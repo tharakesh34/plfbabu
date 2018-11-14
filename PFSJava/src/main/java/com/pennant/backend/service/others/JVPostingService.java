@@ -82,14 +82,16 @@ public interface JVPostingService {
 
 	JVPostingEntry getApprovedJVPostingEntryById(long batchRef, long txnRef, long acRef);
 
-	long save(JVPostingEntry externalAcEntry,String baseCcy, String baseCcyNumber, int baseCcyEditField, boolean addIAEntry);
+	long save(JVPostingEntry externalAcEntry, String baseCcy, String baseCcyNumber, int baseCcyEditField,
+			boolean addIAEntry);
 
-	void update(JVPostingEntry externalAcEntry,String baseCcy, String baseCcyNumber, int baseCcyEditField, boolean addIAEntry, String type);
+	void update(JVPostingEntry externalAcEntry, String baseCcy, String baseCcyNumber, int baseCcyEditField,
+			boolean addIAEntry, String type);
 
 	void deleteByID(JVPostingEntry jVPostingEntry, String type);
 
-	JVPostingEntry getJVPostingEntryById(long batchRef, long txnReference,
-	        String account, String txnEntry, BigDecimal txnAmount);
+	JVPostingEntry getJVPostingEntryById(long batchRef, long txnReference, String account, String txnEntry,
+			BigDecimal txnAmount);
 
 	List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef);
 
@@ -106,7 +108,7 @@ public interface JVPostingService {
 	boolean doAccountValidation(JVPosting jVPosting, List<JVPostingEntry> distinctEntryList);
 
 	void deleteIAEntries(long batchReference);
-	
+
 	long getBatchRerbyExpRef(String expReference);
-	
+
 }

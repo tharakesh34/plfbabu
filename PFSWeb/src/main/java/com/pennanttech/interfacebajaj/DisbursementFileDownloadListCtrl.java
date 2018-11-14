@@ -43,17 +43,6 @@
 
 package com.pennanttech.interfacebajaj;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.model.EventProperties;
-import com.pennanttech.dataengine.util.EncryptionUtil;
-import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.service.AmazonS3Bucket;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,6 +52,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
@@ -79,13 +69,26 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.service.AmazonS3Bucket;
+
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul
+ * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod>  {
+public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(DisbursementFileDownloadListCtrl.class);
 
@@ -100,7 +103,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	String module = null;
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
-	
+
 	protected AmazonS3Bucket bucket;
 
 	/**
@@ -146,7 +149,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 		doRenderPage();
 		search();
-		this.borderLayout_DisbursementFileDownloadList.setHeight(borderLayoutHeight+ "px");
+		this.borderLayout_DisbursementFileDownloadList.setHeight(borderLayoutHeight + "px");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -202,7 +205,6 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	private String loadS3Bucket(long configId) {
 
 		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId, "S3");
@@ -242,6 +244,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		byte[] fileData = bucket.getObject(key);
 		Filedownload.save(fileData, "text/plain", fileName);
 	}
+
 	/**
 	 * Item renderer for listitems in the listbox.
 	 * 
@@ -258,10 +261,9 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
 			lc.setParent(item);
-
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
@@ -279,8 +281,8 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 			builder.append(fileDownlaod.getFileName());
 
 			File file = new File(builder.toString());
-			
-			if(fileDownlaod.getAlwFileDownload() != null && !"1".equals(fileDownlaod.getAlwFileDownload())) {
+
+			if (fileDownlaod.getAlwFileDownload() != null && !"1".equals(fileDownlaod.getAlwFileDownload())) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("Not allowed to download.");
 			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
@@ -294,11 +296,11 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 					downlaod.setTooltiptext("File not available.");
 				}
 			}
-			
+
 			lc.setParent(item);
 		}
 	}
-	
+
 	public void onTimer$timer(Event event) {
 		if (pagingFileDownloadList.getActivePage() == 0) {
 			Events.postEvent("onCreate", this.window_DisbursementFileDownloadList, event);

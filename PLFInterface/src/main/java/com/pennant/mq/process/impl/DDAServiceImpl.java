@@ -17,7 +17,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DDAServiceImpl implements DDAProcess {
 	private static final Logger logger = Logger.getLogger(DDAServiceImpl.class);
-	
+
 	private DDARequestProcess ddaRequestProcess;
 	private DDAAmendmentProcess ddaAmendmentProcess;
 	private DDAUpdateProcess ddaUpdateProcess;
@@ -26,15 +26,15 @@ public class DDAServiceImpl implements DDAProcess {
 	public DDAServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Send the DDARequest Request to MQ <br>
 	 * 
 	 * sendDDARequest method do the following steps.<br>
-	 *  1)  Send DDA_Request Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return DDARequestDetail
+	 * 1) Send DDA_Request Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return DDARequestDetail
 	 */
 	@Override
 	public DDARegistration sendDDARequest(DDARegistration ddsRequest) throws InterfaceException {
@@ -43,7 +43,7 @@ public class DDAServiceImpl implements DDAProcess {
 		DDARegistration ddsReply = null;
 		try {
 			ddsReply = getDdaRequestProcess().sendDDARequest(ddsRequest, InterfaceMasterConfigUtil.DDA_REQ);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -56,16 +56,16 @@ public class DDAServiceImpl implements DDAProcess {
 	 * Send the DDAAmendmnet Request MQ <br>
 	 * 
 	 * sendDDAAmendment method do the following steps.<br>
-	 *  1)  Send DDA_Amendment Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return DDAAmendmentDetail
+	 * 1) Send DDA_Amendment Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return DDAAmendmentDetail
 	 */
 	@Override
 	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		DDAAmendment ddaAmendmentReply = getDdaAmendmentProcess().sendDDAAmendment(ddaAmendmentReq, 
+		DDAAmendment ddaAmendmentReply = getDdaAmendmentProcess().sendDDAAmendment(ddaAmendmentReq,
 				InterfaceMasterConfigUtil.DDA_AMEND);
 
 		logger.debug("Leaving");
@@ -77,43 +77,44 @@ public class DDAServiceImpl implements DDAProcess {
 	 * Send the DDAUpdate Request MQ <br>
 	 * 
 	 * sendDDAUpdate method do the following steps.<br>
-	 *  1)  Send DDA_Update Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return DDAUpdateDetail
+	 * 1) Send DDA_Update Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return DDAUpdateDetail
 	 */
 	@Override
 	public DDAUpdate sendDDAUpdate(DDAUpdate ddaUpdateReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		DDAUpdate ddaUpdateReply = getDdaUpdateProcess().sendDDAUpdate(ddaUpdateReq, InterfaceMasterConfigUtil.DDA_UPDATE);
+		DDAUpdate ddaUpdateReply = getDdaUpdateProcess().sendDDAUpdate(ddaUpdateReq,
+				InterfaceMasterConfigUtil.DDA_UPDATE);
 
 		logger.debug("Leaving");
 
 		return ddaUpdateReply;
 	}
-	
+
 	/**
 	 * This method is for Cancel DDA Registration
 	 * 
 	 * cancelDDARegistration method do the following steps.<br>
-	 *  1)  Send DDA.CANCELLATION Request to interface<br>
-	 *  2)  Receive Response from interface
-	 *  
-	 *  @return DDACancellation
+	 * 1) Send DDA.CANCELLATION Request to interface<br>
+	 * 2) Receive Response from interface
+	 * 
+	 * @return DDACancellation
 	 */
 	@Override
 	public DDACancellation cancelDDARegistration(DDACancellation ddaCancellationReq) throws InterfaceException {
 		logger.debug("Entering");
 
-		DDACancellation ddaCancellationRply = getDdaCancelProcess().cancelDDARegistration(ddaCancellationReq, 
+		DDACancellation ddaCancellationRply = getDdaCancelProcess().cancelDDARegistration(ddaCancellationReq,
 				InterfaceMasterConfigUtil.DDA_CANCELLATION);
 
 		logger.debug("Leaving");
 
 		return ddaCancellationRply;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -121,6 +122,7 @@ public class DDAServiceImpl implements DDAProcess {
 	public DDARequestProcess getDdaRequestProcess() {
 		return ddaRequestProcess;
 	}
+
 	public void setDdaRequestProcess(DDARequestProcess ddaRequestProcess) {
 		this.ddaRequestProcess = ddaRequestProcess;
 	}
@@ -128,6 +130,7 @@ public class DDAServiceImpl implements DDAProcess {
 	public DDAAmendmentProcess getDdaAmendmentProcess() {
 		return ddaAmendmentProcess;
 	}
+
 	public void setDdaAmendmentProcess(DDAAmendmentProcess ddaAmendmentProcess) {
 		this.ddaAmendmentProcess = ddaAmendmentProcess;
 	}
@@ -135,6 +138,7 @@ public class DDAServiceImpl implements DDAProcess {
 	public DDAUpdateProcess getDdaUpdateProcess() {
 		return ddaUpdateProcess;
 	}
+
 	public void setDdaUpdateProcess(DDAUpdateProcess ddaUpdateProcess) {
 		this.ddaUpdateProcess = ddaUpdateProcess;
 	}

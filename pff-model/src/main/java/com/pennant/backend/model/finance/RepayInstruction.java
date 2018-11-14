@@ -59,13 +59,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>RepayInstruction table</b>.<br>
  * 
  */
-@XmlType(propOrder = {
-		"repayDate","repayAmount","repaySchdMethod"
-})
+@XmlType(propOrder = { "repayDate", "repayAmount", "repaySchdMethod" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class RepayInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String finReference = null;
 	@XmlElement
 	private Date repayDate;
@@ -73,12 +71,12 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	@XmlElement
 	private String repaySchdMethod;
-	
+
 	private long logKey;
 	private boolean newRecord = false;
 	private String lovValue;
 	private RepayInstruction befImage;
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -170,10 +168,10 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 	}
 
 	public void setLogKey(long logKey) {
-	    this.logKey = logKey;
-    }
+		this.logKey = logKey;
+	}
 
 	public long getLogKey() {
-	    return logKey;
-    }
+		return logKey;
+	}
 }

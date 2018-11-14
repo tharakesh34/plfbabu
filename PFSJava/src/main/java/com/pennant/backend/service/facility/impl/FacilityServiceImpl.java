@@ -94,26 +94,26 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	private FacilityDAO facilityDAO;
 	private FacilityReferenceDetailDAO facilityReferenceDetailDAO;
 	private CheckListDetailDAO checkListDetailDAO;
-	
+
 	private ScoringSlabDAO scoringSlabDAO;
 	private ScoringMetricsDAO scoringMetricsDAO;
 	private RuleDAO ruleDAO;
 	private CustomerDAO customerDAO;
-	
+
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private FinanceScoreHeaderDAO financeScoreHeaderDAO;
-	
+
 	private CollateralDAO collateralDAO;
 	private FacilityDetailDAO facilityDetailDAO;
-	private CustomerRatingDAO customerRatingDAO; 
-	
+	private CustomerRatingDAO customerRatingDAO;
+
 	private CustomerDocumentDAO customerDocumentDAO;
-	
+
 	public FacilityServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -152,113 +152,101 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		this.facilityReferenceDetailDAO = facilityReferenceDetailDAO;
 	}
 
-
 	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
-	    this.checkListDetailDAO = checkListDetailDAO;
-    }
+		this.checkListDetailDAO = checkListDetailDAO;
+	}
 
 	public CheckListDetailDAO getCheckListDetailDAO() {
-	    return checkListDetailDAO;
-    }
+		return checkListDetailDAO;
+	}
 
-	
 	public ScoringSlabDAO getScoringSlabDAO() {
-    	return scoringSlabDAO;
-    }
+		return scoringSlabDAO;
+	}
 
 	public void setScoringSlabDAO(ScoringSlabDAO scoringSlabDAO) {
-    	this.scoringSlabDAO = scoringSlabDAO;
-    }
+		this.scoringSlabDAO = scoringSlabDAO;
+	}
 
 	public ScoringMetricsDAO getScoringMetricsDAO() {
-    	return scoringMetricsDAO;
-    }
+		return scoringMetricsDAO;
+	}
 
 	public void setScoringMetricsDAO(ScoringMetricsDAO scoringMetricsDAO) {
-    	this.scoringMetricsDAO = scoringMetricsDAO;
-    }
+		this.scoringMetricsDAO = scoringMetricsDAO;
+	}
 
 	public RuleDAO getRuleDAO() {
-    	return ruleDAO;
-    }
+		return ruleDAO;
+	}
 
 	public void setRuleDAO(RuleDAO ruleDAO) {
-    	this.ruleDAO = ruleDAO;
-    }
+		this.ruleDAO = ruleDAO;
+	}
 
 	public CustomerDAO getCustomerDAO() {
-    	return customerDAO;
-    }
+		return customerDAO;
+	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
-    	this.customerDAO = customerDAO;
-    }
+		this.customerDAO = customerDAO;
+	}
 
 	public DocumentDetailsDAO getDocumentDetailsDAO() {
-    	return documentDetailsDAO;
-    }
+		return documentDetailsDAO;
+	}
 
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
-    	this.documentDetailsDAO = documentDetailsDAO;
-    }
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
 
-	
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
-    	return financeCheckListReferenceDAO;
-    }
+		return financeCheckListReferenceDAO;
+	}
 
-	public void setFinanceCheckListReferenceDAO(
-            FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
-    	this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
-    }
+	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
+		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
+	}
 
-	
 	public FinanceScoreHeaderDAO getFinanceScoreHeaderDAO() {
-    	return financeScoreHeaderDAO;
-    }
+		return financeScoreHeaderDAO;
+	}
 
 	public void setFinanceScoreHeaderDAO(FinanceScoreHeaderDAO financeScoreHeaderDAO) {
-    	this.financeScoreHeaderDAO = financeScoreHeaderDAO;
-    }
-	
+		this.financeScoreHeaderDAO = financeScoreHeaderDAO;
+	}
 
 	public CollateralDAO getCollateralDAO() {
-    	return collateralDAO;
-    }
+		return collateralDAO;
+	}
 
 	public void setCollateralDAO(CollateralDAO collateralDAO) {
-    	this.collateralDAO = collateralDAO;
-    }
+		this.collateralDAO = collateralDAO;
+	}
 
-	
 	public FacilityDetailDAO getFacilityDetailDAO() {
-    	return facilityDetailDAO;
-    }
+		return facilityDetailDAO;
+	}
 
 	public void setFacilityDetailDAO(FacilityDetailDAO facilityDetailDAO) {
-    	this.facilityDetailDAO = facilityDetailDAO;
-    }
-	
-	
+		this.facilityDetailDAO = facilityDetailDAO;
+	}
 
 	public CustomerRatingDAO getCustomerRatingDAO() {
-    	return customerRatingDAO;
-    }
+		return customerRatingDAO;
+	}
 
 	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
-    	this.customerRatingDAO = customerRatingDAO;
-    }
-
-	
-
+		this.customerRatingDAO = customerRatingDAO;
+	}
 
 	public CustomerDocumentDAO getCustomerDocumentDAO() {
-    	return customerDocumentDAO;
-    }
+		return customerDocumentDAO;
+	}
 
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
-    	this.customerDocumentDAO = customerDocumentDAO;
-    }
+		this.customerDocumentDAO = customerDocumentDAO;
+	}
 
 	/**
 	 * @return the facility
@@ -275,6 +263,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	public Facility getNewFacility() {
 		return getFacilityDAO().getNewFacility();
 	}
+
 	/**
 	 * @return the collateral for New Record
 	 */
@@ -287,7 +276,6 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	public FacilityDetail getNewFacilityDetail() {
 		return getFacilityDetailDAO().getNewFacilityDetail();
 	}
-	
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -324,41 +312,41 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 
 		//DocumentDetails
-		if (facility.getDocumentDetailsList() != null  && facility.getDocumentDetailsList().size() > 0) {
+		if (facility.getDocumentDetailsList() != null && facility.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = facility.getAuditDetailMap().get("DocumentDetails");
-			details = processDocumentsDetails(facility,details, tableType);
+			details = processDocumentsDetails(facility, details, tableType);
 			auditDetails.addAll(details);
 		}
 		//Check List
-		if (facility.getFinanceCheckList() != null  && facility.getFinanceCheckList().size() > 0) {
+		if (facility.getFinanceCheckList() != null && facility.getFinanceCheckList().size() > 0) {
 			List<AuditDetail> details = facility.getAuditDetailMap().get("FinanceCheckList");
-			details = processFinanceCheckListDetails(facility,details, tableType);
+			details = processFinanceCheckListDetails(facility, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		//Scoring
 		saveOrUpdateScoring(facility);
-		
+
 		//Collateral
-		if (facility.getCollaterals() != null  && facility.getCollaterals().size() > 0) {
+		if (facility.getCollaterals() != null && facility.getCollaterals().size() > 0) {
 			List<AuditDetail> details = facility.getAuditDetailMap().get("Collateral");
-			details = processCollateralDetails(facility,details, tableType);
+			details = processCollateralDetails(facility, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		//FacilityDetails
-		if (facility.getFacilityDetails() != null  && facility.getFacilityDetails().size() > 0) {
+		if (facility.getFacilityDetails() != null && facility.getFacilityDetails().size() > 0) {
 			List<AuditDetail> details = facility.getAuditDetailMap().get("FacilityDetail");
-			details = processFacilityDetails(facility,details, tableType);
+			details = processFacilityDetails(facility, details, tableType);
 			auditDetails.addAll(details);
 		}
 		//CustomerRating
-		if (facility.getCustomerRatings() != null  && facility.getCustomerRatings().size() > 0) {
+		if (facility.getCustomerRatings() != null && facility.getCustomerRatings().size() > 0) {
 			List<AuditDetail> details = facility.getAuditDetailMap().get("CustomerRatings");
-			details = processCustomerRatingDetails(facility,details, tableType);
+			details = processCustomerRatingDetails(facility, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -388,7 +376,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 		Facility facility = (Facility) auditHeader.getAuditDetail().getModelData();
 		getFacilityDAO().delete(facility, "");
-		
+
 		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(facility, "", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -409,31 +397,34 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	public Facility getFacilityById(String id) {
 		Facility facility = getFacilityDAO().getFacilityById(id, "_View");
 		facility = getFacilityChildRecords(facility);
-		facility.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(facility.getCAFReference(), FacilityConstants.MODULE_NAME,"", "_View"));
-		facility.setFinanceCheckList(getFinanceCheckListReferenceDAO().getCheckListByFinRef(facility.getCAFReference(),null, "_View"));
+		facility.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(facility.getCAFReference(),
+				FacilityConstants.MODULE_NAME, "", "_View"));
+		facility.setFinanceCheckList(
+				getFinanceCheckListReferenceDAO().getCheckListByFinRef(facility.getCAFReference(), null, "_View"));
 		facility.setCollaterals(getCollateralDAO().getCollateralsByCAF(facility.getCAFReference(), "_View"));
-		facility.setFacilityDetails(getFacilityDetailDAO().getFacilityDetailsByCAF(facility.getCAFReference(), "_View"));
+		facility.setFacilityDetails(
+				getFacilityDetailDAO().getFacilityDetailsByCAF(facility.getCAFReference(), "_View"));
 		facility.setCustomerRatings(getCustomerRatingByCustomer(facility.getCustID()));
-		facility=setCustomerDocuments(facility);
+		facility = setCustomerDocuments(facility);
 		return facility;
 	}
-	
+
 	@Override
 	public Facility getLatestFacilityByCustID(final long custID) {
 		return getFacilityDAO().getLatestFacilityByCustID(custID, "_AView");
 	}
-	
-	
+
 	@Override
-	public Facility setCustomerDocuments(Facility facility){
+	public Facility setCustomerDocuments(Facility facility) {
 		List<String> docTypeList = null;
 		List<CheckListDetail> checkListDetailList = null;
 		if (facility.getCheckList() != null && !facility.getCheckList().isEmpty()) {
 			docTypeList = new ArrayList<String>();
 			for (FacilityReferenceDetail financeReferenceDetail : facility.getCheckList()) {
-				checkListDetailList = getCheckListDetailDAO().getCheckListDetailByChkList(financeReferenceDetail.getFinRefId(), "_AView");
+				checkListDetailList = getCheckListDetailDAO()
+						.getCheckListDetailByChkList(financeReferenceDetail.getFinRefId(), "_AView");
 				for (CheckListDetail checkListDetail : checkListDetailList) {
-					if(DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode())){
+					if (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode())) {
 						docTypeList.add(checkListDetail.getDocType());
 					}
 				}
@@ -441,23 +432,22 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		//Customer Document Details Fetching Depends on Customer & Doc Type List
 		List<DocumentDetails> documentList = null;
-		if(docTypeList != null && !docTypeList.isEmpty()){
+		if (docTypeList != null && !docTypeList.isEmpty()) {
 			documentList = getCustomerDocumentDAO().getCustDocListByDocTypes(facility.getCustID(), docTypeList, "");
-			
-			if(facility.getDocumentDetailsList() != null && !facility.getDocumentDetailsList().isEmpty()){
+
+			if (facility.getDocumentDetailsList() != null && !facility.getDocumentDetailsList().isEmpty()) {
 				facility.getDocumentDetailsList().addAll(documentList);
-			}else{
+			} else {
 				facility.setDocumentDetailsList(documentList);
 			}
 		}
 		return facility;
 	}
+
 	@Override
 	public List<CustomerRating> getCustomerRatingByCustomer(long custId) {
 		return getCustomerRatingDAO().getCustomerRatingByCustomer(custId, "_View");
 	}
-	
-	
 
 	/**
 	 * getApprovedFacilityById fetch the details by using FacilityDAO's getFacilityById method . with parameter id and
@@ -471,10 +461,13 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 	public Facility getApprovedFacilityById(String id) {
 		Facility facility = getFacilityDAO().getFacilityById(id, "_AView");
 		facility = getFacilityChildRecords(facility);
-		facility.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(facility.getCAFReference(),FacilityConstants.MODULE_NAME,"", ""));
-		facility.setFinanceCheckList(getFinanceCheckListReferenceDAO().getCheckListByFinRef(facility.getCAFReference(),null, "_AView"));
+		facility.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(facility.getCAFReference(),
+				FacilityConstants.MODULE_NAME, "", ""));
+		facility.setFinanceCheckList(
+				getFinanceCheckListReferenceDAO().getCheckListByFinRef(facility.getCAFReference(), null, "_AView"));
 		facility.setCollaterals(getCollateralDAO().getCollateralsByCAF(facility.getCAFReference(), "_AView"));
-		facility.setFacilityDetails(getFacilityDetailDAO().getFacilityDetailsByCAF(facility.getCAFReference(), "_AView"));
+		facility.setFacilityDetails(
+				getFacilityDetailDAO().getFacilityDetailsByCAF(facility.getCAFReference(), "_AView"));
 		facility.setCustomerRatings(getCustomerRatingDAO().getCustomerRatingByCustomer(facility.getCustID(), ""));
 		return facility;
 	}
@@ -506,14 +499,14 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 		Facility facility = new Facility();
 		BeanUtils.copyProperties((Facility) aAuditHeader.getAuditDetail().getModelData(), facility);
-		
+
 		AuditHeader auditHeader = new AuditHeader();
 		BeanUtils.copyProperties(aAuditHeader, auditHeader);
 
 		if (facility.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			//List
-			auditDetails.addAll(deleteChilds(facility, "",tranType));
+			auditDetails.addAll(deleteChilds(facility, "", tranType));
 			getFacilityDAO().delete(facility, "");
 
 		} else {
@@ -534,28 +527,28 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			}
 			//List
 			if (facility.getDocumentDetailsList() != null && facility.getDocumentDetailsList().size() > 0) {
-				List<AuditDetail> details = facility.getAuditDetailMap().get( "DocumentDetails");
-				details = processDocumentsDetails(facility,details, "");
+				List<AuditDetail> details = facility.getAuditDetailMap().get("DocumentDetails");
+				details = processDocumentsDetails(facility, details, "");
 				auditDetails.addAll(details);
 			}
 			if (facility.getFinanceCheckList() != null && facility.getFinanceCheckList().size() > 0) {
-				List<AuditDetail> details = facility.getAuditDetailMap().get( "FinanceCheckList");
-				details = processFinanceCheckListDetails(facility,details, "");
+				List<AuditDetail> details = facility.getAuditDetailMap().get("FinanceCheckList");
+				details = processFinanceCheckListDetails(facility, details, "");
 				auditDetails.addAll(details);
 			}
 			if (facility.getCollaterals() != null && facility.getCollaterals().size() > 0) {
-				List<AuditDetail> details = facility.getAuditDetailMap().get( "Collateral");
-				details = processCollateralDetails(facility,details, "");
+				List<AuditDetail> details = facility.getAuditDetailMap().get("Collateral");
+				details = processCollateralDetails(facility, details, "");
 				auditDetails.addAll(details);
 			}
 			if (facility.getFacilityDetails() != null && facility.getFacilityDetails().size() > 0) {
-				List<AuditDetail> details = facility.getAuditDetailMap().get( "FacilityDetail");
-				details = processFacilityDetails(facility,details, "");
+				List<AuditDetail> details = facility.getAuditDetailMap().get("FacilityDetail");
+				details = processFacilityDetails(facility, details, "");
 				auditDetails.addAll(details);
 			}
 			if (facility.getCustomerRatings() != null && facility.getCustomerRatings().size() > 0) {
-				List<AuditDetail> details = facility.getAuditDetailMap().get( "CustomerRatings");
-				details = processCustomerRatingDetails(facility,details, "");
+				List<AuditDetail> details = facility.getAuditDetailMap().get("CustomerRatings");
+				details = processCustomerRatingDetails(facility, details, "");
 				auditDetails.addAll(details);
 			}
 			//updateCustomer(facility);
@@ -565,8 +558,9 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		//List
 		auditHeader.setAuditDetails(deleteChilds(facility, "_Temp", auditHeader.getAuditTranType()));
-		String[] fields = PennantJavaUtil.getFieldDetails(new Facility(),facility.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], facility.getBefImage(), facility));
+		String[] fields = PennantJavaUtil.getFieldDetails(new Facility(), facility.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				facility.getBefImage(), facility));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
@@ -603,7 +597,8 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFacilityDAO().delete(facility, "_Temp");
 		//List
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds( facility, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader
+				.setAuditDetails(processChildsAudit(deleteChilds(facility, "_Temp", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 
@@ -621,12 +616,12 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		//List
 		auditHeader = prepareChildsAudit(auditHeader, method);
-		auditHeader.setErrorList(validateChilds(auditHeader,auditHeader.getUsrLanguage(),method));
+		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -665,19 +660,19 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 			if (!facility.isWorkflow()) {// With out Work flow only new records  
 				if (befFacility != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-					        "41001", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (facility.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFacility != null || tempFacility != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-						        "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFacility == null || tempFacility != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-						        "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -686,38 +681,35 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			if (!facility.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befFacility == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-					        "41002", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
-					if (oldFacility != null
-					        && !oldFacility.getLastMntOn().equals(befFacility.getLastMntOn())) {
+					if (oldFacility != null && !oldFacility.getLastMntOn().equals(befFacility.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							        "41003", errParm, valueParm));
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							        "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 
 				if (tempFacility == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-					        "41005", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (oldFacility != null
-				        && !oldFacility.getLastMntOn().equals(tempFacility.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-					        "41005", errParm, valueParm));
+				if (oldFacility != null && !oldFacility.getLastMntOn().equals(tempFacility.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
-		        usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !facility.isWorkflow()) {
 			auditDetail.setBefImage(befFacility);
@@ -728,12 +720,14 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 	@Override
 	public Facility getFacilityChildRecords(Facility facility) {
-		List<FacilityReferenceDetail> refList = getFacilityReferenceDetailDAO().getFacilityReferenceDetailById(facility.getFacilityType());
+		List<FacilityReferenceDetail> refList = getFacilityReferenceDetailDAO()
+				.getFacilityReferenceDetailById(facility.getFacilityType());
 		if (refList != null && !refList.isEmpty()) {
 			for (FacilityReferenceDetail facRefDetail : refList) {
 				switch (facRefDetail.getFinRefType()) {
 				case FinanceConstants.PROCEDT_CHECKLIST:
-					facRefDetail.setLovDescCheckListAnsDetails(getCheckListDetailDAO().getCheckListDetailByChkList(facRefDetail.getFinRefId(), "_AView"));
+					facRefDetail.setLovDescCheckListAnsDetails(
+							getCheckListDetailDAO().getCheckListDetailByChkList(facRefDetail.getFinRefId(), "_AView"));
 					facility.getCheckList().add(facRefDetail);
 					break;
 				case FinanceConstants.PROCEDT_AGREEMENT:
@@ -742,7 +736,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				case FinanceConstants.PROCEDT_RTLSCORE:
 					facility.getScoringGroupList().add(facRefDetail);
 					break;
-				case FinanceConstants.PROCEDT_CORPSCORE:	
+				case FinanceConstants.PROCEDT_CORPSCORE:
 					facility.getCorpScoringGroupList().add(facRefDetail);
 					break;
 				default:
@@ -753,14 +747,15 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return facility;
 
 	}
+
 	@Override
-	public Facility setFacilityScoringDetails(Facility facility){
+	public Facility setFacilityScoringDetails(Facility facility) {
 		logger.debug("Entering");
 		facility.getScoringMetrics().clear();
-		facility.getScoringSlabs().clear();		
+		facility.getScoringSlabs().clear();
 
 		List<ScoringMetrics> finScoringMetricList = null;
-		List<ScoringMetrics> nonFinScoringMetricList = null;		
+		List<ScoringMetrics> nonFinScoringMetricList = null;
 
 		List<ScoringSlab> scoringSlabsList = null;
 		List<ScoringMetrics> scoringMetricslist = null;
@@ -768,31 +763,36 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		if (StringUtils.trimToNull(facility.getCustCtgCode()) == null) {
 			return facility;
 		}
-		List<FacilityReferenceDetail> scoringGroupList=null;
+		List<FacilityReferenceDetail> scoringGroupList = null;
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(facility.getCustCtgCode())) {
-			scoringGroupList =facility.getScoringGroupList();
-			if(scoringGroupList!=null && !scoringGroupList.isEmpty()){
+			scoringGroupList = facility.getScoringGroupList();
+			if (scoringGroupList != null && !scoringGroupList.isEmpty()) {
 				for (FacilityReferenceDetail scoringGroup : scoringGroupList) {
 					//Scoring Slab Details List
-					scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(scoringGroup.getFinRefId(), "_AView");
+					scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(scoringGroup.getFinRefId(),
+							"_AView");
 					facility.setScoringSlabs(scoringGroup.getFinRefId(), scoringSlabsList);
 					//Scoring Metric Details For Retail Customers
-					scoringMetricslist = getScoringMetricsDAO().getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "R", "_AView");
+					scoringMetricslist = getScoringMetricsDAO()
+							.getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "R", "_AView");
 					facility.setScoringMetrics(scoringGroup.getFinRefId(), scoringMetricslist);
 				}
 			}
 
 		} else {
 			scoringGroupList = facility.getCorpScoringGroupList();
-			if(scoringGroupList !=null && !scoringGroupList.isEmpty()){
+			if (scoringGroupList != null && !scoringGroupList.isEmpty()) {
 				for (FacilityReferenceDetail scoringGroup : scoringGroupList) {
 					//Scoring Slab Details List
-					scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(scoringGroup.getFinRefId(), "_AView");
+					scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(scoringGroup.getFinRefId(),
+							"_AView");
 					facility.setScoringSlabs(scoringGroup.getFinRefId(), scoringSlabsList);
 					//Corporate Scoring Group for Financial Details
-					finScoringMetricList = getScoringMetricsDAO().getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(),  "F", "_AView");
+					finScoringMetricList = getScoringMetricsDAO()
+							.getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "F", "_AView");
 					//Non - Financial Scoring Metric Details
-					nonFinScoringMetricList = getScoringMetricsDAO().getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(),  "N", "_AView");
+					nonFinScoringMetricList = getScoringMetricsDAO()
+							.getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "N", "_AView");
 				}
 			}
 
@@ -804,7 +804,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				}
 				List<NFScoreRuleDetail> ruleList = getRuleDAO().getNFRulesByNFScoreGroup(metricIdList, "");
 				for (NFScoreRuleDetail rule : ruleList) {
-					ScoringMetrics  metric = new ScoringMetrics();
+					ScoringMetrics metric = new ScoringMetrics();
 					metric.setScoringId(rule.getNFRuleId());
 					metric.setLovDescScoringCode(String.valueOf(rule.getNFRuleId()));
 					metric.setLovDescScoringCodeDesc(rule.getNFRuleDesc());
@@ -825,7 +825,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				for (ScoringMetrics metric : nonFinScoringMetricList) {
 					metricIdList.add(metric.getScoringId());
 				}
-				List<NFScoreRuleDetail> ruleList = getRuleDAO().getNFRulesByNFScoreGroup( metricIdList, "");						
+				List<NFScoreRuleDetail> ruleList = getRuleDAO().getNFRulesByNFScoreGroup(metricIdList, "");
 				for (NFScoreRuleDetail rule : ruleList) {
 					ScoringMetrics metric = new ScoringMetrics();
 					metric.setScoringId(rule.getNFRuleId());
@@ -854,96 +854,99 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		logger.debug("Leaving");
 		return facility;
 	}
+
 	private void setFinScoreHeaderList(Facility facility) {
-	    // Finance Scoring Module Details List 
-	    List<String> groupIds = null;
-	    List<FinanceScoreHeader> finScoreHeaderList = facility.getFinScoreHeaderList();
-	    List<Long> headerIds = null;
-	    List<FinanceScoreDetail> financeScoreDetails = null;
-	    List<FinanceScoreDetail> scoreDetailList = null;
-	    
-	    String finReference = facility.getCAFReference(); 
-	    
-	    if (StringUtils.trimToNull(finReference) != null) {    	
-	    	finScoreHeaderList =  getFinanceScoreHeaderDAO().getFinScoreHeaderList(finReference, "_View");
-	    					
-	    	if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
-	    		headerIds = new ArrayList<Long>();
-	    		groupIds = new ArrayList<String>();
-	    		
-	    		for (FinanceScoreHeader header : finScoreHeaderList) {
-	    			headerIds.add(header.getHeaderId());
-	    			groupIds.add(String.valueOf(header.getGroupId()));
-	    		}
-	    		
-	    		if (facility.getScoreDetailListMap() == null) {
-	    			new HashMap<Long, List<FinanceScoreDetail>>();
-	    		} 
-	    		
-	    		facility.getScoreDetailListMap().clear();
-	    		
-	    		financeScoreDetails  = getFinanceScoreHeaderDAO().getFinScoreDetailList(headerIds, "_View");
-	    		
-	    		if(financeScoreDetails != null) {						
-	    			for (FinanceScoreDetail scoreDetail : financeScoreDetails) {
-	    				scoreDetailList = new ArrayList<FinanceScoreDetail>();
-	    				
-	    				if (facility.getScoreDetailListMap().containsKey(scoreDetail.getHeaderId())) {
-	    					scoreDetailList = facility.getScoreDetailListMap().get(scoreDetail.getHeaderId());
-	    					facility.getScoreDetailListMap().remove(scoreDetail.getHeaderId());
-	    				}
-	    				
-	    				scoreDetailList.add(scoreDetail);
-	    				facility.getScoreDetailListMap().put(scoreDetail.getHeaderId(), scoreDetailList);
-	    			}
-	    		}
-	    	}
-	    }
-	    
-	    facility.setFinScoreHeaderList(finScoreHeaderList);
-    }
-	
+		// Finance Scoring Module Details List 
+		List<String> groupIds = null;
+		List<FinanceScoreHeader> finScoreHeaderList = facility.getFinScoreHeaderList();
+		List<Long> headerIds = null;
+		List<FinanceScoreDetail> financeScoreDetails = null;
+		List<FinanceScoreDetail> scoreDetailList = null;
+
+		String finReference = facility.getCAFReference();
+
+		if (StringUtils.trimToNull(finReference) != null) {
+			finScoreHeaderList = getFinanceScoreHeaderDAO().getFinScoreHeaderList(finReference, "_View");
+
+			if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
+				headerIds = new ArrayList<Long>();
+				groupIds = new ArrayList<String>();
+
+				for (FinanceScoreHeader header : finScoreHeaderList) {
+					headerIds.add(header.getHeaderId());
+					groupIds.add(String.valueOf(header.getGroupId()));
+				}
+
+				if (facility.getScoreDetailListMap() == null) {
+					new HashMap<Long, List<FinanceScoreDetail>>();
+				}
+
+				facility.getScoreDetailListMap().clear();
+
+				financeScoreDetails = getFinanceScoreHeaderDAO().getFinScoreDetailList(headerIds, "_View");
+
+				if (financeScoreDetails != null) {
+					for (FinanceScoreDetail scoreDetail : financeScoreDetails) {
+						scoreDetailList = new ArrayList<FinanceScoreDetail>();
+
+						if (facility.getScoreDetailListMap().containsKey(scoreDetail.getHeaderId())) {
+							scoreDetailList = facility.getScoreDetailListMap().get(scoreDetail.getHeaderId());
+							facility.getScoreDetailListMap().remove(scoreDetail.getHeaderId());
+						}
+
+						scoreDetailList.add(scoreDetail);
+						facility.getScoreDetailListMap().put(scoreDetail.getHeaderId(), scoreDetailList);
+					}
+				}
+			}
+		}
+
+		facility.setFinScoreHeaderList(finScoreHeaderList);
+	}
+
 	/**
-	 * Calculate the scoring for the metrics list based on the CustomerScoringCheck 
-	 * @param List<ScoringMetrics> scoringMetricsList
-	 * @param  CustomerScoringCheck customerScoringCheck
+	 * Calculate the scoring for the metrics list based on the CustomerScoringCheck
+	 * 
+	 * @param List<ScoringMetrics>
+	 *            scoringMetricsList
+	 * @param CustomerScoringCheck
+	 *            customerScoringCheck
 	 * 
 	 */
-	
+
 	private void setExecutedScore(Facility facility) {
 		List<FinanceScoreHeader> scoringHeaderList = facility.getFinScoreHeaderList();
 		HashMap<Long, List<FinanceScoreDetail>> scoreDtlListMap = facility.getScoreDetailListMap();
 		List<FinanceScoreDetail> scoreDetailList = null;
-		List<FacilityReferenceDetail> financeReferenceList =  facility.getScoringGroupList();
+		List<FacilityReferenceDetail> financeReferenceList = facility.getScoringGroupList();
 		List<ScoringMetrics> scoringMetricsList = null;
-		
+
 		int minScore = 0;
 		int executedScore = 0;
 		int overRideScore = 0;
 		boolean isOverride = false;
-		
 
 		// Retail Scoring
 		if (financeReferenceList != null && !financeReferenceList.isEmpty()) {
-			
+
 			for (FacilityReferenceDetail financeReferenceDetail : financeReferenceList) {
 				scoringMetricsList = facility.getScoringMetrics().get(financeReferenceDetail.getFinRefId());
-				if(scoringMetricsList != null && !scoringMetricsList.isEmpty()) {
+				if (scoringMetricsList != null && !scoringMetricsList.isEmpty()) {
 					for (ScoringMetrics scoringMetrics : scoringMetricsList) {
-						if(scoringMetrics.getLovDescExecutedScore().compareTo(BigDecimal.ZERO) == 0) {
+						if (scoringMetrics.getLovDescExecutedScore().compareTo(BigDecimal.ZERO) == 0) {
 							for (FinanceScoreHeader header : scoringHeaderList) {
 								minScore = header.getMinScore();
 								overRideScore = header.getOverrideScore();
 								isOverride = header.isOverride();
-								
+
 								if (scoreDtlListMap != null && scoreDtlListMap.containsKey(header.getHeaderId())) {
 									scoreDetailList = scoreDtlListMap.get(header.getHeaderId());
 
 									for (FinanceScoreDetail finScoreDetail : scoreDetailList) {
-										if(finScoreDetail.getRuleId() == scoringMetrics.getScoringId()) {
+										if (finScoreDetail.getRuleId() == scoringMetrics.getScoringId()) {
 											scoringMetrics.setLovDescExecutedScore(finScoreDetail.getExecScore());
-											executedScore = executedScore + finScoreDetail.getExecScore().intValue(); 
-											break; 
+											executedScore = executedScore + finScoreDetail.getExecScore().intValue();
+											break;
 										}
 									}
 								}
@@ -954,18 +957,18 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				}
 
 			}
-		}	
-		
+		}
+
 		// Corporate Scoring
-		if(facility.getFinScoringMetricList() != null) {
+		if (facility.getFinScoringMetricList() != null) {
 
 			for (ScoringMetrics scoringMetric : facility.getFinScoringMetricList()) {
-				if(facility.getScoringMetrics().containsKey(scoringMetric.getScoringId())){
+				if (facility.getScoringMetrics().containsKey(scoringMetric.getScoringId())) {
 					List<ScoringMetrics> subMetricList = facility.getScoringMetrics().get(scoringMetric.getScoringId());
 
 					if (subMetricList != null) {
 						for (ScoringMetrics subScoreMetric : subMetricList) {
-							if(subScoreMetric.getLovDescExecutedScore().compareTo(BigDecimal.ZERO) == 0) {
+							if (subScoreMetric.getLovDescExecutedScore().compareTo(BigDecimal.ZERO) == 0) {
 								for (FinanceScoreHeader header : scoringHeaderList) {
 									minScore = header.getMinScore();
 									overRideScore = header.getOverrideScore();
@@ -975,10 +978,11 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 										scoreDetailList = scoreDtlListMap.get(header.getHeaderId());
 
 										for (FinanceScoreDetail finScoreDetail : scoreDetailList) {
-											if(finScoreDetail.getRuleId() == subScoreMetric.getScoringId()) {
+											if (finScoreDetail.getRuleId() == subScoreMetric.getScoringId()) {
 												subScoreMetric.setLovDescExecutedScore(finScoreDetail.getExecScore());
-												executedScore = executedScore + finScoreDetail.getExecScore().intValue(); 
-												break; 
+												executedScore = executedScore
+														+ finScoreDetail.getExecScore().intValue();
+												break;
 											}
 										}
 									}
@@ -989,9 +993,9 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					}
 
 				}
-			}		
+			}
 		}
-		
+
 		if (minScore != 0) {
 			if (minScore <= executedScore) {
 				facility.setSufficientScore(true);
@@ -1000,14 +1004,13 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			}
 		}
 	}
-	
-	
+
 	@Override
-	public CustomerEligibilityCheck getCustomerEligibility(Customer customer,long custID) {
-		if (customer==null) {
-			customer=getCustomerDAO().getCustomerByID(custID, "");
-        }
-		CustomerEligibilityCheck eligibilityCheck= new CustomerEligibilityCheck();
+	public CustomerEligibilityCheck getCustomerEligibility(Customer customer, long custID) {
+		if (customer == null) {
+			customer = getCustomerDAO().getCustomerByID(custID, "");
+		}
+		CustomerEligibilityCheck eligibilityCheck = new CustomerEligibilityCheck();
 		Date curBussDate = DateUtility.getAppDate();
 		BeanUtils.copyProperties(customer, eligibilityCheck);
 		int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), DateUtility.getAppDate());
@@ -1023,57 +1026,57 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		//Customer Total Income & Expense Conversion
 		eligibilityCheck.setCustTotalIncome(customer.getCustTotalIncome());
 		eligibilityCheck.setCustTotalExpense(customer.getCustTotalExpense());
-		eligibilityCheck.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate,customer.getCustBlackListDate()));
+		eligibilityCheck
+				.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
 		eligibilityCheck.setCustCtgCode(customer.getCustCtgCode());
 		//Finance Amount Calculations
-		List<FinanceProfitDetail> financeProfitDetailsList = getCustomerDAO().getCustFinAmtDetails(customer.getCustID(),eligibilityCheck);
+		List<FinanceProfitDetail> financeProfitDetailsList = getCustomerDAO().getCustFinAmtDetails(customer.getCustID(),
+				eligibilityCheck);
 		BigDecimal custFinAmount = BigDecimal.ZERO;
 		BigDecimal custODAmount = BigDecimal.ZERO;
-		
+
 		for (FinanceProfitDetail financeProfitDetail : financeProfitDetailsList) {
-			custFinAmount=custFinAmount.add(financeProfitDetail.getTotalPriBal());
+			custFinAmount = custFinAmount.add(financeProfitDetail.getTotalPriBal());
 			custODAmount = custODAmount.add(financeProfitDetail.getODPrincipal());
-        }
-		
+		}
+
 		eligibilityCheck.setCustLiveFinAmount(custFinAmount);
-		eligibilityCheck.setCustPastDueAmt(custODAmount);	
-		
+		eligibilityCheck.setCustPastDueAmt(custODAmount);
+
 		//get Customer Designation if customer status is Employed
 		eligibilityCheck.setCustEmpDesg(getCustomerDAO().getCustEmpDesg(customer.getCustID()));
 		eligibilityCheck.setCustEmpSts(customer.getCustEmpSts());
 
 		//get Customer Employee Allocation Type if customer status is Employed
-		/*eligibilityCheck.setCustEmpAloc(getCustomerDAO().getCustCurEmpAlocType(
-				customer.getCustID()));*/
+		/*
+		 * eligibilityCheck.setCustEmpAloc(getCustomerDAO().getCustCurEmpAlocType( customer.getCustID()));
+		 */
 
 		//Get Customer Repay Totals On Bank
-		eligibilityCheck.setCustRepayBank(getCustomerDAO().getCustRepayBankTotal(
-				customer.getCustID()));
+		eligibilityCheck.setCustRepayBank(getCustomerDAO().getCustRepayBankTotal(customer.getCustID()));
 
 		//Get Customer Repay Totals by Other Commitments
-		eligibilityCheck.setCustRepayOther(getCustomerDAO().getCustRepayOtherTotal(
-				customer.getCustID()));
+		eligibilityCheck.setCustRepayOther(getCustomerDAO().getCustRepayOtherTotal(customer.getCustID()));
 
 		//Get Customer Worst Status From Finances
 		eligibilityCheck.setCustWorstSts(getCustomerDAO().getCustWorstSts(customer.getCustID()));
-		
+
 		return eligibilityCheck;
 	}
-	
+
 	//Update Customer Details On Approval
-//	private void updateCustomer(Facility facility) {
-//		if (StringUtils.trimToEmpty(facility.getCustCoreBank()).equals("")) {
-//			Customer customer = new Customer();
-//			customer.setCustID(facility.getCustID());
-//			customer.setCustCOB(facility.getCountryOfDomicile());
-//			customer.setCustRiskCountry(facility.getCountryOfRisk());
-//			customer.setCustDOB(facility.getEstablishedDate());
-//			customer.setCustSector(facility.getNatureOfBusiness());
-//			getCustomerDAO().updateFromFacility(customer, "");
-//		}
-//	}
-	
-	
+	//	private void updateCustomer(Facility facility) {
+	//		if (StringUtils.trimToEmpty(facility.getCustCoreBank()).equals("")) {
+	//			Customer customer = new Customer();
+	//			customer.setCustID(facility.getCustID());
+	//			customer.setCustCOB(facility.getCountryOfDomicile());
+	//			customer.setCustRiskCountry(facility.getCountryOfRisk());
+	//			customer.setCustDOB(facility.getEstablishedDate());
+	//			customer.setCustSector(facility.getNatureOfBusiness());
+	//			getCustomerDAO().updateFromFacility(customer, "");
+	//		}
+	//	}
+
 	//=================================== List maintain
 	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
@@ -1085,8 +1088,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 		String auditTranType = "";
 
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method)
-		        || "doReject".equals(method)) {
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (facility.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
@@ -1098,7 +1100,8 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		//Check List
 		if (facility.getFinanceCheckList() != null && facility.getFinanceCheckList().size() > 0) {
-			auditDetailMap.put("FinanceCheckList", setFinanceCheckListDetailsAuditData(facility, auditTranType, method));
+			auditDetailMap.put("FinanceCheckList",
+					setFinanceCheckListDetailsAuditData(facility, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinanceCheckList"));
 		}
 		//Collateral
@@ -1117,7 +1120,6 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			auditDetails.addAll(auditDetailMap.get("CustomerRatings"));
 		}
 
-
 		facility.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(facility);
 		auditHeader.setAuditDetails(auditDetails);
@@ -1125,16 +1127,17 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+
 	private List<AuditDetail> processChildsAudit(List<AuditDetail> list) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
-		
+
 		if (list != null && list.size() > 0) {
 			for (AuditDetail auditDetail : list) {
 				String transType = "";
 				String rcdType = "";
 				Object object = auditDetail.getModelData();
-			
+
 				if (object instanceof DocumentDetails) {
 					//DocumentDetails
 					DocumentDetails documentDetails = (DocumentDetails) object;
@@ -1143,29 +1146,31 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 					//Check List
 					FinanceCheckListReference financeCheckListReference = (FinanceCheckListReference) object;
 					rcdType = financeCheckListReference.getRecordType();
-                }else if (object instanceof Collateral) {
+				} else if (object instanceof Collateral) {
 					//Collateral
-                	Collateral collateral = (Collateral) object;
+					Collateral collateral = (Collateral) object;
 					rcdType = collateral.getRecordType();
-                }else if (object instanceof FacilityDetail) {
-                	//FacilityDetail
-                	FacilityDetail facilityDetail = (FacilityDetail) object;
-                	rcdType = facilityDetail.getRecordType();
-                }else if (object instanceof CustomerRating) {
-                	//FacilityDetail
-                	CustomerRating rating = (CustomerRating) object;
-                	rcdType = rating.getRecordType();
-                }
+				} else if (object instanceof FacilityDetail) {
+					//FacilityDetail
+					FacilityDetail facilityDetail = (FacilityDetail) object;
+					rcdType = facilityDetail.getRecordType();
+				} else if (object instanceof CustomerRating) {
+					//FacilityDetail
+					CustomerRating rating = (CustomerRating) object;
+					rcdType = rating.getRecordType();
+				}
 
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					transType = PennantConstants.TRAN_ADD;
-				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					transType = PennantConstants.TRAN_DEL;
 				} else {
 					transType = PennantConstants.TRAN_UPD;
 				}
 				if (StringUtils.isNotEmpty(transType)) {
-					auditDetailsList.add(new AuditDetail(transType, auditDetail.getAuditSeq(),auditDetail.getBefImage(), object));
+					auditDetailsList.add(
+							new AuditDetail(transType, auditDetail.getAuditSeq(), auditDetail.getBefImage(), object));
 				}
 
 			}
@@ -1173,27 +1178,32 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
-	public List<AuditDetail> deleteChilds(Facility facility, String tableType,String auditTranType) {
+
+	public List<AuditDetail> deleteChilds(Facility facility, String tableType, String auditTranType) {
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 		//DocumentDetails
 		if (facility.getDocumentDetailsList() != null && facility.getDocumentDetailsList().size() > 0) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new DocumentDetails(), new DocumentDetails().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new DocumentDetails(),
+					new DocumentDetails().getExcludeFields());
 			for (int i = 0; i < facility.getDocumentDetailsList().size(); i++) {
 				DocumentDetails expenseDetail = facility.getDocumentDetailsList().get(i);
 				if (StringUtils.isNotEmpty(expenseDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],expenseDetail.getBefImage(), expenseDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							expenseDetail.getBefImage(), expenseDetail));
 				}
 			}
 			getDocumentDetailsDAO().deleteList(facility.getDocumentDetailsList(), tableType);
 		}
-		
+
 		//Check List
 		if (facility.getFinanceCheckList() != null && facility.getFinanceCheckList().size() > 0) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceCheckListReference(), new FinanceCheckListReference().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceCheckListReference(),
+					new FinanceCheckListReference().getExcludeFields());
 			for (int i = 0; i < facility.getFinanceCheckList().size(); i++) {
 				FinanceCheckListReference expenseDetail = facility.getFinanceCheckList().get(i);
 				if (StringUtils.isNotEmpty(expenseDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],expenseDetail.getBefImage(), expenseDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							expenseDetail.getBefImage(), expenseDetail));
 				}
 			}
 			getFinanceCheckListReferenceDAO().delete(facility.getCAFReference(), tableType);
@@ -1204,18 +1214,21 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			for (int i = 0; i < facility.getCollaterals().size(); i++) {
 				Collateral collateral = facility.getCollaterals().get(i);
 				if (StringUtils.isNotEmpty(collateral.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],collateral.getBefImage(), collateral));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], collateral.getBefImage(),
+							collateral));
 				}
 			}
 			getCollateralDAO().deleteByCAF(facility.getCAFReference(), tableType);
 		}
 		//FacilityDetails
 		if (facility.getFacilityDetails() != null && facility.getFacilityDetails().size() > 0) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FacilityDetail(), new FacilityDetail().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FacilityDetail(),
+					new FacilityDetail().getExcludeFields());
 			for (int i = 0; i < facility.getFacilityDetails().size(); i++) {
 				FacilityDetail facilityDetail = facility.getFacilityDetails().get(i);
 				if (StringUtils.isNotEmpty(facilityDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],facilityDetail.getBefImage(), facilityDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							facilityDetail.getBefImage(), facilityDetail));
 				}
 			}
 			getFacilityDetailDAO().deleteByCAF(facility.getCAFReference(), tableType);
@@ -1226,65 +1239,70 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			for (int i = 0; i < facility.getCustomerRatings().size(); i++) {
 				CustomerRating customerRating = facility.getCustomerRatings().get(i);
 				if (StringUtils.isNotEmpty(customerRating.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],customerRating.getBefImage(), customerRating));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							customerRating.getBefImage(), customerRating));
 				}
 			}
 			getCustomerRatingDAO().deleteByCustomer(facility.getCustID(), tableType);
 		}
-		
+
 		return auditList;
 	}
-	
-	private List<ErrorDetail> validateChilds(AuditHeader auditHeader,String usrLanguage,String method ){
-		List<ErrorDetail> errorDetails=new ArrayList<ErrorDetail>();
+
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		Facility facility = (Facility) auditHeader.getAuditDetail().getModelData();
-		List<AuditDetail> auditDetails=null;
+		List<AuditDetail> auditDetails = null;
 		//Document Details
-		if (facility.getAuditDetailMap().get("DocumentDetails")!=null) {
-			auditDetails= facility.getAuditDetailMap().get("DocumentDetails");
-		        for (AuditDetail auditDetail : auditDetails) {
-		        	List<ErrorDetail> details=validationDocumentDetails(auditDetail, usrLanguage, method).getErrorDetails();
-			        if (details!=null) {
-		                errorDetails.addAll(details);
-	                }
-		        }
-        }
-		//Check list
-		if (facility.getAuditDetailMap().get("FinanceCheckList")!=null) {
-			auditDetails= facility.getAuditDetailMap().get("FinanceCheckList");
+		if (facility.getAuditDetailMap().get("DocumentDetails") != null) {
+			auditDetails = facility.getAuditDetailMap().get("DocumentDetails");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details=validationFinanceCheckList(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
+				List<ErrorDetail> details = validationDocumentDetails(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+		//Check list
+		if (facility.getAuditDetailMap().get("FinanceCheckList") != null) {
+			auditDetails = facility.getAuditDetailMap().get("FinanceCheckList");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetail> details = validationFinanceCheckList(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
 					errorDetails.addAll(details);
 				}
 			}
 		}
 		//Collateral
-		if (facility.getAuditDetailMap().get("Collateral")!=null) {
-			auditDetails= facility.getAuditDetailMap().get("Collateral");
+		if (facility.getAuditDetailMap().get("Collateral") != null) {
+			auditDetails = facility.getAuditDetailMap().get("Collateral");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details=validationCollateral(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
+				List<ErrorDetail> details = validationCollateral(auditDetail, usrLanguage, method).getErrorDetails();
+				if (details != null) {
 					errorDetails.addAll(details);
 				}
 			}
 		}
 		//FacilityDetails
-		if (facility.getAuditDetailMap().get("FacilityDetail")!=null) {
-			auditDetails= facility.getAuditDetailMap().get("FacilityDetail");
+		if (facility.getAuditDetailMap().get("FacilityDetail") != null) {
+			auditDetails = facility.getAuditDetailMap().get("FacilityDetail");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details=validationFacilityDetails(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
+				List<ErrorDetail> details = validationFacilityDetails(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
 					errorDetails.addAll(details);
 				}
 			}
 		}
 		//CustomerRatings
-		if (facility.getAuditDetailMap().get("CustomerRatings")!=null) {
-			auditDetails= facility.getAuditDetailMap().get("CustomerRatings");
+		if (facility.getAuditDetailMap().get("CustomerRatings") != null) {
+			auditDetails = facility.getAuditDetailMap().get("CustomerRatings");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details=validationCustomerRatingDetails(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
+				List<ErrorDetail> details = validationCustomerRatingDetails(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
 					errorDetails.addAll(details);
 				}
 			}
@@ -1292,8 +1310,8 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return errorDetails;
 	}
 	//Document details
-	
-	private List<AuditDetail> processDocumentsDetails(Facility facility,List<AuditDetail> auditDetails, String type) {
+
+	private List<AuditDetail> processDocumentsDetails(Facility facility, List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1301,84 +1319,80 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		boolean approveRec = false;
 		for (int i = 0; i < auditDetails.size(); i++) {
 			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
-			if(!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))){
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				documentDetails.setRoleCode("");
-				documentDetails.setNextRoleCode("");
-				documentDetails.setTaskId("");
-				documentDetails.setNextTaskId("");
-			}
-			documentDetails.setReferenceId(facility.getCAFReference());
-			documentDetails.setFinEvent("");
-			documentDetails.setWorkflowId(0);
-			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (documentDetails.isNewRecord()) {
-				saveRecord = true;
-				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RCD_DEL)) {
-					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (documentDetails.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RCD_UPD)) {
-					documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
+				saveRecord = false;
+				updateRecord = false;
+				deleteRecord = false;
+				approveRec = false;
+				String rcdType = "";
+				String recordStatus = "";
+				if (StringUtils.isEmpty(type)) {
+					approveRec = true;
+					documentDetails.setRoleCode("");
+					documentDetails.setNextRoleCode("");
+					documentDetails.setTaskId("");
+					documentDetails.setNextTaskId("");
 				}
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (documentDetails.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
+				documentDetails.setReferenceId(facility.getCAFReference());
+				documentDetails.setFinEvent("");
+				documentDetails.setWorkflowId(0);
+				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
-				} else {
+					if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					if (approveRec) {
+						saveRecord = true;
+					} else {
+						updateRecord = true;
+					}
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 					updateRecord = true;
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+					if (approveRec) {
+						deleteRecord = true;
+					} else if (documentDetails.isNew()) {
+						saveRecord = true;
+					} else {
+						updateRecord = true;
+					}
+				}
+
+				if (approveRec) {
+					rcdType = documentDetails.getRecordType();
+					recordStatus = documentDetails.getRecordStatus();
+					documentDetails.setRecordType("");
+					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				}
+				if (saveRecord) {
+					getDocumentDetailsDAO().save(documentDetails, type);
+				}
+				if (updateRecord) {
+					getDocumentDetailsDAO().update(documentDetails, type);
+				}
+				if (deleteRecord) {
+					getDocumentDetailsDAO().delete(documentDetails, type);
+				}
+				if (approveRec) {
+					documentDetails.setRecordType(rcdType);
+					documentDetails.setRecordStatus(recordStatus);
+				}
+				auditDetails.get(i).setModelData(documentDetails);
+			} else {
+				CustomerDocument custdoc = getCustomerDocument(documentDetails, facility);
+				if (custdoc.isNew()) {
+					getCustomerDocumentDAO().save(custdoc, "");
+				} else {
+					getCustomerDocumentDAO().update(custdoc, "");
 				}
 			}
-
-			if (approveRec) {
-				rcdType = documentDetails.getRecordType();
-				recordStatus = documentDetails.getRecordStatus();
-				documentDetails.setRecordType("");
-				documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				getDocumentDetailsDAO().save(documentDetails, type);
-			}
-			if (updateRecord) {
-				getDocumentDetailsDAO().update(documentDetails, type);
-			}
-			if (deleteRecord) {
-				getDocumentDetailsDAO().delete(documentDetails, type);
-			}
-			if (approveRec) {
-				documentDetails.setRecordType(rcdType);
-				documentDetails.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(documentDetails);
-		}else{
-			CustomerDocument custdoc =getCustomerDocument(documentDetails,facility);
-			if (custdoc.isNew()) {
-				getCustomerDocumentDAO().save(custdoc,"");
-			} else {
-				getCustomerDocumentDAO().update(custdoc,"");
-			}
-		}
 		}
 
 		logger.debug("Leaving");
@@ -1386,13 +1400,14 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 	}
 
-	private CustomerDocument getCustomerDocument(DocumentDetails documentDetails, Facility financeMain){
+	private CustomerDocument getCustomerDocument(DocumentDetails documentDetails, Facility financeMain) {
 		CustomerDocument customerDocument = null;
-		if(financeMain != null){
-			customerDocument = getCustomerDocumentDAO().getCustomerDocumentById(financeMain.getCustID(), documentDetails.getDocCategory(), "");
-		}	
-		
-		if(customerDocument == null) {
+		if (financeMain != null) {
+			customerDocument = getCustomerDocumentDAO().getCustomerDocumentById(financeMain.getCustID(),
+					documentDetails.getDocCategory(), "");
+		}
+
+		if (customerDocument == null) {
 			customerDocument = new CustomerDocument();
 			customerDocument.setCustDocExpDate(documentDetails.getCustDocExpDate());
 			customerDocument.setCustDocIsAcrive(documentDetails.isCustDocIsAcrive());
@@ -1406,18 +1421,18 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			customerDocument.setCustDocVerifiedBy(documentDetails.getCustDocVerifiedBy());
 			customerDocument.setNewRecord(true);
 		}
-		
+
 		customerDocument.setCustID(financeMain.getCustID());
 		customerDocument.setLovDescCustCIF(financeMain.getCustCIF());
 		customerDocument.setLovDescCustShrtName(financeMain.getCustShrtName());
-		
+
 		customerDocument.setCustDocImage(documentDetails.getDocImage());
 		customerDocument.setCustDocImage(documentDetails.getDocImage());
 		customerDocument.setCustDocType(documentDetails.getDoctype());
 		customerDocument.setCustDocCategory(documentDetails.getDocCategory());
 		customerDocument.setCustDocName(documentDetails.getDocName());
 		customerDocument.setLovDescCustDocCategory(documentDetails.getLovDescDocCategoryName());
-		
+
 		customerDocument.setRecordStatus(documentDetails.getRecordStatus());
 		customerDocument.setRecordType(documentDetails.getRecordType());
 		customerDocument.setUserDetails(documentDetails.getUserDetails());
@@ -1426,11 +1441,12 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		customerDocument.setLastMntOn(documentDetails.getLastMntOn());
 		return customerDocument;
 	}
-	
+
 	private List<AuditDetail> setDocumentDetailsAuditData(Facility facility, String auditTranType, String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentDetails(), new DocumentDetails().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new DocumentDetails(),
+				new DocumentDetails().getExcludeFields());
 		for (int i = 0; i < facility.getDocumentDetailsList().size(); i++) {
 			DocumentDetails documentDetails = facility.getDocumentDetailsList().get(i);
 			documentDetails.setWorkflowId(facility.getWorkflowId());
@@ -1452,7 +1468,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						|| documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -1462,106 +1478,120 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			documentDetails.setUserDetails(facility.getUserDetails());
 			documentDetails.setLastMntOn(facility.getLastMntOn());
 			if (StringUtils.isNotBlank(documentDetails.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],documentDetails.getBefImage(), documentDetails));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						documentDetails.getBefImage(), documentDetails));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+
 	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	
-	private AuditDetail validationDocumentDetails(AuditDetail auditDetail,String usrLanguage,String method ){
+
+	private AuditDetail validationDocumentDetails(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		DocumentDetails documentDetails= (DocumentDetails) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		DocumentDetails documentDetails = (DocumentDetails) auditDetail.getModelData();
 		if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
-			DocumentDetails tempDocumentDetails= null;
-			if (documentDetails.isWorkflow()){
-				tempDocumentDetails = getDocumentDetailsDAO().getDocumentDetailsById( documentDetails.getId(), "_Temp");
+			DocumentDetails tempDocumentDetails = null;
+			if (documentDetails.isWorkflow()) {
+				tempDocumentDetails = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getId(), "_Temp");
 			}
-			DocumentDetails befDocumentDetails= getDocumentDetailsDAO().getDocumentDetailsById( documentDetails.getId(), "");
+			DocumentDetails befDocumentDetails = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getId(),
+					"");
 
-			DocumentDetails oldDocumentDetails= documentDetails.getBefImage();
+			DocumentDetails oldDocumentDetails = documentDetails.getBefImage();
 
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = documentDetails.getCustDocTitle();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=documentDetails.getCustDocTitle();
-			errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+			if (documentDetails.isNew()) { // for New record or new record into work flow
 
-			if (documentDetails.isNew()){ // for New record or new record into work flow
-
-				if (!documentDetails.isWorkflow()){// With out Work flow only new records  
-					if (befDocumentDetails !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-					}	
-				}else{ // with work flow
-					if (documentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befDocumentDetails !=null || tempDocumentDetails!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+				if (!documentDetails.isWorkflow()) {// With out Work flow only new records  
+					if (befDocumentDetails != null) { // Record Already Exists in the table then error  
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					}
+				} else { // with work flow
+					if (documentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+						if (befDocumentDetails != null || tempDocumentDetails != null) { // if records already exists in the main table
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 						}
-					}else{ // if records not exists in the Main flow table
-						if (befDocumentDetails ==null || tempDocumentDetails!=null ){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					} else { // if records not exists in the Main flow table
+						if (befDocumentDetails == null || tempDocumentDetails != null) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 						}
 					}
 				}
-			}else{
+			} else {
 				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!documentDetails.isWorkflow()){	// With out Work flow for update and delete
+				if (!documentDetails.isWorkflow()) { // With out Work flow for update and delete
 
-					if (befDocumentDetails ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-					}else{
-						if (oldDocumentDetails!=null && !oldDocumentDetails.getLastMntOn().equals(befDocumentDetails.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-							}else{
-								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+					if (befDocumentDetails == null) { // if records not exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					} else {
+						if (oldDocumentDetails != null
+								&& !oldDocumentDetails.getLastMntOn().equals(befDocumentDetails.getLastMntOn())) {
+							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+									.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+								auditDetail.setErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+							} else {
+								auditDetail.setErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 							}
 						}
 					}
-				}else{
+				} else {
 
-					if (tempDocumentDetails==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					if (tempDocumentDetails == null) { // if records not exists in the Work flow table 
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 
-					if (oldDocumentDetails!=null && !oldDocumentDetails.getLastMntOn().equals(tempDocumentDetails.getLastMntOn())){ 
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+					if (oldDocumentDetails != null
+							&& !oldDocumentDetails.getLastMntOn().equals(tempDocumentDetails.getLastMntOn())) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-			if("doApprove".equals(StringUtils.trimToEmpty(method)) || !documentDetails.isWorkflow()){
-				auditDetail.setBefImage(befDocumentDetails);	
+			if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !documentDetails.isWorkflow()) {
+				auditDetail.setBefImage(befDocumentDetails);
 			}
 		}
 		return auditDetail;
 	}
-	
+
 	//CheckList details
-	
-	private List<AuditDetail> processFinanceCheckListDetails(Facility facility,List<AuditDetail> auditDetails, String type) {
+
+	private List<AuditDetail> processFinanceCheckListDetails(Facility facility, List<AuditDetail> auditDetails,
+			String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 		for (int i = 0; i < auditDetails.size(); i++) {
-			FinanceCheckListReference checkListReference = (FinanceCheckListReference) auditDetails.get(i).getModelData();
+			FinanceCheckListReference checkListReference = (FinanceCheckListReference) auditDetails.get(i)
+					.getModelData();
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -1632,10 +1662,13 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return auditDetails;
 
 	}
-	private List<AuditDetail> setFinanceCheckListDetailsAuditData(Facility facility, String auditTranType, String method) {
+
+	private List<AuditDetail> setFinanceCheckListDetailsAuditData(Facility facility, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceCheckListReference(), new FinanceCheckListReference().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceCheckListReference(),
+				new FinanceCheckListReference().getExcludeFields());
 		for (int i = 0; i < facility.getFinanceCheckList().size(); i++) {
 			FinanceCheckListReference checkListReference = facility.getFinanceCheckList().get(i);
 			checkListReference.setWorkflowId(facility.getWorkflowId());
@@ -1657,7 +1690,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (checkListReference.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (checkListReference.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || checkListReference.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						|| checkListReference.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -1667,103 +1700,117 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			checkListReference.setUserDetails(facility.getUserDetails());
 			checkListReference.setLastMntOn(facility.getLastMntOn());
 			if (StringUtils.isNotBlank(checkListReference.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],checkListReference.getBefImage(), checkListReference));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						checkListReference.getBefImage(), checkListReference));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+
 	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	
-	private AuditDetail validationFinanceCheckList(AuditDetail auditDetail,String usrLanguage,String method ){
+
+	private AuditDetail validationFinanceCheckList(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		FinanceCheckListReference finCheckRef= (FinanceCheckListReference) auditDetail.getModelData();
-		
-		FinanceCheckListReference tempFinanceCheckListReference= null;
-		if (finCheckRef.isWorkflow()){
-			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById( finCheckRef.getFinReference(),finCheckRef.getQuestionId(),finCheckRef.getAnswer(), "_Temp");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinanceCheckListReference finCheckRef = (FinanceCheckListReference) auditDetail.getModelData();
+
+		FinanceCheckListReference tempFinanceCheckListReference = null;
+		if (finCheckRef.isWorkflow()) {
+			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById(
+					finCheckRef.getFinReference(), finCheckRef.getQuestionId(), finCheckRef.getAnswer(), "_Temp");
 		}
-		FinanceCheckListReference befFinanceCheckListReference= getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById( finCheckRef.getFinReference(),finCheckRef.getQuestionId(),finCheckRef.getAnswer(), "");
-		
-		FinanceCheckListReference oldFinanceCheckListReference= finCheckRef.getBefImage();
-		
-		
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=finCheckRef.getFinReference();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
-		
-		if (finCheckRef.isNew()){ // for New record or new record into work flow
-			
-			if (!finCheckRef.isWorkflow()){// With out Work flow only new records  
-				if (befFinanceCheckListReference !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (finCheckRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFinanceCheckListReference !=null || tempFinanceCheckListReference!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+		FinanceCheckListReference befFinanceCheckListReference = getFinanceCheckListReferenceDAO()
+				.getFinanceCheckListReferenceById(finCheckRef.getFinReference(), finCheckRef.getQuestionId(),
+						finCheckRef.getAnswer(), "");
+
+		FinanceCheckListReference oldFinanceCheckListReference = finCheckRef.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = finCheckRef.getFinReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+		if (finCheckRef.isNew()) { // for New record or new record into work flow
+
+			if (!finCheckRef.isWorkflow()) {// With out Work flow only new records  
+				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (finCheckRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befFinanceCheckListReference ==null || tempFinanceCheckListReference!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befFinanceCheckListReference == null || tempFinanceCheckListReference != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finCheckRef.isWorkflow()){	// With out Work flow for update and delete
-			
-				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+			if (!finCheckRef.isWorkflow()) { // With out Work flow for update and delete
+
+				if (befFinanceCheckListReference == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldFinanceCheckListReference != null && !oldFinanceCheckListReference.getLastMntOn()
+							.equals(befFinanceCheckListReference.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
-			
-				if (tempFinanceCheckListReference==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+			} else {
+
+				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				
-				if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+
+				if (oldFinanceCheckListReference != null && !oldFinanceCheckListReference.getLastMntOn()
+						.equals(tempFinanceCheckListReference.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !finCheckRef.isWorkflow()){
-			auditDetail.setBefImage(befFinanceCheckListReference);	
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finCheckRef.isWorkflow()) {
+			auditDetail.setBefImage(befFinanceCheckListReference);
 		}
 
 		return auditDetail;
 	}
+
 	//Scoring 
 	public void saveOrUpdateScoring(Facility facility) {
-		List<FinanceScoreHeader>  finScoreHeaderList = facility.getFinScoreHeaderList();
-
+		List<FinanceScoreHeader> finScoreHeaderList = facility.getFinScoreHeaderList();
 
 		if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
 			for (FinanceScoreHeader header : finScoreHeaderList) {
-				List<FinanceScoreDetail> scoreDetailList  = null;
+				List<FinanceScoreDetail> scoreDetailList = null;
 				if (facility.getScoreDetailListMap().containsKey(header.getHeaderId())) {
 					scoreDetailList = facility.getScoreDetailListMap().get(header.getHeaderId());
 				}
@@ -1782,8 +1829,8 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 	}
 	//Collateral
-	
-	private List<AuditDetail> processCollateralDetails(Facility facility,List<AuditDetail> auditDetails, String type) {
+
+	private List<AuditDetail> processCollateralDetails(Facility facility, List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1862,6 +1909,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return auditDetails;
 
 	}
+
 	private List<AuditDetail> setCollateralDetailsAuditData(Facility facility, String auditTranType, String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -1887,7 +1935,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (collateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (collateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || collateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						|| collateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -1897,100 +1945,113 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			collateral.setUserDetails(facility.getUserDetails());
 			collateral.setLastMntOn(facility.getLastMntOn());
 			if (StringUtils.isNotBlank(collateral.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],collateral.getBefImage(), collateral));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], collateral.getBefImage(),
+						collateral));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
 
+	/**
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * 
 	 * @return auditHeader
 	 */
-	
-	private AuditDetail validationCollateral(AuditDetail auditDetail,String usrLanguage,String method ){
+
+	private AuditDetail validationCollateral(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		Collateral collateral= (Collateral) auditDetail.getModelData();
-		
-		Collateral tempCollateral= null;
-		if (collateral.isWorkflow()){
-			tempCollateral = getCollateralDAO().getCollateralById( collateral.getCAFReference(),collateral.getReference(), "_Temp");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		Collateral collateral = (Collateral) auditDetail.getModelData();
+
+		Collateral tempCollateral = null;
+		if (collateral.isWorkflow()) {
+			tempCollateral = getCollateralDAO().getCollateralById(collateral.getCAFReference(),
+					collateral.getReference(), "_Temp");
 		}
-		Collateral befCollateral= getCollateralDAO().getCollateralById( collateral.getCAFReference(),collateral.getReference(), "");
-		
-		Collateral oldFinanceCheckListReference= collateral.getBefImage();
-		
-		
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=collateral.getCAFReference();
-		errParm[0]=PennantJavaUtil.getLabel("label_CAFReference")+":"+valueParm[0];
-		
-		if (collateral.isNew()){ // for New record or new record into work flow
-			
-			if (!collateral.isWorkflow()){// With out Work flow only new records  
-				if (befCollateral !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (collateral.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befCollateral !=null || tempCollateral!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+		Collateral befCollateral = getCollateralDAO().getCollateralById(collateral.getCAFReference(),
+				collateral.getReference(), "");
+
+		Collateral oldFinanceCheckListReference = collateral.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = collateral.getCAFReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_CAFReference") + ":" + valueParm[0];
+
+		if (collateral.isNew()) { // for New record or new record into work flow
+
+			if (!collateral.isWorkflow()) {// With out Work flow only new records  
+				if (befCollateral != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (collateral.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befCollateral != null || tempCollateral != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befCollateral ==null || tempCollateral!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befCollateral == null || tempCollateral != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!collateral.isWorkflow()){	// With out Work flow for update and delete
-			
-				if (befCollateral ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(befCollateral.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+			if (!collateral.isWorkflow()) { // With out Work flow for update and delete
+
+				if (befCollateral == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldFinanceCheckListReference != null
+							&& !oldFinanceCheckListReference.getLastMntOn().equals(befCollateral.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
-			
-				if (tempCollateral==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+			} else {
+
+				if (tempCollateral == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				
-				if (oldFinanceCheckListReference!=null && !oldFinanceCheckListReference.getLastMntOn().equals(tempCollateral.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+
+				if (oldFinanceCheckListReference != null
+						&& !oldFinanceCheckListReference.getLastMntOn().equals(tempCollateral.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !collateral.isWorkflow()){
-			auditDetail.setBefImage(befCollateral);	
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !collateral.isWorkflow()) {
+			auditDetail.setBefImage(befCollateral);
 		}
 
 		return auditDetail;
 	}
-	
+
 	//FacilityDetails
-	
-	private List<AuditDetail> processFacilityDetails(Facility facility,List<AuditDetail> auditDetails, String type) {
+
+	private List<AuditDetail> processFacilityDetails(Facility facility, List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -2069,10 +2130,12 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return auditDetails;
 
 	}
+
 	private List<AuditDetail> setFacilityDetailsAuditData(Facility facility, String auditTranType, String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FacilityDetail(), new FacilityDetail().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new FacilityDetail(),
+				new FacilityDetail().getExcludeFields());
 		for (int i = 0; i < facility.getFacilityDetails().size(); i++) {
 			FacilityDetail facilityDetail = facility.getFacilityDetails().get(i);
 			facilityDetail.setWorkflowId(facility.getWorkflowId());
@@ -2093,7 +2156,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (facilityDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (facilityDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || facilityDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						|| facilityDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -2103,99 +2166,112 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			facilityDetail.setUserDetails(facility.getUserDetails());
 			facilityDetail.setLastMntOn(facility.getLastMntOn());
 			if (StringUtils.isNotBlank(facilityDetail.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],facilityDetail.getBefImage(), facilityDetail));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						facilityDetail.getBefImage(), facilityDetail));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+
 	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	
-	private AuditDetail validationFacilityDetails(AuditDetail auditDetail,String usrLanguage,String method ){
+
+	private AuditDetail validationFacilityDetails(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		FacilityDetail facilityDetail= (FacilityDetail) auditDetail.getModelData();
-		
-		FacilityDetail tempFacilityDetail= null;
-		if (facilityDetail.isWorkflow()){
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FacilityDetail facilityDetail = (FacilityDetail) auditDetail.getModelData();
+
+		FacilityDetail tempFacilityDetail = null;
+		if (facilityDetail.isWorkflow()) {
 			tempFacilityDetail = getFacilityDetailDAO().getFacilityDetailById(facilityDetail.getFacilityRef(), "_Temp");
 		}
-		FacilityDetail befFacilityDetail= getFacilityDetailDAO().getFacilityDetailById(facilityDetail.getFacilityRef(), "");
-		
-		FacilityDetail oldFacilityDetail= facilityDetail.getBefImage();
-		
-		
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=facilityDetail.getFacilityRef();
-		errParm[0]=PennantJavaUtil.getLabel("label_FacilityRef")+":"+valueParm[0];
-		
-		if (facilityDetail.isNew()){ // for New record or new record into work flow
-			
-			if (!facilityDetail.isWorkflow()){// With out Work flow only new records  
-				if (befFacilityDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (facilityDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFacilityDetail !=null || tempFacilityDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+		FacilityDetail befFacilityDetail = getFacilityDetailDAO().getFacilityDetailById(facilityDetail.getFacilityRef(),
+				"");
+
+		FacilityDetail oldFacilityDetail = facilityDetail.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = facilityDetail.getFacilityRef();
+		errParm[0] = PennantJavaUtil.getLabel("label_FacilityRef") + ":" + valueParm[0];
+
+		if (facilityDetail.isNew()) { // for New record or new record into work flow
+
+			if (!facilityDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befFacilityDetail != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (facilityDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFacilityDetail != null || tempFacilityDetail != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befFacilityDetail ==null || tempFacilityDetail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befFacilityDetail == null || tempFacilityDetail != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!facilityDetail.isWorkflow()){	// With out Work flow for update and delete
-			
-				if (befFacilityDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFacilityDetail!=null && !oldFacilityDetail.getLastMntOn().equals(befFacilityDetail.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+			if (!facilityDetail.isWorkflow()) { // With out Work flow for update and delete
+
+				if (befFacilityDetail == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldFacilityDetail != null
+							&& !oldFacilityDetail.getLastMntOn().equals(befFacilityDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
-			
-				if (tempFacilityDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+			} else {
+
+				if (tempFacilityDetail == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				
-				if (oldFacilityDetail!=null && !oldFacilityDetail.getLastMntOn().equals(tempFacilityDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+
+				if (oldFacilityDetail != null
+						&& !oldFacilityDetail.getLastMntOn().equals(tempFacilityDetail.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !facilityDetail.isWorkflow()){
-			auditDetail.setBefImage(befFacilityDetail);	
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !facilityDetail.isWorkflow()) {
+			auditDetail.setBefImage(befFacilityDetail);
 		}
 
 		return auditDetail;
 	}
-	
+
 	//Customer Rating
-	
-	private List<AuditDetail> processCustomerRatingDetails(Facility facility,List<AuditDetail> auditDetails, String type) {
+
+	private List<AuditDetail> processCustomerRatingDetails(Facility facility, List<AuditDetail> auditDetails,
+			String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -2273,7 +2349,9 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return auditDetails;
 
 	}
-	private List<AuditDetail> setCustomerRatingDetailsAuditData(Facility facility, String auditTranType, String method) {
+
+	private List<AuditDetail> setCustomerRatingDetailsAuditData(Facility facility, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new CustomerRating());
@@ -2298,7 +2376,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-				        || customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+						|| customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -2308,112 +2386,127 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			customerRating.setUserDetails(facility.getUserDetails());
 			customerRating.setLastMntOn(facility.getLastMntOn());
 			if (StringUtils.isNotBlank(customerRating.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],customerRating.getBefImage(), customerRating));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						customerRating.getBefImage(), customerRating));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
 
+	/**
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * 
 	 * @return auditHeader
 	 */
-	
-	private AuditDetail validationCustomerRatingDetails(AuditDetail auditDetail,String usrLanguage,String method ){
+
+	private AuditDetail validationCustomerRatingDetails(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		CustomerRating customerRating= (CustomerRating) auditDetail.getModelData();
-		
-		CustomerRating tempCustomerRating= null;
-		if (customerRating.isWorkflow()){
-			tempCustomerRating = getCustomerRatingDAO().getCustomerRatingByID(customerRating.getCustID(), customerRating.getCustRatingType(), "_Temp");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		CustomerRating customerRating = (CustomerRating) auditDetail.getModelData();
+
+		CustomerRating tempCustomerRating = null;
+		if (customerRating.isWorkflow()) {
+			tempCustomerRating = getCustomerRatingDAO().getCustomerRatingByID(customerRating.getCustID(),
+					customerRating.getCustRatingType(), "_Temp");
 		}
-		CustomerRating befCustomerRating= getCustomerRatingDAO().getCustomerRatingByID(customerRating.getCustID(), customerRating.getCustRatingType(), "");
-		
-		CustomerRating oldCustomerRating= customerRating.getBefImage();
-		
-		
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=customerRating.getLovDescCustCIF();
-		errParm[0]=PennantJavaUtil.getLabel("label_CustCIF")+":"+valueParm[0];
-		
-		if (customerRating.isNew()){ // for New record or new record into work flow
-			
-			if (!customerRating.isWorkflow()){// With out Work flow only new records  
-				if (befCustomerRating !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (customerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befCustomerRating !=null || tempCustomerRating!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+		CustomerRating befCustomerRating = getCustomerRatingDAO().getCustomerRatingByID(customerRating.getCustID(),
+				customerRating.getCustRatingType(), "");
+
+		CustomerRating oldCustomerRating = customerRating.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = customerRating.getLovDescCustCIF();
+		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0];
+
+		if (customerRating.isNew()) { // for New record or new record into work flow
+
+			if (!customerRating.isWorkflow()) {// With out Work flow only new records  
+				if (befCustomerRating != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (customerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befCustomerRating != null || tempCustomerRating != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befCustomerRating ==null || tempCustomerRating!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befCustomerRating == null || tempCustomerRating != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!customerRating.isWorkflow()){	// With out Work flow for update and delete
-			
-				if (befCustomerRating ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+			if (!customerRating.isWorkflow()) { // With out Work flow for update and delete
+
+				if (befCustomerRating == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldCustomerRating != null
+							&& !oldCustomerRating.getLastMntOn().equals(befCustomerRating.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
-			
-				if (tempCustomerRating==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+			} else {
+
+				if (tempCustomerRating == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				
-				if (oldCustomerRating!=null && !oldCustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+
+				if (oldCustomerRating != null
+						&& !oldCustomerRating.getLastMntOn().equals(tempCustomerRating.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerRating.isWorkflow()){
-			auditDetail.setBefImage(befCustomerRating);	
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerRating.isWorkflow()) {
+			auditDetail.setBefImage(befCustomerRating);
 		}
 
 		return auditDetail;
 	}
+
 	/**
 	 * Method for Checking Black List Abuser data Against Customer Included in Finance
+	 * 
 	 * @return
 	 */
 	@Override
-	public boolean doCheckBlackListedCustomer(AuditHeader auditHeader){
+	public boolean doCheckBlackListedCustomer(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		Facility finDetail = (Facility) auditHeader.getAuditDetail().getModelData();
 		long custId = finDetail.getCustID();
 
-		if(custId != Long.MIN_VALUE && custId != 0){
-			String custCRCPR = getCustomerDAO().getCustCRCPRById(custId,"");
-			if(StringUtils.isNotBlank(custCRCPR)){
+		if (custId != Long.MIN_VALUE && custId != 0) {
+			String custCRCPR = getCustomerDAO().getCustCRCPRById(custId, "");
+			if (StringUtils.isNotBlank(custCRCPR)) {
 				Date blackListDate = getCustomerDAO().getCustBlackListedDate(custCRCPR, "");
-				if(blackListDate != null){
+				if (blackListDate != null) {
 					logger.debug("Leaving");
 					return true;
 				}
@@ -2421,38 +2514,41 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 		logger.debug("Leaving");
 		return false;
-	}	
-	
+	}
+
 	@Override
-	public Facility getTotalAmountsInUSDAndBHD(Facility facility){
+	public Facility getTotalAmountsInUSDAndBHD(Facility facility) {
 		logger.debug("Entering");
 		BigDecimal amountBD = BigDecimal.ZERO;
 		BigDecimal amountUSD = BigDecimal.ZERO;
-		BigDecimal  maturity = BigDecimal.ZERO;
-		boolean securityClean=true;
+		BigDecimal maturity = BigDecimal.ZERO;
+		boolean securityClean = true;
 		List<FacilityDetail> list = facility.getFacilityDetails();
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			for (FacilityDetail facilityDetail : list) {
-				amountBD=amountBD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), "BHD", facilityDetail.getNewLimit()));
-				amountUSD=amountUSD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), "USD", facilityDetail.getNewLimit()));
-				if (new BigDecimal(facilityDetail.getTenorYear()+"."+facilityDetail.getTenorMonth()).compareTo(maturity)>0) {
-					maturity=new BigDecimal(facilityDetail.getTenorYear()+"."+facilityDetail.getTenorMonth());
-	            }
+				amountBD = amountBD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), "BHD",
+						facilityDetail.getNewLimit()));
+				amountUSD = amountUSD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), "USD",
+						facilityDetail.getNewLimit()));
+				if (new BigDecimal(facilityDetail.getTenorYear() + "." + facilityDetail.getTenorMonth())
+						.compareTo(maturity) > 0) {
+					maturity = new BigDecimal(facilityDetail.getTenorYear() + "." + facilityDetail.getTenorMonth());
+				}
 				if (securityClean) {
 					if (!facilityDetail.isSecurityClean()) {
-						securityClean=false;
-                    }
-                }
-            }
-        } 
-		facility.setAmountBD(PennantApplicationUtil.formateAmount(amountBD,3));
-		facility.setAmountUSD(PennantApplicationUtil.formateAmount(amountUSD,2));
+						securityClean = false;
+					}
+				}
+			}
+		}
+		facility.setAmountBD(PennantApplicationUtil.formateAmount(amountBD, 3));
+		facility.setAmountUSD(PennantApplicationUtil.formateAmount(amountUSD, 2));
 		facility.setMaturity(maturity);
 		facility.setSecurityCollateral(securityClean);
 		logger.debug("Leaving");
 		return facility;
 	}
-	
+
 	@Override
 	public String getActualLevelAprroval(Facility facility) {
 		logger.debug("Entering");
@@ -2489,12 +2585,10 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		}
 
 	}
-	
-	
 
 	@Override
-    public boolean checkFirstTaskOwnerAccess(long loginUsrID) {
-	    return getFacilityDAO().checkFirstTaskOwnerAccess(loginUsrID);
-    }	
-	
+	public boolean checkFirstTaskOwnerAccess(long loginUsrID) {
+		return getFacilityDAO().checkFirstTaskOwnerAccess(loginUsrID);
+	}
+
 }

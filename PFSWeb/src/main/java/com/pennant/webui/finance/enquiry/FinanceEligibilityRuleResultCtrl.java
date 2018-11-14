@@ -77,31 +77,30 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the 
- * /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityRuleResult.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityRuleResult.zul file.
  */
 public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRule> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FinanceEligibilityRuleResultCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_FinElgRuleResult; 		
+	protected Window window_FinElgRuleResult;
 
-	protected Borderlayout	borderlayoutElgRuleResult;	
-	protected Listbox		listBoxElgRule;
+	protected Borderlayout borderlayoutElgRuleResult;
+	protected Listbox listBoxElgRule;
 
 	// not auto wired variables
 	private int formatter = 3;
 	private FinanceDetail financeDetail;
 
 	private transient PromotionPickListCtrl promotionPickListCtrl;
-	private List<FinanceEligibility> finElgRuleDetailList; 
-	
+	private List<FinanceEligibility> finElgRuleDetailList;
+
 	private FinanceTypeService financeTypeService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -115,43 +114,42 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, 
-	 * if the ZUL-file is called with a parameter for a
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinElgRuleResult(ForwardEvent event)  throws Exception {
+	public void onCreate$window_FinElgRuleResult(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
 		setPageComponents(window_FinElgRuleResult);
-		
+
 		if (arguments.containsKey("formatter")) {
 			this.formatter = (Integer) arguments.get("formatter");
 		}
 		if (arguments.containsKey("financeDetail")) {
-			 financeDetail = (FinanceDetail) arguments.get("financeDetail");
+			financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		}
 		if (arguments.containsKey("promotionPickListCtrl")) {
 			this.promotionPickListCtrl = (PromotionPickListCtrl) arguments.get("promotionPickListCtrl");
 		}
-		
+
 		getBorderLayoutHeight();
-		this.listBoxElgRule.setHeight(borderLayoutHeight - 159+"px");
-		
+		this.listBoxElgRule.setHeight(borderLayoutHeight - 159 + "px");
+
 		if (arguments.containsKey("finElgRuleDetailList")) {
 			finElgRuleDetailList = (List<FinanceEligibility>) arguments.get("finElgRuleDetailList");
 			doFillEligibilityDetailList(finElgRuleDetailList);
 		}
-		
+
 		setDialog(DialogType.MODAL);
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -162,22 +160,21 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 		doClose(false);
 	}
 
-	
-	public void doFillEligibilityDetailList(List<FinanceEligibility> finElgRuleDetailList){
+	public void doFillEligibilityDetailList(List<FinanceEligibility> finElgRuleDetailList) {
 		logger.debug("Entering");
-		if(finElgRuleDetailList != null){
+		if (finElgRuleDetailList != null) {
 			String productTemp = "";
 			for (FinanceEligibility finEligibility : finElgRuleDetailList) {
 				Listgroup listgroup;
-				if(!finEligibility.getProduct().equals(productTemp)){
+				if (!finEligibility.getProduct().equals(productTemp)) {
 					listgroup = new Listgroup();
 					Listcell lc;
-					lc = new Listcell(finEligibility.getProduct()+"-"+finEligibility.getProductDesc());
+					lc = new Listcell(finEligibility.getProduct() + "-" + finEligibility.getProductDesc());
 					listgroup.appendChild(lc);
 					this.listBoxElgRule.appendChild(listgroup);
 				}
 				productTemp = finEligibility.getProduct();
-				
+
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(finEligibility.getPromotionCode());
@@ -187,14 +184,14 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 				lc = new Listcell(String.valueOf(finEligibility.getNumberOfTerms()));
 				lc.setStyle("text-align:right");
 				item.appendChild(lc);
-				lc = new Listcell(String.valueOf(finEligibility.getRepayProfitRate())+" %");
+				lc = new Listcell(String.valueOf(finEligibility.getRepayProfitRate()) + " %");
 				lc.setStyle("text-align:right");
 				item.appendChild(lc);
-				lc = new Listcell(PennantAppUtil.amountFormate(finEligibility.getElgAmount(),formatter));
+				lc = new Listcell(PennantAppUtil.amountFormate(finEligibility.getElgAmount(), formatter));
 				lc.setStyle("text-align:right");
 				item.appendChild(lc);
 				lc = new Listcell();
-				Html html=new Html();
+				Html html = new Html();
 				html.setContent(finEligibility.getProductFeature());
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
@@ -206,7 +203,7 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onEligibilityCheckListItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		// get the selected City object
@@ -217,31 +214,31 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 			final FinanceEligibility finEligibility = (FinanceEligibility) item.getAttribute("data");
 			// call the ZUL-file with the parameters packed in a map
 
-			if(finEligibility.getFinAssetType() != null && !finEligibility.getFinAssetType().isEmpty()){
+			if (finEligibility.getFinAssetType() != null && !finEligibility.getFinAssetType().isEmpty()) {
 
-				List<ProductAsset> productAssetlist = getFinanceTypeService().getFinPurposeByAssetId(
-						getAssetTypeList(finEligibility.getFinAssetType()),"");
+				List<ProductAsset> productAssetlist = getFinanceTypeService()
+						.getFinPurposeByAssetId(getAssetTypeList(finEligibility.getFinAssetType()), "");
 
-				if(productAssetlist != null && !productAssetlist.isEmpty()){
-					if(productAssetlist.size() == 1){
+				if (productAssetlist != null && !productAssetlist.isEmpty()) {
+					if (productAssetlist.size() == 1) {
 						finEligibility.setFinPurpose(productAssetlist.get(0).getAssetCode());
 						finEligibility.setLovDescFinPurposeName(productAssetlist.get(0).getAssetDesc());
 						doCreateFinanceWindow(finEligibility);
-					}else{
+					} else {
 						final HashMap<String, Object> map = new HashMap<String, Object>();
 						map.put("productAssetlist", productAssetlist);
 						map.put("finEligibility", finEligibility);
 						map.put("finElgRuleResultCtrl", this);
-						Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinancePurposeSelectDialog.zul",
-								null, map);
+						Executions.createComponents(
+								"/WEB-INF/pages/Enquiry/FinanceInquiry/FinancePurposeSelectDialog.zul", null, map);
 					}
 				}
 			}
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doCreateFinanceWindow(FinanceEligibility finEligibility) throws InterruptedException{
+	public void doCreateFinanceWindow(FinanceEligibility finEligibility) throws InterruptedException {
 		logger.debug("Entering");
 		try {
 			/* get an instance of the borderlayout defined in the zul-file */
@@ -272,9 +269,8 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 				tab.setClosable(true);
 				tab.setParent(tabs);
 
-				final Tabpanels tabpanels = (Tabpanels) center.getFellow("divCenter")
-						.getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter")
-						.getFellow("tabpanelsBoxIndexCenter");
+				final Tabpanels tabpanels = (Tabpanels) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
+						.getFellow("tabsIndexCenter").getFellow("tabpanelsBoxIndexCenter");
 				final Tabpanel tabpanel = new Tabpanel();
 				tabpanel.setHeight("100%");
 				tabpanel.setStyle("padding: 0px;");
@@ -282,32 +278,32 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 				tab.setSelected(true);
 
 				final HashMap<String, Object> map = new HashMap<String, Object>();
-				finEligibility.setFinanceDetail(this.financeDetail); 
+				finEligibility.setFinanceDetail(this.financeDetail);
 				map.put("fromEligibleScreen", true);
 				map.put("finEligibility", finEligibility);
 
 				closeDialog();
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul",tabpanel,map);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul", tabpanel, map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	private ArrayList<String> getAssetTypeList(String finAssetType) {
 		ArrayList<String> finAssetTypelist = new ArrayList<String>();
-		if(finAssetType.contains(",")){
-			String[]finAssetTypes = finAssetType.split(",");
+		if (finAssetType.contains(",")) {
+			String[] finAssetTypes = finAssetType.split(",");
 			for (String assetType : finAssetTypes) {
 				finAssetTypelist.add(assetType);
 			}
-		}else{
+		} else {
 			finAssetTypelist.add(finAssetType);
 		}
 		return finAssetTypelist;
 	}
-	
+
 	@Override
 	public void closeDialog() {
 		super.closeDialog();
@@ -319,9 +315,9 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 	public FinanceTypeService getFinanceTypeService() {
 		return financeTypeService;
 	}
+
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
 	}
-	
-	
+
 }

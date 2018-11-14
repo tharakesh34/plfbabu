@@ -21,16 +21,16 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChangeDetails> implements BulkRateChangeProcessDetailsDAO {
+public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChangeDetails>
+		implements BulkRateChangeProcessDetailsDAO {
 	private static Logger logger = Logger.getLogger(BulkRateChangeProcessDetailsDAOImpl.class);
-	
+
 	public BulkRateChangeProcessDetailsDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new BulkRateChangeDetails
+	 * This method set the Work Flow id based on the module name and return the new BulkRateChangeDetails
 	 * 
 	 * @return BulkRateChangeDetails
 	 */
@@ -47,8 +47,8 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 	}
 
 	/**
-	 * This method get the module from method getBulkRateChangeDetails() and set the new
-	 * record flag as true and return BulkRateChangeDetails()
+	 * This method get the module from method getBulkRateChangeDetails() and set the new record flag as true and return
+	 * BulkRateChangeDetails()
 	 * 
 	 * @return BulkRateChangeDetails
 	 */
@@ -74,23 +74,25 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 	public List<BulkRateChangeDetails> getBulkRateChangeDetailsListByRef(String bulkRateChangeRef, String type) {
 		logger.debug("Entering");
 
-		BulkRateChangeDetails bulkRateChangeDetails= new BulkRateChangeDetails();
+		BulkRateChangeDetails bulkRateChangeDetails = new BulkRateChangeDetails();
 		bulkRateChangeDetails.setBulkRateChangeRef(bulkRateChangeRef);
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount,");
-		selectSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" Status, ErrorMsg" ); 
-		if(type.contains("View")){
-			selectSql.append(", lovDescFinFormatter" );
+		selectSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(" Status, ErrorMsg");
+		if (type.contains("View")) {
+			selectSql.append(", lovDescFinFormatter");
 		}
 		selectSql.append(" FROM  BulkRateChangeDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND (Status = 'P' OR Status = 'F')" ) ;//Pending OR Failed Finances
+		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND (Status = 'P' OR Status = 'F')");//Pending OR Failed Finances
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -107,30 +109,34 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 	 * @return BulkRateChangeDetails
 	 */
 	@Override
-	public BulkRateChangeDetails getDetailsByRateChangeRefAndFinRef(String bulkRateChangeRef, String finReference, String type) {
+	public BulkRateChangeDetails getDetailsByRateChangeRefAndFinRef(String bulkRateChangeRef, String finReference,
+			String type) {
 		logger.debug("Entering");
 
 		BulkRateChangeDetails bulkRateChangeDetails = new BulkRateChangeDetails();
 		bulkRateChangeDetails.setBulkRateChangeRef(bulkRateChangeRef);
 		bulkRateChangeDetails.setFinReference(finReference);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount," );
-		selectSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId," );
-		selectSql.append(" Status, ErrorMsg" ); 
-		if(type.contains("View")){
-			selectSql.append(", lovDescFinFormatter" );
+		selectSql.append(" Select BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount,");
+		selectSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(" Status, ErrorMsg");
+		if (type.contains("View")) {
+			selectSql.append(", lovDescFinFormatter");
 		}
 		selectSql.append(" FROM  BulkRateChangeDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef and FinReference = :FinReference") ;
+		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef and FinReference = :FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BulkRateChangeDetails.class);
 
 		try {
-			bulkRateChangeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bulkRateChangeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			bulkRateChangeDetails = null;
@@ -159,16 +165,17 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 
 		insertSql.append("Insert Into BulkRateChangeDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount, " );
-		insertSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange," );
+		insertSql.append(" (BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount, ");
+		insertSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId, Status, ErrorMsg)" );
+		insertSql.append(" RecordType, WorkflowId, Status, ErrorMsg)");
 		insertSql.append(" Values(:BulkRateChangeRef, :FinReference, :FinBranch, :FinCCY, :CustCIF, :FinAmount, ");
 		insertSql.append(" :OldProfitRate, :NewProfitRate, :OldProfit, :NewProfit, :AllowRateChange, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId, :Status, :ErrorMsg)" );
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(" :RecordType, :WorkflowId, :Status, :ErrorMsg)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -177,9 +184,9 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 	}
 
 	/**
-	 * This method updates the Record BulkRateChangeDetails or BulkRateChangeDetails_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update BulkRateChangeDetails Details by key BulkRateChangeDetailsLevel and Version
+	 * This method updates the Record BulkRateChangeDetails or BulkRateChangeDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update BulkRateChangeDetails Details by key
+	 * BulkRateChangeDetailsLevel and Version
 	 * 
 	 * @param BulkRateChangeDetails
 	 *            Details (bulkRateChangeDetails)
@@ -197,19 +204,22 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 
 		updateSql.append("Update BulkRateChangeDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF," );
-		updateSql.append(" FinAmount = :FinAmount, OldProfitRate = :OldProfitRate, NewProfitRate =  :NewProfitRate, OldProfit = :OldProfit," );
-		updateSql.append(" NewProfit = :NewProfit, AllowRateChange = :AllowRateChange," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Status = :Status, ErrorMsg = :ErrorMsg" );
-		updateSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND FinReference = :FinReference " );
+		updateSql.append(" Set FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF,");
+		updateSql.append(
+				" FinAmount = :FinAmount, OldProfitRate = :OldProfitRate, NewProfitRate =  :NewProfitRate, OldProfit = :OldProfit,");
+		updateSql.append(" NewProfit = :NewProfit, AllowRateChange = :AllowRateChange,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Status = :Status, ErrorMsg = :ErrorMsg");
+		updateSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND FinReference = :FinReference ");
 
-		/*if (!type.endsWith("_TEMP")) {	//TODO
-			updateSql.append(" AND Version = :Version-1");
-		}*/
+		/*
+		 * if (!type.endsWith("_TEMP")) { //TODO updateSql.append(" AND Version = :Version-1"); }
+		 */
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(BulkRateChangeDetails);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -237,19 +247,20 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
 
-		if(type.equalsIgnoreCase("_Temp")){
+		if (type.equalsIgnoreCase("_Temp")) {
 			deleteBulkRateChangeDetailsByRef(bulkRateChangeDetails.get(0).getBulkRateChangeRef(), type);
 		}
 
 		insertSql.append("Insert Into BulkRateChangeDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount, " );
-		insertSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange," );
+		insertSql.append(" (BulkRateChangeRef, FinReference, FinBranch, FinCCY, CustCIF, FinAmount, ");
+		insertSql.append(" OldProfitRate, NewProfitRate, OldProfit, NewProfit, AllowRateChange,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId, Status, ErrorMsg)");
 		insertSql.append(" Values(:BulkRateChangeRef, :FinReference, :FinBranch, :FinCCY, :CustCIF, :FinAmount, ");
 		insertSql.append(" :OldProfitRate, :NewProfitRate, :OldProfit, :NewProfit, :AllowRateChange, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId, :Status, :ErrorMsg)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -260,9 +271,9 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 	}
 
 	/**
-	 * This method updates the Record BulkRateChangeDetails or BulkRateChangeDetails_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update BulkRateChangeDetails Details by key BulkRateChangeDetailsLevel and Version
+	 * This method updates the Record BulkRateChangeDetails or BulkRateChangeDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update BulkRateChangeDetails Details by key
+	 * BulkRateChangeDetailsLevel and Version
 	 * 
 	 * @param List<BulkRateChangeDetails>
 	 *            Details (bulkRateChangeDetails)
@@ -280,17 +291,20 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 
 		updateSql.append("Update BulkRateChangeDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF," );
-		updateSql.append(" FinAmount = :FinAmount, OldProfitRate = :OldProfitRate, NewProfitRate =  :NewProfitRate, OldProfit = :OldProfit," );
-		updateSql.append(" NewProfit = :NewProfit, AllowRateChange = :AllowRateChange," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Status = :Status, ErrorMsg = :ErrorMsg" );
-		updateSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND FinReference = :FinReference" );
+		updateSql.append(" Set FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF,");
+		updateSql.append(
+				" FinAmount = :FinAmount, OldProfitRate = :OldProfitRate, NewProfitRate =  :NewProfitRate, OldProfit = :OldProfit,");
+		updateSql.append(" NewProfit = :NewProfit, AllowRateChange = :AllowRateChange,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Status = :Status, ErrorMsg = :ErrorMsg");
+		updateSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND FinReference = :FinReference");
 
-		/*if (!type.endsWith("_TEMP")) {
-			updateSql.append(" AND Version= :Version-1");
-		}*/
+		/*
+		 * if (!type.endsWith("_TEMP")) { updateSql.append(" AND Version= :Version-1"); }
+		 */
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -301,9 +315,9 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 	}
 
 	/**
-	 * This method Deletes the Record from the BulkRateChangeDetails or
-	 * BulkRateChangeDetails_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete BulkRateChangeDetails Details by key BulkRateChangeDetailsLevel
+	 * This method Deletes the Record from the BulkRateChangeDetails or BulkRateChangeDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete BulkRateChangeDetails Details by key
+	 * BulkRateChangeDetailsLevel
 	 * 
 	 * @param BulkRateChangeDetails
 	 *            Details (bulkRateChangeDetails)
@@ -318,16 +332,16 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 		logger.debug("Entering");
 		int recordCount = 0;
 
-		StringBuilder deleteSql =new StringBuilder();
+		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From BulkRateChangeDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where  BulkRateChangeRef = :BulkRateChangeRef AND FinReference = :FinReference");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetail);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -338,23 +352,24 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 		logger.debug("Leaving");
 	}
 
-	/**	
-	 * This method is used for Delete the Details Based in Bulk Rate Change Ref 
+	/**
+	 * This method is used for Delete the Details Based in Bulk Rate Change Ref
 	 */
 	@Override
-	public void deleteBulkRateChangeDetailsByRef(String bulkRateChangeRef, String type){
+	public void deleteBulkRateChangeDetailsByRef(String bulkRateChangeRef, String type) {
 		logger.debug("Entering");
 		BulkRateChangeDetails bulkRateChangeDetails = new BulkRateChangeDetails();
-		bulkRateChangeDetails.setBulkRateChangeRef(bulkRateChangeRef);;
+		bulkRateChangeDetails.setBulkRateChangeRef(bulkRateChangeRef);
+		;
 		StringBuilder deleteSql = new StringBuilder("Delete From BulkRateChangeDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -371,15 +386,17 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 		bulkRateChangeDetails.setLovDescEventFinType(finType);
 		bulkRateChangeDetails.setLovDescEventFromDate(schFromDate);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT  distinct FinType, FinReference, CustCIF, FinBranch, FinCcy, LovDescFinDivision," );
-		selectSql.append(" ProductCode, OldProfitRate, OldProfit, FinAmount, lovDescFinFormatter" );
-		selectSql.append(" FROM BulkRateChange_View" );
-		selectSql.append(" WHERE " + whereClause );
-		selectSql.append(" ORDER BY FinReference" );
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT  distinct FinType, FinReference, CustCIF, FinBranch, FinCcy, LovDescFinDivision,");
+		selectSql.append(" ProductCode, OldProfitRate, OldProfit, FinAmount, lovDescFinFormatter");
+		selectSql.append(" FROM BulkRateChange_View");
+		selectSql.append(" WHERE " + whereClause);
+		selectSql.append(" ORDER BY FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -397,18 +414,20 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 		bulkRateChangeDetails.setLovDescEventFromDate(fromDate);
 		bulkRateChangeDetails.setLovDescEventToDate(toDate);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT FinReference, FinType, " );
-		selectSql.append(" FinCcy, ScheduleMethod, ProfitDaysBasis, CustCIF, FinBranch, " );
-		selectSql.append(" ProductCode, MIN(SchDate) EventFromDate, MAX(SchDate) EventToDate " );
-		selectSql.append(" FROM IjarahFinance_View WHERE SchDate BETWEEN :LovDescEventFromDate AND :LovDescEventToDate ");
-		selectSql.append(" GROUP BY FinReference ,FinType ,FinCcy ,ScheduleMethod , ProfitDaysBasis ,CustCIF ,FinBranch ,ProductCode ");
+		StringBuilder selectSql = new StringBuilder(" SELECT FinReference, FinType, ");
+		selectSql.append(" FinCcy, ScheduleMethod, ProfitDaysBasis, CustCIF, FinBranch, ");
+		selectSql.append(" ProductCode, MIN(SchDate) EventFromDate, MAX(SchDate) EventToDate ");
+		selectSql.append(
+				" FROM IjarahFinance_View WHERE SchDate BETWEEN :LovDescEventFromDate AND :LovDescEventToDate ");
+		selectSql.append(
+				" GROUP BY FinReference ,FinType ,FinCcy ,ScheduleMethod , ProfitDaysBasis ,CustCIF ,FinBranch ,ProductCode ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }

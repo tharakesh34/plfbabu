@@ -90,59 +90,59 @@ import com.rits.cloning.Cloner;
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul
  */
-public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
-	private static final long								serialVersionUID					= 966281186831332116L;
-	private static final Logger								logger								= Logger.getLogger(ReceiptRealizationDialogCtrl.class);
+public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
+	private static final long serialVersionUID = 966281186831332116L;
+	private static final Logger logger = Logger.getLogger(ReceiptRealizationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window										window_ReceiptRealizationDialog;
-	protected Borderlayout									borderlayout_Realization;
+	protected Window window_ReceiptRealizationDialog;
+	protected Borderlayout borderlayout_Realization;
 
 	//Receipt Details
-	protected Textbox										finType;
-	protected Textbox										finReference;
-	protected Textbox										finCcy;
-	protected Textbox										finBranch;
-	protected Textbox										custCIF;
+	protected Textbox finType;
+	protected Textbox finReference;
+	protected Textbox finCcy;
+	protected Textbox finBranch;
+	protected Textbox custCIF;
 
-	protected Combobox										receiptPurpose;
-	protected Combobox										excessAdjustTo;
-	protected Combobox										receiptMode;
-	protected CurrencyBox									receiptAmount;
-	protected Combobox										allocationMethod;
-	protected Combobox										effScheduleMethod;
-	protected Datebox										realizationDate;
+	protected Combobox receiptPurpose;
+	protected Combobox excessAdjustTo;
+	protected Combobox receiptMode;
+	protected CurrencyBox receiptAmount;
+	protected Combobox allocationMethod;
+	protected Combobox effScheduleMethod;
+	protected Datebox realizationDate;
 
-	protected Groupbox										gb_ReceiptDetails;
-	protected Caption										caption_receiptDetail;
-	protected Label											label_ReceiptRealizationDialog_favourNo;
-	protected Uppercasebox									favourNo;
-	protected Datebox										valueDate;
-	protected ExtendedCombobox								bankCode;
-	protected Textbox										favourName;
-	protected Datebox										depositDate;
-	protected Uppercasebox									depositNo;
-	protected Uppercasebox									paymentRef;
-	protected Uppercasebox									transactionRef;
-	protected AccountSelectionBox							chequeAcNo;
-	protected ExtendedCombobox								fundingAccount;
-	protected Datebox										receivedDate;
-	protected Textbox										remarks;
+	protected Groupbox gb_ReceiptDetails;
+	protected Caption caption_receiptDetail;
+	protected Label label_ReceiptRealizationDialog_favourNo;
+	protected Uppercasebox favourNo;
+	protected Datebox valueDate;
+	protected ExtendedCombobox bankCode;
+	protected Textbox favourName;
+	protected Datebox depositDate;
+	protected Uppercasebox depositNo;
+	protected Uppercasebox paymentRef;
+	protected Uppercasebox transactionRef;
+	protected AccountSelectionBox chequeAcNo;
+	protected ExtendedCombobox fundingAccount;
+	protected Datebox receivedDate;
+	protected Textbox remarks;
 
-	protected Row											row_favourNo;	
-	protected Row											row_BankCode;	
-	protected Row											row_DepositDate;	
-	protected Row											row_PaymentRef;	
-	protected Row											row_ChequeAcNo;	
-	protected Row											row_fundingAcNo;	
-	protected Row											row_remarks;	
+	protected Row row_favourNo;
+	protected Row row_BankCode;
+	protected Row row_DepositDate;
+	protected Row row_PaymentRef;
+	protected Row row_ChequeAcNo;
+	protected Row row_fundingAcNo;
+	protected Row row_remarks;
 
-	private FinReceiptHeader								receiptHeader						= null;
-	private ReceiptRealizationListCtrl						receiptRealizationListCtrl;						
-	private ReceiptRealizationService						receiptRealizationService;						
+	private FinReceiptHeader receiptHeader = null;
+	private ReceiptRealizationListCtrl receiptRealizationListCtrl;
+	private ReceiptRealizationService receiptRealizationService;
 
 	/**
 	 * default constructor.<br>
@@ -182,7 +182,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 				getReceiptHeader().setBefImage(befImage);
 
 			}
-			
+
 			this.receiptRealizationListCtrl = (ReceiptRealizationListCtrl) arguments.get("receiptRealizationListCtrl");
 
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
@@ -249,7 +249,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
 		//Receipts Details
-		this.receiptAmount.setProperties(true , formatter);
+		this.receiptAmount.setProperties(true, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.fundingAccount.setModuleName("FinTypePartner");
@@ -258,7 +258,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.fundingAccount.setDescColumn("PartnerBankCode");
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
-		
+
 		this.chequeAcNo.setButtonVisible(false);
 		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
@@ -325,7 +325,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
@@ -333,22 +333,22 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.receiptRealizationListCtrl.search();
 	}
 
-
 	/**
 	 * Method for Setting Fields based on Receipt Mode selected
+	 * 
 	 * @param recMode
 	 */
 	private void checkByReceiptMode(String recMode, boolean isUserAction) {
 		logger.debug("Entering");
 
-		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
-				StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)
+				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 
-		} else{
+		} else {
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
@@ -365,12 +365,14 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 
-				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
+				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
-					this.label_ReceiptRealizationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptRealizationDialog_ChequeFavourNo.value"));
-				}else{
+					this.label_ReceiptRealizationDialog_favourNo
+							.setValue(Labels.getLabel("label_ReceiptRealizationDialog_ChequeFavourNo.value"));
+				} else {
 					this.row_ChequeAcNo.setVisible(false);
-					this.label_ReceiptRealizationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptRealizationDialog_DDFavourNo.value"));
+					this.label_ReceiptRealizationDialog_favourNo
+							.setValue(Labels.getLabel("label_ReceiptRealizationDialog_DDFavourNo.value"));
 				}
 
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
@@ -412,12 +414,13 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		//Duplicate Creation of Object
 		Cloner cloner = new Cloner();
 		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
-		
-		if(!this.realizationDate.isDisabled()){
-			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), 
-					true, aReceiptHeader.getReceiptDate(),	DateUtility.getAppDate(), true));
+
+		if (!this.realizationDate.isDisabled()) {
+			this.realizationDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), true,
+							aReceiptHeader.getReceiptDate(), DateUtility.getAppDate(), true));
 		}
-		
+
 		try {
 			aReceiptHeader.setRealizationDate(this.realizationDate.getValue());
 		} catch (WrongValueException we) {
@@ -464,6 +467,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 
 	/**
 	 * Method for Writing Data into Fields from Bean
+	 * 
 	 * @throws InterruptedException
 	 */
 	private void doWriteBeanToComponents() throws InterruptedException {
@@ -471,37 +475,41 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
-		
-		this.finType.setValue(header.getFinType()+"-"+header.getFinTypeDesc());
+
+		this.finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
 		this.finReference.setValue(header.getReference());
-		this.finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
-		this.finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
-		this.custCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
+		this.finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
+		this.finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
+		;
+		this.custCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		this.remarks.setValue(header.getRemarks());
-		
+
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
+				"");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 		this.realizationDate.setValue(header.getRealizationDate());
 
 		String allocateMthd = header.getAllocationType();
-		if(StringUtils.isEmpty(allocateMthd)){
+		if (StringUtils.isEmpty(allocateMthd)) {
 			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
 		}
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
-		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
+		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(),
+				",NOEFCT,");
 		checkByReceiptMode(header.getReceiptMode(), false);
 
 		// Separating Receipt Amounts based on user entry, if exists
-		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
+		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
-					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+					this.receiptAmount
+							.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
 					this.bankCode.setValue(receiptDetail.getBankCode());
@@ -647,8 +655,8 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ReceiptRealizationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -690,7 +698,8 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	 */
 	private AuditHeader getAuditHeader(FinReceiptHeader receiptHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, receiptHeader);
-		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail, receiptHeader.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail,
+				receiptHeader.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -715,6 +724,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	public FinReceiptHeader getReceiptHeader() {
 		return receiptHeader;
 	}
+
 	public void setReceiptHeader(FinReceiptHeader receiptHeader) {
 		this.receiptHeader = receiptHeader;
 	}

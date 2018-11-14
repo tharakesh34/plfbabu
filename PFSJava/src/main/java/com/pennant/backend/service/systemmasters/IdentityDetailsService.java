@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.IdentityDetails;
  * 
  */
 public interface IdentityDetailsService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	IdentityDetails getIdentityDetailsById(String id);
+
 	IdentityDetails getApprovedIdentityDetailsById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

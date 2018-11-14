@@ -14,12 +14,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CriffCommercialResponse implements Serializable {
 
-	private static final long	serialVersionUID	= -4015171015029335973L;
+	private static final long serialVersionUID = -4015171015029335973L;
 
-	private String				message;
-	private String				statusCode;
+	private String message;
+	private String statusCode;
 	@XmlElement(name = "data")
-	private List<TradeLine>		tradelines;
+	private List<TradeLine> tradelines;
 
 	public String getMessage() {
 		return message;

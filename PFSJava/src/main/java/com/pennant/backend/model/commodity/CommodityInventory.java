@@ -69,7 +69,7 @@ public class CommodityInventory extends AbstractWorkflowEntity implements Entity
 	private long brokerCustID;
 	private String accountNumber;
 	private String lovDescCommodityDesc;
-	
+
 	//Enquiry Fields
 	private long totalQuantityAllocated;
 	private long soldQuantity;
@@ -148,11 +148,12 @@ public class CommodityInventory extends AbstractWorkflowEntity implements Entity
 	}
 
 	public String getHoldCertificateNo() {
-	    return holdCertificateNo;
-    }
+		return holdCertificateNo;
+	}
+
 	public void setHoldCertificateNo(String holdCertificateNo) {
-	    this.holdCertificateNo = holdCertificateNo;
-    }
+		this.holdCertificateNo = holdCertificateNo;
+	}
 
 	public String getCommodityCode() {
 		return commodityCode;
@@ -323,52 +324,52 @@ public class CommodityInventory extends AbstractWorkflowEntity implements Entity
 	}
 
 	public BigDecimal getFeeOnUnsold() {
-	    return feeOnUnsold;
-    }
+		return feeOnUnsold;
+	}
 
 	public void setFeeOnUnsold(BigDecimal feeOnUnsold) {
-	    this.feeOnUnsold = feeOnUnsold;
-    }
+		this.feeOnUnsold = feeOnUnsold;
+	}
 
 	public String getCommodityCcy() {
-	    return commodityCcy;
-    }
+		return commodityCcy;
+	}
 
 	public void setCommodityCcy(String commodityCcy) {
-	    this.commodityCcy = commodityCcy;
-    }
+		this.commodityCcy = commodityCcy;
+	}
 
 	public String getLocationCode() {
-	    return locationCode;
-    }
+		return locationCode;
+	}
 
 	public void setLocationCode(String locationCode) {
-	    this.locationCode = locationCode;
-    }
+		this.locationCode = locationCode;
+	}
 
 	public String getLocationDesc() {
-	    return locationDesc;
-    }
+		return locationDesc;
+	}
 
 	public void setLocationDesc(String locationDesc) {
-	    this.locationDesc = locationDesc;
-    }
+		this.locationDesc = locationDesc;
+	}
 
 	public long getBrokerCustID() {
-	    return brokerCustID;
-    }
+		return brokerCustID;
+	}
 
 	public void setBrokerCustID(long brokerCustID) {
-	    this.brokerCustID = brokerCustID;
-    }
+		this.brokerCustID = brokerCustID;
+	}
 
 	public String getAccountNumber() {
-	    return accountNumber;
-    }
+		return accountNumber;
+	}
 
 	public void setAccountNumber(String accountNumber) {
-	    this.accountNumber = accountNumber;
-    }
+		this.accountNumber = accountNumber;
+	}
 
 	public String getLovDescCommodityDesc() {
 		return lovDescCommodityDesc;

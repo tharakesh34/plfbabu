@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.finance;
 
-
-
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.BundledProductsDetail;
@@ -56,14 +54,23 @@ import com.pennant.backend.model.finance.BundledProductsDetail;
 public interface BundledProductsDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	BundledProductsDetail getBundledProductsDetailById(String id,String type);
+
+	BundledProductsDetail getBundledProductsDetailById(String id, String type);
+
 	BundledProductsDetail getApprovedBundledProductsDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	AuditDetail saveOrUpdate(BundledProductsDetail bundledProductsDetail, String tableType, String auditTranType);
+
 	AuditDetail doApprove(BundledProductsDetail bundledProductsDetail, String tableType, String auditTranType);
-	AuditDetail validate(BundledProductsDetail bundledProductsDetail, String method, String auditTranType, String  usrLanguage);
+
+	AuditDetail validate(BundledProductsDetail bundledProductsDetail, String method, String auditTranType,
+			String usrLanguage);
+
 	AuditDetail delete(BundledProductsDetail bundledProductsDetail, String tableType, String auditTranType);
 }

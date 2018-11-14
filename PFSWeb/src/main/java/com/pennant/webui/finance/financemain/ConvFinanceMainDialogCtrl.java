@@ -66,19 +66,17 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(ConvFinanceMainDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ConvFinanceMainDialog; 					// autoWired
+	protected Window window_ConvFinanceMainDialog; // autoWired
 
 	/**
 	 * default constructor.<br>
@@ -95,9 +93,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -124,11 +121,11 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		// delete financeMain here.
 		if (arguments.containsKey("financeMainListCtrl")) {
 			setFinanceMainListCtrl((FinanceMainListCtrl) arguments.get("financeMainListCtrl"));
-		} 
-		
+		}
+
 		if (arguments.containsKey("financeSelectCtrl")) {
 			setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
-		} 
+		}
 
 		if (arguments.containsKey("tabbox")) {
 			listWindowTab = (Tab) arguments.get("tabbox");
@@ -141,7 +138,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		if (arguments.containsKey("eventCode")) {
 			eventCode = (String) arguments.get("eventCode");
 		}
-		
+
 		if (arguments.containsKey("menuItemRightName")) {
 			menuItemRightName = (String) arguments.get("menuItemRightName");
 		}
@@ -152,74 +149,71 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
-		}else{
+		} else {
 			this.south.setHeight("0px");
 		}
 
 		setMainWindow(window_ConvFinanceMainDialog);
 		setProductCode("Conv");
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
-
-		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52+ "px");
+		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");
 
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getFinanceDetail());
-					
+
 		Events.echoEvent("onPostWinCreation", this.self, null);
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	@Override
 	protected void doShowDialog(FinanceDetail financeDetail) throws InterruptedException {
 		super.doShowDialog(financeDetail);
 	}
-	
+
 	@Override
 	protected void doEdit() {
 		super.doEdit();
 	}
-	
+
 	@Override
 	protected void doReadOnly() {
 		super.doReadOnly();
 	}
-	
+
 	@Override
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-	InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
 	}
-	
+
 	@Override
 	public void doSave() throws Exception {
 		super.doSave();
-		
+
 	}
-	
-	
+
 	@Override
 	protected void doSetValidation() {
 		super.doSetValidation();
-		
+
 	}
-	
+
 	@Override
 	protected void doSetLOVValidation() {
 		super.doSetLOVValidation();
-		
+
 	}
-	
+
 	@Override
 	protected void doRemoveLOVValidation() {
 		super.doRemoveLOVValidation();
-		
+
 	}
-	
-	
+
 	/**
 	 * If we close the dialog window. <br>
 	 * 
@@ -236,7 +230,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -252,30 +246,30 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			if (!allow) {
 				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
 				return;
-			} 
-		} 
-		
-		Long capturereaonse=null;
+			}
+		}
+
+		Long capturereaonse = null;
 		String taskId = getTaskId(getRole());
 		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-		capturereaonse=getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
-		if (capturereaonse != null && capturereaonse.intValue() !=0) {
+		capturereaonse = getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
+		if (capturereaonse != null && capturereaonse.intValue() != 0) {
 			doFillReasons(capturereaonse.intValue());
 		} else {
 			doSave();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
-
-	public void doFillReasons(int reason) throws InterruptedException{
+	public void doFillReasons(int reason) throws InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
 		map.put("reason", reason);
-		try{
-			Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetails.zul", window_ConvFinanceMainDialog, map);
+		try {
+			Executions.createComponents("/WEB-INF/pages/ReasonDetail/ReasonDetails.zul", window_ConvFinanceMainDialog,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -298,7 +292,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -317,5 +311,5 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		super.onCheckmanualSchedule();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 }

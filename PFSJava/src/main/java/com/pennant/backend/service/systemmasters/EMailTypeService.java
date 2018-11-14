@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.EMailType;
  * 
  */
 public interface EMailTypeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	EMailType getEMailTypeById(String id);
+
 	EMailType getApprovedEMailTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

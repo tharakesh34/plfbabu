@@ -91,60 +91,60 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
-	private static final long		serialVersionUID			= 6004939933729664895L;
-	private static final Logger		logger						= Logger.getLogger(StageAccountingDetailDialogCtrl.class);
+	private static final long serialVersionUID = 6004939933729664895L;
+	private static final Logger logger = Logger.getLogger(StageAccountingDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window				window_StageAccountingDetailsDialog;													// autoWired
+	protected Window window_StageAccountingDetailsDialog; // autoWired
 
 	// Stage Accounting Details Tab
 
-	protected Button				btnStageAccounting;																	// autoWired
-	protected Label					label_StageAccountingDisbCrVal;														// autoWired
-	protected Label					label_StageAccountingDisbDrVal;														// autoWired
-	protected Label					label_StageAccountingDisbSummaryVal;													// autoWired
-	protected Listbox				listBoxFinStageAccountings;															// autoWired
+	protected Button btnStageAccounting; // autoWired
+	protected Label label_StageAccountingDisbCrVal; // autoWired
+	protected Label label_StageAccountingDisbDrVal; // autoWired
+	protected Label label_StageAccountingDisbSummaryVal; // autoWired
+	protected Listbox listBoxFinStageAccountings; // autoWired
 
-	protected BigDecimal			stageDisbCrSum				= BigDecimal.ZERO;
-	protected BigDecimal			stageDisbDrSum				= BigDecimal.ZERO;
+	protected BigDecimal stageDisbCrSum = BigDecimal.ZERO;
+	protected BigDecimal stageDisbDrSum = BigDecimal.ZERO;
 
-	private FinBasicDetailsCtrl		finBasicDetailsCtrl;
-	protected Groupbox				finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	protected Groupbox finBasicdetails;
 
 	// not auto wired variables
-	private FinanceDetail			financeDetail				= null;
-	private FinScheduleData			finScheduleData				= null;
-	private FinanceMain				financeMain					= null;
-	private Object					financeMainDialogCtrl		= null;
+	private FinanceDetail financeDetail = null;
+	private FinScheduleData finScheduleData = null;
+	private FinanceMain financeMain = null;
+	private Object financeMainDialogCtrl = null;
 
-	private AEEvent					aeEvent;																				// over handed per parameters
-	protected boolean				stageAccountingsExecuted	= false;
+	private AEEvent aeEvent; // over handed per parameters
+	protected boolean stageAccountingsExecuted = false;
 
-	private Label					label_PostAccountingDisbCrVal;															// autoWired
-	private Label					label_PostAccountingDisbDrVal;															// autoWired
-	protected Listbox				listBoxPostAccountings;																// autoWired
-	protected Tab					accountDetails;
-	protected Tab					postAccountDetails;
-	protected Tabpanel				postAccountingtab;
+	private Label label_PostAccountingDisbCrVal; // autoWired
+	private Label label_PostAccountingDisbDrVal; // autoWired
+	protected Listbox listBoxPostAccountings; // autoWired
+	protected Tab accountDetails;
+	protected Tab postAccountDetails;
+	protected Tabpanel postAccountingtab;
 
-	private transient BigDecimal	disbCrSum					= BigDecimal.ZERO;
-	private transient BigDecimal	disbDrSum					= BigDecimal.ZERO;
-	private PagedListService		pagedListService;
-	public List<ReturnDataSet>		postingAccountSet			= null;
+	private transient BigDecimal disbCrSum = BigDecimal.ZERO;
+	private transient BigDecimal disbDrSum = BigDecimal.ZERO;
+	private PagedListService pagedListService;
+	public List<ReturnDataSet> postingAccountSet = null;
 
 	//Bean Setters  by application Context
-	private AccountEngineExecution	engineExecution;
-	private String					roleCode					= "";
+	private AccountEngineExecution engineExecution;
+	private String roleCode = "";
 
 	/**
 	 * default constructor.<br>
@@ -264,8 +264,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 						this.listBoxFinStageAccountings.appendChild(listgroup);
 					}
 
-					lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDebitcredit(),
-							PennantStaticListUtil.getTranType()));
+					lc = new Listcell(
+							PennantAppUtil.getlabelDesc(entry.getDebitcredit(), PennantStaticListUtil.getTranType()));
 
 					lc.setParent(item);
 					lc = new Listcell(entry.getTransDesc());
@@ -293,8 +293,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 					}
 
 					Hbox hbox = new Hbox();
-					Label label = new Label(PennantAppUtil.getlabelDesc(entry.getDrOrCr(),
-							PennantStaticListUtil.getTranType()));
+					Label label = new Label(
+							PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
 					hbox.appendChild(label);
 					if (StringUtils.isNotBlank(entry.getPostStatus())) {
 						Label la = new Label("*");
@@ -333,8 +333,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 					lc.setStyle("font-weight:bold;text-align:right;");
 					lc.setParent(item);
-					lc = new Listcell("0000".equals(StringUtils.trimToEmpty(entry.getErrorId())) ? ""
-							: entry.getErrorId());
+					lc = new Listcell(
+							"0000".equals(StringUtils.trimToEmpty(entry.getErrorId())) ? "" : entry.getErrorId());
 					lc.setStyle("font-weight:bold;color:red;");
 					lc.setTooltiptext(entry.getErrorMsg());
 					lc.setParent(item);
@@ -374,7 +374,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_STAGE, getFinanceMain().getFinStartDate(),
 				getFinanceMain().getFinStartDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		
+
 		aeEvent.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -436,10 +436,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				detail.setTransDesc(dataSet.getTranDesc());
 				detail.setCcy(dataSet.getAcCcy());
 				detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
-				detail.setPostAmount(PennantAppUtil.amountFormate(
-						dataSet.getPostAmount(),
-						dataSet.getFormatter() == 0 ? CurrencyUtil.getFormat(getFinanceMain().getFinCcy()) : dataSet
-								.getFormatter()));
+				detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(), dataSet.getFormatter() == 0
+						? CurrencyUtil.getFormat(getFinanceMain().getFinCcy()) : dataSet.getFormatter()));
 				accountingDetails.add(detail);
 			}
 
@@ -506,8 +504,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 					sClassStyle = "color:#FF0000;";
 				}
 				Hbox hbox = new Hbox();
-				Label label = new Label(PennantAppUtil.getlabelDesc(postAccountSet.getDrOrCr(),
-						PennantStaticListUtil.getTranType()));
+				Label label = new Label(
+						PennantAppUtil.getlabelDesc(postAccountSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
 				label.setStyle(sClassStyle);
 				hbox.appendChild(label);
 				lc = new Listcell();
@@ -543,8 +541,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				BigDecimal amt = postAccountSet.getPostAmount() != null ? postAccountSet.getPostAmount()
 						: BigDecimal.ZERO;
 
-				if (postAccountSet.getAcCcy().equals(
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())) {
+				if (postAccountSet.getAcCcy()
+						.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())) {
 					lc = new Listcell(PennantApplicationUtil.amountFormate(amt, formatter));
 
 					if (postAccountSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
@@ -568,8 +566,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				this.listBoxPostAccountings.appendChild(item);
 			}
 
-			this.getLabel_PostAccountingDisbCrVal().setValue(
-					PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
+			this.getLabel_PostAccountingDisbCrVal()
+					.setValue(PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
 			this.getLabel_PostAccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
 		}
 		logger.debug("Leaving");
@@ -601,8 +599,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 		if (postingAccountSet != null && !postingAccountSet.isEmpty()) {
 			return;
 		} else {
-			List<ReturnDataSet> postingaccount = getPostingAccount(getFinanceDetail().getFinScheduleData()
-					.getFinReference());
+			List<ReturnDataSet> postingaccount = getPostingAccount(
+					getFinanceDetail().getFinScheduleData().getFinReference());
 			if (postingaccount != null && !postingaccount.isEmpty()) {
 				doFillPostAccountings(postingaccount);
 				postingAccountSet = postingaccount;

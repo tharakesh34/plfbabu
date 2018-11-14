@@ -28,8 +28,8 @@ public class BlacklistCustomerListModelItemRenderer implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(blacklistCustomer.getCustDOB()));
 		lc.setParent(item);
-		
-		if(StringUtils.isEmpty(blacklistCustomer.getCustCompName())) {
+
+		if (StringUtils.isEmpty(blacklistCustomer.getCustCompName())) {
 			lc = new Listcell(blacklistCustomer.getCustFName());
 			lc.setParent(item);
 		} else {
@@ -38,8 +38,9 @@ public class BlacklistCustomerListModelItemRenderer implements ListitemRenderer<
 		}
 		lc = new Listcell(blacklistCustomer.getCustCtgCode());
 		lc.setParent(item);
-		/*lc = new Listcell(blacklistCustomer.getCustLName());
-		lc.setParent(item);*/
+		/*
+		 * lc = new Listcell(blacklistCustomer.getCustLName()); lc.setParent(item);
+		 */
 		lc = new Listcell(PennantApplicationUtil.formatEIDNumber(blacklistCustomer.getCustCRCPR()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formatEIDNumber(blacklistCustomer.getCustAadhaar()));

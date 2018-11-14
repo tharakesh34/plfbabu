@@ -65,8 +65,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FinTypePartnerBank</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>FinTypePartnerBank</code> with set of CRUD operations.
  */
 public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> implements FinTypePartnerBankDAO {
 	private static Logger logger = Logger.getLogger(FinTypePartnerBankDAOImpl.class);
@@ -126,7 +125,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		if (type.contains("View")) {
 			sql.append("PartnerBankName, PartnerBankCode,");
 		}
-		sql.append(	" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTypePartnerBanks");
 		sql.append(type);
 		sql.append(" Where FinType = :FinType");
@@ -154,10 +154,12 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		StringBuilder sql = new StringBuilder(" insert into FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append(" (iD, finType, purpose, paymentMode, partnerBankID, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iD, :finType, :purpose, :paymentMode, :partnerBankID, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -275,7 +277,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		source.addValue("PartnerBankID", partnerBankID);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From FinTypePartnerBanks");
-		selectSql.append(" Where Fintype = :Fintype AND PaymentMode = :PaymentMode AND Purpose = :Purpose AND PartnerBankID = :PartnerBankID");
+		selectSql.append(
+				" Where Fintype = :Fintype AND PaymentMode = :PaymentMode AND Purpose = :Purpose AND PartnerBankID = :PartnerBankID");
 
 		logger.debug("selectSql: " + selectSql.toString());
 

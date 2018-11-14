@@ -74,8 +74,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	/**
-	 * Method for Fetching List of Excess amounts exist against Finance
-	 * Reference
+	 * Method for Fetching List of Excess amounts exist against Finance Reference
 	 */
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(String finReference) {
@@ -372,8 +371,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	/**
-	 * Method for Deleting Reserved Amounts against Excess ID Processed for
-	 * Utilization
+	 * Method for Deleting Reserved Amounts against Excess ID Processed for Utilization
 	 */
 	@Override
 	public void deleteExcessReserve(long receiptID, long payAgainstID, String paymentType) {
@@ -476,10 +474,10 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug(Literal.LEAVING);
 		return finExcessAmount;
 	}
-	
+
 	//MIGRATION PURPOSE
 	//Added Table Type
-	
+
 	@Override
 	public List<FinExcessAmount> getAllExcessAmountsByRef(String finReference, String type) {
 		logger.debug("Entering");
@@ -487,7 +485,8 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("FinReference", finReference);
 
 		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append(" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		selectSql.append(
+				" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference ");
 

@@ -57,38 +57,39 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class InterfaceMapping extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long								interfaceMappingId		= Long.MIN_VALUE;
-	private long                                interfaceId             = Long.MIN_VALUE;
-	private String								interfaceName;
-	private String								interfaceField;
-	private String								mappingTable;
-	private String								mappingColumn;
-	private String								mappingValue;
-	private String 								mappingSequence;
-	private boolean								active;
-	private String								mappingType;
-	private String								module;
-	private boolean								newRecord;
-	private String								lovValue;
-	private InterfaceMapping					befImage;
-	private LoggedInUser						userDetails;
-	private List<MasterMapping>					masterMappingList;
-	private HashMap<String, List<AuditDetail>>	lovDescAuditDetailMap	= new HashMap<String, List<AuditDetail>>();
+	private long interfaceMappingId = Long.MIN_VALUE;
+	private long interfaceId = Long.MIN_VALUE;
+	private String interfaceName;
+	private String interfaceField;
+	private String mappingTable;
+	private String mappingColumn;
+	private String mappingValue;
+	private String mappingSequence;
+	private boolean active;
+	private String mappingType;
+	private String module;
+	private boolean newRecord;
+	private String lovValue;
+	private InterfaceMapping befImage;
+	private LoggedInUser userDetails;
+	private List<MasterMapping> masterMappingList;
+	private HashMap<String, List<AuditDetail>> lovDescAuditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("mappingid");
 		excludeFields.add("mappingType");
 		excludeFields.add("module");
 		excludeFields.add("mappingSequence");
 		return excludeFields;
 	}
+
 	public InterfaceMapping() {
 		super();
 	}
@@ -112,7 +113,6 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 	public void setInterfaceField(String interfaceField) {
 		this.interfaceField = interfaceField;
 	}
-
 
 	public String getMappingTable() {
 		return mappingTable;

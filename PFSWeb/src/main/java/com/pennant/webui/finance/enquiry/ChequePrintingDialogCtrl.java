@@ -49,40 +49,40 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
-	private static final long				serialVersionUID				= -2919106187676267998L;
-	private static final Logger				logger							= Logger.getLogger(ChequePrintingDialogCtrl.class);
+	private static final long serialVersionUID = -2919106187676267998L;
+	private static final Logger logger = Logger.getLogger(ChequePrintingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_ChequePrintingDialog;
-	protected Window						window_ChequePrinting;
-	protected Listbox						listBoxSchedule;
-	protected Borderlayout					borderlayoutChequePrinting;
-	private Tabpanel						tabPanel_dialogWindow;
-	protected Tab							repayGraphTab;
-	protected Div							graphDivTabDiv;
+	protected Window window_ChequePrintingDialog;
+	protected Window window_ChequePrinting;
+	protected Listbox listBoxSchedule;
+	protected Borderlayout borderlayoutChequePrinting;
+	private Tabpanel tabPanel_dialogWindow;
+	protected Tab repayGraphTab;
+	protected Div graphDivTabDiv;
 
-	protected Combobox						cbPDCPeriod;
-	protected Intbox						noOfCheques;
-	protected Combobox						startDate;
-	protected Button						button_Print;
-	protected Iframe						chequeImageView;
-	public byte[]							buf								= null;
+	protected Combobox cbPDCPeriod;
+	protected Intbox noOfCheques;
+	protected Combobox startDate;
+	protected Button button_Print;
+	protected Iframe chequeImageView;
+	public byte[] buf = null;
 
-	private FinanceEnquiryHeaderDialogCtrl	financeEnquiryHeaderDialogCtrl	= null;
-	private FinanceScheduleDetail			financeScheduleDetail;
-	private FinScheduleData					finScheduleData;
-	private FinScheduleListItemRenderer		finRender;
-	private transient boolean				validationOn;
-	private FinanceScheduleDetail			prvSchDetail;
-	private List<ValueLabel>				listCPPDCPeriod					= PennantStaticListUtil.getPDCPeriodList();
-	protected Map<Integer, BigDecimal>		repayDetailMap					= new HashMap<Integer, BigDecimal>();
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
+	private FinanceScheduleDetail financeScheduleDetail;
+	private FinScheduleData finScheduleData;
+	private FinScheduleListItemRenderer finRender;
+	private transient boolean validationOn;
+	private FinanceScheduleDetail prvSchDetail;
+	private List<ValueLabel> listCPPDCPeriod = PennantStaticListUtil.getPDCPeriodList();
+	protected Map<Integer, BigDecimal> repayDetailMap = new HashMap<Integer, BigDecimal>();
 
 	@SuppressWarnings("unused")
-	private int								formatter;
-	final String							CHEQUE_PRINTING_CHEQUES			= "Checks";
+	private int formatter;
+	final String CHEQUE_PRINTING_CHEQUES = "Checks";
 
 	/**
 	 * default constructor.<br>
@@ -220,10 +220,10 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						new String[] { Labels.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value") }));
 			} else {
 				if (this.noOfCheques.intValue() > allowedNoCheques) {
-					throw new WrongValueException(this.noOfCheques, Labels.getLabel(
-							"NUMBER_MAXVALUE_EQ",
-							new String[] { Labels.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value"),
-									String.valueOf(allowedNoCheques) }));
+					throw new WrongValueException(this.noOfCheques,
+							Labels.getLabel("NUMBER_MAXVALUE_EQ",
+									new String[] { Labels.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value"),
+											String.valueOf(allowedNoCheques) }));
 				}
 			}
 		}
@@ -240,28 +240,27 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		ArrayList<ChequeDetails> chequeDetailsList = null;
 		chequeDetailsList = new ArrayList<ChequeDetails>();
 
-		endIndex = startIndex
-				+ (this.noOfCheques.getValue() * (Integer.parseInt(this.cbPDCPeriod.getSelectedItem().getValue()
-						.toString()))) - 1;
+		endIndex = startIndex + (this.noOfCheques.getValue()
+				* (Integer.parseInt(this.cbPDCPeriod.getSelectedItem().getValue().toString()))) - 1;
 		if (endIndex > repayDetailMap.size()) {
 			endIndex = repayDetailMap.size();
 		}
 
 		if (this.cbPDCPeriod.getSelectedItem() != null) {
 			if ("0000".equals(this.cbPDCPeriod.getSelectedItem().getValue())) {
-				
+
 				int format = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 				chequeDetailsList = new ArrayList<ChequeDetails>();
 				chequeDetailsList.add(null);
 				chequeDetails = prepareReportObject(getFinScheduleData());
 				BigDecimal repayAmt = getRepayDetails(repayDetailMap, startIndex, repayDetailMap.size());
 				chequeDetails.setRepayAmount(PennantAppUtil.amountFormate(repayAmt, format));
-				chequeDetails.setRepayAmountinWords(NumberToEnglishWords.getAmountInText(
-						PennantAppUtil.formateAmount(repayAmt, format), getFinScheduleData().getFinanceMain().getFinCcy())
-						.toUpperCase());
+				chequeDetails.setRepayAmountinWords(
+						NumberToEnglishWords.getAmountInText(PennantAppUtil.formateAmount(repayAmt, format),
+								getFinScheduleData().getFinanceMain().getFinCcy()).toUpperCase());
 				if (!"#".equals(this.startDate.getSelectedItem().getValue().toString())) {
-					chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.getUtilDate(this.startDate
-							.getSelectedItem().getValue().toString(), PennantConstants.DBDateFormat)));
+					chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.getUtilDate(
+							this.startDate.getSelectedItem().getValue().toString(), PennantConstants.DBDateFormat)));
 				}
 				chequeDetailsList.add(chequeDetails);
 			} else {
@@ -298,8 +297,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (pDCPeriod == 0 || j % pDCPeriod == 0) {
 				System.out.println(j);
 				chequeDetails = prepareReportObject(getFinScheduleData());
-				chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.getUtilDate(this.startDate
-						.getItemAtIndex(j).getValue().toString(), PennantConstants.DBDateFormat)));
+				chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.getUtilDate(
+						this.startDate.getItemAtIndex(j).getValue().toString(), PennantConstants.DBDateFormat)));
 				if (j == endIndex) {
 					repaymentAmount = getRepayDetails(repayDetailMap, j - pDCPeriod + 1, repayDetailMap.size());
 					if (endIndex != repayDetailMap.size()) {
@@ -310,9 +309,9 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				}
 				int format = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 				chequeDetails.setRepayAmount(PennantAppUtil.amountFormate(repaymentAmount, format));
-				chequeDetails.setRepayAmountinWords(NumberToEnglishWords.getAmountInText(
-						PennantAppUtil.formateAmount(repaymentAmount, format), getFinScheduleData().getFinanceMain().getFinCcy())
-						.toUpperCase());
+				chequeDetails.setRepayAmountinWords(
+						NumberToEnglishWords.getAmountInText(PennantAppUtil.formateAmount(repaymentAmount, format),
+								getFinScheduleData().getFinanceMain().getFinCcy()).toUpperCase());
 
 				chequeDetailsList.add(chequeDetails);
 			}
@@ -364,7 +363,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onChange$cbPDCPeriod(Event e) {
 		logger.debug("Entering" + e.toString());
 
-		if (StringUtils.equals(this.cbPDCPeriod.getSelectedItem().getValue().toString(), PennantConstants.List_Select)) {
+		if (StringUtils.equals(this.cbPDCPeriod.getSelectedItem().getValue().toString(),
+				PennantConstants.List_Select)) {
 			this.startDate.setText("");
 			this.startDate.setDisabled(false);
 			this.noOfCheques.setValue(0);
@@ -397,12 +397,12 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		setValidationOn(true);
 
 		if (!this.cbPDCPeriod.isDisabled()) {
-			this.cbPDCPeriod.setConstraint(new StaticListValidator(listCPPDCPeriod, Labels
-					.getLabel("label_FinanceEnquiryDialog_CPPDCPeriod.value")));
+			this.cbPDCPeriod.setConstraint(new StaticListValidator(listCPPDCPeriod,
+					Labels.getLabel("label_FinanceEnquiryDialog_CPPDCPeriod.value")));
 		}
 		if (!this.noOfCheques.isReadonly()) {
-			this.noOfCheques.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value"), true, false));
+			this.noOfCheques.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value"), true, false));
 
 		}
 
@@ -444,8 +444,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				BigDecimal schedulePaid = curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid());
-				if ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(
-						BigDecimal.ZERO) > 0))
+				if ((curSchd.isRepayOnSchDate()
+						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
 						&& schedulePaid.compareTo(curSchd.getRepayAmount()) != 0
 						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -453,8 +453,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					comboitem = new Comboitem();
 					comboitem.setAttribute("index", count);
 					count++;
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " "
-							+ curSchd.getSpecifier());
+					comboitem.setLabel(
+							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
@@ -542,10 +542,12 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("window", this.window_ChequePrintingDialog);
-				finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate, false);
+				finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,
+						false);
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, false, true,  finScheduleData.getFinFeeDetailList(), showRate, false);
+					finRender.render(map, prvSchDetail, true, false, true, finScheduleData.getFinFeeDetailList(),
+							showRate, false);
 					break;
 				}
 			}

@@ -23,5 +23,4 @@ public class CollateralConstants {
 	public static final String COLLATERAL_FULL_ADJ = "FULL_ADJ";
 	public static final String COLLATERAL_REQ_ADJ = "REQ_ADJ";
 
-
 }

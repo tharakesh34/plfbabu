@@ -83,16 +83,16 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHeader>
 		implements FinTaxUploadDetailService {
-	private static final Logger			logger	= Logger.getLogger(FinTaxUploadDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinTaxUploadDetailServiceImpl.class);
 
-	private AuditHeaderDAO				auditHeaderDAO;
-	private FinTaxUploadDetailDAO		finTaxUploadDetailDAO;
-	private FinanceTaxDetailDAO			financeTaxDetailDAO;
-	private PinCodeDAO					PinCodeDAO;
-	private FinanceMainDAO				financeMainDAO;
-	private CustomerDAO					customerDAO;
-	private ProvinceDAO					provinceDAO;
-	private JointAccountDetailService	jointAccountDetailService;
+	private AuditHeaderDAO auditHeaderDAO;
+	private FinTaxUploadDetailDAO finTaxUploadDetailDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
+	private PinCodeDAO PinCodeDAO;
+	private FinanceMainDAO financeMainDAO;
+	private CustomerDAO customerDAO;
+	private ProvinceDAO provinceDAO;
+	private JointAccountDetailService jointAccountDetailService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -402,7 +402,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			if (StringUtils.isEmpty(taxuploadDetail.getAggrementNo())) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99015", null), usrLanguage));
 			} else {
-				if (taxuploadDetail.getAggrementNo().length() > 20) {					
+				if (taxuploadDetail.getAggrementNo().length() > 20) {
 					errParm[0] = taxuploadDetail.getAggrementNo();
 					errParm[1] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
 					errParm[2] = 20 + "";
@@ -481,7 +481,6 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			
 
 			//Validate the GST number
 			if (StringUtils.isNotBlank(taxuploadDetail.getAggrementNo())) {
@@ -619,7 +618,8 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			String gstStateCode = null;
 			String panNumber = customer.getCustCRCPR();
 			//if GST Number is already exist or not
-			int count = getFinanceTaxDetailDAO().getGSTNumberCount(financeMain.getCustID(),taxuploadDetail.getTaxCode(), "_View");
+			int count = getFinanceTaxDetailDAO().getGSTNumberCount(financeMain.getCustID(),
+					taxuploadDetail.getTaxCode(), "_View");
 			if (count != 0) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("listheader_TaxNumber.label") + ": ";
@@ -633,15 +633,15 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			if (province != null) {
 				gstStateCode = province.getTaxStateCode();
 			}
-			
-			if (!StringUtils.isEmpty(taxuploadDetail.getTaxCode()) && taxuploadDetail.getTaxCode().length() <15) {
+
+			if (!StringUtils.isEmpty(taxuploadDetail.getTaxCode()) && taxuploadDetail.getTaxCode().length() < 15) {
 				String[] errParm = new String[3];
 				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("label_Gstin");
 				errParm[2] = 15 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99017", errParm, valueParm), usrLanguage));
-			}else{
+			} else {
 				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
 					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxuploadDetail.getTaxCode().substring(0, 2))) {
 						String[] errParams = new String[2];
@@ -869,11 +869,10 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-/*		auditHeader = businessValidation(auditHeader, "doReject");
-		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
-			return auditHeader;
-		}*/
+		/*
+		 * auditHeader = businessValidation(auditHeader, "doReject"); if (!auditHeader.isNextProcess()) {
+		 * logger.debug("Leaving"); return auditHeader; }
+		 */
 
 		FinTaxUploadHeader uploadHeader = (FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);

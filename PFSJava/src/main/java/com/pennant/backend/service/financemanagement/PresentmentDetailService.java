@@ -54,29 +54,31 @@ public interface PresentmentDetailService {
 
 	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
 
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type);
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
+			String type);
 
-	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId, LoggedInUser loggedInUser, boolean isPDC) throws Exception;
+	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId,
+			long partnerBankId, LoggedInUser loggedInUser, boolean isPDC) throws Exception;
 
 	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
-	
-	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
+
+	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
+			String errorDesc);
 
 	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
 
 	void updatePresentmentIdAsZero(long presentmentId);
 
 	void updateFinanceDetails(String presentmentRef);
-	
+
 	long getSeqNumber(String tableNme);
-	
+
 	void processReceipts(PresentmentDetail detail, LoggedInUser userDetails) throws Exception;
 
 	String getPaymenyMode(String presentmentRef);
 
 	PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode);
-	
-	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
 
+	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
 
 }

@@ -67,10 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>DPDBucketConfiguration</code> with set of CRUD operations.
  */
-public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfiguration> implements DPDBucketConfigurationDAO {
-	private static Logger		logger	= Logger.getLogger(DPDBucketConfigurationDAOImpl.class);
-
-	
+public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfiguration>
+		implements DPDBucketConfigurationDAO {
+	private static Logger logger = Logger.getLogger(DPDBucketConfigurationDAOImpl.class);
 
 	public DPDBucketConfigurationDAOImpl() {
 		super();
@@ -86,7 +85,8 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 		if (type.contains("View")) {
 			sql.append(" ProductCodeName, BucketIDName,BucketCode,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From DPDBUCKETSCONFIG");
 		sql.append(type);
 		sql.append(" Where configID = :configID");
@@ -158,10 +158,12 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 		StringBuilder sql = new StringBuilder(" insert into DPDBUCKETSCONFIG");
 		sql.append(tableType.getSuffix());
 		sql.append(" (configID, productCode, bucketID, dueDays, suspendProfit, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :configID, :productCode, :bucketID, :dueDays, :suspendProfit, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (dPDBucketConfiguration.getConfigID() <= 0) {
@@ -256,8 +258,6 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 		logger.debug(Literal.LEAVING);
 		return list;
 	}
-
-
 
 	@Override
 	public int getByProductCode(String producCode, int dueDys, String type) {

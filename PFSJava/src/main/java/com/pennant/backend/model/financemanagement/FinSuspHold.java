@@ -54,19 +54,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinSuspHold table</b>.<br>
  * 
  */
-public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
+public class FinSuspHold extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -6305409759684865400L;
 
-	private long suspHoldID=Long.MIN_VALUE;
+	private long suspHoldID = Long.MIN_VALUE;
 	private String product;
 	private String productDesc;
 	private String finType;
 	private String finTypeDesc;
 	private String finReference;
-	private long custID ;
-	private String custCIF ;
-	private String CustShrtName ;
+	private long custID;
+	private String custCIF;
+	private String CustShrtName;
 	private boolean active;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -86,8 +86,8 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("productDesc");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("custCIF");
@@ -95,21 +95,22 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 		return excludeFields;
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
 	public long getId() {
 		return suspHoldID;
-	}	
-	public void setId (long id) {
+	}
+
+	public void setId(long id) {
 		this.suspHoldID = id;
 	}
 
 	public long getSuspHoldID() {
 		return suspHoldID;
 	}
+
 	public void setSuspHoldID(long suspHoldID) {
 		this.suspHoldID = suspHoldID;
 	}
@@ -117,6 +118,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getProduct() {
 		return product;
 	}
+
 	public void setProduct(String product) {
 		this.product = product;
 	}
@@ -124,6 +126,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getProductDesc() {
 		return productDesc;
 	}
+
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
 	}
@@ -131,6 +134,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -138,6 +142,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getFinTypeDesc() {
 		return finTypeDesc;
 	}
+
 	public void setFinTypeDesc(String finTypeDesc) {
 		this.finTypeDesc = finTypeDesc;
 	}
@@ -145,6 +150,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -152,6 +158,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
@@ -159,6 +166,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getCustCIF() {
 		return custCIF;
 	}
+
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
@@ -166,6 +174,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getCustShrtName() {
 		return CustShrtName;
 	}
+
 	public void setCustShrtName(String custShrtName) {
 		CustShrtName = custShrtName;
 	}
@@ -173,6 +182,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -180,6 +190,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -187,6 +198,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -194,6 +206,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public FinSuspHold getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(FinSuspHold beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -201,6 +214,7 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity  {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

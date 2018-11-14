@@ -43,9 +43,7 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.List;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -67,28 +65,30 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 
-public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail> implements WIFFinanceScheduleDetailDAO {
+public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail>
+		implements WIFFinanceScheduleDetailDAO {
 	private static Logger logger = Logger.getLogger(WIFFinanceScheduleDetailDAOImpl.class);
-		
+
 	public WIFFinanceScheduleDetailDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Finance Schedule Detail details by key field
+	 * Fetch the Record Finance Schedule Detail details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceScheduleDetail
 	 */
 	@Override
 	public FinanceScheduleDetail getWIFFinanceScheduleDetailById(final String id, String type) {
 		logger.debug("Entering");
 		FinanceScheduleDetail wIFFinanceScheduleDetail = new FinanceScheduleDetail();
-		
+
 		wIFFinanceScheduleDetail.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select FinReference, SchDate, SchSeq, PftOnSchDate,");
 		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
 		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, ActRate, NoOfDays,");
@@ -98,7 +98,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 		selectSql.append(" SchdPriPaid, SchdPftPaid, IsSchdPriPaid, IsSchdPftPaid,Specifier,");
 		selectSql.append(" DefSchdDate,");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("lovDescBaseRateName,lovDescSplRateName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -106,75 +106,76 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 		selectSql.append(" From WIFFinScheduleDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				FinanceScheduleDetail.class);
-		
-		try{
-			wIFFinanceScheduleDetail = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		try {
+			wIFFinanceScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			wIFFinanceScheduleDetail = null;
 		}
 		logger.debug("Leaving");
 		return wIFFinanceScheduleDetail;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the WIFFinScheduleDetails or WIFFinScheduleDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Finance Schedule Detail by key FinReference
+	 * This method Deletes the Record from the WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
 	 * 
-	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinanceScheduleDetail wIFFinanceScheduleDetail,String type) {
+	public void delete(FinanceScheduleDetail wIFFinanceScheduleDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From WIFFinScheduleDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into WIFFinScheduleDetails or WIFFinScheduleDetails_Temp.
 	 *
-	 * save Finance Schedule Detail 
+	 * save Finance Schedule Detail
 	 * 
-	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(FinanceScheduleDetail wIFFinanceScheduleDetail,String type) {
+	public String save(FinanceScheduleDetail wIFFinanceScheduleDetail, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into WIFFinScheduleDetails");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into WIFFinScheduleDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, SchDate, SchSeq, PftOnSchDate,");
 		insertSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
@@ -196,43 +197,44 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 		insertSql.append(" :DefSchdDate");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
 		insertSql.append(" :NextTaskId, :RecordType, :WorkflowId)");
-		
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return wIFFinanceScheduleDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record WIFFinScheduleDetails or WIFFinScheduleDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Finance Schedule Detail by key FinReference and Version
+	 * This method updates the Record WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Finance Schedule Detail by key FinReference and Version
 	 * 
-	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(FinanceScheduleDetail wIFFinanceScheduleDetail,String type) {
+	public void update(FinanceScheduleDetail wIFFinanceScheduleDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update WIFFinScheduleDetails");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update WIFFinScheduleDetails");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set SchDate = :SchDate, SchSeq = :SchSeq,");
-		updateSql.append(" PftOnSchDate= :PftOnSchDate, CpzOnSchDate = :CpzOnSchDate, RepayOnSchDate= :RepayOnSchDate,");
+		updateSql
+				.append(" PftOnSchDate= :PftOnSchDate, CpzOnSchDate = :CpzOnSchDate, RepayOnSchDate= :RepayOnSchDate,");
 		updateSql.append(" RvwOnSchDate= :RvwOnSchDate, DisbOnSchDate= :DisbOnSchDate,");
 		updateSql.append(" DownpaymentOnSchDate = :DownpaymentOnSchDate,");
 		updateSql.append(" BalanceForPftCal= :BalanceForPftCal, BaseRate= :BaseRate, SplRate= :SplRate,");
 		updateSql.append(" ActRate= :ActRate, NoOfDays= :NoOfDays, DayFactor =:DayFactor, ProfitCalc= :ProfitCalc,");
 		updateSql.append(" ProfitSchd= :ProfitSchd, PrincipalSchd= :PrincipalSchd, RepayAmount= :RepayAmount,");
-		updateSql.append(" ProfitBalance=:ProfitBalance, DisbAmount= :DisbAmount, DownPaymentAmount= :DownPaymentAmount,");
+		updateSql.append(
+				" ProfitBalance=:ProfitBalance, DisbAmount= :DisbAmount, DownPaymentAmount= :DownPaymentAmount,");
 		updateSql.append(" CpzAmount= :CpzAmount,");
 		updateSql.append(" ClosingBalance= :ClosingBalance,");
 		updateSql.append(" ProfitFraction= :ProfitFraction, PrvRepayAmount= :PrvRepayAmount,");
@@ -244,16 +246,16 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");
 		updateSql.append(" NextTaskId= :NextTaskId, RecordType= :RecordType, WorkflowId= :WorkflowId)");
 		updateSql.append(" Where FinReference =:FinReference");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -261,12 +263,11 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getWIFFinScheduleDetails(String id,
-			String type) {
-		
-		FinanceScheduleDetail wIFFinanceScheduleDetail = new FinanceScheduleDetail();		
+	public List<FinanceScheduleDetail> getWIFFinScheduleDetails(String id, String type) {
+
+		FinanceScheduleDetail wIFFinanceScheduleDetail = new FinanceScheduleDetail();
 		wIFFinanceScheduleDetail.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select FinReference, SchDate, SchSeq, PftOnSchDate,");
 		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
 		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, ActRate, NoOfDays,");
@@ -275,9 +276,8 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 		selectSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, IsSchdPriPaid, IsSchdPftPaid,Specifier,");
 		selectSql.append(" DefSchdDate,");
-		
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescBaseRateName,lovDescSplRateName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -285,15 +285,14 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDet
 		selectSql.append(" From WIFFinScheduleDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				FinanceScheduleDetail.class);
-		
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	
 }

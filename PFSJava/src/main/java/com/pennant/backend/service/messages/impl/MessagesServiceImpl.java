@@ -12,7 +12,7 @@ public class MessagesServiceImpl implements MessagesService {
 	private OfflineUserMessagesBackupDAO offlineUserMessagesBackupDAO;
 	private UserContactsListDAO userContactsListDAO;
 
-	public MessagesServiceImpl(){
+	public MessagesServiceImpl() {
 		super();
 	}
 
@@ -20,10 +20,10 @@ public class MessagesServiceImpl implements MessagesService {
 	 * 
 	 */
 	@Override
-	public List<OfflineUsersMessagesBackup> getOfflineUsersMessagesBackupByUsrId(
-			String usrId) {
+	public List<OfflineUsersMessagesBackup> getOfflineUsersMessagesBackupByUsrId(String usrId) {
 		return getOfflineUserMessagesBackupDAO().getMessagesBackupByUserId(usrId);
 	}
+
 	/**
 	 * 
 	 */
@@ -32,24 +32,25 @@ public class MessagesServiceImpl implements MessagesService {
 		getOfflineUserMessagesBackupDAO().save(offlineusrmsgBkpList);
 
 	}
+
 	/**
 	 * 
 	 */
 	@Override
-	public void deleteOfflineUsersMessages(
-			String usrId) {
+	public void deleteOfflineUsersMessages(String usrId) {
 		getOfflineUserMessagesBackupDAO().delete(usrId);
 
 	}
+
 	/**
 	 * 
 	 * @param offlineUserMessagesBackupDAO
 	 */
 
-	public void setOfflineUserMessagesBackupDAO(
-			OfflineUserMessagesBackupDAO offlineUserMessagesBackupDAO) {
+	public void setOfflineUserMessagesBackupDAO(OfflineUserMessagesBackupDAO offlineUserMessagesBackupDAO) {
 		this.offlineUserMessagesBackupDAO = offlineUserMessagesBackupDAO;
 	}
+
 	/**
 	 * 
 	 * @return
@@ -57,13 +58,15 @@ public class MessagesServiceImpl implements MessagesService {
 	public OfflineUserMessagesBackupDAO getOfflineUserMessagesBackupDAO() {
 		return offlineUserMessagesBackupDAO;
 	}
+
 	/**
 	 * 
 	 */
 	@Override
-	public UserContactsList getUserContactsList(String usrId,String type ) {
-		return getUserContactsListDAO().getUserContactsList(usrId,type);
+	public UserContactsList getUserContactsList(String usrId, String type) {
+		return getUserContactsListDAO().getUserContactsList(usrId, type);
 	}
+
 	/**
 	 * 
 	 */
@@ -72,21 +75,19 @@ public class MessagesServiceImpl implements MessagesService {
 		getUserContactsListDAO().save(userContactsList);
 
 	}
+
 	/**
 	 * 
 	 */
 	@Override
-	public void deleteUserContactsList(String usrId,String type) {
-		getUserContactsListDAO().delete(usrId,type);
+	public void deleteUserContactsList(String usrId, String type) {
+		getUserContactsListDAO().delete(usrId, type);
 	}
-
-
-
-
 
 	public UserContactsListDAO getUserContactsListDAO() {
 		return userContactsListDAO;
 	}
+
 	public void setUserContactsListDAO(UserContactsListDAO userContactsListDAO) {
 		this.userContactsListDAO = userContactsListDAO;
 	}

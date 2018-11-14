@@ -115,11 +115,10 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		super.pageRightName = "SecurityRoleList";
 		super.tableName = "SecRoles_View";
 		super.queueTableName = "SecRoles_View";
-		
-		
-		if("ROLEGROUPS".equals(this.moduleType)){
+
+		if ("ROLEGROUPS".equals(this.moduleType)) {
 			super.queueTableName = "SecRoles_AView";
-		}else{
+		} else {
 			super.queueTableName = "SecRoles_View";
 		}
 	}
@@ -137,9 +136,9 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		setItemRender(new SecurityRoleListModelItemRenderer());
 
 		// Register buttons and fields.
-		if(!"ROLEGROUPS".equals(this.moduleType)){
+		if (!"ROLEGROUPS".equals(this.moduleType)) {
 			registerButton(button_SecurityRoleList_NewSecurityRole, "button_SecurityRoleList_NewSecurityRole", true);
-		}else{
+		} else {
 			this.button_SecurityRoleList_NewSecurityRole.setVisible(false);
 		}
 		registerButton(button_SecurityRoleList_SecurityRoleSearchDialog);
@@ -256,12 +255,13 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		arg.put("newRecord", aSecurityRole.isNew());
 
 		try {
-			if(this.moduleType!=null && this.moduleType.equals("ROLEGROUPS")){
-				Executions.createComponents("/WEB-INF/pages/Administration/SecurityRoleGroups"
-						+ "/SecurityRoleGroupsDialog.zul", null, arg);
-			}
-			else{				
-				Executions.createComponents("/WEB-INF/pages/Administration/SecurityRole/SecurityRoleDialog.zul", null, arg);
+			if (this.moduleType != null && this.moduleType.equals("ROLEGROUPS")) {
+				Executions.createComponents(
+						"/WEB-INF/pages/Administration/SecurityRoleGroups" + "/SecurityRoleGroupsDialog.zul", null,
+						arg);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Administration/SecurityRole/SecurityRoleDialog.zul", null,
+						arg);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);

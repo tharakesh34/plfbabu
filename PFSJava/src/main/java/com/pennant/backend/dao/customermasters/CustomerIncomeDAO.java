@@ -63,7 +63,7 @@ public interface CustomerIncomeDAO {
 
 	List<CustomerIncome> getIncomesByFinReference(String finReference);
 
-	List<CustomerIncome> getIncomesBySamplingId(long samplingId);	
+	List<CustomerIncome> getIncomesBySamplingId(long samplingId);
 
 	long getLinkId(long custId);
 }

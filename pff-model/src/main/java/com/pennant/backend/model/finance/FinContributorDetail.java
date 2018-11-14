@@ -11,8 +11,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class FinContributorDetail extends AbstractWorkflowEntity implements Entity {
 
-    private static final long serialVersionUID = -7356577575758061061L;
-    
+	private static final long serialVersionUID = -7356577575758061061L;
+
 	private String finReference;
 	private long contributorBaseNo;
 	private long custID;
@@ -24,7 +24,7 @@ public class FinContributorDetail extends AbstractWorkflowEntity implements Enti
 	private Date recordDate;
 	private BigDecimal totalInvestPerc;
 	private BigDecimal mudaribPerc;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinContributorDetail befImage;
 	private LoggedInUser userDetails;
@@ -41,128 +41,142 @@ public class FinContributorDetail extends AbstractWorkflowEntity implements Enti
 		super();
 		this.setFinReference(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return contributorBaseNo;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.contributorBaseNo = id;
 	}
 
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
 
 	public long getContributorBaseNo() {
-    	return contributorBaseNo;
-    }
+		return contributorBaseNo;
+	}
+
 	public void setContributorBaseNo(long contributorBaseNo) {
-    	this.contributorBaseNo = contributorBaseNo;
-    }
+		this.contributorBaseNo = contributorBaseNo;
+	}
 
 	public void setCustID(long custID) {
-	    this.custID = custID;
-    }
+		this.custID = custID;
+	}
 
 	public long getCustID() {
-	    return custID;
-    }
+		return custID;
+	}
 
 	public String getLovDescContributorCIF() {
-    	return lovDescContributorCIF;
-    }
+		return lovDescContributorCIF;
+	}
+
 	public void setLovDescContributorCIF(String lovDescContributorCIF) {
-    	this.lovDescContributorCIF = lovDescContributorCIF;
-    }
+		this.lovDescContributorCIF = lovDescContributorCIF;
+	}
 
 	public String getContributorName() {
-    	return contributorName;
-    }
+		return contributorName;
+	}
+
 	public void setContributorName(String contributorName) {
-    	this.contributorName = contributorName;
-    }
+		this.contributorName = contributorName;
+	}
 
 	public BigDecimal getContributorInvest() {
-    	return contributorInvest;
-    }
+		return contributorInvest;
+	}
+
 	public void setContributorInvest(BigDecimal contributorInvest) {
-    	this.contributorInvest = contributorInvest;
-    }
+		this.contributorInvest = contributorInvest;
+	}
 
 	public String getInvestAccount() {
-    	return investAccount;
-    }
+		return investAccount;
+	}
+
 	public void setInvestAccount(String investAccount) {
-    	this.investAccount = investAccount;
-    }
+		this.investAccount = investAccount;
+	}
 
 	public Date getInvestDate() {
-    	return investDate;
-    }
+		return investDate;
+	}
+
 	public void setInvestDate(Date investDate) {
-    	this.investDate = investDate;
-    }
+		this.investDate = investDate;
+	}
 
 	public BigDecimal getTotalInvestPerc() {
-    	return totalInvestPerc;
-    }
+		return totalInvestPerc;
+	}
+
 	public void setTotalInvestPerc(BigDecimal totalInvestPerc) {
-    	this.totalInvestPerc = totalInvestPerc;
-    }
+		this.totalInvestPerc = totalInvestPerc;
+	}
 
 	public BigDecimal getMudaribPerc() {
-    	return mudaribPerc;
-    }
+		return mudaribPerc;
+	}
+
 	public void setMudaribPerc(BigDecimal mudaribPerc) {
-    	this.mudaribPerc = mudaribPerc;
-    }
+		this.mudaribPerc = mudaribPerc;
+	}
 
 	public boolean isNewRecord() {
-    	return newRecord;
-    }
+		return newRecord;
+	}
+
 	public void setNewRecord(boolean newRecord) {
-    	this.newRecord = newRecord;
-    }
+		this.newRecord = newRecord;
+	}
 
 	public String getLovValue() {
-    	return lovValue;
-    }
+		return lovValue;
+	}
+
 	public void setLovValue(String lovValue) {
-    	this.lovValue = lovValue;
-    }
+		this.lovValue = lovValue;
+	}
 
 	public FinContributorDetail getBefImage() {
-    	return befImage;
-    }
+		return befImage;
+	}
+
 	public void setBefImage(FinContributorDetail befImage) {
-    	this.befImage = befImage;
-    }
+		this.befImage = befImage;
+	}
 
 	public LoggedInUser getUserDetails() {
-    	return userDetails;
-    }
+		return userDetails;
+	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
-    	this.userDetails = userDetails;
-    }
-	
+		this.userDetails = userDetails;
+	}
+
 	public void setRecordDate(Date recordDate) {
-	    this.recordDate = recordDate;
-    }
+		this.recordDate = recordDate;
+	}
 
 	public Date getRecordDate() {
-	    return recordDate;
-    }
+		return recordDate;
+	}
 }

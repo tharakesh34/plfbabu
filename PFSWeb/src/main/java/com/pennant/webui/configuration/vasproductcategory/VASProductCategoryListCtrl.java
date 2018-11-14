@@ -63,9 +63,9 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.service.vasproduct.VASProductCategoryService;
 import com.pennant.webui.configuration.vasproductcategory.model.VASProductCategoryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/vasproduct/VASProductCategory/VASProductCategoryList.zul file.
@@ -73,30 +73,30 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCategory> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(VASProductCategoryListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(VASProductCategoryListCtrl.class);
 
-	protected Window							window_VASProductCategoryList;
-	protected Borderlayout						borderLayout_VASProductCategoryList;
-	protected Paging							pagingVASProductCategoryList;
-	protected Listbox							listBoxVASProductCategory;
+	protected Window window_VASProductCategoryList;
+	protected Borderlayout borderLayout_VASProductCategoryList;
+	protected Paging pagingVASProductCategoryList;
+	protected Listbox listBoxVASProductCategory;
 
-	protected Listheader						listheader_ProductCtg;
-	protected Listheader						listheader_ProductCtgDesc;
-	protected Listheader 						listheader_ProductCtgActive;
+	protected Listheader listheader_ProductCtg;
+	protected Listheader listheader_ProductCtgDesc;
+	protected Listheader listheader_ProductCtgActive;
 
-	protected Button							button_VASProductCategoryList_NewVASProductCategory;
-	protected Button							button_VASProductCategoryList_VASProductCategorySearch;
+	protected Button button_VASProductCategoryList_NewVASProductCategory;
+	protected Button button_VASProductCategoryList_VASProductCategorySearch;
 
-	protected Textbox							productCtg;
-	protected Textbox							productCtgDesc;
-	protected Checkbox							active;
+	protected Textbox productCtg;
+	protected Textbox productCtgDesc;
+	protected Checkbox active;
 
-	protected Listbox							sortOperator_ProductCtg;
-	protected Listbox							sortOperator_ProductCtgDesc;
-	protected Listbox							sortOperator_Active;
+	protected Listbox sortOperator_ProductCtg;
+	protected Listbox sortOperator_ProductCtgDesc;
+	protected Listbox sortOperator_Active;
 
-	private transient VASProductCategoryService	vASProductCategoryService;
+	private transient VASProductCategoryService vASProductCategoryService;
 
 	/**
 	 * default constructor.<br>
@@ -121,8 +121,8 @@ public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCatego
 	 */
 	public void onCreate$window_VASProductCategoryList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_VASProductCategoryList, borderLayout_VASProductCategoryList,
-				listBoxVASProductCategory, pagingVASProductCategoryList);
+		setPageComponents(window_VASProductCategoryList, borderLayout_VASProductCategoryList, listBoxVASProductCategory,
+				pagingVASProductCategoryList);
 		setItemRender(new VASProductCategoryListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -134,8 +134,8 @@ public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCatego
 				Operators.STRING);
 		registerField("productCtgDesc", listheader_ProductCtgDesc, SortOrder.NONE, productCtgDesc,
 				sortOperator_ProductCtgDesc, Operators.STRING);
-		registerField("active", listheader_ProductCtgActive, SortOrder.NONE, active,
-				sortOperator_Active, Operators.BOOLEAN);
+		registerField("active", listheader_ProductCtgActive, SortOrder.NONE, active, sortOperator_Active,
+				Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -239,8 +239,7 @@ public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCatego
 		arg.put("vASProductCategoryListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/VASProductCategory/VASProductCategoryDialog.zul",
-					null, arg);
+			Executions.createComponents("/WEB-INF/pages/VASProductCategory/VASProductCategoryDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

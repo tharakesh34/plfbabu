@@ -59,13 +59,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerBankInfo table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "bankId","bankName", "accountNumber", "accountType","salaryAccount" })
+@XmlType(propOrder = { "bankId", "bankName", "accountNumber", "accountType", "salaryAccount" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity  {
+public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -3217987429162088120L;
 
 	private long custID = Long.MIN_VALUE;
-	
+
 	@XmlElement
 	private long bankId = Long.MIN_VALUE;
 
@@ -88,7 +88,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity  
 	@XmlElement
 	private boolean salaryAccount;
 	private String sourceId;
-	
+
 	//As per Profectus documnet below fields added
 	private int creditTranNo = 0;
 	private BigDecimal creditTranAmt = BigDecimal.ZERO;
@@ -425,5 +425,5 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity  
 	public void setEodBalAvg(BigDecimal eodBalAvg) {
 		this.eodBalAvg = eodBalAvg;
 	}
-	
+
 }

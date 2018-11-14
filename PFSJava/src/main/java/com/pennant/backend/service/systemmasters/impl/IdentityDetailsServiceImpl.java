@@ -75,7 +75,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	public IdentityDetailsServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -97,15 +97,12 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTIdentityType/BMTIdentityType_Temp by using IdentityDetailsDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using IdentityDetailsDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTIdentityType by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTIdentityType/BMTIdentityType_Temp by using IdentityDetailsDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using IdentityDetailsDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -122,16 +119,14 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 			return auditHeader;
 		}
 		String tableType = "";
-		IdentityDetails identityDetails = (IdentityDetails) auditHeader
-				.getAuditDetail().getModelData();
+		IdentityDetails identityDetails = (IdentityDetails) auditHeader.getAuditDetail().getModelData();
 
 		if (identityDetails.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (identityDetails.isNew()) {
-			identityDetails.setId(getIdentityDetailsDAO().save(identityDetails,
-					tableType));
+			identityDetails.setId(getIdentityDetailsDAO().save(identityDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(identityDetails);
 			auditHeader.setAuditReference(identityDetails.getId());
 		} else {
@@ -145,12 +140,10 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTIdentityType by using IdentityDetailsDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTIdentityType by using IdentityDetailsDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -166,8 +159,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		IdentityDetails identityDetails = (IdentityDetails) auditHeader
-				.getAuditDetail().getModelData();
+		IdentityDetails identityDetails = (IdentityDetails) auditHeader.getAuditDetail().getModelData();
 
 		getIdentityDetailsDAO().delete(identityDetails, "");
 
@@ -177,8 +169,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * getIdentityDetailsById fetch the details by using IdentityDetailsDAO's
-	 * getIdentityDetailsById method.
+	 * getIdentityDetailsById fetch the details by using IdentityDetailsDAO's getIdentityDetailsById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -192,10 +183,8 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * getApprovedIdentityDetailsById fetch the details by using
-	 * IdentityDetailsDAO's getIdentityDetailsById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * BMTIdentityType.
+	 * getApprovedIdentityDetailsById fetch the details by using IdentityDetailsDAO's getIdentityDetailsById method .
+	 * with parameter id and type as blank. it fetches the approved records from the BMTIdentityType.
 	 * 
 	 * @param id
 	 *            (String)
@@ -206,20 +195,15 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getIdentityDetailsDAO().delete with parameters identityDetails,""
-	 * b) NEW Add new record in to main table by using
-	 * getIdentityDetailsDAO().save with parameters identityDetails,"" c) EDIT
-	 * Update record in the main table by using getIdentityDetailsDAO().update
-	 * with parameters identityDetails,"" 3) Delete the record from the workFlow
-	 * table by using getIdentityDetailsDAO().delete with parameters
-	 * identityDetails,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTIdentityType by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getIdentityDetailsDAO().delete with
+	 * parameters identityDetails,"" b) NEW Add new record in to main table by using getIdentityDetailsDAO().save with
+	 * parameters identityDetails,"" c) EDIT Update record in the main table by using getIdentityDetailsDAO().update
+	 * with parameters identityDetails,"" 3) Delete the record from the workFlow table by using
+	 * getIdentityDetailsDAO().delete with parameters identityDetails,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -237,11 +221,9 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 			return auditHeader;
 		}
 		IdentityDetails identityDetails = new IdentityDetails();
-		BeanUtils.copyProperties((IdentityDetails) auditHeader.getAuditDetail()
-				.getModelData(), identityDetails);
+		BeanUtils.copyProperties((IdentityDetails) auditHeader.getAuditDetail().getModelData(), identityDetails);
 
-		if (identityDetails.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (identityDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getIdentityDetailsDAO().delete(identityDetails, "");
@@ -253,8 +235,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 			identityDetails.setNextTaskId("");
 			identityDetails.setWorkflowId(0);
 
-			if (identityDetails.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (identityDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				identityDetails.setRecordType("");
 				getIdentityDetailsDAO().save(identityDetails, "");
@@ -279,13 +260,10 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getIdentityDetailsDAO().delete with
-	 * parameters identityDetails,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getIdentityDetailsDAO().delete with parameters identityDetails,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTIdentityType by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -300,8 +278,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		IdentityDetails identityDetails = (IdentityDetails) auditHeader
-				.getAuditDetail().getModelData();
+		IdentityDetails identityDetails = (IdentityDetails) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getIdentityDetailsDAO().delete(identityDetails, "_Temp");
@@ -312,20 +289,16 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -334,40 +307,35 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getIdentityDetailsDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getIdentityDetailsDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		IdentityDetails identityDetails = (IdentityDetails) auditDetail
-				.getModelData();
+		IdentityDetails identityDetails = (IdentityDetails) auditDetail.getModelData();
 		IdentityDetails tempIdentityDetails = null;
 
 		if (identityDetails.isWorkflow()) {
-			tempIdentityDetails = getIdentityDetailsDAO()
-					.getIdentityDetailsById(identityDetails.getId(), "_Temp");
+			tempIdentityDetails = getIdentityDetailsDAO().getIdentityDetailsById(identityDetails.getId(), "_Temp");
 		}
 
-		IdentityDetails befIdentityDetails = getIdentityDetailsDAO()
-				.getIdentityDetailsById(identityDetails.getId(), "");
+		IdentityDetails befIdentityDetails = getIdentityDetailsDAO().getIdentityDetailsById(identityDetails.getId(),
+				"");
 		IdentityDetails oldIdentityDetails = identityDetails.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = identityDetails.getIdentityType();
-		errParm[0] = PennantJavaUtil.getLabel("label_IdentityType") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_IdentityType") + ":" + valueParm[0];
 
 		if (identityDetails.isNew()) { // for New record or new record into work
 			// flow
@@ -376,30 +344,20 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 				// records
 				if (befIdentityDetails != null) { // Record Already Exists in
 					// the table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (identityDetails.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (identityDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
-					if (befIdentityDetails != null
-							|| tempIdentityDetails != null) { // if
-						  					// records already exists
-							 				// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+					if (befIdentityDetails != null || tempIdentityDetails != null) { // if
+						// records already exists
+						// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befIdentityDetails == null
-							|| tempIdentityDetails != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+					if (befIdentityDetails == null || tempIdentityDetails != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -411,25 +369,18 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 
 				if (befIdentityDetails == null) { // if records not exists in
 					// the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
 					if (oldIdentityDetails != null
-							&& !oldIdentityDetails.getLastMntOn().equals(
-									befIdentityDetails.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldIdentityDetails.getLastMntOn().equals(befIdentityDetails.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -438,27 +389,17 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 
 				if (tempIdentityDetails == null) { // if records not exists in
 					// the Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempIdentityDetails != null
-						&& oldIdentityDetails != null
-						&& !oldIdentityDetails.getLastMntOn().equals(
-								tempIdentityDetails.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempIdentityDetails != null && oldIdentityDetails != null
+						&& !oldIdentityDetails.getLastMntOn().equals(tempIdentityDetails.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !identityDetails.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !identityDetails.isWorkflow()) {
 			auditDetail.setBefImage(befIdentityDetails);
 		}
 		logger.debug("Leaving");

@@ -77,23 +77,22 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	private static final Logger logger = Logger.getLogger(EmpStsCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_EmpStsCodeDialog;	
+	protected Window window_EmpStsCodeDialog;
 
-	protected Textbox 	empStsCode; 			
-	protected Textbox 	empStsDesc; 			
-	protected Checkbox 	empStsIsActive; 		
+	protected Textbox empStsCode;
+	protected Textbox empStsDesc;
+	protected Checkbox empStsIsActive;
 
 	// not autoWired variables
-	private EmpStsCode stsCode; 	// overHanded per parameter
+	private EmpStsCode stsCode; // overHanded per parameter
 	private transient EmpStsCodeListCtrl empStsCodeListCtrl; // overHanded per
 	// parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient EmpStsCodeService empStsCodeService;
 
@@ -112,9 +111,8 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected EmpStsCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected EmpStsCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -126,7 +124,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		setPageComponents(window_EmpStsCodeDialog);
 
 		try {
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -140,13 +138,11 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 				setStsCode(null);
 			}
 
-			doLoadWorkFlow(this.stsCode.isWorkflow(),
-					this.stsCode.getWorkflowId(), this.stsCode.getNextTaskId());
+			doLoadWorkFlow(this.stsCode.isWorkflow(), this.stsCode.getWorkflowId(), this.stsCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"EmpStsCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "EmpStsCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -155,8 +151,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 			// or
 			// delete empStsCode here.
 			if (arguments.containsKey("empStsCodeListCtrl")) {
-				setEmpStsCodeListCtrl((EmpStsCodeListCtrl) arguments
-						.get("empStsCodeListCtrl"));
+				setEmpStsCodeListCtrl((EmpStsCodeListCtrl) arguments.get("empStsCodeListCtrl"));
 			} else {
 				setEmpStsCodeListCtrl(null);
 			}
@@ -190,8 +185,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -301,8 +295,9 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		this.empStsDesc.setValue(aEmpStsCode.getEmpStsDesc());
 		this.empStsIsActive.setChecked(aEmpStsCode.isEmpStsIsActive());
 		this.recordStatus.setValue(aEmpStsCode.getRecordStatus());
-		
-		if(aEmpStsCode.isNew() || (aEmpStsCode.getRecordType() != null ? aEmpStsCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aEmpStsCode.isNew() || (aEmpStsCode.getRecordType() != null ? aEmpStsCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.empStsIsActive.setChecked(true);
 			this.empStsIsActive.setDisabled(true);
 		}
@@ -355,8 +350,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEmpStsCode
 	 * @throws Exception
@@ -389,7 +383,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 			doWriteBeanToComponents(aEmpStsCode);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_EmpStsCodeDialog.onClose();
 		} catch (Exception e) {
@@ -406,13 +400,16 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 
 		setValidationOn(true);
 
-		if (!this.empStsCode.isReadonly()){
-			this.empStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EmpStsCodeDialog_EmpStsCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.empStsCode.isReadonly()) {
+			this.empStsCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmpStsCodeDialog_EmpStsCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.empStsDesc.isReadonly()){
-			this.empStsDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EmpStsCodeDialog_EmpStsDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.empStsDesc.isReadonly()) {
+			this.empStsDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmpStsCodeDialog_EmpStsDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -467,9 +464,8 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_EmpStsCodeDialog_EmpStsCode.value")+" : "+aEmpStsCode.getEmpStsCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_EmpStsCodeDialog_EmpStsCode.value") + " : " + aEmpStsCode.getEmpStsCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aEmpStsCode.getRecordType())) {
 				aEmpStsCode.setVersion(aEmpStsCode.getVersion() + 1);
@@ -696,7 +692,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aEmpStsCode,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aEmpStsCode, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -757,8 +753,8 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_EmpStsCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -800,10 +796,9 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(EmpStsCode aEmpStsCode, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aEmpStsCode.getBefImage(), aEmpStsCode);
-		return new AuditHeader(String.valueOf(aEmpStsCode.getId()), null, null,
-				null, auditDetail, aEmpStsCode.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aEmpStsCode.getBefImage(), aEmpStsCode);
+		return new AuditHeader(String.valueOf(aEmpStsCode.getId()), null, null, null, auditDetail,
+				aEmpStsCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -819,7 +814,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_EmpStsCodeDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_EmpStsCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -845,7 +840,6 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		getEmpStsCodeListCtrl().search();
 	}
 
-
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.stsCode.getEmpStsCode());
@@ -858,6 +852,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -865,6 +860,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	public EmpStsCode getStsCode() {
 		return this.stsCode;
 	}
+
 	public void setStsCode(EmpStsCode stsCode) {
 		this.stsCode = stsCode;
 	}
@@ -872,6 +868,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	public void setEmpStsCodeService(EmpStsCodeService empStsCodeService) {
 		this.empStsCodeService = empStsCodeService;
 	}
+
 	public EmpStsCodeService getEmpStsCodeService() {
 		return this.empStsCodeService;
 	}
@@ -879,6 +876,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	public void setEmpStsCodeListCtrl(EmpStsCodeListCtrl empStsCodeListCtrl) {
 		this.empStsCodeListCtrl = empStsCodeListCtrl;
 	}
+
 	public EmpStsCodeListCtrl getEmpStsCodeListCtrl() {
 		return this.empStsCodeListCtrl;
 	}

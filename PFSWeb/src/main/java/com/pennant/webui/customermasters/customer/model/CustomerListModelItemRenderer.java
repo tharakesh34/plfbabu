@@ -60,37 +60,37 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerListModelItemRenderer implements ListitemRenderer<Customer>, Serializable {
 
 	private static final long serialVersionUID = 2274326782681085785L;
-	
+
 	public CustomerListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Customer customer, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(customer.getCustCIF().trim());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustCoreBank());
+		lc = new Listcell(customer.getCustCoreBank());
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustShrtName());
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustDftBranch());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getLovDescCustCtgCodeName());
+		lc = new Listcell(customer.getLovDescCustCtgCodeName());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getLovDescCustTypeCodeName());
+		lc = new Listcell(customer.getLovDescCustTypeCodeName());
 		lc.setParent(item);
 		lc = new Listcell(customer.getLovDescRequestStage());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getRecordStatus());
+		lc = new Listcell(customer.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customer.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", customer.getCustID());
 		item.setAttribute("data", customer);
-				
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerItemDoubleClicked");
 	}
 }

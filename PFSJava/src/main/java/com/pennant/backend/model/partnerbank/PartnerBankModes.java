@@ -1,26 +1,25 @@
 package com.pennant.backend.model.partnerbank;
 
 public class PartnerBankModes {
-	private long 				partnerBankId = Long.MIN_VALUE;
-	private String				purpose;
-	private String				paymentMode;
-	private String				partnerBankName;
-	private String				partnerBankCode;
+	private long partnerBankId = Long.MIN_VALUE;
+	private String purpose;
+	private String paymentMode;
+	private String partnerBankName;
+	private String partnerBankCode;
 
 	public PartnerBankModes() {
 		super();
 	}
-	
+
 	public PartnerBankModes(long partnerBankId) {
 		super();
 		this.partnerBankId = partnerBankId;
 	}
-	
+
 	public long getPartnerBankId() {
 		return partnerBankId;
 	}
 
-	
 	public void setPartnerBankId(long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}

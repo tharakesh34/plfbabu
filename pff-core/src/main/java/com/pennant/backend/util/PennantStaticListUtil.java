@@ -266,8 +266,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> filtersList;
 
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
-	private static List<ValueLabel> queryDetailExtRolesList= new ArrayList<>();
-	
+	private static List<ValueLabel> queryDetailExtRolesList = new ArrayList<>();
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -494,8 +494,7 @@ public class PennantStaticListUtil {
 	}
 
 	/**
-	 * Method for getting List of Module Name And SubModule List For
-	 * ExtendedFieldHeader
+	 * Method for getting List of Module Name And SubModule List For ExtendedFieldHeader
 	 * 
 	 * @return
 	 */
@@ -512,8 +511,7 @@ public class PennantStaticListUtil {
 	}
 
 	/**
-	 * Method for getting List of Module Name And SubModule List For
-	 * ExtendedFieldHeader
+	 * Method for getting List of Module Name And SubModule List For ExtendedFieldHeader
 	 * 
 	 * @return
 	 */
@@ -3398,8 +3396,7 @@ public class PennantStaticListUtil {
 	}
 
 	/**
-	 * Method for Fetching Types of Rounding modes for Interest Calculation
-	 * balance amount
+	 * Method for Fetching Types of Rounding modes for Interest Calculation balance amount
 	 * 
 	 * @return
 	 */
@@ -3450,8 +3447,10 @@ public class PennantStaticListUtil {
 
 		if (authTypes == null) {
 			authTypes = new ArrayList<>(2);
-			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name(), Labels.getLabel("label_Auth_Type_Internal")));
-			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.LDAP.name(), Labels.getLabel("label_Auth_Type_External")));
+			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.DAO.name(),
+					Labels.getLabel("label_Auth_Type_Internal")));
+			authTypes.add(new ValueLabel(com.pennanttech.pennapps.core.App.AuthenticationType.LDAP.name(),
+					Labels.getLabel("label_Auth_Type_External")));
 		}
 		return authTypes;
 	}
@@ -3953,8 +3952,7 @@ public class PennantStaticListUtil {
 				new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
 		/*
 		 * schedulCalculationCodes.put(CalculationConstants.RPYCHG_ADDLAST, new
-		 * ValueLabel(CalculationConstants.RPYCHG_ADDLAST,
-		 * Labels.getLabel("label_Add_Last")));
+		 * ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
 		 */
 		scheduleCalculationCodes.put(CalculationConstants.RPYCHG_ADJTERMS,
 				new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));
@@ -4280,9 +4278,10 @@ public class PennantStaticListUtil {
 		return filtersList;
 	}
 
-	public static List<ValueLabel> getQueryDetailExtRolesList(){
+	public static List<ValueLabel> getQueryDetailExtRolesList() {
 		return queryDetailExtRolesList;
 	}
+
 	/**
 	 * Adds the custom extended field master.
 	 * 

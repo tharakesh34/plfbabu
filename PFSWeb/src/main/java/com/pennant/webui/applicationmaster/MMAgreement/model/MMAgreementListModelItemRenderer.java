@@ -18,19 +18,19 @@ import com.pennant.util.PennantAppUtil;
 public class MMAgreementListModelItemRenderer implements ListitemRenderer<MMAgreement>, Serializable {
 
 	private static final long serialVersionUID = -4562142056572229437L;
-	
+
 	public MMAgreementListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, MMAgreement aMMAgreement, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell();
 		lc = new Listcell(aMMAgreement.getMMAReference());
-		lc.setParent(item);		
-	  	lc = new Listcell(aMMAgreement.getCustCIF());
+		lc.setParent(item);
+		lc = new Listcell(aMMAgreement.getCustCIF());
 		lc.setParent(item);
 		int finFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 		lc = new Listcell(PennantAppUtil.amountFormate(aMMAgreement.getContractAmt(), finFormatter));
@@ -38,14 +38,14 @@ public class MMAgreementListModelItemRenderer implements ListitemRenderer<MMAgre
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(aMMAgreement.getContractDate()));
 		lc.setParent(item);
-		if(aMMAgreement.getRate() == null){
+		if (aMMAgreement.getRate() == null) {
 			lc = new Listcell("");
 			lc.setParent(item);
-		}else{
-			lc = new Listcell(PennantApplicationUtil.formatRate(aMMAgreement.getRate().doubleValue(),9));
-			lc.setParent(item);		
+		} else {
+			lc = new Listcell(PennantApplicationUtil.formatRate(aMMAgreement.getRate().doubleValue(), 9));
+			lc.setParent(item);
 		}
-	  	lc = new Listcell(aMMAgreement.getRecordStatus());
+		lc = new Listcell(aMMAgreement.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(aMMAgreement.getRecordType()));
 		lc.setParent(item);

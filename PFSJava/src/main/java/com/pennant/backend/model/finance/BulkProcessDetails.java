@@ -12,10 +12,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String finReference;
-	private String finType; 
+	private String finReference;
+	private String finType;
 	private String finCCY;
 	private long custID;
 	private String finBranch;
@@ -25,14 +25,14 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 	private Date deferedSchdDate;
 	private Date reCalStartDate;
 	private Date reCalEndDate;
-	
+
 	private long bulkProcessId;
 	private BigDecimal oldProfitRate = BigDecimal.ZERO;
 	private BigDecimal newProfitRate = BigDecimal.ZERO;
 	private int profitChange = 0;
-	private boolean alwProcess=false;
-     
-	private boolean newRecord=false;
+	private boolean alwProcess = false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private BulkProcessDetails befImage;
 	private LoggedInUser userDetails;
@@ -41,6 +41,7 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 	private String schdMethodDesc;
 	private String rcdMaintainSts;
 	private boolean schdChangeAlw;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -49,12 +50,12 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("BulkProcessDetails"));
 	}
-	
+
 	public BulkProcessDetails(long id) {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finType");
@@ -66,7 +67,7 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("schdMethodDesc");
 		excludeFields.add("rcdMaintainSts");
 		excludeFields.add("schdChangeAlw");
-		
+
 		return excludeFields;
 	}
 
@@ -75,119 +76,140 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
-	
-	
-	 public String getLovDescProductCode() {
-    	return lovDescProductCode;
-    }
+		this.finReference = finReference;
+	}
+
+	public String getLovDescProductCode() {
+		return lovDescProductCode;
+	}
+
 	public void setLovDescProductCode(String lovDescProductCode) {
-    	this.lovDescProductCode = lovDescProductCode;
-    } 
-	
+		this.lovDescProductCode = lovDescProductCode;
+	}
+
 	public Date getLovDescEventFromDate() {
-    	return lovDescEventFromDate;
-    }
+		return lovDescEventFromDate;
+	}
+
 	public void setLovDescEventFromDate(Date lovDescEventFromDate) {
-    	this.lovDescEventFromDate = lovDescEventFromDate;
-    }
-	
+		this.lovDescEventFromDate = lovDescEventFromDate;
+	}
+
 	public Date getLovDescEventToDate() {
-    	return lovDescEventToDate;
-    }
+		return lovDescEventToDate;
+	}
+
 	public void setLovDescEventToDate(Date lovDescEventToDate) {
-    	this.lovDescEventToDate = lovDescEventToDate;
-    }
+		this.lovDescEventToDate = lovDescEventToDate;
+	}
+
 	public long getBulkProcessId() {
-    	return bulkProcessId;
-    }
+		return bulkProcessId;
+	}
+
 	public void setBulkProcessId(long bulkProcessId) {
-    	this.bulkProcessId = bulkProcessId;
-    }
+		this.bulkProcessId = bulkProcessId;
+	}
+
 	public BigDecimal getOldProfitRate() {
-    	return oldProfitRate;
-    }
+		return oldProfitRate;
+	}
+
 	public void setOldProfitRate(BigDecimal oldProfitRate) {
-    	this.oldProfitRate = oldProfitRate;
-    }
+		this.oldProfitRate = oldProfitRate;
+	}
+
 	public BigDecimal getNewProfitRate() {
-    	return newProfitRate;
-    }
+		return newProfitRate;
+	}
+
 	public void setNewProfitRate(BigDecimal newProfitRate) {
-    	this.newProfitRate = newProfitRate;
-    }
+		this.newProfitRate = newProfitRate;
+	}
+
 	public int getProfitChange() {
-    	return profitChange;
-    }
+		return profitChange;
+	}
+
 	public void setProfitChange(int profitChange) {
-    	this.profitChange = profitChange;
-    }
+		this.profitChange = profitChange;
+	}
+
 	public boolean isNewRecord() {
-    	return newRecord;
-    }
+		return newRecord;
+	}
+
 	public void setNewRecord(boolean newRecord) {
-    	this.newRecord = newRecord;
-    }
+		this.newRecord = newRecord;
+	}
+
 	public String getLovValue() {
-    	return lovValue;
-    }
+		return lovValue;
+	}
+
 	public void setLovValue(String lovValue) {
-    	this.lovValue = lovValue;
-    }
+		this.lovValue = lovValue;
+	}
+
 	public BulkProcessDetails getBefImage() {
-    	return befImage;
-    }
+		return befImage;
+	}
+
 	public void setBefImage(BulkProcessDetails befImage) {
-    	this.befImage = befImage;
-    }
+		this.befImage = befImage;
+	}
+
 	public LoggedInUser getUserDetails() {
-    	return userDetails;
-    }
+		return userDetails;
+	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
-    	this.userDetails = userDetails;
-    }
+		this.userDetails = userDetails;
+	}
+
 	public long getId() {
-	    return bulkProcessId;
-    }
+		return bulkProcessId;
+	}
+
 	public void setId(long id) {
-	    this.bulkProcessId = id;
-    }
+		this.bulkProcessId = id;
+	}
 
 	public Date getDeferedSchdDate() {
-	    return deferedSchdDate;
-    }
+		return deferedSchdDate;
+	}
 
 	public void setDeferedSchdDate(Date deferedSchdDate) {
-	    this.deferedSchdDate = deferedSchdDate;
-    }
+		this.deferedSchdDate = deferedSchdDate;
+	}
 
 	public boolean isAlwProcess() {
-    	return alwProcess;
-    }
+		return alwProcess;
+	}
 
 	public void setAlwProcess(boolean alwProcess) {
-    	this.alwProcess = alwProcess;
-    }
+		this.alwProcess = alwProcess;
+	}
 
 	public Date getReCalStartDate() {
-    	return reCalStartDate;
-    }
+		return reCalStartDate;
+	}
 
 	public void setReCalStartDate(Date reCalStartDate) {
-    	this.reCalStartDate = reCalStartDate;
-    }
+		this.reCalStartDate = reCalStartDate;
+	}
 
 	public Date getReCalEndDate() {
-    	return reCalEndDate;
-    }
+		return reCalEndDate;
+	}
 
 	public void setReCalEndDate(Date reCalEndDate) {
-    	this.reCalEndDate = reCalEndDate;
-    }
+		this.reCalEndDate = reCalEndDate;
+	}
 
 	public String getFinType() {
 		return finType;
@@ -244,6 +266,7 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 	public void setSchdMethodDesc(String schdMethodDesc) {
 		this.schdMethodDesc = schdMethodDesc;
 	}
+
 	public String getRcdMaintainSts() {
 		return rcdMaintainSts;
 	}
@@ -259,7 +282,5 @@ public class BulkProcessDetails extends AbstractWorkflowEntity implements Entity
 	public void setSchdChangeAlw(boolean schdChangeAlw) {
 		this.schdChangeAlw = schdChangeAlw;
 	}
-
-
 
 }

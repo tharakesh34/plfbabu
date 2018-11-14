@@ -55,7 +55,7 @@ import org.zkoss.zul.Space;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.util.PennantConstants;
 
-public class RateBox extends Hbox{
+public class RateBox extends Hbox {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Logger.getLogger(RateBox.class);
@@ -66,22 +66,21 @@ public class RateBox extends Hbox{
 	private Decimalbox marginRate;
 	private Decimalbox effRate;
 	private Hbox hbox;
-	private int rateMaxlength = 8; 
+	private int rateMaxlength = 8;
 
-	
 	/**
 	 * FrequencyBox Constructor Defining the components and events
 	 */
 	public RateBox() {
 		super();
 		logger.debug("Entering");
-		
+
 		space = new Space();
 		space.setWidth("2px");
 		this.appendChild(space);
-		
+
 		hbox = new Hbox();
-		
+
 		baseRateBox = new ExtendedCombobox(false);
 		baseRateBox.getTextbox().setPlaceholder("base");
 		baseRateBox.setTextBoxWidth(60);
@@ -92,7 +91,7 @@ public class RateBox extends Hbox{
 		specialRateBox.getTextbox().setPlaceholder("special");
 		specialRateBox.setTextBoxWidth(60);
 		hbox.appendChild(specialRateBox);
-		
+
 		marginRate = new Decimalbox();
 		marginRate.setMaxlength(13);
 		marginRate.setFormat(PennantConstants.rateFormate9);
@@ -103,7 +102,7 @@ public class RateBox extends Hbox{
 		marginRate.setWidth("79px");
 		marginRate.addForward("onChange", this, "onChangeMargin");
 		hbox.appendChild(marginRate);
-		
+
 		effRate = new Decimalbox();
 		effRate.setVisible(false);
 		effRate.setReadonly(true);
@@ -114,14 +113,14 @@ public class RateBox extends Hbox{
 		effRate.setHeight("23px");
 		effRate.setWidth("79px");
 		hbox.appendChild(effRate);
-		
+
 		this.appendChild(hbox);
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Called when changing the value of the text box
+	 * 
 	 * @param event
 	 */
 	public void onChangeMargin(Event event) {
@@ -129,142 +128,156 @@ public class RateBox extends Hbox{
 		Events.postEvent("onFulfill", this, PennantConstants.RATE_MARGIN);
 		logger.debug("Leaving");
 	}
-	
-	public Object getBaseObject(){
+
+	public Object getBaseObject() {
 		return this.baseRateBox.getObject();
 	}
-	
-	public Object getSpecialObject(){
+
+	public Object getSpecialObject() {
 		return this.specialRateBox.getObject();
 	}
-	
-	public ExtendedCombobox getBaseComp(){
+
+	public ExtendedCombobox getBaseComp() {
 		return this.baseRateBox;
 	}
-	
-	public ExtendedCombobox getSpecialComp(){
+
+	public ExtendedCombobox getSpecialComp() {
 		return this.specialRateBox;
 	}
-	
-	public Decimalbox getMarginComp(){
+
+	public Decimalbox getMarginComp() {
 		return this.marginRate;
 	}
-	
-	public Decimalbox getEffRateComp(){
+
+	public Decimalbox getEffRateComp() {
 		return this.effRate;
 	}
-	
-	public String getBaseValue(){
+
+	public String getBaseValue() {
 		return this.baseRateBox.getValue();
 	}
-	public void setBaseValue(String baseValue){
+
+	public void setBaseValue(String baseValue) {
 		this.baseRateBox.setValue(baseValue);
 	}
-	
-	public String getBaseDescription(){
+
+	public String getBaseDescription() {
 		return this.baseRateBox.getDescription();
 	}
-	public void setBaseDescription(String baseDesc){
+
+	public void setBaseDescription(String baseDesc) {
 		this.baseRateBox.setDescription(baseDesc);
 	}
-	
-	public String getSpecialValue(){
+
+	public String getSpecialValue() {
 		return this.specialRateBox.getValue();
 	}
-	public void setSpecialValue(String spclValue){
+
+	public void setSpecialValue(String spclValue) {
 		this.specialRateBox.setValue(spclValue);
 	}
-	
-	public String getSpecialDescription(){
+
+	public String getSpecialDescription() {
 		return this.specialRateBox.getDescription();
 	}
-	public void setSpecialDescription(String spclDesc){
+
+	public void setSpecialDescription(String spclDesc) {
 		this.specialRateBox.setDescription(spclDesc);
 	}
-	
-	public BigDecimal getMarginValue(){
+
+	public BigDecimal getMarginValue() {
 		return this.marginRate.getValue();
 	}
-	public void setMarginValue(BigDecimal margin){
+
+	public void setMarginValue(BigDecimal margin) {
 		this.marginRate.setValue(margin);
 	}
-	public void setMarginText(String margin){
+
+	public void setMarginText(String margin) {
 		this.marginRate.setText(margin);
 	}
-	
-	public BigDecimal getEffRateValue(){
+
+	public BigDecimal getEffRateValue() {
 		return this.effRate.getValue();
 	}
-	public void setEffRateValue(BigDecimal effRate){
+
+	public void setEffRateValue(BigDecimal effRate) {
 		this.effRate.setValue(effRate);
 	}
-	public void setEffRateText(String margin){
+
+	public void setEffRateText(String margin) {
 		this.effRate.setText(margin);
 	}
-	
+
 	public void setBaseConstraint(String constraint) {
 		this.baseRateBox.setConstraint(constraint);
 	}
+
 	public void setBaseConstraint(Constraint constraint) {
 		this.baseRateBox.setConstraint(constraint);
 	}
-	
+
 	public void setSpecialConstraint(String constraint) {
 		this.specialRateBox.setConstraint(constraint);
 	}
+
 	public void setSpecialConstraint(Constraint constraint) {
 		this.specialRateBox.setConstraint(constraint);
 	}
-	
+
 	public void setMarginConstraint(String constraint) {
 		this.marginRate.setConstraint(constraint);
 	}
+
 	public void setMarginConstraint(Constraint constraint) {
 		this.marginRate.setConstraint(constraint);
 	}
-	
+
 	public void setBaseErrorMessage(String erroMsg) {
 		this.baseRateBox.setErrorMessage(erroMsg);
 	}
-	
+
 	public void setSpecialErrorMessage(String erroMsg) {
 		this.specialRateBox.setErrorMessage(erroMsg);
 	}
-	
+
 	public void setMarginErrorMessage(String erroMsg) {
 		this.marginRate.setErrorMessage(erroMsg);
 	}
-	
-	public void setReadonly(boolean isReadonly){
+
+	public void setReadonly(boolean isReadonly) {
 		setBaseReadonly(isReadonly);
 		setSpecialReadonly(isReadonly);
 		setMarginReadonly(isReadonly);
 	}
-	
-	public boolean isBaseReadonly(){
+
+	public boolean isBaseReadonly() {
 		return this.baseRateBox.isReadonly();
 	}
-	public void setBaseReadonly(boolean isReadonly){
+
+	public void setBaseReadonly(boolean isReadonly) {
 		this.baseRateBox.setReadonly(isReadonly);
-		this.baseRateBox.getTextbox().setPlaceholder(isReadonly?"":"base");
+		this.baseRateBox.getTextbox().setPlaceholder(isReadonly ? "" : "base");
 	}
-	
-	public boolean isSpecialReadonly(){
+
+	public boolean isSpecialReadonly() {
 		return this.specialRateBox.isReadonly();
 	}
-	public void setSpecialReadonly(boolean isReadonly){
+
+	public void setSpecialReadonly(boolean isReadonly) {
 		this.specialRateBox.setReadonly(isReadonly);
-		this.specialRateBox.getTextbox().setPlaceholder(isReadonly?"":"special");
+		this.specialRateBox.getTextbox().setPlaceholder(isReadonly ? "" : "special");
 	}
-	
-	public boolean isMarginReadonly(){
+
+	public boolean isMarginReadonly() {
 		return this.marginRate.isReadonly();
 	}
-	public void setMarginReadonly(boolean isReadonly){
+
+	public void setMarginReadonly(boolean isReadonly) {
 		this.marginRate.setReadonly(isReadonly);
-		this.marginRate.setPlaceholder(isReadonly?"":"margin");
+		this.marginRate.setPlaceholder(isReadonly ? "" : "margin");
 	}
-	
+
 	public void setMandatoryStyle(boolean mandatory) {
 		if (mandatory) {
 			this.space.setSclass(PennantConstants.mandateSclass);
@@ -272,28 +285,31 @@ public class RateBox extends Hbox{
 			this.space.setSclass("");
 		}
 	}
-	
-	public boolean isBaseVisible(){
+
+	public boolean isBaseVisible() {
 		return this.baseRateBox.isVisible();
 	}
-	public void setBaseVisible(boolean visible){
+
+	public void setBaseVisible(boolean visible) {
 		this.baseRateBox.setVisible(visible);
 	}
-	
-	public boolean isSpecialVisible(){
+
+	public boolean isSpecialVisible() {
 		return this.specialRateBox.isVisible();
 	}
-	
-	public void setEffectiveRateVisible(boolean visible){
+
+	public void setEffectiveRateVisible(boolean visible) {
 		this.effRate.setVisible(visible);
 	}
-	
-	public void setBaseProperties(String moduleName,String valueColumn,String descColumn){
-		this.baseRateBox.setProperties(moduleName, valueColumn, descColumn, PennantConstants.RATE_BASE, this.rateMaxlength);
+
+	public void setBaseProperties(String moduleName, String valueColumn, String descColumn) {
+		this.baseRateBox.setProperties(moduleName, valueColumn, descColumn, PennantConstants.RATE_BASE,
+				this.rateMaxlength);
 	}
-	
-	public void setSpecialProperties(String moduleName,String valueColumn,String descColumn){
-		this.specialRateBox.setProperties(moduleName, valueColumn, descColumn, PennantConstants.RATE_SPECIAL, this.rateMaxlength);
+
+	public void setSpecialProperties(String moduleName, String valueColumn, String descColumn) {
+		this.specialRateBox.setProperties(moduleName, valueColumn, descColumn, PennantConstants.RATE_SPECIAL,
+				this.rateMaxlength);
 	}
-	
+
 }

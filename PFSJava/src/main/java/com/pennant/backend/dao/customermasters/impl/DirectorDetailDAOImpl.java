@@ -66,15 +66,14 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implements DirectorDetailDAO {
-      private static Logger logger = Logger.getLogger(DirectorDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(DirectorDetailDAOImpl.class);
 
 	public DirectorDetailDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new DirectorDetail
+	 * This method set the Work Flow id based on the module name and return the new DirectorDetail
 	 * 
 	 * @return DirectorDetail
 	 */
@@ -93,8 +92,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method get the module from method getDirectorDetail() and set the
-	 * new record flag as true and return DirectorDetail()
+	 * This method get the module from method getDirectorDetail() and set the new record flag as true and return
+	 * DirectorDetail()
 	 * 
 	 * @return DirectorDetail
 	 */
@@ -203,10 +202,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Director Detail by key
-	 * DirectorId
+	 * This method Deletes the Record from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Director Detail by key DirectorId
 	 * 
 	 * @param Director
 	 *            Detail (directorDetail)
@@ -239,8 +236,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method Deletes the Records from the CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. depend on CustomerID
+	 * This method Deletes the Records from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. depend on
+	 * CustomerID
 	 * 
 	 * @param int(customerId)
 	 * @param type
@@ -267,9 +264,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method insert new Records into CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. it fetches the available Sequence form
-	 * SeqCustomerDirectorDetail by using getNextValue() method.
+	 * This method insert new Records into CustomerDirectorDetail or CustomerDirectorDetail_Temp. it fetches the
+	 * available Sequence form SeqCustomerDirectorDetail by using getNextValue() method.
 	 *
 	 * save Director Detail
 	 * 
@@ -317,10 +313,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method updates the Record CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Director Detail by key
-	 * DirectorId and Version
+	 * This method updates the Record CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Director Detail by key DirectorId and Version
 	 * 
 	 * @param Director
 	 *            Detail (directorDetail)

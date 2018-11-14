@@ -26,9 +26,9 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.service.IncomeExpenseDetailService;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
-public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHeader>{
+public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHeader> {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailListCtrl.class);
 
 	protected Window window_IncomeExpenseList;
@@ -39,26 +39,26 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 	// List headers
 	protected Listheader listheader_CIF;
 	protected Listheader listheader_FinancialYear;
-	
+
 	protected Button button_IncomeExpenseList_NewIncomeExpense;
 	protected Button button_IncomeExpenseList_IncomeExpenseSearch;
-	
+
 	// Search Fields
 	protected Listbox sortOperator_CIF;
 	protected Listbox sortOperator_FinancialYear;
-	
+
 	protected Textbox cif;
 	protected Intbox financialYear;
-	
+
 	private String module = "";
-	
+
 	@Autowired
 	private IncomeExpenseDetailService incomeExpenseDetailService;
-	
+
 	public IncomeExpenseDetailListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "IncomeExpenseHeader";
@@ -68,7 +68,7 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 		super.enquiryTableName = "org_income_expense_header_view";
 		this.module = getArgument("module");
 	}
-	
+
 	public void onCreate$window_IncomeExpenseList(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -88,19 +88,20 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 
 		registerField("id");
 		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
-		registerField("financialYear", listheader_FinancialYear, SortOrder.ASC, financialYear, sortOperator_FinancialYear, Operators.STRING);
-		
+		registerField("financialYear", listheader_FinancialYear, SortOrder.ASC, financialYear,
+				sortOperator_FinancialYear, Operators.STRING);
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -121,11 +122,11 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 		doReset();
 		search();
 	}
-	
+
 	public void onClick$button_IncomeExpenseList_IncomeExpenseSearch(Event event) {
 		search();
 	}
-	
+
 	public void onClick$button_IncomeExpenseList_NewIncomeExpense(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -139,6 +140,7 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -196,9 +198,11 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 
 		try {
 			if (incExpHeader.isNewRecord()) {
-				Executions.createComponents("/WEB-INF/pages/Organization/School/SchoolOrganizationSelect.zul", null, arg);
+				Executions.createComponents("/WEB-INF/pages/Organization/School/SchoolOrganizationSelect.zul", null,
+						arg);
 			} else {
-				Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul", null, arg);
+				Executions.createComponents("/WEB-INF/pages/Organization/School/IncomeExpenseDetailDialog.zul", null,
+						arg);
 			}
 		} catch (Exception e) {
 			logger.error("Exception:", e);

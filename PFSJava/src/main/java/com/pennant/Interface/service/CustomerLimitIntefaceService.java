@@ -11,7 +11,7 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerLimitIntefaceService {
-	
+
 	List<CustomerLimit> fetchLimitDetails(CustomerLimit customerLimit) throws InterfaceException;
 
 	List<CustomerLimit> fetchLimitEnquiryDetails(CustomerLimit customerLimit) throws InterfaceException;

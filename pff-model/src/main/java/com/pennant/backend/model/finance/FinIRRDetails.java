@@ -54,22 +54,23 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>IRRFeeType table</b>.<br>
  * 
  */
-public class FinIRRDetails extends AbstractWorkflowEntity  implements Entity {
-	private static final long	serialVersionUID	= 1L;
-	
-	private long				iRRID;
-	private String				finReference;
-	private String				iRRCode;
-	private BigDecimal 			iRR;
-	private String			    irrCodeDesc;
-	private boolean 			newRecord=false;
-	private String			    lovValue;
-	private IRRCode			    befImage;
-	private  LoggedInUser	    userDetails;
-	
+public class FinIRRDetails extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
+
+	private long iRRID;
+	private String finReference;
+	private String iRRCode;
+	private BigDecimal iRR;
+	private String irrCodeDesc;
+	private boolean newRecord = false;
+	private String lovValue;
+	private IRRCode befImage;
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
+
 	public String getiRRCode() {
 		return iRRCode;
 	}
@@ -85,6 +86,7 @@ public class FinIRRDetails extends AbstractWorkflowEntity  implements Entity {
 	public void setiRRID(long iRRID) {
 		this.iRRID = iRRID;
 	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -96,6 +98,7 @@ public class FinIRRDetails extends AbstractWorkflowEntity  implements Entity {
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -103,7 +106,7 @@ public class FinIRRDetails extends AbstractWorkflowEntity  implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -112,45 +115,50 @@ public class FinIRRDetails extends AbstractWorkflowEntity  implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public IRRCode getBefImage(){
+	public IRRCode getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(IRRCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(IRRCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
 	@Override
 	public long getId() {
 		return 0;
 	}
+
 	@Override
 	public void setId(long id) {
-		
+
 	}
+
 	public String getIrrCodeDesc() {
 		return irrCodeDesc;
 	}
+
 	public void setIrrCodeDesc(String irrCodeDesc) {
 		this.irrCodeDesc = irrCodeDesc;
 	}
+
 	public BigDecimal getIRR() {
 		return iRR;
 	}
+
 	public void setIRR(BigDecimal iRR) {
 		this.iRR = iRR;
 	}
-	
-	
+
 }

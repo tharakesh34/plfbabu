@@ -69,6 +69,6 @@ public interface SecurityRoleGroupsDAO {
 	SecurityRoleGroups getRoleGroupsByRoleAndGrpId(long roleID, long groupId);
 
 	List<SecurityRoleGroups> getRoleGroupsByRoleID(long roleId, String type);
-	
+
 	long getNextValue();
 }

@@ -61,13 +61,14 @@ import com.pennant.backend.model.applicationmaster.SysNotification;
 import com.pennant.backend.service.applicationmaster.SysNotificationService;
 import com.pennant.webui.applicationmaster.sysnotification.model.SysNotificationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SysNotification/SysNotificationList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SysNotification/SysNotificationList.zul
+ * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -111,7 +112,7 @@ public class SysNotificationListCtrl extends GFCBaseListCtrl<SysNotification> {
 		super.moduleCode = "SysNotification";
 		super.tableName = "SysNotification_AView";
 		super.queueTableName = "SysNotification_View";
-		
+
 		this.sendNotification = getArgument("sendNotification");
 	}
 
@@ -133,7 +134,7 @@ public class SysNotificationListCtrl extends GFCBaseListCtrl<SysNotification> {
 		} else {
 			registerButton(button_SysNotificationList_NewSysNotification, null, true);
 		}
-		
+
 		registerButton(button_SysNotificationList_SysNotificationSearch);
 
 		registerField("sysNotificationId");
@@ -224,7 +225,7 @@ public class SysNotificationListCtrl extends GFCBaseListCtrl<SysNotification> {
 		}
 
 		doShowDialogPage(sysNotification);
-		
+
 		logger.debug("Leaving");
 	}
 

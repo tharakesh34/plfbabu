@@ -54,47 +54,48 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pennant.backend.service.dashboard.DetailStatisticsService;
 
-public class StatisticsSheduler  extends QuartzJobBean implements StatefulJob, Serializable {
+public class StatisticsSheduler extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = 4716466545490087546L;
 	private static final Logger logger = Logger.getLogger(StatisticsSheduler.class);
-	
+
 	private static DetailStatisticsService detailStatisticsService;
 
 	@Override
 	public void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("Entering ");
-		logger.debug("Entering HashCode:"+this.hashCode());
-		
+		logger.debug("Entering HashCode:" + this.hashCode());
+
 		Key jobKey = context.getJobDetail().getKey();
 
 		context.toString();
 		logger.debug("--->Executing Audit Statistics fetching job");
-		if("AUDIT_STATISTICS".equalsIgnoreCase(jobKey.getName())){
+		if ("AUDIT_STATISTICS".equalsIgnoreCase(jobKey.getName())) {
 			try {
 				getDetailStatisticsService().saveOrUpdate();
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				try {
-					logger.debug("Audit statistics schedular is going into standby mode ,jobs execution Paused until it starts again");
+					logger.debug(
+							"Audit statistics schedular is going into standby mode ,jobs execution Paused until it starts again");
 					context.getScheduler().standby();
 				} catch (SchedulerException se) {
 					logger.error("Exception: ", se);
 				}
 			}
 		}
-		logger.debug("Leaving HashCode:"+this.hashCode());
+		logger.debug("Leaving HashCode:" + this.hashCode());
 		logger.debug("Leaving");
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
-	public  static DetailStatisticsService getDetailStatisticsService() {
+
+	public static DetailStatisticsService getDetailStatisticsService() {
 		return detailStatisticsService;
 	}
-	public void setDetailStatisticsService(
-			DetailStatisticsService detailStatisticsService) {
+
+	public void setDetailStatisticsService(DetailStatisticsService detailStatisticsService) {
 		StatisticsSheduler.detailStatisticsService = detailStatisticsService;
 	}
 }

@@ -85,17 +85,18 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 	@Override
 	public EMailType getEMailTypeById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		EMailType eMailType = new EMailType();
 		eMailType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT EmailTypeCode, EmailTypeDesc, EmailTypePriority, EmailTypeIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT EmailTypeCode, EmailTypeDesc, EmailTypePriority, EmailTypeIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTEMailTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where EmailTypeCode =:EmailTypeCode") ;
-				
+		selectSql.append(" Where EmailTypeCode =:EmailTypeCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eMailType);
 		RowMapper<EMailType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EMailType.class);
@@ -106,7 +107,7 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 			logger.error("Exception: ", e);
 			eMailType = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return eMailType;
 	}
@@ -146,7 +147,7 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(EMailType eMailType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -158,7 +159,8 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:EmailTypeCode, :EmailTypeDesc, :EmailTypePriority, :EmailTypeIsActive, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -173,7 +175,7 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 		logger.debug(Literal.LEAVING);
 		return eMailType.getId();
 	}
-	
+
 	@Override
 	public void update(EMailType eMailType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -184,7 +186,8 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 		sql.append(" set EmailTypeDesc = :EmailTypeDesc,");
 		sql.append(" EmailTypePriority = :EmailTypePriority, EmailTypeIsActive = :EmailTypeIsActive ,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where EmailTypeCode =:EmailTypeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
@@ -201,7 +204,7 @@ public class EMailTypeDAOImpl extends BasicDao<EMailType> implements EMailTypeDA
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(EMailType eMailType, TableType tableType) {
 		logger.debug(Literal.ENTERING);

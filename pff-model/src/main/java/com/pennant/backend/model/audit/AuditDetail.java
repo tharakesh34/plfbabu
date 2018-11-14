@@ -59,27 +59,27 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 
 public class AuditDetail implements java.io.Serializable {
-	private static final Logger	logger				= Logger.getLogger(AuditDetail.class);
-	private static final long	serialVersionUID	= 4576632220854658678L;
+	private static final Logger logger = Logger.getLogger(AuditDetail.class);
+	private static final long serialVersionUID = 4576632220854658678L;
 
-	private long				auditId				= Long.MIN_VALUE;
-	private Timestamp			auditDate;
-	private String				auditTranType;
-	private int					auditSeq;
-	private String				auditField;
-	private String				auditValue;
-	private Object				befImage;
-	private Object				modelData;
-	private boolean				extended;
+	private long auditId = Long.MIN_VALUE;
+	private Timestamp auditDate;
+	private String auditTranType;
+	private int auditSeq;
+	private String auditField;
+	private String auditValue;
+	private Object befImage;
+	private Object modelData;
+	private boolean extended;
 
-	private Timestamp			lovDescRcdInTime;
-	private Timestamp			lovDescRcdOutTime;
-	private String				lovDescRecordStatus;
-	private String				lovDescRoleCode		= "";
-	private String				lovDescNextRoleCode	= "";
-	private Object				lovDescAuditRef;
+	private Timestamp lovDescRcdInTime;
+	private Timestamp lovDescRcdOutTime;
+	private String lovDescRecordStatus;
+	private String lovDescRoleCode = "";
+	private String lovDescNextRoleCode = "";
+	private Object lovDescAuditRef;
 
-	private List<ErrorDetail>	errors				= new ArrayList<>();
+	private List<ErrorDetail> errors = new ArrayList<>();
 
 	public AuditDetail() {
 		super();
@@ -178,16 +178,13 @@ public class AuditDetail implements java.io.Serializable {
 		this.modelData = modelData;
 	}
 
-	
 	public boolean isNew() {
 		return getId() == Long.MIN_VALUE;
 	}
 
-	
 	public long getId() {
 		return auditId;
 	}
-
 
 	public void setId(long id) {
 		this.auditId = id;
@@ -246,7 +243,7 @@ public class AuditDetail implements java.io.Serializable {
 	}
 
 	public void setErrorDetails(List<ErrorDetail> errorDetails) {
-		if(errorDetails == null){
+		if (errorDetails == null) {
 			return;
 		}
 		this.errors = errorDetails;
@@ -298,14 +295,13 @@ public class AuditDetail implements java.io.Serializable {
 		}
 		errors.add(errorDetails);
 	}
-	
+
 	public void addErrorDetails(List<ErrorDetail> errorDetails) {
 		if (errorDetails == null) {
 			return;
 		}
 		errors.addAll(errorDetails);
 	}
-
 
 	public void setErrorDetail(long errorCode) {
 		setErrorDetail(new ErrorDetail("Key", String.valueOf(errorCode), null, null));
@@ -326,7 +322,7 @@ public class AuditDetail implements java.io.Serializable {
 	public void setExtended(boolean extended) {
 		this.extended = extended;
 	}
-	
+
 	/**
 	 * Method for Getting Field List for any object(VO)
 	 */
@@ -360,14 +356,15 @@ public class AuditDetail implements java.io.Serializable {
 		}
 		return auditField;
 	}
-	
+
 	/*
-	 * The below variable and methods duplicated from PennantJavaUtil.java to move the AuditDetail class into model layer.
+	 * The below variable and methods duplicated from PennantJavaUtil.java to move the AuditDetail class into model
+	 * layer.
 	 * 
-	 * TODO The below methods needs to be validate 
+	 * TODO The below methods needs to be validate
 	 */
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
-	
+
 	/**
 	 * Method for Getting Field List for any object(VO)
 	 */
@@ -393,7 +390,7 @@ public class AuditDetail implements java.io.Serializable {
 
 		return auditField;
 	}
-	
+
 	/**
 	 * Method for Separating fields from LOV fields and Unused excluded fields
 	 */
@@ -417,7 +414,7 @@ public class AuditDetail implements java.io.Serializable {
 
 		return arrayFields;
 	}
-	
+
 	/**
 	 * Method for Getting Field List for any object(VO)
 	 */
@@ -451,5 +448,5 @@ public class AuditDetail implements java.io.Serializable {
 		}
 		return auditField;
 	}
-	
+
 }

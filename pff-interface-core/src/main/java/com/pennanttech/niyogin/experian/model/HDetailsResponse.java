@@ -16,10 +16,10 @@ public class HDetailsResponse implements Serializable {
 	private static final long serialVersionUID = -3995637881465570183L;
 
 	@XmlElement(name = "SegmentCode")
-	private String	segmentCode;
+	private String segmentCode;
 
 	@XmlElement(name = "BalanceAmt")
-	private String	balanceAmt;
+	private String balanceAmt;
 
 	public String getBalanceAmt() {
 		return balanceAmt;

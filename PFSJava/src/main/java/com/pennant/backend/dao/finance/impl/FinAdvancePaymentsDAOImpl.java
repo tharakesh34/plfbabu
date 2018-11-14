@@ -78,8 +78,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new FinAdvancePayments
+	 * This method set the Work Flow id based on the module name and return the new FinAdvancePayments
 	 * 
 	 * @return FinAdvancePayments
 	 */
@@ -97,8 +96,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	/**
-	 * This method get the module from method getFinAdvancePayments() and set
-	 * the new record flag as true and return FinAdvancePayments()
+	 * This method get the module from method getFinAdvancePayments() and set the new record flag as true and return
+	 * FinAdvancePayments()
 	 * 
 	 * @return FinAdvancePayments
 	 */
@@ -189,10 +188,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	/**
-	 * This method Deletes the Record from the FinAdvancePayments or
-	 * FinAdvancePayments_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Goods Details by key
-	 * LoanRefNumber
+	 * This method Deletes the Record from the FinAdvancePayments or FinAdvancePayments_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
 	 * 
 	 * @param Goods
 	 *            Details (FinAdvancePayments)
@@ -220,8 +217,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	/**
-	 * This method insert new Records into FinAdvancePayments or
-	 * FinAdvancePayments_Temp.
+	 * This method insert new Records into FinAdvancePayments or FinAdvancePayments_Temp.
 	 * 
 	 * save Goods Details
 	 * 
@@ -269,10 +265,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	/**
-	 * This method updates the Record FinAdvancePayments or
-	 * FinAdvancePayments_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Goods Details by key
-	 * LoanRefNumber and Version
+	 * This method updates the Record FinAdvancePayments or FinAdvancePayments_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinAdvancePayments)
@@ -423,13 +417,10 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", REJECTREASON = :REJECTREASON");
 
 		/*
-		 * if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.
-		 * getPaymentType()) ||
-		 * DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement.
-		 * getPaymentType())) {
-		 * sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
-		 * paramMap.addValue("LLREFERENCENO", disbursement.getLlReferenceNo());
-		 * paramMap.addValue("LLDATE", disbursement.getClearingDate()); }
+		 * if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement. getPaymentType()) ||
+		 * DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement. getPaymentType())) {
+		 * sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE"); paramMap.addValue("LLREFERENCENO",
+		 * disbursement.getLlReferenceNo()); paramMap.addValue("LLDATE", disbursement.getClearingDate()); }
 		 */
 
 		sql.append("  Where PAYMENTID = :PAYMENTID");
@@ -513,8 +504,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different
-	 * Finances/Commitments
+	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
 	 */
 	@Override
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
@@ -543,7 +533,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	@Override
 	public int getCountByFinReference(String finReference) {
-		
+
 		int count = 0;
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setFinReference(finReference);
@@ -558,7 +548,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		logger.debug("Leaving");
 		try {
 			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-			
+
 		} catch (Exception e) {
 			logger.info(e);
 			count = 0;
@@ -567,7 +557,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	}
 
 	@Override
-	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate,String type) {
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate, String type) {
 		logger.debug(Literal.ENTERING);
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setFinReference(finRefernce);

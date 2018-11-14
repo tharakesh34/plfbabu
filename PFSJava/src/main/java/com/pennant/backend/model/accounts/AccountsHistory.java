@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
  */
 public class AccountsHistory extends AbstractWorkflowEntity {
 
-	private static final long	serialVersionUID	= 1750261249341373068L;
+	private static final long serialVersionUID = 1750261249341373068L;
 	private String accountId;
 	private Date postDate;
 	private BigDecimal todayDebits = BigDecimal.ZERO;
@@ -62,7 +62,6 @@ public class AccountsHistory extends AbstractWorkflowEntity {
 	private BigDecimal shadowBal = BigDecimal.ZERO;
 	private BigDecimal acBalance = BigDecimal.ZERO;
 	private boolean newRecord = false;
-
 
 	public AccountsHistory() {
 		super();
@@ -144,5 +143,5 @@ public class AccountsHistory extends AbstractWorkflowEntity {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
+
 }

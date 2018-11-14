@@ -53,12 +53,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class RejectDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -7037180743149899523L;
-	
+
 	private String rejectCode;
 	private String rejectDesc;
 	private boolean rejectIsActive;
 	private String rejectType;
-	
+
 	private boolean newRecord;
 	private String lovValue;
 	private RejectDetail befImage;
@@ -80,59 +80,67 @@ public class RejectDetail extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return rejectCode;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.rejectCode = id;
 	}
-	
+
 	public String getRejectCode() {
 		return rejectCode;
 	}
+
 	public void setRejectCode(String rejectCode) {
 		this.rejectCode = rejectCode;
 	}
-	
+
 	public String getRejectDesc() {
 		return rejectDesc;
 	}
+
 	public void setRejectDesc(String rejectDesc) {
 		this.rejectDesc = rejectDesc;
 	}
-	
+
 	public boolean isRejectIsActive() {
 		return rejectIsActive;
 	}
+
 	public void setRejectIsActive(boolean rejectIsActive) {
 		this.rejectIsActive = rejectIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public RejectDetail getBefImage(){
+	public RejectDetail getBefImage() {
 		return this.befImage;
-	}	
-	public void setBefImage(RejectDetail beforeImage){
-		this.befImage=beforeImage;
+	}
+
+	public void setBefImage(RejectDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -144,7 +152,7 @@ public class RejectDetail extends AbstractWorkflowEntity {
 	public void setRejectType(String rejectType) {
 		this.rejectType = rejectType;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

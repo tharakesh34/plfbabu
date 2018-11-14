@@ -9,9 +9,9 @@ public class AccountPostingTemp implements Serializable {
 	private static final long serialVersionUID = 9105442914597078688L;
 
 	public AccountPostingTemp() {
-    	super();
-    }
-	
+		super();
+	}
+
 	private int reqRefId;
 	private int reqRefSeq;
 	private String reqShadow;
@@ -29,7 +29,6 @@ public class AccountPostingTemp implements Serializable {
 	private String postingNar4;
 	private String error;
 	private String errDesc;
-	
 
 	public int getReqRefId() {
 		return reqRefId;

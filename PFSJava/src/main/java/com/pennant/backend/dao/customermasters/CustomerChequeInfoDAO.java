@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerChequeInfo;
@@ -51,11 +52,17 @@ import com.pennant.backend.model.customermasters.CustomerChequeInfo;
  */
 public interface CustomerChequeInfoDAO {
 
-	 CustomerChequeInfo getCustomerChequeInfoById(long id, int chequeSeq,String type);
-	 List<CustomerChequeInfo> getChequeInfoByCustomer(final long id,String type);
-	 void update(CustomerChequeInfo customerChequeInfo,String type);
-	 void delete(CustomerChequeInfo customerChequeInfo,String type);
-	 void deleteByCustomer(long custID,String type);
-	 long save(CustomerChequeInfo customerChequeInfo,String type);
-	 int getVersion(long id, int chequeSeq);
+	CustomerChequeInfo getCustomerChequeInfoById(long id, int chequeSeq, String type);
+
+	List<CustomerChequeInfo> getChequeInfoByCustomer(final long id, String type);
+
+	void update(CustomerChequeInfo customerChequeInfo, String type);
+
+	void delete(CustomerChequeInfo customerChequeInfo, String type);
+
+	void deleteByCustomer(long custID, String type);
+
+	long save(CustomerChequeInfo customerChequeInfo, String type);
+
+	int getVersion(long id, int chequeSeq);
 }

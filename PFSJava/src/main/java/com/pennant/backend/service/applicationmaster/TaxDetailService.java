@@ -51,11 +51,18 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface TaxDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	TaxDetail getTaxDetail(long id);
+
 	TaxDetail getApprovedTaxDetail(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<TaxDetail> getTaxDetailbystateCode(String Statecode,String type);
+
+	List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type);
+
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage);
 }

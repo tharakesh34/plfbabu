@@ -16,7 +16,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 public class CustomerLimitSummary implements Serializable {
 
 	private static final long serialVersionUID = 7108561336746598765L;
-	
+
 	private String limitReference;
 	private String limitDesc;
 	private String controllerUnder;
@@ -36,10 +36,9 @@ public class CustomerLimitSummary implements Serializable {
 	private String customerid;
 	private String limitGroup;
 	private String limitItem;
-	
 
 	public CustomerLimitSummary() {
-		
+
 	}
 
 	@XmlElement(name = "LimitReference")
@@ -195,8 +194,6 @@ public class CustomerLimitSummary implements Serializable {
 		this.customerid = customerid;
 	}
 
-	
-
 	public String getLimitGroup() {
 		return limitGroup;
 	}
@@ -212,8 +209,6 @@ public class CustomerLimitSummary implements Serializable {
 	public void setLimitItem(String limitItem) {
 		this.limitItem = limitItem;
 	}
-
-
 
 	private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat(InterfaceMasterConfigUtil.MQDATE);

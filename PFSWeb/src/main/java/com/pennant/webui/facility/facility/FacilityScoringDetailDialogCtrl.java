@@ -87,39 +87,37 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FacilityScoringDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ScoringDetailDialog; 
-	protected Button btnScoringGroup; 
-	protected Label label_TotalScore; 
-	protected Label totalCorpScore; 
-	protected Label label_CorpCreditWoth; 
-	protected Label corpCreditWoth; 
-	protected Label label_ScoreSummary; 
-	protected Label label_ScoreSummaryVal; 
-	protected Groupbox finScoreDetailGroup; 
-	protected Listbox listBoxRetailScoRef; 
-	protected Listbox listBoxFinancialScoRef; 
-	protected Listbox listBoxNonFinancialScoRef; 
-	protected Tab finScoreMetricTab; 
-	protected Tab nonFinScoreMetricTab; 
-	protected Decimalbox maxFinTotScore; 
-	protected Decimalbox maxNonFinTotScore; 
-	protected Intbox minScore; 
-	protected Decimalbox calTotScore; 
-	protected Checkbox isOverride; 
-	protected Intbox overrideScore; 
-	protected Row row_finScoreOverride; 
+	protected Window window_ScoringDetailDialog;
+	protected Button btnScoringGroup;
+	protected Label label_TotalScore;
+	protected Label totalCorpScore;
+	protected Label label_CorpCreditWoth;
+	protected Label corpCreditWoth;
+	protected Label label_ScoreSummary;
+	protected Label label_ScoreSummaryVal;
+	protected Groupbox finScoreDetailGroup;
+	protected Listbox listBoxRetailScoRef;
+	protected Listbox listBoxFinancialScoRef;
+	protected Listbox listBoxNonFinancialScoRef;
+	protected Tab finScoreMetricTab;
+	protected Tab nonFinScoreMetricTab;
+	protected Decimalbox maxFinTotScore;
+	protected Decimalbox maxNonFinTotScore;
+	protected Intbox minScore;
+	protected Decimalbox calTotScore;
+	protected Checkbox isOverride;
+	protected Intbox overrideScore;
+	protected Row row_finScoreOverride;
 	private Map<String, BigDecimal> finExecScoreMap = null;
 	// private Map<Long, Boolean> retailOverrideCheckMap = null;
 	// External Fields usage for Individuals ----> Scoring Details
@@ -134,7 +132,7 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	// not auto wired variables
 	private Facility facility = null; // over handed per parameters
 										// parameters
-	// Bean Setters by application Context
+										// Bean Setters by application Context
 	private ScoringDetailService scoringDetailService;
 	private CreditReviewSummaryData creditReviewSummaryData;
 	private RatingCodeService ratingCodeService;
@@ -157,11 +155,10 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -208,31 +205,32 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * 
 	 * @param aFinanceMain
 	 *            financeMain
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void doShowDialog() throws Exception {
 		logger.debug("Entering");
 		fillFinCustScoring();
 		try {
-			ctrlObject.getClass().getMethod("setFacilityScoringDetailDialogCtrl", this.getClass()).invoke(ctrlObject, this);
-		
-		if (isWIF) {
-			doExecuteScoring();
+			ctrlObject.getClass().getMethod("setFacilityScoringDetailDialogCtrl", this.getClass()).invoke(ctrlObject,
+					this);
+
+			if (isWIF) {
+				doExecuteScoring();
+			}
+			getBorderLayoutHeight();
+
+			this.listBoxRetailScoRef.setHeight(this.borderLayoutHeight - 200 + "px");
+
+			this.listBoxFinancialScoRef.setHeight(this.borderLayoutHeight - 250 + "px");
+			this.listBoxNonFinancialScoRef.setHeight(this.borderLayoutHeight - 250 + "px");
+
+			this.window_ScoringDetailDialog.setHeight(this.borderLayoutHeight - 75 + "px");
+		} catch (UiException e) {
+			logger.error("Exception: ", e);
+			this.window_ScoringDetailDialog.onClose();
+		} catch (Exception e) {
+			throw e;
 		}
-		getBorderLayoutHeight();
-	
-		this.listBoxRetailScoRef.setHeight(this.borderLayoutHeight - 200 + "px");
-
-		this.listBoxFinancialScoRef.setHeight(this.borderLayoutHeight - 250 + "px");
-		this.listBoxNonFinancialScoRef.setHeight(this.borderLayoutHeight - 250 + "px");
-
-		this.window_ScoringDetailDialog.setHeight(this.borderLayoutHeight - 75 + "px");
-	} catch (UiException e) {
-		logger.error("Exception: ", e);
-		this.window_ScoringDetailDialog.onClose();
-	} catch (Exception e) {
-		throw e;
-	}
 		logger.debug("Leaving");
 	}
 
@@ -249,8 +247,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 			this.finScoreDetailGroup.setVisible(false);
 			this.label_ScoreSummaryVal.setValue("");
 			doFillRetailScoringListbox(getFacility().getScoringGroupList(), this.listBoxRetailScoRef, false);
-		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType) || 
-				StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, custCtgType)) {
+		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType)
+				|| StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, custCtgType)) {
 			// corporate or bank customer
 			this.listBoxRetailScoRef.setVisible(false);
 			this.finScoreDetailGroup.setVisible(true);
@@ -258,11 +256,12 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Method for Filling Corporate Scoring Details
 	 * 
 	 * @param isExecute
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	private void doFillCorpScoringMetricDetails() throws InterruptedException {
 		logger.debug("Entering");
@@ -297,7 +296,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 			this.listBoxFinancialScoRef.getItems().clear();
 			totalFinScore = BigDecimal.ZERO;
 			for (ScoringMetrics scoringMetric : getFacility().getFinScoringMetricList()) {
-				addListGroup(scoringMetric.getLovDescScoringCodeDesc(), this.listBoxFinancialScoRef, PennantConstants.PFF_CUSTCTG_CORP, null, false);
+				addListGroup(scoringMetric.getLovDescScoringCodeDesc(), this.listBoxFinancialScoRef,
+						PennantConstants.PFF_CUSTCTG_CORP, null, false);
 				BigDecimal totalGrpMaxScore = BigDecimal.ZERO;
 				BigDecimal totalGrpExecScore = BigDecimal.ZERO;
 				if (getFacility().getScoringMetrics().containsKey(scoringMetric.getScoringId())) {
@@ -314,7 +314,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 							if (enqModule) {
 								executed = false;
 							}
-							scores = addListItem(subScoreMetric, this.listBoxFinancialScoRef, "F", scoringMetric.getScoringId(), executed);
+							scores = addListItem(subScoreMetric, this.listBoxFinancialScoRef, "F",
+									scoringMetric.getScoringId(), executed);
 							totalGrpMaxScore = totalGrpMaxScore.add(scores[0]);
 							totalGrpExecScore = totalGrpExecScore.add(scores[1]);
 						}
@@ -323,14 +324,16 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 					totalFinScore = totalFinScore.add(totalGrpMaxScore);
 					totalExecScore = totalExecScore.add(totalGrpExecScore);
 				}
-				addListFooter(totalGrpMaxScore, totalGrpExecScore, this.listBoxFinancialScoRef, "", "F", scoringMetric.getScoringId());
+				addListFooter(totalGrpMaxScore, totalGrpExecScore, this.listBoxFinancialScoRef, "", "F",
+						scoringMetric.getScoringId());
 			}
 			this.maxFinTotScore.setValue(totalFinScore);
 			// totalNFRuleScore = BigDecimal.ZERO;
 			this.listBoxNonFinancialScoRef.getItems().clear();
 			BigDecimal totalNonFinScore = BigDecimal.ZERO;
 			for (ScoringMetrics nonFinMetric : getFacility().getNonFinScoringMetricList()) {
-				addListGroup(nonFinMetric.getLovDescScoringCodeDesc(), this.listBoxNonFinancialScoRef, PennantConstants.PFF_CUSTCTG_CORP, null, false);
+				addListGroup(nonFinMetric.getLovDescScoringCodeDesc(), this.listBoxNonFinancialScoRef,
+						PennantConstants.PFF_CUSTCTG_CORP, null, false);
 				BigDecimal totalGrpMaxScore = BigDecimal.ZERO;
 				BigDecimal totalGrpExecScore = BigDecimal.ZERO;
 				if (getFacility().getScoringMetrics().containsKey(nonFinMetric.getScoringId())) {
@@ -347,7 +350,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 							if (enqModule) {
 								executed = false;
 							}
-							scores = addListItem(subScoreMetric, this.listBoxNonFinancialScoRef, "N", nonFinMetric.getScoringId(), executed);
+							scores = addListItem(subScoreMetric, this.listBoxNonFinancialScoRef, "N",
+									nonFinMetric.getScoringId(), executed);
 							totalGrpMaxScore = totalGrpMaxScore.add(scores[0]);
 							totalGrpExecScore = totalGrpExecScore.add(scores[1]);
 						}
@@ -356,7 +360,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 					totalNonFinScore = totalNonFinScore.add(totalGrpMaxScore);
 					totalExecScore = totalExecScore.add(totalGrpExecScore);
 				}
-				addListFooter(totalGrpMaxScore, totalGrpExecScore, this.listBoxNonFinancialScoRef, "", "N", nonFinMetric.getScoringId());
+				addListFooter(totalGrpMaxScore, totalGrpExecScore, this.listBoxNonFinancialScoRef, "", "N",
+						nonFinMetric.getScoringId());
 			}
 			this.maxNonFinTotScore.setValue(totalNonFinScore);
 			//
@@ -365,12 +370,13 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 			BigDecimal totScore = totalExecScore;
 			this.calTotScore.setValue(totScore);
 			this.totalCorpScore.setValue(String.valueOf(totScore));
-			
+
 			//Credit Worth based on OBLIGOR Risk Grade Score
 			BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
-			BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100))).divide(totalScore, 2, RoundingMode.HALF_DOWN);
-			
-			this.corpCreditWoth.setValue(getScrSlab(scoringGroup.getFinRefId(),obligorScore, "", false));
+			BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
+					.divide(totalScore, 2, RoundingMode.HALF_DOWN);
+
+			this.corpCreditWoth.setValue(getScrSlab(scoringGroup.getFinRefId(), obligorScore, "", false));
 			if (totScore.intValue() >= this.minScore.intValue()) {
 				sufficientScore = true;
 				this.isOverride.setDisabled(true);
@@ -408,8 +414,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				this.label_ScoreSummaryVal.setValue("");
 				setSufficientScore(false);
 				doFillRetailScoringListbox(getFacility().getScoringGroupList(), this.listBoxRetailScoRef, true);
-			} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType) || 
-					StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, custCtgType)) {
+			} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType)
+					|| StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, custCtgType)) {
 				this.listBoxRetailScoRef.setVisible(false);
 				this.finScoreDetailGroup.setVisible(true);
 				doFillCorpScoringMetricDetails();
@@ -426,9 +432,10 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 *            (Listbox)
 	 * @param execute
 	 *            (boolean)
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void doFillRetailScoringListbox(List<FacilityReferenceDetail> financeReferenceDetail, Listbox listbox, boolean isExecute) throws InterruptedException {
+	public void doFillRetailScoringListbox(List<FacilityReferenceDetail> financeReferenceDetail, Listbox listbox,
+			boolean isExecute) throws InterruptedException {
 		logger.debug("Entering");
 		this.label_TotalScore.setVisible(false);
 		this.totalCorpScore.setVisible(false);
@@ -440,7 +447,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 		Checkbox cb = null;
 		String key = "";
 		List<FinanceScoreHeader> scoringHeaderList = getFacility().getFinScoreHeaderList();
-		if ((financeReferenceDetail != null && !financeReferenceDetail.isEmpty()) || (scoringHeaderList != null && !scoringHeaderList.isEmpty())) {
+		if ((financeReferenceDetail != null && !financeReferenceDetail.isEmpty())
+				|| (scoringHeaderList != null && !scoringHeaderList.isEmpty())) {
 			BigDecimal totalGrpMaxScore = BigDecimal.ZERO;
 			BigDecimal totalGrpExecScore = BigDecimal.ZERO;
 			for (FacilityReferenceDetail finrefdet : financeReferenceDetail) {
@@ -458,11 +466,13 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				totalGrpMaxScore = BigDecimal.ZERO;
 				totalGrpExecScore = BigDecimal.ZERO;
 				if (getFacility().getScoringMetrics().containsKey(finrefdet.getFinRefId())) {
-					List<ScoringMetrics> scoringMetricsList = getFacility().getScoringMetrics().get(finrefdet.getFinRefId());
+					List<ScoringMetrics> scoringMetricsList = getFacility().getScoringMetrics()
+							.get(finrefdet.getFinRefId());
 					if (isExecute) {
-						getScoringDetailService().executeScoringMetrics(scoringMetricsList, getFacility().getCustomerEligibilityCheck());
+						getScoringDetailService().executeScoringMetrics(scoringMetricsList,
+								getFacility().getCustomerEligibilityCheck());
 						// reset previous user override to false
-						header.setOverride(false); 
+						header.setOverride(false);
 					}
 					for (ScoringMetrics scoringMetric : scoringMetricsList) {
 						scores = addListItem(scoringMetric, listbox, "I", finrefdet.getFinRefId(), isExecute);
@@ -485,7 +495,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 						cb.setDisabled(true);
 					}
 					sufficientScore = true;
-				} else if (header.isOverride() && (totalGrpExecScore.intValue() >= (finrefdet.getLovDescoverrideScore()))) {
+				} else if (header.isOverride()
+						&& (totalGrpExecScore.intValue() >= (finrefdet.getLovDescoverrideScore()))) {
 					sufficientScore = true;
 					if (cb != null) {
 						cb.setDisabled(false);
@@ -507,8 +518,6 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 		logger.debug("Leaving");
 	}
 
-
-
 	/**
 	 * Method for Adding List Item For scoring details
 	 * 
@@ -520,7 +529,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * @param isExecute
 	 * @return
 	 */
-	private BigDecimal[] addListItem(ScoringMetrics scoringMetric, Listbox listbox, String categoryValue, long groupId, boolean isExecute) {
+	private BigDecimal[] addListItem(ScoringMetrics scoringMetric, Listbox listbox, String categoryValue, long groupId,
+			boolean isExecute) {
 		logger.debug("Entering");
 		scores = new BigDecimal[2];
 		Listitem item = null;
@@ -606,80 +616,82 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * Method for calculating Total NFRule Score on Changing each rule Score
 	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("unchecked")
 	public void onChangeNFRuleScore(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-			List<Object> list = (List<Object>) event.getData();
-			Decimalbox dupIntbox = (Decimalbox) list.get(0);
-			Decimalbox orgIntbox = (Decimalbox) list.get(1);
-			BigDecimal ruleMaxScore = (BigDecimal) list.get(2);
-			boolean isFinScore = (Boolean) list.get(3);
-			long grpId = (Long) list.get(4);
-			orgIntbox.setFormat("#0.00");
-			if (orgIntbox.getValue() == null) {
-				orgIntbox.setValue(BigDecimal.ZERO);
+		List<Object> list = (List<Object>) event.getData();
+		Decimalbox dupIntbox = (Decimalbox) list.get(0);
+		Decimalbox orgIntbox = (Decimalbox) list.get(1);
+		BigDecimal ruleMaxScore = (BigDecimal) list.get(2);
+		boolean isFinScore = (Boolean) list.get(3);
+		long grpId = (Long) list.get(4);
+		orgIntbox.setFormat("#0.00");
+		if (orgIntbox.getValue() == null) {
+			orgIntbox.setValue(BigDecimal.ZERO);
+		}
+		if (orgIntbox.getValue().compareTo(ruleMaxScore) > 0) {
+			orgIntbox.setValue(dupIntbox.getValue());
+			throw new WrongValueException(orgIntbox,
+					PennantJavaUtil.concat("Score Value Must Be Less than or Equal to ", String.valueOf(ruleMaxScore)));
+		}
+		final BigDecimal dupNFRuleScore = dupIntbox.getValue();
+		final BigDecimal orgNFRuleScore = orgIntbox.getValue();
+		if (finExecScoreMap == null) {
+			finExecScoreMap = new HashMap<String, BigDecimal>();
+		}
+		if (finExecScoreMap.containsKey(orgIntbox.getId())) {
+			finExecScoreMap.remove(orgIntbox.getId());
+		}
+		finExecScoreMap.put(orgIntbox.getId(), orgNFRuleScore);
+		if (isFinScore) {
+			totalExecScore = totalExecScore.subtract(dupNFRuleScore).add(orgNFRuleScore);
+			dupIntbox.setValue(orgNFRuleScore);
+		} else {
+			totalNFRuleScore = totalNFRuleScore.subtract(dupNFRuleScore).add(orgNFRuleScore);
+			dupIntbox.setValue(orgNFRuleScore);
+		}
+		// Set Total Calculated Score Result
+		BigDecimal totScore = totalExecScore.add(totalNFRuleScore);
+		this.calTotScore.setValue(totScore);
+		this.totalCorpScore.setValue(String.valueOf(totScore));
+		List<FacilityReferenceDetail> scGrplist = getFacility().getScoringGroupList();
+
+		//Credit Worth based on OBLIGOR Risk Grade Score
+		BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
+		BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
+				.divide(totalScore, 2, RoundingMode.HALF_DOWN);
+
+		if (scGrplist != null && !scGrplist.isEmpty()) {
+			this.corpCreditWoth.setValue(getScrSlab(scGrplist.get(0).getFinRefId(), obligorScore, "", false));
+		}
+		//To Calculate Group Total
+		Label label = (Label) this.window_ScoringDetailDialog.getFellowIfAny(grpId + "_TS");
+		BigDecimal grpTotal = BigDecimal.ZERO;
+		for (String string : finExecScoreMap.keySet()) {
+			if (string.startsWith(grpId + "_")) {
+				grpTotal = grpTotal.add(finExecScoreMap.get(string));
 			}
-			if (orgIntbox.getValue().compareTo(ruleMaxScore) > 0) {
-				orgIntbox.setValue(dupIntbox.getValue());
-				throw new WrongValueException(orgIntbox, PennantJavaUtil.concat("Score Value Must Be Less than or Equal to ", String.valueOf(ruleMaxScore)));
-			}
-			final BigDecimal dupNFRuleScore = dupIntbox.getValue();
-			final BigDecimal orgNFRuleScore = orgIntbox.getValue();
-			if (finExecScoreMap == null) {
-				finExecScoreMap = new HashMap<String, BigDecimal>();
-			}
-			if (finExecScoreMap.containsKey(orgIntbox.getId())) {
-				finExecScoreMap.remove(orgIntbox.getId());
-			}
-			finExecScoreMap.put(orgIntbox.getId(), orgNFRuleScore);
-			if (isFinScore) {
-				totalExecScore = totalExecScore.subtract(dupNFRuleScore).add(orgNFRuleScore);
-				dupIntbox.setValue(orgNFRuleScore);
-			} else {
-				totalNFRuleScore = totalNFRuleScore.subtract(dupNFRuleScore).add(orgNFRuleScore);
-				dupIntbox.setValue(orgNFRuleScore);
-			}
-			// Set Total Calculated Score Result
-			BigDecimal totScore = totalExecScore.add(totalNFRuleScore);
-			this.calTotScore.setValue(totScore);
-			this.totalCorpScore.setValue(String.valueOf(totScore));
-			List<FacilityReferenceDetail> scGrplist = getFacility().getScoringGroupList();
-			
-			//Credit Worth based on OBLIGOR Risk Grade Score
-			BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
-			BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100))).divide(totalScore, 2, RoundingMode.HALF_DOWN);
-			
-			if (scGrplist != null && !scGrplist.isEmpty()) {
-				this.corpCreditWoth.setValue(getScrSlab(scGrplist.get(0).getFinRefId(), obligorScore, "", false));
-			}
-			//To Calculate Group Total
-			Label label = (Label) this.window_ScoringDetailDialog.getFellowIfAny(grpId + "_TS");
-			BigDecimal grpTotal = BigDecimal.ZERO;
-			for (String string : finExecScoreMap.keySet()) {
-				if (string.startsWith(grpId + "_")) {
-					grpTotal = grpTotal.add(finExecScoreMap.get(string));
-				}
-			}
-			label.setValue(String.valueOf(grpTotal));
-			if (totScore.intValue() >= (this.overrideScore.intValue())) {
-				sufficientScore = false;
-				this.isOverride.setDisabled(false);
-				if (totScore.intValue() >= this.minScore.intValue()) {
-					this.isOverride.setDisabled(true);
-					this.isOverride.setChecked(false);
-					sufficientScore = true;
-				} else if (this.isOverride.isChecked() && totScore.intValue() >= (this.overrideScore.intValue())) {
-					sufficientScore = true;
-					this.isOverride.setDisabled(false);
-				}
-			} else {
+		}
+		label.setValue(String.valueOf(grpTotal));
+		if (totScore.intValue() >= (this.overrideScore.intValue())) {
+			sufficientScore = false;
+			this.isOverride.setDisabled(false);
+			if (totScore.intValue() >= this.minScore.intValue()) {
 				this.isOverride.setDisabled(true);
 				this.isOverride.setChecked(false);
-				sufficientScore = false;
+				sufficientScore = true;
+			} else if (this.isOverride.isChecked() && totScore.intValue() >= (this.overrideScore.intValue())) {
+				sufficientScore = true;
+				this.isOverride.setDisabled(false);
 			}
-			setScoreSummaryStyle(sufficientScore);
+		} else {
+			this.isOverride.setDisabled(true);
+			this.isOverride.setChecked(false);
+			sufficientScore = false;
+		}
+		setScoreSummaryStyle(sufficientScore);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -687,7 +699,7 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * Method for Check Override Checkbox For Corporate Score Details
 	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onCheck$isOverride(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
@@ -695,11 +707,12 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 		// Set Total Calculated Score Result
 		BigDecimal totScore = totalExecScore.add(totalNFRuleScore);
 		this.totalCorpScore.setValue(String.valueOf(totScore));
-		
+
 		//Credit Worth based on OBLIGOR Risk Grade Score
 		BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
-		BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100))).divide(totalScore, 2, RoundingMode.HALF_DOWN);
-				
+		BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
+				.divide(totalScore, 2, RoundingMode.HALF_DOWN);
+
 		if (finScoreHeaderList != null && !finScoreHeaderList.isEmpty()) {
 			this.corpCreditWoth.setValue(getScrSlab(finScoreHeaderList.get(0).getGroupId(), obligorScore, "", false));
 		}
@@ -742,7 +755,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				lc.setParent(listgroup);
 				lc = new Listcell();
 				lc.setSpan(3);
-				label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :", String.valueOf(header.getMinScore())));
+				label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :",
+						String.valueOf(header.getMinScore())));
 				lc.appendChild(label);
 				space = new Space();
 				space.setWidth("100px");
@@ -759,7 +773,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				space.setWidth("100px");
 				lc.appendChild(space);
 				if (header.isOverride()) {
-					label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_OverrideScore"), " :", String.valueOf(header.getOverrideScore())));
+					label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_OverrideScore"), " :",
+							String.valueOf(header.getOverrideScore())));
 					label.setStyle("float:right;");
 					lc.appendChild(label);
 				}
@@ -774,7 +789,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				lc.setParent(listgroup);
 				lc = new Listcell();
 				lc.setSpan(3);
-				label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :", String.valueOf(detail.getLovDescminScore())));
+				label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :",
+						String.valueOf(detail.getLovDescminScore())));
 				lc.appendChild(label);
 				space = new Space();
 				space.setWidth("100px");
@@ -804,7 +820,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 					space = new Space();
 					space.setWidth("100px");
 					lc.appendChild(space);
-					label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_OverrideScore"), " :", String.valueOf(detail.getLovDescoverrideScore())));
+					label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_OverrideScore"), " :",
+							String.valueOf(detail.getLovDescoverrideScore())));
 					lc.appendChild(label);
 				}
 				lc.setParent(listgroup);
@@ -822,9 +839,10 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * 
 	 * @param scoringMetric
 	 * @param listbox
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	private void addListFooter(BigDecimal totalMaxGrpScore, BigDecimal totalExecGrpScore, Listbox listbox, String creditWorth, String ctgType, long grpId) throws InterruptedException {
+	private void addListFooter(BigDecimal totalMaxGrpScore, BigDecimal totalExecGrpScore, Listbox listbox,
+			String creditWorth, String ctgType, long grpId) throws InterruptedException {
 		logger.debug("Entering");
 		Listgroupfoot listgroupfoot = new Listgroupfoot();
 		Listcell cell = null;
@@ -934,24 +952,25 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * @param grpTotalScore
 	 *            (int)
 	 * @return String
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail) throws InterruptedException {
+	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail)
+			throws InterruptedException {
 		logger.debug("Entering");
 		List<ScoringSlab> slabList = getFacility().getScoringSlabs().get(refId);
 		String creditWorth = "None";
 		if (slabList != null && !slabList.isEmpty()) {
 			for (ScoringSlab slab : slabList) {
-				
-				if(isRetail){
+
+				if (isRetail) {
 					if (grpTotalScore.compareTo(new BigDecimal(slab.getScoringSlab())) >= 0) {
 						creditWorth = slab.getCreditWorthness();
 						break;
 					}
-				}else{
+				} else {
 					if (grpTotalScore.compareTo(new BigDecimal(slab.getScoringSlab())) <= 0) {
 						creditWorth = slab.getCreditWorthness();
-					}else{
+					} else {
 						break;
 					}
 				}
@@ -959,17 +978,17 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 		} else if (StringUtils.isNotBlank(execCreditWorth)) {
 			creditWorth = execCreditWorth;
 		}
-		
-		if(!isRetail && !"None".equals(creditWorth)){
-			RatingCode ratingCode = getRatingCodeService().getApprovedRatingCodeById(PennantConstants.DEFAULT_RATE_TYPE, creditWorth);
-			if(ratingCode != null){
-				creditWorth = ratingCode.getRatingCode() +"-"+ratingCode.getRatingCodeDesc();
-			}else{
+
+		if (!isRetail && !"None".equals(creditWorth)) {
+			RatingCode ratingCode = getRatingCodeService().getApprovedRatingCodeById(PennantConstants.DEFAULT_RATE_TYPE,
+					creditWorth);
+			if (ratingCode != null) {
+				creditWorth = ratingCode.getRatingCode() + "-" + ratingCode.getRatingCodeDesc();
+			} else {
 				MessageUtil.showError("Rating Code Details Not Defined Properly.");
 			}
 		}
-		
-		
+
 		logger.debug("Leaving");
 		return creditWorth;
 	}
@@ -978,7 +997,7 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doSave_ScoreDetail(Facility aFinanceDetail) throws InterruptedException {
 		logger.debug("Entering ");
@@ -1012,7 +1031,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 						scoreDetail.setRuleCodeDesc(metric.getLovDescScoringCodeDesc());
 						scoreDetail.setMaxScore(getMaxMetricScore(metric.getLovDescSQLRule()));
 						BigDecimal execScore = BigDecimal.ZERO;
-						String key = PennantJavaUtil.concat(String.valueOf(detail.getFinRefId()), "_", String.valueOf(metric.getScoringId()));
+						String key = PennantJavaUtil.concat(String.valueOf(detail.getFinRefId()), "_",
+								String.valueOf(metric.getScoringId()));
 						if (finExecScoreMap != null && finExecScoreMap.containsKey(key)) {
 							execScore = finExecScoreMap.get(key);
 						}
@@ -1036,8 +1056,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				}
 				scoreHeaderList.add(header);
 			}
-		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType) || 
-				StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, custCtgType)) {
+		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType)
+				|| StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, custCtgType)) {
 			scoreHeaderList = new ArrayList<FinanceScoreHeader>();
 			for (FacilityReferenceDetail detail : getFacility().getScoringGroupList()) {
 				header.setGroupId(detail.getFinRefId());
@@ -1047,11 +1067,12 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				if (header.isOverride()) {
 					header.setOverrideScore(this.overrideScore.intValue());
 				}
-				
+
 				//Credit Worth based on OBLIGOR Risk Grade Score
 				BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
-				BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100))).divide(totalScore, 2, RoundingMode.HALF_DOWN);
-				
+				BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
+						.divide(totalScore, 2, RoundingMode.HALF_DOWN);
+
 				header.setCreditWorth(getScrSlab(detail.getFinRefId(), obligorScore, "", false));
 				scoreHeaderList.add(header);
 				List<FinanceScoreDetail> scoreDetails = new ArrayList<FinanceScoreDetail>();
@@ -1069,7 +1090,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 							scoreDetail.setSubGroupId(finMetric.getScoringId());
 							scoreDetail.setMaxScore(metric.getLovDescMetricMaxPoints());// getMaxMetricScore(metric.getLovDescSQLRule())
 							BigDecimal execScore = BigDecimal.ZERO;
-							String key = PennantJavaUtil.concat(String.valueOf(finMetric.getScoringId()), "_", String.valueOf(metric.getScoringId()));
+							String key = PennantJavaUtil.concat(String.valueOf(finMetric.getScoringId()), "_",
+									String.valueOf(metric.getScoringId()));
 							if (finExecScoreMap != null && finExecScoreMap.containsKey(key)) {
 								execScore = finExecScoreMap.get(key);
 							}
@@ -1080,7 +1102,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 				}
 				for (ScoringMetrics nonFinMetric : getFacility().getNonFinScoringMetricList()) {
 					if (getFacility().getScoringMetrics().containsKey(nonFinMetric.getScoringId())) {
-						List<ScoringMetrics> metrics = getFacility().getScoringMetrics().get(nonFinMetric.getScoringId());
+						List<ScoringMetrics> metrics = getFacility().getScoringMetrics()
+								.get(nonFinMetric.getScoringId());
 						if (metrics != null) {
 							for (ScoringMetrics metric : metrics) {
 								scoreDetail = new FinanceScoreDetail();
@@ -1092,7 +1115,8 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 								scoreDetail.setSubGroupId(nonFinMetric.getScoringId());
 								scoreDetail.setMaxScore(metric.getLovDescMetricMaxPoints());
 								BigDecimal execScore = BigDecimal.ZERO;
-								String key = PennantJavaUtil.concat(String.valueOf(nonFinMetric.getScoringId()), "_", String.valueOf(metric.getScoringId()));
+								String key = PennantJavaUtil.concat(String.valueOf(nonFinMetric.getScoringId()), "_",
+										String.valueOf(metric.getScoringId()));
 								if (finExecScoreMap != null && finExecScoreMap.containsKey(key)) {
 									execScore = finExecScoreMap.get(key);
 								}
@@ -1111,7 +1135,6 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 		aFinanceDetail.setSufficientScore(sufficientScore);
 		logger.debug("Leaving ");
 	}
-
 
 	private void setScoreSummaryStyle(boolean sufficientScore) {
 		getFacility().setSufficientScore(sufficientScore);
@@ -1180,8 +1203,6 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 	public void setSufficientScore(boolean sufficientScore) {
 		this.sufficientScore = sufficientScore;
 	}
-
-
 
 	public CreditReviewSummaryData getCreditReviewSummaryData() {
 		return creditReviewSummaryData;

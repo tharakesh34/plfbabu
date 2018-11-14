@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.staticparms;
+
 import com.pennant.backend.model.staticparms.Language;
 
 /**
@@ -50,8 +51,11 @@ import com.pennant.backend.model.staticparms.Language;
  */
 public interface LanguageDAO {
 
-	Language getLanguageById(String id,String type);
-	void update(Language language,String type);
-	void delete(Language language,String type);
-	String save(Language language,String type);
+	Language getLanguageById(String id, String type);
+
+	void update(Language language, String type);
+
+	void delete(Language language, String type);
+
+	String save(Language language, String type);
 }

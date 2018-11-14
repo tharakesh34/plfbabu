@@ -48,27 +48,26 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ReportConfiguration extends AbstractWorkflowEntity implements Entity{
+public class ReportConfiguration extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -619353564397203914L;
 
-
 	private long reportID = Long.MIN_VALUE;
-	private String  reportName;
-	private String   reportHeading;
-	private boolean   promptRequired;
-	private String   reportJasperName;
-	private boolean  showTempLibrary;
-	private String  dataSourceName;	
-	private String  menuItemCode;	
+	private String reportName;
+	private String reportHeading;
+	private boolean promptRequired;
+	private String reportJasperName;
+	private boolean showTempLibrary;
+	private String dataSourceName;
+	private String menuItemCode;
 	private boolean alwMultiFormat = false;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private ReportConfiguration befImage;
 	private LoggedInUser userDetails;
 	private boolean whereCondition;
-	
-    private  List<ReportFilterFields> listReportFieldsDetails;
+
+	private List<ReportFilterFields> listReportFieldsDetails;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -77,16 +76,19 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	public List<ReportFilterFields> getListReportFieldsDetails() {
 		return listReportFieldsDetails;
 	}
-	public void setListReportFieldsDetails(
-			List<ReportFilterFields> listReportFieldsDetails) {
+
+	public void setListReportFieldsDetails(List<ReportFilterFields> listReportFieldsDetails) {
 		this.listReportFieldsDetails = listReportFieldsDetails;
 	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
+
 	public ReportConfiguration() {
 		super();
 	}
+
 	public ReportConfiguration(long id) {
 		super();
 		this.setId(id);
@@ -95,7 +97,8 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	public long getId() {
 		return reportID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.reportID = id;
 	}
 
@@ -194,18 +197,23 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	public void setReportID(long reportID) {
 		this.reportID = reportID;
 	}
+
 	public long getReportID() {
 		return reportID;
 	}
+
 	public void setAlwMultiFormat(boolean alwMultiFormat) {
-	    this.alwMultiFormat = alwMultiFormat;
-    }
+		this.alwMultiFormat = alwMultiFormat;
+	}
+
 	public boolean isAlwMultiFormat() {
-	    return alwMultiFormat;
-    }
+		return alwMultiFormat;
+	}
+
 	public boolean isWhereCondition() {
 		return whereCondition;
 	}
+
 	public void setWhereCondition(boolean whereCondition) {
 		this.whereCondition = whereCondition;
 	}

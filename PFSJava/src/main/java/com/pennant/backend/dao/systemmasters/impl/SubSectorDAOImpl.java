@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,11 +68,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDAO {
 	private static Logger logger = Logger.getLogger(SubSectorDAOImpl.class);
-	
+
 	public SubSectorDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Sub Sectors details by key field
 	 * 
@@ -84,16 +83,16 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 	 * @return SubSector
 	 */
 	@Override
-	public SubSector getSubSectorById(final String id, String subSectorCode,String type) {
+	public SubSector getSubSectorById(final String id, String subSectorCode, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		SubSector subSector = new SubSector();
 		subSector.setId(id);
 		subSector.setSubSectorCode(subSectorCode);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("SELECT SectorCode, SubSectorCode, SubSectorDesc, SubSectorIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("lovDescSectorCodeName,");
 		}
 		selectSql.append(" Version, LastMntBy , LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -112,21 +111,21 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 			logger.error("Exception: ", e);
 			subSector = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return subSector;
 	}
 
 	@Override
-    public SubSector getSubSectorBySubSectorCode(String subSectorCode, String type) {
+	public SubSector getSubSectorBySubSectorCode(String subSectorCode, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		SubSector subSector = new SubSector();
 		subSector.setSubSectorCode(subSectorCode);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("SELECT SectorCode, SubSectorCode, SubSectorDesc, SubSectorIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("lovDescSectorCodeName,");
 		}
 		selectSql.append(" Version, LastMntBy , LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -145,11 +144,11 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 			logger.error("Exception: ", e);
 			subSector = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return subSector;
-    }
-	
+	}
+
 	@Override
 	public boolean isDuplicateKey(String sectorCode, String subSectorCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -185,35 +184,36 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(SubSector subSector, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTSubSectors");
 		sql.append(tableType.getSuffix());
 		sql.append(" (SectorCode, SubSectorCode, SubSectorDesc, SubSectorIsActive,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" values(:SectorCode, :SubSectorCode, :SubSectorDesc, :SubSectorIsActive,"); 
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" values(:SectorCode, :SubSectorCode, :SubSectorDesc, :SubSectorIsActive,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subSector);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return subSector.getId();
 	}
-	
+
 	@Override
 	public void update(SubSector subSector, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -223,7 +223,8 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 		sql.append(tableType.getSuffix());
 		sql.append(" set SubSectorDesc = :SubSectorDesc,");
 		sql.append(" SubSectorIsActive = :SubSectorIsActive,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		sql.append(" where SectorCode =:SectorCode AND SubSectorCode=:subSectorCode");
@@ -241,24 +242,24 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(SubSector subSector, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" delete from BMTSubSectors");
 		sql.append(tableType.getSuffix());
 		sql.append(" where SectorCode =:SectorCode AND SubSectorCode=:subSectorCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subSector);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -270,6 +271,5 @@ public class SubSectorDAOImpl extends BasicDao<SubSector> implements SubSectorDA
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 }

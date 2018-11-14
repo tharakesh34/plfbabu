@@ -65,48 +65,48 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.Fees.FeePostings.model.FeePostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Fees/FeePostings/FeePostingsList.zul file.
  */
 public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(FeePostingsListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FeePostingsListCtrl.class);
 
-	protected Window					window_FeePostingList;
-	protected Borderlayout				borderLayout_FeePostingList;
-	protected Paging					pagingFeePostingList;
-	protected Listbox					listBoxFeePosting;
+	protected Window window_FeePostingList;
+	protected Borderlayout borderLayout_FeePostingList;
+	protected Paging pagingFeePostingList;
+	protected Listbox listBoxFeePosting;
 
-	protected Listheader				listheader_PostingAgainst;
-	protected Listheader				listheader_Reference;
-	protected Listheader				listheader_FeetypeCode;
-	protected Listheader				listheader_PostingAmount;
-	protected Listheader				listheader_PostDate;
-	protected Listheader				listheader_ValueDate;
+	protected Listheader listheader_PostingAgainst;
+	protected Listheader listheader_Reference;
+	protected Listheader listheader_FeetypeCode;
+	protected Listheader listheader_PostingAmount;
+	protected Listheader listheader_PostDate;
+	protected Listheader listheader_ValueDate;
 
-	protected Button					button_FeePostingList_NewFeePosting;
-	protected Button					button_FeePostingList_FeePostingSearch;
+	protected Button button_FeePostingList_NewFeePosting;
+	protected Button button_FeePostingList_FeePostingSearch;
 
-	protected Combobox					postAgainst;
-	protected Listbox					sortOperator_PostingAgainst;
+	protected Combobox postAgainst;
+	protected Listbox sortOperator_PostingAgainst;
 
-	protected Textbox					reference;
-	protected Listbox					sortOperator_Reference;
+	protected Textbox reference;
+	protected Listbox sortOperator_Reference;
 
-	protected Textbox					feeTypeCode;
-	protected Listbox					sortOperator_FeeTypeCode;
+	protected Textbox feeTypeCode;
+	protected Listbox sortOperator_FeeTypeCode;
 
-	protected Datebox					valueDate;
-	protected Listbox					sortOperator_ValueDate;
+	protected Datebox valueDate;
+	protected Listbox sortOperator_ValueDate;
 
-	protected Textbox					moduleType;
+	protected Textbox moduleType;
 
-	private transient FeePostingService	feePostingService;
+	private transient FeePostingService feePostingService;
 
 	/**
 	 * default constructor.<br>
@@ -137,7 +137,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 		// Set the page level components.
 		setPageComponents(window_FeePostingList, borderLayout_FeePostingList, listBoxFeePosting, pagingFeePostingList);
 		setItemRender(new FeePostingsListModelItemRenderer());
-		
+
 		registerField("postId");
 		registerButton(button_FeePostingList_FeePostingSearch);
 		registerButton(button_FeePostingList_NewFeePosting, "button_FeePostingList_NewFeePosting", true);

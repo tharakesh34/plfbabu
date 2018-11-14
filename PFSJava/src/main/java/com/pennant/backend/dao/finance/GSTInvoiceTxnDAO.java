@@ -49,7 +49,7 @@ import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.SeqGSTInvoice;
 
 public interface GSTInvoiceTxnDAO {
-	
+
 	long save(GSTInvoiceTxn gstInvoiceTxn);
 
 	long saveSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice);

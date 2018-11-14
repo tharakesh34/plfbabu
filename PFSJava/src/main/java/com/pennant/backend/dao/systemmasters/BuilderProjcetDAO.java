@@ -47,8 +47,7 @@ import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennanttech.pff.core.TableType;
 
 public interface BuilderProjcetDAO extends BasicCrudDao<BuilderProjcet> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,8 +57,8 @@ public interface BuilderProjcetDAO extends BasicCrudDao<BuilderProjcet> {
 	 *            The type of the table.
 	 * @return BuilderProjcet
 	 */
-	BuilderProjcet getBuilderProjcet(long id,String type);
+	BuilderProjcet getBuilderProjcet(long id, String type);
 
 	boolean isDuplicateKey(long id, String name, long builderId, TableType tableType);
-	
+
 }

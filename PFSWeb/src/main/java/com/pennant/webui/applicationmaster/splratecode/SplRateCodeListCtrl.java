@@ -62,9 +62,9 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.service.applicationmaster.SplRateCodeService;
 import com.pennant.webui.applicationmaster.splratecode.model.SplRateCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeList.zul file.
@@ -235,8 +235,8 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> {
 		arg.put("newRecord", aSplRateCode.isNew());
 
 		try {
-			Executions
-					.createComponents("/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

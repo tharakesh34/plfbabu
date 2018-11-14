@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.bmtmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -64,11 +63,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCodeDAO {
 	private static Logger logger = Logger.getLogger(RatingCodeDAOImpl.class);
-	
+
 	public RatingCodeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Rating Code details by key field
 	 * 
@@ -85,9 +84,9 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 		aRatingCode.setRatingType(ratingType);
 		aRatingCode.setRatingCode(ratingCode);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("SELECT RatingType, RatingCode, RatingCodeDesc, RatingIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("LovDescRatingTypeName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
@@ -111,10 +110,8 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTRatingCodes or
-	 * BMTRatingCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Rating Code by key
-	 * RatingType
+	 * This method Deletes the Record from the BMTRatingCodes or BMTRatingCodes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Rating Code by key RatingType
 	 * 
 	 * @param Rating
 	 *            Code (ratingCode)
@@ -129,16 +126,16 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTRatingCodes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where RatingType =:RatingType AND RatingCode=:RatingCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ratingCode);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -150,8 +147,7 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 	}
 
 	/**
-	 * This method insert new Records into BMTRatingCodes or
-	 * BMTRatingCodes_Temp.
+	 * This method insert new Records into BMTRatingCodes or BMTRatingCodes_Temp.
 	 * 
 	 * save Rating Code
 	 * 
@@ -167,17 +163,18 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 	public String save(RatingCode ratingCode, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTRatingCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (RatingType, RatingCode, RatingCodeDesc, RatingIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:RatingType, :RatingCode, :RatingCodeDesc, :RatingIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ratingCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -186,9 +183,8 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 	}
 
 	/**
-	 * This method updates the Record BMTRatingCodes or BMTRatingCodes_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Rating Code by key RatingType and Version
+	 * This method updates the Record BMTRatingCodes or BMTRatingCodes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Rating Code by key RatingType and Version
 	 * 
 	 * @param Rating
 	 *            Code (ratingCode)
@@ -203,22 +199,24 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTRatingCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set RatingCodeDesc = :RatingCodeDesc,");
 		updateSql.append(" RatingIsActive = :RatingIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where RatingType =:RatingType AND RatingCode=:RatingCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ratingCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

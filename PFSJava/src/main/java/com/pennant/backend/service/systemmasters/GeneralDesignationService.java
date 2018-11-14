@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.GeneralDesignation;
  * 
  */
 public interface GeneralDesignationService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	GeneralDesignation getGeneralDesignationById(String id);
+
 	GeneralDesignation getApprovedGeneralDesignationById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

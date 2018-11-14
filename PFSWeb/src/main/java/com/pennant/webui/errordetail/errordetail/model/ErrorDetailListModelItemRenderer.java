@@ -70,8 +70,8 @@ public class ErrorDetailListModelItemRenderer implements ListitemRenderer<ErrorD
 		lc.setParent(item);
 		lc = new Listcell(errorDetail.getLanguage());
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(errorDetail.getSeverity(),
-				PennantStaticListUtil.getSysParamType()));
+		lc = new Listcell(
+				PennantStaticListUtil.getlabelDesc(errorDetail.getSeverity(), PennantStaticListUtil.getSysParamType()));
 		lc.setParent(item);
 		lc = new Listcell(errorDetail.getMessage());
 		lc.setParent(item);

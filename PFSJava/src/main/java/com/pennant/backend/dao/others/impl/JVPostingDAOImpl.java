@@ -68,11 +68,10 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostingDAO {
 	private static Logger logger = Logger.getLogger(JVPostingDAOImpl.class);
 
-	
 	public JVPostingDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new JVPosting
 	 * 
@@ -124,8 +123,8 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select BatchReference, Batch, PostingDate, Filename, Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus, BatchPostingStatus,PostAgainst,Reference,postingDivision");
-		selectSql
-		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CurrencyDesc,divisionCodeDesc");
 		}
@@ -135,12 +134,10 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		RowMapper<JVPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPosting.class);
+		RowMapper<JVPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPosting.class);
 
 		try {
-			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			jVPosting = null;
@@ -154,19 +151,17 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		logger.debug("Entering");
 		JVPosting jVPosting = getJVPosting();
 
-		StringBuilder selectSql = new StringBuilder(
-		        "Select *  From JVPostings_View");
-		selectSql.append(" Where Batch ='"+batchName+"' AND PostingDate='"+DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateTimeFormat)+"'");
+		StringBuilder selectSql = new StringBuilder("Select *  From JVPostings_View");
+		selectSql.append(" Where Batch ='" + batchName + "' AND PostingDate='"
+				+ DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateTimeFormat) + "'");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		RowMapper<JVPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPosting.class);
+		RowMapper<JVPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPosting.class);
 
 		logger.debug("Leaving");
 		try {
-			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			jVPosting = null;
@@ -174,8 +169,6 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		logger.debug("Leaving");
 		return jVPosting;
 	}
-
-	
 
 	/**
 	 * This method Deletes the Record from the JVPostings or JVPostings_Temp. if Record not deleted then throws
@@ -201,8 +194,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -236,14 +228,14 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 		StringBuilder insertSql = new StringBuilder("Insert Into JVPostings");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-		        .append(" (BatchReference,PostingDate, Batch, Filename,Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus , BatchPostingStatus,ExpReference,Reference,PostAgainst,PostingDivision");
-		insertSql
-		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-		        .append(" Values(:BatchReference,:PostingDate, :Batch,  :Filename,:Branch, :DebitCount, :CreditsCount, :TotDebitsByBatchCcy, :TotCreditsByBatchCcy, :BatchPurpose, :Currency, :ExchangeRateType, :ValidationStatus, :BatchPostingStatus,:ExpReference,:Reference,:PostAgainst,:PostingDivision");
-		insertSql
-		        .append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (BatchReference,PostingDate, Batch, Filename,Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus , BatchPostingStatus,ExpReference,Reference,PostAgainst,PostingDivision");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:BatchReference,:PostingDate, :Batch,  :Filename,:Branch, :DebitCount, :CreditsCount, :TotDebitsByBatchCcy, :TotCreditsByBatchCcy, :BatchPurpose, :Currency, :ExchangeRateType, :ValidationStatus, :BatchPostingStatus,:ExpReference,:Reference,:PostAgainst,:PostingDivision");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -273,10 +265,10 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		StringBuilder updateSql = new StringBuilder("Update JVPostings");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, "
-		        		+ "ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus ,ExpReference =:ExpReference,Reference =:Reference,PostAgainst =:PostAgainst,PostingDivision =:PostingDivision");
-		updateSql
-		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+				.append(" Set PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, "
+						+ "ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus ,ExpReference =:ExpReference,Reference =:Reference,PostAgainst =:PostAgainst,PostingDivision =:PostingDivision");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BatchReference =:BatchReference");
 
 		if (!type.endsWith("_Temp")) {
@@ -300,10 +292,10 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostings");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set  PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus");
-		updateSql
-		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" Set  PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BatchReference =:BatchReference");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -357,7 +349,6 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Fetch the Max Seq Number From SeqJVPostings
 	 * 
@@ -389,10 +380,11 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	public long getBatchRerbyExpRef(String expReference) {
 		logger.debug("Entering");
 		long ref = 0;
-		JVPosting jvPosting= new JVPosting();
+		JVPosting jvPosting = new JVPosting();
 		jvPosting.setExpReference(expReference);
-		
-		StringBuilder selectSql = new StringBuilder("Select batchreference from JVPostings_view where ExpReference=:ExpReference");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select batchreference from JVPostings_view where ExpReference=:ExpReference");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jvPosting);
 		try {
@@ -404,6 +396,6 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		jvPosting = null;
 		logger.debug("Leaving");
 		return ref;
-		}
+	}
 
 }

@@ -6,164 +6,164 @@ import java.util.HashMap;
 import com.pennant.app.constants.AccountConstants;
 
 public class AEAmountCodes {
-	
-	private String 		finType;
-	
-	private BigDecimal	accrue				= BigDecimal.ZERO;
-	private BigDecimal	dAccrue				= BigDecimal.ZERO;
-	private BigDecimal	accrueBal			= BigDecimal.ZERO;
 
-	private BigDecimal	accrueS				= BigDecimal.ZERO;
-	private BigDecimal	dAccrueS			= BigDecimal.ZERO;
+	private String finType;
 
-	private BigDecimal	amz					= BigDecimal.ZERO;
-	private BigDecimal	dAmz				= BigDecimal.ZERO;
-	private BigDecimal	amzBal				= BigDecimal.ZERO;
-	private BigDecimal	uAmz				= BigDecimal.ZERO;
-	private BigDecimal	amzNRM				= BigDecimal.ZERO;
-	private BigDecimal	dAmzNRM				= BigDecimal.ZERO;
+	private BigDecimal accrue = BigDecimal.ZERO;
+	private BigDecimal dAccrue = BigDecimal.ZERO;
+	private BigDecimal accrueBal = BigDecimal.ZERO;
 
-	private BigDecimal	amzPD				= BigDecimal.ZERO;
-	private BigDecimal	dAmzPD				= BigDecimal.ZERO;
+	private BigDecimal accrueS = BigDecimal.ZERO;
+	private BigDecimal dAccrueS = BigDecimal.ZERO;
 
-	private BigDecimal	amzS				= BigDecimal.ZERO;
-	private BigDecimal	dAmzS				= BigDecimal.ZERO;
+	private BigDecimal amz = BigDecimal.ZERO;
+	private BigDecimal dAmz = BigDecimal.ZERO;
+	private BigDecimal amzBal = BigDecimal.ZERO;
+	private BigDecimal uAmz = BigDecimal.ZERO;
+	private BigDecimal amzNRM = BigDecimal.ZERO;
+	private BigDecimal dAmzNRM = BigDecimal.ZERO;
 
-	private BigDecimal	disburse			= BigDecimal.ZERO;
-	private BigDecimal	downpay				= BigDecimal.ZERO;
-	private BigDecimal	advanceEMI			= BigDecimal.ZERO;
-	private BigDecimal	pft					= BigDecimal.ZERO;
-	private BigDecimal	pftAB				= BigDecimal.ZERO;
-	private BigDecimal	pftAP				= BigDecimal.ZERO;
-	private BigDecimal	cpzChg				= BigDecimal.ZERO;
-	private BigDecimal	cpzTot				= BigDecimal.ZERO;
-	private BigDecimal	cpzPrv				= BigDecimal.ZERO;
-	private BigDecimal	cpzCur				= BigDecimal.ZERO;
-	private BigDecimal	cpzNxt				= BigDecimal.ZERO;
+	private BigDecimal amzPD = BigDecimal.ZERO;
+	private BigDecimal dAmzPD = BigDecimal.ZERO;
 
-	private BigDecimal	pftChg				= BigDecimal.ZERO;
-	private BigDecimal	pftS				= BigDecimal.ZERO;
-	private BigDecimal	pftSB				= BigDecimal.ZERO;
-	private BigDecimal	pftSP				= BigDecimal.ZERO;
-	private BigDecimal	pri					= BigDecimal.ZERO;
-	private BigDecimal	priAB				= BigDecimal.ZERO;
-	private BigDecimal	priAP				= BigDecimal.ZERO;
-	private BigDecimal	priS				= BigDecimal.ZERO;
-	private BigDecimal	priSB				= BigDecimal.ZERO;
-	private BigDecimal	priSP				= BigDecimal.ZERO;
-	private BigDecimal	rpPft				= BigDecimal.ZERO;
-	private BigDecimal	rpTds				= BigDecimal.ZERO;
-	private BigDecimal	pftDuePaid			= BigDecimal.ZERO;
-	private BigDecimal	priDuePaid			= BigDecimal.ZERO;
-	private BigDecimal	accruedPaid			= BigDecimal.ZERO;
-	private BigDecimal	unAccruedPaid		= BigDecimal.ZERO;
-	private BigDecimal	futurePriPaid		= BigDecimal.ZERO;
-	private BigDecimal	lastSchPftPaid		= BigDecimal.ZERO;
-	private BigDecimal	lastSchPftWaived	= BigDecimal.ZERO;
-	
-	private BigDecimal	rpPri				= BigDecimal.ZERO;
-	private BigDecimal	rpTot				= BigDecimal.ZERO;
-	private BigDecimal	instpft				= BigDecimal.ZERO;
-	private BigDecimal	instTds				= BigDecimal.ZERO;
-	private BigDecimal	instpri				= BigDecimal.ZERO;
-	private BigDecimal	instcpz				= BigDecimal.ZERO;
-	private BigDecimal	insttot				= BigDecimal.ZERO;
-	private BigDecimal	refund				= BigDecimal.ZERO;
-	private BigDecimal	rebate				= BigDecimal.ZERO;
-	private BigDecimal	insRefund			= BigDecimal.ZERO;
-	private BigDecimal	InsPay				= BigDecimal.ZERO;
-	private BigDecimal	schFeePay			= BigDecimal.ZERO;
-	private BigDecimal	suplRentPay			= BigDecimal.ZERO;
-	private BigDecimal	incrCostPay			= BigDecimal.ZERO;
-	private BigDecimal	woPayAmt			= BigDecimal.ZERO;
-	private int			ODDays				= 0;
-	private int			daysFromFullyPaid	= 0;
-	private int			ODInst				= 0;
-	private int			paidInst			= 0;
+	private BigDecimal amzS = BigDecimal.ZERO;
+	private BigDecimal dAmzS = BigDecimal.ZERO;
 
-	private BigDecimal	provAmt				= BigDecimal.ZERO;
-	private BigDecimal	provDue				= BigDecimal.ZERO;
-	private BigDecimal	suspNow				= BigDecimal.ZERO;
-	private BigDecimal	suspRls				= BigDecimal.ZERO;
-	private BigDecimal	penalty				= BigDecimal.ZERO;
-	private BigDecimal	waiver				= BigDecimal.ZERO;
+	private BigDecimal disburse = BigDecimal.ZERO;
+	private BigDecimal downpay = BigDecimal.ZERO;
+	private BigDecimal advanceEMI = BigDecimal.ZERO;
+	private BigDecimal pft = BigDecimal.ZERO;
+	private BigDecimal pftAB = BigDecimal.ZERO;
+	private BigDecimal pftAP = BigDecimal.ZERO;
+	private BigDecimal cpzChg = BigDecimal.ZERO;
+	private BigDecimal cpzTot = BigDecimal.ZERO;
+	private BigDecimal cpzPrv = BigDecimal.ZERO;
+	private BigDecimal cpzCur = BigDecimal.ZERO;
+	private BigDecimal cpzNxt = BigDecimal.ZERO;
 
-	private BigDecimal	penaltyPaid			= BigDecimal.ZERO;
-	private BigDecimal	penaltyDue			= BigDecimal.ZERO;
-	private BigDecimal	penaltyWaived		= BigDecimal.ZERO;
-	private BigDecimal	accrueTsfd			= BigDecimal.ZERO;
-	private BigDecimal	prvAccrueTsfd		= BigDecimal.ZERO;
+	private BigDecimal pftChg = BigDecimal.ZERO;
+	private BigDecimal pftS = BigDecimal.ZERO;
+	private BigDecimal pftSB = BigDecimal.ZERO;
+	private BigDecimal pftSP = BigDecimal.ZERO;
+	private BigDecimal pri = BigDecimal.ZERO;
+	private BigDecimal priAB = BigDecimal.ZERO;
+	private BigDecimal priAP = BigDecimal.ZERO;
+	private BigDecimal priS = BigDecimal.ZERO;
+	private BigDecimal priSB = BigDecimal.ZERO;
+	private BigDecimal priSP = BigDecimal.ZERO;
+	private BigDecimal rpPft = BigDecimal.ZERO;
+	private BigDecimal rpTds = BigDecimal.ZERO;
+	private BigDecimal pftDuePaid = BigDecimal.ZERO;
+	private BigDecimal priDuePaid = BigDecimal.ZERO;
+	private BigDecimal accruedPaid = BigDecimal.ZERO;
+	private BigDecimal unAccruedPaid = BigDecimal.ZERO;
+	private BigDecimal futurePriPaid = BigDecimal.ZERO;
+	private BigDecimal lastSchPftPaid = BigDecimal.ZERO;
+	private BigDecimal lastSchPftWaived = BigDecimal.ZERO;
 
-	private BigDecimal	totalWriteoff		= BigDecimal.ZERO;
-	private BigDecimal	excessBal			= BigDecimal.ZERO;
-	private BigDecimal	toExcessAmt			= BigDecimal.ZERO;
-	private BigDecimal	toEmiAdvance		= BigDecimal.ZERO;
+	private BigDecimal rpPri = BigDecimal.ZERO;
+	private BigDecimal rpTot = BigDecimal.ZERO;
+	private BigDecimal instpft = BigDecimal.ZERO;
+	private BigDecimal instTds = BigDecimal.ZERO;
+	private BigDecimal instpri = BigDecimal.ZERO;
+	private BigDecimal instcpz = BigDecimal.ZERO;
+	private BigDecimal insttot = BigDecimal.ZERO;
+	private BigDecimal refund = BigDecimal.ZERO;
+	private BigDecimal rebate = BigDecimal.ZERO;
+	private BigDecimal insRefund = BigDecimal.ZERO;
+	private BigDecimal InsPay = BigDecimal.ZERO;
+	private BigDecimal schFeePay = BigDecimal.ZERO;
+	private BigDecimal suplRentPay = BigDecimal.ZERO;
+	private BigDecimal incrCostPay = BigDecimal.ZERO;
+	private BigDecimal woPayAmt = BigDecimal.ZERO;
+	private int ODDays = 0;
+	private int daysFromFullyPaid = 0;
+	private int ODInst = 0;
+	private int paidInst = 0;
 
-	private BigDecimal	downpayB			= BigDecimal.ZERO;
-	private BigDecimal	downpayS			= BigDecimal.ZERO;
-	private BigDecimal	FeeChargeAmt		= BigDecimal.ZERO;
-	private BigDecimal	InsuranceAmt		= BigDecimal.ZERO;
+	private BigDecimal provAmt = BigDecimal.ZERO;
+	private BigDecimal provDue = BigDecimal.ZERO;
+	private BigDecimal suspNow = BigDecimal.ZERO;
+	private BigDecimal suspRls = BigDecimal.ZERO;
+	private BigDecimal penalty = BigDecimal.ZERO;
+	private BigDecimal waiver = BigDecimal.ZERO;
 
-	private BigDecimal	addFeeToFinance		= BigDecimal.ZERO;
-	private BigDecimal	paidFee				= BigDecimal.ZERO;
-	private BigDecimal	bpi					= BigDecimal.ZERO;
-	private BigDecimal	deductFeeDisb		= BigDecimal.ZERO;
-	private BigDecimal	deductInsDisb		= BigDecimal.ZERO;
-	private BigDecimal	disbInstAmt			= BigDecimal.ZERO;
+	private BigDecimal penaltyPaid = BigDecimal.ZERO;
+	private BigDecimal penaltyDue = BigDecimal.ZERO;
+	private BigDecimal penaltyWaived = BigDecimal.ZERO;
+	private BigDecimal accrueTsfd = BigDecimal.ZERO;
+	private BigDecimal prvAccrueTsfd = BigDecimal.ZERO;
 
-	private BigDecimal	priWaived			= BigDecimal.ZERO;
-	private BigDecimal	pftWaived			= BigDecimal.ZERO;
-	private BigDecimal	feeWaived			= BigDecimal.ZERO;
-	private BigDecimal	insWaived			= BigDecimal.ZERO;
-	private BigDecimal	pftDueWaived		= BigDecimal.ZERO;
-	private BigDecimal	priDueWaived		= BigDecimal.ZERO;
-	private BigDecimal	accrueWaived		= BigDecimal.ZERO;
-	private BigDecimal	unAccrueWaived		= BigDecimal.ZERO;
-	private BigDecimal	futurePriWaived		= BigDecimal.ZERO;
-	private BigDecimal	dueTds				= BigDecimal.ZERO;
-	private BigDecimal	lastSchTds			= BigDecimal.ZERO;
-	private BigDecimal	accruedTds			= BigDecimal.ZERO;
-	private BigDecimal	unAccruedTds		= BigDecimal.ZERO;
+	private BigDecimal totalWriteoff = BigDecimal.ZERO;
+	private BigDecimal excessBal = BigDecimal.ZERO;
+	private BigDecimal toExcessAmt = BigDecimal.ZERO;
+	private BigDecimal toEmiAdvance = BigDecimal.ZERO;
+
+	private BigDecimal downpayB = BigDecimal.ZERO;
+	private BigDecimal downpayS = BigDecimal.ZERO;
+	private BigDecimal FeeChargeAmt = BigDecimal.ZERO;
+	private BigDecimal InsuranceAmt = BigDecimal.ZERO;
+
+	private BigDecimal addFeeToFinance = BigDecimal.ZERO;
+	private BigDecimal paidFee = BigDecimal.ZERO;
+	private BigDecimal bpi = BigDecimal.ZERO;
+	private BigDecimal deductFeeDisb = BigDecimal.ZERO;
+	private BigDecimal deductInsDisb = BigDecimal.ZERO;
+	private BigDecimal disbInstAmt = BigDecimal.ZERO;
+
+	private BigDecimal priWaived = BigDecimal.ZERO;
+	private BigDecimal pftWaived = BigDecimal.ZERO;
+	private BigDecimal feeWaived = BigDecimal.ZERO;
+	private BigDecimal insWaived = BigDecimal.ZERO;
+	private BigDecimal pftDueWaived = BigDecimal.ZERO;
+	private BigDecimal priDueWaived = BigDecimal.ZERO;
+	private BigDecimal accrueWaived = BigDecimal.ZERO;
+	private BigDecimal unAccrueWaived = BigDecimal.ZERO;
+	private BigDecimal futurePriWaived = BigDecimal.ZERO;
+	private BigDecimal dueTds = BigDecimal.ZERO;
+	private BigDecimal lastSchTds = BigDecimal.ZERO;
+	private BigDecimal accruedTds = BigDecimal.ZERO;
+	private BigDecimal unAccruedTds = BigDecimal.ZERO;
 
 	//For Disbursement Instructions used in SUBHEAD
-	private String		partnerBankAcType;
-	private String		partnerBankAc;
-	
+	private String partnerBankAcType;
+	private String partnerBankAc;
+
 	// Late Payment Interest Fields
-	private BigDecimal	lpi					= BigDecimal.ZERO;
-	private BigDecimal	lpiDue				= BigDecimal.ZERO;
-	private BigDecimal	lpiPaid				= BigDecimal.ZERO;
-	private BigDecimal	lpiWaived			= BigDecimal.ZERO;
-	private BigDecimal	dLPIAmz				= BigDecimal.ZERO;
-	private BigDecimal	dGSTLPIAmz			= BigDecimal.ZERO;
-	
+	private BigDecimal lpi = BigDecimal.ZERO;
+	private BigDecimal lpiDue = BigDecimal.ZERO;
+	private BigDecimal lpiPaid = BigDecimal.ZERO;
+	private BigDecimal lpiWaived = BigDecimal.ZERO;
+	private BigDecimal dLPIAmz = BigDecimal.ZERO;
+	private BigDecimal dGSTLPIAmz = BigDecimal.ZERO;
+
 	// Late Payment Penalty Fields
-	private BigDecimal	dLPPAmz				= BigDecimal.ZERO;
-	private BigDecimal	dGSTLPPAmz				= BigDecimal.ZERO;
+	private BigDecimal dLPPAmz = BigDecimal.ZERO;
+	private BigDecimal dGSTLPPAmz = BigDecimal.ZERO;
 
 	//Commitment
-	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
-	private BigDecimal	chgAmt				= BigDecimal.ZERO;
-	private BigDecimal	cmtAvl				= BigDecimal.ZERO;
-	private BigDecimal	cmtUAmt				= BigDecimal.ZERO;
-	private BigDecimal	cmtUOth				= BigDecimal.ZERO;
-	
+	private BigDecimal cmtAmt = BigDecimal.ZERO;
+	private BigDecimal chgAmt = BigDecimal.ZERO;
+	private BigDecimal cmtAvl = BigDecimal.ZERO;
+	private BigDecimal cmtUAmt = BigDecimal.ZERO;
+	private BigDecimal cmtUOth = BigDecimal.ZERO;
+
 	// Present mode
-	private String		receiptMode;
-	
+	private String receiptMode;
+
 	// VAS Fees
-	private BigDecimal	deductVasDisb				= BigDecimal.ZERO;
-	private BigDecimal	addVasToFinance				= BigDecimal.ZERO;
-	private BigDecimal	vasFeeWaived				= BigDecimal.ZERO;
-	private BigDecimal	paidVasFee					= BigDecimal.ZERO;
-	
+	private BigDecimal deductVasDisb = BigDecimal.ZERO;
+	private BigDecimal addVasToFinance = BigDecimal.ZERO;
+	private BigDecimal vasFeeWaived = BigDecimal.ZERO;
+	private BigDecimal paidVasFee = BigDecimal.ZERO;
+
 	// Cash Management
-	private BigDecimal	transfer			= BigDecimal.ZERO;
-	private String		postingType			= AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
-	private String		userBranch			= "";
-	private String		paymentType				= "";
-	
-	private BigDecimal imdAmount= BigDecimal.ZERO;;
+	private BigDecimal transfer = BigDecimal.ZERO;
+	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
+	private String userBranch = "";
+	private String paymentType = "";
+
+	private BigDecimal imdAmount = BigDecimal.ZERO;;
 
 	public AEAmountCodes() {
 		super();
@@ -1219,5 +1219,4 @@ public class AEAmountCodes {
 		this.instTds = instTds;
 	}
 
-	
 }

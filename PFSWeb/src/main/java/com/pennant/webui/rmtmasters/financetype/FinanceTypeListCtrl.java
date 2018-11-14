@@ -82,16 +82,16 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.rmtmasters.financetype.model.FinanceTypeComparator;
 import com.pennant.webui.rmtmasters.financetype.model.FinanceTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the following zul files <li>
- * /WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeList.zul.</li> <li>
- * /WEB-INF/pages/SolutionFactory/FinanceType/PromotionList.zul.</li>
+ * This is the controller class for the following zul files
+ * <li>/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeList.zul.</li>
+ * <li>/WEB-INF/pages/SolutionFactory/FinanceType/PromotionList.zul.</li>
  */
 public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private static final long serialVersionUID = -1491703348215991538L;
@@ -158,16 +158,16 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.searchObject.addFilterNotEqual("Product", "");
 		} else {
 			this.searchObject.addFilterEqual("Product", "");
-			if(isOverdraft){
+			if (isOverdraft) {
 				this.searchObject.addFilterEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
-			}else{
+			} else {
 				//FIXME: Changed by Pradeep. Not sure about the previous condition correctness. Remove the comment after testing.
 				if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 					Filter[] filters = new Filter[2];
 					filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
 					filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
 					this.searchObject.addFilterOr(filters);
-				}else{
+				} else {
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL);
 				}
@@ -177,7 +177,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 	@Override
 	protected void doPrintResults() {
-		String code = this.finCategory.getValue().charAt(0) + this.finCategory.getValue().substring(1).toLowerCase() + "Type";
+		String code = this.finCategory.getValue().charAt(0) + this.finCategory.getValue().substring(1).toLowerCase()
+				+ "Type";
 		try {
 			new PTListReportUtils(code, searchObject, -1);
 		} catch (InterruptedException e) {
@@ -192,32 +193,32 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FinanceTypeList(Event event) {
-		
+
 		// Set the page level components.
 		setPageComponents(window_FinanceTypeList, borderLayout_FinanceTypeList, listBoxFinanceType, null);
-		
+
 		if (StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_PROMOTION)) {
 			isPromotion = true;
 		}
-		
+
 		if (StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_OVERDRAFT)) {
 			isOverdraft = true;
 		}
 
 		setItemRender(new FinanceTypeListModelItemRenderer(isOverdraft));
 		setComparator(new FinanceTypeComparator());
-		
+
 		// Register buttons and fields.
 		registerButton(button_FinanceTypeList_NewFinanceType, "button_FinanceTypeList_NewFinanceType", true);
 		registerButton(button_FinanceTypeList_FinanceTypeSearchDialog);
 
 		fillComboBox(this.finDaysCalType, "", PennantStaticListUtil.getProfitDaysBasis(), "");
-		
+
 		String ecldSchdmethods = ",NO_PAY,GRCNDPAY,PFTCAP,";
-		if(isOverdraft){
+		if (isOverdraft) {
 			ecldSchdmethods = ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,PFTCAP,";
 		}
-		
+
 		fillComboBox(this.finSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ecldSchdmethods);
 
 		registerField("product");
@@ -227,15 +228,18 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		registerField("finCcy", listheader_FinCcy, SortOrder.NONE, finCcy, sortOperator_finCcy, Operators.STRING);
 		registerField("finDaysCalType", listheader_FinBasicType, SortOrder.NONE, finDaysCalType,
 				sortOperator_finDaysCalType, Operators.STRING);
-		/*registerField("finAcType", listheader_FinAcType, SortOrder.NONE);*/
-		registerField("finSchdMthd", listheader_SchdMthd, SortOrder.NONE, finSchdMthd, sortOperator_finSchdMthd, Operators.STRING);
-		if(!isOverdraft){
-			registerField("fInIsAlwGrace", listheader_AlwGrace, SortOrder.NONE, finIsAlwGrace, sortOperator_finIsAlwGrace, Operators.BOOLEAN);
+		/* registerField("finAcType", listheader_FinAcType, SortOrder.NONE); */
+		registerField("finSchdMthd", listheader_SchdMthd, SortOrder.NONE, finSchdMthd, sortOperator_finSchdMthd,
+				Operators.STRING);
+		if (!isOverdraft) {
+			registerField("fInIsAlwGrace", listheader_AlwGrace, SortOrder.NONE, finIsAlwGrace,
+					sortOperator_finIsAlwGrace, Operators.BOOLEAN);
 		}
-		registerField("finDivision", listheader_FinDivision, SortOrder.NONE, finDivision, sortOperator_finDivision, Operators.STRING);
+		registerField("finDivision", listheader_FinDivision, SortOrder.NONE, finDivision, sortOperator_finDivision,
+				Operators.STRING);
 		registerField("FinCategoryDesc", SortOrder.DESC);
 		registerField("FinCategory");
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -308,7 +312,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					aFinanceType.getFinTypeAccounts().add(aFinTypeAccount);
 				}
 			}
-			
+
 			List<IRRFinanceType> irrFinTypes = sourceFin.getIrrFinanceTypeList();
 			if (irrFinTypes != null && !irrFinTypes.isEmpty()) {
 				aFinanceType.setIrrFinanceTypeList(new ArrayList<IRRFinanceType>());
@@ -321,7 +325,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					aFinanceType.getIrrFinanceTypeList().add(aIRRFinType);
 				}
 			}
-			
+
 			List<FinTypeAccounting> fintypeAccountingList = sourceFin.getFinTypeAccountingList();
 			if (fintypeAccountingList != null && !fintypeAccountingList.isEmpty()) {
 				aFinanceType.setFinTypeAccountingList(new ArrayList<FinTypeAccounting>());
@@ -331,7 +335,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					aFinanceType.getFinTypeAccountingList().add(finTypeAccounting);
 				}
 			}
-			
+
 			List<FinTypeFees> finTypeFeesList = sourceFin.getFinTypeFeesList();
 			if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
 				aFinanceType.setFinTypeFeesList(new ArrayList<FinTypeFees>());
@@ -342,7 +346,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					aFinanceType.getFinTypeFeesList().add(finTypeFees);
 				}
 			}
-			
+
 			List<FinTypePartnerBank> finTypePartnerBankList = sourceFin.getFinTypePartnerBankList();
 			if (finTypePartnerBankList != null && !finTypePartnerBankList.isEmpty()) {
 				aFinanceType.setFinTypePartnerBankList(new ArrayList<FinTypePartnerBank>());
@@ -378,7 +382,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/SelectFinTypeDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/SelectFinTypeDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -413,7 +418,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			return;
 		}
 
-		String whereCond = " AND FinType='" + financeType.getFinType() + "' AND version=" + financeType.getVersion() + " ";
+		String whereCond = " AND FinType='" + financeType.getFinType() + "' AND version=" + financeType.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(financeType, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -448,10 +454,12 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			if(isOverdraft){
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeDialog.zul", null, map);
-			}else{
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null, map);
+			if (isOverdraft) {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeDialog.zul",
+						null, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null,
+						map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);

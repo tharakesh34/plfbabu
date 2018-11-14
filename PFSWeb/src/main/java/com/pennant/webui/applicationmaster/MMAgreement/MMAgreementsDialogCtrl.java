@@ -48,9 +48,9 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
@@ -64,8 +64,8 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import javassist.NotFoundException;
 
 public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
-	private static final long				serialVersionUID	= 9031340167587772517L;
-	private static final Logger				logger				= Logger.getLogger(MMAgreementsDialogCtrl.class);
+	private static final long serialVersionUID = 9031340167587772517L;
+	private static final Logger logger = Logger.getLogger(MMAgreementsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -147,8 +147,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -175,14 +175,12 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 				setMMAgreement(null);
 			}
 
-			doLoadWorkFlow(this.aMMAgreement.isWorkflow(),
-					this.aMMAgreement.getWorkflowId(),
+			doLoadWorkFlow(this.aMMAgreement.isWorkflow(), this.aMMAgreement.getWorkflowId(),
 					this.aMMAgreement.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"MMAgreementsDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "MMAgreementsDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -191,8 +189,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			// or
 			// delete currency here.
 			if (arguments.containsKey("MMAgreementsListCtrl")) {
-				setaMMAgreementsListCtrl((MMAgreementsListCtrl) arguments
-						.get("MMAgreementsListCtrl"));
+				setaMMAgreementsListCtrl((MMAgreementsListCtrl) arguments.get("MMAgreementsListCtrl"));
 			} else {
 				setaMMAgreementsListCtrl(null);
 			}
@@ -223,8 +220,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL);
 		this.custCIF.setFilters(filters);
-		ccyformatt = SysParamUtil
-				.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+		ccyformatt = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 		this.purchRegOffice.setMandatoryStyle(true);
 		this.purchRegOffice.setTextBoxWidth(161);
 		this.purchRegOffice.setModuleName("Province");
@@ -235,8 +231,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		purchRegOffice[0] = new Filter("CPCountry", "AE", Filter.OP_EQUAL);
 		this.purchRegOffice.setFilters(purchRegOffice);
 		this.contractAmt.setMandatory(true);
-		this.contractAmt.setFormat(PennantApplicationUtil
-				.getAmountFormate(ccyformatt));
+		this.contractAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		this.contractAmt.setScale(ccyformatt);
 		this.contractAmt.setValue(BigDecimal.ZERO);
 		this.contractDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -279,26 +274,22 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		this.facOfferLetterDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.facilityLimit.setMandatory(true);
-		this.facilityLimit.setFormat(PennantApplicationUtil
-				.getAmountFormate(ccyformatt));
+		this.facilityLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		this.facilityLimit.setScale(ccyformatt);
 		this.facilityLimit.setValue(BigDecimal.ZERO);
 
 		this.assetValue.setMandatory(true);
-		this.assetValue.setFormat(PennantApplicationUtil
-				.getAmountFormate(ccyformatt));
+		this.assetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		this.assetValue.setScale(ccyformatt);
 		this.assetValue.setValue(BigDecimal.ZERO);
 
 		this.sharePerc.setMandatory(true);
-		this.sharePerc.setFormat(PennantApplicationUtil
-				.getAmountFormate(ccyformatt));
+		this.sharePerc.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		this.sharePerc.setScale(ccyformatt);
 		this.sharePerc.setValue(BigDecimal.ZERO);
 
 		// this.minAmount.setMandatory(true);
-		this.minAmount.setFormat(PennantApplicationUtil
-				.getAmountFormate(ccyformatt));
+		this.minAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyformatt));
 		this.minAmount.setScale(ccyformatt);
 		this.minAmount.setValue(BigDecimal.ZERO);
 
@@ -335,21 +326,19 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.dealer.setDescColumn("DealerName");
 		this.dealer.setValidateColumns(new String[] { "DealerId" });
 		Filter dealerfilter[] = new Filter[1];
-		dealerfilter[0] = new Filter("SellerType", PennantConstants.DEALER,
-				Filter.OP_EQUAL);
+		dealerfilter[0] = new Filter("SellerType", PennantConstants.DEALER, Filter.OP_EQUAL);
 		this.dealer.setFilters(dealerfilter);
 		this.attention.setMaxlength(50);
 		this.dealer.setTextBoxWidth(161);
 		this.purchaddress.setMaxlength(100);
 		this.assetDesc.setMaxlength(50);
 		this.pmaryRelOfficer.setMaxlength(20);
-		this.custAccount.setAcountDetails(
-				AccountConstants.ACTYPES_COMMITCHARGE, "", true); // need ask
-																	// which
-																	// account
-																	// type
-																	// should be
-																	// added
+		this.custAccount.setAcountDetails(AccountConstants.ACTYPES_COMMITCHARGE, "", true); // need ask
+																							// which
+																							// account
+																							// type
+																							// should be
+																							// added
 		this.custAccount.setFormatter(ccyformatt);
 		this.custAccount.setMandatoryStyle(true);
 		this.custAccount.setTextBoxWidth(165);
@@ -362,20 +351,15 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_MMAgreementsDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_MMAgreementsDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_MMAgreementsDialog_btnSave"));
-		this.print.setVisible(getUserWorkspace().isAllowed(
-				"button_MMAgreementsDialog_btnSave"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnSave"));
+		this.print.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
 	}
@@ -446,8 +430,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCurrency
 	 * @throws Exception
@@ -497,27 +480,19 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 */
 	public void doWriteBeanToComponents(MMAgreement aMMAgreement) {
 		logger.debug("Entering ");
-		fillComboBox(this.product, aMMAgreement.getProduct(),
-				PennantStaticListUtil.getProductForMMA(), "");
-		fillComboBox(
-				this.agreeName,
-				aMMAgreement.getAgreeName(),
-				PennantAppUtil.getFieldCodeList(product.getSelectedItem()
-						.getValue().toString()), "");
+		fillComboBox(this.product, aMMAgreement.getProduct(), PennantStaticListUtil.getProductForMMA(), "");
+		fillComboBox(this.agreeName, aMMAgreement.getAgreeName(),
+				PennantAppUtil.getFieldCodeList(product.getSelectedItem().getValue().toString()), "");
 		this.mMAReference.setValue(aMMAgreement.getMMAReference());
 		this.custCIF.setValue(aMMAgreement.getCustCIF());
 		this.custCIF.setDescription(aMMAgreement.getCustShrtName());
 		this.purchaddress.setValue(aMMAgreement.getPurchaddress());
 		this.purchRegOffice.setValue(aMMAgreement.getPurchRegOffice());
-		this.purchRegOffice.setDescription(aMMAgreement
-				.getLovDescPurchRegOffice());
-		this.contractAmt.setValue(PennantAppUtil.formateAmount(
-				aMMAgreement.getContractAmt(), ccyformatt));
+		this.purchRegOffice.setDescription(aMMAgreement.getLovDescPurchRegOffice());
+		this.contractAmt.setValue(PennantAppUtil.formateAmount(aMMAgreement.getContractAmt(), ccyformatt));
 		this.contractDate.setValue(aMMAgreement.getContractDate());
-		this.rate.setValue(aMMAgreement.getRate() == null ? BigDecimal.ZERO
-				: aMMAgreement.getRate());
-		String[] fax = PennantApplicationUtil.unFormatPhoneNumber(aMMAgreement
-				.getFax());
+		this.rate.setValue(aMMAgreement.getRate() == null ? BigDecimal.ZERO : aMMAgreement.getRate());
+		String[] fax = PennantApplicationUtil.unFormatPhoneNumber(aMMAgreement.getFax());
 		this.faxCountryCode.setValue(fax[0]);
 		this.faxAreaCode.setValue(fax[1]);
 		this.fax.setValue(fax[2]);
@@ -527,19 +502,13 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		// Facility Details
 		this.fOLIssueDate.setValue(aMMAgreement.getfOLIssueDate());
 		this.maturityDate.setValue(aMMAgreement.getMaturityDate());
-		this.facilityLimit.setValue(PennantAppUtil.formateAmount(
-				aMMAgreement.getFacilityLimit(), ccyformatt));
-		this.minAmount.setValue(PennantAppUtil.formateAmount(
-				aMMAgreement.getMinAmount(), ccyformatt));
+		this.facilityLimit.setValue(PennantAppUtil.formateAmount(aMMAgreement.getFacilityLimit(), ccyformatt));
+		this.minAmount.setValue(PennantAppUtil.formateAmount(aMMAgreement.getMinAmount(), ccyformatt));
 		this.profitRate.setValue(aMMAgreement.getProfitRate());
-		this.rateCode.setMarginValue(aMMAgreement.getMargin() == null ? BigDecimal.ZERO
-				: aMMAgreement.getMargin());
-		this.minRate
-				.setValue(aMMAgreement.getMinRate() == null ? BigDecimal.ZERO
-						: aMMAgreement.getMinRate());
+		this.rateCode.setMarginValue(aMMAgreement.getMargin() == null ? BigDecimal.ZERO : aMMAgreement.getMargin());
+		this.minRate.setValue(aMMAgreement.getMinRate() == null ? BigDecimal.ZERO : aMMAgreement.getMinRate());
 		this.latePayRate
-				.setValue(aMMAgreement.getLatePayRate() == null ? BigDecimal.ZERO
-						: aMMAgreement.getLatePayRate());
+				.setValue(aMMAgreement.getLatePayRate() == null ? BigDecimal.ZERO : aMMAgreement.getLatePayRate());
 		this.numberOfTerms.setValue(aMMAgreement.getNumberOfTerms());
 		this.profitPeriod.setValue(aMMAgreement.getProfitPeriod());
 
@@ -547,18 +516,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.rateCode.setBaseDescription(aMMAgreement.getLovDescBaseRateName());
 		this.folReference.setValue(aMMAgreement.getfOlReference());
 		this.avlPerDays.setValue(aMMAgreement.getAvlPerDays());
-		this.maxCapProfitRate
-				.setValue(aMMAgreement.getMaxCapProfitRate() == null ? BigDecimal.ZERO
-						: aMMAgreement.getMaxCapProfitRate());
+		this.maxCapProfitRate.setValue(
+				aMMAgreement.getMaxCapProfitRate() == null ? BigDecimal.ZERO : aMMAgreement.getMaxCapProfitRate());
 		this.facOfferLetterDate.setValue(aMMAgreement.getFacOfferLetterDate());
 		this.pmaryRelOfficer.setValue(aMMAgreement.getPmaryRelOfficer());
 		this.custAccount.setValue(aMMAgreement.getCustAccount());
-		this.minCapRate
-				.setValue(aMMAgreement.getMinCapRate() == null ? BigDecimal.ZERO
-						: aMMAgreement.getMinCapRate());
+		this.minCapRate.setValue(aMMAgreement.getMinCapRate() == null ? BigDecimal.ZERO : aMMAgreement.getMinCapRate());
 		this.dealer.setValue(String.valueOf(aMMAgreement.getDealer()));
-		this.dealer.setDescription(StringUtils.trimToEmpty(aMMAgreement
-				.getDealerName()));
+		this.dealer.setDescription(StringUtils.trimToEmpty(aMMAgreement.getDealerName()));
 		this.assetValue.setValue(aMMAgreement.getAssetValue());
 		this.sharePerc.setValue(aMMAgreement.getSharePerc());
 		this.assetDesc.setValue(aMMAgreement.getAssetDesc());
@@ -569,8 +534,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 	public void onSelect$product(Event event) {
 		logger.debug("Entering" + event.toString());
-		ArrayList<ValueLabel> list1 = PennantAppUtil.getFieldCodeList(product
-				.getSelectedItem().getValue().toString());
+		ArrayList<ValueLabel> list1 = PennantAppUtil.getFieldCodeList(product.getSelectedItem().getValue().toString());
 		this.agreeName.setDisabled(false);
 		if (list1.size() == 1) {
 			fillComboBox(this.agreeName, list1.get(0).getValue(), list1, "");
@@ -688,11 +652,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_MMAgreementDialog_MMAReference.value")
-				+ " : " + aMMAgreement.getMMAReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_MMAgreementDialog_MMAReference.value") + " : "
+				+ aMMAgreement.getMMAReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aMMAgreement.getRecordType())) {
 				aMMAgreement.setVersion(aMMAgreement.getVersion() + 1);
@@ -739,68 +701,47 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			this.custCIF.setReadonly(true);
 
 		}
-		this.mMAgreeType
-				.setDisabled(isReadOnly("MMAgreementsDialog_MMAgreeType"));
+		this.mMAgreeType.setDisabled(isReadOnly("MMAgreementsDialog_MMAgreeType"));
 		this.product.setDisabled(isReadOnly("MMAgreementsDialog_Product"));
 		this.agreeName.setDisabled(isReadOnly("MMAgreementsDialog_AgreeName"));
-		this.contractAmt
-				.setDisabled(isReadOnly("MMAgreementsDialog_ContractAmt"));
-		this.contractDate
-				.setDisabled(isReadOnly("MMAgreementsDialog_ContractDate"));
+		this.contractAmt.setDisabled(isReadOnly("MMAgreementsDialog_ContractAmt"));
+		this.contractDate.setDisabled(isReadOnly("MMAgreementsDialog_ContractDate"));
 		this.titleNo.setReadonly(isReadOnly("MMAgreementsDialog_TitleNo"));
 		this.rate.setDisabled(isReadOnly("MMAgreementsDialog_Rate"));
-		this.purchRegOffice
-				.setReadonly(isReadOnly("MMAgreementsDialog_PurchRegOffice"));
+		this.purchRegOffice.setReadonly(isReadOnly("MMAgreementsDialog_PurchRegOffice"));
 		this.fax.setReadonly(isReadOnly("MMAgreementsDialog_Fax"));
 		this.faxCountryCode.setReadonly(isReadOnly("MMAgreementsDialog_Fax"));
 		this.faxAreaCode.setReadonly(isReadOnly("MMAgreementsDialog_Fax"));
-		this.purchaddress
-				.setReadonly(isReadOnly("MMAgreementsDialog_Purchaddress"));
+		this.purchaddress.setReadonly(isReadOnly("MMAgreementsDialog_Purchaddress"));
 		this.attention.setReadonly(isReadOnly("MMAgreementsDialog_Attention"));
 
-		this.fOLIssueDate
-				.setDisabled(isReadOnly("MMAgreementsDialog_FOLIssueDate"));
-		this.maturityDate
-				.setDisabled(isReadOnly("MMAgreementsDialog_maturityDate"));
-		this.facilityLimit
-				.setDisabled(isReadOnly("MMAgreementsDialog_facilityLimit"));
-		this.profitRate
-				.setDisabled(isReadOnly("MMAgreementsDialog_profitRate"));
+		this.fOLIssueDate.setDisabled(isReadOnly("MMAgreementsDialog_FOLIssueDate"));
+		this.maturityDate.setDisabled(isReadOnly("MMAgreementsDialog_maturityDate"));
+		this.facilityLimit.setDisabled(isReadOnly("MMAgreementsDialog_facilityLimit"));
+		this.profitRate.setDisabled(isReadOnly("MMAgreementsDialog_profitRate"));
 		this.minRate.setDisabled(isReadOnly("MMAgreementsDialog_minRate"));
 		this.minAmount.setDisabled(isReadOnly("MMAgreementsDialog_minAmount"));
-		this.numberOfTerms
-				.setReadonly(isReadOnly("MMAgreementsDialog_numberOfTerms"));
-		this.profitPeriod
-				.setReadonly(isReadOnly("MMAgreementsDialog_profitPeriod"));
+		this.numberOfTerms.setReadonly(isReadOnly("MMAgreementsDialog_numberOfTerms"));
+		this.profitPeriod.setReadonly(isReadOnly("MMAgreementsDialog_profitPeriod"));
 		this.country.setReadonly(isReadOnly("MMAgreementsDialog_Country"));
 		this.rateCode.setBaseReadonly(isReadOnly("MMAgreementsDialog_BaseRateCode"));
-		this.folReference
-				.setReadonly(isReadOnly("MMAgreementsDialog_folReference"));
-		this.avlPerDays
-				.setReadonly(isReadOnly("MMAgreementsDialog_AvlPerDays"));
-		this.maxCapProfitRate
-				.setDisabled(isReadOnly("MMAgreementsDialog_MaxCapProfitRate"));
-		this.facOfferLetterDate
-				.setDisabled(isReadOnly("MMAgreementsDialog_FacOfferLetterDate"));
-		this.pmaryRelOfficer
-				.setReadonly(isReadOnly("MMAgreementsDialog_PmaryRelOfficer"));
-		this.custAccount
-				.setReadonly(isReadOnly("MMAgreementsDialog_CustAccount"));
-		this.minCapRate
-				.setDisabled(isReadOnly("MMAgreementsDialog_MinCapRate"));
+		this.folReference.setReadonly(isReadOnly("MMAgreementsDialog_folReference"));
+		this.avlPerDays.setReadonly(isReadOnly("MMAgreementsDialog_AvlPerDays"));
+		this.maxCapProfitRate.setDisabled(isReadOnly("MMAgreementsDialog_MaxCapProfitRate"));
+		this.facOfferLetterDate.setDisabled(isReadOnly("MMAgreementsDialog_FacOfferLetterDate"));
+		this.pmaryRelOfficer.setReadonly(isReadOnly("MMAgreementsDialog_PmaryRelOfficer"));
+		this.custAccount.setReadonly(isReadOnly("MMAgreementsDialog_CustAccount"));
+		this.minCapRate.setDisabled(isReadOnly("MMAgreementsDialog_MinCapRate"));
 		this.rateCode.setMarginReadonly(isReadOnly("MMAgreementsDialog_margin"));
-		this.latePayRate
-				.setDisabled(isReadOnly("MMAgreementsDialog_latePayRate"));
+		this.latePayRate.setDisabled(isReadOnly("MMAgreementsDialog_latePayRate"));
 
 		this.dealer.setReadonly(isReadOnly("MMAgreementsDialog_Dealer"));
-		this.assetValue
-				.setDisabled(isReadOnly("MMAgreementsDialog_assetValue"));
+		this.assetValue.setDisabled(isReadOnly("MMAgreementsDialog_assetValue"));
 		this.assetDesc.setReadonly(isReadOnly("MMAgreementsDialog_assetDesc"));
 		this.custPOBox.setDisabled(isReadOnly("MMAgreementsDialog_custPOBox"));
 		this.sharePerc.setDisabled(isReadOnly("MMAgreementsDialog_sharePerc"));
 		this.city.setReadonly(isReadOnly("MMAgreementsDialog_CustCity"));
-		this.province
-				.setReadonly(isReadOnly("MMAgreementsDialog_CustProvince"));
+		this.province.setReadonly(isReadOnly("MMAgreementsDialog_CustProvince"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -913,11 +854,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			if (StringUtils.isBlank(aMMAgreement.getRecordType())) {
 				aMMAgreement.setVersion(aMMAgreement.getVersion() + 1);
 				if (isNew) {
-					aMMAgreement
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aMMAgreement.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aMMAgreement
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aMMAgreement.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aMMAgreement.setNewRecord(true);
 				}
 			}
@@ -963,22 +902,19 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aMMAgreement.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aMMAgreement.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aMMAgreement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aMMAgreement.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aMMAgreement.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aMMAgreement.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aMMAgreement
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aMMAgreement.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -1024,8 +960,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aMMAgreement,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aMMAgreement, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
@@ -1053,55 +988,41 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		MMAgreement aMMAgreement = (MMAgreement) auditHeader.getAuditDetail()
-				.getModelData();
+		MMAgreement aMMAgreement = (MMAgreement) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getmMAgreementService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getmMAgreementService().delete(auditHeader);
 
 						deleteNotes = true;
 					} else {
-						auditHeader = getmMAgreementService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getmMAgreementService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getmMAgreementService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getmMAgreementService().doApprove(auditHeader);
 
-						if (aMMAgreement.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aMMAgreement.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getmMAgreementService().doReject(
-								auditHeader);
-						if (aMMAgreement.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getmMAgreementService().doReject(auditHeader);
+						if (aMMAgreement.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_MMAgreementDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_MMAgreementDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_MMAgreementDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_MMAgreementDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -1136,11 +1057,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(MMAgreement aMMAgreement, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aMMAgreement.getBefImage(), aMMAgreement);
-		return new AuditHeader(String.valueOf(aMMAgreement.getId()), null,
-				null, null, auditDetail, aMMAgreement.getUserDetails(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMMAgreement.getBefImage(), aMMAgreement);
+		return new AuditHeader(String.valueOf(aMMAgreement.getId()), null, null, null, auditDetail,
+				aMMAgreement.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1154,10 +1073,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_MMAgreementDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_MMAgreementDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1186,106 +1103,88 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 
 		if (!this.mMAReference.isReadonly()) {
-			this.mMAReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_MMAReference.value"),
-					null, true));
+			this.mMAReference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_MMAReference.value"), null, true));
 		}
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_CustCIF.value"), null,
-					true, true));
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_CustCIF.value"), null, true, true));
 		}
 		if (!this.rate.isReadonly()) {
-			this.rate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_MMAgreementDialog_Rate.value"), 9, false,
-					false, 9999));
+			this.rate.setConstraint(new PTDecimalValidator(Labels.getLabel("label_MMAgreementDialog_Rate.value"), 9,
+					false, false, 9999));
 		}
 		if (!this.purchRegOffice.isReadonly()) {
-			this.purchRegOffice.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_PurchRegOffice.value"),
-					null, true, true));
+			this.purchRegOffice.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MMAgreementDialog_PurchRegOffice.value"), null, true, true));
 		}
 		if (!this.purchaddress.isReadonly()) {
-			this.purchaddress.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_Purchaddress.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.purchaddress
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_Purchaddress.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.contractDate.isReadonly()) {
-			this.contractDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_MMAgreementDialog_Date.value"), true,
-					appDate, appEndDate, false));
+			this.contractDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MMAgreementDialog_Date.value"),
+					true, appDate, appEndDate, false));
 		}
 		if (!this.titleNo.isReadonly()) {
-			this.titleNo.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_TitleNo.value"),
+			this.titleNo.setConstraint(new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_TitleNo.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		if (!this.attention.isReadonly()) {
-			this.attention.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_Attention.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.attention
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_Attention.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.faxCountryCode.isReadonly()) {
-			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_MMAgreementDialog_FaxCountryCode.value"),
-					false, 1));
+			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_MMAgreementDialog_FaxCountryCode.value"), false, 1));
 		}
 		if (!this.faxAreaCode.isReadonly()) {
-			this.faxAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_MMAgreementDialog_FaxAreaCode.value"),
-					false, 2));
+			this.faxAreaCode.setConstraint(
+					new PTPhoneNumberValidator(Labels.getLabel("label_MMAgreementDialog_FaxAreaCode.value"), false, 2));
 		}
 		if (!this.fax.isReadonly()) {
-			this.fax.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_MMAgreementDialog_fax.value"), false, 3));
+			this.fax.setConstraint(
+					new PTPhoneNumberValidator(Labels.getLabel("label_MMAgreementDialog_fax.value"), false, 3));
 		}
 		if (!this.rateCode.isMarginReadonly()) {
-			this.rateCode.setMarginConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_MMAgreementDialog_Margin.value"), 9,
-					false, false, 9999));
+			this.rateCode.setMarginConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_MMAgreementDialog_Margin.value"), 9, false, false, 9999));
 		}
 
 		if (!this.minRate.isDisabled()) {
-			this.minRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_MMAgreementDialog_minRate.value"), 9,
-					false, false, 9999));
+			this.minRate.setConstraint(new PTDecimalValidator(Labels.getLabel("label_MMAgreementDialog_minRate.value"),
+					9, false, false, 9999));
 		}
 
 		if (!this.profitRate.isDisabled()) {
-			this.profitRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_MMAgreementDialog_ProfitRate.value"), 9,
-					false, false, 9999));
+			this.profitRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_MMAgreementDialog_ProfitRate.value"), 9, false, false, 9999));
 		}
 		if (!this.latePayRate.isDisabled()) {
-			this.latePayRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_MMAgreementDialog_LatePayRate.value"), 9,
-					false, false, 9999));
+			this.latePayRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_MMAgreementDialog_LatePayRate.value"), 9, false, false, 9999));
 		}
 		if (!this.maxCapProfitRate.isDisabled()) {
-			this.maxCapProfitRate
-					.setConstraint(new PTDecimalValidator(
-							Labels.getLabel("label_MMAgreementDialog_maxCapProfitRate.value"),
-							9, false, false, 9999));
+			this.maxCapProfitRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_MMAgreementDialog_maxCapProfitRate.value"), 9, false, false, 9999));
 		}
 
 		if (!this.folReference.isReadonly()) {
-			this.folReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_FOL_Reference.value"),
-					null, true, true));
+			this.folReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MMAgreementDialog_FOL_Reference.value"), null, true, true));
 		}
 
 		if (this.custAccount.isMandatory()) {
-			this.custAccount.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MMAgreementDialog_CustAccount.value"),
-					null, true));
+			this.custAccount.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_CustAccount.value"), null, true));
 		}
 
 		if (!this.pmaryRelOfficer.isReadonly()) {
-			this.pmaryRelOfficer
-					.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_MMAgreementDialog_PrimaryRelationshipOfficer.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM_SPACE,
-							false));
+			this.pmaryRelOfficer.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_PrimaryRelationshipOfficer.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -1301,34 +1200,22 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (this.product.getSelectedItem() != null
-					&& !"#".equals(this.product.getSelectedItem().getValue())) {
-				aMMAgreement.setProduct(this.product.getSelectedItem()
-						.getValue().toString());
+			if (this.product.getSelectedItem() != null && !"#".equals(this.product.getSelectedItem().getValue())) {
+				aMMAgreement.setProduct(this.product.getSelectedItem().getValue().toString());
 			} else {
-				throw new WrongValueException(
-						this.product,
-						Labels.getLabel(
-								"STATIC_INVALID",
-								new String[] { Labels
-										.getLabel("label_MMAgreementDialog_Product.value") }));
+				throw new WrongValueException(this.product, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_MMAgreementDialog_Product.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if (this.agreeName.getSelectedItem() != null
-					&& !"#".equals(this.agreeName.getSelectedItem().getValue())) {
-				aMMAgreement.setAgreeName(this.agreeName.getSelectedItem()
-						.getValue().toString());
+			if (this.agreeName.getSelectedItem() != null && !"#".equals(this.agreeName.getSelectedItem().getValue())) {
+				aMMAgreement.setAgreeName(this.agreeName.getSelectedItem().getValue().toString());
 			} else {
-				throw new WrongValueException(
-						this.agreeName,
-						Labels.getLabel(
-								"STATIC_INVALID",
-								new String[] { Labels
-										.getLabel("label_MMAgreementDialog_AgreeName.value") }));
+				throw new WrongValueException(this.agreeName, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_MMAgreementDialog_AgreeName.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1363,8 +1250,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aMMAgreement.setContractAmt(PennantAppUtil.unFormateAmount(
-					this.contractAmt.getValidateValue(), ccyformatt));
+			aMMAgreement
+					.setContractAmt(PennantAppUtil.unFormateAmount(this.contractAmt.getValidateValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1406,8 +1293,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aMMAgreement.setFax(PennantApplicationUtil.formatPhoneNumber(
-					this.faxCountryCode.getValue(),
+			aMMAgreement.setFax(PennantApplicationUtil.formatPhoneNumber(this.faxCountryCode.getValue(),
 					this.faxAreaCode.getValue(), this.fax.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1420,16 +1306,11 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			if (this.fOLIssueDate.getValue() != null
-					&& this.maturityDate.getValue() != null) {
-				if (!this.fOLIssueDate.getValue().before(
-						this.maturityDate.getValue())) {
-					throw new WrongValueException(
-							this.fOLIssueDate,
-							Labels.getLabel(
-									"DATE_ALLOWED_MAXDATE",
-									new String[] {
-											Labels.getLabel("label_MMAgreementDialog_fOLIssueDate.value"),
+			if (this.fOLIssueDate.getValue() != null && this.maturityDate.getValue() != null) {
+				if (!this.fOLIssueDate.getValue().before(this.maturityDate.getValue())) {
+					throw new WrongValueException(this.fOLIssueDate,
+							Labels.getLabel("DATE_ALLOWED_MAXDATE",
+									new String[] { Labels.getLabel("label_MMAgreementDialog_fOLIssueDate.value"),
 											Labels.getLabel("label_MMAgreementDialog_maturityDate.value") }));
 				}
 			}
@@ -1444,15 +1325,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aMMAgreement.setFacilityLimit(PennantAppUtil.unFormateAmount(
-					this.facilityLimit.getValidateValue(), ccyformatt));
+			aMMAgreement.setFacilityLimit(
+					PennantAppUtil.unFormateAmount(this.facilityLimit.getValidateValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aMMAgreement.setMinAmount(PennantAppUtil.unFormateAmount(
-					this.minAmount.getValidateValue(), ccyformatt));
+			aMMAgreement.setMinAmount(PennantAppUtil.unFormateAmount(this.minAmount.getValidateValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1522,8 +1402,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aMMAgreement.setFacOfferLetterDate(this.facOfferLetterDate
-					.getValue());
+			aMMAgreement.setFacOfferLetterDate(this.facOfferLetterDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1534,8 +1413,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			wve.add(we);
 		}
 		try {
-			aMMAgreement.setCustAccount(PennantApplicationUtil
-					.unFormatAccountNumber(this.custAccount.getValue()));
+			aMMAgreement.setCustAccount(PennantApplicationUtil.unFormatAccountNumber(this.custAccount.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1590,18 +1468,15 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		Date appDate = DateUtility.getAppDate();
 
 		try {
-			aAgreementDetail.setmMADate(DateUtility
-					.formatToLongDate(this.contractDate.getValue()));
-			aAgreementDetail.setStartDate(DateUtility
-					.formatToLongDate(this.contractDate.getValue()));
+			aAgreementDetail.setmMADate(DateUtility.formatToLongDate(this.contractDate.getValue()));
+			aAgreementDetail.setStartDate(DateUtility.formatToLongDate(this.contractDate.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAgreementDetail.setCustCIF(this.custCIF.getValue());
 			aAgreementDetail.setCustName(this.custCIF.getDescription());
-			aAgreementDetail.setCustArabicName(getMMAgreement()
-					.getCustShrtNameLclLng());
+			aAgreementDetail.setCustArabicName(getMMAgreement().getCustShrtNameLclLng());
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1615,20 +1490,17 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		// WHY TWO CONTROLLERS DUPLICATED WITH SAME FIELDS-- NEED TO CHECK THIS
 		// =====================================
 		try {
-			aAgreementDetail.setmMAPurchRegOffice(this.purchRegOffice
-					.getDescription());
+			aAgreementDetail.setmMAPurchRegOffice(this.purchRegOffice.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setmMAContractAmt(PennantApplicationUtil
-					.formatAmount(this.contractAmt.getValidateValue(),
-							ccyformatt, false));
+			aAgreementDetail.setmMAContractAmt(
+					PennantApplicationUtil.formatAmount(this.contractAmt.getValidateValue(), ccyformatt, false));
 			BigDecimal finAmt = this.contractAmt.getValidateValue();
 			BigDecimal contribution = BigDecimal.valueOf(30);
-			BigDecimal aHBBankShare = (contribution.multiply(finAmt))
-					.divide(new BigDecimal(100));
+			BigDecimal aHBBankShare = (contribution.multiply(finAmt)).divide(new BigDecimal(100));
 			aAgreementDetail.setSharePerc(String.valueOf(aHBBankShare));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1646,9 +1518,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setmMAFax(PennantApplicationUtil
-					.formatPhoneNumber(this.faxCountryCode.getValue(),
-							this.faxAreaCode.getValue(), this.fax.getValue()));
+			aAgreementDetail.setmMAFax(PennantApplicationUtil.formatPhoneNumber(this.faxCountryCode.getValue(),
+					this.faxAreaCode.getValue(), this.fax.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1666,25 +1537,21 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setmMAFOLIssueDate(DateUtility
-					.formatToLongDate(this.fOLIssueDate.getValue()));
+			aAgreementDetail.setmMAFOLIssueDate(DateUtility.formatToLongDate(this.fOLIssueDate.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setmMAMaturityDate(DateUtility
-					.formatToLongDate(this.maturityDate.getValue()));
+			aAgreementDetail.setmMAMaturityDate(DateUtility.formatToLongDate(this.maturityDate.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setmMAFacilityLimit(PennantApplicationUtil
-					.formatAmount(this.facilityLimit.getValidateValue(),
-							ccyformatt, false));
-			String word = NumberToEnglishWords.getAmountInText(
-					this.facilityLimit.getValidateValue(), "");
+			aAgreementDetail.setmMAFacilityLimit(
+					PennantApplicationUtil.formatAmount(this.facilityLimit.getValidateValue(), ccyformatt, false));
+			String word = NumberToEnglishWords.getAmountInText(this.facilityLimit.getValidateValue(), "");
 			aAgreementDetail.setFacLimitInWords(word);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1692,9 +1559,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		// aAgreementDetail.setFacLimitInWords(NumberToEnglishWords.getAmountInText(this.facilityLimit.getValidateValue(),aAgreementDetail.getFinCcy()));
 		try {
-			aAgreementDetail.setmMAMinAmount(PennantApplicationUtil
-					.formatAmount(this.minAmount.getValidateValue(),
-							ccyformatt, false));
+			aAgreementDetail.setmMAMinAmount(
+					PennantApplicationUtil.formatAmount(this.minAmount.getValidateValue(), ccyformatt, false));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1702,43 +1568,39 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		try {
 			if (this.profitRate.getValue() != null) {
 				aAgreementDetail
-						.setmMAPftRate(PennantApplicationUtil.formatRate(
-								this.profitRate.getValue().doubleValue(), 9));
+						.setmMAPftRate(PennantApplicationUtil.formatRate(this.profitRate.getValue().doubleValue(), 9));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if (this.rateCode.getMarginValue() != null) {
-				aAgreementDetail.setmMAMargin(PennantApplicationUtil
-						.formatRate(this.rateCode.getMarginValue().doubleValue(), 9));
+				aAgreementDetail.setmMAMargin(
+						PennantApplicationUtil.formatRate(this.rateCode.getMarginValue().doubleValue(), 9));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if (this.minRate.getValue() != null) {
-				aAgreementDetail.setmMAMinRate(PennantApplicationUtil
-						.formatRate(this.minRate.getValue().doubleValue(), 9));
+				aAgreementDetail
+						.setmMAMinRate(PennantApplicationUtil.formatRate(this.minRate.getValue().doubleValue(), 9));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if (this.latePayRate.getValue() != null) {
-				aAgreementDetail.setmMALatePayRate(PennantApplicationUtil
-						.formatRate(this.latePayRate.getValue().doubleValue(),
-								9));
+				aAgreementDetail.setmMALatePayRate(
+						PennantApplicationUtil.formatRate(this.latePayRate.getValue().doubleValue(), 9));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aAgreementDetail.setmMANumberOfTerms(String
-					.valueOf(this.numberOfTerms.intValue()));
+			aAgreementDetail.setmMANumberOfTerms(String.valueOf(this.numberOfTerms.intValue()));
 			String leasePeriodInWords = NumberToEnglishWords
-					.getNumberToWords(BigInteger.valueOf(this.numberOfTerms
-							.intValue()));
+					.getNumberToWords(BigInteger.valueOf(this.numberOfTerms.intValue()));
 			aAgreementDetail.setLeaseTermsWords(leasePeriodInWords);
 
 		} catch (WrongValueException we) {
@@ -1746,24 +1608,20 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setmMAProfitPeriod(String
-					.valueOf(this.profitPeriod.intValue()));
+			aAgreementDetail.setmMAProfitPeriod(String.valueOf(this.profitPeriod.intValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setFolReference(String.valueOf(this.folReference
-					.getValue()));
+			aAgreementDetail.setFolReference(String.valueOf(this.folReference.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setAvlPerDays(String.valueOf(this.avlPerDays
-					.intValue()));
-			String word = NumberToEnglishWords.getNumberToWords(BigInteger
-					.valueOf(this.avlPerDays.getValue()));
+			aAgreementDetail.setAvlPerDays(String.valueOf(this.avlPerDays.intValue()));
+			String word = NumberToEnglishWords.getNumberToWords(BigInteger.valueOf(this.avlPerDays.getValue()));
 			aAgreementDetail.setAvlPeriodInWords(word);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1771,9 +1629,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		try {
 			if (this.maxCapProfitRate.getValue() != null) {
-				aAgreementDetail.setMaxCapProfitRate(PennantApplicationUtil
-						.formatRate(this.maxCapProfitRate.getValue()
-								.doubleValue(), 9));
+				aAgreementDetail.setMaxCapProfitRate(
+						PennantApplicationUtil.formatRate(this.maxCapProfitRate.getValue().doubleValue(), 9));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1782,30 +1639,26 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		try {
 			if (this.minCapRate.getValue() != null) {
 				aAgreementDetail
-						.setMinCapRate(PennantApplicationUtil.formatRate(
-								this.minCapRate.getValue().doubleValue(), 9));
+						.setMinCapRate(PennantApplicationUtil.formatRate(this.minCapRate.getValue().doubleValue(), 9));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setFacOfferLetterDate(DateUtility
-					.formatToLongDate(this.facOfferLetterDate.getValue()));
+			aAgreementDetail.setFacOfferLetterDate(DateUtility.formatToLongDate(this.facOfferLetterDate.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setPmaryRelOfficer(String
-					.valueOf(this.pmaryRelOfficer.getValue()));
+			aAgreementDetail.setPmaryRelOfficer(String.valueOf(this.pmaryRelOfficer.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			this.custAccount.getValidatedValue();
-			aAgreementDetail.setCustAccount(PennantApplicationUtil
-					.unFormatAccountNumber(this.custAccount.getValue()));
+			aAgreementDetail.setCustAccount(PennantApplicationUtil.unFormatAccountNumber(this.custAccount.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1817,15 +1670,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setDealerCity(StringUtils
-					.trimToEmpty(getMMAgreement().getDealerCity()));
+			aAgreementDetail.setDealerCity(StringUtils.trimToEmpty(getMMAgreement().getDealerCity()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setAssetValue(PennantApplicationUtil.formatAmount(
-					this.assetValue.getActualValue(), ccyformatt, false));
+			aAgreementDetail.setAssetValue(
+					PennantApplicationUtil.formatAmount(this.assetValue.getActualValue(), ccyformatt, false));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1837,8 +1689,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setSharePerc(PennantApplicationUtil.formatAmount(
-					this.sharePerc.getActualValue(), ccyformatt, false));
+			aAgreementDetail.setSharePerc(
+					PennantApplicationUtil.formatAmount(this.sharePerc.getActualValue(), ccyformatt, false));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1849,24 +1701,20 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setCustAddrCountry(getMMAgreement()
-					.getLovDescCustAddrCountryName());
-			aAgreementDetail.setCustAddrProvince(getMMAgreement()
-					.getLovDescCustAddrProvinceName());
+			aAgreementDetail.setCustAddrCountry(getMMAgreement().getLovDescCustAddrCountryName());
+			aAgreementDetail.setCustAddrProvince(getMMAgreement().getLovDescCustAddrProvinceName());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setCustAddrCity(getMMAgreement()
-					.getLovDescCustAddrCityName());
+			aAgreementDetail.setCustAddrCity(getMMAgreement().getLovDescCustAddrCityName());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aAgreementDetail.setDealerCountry(getMMAgreement()
-					.getDealerCountry());
+			aAgreementDetail.setDealerCountry(getMMAgreement().getDealerCountry());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1877,12 +1725,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			wve.add(we);
 		}
 		if (this.fOLIssueDate.getValue() != null) {
-			aAgreementDetail.setMM(String.valueOf(DateUtility
-					.getMonth(this.fOLIssueDate.getValue())));
-			aAgreementDetail.setDD(String.valueOf(DateUtility
-					.getDay(this.fOLIssueDate.getValue())));
-			String year = String.valueOf(DateUtility.getYear(this.fOLIssueDate
-					.getValue()));
+			aAgreementDetail.setMM(String.valueOf(DateUtility.getMonth(this.fOLIssueDate.getValue())));
+			aAgreementDetail.setDD(String.valueOf(DateUtility.getDay(this.fOLIssueDate.getValue())));
+			String year = String.valueOf(DateUtility.getYear(this.fOLIssueDate.getValue()));
 			aAgreementDetail.setYY(year.substring(2, 4));
 		}
 
@@ -1894,28 +1739,24 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			throw new WrongValuesException(wvea);
 		}
 
-		String agreementType = this.agreeName.getSelectedItem().getLabel()
-				+ ".docx";
+		String agreementType = this.agreeName.getSelectedItem().getLabel() + ".docx";
 
 		doAgreementGeneration(aAgreementDetail, agreementType);
 
 		logger.debug("Leaving");
 	}
 
-	public void doAgreementGeneration(AgreementDetail aAgreementDetail,
-			String agreementType) throws IllegalArgumentException,
-			InterruptedException {
+	public void doAgreementGeneration(AgreementDetail aAgreementDetail, String agreementType)
+			throws IllegalArgumentException, InterruptedException {
 		try {
 			String templatePath = PathUtil.getPath(PathUtil.MMA_AGREEMENTS);
-			AgreementEngine engine = new AgreementEngine(templatePath,
-					templatePath);
+			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
 			String refNo = aAgreementDetail.getCustCIF();
 			String reportName = refNo + "_" + agreementType;
 			engine.setTemplate(agreementType);
 			engine.loadTemplate();
 			engine.mergeFields(aAgreementDetail);
-			engine.showDocument(this.window_MMAgreementDialog, reportName,
-					SaveFormat.DOCX);
+			engine.showDocument(this.window_MMAgreementDialog, reportName, SaveFormat.DOCX);
 			engine = null;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -1934,15 +1775,10 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} else {
 			VehicleDealer details = (VehicleDealer) dataObject;
 			if (details != null) {
-				getMMAgreement().setDealerAddr(
-						StringUtils.trimToEmpty(details.getDealerAddress1())
-								+ " "
-								+ StringUtils.trimToEmpty(details
-										.getDealerAddress2()));
-				getMMAgreement().setDealerCountry(
-						StringUtils.trimToEmpty(details.getDealerCountry()));
-				getMMAgreement().setDealerCity(
-						StringUtils.trimToEmpty(details.getDealerCity()));
+				getMMAgreement().setDealerAddr(StringUtils.trimToEmpty(details.getDealerAddress1()) + " "
+						+ StringUtils.trimToEmpty(details.getDealerAddress2()));
+				getMMAgreement().setDealerCountry(StringUtils.trimToEmpty(details.getDealerCountry()));
+				getMMAgreement().setDealerCity(StringUtils.trimToEmpty(details.getDealerCity()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1962,21 +1798,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			Customer details = (Customer) dataObject;
 			if (details != null) {
 				CustomerAddres aCustomerAddres = getmMAgreementService()
-						.getCustomerAddressDetailsByIdCustID(
-								details.getCustID());
+						.getCustomerAddressDetailsByIdCustID(details.getCustID());
 				if (aCustomerAddres != null) {
-					getMMAgreement().setCustCountry(
-							aCustomerAddres.getCustAddrCountry());
-					getMMAgreement().setCustPOBox(
-							aCustomerAddres.getCustPOBox());
-					getMMAgreement().setCustCity(
-							aCustomerAddres.getCustAddrCity());
-					getMMAgreement().setLovDescCustAddrCountryName(
-							aCustomerAddres.getLovDescCustAddrCountryName());
-					getMMAgreement().setLovDescCustAddrProvinceName(
-							aCustomerAddres.getLovDescCustAddrProvinceName());
-					getMMAgreement().setLovDescCustAddrCityName(
-							aCustomerAddres.getLovDescCustAddrCityName());
+					getMMAgreement().setCustCountry(aCustomerAddres.getCustAddrCountry());
+					getMMAgreement().setCustPOBox(aCustomerAddres.getCustPOBox());
+					getMMAgreement().setCustCity(aCustomerAddres.getCustAddrCity());
+					getMMAgreement().setLovDescCustAddrCountryName(aCustomerAddres.getLovDescCustAddrCountryName());
+					getMMAgreement().setLovDescCustAddrProvinceName(aCustomerAddres.getLovDescCustAddrProvinceName());
+					getMMAgreement().setLovDescCustAddrCityName(aCustomerAddres.getLovDescCustAddrCityName());
 				}
 			}
 		}
@@ -1986,8 +1815,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 	private void doSetFilltersFOLRef() {
 		Filter filter1[] = new Filter[1];
-		filter1[0] = new Filter("CustomerReference", this.custCIF.getValue(),
-				Filter.OP_EQUAL);
+		filter1[0] = new Filter("CustomerReference", this.custCIF.getValue(), Filter.OP_EQUAL);
 		this.folReference.setFilters(filter1);
 	}
 
@@ -2004,8 +1832,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	// GUI operations
 
 	// Helpers
-	public void doSetCustomer(Object nCustomer,
-			JdbcSearchObject<Customer> newSearchObject)
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
@@ -2081,8 +1908,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		return aMMAgreementsListCtrl;
 	}
 
-	public void setaMMAgreementsListCtrl(
-			MMAgreementsListCtrl aMMAgreementsListCtrl) {
+	public void setaMMAgreementsListCtrl(MMAgreementsListCtrl aMMAgreementsListCtrl) {
 		this.aMMAgreementsListCtrl = aMMAgreementsListCtrl;
 	}
 

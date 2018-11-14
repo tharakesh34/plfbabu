@@ -64,24 +64,26 @@ public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupPar
 	private static final long serialVersionUID = 2857143548087995871L;
 
 	public DedupParmListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, DedupParm dedupParm, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(dedupParm.getQueryCode());
-		lc.setParent(item);	
+		lc.setParent(item);
 		lc = new Listcell(dedupParm.getQueryDesc());
 		lc.setParent(item);
 		if (dedupParm.getQueryModule().equals(FinanceConstants.DEDUP_CUSTOMER)) {
-			lc = new Listcell(PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getcustCtgCodeList()));
+			lc = new Listcell(
+					PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getcustCtgCodeList()));
 			lc.setParent(item);
-		} else 	if (dedupParm.getQueryModule().equals(FinanceConstants.DEDUP_COLLATERAL)) {
-			lc = new Listcell(PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getCollateralTypesList()));
+		} else if (dedupParm.getQueryModule().equals(FinanceConstants.DEDUP_COLLATERAL)) {
+			lc = new Listcell(
+					PennantAppUtil.getlabelDesc(dedupParm.getQuerySubCode(), PennantAppUtil.getCollateralTypesList()));
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell();
 			lc.setParent(item);
 		}
@@ -89,11 +91,11 @@ public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupPar
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(dedupParm.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("queryCode", dedupParm.getQueryCode());
 		item.setAttribute("queryModule", dedupParm.getQueryModule());
 		item.setAttribute("querySubCode", dedupParm.getQuerySubCode());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onDedupParmItemDoubleClicked");
 	}
 }

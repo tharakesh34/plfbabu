@@ -53,7 +53,7 @@ public class IncomeDetails extends AbstractWorkflowEntity {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public long getIncomeId() {
 		return incomeId;
 	}

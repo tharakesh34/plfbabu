@@ -95,10 +95,10 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -107,73 +107,72 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(LimitGroupDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(LimitGroupDialogCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
+	 * GenericForwardComposer. ************************************************************************
 	 */
-	protected Window							window_LimitGroupDialog;
-	protected Row								row0;
-	protected Label								label_GroupCode;
-	protected Hlayout							hlayout_GroupCode;
-	protected Space								space_GroupCode;
+	protected Window window_LimitGroupDialog;
+	protected Row row0;
+	protected Label label_GroupCode;
+	protected Hlayout hlayout_GroupCode;
+	protected Space space_GroupCode;
 
-	protected Textbox							groupCode;
-	protected Label								label_GroupName;
-	protected Hlayout							hlayout_GroupName;
-	protected Space								space_GroupName;
+	protected Textbox groupCode;
+	protected Label label_GroupName;
+	protected Hlayout hlayout_GroupName;
+	protected Space space_GroupName;
 
-	protected Combobox							groupOf;
-	protected Label								label_GroupOf;
-	protected Hlayout							hlayout_GroupOf;
-	protected Space								space_GroupOf;
+	protected Combobox groupOf;
+	protected Label label_GroupOf;
+	protected Hlayout hlayout_GroupOf;
+	protected Space space_GroupOf;
 
-	protected Label								groupCategory;
-	protected Label								label_GroupCategory;
-	protected Hlayout							hlayout_GroupCategory;
-	protected Space								space_GroupCategory;
+	protected Label groupCategory;
+	protected Label label_GroupCategory;
+	protected Hlayout hlayout_GroupCategory;
+	protected Space space_GroupCategory;
 
-	protected Textbox							groupName;
-	protected Checkbox							active;
-	protected Space								space_Active;
+	protected Textbox groupName;
+	protected Checkbox active;
+	protected Space space_Active;
 
-	private Listheader							listheader_LimitLine;
-	private Listheader							listheader_LimitGroup;
-	protected Label								window_LimitGroupDialog_title;
+	private Listheader listheader_LimitLine;
+	private Listheader listheader_LimitGroup;
+	protected Label window_LimitGroupDialog_title;
 
 	// not auto wired vars
-	private LimitGroup							limitGroup;														// overhanded per param
-	private transient LimitGroupListCtrl		limitGroupListCtrl;												// overhanded per
+	private LimitGroup limitGroup; // overhanded per param
+	private transient LimitGroupListCtrl limitGroupListCtrl; // overhanded per
 	// param
 
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
 
 	// ServiceDAOs / Domain Classes
-	private transient LimitGroupService			limitGroupService;
-	private transient PagedListService			pagedListService;
+	private transient LimitGroupService limitGroupService;
+	private transient PagedListService pagedListService;
 
-	protected Button							btnAddLimitLine;
-	protected Button							btnAddGroup;
-	protected Button							btnTop;
-	protected Button							btnUp;
-	protected Button							btnDown;
-	protected Button							btnBottom;
-	private static List<ValueLabel>				limitLineslist;
-	private static List<ValueLabel>				limitGroupslist;
-	protected Map<String, Rule>					ruleCodesMap;
-	protected Map<String, LimitGroup>			groupCodesMap;
-	protected Listbox							listBoxLimitGroupLines;
-	protected int								key					= 0;
-	protected String							indent				= null;
-	protected boolean							isInstitutionType	= false;
-	List<LimitGroupLines>						limitGroupItemsList	= new ArrayList<LimitGroupLines>();
-	protected Map<Integer, LimitGroupLines>		deleteMap			= new HashMap<Integer, LimitGroupLines>();
-	private PagedListWrapper<LimitGroupLines>	assignedLimitGroupLinesPagedListWrapper;
+	protected Button btnAddLimitLine;
+	protected Button btnAddGroup;
+	protected Button btnTop;
+	protected Button btnUp;
+	protected Button btnDown;
+	protected Button btnBottom;
+	private static List<ValueLabel> limitLineslist;
+	private static List<ValueLabel> limitGroupslist;
+	protected Map<String, Rule> ruleCodesMap;
+	protected Map<String, LimitGroup> groupCodesMap;
+	protected Listbox listBoxLimitGroupLines;
+	protected int key = 0;
+	protected String indent = null;
+	protected boolean isInstitutionType = false;
+	List<LimitGroupLines> limitGroupItemsList = new ArrayList<LimitGroupLines>();
+	protected Map<Integer, LimitGroupLines> deleteMap = new HashMap<Integer, LimitGroupLines>();
+	private PagedListWrapper<LimitGroupLines> assignedLimitGroupLinesPagedListWrapper;
 
 	/**
 	 * default constructor.<br>
@@ -337,9 +336,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	public void onSelect$groupOf(ForwardEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		if (groupOf.getSelectedItem() != null
-				&& (StringUtils
-						.equals(LimitConstants.LIMIT_GROUP_LINE, groupOf.getSelectedItem().getValue().toString()))) {
+		if (groupOf.getSelectedItem() != null && (StringUtils.equals(LimitConstants.LIMIT_GROUP_LINE,
+				groupOf.getSelectedItem().getValue().toString()))) {
 			btnAddGroup.setVisible(false);
 			btnAddLimitLine.setVisible(true);
 			listheader_LimitGroup.setVisible(false);
@@ -510,8 +508,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		if (getLimitGroup().isNewRecord()) {
 			setComponentAccessType("LimitGroupDialog_GroupCode", false, this.groupCode, this.space_GroupCode,
 					this.label_GroupCode, this.hlayout_GroupCode, null);
-			setComponentAccessType("LimitGroupDialog_GroupCode", false, this.groupOf, space_GroupOf,
-					this.label_GroupOf, this.hlayout_GroupOf, null);
+			setComponentAccessType("LimitGroupDialog_GroupCode", false, this.groupOf, space_GroupOf, this.label_GroupOf,
+					this.hlayout_GroupOf, null);
 		}
 		logger.debug("Leaving");
 	}
@@ -563,8 +561,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_btnSave"));
 
 			if (!StringUtils.equalsIgnoreCase(getLimitGroup().getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				this.btnAddLimitLine.setVisible(getUserWorkspace().isAllowed(
-						"button_LimitGroupDialog_NewLimitGroupItem"));
+				this.btnAddLimitLine
+						.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"));
 				this.btnAddGroup.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"));
 				this.btnUp.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"));
 				this.btnTop.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"));
@@ -755,15 +753,15 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		doRemoveValidation();
 		// Group Code
 		if (!this.groupCode.isReadonly()) {
-			this.groupCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_LimitGroupDialog_GroupCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.groupCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_LimitGroupDialog_GroupCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		// Group Name
 		if (!this.groupName.isReadonly()) {
-			this.groupName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_LimitGroupDialog_GroupName.value"), PennantRegularExpressions.REGEX_DESCRIPTION,
-					true));
+			this.groupName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_LimitGroupDialog_GroupName.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		// Group OF
 		if (!this.groupOf.isDisabled()) {
@@ -778,18 +776,17 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			LimitGroupLines lmtGrpItems = (LimitGroupLines) item.getAttribute("Data");
 			lmtGrpItems.setItemSeq(k);
 			k = k + 1;
-			if (this.groupOf.getSelectedItem() != null
-					&& StringUtils.equals(LimitConstants.LIMIT_GROUP_LINE, this.groupOf.getSelectedItem().getValue()
-							.toString())) {
+			if (this.groupOf.getSelectedItem() != null && StringUtils.equals(LimitConstants.LIMIT_GROUP_LINE,
+					this.groupOf.getSelectedItem().getValue().toString())) {
 				Combobox lmtItem = (Combobox) item.getChildren().get(1).getFirstChild();
 				try {
-					lmtItem.setConstraint(new StaticListValidator(limitLineslist, Labels
-							.getLabel("listheader_LimitItem.label")));
+					lmtItem.setConstraint(
+							new StaticListValidator(limitLineslist, Labels.getLabel("listheader_LimitItem.label")));
 					String limtlineCode = lmtItem.getSelectedItem().getValue().toString();
 					for (LimitGroupLines limitLine : list) {
 						if (StringUtils.equals(limtlineCode, limitLine.getLimitLine())) {
-							throw new WrongValueException(lmtItem, limtlineCode + " "
-									+ Labels.getLabel("Limit_Group_LimitLine_Existis"));
+							throw new WrongValueException(lmtItem,
+									limtlineCode + " " + Labels.getLabel("Limit_Group_LimitLine_Existis"));
 						}
 					}
 					if (!isInstitutionType && ruleCodesMap.containsKey(lmtGrpItems.getLimitLine())) {
@@ -811,8 +808,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			} else {
 				Combobox lmtGrp = (Combobox) item.getChildren().get(0).getFirstChild().getChildren().get(0);
 				try {
-					lmtGrp.setConstraint(new StaticListValidator(limitGroupslist, Labels
-							.getLabel("listheader_LimitGroup.label")));
+					lmtGrp.setConstraint(
+							new StaticListValidator(limitGroupslist, Labels.getLabel("listheader_LimitGroup.label")));
 					String limitGrp = lmtGrp.getSelectedItem().getValue().toString();
 					if (StringUtils.equals(limitGrp, this.groupCode.getValue())) {
 						throw new WrongValueException(lmtGrp, Labels.getLabel("Duplicate_LimitGroup"));
@@ -829,8 +826,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 								for (String lmtItem : lmtItems) {
 									for (String lmtItem2 : lmtItems2) {
 										if (lmtItem.equals(lmtItem2)) {
-											throw new WrongValueException(lmtGrp, Labels.getLabel(
-													"DATA_ALREADY_EXISTS",
+											throw new WrongValueException(lmtGrp, Labels.getLabel("DATA_ALREADY_EXISTS",
 													new String[] { Labels.getLabel("listheader_LimitGroup.label") }));
 										}
 									}
@@ -943,8 +939,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			setComponentAccessType("LimitGroupDialog_GroupCode", true, this.groupOf, space_GroupOf, this.label_GroupOf,
 					this.hlayout_GroupOf, null);
 		} else {
-			setComponentAccessType("LimitGroupDialog_GroupCode", false, this.groupOf, space_GroupOf,
-					this.label_GroupOf, this.hlayout_GroupOf, null);
+			setComponentAccessType("LimitGroupDialog_GroupCode", false, this.groupOf, space_GroupOf, this.label_GroupOf,
+					this.hlayout_GroupOf, null);
 		}
 		if (enqiryModule) {
 			btnAddGroup.setVisible(false);
@@ -963,8 +959,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			Combobox limitLineCode = new Combobox();
 
 			if (groupOf.getSelectedItem() != null) {
-				if (StringUtils.equals(LimitConstants.LIMIT_GROUP_GROUP, groupOf.getSelectedItem().getValue()
-						.toString())) {
+				if (StringUtils.equals(LimitConstants.LIMIT_GROUP_GROUP,
+						groupOf.getSelectedItem().getValue().toString())) {
 
 					lc = getListcell(item);
 
@@ -1013,17 +1009,18 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 				limitGroupCode.setDisabled(true);
 
 				readOnlyComponent(isReadOnly("button_LimitGroupDialog_NewLimitGroupItem") || active.isDisabled()
-						|| !(StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, limitGroupItems.getRecordType())), delete);
+						|| !(StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, limitGroupItems.getRecordType())),
+						delete);
 			}
 			//readOnlyComponent(!getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"), delete);
-			
+
 			if (limitGroupItems.getKey() == 0) {
 				key += 1;
 				limitGroupItems.setKey(key);
 			}
 
-			if (enqiryModule
-					|| StringUtils.equalsIgnoreCase(getLimitGroup().getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+			if (enqiryModule || StringUtils.equalsIgnoreCase(getLimitGroup().getRecordType(),
+					PennantConstants.RECORD_TYPE_DEL)) {
 				limitLineCode.setDisabled(true);
 				limitGroupCode.setDisabled(true);
 				readOnlyComponent(true, delete);
@@ -1070,9 +1067,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		Combobox limitGroup = (Combobox) event.getOrigin().getTarget();
 		LimitGroupLines limitGroupItems = (LimitGroupLines) limitGroup.getParent().getParent().getParent()
 				.getAttribute("Data");
-		if (limitGroup.getValue() != null
-				&& !StringUtils
-						.equals(PennantConstants.List_Select, limitGroup.getSelectedItem().getValue().toString())) {
+		if (limitGroup.getValue() != null && !StringUtils.equals(PennantConstants.List_Select,
+				limitGroup.getSelectedItem().getValue().toString())) {
 			limitGroupItems.setGroupCode(limitGroup.getSelectedItem().getValue().toString());
 			String itemCodes = getLimitGroupService().getLimitLines(limitGroupItems.getGroupCode());
 			if (itemCodes != null) {
@@ -1112,18 +1108,18 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
 	private String validateLimitGroups(String limitgroup, String groupCode) throws InterruptedException {
 		String errorMsg = null;
-		List<LimitStructureDetail> structureList1 = getLimitGroupService().getStructuredetailsByLimitGroup(
-				getLimitGroup().getLimitCategory(), limitgroup, false, "_View");
-		List<LimitStructureDetail> structureList2 = getLimitGroupService().getStructuredetailsByLimitGroup(
-				getLimitGroup().getLimitCategory(), groupCode, false, "_View");
+		List<LimitStructureDetail> structureList1 = getLimitGroupService()
+				.getStructuredetailsByLimitGroup(getLimitGroup().getLimitCategory(), limitgroup, false, "_View");
+		List<LimitStructureDetail> structureList2 = getLimitGroupService()
+				.getStructuredetailsByLimitGroup(getLimitGroup().getLimitCategory(), groupCode, false, "_View");
 
 		if (active.isDisabled()) {
 			for (LimitStructureDetail structureCode : structureList1) {
 				for (LimitStructureDetail groupStructureCode : structureList2) {
 					if (StringUtils.equals(structureCode.getLimitStructureCode(),
 							groupStructureCode.getLimitStructureCode())) {
-						errorMsg = Labels.getLabel("Limit_Group_Str_duplicate", new String[] { groupCode, limitgroup,
-								structureCode.getLimitStructureCode() });
+						errorMsg = Labels.getLabel("Limit_Group_Str_duplicate",
+								new String[] { groupCode, limitgroup, structureCode.getLimitStructureCode() });
 						return errorMsg;
 					}
 
@@ -1146,18 +1142,18 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	public String validateLimitLines(String limitLine, String limitgroup) throws InterruptedException {
 		String errorMsg = null;
 
-		List<LimitStructureDetail> structureList1 = getLimitGroupService().getStructuredetailsByLimitGroup(
-				getLimitGroup().getLimitCategory(), limitgroup, false, "_View");
-		List<LimitStructureDetail> structureList2 = getLimitGroupService().getStructuredetailsByLimitGroup(
-				getLimitGroup().getLimitCategory(), limitLine, true, "_View");
+		List<LimitStructureDetail> structureList1 = getLimitGroupService()
+				.getStructuredetailsByLimitGroup(getLimitGroup().getLimitCategory(), limitgroup, false, "_View");
+		List<LimitStructureDetail> structureList2 = getLimitGroupService()
+				.getStructuredetailsByLimitGroup(getLimitGroup().getLimitCategory(), limitLine, true, "_View");
 
 		if (active.isDisabled()) {
 			for (LimitStructureDetail structureCode : structureList1) {
 				for (LimitStructureDetail groupStructureCode : structureList2) {
 					if (StringUtils.equals(structureCode.getLimitStructureCode(),
 							groupStructureCode.getLimitStructureCode())) {
-						errorMsg = Labels.getLabel("Limit_Group_Str_duplicate", new String[] { limitLine, limitgroup,
-								structureCode.getLimitStructureCode() });
+						errorMsg = Labels.getLabel("Limit_Group_Str_duplicate",
+								new String[] { limitLine, limitgroup, structureCode.getLimitStructureCode() });
 						return errorMsg;
 					}
 
@@ -1204,10 +1200,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
 		String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
 		if (limitGroupItems.getLimitLine() != null)
-			msg = msg
-					+ "\n\n --> "
-					+ (limitGroupItems.getLimitLine() == null ? limitGroupItems.getGroupCode() : limitGroupItems
-							.getLimitLine());
+			msg = msg + "\n\n --> " + (limitGroupItems.getLimitLine() == null ? limitGroupItems.getGroupCode()
+					: limitGroupItems.getLimitLine());
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (limitGroupItems.getRecordStatus() != null && limitGroupItems.getRecordType() != null
 					&& limitGroupItems.getRecordType().equals("")) {
@@ -1248,10 +1242,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
 	private void setLimitHeaders() {
 		logger.debug("Entering");
-		if (getLimitGroupLinesList() != null
-				&& groupOf.getSelectedItem() != null
-				&& (StringUtils
-						.equals(LimitConstants.LIMIT_GROUP_LINE, groupOf.getSelectedItem().getValue().toString()))) {
+		if (getLimitGroupLinesList() != null && groupOf.getSelectedItem() != null && (StringUtils
+				.equals(LimitConstants.LIMIT_GROUP_LINE, groupOf.getSelectedItem().getValue().toString()))) {
 			listheader_LimitGroup.setVisible(false);
 			listheader_LimitLine.setVisible(true);
 			this.btnAddLimitLine

@@ -57,16 +57,26 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
  */
 public interface CustomerDocumentService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerDocument getCustomerDocumentById(long id,String docType);
-	CustomerDocument getApprovedCustomerDocumentById(long id,String docType);
+
+	CustomerDocument getCustomerDocumentById(long id, String docType);
+
+	CustomerDocument getApprovedCustomerDocumentById(long id, String docType);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	DocumentDetails getCustDocByCustAndDocType(final long custId, String docType);
+
 	String getCustCRCPRById(long custId, String type);
+
 	List<CustomerDocument> getApprovedCustomerDocumentById(long id);
-	int getVersion(long custId,String docType);
-	AuditDetail validateCustomerDocuments(CustomerDocument customerDocument,Customer customer);
+
+	int getVersion(long custId, String docType);
+
+	AuditDetail validateCustomerDocuments(CustomerDocument customerDocument, Customer customer);
 
 	String getDocTypeByMasterDefByCode(String masterType, String keyCode);
 }

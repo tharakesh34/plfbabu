@@ -76,7 +76,7 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-	 
+
 /**
  * This is the controller class for the /WEB-INF/pages/PoolExecution/PoolExecutionDetail/PoolExecutionDetailList.zul
  * file.
@@ -101,7 +101,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	protected Listheader listheader_FinApprovalStsInquiryList_PreviousRole;
 
 	protected Button button_FinApprovalStsInquiryList_Search;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	// NEEDED for the ReUse in the SearchWindow
 
@@ -136,8 +136,8 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 
 	protected Textbox previousRole;
 	protected Listbox sortOperator_PreviousRole;
-	
-	protected Row	row_Role;
+
+	protected Row row_Role;
 
 	protected Button btnSearchFinType;
 	protected Button btnSearchBranch;
@@ -158,7 +158,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		super();
 	}
 
-	
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
@@ -227,10 +226,10 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 				sortOperator_CurrentRole, Operators.STRING);
 		registerField("PrvRoleDesc", listheader_FinApprovalStsInquiryList_PreviousRole, SortOrder.NONE, previousRole,
 				sortOperator_PreviousRole, Operators.STRING);
-		registerField("FinAmount",listheader_FinApprovalStsInquiryList_FinAmount);
+		registerField("FinAmount", listheader_FinApprovalStsInquiryList_FinAmount);
 		registerField("DownPayment");
 		registerField("FeeChargeAmt");
-		registerField("FinStartDate",listheader_FinApprovalStsInquiryList_FinStartDate);
+		registerField("FinStartDate", listheader_FinApprovalStsInquiryList_FinStartDate);
 		registerField("CUSTID");
 		registerField("RoleCode");
 		registerField("NextRoleCode");
@@ -310,23 +309,24 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 			return;
 		}
 		//concate the UserFName and the lastmntby user
-		aCustomerFinanceDetail.setLastMntByUser(PennantApplicationUtil.getFullName(aCustomerFinanceDetail.getUsrFName(), aCustomerFinanceDetail.getLastMntByUser(), ""));
-		
+		aCustomerFinanceDetail.setLastMntByUser(PennantApplicationUtil.getFullName(aCustomerFinanceDetail.getUsrFName(),
+				aCustomerFinanceDetail.getLastMntByUser(), ""));
+
 		doShowDialogPage(aCustomerFinanceDetail, reasonDetailsList);
-// Since it is a inquiry role check may not be required.
-//		// Check whether the user has authority to change/view the record.
-//		String whereCond = " AND FinReference='" + aCustomerFinanceDetail.getFinReference() + "' AND version="
-//				+ aCustomerFinanceDetail.getVersion() + " ";
-//
-//		if (doCheckAuthority(aCustomerFinanceDetail, whereCond)) {
-//			// Set the latest work-flow id for the new maintenance request.
-//			if (isWorkFlowEnabled() && aCustomerFinanceDetail.getWorkflowId() == 0) {
-//				aCustomerFinanceDetail.setWorkflowId(getWorkFlowId());
-//			}
-//			
-//		} else {
-//			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-//		}
+		// Since it is a inquiry role check may not be required.
+		//		// Check whether the user has authority to change/view the record.
+		//		String whereCond = " AND FinReference='" + aCustomerFinanceDetail.getFinReference() + "' AND version="
+		//				+ aCustomerFinanceDetail.getVersion() + " ";
+		//
+		//		if (doCheckAuthority(aCustomerFinanceDetail, whereCond)) {
+		//			// Set the latest work-flow id for the new maintenance request.
+		//			if (isWorkFlowEnabled() && aCustomerFinanceDetail.getWorkflowId() == 0) {
+		//				aCustomerFinanceDetail.setWorkflowId(getWorkFlowId());
+		//			}
+		//			
+		//		} else {
+		//			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+		//		}
 
 	}
 
@@ -389,7 +389,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		logger.debug("Leaving " + event.toString());
 	}
 
-	
 	/**
 	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
 	 * 
@@ -434,9 +433,10 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * 
 	 * @param aCustomerFinanceDetail
 	 *            The entity that need to be passed to the dialog.
-	 * @param reasonDetailsList 
+	 * @param reasonDetailsList
 	 */
-	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail, List<ReasonDetailsLog> reasonDetailsList) {
+	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail,
+			List<ReasonDetailsLog> reasonDetailsList) {
 		logger.debug("Entering");
 
 		HashMap<String, Object> arg = new HashMap<String, Object>();
@@ -462,16 +462,16 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 
 	private void doDesignByMode() {
 		if (facility) {
-			this.label_FinApprovalStsInquiryList_FinReference.setValue(Labels
-					.getLabel("label_FacilityApprovalStsInquiryList_CAFReference.value"));
+			this.label_FinApprovalStsInquiryList_FinReference
+					.setValue(Labels.getLabel("label_FacilityApprovalStsInquiryList_CAFReference.value"));
 			this.listheader_FinApprovalStsInquiryList_FinAmount.setVisible(false);
-			this.listheader_FinApprovalStsInquiryList_FinReference.setLabel(Labels
-					.getLabel("label_FacilityApprovalStsInquiryList_CAFReference.value"));
-			this.listheader_FinApprovalStsInquiryList_FinType.setLabel(Labels
-					.getLabel("label_FacilityApprovalStsInquiryList_FacilityType.value"));
+			this.listheader_FinApprovalStsInquiryList_FinReference
+					.setLabel(Labels.getLabel("label_FacilityApprovalStsInquiryList_CAFReference.value"));
+			this.listheader_FinApprovalStsInquiryList_FinType
+					.setLabel(Labels.getLabel("label_FacilityApprovalStsInquiryList_FacilityType.value"));
 		}
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -482,7 +482,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -495,7 +495,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -503,7 +503,8 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;

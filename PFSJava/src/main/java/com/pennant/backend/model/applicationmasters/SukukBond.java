@@ -75,9 +75,9 @@ public class SukukBond extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -87,28 +87,27 @@ public class SukukBond extends AbstractWorkflowEntity {
 	public String getId() {
 		return bondCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.bondCode = id;
 	}
-	
+
 	public String getBondCode() {
 		return bondCode;
 	}
+
 	public void setBondCode(String bondCode) {
 		this.bondCode = bondCode;
 	}
-	
-	
-		
-	
+
 	public String getBondDesc() {
 		return bondDesc;
 	}
+
 	public void setBondDesc(String bondDesc) {
 		this.bondDesc = bondDesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -116,7 +115,7 @@ public class SukukBond extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -125,12 +124,12 @@ public class SukukBond extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public SukukBond getBefImage(){
+	public SukukBond getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(SukukBond beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SukukBond beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

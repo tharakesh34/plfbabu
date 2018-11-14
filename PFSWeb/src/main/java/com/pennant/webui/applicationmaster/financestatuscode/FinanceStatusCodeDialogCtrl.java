@@ -65,9 +65,9 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/applicationmaster/FinanceStatusCode/financeStatusCodeDialog.zul
@@ -75,20 +75,20 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(FinanceStatusCodeDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FinanceStatusCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_FinanceStatusCodeDialog;
-	protected Textbox							statusCode;
-	protected Textbox							statusDesc;
-	private FinanceStatusCode					financeStatusCode;															// overhanded per param
+	protected Window window_FinanceStatusCodeDialog;
+	protected Textbox statusCode;
+	protected Textbox statusDesc;
+	private FinanceStatusCode financeStatusCode; // overhanded per param
 
-	private transient FinanceStatusCodeListCtrl	financeStatusCodeListCtrl;													// overhanded per param
-	private transient FinanceStatusCodeService	financeStatusCodeService;
+	private transient FinanceStatusCodeListCtrl financeStatusCodeListCtrl; // overhanded per param
+	private transient FinanceStatusCodeService financeStatusCodeService;
 
 	/**
 	 * default constructor.<br>
@@ -376,14 +376,14 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 		logger.debug(Literal.LEAVING);
 
 		if (!this.statusCode.isReadonly()) {
-			this.statusCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinanceStatusCodeDialog_StatusCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.statusCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceStatusCodeDialog_StatusCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.statusDesc.isReadonly()) {
-			this.statusDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinanceStatusCodeDialog_StatusDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.statusDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceStatusCodeDialog_StatusDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -730,8 +730,8 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinanceStatusCodeDialog, auditHeader);
 						return processCompleted;
 					}

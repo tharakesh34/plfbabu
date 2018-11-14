@@ -66,48 +66,48 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LimitStructureDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "limitStructureDetailsID", "groupCode", "limitLine","groupName","limitLineDesc" ,"structureName", "revolving", "editable",
-		"limitCheck", "itemLevel", "itemSeq" })
+@XmlType(propOrder = { "limitStructureDetailsID", "groupCode", "limitLine", "groupName", "limitLineDesc",
+		"structureName", "revolving", "editable", "limitCheck", "itemLevel", "itemSeq" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class LimitStructureDetail implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name="structureDetailId")
+	@XmlElement(name = "structureDetailId")
 	private long limitStructureDetailsID = Long.MIN_VALUE;
-	
+
 	private String limitStructureCode;
-	
+
 	@XmlElement
 	private String groupCode;
-	
-	@XmlElement(name="lineCode")
+
+	@XmlElement(name = "lineCode")
 	private String limitLine;
-	
-	@XmlElement(name="sequence")
+
+	@XmlElement(name = "sequence")
 	private int itemSeq;
-	
+
 	@XmlElement
 	private boolean editable;
 	private String displayStyle;
 	private int version;
-	
-	@XmlElement(name="structureDetailDesc")
+
+	@XmlElement(name = "structureDetailDesc")
 	private String structureName;
-	@XmlElement(name="lineCodeDesc")
+	@XmlElement(name = "lineCodeDesc")
 	private String limitLineDesc;
-	@XmlElement(name="groupCodeDesc")
+	@XmlElement(name = "groupCodeDesc")
 	private String groupName;
 	private int key;
 	private String limitCategory;
-	
-	@XmlElement(name="level")
+
+	@XmlElement(name = "level")
 	private int itemLevel;
-	
-	@XmlElement(name="check")
+
+	@XmlElement(name = "check")
 	private boolean limitCheck;
-	
+
 	@XmlElement
-	private boolean revolving=true;
+	private boolean revolving = true;
 
 	private int itemPriority;
 	private Map<String, LimitStructureDetail> subGroupsMap = new HashMap<String, LimitStructureDetail>();
@@ -133,7 +133,6 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	private String userAction = "Save";
 	private long workflowId = 0;
 
-	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -227,6 +226,7 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	public void setLimitCheck(boolean limitCheck) {
 		this.limitCheck = limitCheck;
 	}
+
 	public int getVersion() {
 		return version;
 	}
@@ -439,7 +439,6 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 		this.structureName = structureName;
 	}
 
-
 	public String getGroupName() {
 		return groupName;
 	}
@@ -455,7 +454,6 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	public void setLimitCategory(String limitCategory) {
 		this.limitCategory = limitCategory;
 	}
-
 
 	public int getItemPriority() {
 		return itemPriority;
@@ -488,7 +486,7 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	public void setItemLevel(int itemLevel) {
 		this.itemLevel = itemLevel;
 	}
-	
+
 	public boolean isRevolving() {
 		return revolving;
 	}

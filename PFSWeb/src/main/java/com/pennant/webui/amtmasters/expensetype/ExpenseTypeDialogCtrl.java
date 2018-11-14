@@ -77,32 +77,30 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/AMTMaster/ExpenseType/expenseTypeDialog.zul file.
  */
 public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
-	private static final long							serialVersionUID	= 1L;
-	private static final Logger							logger				= Logger
-			.getLogger(ExpenseTypeDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ExpenseTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window									window_ExpenseTypeDialog;												// autowired
-	protected Uppercasebox								expenseTypeCode;														// autowired
-	protected Textbox									expenseTypeDesc;														// autowired
-	protected Checkbox									amortReq;																// autowired
-	protected Checkbox									taxApplicable;															// autowired
-	protected Checkbox									active;																	// autowired
-	protected Row										row_AmzTax;
+	protected Window window_ExpenseTypeDialog; // autowired
+	protected Uppercasebox expenseTypeCode; // autowired
+	protected Textbox expenseTypeDesc; // autowired
+	protected Checkbox amortReq; // autowired
+	protected Checkbox taxApplicable; // autowired
+	protected Checkbox active; // autowired
+	protected Row row_AmzTax;
 
 	// not auto wired vars
-	private ExpenseType									expenseType;															// overhanded per param
-	private transient ExpenseTypeListCtrl				expenseTypeListCtrl;													// overhanded per
-																
+	private ExpenseType expenseType; // overhanded per param
+	private transient ExpenseTypeListCtrl expenseTypeListCtrl; // overhanded per
 
-	private transient boolean							validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient ExpenseTypeService				expenseTypeService;
-	private HashMap<String, ArrayList<ErrorDetail>>	overideMap			= new HashMap<String, ArrayList<ErrorDetail>>();
+	private transient ExpenseTypeService expenseTypeService;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -133,7 +131,6 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 
 		try {
 			/* set components visible dependent of the users rights */
-			
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("expenseType")) {
@@ -352,7 +349,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// TaxApplicable Flag
 		try {
 			aExpenseType.setTaxApplicable(this.taxApplicable.isChecked());
@@ -366,7 +363,6 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -434,13 +430,15 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		setValidationOn(true);
 
 		if (!this.expenseTypeCode.isReadonly()) {
-			this.expenseTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.expenseTypeCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
 		if (!this.expenseTypeDesc.isReadonly()) {
-			this.expenseTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeDesc.value"),
-					PennantRegularExpressions.REGEX_COMPANY_NAME, true));
+			this.expenseTypeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeDesc.value"),
+							PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 
 		logger.debug("Leaving");
@@ -472,7 +470,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-			+ Labels.getLabel("label_ExpenceTypeCode") + " : " + aExpenseType.getExpenseTypeCode();
+				+ Labels.getLabel("label_ExpenceTypeCode") + " : " + aExpenseType.getExpenseTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aExpenseType.getRecordType())) {
 				aExpenseType.setVersion(aExpenseType.getVersion() + 1);
@@ -518,7 +516,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		this.amortReq.setDisabled(isReadOnly("ExpenseTypeDialog_AmortizationReq"));
 		this.taxApplicable.setDisabled(isReadOnly("ExpenseTypeDialog_TaxApplicable"));
 		this.active.setDisabled(isReadOnly("ExpenseTypeDialog_Active"));
-		
+
 		this.row_AmzTax.setVisible(!isReadOnly("ExpenseTypeDialog_RowAmortTaxApplicable"));
 
 		if (isWorkFlowEnabled()) {
@@ -867,7 +865,6 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	protected String getReference() {
 		return String.valueOf(this.expenseType.getExpenseTypeId());
 	}
-
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;

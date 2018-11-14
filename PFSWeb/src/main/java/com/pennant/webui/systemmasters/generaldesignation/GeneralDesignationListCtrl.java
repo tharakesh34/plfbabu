@@ -61,9 +61,9 @@ import com.pennant.backend.model.systemmasters.GeneralDesignation;
 import com.pennant.backend.service.systemmasters.GeneralDesignationService;
 import com.pennant.webui.systemmasters.generaldesignation.model.GeneralDesignationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/GeneralDesignation/GeneralDesignationList.zul file.
@@ -120,8 +120,8 @@ public class GeneralDesignationListCtrl extends GFCBaseListCtrl<GeneralDesignati
 	 */
 	public void onCreate$window_GeneralDesignationList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_GeneralDesignationList, borderLayout_GeneralDesignationList,
-				listBoxGeneralDesignation, pagingGeneralDesignationList);
+		setPageComponents(window_GeneralDesignationList, borderLayout_GeneralDesignationList, listBoxGeneralDesignation,
+				pagingGeneralDesignationList);
 		setItemRender(new GeneralDesignationListModelItemRenderer());
 
 		// Register buttons and fields.

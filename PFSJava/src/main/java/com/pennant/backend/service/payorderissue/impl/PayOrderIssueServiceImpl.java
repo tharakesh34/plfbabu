@@ -89,20 +89,20 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader> implements PayOrderIssueService {
-	private static final Logger		logger	= Logger.getLogger(PayOrderIssueServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PayOrderIssueServiceImpl.class);
 
-	private AuditHeaderDAO			auditHeaderDAO;
-	private PayOrderIssueHeaderDAO	payOrderIssueHeaderDAO;
-	private FinAdvancePaymentsDAO	finAdvancePaymentsDAO;
-	private BeneficiaryDAO			beneficiaryDAO;
-	private FinanceDisbursementDAO	financeDisbursementDAO;
-	private PostingsPreparationUtil	postingsPreparationUtil;
-	private FinanceMainDAO			financeMainDAO;
-	private DisbursementPostings	disbursementPostings;
+	private AuditHeaderDAO auditHeaderDAO;
+	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private BeneficiaryDAO beneficiaryDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceMainDAO financeMainDAO;
+	private DisbursementPostings disbursementPostings;
 	@Autowired
-	private DocumentDetailsDAO		documentDetailsDAO;
-	private FinCovenantTypeDAO		finCovenantTypeDAO;
-	private PartnerBankService		partnerBankService;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private FinCovenantTypeDAO finCovenantTypeDAO;
+	private PartnerBankService partnerBankService;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -127,7 +127,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
 		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
 	}
-	
+
 	public FinCovenantTypeDAO getFinCovenantTypeDAO() {
 		return finCovenantTypeDAO;
 	}
@@ -172,11 +172,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			getPayOrderIssueHeaderDAO().update(payOrderIssueHeader, tableType);
 		}
 
-		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, tableType,null);
+		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, tableType, null);
 		auditDetails.addAll(details);
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				payOrderIssueHeader.getBefImage(), payOrderIssueHeader));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, payOrderIssueHeader.getBefImage(),
+				payOrderIssueHeader));
 		auditHeader.setAuditDetails(auditDetails);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -240,36 +240,39 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 		issueHeader.setFinanceMain(finMian);
 
-		issueHeader.setFinAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(
-				issueHeader.getFinReference(), "_View"));
-		
-		List<FinanceDisbursement> teemList = financeDisbursementDAO.getFinanceDisbursementDetails(
-				issueHeader.getFinReference(), TableType.TEMP_TAB.getSuffix(), false);
-		List<FinanceDisbursement> mainList = financeDisbursementDAO.getFinanceDisbursementDetails(
-				issueHeader.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+		issueHeader.setFinAdvancePaymentsList(
+				finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(issueHeader.getFinReference(), "_View"));
+
+		List<FinanceDisbursement> teemList = financeDisbursementDAO
+				.getFinanceDisbursementDetails(issueHeader.getFinReference(), TableType.TEMP_TAB.getSuffix(), false);
+		List<FinanceDisbursement> mainList = financeDisbursementDAO
+				.getFinanceDisbursementDetails(issueHeader.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
 		// Covenants List
-		issueHeader.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(issueHeader.getFinReference(), "_View",false));
+		issueHeader.setCovenantTypeList(
+				getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(issueHeader.getFinReference(), "_View", false));
 		// Document details
-		issueHeader.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(issueHeader.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
-		
+		issueHeader.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(issueHeader.getFinReference(),
+				FinanceConstants.MODULE_NAME, "", ""));
+
 		if (issueHeader.isLoanApproved()) {
 			issueHeader.setFinanceDisbursements(mainList);
-		}else{
+		} else {
 			issueHeader.setFinanceDisbursements(teemList);
 		}
 		String module = FinanceConstants.MODULE_NAME;
 		String document = SysParamUtil.getValueAsString("DISB_DOC");
-		
+
 		if (StringUtils.isNotEmpty(document)) {
-			DocumentDetails docDetails=null;
+			DocumentDetails docDetails = null;
 			if (issueHeader.isLoanApproved()) {
-				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module, TableType.MAIN_TAB.getSuffix());
-			}else{
-				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module, TableType.TEMP_TAB.getSuffix());
+				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module,
+						TableType.MAIN_TAB.getSuffix());
+			} else {
+				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module,
+						TableType.TEMP_TAB.getSuffix());
 			}
 			issueHeader.setDocumentDetails(docDetails);
 		}
-		
 
 		issueHeader.setApprovedFinanceDisbursements(mainList);
 		logger.debug("Leaving");
@@ -287,8 +290,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public PayOrderIssueHeader getApprovedPayOrderIssueHeaderById(String id, String code) {
 		PayOrderIssueHeader payOrderIssueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(id, "_AView");
-		payOrderIssueHeader.setFinAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(
-				payOrderIssueHeader.getFinReference(), "_AView"));
+		payOrderIssueHeader.setFinAdvancePaymentsList(
+				finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(payOrderIssueHeader.getFinReference(), "_AView"));
 		return payOrderIssueHeader;
 	}
 
@@ -320,28 +323,28 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		PayOrderIssueHeader payOrderIssueHeader = new PayOrderIssueHeader();
-		BeanUtils
-				.copyProperties((PayOrderIssueHeader) auditHeader.getAuditDetail().getModelData(), payOrderIssueHeader);
+		BeanUtils.copyProperties((PayOrderIssueHeader) auditHeader.getAuditDetail().getModelData(),
+				payOrderIssueHeader);
 		calcluatePOHeaderDetails(payOrderIssueHeader);
-		
-		boolean posted=true;
-		Map<Integer, Long> data =null;
+
+		boolean posted = true;
+		Map<Integer, Long> data = null;
 		try {
-			 data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(), payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
+			data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(),
+					payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
 			for (Long linkedID : data.values()) {
-				if (linkedID==Long.MIN_VALUE) {
-					posted=false;
+				if (linkedID == Long.MIN_VALUE) {
+					posted = false;
 				}
 			}
 		} catch (Exception e) {
-			posted=false;
+			posted = false;
 		}
 		if (!posted) {
 			auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
 			return auditHeader;
 		}
 
-		
 		if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "");
@@ -365,7 +368,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		//Retrieving List of Audit Details For PayOrderIssueHeader Asset related modules
-		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "",data);
+		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "", data);
 		auditDetails.addAll(details);
 
 		finAdvancePaymentsDAO.deleteByFinRef(payOrderIssueHeader.getFinReference(), "_Temp");
@@ -435,7 +438,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 
-		payOrderIssueHeader.getBefImage(), payOrderIssueHeader));
+				payOrderIssueHeader.getBefImage(), payOrderIssueHeader));
 
 		List<FinAdvancePayments> list = payOrderIssueHeader.getFinAdvancePaymentsList();
 		if (list != null && !list.isEmpty()) {
@@ -489,11 +492,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		PayOrderIssueHeader tempPayOrderIssueHeader = null;
 		if (payOrderIssueHeader.isWorkflow()) {
-			tempPayOrderIssueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(
-					payOrderIssueHeader.getFinReference(), "_Temp");
+			tempPayOrderIssueHeader = getPayOrderIssueHeaderDAO()
+					.getPayOrderIssueByHeaderRef(payOrderIssueHeader.getFinReference(), "_Temp");
 		}
-		PayOrderIssueHeader befPayOrderIssueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(
-				payOrderIssueHeader.getFinReference(), "");
+		PayOrderIssueHeader befPayOrderIssueHeader = getPayOrderIssueHeaderDAO()
+				.getPayOrderIssueByHeaderRef(payOrderIssueHeader.getFinReference(), "");
 		PayOrderIssueHeader oldPayOrderIssueHeader = payOrderIssueHeader.getBefImage();
 
 		String[] valueParm = new String[1];
@@ -506,20 +509,20 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only new records
 				if (befPayOrderIssueHeader != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 
 				}
 			} else { // with work flow
 				if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befPayOrderIssueHeader != null || tempPayOrderIssueHeader != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPayOrderIssueHeader == null || tempPayOrderIssueHeader != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 
@@ -529,42 +532,43 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (!payOrderIssueHeader.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befPayOrderIssueHeader == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldPayOrderIssueHeader != null
 							&& !oldPayOrderIssueHeader.getLastMntOn().equals(befPayOrderIssueHeader.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempPayOrderIssueHeader == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempPayOrderIssueHeader != null && oldPayOrderIssueHeader != null
 						&& !oldPayOrderIssueHeader.getLastMntOn().equals(tempPayOrderIssueHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		
-		
+
 		if (payOrderIssueHeader.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
-			
-			validateOtcPayment(auditDetail,payOrderIssueHeader);
+
+			validateOtcPayment(auditDetail, payOrderIssueHeader);
 		}
-		
+
 		boolean noValidation = isnoValidationUserAction(payOrderIssueHeader.getRecordStatus());
 		if (!noValidation) {
 			List<FinAdvancePayments> advpayments = payOrderIssueHeader.getFinAdvancePaymentsList();
@@ -588,19 +592,23 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 									usrLanguage));
 						}
 					}
-					
+
 					String partnerBankBankcode = partnerBankService.getBankCodeById(finAdvancePay.getPartnerBankID());
-					
+
 					if (!StringUtils.equals(finAdvancePay.getBranchBankCode(), partnerBankBankcode)) {
-						if (StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+						if (StringUtils.equals(finAdvancePay.getPaymentType(),
+								DisbursementConstants.PAYMENT_TYPE_IFT)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "65033", errParm, valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "65033", errParm, valueParm),
+									usrLanguage));
 						}
-					} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+					} else if (!StringUtils.equals(finAdvancePay.getPaymentType(),
+							DisbursementConstants.PAYMENT_TYPE_IFT)) {
 						String[] errParam = new String[1];
-						errParam[0]=finAdvancePay.getPaymentType();
+						errParam[0] = finAdvancePay.getPaymentType();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "65038", errParam, valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "65038", errParam, valueParm),
+								usrLanguage));
 					}
 				}
 			}
@@ -615,8 +623,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
-	
+
 	private void validateOtcPayment(AuditDetail auditDetail, PayOrderIssueHeader header) {
 		// ####_0.2
 		// Not allowed to approve loan with Disbursement type if it is
@@ -679,7 +686,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type,Map<Integer, Long> data) {
+	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type,
+			Map<Integer, Long> data) {
 		logger.debug(" Entering ");
 
 		List<FinAdvancePayments> list = payOrderIssueHeader.getFinAdvancePaymentsList();
@@ -729,15 +737,15 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 			if (save) {
 				count = count + 1;
-				
+
 				if (StringUtils.isEmpty(type)) {
 					auditTransType = PennantConstants.TRAN_ADD;
-					if (data!=null && data.containsKey(finAdvpay.getPaymentSeq())) {
+					if (data != null && data.containsKey(finAdvpay.getPaymentSeq())) {
 						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentSeq()));
 					}
 				}
 				finAdvancePaymentsDAO.save(finAdvpay, type);
-				
+
 			} else {
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					finAdvancePaymentsDAO.delete(finAdvpay, type);
@@ -783,7 +791,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			beneficiaryDAO.save(beneficiary, "");
 		}
 	}
-	
+
 	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())

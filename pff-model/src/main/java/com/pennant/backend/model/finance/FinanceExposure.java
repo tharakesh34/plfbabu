@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class FinanceExposure implements Serializable {
 
-    private static final long serialVersionUID = -949056579779911379L;
+	private static final long serialVersionUID = -949056579779911379L;
 	private String finType;
 	private String finTypeDesc;
 	private String custCif;
@@ -37,16 +37,16 @@ public class FinanceExposure implements Serializable {
 	private String toCcy;
 
 	public FinanceExposure() {
-		
+
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("totalRepayAmt");
 		excludeFields.add("toCcy");
 		return excludeFields;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
@@ -88,12 +88,12 @@ public class FinanceExposure implements Serializable {
 	}
 
 	public void setCcyEditField(int ccyEditField) {
-	    this.ccyEditField = ccyEditField;
-    }
+		this.ccyEditField = ccyEditField;
+	}
 
 	public int getCcyEditField() {
-	    return ccyEditField;
-    }
+		return ccyEditField;
+	}
 
 	public BigDecimal getFinanceAmt() {
 		return financeAmt;
@@ -136,84 +136,84 @@ public class FinanceExposure implements Serializable {
 	}
 
 	public String getCustCif() {
-    	return custCif;
-    }
+		return custCif;
+	}
 
 	public void setCustCif(String custCif) {
-    	this.custCif = custCif;
-    }
+		this.custCif = custCif;
+	}
 
 	public String getJointCif() {
-    	return jointCif;
-    }
+		return jointCif;
+	}
 
 	public void setJointCif(String jointCif) {
-    	this.jointCif = jointCif;
-    }
+		this.jointCif = jointCif;
+	}
 
 	public String getGuarantorCif() {
-    	return guarantorCif;
-    }
+		return guarantorCif;
+	}
 
 	public void setGuarantorCif(String guarantorCif) {
-    	this.guarantorCif = guarantorCif;
-    }
+		this.guarantorCif = guarantorCif;
+	}
 
 	public String getCustShrtName() {
-    	return custShrtName;
-    }
+		return custShrtName;
+	}
 
 	public void setCustShrtName(String custShrtName) {
-    	this.custShrtName = custShrtName;
-    }
+		this.custShrtName = custShrtName;
+	}
 
 	public BigDecimal getFinanceAmtinBaseCCY() {
-    	return financeAmtinBaseCCY;
-    }
+		return financeAmtinBaseCCY;
+	}
 
 	public void setFinanceAmtinBaseCCY(BigDecimal financeAmtinBaseCCY) {
-    	this.financeAmtinBaseCCY = financeAmtinBaseCCY;
-    }
+		this.financeAmtinBaseCCY = financeAmtinBaseCCY;
+	}
 
 	public BigDecimal getCurrentExpoSureinBaseCCY() {
-    	return currentExpoSureinBaseCCY;
-    }
+		return currentExpoSureinBaseCCY;
+	}
 
 	public void setCurrentExpoSureinBaseCCY(BigDecimal currentExpoSureinBaseCCY) {
-    	this.currentExpoSureinBaseCCY = currentExpoSureinBaseCCY;
-    }
+		this.currentExpoSureinBaseCCY = currentExpoSureinBaseCCY;
+	}
 
 	public BigDecimal getOverdueAmtBaseCCY() {
-    	return overdueAmtBaseCCY;
-    }
+		return overdueAmtBaseCCY;
+	}
 
 	public void setOverdueAmtBaseCCY(BigDecimal overdueAmtBaseCCY) {
-    	this.overdueAmtBaseCCY = overdueAmtBaseCCY;
-    }
+		this.overdueAmtBaseCCY = overdueAmtBaseCCY;
+	}
 
 	public void setStatus(String status) {
-	    this.status = status;
-    }
+		this.status = status;
+	}
 
 	public String getStatus() {
-	    return status;
-    }
+		return status;
+	}
 
 	public void setWorstStatus(String worstStatus) {
-	    this.worstStatus = worstStatus;
-    }
+		this.worstStatus = worstStatus;
+	}
 
 	public String getWorstStatus() {
-	    return worstStatus;
-    }
+		return worstStatus;
+	}
 
 	public void setFinTypeDesc(String finTypeDesc) {
-	    this.finTypeDesc = finTypeDesc;
-    }
+		this.finTypeDesc = finTypeDesc;
+	}
 
 	public String getFinTypeDesc() {
-	    return finTypeDesc;
-    }
+		return finTypeDesc;
+	}
 
 	public BigDecimal getTotalRepayAmt() {
 		return totalRepayAmt;

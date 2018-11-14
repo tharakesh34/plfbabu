@@ -48,8 +48,8 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 
 public class AEAmounts implements Serializable {
-	private static final long	serialVersionUID	= 4594615740716296558L;
-	private static Logger		logger				= Logger.getLogger(AEAmounts.class);
+	private static final long serialVersionUID = 4594615740716296558L;
+	private static Logger logger = Logger.getLogger(AEAmounts.class);
 	private static AccrualService accrualService;
 
 	public AEAmounts() {
@@ -66,13 +66,13 @@ public class AEAmounts implements Serializable {
 		return procCalAEAmounts(pftDetail, schdDetails, eventCode, valueDate, schdDate);
 	}
 
-	public static AEEvent procCalAEAmounts(FinanceProfitDetail pftDetail,  List<FinanceScheduleDetail> schdDetails, String finEvent, Date valueDate,
-			Date dateSchdDate) {
+	public static AEEvent procCalAEAmounts(FinanceProfitDetail pftDetail, List<FinanceScheduleDetail> schdDetails,
+			String finEvent, Date valueDate, Date dateSchdDate) {
 		logger.debug("Entering");
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
-		
+
 		aeEvent.setFinReference(pftDetail.getFinReference());
 		aeEvent.setAccountingEvent(finEvent);
 		aeEvent.setPostDate(DateUtility.getAppDate());
@@ -82,7 +82,7 @@ public class AEAmounts implements Serializable {
 		aeEvent.setCcy(pftDetail.getFinCcy());
 		aeEvent.setFinType(pftDetail.getFinType());
 		aeEvent.setCustID(pftDetail.getCustId());
-		
+
 		// Finance Fields
 		amountCodes.setFinType(aeEvent.getFinType());
 
@@ -115,32 +115,32 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmz(pftDetail.getPftAmz());
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pftDetail.getAmzTillLBD()));
-		
+
 		// LPI Amortization calculation
-		if(pftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0){
-			amountCodes.setdLPIAmz(pftDetail.getLpiAmount().subtract(pftDetail.getLpiTillLBD()));	
-			
+		if (pftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
+			amountCodes.setdLPIAmz(pftDetail.getLpiAmount().subtract(pftDetail.getLpiTillLBD()));
+
 			// Calculate GST Amount on LPI Amount 
-			if(pftDetail.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0){
-				amountCodes.setdGSTLPIAmz(pftDetail.getGstLpiAmount().subtract(pftDetail.getGstLpiTillLBD()));	
+			if (pftDetail.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
+				amountCodes.setdGSTLPIAmz(pftDetail.getGstLpiAmount().subtract(pftDetail.getGstLpiTillLBD()));
 			}
 		}
-		
+
 		// LPP Amortization calculation
-		if(pftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0){
-			amountCodes.setdLPPAmz(pftDetail.getLppAmount().subtract(pftDetail.getLppTillLBD()));	
-			
+		if (pftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
+			amountCodes.setdLPPAmz(pftDetail.getLppAmount().subtract(pftDetail.getLppTillLBD()));
+
 			// Calculate GST Amount on LPP Amount 
-			if(pftDetail.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0){
+			if (pftDetail.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0) {
 				amountCodes.setdGSTLPPAmz(pftDetail.getGstLppAmount().subtract(pftDetail.getGstLppTillLBD()));
 			}
 		}
-		
+
 		//-----------------------------------------------------------------------
 		//FIXME: PV 23MAR18
 		BigDecimal accruedIncome = BigDecimal.ZERO;
 		BigDecimal unRealizedIncome = BigDecimal.ZERO;
-		
+
 		for (int i = 0; i < schdDetails.size(); i++) {
 
 			if (schdDetails.get(i).getSchDate().compareTo(valueDate) > 0) {
@@ -154,7 +154,7 @@ public class AEAmounts implements Serializable {
 		}
 
 		amountCodes.setuAmz(unRealizedIncome);
-		
+
 		//-----------------------------------------------------------------------
 
 		//OD Details
@@ -177,7 +177,7 @@ public class AEAmounts implements Serializable {
 
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		aeEvent.setAeAmountCodes(amountCodes);
-		
+
 		if (amountCodes.getdAmz().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setdAmz(BigDecimal.ZERO);
 		}

@@ -31,7 +31,6 @@ public interface LimitGroupLinesDAO {
 
 	String getGroupByGroupAndHeader(String groupCode, long headerID);
 
-
 	List<LimitGroupLines> getGroupCodesByLimitGroup(String code, boolean limitLine, String type);
 
 	String getGroupcodes(String code, boolean limitLine, String type);

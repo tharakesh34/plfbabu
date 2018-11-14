@@ -63,13 +63,13 @@ import com.pennant.backend.service.bmtmasters.QuestionService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
+public class QuestionSearchCtrl extends GFCBaseCtrl<Question> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(QuestionSearchCtrl.class);
 
@@ -77,38 +77,38 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_QuestionSearch; 
-	
-	protected Textbox questionId; 
-	protected Listbox sortOperator_questionId; 
-	protected Textbox questionDesc; 
-	protected Listbox sortOperator_questionDesc; 
-	protected Textbox answerA; 
-	protected Listbox sortOperator_answerA; 
-	protected Textbox answerB; 
-	protected Listbox sortOperator_answerB; 
-	protected Textbox answerC; 
-	protected Listbox sortOperator_answerC; 
-	protected Textbox answerD; 
-	protected Listbox sortOperator_answerD; 
-	protected Textbox correctAnswer; 
-	protected Listbox sortOperator_correctAnswer; 
-	protected Checkbox questionIsActive; 
-	protected Listbox sortOperator_questionIsActive; 
-	protected Textbox recordStatus; 
-	protected Listbox recordType;	
-	protected Listbox sortOperator_recordStatus; 
-	protected Listbox sortOperator_recordType; 
-	
-	protected Label label_QuestionSearch_RecordStatus; 
-	protected Label label_QuestionSearch_RecordType; 
-	protected Label label_QuestionSearchResult; 
+	protected Window window_QuestionSearch;
+
+	protected Textbox questionId;
+	protected Listbox sortOperator_questionId;
+	protected Textbox questionDesc;
+	protected Listbox sortOperator_questionDesc;
+	protected Textbox answerA;
+	protected Listbox sortOperator_answerA;
+	protected Textbox answerB;
+	protected Listbox sortOperator_answerB;
+	protected Textbox answerC;
+	protected Listbox sortOperator_answerC;
+	protected Textbox answerD;
+	protected Listbox sortOperator_answerD;
+	protected Textbox correctAnswer;
+	protected Listbox sortOperator_correctAnswer;
+	protected Checkbox questionIsActive;
+	protected Listbox sortOperator_questionIsActive;
+	protected Textbox recordStatus;
+	protected Listbox recordType;
+	protected Listbox sortOperator_recordStatus;
+	protected Listbox sortOperator_recordType;
+
+	protected Label label_QuestionSearch_RecordStatus;
+	protected Label label_QuestionSearch_RecordType;
+	protected Label label_QuestionSearchResult;
 
 	// not auto wired vars
 	private transient QuestionListCtrl questionCtrl; // overhanded per param
 	private transient QuestionService questionService;
-	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("Question");
-	
+	private transient WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Question");
+
 	/**
 	 * constructor
 	 */
@@ -132,14 +132,14 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 		// Set the page level components.
 		setPageComponents(window_QuestionSearch);
 
-		if (workFlowDetails==null){
+		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
-		}else{
+		} else {
 			setWorkFlowEnabled(true);
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
-	
+
 		if (arguments.containsKey("questionCtrl")) {
 			this.questionCtrl = (QuestionListCtrl) arguments.get("questionCtrl");
 		} else {
@@ -147,38 +147,48 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 		}
 
 		// DropDown ListBox
-	
-		this.sortOperator_questionId.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_questionId
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_questionId.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_questionDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_questionDesc
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_questionDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_answerA.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_answerA
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_answerA.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_answerB.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_answerB
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_answerB.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_answerC.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_answerC
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_answerC.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_answerD.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_answerD
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_answerD.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_correctAnswer.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_correctAnswer
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_correctAnswer.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_questionIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+
+		this.sortOperator_questionIsActive
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_questionIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		
-		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=setRecordType(this.recordType);	
-		}else{
+			this.recordType = setRecordType(this.recordType);
+		} else {
 			this.recordStatus.setVisible(false);
 			this.recordType.setVisible(false);
 			this.sortOperator_recordStatus.setVisible(false);
@@ -186,12 +196,11 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 			this.label_QuestionSearch_RecordStatus.setVisible(false);
 			this.label_QuestionSearch_RecordType.setVisible(false);
 		}
-		
+
 		// Restore the search mask input definition
 		// if exists a searchObject than show formerly inputs of filter values
 		if (arguments.containsKey("searchObject")) {
-			final JdbcSearchObject<Question> searchObj = (JdbcSearchObject<Question>) arguments
-					.get("searchObject");
+			final JdbcSearchObject<Question> searchObj = (JdbcSearchObject<Question>) arguments.get("searchObject");
 
 			// get the filters from the searchObject
 			final List<Filter> ft = searchObj.getFilters();
@@ -199,33 +208,33 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 			for (final Filter filter : ft) {
 
 				// restore founded properties
-			    if ("questionId".equals(filter.getProperty())) {
+				if ("questionId".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_questionId, filter);
 					this.questionId.setValue(filter.getValue().toString());
-			    } else if ("questionDesc".equals(filter.getProperty())) {
+				} else if ("questionDesc".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_questionDesc, filter);
 					this.questionDesc.setValue(filter.getValue().toString());
-			    } else if ("answerA".equals(filter.getProperty())) {
+				} else if ("answerA".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_answerA, filter);
 					this.answerA.setValue(filter.getValue().toString());
-			    } else if ("answerB".equals(filter.getProperty())) {
+				} else if ("answerB".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_answerB, filter);
 					this.answerB.setValue(filter.getValue().toString());
-			    } else if ("answerC".equals(filter.getProperty())) {
+				} else if ("answerC".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_answerC, filter);
 					this.answerC.setValue(filter.getValue().toString());
-			    } else if ("answerD".equals(filter.getProperty())) {
+				} else if ("answerD".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_answerD, filter);
 					this.answerD.setValue(filter.getValue().toString());
-			    } else if ("correctAnswer".equals(filter.getProperty())) {
+				} else if ("correctAnswer".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_correctAnswer, filter);
 					this.correctAnswer.setValue(filter.getValue().toString());
-			    } else if ("questionIsActive".equals(filter.getProperty())) {
+				} else if ("questionIsActive".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_questionIsActive, filter);
 					//this.questionIsActive.setValue(filter.getValue().toString());
-					if(Integer.parseInt(filter.getValue().toString()) == 1){
+					if (Integer.parseInt(filter.getValue().toString()) == 1) {
 						this.questionIsActive.setChecked(true);
-					}else{
+					} else {
 						this.questionIsActive.setChecked(false);
 					}
 				} else if ("recordStatus".equals(filter.getProperty())) {
@@ -234,14 +243,14 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 				} else if ("recordType".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_recordType, filter);
 					for (int i = 0; i < this.recordType.getItemCount(); i++) {
-						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())){
+						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())) {
 							this.recordType.setSelectedIndex(i);
 						}
 					}
-	
+
 				}
 			}
-			
+
 		}
 		showQuestionSeekDialog();
 	}
@@ -288,30 +297,31 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 	 * 2. Checks which operator is selected. <br>
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
-	 */ 
+	 */
 	@SuppressWarnings("unchecked")
 	public void doSearch() {
 
 		final JdbcSearchObject<Question> so = new JdbcSearchObject<Question>(Question.class);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			so.addTabelName("BMTQuestion_View");
-			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
-		}else{
+			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		} else {
 			so.addTabelName("BMTQuestion_AView");
 		}
-		
-		
+
 		if (StringUtils.isNotEmpty(this.questionId.getValue())) {
 
 			// get the search operator
 			final Listitem listItemQuestionId = this.sortOperator_questionId.getSelectedItem();
 
 			if (listItemQuestionId != null) {
-				final int searchOpId = ((SearchOperators) listItemQuestionId.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemQuestionId.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("questionId", "%" + this.questionId.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(
+							new Filter("questionId", "%" + this.questionId.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -325,10 +335,12 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 			final Listitem listItemQuestionDesc = this.sortOperator_questionDesc.getSelectedItem();
 
 			if (listItemQuestionDesc != null) {
-				final int searchOpId = ((SearchOperators) listItemQuestionDesc.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemQuestionDesc.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("questionDesc", "%" + this.questionDesc.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("questionDesc", "%" + this.questionDesc.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -410,10 +422,12 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 			final Listitem listItemCorrectAnswer = this.sortOperator_correctAnswer.getSelectedItem();
 
 			if (listItemCorrectAnswer != null) {
-				final int searchOpId = ((SearchOperators) listItemCorrectAnswer.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemCorrectAnswer.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("correctAnswer", "%" + this.correctAnswer.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("correctAnswer", "%" + this.correctAnswer.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -425,16 +439,17 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 		final Listitem listItemQuestionIsActive = this.sortOperator_questionIsActive.getSelectedItem();
 
 		if (listItemQuestionIsActive != null) {
-			final int searchOpId = ((SearchOperators) listItemQuestionIsActive.getAttribute("data")).getSearchOperatorId();
-			
+			final int searchOpId = ((SearchOperators) listItemQuestionIsActive.getAttribute("data"))
+					.getSearchOperatorId();
+
 			if (searchOpId == -1) {
 				// do nothing
 			} else {
-				
-				if(this.questionIsActive.isChecked()){
-					so.addFilter(new Filter("questionIsActive",1, searchOpId));
-				}else{
-					so.addFilter(new Filter("questionIsActive",0, searchOpId));	
+
+				if (this.questionIsActive.isChecked()) {
+					so.addFilter(new Filter("questionIsActive", 1, searchOpId));
+				} else {
+					so.addFilter(new Filter("questionIsActive", 0, searchOpId));
 				}
 			}
 		}
@@ -442,10 +457,12 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 			// get the search operator
 			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (listItemRecordStatus != null) {
-				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
-	
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data"))
+						.getSearchOperatorId();
+
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -453,18 +470,19 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 				}
 			}
 		}
-		
-		String selectedValue="";
-		if (this.recordType.getSelectedItem()!=null){
-			selectedValue =this.recordType.getSelectedItem().getValue().toString();
+
+		String selectedValue = "";
+		if (this.recordType.getSelectedItem() != null) {
+			selectedValue = this.recordType.getSelectedItem().getValue().toString();
 		}
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
 			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
-			if (listItemRecordType!= null) {
-				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
-	
+			if (listItemRecordType != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data"))
+						.getSearchOperatorId();
+
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
@@ -482,14 +500,13 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 
 		final Listbox listBox = this.questionCtrl.listBoxQuestion;
 		final Paging paging = this.questionCtrl.pagingQuestionList;
-		
 
 		// set the model to the listbox with the initial resultset get by the DAO method.
 		((PagedListWrapper<Question>) listBox.getModel()).init(so, listBox, paging);
 		this.questionCtrl.setSearchObj(so);
 
-		this.label_QuestionSearchResult.setValue(Labels.getLabel("label_QuestionSearchResult.value") + " "
-				+ String.valueOf(paging.getTotalSize()));
+		this.label_QuestionSearchResult.setValue(
+				Labels.getLabel("label_QuestionSearchResult.value") + " " + String.valueOf(paging.getTotalSize()));
 	}
 
 	// ******************************************************//

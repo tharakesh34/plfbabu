@@ -73,44 +73,40 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/BMTMasters/RatingCode/ratingCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/BMTMasters/RatingCode/ratingCodeDialog.zul file.
  */
 public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	private static final long serialVersionUID = -6289141323349585417L;
 	private static final Logger logger = Logger.getLogger(RatingCodeDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window 		window_RatingCodeDialog; 	// autoWired
 
-	protected Textbox 		ratingType; 				// autoWired
-	protected Textbox 		ratingCode; 				// autoWired
-	protected Textbox 		ratingCodeDesc; 			// autoWired
-	protected Checkbox 		ratingIsActive; 			// autoWired
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_RatingCodeDialog; // autoWired
+
+	protected Textbox ratingType; // autoWired
+	protected Textbox ratingCode; // autoWired
+	protected Textbox ratingCodeDesc; // autoWired
+	protected Checkbox ratingIsActive; // autoWired
 
 	// not autoWired Var's
-	private RatingCode 		mratingCode; 				// over handed per parameter
-	private transient 		RatingCodeListCtrl ratingCodeListCtrl; // over handed per parameter
+	private RatingCode mratingCode; // over handed per parameter
+	private transient RatingCodeListCtrl ratingCodeListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
-	protected Button btnSearchRatingType; 	// autoWired
+
+	protected Button btnSearchRatingType; // autoWired
 	protected Textbox lovDescRatingTypeName;
-	
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient RatingCodeService ratingCodeService;
-	private transient PagedListService  pagedListService;
-	
+	private transient PagedListService pagedListService;
 
 	/**
 	 * default constructor.<br>
@@ -127,9 +123,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected RatingCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected RatingCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -155,14 +150,12 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 				setRatingCode(null);
 			}
 
-			doLoadWorkFlow(this.mratingCode.isWorkflow(),
-					this.mratingCode.getWorkflowId(),
+			doLoadWorkFlow(this.mratingCode.isWorkflow(), this.mratingCode.getWorkflowId(),
 					this.mratingCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"RatingCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "RatingCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -171,8 +164,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 			// or
 			// delete ratingCode here.
 			if (arguments.containsKey("ratingCodeListCtrl")) {
-				setRatingCodeListCtrl((RatingCodeListCtrl) arguments
-						.get("ratingCodeListCtrl"));
+				setRatingCodeListCtrl((RatingCodeListCtrl) arguments.get("ratingCodeListCtrl"));
 			} else {
 				setRatingCodeListCtrl(null);
 			}
@@ -212,8 +204,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -329,11 +320,12 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		if (aRatingCode.isNewRecord()) {
 			this.lovDescRatingTypeName.setValue("");
 		} else {
-			this.lovDescRatingTypeName.setValue(aRatingCode.getRatingType()	+ "-" + aRatingCode.getLovDescRatingTypeName());
+			this.lovDescRatingTypeName
+					.setValue(aRatingCode.getRatingType() + "-" + aRatingCode.getLovDescRatingTypeName());
 		}
 		this.recordStatus.setValue(aRatingCode.getRecordStatus());
-		
-		if(aRatingCode.isNew() || StringUtils.equals(aRatingCode.getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aRatingCode.isNew() || StringUtils.equals(aRatingCode.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.ratingIsActive.setChecked(true);
 			this.ratingIsActive.setDisabled(true);
 		}
@@ -391,8 +383,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRatingCode
 	 * @throws Exception
@@ -440,15 +431,18 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.ratingCode.isReadonly()){
-			this.ratingCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}		
-		
-		if (!this.ratingCodeDesc.isReadonly()){
-			this.ratingCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingCodeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.ratingCode.isReadonly()) {
+			this.ratingCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		
+
+		if (!this.ratingCodeDesc.isReadonly()) {
+			this.ratingCodeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingCodeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -468,7 +462,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescRatingTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingType.value"),null,true));
+		this.lovDescRatingTypeName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingType.value"), null, true));
 		logger.debug("Leaving");
 	}
 
@@ -507,8 +502,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aRatingCode.getRatingType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aRatingCode.getRatingType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aRatingCode.getRecordType())) {
 				aRatingCode.setVersion(aRatingCode.getVersion() + 1);
@@ -809,8 +804,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_RatingCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -875,10 +870,9 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(RatingCode aRatingCode, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aRatingCode.getBefImage(), aRatingCode);
-		return new AuditHeader(String.valueOf(aRatingCode.getId()), null, null,
-				null, auditDetail, aRatingCode.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aRatingCode.getBefImage(), aRatingCode);
+		return new AuditHeader(String.valueOf(aRatingCode.getId()), null, null, null, auditDetail,
+				aRatingCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -895,7 +889,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		try {
 			System.out.println(e);
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_RatingCodeDialog,  auditHeader);
+			ErrorControl.showErrorControl(this.window_RatingCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -919,7 +913,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -938,12 +932,13 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 		logger.debug("Entering");
 		Notes notes = new Notes();
 		notes.setModuleName("RatingCode");
-		notes.setReference(getRatingCode().getRatingType() + PennantConstants.KEY_SEPERATOR + getRatingCode().getRatingCode());
+		notes.setReference(
+				getRatingCode().getRatingType() + PennantConstants.KEY_SEPERATOR + getRatingCode().getRatingCode());
 		notes.setVersion(getRatingCode().getVersion());
 		logger.debug("Leaving");
 		return notes;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -951,6 +946,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -958,6 +954,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	public RatingCode getRatingCode() {
 		return this.mratingCode;
 	}
+
 	public void setRatingCode(RatingCode ratingCode) {
 		this.mratingCode = ratingCode;
 	}
@@ -965,6 +962,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	public void setRatingCodeService(RatingCodeService ratingCodeService) {
 		this.ratingCodeService = ratingCodeService;
 	}
+
 	public RatingCodeService getRatingCodeService() {
 		return this.ratingCodeService;
 	}
@@ -972,6 +970,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	public void setRatingCodeListCtrl(RatingCodeListCtrl ratingCodeListCtrl) {
 		this.ratingCodeListCtrl = ratingCodeListCtrl;
 	}
+
 	public RatingCodeListCtrl getRatingCodeListCtrl() {
 		return this.ratingCodeListCtrl;
 	}
@@ -979,6 +978,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

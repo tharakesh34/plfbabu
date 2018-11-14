@@ -56,16 +56,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class FeePaymentDetail extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
 	private String paymentMethod;
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	private String paymentReference;
-	private Date   valueDate;
-	
-	private boolean newRecord=false;
+	private Date valueDate;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private FeePaymentDetail befImage;
 	private LoggedInUser userDetails;
@@ -82,7 +82,7 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("");
@@ -92,17 +92,19 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String finReference) {
+
+	public void setId(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -110,6 +112,7 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 	public String getPaymentMethod() {
 		return paymentMethod;
 	}
+
 	public void setPaymentMethod(String paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
@@ -117,6 +120,7 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 	public BigDecimal getPaymentAmount() {
 		return paymentAmount;
 	}
+
 	public void setPaymentAmount(BigDecimal paymentAmount) {
 		this.paymentAmount = paymentAmount;
 	}
@@ -124,13 +128,15 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 	public String getPaymentReference() {
 		return paymentReference;
 	}
+
 	public void setPaymentReference(String paymentReference) {
 		this.paymentReference = paymentReference;
 	}
-	
+
 	public Date getValueDate() {
 		return valueDate;
 	}
+
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
@@ -138,27 +144,31 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FeePaymentDetail getBefImage(){
+	public FeePaymentDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FeePaymentDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FeePaymentDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

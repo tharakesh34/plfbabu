@@ -53,17 +53,21 @@ public interface PostingsDAO {
 	long saveHeader(ReturnDataSet rule, String status, String type);
 
 	void saveBatch(List<ReturnDataSet> dataSetList);
+
 	void updateStatusByLinkedTranId(long linkedTranId, String postStatus);
+
 	void updateStatusByPostRef(long postingId, String postStatus);
+
 	void updateStatusByFinRef(String finReference, String postStatus);
 
 	long getLinkedTransId();
+
 	long getPostingId();
-	
+
 	List<ReturnDataSet> getPostingsByPostRef(Long postref);
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
-	
+
 	List<ReturnDataSet> getPostingsByPostRef(long postingId);
 
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
@@ -86,6 +90,6 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 
 	void updatePostCtg();
-	
+
 	List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference);
 }

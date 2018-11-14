@@ -15,14 +15,13 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class IRRFeeTypeValidation {
 
-	private IRRFeeTypeDAO					iRRFeeTypeDAO;
-	
-	public IRRFeeTypeValidation(IRRFeeTypeDAO	iRRFeeTypeDAO) {
+	private IRRFeeTypeDAO iRRFeeTypeDAO;
+
+	public IRRFeeTypeValidation(IRRFeeTypeDAO iRRFeeTypeDAO) {
 		this.iRRFeeTypeDAO = iRRFeeTypeDAO;
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -64,13 +63,11 @@ public class IRRFeeTypeValidation {
 
 				if (irrFeeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befIRRFeeType != null || tempIRRFeeType != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befIRRFeeType == null || tempIRRFeeType != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -82,15 +79,14 @@ public class IRRFeeTypeValidation {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (oldIRRFeeType != null
-							&& !oldIRRFeeType.getLastMntOn().equals(befIRRFeeType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+					if (oldIRRFeeType != null && !oldIRRFeeType.getLastMntOn().equals(befIRRFeeType.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -106,7 +102,7 @@ public class IRRFeeTypeValidation {
 				}
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !irrFeeType.isWorkflow()) {

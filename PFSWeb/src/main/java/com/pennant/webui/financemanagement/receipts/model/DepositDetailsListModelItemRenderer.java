@@ -62,24 +62,26 @@ import com.pennant.util.PennantAppUtil;
 public class DepositDetailsListModelItemRenderer implements ListitemRenderer<DepositDetails>, Serializable {
 
 	private static final long serialVersionUID = 3736186724610414895L;
-	
+
 	public DepositDetailsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, DepositDetails depositDetails, int count) throws Exception {
 
 		Listcell lc;
-		
+
 		//Deposit Type
-		lc = new Listcell(PennantAppUtil.getlabelDesc(depositDetails.getDepositType(), PennantStaticListUtil.getDepositTypesListList()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(depositDetails.getDepositType(),
+				PennantStaticListUtil.getDepositTypesListList()));
 		lc.setParent(item);
 		//Branch Code
 		lc = new Listcell(depositDetails.getBranchCode() + " - " + depositDetails.getBranchDesc());
 		lc.setParent(item);
 		//Available Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(depositDetails.getActualAmount(), PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(depositDetails.getActualAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		//Record Status
@@ -88,9 +90,9 @@ public class DepositDetailsListModelItemRenderer implements ListitemRenderer<Dep
 		//Record Type
 		lc = new Listcell(PennantJavaUtil.getLabel(depositDetails.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("depositId", depositDetails.getDepositId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onDepositDetailsItemDoubleClicked");
 	}
 }

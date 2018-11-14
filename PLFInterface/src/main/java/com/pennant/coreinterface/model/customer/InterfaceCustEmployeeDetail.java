@@ -23,7 +23,7 @@ import java.util.Date;
 public class InterfaceCustEmployeeDetail implements Serializable {
 
 	private static final long serialVersionUID = -3608304442460245461L;
-	
+
 	private long custID;
 	private String empStatus;
 	private String lovDescEmpStatus;
@@ -48,9 +48,9 @@ public class InterfaceCustEmployeeDetail implements Serializable {
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-	
+
 	public InterfaceCustEmployeeDetail() {
-		
+
 	}
 
 	// ******************************************************//

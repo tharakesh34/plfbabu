@@ -118,91 +118,91 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul file.
  */
 public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
-	private static final long				serialVersionUID	= -5901195042041627750L;
-	private static final Logger				logger				= Logger.getLogger(FinanceMainListCtrl.class);
+	private static final long serialVersionUID = -5901195042041627750L;
+	private static final Logger logger = Logger.getLogger(FinanceMainListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_FinanceMainList;											// autoWired
-	protected Borderlayout					borderLayout_FinanceMainList;										// autoWired
-	protected Paging						pagingFinanceMainList;												// autoWired
-	protected Listbox						listBoxFinanceMain;												// autoWired
+	protected Window window_FinanceMainList; // autoWired
+	protected Borderlayout borderLayout_FinanceMainList; // autoWired
+	protected Paging pagingFinanceMainList; // autoWired
+	protected Listbox listBoxFinanceMain; // autoWired
 
-	protected Textbox						finReference;														// autoWired
-	protected Listbox						sortOperator_finReference;											// autoWired
-	protected Textbox						finType;															// autoWired
-	protected Listbox						sortOperator_finType;												// autoWired
-	protected Textbox						custCIF;															// autoWired
-	protected Listbox						sortOperator_custID;												// autoWired
-	protected Longbox						custID;															// autoWired
-	protected Textbox						fincustName;														// autoWired
-	protected Listbox						sortOperator_custName;												// autoWired
-	protected Textbox						finMobileNumber;													// autoWired
-	protected Listbox						sortOperator_mobileNumber;											// autoWired
-	protected Textbox						finEIDNumber;														// autoWired
-	protected Listbox						sortOperator_eidNumber;											// autoWired
-	protected Datebox						finDateofBirth;													// autoWired
-	protected Listbox						sortOperator_finDateofBirth;										// autoWired
-	protected Datebox						finRequestDate;													// autoWired
-	protected Listbox						sortOperator_finRequestDate;										// autoWired
-	protected Listbox						sortOperator_finPromotion;											// autoWired
-	protected Textbox						finPromotion;														// autoWired
-	protected Listbox						sortOperator_finRequestStage;										// autoWired
-	protected Combobox						finRequestStage;													// autoWired
-	protected Listbox						sortOperator_finQueuePriority;										// autoWired
-	protected Combobox						finQueuePriority;													// autoWired
-	protected Textbox						recordStatus;														// autoWired
-	protected Listbox						recordType;														// autoWired
-	protected Listbox						sortOperator_recordStatus;											// autoWired
-	protected Listbox						sortOperator_recordType;											// autoWired
-	protected Datebox						initiateDate;														// autoWired
-	protected Listbox						sortOperator_InitiateDate;											// autoWired
+	protected Textbox finReference; // autoWired
+	protected Listbox sortOperator_finReference; // autoWired
+	protected Textbox finType; // autoWired
+	protected Listbox sortOperator_finType; // autoWired
+	protected Textbox custCIF; // autoWired
+	protected Listbox sortOperator_custID; // autoWired
+	protected Longbox custID; // autoWired
+	protected Textbox fincustName; // autoWired
+	protected Listbox sortOperator_custName; // autoWired
+	protected Textbox finMobileNumber; // autoWired
+	protected Listbox sortOperator_mobileNumber; // autoWired
+	protected Textbox finEIDNumber; // autoWired
+	protected Listbox sortOperator_eidNumber; // autoWired
+	protected Datebox finDateofBirth; // autoWired
+	protected Listbox sortOperator_finDateofBirth; // autoWired
+	protected Datebox finRequestDate; // autoWired
+	protected Listbox sortOperator_finRequestDate; // autoWired
+	protected Listbox sortOperator_finPromotion; // autoWired
+	protected Textbox finPromotion; // autoWired
+	protected Listbox sortOperator_finRequestStage; // autoWired
+	protected Combobox finRequestStage; // autoWired
+	protected Listbox sortOperator_finQueuePriority; // autoWired
+	protected Combobox finQueuePriority; // autoWired
+	protected Textbox recordStatus; // autoWired
+	protected Listbox recordType; // autoWired
+	protected Listbox sortOperator_recordStatus; // autoWired
+	protected Listbox sortOperator_recordType; // autoWired
+	protected Datebox initiateDate; // autoWired
+	protected Listbox sortOperator_InitiateDate; // autoWired
 
 	// List headers
-	protected Listheader					listheader_CustomerCIF;											// autoWired
-	protected Listheader					listheader_CustomerName;											// autoWired
-	protected Listheader					listheader_FinReference;											// autoWired
-	protected Listheader					listheader_FinType;												// autoWired
-	protected Listheader					listheader_FinCcy;													// autoWired
-	protected Listheader					listheader_FinAmount;												// autoWired
-	protected Listheader					listheader_FinancingAmount;										// autoWired
-	protected Listheader					listheader_InitiateDate;											// autoWired
-	protected Listheader					listheader_Promotion;
-	protected Listheader					listheader_Terms;
-	protected Listheader					listheader_RequestStage;
-	protected Listheader					listheader_Priority;
-	protected Listheader					listheader_RecordStatus;											// autoWired
-	protected Listheader					listheader_RecordType;												// autoWired
+	protected Listheader listheader_CustomerCIF; // autoWired
+	protected Listheader listheader_CustomerName; // autoWired
+	protected Listheader listheader_FinReference; // autoWired
+	protected Listheader listheader_FinType; // autoWired
+	protected Listheader listheader_FinCcy; // autoWired
+	protected Listheader listheader_FinAmount; // autoWired
+	protected Listheader listheader_FinancingAmount; // autoWired
+	protected Listheader listheader_InitiateDate; // autoWired
+	protected Listheader listheader_Promotion;
+	protected Listheader listheader_Terms;
+	protected Listheader listheader_RequestStage;
+	protected Listheader listheader_Priority;
+	protected Listheader listheader_RecordStatus; // autoWired
+	protected Listheader listheader_RecordType; // autoWired
 
 	// checkRights
-	protected Button						btnHelp;															// autoWired
-	protected Button						button_FinanceMainList_NewFinanceMain;								// autoWired
-	protected Button						button_FinanceMainList_FinanceMainSearchDialog;					// autoWired
-	protected Button						button_FinanceMainList_PrintList;									// autoWired
-	protected Button						btnRefresh;														// autoWired
+	protected Button btnHelp; // autoWired
+	protected Button button_FinanceMainList_NewFinanceMain; // autoWired
+	protected Button button_FinanceMainList_FinanceMainSearchDialog; // autoWired
+	protected Button button_FinanceMainList_PrintList; // autoWired
+	protected Button btnRefresh; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
-	protected JdbcSearchObject<FinanceMain>	searchObj;
-	protected Row							row_AlwWorkflow;
-	protected Grid							searchGrid;
-	private transient FinanceDetailService	financeDetailService;
+	protected JdbcSearchObject<FinanceMain> searchObj;
+	protected Row row_AlwWorkflow;
+	protected Grid searchGrid;
+	private transient FinanceDetailService financeDetailService;
 
-	private String							requestSource;
-	private String							menuItemRightName	= null;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
-	private boolean							fromEligibleScreen	= false;
-	private FinanceEligibility				finEligibility		= null;
-	protected int							oldVar_sortOperator_finType;										// autoWired
+	private String requestSource;
+	private String menuItemRightName = null;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private boolean fromEligibleScreen = false;
+	private FinanceEligibility finEligibility = null;
+	protected int oldVar_sortOperator_finType; // autoWired
 
-	private DedupParmService				dedupParmService;
-	private FinanceMainExtService			financeMainExtService;
+	private DedupParmService dedupParmService;
+	private FinanceMainExtService financeMainExtService;
 
-	private String							CREATE_CIF			= "CREATECIF";
-	private String							CREATE_ACCOUNT		= "CREATACCOUNT";
-	private List<String> 					usrfinRolesList= new ArrayList<String>();
-	
+	private String CREATE_CIF = "CREATECIF";
+	private String CREATE_ACCOUNT = "CREATACCOUNT";
+	private List<String> usrfinRolesList = new ArrayList<String>();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -231,78 +231,80 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (arguments.containsKey("requestSource")) {
 			requestSource = (String) arguments.get("requestSource");
 		}
-		
+
 		usrfinRolesList = getUserFinanceRoles(new String[] { "FINANCE", "PROMOTION" }, requestSource);
-		
-		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getAlphaNumOperators()));
+
+		this.sortOperator_finReference
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getAlphaNumOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getMultiStringOperators()));
+		this.sortOperator_finType
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getSimpleAlphaNumOperators()));
+		this.sortOperator_custID
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleAlphaNumOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getSimpleStringOperators()));
+		this.sortOperator_custName
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleStringOperators()));
 		this.sortOperator_custName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_mobileNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getSimpleStringOperators()));
+		this.sortOperator_mobileNumber
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleStringOperators()));
 		this.sortOperator_mobileNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eidNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getSimpleStringOperators()));
+		this.sortOperator_eidNumber
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleStringOperators()));
 		this.sortOperator_eidNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		/*this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
-		this.sortOperator_passPort.setItemRenderer(new SearchOperatorListModelItemRenderer());*/
+		/*
+		 * this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
+		 * .getStringOperators())); this.sortOperator_passPort.setItemRenderer(new
+		 * SearchOperatorListModelItemRenderer());
+		 */
 
-		this.sortOperator_finDateofBirth.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getSimpleNumericOperators()));
+		this.sortOperator_finDateofBirth
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleNumericOperators()));
 		this.sortOperator_finDateofBirth.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finRequestDate.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getNumericOperators()));
+		this.sortOperator_finRequestDate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finRequestDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finPromotion.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getMultiStringOperators()));
+		this.sortOperator_finPromotion
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
 		this.sortOperator_finPromotion.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_InitiateDate.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getNumericOperators()));
+		this.sortOperator_InitiateDate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_InitiateDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finRequestStage.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getEqualOrNotOperators()));
-		ArrayList<ValueLabel> secRolesList=null;
-		if (usrfinRolesList!=null && !usrfinRolesList.isEmpty()) {
+		this.sortOperator_finRequestStage
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getEqualOrNotOperators()));
+		ArrayList<ValueLabel> secRolesList = null;
+		if (usrfinRolesList != null && !usrfinRolesList.isEmpty()) {
 			Filter[] filters = new Filter[1];
 			filters[0] = Filter.in("RoleCd", usrfinRolesList);
 			secRolesList = PennantAppUtil.getSecRolesList(filters);
 		}
-		if (secRolesList==null) {
-			secRolesList=new ArrayList<ValueLabel>();	
+		if (secRolesList == null) {
+			secRolesList = new ArrayList<ValueLabel>();
 		}
-		
+
 		fillComboBox(this.finRequestStage, "", secRolesList, "");
 		this.sortOperator_finRequestStage.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finQueuePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getEqualOrNotOperators()));
+		this.sortOperator_finQueuePriority
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getEqualOrNotOperators()));
 		fillComboBox(this.finQueuePriority, "", PennantStaticListUtil.getQueuePriority(), "");
 		this.sortOperator_finQueuePriority.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+		this.sortOperator_recordStatus
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+		this.sortOperator_recordType
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		this.recordType = setRecordType(this.recordType);
 		this.sortOperator_recordType.setSelectedIndex(0);
@@ -433,10 +435,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinanceMainList");
 
-		this.button_FinanceMainList_NewFinanceMain.setVisible(getUserWorkspace().isAllowed(
-				"button_FinanceMainList_NewFinanceMain"));
-		this.button_FinanceMainList_PrintList.setVisible(getUserWorkspace().isAllowed(
-				"button_FinanceMainList_PrintList"));
+		this.button_FinanceMainList_NewFinanceMain
+				.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_NewFinanceMain"));
+		this.button_FinanceMainList_PrintList
+				.setVisible(getUserWorkspace().isAllowed("button_FinanceMainList_PrintList"));
 
 		logger.debug("Leaving");
 	}
@@ -477,20 +479,20 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String[] valueParm = new String[1];
 			valueParm[0] = aFinanceMain.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
-					errParm, valueParm), getUserWorkspace().getUserLanguage());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 			logger.debug("Leaving " + event.toString());
 			return;
 		}
-		
+
 		//Check QDP Case
 		boolean allowProcess = DisbursementInstCtrl.checkQDPProceeed(financeDetail);
 		if (!allowProcess) {
 			MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Queue"));
 			return;
 		}
-		
 
 		if (aFinanceMain.getWorkflowId() != 0
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(aFinanceMain.getRecordStatus())
@@ -503,11 +505,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if (nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 						String baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
-						if (!"".equals(baseRole)
-								&& usrfinRolesList.contains(baseRole)
-								&& aFinanceMain.getNextUserId() != null
-								&& aFinanceMain.getNextUserId().contains(
-										String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()))) {
+						if (!"".equals(baseRole) && usrfinRolesList.contains(baseRole)
+								&& aFinanceMain.getNextUserId() != null && aFinanceMain.getNextUserId()
+										.contains(String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()))) {
 							userAcces = true;
 							break;
 						}
@@ -534,7 +534,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		logger.debug("Leaving " + event.toString());
 	}
-
 
 	/**
 	 * Method for Validating Customer is Exists in Core Banking Account created against Customer in Core banking System
@@ -700,7 +699,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			MessageUtil.showError(Labels.getLabel("USER_FINROLES_NOTASSIGNED"));
 			return;
 		}
-		
+
 		Map<String, Object> map = getDefaultArguments();
 		map.put("financeMainListCtrl", this);
 		map.put("searchObject", this.searchObj);
@@ -937,13 +936,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * "", Filter.OP_EQUAL));
 		 */
 
-		this.searchObj.addFilter(new Filter("DeviationApproval", 0,	Filter.OP_EQUAL));
+		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
 		if (FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals(this.requestSource)) {
-			this.searchObj.addFilter(new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
-					Filter.OP_EQUAL));
+			this.searchObj.addFilter(
+					new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL));
 		} else {
 			Filter[] filters = new Filter[2];
-			filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NOT_EQUAL);
+			filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+					Filter.OP_NOT_EQUAL);
 			filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
 			this.searchObj.addFilterOr(filters);
 		}
@@ -980,8 +980,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// CustId
 		if (StringUtils.isNotBlank(this.custCIF.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(), this.custCIF.getValue()
-					.trim(), "LovDescCustCIF");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(),
+					this.custCIF.getValue().trim(), "LovDescCustCIF");
 		}
 
 		// FinReference
@@ -1015,11 +1015,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
-		
-		
+
 		if (StringUtils.isNotBlank(this.fincustName.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_custName.getSelectedItem(), this.fincustName
-					.getValue().trim(), "lovDescCustShrtName");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custName.getSelectedItem(),
+					this.fincustName.getValue().trim(), "lovDescCustShrtName");
 		}
 		// FinType
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
@@ -1033,14 +1032,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if (searchOpId == -1) {
 					// do nothing
 				} else if (searchOpId == Filter.OP_LIKE) {
-					searchObj.addFilter(new Filter("FinType", "%" + this.finType.getValue().toUpperCase() + "%",
-							searchOpId));
+					searchObj.addFilter(
+							new Filter("FinType", "%" + this.finType.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","),
-							Filter.OP_IN));
+					this.searchObj
+							.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","), Filter.OP_IN));
 				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","),
-							Filter.OP_NOT_IN));
+					this.searchObj.addFilter(
+							new Filter("FinType", this.finType.getValue().trim().split(","), Filter.OP_NOT_IN));
 				} else {
 					searchObj.addFilter(new Filter("FinType", this.finType.getValue(), searchOpId));
 				}
@@ -1071,8 +1070,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		// finPromotion
 		if (StringUtils.isNotBlank(this.finPromotion.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_finPromotion.getSelectedItem(), this.finPromotion
-					.getValue().trim(), "FinType");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finPromotion.getSelectedItem(),
+					this.finPromotion.getValue().trim(), "FinType");
 			searchObj.addFilter(new Filter("LovDescFinProduct", "", Filter.OP_NOT_EQUAL));
 		}
 		// finRequestStage
@@ -1101,8 +1100,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Record Types
 		if (this.recordType.getSelectedItem() != null
 				&& !"".equals(StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()))) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType
-					.getSelectedItem().getValue().toString(), "RecordType");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
 
 		// Set the ListModel for the articles.
@@ -1187,7 +1186,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -1319,8 +1319,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		referenceSearchObj.addTabelName("Task_Assignments_Temp");
 		referenceSearchObj.addField("Reference");
 		referenceSearchObj.addFilterEqual("Reference", finreference);
-		List<QueueAssignment> taskOwnerList = getPagedListWrapper().getPagedListService().getBySearchObject(
-				referenceSearchObj);
+		List<QueueAssignment> taskOwnerList = getPagedListWrapper().getPagedListService()
+				.getBySearchObject(referenceSearchObj);
 		if (!taskOwnerList.isEmpty()) {
 			logger.debug("Leaving");
 			return true;
@@ -1329,14 +1329,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving");
 		return false;
 	}
-	
-	
-	public ArrayList<String> getUserFinanceRoles(String[] moduleNames,String finEvent) {
-		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames,finEvent);
-		ArrayList<String> arrayRoleCode = new ArrayList<String>();;
-		Object[] roles= getUserWorkspace().getUserRoleSet().toArray();
+
+	public ArrayList<String> getUserFinanceRoles(String[] moduleNames, String finEvent) {
+		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames, finEvent);
+		ArrayList<String> arrayRoleCode = new ArrayList<String>();
+		;
+		Object[] roles = getUserWorkspace().getUserRoleSet().toArray();
 		for (Object role : roles) {
-			if(finRoleSet.contains(role.toString())){
+			if (finRoleSet.contains(role.toString())) {
 				arrayRoleCode.add(role.toString());
 			}
 		}

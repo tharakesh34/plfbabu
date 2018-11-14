@@ -59,33 +59,34 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class EtihadCreditBureauDetailValidation {
-	
-	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailValidation.class);	
+
+	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailValidation.class);
 	private EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO;
-	
+
 	public EtihadCreditBureauDetailValidation(EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO) {
 		this.etihadCreditBureauDetailDAO = etihadCreditBureauDetailDAO;
 	}
-	
+
 	public EtihadCreditBureauDetailDAO getEtihadCreditBureauDetailDAO() {
 		return etihadCreditBureauDetailDAO;
 	}
 
-	public AuditHeader etihadCreditBureauDetailValidation(AuditHeader auditHeader, String method){
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+	public AuditHeader etihadCreditBureauDetailValidation(AuditHeader auditHeader, String method) {
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
-	
-	public List<AuditDetail> etihadCreditBureauDetailListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
-		
-		if(auditDetails!=null && auditDetails.size()>0){
+
+	public List<AuditDetail> etihadCreditBureauDetailListValidation(List<AuditDetail> auditDetails, String method,
+			String usrLanguage) {
+
+		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
-				details.add(auditDetail); 		
+				AuditDetail auditDetail = validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail);
 			}
 			return details;
 		}
@@ -99,11 +100,11 @@ public class EtihadCreditBureauDetailValidation {
 
 		EtihadCreditBureauDetail tempEtihadCreditBureauDetail = null;
 		if (etihadCreditBureauDetail.isWorkflow()) {
-			tempEtihadCreditBureauDetail = getEtihadCreditBureauDetailDAO().getEtihadCreditBureauDetailByID(
-					etihadCreditBureauDetail.getId(), "_Temp");
+			tempEtihadCreditBureauDetail = getEtihadCreditBureauDetailDAO()
+					.getEtihadCreditBureauDetailByID(etihadCreditBureauDetail.getId(), "_Temp");
 		}
-		EtihadCreditBureauDetail befEtihadCreditBureauDetail = getEtihadCreditBureauDetailDAO().getEtihadCreditBureauDetailByID(
-				etihadCreditBureauDetail.getId(), "");
+		EtihadCreditBureauDetail befEtihadCreditBureauDetail = getEtihadCreditBureauDetailDAO()
+				.getEtihadCreditBureauDetailByID(etihadCreditBureauDetail.getId(), "");
 
 		EtihadCreditBureauDetail oldEtihadCreditBureauDetail = etihadCreditBureauDetail.getBefImage();
 
@@ -115,28 +116,24 @@ public class EtihadCreditBureauDetailValidation {
 		if (etihadCreditBureauDetail.isNew()) { // for New record or new record into work flow
 
 			if (!etihadCreditBureauDetail.isWorkflow()) {// With out Work flow only new
-												// records
+				// records
 				if (befEtihadCreditBureauDetail != null) { // Record Already Exists in the
-													// table then error
+					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (etihadCreditBureauDetail.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befEtihadCreditBureauDetail != null || tempEtihadCreditBureauDetail != null) { 
+				if (etihadCreditBureauDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																												// is new
+					if (befEtihadCreditBureauDetail != null || tempEtihadCreditBureauDetail != null) {
 						// if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befEtihadCreditBureauDetail == null || tempEtihadCreditBureauDetail != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41005", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -144,42 +141,40 @@ public class EtihadCreditBureauDetailValidation {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!etihadCreditBureauDetail.isWorkflow()) { // With out Work flow for update
-												// and delete
+				// and delete
 
 				if (befEtihadCreditBureauDetail == null) { // if records not exists in the
-													// main table
+					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldEtihadCreditBureauDetail != null
-							&& !oldEtihadCreditBureauDetail.getLastMntOn().equals(
-									befEtihadCreditBureauDetail.getLastMntOn())) {
+					if (oldEtihadCreditBureauDetail != null && !oldEtihadCreditBureauDetail.getLastMntOn()
+							.equals(befEtihadCreditBureauDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempEtihadCreditBureauDetail == null) { // if records not exists in
-													// the Work flow table
+					// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempEtihadCreditBureauDetail != null && oldEtihadCreditBureauDetail != null
-						&& !oldEtihadCreditBureauDetail.getLastMntOn().equals(
-								tempEtihadCreditBureauDetail.getLastMntOn())) {
+						&& !oldEtihadCreditBureauDetail.getLastMntOn()
+								.equals(tempEtihadCreditBureauDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -192,5 +187,5 @@ public class EtihadCreditBureauDetailValidation {
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 }

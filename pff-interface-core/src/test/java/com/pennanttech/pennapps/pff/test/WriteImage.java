@@ -48,7 +48,7 @@ public class WriteImage {
 		try {
 			ByteArrayInputStream input = new ByteArrayInputStream(decodeImage(mandateForm));
 			ImageInputStream imageInput = ImageIO.createImageInputStream(input);
-			
+
 			BufferedImage image = ImageIO.read(imageInput);
 			//File file = new File("D:\\opt\\pennant\\PFF\\BASE\\mandates\\request");
 			ImageIO.write(image, "png", new File("D:\\opt\\pennant\\PFF\\BASE\\mandates\\request\\out.png"));

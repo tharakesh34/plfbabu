@@ -68,7 +68,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal exchRate_Ac;
 	private BigDecimal txnAmount_Batch;
 	private BigDecimal txnAmount_Ac;
-	
+
 	private String modifiedFlag;
 	private boolean deletedFlag;
 	private String validationStatus = "";
@@ -78,29 +78,28 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private String revTxnCode;
 	private boolean externalAccount = true;
 	private long acEntryRef = 1;
-	private	String 	finReference;
-	private	String 	finEvent;
-	private String  transOrderId;
-	private String 	custCIF;
-	private String 	createNew;
-	private String 	createIfNF;
+	private String finReference;
+	private String finEvent;
+	private String transOrderId;
+	private String custCIF;
+	private String createNew;
+	private String createIfNF;
 	private long linkedTranId = Long.MIN_VALUE;
-	
+
 	private String debitAccount;
 	private String debitTxnCode;
 	private String debitTxnDesc;
-	
+
 	private String debitAcType;
 	private String debitAcname;
-	
-	
+
 	private long derivedTxnRef;
 
 	private boolean newRecord = false;
 	private String lovValue;
 	private JVPostingEntry befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -117,6 +116,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	public JVPostingEntry(String id) {
 		super();
 	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("txnCCyName");
@@ -444,43 +444,44 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public boolean isRePostingModule() {
-	    return rePostingModule;
-    }
+		return rePostingModule;
+	}
 
 	public void setRePostingModule(boolean rePostingModule) {
-	    this.rePostingModule = rePostingModule;
-    }
+		this.rePostingModule = rePostingModule;
+	}
 
 	public String getAcType() {
-	    return acType;
-    }
+		return acType;
+	}
 
 	public void setAcType(String acType) {
-	    this.acType = acType;
-    }
+		this.acType = acType;
+	}
 
 	public String getRevTxnCode() {
-	    return revTxnCode;
-    }
+		return revTxnCode;
+	}
 
 	public void setRevTxnCode(String revTxnCode) {
-	    this.revTxnCode = revTxnCode;
-    }
+		this.revTxnCode = revTxnCode;
+	}
 
 	public boolean isExternalAccount() {
-	    return externalAccount;
-    }
+		return externalAccount;
+	}
 
 	public void setExternalAccount(boolean externalAccount) {
-	    this.externalAccount = externalAccount;
-    }
+		this.externalAccount = externalAccount;
+	}
 
 	public long getAcEntryRef() {
-	    return acEntryRef;
-    }
+		return acEntryRef;
+	}
+
 	public void setAcEntryRef(long acEntryRef) {
-	    this.acEntryRef = acEntryRef;
-    }
+		this.acEntryRef = acEntryRef;
+	}
 
 	public String getFinReference() {
 		return finReference;
@@ -539,12 +540,12 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public long getLinkedTranId() {
-	    return linkedTranId;
-    }
+		return linkedTranId;
+	}
 
 	public void setLinkedTranId(long linkedTranId) {
-	    this.linkedTranId = linkedTranId;
-    }
+		this.linkedTranId = linkedTranId;
+	}
 
 	public String getDebitAccount() {
 		return debitAccount;
@@ -593,5 +594,5 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	public void setDebitAcname(String debitAcname) {
 		this.debitAcname = debitAcname;
 	}
-	
+
 }

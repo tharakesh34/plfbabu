@@ -49,14 +49,22 @@ import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface AccountsService {
-	
+
 	Accounts getAccounts();
+
 	Accounts getNewAccounts();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Accounts getAccountsById(String id);
+
 	Accounts getApprovedAccountsById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<Accounts> getAccountsByAcPurpose(String acPurpose);
 }

@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
@@ -51,14 +52,22 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
  */
 public interface CustomerEmploymentDetailDAO {
 	// CustomerEmploymentDetail getCustomerEmploymentDetailByID(long id,long custEmpName,String type);
-	 CustomerEmploymentDetail getCustomerEmploymentDetailByCustEmpId(long custEmpId,String type);
-	 void update(CustomerEmploymentDetail customerEmploymentDetail,String type);
-	 void delete(CustomerEmploymentDetail customerEmploymentDetail,String type);
-	 long save(CustomerEmploymentDetail customerEmploymentDetail,String type);
-	 CustomerEmploymentDetail isEmployeeExistWithCustID(long id,String type);
-	 List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type);
-	 void deleteByCustomer(long custID, String tableType);
-	 int getVersion(long custID, long custEmpId);
-	 int getCustomerEmploymentByCustEmpName(long id,long custEmpName,long custEmpId, String type);
-	
+	CustomerEmploymentDetail getCustomerEmploymentDetailByCustEmpId(long custEmpId, String type);
+
+	void update(CustomerEmploymentDetail customerEmploymentDetail, String type);
+
+	void delete(CustomerEmploymentDetail customerEmploymentDetail, String type);
+
+	long save(CustomerEmploymentDetail customerEmploymentDetail, String type);
+
+	CustomerEmploymentDetail isEmployeeExistWithCustID(long id, String type);
+
+	List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type);
+
+	void deleteByCustomer(long custID, String tableType);
+
+	int getVersion(long custID, long custEmpId);
+
+	int getCustomerEmploymentByCustEmpName(long id, long custEmpName, long custEmpId, String type);
+
 }

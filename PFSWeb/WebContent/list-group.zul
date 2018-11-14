@@ -63,31 +63,30 @@
 	]]></zscript>
 	<tabbox>
 		<tabs>
-			<tab label="1"/>
-			<tab label="2" onClick="Clients.resize(lb)"/>
+			<tab label="1" />
+			<tab label="2" onClick="Clients.resize(lb)" />
 		</tabs>
 		<tabpanels>
-		<tabpanel>
-			<button label="add item" onClick="addItem(lb);"/>
-			<button label="remove item" onClick="removeItem(lb);"/>
-		</tabpanel>
-		<tabpanel>
-			<div width="700px">
-				<groupbox style="border:none;">
-					<listbox id="lb" width="100%" sizedByContent="true" span="true" style="overflow:auto;"
-						onCreate="fillListbox(self);">
-						<listhead sizable="false">
-							<listheader label="head 1"/>
-							<listheader label="head 2"/>
-							<listheader label="head 3"/>
-							<listheader label="head 4"/>
-							<listheader label="head 5"/>
-							<listheader label="head 6"/>
-						</listhead>
-					</listbox>
-				</groupbox>
-			</div>
-		</tabpanel>
+			<tabpanel>
+				<button label="add item" onClick="addItem(lb);" />
+				<button label="remove item" onClick="removeItem(lb);" />
+			</tabpanel>
+			<tabpanel>
+				<div width="700px">
+					<groupbox style="border:none;">
+						<listbox id="lb" width="100%" sizedByContent="true" span="true" style="overflow:auto;" onCreate="fillListbox(self);">
+							<listhead sizable="false">
+								<listheader label="head 1" />
+								<listheader label="head 2" />
+								<listheader label="head 3" />
+								<listheader label="head 4" />
+								<listheader label="head 5" />
+								<listheader label="head 6" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</div>
+			</tabpanel>
 		</tabpanels>
 	</tabbox>
 

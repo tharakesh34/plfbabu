@@ -70,23 +70,23 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration> implements ReportConfigurationDAO {
-    private static Logger logger = Logger.getLogger(ReportConfigurationDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ReportConfigurationDAOImpl.class);
 
-
-public ReportConfigurationDAOImpl() {
+	public ReportConfigurationDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new ReportConfiguration 
+	 * This method set the Work Flow id based on the module name and return the new ReportConfiguration
+	 * 
 	 * @return ReportConfiguration
 	 */
 	@Override
 	public ReportConfiguration getReportConfiguration() {
 		logger.debug("Entering ");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("ReportConfiguration");
-		ReportConfiguration reportConfiguration= new ReportConfiguration();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("ReportConfiguration");
+		ReportConfiguration reportConfiguration = new ReportConfiguration();
+		if (workFlowDetails != null) {
 			reportConfiguration.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving ");
@@ -94,8 +94,8 @@ public ReportConfigurationDAOImpl() {
 	}
 
 	/**
-	 * This method get the module from method getReportConfiguration() and set the new
-	 * record flag as true and return ReportConfiguration()
+	 * This method get the module from method getReportConfiguration() and set the new record flag as true and return
+	 * ReportConfiguration()
 	 * 
 	 * @return ReportConfiguration
 	 */
@@ -109,11 +109,12 @@ public ReportConfigurationDAOImpl() {
 	}
 
 	/**
-	 * Fetch the Record  ReportConfiguration details by key field
+	 * Fetch the Record ReportConfiguration details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ReportConfiguration
 	 */
 	@Override
@@ -122,24 +123,25 @@ public ReportConfigurationDAOImpl() {
 		ReportConfiguration reportConfiguration = new ReportConfiguration();
 		reportConfiguration.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT ReportID, ReportName, ReportHeading, PromptRequired," );
-		selectSql.append(" ReportJasperName, DataSourceName," );
-		selectSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition," );
-		if(type.contains("View")){
+		StringBuilder selectSql = new StringBuilder("SELECT ReportID, ReportName, ReportHeading, PromptRequired,");
+		selectSql.append(" ReportJasperName, DataSourceName,");
+		selectSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition,");
+		if (type.contains("View")) {
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  ReportConfiguration");
-		selectSql.append(StringUtils.trimToEmpty(type) );
+		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append("  Where ReportID = :ReportID");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
-		RowMapper<ReportConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReportConfiguration.class);
+		RowMapper<ReportConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReportConfiguration.class);
 
-		try{
-			reportConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			reportConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			reportConfiguration = null;
 		}
@@ -147,38 +149,37 @@ public ReportConfigurationDAOImpl() {
 		return reportConfiguration;
 	}
 
-	
 	/**
-	 * This method Deletes the Record from the ReportConfiguration or ReportConfiguration_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete ReportConfiguration by key CcyCode
+	 * This method Deletes the Record from the ReportConfiguration or ReportConfiguration_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete ReportConfiguration by key CcyCode
 	 * 
-	 * @param ReportConfiguration (reportConfiguration)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param ReportConfiguration
+	 *            (reportConfiguration)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(ReportConfiguration reportConfiguration,String type) {
+	public void delete(ReportConfiguration reportConfiguration, String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder(" Delete From ReportConfiguration");
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ReportID =:ReportID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
@@ -187,36 +188,37 @@ public ReportConfigurationDAOImpl() {
 	/**
 	 * This method insert new Records into ReportConfiguration or ReportConfiguration_Temp.
 	 *
-	 * save ReportConfiguration 
+	 * save ReportConfiguration
 	 * 
-	 * @param ReportConfiguration (reportConfiguration)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param ReportConfiguration
+	 *            (reportConfiguration)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return String
 	 * 
 	 */
 	@Override
-	public long save(ReportConfiguration reportConfiguration,String type) {
+	public long save(ReportConfiguration reportConfiguration, String type) {
 		logger.debug("Entering ");
 
-		if (reportConfiguration.getId()==Long.MIN_VALUE){
+		if (reportConfiguration.getId() == Long.MIN_VALUE) {
 			reportConfiguration.setId(getNextId("SeqReportConfiguration"));
-			logger.debug("get NextID:"+reportConfiguration.getId());
+			logger.debug("get NextID:" + reportConfiguration.getId());
 		}
-		StringBuilder insertSql = new StringBuilder("Insert Into ReportConfiguration" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (ReportID, ReportName, ReportHeading, PromptRequired, ReportJasperName," );
-		insertSql.append(" DataSourceName," );
-		insertSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		StringBuilder insertSql = new StringBuilder("Insert Into ReportConfiguration");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (ReportID, ReportName, ReportHeading, PromptRequired, ReportJasperName,");
+		insertSql.append(" DataSourceName,");
+		insertSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ReportID, :ReportName, :ReportHeading, :PromptRequired, :ReportJasperName," );
-		insertSql.append(" :DataSourceName," );
-		insertSql.append(" :ShowTempLibrary, :MenuItemCode,  :AlwMultiFormat, :WhereCondition," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" Values(:ReportID, :ReportName, :ReportHeading, :PromptRequired, :ReportJasperName,");
+		insertSql.append(" :DataSourceName,");
+		insertSql.append(" :ShowTempLibrary, :MenuItemCode,  :AlwMultiFormat, :WhereCondition,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -225,39 +227,41 @@ public ReportConfigurationDAOImpl() {
 	}
 
 	/**
-	 * This method updates the Record ReportConfiguration or ReportConfiguration_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update ReportConfiguration by key CcyCode and Version
+	 * This method updates the Record ReportConfiguration or ReportConfiguration_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update ReportConfiguration by key CcyCode and Version
 	 * 
-	 * @param ReportConfiguration (reportConfiguration)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param ReportConfiguration
+	 *            (reportConfiguration)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(ReportConfiguration reportConfiguration,String type) {
+	public void update(ReportConfiguration reportConfiguration, String type) {
 		int recordCount = 0;
 		logger.debug("Entering ");
-		
-		StringBuilder updateSql = new StringBuilder("Update ReportConfiguration" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
+
+		StringBuilder updateSql = new StringBuilder("Update ReportConfiguration");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ReportName = :ReportName, ReportHeading = :ReportHeading,");
-		updateSql.append(" PromptRequired = :PromptRequired, ReportJasperName = :ReportJasperName," );
+		updateSql.append(" PromptRequired = :PromptRequired, ReportJasperName = :ReportJasperName,");
 		updateSql.append(" DataSourceName =:DataSourceName,");
-		updateSql.append(" ShowTempLibrary = :ShowTempLibrary, MenuItemCode = :MenuItemCode, AlwMultiFormat = :AlwMultiFormat," );
-		updateSql.append("  WhereCondition = :WhereCondition, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(
+				" ShowTempLibrary = :ShowTempLibrary, MenuItemCode = :MenuItemCode, AlwMultiFormat = :AlwMultiFormat,");
+		updateSql.append(
+				"  WhereCondition = :WhereCondition, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ReportID = :ReportID");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -271,10 +275,10 @@ public ReportConfigurationDAOImpl() {
 	 * Fetch Total Group Codes For Month Reports generation
 	 */
 	@Override
-    public List<ValueLabel> getMonthEndReportGrpCodes() {
+	public List<ValueLabel> getMonthEndReportGrpCodes() {
 		logger.debug("Entering ");
 
-		StringBuilder selectSql = new StringBuilder("SELECT DISTINCT GroupCode Value, GroupDesc Label " );
+		StringBuilder selectSql = new StringBuilder("SELECT DISTINCT GroupCode Value, GroupDesc Label ");
 		selectSql.append(" FROM  ReportsMonthEndConfiguration");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -282,20 +286,20 @@ public ReportConfigurationDAOImpl() {
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
-    }
-	
+	}
+
 	/**
 	 * Fetch Total Group Codes For Month Reports generation
 	 */
 	@Override
-    public List<ValueLabel> getReportListByGrpCode(String groupCode) {
+	public List<ValueLabel> getReportListByGrpCode(String groupCode) {
 		logger.debug("Entering ");
-		
+
 		ReportsMonthEndConfiguration configuration = new ReportsMonthEndConfiguration();
 		configuration.setGroupCode(groupCode);
 		configuration.setActive(true);
 
-		StringBuilder selectSql = new StringBuilder("SELECT ReportName Value, ReportDesc Label " );
+		StringBuilder selectSql = new StringBuilder("SELECT ReportName Value, ReportDesc Label ");
 		selectSql.append(" FROM  ReportsMonthEndConfiguration ");
 		selectSql.append(" WHERE GroupCode=:GroupCode AND Active =:Active ");
 
@@ -304,7 +308,7 @@ public ReportConfigurationDAOImpl() {
 		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
 
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
-    }
-	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
 }

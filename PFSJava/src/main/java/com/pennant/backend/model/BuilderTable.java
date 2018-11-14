@@ -41,12 +41,10 @@
  ********************************************************************************************
 */
 
-
-
 package com.pennant.backend.model;
 
-public class BuilderTable implements java.io.Serializable {	
-	
+public class BuilderTable implements java.io.Serializable {
+
 	private static final long serialVersionUID = 4645180153311924143L;
 	private long id = Long.MIN_VALUE;
 	private String fieldName;
@@ -55,51 +53,56 @@ public class BuilderTable implements java.io.Serializable {
 	private String data_type;
 	private String character_maximum_length;
 
-	
 	public BuilderTable() {
 
 	}
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 	public long getId() {
 		return id;
 	}
-	
+
 	public String getFieldName() {
 		return fieldName;
 	}
+
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
 	}
-	
+
 	public String getFieldDesc() {
 		return fieldDesc;
 	}
+
 	public void setFieldDesc(String fieldDesc) {
 		this.fieldDesc = fieldDesc;
 	}
-	
+
 	public String getFieldControl() {
 		return fieldControl;
 	}
+
 	public void setFieldControl(String fieldControl) {
 		this.fieldControl = fieldControl;
 	}
-	
+
 	public String getData_type() {
 		return data_type;
 	}
+
 	public void setData_type(String dataType) {
 		this.data_type = dataType;
 	}
-	
+
 	public String getCharacter_maximum_length() {
 		return character_maximum_length;
 	}
+
 	public void setCharacter_maximum_length(String characterMaximumLength) {
 		this.character_maximum_length = characterMaximumLength;
-	}	
-	
+	}
+
 }

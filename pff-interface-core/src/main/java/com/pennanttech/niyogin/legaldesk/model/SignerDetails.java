@@ -12,18 +12,18 @@ import javax.xml.bind.annotation.XmlType;
 public class SignerDetails {
 
 	@XmlElement(name = "name")
-	private String	name;
+	private String name;
 
 	@XmlElement(name = "sequence_of_signature")
-	private int		seqNumbOfSign;
+	private int seqNumbOfSign;
 
 	@XmlElement(name = "email")
-	private String	email;
+	private String email;
 
-	private long	custID;
+	private long custID;
 
 	@XmlElement(name = "borrower_pan")
-	private String	pan;
+	private String pan;
 
 	public String getName() {
 		return name;

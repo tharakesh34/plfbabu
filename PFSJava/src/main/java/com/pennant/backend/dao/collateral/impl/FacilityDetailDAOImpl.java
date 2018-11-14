@@ -54,7 +54,7 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 	public FacilityDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FacilityDetail
 	 * 
@@ -105,14 +105,16 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		facilityDetail.setFacilityRef(facref);
 
-		StringBuilder selectSql = new StringBuilder("Select CAFReference, FacilityRef,TermSheetRef," );
-		selectSql.append(" FacilityFor, FacilityType, FacilityCCY, Exposure, ExistingLimit, NewLimit, FinanceAmount, " );
-		selectSql.append(" Pricing, Repayments, RateType, LCPeriod, UsancePeriod, SecurityClean, SecurityDesc, Utilization, " );
-		selectSql.append(" Commission, Purpose, CustID , StartDate, MaturityDate,Guarantee,Covenants,DocumentsRequired,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
-		selectSql.append(" TenorYear, TenorMonth, TenorDesc, " );
-		selectSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCcy, " );
-		selectSql.append(" UnderWriting, UnderWritingCcy, PropFinalTake, PropFinalTakeCcy, " );
+		StringBuilder selectSql = new StringBuilder("Select CAFReference, FacilityRef,TermSheetRef,");
+		selectSql.append(" FacilityFor, FacilityType, FacilityCCY, Exposure, ExistingLimit, NewLimit, FinanceAmount, ");
+		selectSql.append(
+				" Pricing, Repayments, RateType, LCPeriod, UsancePeriod, SecurityClean, SecurityDesc, Utilization, ");
+		selectSql.append(
+				" Commission, Purpose, CustID , StartDate, MaturityDate,Guarantee,Covenants,DocumentsRequired,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
+		selectSql.append(" TenorYear, TenorMonth, TenorDesc, ");
+		selectSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCcy, ");
+		selectSql.append(" UnderWriting, UnderWritingCcy, PropFinalTake, PropFinalTakeCcy, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,Revolving,CCYformat,FacilityTypeDesc ");
@@ -123,12 +125,10 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
-		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FacilityDetail.class);
+		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityDetail.class);
 
 		try {
-			facilityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			facilityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			facilityDetail = null;
@@ -161,8 +161,7 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -192,23 +191,25 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FacilityDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CAFReference, FacilityRef, TermSheetRef,FacilityFor, FacilityType, " );
-		insertSql.append(" FacilityCCY, Exposure, ExistingLimit, NewLimit, FinanceAmount, Pricing, Repayments," );
-		insertSql.append(" RateType, LCPeriod, UsancePeriod, SecurityClean, SecurityDesc, Utilization, Commission, " );
+		insertSql.append(" (CAFReference, FacilityRef, TermSheetRef,FacilityFor, FacilityType, ");
+		insertSql.append(" FacilityCCY, Exposure, ExistingLimit, NewLimit, FinanceAmount, Pricing, Repayments,");
+		insertSql.append(" RateType, LCPeriod, UsancePeriod, SecurityClean, SecurityDesc, Utilization, Commission, ");
 		insertSql.append(" Purpose,CustID,StartDate,MaturityDate,Guarantee,Covenants,DocumentsRequired,");
-		insertSql.append(" TenorYear,TenorMonth,TenorDesc," );
-		insertSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCcy, " );
-		insertSql.append(" UnderWriting, UnderWritingCcy, PropFinalTake, PropFinalTakeCcy, " );
+		insertSql.append(" TenorYear,TenorMonth,TenorDesc,");
+		insertSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCcy, ");
+		insertSql.append(" UnderWriting, UnderWritingCcy, PropFinalTake, PropFinalTakeCcy, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CAFReference, :FacilityRef, :TermSheetRef,:FacilityFor, :FacilityType, " );
-		insertSql.append(" :FacilityCCY, :Exposure, :ExistingLimit, :NewLimit, :FinanceAmount, :Pricing, :Repayments," );
-		insertSql.append(" :RateType, :LCPeriod, :UsancePeriod, :SecurityClean, :SecurityDesc, :Utilization, :Commission," );
+		insertSql.append(" Values(:CAFReference, :FacilityRef, :TermSheetRef,:FacilityFor, :FacilityType, ");
+		insertSql.append(" :FacilityCCY, :Exposure, :ExistingLimit, :NewLimit, :FinanceAmount, :Pricing, :Repayments,");
+		insertSql.append(
+				" :RateType, :LCPeriod, :UsancePeriod, :SecurityClean, :SecurityDesc, :Utilization, :Commission,");
 		insertSql.append(" :Purpose,:CustID,:StartDate,:MaturityDate,:Guarantee,:Covenants,:DocumentsRequired, ");
-		insertSql.append(" :TenorYear,:TenorMonth,:TenorDesc," );
-		insertSql.append(" :TransactionType, :AgentBank, :OtherDetails, :TotalFacility, :TotalFacilityCcy, " );
-		insertSql.append(" :UnderWriting, :UnderWritingCcy, :PropFinalTake, :PropFinalTakeCcy, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :TenorYear,:TenorMonth,:TenorDesc,");
+		insertSql.append(" :TransactionType, :AgentBank, :OtherDetails, :TotalFacility, :TotalFacilityCcy, ");
+		insertSql.append(" :UnderWriting, :UnderWritingCcy, :PropFinalTake, :PropFinalTakeCcy, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -237,17 +238,25 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 		StringBuilder updateSql = new StringBuilder("Update FacilityDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CAFReference = :CAFReference, TermSheetRef=:TermSheetRef,");
-		updateSql.append(" FacilityFor = :FacilityFor, FacilityType = :FacilityType, FacilityCCY = :FacilityCCY, Exposure = :Exposure," );
-		updateSql.append(" ExistingLimit = :ExistingLimit, NewLimit = :NewLimit, FinanceAmount = :FinanceAmount, Pricing = :Pricing," );
-		updateSql.append(" Repayments = :Repayments, RateType = :RateType, LCPeriod = :LCPeriod, UsancePeriod = :UsancePeriod,");
-		updateSql.append(" SecurityClean = :SecurityClean, SecurityDesc = :SecurityDesc, Utilization = :Utilization, " );
-		updateSql.append(" Commission = :Commission, Purpose = :Purpose ,CustID=:CustID, StartDate=:StartDate, MaturityDate=:MaturityDate,");
+		updateSql.append(
+				" FacilityFor = :FacilityFor, FacilityType = :FacilityType, FacilityCCY = :FacilityCCY, Exposure = :Exposure,");
+		updateSql.append(
+				" ExistingLimit = :ExistingLimit, NewLimit = :NewLimit, FinanceAmount = :FinanceAmount, Pricing = :Pricing,");
+		updateSql.append(
+				" Repayments = :Repayments, RateType = :RateType, LCPeriod = :LCPeriod, UsancePeriod = :UsancePeriod,");
+		updateSql.append(" SecurityClean = :SecurityClean, SecurityDesc = :SecurityDesc, Utilization = :Utilization, ");
+		updateSql.append(
+				" Commission = :Commission, Purpose = :Purpose ,CustID=:CustID, StartDate=:StartDate, MaturityDate=:MaturityDate,");
 		updateSql.append(" Guarantee=:Guarantee, Covenants=:Covenants, DocumentsRequired=:DocumentsRequired,");
-		updateSql.append(" TenorYear=:TenorYear,TenorMonth=:TenorMonth,TenorDesc=:TenorDesc," );
-		updateSql.append(" TransactionType = :TransactionType, AgentBank = :AgentBank, OtherDetails = :OtherDetails, TotalFacility = :TotalFacility, TotalFacilityCcy = :TotalFacilityCcy, " );
-		updateSql.append(" UnderWriting = :UnderWriting, UnderWritingCcy = :UnderWritingCcy, PropFinalTake = :PropFinalTake, PropFinalTakeCcy = :PropFinalTakeCcy, " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus," );
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );
+		updateSql.append(" TenorYear=:TenorYear,TenorMonth=:TenorMonth,TenorDesc=:TenorDesc,");
+		updateSql.append(
+				" TransactionType = :TransactionType, AgentBank = :AgentBank, OtherDetails = :OtherDetails, TotalFacility = :TotalFacility, TotalFacilityCcy = :TotalFacilityCcy, ");
+		updateSql.append(
+				" UnderWriting = :UnderWriting, UnderWritingCcy = :UnderWritingCcy, PropFinalTake = :PropFinalTake, PropFinalTakeCcy = :PropFinalTakeCcy, ");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FacilityRef=:FacilityRef");
 		logger.debug("updateSql: " + updateSql.toString());
@@ -266,14 +275,16 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 		logger.debug("Entering");
 		FacilityDetail facilityDetail = getFacilityDetail();
 		facilityDetail.setId(cafReference);
-		StringBuilder selectSql = new StringBuilder("Select CAFReference, FacilityRef,TermSheetRef," );
-		selectSql.append(" FacilityFor, FacilityType, FacilityCCY, Exposure, ExistingLimit, NewLimit, FinanceAmount, " );
-		selectSql.append(" Pricing, Repayments, RateType, LCPeriod, UsancePeriod, SecurityClean, SecurityDesc, Utilization, " );
-		selectSql.append(" Commission, Purpose, CustID , StartDate, MaturityDate,Guarantee,Covenants,DocumentsRequired,");
-		selectSql.append(" TenorYear,TenorMonth,TenorDesc," );
-		selectSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCcy, " );
-		selectSql.append(" UnderWriting, UnderWritingCcy, PropFinalTake, PropFinalTakeCcy, " );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		StringBuilder selectSql = new StringBuilder("Select CAFReference, FacilityRef,TermSheetRef,");
+		selectSql.append(" FacilityFor, FacilityType, FacilityCCY, Exposure, ExistingLimit, NewLimit, FinanceAmount, ");
+		selectSql.append(
+				" Pricing, Repayments, RateType, LCPeriod, UsancePeriod, SecurityClean, SecurityDesc, Utilization, ");
+		selectSql.append(
+				" Commission, Purpose, CustID , StartDate, MaturityDate,Guarantee,Covenants,DocumentsRequired,");
+		selectSql.append(" TenorYear,TenorMonth,TenorDesc,");
+		selectSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCcy, ");
+		selectSql.append(" UnderWriting, UnderWritingCcy, PropFinalTake, PropFinalTakeCcy, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,Revolving,CCYformat,FacilityTypeDesc ");
@@ -284,11 +295,9 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
-		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FacilityDetail.class);
+		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityDetail.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	public void deleteByCAF(String cafReference, String type) {

@@ -62,8 +62,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>BuilderProjcet</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>BuilderProjcet</code> with set of CRUD operations.
  */
 public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implements BuilderProjcetDAO {
 	private static Logger logger = Logger.getLogger(BuilderProjcetDAOImpl.class);
@@ -127,10 +126,8 @@ public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implement
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		/*
-		 * // Get the identity sequence number. if (builderProjcet.getId() <= 0)
-		 * {
-		 * builderProjcet.setId(getNextidviewDAO().getNextId("SeqBuilderProjcet"
-		 * )); }
+		 * // Get the identity sequence number. if (builderProjcet.getId() <= 0) {
+		 * builderProjcet.setId(getNextidviewDAO().getNextId("SeqBuilderProjcet" )); }
 		 */
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

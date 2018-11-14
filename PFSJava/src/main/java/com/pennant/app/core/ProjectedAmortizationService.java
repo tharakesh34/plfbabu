@@ -107,7 +107,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 	 * @param finEODEvent
 	 * @param custEODEvent
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private FinEODEvent incomeAmortization(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
@@ -119,7 +119,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		updateAMZMethod(finEODEvent);
 
 		// calculate MonthEnd ACCRUALS
-		List<ProjectedAccrual> accrualList = calculateMonthEndAccruals(finEODEvent, custEODEvent.getEodValueDate(), BigDecimal.ZERO, true);
+		List<ProjectedAccrual> accrualList = calculateMonthEndAccruals(finEODEvent, custEODEvent.getEodValueDate(),
+				BigDecimal.ZERO, true);
 		finEODEvent.setProjectedAccrualList(accrualList);
 
 		logger.debug(" Leaving ");
@@ -128,6 +129,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 
 	/**
 	 * Amortized Details Fees/ManualAdvises/Expenses <br>
+	 * 
 	 * @param finEODEvent
 	 */
 	private void saveOrUpdateAMZDetails(FinEODEvent finEODEvent) {
@@ -137,7 +139,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 
 		// prepare map based on IncomeType
-		List<ProjectedAmortization> projectedAMZList = projectedAmortizationDAO.getIncomeAMZDetailsByRef(finMain.getFinReference());
+		List<ProjectedAmortization> projectedAMZList = projectedAmortizationDAO
+				.getIncomeAMZDetailsByRef(finMain.getFinReference());
 		HashMap<String, List<ProjectedAmortization>> map = prepareAMZMap(projectedAMZList);
 
 		projAMZList.addAll(getFeeProjAMZList(map, finMain));
@@ -157,7 +160,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 
 		HashMap<String, String> map = new HashMap<String, String>(1);
 
-		FinanceType finType =  finEODEvent.getFinType();
+		FinanceType finType = finEODEvent.getFinType();
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<ProjectedAmortization> projAMZList = finEODEvent.getProjectedAMZList();
 
@@ -210,8 +213,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		HashMap<String, Object> dataMap = getDataMap(finMain, finType);
 
 		// get SQL rule
-		String sqlRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE,
-				AmortizationConstants.AMZ_METHOD_RULE);
+		String sqlRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
+				AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
 
 		// Rule Execution
 		String ruleResult = (String) ruleExecutionUtil.executeRule(sqlRule, dataMap, "", RuleReturnType.STRING);
@@ -228,7 +231,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 	 * @param valueDate
 	 * @return
 	 */
-	private List<ProjectedAmortization> getFeeProjAMZList(HashMap<String, List<ProjectedAmortization>> map, FinanceMain finMain) {
+	private List<ProjectedAmortization> getFeeProjAMZList(HashMap<String, List<ProjectedAmortization>> map,
+			FinanceMain finMain) {
 
 		boolean isSave = true;
 		Date valueDate = DateUtility.getAppDate();
@@ -238,7 +242,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		for (FinFeeDetail finFeeDetail : finFeeAMZList) {
 
 			isSave = true;
-			ProjectedAmortization feeAMZ = null; 
+			ProjectedAmortization feeAMZ = null;
 
 			if (map.containsKey(AmortizationConstants.AMZ_INCOMETYPE_FEE)) {
 				for (ProjectedAmortization projAMZ : map.get(AmortizationConstants.AMZ_INCOMETYPE_FEE)) {
@@ -312,7 +316,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		for (ManualAdvise manualAdvise : finAdviseAMZList) {
 
 			isSave = true;
-			ProjectedAmortization mdAMZ = null; 
+			ProjectedAmortization mdAMZ = null;
 
 			if (map.containsKey(AmortizationConstants.AMZ_INCOMETYPE_MANUALADVISE)) {
 				for (ProjectedAmortization projAMZ : map.get(AmortizationConstants.AMZ_INCOMETYPE_MANUALADVISE)) {
@@ -380,12 +384,13 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		boolean isSave = true;
 		Date valueDate = DateUtility.getAppDate();
 		List<ProjectedAmortization> projAMZList = new ArrayList<ProjectedAmortization>(1);
-		List<FinExpenseDetails> finExpenseAMZList = finExpenseDetailsDAO.getAMZFinExpenseDetails(finMain.getFinReference(), "");
+		List<FinExpenseDetails> finExpenseAMZList = finExpenseDetailsDAO
+				.getAMZFinExpenseDetails(finMain.getFinReference(), "");
 
 		for (FinExpenseDetails finExpDetail : finExpenseAMZList) {
 
 			isSave = true;
-			ProjectedAmortization expAMZ = null; 
+			ProjectedAmortization expAMZ = null;
 
 			if (map.containsKey(AmortizationConstants.AMZ_INCOMETYPE_EXPENSE)) {
 				for (ProjectedAmortization projAMZ : map.get(AmortizationConstants.AMZ_INCOMETYPE_EXPENSE)) {
@@ -440,6 +445,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 
 	/**
 	 * Month End ACCRUAL Calculation
+	 * 
 	 * @param finMain
 	 * @param schdDetails
 	 * @param appDate
@@ -473,21 +479,21 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		BigDecimal totalProfit = schdTotals.getProfitCalc();
 		BigDecimal totalPOS = schdTotals.getClosingBalance();
 
-		FinanceScheduleDetail prvSchd	= null;
-		FinanceScheduleDetail curSchd	= null;
-		FinanceScheduleDetail nextSchd	= null;
+		FinanceScheduleDetail prvSchd = null;
+		FinanceScheduleDetail curSchd = null;
+		FinanceScheduleDetail nextSchd = null;
 
-		Date prvSchdDate	= null;
-		Date curSchdDate	= null;
-		Date nextSchdDate	= null;
-		Date prvMonthEnd	= null;
+		Date prvSchdDate = null;
+		Date curSchdDate = null;
+		Date nextSchdDate = null;
+		Date prvMonthEnd = null;
 
 		List<Date> months = new ArrayList<Date>();
 		List<Date> monthsCopy = new ArrayList<Date>();
 		Date newMonth = null;
 
-		if (calFromFinStartDate
-				|| DateUtility.getMonthEndDate(getFormatDate(finMain.getFinStartDate())).compareTo(appDateMonthEnd) == 0) {
+		if (calFromFinStartDate || DateUtility.getMonthEndDate(getFormatDate(finMain.getFinStartDate()))
+				.compareTo(appDateMonthEnd) == 0) {
 
 			newMonth = new Date(DateUtility.getMonthEndDate(finMain.getFinStartDate()).getTime());
 		} else {
@@ -550,7 +556,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 				ProjectedAccrual prjAcc = null;
 
 				if (map.containsKey(curMonthEnd)) {
-					prjAcc = map.get(curMonthEnd);			
+					prjAcc = map.get(curMonthEnd);
 				} else {
 					prjAcc = new ProjectedAccrual();
 					prjAcc.setFinReference(finMain.getFinReference());
@@ -575,21 +581,24 @@ public class ProjectedAmortizationService extends ServiceHelper {
 
 					// multiple months between schedules
 					curPftAmz = calProfitAMZ(curSchd, prvSchdDate, nextMonthStart, curMonthStart);
-					curPOSAmz = calPOSAMZ(curSchd, prvSchdDate, nextMonthStart, curMonthStart, prvSchd.getClosingBalance());
+					curPOSAmz = calPOSAMZ(curSchd, prvSchdDate, nextMonthStart, curMonthStart,
+							prvSchd.getClosingBalance());
 				} else {
 
 					// Calculation From MonthEnd to CurSchdDate 
 					if (curMonthEnd.compareTo(prvSchdDate) >= 0 && curMonthEnd.compareTo(nextSchdDate) < 0) {
 
 						curPftAmz = calProfitAMZ(nextSchd, curSchdDate, nextMonthStart, curSchdDate);
-						curPOSAmz = calPOSAMZ(nextSchd, curSchdDate, nextMonthStart, curSchdDate, curSchd.getClosingBalance());
+						curPOSAmz = calPOSAMZ(nextSchd, curSchdDate, nextMonthStart, curSchdDate,
+								curSchd.getClosingBalance());
 					}
 
 					// Calculation From CurSchdDate to Previous MonthEnd
 					if (prvMonthEnd != null && !isSchdAmz) {
 
 						prvPftAmz = calProfitAMZ(curSchd, prvSchdDate, curSchdDate, curMonthStart);
-						prvPOSAmz = calPOSAMZ(curSchd, prvSchdDate, curSchdDate, curMonthStart, prvSchd.getClosingBalance());
+						prvPOSAmz = calPOSAMZ(curSchd, prvSchdDate, curSchdDate, curMonthStart,
+								prvSchd.getClosingBalance());
 					}
 				}
 
@@ -626,7 +635,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 					noOfDays = cumulativeDays;
 
 					// AMZ Percentage, use Previous Cumulative for calculation
-					amzPercentage = calAMZPercentage(totalProfit, totalPOS, finMain, prjAcc, cumulativePft, cumulativePOS, amzMethod);
+					amzPercentage = calAMZPercentage(totalProfit, totalPOS, finMain, prjAcc, cumulativePft,
+							cumulativePOS, amzMethod);
 					prjAcc.setAMZPercentage(amzPercentage);
 
 					cumulativePft = cumulativePft.add(prjAcc.getPftAmz());
@@ -689,7 +699,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 				projIncomeAMZ.setIncomeType(projAmortization.getIncomeType());
 
 				// calculate income / expense amortization
-				BigDecimal amortizedAmount = calculateMonthlyIncomeAMZ(projAmortization, projAccrual, totalAmount, cumulativeAmount);
+				BigDecimal amortizedAmount = calculateMonthlyIncomeAMZ(projAmortization, projAccrual, totalAmount,
+						cumulativeAmount);
 				cumulativeAmount = cumulativeAmount.add(amortizedAmount);
 				unAmortizedAmount = totalAmount.subtract(cumulativeAmount);
 
@@ -707,6 +718,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 
 	/**
 	 * calculate Monthly Amortization for Income and Expense based on AMZPerentage
+	 * 
 	 * @param projAmortization
 	 * @param projAccrual
 	 * @return
@@ -732,7 +744,8 @@ public class ProjectedAmortizationService extends ServiceHelper {
 	 * @param appDate
 	 * @return
 	 */
-	public FinEODEvent updateProjectedAMZAmounts(FinEODEvent finEODEvent, List<ProjectedAmortization> projIncomeAMZList) throws Exception {
+	public FinEODEvent updateProjectedAMZAmounts(FinEODEvent finEODEvent, List<ProjectedAmortization> projIncomeAMZList)
+			throws Exception {
 		logger.debug(" Entering ");
 
 		List<ProjectedAmortization> projAMZList = finEODEvent.getProjectedAMZList();
@@ -740,7 +753,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 		ProjectedAmortization curProjAMZ = null;
 		ProjectedAmortization prvProjAMZ = null;
 
-		for (ProjectedAmortization projAmortization : projAMZList) { 
+		for (ProjectedAmortization projAmortization : projAMZList) {
 			for (int i = 0; i < projIncomeAMZList.size(); i++) {
 
 				curProjAMZ = projIncomeAMZList.get(i);
@@ -785,8 +798,7 @@ public class ProjectedAmortizationService extends ServiceHelper {
 	}
 
 	/**
-	 * Method for calculate part of the profit, Rounding calculation not
-	 * required.
+	 * Method for calculate part of the profit, Rounding calculation not required.
 	 * 
 	 * @param schdDetail
 	 * @param monthEnd
@@ -799,28 +811,29 @@ public class ProjectedAmortizationService extends ServiceHelper {
 
 		int days = DateUtility.getDaysBetween(date1, date2);
 		int daysInCurPeriod = DateUtility.getDaysBetween(schdDetail.getSchDate(), prvSchdDate);
-		pftAmz = schdDetail.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+		pftAmz = schdDetail.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0,
+				RoundingMode.HALF_DOWN);
 
 		return pftAmz;
 	}
 
 	/**
-	 * Method for calculate part of the Principal OutStanding, Rounding
-	 * calculation not required.
+	 * Method for calculate part of the Principal OutStanding, Rounding calculation not required.
 	 * 
 	 * @param schdDetail
 	 * @param monthEnd
 	 * @return
 	 * 
 	 */
-	private static BigDecimal calPOSAMZ(FinanceScheduleDetail schdDetail, Date prvSchdDate, Date date1,
-			Date date2, BigDecimal prvClosingBal) {
+	private static BigDecimal calPOSAMZ(FinanceScheduleDetail schdDetail, Date prvSchdDate, Date date1, Date date2,
+			BigDecimal prvClosingBal) {
 
 		BigDecimal pftAmz = BigDecimal.ZERO;
 
 		int days = DateUtility.getDaysBetween(date1, date2);
 		int daysInCurPeriod = DateUtility.getDaysBetween(schdDetail.getSchDate(), prvSchdDate);
-		pftAmz = prvClosingBal.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+		pftAmz = prvClosingBal.multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0,
+				RoundingMode.HALF_DOWN);
 
 		return pftAmz;
 	}

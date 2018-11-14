@@ -63,16 +63,16 @@ public class DesignationListModelItemRenderer implements ListitemRenderer<Design
 	private static final long serialVersionUID = -7810505551485114617L;
 
 	public DesignationListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Designation designation, int count) throws Exception {
-		
+
 		Listcell lc;
-	  	lc = new Listcell(designation.getDesgCode());
+		lc = new Listcell(designation.getDesgCode());
 		lc.setParent(item);
-	  	lc = new Listcell(designation.getDesgDesc());
+		lc = new Listcell(designation.getDesgDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbDesgIsActive = new Checkbox();
@@ -80,13 +80,13 @@ public class DesignationListModelItemRenderer implements ListitemRenderer<Design
 		cbDesgIsActive.setChecked(designation.isDesgIsActive());
 		lc.appendChild(cbDesgIsActive);
 		lc.setParent(item);
-	  	lc = new Listcell(designation.getRecordStatus());
+		lc = new Listcell(designation.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(designation.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", designation.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onDesignationItemDoubleClicked");
 	}
 }

@@ -63,7 +63,7 @@ public class CustomerEmailListModelItemRenderer implements ListitemRenderer<Cust
 	public CustomerEmailListModelItemRenderer() {
 		//
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerEMail customerEMail, int count) throws Exception {
 		Listcell lc;
@@ -80,6 +80,6 @@ public class CustomerEmailListModelItemRenderer implements ListitemRenderer<Cust
 		lc = new Listcell(PennantJavaUtil.getLabel(customerEMail.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", customerEMail);
-		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmailAddressItemDoubleClicked");   
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmailAddressItemDoubleClicked");
 	}
 }

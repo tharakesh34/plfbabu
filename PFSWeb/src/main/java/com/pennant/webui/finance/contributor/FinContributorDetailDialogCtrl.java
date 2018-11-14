@@ -96,77 +96,74 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.ContributorDetailsDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/Contributor/FinContributorDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/Contributor/FinContributorDetailDialog.zul file.
  */
 public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDetail> {
 	private static final long serialVersionUID = -6959194080451993569L;
 	private static final Logger logger = Logger.getLogger(FinContributorDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_FinContributorDetailDialog;
+	protected Window window_FinContributorDetailDialog;
 
-	protected Longbox 		custID; 					
-	protected Textbox 		contributorCIF; 			
-	protected Label 		contributorName; 			
-	protected CurrencyBox	contributorInvestment; 		
-	protected Label 		investmentAcctBal;
-	protected Textbox 		investmentAcc; 				
-	protected Datebox 		investmentDate; 			
-	protected Datebox 		recordDate; 				
-	protected Decimalbox	contributionPerc; 			
-	protected Decimalbox	mudaribPerc; 				
-	protected Row 			row_mudaribPerc;
-	
-	
-	protected Label 		label_FinContributorDetailDialog_CustID;
-	protected Label 		label_FinContributorDetailDialog_ContributorInvestment;
-	protected Label 		label_FinContributorDetailDialog_InvestmentAcc;
-	protected Label 		label_FinContributorDetailDialog_InvestmentDate;
-	protected Label 		label_FinContributorDetailDialog_RecordDate;
-	protected Label 		label_FinContributorDetailDialog_MudaribPerc;
-	protected Label 		label_FinContributorDetailDialog_RecordStatus;
+	protected Longbox custID;
+	protected Textbox contributorCIF;
+	protected Label contributorName;
+	protected CurrencyBox contributorInvestment;
+	protected Label investmentAcctBal;
+	protected Textbox investmentAcc;
+	protected Datebox investmentDate;
+	protected Datebox recordDate;
+	protected Decimalbox contributionPerc;
+	protected Decimalbox mudaribPerc;
+	protected Row row_mudaribPerc;
+
+	protected Label label_FinContributorDetailDialog_CustID;
+	protected Label label_FinContributorDetailDialog_ContributorInvestment;
+	protected Label label_FinContributorDetailDialog_InvestmentAcc;
+	protected Label label_FinContributorDetailDialog_InvestmentDate;
+	protected Label label_FinContributorDetailDialog_RecordDate;
+	protected Label label_FinContributorDetailDialog_MudaribPerc;
+	protected Label label_FinContributorDetailDialog_RecordStatus;
 
 	// not auto wired vars
-	private FinContributorDetail finContributorDetail; 	// overhanded per param
+	private FinContributorDetail finContributorDetail; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchCustId; // autowire
 	protected Button btnSearchInvestmentAcc; // autowire
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerSelectCtrl customerSelectCtrl;
 
-	private boolean newRecord=false;
-	private boolean newContributor=false;
+	private boolean newRecord = false;
+	private boolean newContributor = false;
 	private List<FinContributorDetail> contributorDetails;
-	private ContributorDetailsDialogCtrl  contributorDetailsDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject ;
-	private String moduleType="";
-	private String finCcy="";
-	private BigDecimal balInvestAmount= BigDecimal.ZERO;
+	private ContributorDetailsDialogCtrl contributorDetailsDialogCtrl;
+	protected JdbcSearchObject<Customer> newSearchObject;
+	private String moduleType = "";
+	private String finCcy = "";
+	private BigDecimal balInvestAmount = BigDecimal.ZERO;
 	private BigDecimal finAmount = BigDecimal.ZERO;
-	private  int formatter = 0;
+	private int formatter = 0;
 	String roleCode = "";
-	
+
 	private FinanceDetail financeDetail;
-	
+
 	private AccountInterfaceService accountInterfaceService;
 	Date appStartDate = DateUtility.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -182,13 +179,12 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinContributorDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinContributorDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */	
+	 */
 	public void onCreate$window_FinContributorDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -197,75 +193,76 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 		if (arguments.containsKey("finContributorDetail")) {
 			this.finContributorDetail = (FinContributorDetail) arguments.get("finContributorDetail");
-			FinContributorDetail befImage =new FinContributorDetail();
+			FinContributorDetail befImage = new FinContributorDetail();
 			BeanUtils.copyProperties(this.finContributorDetail, befImage);
 			this.finContributorDetail.setBefImage(befImage);
 			setFinContributorDetail(this.finContributorDetail);
 		} else {
 			setFinContributorDetail(null);
 		}
-		
+
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
-		
+
 		if (arguments.containsKey("finCcy")) {
 			this.finCcy = (String) arguments.get("finCcy");
 		}
-		
+
 		if (arguments.containsKey("finAmount")) {
 			this.finAmount = (BigDecimal) arguments.get("finAmount");
 		}
-		
+
 		if (arguments.containsKey("balInvestAmount")) {
 			this.balInvestAmount = (BigDecimal) arguments.get("balInvestAmount");
 		}
 		if (arguments.containsKey("formatter")) {
 			this.formatter = (Integer) arguments.get("formatter");
-			newContributor=true;
+			newContributor = true;
 		}
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
- 		}
+		}
 
-		if(getFinContributorDetail().isNewRecord()){
+		if (getFinContributorDetail().isNewRecord()) {
 			setNewRecord(true);
 		}
 
-		if(arguments.containsKey("contributorDetailsDialogCtrl")){
+		if (arguments.containsKey("contributorDetailsDialogCtrl")) {
 
-			setContributorDetailsDialogCtrl((ContributorDetailsDialogCtrl) arguments.get("contributorDetailsDialogCtrl"));
+			setContributorDetailsDialogCtrl(
+					(ContributorDetailsDialogCtrl) arguments.get("contributorDetailsDialogCtrl"));
 			setNewContributor(true);
 
-			if(arguments.containsKey("newRecord")){
+			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
-			}else{
+			} else {
 				setNewRecord(false);
 			}
 			this.finContributorDetail.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
+			if (arguments.containsKey("roleCode")) {
 				roleCode = (String) arguments.get("roleCode");
 				getUserWorkspace().allocateRoleAuthorities(roleCode, "FinContributorDetailDialog");
 			}
-			formatter = CurrencyUtil.getFormat(this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+			formatter = CurrencyUtil.getFormat(this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData()
+					.getFinanceMain().getFinCcy());
 		}
 
-		doLoadWorkFlow(this.finContributorDetail.isWorkflow(),this.finContributorDetail.getWorkflowId(),
+		doLoadWorkFlow(this.finContributorDetail.isWorkflow(), this.finContributorDetail.getWorkflowId(),
 				this.finContributorDetail.getNextTaskId());
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinContributorDetailDialog");
 		}
 
 		// set Field Properties
 		doSetFieldProperties();
-		if(this.contributorDetailsDialogCtrl!=null && 
-				this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceType().getFinCategory().equals(
-						FinanceConstants.PRODUCT_MUSHARAKA)){
+		if (this.contributorDetailsDialogCtrl != null && this.contributorDetailsDialogCtrl.getFinanceDetail()
+				.getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
 			dosetLabels();
 		}
 		doShowDialog(getFinContributorDetail());
@@ -279,52 +276,60 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
-	 * @throws InterruptedException 
-	 * @throws SuspendNotAllowedException 
+	 * 
+	 * @throws InterruptedException
+	 * @throws SuspendNotAllowedException
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		//Empty sent any required attributes
-		
+
 		this.contributorCIF.setMaxlength(6);
 		this.mudaribPerc.setScale(formatter);
-		
+
 		this.contributorInvestment.setMandatory(true);
 		this.contributorInvestment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.contributorInvestment.setScale(formatter);
 		this.contributorInvestment.setTextBoxWidth(150);
-		
+
 		this.investmentAcc.setMaxlength(50);
 		this.mudaribPerc.setMaxlength(6);
 		this.mudaribPerc.setScale(2);
 		this.mudaribPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.investmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.recordDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		readOnlyComponent(true,this.recordDate);
-		
-		if (isWorkFlowEnabled()){
+		readOnlyComponent(true, this.recordDate);
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
-		if(this.contributorDetailsDialogCtrl!=null && 
-				this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)){
+
+		if (this.contributorDetailsDialogCtrl != null && this.contributorDetailsDialogCtrl.getFinanceDetail()
+				.getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
 			this.row_mudaribPerc.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	public void dosetLabels(){
+
+	public void dosetLabels() {
 		logger.debug("Entering");
-		label_FinContributorDetailDialog_CustID.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_CustID.value"));
-		label_FinContributorDetailDialog_ContributorInvestment.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_ContributorInvestment.value"));
-	    label_FinContributorDetailDialog_InvestmentAcc.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_InvestmentAcc.value"));
-		label_FinContributorDetailDialog_InvestmentDate.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_InvestmentDate.value"));
-		label_FinContributorDetailDialog_RecordDate.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_RecordDate.value"));
-		label_FinContributorDetailDialog_MudaribPerc.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_MudaribPerc.value"));
-		label_FinContributorDetailDialog_RecordStatus.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_CustID.value"));
+		label_FinContributorDetailDialog_CustID
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_CustID.value"));
+		label_FinContributorDetailDialog_ContributorInvestment
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_ContributorInvestment.value"));
+		label_FinContributorDetailDialog_InvestmentAcc
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_InvestmentAcc.value"));
+		label_FinContributorDetailDialog_InvestmentDate
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_InvestmentDate.value"));
+		label_FinContributorDetailDialog_RecordDate
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_RecordDate.value"));
+		label_FinContributorDetailDialog_MudaribPerc
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_MudaribPerc.value"));
+		label_FinContributorDetailDialog_RecordStatus
+				.setValue(Labels.getLabel("label_FinMusharakContributorDetailDialog_CustID.value"));
 		logger.debug("Leaving");
 	}
 
@@ -333,8 +338,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -345,7 +349,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinContributorDetailDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinContributorDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -383,7 +387,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		MessageUtil.showHelpWindow(event, window_FinContributorDetailDialog);
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * when the "delete" button is clicked. <br>
@@ -441,22 +444,23 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public void doWriteBeanToComponents(FinContributorDetail aFinContributorDetail) {
 		logger.debug("Entering");
 
-		if(aFinContributorDetail.getCustID()!=Long.MIN_VALUE){
-			this.custID.setValue(aFinContributorDetail.getCustID());	
+		if (aFinContributorDetail.getCustID() != Long.MIN_VALUE) {
+			this.custID.setValue(aFinContributorDetail.getCustID());
 		}
-		
+
 		this.contributorCIF.setValue(aFinContributorDetail.getLovDescContributorCIF());
 		this.contributorName.setValue(aFinContributorDetail.getContributorName());
-		this.contributorInvestment.setValue(PennantAppUtil.formateAmount(
-				aFinContributorDetail.getContributorInvest(),formatter));
+		this.contributorInvestment
+				.setValue(PennantAppUtil.formateAmount(aFinContributorDetail.getContributorInvest(), formatter));
 		this.contributionPerc.setValue(aFinContributorDetail.getTotalInvestPerc());
-		
-		this.investmentAcc.setValue(PennantApplicationUtil.formatAccountNumber(aFinContributorDetail.getInvestAccount()));
+
+		this.investmentAcc
+				.setValue(PennantApplicationUtil.formatAccountNumber(aFinContributorDetail.getInvestAccount()));
 		this.investmentAcctBal.setValue(getAcBalance(aFinContributorDetail.getInvestAccount()));
 		this.investmentDate.setValue(aFinContributorDetail.getInvestDate());
-		if(isNewRecord()){
+		if (isNewRecord()) {
 			this.recordDate.setValue(DateUtility.getAppDate());
-		}else{
+		} else {
 			this.recordDate.setValue(aFinContributorDetail.getRecordDate());
 			this.mudaribPerc.setValue(aFinContributorDetail.getMudaribPerc());
 			this.recordStatus.setValue(aFinContributorDetail.getRecordStatus());
@@ -472,71 +476,79 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public void doWriteComponentsToBean(FinContributorDetail aFinContributorDetail) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		
-		int formatter = CurrencyUtil.getFormat(this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+
+		int formatter = CurrencyUtil.getFormat(
+				this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aFinContributorDetail.setLovDescContributorCIF(this.contributorCIF.getValue());
 			aFinContributorDetail.setCustID(this.custID.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinContributorDetail.setContributorName(this.contributorName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			BigDecimal investAmt = PennantAppUtil.unFormateAmount(this.contributorInvestment.getActualValue(), formatter);
-			 if(balInvestAmount.compareTo(BigDecimal.ZERO) > 0 && investAmt.compareTo(balInvestAmount) > 0){
-				throw new WrongValueException(this.contributorInvestment, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-						new String[] { Labels.getLabel("label_FinContributorDetailDialog_ContributorInvestment.value"),
-						PennantAppUtil.amountFormate(balInvestAmount, formatter)}));
-			}	
-			
+			BigDecimal investAmt = PennantAppUtil.unFormateAmount(this.contributorInvestment.getActualValue(),
+					formatter);
+			if (balInvestAmount.compareTo(BigDecimal.ZERO) > 0 && investAmt.compareTo(balInvestAmount) > 0) {
+				throw new WrongValueException(this.contributorInvestment,
+						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+								new String[] {
+										Labels.getLabel("label_FinContributorDetailDialog_ContributorInvestment.value"),
+										PennantAppUtil.amountFormate(balInvestAmount, formatter) }));
+			}
+
 			aFinContributorDetail.setContributorInvest(investAmt);
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinContributorDetail.setInvestAccount(PennantApplicationUtil.unFormatAccountNumber(this.investmentAcc.getValue()));
-		}catch (WrongValueException we ) {
+			aFinContributorDetail
+					.setInvestAccount(PennantApplicationUtil.unFormatAccountNumber(this.investmentAcc.getValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.investmentDate.getValue() == null){
+			if (this.investmentDate.getValue() == null) {
 				this.investmentDate.setValue(appStartDate);
 			}
 			aFinContributorDetail.setInvestDate(this.investmentDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinContributorDetail.setRecordDate(this.recordDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(finAmount.compareTo(BigDecimal.ZERO)>0){
-			BigDecimal investAmt = PennantAppUtil.unFormateAmount(this.contributorInvestment.getActualValue(), formatter);
-			aFinContributorDetail.setTotalInvestPerc((investAmt.divide(finAmount,2,RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100)));
+			if (finAmount.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal investAmt = PennantAppUtil.unFormateAmount(this.contributorInvestment.getActualValue(),
+						formatter);
+				aFinContributorDetail.setTotalInvestPerc(
+						(investAmt.divide(finAmount, 2, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100)));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinContributorDetail.setMudaribPerc(this.mudaribPerc.getValue() == null? BigDecimal.ZERO :this.mudaribPerc.getValue());
-		}catch (WrongValueException we ) {
+			aFinContributorDetail.setMudaribPerc(
+					this.mudaribPerc.getValue() == null ? BigDecimal.ZERO : this.mudaribPerc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
 			}
@@ -552,8 +564,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinContributorDetail
 	 * @throws InterruptedException
@@ -569,12 +580,12 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			this.contributorCIF.focus();
 		} else {
 			this.contributorInvestment.focus();
-			if (isNewContributor()){
+			if (isNewContributor()) {
 				doEdit();
-			}else  if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -585,12 +596,12 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			// fill the components with the data
 			doWriteBeanToComponents(aFinContributorDetail);
 
-			if(isNewContributor()){
+			if (isNewContributor()) {
 				this.window_FinContributorDetailDialog.setHeight("280px");
 				this.window_FinContributorDetailDialog.setWidth("800px");
 				this.groupboxWf.setVisible(false);
-				this.window_FinContributorDetailDialog.doModal() ;
-			}else{
+				this.window_FinContributorDetailDialog.doModal();
+			} else {
 				this.window_FinContributorDetailDialog.setWidth("100%");
 				this.window_FinContributorDetailDialog.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
@@ -609,26 +620,34 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.custID.isReadonly()){
-			this.contributorCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_FinContributorDetailDialog_CustID.value"),null,true));
+		if (!this.custID.isReadonly()) {
+			this.contributorCIF.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinContributorDetailDialog_CustID.value"), null, true));
 		}
-		
-		if (!this.btnSearchInvestmentAcc.isDisabled()){
-			this.investmentAcc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinContributorDetailDialog_InvestmentAcc.value"),null,true));
+
+		if (!this.btnSearchInvestmentAcc.isDisabled()) {
+			this.investmentAcc.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinContributorDetailDialog_InvestmentAcc.value"), null, true));
 		}
-		
-		if (!this.investmentDate.isReadonly()){
-			this.investmentDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinContributorDetailDialog_InvestmentDate.value"),false,startDate,appStartDate,true));
+
+		if (!this.investmentDate.isReadonly()) {
+			this.investmentDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinContributorDetailDialog_InvestmentDate.value"), false,
+							startDate, appStartDate, true));
 		}
-		
-		if (!this.mudaribPerc.isDisabled()){
-			this.mudaribPerc.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinContributorDetailDialog_MudaribPerc.value"), 2));
+
+		if (!this.mudaribPerc.isDisabled()) {
+			this.mudaribPerc.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinContributorDetailDialog_MudaribPerc.value"), 2));
 		}
-		
+
 		if (!this.contributorInvestment.isReadonly()) {
-			int format = CurrencyUtil.getFormat(this.contributorDetailsDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());;
-			this.contributorInvestment.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_FinContributorDetailDialog_ContributorInvestment.value"), format, true, false));
+			int format = CurrencyUtil.getFormat(this.contributorDetailsDialogCtrl.getFinanceDetail()
+					.getFinScheduleData().getFinanceMain().getFinCcy());
+			;
+			this.contributorInvestment.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinContributorDetailDialog_ContributorInvestment.value"), format, true,
+					false));
 		}
 		logger.debug("Leaving");
 	}
@@ -675,30 +694,31 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		this.mudaribPerc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for getting Discrepancies based on Finance Amount
 	 */
-	public void onFulfill$contributorInvestment(Event event){
+	public void onFulfill$contributorInvestment(Event event) {
 		logger.debug("Entering " + event.toString());
 		contributionPercCalc();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Calculation of Contribution Percentage from Contributor
 	 */
-	private void contributionPercCalc(){
+	private void contributionPercCalc() {
 		this.contributorInvestment.setConstraint("");
 		this.contributorInvestment.setErrorMessage("");
-		
+
 		this.contributionPerc.setValue(BigDecimal.ZERO);
-		if(this.contributorInvestment.getActualValue().compareTo(BigDecimal.ZERO) > 0){
-			if(finAmount.compareTo(BigDecimal.ZERO) > 0){
-				BigDecimal contAmt = PennantApplicationUtil.unFormateAmount(this.contributorInvestment.getActualValue(), formatter);
+		if (this.contributorInvestment.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
+			if (finAmount.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal contAmt = PennantApplicationUtil.unFormateAmount(this.contributorInvestment.getActualValue(),
+						formatter);
 				this.contributionPerc.setValue(contAmt.divide(finAmount, 2, RoundingMode.HALF_DOWN));
 			}
-		}	
+		}
 	}
 
 	// CRUD operations
@@ -712,39 +732,38 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		logger.debug("Entering");
 		final FinContributorDetail aFinContributorDetail = new FinContributorDetail();
 		BeanUtils.copyProperties(getFinContributorDetail(), aFinContributorDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_value",
-				new String[] {Labels.getLabel("Contributor")})
-		+ "\n\n --> " + this.contributorCIF.getText();
+				new String[] { Labels.getLabel("Contributor") }) + "\n\n --> " + this.contributorCIF.getText();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinContributorDetail.getRecordType())){
-				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion()+1);
+			if (StringUtils.isBlank(aFinContributorDetail.getRecordType())) {
+				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion() + 1);
 				aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				aFinContributorDetail.setNewRecord(true);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aFinContributorDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(isNewContributor()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCusomerProcess(aFinContributorDetail,tranType);
+				if (isNewContributor()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newCusomerProcess(aFinContributorDetail, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_FinContributorDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails,true);
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails, true);
 						// send the data back to customer
 						closeDialog();
-					}	
+					}
 
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -757,17 +776,17 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		if (isNewRecord()){
+		if (isNewRecord()) {
 
-			if(isNewContributor()){
-				this.btnCancel.setVisible(false);	
+			if (isNewContributor()) {
+				this.btnCancel.setVisible(false);
 			}
 			this.btnSearchCustId.setVisible(true);
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchCustId.setVisible(false);
 		}
-		
+
 		this.contributorCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("FinContributorDetailDialog_custID"));
 		this.btnSearchCustId.setDisabled(isReadOnly("FinContributorDetailDialog_custID"));
@@ -777,32 +796,32 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		this.investmentDate.setDisabled(isReadOnly("FinContributorDetailDialog_investmentDate"));
 		this.recordDate.setDisabled(isReadOnly("FinContributorDetailDialog_recordDate"));
 		this.mudaribPerc.setDisabled(isReadOnly("FinContributorDetailDialog_mudaribPerc"));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.finContributorDetail.isNewRecord()){
+			if (this.finContributorDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 
-			if(newContributor){
-				if("ENQ".equals(this.moduleType)){
+			if (newContributor) {
+				if ("ENQ".equals(this.moduleType)) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
-				}else if (isNewRecord()){
+				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newContributor);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
@@ -810,8 +829,8 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewContributor()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewContributor()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -830,13 +849,13 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		this.recordDate.setDisabled(true);
 		this.mudaribPerc.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -849,7 +868,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-		
+
 		this.custID.setValue(Long.MIN_VALUE);
 		this.contributorCIF.setValue("");
 		this.contributorName.setValue("");
@@ -858,7 +877,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		this.investmentDate.setText("");
 		this.recordDate.setText("");
 		this.mudaribPerc.setValue("");
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -882,58 +901,58 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		// Do data level validations here
 
 		isNew = aFinContributorDetail.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aFinContributorDetail.getRecordType())){
-				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aFinContributorDetail.getRecordType())) {
+				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion() + 1);
+				if (isNew) {
 					aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aFinContributorDetail.setNewRecord(true);
 				}
 			}
-		}else{
+		} else {
 
-			if(isNewContributor()){
-				if(isNewRecord()){
+			if (isNewContributor()) {
+				if (isNewRecord()) {
 					aFinContributorDetail.setVersion(1);
 					aFinContributorDetail.setRecordType(PennantConstants.RCD_ADD);
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aFinContributorDetail.getRecordType())){
-					aFinContributorDetail.setVersion(aFinContributorDetail.getVersion()+1);
+				if (StringUtils.isBlank(aFinContributorDetail.getRecordType())) {
+					aFinContributorDetail.setVersion(aFinContributorDetail.getVersion() + 1);
 					aFinContributorDetail.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aFinContributorDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aFinContributorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aFinContributorDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aFinContributorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
-				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion()+1);
-				if(isNew){
-					tranType =PennantConstants.TRAN_ADD;
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+			} else {
+				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
 		}
 
 		// save it to database
 		try {
-			if(isNewContributor()){
-				AuditHeader auditHeader =  newCusomerProcess(aFinContributorDetail,tranType);
+			if (isNewContributor()) {
+				AuditHeader auditHeader = newCusomerProcess(aFinContributorDetail, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_FinContributorDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails,true);
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails, true);
 					//true;
 					// send the data back to customer
 					closeDialog();
@@ -946,11 +965,10 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		logger.debug("Leaving");
 	}
 
+	private AuditHeader newCusomerProcess(FinContributorDetail aFinContributorDetail, String tranType) {
+		boolean recordAdded = false;
 
-	private AuditHeader newCusomerProcess(FinContributorDetail aFinContributorDetail,String tranType){
-		boolean recordAdded=false;
-
-		AuditHeader auditHeader= getAuditHeader(aFinContributorDetail, tranType);
+		AuditHeader auditHeader = getAuditHeader(aFinContributorDetail, tranType);
 		contributorDetails = new ArrayList<FinContributorDetail>();
 
 		String[] valueParm = new String[2];
@@ -959,67 +977,72 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		valueParm[0] = aFinContributorDetail.getLovDescContributorCIF();
 		valueParm[1] = aFinContributorDetail.getContributorName();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_ContributorCIF") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_ContributorName") + ":"+valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_ContributorCIF") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_ContributorName") + ":" + valueParm[1];
 
-		if(getContributorDetailsDialogCtrl().getContributorsList()!=null && getContributorDetailsDialogCtrl().getContributorsList().size()>0){
+		if (getContributorDetailsDialogCtrl().getContributorsList() != null
+				&& getContributorDetailsDialogCtrl().getContributorsList().size() > 0) {
 			for (int i = 0; i < getContributorDetailsDialogCtrl().getContributorsList().size(); i++) {
-				FinContributorDetail finContributorDetail = getContributorDetailsDialogCtrl().getContributorsList().get(i);
+				FinContributorDetail finContributorDetail = getContributorDetailsDialogCtrl().getContributorsList()
+						.get(i);
 
-				if(finContributorDetail.getCustID() == aFinContributorDetail.getCustID()){ // Both Current and Existing list rating same
+				if (finContributorDetail.getCustID() == aFinContributorDetail.getCustID()) { // Both Current and Existing list rating same
 
-					if(isNewRecord()){
+					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
-					if(PennantConstants.TRAN_DEL.equals(tranType)){
-						if(PennantConstants.RECORD_TYPE_UPD.equals(aFinContributorDetail.getRecordType())){
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aFinContributorDetail.getRecordType())) {
 							aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							contributorDetails.add(aFinContributorDetail);
-						}else if(PennantConstants.RCD_ADD.equals(aFinContributorDetail.getRecordType())){
-							recordAdded=true;
-						}else if(aFinContributorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+						} else if (PennantConstants.RCD_ADD.equals(aFinContributorDetail.getRecordType())) {
+							recordAdded = true;
+						} else if (aFinContributorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							contributorDetails.add(aFinContributorDetail);
-						}else if(PennantConstants.RECORD_TYPE_CAN.equals(aFinContributorDetail.getRecordType())){
-							recordAdded=true;
-							for (int j = 0; j < getContributorDetailsDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().size(); j++) {
-								FinContributorDetail detail =  getContributorDetailsDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().get(j);
-								if(detail.getCustID() == aFinContributorDetail.getCustID()){
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aFinContributorDetail.getRecordType())) {
+							recordAdded = true;
+							for (int j = 0; j < getContributorDetailsDialogCtrl().getFinanceDetail()
+									.getFinContributorHeader().getContributorDetailList().size(); j++) {
+								FinContributorDetail detail = getContributorDetailsDialogCtrl().getFinanceDetail()
+										.getFinContributorHeader().getContributorDetailList().get(j);
+								if (detail.getCustID() == aFinContributorDetail.getCustID()) {
 									contributorDetails.add(detail);
 								}
 							}
 						}
-					}else{
-						if(!PennantConstants.TRAN_UPD.equals(tranType)){
+					} else {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							contributorDetails.add(finContributorDetail);
 						}
 					}
-				}else{
+				} else {
 					contributorDetails.add(finContributorDetail);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			contributorDetails.add(aFinContributorDetail);
 		}
 		return auditHeader;
-	} 
+	}
 
 	// Search Button Component Events
-	
+
 	/**
 	 * Method for Calling list Of existed Customers
+	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchCustId(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onClick$btnSearchCustId(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -1027,49 +1050,52 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException{
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();	
+		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
-		map.put("searchObject",this.newSearchObject);
-		
+		map.put("searchObject", this.newSearchObject);
+
 		List<Filter> filterList = new ArrayList<Filter>();
 		filterList.add(new Filter("CustCoreBank", " ", Filter.OP_NOT_EQUAL));
-		map.put("filtersList",filterList);
-		
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null,map);
+		map.put("filtersList", filterList);
+
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.contributorCIF.setValue(aCustomer.getCustCIF().trim());
 		this.contributorName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * when clicks on button "btnSearchDisbAcctId"
 	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 * @throws AccountNotFoundException
 	 */
 	public void onClick$btnSearchInvestmentAcc(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		this.contributorCIF.clearErrorMessage();
-		if(StringUtils.isNotBlank(this.contributorCIF.getValue())) {
+		if (StringUtils.isNotBlank(this.contributorCIF.getValue())) {
 			Object dataObject;
 
 			List<IAccounts> iAccountList = new ArrayList<IAccounts>();
@@ -1078,11 +1104,11 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			iAccount.setAcType("EACAJK");
 			iAccount.setAcCustCIF(this.contributorCIF.getValue());
 			iAccount.setDivision(getFinanceDetail().getFinScheduleData().getFinanceType().getFinDivision());
-			
+
 			try {
 				iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
-				dataObject = ExtendedSearchListBox.show(this.window_FinContributorDetailDialog,
-						"Accounts", iAccountList);
+				dataObject = ExtendedSearchListBox.show(this.window_FinContributorDetailDialog, "Accounts",
+						iAccountList);
 				if (dataObject instanceof String) {
 					this.investmentAcc.setValue(dataObject.toString());
 					this.investmentAcctBal.setValue("");
@@ -1097,23 +1123,24 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 				logger.error("Exception: ", e);
 				MessageUtil.showError("Account Details not Found!!!");
 			}
-		}else {
-			throw new WrongValueException(this.contributorCIF,Labels.getLabel("FIELD_NO_EMPTY",
+		} else {
+			throw new WrongValueException(this.contributorCIF, Labels.getLabel("FIELD_NO_EMPTY",
 					new String[] { Labels.getLabel("label_FinContributorDetailDialog_CustID.value") }));
 		}
 
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Fetching Account Balance
+	 * 
 	 * @param acId
 	 * @return
 	 */
-	private String getAcBalance(String acId){
+	private String getAcBalance(String acId) {
 		if (StringUtils.isNotBlank(acId)) {
 			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId), formatter);
-		}else{
+		} else {
 			return "";
 		}
 	}
@@ -1128,11 +1155,11 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(FinContributorDetail aFinContributorDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aFinContributorDetail.getBefImage(), aFinContributorDetail);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinContributorDetail.getBefImage(),
+				aFinContributorDetail);
 
-		return new AuditHeader(getReference(),String.valueOf(aFinContributorDetail.getCustID()), null,
-				null, auditDetail, aFinContributorDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aFinContributorDetail.getCustID()), null, null,
+				auditDetail, aFinContributorDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1145,8 +1172,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinContributorDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1166,13 +1192,13 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		doShowNotes(this.finContributorDetail);
 	}
 
-	/** 
+	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getFinContributorDetail().getCustID()+PennantConstants.KEY_SEPERATOR +
-					getFinContributorDetail().getContributorName();
+		return getFinContributorDetail().getCustID() + PennantConstants.KEY_SEPERATOR
+				+ getFinContributorDetail().getContributorName();
 	}
 
 	// ******************************************************//
@@ -1182,6 +1208,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1189,6 +1216,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public FinContributorDetail getFinContributorDetail() {
 		return this.finContributorDetail;
 	}
+
 	public void setFinContributorDetail(FinContributorDetail customerRating) {
 		this.finContributorDetail = customerRating;
 	}
@@ -1196,6 +1224,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {
 		this.customerSelectCtrl = customerSelectctrl;
 	}
+
 	public CustomerSelectCtrl getCustomerSelectCtrl() {
 		return customerSelectCtrl;
 	}
@@ -1203,6 +1232,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -1210,6 +1240,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public boolean isNewContributor() {
 		return newContributor;
 	}
+
 	public void setNewContributor(boolean newContributor) {
 		this.newContributor = newContributor;
 	}
@@ -1217,14 +1248,15 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public ContributorDetailsDialogCtrl getContributorDetailsDialogCtrl() {
 		return contributorDetailsDialogCtrl;
 	}
-	public void setContributorDetailsDialogCtrl(
-			ContributorDetailsDialogCtrl contributorDetailsDialogCtrl) {
+
+	public void setContributorDetailsDialogCtrl(ContributorDetailsDialogCtrl contributorDetailsDialogCtrl) {
 		this.contributorDetailsDialogCtrl = contributorDetailsDialogCtrl;
 	}
 
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
+
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
@@ -1236,6 +1268,5 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
- 
 
 }

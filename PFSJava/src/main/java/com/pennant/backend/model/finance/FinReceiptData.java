@@ -41,7 +41,6 @@
  ********************************************************************************************
  */
 
-
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
@@ -49,8 +48,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FinReceiptData {
-	
-	private String finReference = null;	
+
+	private String finReference = null;
 	private String buildProcess = "";
 	private BigDecimal accruedTillLBD = BigDecimal.ZERO;
 	private BigDecimal pendingODC = BigDecimal.ZERO;
@@ -66,81 +65,91 @@ public class FinReceiptData {
 	private Map<String, String> allocationDescMap = new HashMap<>();
 	private FinReceiptHeader receiptHeader;
 	private FinanceDetail financeDetail;
-	
+
 	public FinReceiptData() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getBuildProcess() {
 		return buildProcess;
 	}
+
 	public void setBuildProcess(String buildProcess) {
 		this.buildProcess = buildProcess;
 	}
-	
+
 	public RepayMain getRepayMain() {
 		return repayMain;
 	}
+
 	public void setRepayMain(RepayMain repayMain) {
 		this.repayMain = repayMain;
 	}
-	
+
 	public BigDecimal getAccruedTillLBD() {
 		return accruedTillLBD;
 	}
+
 	public void setAccruedTillLBD(BigDecimal accruedTillLBD) {
 		this.accruedTillLBD = accruedTillLBD;
 	}
-	
+
 	public BigDecimal getPendingODC() {
 		return pendingODC;
 	}
+
 	public void setPendingODC(BigDecimal pendingODC) {
 		this.pendingODC = pendingODC;
 	}
-	
+
 	public boolean isSufficientRefund() {
-	    return sufficientRefund;
-    }
+		return sufficientRefund;
+	}
+
 	public void setSufficientRefund(boolean sufficientRefund) {
-	    this.sufficientRefund = sufficientRefund;
-    }
-	
+		this.sufficientRefund = sufficientRefund;
+	}
+
 	public BigDecimal getMaxRefundAmt() {
-	    return maxRefundAmt;
-    }
+		return maxRefundAmt;
+	}
+
 	public void setMaxRefundAmt(BigDecimal maxRefundAmt) {
-	    this.maxRefundAmt = maxRefundAmt;
-    }
-	
+		this.maxRefundAmt = maxRefundAmt;
+	}
+
 	public String getEventCodeRef() {
-	    return eventCodeRef;
-    }
+		return eventCodeRef;
+	}
+
 	public void setEventCodeRef(String eventCodeRef) {
-	    this.eventCodeRef = eventCodeRef;
-    }
-	
+		this.eventCodeRef = eventCodeRef;
+	}
+
 	public BigDecimal getActInsRefundAmt() {
-	    return actInsRefundAmt;
-    }
+		return actInsRefundAmt;
+	}
+
 	public void setActInsRefundAmt(BigDecimal actInsRefundAmt) {
-	    this.actInsRefundAmt = actInsRefundAmt;
-    }
+		this.actInsRefundAmt = actInsRefundAmt;
+	}
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -148,6 +157,7 @@ public class FinReceiptData {
 	public String getSourceId() {
 		return sourceId;
 	}
+
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
@@ -155,6 +165,7 @@ public class FinReceiptData {
 	public FinReceiptHeader getReceiptHeader() {
 		return receiptHeader;
 	}
+
 	public void setReceiptHeader(FinReceiptHeader receiptHeader) {
 		this.receiptHeader = receiptHeader;
 	}

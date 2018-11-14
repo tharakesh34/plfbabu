@@ -66,8 +66,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>AuthorizationLimitDetail</code>
- * with set of CRUD operations.
+ * Data access layer implementation for <code>AuthorizationLimitDetail</code> with set of CRUD operations.
  */
 public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLimitDetail>
 		implements AuthorizationLimitDetailDAO {

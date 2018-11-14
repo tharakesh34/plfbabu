@@ -49,11 +49,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 
 public interface ProvisionMovementService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	ProvisionMovement getProvisionMovementById(String id,Date movementDate, long linkTransId);
-	ProvisionMovement getApprovedProvisionMovementById(String id,Date movementDate);
+
+	ProvisionMovement getProvisionMovementById(String id, Date movementDate, long linkTransId);
+
+	ProvisionMovement getApprovedProvisionMovementById(String id, Date movementDate);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -93,7 +93,6 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 	protected Listheader listheader_HoldExpiryDate;
 	protected Listheader listheader_Active;
 
-	
 	// checkRights
 	protected Button button_AuthorizationLimitList_NewAuthorizationLimit;
 	protected Button button_AuthorizationLimitList_AuthorizationLimitSearch;
@@ -102,7 +101,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 	protected ExtendedCombobox userID; // autowired
 	protected ExtendedCombobox roleId; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_UserID;
 	protected Listbox sortOperator_RoleId;
 	protected Listbox sortOperator_Active;
@@ -110,11 +109,12 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 	protected Label label_AuthorizationLimitList_UserID;
 	protected Label label_AuthorizationLimitList_RoleId;
 	protected Label label_AuthorizationLimitList_Active;
-	
+
 	private transient AuthorizationLimitService authorizationLimitService;
 	private String module;
-	private int limitType=0;
+	private int limitType = 0;
 	private String hold;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -125,49 +125,49 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 	@Override
 	protected void doSetProperties() {
 		this.module = getArgument("module");
-		this.hold= getArgument("hold");
+		this.hold = getArgument("hold");
 		try {
-			limitType= Integer.parseInt(getArgument("limitType"));
+			limitType = Integer.parseInt(getArgument("limitType"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		if(StringUtils.equals("FIN",module) && limitType==1){
-			if(StringUtils.equals("Y",hold )){
-				super.moduleCode 		= "FinanceUserAuthorizationLimitHold";
-				super.pageRightName 	= "FinanceUserAuthorizationLimitHoldList";
-				super.tableName 		= "Auth_Limits_AView";
-				super.queueTableName 	= "Auth_Limits_HView";
-				super.enquiryTableName 	= "Auth_Limits_HView";
-			}else{
-				super.moduleCode 		= "FinanceUserAuthorizationLimit";
-				super.pageRightName 	= "FinanceUserAuthorizationLimitList";
-				super.tableName 		= "Auth_Limits_AView";
-				super.queueTableName 	= "Auth_Limits_View";
-				super.enquiryTableName 	= "Auth_Limits_View";
-				
+		if (StringUtils.equals("FIN", module) && limitType == 1) {
+			if (StringUtils.equals("Y", hold)) {
+				super.moduleCode = "FinanceUserAuthorizationLimitHold";
+				super.pageRightName = "FinanceUserAuthorizationLimitHoldList";
+				super.tableName = "Auth_Limits_AView";
+				super.queueTableName = "Auth_Limits_HView";
+				super.enquiryTableName = "Auth_Limits_HView";
+			} else {
+				super.moduleCode = "FinanceUserAuthorizationLimit";
+				super.pageRightName = "FinanceUserAuthorizationLimitList";
+				super.tableName = "Auth_Limits_AView";
+				super.queueTableName = "Auth_Limits_View";
+				super.enquiryTableName = "Auth_Limits_View";
+
 			}
-		}else if(StringUtils.equals("FIN",module) && limitType==2 ){
-			if(StringUtils.equals("Y",hold )){
-				super.moduleCode 		= "FinanceRoleAuthorizationLimitHold";
-				super.pageRightName 	= "FinanceRoleAuthorizationLimitHoldList";
-				super.tableName 		= "Auth_Limits_AView";
-				super.queueTableName 	= "Auth_Limits_HView";
-				super.enquiryTableName 	= "Auth_Limits_HView";
-			}else{
-				super.moduleCode 		= "FinanceRoleAuthorizationLimit";
-				super.pageRightName 	= "FinanceRoleAuthorizationLimitList";
-				super.tableName 		= "Auth_Limits_AView";
-				super.queueTableName 	= "Auth_Limits_View";
-				super.enquiryTableName 	= "Auth_Limits_View";
+		} else if (StringUtils.equals("FIN", module) && limitType == 2) {
+			if (StringUtils.equals("Y", hold)) {
+				super.moduleCode = "FinanceRoleAuthorizationLimitHold";
+				super.pageRightName = "FinanceRoleAuthorizationLimitHoldList";
+				super.tableName = "Auth_Limits_AView";
+				super.queueTableName = "Auth_Limits_HView";
+				super.enquiryTableName = "Auth_Limits_HView";
+			} else {
+				super.moduleCode = "FinanceRoleAuthorizationLimit";
+				super.pageRightName = "FinanceRoleAuthorizationLimitList";
+				super.tableName = "Auth_Limits_AView";
+				super.queueTableName = "Auth_Limits_View";
+				super.enquiryTableName = "Auth_Limits_View";
 			}
-				
-		}else{
-			super.moduleCode 		= "FinanceAuthorizationLimit";
-			super.pageRightName 	= "AuthorizationLimitList";
-			super.tableName 		= "Auth_Limits_AView";
-			super.queueTableName 	= "Auth_Limits_View";
-			super.enquiryTableName 	= "Auth_Limits_View";
+
+		} else {
+			super.moduleCode = "FinanceAuthorizationLimit";
+			super.pageRightName = "AuthorizationLimitList";
+			super.tableName = "Auth_Limits_AView";
+			super.queueTableName = "Auth_Limits_View";
+			super.enquiryTableName = "Auth_Limits_View";
 		}
 	}
 
@@ -186,18 +186,21 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 
 		// Register buttons and fields.
 		registerButton(button_AuthorizationLimitList_AuthorizationLimitSearch);
-		
-		if(StringUtils.equals("Y",hold )){
-			registerButton(button_AuthorizationLimitList_NewAuthorizationLimit, "button_AuthorizationLimitList_NewAuthorizationLimit", false);	
-		}else{
-			registerButton(button_AuthorizationLimitList_NewAuthorizationLimit, "button_AuthorizationLimitList_NewAuthorizationLimit", true);
+
+		if (StringUtils.equals("Y", hold)) {
+			registerButton(button_AuthorizationLimitList_NewAuthorizationLimit,
+					"button_AuthorizationLimitList_NewAuthorizationLimit", false);
+		} else {
+			registerButton(button_AuthorizationLimitList_NewAuthorizationLimit,
+					"button_AuthorizationLimitList_NewAuthorizationLimit", true);
 		}
-		
+
 		registerField("id");
-		registerField("limitType");		
-		
-		if(limitType==1){
-			registerField("usrLogin", listheader_UserID, SortOrder.NONE, userID, sortOperator_UserID, Operators.DEFAULT);
+		registerField("limitType");
+
+		if (limitType == 1) {
+			registerField("usrLogin", listheader_UserID, SortOrder.NONE, userID, sortOperator_UserID,
+					Operators.DEFAULT);
 			registerField("userID");
 			registerField("UsrFName");
 			registerField("UsrMName");
@@ -206,15 +209,15 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 			this.userID.setModuleName("SecurityUsers");
 			this.userID.setValueColumn("UsrLogin");
 			this.userID.setDescColumn("UsrFName");
-			this.userID.setValidateColumns(new String[] {"usrLogin"});
-			
+			this.userID.setValidateColumns(new String[] { "usrLogin" });
+
 			label_AuthorizationLimitList_UserID.setVisible(true);
 			userID.setVisible(true);
 			sortOperator_UserID.setVisible(true);
 			listheader_UserID.setVisible(true);
 			listheader_RoleId.setVisible(false);
 		}
-		if(limitType==2){
+		if (limitType == 2) {
 			registerField("roleId", listheader_RoleId, SortOrder.NONE, roleId, sortOperator_RoleId, Operators.DEFAULT);
 			registerField("roleCd");
 			registerField("roleName");
@@ -232,45 +235,43 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 			listheader_RoleId.setVisible(true);
 		}
 		registerField("limitAmount");
-		
-			registerField("expiryDate");
-			registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
-			registerField("holdStartDate");
-			registerField("holdExpiryDate");
 
-		if(StringUtils.equals("Y",hold )){
+		registerField("expiryDate");
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
+		registerField("holdStartDate");
+		registerField("holdExpiryDate");
+
+		if (StringUtils.equals("Y", hold)) {
 			label_AuthorizationLimitList_Active.setVisible(false);
 			sortOperator_Active.setVisible(false);
 			active.setVisible(false);
 			listheader_HoldStartDate.setVisible(true);
 			listheader_HoldExpiryDate.setVisible(true);
-		}else{
+		} else {
 			label_AuthorizationLimitList_Active.setVisible(true);
 			sortOperator_Active.setVisible(true);
 			active.setVisible(true);
 			listheader_HoldStartDate.setVisible(false);
 			listheader_HoldExpiryDate.setVisible(false);
 		}
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
 
-	
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		
+
 		this.searchObject.addFilterEqual("module", module);
-		if(limitType==1){
+		if (limitType == 1) {
 			this.searchObject.addFilterNotEqual("UserID", 0);
-		}else{
+		} else {
 			this.searchObject.addFilterNotEqual("RoleId", 0);
 		}
 	}
-		
-		
+
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -315,7 +316,6 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -326,7 +326,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 
 	public void onAuthorizationLimitItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxAuthorizationLimit.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -336,13 +336,13 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  id = ");
-		whereCond.append( authorizationlimit.getId());
+		whereCond.append(authorizationlimit.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(authorizationlimit.getVersion());
-	
+
 		if (doCheckAuthority(authorizationlimit, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && authorizationlimit.getWorkflowId() == 0) {
@@ -352,10 +352,10 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -369,9 +369,10 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 		arg.put("authorizationLimit", authorizationlimit);
 		arg.put("authorizationLimitListCtrl", this);
 		arg.put("hold", hold);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -399,7 +400,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

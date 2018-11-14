@@ -47,13 +47,14 @@ public class CollateralMarkProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 		try {
 			OMElement requestElement = getRequestElement(collateralMarking, referenceNum, factory, msgFormat);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -68,11 +69,11 @@ public class CollateralMarkProcess extends MQProcess {
 	 * 
 	 * @param responseElement
 	 * @param header
-	 * @param msgFormat 
+	 * @param msgFormat
 	 * @return
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	private CollateralMark setCollateralMarkReplyInfo(OMElement responseElement, AHBMQHeader header, String msgFormat) 
+	private CollateralMark setCollateralMarkReplyInfo(OMElement responseElement, AHBMQHeader header, String msgFormat)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -84,10 +85,10 @@ public class CollateralMarkProcess extends MQProcess {
 
 		try {
 			String parentNode = COLLATERAL_MARKREPLY;
-			if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_DEMARKING)) {
+			if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_DEMARKING)) {
 				parentNode = COLLATERAL_DEMARKREPLY;
 			}
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/"+parentNode, responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/" + parentNode, responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
 
@@ -121,18 +122,18 @@ public class CollateralMarkProcess extends MQProcess {
 	 * @param collateralMark
 	 * @param referenceNum
 	 * @param factory
-	 * @param msgFormat 
+	 * @param msgFormat
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(CollateralMark collateralMark, String referenceNum, OMFactory factory, String msgFormat) 
-			throws InterfaceException {
+	private OMElement getRequestElement(CollateralMark collateralMark, String referenceNum, OMFactory factory,
+			String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 
 		OMElement detailRequest = factory.createOMElement(new QName(COLLATERAL_MARKREQ));
-		if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_DEMARKING)) {
+		if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_DEMARKING)) {
 			detailRequest = factory.createOMElement(new QName(COLLATERAL_DEMARKREQ));
 		}
 
@@ -162,15 +163,15 @@ public class CollateralMarkProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		OMElement accDetailElement = null;
-		for(DepositDetail depositDetail:collateralMark.getDepositDetail()) {
+		for (DepositDetail depositDetail : collateralMark.getDepositDetail()) {
 			accDetailElement = factory.createOMElement(new QName("DepositDetails"));
 			PFFXmlUtil.setOMChildElement(factory, accDetailElement, "DepositID", depositDetail.getDepositID());
-			if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_MARKING)) {
+			if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_MARKING)) {
 				PFFXmlUtil.setOMChildElement(factory, accDetailElement, "InsAmount", depositDetail.getInsAmount());
 				PFFXmlUtil.setOMChildElement(factory, accDetailElement, "Reason", depositDetail.getReason());
 			}
-			PFFXmlUtil.setOMChildElement(factory, accDetailElement, "BlockingDate", DateUtility.formateDate(
-					depositDetail.getBlockingDate(), InterfaceMasterConfigUtil.MQDATE));
+			PFFXmlUtil.setOMChildElement(factory, accDetailElement, "BlockingDate",
+					DateUtility.formateDate(depositDetail.getBlockingDate(), InterfaceMasterConfigUtil.MQDATE));
 		}
 		logger.debug("Leaving");
 
@@ -191,14 +192,15 @@ public class CollateralMarkProcess extends MQProcess {
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		OMElement accDetailElement = null;
 		accDetailElement = factory.createOMElement(new QName("AccountDetails"));
-		if(collateralMark.getAccountDetail() != null) {
-			for(AccountDetail accountDetail:collateralMark.getAccountDetail()) {
+		if (collateralMark.getAccountDetail() != null) {
+			for (AccountDetail accountDetail : collateralMark.getAccountDetail()) {
 				PFFXmlUtil.setOMChildElement(factory, accDetailElement, "AccNum", accountDetail.getAccNum());
-				if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_MARKING)) {
-					PFFXmlUtil.setOMChildElement(factory, accDetailElement, "Description", accountDetail.getDescription());
+				if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.COLLATERAL_MARKING)) {
+					PFFXmlUtil.setOMChildElement(factory, accDetailElement, "Description",
+							accountDetail.getDescription());
 					PFFXmlUtil.setOMChildElement(factory, accDetailElement, "InsAmount", accountDetail.getInsAmount());
-					PFFXmlUtil.setOMChildElement(factory, accDetailElement, "BlockingDate", DateUtility.formateDate(
-							accountDetail.getBlockingDate(), InterfaceMasterConfigUtil.MQDATE));
+					PFFXmlUtil.setOMChildElement(factory, accDetailElement, "BlockingDate",
+							DateUtility.formateDate(accountDetail.getBlockingDate(), InterfaceMasterConfigUtil.MQDATE));
 				}
 			}
 		}

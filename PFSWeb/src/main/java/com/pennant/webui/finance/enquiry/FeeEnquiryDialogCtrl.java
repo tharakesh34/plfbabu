@@ -62,21 +62,21 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/Enquiry/FeeEnquiryDialogCtrl.zul file.
  */
 public class FeeEnquiryDialogCtrl extends GFCBaseCtrl<FinFeeDetail> {
-	private static final long				serialVersionUID				= 3184249234920071313L;
-	private static final Logger				logger							= Logger.getLogger(FeeEnquiryDialogCtrl.class);
+	private static final long serialVersionUID = 3184249234920071313L;
+	private static final Logger logger = Logger.getLogger(FeeEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_FinFeeEnquiryDialog;
-	protected Listbox						listBoxFeeDetail;
-	protected Borderlayout					borderlayoutFinFeeEnquiry;
-	private Tabpanel						tabPanel_dialogWindow;
+	protected Window window_FinFeeEnquiryDialog;
+	protected Listbox listBoxFeeDetail;
+	protected Borderlayout borderlayoutFinFeeEnquiry;
+	private Tabpanel tabPanel_dialogWindow;
 
-	private FinanceEnquiryHeaderDialogCtrl	financeEnquiryHeaderDialogCtrl	= null;
-	private List<FinFeeDetail>				finFeeDetails;
-	private int								ccyFormatter					= 0;
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
+	private List<FinFeeDetail> finFeeDetails;
+	private int ccyFormatter = 0;
 
 	/**
 	 * default constructor.<br>

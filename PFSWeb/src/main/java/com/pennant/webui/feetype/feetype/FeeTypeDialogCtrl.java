@@ -93,84 +93,86 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(FeeTypeDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FeeTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window					window_FeeTypeDialog;
+	protected Window window_FeeTypeDialog;
 
-	protected Row						row0;
-	protected Label						label_FeeTypeCode;
-	protected Hbox						hlayout_FeeTypeCode;
-	protected Space						space_FeeTypeCode;
-	protected Uppercasebox				feeTypeCode;
+	protected Row row0;
+	protected Label label_FeeTypeCode;
+	protected Hbox hlayout_FeeTypeCode;
+	protected Space space_FeeTypeCode;
+	protected Uppercasebox feeTypeCode;
 
-	protected Label						label_FeeTypeDesc;
-	protected Hbox						hlayout_FeeTypeDesc;
-	protected Space						space_FeeTypeDesc;
-	protected Textbox					feeTypeDesc;
+	protected Label label_FeeTypeDesc;
+	protected Hbox hlayout_FeeTypeDesc;
+	protected Space space_FeeTypeDesc;
+	protected Textbox feeTypeDesc;
 
-	protected Row						row1;
-	protected Label						label_ManualAdvice;
-	protected Hbox						hlayout_ManualAdvice;
-	protected Space						space_ManualAdvice;
-	protected Checkbox					manualAdvice;
-	
-	protected Label						label_AdviseType;
-	protected Hbox						hlayout_AdviseType;
-	protected Space						space_AdviseType;
-	protected Combobox 					adviseType;
+	protected Row row1;
+	protected Label label_ManualAdvice;
+	protected Hbox hlayout_ManualAdvice;
+	protected Space space_ManualAdvice;
+	protected Checkbox manualAdvice;
 
-	protected Label						label_AccountingSetID;
-	protected Hbox						hlayout_AccountingSetID;
-	protected ExtendedCombobox			accountingSetID;
-	
-	protected Row						row2;
-	protected Row						row3;
-	protected Label						label_Active;
-	protected Hbox						hlayout_Active;
-	protected Space						space_Active;
+	protected Label label_AdviseType;
+	protected Hbox hlayout_AdviseType;
+	protected Space space_AdviseType;
+	protected Combobox adviseType;
 
-	protected Checkbox					active;
-	
-	protected Checkbox					taxApplicable;
-	protected Label						label_TaxComponent;
-	protected Hbox						hlayout_TaxComponent;
-	protected Space						space_TaxComponent;
-	protected Combobox					taxComponent;
+	protected Label label_AccountingSetID;
+	protected Hbox hlayout_AccountingSetID;
+	protected ExtendedCombobox accountingSetID;
 
-	protected Label						recordType;
-	protected Groupbox					gb_statusDetails;
-	private boolean						enqModule			= false;
+	protected Row row2;
+	protected Row row3;
+	protected Label label_Active;
+	protected Hbox hlayout_Active;
+	protected Space space_Active;
 
-	private FeeType						feeType;
-	private transient FeeTypeListCtrl	feeTypeListCtrl;
+	protected Checkbox active;
+
+	protected Checkbox taxApplicable;
+	protected Label label_TaxComponent;
+	protected Hbox hlayout_TaxComponent;
+	protected Space space_TaxComponent;
+	protected Combobox taxComponent;
+
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
+
+	private FeeType feeType;
+	private transient FeeTypeListCtrl feeTypeListCtrl;
 	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
 	private List<ValueLabel> listTaxComponent = PennantStaticListUtil.getFeeTaxTypes();
-	
+
 	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
 
-	private transient FeeTypeService	feeTypeService;
-	private transient PagedListService	pagedListService;
-	
-	protected Label						label_HostFeeTypeCode;
-	protected Hbox						hlayout_HostFeeTypeCode;
-	protected Space						space_HostFeeTypeCode;
-	protected Textbox					hostFeeTypeCode;
-	
-	protected Checkbox					amortzReq;
+	private transient FeeTypeService feeTypeService;
+	private transient PagedListService pagedListService;
 
-	private Boolean						feeTypeEnquiry				= false;
+	protected Label label_HostFeeTypeCode;
+	protected Hbox hlayout_HostFeeTypeCode;
+	protected Space space_HostFeeTypeCode;
+	protected Textbox hostFeeTypeCode;
+
+	protected Checkbox amortzReq;
+
+	private Boolean feeTypeEnquiry = false;
+
 	/**
 	 * default constructor.<br>
 	 */
 	public FeeTypeDialogCtrl() {
 		super();
 	}
+
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "FeeTypeDialog";
@@ -188,17 +190,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	public void onCreate$window_FeeTypeDialog(Event event) throws Exception {
 		logger.debug("Entring" + event.toString());
-		
+
 		try {
 			setPageComponents(this.window_FeeTypeDialog);
-			
+
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
 			} else {
 				enqModule = false;
 			}
-			
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("feeType")) {
@@ -211,7 +212,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			} else {
 				setFeeType(null);
 			}
-			
+
 			if (arguments.containsKey("feeTypeEnquiry")) {
 				this.feeTypeEnquiry = true;
 				enqiryModule = true;
@@ -219,7 +220,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			} else {
 				this.feeTypeEnquiry = false;
 			}
-			
+
 			doLoadWorkFlow(this.feeType.isWorkflow(), this.feeType.getWorkflowId(), this.feeType.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqModule) {
@@ -382,7 +383,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(aFeeType);
-		
+
 		if (feeTypeEnquiry) {
 			this.window_FeeTypeDialog.setHeight("70%");
 			this.window_FeeTypeDialog.setWidth("60%");
@@ -406,10 +407,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(true, this.accountingSetID);
 		readOnlyComponent(true, this.active);
 		readOnlyComponent(true, this.adviseType);
-		readOnlyComponent(true,this.amortzReq);
-		readOnlyComponent(true,this.taxApplicable);
-		readOnlyComponent(true,this.hostFeeTypeCode);
-		readOnlyComponent(true,this.taxComponent);
+		readOnlyComponent(true, this.amortzReq);
+		readOnlyComponent(true, this.taxApplicable);
+		readOnlyComponent(true, this.hostFeeTypeCode);
+		readOnlyComponent(true, this.taxComponent);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -424,16 +425,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onCheck$manualAdvice(Event event) {
 		logger.debug("Entering");
-		FeeType aFeeType =new FeeType();
+		FeeType aFeeType = new FeeType();
 		if (this.manualAdvice.isChecked()) {
 			this.label_AdviseType.setVisible(true);
 			this.hlayout_AdviseType.setVisible(true);
 			fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 
-		}else{
+		} else {
 			this.label_AdviseType.setVisible(false);
 			this.hlayout_AdviseType.setVisible(false);
 		}
@@ -453,10 +454,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
-			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnNew"));
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnDelete"));
-			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnEdit"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnNew"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnDelete"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnEdit"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FeeTypeDialog_btnSave"));
 
 		logger.debug("Leaving");
 	}
@@ -466,22 +467,22 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		//Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
 		this.feeTypeDesc.setMaxlength(35);
 		this.hostFeeTypeCode.setMaxlength(50);
-		
+
 		this.accountingSetID.setModuleName("AccountingSet");
 		this.accountingSetID.setValueColumn("EventCode");
 		this.accountingSetID.setDescColumn("lovDescEventCodeName");
 		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.accountingSetID.setMandatoryStyle(false);
-		
+
 		Filter filters[] = new Filter[1];
-		filters[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_MANFEE,Filter.OP_EQUAL);
+		filters[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_MANFEE, Filter.OP_EQUAL);
 		this.accountingSetID.setFilters(filters);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -504,7 +505,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
-		
+
 		if (this.manualAdvice.isChecked()) {
 			this.label_AdviseType.setVisible(true);
 			this.hlayout_AdviseType.setVisible(true);
@@ -512,18 +513,18 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.label_AdviseType.setVisible(false);
 			this.hlayout_AdviseType.setVisible(false);
 		}
-		
+
 		if (aFeeType.getAccountSetId() != null) {
 			this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
 			this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
 		}
-		if(aFeeType.isNewRecord()){
+		if (aFeeType.isNewRecord()) {
 			this.amortzReq.setChecked(true);
-		}else{
+		} else {
 			this.amortzReq.setChecked(aFeeType.isAmortzReq());
 		}
 		this.active.setChecked(aFeeType.isActive());
-		
+
 		if (aFeeType.isTaxApplicable()) {
 			this.label_TaxComponent.setVisible(true);
 			this.hlayout_TaxComponent.setVisible(true);
@@ -533,30 +534,31 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		}
 		this.taxApplicable.setChecked(aFeeType.isTaxApplicable());
 		fillComboBox(this.taxComponent, String.valueOf(aFeeType.getTaxComponent()), listTaxComponent, "");
-		
-		if(aFeeType.isNew() || (aFeeType.getRecordType() != null ? aFeeType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aFeeType.isNew() || (aFeeType.getRecordType() != null ? aFeeType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		
-		if(StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE) ||
-				StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC) ||
-				StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)){
-			
-			if(!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)){
+
+		if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
+				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
+				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)) {
+
+			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 				this.row1.setVisible(false);
 			}
 			this.row2.setVisible(false);
-			if(!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)){
+			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)) {
 				this.row3.setVisible(false);
 			}
-			if(StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)){
+			if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)) {
 				this.taxApplicable.setDisabled(true);
 			}
 			this.active.setDisabled(true);
 			this.btnDelete.setVisible(false);
 		}
-		
+
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -608,7 +610,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Advise Type
 		try {
 			String strAdviseType = null;
@@ -622,22 +624,22 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				aFeeType.setAdviseType(DEFAULT_ADVISETYPE);
 			}
 		} catch (WrongValueException we) {
-					wve.add(we);
-				}
+			wve.add(we);
+		}
 		//Active
 		try {
 			aFeeType.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Tax Applicable
 		try {
 			aFeeType.setTaxApplicable(this.taxApplicable.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Tax Inclusive/Exclusive Type
 		try {
 			String taxComponentType = getComboboxValue(this.taxComponent);
@@ -646,7 +648,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			wve.add(we);
 		}
 
-		
 		//Amortization Required
 		try {
 			aFeeType.setAmortzReq(this.amortzReq.isChecked());
@@ -675,29 +676,38 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 		//Fee Type Code
 		if (!this.feeTypeCode.isReadonly()) {
-			this.feeTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.feeTypeCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		//Description
 		if (!this.feeTypeDesc.isReadonly()) {
-			this.feeTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
+			this.feeTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"),
+							PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 		//hostFeeTypeCode
-		/*if (!this.hostFeeTypeCode.isReadonly()) {
-			this.hostFeeTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_NUMERIC, true));
-		}*/
+		/*
+		 * if (!this.hostFeeTypeCode.isReadonly()) { this.hostFeeTypeCode.setConstraint(new
+		 * PTStringValidator(Labels.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"),
+		 * PennantRegularExpressions.REGEX_NUMERIC, true)); }
+		 */
 		//accountingSetID
 		if (!this.accountingSetID.isReadonly()) {
-				this.accountingSetID.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
+			this.accountingSetID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
 		}
 		//adviseType
 		if (!this.adviseType.isDisabled() && this.label_AdviseType.isVisible()) {
-			this.adviseType.setConstraint(new StaticListValidator(listAdviseType, Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
+			this.adviseType.setConstraint(
+					new StaticListValidator(listAdviseType, Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
 		}
 		//Tax Component
 		if (!this.taxComponent.isDisabled() && this.label_TaxComponent.isVisible()) {
-			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent, Labels.getLabel("label_FeeTypeDialog_TaxComponent.value")));
+			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent,
+					Labels.getLabel("label_FeeTypeDialog_TaxComponent.value")));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -750,17 +760,17 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private void refreshList() {
 		feeTypeListCtrl.search();
 	}
-	
+
 	/*
 	 * Method for Tax Applicable
 	 */
 	public void onCheck$taxApplicable(Event event) {
 		logger.debug("Entering");
-		
+
 		this.taxComponent.setErrorMessage("");
 		this.taxComponent.setConstraint("");
 		fillComboBox(this.taxComponent, null, listTaxComponent, "");
-		
+
 		if (this.taxApplicable.isChecked()) {
 			this.label_TaxComponent.setVisible(true);
 			this.hlayout_TaxComponent.setVisible(true);
@@ -769,7 +779,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.hlayout_TaxComponent.setVisible(false);
 		}
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -913,7 +923,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		
+
 		// remove validation, if there are a save before
 		this.feeTypeCode.setValue("");
 		this.feeTypeDesc.setValue("");
@@ -1098,8 +1108,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FeeTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1184,6 +1194,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.feeType.getFeeTypeID());

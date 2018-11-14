@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.bmtmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -63,20 +62,19 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
-	private static Logger logger	= Logger.getLogger(ProductDAOImpl.class);
-	
+	private static Logger logger = Logger.getLogger(ProductDAOImpl.class);
+
 	public ProductDAOImpl() {
 		super();
 	}
-	
 
 	/**
 	 * Fetch the Record Product Detail details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return Product
 	 */
 	@Override
@@ -107,14 +105,14 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 		logger.debug("Leaving");
 		return product;
 	}
-	
+
 	/**
 	 * Fetch the Record Product Detail details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return Product
 	 */
 	@Override
@@ -139,19 +137,19 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 		logger.debug("Leaving");
 		return product;
 	}
-	
+
 	public String getProductCtgByProduct(final String code) {
 		logger.debug("Entering");
 		Product product = new Product();
 		product.setProductCode(code);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select ProductCategory From BMTProduct ");
 		selectSql.append(" Where ProductCode =:ProductCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
-		
+
 		String productCtg = null;
 		try {
 			productCtg = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
@@ -164,13 +162,13 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTProduct or BMTProduct_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Product Detail by key ProductCode
+	 * This method Deletes the Record from the BMTProduct or BMTProduct_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Product Detail by key ProductCode
 	 * 
 	 * @param Product
-	 *         Detail (product)
+	 *            Detail (product)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -179,7 +177,7 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	public void delete(Product product, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		StringBuilder  deleteSql = 	new StringBuilder ();
+		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" Delete From BMTProduct");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ProductCode =:ProductCode");
@@ -204,9 +202,9 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	 * save Product Detail
 	 * 
 	 * @param Product
-	 *         Detail (product)
+	 *            Detail (product)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -215,14 +213,15 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	public String save(Product product, String type) {
 		logger.debug("Entering");
 
-		StringBuilder   insertSql =new StringBuilder();
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into BMTProduct");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ProductCode, ProductDesc, ProductCategory,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append("  RecordType, WorkflowId, AllowDeviation)");
 		insertSql.append(" Values(:ProductCode, :ProductDesc, :ProductCategory, :Version , :LastMntBy, :LastMntOn,");
-		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AllowDeviation)");
+		insertSql.append(
+				" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AllowDeviation)");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -235,9 +234,9 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	 * DataAccessException with error 41004. update Product Detail by key ProductCode and Version
 	 * 
 	 * @param Product
-	 *         Detail (product)
+	 *            Detail (product)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -251,15 +250,17 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 		updateSql.append("Update BMTProduct");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ProductDesc = :ProductDesc, ProductCategory = :ProductCategory,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AllowDeviation = :AllowDeviation");
+		updateSql.append(
+				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AllowDeviation = :AllowDeviation");
 		updateSql.append(" Where ProductCode =:ProductCode");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

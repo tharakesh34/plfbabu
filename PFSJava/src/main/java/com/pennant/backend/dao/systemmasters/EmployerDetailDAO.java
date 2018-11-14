@@ -42,13 +42,15 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface EmployerDetailDAO extends BasicCrudDao<EmployerDetail> {
 
-	EmployerDetail getEmployerDetailById(long id,String type);
+	EmployerDetail getEmployerDetailById(long id, String type);
+
 	/**
 	 * 
 	 * @param employerId

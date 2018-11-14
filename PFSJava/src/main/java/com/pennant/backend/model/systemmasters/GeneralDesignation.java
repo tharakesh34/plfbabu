@@ -63,7 +63,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	private GeneralDesignation befImage;
 	private LoggedInUser userDetails;
 	private boolean genDesgIsActive;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -84,6 +84,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public String getId() {
 		return genDesignation;
 	}
+
 	public void setId(String id) {
 		this.genDesignation = id;
 	}
@@ -91,6 +92,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public String getGenDesignation() {
 		return genDesignation;
 	}
+
 	public void setGenDesignation(String genDesignation) {
 		this.genDesignation = genDesignation;
 	}
@@ -98,6 +100,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public String getGenDesgDesc() {
 		return genDesgDesc;
 	}
+
 	public void setGenDesgDesc(String genDesgDesc) {
 		this.genDesgDesc = genDesgDesc;
 	}
@@ -105,6 +108,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -112,6 +116,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -119,6 +124,7 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public GeneralDesignation getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(GeneralDesignation beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -126,13 +132,15 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public boolean isGenDesgIsActive() {
 		return genDesgIsActive;
 	}
+
 	public void setGenDesgIsActive(boolean genDesgIsActive) {
 		this.genDesgIsActive = genDesgIsActive;
 	}

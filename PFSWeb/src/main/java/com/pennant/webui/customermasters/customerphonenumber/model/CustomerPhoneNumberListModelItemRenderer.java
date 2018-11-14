@@ -80,8 +80,8 @@ public class CustomerPhoneNumberListModelItemRenderer implements ListitemRendere
 			Listcell lc;
 			lc = new Listcell(String.valueOf(customerPhoneNumber.getPhoneCustID()));
 			lc.setParent(item);
-			lc = new Listcell(customerPhoneNumber.getPhoneTypeCode() + "-"
-					+ customerPhoneNumber.getLovDescPhoneTypeCodeName());
+			lc = new Listcell(
+					customerPhoneNumber.getPhoneTypeCode() + "-" + customerPhoneNumber.getLovDescPhoneTypeCodeName());
 			lc.setParent(item);
 			lc = new Listcell(customerPhoneNumber.getPhoneCountryCode());
 			lc.setParent(item);

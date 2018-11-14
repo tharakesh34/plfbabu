@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class SubHeadRule implements Serializable {
-	
-    private static final long serialVersionUID = 734402688459795510L;
-    
+
+	private static final long serialVersionUID = 734402688459795510L;
+
 	private String custCOB;
 	private String custCtgCode;
 	private String custNationality;
@@ -20,7 +20,7 @@ public class SubHeadRule implements Serializable {
 	private BigDecimal TOTALPFT = BigDecimal.ZERO;
 	private BigDecimal TOTALPFTBAL = BigDecimal.ZERO;
 	private BigDecimal ACCRUE = BigDecimal.ZERO;
-	private boolean isProcessed= false;
+	private boolean isProcessed = false;
 	private String reqFinType;
 	private String reqFinPurpose;
 	private String reqFinDivision;
@@ -29,178 +29,201 @@ public class SubHeadRule implements Serializable {
 	private BigDecimal PAIDFEE = BigDecimal.ZERO;
 	private int tenure = 0;
 	private int remTenure = 0;
-	
+
 	//Commodity broker
 	private String brokerAccount;
 	private String insAccount;
-	
-	/*private String custIndustry;
-	private String custCIF;
-	private boolean custIsStaff = false;
-	private String custParentCountry;
-	private String custResdCountry;
-	private String custRiskCountry;
-	private String debitOrCredit;
-	private String reqCampaign;
-	private String reqFinBranch;
-	private String reqFinCcy;
-	private String reqFinType;
-	private String reqGLHead;*/
-	
+
+	/*
+	 * private String custIndustry; private String custCIF; private boolean custIsStaff = false; private String
+	 * custParentCountry; private String custResdCountry; private String custRiskCountry; private String debitOrCredit;
+	 * private String reqCampaign; private String reqFinBranch; private String reqFinCcy; private String reqFinType;
+	 * private String reqGLHead;
+	 */
+
 	public SubHeadRule() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getCustCOB() {
-    	return custCOB;
-    }
+		return custCOB;
+	}
+
 	public void setCustCOB(String custCOB) {
-    	this.custCOB = custCOB;
-    }
+		this.custCOB = custCOB;
+	}
 
 	public String getCustCtgCode() {
-    	return custCtgCode;
-    }
+		return custCtgCode;
+	}
+
 	public void setCustCtgCode(String custCtgCode) {
-    	this.custCtgCode = custCtgCode;
-    }
+		this.custCtgCode = custCtgCode;
+	}
 
 	public String getCustNationality() {
-    	return custNationality;
-    }
+		return custNationality;
+	}
+
 	public void setCustNationality(String custNationality) {
-    	this.custNationality = custNationality;
-    }
+		this.custNationality = custNationality;
+	}
 
 	public String getCustSector() {
-    	return custSector;
-    }
+		return custSector;
+	}
+
 	public void setCustSector(String custSector) {
-    	this.custSector = custSector;
-    }
+		this.custSector = custSector;
+	}
 
 	public String getCustSubSector() {
-    	return custSubSector;
-    }
+		return custSubSector;
+	}
+
 	public void setCustSubSector(String custSubSector) {
-    	this.custSubSector = custSubSector;
-    }
+		this.custSubSector = custSubSector;
+	}
 
 	public String getCustTypeCode() {
-    	return custTypeCode;
-    }
+		return custTypeCode;
+	}
+
 	public void setCustTypeCode(String custTypeCode) {
-    	this.custTypeCode = custTypeCode;
-    }
+		this.custTypeCode = custTypeCode;
+	}
 
 	public String getReqFinAcType() {
-    	return reqFinAcType;
-    }
+		return reqFinAcType;
+	}
+
 	public void setReqFinAcType(String reqFinAcType) {
-    	this.reqFinAcType = reqFinAcType;
-    }
+		this.reqFinAcType = reqFinAcType;
+	}
 
 	public String getReqProduct() {
-    	return reqProduct;
-    }
+		return reqProduct;
+	}
+
 	public void setReqProduct(String reqProduct) {
-    	this.reqProduct = reqProduct;
-    }
-	
+		this.reqProduct = reqProduct;
+	}
+
 	public void setREFUNDPFT(BigDecimal rEFUNDPFT) {
-	    REFUNDPFT = rEFUNDPFT;
-    }
+		REFUNDPFT = rEFUNDPFT;
+	}
+
 	public BigDecimal getREFUNDPFT() {
-	    return REFUNDPFT;
-    }
+		return REFUNDPFT;
+	}
 
 	public boolean isProcessed() {
-    	return isProcessed;
-    }
+		return isProcessed;
+	}
+
 	public void setProcessed(boolean isProcessed) {
-    	this.isProcessed = isProcessed;
-    }
-	
+		this.isProcessed = isProcessed;
+	}
+
 	public String getReqFinType() {
-    	return reqFinType;
-    }
+		return reqFinType;
+	}
+
 	public void setReqFinType(String reqFinType) {
-    	this.reqFinType = reqFinType;
-    }
-	
+		this.reqFinType = reqFinType;
+	}
+
 	public void setReqFinPurpose(String reqFinPurpose) {
-	    this.reqFinPurpose = reqFinPurpose;
-    }
+		this.reqFinPurpose = reqFinPurpose;
+	}
+
 	public String getReqFinPurpose() {
-	    return reqFinPurpose;
-    }
-	
+		return reqFinPurpose;
+	}
+
 	public BigDecimal getCALFEE() {
-    	return CALFEE;
-    }
+		return CALFEE;
+	}
+
 	public void setCALFEE(BigDecimal cALFEE) {
-    	CALFEE = cALFEE;
-    }
-	
+		CALFEE = cALFEE;
+	}
+
 	public BigDecimal getWAVFEE() {
-    	return WAVFEE;
-    }
+		return WAVFEE;
+	}
+
 	public void setWAVFEE(BigDecimal wAVFEE) {
-    	WAVFEE = wAVFEE;
-    }
+		WAVFEE = wAVFEE;
+	}
+
 	public int getTenure() {
-    	return tenure;
-    }
+		return tenure;
+	}
+
 	public void setTenure(int tenure) {
-    	this.tenure = tenure;
-    }
+		this.tenure = tenure;
+	}
+
 	public int getRemTenure() {
-    	return remTenure;
-    }
+		return remTenure;
+	}
+
 	public void setRemTenure(int remTenure) {
-    	this.remTenure = remTenure;
-    }
+		this.remTenure = remTenure;
+	}
+
 	public void setReqFinDivision(String reqFinDivision) {
-	    this.reqFinDivision = reqFinDivision;
-    }
+		this.reqFinDivision = reqFinDivision;
+	}
+
 	public String getReqFinDivision() {
-	    return reqFinDivision;
-    }
+		return reqFinDivision;
+	}
+
 	public BigDecimal getTOTALPFT() {
-    	return TOTALPFT;
-    }
+		return TOTALPFT;
+	}
+
 	public void setTOTALPFT(BigDecimal tOTALPFT) {
-    	TOTALPFT = tOTALPFT;
-    }
+		TOTALPFT = tOTALPFT;
+	}
+
 	public BigDecimal getTOTALPFTBAL() {
-    	return TOTALPFTBAL;
-    }
+		return TOTALPFTBAL;
+	}
+
 	public void setTOTALPFTBAL(BigDecimal tOTALPFTBAL) {
-    	TOTALPFTBAL = tOTALPFTBAL;
-    }
+		TOTALPFTBAL = tOTALPFTBAL;
+	}
+
 	public BigDecimal getACCRUE() {
-    	return ACCRUE;
-    }
+		return ACCRUE;
+	}
+
 	public void setACCRUE(BigDecimal aCCRUE) {
-    	ACCRUE = aCCRUE;
-    }
+		ACCRUE = aCCRUE;
+	}
+
 	public BigDecimal getPAIDFEE() {
 		return PAIDFEE;
 	}
+
 	public void setPAIDFEE(BigDecimal pAIDFEE) {
 		PAIDFEE = pAIDFEE;
 	}
-	
+
 	//Set values into Map
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> subHeadRuleMap = new HashMap<String, Object>();	
+		HashMap<String, Object> subHeadRuleMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				subHeadRuleMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				subHeadRuleMap.put(this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
@@ -209,12 +232,12 @@ public class SubHeadRule implements Serializable {
 	}
 
 	public String getBrokerAccount() {
-	    return brokerAccount;
-    }
+		return brokerAccount;
+	}
 
 	public void setBrokerAccount(String brokerAccount) {
-	    this.brokerAccount = brokerAccount;
-    }
+		this.brokerAccount = brokerAccount;
+	}
 
 	public String getInsAccount() {
 		return insAccount;
@@ -223,5 +246,5 @@ public class SubHeadRule implements Serializable {
 	public void setInsAccount(String insAccount) {
 		this.insAccount = insAccount;
 	}
-	
+
 }

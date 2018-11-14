@@ -22,14 +22,14 @@ import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class LimitCustomerGroupsUpdate implements Tasklet {
-	private Logger					logger	= Logger.getLogger(LimitCustomerGroupsUpdate.class);
+	private Logger logger = Logger.getLogger(LimitCustomerGroupsUpdate.class);
 
 	@SuppressWarnings("unused")
-	private DataSource			dataSource;
-	private CustomerGroupQueuingDAO	customerGroupQueuingDAO;
+	private DataSource dataSource;
+	private CustomerGroupQueuingDAO customerGroupQueuingDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	private LimitRebuild limitRebuild;
-	private PlatformTransactionManager	transactionManager;
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -58,7 +58,7 @@ public class LimitCustomerGroupsUpdate implements Tasklet {
 					txStatus = transactionManager.getTransaction(txDef);
 
 					// Limit Customer Group Rebuild
- 					this.limitRebuild.processCustomerGroupRebuild(custGroupId, false, false);
+					this.limitRebuild.processCustomerGroupRebuild(custGroupId, false, false);
 
 					this.customerGroupQueuingDAO.updateStatus(custGroupId, EodConstants.PROGRESS_SUCCESS);
 					this.customerQueuingDAO.updateCustomerQueuingStatus(custGroupId, EodConstants.PROGRESS_SUCCESS);
@@ -93,7 +93,7 @@ public class LimitCustomerGroupsUpdate implements Tasklet {
 		logger.error("LocalizedMessage : " + exp.getLocalizedMessage());
 		logger.error("StackTrace : ", exp);
 	}
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -113,7 +113,7 @@ public class LimitCustomerGroupsUpdate implements Tasklet {
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}

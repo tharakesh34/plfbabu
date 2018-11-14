@@ -11,10 +11,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoanDetailsData implements Serializable {
 
-	private static final long	serialVersionUID	= 7174788511506344048L;
+	private static final long serialVersionUID = 7174788511506344048L;
 
 	@XmlElement(name = "LOAN-DETAILS")
-	private LoanDetail			loanDetail;
+	private LoanDetail loanDetail;
 
 	public LoanDetail getLoanDetail() {
 		return loanDetail;

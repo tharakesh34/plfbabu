@@ -8,14 +8,13 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class CollectionDataDownload  implements Tasklet {
-	private Logger					logger	= Logger.getLogger(CollectionDataDownload.class);
+public class CollectionDataDownload implements Tasklet {
+	private Logger logger = Logger.getLogger(CollectionDataDownload.class);
+
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
-		
-		
+
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;
 	}

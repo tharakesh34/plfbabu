@@ -68,8 +68,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinFeeReceiptDialog.zul file.
@@ -143,7 +143,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 			if (arguments.containsKey("feeTypeCode")) {
 				this.feeTypeCode = (String) arguments.get("feeTypeCode");
 			}
-			
+
 			if (arguments.containsKey("feeTypeDesc")) {
 				this.feeTypeDesc = (String) arguments.get("feeTypeDesc");
 			}
@@ -159,7 +159,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 			if (arguments.containsKey("PaidAmount")) {
 				this.paidAmount = (BigDecimal) arguments.get("PaidAmount");
 			}
-			
+
 			if (arguments.containsKey("PaidAmountValue")) {
 				this.paidAmountValue = (BigDecimal) arguments.get("PaidAmountValue");
 			}
@@ -209,12 +209,14 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 			paidBox = (Decimalbox) listItem.getChildren().get(4).getFirstChild();
 			remReceiptFeeBox = (Decimalbox) listItem.getChildren().get(5).getFirstChild();
 			paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
-			remReceiptAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(remReceiptFeeBox.doubleValue()), formatter);
+			remReceiptAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(remReceiptFeeBox.doubleValue()),
+					formatter);
 			totalPaidAmount = totalPaidAmount.add(BigDecimal.valueOf(paidBox.doubleValue()));
 
 			try {
 				if (remReceiptAmount.compareTo(BigDecimal.ZERO) < 0) {
-					throw new WrongValueException(paidBox, Labels.getLabel("label_FinFeeReceiptDialog_PaiBox_Error.value"));
+					throw new WrongValueException(paidBox,
+							Labels.getLabel("label_FinFeeReceiptDialog_PaiBox_Error.value"));
 				}
 			} catch (WrongValueException wv) {
 				wve.add(wv);
@@ -248,7 +250,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 					if (BigDecimal.ZERO.compareTo(paidAmount) == 0) {
 						for (int i = 0; i < finFeeReceiptsList.size(); i++) {
 							FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
-							
+
 							if (StringUtils.equals(finFeeReceiptTemp.getFeeTypeCode(), this.feeTypeCode)) {
 								if (finFeeReceiptsList.size() > 1) {
 									finFeeReceiptsList.remove(i);
@@ -339,12 +341,12 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		logger.debug("Entering ");
 
 		this.label_FeeType.setValue(this.feeTypeDesc);
-		
+
 		int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-		String feeAmt  = PennantAppUtil.amountFormate(this.feeAmount, formatter);
+		String feeAmt = PennantAppUtil.amountFormate(this.feeAmount, formatter);
 		String paidAmt = PennantAppUtil.amountFormate(paidAmount, formatter);
 		String waiverAmt = PennantAppUtil.amountFormate(waiverAmount, formatter);
-		
+
 		this.label_FeeAmount.setValue(feeAmt);
 		this.label_PaidAmount.setValue(paidAmt);
 		this.label_WaiverAmount.setValue(waiverAmt);
@@ -399,11 +401,11 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				finFeeReceiptTemp.setFeeTypeCode(this.feeTypeCode);
 				finFeeReceiptTemp.setFeeTypeDesc(this.feeTypeDesc);
 				finFeeReceiptTemp.setFeeTypeId(this.feeTypeId);
-				
+
 				if (this.feeTypeId == 0) {
 					finFeeReceiptTemp.setVasReference(this.feeTypeCode);
 				}
-				
+
 				finFeeReceiptTemp.setReceiptID(finFeeReceipt.getReceiptID());
 				finFeeReceiptTemp.setWorkflowId(workFlowId);
 				finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
@@ -457,7 +459,8 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				availableAmountBox.setMaxlength(18);
 				availableAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				availableAmountBox.setDisabled(true);
-				availableAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount(), formatter));
+				availableAmountBox
+						.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(availableAmountBox);
 				lc.setStyle("text-align:right;");
@@ -479,7 +482,8 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				remReceiptAmountBox.setMaxlength(18);
 				remReceiptAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remReceiptAmountBox.setDisabled(true);
-				remReceiptAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount().subtract(finFeeReceipt.getPaidAmount()), formatter));
+				remReceiptAmountBox.setValue(PennantAppUtil.formateAmount(
+						finFeeReceipt.getAvailableAmount().subtract(finFeeReceipt.getPaidAmount()), formatter));
 				lc = new Listcell();
 				lc.appendChild(remReceiptAmountBox);
 				lc.setStyle("text-align:right;");
@@ -495,7 +499,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				amountBoxlist.add(paidBox);
 				amountBoxlist.add(remReceiptAmountBox);
 				amountBoxlist.add(finFeeReceipt);
-				
+
 				paidBox.addForward("onChange", window_FinFeeReceiptDialog, "onChangePaidAmount", amountBoxlist);
 			}
 		}

@@ -49,10 +49,10 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		GcdCustomer gcdCustomer = preparegcdCustomer(customerDetails);
 
 		logRequest(gcdCustomer);
-		
-		if(StringUtils.equals(gcdCustomer.getFinCustId(), null)){			
+
+		if (StringUtils.equals(gcdCustomer.getFinCustId(), null)) {
 			params.put("P_FINN_CUSTID", null);
-		}else{			
+		} else {
 			params.put("P_FINN_CUSTID", Long.parseLong(gcdCustomer.getFinCustId()));
 		}
 
@@ -101,31 +101,29 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		params.put("P_INS_UPD_FLAG", gcdCustomer.getInsertUpdateFlag());
 		params.put("P_SUCCESS_REJECT", gcdCustomer.getStatusFromFinnOne());
 		params.put("P_REJECTION_REASON", gcdCustomer.getRejectionReason());
-		if(StringUtils.equals(gcdCustomer.getFinCustId(), null)){			
+		if (StringUtils.equals(gcdCustomer.getFinCustId(), null)) {
 			params.put("P_FINN_CUST_ID", null);
-		}else{			
+		} else {
 			params.put("P_FINN_CUST_ID", Long.parseLong(gcdCustomer.getFinCustId()));
 		}
 		params.put("P_SFDC_CUSTOMERID", gcdCustomer.getSfdcCustomerId());
-		if(customerDetails.getCustomer().getBranchRefno()!=null){			
+		if (customerDetails.getCustomer().getBranchRefno() != null) {
 			params.put("P_BRANCHID", Long.parseLong(customerDetails.getCustomer().getBranchRefno()));
-		}else{
+		} else {
 			params.put("P_BRANCHID", null);
 		}
-		
-		
+
 		StringBuilder builder = new StringBuilder();
 		for (Entry<String, Object> input : params.entrySet()) {
 			if (builder.length() > 0) {
 				builder.append("\n");
 			}
-			
-			logger.debug(input.getKey()+"------->"+input.getValue());
+
+			logger.debug(input.getKey() + "------->" + input.getValue());
 		}
-		
 
 		try {
-			customerproc.setQueryTimeout((Integer)getSMTParameter("GCD_PROC_TIMEOUT", Integer.class));
+			customerproc.setQueryTimeout((Integer) getSMTParameter("GCD_PROC_TIMEOUT", Integer.class));
 			Map<String, Object> output = customerproc.execute(params);
 
 			if (output != null && !output.isEmpty()) {
@@ -147,17 +145,17 @@ public class FinnOneCustomer extends BajajService implements Crm {
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-				gcdCustomer.setStatusFromFinnOne("P");
-			if(e instanceof QueryTimeoutException){
+			gcdCustomer.setStatusFromFinnOne("P");
+			if (e instanceof QueryTimeoutException) {
 				gcdCustomer.setRejectionReason("Request Timed Out");
 				updateFailStatus(gcdCustomer);
-			}else{
-				gcdCustomer.setRejectionReason(StringUtils.substring(e.getMessage(), 0,50));
+			} else {
+				gcdCustomer.setRejectionReason(StringUtils.substring(e.getMessage(), 0, 50));
 				updateFailStatus(gcdCustomer);
 			}
-			
+
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return customerDetails;
 	}
@@ -176,7 +174,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		Customer customer = customerDetail.getCustomer();
 
 		GcdCustomer gcdCustomer = new GcdCustomer();
-		
+
 		if (StringUtils.isEmpty(customerDetail.getCustomer().getCustCoreBank())) {
 			gcdCustomer.setInsertUpdateFlag("I");
 		} else {
@@ -192,13 +190,13 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		if ("RETAIL".equalsIgnoreCase(customer.getCustCtgCode())) {
 			gcdCustomer.setIndvCorpFlag("I");
 			gcdCustomer.setDOB(customer.getCustDOB());
-				if(customerDetail.getEmploymentDetailsList() != null) {
-					for (CustomerEmploymentDetail custEmplymentDetail : customerDetail.getEmploymentDetailsList()) {
-						if (custEmplymentDetail.isCurrentEmployer()) {
-							gcdCustomer.setYearsOfCurrJob(custEmplymentDetail.getCustEmpFrom());
-						}
+			if (customerDetail.getEmploymentDetailsList() != null) {
+				for (CustomerEmploymentDetail custEmplymentDetail : customerDetail.getEmploymentDetailsList()) {
+					if (custEmplymentDetail.isCurrentEmployer()) {
+						gcdCustomer.setYearsOfCurrJob(custEmplymentDetail.getCustEmpFrom());
 					}
 				}
+			}
 		} else if ("CORP".equalsIgnoreCase(customer.getCustCtgCode())) {
 			gcdCustomer.setIndvCorpFlag("C");
 			gcdCustomer.setDOI(customer.getCustDOB());
@@ -219,10 +217,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		gcdCustomer.setFinnCustId(customer.getCustCoreBank());
 		gcdCustomer.setSfdcCustomerId(Long.parseLong(customer.getCustCIF()));
 		gcdCustomer.setEmiCardElig("0");
-		
-		
-		
-		
+
 		logger.debug(Literal.LEAVING);
 		return gcdCustomer;
 	}
@@ -283,20 +278,20 @@ public class FinnOneCustomer extends BajajService implements Crm {
 					addressLine1 = address.getCustAddrLine1() == null ? "" : address.getCustAddrLine1();
 					addressLine2 = address.getCustAddrLine2() == null ? "" : address.getCustAddrLine2();
 					cityRefNo = address.getCityRefNo() == null ? "" : address.getCityRefNo();
-					stateRefNo = address.getStateRefNo()==null ? "":address.getStateRefNo();
+					stateRefNo = address.getStateRefNo() == null ? "" : address.getStateRefNo();
 
 					addressDetails += address.getCustAddrType() + separator + cityRefNo + separator
-							+ address.getLovDescCustAddrCountryName() + separator + stateRefNo
-							+ separator + address.getCustAddrZIP() + separator + phoneNo + separator + mobileNo
-							+ separator + isPriorityVeryHigh + separator + address.getCustAddrHNbr() + separator
-							+ flatNumber + separator + address.getCustAddrStreet() + separator + addressLine1
-							+ addressLine2 + separator + StringUtils.trimToEmpty(phoneAreaCode) + separator + separator + eMail + ";";
+							+ address.getLovDescCustAddrCountryName() + separator + stateRefNo + separator
+							+ address.getCustAddrZIP() + separator + phoneNo + separator + mobileNo + separator
+							+ isPriorityVeryHigh + separator + address.getCustAddrHNbr() + separator + flatNumber
+							+ separator + address.getCustAddrStreet() + separator + addressLine1 + addressLine2
+							+ separator + StringUtils.trimToEmpty(phoneAreaCode) + separator + separator + eMail + ";";
 
 					noOfAddressFlag++;
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return addressDetails;
 
@@ -304,7 +299,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 
 	public void logRequest(GcdCustomer gcdCustomer) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		setRequsetSeq(gcdCustomer);
 		try {
 			StringBuilder sql = new StringBuilder();
@@ -316,7 +311,8 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			sql.append(" DateLastUpdate, NationalId, PassportNo, Nationality, PanNo, RegionId, BankType, EntityFlag,");
 			sql.append(" ContactPerson, CustSearchId, SectorId, FraudFlag, FraudScore, EmiCardElig, AddressDetail,");
 			sql.append(" BankDetail, NomineeName, NomineeAddress, NomineeRelationship, Field9, Field10,");
-			sql.append(" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId, RequestSeq)");
+			sql.append(
+					" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId, RequestSeq)");
 			sql.append(
 					" Values(:CustId, :FinCustId, :SourceSystem, :CustomerName, :ConstId, :IndustryId, :CategoryId, :Spousename,");
 			sql.append(" :IndvCorpFlag, :FName, :MName, :Lname, :DOB, :Sex,");
@@ -338,8 +334,10 @@ public class FinnOneCustomer extends BajajService implements Crm {
 		logger.debug(Literal.LEAVING);
 
 	}
-	/*setting the requestSeq  to the gcdcustomer to maintain sequence if the same customer hit the procedure 
-	 * more than one time.
+
+	/*
+	 * setting the requestSeq to the gcdcustomer to maintain sequence if the same customer hit the procedure more than
+	 * one time.
 	 */
 	private void setRequsetSeq(GcdCustomer gcdCustomer) {
 		logger.debug("Entering");
@@ -357,7 +355,7 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			logger.debug(dae);
 		}
 		if (count > 0) {
-			GcdCustomer finoneCust = new GcdCustomer() ;
+			GcdCustomer finoneCust = new GcdCustomer();
 			finoneCust.setCustId(gcdCustomer.getCustId());
 			StringBuilder sql = new StringBuilder("SELECT MAX(requestSeq) requestSeq");
 			sql.append(" From GCDCUSTOMERS");
@@ -368,11 +366,11 @@ public class FinnOneCustomer extends BajajService implements Crm {
 			RowMapper<GcdCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GcdCustomer.class);
 
 			try {
-				finoneCust=this.namedJdbcTemplate.queryForObject(sql.toString(), beanparms, typeRowMapper);
+				finoneCust = this.namedJdbcTemplate.queryForObject(sql.toString(), beanparms, typeRowMapper);
 			} catch (EmptyResultDataAccessException dae) {
 				logger.debug(dae);
 			}
-			gcdCustomer.setRequestSeq(finoneCust.getRequestSeq()+1);
+			gcdCustomer.setRequestSeq(finoneCust.getRequestSeq() + 1);
 		}
 
 		logger.debug("Leaving");
@@ -381,7 +379,8 @@ public class FinnOneCustomer extends BajajService implements Crm {
 	private void updateFailStatus(GcdCustomer gcdCustomer) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE GCDCUSTOMERS  SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason, IsSuccess = 0");
+		sql.append(
+				"UPDATE GCDCUSTOMERS  SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason, IsSuccess = 0");
 		sql.append(" Where custId =:custId and RequestSeq =:RequestSeq");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
@@ -392,7 +391,8 @@ public class FinnOneCustomer extends BajajService implements Crm {
 	private void updateSuccessStatus(GcdCustomer gcdCustomer) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE GCDCUSTOMERS SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason, FinnCustId = :FinnCustId, IsSuccess = 1");
+		sql.append(
+				"UPDATE GCDCUSTOMERS SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason, FinnCustId = :FinnCustId, IsSuccess = 1");
 		sql.append(" Where custId = :custId and RequestSeq =:RequestSeq");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);

@@ -1,150 +1,149 @@
 package com.pennant.coreinterface.model;
 
 public class FinanceCancellation {
-	private String	dsReqFinRef;//fin reference
-	private String	dsReqLnkTID;//Linked trans id
+	private String dsReqFinRef;//fin reference
+	private String dsReqLnkTID;//Linked trans id
 
-	private String	dsRspCount;
-	private String	dsRspFinRef;// fin reference
-	private String	dsRspErr;
-	private String	dsRspErrD;
+	private String dsRspCount;
+	private String dsRspFinRef;// fin reference
+	private String dsRspErr;
+	private String dsRspErrD;
 
-	private String	dsRspFinEvent;//
-	private String	dsRspLnkTID;//Linked trans id
-	private String	dsRspPOD;//post date 
-	private String	dsRspAB;//branch
-	private String	dsRspAN;//account
-	private String	dsRspAS;//Sub head
-	private String	dsRspPostRef;
-	private String	dsRspStatus;//
-	private String	dsRspOrder;
+	private String dsRspFinEvent;//
+	private String dsRspLnkTID;//Linked trans id
+	private String dsRspPOD;//post date 
+	private String dsRspAB;//branch
+	private String dsRspAN;//account
+	private String dsRspAS;//Sub head
+	private String dsRspPostRef;
+	private String dsRspStatus;//
+	private String dsRspOrder;
 
 	public FinanceCancellation(String errorMessage) {
-	   this.dsRspErrD=errorMessage;
-    }
-	
+		this.dsRspErrD = errorMessage;
+	}
+
 	public FinanceCancellation() {
-    }
+	}
 
 	public String getDsReqFinRef() {
-    	return dsReqFinRef;
-    }
+		return dsReqFinRef;
+	}
 
 	public String getDsReqLnkTID() {
-    	return dsReqLnkTID;
-    }
+		return dsReqLnkTID;
+	}
 
 	public String getDsRspCount() {
-    	return dsRspCount;
-    }
+		return dsRspCount;
+	}
 
 	public String getDsRspFinRef() {
-    	return dsRspFinRef;
-    }
+		return dsRspFinRef;
+	}
 
 	public String getDsRspErr() {
-    	return dsRspErr;
-    }
+		return dsRspErr;
+	}
 
 	public String getDsRspErrD() {
-    	return dsRspErrD;
-    }
+		return dsRspErrD;
+	}
 
 	public String getDsRspFinEvent() {
-    	return dsRspFinEvent;
-    }
+		return dsRspFinEvent;
+	}
 
 	public String getDsRspLnkTID() {
-    	return dsRspLnkTID;
-    }
+		return dsRspLnkTID;
+	}
 
 	public String getDsRspPOD() {
-    	return dsRspPOD;
-    }
+		return dsRspPOD;
+	}
 
 	public String getDsRspAB() {
-    	return dsRspAB;
-    }
+		return dsRspAB;
+	}
 
 	public String getDsRspAN() {
-    	return dsRspAN;
-    }
+		return dsRspAN;
+	}
 
 	public String getDsRspAS() {
-    	return dsRspAS;
-    }
+		return dsRspAS;
+	}
 
 	public String getDsRspPostRef() {
-    	return dsRspPostRef;
-    }
+		return dsRspPostRef;
+	}
 
 	public String getDsRspStatus() {
-    	return dsRspStatus;
-    }
+		return dsRspStatus;
+	}
 
 	public String getDsRspOrder() {
-    	return dsRspOrder;
-    }
+		return dsRspOrder;
+	}
 
 	public void setDsReqFinRef(String dsReqFinRef) {
-    	this.dsReqFinRef = dsReqFinRef;
-    }
+		this.dsReqFinRef = dsReqFinRef;
+	}
 
 	public void setDsReqLnkTID(String dsReqLnkTID) {
-    	this.dsReqLnkTID = dsReqLnkTID;
-    }
+		this.dsReqLnkTID = dsReqLnkTID;
+	}
 
 	public void setDsRspCount(String dsRspCount) {
-    	this.dsRspCount = dsRspCount;
-    }
+		this.dsRspCount = dsRspCount;
+	}
 
 	public void setDsRspFinRef(String dsRspFinRef) {
-    	this.dsRspFinRef = dsRspFinRef;
-    }
+		this.dsRspFinRef = dsRspFinRef;
+	}
 
 	public void setDsRspErr(String dsRspErr) {
-    	this.dsRspErr = dsRspErr;
-    }
+		this.dsRspErr = dsRspErr;
+	}
 
 	public void setDsRspErrD(String dsRspErrD) {
-    	this.dsRspErrD = dsRspErrD;
-    }
+		this.dsRspErrD = dsRspErrD;
+	}
 
 	public void setDsRspFinEvent(String dsRspFinEvent) {
-    	this.dsRspFinEvent = dsRspFinEvent;
-    }
+		this.dsRspFinEvent = dsRspFinEvent;
+	}
 
 	public void setDsRspLnkTID(String dsRspLnkTID) {
-    	this.dsRspLnkTID = dsRspLnkTID;
-    }
+		this.dsRspLnkTID = dsRspLnkTID;
+	}
 
 	public void setDsRspPOD(String dsRspPOD) {
-    	this.dsRspPOD = dsRspPOD;
-    }
+		this.dsRspPOD = dsRspPOD;
+	}
 
 	public void setDsRspAB(String dsRspAB) {
-    	this.dsRspAB = dsRspAB;
-    }
+		this.dsRspAB = dsRspAB;
+	}
 
 	public void setDsRspAN(String dsRspAN) {
-    	this.dsRspAN = dsRspAN;
-    }
+		this.dsRspAN = dsRspAN;
+	}
 
 	public void setDsRspAS(String dsRspAS) {
-    	this.dsRspAS = dsRspAS;
-    }
+		this.dsRspAS = dsRspAS;
+	}
 
 	public void setDsRspPostRef(String dsRspPostRef) {
-    	this.dsRspPostRef = dsRspPostRef;
-    }
+		this.dsRspPostRef = dsRspPostRef;
+	}
 
 	public void setDsRspStatus(String dsRspStatus) {
-    	this.dsRspStatus = dsRspStatus;
-    }
+		this.dsRspStatus = dsRspStatus;
+	}
 
 	public void setDsRspOrder(String dsRspOrder) {
-    	this.dsRspOrder = dsRspOrder;
-    }
+		this.dsRspOrder = dsRspOrder;
+	}
 
-	
 }

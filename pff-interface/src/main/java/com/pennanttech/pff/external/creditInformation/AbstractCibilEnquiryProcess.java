@@ -102,15 +102,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private boolean cibil_Button;
 
 	/**
-	 * Method to get the CIBIL details of the Customer and set these details to
-	 * ExtendedFieldDetails.
+	 * Method to get the CIBIL details of the Customer and set these details to ExtendedFieldDetails.
 	 * 
 	 * @param auditHeader
 	 * @return auditHeader
 	 * @throws Exception
 	 */
 	@Override
-	public AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader,  boolean isFromCustomer) throws Exception {
+	public AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		String cibilReq = (String) getSMTParameter("CBIL_PROCESS_REQ", String.class);
@@ -154,16 +153,15 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	/**
-	 * Method to get the CIBIL details of the Customer and set these details to
-	 * ExtendedFieldDetails.
+	 * Method to get the CIBIL details of the Customer and set these details to ExtendedFieldDetails.
 	 * 
 	 * @param auditHeader
 	 * @return auditHeader
 	 * @throws Exception
 	 */
 	@Override
-	public CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails,  FinanceMain financeMain, boolean override)
-			throws Exception {
+	public CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails, FinanceMain financeMain,
+			boolean override) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -208,10 +206,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				String prvString = "";
 				Map<String, Object> mapoldData = creditInterfaceDao.getExtendedField(customer.getCustCIF(),
 						tableName.toString());
-				
+
 				if (mapoldData != null && mapoldData.containsKey("cibilRequest")) {
 					Object data = mapoldData.get("cibilRequest");
-					if (data!=null) {
+					if (data != null) {
 						prvString = data.toString();
 					}
 				}
@@ -311,7 +309,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			logger.debug("Cibil TUEF Response: " + response);
 			appplicationdata.put("CibilResponse", response);
 			jsonObject = new JSONObject();
-			 responseDetails = new CibilResponseDetails();
+			responseDetails = new CibilResponseDetails();
 			if (response.startsWith("ERRR")) {
 				parseErrorResponse(response);
 				String error = getActualError(response);
@@ -455,8 +453,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	/**
-	 * Method for load the properties file, then iterate the keys of that file
-	 * and map to jsonResponse.
+	 * Method for load the properties file, then iterate the keys of that file and map to jsonResponse.
 	 * 
 	 * @param jsonResponse
 	 * @param extConfigFileName
@@ -618,13 +615,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	/**
 	 * 
-	 * The TUEF Enquiry Header Segment marks the beginning of the Enquiry
-	 * Record, and:
+	 * The TUEF Enquiry Header Segment marks the beginning of the Enquiry Record, and:
 	 * <li>It is a Required segment.
 	 * <li>It is of a fixed size of 115 bytes.
 	 * <li>It can appear only once per Enquiry Record.
-	 * <li>All the fields must be provided otherwise the entire Enquiry Record
-	 * is rejected</li>.
+	 * <li>All the fields must be provided otherwise the entire Enquiry Record is rejected</li>.
 	 * <li>All fields must be valid.</li>
 	 * 
 	 */
@@ -639,7 +634,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		builder.append(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
 		builder.append(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
 
-		
 		String enqPurpose = null;
 		if (financeMain != null) {
 			enqPurpose = parameters.get(financeMain.getFinType());
@@ -684,8 +678,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	/**
 	 * The PN Segment describes personal consumer information, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 174
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 174 bytes.</li>
 	 * <li>It occurs only once per record.</li>
 	 * <li>Tag 06 is reserved for future use.</li>
 	 */
@@ -710,11 +703,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	/**
 	 * 
-	 * The ID Segment contains identification information about the consumer
-	 * applying for credit, and:  This is a Required segment (with ID Type of
-	 * 01, 02, 03, or 04) when no valid Telephone (PT) segment is provided
-	 * except when the Enquiry Purpose (Positions 94-95 of the TUEF Enquiry
-	 * Header Segment) is “Account Review”, “Retro Enquiry” or “Locate Plus”.
+	 * The ID Segment contains identification information about the consumer applying for credit, and:  This is a
+	 * Required segment (with ID Type of 01, 02, 03, or 04) when no valid Telephone (PT) segment is provided except when
+	 * the Enquiry Purpose (Positions 94-95 of the TUEF Enquiry Header Segment) is “Account Review”, “Retro Enquiry” or
+	 * “Locate Plus”.
 	 * <li>It is variable in length and can be a maximum of 47 bytes.</li>
 	 * <li>This can occur maximum of 8 times per Enquiry Record.</li>
 	 * <li>The ID Type(s) should be unique within the same Enquiry Record.</li>
@@ -734,7 +726,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			if (!cibilIdTypesForRequest.containsKey(code)) {
 				continue;
 			}
-			
+
 			if (++i > 8) {
 				break;
 			}
@@ -750,12 +742,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	/**
 	 * The PT Segment contains the known phone numbers of the consumer, and:
-	 * <li> This is a Required segment when no valid Identification (ID)
-	 * segment with either Income Tax ID Number, Passport Number, Voter ID
-	 * Number or Driver’s License Number is provided except when the Enquiry
-	 * Purpose</li>
-	 * <li>It is variable in length and can be of a maximum size of 51
-	 * bytes</li>
+	 * <li> This is a Required segment when no valid Identification (ID) segment with either Income Tax ID Number,
+	 * Passport Number, Voter ID Number or Driver’s License Number is provided except when the Enquiry Purpose</li>
+	 * <li>It is variable in length and can be of a maximum size of 51 bytes</li>
 	 * <li>This can occur maximum of 4 times per Enquiry Record.</li>
 	 */
 	private void prepareTelephoneSegment(StringBuilder builder, CustomerDetails customerDetails) {
@@ -798,9 +787,8 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * The PA Segment(s) contain(s) the known address(es) of the consumer, and
 	 * <li>It is a Required segment.</li>
 	 * <li>It is variable in length and can be a maximum of 259 bytes.</li>
-	 * <li>It occurs at least once, but no more than twice per Enquiry Record.
-	 * Where possible, enter the Current Address in the first Address Segment
-	 * and the Permanent Address in the second Address Segment</li>.
+	 * <li>It occurs at least once, but no more than twice per Enquiry Record. Where possible, enter the Current Address
+	 * in the first Address Segment and the Permanent Address in the second Address Segment</li>.
 	 */
 	private void prepareAddressSegment(StringBuilder builder, CustomerDetails customerDetails) throws Exception {
 
@@ -1175,7 +1163,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);
-		
+
 		if (cibil_Button) {
 			iLogDetail.setServiceName("CIBIL_B");
 		} else {
@@ -1245,7 +1233,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					String gender = jsonObject.get("Gender").toString();
 					if ("1".equals(gender)) {
 						jsonObject.put("Gender", "Female");
-					} else if("2".equals(gender)) {
+					} else if ("2".equals(gender)) {
 						jsonObject.put("Gender", "Male");
 					}
 
@@ -1489,7 +1477,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String stateCode = pa.get("StateCode").toString();
 							pa.put("StateCode", cibilStateCodes.get(stateCode));
 						}
-						
+
 						if (!pa.isNull("AddressCategory")) {
 							String addCategory = (String) pa.get("AddressCategory");
 							pa.put("AddressCategory", cibilAddrCategory.get(addCategory));
@@ -1695,7 +1683,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 								}
 							}
 						}
-						
+
 						if (!iq.isNull("EnquiryPurpose")) {
 							String enqPurpose = iq.get("EnquiryPurpose").toString();
 							iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose));
@@ -1775,35 +1763,28 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			}
 
 			/*
-			 * // Account Segment repeated Segment JSONArray Array = new
-			 * JSONArray(); JSONObject jo = null; String tlSegment =
-			 * detailsResult.get("TL"); String[] required =
-			 * tlSegment.split("TL04T"); for (int i = 1; i < required.length;
-			 * i++) {
+			 * // Account Segment repeated Segment JSONArray Array = new JSONArray(); JSONObject jo = null; String
+			 * tlSegment = detailsResult.get("TL"); String[] required = tlSegment.split("TL04T"); for (int i = 1; i <
+			 * required.length; i++) {
 			 * 
 			 * String AccSno = required[i].substring(0, 3); requiredValue =
-			 * responseDetails.getCibilResponseDetails(required[i].substring(3,
-			 * required[i].length())); requiredValue.put("00", AccSno);
-			 * Iterator<String> it = requiredValue.keySet().iterator(); jo = new
+			 * responseDetails.getCibilResponseDetails(required[i].substring(3, required[i].length()));
+			 * requiredValue.put("00", AccSno); Iterator<String> it = requiredValue.keySet().iterator(); jo = new
 			 * JSONObject(); while (it.hasNext()) { String tlKey = it.next();
 			 * 
-			 * for (int j = 0; j < StaticListUtil.getAccountSummary().size();
-			 * j++) {
+			 * for (int j = 0; j < StaticListUtil.getAccountSummary().size(); j++) {
 			 * 
-			 * String value =
-			 * StaticListUtil.getAccountSummary().get(j).getValue(); String
-			 * label = StaticListUtil.getAccountSummary().get(j).getLabel();
+			 * String value = StaticListUtil.getAccountSummary().get(j).getValue(); String label =
+			 * StaticListUtil.getAccountSummary().get(j).getLabel();
 			 * 
-			 * if (tlKey.equals(value) &&
-			 * !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
-			 * jo.put(label, requiredValue.get(value)); } }
+			 * if (tlKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) { jo.put(label,
+			 * requiredValue.get(value)); } }
 			 * 
 			 * }
 			 * 
 			 * 
 			 * 
-			 * Array.add(jo); jo = null; } jsonObject.put("AccountSegment",
-			 * Array);
+			 * Array.add(jo); jo = null; } jsonObject.put("AccountSegment", Array);
 			 */
 
 			logger.debug(Literal.LEAVING);
@@ -1877,8 +1858,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	/**
-	 * Method for prepare the Extended Field details map according to the given
-	 * response.
+	 * Method for prepare the Extended Field details map according to the given response.
 	 * 
 	 * @param extendedResMapObject
 	 * @param financeDetail
@@ -2318,10 +2298,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	/*
-	 * private void prepareAccountNumSegment(StringBuilder builder,
-	 * FinanceDetail finDetail) { FinanceMain financeMain =
-	 * finDetail.getFinScheduleData().getFinanceMain(); writeValue(builder,
-	 * "06", financeMain.getFinReference(), "02"); }
+	 * private void prepareAccountNumSegment(StringBuilder builder, FinanceDetail finDetail) { FinanceMain financeMain =
+	 * finDetail.getFinScheduleData().getFinanceMain(); writeValue(builder, "06", financeMain.getFinReference(), "02");
+	 * }
 	 */
 
 	private void jsonResopnseHeader(String responseHeader) {

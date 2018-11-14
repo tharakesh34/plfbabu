@@ -47,19 +47,25 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
 
 /**
- * Service declaration for methods that depends on
- * <b>FinSuspHold</b>.<br>
+ * Service declaration for methods that depends on <b>FinSuspHold</b>.<br>
  * 
  */
 public interface FinSuspHoldService {
-	
+
 	FinSuspHold getFinSuspHold();
+
 	FinSuspHold getNewFinSuspHold();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinSuspHold getFinSuspHoldById(long id);
+
 	FinSuspHold getApprovedFinSuspHoldById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

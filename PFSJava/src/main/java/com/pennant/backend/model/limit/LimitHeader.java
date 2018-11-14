@@ -74,64 +74,64 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name="limitId")
+	@XmlElement(name = "limitId")
 	private long headerId = Long.MIN_VALUE;
-	
+
 	private String ruleCode;
 	private String ruleValue;
-	
+
 	private long customerGroup = 0;
 	private long customerId = 0;
 
 	@XmlElement
 	private String responsibleBranch;
-	
+
 	@XmlElement
 	private String responsibleBranchName;
-	
-	@XmlElement(name="ccy")
+
+	@XmlElement(name = "ccy")
 	private String limitCcy;
-	
-	@XmlElement(name="expiryDate")
+
+	@XmlElement(name = "expiryDate")
 	private Date limitExpiryDate;
-	
-	@XmlElement(name="reviewDate")
+
+	@XmlElement(name = "reviewDate")
 	private Date limitRvwDate;
-	
+
 	@XmlElement
 	private boolean active;
 	private boolean rebuild = true;
-	
+
 	private String status = "";
 
 	private String showLimitsIn;
-	
-	@XmlElement(name="structureCode")
+
+	@XmlElement(name = "structureCode")
 	private String limitStructureCode;
-	
-	@XmlElement(name="remarks")
+
+	@XmlElement(name = "remarks")
 	private String limitSetupRemarks;
-	
+
 	private String custFName;
 	private String custMName;
 	private String custFullName;
 	private String custShrtName;
-	
+
 	private String groupName;
 	private String custCoreBank;
 	private String custDftBranch;
 	private String custDftBranchName;
 	private String custSalutationCode;
-	
+
 	@XmlElement
 	private String structureName;
-	
-	@XmlElement(name="cif")
+
+	@XmlElement(name = "cif")
 	private String custCIF;
-	
-	@XmlElement(name="customerGroup")
+
+	@XmlElement(name = "customerGroup")
 	private String custGrpCode;
-	
+
 	@XmlElement
 	private String ccyDesc;
 	private String QueryDesc;
@@ -147,14 +147,14 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	private LimitHeader befImage;
 	private LoggedInUser userDetails;
 
-	@XmlElement(name="limitDetail")
+	@XmlElement(name = "limitDetail")
 	private List<LimitDetails> customerLimitDetailsList = null;
-	
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	@XmlElement
 	private String customerName;
-	
+
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private LimitHeader validateLimitHeader = this;
@@ -536,7 +536,7 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
-	
+
 	public String getCustomerName() {
 		return customerName;
 	}
@@ -560,5 +560,5 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	public void setCustMName(String custMName) {
 		this.custMName = custMName;
 	}
-	
+
 }

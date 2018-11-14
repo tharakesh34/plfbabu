@@ -70,33 +70,31 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/GeneralDesignation/generalDesignationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/GeneralDesignation/generalDesignationDialog.zul
+ * file.
  */
 public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation> {
 	private static final long serialVersionUID = -1696783232080077214L;
 	private static final Logger logger = Logger.getLogger(GeneralDesignationDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window 		window_GeneralDesignationDialog; 	
 
-	protected Textbox 		genDesignation; 					
-	protected Textbox 		genDesgDesc; 
-	protected Checkbox 		genDesgIsActive;
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_GeneralDesignationDialog;
+
+	protected Textbox genDesignation;
+	protected Textbox genDesgDesc;
+	protected Checkbox genDesgIsActive;
 
 	// not auto wired Var's
 	private GeneralDesignation generalDesignation; // overHanded per param
 	private transient GeneralDesignationListCtrl generalDesignationListCtrl; // overHanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient GeneralDesignationService generalDesignationService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -113,9 +111,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected GeneralDesignation
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected GeneralDesignation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -131,8 +128,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			doCheckRights();
 
 			if (arguments.containsKey("generalDesignation")) {
-				this.generalDesignation = (GeneralDesignation) arguments
-						.get("generalDesignation");
+				this.generalDesignation = (GeneralDesignation) arguments.get("generalDesignation");
 				GeneralDesignation befImage = new GeneralDesignation();
 				BeanUtils.copyProperties(this.generalDesignation, befImage);
 				this.generalDesignation.setBefImage(befImage);
@@ -142,15 +138,13 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 				setGeneralDesignation(null);
 			}
 
-			doLoadWorkFlow(this.generalDesignation.isWorkflow(),
-					this.generalDesignation.getWorkflowId(),
+			doLoadWorkFlow(this.generalDesignation.isWorkflow(), this.generalDesignation.getWorkflowId(),
 					this.generalDesignation.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"GeneralDesignationDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "GeneralDesignationDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -161,8 +155,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			// or
 			// delete generalDesignation here.
 			if (arguments.containsKey("generalDesignationListCtrl")) {
-				setGeneralDesignationListCtrl((GeneralDesignationListCtrl) arguments
-						.get("generalDesignationListCtrl"));
+				setGeneralDesignationListCtrl((GeneralDesignationListCtrl) arguments.get("generalDesignationListCtrl"));
 			} else {
 				setGeneralDesignationListCtrl(null);
 			}
@@ -174,8 +167,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			MessageUtil.showError(e);
 			this.window_GeneralDesignationDialog.onClose();
 		}
-		logger.debug("Leaving"+event.toString());
-		
+		logger.debug("Leaving" + event.toString());
+
 	}
 
 	/**
@@ -186,7 +179,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		// Empty sent any required attributes
 		this.genDesignation.setMaxlength(8);
 		this.genDesgDesc.setMaxlength(50);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -195,20 +188,15 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDesignationDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDesignationDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDesignationDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDesignationDialog_btnSave"));
+
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_GeneralDesignationDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_GeneralDesignationDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_GeneralDesignationDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_GeneralDesignationDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -220,9 +208,9 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());		
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -231,9 +219,9 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -243,9 +231,9 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_GeneralDesignationDialog);
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -255,9 +243,9 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -266,9 +254,9 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -308,12 +296,14 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		this.genDesgDesc.setValue(aGeneralDesignation.getGenDesgDesc());
 		this.genDesgIsActive.setChecked(aGeneralDesignation.isGenDesgIsActive());
 		this.recordStatus.setValue(aGeneralDesignation.getRecordStatus());
-		
-		if(aGeneralDesignation.isNew() || (aGeneralDesignation.getRecordType() != null ? aGeneralDesignation.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aGeneralDesignation.isNew()
+				|| (aGeneralDesignation.getRecordType() != null ? aGeneralDesignation.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.genDesgIsActive.setChecked(true);
 			this.genDesgIsActive.setDisabled(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -325,17 +315,17 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	public void doWriteComponentsToBean(GeneralDesignation aGeneralDesignation) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
-		    aGeneralDesignation.setGenDesignation(this.genDesignation.getValue());
-		}catch (WrongValueException we ) {
+			aGeneralDesignation.setGenDesignation(this.genDesignation.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aGeneralDesignation.setGenDesgDesc(this.genDesgDesc.getValue());
-		}catch (WrongValueException we ) {
+			aGeneralDesignation.setGenDesgDesc(this.genDesgDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -343,18 +333,18 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aGeneralDesignation.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -362,14 +352,12 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGeneralDesignation
 	 * @throws Exception
 	 */
-	public void doShowDialog(GeneralDesignation aGeneralDesignation)
-			throws Exception {
+	public void doShowDialog(GeneralDesignation aGeneralDesignation) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -379,13 +367,13 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			// setFocus
 			this.genDesignation.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.genDesgDesc.focus();
-				if (StringUtils.isNotBlank(aGeneralDesignation.getRecordType())){
+				if (StringUtils.isNotBlank(aGeneralDesignation.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -412,15 +400,17 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
-		if (!this.genDesignation.isReadonly()){
-			this.genDesignation.setConstraint(new PTStringValidator(Labels.getLabel("label_GeneralDesignationDialog_GenDesignation.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
-		}	
-		if (!this.genDesgDesc.isReadonly()){
-			this.genDesgDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_GeneralDesignationDialog_GenDesgDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		}	
+
+		if (!this.genDesignation.isReadonly()) {
+			this.genDesignation.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GeneralDesignationDialog_GenDesignation.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+		}
+		if (!this.genDesgDesc.isReadonly()) {
+			this.genDesgDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GeneralDesignationDialog_GenDesgDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -434,7 +424,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		this.genDesgDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set Validations for LOV Fields
 	 */
@@ -446,7 +436,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 */
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -457,14 +447,14 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		this.genDesgDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getGeneralDesignationListCtrl().search();
-	} 
-	
+	}
+
 	// CRUD operations
 
 	/**
@@ -476,21 +466,22 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Entering");
 		final GeneralDesignation aGeneralDesignation = new GeneralDesignation();
 		BeanUtils.copyProperties(getGeneralDesignation(), aGeneralDesignation);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_GeneralDesignationDialog_GenDesignation.value")+" : "+aGeneralDesignation.getGenDesignation();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_GeneralDesignationDialog_GenDesignation.value") + " : "
+				+ aGeneralDesignation.getGenDesignation();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aGeneralDesignation.getRecordType())){
-				aGeneralDesignation.setVersion(aGeneralDesignation.getVersion()+1);
+			if (StringUtils.isBlank(aGeneralDesignation.getRecordType())) {
+				aGeneralDesignation.setVersion(aGeneralDesignation.getVersion() + 1);
 				aGeneralDesignation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aGeneralDesignation.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -522,7 +513,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		}
 		this.genDesgDesc.setReadonly(isReadOnly("GeneralDesignationDialog_genDesgDesc"));
 		this.genDesgIsActive.setDisabled(isReadOnly("GeneralDesignationDialog_GenDesgIsActive"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -549,14 +540,14 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		this.genDesignation.setReadonly(true);
 		this.genDesgDesc.setReadonly(true);
 		this.genDesgIsActive.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -586,7 +577,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		final GeneralDesignation aGeneralDesignation = new GeneralDesignation();
 		BeanUtils.copyProperties(getGeneralDesignation(), aGeneralDesignation);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the GeneralDesignation object with the components data
@@ -595,30 +586,30 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		
-		isNew = aGeneralDesignation.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
+		isNew = aGeneralDesignation.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aGeneralDesignation.getRecordType())){
-				aGeneralDesignation.setVersion(aGeneralDesignation.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aGeneralDesignation.getRecordType())) {
+				aGeneralDesignation.setVersion(aGeneralDesignation.getVersion() + 1);
+				if (isNew) {
 					aGeneralDesignation.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aGeneralDesignation.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aGeneralDesignation.setNewRecord(true);
 				}
 			}
-		}else{
-			aGeneralDesignation.setVersion(aGeneralDesignation.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aGeneralDesignation.setVersion(aGeneralDesignation.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
 			if (doProcess(aGeneralDesignation, tranType)) {
@@ -633,27 +624,28 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aGeneralDesignation (GeneralDesignation)
+	 * @param aGeneralDesignation
+	 *            (GeneralDesignation)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(GeneralDesignation aGeneralDesignation,String tranType){
+	private boolean doProcess(GeneralDesignation aGeneralDesignation, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
-		aGeneralDesignation.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aGeneralDesignation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aGeneralDesignation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGeneralDesignation.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -676,19 +668,19 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 					}
 				}
 			}
-			
+
 			if (!StringUtils.isBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
-				
-				if (nextTasks!=null && nextTasks.length>0){
+
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-						
-						if(nextRoleCode.length()>1){
+
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -697,98 +689,95 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			aGeneralDesignation.setNextTaskId(nextTaskId);
 			aGeneralDesignation.setRoleCode(getRole());
 			aGeneralDesignation.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aGeneralDesignation, tranType);
-			
+
+			auditHeader = getAuditHeader(aGeneralDesignation, tranType);
+
 			String operationRefs = getServiceOperations(taskId, aGeneralDesignation);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aGeneralDesignation, PennantConstants
-							.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aGeneralDesignation, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aGeneralDesignation, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aGeneralDesignation, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	/**	
-	 * Get the result after processing DataBase Operations 
+
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
-		
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		GeneralDesignation aGeneralDesignation = (GeneralDesignation) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
-		
+		boolean deleteNotes = false;
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getGeneralDesignationService().delete(auditHeader);
 
-						deleteNotes=true;	
-					}else{
-						auditHeader = getGeneralDesignationService().saveOrUpdate(
-								auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getGeneralDesignationService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getGeneralDesignationService().doApprove(auditHeader);
 
-						if(aGeneralDesignation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aGeneralDesignation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getGeneralDesignationService().doReject(auditHeader);
-						if(aGeneralDesignation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aGeneralDesignation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_GeneralDesignationDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_GeneralDesignationDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				retValue = ErrorControl.showErrorControl(
-						this.window_GeneralDesignationDialog, auditHeader);
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.generalDesignation),true);
+
+				retValue = ErrorControl.showErrorControl(this.window_GeneralDesignationDialog, auditHeader);
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.generalDesignation), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -802,25 +791,27 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
-	 * @param aGeneralDesignation (GeneralDesignation)
-	 * @param tranType (String)
+	 * 
+	 * @param aGeneralDesignation
+	 *            (GeneralDesignation)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(GeneralDesignation aGeneralDesignation,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aGeneralDesignation.getBefImage(), aGeneralDesignation);
-		return new AuditHeader(String.valueOf(aGeneralDesignation.getId()),
-				null, null, null, auditDetail,aGeneralDesignation.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(GeneralDesignation aGeneralDesignation, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aGeneralDesignation.getBefImage(), aGeneralDesignation);
+		return new AuditHeader(String.valueOf(aGeneralDesignation.getId()), null, null, null, auditDetail,
+				aGeneralDesignation.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Method for Display Error Message
+	 * 
 	 * @param e
 	 */
 	@SuppressWarnings("unused")
@@ -828,9 +819,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
-			ErrorControl.showErrorControl(this.window_GeneralDesignationDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_GeneralDesignationDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -840,19 +830,20 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event (Event)
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.generalDesignation);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.generalDesignation.getGenDesignation());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -860,6 +851,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -867,22 +859,23 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	public GeneralDesignation getGeneralDesignation() {
 		return this.generalDesignation;
 	}
+
 	public void setGeneralDesignation(GeneralDesignation generalDesignation) {
 		this.generalDesignation = generalDesignation;
 	}
 
-	public void setGeneralDesignationService(
-			GeneralDesignationService generalDesignationService) {
+	public void setGeneralDesignationService(GeneralDesignationService generalDesignationService) {
 		this.generalDesignationService = generalDesignationService;
 	}
+
 	public GeneralDesignationService getGeneralDesignationService() {
 		return this.generalDesignationService;
 	}
 
-	public void setGeneralDesignationListCtrl(
-			GeneralDesignationListCtrl generalDesignationListCtrl) {
+	public void setGeneralDesignationListCtrl(GeneralDesignationListCtrl generalDesignationListCtrl) {
 		this.generalDesignationListCtrl = generalDesignationListCtrl;
 	}
+
 	public GeneralDesignationListCtrl getGeneralDesignationListCtrl() {
 		return this.generalDesignationListCtrl;
 	}

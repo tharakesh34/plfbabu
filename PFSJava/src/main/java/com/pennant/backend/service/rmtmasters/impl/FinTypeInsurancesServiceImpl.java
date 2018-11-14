@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.service.rmtmasters.impl;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,23 +66,21 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>FinTypeInsurances</b>.<br>
  * 
  */
-public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsurances> implements FinTypeInsurancesService {
+public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsurances>
+		implements FinTypeInsurancesService {
 	private static final Logger logger = Logger.getLogger(FinTypeInsurancesServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
-	
+
 	private FinTypeInsuranceDAO finTypeInsuranceDAO;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinTypeInsurancess/FinTypeInsurancess_Temp by using FinTypeInsurancessDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinTypeInsurancessDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtFinTypeInsurancess by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinTypeInsurancess/FinTypeInsurancess_Temp by using FinTypeInsurancessDAO's save method b) Update the Record in
+	 * the table. based on the module workFlow Configuration. by using FinTypeInsurancessDAO's update method 3) Audit
+	 * the record in to AuditHeader and AdtFinTypeInsurancess by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -89,14 +88,14 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-	
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		String tableType = "";
 		FinTypeInsurances finTypeInsurances = (FinTypeInsurances) auditHeader.getAuditDetail().getModelData();
 
@@ -113,16 +112,15 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 
 	}
 
 	/**
-	 * getFinTypeInsurancessById fetch the details by using FinTypeInsurancessDAO's getFinTypeInsurancessById
-	 * method.
+	 * getFinTypeInsurancessById fetch the details by using FinTypeInsurancessDAO's getFinTypeInsurancessById method.
 	 * 
 	 * @param finType
 	 *            (String)
@@ -136,9 +134,8 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 	}
 
 	/**
-	 * getApprovedFinTypeInsurancessById fetch the details by using FinTypeInsurancessDAO's
-	 * getFinTypeInsurancessById method . with parameter id and type as blank. it fetches
-	 * the approved records from the FinTypeInsurancess.
+	 * getApprovedFinTypeInsurancessById fetch the details by using FinTypeInsurancessDAO's getFinTypeInsurancessById
+	 * method . with parameter id and type as blank. it fetches the approved records from the FinTypeInsurancess.
 	 * 
 	 * @param id
 	 *            (String)
@@ -147,22 +144,18 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 	@Override
 	public List<FinTypeInsurances> getApprovedFinTypeInsuranceListByID(String finType, int moduleId) {
 		return getFinTypeInsuranceDAO().getFinTypeInsuranceListByID(finType, moduleId, "_View");
-	}	
-		
+	}
+
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinTypeInsuranceDAO().delete with parameters promotionFee,"" b) NEW Add new
-	 * record in to main table by using getFinTypeInsuranceDAO().save with parameters
-	 * promotionFee,"" c) EDIT Update record in the main table by using
-	 * getFinTypeInsuranceDAO().update with parameters promotionFee,"" 3) Delete the record
-	 * from the workFlow table by using getFinTypeInsuranceDAO().delete with parameters
-	 * promotionFee,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtFinTypeInsurancess by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtFinTypeInsurancess by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinTypeInsuranceDAO().delete with
+	 * parameters promotionFee,"" b) NEW Add new record in to main table by using getFinTypeInsuranceDAO().save with
+	 * parameters promotionFee,"" c) EDIT Update record in the main table by using getFinTypeInsuranceDAO().update with
+	 * parameters promotionFee,"" 3) Delete the record from the workFlow table by using getFinTypeInsuranceDAO().delete
+	 * with parameters promotionFee,"_Temp" 4) Audit the record in to AuditHeader and AdtFinTypeInsurancess by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtFinTypeInsurancess by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -171,7 +164,7 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-	
+
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 
@@ -212,29 +205,26 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 		auditHeader.getAuditDetail().setModelData(finTypeInsurances);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
-		/**
-		 * doReject method do the following steps. 1) Do the Business validation by
-		 * using businessValidation(auditHeader) method if there is any error or
-		 * warning message then return the auditHeader. 2) Delete the record from
-		 * the workFlow table by using getFinTypeInsuranceDAO().delete with parameters
-		 * promotionFee,"_Temp" 3) Audit the record in to AuditHeader and
-		 * AdtFinTypFinTypeInsurancessing auditHeaderDAO.addAudit(auditHeader) for Work
-		 * flow
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
+	/**
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinTypeInsuranceDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtFinTypFinTypeInsurancessing auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -246,32 +236,30 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 		getFinTypeInsuranceDAO().delete(finTypeInsurances, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
-		/**
-		 * businessValidation method do the following steps. 1) get the details from
-		 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-		 * Record based on the record details. 4) Validate for any business
-		 * validation.
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
+	/**
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
@@ -311,18 +299,18 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 			if (!finTypeInsurance.isWorkflow()) {// With out Work flow only new records  
 				if (befFinTypeInsurance != null) { // Record Already Exists in the table then error  
 					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (finTypeInsurance.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinTypeInsurance != null || tempFinTypeInsurance != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinTypeInsurance == null || tempFinTypeInsurance != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -332,17 +320,17 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 
 				if (befFinTypeInsurance == null) { // if records not exists in the main table
 					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldFinTypeinsurance != null
 							&& !oldFinTypeinsurance.getLastMntOn().equals(befFinTypeInsurance.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
@@ -350,13 +338,13 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 
 				if (tempFinTypeInsurance == null) { // if records not exists in the Work flow table 
 					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempFinTypeInsurance != null && oldFinTypeinsurance != null
 						&& !oldFinTypeinsurance.getLastMntOn().equals(tempFinTypeInsurance.getLastMntOn())) {
 					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -369,14 +357,16 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 
 		return auditDetail;
 	}
-	
+
 	@Override
-	public List<AuditDetail> setFinTypeInsuranceDetailsAuditData(List<FinTypeInsurances> finTypeInsurancesList, String auditTranType, String method) {
+	public List<AuditDetail> setFinTypeInsuranceDetailsAuditData(List<FinTypeInsurances> finTypeInsurancesList,
+			String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeInsurances(), new FinTypeInsurances().getExcludeFields());
-		
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeInsurances(),
+				new FinTypeInsurances().getExcludeFields());
+
 		for (int i = 0; i < finTypeInsurancesList.size(); i++) {
 			FinTypeInsurances finTypeInsurance = finTypeInsurancesList.get(i);
 
@@ -413,13 +403,14 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 			//finTypeInsurance.setUserDetails(financeType.getUserDetails());
 			//finTypeInsurance.setLastMntOn(financeType.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeInsurance.getBefImage(), finTypeInsurance));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeInsurance.getBefImage(),
+					finTypeInsurance));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	@Override
 	public List<AuditDetail> processFinTypeInsuranceDetails(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
@@ -501,15 +492,18 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 	}
 
 	@Override
-	public List<AuditDetail> delete(List<FinTypeInsurances> finTypeInsurancesList, String tableType, String auditTranType, String finType, int moduleId) {
+	public List<AuditDetail> delete(List<FinTypeInsurances> finTypeInsurancesList, String tableType,
+			String auditTranType, String finType, int moduleId) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (finTypeInsurancesList != null && !finTypeInsurancesList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeInsurances(), new FinTypeInsurances().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeInsurances(),
+					new FinTypeInsurances().getExcludeFields());
 			for (int i = 0; i < finTypeInsurancesList.size(); i++) {
 				FinTypeInsurances finTypeInsurances = finTypeInsurancesList.get(i);
 				if (StringUtils.isNotEmpty(finTypeInsurances.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeInsurances.getBefImage(), finTypeInsurances));
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							finTypeInsurances.getBefImage(), finTypeInsurances));
 				}
 			}
 			getFinTypeInsuranceDAO().deleteByFinType(finType, moduleId, tableType);
@@ -522,21 +516,21 @@ public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsuranc
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
 
 	public FinTypeInsuranceDAO getFinTypeInsuranceDAO() {
 		return finTypeInsuranceDAO;

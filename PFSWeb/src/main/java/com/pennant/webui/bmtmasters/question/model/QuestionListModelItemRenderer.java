@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.bmtmasters.Question;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -62,24 +61,24 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class QuestionListModelItemRenderer implements ListitemRenderer<Question>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public QuestionListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Question question, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(question.getQuestionDesc());
+		lc = new Listcell(question.getQuestionDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(question.getAnswerA());
+		lc = new Listcell(question.getAnswerA());
 		lc.setParent(item);
-	  	lc = new Listcell(question.getAnswerB());
+		lc = new Listcell(question.getAnswerB());
 		lc.setParent(item);
-	  	lc = new Listcell(question.getAnswerC());
+		lc = new Listcell(question.getAnswerC());
 		lc.setParent(item);
-	  	lc = new Listcell(question.getAnswerD());
+		lc = new Listcell(question.getAnswerD());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbQuestionIsActive = new Checkbox();
@@ -87,7 +86,7 @@ public class QuestionListModelItemRenderer implements ListitemRenderer<Question>
 		cbQuestionIsActive.setChecked(question.isQuestionIsActive());
 		lc.appendChild(cbQuestionIsActive);
 		lc.setParent(item);
-	  	lc = new Listcell(question.getRecordStatus());
+		lc = new Listcell(question.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(question.getRecordType()));
 		lc.setParent(item);

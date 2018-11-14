@@ -65,9 +65,9 @@ public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSu
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public SuspenseListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceSuspHead suspHead, int count) throws Exception {
 
@@ -101,7 +101,7 @@ public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSu
 		lc.setParent(item);
 		item.setAttribute("id", suspHead.getId());
 		item.setAttribute("userRole", suspHead.getNextRoleCode());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSuspenseItemDoubleClicked");
 	}
 }

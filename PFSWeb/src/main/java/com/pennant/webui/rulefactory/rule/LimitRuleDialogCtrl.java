@@ -120,7 +120,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/LimitFilterQuery/dedupParmDialog.zul file.
  */
-public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implements Serializable {
+public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implements Serializable {
 	private static final long serialVersionUID = -3541636402188022162L;
 	private static final Logger logger = Logger.getLogger(LimitRuleDialogCtrl.class);
 
@@ -128,23 +128,22 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_LimitRuleDialog; // autoWired
-	protected Label 	label_WindowTitle; 		// autoWired
+	protected Window window_LimitRuleDialog; // autoWired
+	protected Label label_WindowTitle; // autoWired
 
-	protected Textbox 	queryCode; 				// autoWired
-	protected Textbox 	queryDesc; 				// autoWired
-	protected Textbox 	queryModule;			// autoWired
+	protected Textbox queryCode; // autoWired
+	protected Textbox queryDesc; // autoWired
+	protected Textbox queryModule; // autoWired
 	//protected Combobox 	custCtgCode; 			// autoWired
-	protected Codemirror sQLQuery; 				// autoWired
-	protected Combobox 	combo;
-	protected Row 		rowCustCtgCode;
-	protected Tabpanel 	tabPanel_tree;
-	protected Tabpanel 	tabPanel_QueryResult;
-	protected Tab 		tab_queryDesign;
-	protected Tab		tab_textQuery;
-	protected Checkbox 	active; 			// autoWired
-	protected Space 	space_Active;
-
+	protected Codemirror sQLQuery; // autoWired
+	protected Combobox combo;
+	protected Row rowCustCtgCode;
+	protected Tabpanel tabPanel_tree;
+	protected Tabpanel tabPanel_QueryResult;
+	protected Tab tab_queryDesign;
+	protected Tab tab_textQuery;
+	protected Checkbox active; // autoWired
+	protected Space space_Active;
 
 	// Tree Buttons
 	protected Button removeButton;
@@ -187,10 +186,10 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 	private List<LimitFldCriterias> operatorsList;
 	//For Changes in comboBox's depend on Selection Types in Any ComboBox 
-	private Map<String,String> fieldTypeMap = new HashMap<String, String>();
-	private Map<String,String> selectionTypeMap = new HashMap<String, String>();
-	private Map<String,String> dbTableMap = new HashMap<String, String>();
-	private Map<String,Object> fieldObjectMap = new HashMap<String, Object>();
+	private Map<String, String> fieldTypeMap = new HashMap<String, String>();
+	private Map<String, String> selectionTypeMap = new HashMap<String, String>();
+	private Map<String, String> dbTableMap = new HashMap<String, String>();
+	private Map<String, Object> fieldObjectMap = new HashMap<String, Object>();
 
 	private List<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();// retrieve values from table--GlobalVariable	
 	List<String> sqlQueryValueList = new ArrayList<String>();// list of tree values
@@ -198,7 +197,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	List<BMTRBFldDetails> objectFieldList = new ArrayList<BMTRBFldDetails>();// retrieve values from
 
 	LinkedHashMap<String, String[]> queryFieldMap;
-	protected Button calValueButton;										// autowired
+	protected Button calValueButton; // autowired
 	private String moduleName = "";
 	List<ValueLabel> custCategoryList = PennantAppUtil.getcustCtgCodeList();
 
@@ -217,9 +216,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected LimitFilterQuery object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected LimitFilterQuery object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -244,15 +242,12 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			}
 			/* set components visible dependent of the users rights */
 
-
-			doLoadWorkFlow(this.limitRule.isWorkflow(),
-					this.limitRule.getWorkflowId(),
-					this.limitRule.getNextTaskId());
+			doLoadWorkFlow(this.limitRule.isWorkflow(), this.limitRule.getWorkflowId(), this.limitRule.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-			} 
+			}
 
 			getBorderLayoutHeight();
 			int tabPanelboxHeight = borderLayoutHeight - 150;
@@ -296,12 +291,11 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		if(!enqiryModule){
+		if (!enqiryModule) {
 			getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleNew"));
@@ -314,7 +308,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * when the "save" button is clicked. <br>
@@ -380,9 +373,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if(!active.isDisabled())
+		if (!active.isDisabled())
 			doDelete();
-		else{
+		else {
 			MessageUtil.showError(
 					Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitFilterQuery().getQueryCode() }));
 		}
@@ -410,8 +403,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		doClose(this.btnSave.isVisible());
 	}
 
-
-
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -435,7 +426,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	public void doWriteBeanToComponents(LimitFilterQuery aLimitRule) {
 		logger.debug("Entering");
 
-		custCategoryList=PennantStaticListUtil.getLimitCategories();			
+		custCategoryList = PennantStaticListUtil.getLimitCategories();
 		//fillComboBox(this.custCtgCode,aLimitRule.getQuerySubCode(),this.custCategoryList,"");		
 
 		this.queryModule.setValue(moduleName);
@@ -445,10 +436,10 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		this.active.setChecked(aLimitRule.isActive());
 		actualBlob = aLimitRule.getActualBlock();
 		this.recordStatus.setValue(aLimitRule.getRecordStatus());
-		if(aLimitRule.getQueryModule()==null){
+		if (aLimitRule.getQueryModule() == null) {
 			aLimitRule.setQueryModule(this.queryModule.getValue());
 		}
-		if(aLimitRule.isNew())
+		if (aLimitRule.isNew())
 			this.active.setChecked(true);
 		logger.debug("Leaving");
 	}
@@ -457,11 +448,10 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aLimitRule
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(LimitFilterQuery aLimitRule) throws Exception {
 		logger.debug("Entering");
-
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -487,10 +477,10 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			wve.add(we);
 		}
 		try {
-			if(tab_queryDesign.isVisible()){
+			if (tab_queryDesign.isVisible()) {
 				readButtonClicked();
 			}
-			if (StringUtils.trimToEmpty(this.sQLQuery.getValue()).equals("")){
+			if (StringUtils.trimToEmpty(this.sQLQuery.getValue()).equals("")) {
 				throw new WrongValueException(sQLQuery, Labels.getLabel("label_LimitRuleDialog_SQLQuery.value"));
 			}
 			aLimitRule.setSQLQuery(this.sQLQuery.getValue());
@@ -503,7 +493,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			wve.add(we);
 		}
 		doRemoveValidation();
-
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -520,8 +509,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLimitRule
 	 * @throws Exception
@@ -565,8 +553,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			doWriteBeanToComponents(aLimitRule);
 
 			// getting values from table---GlobalVariable
-			JdbcSearchObject<GlobalVariable> searchObj2 = new JdbcSearchObject<GlobalVariable>(GlobalVariable.class);			
-			globalVariableList = this.pagedListService.getBySearchObject(searchObj2);	
+			JdbcSearchObject<GlobalVariable> searchObj2 = new JdbcSearchObject<GlobalVariable>(GlobalVariable.class);
+			globalVariableList = this.pagedListService.getBySearchObject(searchObj2);
 
 			//getting List of Operators depend on FieldType and SelectionType
 			operatorsList = getLimitRuleService().getOperatorsList();
@@ -580,7 +568,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				}
 			}
 			// Fetches the List of DedupFields		
-			objectFieldList = (List<BMTRBFldDetails>) getLimitRuleService().getFieldList(RuleConstants.MODULE_IRLFILTER,RuleConstants.EVENT_BANK);
+			objectFieldList = (List<BMTRBFldDetails>) getLimitRuleService().getFieldList(RuleConstants.MODULE_IRLFILTER,
+					RuleConstants.EVENT_BANK);
 			// Method for Building tree with /Without existing params
 			buildingTree(sqlQueryValueList, aLimitRule);
 
@@ -598,21 +587,22 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 	/**
 	 * This method for clearing tree children and build a new tree
+	 * 
 	 * @throws Exception
 	 */
-	public void clearAndBuildTree(String ctgCode) throws Exception{
+	public void clearAndBuildTree(String ctgCode) throws Exception {
 		logger.debug("Entering");
 		itemCount = 1;
 		tree.getChildren().clear();
 		objectFieldList = new ArrayList<BMTRBFldDetails>();
-		objectFieldList = (List<BMTRBFldDetails>) getLimitRuleService().getFieldList(getLimitFilterQuery().getQueryModule(),getLimitFilterQuery().getQuerySubCode());
+		objectFieldList = (List<BMTRBFldDetails>) getLimitRuleService()
+				.getFieldList(getLimitFilterQuery().getQueryModule(), getLimitFilterQuery().getQuerySubCode());
 		// Method for Building tree with /Without existing params
 		buildingTree(sqlQueryValueList, new LimitFilterQuery());
 		logger.debug("Leaving");
 	}
 
 	// Helpers
-
 
 	/**
 	 * Method for Build Sibling TreeItem
@@ -654,10 +644,11 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	private void doSetValidation() {
 		logger.debug("Enterring");
 		if (!this.queryCode.isReadonly()) {
-			this.queryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LimitParmDialog_QueryCode.value"),PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+			this.queryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LimitParmDialog_QueryCode.value"),
+					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		if (!this.queryDesc.isReadonly()) {
-			this.queryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LimitParmDialog_QueryDesc.value"), 
+			this.queryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LimitParmDialog_QueryDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
@@ -672,7 +663,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		this.queryDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Remove Error Messages for Fields
@@ -691,7 +681,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	private void refreshList() {
 		logger.debug("Entering");
 
-		getLimitRuleListCtrl().search();	
+		getLimitRuleListCtrl().search();
 
 		logger.debug("Leaving");
 	}
@@ -711,19 +701,20 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			BMTRBFldDetails fldDetails = (BMTRBFldDetails) objectFieldList.get(i);
 			fieldObjectMap.put(fldDetails.getRbFldName(), fldDetails);
 			item = new Comboitem();
-			if(mapCount  == 1){
+			if (mapCount == 1) {
 				fieldTypeMap.put(fldDetails.getRbFldName(), fldDetails.getRbFldType());
 				selectionTypeMap.put(fldDetails.getRbFldName(), fldDetails.getRbSTFlds());
 				dbTableMap.put(fldDetails.getRbFldName(), fldDetails.getRbFldTableName());
 			}
-			if(fldDetails.isRbForBldFlds()){
-				item.setLabel(fldDetails.getRbFldName()+" - "+fldDetails.getRbFldDesc());
+			if (fldDetails.isRbForBldFlds()) {
+				item.setLabel(fldDetails.getRbFldName() + " - " + fldDetails.getRbFldDesc());
 				item.setValue(fldDetails.getRbFldName());
-				item.setTooltiptext("Description :"+fldDetails.getRbFldDesc()+" \n\n Data Type :"+fldDetails.getRbFldType());
+				item.setTooltiptext(
+						"Description :" + fldDetails.getRbFldDesc() + " \n\n Data Type :" + fldDetails.getRbFldType());
 				comboBox.appendChild(item);
 			}
 		}
-		if(fieldTypeMap.size() > 0 && selectionTypeMap.size() > 0){
+		if (fieldTypeMap.size() > 0 && selectionTypeMap.size() > 0) {
 			mapCount++;
 		}
 		comboBox.addForward("onChange", window_LimitRuleDialog, "onFieldComboSelected", comboBox);
@@ -731,25 +722,26 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		logger.debug("Leaving");
 		return comboBox;
 	}
+
 	/**
 	 * Method for generating list of selection field Type
 	 */
-	private Combobox getSelectionTypeItem(String selectionTypes,Combobox combo) {
+	private Combobox getSelectionTypeItem(String selectionTypes, Combobox combo) {
 		logger.debug("Entering");
 		Comboitem item;
 		String[] selectionTypeArray = {};
-		if(selectionTypes != null && !selectionTypes.equals("")){
+		if (selectionTypes != null && !selectionTypes.equals("")) {
 			selectionTypeArray = selectionTypes.split(",");
 		}
 		for (int i = 0; i < selectionTypeArray.length; i++) {
-			if(!StringUtils.equals(LimitConstants.LIMIT_FILTER_GLOBAL, selectionTypeArray[i])){
+			if (!StringUtils.equals(LimitConstants.LIMIT_FILTER_GLOBAL, selectionTypeArray[i])) {
 				item = new Comboitem();
 				item.setLabel(selectionTypeArray[i]);
 				item.setValue(selectionTypeArray[i]);
 				combo.appendChild(item);
 			}
 		}
-		combo.addForward("onChange", window_LimitRuleDialog ,"onComboSelected", combo);
+		combo.addForward("onChange", window_LimitRuleDialog, "onComboSelected", combo);
 		combo.setWidth("100px");
 		logger.debug("Leaving");
 		return combo;
@@ -758,50 +750,46 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	/**
 	 * Method for handling ComboBox selection
 	 */
-	public void onComboSelected(Event event) {		
+	public void onComboSelected(Event event) {
 		Component component = (Component) event.getData();
 		internalComboFill(component);
 		logger.debug("Leaving");
 	}
 
 	//Method for Enable or disable Components Depend on selection type
-	private void internalComboFill(Component component){		
+	private void internalComboFill(Component component) {
 		logger.debug("Entering");
-		Component posCmp = null ;
-		Combobox optrCombo=null;
+		Component posCmp = null;
+		Combobox optrCombo = null;
 
 		// If field type is already selected then remove the exited component
 		Component selectCmp = null;
 		// related to field type
 
-		if(component.getNextSibling().getNextSibling().getNextSibling() instanceof Combobox || component.getNextSibling().getNextSibling().getNextSibling() instanceof Textbox){
+		if (component.getNextSibling().getNextSibling().getNextSibling() instanceof Combobox
+				|| component.getNextSibling().getNextSibling().getNextSibling() instanceof Textbox) {
 			selectCmp = component.getNextSibling().getNextSibling().getNextSibling();
 		}
-		if ((selectCmp instanceof Textbox)
-				|| (selectCmp instanceof Combobox)
-				|| (selectCmp instanceof Datebox)
-				|| (selectCmp instanceof Decimalbox)
-				|| (selectCmp instanceof Longbox)
+		if ((selectCmp instanceof Textbox) || (selectCmp instanceof Combobox) || (selectCmp instanceof Datebox)
+				|| (selectCmp instanceof Decimalbox) || (selectCmp instanceof Longbox)
 				|| (selectCmp instanceof Intbox)) {
-			component.getParent().removeChild(selectCmp);				
+			component.getParent().removeChild(selectCmp);
 		}
 
-
-		if(component.getNextSibling() instanceof Button){
+		if (component.getNextSibling() instanceof Button) {
 			posCmp = component.getNextSibling();
-			((Button)posCmp).setDisabled(true);
-		}else if(component.getNextSibling() instanceof Combobox){
+			((Button) posCmp).setDisabled(true);
+		} else if (component.getNextSibling() instanceof Combobox) {
 			posCmp = component.getNextSibling().getNextSibling();
-			((Button)posCmp).setDisabled(true);
+			((Button) posCmp).setDisabled(true);
 		}
 
 		Component preComp = component.getPreviousSibling().getPreviousSibling();
-		if (((Combobox) preComp).getSelectedItem() == null || 
-				((Combobox) preComp).getSelectedItem().getValue().equals("#")) {
-			((Combobox)component).setValue("");
+		if (((Combobox) preComp).getSelectedItem() == null
+				|| ((Combobox) preComp).getSelectedItem().getValue().equals("#")) {
+			((Combobox) component).setValue("");
 			tab_queryDesign.setSelected(true);
-			throw new WrongValueException(preComp,
-					"please select fieldname before selection type");
+			throw new WrongValueException(preComp, "please select fieldname before selection type");
 		} else {
 			// Set the field type of selected field
 			for (int j = 0; j < objectFieldList.size(); j++) {
@@ -817,57 +805,55 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 		String selectionType = ((Combobox) component).getSelectedItem().getValue().toString();
 
-		if(component.getNextSibling() instanceof Combobox){
+		if (component.getNextSibling() instanceof Combobox) {
 			optrCombo = (Combobox) component.getNextSibling();
 			optrCombo.getItems().clear();
 			optrCombo.setValue("");
-		}else{
-			optrCombo=new Combobox();
+		} else {
+			optrCombo = new Combobox();
 			component.getParent().insertBefore(optrCombo, posCmp);
 		}
-		getCriteria(fieldType,selectionType, optrCombo);
+		getCriteria(fieldType, selectionType, optrCombo);
 
-		if(selectionType.equalsIgnoreCase("static")){
+		if (selectionType.equalsIgnoreCase("static")) {
 			String fieldType = fieldTypeMap.get(((Combobox) preComp).getSelectedItem().getValue().toString());
 			if (fieldType.equalsIgnoreCase("nvarchar")) {
 				Textbox textbox = getSelectText();
 				textbox.setMaxlength(getFieldLength());
 				component.getParent().insertBefore(textbox, posCmp.getNextSibling());
-			}else if (fieldType.equalsIgnoreCase("nchar")) {
-				if(getFieldLength() == 1){
+			} else if (fieldType.equalsIgnoreCase("nchar")) {
+				if (getFieldLength() == 1) {
 					component.getParent().insertBefore(getBooleanVariables(), posCmp.getNextSibling());
-				}else{
+				} else {
 					Textbox textbox = getSelectText();
 					textbox.setMaxlength(getFieldLength());
 					component.getParent().insertBefore(textbox, posCmp.getNextSibling());
 				}
-			}else if (fieldType.equalsIgnoreCase("bigint")) {
-				Intbox intbox  = getIntBox();
+			} else if (fieldType.equalsIgnoreCase("bigint")) {
+				Intbox intbox = getIntBox();
 				intbox.setMaxlength(getFieldLength());
 				component.getParent().insertBefore(intbox, posCmp.getNextSibling());
-			}else if (fieldType.equalsIgnoreCase("decimal")) {
+			} else if (fieldType.equalsIgnoreCase("decimal")) {
 				Decimalbox decimalbox = getDecimalbox();
 				decimalbox.setMaxlength(getFieldLength());
 				component.getParent().insertBefore(decimalbox, posCmp.getNextSibling());
-			}else if (fieldType.equalsIgnoreCase("smalldatetime")) {
+			} else if (fieldType.equalsIgnoreCase("smalldatetime")) {
 				component.getParent().insertBefore(getDateBox(), posCmp.getNextSibling());
 			}
-		}else if(selectionType.equalsIgnoreCase("global")){
+		} else if (selectionType.equalsIgnoreCase("global")) {
 
 			component.getParent().insertBefore(getGlobalVariables(), posCmp.getNextSibling());
-		}else if(selectionType.equalsIgnoreCase("dbvalue")){
+		} else if (selectionType.equalsIgnoreCase("dbvalue")) {
 
 			Textbox textbox = getSelectText();
-			((Button)posCmp).setDisabled(false);
+			((Button) posCmp).setDisabled(false);
 			component.getParent().insertBefore(textbox, posCmp.getNextSibling());
-		}else if(selectionType.equalsIgnoreCase("calvalue")){
+		} else if (selectionType.equalsIgnoreCase("calvalue")) {
 
 			Textbox textbox = getSelectText();
-			((Button)posCmp).setDisabled(false);
+			((Button) posCmp).setDisabled(false);
 			component.getParent().insertBefore(textbox, posCmp.getNextSibling());
 		}
-
-
 
 		fldComboSelAtmpts++;
 		logger.debug("Leaving");
@@ -895,40 +881,40 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 * Method for handling ComboBox selection
 	 */
 	public void onOperatorSelected(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		Component component = (Component) event.getData();
 		Combobox selectionCombo = (Combobox) component.getPreviousSibling();
 		String selectiontype = selectionCombo.getSelectedItem().getValue().toString();
-		if(selectiontype.equalsIgnoreCase("dbvalue")){
-			Textbox textComp = (Textbox) component.getNextSibling().getNextSibling() ;
+		if (selectiontype.equalsIgnoreCase("dbvalue")) {
+			Textbox textComp = (Textbox) component.getNextSibling().getNextSibling();
 			textComp.setValue("");
-		}else if(selectiontype.equalsIgnoreCase("static")){
-			String oprLabel = ((Combobox)component).getSelectedItem().getValue().toString();
-			if(oprLabel.equalsIgnoreCase("IN")
-					|| oprLabel.equalsIgnoreCase("NOT IN")){
+		} else if (selectiontype.equalsIgnoreCase("static")) {
+			String oprLabel = ((Combobox) component).getSelectedItem().getValue().toString();
+			if (oprLabel.equalsIgnoreCase("IN") || oprLabel.equalsIgnoreCase("NOT IN")) {
 				Textbox staticText = (Textbox) component.getNextSibling().getNextSibling();
 				staticText.setMaxlength(100);
 			}
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for creating list of Logical Operators
 	 */
-	private Combobox getCriteria(String fieldType,String selectionType, Combobox combobox) {
+	private Combobox getCriteria(String fieldType, String selectionType, Combobox combobox) {
 		logger.debug("Entering");
 		combobox.setWidth("100px");
 		Comboitem item;
 		String[] operatorLabels = {};
 		String[] operatorValues = {};
-		if((fieldType != null && !fieldType.equals("")) && (selectionType != null && !selectionType.equals(""))){
+		if ((fieldType != null && !fieldType.equals("")) && (selectionType != null && !selectionType.equals(""))) {
 
 			for (int i = 0; i < operatorsList.size(); i++) {
 				LimitFldCriterias criterias = operatorsList.get(i);
-				if(criterias.getQbFldType().equalsIgnoreCase(fieldType) && criterias.getQbSTFld().equalsIgnoreCase(selectionType)){
-					operatorLabels  = criterias.getQbFldCriteriaNames().split(",");
-					operatorValues  = criterias.getQbFldCriteriaValues().split(",");
+				if (criterias.getQbFldType().equalsIgnoreCase(fieldType)
+						&& criterias.getQbSTFld().equalsIgnoreCase(selectionType)) {
+					operatorLabels = criterias.getQbFldCriteriaNames().split(",");
+					operatorValues = criterias.getQbFldCriteriaValues().split(",");
 				}
 			}
 		}
@@ -1089,26 +1075,27 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 	/**
 	 * Method for calling an Event for both Calculated and for DB selection Values
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onValueButtonClicked(Event event) throws Exception{
-		Button comp  = (Button) event.getData();
+	public void onValueButtonClicked(Event event) throws Exception {
+		Button comp = (Button) event.getData();
 		Textbox textbox = ((Textbox) comp.getNextSibling());
 		textbox.setErrorMessage("");
 
 		Combobox selectionCombo = (Combobox) comp.getPreviousSibling().getPreviousSibling();
 		String selectionType = selectionCombo.getSelectedItem().getValue().toString();
-		if(selectionType.equals("calvalue")){
+		if (selectionType.equals("calvalue")) {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("returnValue",textbox.getValue());
+			map.put("returnValue", textbox.getValue());
 			map.put("textbox", textbox);
 			map.put("rbModule", queryModule.getValue());
 			map.put("rbEvent", getLimitFilterQuery().getQuerySubCode());
 
-			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultDialog.zul",
-					window_LimitRuleDialog,map);
-		}else if(selectionType.equals("dbvalue")){
+			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultDialog.zul", window_LimitRuleDialog,
+					map);
+		} else if (selectionType.equals("dbvalue")) {
 			Combobox operatorCombo = (Combobox) comp.getPreviousSibling();
 			if (operatorCombo.getSelectedItem() == null) {
 				throw new WrongValueException(operatorCombo, "Please select Operator ");
@@ -1118,31 +1105,31 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			String fieldName = fieldCombo.getSelectedItem().getValue().toString();
 
 			//For Calling Extended ListBox From DB
-			if(oprLabel.equalsIgnoreCase("Equal") || oprLabel.equalsIgnoreCase("Not Equal")){
+			if (oprLabel.equalsIgnoreCase("Equal") || oprLabel.equalsIgnoreCase("Not Equal")) {
 				Object dataObject = ExtendedSearchListBox.show(this.window_LimitRuleDialog, dbTableMap.get(fieldName));
 				if (dataObject == null) {
 					//do Nothing
-				}else if (dataObject instanceof String) {
+				} else if (dataObject instanceof String) {
 					textbox.setValue("");
 				} else {
-					String textValue = dataObject.getClass().getMethod("getLovValue").invoke( dataObject).toString();
+					String textValue = dataObject.getClass().getMethod("getLovValue").invoke(dataObject).toString();
 					if (textValue != null) {
 						textbox.setValue(textValue);
 					}
 				}
-			}else if(oprLabel.equalsIgnoreCase("IN") || oprLabel.equalsIgnoreCase("Not IN")){
+			} else if (oprLabel.equalsIgnoreCase("IN") || oprLabel.equalsIgnoreCase("Not IN")) {
 				//Calling MultiSelection ListBox From DB
-				String selectedValues= (String) MultiSelectionSearchListBox.show(this.window_LimitRuleDialog, dbTableMap.get(fieldName),textbox.getValue(),new Filter[]{});
-				if (selectedValues!= null) {
+				String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_LimitRuleDialog,
+						dbTableMap.get(fieldName), textbox.getValue(), new Filter[] {});
+				if (selectedValues != null) {
 					textbox.setValue(selectedValues);
 					textbox.setTooltiptext(selectedValues);
-				}else{
+				} else {
 					//do Nothing
 				}
 			}
 		}
 	}
-
 
 	/**
 	 * Common code for generating treeCell
@@ -1223,12 +1210,13 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			hbox.appendChild(space);
 		}
 
-		/*space = new Space();
-		hbox.appendChild(space);*/
+		/*
+		 * space = new Space(); hbox.appendChild(space);
+		 */
 		combo = getFields();// first comb box
 		combo.setReadonly(true);
 
-		Textbox textbox = null ;
+		Textbox textbox = null;
 
 		String field = "";
 
@@ -1262,8 +1250,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		space.setSpacing("10px");
 		hbox.appendChild(space);
 
-		String selectType ="";
-		Combobox comboType =null;
+		String selectType = "";
+		Combobox comboType = null;
 		// Set fieldType to ComboBox depend on staticList of types and getting rule
 		comboType = getSelectionTypeItem(field, new Combobox());// selection type comboBox
 		comboType.setReadonly(true);
@@ -1286,7 +1274,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		} else {
 			this.operatorVal = false;
 		}
-		combo=	getCriteria(fieldType,selectType, new Combobox());
+		combo = getCriteria(fieldType, selectType, new Combobox());
 		this.comboSelected = true;
 
 		for (int i = 0; i < combo.getItemCount(); i++) {
@@ -1304,10 +1292,10 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		calValueButton.setLabel("Add value");
 		calValueButton.setTooltiptext("Click Button for Add Value");
 		calValueButton.setDisabled(true);
-		calValueButton.addForward("onClick",window_LimitRuleDialog,"onValueButtonClicked",calValueButton);
+		calValueButton.addForward("onClick", window_LimitRuleDialog, "onValueButtonClicked", calValueButton);
 		hbox.appendChild(calValueButton);
 
-		if(comboType.getSelectedItem()!=null){	
+		if (comboType.getSelectedItem() != null) {
 			String selectionType = (String) comboType.getSelectedItem().getValue();
 			if (selectionType.equals("static")) {// depend on type of field
 				if (getFieldType().equalsIgnoreCase("nvarchar")) {
@@ -1316,7 +1304,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 					textbox.setValue(queryValues.get(0));
 					hbox.appendChild(textbox);
 				} else if (getFieldType().equalsIgnoreCase("nchar")) {
-					if(getFieldLength() == 1){
+					if (getFieldLength() == 1) {
 						Combobox booleanCombo = getBooleanVariables();
 						for (int i = 0; i < booleanCombo.getItemCount(); i++) {
 							if (booleanCombo.getItemAtIndex(i).getValue().equals(queryValues.get(0))) {
@@ -1325,7 +1313,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 							}
 						}
 						hbox.appendChild(booleanCombo);
-					}else{
+					} else {
 						textbox = getSelectText();
 						textbox.setMaxlength(getFieldLength());
 						textbox.setValue(queryValues.get(0));
@@ -1364,7 +1352,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				calValueButton.setDisabled(false);
 				queryValues.remove(0);
 				fldComboSelAtmpts++;
-			}else if (comboType.getSelectedItem().getValue().equals("global")) {// Global variable field type
+			} else if (comboType.getSelectedItem().getValue().equals("global")) {// Global variable field type
 				combo = getGlobalVariables();
 				for (int i = 0; i < combo.getItemCount(); i++) {
 					if (combo.getItemAtIndex(i).getValue().equals(queryValues.get(0))) {
@@ -1377,8 +1365,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				hbox.appendChild(combo);
 			}
 		}
-
-
 
 		if (queryValues.size() > 0 && !aLimitRule.isNew()) {
 			space = new Space();
@@ -1501,8 +1487,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	}
 
 	/**
-	 * Method for Validating Builded Query and show result in
-	 * 'SqlViewResult.zul'
+	 * Method for Validating Builded Query and show result in 'SqlViewResult.zul'
 	 */
 	public void onClick$btnValidation(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -1512,15 +1497,15 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 		String resultQuery = "";
 		if (moduleName.equals(RuleConstants.MODULE_IRLFILTER)) {
-			resultQuery = "select * from FinancemainLimitCheck_Aview";	
+			resultQuery = "select * from FinancemainLimitCheck_Aview";
 
 		}
 
 		resultQuery = resultQuery + "\n" + sQLQuery.getValue();
-		
+
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultQuery", resultQuery);
-		map.put("IRFilter",queryFieldMap);
+		map.put("IRFilter", queryFieldMap);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/DedupParm/SqlViewResult.zul", null, map);
@@ -1552,7 +1537,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 * Method for Generating Query by using Builded Structure of Tree
 	 * 
 	 * @param selectionComp
-	 * @param isSimulation 
+	 * @param isSimulation
 	 * @throws Exception
 	 */
 	public void doBuildQuery(Component selectionComp) throws Exception {
@@ -1560,7 +1545,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 		if (selectionComp.getChildren() != null) {
 			int comboCount = 1;
-			boolean inCondition = false;		
+			boolean inCondition = false;
 			String element = "";
 			String elementDesc = "";
 			for (int i = 0; i < selectionComp.getChildren().size(); i++) {
@@ -1572,10 +1557,10 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 					// comboBox or not
 					boolean validate = false;
 					String value = ((Combobox) combo).getValue().toString();
-					if (value == null || value.equals("")|| value.equals("--select--")) {
-						if(!((Combobox)combo).isDisabled()){
+					if (value == null || value.equals("") || value.equals("--select--")) {
+						if (!((Combobox) combo).isDisabled()) {
 							validate = false;
-						}else{
+						} else {
 							validate = true;
 						}
 					} else {
@@ -1588,30 +1573,29 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 					}
 					if (!validate) {
 						this.tab_queryDesign.setSelected(true);
-						throw new WrongValueException(combo, Labels.getLabel("STATIC_INVALID", new String[]{""}));
+						throw new WrongValueException(combo, Labels.getLabel("STATIC_INVALID", new String[] { "" }));
 					}
-					String comboValue ="~";
+					String comboValue = "~";
 					String comboLabel = "";
-					if(((Combobox)combo).isDisabled()){
+					if (((Combobox) combo).isDisabled()) {
 
-					}else {
+					} else {
 						comboValue = ((Combobox) combo).getSelectedItem().getValue().toString();
 						comboLabel = ((Combobox) combo).getSelectedItem().getLabel().toString();
 
 					}
 					// retrieve values from comboBox(s)
-					if ("AND".equalsIgnoreCase(comboLabel)
-							|| "OR".equalsIgnoreCase(comboLabel)) {
+					if ("AND".equalsIgnoreCase(comboLabel) || "OR".equalsIgnoreCase(comboLabel)) {
 
 						strSqlQuery = strSqlQuery + "\n" + comboLabel + "\n" + "(";
 
 						actualBlob = actualBlob + comboLabel + "|" + "(" + "|";
 					} else if (comboCount == 2) {
-						actualBlob = actualBlob+ comboValue + "|";
+						actualBlob = actualBlob + comboValue + "|";
 						comboCount++;
 					} else if (comboCount == 3) {
 						strSqlQuery = strSqlQuery + comboValue;
-						if(comboValue.trim().equalsIgnoreCase("LIKE")){
+						if (comboValue.trim().equalsIgnoreCase("LIKE")) {
 							likeCondition = true;
 						}
 						if (StringUtils.strip(comboValue).equalsIgnoreCase("IN")
@@ -1621,36 +1605,37 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 						}
 						actualBlob = actualBlob + comboValue + "|";
 						comboCount++;
-					}  else {
+					} else {
 						if (comboCount == 1) {
 							element = comboValue;
 							elementDesc = ((Combobox) combo).getSelectedItem().getLabel();
 							for (int j = 0; j < objectFieldList.size(); j++) {
-								BMTRBFldDetails builderTables = objectFieldList.get(j);							
+								BMTRBFldDetails builderTables = objectFieldList.get(j);
 								if (builderTables.getRbFldName().equals(element)) {
 									setFieldType(builderTables.getRbFldType());// To Get the Type of selectingField
-									if (strSqlQuery.equals("Where(\n(") || (strSqlQuery.endsWith("AND\n(") || strSqlQuery.endsWith("OR\n("))) {
+									if (strSqlQuery.equals("Where(\n(")
+											|| (strSqlQuery.endsWith("AND\n(") || strSqlQuery.endsWith("OR\n("))) {
 										strSqlQuery = strSqlQuery + element;
 									}
 									actualBlob = actualBlob + comboValue + "|";
 									break;
 								}
 							}
-						}else if(StringUtils.equals(comboValue, "true")|| StringUtils.equals(comboValue, "false")){
-							int resultValue=0;
-							if(StringUtils.equals(comboValue, "true")){
-								resultValue=1;
+						} else if (StringUtils.equals(comboValue, "true") || StringUtils.equals(comboValue, "false")) {
+							int resultValue = 0;
+							if (StringUtils.equals(comboValue, "true")) {
+								resultValue = 1;
 							}
-							strSqlQuery = strSqlQuery + " " + "'"+ resultValue + "' )";
+							strSqlQuery = strSqlQuery + " " + "'" + resultValue + "' )";
 						}
 						comboCount++;
 					}
 					if (comboCount == 4) {
-						if(likeCondition){
+						if (likeCondition) {
 							likeCondition = false;
-						}else{						
-							if(StringUtils.contains(getFieldType(),"varchar")){
-								if(App.DATABASE == Database.SQL_SERVER){								
+						} else {
+							if (StringUtils.contains(getFieldType(), "varchar")) {
+								if (App.DATABASE == Database.SQL_SERVER) {
 								}
 							}
 						}
@@ -1660,7 +1645,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 							array[0] = getFieldType();
 							array[1] = elementDesc;
 							queryFieldMap.put(element, array);
-						}						
+						}
 
 					}
 				} else if (childComp instanceof Textbox) {
@@ -1669,66 +1654,55 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 					//if(isSimulation){
 					Textbox textbox = (Textbox) childComp;
 					textbox.setErrorMessage("");
-					if (textbox.getValue()== null
-							|| textbox.getValue().equals("")) {
-						if(!textbox.isReadonly()){
+					if (textbox.getValue() == null || textbox.getValue().equals("")) {
+						if (!textbox.isReadonly()) {
 							tab_queryDesign.setSelected(true);
-							throw new WrongValueException(textbox,Labels.getLabel("Label_RuleDialog_EnterValue"));
+							throw new WrongValueException(textbox, Labels.getLabel("Label_RuleDialog_EnterValue"));
 						}
 					}
 
 					if (inCondition == true) {
 						String str = textbox.getValue().toString();
 						StringTokenizer st = new StringTokenizer(str, ",");
-						strSqlQuery = strSqlQuery+"(";
+						strSqlQuery = strSqlQuery + "(";
 
-						while (st.hasMoreTokens()) {							
+						while (st.hasMoreTokens()) {
 
 							strSqlQuery = strSqlQuery + "'" + st.nextToken() + "'" + " , ";
 
-						} 
+						}
 
-						strSqlQuery = strSqlQuery.substring(0, strSqlQuery.length()-3)+") )";
+						strSqlQuery = strSqlQuery.substring(0, strSqlQuery.length() - 3) + ") )";
 
 						inCondition = false;
-					}else {
+					} else {
 						boolean elsCond = false;
 						// condition for string field type
 						if (getFieldType().equalsIgnoreCase("nvarchar")) {
-							if(!elsCond){
-								strSqlQuery = strSqlQuery + " " + "'"+ textbox.getValue().toString() + "' )";
+							if (!elsCond) {
+								strSqlQuery = strSqlQuery + " " + "'" + textbox.getValue().toString() + "' )";
 							}
 						} else {// condition for Non-String field type
-							if(!elsCond){
-								strSqlQuery = strSqlQuery + " "+ textbox.getValue().toString()+")";
+							if (!elsCond) {
+								strSqlQuery = strSqlQuery + " " + textbox.getValue().toString() + ")";
 							}
-						}						
+						}
 					}
-					String textValue =textbox.getValue().toString();
-					if(textValue.equals("")){
+					String textValue = textbox.getValue().toString();
+					if (textValue.equals("")) {
 						textValue = "~";
 					}
-					actualBlob = actualBlob +textValue+ "|";
+					actualBlob = actualBlob + textValue + "|";
 					comboCount++;
-					/*}else{
-						if(likeCondition){
-							strSqlQuery = strSqlQuery + ":like" + element;
-							likeCondition = false;
-						}else{
-							strSqlQuery = strSqlQuery + ":" + element ;
-							if(StringUtils.contains(getFieldType(),"varchar")){
-								if(App.DATABASE == Database.SQL_SERVER){
-									strSqlQuery = strSqlQuery + " AND ("+element +" IS NOT NULL AND "+element +" != '') ";
-								}else{
-									strSqlQuery = strSqlQuery + " AND "+element +" IS NOT NULL ";
-								}
-							}
-						}
-						if (!queryFieldMap.containsKey(element)) {
-							queryFieldMap.put(element, getFieldType());
-						}
-						comboCount++;
-					}*/
+					/*
+					 * }else{ if(likeCondition){ strSqlQuery = strSqlQuery + ":like" + element; likeCondition = false;
+					 * }else{ strSqlQuery = strSqlQuery + ":" + element ;
+					 * if(StringUtils.contains(getFieldType(),"varchar")){ if(App.DATABASE == Database.SQL_SERVER){
+					 * strSqlQuery = strSqlQuery + " AND ("+element +" IS NOT NULL AND "+element +" != '') "; }else{
+					 * strSqlQuery = strSqlQuery + " AND "+element +" IS NOT NULL "; } } } if
+					 * (!queryFieldMap.containsKey(element)) { queryFieldMap.put(element, getFieldType()); }
+					 * comboCount++; }
+					 */
 				} else if (childComp instanceof Datebox) {
 					// Component related to dateBox
 
@@ -1752,8 +1726,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 						tab_queryDesign.setSelected(true);
 						throw new WrongValueException(decimalbox, Labels.getLabel("Label_RuleDialog_EnterValue"));
 					}
-					strSqlQuery = strSqlQuery + " "+ decimalbox.getValue().toString();
-					actualBlob = actualBlob + decimalbox.getValue().toString()+ "|";
+					strSqlQuery = strSqlQuery + " " + decimalbox.getValue().toString();
+					actualBlob = actualBlob + decimalbox.getValue().toString() + "|";
 					comboCount++;
 				} else if (childComp instanceof Intbox) {
 					// Component related to intBox
@@ -1764,8 +1738,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 						tab_queryDesign.setSelected(true);
 						throw new WrongValueException(intbox, Labels.getLabel("Label_RuleDialog_EnterValue"));
 					}
-					strSqlQuery = strSqlQuery + " "+ intbox.getValue().toString();
-					actualBlob = actualBlob + intbox.getValue().toString()+ "|";
+					strSqlQuery = strSqlQuery + " " + intbox.getValue().toString();
+					actualBlob = actualBlob + intbox.getValue().toString() + "|";
 					comboCount++;
 				} else if (childComp instanceof Longbox) {
 					// Component related to longBox
@@ -1776,8 +1750,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 						tab_queryDesign.setSelected(true);
 						throw new WrongValueException(longbox, Labels.getLabel("Label_RuleDialog_EnterValue"));
 					}
-					strSqlQuery = strSqlQuery + " "+ longbox.getValue().toString();
-					actualBlob = actualBlob + longbox.getValue().toString()+ "|";
+					strSqlQuery = strSqlQuery + " " + longbox.getValue().toString();
+					actualBlob = actualBlob + longbox.getValue().toString() + "|";
 					comboCount++;
 				} else {
 					// repeating the logic for getting values from components
@@ -1807,8 +1781,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_LimitParmDialog_QueryCode.value")+" : "+aLimitRule.getQueryCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_LimitParmDialog_QueryCode.value") + " : " + aLimitRule.getQueryCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aLimitRule.getRecordType()).equals("")) {
 				aLimitRule.setVersion(aLimitRule.getVersion() + 1);
@@ -1858,9 +1832,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if(getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete") && !enqiryModule){
+		if (getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete") && !enqiryModule) {
 			this.btnDelete.setVisible(true);
-		}else{
+		} else {
 			this.btnDelete.setVisible(false);
 		}
 
@@ -1870,29 +1844,27 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			this.btnDelete.setVisible(false);
 		} else {
 			this.queryCode.setReadonly(true);
-			if(getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete") &&
-					getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleSave") && !enqiryModule){
+			if (getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete")
+					&& getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleSave") && !enqiryModule) {
 				this.btnReadValues.setVisible(true);
 				this.tab_queryDesign.setVisible(true);
-			}else{
+			} else {
 				this.btnReadValues.setVisible(false);
 				this.tab_queryDesign.setVisible(false);
 			}
 
-
-			if (PennantConstants.RECORD_TYPE_DEL.equals(getLimitFilterQuery()
-					.getRecordType()) && !enqiryModule) {
+			if (PennantConstants.RECORD_TYPE_DEL.equals(getLimitFilterQuery().getRecordType()) && !enqiryModule) {
 				this.tab_queryDesign.setVisible(false);
 				this.btnReadValues.setVisible(false);
-				if(!getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleMaintain")){
+				if (!getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleMaintain")) {
 					this.btnSave.setVisible(true);
-					if(getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete")){
+					if (getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete")) {
 						this.btnDelete.setVisible(false);
 					}
-				}else{
+				} else {
 					this.btnSave.setVisible(false);
 					this.btnDelete.setVisible(false);
-					if(getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete")){
+					if (getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleDelete")) {
 						this.btnSave.setVisible(true);
 					}
 				}
@@ -1902,9 +1874,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		this.queryDesc.setReadonly(!getUserWorkspace().isAllowed("RuleDialog_returnType") || enqiryModule);
 		this.active.setDisabled(!getUserWorkspace().isAllowed("RuleDialog_returnType") || enqiryModule);
 
-		if(this.tab_queryDesign.isVisible()){
+		if (this.tab_queryDesign.isVisible()) {
 			this.tab_queryDesign.setSelected(true);
-		}else{
+		} else {
 			this.tab_textQuery.setSelected(true);
 		}
 
@@ -2100,7 +2072,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				for (int i = 0; i < list.length; i++) {
 					auditHeader = getAuditHeader(aLimitRule, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					if (!processCompleted) {
 						break;
 					}
 				}
@@ -2158,7 +2130,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_LimitRuleDialog, auditHeader);
 						return processCompleted;
 					}
@@ -2202,7 +2175,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	 */
 	private AuditHeader getAuditHeader(LimitFilterQuery aLimitRule, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLimitRule.getBefImage(), aLimitRule);
-		return new AuditHeader(aLimitRule.getQueryCode(), null, null, null, auditDetail, aLimitRule.getUserDetails(), getOverideMap());
+		return new AuditHeader(aLimitRule.getQueryCode(), null, null, null, auditDetail, aLimitRule.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -2224,7 +2198,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
@@ -2234,8 +2207,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.limitRule);
 	}
-
-
 
 	/**
 	 * Method for generating new textBox
@@ -2275,10 +2246,13 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		comboBox.setStyle("padding-left: 5px;padding-right: 5px;");
 		Comboitem item;
 
-		for (int i = 0; i < com.pennant.webui.rulefactory.rule.BuilderUtilListbox.getBooleanOperators().getSize(); i++) {
+		for (int i = 0; i < com.pennant.webui.rulefactory.rule.BuilderUtilListbox.getBooleanOperators()
+				.getSize(); i++) {
 			item = new Comboitem();
-			item.setLabel(com.pennant.webui.rulefactory.rule.BuilderUtilListbox.getBooleanOperators().getElementAt(i).toString());
-			item.setValue(com.pennant.webui.rulefactory.rule.BuilderUtilListbox.getBooleanOperators().getElementAt(i).toString());
+			item.setLabel(com.pennant.webui.rulefactory.rule.BuilderUtilListbox.getBooleanOperators().getElementAt(i)
+					.toString());
+			item.setValue(com.pennant.webui.rulefactory.rule.BuilderUtilListbox.getBooleanOperators().getElementAt(i)
+					.toString());
 			comboBox.appendChild(item);
 		}
 		comboBox.setWidth("100px");
@@ -2289,19 +2263,21 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 	/**
 	 * Methods for returning field component types
+	 * 
 	 * @return
 	 */
 	private Decimalbox getDecimalbox() {
 		Decimalbox decimalbox = new Decimalbox();
 		decimalbox.setStyle("padding-left: 5px;padding-right: 5px;");
 		decimalbox.setWidth("100px");
-		return decimalbox;	
+		return decimalbox;
 	}
+
 	private Intbox getIntBox() {
 		Intbox intbox = new Intbox(0);
 		intbox.setStyle("padding-left: 5px;padding-right: 5px;");
 		intbox.setWidth("100px");
-		return intbox;	
+		return intbox;
 	}
 
 	private Datebox getDateBox() {
@@ -2309,26 +2285,24 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		date.setStyle("padding-left: 5px;padding-right: 5px;");
 		date.setWidth("100px");
 		date.setFormat(PennantConstants.DBDateTimeFormat);
-		return date;	
+		return date;
 	}
-
 
 	/**
 	 * Method for handling ComboBox selection
 	 */
 	public void onFieldComboSelected(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 
 		Combobox component = (Combobox) event.getData();
-		Combobox selctcombo =(Combobox) component.getNextSibling().getNextSibling();
-		Combobox optrCombo=(Combobox) component.getNextSibling().getNextSibling().getNextSibling();
+		Combobox selctcombo = (Combobox) component.getNextSibling().getNextSibling();
+		Combobox optrCombo = (Combobox) component.getNextSibling().getNextSibling().getNextSibling();
 
-
-		if(selctcombo!=null){
+		if (selctcombo != null) {
 
 			selctcombo.getItems().clear();
 			selctcombo.setValue("");
-			if(optrCombo!=null){
+			if (optrCombo != null) {
 
 				optrCombo.getItems().clear();
 				optrCombo.setValue("");
@@ -2338,13 +2312,12 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 		}
 
-		if(selectionTypeMap.containsKey(component.getSelectedItem().getValue().toString())){
+		if (selectionTypeMap.containsKey(component.getSelectedItem().getValue().toString())) {
 			String str = selectionTypeMap.get(component.getSelectedItem().getValue().toString());
-			getSelectionTypeItem(str,selctcombo);
+			getSelectionTypeItem(str, selctcombo);
 		}
 
-
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	@Override
@@ -2375,6 +2348,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	public String getFieldType() {
 		return fieldType;
 	}
+
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
 	}
@@ -2390,6 +2364,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

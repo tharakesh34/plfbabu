@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class FinanceSuspDetails implements Serializable{
-	
-    private static final long serialVersionUID = 5778056251513895432L;
-    
+public class FinanceSuspDetails implements Serializable {
+
+	private static final long serialVersionUID = 5778056251513895432L;
+
 	private String finReference;
 	private String finBranch;
 	private String finType;
@@ -19,90 +19,101 @@ public class FinanceSuspDetails implements Serializable{
 	private Date finODDate;
 	private Date finTrfFromDate;
 	private long linkedTranId = Long.MIN_VALUE;
-	
+
 	public FinanceSuspDetails() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
-	
+		this.finReference = finReference;
+	}
+
 	public String getFinBranch() {
-    	return finBranch;
-    }
+		return finBranch;
+	}
+
 	public void setFinBranch(String finBranch) {
-    	this.finBranch = finBranch;
-    }
-	
+		this.finBranch = finBranch;
+	}
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
+
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
-	
+		this.finType = finType;
+	}
+
 	public long getCustId() {
-    	return custId;
-    }
+		return custId;
+	}
+
 	public void setCustId(long custId) {
-    	this.custId = custId;
-    }
-	
+		this.custId = custId;
+	}
+
 	public int getFinSuspSeq() {
-    	return finSuspSeq;
-    }
+		return finSuspSeq;
+	}
+
 	public void setFinSuspSeq(int finSuspSeq) {
-    	this.finSuspSeq = finSuspSeq;
-    }
-	
+		this.finSuspSeq = finSuspSeq;
+	}
+
 	public Date getFinTrfDate() {
-    	return finTrfDate;
-    }
+		return finTrfDate;
+	}
+
 	public void setFinTrfDate(Date finTrfDate) {
-    	this.finTrfDate = finTrfDate;
-    }
-	
+		this.finTrfDate = finTrfDate;
+	}
+
 	public String getFinTrfMvt() {
-    	return finTrfMvt;
-    }
+		return finTrfMvt;
+	}
+
 	public void setFinTrfMvt(String finTrfMvt) {
-    	this.finTrfMvt = finTrfMvt;
-    }
-	
+		this.finTrfMvt = finTrfMvt;
+	}
+
 	public BigDecimal getFinTrfAmt() {
-    	return finTrfAmt;
-    }
+		return finTrfAmt;
+	}
+
 	public void setFinTrfAmt(BigDecimal finTrfAmt) {
-    	this.finTrfAmt = finTrfAmt;
-    }
-	
+		this.finTrfAmt = finTrfAmt;
+	}
+
 	public Date getFinTrfFromDate() {
 		return finTrfFromDate;
 	}
+
 	public void setFinTrfFromDate(Date finTrfFromDate) {
 		this.finTrfFromDate = finTrfFromDate;
 	}
-	
+
 	public Date getFinODDate() {
 		return finODDate;
 	}
+
 	public void setFinODDate(Date finODDate) {
 		this.finODDate = finODDate;
 	}
-	
+
 	public long getLinkedTranId() {
-    	return linkedTranId;
-    }
+		return linkedTranId;
+	}
+
 	public void setLinkedTranId(long linkedTranId) {
-    	this.linkedTranId = linkedTranId;
-    }
-	
+		this.linkedTranId = linkedTranId;
+	}
+
 }

@@ -57,21 +57,18 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinancePreApprovalDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinancePreApprovalDialog.zul file.
  */
 public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FinancePreApprovalDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_FinancePreApprovalDialog; 				// autoWired
+	protected Window window_FinancePreApprovalDialog; // autoWired
 
-	
 	/**
 	 * default constructor.<br>
 	 */
@@ -87,9 +84,8 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -116,11 +112,11 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 		// delete financeMain here.
 		if (arguments.containsKey("financeMainListCtrl")) {
 			setFinanceMainListCtrl((FinanceMainListCtrl) arguments.get("financeMainListCtrl"));
-		} 
-		
+		}
+
 		if (arguments.containsKey("financeSelectCtrl")) {
 			setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
-		} 
+		}
 
 		if (arguments.containsKey("tabbox")) {
 			listWindowTab = (Tab) arguments.get("tabbox");
@@ -130,7 +126,7 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 		if (arguments.containsKey("eventCode")) {
 			eventCode = (String) arguments.get("eventCode");
 		}
-		
+
 		if (arguments.containsKey("menuItemRightName")) {
 			menuItemRightName = (String) arguments.get("menuItemRightName");
 		}
@@ -141,19 +137,19 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
-		}else{
+		} else {
 			this.south.setHeight("0px");
 		}
-		
+
 		setMainWindow(window_FinancePreApprovalDialog);
 		setProductCode("PreApprove");
 		setFinPreApproved(true);
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
-		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52+ "px");
-		
+		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");
+
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getFinanceDetail());
@@ -177,7 +173,7 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -201,7 +197,7 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -210,9 +206,9 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 			doClose();
 		} catch (final WrongValuesException e) {
 			logger.error("Exception: ", e);
-			throw e;		
+			throw e;
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 }

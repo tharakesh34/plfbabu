@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
 
 /**
@@ -50,7 +51,10 @@ import com.pennant.backend.model.applicationmaster.CorpRelationCode;
 public interface CorpRelationCodeDAO {
 
 	CorpRelationCode getCorpRelationCodeById(String id, String type);
+
 	void update(CorpRelationCode corpRelationCode, String type);
+
 	void delete(CorpRelationCode corpRelationCode, String type);
+
 	String save(CorpRelationCode corpRelationCode, String type);
 }

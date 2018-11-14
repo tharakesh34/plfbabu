@@ -79,65 +79,64 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customers/CustomerSelect.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customers/CustomerSelect.zul file.
  */
 public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = -2873070081817788952L;
 	private static final Logger logger = Logger.getLogger(CustomerSelectCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CustomerSelect; 			// autowired
+	protected Window window_CustomerSelect; // autowired
 
-	protected Textbox custCIF; 							// autowired
-	protected Listbox sortOperator_custCIF; 			// autowired
-	protected Datebox custDob; 							// autowired
-	protected Listbox sortOperator_custDob; 			// autowired
-	protected Textbox custName; 						// autowired
-	protected Listbox sortOperator_custName; 			// autowired
-	protected Textbox custMobile; 						// autowired
-	protected Listbox sortOperator_custMobile; 			// autowired
-	protected Textbox custEid; 							// autowired
-	protected Listbox sortOperator_custEID; 			// autowired
-	protected Textbox custType; 						// autowired
-	protected Listbox sortOperator_custType; 			// autowired
-	protected Textbox custNationality; 					// autowired
-	protected Listbox sortOperator_custNationality;	 	// autowired
-	protected ExtendedCombobox custTarget; 				// autowired
-	protected Listbox sortOperator_custTarget; 			// autowired
-	protected Combobox custCategory; 					// autowired
-	protected Listbox sortOperator_custCategory; 		// autowired
+	protected Textbox custCIF; // autowired
+	protected Listbox sortOperator_custCIF; // autowired
+	protected Datebox custDob; // autowired
+	protected Listbox sortOperator_custDob; // autowired
+	protected Textbox custName; // autowired
+	protected Listbox sortOperator_custName; // autowired
+	protected Textbox custMobile; // autowired
+	protected Listbox sortOperator_custMobile; // autowired
+	protected Textbox custEid; // autowired
+	protected Listbox sortOperator_custEID; // autowired
+	protected Textbox custType; // autowired
+	protected Listbox sortOperator_custType; // autowired
+	protected Textbox custNationality; // autowired
+	protected Listbox sortOperator_custNationality; // autowired
+	protected ExtendedCombobox custTarget; // autowired
+	protected Listbox sortOperator_custTarget; // autowired
+	protected Combobox custCategory; // autowired
+	protected Listbox sortOperator_custCategory; // autowired
 	//protected Textbox 		phoneCountryCode; 						
 	//protected Textbox 		phoneAreaCode; 
-	protected Paging pagingCustomerList; 				// autowired
-	protected Listbox listBoxCustomer; 					// autowired
-	protected Grid searchGrid; 							// autowired
+	protected Paging pagingCustomerList; // autowired
+	protected Listbox listBoxCustomer; // autowired
+	protected Grid searchGrid; // autowired
 
 	// List headers
-	protected Listheader listheader_CustID; 			// autowired
-	protected Listheader listheader_CustCIF; 			// autowired
-	protected Listheader listheader_CustCoreBank; 		// autowired
-	protected Listheader listheader_CustCtgCode; 		// autowired
-	protected Listheader listheader_RecordStatus; 		// autowired
+	protected Listheader listheader_CustID; // autowired
+	protected Listheader listheader_CustCIF; // autowired
+	protected Listheader listheader_CustCoreBank; // autowired
+	protected Listheader listheader_CustCtgCode; // autowired
+	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
 
-	protected Label label_CustomerSearch_RecordStatus; 	// autowired
-	protected Label label_CustomerSearch_RecordType; 	// autowired
+	protected Label label_CustomerSearch_RecordStatus; // autowired
+	protected Label label_CustomerSearch_RecordType; // autowired
 
 	protected Borderlayout borderLayout_CustomerSelect;
-	
+
 	// not auto wired vars
 	private transient Object dialogCtrl = null;
 
 	private JdbcSearchObject<Customer> searchObj;
 	private List<Filter> filterList = new ArrayList<Filter>();
 	protected Button btnClear;
-    private String finDivision=null;
-    private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
+	private String finDivision = null;
+	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
+
 	/**
 	 * Default constructor
 	 */
@@ -169,18 +168,18 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDob.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleNumericOperators()));
+		this.sortOperator_custDob
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleNumericOperators()));
 		this.sortOperator_custDob.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custName.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		
+
 		this.sortOperator_custMobile.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custMobile.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custEID.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custEID.setItemRenderer(new SearchOperatorListModelItemRenderer());
-
 
 		this.sortOperator_custType.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custType.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -190,7 +189,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 
 		this.sortOperator_custTarget.setModel(new ListModelList<SearchOperators>(list));
 		doSetTargetProperties();
-		
+
 		this.sortOperator_custTarget.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custCategory.setModel(new ListModelList<SearchOperators>(list));
@@ -200,40 +199,40 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		if (arguments.containsKey("DialogCtrl")) {
 			setDialogCtrl(arguments.get("DialogCtrl"));
 		}
-	
+
 		if (arguments.containsKey("finDivision")) {
 			finDivision = (String) arguments.get("finDivision");
 		}
-		
+
 		if (arguments.containsKey("filtersList")) {
 			filterList = (List<Filter>) arguments.get("filtersList");
 		}
-		
-		if(StringUtils.isNotBlank(finDivision)){
-			if(StringUtils.equals(finDivision,FinanceConstants.FIN_DIVISION_COMMERCIAL) || 
-					StringUtils.equals(finDivision,FinanceConstants.FIN_DIVISION_RETAIL)) {
+
+		if (StringUtils.isNotBlank(finDivision)) {
+			if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL)
+					|| StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)) {
 				filterList.add(new Filter("custDftBranch", PennantConstants.IBD_Branch, Filter.OP_NOT_EQUAL));
-			} else if(StringUtils.equals(finDivision,FinanceConstants.FIN_DIVISION_CORPORATE)){
+			} else if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {
 				filterList.add(new Filter("custDftBranch", PennantConstants.IBD_Branch, Filter.OP_EQUAL));
 			}
 		}
 		doSetFieldProperties();
 		// Stored search object and paging
-			
+
 		if (arguments.containsKey("searchObject")) {
 			searchObj = (JdbcSearchObject<Customer>) arguments.get("searchObject");
 		}
-		
-		this.borderLayout_CustomerSelect.setHeight(borderLayoutHeight+"px");
-		this.listBoxCustomer.setHeight(getListBoxHeight(this.searchGrid.getRows().getVisibleItemCount()+1));
+
+		this.borderLayout_CustomerSelect.setHeight(borderLayoutHeight + "px");
+		this.listBoxCustomer.setHeight(getListBoxHeight(this.searchGrid.getRows().getVisibleItemCount() + 1));
 		this.pagingCustomerList.setPageSize(getListRows());
 		this.pagingCustomerList.setDetailed(true);
-		
+
 		if (searchObj != null) {
-			
+
 			// Render Search Object
 			paging(searchObj);
-		
+
 			// get the filters from the searchObject
 			final List<Filter> ft = searchObj.getFilters();
 			for (final Filter filter : ft) {
@@ -244,7 +243,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 					this.custCIF.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCIF));
 				} else if ("CustDOB".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custDob, filter);
-					this.custDob.setValue(DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.custDob.setValue(
+							DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("CustShrtName".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custName, filter);
 					this.custName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custName));
@@ -259,13 +259,15 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 					this.custType.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custType));
 				} else if ("CustNationality".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custNationality, filter);
-					this.custNationality.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custNationality));
+					this.custNationality
+							.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custNationality));
 				} else if ("Target".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custTarget, filter);
 					this.custTarget.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custTarget));
 				} else if ("CustCtgCode".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custCategory, filter);
-					this.custCategory.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCategory));
+					this.custCategory
+							.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCategory));
 				}
 			}
 		}
@@ -274,7 +276,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void doSetTargetProperties(){
+	private void doSetTargetProperties() {
 		logger.debug("Entering");
 		this.custTarget.setMaxlength(8);
 		this.custTarget.setInputAllowed(false);
@@ -286,7 +288,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.custTarget.setValidateColumns(new String[] { "TargetCode" });
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for replacing LIKE '%' operator in String of SearchObject
 	 * 
@@ -356,7 +358,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustCIF.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustCIF", "%" + this.custCIF.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(
+							new Filter("CustCIF", "%" + this.custCIF.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -379,7 +382,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				}
 			}
 		}
-		
+
 		if (StringUtils.isNotBlank(this.custName.getValue())) {
 
 			// get the search operator
@@ -388,7 +391,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustDftBranch.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustShrtName", "%" + this.custName.getValue() + "%", searchOpId));
+					searchObject
+							.addFilter(new Filter("CustShrtName", "%" + this.custName.getValue() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -403,7 +407,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustCtgCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("PhoneNumber", "%" + this.custMobile.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(new Filter("PhoneNumber",
+							"%" + this.custMobile.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -420,7 +425,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustTypeCode.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustCRCPR", "%" + this.custEid.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(
+							new Filter("CustCRCPR", "%" + this.custEid.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -437,7 +443,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustTypeCode", "%" + this.custType.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(
+							new Filter("CustTypeCode", "%" + this.custType.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -454,7 +461,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustMName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustNationality", "%" + this.custNationality.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(new Filter("CustNationality",
+							"%" + this.custNationality.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -469,7 +477,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				final int searchOpId = ((SearchOperators) itemCustLName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustAddlVar82", "%" + this.custTarget.getValue() + "%", searchOpId));
+					searchObject
+							.addFilter(new Filter("CustAddlVar82", "%" + this.custTarget.getValue() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -477,12 +486,10 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				}
 			}
 		}
-		if (this.custCategory.getSelectedItem()!=null && 
-				!"#".equals(this.custCategory.getSelectedItem().getValue().toString())) {
-			searchObj = getSearchFilter(searchObj,
-					this.sortOperator_custCategory.getSelectedItem(),
-					this.custCategory.getSelectedItem().getLabel(),
-					"lovDescCustCtgCodeName");
+		if (this.custCategory.getSelectedItem() != null
+				&& !"#".equals(this.custCategory.getSelectedItem().getValue().toString())) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custCategory.getSelectedItem(),
+					this.custCategory.getSelectedItem().getLabel(), "lovDescCustCtgCodeName");
 		}
 
 		// Default Sort on the table
@@ -518,7 +525,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 			}
 			try {
 
-				Class[] paramType = { Class.forName("java.lang.Object"), Class.forName("com.pennant.backend.util.JdbcSearchObject") };
+				Class[] paramType = { Class.forName("java.lang.Object"),
+						Class.forName("com.pennant.backend.util.JdbcSearchObject") };
 				Object[] stringParameter = { object, this.searchObj };
 				if (dialogCtrl.getClass().getMethod("doSetCustomer", paramType) != null) {
 					dialogCtrl.getClass().getMethod("doSetCustomer", paramType).invoke(dialogCtrl, stringParameter);
@@ -531,9 +539,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		doClose(false);
 		logger.debug("Leaving");
 	}
-	
-	
-	public void onClick$btnClear(Event event){
+
+	public void onClick$btnClear(Event event) {
 		logger.debug("Entering");
 
 		this.custCIF.setValue("");
@@ -550,20 +557,21 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.sortOperator_custType.setSelectedIndex(0);
 		this.custNationality.setValue("");
 		this.sortOperator_custNationality.setSelectedIndex(0);
-		this.custTarget.setValue("","");
+		this.custTarget.setValue("", "");
 		this.sortOperator_custTarget.setSelectedIndex(0);
 		this.custCategory.setSelectedIndex(0);
 		this.sortOperator_custCategory.setSelectedIndex(0);
 		this.listBoxCustomer.getItems().clear();
-		
+
 		if (this.searchObj != null) {
 			this.searchObj.clearFilters();
 			paging(getSearchObj());
 		}
 		logger.debug("Leaving");
-		
+
 	}
-	private void doSetFieldProperties(){
+
+	private void doSetFieldProperties() {
 		this.custCIF.setMaxlength(12);
 		this.custDob.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.custName.setMaxlength(25);
@@ -577,8 +585,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	// ******************************************************//
 
 	public JdbcSearchObject<Customer> getSearchObj() {
-	
-		searchObj=new JdbcSearchObject<Customer>(Customer.class,getListRows());
+
+		searchObj = new JdbcSearchObject<Customer>(Customer.class, getListRows());
 		searchObj.addTabelName("Customers_AEView");
 		if (filterList != null && filterList.size() > 0) {
 			for (int k = 0; k < filterList.size(); k++) {
@@ -588,13 +596,14 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		return this.searchObj;
 	}
 
-	public void setSearchObj(JdbcSearchObject<Customer> searchObj) {		
+	public void setSearchObj(JdbcSearchObject<Customer> searchObj) {
 		this.searchObj = searchObj;
 	}
 
 	public Object getDialogCtrl() {
 		return dialogCtrl;
 	}
+
 	public void setDialogCtrl(Object dialogCtrl) {
 		this.dialogCtrl = dialogCtrl;
 	}

@@ -60,18 +60,18 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 	private String finReference;
 	private long contractorId;
 	private String contractorName;
-	private BigDecimal dftRetentionPerc= BigDecimal.ZERO;
+	private BigDecimal dftRetentionPerc = BigDecimal.ZERO;
 	private Date retentionTillDate;
 	private long custID;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
 	private String assetDesc;
-	private BigDecimal assetValue= BigDecimal.ZERO;
-	private BigDecimal totClaimAmt= BigDecimal.ZERO;
-	private BigDecimal totAdvanceAmt= BigDecimal.ZERO;
- 	private BigDecimal lovDescClaimPercent;
- 	
-	private boolean newRecord=false;
+	private BigDecimal assetValue = BigDecimal.ZERO;
+	private BigDecimal totClaimAmt = BigDecimal.ZERO;
+	private BigDecimal totAdvanceAmt = BigDecimal.ZERO;
+	private BigDecimal lovDescClaimPercent;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private ContractorAssetDetail befImage;
 	private LoggedInUser userDetails;
@@ -100,66 +100,67 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 	public String getId() {
 		return finReference;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public long getContractorId() {
 		return contractorId;
 	}
+
 	public void setContractorId(long contractorId) {
 		this.contractorId = contractorId;
 	}
-	
+
 	public long getCustID() {
-    	return custID;
-    }
+		return custID;
+	}
 
 	public void setCustID(long custID) {
-    	this.custID = custID;
-    }
+		this.custID = custID;
+	}
 
 	public String getLovDescCustCIF() {
-    	return lovDescCustCIF;
-    }
+		return lovDescCustCIF;
+	}
 
 	public void setLovDescCustCIF(String lovDescCustCIF) {
-    	this.lovDescCustCIF = lovDescCustCIF;
-    }
+		this.lovDescCustCIF = lovDescCustCIF;
+	}
 
 	public String getLovDescCustShrtName() {
-    	return lovDescCustShrtName;
-    }
+		return lovDescCustShrtName;
+	}
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-    	this.lovDescCustShrtName = lovDescCustShrtName;
-    }
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
 
 	public String getAssetDesc() {
 		return assetDesc;
 	}
+
 	public void setAssetDesc(String assetDesc) {
 		this.assetDesc = assetDesc;
 	}
-	
-	
-		
-	
+
 	public BigDecimal getAssetValue() {
 		return assetValue;
 	}
+
 	public void setAssetValue(BigDecimal assetValue) {
 		this.assetValue = assetValue;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -167,7 +168,7 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -176,12 +177,12 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public ContractorAssetDetail getBefImage(){
+	public ContractorAssetDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ContractorAssetDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ContractorAssetDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -193,29 +194,33 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getLovDescClaimPercent() {
-    	return lovDescClaimPercent;
-    }
+		return lovDescClaimPercent;
+	}
+
 	public void setLovDescClaimPercent(BigDecimal lovDescClaimPercent) {
-    	this.lovDescClaimPercent = lovDescClaimPercent;
-    }
+		this.lovDescClaimPercent = lovDescClaimPercent;
+	}
 
 	public BigDecimal getTotClaimAmt() {
-    	return totClaimAmt;
-    }
+		return totClaimAmt;
+	}
+
 	public void setTotClaimAmt(BigDecimal totClaimAmt) {
-    	this.totClaimAmt = totClaimAmt;
-    }
+		this.totClaimAmt = totClaimAmt;
+	}
 
 	public BigDecimal getTotAdvanceAmt() {
-    	return totAdvanceAmt;
-    }
+		return totAdvanceAmt;
+	}
+
 	public void setTotAdvanceAmt(BigDecimal totAdvanceAmt) {
-    	this.totAdvanceAmt = totAdvanceAmt;
-    }
+		this.totAdvanceAmt = totAdvanceAmt;
+	}
 
 	public String getContractorName() {
 		return contractorName;
 	}
+
 	public void setContractorName(String contractorName) {
 		this.contractorName = contractorName;
 	}
@@ -223,6 +228,7 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 	public BigDecimal getDftRetentionPerc() {
 		return dftRetentionPerc;
 	}
+
 	public void setDftRetentionPerc(BigDecimal dftRetentionPerc) {
 		this.dftRetentionPerc = dftRetentionPerc;
 	}
@@ -230,6 +236,7 @@ public class ContractorAssetDetail extends AbstractWorkflowEntity {
 	public Date getRetentionTillDate() {
 		return retentionTillDate;
 	}
+
 	public void setRetentionTillDate(Date retentionTillDate) {
 		this.retentionTillDate = retentionTillDate;
 	}

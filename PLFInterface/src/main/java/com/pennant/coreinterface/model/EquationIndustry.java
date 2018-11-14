@@ -56,48 +56,53 @@ public class EquationIndustry extends AbstractWorkflowEntity {
 	public EquationIndustry() {
 		super();
 	}
-	
+
 	private String industryCode;
 	private String industryDesc;
 	private String subSectorCode;
 	private BigDecimal industryLimit;
-	private boolean industryIsActive;	
-	
+	private boolean industryIsActive;
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getIndustryCode() {
 		return industryCode;
 	}
+
 	public void setIndustryCode(String industryCode) {
 		this.industryCode = industryCode;
 	}
-	
+
 	public String getIndustryDesc() {
 		return industryDesc;
 	}
+
 	public void setIndustryDesc(String industryDesc) {
 		this.industryDesc = industryDesc;
 	}
-	
+
 	public String getSubSectorCode() {
 		return subSectorCode;
 	}
+
 	public void setSubSectorCode(String subSectorCode) {
 		this.subSectorCode = subSectorCode;
 	}
-	
+
 	public BigDecimal getIndustryLimit() {
 		return industryLimit;
 	}
+
 	public void setIndustryLimit(BigDecimal industryLimit) {
 		this.industryLimit = industryLimit;
 	}
-	
+
 	public boolean isIndustryIsActive() {
 		return industryIsActive;
 	}
+
 	public void setIndustryIsActive(boolean industryIsActive) {
 		this.industryIsActive = industryIsActive;
 	}

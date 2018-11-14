@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,11 +68,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class SalutationDAOImpl extends BasicDao<Salutation> implements SalutationDAO {
 	private static Logger logger = Logger.getLogger(SalutationDAOImpl.class);
-	
+
 	public SalutationDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Salutations details by key field
 	 * 
@@ -86,13 +85,15 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 	@Override
 	public Salutation getSalutationById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Salutation salutation = new Salutation();
 		salutation.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("Select SalutationCode, SaluationDesc, SalutationIsActive,SalutationGenderCode,SystemDefault,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		selectSql
+				.append("Select SalutationCode, SaluationDesc, SalutationIsActive,SalutationGenderCode,SystemDefault,");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTSalutations");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SalutationCode =:SalutationCode");
@@ -107,11 +108,11 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 			logger.error("Exception: ", e);
 			salutation = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return salutation;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String salutationCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -147,7 +148,7 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(Salutation salutation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -158,8 +159,10 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		sql.append(" (SalutationCode, SaluationDesc, SalutationIsActive,SalutationGenderCode,SystemDefault,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" values(:SalutationCode, :SaluationDesc, :SalutationIsActive, :SalutationGenderCode,:SystemDefault,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" values(:SalutationCode, :SaluationDesc, :SalutationIsActive, :SalutationGenderCode,:SystemDefault,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -171,11 +174,11 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return salutation.getId();
 	}
-	
+
 	@Override
 	public void update(Salutation salutation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -184,8 +187,10 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		StringBuilder sql = new StringBuilder("update BMTSalutations");
 		sql.append(tableType.getSuffix());
 		sql.append(" set SaluationDesc = :SaluationDesc,");
-		sql.append(" SalutationIsActive = :SalutationIsActive, SalutationGenderCode = :SalutationGenderCode,SystemDefault=:SystemDefault,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
+		sql.append(
+				" SalutationIsActive = :SalutationIsActive, SalutationGenderCode = :SalutationGenderCode,SystemDefault=:SystemDefault,");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		sql.append(" where SalutationCode =:SalutationCode");
@@ -207,15 +212,15 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 	@Override
 	public void delete(Salutation salutation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from BMTSalutations");
 		sql.append(tableType.getSuffix());
 		sql.append(" where SalutationCode =:SalutationCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());		
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(salutation);
 		int recordCount = 0;
 
@@ -236,7 +241,7 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 	@Override
 	public String getSystemDefaultCount(String salutationCode) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Salutation salutation = new Salutation();
 		salutation.setSalutationCode(salutationCode);
 		salutation.setSystemDefault(true);
@@ -251,35 +256,35 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		String dftSalutationCode = "";
 		try {
 			dftSalutationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-        } catch (Exception e) {
-        	logger.warn("Exception: ", e);
-        	dftSalutationCode = "";
-        }
-		
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			dftSalutationCode = "";
+		}
+
 		logger.debug(Literal.LEAVING);
 		return dftSalutationCode;
 	}
 
 	@Override
-    public void updateSytemDefaultByGender(String genderCode, boolean systemDefault) {
+	public void updateSytemDefaultByGender(String genderCode, boolean systemDefault) {
 		logger.debug(Literal.ENTERING);
-		
-		StringBuilder updateSql = new StringBuilder();		
+
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update BMTSalutations  set SystemDefault=:SystemDefault ");
 		updateSql.append(" Where SalutationGenderCode = :SalutationGenderCode");
 
-		logger.debug("updateSql: "+ updateSql.toString());
-		
+		logger.debug("updateSql: " + updateSql.toString());
+
 		Salutation salutation = new Salutation();
 		salutation.setSalutationGenderCode(genderCode);
 		salutation.setSystemDefault(systemDefault);
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		this.jdbcTemplate.update(updateSql.toString(),beanParameters);
-		
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
 		logger.debug(Literal.LEAVING);
-    }
-	
+	}
+
 	@Override
 	public int getGenderCodeCount(String genderCode, String type) {
 		logger.debug("Entering");

@@ -62,12 +62,10 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>IRRCode</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>IRRCode</code> with set of CRUD operations.
  */
 public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 	private static Logger logger = Logger.getLogger(IRRCodeDAOImpl.class);
-
 
 	public IRRCodeDAOImpl() {
 		super();
@@ -80,7 +78,8 @@ public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" iRRID, iRRCode, iRRCodeDesc, active, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From IRRCodes");
 		sql.append(type);
 		sql.append(" Where iRRID = :IRRID");
@@ -149,10 +148,12 @@ public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 		StringBuilder sql = new StringBuilder(" insert into IRRCodes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (iRRID, iRRCode, iRRCodeDesc, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iRRID, :IRRCode, :IRRCodeDesc, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (iRRCode.getId() <= 0) {
@@ -200,8 +201,6 @@ public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
-	
 
 	@Override
 	public void update(IRRCode entity, TableType tableType) {

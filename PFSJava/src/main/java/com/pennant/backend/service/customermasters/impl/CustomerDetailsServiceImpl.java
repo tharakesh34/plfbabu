@@ -2398,10 +2398,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		if (customer.getCasteId() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("Caste","CasteId", customer.getCasteId()));
+			auditDetail.setErrorDetail(validateMasterCode("Caste", "CasteId", customer.getCasteId()));
 		}
 		if (customer.getReligionId() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("Religion","ReligionId", customer.getReligionId()));
+			auditDetail.setErrorDetail(validateMasterCode("Religion", "ReligionId", customer.getReligionId()));
 		}
 		if (StringUtils.isNotBlank(customer.getSubCategory())) {
 			List<ValueLabel> subCategories = PennantStaticListUtil.getSubCategoriesList();

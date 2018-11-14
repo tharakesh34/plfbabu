@@ -30,7 +30,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 	private FeeWaiverHeader befImage;
 	private String lovValue;
 	private LoggedInUser userDetails;
-	private boolean isAlwtoProceed=true;
+	private boolean isAlwtoProceed = true;
 
 	private List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
 
@@ -167,5 +167,4 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		this.isAlwtoProceed = isAlwtoProceed;
 	}
 
-	
 }

@@ -7,12 +7,12 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinBeneficiary extends AbstractWorkflowEntity  implements Entity {
+public class FinBeneficiary extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long beneficiaryID = Long.MIN_VALUE;
 	private String finReference;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private FinBeneficiary befImage;
 	private LoggedInUser userDetails;
 	private Beneficiary beneficiary;
@@ -34,8 +34,8 @@ public class FinBeneficiary extends AbstractWorkflowEntity  implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("beneficiary");
 		return excludeFields;
 	}
@@ -44,10 +44,10 @@ public class FinBeneficiary extends AbstractWorkflowEntity  implements Entity {
 		return beneficiaryID;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.beneficiaryID = id;
 	}
-	
+
 	public long getBeneficiaryID() {
 		return beneficiaryID;
 	}
@@ -55,10 +55,11 @@ public class FinBeneficiary extends AbstractWorkflowEntity  implements Entity {
 	public void setBeneficiaryID(long beneficiaryID) {
 		this.beneficiaryID = beneficiaryID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}

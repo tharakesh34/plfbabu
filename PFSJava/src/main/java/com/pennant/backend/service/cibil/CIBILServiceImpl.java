@@ -45,14 +45,15 @@ public class CIBILServiceImpl implements CIBILService {
 	}
 
 	@Override
-	public void updateFileStatus(long headerid, String status, long totalRecords,long processedRecords,long successCount,long failedCount, String remarks) {
-		cibildao.updateFileStatus(headerid, status, totalRecords,processedRecords,successCount,failedCount,remarks);
+	public void updateFileStatus(long headerid, String status, long totalRecords, long processedRecords,
+			long successCount, long failedCount, String remarks) {
+		cibildao.updateFileStatus(headerid, status, totalRecords, processedRecords, successCount, failedCount, remarks);
 	}
 
 	@Override
 	public void logFileInfoException(long id, String finReference, String reason) {
 		cibildao.logFileInfoException(id, finReference, reason);
-		
+
 	}
 
 	@Override

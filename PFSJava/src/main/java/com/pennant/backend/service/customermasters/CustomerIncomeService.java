@@ -57,14 +57,23 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
  */
 public interface CustomerIncomeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome);
+
 	CustomerIncome getApprovedCustomerIncomeById(CustomerIncome customerIncome);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	//BigDecimal getTotalIncomeByCustomer(long custId);
 	Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF);
+
 	List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF);
+
 	AuditDetail doValidations(CustomerIncome customerIncome);
+
 	int getVersion(CustomerIncome customerIncome);
 }

@@ -31,20 +31,20 @@ import org.json.JSONObject;
 
 public class DocumentConvertion {
 
-	private Workbook			workbook				= null;
-	private FormulaEvaluator	objFormulaEvaluator		= null;						// for cell value formating
-	public static final String	SEPARETOR				= "-";
-	private DataFormatter		objDefaultFormat		= new DataFormatter();		// for cell value formating
-	public static final String	TRUE					= "true";
-	public static final String	FALSE					= "false";
-	public static final String	_ID						= "_id";
-	public static final String	NA						= "NA";
-	public static final String	A						= "A";
-	public static final String	ROOTKEY					= "<ROOT>_id";
-	public static final String	SAMPLE_DATE_FRMT		= "yyyy-MM-dd'T'hh:mm:ss";
-	public static final String	SAMPLE_DATE_FRMT_OLD	= "dd-MMM-yyyy";
-	public static final String	VAS						= "vas";
-	public static final String	EXT_DETAILS				= "extendedDetails";
+	private Workbook workbook = null;
+	private FormulaEvaluator objFormulaEvaluator = null; // for cell value formating
+	public static final String SEPARETOR = "-";
+	private DataFormatter objDefaultFormat = new DataFormatter(); // for cell value formating
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
+	public static final String _ID = "_id";
+	public static final String NA = "NA";
+	public static final String A = "A";
+	public static final String ROOTKEY = "<ROOT>_id";
+	public static final String SAMPLE_DATE_FRMT = "yyyy-MM-dd'T'hh:mm:ss";
+	public static final String SAMPLE_DATE_FRMT_OLD = "dd-MMM-yyyy";
+	public static final String VAS = "vas";
+	public static final String EXT_DETAILS = "extendedDetails";
 
 	/**
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
@@ -93,7 +93,7 @@ public class DocumentConvertion {
 			if (isJsonObjectValueEmpty(finalRequestJson)) {
 				finalRequestJson = new JSONObject(); // resting
 			}
-			if(rowIndex != 0) {
+			if (rowIndex != 0) {
 				jsonArray.put(finalRequestJson);
 			}
 		}

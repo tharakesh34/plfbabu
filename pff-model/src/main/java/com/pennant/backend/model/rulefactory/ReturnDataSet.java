@@ -9,10 +9,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode",
-		"tranDesc", "revTranCode", "account", "drOrCr", "acCcy",
-		"postAmount"})
+@XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode", "tranDesc", "revTranCode", "account",
+		"drOrCr", "acCcy", "postAmount" })
 public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 5269669204845337757L;
@@ -22,7 +22,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String postref;
 	private String postingId;
 	private String finReference;
-	@XmlElement(name="accEvent")
+	@XmlElement(name = "accEvent")
 	private String finEvent;
 	private String lovDescEventCodeName;
 	@XmlElement
@@ -57,8 +57,8 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String tranOrderId;
 	private String postToSys;
 	private String postBranch;
-	private BigDecimal	exchangeRate = BigDecimal.ZERO;
-	private BigDecimal	postAmountLcCcy = BigDecimal.ZERO;
+	private BigDecimal exchangeRate = BigDecimal.ZERO;
+	private BigDecimal postAmountLcCcy = BigDecimal.ZERO;
 
 	private String accountType;
 	//External Purpose fields
@@ -68,31 +68,28 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private long accSetId;
 	private String finType;
 	private String CustCIF;
-//	private String finBranch;
+	//	private String finBranch;
 	private boolean flagCreateNew;
 	private boolean flagCreateIfNF;
 	private boolean internalAc;
 	private int formatter = 0;
 	private String finPurpose;
 	private String postingGroupBy;
-	
+
 	private String secondaryAccounts;//multiple accounts with ";" separated
 	private String finRpyFor;
 	private String userBranch;
 	private long oldLinkedTranId = 0;
 	private String entityCode;
 	/**
-	 * Possible values 
-	 * 0- NON EOD posting 
-	 * 1- EOD Postings 
-	 * 2- EOD Postings and Accounts Updates
+	 * Possible values 0- NON EOD posting 1- EOD Postings 2- EOD Postings and Accounts Updates
 	 */
-	private int	postCategory = 0;//FIXME:How to use constants-AccountConstants.POSTING_CATEGORY_NORMAL;;
-	
+	private int postCategory = 0;//FIXME:How to use constants-AccountConstants.POSTING_CATEGORY_NORMAL;;
+
 	public ReturnDataSet() {
-		
+
 	}
-	
+
 	@Override
 	public boolean isNew() {
 		return false;
@@ -151,14 +148,14 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	public void setFinEvent(String finEvent) {
 		this.finEvent = finEvent;
 	}
-	
+
 	public String getLovDescEventCodeName() {
-    	return lovDescEventCodeName;
-    }
+		return lovDescEventCodeName;
+	}
 
 	public void setLovDescEventCodeName(String lovDescEventCodeName) {
-    	this.lovDescEventCodeName = lovDescEventCodeName;
-    }
+		this.lovDescEventCodeName = lovDescEventCodeName;
+	}
 
 	public Date getPostDate() {
 		return postDate;
@@ -183,14 +180,14 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	public void setTranCode(String tranCode) {
 		this.tranCode = tranCode;
 	}
-	
+
 	public String getTranDesc() {
-    	return tranDesc;
-    }
+		return tranDesc;
+	}
 
 	public void setTranDesc(String tranDesc) {
-    	this.tranDesc = tranDesc;
-    }
+		this.tranDesc = tranDesc;
+	}
 
 	public String getRevTranCode() {
 		return revTranCode;
@@ -288,13 +285,13 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 		CustCIF = custCIF;
 	}
 
-//	public String getFinBranch() {
-//		return finBranch;
-//	}
-//
-//	public void setFinBranch(String finBranch) {
-//		this.finBranch = finBranch;
-//	}
+	//	public String getFinBranch() {
+	//		return finBranch;
+	//	}
+	//
+	//	public void setFinBranch(String finBranch) {
+	//		this.finBranch = finBranch;
+	//	}
 
 	public boolean isFlagCreateNew() {
 		return flagCreateNew;
@@ -321,67 +318,68 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	}
 
 	public void setTransOrder(int tranOrder) {
-	    this.transOrder = tranOrder;
-    }
+		this.transOrder = tranOrder;
+	}
+
 	public int getTransOrder() {
-	    return transOrder;
-    }
+		return transOrder;
+	}
 
 	public void setAmountType(String amountType) {
-	    this.amountType = amountType;
-    }
+		this.amountType = amountType;
+	}
 
 	public String getAmountType() {
-	    return amountType;
-    }
+		return amountType;
+	}
 
 	public void setTranOrderId(String tranOrderId) {
-	    this.tranOrderId = tranOrderId;
-    }
+		this.tranOrderId = tranOrderId;
+	}
 
 	public String getTranOrderId() {
-	    return tranOrderId;
-    }
+		return tranOrderId;
+	}
 
 	public void setCustId(long custId) {
-	    this.custId = custId;
-    }
+		this.custId = custId;
+	}
 
 	public long getCustId() {
-	    return custId;
-    }
+		return custId;
+	}
 
 	public String getAcCcy() {
-	    return acCcy;
-    }
+		return acCcy;
+	}
 
 	public void setAcCcy(String acCcy) {
-	    this.acCcy = acCcy;
-    }
+		this.acCcy = acCcy;
+	}
 
 	public int getFormatter() {
-	    return formatter;
-    }
+		return formatter;
+	}
 
 	public void setFormatter(int formatter) {
-	    this.formatter = formatter;
-    }
+		this.formatter = formatter;
+	}
 
 	public String getPostToSys() {
-	    return postToSys;
-    }
+		return postToSys;
+	}
 
 	public void setPostToSys(String postToSys) {
-	    this.postToSys = postToSys;
-    }
+		this.postToSys = postToSys;
+	}
 
 	public int getDerivedTranOrder() {
-	    return derivedTranOrder;
-    }
+		return derivedTranOrder;
+	}
 
 	public void setDerivedTranOrder(int derivedTranOrder) {
-	    this.derivedTranOrder = derivedTranOrder;
-    }
+		this.derivedTranOrder = derivedTranOrder;
+	}
 
 	public String getFinPurpose() {
 		return finPurpose;
@@ -394,6 +392,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	public String getPostBranch() {
 		return postBranch;
 	}
+
 	public void setPostBranch(String postBranch) {
 		this.postBranch = postBranch;
 	}
@@ -433,6 +432,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	public String getPostingGroupBy() {
 		return postingGroupBy;
 	}
+
 	public void setPostingGroupBy(String postingGroupBy) {
 		this.postingGroupBy = postingGroupBy;
 	}
@@ -440,6 +440,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	public String getAccSetCodeName() {
 		return accSetCodeName;
 	}
+
 	public void setAccSetCodeName(String accSetCodeName) {
 		this.accSetCodeName = accSetCodeName;
 	}
@@ -447,6 +448,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	public long getAccSetId() {
 		return accSetId;
 	}
+
 	public void setAccSetId(long accSetId) {
 		this.accSetId = accSetId;
 	}
@@ -507,5 +509,4 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 		this.entityCode = entityCode;
 	}
 
-	
 }

@@ -36,7 +36,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @param msgFormat
 	 * @return ChequeVerification
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification, String msgFormat)
 			throws JaxenException {
@@ -50,14 +50,15 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(chequeVerification, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -74,7 +75,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @param header
 	 * @return
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private ChequeVerification processChequeVerificationResponse(OMElement responseElement, AHBMQHeader header)
 			throws JaxenException {
@@ -102,7 +103,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 			chequeVerificationRes.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 			chequeVerificationRes.setTimeStamp(Long.parseLong(PFFXmlUtil.getStringValue(detailElement, "TimeStamp")));
 
-			chequeVerificationRes.setChequeStsList(getChequeStsList(detailElement, absPath+"/ChequeStatus"));
+			chequeVerificationRes.setChequeStsList(getChequeStsList(detailElement, absPath + "/ChequeStatus"));
 
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
@@ -145,8 +146,8 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	}
 
 	/**
-	 * Prepare Cheque Verification Request 
-	 *  
+	 * Prepare Cheque Verification Request
+	 * 
 	 * @param chequeVerification
 	 * @param factory
 	 * @return OMElement
@@ -161,11 +162,12 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNum", PFFXmlUtil.getReferenceNumber());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CIF", chequeVerification.getCustCIF());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "FinanceRef", chequeVerification.getFinanceRef());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ChequeRangeFrom", chequeVerification.getChequeRangeFrom());
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ChequeRangeFrom",
+				chequeVerification.getChequeRangeFrom());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ChequeRangeTo", chequeVerification.getChequeRangeTo());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "Remarks", chequeVerification.getRemarks());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "BranchCode", chequeVerification.getBranchCode());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				Long.valueOf(PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME)));
 
 		requestElement.addChild(detailRequest);

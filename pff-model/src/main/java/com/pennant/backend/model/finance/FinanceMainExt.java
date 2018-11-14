@@ -35,7 +35,7 @@ public class FinanceMainExt implements Serializable {
 	public void setRepayIBAN(String repayIBAN) {
 		this.repayIBAN = repayIBAN;
 	}
-	
+
 	public String getNstlAccNum() {
 		return nstlAccNum;
 	}

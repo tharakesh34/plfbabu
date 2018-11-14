@@ -11,16 +11,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BreData {
 
-	private String		cif;
+	private String cif;
 
 	@XmlElement(name = "APPLICATION")
-	private Application	application;
+	private Application application;
 
 	@XmlElement(name = "APPLICANT")
-	private Applicant	applicant;
+	private Applicant applicant;
 
 	@XmlElement(name = "COAPPLICANT")
-	private CoApplicant	coApplicant;
+	private CoApplicant coApplicant;
 
 	public String getCif() {
 		return cif;

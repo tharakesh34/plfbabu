@@ -14,7 +14,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinTypeVasDetailValidation {
-	
+
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 
 	public FinTypeVASProductsDAO getFinTypeVASProductsDAO() {
@@ -25,11 +25,7 @@ public class FinTypeVasDetailValidation {
 		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
 	}
 
-	
-
-	
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -51,16 +47,16 @@ public class FinTypeVasDetailValidation {
 					finTypeVASProducts.getFinType(), finTypeVASProducts.getVasProduct(), "_Temp");
 		}
 
-		FinTypeVASProducts beffinTypeVASProductsDetail =getFinTypeVASProductsDAO().getFinTypeVASProducts(
-				finTypeVASProducts.getFinType(), finTypeVASProducts.getVasProduct(), "");
+		FinTypeVASProducts beffinTypeVASProductsDetail = getFinTypeVASProductsDAO()
+				.getFinTypeVASProducts(finTypeVASProducts.getFinType(), finTypeVASProducts.getVasProduct(), "");
 		FinTypeVASProducts oldfinTypeVASProductsDetail = finTypeVASProducts.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
 		valueParm[0] = finTypeVASProducts.getFinType();
 		valueParm[1] = finTypeVASProducts.getVasProduct();
-			errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
-			errParm[1] = PennantJavaUtil.getLabel("label_FinanceTypeVASProducts") + ":" + valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_FinanceTypeVASProducts") + ":" + valueParm[1];
 
 		if (finTypeVASProducts.isNew()) { // for New record or new record into work flow
 
@@ -72,13 +68,11 @@ public class FinTypeVasDetailValidation {
 
 				if (finTypeVASProducts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (beffinTypeVASProductsDetail != null || tempfinTypeVASProductsDetail != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beffinTypeVASProductsDetail == null || tempfinTypeVASProductsDetail != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -90,15 +84,15 @@ public class FinTypeVasDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (oldfinTypeVASProductsDetail != null
-							&& !oldfinTypeVASProductsDetail.getLastMntOn().equals(beffinTypeVASProductsDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+					if (oldfinTypeVASProductsDetail != null && !oldfinTypeVASProductsDetail.getLastMntOn()
+							.equals(beffinTypeVASProductsDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -109,7 +103,8 @@ public class FinTypeVasDetailValidation {
 				}
 
 				if (tempfinTypeVASProductsDetail != null && oldfinTypeVASProductsDetail != null
-						&& !oldfinTypeVASProductsDetail.getLastMntOn().equals(tempfinTypeVASProductsDetail.getLastMntOn())) {
+						&& !oldfinTypeVASProductsDetail.getLastMntOn()
+								.equals(tempfinTypeVASProductsDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
@@ -122,6 +117,5 @@ public class FinTypeVasDetailValidation {
 		}
 		return auditDetail;
 	}
-
 
 }

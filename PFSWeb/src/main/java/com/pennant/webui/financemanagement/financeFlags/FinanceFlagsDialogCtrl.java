@@ -97,78 +97,77 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FinanceFlagsDialogCtrl.class);
-	
-	protected Window 				window_FinanceFlagsDialog; 		// autoWired
-	protected Borderlayout 			borderlayoutFinanceFlags; 		// autoWired
-	protected Button 				btnNew_FinFlagsDetail; 			// autoWired
-	protected Listbox 				listBoxFinanceFlags; 			// autoWired
-	protected ExtendedCombobox 		finReference;
+
+	protected Window window_FinanceFlagsDialog; // autoWired
+	protected Borderlayout borderlayoutFinanceFlags; // autoWired
+	protected Button btnNew_FinFlagsDetail; // autoWired
+	protected Listbox listBoxFinanceFlags; // autoWired
+	protected ExtendedCombobox finReference;
 
 	private List<FinFlagsDetail> finFlagsDetailList = new ArrayList<FinFlagsDetail>();
 	private transient List<ValueLabel> finFlagsCompList = PennantAppUtil.getFlagDetails();
 
-	protected Grid 					grid_finflags;
-	protected Label					finFlags_finType;
-	protected Label					finFlags_finReference;
-	protected Label					finFlags_finCcy;
-	protected Label					finFlags_profitDaysBasis;
-	protected Label					finFlags_noOfTerms;
-	protected Label					finFlags_grcEndDate;
-	protected Label					finFlags_startDate;
-	protected Label					finFlags_maturityDate;
-	protected Decimalbox			finFlags_purchasePrice;
-	protected Decimalbox			finFlags_otherExp;
-	protected Decimalbox			finFlags_totalCost;
-	protected Decimalbox			finFlags_totalPft;
-	protected Decimalbox			finFlags_contractPrice;
-	public 	  Label 				finFlags_effRate;
+	protected Grid grid_finflags;
+	protected Label finFlags_finType;
+	protected Label finFlags_finReference;
+	protected Label finFlags_finCcy;
+	protected Label finFlags_profitDaysBasis;
+	protected Label finFlags_noOfTerms;
+	protected Label finFlags_grcEndDate;
+	protected Label finFlags_startDate;
+	protected Label finFlags_maturityDate;
+	protected Decimalbox finFlags_purchasePrice;
+	protected Decimalbox finFlags_otherExp;
+	protected Decimalbox finFlags_totalCost;
+	protected Decimalbox finFlags_totalPft;
+	protected Decimalbox finFlags_contractPrice;
+	public Label finFlags_effRate;
 
-	protected Label					label_FinanceFlagsDialog_FinType;
-	protected Label					label_FinanceFlagsDialog_FinReference;
-	protected Label					label_FinanceFlagsDialog_FinCcy;
-	protected Label					label_FinanceFlagsDialog_ProfitDaysBasis;
-	protected Label					label_FinanceFlagsDialog_NoOfTerms;
-	protected Label					label_FinanceFlagsDialog_GrcEndDate;
-	protected Label					label_FinanceFlagsDialog_StartDate;
-	protected Label					label_FinanceFlagsDialog_MaturityDate;
-	protected Label					label_FinanceFlagsDialog_PurchasePrice;
-	protected Label					label_FinanceFlagsDialog_OthExpenses;
-	protected Label					label_FinanceFlagsDialog_TotalCost;
-	protected Label					label_FinanceFlagsDialog_TotalPft;
-	protected Label					label_FinanceFlagsDialog_ContractPrice;
-	protected Label 				label_FinanceFlagsDialog_EffectiveRateOfReturn;
+	protected Label label_FinanceFlagsDialog_FinType;
+	protected Label label_FinanceFlagsDialog_FinReference;
+	protected Label label_FinanceFlagsDialog_FinCcy;
+	protected Label label_FinanceFlagsDialog_ProfitDaysBasis;
+	protected Label label_FinanceFlagsDialog_NoOfTerms;
+	protected Label label_FinanceFlagsDialog_GrcEndDate;
+	protected Label label_FinanceFlagsDialog_StartDate;
+	protected Label label_FinanceFlagsDialog_MaturityDate;
+	protected Label label_FinanceFlagsDialog_PurchasePrice;
+	protected Label label_FinanceFlagsDialog_OthExpenses;
+	protected Label label_FinanceFlagsDialog_TotalCost;
+	protected Label label_FinanceFlagsDialog_TotalPft;
+	protected Label label_FinanceFlagsDialog_ContractPrice;
+	protected Label label_FinanceFlagsDialog_EffectiveRateOfReturn;
 
-	protected Row 					row1;
-	protected Row 					row2;
-	protected Row 					row3;
-	protected Row 					row4;
-	protected Row 					row5;
-	protected Row 					row6;
+	protected Row row1;
+	protected Row row2;
+	protected Row row3;
+	protected Row row4;
+	protected Row row5;
+	protected Row row6;
 
-	protected transient 	String 			oldVar_finReference;
-	
-	private boolean		   			enqModule				= false;
-	private transient 		FinanceFlagsListCtrl financeFlagsListCtrl;
-	private 		  		FinanceFlag financeFlag;
-	private 				FinanceFlagsService financeFlagsService;
+	protected transient String oldVar_finReference;
+
+	private boolean enqModule = false;
+	private transient FinanceFlagsListCtrl financeFlagsListCtrl;
+	private FinanceFlag financeFlag;
+	private FinanceFlagsService financeFlagsService;
 	private PagedListWrapper<FinanceFlag> finFlagslistDetailPagedListWrapper;
 	private PagedListService pagedListService;
-	private String tempflagcode="";
-	private FinanceWorkFlowService  financeWorkFlowService;
-	private FinanceMain  financeMain;
+	private String tempflagcode = "";
+	private FinanceWorkFlowService financeWorkFlowService;
+	private FinanceMain financeMain;
 	private EventManager eventManager;
-
 
 	/**
 	 * default constructor.<br>
@@ -187,9 +186,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	// ************************************************* //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceFlags object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceFlags object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -214,16 +212,16 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 				BeanUtils.copyProperties(this.financeFlag, befImage);
 				this.financeFlag.setBefImage(befImage);
 				setFinanceFlag(this.financeFlag);
-			}else {
+			} else {
 				setFinanceFlag(null);
 			}
-			
-			if(arguments.containsKey("financeMain")){
-				financeMain=(FinanceMain) arguments.get("financeMain");
+
+			if (arguments.containsKey("financeMain")) {
+				financeMain = (FinanceMain) arguments.get("financeMain");
 			}
 
-			if(!getFinanceFlag().isNewRecord()){
-				doLoadWorkFlow(this.financeFlag.isWorkflow(), this.financeFlag.getWorkflowId(), 
+			if (!getFinanceFlag().isNewRecord()) {
+				doLoadWorkFlow(this.financeFlag.isWorkflow(), this.financeFlag.getWorkflowId(),
 						this.financeFlag.getNextTaskId());
 			}
 
@@ -236,10 +234,9 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 				btnCancel.setVisible(true);
 			}
 
-			
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			// READ OVERHANDED parameters !
 			// we get the FinanceFlags controller. So we have access
 			// to it and can synchronize the shown data when we do insert, edit
@@ -255,7 +252,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.listBoxFinanceFlags.setHeight(getListBoxHeight(10));
 			if (getFinanceFlag().isNewRecord()) {
 				fillfinflags(financeMain);
-			}else{
+			} else {
 				doShowDialog();
 			}
 		} catch (Exception e) {
@@ -264,28 +261,27 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FinanceFlagsDialog",getRole());
+		getUserWorkspace().allocateAuthorities("FinanceFlagsDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnEdit"));
 		//this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnDelete"));
 		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		this.btnNew_FinFlagsDetail.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnNew_FinFlagsDetail"));
+		this.btnNew_FinFlagsDetail
+				.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnNew_FinFlagsDetail"));
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -293,10 +289,10 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		if(!getFinanceFlag().isNewRecord()){
-			if (isWorkFlowEnabled()){
+		if (!getFinanceFlag().isNewRecord()) {
+			if (isWorkFlowEnabled()) {
 				this.groupboxWf.setVisible(true);
-			}else{
+			} else {
 				this.groupboxWf.setVisible(false);
 			}
 		}
@@ -314,6 +310,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		doSave();
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -326,7 +323,6 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	/**
 	 * Deletes a FinanceFlags object from database.<br>
 	 * 
@@ -338,40 +334,41 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		final FinanceFlag afinanceFlags = new FinanceFlag();
 		BeanUtils.copyProperties(getFinanceFlag(), afinanceFlags);
 
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_FinanceFlagsDialog_finReference.value")+" : "+afinanceFlags.getFinReference();
-		
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinanceFlagsDialog_finReference.value") + " : "
+				+ afinanceFlags.getFinReference();
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(afinanceFlags.getRecordType())){
-				afinanceFlags.setVersion(afinanceFlags.getVersion()+1);
+			if (StringUtils.isBlank(afinanceFlags.getRecordType())) {
+				afinanceFlags.setVersion(afinanceFlags.getVersion() + 1);
 				afinanceFlags.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					afinanceFlags.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					afinanceFlags.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), afinanceFlags.getNextTaskId(), afinanceFlags);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), afinanceFlags.getNextTaskId(),
+							afinanceFlags);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(afinanceFlags,tranType)){
+				if (doProcess(afinanceFlags, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
 	}
-
 
 	// ****************************************************************
 	// ********************** Components events ***********************
@@ -479,20 +476,21 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 *            aFinanceFlags
 	 */
 	private void doWriteComponentsToBean(FinanceFlag aFinanceFlags) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		//FinReference
 		try {
 			aFinanceFlags.setFinReference(this.finReference.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if(this.listBoxFinanceFlags.getVisibleItemCount() == 0){
-				throw new WrongValueException(this.btnNew_FinFlagsDetail,Labels.getLabel("label_FinFlagsDetailList_Mandatory"));
+			if (this.listBoxFinanceFlags.getVisibleItemCount() == 0) {
+				throw new WrongValueException(this.btnNew_FinFlagsDetail,
+						Labels.getLabel("label_FinFlagsDetailList_Mandatory"));
 			}
 			aFinanceFlags.setFinFlagDetailList(finFlagsDetailList);
 		} catch (WrongValueException we) {
@@ -501,7 +499,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 		doRemoveValidation();
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -516,8 +514,9 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		if(!this.finReference.isReadonly()){
-			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceFlagsDialog_finReference.value"), null, true,true));
+		if (!this.finReference.isReadonly()) {
+			this.finReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceFlagsDialog_finReference.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -556,7 +555,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
-		
+
 		aFinanceFlags.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceFlags.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFinanceFlags.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -582,27 +581,27 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)){
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
 					processCompleted = true;
-				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
-				} else if(StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)){
-					List<String> finTypeList =getFinanceFlagsService().getScheduleEffectModuleList(true);
+				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
+					List<String> finTypeList = getFinanceFlagsService().getScheduleEffectModuleList(true);
 					boolean isScheduleModify = false;
-					for(String fintypeList :finTypeList){
-						if(StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS) &&
-								StringUtils.equals(FinanceConstants.FINSER_EVENT_FINFLAGS,fintypeList)){
+					for (String fintypeList : finTypeList) {
+						if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS)
+								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_FINFLAGS, fintypeList)) {
 							isScheduleModify = true;
 							break;
 						}
 					}
-					if(isScheduleModify){
+					if (isScheduleModify) {
 						aFinanceFlags.setScheduleChange(true);
-					}else{
+					} else {
 						aFinanceFlags.setScheduleChange(false);
 					}
 				} else {
-					FinanceFlag tFinanceFlag=  (FinanceFlag) auditHeader.getAuditDetail().getModelData();
+					FinanceFlag tFinanceFlag = (FinanceFlag) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, aFinanceFlags);
 					auditHeader.getAuditDetail().setModelData(tFinanceFlag);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -614,12 +613,12 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 				}
 
 				finishedTasks += (method + ";");
-				FinanceFlag tFinanceFlag=  (FinanceFlag) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tFinanceFlag,finishedTasks);
+				FinanceFlag tFinanceFlag = (FinanceFlag) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tFinanceFlag, finishedTasks);
 
 			}
 
-			FinanceFlag tFinanceFlag=  (FinanceFlag) auditHeader.getAuditDetail().getModelData();
+			FinanceFlag tFinanceFlag = (FinanceFlag) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tFinanceFlag);
@@ -627,11 +626,11 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
 			}
-			
+
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)|| "Save".equals(userAction.getSelectedItem().getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, aFinanceFlags);
 					auditHeader.getAuditDetail().setModelData(tFinanceFlag);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -646,15 +645,14 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	protected String getServiceTasks(String taskId, FinanceFlag financeFlag,
-			String finishedTasks) {
+
+	protected String getServiceTasks(String taskId, FinanceFlag financeFlag, String finishedTasks) {
 		logger.debug("Entering");
-      // changes regarding parallel work flow 
+		// changes regarding parallel work flow 
 		String nextRoleCode = StringUtils.trimToEmpty(financeFlag.getNextRoleCode());
-		String nextRoleCodes[]=nextRoleCode.split(",");
-		
-		if (nextRoleCodes.length > 1 ) {
+		String nextRoleCodes[] = nextRoleCode.split(",");
+
+		if (nextRoleCodes.length > 1) {
 			return "";
 		}
 
@@ -669,7 +667,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving");
 		return serviceTasks;
 	}
-	
+
 	protected void setNextTaskDetails(String taskId, FinanceFlag financeFlag) {
 		logger.debug("Entering");
 
@@ -684,7 +682,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		} else {
 			if ("Resubmit".equals(action)) {
 				nextTaskId = "";
-			}else if (!"Save".equals(action)) {
+			} else if (!"Save".equals(action)) {
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 			}
 		}
@@ -713,7 +711,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 					nextRoleCode += nextRole;
 					String baseRole = "";
 					if (!"Resubmit".equals(action)) {
-						baseRole= StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
+						baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
 					}
 					baseRoleMap.put(nextRole, baseRole);
 				}
@@ -724,10 +722,9 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		financeFlag.setNextTaskId(nextTaskId);
 		financeFlag.setRoleCode(getRole());
 		financeFlag.setNextRoleCode(nextRoleCode);
-		
+
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * Get the result after processing DataBase Operations
@@ -739,7 +736,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -751,43 +748,46 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())){
+				if (StringUtils.isBlank(method)) {
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
 						auditHeader = getFinanceFlagsService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getFinanceFlagsService().saveOrUpdate(auditHeader);	
+						auditHeader = getFinanceFlagsService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if(PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getFinanceFlagsService().doApprove(auditHeader);
 
-						if(PennantConstants.RECORD_TYPE_DEL.equals(aFinanceFlags.getRecordType())){
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aFinanceFlags.getRecordType())) {
 							deleteNotes = true;
 						}
 
-					}else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getFinanceFlagsService().doReject(auditHeader);
-						if(PennantConstants.RECORD_TYPE_NEW.equals(aFinanceFlags.getRecordType())){
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aFinanceFlags.getRecordType())) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinanceFlagsDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_FinanceFlagsDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinanceFlagsDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(getNotes("FinanceFlags",aFinanceFlags.getFinReference(),aFinanceFlags.getVersion()),true);
+						deleteNotes(
+								getNotes("FinanceFlags", aFinanceFlags.getFinReference(), aFinanceFlags.getVersion()),
+								true);
 					}
 				}
 
@@ -811,8 +811,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceFlags
 	 * @throws Exception
@@ -825,13 +824,14 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 			doWriteBeanToComponents(aFinanceFlags);
 			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aFinanceFlags.isNewRecord()));
-			
+
 			// fill the components with the data
 			if (aFinanceFlags.getFinFlagDetailList() != null && aFinanceFlags.getFinFlagDetailList().size() >= 0) {
 				doFillFinFlagsList(aFinanceFlags.getFinFlagDetailList());
 			}
-			
-			this.listBoxFinanceFlags.setHeight(getListBoxHeight(this.grid_finflags.getRows().getVisibleItemCount()+3));
+
+			this.listBoxFinanceFlags
+					.setHeight(getListBoxHeight(this.grid_finflags.getRows().getVisibleItemCount() + 3));
 
 			setDialog(DialogType.EMBEDDED);
 
@@ -884,10 +884,6 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving");
 	}
 
-	
-	
-	
-	
 	public void fillfinflags(FinanceMain details) throws Exception {
 		logger.debug("Entering");
 		Clients.clearWrongValue(this.btnNew_FinFlagsDetail);
@@ -929,16 +925,16 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving");
 	}
 
-	private void setWorkflowDetails(String finType){
-		
+	private void setWorkflowDetails(String finType) {
+
 		//Finance Maintenance Workflow Check & Assignment
 		WorkFlowDetails workFlowDetails = null;
-		if(StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS)){
-			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType, 
+		if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS)) {
+			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
 					FinanceConstants.FINSER_EVENT_FINFLAGS, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
-			} 
+			}
 		}
 
 		if (workFlowDetails == null) {
@@ -957,10 +953,10 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 */
 	private void doSetLabels(FinanceFlag financeFlag) {
 		logger.debug("Entering");
-		
+
 		if (StringUtils.isNotEmpty(financeFlag.getFinReference())) {
 			String product = financeFlag.getFinCategory();
-			
+
 			this.row1.setVisible(true);
 			this.row2.setVisible(true);
 			this.row3.setVisible(true);
@@ -969,50 +965,74 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.row6.setVisible(true);
 			this.finFlags_finType.setVisible(true);
 			label_FinanceFlagsDialog_FinType.setVisible(true);
-			
+
 			int ccyFormatter = CurrencyUtil.getFormat(financeFlag.getFinCcy());
-			this.finFlags_finType.setValue(financeFlag.getFinType() +" - "+financeFlag.getFinTypeDesc());
-			this.finFlags_finCcy.setValue(financeFlag.getFinCcy() +" - "+ CurrencyUtil.getCcyDesc(financeFlag.getFinCcy()));
+			this.finFlags_finType.setValue(financeFlag.getFinType() + " - " + financeFlag.getFinTypeDesc());
+			this.finFlags_finCcy
+					.setValue(financeFlag.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(financeFlag.getFinCcy()));
 			this.finFlags_purchasePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_otherExp.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_totalCost.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_totalPft.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_contractPrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-			this.finFlags_noOfTerms.setValue(String.valueOf(financeFlag.getNumberOfTerms() + financeFlag.getGraceTerms()));
+			this.finFlags_noOfTerms
+					.setValue(String.valueOf(financeFlag.getNumberOfTerms() + financeFlag.getGraceTerms()));
 			this.finFlags_startDate.setValue(DateUtility.formatToLongDate(financeFlag.getFinStartDate()));
 			this.finFlags_maturityDate.setValue(DateUtility.formatToLongDate(financeFlag.getMaturityDate()));
-			this.finFlags_purchasePrice.setValue(PennantAppUtil.formateAmount(financeFlag.getFinAmount(), ccyFormatter));
+			this.finFlags_purchasePrice
+					.setValue(PennantAppUtil.formateAmount(financeFlag.getFinAmount(), ccyFormatter));
 			this.finFlags_otherExp.setValue(PennantAppUtil.formateAmount(financeFlag.getFeeChargeAmt(), ccyFormatter));
-			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(financeFlag.getFinAmount().subtract(financeFlag.getDownPaySupl()).add(
-					financeFlag.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeFlag.getFeeChargeAmt()), ccyFormatter));
+			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(
+					financeFlag.getFinAmount().subtract(financeFlag.getDownPaySupl()).add(
+							financeFlag.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeFlag.getFeeChargeAmt()),
+					ccyFormatter));
 			this.finFlags_totalPft.setValue(PennantAppUtil.formateAmount(financeFlag.getTotalProfit(), ccyFormatter));
-			this.finFlags_contractPrice.setValue(PennantAppUtil.formateAmount(financeFlag.getFinAmount().subtract(financeFlag.getDownPaySupl()).add(
-					financeFlag.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeFlag.getFeeChargeAmt()).add(financeFlag.getTotalProfit()), ccyFormatter));
+			this.finFlags_contractPrice
+					.setValue(PennantAppUtil.formateAmount(
+							financeFlag.getFinAmount().subtract(financeFlag.getDownPaySupl())
+									.add(financeFlag.getFeeChargeAmt() == null ? BigDecimal.ZERO
+											: financeFlag.getFeeChargeAmt())
+									.add(financeFlag.getTotalProfit()),
+							ccyFormatter));
 
 			if (financeFlag.getEffectiveRateOfReturn() == null) {
 				financeFlag.setEffectiveRateOfReturn(BigDecimal.ZERO);
 			}
-			this.finFlags_effRate.setValue(PennantApplicationUtil.formatRate(financeFlag.getEffectiveRateOfReturn().doubleValue(),  PennantConstants.rateFormate)+ "%");
+			this.finFlags_effRate
+					.setValue(PennantApplicationUtil.formatRate(financeFlag.getEffectiveRateOfReturn().doubleValue(),
+							PennantConstants.rateFormate) + "%");
 
-			String productType = (product.substring(0, 1)).toUpperCase()+(product.substring(1)).toLowerCase();
-			label_FinanceFlagsDialog_FinType.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinType.value"));
-			label_FinanceFlagsDialog_FinCcy.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinCcy.value"));
-			label_FinanceFlagsDialog_ProfitDaysBasis.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_ProfitDaysBasis.value"));
-			label_FinanceFlagsDialog_NoOfTerms.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_NumberOfTerms.value"));
-			label_FinanceFlagsDialog_StartDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinStartDate.value"));
-			label_FinanceFlagsDialog_MaturityDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinMaturityDate.value"));
-			label_FinanceFlagsDialog_PurchasePrice.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_PurchasePrice.value"));
-			label_FinanceFlagsDialog_OthExpenses.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_OthExpenses.value"));
-			label_FinanceFlagsDialog_TotalCost.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_TotalCost.value"));
-			label_FinanceFlagsDialog_TotalPft.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_TotalPft.value"));
-			label_FinanceFlagsDialog_ContractPrice.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_ContractPrice.value"));
-			label_FinanceFlagsDialog_EffectiveRateOfReturn.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_EffectiveRateOfReturn.value"));
+			String productType = (product.substring(0, 1)).toUpperCase() + (product.substring(1)).toLowerCase();
+			label_FinanceFlagsDialog_FinType
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinType.value"));
+			label_FinanceFlagsDialog_FinCcy
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinCcy.value"));
+			label_FinanceFlagsDialog_ProfitDaysBasis
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_ProfitDaysBasis.value"));
+			label_FinanceFlagsDialog_NoOfTerms
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_NumberOfTerms.value"));
+			label_FinanceFlagsDialog_StartDate
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinStartDate.value"));
+			label_FinanceFlagsDialog_MaturityDate
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinMaturityDate.value"));
+			label_FinanceFlagsDialog_PurchasePrice
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_PurchasePrice.value"));
+			label_FinanceFlagsDialog_OthExpenses
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_OthExpenses.value"));
+			label_FinanceFlagsDialog_TotalCost
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_TotalCost.value"));
+			label_FinanceFlagsDialog_TotalPft
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_TotalPft.value"));
+			label_FinanceFlagsDialog_ContractPrice
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_ContractPrice.value"));
+			label_FinanceFlagsDialog_EffectiveRateOfReturn.setValue(
+					Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_EffectiveRateOfReturn.value"));
 		}
 
 		recordStatus.setValue(financeFlag.getRecordStatus());
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Reset Finance Main data
 	 * 
@@ -1020,10 +1040,10 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 */
 	private void doSetLabels(FinanceMain financeMain) {
 		logger.debug("Entering");
-		
+
 		if (StringUtils.isNotEmpty(financeMain.getFinReference())) {
 			String product = financeMain.getLovDescProductCodeName();
-			
+
 			this.row1.setVisible(true);
 			this.row2.setVisible(true);
 			this.row3.setVisible(true);
@@ -1032,48 +1052,71 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.row6.setVisible(true);
 			this.finFlags_finType.setVisible(true);
 			label_FinanceFlagsDialog_FinType.setVisible(true);
-			
+
 			int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-			this.finFlags_finType.setValue(financeMain.getFinType() +" - "+financeMain.getLovDescFinTypeName());
+			this.finFlags_finType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());
 			this.finFlags_finCcy.setValue(financeMain.getFinCcy());
 			this.finFlags_purchasePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_otherExp.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_totalCost.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_totalPft.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_contractPrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-			this.finFlags_noOfTerms.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
+			this.finFlags_noOfTerms
+					.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
 			this.finFlags_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 			this.finFlags_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
-			this.finFlags_purchasePrice.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
+			this.finFlags_purchasePrice
+					.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
 			this.finFlags_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
-			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount().subtract(financeMain.getDownPaySupl()).add(
-					financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()).add(
-							financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt()), ccyFormatter));
+			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount()
+					.subtract(financeMain.getDownPaySupl())
+					.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
+					.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt()),
+					ccyFormatter));
 			this.finFlags_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
-			this.finFlags_contractPrice.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount().subtract(financeMain.getDownPaySupl()).add(
-					financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()).add(
-							financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt()).add(financeMain.getTotalProfit()), ccyFormatter));
+			this.finFlags_contractPrice
+					.setValue(PennantAppUtil.formateAmount(
+							financeMain.getFinAmount().subtract(financeMain.getDownPaySupl())
+									.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
+											: financeMain.getFeeChargeAmt())
+									.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO
+											: financeMain.getInsuranceAmt())
+									.add(financeMain.getTotalProfit()),
+							ccyFormatter));
 
 			if (financeMain.getEffectiveRateOfReturn() == null) {
 				financeMain.setEffectiveRateOfReturn(BigDecimal.ZERO);
 			}
-			this.finFlags_effRate.setValue(PennantApplicationUtil.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(), 
-					PennantConstants.rateFormate)+ "%");
+			this.finFlags_effRate
+					.setValue(PennantApplicationUtil.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(),
+							PennantConstants.rateFormate) + "%");
 			this.finFlags_profitDaysBasis.setValue(financeMain.getProfitDaysBasis());
 
-			String productType = (product.substring(0, 1)).toUpperCase()+(product.substring(1)).toLowerCase();
-			label_FinanceFlagsDialog_FinType.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinType.value"));
-			label_FinanceFlagsDialog_FinCcy.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinCcy.value"));
-			label_FinanceFlagsDialog_ProfitDaysBasis.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_ProfitDaysBasis.value"));
-			label_FinanceFlagsDialog_NoOfTerms.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_NumberOfTerms.value"));
-			label_FinanceFlagsDialog_StartDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinStartDate.value"));
-			label_FinanceFlagsDialog_MaturityDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinMaturityDate.value"));
-			label_FinanceFlagsDialog_PurchasePrice.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_PurchasePrice.value"));
-			label_FinanceFlagsDialog_OthExpenses.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_OthExpenses.value"));
-			label_FinanceFlagsDialog_TotalCost.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_TotalCost.value"));
-			label_FinanceFlagsDialog_TotalPft.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_TotalPft.value"));
-			label_FinanceFlagsDialog_ContractPrice.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_ContractPrice.value"));
-			label_FinanceFlagsDialog_EffectiveRateOfReturn.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_EffectiveRateOfReturn.value"));
+			String productType = (product.substring(0, 1)).toUpperCase() + (product.substring(1)).toLowerCase();
+			label_FinanceFlagsDialog_FinType
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinType.value"));
+			label_FinanceFlagsDialog_FinCcy
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinCcy.value"));
+			label_FinanceFlagsDialog_ProfitDaysBasis
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_ProfitDaysBasis.value"));
+			label_FinanceFlagsDialog_NoOfTerms
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_NumberOfTerms.value"));
+			label_FinanceFlagsDialog_StartDate
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinStartDate.value"));
+			label_FinanceFlagsDialog_MaturityDate
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinMaturityDate.value"));
+			label_FinanceFlagsDialog_PurchasePrice
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_PurchasePrice.value"));
+			label_FinanceFlagsDialog_OthExpenses
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_OthExpenses.value"));
+			label_FinanceFlagsDialog_TotalCost
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_TotalCost.value"));
+			label_FinanceFlagsDialog_TotalPft
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_TotalPft.value"));
+			label_FinanceFlagsDialog_ContractPrice
+					.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_ContractPrice.value"));
+			label_FinanceFlagsDialog_EffectiveRateOfReturn.setValue(
+					Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_EffectiveRateOfReturn.value"));
 		}
 
 		recordStatus.setValue(financeMain.getRecordStatus());
@@ -1089,9 +1132,10 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Entering" + event.toString());
 		doClearMessage();
 		Clients.clearWrongValue(listBoxFinanceFlags);
-		Filter[] filter =new Filter[1];
-		filter[0]= new Filter("Active", 1, Filter.OP_EQUAL);
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceFlagsDialog,"Flag",	tempflagcode, filter);
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceFlagsDialog, "Flag", tempflagcode,
+				filter);
 		if (dataObject != null) {
 			String details = (String) dataObject;
 			tempflagcode = details;
@@ -1101,26 +1145,26 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	}
 
 	/**
-	 * Method for Used for render the Data from List 
+	 * Method for Used for render the Data from List
 	 * 
 	 * @param finFlagsDetailList
 	 */
 	private void doRenderList(List<String> finFlagList) {
 		logger.debug("Entering");
-		
+
 		this.finFlagsDetailList.clear();
 		this.listBoxFinanceFlags.getItems().clear();
 		for (String flagCode : finFlagList) {
-			
-			String flagDesc = PennantAppUtil.getlabelDesc(flagCode,finFlagsCompList);
+
+			String flagDesc = PennantAppUtil.getlabelDesc(flagCode, finFlagsCompList);
 			Listitem item = new Listitem();
 			Listcell lc;
 			lc = new Listcell(flagCode);
 			lc.setParent(item);
 			lc = new Listcell(flagDesc);
 			lc.setParent(item);
-			if(!StringUtils.isEmpty(flagCode)){
-			this.listBoxFinanceFlags.appendChild(item);
+			if (!StringUtils.isEmpty(flagCode)) {
+				this.listBoxFinanceFlags.appendChild(item);
 			}
 			//List Details preparation
 			FinFlagsDetail afinFlagsDetail = new FinFlagsDetail();
@@ -1133,8 +1177,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components finance flags
-	 * list
+	 * Method Used for set list of values been class to components finance flags list
 	 * 
 	 * @param FinanceMain
 	 */
@@ -1142,19 +1185,19 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Entering");
 		this.listBoxFinanceFlags.getItems().clear();
 
-		List<String>  tempfinFlagsList = new ArrayList<String>();
+		List<String> tempfinFlagsList = new ArrayList<String>();
 		for (FinFlagsDetail finFlagsDetail : finFlagsDetailList) {
 			tempfinFlagsList.add(finFlagsDetail.getFlagCode());
-			if(StringUtils.isEmpty(tempflagcode)){
+			if (StringUtils.isEmpty(tempflagcode)) {
 				tempflagcode = finFlagsDetail.getFlagCode();
-			}else{
+			} else {
 				tempflagcode = tempflagcode.concat(",").concat(finFlagsDetail.getFlagCode());
 			}
 		}
 		doRenderList(tempfinFlagsList);
 		logger.debug("Entering");
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -1181,12 +1224,11 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(FinanceFlag aFinanceFlags, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceFlags.getBefImage(), aFinanceFlags);   
-		return new AuditHeader(aFinanceFlags.getFinReference(),null,null,null,
-				auditDetail,aFinanceFlags.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(FinanceFlag aFinanceFlags, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceFlags.getBefImage(), aFinanceFlags);
+		return new AuditHeader(aFinanceFlags.getFinReference(), null, null, null, auditDetail,
+				aFinanceFlags.getUserDetails(), getOverideMap());
 	}
-
 
 	/**
 	 * Get the window for entering Notes
@@ -1215,6 +1257,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	public FinanceFlagsService getFinanceFlagsService() {
 		return financeFlagsService;
 	}
+
 	public void setFinanceFlagsService(FinanceFlagsService financeFlagsService) {
 		this.financeFlagsService = financeFlagsService;
 	}
@@ -1222,16 +1265,19 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	public FinanceFlagsListCtrl getFinanceFlagsListCtrl() {
 		return financeFlagsListCtrl;
 	}
+
 	public void setFinanceFlagsListCtrl(FinanceFlagsListCtrl financeFlagsListCtrl) {
 		this.financeFlagsListCtrl = financeFlagsListCtrl;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setFinFlagslistDetailPagedListWrapper() {
-		if(this.finFlagslistDetailPagedListWrapper == null){
-			this.finFlagslistDetailPagedListWrapper = (PagedListWrapper<FinanceFlag>) SpringUtil.getBean("pagedListWrapper");
+		if (this.finFlagslistDetailPagedListWrapper == null) {
+			this.finFlagslistDetailPagedListWrapper = (PagedListWrapper<FinanceFlag>) SpringUtil
+					.getBean("pagedListWrapper");
 		}
 	}
+
 	public PagedListWrapper<FinanceFlag> getFinFlagslistDetailPagedListWrapper() {
 		return finFlagslistDetailPagedListWrapper;
 	}
@@ -1239,6 +1285,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	public FinanceFlag getFinanceFlag() {
 		return financeFlag;
 	}
+
 	public void setFinanceFlag(FinanceFlag financeFlag) {
 		this.financeFlag = financeFlag;
 	}
@@ -1268,4 +1315,3 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	}
 
 }
-

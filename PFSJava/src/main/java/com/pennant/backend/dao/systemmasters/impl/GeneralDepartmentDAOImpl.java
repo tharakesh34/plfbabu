@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -70,17 +69,18 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implements GeneralDepartmentDAO {
 	private static Logger logger = Logger.getLogger(GeneralDepartmentDAOImpl.class);
-	
+
 	public GeneralDepartmentDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  GeneralDepartment details by key field
+	 * Fetch the Record GeneralDepartment details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return GeneralDepartment
 	 */
 	@Override
@@ -88,38 +88,37 @@ public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implem
 		logger.debug("Entering");
 		GeneralDepartment generalDepartment = new GeneralDepartment();
 		generalDepartment.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select GenDepartment, GenDeptDesc, GenDeptIsActive," );
+
+		StringBuilder selectSql = new StringBuilder("Select GenDepartment, GenDeptDesc, GenDeptIsActive,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTGenDepartments");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GenDepartment =:GenDepartment");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
 		RowMapper<GeneralDepartment> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(GeneralDepartment.class);
-		
-		try{
-			generalDepartment = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			generalDepartment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			generalDepartment = null;
 		}
 		logger.debug("Leaving");
 		return generalDepartment;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the RMTGenDepartments or RMTGenDepartments_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete GeneralDepartment by key GenDepartment
+	 * This method Deletes the Record from the RMTGenDepartments or RMTGenDepartments_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete GeneralDepartment by key GenDepartment
 	 * 
-	 * @param GeneralDepartment (generalDepartment)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param GeneralDepartment
+	 *            (generalDepartment)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -127,16 +126,16 @@ public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implem
 	public void delete(GeneralDepartment generalDepartment, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
-		
-		StringBuilder deleteSql = new StringBuilder(" Delete From RMTGenDepartments" );
+
+		StringBuilder deleteSql = new StringBuilder(" Delete From RMTGenDepartments");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where GenDepartment =:GenDepartment");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -148,15 +147,16 @@ public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implem
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * This method insert new Records into RMTGenDepartments or RMTGenDepartments_Temp.
 	 *
-	 * save GeneralDepartment 
+	 * save GeneralDepartment
 	 * 
-	 * @param GeneralDepartment (generalDepartment)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param GeneralDepartment
+	 *            (generalDepartment)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -164,35 +164,35 @@ public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implem
 	@Override
 	public String save(GeneralDepartment generalDepartment, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTGenDepartments" );
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTGenDepartments");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (GenDepartment, GenDeptDesc, GenDeptIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:GenDepartment, :GenDeptDesc, :GenDeptIsActive," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:GenDepartment, :GenDeptDesc, :GenDeptIsActive,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
-		
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 		return generalDepartment.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record RMTGenDepartments or RMTGenDepartments_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update GeneralDepartment by key GenDepartment and Version
+	 * This method updates the Record RMTGenDepartments or RMTGenDepartments_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update GeneralDepartment by key GenDepartment and Version
 	 * 
-	 * @param GeneralDepartment (generalDepartment)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param GeneralDepartment
+	 *            (generalDepartment)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -201,18 +201,18 @@ public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implem
 	public void update(GeneralDepartment generalDepartment, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
-		
+
 		StringBuilder updateSql = new StringBuilder("Update RMTGenDepartments");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set GenDeptDesc = :GenDeptDesc, GenDeptIsActive = :GenDeptIsActive," );
+		updateSql.append(" Set GenDeptDesc = :GenDeptDesc, GenDeptIsActive = :GenDeptIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where GenDepartment =:GenDepartment");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
-		logger.trace(Literal.SQL +  updateSql.toString());
+
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -257,5 +257,5 @@ public class GeneralDepartmentDAOImpl extends BasicDao<GeneralDepartment> implem
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 }

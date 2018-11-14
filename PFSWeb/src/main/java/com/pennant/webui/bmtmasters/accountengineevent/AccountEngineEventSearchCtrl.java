@@ -62,34 +62,33 @@ import com.pennant.backend.service.bmtmasters.AccountEngineEventService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent>  {
+public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent> {
 	private static final long serialVersionUID = -5457162932741884160L;
 	private static final Logger logger = Logger.getLogger(AccountEngineEventSearchCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  window_AccountEngineEventSearch; 	
-	protected Textbox aEEventCode; 						
-	protected Listbox sortOperator_aEEventCode; 		
-	protected Textbox aEEventCodeDesc; 					
-	protected Listbox sortOperator_aEEventCodeDesc; 	
-	protected Textbox recordStatus; 					
-	protected Listbox recordType;						
-	protected Listbox sortOperator_recordStatus; 		
-	protected Listbox sortOperator_recordType; 			
+	protected Window window_AccountEngineEventSearch;
+	protected Textbox aEEventCode;
+	protected Listbox sortOperator_aEEventCode;
+	protected Textbox aEEventCodeDesc;
+	protected Listbox sortOperator_aEEventCodeDesc;
+	protected Textbox recordStatus;
+	protected Listbox recordType;
+	protected Listbox sortOperator_recordStatus;
+	protected Listbox sortOperator_recordType;
 
-	protected Label label_AccountEngineEventSearch_RecordStatus; 	
-	protected Label label_AccountEngineEventSearch_RecordType; 		
-	protected Label label_AccountEngineEventSearchResult; 			
+	protected Label label_AccountEngineEventSearch_RecordStatus;
+	protected Label label_AccountEngineEventSearch_RecordType;
+	protected Label label_AccountEngineEventSearchResult;
 
 	// not auto wired Var's
 	private transient AccountEngineEventListCtrl accountEngineEventCtrl; // overHanded per parameter
@@ -109,11 +108,10 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the Search window we check, if the
-	 * ZUL-file is called with a parameter for a selected AccountEngineEvent object in a
-	 * Map.
+	 * Before binding the data and calling the Search window we check, if the ZUL-file is called with a parameter for a
+	 * selected AccountEngineEvent object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -124,35 +122,39 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 		// Set the page level components.
 		setPageComponents(window_AccountEngineEventSearch);
 
-		if (workFlowDetails==null){
+		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
-		}else{
+		} else {
 			setWorkFlowEnabled(true);
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
 
 		if (arguments.containsKey("accountEngineEventCtrl")) {
-			this.accountEngineEventCtrl = (AccountEngineEventListCtrl)arguments.get("accountEngineEventCtrl");
+			this.accountEngineEventCtrl = (AccountEngineEventListCtrl) arguments.get("accountEngineEventCtrl");
 		} else {
 			this.accountEngineEventCtrl = null;
 		}
 
 		// DropDown ListBox
 
-		this.sortOperator_aEEventCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_aEEventCode
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_aEEventCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_aEEventCodeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_aEEventCodeDesc
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_aEEventCodeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=setRecordType(this.recordType);	
-		}else{
+			this.recordType = setRecordType(this.recordType);
+		} else {
 			this.recordStatus.setVisible(false);
 			this.recordType.setVisible(false);
 			this.sortOperator_recordStatus.setVisible(false);
@@ -165,7 +167,8 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 		// if exists a searchObject than show formerly inputs of filter values
 		if (arguments.containsKey("searchObject")) {
 			@SuppressWarnings("unchecked")
-			final JdbcSearchObject<AccountEngineEvent> searchObj = (JdbcSearchObject<AccountEngineEvent>) arguments.get("searchObject");
+			final JdbcSearchObject<AccountEngineEvent> searchObj = (JdbcSearchObject<AccountEngineEvent>) arguments
+					.get("searchObject");
 
 			// get the filters from the searchObject
 			final List<Filter> ft = searchObj.getFilters();
@@ -238,15 +241,16 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 * 2. Checks which operator is selected. <br>
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
-	 */ 
+	 */
 	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
-		final JdbcSearchObject<AccountEngineEvent> so = new JdbcSearchObject<AccountEngineEvent>(AccountEngineEvent.class);
+		final JdbcSearchObject<AccountEngineEvent> so = new JdbcSearchObject<AccountEngineEvent>(
+				AccountEngineEvent.class);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			so.addTabelName("BMTAEEvents_View");
-			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
+			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		} else {
 			so.addTabelName("BMTAEEvents_AView");
 		}
@@ -257,10 +261,12 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 			final Listitem listItemAEEventCode = this.sortOperator_aEEventCode.getSelectedItem();
 
 			if (listItemAEEventCode != null) {
-				final int searchOpId = ((SearchOperators) listItemAEEventCode.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemAEEventCode.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("aEEventCode", "%"	+ this.aEEventCode.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("aEEventCode", "%" + this.aEEventCode.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -274,10 +280,12 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 			final Listitem listItemAEEventCodeDesc = this.sortOperator_aEEventCodeDesc.getSelectedItem();
 
 			if (listItemAEEventCodeDesc != null) {
-				final int searchOpId = ((SearchOperators) listItemAEEventCodeDesc.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemAEEventCodeDesc.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("aEEventCodeDesc", "%" + this.aEEventCodeDesc.getValue().toUpperCase()+ "%", searchOpId));
+					so.addFilter(new Filter("aEEventCodeDesc",
+							"%" + this.aEEventCodeDesc.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -289,10 +297,12 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 			// get the search operator
 			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (listItemRecordStatus != null) {
-				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",searchOpId));
+					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -301,16 +311,17 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 			}
 		}
 
-		String selectedValue="";
-		if (this.recordType.getSelectedItem()!=null){
-			selectedValue =this.recordType.getSelectedItem().getValue().toString();
+		String selectedValue = "";
+		if (this.recordType.getSelectedItem() != null) {
+			selectedValue = this.recordType.getSelectedItem().getValue().toString();
 		}
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
 			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
-			if (listItemRecordType!= null) {
-				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
+			if (listItemRecordType != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
@@ -334,8 +345,8 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 		((PagedListWrapper<AccountEngineEvent>) listBox.getModel()).init(so, listBox, paging);
 		this.accountEngineEventCtrl.setSearchObj(so);
 
-		this.label_AccountEngineEventSearchResult.setValue(Labels.getLabel(
-		"label_AccountEngineEventSearchResult.value")+ " " + String.valueOf(paging.getTotalSize()));
+		this.label_AccountEngineEventSearchResult.setValue(Labels.getLabel("label_AccountEngineEventSearchResult.value")
+				+ " " + String.valueOf(paging.getTotalSize()));
 		logger.debug("Leaving");
 	}
 
@@ -346,6 +357,7 @@ public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent
 	public void setAccountEngineEventService(AccountEngineEventService accountEngineEventService) {
 		this.accountEngineEventService = accountEngineEventService;
 	}
+
 	public AccountEngineEventService getAccountEngineEventService() {
 		return this.accountEngineEventService;
 	}

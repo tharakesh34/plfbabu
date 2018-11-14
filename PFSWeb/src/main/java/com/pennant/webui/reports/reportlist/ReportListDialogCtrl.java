@@ -78,56 +78,52 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.PTListReportUtils;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Reports/ReportList/reportListDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Reports/ReportList/reportListDialog.zul file.
  */
 public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	private static final long serialVersionUID = 7403304686538288944L;
 	private static final Logger logger = Logger.getLogger(ReportListDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_ReportListDialog; 	// autoWired
-	protected Textbox 	code; 						// autoWired
-	protected Combobox 	module; 					// autoWired
-	protected Textbox 	fieldLabels; 				// autoWired
-	protected Textbox 	fieldValues; 				// autoWired
-	protected Textbox 	fieldType; 					// autoWired
-	protected Textbox 	addfields; 					// autoWired
-	protected Combobox 	reportFileName; 			// autoWired
-	protected Textbox 	reportHeading; 				// autoWired
-	protected Textbox 	moduleType; 				// autoWired
-
-	
+	protected Window window_ReportListDialog; // autoWired
+	protected Textbox code; // autoWired
+	protected Combobox module; // autoWired
+	protected Textbox fieldLabels; // autoWired
+	protected Textbox fieldValues; // autoWired
+	protected Textbox fieldType; // autoWired
+	protected Textbox addfields; // autoWired
+	protected Combobox reportFileName; // autoWired
+	protected Textbox reportHeading; // autoWired
+	protected Textbox moduleType; // autoWired
 
 	// not auto wired variables
-	private ReportList reportList; 									// overHanded per parameter
-	private ReportList prvReportList; 								// overHanded per parameter
-	private transient ReportListListCtrl 	reportListListCtrl; 	// overHanded per parameter
-	private transient FieldsListSelectCtrl 	fieldsListSelectCtrl; 	// overHanded per parameter
-	private transient PTListReportUtils 	ptListReportUtils;
+	private ReportList reportList; // overHanded per parameter
+	private ReportList prvReportList; // overHanded per parameter
+	private transient ReportListListCtrl reportListListCtrl; // overHanded per parameter
+	private transient FieldsListSelectCtrl fieldsListSelectCtrl; // overHanded per parameter
+	private transient PTListReportUtils ptListReportUtils;
 
 	private transient boolean validationOn;
-	
-	protected Button btnConfigure; 	// autoWire
+
+	protected Button btnConfigure; // autoWire
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<ReportList> searchObj;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient ReportListService reportListService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
-	private List<ValueLabel> listReportFileName=PennantStaticListUtil.getReportListName(); // autoWired
+	private List<ValueLabel> listReportFileName = PennantStaticListUtil.getReportListName(); // autoWired
 	private List<ValueLabel> moduleList = PennantAppUtil.getModuleList(false);
 
 	/**
@@ -145,9 +141,8 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ReportList object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ReportList object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -163,7 +158,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 
 		if (arguments.containsKey("reportList")) {
 			this.reportList = (ReportList) arguments.get("reportList");
-			ReportList befImage =new ReportList();
+			ReportList befImage = new ReportList();
 			BeanUtils.copyProperties(this.reportList, befImage);
 			this.reportList.setBefImage(befImage);
 
@@ -172,10 +167,10 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 			setReportList(null);
 		}
 
-		doLoadWorkFlow(this.reportList.isWorkflow(),this.reportList.getWorkflowId(),this.reportList.getNextTaskId());
+		doLoadWorkFlow(this.reportList.isWorkflow(), this.reportList.getWorkflowId(), this.reportList.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "ReportListDialog");
 		}
 
@@ -190,33 +185,33 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		}
 
 		if (arguments.containsKey("fieldListSelectCtrl")) {
-			this.setFieldsListSelectCtrl((FieldsListSelectCtrl) arguments.get("fieldListSelectCtrl"));			
+			this.setFieldsListSelectCtrl((FieldsListSelectCtrl) arguments.get("fieldListSelectCtrl"));
 		} else {
 			this.setFieldsListSelectCtrl(null);
 		}
-		
+
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getReportList());
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.code.setMaxlength(50);
 		this.reportHeading.setMaxlength(50);
 		this.moduleType.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -224,11 +219,10 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities("ReportListDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReportListDialog_btnNew"));
@@ -237,7 +231,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ReportListDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -247,9 +241,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -258,9 +252,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -270,9 +264,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_ReportListDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -282,9 +276,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -293,9 +287,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -315,11 +309,11 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.reportList.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -329,7 +323,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 *            ReportList
 	 */
 	public void doWriteBeanToComponents(ReportList aReportList) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.code.setValue(aReportList.getCode());
 		fillComboBox(module, aReportList.getModule(), moduleList, "");
 		this.fieldLabels.setValue(aReportList.getFieldLabels());
@@ -350,62 +344,62 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @param aReportList
 	 */
 	public void doWriteComponentsToBean(ReportList aReportList) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aReportList.setCode(this.code.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setModule(this.module.getSelectedItem().getValue().toString());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setFieldLabels(aReportList.getFieldLabels());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setFieldValues(aReportList.getFieldValues());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setFieldType(aReportList.getFieldType());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setAddfields(this.addfields.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setReportHeading(this.reportHeading.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setReportFileName(this.reportFileName.getSelectedItem().getValue().toString());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aReportList.setModuleType(this.moduleType.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -419,8 +413,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReportList
 	 * @throws Exception
@@ -435,12 +428,12 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 			// setFocus
 			this.code.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(aReportList.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -458,7 +451,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -468,20 +461,25 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		doClearMessage();
-		if (!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportListDialog_Code.value"), null, true));
+		if (!this.code.isReadonly()) {
+			this.code.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReportListDialog_Code.value"), null, true));
 		}
-		if (!this.module.isDisabled()){
-			this.module.setConstraint(new StaticListValidator(moduleList,Labels.getLabel("label_ReportListDialog_Module.value")));
+		if (!this.module.isDisabled()) {
+			this.module.setConstraint(
+					new StaticListValidator(moduleList, Labels.getLabel("label_ReportListDialog_Module.value")));
 		}
-		if (!this.reportFileName.isDisabled()){
-			this.reportFileName.setConstraint(new StaticListValidator(listReportFileName,Labels.getLabel("label_ReportListDialog_ReportFileName.value")));
+		if (!this.reportFileName.isDisabled()) {
+			this.reportFileName.setConstraint(new StaticListValidator(listReportFileName,
+					Labels.getLabel("label_ReportListDialog_ReportFileName.value")));
 		}
-		if (!this.reportHeading.isReadonly()){
-			this.reportHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportListDialog_ReportHeading.value"), null, true));
-		}	
-		if (!this.moduleType.isReadonly()){
-			this.moduleType.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportListDialog_ModuleType.value"), null, true));
+		if (!this.reportHeading.isReadonly()) {
+			this.reportHeading.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReportListDialog_ReportHeading.value"), null, true));
+		}
+		if (!this.moduleType.isReadonly()) {
+			this.moduleType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReportListDialog_ModuleType.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -543,35 +541,35 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final ReportList aReportList = new ReportList();
 		BeanUtils.copyProperties(getReportList(), aReportList);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_ReportListDialog_Code.value")+" : "+aReportList.getModule();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ReportListDialog_Code.value") + " : " + aReportList.getModule();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aReportList.getRecordType())){
-				aReportList.setVersion(aReportList.getVersion()+1);
+			if (StringUtils.isBlank(aReportList.getRecordType())) {
+				aReportList.setVersion(aReportList.getVersion() + 1);
 				aReportList.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aReportList.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aReportList,tranType)){
+				if (doProcess(aReportList, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -586,23 +584,23 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getReportList().isNewRecord()){
+		if (getReportList().isNewRecord()) {
 			this.code.setDisabled(false);
 			this.module.setDisabled(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.code.setDisabled(true);
 			this.module.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
-		
-		if(getUserWorkspace().isAllowed("button_ReportListDialog_btnConfigure")){
+
+		if (getUserWorkspace().isAllowed("button_ReportListDialog_btnConfigure")) {
 			this.btnConfigure.setLabel(Labels.getLabel("label_ReportListDialog_btnConfigure.value"));
 		} else {
 			this.btnConfigure.setLabel(Labels.getLabel("label_ReportListDialog_btnConfiguration.value"));
 			this.module.setDisabled(true);
 		}
-		
+
 		this.fieldLabels.setReadonly(isReadOnly("ReportListDialog_fieldLabels"));
 		this.fieldValues.setReadonly(isReadOnly("ReportListDialog_fieldValues"));
 		this.fieldType.setReadonly(isReadOnly("ReportListDialog_fieldType"));
@@ -612,19 +610,19 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		this.reportHeading.setReadonly(isReadOnly("ReportListDialog_reportHeading"));
 		this.moduleType.setReadonly(isReadOnly("ReportListDialog_moduleType"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.reportList.isNewRecord()){
+			if (this.reportList.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 				this.reportFileName.focus();
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
@@ -645,13 +643,13 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		this.reportHeading.setReadonly(true);
 		this.moduleType.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -698,32 +696,32 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		// Do data level validations here
 
 		isNew = aReportList.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aReportList.getRecordType())){
-				aReportList.setVersion(aReportList.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aReportList.getRecordType())) {
+				aReportList.setVersion(aReportList.getVersion() + 1);
+				if (isNew) {
 					aReportList.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aReportList.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aReportList.setNewRecord(true);
 				}
 			}
-		}else{
-			aReportList.setVersion(aReportList.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aReportList.setVersion(aReportList.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aReportList,tranType)){
+			if (doProcess(aReportList, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -747,11 +745,11 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReportList aReportList,String tranType){
+	private boolean doProcess(ReportList aReportList, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aReportList.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReportList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -783,15 +781,15 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -801,29 +799,29 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 			aReportList.setRoleCode(getRole());
 			aReportList.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aReportList, tranType);
+			auditHeader = getAuditHeader(aReportList, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aReportList);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aReportList, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aReportList, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 
-			auditHeader =  getAuditHeader(aReportList, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+			auditHeader = getAuditHeader(aReportList, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
@@ -840,59 +838,60 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
 		ReportList aReportList = (ReportList) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getReportListService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getReportListService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getReportListService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getReportListService().doApprove(auditHeader);
 
-						if(aReportList.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aReportList.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getReportListService().doReject(auditHeader);
-						if(aReportList.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aReportList.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ReportListDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_ReportListDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_ReportListDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -910,12 +909,12 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	}
 
 	/**
-	 * Event to load the field values as a list. 
+	 * Event to load the field values as a list.
 	 * 
 	 * @throws InterruptedException,SuspendNotAllowedException
 	 **/
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void onClick$btnConfigure(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onClick$btnConfigure(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		doSetValidation();
 		final HashMap map = new HashMap();
@@ -926,7 +925,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		map.put("fileName", this.reportFileName.getSelectedItem().getValue().toString());
 		map.put("btnConfigure", this.btnConfigure.getLabel());
 		try {
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportList/FieldsListSelect.zul",null, map);
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportList/FieldsListSelect.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -945,9 +944,10 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(ReportList aReportList, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aReportList.getBefImage(), aReportList);   
-		return new AuditHeader(aReportList.getModule(),null,null,null,auditDetail,aReportList.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(ReportList aReportList, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aReportList.getBefImage(), aReportList);
+		return new AuditHeader(aReportList.getModule(), null, null, null, auditDetail, aReportList.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -956,10 +956,10 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @param e
 	 *            (Exception)
 	 */
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_ReportListDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -979,7 +979,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	}
 
 	// Get the notes entered for rejected reason
-	private Notes getNotes(){
+	private Notes getNotes() {
 		Notes notes = new Notes();
 		notes.setModuleName("ReportList");
 		notes.setReference(getReportList().getModule());
@@ -990,10 +990,10 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getReportListListCtrl().search();
-	} 
-	
+	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.reportList);
@@ -1006,6 +1006,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1013,6 +1014,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public ReportList getReportList() {
 		return this.reportList;
 	}
+
 	public void setReportList(ReportList reportList) {
 		this.reportList = reportList;
 	}
@@ -1020,6 +1022,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public void setReportListService(ReportListService reportListService) {
 		this.reportListService = reportListService;
 	}
+
 	public ReportListService getReportListService() {
 		return this.reportListService;
 	}
@@ -1027,6 +1030,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public void setReportListListCtrl(ReportListListCtrl reportListListCtrl) {
 		this.reportListListCtrl = reportListListCtrl;
 	}
+
 	public ReportListListCtrl getReportListListCtrl() {
 		return this.reportListListCtrl;
 	}
@@ -1034,6 +1038,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1041,6 +1046,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1052,6 +1058,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public void setFieldsListSelectCtrl(FieldsListSelectCtrl fieldsListSelectCtrl) {
 		this.fieldsListSelectCtrl = fieldsListSelectCtrl;
 	}
+
 	public FieldsListSelectCtrl getFieldsListSelectCtrl() {
 		return fieldsListSelectCtrl;
 	}
@@ -1067,6 +1074,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	public JdbcSearchObject<ReportList> getSearchObj() {
 		return searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<ReportList> searchObj) {
 		this.searchObj = searchObj;
 	}

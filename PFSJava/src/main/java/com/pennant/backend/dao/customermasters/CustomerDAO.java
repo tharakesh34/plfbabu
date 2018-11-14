@@ -72,7 +72,7 @@ public interface CustomerDAO {
 	boolean isDuplicateCif(long custId, String cif);
 
 	Customer getCustomerByCIF(String cifId, String type);
-	
+
 	Customer checkCustomerByCIF(String cifId, String type);
 
 	WIFCustomer getWIFCustomerByCIF(long cifId, String type);
@@ -161,9 +161,8 @@ public interface CustomerDAO {
 
 	void updateCustStatus(String custStatus, Date statusChgdate, long custId);
 
-
 	Customer getCustomerStatus(long custId);
-	
+
 	Customer getCustomerEOD(long id);
 
 	Date getCustAppDate(long custId);
@@ -172,10 +171,10 @@ public interface CustomerDAO {
 
 	List<Customer> getCustomerByGroupID(long custGroupID);
 
-	int updateCustCRCPR(String custDocTitle,long custID);
-	
-	boolean customerExistingCustGrp(long custGrpID, String type) ;
-	
+	int updateCustCRCPR(String custDocTitle, long custID);
+
+	boolean customerExistingCustGrp(long custGrpID, String type);
+
 	int getCustCountByDealerId(long dealerId);
 
 	boolean isCasteExist(long casteId, String type);

@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.finance;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinContributorDetail;
@@ -52,10 +53,15 @@ import com.pennant.backend.model.finance.FinContributorDetail;
  */
 public interface FinContributorDetailDAO {
 
-	FinContributorDetail getFinContributorDetailByID(String finReference,long id,String type);
-	List<FinContributorDetail> getFinContributorDetailByFinRef(final String id,String type);
-	void update(FinContributorDetail contributorDetail,String type);
-	void delete(FinContributorDetail contributorDetail,String type);
-	long save(FinContributorDetail contributorDetail,String type);
-	void deleteByFinRef(final String finReference,String type);
+	FinContributorDetail getFinContributorDetailByID(String finReference, long id, String type);
+
+	List<FinContributorDetail> getFinContributorDetailByFinRef(final String id, String type);
+
+	void update(FinContributorDetail contributorDetail, String type);
+
+	void delete(FinContributorDetail contributorDetail, String type);
+
+	long save(FinContributorDetail contributorDetail, String type);
+
+	void deleteByFinRef(final String finReference, String type);
 }

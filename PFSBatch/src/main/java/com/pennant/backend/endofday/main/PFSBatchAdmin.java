@@ -62,36 +62,35 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class PFSBatchAdmin implements Serializable {
 	private static final long serialVersionUID = -1648550888126596125L;
 	private static final Logger logger = Logger.getLogger(PFSBatchAdmin.class);
-	
+
 	private static PFSBatchAdmin instance = null;
-	private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;	
-	
-	
-	private static  JobParametersBuilder 	builder;
-	private static  JobParameters 			jobParameters;
-	private static  JobRepository  			jobRepository;
-	private static  SimpleJobOperator 		jobOperator;
-	private static  JobLauncher 			jobLauncher;
-	private static  Job 					job;
+	private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;
+
+	private static JobParametersBuilder builder;
+	private static JobParameters jobParameters;
+	private static JobRepository jobRepository;
+	private static SimpleJobOperator jobOperator;
+	private static JobLauncher jobLauncher;
+	private static Job job;
 
 	private static String args[] = new String[1];
 	private static String runType = "";
 
 	private PFSBatchAdmin() {
 		logger.debug(Literal.ENTERING);
-		
+
 		//Application Context For END OF DAY job initiation
-		PFS_JOB_CONTEXT = new ClassPathXmlApplicationContext("eod-batch-config.xml");	
-		
-		jobRepository 	= (JobRepository)PFS_JOB_CONTEXT.getBean("jobRepository");
-		jobOperator 	= (SimpleJobOperator)PFS_JOB_CONTEXT.getBean("jobOperator");
-		jobLauncher 	= (JobLauncher)PFS_JOB_CONTEXT.getBean("jobLauncher");
-		job 			= (Job) PFS_JOB_CONTEXT.getBean("plfEodJob");
-		
-		builder = new JobParametersBuilder();		
+		PFS_JOB_CONTEXT = new ClassPathXmlApplicationContext("eod-batch-config.xml");
+
+		jobRepository = (JobRepository) PFS_JOB_CONTEXT.getBean("jobRepository");
+		jobOperator = (SimpleJobOperator) PFS_JOB_CONTEXT.getBean("jobOperator");
+		jobLauncher = (JobLauncher) PFS_JOB_CONTEXT.getBean("jobLauncher");
+		job = (Job) PFS_JOB_CONTEXT.getBean("plfEodJob");
+
+		builder = new JobParametersBuilder();
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public static PFSBatchAdmin getInstance() {
 		if (instance == null) {
 			instance = new PFSBatchAdmin();
@@ -106,19 +105,19 @@ public class PFSBatchAdmin implements Serializable {
 			logger.debug(Literal.LEAVING);
 			return false;
 		}
-		
+
 		try {
 			jobOperator.stop(jobExecution.getId());
-		} catch (Exception e) {	
+		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
-		
+
 		jobExecution = getJobExecution();
 		jobExecution.setStatus(BatchStatus.STOPPED);
 		jobExecution.setExitStatus(ExitStatus.STOPPED);
 		jobExecution.setEndTime(DateUtility.getSysDate());
 		jobRepository.update(jobExecution);
-		
+
 		logger.debug(Literal.LEAVING);
 		return true;
 	}
@@ -127,8 +126,8 @@ public class PFSBatchAdmin implements Serializable {
 		logger.debug(Literal.ENTERING);
 		try {
 			if ("START".equals(runType)) {
-				builder.addString("Date", (String) args[0]);				
-				jobParameters = builder.toJobParameters();				
+				builder.addString("Date", (String) args[0]);
+				jobParameters = builder.toJobParameters();
 				jobLauncher.run(job, jobParameters).getId();
 			} else {
 				//this.jobOperator.startNextInstance(this.job.getName());
@@ -139,14 +138,13 @@ public class PFSBatchAdmin implements Serializable {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public static JobExecution getJobExecution() {
-		builder.addString("Date", (String) args[0]);				
-		jobParameters = builder.toJobParameters();		
+		builder.addString("Date", (String) args[0]);
+		jobParameters = builder.toJobParameters();
 		return jobRepository.getLastJobExecution(job.getName(), jobParameters);
 	}
-	
-	
+
 	public static void destroy() {
 		instance = null;
 		PFS_JOB_CONTEXT = null;
@@ -162,7 +160,7 @@ public class PFSBatchAdmin implements Serializable {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public static String[] getArgs() {
 		return args;
 	}
@@ -178,6 +176,5 @@ public class PFSBatchAdmin implements Serializable {
 	public static void setRunType(String runType) {
 		PFSBatchAdmin.runType = runType;
 	}
-
 
 }

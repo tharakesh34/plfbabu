@@ -64,12 +64,12 @@ import com.pennanttech.pff.core.TableType;
 /**
  * Service implementation for methods that depends on <b>DPDBucketConfiguration</b>.<br>
  */
-public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketConfiguration> implements
-		DPDBucketConfigurationService {
-	private static final Logger			logger	= Logger.getLogger(DPDBucketConfigurationServiceImpl.class);
+public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketConfiguration>
+		implements DPDBucketConfigurationService {
+	private static final Logger logger = Logger.getLogger(DPDBucketConfigurationServiceImpl.class);
 
-	private AuditHeaderDAO				auditHeaderDAO;
-	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private DPDBucketConfigurationDAO dPDBucketConfigurationDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -136,18 +136,18 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		}
 
 		if (dPDBucketConfiguration.isNew()) {
-			dPDBucketConfiguration.setId(Long.parseLong(getDPDBucketConfigurationDAO().save(dPDBucketConfiguration,
-					tableType)));
+			dPDBucketConfiguration
+					.setId(Long.parseLong(getDPDBucketConfigurationDAO().save(dPDBucketConfiguration, tableType)));
 			auditHeader.getAuditDetail().setModelData(dPDBucketConfiguration);
 			auditHeader.setAuditReference(String.valueOf(dPDBucketConfiguration.getConfigID()));
 		} else {
 			getDPDBucketConfigurationDAO().update(dPDBucketConfiguration, tableType);
 		}
-		
+
 		if (TableType.MAIN_TAB.equals(tableType)) {
 			FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getProductCode());
 		}
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -250,7 +250,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		if (dPDBucketConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getDPDBucketConfigurationDAO().delete(dPDBucketConfiguration, TableType.MAIN_TAB);
-		
+
 		} else {
 			dPDBucketConfiguration.setRoleCode("");
 			dPDBucketConfiguration.setNextRoleCode("");
@@ -268,7 +268,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 				getDPDBucketConfigurationDAO().update(dPDBucketConfiguration, TableType.MAIN_TAB);
 			}
 		}
-		
+
 		FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getProductCode());
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -361,16 +361,17 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 
 			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : "
 					+ dPDBucketConfiguration.getProductCode() + " and ";
-			parameters[1] = PennantJavaUtil.getLabel("label_BucketCode") + " : " + dPDBucketConfiguration.getBucketCode();
+			parameters[1] = PennantJavaUtil.getLabel("label_BucketCode") + " : "
+					+ dPDBucketConfiguration.getBucketCode();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		if (!(StringUtils.equals(method, PennantConstants.method_doReject)
 				|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(dPDBucketConfiguration.getRecordType()))) {
 
- 			int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
- 					dPDBucketConfiguration.getDueDays(), "");
+			int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
+					dPDBucketConfiguration.getDueDays(), "");
 
 			if (count != 0) {
 
@@ -381,8 +382,8 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 				errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : " + valueParm[0];
 				errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + "  : " + valueParm[1];
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015",
-						errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41015", errParm, valueParm), usrLanguage));
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

@@ -58,7 +58,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class IncomeType extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -260562868574383176L;
-	
+
 	private String incomeExpense;
 	private String category;
 	private String lovDescCategoryName;
@@ -84,7 +84,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("incomeExpenseCode");
@@ -98,6 +98,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public String getId() {
 		return incomeTypeCode;
 	}
+
 	public void setId(String id) {
 		this.incomeTypeCode = id;
 	}
@@ -105,6 +106,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public String getIncomeTypeCode() {
 		return incomeTypeCode;
 	}
+
 	public void setIncomeTypeCode(String incomeTypeCode) {
 		this.incomeTypeCode = incomeTypeCode;
 	}
@@ -112,6 +114,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public String getIncomeTypeDesc() {
 		return incomeTypeDesc;
 	}
+
 	public void setIncomeTypeDesc(String incomeTypeDesc) {
 		this.incomeTypeDesc = incomeTypeDesc;
 	}
@@ -119,6 +122,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public boolean isIncomeTypeIsActive() {
 		return incomeTypeIsActive;
 	}
+
 	public void setIncomeTypeIsActive(boolean incomeTypeIsActive) {
 		this.incomeTypeIsActive = incomeTypeIsActive;
 	}
@@ -134,6 +138,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -141,6 +146,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -148,6 +154,7 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public IncomeType getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(IncomeType beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -155,41 +162,43 @@ public class IncomeType extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public void setIncomeExpense(String incomeExpense) {
-	    this.incomeExpense = incomeExpense;
-    }
+		this.incomeExpense = incomeExpense;
+	}
 
 	public String getIncomeExpense() {
-	    return incomeExpense;
-    }
+		return incomeExpense;
+	}
 
 	public void setCategory(String category) {
-	    this.category = category;
-    }
+		this.category = category;
+	}
 
 	public String getCategory() {
-	    return category;
-    }
+		return category;
+	}
 
 	public void setMargin(BigDecimal margin) {
-	    this.margin = margin;
-    }
+		this.margin = margin;
+	}
 
 	public BigDecimal getMargin() {
-	    return margin;
-    }
+		return margin;
+	}
 
 	public void setLovDescCategoryName(String lovDescCategoryName) {
-	    this.lovDescCategoryName = lovDescCategoryName;
-    }
+		this.lovDescCategoryName = lovDescCategoryName;
+	}
 
 	public String getLovDescCategoryName() {
-	    return lovDescCategoryName;
-    }
+		return lovDescCategoryName;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

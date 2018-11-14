@@ -9,15 +9,15 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class InsuranceTypeProvider extends AbstractWorkflowEntity {
 
-	private static final long		serialVersionUID	= 1L;
-	private String					insuranceType;
-	private String					insuranceTypeDesc;
-	private String					providerCode;
-	private String					providerName;
-	private BigDecimal				insuranceRate		= BigDecimal.ZERO;
-	private boolean					newRecord			= false;
-	private InsuranceTypeProvider	befImage;
-	private LoggedInUser			userDetails;
+	private static final long serialVersionUID = 1L;
+	private String insuranceType;
+	private String insuranceTypeDesc;
+	private String providerCode;
+	private String providerName;
+	private BigDecimal insuranceRate = BigDecimal.ZERO;
+	private boolean newRecord = false;
+	private InsuranceTypeProvider befImage;
+	private LoggedInUser userDetails;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -26,23 +26,23 @@ public class InsuranceTypeProvider extends AbstractWorkflowEntity {
 		excludeFields.add("insuranceTypeDesc");
 		return excludeFields;
 	}
-	
+
 	public InsuranceTypeProvider(String id) {
 		super();
 		this.setId(id);
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.insuranceType = id;
 	}
-	
+
 	public String getId() {
 		return insuranceType;
 	}
-	
+
 	public String getFinType() {
-    	return insuranceType;
-    }
+		return insuranceType;
+	}
 
 	public InsuranceTypeProvider() {
 		super();

@@ -9,5 +9,5 @@ public interface UploadSecondaryMandateDAO {
 
 	boolean fileIsExists(String name);
 
-	List<UploadSecondaryMandate> getReportData(long headerId, long userId,String module);
+	List<UploadSecondaryMandate> getReportData(long headerId, long userId, String module);
 }

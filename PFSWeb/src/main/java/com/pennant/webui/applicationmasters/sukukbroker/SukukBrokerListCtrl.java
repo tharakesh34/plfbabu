@@ -61,9 +61,9 @@ import com.pennant.backend.model.applicationmasters.SukukBroker;
 import com.pennant.backend.service.applicationmaster.SukukBrokerService;
 import com.pennant.webui.applicationmasters.sukukbroker.model.SukukBrokerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerList.zul file.
@@ -233,8 +233,8 @@ public class SukukBrokerListCtrl extends GFCBaseListCtrl<SukukBroker> {
 		arg.put("enqModule", enqiryModule);
 
 		try {
-			Executions
-					.createComponents("/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

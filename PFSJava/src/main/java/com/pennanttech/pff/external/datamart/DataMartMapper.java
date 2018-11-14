@@ -2068,8 +2068,6 @@ public class DataMartMapper {
 
 	}
 
-
-
 	public static void saveWriteOffDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2118,7 +2116,7 @@ public class DataMartMapper {
 				rs.getObject("RECEIPT_ON_CHARGEOFF"), rs.getObject("BUSINESS_YEAR"), batchId);
 
 	}
-	
+
 	public static void saveGoldLoanPolicyDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2167,14 +2165,15 @@ public class DataMartMapper {
 		sql.append(",?");
 		sql.append(")");
 
-		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("CODE"),
-				rs.getObject("DESCRIPTION"), rs.getObject("NSOLIDGOLDPRICEREDUCT"), rs.getObject("MAXCUSTEXPOSURE"), rs.getObject("MINLOANAMT"),
+		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("CODE"), rs.getObject("DESCRIPTION"),
+				rs.getObject("NSOLIDGOLDPRICEREDUCT"), rs.getObject("MAXCUSTEXPOSURE"), rs.getObject("MINLOANAMT"),
 				rs.getObject("MAXLOANAMT"), rs.getObject("MAXTENOR"), rs.getObject("MINAGE"),
-				rs.getObject("MAILCHANGEMAILTEMP"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("MAXAGE"),
-				rs.getObject("MASTERLTV"), rs.getObject("MAXSTONEWEIGHT"), rs.getObject("MINSTANDARDWEIGHTDEDUCT"), rs.getObject("MAXSTANDARDWEIGHTDEDUCT"),
+				rs.getObject("MAILCHANGEMAILTEMP"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"),
+				rs.getObject("MAXAGE"), rs.getObject("MASTERLTV"), rs.getObject("MAXSTONEWEIGHT"),
+				rs.getObject("MINSTANDARDWEIGHTDEDUCT"), rs.getObject("MAXSTANDARDWEIGHTDEDUCT"),
 				rs.getObject("PRICECHANGEALERT"), rs.getObject("MAILRECIPIENTS"), batchId);
 	}
-	
+
 	public static void saveGoldLoanStatePolicyDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2219,13 +2218,14 @@ public class DataMartMapper {
 		sql.append(",?");
 		sql.append(")");
 
-		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("POLICYID"),
-				rs.getObject("STATECODE"), rs.getObject("NSOLIDGOLDPRICEREDUCT"), rs.getObject("MAXCUSTEXPOSURE"), rs.getObject("MINLOANAMT"),
-				rs.getObject("MAXLOANAMT"), rs.getObject("MAXTENOR"), rs.getObject("MINAGE"),
-				rs.getObject("ACTIVE"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("MAXAGE"),
-				rs.getObject("MASTERLTV"), rs.getObject("MAXSTONEWEIGHT"), rs.getObject("MINSTANDARDWEIGHTDEDUCT"), rs.getObject("MAXSTANDARDWEIGHTDEDUCT"),batchId);
+		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("POLICYID"), rs.getObject("STATECODE"),
+				rs.getObject("NSOLIDGOLDPRICEREDUCT"), rs.getObject("MAXCUSTEXPOSURE"), rs.getObject("MINLOANAMT"),
+				rs.getObject("MAXLOANAMT"), rs.getObject("MAXTENOR"), rs.getObject("MINAGE"), rs.getObject("ACTIVE"),
+				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("MAXAGE"), rs.getObject("MASTERLTV"),
+				rs.getObject("MAXSTONEWEIGHT"), rs.getObject("MINSTANDARDWEIGHTDEDUCT"),
+				rs.getObject("MAXSTANDARDWEIGHTDEDUCT"), batchId);
 	}
-	
+
 	public static void saveGoldRateDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2250,12 +2250,11 @@ public class DataMartMapper {
 		sql.append(",?");
 		sql.append(")");
 
-		jdbcTemplate.update(sql.toString(), rs.getObject("ID"),
-				rs.getObject("EFFECTIVEDATE"), rs.getObject("DAILYRATE"),
-				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("SOLIDMOVINGAVGRATE"),
-				rs.getObject("NSOLIDMOVINGAVGRATE"), batchId);
+		jdbcTemplate.update(sql.toString(), rs.getObject("ID"), rs.getObject("EFFECTIVEDATE"),
+				rs.getObject("DAILYRATE"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"),
+				rs.getObject("SOLIDMOVINGAVGRATE"), rs.getObject("NSOLIDMOVINGAVGRATE"), batchId);
 	}
-	
+
 	public static void savePromotionDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2355,20 +2354,22 @@ public class DataMartMapper {
 		sql.append(")");
 
 		jdbcTemplate.update(sql.toString(), rs.getObject("PROMOTIONID"), rs.getObject("PROMOTIONCODE"),
-				rs.getObject("PROMOTIONDESC"), rs.getObject("FINTYPE"), rs.getObject("STARTDATE"), rs.getObject("ENDDATE"),
-				rs.getObject("FINISDWPAYREQUIRED"), rs.getObject("DOWNPAYRULE"), rs.getObject("ACTUALINTERESTRATE"),
-				rs.getObject("FINBASERATE"), rs.getObject("FINSPLRATE"), rs.getObject("FINMARGIN"), rs.getObject("APPLYRPYPRICING"),
-				rs.getObject("RPYPRICINGMETHOD"), rs.getObject("FINMINTERM"), rs.getObject("FINMAXTERM"), rs.getObject("FINMINAMOUNT"),
+				rs.getObject("PROMOTIONDESC"), rs.getObject("FINTYPE"), rs.getObject("STARTDATE"),
+				rs.getObject("ENDDATE"), rs.getObject("FINISDWPAYREQUIRED"), rs.getObject("DOWNPAYRULE"),
+				rs.getObject("ACTUALINTERESTRATE"), rs.getObject("FINBASERATE"), rs.getObject("FINSPLRATE"),
+				rs.getObject("FINMARGIN"), rs.getObject("APPLYRPYPRICING"), rs.getObject("RPYPRICINGMETHOD"),
+				rs.getObject("FINMINTERM"), rs.getObject("FINMAXTERM"), rs.getObject("FINMINAMOUNT"),
 				rs.getObject("FINMAXAMOUNT"), rs.getObject("FINMINRATE"), rs.getObject("FINMAXRATE"),
-				rs.getObject("ACTIVE"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("SCHEMESCOPE"),
-				rs.getObject("REPLEDGE"), rs.getObject("SCHEMEWISELIMIT"), rs.getObject("TENOR"), rs.getObject("INTERESTTYPE"),
-				rs.getObject("MININTERESTPERIOD"), rs.getObject("MONTHLYCOMPOUNDING"), rs.getObject("PENALINTERESTTYPE"), rs.getObject("MODULE"),
+				rs.getObject("ACTIVE"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"),
+				rs.getObject("SCHEMESCOPE"), rs.getObject("REPLEDGE"), rs.getObject("SCHEMEWISELIMIT"),
+				rs.getObject("TENOR"), rs.getObject("INTERESTTYPE"), rs.getObject("MININTERESTPERIOD"),
+				rs.getObject("MONTHLYCOMPOUNDING"), rs.getObject("PENALINTERESTTYPE"), rs.getObject("MODULE"),
 				rs.getObject("REFERENCEID"), rs.getObject("REMARKS"), rs.getObject("LTV"), rs.getObject("PENALRATE"),
-				rs.getObject("APPLYODPENALTY"), rs.getObject("ODINCGRCDAYS"), rs.getObject("ODCHARGETYPE"), rs.getObject("ODGRACEDAYS"),
-				rs.getObject("ODCHARGECALON"), rs.getObject("ODCHARGEAMTORPERC"),
+				rs.getObject("APPLYODPENALTY"), rs.getObject("ODINCGRCDAYS"), rs.getObject("ODCHARGETYPE"),
+				rs.getObject("ODGRACEDAYS"), rs.getObject("ODCHARGECALON"), rs.getObject("ODCHARGEAMTORPERC"),
 				rs.getObject("ODALLOWWAIVER"), rs.getObject("ODMAXWAIVERPERC"), batchId);
 	}
-	
+
 	public static void saveGoldPromotionSlabRateDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2395,12 +2396,11 @@ public class DataMartMapper {
 		sql.append(",?");
 		sql.append(")");
 
-		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("ID"),
-				rs.getObject("FROMDAYS"), rs.getObject("TODAYS"),
-				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), rs.getObject("RECORDSTATUS"),
-				rs.getObject("RATE"), batchId);
+		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("ID"), rs.getObject("FROMDAYS"),
+				rs.getObject("TODAYS"), rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"),
+				rs.getObject("RECORDSTATUS"), rs.getObject("RATE"), batchId);
 	}
-	
+
 	public static void saveGoldPromotionBranchDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2422,10 +2422,10 @@ public class DataMartMapper {
 		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("BRANCHCODE"),
 				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), batchId);
 	}
-	
+
 	public static void saveGoldPromotionStatesDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DM_PROMOTIONSTATES (");
 		sql.append(" REFERENCEID");
@@ -2440,14 +2440,14 @@ public class DataMartMapper {
 		sql.append(",?");
 		sql.append(",?");
 		sql.append(")");
-		
+
 		jdbcTemplate.update(sql.toString(), rs.getObject("REFERENCEID"), rs.getObject("STATECODE"),
 				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), batchId);
 	}
-	
+
 	public static void saveOrnamentTypeDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DM_ORNAMENTTYPE (");
 		sql.append(" ORNAMENTTYPE");
@@ -2462,11 +2462,11 @@ public class DataMartMapper {
 		sql.append(",?");
 		sql.append(",?");
 		sql.append(")");
-		
+
 		jdbcTemplate.update(sql.toString(), rs.getObject("ORNAMENTTYPE"), rs.getObject("ORNAMENTDESCRIPTION"),
 				rs.getObject("LASTMNTBY"), rs.getObject("LASTMNTON"), batchId);
 	}
-	
+
 	public static void saveOrnamentDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
 			JdbcTemplate jdbcTemplate) throws Exception {
 
@@ -2520,10 +2520,12 @@ public class DataMartMapper {
 		sql.append(")");
 
 		jdbcTemplate.update(sql.toString(), rs.getObject("APPL_ID"), rs.getObject("CUSTOMER_ID"),
-				rs.getObject("CUSTOMER_KEY"), rs.getObject("REFFERENCE_ID"), rs.getObject("RATE_PER_GRAM"), rs.getObject("ORNAMENT_ID"),
-				rs.getObject("ORNAMENT_KEY"), rs.getObject("ORNAMENT_REMARKS"), rs.getObject("NUMBER_OF_ITEMS"),
-				rs.getObject("STONE_FIX"), rs.getObject("STONE_FIX_KEY"), rs.getObject("TESTING_SYSTEM"), rs.getObject("TESTING_SYSTEM_KEY"),
-				rs.getObject("SYSTEM_READ"), rs.getObject("MANUAL_READ"), rs.getObject("GROSS_WEIGHT"), rs.getObject("STONE_WEIGHT"),
-				rs.getObject("NET_WEIGHT"), rs.getObject("MAX_LA"), rs.getObject("LOAN_AMOUNT"), rs.getObject("BUSSINESS_DATE"),batchId);
+				rs.getObject("CUSTOMER_KEY"), rs.getObject("REFFERENCE_ID"), rs.getObject("RATE_PER_GRAM"),
+				rs.getObject("ORNAMENT_ID"), rs.getObject("ORNAMENT_KEY"), rs.getObject("ORNAMENT_REMARKS"),
+				rs.getObject("NUMBER_OF_ITEMS"), rs.getObject("STONE_FIX"), rs.getObject("STONE_FIX_KEY"),
+				rs.getObject("TESTING_SYSTEM"), rs.getObject("TESTING_SYSTEM_KEY"), rs.getObject("SYSTEM_READ"),
+				rs.getObject("MANUAL_READ"), rs.getObject("GROSS_WEIGHT"), rs.getObject("STONE_WEIGHT"),
+				rs.getObject("NET_WEIGHT"), rs.getObject("MAX_LA"), rs.getObject("LOAN_AMOUNT"),
+				rs.getObject("BUSSINESS_DATE"), batchId);
 	}
 }

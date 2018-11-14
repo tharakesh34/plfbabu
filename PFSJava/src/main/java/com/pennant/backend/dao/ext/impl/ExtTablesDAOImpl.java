@@ -23,7 +23,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO {
 	private static Logger logger = Logger.getLogger(ExtTablesDAOImpl.class);
-	
+
 	public ExtTablesDAOImpl() {
 		super();
 	}
@@ -55,7 +55,6 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-
 
 	@Override
 	public void updateByid(ExtTable autoHunting) {
@@ -99,27 +98,28 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		insertSql.append(" (Sys_Code, Cob_Date, Target_Sys_Code, Status)");
 		insertSql.append(" Values(:Sys_Code, :Cob_Date, :Target_Sys_Code, :Status)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extTable);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * update Control Table Data
 	 * 
 	 * @param extTable
 	 */
 	@Override
-	public void updateCtrlTableStatus(String syscode,Date cobdate) {
+	public void updateCtrlTableStatus(String syscode, Date cobdate) {
 		logger.debug("Entering");
-		MapSqlParameterSource source=new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Sys_Code", syscode);
 		source.addValue("Cob_Date", cobdate);
-		
-		StringBuilder insertSql = new StringBuilder();		
+
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Update CONTROL_TABLE set STATUS=1 where SYS_CODE=:Sys_Code and COB_DATE= :Cob_Date");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
@@ -138,45 +138,40 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		insertSql.append(" (Key_Code, Key_desc, Cob_Date, Key_Value)");
 		insertSql.append(" Values(:Key_Code, :Key_desc, :Cob_Date, :Key_Value)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extTable);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * 
 	 */
 	@Override
-	public String insertPushData(final String tabdata, final String ouptut,
-			final String messageReturn) {
+	public String insertPushData(final String tabdata, final String ouptut, final String messageReturn) {
 		final StringBuilder builder = new StringBuilder("{ call SP_InsertPushData(?, ?, ?) }");
 
 		logger.debug("selectSql: " + builder.toString());
 
-		try{		
+		try {
 
-			this.jdbcTemplate.getJdbcOperations().execute(
-					new CallableStatementCreator() {
-						public CallableStatement createCallableStatement(Connection con) throws SQLException{
-							CallableStatement cs = con.prepareCall(builder.toString());
-							cs.setString(1, tabdata); 
-							cs.setString(2, ouptut); 
-							cs.setString(3, messageReturn); 
+			this.jdbcTemplate.getJdbcOperations().execute(new CallableStatementCreator() {
+				public CallableStatement createCallableStatement(Connection con) throws SQLException {
+					CallableStatement cs = con.prepareCall(builder.toString());
+					cs.setString(1, tabdata);
+					cs.setString(2, ouptut);
+					cs.setString(3, messageReturn);
 
-							return cs;
-						}
-					},
-					new CallableStatementCallback<Object>() {
-						public Object doInCallableStatement(CallableStatement cs) throws SQLException{
-							cs.execute();
-							return "";
-						}
-					}
-					);
+					return cs;
+				}
+			}, new CallableStatementCallback<Object>() {
+				public Object doInCallableStatement(CallableStatement cs) throws SQLException {
+					cs.execute();
+					return "";
+				}
+			});
 
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.info(e);
 		}
 		logger.debug("Leaving");
@@ -202,7 +197,7 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		insertSql.append(" (Id, AccountNumber)");
 		insertSql.append(" Values(:Id, :AccountNumber)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 
 		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
@@ -219,12 +214,12 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("DELETE FROM FinODAccounts");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 
 		this.jdbcTemplate.update(deleteSql.toString(), new MapSqlParameterSource());
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for adding Salaried Finance Next installment details
 	 * 
@@ -238,11 +233,10 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		insertSql.append(" (FinReference, PriAccount, SecAccount, NextPayDate, NextPayment, ValueDate)");
 		insertSql.append(" Values(:FinReference, :PriAccount, :SecAccount, :NextPayDate, :NextPayment, :ValueDate)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salariedPayment);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-
 
 }

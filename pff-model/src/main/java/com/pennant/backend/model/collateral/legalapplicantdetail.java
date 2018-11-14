@@ -14,90 +14,90 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "bankCustomer", "coOwnerIDType", "coOwnerId", "coOwnerPercentage", "coOwnerCIF",
-		"coOwnerCIFName","mobileNo", "emailId", "coOwnerIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2",
-		"POBox", "addrCountry", "addrProvince", "addrCity", "addrZIP", "remarks" })
+		"coOwnerCIFName", "mobileNo", "emailId", "coOwnerIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1",
+		"addrLine2", "POBox", "addrCountry", "addrProvince", "addrCity", "addrZIP", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class legalapplicantdetail extends AbstractWorkflowEntity implements Entity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				customerId;
-	
+	private long customerId;
+
 	@XmlElement(name = "coOwnerID")
-	private int					coOwnerId;
-	private String				collateralRef;
-	
-	@XmlElement
-	private boolean				bankCustomer;
-	
-	@XmlElement(name="cif")
-	private String				coOwnerCIF;
-	
-	@XmlElement(name="idType")
-	private String				coOwnerIDType;
-	
-	@XmlElement(name="idNumber")
-	private String				coOwnerIDNumber;
-	
-	@XmlElement(name="name")
-	private String				coOwnerCIFName;
-	
-	@XmlElement(name="ownershipPerc")
-	private BigDecimal			coOwnerPercentage;
-	@XmlElement(name="phoneNumber")
-	private String				mobileNo;
-	
-	@XmlElement(name="email")
-	private String				emailId;
-	
-	private byte[]				coOwnerProof = new byte[Byte.MAX_VALUE];
-	
-	@XmlElement
-	private String				remarks;
-	// Address Details
-	
-	@XmlElement(name="houseNo")
-	private String				addrHNbr;
-	
-	@XmlElement(name="flatNo")
-	private String				flatNbr;
-	
-	@XmlElement(name="streetName")
-	private String				addrStreet;
-	
-	@XmlElement
-	private String				addrLine1;
-	
-	@XmlElement
-	private String				addrLine2;
-	
-	@XmlElement
-	private String				POBox;
-	
-	@XmlElement(name="country")
-	private String				addrCountry;
-	
-	@XmlElement(name="province")
-	private String				addrProvince;
-	
-	@XmlElement(name="city")
-	private String				addrCity;
-	
-	@XmlElement(name="zip")
-	private String				addrZIP;
-	private boolean				newRecord			= false;
-	private legalapplicantdetail		befImage;
-	private LoggedInUser		userDetails;
+	private int coOwnerId;
+	private String collateralRef;
 
-	private String				coOwnerIDTypeName;
-	private String				coOwnerProofName;
-	private String				lovDescAddrCountryName;
-	private String				lovDescAddrProvinceName;
-	private String				lovDescAddrCityName;
-	
+	@XmlElement
+	private boolean bankCustomer;
+
+	@XmlElement(name = "cif")
+	private String coOwnerCIF;
+
+	@XmlElement(name = "idType")
+	private String coOwnerIDType;
+
+	@XmlElement(name = "idNumber")
+	private String coOwnerIDNumber;
+
+	@XmlElement(name = "name")
+	private String coOwnerCIFName;
+
+	@XmlElement(name = "ownershipPerc")
+	private BigDecimal coOwnerPercentage;
+	@XmlElement(name = "phoneNumber")
+	private String mobileNo;
+
+	@XmlElement(name = "email")
+	private String emailId;
+
+	private byte[] coOwnerProof = new byte[Byte.MAX_VALUE];
+
+	@XmlElement
+	private String remarks;
+	// Address Details
+
+	@XmlElement(name = "houseNo")
+	private String addrHNbr;
+
+	@XmlElement(name = "flatNo")
+	private String flatNbr;
+
+	@XmlElement(name = "streetName")
+	private String addrStreet;
+
+	@XmlElement
+	private String addrLine1;
+
+	@XmlElement
+	private String addrLine2;
+
+	@XmlElement
+	private String POBox;
+
+	@XmlElement(name = "country")
+	private String addrCountry;
+
+	@XmlElement(name = "province")
+	private String addrProvince;
+
+	@XmlElement(name = "city")
+	private String addrCity;
+
+	@XmlElement(name = "zip")
+	private String addrZIP;
+	private boolean newRecord = false;
+	private legalapplicantdetail befImage;
+	private LoggedInUser userDetails;
+
+	private String coOwnerIDTypeName;
+	private String coOwnerProofName;
+	private String lovDescAddrCountryName;
+	private String lovDescAddrProvinceName;
+	private String lovDescAddrCityName;
+
 	// API validation purpose only
-		@SuppressWarnings("unused")
-		private legalapplicantdetail validateCoOwner = this;
-		
+	@SuppressWarnings("unused")
+	private legalapplicantdetail validateCoOwner = this;
+
 	public legalapplicantdetail() {
 		super();
 	}

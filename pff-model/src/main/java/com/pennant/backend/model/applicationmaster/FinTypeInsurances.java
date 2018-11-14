@@ -8,31 +8,31 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class FinTypeInsurances extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
-	private String				finType=null;
-	private String              finTypeDesc; 
-	private String				insuranceType;
-	private String              insuranceTypeDesc;
-	private String				insuranceProvider;
-	private String				takafulName;
-	private String 				policyRate;
-	private String				policyType;
-	private String              policyDesc;
-	private String				dftPayType;
-	private String				calType;
-	private String				amountRule;
-	private String				ruleCodeDesc;
-	private BigDecimal          constAmt= BigDecimal.ZERO;
-	private BigDecimal          percentage=BigDecimal.ZERO;
-	private String              calculateOn;
-	private boolean				mandatory;
-	private boolean				alwRateChange;
-	private boolean				newRecord			= false;
-	private FinTypeInsurances	befImage;
-	private LoggedInUser		userDetails;
-	
-	private int 				moduleId;
-	
+	private static final long serialVersionUID = 1L;
+	private String finType = null;
+	private String finTypeDesc;
+	private String insuranceType;
+	private String insuranceTypeDesc;
+	private String insuranceProvider;
+	private String takafulName;
+	private String policyRate;
+	private String policyType;
+	private String policyDesc;
+	private String dftPayType;
+	private String calType;
+	private String amountRule;
+	private String ruleCodeDesc;
+	private BigDecimal constAmt = BigDecimal.ZERO;
+	private BigDecimal percentage = BigDecimal.ZERO;
+	private String calculateOn;
+	private boolean mandatory;
+	private boolean alwRateChange;
+	private boolean newRecord = false;
+	private FinTypeInsurances befImage;
+	private LoggedInUser userDetails;
+
+	private int moduleId;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("insuranceTypeDesc");
@@ -44,25 +44,26 @@ public class FinTypeInsurances extends AbstractWorkflowEntity {
 		excludeFields.add("policyRate");
 		return excludeFields;
 	}
-	
+
 	public FinTypeInsurances() {
 		super();
 	}
-	
+
 	public FinTypeInsurances(String id) {
 		super();
 		this.setId(id);
 	}
-	
+
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return finType;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finType = id;
 	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -98,7 +99,6 @@ public class FinTypeInsurances extends AbstractWorkflowEntity {
 	public void setCalType(String calType) {
 		this.calType = calType;
 	}
-
 
 	public String getAmountRule() {
 		return amountRule;
@@ -163,7 +163,7 @@ public class FinTypeInsurances extends AbstractWorkflowEntity {
 	public void setInsuranceTypeDesc(String insuranceTypeDesc) {
 		this.insuranceTypeDesc = insuranceTypeDesc;
 	}
-	
+
 	public String getPolicyType() {
 		return policyType;
 	}

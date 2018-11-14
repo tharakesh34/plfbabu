@@ -101,42 +101,41 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-	
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CashManagement/BranchCashToBankRequest/DepositDetailsDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/CashManagement/BranchCashToBankRequest/DepositDetailsDialog.zul
+ * file. <br>
  */
 public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(DepositDetailsDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(DepositDetailsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_DepositDetailsDialog;
-	protected Combobox							depositType;
-	protected ExtendedCombobox					branchCode;
-	protected CurrencyBox						availableAmount;
-	protected CurrencyBox						reservedAmount;
-	protected ExtendedCombobox					partnerBankId;
-	protected Datebox							transactionDate;
-	protected Uppercasebox						depositSlipNumber;
-	protected Space								Space_depositSlipNumber;
-	protected Listbox							listBox_DenominationsList;
-	protected Tablechildren						tablechildren_Cash;
-	protected Listbox							listBoxChequeOrDD;
-	protected Groupbox							groupBox_Cheque;
+	protected Window window_DepositDetailsDialog;
+	protected Combobox depositType;
+	protected ExtendedCombobox branchCode;
+	protected CurrencyBox availableAmount;
+	protected CurrencyBox reservedAmount;
+	protected ExtendedCombobox partnerBankId;
+	protected Datebox transactionDate;
+	protected Uppercasebox depositSlipNumber;
+	protected Space Space_depositSlipNumber;
+	protected Listbox listBox_DenominationsList;
+	protected Tablechildren tablechildren_Cash;
+	protected Listbox listBoxChequeOrDD;
+	protected Groupbox groupBox_Cheque;
 
-	private DepositDetails						depositDetails;
+	private DepositDetails depositDetails;
 
-	private transient DepositDetailsListCtrl	depositDetailsListCtrl;
-	private transient DepositDetailsService		depositDetailsService;
+	private transient DepositDetailsListCtrl depositDetailsListCtrl;
+	private transient DepositDetailsService depositDetailsService;
 
-	private List<ValueLabel>					listRequestType		= PennantStaticListUtil.getDepositTypesListList();
-	private List<CashDenomination>				cashDenominations	= new ArrayList<CashDenomination>();
+	private List<ValueLabel> listRequestType = PennantStaticListUtil.getDepositTypesListList();
+	private List<CashDenomination> cashDenominations = new ArrayList<CashDenomination>();
 
 	/**
 	 * default constructor.<br>
@@ -185,7 +184,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			this.depositDetails.setBefImage(depositDetails);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.depositDetails.isWorkflow(), this.depositDetails.getWorkflowId(), this.depositDetails.getNextTaskId());
+			doLoadWorkFlow(this.depositDetails.isWorkflow(), this.depositDetails.getWorkflowId(),
+					this.depositDetails.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
@@ -395,7 +395,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	private void doFillDenominationsList(List<CashDenomination> denominations) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		setCashDenominations(denominations);
 		boolean isReadOnly = false;
@@ -453,7 +453,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			countBox.addForward("onChange", window_DepositDetailsDialog, "onChangeCount", cashDenomination);
 
 			// Total Amount
-			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(), PennantConstants.defaultCCYDecPos);
+			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(),
+					PennantConstants.defaultCCYDecPos);
 			Decimalbox amountBox = new Decimalbox();
 			amountBox.setMaxlength(18);
 			amountBox.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
@@ -505,12 +506,13 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		lc.setParent(item);
 
 		this.listBox_DenominationsList.appendChild(item);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Change the Denomination count
+	 * 
 	 * @param event
 	 */
 	public void onChangeCount(ForwardEvent event) {
@@ -526,7 +528,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		} else {
 			cashDenomination.setCount(count.getValue());
 			BigDecimal denomination = new BigDecimal(cashDenomination.getDenomination());
-			cashDenomination.setAmount(PennantAppUtil.unFormateAmount(denomination.multiply(new BigDecimal(count.getValue())), PennantConstants.defaultCCYDecPos));
+			cashDenomination.setAmount(PennantAppUtil.unFormateAmount(
+					denomination.multiply(new BigDecimal(count.getValue())), PennantConstants.defaultCCYDecPos));
 		}
 
 		doFillDenominationsList(getCashDenominations());
@@ -536,6 +539,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	/**
 	 * Change the coins amount
+	 * 
 	 * @param event
 	 */
 	public void onChangeAmount(ForwardEvent event) {
@@ -546,9 +550,11 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		CashDenomination cashDenomination = (CashDenomination) event.getData();
 
 		if (amount.getValue() == null) {
-			cashDenomination.setAmount(PennantAppUtil.unFormateAmount(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
+			cashDenomination
+					.setAmount(PennantAppUtil.unFormateAmount(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
 		} else {
-			cashDenomination.setAmount(PennantAppUtil.unFormateAmount(amount.getValue(), PennantConstants.defaultCCYDecPos));
+			cashDenomination
+					.setAmount(PennantAppUtil.unFormateAmount(amount.getValue(), PennantConstants.defaultCCYDecPos));
 		}
 
 		doFillDenominationsList(getCashDenominations());
@@ -570,7 +576,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		DepositMovements depositMovements = aDepositDetails.getDepositMovements();
 		BigDecimal availableAmount = aDepositDetails.getActualAmount();
-		this.availableAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
+		this.availableAmount
+				.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 
 		if (depositMovements == null) {
 			this.transactionDate.setValue(DateUtility.getAppDate());
@@ -581,17 +588,21 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			depositMovements.setNewRecord(true);
 			aDepositDetails.setDepositMovements(depositMovements);
 			if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(aDepositDetails.getDepositType())) {
-				this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
+				this.reservedAmount.setValue(
+						PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 			} else {
-				this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
+				this.reservedAmount.setValue(
+						PennantApplicationUtil.formateAmount(BigDecimal.ZERO, PennantConstants.defaultCCYDecPos));
 			}
 		} else {
-			this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(aDepositDetails.getReservedAmount(), PennantConstants.defaultCCYDecPos));
-			this.partnerBankId.setValue(String.valueOf(depositMovements.getPartnerBankId()), depositMovements.getPartnerBankName());
+			this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(aDepositDetails.getReservedAmount(),
+					PennantConstants.defaultCCYDecPos));
+			this.partnerBankId.setValue(String.valueOf(depositMovements.getPartnerBankId()),
+					depositMovements.getPartnerBankName());
 			this.transactionDate.setValue(depositMovements.getTransactionDate());
 			this.depositSlipNumber.setValue(depositMovements.getDepositSlipNumber());
 		}
-		
+
 		if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(aDepositDetails.getDepositType())) {
 			this.groupBox_Cheque.setVisible(false);
 			if (CollectionUtils.isNotEmpty(depositMovements.getDenominationList())) {
@@ -601,7 +612,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			}
 		} else {
 			this.tablechildren_Cash.setVisible(false);
-			List<DepositCheques> depositChequesList = this.depositDetailsService.getDepositChequesList(aDepositDetails.getBranchCode());
+			List<DepositCheques> depositChequesList = this.depositDetailsService
+					.getDepositChequesList(aDepositDetails.getBranchCode());
 			if (CollectionUtils.isNotEmpty(depositChequesList)) {
 				for (DepositCheques depositCheque : depositChequesList) {
 					depositCheque.setStatus(CashManagementConstants.DEPOSIT_CHEQUE_STATUS_APPROVE);
@@ -610,7 +622,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 					depositCheque.setNewRecord(true);
 				}
 			}
-			
+
 			if (CollectionUtils.isNotEmpty(depositMovements.getDepositChequesList())) {
 				for (DepositCheques depositCheque : depositMovements.getDepositChequesList()) {
 					depositCheque.setVisible(true);
@@ -619,17 +631,18 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			} else {
 				depositMovements.setDepositChequesList(depositChequesList);
 			}
-			
+
 			doFillChequeDetails(depositMovements.getDepositChequesList());
 		}
-		
+
 		this.recordStatus.setValue(depositDetails.getRecordStatus());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for Showing Posting Details which are going to be reversed
+	 * 
 	 * @param linkedTranId
 	 */
 	private void doFillChequeDetails(List<DepositCheques> depositChequesList) {
@@ -638,7 +651,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		if (CollectionUtils.isNotEmpty(depositChequesList)) {
 			Listitem item;
 			boolean readOnly = isReadOnly("DepositDetailsDialog_TransactionAmount");
-			
+
 			for (DepositCheques depositCheque : depositChequesList) {
 				item = new Listitem();
 				Listcell lc = null;
@@ -651,34 +664,36 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc = new Listcell();
 				lc.appendChild(active);
 				lc.setParent(item);
-				
+
 				//FinReference
 				lc = new Listcell(depositCheque.getFinReference());
 				lc.setParent(item);
-				
+
 				//Customer Name
 				lc = new Listcell(depositCheque.getCustShrtName());
 				lc.setParent(item);
-				
+
 				//Cheque/DD No
 				lc = new Listcell(depositCheque.getFavourNumber());
 				lc.setParent(item);
-				
+
 				//Cheque/DD Date
 				lc = new Listcell(DateUtility.formatToLongDate(depositCheque.getReceivedDate()));
 				lc.setParent(item);
-				
+
 				//Bank Name
 				//lc = new Listcell(depositCheque.getPartnerBankCode());
 				//lc.setParent(item);
-				
+
 				//Amount
-				lc = new Listcell(PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
+				lc = new Listcell(
+						PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				
+
 				//Receipt Purpose
-				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(), PennantStaticListUtil.getReceiptPurpose()));
+				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(),
+						PennantStaticListUtil.getReceiptPurpose()));
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());
 				lc.setParent(item);
@@ -688,7 +703,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * onSelect event for list item
 	 * 
@@ -697,13 +712,14 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 */
 	public void onCheckListItem(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		DepositCheques depositCheques = (DepositCheques) event.getData();
 		if (depositCheques == null) {
 			return;
 		}
 		Checkbox active = (Checkbox) event.getOrigin().getTarget();
-		BigDecimal reservedAmount = PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(), PennantConstants.defaultCCYDecPos);
+		BigDecimal reservedAmount = PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(),
+				PennantConstants.defaultCCYDecPos);
 		if (active.isChecked()) {
 			reservedAmount = reservedAmount.add(depositCheques.getAmount());
 			depositCheques.setVisible(true);
@@ -711,12 +727,13 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			reservedAmount = reservedAmount.subtract(depositCheques.getAmount());
 			depositCheques.setVisible(false);
 		}
-		
-		this.reservedAmount.setValue(PennantApplicationUtil.formateAmount(reservedAmount, PennantConstants.defaultCCYDecPos));
-		
+
+		this.reservedAmount
+				.setValue(PennantApplicationUtil.formateAmount(reservedAmount, PennantConstants.defaultCCYDecPos));
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * preparing cash denominations
 	 * 
@@ -756,7 +773,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		DepositMovements depositMovements = aDepositDetails.getDepositMovements();
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		//Deposit Type
@@ -774,8 +791,10 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		}
 		//Reserved Amount
 		try {
-			aDepositDetails.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
-			depositMovements.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			aDepositDetails.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(),
+					PennantConstants.defaultCCYDecPos));
+			depositMovements.setReservedAmount(PennantAppUtil.unFormateAmount(this.reservedAmount.getValidateValue(),
+					PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -783,18 +802,22 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		try {
 			double reservedAmount = this.reservedAmount.getValidateValue().doubleValue();
 			double availableAmount = this.availableAmount.getValidateValue().doubleValue();
-			
+
 			String recordStatus = this.userAction.getSelectedItem().getLabel();
-			if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus) && !"Resubmit".equalsIgnoreCase(recordStatus)) {
+			if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus)
+					&& !"Resubmit".equalsIgnoreCase(recordStatus)) {
 				if (reservedAmount != 0 && availableAmount != 0 && availableAmount < reservedAmount) {
 					throw new WrongValueException(this.reservedAmount,
-							Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[]{Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
-									Labels.getLabel("label_DepositDetailsDialog_AvailableAmount.value")}));
+							Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+									new String[] { Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
+											Labels.getLabel("label_DepositDetailsDialog_AvailableAmount.value") }));
 				} else if (reservedAmount == 0) {
-					throw new WrongValueException(this.reservedAmount, Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value") + " must be greater than 0.");
+					throw new WrongValueException(this.reservedAmount,
+							Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value")
+									+ " must be greater than 0.");
 				}
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -825,21 +848,23 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			wve.add(we);
 		}
 
-		
 		if (wve.size() == 0) {
-			if (this.tablechildren_Cash.isVisible()) {	//Cash Denominations
-				if (this.userAction.getSelectedItem() != null && !PennantConstants.RECORD_TYPE_DEL.equals(aDepositDetails.getRecordType())) {
+			if (this.tablechildren_Cash.isVisible()) { //Cash Denominations
+				if (this.userAction.getSelectedItem() != null
+						&& !PennantConstants.RECORD_TYPE_DEL.equals(aDepositDetails.getRecordType())) {
 					String recordStatus = this.userAction.getSelectedItem().getLabel();
-					if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus) && !"Resubmit".equalsIgnoreCase(recordStatus)) {
+					if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus)
+							&& !"Resubmit".equalsIgnoreCase(recordStatus)) {
 						wve = validateCashDenomination(wve);
 					}
 				}
 				if (wve.isEmpty()) {
 					depositMovements.setDenominationList(getCashDenominations());
 				}
-			} else if (this.groupBox_Cheque.isVisible() && CollectionUtils.isNotEmpty(depositMovements.getDepositChequesList())) {	//Deposit Cheques
+			} else if (this.groupBox_Cheque.isVisible()
+					&& CollectionUtils.isNotEmpty(depositMovements.getDepositChequesList())) { //Deposit Cheques
 				List<DepositCheques> finalChequesList = new ArrayList<DepositCheques>();
-				
+
 				boolean active = false;
 				for (DepositCheques depositCheques : depositMovements.getDepositChequesList()) {
 					if (depositCheques.isVisible()) {
@@ -856,7 +881,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 						finalChequesList.add(depositCheques);
 					}
 				}
-				
+
 				if (!active) {
 					try {
 						throw new WrongValueException(this.listBoxChequeOrDD, "Please select at least once record.");
@@ -864,7 +889,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 						wve.add(we);
 					}
 				}
-				
+
 				depositMovements.setDepositChequesList(finalChequesList);
 			}
 		}
@@ -890,6 +915,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	/**
 	 * Validate the Cash Denominations
+	 * 
 	 * @param wve
 	 * @return
 	 */
@@ -1013,34 +1039,42 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.branchCode.isReadonly()) {
-			this.branchCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DepositDetailsDialog_BranchCode.value"), null, true, true));
+			this.branchCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_DepositDetailsDialog_BranchCode.value"), null, true, true));
 		}
 
 		if (!this.depositSlipNumber.isReadonly()) {
-			this.depositSlipNumber.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.depositSlipNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DepositDetailsDialog_DepositSlipNumber.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
 		if (!this.depositType.isReadonly()) {
-			this.depositType.setConstraint(new StaticListValidator(listRequestType, Labels.getLabel("label_DepositDetailsDialog_DepositType.value")));
+			this.depositType.setConstraint(new StaticListValidator(listRequestType,
+					Labels.getLabel("label_DepositDetailsDialog_DepositType.value")));
 		}
 
 		if (!this.availableAmount.isReadonly()) {
-			this.availableAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_DepositDetailsDialog_AvailableAmount.value"),
+			this.availableAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_DepositDetailsDialog_AvailableAmount.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
 
 		if (!this.reservedAmount.isReadonly()) {
-			this.reservedAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
+			this.reservedAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_DepositDetailsDialog_ReservedAmount.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
 
 		if (!this.partnerBankId.isReadonly()) {
-			this.partnerBankId.setConstraint(new PTStringValidator(Labels.getLabel("label_DepositDetailsDialog_PartnerBankId.value"), null, true, true));
+			this.partnerBankId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_DepositDetailsDialog_PartnerBankId.value"), null, true, true));
 		}
-		
+
 		if (!this.transactionDate.isReadonly()) {
-			this.transactionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DepositDetailsDialog_TransactionDate.value"), true, DateUtility.getAppDate(), DateUtility.getAppDate(), true));
+			this.transactionDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_DepositDetailsDialog_TransactionDate.value"), true,
+							DateUtility.getAppDate(), DateUtility.getAppDate(), true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1089,7 +1123,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.branchCode.setErrorMessage("");
 		this.depositType.setErrorMessage("");
 		this.transactionDate.setErrorMessage("");
@@ -1097,7 +1131,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		this.reservedAmount.setErrorMessage("");
 		this.depositSlipNumber.setErrorMessage("");
 		this.partnerBankId.setErrorMessage("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1169,7 +1203,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		readOnlyComponent(true, this.transactionDate);
 		readOnlyComponent(true, this.availableAmount);
 		readOnlyComponent(true, this.depositType);
-		
+
 		String isDepositAmtEdit = SysParamUtil.getValueAsString("DEPOSIT_AMOUNT_EDIT");
 
 		if (StringUtils.equals(isDepositAmtEdit, PennantConstants.YES)
@@ -1178,14 +1212,14 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		} else {
 			readOnlyComponent(true, this.reservedAmount);
 		}
-		
+
 		if (partnerBankId.isReadonly()) {
 			partnerBankId.setMandatoryStyle(false);
 		}
 		if (depositSlipNumber.isReadonly()) {
 			Space_depositSlipNumber.setSclass("");
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1255,19 +1289,21 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 */
 	public void doSave() {
 		logger.debug("Entering");
-		
+
 		final DepositDetails aDepositDetails = new DepositDetails();
 		BeanUtils.copyProperties(this.depositDetails, aDepositDetails);
 		boolean isNew = false;
 
 		//Validation for components
-		if (this.userAction.getSelectedItem() != null && !PennantConstants.RECORD_TYPE_DEL.equals(aDepositDetails.getRecordType())) {
+		if (this.userAction.getSelectedItem() != null
+				&& !PennantConstants.RECORD_TYPE_DEL.equals(aDepositDetails.getRecordType())) {
 			String recordStatus = this.userAction.getSelectedItem().getLabel();
-			if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus) && !"Resubmit".equalsIgnoreCase(recordStatus)) {
+			if (!"Reject".equalsIgnoreCase(recordStatus) && !"Cancel".equalsIgnoreCase(recordStatus)
+					&& !"Resubmit".equalsIgnoreCase(recordStatus)) {
 				doSetValidation();
 			}
 		}
-		
+
 		doWriteComponentsToBean(aDepositDetails);
 
 		isNew = aDepositDetails.isNew();
@@ -1302,7 +1338,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		} catch (final DataAccessException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
-		}  catch (AppException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
@@ -1324,7 +1360,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 */
 	private boolean doProcess(DepositDetails depositDetails, String tranType) {
 		logger.debug("Entering");
-		
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1415,7 +1451,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		DepositDetails aDepositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
@@ -1489,7 +1525,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 */
 	private AuditHeader getAuditHeader(DepositDetails depositDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, depositDetails.getBefImage(), depositDetails);
-		return new AuditHeader(getReference(), null, null, null, auditDetail, depositDetails.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), null, null, null, auditDetail, depositDetails.getUserDetails(),
+				getOverideMap());
 	}
 
 	public void setDepositDetailsService(DepositDetailsService depositDetailsService) {

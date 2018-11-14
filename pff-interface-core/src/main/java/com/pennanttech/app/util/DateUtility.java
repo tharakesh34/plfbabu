@@ -48,24 +48,23 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
- import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * <p>
  * A suite of utilities surrounding the use of the {@link java.util.Calendar} and {@link java.util.Date} object.
  * </p>
  */
- @Deprecated
+@Deprecated
 public final class DateUtility extends DateUtil {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
-	
+
 	static String DBDateFormat = "yyyy-MM-dd";
 
-	
-	private DateUtility(){
+	private DateUtility() {
 		super();
 	}
-	
+
 	/**
 	 * Returns the string representation with the specified pattern of the server time.
 	 * 
@@ -296,8 +295,8 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the month part of the Date. This method is provided because
-	 * <code> getMonth() <code> method in Date is deprecated
+	 * Returns the month part of the Date. This method is provided because <code> getMonth() <code> method in Date is
+	 * deprecated
 	 * 
 	 * @param date
 	 *            (Date)
@@ -347,8 +346,8 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the year part of the Date. This method is provided because
-	 * <code> getYear() <code> method in Date is deprecated
+	 * Returns the year part of the Date. This method is provided because <code> getYear() <code> method in Date is
+	 * deprecated
 	 * 
 	 * @param date
 	 *            (Date)
@@ -471,11 +470,8 @@ public final class DateUtility extends DateUtil {
 
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = 0;
-		if (includeDate2
-				&& getMonthEndDate(date1)
-						.compareTo(
-								getUtilDate(formatUtilDate(date1, DBDateFormat),
-										DBDateFormat)) == 0) {
+		if (includeDate2 && getMonthEndDate(date1)
+				.compareTo(getUtilDate(formatUtilDate(date1, DBDateFormat), DBDateFormat)) == 0) {
 
 			if (convert(addDays(date1, 1)).get(Calendar.YEAR) != convert(date1).get(Calendar.YEAR)) {
 				years++;
@@ -552,7 +548,6 @@ public final class DateUtility extends DateUtil {
 		return gc;
 	}
 
-	 
 	public static long getDaysBetween(Calendar startCalendar, Calendar endCalendar) {
 		return Math
 				.round((endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (1000d * 60d * 60d * 24d));
@@ -575,12 +570,12 @@ public final class DateUtility extends DateUtil {
 		if (endTime == null || startTime == null) {
 			return "";
 		}
-		return new SimpleDateFormat("HH:mm:ss").format(convert(new GregorianCalendar(
-				getYearsBetween(endTime, startTime), getMonthsBetween(endTime, startTime) % 12, getDay(endTime)
-						- getDay(startTime), convert(endTime).get(Calendar.HOUR)
-						- convert(startTime).get(Calendar.HOUR), convert(endTime).get(Calendar.MINUTE)
-						- convert(startTime).get(Calendar.MINUTE), convert(endTime).get(Calendar.SECOND)
-						- convert(startTime).get(Calendar.SECOND))));
+		return new SimpleDateFormat("HH:mm:ss")
+				.format(convert(new GregorianCalendar(getYearsBetween(endTime, startTime),
+						getMonthsBetween(endTime, startTime) % 12, getDay(endTime) - getDay(startTime),
+						convert(endTime).get(Calendar.HOUR) - convert(startTime).get(Calendar.HOUR),
+						convert(endTime).get(Calendar.MINUTE) - convert(startTime).get(Calendar.MINUTE),
+						convert(endTime).get(Calendar.SECOND) - convert(startTime).get(Calendar.SECOND))));
 
 	}
 
@@ -630,41 +625,39 @@ public final class DateUtility extends DateUtil {
 
 		return new java.util.Date(xmlCalendar.toGregorianCalendar().getTimeInMillis());
 	}
-	
+
 	public static String timeBetween(java.util.Date endTime, java.util.Date startTime, String format) {
-		if(endTime == null || startTime == null ){
+		if (endTime == null || startTime == null) {
 			return "";
 		}
-		
+
 		long diff = endTime.getTime() - startTime.getTime();
-		
+
 		long diffSeconds = diff / 1000 % 60;
 		long diffMinutes = diff / (60 * 1000) % 60;
 		long diffHours = diff / (60 * 60 * 1000) % 24;
-		
+
 		int seconds = 0;
-		if(diffSeconds > 0) {
+		if (diffSeconds > 0) {
 			seconds = Integer.parseInt(String.valueOf(diffSeconds));
-		} 
-		
+		}
+
 		int minutes = 0;
-		if(diffMinutes > 0) {
+		if (diffMinutes > 0) {
 			minutes = Integer.parseInt(String.valueOf(diffMinutes));
-		} 
-		
+		}
+
 		int hours = 0;
-		if(diffHours > 0) {
+		if (diffHours > 0) {
 			hours = Integer.parseInt(String.valueOf(diffHours));
-		} 
-		
-		
+		}
+
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, hours);
 		cal.set(Calendar.MINUTE, minutes);
 		cal.set(Calendar.SECOND, seconds);
-		
-		
-		return  new SimpleDateFormat(format).format(cal.getTime());
+
+		return new SimpleDateFormat(format).format(cal.getTime());
 	}
 
 }

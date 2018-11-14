@@ -65,9 +65,9 @@ import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.beneficiary.beneficiary.model.BeneficiaryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.beneficiary/Beneficiary/BeneficiaryList.zul file.
@@ -100,7 +100,7 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 	protected Listbox sortOperator_AccNo;
 
 	private transient BeneficiaryService beneficiaryService;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -289,7 +289,7 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -300,7 +300,7 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -313,7 +313,7 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -321,7 +321,8 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;

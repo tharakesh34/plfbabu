@@ -47,36 +47,33 @@ import org.zkforge.ckez.CKeditor;
 
 public class PTCKeditor extends CKeditor {
 	private static final long serialVersionUID = -4246285143621221275L;
-	
+
 	public static final String ckEditorReadonlyUrl = "/ptjs/ckEditorReadonlyConfig.js";
 	public static final String ckEditorUrl = "/ptjs/ckEditorConfig.js";
 	public static final String SIMPLE_LIST = "/ptjs/ckEditorConfigSimpleList.js";
-	
+
 	/**
-	 * PTCKeditor
-	 * Constructor
-	 * Defining the components and events
+	 * PTCKeditor Constructor Defining the components and events
 	 */
 	public PTCKeditor() {
 		super();
 		this.setCustomConfigurationsPath(ckEditorUrl);
 	}
-	
-	public void setReadonly(boolean readonly){
-		if(readonly){
+
+	public void setReadonly(boolean readonly) {
+		if (readonly) {
 			this.setCustomConfigurationsPath(ckEditorReadonlyUrl);
-		}else{
+		} else {
 			this.setCustomConfigurationsPath(ckEditorUrl);
 		}
 		//this.setCustomConfigurationsPath(ckEditorUrl); --TODO : Commented for setting Readonly Condition
 	}
-	
-	public boolean isReadonly(){
-		if(this.getCustomConfigurationsPath().equals(ckEditorReadonlyUrl)){
+
+	public boolean isReadonly() {
+		if (this.getCustomConfigurationsPath().equals(ckEditorReadonlyUrl)) {
 			return true;
 		}
 		return false;
 	}
-	
-	
+
 }

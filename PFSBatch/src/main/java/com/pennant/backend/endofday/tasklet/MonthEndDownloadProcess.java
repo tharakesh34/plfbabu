@@ -24,50 +24,50 @@ import com.pennant.backend.model.rulefactory.SubHeadRule;
 
 public class MonthEndDownloadProcess implements Tasklet {
 	private Logger logger = Logger.getLogger(MonthEndDownloadProcess.class);
-	
-	private DailyDownloadInterfaceService dailyDownloadInterfaceService; 
-	private AccountNumberUtil accountNumberUtil; 
-	
+
+	private DailyDownloadInterfaceService dailyDownloadInterfaceService;
+	private AccountNumberUtil accountNumberUtil;
+
 	private Date dateValueDate = null;
 	private ExecutionContext stepExecutionContext;
 
 	public MonthEndDownloadProcess() {
 		//
 	}
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getAppValueDate();
 
-		logger.debug("START: Month End Download Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
+		logger.debug("START: Month End Download Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
 
-		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();	
+		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		try {
-			List<FinanceType> financeTypeList =  getDailyDownloadInterfaceService().fetchFinanceTypeDetails();
-			if(financeTypeList != null){
-				
+			List<FinanceType> financeTypeList = getDailyDownloadInterfaceService().fetchFinanceTypeDetails();
+			if (financeTypeList != null) {
+
 				List<FinanceProfitDetail> updateFinPftDetailList = processIncomeAccountDetails(financeTypeList);
-				
-				if(!updateFinPftDetailList.isEmpty()){
+
+				if (!updateFinPftDetailList.isEmpty()) {
 					getDailyDownloadInterfaceService().updateFinProfitIncomeAccounts(updateFinPftDetailList);
 				}
-			} 
+			}
 
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 
-		logger.debug("COMPLETE: Month End Download Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
+		logger.debug("COMPLETE: Month End Download Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
-	
-	private List<FinanceProfitDetail> processIncomeAccountDetails(List<FinanceType> financeTypeList){
+
+	private List<FinanceProfitDetail> processIncomeAccountDetails(List<FinanceType> financeTypeList) {
 		logger.debug("Entering");
 
-		Map<Long,List<TransactionEntry>> eventCodes  = new HashMap<Long,List<TransactionEntry>>(); 
+		Map<Long, List<TransactionEntry>> eventCodes = new HashMap<Long, List<TransactionEntry>>();
 		List<FinanceProfitDetail> finPftDetailList = new ArrayList<FinanceProfitDetail>();
 		List<TransactionEntry> transactionEntries = null;
 		FinanceProfitDetail financeProfitDetail = null;
@@ -76,13 +76,13 @@ public class MonthEndDownloadProcess implements Tasklet {
 		for (FinanceType financeType : financeTypeList) {
 			//Maintaining Map To Avoid Multiple Database Hits For Same Transaction Entries
 			Long accSetID = financeType.getAccEventValue(AccountEventConstants.ACCEVENT_AMZ);
-			if(eventCodes.containsKey(accSetID)){
+			if (eventCodes.containsKey(accSetID)) {
 				transactionEntries = eventCodes.get(accSetID);
-			}else{
+			} else {
 				transactionEntries = getDailyDownloadInterfaceService().fetchTransactionEntryDetails(accSetID);
-				eventCodes.put(accSetID,transactionEntries);
+				eventCodes.put(accSetID, transactionEntries);
 			}
-			if(transactionEntries != null){
+			if (transactionEntries != null) {
 				subHeadRule = new SubHeadRule();
 				subHeadRule.setReqFinAcType(financeType.getFinAcType());
 				subHeadRule.setReqProduct(financeType.getFinCategory());
@@ -96,10 +96,10 @@ public class MonthEndDownloadProcess implements Tasklet {
 			}
 		}
 
-		logger.debug("Leaving"); 
+		logger.debug("Leaving");
 		return finPftDetailList;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -107,16 +107,17 @@ public class MonthEndDownloadProcess implements Tasklet {
 	public DailyDownloadInterfaceService getDailyDownloadInterfaceService() {
 		return dailyDownloadInterfaceService;
 	}
-	public void setDailyDownloadInterfaceService(
-			DailyDownloadInterfaceService dailyDownloadInterfaceService) {
+
+	public void setDailyDownloadInterfaceService(DailyDownloadInterfaceService dailyDownloadInterfaceService) {
 		this.dailyDownloadInterfaceService = dailyDownloadInterfaceService;
 	}
 
 	public AccountNumberUtil getAccountNumberUtil() {
 		return accountNumberUtil;
 	}
+
 	public void setAccountNumberUtil(AccountNumberUtil accountNumberUtil) {
 		this.accountNumberUtil = accountNumberUtil;
 	}
-	
+
 }

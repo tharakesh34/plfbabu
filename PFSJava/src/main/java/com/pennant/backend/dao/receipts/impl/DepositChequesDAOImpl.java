@@ -70,13 +70,12 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>DepositCheques</code> with set of CRUD operations.
  */
 public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implements DepositChequesDAO {
-	private static Logger				logger	= Logger.getLogger(DepositChequesDAOImpl.class);
+	private static Logger logger = Logger.getLogger(DepositChequesDAOImpl.class);
 
 	public DepositChequesDAOImpl() {
 		super();
 	}
 
-	
 	@Override
 	public String save(DepositCheques depositCheques, String type) {
 		logger.debug(Literal.ENTERING);
@@ -85,11 +84,13 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		StringBuilder sql = new StringBuilder(" insert into DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, LinkedTranId,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :Id, :MovementId, :ReceiptId, :ReceiptMode, :Amount, :Status, :LinkedTranId,");
-		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the identity sequence number.
 		if (depositCheques.getId() <= 0) {
 			depositCheques.setId(getNextValue("SeqDepositCheques"));
@@ -116,7 +117,8 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set ReceiptId = :ReceiptId, ReceiptMode = :ReceiptMode, Amount = :Amount, Status = :Status, LinkedTranId = :LinkedTranId,");
+		sql.append(
+				" Set ReceiptId = :ReceiptId, ReceiptMode = :ReceiptMode, Amount = :Amount, Status = :Status, LinkedTranId = :LinkedTranId,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -197,8 +199,10 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		List<DepositCheques> list;
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, LinkedTranId,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder(
+				"SELECT Id, MovementId, ReceiptId, ReceiptMode, Amount, Status, LinkedTranId,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", Receiptpurpose, FavourNumber, ReceivedDate, FundingAc, Remarks, FinReference,  CustShrtName");
 		}
@@ -219,7 +223,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		logger.debug(Literal.LEAVING);
 		return list;
 	}
-	
+
 	@Override
 	public List<DepositCheques> getDepositChequesList(String branchCode) {
 		logger.debug(Literal.ENTERING);
@@ -227,13 +231,14 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, FavourNumber, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
+		sql.append(
+				" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, FavourNumber, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
 		sql.append(" FROM FinReceiptHeader_DView");
 		sql.append(" WHERE DepositBranch = :DepositBranch");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("DepositBranch", branchCode);
 		RowMapper<DepositCheques> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
@@ -310,13 +315,13 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		}
 		logger.debug("Leaving");
 		return null;
-	
+
 	}
 
 	@Override
 	public void reverseChequeStatus(long movementId, long receiptID, long linkedTranId) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DepositCheques depositCheques = new DepositCheques();
 		depositCheques.setReceiptId(receiptID);
 		depositCheques.setMovementId(movementId);
@@ -331,7 +336,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositCheques);
-		
+
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (Exception e) {
@@ -340,4 +345,4 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-}	
+}

@@ -11,15 +11,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 
-@Component(value="customerPostValidationHook")
+@Component(value = "customerPostValidationHook")
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class CustomerPostValidationHook implements PostValidationHook {
 
 	@Override
 	public List<ErrorDetail> validation(AuditHeader auditHeader) {
 		List<ErrorDetail> errorDetails = new ArrayList<>();
-		
-		
+
 		return errorDetails;
 	}
 

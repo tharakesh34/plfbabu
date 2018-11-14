@@ -43,29 +43,28 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	private static final Logger logger = Logger.getLogger(PoliceCaseDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 				window_PoliceCaseDialog; 		
+	protected Window window_PoliceCaseDialog;
 
-	protected  Textbox 				policeCaseCustCIF; 	
-	protected  Datebox				policeCaseCustDOB;
-	protected  Textbox				policeCaseCustFName;
-	protected  Textbox				policeCaseCustLName;
-	protected  Uppercasebox			policeCaseCustEIDNumber;
-	protected  Textbox  			policeCaseCustPassport;
-	protected Textbox 				phoneCountryCode; 						
-	protected Textbox 				phoneAreaCode; 	
-	protected  Textbox				policeCaseCustMobileNumber;
-	protected ExtendedCombobox 		policeCaseCustNationality; 			
+	protected Textbox policeCaseCustCIF;
+	protected Datebox policeCaseCustDOB;
+	protected Textbox policeCaseCustFName;
+	protected Textbox policeCaseCustLName;
+	protected Uppercasebox policeCaseCustEIDNumber;
+	protected Textbox policeCaseCustPassport;
+	protected Textbox phoneCountryCode;
+	protected Textbox phoneAreaCode;
+	protected Textbox policeCaseCustMobileNumber;
+	protected ExtendedCombobox policeCaseCustNationality;
 
 	// not autoWired Var's
-	private PoliceCaseDetail policeCaseDetail; 
-	private transient PoliceCaseListCtrl policeCaseListCtrl; 
+	private PoliceCaseDetail policeCaseDetail;
+	private transient PoliceCaseListCtrl policeCaseListCtrl;
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient PoliceCaseService policeCaseService;
 
@@ -81,13 +80,11 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		super.pageRightName = "PoliceCaseCustomersDialog";
 	}
 
-
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected PoliceCase object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected PoliceCase object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -104,8 +101,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("policeCaseDetail")) {
-				this.policeCaseDetail = (PoliceCaseDetail) arguments
-						.get("policeCaseDetail");
+				this.policeCaseDetail = (PoliceCaseDetail) arguments.get("policeCaseDetail");
 				PoliceCaseDetail befImage = new PoliceCaseDetail();
 				BeanUtils.copyProperties(this.policeCaseDetail, befImage);
 				this.policeCaseDetail.setBefImage(befImage);
@@ -115,14 +111,12 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 				setPoliceCaseDetail(null);
 			}
 
-			doLoadWorkFlow(this.policeCaseDetail.isWorkflow(),
-					this.policeCaseDetail.getWorkflowId(),
+			doLoadWorkFlow(this.policeCaseDetail.isWorkflow(), this.policeCaseDetail.getWorkflowId(),
 					this.policeCaseDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"PoliceCaseCustomersDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "PoliceCaseCustomersDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -131,8 +125,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 			// or
 			// delete PoliceCaseCustomers here.
 			if (arguments.containsKey("policeCaseListCtrl")) {
-				setPoliceCaseListCtrl((PoliceCaseListCtrl) arguments
-						.get("policeCaseListCtrl"));
+				setPoliceCaseListCtrl((PoliceCaseListCtrl) arguments.get("policeCaseListCtrl"));
 			} else {
 				setPoliceCaseListCtrl(null);
 			}
@@ -148,18 +141,16 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("PoliceCaseCustomersDialog",getRole());
+		getUserWorkspace().allocateAuthorities("PoliceCaseCustomersDialog", getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_PoliceCaseCustomersDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_PoliceCaseCustomersDialog_btnEdit"));
@@ -221,7 +212,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		doEdit();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -233,7 +224,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		MessageUtil.showHelpWindow(event, window_PoliceCaseDialog);
 		logger.debug("Leaving" + event.toString());
 	}
-		
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -245,7 +236,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		doDelete();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "cancel" button is clicked. <br>
 	 * 
@@ -266,7 +257,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -279,18 +270,17 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		doShowNotes(this.policeCaseDetail);
 	}
 
-	public void onChange$policeCaseCustEIDNumber(Event event){
-			logger.debug("Entering"+event.toString());
-			this.policeCaseCustEIDNumber.setValue(PennantApplicationUtil.formatEIDNumber(this.policeCaseCustEIDNumber.getValue()));
-			logger.debug("Leaving"+event.toString());
-		}
-		
-		
+	public void onChange$policeCaseCustEIDNumber(Event event) {
+		logger.debug("Entering" + event.toString());
+		this.policeCaseCustEIDNumber
+				.setValue(PennantApplicationUtil.formatEIDNumber(this.policeCaseCustEIDNumber.getValue()));
+		logger.debug("Leaving" + event.toString());
+	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPoliceCaseDetail
 	 * @throws Exception
@@ -353,7 +343,6 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		this.phoneCountryCode.setReadonly(isReadOnly("PoliceCaseCustomersDialog_custMobileNumber"));
 		this.policeCaseCustPassport.setReadonly(isReadOnly("PoliceCaseCustomersDialog_custPassportNo"));
 		this.policeCaseCustNationality.setReadonly(isReadOnly("PoliceCaseCustomersDialog_custNationality"));
-		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -370,8 +359,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving ");
-	}	
-
+	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
@@ -412,47 +400,55 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		setValidationOn(true);
 
 		if (!this.policeCaseCustCIF.isReadonly()) {
-			this.policeCaseCustCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustCIF.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.policeCaseCustCIF
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustCIF.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.policeCaseCustDOB.isReadonly()) {
-			this.policeCaseCustDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_PoliceCaseDialog_CustDOB.value"),true,startDate,appStartDate,false));
+			this.policeCaseCustDOB.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_PoliceCaseDialog_CustDOB.value"), true, startDate, appStartDate, false));
 		}
 		if (!this.policeCaseCustFName.isReadonly()) {
-			this.policeCaseCustFName.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustFName.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, true));
+			this.policeCaseCustFName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustFName.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, true));
 		}
 		if (!this.policeCaseCustLName.isReadonly()) {
-			this.policeCaseCustLName.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustLName.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, true));
+			this.policeCaseCustLName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustLName.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, true));
 		}
-		if(!this.phoneCountryCode.isReadonly()){
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_PoliceCaseDialog_mobileCountryCode.value"),true,1));
+		if (!this.phoneCountryCode.isReadonly()) {
+			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_PoliceCaseDialog_mobileCountryCode.value"), true, 1));
 		}
-		if(!this.phoneAreaCode.isReadonly()){
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_PoliceCaseDialog_mobileAreaCode.value"),true,2));
+		if (!this.phoneAreaCode.isReadonly()) {
+			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_PoliceCaseDialog_mobileAreaCode.value"), true, 2));
 		}
-		if (!this.policeCaseCustMobileNumber.isReadonly()){
-			this.policeCaseCustMobileNumber.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_PoliceCaseDialog_CustMobileNumber.value"),true,3));
+		if (!this.policeCaseCustMobileNumber.isReadonly()) {
+			this.policeCaseCustMobileNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_PoliceCaseDialog_CustMobileNumber.value"), true, 3));
 		}
 		if (!this.policeCaseCustPassport.isReadonly()) {
-			this.policeCaseCustPassport.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustPassport.value"),null,true));
+			this.policeCaseCustPassport.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustPassport.value"), null, true));
 		}
-		
+
 		if (!this.policeCaseCustEIDNumber.isReadonly()) {
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-				this.policeCaseCustEIDNumber.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_PoliceCaseDialog_CustEIDNumber.value"),
-						PennantRegularExpressions.REGEX_EIDNUMBER, true));
-			}else{
-				this.policeCaseCustEIDNumber.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_PoliceCaseDialog_CustEIDNumber.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER, true));
+				this.policeCaseCustEIDNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustEIDNumber.value"),
+								PennantRegularExpressions.REGEX_EIDNUMBER, true));
+			} else {
+				this.policeCaseCustEIDNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustEIDNumber.value"),
+								PennantRegularExpressions.REGEX_PANNUMBER, true));
 			}
 		}
-		logger.debug("Leaving"); 
-		
+		logger.debug("Leaving");
+
 	}
 
 	/**
@@ -473,24 +469,26 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		this.policeCaseCustPassport.setConstraint("");
 		logger.debug("Leaving");
 	}
+
 	/**
-	 * Sets the Validation by setting the accordingly constraints to the
-	 * LOVfields.
+	 * Sets the Validation by setting the accordingly constraints to the LOVfields.
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		if(!this.policeCaseCustNationality.isReadonly()){
-			this.policeCaseCustNationality.setConstraint(new PTStringValidator(Labels.getLabel("label_PoliceCaseDialog_CustNationality.value"), null, true,true));
+		if (!this.policeCaseCustNationality.isReadonly()) {
+			this.policeCaseCustNationality.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_PoliceCaseDialog_CustNationality.value"), null, true, true));
 		}
 	}
+
 	/**
-	 * Removes the Validation by setting the accordingly constraints to the
-	 * LOVfields.
+	 * Removes the Validation by setting the accordingly constraints to the LOVfields.
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
 		this.policeCaseCustNationality.setConstraint("");
 	}
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -528,7 +526,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		this.phoneCountryCode.setValue("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -543,6 +541,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -555,14 +554,15 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		this.policeCaseCustDOB.setValue(aPoliceCaseDetail.getCustDOB());
 		this.policeCaseCustFName.setValue(aPoliceCaseDetail.getCustFName());
 		this.policeCaseCustLName.setValue(aPoliceCaseDetail.getCustLName());
-		this.policeCaseCustEIDNumber.setValue( PennantApplicationUtil.formatEIDNumber(aPoliceCaseDetail.getCustCRCPR()));
+		this.policeCaseCustEIDNumber.setValue(PennantApplicationUtil.formatEIDNumber(aPoliceCaseDetail.getCustCRCPR()));
 		this.policeCaseCustPassport.setValue(aPoliceCaseDetail.getCustPassportNo());
-		String[]phone = PennantApplicationUtil.unFormatPhoneNumber(aPoliceCaseDetail.getMobileNumber());
+		String[] phone = PennantApplicationUtil.unFormatPhoneNumber(aPoliceCaseDetail.getMobileNumber());
 		this.phoneCountryCode.setValue(phone[0]);
 		this.phoneAreaCode.setValue(phone[1]);
 		this.policeCaseCustMobileNumber.setValue(phone[2]);
 		this.policeCaseCustNationality.setValue(aPoliceCaseDetail.getCustNationality());
-		this.policeCaseCustNationality.setDescription(StringUtils.isBlank(aPoliceCaseDetail.getLovDescNationalityDesc())? "" : aPoliceCaseDetail.getLovDescNationalityDesc());
+		this.policeCaseCustNationality.setDescription(StringUtils.isBlank(aPoliceCaseDetail.getLovDescNationalityDesc())
+				? "" : aPoliceCaseDetail.getLovDescNationalityDesc());
 		this.recordStatus.setValue(aPoliceCaseDetail.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -599,7 +599,8 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 			wve.add(we);
 		}
 		try {
-			aPoliceCaseDetail.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.policeCaseCustEIDNumber.getValue()));
+			aPoliceCaseDetail
+					.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.policeCaseCustEIDNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -610,7 +611,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		}
 		try {
 			aPoliceCaseDetail.setMobileNumber(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(),this.policeCaseCustMobileNumber.getValue()));
+					this.phoneAreaCode.getValue(), this.policeCaseCustMobileNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -635,6 +636,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -723,6 +725,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
+
 	/**
 	 * Saves the components to table. <br>
 	 * 
@@ -780,9 +783,6 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		logger.debug("Leaving");
 	}
 
-
-
-
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -792,12 +792,9 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	 */
 	private AuditHeader getAuditHeader(PoliceCaseDetail aPoliceCaseDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPoliceCaseDetail.getBefImage(), aPoliceCaseDetail);
-		return new AuditHeader(String.valueOf(getPoliceCaseDetail().getId()), null, null,
-				null, auditDetail, aPoliceCaseDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(getPoliceCaseDetail().getId()), null, null, null, auditDetail,
+				aPoliceCaseDetail.getUserDetails(), getOverideMap());
 	}
-
-
-
 
 	/**
 	 * Get the result after processing DataBase Operations
@@ -844,8 +841,8 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_PoliceCaseDialog, auditHeader);
 						return processCompleted;
 					}
@@ -877,14 +874,14 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getPoliceCaseListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.policeCaseDetail.getId());
@@ -908,9 +905,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
-	
+
 	/**
 	 * Deletes a PoliceCaseDetail object from database.<br>
 	 * 
@@ -923,9 +918,8 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_PoliceCaseDialog_CustCIF.value")+" : "+aPoliceCaseDetail.getCustCIF();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_PoliceCaseDialog_CustCIF.value") + " : " + aPoliceCaseDetail.getCustCIF();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aPoliceCaseDetail.getRecordType())) {
 				aPoliceCaseDetail.setVersion(aPoliceCaseDetail.getVersion() + 1);
@@ -950,8 +944,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -959,6 +952,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}

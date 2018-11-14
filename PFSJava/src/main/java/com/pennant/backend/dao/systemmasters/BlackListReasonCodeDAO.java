@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.BlackListReasonCode;
 
 /**
@@ -50,8 +51,11 @@ import com.pennant.backend.model.systemmasters.BlackListReasonCode;
  */
 public interface BlackListReasonCodeDAO {
 
-	BlackListReasonCode getBlackListReasonCodeById(String id,String type);
-	void update(BlackListReasonCode blackListReasonCode,String type);
-	void delete(BlackListReasonCode blackListReasonCode,String type);
-	String save(BlackListReasonCode blackListReasonCode,String type);
+	BlackListReasonCode getBlackListReasonCodeById(String id, String type);
+
+	void update(BlackListReasonCode blackListReasonCode, String type);
+
+	void delete(BlackListReasonCode blackListReasonCode, String type);
+
+	String save(BlackListReasonCode blackListReasonCode, String type);
 }

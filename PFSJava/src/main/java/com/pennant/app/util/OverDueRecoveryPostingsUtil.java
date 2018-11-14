@@ -71,17 +71,17 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
-	private static final long			serialVersionUID	= 6161809223570900644L;
-	private static Logger				logger				= Logger.getLogger(OverDueRecoveryPostingsUtil.class);
+	private static final long serialVersionUID = 6161809223570900644L;
+	private static Logger logger = Logger.getLogger(OverDueRecoveryPostingsUtil.class);
 
-	private FinanceMainDAO				financeMainDAO;
-	private FinODDetailsDAO				finODDetailsDAO;
-	private OverdueChargeRecoveryDAO	recoveryDAO;
-	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
-	private AccountInterfaceService		accountInterfaceService;
-	private PostingsPreparationUtil		postingsPreparationUtil;
-	private FeeTypeDAO					feeTypeDAO;
-	private AEEvent						aeEvent				= null;
+	private FinanceMainDAO financeMainDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private OverdueChargeRecoveryDAO recoveryDAO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private AccountInterfaceService accountInterfaceService;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FeeTypeDAO feeTypeDAO;
+	private AEEvent aeEvent = null;
 
 	/**
 	 * Default constructor
@@ -103,7 +103,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	public AEEvent recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, FinRepayQueue repayQueue,
-			Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay, List<ManualAdviseMovements> penalityMovements) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader, boolean isFirstTimePay,
+			List<ManualAdviseMovements> penalityMovements)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String finReference = financeMain.getFinReference();
@@ -112,7 +114,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		// EOD Repayments should pass the value date as schedule for which
 		// Repayment is processing
 		AEAmountCodes amountCodes = null;
-		if(aeEvent == null){
+		if (aeEvent == null) {
 
 			aeEvent = new AEEvent();
 			aeEvent.setAeAmountCodes(new AEAmountCodes());
@@ -131,14 +133,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 			amountCodes.setFinType(financeMain.getFinType());
 
-		}else{
+		} else {
 			amountCodes = aeEvent.getAeAmountCodes();
 		}
 
 		amountCodes.setPenaltyPaid(repayQueue.getPenaltyPayNow());
 		amountCodes.setPenaltyWaived(repayQueue.getWaivedAmount());
-        aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
-        aeEvent.setPostingId(financeMain.getPostingId());
+		aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
+		aeEvent.setPostingId(financeMain.getPostingId());
 		aeEvent.setSchdDate(repayQueue.getRpyDate());
 		aeEvent.setEOD(false);
 
@@ -149,13 +151,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		
+
 		// GST Field Details
 		dataMap.put("LPP_CGST_P", repayQueue.getPaidPenaltyCGST());
 		dataMap.put("LPP_SGST_P", repayQueue.getPaidPenaltySGST());
 		dataMap.put("LPP_UGST_P", repayQueue.getPaidPenaltyUGST());
 		dataMap.put("LPP_IGST_P", repayQueue.getPaidPenaltyIGST());
-		
+
 		ManualAdviseMovements movement = new ManualAdviseMovements();
 		movement.setPaidCGST(repayQueue.getPaidPenaltyCGST());
 		movement.setPaidSGST(repayQueue.getPaidPenaltySGST());
@@ -169,35 +171,35 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		movement.setMovementAmount(repayQueue.getPenaltyPayNow());
 		movement.setPaidAmount(repayQueue.getPenaltyPayNow());
 		penalityMovements.add(movement);
-		
+
 		if (rpyQueueHeader.getProfit().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getPrincipal().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getTds().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getLateProfit().compareTo(BigDecimal.ZERO) == 0
 				&& rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0 && isFirstTimePay) {
 
-			if(rpyQueueHeader.getExtDataMap() != null){
+			if (rpyQueueHeader.getExtDataMap() != null) {
 				dataMap.putAll(rpyQueueHeader.getExtDataMap());
 			}
 		}
-		
+
 		if (rpyQueueHeader.getGstExecutionMap() != null) {
 			for (String key : rpyQueueHeader.getGstExecutionMap().keySet()) {
 				if (StringUtils.isNotBlank(key)) {
-					dataMap.put (key, rpyQueueHeader.getGstExecutionMap().get(key));
+					dataMap.put(key, rpyQueueHeader.getGstExecutionMap().get(key));
 				}
 			}
 		}
-		
+
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 		aeEvent.setDataMap(dataMap);
 		aeEvent.getAcSetIDList().clear();
-		
+
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), 
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
 					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), 
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
 					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
 		}
 
@@ -235,9 +237,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public FinODDetails overDueDetailPreparation(FinRepayQueue finRepayQueue, String profitDayBasis,
-			Date dateValueDate, boolean isAfterRecovery, boolean isEnqPurpose) throws InterfaceException,
-			IllegalAccessException, InvocationTargetException {
+	public FinODDetails overDueDetailPreparation(FinRepayQueue finRepayQueue, String profitDayBasis, Date dateValueDate,
+			boolean isAfterRecovery, boolean isEnqPurpose)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		Date curBussDate = DateUtility.getAppValueDate();
@@ -276,8 +278,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> recoveryCalculation(FinRepayQueue finRepayQueue, String pftDaysBasis, Date dateValueDate,
-			boolean isAfterRecovery, boolean isEnqPurpose) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+			boolean isAfterRecovery, boolean isEnqPurpose)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> odObjDetails = new ArrayList<Object>();
@@ -392,9 +394,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				int seqNo = 1;
 				//Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
 				if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())
-						&& recovery != null
-						&& (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || recovery.getWaivedAmt()
-								.compareTo(BigDecimal.ZERO) > 0)) {
+						&& recovery != null && (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
+								|| recovery.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0)) {
 
 					return recovery;
 
@@ -470,37 +471,34 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 					if (odDetails.getODChargeCalOn().equals(FinanceConstants.ODCALON_SPFT)) {
 
-						recovery.setPenalty(getPercentageValue(recovery.getFinCurODPft(),
-								odDetails.getODChargeAmtOrPerc()));
+						recovery.setPenalty(
+								getPercentageValue(recovery.getFinCurODPft(), odDetails.getODChargeAmtOrPerc()));
 
 					} else if (odDetails.getODChargeCalOn().equals(FinanceConstants.ODCALON_SPRI)) {
 
-						recovery.setPenalty(getPercentageValue(recovery.getFinCurODPri(),
-								odDetails.getODChargeAmtOrPerc()));
+						recovery.setPenalty(
+								getPercentageValue(recovery.getFinCurODPri(), odDetails.getODChargeAmtOrPerc()));
 
 					} else {
-						recovery.setPenalty(getPercentageValue(recovery.getFinCurODAmt(),
-								odDetails.getODChargeAmtOrPerc()));
+						recovery.setPenalty(
+								getPercentageValue(recovery.getFinCurODAmt(), odDetails.getODChargeAmtOrPerc()));
 					}
 
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())) {
 
 					if (odDetails.getODChargeCalOn().equals(FinanceConstants.ODCALON_SPFT)) {
 
-						recovery.setPenalty(getDayPercValue(recovery.getFinCurODPft(),
-								odDetails.getODChargeAmtOrPerc(), finODDate, dateValueDate, isAfterRecovery,
-								profitDayBasis));
+						recovery.setPenalty(getDayPercValue(recovery.getFinCurODPft(), odDetails.getODChargeAmtOrPerc(),
+								finODDate, dateValueDate, isAfterRecovery, profitDayBasis));
 
 					} else if (odDetails.getODChargeCalOn().equals(FinanceConstants.ODCALON_SPRI)) {
 
-						recovery.setPenalty(getDayPercValue(recovery.getFinCurODPri(),
-								odDetails.getODChargeAmtOrPerc(), finODDate, dateValueDate, isAfterRecovery,
-								profitDayBasis));
+						recovery.setPenalty(getDayPercValue(recovery.getFinCurODPri(), odDetails.getODChargeAmtOrPerc(),
+								finODDate, dateValueDate, isAfterRecovery, profitDayBasis));
 
 					} else {
-						recovery.setPenalty(getDayPercValue(recovery.getFinCurODAmt(),
-								odDetails.getODChargeAmtOrPerc(), finODDate, dateValueDate, isAfterRecovery,
-								profitDayBasis));
+						recovery.setPenalty(getDayPercValue(recovery.getFinCurODAmt(), odDetails.getODChargeAmtOrPerc(),
+								finODDate, dateValueDate, isAfterRecovery, profitDayBasis));
 					}
 				}
 
@@ -653,8 +651,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			dateValueDate = DateUtility.addDays(dateValueDate, 1);
 		}
 
-		BigDecimal value = ((odCalculatedBalance.multiply(odPercent)).multiply(CalculationUtil.getInterestDays(
-				odEffectiveDate, dateValueDate, profitDayBasis))).divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
+		BigDecimal value = ((odCalculatedBalance.multiply(odPercent))
+				.multiply(CalculationUtil.getInterestDays(odEffectiveDate, dateValueDate, profitDayBasis)))
+						.divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
 
 		return value.setScale(0, RoundingMode.HALF_DOWN);
 	}
@@ -684,14 +683,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> oDRPostingProcess(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid, BigDecimal waiverAmt, String chargeType,
-			long linkedTranId, String finDivision) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+			long linkedTranId, String finDivision)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering" + "', financeMain='" + financeMain + "', dateValueDate='" + dateValueDate
 				+ "', SchdDate='" + schdDate + "', finODFor='" + finODFor + "', movementDate='" + movementDate
 				+ "', penalty='" + penalty + "', prvPenaltyPaid='" + prvPenaltyPaid + "', waiverAmt='" + waiverAmt
-				+ "', chargeType='" + chargeType + "', linkedTranId='" + linkedTranId + "', finDivision='"
-				+ finDivision + "'");
+				+ "', chargeType='" + chargeType + "', linkedTranId='" + linkedTranId + "', finDivision='" + finDivision
+				+ "'");
 		boolean isPostingSuccess = true;
 		String errorCode = null;
 		BigDecimal paidAmount = BigDecimal.ZERO;
@@ -742,9 +741,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				String[] acTypeList = acType.split(",");
 				for (int i = 0; i < acTypeList.length; i++) {/*
-															 * if(iAccount.getAcType().equals(acTypeList[i].trim())){
-															 * accFound = true; break; }
-															 */
+																 * if(iAccount.getAcType().equals(acTypeList[i].trim()))
+																 * { accFound = true; break; }
+																 */
 				}
 			}
 
@@ -780,11 +779,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setSchdDate(schdDate);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
-				/*String phase = SysParamUtil.getValueAsString("PHASE");
-				boolean isEODProcess = false;
-				if (!"DAY".equals(phase)) {
-					isEODProcess = true;
-				}*/
+				/*
+				 * String phase = SysParamUtil.getValueAsString("PHASE"); boolean isEODProcess = false; if
+				 * (!"DAY".equals(phase)) { isEODProcess = true; }
+				 */
 
 				Date dateAppDate = DateUtility.getAppDate();
 				aeEvent.setPostDate(dateAppDate);
@@ -795,7 +793,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 
 				isPostingSuccess = aeEvent.isPostingSucess();
 				linkedTranId = aeEvent.getLinkedTranId();

@@ -64,13 +64,14 @@ import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.service.applicationmaster.DPDBucketConfigurationService;
 import com.pennant.webui.applicationmaster.dpdbucketconfiguration.model.DPDBucketConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.applicationmaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul file.
  * 
  */
 public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketConfiguration> {
@@ -95,14 +96,14 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 	// Search Fields
 	protected Textbox productCode; // autowired
 	protected Textbox bucketID; // autowired
-  	protected Intbox dueDays; // autowired
+	protected Intbox dueDays; // autowired
 	protected Checkbox suspendProfit; // autowired
-	
+
 	protected Listbox sortOperator_ProductCode;
 	protected Listbox sortOperator_BucketID;
 	protected Listbox sortOperator_DueDays;
 	protected Listbox sortOperator_SuspendProfit;
-	
+
 	private transient DPDBucketConfigurationService dPDBucketConfigurationService;
 
 	/**
@@ -130,19 +131,23 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 	public void onCreate$window_DPDBucketConfigurationList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_DPDBucketConfigurationList, borderLayout_DPDBucketConfigurationList, listBoxDPDBucketConfiguration,
-				pagingDPDBucketConfigurationList);
+		setPageComponents(window_DPDBucketConfigurationList, borderLayout_DPDBucketConfigurationList,
+				listBoxDPDBucketConfiguration, pagingDPDBucketConfigurationList);
 		setItemRender(new DPDBucketConfigurationListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_DPDBucketConfigurationList_DPDBucketConfigurationSearch);
-		registerButton(button_DPDBucketConfigurationList_NewDPDBucketConfiguration, "button_DPDBucketConfigurationList_NewDPDBucketConfiguration", true);
+		registerButton(button_DPDBucketConfigurationList_NewDPDBucketConfiguration,
+				"button_DPDBucketConfigurationList_NewDPDBucketConfiguration", true);
 
 		registerField("configID");
-		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode, Operators.STRING);
-		registerField("bucketCode", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
+		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode,
+				Operators.STRING);
+		registerField("bucketCode", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID,
+				Operators.NUMERIC);
 		registerField("dueDays", listheader_DueDays, SortOrder.NONE, dueDays, sortOperator_DueDays, Operators.NUMERIC);
-		registerField("suspendProfit", listheader_SuspendProfit, SortOrder.NONE, suspendProfit, sortOperator_SuspendProfit, Operators.BOOLEAN);
+		registerField("suspendProfit", listheader_SuspendProfit, SortOrder.NONE, suspendProfit,
+				sortOperator_SuspendProfit, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -189,7 +194,6 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -200,23 +204,24 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 
 	public void onDPDBucketConfigurationItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxDPDBucketConfiguration.getSelectedItem();
 		final long configID = (long) selectedItem.getAttribute("configID");
-		DPDBucketConfiguration dpdbucketconfiguration = dPDBucketConfigurationService.getDPDBucketConfiguration(configID);
+		DPDBucketConfiguration dpdbucketconfiguration = dPDBucketConfigurationService
+				.getDPDBucketConfiguration(configID);
 
 		if (dpdbucketconfiguration == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  ConfigID = ");
-		whereCond.append( dpdbucketconfiguration.getConfigID());
+		whereCond.append(dpdbucketconfiguration.getConfigID());
 		whereCond.append(" AND  version=");
 		whereCond.append(dpdbucketconfiguration.getVersion());
-	
+
 		if (doCheckAuthority(dpdbucketconfiguration, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dpdbucketconfiguration.getWorkflowId() == 0) {
@@ -226,10 +231,10 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -242,9 +247,11 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("dpdbucketconfiguration", dpdbucketconfiguration);
 		arg.put("dpdbucketconfigurationListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationDialog.zul", null, arg);
+			Executions.createComponents(
+					"/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -271,7 +278,7 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

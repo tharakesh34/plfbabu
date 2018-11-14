@@ -67,12 +67,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "productCode", "productDesc", "productType", "vasFee", "allowFeeToModify", "manufacturerId",
-		"recAgainst", "feeAccrued", "recurringType", "freeLockPeriod", "remarks", "active", "extendedFieldDetailList","returnStatus" })
+		"recAgainst", "feeAccrued", "recurringType", "freeLockPeriod", "remarks", "active", "extendedFieldDetailList",
+		"returnStatus" })
 @XmlRootElement(name = "vasConfiguration")
 @XmlAccessorType(XmlAccessType.NONE)
 public class VASConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name="product")
+	@XmlElement(name = "product")
 	private String productCode;
 	@XmlElement
 	private String productDesc;
@@ -104,8 +105,8 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private int freeLockPeriod;
 	private boolean preValidationReq;
 	private boolean postValidationReq;
-	private String	preValidation;
-	private String  postValidation;
+	private String preValidation;
+	private String postValidation;
 
 	@XmlElement
 	private boolean active;
@@ -119,11 +120,11 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private VASConfiguration befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	private ExtendedFieldHeader	extendedFieldHeader;
+	private ExtendedFieldHeader extendedFieldHeader;
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	@XmlElementWrapper(name="extendedFields")
-	@XmlElement(name="extendedField")
+	@XmlElementWrapper(name = "extendedFields")
+	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList;
 
 	public boolean isNew() {
@@ -163,6 +164,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getId() {
 		return productCode;
 	}
+
 	public void setId(String id) {
 		this.productCode = id;
 	}
@@ -170,6 +172,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getProductCode() {
 		return productCode;
 	}
+
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
 	}
@@ -177,6 +180,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getProductDesc() {
 		return productDesc;
 	}
+
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
 	}
@@ -240,6 +244,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getRecAgainst() {
 		return recAgainst;
 	}
+
 	public void setRecAgainst(String recAgainst) {
 		this.recAgainst = recAgainst;
 	}
@@ -247,6 +252,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isFeeAccrued() {
 		return feeAccrued;
 	}
+
 	public void setFeeAccrued(boolean feeAccrued) {
 		this.feeAccrued = feeAccrued;
 	}
@@ -254,6 +260,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public long getFeeAccounting() {
 		return feeAccounting;
 	}
+
 	public void setFeeAccounting(long feeAccounting) {
 		this.feeAccounting = feeAccounting;
 	}
@@ -261,6 +268,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getFeeAccountingName() {
 		return this.feeAccountingName;
 	}
+
 	public void setFeeAccountingName(String feeAccountingName) {
 		this.feeAccountingName = feeAccountingName;
 	}
@@ -268,6 +276,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public long getAccrualAccounting() {
 		return accrualAccounting;
 	}
+
 	public void setAccrualAccounting(long accrualAccounting) {
 		this.accrualAccounting = accrualAccounting;
 	}
@@ -275,6 +284,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getAccrualAccountingName() {
 		return this.accrualAccountingName;
 	}
+
 	public void setAccrualAccountingName(String accrualAccountingName) {
 		this.accrualAccountingName = accrualAccountingName;
 	}
@@ -282,6 +292,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isRecurringType() {
 		return recurringType;
 	}
+
 	public void setRecurringType(boolean recurringType) {
 		this.recurringType = recurringType;
 	}
@@ -289,6 +300,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public int getFreeLockPeriod() {
 		return freeLockPeriod;
 	}
+
 	public void setFreeLockPeriod(int freeLockPeriod) {
 		this.freeLockPeriod = freeLockPeriod;
 	}
@@ -296,6 +308,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isPreValidationReq() {
 		return preValidationReq;
 	}
+
 	public void setPreValidationReq(boolean preValidationReq) {
 		this.preValidationReq = preValidationReq;
 	}
@@ -303,6 +316,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isPostValidationReq() {
 		return postValidationReq;
 	}
+
 	public void setPostValidationReq(boolean postValidationReq) {
 		this.postValidationReq = postValidationReq;
 	}
@@ -310,6 +324,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -318,6 +333,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -326,6 +342,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -334,6 +351,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public VASConfiguration getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(VASConfiguration beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -358,6 +376,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -365,6 +384,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getFeeAccountingDesc() {
 		return feeAccountingDesc;
 	}
+
 	public void setFeeAccountingDesc(String feeAccountingDesc) {
 		this.feeAccountingDesc = feeAccountingDesc;
 	}
@@ -372,6 +392,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public String getAccrualAccountingDesc() {
 		return accrualAccountingDesc;
 	}
+
 	public void setAccrualAccountingDesc(String accrualAccountingDesc) {
 		this.accrualAccountingDesc = accrualAccountingDesc;
 	}

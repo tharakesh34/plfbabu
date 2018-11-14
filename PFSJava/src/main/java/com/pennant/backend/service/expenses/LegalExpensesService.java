@@ -60,6 +60,6 @@ public interface LegalExpensesService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	BigDecimal getTotalCharges(String finReference);
 }

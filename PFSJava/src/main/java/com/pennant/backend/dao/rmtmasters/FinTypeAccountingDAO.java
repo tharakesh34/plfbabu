@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
-
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
@@ -55,16 +54,28 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 public interface FinTypeAccountingDAO {
 
 	FinTypeAccounting getFinTypeAccounting();
+
 	FinTypeAccounting getNewFinTypeAccounting();
-	FinTypeAccounting getFinTypeAccountingByID(FinTypeAccounting finTypeAccounting, String type); 
-	List<FinTypeAccounting> getFinTypeAccountingListByID(final String id, int moduleId, String type); 
+
+	FinTypeAccounting getFinTypeAccountingByID(FinTypeAccounting finTypeAccounting, String type);
+
+	List<FinTypeAccounting> getFinTypeAccountingListByID(final String id, int moduleId, String type);
+
 	void update(FinTypeAccounting finTypeAccounting, String type);
+
 	String save(FinTypeAccounting finTypeAccounting, String type);
+
 	void delete(FinTypeAccounting finTypeAccounting, String type);
+
 	void deleteByFinType(String finType, int moduleId, String type);
+
 	Long getAccountSetID(String finType, String event, int moduleId);
-	List<String> getFinTypeAccounting(String event,Long accountSetId, int moduleId);
+
+	List<String> getFinTypeAccounting(String event, Long accountSetId, int moduleId);
+
 	List<Long> getFinTypeAccounting(String fintype, List<String> events, int moduleId);
+
 	List<FinTypeAccounting> getFinTypeAccountingByFinType(String finType, int moduleId);
+
 	int getAccountingSetIdCount(long accountSetId, String type);
 }

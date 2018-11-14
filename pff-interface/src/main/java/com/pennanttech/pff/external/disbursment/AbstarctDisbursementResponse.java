@@ -24,14 +24,14 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementResponse;
 
 public class AbstarctDisbursementResponse extends AbstractInterface implements DisbursementResponse {
-	protected final Logger	logger	= Logger.getLogger(getClass());
+	protected final Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
-	private DisbursementProcess	disbursementProcess;
-	
+	private DisbursementProcess disbursementProcess;
+
 	@Autowired
 	private PaymentProcess paymentProcess;
-	
+
 	public AbstarctDisbursementResponse() {
 		super();
 	}
@@ -45,7 +45,6 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 		Media media = (Media) params[3];
 
 		String configName = status.getName();
-
 
 		String name = "";
 
@@ -64,11 +63,11 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());
-		
+
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("AC", "AC");
 		dataEngine.setFilterMap(filterMap);
-		
+
 		dataEngine.importData(configName);
 
 		do {
@@ -124,19 +123,20 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 
 		logger.info(name + " file processing completed");
 	}
-	
+
 	private void processResponse(long batchId) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = null;
-		
-	 	//Disbursements
+
+		//Disbursements
 		List<FinAdvancePayments> disbursements = null;
 		RowMapper<FinAdvancePayments> rowMapper = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE, FA.PAYMENTTYPE, DR.STATUS,");
+			sql.append(
+					" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE, FA.PAYMENTTYPE, DR.STATUS,");
 			sql.append(" FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID, FA.BANKCODE,");
 			sql.append(" FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE,");
 			sql.append(" DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON,");
@@ -159,15 +159,16 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		}  
-		
+		}
+
 		//Payments..
 		List<PaymentInstruction> instructions = null;
 		RowMapper<PaymentInstruction> instructionRowMapper = null;
-		try { 
+		try {
 			sql = new StringBuilder();
 			sql.append(" SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO, ");
-			sql.append(" PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID, PI.PAYMENTAMOUNT,");
+			sql.append(
+					" PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID, PI.PAYMENTAMOUNT,");
 			sql.append(" PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS, DR.REJECT_REASON REJECTREASON,");
 			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
@@ -176,10 +177,10 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue("RESP_BATCH_ID", batchId);
-			
+
 			instructionRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
 			instructions = namedJdbcTemplate.query(sql.toString(), paramMap, instructionRowMapper);
-			
+
 			for (PaymentInstruction instruction : instructions) {
 				try {
 					paymentProcess.process(instruction);
@@ -189,8 +190,8 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
-		
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 }

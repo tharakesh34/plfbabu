@@ -42,12 +42,16 @@
 */
 
 package com.pennant.backend.dao.finance;
+
 import com.pennant.backend.model.finance.FinanceMain;
 
 public interface WIFFinanceMainDAO {
 
-	FinanceMain getWIFFinanceMainById(String id,String type);
-	void update(FinanceMain wIFFinanceMain,String type);
-	void delete(FinanceMain wIFFinanceMain,String type);
-	String save(FinanceMain wIFFinanceMain,String type);
+	FinanceMain getWIFFinanceMainById(String id, String type);
+
+	void update(FinanceMain wIFFinanceMain, String type);
+
+	void delete(FinanceMain wIFFinanceMain, String type);
+
+	String save(FinanceMain wIFFinanceMain, String type);
 }

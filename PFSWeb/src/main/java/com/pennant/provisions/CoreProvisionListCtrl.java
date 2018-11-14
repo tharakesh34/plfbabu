@@ -66,45 +66,45 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.provisions.model.CoreProvisionListModelItemRender;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provisions/ProvisionsList.zul file.
  */
 public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
-	private static final long			serialVersionUID	= -2437455376763752382L;
-	private static final Logger			logger				= Logger.getLogger(CoreProvisionListCtrl.class);
+	private static final long serialVersionUID = -2437455376763752382L;
+	private static final Logger logger = Logger.getLogger(CoreProvisionListCtrl.class);
 
-	protected Window					window_CoreProvisionList;
-	protected Borderlayout				borderLayout_CoreProvisionList;
-	protected Paging					pagingCoreProvisionList;
-	protected Listbox					listBoxProvisions;
+	protected Window window_CoreProvisionList;
+	protected Borderlayout borderLayout_CoreProvisionList;
+	protected Paging pagingCoreProvisionList;
+	protected Listbox listBoxProvisions;
 
-	protected Listbox					sortOperator_Finreference;
-	protected Textbox					finreference;
+	protected Listbox sortOperator_Finreference;
+	protected Textbox finreference;
 
 	// List headers
-	protected Listheader				listheader_Prov_Finreference;
-	protected Listheader				listheader_ProvisionCalDate;
-	protected Listheader				listheader_ProvosionAmt;
-	protected Listheader				listheader_ProvosionAmtCal;
-	protected Listheader				listheader_NoFormlaProvision;
-	protected Listheader				listheader_UseNFProv;
-	protected Listheader				listheader_PrevProvDate;
-	protected Listheader				listheader_PrevProvAmt;
-	protected Listheader				listheader_TranRef;
+	protected Listheader listheader_Prov_Finreference;
+	protected Listheader listheader_ProvisionCalDate;
+	protected Listheader listheader_ProvosionAmt;
+	protected Listheader listheader_ProvosionAmtCal;
+	protected Listheader listheader_NoFormlaProvision;
+	protected Listheader listheader_UseNFProv;
+	protected Listheader listheader_PrevProvDate;
+	protected Listheader listheader_PrevProvAmt;
+	protected Listheader listheader_TranRef;
 
 	// checkRights
-	protected Button					button_ProvisionsList_ProvisionProcess;
-	protected Button					button_CoreProvisionList_ProvosionsSearchDialog;
+	protected Button button_ProvisionsList_ProvisionProcess;
+	protected Button button_CoreProvisionList_ProvosionsSearchDialog;
 
 	// NEEDED for the ReUse in the SearchWindow
 
-	private ProvisionCalculationUtil	provisionCalculationUtil;
-	private ProvisionService			provisionService;
+	private ProvisionCalculationUtil provisionCalculationUtil;
+	private ProvisionService provisionService;
 
 	/**
 	 * default constructor.<br>

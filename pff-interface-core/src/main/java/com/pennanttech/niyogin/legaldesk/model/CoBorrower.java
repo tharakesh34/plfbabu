@@ -12,10 +12,10 @@ import javax.xml.bind.annotation.XmlType;
 public class CoBorrower {
 
 	@XmlElement(name = "name")
-	private String	name;
+	private String name;
 
 	@XmlElement(name = "pan")
-	private String	pan;
+	private String pan;
 
 	public String getName() {
 		return name;

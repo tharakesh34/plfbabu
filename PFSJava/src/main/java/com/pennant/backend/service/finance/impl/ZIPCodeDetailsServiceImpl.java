@@ -8,7 +8,6 @@ public class ZIPCodeDetailsServiceImpl implements ZIPCodeDetailsService {
 
 	private ZIPCodeDetailsDAO zIPCodeDetailsDAO;
 
-
 	/**
 	 * Method for fetch ZIPCode Details of corresponding pinCode
 	 * 
@@ -23,10 +22,8 @@ public class ZIPCodeDetailsServiceImpl implements ZIPCodeDetailsService {
 		return zIPCodeDetailsDAO.getPinCodeDetail(pinCode);
 	}
 
-
 	public void setzIPCodeDetailsDAO(ZIPCodeDetailsDAO zIPCodeDetailsDAO) {
 		this.zIPCodeDetailsDAO = zIPCodeDetailsDAO;
 	}
-
 
 }

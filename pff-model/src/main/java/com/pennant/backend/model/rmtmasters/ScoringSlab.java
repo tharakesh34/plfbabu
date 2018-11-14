@@ -57,7 +57,7 @@ public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
 	private long scoringSlab;
 	private String lovDescScoreGroupCode;
 	private String creditWorthness;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private ScoringSlab befImage;
 	private LoggedInUser userDetails;
@@ -81,33 +81,30 @@ public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
 		return scoreGroupId;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.scoreGroupId = id;
 	}
 
 	public long getScoreGroupId() {
 		return scoreGroupId;
 	}
+
 	public void setScoreGroupId(long scoreGroupId) {
 		this.scoreGroupId = scoreGroupId;
 	}
 
-
-
-
 	public long getScoringSlab() {
 		return scoringSlab;
 	}
+
 	public void setScoringSlab(long scoringSlab) {
 		this.scoringSlab = scoringSlab;
 	}
 
-
-
-
 	public String getCreditWorthness() {
 		return creditWorthness;
 	}
+
 	public void setCreditWorthness(String creditWorthness) {
 		this.creditWorthness = creditWorthness;
 	}
@@ -128,12 +125,12 @@ public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public ScoringSlab getBefImage(){
+	public ScoringSlab getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(ScoringSlab beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(ScoringSlab beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

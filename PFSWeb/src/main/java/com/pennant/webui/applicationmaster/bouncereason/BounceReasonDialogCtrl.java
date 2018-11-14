@@ -80,36 +80,34 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/BounceReason/bounceReasonDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/BounceReason/bounceReasonDialog.zul file. <br>
  */
-public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
+public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(BounceReasonDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_BounceReasonDialog; 
-	protected Textbox 		bounceCode; 
- 	protected Combobox 		reasonType; 
- 	protected Combobox 		category; 
-	protected Textbox 		reason; 
- 	protected Combobox 		action; 
-    protected ExtendedCombobox 		ruleID; 
-    protected Textbox 		returnCode; 
-    protected Checkbox 		active; 
+	protected Window window_BounceReasonDialog;
+	protected Textbox bounceCode;
+	protected Combobox reasonType;
+	protected Combobox category;
+	protected Textbox reason;
+	protected Combobox action;
+	protected ExtendedCombobox ruleID;
+	protected Textbox returnCode;
+	protected Checkbox active;
 	private BounceReason bounceReason; // overhanded per param
 
 	private transient BounceReasonListCtrl bounceReasonListCtrl; // overhanded per param
 	private transient BounceReasonService bounceReasonService;
-	
+
 	private List<Property> listReasonType = PennantStaticListUtil.getReasonType();
 	private List<Property> listCategory = PennantStaticListUtil.getCategoryType();
-	private List<ValueLabel> listAction=PennantStaticListUtil.getAction();
+	private List<ValueLabel> listAction = PennantStaticListUtil.getAction();
 
 	/**
 	 * default constructor.<br>
@@ -122,14 +120,13 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	protected void doSetProperties() {
 		super.pageRightName = "BounceReasonDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.bounceReason.getBounceID()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.bounceReason.getBounceID()));
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -140,11 +137,10 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	 */
 	public void onCreate$window_BounceReasonDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_BounceReasonDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.bounceReason = (BounceReason) arguments.get("bounceReason");
@@ -158,16 +154,16 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			BounceReason bounceReason = new BounceReason();
 			BeanUtils.copyProperties(this.bounceReason, bounceReason);
 			this.bounceReason.setBefImage(bounceReason);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.bounceReason.isWorkflow(), this.bounceReason.getWorkflowId(),
 					this.bounceReason.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -177,35 +173,34 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			this.bounceCode.setMaxlength(8);
-			this.reason.setMaxlength(50);
-			this.ruleID.setModuleName("Rule");
-			this.ruleID.setMandatoryStyle(true);
-			this.ruleID.setValueColumn("RuleCode");
-			this.ruleID.setDescColumn("RuleCodeDesc");
-			this.ruleID.setValidateColumns(new String[] {"RuleCode"});
-			Filter[] filters = new Filter[1] ;
-			filters[0]=new Filter("RuleModule", "BOUNCE", Filter.OP_EQUAL);
-			this.ruleID.setFilters(filters);
-			
-			this.returnCode.setMaxlength(8);
-			
+
+		this.bounceCode.setMaxlength(8);
+		this.reason.setMaxlength(50);
+		this.ruleID.setModuleName("Rule");
+		this.ruleID.setMandatoryStyle(true);
+		this.ruleID.setValueColumn("RuleCode");
+		this.ruleID.setDescColumn("RuleCodeDesc");
+		this.ruleID.setValidateColumns(new String[] { "RuleCode" });
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("RuleModule", "BOUNCE", Filter.OP_EQUAL);
+		this.ruleID.setFilters(filters);
+
+		this.returnCode.setMaxlength(8);
+
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -231,7 +226,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -264,7 +259,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -329,7 +324,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.LEAVING);
 	}
 
-   	/**
+	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param bounceReason
@@ -337,27 +332,27 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	 */
 	public void doWriteBeanToComponents(BounceReason aBounceReason) {
 		logger.debug(Literal.ENTERING);
-	
-			this.bounceCode.setValue(aBounceReason.getBounceCode());
+
+		this.bounceCode.setValue(aBounceReason.getBounceCode());
 		fillList(reasonType, listReasonType, aBounceReason.getReasonType());
 		fillList(category, listCategory, aBounceReason.getCategory());
-			this.reason.setValue(aBounceReason.getReason());
-			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
-			
-			this.ruleID.setObject(new Rule(aBounceReason.getRuleID()));
-			this.ruleID.setValue(aBounceReason.getRuleCode(),aBounceReason.getRuleCodeDesc());
-			
-			this.returnCode.setValue(aBounceReason.getReturnCode());
-			this.active.setChecked(aBounceReason.isActive());
-			
-			if (aBounceReason.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aBounceReason.getRecordType())) {
-				this.active.setChecked(true);
-				this.active.setDisabled(true);
-			}
-			this.recordStatus.setValue(aBounceReason.getRecordStatus());
+		this.reason.setValue(aBounceReason.getReason());
+		fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction, "");
+
+		this.ruleID.setObject(new Rule(aBounceReason.getRuleID()));
+		this.ruleID.setValue(aBounceReason.getRuleCode(), aBounceReason.getRuleCodeDesc());
+
+		this.returnCode.setValue(aBounceReason.getReturnCode());
+		this.active.setChecked(aBounceReason.isActive());
+
+		if (aBounceReason.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aBounceReason.getRecordType())) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
+		this.recordStatus.setValue(aBounceReason.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -365,66 +360,66 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	 */
 	public void doWriteComponentsToBean(BounceReason aBounceReason) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Bounce Code
 		try {
-		    aBounceReason.setBounceCode(this.bounceCode.getValue());
-		}catch (WrongValueException we ) {
+			aBounceReason.setBounceCode(this.bounceCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Reason Type
 		try {
-			String strReasonType =null; 
-			if(this.reasonType.getSelectedItem()!=null){
+			String strReasonType = null;
+			if (this.reasonType.getSelectedItem() != null) {
 				strReasonType = this.reasonType.getSelectedItem().getValue().toString();
 			}
-			if(strReasonType!= null && !PennantConstants.List_Select.equals(strReasonType)){
+			if (strReasonType != null && !PennantConstants.List_Select.equals(strReasonType)) {
 				aBounceReason.setReasonType(Integer.parseInt(strReasonType));
-	
-			}else{
+
+			} else {
 				aBounceReason.setReasonType(0);
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Category
 		try {
-			String strCategory =null; 
-			if(this.category.getSelectedItem()!=null){
+			String strCategory = null;
+			if (this.category.getSelectedItem() != null) {
 				strCategory = this.category.getSelectedItem().getValue().toString();
 			}
-			if(strCategory!= null && !PennantConstants.List_Select.equals(strCategory)){
+			if (strCategory != null && !PennantConstants.List_Select.equals(strCategory)) {
 				aBounceReason.setCategory(Integer.parseInt(strCategory));
-	
-			}else{
+
+			} else {
 				aBounceReason.setCategory(0);
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Reason
 		try {
-		    aBounceReason.setReason(this.reason.getValue());
-		}catch (WrongValueException we ) {
+			aBounceReason.setReason(this.reason.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Action
 		try {
-			String strAction =null; 
-			if(this.action.getSelectedItem()!=null){
+			String strAction = null;
+			if (this.action.getSelectedItem() != null) {
 				strAction = this.action.getSelectedItem().getValue().toString();
 			}
-			if(strAction!= null && !PennantConstants.List_Select.equals(strAction)){
+			if (strAction != null && !PennantConstants.List_Select.equals(strAction)) {
 				aBounceReason.setAction(Integer.parseInt(strAction));
-	
-			}else{
+
+			} else {
 				aBounceReason.setAction(0);
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Fee ID
@@ -434,7 +429,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			aBounceReason.setRuleID(rule.getRuleId());
 			aBounceReason.setRuleCode(rule.getRuleCode());
 			aBounceReason.setRuleCodeDesc(rule.getRuleCodeDesc());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Return Code
@@ -447,21 +442,21 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		//Active
 		try {
 			aBounceReason.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -512,34 +507,42 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.bounceCode.isReadonly()){
-			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
+		if (!this.bounceCode.isReadonly()) {
+			this.bounceCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.category.isDisabled()){
-			this.category.setConstraint(new StaticListValidator(listCategory,Labels.getLabel("label_BounceReasonDialog_Category.value")));
+		if (!this.category.isDisabled()) {
+			this.category.setConstraint(
+					new StaticListValidator(listCategory, Labels.getLabel("label_BounceReasonDialog_Category.value")));
 		}
-		if (!this.action.isDisabled()){
-			this.action.setConstraint(new StaticListValidator(listAction,Labels.getLabel("label_BounceReasonDialog_Action.value")));
+		if (!this.action.isDisabled()) {
+			this.action.setConstraint(
+					new StaticListValidator(listAction, Labels.getLabel("label_BounceReasonDialog_Action.value")));
 		}
-		if (!this.reason.isReadonly()){
-			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_Reason.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.reason.isReadonly()) {
+			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_Reason.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		if (!this.ruleID.isReadonly()){
-			this.ruleID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_RuleID.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+		if (!this.ruleID.isReadonly()) {
+			this.ruleID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_RuleID.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		if (!this.returnCode.isReadonly()){
-			this.returnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_ReturnCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+		if (!this.returnCode.isReadonly()) {
+			this.returnCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_ReturnCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.bounceCode.setConstraint("");
 		this.reasonType.setConstraint("");
 		this.category.setConstraint("");
@@ -547,10 +550,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		this.action.setConstraint("");
 		this.ruleID.setConstraint("");
 		this.returnCode.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
-	}
 
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Set Validations for LOV Fields
@@ -558,7 +560,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		//Bounce ID
 		//Bounce Code
 		//Reason Type
@@ -568,30 +570,28 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		//Fee ID
 		//Return ID
 		//Active
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -601,164 +601,27 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final BounceReason aBounceReason = new BounceReason();
 		BeanUtils.copyProperties(this.bounceReason, aBounceReason);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_BounceReasonDialog_BounceCode.value") + " : " + aBounceReason.getBounceCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBounceReason.getRecordType()).equals("")){
-				aBounceReason.setVersion(aBounceReason.getVersion()+1);
+			if (StringUtils.trimToEmpty(aBounceReason.getRecordType()).equals("")) {
+				aBounceReason.setVersion(aBounceReason.getVersion() + 1);
 				aBounceReason.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aBounceReason.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aBounceReason.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBounceReason.getNextTaskId(), aBounceReason);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aBounceReason,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				MessageUtil.showError(e);
-			}
-			
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.bounceReason.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.bounceCode);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnCode"), this.returnCode);
-		} else {
-			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.bounceCode);
-			readOnlyComponent(true, this.returnCode);
-		}
-	
-			readOnlyComponent(isReadOnly("BounceReasonDialog_ReasonType"), this.reasonType);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_Category"), this.category);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.bounceReason.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBounceReason.getNextTaskId(),
+							aBounceReason);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.bounceCode);
-			readOnlyComponent(true, this.reasonType);
-			readOnlyComponent(true, this.category);
-			readOnlyComponent(true, this.reason);
-			readOnlyComponent(true, this.action);
-			readOnlyComponent(true, this.ruleID);
-			readOnlyComponent(true, this.returnCode);
-			readOnlyComponent(true, this.active);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.bounceCode.setValue("");
-			 	this.reasonType.setSelectedIndex(0);
-			 	this.category.setSelectedIndex(0);
-				this.reason.setValue("");
-			 	this.action.setSelectedIndex(0);
-			  	this.ruleID.setValue("");
-			  	this.ruleID.setDescription("");
-			  	this.returnCode.setValue("");
-				this.active.setChecked(false);
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final BounceReason aBounceReason = new BounceReason();
-			BeanUtils.copyProperties(this.bounceReason, aBounceReason);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aBounceReason);
-
-			isNew = aBounceReason.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aBounceReason.getRecordType())) {
-					aBounceReason.setVersion(aBounceReason.getVersion() + 1);
-					if (isNew) {
-						aBounceReason.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aBounceReason.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aBounceReason.setNewRecord(true);
-					}
-				}
-			} else {
-				aBounceReason.setVersion(aBounceReason.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -768,196 +631,331 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			logger.debug("Leaving");
+
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(BounceReason aBounceReason, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aBounceReason.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aBounceReason.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aBounceReason.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aBounceReason.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.bounceReason.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+			readOnlyComponent(false, this.bounceCode);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnCode"), this.returnCode);
+		} else {
+			this.btnCancel.setVisible(true);
+			readOnlyComponent(true, this.bounceCode);
+			readOnlyComponent(true, this.returnCode);
+		}
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aBounceReason.getNextTaskId());
+		readOnlyComponent(isReadOnly("BounceReasonDialog_ReasonType"), this.reasonType);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_Category"), this.category);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aBounceReason);
-					}
-
-					if (isNotesMandatory(taskId, aBounceReason)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aBounceReason.setTaskId(taskId);
-				aBounceReason.setNextTaskId(nextTaskId);
-				aBounceReason.setRoleCode(getRole());
-				aBounceReason.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aBounceReason, tranType);
-				String operationRefs = getServiceOperations(taskId, aBounceReason);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aBounceReason, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.bounceReason.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aBounceReason, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			BounceReason aBounceReason = (BounceReason) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		readOnlyComponent(true, this.bounceCode);
+		readOnlyComponent(true, this.reasonType);
+		readOnlyComponent(true, this.category);
+		readOnlyComponent(true, this.reason);
+		readOnlyComponent(true, this.action);
+		readOnlyComponent(true, this.ruleID);
+		readOnlyComponent(true, this.returnCode);
+		readOnlyComponent(true, this.active);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = bounceReasonService.delete(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.bounceCode.setValue("");
+		this.reasonType.setSelectedIndex(0);
+		this.category.setSelectedIndex(0);
+		this.reason.setValue("");
+		this.action.setSelectedIndex(0);
+		this.ruleID.setValue("");
+		this.ruleID.setDescription("");
+		this.returnCode.setValue("");
+		this.active.setChecked(false);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final BounceReason aBounceReason = new BounceReason();
+		BeanUtils.copyProperties(this.bounceReason, aBounceReason);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aBounceReason);
+
+		isNew = aBounceReason.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aBounceReason.getRecordType())) {
+				aBounceReason.setVersion(aBounceReason.getVersion() + 1);
+				if (isNew) {
+					aBounceReason.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aBounceReason.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aBounceReason.setNewRecord(true);
+				}
+			}
+		} else {
+			aBounceReason.setVersion(aBounceReason.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aBounceReason, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(BounceReason aBounceReason, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aBounceReason.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aBounceReason.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aBounceReason.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aBounceReason.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aBounceReason.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aBounceReason);
+				}
+
+				if (isNotesMandatory(taskId, aBounceReason)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aBounceReason.setTaskId(taskId);
+			aBounceReason.setNextTaskId(nextTaskId);
+			aBounceReason.setRoleCode(getRole());
+			aBounceReason.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aBounceReason, tranType);
+			String operationRefs = getServiceOperations(taskId, aBounceReason);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aBounceReason, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aBounceReason, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		BounceReason aBounceReason = (BounceReason) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = bounceReasonService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = bounceReasonService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = bounceReasonService.doApprove(auditHeader);
+
+						if (aBounceReason.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = bounceReasonService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = bounceReasonService.doReject(auditHeader);
+						if (aBounceReason.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = bounceReasonService.doApprove(auditHeader);
-
-							if (aBounceReason.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = bounceReasonService.doReject(auditHeader);
-							if (aBounceReason.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_BounceReasonDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_BounceReasonDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.bounceReason), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_BounceReasonDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_BounceReasonDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.bounceReason), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(BounceReason aBounceReason, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aBounceReason.getBefImage(), aBounceReason);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aBounceReason.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setBounceReasonService(BounceReasonService bounceReasonService) {
-			this.bounceReasonService = bounceReasonService;
-		}
-			
+	private AuditHeader getAuditHeader(BounceReason aBounceReason, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBounceReason.getBefImage(), aBounceReason);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aBounceReason.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setBounceReasonService(BounceReasonService bounceReasonService) {
+		this.bounceReasonService = bounceReasonService;
+	}
+
 }

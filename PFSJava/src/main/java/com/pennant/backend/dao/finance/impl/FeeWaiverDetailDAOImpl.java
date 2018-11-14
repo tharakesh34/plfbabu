@@ -87,9 +87,11 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		StringBuilder sql = new StringBuilder("insert into FeeWaiverDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (WaiverDetailId, WaiverId, AdviseId, FinODSchdDate, ReceivableAmount,");
-		sql.append(" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode,FeeTypeDesc,Version,lastMntBy,lastMntOn)");
+		sql.append(
+				" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode,FeeTypeDesc,Version,lastMntBy,lastMntOn)");
 		sql.append(" Values( :WaiverDetailId, :WaiverId, :AdviseId, :FinODSchdDate, :ReceivableAmount,");
-		sql.append(" :ReceivedAmount, :WaivedAmount, :BalanceAmount, :CurrWaiverAmount, :FeeTypeCode, :FeeTypeDesc, :Version, :lastMntBy, :lastMntOn)");
+		sql.append(
+				" :ReceivedAmount, :WaivedAmount, :BalanceAmount, :CurrWaiverAmount, :FeeTypeCode, :FeeTypeDesc, :Version, :lastMntBy, :lastMntOn)");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(feeWaiverDetail);
@@ -188,6 +190,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
 	@Override
 	public List<FeeWaiverDetail> getFeeWaiverEnqDetailList(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -197,10 +200,12 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select FD.WaiverDetailId, FD.WaiverId, FD.AdviseId, FD.FinODSchdDate, FD.ReceivableAmount,");
-		selectSql.append(" FD.ReceivedAmount, FD.WaivedAmount, FD.BalanceAmount, FD.CurrWaiverAmount, FD.FeeTypeCode,FD.FeeTypeDesc,FH.valueDate,SU.usrFName waivedBy");
+		selectSql.append(
+				" FD.ReceivedAmount, FD.WaivedAmount, FD.BalanceAmount, FD.CurrWaiverAmount, FD.FeeTypeCode,FD.FeeTypeDesc,FH.valueDate,SU.usrFName waivedBy");
 		selectSql.append(" From  FeeWaiverDetails FD inner join FeeWaiverHeader FH  on FH.waiverId=FD.waiverId ");
 		selectSql.append(" left join SecUsers SU on FH.lastMntBy=SU.usrid ");
-		selectSql.append(" where FH.waiverId in (select waiverId from FeeWaiverHeader where FinReference = :FinReference) order by FeeTypeCode ");
+		selectSql.append(
+				" where FH.waiverId in (select waiverId from FeeWaiverHeader where FinReference = :FinReference) order by FeeTypeCode ");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);

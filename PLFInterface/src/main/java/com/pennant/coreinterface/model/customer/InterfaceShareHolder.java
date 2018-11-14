@@ -6,7 +6,7 @@ import java.util.Date;
 public class InterfaceShareHolder implements Serializable {
 
 	private static final long serialVersionUID = -6692665473168415871L;
-	
+
 	private String shareHolderIDType;
 	private String shareHolderIDRef;
 	private String shareHolderPerc;
@@ -18,9 +18,9 @@ public class InterfaceShareHolder implements Serializable {
 	private String recordType;
 
 	public InterfaceShareHolder() {
-		
+
 	}
-	
+
 	public String getShareHolderIDType() {
 		return shareHolderIDType;
 	}

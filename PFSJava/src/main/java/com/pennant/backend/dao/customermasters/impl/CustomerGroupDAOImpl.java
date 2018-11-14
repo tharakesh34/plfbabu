@@ -62,18 +62,19 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements CustomerGroupDAO {
-       private static Logger logger = Logger.getLogger(CustomerGroupDAOImpl.class);
-	
+	private static Logger logger = Logger.getLogger(CustomerGroupDAOImpl.class);
+
 	public CustomerGroupDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Customer Groups details by key field
+	 * Fetch the Record Customer Groups details by key field
 	 * 
-	 * @param id (integer)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (integer)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerGroup
 	 */
 	@Override
@@ -84,76 +85,74 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT CustGrpID, CustGrpCode, CustGrpDesc, CustGrpRO1, CustGrpLimit, CustGrpIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCustGrpRO1Name,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerGroups");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustGrpID =:CustGrpID") ;
-		
+		selectSql.append(" Where CustGrpID =:CustGrpID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
 		RowMapper<CustomerGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGroup.class);
-		
-		try{
-			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerGroup = null;
 		}
 		logger.debug("Leaving");
 		return customerGroup;
 	}
-	
+
 	@Override
 	public CustomerGroup getCustomerGroupByCode(final String id, String type) {
 		logger.debug("Entering");
 		CustomerGroup customerGroup = new CustomerGroup();
 		customerGroup.setCustGrpCode(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("SELECT CustGrpID, CustGrpCode, CustGrpDesc, CustGrpRO1, CustGrpLimit, CustGrpIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCustGrpRO1Name,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerGroups");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustGrpCode =:CustGrpCode") ;
-		
+		selectSql.append(" Where CustGrpCode =:CustGrpCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
 		RowMapper<CustomerGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGroup.class);
-		
-		try{
-			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (Exception e) {
+
+		try {
+			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			customerGroup = null;
 		}
 		logger.debug("Leaving");
 		return customerGroup;
 	}
-	
-	
-	
+
 	/**
-	 * This method Deletes the Record from the CustomerGroups or CustomerGroups_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Groups by key CustGrpID
+	 * This method Deletes the Record from the CustomerGroups or CustomerGroups_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Customer Groups by key CustGrpID
 	 * 
-	 * @param Customer Groups (customerGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Groups (customerGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerGroup customerGroup,String type) {
+	public void delete(CustomerGroup customerGroup, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
@@ -161,97 +160,101 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 		deleteSql.append(" Delete From CustomerGroups");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustGrpID =:CustGrpID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into CustomerGroups or CustomerGroups_Temp.
-	 * it fetches the available Sequence form SeqCustomerGroups by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into CustomerGroups or CustomerGroups_Temp. it fetches the available Sequence form
+	 * SeqCustomerGroups by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Customer Groups 
+	 * save Customer Groups
 	 * 
-	 * @param Customer Groups (customerGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Groups (customerGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerGroup customerGroup,String type) {
+	public long save(CustomerGroup customerGroup, String type) {
 		logger.debug("Entering");
-		
-		if(customerGroup.getCustGrpID() ==0 || customerGroup.getCustGrpID() == Long.MIN_VALUE){
-			customerGroup.setCustGrpID(getNextId("SeqCustomerGroups"));	
+
+		if (customerGroup.getCustGrpID() == 0 || customerGroup.getCustGrpID() == Long.MIN_VALUE) {
+			customerGroup.setCustGrpID(getNextId("SeqCustomerGroups"));
 		}
-		
+
 		StringBuilder insertSql = new StringBuilder(" Insert Into CustomerGroups");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustGrpID, CustGrpCode, CustGrpDesc, CustGrpRO1, CustGrpLimit, CustGrpIsActive," );
+		insertSql.append(" (CustGrpID, CustGrpCode, CustGrpDesc, CustGrpRO1, CustGrpLimit, CustGrpIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values( :CustGrpID, :CustGrpCode, :CustGrpDesc, :CustGrpRO1, :CustGrpLimit, :CustGrpIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" Values( :CustGrpID, :CustGrpCode, :CustGrpDesc, :CustGrpRO1, :CustGrpLimit, :CustGrpIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return customerGroup.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record CustomerGroups or CustomerGroups_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Groups by key CustGrpID and Version
+	 * This method updates the Record CustomerGroups or CustomerGroups_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Groups by key CustGrpID and Version
 	 * 
-	 * @param Customer Groups (customerGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Groups (customerGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerGroup customerGroup,String type) {
+	public void update(CustomerGroup customerGroup, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 
 		updateSql.append("Update CustomerGroups");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set CustGrpCode = :CustGrpCode, CustGrpDesc = :CustGrpDesc, CustGrpRO1 = :CustGrpRO1, " );
-		updateSql.append(" CustGrpLimit = :CustGrpLimit, CustGrpIsActive = :CustGrpIsActive ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append("  Set CustGrpCode = :CustGrpCode, CustGrpDesc = :CustGrpDesc, CustGrpRO1 = :CustGrpRO1, ");
+		updateSql.append(" CustGrpLimit = :CustGrpLimit, CustGrpIsActive = :CustGrpIsActive ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustGrpID =:CustGrpID ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

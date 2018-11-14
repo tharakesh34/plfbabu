@@ -53,10 +53,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class PurposeDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -1472467289111692722L;
-	
+
 	private String purposeCode;
 	private String purposeDesc = null;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private PurposeDetail befImage;
 	private LoggedInUser userDetails;
@@ -77,14 +77,15 @@ public class PurposeDetail extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-		
+
 	public String getId() {
 		return purposeCode;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.purposeCode = id;
 	}
-	
+
 	public String getPurposeCode() {
 		return purposeCode;
 	}
@@ -104,27 +105,31 @@ public class PurposeDetail extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public PurposeDetail getBefImage(){
+	public PurposeDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(PurposeDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(PurposeDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

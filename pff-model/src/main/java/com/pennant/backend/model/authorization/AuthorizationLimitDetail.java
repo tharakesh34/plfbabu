@@ -62,26 +62,26 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>AuthorizationLimitDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","authLimitId","code","limitAmount"})
+@XmlType(propOrder = { "id", "authLimitId", "code", "limitAmount" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AuthorizationLimitDetail extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class AuthorizationLimitDetail extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-	private long authLimitId= 0;
+	private long authLimitId = 0;
 	private String code;
 	private String productDesc;
 	private String collateralDesc;
-	private BigDecimal limitAmount= BigDecimal.ZERO;
+	private BigDecimal limitAmount = BigDecimal.ZERO;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private AuthorizationLimitDetail befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -94,36 +94,38 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-			Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("productDesc");
-			excludeFields.add("collateralDesc");
-			return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("productDesc");
+		excludeFields.add("collateralDesc");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public long getAuthLimitId() {
 		return authLimitId;
 	}
+
 	public void setAuthLimitId(long authLimitId) {
 		this.authLimitId = authLimitId;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
-	
+
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public String getProductDesc() {
 		return productDesc;
 	}
@@ -141,20 +143,20 @@ private static final long serialVersionUID = 1L;
 	}
 
 	public String getCodeName() {
-		if(StringUtils.trimToNull(this.productDesc)==null){
+		if (StringUtils.trimToNull(this.productDesc) == null) {
 			return collateralDesc;
 		}
 		return productDesc;
 	}
 
-	
 	public BigDecimal getLimitAmount() {
 		return limitAmount;
 	}
+
 	public void setLimitAmount(BigDecimal limitAmount) {
 		this.limitAmount = limitAmount;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -162,7 +164,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -171,19 +173,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public AuthorizationLimitDetail getBefImage(){
+	public AuthorizationLimitDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(AuthorizationLimitDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AuthorizationLimitDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

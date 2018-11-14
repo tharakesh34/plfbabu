@@ -67,10 +67,10 @@ import com.pennant.backend.service.commodity.CommodityInventoryService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.commodity.commodityinventory.model.CommodityInventoryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Commodity/CommodityInventory/CommodityInventoryList.zul file.
@@ -140,8 +140,8 @@ public class CommodityInventoryListCtrl extends GFCBaseListCtrl<CommodityInvento
 	 */
 	public void onCreate$window_CommodityInventoryList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_CommodityInventoryList, borderLayout_CommodityInventoryList,
-				listBoxCommodityInventory, pagingCommodityInventoryList);
+		setPageComponents(window_CommodityInventoryList, borderLayout_CommodityInventoryList, listBoxCommodityInventory,
+				pagingCommodityInventoryList);
 		setItemRender(new CommodityInventoryListModelItemRenderer());
 
 		fillComboBox(this.commodityCode, "", listCommodityCode, "");

@@ -68,25 +68,26 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvaluation>
 		implements FinAssetEvaluationService {
-	
+
 	private static final Logger logger = Logger.getLogger(FinAssetEvaluationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinAssetEvaluationDAO finAssetEvaluationDAO;
-	
+
 	private FinAssetEvaluationValidation finAssetEvaluationValidation;
 
 	public FinAssetEvaluationServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -94,31 +95,28 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	public FinAssetEvaluationDAO getFinAssetEvaluationDAO() {
 		return finAssetEvaluationDAO;
 	}
+
 	public void setFinAssetEvaluationDAO(FinAssetEvaluationDAO finAssetEvaluationDAO) {
 		this.finAssetEvaluationDAO = finAssetEvaluationDAO;
 	}
-	
+
 	/**
 	 * @return the finAssetEvaluationValidation
 	 */
 	public FinAssetEvaluationValidation getFinAssetEvaluationValidation() {
-		if(finAssetEvaluationValidation==null){
+		if (finAssetEvaluationValidation == null) {
 			this.finAssetEvaluationValidation = new FinAssetEvaluationValidation(finAssetEvaluationDAO);
 		}
 		return this.finAssetEvaluationValidation;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 
-	 * 1) Do the Business validation by using businessValidation(auditHeader) method if there is
-	 * 		any error or warning message then return the auditHeader. 
-	 * 2) Do Add or Update the Record 
-	 * 		a) Add new Record for the new record in the DB table 
-	 * 			LMTFinAssetEvaluation/LMTFinAssetEvaluation_Temp by using FinAssetEvaluationDAO's save method 
-	 * 		b) Update the Record in the table. based on the module workFlow Configuration. 
-	 * 			by using FinAssetEvaluationDAO's update method 
-	 * 3) Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using 
-	 * 		auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * LMTFinAssetEvaluation/LMTFinAssetEvaluation_Temp by using FinAssetEvaluationDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using FinAssetEvaluationDAO's update method
+	 * 3) Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -140,7 +138,7 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 		}
 
 		if (finAssetEvaluation.isNew()) {
-			finAssetEvaluation.setId(getFinAssetEvaluationDAO().save(finAssetEvaluation,tableType));
+			finAssetEvaluation.setId(getFinAssetEvaluationDAO().save(finAssetEvaluation, tableType));
 			auditHeader.getAuditDetail().setModelData(finAssetEvaluation);
 			auditHeader.setAuditReference(finAssetEvaluation.getId());
 		} else {
@@ -153,13 +151,10 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	}
 
 	/**
-	 * delete method do the following steps. 
-	 * 1) Do the Business validation by using businessValidation(auditHeader) method 
-	 * 		if there is any error or warning message then return the auditHeader. 
-	 * 2) delete Record for the DB table LMTFinAssetEvaluation by using FinAssetEvaluationDAO's 
-	 * 		delete method with type as Blank 
-	 * 3) Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using 
-	 * 		auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * LMTFinAssetEvaluation by using FinAssetEvaluationDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtLMTFinAssetEvaluation by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -183,8 +178,7 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	}
 
 	/**
-	 * getFinAssetEvaluationById fetch the details by using FinAssetEvaluationDAO's
-	 * getFinAssetEvaluationById method.
+	 * getFinAssetEvaluationById fetch the details by using FinAssetEvaluationDAO's getFinAssetEvaluationById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -193,15 +187,13 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	 * @return FinAssetEvaluation
 	 */
 	@Override
-	public FinAssetEvaluation getFinAssetEvaluationById(String id,String type) {
-		return getFinAssetEvaluationDAO().getFinAssetEvaluationByID(id,type);
+	public FinAssetEvaluation getFinAssetEvaluationById(String id, String type) {
+		return getFinAssetEvaluationDAO().getFinAssetEvaluationByID(id, type);
 	}
 
 	/**
-	 * getApprovedFinAssetEvaluationById fetch the details by using
-	 * FinAssetEvaluationDAO's getFinAssetEvaluationById method . with parameter id and
-	 * type as blank. it fetches the approved records from the
-	 * LMTFinAssetEvaluation.
+	 * getApprovedFinAssetEvaluationById fetch the details by using FinAssetEvaluationDAO's getFinAssetEvaluationById
+	 * method . with parameter id and type as blank. it fetches the approved records from the LMTFinAssetEvaluation.
 	 * 
 	 * @param id
 	 *            (String)
@@ -211,25 +203,18 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	public FinAssetEvaluation getApprovedFinAssetEvaluationById(String id) {
 		return getFinAssetEvaluationDAO().getFinAssetEvaluationByID(id, "_AView");
 	}
-	
 
 	/**
-	 * doApprove method do the following steps. 
-	 * 1) Do the Business validation by using businessValidation(auditHeader) method 
-	 * 		if there is any error or warning message then return the auditHeader. 
-	 * 2) based on the Record type do following actions 
-	 * 		a) DELETE Delete the record from the main table by using 
-	 * 			getFinAssetEvaluationDAO().delete with parameters finAssetEvaluation,"" 
-	 * 		b) NEW Add new record in to main table by using getFinAssetEvaluationDAO().save
-	 * 			with parameters finAssetEvaluation,"" 
-	 * 		c) EDIT Update record in the main table by using 
-	 * 			getFinAssetEvaluationDAO().update with parameters finAssetEvaluation,""
-	 * 3) Delete the record from the workFlow table by using getFinAssetEvaluationDAO().delete 
-	 * 		with parameters finAssetEvaluation,"_Temp" 
-	 * 4) Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using
-	 * 		auditHeaderDAO.addAudit(auditHeader) for Work flow 
-	 * 5) Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using
-	 * 		auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinAssetEvaluationDAO().delete with
+	 * parameters finAssetEvaluation,"" b) NEW Add new record in to main table by using getFinAssetEvaluationDAO().save
+	 * with parameters finAssetEvaluation,"" c) EDIT Update record in the main table by using
+	 * getFinAssetEvaluationDAO().update with parameters finAssetEvaluation,"" 3) Delete the record from the workFlow
+	 * table by using getFinAssetEvaluationDAO().delete with parameters finAssetEvaluation,"_Temp" 4) Audit the record
+	 * in to AuditHeader and AdtLMTFinAssetEvaluation by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5)
+	 * Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using auditHeaderDAO.addAudit(auditHeader)
+	 * based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -246,8 +231,7 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 		}
 
 		FinAssetEvaluation finAssetEvaluation = new FinAssetEvaluation();
-		BeanUtils.copyProperties((FinAssetEvaluation) auditHeader.getAuditDetail()
-				.getModelData(), finAssetEvaluation);
+		BeanUtils.copyProperties((FinAssetEvaluation) auditHeader.getAuditDetail().getModelData(), finAssetEvaluation);
 
 		if (finAssetEvaluation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -285,13 +269,10 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	}
 
 	/**
-	 * doReject method do the following steps. 
-	 * 1) Do the Business validation by using businessValidation(auditHeader) method 
-	 * 		if there is any error or warning message then return the auditHeader. 
-	 * 2) Delete the record from the workFlow table by using 
-	 * 		getFinAssetEvaluationDAO().delete with parameters finAssetEvaluation,"_Temp" 
-	 * 3) Audit the record in to AuditHeader and AdtLMTFinAssetEvaluation by using 
-	 * 		auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinAssetEvaluationDAO().delete with parameters finAssetEvaluation,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtLMTFinAssetEvaluation by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -316,33 +297,29 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 	}
 
 	/**
-	 * businessValidation method do the following steps. 
-	 * 1) get the details from the auditHeader.
-	 * 2) fetch the details from the tables 
-	 * 3) Validate the Record based on the record details. 
-	 * 4) Validate for any business validation. 
-	 * 5) for any mismatch conditions Fetch the error details from
-	 * 		getFinAssetEvaluationDAO().getErrorDetail with Error ID and language as parameters. 
-	 * 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFinAssetEvaluationDAO().getErrorDetail with Error ID
+	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		auditHeader = doValidation(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	@Override
-	public AuditDetail validate(FinAssetEvaluation finAssetEvaluation, String method, String auditTranType, String  usrLanguage){
+	public AuditDetail validate(FinAssetEvaluation finAssetEvaluation, String method, String auditTranType,
+			String usrLanguage) {
 		return doValidation(finAssetEvaluation, auditTranType, method, usrLanguage);
 	}
 
-		
 	@Override
 	public AuditDetail saveOrUpdate(FinAssetEvaluation finAssetEvaluation, String tableType, String auditTranType) {
 		logger.debug("Entering");
@@ -357,10 +334,11 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 		}
 
 		logger.debug("Leaving");
-		return new AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(), finAssetEvaluation);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(),
+				finAssetEvaluation);
 
 	}
-	
+
 	@Override
 	public AuditDetail doApprove(FinAssetEvaluation finAssetEvaluation, String tableType, String auditTranType) {
 		logger.debug("Entering");
@@ -376,56 +354,58 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 		getFinAssetEvaluationDAO().save(finAssetEvaluation, tableType);
 
 		logger.debug("Leaving");
-		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(), finAssetEvaluation);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(),
+				finAssetEvaluation);
 	}
-	
+
 	@Override
 	public AuditDetail delete(FinAssetEvaluation finAssetEvaluation, String tableType, String auditTranType) {
 		logger.debug("Entering");
 
-		String[] fields = PennantJavaUtil.getFieldDetails(finAssetEvaluation, finAssetEvaluation.getExcludeFields());	
+		String[] fields = PennantJavaUtil.getFieldDetails(finAssetEvaluation, finAssetEvaluation.getExcludeFields());
 
 		getFinAssetEvaluationDAO().delete(finAssetEvaluation, tableType);
 
 		logger.debug("Leaving");
-		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(), finAssetEvaluation);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(),
+				finAssetEvaluation);
 	}
-	
-	
-	
-	public AuditHeader doValidation(AuditHeader auditHeader, String method){
+
+	public AuditHeader doValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	public AuditDetail doValidation(FinAssetEvaluation finAssetEvaluation, String auditTranType, String method,String  usrLanguage){
+	public AuditDetail doValidation(FinAssetEvaluation finAssetEvaluation, String auditTranType, String method,
+			String usrLanguage) {
 		logger.debug("Entering");
 		String[] fields = PennantJavaUtil.getFieldDetails(finAssetEvaluation, finAssetEvaluation.getExcludeFields());
-		
-		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], finAssetEvaluation.getBefImage(), finAssetEvaluation);
-		
+
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1],
+				finAssetEvaluation.getBefImage(), finAssetEvaluation);
+
 		logger.debug("Leaving");
 		return validate(auditDetail, usrLanguage, method);
 	}
-	
-	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage) {
+
+	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAssetEvaluation finAssetEvaluation = (FinAssetEvaluation) auditDetail.getModelData();
 
 		FinAssetEvaluation tempFinAssetEvaluation = null;
 		if (finAssetEvaluation.isWorkflow()) {
-			tempFinAssetEvaluation = getFinAssetEvaluationDAO().getFinAssetEvaluationByID(
-					finAssetEvaluation.getId(), "_Temp");
+			tempFinAssetEvaluation = getFinAssetEvaluationDAO().getFinAssetEvaluationByID(finAssetEvaluation.getId(),
+					"_Temp");
 		}
-		FinAssetEvaluation befFinAssetEvaluation = getFinAssetEvaluationDAO().getFinAssetEvaluationByID(
-				finAssetEvaluation.getId(), "");
+		FinAssetEvaluation befFinAssetEvaluation = getFinAssetEvaluationDAO()
+				.getFinAssetEvaluationByID(finAssetEvaluation.getId(), "");
 		FinAssetEvaluation oldFinAssetEvaluation = finAssetEvaluation.getBefImage();
 
 		String[] errParm = new String[1];
@@ -436,28 +416,24 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 		if (finAssetEvaluation.isNew()) { // for New record or new record into work flow
 
 			if (!finAssetEvaluation.isWorkflow()) {// With out Work flow only new
-												// records
+														// records
 				if (befFinAssetEvaluation != null) { // Record Already Exists in the
-													// table then error
+															// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (finAssetEvaluation.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befFinAssetEvaluation != null || tempFinAssetEvaluation != null) { 
+				if (finAssetEvaluation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befFinAssetEvaluation != null || tempFinAssetEvaluation != null) {
 						// if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinAssetEvaluation == null || tempFinAssetEvaluation != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41005", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -465,42 +441,39 @@ public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvalua
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!finAssetEvaluation.isWorkflow()) { // With out Work flow for update
-												// and delete
+				// and delete
 
 				if (befFinAssetEvaluation == null) { // if records not exists in the
-													// main table
+															// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinAssetEvaluation != null
-							&& !oldFinAssetEvaluation.getLastMntOn().equals(
-									befFinAssetEvaluation.getLastMntOn())) {
+							&& !oldFinAssetEvaluation.getLastMntOn().equals(befFinAssetEvaluation.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempFinAssetEvaluation == null) { // if records not exists in
-													// the Work flow table
+															// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinAssetEvaluation != null && oldFinAssetEvaluation != null
-						&& !oldFinAssetEvaluation.getLastMntOn().equals(
-								tempFinAssetEvaluation.getLastMntOn())) {
+						&& !oldFinAssetEvaluation.getLastMntOn().equals(tempFinAssetEvaluation.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

@@ -25,7 +25,8 @@ public class AccountPostingDetailProcess extends MQProcess {
 		super();
 	}
 
-	public AccountPostingDetail doFillPostingDetails(AccountPostingDetail accPostingReq, String msgFormat) throws InterfaceException {
+	public AccountPostingDetail doFillPostingDetails(AccountPostingDetail accPostingReq, String msgFormat)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (accPostingReq == null) {
@@ -37,13 +38,14 @@ public class AccountPostingDetailProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 		try {
 			OMElement requestElement = getRequestElement(accPostingReq, referenceNum, factory, msgFormat);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.warn(pffe.getErrorCode() + ":" + pffe.getErrorMessage());
 			throw pffe;
@@ -59,10 +61,10 @@ public class AccountPostingDetailProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	private AccountPostingDetail setAccountPostingReplyInfo(OMElement responseElement, AHBMQHeader header, String msgFormat) 
-			throws InterfaceException {
+	private AccountPostingDetail setAccountPostingReplyInfo(OMElement responseElement, AHBMQHeader header,
+			String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -70,14 +72,14 @@ public class AccountPostingDetailProcess extends MQProcess {
 		}
 
 		String parentNode = "WithinBankTransferReply";
-		if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.ACCOUNT_REVERSAL)) {
+		if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.ACCOUNT_REVERSAL)) {
 			parentNode = "ReversalReply";
 		}
 
 		AccountPostingDetail accAccountPosting = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/"+parentNode, responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/" + parentNode, responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
 
@@ -88,7 +90,7 @@ public class AccountPostingDetailProcess extends MQProcess {
 
 			accAccountPosting = new AccountPostingDetail();
 
-			if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.ACCOUNT_POSTING)) {
+			if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.ACCOUNT_POSTING)) {
 
 				// Posting Response
 				accAccountPosting.setReferenceNum(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
@@ -104,10 +106,12 @@ public class AccountPostingDetailProcess extends MQProcess {
 				accAccountPosting.setDebitAccountNumber(PFFXmlUtil.getStringValue(detailElement, "DebitAccountNumber"));
 				accAccountPosting.setDebitedCIFID(PFFXmlUtil.getStringValue(detailElement, "DebitCIFID"));
 				accAccountPosting.setDebitedCardNoFlag(PFFXmlUtil.getStringValue(detailElement, "DebitCardNumFlag"));
-				accAccountPosting.setCreditAccountNumber(PFFXmlUtil.getStringValue(detailElement, "CreditAccountNumber"));
+				accAccountPosting
+						.setCreditAccountNumber(PFFXmlUtil.getStringValue(detailElement, "CreditAccountNumber"));
 				accAccountPosting.setCreditedCIFID(PFFXmlUtil.getStringValue(detailElement, "CreditCIFID"));
 				accAccountPosting.setCreditedCardNoFlag(PFFXmlUtil.getStringValue(detailElement, "CreditCardNumFlag"));
-				accAccountPosting.setTransactionAmount(PFFXmlUtil.getBigDecimalValue(detailElement, "TransactionAmount"));
+				accAccountPosting
+						.setTransactionAmount(PFFXmlUtil.getBigDecimalValue(detailElement, "TransactionAmount"));
 				accAccountPosting.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 			}
 		} catch (InterfaceException e) {
@@ -129,8 +133,8 @@ public class AccountPostingDetailProcess extends MQProcess {
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(AccountPostingDetail accPostingReq, String referenceNum, OMFactory factory, String msgFormat) 
-			throws InterfaceException {
+	private OMElement getRequestElement(AccountPostingDetail accPostingReq, String referenceNum, OMFactory factory,
+			String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
@@ -138,23 +142,28 @@ public class AccountPostingDetailProcess extends MQProcess {
 		OMElement detailRequest = factory.createOMElement("WithinBankTransferRequest", null);
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNum", referenceNum);
 
-		if(!StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.ACCOUNT_REVERSAL)) {
+		if (!StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.ACCOUNT_REVERSAL)) {
 
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitAccountNumber", accPostingReq.getDebitAccountNumber());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitAccountNumber",
+					accPostingReq.getDebitAccountNumber());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitCurrency", accPostingReq.getDebitCcy());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditAccountNumber", accPostingReq.getCreditAccountNumber());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditAccountNumber",
+					accPostingReq.getCreditAccountNumber());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditCurrency", accPostingReq.getCreditCcy());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionAmount", accPostingReq.getTransactionAmount());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionCurrency", accPostingReq.getTransactionCcy());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionAmount",
+					accPostingReq.getTransactionAmount());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionCurrency",
+					accPostingReq.getTransactionCcy());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "PaymentMode", accPostingReq.getPaymentMode());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DealReferenceNumber", accPostingReq.getDealRefNum());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionNarration", accPostingReq.getTransNarration());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionNarration",
+					accPostingReq.getTransNarration());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DealPurpose", accPostingReq.getDealPurpose());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DealType", accPostingReq.getDealType());
 
 			// add secondary account
-			if(accPostingReq.getScndDebitAccountList() != null) {
-				for(SecondaryDebitAccount account: accPostingReq.getScndDebitAccountList()) {
+			if (accPostingReq.getScndDebitAccountList() != null) {
+				for (SecondaryDebitAccount account : accPostingReq.getScndDebitAccountList()) {
 					detailRequest.addChild(getSecondaryDebitAccounts(account));
 				}
 			}
@@ -162,20 +171,27 @@ public class AccountPostingDetailProcess extends MQProcess {
 		} else {
 			detailRequest = factory.createOMElement(new QName("ReversalRequest"));
 
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionReferenceNum", accPostingReq.getTransRefNum());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "HostReferenceNum", accPostingReq.getHostReferenceNum());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionReferenceNum",
+					accPostingReq.getTransRefNum());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "HostReferenceNum",
+					accPostingReq.getHostReferenceNum());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "PaymentMode", accPostingReq.getPaymentMode());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitAccountNumber", accPostingReq.getDebitAccountNumber());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitAccountNumber",
+					accPostingReq.getDebitAccountNumber());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitCIFID", accPostingReq.getDebitedCIFID());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitCardNumFlag", accPostingReq.getDebitedCardNoFlag());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditAccountNumber", accPostingReq.getCreditAccountNumber());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "DebitCardNumFlag",
+					accPostingReq.getDebitedCardNoFlag());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditAccountNumber",
+					accPostingReq.getCreditAccountNumber());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditCIFID", accPostingReq.getCreditedCIFID());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditCardNumFlag", accPostingReq.getCreditedCardNoFlag());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionAmount", accPostingReq.getTransactionAmount());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CreditCardNumFlag",
+					accPostingReq.getCreditedCardNoFlag());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransactionAmount",
+					accPostingReq.getTransactionAmount());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReturnCode", accPostingReq.getReturnCode());
 		}
 
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 
 		requestElement.addChild(detailRequest);
@@ -197,11 +213,11 @@ public class AccountPostingDetailProcess extends MQProcess {
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		OMElement scndDebitAccElement = factory.createOMElement(new QName("SecondaryDebitAccounts"));
 
-		if(scndDebitAccount != null) {
+		if (scndDebitAccount != null) {
 
-			PFFXmlUtil.setOMChildElement(factory, scndDebitAccElement, "SecondaryDebitAccount", 
+			PFFXmlUtil.setOMChildElement(factory, scndDebitAccElement, "SecondaryDebitAccount",
 					scndDebitAccount.getSecondaryDebitAccount());
-			PFFXmlUtil.setOMChildElement(factory, scndDebitAccElement, "ScheduleDate", 
+			PFFXmlUtil.setOMChildElement(factory, scndDebitAccElement, "ScheduleDate",
 					DateUtility.formatDate(scndDebitAccount.getScheduleDate(), InterfaceMasterConfigUtil.MQDATE));
 			PFFXmlUtil.setOMChildElement(factory, scndDebitAccElement, "CIF", scndDebitAccount.getCustCIF());
 		}

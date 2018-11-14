@@ -13,7 +13,7 @@ import com.pennant.backend.util.PennantConstants;
 
 public class DateService extends ServiceHelper {
 	private static final long serialVersionUID = -4861845683077000353L;
-	private static Logger	logger	= Logger.getLogger(DateService.class);
+	private static Logger logger = Logger.getLogger(DateService.class);
 
 	/**
 	 * TO update system parameters before start of the end of day

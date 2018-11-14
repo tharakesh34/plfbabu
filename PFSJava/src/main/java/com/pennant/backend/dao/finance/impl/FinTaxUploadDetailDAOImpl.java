@@ -63,8 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
- * Data access layer implementation for <code>ManualAdvise</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>ManualAdvise</code> with set of CRUD operations.
  */
 public class FinTaxUploadDetailDAOImpl extends SequenceDao<FinTaxUploadHeader> implements FinTaxUploadDetailDAO {
 	private static Logger logger = Logger.getLogger(FinTaxUploadDetailDAOImpl.class);

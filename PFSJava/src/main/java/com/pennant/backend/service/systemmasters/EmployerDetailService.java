@@ -47,11 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 
 public interface EmployerDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	EmployerDetail getEmployerDetailById(long id);
+
 	EmployerDetail getApprovedEmployerDetailById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

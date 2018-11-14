@@ -39,30 +39,32 @@ import com.pennant.util.PennantAppUtil;
 public class CustomerIncomeListItemRenderer implements ListitemRenderer<CustomerIncome>, Serializable {
 
 	private static final long serialVersionUID = 6321996138703133595L;
-	
+
 	public CustomerIncomeListItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerIncome income, int count) throws Exception {
 
 		int format = CurrencyUtil.getFormat(income.getToCcy());
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(income.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(income.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense()));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(income.getCategory(), PennantAppUtil.getIncomeExpenseCategory()));
 		lc.setParent(item);
-		if(income.getRecordType().equals(PennantConstants.RCD_ADD) || income.getRecordType().equals(PennantConstants.RCD_UPD)){
-			
+		if (income.getRecordType().equals(PennantConstants.RCD_ADD)
+				|| income.getRecordType().equals(PennantConstants.RCD_UPD)) {
+
 			lc = new Listcell(income.getIncomeTypeDesc());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(),format));
+			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(), format));
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell(income.getIncomeType());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(),format));
+			lc = new Listcell(PennantAppUtil.amountFormate(income.getIncome(), format));
 			lc.setParent(item);
 		}
 		lc = new Listcell(income.getRecordStatus());
@@ -71,5 +73,5 @@ public class CustomerIncomeListItemRenderer implements ListitemRenderer<Customer
 		lc.setParent(item);
 		item.setAttribute("data", income);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
-	}	
+	}
 }

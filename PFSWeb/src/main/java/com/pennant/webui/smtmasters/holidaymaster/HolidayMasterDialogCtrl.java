@@ -91,17 +91,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/SolutionFactory/holidayMasterDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/SolutionFactory/holidayMasterDialog.zul file.
  */
 public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	private static final long serialVersionUID = -6497477637239109557L;
 	private static final Logger logger = Logger.getLogger(HolidayMasterDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_HolidayMasterDialog; // autoWired
 
@@ -142,7 +140,6 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	protected Calendars calendars10;
 	protected Calendars calendars11;
 
-	
 	/**
 	 * default constructor.<br>
 	 */
@@ -158,9 +155,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected HolidayMaster object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected HolidayMaster object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -248,8 +244,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -329,13 +324,11 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		if (this.holidayYear.getValue() != null) {
 			showCalendar();
 		}
-		if(this.holidayYear.isReadonly()){
+		if (this.holidayYear.isReadonly()) {
 			this.holidayYear.setReadonly(false);
-			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-
 
 	/**
 	 * when the "New" button is clicked. <br>
@@ -377,17 +370,19 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		logger.debug("Entering " + event.toString());
 		showCalendar();
 		holidayDetails.clear();
-		if (this.holidayCode.getValue() != null &&  !StringUtils.equals(this.holidayCode.getValue(), "")) {
-			if(this.holidayYear.getValue() != null && (this.holidayYear.getValue().compareTo(BigDecimal.valueOf(1950)) < 0) ||
-					this.holidayYear.getValue().compareTo(BigDecimal.valueOf(Long.valueOf(DateUtility.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))))) > 0){
-				throw new WrongValueException(this.holidayYear, Labels.getLabel("DATE_ALLOWED_RANGE",new String[]{
-						Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value"),"1950",
-						String.valueOf(DateUtility.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE")))}));
+		if (this.holidayCode.getValue() != null && !StringUtils.equals(this.holidayCode.getValue(), "")) {
+			if (this.holidayYear.getValue() != null
+					&& (this.holidayYear.getValue().compareTo(BigDecimal.valueOf(1950)) < 0)
+					|| this.holidayYear.getValue().compareTo(BigDecimal.valueOf(
+							Long.valueOf(DateUtility.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))))) > 0) {
+				throw new WrongValueException(this.holidayYear, Labels.getLabel("DATE_ALLOWED_RANGE", new String[] {
+						Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value"), "1950",
+						String.valueOf(DateUtility.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) }));
 			}
 			holidayDetails = BusinessCalendar.getWeekendList(this.holidayCode.getValue(), this.holidayYear.intValue());
 			showHoliday();
 		}
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -482,8 +477,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aHolidayMaster
 	 * @throws Exception
@@ -532,17 +526,16 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		setValidationOn(true);
 
 		if (!this.holidayCode.isReadonly()) {
-			this.holidayCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_HolidayMasterDialog_HolidayCode.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true, true));
+			this.holidayCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_HolidayMasterDialog_HolidayCode.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true, true));
 		}
 
 		if (!this.holidayYear.isReadonly()) {
-			this.holidayYear.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY",
-							new String[] { Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value") }));
+			this.holidayYear.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value") }));
 		}
-				
+
 		logger.debug("Leaving ");
 	}
 
@@ -602,7 +595,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		
+
 		logger.debug("Leaving ");
 	}
 
@@ -814,8 +807,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_HolidayMasterDialog, auditHeader);
 						return processCompleted;
 					}
@@ -892,12 +885,11 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		String appDate = String.valueOf(appEndDate).substring(0, 4);
 		BigDecimal appDftEndDate = new BigDecimal(appDate);
 		BigDecimal appStartDate = new BigDecimal(Calendar.getInstance().get(Calendar.YEAR));
-		if (!this.holidayYear.isReadonly()
-				&& holidayYear.getValue() != null
-				&& (this.holidayYear.getValue().compareTo(appDftEndDate) >= 0 || this.holidayYear.getValue().compareTo(
-						appStartDate) < 0)) {
-			throw new WrongValueException(this.holidayYear, Labels.getLabel("HolidayYear_Validation", new String[] {
-					String.valueOf(appStartDate), appDate }));
+		if (!this.holidayYear.isReadonly() && holidayYear.getValue() != null
+				&& (this.holidayYear.getValue().compareTo(appDftEndDate) >= 0
+						|| this.holidayYear.getValue().compareTo(appStartDate) < 0)) {
+			throw new WrongValueException(this.holidayYear,
+					Labels.getLabel("HolidayYear_Validation", new String[] { String.valueOf(appStartDate), appDate }));
 		}
 		logger.debug("Leaving");
 	}
@@ -1073,7 +1065,6 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		return calendar.getTime();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.holidayMaster.getHolidayCode());

@@ -96,26 +96,25 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long serialVersionUID = 4028305737293383251L;
 	private static final Logger logger = Logger.getLogger(FacilityCheckListReferenceDialogCtrl.class);
-	
+
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	public Window window_FinanceCheckListReferenceDialog; 
+	public Window window_FinanceCheckListReferenceDialog;
 	// not auto wired variables
-	protected Listbox listBox_CheckList; 
-	private Facility facility;	
-	
+	protected Listbox listBox_CheckList;
+	private Facility facility;
+
 	private Map<Long, Long> selectedAnsCountMap;
 	private Map<String, Textbox> commentsTxtBoxMap = new HashMap<String, Textbox>();
 	private Map<String, String> ansDescMap;
 	private Map<String, FinanceCheckListReference> prevAnswersMap;
 	private Map<String, FinanceCheckListReference> temp_PrevAnswersMap = new HashMap<String, FinanceCheckListReference>();
 	private Map<String, CheckListDetail> presentAnswersMap;
-	
+
 	/*
-	 * Here we remove the checkList Details form list which are not allowed to
-	 * show at this stage
+	 * Here we remove the checkList Details form list which are not allowed to show at this stage
 	 */
 	private Map<Long, FacilityReferenceDetail> notAllowedToShowMap;
 	private Map<Long, FacilityReferenceDetail> notInputInStageMap;
@@ -140,11 +139,10 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected
-	 * FinanceCheckListReference object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceCheckListReference object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -196,9 +194,10 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 */
 	public void doShowDialog() throws Exception {
 		logger.debug("Entering ");
-		try{
+		try {
 			doWriteBeanToComponents(getFacility());
-			getCtrlObject().getClass().getMethod("setFacilityCheckListReferenceDialogCtrl", this.getClass()).invoke(getCtrlObject(), this);
+			getCtrlObject().getClass().getMethod("setFacilityCheckListReferenceDialogCtrl", this.getClass())
+					.invoke(getCtrlObject(), this);
 			getBorderLayoutHeight();
 			this.listBox_CheckList.setHeight(this.borderLayoutHeight + "px");
 			this.window_FinanceCheckListReferenceDialog.setHeight(this.borderLayoutHeight - 80 + "px");
@@ -215,7 +214,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * This method gets
 	 * 
 	 * @param aFacility
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void doWriteBeanToComponents(Facility aFacility) throws Exception {
@@ -225,20 +224,20 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		ansDescMap = new HashMap<String, String>();
 		//Check List from Facility process editor
 		List<FacilityReferenceDetail> checkList = aFacility.getCheckList();
-		
+
 		//Check List To display 
 		List<FacilityReferenceDetail> checkListToDisplay = new ArrayList<FacilityReferenceDetail>();
-		
+
 		HashMap<String, Object> fieldsandvalues = null;
 		if (aFacility.getCustomerEligibilityCheck() != null) {
 			fieldsandvalues = aFacility.getCustomerEligibilityCheck().getDeclaredFieldValues();
-		} else  {
+		} else {
 			// Data Preparation for Rule Execution
 			fieldsandvalues = doSetEngineData(aFacility.getCustID());
 		}
-		
+
 		for (FacilityReferenceDetail finRefDetail : checkList) {
-			if (isAllowedToShow(finRefDetail,userRole)) {
+			if (isAllowedToShow(finRefDetail, userRole)) {
 				if (StringUtils.isNotBlank(finRefDetail.getLovDescElgRuleValue())) {
 					boolean isValid = (boolean) this.ruleExecutionUtil.executeRule(
 							finRefDetail.getLovDescElgRuleValue(), fieldsandvalues, null, RuleReturnType.BOOLEAN);
@@ -248,35 +247,34 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 					}
 				}
 				checkListToDisplay.add(finRefDetail);
-				if (!isAllowedInputInStage(finRefDetail,userRole)) {
+				if (!isAllowedInputInStage(finRefDetail, userRole)) {
 					notInputInStageMap.put(Long.valueOf(finRefDetail.getFinRefId()), finRefDetail);
-				} 
+				}
 			} else {
 				notAllowedToShowMap.put(Long.valueOf(finRefDetail.getFinRefId()), finRefDetail);
 			}
 		}
-		
+
 		aFacility.setFinRefDetailsList(checkListToDisplay);
-		
+
 		prevAnswersMap = doGetPreviowsAnswers(aFacility);
 		temp_PrevAnswersMap.putAll(prevAnswersMap);
 		checkListDocTypeMap = new HashMap<String, List<Listitem>>();
 		String remarks = "";
-		
-		
+
 		//Create Items to Render in List box
 		List<CheckListDetail> checkListToRender = new ArrayList<CheckListDetail>();
 		for (FacilityReferenceDetail finRefDetail : checkListToDisplay) {
-			List<CheckListDetail> checkListAnsDetails=finRefDetail.getLovDescCheckListAnsDetails();
-			if (checkListAnsDetails !=null && !checkListAnsDetails.isEmpty()) {
+			List<CheckListDetail> checkListAnsDetails = finRefDetail.getLovDescCheckListAnsDetails();
+			if (checkListAnsDetails != null && !checkListAnsDetails.isEmpty()) {
 				for (CheckListDetail checkListAnsDetail : checkListAnsDetails) {
 					checkListAnsDetail.setLovDescCheckListDesc(finRefDetail.getLovDescRefDesc());
 					checkListAnsDetail.setLovDescCheckMinCount(finRefDetail.getLovDescCheckMinCount());
 					checkListAnsDetail.setLovDescCheckMaxCount(finRefDetail.getLovDescCheckMaxCount());
 					checkListAnsDetail.setLovDescFinRefId(finRefDetail.getFinRefId());
-					
+
 					checkListAnsDetail.setLovDescUserRole(userRole);
-					String key=checkListAnsDetail.getCheckListId() + ";" + checkListAnsDetail.getAnsSeqNo();
+					String key = checkListAnsDetail.getCheckListId() + ";" + checkListAnsDetail.getAnsSeqNo();
 					remarks = prevAnswersMap.get(key) == null ? "" : prevAnswersMap.get(key).getRemarks();
 					checkListAnsDetail.setLovDescRemarks(remarks);
 					ansDescMap.put(key, checkListAnsDetail.getAnsDesc());
@@ -288,7 +286,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		this.listBox_CheckList.setModel(new GroupsModelArray(checkListToRender.toArray(), new CheckListComparator()));
 		logger.debug("Leaving ");
 	}
-	
+
 	public boolean isAllowedToShow(FacilityReferenceDetail financeReferenceDetail, String userRole) {
 		logger.debug("Entering");
 		String showinStage = StringUtils.trimToEmpty(financeReferenceDetail.getShowInStage());
@@ -304,7 +302,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		logger.debug("Leaving");
 		return false;
 	}
-	
+
 	public boolean isAllowedInputInStage(FacilityReferenceDetail financeReferenceDetail, String userRole) {
 		logger.debug("Entering");
 		String showinStage = StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage());
@@ -320,26 +318,27 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		logger.debug("Leaving");
 		return false;
 	}
-	
-	
-	
-	public class FinanceCheckListReferenceListModelItemRenderer implements ListitemRenderer<CheckListDetail>, Serializable {
+
+	public class FinanceCheckListReferenceListModelItemRenderer
+			implements ListitemRenderer<CheckListDetail>, Serializable {
 		private static final long serialVersionUID = -5988686000244488795L;
 
 		public FinanceCheckListReferenceListModelItemRenderer() {
-			
+
 		}
-		
+
 		@Override
 		public void render(Listitem item, CheckListDetail checkListDetail, int count) throws Exception {
 			item.setSelected(false);
-			
+
 			if (item instanceof Listgroup) {
-				StringBuilder builder=new StringBuilder(checkListDetail.getLovDescCheckListDesc());
+				StringBuilder builder = new StringBuilder(checkListDetail.getLovDescCheckListDesc());
 				builder.append("  ");//To add Space between sentences
-				builder.append(Labels.getLabel("Required_CheckList",new String[]{String.valueOf(checkListDetail.getLovDescCheckMinCount()),String.valueOf(checkListDetail.getLovDescCheckMaxCount())}));
+				builder.append(Labels.getLabel("Required_CheckList",
+						new String[] { String.valueOf(checkListDetail.getLovDescCheckMinCount()),
+								String.valueOf(checkListDetail.getLovDescCheckMaxCount()) }));
 				item.appendChild(new Listcell(builder.toString()));
-				item.setId(checkListDetail.getCheckListId()+"_LG");
+				item.setId(checkListDetail.getCheckListId() + "_LG");
 			} else if (item instanceof Listgroupfoot) {
 				Listcell cell = new Listcell("");
 				cell.setSpan(2);
@@ -348,7 +347,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 				((Listbox) item.getParent()).setMultiple(true);
 				if (checkListDetail.isDocRequired()) {
 					for (DocumentDetails documentDetail : getFacility().getDocumentDetailsList()) {
-						if(documentDetail.getDocCategory().equals(checkListDetail.getDocType())){
+						if (documentDetail.getDocCategory().equals(checkListDetail.getDocType())) {
 							item.setSelected(true);
 						}
 					}
@@ -368,14 +367,16 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 					if (!enqModule) {
 						if (!notInputInStageMap.containsKey(checkListDetail.getLovDescFinRefId())) {
 							Button uploadBtn = new Button("Upload");
-							uploadBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
+							uploadBtn.setStyle(
+									"background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
 							listCell.appendChild(uploadBtn);
 							uploadBtn.addForward("onClick", "", "onUploadRequiredDocument", checkListDetail);
 						}
 					}
 					listCell.appendChild(new Space());
 					Button viewBtn = new Button("View");
-					viewBtn.setStyle("background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
+					viewBtn.setStyle(
+							"background-color:#16a085;color:#ffffff !important;font-size:10px;padding:0px 2px;");
 					listCell.appendChild(viewBtn);
 					viewBtn.addForward("onClick", "", "onViewRequiredDocument", checkListDetail);
 				}
@@ -449,7 +450,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		fieldsAndValues.put("custNationality", aCustomer.getCustNationality());
 		fieldsAndValues.put("custParentCountry", aCustomer.getCustParentCountry());
 		logger.debug("Leaving");
-		
+
 		return fieldsAndValues;
 	}
 
@@ -457,9 +458,9 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		private static final long serialVersionUID = 9112640872865877333L;
 
 		public CheckListComparator() {
-			
+
 		}
-		
+
 		@Override
 		public int compare(CheckListDetail data1, CheckListDetail data2) {
 			return String.valueOf(data1.getCheckListId()).compareTo(String.valueOf(data2.getCheckListId()));
@@ -467,21 +468,20 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	}
 
 	/**
-	 * This method gets all answers for checkList and prepares the
-	 * List<finCheckListReference>
+	 * This method gets all answers for checkList and prepares the List<finCheckListReference>
 	 */
 	@SuppressWarnings("rawtypes")
 	private void doWriteComponentsToBean(Facility aFinanceDetail) {
 		logger.debug("Entering ");
 		dataChanged = false;
 		List<FinanceCheckListReference> finCheckListRefList = new ArrayList<FinanceCheckListReference>();
-		
+
 		List<CheckListDetail> checkListDetailsList = new ArrayList<CheckListDetail>();
 		presentAnswersMap = new HashMap<String, CheckListDetail>();
 		selectedAnsCountMap = new HashMap<Long, Long>();
-		
+
 		// To get Selected Items
-		Set seletedSet = this.listBox_CheckList.getSelectedItems(); 
+		Set seletedSet = this.listBox_CheckList.getSelectedItems();
 		if (seletedSet != null) {
 			for (Object object : seletedSet) {
 				if (object instanceof Listitem && !(object instanceof Listgroup)) {
@@ -506,14 +506,15 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 					} else if (selectedAnsCountMap.containsKey(Long.valueOf(checkListDetail.getCheckListId()))) {
 						long answerCount = selectedAnsCountMap.get(Long.valueOf(checkListDetail.getCheckListId()));
 						selectedAnsCountMap.remove(Long.valueOf(checkListDetail.getCheckListId()));
-						selectedAnsCountMap.put(Long.valueOf(checkListDetail.getCheckListId()), Long.valueOf(answerCount + 1));
+						selectedAnsCountMap.put(Long.valueOf(checkListDetail.getCheckListId()),
+								Long.valueOf(answerCount + 1));
 					}
-					String key=checkListDetail.getCheckListId() + ";" + checkListDetail.getAnsSeqNo();
+					String key = checkListDetail.getCheckListId() + ";" + checkListDetail.getAnsSeqNo();
 					presentAnswersMap.put(key, checkListDetail);
 				}
 			}
 		}
-		
+
 		aFinanceDetail.setLovDescSelAnsCountMap(selectedAnsCountMap);
 		aFinanceDetail.getLovDescSelAnsCountMap().putAll(selectedAnsCountMap);
 		// For unselected check list details
@@ -522,7 +523,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 			finChkListRef.setQuestionId(prevAnswersMap.get(questionId).getQuestionId());
 			finChkListRef.setLovDescQuesDesc(prevAnswersMap.get(questionId).getLovDescQuesDesc());
 			finChkListRef.setAnswer(prevAnswersMap.get(questionId).getAnswer());
-			String key=finChkListRef.getQuestionId() + ";" + finChkListRef.getAnswer();
+			String key = finChkListRef.getQuestionId() + ";" + finChkListRef.getAnswer();
 			finChkListRef.setLovDescAnswerDesc(ansDescMap.get(key));
 			String remarks = commentsTxtBoxMap.get(key) == null ? "" : commentsTxtBoxMap.get(key).getValue();
 			finChkListRef.setRemarks(remarks);
@@ -539,7 +540,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 				}
 			} else {
 				finChkListRef.setBefImage(prevAnswersMap.get(questionId));
-				if (!StringUtils.equals(finChkListRef.getRemarks().trim(), finChkListRef.getBefImage().getRemarks().trim())) {
+				if (!StringUtils.equals(finChkListRef.getRemarks().trim(),
+						finChkListRef.getBefImage().getRemarks().trim())) {
 					finChkListRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					dataChanged = true;
 				} else {
@@ -558,7 +560,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 				finChkListRef.setAnswer(presentAnswersMap.get(questionId).getAnsSeqNo());
 				finChkListRef.setFinReference(getFacility().getCAFReference());
 				finChkListRef.setLovDescAnswerDesc(presentAnswersMap.get(questionId).getAnsDesc());
-				String key=finChkListRef.getQuestionId() + ";" + finChkListRef.getAnswer();
+				String key = finChkListRef.getQuestionId() + ";" + finChkListRef.getAnswer();
 				String remarks = commentsTxtBoxMap.get(key) == null ? "" : commentsTxtBoxMap.get(key).getValue();
 				finChkListRef.setRemarks(remarks);
 				finChkListRef.setLovDescSelAnsCountMap(selectedAnsCountMap);
@@ -566,12 +568,14 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 				dataChanged = true;
 			}
 		}
-		if (aFinanceDetail.getFinanceCheckList()!=null) {
+		if (aFinanceDetail.getFinanceCheckList() != null) {
 			for (FinanceCheckListReference reference : aFinanceDetail.getFinanceCheckList()) {
 				boolean contains = false;
 				for (FinanceCheckListReference newListReference : finCheckListRefList) {
-					if (newListReference.getFinReference().equals(reference.getFinReference()) && newListReference.getQuestionId() == reference.getQuestionId() && newListReference.getAnswer() == reference.getAnswer()) {
-						contains=true;
+					if (newListReference.getFinReference().equals(reference.getFinReference())
+							&& newListReference.getQuestionId() == reference.getQuestionId()
+							&& newListReference.getAnswer() == reference.getAnswer()) {
+						contains = true;
 					}
 				}
 				if (!contains) {
@@ -579,8 +583,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 				}
 			}
 		}
-		
-		
+
 		aFinanceDetail.setFinanceCheckList(finCheckListRefList);
 		setFacility(aFinanceDetail);
 		logger.debug("Leaving ");
@@ -598,15 +601,17 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * @return auditDetail
 	 * @throws InterruptedException
 	 */
-	private ArrayList<WrongValueException> validation_CheckList(Facility facility, String usrLanguage, String method) throws InterruptedException {
+	private ArrayList<WrongValueException> validation_CheckList(Facility facility, String usrLanguage, String method)
+			throws InterruptedException {
 		logger.debug("Entering ");
-	
+
 		Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>();
 		Set<Listitem> selSet = this.listBox_CheckList.getSelectedItems();
 		for (Listitem listitem : selSet) {
 			final CheckListDetail aCheckListDetail = (CheckListDetail) listitem.getAttribute("data");
 			if (selAnsCountMap.containsKey(aCheckListDetail.getCheckListId())) {
-				selAnsCountMap.put(aCheckListDetail.getCheckListId(), selAnsCountMap.get(aCheckListDetail.getCheckListId()) + Long.valueOf(1));
+				selAnsCountMap.put(aCheckListDetail.getCheckListId(),
+						selAnsCountMap.get(aCheckListDetail.getCheckListId()) + Long.valueOf(1));
 			} else {
 				selAnsCountMap.put(aCheckListDetail.getCheckListId(), Long.valueOf(1));
 			}
@@ -614,14 +619,15 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		if (facility.getFinRefDetailsList() != null) {
 			ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 			for (FacilityReferenceDetail aFinRefDetail : facility.getFinRefDetailsList()) {
-				boolean valid=true;
-				if (!isAllowedInputInStage(aFinRefDetail,userRole)) {
+				boolean valid = true;
+				if (!isAllowedInputInStage(aFinRefDetail, userRole)) {
 					continue;
 				}
-				
+
 				if (selAnsCountMap.containsKey(Long.valueOf(aFinRefDetail.getFinRefId()))) {
 					long selCount = selAnsCountMap.get(Long.valueOf(aFinRefDetail.getFinRefId()));
-					if ((selCount) > (aFinRefDetail.getLovDescCheckMaxCount()) || (selCount) < (aFinRefDetail.getLovDescCheckMinCount())) {
+					if ((selCount) > (aFinRefDetail.getLovDescCheckMaxCount())
+							|| (selCount) < (aFinRefDetail.getLovDescCheckMinCount())) {
 						valid = false;
 					}
 				} else {
@@ -633,7 +639,11 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 					errParm[0] = Long.toString(aFinRefDetail.getLovDescCheckMinCount());
 					errParm[1] = Long.toString(aFinRefDetail.getLovDescCheckMaxCount());
 					errParm[2] = aFinRefDetail.getLovDescRefDesc();
-					wve.add(new WrongValueException(this.listBox_CheckList.getFellowIfAny(aFinRefDetail.getFinRefId()+"_LG"),ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30701", errParm, valueParm), usrLanguage).getError()));
+					wve.add(new WrongValueException(
+							this.listBox_CheckList.getFellowIfAny(aFinRefDetail.getFinRefId() + "_LG"),
+							ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "30701", errParm, valueParm),
+									usrLanguage).getError()));
 				}
 			}
 			return wve;
@@ -643,9 +653,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	}
 
 	/**
-	 * This method retrieves previously selected answers of checkList for this
-	 * finance reference and keeps those in prevAnswersMap where key is question
-	 * Id and value is answer like 'A' or 'B'
+	 * This method retrieves previously selected answers of checkList for this finance reference and keeps those in
+	 * prevAnswersMap where key is question Id and value is answer like 'A' or 'B'
 	 * 
 	 * @param financeMain
 	 * @param answersRadiogroup
@@ -656,7 +665,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		List<FinanceCheckListReference> finCheckRefList = aFinanceDetail.getFinanceCheckList();
 		if (finCheckRefList != null && !finCheckRefList.isEmpty()) {
 			for (FinanceCheckListReference finCheckListRef : finCheckRefList) {
-				prevAnswersMap.put(String.valueOf(finCheckListRef.getQuestionId() + ";" + finCheckListRef.getAnswer()), finCheckListRef);
+				prevAnswersMap.put(String.valueOf(finCheckListRef.getQuestionId() + ";" + finCheckListRef.getAnswer()),
+						finCheckListRef);
 			}
 		}
 		logger.debug("Leaving ");
@@ -673,11 +683,12 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		/* Check whether answer is selected or not if not selected throw error */
 		for (FinanceCheckListReference finChkListRef : financeDetail.getFinanceCheckList()) {
 			try {
-				String key=finChkListRef.getQuestionId() + ";" + finChkListRef.getAnswer();
+				String key = finChkListRef.getQuestionId() + ";" + finChkListRef.getAnswer();
 				if (commentsTxtBoxMap.containsKey(key)) {
 					if (!finChkListRef.getRecordType().equals(PennantConstants.RCD_DEL)) {
 						if (StringUtils.isEmpty(commentsTxtBoxMap.get(key).getValue().trim())) {
-							throw new WrongValueException(commentsTxtBoxMap.get(key), Labels.getLabel("label_ChecList_Must_EnterRemarks"));
+							throw new WrongValueException(commentsTxtBoxMap.get(key),
+									Labels.getLabel("label_ChecList_Must_EnterRemarks"));
 						}
 					}
 				}
@@ -700,8 +711,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	public void onChkListValidation(Event event) throws Exception {
 		logger.debug("Entering");
 		Map<String, Object> map = new HashMap<String, Object>();
-		String userAction="";
-		Facility facility=null;
+		String userAction = "";
+		Facility facility = null;
 		if (event.getData() != null) {
 			map = (Map<String, Object>) event.getData();
 		}
@@ -709,25 +720,26 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 			this.ctrlObject = (Object) map.get("control");
 		}
 		if (map.containsKey("facility")) {
-			facility=(Facility) map.get("facility");
+			facility = (Facility) map.get("facility");
 		}
 		if (map.containsKey("userAction")) {
-			userAction= (String) map.get("userAction");
+			userAction = (String) map.get("userAction");
 		}
-		
-		
+
 		doClearErrorMessages();
 		if (getCtrlObject() != null) {
 			doWriteComponentsToBean(facility);
 			doCheckListValidation(facility);
 			if (map.containsKey("agreement")) {
-				map.put("Error", validation_CheckList(facility, getUserWorkspace().getUserLanguage(), facility.getUserAction()));
+				map.put("Error",
+						validation_CheckList(facility, getUserWorkspace().getUserLanguage(), facility.getUserAction()));
 			} else {
 				if (!("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction))) {
-					map.put("Error", validation_CheckList(facility, getUserWorkspace().getUserLanguage(), facility.getUserAction()));
+					map.put("Error", validation_CheckList(facility, getUserWorkspace().getUserLanguage(),
+							facility.getUserAction()));
 				}
 			}
-		} 
+		}
 		logger.debug("Leaving");
 	}
 
@@ -736,13 +748,14 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * 
 	 * @param event
 	 * @return
-	 * */
+	 */
 	public void onCheckListClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClearErrorMessages();
 		if (getCtrlObject() != null) {
 			try {
-				getCtrlObject().getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(getCtrlObject(), isDataChanged(getFacility()));
+				getCtrlObject().getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(getCtrlObject(),
+						isDataChanged(getFacility()));
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
@@ -843,11 +856,13 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		if (getCtrlObject() != null) {
 			try {
 				if (getCtrlObject().getClass().getMethod("getFacilityDocumentDetailDialogCtrl") != null) {
-					FacilityDocumentDetailDialogCtrl docDialogCtrl = (FacilityDocumentDetailDialogCtrl) getCtrlObject().getClass().getMethod("getFacilityDocumentDetailDialogCtrl").invoke(getCtrlObject());
+					FacilityDocumentDetailDialogCtrl docDialogCtrl = (FacilityDocumentDetailDialogCtrl) getCtrlObject()
+							.getClass().getMethod("getFacilityDocumentDetailDialogCtrl").invoke(getCtrlObject());
 					if (docDialogCtrl != null) {
 						Map<String, DocumentDetails> docDetailMap = docDialogCtrl.getDocDetailMap();
 						if (docDetailMap != null && docDetailMap.containsKey(checkListDetail.getDocType())) {
-							docDialogCtrl.updateExistingDocument(docDetailMap.get(checkListDetail.getDocType()), true, false);
+							docDialogCtrl.updateExistingDocument(docDetailMap.get(checkListDetail.getDocType()), true,
+									false);
 						} else {
 							docDialogCtrl.createNewDocument(checkListDetail, true, updateFinanceMain());
 						}
@@ -867,7 +882,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		if (getCtrlObject() != null) {
 			try {
 				if (getCtrlObject().getClass().getMethod("getFacilityDocumentDetailDialogCtrl") != null) {
-					FacilityDocumentDetailDialogCtrl docDialogCtrl = (FacilityDocumentDetailDialogCtrl) getCtrlObject().getClass().getMethod("getFacilityDocumentDetailDialogCtrl").invoke(getCtrlObject());
+					FacilityDocumentDetailDialogCtrl docDialogCtrl = (FacilityDocumentDetailDialogCtrl) getCtrlObject()
+							.getClass().getMethod("getFacilityDocumentDetailDialogCtrl").invoke(getCtrlObject());
 					if (docDialogCtrl != null) {
 						Map<String, DocumentDetails> docDetailMap = docDialogCtrl.getDocDetailMap();
 						if (docDetailMap != null && docDetailMap.containsKey(docType)) {
@@ -887,12 +903,13 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
-	 * Update Finance Main Details from the Finance Main Ctrl 
+	 * Update Finance Main Details from the Finance Main Ctrl
+	 * 
 	 * @return
 	 */
-	private Facility updateFinanceMain(){
+	private Facility updateFinanceMain() {
 		Facility main = null;
 		try {
 			Object object = getCtrlObject().getClass().getMethod("getFacility").invoke(getCtrlObject());

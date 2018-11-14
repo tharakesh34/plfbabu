@@ -46,12 +46,11 @@ public class DDAProcessData implements Serializable, Entity {
 	private String ddaReference;
 	private String ddaAckStatus;
 	private long timeStamp;
-	
+
 	private String oic;// Originator Identification code
 	private String ddaIssuedFor;// FinCategory
 	private String ddaCanResCode;
 	private String captureMode;
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -66,7 +65,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setId(long id) {
 		this.seqNo = id;
 	}
-	
+
 	public long getSeqNo() {
 		return seqNo;
 	}
@@ -74,13 +73,11 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setSeqNo(long seqNo) {
 		this.seqNo = seqNo;
 	}
-/*	public long getDdaRefId() {
-		return seqNo;
-	}
-
-	public void setDdaRefId(long ddaRefId) {
-		this.seqNo = ddaRefId;
-	}*/
+	/*
+	 * public long getDdaRefId() { return seqNo; }
+	 * 
+	 * public void setDdaRefId(long ddaRefId) { this.seqNo = ddaRefId; }
+	 */
 
 	public String getReferenceNum() {
 		return referenceNum;
@@ -302,7 +299,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public boolean isNew() {
 		return false;
 	}
-	
+
 	public Date getValueDate() {
 		return valueDate;
 	}
@@ -310,7 +307,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
@@ -318,7 +315,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public String getDdaReference() {
 		return ddaReference;
 	}
@@ -326,7 +323,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setDdaReference(String ddaReference) {
 		this.ddaReference = ddaReference;
 	}
-	
+
 	public String getDdaAckStatus() {
 		return ddaAckStatus;
 	}
@@ -334,7 +331,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setDdaAckStatus(String ddaAckStatus) {
 		this.ddaAckStatus = ddaAckStatus;
 	}
-	
+
 	public String getOic() {
 		return oic;
 	}
@@ -350,7 +347,7 @@ public class DDAProcessData implements Serializable, Entity {
 	public void setDdaIssuedFor(String ddaIssuedFor) {
 		this.ddaIssuedFor = ddaIssuedFor;
 	}
-	
+
 	public String getDdaCanResCode() {
 		return ddaCanResCode;
 	}

@@ -41,12 +41,16 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 
 public interface CustomerAdditionalDetailDAO {
-	 CustomerAdditionalDetail getCustomerAdditionalDetailById(long id,String type);
-	 void update(CustomerAdditionalDetail customerAdditionalDetail,String type);
-	 void delete(CustomerAdditionalDetail customerAdditionalDetail,String type);
-	 long save(CustomerAdditionalDetail customerAdditionalDetail,String type);
-	
+	CustomerAdditionalDetail getCustomerAdditionalDetailById(long id, String type);
+
+	void update(CustomerAdditionalDetail customerAdditionalDetail, String type);
+
+	void delete(CustomerAdditionalDetail customerAdditionalDetail, String type);
+
+	long save(CustomerAdditionalDetail customerAdditionalDetail, String type);
+
 }

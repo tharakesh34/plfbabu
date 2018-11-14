@@ -62,10 +62,10 @@ import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
 import com.pennant.backend.service.applicationmaster.FinanceStatusCodeService;
 import com.pennant.webui.applicationmaster.financestatuscode.model.FinanceStatusCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -73,30 +73,30 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinanceStatusCodeListCtrl extends GFCBaseListCtrl<FinanceStatusCode> {
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(FinanceStatusCodeListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FinanceStatusCodeListCtrl.class);
 
-	protected Window							window_FinanceStatusCodeList;
-	protected Borderlayout						borderLayout_FinanceStatusCodeList;
-	protected Paging							pagingFinanceStatusCodeList;
-	protected Listbox							listBoxFinanceStatusCode;
+	protected Window window_FinanceStatusCodeList;
+	protected Borderlayout borderLayout_FinanceStatusCodeList;
+	protected Paging pagingFinanceStatusCodeList;
+	protected Listbox listBoxFinanceStatusCode;
 
-	protected Listheader						listheader_StatusCode;
-	protected Listheader						listheader_StatusDesc;
+	protected Listheader listheader_StatusCode;
+	protected Listheader listheader_StatusDesc;
 
-	protected Textbox							statusCode;
-	protected Textbox							statusDesc;
+	protected Textbox statusCode;
+	protected Textbox statusDesc;
 
-	protected Listbox							sortOperator_statusCode;
-	protected Listbox							sortOperator_statusDesc;
+	protected Listbox sortOperator_statusCode;
+	protected Listbox sortOperator_statusDesc;
 
 	// checkRights
-	protected Button							button_FinanceStatusCodeList_NewFinanceStatusCode;
-	protected Button							button_FinanceStatusCodeList_FinanceStatusCodeSearch;
+	protected Button button_FinanceStatusCodeList_NewFinanceStatusCode;
+	protected Button button_FinanceStatusCodeList_FinanceStatusCodeSearch;
 
 	// Search Fields
 
-	private transient FinanceStatusCodeService	financeStatusCodeService;
+	private transient FinanceStatusCodeService financeStatusCodeService;
 
 	/**
 	 * default constructor.<br>

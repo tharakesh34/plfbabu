@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.dedup;
+
 import java.util.List;
 import java.util.Map;
 
@@ -56,17 +57,27 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
  * 
  */
 public interface DedupParmDAO {
-	DedupParm getDedupParmByID(String id,String queryModule,String querySubCode, String type);
-	void update(DedupParm dedupParm,String type);
-	void delete(DedupParm dedupParm,String type);
-	long save(DedupParm dedupParm,String type);
+	DedupParm getDedupParmByID(String id, String queryModule, String querySubCode, String type);
+
+	void update(DedupParm dedupParm, String type);
+
+	void delete(DedupParm dedupParm, String type);
+
+	long save(DedupParm dedupParm, String type);
+
 	List<DedupParm> getDedupParmByModule(String queryModule, String querySubCode, String type);
+
 	@SuppressWarnings("rawtypes")
-	List validate(String resultQuery,CustomerDedup customerDedup);
-	List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery);
+	List validate(String resultQuery, CustomerDedup customerDedup);
+
+	List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup, String sqlQuery);
+
 	List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery);
+
 	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType);
+
 	List<String> getRuleFieldNames(String blacklistType);
+
 	List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap);
-	
+
 }

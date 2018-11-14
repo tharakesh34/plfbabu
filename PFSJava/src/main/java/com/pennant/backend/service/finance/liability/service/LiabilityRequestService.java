@@ -50,14 +50,25 @@ import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface LiabilityRequestService {
-	
+
 	LiabilityRequest getLiabilityRequest();
+
 	LiabilityRequest getNewLiabilityRequest();
-	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader saveOrUpdate(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	LiabilityRequest getLiabilityRequestById(long id);
+
 	LiabilityRequest getApprovedLiabilityRequestById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doApprove(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	String getProceedingWorkflow(String finType, String finEvent);
 }

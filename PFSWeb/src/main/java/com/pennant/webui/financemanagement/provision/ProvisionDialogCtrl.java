@@ -120,49 +120,49 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/provisionDialog.zul file.
  */
 public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
-	private static final long							serialVersionUID	= 5139814152842315333L;
-	private static final Logger							logger				= Logger.getLogger(ProvisionDialogCtrl.class);
+	private static final long serialVersionUID = 5139814152842315333L;
+	private static final Logger logger = Logger.getLogger(ProvisionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window									window_ProvisionDialog;												// autowired
+	protected Window window_ProvisionDialog; // autowired
 
-	protected ExtendedCombobox							finReference;															// autowired
-	protected Textbox									finBranch;																// autowired
-	protected Textbox									finType;																// autowired
-	protected Longbox									custID;																// autowired
-	protected Textbox									lovDescCustCIF;														// autowired
-	protected Label										custShrtName;															// autowired
-	protected Checkbox									useNFProv;																// autowired
-	protected Checkbox									autoReleaseNFP;														// autowired
-	protected Decimalbox								principalDue;															// autowired
-	protected Decimalbox								profitDue;																// autowired
-	protected Decimalbox								dueTotal;																// autowired
-	protected Decimalbox								nonFormulaProv;														// autowired
-	protected Datebox									dueFromDate;															// autowired
-	protected Decimalbox								calProvisionedAmt;														// autowired
-	protected Decimalbox								provisionedAmt;														// autowired
-	protected Datebox									lastFullyPaidDate;														// autowired
+	protected ExtendedCombobox finReference; // autowired
+	protected Textbox finBranch; // autowired
+	protected Textbox finType; // autowired
+	protected Longbox custID; // autowired
+	protected Textbox lovDescCustCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Checkbox useNFProv; // autowired
+	protected Checkbox autoReleaseNFP; // autowired
+	protected Decimalbox principalDue; // autowired
+	protected Decimalbox profitDue; // autowired
+	protected Decimalbox dueTotal; // autowired
+	protected Decimalbox nonFormulaProv; // autowired
+	protected Datebox dueFromDate; // autowired
+	protected Decimalbox calProvisionedAmt; // autowired
+	protected Decimalbox provisionedAmt; // autowired
+	protected Datebox lastFullyPaidDate; // autowired
 
 	// not auto wired vars
-	private Provision									provision;																// overhanded per param
-	private transient ProvisionListCtrl					provisionListCtrl;														// overhanded per
-																																// param
-	private transient boolean							validationOn;
+	private Provision provision; // overhanded per param
+	private transient ProvisionListCtrl provisionListCtrl; // overhanded per
+															// param
+	private transient boolean validationOn;
 
-	private String										menuItemRightName	= null;
+	private String menuItemRightName = null;
 
 	// ServiceDAOs / Domain Classes
-	private transient ProvisionService					provisionService;
+	private transient ProvisionService provisionService;
 
-	private FinanceReferenceDetailService				financeReferenceDetailService;
-	private FinanceWorkFlowService						financeWorkFlowService;
-	private CustomerDetailsService						customerDetailsService;
-	private OverdueChargeRecoveryService				overdueChargeRecoveryService;
+	private FinanceReferenceDetailService financeReferenceDetailService;
+	private FinanceWorkFlowService financeWorkFlowService;
+	private CustomerDetailsService customerDetailsService;
+	private OverdueChargeRecoveryService overdueChargeRecoveryService;
 
-	private HashMap<String, ArrayList<ErrorDetail>>	overideMap			= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private NotificationService notificationService;
 
@@ -442,8 +442,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
 		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
 		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
-		this.dueTotal.setValue(PennantAppUtil.formateAmount(
-				aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
+		this.dueTotal.setValue(
+				PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
 		this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
 		this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
 		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(), format));
@@ -491,8 +491,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event)
+			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		this.doWriteComponentsToBean(provision);
 
@@ -563,10 +563,10 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 					throw new WrongValueException(this.nonFormulaProv, Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO",
 							new String[] { Labels.getLabel("label_ProvisionDialog_ProvisionAmt.value") }));
 				} else if (this.nonFormulaProv.getValue().compareTo(this.principalDue.getValue()) > 0) {
-					throw new WrongValueException(this.nonFormulaProv, Labels.getLabel(
-							"FIELD_IS_EQUAL_OR_LESSER",
-							new String[] { Labels.getLabel("label_ProvisionDialog_ProvisionAmt.value"),
-									String.valueOf(this.principalDue.getValue()) }));
+					throw new WrongValueException(this.nonFormulaProv,
+							Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+									new String[] { Labels.getLabel("label_ProvisionDialog_ProvisionAmt.value"),
+											String.valueOf(this.principalDue.getValue()) }));
 				}
 			}
 			aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), format));
@@ -681,8 +681,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		setValidationOn(true);
 
 		if (this.finReference.isButtonVisible()) {
-			this.finReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ProvisionDialog_FinReference.value"), null, true, true));
+			this.finReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ProvisionDialog_FinReference.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -849,8 +849,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
-		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-				: moduleDefiner);
+		aFinanceDetail.setModuleDefiner(
+				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
@@ -866,8 +866,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
-			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
-					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
+			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum()
+					.compareTo(getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
@@ -959,7 +959,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 					}
 
 				}
-				
+
 				// User Notifications Message/Alert
 				try {
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -1038,8 +1038,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(Provision aProvision, String tranType) throws InterruptedException,
-			InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(Provision aProvision, String tranType)
+			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
@@ -1209,8 +1209,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,
-			IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1243,8 +1243,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ProvisionDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1299,8 +1299,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			getProvision().setDueFromDate(appDate);
 			getProvision().setFinCcy(finMain.getFinCcy());
 
-			OverdueChargeRecovery odcharges = getOverdueChargeRecoveryService().getOverdueChargeRecovery(
-					StringUtils.trim(finMain.getFinReference()));
+			OverdueChargeRecovery odcharges = getOverdueChargeRecoveryService()
+					.getOverdueChargeRecovery(StringUtils.trim(finMain.getFinReference()));
 			getProvision().setPrincipalDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
 			getProvision().setProfitDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), format));
 
@@ -1360,8 +1360,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 	}
 
-	private void doLoadWorkFlow(Provision provision) throws FileNotFoundException, XMLStreamException,
-			UnsupportedEncodingException, FactoryConfigurationError {
+	private void doLoadWorkFlow(Provision provision)
+			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		String roleCode = null;
 		if (!provision.isNewRecord() && StringUtils.trimToEmpty(provision.getNextTaskId()).contains(";")) {
@@ -1495,8 +1495,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException,
-			InvocationTargetException {
+	public FinanceDetail onExecuteStageAccDetail()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		getFinanceDetail().setModuleDefiner(
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 		return getFinanceDetail();
@@ -1515,8 +1515,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getAppValueDate();
 
-		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
-				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
+				profitDetail, eventCode, dateValueDate, dateValueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -1538,8 +1538,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 	private AuditHeader getAuditHeader(Provision aProvision, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProvision.getBefImage(), aProvision);
-		return new AuditHeader(aProvision.getFinReference(), null, null, null, auditDetail,
-				aProvision.getUserDetails(), getOverideMap());
+		return new AuditHeader(aProvision.getFinReference(), null, null, null, auditDetail, aProvision.getUserDetails(),
+				getOverideMap());
 	}
 
 	@SuppressWarnings("unused")

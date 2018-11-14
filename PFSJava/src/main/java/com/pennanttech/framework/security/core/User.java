@@ -52,16 +52,17 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 
 public class User extends org.springframework.security.core.userdetails.User implements Serializable {
-	private static final long	serialVersionUID	= 7682359879431168931L;
+	private static final long serialVersionUID = 7682359879431168931L;
 
-	final private String		usrToken;
-	final private long			userId;
-	private SecurityUser		securityUser;
-	private List<SecurityRole>	securityRole;
-	private long				loginId;
+	final private String usrToken;
+	final private long userId;
+	private SecurityUser securityUser;
+	private List<SecurityRole> securityRole;
+	private long loginId;
 
 	public User(SecurityUser user, Collection<GrantedAuthority> authorities, List<SecurityRole> roles) {
-		super(user.getUsrLogin(), user.getUsrPwd() == null ? "" : user.getUsrPwd(), user.isUsrEnabled(), user.isAccountNonExpired(), true, user.isAccountNonLocked(), authorities);
+		super(user.getUsrLogin(), user.getUsrPwd() == null ? "" : user.getUsrPwd(), user.isUsrEnabled(),
+				user.isAccountNonExpired(), true, user.isAccountNonLocked(), authorities);
 
 		this.usrToken = user.getUsrToken();
 		this.userId = user.getId();

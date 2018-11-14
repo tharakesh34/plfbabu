@@ -91,44 +91,44 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
-	private static final long				serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static final Logger				logger				= Logger.getLogger(SelectVASConfigurationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectVASConfigurationDialogCtrl.class);
 
-	protected Window						window_SelectVASConfiguration;
-	protected ExtendedCombobox				productType;
-	protected Button						btnProceed;
+	protected Window window_SelectVASConfiguration;
+	protected ExtendedCombobox productType;
+	protected Button btnProceed;
 
-	protected Row							customerRow;
-	protected Button						btnSearchCustCIF;
-	protected Textbox						custCIF;
-	protected Label							custName;
+	protected Row customerRow;
+	protected Button btnSearchCustCIF;
+	protected Textbox custCIF;
+	protected Label custName;
 
-	protected Row							loanRow;
-	protected ExtendedCombobox				loanType;
+	protected Row loanRow;
+	protected ExtendedCombobox loanType;
 
-	protected Row							collateralRow;
-	protected ExtendedCombobox				collteralType;
+	protected Row collateralRow;
+	protected ExtendedCombobox collteralType;
 
-	private VASRecording					vasRecording;
-	private VASConfiguration				vasConfiguration;
-	private VASRecordingListCtrl			vasRecordingListCtrl;
-	private FinVasRecordingDialogCtrl		finVasRecordingDialogCtrl;
-	private FinanceWorkFlow					financeWorkFlow;
-	private FinanceWorkFlowService			financeWorkFlowService;
-	private VASRecordingService				vASRecordingService;
-	private CustomerDetailsService			customerDetailsService;
-	private VASConfigurationService			vasConfigurationService;
-	private transient   FinanceDetailService    financeDetailService;   
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
-	private CustomerDAO						customerDAO;
-	private FinTypeVASProducts				finTypeVASProducts;
+	private VASRecording vasRecording;
+	private VASConfiguration vasConfiguration;
+	private VASRecordingListCtrl vasRecordingListCtrl;
+	private FinVasRecordingDialogCtrl finVasRecordingDialogCtrl;
+	private FinanceWorkFlow financeWorkFlow;
+	private FinanceWorkFlowService financeWorkFlowService;
+	private VASRecordingService vASRecordingService;
+	private CustomerDetailsService customerDetailsService;
+	private VASConfigurationService vasConfigurationService;
+	private transient FinanceDetailService financeDetailService;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private CustomerDAO customerDAO;
+	private FinTypeVASProducts finTypeVASProducts;
 
-	private List<String>					userRoleCodeList	= new ArrayList<String>();
-	private boolean 						isFinanceProcess = false;
-	private boolean 						waivedFlag = false;
-	private boolean 						newRecord = false;
-	private String							finType;
+	private List<String> userRoleCodeList = new ArrayList<String>();
+	private boolean isFinanceProcess = false;
+	private boolean waivedFlag = false;
+	private boolean newRecord = false;
+	private String finType;
 
 	public SelectVASConfigurationDialogCtrl() {
 		super();
@@ -160,7 +160,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			if (this.vasRecording == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
-			
+
 			if (arguments.containsKey("finType")) {
 				this.finType = (String) arguments.get("finType");
 			}
@@ -200,7 +200,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		// productType
 		this.productType.setMaxlength(8);
 		this.productType.setMandatoryStyle(true);
-		
+
 		if (isFinanceProcess) {
 			this.productType.setModuleName("FinTypeVASProducts");
 			this.productType.setValueColumn("VasProduct");
@@ -209,7 +209,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("FinType", finType.toString(), Filter.OP_EQUAL);
 			this.productType.setFilters(filters);
-		}else{
+		} else {
 			this.productType.setModuleName("VASWorkFlow");
 			this.productType.setValueColumn("TypeCode");
 			this.productType.setDescColumn("VasProductDesc");
@@ -218,7 +218,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
 			this.productType.setFilters(filters);
-			
+
 			String whereClause = getWhereClauseWithFirstTask();
 			if (StringUtils.isNotEmpty(whereClause)) {
 				this.productType.setWhereClause(whereClause);
@@ -293,13 +293,13 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 				return;
 			}
 			vasRecording.setPrimaryLinkRef(this.custCIF.getValue());
-			
+
 		} else if (this.loanRow.isVisible()) {
 			vasRecording.setPrimaryLinkRef(this.loanType.getValue());
 		} else if (this.collateralRow.isVisible()) {
 			vasRecording.setPrimaryLinkRef(this.collteralType.getValue());
 		}
-		
+
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null && !isFinanceProcess) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
@@ -334,18 +334,20 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasRecording.setWorkflowId(workFlowDetails.getWorkFlowId());
 			doLoadWorkFlow(vasRecording.isWorkflow(), vasRecording.getWorkflowId(), vasRecording.getNextTaskId());
 		}
-		
-		if(vasConfiguration == null){
+
+		if (vasConfiguration == null) {
 			//Fetching the vasConfiguration details
-			vasConfiguration = getVasConfigurationService().getApprovedVASConfigurationByCode(this.productType.getValue());
+			vasConfiguration = getVasConfigurationService()
+					.getApprovedVASConfigurationByCode(this.productType.getValue());
 		}
-		
+
 		// Vas Customer Details
-		if(!isFinanceProcess){
-			vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(), vasConfiguration.getRecAgainst());
+		if (!isFinanceProcess) {
+			vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(),
+					vasConfiguration.getRecAgainst());
 			vasRecording.setVasCustomer(vasCustomer);
 		}
-		
+
 		vasRecording.setVasConfiguration(vasConfiguration);
 		vasRecording.setNewRecord(true);
 		vasRecording.setProductCode(vasConfiguration.getProductCode());
@@ -372,23 +374,23 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 		HashMap<String, Object> arguments = new HashMap<String, Object>();
 		arguments.put("vASRecording", this.vasRecording);
-		if(this.vasRecordingListCtrl != null){
+		if (this.vasRecordingListCtrl != null) {
 			arguments.put("vASRecordingListCtrl", this.vasRecordingListCtrl);
 		}
-		if(this.finVasRecordingDialogCtrl != null){
+		if (this.finVasRecordingDialogCtrl != null) {
 			arguments.put("finVasRecordingDialogCtrl", this.finVasRecordingDialogCtrl);
 		}
 		arguments.put("newRecord", this.newRecord);
 		arguments.put("waivedFlag", this.waivedFlag);
-		if(userRoleCodeList != null && !userRoleCodeList.isEmpty()){
+		if (userRoleCodeList != null && !userRoleCodeList.isEmpty()) {
 			arguments.put("roleCode", userRoleCodeList.get(0));
 		}
-		try { 
-			
-			if(isFinanceProcess){
+		try {
+
+			if (isFinanceProcess) {
 				Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul",
 						this.finVasRecordingDialogCtrl.window_FinVasRecordingDialog, arguments);
-			}else{
+			} else {
 				Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul",
 						this.vasRecordingListCtrl.window_VASRecordingList, arguments);
 			}
@@ -455,8 +457,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		}
 		return true;
 	}
-	
-	
+
 	/**
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
@@ -518,7 +519,8 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 
 		this.custCIF.clearErrorMessage();
@@ -543,8 +545,9 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 	/**
 	 * When user clicks on button "productType" button
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onFulfill$productType(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
@@ -559,13 +562,13 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			showProductTypeRow("");
 		} else {
 
-			if(dataObject instanceof FinanceWorkFlow){
+			if (dataObject instanceof FinanceWorkFlow) {
 				FinanceWorkFlow details = (FinanceWorkFlow) dataObject;
 				/* Set FinanceWorkFloe object */
 				setFinanceWorkFlow(details);
 				this.productType.setValue(details.getFinType());
 				this.productType.setDescription(details.getVasProductDesc());
-			}else if(dataObject instanceof VASConfiguration){
+			} else if (dataObject instanceof VASConfiguration) {
 				VASConfiguration details = (VASConfiguration) dataObject;
 				this.productType.setValue(details.getProductCode());
 				this.productType.setDescription(details.getProductDesc());
@@ -573,12 +576,13 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		}
 		if (StringUtils.trimToNull(this.productType.getValue()) != null && !isFinanceProcess) {
 			//Fetching the vasConfiguration details
-			vasConfiguration = getVasConfigurationService().getApprovedVASConfigurationByCode(this.productType.getValue());
-			if(vasConfiguration == null){
-				this.productType.setValue("","");
+			vasConfiguration = getVasConfigurationService()
+					.getApprovedVASConfigurationByCode(this.productType.getValue());
+			if (vasConfiguration == null) {
+				this.productType.setValue("", "");
 				this.productType.setObject(null);
 				MessageUtil.showError(Labels.getLabel("label_SelectVASConfiguration_Product_NotExists"));
-			}else{
+			} else {
 				showProductTypeRow(vasConfiguration.getRecAgainst());
 			}
 		}
@@ -695,6 +699,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	public void setVasConfigurationService(VASConfigurationService vasConfigurationService) {
 		this.vasConfigurationService = vasConfigurationService;
 	}
+
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}

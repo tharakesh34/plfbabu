@@ -66,22 +66,20 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.bmtmasters.question.model.QuestionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.PTListReportUtils;
 
 /**
- * This is the controller class for the /WEB-INF/pages/BMTMasters/Question/QuestionList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/BMTMasters/Question/QuestionList.zul file.
  */
 public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(QuestionListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_QuestionList; // autowired
 	protected Borderlayout borderLayout_QuestionList; // autowired
@@ -106,7 +104,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Question> searchObj;
-	
+
 	private transient QuestionService questionService;
 
 	/**
@@ -115,7 +113,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	public QuestionListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		moduleCode = "Question";
@@ -123,10 +121,10 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 
 	public void onCreate$window_QuestionList(Event event) throws Exception {
 		logger.debug("Entering");
-				
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_QuestionList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
@@ -145,19 +143,19 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 		this.listheader_AnswerD.setSortDescending(new FieldComparator("answerD", false));
 		this.listheader_QuestionIsActive.setSortAscending(new FieldComparator("questionIsActive", true));
 		this.listheader_QuestionIsActive.setSortDescending(new FieldComparator("questionIsActive", false));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
 			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
-		}else{
+		} else {
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
+
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<Question>(Question.class,getListRows());
+		this.searchObj = new JdbcSearchObject<Question>(Question.class, getListRows());
 		this.searchObj.addSort("QuestionId", false);
 		// Workflow
 		if (isWorkFlowEnabled()) {
@@ -168,17 +166,17 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 				button_QuestionList_NewQuestion.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		} else {
 			this.searchObj.addTabelName("BMTQuestion_AView");
 		}
 
 		setSearchObj(this.searchObj);
 		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj,this.listBoxQuestion,this.pagingQuestionList);
+		getPagedListWrapper().init(this.searchObj, this.listBoxQuestion, this.pagingQuestionList);
 		// set the itemRenderer
 		this.listBoxQuestion.setItemRenderer(new QuestionListModelItemRenderer());
-					
+
 		logger.debug("Leaving");
 	}
 
@@ -188,11 +186,13 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("QuestionList");
-		
-		this.button_QuestionList_NewQuestion.setVisible(getUserWorkspace().isAllowed("button_QuestionList_NewQuestion"));
-		this.button_QuestionList_QuestionSearchDialog.setVisible(getUserWorkspace().isAllowed("button_QuestionList_QuestionFindDialog"));
+
+		this.button_QuestionList_NewQuestion
+				.setVisible(getUserWorkspace().isAllowed("button_QuestionList_NewQuestion"));
+		this.button_QuestionList_QuestionSearchDialog
+				.setVisible(getUserWorkspace().isAllowed("button_QuestionList_QuestionFindDialog"));
 		this.button_QuestionList_PrintList.setVisible(getUserWorkspace().isAllowed("button_QuestionList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	 * @param event
 	 * @throws Exception
 	 */
-	
+
 	public void onQuestionItemDoubleClicked(Event event) throws Exception {
 		logger.debug(event.toString());
 
@@ -213,29 +213,34 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final Question aQuestion = (Question) item.getAttribute("data");
 			final Question question = getQuestionService().getQuestionById(aQuestion.getId());
-			
-			if(question==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=String.valueOf(aQuestion.getId());
-				errParm[0]=PennantJavaUtil.getLabel("label_QuestionId")+":"+valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+			if (question == null) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(aQuestion.getId());
+				errParm[0] = PennantJavaUtil.getLabel("label_QuestionId") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
-			}else{
-				if(isWorkFlowEnabled()){
-					String whereCond =  " AND QuestionId="+ question.getQuestionId()+" AND version=" + question.getVersion()+" ";
+			} else {
+				if (isWorkFlowEnabled()) {
+					String whereCond = " AND QuestionId=" + question.getQuestionId() + " AND version="
+							+ question.getVersion() + " ";
 
-					boolean userAcces =  validateUserAccess(question.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "Question", whereCond, question.getTaskId(), question.getNextTaskId());
-					if (userAcces){
+					boolean userAcces = validateUserAccess(question.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "Question", whereCond,
+							question.getTaskId(), question.getNextTaskId());
+					if (userAcces) {
 						showDetailView(question);
-					}else{
+					} else {
 						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					showDetailView(question);
 				}
-			}	
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -255,17 +260,17 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param Question (aQuestion)
+	 * @param Question
+	 *            (aQuestion)
 	 * @throws Exception
 	 */
 	private void showDetailView(Question aQuestion) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		if (aQuestion.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aQuestion.setWorkflowId(getWorkFlowId());
 		}
@@ -273,16 +278,15 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 		Map<String, Object> map = getDefaultArguments();
 		map.put("question", aQuestion);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listbox Listmodel. This is
-		 * fine for synchronizing the data in the QuestionListbox from the
-		 * dialog when we do a delete, edit or insert a Question.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listbox Listmodel. This is fine for synchronizing the data in the QuestionListbox from the dialog when we do
+		 * a delete, edit or insert a Question.
 		 */
 		map.put("questionListCtrl", this);
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/BMTMasters/Question/QuestionDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/BMTMasters/Question/QuestionDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -320,15 +324,13 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	/*
 	 * call the Question dialog
 	 */
-	
+
 	public void onClick$button_QuestionList_QuestionSearchDialog(Event event) throws Exception {
 		logger.debug("Entering");
 		logger.debug(event.toString());
 		/*
-		 * we can call our QuestionDialog zul-file with parameters. So we can
-		 * call them with a object of the selected Question. For handed over
-		 * these parameter only a Map is accepted. So we put the Question object
-		 * in a HashMap.
+		 * we can call our QuestionDialog zul-file with parameters. So we can call them with a object of the selected
+		 * Question. For handed over these parameter only a Map is accepted. So we put the Question object in a HashMap.
 		 */
 		Map<String, Object> map = getDefaultArguments();
 		map.put("questionCtrl", this);
@@ -336,7 +338,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/BMTMasters/Question/QuestionSearchDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/BMTMasters/Question/QuestionSearchDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -352,7 +354,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	public void onClick$button_QuestionList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		new PTListReportUtils("Question", getSearchObj(),this.pagingQuestionList.getTotalSize()+1);
+		new PTListReportUtils("Question", getSearchObj(), this.pagingQuestionList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 

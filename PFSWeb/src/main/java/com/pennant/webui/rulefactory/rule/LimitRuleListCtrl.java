@@ -66,70 +66,65 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.webui.rulefactory.rule.model.LimitRuleListModelItemRendrer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/RuleFactory/Rule/RuleList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/RuleFactory/Rule/RuleList.zul file.
  */
-public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
+public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	private static final long serialVersionUID = -6345351842301484405L;
 	private static final Logger logger = Logger.getLogger(LimitRuleListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	
-	protected Window 		window_LimitRuleList; 			     // autoWired
-	protected Borderlayout 	borderLayout_DedupParmList; 	     // autoWired
-	protected Paging 		pagingDedupParmList; 			     // autoWired
-	protected Listbox 		listBoxDedupParm; 				     // autoWired
-	protected Textbox 		queryModule;						 // autoWired
-	
+
+	protected Window window_LimitRuleList; // autoWired
+	protected Borderlayout borderLayout_DedupParmList; // autoWired
+	protected Paging pagingDedupParmList; // autoWired
+	protected Listbox listBoxDedupParm; // autoWired
+	protected Textbox queryModule; // autoWired
 
 	// List headers
-	protected Listheader listheader_QueryCode; 			         // autoWired
-	protected Listheader listheader_QueryDesc; 			         // autoWired
+	protected Listheader listheader_QueryCode; // autoWired
+	protected Listheader listheader_QueryDesc; // autoWired
 	protected Listheader listheader_Active;
-	
-	
+
 	//Search
-	protected Listbox sortOperator_queryCode; 					// autoWired
-	protected Textbox queryDesc; 				// autoWired
-	protected Listbox sortOperator_queryDesc; 	// autoWired
-	protected Textbox queryModules; 			// autoWired
-	protected Textbox queryCode; 				// autoWired
+	protected Listbox sortOperator_queryCode; // autoWired
+	protected Textbox queryDesc; // autoWired
+	protected Listbox sortOperator_queryDesc; // autoWired
+	protected Textbox queryModules; // autoWired
+	protected Textbox queryCode; // autoWired
 	protected Listbox sortOperator_queryModule; // autoWired
-	protected Textbox sQLQuery; 				// autoWired
-	protected Combobox querySubCode;			// autoWired
+	protected Textbox sQLQuery; // autoWired
+	protected Combobox querySubCode; // autoWired
 	protected Listbox sortOperator_querySubCode;// autoWired 
-	protected Listbox sortOperator_sQLQuery; 	// autoWired
-	protected Listbox 	sortOperator_active;
-	protected Checkbox 	active;
-	
+	protected Listbox sortOperator_sQLQuery; // autoWired
+	protected Listbox sortOperator_active;
+	protected Checkbox active;
 
 	// Check Rights
-	protected Button btnHelp; 									 // autoWired
-	protected Button button_DedupParmList_NewDedupParm; 		 // autoWired
+	protected Button btnHelp; // autoWired
+	protected Button button_DedupParmList_NewDedupParm; // autoWired
 	protected Button button_DedupParmList_DedupParmSearchDialog; // autoWired
-	protected Button button_DedupParmList_PrintList; 			 // autoWired
+	protected Button button_DedupParmList_PrintList; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<LimitFilterQuery> searchObj;
 	private transient LimitRuleService limitRuleService;
-	private transient WorkFlowDetails workFlowDetails=null;
-	
+	private transient WorkFlowDetails workFlowDetails = null;
+
 	/**
 	 * default constructor.<br>
 	 */
 	public LimitRuleListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "LimitFilterQuery";
@@ -140,19 +135,18 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 	}
 	// Component Events
 
-	
 	@Override
 	protected void doAddFilters() {
 
-		super.doAddFilters();		
-		
-		searchObject.addFilterEqual("QueryModule",queryModule.getValue());
-	
+		super.doAddFilters();
+
+		searchObject.addFilterEqual("QueryModule", queryModule.getValue());
+
 	}
+
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected DedupParam object in a
-	 * Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected DedupParam object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -168,31 +162,28 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 		registerButton(button_DedupParmList_NewDedupParm, "button_DedupParmList_NewDedupParm", true);
 		registerButton(button_DedupParmList_DedupParmSearchDialog);
 
+		registerField("queryCode", listheader_QueryCode, SortOrder.ASC, queryCode, sortOperator_queryCode,
+				Operators.STRING);
+		registerField("queryDesc", listheader_QueryDesc, SortOrder.ASC, queryDesc, sortOperator_queryDesc,
+				Operators.STRING);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
 
-		registerField("queryCode", listheader_QueryCode, SortOrder.ASC, queryCode,
-				sortOperator_queryCode, Operators.STRING);
-		registerField("queryDesc", listheader_QueryDesc, SortOrder.ASC, queryDesc,
-				sortOperator_queryDesc, Operators.STRING);
-		registerField("active", listheader_Active, SortOrder.NONE, active,
-				sortOperator_active, Operators.BOOLEAN);
-		
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 
 		logger.debug("Leaving");
-		
+
 	}
-	
+
 	/**
 	 * Invoke Search
 	 */
 	public void onClick$button_DedupParmList_DedupParmSearchDialog(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		search();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
@@ -205,7 +196,6 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 		search();
 	}
 
-	
 	/**
 	 * Call the DedupParm dialog with a new empty entry. <br>
 	 */
@@ -221,49 +211,44 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
-	 * see:
-	 * com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer
-	 * .java <br>
+	 * see: com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer .java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onDedupParmItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		// Get the selected record.
-				Listitem selectedItem = this.listBoxDedupParm.getSelectedItem();
+		Listitem selectedItem = this.listBoxDedupParm.getSelectedItem();
 
-				// Get the selected entity.
-				LimitFilterQuery aDedupParm = (LimitFilterQuery) selectedItem.getAttribute("data");
-				final LimitFilterQuery dedupParm = limitRuleService.getLimitRuleByID(aDedupParm.getQueryCode(),queryModule.getValue(),RuleConstants.EVENT_BANK);
+		// Get the selected entity.
+		LimitFilterQuery aDedupParm = (LimitFilterQuery) selectedItem.getAttribute("data");
+		final LimitFilterQuery dedupParm = limitRuleService.getLimitRuleByID(aDedupParm.getQueryCode(),
+				queryModule.getValue(), RuleConstants.EVENT_BANK);
 
+		if (dedupParm == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
 
-				if (dedupParm == null) {
-					MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
-					return;
-				}
+		// Check whether the user has authority to change/view the record.
+		String whereCond = " AND QueryCode='" + dedupParm.getQueryCode() + "' AND QueryModule='"
+				+ queryModule.getValue() + "' AND QuerySubCode='" + RuleConstants.EVENT_BANK + "' AND version="
+				+ dedupParm.getVersion() + " ";
 
-				// Check whether the user has authority to change/view the record.
-				String whereCond = " AND QueryCode='"+ dedupParm.getQueryCode() + 
-						"' AND QueryModule='"+queryModule.getValue() + 
-						"' AND QuerySubCode='"+ RuleConstants.EVENT_BANK + 
-						"' AND version="+ dedupParm.getVersion() + " ";
+		if (doCheckAuthority(dedupParm, whereCond)) {
+			// Set the latest work-flow id for the new maintenance request.
+			if (isWorkFlowEnabled() && dedupParm.getWorkflowId() == 0) {
+				dedupParm.setWorkflowId(getWorkFlowId());
+			}
+			doShowDialogPage(dedupParm);
+		} else {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+		}
 
-				if (doCheckAuthority(dedupParm, whereCond)) {
-					// Set the latest work-flow id for the new maintenance request.
-					if (isWorkFlowEnabled() && dedupParm.getWorkflowId() == 0) {
-						dedupParm.setWorkflowId(getWorkFlowId());
-					}
-					doShowDialogPage(dedupParm);
-				} else {
-					MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				}
-		
 		logger.debug("Leaving" + event.toString());
 	}
-
-	
 
 	/**
 	 * Opens the detail view. <br>
@@ -276,28 +261,26 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 	private void doShowDialogPage(LimitFilterQuery dedupParm) throws Exception {
 		logger.debug("Entering");
 		Map<String, Object> arg = getDefaultArguments();
-		
 
 		if (dedupParm.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			dedupParm.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		dedupParm.setQueryModule(this.queryModule.getValue());
-		
-		
+
 		arg.put("queryModule", this.queryModule.getValue());
-		arg.put("LimitParam", dedupParm);	
+		arg.put("LimitParam", dedupParm);
 		arg.put("limitRuleListCtrl", this);
 		arg.put("enqiryModule", super.enqiryModule);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/RulesFactory/Rule/LimitRuleDialog.zul", null,arg);
+			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/LimitRuleDialog.zul", null, arg);
 		} catch (final Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
@@ -336,11 +319,9 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 		search();
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
 
 	public void setLimitRuleService(LimitRuleService limitRuleService) {
 		this.limitRuleService = limitRuleService;

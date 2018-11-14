@@ -74,32 +74,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/CustomerType/customerTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/CustomerType/customerTypeDialog.zul file.
  */
 public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	private static final long serialVersionUID = 8514232721532245700L;
 	private static final Logger logger = Logger.getLogger(CustomerTypeDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CustomerTypeDialog; 	// autoWired
+	protected Window window_CustomerTypeDialog; // autoWired
 
-	protected Textbox 		custTypeCode; 				// autoWired
-	protected Textbox 		custTypeDesc; 				// autoWired
-	protected Combobox 		custTypeCtg; 				// autoWired
-	protected Checkbox	 	custTypeIsActive; 			// autoWired
-
+	protected Textbox custTypeCode; // autoWired
+	protected Textbox custTypeDesc; // autoWired
+	protected Combobox custTypeCtg; // autoWired
+	protected Checkbox custTypeIsActive; // autoWired
 
 	// not autoWired variables
-	private CustomerType customerType; 								// over handed per parameter
-	private transient CustomerTypeListCtrl customerTypeListCtrl; 	// over handed per parameter
+	private CustomerType customerType; // over handed per parameter
+	private transient CustomerTypeListCtrl customerTypeListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CustomerTypeService customerTypeService;
 	private List<ValueLabel> categoryTypeList = PennantAppUtil.getcustCtgCodeList();
@@ -119,9 +116,8 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerType object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -134,28 +130,28 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
-		
+
 		if (arguments.containsKey("customerType")) {
 			this.customerType = (CustomerType) arguments.get("customerType");
-			CustomerType befImage =new CustomerType();
+			CustomerType befImage = new CustomerType();
 			BeanUtils.copyProperties(this.customerType, befImage);
 			this.customerType.setBefImage(befImage);
-			
+
 			setCustomerType(this.customerType);
 		} else {
 			setCustomerType(null);
 		}
-	
-		doLoadWorkFlow(this.customerType.isWorkflow(),
-				this.customerType.getWorkflowId(),this.customerType.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		doLoadWorkFlow(this.customerType.isWorkflow(), this.customerType.getWorkflowId(),
+				this.customerType.getNextTaskId());
+
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerTypeDialog");
-		}else{
+		} else {
 			getUserWorkspace().allocateAuthorities(super.pageRightName);
 		}
-	
+
 		// READ OVERHANDED parameters !
 		// we get the customerTypeListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -169,7 +165,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCustomerType());
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -177,17 +173,17 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		//Empty sent any required attributes
 		this.custTypeCode.setMaxlength(8);
 		this.custTypeDesc.setMaxlength(100);
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		
-		}else{
+
+		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -197,12 +193,11 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerTypeDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerTypeDialog_btnDelete"));
@@ -218,9 +213,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -229,9 +224,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -241,9 +236,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CustomerTypeDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -253,9 +248,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -264,9 +259,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -302,7 +297,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	public void doWriteBeanToComponents(CustomerType aCustomerType) {
 		logger.debug("Entering");
 		this.custTypeCode.setValue(aCustomerType.getCustTypeCode());
-		
+
 		Comboitem comboitem;
 		for (int i = 0; i < categoryTypeList.size(); i++) {
 			comboitem = new Comboitem();
@@ -316,8 +311,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		this.custTypeDesc.setValue(aCustomerType.getCustTypeDesc());
 		this.custTypeIsActive.setChecked(aCustomerType.isCustTypeIsActive());
 		this.recordStatus.setValue(aCustomerType.getRecordStatus());
-		
-		if(aCustomerType.isNew() || StringUtils.equals(aCustomerType.getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCustomerType.isNew()
+				|| StringUtils.equals(aCustomerType.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.custTypeIsActive.setChecked(true);
 			this.custTypeIsActive.setDisabled(true);
 		}
@@ -331,14 +327,14 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	public void doWriteComponentsToBean(CustomerType aCustomerType) {
 		logger.debug("Entering");
-	
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
-		    aCustomerType.setCustTypeCode(this.custTypeCode.getValue().toUpperCase());
-		}catch (WrongValueException we ) {
+			aCustomerType.setCustTypeCode(this.custTypeCode.getValue().toUpperCase());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -347,36 +343,36 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 			wve.add(we);
 		}
 		try {
-			if(!this.custTypeCtg.isDisabled() && this.custTypeCtg.getSelectedIndex()<0){
+			if (!this.custTypeCtg.isDisabled() && this.custTypeCtg.getSelectedIndex() < 0) {
 				throw new WrongValueException(custTypeCtg, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_CustomerTypeDialog_CustTypeCtg.value")}));
+						new String[] { Labels.getLabel("label_CustomerTypeDialog_CustTypeCtg.value") }));
 			}
 			aCustomerType.setCustTypeCtg(this.custTypeCtg.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aCustomerType.setCustTypeDesc(this.custTypeDesc.getValue());
-		}catch (WrongValueException we ) {
+			aCustomerType.setCustTypeDesc(this.custTypeDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerType.setCustTypeIsActive(this.custTypeIsActive.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aCustomerType.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -384,8 +380,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerType
 	 * @throws InterruptedException
@@ -400,13 +395,13 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 			// setFocus
 			this.custTypeCode.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.custTypeDesc.focus();
-				if (StringUtils.isNotBlank(aCustomerType.getRecordType())){
+				if (StringUtils.isNotBlank(aCustomerType.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -429,20 +424,23 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		setValidationOn(true);
-		if (!this.custTypeCode.isReadonly()){
-			this.custTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeCode.value"),PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+		if (!this.custTypeCode.isReadonly()) {
+			this.custTypeCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
-		if (!this.custTypeDesc.isReadonly()){
-			this.custTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.custTypeDesc.isReadonly()) {
+			this.custTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.custTypeCtg.isReadonly()) {
-			this.custTypeCtg.setConstraint(new PTStringValidator(Labels.getLabel(
-					"label_CustomerTypeDialog_CustTypeCtg.value"), null, true));
+			this.custTypeCtg.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeCtg.value"), null, true));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -463,13 +461,13 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	private void doSetLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -480,14 +478,14 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		this.custTypeDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getCustomerTypeListCtrl().search();
-	} 
-	
+	}
+
 	// CRUD operations
 
 	/**
@@ -497,35 +495,34 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final CustomerType aCustomerType = new CustomerType();
 		BeanUtils.copyProperties(getCustomerType(), aCustomerType);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aCustomerType.getCustTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerType.getRecordType())){
-				aCustomerType.setVersion(aCustomerType.getVersion()+1);
+			if (StringUtils.isBlank(aCustomerType.getRecordType())) {
+				aCustomerType.setVersion(aCustomerType.getVersion() + 1);
 				aCustomerType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aCustomerType.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aCustomerType,tranType)){
+				if (doProcess(aCustomerType, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -538,28 +535,28 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getCustomerType().isNewRecord()){
+		if (getCustomerType().isNewRecord()) {
 			this.custTypeCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.custTypeCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.custTypeDesc.setReadonly(isReadOnly("CustomerTypeDialog_custTypeDesc"));
 		this.custTypeCtg.setDisabled(isReadOnly("CustomerTypeDialog_custTypeCtg"));
 		this.custTypeIsActive.setDisabled(isReadOnly("CustomerTypeDialog_custTypeIsActive"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.customerType.isNewRecord()){
+			if (this.customerType.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
@@ -571,18 +568,18 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		
+
 		this.custTypeCode.setReadonly(true);
 		this.custTypeCtg.setReadonly(true);
 		this.custTypeDesc.setReadonly(true);
 		this.custTypeIsActive.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -613,7 +610,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		final CustomerType aCustomerType = new CustomerType();
 		BeanUtils.copyProperties(getCustomerType(), aCustomerType);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the CustomerType object with the components data
@@ -622,34 +619,34 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
 		// Do data level validations here
-		
-		isNew = aCustomerType.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCustomerType.getRecordType())){
-				aCustomerType.setVersion(aCustomerType.getVersion()+1);
-				if(isNew){
+		isNew = aCustomerType.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCustomerType.getRecordType())) {
+				aCustomerType.setVersion(aCustomerType.getVersion() + 1);
+				if (isNew) {
 					aCustomerType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCustomerType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerType.setNewRecord(true);
 				}
 			}
-		}else{
-			aCustomerType.setVersion(aCustomerType.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCustomerType.setVersion(aCustomerType.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			
-			if(doProcess(aCustomerType,tranType)){
+
+			if (doProcess(aCustomerType, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -660,26 +657,28 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerType (CustomerType)
+	 * @param aCustomerType
+	 *            (CustomerType)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerType aCustomerType,String tranType){
+	private boolean doProcess(CustomerType aCustomerType, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
 		aCustomerType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerType.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -702,21 +701,21 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 					}
 				}
 			}
-			
+
 			if (!StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 
 				String[] nextTasks = nextTaskId.split(";");
-				
-				if (nextTasks!=null && nextTasks.length>0){
+
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-						
-						if(nextRoleCode.length()>1){
+
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -725,97 +724,96 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 			aCustomerType.setNextTaskId(nextTaskId);
 			aCustomerType.setRoleCode(getRole());
 			aCustomerType.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aCustomerType, tranType);
-			
+
+			auditHeader = getAuditHeader(aCustomerType, tranType);
+
 			String operationRefs = getServiceOperations(taskId, aCustomerType);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCustomerType, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aCustomerType, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{			
-			auditHeader =  getAuditHeader(aCustomerType, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCustomerType, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	/**	
-	 * Get the result after processing DataBase Operations 
+
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		CustomerType aCustomerType = (CustomerType) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
-		
+		boolean deleteNotes = false;
+
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCustomerTypeService().delete(auditHeader);
 
-						deleteNotes=true;	
-					}else{
-						auditHeader = getCustomerTypeService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getCustomerTypeService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerTypeService().doApprove(auditHeader);
 
-						if(aCustomerType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;		
+						if (aCustomerType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCustomerTypeService().doReject(auditHeader);
-						if(aCustomerType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCustomerType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CustomerTypeDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CustomerTypeDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				retValue = ErrorControl.showErrorControl(
-						this.window_CustomerTypeDialog, auditHeader);
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.customerType),true);
+
+				retValue = ErrorControl.showErrorControl(this.window_CustomerTypeDialog, auditHeader);
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.customerType), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -831,21 +829,27 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
-	 * @param aCustomerType (CustomerType)
-	 * @param tranType (String)
+	 * 
+	 * @param aCustomerType
+	 *            (CustomerType)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(CustomerType aCustomerType, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerType.getBefImage(), aCustomerType);   
-		return new AuditHeader(String.valueOf(aCustomerType.getId()),null,null,null,auditDetail,aCustomerType.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CustomerType aCustomerType, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerType.getBefImage(), aCustomerType);
+		return new AuditHeader(String.valueOf(aCustomerType.getId()), null, null, null, auditDetail,
+				aCustomerType.getUserDetails(), getOverideMap());
 	}
-	
+
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -853,19 +857,19 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		doShowNotes(this.customerType);
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.customerType.getCustTypeCode());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -873,6 +877,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	public CustomerType getCustomerType() {
 		return this.customerType;
 	}
+
 	public void setCustomerType(CustomerType customerType) {
 		this.customerType = customerType;
 	}
@@ -880,6 +885,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	public void setCustomerTypeService(CustomerTypeService customerTypeService) {
 		this.customerTypeService = customerTypeService;
 	}
+
 	public CustomerTypeService getCustomerTypeService() {
 		return this.customerTypeService;
 	}
@@ -887,8 +893,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	public void setCustomerTypeListCtrl(CustomerTypeListCtrl customerTypeListCtrl) {
 		this.customerTypeListCtrl = customerTypeListCtrl;
 	}
+
 	public CustomerTypeListCtrl getCustomerTypeListCtrl() {
 		return this.customerTypeListCtrl;
 	}
-	
+
 }

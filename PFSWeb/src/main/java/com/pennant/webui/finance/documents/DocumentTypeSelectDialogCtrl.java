@@ -87,10 +87,10 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = -6959194080451993569L;
 	private static final Logger logger = Logger.getLogger(DocumentTypeSelectDialogCtrl.class);
 
-	protected Window	                  window_DocumentTypeSelectDialog;	
+	protected Window window_DocumentTypeSelectDialog;
 	//protected Combobox	                  docCategory;	                                                                 // autowired
 
-	ExtendedCombobox            docCategory;                                                                  //autowired
+	ExtendedCombobox docCategory; //autowired
 
 	private DocumentDetails documentDetail;
 	private List<DocumentType> documentTypes = PennantAppUtil.getDocumentTypesList();
@@ -105,7 +105,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private Map<String, List<Listitem>> checkListDocTypeMap = null;
 	private List<Object> custDetails = null;
 	private String module;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -121,9 +121,8 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DocumentDetails object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DocumentDetails object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -138,7 +137,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		try {
 
 			if (arguments.containsKey("custDetails")) {
-				setCustDetails((List<Object>)arguments.get("custDetails"));
+				setCustDetails((List<Object>) arguments.get("custDetails"));
 			}
 
 			if (arguments.containsKey("financeDetail")) {
@@ -148,18 +147,17 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("isFacility")) {
 				setFacility((Boolean) arguments.get("isFacility"));
 			}
-			
+
 			if (arguments.containsKey("isNotFinanceProcess")) {
 				isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
 			}
-			
+
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
 			}
-						
+
 			if (arguments.containsKey("checkListDocTypeMap")) {
-				checkListDocTypeMap = (Map<String, List<Listitem>>) arguments
-						.get("checkListDocTypeMap");
+				checkListDocTypeMap = (Map<String, List<Listitem>>) arguments.get("checkListDocTypeMap");
 			}
 
 			if (arguments.containsKey("documentDetailDialogCtrl")) {
@@ -178,12 +176,12 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("window")) {
 				this.window_documentDetailDialog = (Component) arguments.get("window");
 			}
-			
+
 			// Module
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
-			
+
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -192,19 +190,19 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
 	 */
-	public void onClick$btn_proceed(Event event) throws InterruptedException, IllegalArgumentException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void onClick$btn_proceed(Event event) throws InterruptedException, IllegalArgumentException,
+			SecurityException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		doProceed();
 		logger.debug("Leaving" + event.toString());
@@ -223,8 +221,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentDetails
 	 * @throws Exception
@@ -248,8 +245,6 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
-
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
 		this.docCategory.setMaxlength(50);
@@ -258,29 +253,30 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setModuleName("DocumentType");
 		this.docCategory.setValueColumn("DocTypeCode");
 		this.docCategory.setDescColumn("DocTypeDesc");
-		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
-		
+		this.docCategory.setValidateColumns(new String[] { "DocTypeCode" });
+
 		if (DocumentCategories.VERIFICATION_FI.getKey().equals(module)
 				|| DocumentCategories.VERIFICATION_TV.getKey().equals(module)
 				|| DocumentCategories.VERIFICATION_LV.getKey().equals(module)
 				|| DocumentCategories.VERIFICATION_RCU.getKey().equals(module)
 				|| DocumentCategories.FINANCE.getKey().equals(module)
-				|| DocumentCategories.COLLATERAL.getKey().equals(module) 
+				|| DocumentCategories.COLLATERAL.getKey().equals(module)
 				|| DocumentCategories.SAMPLING.getKey().equals(module)) {
 			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode", module, Filter.OP_EQUAL) });
 		} else {
-			if(module==null){
+			if (module == null) {
 				Filter[] filters = new Filter[1];
-				List<String> types=new ArrayList<>();
+				List<String> types = new ArrayList<>();
 				types.add(DocumentCategories.FINANCE.getKey());
 				types.add(DocumentCategories.COLLATERAL.getKey());
-				filters[0]= Filter.in("CategoryCode", types.toArray(new String[types.size()]));
+				filters[0] = Filter.in("CategoryCode", types.toArray(new String[types.size()]));
 				this.docCategory.setFilters(filters);
-			}else{				
-				this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode",DocumentCategories.CUSTOMER.getKey(), Filter.OP_EQUAL) });
+			} else {
+				this.docCategory.setFilters(new Filter[] {
+						new Filter("CategoryCode", DocumentCategories.CUSTOMER.getKey(), Filter.OP_EQUAL) });
 			}
 		}
-		
+
 		logger.debug("Leaving ");
 	}
 
@@ -294,19 +290,19 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		aDocumentDetails = new DocumentDetails();
 		this.docCategory.setValue(aDocumentDetails.getDocCategory());
-		
+
 		logger.debug("Leaving");
 	}
-	
 
-
-	public DocumentDetails getDocumentDetails(){
+	public DocumentDetails getDocumentDetails() {
 		logger.debug("Entering");
 		DocumentDetails aDocumentDetails = new DocumentDetails();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
-			if (this.docCategory.getValue() == null || this.docCategory.getValue().equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(this.docCategory, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
+			if (this.docCategory.getValue() == null
+					|| this.docCategory.getValue().equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.docCategory, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
 			} else {
 				this.docCategory.setReadonly(true);
 			}
@@ -324,7 +320,8 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		logger.debug("Leaving");
 		return aDocumentDetails;
-	} 
+	}
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -342,14 +339,15 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 
 		this.docCategory.setErrorMessage("");
-		this.docCategory.setConstraint(new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value"),null,true,true));
+		this.docCategory.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value"), null, true, true));
 
 		DocumentType doctype = (DocumentType) this.docCategory.getObject();
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		if(isFacility()){
+		if (isFacility()) {
 			map.put("DocumentDetailDialogCtrl", this.facilityDocumentDetailDialogCtrl);
-		}else{
+		} else {
 			map.put("DocumentDetailDialogCtrl", this.documentDetailDialogCtrl);
 		}
 		map.put("newRecord", "true");
@@ -360,42 +358,48 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		try {
 			this.window_DocumentTypeSelectDialog.onClose();
-			if(!(DocumentCategories.CUSTOMER.getKey().equals(doctype.getCategoryCode()))){
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(doctype.getCategoryCode()))) {
 				DocumentDetails documentDetails = getDocumentDetails();
 				documentDetails.setNewRecord(true);
 				documentDetails.setWorkflowId(0);
 				map.put("finDocumentDetail", documentDetails);
-				map.put("isCheckList",false);
+				map.put("isCheckList", false);
 				map.put("docIsMandatory", false);
-				if(getFinanceDetail() != null){
+				if (getFinanceDetail() != null) {
 					map.put("isDocAllowedForInput", isDocAllowedForInput(doctype.getDocTypeCode()));
-				}else{
-					if(isNotFinanceProcess){
+				} else {
+					if (isNotFinanceProcess) {
 						map.put("isDocAllowedForInput", true);
 					}
 				}
-				if(isFacility()){
-					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul", window_documentDetailDialog, map);
-				}else{
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceDocuments/FinDocumentDetailDialog.zul", window_documentDetailDialog, map);
+				if (isFacility()) {
+					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul",
+							window_documentDetailDialog, map);
+				} else {
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceDocuments/FinDocumentDetailDialog.zul",
+							window_documentDetailDialog, map);
 				}
-			}else{
+			} else {
 				CustomerDocument customerDocument = new CustomerDocument();
 				customerDocument.setNewRecord(true);
 				//customerDocument.setCustDocCategory(checkListDetail.getDocType());
 				//	customerDocument.setLovDescCustDocCategory(checkListDetail.getAnsDesc());
 				customerDocument.setWorkflowId(0);
-				if(isFacility()){
+				if (isFacility()) {
 					customerDocument.setCustID(getFacility().getCustID());
 					customerDocument.setLovDescCustCIF(getFacility().getCustCIF());
 					customerDocument.setLovDescCustShrtName(getFacility().getCustShrtName());
-				}else{
-					customerDocument.setCustID(getCustDetails() != null ? Long.valueOf(getCustDetails().get(0).toString()) :  0);
-					customerDocument.setLovDescCustCIF(getCustDetails() != null ? String.valueOf(getCustDetails().get(1).toString()) : "");
-					customerDocument.setLovDescCustShrtName(getCustDetails() != null ? String.valueOf(getCustDetails().get(2).toString()) : "");
+				} else {
+					customerDocument
+							.setCustID(getCustDetails() != null ? Long.valueOf(getCustDetails().get(0).toString()) : 0);
+					customerDocument.setLovDescCustCIF(
+							getCustDetails() != null ? String.valueOf(getCustDetails().get(1).toString()) : "");
+					customerDocument.setLovDescCustShrtName(
+							getCustDetails() != null ? String.valueOf(getCustDetails().get(2).toString()) : "");
 					//if  documents type is Customer Documents then set mandatory from documents masters.
-					for (DocumentType document : documentTypes){
-						if(this.docCategory.getValue()!=null && this.docCategory.getValue().equals(document.getDocTypeCode())){
+					for (DocumentType document : documentTypes) {
+						if (this.docCategory.getValue() != null
+								&& this.docCategory.getValue().equals(document.getDocTypeCode())) {
 							customerDocument.setLovDescdocExpDateIsMand(document.isDocExpDateIsMand());
 							customerDocument.setDocIdNumMand(document.isDocIdNumMand());
 							customerDocument.setDocIssueDateMand(document.isDocIssueDateMand());
@@ -403,37 +407,41 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							break;
 						}
 					}
-					if((PennantConstants.CPRCODE.equals(doctype.getDocTypeCode()) || 
-							PennantConstants.PASSPORT.equals(doctype.getDocTypeCode()) || 
-							PennantConstants.TRADELICENSE.equals(doctype.getDocTypeCode())) && documentDetailDialogCtrl != null && 
-							documentDetailDialogCtrl.getFinanceMainDialogCtrl() != null){
-						if (documentDetailDialogCtrl.getFinanceMainDialogCtrl().getClass().getMethod("getCustomerIDNumber",String.class) != null) {
-							String idNumber  = (String)documentDetailDialogCtrl.getFinanceMainDialogCtrl().getClass().
-									getMethod("getCustomerIDNumber",String.class).invoke(documentDetailDialogCtrl.
-											getFinanceMainDialogCtrl(),doctype.getDocTypeCode());
+					if ((PennantConstants.CPRCODE.equals(doctype.getDocTypeCode())
+							|| PennantConstants.PASSPORT.equals(doctype.getDocTypeCode())
+							|| PennantConstants.TRADELICENSE.equals(doctype.getDocTypeCode()))
+							&& documentDetailDialogCtrl != null
+							&& documentDetailDialogCtrl.getFinanceMainDialogCtrl() != null) {
+						if (documentDetailDialogCtrl.getFinanceMainDialogCtrl().getClass()
+								.getMethod("getCustomerIDNumber", String.class) != null) {
+							String idNumber = (String) documentDetailDialogCtrl.getFinanceMainDialogCtrl().getClass()
+									.getMethod("getCustomerIDNumber", String.class)
+									.invoke(documentDetailDialogCtrl.getFinanceMainDialogCtrl(),
+											doctype.getDocTypeCode());
 							customerDocument.setCustDocTitle(idNumber);
 						}
 					}
 				}
 				customerDocument.setCustDocCategory(doctype.getDocTypeCode());
 				customerDocument.setLovDescCustDocCategory(doctype.getDocTypeDesc());
-				
-				Filter[] countrysystemDefault=new Filter[1];
-				countrysystemDefault[0]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
-				Object countryObj=	PennantAppUtil.getSystemDefault("Country","", countrysystemDefault);
 
-				if (countryObj!=null) {
-					Country country=(Country) countryObj;
+				Filter[] countrysystemDefault = new Filter[1];
+				countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
+				Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
+
+				if (countryObj != null) {
+					Country country = (Country) countryObj;
 					customerDocument.setCustDocIssuedCountry(country.getCountryCode());
 					customerDocument.setLovDescCustDocIssuedCountry(country.getCountryDesc());
 				}
 				map.put("isDocAllowedForInput", true);
-				map.put("isCheckList",true);
+				map.put("isCheckList", true);
 				map.put("customerDocument", customerDocument);
-				if(documentDetailDialogCtrl != null && documentDetailDialogCtrl.getFinanceMainDialogCtrl() != null){
+				if (documentDetailDialogCtrl != null && documentDetailDialogCtrl.getFinanceMainDialogCtrl() != null) {
 					map.put("financeMainDialogCtrl", documentDetailDialogCtrl.getFinanceMainDialogCtrl());
 				}
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
+				Executions.createComponents(
+						"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -442,25 +450,26 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving");
 	}
 
-	
-	public boolean isDocAllowedForInput(String docCategory){
+	public boolean isDocAllowedForInput(String docCategory) {
 		List<FinanceReferenceDetail> financeReferenceDetails = getFinanceDetail().getCheckList();
-		if(financeReferenceDetails != null && !financeReferenceDetails.isEmpty()){ 
-			String roleCode=StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode());
-			
+		if (financeReferenceDetails != null && !financeReferenceDetails.isEmpty()) {
+			String roleCode = StringUtils
+					.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode());
+
 			for (FinanceReferenceDetail financeReferenceDetail : financeReferenceDetails) {
-				
+
 				List<CheckListDetail> checkListDetails = financeReferenceDetail.getLovDesccheckListDetail();
-				
-				if(checkListDetails != null && !checkListDetails.isEmpty()){
-					
+
+				if (checkListDetails != null && !checkListDetails.isEmpty()) {
+
 					for (CheckListDetail checkListDetail : checkListDetails) {
-						
-						if(StringUtils.trimToEmpty(checkListDetail.getDocType()).equalsIgnoreCase(docCategory)){
-							return StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage()).contains(roleCode);
+
+						if (StringUtils.trimToEmpty(checkListDetail.getDocType()).equalsIgnoreCase(docCategory)) {
+							return StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage())
+									.contains(roleCode);
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -494,6 +503,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}

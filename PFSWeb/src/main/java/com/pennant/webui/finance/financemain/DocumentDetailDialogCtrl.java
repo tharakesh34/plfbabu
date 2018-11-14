@@ -123,7 +123,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private ExternalDocumentManager externalDocumentManager = null;
 
 	private Object financeMainDialogCtrl = null;
-	
+
 	private FinanceDetail financeDetail = null;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
@@ -187,7 +187,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
 
 				if (financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
-					((FinanceMainBaseCtrl)financeMainDialogCtrl).setDocumentDetailDialogCtrl(this);
+					((FinanceMainBaseCtrl) financeMainDialogCtrl).setDocumentDetailDialogCtrl(this);
 				}
 			}
 			if (arguments.containsKey("headerNotrequired")) {
@@ -203,10 +203,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("moduleName")) {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
-			
+
 			if (arguments.containsKey("isEditable")) {
 				isEditable = Boolean.parseBoolean(arguments.get("isEditable").toString());
-			}			
+			}
 
 			// append finance basic details
 			if (arguments.containsKey("finHeaderList")) {
@@ -219,12 +219,12 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("documentDetails")) {
 				setDocumentDetailsList((List<DocumentDetails>) arguments.get("documentDetails"));
 			}
-			
+
 			// Module
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
-			
+
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -346,7 +346,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		List<Object> list = getCustomerBasicDetails();
-		if (checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail	.getCategoryCode()))) {
+		if (checkListDetail != null
+				&& (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))) {
 			CustomerDocument customerDocument = new CustomerDocument();
 			customerDocument.setNewRecord(true);
 			customerDocument.setCustDocCategory(checkListDetail.getDocType());
@@ -408,7 +409,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		try {
 
-			if (checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail	.getCategoryCode()))) {
+			if (checkListDetail != null
+					&& (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))) {
 				Executions.createComponents(
 						"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 			} else {
@@ -458,7 +460,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 			docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
 		}
-		
+
 		if (rcuVerificationDialogCtrl != null) {
 			rcuVerificationDialogCtrl.addLoanDocuments(getLoanDocumentsFromScreen());
 		}
@@ -466,7 +468,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (lVerificationCtrl != null) {
 			lVerificationCtrl.addLoanDocuments(getLoanDocumentsFromScreen());
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -563,7 +565,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("roleCode", getRole());
 		map.put("moduleType", "");
 		map.put("enqiryModule", enqiryModule);
-		map.put("isCheckList", (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) ? true : (checklistID > 0 ? true : false));
+		map.put("isCheckList", (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) ? true
+				: (checklistID > 0 ? true : false));
 		map.put("customerDialogCtrl", this);
 		map.put("moduleName", moduleName);
 		map.put("isEditable", isEditable);
@@ -587,7 +590,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		CustomerDocument customerDocument = null;
-		if (customerDocument == null && (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))) {
+		if (customerDocument == null
+				&& (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))) {
 			customerDocument = new CustomerDocument();
 
 			customerDocument.setCustID(list != null ? Long.valueOf(list.get(0).toString()) : 0);
@@ -853,7 +857,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
-	
+
 	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}

@@ -45,7 +45,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,17 +67,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRateCodeDAO {
 	private static Logger logger = Logger.getLogger(SplRateCodeDAOImpl.class);
-	
+
 	public SplRateCodeDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Special Rate Codes details by key field
+	 * Fetch the Record Special Rate Codes details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SplRateCode
 	 */
 	@Override
@@ -87,22 +87,20 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 		SplRateCode splRateCode = new SplRateCode();
 		splRateCode.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select SRType, SRTypeDesc, SRIsActive," );
+		StringBuilder selectSql = new StringBuilder("Select SRType, SRTypeDesc, SRIsActive,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTSplRateCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SRType =:SRType ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
-		RowMapper<SplRateCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-						.newInstance(SplRateCode.class);
+		RowMapper<SplRateCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRateCode.class);
 
-		try{
-			splRateCode = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			splRateCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			splRateCode = null;
 		}
@@ -121,26 +119,27 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 		selectSql.append(" FROM RMTBaseRates");
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND RecordStatus = 'Approved' ");
 		selectSql.append(" AND breffdate >= (select max(BREffDate) from RMTBASERATES ");
-		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND RecordStatus = 'Approved' AND breffdate <= :BREffDate");
-		
+		selectSql.append(
+				" Where brtype = :BRType AND Currency = :Currency AND RecordStatus = 'Approved' AND breffdate <= :BREffDate");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
-		
-		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
-		
+
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 		logger.debug("Leaving");
 		return baseRates;
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTSplRateCodes or RMTSplRateCodes_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Special Rate Codes by key SRType
+	 * This method Deletes the Record from the RMTSplRateCodes or RMTSplRateCodes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Special Rate Codes by key SRType
 	 * 
-	 * @param Special Rate Codes (splRateCode)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Special
+	 *            Rate Codes (splRateCode)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -149,12 +148,12 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 	public void delete(SplRateCode splRateCode, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
-		StringBuilder deleteSql = new StringBuilder(" Delete From RMTSplRateCodes" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+
+		StringBuilder deleteSql = new StringBuilder(" Delete From RMTSplRateCodes");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SRType =:SRType");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
 
 		try {
@@ -172,29 +171,30 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 	/**
 	 * This method insert new Records into RMTSplRateCodes or RMTSplRateCodes_Temp.
 	 *
-	 * save Special Rate Codes 
+	 * save Special Rate Codes
 	 * 
-	 * @param Special Rate Codes (splRateCode)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Special
+	 *            Rate Codes (splRateCode)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(SplRateCode splRateCode,String type) {
+	public String save(SplRateCode splRateCode, String type) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTSplRateCodes" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (SRType, SRTypeDesc, SRIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTSplRateCodes");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (SRType, SRTypeDesc, SRIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:SRType, :SRTypeDesc, :SRIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -203,13 +203,13 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 	}
 
 	/**
-	 * This method updates the Record RMTSplRateCodes or RMTSplRateCodes_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Special Rate Codes by key SRType and Version
+	 * This method updates the Record RMTSplRateCodes or RMTSplRateCodes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Special Rate Codes by key SRType and Version
 	 * 
-	 * @param Special Rate Codes (splRateCode)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Special
+	 *            Rate Codes (splRateCode)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -218,21 +218,21 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 	public void update(SplRateCode splRateCode, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
-		StringBuilder updateSql = new StringBuilder("Update RMTSplRateCodes" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
+
+		StringBuilder updateSql = new StringBuilder("Update RMTSplRateCodes");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set SRTypeDesc = :SRTypeDesc, SRIsActive = :SRIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SRType =:SRType");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

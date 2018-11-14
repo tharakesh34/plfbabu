@@ -13,15 +13,12 @@ import com.pennant.backend.dao.finance.DealerResponseDAO;
 import com.pennant.backend.model.finance.DealerResponse;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implements   DealerResponseDAO {
- private static Logger logger = Logger.getLogger(DealerResponseDAOImpl.class);
+public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implements DealerResponseDAO {
+	private static Logger logger = Logger.getLogger(DealerResponseDAOImpl.class);
 
-	
 	public DealerResponseDAOImpl() {
 		super();
 	}
-	
-	
 
 	/**
 	 * get DealerResponse List based on finance reference
@@ -33,8 +30,7 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		DealerResponse dealerResponse = new DealerResponse();
 		dealerResponse.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(
-		        "Select DealerResponseId, DealerId, FinReference, ");
+		StringBuilder selectSql = new StringBuilder("Select DealerResponseId, DealerId, FinReference, ");
 		selectSql.append(" UniqueReference ,AttachmentName, ReqUserRole, ReqUserid,");
 		selectSql.append(" Status,RequestDate ,ResponseDate, ResponseRef,Processed ");
 		selectSql.append(" From DealerResponse");
@@ -43,11 +39,9 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		RowMapper<DealerResponse> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(DealerResponse.class);
+		RowMapper<DealerResponse> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DealerResponse.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -61,8 +55,7 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		dealerResponse.setFinReference(finReference);
 		dealerResponse.setProcessed(processed);
 
-		StringBuilder selectSql = new StringBuilder(
-		        "Select DealerResponseId, DealerId, FinReference, ");
+		StringBuilder selectSql = new StringBuilder("Select DealerResponseId, DealerId, FinReference, ");
 		selectSql.append(" UniqueReference ,AttachmentName, ReqUserRole, ReqUserid,");
 		selectSql.append(" Status,RequestDate ,ResponseDate, ResponseRef,Processed ");
 		selectSql.append(" From DealerResponse");
@@ -71,12 +64,11 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		RowMapper<DealerResponse> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(DealerResponse.class);
+		RowMapper<DealerResponse> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DealerResponse.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+
 	/**
 	 * get DealerResponse processed count based on finance reference
 	 * 
@@ -87,15 +79,15 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		DealerResponse dealerResponse = new DealerResponse();
 		dealerResponse.setFinReference(finReference);
 		dealerResponse.setProcessed(processed);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select count(*) From DealerResponse");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference and Processed = :Processed");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -103,7 +95,8 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update DealerResponse");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set  Status = :Status, ResponseDate=:ResponseDate, ResponseRef=:ResponseRef where DealerResponseId = :DealerResponseId ");
+		updateSql.append(
+				" Set  Status = :Status, ResponseDate=:ResponseDate, ResponseRef=:ResponseRef where DealerResponseId = :DealerResponseId ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);

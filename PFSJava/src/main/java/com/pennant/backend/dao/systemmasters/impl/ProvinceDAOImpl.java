@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,13 +67,13 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Province model</b> class.<br>
  * 
  */
-public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
+public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	private static Logger logger = Logger.getLogger(ProvinceDAOImpl.class);
-	
+
 	public ProvinceDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Province details by key field
 	 * 
@@ -84,19 +83,20 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 	 *            (String) ""/_Temp/_View
 	 * @return Province
 	 */
-	public Province getProvinceById(final String cPCountry, String cPProvince,String type) {
+	public Province getProvinceById(final String cPCountry, String cPProvince, String type) {
 		logger.debug(Literal.ENTERING);
 		Province province = new Province();
 		province.setCPCountry(cPCountry);
 		province.setCPProvince(cPProvince);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive," );
-		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea," );
-		if(type.contains("View")){
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
+		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea,");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCPCountryName, ");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CPCountry = :cPCountry AND CPProvince =:cPProvince ");
@@ -106,8 +106,7 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
 
 		try {
-			province = this.jdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);
+			province = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			province = null;
@@ -117,9 +116,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTCountryVsProvince or
-	 * RMTCountryVsProvince_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Province by key CPCountry
+	 * This method Deletes the Record from the RMTCountryVsProvince or RMTCountryVsProvince_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Province by key CPCountry
 	 * 
 	 * @param Province
 	 *            (province)
@@ -137,12 +135,12 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where CPCountry =:CPCountry and CPProvince = :CPProvince");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
-		logger.trace(Literal.SQL +deleteSql.toString());
+
+		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -155,8 +153,7 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 	}
 
 	/**
-	 * This method insert new Records into RMTCountryVsProvince or
-	 * RMTCountryVsProvince_Temp.
+	 * This method insert new Records into RMTCountryVsProvince or RMTCountryVsProvince_Temp.
 	 * 
 	 * save Province
 	 * 
@@ -175,32 +172,29 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCountryVsProvince");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
-		insertSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:CPCountry, :CPProvince, :CPProvinceName,:SystemDefault,:BankRefNo, :CPIsActive," );
-		insertSql.append(" :TaxExempted, :UnionTerritory, :TaxStateCode, :TaxAvailable, :BusinessArea," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CPCountry, :CPProvince, :CPProvinceName,:SystemDefault,:BankRefNo, :CPIsActive,");
+		insertSql.append(" :TaxExempted, :UnionTerritory, :TaxStateCode, :TaxAvailable, :BusinessArea,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.trace(Literal.SQL + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				province);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	/**
-	 * This method updates the Record RMTCountryVsProvince or
-	 * RMTCountryVsProvince_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Province by key CPCountry
-	 * and Version
+	 * This method updates the Record RMTCountryVsProvince or RMTCountryVsProvince_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Province by key CPCountry and Version
 	 * 
 	 * @param Province
 	 *            (province)
@@ -213,30 +207,31 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 	@Override
 	public void update(Province province, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update RMTCountryVsProvince");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo,CPIsActive=:CPIsActive," );
-		updateSql.append(" TaxExempted = :TaxExempted, UnionTerritory = :UnionTerritory, TaxStateCode = :TaxStateCode, TaxAvailable = :TaxAvailable, BusinessArea = :BusinessArea," );
+		updateSql.append(
+				" Set CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo,CPIsActive=:CPIsActive,");
+		updateSql.append(
+				" TaxExempted = :TaxExempted, UnionTerritory = :UnionTerritory, TaxStateCode = :TaxStateCode, TaxAvailable = :TaxAvailable, BusinessArea = :BusinessArea,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CPCountry =:CPCountry  and  CPProvince = :CPProvince");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.trace(Literal.SQL +  updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				province);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		logger.trace(Literal.SQL + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Fetch the count of system default values by key field
 	 * 
@@ -263,11 +258,11 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		String dftCPProvince = "";
 		try {
 			dftCPProvince = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-        } catch (Exception e) {
-        	logger.warn("Exception: ", e);
-        	dftCPProvince = "";
-        }
-		
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			dftCPProvince = "";
+		}
+
 		logger.debug(Literal.LEAVING);
 		return dftCPProvince;
 
@@ -288,7 +283,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 			sql = QueryUtil.getCountQuery("RMTCountryVsProvince_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "RMTCountryVsProvince_Temp", "RMTCountryVsProvince" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "RMTCountryVsProvince_Temp", "RMTCountryVsProvince" },
+					whereClause);
 			break;
 		}
 
@@ -308,13 +304,13 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public boolean count(String taxStateCode,String cPProvince, TableType tableType){
+	public boolean count(String taxStateCode, String cPProvince, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "taxStateCode = :taxStateCode and cPProvince <> :cPProvince" ;
+		String whereClause = "taxStateCode = :taxStateCode and cPProvince <> :cPProvince";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -324,7 +320,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 			sql = QueryUtil.getCountQuery("RMTCountryVsProvince_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "RMTCountryVsProvince_Temp", "RMTCountryVsProvince" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "RMTCountryVsProvince_Temp", "RMTCountryVsProvince" },
+					whereClause);
 			break;
 		}
 
@@ -344,7 +341,6 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-
 
 	@Override
 	public int getBusinessAreaCount(String businessAreaValue, String type) {
@@ -406,13 +402,14 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		Province province = new Province();
 		province.setCPProvince(cPProvince);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive," );
-		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea," );
-		if(type.contains("View")){
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
+		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea,");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCPCountryName, ");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where  CPProvince =:cPProvince ");
@@ -422,15 +419,14 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements	ProvinceDAO {
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
 
 		try {
-			province = this.jdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);
+			province = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			province = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return province;
-	
+
 	}
-	
+
 }

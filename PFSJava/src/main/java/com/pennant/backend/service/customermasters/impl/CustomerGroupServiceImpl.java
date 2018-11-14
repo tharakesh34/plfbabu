@@ -73,10 +73,11 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	private CustomerGroupDAO customerGroupDAO;
 	private LimitHeaderDAO limitHeaderDAO;
 	private CustomerDAO customerDAO;
+
 	public CustomerGroupServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -92,6 +93,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -99,6 +101,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	public CustomerGroupDAO getCustomerGroupDAO() {
 		return customerGroupDAO;
 	}
+
 	public void setCustomerGroupDAO(CustomerGroupDAO customerGroupDAO) {
 		this.customerGroupDAO = customerGroupDAO;
 	}
@@ -112,15 +115,12 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * CustomerGroups/CustomerGroups_Temp by using CustomerGroupDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using CustomerGroupDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtCustomerGroups by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * CustomerGroups/CustomerGroups_Temp by using CustomerGroupDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using CustomerGroupDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtCustomerGroups by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -141,10 +141,10 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 
 		if (customerGroup.isWorkflow()) {
 			tableType = "_Temp";
-		} 
+		}
 
 		if (customerGroup.isNew()) {
-			customerGroup.setId(getCustomerGroupDAO().save(customerGroup,tableType));
+			customerGroup.setId(getCustomerGroupDAO().save(customerGroup, tableType));
 			auditHeader.getAuditDetail().setModelData(customerGroup);
 			auditHeader.setAuditReference(String.valueOf(customerGroup.getId()));
 		} else {
@@ -157,12 +157,10 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table CustomerGroups by using CustomerGroupDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtCustomerGroups by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * CustomerGroups by using CustomerGroupDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtCustomerGroups by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -179,7 +177,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		}
 
 		CustomerGroup customerGroup = (CustomerGroup) auditHeader.getAuditDetail().getModelData();
-		
+
 		getCustomerGroupDAO().delete(customerGroup, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -188,8 +186,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * getCustomerGroupById fetch the details by using CustomerGroupDAO's
-	 * getCustomerGroupById method.
+	 * getCustomerGroupById fetch the details by using CustomerGroupDAO's getCustomerGroupById method.
 	 * 
 	 * @param id
 	 *            (int)
@@ -203,9 +200,8 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * getApprovedCustomerGroupById fetch the details by using
-	 * CustomerGroupDAO's getCustomerGroupById method . with parameter id and
-	 * type as blank. it fetches the approved records from the CustomerGroups.
+	 * getApprovedCustomerGroupById fetch the details by using CustomerGroupDAO's getCustomerGroupById method . with
+	 * parameter id and type as blank. it fetches the approved records from the CustomerGroups.
 	 * 
 	 * @param id
 	 *            (int)
@@ -216,20 +212,15 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCustomerGroupDAO().delete with parameters customerGroup,"" b)
-	 * NEW Add new record in to main table by using getCustomerGroupDAO().save
-	 * with parameters customerGroup,"" c) EDIT Update record in the main table
-	 * by using getCustomerGroupDAO().update with parameters customerGroup,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getCustomerGroupDAO().delete with parameters customerGroup,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtCustomerGroups by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtCustomerGroups by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerGroupDAO().delete with
+	 * parameters customerGroup,"" b) NEW Add new record in to main table by using getCustomerGroupDAO().save with
+	 * parameters customerGroup,"" c) EDIT Update record in the main table by using getCustomerGroupDAO().update with
+	 * parameters customerGroup,"" 3) Delete the record from the workFlow table by using getCustomerGroupDAO().delete
+	 * with parameters customerGroup,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomerGroups by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCustomerGroups by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -247,7 +238,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		}
 
 		CustomerGroup customerGroup = new CustomerGroup();
-		BeanUtils.copyProperties((CustomerGroup) auditHeader.getAuditDetail().getModelData(),customerGroup);
+		BeanUtils.copyProperties((CustomerGroup) auditHeader.getAuditDetail().getModelData(), customerGroup);
 
 		if (customerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -284,13 +275,10 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCustomerGroupDAO().delete with parameters
-	 * customerGroup,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtCustomerGroups by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerGroupDAO().delete with parameters customerGroup,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtCustomerGroups by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -315,29 +303,27 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,	String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getCustomerIdentityDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getCustomerIdentityDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -351,11 +337,11 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		CustomerGroup tempCustomerGroup = null;
 
 		if (customerGroup.isWorkflow()) {
-			tempCustomerGroup = getCustomerGroupDAO().getCustomerGroupByCode(
-					customerGroup.getCustGrpCode(), "_Temp");
+			tempCustomerGroup = getCustomerGroupDAO().getCustomerGroupByCode(customerGroup.getCustGrpCode(), "_Temp");
 		}
 
-		CustomerGroup befCustomerGroup = getCustomerGroupDAO().getCustomerGroupByCode(customerGroup.getCustGrpCode(), "");
+		CustomerGroup befCustomerGroup = getCustomerGroupDAO().getCustomerGroupByCode(customerGroup.getCustGrpCode(),
+				"");
 		CustomerGroup oldCustomerGroup = customerGroup.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -371,11 +357,10 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 				// records
 				if (befCustomerGroup != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (customerGroup.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (customerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befCustomerGroup != null || tempCustomerGroup != null) { // if records already exists
 						// in the main table
@@ -396,13 +381,16 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 				if (befCustomerGroup == null) { // if records not exists in the
 					// main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
-				}else {
+				} else {
 					if (oldCustomerGroup != null
 							&& !oldCustomerGroup.getLastMntOn().equals(befCustomerGroup.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -414,13 +402,13 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomerGroup != null && oldCustomerGroup != null && !oldCustomerGroup.getLastMntOn().equals(
-						tempCustomerGroup.getLastMntOn())) {
+				if (tempCustomerGroup != null && oldCustomerGroup != null
+						&& !oldCustomerGroup.getLastMntOn().equals(tempCustomerGroup.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
-		
+
 		// Checking Dependency Validation
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(customerGroup.getRecordType())) {
@@ -440,10 +428,10 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 			}
 
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !customerGroup.isWorkflow()) {
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerGroup.isWorkflow()) {
 			auditDetail.setBefImage(befCustomerGroup);
 		}
 		logger.debug("Leaving");

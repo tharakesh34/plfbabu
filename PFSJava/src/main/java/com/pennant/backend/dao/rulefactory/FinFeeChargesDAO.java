@@ -50,10 +50,14 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 public interface FinFeeChargesDAO {
 
 	FeeRule getFeeChargesByFinRefAndFee(String finReference, String feeCode, String tableType);
+
 	boolean updateFeeChargesByFinRefAndFee(FeeRule feeRule, String tableType);
-	
+
 	FeeRule getInsFee(String finReference, String type);
+
 	void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
+
 	void deleteChargesBatch(String finReference, String finEvent, boolean isWIF, String tableType);
+
 	List<FeeRule> getFeeChargesByFinRef(String finReference, String finEvent, boolean isWIF, String tableType);
 }

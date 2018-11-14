@@ -73,17 +73,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/CostOfFundCode/costOfFundCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CostOfFundCode/costOfFundCodeDialog.zul file.
  */
 public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	private static final long serialVersionUID = 190631304555025244L;
 	private static final Logger logger = Logger.getLogger(CostOfFundCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CostOfFundCodeDialog; // autoWired
 
@@ -92,11 +90,11 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	protected Checkbox active; // autoWired
 
 	// not autoWired Var's
-	private CostOfFundCode costOfFundCode; 							 // overHanded per parameter
+	private CostOfFundCode costOfFundCode; // overHanded per parameter
 	private transient CostOfFundCodeListCtrl costOfFundCodeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CostOfFundCodeService costOfFundCodeService;
 
@@ -115,9 +113,8 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CostOfFundCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CostOfFundCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -129,7 +126,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		setPageComponents(window_CostOfFundCodeDialog);
 
 		try {
-			
+
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("costOfFundCode")) {
 				this.costOfFundCode = (CostOfFundCode) arguments.get("costOfFundCode");
@@ -142,14 +139,13 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 				setCostOfFundCode(null);
 			}
 
-			doLoadWorkFlow(this.costOfFundCode.isWorkflow(),
-					this.costOfFundCode.getWorkflowId(),
+			doLoadWorkFlow(this.costOfFundCode.isWorkflow(), this.costOfFundCode.getWorkflowId(),
 					this.costOfFundCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
-			}else{
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -159,12 +155,11 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 			// or
 			// delete costOfFundCode here.
 			if (arguments.containsKey("costOfFundCodeListCtrl")) {
-				setCostOfFundCodeListCtrl((CostOfFundCodeListCtrl) arguments
-						.get("costOfFundCodeListCtrl"));
+				setCostOfFundCodeListCtrl((CostOfFundCodeListCtrl) arguments.get("costOfFundCodeListCtrl"));
 			} else {
 				setCostOfFundCodeListCtrl(null);
 			}
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -175,7 +170,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 			com.pennanttech.pennapps.web.util.MessageUtil.showError(e);
 			this.window_CostOfFundCodeDialog.onClose();
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -187,9 +182,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		this.cofCode.setMaxlength(8);
 		this.cofDesc.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -200,8 +195,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -221,9 +215,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());		
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -232,9 +226,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -244,9 +238,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CostOfFundCodeDialog);
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -256,9 +250,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving"+event.toString());		
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -267,9 +261,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -309,7 +303,8 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		this.cofDesc.setValue(aCostOfFundCode.getCofDesc());
 		this.recordStatus.setValue(aCostOfFundCode.getRecordStatus());
 		this.active.setChecked(aCostOfFundCode.isActive());
-		if(aCostOfFundCode.isNew() || (aCostOfFundCode.getRecordType() != null ? aCostOfFundCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aCostOfFundCode.isNew() || (aCostOfFundCode.getRecordType() != null ? aCostOfFundCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -329,12 +324,12 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 
 		try {
 			aCostOfFundCode.setCofCode(this.cofCode.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCostOfFundCode.setCofDesc(this.cofDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -345,8 +340,8 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -360,8 +355,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCostOfFundCode
 	 * @throws Exception
@@ -376,13 +370,13 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 			// setFocus
 			this.cofCode.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.cofDesc.focus();
-				if (StringUtils.isNotBlank(aCostOfFundCode.getRecordType())){
+				if (StringUtils.isNotBlank(aCostOfFundCode.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -410,12 +404,15 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.cofCode.isReadonly()){
-			this.cofCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CostOfFundCodeDialog_CofCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
-		if (!this.cofDesc.isReadonly()){
-			this.cofDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CostOfFundCodeDialog_CofDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.cofCode.isReadonly()) {
+			this.cofCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CostOfFundCodeDialog_CofCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
+		if (!this.cofDesc.isReadonly()) {
+			this.cofDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CostOfFundCodeDialog_CofDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -433,13 +430,13 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 
 	/**
 	 * Set Validations for LOV Fields
-	 */	
+	 */
 	private void doSetLOVValidation() {
 	}
 
 	/**
 	 * Remove Validations for LOV Fields
-	 */	
+	 */
 	private void doRemoveLOVValidation() {
 	}
 
@@ -457,9 +454,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getCostOfFundCodeListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -472,36 +469,35 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		logger.debug("Entering");
 		final CostOfFundCode aCostOfFundCode = new CostOfFundCode();
 		BeanUtils.copyProperties(getCostOfFundCode(), aCostOfFundCode);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "+ 
-				Labels.getLabel("label_CostOfFundCodeDialog_CofCode.value")+" : "+aCostOfFundCode.getCofCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CostOfFundCodeDialog_CofCode.value") + " : " + aCostOfFundCode.getCofCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCostOfFundCode.getRecordType())){
-				aCostOfFundCode.setVersion(aCostOfFundCode.getVersion()+1);
+			if (StringUtils.isBlank(aCostOfFundCode.getRecordType())) {
+				aCostOfFundCode.setVersion(aCostOfFundCode.getVersion() + 1);
 				aCostOfFundCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCostOfFundCode.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aCostOfFundCode,tranType)){
+				if (doProcess(aCostOfFundCode, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
 			} catch (Exception e) {
 				MessageUtil.showError(e);
-			}		
+			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -510,27 +506,27 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		if (getCostOfFundCode().isNewRecord()){
+		if (getCostOfFundCode().isNewRecord()) {
 			this.cofCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.cofCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.cofDesc.setReadonly(isReadOnly("CostOfFundCodesDialog_cofDesc"));
 		this.active.setDisabled(isReadOnly("CostOfFundCodesDialog_active"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.costOfFundCode.isNewRecord()){
+			if (this.costOfFundCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -545,14 +541,14 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		this.cofCode.setReadonly(true);
 		this.cofDesc.setReadonly(true);
 		this.active.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -592,32 +588,32 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		// Do data level validations here
 
 		isNew = aCostOfFundCode.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCostOfFundCode.getRecordType())){
-				aCostOfFundCode.setVersion(aCostOfFundCode.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCostOfFundCode.getRecordType())) {
+				aCostOfFundCode.setVersion(aCostOfFundCode.getVersion() + 1);
+				if (isNew) {
 					aCostOfFundCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCostOfFundCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCostOfFundCode.setNewRecord(true);
 				}
 			}
-		}else{
-			aCostOfFundCode.setVersion(aCostOfFundCode.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCostOfFundCode.setVersion(aCostOfFundCode.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aCostOfFundCode,tranType)){
+			if (doProcess(aCostOfFundCode, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -626,24 +622,27 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	/**	
+
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCostOfFundCode (CostOfFundCode)
+	 * @param aCostOfFundCode
+	 *            (CostOfFundCode)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CostOfFundCode aCostOfFundCode,String tranType){
+	private boolean doProcess(CostOfFundCode aCostOfFundCode, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCostOfFundCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCostOfFundCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -675,15 +674,15 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -693,95 +692,95 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 			aCostOfFundCode.setRoleCode(getRole());
 			aCostOfFundCode.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCostOfFundCode, tranType);
+			auditHeader = getAuditHeader(aCostOfFundCode, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCostOfFundCode);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCostOfFundCode, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aCostOfFundCode, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aCostOfFundCode, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCostOfFundCode, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
-	/**	
-	 * Get the result after processing DataBase Operations 
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		CostOfFundCode aCostOfFundCode = (CostOfFundCode) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
+		boolean deleteNotes = false;
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCostOfFundCodeService().delete(auditHeader);
 
-						if(aCostOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aCostOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader = getCostOfFundCodeService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getCostOfFundCodeService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCostOfFundCodeService().doApprove(auditHeader);
-						if(aCostOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes =true;	
+						if (aCostOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCostOfFundCodeService().doReject(auditHeader);
-						if(aCostOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCostOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CostOfFundCodeDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CostOfFundCodeDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(this.window_CostOfFundCodeDialog,auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_CostOfFundCodeDialog, auditHeader);
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -800,26 +799,29 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 
 	/**
 	 * Get Audit Header Details
-	 * @param aCostOfFundCode 
+	 * 
+	 * @param aCostOfFundCode
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CostOfFundCode aCostOfFundCode, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCostOfFundCode.getBefImage(), aCostOfFundCode);   
-		return new AuditHeader(String.valueOf(aCostOfFundCode.getId()),null,null,null,auditDetail,aCostOfFundCode.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CostOfFundCode aCostOfFundCode, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCostOfFundCode.getBefImage(), aCostOfFundCode);
+		return new AuditHeader(String.valueOf(aCostOfFundCode.getId()), null, null, null, auditDetail,
+				aCostOfFundCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CostOfFundCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -828,13 +830,15 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	}
 
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
-	 */	
+	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
@@ -846,7 +850,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -869,6 +873,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -876,6 +881,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	public CostOfFundCode getCostOfFundCode() {
 		return this.costOfFundCode;
 	}
+
 	public void setCostOfFundCode(CostOfFundCode costOfFundCode) {
 		this.costOfFundCode = costOfFundCode;
 	}
@@ -883,6 +889,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	public void setCostOfFundCodeService(CostOfFundCodeService costOfFundCodeService) {
 		this.costOfFundCodeService = costOfFundCodeService;
 	}
+
 	public CostOfFundCodeService getCostOfFundCodeService() {
 		return this.costOfFundCodeService;
 	}
@@ -890,6 +897,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	public void setCostOfFundCodeListCtrl(CostOfFundCodeListCtrl costOfFundCodeListCtrl) {
 		this.costOfFundCodeListCtrl = costOfFundCodeListCtrl;
 	}
+
 	public CostOfFundCodeListCtrl getCostOfFundCodeListCtrl() {
 		return this.costOfFundCodeListCtrl;
 	}

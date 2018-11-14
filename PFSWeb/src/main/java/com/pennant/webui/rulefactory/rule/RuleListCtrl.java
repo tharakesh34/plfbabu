@@ -83,7 +83,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	protected Paging pagingRuleList;
 	protected Listbox listBoxRule;
 	protected Textbox ruleModule;
-	protected Textbox 		limitLine;
+	protected Textbox limitLine;
 
 	protected Listheader listheader_RuleEvent;
 	protected Listheader listheader_RuleCode;
@@ -93,9 +93,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	protected Button button_RuleList_RuleSearchDialog;
 	protected Button btnExport;
 
-
 	// Filtering Fields for Check List rule
-	
+
 	protected Textbox ruleCode;
 	protected Textbox ruleCodeDesc;
 	protected Uppercasebox ruleEvent;
@@ -103,7 +102,6 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	protected Listbox sortOperator_ruleCode;
 	protected Listbox sortOperator_ruleCodeDesc;
 	protected Listbox sortOperator_ruleEvent;
-
 
 	private transient RuleService ruleService;
 
@@ -139,7 +137,9 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		try {
 
 			if (limitLine != null && !StringUtils.isEmpty(limitLine.getValue())) {
-				new PTListReportUtils(StringUtils.trimToEmpty(this.ruleModule.getValue()) + StringUtils.trimToEmpty(limitLine.getValue()),
+				new PTListReportUtils(
+						StringUtils.trimToEmpty(this.ruleModule.getValue())
+								+ StringUtils.trimToEmpty(limitLine.getValue()),
 						super.searchObject, this.pagingRuleList.getTotalSize() + 1);
 			} else {
 				new PTListReportUtils(this.ruleModuleName, super.searchObject, this.pagingRuleList.getTotalSize() + 1);
@@ -157,7 +157,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_RuleList(Event event) {
-		
+
 		String ruleModuleValue = ruleModule.getValue();
 
 		if (RuleConstants.MODULE_ELGRULE.equals(ruleModuleValue)) {
@@ -196,21 +196,22 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 
 		// Register buttons and fields.
 		registerButton(button_RuleList_RuleSearchDialog);
-		
+
 		if (RuleConstants.MODULE_AMORTIZATIONMETHOD.equals(ruleModuleValue)) {
 			this.ruleModuleName = "AmortizationMethodRule";
 			button_RuleList_NewRule.setVisible(false);
 		} else if (RuleConstants.MODULE_GSTRULE.equals(ruleModuleValue)) {
-			this.ruleModuleName="GSTRULE";
+			this.ruleModuleName = "GSTRULE";
 			this.button_RuleList_NewRule.setVisible(false);
 		} else {
 			registerButton(button_RuleList_NewRule, "button_RuleList_New" + this.ruleModuleName, true);
 		}
 
-		registerField("ruleCode", listheader_RuleCode, SortOrder.ASC, ruleCode, sortOperator_ruleCode, Operators.STRING);
+		registerField("ruleCode", listheader_RuleCode, SortOrder.ASC, ruleCode, sortOperator_ruleCode,
+				Operators.STRING);
 		registerField("ruleCodeDesc", listheader_RuleCodeDesc, SortOrder.NONE, ruleCodeDesc, sortOperator_ruleCodeDesc,
 				Operators.STRING);
-		
+
 		if (this.ruleEvent != null) {
 			registerField("ruleEvent", listheader_RuleEvent, SortOrder.NONE, ruleEvent, sortOperator_ruleEvent,
 					Operators.STRING);
@@ -270,7 +271,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			aRule.setRuleEvent("RSCORE");
 		} else if (!StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEES)) {
 			aRule.setRuleEvent(ruleModuleValue);
-		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) {	//GST Rules
+		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) { //GST Rules
 			//aRule.setRuleEvent("IGST");				//Open any one of this rule Event
 			//aRule.setRuleEvent("CGST");
 			//aRule.setRuleEvent("SGST");
@@ -367,7 +368,6 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-
 
 	public void onClick$btnExport(Event event) {
 		logger.debug("Entering");

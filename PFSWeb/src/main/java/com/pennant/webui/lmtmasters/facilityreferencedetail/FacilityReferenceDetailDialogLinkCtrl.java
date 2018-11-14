@@ -89,10 +89,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/LMTMasters/FacilityReferenceDetail
@@ -103,9 +103,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailDialogLinkCtrl.class);
 
 	/*
-	 * All the components that are defined here
-	 * and have a corresponding component with the same 'id' in the zul-file are getting auto wired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FacilityReferenceDetailDialogLink; // auto wired
 	protected Textbox finType; // auto wired
@@ -119,29 +118,28 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	protected Intbox overRideValue;
 	protected Textbox lovDescRefDesc;
 	protected Row statusRow;
-	
-	
+
 	// not auto wired variables
 	private FacilityReferenceDetail facilityReferenceDetail; // over handed per parameter
 	private FacilityReferenceDetail prvFacilityReferenceDetail; // over handed per parameter
 	private transient FacilityReferenceDetailDialogCtrl facilityReferenceDetailDialogCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient FacilityReferenceDetailService facilityReferenceDetailService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private String roleCodes;
-	
+
 	protected Listbox listboxshowInStage; // auto wired
 	protected Listbox listboxmandInputInStage; // auto wired
 	protected Listbox listboxallowInputInStage;
-	
+
 	private Map<String, String> checkShowInStageMap = new HashMap<String, String>();
 	private Map<String, String> checkMandInputInStageMap = new HashMap<String, String>();
 	private Map<String, String> checkAllowInputInStage = new HashMap<String, String>();
-	
+
 	// List od values
 	protected Button btnSearchElgRule;
 	protected Button btnSearchAggCode;
@@ -150,18 +148,18 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	protected Button btnSearchCorpScoringGroup;
 	protected Button btnSearchAccounting;
 	protected Button btnSearchTemplate;
-	
+
 	protected Label label_FacilityReferenceDetailDialog_FinRefId;
 	protected Row rowSingleListbox;
 	protected Row rowDoubleListbox;
 	protected Row rowOverRide;
-	
+
 	protected Label label_FacilityReferenceDetailDialogLink;
-	
+
 	protected Label label_FacilityReferenceDetailDialog_ShowInStage;
 	protected Label label_FacilityReferenceDetailDialog_AllowInputInStage;
 	protected Label label_FacilityReferenceDetailDialog_MandInputInStage;
-	
+
 	protected Listheader listheadShowInStage;
 	protected Listheader listheadAllowInputInStage;
 	protected Listheader listheadMandInputInStage;
@@ -195,14 +193,13 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		setPageComponents(window_FacilityReferenceDetailDialogLink);
 
 		try {
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("facilityReferenceDetail")) {
-				this.facilityReferenceDetail = (FacilityReferenceDetail) arguments
-						.get("facilityReferenceDetail");
+				this.facilityReferenceDetail = (FacilityReferenceDetail) arguments.get("facilityReferenceDetail");
 
 				boolean addBefImage = true;
 				if (PennantConstants.RECORD_TYPE_NEW.equals(this.facilityReferenceDetail.getRecordType())
@@ -213,8 +210,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 				}
 				if (addBefImage) {
 					FacilityReferenceDetail befImage = new FacilityReferenceDetail();
-					BeanUtils.copyProperties(this.facilityReferenceDetail,
-							befImage);
+					BeanUtils.copyProperties(this.facilityReferenceDetail, befImage);
 					this.facilityReferenceDetail.setBefImage(befImage);
 				}
 				setFacilityReferenceDetail(this.facilityReferenceDetail);
@@ -223,8 +219,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			}
 
 			if (arguments.containsKey("facilityReferenceDetailDialogCtrl")) {
-				setFacilityReferenceDetailDialogCtrl((FacilityReferenceDetailDialogCtrl) arguments
-						.get("facilityReferenceDetailDialogCtrl"));
+				setFacilityReferenceDetailDialogCtrl(
+						(FacilityReferenceDetailDialogCtrl) arguments.get("facilityReferenceDetailDialogCtrl"));
 			} else {
 				setFacilityReferenceDetailDialogCtrl(null);
 			}
@@ -233,14 +229,12 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 				roleCodes = arguments.get("roleCodeList").toString();
 			}
 
-			doLoadWorkFlow(this.facilityReferenceDetail.isWorkflow(),
-					this.facilityReferenceDetail.getWorkflowId(),
+			doLoadWorkFlow(this.facilityReferenceDetail.isWorkflow(), this.facilityReferenceDetail.getWorkflowId(),
 					this.facilityReferenceDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"FacilityReferenceDetailDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FacilityReferenceDetailDialog");
 			}
 
 			// set Field Properties
@@ -260,11 +254,11 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		
+
 		this.finType.setMaxlength(8);
 		this.finRefType.setMaxlength(10);
 		this.overRideValue.setMaxlength(4);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			this.statusRow.setVisible(true);
@@ -397,35 +391,34 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		this.overRideValue.setValue(aFacilityReferenceDetail.getOverRideValue());
 		this.lovDescRefDesc.setValue(aFacilityReferenceDetail.getLovDescRefDesc());
 
-		if (aFacilityReferenceDetail.getShowInStage() != null && 
-				StringUtils.isNotEmpty(aFacilityReferenceDetail.getShowInStage())) {
+		if (aFacilityReferenceDetail.getShowInStage() != null
+				&& StringUtils.isNotEmpty(aFacilityReferenceDetail.getShowInStage())) {
 			String[] roles = aFacilityReferenceDetail.getShowInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkShowInStageMap.put(roles[i], roles[i]);
 			}
 		}
-		if (aFacilityReferenceDetail.getAllowInputInStage() != null && 
-				StringUtils.isNotEmpty(aFacilityReferenceDetail.getAllowInputInStage())) {
+		if (aFacilityReferenceDetail.getAllowInputInStage() != null
+				&& StringUtils.isNotEmpty(aFacilityReferenceDetail.getAllowInputInStage())) {
 			String[] roles = aFacilityReferenceDetail.getAllowInputInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkAllowInputInStage.put(roles[i], roles[i]);
 			}
 		}
-		if (aFacilityReferenceDetail.getMandInputInStage() != null && 
-				StringUtils.isNotEmpty(aFacilityReferenceDetail.getMandInputInStage())) {
+		if (aFacilityReferenceDetail.getMandInputInStage() != null
+				&& StringUtils.isNotEmpty(aFacilityReferenceDetail.getMandInputInStage())) {
 			String[] roles = aFacilityReferenceDetail.getMandInputInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkMandInputInStageMap.put(roles[i], roles[i]);
 			}
 		}
 
-		fillListBox(this.listboxshowInStage, roleCodes, checkShowInStageMap, 
-				FinanceConstants.PROCEDT_SHOWINSTAGE);
-		fillListBox(this.listboxallowInputInStage, roleCodes, checkAllowInputInStage, 
+		fillListBox(this.listboxshowInStage, roleCodes, checkShowInStageMap, FinanceConstants.PROCEDT_SHOWINSTAGE);
+		fillListBox(this.listboxallowInputInStage, roleCodes, checkAllowInputInStage,
 				FinanceConstants.PROCEDT_ALWINPUTSTAGE);
-		fillListBox(this.listboxmandInputInStage, roleCodes, checkMandInputInStageMap, 
+		fillListBox(this.listboxmandInputInStage, roleCodes, checkMandInputInStageMap,
 				FinanceConstants.PROCEDT_MANDINPUTSTAGE);
-		
+
 		doDesignByType(getFacilityReferenceDetail());
 		this.recordStatus.setValue(aFacilityReferenceDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -443,7 +436,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 
 		try {
 			if (this.finType.getValue() == null || StringUtils.isEmpty(this.finType.getValue())) {
-				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY", 
+				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_FacilityReferenceDetailDialog_FinType.value") }));
 			}
 			aFacilityReferenceDetail.setFinType(this.finType.getValue());
@@ -473,7 +466,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 				this.showInStage.setValue(getCheckedValues(listboxshowInStage));
 				// then check for empty
 				if (this.showInStage.getValue() == null || StringUtils.isEmpty(this.showInStage.getValue())) {
-					throw new WrongValueException(this.listboxshowInStage, 
+					throw new WrongValueException(this.listboxshowInStage,
 							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.showInStage.getLeft() }));
 				}
 			}
@@ -486,11 +479,10 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 				// Set checked values
 				this.allowInputInStage.setValue(getCheckedValues(listboxallowInputInStage));
 				// then check for empty
-				if (this.allowInputInStage.getValue() == null || 
-						StringUtils.isEmpty(this.allowInputInStage.getValue())) {
-					throw new WrongValueException(this.listboxallowInputInStage, 
-							Labels.getLabel("FIELD_NO_EMPTY", 
-									new String[] { this.allowInputInStage.getLeft() }));
+				if (this.allowInputInStage.getValue() == null
+						|| StringUtils.isEmpty(this.allowInputInStage.getValue())) {
+					throw new WrongValueException(this.listboxallowInputInStage,
+							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.allowInputInStage.getLeft() }));
 				}
 			}
 			aFacilityReferenceDetail.setAllowInputInStage(this.allowInputInStage.getValue());
@@ -502,11 +494,9 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 				// Set checked values
 				this.mandInputInStage.setValue(getCheckedValues(listboxmandInputInStage));
 				// then check for empty
-				if (this.mandInputInStage.getValue() == null || 
-						StringUtils.isEmpty(this.mandInputInStage.getValue())) {
-					throw new WrongValueException(this.listboxmandInputInStage, 
-							Labels.getLabel("FIELD_NO_EMPTY",
-									new String[] { this.mandInputInStage.getLeft() }));
+				if (this.mandInputInStage.getValue() == null || StringUtils.isEmpty(this.mandInputInStage.getValue())) {
+					throw new WrongValueException(this.listboxmandInputInStage,
+							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.mandInputInStage.getLeft() }));
 				}
 			}
 			aFacilityReferenceDetail.setMandInputInStage(this.mandInputInStage.getValue());
@@ -533,8 +523,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			if (!this.overRideValue.isReadonly() && this.overRide.isChecked()) {
 				if (this.overRideValue.getValue() == null || this.overRideValue.getValue() <= 0) {
 					throw new WrongValueException(this.overRideValue,
-							Labels.getLabel("FIELD_NO_EMPTY", 
-									new String[] { this.overRideValue.getLeft() }));
+							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.overRideValue.getLeft() }));
 				}
 			}
 			aFacilityReferenceDetail.setOverRideValue(this.overRideValue.getValue());
@@ -568,7 +557,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 
 		/* fill the components with the data */
 		doWriteBeanToComponents(aFacilityReferenceDetail);
-		
+
 		/* set Read only mode accordingly if the object is new or not. */
 		if (aFacilityReferenceDetail.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -593,7 +582,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		try {
 
 			getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.setVisible(false);
-			getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.getParent().appendChild(window_FacilityReferenceDetailDialogLink);
+			getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.getParent()
+					.appendChild(window_FacilityReferenceDetailDialogLink);
 
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -613,22 +603,28 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinType.value"),null,true));
+			this.finType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_FinType.value"), null, true));
 		}
 		if (!this.finRefType.isReadonly()) {
-			this.finRefType.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefType.value"), true));
+			this.finRefType.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefType.value"), true));
 		}
 		if (!this.finRefId.isReadonly()) {
-			this.finRefId.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefId.value"), true));
+			this.finRefId.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefId.value"), true));
 		}
 		if (!this.showInStage.isReadonly()) {
-			this.showInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_ShowInStage.value"),null,true));
+			this.showInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_ShowInStage.value"), null, true));
 		}
 		if (!this.mandInputInStage.isReadonly()) {
-			this.mandInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_MandInputInStage.value"),null,true));
+			this.mandInputInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_MandInputInStage.value"), null, true));
 		}
 		if (!this.allowInputInStage.isReadonly()) {
-			this.allowInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_AllowInputInStage.value"),null,true));
+			this.allowInputInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_AllowInputInStage.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -659,8 +655,9 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		final FacilityReferenceDetail aFacilityReferenceDetail = new FacilityReferenceDetail();
 		BeanUtils.copyProperties(getFacilityReferenceDetail(), aFacilityReferenceDetail);
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				this.label_FacilityReferenceDetailDialog_FinRefId.getValue()+" : "+aFacilityReferenceDetail.getLovDescRefDesc();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ this.label_FacilityReferenceDetailDialog_FinRefId.getValue() + " : "
+				+ aFacilityReferenceDetail.getLovDescRefDesc();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			aFacilityReferenceDetail.setRecordType(PennantConstants.RCD_DEL);
 			try {
@@ -697,10 +694,10 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			this.btnSearchCorpScoringGroup.setDisabled(true);
 			this.isActive.setDisabled(isReadOnly("FacilityReferenceDetailDialog_isActive"));
 		}
-		if (getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RTLSCORE ||
-				getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CORPSCORE ||
-				getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_STAGEACC ||
-				getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_TEMPLATE) {
+		if (getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RTLSCORE
+				|| getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CORPSCORE
+				|| getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_STAGEACC
+				|| getFacilityReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_TEMPLATE) {
 			doToggleInReadOnlyMode(this.listboxmandInputInStage, isReadOnly("FacilityReferenceDetailDialog_isActive"));
 		} else {
 			doToggleInReadOnlyMode(this.listboxshowInStage, isReadOnly("FacilityReferenceDetailDialog_isActive"));
@@ -737,7 +734,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -841,7 +838,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		return facilityReferenceDetailDialogCtrl;
 	}
 
-	public void setFacilityReferenceDetailDialogCtrl(FacilityReferenceDetailDialogCtrl facilityReferenceDetailDialogCtrl) {
+	public void setFacilityReferenceDetailDialogCtrl(
+			FacilityReferenceDetailDialogCtrl facilityReferenceDetailDialogCtrl) {
 		this.facilityReferenceDetailDialogCtrl = facilityReferenceDetailDialogCtrl;
 	}
 
@@ -867,7 +865,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.facilityReferenceDetail);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.facilityReferenceDetail.getFinRefDetailId());
@@ -915,7 +913,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 
 	public void onClick$btnSearchAggCode(Event event) {
 		logger.debug("Entering");
-		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "AgreementDefinition");
+		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink,
+				"AgreementDefinition");
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -932,9 +931,10 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 
 	public void onClick$btnSearchScoringGroup(Event event) {
 		logger.debug("Entering");
-		Filter[] filters=new Filter[1];
-		filters[0]=new Filter("CategoryType",PennantConstants.PFF_CUSTCTG_INDIV,Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "ScoringGroup", filters);
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CategoryType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "ScoringGroup",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -948,12 +948,13 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$btnSearchCorpScoringGroup(Event event) {
 		logger.debug("Entering");
-		Filter[] filters=new Filter[1];
-		filters[0]=new Filter("CategoryType",PennantConstants.PFF_CUSTCTG_CORP,Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "ScoringGroup", filters);
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CategoryType", PennantConstants.PFF_CUSTCTG_CORP, Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "ScoringGroup",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -967,12 +968,13 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$btnSearchAccounting(Event event) {
 		logger.debug("Entering");
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_STAGE, Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "AccountingSet", filter);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "AccountingSet",
+				filter);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -986,13 +988,14 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$btnSearchTemplate(Event event) {
 		logger.debug("Entering");
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("TemplateFor", NotificationConstants.TEMPLATE_FOR_CN, Filter.OP_EQUAL);
 		filters[1] = new Filter("Module", NotificationConstants.MAIL_MODULE_CAF, Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "MailTemplate",filters);
+		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "MailTemplate",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1053,9 +1056,9 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	public final class onCheckBoxCheked implements EventListener<Event> {
 
 		public onCheckBoxCheked() {
-			
+
 		}
-		
+
 		public void onEvent(Event event) throws Exception {
 			logger.debug("onEvent()");
 			Checkbox checkbox = (Checkbox) event.getTarget();
@@ -1088,9 +1091,9 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	private void doDesignByType(FacilityReferenceDetail finRefDetail) {
 		logger.debug("Entering");
 		switch (finRefDetail.getFinRefType()) {
-		
+
 		case FinanceConstants.PROCEDT_CHECKLIST:
-			
+
 			// For validations
 			this.showInStage.setReadonly(false);
 			this.allowInputInStage.setReadonly(false);
@@ -1099,258 +1102,283 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FacilityReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchQuestionId.setVisible(true);// show
 
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Question.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Question.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowDoubleListbox.setVisible(true);// Show
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
-			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
-			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+			this.label_FacilityReferenceDetailDialog_ShowInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.label_FacilityReferenceDetailDialog_AllowInputInStage
+					.setValue(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
+			this.label_FacilityReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.listheadAllowInputInStage.setLabel(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
+			this.listheadAllowInputInStage
+					.setLabel(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+
 			doEnableByChecked(this.listboxallowInputInStage);
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityCheckListList.title"));
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityCheckListList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_AGREEMENT:
-			
+
 			// For validations
 			this.showInStage.setReadonly(false);
 			this.allowInputInStage.setReadonly(false);
 			this.mandInputInStage.setReadonly(true);// not required
-			
+
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.mandInputInStage.setLeft("");
-			
+
 			// LOV List
 			this.btnSearchAggCode.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Agreement.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Agreement.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowDoubleListbox.setVisible(true);// Show
 
 			// labels of list boxes
-			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
+			this.label_FacilityReferenceDetailDialog_ShowInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.label_FacilityReferenceDetailDialog_AllowInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
 			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue("");// not required
-			
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.listheadAllowInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
 			this.listheadMandInputInStage.setLabel("");// not required
-			
+
 			doEnableByChecked(this.listboxallowInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityAgreementList.title"));
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityAgreementList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_ELIGIBILITY:
-			
+
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.mandInputInStage.setLeft("");
 			// For validations
 			this.showInStage.setReadonly(false);
-			this.allowInputInStage.setReadonly(false); 
+			this.allowInputInStage.setReadonly(false);
 			this.mandInputInStage.setReadonly(true);
-			
+
 			this.overRide.setDisabled(false);
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FacilityReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.mandInputInStage.setLeft("");
-			
+
 			// LOV List
 			this.btnSearchElgRule.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_Eligibility.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinReferDialogLink_Eligibility.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowDoubleListbox.setVisible(true);// Show
 
-			
 			// labels of list boxes
-			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
+			this.label_FacilityReferenceDetailDialog_ShowInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.label_FacilityReferenceDetailDialog_AllowInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
 			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue("");// not required
-			
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.listheadAllowInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
 			this.listheadMandInputInStage.setLabel("");// not required
-			
+
 			doEnableByChecked(this.listboxallowInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityAgreementList.title"));
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityAgreementList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_RTLSCORE:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchScoringGroup.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FacilityReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityScoringList.title"));
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityScoringList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_CORPSCORE:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchCorpScoringGroup.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FacilityReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityCorpScoringList.title"));
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityCorpScoringList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_STAGEACC:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchAccounting.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Accounting.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Accounting.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FacilityReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityAccountingList.title"));			
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityAccountingList.title"));
 			CheckOverride();
 			break;
-			
+
 		case FinanceConstants.PROCEDT_TEMPLATE:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchTemplate.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FacilityReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Template.value"));
-			
+			this.label_FacilityReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Template.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FacilityReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FacilityReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FacilityReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FacilityReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FacilityReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FacilityMailTemplateList.title"));			
+			this.label_FacilityReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FacilityMailTemplateList.title"));
 			CheckOverride();
 			break;
-			
+
 		default:
 			break;
 		}
@@ -1361,7 +1389,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	private void processFinRefDetails(FacilityReferenceDetail facilityReferenceDetail) throws InterruptedException {
 		logger.debug("Entering");
 		if (facilityReferenceDetail.getRecordType() != null) {
-			if (facilityReferenceDetail.getRecordType().equals(PennantConstants.RCD_ADD) || facilityReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
+			if (facilityReferenceDetail.getRecordType().equals(PennantConstants.RCD_ADD)
+					|| facilityReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
 					|| facilityReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				if ("Save".equals(facilityReferenceDetail.getUserAction())) {
 					facilityReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1380,7 +1409,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			processAddOrUpdate(facilityReferenceDetail, getFacilityReferenceDetailDialogCtrl().listBoxFinanceCheckList);
 			break;
 		case FinanceConstants.PROCEDT_AGREEMENT:
-			processAddOrUpdate(facilityReferenceDetail, getFacilityReferenceDetailDialogCtrl().listboxFinanceAgreementLink);
+			processAddOrUpdate(facilityReferenceDetail,
+					getFacilityReferenceDetailDialogCtrl().listboxFinanceAgreementLink);
 			break;
 		case FinanceConstants.PROCEDT_ELIGIBILITY:
 			processAddOrUpdate(facilityReferenceDetail, getFacilityReferenceDetailDialogCtrl().listBoxEligibilityRules);
@@ -1418,7 +1448,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 					newFinrefDet.setNewRecord(false);
 					newFinrefDet.setFinRefDetailId(finRefDet.getFinRefDetailId());
 					newFinrefDet.setVersion(finRefDet.getVersion());
-					
+
 					FacilityReferenceDetail befImage = new FacilityReferenceDetail();
 					BeanUtils.copyProperties(finRefDet.getBefImage(), befImage);
 					newFinrefDet.setBefImage(befImage);
@@ -1437,8 +1467,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			this.window_FacilityReferenceDetailDialogLink.onClose();
 			getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.setVisible(true);
 		}
-		
-		if("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1){
+
+		if ("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1) {
 			getFacilityReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -1482,20 +1512,21 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		for (int i = 0; i < avlFinRef.size(); i++) {
 			FacilityReferenceDetail finRefDet = (FacilityReferenceDetail) avlFinRef.get(i).getAttribute("data");
 			if (finRefDet.getFinRefId() == newFinrefDet.getFinRefId()) {
-				if (finRefDet.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED) ||
-						(finRefDet.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD) && !finRefDet.isNewRecord())) {
+				if (finRefDet.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)
+						|| (finRefDet.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)
+								&& !finRefDet.isNewRecord())) {
 					listbox.removeItemAt(avlFinRef.get(i).getIndex());
 					List<FacilityReferenceDetail> finRefDetailList = new ArrayList<FacilityReferenceDetail>();
 					finRefDetailList.add(newFinrefDet);
 					getFacilityReferenceDetailDialogCtrl().dofillListbox(finRefDetailList, listbox);
-					if("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1){
+					if ("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1) {
 						getFacilityReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(false);
-					}else{
+					} else {
 						getFacilityReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(true);
 					}
 				} else {
 					listbox.removeItemAt(avlFinRef.get(i).getIndex());
-					if("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getItemCount() == 0){
+					if ("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getItemCount() == 0) {
 						getFacilityReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(true);
 					}
 				}

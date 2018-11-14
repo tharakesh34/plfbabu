@@ -84,22 +84,20 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/WeekendMaster/weekendMasterDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/WeekendMaster/weekendMasterDialog.zul file.
  */
 public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	private static final long serialVersionUID = -4145707224044632347L;
 	private static final Logger logger = Logger.getLogger(WeekendMasterDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_WeekendMasterDialog; // autowired
 
@@ -114,7 +112,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	// per param
 
 	private transient boolean validationOn;
-	
+
 	private List<ValueLabel> weekendList = null;
 	protected Paging paging;
 	protected PagedListWrapper<ValueLabel> listWrapper;
@@ -139,9 +137,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected WeekendMaster object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected WeekendMaster object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -223,8 +220,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering doCheckRights()");
@@ -309,13 +305,13 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	 */
 	private void doCancel() {
 		logger.debug("Entering doCancel()");
-		
+
 		doWriteBeanToComponents(this.weekendMaster.getBefImage());
 		doReadOnly();
-		
+
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving doCancel()");
 	}
 
@@ -381,8 +377,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 						new String[] { Labels.getLabel("label_WeekendMasterDialog_Weekend.value") }));
 			}
 			if (this.weekendText.getValue().endsWith(",")) {
-				aWeekendMaster.setWeekend(this.weekendText.getValue().substring(0,
-						this.weekendText.getValue().length() - 1));
+				aWeekendMaster
+						.setWeekend(this.weekendText.getValue().substring(0, this.weekendText.getValue().length() - 1));
 			} else {
 				aWeekendMaster.setWeekend(this.weekendText.getValue());
 			}
@@ -408,8 +404,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aWeekendMaster
 	 * @throws Exception
@@ -444,7 +439,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aWeekendMaster);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -463,14 +458,14 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		setValidationOn(true);
 
 		if (!this.weekendCode.isReadonly()) {
-			this.weekendCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_WeekendMasterDialog_WeekendCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.weekendCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_WeekendMasterDialog_WeekendCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		if (!this.weekendDesc.isReadonly()) {
-			this.weekendDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_WeekendMasterDialog_WeekendDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.weekendDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_WeekendMasterDialog_WeekendDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving doSetValidation()");
 	}
@@ -502,9 +497,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				Labels.getLabel("label_CountryDialog_CountryCode.value")+" : "+aWeekendMaster.getWeekendCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CountryDialog_CountryCode.value") + " : " + aWeekendMaster.getWeekendCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aWeekendMaster.getRecordType())) {
 				aWeekendMaster.setVersion(aWeekendMaster.getVersion() + 1);
@@ -785,8 +779,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_WeekendMasterDialog, auditHeader);
 						return processCompleted;
 					}
@@ -837,7 +831,6 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		logger.debug("Leaving ");
 	}
 
-	
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.weekendMaster);
 	}
@@ -847,7 +840,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.weekendMaster.getWeekendCode());

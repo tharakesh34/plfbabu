@@ -54,17 +54,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class Religion extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private long religionId = Long.MIN_VALUE;
-private String religionCode;
-private String religionDesc;
-private boolean active;
-	private boolean newRecord=false;
+	private String religionCode;
+	private String religionDesc;
+	private boolean active;
+	private boolean newRecord = false;
 	private String lovValue;
 	private Religion befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -77,47 +77,52 @@ private boolean active;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return religionId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.religionId = id;
 	}
+
 	public long getReligionId() {
 		return religionId;
 	}
+
 	public void setReligionId(long religionId) {
 		this.religionId = religionId;
 	}
-	
+
 	public String getReligionCode() {
 		return religionCode;
 	}
+
 	public void setReligionCode(String religionCode) {
 		this.religionCode = religionCode;
 	}
-	
+
 	public String getReligionDesc() {
 		return religionDesc;
 	}
+
 	public void setReligionDesc(String religionDesc) {
 		this.religionDesc = religionDesc;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -125,7 +130,7 @@ private boolean active;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -134,19 +139,19 @@ private boolean active;
 		this.lovValue = lovValue;
 	}
 
-	public Religion getBefImage(){
+	public Religion getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(Religion beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Religion beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

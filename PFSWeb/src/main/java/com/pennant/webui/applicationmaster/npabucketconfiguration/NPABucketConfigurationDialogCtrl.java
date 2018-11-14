@@ -79,24 +79,24 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfiguration> {
 
-	private static final long							serialVersionUID	= 1L;
-	private static final Logger							logger				= Logger.getLogger(NPABucketConfigurationDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(NPABucketConfigurationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * 
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window									window_NPABucketConfigurationDialog;
-	protected ExtendedCombobox							productCode;
-	protected ExtendedCombobox							bucketID;
-	protected Intbox									dueDays;
-	protected Checkbox									suspendProfit;
-	protected Row										row2;
-	private NPABucketConfiguration						nPABucketConfiguration;														// overhanded per param
+	protected Window window_NPABucketConfigurationDialog;
+	protected ExtendedCombobox productCode;
+	protected ExtendedCombobox bucketID;
+	protected Intbox dueDays;
+	protected Checkbox suspendProfit;
+	protected Row row2;
+	private NPABucketConfiguration nPABucketConfiguration; // overhanded per param
 
-	private transient NPABucketConfigurationListCtrl	nPABucketConfigurationListCtrl;												// overhanded per param
-	private transient NPABucketConfigurationService		nPABucketConfigurationService;
+	private transient NPABucketConfigurationListCtrl nPABucketConfigurationListCtrl; // overhanded per param
+	private transient NPABucketConfigurationService nPABucketConfigurationService;
 
 	/**
 	 * default constructor.<br>
@@ -177,7 +177,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		this.productCode.setValueColumn("ProductCode");
 		this.productCode.setDescColumn("ProductDesc");
 		this.productCode.setValidateColumns(new String[] { "ProductCode" });
-				
+
 		this.bucketID.setModuleName("NPABucket");
 		this.bucketID.setMandatoryStyle(true);
 		this.bucketID.setValueColumn("BucketCode");
@@ -309,10 +309,10 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		this.productCode.setValue(aNPABucketConfiguration.getProductCode());
 		this.dueDays.setValue(aNPABucketConfiguration.getDueDays());
 		this.suspendProfit.setChecked(aNPABucketConfiguration.isSuspendProfit());
-		
+
 		this.bucketID.setObject(new NPABucket(aNPABucketConfiguration.getBucketID()));
-		this.bucketID.setValue(aNPABucketConfiguration.getBucketCode(),aNPABucketConfiguration.getBucketIDName());
-		
+		this.bucketID.setValue(aNPABucketConfiguration.getBucketCode(), aNPABucketConfiguration.getBucketIDName());
+
 		if (aNPABucketConfiguration.isNewRecord()) {
 			this.productCode.setDescription("");
 		} else {
@@ -349,7 +349,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 			aNPABucketConfiguration.setBucketID(nPABucket.getBucketID());
 			aNPABucketConfiguration.setBucketCode(nPABucket.getBucketCode());
 			aNPABucketConfiguration.setBucketIDName(nPABucket.getBucketDesc());
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -429,18 +429,16 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		logger.debug(Literal.LEAVING);
 
 		if (!this.productCode.isReadonly()) {
-			this.productCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_NPABucketConfigurationDialog_ProductCode.value"),
-					null, true));
+			this.productCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_NPABucketConfigurationDialog_ProductCode.value"), null, true));
 		}
 		if (!this.bucketID.isReadonly()) {
-			this.bucketID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_NPABucketConfigurationDialog_BucketID.value"),
-					null, true));
+			this.bucketID.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_NPABucketConfigurationDialog_BucketID.value"), null, true));
 		}
 		if (!this.dueDays.isReadonly()) {
-			this.dueDays.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_NPABucketConfigurationDialog_DueDays.value"), true, false, 0));
+			this.dueDays.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_NPABucketConfigurationDialog_DueDays.value"), true, false, 0));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -494,23 +492,14 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
-	/*public void onFulfill$bucketID(Event event) {
-		logger.debug("Entering" + event.toString());
-		Object dataObject = bucketID.getObject();
-		if (dataObject instanceof String) {
-			this.bucketID.setValue(dataObject.toString());
-			this.bucketID.setDescription("");
-		} else {
-			NPABucket details = (NPABucket) dataObject;
-			if (details != null) {
-				this.bucketID.setAttribute("BucketID", details.getBucketID());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}*/
-	
+
+	/*
+	 * public void onFulfill$bucketID(Event event) { logger.debug("Entering" + event.toString()); Object dataObject =
+	 * bucketID.getObject(); if (dataObject instanceof String) { this.bucketID.setValue(dataObject.toString());
+	 * this.bucketID.setDescription(""); } else { NPABucket details = (NPABucket) dataObject; if (details != null) {
+	 * this.bucketID.setAttribute("BucketID", details.getBucketID()); } } logger.debug("Leaving" + event.toString()); }
+	 */
+
 	/**
 	 * Deletes a NPABucketConfiguration object from database.<br>
 	 * 
@@ -536,8 +525,8 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 					aNPABucketConfiguration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aNPABucketConfiguration.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-							aNPABucketConfiguration.getNextTaskId(), aNPABucketConfiguration);
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aNPABucketConfiguration.getNextTaskId(),
+							aNPABucketConfiguration);
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
@@ -817,8 +806,8 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_NPABucketConfigurationDialog, auditHeader);
 						return processCompleted;
 					}

@@ -159,93 +159,93 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  * This is the controller class for the /WEB-INF/pages/configuration/VASRecording/vASRecordingDialog.zul file. <br>
  */
 public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
-	private static final long								serialVersionUID		= 1L;
-	private static final Logger								logger					= Logger.getLogger(VASRecordingDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(VASRecordingDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window										window_VASRecordingDialog;
-	protected Label											windowTitle;
-	protected ExtendedCombobox								productCode;
-	protected Combobox										postingAgainst;
-	protected Textbox										primaryLinkRef;
-	protected Textbox										vasReference;
-	protected CurrencyBox									fee;
-	protected CurrencyBox									renewalFee;
-	protected Combobox										feePaymentMode;
-	protected Space											space_FeePaymentMode;
-	protected Datebox										valueDate;
-	protected Datebox										accrualTillDate;
-	protected Datebox										recurringDate;
-	protected ExtendedCombobox								dsaId;
-	protected ExtendedCombobox								dmaId;
-	protected ExtendedCombobox								fulfilOfficerId;
-	protected ExtendedCombobox								referralId;
-	protected Button										viewInfo;
-	protected Button										btnSearchSelection;
-	protected Row											row_Vasfee;
-	
-	private VASRecording									vASRecording;
-	private Textbox											enquiryType;
-	private transient VASRecordingListCtrl					vASRecordingListCtrl;
-	private transient FinVasRecordingDialogCtrl				finVasRecordingDialogCtrl;
-	private VASConfiguration								vASConfiguration		= null;
-	
+	protected Window window_VASRecordingDialog;
+	protected Label windowTitle;
+	protected ExtendedCombobox productCode;
+	protected Combobox postingAgainst;
+	protected Textbox primaryLinkRef;
+	protected Textbox vasReference;
+	protected CurrencyBox fee;
+	protected CurrencyBox renewalFee;
+	protected Combobox feePaymentMode;
+	protected Space space_FeePaymentMode;
+	protected Datebox valueDate;
+	protected Datebox accrualTillDate;
+	protected Datebox recurringDate;
+	protected ExtendedCombobox dsaId;
+	protected ExtendedCombobox dmaId;
+	protected ExtendedCombobox fulfilOfficerId;
+	protected ExtendedCombobox referralId;
+	protected Button viewInfo;
+	protected Button btnSearchSelection;
+	protected Row row_Vasfee;
+
+	private VASRecording vASRecording;
+	private Textbox enquiryType;
+	private transient VASRecordingListCtrl vASRecordingListCtrl;
+	private transient FinVasRecordingDialogCtrl finVasRecordingDialogCtrl;
+	private VASConfiguration vASConfiguration = null;
+
 	// ServiceDAOs / Domain Classes
-	private transient VASRecordingService					vASRecordingService;
-	private transient CollateralSetupService				collateralSetupService;
-	private transient FinanceDetailService					financeDetailService;
-	private transient CustomerDetailsService				customerDetailsService;
-	protected JdbcSearchObject<Customer>					custCIFSearchObject;
-	private Window											mainWindow				= null;
+	private transient VASRecordingService vASRecordingService;
+	private transient CollateralSetupService collateralSetupService;
+	private transient FinanceDetailService financeDetailService;
+	private transient CustomerDetailsService customerDetailsService;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private Window mainWindow = null;
 
-	protected Tabbox										tabBoxIndexCenter;
-	protected Tabs											tabsIndexCenter;
-	protected Tabpanels										tabpanelsBoxIndexCenter;
-	protected Tab											basicDetailsTab;
-	protected Tab											extendedDetailsTab;														//NOt required
-	protected Tabpanel										extendedFieldTabpanel;														//NOt required
-	protected Component										checkListChildWindow;
-	private transient ExtendedFieldRenderDialogCtrl			extendedFieldRenderDialogCtrl;
-	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl;
-	private transient AccountingDetailDialogCtrl 			accountingDetailDialogCtrl;
-	private transient AgreementDetailDialogCtrl				agreementDetailDialogCtrl;
-	private transient FinanceCheckListReferenceDialogCtrl	financeCheckListReferenceDialogCtrl;
-	protected String										selectMethodName		= "onSelectTab";
-	private String											moduleType				= "";
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab basicDetailsTab;
+	protected Tab extendedDetailsTab; //NOt required
+	protected Tabpanel extendedFieldTabpanel; //NOt required
+	protected Component checkListChildWindow;
+	private transient ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl;
+	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
+	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
+	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl;
+	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
+	protected String selectMethodName = "onSelectTab";
+	private String moduleType = "";
 
-	private List<FinanceCheckListReference>					vasChecklists			= null;
-	private HashMap<Long, Long>								selectedAnsCountMap		= null;
-	protected Map<String, Object>							flagTypeDataMap			= new HashMap<String, Object>();
-	private ExtendedFieldsGenerator							generator;
-	protected Tabpanel										extendedFieldTabPanel;
-	private ScriptValidationService							scriptValidationService;
-	private String											preValidationScript;
-	private String											postValidationScript;
-	private ExtendedFieldHeader								extendedFieldHeader;
-	private ExtendedFieldRender								extendedFieldRender;
-	
-	private FinanceReferenceDetailService					financeReferenceDetailService;			
-	private CustomerEMailDAO 								customerEMailDAO;		
+	private List<FinanceCheckListReference> vasChecklists = null;
+	private HashMap<Long, Long> selectedAnsCountMap = null;
+	protected Map<String, Object> flagTypeDataMap = new HashMap<String, Object>();
+	private ExtendedFieldsGenerator generator;
+	protected Tabpanel extendedFieldTabPanel;
+	private ScriptValidationService scriptValidationService;
+	private String preValidationScript;
+	private String postValidationScript;
+	private ExtendedFieldHeader extendedFieldHeader;
+	private ExtendedFieldRender extendedFieldRender;
+
+	private FinanceReferenceDetailService financeReferenceDetailService;
+	private CustomerEMailDAO customerEMailDAO;
 	private NotificationService notificationService;
-	private EventManager 									eventManager;
-	
-	private boolean 										financeVas = false;
-	private boolean 										feeEditable = false;
-	private boolean 										newRecord = false;
-	private List<VASRecording> 								vasRecordings;
-	private List<FinFeeDetail>								finFeeDetailsList = new ArrayList<FinFeeDetail>();
-	
-	private AccountEngineExecution 							engineExecution;
+	private EventManager eventManager;
+
+	private boolean financeVas = false;
+	private boolean feeEditable = false;
+	private boolean newRecord = false;
+	private List<VASRecording> vasRecordings;
+	private List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
+
+	private AccountEngineExecution engineExecution;
 	private boolean isAccountingExecuted = true;
 	private boolean isCancelProcess = false;
-	protected Row 											row_VASPaid;
-	protected CurrencyBox									paidAmt;
-	protected CurrencyBox									waivedAmt;
-	
+	protected Row row_VASPaid;
+	protected CurrencyBox paidAmt;
+	protected CurrencyBox waivedAmt;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -274,51 +274,51 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		setPageComponents(window_VASRecordingDialog);
 
 		try {
-			
+
 			if (arguments.containsKey("module")) {
 				String module = (String) arguments.get("module");
-				if (StringUtils.equals("E" , module)) {
+				if (StringUtils.equals("E", module)) {
 					enqiryModule = true;
 					moduleType = PennantConstants.MODULETYPE_ENQ;
-				}else if (StringUtils.equals("C" , module)) {
+				} else if (StringUtils.equals("C", module)) {
 					isCancelProcess = true;
 				}
 			}
-			
+
 			// Store the before image.
 			if (arguments.containsKey("vASRecording")) {
 				this.vASRecording = (VASRecording) arguments.get("vASRecording");
 				VASRecording befImage = new VASRecording();
 				BeanUtils.copyProperties(this.vASRecording, befImage);
 				this.vASRecording.setBefImage(befImage);
-				
+
 				setVASRecording(this.vASRecording);
 			} else {
 				setVASRecording(null);
 			}
-			
-			if(arguments.containsKey("finVasRecordingDialogCtrl")){
+
+			if (arguments.containsKey("finVasRecordingDialogCtrl")) {
 
 				setFinVasRecordingDialogCtrl((FinVasRecordingDialogCtrl) arguments.get("finVasRecordingDialogCtrl"));
 				setFinanceVas(true);
-				
+
 				if (arguments.containsKey("feeEditable")) {
 					setFeeEditable((boolean) arguments.get("feeEditable"));
-				} 
+				}
 
-				if(arguments.containsKey("newRecord")){
+				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);
 					setFeeEditable(true);
-				}else{
+				} else {
 					setNewRecord(false);
 				}
 				this.vASRecording.setWorkflowId(0);
-				if(arguments.containsKey("roleCode")){
+				if (arguments.containsKey("roleCode")) {
 					setRole((String) arguments.get("roleCode"));
 				}
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			// Render the page and display the data.
 			if (!enqiryModule) {
 				doLoadWorkFlow(this.vASRecording.isWorkflow(), this.vASRecording.getWorkflowId(),
@@ -328,7 +328,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-			} 
+			}
 
 			// Get the required arguments.
 			if (arguments.containsKey("vASRecordingListCtrl")) {
@@ -336,12 +336,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			} else {
 				setVASRecordingListCtrl(null);
 			}
-			
+
 			// set Field Properties
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(getVASRecording());
-			
+
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -375,11 +375,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnDelete(Event event)
+			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		doDelete();
 	}
 
@@ -390,7 +391,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
-	 * @throws ScriptException 
+	 * @throws ScriptException
 	 */
 	public void onClick$btnCancel(Event event) throws ParseException, InterruptedException, ScriptException {
 		doCancel();
@@ -443,9 +444,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnCancel.setVisible(true);
 			this.btnSearchSelection.setDisabled(true);
 		}
-		if(isFinanceVas()){
+		if (isFinanceVas()) {
 			this.row_VASPaid.setVisible(false);
-		}else{
+		} else {
 			this.row_VASPaid.setVisible(true);
 		}
 		this.productCode.setReadonly(true);
@@ -460,9 +461,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.fulfilOfficerId.setReadonly(isReadOnly("VASRecordingDialog_FulfilOfficerId"));
 		this.referralId.setReadonly(isReadOnly("VASRecordingDialog_ReferralId"));
 		this.waivedAmt.setReadonly(isReadOnly("VASRecordingDialog_WaivedAmt"));
-		if(isFinanceVas()){
+		if (isFinanceVas()) {
 			this.viewInfo.setVisible(false);
-		}else{
+		} else {
 			this.viewInfo.setVisible(false);
 		}
 
@@ -477,19 +478,19 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			if(isFinanceVas()){
-				if(enqiryModule){
+			if (isFinanceVas()) {
+				if (enqiryModule) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					this.btnCancel.setVisible(false);
-				}else if (isNewRecord()){
+				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					this.btnCancel.setVisible(false);
-				}else{
+				} else {
 					//this.btnCtrl.setWFBtnStatus_Edit(isFinanceVas());
 					this.btnCancel.setVisible(false);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				this.btnCancel.setVisible(true);
 			}
@@ -502,19 +503,20 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Deletes a VASConfiguration object from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private void doDelete() throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	private void doDelete()
+			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+
 		final VASRecording aVASRecording = new VASRecording();
 		BeanUtils.copyProperties(getVASRecording(), aVASRecording);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-		Labels.getLabel("label_VASReference")	+" : "+ aVASRecording.getVasReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_VASReference") + " : " + aVASRecording.getVasReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aVASRecording.getRecordType()).equals("")) {
 				aVASRecording.setVersion(aVASRecording.getVersion() + 1);
@@ -523,26 +525,27 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					aVASRecording.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aVASRecording.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVASRecording.getNextTaskId(), aVASRecording);
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVASRecording.getNextTaskId(),
+							aVASRecording);
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(isFinanceVas()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  processVasRecords(aVASRecording,tranType);
+				if (isFinanceVas()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = processVasRecords(aVASRecording, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_VASRecordingDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
-						
+
 						removeFeesFromFeeList(aVASRecording.getVasReference());
 						// send the data back to customer
 						closeDialog();
-					}	
+					}
 
-				}else if (doProcess(aVASRecording, tranType)) {
+				} else if (doProcess(aVASRecording, tranType)) {
 					refreshList();
 					closeDialog();
 				}
@@ -598,7 +601,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ParseException
-	 * @throws ScriptException 
+	 * @throws ScriptException
 	 * 
 	 */
 	private void doCancel() throws ParseException, InterruptedException, ScriptException {
@@ -628,7 +631,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		doSetValidation();
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aVASRecording, true);
-		 
+
 		//Finance CheckList Details Saving
 		if (checkListChildWindow != null) {
 			boolean validationSuccess = doSave_CheckList(aVASRecording, false);
@@ -651,7 +654,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
-		
+
 		// doStoreInitValues();
 		isNew = aVASRecording.isNew();
 		String tranType = "";
@@ -668,27 +671,27 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 		} else {
-			
-			if(isFinanceVas()){
-				if(isNewRecord()){
+
+			if (isFinanceVas()) {
+				if (isNewRecord()) {
 					aVASRecording.setVersion(1);
 					aVASRecording.setRecordType(PennantConstants.RCD_ADD);
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aVASRecording.getRecordType())){
-					aVASRecording.setVersion(aVASRecording.getVersion()+1);
+				if (StringUtils.isBlank(aVASRecording.getRecordType())) {
+					aVASRecording.setVersion(aVASRecording.getVersion() + 1);
 					aVASRecording.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aVASRecording.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aVASRecording.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
+			} else {
 				aVASRecording.setVersion(aVASRecording.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
@@ -699,16 +702,16 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		// save it to database
 		try {
-			
-			if(isFinanceVas()){
+
+			if (isFinanceVas()) {
 				aVASRecording.setFeeAccounting(vASConfiguration.getFeeAccounting());
 				aVASRecording.setFinanceProcess(true);
-				AuditHeader auditHeader =  processVasRecords(aVASRecording,tranType);
+				AuditHeader auditHeader = processVasRecords(aVASRecording, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_VASRecordingDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
-					if(isFeeEditable()){
+					if (isFeeEditable()) {
 						FinFeeDetail finFeeDetail = new FinFeeDetail();
 						finFeeDetail.setVasReference(aVASRecording.getVasReference());
 						finFeeDetail.setOriginationFee(true);
@@ -726,49 +729,49 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
 						finFeeDetail.setAlwModifyFee(vASConfiguration.isAllowFeeToModify());
 						finFeeDetail.setAlwModifyFeeSchdMthd(true);
-						
+
 						finFeeDetail.setTaxComponent("");
 						finFeeDetail.setTaxApplicable(false);
-						
+
 						finFeeDetail.setActualAmountOriginal(aVASRecording.getFee());
 						finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
 						finFeeDetail.setActualAmount(aVASRecording.getFee());
-						
+
 						finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
 						finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 						finFeeDetail.setRemainingFee(aVASRecording.getFee());
-						
-						if(!StringUtils.equals(aVASRecording.getFeePaymentMode(), PennantConstants.List_Select)){
+
+						if (!StringUtils.equals(aVASRecording.getFeePaymentMode(), PennantConstants.List_Select)) {
 							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PAID_BY_CUSTOMER);
 							//finFeeDetail.setPaidAmount(aVASRecording.getFee());
 							//finFeeDetail.setRemainingFee(BigDecimal.ZERO);
-							
+
 							finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
 							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
 							finFeeDetail.setPaidAmount(aVASRecording.getFee());
-							
+
 							finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
 						}
-						
+
 						finFeeDetail.setNetAmountOriginal(aVASRecording.getFee());
 						finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
 						finFeeDetail.setNetAmount(aVASRecording.getFee());
-						
+
 						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
 						finFeeDetailsList.add(finFeeDetail);
-						
+
 						appendFeesToFeeList(finFeeDetail);
-						
+
 					}
 					aVASRecording.setFinFeeDetailsList(finFeeDetailsList);
-					
+
 					// send the data back to customer
 					closeDialog();
-				}	
+				}
 
-			}else if (doProcess(aVASRecording, tranType)) {
+			} else if (doProcess(aVASRecording, tranType)) {
 
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
@@ -783,8 +786,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 					try {
 						notificationService.sendNotifications(notification, aVASRecording,
-								aVASRecording.getProductCode(),
-								null);
+								aVASRecording.getProductCode(), null);
 					} catch (Exception e) {
 						logger.debug(e);
 					}
@@ -792,22 +794,25 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 
 				// User Notifications Message/Alert
-				try{
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) && !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) &&
-							!this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+				try {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 						// Send message Notification to Users
 						String reference = aVASRecording.getVasReference();
 						String nextRoleCodes = aVASRecording.getNextRoleCode();
-						if(StringUtils.isNotEmpty(nextRoleCodes)){
+						if (StringUtils.isNotEmpty(nextRoleCodes)) {
 							Notify notify = Notify.valueOf("ROLE");
-							String[] to=nextRoleCodes.split(",");					
-							if(StringUtils.isNotEmpty(reference)){
-								if(!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aVASRecording.getRecordStatus())){
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE")+" with Reference"+":"+reference, notify,to);
+							String[] to = nextRoleCodes.split(",");
+							if (StringUtils.isNotEmpty(reference)) {
+								if (!PennantConstants.RCD_STATUS_CANCELLED
+										.equalsIgnoreCase(aVASRecording.getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, notify, to);
 								}
 							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify,to);
-							} 
+								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -818,9 +823,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				refreshList();
 
 				// Confirmation message
-				String msg = PennantApplicationUtil.getSavingStatus(aVASRecording.getRoleCode(),aVASRecording.getNextRoleCode(), 
-						aVASRecording.getVasReference(), " Vas ", aVASRecording.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+				String msg = PennantApplicationUtil.getSavingStatus(aVASRecording.getRoleCode(),
+						aVASRecording.getNextRoleCode(), aVASRecording.getVasReference(), " Vas ",
+						aVASRecording.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 
 				closeDialog();
 			}
@@ -842,13 +848,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType)  throws InterfaceException {
+	private boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -905,7 +911,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			aVASRecording.setNextRoleCode(nextRoleCode);
 
 			//Extended Field details
-			if(aVASRecording.getExtendedFieldRender() !=null){
+			if (aVASRecording.getExtendedFieldRender() != null) {
 				ExtendedFieldRender details = aVASRecording.getExtendedFieldRender();
 				details.setReference(aVASRecording.getVasReference());
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -951,7 +957,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					}
 				}
 			}
-			
+
 			//CheckList details
 			if (aVASRecording.getVasCheckLists() != null && !aVASRecording.getVasCheckLists().isEmpty()) {
 				for (FinanceCheckListReference details : aVASRecording.getVasCheckLists()) {
@@ -972,7 +978,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					}
 				}
 			}
-			
+
 			auditHeader = getAuditHeader(aVASRecording, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aVASRecording);
@@ -1006,9 +1012,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param method
 	 *            (String)
 	 * @return boolean
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
@@ -1038,8 +1044,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_VASRecordingDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1066,75 +1072,77 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Method for Processing VAS Records List on Finance Origination Process
+	 * 
 	 * @param aVASRecording
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader processVasRecords(VASRecording aVASRecording,String tranType){
-		boolean recordAdded=false;
+	private AuditHeader processVasRecords(VASRecording aVASRecording, String tranType) {
+		boolean recordAdded = false;
 
-		AuditHeader auditHeader= getAuditHeader(aVASRecording, tranType);
+		AuditHeader auditHeader = getAuditHeader(aVASRecording, tranType);
 		vasRecordings = new ArrayList<VASRecording>();
 
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
 
 		valueParm[0] = String.valueOf(aVASRecording.getProductCode());
-		errParm[0] = PennantJavaUtil.getLabel("label_VASCode") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_VASCode") + ":" + valueParm[0];
 
-		if(getFinVasRecordingDialogCtrl().getVasRecordings() != null && !getFinVasRecordingDialogCtrl().getVasRecordings().isEmpty()){
+		if (getFinVasRecordingDialogCtrl().getVasRecordings() != null
+				&& !getFinVasRecordingDialogCtrl().getVasRecordings().isEmpty()) {
 			for (int i = 0; i < getFinVasRecordingDialogCtrl().getVasRecordings().size(); i++) {
 				VASRecording vasRecording = getFinVasRecordingDialogCtrl().getVasRecordings().get(i);
 
 				// Both Current and Existing list Vas Reference same
-				if(StringUtils.equals(vasRecording.getProductCode(),aVASRecording.getProductCode())){ 
+				if (StringUtils.equals(vasRecording.getProductCode(), aVASRecording.getProductCode())) {
 
-					if(isNewRecord()){
+					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						if (aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 							aVASRecording.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							vasRecordings.add(aVASRecording);
-						}else if(aVASRecording.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+						} else if (aVASRecording.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aVASRecording.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							vasRecordings.add(aVASRecording);
-						}else if(aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
+						} else if (aVASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
 							for (int j = 0; j < getFinVasRecordingDialogCtrl().getVasRecordings().size(); j++) {
-								VASRecording recording =  getFinVasRecordingDialogCtrl().getVasRecordings().get(j);
-								if(StringUtils.equals(recording.getProductCode(),aVASRecording.getProductCode())){
+								VASRecording recording = getFinVasRecordingDialogCtrl().getVasRecordings().get(j);
+								if (StringUtils.equals(recording.getProductCode(), aVASRecording.getProductCode())) {
 									vasRecordings.add(recording);
 								}
 							}
 						}
-					}else{
+					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							vasRecordings.add(vasRecording);
 						}
 					}
-				}else{
+				} else {
 					vasRecordings.add(vasRecording);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			vasRecordings.add(aVASRecording);
 		}
-		
+
 		//Extended Field details
-		if(aVASRecording.getExtendedFieldRender() !=null){
+		if (aVASRecording.getExtendedFieldRender() != null) {
 			ExtendedFieldRender details = aVASRecording.getExtendedFieldRender();
 			details.setReference(aVASRecording.getVasReference());
 			details.setTypeCode(aVASRecording.getProductCode());
@@ -1157,9 +1165,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 		}
-		
+
 		return auditHeader;
-	} 
+	}
 
 	/**
 	 * @param aAuthorizedSignatoryRepository
@@ -1189,9 +1197,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			// setFocus
 			this.fee.focus();
 		} else {
-			if (isFinanceVas()){
+			if (isFinanceVas()) {
 				doEdit();
-			}else if (isWorkFlowEnabled()) {
+			} else if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(aVASRecording.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
@@ -1214,28 +1222,28 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aVASRecording);
-			
-			if(enqiryModule){
+
+			if (enqiryModule) {
 				this.windowTitle.setValue(Labels.getLabel("window_VASRecordingEnquiryDialog.title"));
-			}else  if(isCancelProcess){
+			} else if (isCancelProcess) {
 				this.windowTitle.setValue(Labels.getLabel("window_VASRecordingCancelDialog.title"));
 			}
 
-			if(isFinanceVas()){
-				
+			if (isFinanceVas()) {
+
 				// Height Calculation
 				int height = borderLayoutHeight - 120;
-				this.window_VASRecordingDialog.setHeight(height+"px");
+				this.window_VASRecordingDialog.setHeight(height + "px");
 				this.window_VASRecordingDialog.setWidth("90%");
 				this.groupboxWf.setVisible(false);
-				this.window_VASRecordingDialog.doModal() ;
-			}else if(enqiryModule){
+				this.window_VASRecordingDialog.doModal();
+			} else if (enqiryModule) {
 				this.groupboxWf.setVisible(false);
 				setDialog(DialogType.EMBEDDED);
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -1247,64 +1255,64 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	protected void doSetValidation() {
 		logger.debug("Entering");
-		
-		if(isCancelProcess || enqiryModule){
+
+		if (isCancelProcess || enqiryModule) {
 			return;
 		}
 
 		if (!this.productCode.isButtonDisabled()) {
-			this.productCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASRecordingDialog_ProductCode.value"), null, true));
+			this.productCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_ProductCode.value"), null, true));
 		}
 
 		if (!this.primaryLinkRef.isReadonly()) {
-			this.primaryLinkRef.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASRecordingDialog_PrimaryLinkRef.value"), null, true));
+			this.primaryLinkRef.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASRecordingDialog_PrimaryLinkRef.value"), null, true));
 		}
 
 		if (!this.fee.isReadonly()) {
-			this.fee.setConstraint(new PTDecimalValidator(Labels.getLabel("label_VASRecordingDialog_Fee.value"), 2,
-					false, false));
+			this.fee.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_VASRecordingDialog_Fee.value"), 2, false, false));
 		}
 
 		if (!this.renewalFee.isReadonly()) {
-			this.renewalFee.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_VASRecordingDialog_RenewalFee.value"), 2, false, false));
+			this.renewalFee.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_VASRecordingDialog_RenewalFee.value"), 2, false, false));
 		}
 
 		if (!this.valueDate.isDisabled()) {
-			this.valueDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_VASRecordingDialog_ValueDate.value"), true, SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE), 
-					DateUtility.getAppDate(), true));
+			this.valueDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_VASRecordingDialog_ValueDate.value"), true,
+					SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE), DateUtility.getAppDate(), true));
 		}
-		
+
 		if (!this.accrualTillDate.isDisabled()) {
-			this.accrualTillDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_VASRecordingDialog_AccrualTillDate.value"), true, DateUtility.getAppDate(), 
-					SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
+			this.accrualTillDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_VASRecordingDialog_AccrualTillDate.value"), true,
+							DateUtility.getAppDate(), SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
 		}
-		
+
 		if (!this.recurringDate.isDisabled()) {
-			this.recurringDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_VASRecordingDialog_RecurringDate.value"), true, DateUtility.getAppDate(), 
-					SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
+			this.recurringDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_VASRecordingDialog_RecurringDate.value"),
+							true, DateUtility.getAppDate(), SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
 		}
 
 		if (!this.dsaId.isButtonDisabled()) {
-			this.dsaId.setConstraint(new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_DsaId.value"),
-					null, false));
+			this.dsaId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_DsaId.value"), null, false));
 		}
 		if (!this.dmaId.isButtonDisabled()) {
-			this.dmaId.setConstraint(new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_DmaId.value"),
-					null, false));
+			this.dmaId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_DmaId.value"), null, false));
 		}
 		if (!this.fulfilOfficerId.isButtonDisabled()) {
-			this.fulfilOfficerId.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASRecordingDialog_FulfilOfficerId.value"), null, false));
+			this.fulfilOfficerId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASRecordingDialog_FulfilOfficerId.value"), null, false));
 		}
 		if (!this.referralId.isButtonDisabled()) {
-			this.referralId.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASRecordingDialog_ReferralId.value"), null, false));
+			this.referralId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_ReferralId.value"), null, false));
 		}
 	}
 
@@ -1314,13 +1322,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param aVASConfiguration
 	 * @throws InterruptedException
 	 * @throws ParseException
-	 * @throws ScriptException 
+	 * @throws ScriptException
 	 * 
 	 */
-	public void doWriteBeanToComponents(VASRecording aVASRecording) throws ParseException, InterruptedException, ScriptException {
+	public void doWriteBeanToComponents(VASRecording aVASRecording)
+			throws ParseException, InterruptedException, ScriptException {
 		logger.debug("Entering");
 
-		 vASConfiguration = aVASRecording.getVasConfiguration();
+		vASConfiguration = aVASRecording.getVasConfiguration();
 		if (aVASRecording.isNewRecord()) {
 			this.dsaId.setDescription("");
 			this.dmaId.setDescription("");
@@ -1340,42 +1349,43 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.recurringDate.setValue(aVASRecording.getRecurringDate());
 			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getPaidAmt(), getCcyFormat()));
 		}
-		
+
 		// Product Code
 		this.productCode.setValue(aVASRecording.getProductCode());
 		this.productCode.setDescription(aVASRecording.getProductDesc());
-		
+
 		// Primary Link Reference
 		this.primaryLinkRef.setValue(aVASRecording.getPrimaryLinkRef());
-		fillComboBox(this.postingAgainst, aVASRecording.getPostingAgainst(),PennantStaticListUtil.getRecAgainstTypes(), "");
+		fillComboBox(this.postingAgainst, aVASRecording.getPostingAgainst(), PennantStaticListUtil.getRecAgainstTypes(),
+				"");
 		fillComboBox(this.feePaymentMode, aVASRecording.getFeePaymentMode(), PennantStaticListUtil.getFeeTypes(), "");
 
 		//Vas fee
-		if(isFinanceVas()){
-			if(isFeeEditable() && vASConfiguration.isAllowFeeToModify()){
+		if (isFinanceVas()) {
+			if (isFeeEditable() && vASConfiguration.isAllowFeeToModify()) {
 				this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
-			}else{
+			} else {
 				this.fee.setReadonly(true);
 			}
-		}else{
+		} else {
 			if (vASConfiguration.isAllowFeeToModify() && !isCancelProcess && !enqiryModule) {
 				this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
 			} else {
 				this.fee.setReadonly(true);
 			}
 		}
-		if(!isFinanceVas()){
+		if (!isFinanceVas()) {
 			this.fee.addForward("onFulfill", this.window_VASRecordingDialog, "onFeeAmountChange");
 		}
 		this.fee.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
 		this.waivedAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getWaivedAmt(), getCcyFormat()));
-		
+
 		// Payment Mode
-		if(isFinanceVas()){
+		if (isFinanceVas()) {
 			this.space_FeePaymentMode.setSclass("");
-			if(isFeeEditable()){
+			if (isFeeEditable()) {
 				this.feePaymentMode.setDisabled(isReadOnly("VASRecordingDialog_FeePaymentMode"));
-			}else{
+			} else {
 				this.feePaymentMode.setDisabled(true);
 			}
 		}
@@ -1443,7 +1453,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		if (!isFinanceVas()) {
 			//Agreements Detail Tab Addition
-			if(!enqiryModule && !isCancelProcess){
+			if (!enqiryModule && !isCancelProcess) {
 				appendAgreementsDetailTab(true);
 
 				//CheckList Details Tab Addition
@@ -1457,13 +1467,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			appendRecommendDetailTab(true);
 
 			// Accounting Details Tab Addition
-			if(!enqiryModule && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())){
+			if (!enqiryModule && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
 				appendAccountingDetailTab(true);
 			}
-			
+
 			// Show Posting on Enquiry against Vas Reference
-			if(enqiryModule){
-				 appendPostingsTab();
+			if (enqiryModule) {
+				appendPostingsTab();
 			}
 		}
 
@@ -1492,7 +1502,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		VASConfiguration vasConfiguration = aVASRecording.getVasConfiguration();
 		setExtendedFieldRender(aVASRecording.getExtendedFieldRender());
-		
+
 		//Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
@@ -1505,7 +1515,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		setExtendedFieldHeader(vasConfiguration.getExtendedFieldHeader());
 		aVASRecording.getRecordType();
 		aVASRecording.getRecordStatus();
-		if (((isNewRecord() || isFeeEditable()) && isFinanceVas())||(!isFinanceVas()&& aVASRecording.isNewRecord()))  {
+		if (((isNewRecord() || isFeeEditable()) && isFinanceVas())
+				|| (!isFinanceVas() && aVASRecording.isNewRecord())) {
 			//get pre-validation script if record is new
 			String preValidationScript = vasConfiguration.getPreValidation();
 			if (StringUtils.isNotEmpty(preValidationScript)) {
@@ -1539,7 +1550,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Joint account and guaranteer Details Data in finance
 	 */
@@ -1564,7 +1575,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				if (enqiryModule || isCancelProcess) {
 					map.put("enqModule", true);
 				}
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul", getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
 			}
 		}
 		logger.debug("Leaving");
@@ -1629,16 +1641,17 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	private void appendDocumentDetailTab() {
 		logger.debug("Entering");
-		
+
 		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
-		
+
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getVASRecording().getDocuments());
 		map.put("financeMainDialogCtrl", this);
 		if (isCancelProcess || enqiryModule) {
 			map.put("enqModule", true);
 		}
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
+				getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
 		logger.debug("Leaving");
 	}
 
@@ -1662,31 +1675,32 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				map.put("enqModule", true);
 			}
 			try {
-				Executions.createComponents("/WEB-INF/pages/notes/notes.zul", getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
+				Executions.createComponents("/WEB-INF/pages/notes/notes.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
-	protected void appendAccountingDetailTab(boolean onLoadProcess){
+	protected void appendAccountingDetailTab(boolean onLoadProcess) {
 		logger.debug("Entering");
 		boolean createTab = false;
-		if(getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null){
+		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
 			createTab = true;
 		}
-		
-		if(createTab){
+
+		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
-		}else{
+		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
 		}
 		if (!onLoadProcess) {
-			
+
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("vASRecording", getVASRecording());
 			map.put("acSetID", vASConfiguration.getFeeAccounting());
@@ -1696,25 +1710,26 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
 			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
-			if(tab != null){
+			if (tab != null) {
 				tab.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Document Details Data in finance
 	 */
 	private void appendPostingsTab() {
 		logger.debug("Entering");
-		
+
 		createTab(AssetConstants.UNIQUE_ID_POSTINGS, true);
-		
+
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("postingDetails", getVASRecording().getReturnDataSetList());
 		map.put("dialogCtrl", this);
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PostingDetailDialog.zul",getTabpanel(AssetConstants.UNIQUE_ID_POSTINGS), map);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PostingDetailDialog.zul",
+				getTabpanel(AssetConstants.UNIQUE_ID_POSTINGS), map);
 		logger.debug("Leaving");
 	}
 
@@ -1856,17 +1871,18 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 					getMainWindow(), map);
 		} else if (VASConsatnts.VASAGAINST_COLLATERAL.equals(stmtType)) {
-			CollateralSetup collateralSetup = getCollateralSetupService().getCollateralSetupByRef(
-					this.primaryLinkRef.getValue(), "", true);
+			CollateralSetup collateralSetup = getCollateralSetupService()
+					.getCollateralSetupByRef(this.primaryLinkRef.getValue(), "", true);
 			map.put("collateralSetup", collateralSetup);
 			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul",
-					null, map);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null,
+					map);
 		}
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.primaryLinkRef.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -1893,7 +1909,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aVASConfiguration
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	public void doWriteComponentsToBean(VASRecording aVASRecording, boolean isSave) throws ParseException {
 		logger.debug("Entering");
@@ -1921,8 +1937,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		// Fee Payment Mode
 		try {
 			if (!this.feePaymentMode.isDisabled() && !isFinanceVas()) {
-				isValidComboValue(this.feePaymentMode, Labels.getLabel("label_VASRecordingDialog_FeePaymentMode.value"));
-			} 
+				isValidComboValue(this.feePaymentMode,
+						Labels.getLabel("label_VASRecordingDialog_FeePaymentMode.value"));
+			}
 			aVASRecording.setFeePaymentMode(this.feePaymentMode.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1944,18 +1961,18 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// VAS Fee
 		try {
-			aVASRecording.setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(),getCcyFormat()));
+			aVASRecording.setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Paid Amount
 		try {
 			aVASRecording.setPaidAmt(PennantAppUtil.unFormateAmount(this.paidAmt.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Waived Amount
 		try {
 			aVASRecording.setWaivedAmt(PennantAppUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
@@ -1965,7 +1982,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// Renewal Fee  
 		try {
-			aVASRecording.setRenewalFee(PennantAppUtil.unFormateAmount(this.renewalFee.getActualValue(),getCcyFormat()));
+			aVASRecording
+					.setRenewalFee(PennantAppUtil.unFormateAmount(this.renewalFee.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2018,10 +2036,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Vas Status
 		aVASRecording.setVasStatus(isCancelProcess ? "C" : "N");
-		
+
 		//Extended field details
 		final ExtendedFieldRender aExetendedFieldRender = getExtendedFieldRender();
 		// Write the additional validations as per below example
@@ -2035,7 +2053,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			} else {
 				isReadOnly = isReadOnly("VASRecordingDialog_ExtendedFields");
 			}
-			
+
 			map = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), isReadOnly);
 			aExetendedFieldRender.setMapValues(map);
 		} catch (WrongValuesException wves) {
@@ -2047,52 +2065,54 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// Basic Details Error Detail
 		showErrorDetails(wve, this.basicDetailsTab);
-				
+
 		// Post Validations for the Extended fields
 		if (!enqiryModule && !isCancelProcess) {
-			if(StringUtils.isNotEmpty(getPostValidationScript())){
-				ScriptErrors postValidationErrors = getScriptValidationService().getPostValidationErrors(getPostValidationScript(), map);
+			if (StringUtils.isNotEmpty(getPostValidationScript())) {
+				ScriptErrors postValidationErrors = getScriptValidationService()
+						.getPostValidationErrors(getPostValidationScript(), map);
 				// Preparing Wrong Value User UI exceptions
 				showErrorDetails(postValidationErrors);
 			}
 		}
-		
+
 		if (aVASRecording.isNew()) {
 			aExetendedFieldRender.setSeqNo(1);
 		}
 		aVASRecording.setExtendedFieldRender(aExetendedFieldRender);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Showing UI Post validation Errors
+	 * 
 	 * @param postValidationErrors
 	 */
 	public void showErrorDetails(ScriptErrors postValidationErrors) {
 		List<ScriptError> errorList = postValidationErrors.getAll();
-		if(errorList == null || errorList.isEmpty()){
+		if (errorList == null || errorList.isEmpty()) {
 			return;
 		}
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
-			
-			if(extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty()) != null){
-				Component component = extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty());
+
+			if (extendedFieldTabPanel.getFellowIfAny("ad_" + error.getProperty()) != null) {
+				Component component = extendedFieldTabPanel.getFellowIfAny("ad_" + error.getProperty());
 				WrongValueException we = new WrongValueException(component, error.getValue());
 				wve.add(we);
 			}
 		}
-		
+
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
-				if(i == 0){
+				if (i == 0) {
 					Component comp = wvea[i].getComponent();
-					if(comp instanceof HtmlBasedComponent){
+					if (comp instanceof HtmlBasedComponent) {
 						Clients.scrollIntoView(comp);
 					}
 				}
@@ -2101,8 +2121,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			throw new WrongValuesException(wvea);
 		}
 	}
-	
-	
+
 	/**
 	 * Method to show error details if occurred
 	 * 
@@ -2118,9 +2137,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
-				if(i == 0){
+				if (i == 0) {
 					Component comp = wvea[i].getComponent();
-					if(comp instanceof HtmlBasedComponent){
+					if (comp instanceof HtmlBasedComponent) {
 						Clients.scrollIntoView(comp);
 					}
 				}
@@ -2177,13 +2196,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.referralId.setReadonly(true);
 		this.waivedAmt.setReadonly(true);
 		this.viewInfo.setVisible(false);
-		
+
 		if (isWorkFlowEnabled() && !isCancelProcess) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		if(isCancelProcess){
+		if (isCancelProcess) {
 			if (isWorkFlowEnabled()) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
 					userAction.getItemAtIndex(i).setDisabled(false);
@@ -2215,7 +2234,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		if(!enqiryModule){
+		if (!enqiryModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnDelete"));
@@ -2284,7 +2303,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.renewalFee.setWidth("100px");
 		logger.debug("Leaving");
 	}
-	
+
 	private String getTabID(String id) {
 		return "TAB" + StringUtils.trimToEmpty(id);
 	}
@@ -2295,7 +2314,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public HashMap<String, Object> getDefaultArguments() {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-	 	map.put("roleCode", getRole());
+		map.put("roleCode", getRole());
 		map.put("dialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
 		map.put("isNotFinanceProcess", true);
@@ -2385,7 +2404,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.doWriteComponentsToBean(getVASRecording(), true);
 			if (accountingDetailDialogCtrl != null) {
 				accountingDetailDialogCtrl.doSetLabels(getHeaderBasicDetails());
-			}else{
+			} else {
 				appendAccountingDetailTab(false);
 			}
 			isAccountingExecuted = false;
@@ -2428,9 +2447,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		return new ArrayList<DocumentDetails>();
 	}
-	
+
 	/**
 	 * Method for fetching Customer Basic Details for Document Details processing
+	 * 
 	 * @return
 	 */
 	public List<Object> getCustomerBasicDetails() {
@@ -2445,62 +2465,65 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		return custBasicDetails;
 	}
-	
+
 	/**
 	 * Method for Executing Eligibility Details
 	 * 
 	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception{
+	public void executeAccounting() throws Exception {
 		logger.debug("Entering");
-		
+
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-		if(isCancelProcess){
+		if (isCancelProcess) {
 			accountingSetEntries.addAll(getVASRecording().getReturnDataSetList());
-		}else{
+		} else {
 			getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-			if(amountCodes == null){
+			if (amountCodes == null) {
 				amountCodes = new AEAmountCodes();
 			}
-			
+
 			// Based on VAS Created Against, details will be captured  
-			if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())){
-				FinanceMain financeMain = getFinanceDetailService().getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
+			if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())) {
+				FinanceMain financeMain = getFinanceDetailService()
+						.getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
 				amountCodes.setFinType(financeMain.getFinType());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());
 				aeEvent.setCustID(financeMain.getCustID());
-			}else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())){
+			} else if (StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())) {
 				Customer customer = getCustomerDetailsService().getCustomerByCIF(getVASRecording().getPrimaryLinkRef());
 				aeEvent.setBranch(customer.getCustDftBranch());
 				aeEvent.setCcy(customer.getCustBaseCcy());
 				aeEvent.setCustID(customer.getCustID());
-			}else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())){
-				CollateralSetup collateralSetup = getCollateralSetupService().getApprovedCollateralSetupById(
-						getVASRecording().getPrimaryLinkRef());
+			} else if (StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())) {
+				CollateralSetup collateralSetup = getCollateralSetupService()
+						.getApprovedCollateralSetupById(getVASRecording().getPrimaryLinkRef());
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
 			}
-			
+
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 			aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
-			List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+			List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent)
+					.getReturnDataSet();
 			getVASRecording().setReturnDataSetList(returnSetEntries);
 			accountingSetEntries.addAll(returnSetEntries);
 		}
-		if(accountingDetailDialogCtrl != null){
+		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method for Adding fee amounts to Fee List Controller to maintain Single list of fees
+	 * 
 	 * @param vasFee
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
@@ -2518,7 +2541,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			// Fetch Fee List Controller
 			FinFeeDetailListCtrl feeDetailListCtrl = (FinFeeDetailListCtrl) mainBaseCtrl.getClass()
 					.getMethod("getFinFeeDetailListCtrl").invoke(mainBaseCtrl);
-			
+
 			// Rendering newly added VAS fees
 			if (feeDetailListCtrl != null) {
 				feeDetailListCtrl.renderVASFee(vasFee);
@@ -2529,9 +2552,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Adding fee amounts to Fee List Controller to maintain Single list of fees
+	 * 
 	 * @param vasFee
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
@@ -2545,11 +2569,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			// Fetch FinanceMain Base Controller
 			FinanceMainBaseCtrl mainBaseCtrl = (FinanceMainBaseCtrl) finVasRecordingDialogCtrl.getClass()
 					.getMethod("getFinanceMainDialogCtrl").invoke(finVasRecordingDialogCtrl);
-			
+
 			// Fetch Fee List Controller
 			FinFeeDetailListCtrl feeDetailListCtrl = (FinFeeDetailListCtrl) mainBaseCtrl.getClass()
 					.getMethod("getFinFeeDetailListCtrl").invoke(mainBaseCtrl);
-			
+
 			// Rendering newly added VAS fees
 			if (feeDetailListCtrl != null) {
 				feeDetailListCtrl.removeVASFee(vasReference);
@@ -2557,18 +2581,19 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for action Event of Changing Waived Amount
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onFulfill$waivedAmt(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		BigDecimal vasFee = PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat());
 		BigDecimal waivedAmt = PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat());
 		if (waivedAmt.compareTo(vasFee) > 0) {
@@ -2578,16 +2603,17 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		BigDecimal bal = vasFee
 				.subtract(PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
 		this.paidAmt.setValue(PennantApplicationUtil.formateAmount(bal, getCcyFormat()));
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for action Event of Changing VAS FEE Amount
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onFeeAmountChange(ForwardEvent event)throws Exception{
+	public void onFeeAmountChange(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 		this.paidAmt.setValue(this.fee.getActualValue());
 		this.waivedAmt.setValue(BigDecimal.ZERO);
@@ -2605,7 +2631,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		return 0;
 	}
-	
+
 	public boolean isReadOnly(String componentName) {
 		if (isWorkFlowEnabled() || isFinanceVas()) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -2726,6 +2752,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
 		return accountingDetailDialogCtrl;
 	}
+
 	public void setAccountingDetailDialogCtrl(AccountingDetailDialogCtrl accountingDetailDialogCtrl) {
 		this.accountingDetailDialogCtrl = accountingDetailDialogCtrl;
 	}
@@ -2733,6 +2760,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public ScriptValidationService getScriptValidationService() {
 		return scriptValidationService;
 	}
+
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
 	}
@@ -2740,6 +2768,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public String getPreValidationScript() {
 		return preValidationScript;
 	}
+
 	public void setPreValidationScript(String preValidationScript) {
 		this.preValidationScript = preValidationScript;
 	}
@@ -2747,6 +2776,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public String getPostValidationScript() {
 		return postValidationScript;
 	}
+
 	public void setPostValidationScript(String postValidationScript) {
 		this.postValidationScript = postValidationScript;
 	}
@@ -2754,6 +2784,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}
+
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
 	}
@@ -2761,6 +2792,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public ExtendedFieldRender getExtendedFieldRender() {
 		return extendedFieldRender;
 	}
+
 	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
 		this.extendedFieldRender = extendedFieldRender;
 	}
@@ -2768,13 +2800,15 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return financeReferenceDetailService;
 	}
+
 	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
-	
+
 	public CustomerEMailDAO getCustomerEMailDAO() {
 		return customerEMailDAO;
 	}
+
 	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
 		this.customerEMailDAO = customerEMailDAO;
 	}
@@ -2786,6 +2820,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public EventManager getEventManager() {
 		return eventManager;
 	}
+
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}
@@ -2793,6 +2828,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public FinVasRecordingDialogCtrl getFinVasRecordingDialogCtrl() {
 		return finVasRecordingDialogCtrl;
 	}
+
 	public void setFinVasRecordingDialogCtrl(FinVasRecordingDialogCtrl finVasRecordingDialogCtrl) {
 		this.finVasRecordingDialogCtrl = finVasRecordingDialogCtrl;
 	}
@@ -2800,6 +2836,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public boolean isFinanceVas() {
 		return financeVas;
 	}
+
 	public void setFinanceVas(boolean financeVas) {
 		this.financeVas = financeVas;
 	}
@@ -2807,6 +2844,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -2814,6 +2852,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public boolean isFeeEditable() {
 		return feeEditable;
 	}
+
 	public void setFeeEditable(boolean feeEditable) {
 		this.feeEditable = feeEditable;
 	}
@@ -2821,6 +2860,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public AccountEngineExecution getEngineExecution() {
 		return engineExecution;
 	}
+
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
 	}
@@ -2828,6 +2868,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public List<FinFeeDetail> getFinFeeDetailsList() {
 		return finFeeDetailsList;
 	}
+
 	public void setFinFeeDetailsList(List<FinFeeDetail> finFeeDetailsList) {
 		this.finFeeDetailsList = finFeeDetailsList;
 	}
@@ -2835,6 +2876,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -2842,9 +2884,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
+
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
-
 
 }

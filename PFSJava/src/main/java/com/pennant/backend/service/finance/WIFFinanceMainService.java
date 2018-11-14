@@ -47,11 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 
 public interface WIFFinanceMainService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceMain getWIFFinanceMainById(String id);
+
 	FinanceMain getApprovedWIFFinanceMainById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -52,7 +52,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -65,12 +64,11 @@ public class TaxDetailListModelItemRenderer implements ListitemRenderer<TaxDetai
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, TaxDetail taxDetail, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(taxDetail.getCountryName());
+		lc = new Listcell(taxDetail.getCountryName());
 		lc.setParent(item);
 		lc = new Listcell(taxDetail.getProvinceName());
 		lc.setParent(item);
@@ -87,7 +85,7 @@ public class TaxDetailListModelItemRenderer implements ListitemRenderer<TaxDetai
 		lc = new Listcell(PennantJavaUtil.getLabel(taxDetail.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", taxDetail.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
 	}
 }

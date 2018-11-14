@@ -44,20 +44,20 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
-	private static final Logger			logger	= Logger.getLogger(FinanceDeviationsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceDeviationsServiceImpl.class);
 
-	private AuditHeaderDAO				auditHeaderDAO;
-	private FinanceDeviationsDAO		deviationDetailsDAO;
-	private FinanceMainDAO				financeMainDAO;
-	private TaskOwnersDAO				taskOwnersDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private FinanceDeviationsDAO deviationDetailsDAO;
+	private FinanceMainDAO financeMainDAO;
+	private TaskOwnersDAO taskOwnersDAO;
 
-	private FinanceTypeDAO				financeTypeDAO;
-	private CustomerDetailsService		customerDetailsService;
-	private EligibilityDetailService	eligibilityDetailService;
-	private CheckListDetailService		checkListDetailService;
-	private FinanceScoreHeaderDAO		financeScoreHeaderDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private CustomerDetailsService customerDetailsService;
+	private EligibilityDetailService eligibilityDetailService;
+	private CheckListDetailService checkListDetailService;
+	private FinanceScoreHeaderDAO financeScoreHeaderDAO;
 	@Autowired
-	private DeviationHelper				deviationHelper;
+	private DeviationHelper deviationHelper;
 
 	public FinanceDeviationsServiceImpl() {
 		super();
@@ -218,7 +218,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				auditDetails.add(getFinDeviationsAudit(financeDeviations, ++count, PennantConstants.TRAN_DEL));
 				continue;
 			}
-			
+
 			if (!(StringUtils.isEmpty(financeDeviations.getApprovalStatus())
 					|| StringUtils.equals(financeDeviations.getApprovalStatus(), PennantConstants.List_Select))) {
 				deviationDetailsDAO.save(financeDeviations, "");
@@ -251,7 +251,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		if (deviations == null) {
 			return;
 		}
-		
+
 		for (FinanceDeviations deviation : deviations) {
 			if (PennantConstants.RCD_UPD.equals(deviation.getRecordType())) {
 				deviationDetailsDAO.updateMarkDeleted(deviation.getDeviationId(), deviation.isMarkDeleted());
@@ -341,7 +341,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				// Get the delegator's next tasks.
 				Map<String, Object> data = new HashMap<>();
 				data.put("vo", finmain);
-				
+
 				if (rejected) {
 					data.put("deviationApprovalStatus", "REJECTED");
 				} else {
@@ -372,7 +372,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 					}
 				} else {
 					queueChanged = true;
-					
+
 					newTaskId = delegatorNextTasks;
 
 					String[] nextTasks = newTaskId.split(";");
@@ -525,6 +525,5 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
 
 }

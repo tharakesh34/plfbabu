@@ -69,12 +69,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>BankDetail</b>.<br>
+ * Service implementation for methods that depends on <b>BankDetail</b>.<br>
  * 
  */
-public class BankDetailServiceImpl extends
-		GenericService<BankDetail> implements BankDetailService {
+public class BankDetailServiceImpl extends GenericService<BankDetail> implements BankDetailService {
 
 	private static Logger logger = Logger.getLogger(BankDetailServiceImpl.class);
 
@@ -83,17 +81,16 @@ public class BankDetailServiceImpl extends
 	private BankBranchDAO bankBranchDAO;
 	private CustomerBankInfoDAO customerBankInfoDAO;
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
-	private FinAdvancePaymentsDAO	finAdvancePaymentsDAO;
-	private FinanceMainDAO	financeMainDAO;
-	private FinCollateralsDAO	finCollateralsDAO;
-	private FinReceiptDetailDAO	finReceiptDetailDAO;
-	private PartnerBankDAO		partnerBankDAO;
-	
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinCollateralsDAO finCollateralsDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private PartnerBankDAO partnerBankDAO;
 
 	public BankDetailServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -110,8 +107,7 @@ public class BankDetailServiceImpl extends
 		return bankDetailDAO;
 	}
 
-	public void setBankDetailDAO(
-			BankDetailDAO bankDetailDAO) {
+	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
 		this.bankDetailDAO = bankDetailDAO;
 	}
 
@@ -121,16 +117,12 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTBankDetail/BMTBankDetail_Temp by using
-	 * BankDetailDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using
-	 * BankDetailDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtBMTBankDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTBankDetail/BMTBankDetail_Temp
+	 * by using BankDetailDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using BankDetailDAO's update method 3) Audit the record in to AuditHeader and AdtBMTBankDetail
+	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -148,7 +140,7 @@ public class BankDetailServiceImpl extends
 
 		BankDetail bankDetail = (BankDetail) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		
+
 		if (bankDetail.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
@@ -158,7 +150,7 @@ public class BankDetailServiceImpl extends
 			auditHeader.getAuditDetail().setModelData(bankDetail);
 			auditHeader.setAuditReference(bankDetail.getId());
 		} else {
-			getBankDetailDAO().update(bankDetail,tableType);
+			getBankDetailDAO().update(bankDetail, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -167,13 +159,10 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTBankDetail by using BankDetailDAO's
-	 * delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtBMTBankDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTBankDetail by using BankDetailDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTBankDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -197,8 +186,7 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * getBankDetailById fetch the details by using
-	 * BankDetailDAO's getBankDetailById method.
+	 * getBankDetailById fetch the details by using BankDetailDAO's getBankDetailById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -208,14 +196,12 @@ public class BankDetailServiceImpl extends
 	 */
 	@Override
 	public BankDetail getBankDetailById(String id) {
-		return getBankDetailDAO().getBankDetailById(id,	"_View");
+		return getBankDetailDAO().getBankDetailById(id, "_View");
 	}
 
 	/**
-	 * getApprovedBankDetailById fetch the details by using
-	 * BankDetailDAO's getBankDetailById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * BMTBankDetail.
+	 * getApprovedBankDetailById fetch the details by using BankDetailDAO's getBankDetailById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTBankDetail.
 	 * 
 	 * @param id
 	 *            (String)
@@ -223,9 +209,9 @@ public class BankDetailServiceImpl extends
 	 */
 
 	public BankDetail getApprovedBankDetailById(String id) {
-		return getBankDetailDAO().getBankDetailById(id,	"_AView");
+		return getBankDetailDAO().getBankDetailById(id, "_AView");
 	}
-	
+
 	/**
 	 * fetch Account No Length by bankCode .
 	 * 
@@ -238,22 +224,15 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getBankDetailDAO().delete with parameters
-	 * bankDetail,"" b) NEW Add new record in to main table by using
-	 * getBankDetailDAO().save with parameters
-	 * bankDetail,"" c) EDIT Update record in the main table by
-	 * using getBankDetailDAO().update with parameters
-	 * bankDetail,"" 3) Delete the record from the workFlow table by
-	 * using getBankDetailDAO().delete with parameters
-	 * bankDetail,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTBankDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtBMTBankDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getBankDetailDAO().delete with
+	 * parameters bankDetail,"" b) NEW Add new record in to main table by using getBankDetailDAO().save with parameters
+	 * bankDetail,"" c) EDIT Update record in the main table by using getBankDetailDAO().update with parameters
+	 * bankDetail,"" 3) Delete the record from the workFlow table by using getBankDetailDAO().delete with parameters
+	 * bankDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTBankDetail by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTBankDetail by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -274,11 +253,11 @@ public class BankDetailServiceImpl extends
 		BeanUtils.copyProperties((BankDetail) auditHeader.getAuditDetail().getModelData(), bankDetail);
 
 		getBankDetailDAO().delete(bankDetail, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(bankDetailDAO.getBankDetailById(bankDetail.getBankCode(), ""));
 		}
-		
+
 		if (bankDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getBankDetailDAO().delete(bankDetail, TableType.MAIN_TAB);
@@ -296,7 +275,7 @@ public class BankDetailServiceImpl extends
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				bankDetail.setRecordType("");
-				getBankDetailDAO().update(bankDetail,TableType.MAIN_TAB);
+				getBankDetailDAO().update(bankDetail, TableType.MAIN_TAB);
 			}
 		}
 
@@ -313,13 +292,10 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getBankDetailDAO().delete with
-	 * parameters bankDetail,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTBankDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getBankDetailDAO().delete with parameters bankDetail,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTBankDetail by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -345,12 +321,10 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getBankDetailDAO().getErrorDetail with Error ID and language
-	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getBankDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -358,7 +332,7 @@ public class BankDetailServiceImpl extends
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -367,16 +341,15 @@ public class BankDetailServiceImpl extends
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getBankDetailDAO().getErrorDetail with Error ID and language
-	 * as parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getBankDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
@@ -384,18 +357,15 @@ public class BankDetailServiceImpl extends
 		String code = bankDetail.getBankCode();
 
 		// Check the unique keys.
-		if (bankDetail.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType())
-				&& bankDetailDAO
-						.isDuplicateKey(code, bankDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (bankDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType()) && bankDetailDAO
+				.isDuplicateKey(code, bankDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		if (!bankDetail.isActive()) {
-			if (partnerBankDAO.getPartnerBankbyBank(code, "") != 0
-					|| financeMainDAO.getFinanceMainByBank(code, "") != 0
+			if (partnerBankDAO.getPartnerBankbyBank(code, "") != 0 || financeMainDAO.getFinanceMainByBank(code, "") != 0
 					|| finAdvancePaymentsDAO.getBankCode(code, "") != 0
 					|| finCollateralsDAO.getFinCollateralsByBank(code, "") != 0
 					|| finReceiptDetailDAO.getReceiptHeaderByBank(code, "") != 0
@@ -413,6 +383,7 @@ public class BankDetailServiceImpl extends
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+
 	@Override
 	public String getBankCodeByName(String bankName) {
 		return bankDetailDAO.getBankCodeByName(bankName);

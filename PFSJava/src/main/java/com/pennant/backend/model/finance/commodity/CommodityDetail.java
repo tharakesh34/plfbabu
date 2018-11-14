@@ -51,13 +51,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class CommodityDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2887650447068101149L;
-	
-	private String      commodityCode;
-	private String      commodityName;
-	private String      commodityUnitCode;
-	private String      commodityUnitName;
-	private boolean     newRecord;
-	private String      lovValue;
+
+	private String commodityCode;
+	private String commodityName;
+	private String commodityUnitCode;
+	private String commodityUnitName;
+	private boolean newRecord;
+	private String lovValue;
 	private CommodityDetail befImage;
 	private LoggedInUser userDetails;
 
@@ -75,37 +75,43 @@ public class CommodityDetail extends AbstractWorkflowEntity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return commodityCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.commodityCode = id;
 	}
-	
+
 	public String getCommodityCode() {
 		return commodityCode;
 	}
+
 	public void setCommodityCode(String commodityCode) {
 		this.commodityCode = commodityCode;
 	}
+
 	public String getCommodityName() {
 		return commodityName;
 	}
+
 	public void setCommodityName(String commodityName) {
 		this.commodityName = commodityName;
 	}
-	
+
 	public String getCommodityUnitCode() {
 		return commodityUnitCode;
 	}
+
 	public void setCommodityUnitCode(String commodityUnitCode) {
 		this.commodityUnitCode = commodityUnitCode;
-	}	
+	}
+
 	public String getCommodityUnitName() {
 		return commodityUnitName;
 	}
+
 	public void setCommodityUnitName(String commodityUnitName) {
 		this.commodityUnitName = commodityUnitName;
 	}
@@ -117,7 +123,7 @@ public class CommodityDetail extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -126,12 +132,12 @@ public class CommodityDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public CommodityDetail getBefImage(){
+	public CommodityDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(CommodityDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CommodityDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

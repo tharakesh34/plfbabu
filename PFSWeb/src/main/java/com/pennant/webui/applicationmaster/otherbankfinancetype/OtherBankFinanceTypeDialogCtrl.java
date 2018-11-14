@@ -72,20 +72,16 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/OtherBankFinanceType
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/OtherBankFinanceType
  * /otherBankFinanceTypeDialog.zul file.
  */
-public class OtherBankFinanceTypeDialogCtrl extends
-		GFCBaseCtrl<OtherBankFinanceType> {
+public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinanceType> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger
-			.getLogger(OtherBankFinanceTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(OtherBankFinanceTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_OtherBankFinanceTypeDialog; // autowired
 	protected Textbox finType; // autowired
@@ -120,15 +116,13 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected OtherBankFinanceType
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected OtherBankFinanceType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_OtherBankFinanceTypeDialog(Event event)
-			throws Exception {
+	public void onCreate$window_OtherBankFinanceTypeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -140,8 +134,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("otherBankFinanceType")) {
-				this.otherBankFinanceType = (OtherBankFinanceType) arguments
-						.get("otherBankFinanceType");
+				this.otherBankFinanceType = (OtherBankFinanceType) arguments.get("otherBankFinanceType");
 				OtherBankFinanceType befImage = new OtherBankFinanceType();
 				BeanUtils.copyProperties(this.otherBankFinanceType, befImage);
 				this.otherBankFinanceType.setBefImage(befImage);
@@ -150,14 +143,12 @@ public class OtherBankFinanceTypeDialogCtrl extends
 				setOtherBankFinanceType(null);
 			}
 
-			doLoadWorkFlow(this.otherBankFinanceType.isWorkflow(),
-					this.otherBankFinanceType.getWorkflowId(),
+			doLoadWorkFlow(this.otherBankFinanceType.isWorkflow(), this.otherBankFinanceType.getWorkflowId(),
 					this.otherBankFinanceType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"OtherBankFinanceTypeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "OtherBankFinanceTypeDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -167,8 +158,8 @@ public class OtherBankFinanceTypeDialogCtrl extends
 			// or
 			// delete otherBankFinanceType here.
 			if (arguments.containsKey("otherBankFinanceTypeListCtrl")) {
-				setOtherBankFinanceTypeListCtrl((OtherBankFinanceTypeListCtrl) arguments
-						.get("otherBankFinanceTypeListCtrl"));
+				setOtherBankFinanceTypeListCtrl(
+						(OtherBankFinanceTypeListCtrl) arguments.get("otherBankFinanceTypeListCtrl"));
 			} else {
 				setOtherBankFinanceTypeListCtrl(null);
 			}
@@ -206,22 +197,17 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_OtherBankFinanceTypeDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_OtherBankFinanceTypeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_OtherBankFinanceTypeDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_OtherBankFinanceTypeDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_OtherBankFinanceTypeDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_OtherBankFinanceTypeDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_OtherBankFinanceTypeDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_OtherBankFinanceTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
@@ -316,15 +302,13 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	 * @param aOtherBankFinanceType
 	 *            OtherBankFinanceType
 	 */
-	public void doWriteBeanToComponents(
-			OtherBankFinanceType aOtherBankFinanceType) {
+	public void doWriteBeanToComponents(OtherBankFinanceType aOtherBankFinanceType) {
 		logger.debug("Entering");
 		this.finType.setValue(aOtherBankFinanceType.getFinType());
 		this.finTypeDesc.setValue(aOtherBankFinanceType.getFinTypeDesc());
 		this.active.setChecked(aOtherBankFinanceType.isActive());
 		if (aOtherBankFinanceType.isNew()
-				|| (aOtherBankFinanceType.getRecordType() != null ? aOtherBankFinanceType
-						.getRecordType() : "")
+				|| (aOtherBankFinanceType.getRecordType() != null ? aOtherBankFinanceType.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -338,8 +322,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	 * 
 	 * @param aOtherBankFinanceType
 	 */
-	public void doWriteComponentsToBean(
-			OtherBankFinanceType aOtherBankFinanceType) {
+	public void doWriteComponentsToBean(OtherBankFinanceType aOtherBankFinanceType) {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -379,14 +362,12 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aOtherBankFinanceType
 	 * @throws Exception
 	 */
-	public void doShowDialog(OtherBankFinanceType aOtherBankFinanceType)
-			throws Exception {
+	public void doShowDialog(OtherBankFinanceType aOtherBankFinanceType) throws Exception {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -407,8 +388,8 @@ public class OtherBankFinanceTypeDialogCtrl extends
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
-		
-			}
+
+		}
 
 		try {
 			// fill the components with the data
@@ -432,15 +413,13 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		setValidationOn(true);
 
 		if (!this.finType.isReadonly()) {
-			this.finType
-					.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_OtherBankFinanceTypeDialog_FinType.value"),
+			this.finType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_OtherBankFinanceTypeDialog_FinType.value"),
 							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
 		}
 		if (!this.finTypeDesc.isReadonly()) {
-			this.finTypeDesc
-					.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_OtherBankFinanceTypeDialog_FinTypeDesc.value"),
+			this.finTypeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_OtherBankFinanceTypeDialog_FinTypeDesc.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
@@ -467,22 +446,17 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 		final OtherBankFinanceType aOtherBankFinanceType = new OtherBankFinanceType();
-		BeanUtils.copyProperties(getOtherBankFinanceType(),
-				aOtherBankFinanceType);
+		BeanUtils.copyProperties(getOtherBankFinanceType(), aOtherBankFinanceType);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_OtherBankFinanceTypeDialog_FinType.value")
-				+ " : " + aOtherBankFinanceType.getFinType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_OtherBankFinanceTypeDialog_FinType.value") + " : "
+				+ aOtherBankFinanceType.getFinType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aOtherBankFinanceType.getRecordType())) {
-				aOtherBankFinanceType.setVersion(aOtherBankFinanceType
-						.getVersion() + 1);
-				aOtherBankFinanceType
-						.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				aOtherBankFinanceType.setVersion(aOtherBankFinanceType.getVersion() + 1);
+				aOtherBankFinanceType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
 				if (isWorkFlowEnabled()) {
 					aOtherBankFinanceType.setNewRecord(true);
@@ -498,7 +472,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -519,10 +493,8 @@ public class OtherBankFinanceTypeDialogCtrl extends
 			this.btnCancel.setVisible(true);
 		}
 
-		readOnlyComponent(isReadOnly("OtherBankFinanceTypeDialog_finTypeDesc"),
-				this.finTypeDesc);
-		readOnlyComponent(isReadOnly("OtherBankFinanceTypeDialog_active"),
-				this.active);
+		readOnlyComponent(isReadOnly("OtherBankFinanceTypeDialog_finTypeDesc"), this.finTypeDesc);
+		readOnlyComponent(isReadOnly("OtherBankFinanceTypeDialog_active"), this.active);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -585,8 +557,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 		final OtherBankFinanceType aOtherBankFinanceType = new OtherBankFinanceType();
-		BeanUtils.copyProperties(getOtherBankFinanceType(),
-				aOtherBankFinanceType);
+		BeanUtils.copyProperties(getOtherBankFinanceType(), aOtherBankFinanceType);
 		boolean isNew = false;
 
 		// force validation, if on, than execute by component.getValue()
@@ -604,20 +575,16 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aOtherBankFinanceType.getRecordType())) {
-				aOtherBankFinanceType.setVersion(aOtherBankFinanceType
-						.getVersion() + 1);
+				aOtherBankFinanceType.setVersion(aOtherBankFinanceType.getVersion() + 1);
 				if (isNew) {
-					aOtherBankFinanceType
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aOtherBankFinanceType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aOtherBankFinanceType
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aOtherBankFinanceType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aOtherBankFinanceType.setNewRecord(true);
 				}
 			}
 		} else {
-			aOtherBankFinanceType
-					.setVersion(aOtherBankFinanceType.getVersion() + 1);
+			aOtherBankFinanceType.setVersion(aOtherBankFinanceType.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -640,19 +607,15 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(OtherBankFinanceType aOtherBankFinanceType,
-			String tranType) {
+	private boolean doProcess(OtherBankFinanceType aOtherBankFinanceType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aOtherBankFinanceType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
-		aOtherBankFinanceType.setLastMntOn(new Timestamp(System
-				.currentTimeMillis()));
-		aOtherBankFinanceType.setUserDetails(getUserWorkspace()
-				.getLoggedInUser());
+		aOtherBankFinanceType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aOtherBankFinanceType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aOtherBankFinanceType.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
@@ -661,8 +624,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aOtherBankFinanceType
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aOtherBankFinanceType.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -708,8 +670,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aOtherBankFinanceType,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aOtherBankFinanceType, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -732,58 +693,43 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		OtherBankFinanceType aOtherBankFinanceType = (OtherBankFinanceType) auditHeader
-				.getAuditDetail().getModelData();
+		OtherBankFinanceType aOtherBankFinanceType = (OtherBankFinanceType) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getOtherBankFinanceTypeService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getOtherBankFinanceTypeService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getOtherBankFinanceTypeService()
-								.saveOrUpdate(auditHeader);
+						auditHeader = getOtherBankFinanceTypeService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getOtherBankFinanceTypeService()
-								.doApprove(auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getOtherBankFinanceTypeService().doApprove(auditHeader);
 
-						if (aOtherBankFinanceType.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aOtherBankFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getOtherBankFinanceTypeService()
-								.doReject(auditHeader);
-						if (aOtherBankFinanceType.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getOtherBankFinanceTypeService().doReject(auditHeader);
+						if (aOtherBankFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_OtherBankFinanceTypeDialog,
-								auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_OtherBankFinanceTypeDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_OtherBankFinanceTypeDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_OtherBankFinanceTypeDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -827,13 +773,11 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		return this.otherBankFinanceType;
 	}
 
-	public void setOtherBankFinanceType(
-			OtherBankFinanceType otherBankFinanceType) {
+	public void setOtherBankFinanceType(OtherBankFinanceType otherBankFinanceType) {
 		this.otherBankFinanceType = otherBankFinanceType;
 	}
 
-	public void setOtherBankFinanceTypeService(
-			OtherBankFinanceTypeService otherBankFinanceTypeService) {
+	public void setOtherBankFinanceTypeService(OtherBankFinanceTypeService otherBankFinanceTypeService) {
 		this.otherBankFinanceTypeService = otherBankFinanceTypeService;
 	}
 
@@ -841,8 +785,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		return this.otherBankFinanceTypeService;
 	}
 
-	public void setOtherBankFinanceTypeListCtrl(
-			OtherBankFinanceTypeListCtrl otherBankFinanceTypeListCtrl) {
+	public void setOtherBankFinanceTypeListCtrl(OtherBankFinanceTypeListCtrl otherBankFinanceTypeListCtrl) {
 		this.otherBankFinanceTypeListCtrl = otherBankFinanceTypeListCtrl;
 	}
 
@@ -850,23 +793,19 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		return this.otherBankFinanceTypeListCtrl;
 	}
 
-	private AuditHeader getAuditHeader(
-			OtherBankFinanceType aOtherBankFinanceType, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aOtherBankFinanceType.getBefImage(), aOtherBankFinanceType);
-		return new AuditHeader(aOtherBankFinanceType.getFinType(), null, null,
-				null, auditDetail, aOtherBankFinanceType.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(OtherBankFinanceType aOtherBankFinanceType, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aOtherBankFinanceType.getBefImage(),
+				aOtherBankFinanceType);
+		return new AuditHeader(aOtherBankFinanceType.getFinType(), null, null, null, auditDetail,
+				aOtherBankFinanceType.getUserDetails(), getOverideMap());
 	}
 
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(
-					this.window_OtherBankFinanceTypeDialog, auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_OtherBankFinanceTypeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -902,8 +841,7 @@ public class OtherBankFinanceTypeDialogCtrl extends
 		return String.valueOf(this.otherBankFinanceType.getFinType());
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

@@ -89,10 +89,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	}
 
 	/**
-	 * This method Deletes the Record from the documentDetailss or
-	 * documentDetailss_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Channel Detail by key
-	 * ChannelId
+	 * This method Deletes the Record from the documentDetailss or documentDetailss_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Channel Detail by key ChannelId
 	 * 
 	 * @param Channel
 	 *            Detail (documentDetails)
@@ -125,8 +123,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	}
 
 	/*
-	 * Deleting the records based on the String referenceId, String docCategory,
-	 * String docModule
+	 * Deleting the records based on the String referenceId, String docCategory, String docModule
 	 */
 	@Override
 	public void deleteList(String referenceId, String docCategory, String docModule, String type) {
@@ -171,9 +168,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	}
 
 	/**
-	 * This method insert new Records into documentDetailss or
-	 * documentDetailss_Temp. it fetches the available Sequence form
-	 * SeqdocumentDetailss by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into documentDetailss or documentDetailss_Temp. it fetches the available Sequence
+	 * form SeqdocumentDetailss by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Channel Detail
 	 * 
@@ -248,9 +244,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	}
 
 	/**
-	 * This method updates the Record documentDetailss or documentDetailss_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Channel Detail by key ChannelId and Version
+	 * This method updates the Record documentDetailss or documentDetailss_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Channel Detail by key ChannelId and Version
 	 * 
 	 * @param Channel
 	 *            Detail (documentDetails)
@@ -301,8 +296,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where ReferenceId = :ReferenceId AND DocModule =:DocModule ");
 		/*
-		 * if(StringUtils.isNotBlank(finEvent)){
-		 * sql.append(" AND (FinEvent = :FinEvent OR FinEvent = '' )"); }
+		 * if(StringUtils.isNotBlank(finEvent)){ sql.append(" AND (FinEvent = :FinEvent OR FinEvent = '' )"); }
 		 */
 		logger.debug("selectSql: " + sql.toString());
 
@@ -327,7 +321,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
-		sql.append(" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
+		sql.append(
+				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId ");
 		sql.append(" from DocumentDetails");
@@ -443,7 +438,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		documentDetails.setDocModule(module);
 
 		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, ");
-		selectSql.append(" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
+		selectSql.append(
+				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" From DocumentDetails");

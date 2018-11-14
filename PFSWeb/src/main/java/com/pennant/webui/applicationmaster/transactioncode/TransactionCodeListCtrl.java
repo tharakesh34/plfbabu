@@ -64,9 +64,9 @@ import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.applicationmaster.transactioncode.model.TransactionCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeList.zul file.
@@ -140,7 +140,8 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> {
 
 		fillComboBox(this.tranType, "", PennantStaticListUtil.getTranTypeBoth(), "");
 
-		registerField("tranCode", listheader_TranCode, SortOrder.ASC, tranCode, sortOperator_tranCode, Operators.STRING);
+		registerField("tranCode", listheader_TranCode, SortOrder.ASC, tranCode, sortOperator_tranCode,
+				Operators.STRING);
 		registerField("tranDesc", listheader_TranDesc, SortOrder.NONE, tranDesc, sortOperator_tranDesc,
 				Operators.STRING);
 		registerField("tranType", listheader_TranType, SortOrder.NONE, tranType, sortOperator_tranType,

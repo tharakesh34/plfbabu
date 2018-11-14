@@ -41,14 +41,20 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.bmtmasters;
+
 import com.pennant.backend.model.bmtmasters.Question;
 
 public interface QuestionDAO {
 
 	Question getQuestion();
+
 	Question getNewQuestion();
-	Question getQuestionById(long id,String type);
-	void update(Question question,String type);
-	void delete(Question question,String type);
-	long save(Question question,String type);
+
+	Question getQuestionById(long id, String type);
+
+	void update(Question question, String type);
+
+	void delete(Question question, String type);
+
+	long save(Question question, String type);
 }

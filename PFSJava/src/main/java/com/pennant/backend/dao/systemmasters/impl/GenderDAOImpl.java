@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 	private static Logger logger = Logger.getLogger(GenderDAOImpl.class);
-	
+
 	public GenderDAOImpl() {
 		super();
 	}
@@ -85,13 +84,14 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 	@Override
 	public Gender getGenderById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Gender gender = new Gender();
 		gender.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT GenderCode, GenderDesc, GenderIsActive,SystemDefault,");
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTGenders");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GenderCode =:GenderCode");
@@ -106,7 +106,7 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 			logger.error("Exception: ", e);
 			gender = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return gender;
 	}
@@ -158,7 +158,8 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:GenderCode, :GenderDesc, :GenderIsActive, :SystemDefault, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -184,7 +185,8 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 		sql.append(tableType.getSuffix());
 		sql.append(" set  GenderDesc = :GenderDesc, GenderIsActive = :GenderIsActive, SystemDefault=:SystemDefault,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where GenderCode =:GenderCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
@@ -250,16 +252,13 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT GenderCode FROM  BMTGenders_View ");
-		selectSql
-				.append(" Where GenderCode != :GenderCode and SystemDefault = :SystemDefault");
+		selectSql.append(" Where GenderCode != :GenderCode and SystemDefault = :SystemDefault");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				gender);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
 		String dftGenderCode = "";
 		try {
-			dftGenderCode = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, String.class);
+			dftGenderCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			dftGenderCode = "";

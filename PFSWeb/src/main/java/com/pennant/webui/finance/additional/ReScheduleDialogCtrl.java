@@ -94,19 +94,17 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/ReScheduleDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/ReScheduleDialog.zul file.
  */
 public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 454600127282110738L;
 	private static final Logger logger = Logger.getLogger(ReScheduleDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ReScheduleDialog; 		
+	protected Window window_ReScheduleDialog;
 	protected FrequencyBox repayFrq;
 	protected FrequencyBox grcPftFrq;
 	protected FrequencyBox grcCpzFrq;
@@ -114,31 +112,31 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected FrequencyBox repayPftFrq;
 	protected FrequencyBox repayRvwFrq;
 	protected FrequencyBox repayCpzFrq;
-	protected Combobox cbFrqFromDate; 	
-	protected Combobox cbSchdMthd; 
-	protected Datebox grcPeriodEndDate; 				
-	protected Datebox nextGrcRepayDate; 				
-	protected Datebox nextRepayDate; 					
-	protected Intbox numberOfTerms; 					
-	protected Decimalbox repayPftRate; 					
-	protected Checkbox pftIntact; 	
-	protected RateBox  rate;  	
+	protected Combobox cbFrqFromDate;
+	protected Combobox cbSchdMthd;
+	protected Datebox grcPeriodEndDate;
+	protected Datebox nextGrcRepayDate;
+	protected Datebox nextRepayDate;
+	protected Intbox numberOfTerms;
+	protected Decimalbox repayPftRate;
+	protected Checkbox pftIntact;
+	protected RateBox rate;
 	protected Uppercasebox serviceReqNo;
-	protected Textbox	   remarks;
-	
+	protected Textbox remarks;
+
 	protected Row row_GrcPeriodEndDate;
 	protected Row row_grcNextRepayDate;
 	protected Row row_Rate;
 	protected Row row_PftIntact;
 	protected Row row_GrcFrq;
 	protected Row row_GrcRvwFrq;
-	
+
 	// not auto wired vars
-	private FinScheduleData finScheduleData; 				// overhanded per param
+	private FinScheduleData finScheduleData; // overhanded per param
 	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
 	private transient ReScheduleService reScheduleService;
 	private boolean appDateValidationReq = false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -154,9 +152,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceMain object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -169,15 +166,14 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		try {
 			if (arguments.containsKey("finScheduleData")) {
-				this.finScheduleData = (FinScheduleData) arguments
-						.get("finScheduleData");
+				this.finScheduleData = (FinScheduleData) arguments.get("finScheduleData");
 				setFinScheduleData(this.finScheduleData);
 			} else {
 				setFinScheduleData(null);
 			}
-			
+
 			if (arguments.containsKey("appDateValidationReq")) {
-				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
+				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// we get the FinanceMainDialogCtrl controller. So we have access
@@ -185,8 +181,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			// or
 			// delete WIF/FinanceMain here.
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) arguments
-						.get("financeMainDialogCtrl"));
+				setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) arguments.get("financeMainDialogCtrl"));
 			} else {
 				setFinanceMainDialogCtrl(null);
 			}
@@ -204,8 +199,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
 	 * @throws Exception
@@ -224,7 +218,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (Exception e) {
 			throw e;
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -241,8 +235,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.repayPftFrq.setMandatoryStyle(true);
 		this.repayRvwFrq.setMandatoryStyle(true);
 		this.repayCpzFrq.setMandatoryStyle(true);
-		this.rate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
-		this.rate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
+		this.rate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
+		this.rate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.rate.setEffectiveRateVisible(true);
 		this.numberOfTerms.setMaxlength(3);
 		this.repayPftRate.setMaxlength(13);
@@ -254,10 +248,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
-		
-		this.row_GrcPeriodEndDate.setVisible(false); 
-		this.row_GrcFrq.setVisible(false); 
-		this.row_GrcRvwFrq.setVisible(false); 
+
+		this.row_GrcPeriodEndDate.setVisible(false);
+		this.row_GrcFrq.setVisible(false);
+		this.row_GrcRvwFrq.setVisible(false);
 		logger.debug("Leaving");
 
 	}
@@ -267,17 +261,19 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doSetValidation() {
 		if (!this.repayPftRate.isDisabled()) {
-			this.repayPftRate.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_ReScheduleDialog_RepayPftRate.value"),9, false, false,9999));
+			this.repayPftRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value"), 9, false, false, 9999));
 		}
 		if (!this.rate.isMarginReadonly()) {
-			this.rate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_ReScheduleDialog_MarginRate.value"), 9, false, true, -9999,9999));
+			this.rate.setMarginConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_ReScheduleDialog_MarginRate.value"), 9, false, true, -9999, 9999));
 		}
-		if(!this.rate.getBaseComp().isReadonly()) {
-			this.rate.setBaseConstraint(new PTStringValidator(Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),null,false, true));
+		if (!this.rate.getBaseComp().isReadonly()) {
+			this.rate.setBaseConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReScheduleDialog_BaseRate.value"), null, false, true));
 		}
 	}
-	
+
 	/**
 	 * when the "Apply" button is clicked. <br>
 	 * 
@@ -298,13 +294,13 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close event is occurred.
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -322,8 +318,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.window_ReScheduleDialog.onClose();
 		logger.debug("Leaving");
 	}
-	
-	public void doClearMessage(){
+
+	public void doClearMessage() {
 		this.cbFrqFromDate.setConstraint("");
 		this.grcPeriodEndDate.setConstraint("");
 		this.nextGrcRepayDate.setConstraint("");
@@ -334,8 +330,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setMarginConstraint("");
 		this.serviceReqNo.setConstraint("");
 		this.remarks.setConstraint("");
-		
-		
+
 		this.cbFrqFromDate.setErrorMessage("");
 		this.grcPeriodEndDate.setErrorMessage("");
 		this.nextGrcRepayDate.setErrorMessage("");
@@ -356,16 +351,17 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		
+
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
-		fillComboBox(this.cbSchdMthd,aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP," );
+		fillComboBox(this.cbSchdMthd, aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(),
+				",GRCNDPAY,PFTCAP,");
 		this.cbSchdMthd.setDisabled(true);
-		
-		if(StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)){
+
+		if (StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)) {
 			this.row_Rate.setVisible(false);
 			this.row_PftIntact.setVisible(false);
 		}
-		
+
 		this.repayFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
 		this.repayFrq.setValue(aFinanceMain.getRepayFrq());
 		this.grcPftFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
@@ -381,25 +377,25 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.repayCpzFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
 		this.repayCpzFrq.setValue(aFinanceMain.getRepayCpzFrq());
 		fillSchFromDates(aFinSchData.getFinanceScheduleDetails());
-		if(aFinSchData.getFinanceType().isFinPftUnChanged()){
+		if (aFinSchData.getFinanceType().isFinPftUnChanged()) {
 			this.pftIntact.setChecked(true);
 			this.pftIntact.setDisabled(true);
-		}else{
+		} else {
 			this.pftIntact.setDisabled(false);
 			this.pftIntact.setChecked(false);
 		}
-		
+
 		// Frequencies based on Conditions
-		if(!aFinanceMain.isAllowGrcPftRvw()){
+		if (!aFinanceMain.isAllowGrcPftRvw()) {
 			this.grcRvwFrq.setDisabled(true);
 		}
-		if(!aFinanceMain.isAllowGrcCpz()){
+		if (!aFinanceMain.isAllowGrcCpz()) {
 			this.grcCpzFrq.setDisabled(true);
 		}
-		if(!aFinanceMain.isAllowRepayRvw()){
+		if (!aFinanceMain.isAllowRepayRvw()) {
 			this.repayRvwFrq.setDisabled(true);
 		}
-		if(!aFinanceMain.isAllowRepayCpz()){
+		if (!aFinanceMain.isAllowRepayCpz()) {
 			this.repayCpzFrq.setDisabled(true);
 		}
 		logger.debug("Leaving");
@@ -414,7 +410,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		this.cbFrqFromDate.appendChild(comboitem);
 		this.cbFrqFromDate.setSelectedItem(comboitem);
-		
+
 		if (financeScheduleDetails != null) {
 			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
@@ -422,16 +418,16 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if(i == 0){
+				if (i == 0) {
 					prvSchd = curSchd;
 				}
 
 				// Not allow Before Current Business Date
-				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+				if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					prvSchd = curSchd;
 					continue;
 				}
-				
+
 				// Only allowed if payment amount is greater than Zero
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					prvSchd = curSchd;
@@ -439,17 +435,18 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.cbFrqFromDate.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
 					comboitem.setLabel(Labels.getLabel("Combo.Select"));
 					this.cbFrqFromDate.appendChild(comboitem);
-					
+
 					prvSchd = curSchd;
 					continue;
 				}
-				
+
 				// If Presentment Exists, should not consider for recalculation
 				if (curSchd.getPresentmentId() > 0) {
 					this.cbFrqFromDate.getItems().clear();
@@ -457,32 +454,33 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setValue("#");
 					comboitem.setLabel(Labels.getLabel("Combo.Select"));
 					this.cbFrqFromDate.appendChild(comboitem);
-					
+
 					prvSchd = curSchd;
 					isPrvShcdAdded = false;
 					continue;
 				}
 
-				if(i == financeScheduleDetails.size() -1){
+				if (i == financeScheduleDetails.size() - 1) {
 					continue;
 				}
-				
-				if(prvSchd != null && !isPrvShcdAdded){
+
+				if (prvSchd != null && !isPrvShcdAdded) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+					comboitem.setLabel(
+							DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 					comboitem.setValue(prvSchd.getSchDate());
 					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
 					this.cbFrqFromDate.appendChild(comboitem);
 					isPrvShcdAdded = true;
 				}
-				
+
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				this.cbFrqFromDate.appendChild(comboitem);
-				
-				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
 					break;
 				}
 			}
@@ -497,16 +495,16 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		Date fromDate = null;
 		String frq = "";
-		
+
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		
+
 		boolean frqValid = true;
-		
+
 		try {
 			if (this.repayFrq.isValidComboValue()) {
 				frq = this.repayFrq.getValue() == null ? "" : this.repayFrq.getValue();
@@ -578,134 +576,158 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		try {
 			if (isValidComboValue(this.cbFrqFromDate, Labels.getLabel("label_ReScheduleDialog_FromDate.value"))) {
-				fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();
-				finServiceInstruction.setFromDate((Date)this.cbFrqFromDate.getSelectedItem().getValue());
+				fromDate = (Date) this.cbFrqFromDate.getSelectedItem().getValue();
+				finServiceInstruction.setFromDate((Date) this.cbFrqFromDate.getSelectedItem().getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_ReScheduleDialog_SchdMthd.value")) && this.cbSchdMthd.getSelectedIndex() != 0) {
+			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_ReScheduleDialog_SchdMthd.value"))
+					&& this.cbSchdMthd.getSelectedIndex() != 0) {
 				finServiceInstruction.setSchdMethod(getComboboxValue(this.cbSchdMthd));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		if(this.row_GrcPeriodEndDate.isVisible()){
+		if (this.row_GrcPeriodEndDate.isVisible()) {
 			try {
-				if(fromDate != null && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0){
-					if(this.grcPeriodEndDate.getValue() == null){
-						throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("FIELD_IS_MAND", new String[]{
-								Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value")}));
-					}else {
-						if(this.grcPeriodEndDate.getValue().compareTo(financeMain.getFinStartDate()) < 0){
-							throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[]{
-									Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"), Labels.getLabel("label_ReScheduleDialog_FinStartDate.value")}));
-						}else if(this.grcPeriodEndDate.getValue().compareTo(fromDate) <= 0){
-							throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("DATE_ALLOWED_MINDATE", new String[]{
-									Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"), DateUtility.formatToLongDate(fromDate)}));
-						}else if(!financeMain.isNewRecord() && 
-								!StringUtils.trimToEmpty(financeMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
-							
-							if(StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory()).equals(FinanceConstants.PRODUCT_IJARAH)||
-							   StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory()).equals(FinanceConstants.PRODUCT_FWIJARAH)){
+				if (fromDate != null && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+					if (this.grcPeriodEndDate.getValue() == null) {
+						throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("FIELD_IS_MAND",
+								new String[] { Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value") }));
+					} else {
+						if (this.grcPeriodEndDate.getValue().compareTo(financeMain.getFinStartDate()) < 0) {
+							throw new WrongValueException(this.grcPeriodEndDate,
+									Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
+											new String[] {
+													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
+													Labels.getLabel("label_ReScheduleDialog_FinStartDate.value") }));
+						} else if (this.grcPeriodEndDate.getValue().compareTo(fromDate) <= 0) {
+							throw new WrongValueException(this.grcPeriodEndDate,
+									Labels.getLabel("DATE_ALLOWED_MINDATE",
+											new String[] {
+													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
+													DateUtility.formatToLongDate(fromDate) }));
+						} else if (!financeMain.isNewRecord() && !StringUtils.trimToEmpty(financeMain.getRecordType())
+								.equals(PennantConstants.RECORD_TYPE_NEW)) {
+
+							if (StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
+									.equals(FinanceConstants.PRODUCT_IJARAH)
+									|| StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
+											.equals(FinanceConstants.PRODUCT_FWIJARAH)) {
 								Date curBussDate = DateUtility.getAppDate();
-								if(this.grcPeriodEndDate.getValue().compareTo(curBussDate) <= 0){
-									throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[]{
-											Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"), Labels.getLabel("label_ReScheduleDialog_CurBussDate.value")}));
+								if (this.grcPeriodEndDate.getValue().compareTo(curBussDate) <= 0) {
+									throw new WrongValueException(this.grcPeriodEndDate,
+											Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {
+													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
+													Labels.getLabel("label_ReScheduleDialog_CurBussDate.value") }));
 								}
 							}
 						}
 					}
 				}
 				finServiceInstruction.setGrcPeriodEndDate(this.grcPeriodEndDate.getValue());
-			}catch (WrongValueException we ) {
+			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
 		try {
 			finServiceInstruction.setNextGrcRepayDate(this.nextGrcRepayDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if(this.nextGrcRepayDate.getValue() != null && this.grcPeriodEndDate.getValue() != null){
-				if(this.nextGrcRepayDate.getValue().compareTo(this.grcPeriodEndDate.getValue()) > 0){
-					throw new WrongValueException(this.nextGrcRepayDate, Labels.getLabel("DATE_ALLOWED_MAXDATE", new String[]{
-							Labels.getLabel("label_ReScheduleDialog_NextGrcRepayDate.value"), Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value")}));
-				}else if(this.nextGrcRepayDate.getValue().compareTo(financeMain.getFinStartDate()) <= 0){
-						throw new WrongValueException(this.nextGrcRepayDate, Labels.getLabel("DATE_ALLOWED_MINDATE", new String[]{
-								Labels.getLabel("label_ReScheduleDialog_NextGrcRepayDate.value"), Labels.getLabel("label_ReScheduleDialog_FinStartDate.value")}));
-					}
+			if (this.nextGrcRepayDate.getValue() != null && this.grcPeriodEndDate.getValue() != null) {
+				if (this.nextGrcRepayDate.getValue().compareTo(this.grcPeriodEndDate.getValue()) > 0) {
+					throw new WrongValueException(this.nextGrcRepayDate,
+							Labels.getLabel("DATE_ALLOWED_MAXDATE",
+									new String[] { Labels.getLabel("label_ReScheduleDialog_NextGrcRepayDate.value"),
+											Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value") }));
+				} else if (this.nextGrcRepayDate.getValue().compareTo(financeMain.getFinStartDate()) <= 0) {
+					throw new WrongValueException(this.nextGrcRepayDate,
+							Labels.getLabel("DATE_ALLOWED_MINDATE",
+									new String[] { Labels.getLabel("label_ReScheduleDialog_NextGrcRepayDate.value"),
+											Labels.getLabel("label_ReScheduleDialog_FinStartDate.value") }));
+				}
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.nextRepayDate.getValue() != null && this.grcPeriodEndDate.getValue() != null){
-				if(this.nextRepayDate.getValue().compareTo(this.grcPeriodEndDate.getValue()) <= 0){
-					throw new WrongValueException(this.nextRepayDate, Labels.getLabel("DATE_ALLOWED_MINDATE", new String[]{
-							Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"), Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value")}));
+			if (this.nextRepayDate.getValue() != null && this.grcPeriodEndDate.getValue() != null) {
+				if (this.nextRepayDate.getValue().compareTo(this.grcPeriodEndDate.getValue()) <= 0) {
+					throw new WrongValueException(this.nextRepayDate,
+							Labels.getLabel("DATE_ALLOWED_MINDATE",
+									new String[] { Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"),
+											Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value") }));
 				}
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.nextRepayDate.getValue() != null && fromDate != null){
-				if(this.nextRepayDate.getValue().compareTo(fromDate) <= 0){
-					throw new WrongValueException(this.nextRepayDate, Labels.getLabel("DATE_ALLOWED_MINDATE", new String[]{
-							Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"),DateUtility.formatToShortDate(fromDate)}));
+			if (this.nextRepayDate.getValue() != null && fromDate != null) {
+				if (this.nextRepayDate.getValue().compareTo(fromDate) <= 0) {
+					throw new WrongValueException(this.nextRepayDate,
+							Labels.getLabel("DATE_ALLOWED_MINDATE",
+									new String[] { Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"),
+											DateUtility.formatToShortDate(fromDate) }));
 				}
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.nextRepayDate.getValue() != null && this.nextGrcRepayDate.getValue() != null){
-				if(this.nextRepayDate.getValue().compareTo(this.nextGrcRepayDate.getValue()) <= 0){
-					throw new WrongValueException(this.nextRepayDate, Labels.getLabel("DATE_ALLOWED_MINDATE", new String[]{
-							Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"), Labels.getLabel("label_ReScheduleDialog_NextGrcRepayDate.value")}));
+			if (this.nextRepayDate.getValue() != null && this.nextGrcRepayDate.getValue() != null) {
+				if (this.nextRepayDate.getValue().compareTo(this.nextGrcRepayDate.getValue()) <= 0) {
+					throw new WrongValueException(this.nextRepayDate,
+							Labels.getLabel("DATE_ALLOWED_MINDATE",
+									new String[] { Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"),
+											Labels.getLabel("label_ReScheduleDialog_NextGrcRepayDate.value") }));
 				}
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			finServiceInstruction.setNextRepayDate(this.nextRepayDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(this.numberOfTerms.getValue() == null ){
-				throw new WrongValueException(this.numberOfTerms, Labels.getLabel("FIELD_IS_MAND", new String[]{
-						Labels.getLabel("label_ReScheduleDialog_NumberOftTerms.value")}));
+			if (this.numberOfTerms.getValue() == null) {
+				throw new WrongValueException(this.numberOfTerms, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_ReScheduleDialog_NumberOftTerms.value") }));
 			}
-			if(this.numberOfTerms.intValue() <= 0 ){
-				throw new WrongValueException(this.numberOfTerms, Labels.getLabel("NUMBER_MINVALUE", new String[]{
-						Labels.getLabel("label_ReScheduleDialog_NumberOftTerms.value"), " 0 "}));
+			if (this.numberOfTerms.intValue() <= 0) {
+				throw new WrongValueException(this.numberOfTerms, Labels.getLabel("NUMBER_MINVALUE",
+						new String[] { Labels.getLabel("label_ReScheduleDialog_NumberOftTerms.value"), " 0 " }));
 			}
-			if(frqValid){
+			if (frqValid) {
 				Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-				int termsAllowed =FrequencyUtil.getTerms(this.repayFrq.getValue(), 
-						financeMain.getNextRepayPftDate(), appEndDate, true, false).getTerms();
-				if(this.numberOfTerms.intValue() > termsAllowed){
-					throw new WrongValueException(this.numberOfTerms,Labels.getLabel("NUMBER_MAXVALUE",new String[]{
-							Labels.getLabel("label_ReScheduleDialog_NumberOftTerms.value"),String.valueOf(termsAllowed)}));
+				int termsAllowed = FrequencyUtil
+						.getTerms(this.repayFrq.getValue(), financeMain.getNextRepayPftDate(), appEndDate, true, false)
+						.getTerms();
+				if (this.numberOfTerms.intValue() > termsAllowed) {
+					throw new WrongValueException(this.numberOfTerms,
+							Labels.getLabel("NUMBER_MAXVALUE",
+									new String[] { Labels.getLabel("label_ReScheduleDialog_NumberOftTerms.value"),
+											String.valueOf(termsAllowed) }));
 				}
 			}
 			finServiceInstruction.setTerms(this.numberOfTerms.intValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			finServiceInstruction.setActualRate(this.repayPftRate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -719,11 +741,11 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if(StringUtils.trimToNull(this.rate.getBaseValue()) == null && this.rate.getMarginValue() != null &&
-					this.rate.getMarginValue().compareTo(BigDecimal.ZERO) != 0){
-				throw new WrongValueException(rate.getMarginComp(),Labels.getLabel("FIELD_EMPTY",new String[]{
-						Labels.getLabel("label_ReScheduleDialog_MarginRate.value")}));
-				
+			if (StringUtils.trimToNull(this.rate.getBaseValue()) == null && this.rate.getMarginValue() != null
+					&& this.rate.getMarginValue().compareTo(BigDecimal.ZERO) != 0) {
+				throw new WrongValueException(rate.getMarginComp(), Labels.getLabel("FIELD_EMPTY",
+						new String[] { Labels.getLabel("label_ReScheduleDialog_MarginRate.value") }));
+
 			}
 			finServiceInstruction.setMargin(this.rate.getMarginValue());
 		} catch (WrongValueException we) {
@@ -732,21 +754,24 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// IF Single Rate required based on Origination Selection please comment below try-catch block
 		try {
-			if (this.row_Rate.isVisible() && ((this.repayPftRate.getValue() != null && this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
+			if (this.row_Rate.isVisible() && ((this.repayPftRate.getValue() != null
+					&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
 					&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
-				throw new WrongValueException(this.repayPftRate, Labels.getLabel("EITHER_OR",
-						new String[] {Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
-						Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") }));
+				throw new WrongValueException(this.repayPftRate,
+						Labels.getLabel("EITHER_OR",
+								new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
+										Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (this.row_Rate.isVisible() && (this.repayPftRate.getValue() == null
-					&& (StringUtils.isEmpty(this.rate.getBaseValue())))) {
-				throw new WrongValueException(this.repayPftRate, Labels.getLabel("EITHER_OR",
-						new String[] {Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
-						Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") }));
+			if (this.row_Rate.isVisible()
+					&& (this.repayPftRate.getValue() == null && (StringUtils.isEmpty(this.rate.getBaseValue())))) {
+				throw new WrongValueException(this.repayPftRate,
+						Labels.getLabel("EITHER_OR",
+								new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
+										Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -762,7 +787,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -771,7 +795,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RESCHD);
@@ -779,18 +803,18 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		setFinScheduleData(reScheduleService.doReSchedule(getFinScheduleData(), finServiceInstruction));
-		
+
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
-		
+
 		//Show Error Details in Schedule Maintenance
-		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
-		}else{
+		} else {
 			getFinScheduleData().setSchduleGenerated(true);
-			if(getFinanceMainDialogCtrl()!=null){
+			if (getFinanceMainDialogCtrl() != null) {
 				try {
 					getFinanceMainDialogCtrl().doFillScheduleList(getFinScheduleData());
 				} catch (Exception e) {
@@ -798,31 +822,34 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$rate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		Clients.clearWrongValue(this.rate.getBaseComp());
 		Clients.clearWrongValue(this.rate.getSpecialComp());
 		this.rate.getMarginComp().setErrorMessage("");
-		ForwardEvent forwardEvent = (ForwardEvent)event;
+		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
-		if(StringUtils.equals(rateType, PennantConstants.RATE_BASE)){
+		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
 			Object dataObject = rate.getBaseObject();
 			if (dataObject instanceof String) {
 				this.rate.setBaseValue(dataObject.toString());
-				this.rate.setEffRateText(PennantApplicationUtil.formatRate(Double.valueOf(0),2));
+				this.rate.setEffRateText(PennantApplicationUtil.formatRate(Double.valueOf(0), 2));
 			} else {
 				BaseRateCode details = (BaseRateCode) dataObject;
 				if (details != null) {
 					this.rate.setBaseValue(details.getBRType());
-					RateDetail rateDetail = RateUtil.rates(this.rate.getBaseValue(),getFinScheduleData().getFinanceMain().getFinCcy(),
-							this.rate.getSpecialValue(), this.rate.getMarginValue()==null?BigDecimal.ZERO:this.rate.getMarginValue(),
-									getFinScheduleData().getFinanceMain().getRpyMinRate(), getFinScheduleData().getFinanceMain().getRpyMaxRate());
-					if(rateDetail.getErrorDetails() == null){
-						this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+					RateDetail rateDetail = RateUtil.rates(this.rate.getBaseValue(),
+							getFinScheduleData().getFinanceMain().getFinCcy(), this.rate.getSpecialValue(),
+							this.rate.getMarginValue() == null ? BigDecimal.ZERO : this.rate.getMarginValue(),
+							getFinScheduleData().getFinanceMain().getRpyMinRate(),
+							getFinScheduleData().getFinanceMain().getRpyMaxRate());
+					if (rateDetail.getErrorDetails() == null) {
+						this.rate.setEffRateText(
+								PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 					} else {
 						MessageUtil.showError(ErrorUtil
 								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
@@ -831,7 +858,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 			}
-		}else if(StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)){
+		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
 			Object dataObject = rate.getSpecialObject();
 			if (dataObject instanceof String) {
 				this.rate.setSpecialValue(dataObject.toString());
@@ -839,11 +866,14 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				SplRateCode details = (SplRateCode) dataObject;
 				if (details != null) {
 					this.rate.setSpecialValue(details.getSRType());
-					RateDetail rateDetail = RateUtil.rates(this.rate.getBaseValue(),getFinScheduleData().getFinanceMain().getFinCcy(),
-							this.rate.getSpecialValue(),this.rate.getMarginValue()==null?BigDecimal.ZERO:this.rate.getMarginValue(),
-									getFinScheduleData().getFinanceMain().getRpyMinRate(), getFinScheduleData().getFinanceMain().getRpyMaxRate());
-					if(rateDetail.getErrorDetails() == null){
-						this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+					RateDetail rateDetail = RateUtil.rates(this.rate.getBaseValue(),
+							getFinScheduleData().getFinanceMain().getFinCcy(), this.rate.getSpecialValue(),
+							this.rate.getMarginValue() == null ? BigDecimal.ZERO : this.rate.getMarginValue(),
+							getFinScheduleData().getFinanceMain().getRpyMinRate(),
+							getFinScheduleData().getFinanceMain().getRpyMaxRate());
+					if (rateDetail.getErrorDetails() == null) {
+						this.rate.setEffRateText(
+								PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 					} else {
 						MessageUtil.showError(ErrorUtil
 								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
@@ -852,60 +882,68 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 			}
-		}else if(StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)){
+		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 			setEffectiveRate();
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
-	private void setEffectiveRate() throws InterruptedException{
-		if(StringUtils.isBlank(this.rate.getBaseValue())){
-			this.rate.setEffRateText(PennantApplicationUtil.formatRate((this.rate.getMarginValue()==null?BigDecimal.ZERO:this.rate.getMarginValue()).doubleValue(),2));
+
+	private void setEffectiveRate() throws InterruptedException {
+		if (StringUtils.isBlank(this.rate.getBaseValue())) {
+			this.rate.setEffRateText(PennantApplicationUtil.formatRate(
+					(this.rate.getMarginValue() == null ? BigDecimal.ZERO : this.rate.getMarginValue()).doubleValue(),
+					2));
 			return;
 		}
-		RateDetail rateDetail = RateUtil.rates(this.rate.getBaseValue(), getFinScheduleData().getFinanceMain().getFinCcy(),
-				this.rate.getSpecialValue(),this.rate.getMarginValue()==null?BigDecimal.ZERO:this.rate.getMarginValue(),
-						getFinScheduleData().getFinanceMain().getRpyMinRate(), getFinScheduleData().getFinanceMain().getRpyMaxRate());
-		if(rateDetail.getErrorDetails() == null){
-			this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+		RateDetail rateDetail = RateUtil.rates(this.rate.getBaseValue(),
+				getFinScheduleData().getFinanceMain().getFinCcy(), this.rate.getSpecialValue(),
+				this.rate.getMarginValue() == null ? BigDecimal.ZERO : this.rate.getMarginValue(),
+				getFinScheduleData().getFinanceMain().getRpyMinRate(),
+				getFinScheduleData().getFinanceMain().getRpyMaxRate());
+		if (rateDetail.getErrorDetails() == null) {
+			this.rate
+					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
 			MessageUtil.showError(ErrorUtil
 					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.rate.setSpecialValue("");
 		}
 	}
-	
+
 	public void onChange$cbFrqFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		this.row_GrcPeriodEndDate.setVisible(false); 
-		this.row_GrcFrq.setVisible(false); 
-		this.row_GrcRvwFrq.setVisible(false); 
+
+		this.row_GrcPeriodEndDate.setVisible(false);
+		this.row_GrcFrq.setVisible(false);
+		this.row_GrcRvwFrq.setVisible(false);
 		this.row_grcNextRepayDate.setVisible(true);
-		
+
 		this.cbSchdMthd.setDisabled(true);
-		fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
-		
-		if(this.cbFrqFromDate.getSelectedIndex() != 0){
-			Date fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();
-			
+		fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(),
+				PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+
+		if (this.cbFrqFromDate.getSelectedIndex() != 0) {
+			Date fromDate = (Date) this.cbFrqFromDate.getSelectedItem().getValue();
+
 			List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-					
+
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-					
-					if(curSchd.isRepayOnSchDate() || curSchd.isRvwOnSchDate() ||
-							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) || 
-							fromDate.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
-						if(fromDate.compareTo(curSchd.getSchDate()) == 0){
-							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0){
-								this.row_GrcPeriodEndDate.setVisible(true); 
-								this.row_GrcFrq.setVisible(true); 
-								this.row_GrcRvwFrq.setVisible(true); 
-								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
-							}else{
-								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+
+					if (curSchd.isRepayOnSchDate() || curSchd.isRvwOnSchDate()
+							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)
+							|| fromDate.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+						if (fromDate.compareTo(curSchd.getSchDate()) == 0) {
+							if (fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0) {
+								this.row_GrcPeriodEndDate.setVisible(true);
+								this.row_GrcFrq.setVisible(true);
+								this.row_GrcRvwFrq.setVisible(true);
+								fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
+										PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
+							} else {
+								fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(),
+										PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 							}
 							break;
 						}
@@ -915,8 +953,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	public void onSelectCode$repayFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.nextGrcRepayDate.setText("");
@@ -932,7 +969,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.grcPeriodEndDate.setText("");
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onSelectDay$repayFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.nextGrcRepayDate.setText("");
@@ -940,14 +977,15 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.grcPeriodEndDate.setText("");
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public ScheduleDetailDialogCtrl getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(ScheduleDetailDialogCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -955,6 +993,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}

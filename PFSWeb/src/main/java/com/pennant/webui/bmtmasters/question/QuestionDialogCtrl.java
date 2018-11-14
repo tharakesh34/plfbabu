@@ -79,35 +79,33 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/BMTMasters/Question/questionDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/BMTMasters/Question/questionDialog.zul file.
  */
 public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	private static final long serialVersionUID = -4852924198816837755L;
 	private static final Logger logger = Logger.getLogger(QuestionDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_QuestionDialog;	
-	protected Textbox 	questionDesc; 			
-	protected Textbox 	answerA; 				
-	protected Textbox 	answerB; 				
-	protected Textbox 	answerC; 				
-	protected Textbox 	answerD; 				
-	protected Combobox 	correctAnswer; 			
-	protected Checkbox 	questionIsActive; 		
+	protected Window window_QuestionDialog;
+	protected Textbox questionDesc;
+	protected Textbox answerA;
+	protected Textbox answerB;
+	protected Textbox answerC;
+	protected Textbox answerD;
+	protected Combobox correctAnswer;
+	protected Checkbox questionIsActive;
 	protected Row statusRow;
 
 	// not auto wired variables
-	private Question question; 								// overHanded per parameter
-	private Question prvQuestion; 							// overHanded per parameter
-	private transient QuestionListCtrl questionListCtrl; 	// overHanded per parameter
+	private Question question; // overHanded per parameter
+	private Question prvQuestion; // overHanded per parameter
+	private transient QuestionListCtrl questionListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient QuestionService questionService;
 	private transient PagedListService pagedListService;
@@ -130,9 +128,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Question object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Question object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -176,7 +173,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getQuestion());
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -202,8 +199,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -225,9 +221,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -236,9 +232,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -248,9 +244,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_QuestionDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -260,9 +256,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -271,9 +267,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -314,10 +310,10 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		this.answerC.setValue(aQuestion.getAnswerC());
 		this.answerD.setValue(aQuestion.getAnswerD());
 		setListCorrectAnswer(this.correctAnswer, aQuestion.getCorrectAnswer());
-		if(aQuestion.isNewRecord() || aQuestion.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aQuestion.isNewRecord() || aQuestion.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.questionIsActive.setChecked(true);
 			this.questionIsActive.setDisabled(true);
-		}else{
+		} else {
 			this.questionIsActive.setChecked(aQuestion.isQuestionIsActive());
 		}
 		this.recordStatus.setValue(aQuestion.getRecordStatus());
@@ -362,21 +358,18 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		}
 		try {
 			if (this.correctAnswer.getSelectedItem().getValue() != null) {
-				if (this.correctAnswer
-						.getSelectedItem().getLabel().equals(PennantJavaUtil.getLabel("label_QuestionDialog_AnswerC.value"))) {
-					if (this.answerC.getValue() == null
-							|| StringUtils.isEmpty(this.answerC.getValue())) {
-						throw new WrongValueException(
-								this.answerC,Labels.getLabel("FIELD_NO_EMPTY", new String[] { 
-										Labels.getLabel("label_QuestionDialog_AnswerC.value") }));
+				if (this.correctAnswer.getSelectedItem().getLabel()
+						.equals(PennantJavaUtil.getLabel("label_QuestionDialog_AnswerC.value"))) {
+					if (this.answerC.getValue() == null || StringUtils.isEmpty(this.answerC.getValue())) {
+						throw new WrongValueException(this.answerC, Labels.getLabel("FIELD_NO_EMPTY",
+								new String[] { Labels.getLabel("label_QuestionDialog_AnswerC.value") }));
 					}
 
-				} else if (this.correctAnswer
-						.getSelectedItem().getLabel().equals(PennantJavaUtil.getLabel("label_QuestionDialog_AnswerD.value"))) {
+				} else if (this.correctAnswer.getSelectedItem().getLabel()
+						.equals(PennantJavaUtil.getLabel("label_QuestionDialog_AnswerD.value"))) {
 					if (this.answerD.getValue() == null || StringUtils.isEmpty(this.answerD.getValue())) {
-						throw new WrongValueException(
-								this.answerD,Labels.getLabel("FIELD_NO_EMPTY",new String[] { 
-										Labels.getLabel("label_QuestionDialog_AnswerD.value") }));
+						throw new WrongValueException(this.answerD, Labels.getLabel("FIELD_NO_EMPTY",
+								new String[] { Labels.getLabel("label_QuestionDialog_AnswerD.value") }));
 					}
 				}
 			}
@@ -409,8 +402,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aQuestion
 	 * @throws InterruptedException
@@ -455,27 +447,26 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		setValidationOn(true);
 
 		if (!this.questionDesc.isReadonly()) {
-			this.questionDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_QuestionDialog_QuestionDesc.value"),null,true));
+			this.questionDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_QuestionDialog_QuestionDesc.value"), null, true));
 		}
 		if (!this.answerA.isReadonly()) {
-			this.answerA.setConstraint(new PTStringValidator(Labels.getLabel("label_QuestionDialog_AnswerA.value"),null,true));
+			this.answerA.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_QuestionDialog_AnswerA.value"), null, true));
 		}
 		if (!this.answerB.isReadonly()) {
-			this.answerB.setConstraint(new PTStringValidator(Labels.getLabel("label_QuestionDialog_AnswerB.value"),null,true));
+			this.answerB.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_QuestionDialog_AnswerB.value"), null, true));
 		}
 		/*
-		 * if (!this.answerC.isReadonly()){
-		 * this.answerC.setConstraint("NO EMPTY:" +
-		 * Labels.getLabel("FIELD_NO_EMPTY",new
-		 * String[]{Labels.getLabel("label_QuestionDialog_AnswerC.value")})); }
-		 * if (!this.answerD.isReadonly()){
-		 * this.answerD.setConstraint("NO EMPTY:" +
-		 * Labels.getLabel("FIELD_NO_EMPTY",new
+		 * if (!this.answerC.isReadonly()){ this.answerC.setConstraint("NO EMPTY:" +
+		 * Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_QuestionDialog_AnswerC.value")})); } if
+		 * (!this.answerD.isReadonly()){ this.answerD.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new
 		 * String[]{Labels.getLabel("label_QuestionDialog_AnswerD.value")})); }
 		 */
 		if (!this.correctAnswer.isDisabled()) {
 			this.correctAnswer.setConstraint(new StaticListValidator(listCorrectAnswer,
-							Labels.getLabel("label_QuestionDialog_CorrectAnswer.value")));
+					Labels.getLabel("label_QuestionDialog_CorrectAnswer.value")));
 		}
 		logger.debug("Leaving");
 	}
@@ -494,7 +485,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		this.correctAnswer.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set Validations for LOV Fields
 	 */
@@ -521,7 +512,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		this.correctAnswer.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	// CRUD operations
 
 	/**
@@ -536,8 +527,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> " + aQuestion.getQuestionId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aQuestion.getQuestionId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aQuestion.getRecordType())) {
 				aQuestion.setVersion(aQuestion.getVersion() + 1);
@@ -586,8 +577,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		this.answerC.setReadonly(isReadOnly("QuestionDialog_answerC"));
 		this.answerD.setReadonly(isReadOnly("QuestionDialog_answerD"));
 		this.correctAnswer.setDisabled(isReadOnly("QuestionDialog_correctAnswer"));
-		/*this.questionIsActive
-				.setDisabled(isReadOnly("QuestionDialog_questionIsActive"));*/
+		/*
+		 * this.questionIsActive .setDisabled(isReadOnly("QuestionDialog_questionIsActive"));
+		 */
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -786,7 +778,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aQuestion,	PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aQuestion, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -821,8 +813,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		Question aQuestion = (Question) auditHeader.getAuditDetail()
-				.getModelData();
+		Question aQuestion = (Question) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
@@ -851,8 +842,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_QuestionDialog, auditHeader);
 						return processCompleted;
 					}
@@ -922,11 +913,9 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Question aQuestion, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aQuestion.getBefImage(), aQuestion);
-		return new AuditHeader(String.valueOf(aQuestion.getQuestionId()), null,
-				null, null, auditDetail, aQuestion.getUserDetails(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aQuestion.getBefImage(), aQuestion);
+		return new AuditHeader(String.valueOf(aQuestion.getQuestionId()), null, null, null, auditDetail,
+				aQuestion.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -938,10 +927,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_QuestionDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_QuestionDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -968,7 +955,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 			getQuestionListCtrl().listBoxQuestion.getListModel();
 		}
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(question.getQuestionId());
@@ -981,6 +968,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -988,6 +976,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	public Question getQuestion() {
 		return this.question;
 	}
+
 	public void setQuestion(Question question) {
 		this.question = question;
 	}
@@ -995,6 +984,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	public void setQuestionService(QuestionService questionService) {
 		this.questionService = questionService;
 	}
+
 	public QuestionService getQuestionService() {
 		return this.questionService;
 	}
@@ -1002,6 +992,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	public void setQuestionListCtrl(QuestionListCtrl questionListCtrl) {
 		this.questionListCtrl = questionListCtrl;
 	}
+
 	public QuestionListCtrl getQuestionListCtrl() {
 		return this.questionListCtrl;
 	}
@@ -1009,13 +1000,15 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
-	
+
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

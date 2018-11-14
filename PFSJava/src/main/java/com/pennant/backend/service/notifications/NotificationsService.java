@@ -57,16 +57,27 @@ import com.pennant.backend.model.rulefactory.Notifications;
 public interface NotificationsService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Notifications getNotificationsById(String ruleCode);
+
 	Notifications getApprovedNotificationsById(String ruleCode);
+
 	List<Notifications> getApprovedNotificationsByModule(String ruleModule);
+
 	List<Notifications> getApprovedNotificationsByRuleIdList(List<Long> notificationIdList);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<Long> getTemplateIds(String templateType);
+
 	List<MailData> getMailData(String mailName);
+
 	Map<String, Object> mergeFields(String query);
+
 	int triggerMail(String query);
 
 }

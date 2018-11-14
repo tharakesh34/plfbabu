@@ -50,15 +50,15 @@ public class UserActivityLog {
 	private String reference;
 	private int serialNo;
 	private long fromUser;
-	private String roleCode= "";
+	private String roleCode = "";
 	private String activity;
 	private long toUser;
-	private String nextRoleCode= "";
+	private String nextRoleCode = "";
 	private Timestamp logTime;
 	private Timestamp reassignedTime;
 	private boolean processed;
-	
-	public UserActivityLog(){
+
+	public UserActivityLog() {
 		super();
 	}
 
@@ -111,20 +111,20 @@ public class UserActivityLog {
 	}
 
 	public Timestamp getLogTime() {
-	    return logTime;
-    }
+		return logTime;
+	}
 
 	public void setLogTime(Timestamp logTime) {
-	    this.logTime = logTime;
-    }
+		this.logTime = logTime;
+	}
 
 	public Timestamp getReassignedTime() {
-	    return reassignedTime;
-    }
+		return reassignedTime;
+	}
 
 	public void setReassignedTime(Timestamp reassignedTime) {
-	    this.reassignedTime = reassignedTime;
-    }
+		this.reassignedTime = reassignedTime;
+	}
 
 	public int getSerialNo() {
 		return serialNo;

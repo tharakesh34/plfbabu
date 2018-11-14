@@ -47,11 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
 
 public interface ScheduleMethodService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ScheduleMethod getScheduleMethodById(String id);
+
 	ScheduleMethod getApprovedScheduleMethodById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -60,12 +60,12 @@ public interface CollateralAssignmentDAO {
 	CollateralAssignment getCollateralAssignmentbyID(CollateralAssignment collateralAssignment, String type);
 
 	void delete(CollateralAssignment collateralAssignment, String type);
-	
+
 	void deleteByReference(String reference, String type);
 
 	List<AssignmentDetails> getCollateralAssignmentByColRef(String collateralRef, String collateralType);
 
-	BigDecimal getAssignedPerc(String collateralRef, String reference,	String type);
+	BigDecimal getAssignedPerc(String collateralRef, String reference, String type);
 
 	int getAssignedCollateralCount(String collateralRef, String type);
 
@@ -74,6 +74,5 @@ public interface CollateralAssignmentDAO {
 	void save(CollateralMovement movement);
 
 	List<CollateralMovement> getCollateralMovements(String collateralRef);
-	
-}
 
+}

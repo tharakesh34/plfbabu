@@ -47,8 +47,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennanttech.pff.core.TableType;
 
 public interface PinCodeDAO extends BasicCrudDao<PinCode> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,7 +57,8 @@ public interface PinCodeDAO extends BasicCrudDao<PinCode> {
 	 *            The type of the table.
 	 * @return PinCode
 	 */
-	PinCode getPinCode(long pinCodeId,String type);
+	PinCode getPinCode(long pinCodeId, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -71,8 +71,9 @@ public interface PinCodeDAO extends BasicCrudDao<PinCode> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long pinCodeId, String pinCode, TableType tableType);
+
 	boolean isCityCodeExists(String pcCity);
-	
-	PinCode getPinCode(String pinCode,String type);
-	
+
+	PinCode getPinCode(String pinCode, String type);
+
 }

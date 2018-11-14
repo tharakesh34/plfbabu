@@ -23,18 +23,18 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements LimitHeaderDAO {
 	private static Logger logger = Logger.getLogger(LimitHeaderDAOImpl.class);
 
-	
 	/**
-	 * This method set the Work Flow id based on the module name and return the new LimitDetail 
+	 * This method set the Work Flow id based on the module name and return the new LimitDetail
+	 * 
 	 * @return LimitDetail
 	 */
 
 	@Override
 	public LimitHeader getLimitHeader() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("LimitHeader");
-		LimitHeader limitHeader= new LimitHeader();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("LimitHeader");
+		LimitHeader limitHeader = new LimitHeader();
+		if (workFlowDetails != null) {
 			limitHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -50,16 +50,13 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		return limitHeader;
 	}
 
-
-
-
-
 	/**
-	 * Fetch the Record  Limit Header details by Customer ID
+	 * Fetch the Record Limit Header details by Customer ID
 	 * 
-	 * @param Customerid (String )
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customerid
+	 *            (String )
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitHeader
 	 */
 
@@ -71,10 +68,12 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		limitHeader.setCustomerId(customerId);
 
-		StringBuilder selectSql = new StringBuilder("Select HeaderId,  CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
+		StringBuilder selectSql = new StringBuilder(
+				"Select HeaderId,  CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
 		selectSql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" , ShowLimitsIn,QueryDesc,GroupName,CustGrpRO1,ResponsibleBranchName,StructureName,CustShrtName,custCoreBank ,custDftBranch ,CustDftBranchName ,custSalutationCode, ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					" , ShowLimitsIn,QueryDesc,GroupName,CustGrpRO1,ResponsibleBranchName,StructureName,CustShrtName,custCoreBank ,custDftBranch ,CustDftBranchName ,custSalutationCode, ");
 			selectSql.append(" CustCIF,CustFName,CustMName, CustFullName, CustGrpCode, GroupName ");
 		}
 		selectSql.append(" From LimitHeader");
@@ -85,9 +84,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
 		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
 
-		try{
-			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitHeader = null;
 		}
@@ -97,11 +96,12 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	}
 
 	/**
-	 * Fetch the Record  Limit Header details by Customer Group Code
+	 * Fetch the Record Limit Header details by Customer Group Code
 	 * 
-	 * @param GroupCode (String )
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param GroupCode
+	 *            (String )
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitHeader
 	 */
 	@Override
@@ -139,16 +139,17 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	}
 
 	@Override
-	public LimitHeader getLimitHeaderByRule(final String ruleCode,final String ruleValue, String type) {
+	public LimitHeader getLimitHeaderByRule(final String ruleCode, final String ruleValue, String type) {
 
 		logger.debug("Entering");
 		LimitHeader limitHeader = getLimitHeader();
 
 		limitHeader.setRuleCode(ruleCode);
 
-		StringBuilder selectSql = new StringBuilder("Select HeaderId,  RuleCode,RuleValue, ResponsibleBranch, LimitCcy, LimitExpiryDate , LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
+		StringBuilder selectSql = new StringBuilder(
+				"Select HeaderId,  RuleCode,RuleValue, ResponsibleBranch, LimitCcy, LimitExpiryDate , LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
 		selectSql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",ShowLimitsIn,QueryDesc,ResponsibleBranchName,StructureName");
 		}
 		selectSql.append(" From LimitHeader");
@@ -159,9 +160,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
 		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
 
-		try{
-			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitHeader = null;
 		}
@@ -171,32 +172,37 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	}
 
 	/**
-	 * This method insert new Records into LimitHeader or LimitHeader_Temp.
-	 * it fetches the available Sequence form SeqLimitHeader by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into LimitHeader or LimitHeader_Temp. it fetches the available Sequence form
+	 * SeqLimitHeader by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Limit Header 
+	 * save Limit Header
 	 * 
-	 * @param Limit Header (LimitDetails)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Header (LimitDetails)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
-	public long save(LimitHeader limitHeader,String type) {
+	public long save(LimitHeader limitHeader, String type) {
 		logger.debug("Entering");
-		if (limitHeader.getId()==Long.MIN_VALUE){
+		if (limitHeader.getId() == Long.MIN_VALUE) {
 			limitHeader.setId(getNextId("SeqLimitHeader"));
-			logger.debug("get NextID:"+limitHeader.getId());
+			logger.debug("get NextID:" + limitHeader.getId());
 		}
 
-		StringBuilder insertSql =new StringBuilder("Insert Into LimitHeader");
+		StringBuilder insertSql = new StringBuilder("Insert Into LimitHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
-		insertSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:HeaderId, :RuleCode, :RuleValue, :CustomerGroup, :CustomerId, :ResponsibleBranch, :LimitCcy, :LimitExpiryDate, :LimitRvwDate, :LimitStructureCode, :LimitSetupRemarks,:Active,:Rebuild");
-		insertSql.append(", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
+		insertSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:HeaderId, :RuleCode, :RuleValue, :CustomerGroup, :CustomerId, :ResponsibleBranch, :LimitCcy, :LimitExpiryDate, :LimitRvwDate, :LimitStructureCode, :LimitSetupRemarks,:Active,:Rebuild");
+		insertSql.append(
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -207,29 +213,31 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	}
 
 	/**
-	 * This method updates the Record LimitHeader or LimitHeader_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Limit Header by key HeaderId and Version
+	 * This method updates the Record LimitHeader or LimitHeader_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Limit Header by key HeaderId and Version
 	 * 
-	 * @param Limit Header (limitHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Header (limitHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public void update(LimitHeader limitHeader,String type) {
+	public void update(LimitHeader limitHeader, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update LimitHeader");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set RuleCode = :RuleCode, RuleValue = :RuleValue, CustomerGroup = :CustomerGroup, CustomerId = :CustomerId, ResponsibleBranch = :ResponsibleBranch, LimitCcy = :LimitCcy, LimitExpiryDate = :LimitExpiryDate, LimitRvwDate = :LimitRvwDate, LimitStructureCode = :LimitStructureCode, LimitSetupRemarks = :LimitSetupRemarks ,Active =:Active,Rebuild =:Rebuild");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update LimitHeader");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set RuleCode = :RuleCode, RuleValue = :RuleValue, CustomerGroup = :CustomerGroup, CustomerId = :CustomerId, ResponsibleBranch = :ResponsibleBranch, LimitCcy = :LimitCcy, LimitExpiryDate = :LimitExpiryDate, LimitRvwDate = :LimitRvwDate, LimitStructureCode = :LimitStructureCode, LimitSetupRemarks = :LimitSetupRemarks ,Active =:Active,Rebuild =:Rebuild");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where HeaderId =:HeaderId");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
@@ -244,21 +252,20 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		logger.debug("Leaving");
 	}
 
-
 	/**
-	 * This method Deletes the Record from the LimitHeader or LimitHeader_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Limit Header by key HeaderId
+	 * This method Deletes the Record from the LimitHeader or LimitHeader_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Limit Header by key HeaderId
 	 * 
-	 * @param Limit Header (LimitHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Header (LimitHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(LimitHeader limitHeader ,String type) {
+	public void delete(LimitHeader limitHeader, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -267,13 +274,13 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		deleteSql.append(" Where HeaderId =:HeaderId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader );
-		try{
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 
 		}
@@ -281,11 +288,12 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	}
 
 	/**
-	 * Fetch the Record  Limit Header details by key field
+	 * Fetch the Record Limit Header details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitDetails
 	 */
 	@Override
@@ -295,10 +303,13 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		limitHeader.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" ,ShowLimitsIn,QueryDesc,CustCIF,CustGrpCode ,GroupName,ResponsibleBranchName,StructureName,CustFName,CustMName,CustFullName ,CustShrtName,custCoreBank ,custDftBranch ,CustDftBranchName ,custSalutationCode");
+		StringBuilder selectSql = new StringBuilder(
+				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active");
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					" ,ShowLimitsIn,QueryDesc,CustCIF,CustGrpCode ,GroupName,ResponsibleBranchName,StructureName,CustFName,CustMName,CustFullName ,CustShrtName,custCoreBank ,custDftBranch ,CustDftBranchName ,custSalutationCode");
 		}
 		selectSql.append(" From LimitHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -308,15 +319,16 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
 		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
 
-		try{
-			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitHeader = null;
 		}
 		logger.debug("Leaving");
 		return limitHeader;
 	}
+
 	@Override
 	public List<LimitHeader> getLimitHeaderByStructureCode(String code, String type) {
 		logger.debug("Entering");
@@ -324,9 +336,11 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		limitHeader.setLimitStructureCode(code);
 
-		StringBuilder selectSql = new StringBuilder("Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){			
+		StringBuilder selectSql = new StringBuilder(
+				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active");
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 		}
 		selectSql.append(" From LimitHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -337,11 +351,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);	
-	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 	}
-
-
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -352,8 +364,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		limitHeader.setCustomerId(customerId);
 
 		StringBuilder selectSql = new StringBuilder("Select count(CustomerId) ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" ,QueryDesc,CustCIF,CustGrpCode ,GroupName,ResponsibleBranchName,StructureName,CustFName,CustMName,CustFullName ,CustShrtName,custCoreBank ,custDftBranch ,CustDftBranchName ,custSalutationCode");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					" ,QueryDesc,CustCIF,CustGrpCode ,GroupName,ResponsibleBranchName,StructureName,CustFName,CustMName,CustFullName ,CustShrtName,custCoreBank ,custDftBranch ,CustDftBranchName ,custSalutationCode");
 		}
 		selectSql.append(" From LimitHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -362,19 +375,19 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
 
-		try{
-			count = this.jdbcTemplate.queryForLong(selectSql.toString(), beanParameters);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			count = this.jdbcTemplate.queryForLong(selectSql.toString(), beanParameters);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitHeader = null;
 		}
 
 		logger.debug("Leaving");
-		if(count<=0){
+		if (count <= 0) {
 			return false;
-		}else{
+		} else {
 			return true;
-		}		
+		}
 	}
 
 	/**
@@ -383,14 +396,14 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * @param type
 	 */
 	@Override
-	public void updateRebuild(long headerId,boolean rebuild,String type) {
+	public void updateRebuild(long headerId, boolean rebuild, String type) {
 		logger.debug("Entering");
-		MapSqlParameterSource source=new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("HeaderId", headerId);
 		source.addValue("Rebuild", rebuild);
-		
-		StringBuilder	updateSql =new StringBuilder("Update LimitHeader");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+
+		StringBuilder updateSql = new StringBuilder("Update LimitHeader");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set Rebuild = :Rebuild ");
 		updateSql.append(" Where HeaderId =:HeaderId");
 		logger.debug("updateSql: " + updateSql.toString());
@@ -426,6 +439,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 			return 0;
 		}
 	}
+
 	/**
 	 * Method for fetch number of records from limitHeader
 	 * 
@@ -454,7 +468,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Method for fetch limitHeaders
 	 * 
@@ -481,12 +495,13 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	/**
 	 * Method for fetch number of records from limitHeader
 	 * 
 	 * @param headerId
-	 * @param customer group
+	 * @param customer
+	 *            group
 	 * 
 	 * @return Integer
 	 */

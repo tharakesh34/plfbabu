@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -11,30 +11,36 @@
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-        
-	<bean id="interfaceLoggingDAO" class="com.pennanttech.pff.logging.dao.impl.InterfaceLoggingDAOImpl" parent="basicDao"/>
+
+	<bean id="interfaceLoggingDAO" class="com.pennanttech.pff.logging.dao.impl.InterfaceLoggingDAOImpl" parent="basicDao" />
 	<bean id="creditInterfaceDAOImpl" class="com.pennanttech.pff.dao.impl.CreditInterfaceDAOImpl" parent="basicDao">
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
-	
-	 <bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
+
+	<bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<bean id="abstractMandateProcess" class="com.pennanttech.pff.external.mandate.AbstractMandateProcess" abstract="true" parent="abstractInterface"/>
-	<bean id="abstractPresentmentProcess" class="com.pennanttech.pff.external.presentment.AbstractPresentmentRequest" abstract="true" parent="abstractInterface"/>
-	<bean id="abstarctDisbursementRequest" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementRequest" abstract="true" parent="abstractInterface"/>
-	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse" abstract="true" parent="abstractInterface"/>
-	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess" abstract="true" parent="abstractInterface"/>
-	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService" abstract="true" parent="abstractInterface"/>
+
+	<bean id="abstractMandateProcess" class="com.pennanttech.pff.external.mandate.AbstractMandateProcess" abstract="true"
+		parent="abstractInterface" />
+	<bean id="abstractPresentmentProcess" class="com.pennanttech.pff.external.presentment.AbstractPresentmentRequest"
+		abstract="true" parent="abstractInterface" />
+	<bean id="abstarctDisbursementRequest" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementRequest"
+		abstract="true" parent="abstractInterface" />
+	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse"
+		abstract="true" parent="abstractInterface" />
+	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
+		abstract="true" parent="abstractInterface" />
+	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService"
+		abstract="true" parent="abstractInterface" />
 	<bean id="dmsIdentificationDAO" class="com.pennant.backend.dao.dms.impl.DMSIdentificationDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<bean id="dmsAddDocJob" class="com.pennanttech.pff.schedule.jobs.DMSAddDocJob"/>
+
+	<bean id="dmsAddDocJob" class="com.pennanttech.pff.schedule.jobs.DMSAddDocJob" />
 	<bean id="dmsAddDocJobProcess" class="com.pennanttech.pff.process.DMSAddDocJobProcess">
-		<property name="retryCount" value="${dms.document.retrycount}"/>
-		<property name="threadCount" value="${dms.thread.count}"/>
-		<property name="threadAwaitPeroid" value="${dms.thread.seconds.timeout}"/>
+		<property name="retryCount" value="${dms.document.retrycount}" />
+		<property name="threadCount" value="${dms.thread.count}" />
+		<property name="threadAwaitPeroid" value="${dms.thread.seconds.timeout}" />
 	</bean>
 </beans>

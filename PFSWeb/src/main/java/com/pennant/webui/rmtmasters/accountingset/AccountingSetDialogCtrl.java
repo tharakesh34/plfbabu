@@ -95,50 +95,48 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.accountingset.model.TransactionEntryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RulesFactory/AccountingSet/accountingSetDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RulesFactory/AccountingSet/accountingSetDialog.zul file.
  */
 public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = Logger.getLogger(AccountingSetDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_AccountingSetDialog; 
+	protected Window window_AccountingSetDialog;
 
-	protected ExtendedCombobox 		eventCode; 					
-	protected Textbox 		accountSetCode; 			
-	protected Textbox 		accountSetCodeName; 		
-	protected Checkbox 		entryByInvestment; 			
-	protected Checkbox 		systemDefault;				
-	protected Button 		btnCopyTo;					
+	protected ExtendedCombobox eventCode;
+	protected Textbox accountSetCode;
+	protected Textbox accountSetCodeName;
+	protected Checkbox entryByInvestment;
+	protected Checkbox systemDefault;
+	protected Button btnCopyTo;
 
-	protected Grid 			grid_Basicdetails;			
-	
-	protected Hbox 			hbox_EntryByInvestment;		
+	protected Grid grid_Basicdetails;
 
-	protected Listbox 		listBoxTransactionEntry;
-	protected Listheader 	listheader_Account;
-	protected Listheader 	listheader_PostToSystem;
-	protected Listheader 	listheader_ByInvestor;		
-	protected Paging 		pagingTransactionEntryList;
+	protected Hbox hbox_EntryByInvestment;
+
+	protected Listbox listBoxTransactionEntry;
+	protected Listheader listheader_Account;
+	protected Listheader listheader_PostToSystem;
+	protected Listheader listheader_ByInvestor;
+	protected Paging pagingTransactionEntryList;
 
 	// not auto wired vars
 	private AccountingSet accountingSet; // overhanded per param
 	private transient AccountingSetListCtrl accountingSetListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
-	protected Button button_TransactionEntryList_NewTransactionEntry; 
+
+	protected Button button_TransactionEntryList_NewTransactionEntry;
 	protected Button btnSearchAccountSetCode; // autowire
 	protected Textbox lovDescEventCodeName;
 
@@ -149,7 +147,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private PagedListWrapper<TransactionEntry> TransactionEntryPagedListWrapper;
 	int listRows;
 	private boolean saveRecord = false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -165,9 +163,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected AccountingSet object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected AccountingSet object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -242,15 +239,16 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.accountSetCodeName.setMaxlength(50);
 		this.eventCode.setMandatoryStyle(true);
 		this.eventCode.setModuleName("AccountEngineEvent");/*
-		this.eventCode.setValueColumn("AEEventCode");
-		this.eventCode.setDescColumn("AEEventCodeDesc");*/
-		this.eventCode.setValidateColumns(new String[]{"AEEventCode"});
-		
+															 * this.eventCode.setValueColumn("AEEventCode");
+															 * this.eventCode.setDescColumn("AEEventCodeDesc");
+															 */
+		this.eventCode.setValidateColumns(new String[] { "AEEventCode" });
+
 		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)) {
 			this.listheader_Account.setVisible(false);
 			this.listheader_PostToSystem.setVisible(false);
 		}
-		
+
 		this.hbox_EntryByInvestment.setVisible(ImplementationConstants.ALLOW_RIA);
 		this.listheader_ByInvestor.setVisible(ImplementationConstants.ALLOW_RIA);
 
@@ -267,8 +265,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -280,7 +277,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AccountingSetDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AccountingSetDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		this.button_TransactionEntryList_NewTransactionEntry.setVisible(getUserWorkspace().isAllowed("button_AccountingSetDialog_btnNewTransactionEntry"));
+		this.button_TransactionEntryList_NewTransactionEntry
+				.setVisible(getUserWorkspace().isAllowed("button_AccountingSetDialog_btnNewTransactionEntry"));
 		this.btnCopyTo.setVisible(getUserWorkspace().isAllowed("button_AccountingSetDialog_btnCopyTo"));
 
 		logger.debug("Leaving");
@@ -377,21 +375,22 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	public void doWriteBeanToComponents(AccountingSet aAccountingSet) {
 		logger.debug("Entering");
-		
+
 		this.eventCode.setValue(aAccountingSet.getEventCode());
 		this.accountSetCode.setValue(aAccountingSet.getAccountSetCode());
 		this.accountSetCodeName.setValue(aAccountingSet.getAccountSetCodeName());
 		this.entryByInvestment.setChecked(aAccountingSet.isEntryByInvestment());
 		this.systemDefault.setChecked(aAccountingSet.isSystemDefault());
-		
+
 		doFilllistbox(aAccountingSet.getTransactionEntries());
-		checkSystemDefault(aAccountingSet.getEventCode(),aAccountingSet.getAccountSetCode());
-		if (aAccountingSet.getLovDescEventCodeName()!=null) {
+		checkSystemDefault(aAccountingSet.getEventCode(), aAccountingSet.getAccountSetCode());
+		if (aAccountingSet.getLovDescEventCodeName() != null) {
 			this.lovDescEventCodeName.setValue(aAccountingSet.getLovDescEventCodeName());
 		}
-		/*if(this.eventCode.getValue().equals(AccountEventConstants.ACCEVENT_LATEPAY)){
-			this.button_TransactionEntryList_NewTransactionEntry.setVisible(false);
-		}*/
+		/*
+		 * if(this.eventCode.getValue().equals(AccountEventConstants.ACCEVENT_LATEPAY)){
+		 * this.button_TransactionEntryList_NewTransactionEntry.setVisible(false); }
+		 */
 		this.recordStatus.setValue(aAccountingSet.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -403,7 +402,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	public void doWriteComponentsToBean(AccountingSet aAccountingSet) {
 		logger.debug("Entering");
-		
+
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -430,14 +429,15 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			wve.add(we);
 		}
 		aAccountingSet.setSystemDefault(this.systemDefault.isChecked());
-		
+
 		try {
 			if (saveRecord) {
 				saveRecord = false;
 				if (this.listBoxTransactionEntry.getItemCount() <= 0) {
-					throw new WrongValueException(this.listBoxTransactionEntry, "Please add atleast one transaction entry!!!");
-				} 
-			} 
+					throw new WrongValueException(this.listBoxTransactionEntry,
+							"Please add atleast one transaction entry!!!");
+				}
+			}
 			aAccountingSet.setTransactionEntries(getTransactionEntryList());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -490,11 +490,11 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aAccountingSet);
-			
-			if (this.listBoxTransactionEntry.getItemCount()==0) {
-	            this.btnCopyTo.setVisible(false);
-            }
-			
+
+			if (this.listBoxTransactionEntry.getItemCount() == 0) {
+				this.btnCopyTo.setVisible(false);
+			}
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -514,23 +514,23 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 
 		if (transactionEntryList != null) {
-			
+
 			Collections.sort(transactionEntryList, new Comparator<TransactionEntry>() {
 				@Override
 				public int compare(TransactionEntry entry1, TransactionEntry entry2) {
 					if (entry1.getTransOrder() > entry2.getTransOrder()) {
 						return 1;
-					} else if(entry1.getTransOrder() < entry2.getTransOrder()) {
+					} else if (entry1.getTransOrder() < entry2.getTransOrder()) {
 						return -1;
-					} 
+					}
 					return 0;
 				}
 			});
 			getTransactionEntryList().clear();
 			setTransactionEntryList(transactionEntryList);
 			this.pagingTransactionEntryList.setDetailed(true);
-			getTransactionEntryPagedListWrapper().initList(transactionEntryList, 
-					this.listBoxTransactionEntry, this.pagingTransactionEntryList);
+			getTransactionEntryPagedListWrapper().initList(transactionEntryList, this.listBoxTransactionEntry,
+					this.pagingTransactionEntryList);
 			this.listBoxTransactionEntry.setItemRenderer(new TransactionEntryListModelItemRenderer());
 		}
 		checkListboxcount();
@@ -538,7 +538,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		if (pagingTransactionEntryList != null) {
 			this.pagingTransactionEntryList.setActivePage(0);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -554,13 +554,13 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	private void checkListboxcount() {
 		logger.debug("Entering");
-		
+
 		if (this.listBoxTransactionEntry.getItemCount() > 0) {
 			this.entryByInvestment.setDisabled(true);
 		} else {
 			this.entryByInvestment.setDisabled(isReadOnly("AccountingSetDialog_entryByInvestment"));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -569,18 +569,21 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		setValidationOn(true);
-		
-		if (!this.accountSetCode.isReadonly()){
-			this.accountSetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+
+		if (!this.accountSetCode.isReadonly()) {
+			this.accountSetCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		
-		if (!this.accountSetCodeName.isReadonly()){
-			this.accountSetCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCodeName.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+
+		if (!this.accountSetCodeName.isReadonly()) {
+			this.accountSetCodeName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCodeName.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -602,9 +605,10 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		
-		this.eventCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_EventCode.value"), null, true,true));
-		
+
+		this.eventCode.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_EventCode.value"), null, true, true));
+
 		logger.debug("Leaving");
 	}
 
@@ -653,8 +657,10 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +Labels.getLabel("label_AccountingSetDialog_EventCode.value")+":"+
-		aAccountingSet.getEventCode()+", "+Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value")+":"+aAccountingSet.getAccountSetCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_AccountingSetDialog_EventCode.value") + ":" + aAccountingSet.getEventCode()
+				+ ", " + Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value") + ":"
+				+ aAccountingSet.getAccountSetCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aAccountingSet.getRecordType())) {
 				aAccountingSet.setVersion(aAccountingSet.getVersion() + 1);
@@ -687,7 +693,6 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-			
 		if (getAccountingSet().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.btnCopyTo.setDisabled(true);
@@ -699,19 +704,20 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.btnCancel.setVisible(true);
 			this.accountSetCode.setReadonly(true);
 		}
-		
+
 		// this.btnSearchEventCode.setDisabled(isReadOnly("AccountingSetDialog_eventCode"));
-		/*if(AccountEventConstants.ACCEVENT_LATEPAY.equals(getAccountingSet().getEventCode())){
-			this.accountSetCode.setReadonly(true);
-			this.button_TransactionEntryList_NewTransactionEntry.setVisible(false);
-		}else{*/
-			
+		/*
+		 * if(AccountEventConstants.ACCEVENT_LATEPAY.equals(getAccountingSet().getEventCode())){
+		 * this.accountSetCode.setReadonly(true);
+		 * this.button_TransactionEntryList_NewTransactionEntry.setVisible(false); }else{
+		 */
+
 		//}
-		
+
 		this.systemDefault.setDisabled(isReadOnly("AccountingSetDialog_systemDefault"));
 		this.entryByInvestment.setDisabled(isReadOnly("AccountingSetDialog_entryByInvestment"));
 		this.accountSetCodeName.setReadonly(isReadOnly("AccountingSetDialog_accountSetCodeName"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -786,18 +792,17 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// fill the AccountingSet object with the components data
 		doWriteComponentsToBean(aAccountingSet);
 
-		
-		if(this.userAction.getSelectedItem() != null &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_FINALIZED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_APPROVED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)){
-			if(!validateFees(aAccountingSet)){
+		if (this.userAction.getSelectedItem() != null
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_FINALIZED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_APPROVED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)) {
+			if (!validateFees(aAccountingSet)) {
 				return;
 			}
 		}
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
@@ -980,7 +985,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AccountingSetDialog, auditHeader);
 						return processCompleted;
@@ -1028,28 +1033,28 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			AccountEngineEvent details = (AccountEngineEvent) dataObject;
 
 			if (details != null) {
-				checkSystemDefault(details.getAEEventCode(),"");
+				checkSystemDefault(details.getAEEventCode(), "");
 
 				this.eventCode.setValue(details.getAEEventCode());
 				this.lovDescEventCodeName.setValue(details.getAEEventCodeDesc());
 			}
 		}
 		this.accountSetCode.setValue("");
-		/*if(this.eventCode.getValue().equals(AccountEventConstants.ACCEVENT_LATEPAY)){
-			this.accountSetCode.setReadonly(true);
-			this.btnSearchAccountSetCode.setVisible(true);
-			this.button_TransactionEntryList_NewTransactionEntry.setVisible(false);
-		}else{*/
-			
-			this.accountSetCodeName.setValue("");
-			this.accountSetCode.setReadonly(false);
-			this.btnSearchAccountSetCode.setVisible(false);
+		/*
+		 * if(this.eventCode.getValue().equals(AccountEventConstants.ACCEVENT_LATEPAY)){
+		 * this.accountSetCode.setReadonly(true); this.btnSearchAccountSetCode.setVisible(true);
+		 * this.button_TransactionEntryList_NewTransactionEntry.setVisible(false); }else{
+		 */
+
+		this.accountSetCodeName.setValue("");
+		this.accountSetCode.setReadonly(false);
+		this.btnSearchAccountSetCode.setVisible(false);
 		//}
 
 		disableNewTransactionEntry();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchAccountSetCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -1063,34 +1068,38 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			if (details != null) {
 				this.accountSetCode.setValue(details.getODCRuleCode());
 				this.accountSetCodeName.setValue(details.getoDCRuleDescription());
-				
+
 				//OverDue transaction Entries preparation manually
 				List<TransactionEntry> transactionEntries = getAccountingSetService().getODTransactionEntries();
-				
+
 				PFSParameter debitCode = SysParamUtil.getSystemParameterObject("ODC_DTCD");
 				PFSParameter creditCode = SysParamUtil.getSystemParameterObject("ODC_CTCD");
-				
+
 				for (int i = 0; i < transactionEntries.size(); i++) {
 					TransactionEntry entry = transactionEntries.get(i);
 					entry.setRecordType(PennantConstants.RCD_ADD);
-					if("PLA".equals(entry.getAccountType())){
+					if ("PLA".equals(entry.getAccountType())) {
 						entry.setAccountType(details.getODCPLAccount());
 						entry.setAccountSubHeadRule(details.getoDCPLSubHead());
-					}else if("CA".equals(entry.getAccountType())){
+					} else if ("CA".equals(entry.getAccountType())) {
 						entry.setAccountType(details.getODCCharityAccount());
 						entry.setAccountSubHeadRule(details.getoDCCharitySubHead());
 					}
-					
-					if(entry.getDebitcredit().equals(AccountConstants.TRANTYPE_DEBIT)){
+
+					if (entry.getDebitcredit().equals(AccountConstants.TRANTYPE_DEBIT)) {
 						entry.setTranscationCode(debitCode.getSysParmValue());
-						entry.setLovDescTranscationCodeName(debitCode.getSysParmValue()+"-"+debitCode.getSysParmDesc());
+						entry.setLovDescTranscationCodeName(
+								debitCode.getSysParmValue() + "-" + debitCode.getSysParmDesc());
 						entry.setRvsTransactionCode(creditCode.getSysParmValue());
-						entry.setLovDescRvsTransactionCodeName(creditCode.getSysParmValue()+"-"+creditCode.getSysParmDesc());
-					}else{
+						entry.setLovDescRvsTransactionCodeName(
+								creditCode.getSysParmValue() + "-" + creditCode.getSysParmDesc());
+					} else {
 						entry.setTranscationCode(creditCode.getSysParmValue());
-						entry.setLovDescTranscationCodeName(creditCode.getSysParmValue()+"-"+creditCode.getSysParmDesc());
+						entry.setLovDescTranscationCodeName(
+								creditCode.getSysParmValue() + "-" + creditCode.getSysParmDesc());
 						entry.setRvsTransactionCode(debitCode.getSysParmValue());
-						entry.setLovDescRvsTransactionCodeName(debitCode.getSysParmValue()+"-"+debitCode.getSysParmDesc());
+						entry.setLovDescRvsTransactionCodeName(
+								debitCode.getSysParmValue() + "-" + debitCode.getSysParmDesc());
 					}
 				}
 				doFilllistbox(transactionEntries);
@@ -1104,24 +1113,24 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	public void onClick$button_TransactionEntryList_NewTransactionEntry(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		String recordStatus = userAction.getSelectedItem().getValue();
-		
+
 		if (!StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_CANCELLED)
 				&& !StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_REJECTED)
 				&& !StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_RESUBMITTED)) {
 			doSetValidation();
 		}
-		
+
 		doWriteComponentsToBean(getAccountingSet());
-		
+
 		// create a new TransactionEntry object, We GET it from the backEnd.
 		final TransactionEntry aTransactionEntry = getAccountingSetService().getNewTransactionEntry();
 		aTransactionEntry.setLovDescEventCodeName(this.eventCode.getValue());
 		aTransactionEntry.setLovDescAccSetCodeName(this.accountSetCode.getValue());
 		aTransactionEntry.setLovDescAccSetCodeDesc(this.accountSetCodeName.getValue());
 		aTransactionEntry.setLovDescEventCodeDesc(this.lovDescEventCodeName.getValue());
-		if(ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_BFL)){
+		if (ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_BFL)) {
 			aTransactionEntry.setAccount(AccountConstants.TRANACC_BUILD);
 		}
 
@@ -1132,8 +1141,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		map.put("role", getRole());
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/RulesFactory/TransactionEntry/TransactionEntryDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/RulesFactory/TransactionEntry/TransactionEntryDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -1164,8 +1173,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/RulesFactory/TransactionEntry/TransactionEntryDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/RulesFactory/TransactionEntry/TransactionEntryDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -1183,8 +1192,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	private AuditHeader getAuditHeader(AccountingSet aAccountingSet, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAccountingSet.getBefImage(), aAccountingSet);
-		return new AuditHeader(String.valueOf(aAccountingSet.getAccountSetid()), 
-				null, null, null, auditDetail, aAccountingSet.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aAccountingSet.getAccountSetid()), null, null, null, auditDetail,
+				aAccountingSet.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1218,7 +1227,6 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		doShowNotes(this.accountingSet);
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.accountingSet.getAccountSetid());
@@ -1226,11 +1234,13 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	private void checkSystemDefault(String eventCode, String setCode) {
 		if (eventCode != null && StringUtils.isNotEmpty(eventCode)) {
-			AccountingSet accountingSetmain = getAccountingSetService().getAccSetSysDflByEvent(eventCode,setCode, "_AView");
-			if (accountingSetmain == null) {	
-				AccountingSet accountingSettemp = getAccountingSetService().getAccSetSysDflByEvent(eventCode , setCode, "_View");	
+			AccountingSet accountingSetmain = getAccountingSetService().getAccSetSysDflByEvent(eventCode, setCode,
+					"_AView");
+			if (accountingSetmain == null) {
+				AccountingSet accountingSettemp = getAccountingSetService().getAccSetSysDflByEvent(eventCode, setCode,
+						"_View");
 				checkSysHelper(accountingSettemp);
-			}else{
+			} else {
 				checkSysHelper(accountingSetmain);
 			}
 		} else {
@@ -1239,8 +1249,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 	}
 
-	private void checkSysHelper(AccountingSet accountingSet){		
-		if (accountingSet == null) {			
+	private void checkSysHelper(AccountingSet accountingSet) {
+		if (accountingSet == null) {
 			this.systemDefault.setDisabled(isReadOnly("AccountingSetDialog_systemDefault"));
 		} else {
 			if (accountingSet.getAccountSetid() != getAccountingSet().getAccountSetid()) {
@@ -1251,7 +1261,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 		}
 	}
-		
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1259,6 +1269,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1266,6 +1277,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public AccountingSet getAccountingSet() {
 		return this.accountingSet;
 	}
+
 	public void setAccountingSet(AccountingSet accountingSet) {
 		this.accountingSet = accountingSet;
 	}
@@ -1273,6 +1285,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void setAccountingSetService(AccountingSetService accountingSetService) {
 		this.accountingSetService = accountingSetService;
 	}
+
 	public AccountingSetService getAccountingSetService() {
 		return this.accountingSetService;
 	}
@@ -1280,6 +1293,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void setAccountingSetListCtrl(AccountingSetListCtrl accountingSetListCtrl) {
 		this.accountingSetListCtrl = accountingSetListCtrl;
 	}
+
 	public AccountingSetListCtrl getAccountingSetListCtrl() {
 		return this.accountingSetListCtrl;
 	}
@@ -1287,6 +1301,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1294,6 +1309,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void setTransactionEntryList(List<TransactionEntry> transactionEntryList) {
 		this.transactionEntryList = transactionEntryList;
 	}
+
 	public List<TransactionEntry> getTransactionEntryList() {
 		return transactionEntryList;
 	}
@@ -1301,109 +1317,113 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public PagedListWrapper<TransactionEntry> getTransactionEntryPagedListWrapper() {
 		return TransactionEntryPagedListWrapper;
 	}
+
 	@SuppressWarnings("unchecked")
 	public void setTransactionEntryPagedListWrapper() {
 		if (this.TransactionEntryPagedListWrapper == null) {
-			this.TransactionEntryPagedListWrapper = (PagedListWrapper<TransactionEntry>) SpringUtil.getBean("pagedListWrapper");
+			this.TransactionEntryPagedListWrapper = (PagedListWrapper<TransactionEntry>) SpringUtil
+					.getBean("pagedListWrapper");
 		}
 	}
 
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		doClose(this.btnSave.isVisible());
-		
-		Events.postEvent("onClick$button_AccountingSetList_NewAccountingSet", 
+
+		Events.postEvent("onClick$button_AccountingSetList_NewAccountingSet",
 				accountingSetListCtrl.window_AccountingSetList, getAccountingSet());
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public boolean validateFees(AccountingSet aAccountingSet){
+
+	public boolean validateFees(AccountingSet aAccountingSet) {
 		List<String> feeCodeTransactionList = new ArrayList<String>();
-		if(aAccountingSet.getTransactionEntries() != null){
+		if (aAccountingSet.getTransactionEntries() != null) {
 			for (TransactionEntry transactionEntry : aAccountingSet.getTransactionEntries()) {
 				String feeCode = getTransactionFeeCode(transactionEntry.getAmountRule());
-				if(StringUtils.isNotEmpty(feeCode) && !feeCodeTransactionList.contains(feeCode)){
+				if (StringUtils.isNotEmpty(feeCode) && !feeCodeTransactionList.contains(feeCode)) {
 					feeCodeTransactionList.add(feeCode);
 				}
 			}
 		}
-		if(!feeCodeTransactionList.isEmpty()){
-			Map<String,List<FinTypeFees>> finTypeFeeMap = getAccountingSetService().fetchFinTypeFees(aAccountingSet);
-			if(finTypeFeeMap != null && !finTypeFeeMap.isEmpty()){
-				if(validateFintypeFees(feeCodeTransactionList, finTypeFeeMap)){
-					if(!validateAccountingFees(feeCodeTransactionList, finTypeFeeMap)){
+		if (!feeCodeTransactionList.isEmpty()) {
+			Map<String, List<FinTypeFees>> finTypeFeeMap = getAccountingSetService().fetchFinTypeFees(aAccountingSet);
+			if (finTypeFeeMap != null && !finTypeFeeMap.isEmpty()) {
+				if (validateFintypeFees(feeCodeTransactionList, finTypeFeeMap)) {
+					if (!validateAccountingFees(feeCodeTransactionList, finTypeFeeMap)) {
 						return false;
 					}
-				}else{
+				} else {
 					return false;
 				}
 			}
 		}
 		return true;
 	}
-	
-	private boolean validateFintypeFees(List<String> feeCodeTransactionList,Map<String,List<FinTypeFees>> finTypeFeeMap){
+
+	private boolean validateFintypeFees(List<String> feeCodeTransactionList,
+			Map<String, List<FinTypeFees>> finTypeFeeMap) {
 		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
 		for (String feeCode : feeCodeTransactionList) {
 			String finTypes = "";
 			for (String finType : finTypeFeeMap.keySet()) {
 				boolean feeConfigured = false;
-				if(finTypeFeeMap.get(finType) == null){
+				if (finTypeFeeMap.get(finType) == null) {
 					continue;
 				}
 				for (FinTypeFees finTypeFee : finTypeFeeMap.get(finType)) {
-					if(StringUtils.equals(feeCode, finTypeFee.getFeeTypeCode())){
+					if (StringUtils.equals(feeCode, finTypeFee.getFeeTypeCode())) {
 						feeConfigured = true;
 						break;
 					}
 				}
-				if(!feeConfigured){
-					if(StringUtils.isEmpty(finTypes)){
+				if (!feeConfigured) {
+					if (StringUtils.isEmpty(finTypes)) {
 						finTypes = finType;
-					}else{
-						finTypes = finTypes +","+ finType;
+					} else {
+						finTypes = finTypes + "," + finType;
 					}
 				}
 			}
-			if(StringUtils.isNotEmpty(finTypes)){
+			if (StringUtils.isNotEmpty(finTypes)) {
 				String[] errParm = new String[2];
 				String[] valueParm = new String[2];
 				valueParm[0] = feeCode;
 				errParm[0] = PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[0];
 				valueParm[1] = finTypes;
 				errParm[1] = PennantJavaUtil.getLabel("FinanceType_label") + ":" + valueParm[1];
-				feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail
-						(PennantConstants.KEY_FIELD, "WFEE04", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
+				feeErrorDetails.add(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "WFEE04", errParm, valueParm),
+						getUserWorkspace().getLoggedInUser().getLanguage()));
 			}
 		}
-		if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
+		if (feeErrorDetails != null && !feeErrorDetails.isEmpty()) {
 			String errorMsg = "";
 			String warningMsg = "";
 			int errorCount = 0;
 			int warningCount = 0;
 			for (ErrorDetail errorDetail : feeErrorDetails) {
-				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
+				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
 					errorCount++;
-					if(StringUtils.isEmpty(errorMsg)){
-						errorMsg = errorCount+")"+errorDetail.getError();
-					}else{
-						errorMsg = errorMsg + " \n  \n "+errorCount+")"+errorDetail.getError();
+					if (StringUtils.isEmpty(errorMsg)) {
+						errorMsg = errorCount + ")" + errorDetail.getError();
+					} else {
+						errorMsg = errorMsg + " \n  \n " + errorCount + ")" + errorDetail.getError();
 					}
-				}else{
+				} else {
 					warningCount++;
-					if(StringUtils.isEmpty(warningMsg)){
-						warningMsg = warningCount+")"+errorDetail.getError();
-					}else{
-						warningMsg = warningMsg + " \n \n "+warningCount+")"+errorDetail.getError();
+					if (StringUtils.isEmpty(warningMsg)) {
+						warningMsg = warningCount + ")" + errorDetail.getError();
+					} else {
+						warningMsg = warningMsg + " \n \n " + warningCount + ")" + errorDetail.getError();
 					}
 				}
 			}
-			if (StringUtils.isNotEmpty(errorMsg)){
+			if (StringUtils.isNotEmpty(errorMsg)) {
 				MessageUtil.showError(errorMsg);
 				return false;
-			}else if(StringUtils.isNotEmpty(warningMsg)){
-				warningMsg = warningMsg + " \n \n "+ "Do you want to proceed?";
+			} else if (StringUtils.isNotEmpty(warningMsg)) {
+				warningMsg = warningMsg + " \n \n " + "Do you want to proceed?";
 				if (MessageUtil.confirm(warningMsg) != MessageUtil.YES) {
 					return false;
 				}
@@ -1411,74 +1431,76 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 		return true;
 	}
-	
-	private boolean validateAccountingFees(List<String> feeCodeTransactionList,Map<String,List<FinTypeFees>> finTypeFeeMap){
+
+	private boolean validateAccountingFees(List<String> feeCodeTransactionList,
+			Map<String, List<FinTypeFees>> finTypeFeeMap) {
 		List<ErrorDetail> feeErrorDetails = new ArrayList<ErrorDetail>();
-		
-		Map<String,String> finTypeFeeCodeMap = new HashMap<String,String>();		
-		
+
+		Map<String, String> finTypeFeeCodeMap = new HashMap<String, String>();
+
 		for (String finType : finTypeFeeMap.keySet()) {
-			if(finTypeFeeMap.get(finType) == null){
+			if (finTypeFeeMap.get(finType) == null) {
 				continue;
 			}
 			for (FinTypeFees finTypeFee : finTypeFeeMap.get(finType)) {
-				if(finTypeFeeCodeMap.containsKey(finTypeFee.getFeeTypeCode())){
+				if (finTypeFeeCodeMap.containsKey(finTypeFee.getFeeTypeCode())) {
 					String finTypes = finTypeFeeCodeMap.get(finTypeFee.getFeeTypeCode());
-					finTypes = finTypes +","+finTypeFee.getFinType();
+					finTypes = finTypes + "," + finTypeFee.getFinType();
 					finTypeFeeCodeMap.put(finTypeFee.getFeeTypeCode(), finTypes);
-				}else{
+				} else {
 					finTypeFeeCodeMap.put(finTypeFee.getFeeTypeCode(), finTypeFee.getFinType());
 				}
 			}
 		}
-		if(!finTypeFeeCodeMap.isEmpty()){
+		if (!finTypeFeeCodeMap.isEmpty()) {
 			for (String finTypeFeeCode : finTypeFeeCodeMap.keySet()) {
 				boolean feeConfigured = false;
 				for (String feeCode : feeCodeTransactionList) {
-					if(StringUtils.equals(feeCode, finTypeFeeCode)){
+					if (StringUtils.equals(feeCode, finTypeFeeCode)) {
 						feeConfigured = true;
 						break;
-					} 	
+					}
 				}
-				if(!feeConfigured){
+				if (!feeConfigured) {
 					String[] errParm = new String[2];
 					String[] valueParm = new String[2];
 					valueParm[0] = finTypeFeeCode;
 					errParm[0] = PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[0];
 					valueParm[1] = finTypeFeeCodeMap.get(finTypeFeeCode);
 					errParm[1] = PennantJavaUtil.getLabel("FinanceType_label") + ":" + valueParm[1];
-					feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail
-							(PennantConstants.KEY_FIELD, "WFEE05", errParm, valueParm), getUserWorkspace().getLoggedInUser().getLanguage()));
+					feeErrorDetails.add(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "WFEE05", errParm, valueParm),
+							getUserWorkspace().getLoggedInUser().getLanguage()));
 
 				}
 			}
 		}
-		if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
+		if (feeErrorDetails != null && !feeErrorDetails.isEmpty()) {
 			String errorMsg = "";
 			String warningMsg = "";
 			int errorCount = 0;
 			int warningCount = 0;
 			for (ErrorDetail errorDetail : feeErrorDetails) {
-				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
+				if (errorDetail.getSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
 					errorCount++;
-					if(StringUtils.isEmpty(errorMsg)){
-						errorMsg = errorCount+")"+errorDetail.getError();
-					}else{
-						errorMsg = errorMsg + " \n  \n "+errorCount+")"+errorDetail.getError();
+					if (StringUtils.isEmpty(errorMsg)) {
+						errorMsg = errorCount + ")" + errorDetail.getError();
+					} else {
+						errorMsg = errorMsg + " \n  \n " + errorCount + ")" + errorDetail.getError();
 					}
-				}else{
+				} else {
 					warningCount++;
-					if(StringUtils.isEmpty(warningMsg)){
-						warningMsg = warningCount+")"+errorDetail.getError();
-					}else{
-						warningMsg = warningMsg + " \n \n "+warningCount+")"+errorDetail.getError();
+					if (StringUtils.isEmpty(warningMsg)) {
+						warningMsg = warningCount + ")" + errorDetail.getError();
+					} else {
+						warningMsg = warningMsg + " \n \n " + warningCount + ")" + errorDetail.getError();
 					}
 				}
 			}
-			if (StringUtils.isNotEmpty(errorMsg)){
+			if (StringUtils.isNotEmpty(errorMsg)) {
 				MessageUtil.showError(errorMsg);
 				return false;
-			}else if(StringUtils.isNotEmpty(warningMsg)){
+			} else if (StringUtils.isNotEmpty(warningMsg)) {
 				warningMsg = warningMsg + "\n\n" + "Do you want to proceed?";
 				if (MessageUtil.confirm(warningMsg) != MessageUtil.YES) {
 					return false;
@@ -1487,23 +1509,23 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 		return true;
 	}
-	
-	private String getTransactionFeeCode(String amountRule){
+
+	private String getTransactionFeeCode(String amountRule) {
 		String[] feeCodeList = amountRule.split("[^a-zA-Z0-9_]+");
 		String feeCode = "";
 		for (int k = 0; k < feeCodeList.length; k++) {
-			if((StringUtils.isNotBlank(feeCodeList[k]) || "Result".equalsIgnoreCase(feeCodeList[k]))
-					&& (feeCodeList[k].trim().endsWith("_W") ||  feeCodeList[k].trim().endsWith("_C") ||
-							feeCodeList[k].trim().endsWith("_P") || feeCodeList[k].trim().endsWith("_AF"))){
-				if(!feeCode.contains(feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_'))+",")){
-					feeCode = feeCode+feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_'))+",";
+			if ((StringUtils.isNotBlank(feeCodeList[k]) || "Result".equalsIgnoreCase(feeCodeList[k]))
+					&& (feeCodeList[k].trim().endsWith("_W") || feeCodeList[k].trim().endsWith("_C")
+							|| feeCodeList[k].trim().endsWith("_P") || feeCodeList[k].trim().endsWith("_AF"))) {
+				if (!feeCode.contains(feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_')) + ",")) {
+					feeCode = feeCode + feeCodeList[k].trim().substring(0, feeCodeList[k].trim().indexOf('_')) + ",";
 				}
 			}
 		}
-		if(feeCode.endsWith(",")){
-			feeCode = feeCode.substring(0, feeCode.length()-1);
+		if (feeCode.endsWith(",")) {
+			feeCode = feeCode.substring(0, feeCode.length() - 1);
 		}
 		return feeCode;
 	}
-	
+
 }

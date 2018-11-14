@@ -57,14 +57,15 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CorporateCustomerDetailListModelItemRenderer implements ListitemRenderer<CorporateCustomerDetail>, Serializable {
+public class CorporateCustomerDetailListModelItemRenderer
+		implements ListitemRenderer<CorporateCustomerDetail>, Serializable {
 
 	private static final long serialVersionUID = 2495491623811019430L;
-	
+
 	public CorporateCustomerDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CorporateCustomerDetail corporateCustomerDetail, int count) throws Exception {
 

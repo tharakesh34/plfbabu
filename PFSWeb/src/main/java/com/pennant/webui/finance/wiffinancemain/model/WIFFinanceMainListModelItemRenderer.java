@@ -56,7 +56,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -64,68 +63,68 @@ import com.pennant.util.PennantAppUtil;
 public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<FinanceMain>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public WIFFinanceMainListModelItemRenderer() {
-		
+
 	}
-	 
+
 	@Override
 	public void render(Listitem item, FinanceMain wIFFinanceMain, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(wIFFinanceMain.getFinReference());
+		lc = new Listcell(wIFFinanceMain.getFinReference());
 		lc.setParent(item);
-		if(wIFFinanceMain.getLovDescCustCIF()!=null){
+		if (wIFFinanceMain.getLovDescCustCIF() != null) {
 			lc = new Listcell(wIFFinanceMain.getLovDescCustCIF());
-		}else{
+		} else {
 			lc = new Listcell();
 		}
 		lc.setParent(item);
-		
-		if(StringUtils.isBlank(wIFFinanceMain.getLovDescFinProduct())){
+
+		if (StringUtils.isBlank(wIFFinanceMain.getLovDescFinProduct())) {
 			lc = new Listcell(wIFFinanceMain.getFinType());
 			lc.setParent(item);
 			lc = new Listcell("");
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell(wIFFinanceMain.getLovDescFinProduct());
 			lc.setParent(item);
 			lc = new Listcell(wIFFinanceMain.getFinType());
 			lc.setParent(item);
 		}
-		
-		lc = new Listcell(PennantAppUtil.amountFormate(wIFFinanceMain.getFinCurrAssetValue().add(
-				wIFFinanceMain.getFeeChargeAmt()).add(wIFFinanceMain.getInsuranceAmt()),
-				CurrencyUtil.getFormat(wIFFinanceMain.getFinCcy())));
+
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(wIFFinanceMain.getFinCurrAssetValue().add(wIFFinanceMain.getFeeChargeAmt())
+						.add(wIFFinanceMain.getInsuranceAmt()), CurrencyUtil.getFormat(wIFFinanceMain.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-	  	lc = new Listcell(wIFFinanceMain.getFinCcy());
+		lc = new Listcell(wIFFinanceMain.getFinCcy());
 		lc.setParent(item);
-	  	lc = new Listcell(wIFFinanceMain.getScheduleMethod());
+		lc = new Listcell(wIFFinanceMain.getScheduleMethod());
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(wIFFinanceMain.getCalTerms()+wIFFinanceMain.getAdvEMITerms()));
+		lc = new Listcell(String.valueOf(wIFFinanceMain.getCalTerms() + wIFFinanceMain.getAdvEMITerms()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getFinStartDate()));
 		lc.setParent(item);
-		if(wIFFinanceMain.getGrcPeriodEndDate()!=null){
+		if (wIFFinanceMain.getGrcPeriodEndDate() != null) {
 			lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getGrcPeriodEndDate()));
-		}else {
+		} else {
 			lc = new Listcell();
 		}
 		lc.setParent(item);
-		if(wIFFinanceMain.getMaturityDate()!=null){
+		if (wIFFinanceMain.getMaturityDate() != null) {
 			lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getMaturityDate()));
-		}else {
+		} else {
 			lc = new Listcell();
 		}
 		lc.setParent(item);
-		if(StringUtils.isNotBlank(wIFFinanceMain.getRecordStatus())){
+		if (StringUtils.isNotBlank(wIFFinanceMain.getRecordStatus())) {
 			lc = new Listcell(wIFFinanceMain.getRecordStatus());
-		}else{
+		} else {
 			lc = new Listcell();
 		}
 		lc.setParent(item);
-		
+
 		item.setAttribute("data", wIFFinanceMain);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onWIFFinanceMainItemDoubleClicked");
 	}

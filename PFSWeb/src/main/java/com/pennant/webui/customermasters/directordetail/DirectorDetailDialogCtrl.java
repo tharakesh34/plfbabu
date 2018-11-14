@@ -106,74 +106,74 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/DirectorDetail/directorDetailDialog.zul file.
  */
 public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
-	private static final long					serialVersionUID	= -3436424948986683205L;
-	private static final Logger					logger				= Logger.getLogger(DirectorDetailDialogCtrl.class);
+	private static final long serialVersionUID = -3436424948986683205L;
+	private static final Logger logger = Logger.getLogger(DirectorDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_DirectorDetailDialog;											// autowired
-	protected Longbox							custID;																// autowired
-	protected Longbox							directorID;															// autowired
-	protected Textbox							firstName;																// autowired
-	protected Textbox							lastName;																// autowired
-	protected Textbox							shortName;																// autowired
-	protected Decimalbox						sharePerc;																// autowired
-	protected Space								space_SharePerc;														// autowired
-	protected Combobox							custGenderCode;														// autowired
-	protected Combobox							custSalutationCode;													// autowired
-	protected Textbox							custAddrHNbr;															// autowired
-	protected Textbox							custFlatNbr;															// autowired
-	protected Textbox							custAddrStreet;														// autowired
-	protected Textbox							custAddrLine1;															// autowired
-	protected Textbox							custAddrLine2;															// autowired
-	protected Textbox							custPOBox;																// autowired
-	protected ExtendedCombobox					custAddrCity;															// autowired
-	protected ExtendedCombobox					custAddrProvince;														// autowired
-	protected ExtendedCombobox					custAddrCountry;														// autowired
-	protected Textbox							custAddrZIP;															// autowired
-	protected Textbox							custAddrPhone;															// autowired
-	protected Datebox							custAddrFrom;															// autowired
-	protected Textbox							custCIF;																// autowired
-	protected Label								custShrtName;															// autowired
-	protected Checkbox							shareholder;															// autowired
-	protected Checkbox							director;																// autowired
-	protected ExtendedCombobox					designation;															// autowired
-	protected ExtendedCombobox					idType;																// autowired
-	protected Space								space_idReference;														// autowired
-	protected Textbox							idReference;															// autowired
-	protected ExtendedCombobox					nationality;															// autowired
-	protected Datebox							dob;																	// autowired
+	protected Window window_DirectorDetailDialog; // autowired
+	protected Longbox custID; // autowired
+	protected Longbox directorID; // autowired
+	protected Textbox firstName; // autowired
+	protected Textbox lastName; // autowired
+	protected Textbox shortName; // autowired
+	protected Decimalbox sharePerc; // autowired
+	protected Space space_SharePerc; // autowired
+	protected Combobox custGenderCode; // autowired
+	protected Combobox custSalutationCode; // autowired
+	protected Textbox custAddrHNbr; // autowired
+	protected Textbox custFlatNbr; // autowired
+	protected Textbox custAddrStreet; // autowired
+	protected Textbox custAddrLine1; // autowired
+	protected Textbox custAddrLine2; // autowired
+	protected Textbox custPOBox; // autowired
+	protected ExtendedCombobox custAddrCity; // autowired
+	protected ExtendedCombobox custAddrProvince; // autowired
+	protected ExtendedCombobox custAddrCountry; // autowired
+	protected Textbox custAddrZIP; // autowired
+	protected Textbox custAddrPhone; // autowired
+	protected Datebox custAddrFrom; // autowired
+	protected Textbox custCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Checkbox shareholder; // autowired
+	protected Checkbox director; // autowired
+	protected ExtendedCombobox designation; // autowired
+	protected ExtendedCombobox idType; // autowired
+	protected Space space_idReference; // autowired
+	protected Textbox idReference; // autowired
+	protected ExtendedCombobox nationality; // autowired
+	protected Datebox dob; // autowired
 
 	// not auto wired vars
-	private DirectorDetail						directorDetail;														// overhanded per param
-	private transient DirectorDetailListCtrl	directorDetailListCtrl;												// overhanded per param
+	private DirectorDetail directorDetail; // overhanded per param
+	private transient DirectorDetailListCtrl directorDetailListCtrl; // overhanded per param
 
-	private transient boolean					validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient DirectorDetailService		directorDetailService;
-	private transient PagedListService			pagedListService;
-	private transient CustomerSelectCtrl		customerSelectCtrl;
+	private transient DirectorDetailService directorDetailService;
+	private transient PagedListService pagedListService;
+	private transient CustomerSelectCtrl customerSelectCtrl;
 
-	private boolean								newRecord			= false;
-	private boolean								newCustomer			= false;
-	private CustomerDialogCtrl					customerDialogCtrl;
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
+	private CustomerDialogCtrl customerDialogCtrl;
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
-	protected JdbcSearchObject<Customer>		newSearchObject;
-	protected Button							btnSearchPRCustid;
+	protected JdbcSearchObject<Customer> newSearchObject;
+	protected Button btnSearchPRCustid;
 
-	private List<DirectorDetail>				directorDetailList;
-	private List<ValueLabel>					genderCodes			= PennantAppUtil.getGenderCodes();
-	private String								sCustGenderCode;
-	private String								sCustAddrCountry;
-	private String								sCustAddrProvince;
-	protected Row								Row_Gender;
+	private List<DirectorDetail> directorDetailList;
+	private List<ValueLabel> genderCodes = PennantAppUtil.getGenderCodes();
+	private String sCustGenderCode;
+	private String sCustAddrCountry;
+	private String sCustAddrProvince;
+	protected Row Row_Gender;
 
-	private BigDecimal							totSharePerc;
-	private String								userRole			= "";
-	private boolean								isEnquiry			= false;
+	private BigDecimal totSharePerc;
+	private String userRole = "";
+	private boolean isEnquiry = false;
 
 	/**
 	 * default constructor.<br>
@@ -503,10 +503,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrZIP.setValue(aDirectorDetail.getCustAddrZIP());
 		this.custAddrPhone.setValue(aDirectorDetail.getCustAddrPhone());
 		this.custAddrFrom.setValue(aDirectorDetail.getCustAddrFrom());
-		this.custCIF.setValue(aDirectorDetail.getLovDescCustCIF() == null ? "" : aDirectorDetail.getLovDescCustCIF()
-				.trim());
-		this.custShrtName.setValue(aDirectorDetail.getLovDescCustShrtName() == null ? "" : aDirectorDetail
-				.getLovDescCustShrtName().trim());
+		this.custCIF.setValue(
+				aDirectorDetail.getLovDescCustCIF() == null ? "" : aDirectorDetail.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aDirectorDetail.getLovDescCustShrtName() == null ? ""
+				: aDirectorDetail.getLovDescCustShrtName().trim());
 		this.idType.setValue(StringUtils.trimToEmpty(aDirectorDetail.getIdType()));
 		this.idReference.setValue(StringUtils.trimToEmpty(aDirectorDetail.getIdReference()));
 		this.nationality.setValue(StringUtils.trimToEmpty(aDirectorDetail.getNationality()));
@@ -520,18 +520,18 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			this.sharePerc.setReadonly(true);
 			this.sharePerc.setValue(BigDecimal.ZERO);
 		}
-		if(this.director.isChecked()){
+		if (this.director.isChecked()) {
 			this.designation.setReadonly(isReadOnly("DirectorDetailDialog_designation"));
 			this.designation.setButtonDisabled(isReadOnly("DirectorDetailDialog_designation"));
 			this.designation.setValue(aDirectorDetail.getDesignation());
 			this.designation.setDescription(aDirectorDetail.getLovDescDesignationName());
-		}else{
+		} else {
 			this.designation.setReadonly(true);
 			this.designation.setButtonDisabled(true);
 			this.designation.setValue("");
 			this.designation.setDescription("");
 		}
-		
+
 		if (isNewRecord()) {
 			this.custAddrCity.setDescription("");
 			this.custAddrProvince.setDescription("");
@@ -546,12 +546,12 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			this.nationality.setDescription(aDirectorDetail.getLovDescNationalityName());
 			this.idType.setDescription(aDirectorDetail.getLovDescCustDocCategoryName());
 		}
-		
-		this.custAddrProvince.setFilters(new Filter[] { new Filter("CPCountry", this.custAddrCountry.getValue(),
-				Filter.OP_EQUAL) });
-		this.custAddrCity.setFilters(new Filter[] {
-				new Filter("PCCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL),
-				new Filter("PCProvince", this.custAddrProvince.getValue(), Filter.OP_EQUAL) });
+
+		this.custAddrProvince
+				.setFilters(new Filter[] { new Filter("CPCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL) });
+		this.custAddrCity
+				.setFilters(new Filter[] { new Filter("PCCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL),
+						new Filter("PCProvince", this.custAddrProvince.getValue(), Filter.OP_EQUAL) });
 		if (StringUtils.isNotEmpty(aDirectorDetail.getIdType()) && aDirectorDetail.isIdReferenceMand()) {
 			this.space_idReference.setSclass(PennantConstants.mandateSclass);
 		} else {
@@ -611,19 +611,21 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 				throw new WrongValueException(this.shareholder,
 						Labels.getLabel("label_DirectorDetailDialog_ShareOrDirector.value"));
 			}
-			if (this.shareholder.isChecked() && !this.sharePerc.isReadonly() && this.sharePerc.getValue().compareTo(BigDecimal.ZERO) <= 0) {
+			if (this.shareholder.isChecked() && !this.sharePerc.isReadonly()
+					&& this.sharePerc.getValue().compareTo(BigDecimal.ZERO) <= 0) {
 				throw new WrongValueException(this.sharePerc, Labels.getLabel("NUMBER_MINVALUE",
 						new String[] { Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"), "0" }));
 			}
-			if (this.sharePerc.getValue() != null  && this.sharePerc.intValue() != 0) {
+			if (this.sharePerc.getValue() != null && this.sharePerc.intValue() != 0) {
 				if ((this.totSharePerc.add(this.sharePerc.getValue())).compareTo(new BigDecimal(100)) > 0) {
 					BigDecimal availableSharePerc = new BigDecimal(100).subtract(this.totSharePerc);
-					throw new WrongValueException(this.sharePerc, Labels.getLabel("Total_Percentage",
-							new String[] { Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"),
-									availableSharePerc.toString() }));
+					throw new WrongValueException(this.sharePerc,
+							Labels.getLabel("Total_Percentage",
+									new String[] { Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"),
+											availableSharePerc.toString() }));
 				}
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -651,7 +653,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			wve.add(we);
 		}
 		try {
-			aDirectorDetail.setCustAddrPhone( this.custAddrPhone.getValue());
+			aDirectorDetail.setCustAddrPhone(this.custAddrPhone.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -708,7 +710,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDirectorDetail.setSharePerc(this.sharePerc.getValue());
 		} catch (WrongValueException we) {
@@ -823,13 +825,13 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		setValidationOn(true);
 		clearShareDirector();
 		if (!this.custID.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DirectorDetailDialog_CustID.value"), null, true));
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustID.value"), null, true));
 		}
 		if (!this.firstName.isReadonly()) {
-			this.firstName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_FirstName.value"), PennantRegularExpressions.REGEX_NAME,
-					false));
+			this.firstName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_FirstName.value"),
+							PennantRegularExpressions.REGEX_NAME, false));
 		}
 		if (!this.lastName.isReadonly()) {
 			this.lastName
@@ -837,76 +839,76 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 							PennantRegularExpressions.REGEX_NAME, false));
 		}
 		if (!this.shortName.isReadonly()) {
-			this.shortName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_ShortName.value"), PennantRegularExpressions.REGEX_NAME,
-					false));
+			this.shortName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_ShortName.value"),
+							PennantRegularExpressions.REGEX_NAME, false));
 		}
 		if (!this.firstName.isReadonly() && !this.lastName.isReadonly() && !this.shortName.isReadonly()) {
 			if (StringUtils.isBlank(this.firstName.getValue()) && StringUtils.isBlank(this.lastName.getValue())
 					&& StringUtils.isBlank(this.shortName.getValue())) {
 
-				this.shortName.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DirectorDetailDialog_AnyName.value"), PennantRegularExpressions.REGEX_NAME,
-						true));
+				this.shortName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_AnyName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 		}
 		if (this.shareholder.isChecked()) {
 			if (!this.sharePerc.isReadonly() && !this.sharePerc.isDisabled()) {
-				this.sharePerc.setConstraint(new PTDecimalValidator(Labels
-						.getLabel("label_DirectorDetailDialog_SharePerc.value"), 2, true, false));
+				this.sharePerc.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"), 2, true, false));
 			}
 		}
 		if (this.director.isChecked()) {
 			if (!this.designation.isReadonly()) {
-				this.designation.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DirectorDetailDialog_Designation.value"), null, true, true));
+				this.designation.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_DirectorDetailDialog_Designation.value"), null, true, true));
 			}
 		}
 		if (!this.custAddrHNbr.isReadonly()) {
-			this.custAddrHNbr.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrHNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.custAddrHNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrHNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.custFlatNbr.isReadonly()) {
-			this.custFlatNbr.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustFlatNbr.value"), PennantRegularExpressions.REGEX_ADDRESS,
-					false));
+			this.custFlatNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustFlatNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.custAddrStreet.isReadonly()) {
-			this.custAddrStreet.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrStreet.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.custAddrStreet.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrStreet.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.custAddrLine1.isReadonly()) {
-			this.custAddrLine1.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrLine1.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.custAddrLine1.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.custAddrLine2.isReadonly()) {
-			this.custAddrLine2.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrLine2.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.custAddrLine2.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrLine2.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.custPOBox.isReadonly()) {
-			this.custPOBox.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustPOBox.value"), PennantRegularExpressions.REGEX_NUMERIC,
-					false));
+			this.custPOBox
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustPOBox.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		if (!this.custAddrZIP.isReadonly()) {
-			this.custAddrZIP.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP,
-					false));
+			this.custAddrZIP.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrZIP.value"),
+							PennantRegularExpressions.REGEX_ZIP, false));
 		}
-		
+
 		if (!this.custAddrPhone.isReadonly()) {
-			this.custAddrPhone.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrPhone.value"), false));
+			this.custAddrPhone.setConstraint(new PTMobileNumberValidator(
+					Labels.getLabel("label_DirectorDetailDialog_CustAddrPhone.value"), false));
 		}
 		if (!this.idReference.isReadonly()) {
-			this.idReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DirectorDetailDialog_IDReference.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, StringUtils.equals(PennantConstants.mandateSclass,
-							this.space_idReference.getSclass())));
+			this.idReference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_IDReference.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM,
+							StringUtils.equals(PennantConstants.mandateSclass, this.space_idReference.getSclass())));
 		}
 		logger.debug("Leaving");
 	}
@@ -943,12 +945,12 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custAddrCountry.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_DirectorDetailDialog_CustAddrCountry.value"), null, true, true));
-		this.custAddrProvince.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_DirectorDetailDialog_CustAddrProvince.value"), null, true, true));
-		this.custAddrCity.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_DirectorDetailDialog_CustAddrCity.value"), null, true, true));
+		this.custAddrCountry.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_DirectorDetailDialog_CustAddrCountry.value"), null, true, true));
+		this.custAddrProvince.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_DirectorDetailDialog_CustAddrProvince.value"), null, true, true));
+		this.custAddrCity.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_DirectorDetailDialog_CustAddrCity.value"), null, true, true));
 		logger.debug("Leaving");
 	}
 
@@ -1356,9 +1358,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 				if (aDirectorDetail.getId() == directorDetail.getId()) { // Both Current and Existing list director same
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1542,8 +1544,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DirectorDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1719,7 +1721,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
@@ -1754,7 +1757,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			this.designation.setMandatoryStyle(false);
 			this.designation.setButtonDisabled(true);
 			this.designation.setReadonly(true);
-			this.designation.setValue("","");
+			this.designation.setValue("", "");
 		}
 		logger.debug("Leaving");
 	}
@@ -1786,8 +1789,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 */
 	private AuditHeader getAuditHeader(DirectorDetail aDirectorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDirectorDetail.getBefImage(), aDirectorDetail);
-		return new AuditHeader(String.valueOf(aDirectorDetail.getDirectorId()), String.valueOf(aDirectorDetail
-				.getCustID()), null, null, auditDetail, aDirectorDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aDirectorDetail.getDirectorId()),
+				String.valueOf(aDirectorDetail.getCustID()), null, null, auditDetail, aDirectorDetail.getUserDetails(),
+				getOverideMap());
 
 	}
 

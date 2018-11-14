@@ -53,9 +53,14 @@ import com.pennant.backend.model.systemmasters.DispatchMode;
 public interface DispatchModeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	DispatchMode getDispatchModeById(String id);
+
 	DispatchMode getApprovedDispatchModeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

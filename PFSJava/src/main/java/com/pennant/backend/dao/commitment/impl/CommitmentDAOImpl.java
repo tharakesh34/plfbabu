@@ -122,8 +122,9 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		selectSql.append(", CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate");
 		selectSql.append(", CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
 		selectSql.append(", CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming,FacilityRef");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(", CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId" );
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(", CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", custShrtName, BranchDesc, custCIF, facilityRefDesc");
@@ -137,7 +138,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(),beanParameters, typeRowMapper);
+			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commitment = null;
@@ -194,8 +195,9 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		selectSql.append(", CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate");
 		selectSql.append(", CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
 		selectSql.append(", CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming,FacilityRef");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(", CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId" );
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(", CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",custShrtName, branchDesc, custCIF, facilityRefDesc");
@@ -219,7 +221,6 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		return commitment;
 	}
 
-
 	/**
 	 * Fetch the Record Commitment Detail details by key field
 	 * 
@@ -236,9 +237,10 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		Commitment commitment = new Commitment();
 		commitment.setCustID(custId);
 
-		StringBuilder selectSql = new StringBuilder("Select CmtReference, CmtAccount , CmtCcy, CmtAmount, CmtUtilizedAmount,");
+		StringBuilder selectSql = new StringBuilder(
+				"Select CmtReference, CmtAccount , CmtCcy, CmtAmount, CmtUtilizedAmount,");
 		selectSql.append(" CmtAvailable, CmtExpDate , CmtTitle, Revolving, CmtNotes, FacilityRef, ");
-		selectSql.append(" CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId" );
+		selectSql.append(" CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", facilityRefDesc");
@@ -249,7 +251,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		RowMapper<AvailCommitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailCommitment.class);
+		RowMapper<AvailCommitment> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AvailCommitment.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -280,8 +283,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-					beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -293,7 +295,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	}
 
 	/**
-	 * Method for Deleting Commitment based on Commitment Reference 
+	 * Method for Deleting Commitment based on Commitment Reference
+	 * 
 	 * @param cmtReference
 	 * @param type
 	 */
@@ -335,13 +338,17 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		StringBuilder insertSql = new StringBuilder("Insert Into Commitments");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CmtReference, custID, CmtBranch, OpenAccount, CmtAccount, CmtCcy, CmtPftRateMin, CmtPftRateMax, CmtAmount, CmtUtilizedAmount, CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate, CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
+		insertSql.append(
+				" (CmtReference, custID, CmtBranch, OpenAccount, CmtAccount, CmtCcy, CmtPftRateMin, CmtPftRateMax, CmtAmount, CmtUtilizedAmount, CmtAvailable, CmtPromisedDate, CmtStartDate, CmtExpDate, CmtTitle, CmtNotes, Revolving, SharedCmt, MultiBranch");
 		insertSql.append(", CmtCharges,ChargesAccount,CmtActive,CmtStopRateRange,NonPerforming,FacilityRef");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		insertSql.append(", CmtRvwDate, CmtAvailableMonths, CollateralRequired, CmtEndDate, limitLineId)");
-		insertSql.append(" Values(:CmtReference, :custID, :CmtBranch, :OpenAccount, :CmtAccount, :CmtCcy, :CmtPftRateMin, :CmtPftRateMax, :CmtAmount, :CmtUtilizedAmount, :CmtAvailable, :CmtPromisedDate, :CmtStartDate, :CmtExpDate, :CmtTitle, :CmtNotes, :Revolving, :SharedCmt, :MultiBranch");
+		insertSql.append(
+				" Values(:CmtReference, :custID, :CmtBranch, :OpenAccount, :CmtAccount, :CmtCcy, :CmtPftRateMin, :CmtPftRateMax, :CmtAmount, :CmtUtilizedAmount, :CmtAvailable, :CmtPromisedDate, :CmtStartDate, :CmtExpDate, :CmtTitle, :CmtNotes, :Revolving, :SharedCmt, :MultiBranch");
 		insertSql.append(", :CmtCharges,:ChargesAccount,:CmtActive,:CmtStopRateRange,:NonPerforming,:FacilityRef");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
 		insertSql.append(", :CmtRvwDate, :CmtAvailableMonths, :CollateralRequired, :CmtEndDate, :limitLineId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -373,12 +380,18 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		StringBuilder updateSql = new StringBuilder("Update Commitments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set custID = :custID, CmtBranch = :CmtBranch, OpenAccount = :OpenAccount, CmtAccount = :CmtAccount, CmtCcy = :CmtCcy, CmtPftRateMin = :CmtPftRateMin");
-		updateSql.append(", CmtPftRateMax = :CmtPftRateMax, CmtAmount = :CmtAmount, CmtUtilizedAmount = :CmtUtilizedAmount, CmtAvailable = :CmtAvailable, CmtPromisedDate = :CmtPromisedDate, CmtStartDate = :CmtStartDate");
-		updateSql.append(", CmtExpDate = :CmtExpDate, CmtTitle = :CmtTitle, CmtNotes = :CmtNotes, Revolving = :Revolving, SharedCmt = :SharedCmt, MultiBranch = :MultiBranch");
-		updateSql.append(", CmtCharges=:CmtCharges,ChargesAccount=:ChargesAccount,CmtActive=:CmtActive,CmtStopRateRange=:CmtStopRateRange,NonPerforming=:NonPerforming,FacilityRef=:FacilityRef");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(", CmtRvwDate = :CmtRvwDate, CmtAvailableMonths = :CmtAvailableMonths, CollateralRequired = :CollateralRequired, CmtEndDate = :CmtEndDate, limitLineId = :limitLineId");
+		updateSql.append(
+				" Set custID = :custID, CmtBranch = :CmtBranch, OpenAccount = :OpenAccount, CmtAccount = :CmtAccount, CmtCcy = :CmtCcy, CmtPftRateMin = :CmtPftRateMin");
+		updateSql.append(
+				", CmtPftRateMax = :CmtPftRateMax, CmtAmount = :CmtAmount, CmtUtilizedAmount = :CmtUtilizedAmount, CmtAvailable = :CmtAvailable, CmtPromisedDate = :CmtPromisedDate, CmtStartDate = :CmtStartDate");
+		updateSql.append(
+				", CmtExpDate = :CmtExpDate, CmtTitle = :CmtTitle, CmtNotes = :CmtNotes, Revolving = :Revolving, SharedCmt = :SharedCmt, MultiBranch = :MultiBranch");
+		updateSql.append(
+				", CmtCharges=:CmtCharges,ChargesAccount=:ChargesAccount,CmtActive=:CmtActive,CmtStopRateRange=:CmtStopRateRange,NonPerforming=:NonPerforming,FacilityRef=:FacilityRef");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", CmtRvwDate = :CmtRvwDate, CmtAvailableMonths = :CmtAvailableMonths, CollateralRequired = :CollateralRequired, CmtEndDate = :CmtEndDate, limitLineId = :limitLineId");
 
 		updateSql.append(" Where CmtReference = :CmtReference");
 
@@ -411,12 +424,12 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		int status;
 
 		Map<String, Long> namedParamters = Collections.singletonMap("custID", custID);
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM Commitments where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP ");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT COUNT(*) FROM Commitments where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP ");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			status = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					namedParamters, Integer.class);
+			status = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			status = 0;
@@ -436,7 +449,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	public Map<String, Object> getAmountSummary(long custID) {
 		logger.debug("Entering ");
 
-		Map<String, Long> namedParamters = Collections.singletonMap("custID",custID);
+		Map<String, Long> namedParamters = Collections.singletonMap("custID", custID);
 		StringBuilder selectSql = new StringBuilder(" SELECT COUNT(*) ");
 		selectSql.append(PennantConstants.CMT_TOTALCMT);
 		selectSql.append(" , COALESCE(SUM(CmtAmount), 0) ");
@@ -448,8 +461,9 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		logger.debug("Leaving");
 
-		return  this.jdbcTemplate.queryForMap(selectSql.toString(), namedParamters);
+		return this.jdbcTemplate.queryForMap(selectSql.toString(), namedParamters);
 	}
+
 	/**
 	 * This method get Commitment Amount Summary
 	 * 
@@ -460,7 +474,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	public List<CommitmentSummary> getCommitmentSummary(long custID) {
 		logger.debug("Entering ");
 
-		CommitmentSummary commitmentSummary=new CommitmentSummary();
+		CommitmentSummary commitmentSummary = new CommitmentSummary();
 		commitmentSummary.setCustID(custID);
 		StringBuilder selectSql = new StringBuilder(" SELECT CmtCcy,CcyEditField, COUNT(*) ");
 		selectSql.append(PennantConstants.CMT_TOTALCMT);
@@ -468,44 +482,46 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		selectSql.append(PennantConstants.CMT_TOTALCMTAMT);
 		selectSql.append(" , COALESCE(SUM(CmtUtilizedAmount), 0) ");
 		selectSql.append(PennantConstants.CMT_TOTALUTZAMT);
-		selectSql.append(" FROM Commitments_AView where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP group by CmtCcy,CcyEditField");
+		selectSql.append(
+				" FROM Commitments_AView where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP group by CmtCcy,CcyEditField");
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving getCmtAmountCount()");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentSummary);
-		RowMapper<CommitmentSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentSummary.class);
+		RowMapper<CommitmentSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CommitmentSummary.class);
 
 		logger.debug("Leaving");
-		return  this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	public boolean updateCommitmentAmounts(String cmtReference, BigDecimal postingAmount, Date cmtExpDate){
+	public boolean updateCommitmentAmounts(String cmtReference, BigDecimal postingAmount, Date cmtExpDate) {
 		logger.debug("Entering");
 
 		boolean cmtExpired = false;
 		Date dateValueDate = DateUtility.getAppValueDate();
-		if(cmtExpDate.compareTo(dateValueDate) < 0){
+		if (cmtExpDate.compareTo(dateValueDate) < 0) {
 			cmtExpired = true;
 		}
 
 		int recordCount = 0;
-		Map<String, Object> namedParameters=new HashMap<String, Object>();
+		Map<String, Object> namedParameters = new HashMap<String, Object>();
 		namedParameters.put("CmtReference", cmtReference);
 		namedParameters.put("CmtUtilizedAmount", postingAmount);
 		namedParameters.put("CmtAvailable", postingAmount);
 
 		StringBuilder updateSql = new StringBuilder(" Update Commitments");
 		updateSql.append(" set CmtUtilizedAmount = CmtUtilizedAmount + :CmtUtilizedAmount, ");
-		if(cmtExpired){
+		if (cmtExpired) {
 			updateSql.append(" CmtAvailable = 0 ");
-		}else{
+		} else {
 			updateSql.append(" CmtAvailable = CmtAvailable - :CmtAvailable ");
 		}
 		updateSql.append(" where CmtReference = :CmtReference");
 
-		logger.debug("updateSql:"+updateSql.toString());
-		try{
+		logger.debug("updateSql:" + updateSql.toString());
+		try {
 			recordCount = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -529,12 +545,12 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		updateSql.append(" set NonperformingStatus = :NonperformingStatus ");
 		updateSql.append(" where CmtReference =:CmtReference");
 
-		logger.debug("updateSql:"+updateSql.toString());
+		logger.debug("updateSql:" + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 
-		try{
+		try {
 			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -543,7 +559,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	/**
 	 * Get approved commitments record count by id.
 	 * 
-	 * @param id (commitment Reference)
+	 * @param id
+	 *            (commitment Reference)
 	 * @return Integer
 	 */
 	@Override
@@ -563,7 +580,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
 		}

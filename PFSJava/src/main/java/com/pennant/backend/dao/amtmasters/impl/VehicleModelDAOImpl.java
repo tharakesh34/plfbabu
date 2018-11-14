@@ -63,18 +63,17 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements VehicleModelDAO {
 	private static Logger logger = Logger.getLogger(VehicleModelDAOImpl.class);
 
-	
 	public VehicleModelDAOImpl() {
 		super();
 	}
-	
 
 	/**
-	 * Fetch the Record  Vehicle Model Detail details by key field
+	 * Fetch the Record Vehicle Model Detail details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return VehicleModel
 	 */
 	@Override
@@ -83,11 +82,11 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 		VehicleModel vehicleModel = new VehicleModel();
 		vehicleModel.setVehicleModelId(id);
 		vehicleModel.setVehicleManufacturerId(vehicleManufacturerId);
-		
-		StringBuilder   selectSql = new StringBuilder  ("SELECT VehicleManufacturerId," );
+
+		StringBuilder selectSql = new StringBuilder("SELECT VehicleManufacturerId,");
 		selectSql.append(" VehicleModelId,VehicleModelDesc, ");
 
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("lovDescVehicleManufacturerName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -95,15 +94,14 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 		selectSql.append(" FROM  AMTVehicleModel");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where VehicleModelId =:VehicleModelId and VehicleManufacturerId =:VehicleManufacturerId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleModel);
-		RowMapper<VehicleModel> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleModel.class);
+		RowMapper<VehicleModel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleModel.class);
 
-		try{
-			vehicleModel = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			vehicleModel = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vehicleModel = null;
 		}
@@ -111,13 +109,9 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 		return vehicleModel;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the AMTVehicleModel or
-	 * AMTVehicleModel_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Vehicle Model Detail by key
-	 * VehicleModelId
+	 * This method Deletes the Record from the AMTVehicleModel or AMTVehicleModel_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Vehicle Model Detail by key VehicleModelId
 	 * 
 	 * @param Vehicle
 	 *            Model Detail (vehicleModel)
@@ -136,7 +130,7 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where VehicleModelId =:VehicleModelId");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleModel);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
@@ -150,9 +144,8 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 	}
 
 	/**
-	 * This method insert new Records into AMTVehicleModel or
-	 * AMTVehicleModel_Temp. it fetches the available Sequence form
-	 * SeqAMTVehicleModel by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into AMTVehicleModel or AMTVehicleModel_Temp. it fetches the available Sequence
+	 * form SeqAMTVehicleModel by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Vehicle Model Detail
 	 * 
@@ -165,23 +158,23 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 	 * 
 	 */
 	@Override
-	public long save(VehicleModel vehicleModel,String type) {
+	public long save(VehicleModel vehicleModel, String type) {
 		logger.debug("Entering");
-		if (vehicleModel.getId()==Long.MIN_VALUE){
+		if (vehicleModel.getId() == Long.MIN_VALUE) {
 			vehicleModel.setId(getNextId("SeqAMTVehicleModel"));
-			logger.debug("get NextID:"+vehicleModel.getId());
+			logger.debug("get NextID:" + vehicleModel.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AMTVehicleModel");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(VehicleManufacturerId,VehicleModelId, VehicleModelDesc, " );
+		insertSql.append("(VehicleManufacturerId,VehicleModelId, VehicleModelDesc, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:VehicleManufacturerId,:VehicleModelId, :VehicleModelDesc,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleModel);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -189,13 +182,13 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 	}
 
 	/**
-	 * This method updates the Record AMTVehicleModel or AMTVehicleModel_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Vehicle Model Detail by key VehicleModelId and Version
+	 * This method updates the Record AMTVehicleModel or AMTVehicleModel_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Vehicle Model Detail by key VehicleModelId and Version
 	 * 
-	 * @param Vehicle Model Detail (vehicleModel)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Vehicle
+	 *            Model Detail (vehicleModel)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -219,7 +212,7 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleModel);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount <= 0) {
@@ -228,39 +221,39 @@ public class VehicleModelDAOImpl extends SequenceDao<VehicleModel> implements Ve
 		logger.debug("Leaving");
 	}
 
-
 	/**
-	 * Fetch the Record  Vehicle Model Detail details by key field
+	 * Fetch the Record Vehicle Model Detail details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return VehicleModel
 	 */
 	@Override
 	public VehicleModel getVehicleModelByModelDesc(VehicleModel vehicleModel, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder   selectSql = new StringBuilder  ("SELECT VehicleManufacturerId," );
+
+		StringBuilder selectSql = new StringBuilder("SELECT VehicleManufacturerId,");
 		selectSql.append(" VehicleModelId,VehicleModelDesc, ");
 
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("lovDescVehicleManufacturerName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  AMTVehicleModel");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where VehicleModelId !=:VehicleModelId and VehicleManufacturerId =:VehicleManufacturerId and VehicleModelDesc =:VehicleModelDesc ");
-		
+		selectSql.append(
+				" Where VehicleModelId !=:VehicleModelId and VehicleManufacturerId =:VehicleManufacturerId and VehicleModelDesc =:VehicleModelDesc ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleModel);
-		RowMapper<VehicleModel> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleModel.class);
+		RowMapper<VehicleModel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleModel.class);
 
-		try{
-			vehicleModel = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			vehicleModel = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vehicleModel = null;
 		}

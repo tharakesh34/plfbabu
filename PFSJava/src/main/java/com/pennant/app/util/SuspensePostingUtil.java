@@ -70,14 +70,14 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class SuspensePostingUtil implements Serializable {
-	private static final long			serialVersionUID	= -7469564513544156223L;
-	private static Logger				logger				= Logger.getLogger(SuspensePostingUtil.class);
+	private static final long serialVersionUID = -7469564513544156223L;
+	private static Logger logger = Logger.getLogger(SuspensePostingUtil.class);
 
-	private FinanceSuspHeadDAO			financeSuspHeadDAO;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private FinODDetailsDAO				finODDetailsDAO;
-	private CustomerStatusCodeDAO		customerStatusCodeDAO;
-	private PostingsPreparationUtil		postingsPreparationUtil;
+	private FinanceSuspHeadDAO financeSuspHeadDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private CustomerStatusCodeDAO customerStatusCodeDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
 	public SuspensePostingUtil() {
 		super();
@@ -102,8 +102,8 @@ public class SuspensePostingUtil implements Serializable {
 		boolean isPostingSuccess = true;
 
 		boolean isDueSuspNow = false;
-		int curOdDays = getFinODDetailsDAO()
-				.getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate());
+		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
+				repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -194,8 +194,8 @@ public class SuspensePostingUtil implements Serializable {
 		isDueSuspNow = true;
 
 		// Insert Finance Suspend Details data
-		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(),
-				suspHead.getFinSuspSeq(), valueDate, repayQueue.getRpyDate(), "S", suspFromDate, linkedTranId);
+		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(), suspHead.getFinSuspSeq(),
+				valueDate, repayQueue.getRpyDate(), "S", suspFromDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
 
 		returnList.add(isPostingSuccess);
@@ -219,8 +219,8 @@ public class SuspensePostingUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	public void suspReleasePreparation(FinanceMain financeMain, BigDecimal releasePftAmount,
-			FinRepayQueue finRepayQueue, Date valueDate, boolean isEODProcess) throws InterfaceException,
-			IllegalAccessException, InvocationTargetException {
+			FinRepayQueue finRepayQueue, Date valueDate, boolean isEODProcess)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Fetch the Finance Suspend head

@@ -75,7 +75,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	public PRelationCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -97,15 +97,12 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTPRelationCodes/BMTPRelationCodes_Temp by using PRelationCodeDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using PRelationCodeDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTPRelationCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTPRelationCodes/BMTPRelationCodes_Temp by using PRelationCodeDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using PRelationCodeDAO's update method 3) Audit the record
+	 * in to AuditHeader and AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -141,12 +138,10 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTPRelationCodes by using PRelationCodeDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTPRelationCodes by using PRelationCodeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -168,8 +163,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * getPRelationCodeById fetch the details by using PRelationCodeDAO's
-	 * getPRelationCodeById method.
+	 * getPRelationCodeById fetch the details by using PRelationCodeDAO's getPRelationCodeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -183,10 +177,8 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * getApprovedPRelationCodeById fetch the details by using
-	 * PRelationCodeDAO's getPRelationCodeById method . with parameter id and
-	 * type as blank. it fetches the approved records from the
-	 * BMTPRelationCodes.
+	 * getApprovedPRelationCodeById fetch the details by using PRelationCodeDAO's getPRelationCodeById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BMTPRelationCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,20 +189,15 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getPRelationCodeDAO().delete with parameters pRelationCode,"" b)
-	 * NEW Add new record in to main table by using getPRelationCodeDAO().save
-	 * with parameters pRelationCode,"" c) EDIT Update record in the main table
-	 * by using getPRelationCodeDAO().update with parameters pRelationCode,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getPRelationCodeDAO().delete with parameters pRelationCode,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtBMTPRelationCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtBMTPRelationCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getPRelationCodeDAO().delete with
+	 * parameters pRelationCode,"" b) NEW Add new record in to main table by using getPRelationCodeDAO().save with
+	 * parameters pRelationCode,"" c) EDIT Update record in the main table by using getPRelationCodeDAO().update with
+	 * parameters pRelationCode,"" 3) Delete the record from the workFlow table by using getPRelationCodeDAO().delete
+	 * with parameters pRelationCode,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTPRelationCodes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTPRelationCodes
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -236,8 +223,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 			pRelationCode.setNextTaskId("");
 			pRelationCode.setWorkflowId(0);
 
-			if (pRelationCode.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (pRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				pRelationCode.setRecordType("");
 				getPRelationCodeDAO().save(pRelationCode, "");
@@ -261,13 +247,10 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getPRelationCodeDAO().delete with parameters
-	 * pRelationCode,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getPRelationCodeDAO().delete with parameters pRelationCode,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -290,19 +273,16 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -311,18 +291,16 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -340,25 +318,23 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 		String[] errParm = new String[2];
 
 		valueParm[0] = pRelationCode.getPRelationCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_PRelationCode") + ":"
-		+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_PRelationCode") + ":" + valueParm[0];
 
 		if (pRelationCode.isNew()) { // for New record or new record into work flow
 
 			if (!pRelationCode.isWorkflow()) {// With out Work flow only new records
 				if (befPRelationCode != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (pRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befPRelationCode != null || tempPRelationCode != null) { //if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPRelationCode == null || tempPRelationCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -367,37 +343,35 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 			if (!pRelationCode.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befPRelationCode == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldPRelationCode != null
 							&& !oldPRelationCode.getLastMntOn().equals(befPRelationCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 
 				if (tempPRelationCode == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempPRelationCode != null
-						&& oldPRelationCode != null
+				if (tempPRelationCode != null && oldPRelationCode != null
 						&& !oldPRelationCode.getLastMntOn().equals(tempPRelationCode.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !pRelationCode.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !pRelationCode.isWorkflow()) {
 			auditDetail.setBefImage(befPRelationCode);
 		}
 		logger.debug("Leaving");

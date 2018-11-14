@@ -65,36 +65,34 @@ import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiry.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiry.zul file.
  */
 public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory> {
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = Logger.getLogger(CustomerLimitEnquiryCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CustomerLimitEnquiry; // autowired
-	
-	protected Label 		custCIF;
-	protected Label 		custShortName;
-	protected Label 		country;
-	protected Label 		groupName;
-	protected Label 		currency;
-	protected Label 		earliestExpiryDate;
-	
-	protected Listbox 		listBoxCustomerLimit;
-	protected Grid			grid_enquiryDetails;
-	
+	protected Window window_CustomerLimitEnquiry; // autowired
+
+	protected Label custCIF;
+	protected Label custShortName;
+	protected Label country;
+	protected Label groupName;
+	protected Label currency;
+	protected Label earliestExpiryDate;
+
+	protected Listbox listBoxCustomerLimit;
+	protected Grid grid_enquiryDetails;
+
 	private CustomerLimit customerLimit;
-	
+
 	private CustomerLimitIntefaceService customerLimitIntefaceService;
 	private CurrencyService currencyService;
 
@@ -104,16 +102,15 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	public CustomerLimitEnquiryCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "CustomerLimitEnquiry";
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected AccountingSet object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected AccountingSet object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -139,9 +136,9 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 		}
 
 		getBorderLayoutHeight();
-		int dialogHeight =  grid_enquiryDetails.getRows().getVisibleItemCount()* 20 + 100 ; 
-		int listboxHeight = borderLayoutHeight-dialogHeight;
-		listBoxCustomerLimit.setHeight(listboxHeight+"px");
+		int dialogHeight = grid_enquiryDetails.getRows().getVisibleItemCount() * 20 + 100;
+		int listboxHeight = borderLayoutHeight - dialogHeight;
+		listBoxCustomerLimit.setHeight(listboxHeight + "px");
 
 		// set Field Properties
 		doShowDialog(getCustomerLimit());
@@ -159,7 +156,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 		MessageUtil.showHelpWindow(event, window_CustomerLimitEnquiry);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -175,24 +172,26 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	 * 
 	 * @param aAccountingSet
 	 *            (AccountingSet)
-	 * @throws CustomerLimitProcessException 
-	 * @throws InterruptedException 
-	 * @throws JaxenException 
+	 * @throws CustomerLimitProcessException
+	 * @throws InterruptedException
+	 * @throws JaxenException
 	 */
-	public void doWriteBeanToComponents(CustomerLimit customerLimit) throws InterfaceException, InterruptedException, JaxenException {
+	public void doWriteBeanToComponents(CustomerLimit customerLimit)
+			throws InterfaceException, InterruptedException, JaxenException {
 		logger.debug("Entering");
-		
+
 		this.custCIF.setValue(customerLimit.getCustCIF());
 		this.custShortName.setValue(customerLimit.getCustShortName());
 		this.country.setValue(customerLimit.getBranch());
 		this.groupName.setValue(customerLimit.getLimitCategory());
-		if(customerLimit.isRepeatThousands()){
-			this.currency.setValue(customerLimit.getCurrency() +" ( Thousands '000' Omitted) ");
-		}else{
+		if (customerLimit.isRepeatThousands()) {
+			this.currency.setValue(customerLimit.getCurrency() + " ( Thousands '000' Omitted) ");
+		} else {
 			this.currency.setValue(customerLimit.getCurrency());
 		}
-		this.earliestExpiryDate.setValue(DateUtility.formatToLongDate(DateUtility.addYears(customerLimit.getEarliestExpiryDate(),1900)));
-		
+		this.earliestExpiryDate.setValue(
+				DateUtility.formatToLongDate(DateUtility.addYears(customerLimit.getEarliestExpiryDate(), 1900)));
+
 		doFilllistbox(customerLimit.getCustCIF());
 		logger.debug("Leaving");
 	}
@@ -211,7 +210,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerLimit);
-			
+
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			setDialog(DialogType.EMBEDDED);
@@ -225,27 +224,27 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	 * Method for rendering list of TransactionEntry
 	 * 
 	 * @param custlimitCategoryList
-	 * @throws CustomerLimitProcessException 
-	 * @throws InterruptedException 
-	 * @throws JaxenException 
+	 * @throws CustomerLimitProcessException
+	 * @throws InterruptedException
+	 * @throws JaxenException
 	 */
 	public void doFilllistbox(String custMnemonic) throws InterfaceException, InterruptedException, JaxenException {
 		logger.debug("Entering");
-		
+
 		com.pennant.coreinterface.model.CustomerLimit limit = new com.pennant.coreinterface.model.CustomerLimit();
 		limit.setCustMnemonic(custMnemonic);
 		limit.setCustLocation("");
 		List<com.pennant.coreinterface.model.CustomerLimit> list = null;
 		int formatter = 0;
 		try {
-			
+
 			list = getCustomerLimitIntefaceService().fetchLimitEnquiryDetails(limit);
 			Currency currency = getCurrencyService().getCurrencyById(getCustomerLimit().getCurrency());
-			if(currency != null){
+			if (currency != null) {
 				formatter = currency.getCcyEditField();
 			}
-			
-			if(getCustomerLimit().isRepeatThousands()){
+
+			if (getCustomerLimit().isRepeatThousands()) {
 				formatter = formatter + 3;
 			}
 		} catch (InterfaceException e) {
@@ -259,58 +258,61 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			for (com.pennant.coreinterface.model.CustomerLimit category : list) {
 
 				boolean limitExceed = false;
-				if(category.getRiskAmount().longValue() > category.getLimitAmount().longValue()){
+				if (category.getRiskAmount().longValue() > category.getLimitAmount().longValue()) {
 					limitExceed = true;
 				}
-				
+
 				item = new Listitem();
 				lc = new Listcell(category.getLimitCategory());
-				if(limitExceed){
+				if (limitExceed) {
 					lc.setStyle("color:red;");
 				}
 				lc.setParent(item);
-				
+
 				lc = new Listcell(category.getLimitCategoryDesc());
-				if(limitExceed){
+				if (limitExceed) {
 					lc.setStyle("color:red;");
 				}
 				lc.setParent(item);
-				
-				lc = new Listcell(String.valueOf(category.getRiskAmount().divide(BigDecimal.valueOf(Math.pow(10, formatter)),RoundingMode.HALF_UP)));
-				
-				if(limitExceed){
+
+				lc = new Listcell(String.valueOf(category.getRiskAmount()
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP)));
+
+				if (limitExceed) {
 					lc.setStyle("color:red;text-align:right;");
-				}else{
+				} else {
 					lc.setStyle("text-align:right;");
 				}
 				lc.setParent(item);
-				
-				lc = new Listcell(String.valueOf(category.getLimitAmount().divide(BigDecimal.valueOf(Math.pow(10, formatter)),RoundingMode.HALF_UP)));
-				if(limitExceed){
+
+				lc = new Listcell(String.valueOf(category.getLimitAmount()
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP)));
+				if (limitExceed) {
 					lc.setStyle("color:red;text-align:right;");
-				}else{
+				} else {
 					lc.setStyle("text-align:right;");
 				}
 				lc.setParent(item);
-				
-				lc = new Listcell(String.valueOf(category.getAvailAmount().divide(BigDecimal.valueOf(Math.pow(10, formatter)),RoundingMode.HALF_UP)));
-				if(limitExceed){
+
+				lc = new Listcell(String.valueOf(category.getAvailAmount()
+						.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP)));
+				if (limitExceed) {
 					lc.setStyle("color:red;text-align:right;");
-				}else{
+				} else {
 					lc.setStyle("text-align:right;");
 				}
 				lc.setParent(item);
-								
+
 				item.setAttribute("data", category);
 				item.setId(category.getLimitCategory());
-			//	ComponentsCtrl.applyForward(item, "onDoubleClick=onCategoryItemDoubleClicked");
+				//	ComponentsCtrl.applyForward(item, "onDoubleClick=onCategoryItemDoubleClicked");
 				this.listBoxCustomerLimit.appendChild(item);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onCategoryItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -323,21 +325,19 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			CustomerLimitCategory category = (CustomerLimitCategory) item.getAttribute("data");
 			getCustomerLimit().setLimitCategory(category.getLimitCategory());
 			map.put("customerLimit", getCustomerLimit());
-		}	
-		
+		}
+
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listBox ListModel. This is
-		 * fine for synchronizing the data in the CustomerListbox from the
-		 * dialog when we do a delete, edit or insert a Customer.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listBox ListModel. This is fine for synchronizing the data in the CustomerListbox from the dialog when we do
+		 * a delete, edit or insert a Customer.
 		 */
 		map.put("customerListCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitCategoryEnquiryList.zul",
-					null,map);
+					"/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitCategoryEnquiryList.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -351,12 +351,12 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	public CustomerLimit getCustomerLimit() {
 		return customerLimit;
 	}
+
 	public void setCustomerLimit(CustomerLimit customerLimit) {
 		this.customerLimit = customerLimit;
 	}
 
-	public void setCustomerLimitIntefaceService(
-			CustomerLimitIntefaceService customerLimitIntefaceService) {
+	public void setCustomerLimitIntefaceService(CustomerLimitIntefaceService customerLimitIntefaceService) {
 		this.customerLimitIntefaceService = customerLimitIntefaceService;
 	}
 
@@ -371,5 +371,5 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}
-	
+
 }

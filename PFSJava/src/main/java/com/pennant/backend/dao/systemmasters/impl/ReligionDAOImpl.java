@@ -62,8 +62,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>Religion</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>Religion</code> with set of CRUD operations.
  */
 public class ReligionDAOImpl extends SequenceDao<Religion> implements ReligionDAO {
 	private static Logger logger = Logger.getLogger(ReligionDAOImpl.class);

@@ -44,9 +44,12 @@
 package com.pennant.backend.dao;
 
 public interface NextidviewDAO {
-	
+
 	long getNextId(String seqName);
+
 	long getSeqNumber(String seqName);
-	void setSeqNumber(String seqName,long seqNumber);
+
+	void setSeqNumber(String seqName, long seqNumber);
+
 	long getNextExtId(String seqName);
 }

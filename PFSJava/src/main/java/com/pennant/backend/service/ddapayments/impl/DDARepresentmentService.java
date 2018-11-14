@@ -26,9 +26,9 @@ public class DDARepresentmentService {
 	}
 
 	// DDA Representment dao
-	private DDARepresentmentDAO 		ddaRepresentmentDAO;
-	private FinanceScheduleDetailDAO 	financeScheduleDetailDAO;
-	private FinanceMainDAO 				financeMainDAO;
+	private DDARepresentmentDAO ddaRepresentmentDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	// date formats
 	public static final String appDateFormat = "yyyymmdd";
@@ -39,7 +39,7 @@ public class DDARepresentmentService {
 	 * 
 	 * @param repayData
 	 */
-	public void doDDARepresentment(RepayData repayData){
+	public void doDDARepresentment(RepayData repayData) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -56,11 +56,11 @@ public class DDARepresentmentService {
 	 * 
 	 * @param repayData
 	 */
-	public void doDDARepresentment(FinanceMain financeMain, RepayScheduleDetail rpySchd){
+	public void doDDARepresentment(FinanceMain financeMain, RepayScheduleDetail rpySchd) {
 		logger.debug("Entering");
 
 		// required only past due payments
-		if(rpySchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0){
+		if (rpySchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0) {
 			return;
 		}
 
@@ -68,7 +68,8 @@ public class DDARepresentmentService {
 		Date schDate = rpySchd.getSchDate();
 
 		// Fetch Finance Schdule details
-		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schDate, false);
+		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schDate,
+				false);
 
 		// process DDA Re-presentment data
 		processRepresentment(scheduleDetail, financeMain);
@@ -83,14 +84,15 @@ public class DDARepresentmentService {
 	 */
 	public void doDDARepresentment(Date schdDate, String finReference) {
 		logger.debug("Entering");
-		
+
 		// required only past due payments
-		if(schdDate.compareTo(DateUtility.getAppDate()) >= 0){
+		if (schdDate.compareTo(DateUtility.getAppDate()) >= 0) {
 			return;
 		}
 
 		// Fetch Finance Schdule details
-		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schdDate, false);
+		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference,
+				schdDate, false);
 
 		// Fetch FinanceMain details
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(finReference, "", false);
@@ -111,7 +113,7 @@ public class DDARepresentmentService {
 		// calculate total repayAmount
 		BigDecimal dueAmount = getPaymentDueBySchedule(scheduleDetail);
 
-		if(dueAmount.compareTo(BigDecimal.ZERO) == 0) {
+		if (dueAmount.compareTo(BigDecimal.ZERO) == 0) {
 			DDAPayments ddaPay = new DDAPayments();
 			ddaPay.setDirectDebitRefNo(financeMain.getDdaReferenceNo());
 			ddaPay.setCustCIF(financeMain.getLovDescCustCIF());
@@ -123,7 +125,7 @@ public class DDARepresentmentService {
 			representment(ddaPay);
 		}
 	}
-	
+
 	/**
 	 * @param scheduleDetail
 	 * @return
@@ -154,7 +156,7 @@ public class DDARepresentmentService {
 		DDAPayments payments = new DDAPayments();
 
 		Date appDate = DateUtility.getAppDate();
-		payments.setdDARefNo(ddaPayments.getdDAReferenceNo() + "-"+ DateUtility.format(appDate, appDateFormat));
+		payments.setdDARefNo(ddaPayments.getdDAReferenceNo() + "-" + DateUtility.format(appDate, appDateFormat));
 		payments.setpFFData(getPFFData(ddaPayments));
 
 		// Save DDA Payment Details into DDS_PFF_DD500 table
@@ -172,11 +174,11 @@ public class DDARepresentmentService {
 
 	public void representment(List<DdaPresentment> presentments) {
 		logger.debug("Entering");
-		
-		if(presentments != null && !presentments.isEmpty()) {
+
+		if (presentments != null && !presentments.isEmpty()) {
 			// TODO: Temporary method need to fix
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -202,7 +204,7 @@ public class DDARepresentmentService {
 	}
 
 	private void appendLine(StringBuilder builder, String value) {
-		builder.append(value+";");
+		builder.append(value + ";");
 	}
 
 	// Setters and getters
@@ -218,8 +220,7 @@ public class DDARepresentmentService {
 		return financeScheduleDetailDAO;
 	}
 
-	public void setFinanceScheduleDetailDAO(
-			FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 

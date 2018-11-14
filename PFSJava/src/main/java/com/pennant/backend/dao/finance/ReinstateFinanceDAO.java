@@ -46,7 +46,6 @@ package com.pennant.backend.dao.finance;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReinstateFinance;
 
-
 /**
  * DAO methods declaration for the <b>ReinstateFinance model</b> class.<br>
  * 
@@ -54,13 +53,22 @@ import com.pennant.backend.model.finance.ReinstateFinance;
 public interface ReinstateFinanceDAO {
 
 	ReinstateFinance getReinstateFinance();
+
 	ReinstateFinance getNewReinstateFinance();
-	ReinstateFinance getReinstateFinanceById(String finReference,String type);
-	void update(ReinstateFinance reinstateFinance,String type);
-	void delete(ReinstateFinance reinstateFinance,String type);
-	String save(ReinstateFinance reinstateFinance,String type);
+
+	ReinstateFinance getReinstateFinanceById(String finReference, String type);
+
+	void update(ReinstateFinance reinstateFinance, String type);
+
+	void delete(ReinstateFinance reinstateFinance, String type);
+
+	String save(ReinstateFinance reinstateFinance, String type);
+
 	ReinstateFinance getFinanceDetailsById(String finReference);
+
 	FinanceMain getRejectedFinanceById(final String id);
+
 	void processReInstateFinance(FinanceMain financeMain);
+
 	void deleteRejectFinance(ReinstateFinance reinstateFinance);
 }

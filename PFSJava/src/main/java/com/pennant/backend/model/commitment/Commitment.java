@@ -68,70 +68,69 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Commitment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private String								cmtReference;
-	private long 								custID;
-	private String								cmtBranch;
-	private boolean 							openAccount;
-	private String 								cmtAccount;
-	private String 								cmtCcy;
-	private BigDecimal 							cmtPftRateMin;
-	private BigDecimal 							cmtPftRateMax;
-	private BigDecimal 							cmtAmount;
-	private BigDecimal 							cmtUtilizedAmount;
-	private BigDecimal 							cmtAvailable;
-	private Date 								cmtPromisedDate;
-	private Date 								cmtStartDate;
-	private Date 								cmtExpDate;
-	private boolean 							activeStatus;
-	private boolean 							nonperformingStatus;
-	private String 								cmtTitle;
-	private String 								cmtNotes;
-	private boolean 							revolving;
-	private boolean 							sharedCmt;
-	private boolean 							multiBranch;
+	private String cmtReference;
+	private long custID;
+	private String cmtBranch;
+	private boolean openAccount;
+	private String cmtAccount;
+	private String cmtCcy;
+	private BigDecimal cmtPftRateMin;
+	private BigDecimal cmtPftRateMax;
+	private BigDecimal cmtAmount;
+	private BigDecimal cmtUtilizedAmount;
+	private BigDecimal cmtAvailable;
+	private Date cmtPromisedDate;
+	private Date cmtStartDate;
+	private Date cmtExpDate;
+	private boolean activeStatus;
+	private boolean nonperformingStatus;
+	private String cmtTitle;
+	private String cmtNotes;
+	private boolean revolving;
+	private boolean sharedCmt;
+	private boolean multiBranch;
 
-	private BigDecimal 							cmtCharges;
-	private String 								chargesAccount;
-	private boolean 							cmtActive;
-	private boolean 							cmtStopRateRange;
-	private boolean 							nonPerforming;
+	private BigDecimal cmtCharges;
+	private String chargesAccount;
+	private boolean cmtActive;
+	private boolean cmtStopRateRange;
+	private boolean nonPerforming;
 
-	private String 								custShrtName;
-	private String 								custCIF;
-	private String 								branchDesc;
-	private String 								chargesAccountName;
-	private String 								cmtAccountName;
-	private String 								custCtgCode;
-	private Date 								custDOB;
-	private String 								facilityRef;
-	private String 								facilityRefDesc;
-	private long 								limitLineId;
-	private String 								limitLineCode;
-	private String 								limitLineCodeDesc;
+	private String custShrtName;
+	private String custCIF;
+	private String branchDesc;
+	private String chargesAccountName;
+	private String cmtAccountName;
+	private String custCtgCode;
+	private Date custDOB;
+	private String facilityRef;
+	private String facilityRefDesc;
+	private long limitLineId;
+	private String limitLineCode;
+	private String limitLineCodeDesc;
 
-	private boolean 							newRecord 				= false;
-	private String 								lovValue;
-	private Commitment 							befImage;
-	private LoggedInUser 						userDetails;
-	public CommitmentMovement 					commitmentMovement;
+	private boolean newRecord = false;
+	private String lovValue;
+	private Commitment befImage;
+	private LoggedInUser userDetails;
+	public CommitmentMovement commitmentMovement;
 
-	private int 								cmtAvailableMonths;
-	private Date 								cmtRvwDate;
-	private boolean 							collateralRequired;
-	private Date 								cmtEndDate;
+	private int cmtAvailableMonths;
+	private Date cmtRvwDate;
+	private boolean collateralRequired;
+	private Date cmtEndDate;
 
-	private HashMap<String, List<AuditDetail>>	auditDetailMap 			= new HashMap<String, List<AuditDetail>>();
-	private Map<Long, Long> 					selAnsCountMap 			= new HashMap<Long, Long>(1);
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
 
-	private CustomerDetails 					customerDetails;
-	private List<FinanceReferenceDetail> 		aggrements 				= null;
-	private List<DocumentDetails> 				documents				= null;
-	private List<FinanceReferenceDetail> 		checkLists				= null;
-	private List<FinanceCheckListReference> 	commitmentCheckLists	= null;
-	private List<FinFlagsDetail> 				cmtFlagDetailList;
-	private List<CommitmentRate> 				commitmentRateList;
-	private List<CollateralAssignment> 			collateralAssignmentList = new ArrayList<CollateralAssignment>();
-
+	private CustomerDetails customerDetails;
+	private List<FinanceReferenceDetail> aggrements = null;
+	private List<DocumentDetails> documents = null;
+	private List<FinanceReferenceDetail> checkLists = null;
+	private List<FinanceCheckListReference> commitmentCheckLists = null;
+	private List<FinFlagsDetail> cmtFlagDetailList;
+	private List<CommitmentRate> commitmentRateList;
+	private List<CollateralAssignment> collateralAssignmentList = new ArrayList<CollateralAssignment>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -514,6 +513,7 @@ public class Commitment extends AbstractWorkflowEntity {
 	public String getFacilityRefDesc() {
 		return facilityRefDesc;
 	}
+
 	public int getCmtAvailableMonths() {
 		return cmtAvailableMonths;
 	}
@@ -641,17 +641,18 @@ public class Commitment extends AbstractWorkflowEntity {
 	public void setLimitLineCodeDesc(String limitLineCodeDesc) {
 		this.limitLineCodeDesc = limitLineCodeDesc;
 	}
-	
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> commitmentMap = new HashMap<String, Object>();	
-		
+		HashMap<String, Object> commitmentMap = new HashMap<String, Object>();
+
 		return getDeclaredFieldValues(commitmentMap);
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> commitmentMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				commitmentMap.put("cmt_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				commitmentMap.put("cmt_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}

@@ -70,14 +70,14 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 
 	private static Logger logger = Logger.getLogger(CustomerEMailServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerEMailDAO customerEMailDAO;
 	private CustomerEMailValidation customerEMailValidation;
 
 	public CustomerEMailServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -85,6 +85,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -92,54 +93,53 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	public CustomerEMailDAO getCustomerEMailDAO() {
 		return customerEMailDAO;
 	}
+
 	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
 		this.customerEMailDAO = customerEMailDAO;
 	}
 
-	public CustomerEMailValidation getEMailValidation(){
+	public CustomerEMailValidation getEMailValidation() {
 
-		if(customerEMailValidation==null){
+		if (customerEMailValidation == null) {
 			this.customerEMailValidation = new CustomerEMailValidation(customerEMailDAO);
 		}
 		return this.customerEMailValidation;
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table CustomerEMails/CustomerEMails_Temp 
-	 * 			by using CustomerEMailDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using CustomerEMailDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerEMails by using 
-	 * 		auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * CustomerEMails/CustomerEMails_Temp by using CustomerEMailDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using CustomerEMailDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtCustomerEMails by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		String tableType="";
+		String tableType = "";
 		CustomerEMail customerEMail = (CustomerEMail) auditHeader.getAuditDetail().getModelData();
 
 		if (customerEMail.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (customerEMail.isNew()) {
-			getCustomerEMailDAO().save(customerEMail,tableType);
+			getCustomerEMailDAO().save(customerEMail, tableType);
 			auditHeader.getAuditDetail().setModelData(customerEMail);
-		}else{
-			getCustomerEMailDAO().update(customerEMail,tableType);
+		} else {
+			getCustomerEMailDAO().update(customerEMail, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -149,29 +149,28 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table CustomerEMails by using 
-	 * 			CustomerEMailDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerEMails by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * CustomerEMails by using CustomerEMailDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtCustomerEMails by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"delete");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "delete");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		CustomerEMail customerEMail = (CustomerEMail) auditHeader.getAuditDetail().getModelData();
 
-		getCustomerEMailDAO().delete(customerEMail,"");		
+		getCustomerEMailDAO().delete(customerEMail, "");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -179,53 +178,51 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 
 	/**
 	 * getCustomerEMailById fetch the details by using CustomerEMailDAO's getCustomerEMailById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerEMail
 	 */
 	@Override
-	public CustomerEMail getCustomerEMailById(long id,String typeCode) {
-		return getCustomerEMailDAO().getCustomerEMailById(id,typeCode,"_View");
-	}
-	
-	/**
-	 * getApprovedCustomerEMailById fetch the details by using CustomerEMailDAO's getCustomerEMailById method .
-	 * with parameter id and type as blank. it fetches the approved records from the CustomerEMails.
-	 * @param id (String)
-	 * @return CustomerEMail
-	 */
-	public CustomerEMail getApprovedCustomerEMailById(long id,String typeCode) {
-		return getCustomerEMailDAO().getCustomerEMailById(id,typeCode,"_AView");
+	public CustomerEMail getCustomerEMailById(long id, String typeCode) {
+		return getCustomerEMailDAO().getCustomerEMailById(id, typeCode, "_View");
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using 
-	 * 				getCustomerEMailDAO().delete with parameters customerEMail,""
-	 * 		b)  NEW		Add new record in to main table by using 
-	 * 				getCustomerEMailDAO().save with parameters customerEMail,""
-	 * 		c)  EDIT	Update record in the main table by using 
-	 * 				getCustomerEMailDAO().update with parameters customerEMail,""
-	 * 3)	Delete the record from the workFlow table by using 
-	 * 			getCustomerEMailDAO().delete with parameters customerEMail,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtCustomerEMails by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtCustomerEMails by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * getApprovedCustomerEMailById fetch the details by using CustomerEMailDAO's getCustomerEMailById method . with
+	 * parameter id and type as blank. it fetches the approved records from the CustomerEMails.
 	 * 
-	 * @param AuditHeader (auditHeader)    
+	 * @param id
+	 *            (String)
+	 * @return CustomerEMail
+	 */
+	public CustomerEMail getApprovedCustomerEMailById(long id, String typeCode) {
+		return getCustomerEMailDAO().getCustomerEMailById(id, typeCode, "_AView");
+	}
+
+	/**
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerEMailDAO().delete with
+	 * parameters customerEMail,"" b) NEW Add new record in to main table by using getCustomerEMailDAO().save with
+	 * parameters customerEMail,"" c) EDIT Update record in the main table by using getCustomerEMailDAO().update with
+	 * parameters customerEMail,"" 3) Delete the record from the workFlow table by using getCustomerEMailDAO().delete
+	 * with parameters customerEMail,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomerEMails by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCustomerEMails by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		if (!auditHeader.isNextProcess()){
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -234,8 +231,8 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 		BeanUtils.copyProperties((CustomerEMail) auditHeader.getAuditDetail().getModelData(), customerEMail);
 
 		if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
-			getCustomerEMailDAO().delete(customerEMail,"");
+			tranType = PennantConstants.TRAN_DEL;
+			getCustomerEMailDAO().delete(customerEMail, "");
 		} else {
 			customerEMail.setRoleCode("");
 			customerEMail.setNextRoleCode("");
@@ -243,21 +240,21 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 			customerEMail.setNextTaskId("");
 			customerEMail.setWorkflowId(0);
 
-			if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
-				tranType=PennantConstants.TRAN_ADD;
+			if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				customerEMail.setRecordType("");
-				getCustomerEMailDAO().save(customerEMail,"");
+				getCustomerEMailDAO().save(customerEMail, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				customerEMail.setRecordType("");
-				getCustomerEMailDAO().update(customerEMail,"");
+				getCustomerEMailDAO().update(customerEMail, "");
 			}
 		}
 
-		if(!StringUtils.equals(customerEMail.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-		getCustomerEMailDAO().delete(customerEMail,"_Temp");
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		if (!StringUtils.equals(customerEMail.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			getCustomerEMailDAO().delete(customerEMail, "_Temp");
+			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);
@@ -269,28 +266,27 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using 
-	 * 			getCustomerEMailDAO().delete with parameters customerEMail,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerEMails by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerEMailDAO().delete with parameters customerEMail,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtCustomerEMails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		CustomerEMail customerEMail= (CustomerEMail) auditHeader.getAuditDetail().getModelData();			
+		CustomerEMail customerEMail = (CustomerEMail) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCustomerEMailDAO().delete(customerEMail,"_Temp");
+		getCustomerEMailDAO().delete(customerEMail, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -298,41 +294,41 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		auditHeader = getEMailValidation().emailValidation(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	@Override
-    public List<String> getCustEmailsByCustId(long custId) {
-	    return getCustomerEMailDAO().getCustEmailsByCustId(custId);
-    }
+	public List<String> getCustEmailsByCustId(long custId) {
+		return getCustomerEMailDAO().getCustEmailsByCustId(custId);
+	}
 
 	@Override
 	public List<CustomerEMail> getApprovedCustomerEMailById(long id) {
-		 return getCustomerEMailDAO().getCustomerEmailByCustomer(id,"_AView");
+		return getCustomerEMailDAO().getCustomerEmailByCustomer(id, "_AView");
 	}
+
 	/**
 	 * Validate the EmailType Code
-	 * @param customerEMail   
+	 * 
+	 * @param customerEMail
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerEMail customerEMail,String method) {
-			AuditDetail auditDetail = new AuditDetail();
-			ErrorDetail errorDetail = new ErrorDetail();
+	public AuditDetail doValidations(CustomerEMail customerEMail, String method) {
+		AuditDetail auditDetail = new AuditDetail();
+		ErrorDetail errorDetail = new ErrorDetail();
 
 		if (StringUtils.equals(method, "Create")) {
 			List<CustomerEMail> prvCustomerEmailList = customerEMailDAO
@@ -398,37 +394,37 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 				}
 			}
 		}
-			// validate Master code with PLF system masters
-			int count = getCustomerEMailDAO().getEMailTypeCount(customerEMail.getCustEMailTypeCode());
-			if (count <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "EMailType";
-				valueParm[1] = customerEMail.getCustEMailTypeCode();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			}
-			if(!(customerEMail.getCustEMailPriority()>=1 && customerEMail.getCustEMailPriority()<=5)){
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(customerEMail.getCustEMailPriority());
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90110", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-				
-			}
-			 boolean validRegex =  EmailValidator.getInstance().isValid(customerEMail.getCustEMail());
-				
-				if(!validRegex){
-					String[] valueParm = new String[1];
-					valueParm[0] = customerEMail.getCustEMail();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
+		// validate Master code with PLF system masters
+		int count = getCustomerEMailDAO().getEMailTypeCount(customerEMail.getCustEMailTypeCode());
+		if (count <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "EMailType";
+			valueParm[1] = customerEMail.getCustEMailTypeCode();
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
+		if (!(customerEMail.getCustEMailPriority() >= 1 && customerEMail.getCustEMailPriority() <= 5)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(customerEMail.getCustEMailPriority());
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90110", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+		boolean validRegex = EmailValidator.getInstance().isValid(customerEMail.getCustEMail());
+
+		if (!validRegex) {
+			String[] valueParm = new String[1];
+			valueParm[0] = customerEMail.getCustEMail();
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+		}
+		return auditDetail;
+	}
 
 	@Override
 	public int getVersion(long id, String typeCode) {
-		return getCustomerEMailDAO().getVersion(id,typeCode);
+		return getCustomerEMailDAO().getVersion(id, typeCode);
 	}
 }

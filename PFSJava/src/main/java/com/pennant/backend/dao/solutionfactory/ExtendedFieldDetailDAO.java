@@ -65,7 +65,8 @@ public interface ExtendedFieldDetailDAO {
 
 	void deleteByExtendedFields(final long id, String type);
 
-	void alter(ExtendedFieldDetail extendedFieldDetail, String type, boolean dropCol, boolean reCreateCol, boolean isAudit);
+	void alter(ExtendedFieldDetail extendedFieldDetail, String type, boolean dropCol, boolean reCreateCol,
+			boolean isAudit);
 
 	@Deprecated
 	Map<String, Object> retrive(String tableName, String id, String type);

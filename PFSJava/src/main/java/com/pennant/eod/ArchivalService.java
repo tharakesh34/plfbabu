@@ -31,15 +31,13 @@ public class ArchivalService extends ServiceHelper {
 	private static final long serialVersionUID = -2106034326949484681L;
 	private static Logger logger = Logger.getLogger(ArchivalService.class);
 
-	private int	seqNo	= 0;
-	
+	private int seqNo = 0;
+
 	public static final String approvedFinances = " SELECT FinReference, custid FROM FinanceMain WHERE FinApprovedDate = ?  ";
 	public static final String customerDocuments = " SELECT CustDocCategory, CustDocType, CustDocName, CustDocImage FROM CustomerDocuments WHERE CustID = ? ";
 	public static final String financeDocuments = " SELECT DD.Doctype, DD.DocCategory, DD.DocName, DM.DocImage FROM DocumentDetails DD INNER JOIN "
 			+ " DocumentManager DM ON DD.DocRefId = DM.Id WHERE ReferenceId = ? ";
 
-
-	
 	/**
 	 * Fetch the list approved finances based on value date and process the document archival
 	 * 
@@ -65,12 +63,12 @@ public class ArchivalService extends ServiceHelper {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Fetch Finance and customer level documents to archive into the specified location
 	 * 
 	 * @param financeResultSet
-	 * 				Which contains value date approved finances
+	 *            Which contains value date approved finances
 	 * @throws Exception
 	 */
 	public void doDocumentArchive(ResultSet financeResultSet) throws Exception {
@@ -92,7 +90,7 @@ public class ArchivalService extends ServiceHelper {
 			documentStatement = connection.prepareStatement(financeDocuments);
 			documentStatement.setString(1, refNumber);
 			documentsResultSet = documentStatement.executeQuery();
-			
+
 			while (documentsResultSet.next()) {
 				String doctype = documentsResultSet.getString("Doctype");
 				String docCategory = documentsResultSet.getString("DocCategory");
@@ -106,7 +104,7 @@ public class ArchivalService extends ServiceHelper {
 			custDocStatement = connection.prepareStatement(customerDocuments);
 			custDocStatement.setString(1, custID);
 			custDocResultSet = custDocStatement.executeQuery();
-			
+
 			while (custDocResultSet.next()) {
 				String doctype = custDocResultSet.getString("CustDocType");
 				String docCategory = custDocResultSet.getString("CustDocCategory");
@@ -131,7 +129,7 @@ public class ArchivalService extends ServiceHelper {
 			if (custDocStatement != null) {
 				custDocStatement.close();
 			}
-			
+
 		}
 
 		logger.debug("Leaving");
@@ -148,17 +146,21 @@ public class ArchivalService extends ServiceHelper {
 	 * @param custID
 	 * @throws Exception
 	 */
-	private void conversionToPDF(String docType, String docCategory, String docName, byte[] data, String refNumber, String custID) throws Exception {
+	private void conversionToPDF(String docType, String docCategory, String docName, byte[] data, String refNumber,
+			String custID) throws Exception {
 
 		try {
 			String fileName = generateName(refNumber, docCategory);
 
 			if (("IMG").equals(docType) && data != null) {
-				PDFConversion.generatePDFFromImage(data, PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".PDF");
+				PDFConversion.generatePDFFromImage(data,
+						PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".PDF");
 			} else if (("WORD").equals(docType) && data != null) {
-				PDFConversion.generatePDFFromWord(data, PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".PDF");
+				PDFConversion.generatePDFFromWord(data,
+						PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".PDF");
 			} else if (("PDF").equals(docType) && data != null) {
-				PDFConversion.generatePdfFromPdf(data, PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".PDF");
+				PDFConversion.generatePdfFromPdf(data,
+						PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".PDF");
 			}
 			prepareXMl(custID, refNumber, docCategory, docName, fileName);
 		} catch (SQLException e) {
@@ -180,7 +182,8 @@ public class ArchivalService extends ServiceHelper {
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
 	 */
-	private void prepareXMl(String cifID, String reference, String docuType, String docName, String fileName) throws ParserConfigurationException, TransformerException {
+	private void prepareXMl(String cifID, String reference, String docuType, String docName, String fileName)
+			throws ParserConfigurationException, TransformerException {
 
 		final String xmlFilePath = PathUtil.getPath(PathUtil.ECMS_ARCHIVEDOC_LOCATION) + fileName + ".xml";
 		try {
@@ -252,7 +255,6 @@ public class ArchivalService extends ServiceHelper {
 		fileName.append(getSeqNo());
 		return fileName.toString();
 	}
-
 
 	public int getSeqNo() {
 		return seqNo;

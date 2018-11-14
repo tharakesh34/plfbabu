@@ -62,11 +62,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * Service implementation for methods that depends on
- * <b>InterestRateBasisCode</b>.<br>
+ * Service implementation for methods that depends on <b>InterestRateBasisCode</b>.<br>
  * 
  */
-public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRateBasisCode> implements InterestRateBasisCodeService {
+public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRateBasisCode>
+		implements InterestRateBasisCodeService {
 
 	private static Logger logger = Logger.getLogger(InterestRateBasisCodeServiceImpl.class);
 
@@ -76,7 +76,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	public InterestRateBasisCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -98,15 +98,12 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTIntRateBasisCodes/BMTIntRateBasisCodes_Temp by using
-	 * InterestRateBasisCodeDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using
-	 * InterestRateBasisCodeDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtBMTIntRateBasisCodes by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTIntRateBasisCodes/BMTIntRateBasisCodes_Temp by using InterestRateBasisCodeDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using InterestRateBasisCodeDAO's update
+	 * method 3) Audit the record in to AuditHeader and AdtBMTIntRateBasisCodes by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -123,7 +120,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			return auditHeader;
 		}
 		String tableType = "";
-		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail().getModelData();
+		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail()
+				.getModelData();
 
 		if (interestRateBasisCode.isWorkflow()) {
 			tableType = "_Temp";
@@ -134,7 +132,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			auditHeader.getAuditDetail().setModelData(interestRateBasisCode);
 			auditHeader.setAuditReference(interestRateBasisCode.getId());
 		} else {
-			getInterestRateBasisCodeDAO().update(interestRateBasisCode,tableType);
+			getInterestRateBasisCodeDAO().update(interestRateBasisCode, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -144,12 +142,10 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTIntRateBasisCodes by using InterestRateBasisCodeDAO's delete
-	 * method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTIntRateBasisCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTIntRateBasisCodes by using InterestRateBasisCodeDAO's delete method with type as Blank 3) Audit the record in
+	 * to AuditHeader and AdtBMTIntRateBasisCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,7 +160,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail().getModelData();
+		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail()
+				.getModelData();
 
 		getInterestRateBasisCodeDAO().delete(interestRateBasisCode, "");
 
@@ -174,8 +171,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	}
 
 	/**
-	 * getInterestRateBasisCodeById fetch the details by using
-	 * InterestRateBasisCodeDAO's getInterestRateBasisCodeById method.
+	 * getInterestRateBasisCodeById fetch the details by using InterestRateBasisCodeDAO's getInterestRateBasisCodeById
+	 * method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -185,40 +182,33 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	 */
 	@Override
 	public InterestRateBasisCode getInterestRateBasisCodeById(String id) {
-		return getInterestRateBasisCodeDAO().getInterestRateBasisCodeById(id,"_View");
+		return getInterestRateBasisCodeDAO().getInterestRateBasisCodeById(id, "_View");
 	}
 
 	/**
-	 * getApprovedInterestRateBasisCodeById fetch the details by using
-	 * InterestRateBasisCodeDAO's getInterestRateBasisCodeById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * BMTIntRateBasisCodes.
+	 * getApprovedInterestRateBasisCodeById fetch the details by using InterestRateBasisCodeDAO's
+	 * getInterestRateBasisCodeById method . with parameter id and type as blank. it fetches the approved records from
+	 * the BMTIntRateBasisCodes.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return InterestRateBasisCode
 	 */
 	public InterestRateBasisCode getApprovedInterestRateBasisCodeById(String id) {
-		return getInterestRateBasisCodeDAO().getInterestRateBasisCodeById(id,"_AView");
+		return getInterestRateBasisCodeDAO().getInterestRateBasisCodeById(id, "_AView");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getInterestRateBasisCodeDAO().delete with parameters
-	 * interestRateBasisCode,"" b) NEW Add new record in to main table by using
-	 * getInterestRateBasisCodeDAO().save with parameters
-	 * interestRateBasisCode,"" c) EDIT Update record in the main table by using
-	 * getInterestRateBasisCodeDAO().update with parameters
-	 * interestRateBasisCode,"" 3) Delete the record from the workFlow table by
-	 * using getInterestRateBasisCodeDAO().delete with parameters
-	 * interestRateBasisCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTIntRateBasisCodes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTIntRateBasisCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getInterestRateBasisCodeDAO().delete
+	 * with parameters interestRateBasisCode,"" b) NEW Add new record in to main table by using
+	 * getInterestRateBasisCodeDAO().save with parameters interestRateBasisCode,"" c) EDIT Update record in the main
+	 * table by using getInterestRateBasisCodeDAO().update with parameters interestRateBasisCode,"" 3) Delete the record
+	 * from the workFlow table by using getInterestRateBasisCodeDAO().delete with parameters
+	 * interestRateBasisCode,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTIntRateBasisCodes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtBMTIntRateBasisCodes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -235,7 +225,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			return auditHeader;
 		}
 		InterestRateBasisCode interestRateBasisCode = new InterestRateBasisCode();
-		BeanUtils.copyProperties((InterestRateBasisCode) auditHeader.getAuditDetail().getModelData(), interestRateBasisCode);
+		BeanUtils.copyProperties((InterestRateBasisCode) auditHeader.getAuditDetail().getModelData(),
+				interestRateBasisCode);
 
 		if (interestRateBasisCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -270,13 +261,11 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getInterestRateBasisCodeDAO().delete with
-	 * parameters interestRateBasisCode,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTIntRateBasisCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getInterestRateBasisCodeDAO().delete with parameters interestRateBasisCode,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtBMTIntRateBasisCodes by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -290,7 +279,8 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail().getModelData();
+		InterestRateBasisCode interestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail()
+				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getInterestRateBasisCodeDAO().delete(interestRateBasisCode, "_Temp");
@@ -301,21 +291,18 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getInterestRateBasisCodeDAO().getErrorDetail with Error ID and language
-	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getInterestRateBasisCodeDAO().getErrorDetail with Error
+	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -324,18 +311,16 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getInterestRateBasisCodeDAO().getErrorDetail with Error ID and language
-	 * as parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getInterestRateBasisCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -344,40 +329,35 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 
 		if (interestRateBasisCode.isWorkflow()) {
 			tempInterestRateBasisCode = getInterestRateBasisCodeDAO()
-			.getInterestRateBasisCodeById(interestRateBasisCode.getId(), "_Temp");
+					.getInterestRateBasisCodeById(interestRateBasisCode.getId(), "_Temp");
 		}
 
 		InterestRateBasisCode befInterestRateBasisCode = getInterestRateBasisCodeDAO()
-		.getInterestRateBasisCodeById(interestRateBasisCode.getId(), "");
-		InterestRateBasisCode oldInterestRateBasisCode = interestRateBasisCode
-		.getBefImage();
+				.getInterestRateBasisCodeById(interestRateBasisCode.getId(), "");
+		InterestRateBasisCode oldInterestRateBasisCode = interestRateBasisCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = interestRateBasisCode.getIntRateBasisCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_IntRateBasisCode") + ":"
-		+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_IntRateBasisCode") + ":" + valueParm[0];
 
 		if (interestRateBasisCode.isNew()) { // for New record or new record
 			// into work flow
 
 			if (!interestRateBasisCode.isWorkflow()) {// With out Work flow only new records
 				if (befInterestRateBasisCode != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (interestRateBasisCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befInterestRateBasisCode != null
-							|| tempInterestRateBasisCode != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+					if (befInterestRateBasisCode != null || tempInterestRateBasisCode != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befInterestRateBasisCode == null
-							|| tempInterestRateBasisCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+					if (befInterestRateBasisCode == null || tempInterestRateBasisCode != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -387,38 +367,33 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			if (!interestRateBasisCode.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befInterestRateBasisCode == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
-					if (oldInterestRateBasisCode != null
-							&& !oldInterestRateBasisCode.getLastMntOn()
+					if (oldInterestRateBasisCode != null && !oldInterestRateBasisCode.getLastMntOn()
 							.equals(befInterestRateBasisCode.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempInterestRateBasisCode == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempInterestRateBasisCode != null
-						&& oldInterestRateBasisCode != null
+				if (tempInterestRateBasisCode != null && oldInterestRateBasisCode != null
 						&& !oldInterestRateBasisCode.getLastMntOn().equals(tempInterestRateBasisCode.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !interestRateBasisCode.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !interestRateBasisCode.isWorkflow()) {
 			auditDetail.setBefImage(befInterestRateBasisCode);
 		}
 		logger.debug("Leaving");

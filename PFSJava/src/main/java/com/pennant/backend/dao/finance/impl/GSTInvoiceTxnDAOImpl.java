@@ -69,12 +69,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements GSTInvoiceTxnDAO {
 	private static Logger logger = Logger.getLogger(GSTInvoiceTxnDAOImpl.class);
 
-
 	public GSTInvoiceTxnDAOImpl() {
 		super();
 	}
-
-	
 
 	@Override
 	public long save(GSTInvoiceTxn gstInvoiceTxn) {
@@ -87,11 +84,15 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert Into GST_Invoice_Txn");
-		sql.append("(InvoiceId, TransactionID, InvoiceNo, InvoiceDate, Invoice_Amt, CompanyCode, CompanyName, Company_GSTIN, Company_Address1, Company_Address2, Company_Address3,");
-		sql.append(" Company_PINCode, Company_State_Code, Company_State_Name, HsnNumber, NatureService, PanNumber, LoanAccountNo, CustomerID, CustomerName, CustomerGSTIN,");
+		sql.append(
+				"(InvoiceId, TransactionID, InvoiceNo, InvoiceDate, Invoice_Amt, CompanyCode, CompanyName, Company_GSTIN, Company_Address1, Company_Address2, Company_Address3,");
+		sql.append(
+				" Company_PINCode, Company_State_Code, Company_State_Name, HsnNumber, NatureService, PanNumber, LoanAccountNo, CustomerID, CustomerName, CustomerGSTIN,");
 		sql.append(" CustomerStateCode, CustomerStateName, CustomerAddress, Invoice_Status, InvoiceType)");
-		sql.append(" Values (:InvoiceId, :TransactionID, :InvoiceNo, :InvoiceDate, :Invoice_Amt, :CompanyCode, :CompanyName, :Company_GSTIN, :Company_Address1, :Company_Address2, :Company_Address3,");
-		sql.append(" :Company_PINCode, :Company_State_Code, :Company_State_Name, :HsnNumber, :NatureService, :PanNumber, :LoanAccountNo, :CustomerID, :CustomerName, :CustomerGSTIN,");
+		sql.append(
+				" Values (:InvoiceId, :TransactionID, :InvoiceNo, :InvoiceDate, :Invoice_Amt, :CompanyCode, :CompanyName, :Company_GSTIN, :Company_Address1, :Company_Address2, :Company_Address3,");
+		sql.append(
+				" :Company_PINCode, :Company_State_Code, :Company_State_Name, :HsnNumber, :NatureService, :PanNumber, :LoanAccountNo, :CustomerID, :CustomerName, :CustomerGSTIN,");
 		sql.append(" :CustomerStateCode, :CustomerStateName, :CustomerAddress, :Invoice_Status, :InvoiceType)");
 
 		// Execute the SQL, binding the arguments.
@@ -113,8 +114,10 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				invoiceDetail.setInvoiceId(gstInvoiceTxn.getInvoiceId());
 
 				StringBuilder sqlQuery = new StringBuilder("insert into GST_Invoice_Txn_Details");
-				sqlQuery.append("(Id, InvoiceId, FeeCode, FeeAmount, CGST_RATE, CGST_AMT, SGST_RATE, SGST_AMT, IGST_RATE, IGST_AMT, UGST_RATE, UGST_AMT)");
-				sqlQuery.append("values (:Id, :InvoiceId, :FeeCode, :FeeAmount, :CGST_RATE, :CGST_AMT, :SGST_RATE, :SGST_AMT, :IGST_RATE, :IGST_AMT, :UGST_RATE, :UGST_AMT)");
+				sqlQuery.append(
+						"(Id, InvoiceId, FeeCode, FeeAmount, CGST_RATE, CGST_AMT, SGST_RATE, SGST_AMT, IGST_RATE, IGST_AMT, UGST_RATE, UGST_AMT)");
+				sqlQuery.append(
+						"values (:Id, :InvoiceId, :FeeCode, :FeeAmount, :CGST_RATE, :CGST_AMT, :SGST_RATE, :SGST_AMT, :IGST_RATE, :IGST_AMT, :UGST_RATE, :UGST_AMT)");
 
 				// Execute the SQL, binding the arguments
 				logger.trace(Literal.SQL + sqlQuery.toString());
@@ -132,7 +135,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		return gstInvoiceTxn.getInvoiceId();
 	}
-	
+
 	@Override
 	public void updateGSTInvoiceNo(GSTInvoiceTxn gstInvoiceTxn) {
 		logger.debug(Literal.ENTERING);
@@ -154,29 +157,31 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public List<GSTInvoiceTxn> getGSTInvoiceTxnList() {
 		logger.debug("Entering");
-		
+
 		GSTInvoiceTxn gstInvoiceTxn = new GSTInvoiceTxn();
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select InvoiceId, TransactionID, InvoiceNo, InvoiceDate, Invoice_Amt, CompanyCode, CompanyName, Company_GSTIN, Company_Address1, Company_Address2, Company_Address3,");
-		selectSql.append(" Company_PINCode, Company_State_Code, Company_State_Name, HsnNumber, NatureService, PanNumber, LoanAccountNo, CustomerID, CustomerName, CustomerGSTIN,");
+
+		selectSql.append(
+				" Select InvoiceId, TransactionID, InvoiceNo, InvoiceDate, Invoice_Amt, CompanyCode, CompanyName, Company_GSTIN, Company_Address1, Company_Address2, Company_Address3,");
+		selectSql.append(
+				" Company_PINCode, Company_State_Code, Company_State_Name, HsnNumber, NatureService, PanNumber, LoanAccountNo, CustomerID, CustomerName, CustomerGSTIN,");
 		selectSql.append(" CustomerStateCode, CustomerStateName, CustomerAddress, Invoice_Status, InvoiceType");
 		selectSql.append(" From GST_Invoice_Txn");
 		selectSql.append(" Where InvoiceNo is null Order By InvoiceId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gstInvoiceTxn);
 		RowMapper<GSTInvoiceTxn> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GSTInvoiceTxn.class);
 		logger.debug("Leaving");
-		
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public long saveSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
 		logger.debug(Literal.ENTERING);
@@ -200,7 +205,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		return seqGSTInvoice.getSeqNo();
 	}
-	
+
 	@Override
 	public void updateSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
 		logger.debug(Literal.ENTERING);
@@ -222,25 +227,25 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public long getSeqNoFromSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource parameter = null;
 		StringBuilder selectSql = new StringBuilder();
 		long seqNo = 0;
-		
+
 		try {
 			selectSql.append(" SELECT SeqNo From Seq_GST_Invoice");
 			selectSql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
-			
+
 			logger.debug("selectSql: " + selectSql.toString());
-			
+
 			parameter = new MapSqlParameterSource();
 			parameter.addValue("GstStateCode", seqGSTInvoice.getGstStateCode());
 			parameter.addValue("TransactionType", seqGSTInvoice.getTransactionType());
-			
+
 			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), parameter, Long.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -249,19 +254,19 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 			parameter = null;
 			logger.debug("Leaving");
 		}
-		
+
 		return seqNo;
 	}
-	
+
 	@Override
 	public SeqGSTInvoice getSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT GstStateCode, TransactionType, SeqNo");
 		sql.append(" From Seq_GST_Invoice");
 		sql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -277,29 +282,30 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		logger.debug(Literal.LEAVING);
 		return seqGSTInvoice;
-	}	
-	
+	}
+
 	@Override
-	public boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate) {
+	public boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate,
+			Date toDate) {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean invoiceExist = false;
 		List<GSTInvoiceTxn> list = new ArrayList<GSTInvoiceTxn>();
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append(" Select InvoiceId, InvoiceNo From GST_Invoice_Txn");
 		selectSql.append(" Where CustomerID = :CustomerID  And InvoiceType = :InvoiceType");
 		if (StringUtils.isNotBlank(finReference)) {
 			selectSql.append(" And LoanAccountNo = :LoanAccountNo");
 		}
-		
+
 		if (fromDate != null && toDate != null) {
 			selectSql.append(" And InvoiceDate >= :FromDate And InvoiceDate <= :ToDate");
 		}
-		
+
 		logger.debug(Literal.SQL + selectSql.toString());
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CustomerID", custCif);
 		paramSource.addValue("LoanAccountNo", finReference);
@@ -313,7 +319,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(Literal.EXCEPTION, dae);
 		}
-		
+
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (GSTInvoiceTxn invoiceTxn : list) {
 				if (StringUtils.isNotBlank(invoiceTxn.getInvoiceNo())) {
@@ -322,7 +328,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				}
 			}
 		}
-		
+
 		return invoiceExist;
-	}	
+	}
 }

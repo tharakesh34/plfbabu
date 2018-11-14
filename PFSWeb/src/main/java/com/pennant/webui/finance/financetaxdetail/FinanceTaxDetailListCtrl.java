@@ -65,15 +65,13 @@ import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financetaxdetail.model.FinanceTaxDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/com.pennant.tax/FinanceTaxDetail/FinanceTaxDetailList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/com.pennant.tax/FinanceTaxDetail/FinanceTaxDetailList.zul file.
  * 
  */
 public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> {
@@ -131,8 +129,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -169,8 +166,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -180,8 +176,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -192,8 +187,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -212,8 +206,8 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -276,8 +270,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

@@ -134,73 +134,73 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptDialog.zul
  */
 public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
-	private static final long								serialVersionUID					= 966281186831332116L;
-	private static final Logger								logger								= Logger.getLogger(FeeReceiptDialogCtrl.class);
+	private static final long serialVersionUID = 966281186831332116L;
+	private static final Logger logger = Logger.getLogger(FeeReceiptDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window										window_FeeReceiptDialog;
-	protected Borderlayout									borderlayout_FeeReceipt;
+	protected Window window_FeeReceiptDialog;
+	protected Borderlayout borderlayout_FeeReceipt;
 
 	//Receipt Details
-	protected ExtendedCombobox								finType;
-	protected ExtendedCombobox								finReference;
-	protected ExtendedCombobox								finCcy;
-	protected ExtendedCombobox								finBranch;
-	protected Textbox										custCIF;
-	protected Textbox										custName;
-	protected Groupbox										gb_FeeDetail;
-	protected Listbox										listBoxFeeDetail;
+	protected ExtendedCombobox finType;
+	protected ExtendedCombobox finReference;
+	protected ExtendedCombobox finCcy;
+	protected ExtendedCombobox finBranch;
+	protected Textbox custCIF;
+	protected Textbox custName;
+	protected Groupbox gb_FeeDetail;
+	protected Listbox listBoxFeeDetail;
 
-	protected Combobox										receiptPurpose;
-	protected Combobox										excessAdjustTo;
-	protected Combobox										receiptMode;
-	protected CurrencyBox									receiptAmount;
-	protected Combobox										allocationMethod;
-	protected Row											row_RealizationDate;
-	protected Datebox										realizationDate;
-	
-	protected Groupbox										gb_ReceiptDetails;
-	protected Caption										caption_receiptDetail;
-	protected Label											label_FeeReceiptDialog_favourNo;
-	protected Uppercasebox									favourNo;
-	protected Datebox										valueDate;
-	protected ExtendedCombobox								bankCode;
-	protected Textbox										favourName;
-	protected Datebox										depositDate;
-	protected Uppercasebox									depositNo;
-	protected Uppercasebox									paymentRef;
-	protected Uppercasebox									transactionRef;
-	protected AccountSelectionBox							chequeAcNo;
-	protected ExtendedCombobox								fundingAccount;
-	protected Datebox										receivedDate;
-	protected Textbox										remarks;
-	
-	protected Row											row_favourNo;	
-	protected Row											row_BankCode;	
-	protected Row											row_DepositDate;	
-	protected Row											row_PaymentRef;	
-	protected Row											row_ChequeAcNo;	
-	protected Row											row_fundingAcNo;	
-	protected Row											row_remarks;
-	
-	protected Tabbox										tabBoxIndexCenter;
-	protected Tabs											tabsIndexCenter;
-	protected Tabpanels										tabpanelsBoxIndexCenter;
+	protected Combobox receiptPurpose;
+	protected Combobox excessAdjustTo;
+	protected Combobox receiptMode;
+	protected CurrencyBox receiptAmount;
+	protected Combobox allocationMethod;
+	protected Row row_RealizationDate;
+	protected Datebox realizationDate;
+
+	protected Groupbox gb_ReceiptDetails;
+	protected Caption caption_receiptDetail;
+	protected Label label_FeeReceiptDialog_favourNo;
+	protected Uppercasebox favourNo;
+	protected Datebox valueDate;
+	protected ExtendedCombobox bankCode;
+	protected Textbox favourName;
+	protected Datebox depositDate;
+	protected Uppercasebox depositNo;
+	protected Uppercasebox paymentRef;
+	protected Uppercasebox transactionRef;
+	protected AccountSelectionBox chequeAcNo;
+	protected ExtendedCombobox fundingAccount;
+	protected Datebox receivedDate;
+	protected Textbox remarks;
+
+	protected Row row_favourNo;
+	protected Row row_BankCode;
+	protected Row row_DepositDate;
+	protected Row row_PaymentRef;
+	protected Row row_ChequeAcNo;
+	protected Row row_fundingAcNo;
+	protected Row row_remarks;
+
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
 
 	//Buttons
-	protected Button										btnReceipt;
+	protected Button btnReceipt;
 
-	protected transient FeeReceiptListCtrl					feeReceiptListCtrl					= null;		
-	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl;
-	private FinReceiptHeader								receiptHeader						= null;
-	private transient FeeReceiptService						feeReceiptService;
-	private AccountingSetService							accountingSetService;
-	private AccountEngineExecution							engineExecution;
-	private EventManager									eventManager;
-	private boolean											feesExists = false;
+	protected transient FeeReceiptListCtrl feeReceiptListCtrl = null;
+	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
+	private FinReceiptHeader receiptHeader = null;
+	private transient FeeReceiptService feeReceiptService;
+	private AccountingSetService accountingSetService;
+	private AccountEngineExecution engineExecution;
+	private EventManager eventManager;
+	private boolean feesExists = false;
 
 	/**
 	 * default constructor.<br>
@@ -240,7 +240,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 			if (arguments.containsKey("feeReceiptListCtrl")) {
-				feeReceiptListCtrl =  (FeeReceiptListCtrl) arguments.get("feeReceiptListCtrl");
+				feeReceiptListCtrl = (FeeReceiptListCtrl) arguments.get("feeReceiptListCtrl");
 			}
 
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
@@ -310,20 +310,20 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setDisplayStyle(2);
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		
+
 		// Remove Receipt Records , because fees in Receipts collected automatically
 		Filter referenceFilter[] = new Filter[2];
 		referenceFilter[0] = new Filter("RcdMaintainSts", FinanceConstants.FINSER_EVENT_RECEIPT, Filter.OP_NOT_EQUAL);
 		referenceFilter[1] = Filter.isNull("RcdMaintainSts");
-		
+
 		Filter filter[] = new Filter[1];
 		filter[0] = Filter.or(referenceFilter);
 		this.finReference.setFilters(filter);
 
 		//Receipts Details
-		this.receiptAmount.setProperties(true , formatter);
+		this.receiptAmount.setProperties(true, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
 		this.fundingAccount.setValueColumn("PartnerBankID");
@@ -331,12 +331,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setValueType(DataType.LONG);
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
-		
+
 		this.chequeAcNo.setButtonVisible(false);
 		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
 		this.chequeAcNo.setTextBoxWidth(180);
-		
+
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
 		this.favourName.setMaxlength(50);
@@ -346,7 +346,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.depositNo.setMaxlength(50);
 		this.paymentRef.setMaxlength(50);
 		this.transactionRef.setMaxlength(50);
-		
+
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
 		this.bankCode.setValueColumn("BankCode");
@@ -362,13 +362,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	public void doEdit() {
 		logger.debug("Entering");
-		
-		if(this.receiptHeader.isNewRecord()){
+
+		if (this.receiptHeader.isNewRecord()) {
 			this.finReference.setReadonly(false);
-		}else{
+		} else {
 			this.finReference.setReadonly(true);
 		}
-		
+
 		this.finType.setReadonly(true);
 		this.finCcy.setReadonly(true);
 		this.finBranch.setReadonly(true);
@@ -383,7 +383,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptAmount"), this.receiptAmount);
 		this.excessAdjustTo.setDisabled(true);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_realizationDate"), this.realizationDate);
-		
+
 		//Receipt Details
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_favourNo"), this.favourNo);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_valueDate"), this.valueDate);
@@ -400,7 +400,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -426,7 +426,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onFulfill$finReference(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = finReference.getObject();
@@ -438,29 +438,29 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			FinanceMain main = (FinanceMain) dataObject;
 			if (main != null) {
-				this.finReference.setValue(main.getFinReference(),"");
+				this.finReference.setValue(main.getFinReference(), "");
 				this.finType.setValue(main.getFinType(), main.getLovDescFinTypeName());
 				this.finCcy.setValue(main.getFinCcy(), CurrencyUtil.getCcyDesc(main.getFinCcy()));
 				this.finBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
 				this.custCIF.setValue(main.getLovDescCustCIF());
 				this.custName.setValue(main.getLovDescCustShrtName());
-				
+
 				// Fee Details Fetching only for display
 				List<FinFeeDetail> feelist = getFeeReceiptService().getPaidFinFeeDetails(main.getFinReference());
 				doFillFeeDetails(feelist);
-			}else{
+			} else {
 				clearFields = true;
 			}
 		}
-		
-		if(clearFields){
-			this.finReference.setValue("","");
-			this.finType.setValue("","");
-			this.finCcy.setValue("","");
-			this.finBranch.setValue("","");
+
+		if (clearFields) {
+			this.finReference.setValue("", "");
+			this.finType.setValue("", "");
+			this.finCcy.setValue("", "");
+			this.finBranch.setValue("", "");
 			this.custCIF.setValue("");
 			this.custName.setValue("");
-			
+
 			this.gb_FeeDetail.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());
@@ -485,7 +485,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinFeeDetail fee = feeDetails.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() :  fee.getFeeTypeDesc());
+				lc = new Listcell(
+						StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() : fee.getFeeTypeDesc());
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getCalculatedAmount(), finFormatter));
@@ -503,12 +504,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getRemainingFee(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				
+
 				this.listBoxFeeDetail.appendChild(item);
 				totalPaid = totalPaid.add(fee.getPaidAmount());
 			}
 
-			if(totalPaid.compareTo(BigDecimal.ZERO) > 0){
+			if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
 				feesExists = true;
 				doFillSummaryDetails(totalPaid, finFormatter);
 			}
@@ -528,14 +529,14 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		Listcell lc;
 		Listitem item;
-		
+
 		//Summary Details
 		item = new Listitem();
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
 		item.setStyle("font-weight:bold;background-color: #C0EBDF;");
 		lc.setSpan(4);
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantApplicationUtil.amountFormate(totalPaid, finFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
@@ -546,6 +547,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Processing Captured details based on Receipt Mode
+	 * 
 	 * @param event
 	 */
 	public void onChange$receiptMode(Event event) {
@@ -555,12 +557,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Setting Fields based on Receipt Mode selected
+	 * 
 	 * @param recMode
 	 */
 	private void checkByReceiptMode(String recMode, boolean isUserAction) {
 		logger.debug("Entering");
-		
-		if(isUserAction){
+
+		if (isUserAction) {
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 			this.favourNo.setValue("");
 			this.valueDate.setValue(DateUtility.getAppDate());
@@ -579,21 +582,21 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.receivedDate.setValue(DateUtility.getAppDate());
 			this.remarks.setValue("");
 		}
-		
-		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
-				StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+
+		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)
+				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
 			this.receiptAmount.setValue(BigDecimal.ZERO);
-			
-		} else{
+
+		} else {
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
 			this.receiptAmount.setMandatory(true);
 			readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptAmount"), this.receiptAmount);
-			
+
 			Filter fundingAcFilters[] = new Filter[3];
 			fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
 			fundingAcFilters[1] = new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
@@ -602,53 +605,55 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setFilters(fundingAcFilters);
 			this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
-			
+
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
-				
+
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
 				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
-				
-				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
+
+				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
-					this.label_FeeReceiptDialog_favourNo.setValue(Labels.getLabel("label_FeeReceiptDialog_ChequeFavourNo.value"));
-					
-					if(isUserAction){
+					this.label_FeeReceiptDialog_favourNo
+							.setValue(Labels.getLabel("label_FeeReceiptDialog_ChequeFavourNo.value"));
+
+					if (isUserAction) {
 						this.depositDate.setValue(DateUtility.getAppDate());
 						this.receivedDate.setValue(DateUtility.getAppDate());
 						this.valueDate.setValue(DateUtility.getAppDate());
 					}
-					
-				}else{
+
+				} else {
 					this.row_ChequeAcNo.setVisible(false);
-					this.label_FeeReceiptDialog_favourNo.setValue(Labels.getLabel("label_FeeReceiptDialog_DDFavourNo.value"));
-					
-					if(isUserAction){
+					this.label_FeeReceiptDialog_favourNo
+							.setValue(Labels.getLabel("label_FeeReceiptDialog_DDFavourNo.value"));
+
+					if (isUserAction) {
 						this.depositDate.setValue(DateUtility.getAppDate());
 						this.valueDate.setValue(DateUtility.getAppDate());
 					}
 				}
-				
-				if(isUserAction){
+
+				if (isUserAction) {
 					this.favourName.setValue(Labels.getLabel("label_ClientName"));
 				}
-				
+
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
-				
+
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
 				this.bankCode.setMandatoryStyle(false);
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-				
-				if(isUserAction){
+
+				if (isUserAction) {
 					this.receivedDate.setValue(DateUtility.getAppDate());
 				}
-				
+
 			} else {
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
@@ -660,7 +665,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for event of Changing Repayment Amount
 	 * 
@@ -680,24 +685,25 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			boolean recReject = false;
 			if (this.userAction.getSelectedItem() != null
 					&& ("Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) || "Cancel"
-							.equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
+							|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
 				recReject = true;
 			}
-			
+
 			// If Fee Details not exists against Reference , not allowed to proceed further
-			if(!feesExists){
-				/*MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
-				return;*/
+			if (!feesExists) {
+				/*
+				 * MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value")); return;
+				 */
 			}
 
-			if(!recReject){
+			if (!recReject) {
 				doClearMessage();
 				doSetValidation();
 				doWriteComponentsToBean();
-				
+
 				FinReceiptHeader header = getReceiptHeader();
-				if(header.getReceiptDetails().isEmpty()){
+				if (header.getReceiptDetails().isEmpty()) {
 					FinReceiptDetail receiptDetail = new FinReceiptDetail();
 					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
@@ -718,17 +724,16 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 					receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 					receiptDetail.setReceivedDate(this.receivedDate.getValue());
-					
-					
-					if(receiptDetail.getRepayHeaders().isEmpty()){
+
+					if (receiptDetail.getRepayHeaders().isEmpty()) {
 						FinRepayHeader repayHeader = new FinRepayHeader();
 						repayHeader.setFinReference(this.finReference.getValue());
 						repayHeader.setValueDate(this.receivedDate.getValue());
 						repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 						repayHeader.setRepayAmount(header.getReceiptAmount());
-						
+
 						receiptDetail.getRepayHeaders().add(repayHeader);
-					}else{
+					} else {
 						receiptDetail.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
 						receiptDetail.getRepayHeaders().get(0).setRepayAmount(header.getReceiptAmount());
 					}
@@ -786,7 +791,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// save it to database
 		try {
-			
+
 			if (doProcess(aReceiptHeader, tranType)) {
 
 				if (feeReceiptListCtrl != null) {
@@ -801,7 +806,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						aReceiptHeader.getNextRoleCode(), this.finReference.getValue(), " Fee Receipt ",
 						aReceiptHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
-				
 
 				// User Notifications Message/Alert
 				try {
@@ -817,10 +821,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							if (StringUtils.isNotEmpty(aReceiptHeader.getReference())) {
 
 								String reference = aReceiptHeader.getReference();
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aReceiptHeader.getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-													+ reference, notify, to);
+								if (!PennantConstants.RCD_STATUS_CANCELLED
+										.equalsIgnoreCase(aReceiptHeader.getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, notify, to);
 								}
 							} else {
 								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
@@ -842,6 +846,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Writing Data into Fields from Bean
+	 * 
 	 * @throws InterruptedException
 	 */
 	private void doWriteBeanToComponents() throws InterruptedException {
@@ -850,44 +855,47 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
-		fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_FEEPAYMENT, PennantStaticListUtil.getReceiptPurpose(), "");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+		fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_FEEPAYMENT,
+				PennantStaticListUtil.getReceiptPurpose(), "");
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
+				"");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), ",EXCESS,");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 		this.realizationDate.setValue(header.getRealizationDate());
-		if(!isReadOnly("FeeReceiptDialog_realizationDate") || header.getRealizationDate() != null){
+		if (!isReadOnly("FeeReceiptDialog_realizationDate") || header.getRealizationDate() != null) {
 			this.row_RealizationDate.setVisible(true);
-		}else{
+		} else {
 			this.row_RealizationDate.setVisible(false);
 		}
 		this.remarks.setValue(header.getRemarks());
-		
-		if(!header.isNewRecord()){
-			this.finReference.setValue(header.getReference(),"");
+
+		if (!header.isNewRecord()) {
+			this.finReference.setValue(header.getReference(), "");
 			this.finType.setValue(header.getFinType(), header.getFinTypeDesc());
 			this.finCcy.setValue(header.getFinCcy(), CurrencyUtil.getCcyDesc(header.getFinCcy()));
 			this.finBranch.setValue(header.getFinBranch(), header.getFinBranchDesc());
 			this.custCIF.setValue(header.getCustCIF());
 			this.custName.setValue(header.getCustShrtName());
 		}
-		
+
 		String allocateMthd = header.getAllocationType();
-		if(StringUtils.isEmpty(allocateMthd)){
+		if (StringUtils.isEmpty(allocateMthd)) {
 			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
 		}
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		checkByReceiptMode(header.getReceiptMode(), false);
-		
+
 		// Separating Receipt Amounts based on user entry, if exists
 		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
-		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
+		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
 				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
-					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+					this.receiptAmount
+							.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
 					this.bankCode.setValue(receiptDetail.getBankCode());
@@ -904,10 +912,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 		}
-		
+
 		// Fee Details
 		doFillFeeDetails(header.getPaidFeeList());
-		
+
 		//Show Accounting Tab Details Based upon Role Condition using Work flow
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
 			//Accounting Details Tab Addition
@@ -917,7 +925,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
@@ -927,7 +935,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
 			createTab = true;
 		}
-		
+
 		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
 		} else {
@@ -938,19 +946,19 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
-			
+
 			// Fetch Accounting Set ID
-			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY,
-					AccountEventConstants.ACCEVENT_FEEPAY, "");
-			
+			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(
+					AccountEventConstants.ACCEVENT_FEEPAY, AccountEventConstants.ACCEVENT_FEEPAY, "");
+
 			long acSetID = 0;
-			if(accountingSet != null){
+			if (accountingSet != null) {
 				acSetID = accountingSet.getAccountSetid();
 			}
-			
+
 			map.put("acSetID", acSetID);
 			map.put("postAccReq", false);
-			
+
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
 			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
@@ -960,7 +968,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * fill finance basic details to List
 	 * 
@@ -970,9 +978,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 		arrayList.add(0, this.finType.getValue());
 		arrayList.add(1, this.finCcy.getValue());
-		arrayList.add(2, PennantAppUtil.getlabelDesc(getReceiptHeader().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods()));
+		arrayList.add(2, PennantAppUtil.getlabelDesc(getReceiptHeader().getScheduleMethod(),
+				PennantStaticListUtil.getScheduleMethods()));
 		arrayList.add(3, this.finReference.getValue());
-		arrayList.add(4, PennantAppUtil.getlabelDesc(getReceiptHeader().getPftDaysBasis(), PennantStaticListUtil.getProfitDaysBasis()));
+		arrayList.add(4, PennantAppUtil.getlabelDesc(getReceiptHeader().getPftDaysBasis(),
+				PennantStaticListUtil.getProfitDaysBasis()));
 		arrayList.add(5, null);
 		arrayList.add(6, false);
 		arrayList.add(7, false);
@@ -982,7 +992,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		arrayList.add(11, null);
 		return arrayList;
 	}
-	
+
 	/**
 	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
 	 * parameter
@@ -1005,9 +1015,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		ComponentsCtrl.applyForward(tab, ("onSelect=onSelectAccountTab"));
 		logger.debug("Leaving");
 	}
-	
-	public void onSelectAccountTab(ForwardEvent event){
-		
+
+	public void onSelectAccountTab(ForwardEvent event) {
+
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		tab.removeForward(Events.ON_SELECT, tab, "onSelectAccountTab");
 		appendAccountingDetailTab(false);
@@ -1015,7 +1025,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			accountingDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 		}
 	}
-	
+
 	private String getTabID(String id) {
 		return "TAB" + StringUtils.trimToEmpty(id);
 	}
@@ -1039,13 +1049,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private Tabpanel getTabpanel(String id) {
 		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
 	}
-	
+
 	/**
 	 * Method for Executing Eligibility Details
 	 * 
 	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception{
+	public void executeAccounting() throws Exception {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -1056,29 +1066,30 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		aeEvent.setBranch(getReceiptHeader().getFinBranch());
 		aeEvent.setCcy(getReceiptHeader().getFinCcy());
 		aeEvent.setCustID(getReceiptHeader().getCustID());
-		
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		if(amountCodes == null){
+		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
 		}
-		
+
 		FinReceiptDetail receiptDetail = getReceiptHeader().getReceiptDetails().get(0);
 		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
 		amountCodes.setFinType(getReceiptHeader().getFinType());
-		
+
 		// Fetch Accounting Set ID
 		long accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
 				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
-		if(accountingSetID != 0 && accountingSetID != Long.MIN_VALUE){
+		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
-		}else{
-			Clients.showNotification(Labels.getLabel("label_FeeReceiptDialog_NoAccounting.value"), "warning", null, null, -1);
+		} else {
+			Clients.showNotification(Labels.getLabel("label_FeeReceiptDialog_NoAccounting.value"), "warning", null,
+					null, -1);
 		}
-		if(accountingDetailDialogCtrl != null){
+		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
 
@@ -1092,102 +1103,115 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Entering");
 
 		if (!this.receiptPurpose.isDisabled()) {
-			this.receiptPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptPurpose(), Labels
-					.getLabel("label_FeeReceiptDialog_ReceiptPurpose.value")));
+			this.receiptPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptPurpose(),
+					Labels.getLabel("label_FeeReceiptDialog_ReceiptPurpose.value")));
 		}
-		
+
 		String recptMode = getComboboxValue(receiptMode);
 		if (!this.receiptMode.isDisabled()) {
-			this.receiptMode.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptModes(), Labels
-					.getLabel("label_FeeReceiptDialog_ReceiptMode.value")));
+			this.receiptMode.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptModes(),
+					Labels.getLabel("label_FeeReceiptDialog_ReceiptMode.value")));
 		}
 		if (!this.excessAdjustTo.isDisabled()) {
-			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(), Labels
-					.getLabel("label_FeeReceiptDialog_ExcessAdjustTo.value")));
+			this.excessAdjustTo.setConstraint(new StaticListValidator(PennantStaticListUtil.getExcessAdjustmentTypes(),
+					Labels.getLabel("label_FeeReceiptDialog_ExcessAdjustTo.value")));
 		}
 		if (!this.allocationMethod.isDisabled()) {
-			this.allocationMethod.setConstraint(new StaticListValidator(PennantStaticListUtil.getAllocationMethods(), Labels
-					.getLabel("label_FeeReceiptDialog_AllocationMethod.value")));
+			this.allocationMethod.setConstraint(new StaticListValidator(PennantStaticListUtil.getAllocationMethods(),
+					Labels.getLabel("label_FeeReceiptDialog_AllocationMethod.value")));
 		}
-		
-		if(this.row_RealizationDate.isVisible() && !this.realizationDate.isDisabled()){
-			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_RealizationDate.value"), 
-					true, this.valueDate.getValue(), DateUtility.getAppDate(), true));
+
+		if (this.row_RealizationDate.isVisible() && !this.realizationDate.isDisabled()) {
+			this.realizationDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_RealizationDate.value"),
+							true, this.valueDate.getValue(), DateUtility.getAppDate(), true));
 		}
-		
-		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)){
-			
-			if(!this.chequeAcNo.isReadonly()){
-				this.chequeAcNo.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_ChequeAccountNo.value"), null, false));
+
+		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+
+			if (!this.chequeAcNo.isReadonly()) {
+				this.chequeAcNo.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FeeReceiptDialog_ChequeAccountNo.value"), null, false));
 			}
 		}
-		
-		if(!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)){
-			if(!this.fundingAccount.isReadonly()){
-				this.fundingAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_FundingAccount.value"), null, true));
+
+		if (!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+			if (!this.fundingAccount.isReadonly()) {
+				this.fundingAccount.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FeeReceiptDialog_FundingAccount.value"), null, true));
 			}
 
-			if(!this.receivedDate.isDisabled()){
-				this.receivedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_ReceivedDate.value"), true, 
-						SysParamUtil.getValueAsDate(""), DateUtility.getAppDate(), true));
+			if (!this.receivedDate.isDisabled()) {
+				this.receivedDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_ReceivedDate.value"),
+								true, SysParamUtil.getValueAsDate(""), DateUtility.getAppDate(), true));
 			}
 		}
-		
-		if(StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD) ||
-				StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)){
-			
-			if(!this.favourNo.isReadonly()){
+
+		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+
+			if (!this.favourNo.isReadonly()) {
 				String label = Labels.getLabel("label_FeeReceiptDialog_ChequeFavourNo.value");
-				if(StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)){
+				if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)) {
 					label = Labels.getLabel("label_FeeReceiptDialog_DDFavourNo.value");
 				}
-				this.favourNo.setConstraint(new PTStringValidator(label, PennantRegularExpressions.REGEX_NUMERIC, true, 1, 6));
-			}
-			
-			if(!this.valueDate.isDisabled()){
-				this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_ValueDate.value"), true, 
-						SysParamUtil.getValueAsDate(""), DateUtility.getAppDate(), true));
-			}
-			
-			if(!this.bankCode.isReadonly()){
-				this.bankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_BankCode.value"), null, true, true));
-			}
-			
-			if(!this.favourName.isReadonly()){
-				this.favourName.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_favourName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
-			}
-			
-			if(!this.depositDate.isDisabled()){
-				this.depositDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_DepositDate.value"), true, 
-						SysParamUtil.getValueAsDate(""), DateUtility.getAppDate(), true));
-			}
-			
-			if(!this.depositNo.isReadonly()){
-				this.depositNo.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_depositNo.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
-			}
-		}
-		
-		if(StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_NEFT) || 
-				StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_RTGS) || 
-				StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)){
-			
-			if(!this.transactionRef.isReadonly()){
-				this.transactionRef.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_tranReference.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-			}
-		}
-		
-		if(!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)){
-			if(!this.paymentRef.isReadonly()){
-				this.paymentRef.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_paymentReference.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
+				this.favourNo.setConstraint(
+						new PTStringValidator(label, PennantRegularExpressions.REGEX_NUMERIC, true, 1, 6));
 			}
 
-			if(!this.remarks.isReadonly()){
-				this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_Remarks.value"),
-						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			if (!this.valueDate.isDisabled()) {
+				this.valueDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_ValueDate.value"),
+								true, SysParamUtil.getValueAsDate(""), DateUtility.getAppDate(), true));
+			}
+
+			if (!this.bankCode.isReadonly()) {
+				this.bankCode.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FeeReceiptDialog_BankCode.value"), null, true, true));
+			}
+
+			if (!this.favourName.isReadonly()) {
+				this.favourName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_favourName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
+			}
+
+			if (!this.depositDate.isDisabled()) {
+				this.depositDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_DepositDate.value"),
+								true, SysParamUtil.getValueAsDate(""), DateUtility.getAppDate(), true));
+			}
+
+			if (!this.depositNo.isReadonly()) {
+				this.depositNo
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_depositNo.value"),
+								PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
+			}
+		}
+
+		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_NEFT)
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_RTGS)
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)) {
+
+			if (!this.transactionRef.isReadonly()) {
+				this.transactionRef.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_tranReference.value"),
+								PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			}
+		}
+
+		if (!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+			if (!this.paymentRef.isReadonly()) {
+				this.paymentRef.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_paymentReference.value"),
+								PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
+			}
+
+			if (!this.remarks.isReadonly()) {
+				this.remarks
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_Remarks.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			}
 		}
 
@@ -1199,13 +1223,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
-		
+
 		this.receiptPurpose.setConstraint("");
 		this.receiptMode.setConstraint("");
 		this.excessAdjustTo.setConstraint("");
 		this.allocationMethod.setConstraint("");
 		this.realizationDate.setConstraint("");
-		
+
 		this.favourNo.setConstraint("");
 		this.valueDate.setConstraint("");
 		this.bankCode.setConstraint("");
@@ -1221,7 +1245,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
@@ -1234,7 +1258,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.excessAdjustTo.setErrorMessage("");
 		this.allocationMethod.setErrorMessage("");
 		this.realizationDate.setErrorMessage("");
-		
+
 		this.favourNo.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
 		this.bankCode.setErrorMessage("");
@@ -1253,6 +1277,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for capturing Fields data from components to bean
+	 * 
 	 * @return
 	 */
 	private FinReceiptHeader doWriteComponentsToBean() {
@@ -1283,7 +1308,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 		try {
-			header.setReceiptAmount(PennantApplicationUtil.unFormateAmount(receiptAmount.getValidateValue(), finFormatter));
+			header.setReceiptAmount(
+					PennantApplicationUtil.unFormateAmount(receiptAmount.getValidateValue(), finFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1292,7 +1318,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Receipt Mode Details
 		try {
 			this.favourNo.getValue();
@@ -1354,7 +1380,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -1363,7 +1389,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug("Leaving");
 		return header;
 	}
@@ -1385,12 +1411,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId;
 			aReceiptHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			
+
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
@@ -1429,7 +1455,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			aReceiptHeader.setNextTaskId(nextTaskId);
 			aReceiptHeader.setRoleCode(getRole());
 			aReceiptHeader.setNextRoleCode(nextRoleCode);
-			
+
 			auditHeader = getAuditHeader(aReceiptHeader, tranType);
 			String operationRefs = getServiceOperations(taskId, aReceiptHeader);
 
@@ -1492,8 +1518,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FeeReceiptDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1529,7 +1555,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * when user clicks on button "Notes"
 	 * 
@@ -1545,7 +1571,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private AuditHeader getAuditHeader(FinReceiptHeader receiptHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, receiptHeader);
-		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail, 
+		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail,
 				receiptHeader.getUserDetails(), getOverideMap());
 	}
 
@@ -1570,6 +1596,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public FinReceiptHeader getReceiptHeader() {
 		return receiptHeader;
 	}
+
 	public void setReceiptHeader(FinReceiptHeader receiptHeader) {
 		this.receiptHeader = receiptHeader;
 	}
@@ -1577,6 +1604,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public FeeReceiptService getFeeReceiptService() {
 		return feeReceiptService;
 	}
+
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
 	}

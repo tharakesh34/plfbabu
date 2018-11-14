@@ -64,10 +64,10 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.service.eod.EODConfigService;
 import com.pennant.webui.eod.eodconfig.model.EODConfigListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.eod/EODConfig/EODConfigList.zul file.
@@ -93,10 +93,10 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 	// Search Fields
 	protected Checkbox extMnthRequired; // autowired
 	protected Datebox mnthExtTo; // autowired
-	
+
 	protected Listbox sortOperator_ExtMnthRequired;
 	protected Listbox sortOperator_MnthExtTo;
-	
+
 	private transient EODConfigService eODConfigService;
 
 	/**
@@ -124,8 +124,7 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 	public void onCreate$window_EODConfigList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_EODConfigList, borderLayout_EODConfigList, listBoxEODConfig,
-				pagingEODConfigList);
+		setPageComponents(window_EODConfigList, borderLayout_EODConfigList, listBoxEODConfig, pagingEODConfigList);
 		setItemRender(new EODConfigListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -133,16 +132,18 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		registerButton(button_EODConfigList_NewEODConfig, "button_EODConfigList_NewEODConfig", true);
 
 		registerField("eodConfigId");
-		registerField("extMnthRequired", listheader_ExtMnthRequired, SortOrder.NONE, extMnthRequired, sortOperator_ExtMnthRequired, Operators.BOOLEAN);
-		registerField("mnthExtTo", listheader_MnthExtTo, SortOrder.NONE, mnthExtTo, sortOperator_MnthExtTo, Operators.DATE);
-		registerField("active");		
+		registerField("extMnthRequired", listheader_ExtMnthRequired, SortOrder.NONE, extMnthRequired,
+				sortOperator_ExtMnthRequired, Operators.BOOLEAN);
+		registerField("mnthExtTo", listheader_MnthExtTo, SortOrder.NONE, mnthExtTo, sortOperator_MnthExtTo,
+				Operators.DATE);
+		registerField("active");
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		
+
 		List<EODConfig> list = eODConfigService.getEODConfig();
-		
+
 		if (list.size() > 0) {
 			this.button_EODConfigList_NewEODConfig.setVisible(false);
 		}
@@ -188,7 +189,6 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -199,7 +199,7 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 
 	public void onEODConfigItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxEODConfig.getSelectedItem();
 		final long eodConfigId = (long) selectedItem.getAttribute("eodConfigId");
@@ -209,13 +209,13 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  EodConfigId = ");
-		whereCond.append( eodconfig.getEodConfigId());
+		whereCond.append(eodconfig.getEodConfigId());
 		whereCond.append(" AND  version=");
 		whereCond.append(eodconfig.getVersion());
-	
+
 		if (doCheckAuthority(eodconfig, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && eodconfig.getWorkflowId() == 0) {
@@ -225,10 +225,10 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -241,7 +241,7 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("eodconfig", eodconfig);
 		arg.put("eodconfigListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/EOD/EODConfig/EODConfigDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -270,7 +270,7 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

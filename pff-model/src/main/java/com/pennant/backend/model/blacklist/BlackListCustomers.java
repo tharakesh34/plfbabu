@@ -9,8 +9,8 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class BlackListCustomers extends AbstractWorkflowEntity {
-    private static final long serialVersionUID = 4313500432713459335L;
-    
+	private static final long serialVersionUID = 4313500432713459335L;
+
 	private String custCIF;
 	private String custFName;
 	private String custLName;
@@ -34,9 +34,9 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String likeCustFName;
 	private String likeCustMName;
 	private String likeCustLName;
-	private boolean custIsActive;	
-	private String custCin;	
-	private String custAadhaar;	
+	private boolean custIsActive;
+	private String custCin;
+	private String custAadhaar;
 
 	// For Internal Use
 	private String finReference;
@@ -46,8 +46,8 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private boolean newRule;
 	private boolean newBlacklistRecord = true;
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finReference");
 		excludeFields.add("queryField");
 		excludeFields.add("overridenby");
@@ -63,8 +63,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		excludeFields.add("likeCustLName");
 		return excludeFields;
 	}
-	
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -77,7 +76,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -89,7 +88,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public void setId(String id) {
 		this.custCIF = id;
 	}
-	
+
 	public String getCustCIF() {
 		return custCIF;
 	}
@@ -113,7 +112,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public void setCustLName(String custLName) {
 		this.custLName = custLName;
 	}
-
 
 	public Date getCustDOB() {
 		return custDOB;
@@ -182,6 +180,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public String getCustCtgCode() {
 		return custCtgCode;
 	}
+
 	public void setCustCtgCode(String custCtgCode) {
 		this.custCtgCode = custCtgCode;
 	}
@@ -219,13 +218,12 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	}
 
 	public boolean isNewRule() {
-	    return newRule;
-    }
+		return newRule;
+	}
 
 	public void setNewRule(boolean newRule) {
-	    this.newRule = newRule;
-    }
-
+		this.newRule = newRule;
+	}
 
 	public boolean isNewBlacklistRecord() {
 		return newBlacklistRecord;
@@ -268,21 +266,21 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	}
 
 	public String getLovDescNationalityDesc() {
-	    return lovDescNationalityDesc;
-    }
+		return lovDescNationalityDesc;
+	}
 
 	public void setLovDescNationalityDesc(String lovDescNationalityDesc) {
-	    this.lovDescNationalityDesc = lovDescNationalityDesc;
-    }
+		this.lovDescNationalityDesc = lovDescNationalityDesc;
+	}
 
 	public String getLovDescEmpName() {
-	    return lovDescEmpName;
-    }
+		return lovDescEmpName;
+	}
 
 	public void setLovDescEmpName(String lovDescEmpName) {
-	    this.lovDescEmpName = lovDescEmpName;
-    }
-	
+		this.lovDescEmpName = lovDescEmpName;
+	}
+
 	public String getLikeCustFName() {
 		return likeCustFName;
 	}
@@ -306,7 +304,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public void setLikeCustLName(String likeCustLName) {
 		this.likeCustLName = likeCustLName;
 	}
-	
+
 	public boolean isCustIsActive() {
 		return custIsActive;
 	}
@@ -314,12 +312,10 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public void setCustIsActive(boolean custIsActive) {
 		this.custIsActive = custIsActive;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-
-
 
 	public String getCustCin() {
 		return custCin;
@@ -329,21 +325,17 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		this.custCin = custCin;
 	}
 
-
 	public String getCustAadhaar() {
 		return custAadhaar;
 	}
-
 
 	public void setCustAadhaar(String custAadhaar) {
 		this.custAadhaar = custAadhaar;
 	}
 
-
 	public String getCustCompName() {
 		return custCompName;
 	}
-
 
 	public void setCustCompName(String custCompName) {
 		this.custCompName = custCompName;
@@ -352,7 +344,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public String getCustShrtName() {
 		return custShrtName;
 	}
-
 
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;

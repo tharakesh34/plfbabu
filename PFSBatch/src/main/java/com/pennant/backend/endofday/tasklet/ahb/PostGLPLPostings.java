@@ -29,10 +29,10 @@ import com.pennant.eod.BatchFileUtil;
 import com.pennanttech.pennapps.core.App;
 
 public class PostGLPLPostings implements Tasklet {
-	private Logger		logger	= Logger.getLogger(PostGLPLPostings.class);
+	private Logger logger = Logger.getLogger(PostGLPLPostings.class);
 
-	private Date		appDate	= null;
-	private DataSource	dataSource;
+	private Date appDate = null;
+	private DataSource dataSource;
 
 	public PostGLPLPostings() {
 		super();
@@ -57,9 +57,9 @@ public class PostGLPLPostings implements Tasklet {
 			sqlStatement.setDate(2, DateUtility.getDBDate(appDate.toString()));
 
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
@@ -85,7 +85,7 @@ public class PostGLPLPostings implements Tasklet {
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);
 		} finally {
-			
+
 			if (resultSet != null) {
 				resultSet.close();
 			}
@@ -93,7 +93,7 @@ public class PostGLPLPostings implements Tasklet {
 			if (sqlStatement != null) {
 				sqlStatement.close();
 			}
-			if (filewriter!=null) {
+			if (filewriter != null) {
 				filewriter.close();
 			}
 
@@ -187,7 +187,8 @@ public class PostGLPLPostings implements Tasklet {
 	}
 
 	public String getAmt(BigDecimal amt) {
-		return String.valueOf(PennantApplicationUtil.formateAmount(amt, CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
+		return String.valueOf(
+				PennantApplicationUtil.formateAmount(amt, CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 	}
 
 	public String getAmt(BigDecimal amt, String ccy) {
@@ -307,23 +308,27 @@ public class PostGLPLPostings implements Tasklet {
 	}
 
 	private String getTotPostAmtQuery() {
-		StringBuilder selectQuery = new StringBuilder("Select SUM(PostAmount) PostAmount,SUM(PostAmountLcCcy) PostAmountLcCcy From Postings ");
+		StringBuilder selectQuery = new StringBuilder(
+				"Select SUM(PostAmount) PostAmount,SUM(PostAmountLcCcy) PostAmountLcCcy From Postings ");
 		selectQuery.append(" Where Account = ? AND DrOrCr = ? AND ValueDate = ? ");
 		return selectQuery.toString();
 	}
 
 	/**
-	 * Method for prepare SQL query to fetch GL Postings details for ERP
-	 * Extracts
+	 * Method for prepare SQL query to fetch GL Postings details for ERP Extracts
 	 * 
 	 */
 	private String prepareSelectQuery() {
 
-		StringBuilder selQuery = new StringBuilder("Select T1.PostRef, T1.FinReference, T3.CustCIF, T1.Account, T1.DrOrCr,");
+		StringBuilder selQuery = new StringBuilder(
+				"Select T1.PostRef, T1.FinReference, T3.CustCIF, T1.Account, T1.DrOrCr,");
 		selQuery.append(" T2.FinBranch, T2.AccountsOfficer, T4.FinCategory, T3.custSector, T2.FinType, ");
-		selQuery.append(" T3.custIndustry, T3.custNationality, T3.custResdCountry, T3.custTypeCode, T3.custDftBranch, ");
-		selQuery.append(" T1.TranCode, T1.AcCcy, T1.PostAmount, T1.ValueDate, T1.PostDate, T2.MaturityDate, T2.InitiateDate, ");
-		selQuery.append(" T2.FinStartDate, T2.RepayBaseRate, T1.RevTranCode, T1.ExchangeRate, T1.FinEvent, T3.CustDSA,");
+		selQuery.append(
+				" T3.custIndustry, T3.custNationality, T3.custResdCountry, T3.custTypeCode, T3.custDftBranch, ");
+		selQuery.append(
+				" T1.TranCode, T1.AcCcy, T1.PostAmount, T1.ValueDate, T1.PostDate, T2.MaturityDate, T2.InitiateDate, ");
+		selQuery.append(
+				" T2.FinStartDate, T2.RepayBaseRate, T1.RevTranCode, T1.ExchangeRate, T1.FinEvent, T3.CustDSA,");
 		selQuery.append(" T1.PostAmountLcCcy ");
 		selQuery.append(" From Postings T1 ");
 		selQuery.append(" INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference ");

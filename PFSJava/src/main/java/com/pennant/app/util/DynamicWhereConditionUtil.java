@@ -56,11 +56,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class DynamicWhereConditionUtil implements Serializable {
 
-    private static final long serialVersionUID = 8679640623211482353L;
-    
+	private static final long serialVersionUID = 8679640623211482353L;
+
 	/**
-	 * This method replaces dynamic where condition constants with related values 
-	 * E.g &ROLES replaces with ('MAKER',"APPROVER')
+	 * This method replaces dynamic where condition constants with related values E.g &ROLES replaces with
+	 * ('MAKER',"APPROVER')
+	 * 
 	 * @param aDashboardConfiguration
 	 * @return
 	 */
@@ -69,25 +70,25 @@ public class DynamicWhereConditionUtil implements Serializable {
 		//Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		//UserImpl userDetails = (UserImpl) currentUser.getPrincipal();
 
-		Map<String,String> listDynWhereConditions = getWhereConditionsList();
-		String query=aDashboardConfiguration.getQuery().toUpperCase();
-		for(String ValueLabel:listDynWhereConditions.keySet()){
-			String whereCondtion=ValueLabel.toUpperCase();
-			if(StringUtils.contains(query, whereCondtion)){
-				if(StringUtils.equalsIgnoreCase(whereCondtion, Labels
-						.getLabel("label_WhereConditonConstant_&ROLES"))){    //Replacing User Roles  
-					String role="(";
-					
-					for (int i = 0; i < roles.size(); i++) {
-						role=role.concat("'"+roles.get(i).getRoleCd()+"'");
+		Map<String, String> listDynWhereConditions = getWhereConditionsList();
+		String query = aDashboardConfiguration.getQuery().toUpperCase();
+		for (String ValueLabel : listDynWhereConditions.keySet()) {
+			String whereCondtion = ValueLabel.toUpperCase();
+			if (StringUtils.contains(query, whereCondtion)) {
+				if (StringUtils.equalsIgnoreCase(whereCondtion,
+						Labels.getLabel("label_WhereConditonConstant_&ROLES"))) { //Replacing User Roles  
+					String role = "(";
 
-						if(i!=roles.size()-1){
-							role=role.concat(",");
+					for (int i = 0; i < roles.size(); i++) {
+						role = role.concat("'" + roles.get(i).getRoleCd() + "'");
+
+						if (i != roles.size() - 1) {
+							role = role.concat(",");
 						}
 					}
-					
-					role=role.concat(")");
-					query=StringUtils.replace(query, whereCondtion,role);
+
+					role = role.concat(")");
+					query = StringUtils.replace(query, whereCondtion, role);
 					return query;
 				} else if (StringUtils.equalsIgnoreCase(whereCondtion,
 						Labels.getLabel("label_WhereConditonConstant_&USERLOGIN"))) {
@@ -99,19 +100,18 @@ public class DynamicWhereConditionUtil implements Serializable {
 		}
 		return query;
 	}
-	
+
 	/**
 	 * This method returns dynamic where condition constants
+	 * 
 	 * @return
 	 */
-	private static Map<String,String> getWhereConditionsList() {
-		Map<String,String> dynWhereConditionMap = new HashMap<String,String>();
-		dynWhereConditionMap.put(Labels
-				.getLabel("label_WhereConditonConstant_&ROLES"), Labels
-				.getLabel("label_WhereConditonConstant_&ROLES"));
-		dynWhereConditionMap.put(Labels
-				.getLabel("label_WhereConditonConstant_&USERLOGIN"), Labels
-				.getLabel("label_WhereConditonConstant_&USERLOGIN"));
+	private static Map<String, String> getWhereConditionsList() {
+		Map<String, String> dynWhereConditionMap = new HashMap<String, String>();
+		dynWhereConditionMap.put(Labels.getLabel("label_WhereConditonConstant_&ROLES"),
+				Labels.getLabel("label_WhereConditonConstant_&ROLES"));
+		dynWhereConditionMap.put(Labels.getLabel("label_WhereConditonConstant_&USERLOGIN"),
+				Labels.getLabel("label_WhereConditonConstant_&USERLOGIN"));
 		return dynWhereConditionMap;
 	}
 

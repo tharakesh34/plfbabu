@@ -39,23 +39,25 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implements CashDenominationDAO {
 	private static Logger logger = Logger.getLogger(CashDenominationDAOImpl.class);
-	
+
 	public CashDenominationDAOImpl() {
 		super();
 	}
-		
+
 	@Override
-	public String save(CashDenomination cashDenomination,String type) {
+	public String save(CashDenomination cashDenomination, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into CashDenominations");
-		sql.append(StringUtils.trimToEmpty(type) );
+		StringBuilder sql = new StringBuilder(" insert into CashDenominations");
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (MovementId, SeqNo, Denomination, Count, Amount,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :MovementId, :SeqNo, :Denomination, :Count, :Amount,");
-		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -69,25 +71,25 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(cashDenomination.getMovementId());
-	}	
+	}
 
 	@Override
-	public void update(CashDenomination cashDenomination, String  type) {
+	public void update(CashDenomination cashDenomination, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update CashDenominations" );
-		sql.append(StringUtils.trimToEmpty(type) );
+		StringBuilder sql = new StringBuilder("update CashDenominations");
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  set count = :count, amount = :amount, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where MovementId = :MovementId AND denomination = :denomination And SeqNo = :SeqNo");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(cashDenomination);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -95,7 +97,7 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -105,7 +107,7 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from CashDenominations");
-		sql.append(StringUtils.trimToEmpty(type) );
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where MovementId = :MovementId AND denomination = :denomination And SeqNo = :SeqNo");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -131,9 +133,9 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 	@Override
 	public void deleteByMovementId(long movementId, String type) {
 		logger.debug(Literal.ENTERING);
-		CashDenomination cashDenomination= new CashDenomination();
+		CashDenomination cashDenomination = new CashDenomination();
 		cashDenomination.setMovementId(movementId);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from CashDenominations");
 		sql.append(type);
@@ -157,27 +159,28 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 	public List<CashDenomination> getCashDenominationList(long movementId, String type) {
 		logger.debug(Literal.ENTERING);
 		List<CashDenomination> list;
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT MovementId, SeqNo, Denomination, Count, Amount,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CashDenominations");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where MovementId = :MovementId Order by SeqNo");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		CashDenomination cashDenomination = new CashDenomination();
 		cashDenomination.setMovementId(movementId);
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashDenomination);
 		RowMapper<CashDenomination> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CashDenomination.class);
 		list = jdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
-		
+
 		logger.debug(Literal.LEAVING);
 		return list;
-	}	
+	}
 
 	@Override
 	public boolean isDuplicateKey(long movementId, TableType tableType) {
@@ -214,4 +217,4 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-}	
+}

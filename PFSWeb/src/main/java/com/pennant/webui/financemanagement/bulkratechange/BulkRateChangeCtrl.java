@@ -74,33 +74,32 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	private static final Logger logger = Logger.getLogger(BulkRateChangeCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_RateChangeDialog; 					
-	protected Textbox reference;  								
-	protected Datebox fromDate;  								
-	protected Datebox toDate;  								
-	protected Combobox reCalType; 							
-	protected Decimalbox rateChange; 							
+	protected Window window_RateChangeDialog;
+	protected Textbox reference;
+	protected Datebox fromDate;
+	protected Datebox toDate;
+	protected Combobox reCalType;
+	protected Decimalbox rateChange;
 
 	private transient BulkRateChangeDialogCtrl bulkRateChangeDialogCtrl;
 	private transient BulkRateChangeHeader bulkRateChangeHeader;
 
 	private transient boolean validationOn;
-	final List<ValueLabel>	      recalTypes  = PennantStaticListUtil.getSchCalCodes();
+	final List<ValueLabel> recalTypes = PennantStaticListUtil.getSchCalCodes();
 
 	//private boolean 		isApplyRateChangeWin = false;
 
-		/**
-		 * default constructor.<br>
-		 */
-		public BulkRateChangeCtrl() {
-			super();
-		}
+	/**
+	 * default constructor.<br>
+	 */
+	public BulkRateChangeCtrl() {
+		super();
+	}
 
-		// Component Events
+	// Component Events
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "";
@@ -109,9 +108,8 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected BulkRateChangeHeader object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected BulkRateChangeHeader object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -136,11 +134,10 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 				setBulkRateChangeDialogCtrl(null);
 			}
 
-			/*if (args.containsKey("isApplyRateChangeWin")) {
-				isApplyRateChangeWin = (Boolean) args.get("isApplyRateChangeWin");
-			} else {
-				isApplyRateChangeWin = false;
-			}*/
+			/*
+			 * if (args.containsKey("isApplyRateChangeWin")) { isApplyRateChangeWin = (Boolean)
+			 * args.get("isApplyRateChangeWin"); } else { isApplyRateChangeWin = false; }
+			 */
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -156,8 +153,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBulkRateChangeHeader
 	 * @throws Exception
@@ -173,7 +169,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 			doReadOnly();
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_RateChangeDialog.onClose();
 		} catch (Exception e) {
@@ -189,7 +185,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 		logger.debug("Entering");
 
 		// Empty sent any required attributes
-		this.fromDate.setFormat(PennantConstants.dateFormat);		
+		this.fromDate.setFormat(PennantConstants.dateFormat);
 		this.rateChange.setMaxlength(13);
 		this.rateChange.setFormat(PennantConstants.rateFormate9);
 		this.rateChange.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -224,10 +220,11 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	public void doWriteBeanToComponents(BulkRateChangeHeader aBulkRateChangeHeader) {
 		logger.debug("Entering");
 
-		if(StringUtils.isBlank(getBulkRateChangeHeader().getReCalType())) {
+		if (StringUtils.isBlank(getBulkRateChangeHeader().getReCalType())) {
 			fillComboBox(this.reCalType, "TILLMDT", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		} else {
-			fillComboBox(this.reCalType, getBulkRateChangeHeader().getReCalType(), recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
+			fillComboBox(this.reCalType, getBulkRateChangeHeader().getReCalType(), recalTypes,
+					",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		}
 		this.reference.setValue(aBulkRateChangeHeader.getBulkRateChangeRef());
 		this.fromDate.setValue(getBulkRateChangeHeader().getFromDate());
@@ -240,7 +237,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aBulkRateChangeHeader
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
@@ -284,18 +281,19 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 			}
 			if (strReCalType != null && !PennantConstants.List_Select.equals(strReCalType)) {
 				getBulkRateChangeHeader().setReCalType(strReCalType);
-				getBulkRateChangeHeader().setLovDescReCalType(PennantStaticListUtil.getlabelDesc(strReCalType, recalTypes));
+				getBulkRateChangeHeader()
+						.setLovDescReCalType(PennantStaticListUtil.getlabelDesc(strReCalType, recalTypes));
 			} else {
 				getBulkRateChangeHeader().setReCalType(null);
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -315,27 +313,30 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 
 		setValidationOn(true);
 
-
 		if (!this.fromDate.isReadonly()) {
-			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"), true));
+			this.fromDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"), true));
 		}
 
 		if (!this.toDate.isReadonly()) {
-			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"), true));
+			this.toDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"), true));
 		}
 		if (!this.rateChange.isReadonly()) {
-			this.rateChange.setConstraint(new PTDecimalValidator(Labels.getLabel("label_RateChangeDialog_Rate.value"), 	9, true, true, 0, 9999)); //TODO
+			this.rateChange.setConstraint(new PTDecimalValidator(Labels.getLabel("label_RateChangeDialog_Rate.value"),
+					9, true, true, 0, 9999)); //TODO
 		}
 
-		if (!this.reCalType.isDisabled()){
-			this.reCalType.setConstraint(new StaticListValidator(recalTypes, Labels.getLabel("label_RateChangeDialog_RecalType.value")));  
+		if (!this.reCalType.isDisabled()) {
+			this.reCalType.setConstraint(
+					new StaticListValidator(recalTypes, Labels.getLabel("label_RateChangeDialog_RecalType.value")));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * Removes the Validation by setting the  constraints to the empty.
+	 * Removes the Validation by setting the constraints to the empty.
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering ");
@@ -351,7 +352,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	/**
 	 * Method to clear error messages
 	 * 
-	 * */
+	 */
 	protected void doClearMessage() {
 		logger.debug("Entering");
 
@@ -374,7 +375,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 
 		if (getBulkRateChangeHeader() != null) {
 			doSave();
-		}  
+		}
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -394,7 +395,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -411,7 +412,8 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 		doWriteComponentsToBean();
 		getBulkRateChangeDialogCtrl().fillRateChangeDetails(getBulkRateChangeHeader());
 		try {
-			getBulkRateChangeDialogCtrl().calculateNewRateAndNewProfit(getBulkRateChangeHeader(), getBulkRateChangeHeader().getBulkRateChangeDetailsList(), null);
+			getBulkRateChangeDialogCtrl().calculateNewRateAndNewProfit(getBulkRateChangeHeader(),
+					getBulkRateChangeHeader().getBulkRateChangeDetailsList(), null);
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -419,12 +421,12 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 		logger.debug("Leaving");
 	}
 
-
 	//	getter / setter
 
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}

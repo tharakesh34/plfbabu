@@ -62,120 +62,121 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AccountNumberGeneration implements Serializable {
-	
-    private static final long serialVersionUID = 6730313822927151348L;
-	private static Logger logger = Logger.getLogger(AccountNumberGeneration.class);
-	
-	private String acType="";
-	private String accBranch="";
 
-	private String ccyNumber ="000";
-	private String accountHeade="";
-	private String accountNumber="";
+	private static final long serialVersionUID = 6730313822927151348L;
+	private static Logger logger = Logger.getLogger(AccountNumberGeneration.class);
+
+	private String acType = "";
+	private String accBranch = "";
+
+	private String ccyNumber = "000";
+	private String accountHeade = "";
+	private String accountNumber = "";
 	private AccountType accountType;
-	
+
 	private static GenerateAccountNumberDAO generateAccountNumberDAO;
 	private static AccountTypeDAO accountTypeDAO;
 	private static CurrencyDAO currencyDAO;
 	private static AccountsDAO accountsDAO;
 
-	public AccountNumberGeneration(){
+	public AccountNumberGeneration() {
 		super();
-	} 
+	}
 
-	private AccountNumberGeneration (String acType,String ccyCode,
-			String accBranch) throws DataAccessException{
+	private AccountNumberGeneration(String acType, String ccyCode, String accBranch) throws DataAccessException {
 		super();
 		logger.debug("Entering");
-		logger.debug(acType+"-"+ccyCode+"-"+accBranch);
+		logger.debug(acType + "-" + ccyCode + "-" + accBranch);
 		this.acType = StringUtils.trimToEmpty(acType);
-		this.accBranch=StringUtils.trimToEmpty(accBranch);
+		this.accBranch = StringUtils.trimToEmpty(accBranch);
 		this.accountType = getAccountTypeDAO().getAccountTypeById(this.acType, "");
 
-		if(this.accountType==null){
-			String[][] parms= new String[2][1]; 
-			parms[1][0] =  acType;
+		if (this.accountType == null) {
+			String[][] parms = new String[2][1];
+			parms[1][0] = acType;
 			parms[0][0] = PennantJavaUtil.getLabel("label_AcType");
 			ErrorDetail details = getError("41002", parms);
 			throw new AppException(details.getError());
-		}else{
+		} else {
 			this.accountHeade = accountType.getAcHeadCode().trim();
 		}
 
-		generateCustomerAccount();	
+		generateCustomerAccount();
 		logger.debug("Leaving");
 	}
-	
-	public static String genNewAcountNumber(String acType,String ccyCode, String accBranch) {
+
+	public static String genNewAcountNumber(String acType, String ccyCode, String accBranch) {
 		return new AccountNumberGeneration(acType, ccyCode, accBranch).getAccountNumber();
 	}
 
-	private void generateCustomerAccount(){
+	private void generateCustomerAccount() {
 		logger.debug("Entering");
-		long accountSeq=0;
-		boolean newSeq=false;
+		long accountSeq = 0;
+		boolean newSeq = false;
 
-		SeqAccountNumber seqAccountNumber = new SeqAccountNumber(accBranch, this.accountType.getAcHeadCode(), ccyNumber);
-		seqAccountNumber = getGenerateAccountNumberDAO().getSeqAccountNumber(seqAccountNumber,false);
+		SeqAccountNumber seqAccountNumber = new SeqAccountNumber(accBranch, this.accountType.getAcHeadCode(),
+				ccyNumber);
+		seqAccountNumber = getGenerateAccountNumberDAO().getSeqAccountNumber(seqAccountNumber, false);
 
-		if(seqAccountNumber==null){
-			seqAccountNumber =new SeqAccountNumber(accBranch, this.accountType.getAcHeadCode(), ccyNumber);
-			newSeq=true;
+		if (seqAccountNumber == null) {
+			seqAccountNumber = new SeqAccountNumber(accBranch, this.accountType.getAcHeadCode(), ccyNumber);
+			newSeq = true;
 		}
 
-		accountSeq =seqAccountNumber.getAccountSeqNo()+1;
+		accountSeq = seqAccountNumber.getAccountSeqNo() + 1;
 
-		String branch ="";
-		String headCode="";
+		String branch = "";
+		String headCode = "";
 
-		if(accBranch.length() <= LengthConstants.LEN_BRANCH){
-			branch  = StringUtils.leftPad(this.accBranch, this.accBranch.length(), '0');
-		}else{
-			branch  = this.accBranch.substring(this.accBranch.length()-LengthConstants.LEN_BRANCH);	
+		if (accBranch.length() <= LengthConstants.LEN_BRANCH) {
+			branch = StringUtils.leftPad(this.accBranch, this.accBranch.length(), '0');
+		} else {
+			branch = this.accBranch.substring(this.accBranch.length() - LengthConstants.LEN_BRANCH);
 		}
 
-		if(this.accountHeade.length() <= LengthConstants.LEN_ACHEADCODE){
-			headCode  = StringUtils.leftPad(this.accountHeade, this.accountHeade.length(), '0');
-		}else{
-			headCode  = this.accountHeade.substring(this.accountHeade.length());
+		if (this.accountHeade.length() <= LengthConstants.LEN_ACHEADCODE) {
+			headCode = StringUtils.leftPad(this.accountHeade, this.accountHeade.length(), '0');
+		} else {
+			headCode = this.accountHeade.substring(this.accountHeade.length());
 		}
 
-		boolean status=true;
-		while(status){
-			this.accountNumber =  branch+headCode+StringUtils
-			.leftPad(String.valueOf(accountSeq),LengthConstants.LEN_ACCOUNT -(branch.length()+headCode.length()),'0');
-			Accounts accounts=getAccountsDAO().getAccountsById(this.accountNumber.trim(),"_View");
+		boolean status = true;
+		while (status) {
+			this.accountNumber = branch + headCode + StringUtils.leftPad(String.valueOf(accountSeq),
+					LengthConstants.LEN_ACCOUNT - (branch.length() + headCode.length()), '0');
+			Accounts accounts = getAccountsDAO().getAccountsById(this.accountNumber.trim(), "_View");
 
-			if(accounts!=null){
-				accountSeq=accountSeq+1;
-			}else{
-				status=false;
+			if (accounts != null) {
+				accountSeq = accountSeq + 1;
+			} else {
+				status = false;
 			}
 		}
-		
-		if(newSeq){
+
+		if (newSeq) {
 			seqAccountNumber.setAccountSeqNo(accountSeq);
 			getGenerateAccountNumberDAO().save(seqAccountNumber);
 
-		}else{
+		} else {
 			seqAccountNumber.setAccountSeqNo(accountSeq);
 			getGenerateAccountNumberDAO().update(seqAccountNumber);
 		}
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetail  getError(String errorId, String[][] parms){
-		return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD
-				, errorId, parms[0],parms[1]), SessionUserDetails.getUserLanguage());
+	private ErrorDetail getError(String errorId, String[][] parms) {
+		return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
+				SessionUserDetails.getUserLanguage());
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getAccountNumber() {
 		return accountNumber;
 	}
+
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
@@ -183,6 +184,7 @@ public class AccountNumberGeneration implements Serializable {
 	public static GenerateAccountNumberDAO getGenerateAccountNumberDAO() {
 		return generateAccountNumberDAO;
 	}
+
 	public void setGenerateAccountNumberDAO(GenerateAccountNumberDAO generateAccountNumberDAO) {
 		AccountNumberGeneration.generateAccountNumberDAO = generateAccountNumberDAO;
 	}
@@ -190,6 +192,7 @@ public class AccountNumberGeneration implements Serializable {
 	public static AccountTypeDAO getAccountTypeDAO() {
 		return accountTypeDAO;
 	}
+
 	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
 		AccountNumberGeneration.accountTypeDAO = accountTypeDAO;
 	}
@@ -197,13 +200,15 @@ public class AccountNumberGeneration implements Serializable {
 	public static CurrencyDAO getCurrencyDAO() {
 		return currencyDAO;
 	}
+
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		AccountNumberGeneration.currencyDAO = currencyDAO;
 	}
 
-	public  void setAccountsDAO(AccountsDAO accountsDAO) {
+	public void setAccountsDAO(AccountsDAO accountsDAO) {
 		AccountNumberGeneration.accountsDAO = accountsDAO;
 	}
+
 	public static AccountsDAO getAccountsDAO() {
 		return accountsDAO;
 	}

@@ -311,7 +311,7 @@ public class NotificationService {
 
 			MailTemplate template = null;
 			if (sendNotification) {
-				emailAndMobiles = getEmailsAndMobile(customerDetails, item, data,financeMain);
+				emailAndMobiles = getEmailsAndMobile(customerDetails, item, data, financeMain);
 
 				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("EMAILS"))) {
 					notification.getEmails().addAll(emailAndMobiles.get("EMAILS"));
@@ -588,10 +588,8 @@ public class NotificationService {
 		data.setCustId(main.getCustID());
 		data.setCustCIF(main.getLovDescCustCIF());
 		data.setFinType(main.getFinType());
-		data.setNextRepayDate(
-				DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
+		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
 		data.setPriority(main.getPriority());
-
 
 		// Role Code For Alert Notification
 		List<SecurityRole> securityRoles = getSecurityRoleService().getSecRoleCodeDesc(main.getRoleCode());
@@ -867,7 +865,6 @@ public class NotificationService {
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
 		declaredFieldValues.putAll(getTemplateData(main));
 
-
 		return declaredFieldValues;
 	}
 
@@ -954,10 +951,11 @@ public class NotificationService {
 				mobileNumbers.add(StringUtils.trimToEmpty(vehicleDealer.getDealerTelephone()));
 				fieldsAndValues.putAll(vehicleDealer.getDeclaredFieldValues());
 			}
-		}else if (NotificationConstants.TEMPLATE_FOR_DSAN.equals(templateType)) {
+		} else if (NotificationConstants.TEMPLATE_FOR_DSAN.equals(templateType)) {
 			VehicleDealer vehicleDealer = null;
-			if(StringUtils.isNotBlank(financeMain.getDsaCode())&& StringUtils.isNumeric(financeMain.getDsaCode())) {
-			 vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(Long.valueOf(financeMain.getDsaCode()));
+			if (StringUtils.isNotBlank(financeMain.getDsaCode()) && StringUtils.isNumeric(financeMain.getDsaCode())) {
+				vehicleDealer = vehicleDealerService
+						.getApprovedVehicleDealerById(Long.valueOf(financeMain.getDsaCode()));
 			}
 
 			if (vehicleDealer != null) {

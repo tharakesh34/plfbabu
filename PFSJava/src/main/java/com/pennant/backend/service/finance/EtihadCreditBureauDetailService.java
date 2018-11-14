@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.finance;
 
-
-
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
@@ -55,14 +53,23 @@ import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
  */
 public interface EtihadCreditBureauDetailService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	EtihadCreditBureauDetail getEtihadCreditBureauDetailById(String id,String type);
+
+	EtihadCreditBureauDetail getEtihadCreditBureauDetailById(String id, String type);
+
 	EtihadCreditBureauDetail getApprovedEtihadCreditBureauDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	AuditDetail saveOrUpdate(EtihadCreditBureauDetail etihadCreditBureauDetail, String tableType, String auditTranType);
+
 	AuditDetail doApprove(EtihadCreditBureauDetail etihadCreditBureauDetail, String tableType, String auditTranType);
-	AuditDetail validate(EtihadCreditBureauDetail etihadCreditBureauDetail, String method, String auditTranType, String  usrLanguage);
+
+	AuditDetail validate(EtihadCreditBureauDetail etihadCreditBureauDetail, String method, String auditTranType,
+			String usrLanguage);
+
 	AuditDetail delete(EtihadCreditBureauDetail etihadCreditBureauDetail, String tableType, String auditTranType);
 }

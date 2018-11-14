@@ -17,7 +17,7 @@ public class Rule implements Serializable {
 	private String ruleID;
 	private int ruleCount;
 	@XmlElement(name = "Score")
-	private int	score;
+	private int score;
 
 	public String getRuleID() {
 		return ruleID;

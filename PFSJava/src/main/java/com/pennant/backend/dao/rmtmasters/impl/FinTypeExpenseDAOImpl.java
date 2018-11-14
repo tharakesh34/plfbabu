@@ -73,8 +73,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new FinTypeExpense
+	 * This method set the Work Flow id based on the module name and return the new FinTypeExpense
 	 * 
 	 * @return FinTypeExpense
 	 */
@@ -87,8 +86,8 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 	}
 
 	/**
-	 * This method get the module from method getFinTypeExpense() and set the
-	 * new record flag as true and return FinTypeExpense()
+	 * This method get the module from method getFinTypeExpense() and set the new record flag as true and return
+	 * FinTypeExpense()
 	 * 
 	 * @return FinTypeExpense
 	 */
@@ -161,8 +160,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 	}
 
 	/**
-	 * This method insert new Records into RMTFinTypeExpenses or
-	 * RMTFinTypeExpenses_Temp.
+	 * This method insert new Records into RMTFinTypeExpenses or RMTFinTypeExpenses_Temp.
 	 * 
 	 * save FinTypeExpense
 	 * 
@@ -202,10 +200,8 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 	}
 
 	/**
-	 * This method updates the Record RMTFinTypeExpenses or
-	 * RMTFinTypeExpenses_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Types by key FinType
-	 * and Version
+	 * This method updates the Record RMTFinTypeExpenses or RMTFinTypeExpenses_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
 	 * @param FinTypeExpense
 	 *            (FinTypeExpense)
@@ -233,8 +229,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 		updateSql.append(" Where FinType =:FinType And ExpenseTypeID = :ExpenseTypeID And  FinEvent = :FinEvent");
 
 		/*
-		 * if (!type.endsWith("_Temp")) {
-		 * updateSql.append("  AND Version= :Version-1"); }
+		 * if (!type.endsWith("_Temp")) { updateSql.append("  AND Version= :Version-1"); }
 		 */
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeExpense);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
@@ -246,9 +241,8 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTFinTypeExpenses or
-	 * RMTFinTypeExpenses_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the RMTFinTypeExpenses or RMTFinTypeExpenses_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param FinTypeExpense
 	 *            (FinTypeExpense)

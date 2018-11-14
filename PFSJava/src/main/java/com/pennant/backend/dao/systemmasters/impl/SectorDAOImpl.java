@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -89,9 +88,10 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 		Sector sector = new Sector();
 		sector.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select SectorCode, SectorDesc, SectorLimit, SectorIsActive,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTSectors");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SectorCode =:SectorCode");
@@ -143,7 +143,7 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(Sector sector, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -154,7 +154,8 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" Values(:SectorCode, :SectorDesc, :SectorLimit, :SectorIsActive,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -180,7 +181,8 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		sql.append(" set SectorDesc = :SectorDesc, SectorLimit = :SectorLimit,");
 		sql.append(" SectorIsActive = :SectorIsActive,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		sql.append(" Where SectorCode =:SectorCode");
@@ -188,10 +190,8 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(
-				sector);
-		int recordCount = jdbcTemplate.update(sql.toString(),
-				paramSource);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(sector);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {

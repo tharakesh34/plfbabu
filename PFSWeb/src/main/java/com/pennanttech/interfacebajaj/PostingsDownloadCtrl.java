@@ -67,15 +67,15 @@ import com.pennanttech.pff.external.PostingDownloadService;
  */
 public class PostingsDownloadCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
-	private static final long		serialVersionUID	= 1L;
-	private static final Logger		logger				= Logger.getLogger(PostingsDownloadCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(PostingsDownloadCtrl.class);
 
-	protected Window				window_PostingsDownloadCtrl;
-	protected Datebox				postingDate;
-	protected Button				btnFileUpload;
+	protected Window window_PostingsDownloadCtrl;
+	protected Datebox postingDate;
+	protected Button btnFileUpload;
 
 	@Autowired(required = true)
-	private PostingDownloadService	postingDownloadService;
+	private PostingDownloadService postingDownloadService;
 
 	/**
 	 * default constructor.<br>

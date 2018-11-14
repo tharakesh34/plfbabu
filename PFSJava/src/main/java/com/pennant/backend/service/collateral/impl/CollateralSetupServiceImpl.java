@@ -125,35 +125,35 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> implements CollateralSetupService {
-	private static final Logger				logger	= Logger.getLogger(CollateralSetupServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CollateralSetupServiceImpl.class);
 
-	private AuditHeaderDAO					auditHeaderDAO;
-	private CollateralSetupDAO				collateralSetupDAO;
-	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private CollateralSetupDAO collateralSetupDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 
-	private CollateralThirdPartyDAO			collateralThirdPartyDAO;
-	private CoOwnerDetailDAO				coOwnerDetailDAO;
-	private DocumentDetailsDAO				documentDetailsDAO;
-	private DocumentManagerDAO				documentManagerDAO;
-	private CustomerDocumentDAO				customerDocumentDAO;
-	private FinFlagDetailsDAO				finFlagDetailsDAO;
-	private FinanceCheckListReferenceDAO	financeCheckListReferenceDAO;
-	private CityDAO							cityDAO;
-	private CustomerDetailsService			customerDetailsService;
-	private CheckListDetailService			checkListDetailService;
-	private CollateralStructureService		collateralStructureService;
-	private CurrencyDAO						currencyDAO;
-	private DocumentTypeService				documentTypeService;
-	private CollateralAssignmentDAO			collateralAssignmentDAO;
+	private CollateralThirdPartyDAO collateralThirdPartyDAO;
+	private CoOwnerDetailDAO coOwnerDetailDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private DocumentManagerDAO documentManagerDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
+	private FinFlagDetailsDAO finFlagDetailsDAO;
+	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
+	private CityDAO cityDAO;
+	private CustomerDetailsService customerDetailsService;
+	private CheckListDetailService checkListDetailService;
+	private CollateralStructureService collateralStructureService;
+	private CurrencyDAO currencyDAO;
+	private DocumentTypeService documentTypeService;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
 
 	// Validation Service Classes
-	private CollateralThirdPartyValidation	collateralThirdPartyValidation;
-	private FlagDetailValidation			collateralFlagValidation;
-	private DocumentDetailValidation		collateralDocumentValidation;
-	private CoOwnerDetailsValidation		coOwnerDetailsValidation;
+	private CollateralThirdPartyValidation collateralThirdPartyValidation;
+	private FlagDetailValidation collateralFlagValidation;
+	private DocumentDetailValidation collateralDocumentValidation;
+	private CoOwnerDetailsValidation coOwnerDetailsValidation;
 
-	private ExtendedFieldDetailsService		extendedFieldDetailsService;
-	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -353,7 +353,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				return auditHeader;
 			}
 		}
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String tableType = "";
 		CollateralSetup collateralSetup = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
@@ -434,7 +434,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		CollateralSetup detail = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
 		if (detail.isFromLoan()) {
 			auditHeader = getAuditDetails(auditHeader, "delete");
@@ -445,7 +445,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				return auditHeader;
 			}
 		}
-		
+
 		CollateralSetup collateralSetup = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
 
 		auditDetails.addAll(listDeletion(collateralSetup, "", auditHeader.getAuditTranType()));
@@ -583,10 +583,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Leaving");
 		return collateralSetup;
 	}
-	
+
 	/**
-	 * getCollateralDetailById fetch the details by using CollateralDetailDAO's
-	 * getCollateralDetailById method.
+	 * getCollateralDetailById fetch the details by using CollateralDetailDAO's getCollateralDetailById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -818,9 +817,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					&& !collateralSetup.getExtendedFieldRenderList().isEmpty()) {
 				List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("ExtendedFieldDetails");
 				if (details != null && details.size() > 0) {
-				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						collateralSetup.getCollateralStructure().getExtendedFieldHeader(), "");
-				auditDetails.addAll(details);
+					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+							collateralSetup.getCollateralStructure().getExtendedFieldHeader(), "");
+					auditDetails.addAll(details);
 				}
 			}
 
@@ -863,7 +862,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		 
+
 		CollateralSetup detail = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
 		if (detail.isFromLoan()) {
 			auditHeader = getAuditDetails(auditHeader, "doReject");
@@ -904,7 +903,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		 List<AuditDetail> auditDetails = validate(auditHeader, method);
+		List<AuditDetail> auditDetails = validate(auditHeader, method);
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
@@ -1013,7 +1012,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		String[] valueParm = new String[1];
 		valueParm[0] = collateralSetup.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_CollateralRef") + ":" + valueParm[0];
-			if (collateralSetup.isNew()) { // for New record or new record into work flow
+		if (collateralSetup.isNew()) { // for New record or new record into work flow
 
 			if (!collateralSetup.isWorkflow()) {// With out Work flow only new records  
 				if (befCollateralSetup != null) { // Record Already Exists in the table then error  
@@ -1061,7 +1060,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				}
 
 				if (tempCollateralSetup != null && oldCollateralSetup != null
-						&& !oldCollateralSetup.getLastMntOn().equals(tempCollateralSetup.getLastMntOn()) && !collateralSetup.isFromLoan()) {
+						&& !oldCollateralSetup.getLastMntOn().equals(tempCollateralSetup.getLastMntOn())
+						&& !collateralSetup.isFromLoan()) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -1183,14 +1183,15 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			if (collateralCheckLists != null && !collateralCheckLists.isEmpty()) {
 				auditDetailMap.put("CheckListDetails", setCheckListsAuditData(collateralSetup, auditTranType, method));
-  				auditDetails.addAll(auditDetailMap.get("CheckListDetails"));
+				auditDetails.addAll(auditDetailMap.get("CheckListDetails"));
 			}
 		}
 
 		// Collateral Extended Field Details
- 		if (collateralSetup.getExtendedFieldRenderList() != null
+		if (collateralSetup.getExtendedFieldRenderList() != null
 				&& collateralSetup.getExtendedFieldRenderList().size() > 0) {
-			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(collateralSetup.getExtendedFieldRenderList(), auditTranType, method));
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(collateralSetup.getExtendedFieldRenderList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -1486,7 +1487,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collChekListRef.setRecordStatus("");
 			collChekListRef.setUserDetails(collateralSetup.getUserDetails());
 			collChekListRef.setLastMntOn(collateralSetup.getLastMntOn());
- 			collChekListRef.setLastMntBy(collateralSetup.getLastMntBy());
+			collChekListRef.setLastMntBy(collateralSetup.getLastMntBy());
 			collChekListRef.setWorkflowId(collateralSetup.getWorkflowId());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], collChekListRef.getBefImage(),
@@ -1798,7 +1799,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
 			}
-			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))	) {
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -2315,7 +2316,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				valueParm[1] = "0";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
 			}
-			
+
 			// validate third party customers
 			List<CollateralThirdParty> thirdPartyCollateral = collateralSetup.getCollateralThirdPartyList();
 			if (thirdPartyCollateral != null) {
@@ -2332,32 +2333,35 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			// validate collateral coOwner details
 			List<CoOwnerDetail> coOwnerDetails = collateralSetup.getCoOwnerDetailList();
 			if (coOwnerDetails != null) {
-			for (CoOwnerDetail coOwnerDetail : coOwnerDetails) {
+				for (CoOwnerDetail coOwnerDetail : coOwnerDetails) {
 
-				// validate co-owner cif
-				if (coOwnerDetail.isBankCustomer()) {
-					int rcdCount = customerDetailsService.getCustomerCountByCIF(coOwnerDetail.getCoOwnerCIF(), "");
-					if (rcdCount <= 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = coOwnerDetail.getCoOwnerCIF();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90905", "", valueParm)));
-					}
-				} else {
-					String mobileNumber = coOwnerDetail.getMobileNo();
-					if (StringUtils.isBlank(mobileNumber)) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "phoneNumber";
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-					} else {
-						if (!(mobileNumber.matches("\\d{10}"))) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90278", "", null)));
-							return auditDetail;
+					// validate co-owner cif
+					if (coOwnerDetail.isBankCustomer()) {
+						int rcdCount = customerDetailsService.getCustomerCountByCIF(coOwnerDetail.getCoOwnerCIF(), "");
+						if (rcdCount <= 0) {
+							String[] valueParm = new String[1];
+							valueParm[0] = coOwnerDetail.getCoOwnerCIF();
+							auditDetail
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90905", "", valueParm)));
 						}
+					} else {
+						String mobileNumber = coOwnerDetail.getMobileNo();
+						if (StringUtils.isBlank(mobileNumber)) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "phoneNumber";
+							auditDetail
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+						} else {
+							if (!(mobileNumber.matches("\\d{10}"))) {
+								auditDetail
+										.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90278", "", null)));
+								return auditDetail;
+							}
+						}
+
 					}
 
-				}
-
-				// validate address
+					// validate address
 					if (!coOwnerDetail.isBankCustomer()) {
 
 						City city = cityDAO.getCityById(coOwnerDetail.getAddrCountry(), coOwnerDetail.getAddrProvince(),
@@ -2370,8 +2374,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 						}
 					}
+				}
 			}
-		}
 
 			// validate Extended details
 			int extendedDetailsCount = 0;
@@ -2389,11 +2393,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 				return auditDetail;
 			}
-			
+
 			if (collateralSetup.getExtendedDetails() != null && !collateralSetup.getExtendedDetails().isEmpty()) {
-				
+
 				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
-					List<ExtendedFieldData>extList= defultExtendedValues(details.getExtendedFieldDataList(), exdFldConfig);
+					List<ExtendedFieldData> extList = defultExtendedValues(details.getExtendedFieldDataList(),
+							exdFldConfig);
 					details.setExtendedFieldDataList(extList);
 					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
@@ -2404,7 +2409,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 							return auditDetail;
 						}
-						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(),""))) {
+						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(), ""))) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
 							auditDetail
@@ -2489,40 +2494,37 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return auditDetail;
 	}
 
-	
-
-	
-
-	private List<ExtendedFieldData> defultExtendedValues(List<ExtendedFieldData> list, List<ExtendedFieldDetail> exdFldConfig) {
+	private List<ExtendedFieldData> defultExtendedValues(List<ExtendedFieldData> list,
+			List<ExtendedFieldDetail> exdFldConfig) {
 		for (ExtendedFieldDetail exdFldConfigDeatil : exdFldConfig) {
-			
+
 			boolean isExists = false;
 			for (ExtendedFieldData deail : list) {
-					if (StringUtils.equals(exdFldConfigDeatil.getFieldName(), deail.getFieldName())) {
-						isExists = true;
-					}
-					if (isExists) {
-						break;
-					}
+				if (StringUtils.equals(exdFldConfigDeatil.getFieldName(), deail.getFieldName())) {
+					isExists = true;
 				}
+				if (isExists) {
+					break;
+				}
+			}
 			if (!isExists) {
-				String feildType=exdFldConfigDeatil.getFieldType();
-				if(StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_ACTRATE)||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_AMOUNT) ||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_INT)||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_LONG)||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN) ||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_DECIMAL)||
-					StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_INT)) {
-				ExtendedFieldData extendedFieldData = new ExtendedFieldData();
-				extendedFieldData.setFieldName(exdFldConfigDeatil.getFieldName());
-				extendedFieldData.setFieldValue(0);
-				list.add(extendedFieldData);
+				String feildType = exdFldConfigDeatil.getFieldType();
+				if (StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_ACTRATE)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_AMOUNT)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_INT)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_LONG)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_DECIMAL)
+						|| StringUtils.equals(feildType, ExtendedFieldConstants.FIELDTYPE_INT)) {
+					ExtendedFieldData extendedFieldData = new ExtendedFieldData();
+					extendedFieldData.setFieldName(exdFldConfigDeatil.getFieldName());
+					extendedFieldData.setFieldValue(0);
+					list.add(extendedFieldData);
 				}
 			}
 		}
-		
+
 		return list;
 	}
 
@@ -2707,10 +2709,11 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
-	
+
 	@Override
 	public List<CollateralSetup> getCollateralDetails(String finReference) {
-		List<CollateralSetup> collateralSetupList = getCollateralSetupDAO().getCollateralSetupByFinRef(finReference, "_Tview");
+		List<CollateralSetup> collateralSetupList = getCollateralSetupDAO().getCollateralSetupByFinRef(finReference,
+				"_Tview");
 		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
 			for (CollateralSetup detail : collateralSetupList) {
 				getCollateralDetails(detail);
@@ -2721,6 +2724,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	/**
 	 * Getting the Collateralsetup data
+	 * 
 	 * @param collateralSetup
 	 * @return
 	 */
@@ -2728,22 +2732,26 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Entering");
 
 		if (collateralSetup != null) {
-			String  collateralRef = collateralSetup.getCollateralRef();
-			
+			String collateralRef = collateralSetup.getCollateralRef();
+
 			// Collateral Type/Structure Details
-			collateralSetup.setCollateralStructure(getCollateralStructureService().getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+			collateralSetup.setCollateralStructure(getCollateralStructureService()
+					.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
 
 			// Co-Owner Details
 			collateralSetup.setCoOwnerDetailList(getCoOwnerDetailDAO().getCoOwnerDetailByRef(collateralRef, "_View"));
 
 			// Third Party Details
-			collateralSetup.setCollateralThirdPartyList(getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
+			collateralSetup.setCollateralThirdPartyList(
+					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
 
 			//Flag Details
-			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef, CollateralConstants.MODULE_NAME, "_View"));
+			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef,
+					CollateralConstants.MODULE_NAME, "_View"));
 
 			// Assignment Details
-			collateralSetup.setAssignmentDetails(getCollateralAssignmentDAO().getCollateralAssignmentByColRef(collateralRef, collateralSetup.getCollateralType()));
+			collateralSetup.setAssignmentDetails(getCollateralAssignmentDAO()
+					.getCollateralAssignmentByColRef(collateralRef, collateralSetup.getCollateralType()));
 
 			// Extended Field Details
 			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
@@ -2754,7 +2762,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			tableName.append(extendedFieldHeader.getSubModuleName());
 			tableName.append("_ED");
 
-			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,tableName.toString(), "_View");
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
+					tableName.toString(), "_View");
 
 			List<ExtendedFieldRender> renderList = new ArrayList<>();
 			for (int i = 0; i < renderMapList.size(); i++) {
@@ -2772,7 +2781,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+				extendedFieldRender
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
 								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
 				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
@@ -2802,10 +2812,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setExtendedFieldRenderList(renderList);
 
 			// Customer Details
-			collateralSetup.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
+			collateralSetup.setCustomerDetails(getCustomerDetailsService()
+					.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
 
 			// Document Details
-			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef, CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
+					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
 			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 				collateralSetup.getDocuments().addAll(documentList);
 			} else {
@@ -2813,19 +2825,20 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 
 			// Agreement Details & Check List Details
-			if (StringUtils.isNotEmpty(collateralSetup.getRecordType()) && !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
+			if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
+					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(), FinanceConstants.FINSER_EVENT_ORG);//FIXME
+				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
+						FinanceConstants.FINSER_EVENT_ORG);//FIXME
 			}
 		}
 		logger.debug("Leaving");
 		return collateralSetup;
 	}
-	
-	
-	 /**
-	  * Validate the parent and all child details
-	  */
+
+	/**
+	 * Validate the parent and all child details
+	 */
 	@Override
 	public List<AuditDetail> validateDetails(FinanceDetail financeDetail, String auditTranType, String method) {
 		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
@@ -2855,25 +2868,25 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String auditTranType = "";
-		
+
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (financeMain.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
-		
+
 		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
-			
+
 			if ("doApprove".equals(method)) {
 				collateralSetupList = setApprovedData(collateralSetupList, financeDetail);
 			}
-			
+
 			for (int i = 0; i < collateralSetupList.size(); i++) {
 				CollateralSetup collateralSetup = setWorkFlowValues(financeDetail, collateralSetupList.get(i), method);
 				String[] fields = PennantJavaUtil.getFieldDetails(collateralSetup, collateralSetup.getExcludeFields());
 				AuditHeader auditHeader = getAuditHeader(collateralSetup, auditTranType);
-				
+
 				switch (method) {
 				case "saveOrUpdate":
 					saveOrUpdate(auditHeader);
@@ -2899,11 +2912,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	/**
 	 * Setting the Approved workflow values
+	 * 
 	 * @param collateralSetupList
 	 * @param financeDetail
 	 * @return
 	 */
-	private List<CollateralSetup> setApprovedData(List<CollateralSetup> collateralSetupList, FinanceDetail financeDetail) {
+	private List<CollateralSetup> setApprovedData(List<CollateralSetup> collateralSetupList,
+			FinanceDetail financeDetail) {
 
 		List<CollateralSetup> generatedSetupList = new ArrayList<CollateralSetup>();
 
@@ -2932,7 +2947,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return generatedSetupList;
 	}
 
-	 
 	/**
 	 * Setting the workflow values
 	 * 
@@ -2941,14 +2955,15 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	 * @param method
 	 * @return
 	 */
-	private CollateralSetup setWorkFlowValues(FinanceDetail financeDetail, CollateralSetup collateralSetup, String method) {
+	private CollateralSetup setWorkFlowValues(FinanceDetail financeDetail, CollateralSetup collateralSetup,
+			String method) {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-	
+
 		collateralSetup.setDepositorId(financeDetail.getCustomerDetails().getCustomer().getCustID());
 		collateralSetup.setUserDetails(financeMain.getUserDetails());
 		collateralSetup.setWorkflowId(financeMain.getWorkflowId());
 		collateralSetup.setFromLoan(true);
-	
+
 		if ("doApprove".equals(method)) {
 			collateralSetup.setFinReference(null);
 		} else {
@@ -3096,6 +3111,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	/**
 	 * Preparing the audi header
+	 * 
 	 * @param aCollateralSetup
 	 * @param tranType
 	 * @return

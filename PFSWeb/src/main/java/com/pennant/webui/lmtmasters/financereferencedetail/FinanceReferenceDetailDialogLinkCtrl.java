@@ -119,9 +119,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailDialogLinkCtrl.class);
 
 	/*
-	 * All the components that are defined here
-	 * and have a corresponding component with the same 'id' in the zul-file are getting auto wired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinanceReferenceDetailDialogLink; // auto wired
 	protected Textbox finType; // auto wired
@@ -139,17 +138,17 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Checkbox allowWaiver;
 	protected Checkbox allowPostpone;
 	protected Checkbox allowExpire;
-	protected Hbox     hboxWaiver;
-	protected Row 	   row_AlertType;
+	protected Hbox hboxWaiver;
+	protected Row row_AlertType;
 	protected Combobox alertType;
 	protected Checkbox reSend;
-	
+
 	// not auto wired variables
 	private FinanceReferenceDetail financeReferenceDetail; // over handed per parameter
 	private transient FinanceReferenceDetailDialogCtrl financeReferenceDetailDialogCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
 	private transient PagedListService pagedListService;
@@ -158,15 +157,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private String delegatorRoles;
 	private String moduleName;
 	private String eventAction;
-	
+
 	protected Listbox listboxshowInStage; // auto wired
 	protected Listbox listboxmandInputInStage; // auto wired
 	protected Listbox listboxallowInputInStage;
-	
+
 	private Map<String, String> checkShowInStageMap = new HashMap<String, String>();
 	private Map<String, String> checkMandInputInStageMap = new HashMap<String, String>();
 	private Map<String, String> checkAllowInputInStage = new HashMap<String, String>();
-	
+
 	// List od values
 	protected Button btnSearchElgRule;
 	protected Button btnSearchAggCode;
@@ -182,7 +181,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Button btnSearchReturnCheque;
 	protected Button btnSearchLimitService;
 	protected Button btnSearchTatNotification;
-	protected Button btnFinanceTabs;	
+	protected Button btnFinanceTabs;
 	protected Label label_FinanceReferenceDetailDialog_FinRefId;
 	protected Row rowSingleListbox;
 	protected Row rowDoubleListbox;
@@ -190,14 +189,14 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	protected Row rowDeviation;
 	protected Row rowPostpone;
 	protected Row row_Resend;
-	
+
 	protected Label label_FinanceReferenceDetailDialogLink;
-	
+
 	protected Label label_FinanceReferenceDetailDialog_ShowInStage;
 	protected Label label_FinanceReferenceDetailDialog_AllowInputInStage;
 	protected Label label_FinanceReferenceDetailDialog_MandInputInStage;
 	protected Label label_FinanceReferenceDetailDialog_AllowWaiver;
-	
+
 	protected Listheader listheadShowInStage;
 	protected Listheader listheadAllowInputInStage;
 	protected Listheader listheadMandInputInStage;
@@ -241,24 +240,19 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 			if (arguments.containsKey("financeReferenceDetail")) {
-				this.financeReferenceDetail = (FinanceReferenceDetail) arguments
-						.get("financeReferenceDetail");
+				this.financeReferenceDetail = (FinanceReferenceDetail) arguments.get("financeReferenceDetail");
 				referenceType = financeReferenceDetail.getFinRefType();
 
 				boolean addBefImage = true;
-				if (PennantConstants.RECORD_TYPE_NEW
-						.equals(this.financeReferenceDetail.getRecordType())
-						|| PennantConstants.RECORD_TYPE_UPD
-								.equals(this.financeReferenceDetail
-										.getRecordType())) {
+				if (PennantConstants.RECORD_TYPE_NEW.equals(this.financeReferenceDetail.getRecordType())
+						|| PennantConstants.RECORD_TYPE_UPD.equals(this.financeReferenceDetail.getRecordType())) {
 					if (!this.financeReferenceDetail.isNewRecord()) {
 						addBefImage = false;
 					}
 				}
 				if (addBefImage) {
 					FinanceReferenceDetail befImage = new FinanceReferenceDetail();
-					BeanUtils.copyProperties(this.financeReferenceDetail,
-							befImage);
+					BeanUtils.copyProperties(this.financeReferenceDetail, befImage);
 					this.financeReferenceDetail.setBefImage(befImage);
 				}
 				setFinanceReferenceDetail(this.financeReferenceDetail);
@@ -267,8 +261,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			}
 
 			if (arguments.containsKey("financeReferenceDetailDialogCtrl")) {
-				setFinanceReferenceDetailDialogCtrl((FinanceReferenceDetailDialogCtrl) arguments
-						.get("financeReferenceDetailDialogCtrl"));
+				setFinanceReferenceDetailDialogCtrl(
+						(FinanceReferenceDetailDialogCtrl) arguments.get("financeReferenceDetailDialogCtrl"));
 			} else {
 				setFinanceReferenceDetailDialogCtrl(null);
 			}
@@ -289,14 +283,12 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				delegatorRoles = getDelegatorRoles();
 			}
 
-			doLoadWorkFlow(this.financeReferenceDetail.isWorkflow(),
-					this.financeReferenceDetail.getWorkflowId(),
+			doLoadWorkFlow(this.financeReferenceDetail.isWorkflow(), this.financeReferenceDetail.getWorkflowId(),
 					this.financeReferenceDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"FinanceReferenceDetailDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceReferenceDetailDialog");
 			}
 
 			// set Field Properties
@@ -315,11 +307,11 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		
+
 		this.finType.setMaxlength(8);
 		this.finRefType.setMaxlength(10);
 		this.overRideValue.setMaxlength(4);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -414,8 +406,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void onClick$btnClose(Event event) {
 		boolean isClosed = doClose(this.btnSave.isVisible());
 		if (isClosed) {
-			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog
-					.setVisible(true);
+			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
 		}
 	}
 
@@ -444,7 +435,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	 */
 	public void doWriteBeanToComponents(FinanceReferenceDetail aFinanceReferenceDetail) {
 		logger.debug("Entering");
-		
+
 		this.finType.setValue(aFinanceReferenceDetail.getFinType());
 		this.finRefType.setValue(aFinanceReferenceDetail.getFinRefType());
 		this.finRefId.setValue(aFinanceReferenceDetail.getFinRefId());
@@ -460,33 +451,31 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		this.allowPostpone.setChecked(aFinanceReferenceDetail.isAllowPostpone());
 		this.allowExpire.setChecked(aFinanceReferenceDetail.isAllowExpire());
 		this.reSend.setChecked(aFinanceReferenceDetail.isResendReq());
-	
 
-		if (aFinanceReferenceDetail.getShowInStage() != null && 
-				StringUtils.isNotEmpty(aFinanceReferenceDetail.getShowInStage())) {
+		if (aFinanceReferenceDetail.getShowInStage() != null
+				&& StringUtils.isNotEmpty(aFinanceReferenceDetail.getShowInStage())) {
 			String[] roles = aFinanceReferenceDetail.getShowInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkShowInStageMap.put(roles[i], roles[i]);
 			}
 		}
-		if (aFinanceReferenceDetail.getAllowInputInStage() != null && 
-				StringUtils.isNotEmpty(aFinanceReferenceDetail.getAllowInputInStage())) {
+		if (aFinanceReferenceDetail.getAllowInputInStage() != null
+				&& StringUtils.isNotEmpty(aFinanceReferenceDetail.getAllowInputInStage())) {
 			String[] roles = aFinanceReferenceDetail.getAllowInputInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkAllowInputInStage.put(roles[i], roles[i]);
 			}
 		}
-		if (aFinanceReferenceDetail.getMandInputInStage() != null && 
-				StringUtils.isNotEmpty(aFinanceReferenceDetail.getMandInputInStage())) {
+		if (aFinanceReferenceDetail.getMandInputInStage() != null
+				&& StringUtils.isNotEmpty(aFinanceReferenceDetail.getMandInputInStage())) {
 			String[] roles = aFinanceReferenceDetail.getMandInputInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkMandInputInStageMap.put(roles[i], roles[i]);
 			}
 		}
 
-		fillListBox(this.listboxshowInStage, roleCodes, checkShowInStageMap, 
-				FinanceConstants.PROCEDT_SHOWINSTAGE);
-		fillListBox(this.listboxallowInputInStage, roleCodes, checkAllowInputInStage, 
+		fillListBox(this.listboxshowInStage, roleCodes, checkShowInStageMap, FinanceConstants.PROCEDT_SHOWINSTAGE);
+		fillListBox(this.listboxallowInputInStage, roleCodes, checkAllowInputInStage,
 				FinanceConstants.PROCEDT_ALWINPUTSTAGE);
 		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 
@@ -499,11 +488,12 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 					FinanceConstants.PROCEDT_MANDINPUTSTAGE);
 		}
 		// ### 06-05-2018 - End
-		fillComboBox(this.alertType, aFinanceReferenceDetail.getAlertType(), PennantStaticListUtil.getNotificationTypes(), "");
+		fillComboBox(this.alertType, aFinanceReferenceDetail.getAlertType(),
+				PennantStaticListUtil.getNotificationTypes(), "");
 		doDesignByType(getFinanceReferenceDetail());
 		CheckOverride();
 		this.recordStatus.setValue(aFinanceReferenceDetail.getRecordStatus());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -519,7 +509,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		try {
 			if (this.finType.getValue() == null || StringUtils.isEmpty(this.finType.getValue())) {
-				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY", 
+				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_FinanceReferenceDetailDialog_FinType.value") }));
 			}
 			aFinanceReferenceDetail.setFinType(this.finType.getValue());
@@ -552,32 +542,27 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		try {
 
-			if(this.row_AlertType.isVisible()){
+			if (this.row_AlertType.isVisible()) {
 				if ("#".equals(getComboboxValue(this.alertType))) {
 					if (!this.alertType.isDisabled()) {
-						throw new WrongValueException(
-								this.alertType,
-								Labels.getLabel(
-										"STATIC_INVALID",
-										new String[] { Labels
-												.getLabel("label_FinanceReferenceDetailDialog_AlertType.value") }));
-					} 
+						throw new WrongValueException(this.alertType, Labels.getLabel("STATIC_INVALID", new String[] {
+								Labels.getLabel("label_FinanceReferenceDetailDialog_AlertType.value") }));
+					}
 
-				}else{
+				} else {
 					aFinanceReferenceDetail.setAlertType(getComboboxValue(this.alertType));
 				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (!this.allowDeviation.isDisabled() && this.allowDeviation.isChecked()) {
-				if (!this.allowWaiver.isDisabled() && !this.allowWaiver.isChecked()
-						&& !this.allowPostpone.isDisabled() && !this.allowPostpone.isChecked()
-						&& !this.allowExpire.isDisabled() && !this.allowExpire.isChecked()) {
-					throw new WrongValueException(this.allowDeviation, 
-							Labels.getLabel("message_Deviation_Mandatory"));
+				if (!this.allowWaiver.isDisabled() && !this.allowWaiver.isChecked() && !this.allowPostpone.isDisabled()
+						&& !this.allowPostpone.isChecked() && !this.allowExpire.isDisabled()
+						&& !this.allowExpire.isChecked()) {
+					throw new WrongValueException(this.allowDeviation, Labels.getLabel("message_Deviation_Mandatory"));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -589,7 +574,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				this.showInStage.setValue(getCheckedValues(listboxshowInStage));
 				// then check for empty
 				if (this.showInStage.getValue() == null || StringUtils.isEmpty(this.showInStage.getValue())) {
-					throw new WrongValueException(this.listboxshowInStage, 
+					throw new WrongValueException(this.listboxshowInStage,
 							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.showInStage.getLeft() }));
 				}
 			}
@@ -602,11 +587,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				// Set checked values
 				this.allowInputInStage.setValue(getCheckedValues(listboxallowInputInStage));
 				// then check for empty
-				if (this.allowInputInStage.getValue() == null || 
-						StringUtils.isEmpty(this.allowInputInStage.getValue())) {
-					throw new WrongValueException(this.listboxallowInputInStage, 
-							Labels.getLabel("FIELD_NO_EMPTY", 
-									new String[] { this.allowInputInStage.getLeft() }));
+				if (this.allowInputInStage.getValue() == null
+						|| StringUtils.isEmpty(this.allowInputInStage.getValue())) {
+					throw new WrongValueException(this.listboxallowInputInStage,
+							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.allowInputInStage.getLeft() }));
 				}
 			}
 			aFinanceReferenceDetail.setAllowInputInStage(this.allowInputInStage.getValue());
@@ -655,7 +639,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 						if (workflowEngine.compareRoles(stage, delegator) == Flow.PREDECESSOR) {
 							canRaiseManualDeviation = false;
 							break;
-						}else{
+						} else {
 							continue;
 						}
 					}
@@ -676,39 +660,38 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			if (!this.overRideValue.isReadonly() && this.overRide.isChecked()) {
 				if (this.overRideValue.getValue() == null || this.overRideValue.getValue() <= 0) {
 					throw new WrongValueException(this.overRideValue,
-							Labels.getLabel("FIELD_NO_EMPTY", 
-									new String[] { this.overRideValue.getLeft() }));
+							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.overRideValue.getLeft() }));
 				}
 			}
 			aFinanceReferenceDetail.setOverRideValue(this.overRideValue.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceReferenceDetail.setAllowDeviation(this.allowDeviation.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceReferenceDetail.setAllowWaiver(this.allowWaiver.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceReferenceDetail.setAllowPostpone(this.allowPostpone.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceReferenceDetail.setAllowExpire(this.allowExpire.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
@@ -726,14 +709,14 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private void hasSingleApprStage(FinanceReferenceDetail aFinanceReferenceDetail) {
 		//Verification Approval Event validations in Miscellaneous Tab
 		String reference = aFinanceReferenceDetail.getLovDescNamelov();
-		
+
 		/**
 		 * Allow sampling approval more than 1 role.
 		 */
 		if (FinanceConstants.PROCEDT_SAMPLING_APPR.equals(reference)) {
 			return;
 		}
-		
+
 		int length = getCheckedValues(listboxmandInputInStage).split(",").length;
 		if (aFinanceReferenceDetail.getFinRefType() == FinanceConstants.PROCEDT_LIMIT && length > 1) {
 			String[] message = new String[1];
@@ -777,7 +760,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		/* fill the components with the data */
 		doWriteBeanToComponents(aFinanceReferenceDetail);
-		
+
 		/* set Read only mode accordingly if the object is new or not. */
 		if (aFinanceReferenceDetail.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -798,14 +781,14 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				this.btnDelete.setVisible(true);
 			}
 		}
-		
-		if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COLLATERAL) ||
-				StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS) ||
-				StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COMMITMENT)){
+
+		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COLLATERAL)
+				|| StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS)
+				|| StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COMMITMENT)) {
 			this.rowDeviation.setVisible(false);
 			this.rowPostpone.setVisible(false);
 		}
-		
+
 		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FINANCE)
 				&& FinanceConstants.PROCEDT_TEMPLATE == financeReferenceDetail.getFinRefType()) {
 			this.row_Resend.setVisible(true);
@@ -814,7 +797,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		try {
 
 			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(false);
-			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.getParent().appendChild(window_FinanceReferenceDetailDialogLink);
+			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.getParent()
+					.appendChild(window_FinanceReferenceDetailDialogLink);
 
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -832,26 +816,32 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	@SuppressWarnings("unused")
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		setValidationOn(true);
-		
+
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(new PTStringValidator( Labels.getLabel("label_FinanceReferenceDetailDialog_FinType.value"),null,true));
+			this.finType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceReferenceDetailDialog_FinType.value"), null, true));
 		}
 		if (!this.finRefType.isReadonly()) {
-			this.finRefType.setConstraint(new PTNumberValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_FinRefType.value"), true));
+			this.finRefType.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FinanceReferenceDetailDialog_FinRefType.value"), true));
 		}
 		if (!this.finRefId.isReadonly()) {
-			this.finRefId.setConstraint(new PTNumberValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_FinRefId.value"), true));
+			this.finRefId.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_FinRefId.value"), true));
 		}
 		if (!this.showInStage.isReadonly()) {
-			this.showInStage.setConstraint(new PTStringValidator( Labels.getLabel("label_FinanceReferenceDetailDialog_ShowInStage.value"),null,true));
+			this.showInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceReferenceDetailDialog_ShowInStage.value"), null, true));
 		}
 		if (!this.mandInputInStage.isReadonly()) {
-			this.mandInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_MandInputInStage.value"),null,true));
+			this.mandInputInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceReferenceDetailDialog_MandInputInStage.value"), null, true));
 		}
 		if (!this.allowInputInStage.isReadonly()) {
-			this.allowInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_AllowInputInStage.value"),null,true ));
+			this.allowInputInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceReferenceDetailDialog_AllowInputInStage.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -881,12 +871,13 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				this.label_FinanceReferenceDetailDialog_FinRefId.getValue() +" : "+aFinanceReferenceDetail.getLovDescRefDesc();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ this.label_FinanceReferenceDetailDialog_FinRefId.getValue() + " : "
+				+ aFinanceReferenceDetail.getLovDescRefDesc();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_DEL);
 			try {
@@ -925,19 +916,19 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.alertType.setDisabled(false);
 			this.isActive.setDisabled(isReadOnly("FinanceReferenceDetailDialog_isActive"));
 		}
-		if (getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RTLSCORE ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CORPSCORE ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_STAGEACC ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_TEMPLATE ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_FINDEDUP ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CUSTDEDUP ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_BLACKLIST ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_POLICEDEDUP ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RETURNCHQ ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_AGREEMENT ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_LIMIT ||
-				getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_TATNOTIFICATION  ||			
-			getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_FINANCETABS) {
+		if (getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RTLSCORE
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CORPSCORE
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_STAGEACC
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_TEMPLATE
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_FINDEDUP
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_CUSTDEDUP
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_BLACKLIST
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_POLICEDEDUP
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_RETURNCHQ
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_AGREEMENT
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_LIMIT
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_TATNOTIFICATION
+				|| getFinanceReferenceDetail().getFinRefType() == FinanceConstants.PROCEDT_FINANCETABS) {
 			doToggleInReadOnlyMode(this.listboxmandInputInStage, false);
 		} else {
 			doToggleInReadOnlyMode(this.listboxshowInStage, isReadOnly("FinanceReferenceDetailDialog_isActive"));
@@ -977,7 +968,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -986,7 +977,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		
+
 		this.finType.setReadonly(true);
 		this.finRefType.setReadonly(true);
 		this.finRefId.setReadonly(true);
@@ -1052,8 +1043,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
 		doWriteComponentsToBean(aFinanceReferenceDetail);
 		if (!canRaiseManualDeviation) {
-			MessageUtil.showError(
-					"Select Privileged Users alone to raise Manual Deviations");
+			MessageUtil.showError("Select Privileged Users alone to raise Manual Deviations");
 			canRaiseManualDeviation = true;
 			return;
 		}
@@ -1073,6 +1063,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1080,6 +1071,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public FinanceReferenceDetail getFinanceReferenceDetail() {
 		return this.financeReferenceDetail;
 	}
+
 	public void setFinanceReferenceDetail(FinanceReferenceDetail financeReferenceDetail) {
 		this.financeReferenceDetail = financeReferenceDetail;
 	}
@@ -1087,6 +1079,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
+
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return this.financeReferenceDetailService;
 	}
@@ -1098,6 +1091,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public FinanceReferenceDetailDialogCtrl getFinanceReferenceDetailDialogCtrl() {
 		return financeReferenceDetailDialogCtrl;
 	}
+
 	public void setFinanceReferenceDetailDialogCtrl(FinanceReferenceDetailDialogCtrl financeReferenceDetailDialogCtrl) {
 		this.financeReferenceDetailDialogCtrl = financeReferenceDetailDialogCtrl;
 	}
@@ -1105,6 +1099,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1123,7 +1118,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.financeReferenceDetail);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.financeReferenceDetail.getFinRefDetailId());
@@ -1144,6 +1139,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1151,11 +1147,12 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// =======================================//
 	public void onClick$btnSearchQuestionId(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("ModuleName", moduleName, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "CheckList", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "CheckList",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1170,12 +1167,13 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	public void onClick$btnSearchAggCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("ModuleName", moduleName, Filter.OP_EQUAL);
 		filters[1] = new Filter("AGGISACTIVE", 1, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "AgreementDefinition",filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink,
+				"AgreementDefinition", filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1192,11 +1190,12 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	public void onClick$btnSearchScoringGroup(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters=new Filter[1];
-		filters[0]=new Filter("CategoryType",PennantConstants.PFF_CUSTCTG_INDIV,Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "ScoringGroup", filters);
+
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CategoryType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "ScoringGroup",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1210,14 +1209,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchCorpScoringGroup(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters=new Filter[1];
-		filters[0]=new Filter("CategoryType", PennantConstants.PFF_CUSTCTG_CORP,Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "ScoringGroup", filters);
+
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CategoryType", PennantConstants.PFF_CUSTCTG_CORP, Filter.OP_EQUAL);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "ScoringGroup",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1231,30 +1231,26 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchAccounting(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		//////////////////Stage Accounting with Stage Accounting Rules change///////////
-		/*Filter[] filter = new Filter[1];
-		filter[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_STAGE, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "AccountingSet", filter);
-		if (dataObject instanceof String) {
-			this.lovDescRefDesc.setValue("");
-		} else {
-			AccountingSet details = (AccountingSet) dataObject;
-			if (details != null) {
-				this.finRefId.setValue(details.getAccountSetid());
-				this.lovDescRefDesc.setValue(details.getEventCode() + "-" + details.getAccountSetCodeName());
-				getFinanceReferenceDetail().setLovDescNamelov(details.getEventCode());
-				getFinanceReferenceDetail().setLovDescRefDesc(details.getAccountSetCodeName());
-			}
-		}*/
-		
+		/*
+		 * Filter[] filter = new Filter[1]; filter[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_STAGE,
+		 * Filter.OP_EQUAL);
+		 * 
+		 * Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "AccountingSet",
+		 * filter); if (dataObject instanceof String) { this.lovDescRefDesc.setValue(""); } else { AccountingSet details
+		 * = (AccountingSet) dataObject; if (details != null) { this.finRefId.setValue(details.getAccountSetid());
+		 * this.lovDescRefDesc.setValue(details.getEventCode() + "-" + details.getAccountSetCodeName());
+		 * getFinanceReferenceDetail().setLovDescNamelov(details.getEventCode());
+		 * getFinanceReferenceDetail().setLovDescRefDesc(details.getAccountSetCodeName()); } }
+		 */
+
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("RuleModule", RuleConstants.MODULE_STGACRULE, Filter.OP_EQUAL);
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "Rule", filter);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
@@ -1268,17 +1264,18 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 			}
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchTemplate(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("RuleModule", NotificationConstants.MAIL_MODULE_FIN, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "Notifications", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "Notifications",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1292,14 +1289,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchFinanceDedupe(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("QueryModule", FinanceConstants.DEDUP_FINANCE, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1313,14 +1311,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchCustomerDedupe(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("QueryModule", FinanceConstants.DEDUP_CUSTOMER, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1334,14 +1333,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchBlackListDedupe(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("QueryModule", FinanceConstants.DEDUP_BLACKLIST, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1355,14 +1355,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchPoliceDedupe(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("QueryModule", FinanceConstants.DEDUP_POLICE, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1376,14 +1377,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchReturnCheque(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("ModuleName", FinanceConstants.DEDUP_RETCHQ, Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "ProcessEditor", filters);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "ProcessEditor",
+				filters);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1403,7 +1405,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("RuleModule", RuleConstants.MODULE_ELGRULE, Filter.OP_EQUAL);
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "Rule", filter);
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
@@ -1419,17 +1421,18 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchLimitService(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = null;
-		if(StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)){
+		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			Filter[] filter = new Filter[1];
 			filter[0] = new Filter("LimitCode", FinanceConstants.QUICK_DISBURSEMENT, Filter.OP_NOT_EQUAL);
 
-			dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "LimitCodeDetail", filter);
-		}else{
+			dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "LimitCodeDetail",
+					filter);
+		} else {
 			dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "LimitCodeDetail");
 		}
 		if (dataObject instanceof String) {
@@ -1473,11 +1476,11 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	}
 	// ### 06-05-2018 - End
 
-	
 	public void onClick$btnSearchTatNotification(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "TATNotificationCode");
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink,
+				"TATNotificationCode");
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {
@@ -1491,10 +1494,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnFinanceTabs(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "StageTabDetail");
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
@@ -1509,15 +1512,15 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void fillListBox(Listbox listbox, String roleCodes, Map<String, String> checkedlist, int type) {
 		logger.debug("Entering");
-		
+
 		listbox.getItems().clear();
 		String[] roles = roleCodes.split(";");
 		for (int i = 0; i < roles.length; i++) {
-			
-			if(StringUtils.isBlank(roles[i])){
+
+			if (StringUtils.isBlank(roles[i])) {
 				continue;
 			}
 			Listitem item = new Listitem();
@@ -1533,7 +1536,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			lc.setParent(item);
 			listbox.appendChild(item);
 		}
-		
+
 		logger.debug("Leaving");
 
 	}
@@ -1541,12 +1544,12 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public final class onCheckBoxCheked implements EventListener<Event> {
 
 		public onCheckBoxCheked() {
-			
+
 		}
-		
+
 		public void onEvent(Event event) throws Exception {
 			logger.debug("Entering" + event.toString());
-			
+
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			switch (checkbox.getTabindex()) {
 			case FinanceConstants.PROCEDT_SHOWINSTAGE:
@@ -1576,11 +1579,11 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// ============Design the zul file===========//
 	private void doDesignByType(FinanceReferenceDetail finRefDetail) {
 		logger.debug("Entering");
-		
+
 		switch (finRefDetail.getFinRefType()) {
-		
+
 		case FinanceConstants.PROCEDT_CHECKLIST:
-			
+
 			// For validations
 			this.showInStage.setReadonly(false);
 			this.allowInputInStage.setReadonly(false);
@@ -1592,266 +1595,290 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.rowPostpone.setVisible(true);
 			this.label_FinanceReferenceDetailDialog_AllowWaiver.setVisible(true);
 			this.hboxWaiver.setVisible(true);
-			
+
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchQuestionId.setVisible(true);// show
 
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Question.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Question.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowDoubleListbox.setVisible(true);// Show
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
-			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_ShowInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.label_FinanceReferenceDetailDialog_AllowInputInStage
+					.setValue(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.listheadAllowInputInStage.setLabel(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
+			this.listheadAllowInputInStage
+					.setLabel(Labels.getLabel("label_FinReferDialogLink_AllowInputInStage.value"));
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+
 			doEnableByChecked(this.listboxallowInputInStage);
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceCheckListList.title"));
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceCheckListList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_AGREEMENT:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchAggCode.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Agreement.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Agreement.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
 
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceAgreementList.title"));
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceAgreementList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_ELIGIBILITY:
-			
+
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.mandInputInStage.setLeft("");
 			// For validations
 			this.showInStage.setReadonly(false);
-			this.allowInputInStage.setReadonly(false); 
+			this.allowInputInStage.setReadonly(false);
 			this.mandInputInStage.setReadonly(true);
-			
+
 			this.overRide.setDisabled(false);
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(false);
 			this.rowDeviation.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			// error labels
 			this.showInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_MandInputInStage.value"));
 			this.allowInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.mandInputInStage.setLeft("");
-			
+
 			// LOV List
 			this.btnSearchElgRule.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_Eligibility.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinReferDialogLink_Eligibility.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowDoubleListbox.setVisible(true);// Show
 
-			
 			// labels of list boxes
-			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
+			this.label_FinanceReferenceDetailDialog_ShowInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+			this.label_FinanceReferenceDetailDialog_AllowInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
 			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue("");// not required
-			
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
 			this.listheadAllowInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ReGenerateInStage.value"));
 			this.listheadMandInputInStage.setLabel("");// not required
-			
+
 			doEnableByChecked(this.listboxallowInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceEligibilityList.title"));
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceEligibilityList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_RTLSCORE:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			//Deviation
 			this.rowDeviation.setVisible(true);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchScoringGroup.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceScoringList.title"));
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceScoringList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_CORPSCORE:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchCorpScoringGroup.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinReferDialogLink_ScoringGroup.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceCorpScoringList.title"));
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceCorpScoringList.title"));
 			break;
-			
+
 		case FinanceConstants.PROCEDT_STAGEACC:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchAccounting.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Accounting.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Accounting.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceAccountingList.title"));			
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceAccountingList.title"));
 			CheckOverride();
 			break;
-			
+
 		case FinanceConstants.PROCEDT_TEMPLATE:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchTemplate.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_Template.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_Template.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceMailTemplateList.title"));			
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceMailTemplateList.title"));
 			CheckOverride();
 			break;
-			
+
 		case FinanceConstants.PROCEDT_FINDEDUP:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -1860,38 +1887,41 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchFinanceDedupe.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_FinanceDedupe.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_FinanceDedupe.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceDedupeList.title"));			
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_FinanceDedupeList.title"));
 			CheckOverride();
 			break;
-		
-            case FinanceConstants.PROCEDT_CUSTDEDUP:
-			
+
+		case FinanceConstants.PROCEDT_CUSTDEDUP:
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -1900,38 +1930,41 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchCustomerDedupe.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_CustomerDedupe.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_CustomerDedupe.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustomerDedupeList.title"));			
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_Window_CustomerDedupeList.title"));
 			CheckOverride();
-			break;	
-			
+			break;
+
 		case FinanceConstants.PROCEDT_BLACKLIST:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -1940,38 +1973,40 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchBlackListDedupe.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_CustBlackList.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_CustBlackList.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustBlackList.title"));			
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustBlackList.title"));
 			CheckOverride();
 			break;
-		
+
 		case FinanceConstants.PROCEDT_POLICEDEDUP:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -1980,38 +2015,40 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(true);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchPoliceDedupe.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_CustPolice.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_CustPolice.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustPolice.title"));			
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustPolice.title"));
 			CheckOverride();
 			break;
-			
+
 		case FinanceConstants.PROCEDT_RETURNCHQ:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -2020,38 +2057,40 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(false);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchReturnCheque.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_CustReturnChq.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_CustReturnChq.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustReturnChq.title"));			
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_CustReturnChq.title"));
 			CheckOverride();
 			break;
-			
+
 		case FinanceConstants.PROCEDT_LIMIT:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -2060,38 +2099,40 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(false);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchLimitService.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_LimitService.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_LimitService.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_LimitService.title"));			
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_LimitService.title"));
 			CheckOverride();
 			break;
-			
+
 		case FinanceConstants.PROCEDT_TATNOTIFICATION:
-			
+
 			// For validations
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
@@ -2100,34 +2141,37 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.overRideValue.setReadonly(false);
 			this.rowOverRide.setVisible(false);
 			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			// LOV List
 			this.btnSearchTatNotification.setVisible(true);
 			this.row_AlertType.setVisible(true);
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_TATNotification.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_TATNotification.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
-			
+
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
-			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_FinRefDialogLink_TATNotification.value"));			
+			this.label_FinanceReferenceDetailDialogLink
+					.setValue(Labels.getLabel("label_FinRefDialogLink_TATNotification.value"));
 			CheckOverride();
 			break;
 		case FinanceConstants.PROCEDT_FINANCETABS:
@@ -2135,31 +2179,33 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.showInStage.setReadonly(true);// not required
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
-			
+
 			// error labels
 			this.showInStage.setLeft("");
 			this.allowInputInStage.setLeft("");
 			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_StageTabInStage.value"));
-			
+
 			// LOV List
 			this.btnFinanceTabs.setVisible(true);// show
-			
+
 			// LOV Label
-			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_FinanceTabs.value"));
-			
+			this.label_FinanceReferenceDetailDialog_FinRefId
+					.setValue(Labels.getLabel("label_FinRefDialogLink_FinanceTabs.value"));
+
 			// ROWS WITH LIST Boxes
 			this.rowSingleListbox.setVisible(true);// Show
 
 			// labels of list boxes
 			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
 			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
-			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			
+			this.label_FinanceReferenceDetailDialog_MandInputInStage
+					.setValue(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
+
 			// List headers of list boxes
 			this.listheadShowInStage.setLabel("");// not required
 			this.listheadAllowInputInStage.setLabel("");// not required
 			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ShowInStage.value"));
-			
+
 			doEnableByChecked(this.listboxmandInputInStage);
 			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceTabsList.title"));
 
@@ -2172,9 +2218,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// =====ADD or Update========//
 	private void processFinRefDetails(FinanceReferenceDetail financeReferenceDetail) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		if (financeReferenceDetail.getRecordType() != null) {
-			if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_ADD) || financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
+			if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_ADD)
+					|| financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
 					|| financeReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				if ("Save".equals(financeReferenceDetail.getUserAction())) {
 					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -2188,13 +2235,14 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeReferenceDetail.setNewRecord(true);
 		}
-		
+
 		switch (financeReferenceDetail.getFinRefType()) {
 		case FinanceConstants.PROCEDT_CHECKLIST:
 			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxFinanceCheckList);
 			break;
 		case FinanceConstants.PROCEDT_AGREEMENT:
-			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listboxFinanceAgreementLink);
+			processAddOrUpdate(financeReferenceDetail,
+					getFinanceReferenceDetailDialogCtrl().listboxFinanceAgreementLink);
 			break;
 		case FinanceConstants.PROCEDT_ELIGIBILITY:
 			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxEligibilityRules);
@@ -2243,10 +2291,10 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	public void processAddOrUpdate(FinanceReferenceDetail newFinrefDet, Listbox listbox) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		boolean contains = false;
 		List<Listitem> avlFinRef = listbox.getItems();
-		
+
 		for (int i = 0; i < avlFinRef.size(); i++) {
 			FinanceReferenceDetail finRefDet = (FinanceReferenceDetail) avlFinRef.get(i).getAttribute("data");
 			if (finRefDet.getFinRefId() == newFinrefDet.getFinRefId()) {
@@ -2258,7 +2306,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 					newFinrefDet.setNewRecord(false);
 					newFinrefDet.setFinRefDetailId(finRefDet.getFinRefDetailId());
 					newFinrefDet.setVersion(finRefDet.getVersion());
-					
+
 					FinanceReferenceDetail befImage = new FinanceReferenceDetail();
 					BeanUtils.copyProperties(finRefDet.getBefImage(), befImage);
 					newFinrefDet.setBefImage(befImage);
@@ -2277,8 +2325,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.window_FinanceReferenceDetailDialogLink.onClose();
 			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
 		}
-		
-		if("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1){
+
+		if ("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1) {
 			getFinanceReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -2287,7 +2335,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// ====== Delete ===============//
 	private void deleteFinRrefDetails(FinanceReferenceDetail finRefDetail) {
 		logger.debug("Entering");
-		
+
 		switch (finRefDetail.getFinRefType()) {
 		case FinanceConstants.PROCEDT_CHECKLIST:
 			processDelet(finRefDetail, getFinanceReferenceDetailDialogCtrl().listBoxFinanceCheckList);
@@ -2342,26 +2390,27 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	public void processDelet(FinanceReferenceDetail newFinrefDet, Listbox listbox) {
 		logger.debug("Entering");
-		
+
 		List<Listitem> avlFinRef = listbox.getItems();
-		
+
 		for (int i = 0; i < avlFinRef.size(); i++) {
 			FinanceReferenceDetail finRefDet = (FinanceReferenceDetail) avlFinRef.get(i).getAttribute("data");
 			if (finRefDet.getFinRefId() == newFinrefDet.getFinRefId()) {
-				if (finRefDet.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED) ||
-						(finRefDet.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD) && !finRefDet.isNewRecord())) {
+				if (finRefDet.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)
+						|| (finRefDet.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)
+								&& !finRefDet.isNewRecord())) {
 					listbox.removeItemAt(avlFinRef.get(i).getIndex());
 					List<FinanceReferenceDetail> finRefDetailList = new ArrayList<FinanceReferenceDetail>();
 					finRefDetailList.add(newFinrefDet);
 					getFinanceReferenceDetailDialogCtrl().dofillListbox(finRefDetailList, listbox);
-					if("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1){
+					if ("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getVisibleItemCount() == 1) {
 						getFinanceReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(false);
-					}else{
+					} else {
 						getFinanceReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(true);
 					}
 				} else {
 					listbox.removeItemAt(avlFinRef.get(i).getIndex());
-					if("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getItemCount() == 0){
+					if ("listBoxCorpScoringGroup".equals(listbox.getId()) && listbox.getItemCount() == 0) {
 						getFinanceReferenceDetailDialogCtrl().btnNew_FinCorpScoringGroup.setVisible(true);
 					}
 				}
@@ -2463,7 +2512,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.space_Override.setSclass("");
 		}
 	}
-	
+
 	/**
 	 * On Deviation Checked
 	 * 
@@ -2474,19 +2523,19 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		checkAllowDeviation();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
-	 * To enable and Disable the fields 
+	 * To enable and Disable the fields
 	 */
-	private void checkAllowDeviation(){
+	private void checkAllowDeviation() {
 		logger.debug("Entering");
-		int refType=getFinanceReferenceDetail().getFinRefType();
+		int refType = getFinanceReferenceDetail().getFinRefType();
 		if (refType == FinanceConstants.PROCEDT_CHECKLIST) {
 			if (allowDeviation.isChecked()) {
 				this.allowWaiver.setDisabled(false);
 				this.allowPostpone.setDisabled(false);
 				this.allowExpire.setDisabled(false);
-			}else{
+			} else {
 				this.allowWaiver.setChecked(false);
 				this.allowPostpone.setChecked(false);
 				this.allowExpire.setChecked(false);

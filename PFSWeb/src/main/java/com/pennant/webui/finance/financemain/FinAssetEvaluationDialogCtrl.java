@@ -92,63 +92,61 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/LMTMasters/FinAssetEvaluation/finAssetEvaluationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/LMTMasters/FinAssetEvaluation/finAssetEvaluationDialog.zul file.
  */
 public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation> {
 	private static final long serialVersionUID = 3141943554064485540L;
 	private static final Logger logger = Logger.getLogger(FinAssetEvaluationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_FinAssetEvaluationDialog; // autowired
-	protected Groupbox 		gb_basicDetails; 			     // autowired
-	protected Groupbox 		gp_REUEvaluation; 			     // autowired
-	protected Textbox 		finReference; 				     // autowired
-	protected Textbox 		custRepreName; 		             // autowired
-	protected Textbox 		remarks; 		            	 // autowired
-	protected Textbox 		panelFirm; 			             // autowired
-	protected Textbox 		reuReference; 			         // autowired
-	protected Textbox    	propertyDesc; 		             // autowired
-	protected Combobox 		status; 	                     // autowired
-	protected Textbox 		valuationComments; 			     // autowired
-	protected CurrencyBox 	totalRevenue; 			         // autowired
-	protected CurrencyBox 	marketValueAED; 			     // autowired
-	protected CurrencyBox 	valuerFee; 			             // autowired
-	protected CurrencyBox 	customerFee; 			         // autowired
-	protected CurrencyBox 	expRentalIncome; 			     // autowired
-	protected Combobox 		typeofValuation; 	             // autowired
-	protected ExtendedCombobox	vendorValuer; 	                 // autowired
-	protected Combobox 		propertyStatus; 	             // autowired
-	protected Combobox 		reuDecision; 	                 // autowired
-	protected Checkbox      custAwareVisit; 	             // autowired
-	protected Checkbox      tenantAwareVisit; 	             // autowired
-	protected Checkbox      propIsRented; 	                 // autowired
-	protected Checkbox      illegalDivAlteration; 	         // autowired
-	protected Checkbox      nocReqDevMunicipality; 	         // autowired
-	protected Decimalbox    unitVillaSize;                   // autowired
-	protected Checkbox      leased; 	                     // autowired
-	protected Decimalbox    percWorkCompletion; 	         // autowired
-	protected Textbox 		contactNumCountryCode; 		     // autowired
-	protected Textbox 		contactNumAreaCode; 		     // autowired
-	protected Textbox 		contactPhoneNumber; 		     // autowired
-	protected Datebox       vendorInstructedDate; 			 // autowired
-	protected Datebox       reportDeliveredDate; 			 // autowired
-	protected Datebox       inspectionDate; 				 // autowired
-	protected Datebox       finalReportDate; 				 // autowired
-	protected Datebox       valuationDate; 					 // autowired
-	
+	protected Window window_FinAssetEvaluationDialog; // autowired
+	protected Groupbox gb_basicDetails; // autowired
+	protected Groupbox gp_REUEvaluation; // autowired
+	protected Textbox finReference; // autowired
+	protected Textbox custRepreName; // autowired
+	protected Textbox remarks; // autowired
+	protected Textbox panelFirm; // autowired
+	protected Textbox reuReference; // autowired
+	protected Textbox propertyDesc; // autowired
+	protected Combobox status; // autowired
+	protected Textbox valuationComments; // autowired
+	protected CurrencyBox totalRevenue; // autowired
+	protected CurrencyBox marketValueAED; // autowired
+	protected CurrencyBox valuerFee; // autowired
+	protected CurrencyBox customerFee; // autowired
+	protected CurrencyBox expRentalIncome; // autowired
+	protected Combobox typeofValuation; // autowired
+	protected ExtendedCombobox vendorValuer; // autowired
+	protected Combobox propertyStatus; // autowired
+	protected Combobox reuDecision; // autowired
+	protected Checkbox custAwareVisit; // autowired
+	protected Checkbox tenantAwareVisit; // autowired
+	protected Checkbox propIsRented; // autowired
+	protected Checkbox illegalDivAlteration; // autowired
+	protected Checkbox nocReqDevMunicipality; // autowired
+	protected Decimalbox unitVillaSize; // autowired
+	protected Checkbox leased; // autowired
+	protected Decimalbox percWorkCompletion; // autowired
+	protected Textbox contactNumCountryCode; // autowired
+	protected Textbox contactNumAreaCode; // autowired
+	protected Textbox contactPhoneNumber; // autowired
+	protected Datebox vendorInstructedDate; // autowired
+	protected Datebox reportDeliveredDate; // autowired
+	protected Datebox inspectionDate; // autowired
+	protected Datebox finalReportDate; // autowired
+	protected Datebox valuationDate; // autowired
+
 	// not auto wired vars
-	private FinAssetEvaluation finAssetEvaluation; 							 // overhanded per param
+	private FinAssetEvaluation finAssetEvaluation; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient FinAssetEvaluationService finAssetEvaluationService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
@@ -160,10 +158,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	private Grid grid_Reference2;
 
 	private transient boolean recSave = false;
-	private transient boolean   newFinance;
-	public transient int   ccyFormatter = 0;
+	private transient boolean newFinance;
+	public transient int ccyFormatter = 0;
 	protected Groupbox finBasicdetails;
-	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -180,9 +178,8 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinAssetEvaluation object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinAssetEvaluation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -193,7 +190,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		// Set the page level components.
 		setPageComponents(window_FinAssetEvaluationDialog);
 
-		if(event.getTarget().getParent() != null){
+		if (event.getTarget().getParent() != null) {
 			parent = event.getTarget().getParent();
 		}
 
@@ -210,15 +207,16 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 
 		if (arguments.containsKey("financeDetail")) {
 			setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
-			if (getFinancedetail()!=null) {
+			if (getFinancedetail() != null) {
 				setFinAssetEvaluation(getFinancedetail().getFinAssetEvaluation());
 			}
 		}
-		
-		if(arguments.containsKey("financeMainDialogCtrl")){
+
+		if (arguments.containsKey("financeMainDialogCtrl")) {
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 			try {
-					financeMainDialogCtrl.getClass().getMethod("setFinAssetEvaluationDialogCtrl", this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
+				financeMainDialogCtrl.getClass().getMethod("setFinAssetEvaluationDialogCtrl", this.getClass())
+						.invoke(getFinanceMainDialogCtrl(), this);
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
@@ -226,24 +224,24 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 			this.window_FinAssetEvaluationDialog.setTitle("");
 		}
 
-		if(arguments.containsKey("roleCode")){
+		if (arguments.containsKey("roleCode")) {
 			setRole((String) arguments.get("roleCode"));
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinAssetEvaluationDialog");
 		}
 
-		if(arguments.containsKey("ccyFormatter")){
-			this.ccyFormatter = (Integer)arguments.get("ccyFormatter");
-		}		
-		
+		if (arguments.containsKey("ccyFormatter")) {
+			this.ccyFormatter = (Integer) arguments.get("ccyFormatter");
+		}
+
 		if (arguments.containsKey("parentTab")) {
 			parentTab = (Tab) arguments.get("parentTab");
 		}
-		
+
 		if (isWorkFlowEnabled() && !isNewFinance()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinAssetEvaluationDialog");
 		}
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -274,7 +272,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		this.typeofValuation.setWidth("171px");
 		this.propertyStatus.setWidth("171px");
 		this.reuDecision.setWidth("171px");
-		
+
 		this.vendorValuer.setInputAllowed(false);
 		this.vendorValuer.setDisplayStyle(3);
 		this.vendorValuer.setModuleName("VendorValuator");
@@ -282,14 +280,14 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		this.vendorValuer.setDescColumn("ValueDesc");
 		this.vendorValuer.setValidateColumns(new String[] { "FieldCodeValue" });
 		this.vendorValuer.setTextBoxWidth(151);
-		
+
 		this.contactNumCountryCode.setMaxlength(3);
 		this.contactNumCountryCode.setWidth("50px");
 		this.contactNumAreaCode.setMaxlength(3);
 		this.contactNumAreaCode.setWidth("50px");
 		this.contactPhoneNumber.setMaxlength(8);
 		this.contactPhoneNumber.setWidth("100px");
-		
+
 		this.custRepreName.setMaxlength(200);
 		this.remarks.setMaxlength(500);
 		this.panelFirm.setMaxlength(100);
@@ -297,33 +295,33 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		this.propertyDesc.setMaxlength(500);
 		this.reuReference.setMaxlength(50);
 		this.valuationComments.setMaxlength(500);
-	
+
 		this.totalRevenue.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.totalRevenue.setScale(ccyFormatter);
 		this.totalRevenue.setTextBoxWidth(171);
-	
+
 		this.marketValueAED.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.marketValueAED.setScale(ccyFormatter);
 		this.marketValueAED.setTextBoxWidth(171);
-		
+
 		this.valuerFee.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.valuerFee.setScale(ccyFormatter);
 		this.valuerFee.setTextBoxWidth(171);
-		
+
 		this.customerFee.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.customerFee.setScale(ccyFormatter);
 		this.customerFee.setTextBoxWidth(171);
-		
+
 		this.expRentalIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.expRentalIncome.setScale(ccyFormatter);
 		this.expRentalIncome.setTextBoxWidth(171);
-		
+
 		this.vendorInstructedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.reportDeliveredDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.inspectionDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finalReportDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valuationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -337,8 +335,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -354,18 +351,18 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		logger.debug("Leaving");
 	}
 
-
-	public void doSave_FinAssetEvaluation(FinanceDetail financeDetail,Tab etihadTab,boolean recSave) throws InterruptedException{
+	public void doSave_FinAssetEvaluation(FinanceDetail financeDetail, Tab etihadTab, boolean recSave)
+			throws InterruptedException {
 		logger.debug("Entering");
 
 		doClearMessage();
-		if(!recSave){
-			doSetValidation();	
+		if (!recSave) {
+			doSetValidation();
 			doSetLOVValidation();
 		}
 		FinAssetEvaluation finAssetEvaluation = getFinAssetEvaluation();
-		doWriteComponentsToBean(finAssetEvaluation,etihadTab);
-		if(StringUtils.isBlank(getFinAssetEvaluation().getRecordType())){
+		doWriteComponentsToBean(finAssetEvaluation, etihadTab);
+		if (StringUtils.isBlank(getFinAssetEvaluation().getRecordType())) {
 			finAssetEvaluation.setVersion(getFinAssetEvaluation().getVersion() + 1);
 			finAssetEvaluation.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			finAssetEvaluation.setNewRecord(true);
@@ -470,9 +467,12 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		logger.debug("Entering");
 		this.finReference.setValue(aFinAssetEvaluation.getFinReference());
 		this.custRepreName.setValue(aFinAssetEvaluation.getCustRepreName());
-		fillComboBox(this.typeofValuation, aFinAssetEvaluation.getTypeofValuation(), PennantStaticListUtil.getTypeOfValuations(), "");
-		fillComboBox(this.propertyStatus, aFinAssetEvaluation.getPropertyStatus(), PennantStaticListUtil.getPropertyStatus(), "");
-		fillComboBox(this.reuDecision, aFinAssetEvaluation.getReuDecision(), PennantStaticListUtil.getREUDecisionTypes(), "");
+		fillComboBox(this.typeofValuation, aFinAssetEvaluation.getTypeofValuation(),
+				PennantStaticListUtil.getTypeOfValuations(), "");
+		fillComboBox(this.propertyStatus, aFinAssetEvaluation.getPropertyStatus(),
+				PennantStaticListUtil.getPropertyStatus(), "");
+		fillComboBox(this.reuDecision, aFinAssetEvaluation.getReuDecision(),
+				PennantStaticListUtil.getREUDecisionTypes(), "");
 		fillComboBox(this.status, aFinAssetEvaluation.getStatus(), PennantStaticListUtil.getEvaluationStatus(), "");
 		this.vendorValuer.setValue(String.valueOf(aFinAssetEvaluation.getVendorValuer()));
 		this.vendorValuer.setDescription(StringUtils.trimToEmpty(aFinAssetEvaluation.getVendorValuerDesc()));
@@ -481,9 +481,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		this.percWorkCompletion.setValue(aFinAssetEvaluation.getPercWorkCompletion());
 		this.propertyDesc.setValue(aFinAssetEvaluation.getPropertyDesc());
 		this.reuReference.setValue(aFinAssetEvaluation.getReuReference());
-		if(StringUtils.isNotEmpty(aFinAssetEvaluation.getTenantContactNum())){
-			String[] contactNumber = PennantApplicationUtil.unFormatPhoneNumber(aFinAssetEvaluation.getTenantContactNum());
-			if(contactNumber.length==3){
+		if (StringUtils.isNotEmpty(aFinAssetEvaluation.getTenantContactNum())) {
+			String[] contactNumber = PennantApplicationUtil
+					.unFormatPhoneNumber(aFinAssetEvaluation.getTenantContactNum());
+			if (contactNumber.length == 3) {
 				this.contactNumCountryCode.setValue(contactNumber[0]);
 				this.contactNumAreaCode.setValue(contactNumber[1]);
 				this.contactPhoneNumber.setValue(contactNumber[2]);
@@ -491,10 +492,12 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		}
 		this.valuationComments.setValue(aFinAssetEvaluation.getValuationComments());
 		this.totalRevenue.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getTotalRevenue(), ccyFormatter));
-		this.marketValueAED.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getMarketValueAED(), ccyFormatter));
+		this.marketValueAED
+				.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getMarketValueAED(), ccyFormatter));
 		this.valuerFee.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getValuerFee(), ccyFormatter));
 		this.customerFee.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getCustomerFee(), ccyFormatter));
-		this.expRentalIncome.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getExpRentalIncome(), ccyFormatter));
+		this.expRentalIncome
+				.setValue(PennantAppUtil.formateAmount(aFinAssetEvaluation.getExpRentalIncome(), ccyFormatter));
 		this.custAwareVisit.setChecked(aFinAssetEvaluation.isCustAwareVisit());
 		this.tenantAwareVisit.setChecked(aFinAssetEvaluation.isTenantAwareVisit());
 		this.propIsRented.setChecked(aFinAssetEvaluation.isPropIsRented());
@@ -515,9 +518,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinAssetEvaluation
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinAssetEvaluation aFinAssetEvaluation,Tab etihadTab) throws InterruptedException {
+	public void doWriteComponentsToBean(FinAssetEvaluation aFinAssetEvaluation, Tab etihadTab)
+			throws InterruptedException {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -527,20 +531,20 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinAssetEvaluation.setCustRepreName(this.custRepreName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(StringUtils.equals(getComboboxValue(this.typeofValuation), "#")) {
+			if (StringUtils.equals(getComboboxValue(this.typeofValuation), "#")) {
 				aFinAssetEvaluation.setTypeofValuation(null);
-			}else{
+			} else {
 				aFinAssetEvaluation.setTypeofValuation(getComboboxValue(this.typeofValuation));
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -551,27 +555,27 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 			wve.add(we);
 		}
 		try {
-			if(StringUtils.equals(getComboboxValue(this.status), "#")){
+			if (StringUtils.equals(getComboboxValue(this.status), "#")) {
 				aFinAssetEvaluation.setStatus(null);
-			}else{
+			} else {
 				aFinAssetEvaluation.setStatus(getComboboxValue(this.status));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(StringUtils.equals(getComboboxValue(this.propertyStatus), "#")){
+			if (StringUtils.equals(getComboboxValue(this.propertyStatus), "#")) {
 				aFinAssetEvaluation.setPropertyStatus(null);
-			}else{
+			} else {
 				aFinAssetEvaluation.setPropertyStatus(getComboboxValue(this.propertyStatus));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(StringUtils.equals(getComboboxValue(this.reuDecision), "#")){
+			if (StringUtils.equals(getComboboxValue(this.reuDecision), "#")) {
 				aFinAssetEvaluation.setReuDecision(null);
-			}else{
+			} else {
 				aFinAssetEvaluation.setReuDecision(getComboboxValue(this.reuDecision));
 			}
 		} catch (WrongValueException we) {
@@ -588,12 +592,13 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 			wve.add(we);
 		}
 		try {
-			aFinAssetEvaluation.setPercWorkCompletion(this.percWorkCompletion.intValue() == 0 ? BigDecimal.ZERO : 
-				new BigDecimal(PennantApplicationUtil.formatRate(this.percWorkCompletion.getValue().doubleValue(),2)));
+			aFinAssetEvaluation.setPercWorkCompletion(this.percWorkCompletion.intValue() == 0 ? BigDecimal.ZERO
+					: new BigDecimal(
+							PennantApplicationUtil.formatRate(this.percWorkCompletion.getValue().doubleValue(), 2)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinAssetEvaluation.setPropertyDesc(this.propertyDesc.getValue());
 		} catch (WrongValueException we) {
@@ -604,62 +609,73 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		if(StringUtils.isNotEmpty(this.contactNumCountryCode.getValue()) || 
-				StringUtils.isNotEmpty(this.contactNumAreaCode.getValue()) ||
-				StringUtils.isNotEmpty(this.contactPhoneNumber.getValue())){
+
+		if (StringUtils.isNotEmpty(this.contactNumCountryCode.getValue())
+				|| StringUtils.isNotEmpty(this.contactNumAreaCode.getValue())
+				|| StringUtils.isNotEmpty(this.contactPhoneNumber.getValue())) {
 			try {
-				if(StringUtils.isEmpty(this.contactNumCountryCode.getValue()) && !this.contactNumCountryCode.isReadonly()){
-					throw new WrongValueException(this.contactNumCountryCode,Labels.getLabel("label_TenantContactNum_Validation_CountryCode"));
+				if (StringUtils.isEmpty(this.contactNumCountryCode.getValue())
+						&& !this.contactNumCountryCode.isReadonly()) {
+					throw new WrongValueException(this.contactNumCountryCode,
+							Labels.getLabel("label_TenantContactNum_Validation_CountryCode"));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				if(StringUtils.isEmpty(this.contactNumAreaCode.getValue()) && !this.contactNumAreaCode.isReadonly()){
-					throw new WrongValueException(this.contactNumAreaCode,Labels.getLabel("label_TenantContactNum_Validation_AreaCode"));
+				if (StringUtils.isEmpty(this.contactNumAreaCode.getValue()) && !this.contactNumAreaCode.isReadonly()) {
+					throw new WrongValueException(this.contactNumAreaCode,
+							Labels.getLabel("label_TenantContactNum_Validation_AreaCode"));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				if(StringUtils.isEmpty(this.contactPhoneNumber.getValue()) && !this.contactPhoneNumber.isReadonly()){
-					throw new WrongValueException(this.contactPhoneNumber,Labels.getLabel("label_TenantContactNum_Validation_PhoneNum"));
+				if (StringUtils.isEmpty(this.contactPhoneNumber.getValue()) && !this.contactPhoneNumber.isReadonly()) {
+					throw new WrongValueException(this.contactPhoneNumber,
+							Labels.getLabel("label_TenantContactNum_Validation_PhoneNum"));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
-		
+
 		try {
-			aFinAssetEvaluation.setTenantContactNum(PennantApplicationUtil.formatPhoneNumber(this.contactNumCountryCode.getValue(),this.contactNumAreaCode.getValue(),this.contactPhoneNumber.getValue()));
+			aFinAssetEvaluation
+					.setTenantContactNum(PennantApplicationUtil.formatPhoneNumber(this.contactNumCountryCode.getValue(),
+							this.contactNumAreaCode.getValue(), this.contactPhoneNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinAssetEvaluation.setTotalRevenue(PennantAppUtil.unFormateAmount(this.totalRevenue.getValidateValue(), ccyFormatter));			
+			aFinAssetEvaluation.setTotalRevenue(
+					PennantAppUtil.unFormateAmount(this.totalRevenue.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinAssetEvaluation.setMarketValueAED(PennantAppUtil.unFormateAmount(this.marketValueAED.getValidateValue(), ccyFormatter));			
+			aFinAssetEvaluation.setMarketValueAED(
+					PennantAppUtil.unFormateAmount(this.marketValueAED.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinAssetEvaluation.setValuerFee(PennantAppUtil.unFormateAmount(this.valuerFee.getValidateValue(), ccyFormatter));			
+			aFinAssetEvaluation
+					.setValuerFee(PennantAppUtil.unFormateAmount(this.valuerFee.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinAssetEvaluation.setCustomerFee(PennantAppUtil.unFormateAmount(this.customerFee.getValidateValue(), ccyFormatter));			
+			aFinAssetEvaluation
+					.setCustomerFee(PennantAppUtil.unFormateAmount(this.customerFee.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinAssetEvaluation.setExpRentalIncome(PennantAppUtil.unFormateAmount(this.expRentalIncome.getValidateValue(), ccyFormatter));			
+			aFinAssetEvaluation.setExpRentalIncome(
+					PennantAppUtil.unFormateAmount(this.expRentalIncome.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -730,7 +746,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		showErrorDetails(wve, etihadTab);
 		aFinAssetEvaluation.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
@@ -744,13 +760,13 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		logger.debug("Entering");
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		if(!recSave){
+		if (!recSave) {
 			if (wve.size() > 0) {
 				logger.debug("Throwing occured Errors By using WrongValueException");
-				if(parentTab != null){
+				if (parentTab != null) {
 					parentTab.setSelected(true);
 				}
-				if(etihadTab != null){
+				if (etihadTab != null) {
 					etihadTab.setSelected(true);
 				}
 				WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -762,13 +778,11 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinAssetEvaluation
 	 * @throws InterruptedException
@@ -783,19 +797,19 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 			aFinAssetEvaluation = new FinAssetEvaluation();
 			aFinAssetEvaluation.setNewRecord(true);
 			setFinAssetEvaluation(aFinAssetEvaluation);
-		} 
-		
+		}
+
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aFinAssetEvaluation.isNew()) {
 			this.btnCtrl.setInitNew();
-			doEdit(); 
+			doEdit();
 			// setFocus
 			this.custRepreName.focus();
 		} else {
 			this.custRepreName.focus();
-			if(isNewFinance()){
-				doEdit(); 
-			}else if (isWorkFlowEnabled()) {
+			if (isNewFinance()) {
+				doEdit();
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
 			} else {
@@ -810,15 +824,16 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 			doWriteBeanToComponents(aFinAssetEvaluation);
 
 			this.gp_REUEvaluation.setVisible(isReadOnly("FinanceMainDialog_invisibleREUValuation"));
-			
-			if(parent != null){
+
+			if (parent != null) {
 				this.toolbar.setVisible(false);
 				this.groupboxWf.setVisible(false);
 				this.gb_basicDetails.setHeight("100%");
-				int visibleRows = grid_basicDetails.getRows().getVisibleItemCount() + grid_Reference2.getRows().getVisibleItemCount();
-				this.window_FinAssetEvaluationDialog.setHeight(visibleRows*22+350+"px");
+				int visibleRows = grid_basicDetails.getRows().getVisibleItemCount()
+						+ grid_Reference2.getRows().getVisibleItemCount();
+				this.window_FinAssetEvaluationDialog.setHeight(visibleRows * 22 + 350 + "px");
 				parent.appendChild(this.window_FinAssetEvaluationDialog);
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
@@ -835,91 +850,111 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		setValidationOn(true);
 
 		if (!this.custRepreName.isReadonly()) {
-			this.custRepreName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_CustRepreName.value"), 
-					null, false));
+			this.custRepreName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_CustRepreName.value"), null, false));
 		}
 		if (!this.typeofValuation.isDisabled()) {
-			this.typeofValuation.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_TypeofValuation.value"), null, false));
+			this.typeofValuation.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_TypeofValuation.value"), null, false));
 		}
 		if (!this.vendorValuer.isReadonly()) {
-			this.vendorValuer.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_VendorValuer.value"),null,false,true));
+			this.vendorValuer.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_VendorValuer.value"), null, false, true));
 		}
 		if (!this.status.isReadonly()) {
-			this.status.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_Status.value"),null, false));
+			this.status.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_Status.value"), null, false));
 		}
 		if (!this.propertyStatus.isDisabled()) {
-			this.propertyStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_PropertyStatus.value"),null,false));
+			this.propertyStatus.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_PropertyStatus.value"), null, false));
 		}
 		if (!this.reuDecision.isDisabled()) {
-			this.reuDecision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_REUDecision.value"),null,false));
+			this.reuDecision.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_REUDecision.value"), null, false));
 		}
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_Remarks.value"), 
-					null, false));
+			this.remarks.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_Remarks.value"), null, false));
 		}
 		if (!this.panelFirm.isReadonly()) {
-			this.panelFirm.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_PanelFirm.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, false));
+			this.panelFirm.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_PanelFirm.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		if (!this.propertyDesc.isReadonly()) {
-			this.propertyDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_PropertyDesc.value"), 
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.propertyDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_PropertyDesc.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.reuReference.isReadonly()) {
-			this.reuReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_REUReference.value"), 
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.reuReference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_REUReference.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		if(!this.contactNumCountryCode.isReadonly()){
-			this.contactNumCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ContactNumCountryCode.value"),false,1));
+		if (!this.contactNumCountryCode.isReadonly()) {
+			this.contactNumCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_ContactNumCountryCode.value"), false, 1));
 		}
-		if(!this.contactNumAreaCode.isReadonly()){
-			this.contactNumAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ContactNumAreaCode.value"),false,2));
+		if (!this.contactNumAreaCode.isReadonly()) {
+			this.contactNumAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_ContactNumAreaCode.value"), false, 2));
 		}
 		if (!this.contactPhoneNumber.isReadonly()) {
-			this.contactPhoneNumber.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ContactPhoneNumber.value"),false,3));
+			this.contactPhoneNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_ContactPhoneNumber.value"), false, 3));
 		}
 		if (!this.valuationComments.isReadonly()) {
-			this.valuationComments.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ValuationComments.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, false));
+			this.valuationComments.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ValuationComments.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		if (!this.totalRevenue.isReadonly()) {
-			this.totalRevenue.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_FinAssetEvaluationDialog_TotalRevenue.value"), ccyFormatter, false, false));
+			this.totalRevenue.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_TotalRevenue.value"), ccyFormatter, false, false));
 		}
 		if (!this.marketValueAED.isReadonly()) {
-			this.marketValueAED.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_FinAssetEvaluationDialog_MarketValueAED.value"), ccyFormatter, false, false));
+			this.marketValueAED.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinAssetEvaluationDialog_MarketValueAED.value"),
+							ccyFormatter, false, false));
 		}
 		if (!this.valuerFee.isReadonly()) {
-			this.valuerFee.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_FinAssetEvaluationDialog_ValuerFee.value"), ccyFormatter, false, false));
+			this.valuerFee.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_ValuerFee.value"), ccyFormatter, false, false));
 		}
 		if (!this.customerFee.isReadonly()) {
-			this.customerFee.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_FinAssetEvaluationDialog_CustomerFee.value"), ccyFormatter, false, false));
+			this.customerFee.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_CustomerFee.value"), ccyFormatter, false, false));
 		}
 		if (!this.expRentalIncome.isReadonly()) {
-			this.expRentalIncome.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_FinAssetEvaluationDialog_ExpRentalIncome.value"), ccyFormatter, false, false));
+			this.expRentalIncome.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ExpRentalIncome.value"),
+							ccyFormatter, false, false));
 		}
 		if (!this.vendorInstructedDate.isDisabled()) {
-			this.vendorInstructedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_VendorInstructedDate.value"),false));
+			this.vendorInstructedDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_VendorInstructedDate.value"), false));
 		}
 		if (!this.reportDeliveredDate.isDisabled()) {
-			this.reportDeliveredDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ReportDeliveredDate.value"),false));
+			this.reportDeliveredDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_ReportDeliveredDate.value"), false));
 		}
 		if (!this.inspectionDate.isDisabled()) {
-			this.inspectionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_InspectionDate.value"),false));
+			this.inspectionDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_InspectionDate.value"), false));
 		}
 		if (!this.finalReportDate.isDisabled()) {
-			this.finalReportDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_FinalReportDate.value"),false));
+			this.finalReportDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FinAssetEvaluationDialog_FinalReportDate.value"), false));
 		}
 		if (!this.valuationDate.isDisabled()) {
-			this.valuationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ValuationDate.value"),false));
+			this.valuationDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinAssetEvaluationDialog_ValuationDate.value"), false));
 		}
 		if (!this.unitVillaSize.isReadonly()) {
-			this.unitVillaSize.setConstraint(new PTDecimalValidator(
-			Labels.getLabel("label_FinAssetEvaluationDialog_UnitVillaSize.value"), ccyFormatter, false, false,999999));
+			this.unitVillaSize.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinAssetEvaluationDialog_UnitVillaSize.value"),
+							ccyFormatter, false, false, 999999));
 		}
 		logger.debug("Leaving");
 	}
@@ -966,7 +1001,6 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-
 		logger.debug("Leaving");
 	}
 
@@ -979,7 +1013,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	}
 
 	/**
-	 * Method for clear the error Messages 
+	 * Method for clear the error Messages
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1016,10 +1050,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 
 	private void refreshList() {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	// CRUD operations
 
 	/**
@@ -1034,8 +1068,8 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-		+ "\n\n --> " + aFinAssetEvaluation.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aFinAssetEvaluation.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinAssetEvaluation.getRecordType())) {
 				aFinAssetEvaluation.setVersion(aFinAssetEvaluation.getVersion() + 1);
@@ -1126,8 +1160,8 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewFinance()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewFinance()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1170,7 +1204,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		this.inspectionDate.setDisabled(true);
 		this.finalReportDate.setDisabled(true);
 		this.valuationDate.setDisabled(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1229,7 +1263,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		doSetValidation();
 		doSetLOVValidation();
 		// fill the FinAssetEvaluation object with the components data
-		doWriteComponentsToBean(aFinAssetEvaluation,null);
+		doWriteComponentsToBean(aFinAssetEvaluation, null);
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
@@ -1274,8 +1308,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aFinAssetEvaluation (FinAssetEvaluation)
-	 * @param tranType (String)
+	 * @param aFinAssetEvaluation
+	 *            (FinAssetEvaluation)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 */
@@ -1364,8 +1400,10 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
-	 * @param method (String)
+	 * @param auditHeader
+	 *            (AuditHeader)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 */
@@ -1388,34 +1426,28 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getFinAssetEvaluationService().doApprove(auditHeader);
 
-						if (aFinAssetEvaluation.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aFinAssetEvaluation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getFinAssetEvaluationService().doReject(auditHeader);
-						if (aFinAssetEvaluation.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aFinAssetEvaluation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_FinAssetEvaluationDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_FinAssetEvaluationDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_FinAssetEvaluationDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinAssetEvaluationDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -1442,7 +1474,6 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		return processCompleted;
 	}
 
-
 	// WorkFlow Components
 
 	/**
@@ -1452,26 +1483,23 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(FinAssetEvaluation aFinAssetEvaluation,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aFinAssetEvaluation.getBefImage(), aFinAssetEvaluation);
-		return new AuditHeader(String.valueOf(aFinAssetEvaluation.getId()),
-				null, null, null, auditDetail,
+	private AuditHeader getAuditHeader(FinAssetEvaluation aFinAssetEvaluation, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinAssetEvaluation.getBefImage(), aFinAssetEvaluation);
+		return new AuditHeader(String.valueOf(aFinAssetEvaluation.getId()), null, null, null, auditDetail,
 				aFinAssetEvaluation.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinAssetEvaluationDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1490,7 +1518,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.finAssetEvaluation);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.finAssetEvaluation.getId());
@@ -1502,18 +1530,18 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	private void appendFinBasicDetails() {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("parentCtrl", this );
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			map.put("parentCtrl", this);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
-	
 
 	public void onFulfill$vendorValuer(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -1529,7 +1557,6 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1537,6 +1564,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1544,35 +1572,39 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	public FinAssetEvaluation getFinAssetEvaluation() {
 		return this.finAssetEvaluation;
 	}
+
 	public void setFinAssetEvaluation(FinAssetEvaluation finAssetEvaluation) {
 		this.finAssetEvaluation = finAssetEvaluation;
 	}
 
-	public void setFinAssetEvaluationService(
-			FinAssetEvaluationService finAssetEvaluationService) {
+	public void setFinAssetEvaluationService(FinAssetEvaluationService finAssetEvaluationService) {
 		this.finAssetEvaluationService = finAssetEvaluationService;
 	}
+
 	public FinAssetEvaluationService getFinAssetEvaluationService() {
 		return this.finAssetEvaluationService;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
+
 	public boolean isNewFinance() {
 		return newFinance;
 	}
+
 	public void setNewFinance(boolean newFinance) {
 		this.newFinance = newFinance;
 	}
-	
+
 	public FinanceDetail getFinancedetail() {
 		return financedetail;
 	}
+
 	public void setFinancedetail(FinanceDetail financedetail) {
 		this.financedetail = financedetail;
 	}
@@ -1580,6 +1612,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -1587,6 +1620,7 @@ public class FinAssetEvaluationDialogCtrl extends GFCBaseCtrl<FinAssetEvaluation
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
+
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}

@@ -70,9 +70,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalPropertyTitle/legalPropertyTitleDialog.zul file.
- * <br>
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalPropertyTitle/legalPropertyTitleDialog.zul file. <br>
  */
 public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle> {
 
@@ -111,8 +109,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -138,8 +135,8 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
-			} 
-			
+			}
+
 			this.legalPropertyTitle.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -230,8 +227,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -243,8 +239,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -400,8 +395,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -634,11 +628,11 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 
 		if (oldLegalPropertyTitleList != null && !oldLegalPropertyTitleList.isEmpty()) {
 			for (LegalPropertyTitle oldDetail : oldLegalPropertyTitleList) {
-				
+
 				if (oldDetail.getSeqNum() == aLegalPropertyTitle.getSeqNum()) {
 					duplicateRecord = true;
 				}
-				
+
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalPropertyTitle.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {

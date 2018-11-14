@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "phoneNumber", "phoneType" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Phone implements Serializable {
-	private static final long	serialVersionUID	= -1626565083533225611L;
+	private static final long serialVersionUID = -1626565083533225611L;
 
 	@XmlElement(name = "phone_number")
-	private String				phoneNumber;
+	private String phoneNumber;
 	@XmlElement(name = "phone_type")
-	private String				phoneType;
+	private String phoneType;
 
 	public Phone() {
 		super();

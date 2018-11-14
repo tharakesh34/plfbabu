@@ -10,11 +10,11 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class DepositDetailProcessImpl implements DepositDetailProcess {
 
 	private static final Logger logger = Logger.getLogger(DepositDetailProcessImpl.class);
-	
+
 	public DepositDetailProcessImpl() {
-		
+
 	}
-	
+
 	@Override
 	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");

@@ -32,28 +32,24 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	private static final Logger logger = Logger.getLogger(PresentmentReasonCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_PresentmentReasonCodeDialog; 			
-	protected Textbox 		code; 						
-	protected Textbox 		description; 						
-	protected Checkbox 		active; 					
-
+	protected Window window_PresentmentReasonCodeDialog;
+	protected Textbox code;
+	protected Textbox description;
+	protected Checkbox active;
 
 	// not auto wired variables
-	private PresentmentReasonCode 	presentmentReasonCode; 
+	private PresentmentReasonCode presentmentReasonCode;
 
-
-
-	private transient 		PresentmentReasonCodeListCtrl presentmentReasonCodeListCtrl; // overHanded per parameter
+	private transient PresentmentReasonCodeListCtrl presentmentReasonCodeListCtrl; // overHanded per parameter
 
 	// Button controller for the CRUD buttons
-	private transient boolean 			validationOn;
-	
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
-	private transient PresentmentReasonCodeService 	presentmentReasonCodeService;
+	private transient PresentmentReasonCodeService presentmentReasonCodeService;
 
 	/**
 	 * default constructor.<br>
@@ -69,7 +65,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 
 	// Component Events
 
-	public void onCreate$window_PresentmentReasonCodeDialog(Event event)throws Exception {
+	public void onCreate$window_PresentmentReasonCodeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -90,14 +86,12 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 				setPresentmentReasonCode(null);
 			}
 
-			doLoadWorkFlow(this.presentmentReasonCode.isWorkflow(),
-					this.presentmentReasonCode.getWorkflowId(),
+			doLoadWorkFlow(this.presentmentReasonCode.isWorkflow(), this.presentmentReasonCode.getWorkflowId(),
 					this.presentmentReasonCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"PresentmentReasonCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "PresentmentReasonCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -106,8 +100,8 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 			// or
 			// delete PresentmentReasonCode here.
 			if (arguments.containsKey("presentmentReasonCodeListCtrl")) {
-				setPresentmentReasonCodeListCtrl((PresentmentReasonCodeListCtrl) arguments
-						.get("presentmentReasonCodeListCtrl"));
+				setPresentmentReasonCodeListCtrl(
+						(PresentmentReasonCodeListCtrl) arguments.get("presentmentReasonCodeListCtrl"));
 			} else {
 				setPresentmentReasonCodeListCtrl(null);
 			}
@@ -143,7 +137,6 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * when the "help" button is clicked. <br>
@@ -203,14 +196,13 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPresentmentReasonCode
 	 * @throws Exception
 	 */
 
-	public void doShowDialog(PresentmentReasonCode aPresentmentReasonCode)throws Exception {
+	public void doShowDialog(PresentmentReasonCode aPresentmentReasonCode) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -245,7 +237,6 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		logger.debug("Leaving");
 	}
 
-
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
@@ -256,7 +247,6 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
-
 
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
@@ -279,7 +269,9 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		this.active.setChecked(aPresentmentReasonCode.isActive());
 		this.recordStatus.setValue(aPresentmentReasonCode.getRecordStatus());
 
-		if(aPresentmentReasonCode.isNew() || (aPresentmentReasonCode.getRecordType() != null ? aPresentmentReasonCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aPresentmentReasonCode.isNew()
+				|| (aPresentmentReasonCode.getRecordType() != null ? aPresentmentReasonCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -291,7 +283,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	 * 
 	 * @param aPresentmentReasonCode
 	 */
-	
+
 	public void doWriteComponentsToBean(PresentmentReasonCode aPresentmentReasonCode) {
 		logger.debug("Entering");
 
@@ -380,7 +372,6 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Clears the components values. <br>
 	 */
@@ -406,9 +397,9 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_PresentmentReasonCodeDialog_Code.value")+" : "+aPresentmentReasonCode.getCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_PresentmentReasonCodeDialog_Code.value") + " : "
+				+ aPresentmentReasonCode.getCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aPresentmentReasonCode.getRecordType())) {
 				aPresentmentReasonCode.setVersion(aPresentmentReasonCode.getVersion() + 1);
@@ -485,7 +476,6 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		logger.debug("Leaving");
 	}
 
-
 	private boolean doProcess(PresentmentReasonCode aPresentmentReasonCode, String tranType) {
 		logger.debug("Entering");
 
@@ -548,7 +538,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 			} else {
 				String[] list = operationRefs.split(";");
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aPresentmentReasonCode,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aPresentmentReasonCode, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
@@ -565,7 +555,8 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		PresentmentReasonCode aPresentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail().getModelData();
+		PresentmentReasonCode aPresentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail()
+				.getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -593,8 +584,8 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_PresentmentReasonCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -634,29 +625,32 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		logger.debug("Leaving");
 	}
 
-	private void doSetValidation(){
+	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		if(!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentReasonCodeDialog_Code.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
+		if (!this.code.isReadonly()) {
+			this.code.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PresentmentReasonCodeDialog_Code.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.description.isReadonly()){
-			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentReasonCodeDialog_Description.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.description.isReadonly()) {
+			this.description.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PresentmentReasonCodeDialog_Description.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
 
-	private void doRemoveValidation(){
+	private void doRemoveValidation() {
 		logger.debug("Entering");
 		setValidation(false);
 		this.code.setConstraint("");
 		this.description.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	protected void doClearMessage(){
+	protected void doClearMessage() {
 		logger.debug("entering");
 		this.code.setErrorMessage("");
 		this.description.setErrorMessage("");
@@ -681,21 +675,18 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		getPresentmentReasonCodeListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.presentmentReasonCode.getCode());
 	}
 
-	private AuditHeader getAuditHeader(PresentmentReasonCode aPresentmentReasonCode,String tranType) {
+	private AuditHeader getAuditHeader(PresentmentReasonCode aPresentmentReasonCode, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aPresentmentReasonCode.getBefImage(), aPresentmentReasonCode);
-		return new AuditHeader(String.valueOf(aPresentmentReasonCode.getId()), null,
-				null, null, auditDetail, aPresentmentReasonCode.getUserDetails(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPresentmentReasonCode.getBefImage(),
+				aPresentmentReasonCode);
+		return new AuditHeader(String.valueOf(aPresentmentReasonCode.getId()), null, null, null, auditDetail,
+				aPresentmentReasonCode.getUserDetails(), getOverideMap());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -704,6 +695,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	public PresentmentReasonCode getPresentmentReasonCode() {
 		return presentmentReasonCode;
 	}
+
 	public void setPresentmentReasonCode(PresentmentReasonCode presentmentReasonCode) {
 		this.presentmentReasonCode = presentmentReasonCode;
 	}
@@ -711,6 +703,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	public PresentmentReasonCodeListCtrl getPresentmentReasonCodeListCtrl() {
 		return presentmentReasonCodeListCtrl;
 	}
+
 	public void setPresentmentReasonCodeListCtrl(PresentmentReasonCodeListCtrl presentmentReasonCodeListCtrl) {
 		this.presentmentReasonCodeListCtrl = presentmentReasonCodeListCtrl;
 	}
@@ -718,6 +711,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	public PresentmentReasonCodeService getPresentmentReasonCodeService() {
 		return presentmentReasonCodeService;
 	}
+
 	public void setPresentmentReasonCodeService(PresentmentReasonCodeService presentmentReasonCodeService) {
 		this.presentmentReasonCodeService = presentmentReasonCodeService;
 	}
@@ -725,6 +719,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}

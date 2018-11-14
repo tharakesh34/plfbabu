@@ -13,32 +13,32 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 
-	private static final long	serialVersionUID	= -58727889587717168L;
+	private static final long serialVersionUID = -58727889587717168L;
 
-	private long				id					= Long.MIN_VALUE;		// Auto Generated Sequence
-	private long				movementId			= 0;
-	private long				receiptId			= 0;
-	private String				receiptMode;
-	private BigDecimal			amount				= BigDecimal.ZERO;
-	private String				status				= "A";
-	private long				linkedTranId		= 0;
-	
-	private boolean				newRecord			= false;
-	private DepositCheques		befImage;
+	private long id = Long.MIN_VALUE; // Auto Generated Sequence
+	private long movementId = 0;
+	private long receiptId = 0;
+	private String receiptMode;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private String status = "A";
+	private long linkedTranId = 0;
 
-	private String				finReference;
-	private String				receiptpurpose;
-	private String				favourNumber;
-	private String				custShrtName;
-	private String				remarks;
-	private Date				receivedDate;
-	private long				fundingAc;
+	private boolean newRecord = false;
+	private DepositCheques befImage;
 
-	private boolean				visible				= false;		// For Display purpose
-	private String 				branchCode;	// Respective branch cheques we have show the user 
-	
+	private String finReference;
+	private String receiptpurpose;
+	private String favourNumber;
+	private String custShrtName;
+	private String remarks;
+	private Date receivedDate;
+	private long fundingAc;
+
+	private boolean visible = false; // For Display purpose
+	private String branchCode; // Respective branch cheques we have show the user 
+
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
 	public DepositCheques() {
 		super();
@@ -55,7 +55,7 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		excludeFields.add("finReference");
 		excludeFields.add("receiptpurpose");
 		excludeFields.add("favourNumber");
@@ -65,7 +65,7 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("fundingAc");
 		excludeFields.add("visible");
 		excludeFields.add("branchCode");
-		
+
 		return excludeFields;
 	}
 

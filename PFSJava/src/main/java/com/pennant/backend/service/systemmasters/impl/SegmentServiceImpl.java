@@ -75,7 +75,7 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	public SegmentServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -97,14 +97,12 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTSegments/BMTSegments_Temp by using SegmentDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using SegmentDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtBMTSegments by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTSegments/BMTSegments_Temp by
+	 * using SegmentDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using SegmentDAO's update method 3) Audit the record in to AuditHeader and AdtBMTSegments by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -137,12 +135,10 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTSegments by using SegmentDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtBMTSegments by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTSegments by using SegmentDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTSegments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -165,8 +161,7 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * getSegmentById fetch the details by using SegmentDAO's getSegmentById
-	 * method.
+	 * getSegmentById fetch the details by using SegmentDAO's getSegmentById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -180,9 +175,8 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * getApprovedSegmentById fetch the details by using SegmentDAO's
-	 * getSegmentById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTSegments.
+	 * getApprovedSegmentById fetch the details by using SegmentDAO's getSegmentById method . with parameter id and type
+	 * as blank. it fetches the approved records from the BMTSegments.
 	 * 
 	 * @param id
 	 *            (String)
@@ -193,19 +187,15 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getSegmentDAO().delete with parameters segment,"" b) NEW Add new
-	 * record in to main table by using getSegmentDAO().save with parameters
-	 * segment,"" c) EDIT Update record in the main table by using
-	 * getSegmentDAO().update with parameters segment,"" 3) Delete the record
-	 * from the workFlow table by using getSegmentDAO().delete with parameters
-	 * segment,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTSegments
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtBMTSegments by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getSegmentDAO().delete with parameters
+	 * segment,"" b) NEW Add new record in to main table by using getSegmentDAO().save with parameters segment,"" c)
+	 * EDIT Update record in the main table by using getSegmentDAO().update with parameters segment,"" 3) Delete the
+	 * record from the workFlow table by using getSegmentDAO().delete with parameters segment,"_Temp" 4) Audit the
+	 * record in to AuditHeader and AdtBMTSegments by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtBMTSegments by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -258,12 +248,10 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getSegmentDAO().delete with parameters
-	 * segment,"_Temp" 3) Audit the record in to AuditHeader and AdtBMTSegments
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getSegmentDAO().delete with parameters segment,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTSegments by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -287,19 +275,16 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -308,18 +293,16 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -327,7 +310,7 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 		Segment tempSegment = null;
 
 		if (segment.isWorkflow()) {
-			tempSegment = getSegmentDAO().getSegmentById(segment.getId(),"_Temp");
+			tempSegment = getSegmentDAO().getSegmentById(segment.getId(), "_Temp");
 		}
 
 		Segment befSegment = getSegmentDAO().getSegmentById(segment.getId(), "");
@@ -337,24 +320,22 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 		String[] errParm = new String[2];
 
 		valueParm[0] = segment.getSegmentCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_Segment_Code") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_Segment_Code") + ":" + valueParm[0];
 
 		if (segment.isNew()) { // for New record or new record into work flow
 
 			if (!segment.isWorkflow()) {// With out Work flow only new records
 				if (befSegment != null) { // Record Already Exists in the table  then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (segment.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+				if (segment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befSegment != null || tempSegment != null) { //if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSegment == null || tempSegment != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -363,36 +344,33 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 			if (!segment.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befSegment == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
-					if (oldSegment != null
-							&& !oldSegment.getLastMntOn().equals(befSegment.getLastMntOn())) {
+					if (oldSegment != null && !oldSegment.getLastMntOn().equals(befSegment.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 
 				if (tempSegment == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempSegment != null
-						&& oldSegment != null
+				if (tempSegment != null && oldSegment != null
 						&& !oldSegment.getLastMntOn().equals(tempSegment.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !segment.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !segment.isWorkflow()) {
 			auditDetail.setBefImage(befSegment);
 		}
 		logger.debug("Leaving");

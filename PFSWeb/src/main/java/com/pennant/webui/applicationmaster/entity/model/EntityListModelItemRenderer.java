@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,20 +65,19 @@ public class EntityListModelItemRenderer implements ListitemRenderer<Entity>, Se
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, Entity entity, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(entity.getEntityCode());
+		lc = new Listcell(entity.getEntityCode());
 		lc.setParent(item);
-	  	lc = new Listcell(entity.getEntityDesc());
+		lc = new Listcell(entity.getEntityDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(entity.getCountry());
+		lc = new Listcell(entity.getCountry());
 		lc.setParent(item);
-	  	lc = new Listcell(entity.getStateCode());
+		lc = new Listcell(entity.getStateCode());
 		lc.setParent(item);
-	  	lc = new Listcell(entity.getCityCode());
+		lc = new Listcell(entity.getCityCode());
 		lc.setParent(item);
 		lc = new Listcell(entity.getPinCode());
 		lc.setParent(item);
@@ -89,12 +87,12 @@ public class EntityListModelItemRenderer implements ListitemRenderer<Entity>, Se
 		cbActive.setChecked(entity.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(entity.getRecordStatus());
+		lc = new Listcell(entity.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(entity.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("entityCode", entity.getEntityCode());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onEntityItemDoubleClicked");
 	}
 }

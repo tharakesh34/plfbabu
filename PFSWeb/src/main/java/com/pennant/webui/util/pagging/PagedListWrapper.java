@@ -90,8 +90,8 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	// param. The SearchObject, holds the entity and properties to search. <br>
 	private JdbcSearchObject<E> jdbcSearchObject;
 	private List<E> itemList;
-	boolean searchObject=true;
-	
+	boolean searchObject = true;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -100,36 +100,35 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void initList(List<E> iteamList,Listbox listBox, Paging paging1) {
+	public void initList(List<E> iteamList, Listbox listBox, Paging paging1) {
 		setPaging(paging1);
 		setListeners(listBox);
 		clear();
 		getPaging().setTotalSize(iteamList.size());
-		this.itemList=iteamList;
-		List<E> tmpList= new ArrayList<E>();
+		this.itemList = iteamList;
+		List<E> tmpList = new ArrayList<E>();
 
 		for (int i = 0; i < getPaging().getPageSize(); i++) {
-			if ( iteamList.size()<=i){
+			if (iteamList.size() <= i) {
 				break;
 			}
 			tmpList.add(iteamList.get(i));
 		}
-		
+
 		addAll(tmpList);
-		searchObject=false;
+		searchObject = false;
 	}
-	
+
 	public void init(JdbcSearchObject<E> jdbcSearchObject1, Listbox listBox, Paging paging1) {
 
-		/*if(getSearchObject()!=null){
-			setSearchObject(jdbcSearchObject1);
-			getPaging().setActivePage(0);
-		}else{*/
-			setPaging(paging1);
-			setListeners(listBox);
-			setSearchObject(jdbcSearchObject1);
+		/*
+		 * if(getSearchObject()!=null){ setSearchObject(jdbcSearchObject1); getPaging().setActivePage(0); }else{
+		 */
+		setPaging(paging1);
+		setListeners(listBox);
+		setSearchObject(jdbcSearchObject1);
 		//}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -146,35 +145,34 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	}
 
 	/**
-	 * Refreshes the list by calling the DAO methode with the modified search
-	 * object. <br>
+	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
 	 * @param start
 	 *            Row to start. <br>
 	 */
 	@SuppressWarnings("unchecked")
 	void refreshModel(int start) {
-		if(searchObject){
+		if (searchObject) {
 			getSearchObject().setFirstResult(start);
 			getSearchObject().setMaxResults(getPageSize());
-	
+
 			// clear old data
 			clear();
-	
+
 			addAll(getPagedListService().getBySearchObject(getSearchObject()));
-		}else{
+		} else {
 			clear();
 			getPaging().setTotalSize(itemList.size());
-			List<E> tmpList= new ArrayList<E>();
+			List<E> tmpList = new ArrayList<E>();
 			for (int i = 0; i < getPaging().getPageSize(); i++) {
-				if (itemList.size()<=i+start){
+				if (itemList.size() <= i + start) {
 					break;
 				}
-				tmpList.add(itemList.get(i+start));
+				tmpList.add(itemList.get(i + start));
 			}
-			
+
 			addAll(tmpList);
-		}	
+		}
 	}
 
 	public void clearFilters() {
@@ -187,17 +185,17 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	 * <br>
 	 * 1. "onPaging" for the paging component. <br>
 	 * 2. "onSort" for all listheaders that have a sortDirection declared. <br>
-	 * All not used Listheaders must me declared as:
-	 * listheader.setSortAscending(""); listheader.setSortDescending(""); <br>
+	 * All not used Listheaders must me declared as: listheader.setSortAscending(""); listheader.setSortDescending("");
+	 * <br>
 	 */
 	@SuppressWarnings("unchecked")
 	private void setListeners(Listbox listBox) {
 
 		//Remove Listener Events If Already Exists
 		Iterable<EventListener<? extends Event>> iter = getPaging().getEventListeners("onPaging");
-		if(iter!=null && iter.iterator().hasNext()){
-			getPaging().removeEventListener("onPaging",iter.iterator().next() );	
-		} 
+		if (iter != null && iter.iterator().hasNext()) {
+			getPaging().removeEventListener("onPaging", iter.iterator().next());
+		}
 
 		// Add 'onPaging' listener to the paging component
 		getPaging().addEventListener("onPaging", new OnPagingEventListener());
@@ -211,13 +209,13 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 				final Listheader lheader = (Listheader) object;
 
 				if (lheader.getSortAscending() != null || lheader.getSortDescending() != null) {
-					
+
 					//Remove Listener Events If Already Exists
 					Iterable<EventListener<? extends Event>> sort = lheader.getEventListeners("onSort");
-					if(sort!=null && sort.iterator().hasNext()){
-						lheader.removeEventListener("onSort",sort.iterator().next());	
-					} 
-					
+					if (sort != null && sort.iterator().hasNext()) {
+						lheader.removeEventListener("onSort", sort.iterator().next());
+					}
+
 					// Add 'onSort' listener to the ListHeader component
 					lheader.addEventListener("onSort", onSortEventListener);
 				}
@@ -230,15 +228,14 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and
-	 * pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
 	 */
 	public final class OnPagingEventListener implements EventListener<Event> {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -254,19 +251,17 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	/**
 	 * "onSort" eventlistener for the listheader components. <br>
 	 * <br>
-	 * Checks wich listheader is clicked and checks which orderDirection must be
-	 * set. <br>
+	 * Checks wich listheader is clicked and checks which orderDirection must be set. <br>
 	 * 
-	 * Calls the methode for refreshing the data with the new ordering. and the
-	 * remembered rowStart and pageSize. <br>
+	 * Calls the methode for refreshing the data with the new ordering. and the remembered rowStart and pageSize. <br>
 	 */
 	public final class OnSortEventListener implements EventListener, Serializable {
 		private static final long serialVersionUID = 1L;
 
-		public  OnSortEventListener() {
-			
+		public OnSortEventListener() {
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			final Listheader lh = (Listheader) event.getTarget();
@@ -279,10 +274,10 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 					orderBy = StringUtils.substringBefore(orderBy, "DESC").trim();
 
 					// update SearchObject with orderBy
-					if(searchObject){
+					if (searchObject) {
 						getSearchObject().clearSorts();
 						getSearchObject().addSort(orderBy, true);
-					}					
+					}
 				}
 			} else if ("descending".equals(sortDirection) || "natural".equals(sortDirection)
 					|| Strings.isBlank(sortDirection)) {
@@ -292,7 +287,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 					orderBy = StringUtils.substringBefore(orderBy, "ASC").trim();
 
 					// update SearchObject with orderBy
-					if(searchObject){
+					if (searchObject) {
 						getSearchObject().clearSorts();
 						getSearchObject().addSort(orderBy, false);
 					}
@@ -316,6 +311,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	Paging getPaging() {
 		return this.paging;
 	}
+
 	private void setPaging(Paging paging) {
 		this.paging = paging;
 	}
@@ -323,14 +319,16 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
+
 	public PagedListService getPagedListService() {
 		return this.pagedListService;
 	}
-	
+
 	public void setSearchObject(JdbcSearchObject<E> jdbcSearchObject1) {
 		this.jdbcSearchObject = jdbcSearchObject1;
 		initModel();
 	}
+
 	JdbcSearchObject<E> getSearchObject() {
 		return this.jdbcSearchObject;
 	}

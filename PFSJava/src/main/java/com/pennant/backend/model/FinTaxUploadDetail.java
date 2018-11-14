@@ -11,30 +11,30 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class FinTaxUploadDetail extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				batchReference;
-	private String				taxCode;
-	private String				aggrementNo;
-	private String				applicableFor;
-	private String				applicant;
-	private boolean				taxExempted			= false;
-	private String				addrLine1;
-	private String				addrLine2;
-	private String				addrLine3;
-	private String				addrLine4;
-	private String				country;
-	private String				province;
-	private String				city;
-	private String				pinCode;
-	private boolean				newRecord			= false;
-	private LoggedInUser		userDetails;
-	private FinTaxUploadDetail	befImage;
-	private int					seqNo;
+	private String batchReference;
+	private String taxCode;
+	private String aggrementNo;
+	private String applicableFor;
+	private String applicant;
+	private boolean taxExempted = false;
+	private String addrLine1;
+	private String addrLine2;
+	private String addrLine3;
+	private String addrLine4;
+	private String country;
+	private String province;
+	private String city;
+	private String pinCode;
+	private boolean newRecord = false;
+	private LoggedInUser userDetails;
+	private FinTaxUploadDetail befImage;
+	private int seqNo;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
 

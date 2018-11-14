@@ -85,22 +85,17 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/AgreementDefinition
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/AgreementDefinition
  * /agreementDefinitionDialog.zul file.
  */
-public class AgreementDefinitionDialogCtrl extends
-		GFCBaseCtrl<AgreementDefinition> {
+public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefinition> {
 	private static final long serialVersionUID = 675917331534316816L;
-	private static final Logger logger = Logger
-			.getLogger(AgreementDefinitionDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AgreementDefinitionDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementDefinitionDialog; // autoWired
 	protected Textbox aggCode; // autoWired
@@ -116,16 +111,16 @@ public class AgreementDefinitionDialogCtrl extends
 	protected Checkbox allowMultiple; // autoWired
 	protected Space space_ModuleType;
 	protected Vlayout agreementDetails; // autoWired
-	protected Combobox	moduleName;
-	protected Space		space_ModuleName;
-	protected Row		agrRule_row;
-	protected Row		auto_check;
-	protected Row		allowMultiple_row;
+	protected Combobox moduleName;
+	protected Space space_ModuleName;
+	protected Row agrRule_row;
+	protected Row auto_check;
+	protected Row allowMultiple_row;
 	protected ExtendedCombobox docType;
 	protected Checkbox autoGeneration;
 	protected Checkbox autoDownload;
 	protected ExtendedCombobox doctype_Check;
-	
+
 	// protected Button brwAgreementDoc; // autoWired
 	// protected Div signCopyPdf; // autoWired
 	protected Div orgDetailTabDiv;
@@ -140,17 +135,16 @@ public class AgreementDefinitionDialogCtrl extends
 	private transient AgreementDefinitionListCtrl agreementDefinitionListCtrl; // overHanded
 																				// per
 																				// parameter
-	 private org.zkoss.zul.Label label_AgreementDefinitionDialog_autoDownload;
-	 private  org.zkoss.zul.Label label_AgreementDefinitionDialog_doc_Type;
-	 private  org.zkoss.zul.Label  label_AgreementDefinitionDialog_AutoGeneration;
+	private org.zkoss.zul.Label label_AgreementDefinitionDialog_autoDownload;
+	private org.zkoss.zul.Label label_AgreementDefinitionDialog_doc_Type;
+	private org.zkoss.zul.Label label_AgreementDefinitionDialog_AutoGeneration;
 
 	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
 	private transient AgreementDefinitionService agreementDefinitionService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
-	static final List<ValueLabel> agreementDetailsList = PennantStaticListUtil
-			.getAggDetails();
+	static final List<ValueLabel> agreementDetailsList = PennantStaticListUtil.getAggDetails();
 
 	/**
 	 * default constructor.<br>
@@ -167,15 +161,13 @@ public class AgreementDefinitionDialogCtrl extends
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected AgreementDefinition
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected AgreementDefinition object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_AgreementDefinitionDialog(Event event)
-			throws Exception {
+	public void onCreate$window_AgreementDefinitionDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -235,8 +227,8 @@ public class AgreementDefinitionDialogCtrl extends
 		this.docType.setModuleName("DocumentType");
 		this.docType.setValueColumn("DocTypeCode");
 		this.docType.setDescColumn("DocTypeDesc");
-		this.docType.setValidateColumns(new String[] {"DocTypeCode"});
-		
+		this.docType.setValidateColumns(new String[] { "DocTypeCode" });
+
 		this.agrRule.setMandatoryStyle(false);
 		this.agrRule.setModuleName("Rule");
 		this.agrRule.setValueColumn("RuleCode");
@@ -244,10 +236,8 @@ public class AgreementDefinitionDialogCtrl extends
 		this.agrRule.setValidateColumns(new String[] { "RuleCode" });
 
 		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("RuleModule", RuleConstants.MODULE_AGRRULE,
-				Filter.OP_EQUAL);
-		filters[1] = new Filter("RuleEvent", RuleConstants.EVENT_AGRRULE,
-				Filter.OP_EQUAL);
+		filters[0] = new Filter("RuleModule", RuleConstants.MODULE_AGRRULE, Filter.OP_EQUAL);
+		filters[1] = new Filter("RuleEvent", RuleConstants.EVENT_AGRRULE, Filter.OP_EQUAL);
 		this.agrRule.setFilters(filters);
 
 		// this.aggReportPath.setMaxlength(100);
@@ -265,20 +255,15 @@ public class AgreementDefinitionDialogCtrl extends
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_AgreementDefinitionDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_AgreementDefinitionDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_AgreementDefinitionDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_AgreementDefinitionDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AgreementDefinitionDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AgreementDefinitionDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AgreementDefinitionDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AgreementDefinitionDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -301,13 +286,11 @@ public class AgreementDefinitionDialogCtrl extends
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onCheck$aggCheck_SelectAll(Event event)
-			throws InterruptedException {
+	public void onCheck$aggCheck_SelectAll(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		for (int i = 0; i < agreementDetailsList.size(); i++) {
-			Checkbox checkBox = (Checkbox) agreementDetails.getChildren()
-					.get(i);
+			Checkbox checkBox = (Checkbox) agreementDetails.getChildren().get(i);
 			if (aggCheck_SelectAll.isChecked()) {
 				checkBox.setChecked(true);
 			} else {
@@ -337,23 +320,22 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 		logger.debug("Leaving");
 	}
-	
 
 	public void doCheckAllowDoctType() {
 		logger.debug("Entering");
-		
+
 		String autoGenCheckbox = autoGeneration.getValue().toString();
-		if(autoGenCheckbox.equals(true)){
+		if (autoGenCheckbox.equals(true)) {
 			this.auto_check.setSclass(PennantConstants.mandateSclass);
 			this.docType.setVisible(true);
 			this.docType.setButtonDisabled(false);
 			this.autoDownload.setVisible(true);
 			this.auto_check.setVisible(true);
-		}else{
+		} else {
 			this.auto_check.setVisible(false);
 		}
 	}
-		
+
 	/**
 	 * when the "edit" button is clicked. <br>
 	 * 
@@ -478,45 +460,35 @@ public class AgreementDefinitionDialogCtrl extends
 		doModuleSelection(modulename);
 
 		/*
-		 * AMedia amedia = null; String docType =
-		 * aAgreementDefinition.getAggtype(); if
-		 * (aAgreementDefinition.getAggImage() != null) { final InputStream data
-		 * = new ByteArrayInputStream(aAgreementDefinition.getAggImage());
+		 * AMedia amedia = null; String docType = aAgreementDefinition.getAggtype(); if
+		 * (aAgreementDefinition.getAggImage() != null) { final InputStream data = new
+		 * ByteArrayInputStream(aAgreementDefinition.getAggImage());
 		 * 
-		 * if("JPEG".equals(docType)){ amedia = new AMedia("document.jpg",
-		 * "jpeg", "image/jpeg", data); } else if("PNG".equals(docType)){ amedia
-		 * = new AMedia("document.png", "png", "image/png", data); } else
-		 * if("GIF".equals(docType)){ amedia = new AMedia("document.gif", "gif",
-		 * "image/gif", data); } else if("PDF".equals(docType)){ amedia = new
-		 * AMedia("document.pdf", "pdf", "application/pdf", data); } else
-		 * if("TEXT".equals(docType)){ amedia = new AMedia("document.txt",
-		 * "txt", "text/plain", data); }
+		 * if("JPEG".equals(docType)){ amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data); } else
+		 * if("PNG".equals(docType)){ amedia = new AMedia("document.png", "png", "image/png", data); } else
+		 * if("GIF".equals(docType)){ amedia = new AMedia("document.gif", "gif", "image/gif", data); } else
+		 * if("PDF".equals(docType)){ amedia = new AMedia("document.pdf", "pdf", "application/pdf", data); } else
+		 * if("TEXT".equals(docType)){ amedia = new AMedia("document.txt", "txt", "text/plain", data); }
 		 * 
 		 * try{ if (docType.equals("WORD")) {
 		 * 
-		 * FileOutputStream out = new
-		 * FileOutputStream(aAgreementDefinition.getAggReportName());
+		 * FileOutputStream out = new FileOutputStream(aAgreementDefinition.getAggReportName());
 		 * out.write(aAgreementDefinition.getAggImage()); out.close();
 		 * 
 		 * Document doc = new Document(aAgreementDefinition.getAggReportName());
 		 * 
-		 * String pdfFileName =
-		 * aAgreementDefinition.getAggReportName().substring(0,
-		 * aAgreementDefinition.getAggReportName().lastIndexOf("."));
-		 * pdfFileName = pdfFileName +".pdf";
+		 * String pdfFileName = aAgreementDefinition.getAggReportName().substring(0,
+		 * aAgreementDefinition.getAggReportName().lastIndexOf(".")); pdfFileName = pdfFileName +".pdf";
 		 * 
-		 * doc.save(pdfFileName, SaveFormat.PDF); amedia = new
-		 * AMedia("document.pdf", "pdf", "application/pdf", new
+		 * doc.save(pdfFileName, SaveFormat.PDF); amedia = new AMedia("document.pdf", "pdf", "application/pdf", new
 		 * FileInputStream(pdfFileName));
 		 * 
 		 * 
-		 * } }catch (Exception e) { logger.warn("Exception: ", e); }
-		 * agreementDocView.setContent(amedia); }
+		 * } }catch (Exception e) { logger.warn("Exception: ", e); } agreementDocView.setContent(amedia); }
 		 */
 
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Writes the components values to the bean.<br>
@@ -546,14 +518,12 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 		try {
 			aAgreementDefinition.setAgrRule(this.agrRule.getValue());
-			aAgreementDefinition.setLovDescAgrRuleDesc(this.agrRule
-					.getDescription());
+			aAgreementDefinition.setLovDescAgrRuleDesc(this.agrRule.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aAgreementDefinition
-					.setAggReportName(this.aggReportName.getValue());
+			aAgreementDefinition.setAggReportName(this.aggReportName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -569,12 +539,8 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 		try {
 			if ("#".equals(getComboboxValue(this.aggType))) {
-				throw new WrongValueException(
-						this.aggType,
-						Labels.getLabel(
-								"STATIC_INVALID",
-								new String[] { Labels
-										.getLabel("label_AgreementDefinitionDialog_AggType.value") }));
+				throw new WrongValueException(this.aggType, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_AgreementDefinitionDialog_AggType.value") }));
 			}
 			aAgreementDefinition.setAggtype(getComboboxValue(this.aggType));
 		} catch (WrongValueException we) {
@@ -582,17 +548,11 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 
 		try {
-			if (this.allowMultiple.isChecked()
-					&& "#".equals(getComboboxValue(this.moduleType))) {
-				throw new WrongValueException(
-						this.moduleType,
-						Labels.getLabel(
-								"STATIC_INVALID",
-								new String[] { Labels
-										.getLabel("label_AgreementDefinitionDialog_ModuleType.value") }));
+			if (this.allowMultiple.isChecked() && "#".equals(getComboboxValue(this.moduleType))) {
+				throw new WrongValueException(this.moduleType, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_AgreementDefinitionDialog_ModuleType.value") }));
 			}
-			aAgreementDefinition
-					.setModuleType(getComboboxValue(this.moduleType));
+			aAgreementDefinition.setModuleType(getComboboxValue(this.moduleType));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -601,26 +561,22 @@ public class AgreementDefinitionDialogCtrl extends
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		try {
 			aAgreementDefinition.setAutoDownload(this.autoDownload.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-	
+
 		try {
 			aAgreementDefinition.setDocType(this.docType.getValue());
 			aAgreementDefinition.setLovDescDocumentType(this.docType.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-	
+
 		try {
-			aAgreementDefinition.setAllowMultiple(this.allowMultiple
-					.isChecked());
+			aAgreementDefinition.setAllowMultiple(this.allowMultiple.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -651,9 +607,9 @@ public class AgreementDefinitionDialogCtrl extends
 		aAgreementDefinition.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * When user clicks on select "Selection Item based on moduleName" 
+	 * When user clicks on select "Selection Item based on moduleName"
 	 * 
 	 * @param event
 	 */
@@ -707,11 +663,10 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 
 	}
-	
 
 	public void onCheck$autoGeneration(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		if (autoGeneration.isChecked()) {
 			this.autoDownload.setVisible(true);
 			this.autoDownload.setChecked(false);
@@ -734,7 +689,6 @@ public class AgreementDefinitionDialogCtrl extends
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	/**
 	 * This method Fills Agreement Details in Listbox
 	 */
@@ -743,10 +697,8 @@ public class AgreementDefinitionDialogCtrl extends
 
 		this.agreementDetails.getChildren().clear();
 
-		String aggDetail1 = aAgreementDefinition.getAggImage() == null ? ""
-				: aAgreementDefinition.getAggImage();
-		List<String> aggDetailList = new ArrayList<String>(
-				Arrays.asList(aggDetail1.split(",")));
+		String aggDetail1 = aAgreementDefinition.getAggImage() == null ? "" : aAgreementDefinition.getAggImage();
+		List<String> aggDetailList = new ArrayList<String>(Arrays.asList(aggDetail1.split(",")));
 
 		if (aggDetailList.size() == agreementDetailsList.size()) {
 			aggCheck_SelectAll.setChecked(true);
@@ -784,14 +736,12 @@ public class AgreementDefinitionDialogCtrl extends
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAgreementDefinition
 	 * @throws Exception
 	 */
-	public void doShowDialog(AgreementDefinition aAgreementDefinition)
-			throws Exception {
+	public void doShowDialog(AgreementDefinition aAgreementDefinition) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -806,8 +756,7 @@ public class AgreementDefinitionDialogCtrl extends
 		} else {
 			this.aggName.focus();
 			if (isWorkFlowEnabled()) {
-				if (StringUtils
-						.isNotBlank(aAgreementDefinition.getRecordType())) {
+				if (StringUtils.isNotBlank(aAgreementDefinition.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
@@ -835,8 +784,6 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 		logger.debug("Leaving");
 	}
-
-	
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
@@ -866,12 +813,12 @@ public class AgreementDefinitionDialogCtrl extends
 					Labels.getLabel("label_AgreementDefinitionDialog_AggReportName.value"), null, true));
 		}
 
-		if(!this.docType.isReadonly()){
-			this.docType.setConstraint(new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_doc_Type.value"), null,autoGeneration.isChecked()));
+		if (!this.docType.isReadonly()) {
+			this.docType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AgreementDefinitionDialog_doc_Type.value"), null,
+							autoGeneration.isChecked()));
 		}
-		
-	
-		
+
 		/*
 		 * if (!this.aggReportPath.isReadonly()){ this.aggReportPath.setConstraint(new SimpleConstraint(
 		 * PennantConstants.PATH_REGEX, Labels.getLabel( "MAND_FIELD_ALPHANUMERIC_SPECIALCHARS",new
@@ -891,7 +838,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.aggDesc.setConstraint("");
 		this.agrRule.setConstraint("");
 		this.aggReportName.setConstraint("");
-		
+
 		this.docType.setConstraint("");
 		// this.aggReportPath.setConstraint("");
 		logger.debug("Leaving");
@@ -938,22 +885,17 @@ public class AgreementDefinitionDialogCtrl extends
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 		final AgreementDefinition aAgreementDefinition = new AgreementDefinition();
-		BeanUtils
-				.copyProperties(getAgreementDefinition(), aAgreementDefinition);
+		BeanUtils.copyProperties(getAgreementDefinition(), aAgreementDefinition);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_AgreementDefinitionDialog_AggCode.value")
-				+ " : " + aAgreementDefinition.getAggCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_AgreementDefinitionDialog_AggCode.value") + " : "
+				+ aAgreementDefinition.getAggCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aAgreementDefinition.getRecordType())) {
-				aAgreementDefinition.setVersion(aAgreementDefinition
-						.getVersion() + 1);
-				aAgreementDefinition
-						.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				aAgreementDefinition.setVersion(aAgreementDefinition.getVersion() + 1);
+				aAgreementDefinition.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
 				if (isWorkFlowEnabled()) {
 					aAgreementDefinition.setNewRecord(true);
@@ -969,7 +911,7 @@ public class AgreementDefinitionDialogCtrl extends
 					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -990,36 +932,24 @@ public class AgreementDefinitionDialogCtrl extends
 			this.btnCancel.setVisible(true);
 		}
 
-		this.aggName
-				.setReadonly(isReadOnly("AgreementDefinitionDialog_aggName"));
-		this.aggDesc
-				.setReadonly(isReadOnly("AgreementDefinitionDialog_aggDesc"));
-		this.aggReportName
-				.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportName"));
-		this.agrRule
-				.setReadonly(isReadOnly("AgreementDefinitionDialog_agrRule"));
-		this.aggType
-				.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
-		this.moduleType
-				.setDisabled(isReadOnly("AgreementDefinitionDialog_moduleType"));
-		this.allowMultiple
-				.setDisabled(isReadOnly("AgreementDefinitionDialog_allowMultiple"));
+		this.aggName.setReadonly(isReadOnly("AgreementDefinitionDialog_aggName"));
+		this.aggDesc.setReadonly(isReadOnly("AgreementDefinitionDialog_aggDesc"));
+		this.aggReportName.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportName"));
+		this.agrRule.setReadonly(isReadOnly("AgreementDefinitionDialog_agrRule"));
+		this.aggType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
+		this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_moduleType"));
+		this.allowMultiple.setDisabled(isReadOnly("AgreementDefinitionDialog_allowMultiple"));
 		// this.aggReportPath.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportPath"));
-		this.aggIsActive
-				.setDisabled(isReadOnly("AgreementDefinitionDialog_aggIsActive"));
-		this.aggCheck_SelectAll
-				.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
+		this.aggIsActive.setDisabled(isReadOnly("AgreementDefinitionDialog_aggIsActive"));
+		this.aggCheck_SelectAll.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		this.moduleName.setDisabled(isReadOnly("AgreementDefinitionDialog_moduleName"));
 		this.autoGeneration.setDisabled(isReadOnly("AgreementDefinitionDialog_autoGenerate"));
 		this.autoDownload.setDisabled(isReadOnly("AgreementDefinitionDialog_autoDownload"));
 		this.docType.setReadonly(isReadOnly("AgreementDefinitionDialog_docType"));
-		
-		
-	
+
 		doDisable(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		if (this.allowMultiple.isChecked()) {
-			this.moduleType
-					.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
+			this.moduleType.setDisabled(isReadOnly("AgreementDefinitionDialog_aggType"));
 		} else {
 			this.moduleType.setDisabled(true);
 		}
@@ -1089,7 +1019,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.docType.setValue("");
 		this.autoGeneration.setValue("");
 		this.autoDownload.setValue("");
-		
+
 		this.moduleType.setValue("");
 		this.aggType.setValue("");
 		this.allowMultiple.setChecked(false);
@@ -1107,8 +1037,7 @@ public class AgreementDefinitionDialogCtrl extends
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 		final AgreementDefinition aAgreementDefinition = new AgreementDefinition();
-		BeanUtils
-				.copyProperties(getAgreementDefinition(), aAgreementDefinition);
+		BeanUtils.copyProperties(getAgreementDefinition(), aAgreementDefinition);
 		boolean isNew = false;
 
 		// force validation, if on, than execute by component.getValue()
@@ -1126,20 +1055,16 @@ public class AgreementDefinitionDialogCtrl extends
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aAgreementDefinition.getRecordType())) {
-				aAgreementDefinition.setVersion(aAgreementDefinition
-						.getVersion() + 1);
+				aAgreementDefinition.setVersion(aAgreementDefinition.getVersion() + 1);
 				if (isNew) {
-					aAgreementDefinition
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aAgreementDefinition.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aAgreementDefinition
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aAgreementDefinition.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aAgreementDefinition.setNewRecord(true);
 				}
 			}
 		} else {
-			aAgreementDefinition
-					.setVersion(aAgreementDefinition.getVersion() + 1);
+			aAgreementDefinition.setVersion(aAgreementDefinition.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -1173,31 +1098,25 @@ public class AgreementDefinitionDialogCtrl extends
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AgreementDefinition aAgreementDefinition,
-			String tranType) {
+	private boolean doProcess(AgreementDefinition aAgreementDefinition, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aAgreementDefinition.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
-		aAgreementDefinition.setLastMntOn(new Timestamp(System
-				.currentTimeMillis()));
-		aAgreementDefinition.setUserDetails(getUserWorkspace()
-				.getLoggedInUser());
+		aAgreementDefinition.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aAgreementDefinition.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aAgreementDefinition.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aAgreementDefinition.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aAgreementDefinition.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aAgreementDefinition
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aAgreementDefinition.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -1238,13 +1157,12 @@ public class AgreementDefinitionDialogCtrl extends
 			String operationRefs = getServiceOperations(taskId, aAgreementDefinition);
 
 			if ("".equals(operationRefs)) {
-			processCompleted = doSaveProcess(auditHeader, null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aAgreementDefinition,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aAgreementDefinition, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -1279,58 +1197,43 @@ public class AgreementDefinitionDialogCtrl extends
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		AgreementDefinition aAgreementDefinition = (AgreementDefinition) auditHeader
-				.getAuditDetail().getModelData();
+		AgreementDefinition aAgreementDefinition = (AgreementDefinition) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getAgreementDefinitionService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getAgreementDefinitionService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getAgreementDefinitionService()
-								.saveOrUpdate(auditHeader);
+						auditHeader = getAgreementDefinitionService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getAgreementDefinitionService()
-								.doApprove(auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getAgreementDefinitionService().doApprove(auditHeader);
 
-						if (aAgreementDefinition.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aAgreementDefinition.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getAgreementDefinitionService().doReject(
-								auditHeader);
-						if (aAgreementDefinition.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getAgreementDefinitionService().doReject(auditHeader);
+						if (aAgreementDefinition.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_AgreementDefinitionDialog,
-								auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_AgreementDefinitionDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_AgreementDefinitionDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_AgreementDefinitionDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -1365,12 +1268,10 @@ public class AgreementDefinitionDialogCtrl extends
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(
-			AgreementDefinition aAgreementDefinition, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aAgreementDefinition.getBefImage(), aAgreementDefinition);
-		return new AuditHeader(String.valueOf(aAgreementDefinition.getAggId()),
-				null, null, null, auditDetail,
+	private AuditHeader getAuditHeader(AgreementDefinition aAgreementDefinition, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAgreementDefinition.getBefImage(),
+				aAgreementDefinition);
+		return new AuditHeader(String.valueOf(aAgreementDefinition.getAggId()), null, null, null, auditDetail,
 				aAgreementDefinition.getUserDetails(), getOverideMap());
 	}
 
@@ -1384,10 +1285,8 @@ public class AgreementDefinitionDialogCtrl extends
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(
-					this.window_AgreementDefinitionDialog, auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_AgreementDefinitionDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1410,14 +1309,12 @@ public class AgreementDefinitionDialogCtrl extends
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,
-					map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
@@ -1427,58 +1324,41 @@ public class AgreementDefinitionDialogCtrl extends
 	}
 
 	/*
-	 * public void onUpload$brwAgreementDoc(UploadEvent event) {
-	 * logger.debug("Entering" + event.toString()); Media media =
-	 * event.getMedia();
+	 * public void onUpload$brwAgreementDoc(UploadEvent event) { logger.debug("Entering" + event.toString()); Media
+	 * media = event.getMedia();
 	 * 
-	 * browseDoc(media, getAgreementDefinition()); logger.debug("Leaving" +
-	 * event.toString()); }
+	 * browseDoc(media, getAgreementDefinition()); logger.debug("Leaving" + event.toString()); }
 	 */
 
 	/*
-	 * private void browseDoc(Media media, AgreementDefinition
-	 * agreementDefinition) { logger.debug("Entering"); try { boolean
-	 * isSupported = true; String docType = ""; String fileName =
-	 * media.getName(); String mediaDocType = media.getContentType(); if
-	 * (mediaDocType.equals("image/gif")) { docType = "GIF"; } else if
-	 * (mediaDocType.equals("image/png")) { docType = "PNG"; } else if
-	 * (mediaDocType.equals("image/jpeg")) { docType = "JPEG"; } else if
-	 * (mediaDocType.equals("application/pdf")) { docType = "PDF"; } else if
-	 * (mediaDocType.equals("application/msword")) { docType = "WORD"; } else if
-	 * (mediaDocType.equals("text/plain")) { docType = "TEXT"; } else {
-	 * isSupported = false;
+	 * private void browseDoc(Media media, AgreementDefinition agreementDefinition) { logger.debug("Entering"); try {
+	 * boolean isSupported = true; String docType = ""; String fileName = media.getName(); String mediaDocType =
+	 * media.getContentType(); if (mediaDocType.equals("image/gif")) { docType = "GIF"; } else if
+	 * (mediaDocType.equals("image/png")) { docType = "PNG"; } else if (mediaDocType.equals("image/jpeg")) { docType =
+	 * "JPEG"; } else if (mediaDocType.equals("application/pdf")) { docType = "PDF"; } else if
+	 * (mediaDocType.equals("application/msword")) { docType = "WORD"; } else if (mediaDocType.equals("text/plain")) {
+	 * docType = "TEXT"; } else { isSupported = false;
 	 * MessageUtil.showErrorMessage("Un Supported Format.only "+PennantConstants
-	 * .AGREEMENT_DEFINITION_DOCS+" are allowed"); } if (isSupported) { byte[]
-	 * imageData = null; if(media.isBinary()) { imageData =
-	 * IOUtils.toByteArray(media.getStreamData()); } else { imageData =
-	 * IOUtils.toByteArray(media.getReaderData()); }
-	 * agreementDefinition.setAggImage(imageData);
-	 * agreementDefinition.setAggtype(docType);
-	 * this.aggReportName.setValue(fileName); //
-	 * this.aggReportPath.setValue(fileName); if(docType.equals("WORD")) {
-	 * FileOutputStream out = new FileOutputStream(fileName);
-	 * out.write(imageData); out.close(); Document doc = new Document(fileName);
-	 * String pdfFileName = fileName.substring(0,
-	 * media.getName().lastIndexOf(".")); pdfFileName = pdfFileName +".pdf";
-	 * doc.save(pdfFileName, SaveFormat.PDF); imageData =
-	 * IOUtils.toByteArray(new FileInputStream(pdfFileName)); }
-	 * if("JPEG".equals(docType)){ this.agreementDocView.setContent(new
-	 * AMedia("document.jpg", "image/jpeg", mediaDocType, imageData)); } else
-	 * if("PNG".equals(docType)){ this.agreementDocView.setContent(new
-	 * AMedia("document.png", "image/png", mediaDocType, imageData)); } else
-	 * if("GIF".equals(docType)){ this.agreementDocView.setContent(new
-	 * AMedia("document.gif", "image/gif", mediaDocType, imageData)); } else
-	 * if("PDF".equals(docType) || "WORD".equals(docType)){
-	 * this.agreementDocView.setContent(new AMedia("document.pdf", "pdf",
-	 * "application/pdf", imageData)); } else if("TEXT".equals(docType)){
-	 * this.agreementDocView.setContent(new AMedia("document.txt", "txt",
-	 * "text/plain", imageData)); }
+	 * .AGREEMENT_DEFINITION_DOCS+" are allowed"); } if (isSupported) { byte[] imageData = null; if(media.isBinary()) {
+	 * imageData = IOUtils.toByteArray(media.getStreamData()); } else { imageData =
+	 * IOUtils.toByteArray(media.getReaderData()); } agreementDefinition.setAggImage(imageData);
+	 * agreementDefinition.setAggtype(docType); this.aggReportName.setValue(fileName); //
+	 * this.aggReportPath.setValue(fileName); if(docType.equals("WORD")) { FileOutputStream out = new
+	 * FileOutputStream(fileName); out.write(imageData); out.close(); Document doc = new Document(fileName); String
+	 * pdfFileName = fileName.substring(0, media.getName().lastIndexOf(".")); pdfFileName = pdfFileName +".pdf";
+	 * doc.save(pdfFileName, SaveFormat.PDF); imageData = IOUtils.toByteArray(new FileInputStream(pdfFileName)); }
+	 * if("JPEG".equals(docType)){ this.agreementDocView.setContent(new AMedia("document.jpg", "image/jpeg",
+	 * mediaDocType, imageData)); } else if("PNG".equals(docType)){ this.agreementDocView.setContent(new
+	 * AMedia("document.png", "image/png", mediaDocType, imageData)); } else if("GIF".equals(docType)){
+	 * this.agreementDocView.setContent(new AMedia("document.gif", "image/gif", mediaDocType, imageData)); } else
+	 * if("PDF".equals(docType) || "WORD".equals(docType)){ this.agreementDocView.setContent(new AMedia("document.pdf",
+	 * "pdf", "application/pdf", imageData)); } else if("TEXT".equals(docType)){ this.agreementDocView.setContent(new
+	 * AMedia("document.txt", "txt", "text/plain", imageData)); }
 	 * 
 	 * }
 	 * 
 	 * 
-	 * } catch (Exception e) { logger.warn("Exception: ", e); } logger.debug("Leaving" +
-	 * event.toString()); }
+	 * } catch (Exception e) { logger.warn("Exception: ", e); } logger.debug("Leaving" + event.toString()); }
 	 */
 
 	public void doDisable(boolean dsiable) {
@@ -1491,7 +1371,6 @@ public class AgreementDefinitionDialogCtrl extends
 		}
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.agreementDefinition.getAggId());
@@ -1516,8 +1395,7 @@ public class AgreementDefinitionDialogCtrl extends
 		this.agreementDefinition = agreementDefinition;
 	}
 
-	public void setAgreementDefinitionService(
-			AgreementDefinitionService agreementDefinitionService) {
+	public void setAgreementDefinitionService(AgreementDefinitionService agreementDefinitionService) {
 		this.agreementDefinitionService = agreementDefinitionService;
 	}
 
@@ -1525,8 +1403,7 @@ public class AgreementDefinitionDialogCtrl extends
 		return this.agreementDefinitionService;
 	}
 
-	public void setAgreementDefinitionListCtrl(
-			AgreementDefinitionListCtrl agreementDefinitionListCtrl) {
+	public void setAgreementDefinitionListCtrl(AgreementDefinitionListCtrl agreementDefinitionListCtrl) {
 		this.agreementDefinitionListCtrl = agreementDefinitionListCtrl;
 	}
 
@@ -1534,8 +1411,7 @@ public class AgreementDefinitionDialogCtrl extends
 		return this.agreementDefinitionListCtrl;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

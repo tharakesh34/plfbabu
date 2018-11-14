@@ -53,29 +53,29 @@ public class LimitDetail implements Serializable {
 	private String returnCode;
 	private String returnText;
 	private String timeStamp;
-	
-	//CustomerLimitService Required fields
-	private long 		headerId;
-	private String 		ruleCode;
-	private String 		ruleValue;
-	private String 		customerGroup;
-	private String 		customerId;
-	private String 		responsibleBranch;
-	private String 		currency;
-	private Date 		expiryDate;
-	private Date 		reviewDate;
 
-	private String 		limitStructureCode;
-	private long 		detailId;
-    private String 		limitItem;
-   	private BigDecimal 	limitSanctioned;
-	private BigDecimal 	calculatedLimit;
-	private BigDecimal 	utilisedLimit;
-	private boolean 	limitCheck;
-	private String 		conditionRule;
-	private String 		sqlRule;
-	private String 		returnType;
-	
+	//CustomerLimitService Required fields
+	private long headerId;
+	private String ruleCode;
+	private String ruleValue;
+	private String customerGroup;
+	private String customerId;
+	private String responsibleBranch;
+	private String currency;
+	private Date expiryDate;
+	private Date reviewDate;
+
+	private String limitStructureCode;
+	private long detailId;
+	private String limitItem;
+	private BigDecimal limitSanctioned;
+	private BigDecimal calculatedLimit;
+	private BigDecimal utilisedLimit;
+	private boolean limitCheck;
+	private String conditionRule;
+	private String sqlRule;
+	private String returnType;
+
 	public LimitDetail() {
 		//
 	}
@@ -427,8 +427,7 @@ public class LimitDetail implements Serializable {
 	public void setTimeStamp(String timeStamp) {
 		this.timeStamp = timeStamp;
 	}
-	
-	
+
 	public long getHeaderId() {
 		return headerId;
 	}
@@ -564,7 +563,7 @@ public class LimitDetail implements Serializable {
 	public void setConditionRule(String conditionRule) {
 		this.conditionRule = conditionRule;
 	}
-	
+
 	public String getSqlRule() {
 		return sqlRule;
 	}
@@ -572,7 +571,7 @@ public class LimitDetail implements Serializable {
 	public void setSqlRule(String sqlRule) {
 		this.sqlRule = sqlRule;
 	}
-	
+
 	public String getReturnType() {
 		return returnType;
 	}

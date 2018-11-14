@@ -104,46 +104,44 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/ExtendedFieldDetail
- * /extendedFieldDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/ExtendedFieldDetail /extendedFieldDetailDialog.zul
+ * file.
  */
 public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
-	private static final long	serialVersionUID	= -5800673813892917464L;
+	private static final long serialVersionUID = -5800673813892917464L;
 	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ExtendedFieldDetailDialog; 	// autowired
-	protected Combobox 		moduleId;							// autowired
-	protected Uppercasebox 	fieldName; 							// autowired
-	protected Combobox 		fieldType; 							// autowired
-	protected Intbox	 	fieldLength; 						// autowired
-	protected Intbox 		fieldPrec; 							// autowired
-	protected Textbox 		fieldLabel; 						// autowired
-	protected Checkbox 		fieldMandatory;	 					// autowired
-	protected Combobox 		fieldConstraint; 					// autowired
-	protected Intbox 		fieldSeqOrder; 						// autowired
-	protected Combobox 		combofieldList; 					// autowired
-	protected Textbox 		fieldDefaultValue; 					// autowired
-	protected Checkbox 		fieldDefaultValue_Boolean; 			// autowired
-	protected Combobox 		fieldDefaultValue_Date; 			// autowired
-	protected Longbox 		fieldMinValue; 						// autowired
-	protected Longbox 		fieldMaxValue; 						// autowired
-	protected Checkbox 		fieldUnique; 						// autowired
-	protected Label			label_ExtendedFieldDetailDialog_FieldListInstrLabel;
-	protected Intbox		fieldMultilinetxt;
-	protected Combobox 		parentTag;
-	protected Label			label_ExtendedFieldDetailDialog_FieldSeqOrder;
-	protected Checkbox 		fieldEditable;
+	protected Window window_ExtendedFieldDetailDialog; // autowired
+	protected Combobox moduleId; // autowired
+	protected Uppercasebox fieldName; // autowired
+	protected Combobox fieldType; // autowired
+	protected Intbox fieldLength; // autowired
+	protected Intbox fieldPrec; // autowired
+	protected Textbox fieldLabel; // autowired
+	protected Checkbox fieldMandatory; // autowired
+	protected Combobox fieldConstraint; // autowired
+	protected Intbox fieldSeqOrder; // autowired
+	protected Combobox combofieldList; // autowired
+	protected Textbox fieldDefaultValue; // autowired
+	protected Checkbox fieldDefaultValue_Boolean; // autowired
+	protected Combobox fieldDefaultValue_Date; // autowired
+	protected Longbox fieldMinValue; // autowired
+	protected Longbox fieldMaxValue; // autowired
+	protected Checkbox fieldUnique; // autowired
+	protected Label label_ExtendedFieldDetailDialog_FieldListInstrLabel;
+	protected Intbox fieldMultilinetxt;
+	protected Combobox parentTag;
+	protected Label label_ExtendedFieldDetailDialog_FieldSeqOrder;
+	protected Checkbox fieldEditable;
 
-	protected Listbox 		listBoxFieldDet;
-	protected Paging 		pagingFieldDetList;
-	protected Textbox 		fieldList;
-	protected Grid 			grid_label;
+	protected Listbox listBoxFieldDet;
+	protected Paging pagingFieldDetList;
+	protected Textbox fieldList;
+	protected Grid grid_label;
 
 	// not auto wired vars
 	private ExtendedFieldDetail extendedFieldDetail; // overhanded per param
@@ -170,13 +168,13 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Row rowfieldIsEditable;
 	protected Hbox parent_fieldConstraint;
 	//### 08-05-2018 Start Development Iteam 81
-	protected Checkbox 		allowInRule; 					 
-	protected Row 			rowfieldAllowInRule;		
-	
+	protected Checkbox allowInRule;
+	protected Row rowfieldAllowInRule;
+
 	//story #699 Allow Additional filters for extended combobox.
-	protected Row 			rowExtAddtionalFilters;				 
-	protected Listbox 		listBoxAddtionalFilters;				 
-	protected Button 		btnAddFilters;				 
+	protected Row rowExtAddtionalFilters;
+	protected Listbox listBoxAddtionalFilters;
+	protected Button btnAddFilters;
 	private List<ValueLabel> fieldNames = new ArrayList<>();
 	private List<ValueLabel> extendedParents = new ArrayList<>();
 	private List<ValueLabel> filterList = PennantStaticListUtil.getFilters();
@@ -184,10 +182,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public static final String DELIMITER = "^^";
 	public static final String SEPARATOR = ">>";
 
-	
-	private boolean newRecord=false;
-	private boolean newFieldDetail=false;
-	private boolean firstTaskRole=false;
+	private boolean newRecord = false;
+	private boolean newFieldDetail = false;
+	private boolean firstTaskRole = false;
 	private int maxSeqNo = 0;
 	private ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
 	private TechnicalValuationDialogCtrl technicalValuationDialogCtrl;
@@ -195,6 +192,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private List<ValueLabel> moduleList = PennantStaticListUtil.getExtendedFieldMasters();
 	private String moduleDesc;
 	private String subModuleDesc;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -210,9 +208,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected ExtendedFieldDetail
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected ExtendedFieldDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -239,16 +236,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			if (arguments.containsKey("extendedFieldDialogCtrl")) {
 				setExtendedFieldDialogCtrl((ExtendedFieldDialogCtrl) arguments.get("extendedFieldDialogCtrl"));
 			} else if (arguments.containsKey("technicalValuationDialogCtrl")) {
-				setTechnicalValuationDialogCtrl((TechnicalValuationDialogCtrl) arguments.get("technicalValuationDialogCtrl"));
+				setTechnicalValuationDialogCtrl(
+						(TechnicalValuationDialogCtrl) arguments.get("technicalValuationDialogCtrl"));
 			}
 			//### 08-05-2018 Start Development Iteam 81
-			
+
 			if (arguments.containsKey("moduleDesc")) {
-				moduleDesc=(String) arguments.get("moduleDesc");
+				moduleDesc = (String) arguments.get("moduleDesc");
 			}
-		
+
 			if (arguments.containsKey("subModuleDesc")) {
-				subModuleDesc=(String) arguments.get("subModuleDesc");
+				subModuleDesc = (String) arguments.get("subModuleDesc");
 			}
 			//### 08-05-2018 End Development Iteam 81
 			setNewFieldDetail(true);
@@ -289,7 +287,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			// to it and can synchronize the shown data when we do insert, edit or
 			// delete extendedFieldDetail here.
 			if (arguments.containsKey("extendedFieldDetailListCtrl")) {
-				setExtendedFieldDetailListCtrl((ExtendedFieldDetailListCtrl) arguments.get("extendedFieldDetailListCtrl"));
+				setExtendedFieldDetailListCtrl(
+						(ExtendedFieldDetailListCtrl) arguments.get("extendedFieldDetailListCtrl"));
 			} else {
 				setExtendedFieldDetailListCtrl(null);
 			}
@@ -320,11 +319,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldMultilinetxt.setMaxlength(2);
 
 		//story #699 Allow Additional filters for extended combobox.
-		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, getExtendedFieldDetail().getFieldType())) {
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO,
+				getExtendedFieldDetail().getFieldType())) {
 			this.fieldNames = getFieldNameList(getExtendedFieldDetail().getFieldList());
 		}
 		this.extendedParents = getExtendedParentsList();
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -339,13 +339,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("ExtendedFieldDetailDialog",getRole());
+		getUserWorkspace().allocateAuthorities("ExtendedFieldDetailDialog", getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ExtendedFieldDetailDialog_btnNewD"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ExtendedFieldDetailDialog_btnEditD"));
@@ -449,15 +448,20 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		this.fieldName.setValue(aExtendedFieldDetail.getFieldName());
 
-		fillComboBox(this.fieldType,aExtendedFieldDetail.getFieldType(),PennantStaticListUtil.getFieldType(),"");
-		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(), getParentElements(aExtendedFieldDetail.getFieldType()), "");
+		fillComboBox(this.fieldType, aExtendedFieldDetail.getFieldType(), PennantStaticListUtil.getFieldType(), "");
+		fillComboBox(this.parentTag, aExtendedFieldDetail.getParentTag(),
+				getParentElements(aExtendedFieldDetail.getFieldType()), "");
 
-		if(isTextType()){
-			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint(),PennantStaticListUtil.getRegexType(),"");
-			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint(), PennantStaticListUtil.getRegexType()));
-		}else if(isDateType()){
-			fillComboBox(this.fieldConstraint,aExtendedFieldDetail.getFieldConstraint().split(",")[0],PennantStaticListUtil.getDateType(),"");
-			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint().split(",")[0], PennantStaticListUtil.getDateType()));
+		if (isTextType()) {
+			fillComboBox(this.fieldConstraint, aExtendedFieldDetail.getFieldConstraint(),
+					PennantStaticListUtil.getRegexType(), "");
+			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(aExtendedFieldDetail.getFieldConstraint(),
+					PennantStaticListUtil.getRegexType()));
+		} else if (isDateType()) {
+			fillComboBox(this.fieldConstraint, aExtendedFieldDetail.getFieldConstraint().split(",")[0],
+					PennantStaticListUtil.getDateType(), "");
+			this.fieldConstraint.setValue(PennantAppUtil.getlabelDesc(
+					aExtendedFieldDetail.getFieldConstraint().split(",")[0], PennantStaticListUtil.getDateType()));
 		}
 
 		fillComboBox(this.combofieldList, aExtendedFieldDetail.getFieldList(), moduleList, "");
@@ -466,16 +470,16 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldLabel.setValue(aExtendedFieldDetail.getFieldLabel());
 		this.fieldMandatory.setChecked(aExtendedFieldDetail.isFieldMandatory());
 		this.fieldSeqOrder.setValue(aExtendedFieldDetail.getFieldSeqOrder());
-		if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, aExtendedFieldDetail.getFieldType())){
-			if(StringUtils.equals(PennantConstants.YES, aExtendedFieldDetail.getFieldDefaultValue())){
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, aExtendedFieldDetail.getFieldType())) {
+			if (StringUtils.equals(PennantConstants.YES, aExtendedFieldDetail.getFieldDefaultValue())) {
 				this.fieldDefaultValue_Boolean.setChecked(true);
-			}else{
+			} else {
 				this.fieldDefaultValue_Boolean.setChecked(false);
 			}
-		}else if(isDateType()){
-			fillComboBox(fieldDefaultValue_Date, aExtendedFieldDetail.getFieldDefaultValue(), 
+		} else if (isDateType()) {
+			fillComboBox(fieldDefaultValue_Date, aExtendedFieldDetail.getFieldDefaultValue(),
 					getDateDefaultType(aExtendedFieldDetail.getFieldType()), "");
-		}else{
+		} else {
 			this.fieldDefaultValue.setValue(aExtendedFieldDetail.getFieldDefaultValue());
 		}
 		this.fieldMinValue.setValue(aExtendedFieldDetail.getFieldMinValue());
@@ -487,10 +491,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			onFieldTypeChange(aExtendedFieldDetail.getFieldType(), false);
 		}
 		//story #699 Allow Additional filters for extended combobox.
-		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, aExtendedFieldDetail.getFieldType())){
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, aExtendedFieldDetail.getFieldType())) {
 			renderAddtionalFilters(aExtendedFieldDetail);
 		}
-		
+
 		if (aExtendedFieldDetail.isNewRecord() && StringUtils.isBlank(aExtendedFieldDetail.getFieldName())) {
 			this.fieldEditable.setChecked(true);
 		} else {
@@ -498,7 +502,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		this.parentTag.setValue(aExtendedFieldDetail.getParentTag());
 		this.allowInRule.setChecked(aExtendedFieldDetail.isAllowInRule());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -564,28 +568,29 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		String reservedKeys = ",ADD,EXTERNAL,PROCEDURE,ALL,FETCH,PUBLIC,ALTER,FILE,RAISERROR,AND,FILLFACTOR,READ," +
-				"ANY,FOR,READTEXT,AS,FOREIGN,RECONFIGURE,ASC,FREETEXT,REFERENCES,AUTHORIZATION,FREETEXTTABLE," +
-				"REPLICATION,BACKUP,FROM,RESTORE,BEGIN,FULL,RESTRICT,BETWEEN,FUNCTION,RETURN,BREAK,GOTO,REVERT," +
-				"BROWSE,GRANT,REVOKE,BULK,GROUP,RIGHT,BY,HAVING,ROLLBACK,CASCADE,HOLDLOCK,ROWCOUNT,CASE," +
-				"IDENTITY,ROWGUIDCOL,CHECK,IDENTITY_INSERT,RULE,CHECKPOINT,IDENTITYCOL,SAVE,CLOSE,IF,SCHEMA," +
-				"CLUSTERED,IN,SECURITYAUDIT,COALESCE,INDEX,SELECT,COLLATE,INNER,SEMANTICKEYPHRASETABLE,COLUMN," +
-				"INSERT,SEMANTICSIMILARITYDETAILSTABLE,COMMIT,INTERSECT,SEMANTICSIMILARITYTABLE,INTO,SESSION_USER," +
-				"CONSTRAINT,IS,SET,CONTAINS,JOIN,SETUSER,CONTAINSTABLE,KEY,SHUTDOWN,CONTINUE,KILL,SOME," +
-				"CONVERT,LEFT,STATISTICS,CREATE,LIKE,SYSTEM_USER,CROSS,LINENO,TABLE,CURRENT,LOAD,TABLESAMPLE," +
-				"MERGE,TEXTSIZE,CURRENT_TIME,NATIONAL,THEN,CURRENT_TIMESTAMP,NOCHECK,TO,CURRENT_USER," +
-				"NONCLUSTERED,TOP,CURSOR,NOT,TRAN,DATABASE,NULL,TRANSACTION,DBCC,NULLIF,TRIGGER,DEALLOCATE," +
-				"OF,TRUNCATE,DECLARE,OFF,TRY_CONVERT,DEFAULT,OFFSETS,TSEQUAL,DELETE,ON,UNION,DENY,OPEN," +
-				"UNIQUE,DESC,OPENDATASOURCE,UNPIVOT,DISK,OPENQUERY,UPDATE,DISTINCT,OPENROWSET,UPDATETEXT," +
-				"DISTRIBUTED,OPENXML,USE,DOUBLE,OPTION,USER,DROP,OR,VALUES,DUMP,ORDER,VARYING,ELSE,OUTER," +
-				"VIEW,END,OVER,WAITFOR,ERRLVL,PERCENT,WHEN,ESCAPE,PIVOT,WHERE,EXCEPT,PLAN,WHILE,EXEC," +
-				"PRECISION,WITH,EXECUTE,PRIMARY,EXISTS,PRINT,WRITETEXT,EXIT,PROC,VERSION,LASTMNTON,LASTMNTBY,"+
-				"RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,DATE,LONG,NUMBER";
+		String reservedKeys = ",ADD,EXTERNAL,PROCEDURE,ALL,FETCH,PUBLIC,ALTER,FILE,RAISERROR,AND,FILLFACTOR,READ,"
+				+ "ANY,FOR,READTEXT,AS,FOREIGN,RECONFIGURE,ASC,FREETEXT,REFERENCES,AUTHORIZATION,FREETEXTTABLE,"
+				+ "REPLICATION,BACKUP,FROM,RESTORE,BEGIN,FULL,RESTRICT,BETWEEN,FUNCTION,RETURN,BREAK,GOTO,REVERT,"
+				+ "BROWSE,GRANT,REVOKE,BULK,GROUP,RIGHT,BY,HAVING,ROLLBACK,CASCADE,HOLDLOCK,ROWCOUNT,CASE,"
+				+ "IDENTITY,ROWGUIDCOL,CHECK,IDENTITY_INSERT,RULE,CHECKPOINT,IDENTITYCOL,SAVE,CLOSE,IF,SCHEMA,"
+				+ "CLUSTERED,IN,SECURITYAUDIT,COALESCE,INDEX,SELECT,COLLATE,INNER,SEMANTICKEYPHRASETABLE,COLUMN,"
+				+ "INSERT,SEMANTICSIMILARITYDETAILSTABLE,COMMIT,INTERSECT,SEMANTICSIMILARITYTABLE,INTO,SESSION_USER,"
+				+ "CONSTRAINT,IS,SET,CONTAINS,JOIN,SETUSER,CONTAINSTABLE,KEY,SHUTDOWN,CONTINUE,KILL,SOME,"
+				+ "CONVERT,LEFT,STATISTICS,CREATE,LIKE,SYSTEM_USER,CROSS,LINENO,TABLE,CURRENT,LOAD,TABLESAMPLE,"
+				+ "MERGE,TEXTSIZE,CURRENT_TIME,NATIONAL,THEN,CURRENT_TIMESTAMP,NOCHECK,TO,CURRENT_USER,"
+				+ "NONCLUSTERED,TOP,CURSOR,NOT,TRAN,DATABASE,NULL,TRANSACTION,DBCC,NULLIF,TRIGGER,DEALLOCATE,"
+				+ "OF,TRUNCATE,DECLARE,OFF,TRY_CONVERT,DEFAULT,OFFSETS,TSEQUAL,DELETE,ON,UNION,DENY,OPEN,"
+				+ "UNIQUE,DESC,OPENDATASOURCE,UNPIVOT,DISK,OPENQUERY,UPDATE,DISTINCT,OPENROWSET,UPDATETEXT,"
+				+ "DISTRIBUTED,OPENXML,USE,DOUBLE,OPTION,USER,DROP,OR,VALUES,DUMP,ORDER,VARYING,ELSE,OUTER,"
+				+ "VIEW,END,OVER,WAITFOR,ERRLVL,PERCENT,WHEN,ESCAPE,PIVOT,WHERE,EXCEPT,PLAN,WHILE,EXEC,"
+				+ "PRECISION,WITH,EXECUTE,PRIMARY,EXISTS,PRINT,WRITETEXT,EXIT,PROC,VERSION,LASTMNTON,LASTMNTBY,"
+				+ "RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,DATE,LONG,NUMBER";
 
 		try {
-			this.fieldName.getValue();			
-			if(reservedKeys.contains(","+this.fieldName.getValue().toUpperCase()+",")){
-				throw new WrongValueException(this.fieldName, Labels.getLabel("RESERVED_KEYS", new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value")}));
+			this.fieldName.getValue();
+			if (reservedKeys.contains("," + this.fieldName.getValue().toUpperCase() + ",")) {
+				throw new WrongValueException(this.fieldName, Labels.getLabel("RESERVED_KEYS",
+						new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value") }));
 			}
 			aExtendedFieldDetail.setFieldName(this.fieldName.getValue());
 		} catch (WrongValueException we) {
@@ -598,11 +603,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 
 		try {
-			
+
 			int seqNo = this.fieldSeqOrder.intValue();
-			if(seqNo == 0){
+			if (seqNo == 0) {
 				seqNo = maxSeqNo + 10;
-				if(seqNo > 1000){
+				if (seqNo > 1000) {
 					seqNo = 1000;
 				}
 			}
@@ -612,9 +617,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 
 		try {
-			if(!this.fieldType.isDisabled() && this.fieldType.getSelectedIndex()<1){
+			if (!this.fieldType.isDisabled() && this.fieldType.getSelectedIndex() < 1) {
 				throw new WrongValueException(fieldType, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldType.value")}));
+						new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_FieldType.value") }));
 			}
 			aExtendedFieldDetail.setFieldType(this.fieldType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
@@ -622,20 +627,22 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		try {
 			if (aExtendedFieldDetail.getFieldType() != null && (isTextType() || isDateType())) {
-				if(isTextType()){
-					if(!this.fieldConstraint.isDisabled() && this.fieldConstraint.getSelectedIndex()<1){
-						throw new WrongValueException(fieldConstraint, Labels.getLabel("STATIC_INVALID",
-								new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldConstraint.value")}));
+				if (isTextType()) {
+					if (!this.fieldConstraint.isDisabled() && this.fieldConstraint.getSelectedIndex() < 1) {
+						throw new WrongValueException(fieldConstraint, Labels.getLabel("STATIC_INVALID", new String[] {
+								Labels.getLabel("label_ExtendedFieldDetailDialog_FieldConstraint.value") }));
 					}
-					aExtendedFieldDetail.setFieldConstraint(this.fieldConstraint.getSelectedItem().getValue().toString());
+					aExtendedFieldDetail
+							.setFieldConstraint(this.fieldConstraint.getSelectedItem().getValue().toString());
 
-				}else if(isDateType()){
+				} else if (isDateType()) {
 
-					if(!"TIME".equals(aExtendedFieldDetail.getFieldType())){
+					if (!"TIME".equals(aExtendedFieldDetail.getFieldType())) {
 
-						if(!this.fieldConstraint.isDisabled() && this.fieldConstraint.getSelectedIndex()<1){
-							throw new WrongValueException(fieldConstraint, Labels.getLabel("STATIC_INVALID",
-									new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldConstraint.value")}));
+						if (!this.fieldConstraint.isDisabled() && this.fieldConstraint.getSelectedIndex() < 1) {
+							throw new WrongValueException(fieldConstraint,
+									Labels.getLabel("STATIC_INVALID", new String[] { Labels
+											.getLabel("label_ExtendedFieldDetailDialog_FieldConstraint.value") }));
 						}
 						String value = this.fieldConstraint.getSelectedItem().getValue().toString();
 
@@ -646,50 +653,58 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 							if (this.parent_fieldConstraint.getFellowIfAny("range_From") != null) {
 								rangeFrom = (Datebox) this.parent_fieldConstraint.getFellowIfAny("range_From");
 								if (rangeFrom.getValue() == null) {
-									throw new WrongValueException(rangeFrom,  Labels.getLabel("FIELD_IS_MAND", new String[] {"From Date"}));
+									throw new WrongValueException(rangeFrom,
+											Labels.getLabel("FIELD_IS_MAND", new String[] { "From Date" }));
 								}
-								value = value +","+DateUtility.formatUtilDate(rangeFrom.getValue(),PennantConstants.dateTimeFormat);
+								value = value + "," + DateUtility.formatUtilDate(rangeFrom.getValue(),
+										PennantConstants.dateTimeFormat);
 							}
 
 							if (this.parent_fieldConstraint.getFellowIfAny("range_To") != null) {
 								rangeTo = (Datebox) this.parent_fieldConstraint.getFellowIfAny("range_To");
 								if (rangeTo.getValue() == null) {
-									throw new WrongValueException(rangeTo, Labels.getLabel("FIELD_IS_MAND", new String[] {"To Date"}));
+									throw new WrongValueException(rangeTo,
+											Labels.getLabel("FIELD_IS_MAND", new String[] { "To Date" }));
 								}
 
 								if (rangeTo.getValue().compareTo(rangeFrom.getValue()) <= 0) {
 									throw new WrongValueException(rangeTo, Labels.getLabel("DATE_ALLOWED_MINDATE",
 											new String[] { "To Date", "From Date" }));
 								}
-								value = value +","+DateUtility.formatUtilDate(rangeTo.getValue(),PennantConstants.dateTimeFormat);
+								value = value + "," + DateUtility.formatUtilDate(rangeTo.getValue(),
+										PennantConstants.dateTimeFormat);
 							}
 
-						} else if("FUTURE_DAYS".equals(value) ||  "PAST_DAYS".equals(value)){
+						} else if ("FUTURE_DAYS".equals(value) || "PAST_DAYS".equals(value)) {
 
-							if(this.parent_fieldConstraint.getFellowIfAny("noOfDays") != null){
+							if (this.parent_fieldConstraint.getFellowIfAny("noOfDays") != null) {
 								Intbox days = (Intbox) this.parent_fieldConstraint.getFellowIfAny("noOfDays");
-								if(days.intValue()<=0){
-									throw new WrongValueException(days, Labels.getLabel("NUMBER_MINVALUE", new String[] {"No Of Days","0"}));
+								if (days.intValue() <= 0) {
+									throw new WrongValueException(days,
+											Labels.getLabel("NUMBER_MINVALUE", new String[] { "No Of Days", "0" }));
 								}
-								value = value +","+days.intValue();
+								value = value + "," + days.intValue();
 							}
 						}
 						aExtendedFieldDetail.setFieldConstraint(value);
-					}else{
+					} else {
 						aExtendedFieldDetail.setFieldConstraint("");
 					}
 				}
-			}else{
+			} else {
 				aExtendedFieldDetail.setFieldConstraint("");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TEXT,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD,aExtendedFieldDetail.getFieldType()))) {
+		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TEXT,
+				aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_UPPERTEXT, aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT,
+						aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD,
+						aExtendedFieldDetail.getFieldType()))) {
 			aExtendedFieldDetail.setFieldPrec(0);
 			aExtendedFieldDetail.setFieldList("");
 			aExtendedFieldDetail.setFieldDefaultValue(this.fieldDefaultValue.getValue());
@@ -712,9 +727,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			wve.add(we);
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,aExtendedFieldDetail.getFieldType()))) {
+		if (aExtendedFieldDetail.getFieldType() != null
+				&& (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, aExtendedFieldDetail.getFieldType())
+						|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG,
+								aExtendedFieldDetail.getFieldType())
+						|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,
+								aExtendedFieldDetail.getFieldType()))) {
 
 			try {
 				if (this.fieldLength.getValue() == null || this.fieldLength.intValue() == 0) {
@@ -723,7 +741,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				}
 				aExtendedFieldDetail.setFieldLength(this.fieldLength.intValue());
 				aExtendedFieldDetail.setFieldList("");
-				aExtendedFieldDetail.setFieldDefaultValue(this.fieldDefaultValue.getValue() == null?"":this.fieldDefaultValue.getValue());
+				aExtendedFieldDetail.setFieldDefaultValue(
+						this.fieldDefaultValue.getValue() == null ? "" : this.fieldDefaultValue.getValue());
 				aExtendedFieldDetail.setFieldMinValue(this.fieldMinValue.longValue());
 				aExtendedFieldDetail.setFieldMaxValue(this.fieldMaxValue.longValue());
 				aExtendedFieldDetail.setFieldPrec(this.fieldPrec.intValue());
@@ -732,9 +751,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT,aExtendedFieldDetail.getFieldType()) 
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL,aExtendedFieldDetail.getFieldType()))) {
+		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT,
+				aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, aExtendedFieldDetail.getFieldType()))) {
 
 			try {
 				if (this.fieldLength.getValue() == null || this.fieldLength.intValue() == 0) {
@@ -743,7 +763,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				}
 				aExtendedFieldDetail.setFieldLength(this.fieldLength.intValue());
 				aExtendedFieldDetail.setFieldList("");
-				aExtendedFieldDetail.setFieldDefaultValue(this.fieldDefaultValue.getValue() == null?"":this.fieldDefaultValue.getValue());
+				aExtendedFieldDetail.setFieldDefaultValue(
+						this.fieldDefaultValue.getValue() == null ? "" : this.fieldDefaultValue.getValue());
 				aExtendedFieldDetail.setFieldMinValue(this.fieldMinValue.longValue());
 				aExtendedFieldDetail.setFieldMaxValue(this.fieldMaxValue.longValue());
 			} catch (WrongValueException we) {
@@ -756,44 +777,48 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null &&  
-				StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_STATICCOMBO,aExtendedFieldDetail.getFieldType())) {
+		if (aExtendedFieldDetail.getFieldType() != null && StringUtils
+				.equals(ExtendedFieldConstants.FIELDTYPE_STATICCOMBO, aExtendedFieldDetail.getFieldType())) {
 
 			try {
 				if (this.fieldLength.getValue() == null || this.fieldLength.intValue() == 0) {
 					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY",
 							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value")));
-				}else if(this.fieldLength.intValue() > 100){
-					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY_LESSTHAN",
-							new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),String.valueOf(100)}));
+				} else if (this.fieldLength.intValue() > 100) {
+					throw new WrongValueException(this.fieldLength,
+							Labels.getLabel("FIELD_NO_EMPTY_LESSTHAN",
+									new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),
+											String.valueOf(100) }));
 				}
 				aExtendedFieldDetail.setFieldLength(this.fieldLength.intValue());
 				aExtendedFieldDetail.setFieldPrec(0);
 				aExtendedFieldDetail.setFieldMinValue(0);
 				aExtendedFieldDetail.setFieldMaxValue(0);
 				aExtendedFieldDetail.setFieldDefaultValue("");
-				if (grid_label.getFellowIfAny("SListId") != null){
-					Textbox text=(Textbox) grid_label.getFellowIfAny("SListId");
+				if (grid_label.getFellowIfAny("SListId") != null) {
+					Textbox text = (Textbox) grid_label.getFellowIfAny("SListId");
 					String[] statList = text.getValue().split(",");
-					
-					if(statList.length > 20){
-						throw new WrongValueException(text, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-								new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),"20 Items"}));
+
+					if (statList.length > 20) {
+						throw new WrongValueException(text, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
+								Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"), "20 Items" }));
 					}
-					Map<String,Boolean> fieldList = new HashMap<String,Boolean>();
+					Map<String, Boolean> fieldList = new HashMap<String, Boolean>();
 					for (String statValue : statList) {
-						if(fieldList.containsKey(statValue)){
-							throw new WrongValueException(text, Labels.getLabel("FIELD_REPEAT",
-									new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),""}));
+						if (fieldList.containsKey(statValue)) {
+							throw new WrongValueException(text, Labels.getLabel("FIELD_REPEAT", new String[] {
+									Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"), "" }));
 						}
 						fieldList.put(statValue, false);
-						if(statValue.length() == 0){
+						if (statValue.length() == 0) {
 							throw new WrongValueException(text, Labels.getLabel("NOEMPTY_LISTVALUE"));
 						}
-						if(statValue.length() > this.fieldLength.intValue()){
-							throw new WrongValueException(text, Labels.getLabel("FIELD_LEN_RENGE",
-									new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),
-									String.valueOf(this.fieldLength.intValue())}));
+						if (statValue.length() > this.fieldLength.intValue()) {
+							throw new WrongValueException(text,
+									Labels.getLabel("FIELD_LEN_RENGE",
+											new String[] {
+													Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),
+													String.valueOf(this.fieldLength.intValue()) }));
 						}
 					}
 					aExtendedFieldDetail.setFieldList(text.getValue());
@@ -802,37 +827,39 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				wve.add(we);
 			}
 		}
-		if (aExtendedFieldDetail.getFieldType() != null && 
-				StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO,aExtendedFieldDetail.getFieldType())) {
-			
+		if (aExtendedFieldDetail.getFieldType() != null && StringUtils
+				.equals(ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO, aExtendedFieldDetail.getFieldType())) {
+
 			try {
-				
+
 				aExtendedFieldDetail.setFieldLength(200);
 				aExtendedFieldDetail.setFieldPrec(0);
 				aExtendedFieldDetail.setFieldMinValue(0);
 				aExtendedFieldDetail.setFieldMaxValue(0);
 				aExtendedFieldDetail.setFieldDefaultValue("");
-				if (grid_label.getFellowIfAny("SListId") != null){
-					Textbox text=(Textbox) grid_label.getFellowIfAny("SListId");
+				if (grid_label.getFellowIfAny("SListId") != null) {
+					Textbox text = (Textbox) grid_label.getFellowIfAny("SListId");
 					String[] statList = text.getValue().split(",");
-					if(statList.length > 10){
-						throw new WrongValueException(text, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-								new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),"10 Items"}));
+					if (statList.length > 10) {
+						throw new WrongValueException(text, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
+								Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"), "10 Items" }));
 					}
-					Map<String,Boolean> fieldList = new HashMap<String,Boolean>();
+					Map<String, Boolean> fieldList = new HashMap<String, Boolean>();
 					for (String statValue : statList) {
-						if(fieldList.containsKey(statValue)){
-							throw new WrongValueException(text, Labels.getLabel("FIELD_REPEAT",
-									new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),""}));
+						if (fieldList.containsKey(statValue)) {
+							throw new WrongValueException(text, Labels.getLabel("FIELD_REPEAT", new String[] {
+									Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"), "" }));
 						}
 						fieldList.put(statValue, false);
-						if(statValue.length() == 0){
+						if (statValue.length() == 0) {
 							throw new WrongValueException(text, Labels.getLabel("NOEMPTY_LISTVALUE"));
 						}
-						if(statValue.length() > 20){
-							throw new WrongValueException(text, Labels.getLabel("FIELD_LEN_RENGE",
-									new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),
-									String.valueOf(20)}));
+						if (statValue.length() > 20) {
+							throw new WrongValueException(text,
+									Labels.getLabel("FIELD_LEN_RENGE",
+											new String[] {
+													Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),
+													String.valueOf(20) }));
 						}
 					}
 					aExtendedFieldDetail.setFieldList(text.getValue());
@@ -842,41 +869,47 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null && 
-				StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO,aExtendedFieldDetail.getFieldType())) {
+		if (aExtendedFieldDetail.getFieldType() != null
+				&& StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, aExtendedFieldDetail.getFieldType())) {
 
 			try {
 				if (this.fieldLength.getValue() == null || this.fieldLength.intValue() == 0) {
 					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY",
 							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value")));
-				}else if(this.fieldLength.intValue() > 20){
-					throw new WrongValueException(this.fieldLength, Labels.getLabel("FIELD_NO_EMPTY_LESSTHAN",
-							new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),String.valueOf(20)}));
+				} else if (this.fieldLength.intValue() > 20) {
+					throw new WrongValueException(this.fieldLength,
+							Labels.getLabel("FIELD_NO_EMPTY_LESSTHAN",
+									new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),
+											String.valueOf(20) }));
 				}
 				aExtendedFieldDetail.setFieldLength(this.fieldLength.intValue());
 				aExtendedFieldDetail.setFieldPrec(0);
 				aExtendedFieldDetail.setFieldMinValue(0);
 				aExtendedFieldDetail.setFieldMaxValue(0);
 				aExtendedFieldDetail.setFieldDefaultValue("");
-				if (grid_label.getFellowIfAny("RadioList") != null){
-					Textbox text=(Textbox) grid_label.getFellowIfAny("RadioList");
+				if (grid_label.getFellowIfAny("RadioList") != null) {
+					Textbox text = (Textbox) grid_label.getFellowIfAny("RadioList");
 					String[] statList = text.getValue().split(",");
-					if(statList.length > 10){
-						throw new WrongValueException(text, Labels.getLabel("FIELD_COUNT_RENGE",
-								new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value"),
-								String.valueOf(10)}));
+					if (statList.length > 10) {
+						throw new WrongValueException(text,
+								Labels.getLabel("FIELD_COUNT_RENGE",
+										new String[] {
+												Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value"),
+												String.valueOf(10) }));
 					}
-					Map<String,Boolean> fieldList = new HashMap<String,Boolean>();
+					Map<String, Boolean> fieldList = new HashMap<String, Boolean>();
 					for (String statValue : statList) {
-						if(fieldList.containsKey(statValue)){
+						if (fieldList.containsKey(statValue)) {
 							throw new WrongValueException(text, Labels.getLabel("FIELD_REPEAT",
 									Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value")));
 						}
 						fieldList.put(statValue, false);
-						if(statValue.length() == 0 || (statValue.length() > this.fieldLength.intValue())){
-							throw new WrongValueException(text, Labels.getLabel("FIELD_LEN_RENGE",
-									new String[]{Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value"),
-									String.valueOf(this.fieldLength.intValue())}));
+						if (statValue.length() == 0 || (statValue.length() > this.fieldLength.intValue())) {
+							throw new WrongValueException(text,
+									Labels.getLabel("FIELD_LEN_RENGE",
+											new String[] {
+													Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value"),
+													String.valueOf(this.fieldLength.intValue()) }));
 						}
 					}
 					aExtendedFieldDetail.setFieldList(text.getValue());
@@ -886,8 +919,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null &&  
-				"BOOLEAN".equals(aExtendedFieldDetail.getFieldType())) {
+		if (aExtendedFieldDetail.getFieldType() != null && "BOOLEAN".equals(aExtendedFieldDetail.getFieldType())) {
 			aExtendedFieldDetail.setFieldLength(0);
 			aExtendedFieldDetail.setFieldPrec(0);
 			aExtendedFieldDetail.setFieldMinValue(0);
@@ -896,8 +928,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			aExtendedFieldDetail.setFieldList("");
 		}
 
-		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO,aExtendedFieldDetail.getFieldType()) || 
-				StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO,aExtendedFieldDetail.getFieldType())) {
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO,
+						aExtendedFieldDetail.getFieldType())) {
 			try {
 				if (StringUtils.isEmpty(this.combofieldList.getValue())) {
 					throw new WrongValueException(this.combofieldList, Labels.getLabel("SELECT_FIELD",
@@ -922,23 +955,24 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		}
 
-		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME,aExtendedFieldDetail.getFieldType())
-				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME,aExtendedFieldDetail.getFieldType()))) {
+		if (aExtendedFieldDetail.getFieldType() != null && (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN,
+				aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, aExtendedFieldDetail.getFieldType())
+				|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, aExtendedFieldDetail.getFieldType()))) {
 			aExtendedFieldDetail.setFieldPrec(0);
 			aExtendedFieldDetail.setFieldMinValue(0);
 			aExtendedFieldDetail.setFieldMaxValue(0);
 			aExtendedFieldDetail.setFieldLength(0);
 			aExtendedFieldDetail.setFieldList("");
-			
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN,aExtendedFieldDetail.getFieldType())){
-				if(this.fieldDefaultValue_Boolean.isChecked()){
+
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, aExtendedFieldDetail.getFieldType())) {
+				if (this.fieldDefaultValue_Boolean.isChecked()) {
 					aExtendedFieldDetail.setFieldDefaultValue(PennantConstants.YES);
-				}else{
+				} else {
 					aExtendedFieldDetail.setFieldDefaultValue(PennantConstants.NO);
 				}
-			}else{
+			} else {
 				aExtendedFieldDetail.setFieldDefaultValue(getComboboxValue(this.fieldDefaultValue_Date));
 			}
 		}
@@ -947,14 +981,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldDefaultValue.getValue();
 			if (aExtendedFieldDetail.getFieldType() != null && isNumericType()
 					&& StringUtils.isNotBlank(this.fieldDefaultValue.getValue())) {
-				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,aExtendedFieldDetail.getFieldType())){
-					this.fieldDefaultValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"),
-							2, false, false, 0, 100));
-				}else{
+				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,
+						aExtendedFieldDetail.getFieldType())) {
+					this.fieldDefaultValue.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"), 2, false, false,
+							0, 100));
+				} else {
 					int length = this.fieldLength.intValue();
 					int prec = this.fieldPrec.intValue();
-					this.fieldDefaultValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"),
-							prec, false, false, 0, Math.pow(10, length-prec) -1));
+					this.fieldDefaultValue.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"), prec, false,
+							false, 0, Math.pow(10, length - prec) - 1));
 				}
 				this.fieldDefaultValue.getValue();
 			}
@@ -963,16 +1000,19 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 
 		try {
-			if(aExtendedFieldDetail.getFieldType() != null && isNumericType() && this.fieldMinValue.longValue() != 0){
-				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,aExtendedFieldDetail.getFieldType())){
-					this.fieldMinValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"),
-							2, false, false, 0, 100));
-				}else{
+			if (aExtendedFieldDetail.getFieldType() != null && isNumericType() && this.fieldMinValue.longValue() != 0) {
+				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,
+						aExtendedFieldDetail.getFieldType())) {
+					this.fieldMinValue.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"), 2, false, false, 0,
+							100));
+				} else {
 					int length = this.fieldLength.intValue();
 					int prec = this.fieldPrec.intValue();
 
-					this.fieldMinValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"),
-							prec, false, false, 0, Math.pow(10, length-prec) -1));
+					this.fieldMinValue.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"), prec, false, false,
+							0, Math.pow(10, length - prec) - 1));
 				}
 				this.fieldMinValue.longValue();
 			}
@@ -981,15 +1021,18 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 
 		try {
-			if(aExtendedFieldDetail.getFieldType() != null && isNumericType() && this.fieldMaxValue.longValue() != 0){
-				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,aExtendedFieldDetail.getFieldType())){
-					this.fieldMaxValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMaxValue.value"),
-							2, false, false, 0, 100));
-				}else{
+			if (aExtendedFieldDetail.getFieldType() != null && isNumericType() && this.fieldMaxValue.longValue() != 0) {
+				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE,
+						aExtendedFieldDetail.getFieldType())) {
+					this.fieldMaxValue.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMaxValue.value"), 2, false, false, 0,
+							100));
+				} else {
 					int length = this.fieldLength.intValue();
 					int prec = this.fieldPrec.intValue();
-					this.fieldMaxValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMaxValue.value"),
-							prec, false, false, 0, Math.pow(10, length-prec) -1));
+					this.fieldMaxValue.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMaxValue.value"), prec, false, false,
+							0, Math.pow(10, length - prec) - 1));
 				}
 				this.fieldMaxValue.longValue();
 			}
@@ -997,14 +1040,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			wve.add(we);
 		}
 		try {
-			if(aExtendedFieldDetail.getFieldType() != null && isNumericType()){
+			if (aExtendedFieldDetail.getFieldType() != null && isNumericType()) {
 				this.fieldMinValue.longValue();
 				this.fieldMaxValue.longValue();
-				if(this.fieldMaxValue.longValue() > 0){
-					if(this.fieldMinValue.longValue() > this.fieldMaxValue.longValue()){
-						throw new WrongValueException(fieldMinValue, Labels.getLabel("NUMBER_MAXVALUE_EQ", 
-								new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value") ,
-								Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMaxValue.value")}));
+				if (this.fieldMaxValue.longValue() > 0) {
+					if (this.fieldMinValue.longValue() > this.fieldMaxValue.longValue()) {
+						throw new WrongValueException(fieldMinValue, Labels.getLabel("NUMBER_MAXVALUE_EQ",
+								new String[] { Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"),
+										Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMaxValue.value") }));
 					}
 				}
 			}
@@ -1023,26 +1066,28 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			wve.add(we);
 		}
 		try {
-			if(!this.parentTag.isDisabled() && this.parentTag.getSelectedIndex()>0){
-				aExtendedFieldDetail.setParentTag(this.parentTag.getSelectedItem().getValue().toString());	
-			}else{
+			if (!this.parentTag.isDisabled() && this.parentTag.getSelectedIndex() > 0) {
+				aExtendedFieldDetail.setParentTag(this.parentTag.getSelectedItem().getValue().toString());
+			} else {
 				aExtendedFieldDetail.setParentTag(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//If the fieldType is groupbox ,tabpanel or button then make inputElement as false otherwise true
-		try{
+		try {
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, aExtendedFieldDetail.getFieldType())
-					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL,aExtendedFieldDetail.getFieldType())
-					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON,aExtendedFieldDetail.getFieldType())
-					||StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX,aExtendedFieldDetail.getFieldType())) {
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL,
+							aExtendedFieldDetail.getFieldType())
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, aExtendedFieldDetail.getFieldType())
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX,
+							aExtendedFieldDetail.getFieldType())) {
 				aExtendedFieldDetail.setInputElement(false);
 				this.fieldEditable.setValue(false);
-			}else{
+			} else {
 				aExtendedFieldDetail.setInputElement(true);
 			}
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -1050,7 +1095,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD, aExtendedFieldDetail.getFieldType())) {
 				if (this.parentTag.getSelectedIndex() == 0) {
@@ -1068,7 +1113,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		//story #699 Allow Additional filters for extended combobox.
 		try {
 			if (this.rowExtAddtionalFilters.isVisible()) {
@@ -1082,7 +1127,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1098,12 +1143,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExtendedFieldDetail
 	 * @throws InterruptedException
@@ -1119,12 +1162,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldName.focus();
 		} else {
 			this.fieldType.focus();
-			if (isNewFieldDetail()){
+			if (isNewFieldDetail()) {
 				doEdit();
-			}else  if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -1135,12 +1178,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			// fill the components with the data
 			doWriteBeanToComponents(aExtendedFieldDetail);
 
-			if(isNewFieldDetail()){
+			if (isNewFieldDetail()) {
 				this.window_ExtendedFieldDetailDialog.setHeight("480px");
 				this.window_ExtendedFieldDetailDialog.setWidth("800px");
 				this.groupboxWf.setVisible(false);
-				this.window_ExtendedFieldDetailDialog.doModal() ;
-			}else{
+				this.window_ExtendedFieldDetailDialog.doModal();
+			} else {
 				this.window_ExtendedFieldDetailDialog.setWidth("100%");
 				this.window_ExtendedFieldDetailDialog.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
@@ -1161,36 +1204,39 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldPrec.getValue();
 
 		if (!this.fieldName.isReadonly()) {
-			this.fieldName.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value"),
-					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE,true));
+			this.fieldName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 
 		if (!this.fieldLabel.isReadonly()) {
-			this.fieldLabel.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLabel.value"),
-					PennantRegularExpressions.REGEX_FIELDLABEL,true));
+			this.fieldLabel.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLabel.value"),
+							PennantRegularExpressions.REGEX_FIELDLABEL, true));
 		}
 
 		if (!this.fieldLength.isReadonly()) {
 
 			int maxLength = 0;
 			int minLength = 1;
-			if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_TEXT) ||
-					StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_UPPERTEXT)) {
+			if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_TEXT)
+					|| StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_UPPERTEXT)) {
 				maxLength = 100;
-			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT)) {
+			} else if (StringUtils.equals(getComboboxValue(fieldType),
+					ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT)) {
 				maxLength = 1000;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_STATICCOMBO)) {
 				maxLength = 100;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_RADIO)) {
 				maxLength = 20;
-			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
 				maxLength = 21;
 				minLength = 9;
-			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_DECIMAL)) {
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_DECIMAL)) {
 				maxLength = 21;
-			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_INT)) {
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_INT)) {
 				maxLength = 8;
-			}else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LONG)) {
+			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LONG)) {
 				maxLength = 12;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LISTFIELD)) {
 				minLength = 1000;
@@ -1198,36 +1244,39 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 
 			if (maxLength != 0) {
-				this.fieldLength.setConstraint(new PTNumberValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),
-						false, false, minLength, maxLength));
+				this.fieldLength.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldLength.value"),
+								false, false, minLength, maxLength));
 			}
 		}
 
 		if (!this.fieldPrec.isReadonly()) {
-			this.fieldPrec.setConstraint(new PTNumberValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldPrec.value"),
-					false, false, 0, 4));
+			this.fieldPrec.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_ExtendedFieldDetailDialog_FieldPrec.value"), false, false, 0, 4));
 		}
 
 		if (!this.fieldSeqOrder.isReadonly()) {
-			this.fieldSeqOrder.setConstraint(new PTNumberValidator(	Labels.getLabel("label_ExtendedFieldDetailDialog_FieldSeqOrder.value"),
-					false, false, 0, 1000));
+			this.fieldSeqOrder.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_ExtendedFieldDetailDialog_FieldSeqOrder.value"), false, false, 0, 1000));
 		}
 
 		if (!this.combofieldList.isDisabled() && rowfieldList.isVisible()) {
-			this.combofieldList.setConstraint(new StaticListValidator(moduleList, Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value")));
+			this.combofieldList.setConstraint(new StaticListValidator(moduleList,
+					Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value")));
 		}
 
 		if (!this.fieldDefaultValue.isReadonly() && rowfieldDefaultValue.isVisible()) {
-			if(isNumericType()){
+			if (isNumericType()) {
 				this.fieldDefaultValue.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"),
-						PennantRegularExpressions.REGEX_NM_AMOUNT,false));
+						PennantRegularExpressions.REGEX_NM_AMOUNT, false));
 			}
 		}
-		if(!this.fieldMultilinetxt.isReadonly()){
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT,getComboboxValue(fieldType))){
-				this.fieldMultilinetxt.setConstraint(new PTNumberValidator(	Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMultilinetxt.value"),
-						true, false, 1, 10));
+		if (!this.fieldMultilinetxt.isReadonly()) {
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, getComboboxValue(fieldType))) {
+				this.fieldMultilinetxt.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMultilinetxt.value"), true, false, 1,
+						10));
 			}
 		}
 
@@ -1419,7 +1468,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		//story #699 Allow Additional filters for extended combobox.
 		readOnlyComponent(isReadOnly("ExtendedFieldDetailDialog_btnAddFilters"), this.btnAddFilters);
-		
+
 		boolean isMaintenanceProcess = false;
 		if ((!getExtendedFieldDetail().isNewRecord() && StringUtils.isEmpty(getExtendedFieldDetail().getRecordType())
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_UPD, getExtendedFieldDetail().getRecordType())
@@ -1470,8 +1519,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewFieldDetail()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewFieldDetail()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1499,7 +1548,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldUnique.setDisabled(true);
 		this.fieldMultilinetxt.setReadonly(true);
 		readOnlyComponent(true, this.allowInRule);
-		
+
 		doEdit();
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1580,42 +1629,42 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 		} else {
 
-			if(isNewFieldDetail()){
-				if(isNewRecord()){
+			if (isNewFieldDetail()) {
+				if (isNewRecord()) {
 					aExtendedFieldDetail.setVersion(1);
 					aExtendedFieldDetail.setRecordType(PennantConstants.RCD_ADD);
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aExtendedFieldDetail.getRecordType())){
-					aExtendedFieldDetail.setVersion(aExtendedFieldDetail.getVersion()+1);
+				if (StringUtils.isBlank(aExtendedFieldDetail.getRecordType())) {
+					aExtendedFieldDetail.setVersion(aExtendedFieldDetail.getVersion() + 1);
 					aExtendedFieldDetail.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aExtendedFieldDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aExtendedFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aExtendedFieldDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aExtendedFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
-				aExtendedFieldDetail.setVersion(aExtendedFieldDetail.getVersion()+1);
-				if(isNew){
-					tranType =PennantConstants.TRAN_ADD;
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+			} else {
+				aExtendedFieldDetail.setVersion(aExtendedFieldDetail.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
 		}
 
 		// save it to database
 		try {
-			if(isNewFieldDetail()){
-				AuditHeader auditHeader =  newFieldProcess(aExtendedFieldDetail,tranType);
+			if (isNewFieldDetail()) {
+				AuditHeader auditHeader = newFieldProcess(aExtendedFieldDetail, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					if (getExtendedFieldDialogCtrl() != null) {
 						getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
 					} else if (getTechnicalValuationDialogCtrl() != null) {
@@ -1624,7 +1673,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					closeDialog();
 				}
 
-			}else if (doProcess(aExtendedFieldDetail, tranType)) {
+			} else if (doProcess(aExtendedFieldDetail, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -1752,8 +1801,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ExtendedFieldDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1794,6 +1843,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1801,6 +1851,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public ExtendedFieldDetail getExtendedFieldDetail() {
 		return this.extendedFieldDetail;
 	}
+
 	public void setExtendedFieldDetail(ExtendedFieldDetail extendedFieldDetail) {
 		this.extendedFieldDetail = extendedFieldDetail;
 	}
@@ -1808,6 +1859,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public void setExtendedFieldDetailService(ExtendedFieldDetailService extendedFieldDetailService) {
 		this.extendedFieldDetailService = extendedFieldDetailService;
 	}
+
 	public ExtendedFieldDetailService getExtendedFieldDetailService() {
 		return this.extendedFieldDetailService;
 	}
@@ -1815,12 +1867,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public void setExtendedFieldDetailListCtrl(ExtendedFieldDetailListCtrl extendedFieldDetailListCtrl) {
 		this.extendedFieldDetailListCtrl = extendedFieldDetailListCtrl;
 	}
+
 	public ExtendedFieldDetailListCtrl getExtendedFieldDetailListCtrl() {
 		return this.extendedFieldDetailListCtrl;
 	}
 
 	private AuditHeader getAuditHeader(ExtendedFieldDetail aExtendedFieldDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aExtendedFieldDetail.getBefImage(), aExtendedFieldDetail);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aExtendedFieldDetail.getBefImage(),
+				aExtendedFieldDetail);
 		return new AuditHeader(String.valueOf(aExtendedFieldDetail.getModuleId()), null, null, null, auditDetail,
 				aExtendedFieldDetail.getUserDetails(), getOverideMap());
 	}
@@ -1849,6 +1903,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected String getReference() {
 		return String.valueOf(this.extendedFieldDetail.getModuleId());
 	}
+
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -1873,17 +1928,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 	public void onChange$fieldType(Event event) {
 		if (!("").equals(this.fieldType.getSelectedItem().getValue())) {
-			onFieldTypeChange(this.fieldType.getSelectedItem().getValue().toString(),true);
+			onFieldTypeChange(this.fieldType.getSelectedItem().getValue().toString(), true);
 		}
 	}
 
 	public void onChange$fieldLength(Event event) {
 
 		int length = this.fieldLength.intValue();
-		if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE) ||
-				StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_DECIMAL) ||
-				StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)) {
-			length = length +1;
+		if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)
+				|| StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_DECIMAL)
+				|| StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)) {
+			length = length + 1;
 		}
 		this.fieldDefaultValue.setMaxlength(length);
 		this.fieldMinValue.setMaxlength(length);
@@ -1907,20 +1962,21 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 	private boolean isListType() {
 		String type = this.fieldType.getSelectedItem().getValue().toString();
-		return "|EXTENDEDCOMBO|STATICCOMBO|MULTISTATICCOMBO|MULTIEXTENDEDCOMBO|RADIO|LISTFIELD|".contains("|" + type + "|");
+		return "|EXTENDEDCOMBO|STATICCOMBO|MULTISTATICCOMBO|MULTIEXTENDEDCOMBO|RADIO|LISTFIELD|"
+				.contains("|" + type + "|");
 	}
 
 	private void onFieldTypeChange(String fieldType, boolean isUserAction) {
 		logger.debug("Entering");
 		fillComboBox(this.parentTag, "", getParentElements(fieldType), "");
-		if(StringUtils.equals(PennantConstants.List_Select,fieldType)){
+		if (StringUtils.equals(PennantConstants.List_Select, fieldType)) {
 			this.fieldLength.setText("");
 			this.fieldPrec.setText("");
 			this.fieldLength.setReadonly(false);
 			this.fieldPrec.setReadonly(false);
 			this.fieldMandatory.setChecked(false);
 			this.fieldUnique.setChecked(false);
-			fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
+			fillComboBox(this.fieldConstraint, "", PennantStaticListUtil.getRegexType(), "");
 			this.fieldConstraint.setSelectedIndex(0);
 			this.fieldSeqOrder.setText("");
 			this.rowfieldLength.setVisible(true);
@@ -1934,13 +1990,13 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowfieldMaxValue.setVisible(false);
 			this.rowfieldMultilinetxt.setVisible(false);
 			this.rowExtAddtionalFilters.setVisible(false);
-			
-		}else{
 
-			if(this.rowfieldList.getFellowIfAny("SListId") != null){
+		} else {
+
+			if (this.rowfieldList.getFellowIfAny("SListId") != null) {
 				this.combofieldList.getPreviousSibling().detach();
 			}
-			if(this.rowfieldList.getFellowIfAny("RadioList") != null){
+			if (this.rowfieldList.getFellowIfAny("RadioList") != null) {
 				this.combofieldList.getPreviousSibling().detach();
 			}
 
@@ -1966,7 +2022,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowConstraint.setVisible(false);
 			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);
 
-			if(isUserAction){
+			if (isUserAction) {
 				this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
 				this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
 				this.fieldDefaultValue.setValue("");
@@ -1976,14 +2032,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.rowfieldDefaultValue.setVisible(true);
 				this.fieldDefaultValue.setVisible(true);
 				this.rowConstraint.setVisible(true);
-				if(isUserAction){
+				if (isUserAction) {
 					this.fieldConstraint.getItems().clear();
-					fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
+					fillComboBox(this.fieldConstraint, "", PennantStaticListUtil.getRegexType(), "");
 				}
 
-				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, fieldType)){
+				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, fieldType)) {
 					this.rowfieldMultilinetxt.setVisible(true);
-				}else{
+				} else {
 					this.rowUnique.setVisible(true);
 				}
 			} else if (isNumericType()) {
@@ -1992,7 +2048,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.rowfieldMinValue.setVisible(true);
 				this.rowfieldMaxValue.setVisible(true);
 
-				if(isUserAction){
+				if (isUserAction) {
 					// Set the default values
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
 						this.fieldLength.setValue(18);
@@ -2009,37 +2065,36 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 						this.fieldLength.setValue(5);
 						this.fieldPrec.setValue(2);
 						this.fieldLength.setReadonly(true);
-					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType)){
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType)) {
 						this.fieldLength.setValue(8);
 						this.fieldPrec.setValue(0);
 						this.rowfieldPrec.setVisible(false);
-					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)){
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)) {
 						this.fieldLength.setValue(12);
 						this.fieldPrec.setValue(0);
 						this.rowfieldPrec.setVisible(false);
 					}
-				}else{
-					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, fieldType) || 
-							StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
+				} else {
+					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, fieldType)
+							|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
 						this.fieldLength.setReadonly(true);
-					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType) || 
-							StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)){
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType)
+							|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)) {
 						this.rowfieldPrec.setVisible(false);
-					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)){
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)) {
 						this.fieldPrec.setReadonly(true);
-					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)){
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)) {
 						this.fieldPrec.setReadonly(true);
 					}
 				}
 
-
-			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType) || 
-					StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)) {
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType)
+					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)) {
 				this.rowfieldList.setVisible(true);
 				this.combofieldList.setVisible(true);
 				this.fieldLength.setReadonly(true);
 				this.fieldLength.setValue(20);
-				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)){
+				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)) {
 					this.fieldLength.setValue(220);
 				}
 				//story #699 Allow Additional filters for extended combobox.
@@ -2058,17 +2113,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				textbox.setWidth("200px");
 				textbox.setId("SListId");
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-				if(!isUserAction){
+				if (!isUserAction) {
 					textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
 					this.fieldLength.setValue(getExtendedFieldDetail().getFieldLength());
-				}else{
+				} else {
 					this.fieldLength.setValue(20);
 				}
-				textbox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value") ,
-						PennantRegularExpressions.REGEX_STATICLIST,true));
+				textbox.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),
+								PennantRegularExpressions.REGEX_STATICLIST, true));
 
-				this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
+				this.combofieldList.getParent().insertBefore(textbox, this.combofieldList);
 				this.combofieldList.setVisible(false);
 				this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
 
@@ -2078,25 +2133,25 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				Uppercasebox textbox = new Uppercasebox();
 				textbox.setId("SListId");
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-				if(!isUserAction){
+				if (!isUserAction) {
 					textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
 				}
 				this.fieldLength.setReadonly(true);
 				this.fieldLength.setValue(220);
-				textbox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value") ,
-						PennantRegularExpressions.REGEX_STATICLIST,true));
+				textbox.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"),
+								PennantRegularExpressions.REGEX_STATICLIST, true));
 
-				this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
+				this.combofieldList.getParent().insertBefore(textbox, this.combofieldList);
 				this.combofieldList.setVisible(false);
 				this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
 
-			} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, fieldType)){
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, fieldType)) {
 				this.rowMandatory.setVisible(false);
 				this.rowfieldDefaultValue.setVisible(true);
 				this.fieldDefaultValue_Boolean.setVisible(true);
 
-			} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, fieldType)){
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, fieldType)) {
 				this.rowfieldList.setVisible(true);
 				this.fieldLength.setValue(20);
 
@@ -2105,40 +2160,41 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
 				textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
 
-				textbox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value") ,
-						PennantRegularExpressions.REGEX_STATICLIST,true));
+				textbox.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value"),
+								PennantRegularExpressions.REGEX_STATICLIST, true));
 
-				this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
+				this.combofieldList.getParent().insertBefore(textbox, this.combofieldList);
 				this.combofieldList.setVisible(false);
 				this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
 
-			}else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType)){
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType)) {
 				Uppercasebox textbox = new Uppercasebox();
 				textbox.setId("ExtCmbId");
 				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
 
-			}else if(isDateType()){
+			} else if (isDateType()) {
 				this.rowfieldDefaultValue.setVisible(true);
 				this.fieldDefaultValue_Date.setVisible(true);
-				if(isUserAction){
+				if (isUserAction) {
 					fillComboBox(fieldDefaultValue_Date, "", getDateDefaultType(fieldType), "");
 				}
-				if(!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fieldType)){
+				if (!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fieldType)) {
 					this.rowConstraint.setVisible(true);
-					if(isUserAction){
+					if (isUserAction) {
 						this.fieldConstraint.getChildren().clear();
 						while (this.fieldConstraint.getNextSibling() != null) {
 							this.fieldConstraint.getNextSibling().detach();
 						}
-						fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getDateType(),"");
-					}else{
-						onChangeDateConstraint(getExtendedFieldDetail().getFieldConstraint().split(",")[0],false);
+						fillComboBox(this.fieldConstraint, "", PennantStaticListUtil.getDateType(), "");
+					} else {
+						onChangeDateConstraint(getExtendedFieldDetail().getFieldConstraint().split(",")[0], false);
 					}
-					this.fieldConstraint.addForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
+					this.fieldConstraint.addForward("onChange", this.window_ExtendedFieldDetailDialog,
+							"onDateContSelect");
 				}
 			}
-		
+
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_GROUPBOX, fieldType)
 					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TABPANEL, fieldType)
 					|| StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTBOX, fieldType)
@@ -2159,48 +2215,48 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.rowMandatory.setVisible(false);
 			}
 
-			if(this.rowfieldLength.isVisible()){
-				if(isTextType()){
+			if (this.rowfieldLength.isVisible()) {
+				if (isTextType()) {
 					this.fieldDefaultValue.setStyle("text-align:left;");
 					this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue());
-				}else if(isNumericType()){
+				} else if (isNumericType()) {
 					this.fieldDefaultValue.setStyle("text-align:right;");
-					if(StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_INT) || 
-							StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LONG)){
+					if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_INT)
+							|| StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LONG)) {
 
 						this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue());
-					}else{
-						this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue()+1);
+					} else {
+						this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue() + 1);
 					}
 					this.fieldDefaultValue.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"),
-							PennantRegularExpressions.REGEX_NM_AMOUNT,false));
+							PennantRegularExpressions.REGEX_NM_AMOUNT, false));
 				}
 			}
 		}
 		logger.debug("Leaving");
 	}
 
-	public void onDateContSelect(Event event){
+	public void onDateContSelect(Event event) {
 
-		if(this.parent_fieldConstraint.getFellowIfAny("range")!= null){
+		if (this.parent_fieldConstraint.getFellowIfAny("range") != null) {
 			this.parent_fieldConstraint.removeChild(this.parent_fieldConstraint.getFellowIfAny("range"));
-		}else if(this.parent_fieldConstraint.getFellowIfAny("days") != null){
+		} else if (this.parent_fieldConstraint.getFellowIfAny("days") != null) {
 			this.parent_fieldConstraint.removeChild(this.parent_fieldConstraint.getFellowIfAny("days"));
 		}
 
-		if(isDateType() && this.fieldConstraint.getSelectedIndex() > 0 && 
-				StringUtils.isNotBlank(this.fieldConstraint.getSelectedItem().getValue().toString())){
+		if (isDateType() && this.fieldConstraint.getSelectedIndex() > 0
+				&& StringUtils.isNotBlank(this.fieldConstraint.getSelectedItem().getValue().toString())) {
 
 			String constType = this.fieldConstraint.getSelectedItem().getValue().toString();
-			onChangeDateConstraint(constType,true);
+			onChangeDateConstraint(constType, true);
 		}
 
 	}
 
-	private void onChangeDateConstraint(String constType,boolean newSel){
+	private void onChangeDateConstraint(String constType, boolean newSel) {
 
-		if("RANGE".equals(constType)){
+		if ("RANGE".equals(constType)) {
 			Datebox rangeFrom = new Datebox();
 			rangeFrom.setId("range_From");
 			rangeFrom.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -2209,7 +2265,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			rangeTo.setId("range_To");
 			rangeTo.setFormat(DateFormat.SHORT_DATE.getPattern());
 
-			Hbox hbox = new Hbox(); 
+			Hbox hbox = new Hbox();
 			hbox.setId("range");
 			hbox.appendChild(rangeFrom);
 			hbox.setStyle("padding-left:10px;");
@@ -2218,26 +2274,28 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			hbox.appendChild(rangeTo);
 			parent_fieldConstraint.appendChild(hbox);
 
-			if(!newSel){
-				rangeFrom.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[1],PennantConstants.dateFormat));
-				rangeTo.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[2],PennantConstants.dateFormat));
+			if (!newSel) {
+				rangeFrom.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[1],
+						PennantConstants.dateFormat));
+				rangeTo.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[2],
+						PennantConstants.dateFormat));
 			}
 
-		}else if("FUTURE_DAYS".equals(constType) || "PAST_DAYS".equals(constType)){
+		} else if ("FUTURE_DAYS".equals(constType) || "PAST_DAYS".equals(constType)) {
 
-			Hbox hbox = new Hbox(); 
+			Hbox hbox = new Hbox();
 			hbox.setId("days");
 			Label label = new Label(" No Of Days : ");
 			hbox.appendChild(label);
 
-			Intbox intbox = new Intbox(); 
+			Intbox intbox = new Intbox();
 			intbox.setMaxlength(5);
 			intbox.setWidth("50px");
 			intbox.setId("noOfDays");
 			hbox.appendChild(intbox);
 			parent_fieldConstraint.appendChild(hbox);
 
-			if(!newSel){
+			if (!newSel) {
 				intbox.setValue(Integer.parseInt(getExtendedFieldDetail().getFieldConstraint().split(",")[1]));
 			}
 		}
@@ -2246,6 +2304,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -2253,10 +2312,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public ExtendedFieldDialogCtrl getExtendedFieldDialogCtrl() {
 		return extendedFieldDialogCtrl;
 	}
+
 	public void setExtendedFieldDialogCtrl(ExtendedFieldDialogCtrl extendedFieldDialogCtrl) {
 		this.extendedFieldDialogCtrl = extendedFieldDialogCtrl;
 	}
-	
+
 	public TechnicalValuationDialogCtrl getTechnicalValuationDialogCtrl() {
 		return technicalValuationDialogCtrl;
 	}
@@ -2268,6 +2328,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -2275,6 +2336,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	public boolean isNewFieldDetail() {
 		return newFieldDetail;
 	}
+
 	public void setNewFieldDetail(boolean newFieldDetail) {
 		this.newFieldDetail = newFieldDetail;
 	}
@@ -2309,9 +2371,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 							valueParm[0] = aExtendedFieldDetail.getFieldLabel();
 							errParm[0] = PennantJavaUtil.getLabel("label_FieldLabel") + ":" + valueParm[0];
 						}
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -2328,7 +2390,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 							extendedFieldDetails.add(aExtendedFieldDetail);
 						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aExtendedFieldDetail.getRecordType())) {
 							recordAdded = true;
-							for (int j = 0; j < getExtendedFieldDialogCtrl().getExtendedFieldDetailsList().size(); j++) {
+							for (int j = 0; j < getExtendedFieldDialogCtrl().getExtendedFieldDetailsList()
+									.size(); j++) {
 								ExtendedFieldDetail detail = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList()
 										.get(j);
 								if (detail.getModuleId() == aExtendedFieldDetail.getModuleId()
@@ -2354,26 +2417,32 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	private ArrayList<ValueLabel> getDateDefaultType(String fielType) {
-		
+
 		ArrayList<ValueLabel> dateDefaultTypes = new ArrayList<ValueLabel>(1);
-		if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, fielType)){
-			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_APPDATE, Labels.getLabel("label_DateDefaultType_AppDate")));
-			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_SYSDATE, Labels.getLabel("label_DateDefaultType_SysDate")));
-		}else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, fielType)){
-			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_APPDATE, Labels.getLabel("label_DateDefaultType_AppDateSysTime")));
-			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_SYSDATE, Labels.getLabel("label_DateDefaultType_SysDateSysTime")));
-		}else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fielType)){
-			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_SYSTIME, Labels.getLabel("label_DateDefaultType_SysTime")));
+		if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, fielType)) {
+			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
+					Labels.getLabel("label_DateDefaultType_AppDate")));
+			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
+					Labels.getLabel("label_DateDefaultType_SysDate")));
+		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, fielType)) {
+			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
+					Labels.getLabel("label_DateDefaultType_AppDateSysTime")));
+			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
+					Labels.getLabel("label_DateDefaultType_SysDateSysTime")));
+		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fielType)) {
+			dateDefaultTypes.add(new ValueLabel(ExtendedFieldConstants.DFTDATETYPE_SYSTIME,
+					Labels.getLabel("label_DateDefaultType_SysTime")));
 		}
 		return dateDefaultTypes;
 	}
-	
+
 	//story #699 Allow Additional filters for extended combobox. Development Started
-	
+
 	/**
 	 * Rendering the additional filters.
+	 * 
 	 * @param detail
 	 */
 	private void renderAddtionalFilters(ExtendedFieldDetail detail) {
@@ -2381,27 +2450,27 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		String filters = detail.getFilters();
 		if (StringUtils.trimToNull(filters) == null) {
-			this.listBoxAddtionalFilters.setHeight(((addFiltersSeqNo +2) * 28) + "px");
+			this.listBoxAddtionalFilters.setHeight(((addFiltersSeqNo + 2) * 28) + "px");
 			return;
 		}
 		String[] filterArray = StringUtils.split(filters, DELIMITER);
 		for (String filter : filterArray) {
 			String[] values = filter.split(SEPARATOR);
-			addFiltersSeqNo =addFiltersSeqNo+1;
+			addFiltersSeqNo = addFiltersSeqNo + 1;
 			doFillExtAdditionalFilters(addFiltersSeqNo, Arrays.asList(values));
 		}
-		
-		this.listBoxAddtionalFilters.setHeight(((addFiltersSeqNo +2) * 28) + "px");
+
+		this.listBoxAddtionalFilters.setHeight(((addFiltersSeqNo + 2) * 28) + "px");
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * @param seqNo
 	 * @param values
 	 */
 	private void doFillExtAdditionalFilters(int seqNo, List<String> values) {
 		boolean readOnly = isReadOnly("ExtendedFieldDetailDialog_AdditionalFilters");
-		
+
 		Listitem item = new Listitem();
 
 		// Parameter
@@ -2451,7 +2520,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		item.setId("listitem_" + seqNo);
 		this.listBoxAddtionalFilters.appendChild(item);
 	}
-	
+
 	/**
 	 * Method for Creating new Slab Rate record on Clicking New Button
 	 * 
@@ -2464,7 +2533,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			MessageUtil.showMessage(Labels.getLabel("label_ExtendedFieldDetailDialog_AdditionalFilters_Add"));
 			return;
 		}
-		
+
 		addFilters();
 		logger.debug(Literal.LEAVING);
 	}
@@ -2474,18 +2543,18 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 */
 	private void addFilters() {
 		logger.debug(Literal.ENTERING);
-		
+
 		addFiltersSeqNo = addFiltersSeqNo + 1;
 		List<String> valueList = new ArrayList<>();
 		valueList.add("");
 		valueList.add("");
 		valueList.add("");
 		doFillExtAdditionalFilters(addFiltersSeqNo, valueList);
-		this.listBoxAddtionalFilters.setHeight(((this.listBoxAddtionalFilters.getItemCount() +2) * 28) + "px");
-		
+		this.listBoxAddtionalFilters.setHeight(((this.listBoxAddtionalFilters.getItemCount() + 2) * 28) + "px");
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * To delete row
 	 * 
@@ -2497,25 +2566,26 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug(Literal.ENTERING);
 
 		Button delete = (Button) event.getOrigin().getTarget();
-		
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_row");
 		if (MessageUtil.confirm(msg) == MessageUtil.NO) {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
-		
+
 		int seqNo = Integer.parseInt(delete.getId().replaceAll("Delete_", ""));
-		Listitem curListItem = (Listitem) listBoxAddtionalFilters.getFellowIfAny("listitem_"+ seqNo);
-		
+		Listitem curListItem = (Listitem) listBoxAddtionalFilters.getFellowIfAny("listitem_" + seqNo);
+
 		// Delete the item from listbox
 		curListItem.detach();
-		this.listBoxAddtionalFilters.setHeight(((listBoxAddtionalFilters.getItemCount() +2) * 28) + "px");
+		this.listBoxAddtionalFilters.setHeight(((listBoxAddtionalFilters.getItemCount() + 2) * 28) + "px");
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Fetching the all filter values
+	 * 
 	 * @param aExtendedFieldDetail
 	 * @return
 	 */
@@ -2548,9 +2618,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		return values.toString();
 	}
 
-	
 	/**
 	 * Method for validating components
+	 * 
 	 * @return
 	 */
 	private WrongValueException validateFilters() {
@@ -2589,12 +2659,13 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					for (String value : valueList) {
 						String[] valueArray = value.split(SEPARATOR);
 						if (parameterVal.equals(valueArray[0]) && parentVal.equals(valueArray[1])) {
-							throw new WrongValueException(item, Labels.getLabel("label_ExtendedFieldDetailDialog_AdditionalFilters",
-									new String[] { parameterVal, parentVal, valueArray[0], valueArray[1] }));
+							throw new WrongValueException(item,
+									Labels.getLabel("label_ExtendedFieldDetailDialog_AdditionalFilters",
+											new String[] { parameterVal, parentVal, valueArray[0], valueArray[1] }));
 						}
 					}
 				}
-				
+
 				sb = new StringBuilder();
 				sb.append(parameterVal).append(SEPARATOR).append(parentVal);
 				valueList.add(sb.toString());
@@ -2605,16 +2676,17 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	/**
 	 * Getting the selected Module class fields list.
+	 * 
 	 * @param paramCode
 	 * @return
 	 */
 	private List<ValueLabel> getFieldNameList(String paramCode) {
 		logger.debug(Literal.ENTERING);
 		List<ValueLabel> namesList = new ArrayList<>();
-		
+
 		if (StringUtils.trimToNull(paramCode) == null || PennantConstants.List_Select.equals(paramCode)) {
 			return namesList;
 		}
@@ -2622,19 +2694,20 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		Class<?> class1 = moduleMapping.getModuleClass();
 		Field[] fieldArray = class1.getDeclaredFields();
 		List<Field> list = Arrays.asList(fieldArray);
-		
+
 		String excludeList = "serialVersionUID,befImage,userDetails,newRecord";
 		for (Field field : list) {
-			if(!excludeList.contains(field.getName())){
+			if (!excludeList.contains(field.getName())) {
 				namesList.add(new ValueLabel(field.getName(), field.getName()));
 			}
 		}
 		logger.debug(Literal.LEAVING);
 		return namesList;
 	}
-	
+
 	/**
 	 * Getting the existing application lists
+	 * 
 	 * @return
 	 */
 	private List<ValueLabel> getExtendedParentsList() {
@@ -2660,26 +2733,28 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		return valueLabelList;
 	}
-	
+
 	/**
 	 * On change On Module
+	 * 
 	 * @param event
 	 */
 	public void onChange$combofieldList(Event event) {
-		this.fieldNames =  getFieldNameList(this.combofieldList.getSelectedItem().getValue().toString());
+		this.fieldNames = getFieldNameList(this.combofieldList.getSelectedItem().getValue().toString());
 		this.listBoxAddtionalFilters.getItems().clear();
 	}
-	
+
 	/**
 	 * Checking if the deleted filter used in existing module or not
+	 * 
 	 * @param addFilters
 	 * @param aExtendedFieldDetail
 	 * @return
 	 */
 	private String existsAdditionalFilters(String addFilters, ExtendedFieldDetail aExtendedFieldDetail) {
-		
+
 		List<ExtendedFieldDetail> details = new ArrayList<>();
-		
+
 		if (getExtendedFieldDialogCtrl() != null) {
 			details = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 		} else if (getTechnicalValuationDialogCtrl() != null) {
@@ -2712,5 +2787,5 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		return null;
 	}
 	//story #699 Allow Additional filters for extended combobox.Development Ended.
-	
+
 }

@@ -73,17 +73,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/BaseRateCode/baseRateCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/BaseRateCode/baseRateCodeDialog.zul file.
  */
 public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	private static final long serialVersionUID = 190631304555025244L;
 	private static final Logger logger = Logger.getLogger(BaseRateCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BaseRateCodeDialog; // autoWired
 
@@ -92,11 +90,11 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	protected Checkbox bRTypeIsActive; // autoWired
 
 	// not autoWired Var's
-	private BaseRateCode baseRateCode; 							 // overHanded per parameter
+	private BaseRateCode baseRateCode; // overHanded per parameter
 	private transient BaseRateCodeListCtrl baseRateCodeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient BaseRateCodeService baseRateCodeService;
 
@@ -115,9 +113,8 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected BaseRateCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected BaseRateCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -129,7 +126,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		setPageComponents(window_BaseRateCodeDialog);
 
 		try {
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -145,15 +142,13 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 				setBaseRateCode(null);
 			}
 
-			doLoadWorkFlow(this.baseRateCode.isWorkflow(),
-					this.baseRateCode.getWorkflowId(),
+			doLoadWorkFlow(this.baseRateCode.isWorkflow(), this.baseRateCode.getWorkflowId(),
 					this.baseRateCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"BaseRateCodeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "BaseRateCodeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -163,8 +158,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			// or
 			// delete baseRateCode here.
 			if (arguments.containsKey("baseRateCodeListCtrl")) {
-				setBaseRateCodeListCtrl((BaseRateCodeListCtrl) arguments
-						.get("baseRateCodeListCtrl"));
+				setBaseRateCodeListCtrl((BaseRateCodeListCtrl) arguments.get("baseRateCodeListCtrl"));
 			} else {
 				setBaseRateCodeListCtrl(null);
 			}
@@ -176,7 +170,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			MessageUtil.showError(e);
 			this.window_BaseRateCodeDialog.onClose();
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -188,9 +182,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		this.bRType.setMaxlength(8);
 		this.bRTypeDesc.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -201,8 +195,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -222,9 +215,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());		
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -233,9 +226,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -245,9 +238,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_BaseRateCodeDialog);
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -257,9 +250,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving"+event.toString());		
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -268,9 +261,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -310,7 +303,8 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		this.bRTypeDesc.setValue(aBaseRateCode.getBRTypeDesc());
 		this.recordStatus.setValue(aBaseRateCode.getRecordStatus());
 		this.bRTypeIsActive.setChecked(aBaseRateCode.isbRTypeIsActive());
-		if(aBaseRateCode.isNew() || (aBaseRateCode.getRecordType() != null ? aBaseRateCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aBaseRateCode.isNew() || (aBaseRateCode.getRecordType() != null ? aBaseRateCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.bRTypeIsActive.setChecked(true);
 			this.bRTypeIsActive.setDisabled(true);
 		}
@@ -330,12 +324,12 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 
 		try {
 			aBaseRateCode.setBRType(this.bRType.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aBaseRateCode.setBRTypeDesc(this.bRTypeDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -346,8 +340,8 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -361,8 +355,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBaseRateCode
 	 * @throws Exception
@@ -377,13 +370,13 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			// setFocus
 			this.bRType.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.bRTypeDesc.focus();
-				if (StringUtils.isNotBlank(aBaseRateCode.getRecordType())){
+				if (StringUtils.isNotBlank(aBaseRateCode.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -411,12 +404,14 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.bRType.isReadonly()){
-			this.bRType.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateCodeDialog_BRType.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
-		if (!this.bRTypeDesc.isReadonly()){
-			this.bRTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateCodeDialog_BRTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.bRType.isReadonly()) {
+			this.bRType.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateCodeDialog_BRType.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
+		if (!this.bRTypeDesc.isReadonly()) {
+			this.bRTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateCodeDialog_BRTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -434,13 +429,13 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 
 	/**
 	 * Set Validations for LOV Fields
-	 */	
+	 */
 	private void doSetLOVValidation() {
 	}
 
 	/**
 	 * Remove Validations for LOV Fields
-	 */	
+	 */
 	private void doRemoveLOVValidation() {
 	}
 
@@ -458,9 +453,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getBaseRateCodeListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -473,36 +468,35 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		logger.debug("Entering");
 		final BaseRateCode aBaseRateCode = new BaseRateCode();
 		BeanUtils.copyProperties(getBaseRateCode(), aBaseRateCode);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "+ 
-				Labels.getLabel("label_BaseRateCodeDialog_BRType.value")+" : "+aBaseRateCode.getBRType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BaseRateCodeDialog_BRType.value") + " : " + aBaseRateCode.getBRType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aBaseRateCode.getRecordType())){
-				aBaseRateCode.setVersion(aBaseRateCode.getVersion()+1);
+			if (StringUtils.isBlank(aBaseRateCode.getRecordType())) {
+				aBaseRateCode.setVersion(aBaseRateCode.getVersion() + 1);
 				aBaseRateCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aBaseRateCode.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aBaseRateCode,tranType)){
+				if (doProcess(aBaseRateCode, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
 			} catch (Exception e) {
 				MessageUtil.showError(e);
-			}		
+			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -511,27 +505,27 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		if (getBaseRateCode().isNewRecord()){
+		if (getBaseRateCode().isNewRecord()) {
 			this.bRType.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.bRType.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.bRTypeDesc.setReadonly(isReadOnly("BaseRateCodeDialog_bRTypeDesc"));
 		this.bRTypeIsActive.setDisabled(isReadOnly("BaseRateCodeDialog_BRTypeIsActive"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.baseRateCode.isNewRecord()){
+			if (this.baseRateCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -546,14 +540,14 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		this.bRType.setReadonly(true);
 		this.bRTypeDesc.setReadonly(true);
 		this.bRTypeIsActive.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -593,32 +587,32 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		// Do data level validations here
 
 		isNew = aBaseRateCode.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aBaseRateCode.getRecordType())){
-				aBaseRateCode.setVersion(aBaseRateCode.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aBaseRateCode.getRecordType())) {
+				aBaseRateCode.setVersion(aBaseRateCode.getVersion() + 1);
+				if (isNew) {
 					aBaseRateCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aBaseRateCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aBaseRateCode.setNewRecord(true);
 				}
 			}
-		}else{
-			aBaseRateCode.setVersion(aBaseRateCode.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aBaseRateCode.setVersion(aBaseRateCode.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aBaseRateCode,tranType)){
+			if (doProcess(aBaseRateCode, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -627,24 +621,27 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	/**	
+
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aBaseRateCode (BaseRateCode)
+	 * @param aBaseRateCode
+	 *            (BaseRateCode)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BaseRateCode aBaseRateCode,String tranType){
+	private boolean doProcess(BaseRateCode aBaseRateCode, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aBaseRateCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBaseRateCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -676,15 +673,15 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -694,95 +691,95 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			aBaseRateCode.setRoleCode(getRole());
 			aBaseRateCode.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aBaseRateCode, tranType);
+			auditHeader = getAuditHeader(aBaseRateCode, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aBaseRateCode);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aBaseRateCode, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aBaseRateCode, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aBaseRateCode, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aBaseRateCode, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
-	/**	
-	 * Get the result after processing DataBase Operations 
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		BaseRateCode aBaseRateCode = (BaseRateCode) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
+		boolean deleteNotes = false;
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getBaseRateCodeService().delete(auditHeader);
 
-						if(aBaseRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aBaseRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader = getBaseRateCodeService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getBaseRateCodeService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getBaseRateCodeService().doApprove(auditHeader);
-						if(aBaseRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes =true;	
+						if (aBaseRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getBaseRateCodeService().doReject(auditHeader);
-						if(aBaseRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aBaseRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_BaseRateCodeDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_BaseRateCodeDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(this.window_BaseRateCodeDialog,auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_BaseRateCodeDialog, auditHeader);
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -801,26 +798,29 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 
 	/**
 	 * Get Audit Header Details
-	 * @param aBaseRateCode 
+	 * 
+	 * @param aBaseRateCode
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(BaseRateCode aBaseRateCode, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBaseRateCode.getBefImage(), aBaseRateCode);   
-		return new AuditHeader(String.valueOf(aBaseRateCode.getId()),null,null,null,auditDetail,aBaseRateCode.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(BaseRateCode aBaseRateCode, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBaseRateCode.getBefImage(), aBaseRateCode);
+		return new AuditHeader(String.valueOf(aBaseRateCode.getId()), null, null, null, auditDetail,
+				aBaseRateCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_BaseRateCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -829,13 +829,15 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	}
 
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
-	 */	
+	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
@@ -847,7 +849,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -870,6 +872,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -877,6 +880,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	public BaseRateCode getBaseRateCode() {
 		return this.baseRateCode;
 	}
+
 	public void setBaseRateCode(BaseRateCode baseRateCode) {
 		this.baseRateCode = baseRateCode;
 	}
@@ -884,6 +888,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	public void setBaseRateCodeService(BaseRateCodeService baseRateCodeService) {
 		this.baseRateCodeService = baseRateCodeService;
 	}
+
 	public BaseRateCodeService getBaseRateCodeService() {
 		return this.baseRateCodeService;
 	}
@@ -891,6 +896,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	public void setBaseRateCodeListCtrl(BaseRateCodeListCtrl baseRateCodeListCtrl) {
 		this.baseRateCodeListCtrl = baseRateCodeListCtrl;
 	}
+
 	public BaseRateCodeListCtrl getBaseRateCodeListCtrl() {
 		return this.baseRateCodeListCtrl;
 	}

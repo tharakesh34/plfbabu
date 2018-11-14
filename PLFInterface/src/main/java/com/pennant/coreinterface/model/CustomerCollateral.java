@@ -3,13 +3,13 @@ package com.pennant.coreinterface.model;
 import java.io.Serializable;
 
 public class CustomerCollateral implements Serializable {
-	
+
 	private static final long serialVersionUID = -5775138323274602299L;
 
 	public CustomerCollateral() {
 		super();
 	}
-	
+
 	private String custCIF;
 	private String collReference;
 	private String collType;

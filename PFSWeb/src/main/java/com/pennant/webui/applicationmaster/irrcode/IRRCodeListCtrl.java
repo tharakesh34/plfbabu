@@ -94,11 +94,11 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 	protected Textbox iRRCode; // autowired
 	protected Textbox iRRCodeDesc; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_IRRCode;
 	protected Listbox sortOperator_IRRCodeDesc;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient IRRCodeService iRRCodeService;
 
 	/**
@@ -126,8 +126,7 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 	public void onCreate$window_IRRCodeList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_IRRCodeList, borderLayout_IRRCodeList, listBoxIRRCode,
-				pagingIRRCodeList);
+		setPageComponents(window_IRRCodeList, borderLayout_IRRCodeList, listBoxIRRCode, pagingIRRCodeList);
 		setItemRender(new IRRCodeListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -136,7 +135,8 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 
 		registerField("iRRID");
 		registerField("iRRCode", listheader_IRRCode, SortOrder.NONE, iRRCode, sortOperator_IRRCode, Operators.STRING);
-		registerField("iRRCodeDesc", listheader_IRRCodeDesc, SortOrder.NONE, iRRCodeDesc, sortOperator_IRRCodeDesc, Operators.STRING);
+		registerField("iRRCodeDesc", listheader_IRRCodeDesc, SortOrder.NONE, iRRCodeDesc, sortOperator_IRRCodeDesc,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -184,7 +184,6 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -195,7 +194,7 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 
 	public void onIRRCodeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxIRRCode.getSelectedItem();
 		final long iRRID = (long) selectedItem.getAttribute("iRRID");
@@ -205,13 +204,13 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  IRRID = ");
-		whereCond.append( irrcode.getIRRID());
+		whereCond.append(irrcode.getIRRID());
 		whereCond.append(" AND  version=");
 		whereCond.append(irrcode.getVersion());
-	
+
 		if (doCheckAuthority(irrcode, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && irrcode.getWorkflowId() == 0) {
@@ -221,10 +220,10 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -238,7 +237,7 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 		irrcode.setWorkflowId(getWorkFlowId());
 		arg.put("irrcode", irrcode);
 		arg.put("irrcodeListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/IRRCode/IRRCodeDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -268,7 +267,7 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

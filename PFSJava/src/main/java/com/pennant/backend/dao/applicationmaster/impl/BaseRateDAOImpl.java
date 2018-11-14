@@ -71,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	private static Logger logger = Logger.getLogger(BaseRateDAOImpl.class);
-	
+
 	public BaseRateDAOImpl() {
 		super();
 	}
@@ -88,13 +88,14 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	@Override
 	public BaseRate getBaseRateById(final String bRType, String currency, Date bREffDate, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BaseRate baseRate = new BaseRate();
 		baseRate.setBRType(bRType);
 		baseRate.setCurrency(currency);
 		baseRate.setBREffDate(bREffDate);
 
-		StringBuilder selectSql = new StringBuilder("SELECT BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive,");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive,");
 		if (type.contains("View")) {
 			selectSql.append(" LovDescBRTypeName, ");
 		}
@@ -108,17 +109,16 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
 		try {
-			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			baseRate = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return baseRate;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String bRType, Date bREffDate, String currency, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -156,7 +156,7 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(BaseRate baseRate, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -212,22 +212,22 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
-	public void delete(BaseRate baseRate, TableType tableType ) {
+	public void delete(BaseRate baseRate, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" delete from RMTBaseRates");
 		sql.append(tableType.getSuffix());
 		sql.append(" where BRType =:BRType and BREffDate = :BREffDate and Currency = :Currency");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -241,10 +241,10 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * Common method for BaseRates to get the baseRate and
-	 * get the List of objects less than passed Effective BaseRate Date
+	 * Common method for BaseRates to get the baseRate and get the List of objects less than passed Effective BaseRate
+	 * Date
 	 * 
 	 * @param bRType
 	 * @param bREffDate
@@ -261,14 +261,15 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		StringBuilder selectSql = new StringBuilder("SELECT BRType,Currency,BREffDate,BRRate,LastMdfDate ");
 		selectSql.append(" FROM RMTBaseRates");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BRType =:BRType and Currency =:Currency and BREffDate <=:BREffDate  Order by BREffDate Desc");
+		selectSql.append(
+				" Where BRType =:BRType and Currency =:Currency and BREffDate <=:BREffDate  Order by BREffDate Desc");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
-		
+
 		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		
+
 		logger.debug("Leaving");
 		return baseRates;
 	}
@@ -285,19 +286,20 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency ");
 		selectSql.append(" AND breffdate >= (select max(BREffDate) from RMTBASERATES ");
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND breffdate <= :BREffDate)");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
-		
-		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
-		
+
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 		logger.debug("Leaving");
 		return baseRates;
 	}
-	
+
 	/**
-	 * Method for fetching Base Rate with Max Effective date from requested  date
+	 * Method for fetching Base Rate with Max Effective date from requested date
+	 * 
 	 * @param bRType
 	 * @param currency
 	 * @param bREffDate
@@ -316,28 +318,26 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency ");
 		selectSql.append(" AND breffdate = (select max(BREffDate) from RMTBASERATES ");
 		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND breffdate <= :BREffDate)");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
-		
+
 		try {
-			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			baseRate = null;
-		} 
-		
+		}
+
 		logger.debug("Leaving");
 		return baseRate;
 	}
 
 	/**
-	 * To get base rate value using base rate code and effective date is less
-	 * than passed date
+	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
-	public BaseRate getBaseRateByType(final String bRType, String currency,  Date bREffDate) {
+	public BaseRate getBaseRateByType(final String bRType, String currency, Date bREffDate) {
 		logger.debug("Entering");
 		BaseRate baseRate = null;
 
@@ -351,8 +351,7 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	}
 
 	/**
-	 * To get base rate value using base rate code and effective date is less
-	 * than passed date
+	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
 	public boolean getBaseRateListById(String bRType, String currency, Date bREffDate, String type) {
 		logger.debug("Entering");
@@ -376,33 +375,32 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 			return false;
 		}
 		return true;
-	}	
+	}
 
 	@Override
 	public List<BaseRate> getBSRListByMdfDate(Date effDate, String type) {
 		logger.debug("Entering");
-		
-		BaseRate baseRate =new BaseRate();
+
+		BaseRate baseRate = new BaseRate();
 		StringBuilder selectSql = new StringBuilder("SELECT BRType,Currency,BREffDate,BRRate,LastMdfDate ");
 		selectSql.append(" FROM RMTBaseRates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LastMdfDate='");
 		selectSql.append(effDate);
 		selectSql.append('\'');
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
-		
-		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+
+		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return baseRates;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the RMTBaseRates
-	 * If Record not deleted then throws DataAccessException
-	 * with error 41003. delete BaseRates greater than effective date
+	 * This method Deletes the Record from the RMTBaseRates If Record not deleted then throws DataAccessException with
+	 * error 41003. delete BaseRates greater than effective date
 	 * 
 	 * @param BaseRates
 	 *            (baseRate)
@@ -413,7 +411,7 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	public void deleteByEffDate(BaseRate baseRate, String type) {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTBaseRates");
-		deleteSql.append(StringUtils.trimToEmpty(type)); 
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BRType =:BRType and Currency = :Currency and BREffDate > :BREffDate");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);

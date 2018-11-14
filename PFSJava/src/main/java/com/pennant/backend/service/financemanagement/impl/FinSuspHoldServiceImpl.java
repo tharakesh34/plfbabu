@@ -62,12 +62,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * Service implementation for methods that depends on
- * <b>FinSuspHold</b>.<br>
+ * Service implementation for methods that depends on <b>FinSuspHold</b>.<br>
  * 
  */
-public class FinSuspHoldServiceImpl extends
-		GenericService<FinSuspHold> implements FinSuspHoldService {
+public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implements FinSuspHoldService {
 
 	private static Logger logger = Logger.getLogger(FinSuspHoldServiceImpl.class);
 
@@ -77,7 +75,7 @@ public class FinSuspHoldServiceImpl extends
 	public FinSuspHoldServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -94,8 +92,7 @@ public class FinSuspHoldServiceImpl extends
 		return finSuspHoldDAO;
 	}
 
-	public void setFinSuspHoldDAO(
-			FinSuspHoldDAO finSuspHoldDAO) {
+	public void setFinSuspHoldDAO(FinSuspHoldDAO finSuspHoldDAO) {
 		this.finSuspHoldDAO = finSuspHoldDAO;
 	}
 
@@ -108,16 +105,12 @@ public class FinSuspHoldServiceImpl extends
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTFinSuspHold/BMTFinSuspHold_Temp by using
-	 * FinSuspHoldDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using
-	 * FinSuspHoldDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtBMTFinSuspHold by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTFinSuspHold/BMTFinSuspHold_Temp by using FinSuspHoldDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using FinSuspHoldDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTFinSuspHold by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -145,7 +138,7 @@ public class FinSuspHoldServiceImpl extends
 			auditHeader.getAuditDetail().setModelData(finSuspHold);
 			auditHeader.setAuditReference(Long.toString(finSuspHold.getId()));
 		} else {
-			getFinSuspHoldDAO().update(finSuspHold,tableType);
+			getFinSuspHoldDAO().update(finSuspHold, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -154,13 +147,10 @@ public class FinSuspHoldServiceImpl extends
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTFinSuspHold by using FinSuspHoldDAO's
-	 * delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtBMTFinSuspHold by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTFinSuspHold by using FinSuspHoldDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTFinSuspHold by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -184,8 +174,7 @@ public class FinSuspHoldServiceImpl extends
 	}
 
 	/**
-	 * getFinSuspHoldById fetch the details by using
-	 * FinSuspHoldDAO's getFinSuspHoldById method.
+	 * getFinSuspHoldById fetch the details by using FinSuspHoldDAO's getFinSuspHoldById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -195,14 +184,12 @@ public class FinSuspHoldServiceImpl extends
 	 */
 	@Override
 	public FinSuspHold getFinSuspHoldById(long id) {
-		return getFinSuspHoldDAO().getFinSuspHoldById(id,	"_View");
+		return getFinSuspHoldDAO().getFinSuspHoldById(id, "_View");
 	}
 
 	/**
-	 * getApprovedFinSuspHoldById fetch the details by using
-	 * FinSuspHoldDAO's getFinSuspHoldById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * BMTFinSuspHold.
+	 * getApprovedFinSuspHoldById fetch the details by using FinSuspHoldDAO's getFinSuspHoldById method . with parameter
+	 * id and type as blank. it fetches the approved records from the BMTFinSuspHold.
 	 * 
 	 * @param id
 	 *            (String)
@@ -210,26 +197,19 @@ public class FinSuspHoldServiceImpl extends
 	 */
 
 	public FinSuspHold getApprovedFinSuspHoldById(long id) {
-		return getFinSuspHoldDAO().getFinSuspHoldById(id,	"_AView");
+		return getFinSuspHoldDAO().getFinSuspHoldById(id, "_AView");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinSuspHoldDAO().delete with parameters
-	 * finSuspHold,"" b) NEW Add new record in to main table by using
-	 * getFinSuspHoldDAO().save with parameters
-	 * finSuspHold,"" c) EDIT Update record in the main table by
-	 * using getFinSuspHoldDAO().update with parameters
-	 * finSuspHold,"" 3) Delete the record from the workFlow table by
-	 * using getFinSuspHoldDAO().delete with parameters
-	 * finSuspHold,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTFinSuspHold by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtBMTFinSuspHold by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinSuspHoldDAO().delete with
+	 * parameters finSuspHold,"" b) NEW Add new record in to main table by using getFinSuspHoldDAO().save with
+	 * parameters finSuspHold,"" c) EDIT Update record in the main table by using getFinSuspHoldDAO().update with
+	 * parameters finSuspHold,"" 3) Delete the record from the workFlow table by using getFinSuspHoldDAO().delete with
+	 * parameters finSuspHold,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTFinSuspHold by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTFinSuspHold by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -266,7 +246,7 @@ public class FinSuspHoldServiceImpl extends
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				finSuspHold.setRecordType("");
-				getFinSuspHoldDAO().update(finSuspHold,"");
+				getFinSuspHoldDAO().update(finSuspHold, "");
 			}
 		}
 
@@ -284,13 +264,10 @@ public class FinSuspHoldServiceImpl extends
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinSuspHoldDAO().delete with
-	 * parameters finSuspHold,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTFinSuspHold by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinSuspHoldDAO().delete with parameters finSuspHold,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTFinSuspHold by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -316,20 +293,18 @@ public class FinSuspHoldServiceImpl extends
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getFinSuspHoldDAO().getErrorDetail with Error ID and language
-	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFinSuspHoldDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,	String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -338,17 +313,16 @@ public class FinSuspHoldServiceImpl extends
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFinSuspHoldDAO().getErrorDetail with Error ID and language
-	 * as parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFinSuspHoldDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,	String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -359,10 +333,10 @@ public class FinSuspHoldServiceImpl extends
 			tempFinSuspHold = getFinSuspHoldDAO().getFinSuspHoldById(finSuspHold.getId(), "_Temp");
 		}
 
-		FinSuspHold befFinSuspHold = getFinSuspHoldDAO().getFinSuspHoldById(finSuspHold.getId(),	"");
+		FinSuspHold befFinSuspHold = getFinSuspHoldDAO().getFinSuspHoldById(finSuspHold.getId(), "");
 		FinSuspHold oldFinSuspHold = finSuspHold.getBefImage();
 
-		String[] errParm = {getValidationMsg(finSuspHold)};
+		String[] errParm = { getValidationMsg(finSuspHold) };
 
 		if (finSuspHold.isNew()) { // for New record or new record
 			// into work flow
@@ -372,16 +346,16 @@ public class FinSuspHoldServiceImpl extends
 				if (befFinSuspHold != null) { // Record Already
 					// Exists in the
 					// table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (finSuspHold.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befFinSuspHold != null || tempFinSuspHold != null) { // if
-						  						// records already exists
-							 					// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						// records already exists
+						// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinSuspHold == null || tempFinSuspHold != null) {
@@ -398,15 +372,17 @@ public class FinSuspHoldServiceImpl extends
 				if (befFinSuspHold == null) { // if records not
 					// exists in the
 					// main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldFinSuspHold != null
 							&& !oldFinSuspHold.getLastMntOn().equals(befFinSuspHold.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -416,21 +392,22 @@ public class FinSuspHoldServiceImpl extends
 				if (tempFinSuspHold == null) { // if records not
 					// exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempFinSuspHold != null && oldFinSuspHold != null
 						&& !oldFinSuspHold.getLastMntOn().equals(tempFinSuspHold.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
-		
+
 		FinSuspHold finSuspHoldTemp = getFinSuspHoldDAO().getFinSuspHoldByDetails(finSuspHold, "_View");
-		if(finSuspHoldTemp != null && finSuspHoldTemp.getId() != finSuspHold.getId()){
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014",new String[]{getValidationMsg(finSuspHold)}, null));
+		if (finSuspHoldTemp != null && finSuspHoldTemp.getId() != finSuspHold.getId()) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014",
+					new String[] { getValidationMsg(finSuspHold) }, null));
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finSuspHold.isWorkflow()) {
 			auditDetail.setBefImage(befFinSuspHold);
@@ -438,37 +415,37 @@ public class FinSuspHoldServiceImpl extends
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
-	private String getValidationMsg(FinSuspHold finSuspHold){
+
+	private String getValidationMsg(FinSuspHold finSuspHold) {
 		logger.debug("Entering");
 		String errMsg = "";
-		if(StringUtils.isNotEmpty(finSuspHold.getProduct())){
-			errMsg = Labels.getLabel("label_FinSuspHold_Product")+" : "+ finSuspHold.getProduct();
+		if (StringUtils.isNotEmpty(finSuspHold.getProduct())) {
+			errMsg = Labels.getLabel("label_FinSuspHold_Product") + " : " + finSuspHold.getProduct();
 		}
-		if(StringUtils.isNotEmpty(finSuspHold.getFinType())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_FinType")+" : "+ finSuspHold.getFinType();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_FinType")+" : "+ finSuspHold.getFinType();
+		if (StringUtils.isNotEmpty(finSuspHold.getFinType())) {
+			if (StringUtils.isEmpty(errMsg)) {
+				errMsg = Labels.getLabel("label_FinSuspHold_FinType") + " : " + finSuspHold.getFinType();
+			} else {
+				errMsg = errMsg + "," + Labels.getLabel("label_FinSuspHold_FinType") + " : " + finSuspHold.getFinType();
 			}
 		}
-		if(StringUtils.isNotEmpty(finSuspHold.getFinReference())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_FinReference")+" : "+ finSuspHold.getFinReference();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_FinReference")+" : "+ finSuspHold.getFinReference();
+		if (StringUtils.isNotEmpty(finSuspHold.getFinReference())) {
+			if (StringUtils.isEmpty(errMsg)) {
+				errMsg = Labels.getLabel("label_FinSuspHold_FinReference") + " : " + finSuspHold.getFinReference();
+			} else {
+				errMsg = errMsg + "," + Labels.getLabel("label_FinSuspHold_FinReference") + " : "
+						+ finSuspHold.getFinReference();
 			}
 		}
-		if(StringUtils.isNotEmpty(finSuspHold.getCustCIF())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_CustCIF")+" : "+ finSuspHold.getCustCIF();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_CustCIF")+" : "+ finSuspHold.getCustCIF();
+		if (StringUtils.isNotEmpty(finSuspHold.getCustCIF())) {
+			if (StringUtils.isEmpty(errMsg)) {
+				errMsg = Labels.getLabel("label_FinSuspHold_CustCIF") + " : " + finSuspHold.getCustCIF();
+			} else {
+				errMsg = errMsg + "," + Labels.getLabel("label_FinSuspHold_CustCIF") + " : " + finSuspHold.getCustCIF();
 			}
 		}
 		logger.debug("Leaving");
 		return errMsg;
 	}
-	
 
 }

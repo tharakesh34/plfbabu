@@ -22,7 +22,7 @@ import java.util.List;
 public class InterfaceCustomerDetail implements Serializable {
 
 	private static final long serialVersionUID = 5924309510247559865L;
-	
+
 	private String custCIF;
 	private InterfaceCustomer customer;
 	private InterfaceCustEmployeeDetail custEmployeeDetail;
@@ -37,9 +37,9 @@ public class InterfaceCustomerDetail implements Serializable {
 	private InterfaceCoreCustomer interfaceCoreCustomer;
 
 	public InterfaceCustomerDetail() {
-		
+
 	}
-	
+
 	public String getCustCIF() {
 		return custCIF;
 	}
@@ -84,8 +84,7 @@ public class InterfaceCustomerDetail implements Serializable {
 		return customerDocumentsList;
 	}
 
-	public void setCustomerDocumentsList(
-			List<InterfaceCustomerDocument> customerDocumentsList) {
+	public void setCustomerDocumentsList(List<InterfaceCustomerDocument> customerDocumentsList) {
 		this.customerDocumentsList = customerDocumentsList;
 	}
 
@@ -117,8 +116,7 @@ public class InterfaceCustomerDetail implements Serializable {
 		return customerIdentityList;
 	}
 
-	public void setCustomerIdentityList(
-			List<InterfaceCustomerIdentity> customerIdentityList) {
+	public void setCustomerIdentityList(List<InterfaceCustomerIdentity> customerIdentityList) {
 		this.customerIdentityList = customerIdentityList;
 	}
 
@@ -129,7 +127,7 @@ public class InterfaceCustomerDetail implements Serializable {
 	public void setShareHolderList(List<InterfaceShareHolder> shareHolderList) {
 		this.shareHolderList = shareHolderList;
 	}
-	
+
 	public InterfaceCoreCustomer getInterfaceCoreCustomer() {
 		return interfaceCoreCustomer;
 	}
@@ -137,5 +135,5 @@ public class InterfaceCustomerDetail implements Serializable {
 	public void setInterfaceCoreCustomer(InterfaceCoreCustomer interfaceCoreCustomer) {
 		this.interfaceCoreCustomer = interfaceCoreCustomer;
 	}
-	
+
 }

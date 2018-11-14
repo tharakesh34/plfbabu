@@ -45,7 +45,7 @@ public class QueryModuleController {
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
-	private void doSetDocumentDetails(QueryDetail queryDetail){
+	private void doSetDocumentDetails(QueryDetail queryDetail) {
 		if (!CollectionUtils.isNullOrEmpty(queryDetail.getDocumentDetailsList())) {
 			for (DocumentDetails documentDetail : queryDetail.getDocumentDetailsList()) {
 				documentDetail.setNewRecord(true);
@@ -56,7 +56,7 @@ public class QueryModuleController {
 			}
 		}
 	}
-	
+
 	private AuditHeader getAuditHeader(QueryDetail aQueryDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aQueryDetail.getBefImage(), aQueryDetail);
 		return new AuditHeader(getReference(aQueryDetail.getId()), null, null, null, auditDetail,

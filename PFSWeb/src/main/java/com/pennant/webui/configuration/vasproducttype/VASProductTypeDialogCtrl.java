@@ -83,39 +83,39 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(VASProductTypeDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(VASProductTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window							window_VASProductTypeDialog;
-	protected Row								row0;
-	protected Label								label_ProductType;
-	protected Space								space_ProductType;
+	protected Window window_VASProductTypeDialog;
+	protected Row row0;
+	protected Label label_ProductType;
+	protected Space space_ProductType;
 
-	protected Textbox							productType;
-	protected Label								label_ProductTypeDesc;
-	protected Space								space_ProductTypeDesc;
+	protected Textbox productType;
+	protected Label label_ProductTypeDesc;
+	protected Space space_ProductTypeDesc;
 
-	protected Textbox							productTypeDesc;
-	protected Row								row1;
-	protected Label								label_ProductCtg;
-	protected Space								space_ProductCtg;
+	protected Textbox productTypeDesc;
+	protected Row row1;
+	protected Label label_ProductCtg;
+	protected Space space_ProductCtg;
 
-	protected ExtendedCombobox					productCtg;
-	protected Checkbox							active;
+	protected ExtendedCombobox productCtg;
+	protected Checkbox active;
 
-	protected Label								recordType;
-	protected Groupbox							gb_statusDetails;
-	private boolean								enqModule			= false;
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
 
-	private VASProductType						vASProductType;
-	private transient VASProductTypeListCtrl	vASProductTypeListCtrl;
+	private VASProductType vASProductType;
+	private transient VASProductTypeListCtrl vASProductTypeListCtrl;
 
-	private transient VASProductTypeService		vASProductTypeService;
+	private transient VASProductTypeService vASProductTypeService;
 
 	/**
 	 * default constructor.<br>
@@ -286,7 +286,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 
 		if (dataObject instanceof String) {
 			this.productCtg.setValue(dataObject.toString());
-			
+
 		} else {
 			VASProductCategory details = (VASProductCategory) dataObject;
 
@@ -298,7 +298,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		}
 
 		logger.debug("Leaving");
-	
+
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -402,15 +402,15 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		//Empty sent any required attributes
 		this.productType.setMaxlength(8);
 		this.productTypeDesc.setMaxlength(50);
-		
+
 		this.productCtg.setModuleName("VASProductCategory");
 		this.productCtg.setMandatoryStyle(true);
 		this.productCtg.setValueColumn("productCtg");
 		this.productCtg.setDescColumn("ProductCtgDesc");
 		this.productCtg.setDisplayStyle(2);
 		this.productCtg.setValidateColumns(new String[] { "productCtg", "ProductCtgDesc" });
-		Filter[] filtersProductCtg = new Filter[1] ;
-		filtersProductCtg[0]= new Filter("Active", 1, Filter.OP_EQUAL);
+		Filter[] filtersProductCtg = new Filter[1];
+		filtersProductCtg[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.productCtg.setFilters(filtersProductCtg);
 
 		setStatusDetails();
@@ -429,9 +429,9 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		this.productTypeDesc.setValue(aVASProductType.getProductTypeDesc());
 
 		this.productCtg.setAttribute("productCtg", aVASProductType.getProductCtg());
-		this.productCtg.setValue(aVASProductType.getProductCtg(),aVASProductType.getProductCtgDesc());
+		this.productCtg.setValue(aVASProductType.getProductCtg(), aVASProductType.getProductCtgDesc());
 		this.active.setChecked(aVASProductType.isActive());
-		
+
 		this.recordStatus.setValue(aVASProductType.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -495,21 +495,21 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		logger.debug("Entering");
 		//Product Type
 		if (!this.productType.isReadonly()) {
-			this.productType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASProductTypeDialog_ProductType.value"), PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE,
-					true));
+			this.productType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASProductTypeDialog_ProductType.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		//Product Type Desc
 		if (!this.productTypeDesc.isReadonly()) {
-			this.productTypeDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASProductTypeDialog_ProductTypeDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.productTypeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASProductTypeDialog_ProductTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		//Product Ctg
 		if (!this.productCtg.isReadonly()) {
-			this.productCtg.setConstraint(new PTStringValidator(Labels.getLabel("label_VASProductTypeDialog_ProductCtg.value"),
-					null, true,true));
-			
+			this.productCtg.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASProductTypeDialog_ProductCtg.value"), null, true, true));
+
 		}
 		logger.debug("Leaving");
 	}
@@ -524,7 +524,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		this.productCtg.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
@@ -537,7 +537,6 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Set Validations for LOV Fields
 	 */
@@ -561,7 +560,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	private void refreshList() {
 		vASProductTypeListCtrl.search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.vASProductType.getProductType());
@@ -588,7 +587,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		this.productTypeDesc.setReadonly(isReadOnly("VASProductTypeDialog_ProductTypeDesc"));
 		this.productCtg.setReadonly(isReadOnly("VASProductTypeDialog_ProductCtg"));
 		int count = vASProductTypeService.getVASProductTypeByActive(this.vASProductType.getProductType(), "");
-		
+
 		if (count > 0) {
 			this.active.setDisabled(true);
 		} else if (vASProductType.isNew()) {
@@ -894,8 +893,8 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_VASProductTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -908,9 +907,8 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(
-								getNotes("VASProductType", aVASProductType.getProductType(),
-										aVASProductType.getVersion()), true);
+						deleteNotes(getNotes("VASProductType", aVASProductType.getProductType(),
+								aVASProductType.getVersion()), true);
 					}
 				}
 
@@ -943,8 +941,8 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 
 	private AuditHeader getAuditHeader(VASProductType aVASProductType, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVASProductType.getBefImage(), aVASProductType);
-		return new AuditHeader(getReference(), null, null, null, auditDetail,
-				aVASProductType.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aVASProductType.getUserDetails(),
+				getOverideMap());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

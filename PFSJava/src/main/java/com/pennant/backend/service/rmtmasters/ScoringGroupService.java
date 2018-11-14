@@ -49,9 +49,14 @@ import com.pennant.backend.model.rmtmasters.ScoringGroup;
 public interface ScoringGroupService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ScoringGroup getScoringGroupById(long id);
+
 	ScoringGroup getApprovedScoringGroupById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -92,17 +92,15 @@ import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMaster/VehicleDealer/vehicleDealerDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/AMTMaster/VehicleDealer/vehicleDealerDialog.zul file. <br>
  */
 public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(VehicleDealerDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_VehicleDealerDialog; // autowired
 	protected Label windowTitle;
@@ -173,9 +171,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected VehicleDealer object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected VehicleDealer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -250,7 +247,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Empty sent any required attributes
 		this.dealerName.setMaxlength(50);
 		this.dealerTelephone.setMaxlength(13);
@@ -289,7 +286,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		this.iBANnumber.setMaxlength(23);
 		this.dealerPoBox.setMaxlength(8);
-		if(module.equals("DSA")){
+		if (module.equals("DSA")) {
 			this.space_dealerPoBox.setSclass("");
 			this.space_Code.setClass(PennantConstants.mandateSclass);
 		} else {
@@ -297,7 +294,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.space_Code.setSclass("");
 		}
 
-		if (module.equals("DMA") ||"CONN".equals(module)) {
+		if (module.equals("DMA") || "CONN".equals(module)) {
 			this.space_Code.setClass(PennantConstants.mandateSclass);
 		}
 		this.zipCode.setMaxlength(8);
@@ -357,11 +354,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.windowTitle.setValue(Agencies.RCUVAGENCY.getValue());
 		} else if (module.equals(Agencies.TVAGENCY.getKey())) {
 			this.windowTitle.setValue(Agencies.TVAGENCY.getValue());
-		}else if (module.equals(Agencies.DMA.getKey())) {
+		} else if (module.equals(Agencies.DMA.getKey())) {
 			this.windowTitle.setValue(Agencies.DMA.getValue());
-		}else if (module.equals(Agencies.DSA.getKey())) {
+		} else if (module.equals(Agencies.DSA.getKey())) {
 			this.windowTitle.setValue(Agencies.DSA.getValue());
-		}else if (module.equals(Agencies.CONN.getKey())) {
+		} else if (module.equals(Agencies.CONN.getKey())) {
 			this.windowTitle.setValue(Agencies.CONN.getValue());
 		}
 	}
@@ -371,8 +368,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
@@ -588,7 +584,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (this.row_DealerType.isVisible() && this.dealerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
+			if (this.row_DealerType.isVisible()
+					&& this.dealerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
 				throw new WrongValueException(this.dealerType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_VehicleDealerDialog_DealerType.value") }));
 			}
@@ -769,8 +766,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVehicleDealer
 	 * @throws Exception
@@ -820,15 +816,17 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		doClearMessage();
 
 		if (!this.dealerName.isReadonly()) {
-			this.dealerName.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),PennantRegularExpressions.REGEX_UPPERCASENAME, true));
-		} 
-		
+			this.dealerName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),
+							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+		}
+
 		if (!this.dealerTelephone.isReadonly()) {
 			this.dealerTelephone.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerTelephone.value"),
 							true, null, this.dealerTelephone.getMaxlength()));
 		}
-		
+
 		if (!this.dealerAddress1.isReadonly()) {
 			this.dealerAddress1.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerAddress1.value"),
@@ -849,9 +847,10 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		if (!this.dealerFax.isReadonly()) {
 			this.dealerFax.setConstraint(
-					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true,null, this.dealerFax.getMaxlength()));
+					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true,
+							null, this.dealerFax.getMaxlength()));
 		}
-	 
+
 		if (!this.email.isReadonly()) {
 			this.email.setConstraint(
 					new PTEmailValidator(Labels.getLabel("label_VehicleDealerDialog_Email.value"), true));
@@ -881,9 +880,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		if (!module.equals("DSA")) {
 			if (!this.dealerPoBox.isReadonly()) {
-			this.dealerPoBox
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Pobox.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, true));
+				this.dealerPoBox
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Pobox.value"),
+								PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
 		}
 		if (!this.zipCode.isReadonly()) {
@@ -915,7 +914,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		if (module.equals("DSA") || module.equals("DMA") || "CONN".equals(module)) {
 			if (!this.code.isReadonly()) {
 				this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Code.value"),
-								PennantRegularExpressions.REGEX_SPECIAL_REGX, true));
+						PennantRegularExpressions.REGEX_SPECIAL_REGX, true));
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -1213,7 +1212,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		// DealerName
 		try {
 
-			boolean status = getVehicleDealerService().SearchByName(aVehicleDealer.getDealerName(), aVehicleDealer.getDealerType());
+			boolean status = getVehicleDealerService().SearchByName(aVehicleDealer.getDealerName(),
+					aVehicleDealer.getDealerType());
 			if (status) {
 				throw new WrongValueException(this.dealerName, "DealerName already exists...");
 			}
@@ -1544,7 +1544,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.dealerType.setErrorMessage("");
 		this.dealerName.setErrorMessage("");
 		this.dealerTelephone.setErrorMessage("");
@@ -1567,7 +1567,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.sellerType.setErrorMessage("");
 		this.cityName.setErrorMessage("");
 		this.zipCode.setErrorMessage("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

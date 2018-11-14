@@ -54,7 +54,7 @@ public class GSTInvoiceTxn implements Entity {
 	private String invoiceNo;
 	private Date invoiceDate;
 	private BigDecimal invoice_Amt = BigDecimal.ZERO;
-	
+
 	private String companyCode;
 	private String companyName;
 	private String company_GSTIN;
@@ -68,19 +68,19 @@ public class GSTInvoiceTxn implements Entity {
 	private String natureService;
 	private String panNumber;
 	private String loanAccountNo;
-	
+
 	private String customerID;
 	private String customerName;
 	private String customerStateCode;
 	private String customerStateName;
 	private String customerGSTIN;
 	private String customerAddress;
-	
+
 	private String invoice_Status;
 	private String invoiceType = "D";
-	
+
 	private List<GSTInvoiceTxnDetails> gstInvoiceTxnDetailsList = new ArrayList<GSTInvoiceTxnDetails>();
-	
+
 	public GSTInvoiceTxn() {
 		super();
 	}

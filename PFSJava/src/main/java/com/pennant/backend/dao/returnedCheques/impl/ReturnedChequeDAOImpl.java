@@ -2,7 +2,6 @@ package com.pennant.backend.dao.returnedCheques.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -29,7 +28,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> implements ReturnedChequeDAO {
 	private static Logger logger = Logger.getLogger(ReturnedChequeDAOImpl.class);
-	
+
 	public ReturnedChequeDAOImpl() {
 		super();
 	}
@@ -67,8 +66,7 @@ public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> imple
 				.newInstance(ReturnedChequeDetails.class);
 
 		try {
-			returnCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanparameters,
-					typeRowMapper);
+			returnCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanparameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			returnCheque = null;

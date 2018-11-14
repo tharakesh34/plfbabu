@@ -86,14 +86,13 @@ public interface MandateDAO {
 	boolean checkMandateStatus(long mandateID);
 
 	boolean checkMandates(String orgReference, long mandateid);
-	
-	int getSecondaryMandateCount(long mandateID);
-	
-	 int getBarCodeCount(String barCode, long mandateID, String type);
 
+	int getSecondaryMandateCount(long mandateID);
+
+	int getBarCodeCount(String barCode, long mandateID, String type);
 
 	BigDecimal getMaxRepayAmount(String finReference, String type);
-	
+
 	boolean entityExistMandate(String entityCode, String type);
 
 }

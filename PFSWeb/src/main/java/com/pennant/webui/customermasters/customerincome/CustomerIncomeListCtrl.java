@@ -63,9 +63,9 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.webui.customermasters.customerincome.model.CustomerIncomeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeList.zul file.
@@ -90,7 +90,7 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 	protected Checkbox jointCust;
 	protected Decimalbox custIncome;
 	protected Textbox custIncomeCountry;
-	
+
 	protected Listbox sortOperator_custIncomeCountry;
 	protected Listbox sortOperator_custCIF;
 	protected Listbox sortOperator_custIncomeType;
@@ -130,7 +130,8 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 		setItemRender(new CustomerIncomeListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_CustomerIncomeList_NewCustomerIncome, "button_CustomerIncomeList_NewCustomerIncome", true);
+		registerButton(button_CustomerIncomeList_NewCustomerIncome, "button_CustomerIncomeList_NewCustomerIncome",
+				true);
 		registerButton(button_CustomerIncomeList_NewCustomerIncome);
 
 		registerField("custid");

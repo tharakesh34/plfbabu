@@ -50,7 +50,7 @@
 		<component-name>ptCKeditor</component-name>
 		<component-class>com.pennant.component.PTCKeditor</component-class>
 		<extends>ckeditor</extends>
-  	</component>
+	</component>
 	<component>
 		<component-name>uppercasebox</component-name>
 		<component-class>com.pennant.component.Uppercasebox</component-class>
@@ -100,5 +100,5 @@
 		<component-class>com.pennant.QueryBuilder</component-class>
 		<extends>groupbox</extends>
 	</component>
-	
+
 </language-addon>

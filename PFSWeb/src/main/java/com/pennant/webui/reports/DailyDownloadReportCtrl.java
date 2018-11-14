@@ -96,21 +96,21 @@ import net.sf.jasperreports.engine.fill.JRAbstractLRUVirtualizer;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 
-public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndConfiguration> {
+public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
 	private static final Logger logger = Logger.getLogger(DailyDownloadReportCtrl.class);
 
-	protected Window        window_DialyDownloadReport;
-	protected Combobox      moduleName;
-	protected Combobox      reportName;
-	protected Button        button_ExportToExcel;
-	protected Button        button_ExportToZIP;
+	protected Window window_DialyDownloadReport;
+	protected Combobox moduleName;
+	protected Combobox reportName;
+	protected Button button_ExportToExcel;
+	protected Button button_ExportToZIP;
 	protected Panelchildren pc_StatusList;
-	protected Vbox          vbox_statusList;
+	protected Vbox vbox_statusList;
 
 	//Unused Fields
-	protected Datebox       fromDate;
-	protected Datebox       toDate;
+	protected Datebox fromDate;
+	protected Datebox toDate;
 
 	private List<ValueLabel> moduleNameList = null;
 	private List<ValueLabel> reportNameList = new ArrayList<ValueLabel>();
@@ -119,9 +119,10 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 	public DailyDownloadReportCtrl() {
 		super();
 	}
-	
+
 	/**
-	 * OnCreate window 
+	 * OnCreate window
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -129,8 +130,9 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		logger.debug("Entering" + event.toString());
 
 		try {
-			/*this.fromDate.setValue(DateUtility.today());
-			this.toDate.setValue(DateUtility.today());*/
+			/*
+			 * this.fromDate.setValue(DateUtility.today()); this.toDate.setValue(DateUtility.today());
+			 */
 			setModuleNamesList();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -151,13 +153,14 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 
 	/**
 	 * Method for changing Report Name List as per module group Name selection
+	 * 
 	 * @param event
 	 */
-	public void onChange$moduleName(Event event){
+	public void onChange$moduleName(Event event) {
 		logger.debug("Entering" + event.toString());
 		String grpCode = "";
 		reportNameList = new ArrayList<ValueLabel>(1);
-		if(this.moduleName.getSelectedIndex() != 0){
+		if (this.moduleName.getSelectedIndex() != 0) {
 			grpCode = this.moduleName.getSelectedItem().getValue().toString();
 			reportNameList = getReportConfigurationService().getReportListByGrpCode(grpCode);
 		}
@@ -167,6 +170,7 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 
 	/**
 	 * This method reads the components
+	 * 
 	 * @return
 	 */
 	private void verifyValidation(boolean isZIPDownload) {
@@ -180,21 +184,21 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 
-			if(!this.moduleName.isDisabled() && this.moduleName.getSelectedIndex()==0){
+			if (!this.moduleName.isDisabled() && this.moduleName.getSelectedIndex() == 0) {
 				throw new WrongValueException(moduleName, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_DialyDownLoadsReport_GroupName.value")}));
+						new String[] { Labels.getLabel("label_DialyDownLoadsReport_GroupName.value") }));
 			}
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		if(!isZIPDownload){
+
+		if (!isZIPDownload) {
 			try {
 
-				if(!this.reportName.isDisabled() && this.reportName.getSelectedIndex()==0){
+				if (!this.reportName.isDisabled() && this.reportName.getSelectedIndex() == 0) {
 					throw new WrongValueException(reportName, Labels.getLabel("STATIC_INVALID",
-							new String[]{Labels.getLabel("label_DialyDownLoadsReport_Reportname.value")}));
+							new String[] { Labels.getLabel("label_DialyDownLoadsReport_Reportname.value") }));
 				}
 
 			} catch (WrongValueException we) {
@@ -202,36 +206,26 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 			}
 		}
 
-		/*try {
-
-			if (fromDate.getValue() == null ) {
-				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.value"));
-			}
-			if (toDate.getValue() == null ) {
-				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
-			}
-			if (fromDate.getValue().after(toDate.getValue())) {
-				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.NotGreater"));
-			}
-			if (fromDate.getValue().compareTo(DateUtility.today())>=0){
-				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.Lessthan"));
-			}
-			map.put("FromDate", DateUtility.getDate(DateUtility.formatUtilDate(fromDate.getValue(), PennantConstants.dateFormat)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			if (toDate.getValue() == null ) {
-				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
-			}
-			if (toDate.getValue().compareTo(DateUtility.today())>=0){
-				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.Lessthan"));
-			}
-			map.put("ToDate", DateUtility.getDate(DateUtility.formatUtilDate(toDate.getValue(), PennantConstants.dateFormat)));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * try {
+		 * 
+		 * if (fromDate.getValue() == null ) { throw new WrongValueException(fromDate,
+		 * Labels.getLabel("label_AuditReport_FromDate.value")); } if (toDate.getValue() == null ) { throw new
+		 * WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value")); } if
+		 * (fromDate.getValue().after(toDate.getValue())) { throw new WrongValueException(fromDate,
+		 * Labels.getLabel("label_AuditReport_FromDate.NotGreater")); } if
+		 * (fromDate.getValue().compareTo(DateUtility.today())>=0){ throw new WrongValueException(fromDate,
+		 * Labels.getLabel("label_AuditReport_FromDate.Lessthan")); } map.put("FromDate",
+		 * DateUtility.getDate(DateUtility.formatUtilDate(fromDate.getValue(), PennantConstants.dateFormat))); } catch
+		 * (WrongValueException we) { wve.add(we); }
+		 * 
+		 * try { if (toDate.getValue() == null ) { throw new WrongValueException(toDate,
+		 * Labels.getLabel("label_AuditReport_ToDate.value")); } if
+		 * (toDate.getValue().compareTo(DateUtility.today())>=0){ throw new WrongValueException(toDate,
+		 * Labels.getLabel("label_AuditReport_ToDate.Lessthan")); } map.put("ToDate",
+		 * DateUtility.getDate(DateUtility.formatUtilDate(toDate.getValue(), PennantConstants.dateFormat))); } catch
+		 * (WrongValueException we) { wve.add(we); }
+		 */
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -245,42 +239,44 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 
 	/**
 	 * Method for Exporting Reports in Excel Format
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$button_ExportToExcel(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		verifyValidation(false);
 		String folderPath = this.moduleName.getSelectedItem().getValue().toString().trim();
 		String reportName = this.reportName.getSelectedItem().getValue().toString().trim();
 		String reportDesc = this.reportName.getSelectedItem().getLabel().trim();
-		
+
 		Connection connection = null;
-		DataSource dataSourceObj = null;		
-		
+		DataSource dataSourceObj = null;
+
 		try {
-			
+
 			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
-			
-			generateExcelReport(folderPath, reportName,reportDesc, false,"", connection);
-			
+
+			generateExcelReport(folderPath, reportName, reportDesc, false, "", connection);
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		}finally{
-			if(connection!=null){
+		} finally {
+			if (connection != null) {
 				connection.close();
 			}
-			connection=null;
+			connection = null;
 			dataSourceObj = null;
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for Exporting Reports in Excel Format
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -293,57 +289,59 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 
 	/**
 	 * Method for Generating Excel Format Report
+	 * 
 	 * @param reportSrc
-	 * @return 
+	 * @return
 	 * @throws InterruptedException
 	 * @throws SQLException
 	 */
-	private boolean generateExcelReport(String folderPath, String reportName, String reportDesc, boolean bulkReportProc, 
-			String zipFolderPath, Connection con) throws InterruptedException, SQLException{
+	private boolean generateExcelReport(String folderPath, String reportName, String reportDesc, boolean bulkReportProc,
+			String zipFolderPath, Connection con) throws InterruptedException, SQLException {
 		logger.debug("Entering");
 
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ENDOFMONTH)+"/"+folderPath+"/"+ reportName+".jasper";
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ENDOFMONTH) + "/" + folderPath + "/" + reportName
+				+ ".jasper";
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getUserName());
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-		reportArgumentsMap.put("whereCondition","");
-		reportArgumentsMap.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
-		reportArgumentsMap.put("signimage",PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
-		reportArgumentsMap.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+		reportArgumentsMap.put("whereCondition", "");
+		reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 
 		File file = null;
-		try {			
-			
-			file = new File(reportSrc) ;
-			if(file.exists()){
-				
+		try {
+
+			file = new File(reportSrc);
+			if (file.exists()) {
+
 				//use swap virtualizer by default
-				int maxSize= 250;
-				JRSwapFile swapFile=new JRSwapFile(System.getProperty("java.io.tmpdir"),250,250);
-				JRAbstractLRUVirtualizer virtualizer =new JRSwapFileVirtualizer(maxSize,swapFile, true);
+				int maxSize = 250;
+				JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
+				JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
 				reportArgumentsMap.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
-				 
-				if(StringUtils.trimToEmpty(reportDesc).toLowerCase().endsWith(".pdf")){
-					if(bulkReportProc){
+
+				if (StringUtils.trimToEmpty(reportDesc).toLowerCase().endsWith(".pdf")) {
+					if (bulkReportProc) {
 						JasperPrint jasperPrint = JasperFillManager.fillReport(reportSrc, reportArgumentsMap, con);
-						
-						String outputFileName = zipFolderPath +"\\"+ reportName+".pdf";
+
+						String outputFileName = zipFolderPath + "\\" + reportName + ".pdf";
 						File outputFile = new File(outputFileName);
 						//If File Already exist in Folder Delete it for Regeneration with New Data
-						if(outputFile.exists()){
+						if (outputFile.exists()) {
 							outputFile.delete();
-						}		
+						}
 						JRPdfExporter pdfExporter = new JRPdfExporter();
 						pdfExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-						pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outputFileName);   
+						pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outputFileName);
 						pdfExporter.exportReport();
 						outputFile = null;
-					}else{	
+					} else {
 						byte[] buf = null;
-						buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap,con);
+						buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
 						Filedownload.save(new AMedia(reportName, "pdf", "application/pdf", buf));
 					}
-				}else{
+				} else {
 
 					ByteArrayOutputStream outputStream = null;
 
@@ -351,62 +349,63 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 					JasperPrint jasperPrint = JasperFillManager.fillReport(reportSrc, reportArgumentsMap, con);
 
 					//set virtualizer read only to optimize performance. must be set after print object has been generated
-					if(virtualizer!=null){
+					if (virtualizer != null) {
 						virtualizer.setReadOnly(true);
 					}
-
 
 					JRXlsExporter excelExporter = new JRXlsExporter();
 					excelExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 
 					//excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 
-					excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.TRUE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.FALSE);  
+					excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
+							Boolean.FALSE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.MAXIMUM_ROWS_PER_SHEET, Integer.decode("200000") );
+					excelExporter.setParameter(JRXlsExporterParameter.MAXIMUM_ROWS_PER_SHEET, Integer.decode("200000"));
 
-					if(bulkReportProc){
+					if (bulkReportProc) {
 
-						String outputFileName = zipFolderPath +"\\"+ reportName+".xls";
+						String outputFileName = zipFolderPath + "\\" + reportName + ".xls";
 						File outputFile = new File(outputFileName);
 						//If File Already exist in Folder Delete it for Regeneration with New Data
-						if(outputFile.exists()){
+						if (outputFile.exists()) {
 							outputFile.delete();
-						}		
+						}
 						outputFile = null;
-						excelExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outputFileName);   
-					}else{
+						excelExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outputFileName);
+					} else {
 						outputStream = new ByteArrayOutputStream();
 						excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
 					}
 					excelExporter.exportReport();
 
 					//Excel Download to local System Directly
-					if(!bulkReportProc){
-						Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+					if (!bulkReportProc) {
+						Filedownload.save(
+								new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 						outputStream = null;
 					}
 
 					excelExporter = null;
 					jasperPrint = null;
 				}
-				if(virtualizer!=null){
+				if (virtualizer != null) {
 					virtualizer.cleanup();
 				}
-					
-			}else{
+
+			} else {
 				MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			if(!bulkReportProc){
+			if (!bulkReportProc) {
 				MessageUtil.showError("Error in Configuring the " + reportName + " report");
 			}
 			return false;
-		}finally{
+		} finally {
 			reportSrc = null;
 			file = null;
 			reportArgumentsMap = null;
@@ -416,8 +415,9 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 	}
 
 	/**
-	 * This Method Imports  reports with As Excel
-	 * @param  event
+	 * This Method Imports reports with As Excel
+	 * 
+	 * @param event
 	 * @throws Exception
 	 */
 	private void ExportExcelFilesToZIP() throws Exception {
@@ -426,67 +426,71 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		File folder = null;
 		String tempFolderLocation = PathUtil.getPath(PathUtil.REPORTS_EOMDOWNLOAD_FOLDER);
 		String folderPath = this.moduleName.getSelectedItem().getValue().toString().trim();
-		String fileLocation =  tempFolderLocation+"/"+folderPath+"_"+DateUtility.formatDate(DateUtility.getSysDate()
-				, PennantConstants.DBDateFormat) +"_"+getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
-		fileLocation =  tempFolderLocation+"/"+folderPath+"_"+DateUtility.formatDate(DateUtility.getSysDate()
-				, PennantConstants.DBDateFormat) +"_"+getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
-		
-		File directory =new File(fileLocation);
+		String fileLocation = tempFolderLocation + "/" + folderPath + "_"
+				+ DateUtility.formatDate(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
+				+ getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
+		fileLocation = tempFolderLocation + "/" + folderPath + "_"
+				+ DateUtility.formatDate(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
+				+ getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
+
+		File directory = new File(fileLocation);
 		directory.deleteOnExit();
-		if(!directory.exists()){
+		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		
+
 		this.vbox_statusList.getChildren().clear();
 		String reportName = "";
 		String reportDesc = "";
-		
+
 		Connection connection = null;
-		DataSource dataSourceObj = null;		
+		DataSource dataSourceObj = null;
 
 		try {
-			
+
 			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 
 			for (int i = 0; i < reportNameList.size(); i++) {
 				reportName = reportNameList.get(i).getValue().trim();
 				reportDesc = reportNameList.get(i).getLabel().trim();
-				boolean isGenerateExcel= generateExcelReport(folderPath, reportName,reportDesc, true, directory.getAbsolutePath(), connection);
+				boolean isGenerateExcel = generateExcelReport(folderPath, reportName, reportDesc, true,
+						directory.getAbsolutePath(), connection);
 
-				if(isGenerateExcel){
-					appendChild(Labels.getLabel("labels_DownLoadSuccess.value") ,reportDesc,true);
-				}else{
-					appendChild(Labels.getLabel("labels_DownLoadFail.value") ,reportDesc,false);
+				if (isGenerateExcel) {
+					appendChild(Labels.getLabel("labels_DownLoadSuccess.value"), reportDesc, true);
+				} else {
+					appendChild(Labels.getLabel("labels_DownLoadFail.value"), reportDesc, false);
 				}
 				this.vbox_statusList.invalidate();
 			}
 
 			createZIPFile(fileLocation);
-			folder = new File(fileLocation+".zip");
-			Filedownload.save(folder,"application/*");
-			
+			folder = new File(fileLocation + ".zip");
+			Filedownload.save(folder, "application/*");
+
 		} catch (Exception e) {
-			appendChild("Download fail " ,reportName,false);
+			appendChild("Download fail ", reportName, false);
 			logger.error("Exception: ", e);
 		} finally {
 			//Delete File after Creating ZIP
 			deleteFile(new File(fileLocation));
-			directory=null;
+			directory = null;
 			folder = null;
-			
-			if(connection!=null){
+
+			if (connection != null) {
 				connection.close();
 			}
-			connection=null;
+			connection = null;
 			dataSourceObj = null;
-			
+
 		}
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method takes source file and create .zip file of source file 
+	 * This method takes source file and create .zip file of source file
+	 * 
 	 * @param fileLocation
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -497,78 +501,79 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 		File inFolder = null;
 		ZipOutputStream out = null;
 		FileInputStream in = null;
-		
+
 		try {
-			
+
 			inFolder = new File(fileLocation);
-			out = new ZipOutputStream(new FileOutputStream(fileLocation+".zip"));
+			out = new ZipOutputStream(new FileOutputStream(fileLocation + ".zip"));
 
 			byte[] data = new byte[1000];
 			String files[] = inFolder.list();
 
-			for (int i=0; i < files.length; i++){
+			for (int i = 0; i < files.length; i++) {
 
-				in = new FileInputStream(inFolder.getPath() + "/" + files[i]);                  
-				out.putNextEntry(new ZipEntry(files[i])); 
+				in = new FileInputStream(inFolder.getPath() + "/" + files[i]);
+				out.putNextEntry(new ZipEntry(files[i]));
 				int count;
 
-				while((count = in.read(data,0,1000)) != -1){
+				while ((count = in.read(data, 0, 1000)) != -1) {
 					out.write(data, 0, count);
 				}
 				out.closeEntry();
 			}
-			
+
 			files = null;
 			data = null;
-			
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		}finally{
+		} finally {
 			out.flush();
 			out.close();
 			in.close();
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Deleting Folder having Files
+	 * 
 	 * @param file
 	 */
-	private void deleteFile(File file){
+	private void deleteFile(File file) {
 		logger.debug("Entering");
 
 		try {
-			if(file.exists()){
-				if(file.isDirectory()){
+			if (file.exists()) {
+				if (file.isDirectory()) {
 					File files[] = file.listFiles();
 					for (int i = 0; i < files.length; i++) {
 						files[i].delete();
 					}
-					if(file.list().length == 0){
+					if (file.list().length == 0) {
 						file.delete();
-					}else{
+					} else {
 						deleteFile(file);
 					}
-				}else{
+				} else {
 					//if file, then delete it
 					file.delete();
 				}
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		}finally{
+		} finally {
 			file = null;
 		}
 		logger.debug("Leaving");
 	}
 
-	public void appendChild(String value,String label,boolean isSucess){
-		Label statuslabel =new Label(value +" "+ label);
-		if(isSucess){
+	public void appendChild(String value, String label, boolean isSucess) {
+		Label statuslabel = new Label(value + " " + label);
+		if (isSucess) {
 			statuslabel.setStyle("Color:Green");
-		}else{
+		} else {
 			statuslabel.setStyle("Color:Red");
 		}
 		this.vbox_statusList.appendChild(statuslabel);
@@ -581,8 +586,8 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 	public ReportConfigurationService getReportConfigurationService() {
 		return reportConfigurationService;
 	}
-	public void setReportConfigurationService(
-			ReportConfigurationService reportConfigurationService) {
+
+	public void setReportConfigurationService(ReportConfigurationService reportConfigurationService) {
 		this.reportConfigurationService = reportConfigurationService;
 	}
 

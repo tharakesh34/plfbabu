@@ -57,105 +57,110 @@ import com.pennant.backend.model.reports.ReportSearchTemplate;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> implements ReportSearchTemplateDAO {
-	private static Logger logger = Logger.getLogger(ReportSearchTemplateDAOImpl .class);
+	private static Logger logger = Logger.getLogger(ReportSearchTemplateDAOImpl.class);
 
 	public ReportSearchTemplateDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This Method saves the values into REPORTSEARCHTEMPLATE
 	 */
 	@Override
 	public void save(ReportSearchTemplate reportSearchTemplate) {
 		logger.debug("Entering");
-		try{
-			StringBuilder  insertSql = new StringBuilder ("INSERT INTO REPORTSEARCHTEMPLATE ( ReportID,TemplateName");
+		try {
+			StringBuilder insertSql = new StringBuilder("INSERT INTO REPORTSEARCHTEMPLATE ( ReportID,TemplateName");
 			insertSql.append(",FieldID,UsrID,FieldValue,Filter,FieldType,Version,LastMntBy,LastMntOn,RecordStatus");
 			insertSql.append(",RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId) values (:ReportID,:TemplateName");
-			insertSql.append(",:FieldID,:UsrID,:FieldValue,:Filter,:FieldType,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode");
+			insertSql.append(
+					",:FieldID,:UsrID,:FieldValue,:Filter,:FieldType,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode");
 			insertSql.append(",:NextRoleCode,:TaskId,:RecordType,:WorkflowId) ");
-			logger.debug("insertSql:"+ insertSql.toString());
+			logger.debug("insertSql:" + insertSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportSearchTemplate);
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			logger.debug("Leaving");
-		}catch (Exception e){
+		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 		}
 	}
+
 	/**
-	 * This Method selects the values from REPORTSEARCHTEMPLATE by 
+	 * This Method selects the values from REPORTSEARCHTEMPLATE by
 	 */
 	@Override
 	public List<ReportSearchTemplate> getReportSearchTemplateByReportId(long reportID, long usrID) {
 		logger.debug("Entering ");
-		ReportSearchTemplate aReportSearchTemplate =new ReportSearchTemplate();
+		ReportSearchTemplate aReportSearchTemplate = new ReportSearchTemplate();
 		aReportSearchTemplate.setReportID(reportID);
 		aReportSearchTemplate.setUsrID(usrID);
 
-		StringBuilder  selectSql = new StringBuilder ();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  ReportID,TemplateName,FieldID,UsrID,FieldValue,Filter,FieldType ");
 		selectSql.append(",Version,LastMntBy,LastMntOn,RecordStatus");
 		selectSql.append(",RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId ");
-		selectSql.append(" FROM REPORTSEARCHTEMPLATE  where ReportID=:ReportID and UsrID in (-1,:UsrID)");	
-		logger.debug("selectSql : " + selectSql.toString()); 
-		try{
+		selectSql.append(" FROM REPORTSEARCHTEMPLATE  where ReportID=:ReportID and UsrID in (-1,:UsrID)");
+		logger.debug("selectSql : " + selectSql.toString());
+		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);
 			RowMapper<ReportSearchTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper
 					.newInstance(ReportSearchTemplate.class);
 			logger.debug("Leaving ");
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-		}catch (Exception e){
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 			return null;
 		}
 	}
+
 	/**
-	 * This Method selects the count of values  from REPORTSEARCHTEMPLATE by templateName
+	 * This Method selects the count of values from REPORTSEARCHTEMPLATE by templateName
 	 */
 	@Override
-	public int  getRecordCountByTemplateName(long reportId,long usrId,String templateName){
+	public int getRecordCountByTemplateName(long reportId, long usrId, String templateName) {
 		int status;
 		logger.debug("Entering ");
-		ReportSearchTemplate aReportSearchTemplate=new ReportSearchTemplate();
+		ReportSearchTemplate aReportSearchTemplate = new ReportSearchTemplate();
 		aReportSearchTemplate.setUsrID(usrId);
 		aReportSearchTemplate.setReportID(reportId);
 		aReportSearchTemplate.setTemplateName(templateName);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);
-		StringBuilder  selectSql = new StringBuilder ("SELECT COUNT(*) FROM REPORTSEARCHTEMPLATE where templateName=:templateName and ");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT COUNT(*) FROM REPORTSEARCHTEMPLATE where templateName=:templateName and ");
 		selectSql.append("usrID=:usrID and reportID=:reportID");
-		logger.debug("selectSql: " + selectSql.toString());      
+		logger.debug("selectSql: " + selectSql.toString());
 
-		try{
-			status=this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		}catch (EmptyResultDataAccessException e) {
-			status=0;
+		try {
+			status = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			status = 0;
 			logger.error("Exception: ", e);
 		}
 
 		logger.debug("Leaving");
 		return status;
 	}
+
 	@Override
 	public boolean delete(long reportId, long usrId, String templateName) {
 		logger.debug("Entering");
-		ReportSearchTemplate aReportSearchTemplate=new ReportSearchTemplate();
+		ReportSearchTemplate aReportSearchTemplate = new ReportSearchTemplate();
 		aReportSearchTemplate.setUsrID(usrId);
 		aReportSearchTemplate.setReportID(reportId);
 		aReportSearchTemplate.setTemplateName(templateName);
-		StringBuilder   deleteSql = new StringBuilder  ("Delete From REPORTSEARCHTEMPLATE");
+		StringBuilder deleteSql = new StringBuilder("Delete From REPORTSEARCHTEMPLATE");
 		deleteSql.append(" Where templateName=:templateName and usrID=:usrID and reportID=:reportID ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);
-		logger.debug("deleteSql:"+deleteSql.toString());
-		
+		logger.debug("deleteSql:" + deleteSql.toString());
+
 		int recordCount = 0;
-		boolean rcdDeleted = false; 
-		try{
+		boolean rcdDeleted = false;
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if(recordCount != 0){
+			if (recordCount != 0) {
 				rcdDeleted = true;
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			logger.debug("Exception: ", e);
 			rcdDeleted = false;
 		}

@@ -13,7 +13,7 @@ public class InventorySettlementDetails implements Serializable {
 	private String holdCertificateNo;
 	private long unsoldQty;
 	private BigDecimal unsoldFee;
-	
+
 	//other fields
 	private long quantity;
 	private long saleQuantity;
@@ -23,7 +23,7 @@ public class InventorySettlementDetails implements Serializable {
 	private Date finalSettlementDate;
 	private BigDecimal feeOnUnsold;
 	private long brokerCustID;
-	private String accountNumber;	
+	private String accountNumber;
 
 	public long getId() {
 		return id;
@@ -48,6 +48,7 @@ public class InventorySettlementDetails implements Serializable {
 	public void setHoldCertificateNo(String holdCertificateNo) {
 		this.holdCertificateNo = holdCertificateNo;
 	}
+
 	public String getCommodityCode() {
 		return commodityCode;
 	}
@@ -63,7 +64,6 @@ public class InventorySettlementDetails implements Serializable {
 	public void setCommodityCcy(String commodityCcy) {
 		this.commodityCcy = commodityCcy;
 	}
-
 
 	public Date getFinalSettlementDate() {
 		return finalSettlementDate;
@@ -96,7 +96,7 @@ public class InventorySettlementDetails implements Serializable {
 	public void setUnitPrice(BigDecimal unitPrice) {
 		this.unitPrice = unitPrice;
 	}
-	
+
 	public BigDecimal getUnsoldFee() {
 		return unsoldFee;
 	}

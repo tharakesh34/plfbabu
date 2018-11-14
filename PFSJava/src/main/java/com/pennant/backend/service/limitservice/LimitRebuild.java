@@ -8,13 +8,13 @@ public interface LimitRebuild {
 	 * @param custID
 	 * @throws DatatypeConfigurationException
 	 */
-	void processCustomerRebuild(long custID,boolean rebuildOnStrChg);
+	void processCustomerRebuild(long custID, boolean rebuildOnStrChg);
 
 	/**
 	 * @param custGroupID
 	 * @throws DatatypeConfigurationException
 	 */
-	void processCustomerGroupRebuild(long rebuildGroupID,boolean removedFromGroup,boolean addedNewlyToGroup) ;
+	void processCustomerGroupRebuild(long rebuildGroupID, boolean removedFromGroup, boolean addedNewlyToGroup);
 
 	void processCustomerGroupSwap(long rebuildGroupID, long resetGroupID);
 

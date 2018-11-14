@@ -70,14 +70,14 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> implements InsurancePolicyService {
-	private static final Logger	logger	= Logger.getLogger(InsurancePolicyServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(InsurancePolicyServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
+	private AuditHeaderDAO auditHeaderDAO;
 
-	private InsurancePolicyDAO	insurancePolicyDAO;
+	private InsurancePolicyDAO insurancePolicyDAO;
 
-	private FinTypeInsuranceDAO finTypeInsuranceDAO; 
-	
+	private FinTypeInsuranceDAO finTypeInsuranceDAO;
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -111,7 +111,7 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 	public void setInsurancePolicyDAO(InsurancePolicyDAO insurancePolicyDAO) {
 		this.insurancePolicyDAO = insurancePolicyDAO;
 	}
-	
+
 	public FinTypeInsuranceDAO getFinTypeInsuranceDAO() {
 		return finTypeInsuranceDAO;
 	}
@@ -340,8 +340,8 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 		if (insurancePolicy.isWorkflow()) {
 			tempInsurancePolicy = getInsurancePolicyDAO().getInsurancePolicyById(insurancePolicy.getId(), "_Temp");
 		}
-		InsurancePolicy befInsurancePolicy = getInsurancePolicyDAO()
-				.getInsurancePolicyById(insurancePolicy.getId(), "");
+		InsurancePolicy befInsurancePolicy = getInsurancePolicyDAO().getInsurancePolicyById(insurancePolicy.getId(),
+				"");
 
 		InsurancePolicy oldInsurancePolicy = insurancePolicy.getBefImage();
 
@@ -360,13 +360,13 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 			} else { // with work flow
 				if (PennantConstants.RECORD_TYPE_NEW.equals(insurancePolicy.getRecordType())) { // if records type is new
 					if (befInsurancePolicy != null || tempInsurancePolicy != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befInsurancePolicy == null || tempInsurancePolicy != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -380,13 +380,13 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 				} else {
 					if (oldInsurancePolicy != null
 							&& !oldInsurancePolicy.getLastMntOn().equals(befInsurancePolicy.getLastMntOn())) {
-						if (PennantConstants.TRAN_DEL.equalsIgnoreCase(StringUtils.trimToEmpty(auditDetail
-								.getAuditTranType()))) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
+						if (PennantConstants.TRAN_DEL
+								.equalsIgnoreCase(StringUtils.trimToEmpty(auditDetail.getAuditTranType()))) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
@@ -406,23 +406,22 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 		}
 
 		//Validate if the insurance Policy assigned to any FinanceType
-		if(StringUtils.equals(insurancePolicy.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED) 
+		if (StringUtils.equals(insurancePolicy.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
 				&& StringUtils.equals(insurancePolicy.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 
-			List<FinTypeInsurances> finTypeInsurance = getFinTypeInsuranceDAO().getFinTypeInsurances(
-					insurancePolicy.getPolicyCode(), FinanceConstants.MODULEID_FINTYPE, "_view");
+			List<FinTypeInsurances> finTypeInsurance = getFinTypeInsuranceDAO()
+					.getFinTypeInsurances(insurancePolicy.getPolicyCode(), FinanceConstants.MODULEID_FINTYPE, "_view");
 			if (!finTypeInsurance.isEmpty()) {
 				String[][] parms = new String[2][1];
 				parms[1][0] = insurancePolicy.getPolicyCode();
 				parms[0][0] = PennantJavaUtil.getLabel("label_PolicyCode") + ":" + parms[1][0];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-						"41006", parms[0], parms[1]), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parms[0], parms[1]), usrLanguage));
 
 			}
 
 		}
-		
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !insurancePolicy.isWorkflow()) {

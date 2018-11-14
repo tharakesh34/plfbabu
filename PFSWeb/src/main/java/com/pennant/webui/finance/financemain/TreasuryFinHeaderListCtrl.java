@@ -69,12 +69,12 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.finance.treasuaryfinance.model.TreasuaryFinHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderList.zul file.
@@ -249,8 +249,8 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final InvestmentFinHeader aTreasuaryFinHeader = (InvestmentFinHeader) item.getAttribute("data");
-			InvestmentFinHeader treasuaryFinHeader = getTreasuaryFinanceService().getTreasuaryFinanceById(
-					aTreasuaryFinHeader.getId());
+			InvestmentFinHeader treasuaryFinHeader = getTreasuaryFinanceService()
+					.getTreasuaryFinanceById(aTreasuaryFinHeader.getId());
 
 			if (treasuaryFinHeader == null) {
 				String[] errParm = new String[1];
@@ -259,8 +259,9 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 				ErrorDetail errorDetails;
-				errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
-						valueParm), getUserWorkspace().getUserLanguage());
+				errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			} else {
 				List<FinanceDetail> financeDetails = null;

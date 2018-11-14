@@ -27,7 +27,6 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 	public TargetDetailServiceImpl() {
 		super();
 	}
-	
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -141,11 +140,9 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 		return auditHeader;
 	}
 
-
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -153,8 +150,7 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 		return auditHeader;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -166,29 +162,28 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 		}
 
 		TargetDetail beftargetDetail = getTargetDetailDAO().getTargetDetailById(targetDetail.getId(), "");
-		TargetDetail oldtargetDetail = targetDetail.getBefImage() ;
+		TargetDetail oldtargetDetail = targetDetail.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = targetDetail.getTargetCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_TargetCode") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_TargetCode") + ":" + valueParm[0];
 
 		if (targetDetail.isNew()) { // for New record or new record into work flow
 
 			if (!targetDetail.isWorkflow()) {// With out Work flow only new records
 				if (beftargetDetail != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (targetDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new 
 					if (beftargetDetail != null || tempTargetDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beftargetDetail == null || tempTargetDetail != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -196,37 +191,34 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!targetDetail.isWorkflow()) { // With out Work flow for update and delete
 				if (beftargetDetail == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldtargetDetail != null
 							&& !oldtargetDetail.getLastMntOn().equals(beftargetDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempTargetDetail == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempTargetDetail != null
-						&& oldtargetDetail != null
+				if (tempTargetDetail != null && oldtargetDetail != null
 						&& !oldtargetDetail.getLastMntOn().equals(tempTargetDetail.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !targetDetail.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !targetDetail.isWorkflow()) {
 			auditDetail.setBefImage(beftargetDetail);
 		}
 		logger.debug("Leaving");

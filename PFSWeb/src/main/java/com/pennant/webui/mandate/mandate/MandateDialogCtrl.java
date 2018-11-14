@@ -1915,8 +1915,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				if (StringUtils.isBlank(aMandate.getNextTaskId())) {
 					aMandate.setNextRoleCode("");
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(aMandate.getRoleCode(),
-						aMandate.getNextRoleCode(), aMandate.getCustCIF(), " Mandate ", aMandate.getRecordStatus());
+				String msg = PennantApplicationUtil.getSavingStatus(aMandate.getRoleCode(), aMandate.getNextRoleCode(),
+						aMandate.getCustCIF(), " Mandate ", aMandate.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 				refreshList();
 				closeDialog();

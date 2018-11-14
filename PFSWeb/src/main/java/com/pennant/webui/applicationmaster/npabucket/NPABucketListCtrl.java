@@ -63,10 +63,10 @@ import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.service.applicationmaster.NPABucketService;
 import com.pennant.webui.applicationmaster.npabucket.model.NPABucketListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/NPABucket/NPABucketList.zul file.
@@ -94,11 +94,11 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 	protected Textbox bucketCode; // autowired
 	protected Textbox bucketDesc; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_BucketCode;
 	protected Listbox sortOperator_BucketDesc;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient NPABucketService nPABucketService;
 
 	/**
@@ -126,8 +126,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 	public void onCreate$window_NPABucketList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_NPABucketList, borderLayout_NPABucketList, listBoxNPABucket,
-				pagingNPABucketList);
+		setPageComponents(window_NPABucketList, borderLayout_NPABucketList, listBoxNPABucket, pagingNPABucketList);
 		setItemRender(new NPABucketListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -135,8 +134,10 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 		registerButton(button_NPABucketList_NewNPABucket, "button_NPABucketList_NewNPABucket", true);
 
 		registerField("bucketID");
-		registerField("bucketCode", listheader_BucketCode, SortOrder.NONE, bucketCode, sortOperator_BucketCode, Operators.STRING);
-		registerField("bucketDesc", listheader_BucketDesc, SortOrder.NONE, bucketDesc, sortOperator_BucketDesc, Operators.STRING);
+		registerField("bucketCode", listheader_BucketCode, SortOrder.NONE, bucketCode, sortOperator_BucketCode,
+				Operators.STRING);
+		registerField("bucketDesc", listheader_BucketDesc, SortOrder.NONE, bucketDesc, sortOperator_BucketDesc,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -184,7 +185,6 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -195,7 +195,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 
 	public void onNPABucketItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxNPABucket.getSelectedItem();
 		final long bucketID = (long) selectedItem.getAttribute("bucketID");
@@ -205,13 +205,13 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  BucketID = ");
-		whereCond.append( npabucket.getBucketID());
+		whereCond.append(npabucket.getBucketID());
 		whereCond.append(" AND  version=");
 		whereCond.append(npabucket.getVersion());
-	
+
 		if (doCheckAuthority(npabucket, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && npabucket.getWorkflowId() == 0) {
@@ -221,10 +221,10 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -237,7 +237,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("npabucket", npabucket);
 		arg.put("npabucketListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/NPABucket/NPABucketDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -266,7 +266,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

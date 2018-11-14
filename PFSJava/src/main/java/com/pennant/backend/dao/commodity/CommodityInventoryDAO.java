@@ -60,12 +60,11 @@ public interface CommodityInventoryDAO {
 	List<FinCommodityInventory> getUsedCommInventory(String brokerCode, String holdCertificateNo);
 
 	int getCommodityFinances(String brokerCode, String holdCertificateNo, String status);
-	
-	CommodityInventory  getCommodityDetails(String holdCertificateNo,String brokerCode);
-	
+
+	CommodityInventory getCommodityDetails(String holdCertificateNo, String brokerCode);
+
 	int getComInvCountByBrokerAndHoldCertNo(CommodityInventory commodityInventory, String type);
 
 	List<String> getAllocateCmdList(String cmdSts, String type);
-
 
 }

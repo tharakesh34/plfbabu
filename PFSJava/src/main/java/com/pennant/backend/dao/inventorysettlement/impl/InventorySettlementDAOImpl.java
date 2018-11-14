@@ -73,12 +73,10 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement> implements InventorySettlementDAO {
-   private static Logger	logger	= Logger.getLogger(InventorySettlementDAOImpl.class);
+	private static Logger logger = Logger.getLogger(InventorySettlementDAOImpl.class);
 
-	
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new InventorySettlement
+	 * This method set the Work Flow id based on the module name and return the new InventorySettlement
 	 * 
 	 * @return InventorySettlement
 	 */
@@ -96,8 +94,8 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 	}
 
 	/**
-	 * This method get the module from method getInventorySettlement() and set
-	 * the new record flag as true and return InventorySettlement()
+	 * This method get the module from method getInventorySettlement() and set the new record flag as true and return
+	 * InventorySettlement()
 	 * 
 	 * @return InventorySettlement
 	 */
@@ -128,7 +126,8 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 		inventorySettlement.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select Id, BrokerCode, SettlementDate");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BrokerCodeName");
 		}
@@ -138,7 +137,8 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(inventorySettlement);
-		RowMapper<InventorySettlement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InventorySettlement.class);
+		RowMapper<InventorySettlement> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InventorySettlement.class);
 
 		try {
 			inventorySettlement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -150,12 +150,9 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 		return inventorySettlement;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the InventorySettlement or
-	 * InventorySettlement_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Management by key Id
+	 * This method Deletes the Record from the InventorySettlement or InventorySettlement_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Finance Management by key Id
 	 * 
 	 * @param Finance
 	 *            Management (inventorySettlement)
@@ -188,9 +185,8 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 	}
 
 	/**
-	 * This method insert new Records into InventorySettlement or
-	 * InventorySettlement_Temp. it fetches the available Sequence form
-	 * SeqInventorySettlement by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into InventorySettlement or InventorySettlement_Temp. it fetches the available
+	 * Sequence form SeqInventorySettlement by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Finance Management
 	 * 
@@ -214,9 +210,11 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 		StringBuilder insertSql = new StringBuilder("Insert Into InventorySettlement");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (Id, BrokerCode, SettlementDate");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:Id, :BrokerCode, :SettlementDate");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -227,10 +225,8 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 	}
 
 	/**
-	 * This method updates the Record InventorySettlement or
-	 * InventorySettlement_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Management by key Id
-	 * and Version
+	 * This method updates the Record InventorySettlement or InventorySettlement_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Management by key Id and Version
 	 * 
 	 * @param Finance
 	 *            Management (inventorySettlement)
@@ -248,7 +244,8 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 		StringBuilder updateSql = new StringBuilder("Update InventorySettlement");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set BrokerCode = :BrokerCode, SettlementDate = :SettlementDate");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Id =:Id");
 
 		if (!type.endsWith("_Temp")) {
@@ -280,14 +277,18 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" select T.BrokerCode, T.HoldCertificateNo, ci.Quantity, T.SaleQuantity, ");
 		selectSql.append(" (ci.Quantity -T.SaleQuantity) UnsoldQty,	CI.CommodityCode, ");
-		selectSql.append(" CI.UnitPrice,CI.CommodityCcy,CI.FinalSettlementDate ,FB.FeeOnUnSold,FB.BrokerCustID,FB.AccountNumber   ");
-		selectSql.append("  from (select BrokerCode,HoldCertificateNo,SUM(SaleQuantity) SaleQuantity from FinCommodityInventory where BrokerCode = :BrokerCode ");
+		selectSql.append(
+				" CI.UnitPrice,CI.CommodityCcy,CI.FinalSettlementDate ,FB.FeeOnUnSold,FB.BrokerCustID,FB.AccountNumber   ");
+		selectSql.append(
+				"  from (select BrokerCode,HoldCertificateNo,SUM(SaleQuantity) SaleQuantity from FinCommodityInventory where BrokerCode = :BrokerCode ");
 		selectSql.append(" and CommodityStatus=:CommodityStatus group by HoldCertificateNo,BrokerCode) t ");
-		selectSql.append(" inner join FCMTCommodityInventory CI on CI.BrokerCode=t.BrokerCode and CI.HoldCertificateNo=t.HoldCertificateNo   ");
+		selectSql.append(
+				" inner join FCMTCommodityInventory CI on CI.BrokerCode=t.BrokerCode and CI.HoldCertificateNo=t.HoldCertificateNo   ");
 		selectSql.append(" inner join FCMTBrokerDetail FB on Fb.BrokerCode=t.BrokerCode ");
 		selectSql.append(" where CI.FinalSettlementDate <=:FinalSettlementDate ");
 
-		RowMapper<InventorySettlementDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InventorySettlementDetails.class);
+		RowMapper<InventorySettlementDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InventorySettlementDetails.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);

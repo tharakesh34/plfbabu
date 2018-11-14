@@ -54,7 +54,6 @@ import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,26 +66,25 @@ public class LegalDetailListModelItemRenderer implements ListitemRenderer<LegalD
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, LegalDetail legalDetail, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(legalDetail.getLoanReference());
+		lc = new Listcell(legalDetail.getLoanReference());
 		lc.setParent(item);
-		
-	  	lc = new Listcell(legalDetail.getCollateralReference());
+
+		lc = new Listcell(legalDetail.getCollateralReference());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(legalDetail.getLegalReference());
 		lc.setParent(item);
-		
-	  	lc = new Listcell(legalDetail.getBranchDesc());
+
+		lc = new Listcell(legalDetail.getBranchDesc());
 		lc.setParent(item);
-		
-	  	lc = new Listcell(DateUtility.formateDate(legalDetail.getLegalDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	 
+
+		lc = new Listcell(DateUtility.formateDate(legalDetail.getLegalDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+
 		if (legalDetail.isActive()) {
 			lc = new Listcell("Active");
 			lc.setStyle("font-weight:bold;color:#00F566;");
@@ -96,15 +94,15 @@ public class LegalDetailListModelItemRenderer implements ListitemRenderer<LegalD
 			lc.setStyle("font-weight:bold;color:#E37114;");
 			lc.setParent(item);
 		}
-			
-	  	lc = new Listcell(legalDetail.getRecordStatus());
+
+		lc = new Listcell(legalDetail.getRecordStatus());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantJavaUtil.getLabel(legalDetail.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("legalId", legalDetail.getLegalId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onLegalDetailItemDoubleClicked");
 	}
 }

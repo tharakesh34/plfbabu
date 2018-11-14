@@ -59,24 +59,24 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ProfitCenter table</b>.<br>
  *
  */
-@XmlType(propOrder = {"profitCenterID","profitCenterCode","profitCenterDesc","active"})
+@XmlType(propOrder = { "profitCenterID", "profitCenterCode", "profitCenterDesc", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProfitCenter extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class ProfitCenter extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long profitCenterID = Long.MIN_VALUE;
 	private String profitCenterCode;
 	private String profitCenterDesc;
 	private boolean active;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ProfitCenter befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -89,47 +89,52 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return profitCenterID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.profitCenterID = id;
 	}
+
 	public long getProfitCenterID() {
 		return profitCenterID;
 	}
+
 	public void setProfitCenterID(long profitCenterID) {
 		this.profitCenterID = profitCenterID;
 	}
-	
+
 	public String getProfitCenterCode() {
 		return profitCenterCode;
 	}
+
 	public void setProfitCenterCode(String profitCenterCode) {
 		this.profitCenterCode = profitCenterCode;
 	}
-	
+
 	public String getProfitCenterDesc() {
 		return profitCenterDesc;
 	}
+
 	public void setProfitCenterDesc(String profitCenterDesc) {
 		this.profitCenterDesc = profitCenterDesc;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -137,7 +142,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -146,22 +151,22 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public ProfitCenter getBefImage(){
+	public ProfitCenter getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ProfitCenter beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ProfitCenter beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -50,14 +51,23 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
  * 
  */
 public interface CustomerPhoneNumberDAO {
-	 CustomerPhoneNumber getCustomerPhoneNumberByID(long id,String typeCode,String type);
-	 List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id,String type);
-	 void update(CustomerPhoneNumber customerPhoneNumber,String type);
-	 void delete(CustomerPhoneNumber customerPhoneNumber,String type);
-	 long save(CustomerPhoneNumber customerPhoneNumber,String type);
-	 void deleteByCustomer(final long id,String type);
-	 List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType);
-	 List<CustomerPhoneNumber> getCustomerPhoneNumberById(long id,String type);
-	 int getVersion(long id,String typeCode);
-	 int getPhoneTypeCodeCount(String phoneTypeCode);
+	CustomerPhoneNumber getCustomerPhoneNumberByID(long id, String typeCode, String type);
+
+	List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id, String type);
+
+	void update(CustomerPhoneNumber customerPhoneNumber, String type);
+
+	void delete(CustomerPhoneNumber customerPhoneNumber, String type);
+
+	long save(CustomerPhoneNumber customerPhoneNumber, String type);
+
+	void deleteByCustomer(final long id, String type);
+
+	List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id, String type, String phoneType);
+
+	List<CustomerPhoneNumber> getCustomerPhoneNumberById(long id, String type);
+
+	int getVersion(long id, String typeCode);
+
+	int getPhoneTypeCodeCount(String phoneTypeCode);
 }

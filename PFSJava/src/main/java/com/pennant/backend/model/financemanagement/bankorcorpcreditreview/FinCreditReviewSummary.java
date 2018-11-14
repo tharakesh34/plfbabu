@@ -6,17 +6,17 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinCreditReviewSummary extends AbstractWorkflowEntity implements Entity{
+public class FinCreditReviewSummary extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
-	private long summaryId  = Long.MIN_VALUE;
+	private long summaryId = Long.MIN_VALUE;
 	private long detailId;
 	private String subCategoryCode;
 	private long lovDescCategoryID;
 	private String lovDescCategoryDesc;
 	private String lovDescSubCategoryDesc;
 	private String lovDescCreditRevCode;
-	private BigDecimal itemValue;	
+	private BigDecimal itemValue;
 	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditReviewSummary befImage;
@@ -29,69 +29,75 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 	private String auditYear;
 	private String creditRevCode;
 	private int lovDescCcyEditField;
-	
-	
+
 	public BigDecimal getLovDescConversionRate() {
-    	return lovDescConversionRate;
-    }
+		return lovDescConversionRate;
+	}
 
 	public void setLovDescConversionRate(BigDecimal lovDescConversionRate) {
-    	this.lovDescConversionRate = lovDescConversionRate;
-    }
+		this.lovDescConversionRate = lovDescConversionRate;
+	}
 
 	public String getLovDescBankName() {
-    	return lovDescBankName;
-    }
+		return lovDescBankName;
+	}
 
 	public void setLovDescBankName(String lovDescBankName) {
-    	this.lovDescBankName = lovDescBankName;
-    }
+		this.lovDescBankName = lovDescBankName;
+	}
 
 	public String getLovDescCreditRevCode() {
-    	return lovDescCreditRevCode;
-    }
+		return lovDescCreditRevCode;
+	}
 
 	public void setLovDescCreditRevCode(String lovDescCreditRevCode) {
-    	this.lovDescCreditRevCode = lovDescCreditRevCode;
-    }
+		this.lovDescCreditRevCode = lovDescCreditRevCode;
+	}
 
-	public FinCreditReviewSummary(){
+	public FinCreditReviewSummary() {
 		super();
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
+
 	public long getSummaryId() {
-    	return this.summaryId;
-    }
+		return this.summaryId;
+	}
+
 	public void setSummaryId(long summaryId) {
-    	this.summaryId = summaryId;
-    }
+		this.summaryId = summaryId;
+	}
+
 	public long getDetailId() {
-    	return detailId;
-    }
+		return detailId;
+	}
+
 	public String getLovDescSubCategoryDesc() {
-    	return lovDescSubCategoryDesc;
-    }
+		return lovDescSubCategoryDesc;
+	}
 
 	public void setLovDescSubCategoryDesc(String lovDescSubCategoryDesc) {
-    	this.lovDescSubCategoryDesc = lovDescSubCategoryDesc;
-    }
+		this.lovDescSubCategoryDesc = lovDescSubCategoryDesc;
+	}
 
 	public void setDetailId(long detailId) {
-    	this.detailId = detailId;
-    }	
+		this.detailId = detailId;
+	}
+
 	public BigDecimal getItemValue() {
-    	return itemValue;
-    }
+		return itemValue;
+	}
+
 	public void setItemValue(BigDecimal itemValue) {
-    	this.itemValue = itemValue;
-    }
+		this.itemValue = itemValue;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -99,6 +105,7 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -106,6 +113,7 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 	public FinCreditReviewSummary getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(FinCreditReviewSummary beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -113,82 +121,84 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	@Override
-    public long getId() {
-	   
-	    return this.summaryId;
-    }
+	public long getId() {
+
+		return this.summaryId;
+	}
+
 	@Override
-    public void setId(long id) {
-	    this.summaryId = id;
-    }
+	public void setId(long id) {
+		this.summaryId = id;
+	}
 
 	public void setSubCategoryCode(String subCategoryCode) {
-	    this.subCategoryCode = subCategoryCode;
-    }
+		this.subCategoryCode = subCategoryCode;
+	}
 
 	public String getSubCategoryCode() {
-	    return subCategoryCode;
-    }
+		return subCategoryCode;
+	}
 
 	public void setLovDescNoOfShares(int lovDescNoOfShares) {
-	    this.lovDescNoOfShares = lovDescNoOfShares;
-    }
+		this.lovDescNoOfShares = lovDescNoOfShares;
+	}
 
 	public int getLovDescNoOfShares() {
-	    return lovDescNoOfShares;
-    }
+		return lovDescNoOfShares;
+	}
 
 	public void setLovDescMarketPrice(BigDecimal lovDescMarketPrice) {
-	    this.lovDescMarketPrice = lovDescMarketPrice;
-    }
+		this.lovDescMarketPrice = lovDescMarketPrice;
+	}
 
 	public BigDecimal getLovDescMarketPrice() {
-	    return lovDescMarketPrice;
-    }
+		return lovDescMarketPrice;
+	}
 
 	public long getLovDescCategoryID() {
-    	return lovDescCategoryID;
-    }
+		return lovDescCategoryID;
+	}
 
 	public void setLovDescCategoryID(long lovDescCategoryID) {
-    	this.lovDescCategoryID = lovDescCategoryID;
-    }
+		this.lovDescCategoryID = lovDescCategoryID;
+	}
 
 	public String getLovDescCategoryDesc() {
-    	return lovDescCategoryDesc;
-    }
+		return lovDescCategoryDesc;
+	}
 
 	public void setLovDescCategoryDesc(String lovDescCategoryDesc) {
-    	this.lovDescCategoryDesc = lovDescCategoryDesc;
-    }
+		this.lovDescCategoryDesc = lovDescCategoryDesc;
+	}
 
 	public void setAuditYear(String auditYear) {
-	    this.auditYear = auditYear;
-    }
+		this.auditYear = auditYear;
+	}
 
 	public String getAuditYear() {
-	    return auditYear;
-    }
+		return auditYear;
+	}
 
 	public void setCreditRevCode(String creditRevCode) {
-	    this.creditRevCode = creditRevCode;
-    }
+		this.creditRevCode = creditRevCode;
+	}
 
 	public String getCreditRevCode() {
-	    return creditRevCode;
-    }
+		return creditRevCode;
+	}
 
 	public int getLovDescCcyEditField() {
-    	return lovDescCcyEditField;
-    }
+		return lovDescCcyEditField;
+	}
 
 	public void setLovDescCcyEditField(int lovDescCcyEditField) {
-    	this.lovDescCcyEditField = lovDescCcyEditField;
-    }
+		this.lovDescCcyEditField = lovDescCcyEditField;
+	}
 
 }

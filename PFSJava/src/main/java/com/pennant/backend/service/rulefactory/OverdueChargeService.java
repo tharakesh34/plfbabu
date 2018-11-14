@@ -52,14 +52,22 @@ import com.pennant.backend.model.rulefactory.OverdueChargeDetail;
  * 
  */
 public interface OverdueChargeService {
-	
+
 	OverdueCharge getOverdueCharge();
+
 	OverdueCharge getNewOverdueCharge();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	OverdueCharge getOverdueChargeById(String id);
+
 	OverdueCharge getApprovedOverdueChargeById(String id);
+
 	OverdueChargeDetail getNewOverdueChargeDetail();
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

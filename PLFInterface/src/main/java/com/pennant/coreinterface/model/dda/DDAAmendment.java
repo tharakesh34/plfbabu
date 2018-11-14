@@ -25,12 +25,11 @@ public class DDAAmendment implements Serializable {
 	private String returnCode;
 	private String returnText;
 	private long timeStamp;
-	
+
 	public DDAAmendment() {
-		
+
 	}
-	
-	
+
 	@XmlElement(name = "ReferenceNum")
 	public String getReferenceNum() {
 		return referenceNum;
@@ -120,7 +119,7 @@ public class DDAAmendment implements Serializable {
 	public void setPaymentFreq(String paymentFreq) {
 		this.paymentFreq = paymentFreq;
 	}
-	
+
 	@XmlElement(name = "ReturnCode")
 	public String getReturnCode() {
 		return returnCode;

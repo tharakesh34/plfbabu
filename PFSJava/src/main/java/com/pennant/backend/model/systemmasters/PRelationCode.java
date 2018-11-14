@@ -51,9 +51,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class PRelationCode extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -6112299060860374205L;
-	
+
 	private String pRelationCode;
 	private String pRelationDesc;
 	private boolean relationCodeIsActive;
@@ -82,6 +82,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return pRelationCode;
 	}
+
 	public void setId(String id) {
 		this.pRelationCode = id;
 	}
@@ -89,6 +90,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public String getPRelationCode() {
 		return pRelationCode;
 	}
+
 	public void setPRelationCode(String pRelationCode) {
 		this.pRelationCode = pRelationCode;
 	}
@@ -96,6 +98,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public String getPRelationDesc() {
 		return pRelationDesc;
 	}
+
 	public void setPRelationDesc(String pRelationDesc) {
 		this.pRelationDesc = pRelationDesc;
 	}
@@ -103,6 +106,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public boolean isRelationCodeIsActive() {
 		return relationCodeIsActive;
 	}
+
 	public void setRelationCodeIsActive(boolean relationCodeIsActive) {
 		this.relationCodeIsActive = relationCodeIsActive;
 	}
@@ -110,6 +114,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -117,6 +122,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -124,6 +130,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public PRelationCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(PRelationCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -131,6 +138,7 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

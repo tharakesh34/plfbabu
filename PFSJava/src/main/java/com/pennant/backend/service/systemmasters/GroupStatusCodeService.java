@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.GroupStatusCode;
  * 
  */
 public interface GroupStatusCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	GroupStatusCode getGroupStatusCodeById(String id);
+
 	GroupStatusCode getApprovedGroupStatusCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

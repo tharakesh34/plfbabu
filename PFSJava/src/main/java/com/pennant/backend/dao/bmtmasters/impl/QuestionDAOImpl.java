@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.bmtmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -66,35 +65,35 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class QuestionDAOImpl extends SequenceDao<Question> implements QuestionDAO {
-   private static Logger logger = Logger.getLogger(QuestionDAOImpl.class);
-	
+	private static Logger logger = Logger.getLogger(QuestionDAOImpl.class);
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new Question 
+	 * This method set the Work Flow id based on the module name and return the new Question
+	 * 
 	 * @return Question
 	 */
 
 	public QuestionDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public Question getQuestion() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("Question");
-		Question question= new Question();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Question");
+		Question question = new Question();
+		if (workFlowDetails != null) {
 			question.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return question;
 	}
 
-
 	/**
-	 * This method get the module from method getQuestion() and set the new record flag as true and return Question()   
+	 * This method get the module from method getQuestion() and set the new record flag as true and return Question()
+	 * 
 	 * @return Question
 	 */
-
 
 	@Override
 	public Question getNewQuestion() {
@@ -106,142 +105,152 @@ public class QuestionDAOImpl extends SequenceDao<Question> implements QuestionDA
 	}
 
 	/**
-	 * Fetch the Record  Question Details details by key field
+	 * Fetch the Record Question Details details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Question
 	 */
 	@Override
 	public Question getQuestionById(final long id, String type) {
 		logger.debug("Entering");
 		Question question = new Question();
-		
+
 		question.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select QuestionId, QuestionDesc, AnswerA, AnswerB, AnswerC, AnswerD, CorrectAnswer, QuestionIsActive");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select QuestionId, QuestionDesc, AnswerA, AnswerB, AnswerC, AnswerD, CorrectAnswer, QuestionIsActive");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTQuestion");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where QuestionId =:QuestionId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
 		RowMapper<Question> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Question.class);
-		
-		try{
-			question = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			question = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			question = null;
 		}
 		logger.debug("Leaving");
 		return question;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the BMTQuestion or BMTQuestion_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Question Details by key QuestionId
+	 * This method Deletes the Record from the BMTQuestion or BMTQuestion_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Question Details by key QuestionId
 	 * 
-	 * @param Question Details (question)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Question
+	 *            Details (question)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(Question question,String type) {
+	public void delete(Question question, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From BMTQuestion");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where QuestionId =:QuestionId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into BMTQuestion or BMTQuestion_Temp.
-	 * it fetches the available Sequence form SeqBMTQuestion by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into BMTQuestion or BMTQuestion_Temp. it fetches the available Sequence form
+	 * SeqBMTQuestion by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Question Details 
+	 * save Question Details
 	 * 
-	 * @param Question Details (question)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Question
+	 *            Details (question)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public long save(Question question,String type) {
+	public long save(Question question, String type) {
 		logger.debug("Entering");
-		if (question.getId()==Long.MIN_VALUE){
+		if (question.getId() == Long.MIN_VALUE) {
 			question.setId(getNextId("SeqBMTQuestion"));
-			logger.debug("get NextID:"+question.getId());
+			logger.debug("get NextID:" + question.getId());
 		}
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into BMTQuestion");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into BMTQuestion");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (QuestionId, QuestionDesc, AnswerA, AnswerB, AnswerC, AnswerD, CorrectAnswer, QuestionIsActive");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:QuestionId, :QuestionDesc, :AnswerA, :AnswerB, :AnswerC, :AnswerD, :CorrectAnswer, :QuestionIsActive");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				" (QuestionId, QuestionDesc, AnswerA, AnswerB, AnswerC, AnswerD, CorrectAnswer, QuestionIsActive");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:QuestionId, :QuestionDesc, :AnswerA, :AnswerB, :AnswerC, :AnswerD, :CorrectAnswer, :QuestionIsActive");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return question.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record BMTQuestion or BMTQuestion_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Question Details by key QuestionId and Version
+	 * This method updates the Record BMTQuestion or BMTQuestion_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Question Details by key QuestionId and Version
 	 * 
-	 * @param Question Details (question)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Question
+	 *            Details (question)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(Question question,String type) {
+	public void update(Question question, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update BMTQuestion");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set QuestionDesc = :QuestionDesc, AnswerA = :AnswerA, AnswerB = :AnswerB, AnswerC = :AnswerC, AnswerD = :AnswerD, CorrectAnswer = :CorrectAnswer, QuestionIsActive = :QuestionIsActive");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update BMTQuestion");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set QuestionDesc = :QuestionDesc, AnswerA = :AnswerA, AnswerB = :AnswerB, AnswerC = :AnswerC, AnswerD = :AnswerD, CorrectAnswer = :CorrectAnswer, QuestionIsActive = :QuestionIsActive");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where QuestionId =:QuestionId");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

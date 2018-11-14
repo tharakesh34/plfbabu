@@ -65,10 +65,11 @@ import com.pennant.util.PennantAppUtil;
  * 
  */
 public class DirectorDetailListModelItemRenderer implements ListitemRenderer<DirectorDetail>, Serializable {
-	
+
 	private List<ValueLabel> countryList = null;
 	private List<ValueLabel> docTypeList = null;
-	public DirectorDetailListModelItemRenderer(List<ValueLabel> countryListDetails, List<ValueLabel> docTypes){
+
+	public DirectorDetailListModelItemRenderer(List<ValueLabel> countryListDetails, List<ValueLabel> docTypes) {
 		countryList = countryListDetails;
 		docTypeList = docTypes;
 	}
@@ -76,61 +77,67 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 	private static final long serialVersionUID = -6611216779270185816L;
 
 	public DirectorDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, DirectorDetail directorDetail, int count) throws Exception {
 
-		if (item instanceof Listgroup) { 
-			item.appendChild(new Listcell(String.valueOf(directorDetail.getLovDescCustCIF()))); 
-		} else if (item instanceof Listgroupfoot) { 
+		if (item instanceof Listgroup) {
+			item.appendChild(new Listcell(String.valueOf(directorDetail.getLovDescCustCIF())));
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(6);
-			item.appendChild(cell); 
-		} else { 
+			item.appendChild(cell);
+		} else {
 			String name = "";
-            if(StringUtils.isNotBlank(directorDetail.getShortName())){
-            	name = directorDetail.getShortName();
-            }else if(StringUtils.isNotBlank(directorDetail.getFirstName()) || StringUtils.isNotBlank(directorDetail.getLastName())){
-            	 name =(directorDetail.getFirstName()==null ? " ":directorDetail.getFirstName()) + "  " + (directorDetail.getLastName()==null ? " ":directorDetail.getLastName());
-            }
-            if (StringUtils.trimToEmpty(directorDetail.getCustAddrCountry()).equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustAddrCountryName()))) {
+			if (StringUtils.isNotBlank(directorDetail.getShortName())) {
+				name = directorDetail.getShortName();
+			} else if (StringUtils.isNotBlank(directorDetail.getFirstName())
+					|| StringUtils.isNotBlank(directorDetail.getLastName())) {
+				name = (directorDetail.getFirstName() == null ? " " : directorDetail.getFirstName()) + "  "
+						+ (directorDetail.getLastName() == null ? " " : directorDetail.getLastName());
+			}
+			if (StringUtils.trimToEmpty(directorDetail.getCustAddrCountry())
+					.equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustAddrCountryName()))) {
 				String desc = PennantAppUtil.getlabelDesc(directorDetail.getCustAddrCountry(), countryList);
 				directorDetail.setLovDescCustAddrCountryName(desc);
 			}
 			Listcell lc = new Listcell(name);
 			lc.setParent(item);
-			if(StringUtils.isNotBlank(directorDetail.getLovDescCustAddrCountryName())){
-				lc = new Listcell(directorDetail.getCustAddrCountry()+ " - " +directorDetail.getLovDescCustAddrCountryName());
-			}else{
+			if (StringUtils.isNotBlank(directorDetail.getLovDescCustAddrCountryName())) {
+				lc = new Listcell(
+						directorDetail.getCustAddrCountry() + " - " + directorDetail.getLovDescCustAddrCountryName());
+			} else {
 				lc = new Listcell(directorDetail.getCustAddrCountry());
 			}
 			lc.setParent(item);
-			if(directorDetail.getSharePerc() != null){
-			lc = new Listcell(String.valueOf(directorDetail.getSharePerc().doubleValue()));
-			lc.setParent(item);
+			if (directorDetail.getSharePerc() != null) {
+				lc = new Listcell(String.valueOf(directorDetail.getSharePerc().doubleValue()));
+				lc.setParent(item);
 			}
-			if (StringUtils.trimToEmpty(directorDetail.getIdType()).equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustDocCategoryName()))) {
+			if (StringUtils.trimToEmpty(directorDetail.getIdType())
+					.equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustDocCategoryName()))) {
 				String desc = PennantAppUtil.getlabelDesc(directorDetail.getIdType(), docTypeList);
 				directorDetail.setLovDescCustDocCategoryName(desc);
 			}
-			if (StringUtils.trimToEmpty(directorDetail.getNationality()).equals(StringUtils.trimToEmpty(directorDetail.getLovDescNationalityName()))) {
+			if (StringUtils.trimToEmpty(directorDetail.getNationality())
+					.equals(StringUtils.trimToEmpty(directorDetail.getLovDescNationalityName()))) {
 				String desc = PennantAppUtil.getlabelDesc(directorDetail.getNationality(), countryList);
 				directorDetail.setLovDescNationalityName(desc);
 			}
-			if(StringUtils.isNotBlank(directorDetail.getLovDescCustDocCategoryName())){
-			lc = new Listcell(directorDetail.getIdType()+" - "+directorDetail.getLovDescCustDocCategoryName());
-			}else{
-				lc = new Listcell(directorDetail.getIdType());	
+			if (StringUtils.isNotBlank(directorDetail.getLovDescCustDocCategoryName())) {
+				lc = new Listcell(directorDetail.getIdType() + " - " + directorDetail.getLovDescCustDocCategoryName());
+			} else {
+				lc = new Listcell(directorDetail.getIdType());
 			}
 			lc.setParent(item);
 			lc = new Listcell(directorDetail.getIdReference());
 			lc.setParent(item);
-			if(StringUtils.isNotBlank(directorDetail.getLovDescNationalityName())){
-			lc = new Listcell(directorDetail.getNationality()+ " - " +directorDetail.getLovDescNationalityName());
-			}else{
-			lc = new Listcell(directorDetail.getNationality());
+			if (StringUtils.isNotBlank(directorDetail.getLovDescNationalityName())) {
+				lc = new Listcell(directorDetail.getNationality() + " - " + directorDetail.getLovDescNationalityName());
+			} else {
+				lc = new Listcell(directorDetail.getNationality());
 			}
 			lc.setParent(item);
 			lc = new Listcell();
@@ -143,7 +150,7 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(directorDetail.getRecordType()));
 			lc.setParent(item);
-			
+
 			item.setAttribute("directorId", directorDetail.getDirectorId());
 			item.setAttribute("custID", directorDetail.getCustID());
 			item.setAttribute("data", directorDetail);

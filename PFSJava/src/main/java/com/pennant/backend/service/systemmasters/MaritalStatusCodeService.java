@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.MaritalStatusCode;
  * 
  */
 public interface MaritalStatusCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	MaritalStatusCode getMaritalStatusCodeById(String id);
+
 	MaritalStatusCode getApprovedMaritalStatusCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

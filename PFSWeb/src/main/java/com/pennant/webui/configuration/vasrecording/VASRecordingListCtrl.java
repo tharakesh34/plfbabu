@@ -87,9 +87,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/Configuration/VASConfiguration/VASConfigurationList.zul
- * file.<br>
+ * This is the controller class for the /WEB-INF/pages/Configuration/VASConfiguration/VASConfigurationList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -240,7 +238,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		if ("C".equals(module) || "E".equals(module)) {
 			this.button_VASRecordingList_NewVASRecording.setVisible(false);
-		} 
+		}
 		if ("E".equals(module)) {
 			this.listheader_VasStatus.setVisible(true);
 		}
@@ -248,8 +246,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -259,8 +256,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -271,8 +267,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -299,8 +294,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -428,8 +423,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

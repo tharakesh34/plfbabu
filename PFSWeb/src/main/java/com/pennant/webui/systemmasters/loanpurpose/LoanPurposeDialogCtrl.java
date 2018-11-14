@@ -75,33 +75,30 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/LoanPurpose/LoanPurposeDialogCtrl.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/LoanPurpose/LoanPurposeDialogCtrl.zul file.
  */
 public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	private static final long serialVersionUID = 3184249234920071313L;
 	private static final Logger logger = Logger.getLogger(LoanPurposeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_LoanPurposeDialog;											// autoWired
-	protected Textbox						loanPurposeCode;													// autoWired
-	protected Textbox						loanPurposeDesc;													// autoWired
-	protected CurrencyBox					loanEligibleAmount;													// autoWired
-	protected Checkbox						loanPurposeIsActive;												// autoWired
-	protected Row                            row_EligibleAmount;
-
+	protected Window window_LoanPurposeDialog; // autoWired
+	protected Textbox loanPurposeCode; // autoWired
+	protected Textbox loanPurposeDesc; // autoWired
+	protected CurrencyBox loanEligibleAmount; // autoWired
+	protected Checkbox loanPurposeIsActive; // autoWired
+	protected Row row_EligibleAmount;
 
 	// not autoWired Var's
-	private LoanPurpose loanpurpose; 						   // overHanded per parameters
+	private LoanPurpose loanpurpose; // overHanded per parameters
 	private transient LoanPurposeListCtrl loanPurposeListCtrl; // overHanded per
 	// parameters
 
-	private transient boolean 	validationOn;
-	
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
 	private transient LoanPurposeService loanPurposeService;
 
@@ -120,9 +117,8 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected LoanPurpose object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected LoanPurpose object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -134,29 +130,26 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		setPageComponents(window_LoanPurposeDialog);
 
 		/* set components visible dependent of the users rights */
-		try{
+		try {
 			doCheckRights();
 
-
 			this.loanpurpose = (LoanPurpose) arguments.get("LoanPurpose");
-			
+
 			LoanPurpose befImage = new LoanPurpose();
 			BeanUtils.copyProperties(this.loanpurpose, befImage);
-			
-			this.loanpurpose.setBefImage(befImage);		
+
+			this.loanpurpose.setBefImage(befImage);
 			setLoanPurpose(this.loanpurpose);
-			
+
 			setLoanPurposeListCtrl((LoanPurposeListCtrl) arguments.get("LoanPurposeListCtrl"));
 
-			doLoadWorkFlow(this.loanpurpose.isWorkflow(),
-					this.loanpurpose.getWorkflowId(),
+			doLoadWorkFlow(this.loanpurpose.isWorkflow(), this.loanpurpose.getWorkflowId(),
 					this.loanpurpose.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"LoanPurposeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "LoanPurposeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -169,7 +162,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 			this.window_LoanPurposeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
-	}	
+	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -180,7 +173,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		// Empty sent any required attributes
 		this.loanPurposeCode.setMaxlength(8);
 		this.loanPurposeDesc.setMaxlength(50);
-  		this.loanEligibleAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.loanEligibleAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -195,8 +188,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -243,7 +235,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		MessageUtil.showHelpWindow(event, window_LoanPurposeDialog);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -303,10 +295,12 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		this.loanPurposeCode.setValue(aLoanPurpose.getLoanPurposeCode());
 		this.loanPurposeDesc.setValue(aLoanPurpose.getLoanPurposeDesc());
 		this.loanPurposeIsActive.setChecked(aLoanPurpose.isLoanPurposeIsActive());
-		this.loanEligibleAmount.setValue(PennantApplicationUtil.formateAmount(aLoanPurpose.getEligibleAmount(), CurrencyUtil.getFormat("")));
+		this.loanEligibleAmount.setValue(
+				PennantApplicationUtil.formateAmount(aLoanPurpose.getEligibleAmount(), CurrencyUtil.getFormat("")));
 		this.recordStatus.setValue(aLoanPurpose.getRecordStatus());
-		
-		if(aLoanPurpose.isNew() || (aLoanPurpose.getRecordType() != null ? aLoanPurpose.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aLoanPurpose.isNew() || (aLoanPurpose.getRecordType() != null ? aLoanPurpose.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.loanPurposeIsActive.setChecked(true);
 			this.loanPurposeIsActive.setDisabled(true);
 		}
@@ -325,8 +319,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aLoanPurpose.setLoanPurposeCode(this.loanPurposeCode.getValue()
-					.toUpperCase());
+			aLoanPurpose.setLoanPurposeCode(this.loanPurposeCode.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -340,11 +333,11 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.loanEligibleAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-				aLoanPurpose.setEligibleAmount(PennantApplicationUtil
-						.unFormateAmount(this.loanEligibleAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+				aLoanPurpose.setEligibleAmount(PennantApplicationUtil.unFormateAmount(
+						this.loanEligibleAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -368,8 +361,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLoanPurpose
 	 * @throws Exception
@@ -405,7 +397,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_LoanPurposeDialog.onClose();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 		logger.debug("Leaving");
@@ -419,15 +411,17 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 
 		setValidationOn(true);
 
-		if (!this.loanPurposeCode.isReadonly()){
-			this.loanPurposeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LoanPurposeDialog_LoanPurposeCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
-
-		if (!this.loanPurposeDesc.isReadonly()){
-			this.loanPurposeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LoanPurposeDialog_LoanPurposeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.loanPurposeCode.isReadonly()) {
+			this.loanPurposeCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LoanPurposeDialog_LoanPurposeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
+		if (!this.loanPurposeDesc.isReadonly()) {
+			this.loanPurposeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LoanPurposeDialog_LoanPurposeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -481,9 +475,9 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_LoanPurposeDialog_LoanPurposeCode.value") +" : "+ aLoanPurpose.getLoanPurposeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_LoanPurposeDialog_LoanPurposeCode.value") + " : "
+				+ aLoanPurpose.getLoanPurposeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aLoanPurpose.getRecordType())) {
 				aLoanPurpose.setVersion(aLoanPurpose.getVersion() + 1);
@@ -509,7 +503,6 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set the components for edit mode. <br>
@@ -633,7 +626,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 				closeDialog();
 			}
 
-		}catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -778,8 +771,8 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_LoanPurposeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -812,7 +805,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aLoanPurpose
 	 * @param tranType
@@ -820,8 +813,8 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	 */
 	private AuditHeader getAuditHeader(LoanPurpose aLoanPurpose, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLoanPurpose.getBefImage(), aLoanPurpose);
-		return new AuditHeader(String.valueOf(aLoanPurpose.getId()), null,
-				null, null, auditDetail, aLoanPurpose.getUserDetails(),	getOverideMap());
+		return new AuditHeader(String.valueOf(aLoanPurpose.getId()), null, null, null, auditDetail,
+				aLoanPurpose.getUserDetails(), getOverideMap());
 
 	}
 
@@ -862,7 +855,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	private void refreshList() {
 		getLoanPurposeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.loanpurpose.getLoanPurposeCode());
@@ -875,6 +868,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -882,6 +876,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	public LoanPurpose getLoanPurpose() {
 		return this.loanpurpose;
 	}
+
 	public void setLoanPurpose(LoanPurpose addressType) {
 		this.loanpurpose = addressType;
 	}
@@ -889,6 +884,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	public void setLoanPurposeService(LoanPurposeService addressTypeService) {
 		this.loanPurposeService = addressTypeService;
 	}
+
 	public LoanPurposeService getLoanPurposeService() {
 		return this.loanPurposeService;
 	}
@@ -896,6 +892,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	public void setLoanPurposeListCtrl(LoanPurposeListCtrl addressTypeListCtrl) {
 		this.loanPurposeListCtrl = addressTypeListCtrl;
 	}
+
 	public LoanPurposeListCtrl getLoanPurposeListCtrl() {
 		return this.loanPurposeListCtrl;
 	}

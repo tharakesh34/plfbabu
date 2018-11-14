@@ -99,20 +99,18 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerIncome/customerIncomeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerIncome/customerIncomeDialog.zul file.
  */
 public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private static final long serialVersionUID = 7152044545249791558L;
 	private static final Logger logger = Logger.getLogger(CustomerIncomeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CustomerIncomeDialog; 		// autoWired
-	
+	protected Window window_CustomerIncomeDialog; // autoWired
+
 	IncomeType incomeType = null;
 	protected Longbox custID; // autoWired
 	protected ExtendedCombobox custIncomeType; // autoWired
@@ -130,7 +128,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private transient CustomerIncomeListCtrl customerIncomeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchPRCustid; // autoWire
 
 	// ServiceDAOs / Domain Classes
@@ -138,17 +136,17 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	protected JdbcSearchObject<Customer> searchObj;
 	private transient CustomerSelectCtrl customerSelectCtrl;
 
-	private boolean newRecord=false;
-	private boolean newCustomer=false;
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
 	private List<CustomerIncome> customerIncomes;
 	private CustomerDialogCtrl customerDialogCtrl;
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	private SamplingDialogCtrl samplingDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject ;
+	protected JdbcSearchObject<Customer> newSearchObject;
 	private int ccyFormatter = 0;
-	private String moduleType="";
+	private String moduleType = "";
 	private boolean custIsJointCust = false;
-	private String userRole="";
+	private String userRole = "";
 	private String inputSource = "customer";
 	private String finReference;
 	private Set<String> coApplicants;
@@ -170,14 +168,13 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerIncome object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerIncome object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerIncomeDialog(Event event)throws Exception {
+	public void onCreate$window_CustomerIncomeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -199,27 +196,27 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		if (arguments.containsKey("jointCust")) {
 			this.custIsJointCust = (Boolean) arguments.get("jointCust");
 		}
-		
-		if(getCustomerIncome().isNewRecord()){
+
+		if (getCustomerIncome().isNewRecord()) {
 			setNewRecord(true);
 		}
 
-		if(arguments.containsKey("customerDialogCtrl")){
+		if (arguments.containsKey("customerDialogCtrl")) {
 
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
 			setNewCustomer(true);
-			
-			if(arguments.containsKey("ccyFormatter")){
-				ccyFormatter =  (Integer) arguments.get("ccyFormatter");
+
+			if (arguments.containsKey("ccyFormatter")) {
+				ccyFormatter = (Integer) arguments.get("ccyFormatter");
 			}
 
-			if(arguments.containsKey("newRecord")){
+			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
-			}else{
+			} else {
 				setNewRecord(false);
 			}
 			this.customerIncome.setWorkflowId(0);
-			if(arguments.containsKey("roleCode") && !enqiryModule){
+			if (arguments.containsKey("roleCode") && !enqiryModule) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}
@@ -244,11 +241,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerIncomeDialog");
 			}
 		}
-		
-		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getFinancedetail()==null) {
+
+		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getFinancedetail() == null) {
 			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		
+
 		if (arguments.containsKey("samplingDialogCtrl")) {
 			row_custType.setVisible(true);
 			inputSource = "sampling";
@@ -276,13 +273,13 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				getUserWorkspace().allocateRoleAuthorities(userRole, pageRightName);
 			}
 		}
-		
+
 		if (arguments.containsKey("isFinanceProcess")) {
 			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
 
-		doLoadWorkFlow(this.customerIncome.isWorkflow(),
-				this.customerIncome.getWorkflowId(), this.customerIncome.getNextTaskId());
+		doLoadWorkFlow(this.customerIncome.isWorkflow(), this.customerIncome.getWorkflowId(),
+				this.customerIncome.getNextTaskId());
 
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			this.userAction = setListRecordStatus(this.userAction);
@@ -298,10 +295,10 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		} else {
 			setCustomerIncomeListCtrl(null);
 		}
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
-		
+
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCustomerIncome());
@@ -327,17 +324,17 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custIncomeType.setValueColumn("IncomeExpenseCode");
 		this.custIncomeType.setDescColumn("IncomeTypeDesc");
 		this.custIncomeType.setValidateColumns(new String[] { "IncomeExpenseCode" });
-		
+
 		if (this.samplingDialogCtrl != null) {
 			Filter incomeTypeFilter[] = new Filter[1];
 			incomeTypeFilter[0] = new Filter("IncomeExpense", PennantConstants.INCOME, Filter.OP_EQUAL);
 			custIncomeType.setFilters(incomeTypeFilter);
 		}
-		
+
 		this.custIncome.setMandatory(true);
 		this.custIncome.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.custIncome.setScale(ccyFormatter);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -352,8 +349,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -458,28 +454,30 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void doWriteBeanToComponents(CustomerIncome aCustomerIncome) {
 		logger.debug("Entering");
 
-		if(aCustomerIncome.getCustId()!=Long.MIN_VALUE){
-			this.custID.setValue(aCustomerIncome.getCustId());	
+		if (aCustomerIncome.getCustId() != Long.MIN_VALUE) {
+			this.custID.setValue(aCustomerIncome.getCustId());
 		}
-		
+
 		List<ValueLabel> customerTypes = new ArrayList<>();
-		if(row_custType.isVisible()){
+		if (row_custType.isVisible()) {
 			customerTypes.add(new ValueLabel("1", "Primary Customer"));
 			customerTypes.add(new ValueLabel("2", "Co-Applicant Customer"));
-			fillComboBox(this.custType, aCustomerIncome.getCustType() == 0?customerTypes.get(0).getValue():String.valueOf(aCustomerIncome.getCustType()), customerTypes, "");
+			fillComboBox(this.custType, aCustomerIncome.getCustType() == 0 ? customerTypes.get(0).getValue()
+					: String.valueOf(aCustomerIncome.getCustType()), customerTypes, "");
 		}
-		
-		if(row_custType.isVisible() && coApplicants.contains(aCustomerIncome.getCustCif())){
+
+		if (row_custType.isVisible() && coApplicants.contains(aCustomerIncome.getCustCif())) {
 			this.custType.setValue(customerTypes.get(1).getLabel());
 		}
-		
-		this.custIncomeType.setValue(aCustomerIncome.getIncomeType()==null?"":aCustomerIncome.getIncomeType());
+
+		this.custIncomeType.setValue(aCustomerIncome.getIncomeType() == null ? "" : aCustomerIncome.getIncomeType());
 		this.custIncome.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getIncome(), ccyFormatter));
-		this.custCIF.setValue(aCustomerIncome.getCustCif()==null?"":aCustomerIncome.getCustCif().trim());
-		this.custShrtName.setValue(aCustomerIncome.getCustShrtName()==null?"":aCustomerIncome.getCustShrtName().trim());
+		this.custCIF.setValue(aCustomerIncome.getCustCif() == null ? "" : aCustomerIncome.getCustCif().trim());
+		this.custShrtName
+				.setValue(aCustomerIncome.getCustShrtName() == null ? "" : aCustomerIncome.getCustShrtName().trim());
 		this.jointCust.setChecked(aCustomerIncome.isJointCust());
 		this.margin.setValue(PennantAppUtil.formateAmount(aCustomerIncome.getMargin(), 2));
-		
+
 		if (isNewRecord()) {
 			this.custIncomeType.setDescription("");
 		} else {
@@ -497,17 +495,17 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void doWriteComponentsToBean(CustomerIncome aCustomerIncome) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			aCustomerIncome.setCustShrtName(this.custShrtName.getValue());
-			aCustomerIncome.setCustId(this.custID.getValue());	
+			aCustomerIncome.setCustId(this.custID.getValue());
 			aCustomerIncome.setCustCif(this.custCIF.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerIncome.setMargin(PennantAppUtil.unFormateAmount(this.margin.getValue(),ccyFormatter));
+			aCustomerIncome.setMargin(PennantAppUtil.unFormateAmount(this.margin.getValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -517,7 +515,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aCustomerIncome.setIncome(PennantAppUtil.unFormateAmount(this.custIncome.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
@@ -525,16 +523,16 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		aCustomerIncome.setJointCust(this.jointCust.isChecked());
-//		try {
-//			aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
-//			aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
-//		} catch (WrongValueException we) {
-//			wve.add(we);
-//		}
-		
-		try{
+		//		try {
+		//			aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
+		//			aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
+		//		} catch (WrongValueException we) {
+		//			wve.add(we);
+		//		}
+
+		try {
 			aCustomerIncome.setInputSource(inputSource);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
 
@@ -550,16 +548,15 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		IncomeType type = getIncomeType(this.custIncomeType.getValue().trim());
-		if(type!=null && type.getMargin()!=null){
-			aCustomerIncome.setMarginDeviation(!type.getMargin().equals(this.margin.getValue()));	
+		if (type != null && type.getMargin() != null) {
+			aCustomerIncome.setMarginDeviation(!type.getMargin().equals(this.margin.getValue()));
 		}
 
 		aCustomerIncome.setRecordStatus(this.recordStatus.getValue());
 		setCustomerIncome(aCustomerIncome);
 		logger.debug("Leaving");
 	}
-	
-	
+
 	public void onChange$custType(Event event) {
 		logger.debug(Literal.ENTERING);
 		String type = this.custType.getSelectedItem().getValue();
@@ -568,44 +565,45 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void visibleComponent(Integer type) {
-		CustomerIncome customerIncome=this.customerIncome.getBefImage();
-		
-		if(type == 2){
+		CustomerIncome customerIncome = this.customerIncome.getBefImage();
+
+		if (type == 2) {
 			this.custCIF.setValue("");
 			this.custShrtName.setValue("");
 			this.btnSearchPRCustid.setVisible(true);
-		}else{
-			this.custCIF.setValue(customerIncome.getCustCif()==null?"":customerIncome.getCustCif().trim());
-			this.custShrtName.setValue(customerIncome.getCustShrtName()==null?"":customerIncome.getCustShrtName().trim());
+		} else {
+			this.custCIF.setValue(customerIncome.getCustCif() == null ? "" : customerIncome.getCustCif().trim());
+			this.custShrtName
+					.setValue(customerIncome.getCustShrtName() == null ? "" : customerIncome.getCustShrtName().trim());
 			this.btnSearchPRCustid.setVisible(false);
 		}
 	}
 
-	private IncomeType  getIncomeType(String incomeType){
-		
+	private IncomeType getIncomeType(String incomeType) {
+
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<IncomeType> searchObject = new JdbcSearchObject<IncomeType>(IncomeType.class);
-		searchObject.addFilterEqual("IncomeTypeCode",incomeType);
+		searchObject.addFilterEqual("IncomeTypeCode", incomeType);
 		searchObject.addTabelName("BMTIncomeTypes_AView");
 		List<IncomeType> incomeList = pagedListService.getBySearchObject(searchObject);
 		if (incomeList != null && !incomeList.isEmpty()) {
 			return incomeList.get(0);
-		}else{
+		} else {
 			return null;
 		}
 	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerIncome
 	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerIncome aCustomerIncome)throws InterruptedException {
+	public void doShowDialog(CustomerIncome aCustomerIncome) throws InterruptedException {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -616,9 +614,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			this.custCIF.focus();
 		} else {
 			this.custIncome.focus();
-			if (isNewCustomer()){
+			if (isNewCustomer()) {
 				doEdit();
-			}else	if (isWorkFlowEnabled()) {
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
 			} else {
@@ -632,20 +630,20 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerIncome);
 			doCheckEnquiry();
-			if(!custIsJointCust){
+			if (!custIsJointCust) {
 				this.row_isJoint.setVisible(false);
 			}
-			
-			if(isNewCustomer()){
+
+			if (isNewCustomer()) {
 				this.window_CustomerIncomeDialog.setHeight("228px");
 				this.window_CustomerIncomeDialog.setWidth("800px");
 				this.groupboxWf.setVisible(false);
-				this.window_CustomerIncomeDialog.doModal() ;
-			}else{
+				this.window_CustomerIncomeDialog.doModal();
+			} else {
 				this.window_CustomerIncomeDialog.setWidth("100%");
 				this.window_CustomerIncomeDialog.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
-			}			
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -668,17 +666,20 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (this.btnSearchPRCustid.isVisible()){
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIncomeDialog_CustID.value"),null,true));
+		if (this.btnSearchPRCustid.isVisible()) {
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerIncomeDialog_CustID.value"), null, true));
 		}
 
 		if (!this.custIncome.isReadonly()) {
-			this.custIncome.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerIncomeDialog_CustIncome.value"), ccyFormatter, true, false));
+			this.custIncome.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerIncomeDialog_CustIncome.value"), ccyFormatter, true, false));
 		}
 		if (!this.margin.isReadonly()) {
-			this.margin.setConstraint(new 	PTDecimalValidator(Labels.getLabel("label_CustomerIncomeDialog_Margin.value"), 2,false,false,100));
+			this.margin.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerIncomeDialog_Margin.value"),
+					2, false, false, 100));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -698,7 +699,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custIncomeType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value"),null,true,true));
+		this.custIncomeType.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value"), null, true, true));
 
 		logger.debug("Leaving");
 	}
@@ -730,7 +732,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private void refreshList() {
 		getCustomerIncomeListCtrl().search();
 	}
-	
+
 	// CRUD operations
 
 	/**
@@ -746,43 +748,42 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-		+ "\n\n --> " + Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value")+" : "+ aCustomerIncome.getIncomeType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value") + " : "
+				+ aCustomerIncome.getIncomeType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerIncome.getRecordType())) {
 				aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
 				aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if(!isFinanceProcess && getCustomerDialogCtrl() != null &&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
-					aCustomerIncome.setNewRecord(true);	
-				}else{
-					tranType = PennantConstants.TRAN_DEL;
-				}
-/*				if (isWorkFlowEnabled()) {
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
+						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
 					aCustomerIncome.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
-*/			}
+				/*
+				 * if (isWorkFlowEnabled()) { aCustomerIncome.setNewRecord(true); tranType = PennantConstants.TRAN_WF; }
+				 * else { tranType = PennantConstants.TRAN_DEL; }
+				 */ }
 
 			try {
-				if(isNewCustomer()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCustomerProcess(aCustomerIncome,tranType);
+				if (isNewCustomer()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newCustomerProcess(aCustomerIncome, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerIncomeDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						if (getCustomerDialogCtrl() != null) {
 							getCustomerDialogCtrl().doFillCustomerIncome(this.customerIncomes);
-						}else if (getSamplingDialogCtrl()!=null) {
+						} else if (getSamplingDialogCtrl() != null) {
 							getSamplingDialogCtrl().doFillCustomerIncome(this.customerIncomes);
 						}
 						closeDialog();
-					}	
-				}else if (doProcess(aCustomerIncome, tranType)) {
+					}
+				} else if (doProcess(aCustomerIncome, tranType)) {
 					refreshList();
 					closeDialog();
-				}	
+				}
 			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
@@ -797,18 +798,18 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if(isNewRecord()){
+		if (isNewRecord()) {
 
-			if(isNewCustomer()){
-				this.btnCancel.setVisible(false);	
+			if (isNewCustomer()) {
+				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-			}else{
+			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
 			this.custIncomeType.setReadonly(isReadOnly("CustomerIncomeDialog_custIncomeType"));
 			this.jointCust.setDisabled(isReadOnly("CustomerIncomeDialog_custIncomeType"));
 			this.custType.setDisabled(isReadOnly("CustomerIncomeDialog_custIncome"));
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.custIncomeType.setReadonly(true);
@@ -820,7 +821,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		this.custID.setReadonly(isReadOnly("CustomerIncomeDialog_custID"));
 		this.custIncome.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
 		this.margin.setReadonly(isReadOnly("CustomerIncomeDialog_custIncome"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -833,18 +834,18 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			if(newCustomer){
-				if(PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)){
+			if (newCustomer) {
+				if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
-				}else if (isNewRecord()){
+				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
 				}
-			}else {
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
@@ -925,7 +926,6 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		doSetValidation();
 		doWriteComponentsToBean(aCustomerIncome);
 
-		
 		isNew = aCustomerIncome.isNew();
 		String tranType = "";
 
@@ -942,47 +942,45 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			}
 		} else {
 
-			if(isNewCustomer()){
-				if(isNewRecord()){
+			if (isNewCustomer()) {
+				if (isNewRecord()) {
 					aCustomerIncome.setVersion(1);
 					aCustomerIncome.setRecordType(PennantConstants.RCD_ADD);
-				}else{
+				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aCustomerIncome.getRecordType())){
-					aCustomerIncome.setVersion(aCustomerIncome.getVersion()+1);
+				if (StringUtils.isBlank(aCustomerIncome.getRecordType())) {
+					aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
 					aCustomerIncome.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aCustomerIncome.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aCustomerIncome.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
-			}else{
+			} else {
 				aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
-			}			
-		}
-	/*	IncomeType type = null;
-		IncomeTypeServiceImpl income;
-		if (this.margin.getValue().compareTo(type.getMargin())==0) {
-			boolean Flag = false;
-			if(Flag=false){
-				
 			}
-		} else {
-			
-		}*/
+		}
+		/*
+		 * IncomeType type = null; IncomeTypeServiceImpl income; if
+		 * (this.margin.getValue().compareTo(type.getMargin())==0) { boolean Flag = false; if(Flag=false){
+		 * 
+		 * } } else {
+		 * 
+		 * }
+		 */
 		// save it to database
 		try {
-			if(isNewCustomer()){
-				AuditHeader auditHeader =  newCustomerProcess(aCustomerIncome, tranType);
+			if (isNewCustomer()) {
+				AuditHeader auditHeader = newCustomerProcess(aCustomerIncome, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerIncomeDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -994,7 +992,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 					// send the data back to customer
 					closeDialog();
 				}
-			}else if (doProcess(aCustomerIncome, tranType)) {
+			} else if (doProcess(aCustomerIncome, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -1009,7 +1007,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private AuditHeader newCustomerProcess(CustomerIncome aCustomerIncome, String tranType) {
 		boolean recordAdded = false;
 
-		AuditHeader auditHeader= getAuditHeader(aCustomerIncome, tranType);
+		AuditHeader auditHeader = getAuditHeader(aCustomerIncome, tranType);
 		customerIncomes = new ArrayList<>();
 
 		String[] valueParm = new String[4];
@@ -1020,11 +1018,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		valueParm[2] = String.valueOf(aCustomerIncome.isJointCust());
 		valueParm[3] = aCustomerIncome.getCategory();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustomerIncomeDialog_CustIncomeCIF.value") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":"+valueParm[1];
-		errParm[2] = PennantJavaUtil.getLabel("label_JointCust") + ":"+valueParm[3];
-		errParm[3] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":"+valueParm[2];
-		
+		errParm[0] = PennantJavaUtil.getLabel("label_CustomerIncomeDialog_CustIncomeCIF.value") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustIncomeType") + ":" + valueParm[1];
+		errParm[2] = PennantJavaUtil.getLabel("label_JointCust") + ":" + valueParm[3];
+		errParm[3] = PennantJavaUtil.getLabel("label_CustIncomeCountry") + ":" + valueParm[2];
+
 		List<CustomerIncome> custIncomeList = null;
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getIncomeList() != null
@@ -1035,7 +1033,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			custIncomeList = getSamplingDialogCtrl().getIncomeList();
 		}
 
-		if (custIncomeList != null && custIncomeList.size() > 0){
+		if (custIncomeList != null && custIncomeList.size() > 0) {
 			for (int i = 0; i < custIncomeList.size(); i++) {
 				CustomerIncome customerIncome = custIncomeList.get(i);
 
@@ -1043,49 +1041,57 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 						&& (aCustomerIncome.getIncomeType().equals(customerIncome.getIncomeType()))
 						&& (aCustomerIncome.getCategory().equals(customerIncome.getCategory()))
 						&& (aCustomerIncome.isJointCust() == customerIncome.isJointCust())
-						&& (aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))){ // Both Current and Existing list rating same
+						&& (aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))) { // Both Current and Existing list rating same
 
-					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+					if (isNewRecord()) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						if (aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 							aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							customerIncomes.add(aCustomerIncome);
-						}else if(aCustomerIncome.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+						} else if (aCustomerIncome.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							customerIncomes.add(aCustomerIncome);
-						}else if(aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
-							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList().size(); j++) {
-								CustomerIncome income =  getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList().get(j);
-								if(income.getCustId() == aCustomerIncome.getCustId() && income.getIncomeType().equals(aCustomerIncome.getIncomeType()) && income.getCategory().equals(aCustomerIncome.getCategory()) && income.getIncomeExpense().equals(aCustomerIncome.getIncomeExpense())){
+						} else if (aCustomerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
+							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList()
+									.size(); j++) {
+								CustomerIncome income = getCustomerDialogCtrl().getCustomerDetails()
+										.getCustomerIncomeList().get(j);
+								if (income.getCustId() == aCustomerIncome.getCustId()
+										&& income.getIncomeType().equals(aCustomerIncome.getIncomeType())
+										&& income.getCategory().equals(aCustomerIncome.getCategory())
+										&& income.getIncomeExpense().equals(aCustomerIncome.getIncomeExpense())) {
 									customerIncomes.add(income);
 								}
 							}
 						}
-					}else{
+					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							customerIncomes.add(customerIncome);
 						}
 					}
-				}else{
+				} else {
 					customerIncomes.add(customerIncome);
 				}
 			}
 		}
 
-		if(!recordAdded){
+		if (!recordAdded) {
 			customerIncomes.add(aCustomerIncome);
 		}
 		return auditHeader;
-	} 
+	}
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1165,11 +1171,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aCustomerIncome,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aCustomerIncome, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					if (!processCompleted) {
 						break;
-					}						
+					}
 				}
 			}
 		} else {
@@ -1226,8 +1232,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerIncomeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1258,7 +1264,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	}
 
 	// Search Button Component Events
-	
+
 	public void onFulfill$custIncomeType(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = custIncomeType.getObject();
@@ -1288,7 +1294,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event)throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING);
 		onload();
 		logger.debug(Literal.LEAVING);
@@ -1300,47 +1306,48 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	
-	private void onload() throws SuspendNotAllowedException,InterruptedException {
+
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		List<Filter> filtersList=new ArrayList<Filter>();
-		Filter filter =null;
+		List<Filter> filtersList = new ArrayList<Filter>();
+		Filter filter = null;
 		if (arguments.containsKey("samplingDialogCtrl")) {
-			if(!coApplicants.isEmpty()){
-			filter = new Filter("custcif", coApplicants.toArray(new String[0]), Filter.OP_IN);
-			}else {
-				filter = new Filter("custcif", "", Filter.OP_EQUAL);	
+			if (!coApplicants.isEmpty()) {
+				filter = new Filter("custcif", coApplicants.toArray(new String[0]), Filter.OP_IN);
+			} else {
+				filter = new Filter("custcif", "", Filter.OP_EQUAL);
 			}
 		} else {
 			filter = new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL);
 		}
-		
+
 		filtersList.add(filter);
 		map.put("DialogCtrl", this);
 		map.put("filtersList", filtersList);
 		map.put("filtertype", "Extended");
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
-	 * @param newSearchObject 
+	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
 		logger.debug("Leaving");
 	}
-
 
 	// WorkFlow Components
 
@@ -1351,12 +1358,11 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome,String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerIncome.getBefImage(), aCustomerIncome);
+	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
 
-		return new AuditHeader(getReference(), String.valueOf(aCustomerIncome.getCustId()),
-				null, null, auditDetail, aCustomerIncome.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aCustomerIncome.getCustId()), null, null, auditDetail,
+				aCustomerIncome.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1370,7 +1376,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CustomerIncomeDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_CustomerIncomeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1394,10 +1400,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 */
 	@Override
 	protected String getReference() {
-		return getCustomerIncome().getCustId()
-		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getIncomeType()
-		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getCategory()
-		+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getIncomeExpense();
+		return getCustomerIncome().getCustId() + PennantConstants.KEY_SEPERATOR + getCustomerIncome().getIncomeType()
+				+ PennantConstants.KEY_SEPERATOR + getCustomerIncome().getCategory() + PennantConstants.KEY_SEPERATOR
+				+ getCustomerIncome().getIncomeExpense();
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1406,6 +1411,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1413,22 +1419,23 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public CustomerIncome getCustomerIncome() {
 		return this.customerIncome;
 	}
+
 	public void setCustomerIncome(CustomerIncome customerIncome) {
 		this.customerIncome = customerIncome;
 	}
 
-	public void setCustomerIncomeService(
-			CustomerIncomeService customerIncomeService) {
+	public void setCustomerIncomeService(CustomerIncomeService customerIncomeService) {
 		this.customerIncomeService = customerIncomeService;
 	}
+
 	public CustomerIncomeService getCustomerIncomeService() {
 		return this.customerIncomeService;
 	}
 
-	public void setCustomerIncomeListCtrl(
-			CustomerIncomeListCtrl customerIncomeListCtrl) {
+	public void setCustomerIncomeListCtrl(CustomerIncomeListCtrl customerIncomeListCtrl) {
 		this.customerIncomeListCtrl = customerIncomeListCtrl;
 	}
+
 	public CustomerIncomeListCtrl getCustomerIncomeListCtrl() {
 		return this.customerIncomeListCtrl;
 	}
@@ -1436,6 +1443,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void setCustomerIncomes(List<CustomerIncome> customerIncomes) {
 		this.customerIncomes = customerIncomes;
 	}
+
 	public List<CustomerIncome> getCustomerIncomes() {
 		return customerIncomes;
 	}
@@ -1443,6 +1451,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {
 		this.customerSelectCtrl = customerSelectctrl;
 	}
+
 	public CustomerSelectCtrl getCustomerSelectCtrl() {
 		return customerSelectCtrl;
 	}
@@ -1450,6 +1459,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -1457,6 +1467,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public boolean isNewCustomer() {
 		return newCustomer;
 	}
+
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
@@ -1464,6 +1475,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
@@ -1483,5 +1495,5 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	public void setSamplingDialogCtrl(SamplingDialogCtrl samplingDialogCtrl) {
 		this.samplingDialogCtrl = samplingDialogCtrl;
 	}
-	
+
 }

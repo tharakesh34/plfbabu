@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.finance.commodity.impl;
 
-
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,234 +69,259 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class CommodityBrokerDetailDAOImpl extends BasicDao<CommodityBrokerDetail> implements CommodityBrokerDetailDAO {
 	private static Logger logger = Logger.getLogger(CommodityBrokerDetailDAOImpl.class);
-	
+
 	public CommodityBrokerDetailDAOImpl() {
 		super();
 	}
-	
 
 	/**
-	 * Fetch the Record  Commodity Broker Detail details by key field
+	 * Fetch the Record Commodity Broker Detail details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CommodityBrokerDetail
 	 */
 	@Override
 	public CommodityBrokerDetail getCommodityBrokerDetailById(final String id, String type) {
 		logger.debug("Entering");
 		CommodityBrokerDetail commodityBrokerDetail = new CommodityBrokerDetail();
-		
-		commodityBrokerDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select BrokerCode, BrokerCustID, BrokerFrom, BrokerAddrHNbr, BrokerAddrFlatNbr,");
-		selectSql.append(" BrokerAddrStreet, BrokerAddrLane1, BrokerAddrLane2, BrokerAddrPOBox, BrokerAddrCountry, BrokerAddrProvince,");
-		selectSql.append(" BrokerAddrCity, BrokerAddrZIP, BrokerAddrPhone, BrokerAddrFax, BrokerEmail, AgreementRef, feeOnUnsold, AccountNumber, CommissionRate,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",lovDescBrokerShortName,lovDescBrokerAddrCountryName,lovDescBrokerAddrProvinceName,lovDescBrokerAddrCityName,lovDescBrokerCIF ");
+		commodityBrokerDetail.setId(id);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select BrokerCode, BrokerCustID, BrokerFrom, BrokerAddrHNbr, BrokerAddrFlatNbr,");
+		selectSql.append(
+				" BrokerAddrStreet, BrokerAddrLane1, BrokerAddrLane2, BrokerAddrPOBox, BrokerAddrCountry, BrokerAddrProvince,");
+		selectSql.append(
+				" BrokerAddrCity, BrokerAddrZIP, BrokerAddrPhone, BrokerAddrFax, BrokerEmail, AgreementRef, feeOnUnsold, AccountNumber, CommissionRate,");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					",lovDescBrokerShortName,lovDescBrokerAddrCountryName,lovDescBrokerAddrProvinceName,lovDescBrokerAddrCityName,lovDescBrokerCIF ");
 		}
 		selectSql.append(" From FCMTBrokerDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BrokerCode =:BrokerCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityBrokerDetail);
-		RowMapper<CommodityBrokerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityBrokerDetail.class);
-		
-		try{
-			commodityBrokerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CommodityBrokerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CommodityBrokerDetail.class);
+
+		try {
+			commodityBrokerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commodityBrokerDetail = null;
 		}
 		logger.debug("Leaving");
 		return commodityBrokerDetail;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the FCMTBrokerDetail or FCMTBrokerDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Commodity Broker Detail by key BrokerCode
+	 * This method Deletes the Record from the FCMTBrokerDetail or FCMTBrokerDetail_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Commodity Broker Detail by key BrokerCode
 	 * 
-	 * @param Commodity Broker Detail (commodityBrokerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Commodity
+	 *            Broker Detail (commodityBrokerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CommodityBrokerDetail commodityBrokerDetail,String type) {
+	public void delete(CommodityBrokerDetail commodityBrokerDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From FCMTBrokerDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BrokerCode =:BrokerCode");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityBrokerDetail);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into FCMTBrokerDetail or FCMTBrokerDetail_Temp.
 	 *
-	 * save Commodity Broker Detail 
+	 * save Commodity Broker Detail
 	 * 
-	 * @param Commodity Broker Detail (commodityBrokerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Commodity
+	 *            Broker Detail (commodityBrokerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(CommodityBrokerDetail commodityBrokerDetail,String type) {
+	public String save(CommodityBrokerDetail commodityBrokerDetail, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into FCMTBrokerDetail");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FCMTBrokerDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BrokerCode, BrokerCustID, BrokerFrom, BrokerAddrHNbr, BrokerAddrFlatNbr, BrokerAddrStreet, BrokerAddrLane1," );
-		insertSql.append(" BrokerAddrLane2, BrokerAddrPOBox, BrokerAddrCountry, BrokerAddrProvince, BrokerAddrCity, BrokerAddrZIP, ");
-		insertSql.append("  BrokerAddrPhone, BrokerAddrFax, BrokerEmail, AgreementRef, feeOnUnsold, AccountNumber, CommissionRate,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:BrokerCode, :BrokerCustID, :BrokerFrom, :BrokerAddrHNbr, :BrokerAddrFlatNbr, :BrokerAddrStreet," );
-		insertSql.append(" :BrokerAddrLane1, :BrokerAddrLane2, :BrokerAddrPOBox, :BrokerAddrCountry, :BrokerAddrProvince, :BrokerAddrCity, :BrokerAddrZIP," );
-		insertSql.append(" :BrokerAddrPhone, :BrokerAddrFax, :BrokerEmail, :AgreementRef, :feeOnUnsold, :AccountNumber, :CommissionRate,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				" (BrokerCode, BrokerCustID, BrokerFrom, BrokerAddrHNbr, BrokerAddrFlatNbr, BrokerAddrStreet, BrokerAddrLane1,");
+		insertSql.append(
+				" BrokerAddrLane2, BrokerAddrPOBox, BrokerAddrCountry, BrokerAddrProvince, BrokerAddrCity, BrokerAddrZIP, ");
+		insertSql.append(
+				"  BrokerAddrPhone, BrokerAddrFax, BrokerEmail, AgreementRef, feeOnUnsold, AccountNumber, CommissionRate,");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:BrokerCode, :BrokerCustID, :BrokerFrom, :BrokerAddrHNbr, :BrokerAddrFlatNbr, :BrokerAddrStreet,");
+		insertSql.append(
+				" :BrokerAddrLane1, :BrokerAddrLane2, :BrokerAddrPOBox, :BrokerAddrCountry, :BrokerAddrProvince, :BrokerAddrCity, :BrokerAddrZIP,");
+		insertSql.append(
+				" :BrokerAddrPhone, :BrokerAddrFax, :BrokerEmail, :AgreementRef, :feeOnUnsold, :AccountNumber, :CommissionRate,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityBrokerDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return commodityBrokerDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record FCMTBrokerDetail or FCMTBrokerDetail_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Commodity Broker Detail by key BrokerCode and Version
+	 * This method updates the Record FCMTBrokerDetail or FCMTBrokerDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Commodity Broker Detail by key BrokerCode and Version
 	 * 
-	 * @param Commodity Broker Detail (commodityBrokerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Commodity
+	 *            Broker Detail (commodityBrokerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(CommodityBrokerDetail commodityBrokerDetail,String type) {
+	public void update(CommodityBrokerDetail commodityBrokerDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update FCMTBrokerDetail");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update FCMTBrokerDetail");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set BrokerCustID = :BrokerCustID, BrokerFrom = :BrokerFrom,");
-		updateSql.append(" BrokerAddrHNbr = :BrokerAddrHNbr, BrokerAddrFlatNbr = :BrokerAddrFlatNbr, BrokerAddrStreet = :BrokerAddrStreet,");
-		updateSql.append(" BrokerAddrLane1 = :BrokerAddrLane1, BrokerAddrLane2 = :BrokerAddrLane2, BrokerAddrPOBox = :BrokerAddrPOBox,");
-		updateSql.append(" BrokerAddrCountry = :BrokerAddrCountry, BrokerAddrProvince = :BrokerAddrProvince, BrokerAddrCity = :BrokerAddrCity,");
-		updateSql.append(" BrokerAddrZIP = :BrokerAddrZIP, BrokerAddrPhone = :BrokerAddrPhone, BrokerAddrFax = :BrokerAddrFax,");
-		updateSql.append(" BrokerEmail = :BrokerEmail, AgreementRef = :AgreementRef, feeOnUnsold = :feeOnUnsold, AccountNumber = :AccountNumber, CommissionRate=:CommissionRate, ");
+		updateSql.append(
+				" BrokerAddrHNbr = :BrokerAddrHNbr, BrokerAddrFlatNbr = :BrokerAddrFlatNbr, BrokerAddrStreet = :BrokerAddrStreet,");
+		updateSql.append(
+				" BrokerAddrLane1 = :BrokerAddrLane1, BrokerAddrLane2 = :BrokerAddrLane2, BrokerAddrPOBox = :BrokerAddrPOBox,");
+		updateSql.append(
+				" BrokerAddrCountry = :BrokerAddrCountry, BrokerAddrProvince = :BrokerAddrProvince, BrokerAddrCity = :BrokerAddrCity,");
+		updateSql.append(
+				" BrokerAddrZIP = :BrokerAddrZIP, BrokerAddrPhone = :BrokerAddrPhone, BrokerAddrFax = :BrokerAddrFax,");
+		updateSql.append(
+				" BrokerEmail = :BrokerEmail, AgreementRef = :AgreementRef, feeOnUnsold = :feeOnUnsold, AccountNumber = :AccountNumber, CommissionRate=:CommissionRate, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BrokerCode =:BrokerCode");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityBrokerDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
-	 * Fetch the Record  Commodity Broker Detail details by key field
+	 * Fetch the Record Commodity Broker Detail details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CommodityBrokerDetail
 	 */
 	@Override
-	public List<BrokerCommodityDetail> getBrokerCommodityDetails(String id,String type) {
+	public List<BrokerCommodityDetail> getBrokerCommodityDetails(String id, String type) {
 		logger.debug("Entering");
 		BrokerCommodityDetail brokerCommodityDetail = new BrokerCommodityDetail();
 		brokerCommodityDetail.setBrokerCode(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select BrokerCode, CommodityCode,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" From BrokerCommodityDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BrokerCode = :BrokerCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(brokerCommodityDetail);
-		RowMapper<BrokerCommodityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BrokerCommodityDetail.class);
-		
+		RowMapper<BrokerCommodityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BrokerCommodityDetail.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	/**
-	 *  Method for saving Broker Commodity Details
-	 * @throws Exception 
+	 * Method for saving Broker Commodity Details
+	 * 
+	 * @throws Exception
 	 */
 	@Override
-	public void saveCommodities(CommodityBrokerDetail commodityBrokerDetail,String type){
+	public void saveCommodities(CommodityBrokerDetail commodityBrokerDetail, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BrokerCommodityDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BrokerCode, CommodityCode, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:BrokerCode, :CommodityCode, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (BrokerCode, CommodityCode, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:BrokerCode, :CommodityCode, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(commodityBrokerDetail.getBrokerCommodityList().toArray());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
+				.createBatch(commodityBrokerDetail.getBrokerCommodityList().toArray());
 		logger.debug("Leaving");
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 	}
-	
-	
 
-	/**o
-	 * This method Deletes the Record from the BrokerCommodityDetail or BrokerCommodityDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Commodity Broker Detail by key BrokerCode
+	/**
+	 * o This method Deletes the Record from the BrokerCommodityDetail or BrokerCommodityDetail_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Commodity Broker Detail by key BrokerCode
 	 * 
-	 * @param Commodity  Detail (BrokerCommodityDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Commodity
+	 *            Detail (BrokerCommodityDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteCommodities(CommodityBrokerDetail commodityBrokerDetail,String type) {
+	public void deleteCommodities(CommodityBrokerDetail commodityBrokerDetail, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From BrokerCommodityDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BrokerCode =:BrokerCode");
@@ -308,5 +331,5 @@ public class CommodityBrokerDetailDAOImpl extends BasicDao<CommodityBrokerDetail
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 }

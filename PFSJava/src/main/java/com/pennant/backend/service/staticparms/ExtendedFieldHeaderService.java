@@ -43,17 +43,20 @@
 
 package com.pennant.backend.service.staticparms;
 
-
 import com.pennant.backend.model.audit.AuditHeader;
-
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 
 public interface ExtendedFieldHeaderService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ExtendedFieldHeader getExtendedFieldHeaderById(long id);
+
 	ExtendedFieldHeader getApprovedExtendedFieldHeaderById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

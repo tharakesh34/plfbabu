@@ -56,12 +56,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class TakafulProvider extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String takafulCode;
 	private String takafulName;
 	private String takafulType;
 	private String accountNumber;
-	private BigDecimal 	takafulRate = BigDecimal.ZERO;
+	private BigDecimal takafulRate = BigDecimal.ZERO;
 	private Date establishedDate;
 	private String street;
 	private String houseNumber;
@@ -101,12 +101,12 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("lovDescCountryDesc");
-			excludeFields.add("lovDescProvinceDesc");
-			excludeFields.add("lovDescCityDesc");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("lovDescCountryDesc");
+		excludeFields.add("lovDescProvinceDesc");
+		excludeFields.add("lovDescCityDesc");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -116,15 +116,15 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getId() {
 		return takafulCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.takafulCode = id;
 	}
-	
-	
+
 	public String getTakafulCode() {
 		return takafulCode;
 	}
+
 	public void setTakafulCode(String takafulCode) {
 		this.takafulCode = takafulCode;
 	}
@@ -132,6 +132,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getTakafulName() {
 		return takafulName;
 	}
+
 	public void setTakafulName(String takafulName) {
 		this.takafulName = takafulName;
 	}
@@ -139,6 +140,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getTakafulType() {
 		return takafulType;
 	}
+
 	public void setTakafulType(String takafulType) {
 		this.takafulType = takafulType;
 	}
@@ -146,6 +148,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getAccountNumber() {
 		return accountNumber;
 	}
+
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
@@ -153,6 +156,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public BigDecimal getTakafulRate() {
 		return takafulRate;
 	}
+
 	public void setTakafulRate(BigDecimal takafulRate) {
 		this.takafulRate = takafulRate;
 	}
@@ -160,6 +164,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public Date getEstablishedDate() {
 		return establishedDate;
 	}
+
 	public void setEstablishedDate(Date establishedDate) {
 		this.establishedDate = establishedDate;
 	}
@@ -167,6 +172,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getStreet() {
 		return street;
 	}
+
 	public void setStreet(String street) {
 		this.street = street;
 	}
@@ -174,6 +180,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getHouseNumber() {
 		return houseNumber;
 	}
+
 	public void setHouseNumber(String houseNumber) {
 		this.houseNumber = houseNumber;
 	}
@@ -181,6 +188,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getAddrLine1() {
 		return addrLine1;
 	}
+
 	public void setAddrLine1(String addrLine1) {
 		this.addrLine1 = addrLine1;
 	}
@@ -188,6 +196,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getAddrLine2() {
 		return addrLine2;
 	}
+
 	public void setAddrLine2(String addrLine2) {
 		this.addrLine2 = addrLine2;
 	}
@@ -195,6 +204,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -202,6 +212,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getLovDescCountryDesc() {
 		return lovDescCountryDesc;
 	}
+
 	public void setLovDescCountryDesc(String lovDescCountryDesc) {
 		this.lovDescCountryDesc = lovDescCountryDesc;
 	}
@@ -209,6 +220,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getProvince() {
 		return province;
 	}
+
 	public void setProvince(String province) {
 		this.province = province;
 	}
@@ -216,6 +228,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getLovDescProvinceDesc() {
 		return lovDescProvinceDesc;
 	}
+
 	public void setLovDescProvinceDesc(String lovDescProvinceDesc) {
 		this.lovDescProvinceDesc = lovDescProvinceDesc;
 	}
@@ -223,6 +236,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
@@ -230,6 +244,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getLovDescCityDesc() {
 		return lovDescCityDesc;
 	}
+
 	public void setLovDescCityDesc(String lovDescCityDesc) {
 		this.lovDescCityDesc = lovDescCityDesc;
 	}
@@ -237,6 +252,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getZipCode() {
 		return zipCode;
 	}
+
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
@@ -244,6 +260,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getPhone() {
 		return phone;
 	}
+
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
@@ -251,6 +268,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getFax() {
 		return fax;
 	}
+
 	public void setFax(String fax) {
 		this.fax = fax;
 	}
@@ -258,6 +276,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getEmailId() {
 		return emailId;
 	}
+
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
@@ -265,6 +284,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getWebSite() {
 		return webSite;
 	}
+
 	public void setWebSite(String webSite) {
 		this.webSite = webSite;
 	}
@@ -272,6 +292,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getContactPerson() {
 		return contactPerson;
 	}
+
 	public void setContactPerson(String contactPerson) {
 		this.contactPerson = contactPerson;
 	}
@@ -279,6 +300,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getContactPersonNo() {
 		return contactPersonNo;
 	}
+
 	public void setContactPersonNo(String contactPersonNo) {
 		this.contactPersonNo = contactPersonNo;
 	}
@@ -286,6 +308,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -293,6 +316,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -300,6 +324,7 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public TakafulProvider getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(TakafulProvider befImage) {
 		this.befImage = befImage;
 	}
@@ -307,23 +332,24 @@ public class TakafulProvider extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Date getExpiryDate() {
-	    return expiryDate;
-    }
+		return expiryDate;
+	}
 
 	public void setExpiryDate(Date expiryDate) {
-	    this.expiryDate = expiryDate;
-    }
+		this.expiryDate = expiryDate;
+	}
 
 	public String getProviderType() {
-	    return providerType;
-    }
+		return providerType;
+	}
 
 	public void setProviderType(String providerType) {
-	    this.providerType = providerType;
-    }
+		this.providerType = providerType;
+	}
 }

@@ -16,7 +16,7 @@ public interface LimitRuleService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	List<LimitFldCriterias> getOperatorsList();
 
 	List<BMTRBFldDetails> getFieldList(String dedupLimits, String string);

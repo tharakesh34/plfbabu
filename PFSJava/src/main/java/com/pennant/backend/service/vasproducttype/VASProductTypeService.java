@@ -63,6 +63,6 @@ public interface VASProductTypeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	int getVASProductTypeByActive(String productType, String type);
 }

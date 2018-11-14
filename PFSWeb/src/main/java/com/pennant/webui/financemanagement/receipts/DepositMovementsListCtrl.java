@@ -77,36 +77,36 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * 
  */
 public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> {
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(DepositMovementsListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(DepositMovementsListCtrl.class);
 
-	protected Window						window_DepositMovementsList;
-	protected Borderlayout					borderLayout_DepositMovementsList;
-	protected Paging						pagingDepositMovementsList;
-	protected Listbox						listBoxDepositMovements;
+	protected Window window_DepositMovementsList;
+	protected Borderlayout borderLayout_DepositMovementsList;
+	protected Paging pagingDepositMovementsList;
+	protected Listbox listBoxDepositMovements;
 
 	// List headers
-	protected Listheader					listheader_DepositType;
-	protected Listheader					listheader_DepositSlipNumber;
-	protected Listheader					listheader_TransactionDate;
-	protected Listheader					listheader_BranchCode;
-	protected Listheader					listheader_PartnerBankId;
-	protected Listheader					listheader_DepositAmount;
+	protected Listheader listheader_DepositType;
+	protected Listheader listheader_DepositSlipNumber;
+	protected Listheader listheader_TransactionDate;
+	protected Listheader listheader_BranchCode;
+	protected Listheader listheader_PartnerBankId;
+	protected Listheader listheader_DepositAmount;
 
 	// checkRights
-	protected Button						button_DepositMovementsList_NewDepositMovements;
-	protected Button						button_DepositMovementsList_DepositMovementsSearch;
+	protected Button button_DepositMovementsList_NewDepositMovements;
+	protected Button button_DepositMovementsList_DepositMovementsSearch;
 
 	// Search Fields
-	protected Textbox						depositSlipNumber;
-	protected Datebox						transactionDate;
-	protected Combobox						depositType;
+	protected Textbox depositSlipNumber;
+	protected Datebox transactionDate;
+	protected Combobox depositType;
 
-	protected Listbox						sortOperator_DepositSlipNumber;
-	protected Listbox						sortOperator_TransactionDate;
-	protected Listbox						sortOperator_DepositType;
+	protected Listbox sortOperator_DepositSlipNumber;
+	protected Listbox sortOperator_TransactionDate;
+	protected Listbox sortOperator_DepositType;
 
-	private transient DepositDetailsService	depositDetailsService;
+	private transient DepositDetailsService depositDetailsService;
 
 	/**
 	 * default constructor.<br>
@@ -145,22 +145,27 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
-		setPageComponents(window_DepositMovementsList, borderLayout_DepositMovementsList, listBoxDepositMovements, pagingDepositMovementsList);
+		setPageComponents(window_DepositMovementsList, borderLayout_DepositMovementsList, listBoxDepositMovements,
+				pagingDepositMovementsList);
 		setItemRender(new DepositMovementsListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_DepositMovementsList_DepositMovementsSearch);
-		registerButton(button_DepositMovementsList_NewDepositMovements, "button_DepositMovementsList_NewDepositMovements", true);
+		registerButton(button_DepositMovementsList_NewDepositMovements,
+				"button_DepositMovementsList_NewDepositMovements", true);
 
-		registerField("DepositType", listheader_DepositType, SortOrder.NONE, depositType, sortOperator_DepositType, Operators.STRING);
-		registerField("depositSlipNumber", listheader_DepositSlipNumber, SortOrder.NONE, depositSlipNumber, sortOperator_DepositSlipNumber, Operators.STRING);
-		registerField("TransactionDate", listheader_TransactionDate, SortOrder.NONE, transactionDate, sortOperator_TransactionDate, Operators.DATE);
+		registerField("DepositType", listheader_DepositType, SortOrder.NONE, depositType, sortOperator_DepositType,
+				Operators.STRING);
+		registerField("depositSlipNumber", listheader_DepositSlipNumber, SortOrder.NONE, depositSlipNumber,
+				sortOperator_DepositSlipNumber, Operators.STRING);
+		registerField("TransactionDate", listheader_TransactionDate, SortOrder.NONE, transactionDate,
+				sortOperator_TransactionDate, Operators.DATE);
 		registerField("ReservedAmount", listheader_DepositAmount, SortOrder.NONE);
 		registerField("MovementId");
 		registerField("BranchCode");
 		registerField("BranchDesc");
 		registerField("PartnerBankName");
-		
+
 		fillComboBox(depositType, "", PennantStaticListUtil.getDepositTypesListList(), "");
 
 		// Render the page and display the data.
@@ -244,7 +249,8 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 		arg.put("depositMovementsListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);

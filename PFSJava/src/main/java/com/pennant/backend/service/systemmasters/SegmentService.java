@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.Segment;
  * 
  */
 public interface SegmentService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Segment getSegmentById(String id);
+
 	Segment getApprovedSegmentById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

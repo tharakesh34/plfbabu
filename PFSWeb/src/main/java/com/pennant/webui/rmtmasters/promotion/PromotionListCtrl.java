@@ -64,9 +64,9 @@ import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.rmtmasters.promotion.model.PromotionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Promotion/Promotion/PromotionList.zul file.<br>
@@ -184,14 +184,15 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		Promotion promotion = new Promotion();
 		promotion.setNewRecord(true);
 		promotion.setWorkflowId(getWorkFlowId());
-		
+
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("promotion", promotion);
 		arg.put("promotionListCtrl", this);
 		arg.put("role", getRole());
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/SelectPromotionDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/SelectPromotionDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -222,7 +223,8 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PromotionCode='" + promotion.getPromotionCode() + "' AND version=" + promotion.getVersion() + " ";
+		String whereCond = " AND PromotionCode='" + promotion.getPromotionCode() + "' AND version="
+				+ promotion.getVersion() + " ";
 
 		if (doCheckAuthority(promotion, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

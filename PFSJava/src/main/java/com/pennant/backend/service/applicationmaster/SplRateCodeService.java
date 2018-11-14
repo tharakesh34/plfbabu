@@ -52,10 +52,15 @@ import com.pennant.backend.model.audit.AuditHeader;
  */
 public interface SplRateCodeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SplRateCode getSplRateCodeById(String id);
+
 	SplRateCode getApprovedSplRateCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

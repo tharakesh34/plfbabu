@@ -21,23 +21,23 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 
 	private static final Logger logger = Logger.getLogger(CustomerCreationServiceImpl.class);
-	
+
 	private AddNewCustomerProcess addNewCustomerProcess;
 	private CustomerDedupProcess customerDedupProcess;
 	private ReserveCIFProcess reserveCIFProcess;
 	private ReleaseCIFProcess releaseCIFProcess;
 
 	public CustomerCreationServiceImpl() {
-		
+
 	}
-	
+
 	@Override
 	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {
 		return null;
 	}
 
 	/********* Excess Interface Connection calls ********/
-	
+
 	/**
 	 * Create a New Customer with given customer Details<br>
 	 * createNewCustomer method do the following steps.<br>
@@ -47,16 +47,17 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	 * @return String
 	 */
 	@Override
-	public String createNewCustomer(InterfaceCustomerDetail customerDetail)	throws InterfaceException {
+	public String createNewCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (customerDetail.getCustomer() != null) {
-			return getAddNewCustomerProcess().createNewCustomer(customerDetail, InterfaceMasterConfigUtil.CREATE_CUST_NSTL);
+			return getAddNewCustomerProcess().createNewCustomer(customerDetail,
+					InterfaceMasterConfigUtil.CREATE_CUST_NSTL);
 		}
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Update the Customer Information in Interface DB<br>
 	 * 
@@ -69,36 +70,40 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	public void updateCoreCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException {
 		logger.debug("Entering");
 
-		if(customerDetail != null) {
-			if(StringUtils.equalsIgnoreCase(InterfaceMasterConfigUtil.CUST_SME, customerDetail.getCustomer().getCustCtgCode())) {
+		if (customerDetail != null) {
+			if (StringUtils.equalsIgnoreCase(InterfaceMasterConfigUtil.CUST_SME,
+					customerDetail.getCustomer().getCustCtgCode())) {
 				throw new InterfaceException("PTI6001", "Can not Update SME Customer");
 			}
 			getAddNewCustomerProcess().updateCustomer(customerDetail, InterfaceMasterConfigUtil.UPDATE_CUST_RETAIL);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Checking Customer Duplication with given customer Details<br>
 	 * 
 	 * customerDedupCheck method do the following steps.<br>
 	 * 1) Send CheckDuplicate Request to MQ<br>
 	 * 2) Receive Response from MQ
-	 * @throws InterfaceException 
+	 * 
+	 * @throws InterfaceException
 	 * 
 	 */
 	@Override
-	public List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup) throws InterfaceException {
+	public List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup)
+			throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		List<CoreCustomerDedup> coreCustDedupList = null;
 		try {
-			coreCustDedupList = getCustomerDedupProcess().customerDedupCheck(customerDedup, InterfaceMasterConfigUtil.CUST_DEDUP);
+			coreCustDedupList = getCustomerDedupProcess().customerDedupCheck(customerDedup,
+					InterfaceMasterConfigUtil.CUST_DEDUP);
 		} catch (JaxenException e) {
 			logger.error("Exception: ", e);
-		} 
-		
+		}
+
 		logger.debug("Leaving");
 		return coreCustDedupList;
 	}
@@ -115,26 +120,28 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		String returnCode = null;
-		
+
 		// Release CIF call for T24 interface
-		returnCode = getReleaseCIFProcess().releaseCIF(coreCustomer, reserveRefNum, InterfaceMasterConfigUtil.RELEASE_CIF);
-		
+		returnCode = getReleaseCIFProcess().releaseCIF(coreCustomer, reserveRefNum,
+				InterfaceMasterConfigUtil.RELEASE_CIF);
+
 		// Release CIF call for HPS interface
-		if(StringUtils.isBlank(returnCode)) {
-			returnCode = getReleaseCIFProcess().releaseCIF(coreCustomer, reserveRefNum, InterfaceMasterConfigUtil.RELEASE_CIF_HPS);
+		if (StringUtils.isBlank(returnCode)) {
+			returnCode = getReleaseCIFProcess().releaseCIF(coreCustomer, reserveRefNum,
+					InterfaceMasterConfigUtil.RELEASE_CIF_HPS);
 		}
 		return returnCode;
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
 
 	public AddNewCustomerProcess getAddNewCustomerProcess() {
 		return addNewCustomerProcess;
 	}
+
 	public void setAddNewCustomerProcess(AddNewCustomerProcess addNewCustomerProcess) {
 		this.addNewCustomerProcess = addNewCustomerProcess;
 	}
@@ -154,6 +161,7 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	public void setReserveCIFProcess(ReserveCIFProcess reserveCIFProcess) {
 		this.reserveCIFProcess = reserveCIFProcess;
 	}
+
 	public ReleaseCIFProcess getReleaseCIFProcess() {
 		return releaseCIFProcess;
 	}

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 	<?link rel="shortcut icon" type="image/x-icon" href="/Favicon.png" ?>
@@ -10,7 +8,8 @@
 	<window border="3d">
 		<style>
 			body { padding: 0 0; background-color: #EBEBEB; /* 0 padding
-			on top and bottom and 0 padding on right and left */ }
+			on top and bottom and 0 padding on right and left
+			*/ }
 		</style>
 
 		<div align="center">
@@ -23,15 +22,16 @@
 						<separator />
 						<separator />
 
-						<label
-							value="${c:l('message_Session_Timeout')}" />
+						<label value="${c:l('message_Session_Timeout')}" />
 
 						<separator />
 						<separator />
 
 						<div align="center">
-							<!-- zk 5.x  -->
-							<a href="/loginDialog.zul">${c:l('btnBackToStart')}</a>
+							<!-- zk 5.x -->
+							<a href="/loginDialog.zul">
+								${c:l('btnBackToStart')}
+							</a>
 						</div>
 					</vbox>
 				</panelchildren>

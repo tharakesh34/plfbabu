@@ -47,9 +47,13 @@ import java.util.List;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 
 public interface TakafulProviderDAO {
-	TakafulProvider getTakafulProviderById(String id,String type);
-	void update(TakafulProvider takafulProvider,String type);
-	void delete(TakafulProvider takafulProvider,String type);
-	void save(TakafulProvider takafulProvider,String type);
+	TakafulProvider getTakafulProviderById(String id, String type);
+
+	void update(TakafulProvider takafulProvider, String type);
+
+	void delete(TakafulProvider takafulProvider, String type);
+
+	void save(TakafulProvider takafulProvider, String type);
+
 	List<TakafulProvider> getTakafulProviders();
 }

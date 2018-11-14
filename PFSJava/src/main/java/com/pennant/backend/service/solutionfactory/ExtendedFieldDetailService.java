@@ -50,10 +50,10 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface ExtendedFieldDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName,  int extendedType);
+	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName, int extendedType);
 
 	ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id, String fieldName, int extendedType);
 
@@ -66,14 +66,14 @@ public interface ExtendedFieldDetailService {
 	ExtendedFieldHeader getExtendedFieldHeaderById(ExtendedFieldHeader extendedFieldHeader);
 
 	void revertColumn(ExtendedFieldDetail efd);
-	
+
 	List<ErrorDetail> doValidations(ExtendedFieldHeader extendedFieldHeader);
-	
-	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName,String subModuleName,String type);
-	
+
+	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String type);
+
 	List<ExtendedFieldDetail> getExtendedFieldDetailByModuleID(long id, String type);
-	
+
 	//### 08-05-2018 Development Iteam 81
 	boolean isFieldAssignedToRule(String fieldName);
-	
+
 }

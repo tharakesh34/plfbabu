@@ -53,13 +53,20 @@ import com.pennant.backend.model.rulefactory.Rule;
 public interface AccountMappingService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	AccountMapping getAccountMapping(String account);
+
 	AccountMapping getApprovedAccountMapping(String account);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<TransactionEntry> getTransactionEntriesByFintype(String finType);
-	Map<String, Rule> getSubheadRules(List<String> subHeadRules) ; 
-	
+
+	Map<String, Rule> getSubheadRules(List<String> subHeadRules);
+
 	void save(List<AccountMapping> accountMappingList, String finType);
 }

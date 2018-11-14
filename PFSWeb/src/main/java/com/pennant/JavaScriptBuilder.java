@@ -103,68 +103,67 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class JavaScriptBuilder extends Groupbox {
 	private static final Logger logger = Logger.getLogger(JavaScriptBuilder.class);
 
-	private static final long 	serialVersionUID = 1L;
-	
-	protected Tree 				tree; 				
-	protected Space 			space; 				
-	protected Codemirror 		codemirror; 		 
-	protected Tabbox 			tabbox; 			 
-	protected Tabs 				tabs; 				 
-	protected Tab 				treeTab; 			 
-	protected Tab 				scriptTab; 			 
-	protected Tabpanels			tabPanels; 			 
-	protected Tabpanel 			treeTabpanel; 		 
-	protected Tabpanel 			scriptTabpanel; 	 
+	private static final long serialVersionUID = 1L;
 
-	private String 				actualBlock = "";
-	private String 				sqlQuery = "";
-	private String 				actualQuery = "";
-	private String 				fields = "";
-	private String 				query = "";
-	private String 				module = "";
-	private String 				event = "";
-	
-	private int 				uniqueId = 0;
-	private int 				logicCount = 0;
-	private int 				mode = 1;		//(1-SelectFromFields, 2-All)
-	private int 				currentDesktopHeight;
-	private int					borderLayoutHeight = 0;
-	private int 				noOfRowsVisible = 5;
-	private int 				tabPanelboxHeight = 200; 
-	private int 				spaceCount = 0; 
-	public static final int 	borderlayoutMainNorth = 100;
-	
-	private RuleReturnType 		ruleType = RuleReturnType.BOOLEAN;		//Default Boolean Type
-	private RuleModule 			ruleModule;
-	private ModuleMapping 		moduleMapping = null;
-	private Set<String> 		fieldsSet = new HashSet<String>();
-	
-	private boolean 			editable = true;
-	private boolean 			readOnly = true;	//FIXME Temporary Solution for Saving
+	protected Tree tree;
+	protected Space space;
+	protected Codemirror codemirror;
+	protected Tabbox tabbox;
+	protected Tabs tabs;
+	protected Tab treeTab;
+	protected Tab scriptTab;
+	protected Tabpanels tabPanels;
+	protected Tabpanel treeTabpanel;
+	protected Tabpanel scriptTabpanel;
 
-	private List<ValueLabel> 		operatorsList 		 = PennantStaticListUtil.getOperators("JS"); // retrieve all the operators
-	private List<ValueLabel> 		operandTypesList	 = PennantStaticListUtil.getOperandTypes("JS"); // retrieve all selection types
-	private List<ValueLabel> 		logicalOperatorsList = PennantStaticListUtil.getLogicalOperators("JS");// retrieve values
-	private List<GlobalVariable>	globalVariableList	 = SysParamUtil.getGlobaVariableList();// retrieve values from table--GlobalVariable
-	private List<RBFieldDetail> 	objectFieldList		 = null;// retrieve values
-	private	List<JSRuleReturnType> 	jsRuleReturnTypeList = null; 
-	
-	protected Groupbox	groupbox;
-	protected Toolbar	toolbar;
-	protected Button	btnValidate = new Button("GENERATE");
-	protected Button	btnSimulation = new Button("SIMULATE");
-	
+	private String actualBlock = "";
+	private String sqlQuery = "";
+	private String actualQuery = "";
+	private String fields = "";
+	private String query = "";
+	private String module = "";
+	private String event = "";
+
+	private int uniqueId = 0;
+	private int logicCount = 0;
+	private int mode = 1; //(1-SelectFromFields, 2-All)
+	private int currentDesktopHeight;
+	private int borderLayoutHeight = 0;
+	private int noOfRowsVisible = 5;
+	private int tabPanelboxHeight = 200;
+	private int spaceCount = 0;
+	public static final int borderlayoutMainNorth = 100;
+
+	private RuleReturnType ruleType = RuleReturnType.BOOLEAN; //Default Boolean Type
+	private RuleModule ruleModule;
+	private ModuleMapping moduleMapping = null;
+	private Set<String> fieldsSet = new HashSet<String>();
+
+	private boolean editable = true;
+	private boolean readOnly = true; //FIXME Temporary Solution for Saving
+
+	private List<ValueLabel> operatorsList = PennantStaticListUtil.getOperators("JS"); // retrieve all the operators
+	private List<ValueLabel> operandTypesList = PennantStaticListUtil.getOperandTypes("JS"); // retrieve all selection types
+	private List<ValueLabel> logicalOperatorsList = PennantStaticListUtil.getLogicalOperators("JS");// retrieve values
+	private List<GlobalVariable> globalVariableList = SysParamUtil.getGlobaVariableList();// retrieve values from table--GlobalVariable
+	private List<RBFieldDetail> objectFieldList = null;// retrieve values
+	private List<JSRuleReturnType> jsRuleReturnTypeList = null;
+
+	protected Groupbox groupbox;
+	protected Toolbar toolbar;
+	protected Button btnValidate = new Button("GENERATE");
+	protected Button btnSimulation = new Button("SIMULATE");
+
 	/**
 	 * Enumerates the supported RuleTabs.
 	 */
 	public enum RuleTabs {
 		DESIGN, SCRIPT
 	}
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Query object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Query object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -184,7 +183,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.setHeight("100%");
 		this.setStyle("overflow:auto;");
 
-		this.groupbox = new Groupbox();	//Groupbox
+		this.groupbox = new Groupbox(); //Groupbox
 		this.groupbox.setParent(this);
 
 		this.tabbox = new Tabbox(); // Tabbox
@@ -197,7 +196,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.treeTab.setParent(tabs);
 		this.scriptTab = new Tab("Rule Result");
 		this.scriptTab.setParent(tabs);
-		
+
 		this.toolbar = new Toolbar(); // Toolbar
 		this.toolbar.setStyle("padding: 0px 0px 0px;");
 		this.toolbar.setParent(tabbox);
@@ -222,7 +221,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		setBorderLayoutHeight();
 		this.tabPanelboxHeight = this.borderLayoutHeight - (this.noOfRowsVisible * 20) - 185;
-		
+
 		this.tree = new Tree();
 		this.tree.setZclass("z-dottree");
 		this.tree.setSclass("QueryBuilderTree");
@@ -244,9 +243,10 @@ public class JavaScriptBuilder extends Groupbox {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * gives desktop height
+	 * 
 	 * @return currentDesktopHeight
 	 */
 	public static int getCurrentDesktopHeight() {
@@ -258,7 +258,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		return 0;
 	}
-	
+
 	/**
 	 * set the border layout height
 	 */
@@ -269,7 +269,9 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Create a new Condition
-	 * @param condition(String) to build new condition based on the dbQuery
+	 * 
+	 * @param condition(String)
+	 *            to build new condition based on the dbQuery
 	 * @param label(String)
 	 * @return treeItem(TreeItem)
 	 */
@@ -297,7 +299,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		// Tree item Preparation Starts here
 		Treeitem treeItem = new Treeitem();
-		treeItem.setId("treeItem" + this.getId()  +  this.uniqueId);
+		treeItem.setId("treeItem" + this.getId() + this.uniqueId);
 
 		Treerow treeRow = new Treerow();
 		treeRow.setParent(treeItem);
@@ -416,8 +418,8 @@ public class JavaScriptBuilder extends Groupbox {
 					leftOperandTypeValue = leftOperandType.getSelectedItem().getValue();
 
 					if (StringUtils.equals(leftOperandTypeValue, RuleConstants.FIELDLIST)) {
-						RBFieldDetail fielddetails = (RBFieldDetail) leftOperandCombo.getSelectedItem().getAttribute(
-								"FieldDetails");
+						RBFieldDetail fielddetails = (RBFieldDetail) leftOperandCombo.getSelectedItem()
+								.getAttribute("FieldDetails");
 						excludeFields = getExcludeFieldsByOperands(leftOperandCombo, "operator", fielddetails);
 					} else if (StringUtils.equals(leftOperandTypeValue, RuleConstants.GLOBALVAR)) {
 						GlobalVariable globalVariable = (GlobalVariable) leftOperandCombo.getSelectedItem()
@@ -460,11 +462,12 @@ public class JavaScriptBuilder extends Groupbox {
 			space.setParent(treeCell);
 
 			// Creating Right Operand
-			Component rightOperand = createOperand(uUID + "_rightOperand", rightOperandType, isMaintain ? buildCondition[count++] : null);
+			Component rightOperand = createOperand(uUID + "_rightOperand", rightOperandType,
+					isMaintain ? buildCondition[count++] : null);
 			if (isMaintain) {
 				rightOperandTypeCalcFields = buildCondition[count];
 				count++;
-			} 
+			}
 			rightOperand.setAttribute("calculatedFields", rightOperandTypeCalcFields); // for Calculated Fields
 		}
 
@@ -486,9 +489,9 @@ public class JavaScriptBuilder extends Groupbox {
 		space.setWidth("5px");
 		space.setParent(treeCell);
 
-		/*if (isMaintain) {
-			space.setVisible("1".equals(buildCondition[count - 1]) ? true : false);
-		}*/
+		/*
+		 * if (isMaintain) { space.setVisible("1".equals(buildCondition[count - 1]) ? true : false); }
+		 */
 
 		// Creating ELSE Button for adding a new condition
 		Label buttonElse = new Label();
@@ -508,9 +511,9 @@ public class JavaScriptBuilder extends Groupbox {
 		space.setId("space_" + buttonElse.getId());
 		space.setWidth("5px");
 		space.setParent(treeCell);
-		/*if (isMaintain) {
-			space.setVisible("1".equals(buildCondition[count - 1]) ? true : false);
-		}*/
+		/*
+		 * if (isMaintain) { space.setVisible("1".equals(buildCondition[count - 1]) ? true : false); }
+		 */
 
 		// Creating ELSE IF Button for adding a new condition
 		Label buttonElseIf = new Label();
@@ -530,9 +533,9 @@ public class JavaScriptBuilder extends Groupbox {
 		space.setId("space_" + buttonElseIf.getId());
 		space.setWidth("5px");
 		space.setParent(treeCell);
-		/*if (isMaintain) {
-			space.setVisible("1".equals(buildCondition[count - 1]) ? true : false);
-		}*/
+		/*
+		 * if (isMaintain) { space.setVisible("1".equals(buildCondition[count - 1]) ? true : false); }
+		 */
 
 		// Creating NESTED IF Button for adding a new condition
 		Label buttonNestedIf = new Label(); // Nested IF
@@ -552,9 +555,9 @@ public class JavaScriptBuilder extends Groupbox {
 		space.setId("space_" + buttonNestedIf.getId());
 		space.setWidth("5px");
 		space.setParent(treeCell);
-		/*if (isMaintain) {
-			space.setVisible("1".equals(buildCondition[count - 1]) ? true : false);
-		}*/
+		/*
+		 * if (isMaintain) { space.setVisible("1".equals(buildCondition[count - 1]) ? true : false); }
+		 */
 
 		// Creating CALCULATE Button for adding a new sub condition
 		Label buttonCalculate = new Label(); // Calculation
@@ -575,20 +578,17 @@ public class JavaScriptBuilder extends Groupbox {
 			}
 		}
 
-		/*if (button_Calculate.isVisible()) {
-			space.setVisible(true);
-		} else {
-			space.setVisible(false);
-		}
-*/
+		/*
+		 * if (button_Calculate.isVisible()) { space.setVisible(true); } else { space.setVisible(false); }
+		 */
 		space = new Space();
 		space.setId("space_" + buttonCalculate.getId());
 		space.setWidth("5px");
 		space.setParent(treeCell);
 
-/*		if (isMaintain) {
-			space.setVisible("1".equals(buildCondition[count - 1]) ? true : false);
-		}*/
+		/*
+		 * if (isMaintain) { space.setVisible("1".equals(buildCondition[count - 1]) ? true : false); }
+		 */
 
 		// Result
 		resultCreation(buildCondition, uUID, isMaintain, count, space, treeCell, buttonCalculate);
@@ -609,11 +609,12 @@ public class JavaScriptBuilder extends Groupbox {
 	 */
 	private void resultCreation(String[] buildCondition, String uUID, boolean isMaintain, int count, Space space,
 			Treecell treeCell, Label result) {
-		
+
 		if (this.ruleType == RuleReturnType.OBJECT) {
 			customisedComponentCreation(buildCondition, uUID, isMaintain, count, treeCell);
-		} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.STRING  || this.ruleType == RuleReturnType.CALCSTRING) {
-			if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+		} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.STRING
+				|| this.ruleType == RuleReturnType.CALCSTRING) {
+			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				customisedComponentCreation(buildCondition, uUID, isMaintain, count, treeCell);
 			} else {
 				Textbox tbResult = new Textbox(); // Result TextBox
@@ -621,9 +622,9 @@ public class JavaScriptBuilder extends Groupbox {
 				tbResult.setParent(treeCell);
 				tbResult.setWidth("120px");
 				result.addForward("onClick", this, "onClickCalculate", tbResult);
-				
+
 				String tbResultCalcFields = " ";
-				
+
 				if (isMaintain) {
 					if (count >= buildCondition.length) {
 						tbResult.setVisible(false);
@@ -636,20 +637,20 @@ public class JavaScriptBuilder extends Groupbox {
 						tbResultCalcFields = buildCondition[count];
 					}
 				}
-				
+
 				tbResult.setAttribute("calculatedFields", tbResultCalcFields);
 			}
 		} else if (this.ruleType == RuleReturnType.INTEGER) {
-			if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				customisedComponentCreation(buildCondition, uUID, isMaintain, count, treeCell);
 			} else {
 				Intbox ibResult = new Intbox(); // Result IntBox
 				ibResult.setId(uUID + "_RESULT");
 				ibResult.setParent(treeCell);
 				ibResult.setWidth("120px");
-				
+
 				ibResult.setVisible(true);
-				
+
 				if (isMaintain) {
 					if (count >= buildCondition.length) {
 						ibResult.setVisible(false);
@@ -660,20 +661,20 @@ public class JavaScriptBuilder extends Groupbox {
 				}
 			}
 		} else if (this.ruleType == RuleReturnType.BOOLEAN) {
-			if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				customisedComponentCreation(buildCondition, uUID, isMaintain, count, treeCell);
 			} else {
 				String cbResultValue = null;
 				List<ValueLabel> booleanList = new ArrayList<ValueLabel>();
 				booleanList.add(new ValueLabel("1", "TRUE"));
 				booleanList.add(new ValueLabel("0", "FALSE"));
-				
+
 				Combobox cbResult = new Combobox(); // Result ComboBox
 				cbResult.setId(uUID + "_RESULT");
 				cbResult.setParent(treeCell);
 				cbResult.setReadonly(true);
 				cbResult.setWidth("120px");
-				
+
 				if (isMaintain) {
 					if (count >= buildCondition.length) {
 						cbResult.setVisible(false);
@@ -682,7 +683,7 @@ public class JavaScriptBuilder extends Groupbox {
 						count++;
 					}
 				}
-				
+
 				fillComboBox(cbResult, cbResultValue, booleanList, "");
 			}
 		} else {
@@ -697,7 +698,8 @@ public class JavaScriptBuilder extends Groupbox {
 	 * @param count
 	 * @param treeCell
 	 */
-	private void customisedComponentCreation(String[] buildCondition, String uUID, boolean isMaintain, int count, Treecell treeCell) {
+	private void customisedComponentCreation(String[] buildCondition, String uUID, boolean isMaintain, int count,
+			Treecell treeCell) {
 		Space space;
 		int loopCount = 0;
 		for (JSRuleReturnType jsRuleReturnType : this.jsRuleReturnTypeList) {
@@ -726,8 +728,8 @@ public class JavaScriptBuilder extends Groupbox {
 				extendedCombo.setValueColumn(jsRuleReturnType.getValueColumn());
 				extendedCombo.setValidateColumns(jsRuleReturnType.getValidateColumns());
 				extendedCombo.setButtonDisabled(StringUtils.isBlank(jsRuleReturnType.getModuleName()));
-				
-				if(jsRuleReturnType.isMultiSelection()) {
+
+				if (jsRuleReturnType.isMultiSelection()) {
 					extendedCombo.addForward("onFulfill", this, "onFulfillExtendedComobo", jsRuleReturnType);
 				} else {
 					extendedCombo.setModuleName(jsRuleReturnType.getModuleName());
@@ -756,9 +758,9 @@ public class JavaScriptBuilder extends Groupbox {
 				resultCombobox.setAttribute("calculatedFields", resultComboboxCalcFields);
 				fillComboBox(resultCombobox, resultComboboxValue, jsRuleReturnType.getListOfData(), "");
 
-			//for deviation case we added this (old code: } else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())) {	)
-			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType()) || 
-					StringUtils.equals(RuleConstants.COMPONENTTYPE_INTEGER, jsRuleReturnType.getComponentType())) {
+				//for deviation case we added this (old code: } else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())) {	)
+			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())
+					|| StringUtils.equals(RuleConstants.COMPONENTTYPE_INTEGER, jsRuleReturnType.getComponentType())) {
 				Label buttonCalculate = new Label(); // Calculation
 				buttonCalculate.setTooltiptext("Click for Add Return Value");
 				buttonCalculate.setValue("CALCULATE");
@@ -818,7 +820,8 @@ public class JavaScriptBuilder extends Groupbox {
 					resultIntboxCalcFields = buildCondition[count];
 				}
 				intboxResult.setAttribute("calculatedFields", resultIntboxCalcFields);
-			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_PERCENTAGE, jsRuleReturnType.getComponentType())) {
+			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_PERCENTAGE,
+					jsRuleReturnType.getComponentType())) {
 				Decimalbox deciamlboxResult = new Decimalbox(); // Result TextBox
 				deciamlboxResult.setId(uUID + "_RESULT" + loopCount);
 				deciamlboxResult.setParent(treeCell);
@@ -865,8 +868,6 @@ public class JavaScriptBuilder extends Groupbox {
 		}
 	}
 
-
-
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -882,8 +883,8 @@ public class JavaScriptBuilder extends Groupbox {
 		Treecell treeCell = (Treecell) event.getOrigin().getTarget().getParent();
 		Treechildren treeChildren = (Treechildren) treeItem.getParent();
 		Label label = (Label) treeItem.getFellowIfAny(treeCell.getId() + "_statement");
-		
-		if (label != null && StringUtils.equalsIgnoreCase(label.getValue(), "IF")) {	//IF BLOCK
+
+		if (label != null && StringUtils.equalsIgnoreCase(label.getValue(), "IF")) { //IF BLOCK
 			Treeitem parentItem = (Treeitem) treeChildren.getParent();
 			String parentuUID = parentItem.getTreerow().getChildren().get(0).getId();
 			//NESTED IF
@@ -894,27 +895,27 @@ public class JavaScriptBuilder extends Groupbox {
 				parentItem.getFellowIfAny(parentuUID + "_RESULT").setVisible(true);
 			}
 			parentItem.getFellowIfAny(parentuUID + "_btn_CALCULATE").setVisible(false);
-			
-			if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+
+			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
 					parentItem.getFellowIfAny(parentuUID + "_RESULT" + count).setVisible(true);
-					if(treeItem.getFellowIfAny(parentuUID + "_btn_CALCULATE" + count) != null) {
+					if (treeItem.getFellowIfAny(parentuUID + "_btn_CALCULATE" + count) != null) {
 						treeItem.getFellowIfAny(parentuUID + "_btn_CALCULATE" + count).setVisible(true);
 					}
 				}
-			} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.CALCSTRING) {  
+			} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.CALCSTRING) {
 				parentItem.getFellowIfAny(parentuUID + "_btn_CALCULATE").setVisible(true);
 			}
 
 			List<Treeitem> list = parentItem.getTreechildren().getChildren();
-			for(Treeitem ti : list) {
+			for (Treeitem ti : list) {
 				Treecell trcell = (Treecell) ti.getChildren().get(0).getChildren().get(0);
-				if(trcell.getFellowIfAny(trcell.getId() + "_logicalOperator") == null) {
+				if (trcell.getFellowIfAny(trcell.getId() + "_logicalOperator") == null) {
 					trcell.getFellowIfAny(trcell.getId() + "_statement");
 					rmvTreeItems.add(ti);
 				}
 			}
-		} else{
+		} else {
 			rmvTreeItems.add(treeItem);
 		}
 
@@ -928,9 +929,9 @@ public class JavaScriptBuilder extends Groupbox {
 	/**
 	 * On selecting to add a new Condition
 	 */
-	public void onClickElseIF(ForwardEvent event){
+	public void onClickElseIF(ForwardEvent event) {
 		logger.debug("Entering");
-		
+
 		Treeitem treeItem = (Treeitem) event.getData();
 		Treecell currentTreeCell = (Treecell) event.getOrigin().getTarget().getParent();
 		Treechildren treeChildren = (Treechildren) treeItem.getParent();
@@ -941,18 +942,18 @@ public class JavaScriptBuilder extends Groupbox {
 		} else {
 			treeChildren.appendChild(newCondition);
 		}
-		
-		String currentuUID = currentTreeCell.getId();
-		String newuUID = newCondition.getTreerow().getChildren().get(0).getId();  
 
-		doSetButtonProperties(treeChildren,currentuUID, newuUID,"ELSEIF");
-		
+		String currentuUID = currentTreeCell.getId();
+		String newuUID = newCondition.getTreerow().getChildren().get(0).getId();
+
+		doSetButtonProperties(treeChildren, currentuUID, newuUID, "ELSEIF");
+
 		Treechildren parentTreeChildren = (Treechildren) treeItem.getParent();
 		Object parentTreeTreeItem = parentTreeChildren.getParent();
-		
-		if(parentTreeTreeItem instanceof Treeitem){
-			setTreeSpace(newCondition, (Treeitem)parentTreeTreeItem);
-		}else{
+
+		if (parentTreeTreeItem instanceof Treeitem) {
+			setTreeSpace(newCondition, (Treeitem) parentTreeTreeItem);
+		} else {
 			setTreeSpace(newCondition, null);
 		}
 		logger.debug("Leaving");
@@ -975,7 +976,7 @@ public class JavaScriptBuilder extends Groupbox {
 		String newuUID = newCondition.getTreerow().getChildren().get(0).getId();
 
 		doSetButtonProperties(treeChildren, currentuUID, newuUID, "ELSE");
-		
+
 		setTreeSpace(newCondition, treeItem);
 
 		logger.debug("Leaving");
@@ -1012,15 +1013,16 @@ public class JavaScriptBuilder extends Groupbox {
 
 		doSetButtonProperties(treeChildren, currentuUID, newuUID, "IF");
 		setTreeSpace(ifCondition, treeItem);
-		
+
 		Treeitem elseCondition = setElseCondition(treeChildren, ifCondition);
 		setTreeSpace(elseCondition, treeItem);
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * On selecting to add a new sub Condition
+	 * 
 	 * @param event
 	 */
 	public void onClickLogicalOperator(ForwardEvent event) {
@@ -1051,6 +1053,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * set the Button properties
+	 * 
 	 * @param treeChildren
 	 * @param currentuUID
 	 * @param newuUID
@@ -1059,11 +1062,11 @@ public class JavaScriptBuilder extends Groupbox {
 	public void doSetButtonProperties(Treechildren treeChildren, String currentuUID, String newuUID, String label) {
 		logger.debug("Entering");
 
-		if (StringUtils.equalsIgnoreCase(label, "ELSEIF")) {	//ELSEIF
+		if (StringUtils.equalsIgnoreCase(label, "ELSEIF")) { //ELSEIF
 			//ELSE
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_ELSE").setVisible(false);
-		} else if (StringUtils.equalsIgnoreCase(label, "ELSE")) {	//ELSE
+		} else if (StringUtils.equalsIgnoreCase(label, "ELSE")) { //ELSE
 			//ELSEIF
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSEIF").setVisible(false);
 			//treeChildren.getFellowIfAny(newuUID + "_leftOperand_space").setVisible(false);
@@ -1075,24 +1078,24 @@ public class JavaScriptBuilder extends Groupbox {
 			//AND
 			treeChildren.getFellowIfAny(newuUID + "_btn_AND").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_AND").setVisible(false);
-		} else if (StringUtils.equalsIgnoreCase(label, "IF")) {	//IF
+		} else if (StringUtils.equalsIgnoreCase(label, "IF")) { //IF
 			//NESTED IF
 			treeChildren.getFellowIfAny(currentuUID + "_btn_NESTEDIF").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + currentuUID + "_btn_NESTEDIF").setVisible(false);
 			//CALCULATE
 			treeChildren.getFellowIfAny(currentuUID + "_btn_CALCULATE").setVisible(false);
 			//if (this.ruleType == RuleReturnType.OBJECT) {
-			if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
 					treeChildren.getFellowIfAny(currentuUID + "_RESULT" + count).setVisible(false);
-					if(treeChildren.getFellowIfAny(currentuUID + "_btn_CALCULATE" + count) != null) {
+					if (treeChildren.getFellowIfAny(currentuUID + "_btn_CALCULATE" + count) != null) {
 						treeChildren.getFellowIfAny(currentuUID + "_btn_CALCULATE" + count).setVisible(false);
 					}
 				}
-			} else	{
+			} else {
 				treeChildren.getFellowIfAny(currentuUID + "_RESULT").setVisible(false);
 			}
-		} else if (StringUtils.equalsIgnoreCase(label, "AND")) {	//AND
+		} else if (StringUtils.equalsIgnoreCase(label, "AND")) { //AND
 			//ELSE
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_ELSE").setVisible(false);
@@ -1107,19 +1110,19 @@ public class JavaScriptBuilder extends Groupbox {
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_CALCULATE").setVisible(false);
 			//RESULT TextBox
 			//treeChildren.getFellowIfAny(newuUID + "_RESULT").setVisible(false);
-			
+
 			//if (this.ruleType == RuleReturnType.OBJECT) {
-				if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {	
-					for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
+			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
 					treeChildren.getFellowIfAny(newuUID + "_RESULT" + count).setVisible(false);
-					if(treeChildren.getFellowIfAny(newuUID + "_btn_CALCULATE" + count) != null) {
+					if (treeChildren.getFellowIfAny(newuUID + "_btn_CALCULATE" + count) != null) {
 						treeChildren.getFellowIfAny(newuUID + "_btn_CALCULATE" + count).setVisible(false);
 					}
 				}
-			} else	{
+			} else {
 				treeChildren.getFellowIfAny(newuUID + "_RESULT").setVisible(false);
 			}
-			
+
 		}
 
 		logger.debug("Leaving");
@@ -1127,6 +1130,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * onChanging Operand Types
+	 * 
 	 * @param event
 	 */
 	public void onChangeOperandType(ForwardEvent event) {
@@ -1147,16 +1151,16 @@ public class JavaScriptBuilder extends Groupbox {
 				if (treeCell.getFellowIfAny(uUID + "_rightOperandType") != null) {
 					Combobox rightOperandType = (Combobox) treeCell.getFellowIfAny(uUID + "_rightOperandType");
 					Combobox operator = (Combobox) treeCell.getFellowIfAny(uUID + "_operator");
-					
+
 					if (operator.getSelectedIndex() > 0) {
 						((Combobox) operator).setSelectedIndex(0);
 					}
-					
+
 					if (rightOperandType.getSelectedIndex() > 0) {
 						((Combobox) rightOperandType).setSelectedIndex(0);
 					}
 				}
-				
+
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand") != null) {
 					Component rightOperand = treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand");
 					if (rightOperand instanceof Combobox) {
@@ -1173,7 +1177,7 @@ public class JavaScriptBuilder extends Groupbox {
 						((Textbox) rightOperand).setValue("");
 					}
 				}
-				
+
 				Combobox comboBox = (Combobox) treeCell.getFellowIfAny(uUID + "_operator");
 				String comboBoxValue = comboBox.getSelectedItem().getValue().toString();
 				String excludeFields = getExcludeFieldsByOperandType(operandType, "operator");
@@ -1191,11 +1195,11 @@ public class JavaScriptBuilder extends Groupbox {
 		}
 		if (treeCell.getFellowIfAny(uUID) != null) {
 			treeCell.getFellowIfAny(uUID).detach();
-			
+
 			if (treeCell.getFellowIfAny(uUID + "_space") != null) {
 				treeCell.getFellowIfAny(uUID + "_space").detach();
 			}
-			
+
 			if (treeCell.getFellowIfAny(uUID + "_calculate") != null) {
 				treeCell.getFellowIfAny(uUID + "_calculate").detach();
 			}
@@ -1207,6 +1211,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Get Exclude Fields by Operand Type
+	 * 
 	 * @param operandType
 	 * @return
 	 */
@@ -1215,14 +1220,15 @@ public class JavaScriptBuilder extends Groupbox {
 
 		String excludeFields = "";
 		String operandTypeValue = operandType.getSelectedItem().getValue();
-		
+
 		if (operandType.getSelectedIndex() == 0) {
 			//Do nothing
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.STATICTEXT)) {
 			if (StringUtils.equals(type, "operator")) {
 				excludeFields = ", > , >= , < , <= , IN , NOT IN ,";
 			} else if (StringUtils.equals(type, "operandType")) {
-				excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , " + RuleConstants.DBVALUE + " , ";
+				excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , "
+						+ RuleConstants.DBVALUE + " , ";
 			}
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.GLOBALVAR)) {
 			if (StringUtils.equals(type, "operator")) {
@@ -1254,7 +1260,8 @@ public class JavaScriptBuilder extends Groupbox {
 	}
 
 	/**
-	 * onChanging Operand 
+	 * onChanging Operand
+	 * 
 	 * @param event
 	 */
 	@SuppressWarnings("unused")
@@ -1289,8 +1296,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_rightOperandType") != null
 						&& treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand") != null) {
-					Combobox rightOperandType = (Combobox) treeCell.getFellowIfAny(treeCell.getId()
-							+ "_rightOperandType");
+					Combobox rightOperandType = (Combobox) treeCell
+							.getFellowIfAny(treeCell.getId() + "_rightOperandType");
 					Component rightOperand = (Component) treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand");
 					rightOperandType.setSelectedIndex(0);
 
@@ -1311,8 +1318,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 				if (StringUtils.equals(operandTypeValue, RuleConstants.FIELDLIST)
 						&& ((Combobox) operand).getSelectedIndex() != 0) {
-					RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) operand).getSelectedItem().getAttribute(
-							"FieldDetails");
+					RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) operand).getSelectedItem()
+							.getAttribute("FieldDetails");
 					String uUID = treeCell.getId();
 
 					if (treeCell.getFellowIfAny(uUID + "_operator") != null) {
@@ -1384,12 +1391,12 @@ public class JavaScriptBuilder extends Groupbox {
 			if (StringUtils.equals(type, "operator")) {
 				excludeFields = " , > , >= , < , <= , ";
 			} else if (StringUtils.equals(type, "operandType")) {
-				excludeFields = " , " + RuleConstants.CALCVALUE + " , " ;
+				excludeFields = " , " + RuleConstants.CALCVALUE + " , ";
 			}
 		} else if ((StringUtils.equalsIgnoreCase(fieldType, PennantConstants.DATETIME))
 				|| (StringUtils.equalsIgnoreCase(fieldType, PennantConstants.SMALLDATETIME))) {
 			if (StringUtils.equals(type, "operandType")) {
-				excludeFields = " , " + RuleConstants.CALCVALUE + " , " ;
+				excludeFields = " , " + RuleConstants.CALCVALUE + " , ";
 			}
 		}
 
@@ -1399,12 +1406,12 @@ public class JavaScriptBuilder extends Groupbox {
 			} else if (StringUtils.equals(type, "operandType")) {
 				excludeFields = excludeFields + " , " + RuleConstants.DBVALUE + " ,";
 			}
-		}	
+		}
 
 		logger.debug("Leaving");
 
 		return excludeFields;
-}
+	}
 
 	public String getGlobalExcludeFieldsByOperands(Combobox operand, String type, GlobalVariable globalVariable) {
 		logger.debug("Entering");
@@ -1444,8 +1451,10 @@ public class JavaScriptBuilder extends Groupbox {
 
 		return excludeFields;
 	}
+
 	/**
-	 * onChanging Operator 
+	 * onChanging Operator
+	 * 
 	 * @param event
 	 */
 	public void onChangeOperator(ForwardEvent event) {
@@ -1472,7 +1481,7 @@ public class JavaScriptBuilder extends Groupbox {
 			Combobox leftOperandType = (Combobox) treeCell.getFellowIfAny(uUID + "_leftOperandType");
 			Component rightOperand = (Component) treeCell.getFellowIfAny(uUID + "_rightOperand");
 			Component leftOperand = (Component) treeCell.getFellowIfAny(uUID + "_leftOperand");
-			
+
 			rightOperandType.setSelectedIndex(0);
 			String rightOperandTypeValue = rightOperandType.getSelectedItem().getValue();
 
@@ -1502,9 +1511,9 @@ public class JavaScriptBuilder extends Groupbox {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Get the Excludefields for rightOperandType
+	 * 
 	 * @param operator(Combobox),leftOperand(Component)
 	 * @return excludeFields(String)
 	 */
@@ -1525,8 +1534,10 @@ public class JavaScriptBuilder extends Groupbox {
 				if (leftOperand instanceof Combobox) {
 					if (StringUtils.equals(leftOperandTypeValue, RuleConstants.FIELDLIST)) {
 						if (((Combobox) leftOperand).getSelectedIndex() != 0) {
-							leftOperandTooltip = ((Combobox) leftOperand).getSelectedItem().getTooltiptext().toLowerCase();
-							RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem().getAttribute("FieldDetails");
+							leftOperandTooltip = ((Combobox) leftOperand).getSelectedItem().getTooltiptext()
+									.toLowerCase();
+							RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem()
+									.getAttribute("FieldDetails");
 
 							String rbFldType = fielddetails.getRbFldType().toLowerCase();
 							excludeFields = " , " + RuleConstants.SUBQUERY;
@@ -1553,7 +1564,8 @@ public class JavaScriptBuilder extends Groupbox {
 						if (((Combobox) leftOperand).getSelectedIndex() != 0) {
 							// GlobalVariable globalVariable=(GlobalVariable) ((Combobox)
 							// leftOperand).getSelectedItem().getAttribute("GlobalVariableDetails");
-							leftOperandTooltip = ((Combobox) leftOperand).getSelectedItem().getTooltiptext().toLowerCase();
+							leftOperandTooltip = ((Combobox) leftOperand).getSelectedItem().getTooltiptext()
+									.toLowerCase();
 
 							if (StringUtils.contains(leftOperandTooltip, PennantConstants.NCHAR)
 									|| StringUtils.contains(leftOperandTooltip, PennantConstants.NVARCHAR)
@@ -1561,7 +1573,8 @@ public class JavaScriptBuilder extends Groupbox {
 								excludeFields += " , " + RuleConstants.CALCVALUE + " , ";
 							} else if (StringUtils.contains(leftOperandTooltip, PennantConstants.DATETIME)
 									|| StringUtils.contains(leftOperandTooltip, PennantConstants.SMALLDATETIME)) {
-								excludeFields += " , " + RuleConstants.STATICTEXT + " , " + RuleConstants.CALCVALUE + " , ";
+								excludeFields += " , " + RuleConstants.STATICTEXT + " , " + RuleConstants.CALCVALUE
+										+ " , ";
 							} else if (StringUtils.contains(leftOperandTooltip, PennantConstants.NUMERIC)
 									|| StringUtils.contains(leftOperandTooltip, PennantConstants.BIGINT)
 									|| StringUtils.contains(leftOperandTooltip, PennantConstants.DECIMAL)
@@ -1572,7 +1585,8 @@ public class JavaScriptBuilder extends Groupbox {
 					}
 				} else if (StringUtils.equals(leftOperandTypeValue, RuleConstants.STATICTEXT)
 						|| StringUtils.equals(leftOperandTypeValue, RuleConstants.CALCVALUE)) {
-					excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , " + RuleConstants.DBVALUE + " , ";
+					excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , "
+							+ RuleConstants.DBVALUE + " , ";
 				}
 			} else if (StringUtils.equals(selectedOperator, Labels.getLabel("GREATER_LABEL"))
 					|| StringUtils.equals(selectedOperator, Labels.getLabel("GREATEREQUAL_LABEL"))
@@ -1588,18 +1602,20 @@ public class JavaScriptBuilder extends Groupbox {
 							excludeFields += " , " + RuleConstants.CALCVALUE + " , ";
 						}
 					}
-				} 
+				}
 			} else if (StringUtils.equals(selectedOperator, Labels.getLabel("IN_LABEL"))
 					|| StringUtils.equals(selectedOperator, Labels.getLabel("NOTIN_LABEL"))) {
 				excludeFields = " , " + RuleConstants.FIELDLIST + " , ";
-				
+
 				String leftOperandTypeValue = leftOperandType.getSelectedItem().getValue();
 
 				if (leftOperand instanceof Combobox) {
 					if (StringUtils.equals(leftOperandTypeValue, RuleConstants.FIELDLIST)) {
 						if (((Combobox) leftOperand).getSelectedIndex() != 0) {
-							leftOperandTooltip = ((Combobox) leftOperand).getSelectedItem().getTooltiptext().toLowerCase();
-							RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem().getAttribute("FieldDetails");
+							leftOperandTooltip = ((Combobox) leftOperand).getSelectedItem().getTooltiptext()
+									.toLowerCase();
+							RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem()
+									.getAttribute("FieldDetails");
 
 							String rbFldType = fielddetails.getRbFldType().toLowerCase();
 
@@ -1627,7 +1643,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		return excludeFields;
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++  GUI OPERATIONS  ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -1668,7 +1684,7 @@ public class JavaScriptBuilder extends Groupbox {
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.GLOBALVAR)) { // GLOBALVAR
 			Combobox operand = new Combobox();
 			operand.setId(uUID);
-			
+
 			Comboitem comboitem;
 			comboitem = new Comboitem();
 			comboitem.setValue("#");
@@ -1693,7 +1709,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else if (operand.getId().endsWith("_rightOperand")) {
 				Treecell treeCell = (Treecell) operandType.getParent();
 				Combobox leftOperandType = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperandType");
-				
+
 				if (RuleConstants.GLOBALVAR.equals(leftOperandType.getSelectedItem().getValue())) {
 					for (int i = 0; i < globalVariableList.size(); i++) {
 						GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
@@ -1709,16 +1725,17 @@ public class JavaScriptBuilder extends Groupbox {
 						}
 					}
 				}
-				
+
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand") instanceof Combobox) {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
 					if (globalVariableList != null && globalVariableList.size() > 0) {
 						for (int i = 0; i < globalVariableList.size(); i++) {
 							GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 							comboitem = new Comboitem();
-							
+
 							if (leftOperand.getSelectedIndex() > 0) {
-								if (StringUtils.containsIgnoreCase(leftOperand.getSelectedItem().getTooltiptext(), globalVariable.getType())) {
+								if (StringUtils.containsIgnoreCase(leftOperand.getSelectedItem().getTooltiptext(),
+										globalVariable.getType())) {
 									comboitem.setLabel(globalVariable.getName());
 									comboitem.setValue(globalVariable.getName());
 									comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
@@ -1726,8 +1743,8 @@ public class JavaScriptBuilder extends Groupbox {
 									comboitem.setAttribute("OperandType", operandTypeValue);
 									operand.appendChild(comboitem);
 									operand.setAttribute("GlobalVariableDetails", globalVariable);
-									if (StringUtils.trimToEmpty(value).equals(
-											StringUtils.trimToEmpty(globalVariable.getName()))) {
+									if (StringUtils.trimToEmpty(value)
+											.equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 										operand.setSelectedItem(comboitem);
 									}
 								}
@@ -1736,12 +1753,12 @@ public class JavaScriptBuilder extends Groupbox {
 					}
 				} else {
 					String charDataTypes = "varchar,nvarchar,nchar,char";
-					
+
 					if (globalVariableList != null && globalVariableList.size() > 0) {
 						for (int i = 0; i < globalVariableList.size(); i++) {
 							GlobalVariable globalVariable = (GlobalVariable) globalVariableList.get(i);
 							comboitem = new Comboitem();
-							
+
 							if (charDataTypes.contains(globalVariable.getType())) {
 								comboitem.setLabel(globalVariable.getName());
 								comboitem.setLabel(globalVariable.getName());
@@ -1750,8 +1767,8 @@ public class JavaScriptBuilder extends Groupbox {
 								comboitem.setAttribute("OperandType", operandTypeValue);
 								operand.appendChild(comboitem);
 								operand.setAttribute("GlobalVariableDetails", globalVariable);
-								if (StringUtils.trimToEmpty(value).equals(
-										StringUtils.trimToEmpty(globalVariable.getName()))) {
+								if (StringUtils.trimToEmpty(value)
+										.equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 									operand.setSelectedItem(comboitem);
 								}
 							}
@@ -1759,7 +1776,7 @@ public class JavaScriptBuilder extends Groupbox {
 					}
 				}
 			}
-			
+
 			operand.setWidth("190px");
 			operandType.getParent().insertBefore(space, operandType.getNextSibling().getNextSibling());
 			operandType.getParent().insertBefore(operand, space);
@@ -1770,9 +1787,10 @@ public class JavaScriptBuilder extends Groupbox {
 			return operand;
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.FIELDLIST)) {
 			if (objectFieldList == null || objectFieldList.isEmpty()) {
-				this.objectFieldList = PennantAppUtil.getExtendedFieldForRules(PennantAppUtil.getRBFieldDetails(getModule(), getEvent()));
+				this.objectFieldList = PennantAppUtil
+						.getExtendedFieldForRules(PennantAppUtil.getRBFieldDetails(getModule(), getEvent()));
 			}
-			
+
 			Combobox operand = new Combobox();
 			operand.setId(uUID);
 			Comboitem comboitem;
@@ -1802,13 +1820,13 @@ public class JavaScriptBuilder extends Groupbox {
 				Treecell treeCell = (Treecell) operandType.getParent();
 				Combobox leftOperandType = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperandType");
 				String leftOperandTypeValue = leftOperandType.getSelectedItem().getValue();
-				
+
 				if (value != null) {
 					if (" ".equals(value)) {
 						operand.setVisible(false);
 					}
 				}
-				
+
 				if (StringUtils.equals(leftOperandTypeValue, RuleConstants.GLOBALVAR)) {
 					for (int i = 0; i < this.objectFieldList.size(); i++) {
 						RBFieldDetail fieldDetails = (RBFieldDetail) this.objectFieldList.get(i);
@@ -1820,7 +1838,8 @@ public class JavaScriptBuilder extends Groupbox {
 						comboitem.setAttribute("FieldDetails", fieldDetails);
 						// comboitem.setAttribute("OperandType",operandType);
 						operand.appendChild(comboitem);
-						if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
+						if (StringUtils.trimToEmpty(value)
+								.equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
 							operand.setSelectedItem(comboitem);
 						}
 					}
@@ -1837,14 +1856,14 @@ public class JavaScriptBuilder extends Groupbox {
 							comboitem.setAttribute("FieldDetails", fieldDetails);
 							// comboitem.setAttribute("OperandType",operandType);
 							operand.appendChild(comboitem);
-							if (StringUtils.trimToEmpty(value).equals(
-									StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
+							if (StringUtils.trimToEmpty(value)
+									.equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
 								operand.setSelectedItem(comboitem);
 							}
 						}
 					}
 				}
-				
+
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand") instanceof Combobox) {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
 					for (int i = 0; i < this.objectFieldList.size(); i++) {
@@ -1852,14 +1871,15 @@ public class JavaScriptBuilder extends Groupbox {
 
 						comboitem = new Comboitem();
 						if (leftOperand.getSelectedIndex() != 0) {
-							if (leftOperand.getSelectedItem().getTooltiptext().contains(fieldDetails.getRbFldType().toUpperCase())) {
+							if (leftOperand.getSelectedItem().getTooltiptext()
+									.contains(fieldDetails.getRbFldType().toUpperCase())) {
 								comboitem.setLabel(fieldDetails.getRbFldName() + "  -  " + fieldDetails.getRbFldDesc());
 								comboitem.setValue(fieldDetails.getRbFldName());
 								comboitem.setTooltiptext("Data Type :" + fieldDetails.getRbFldType().toUpperCase());
 								comboitem.setAttribute("FieldDetails", fieldDetails);
 								operand.appendChild(comboitem);
-								if (StringUtils.trimToEmpty(value).equals(
-										StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
+								if (StringUtils.trimToEmpty(value)
+										.equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
 									operand.setSelectedItem(comboitem);
 								}
 							}
@@ -1878,8 +1898,8 @@ public class JavaScriptBuilder extends Groupbox {
 							comboitem.setAttribute("FieldDetails", fieldDetails);
 							// comboitem.setAttribute("OperandType",operandType);
 							operand.appendChild(comboitem);
-							if (StringUtils.trimToEmpty(value).equals(
-									StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
+							if (StringUtils.trimToEmpty(value)
+									.equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
 								operand.setSelectedItem(comboitem);
 							}
 						}
@@ -1893,7 +1913,7 @@ public class JavaScriptBuilder extends Groupbox {
 			operandType.setFocus(true);
 			operand.setAttribute("OperandType", operandType);
 			operand.addForward("onChange", this, "onChangeOperand", operandType);
-			operand.setWidth("120px");	
+			operand.setWidth("120px");
 			return operand;
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.CALCVALUE)) {// Calculation
 			Label calculate = new Label();
@@ -1918,19 +1938,19 @@ public class JavaScriptBuilder extends Groupbox {
 			Textbox operand = new Textbox();
 			operand.setId(uUID);
 			operand.setReadonly(true);
-			
+
 			if (value != null) {
 				if ((" ".equals(value)) || ("".equals(value))) {
 					operand.setVisible(false);
 				}
 			}
-			
+
 			if (value != null && value.contains("(")) {
 				operand.setValue(value.replace("(", "").replace(")", ""));
 			} else {
 				operand.setValue(value);
 			}
-			
+
 			operandType.getParent().insertBefore(space, operandType.getNextSibling().getNextSibling());
 			Space space1 = new Space();
 			space1.setWidth("5px");
@@ -1957,15 +1977,17 @@ public class JavaScriptBuilder extends Groupbox {
 	}
 
 	/**
-	 * onClicking SearchButton 
+	 * onClicking SearchButton
+	 * 
 	 * @param event
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws NoSuchMethodException 
-	 * @throws IllegalArgumentException 
-	 * @throws SecurityException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws SecurityException
 	 */
-	public void onSearchButtonClick(ForwardEvent event) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void onSearchButtonClick(ForwardEvent event) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		logger.debug("Entering");
 
 		Component button = (Component) event.getOrigin().getTarget();
@@ -1973,12 +1995,13 @@ public class JavaScriptBuilder extends Groupbox {
 		Combobox operandType = (Combobox) button.getAttribute("OperandType");
 		Treecell treeCell = (Treecell) operandType.getParent();
 		Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
-		RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem().getAttribute("FieldDetails");
-		
-		if(fielddetails == null) {
+		RBFieldDetail fielddetails = (RBFieldDetail) ((Combobox) leftOperand).getSelectedItem()
+				.getAttribute("FieldDetails");
+
+		if (fielddetails == null) {
 			return;
 		}
-		
+
 		Combobox operator = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_operator");
 		String moduleCode = fielddetails.getModuleCode();
 		String operatorLabel = operator.getSelectedItem().getLabel();
@@ -1986,7 +2009,7 @@ public class JavaScriptBuilder extends Groupbox {
 		if (StringUtils.equals(operatorLabel, Labels.getLabel("IN_LABEL"))
 				|| StringUtils.equals(operatorLabel, Labels.getLabel("NOTIN_LABEL"))) {
 			HashMap<String, Object> selectedValues = setSelectedValuesMap(lovText.getValue());
-			
+
 			Object dataObject = ExtendedMultipleSearchListBox.show(this, moduleCode, selectedValues);
 
 			if (dataObject instanceof String) {
@@ -1994,7 +2017,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				@SuppressWarnings("unchecked")
 				HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
-				
+
 				if (details != null) {
 					String multivalues = details.keySet().toString();
 					lovText.setValue(multivalues.replace("[", "").replace("]", " "));
@@ -2002,7 +2025,7 @@ public class JavaScriptBuilder extends Groupbox {
 			}
 		} else {
 			Object dataObject = ExtendedSearchListBox.show(this, moduleCode);
-			
+
 			if (dataObject instanceof String) {
 				lovText.setValue(dataObject.toString());
 			} else {
@@ -2010,14 +2033,14 @@ public class JavaScriptBuilder extends Groupbox {
 				String fieldValue = "";
 				String fieldString = moduleMapping.getLovFields()[0];
 				String fieldMethod = "get" + fieldString.substring(0, 1).toUpperCase() + fieldString.substring(1);
-				
+
 				if (dataObject != null) {
 					if (dataObject.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 						fieldValue = (String) dataObject.getClass().getMethod(fieldMethod).invoke(dataObject);
 					} else {
 						fieldValue = dataObject.getClass().getMethod(fieldMethod).invoke(dataObject).toString();
 					}
-					
+
 					if (StringUtils.isNotBlank(fieldValue)) {
 						lovText.setValue(fieldValue);
 					}
@@ -2027,25 +2050,26 @@ public class JavaScriptBuilder extends Groupbox {
 
 		logger.debug("Leaving");
 	}
-	
+
 	private HashMap<String, Object> setSelectedValuesMap(String code) {
 		logger.debug("Entering");
-		
-		HashMap<String,Object> setValues = new HashMap<String,Object>();
-		
+
+		HashMap<String, Object> setValues = new HashMap<String, Object>();
+
 		if (StringUtils.isNotBlank(code)) {
 			for (String value : code.split(",")) {
 				setValues.put(value.trim(), value.trim());
 			}
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return setValues;
 	}
 
 	/**
 	 * Get Query from the tree
+	 * 
 	 * @param treeChildren
 	 * @return
 	 */
@@ -2055,7 +2079,7 @@ public class JavaScriptBuilder extends Groupbox {
 		Treecell treeCell;
 		Treeitem treeItem;
 		String uUID = "";
-		
+
 		List<Component> treeItems = treeChildren.getChildren();
 		List<String> objectResultList = null;
 		List<String> queryResultList = null;
@@ -2064,37 +2088,36 @@ public class JavaScriptBuilder extends Groupbox {
 			treeItem = (Treeitem) treeItems.get(i);
 			treeCell = (Treecell) treeItem.getTreerow().getChildren().get(0);
 			uUID = treeCell.getId();
-			boolean elseCondition = false; 
+			boolean elseCondition = false;
 			boolean flag = true;
-			
+
 			// Remove Button
 			Button buttonRemove = (Button) treeCell.getFellowIfAny(uUID + "_RmvCond");
 			if (!buttonRemove.isDisabled()) {
 				actualBlock += "~";
 			}
-			
-	
+
 			Component labelStatement = treeCell.getFellowIfAny(uUID + "_statement");
 			String statementValue = "";
 			if (labelStatement != null) {
 				// IF/ELSE IF/ELSE
 				statementValue = getOperandValue(labelStatement);
-				
+
 				if (StringUtils.equalsIgnoreCase(statementValue, "ELSE")) {
 					actualBlock += "~";
 					elseCondition = true;
-				}else{
-					for (int j= this.spaceCount; j>0 ; j--) {
+				} else {
+					for (int j = this.spaceCount; j > 0; j--) {
 						this.query += "\t\t";
 					}
 				}
-				
+
 				actualBlock += "(" + "|";
 				actualBlock += statementValue + "|";
 			} else {
 				// AND/OR
 				Combobox comboLogicalOperator = (Combobox) treeCell.getFellowIfAny(uUID + "_logicalOperator");
-				this.query = this.query.substring(0, this.query.length() - 4);	//For removing the opening braces 
+				this.query = this.query.substring(0, this.query.length() - 4); //For removing the opening braces 
 				logicCount++;
 				this.spaceCount--;
 				statementValue = getOperandValue(comboLogicalOperator);
@@ -2102,12 +2125,12 @@ public class JavaScriptBuilder extends Groupbox {
 				actualBlock += comboLogicalOperator.getSelectedItem().getLabel() + "|";
 				flag = false;
 			}
-			
-			this.query += " " + statementValue ;
-			
+
+			this.query += " " + statementValue;
+
 			if (!elseCondition) {
 				this.query += " (";
-			
+
 				// Left Operand Type
 				Component comboLeftOperandType = treeCell.getFellowIfAny(uUID + "_leftOperandType");
 				String leftOperandTypeValue = getOperandValue(comboLeftOperandType);
@@ -2118,7 +2141,7 @@ public class JavaScriptBuilder extends Groupbox {
 				Component leftOperand = treeCell.getFellowIfAny(uUID + "_leftOperand");
 				String leftOperandValue = getOperandValue(leftOperand);
 				actualBlock += leftOperandValue + "|";
-				
+
 				if (StringUtils.isNotBlank(leftOperandValue)
 						&& StringUtils.equalsIgnoreCase(leftOperandTypeValue, RuleConstants.FIELDLIST)) {
 					fieldsSet.add(leftOperandValue);
@@ -2148,42 +2171,44 @@ public class JavaScriptBuilder extends Groupbox {
 				Component rightOperandType = treeCell.getFellowIfAny(uUID + "_rightOperandType");
 				String rightOperandTypeValue = getOperandValue(rightOperandType);
 				actualBlock += rightOperandTypeValue + "|";
-				
+
 				// Right Operand
 				Component rightOperand = treeCell.getFellowIfAny(uUID + "_rightOperand");
 				String rightOperandValue = getOperandValue(rightOperand);
 				actualBlock += rightOperandValue + "|";
-		
+
 				if (StringUtils.equals(rightOperandTypeValue, RuleConstants.FIELDLIST)) {
 					fieldsSet.add(rightOperandValue);
 				}
-				
+
 				// IN Operator/ NOT IN Operator
 				if (StringUtils.equals(logicalOperatorValue, Labels.getLabel("IN_LABEL"))
 						|| StringUtils.equals(logicalOperatorValue, Labels.getLabel("NOTIN_LABEL"))) {
-						String[] values = rightOperandValue.split(",");
-						
-						for (int j = 0; j < values.length; j++) {
-							if (j > 0) {
-								this.query += " || ";
-							} else {
-								this.query += " ( ";
-							}
-							//TODO Numeric values to be developed
-							this.query += leftOperandValue + (logicalOperatorValue.equals(Labels.getLabel("IN_LABEL")) ? " == " : " != ") + "'" + values[j].trim() + "'";
+					String[] values = rightOperandValue.split(",");
+
+					for (int j = 0; j < values.length; j++) {
+						if (j > 0) {
+							this.query += " || ";
+						} else {
+							this.query += " ( ";
 						}
-						this.query += " ) ";
+						//TODO Numeric values to be developed
+						this.query += leftOperandValue
+								+ (logicalOperatorValue.equals(Labels.getLabel("IN_LABEL")) ? " == " : " != ") + "'"
+								+ values[j].trim() + "'";
+					}
+					this.query += " ) ";
 				} else {
 					if (StringUtils.equals(rightOperandTypeValue, RuleConstants.STATICTEXT)
 							|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)) {
 						rightOperandValue = "'" + rightOperandValue + "'";
-					} 					
-					
+					}
+
 					this.query += leftOperandValue + " ";
 					this.query += logicalOperatorValue + " ";
 					this.query += rightOperandValue;
 				}
-				
+
 				// Right Operand Calculation Fields
 				String rightOperandCalculatedFields = " ";
 				if (rightOperand.getAttribute("calculatedFields") != null) {
@@ -2195,7 +2220,7 @@ public class JavaScriptBuilder extends Groupbox {
 					fieldsSet.add(calculateField);
 				}
 			}
-			
+
 			// AND Button
 			Label buttonAnd = (Label) treeCell.getFellowIfAny(uUID + "_btn_AND");
 			if (buttonAnd.isVisible()) {
@@ -2203,7 +2228,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				actualBlock += "0|";
 			}
-			
+
 			// ELSE Button
 			Label buttonElse = (Label) treeCell.getFellowIfAny(uUID + "_btn_ELSE");
 			if (buttonElse.isVisible()) {
@@ -2211,7 +2236,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				actualBlock += "0|";
 			}
-			
+
 			// ELSE IF Button
 			Label buttonElseIf = (Label) treeCell.getFellowIfAny(uUID + "_btn_ELSEIF");
 			if (buttonElseIf.isVisible()) {
@@ -2219,7 +2244,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				actualBlock += "0|";
 			}
-			
+
 			// NESTED IF Button
 			Label buttonNestedIf = (Label) treeCell.getFellowIfAny(uUID + "_btn_NESTEDIF");
 			if (buttonNestedIf.isVisible()) {
@@ -2227,7 +2252,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				actualBlock += "0|";
 			}
-			
+
 			// CALCULATE Button
 			Label buttonCalculate = (Label) treeCell.getFellowIfAny(uUID + "_btn_CALCULATE");
 			if (buttonCalculate.isVisible()) {
@@ -2235,17 +2260,17 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				actualBlock += "0|";
 			}
-			
+
 			// RESULT
 			Component resultComponent = treeCell.getFellowIfAny(uUID + "_RESULT");
-			String resultValue  = null;
+			String resultValue = null;
 			objectResultList = new ArrayList<String>();
-			
-			if ( resultComponent != null && resultComponent.isVisible()) {
+
+			if (resultComponent != null && resultComponent.isVisible()) {
 				// Result Calculation Fields
 				String resultCalculatedFields = " ";
 				resultValue = getOperandValue(resultComponent);
-				
+
 				if (resultComponent.getAttribute("calculatedFields") != null) {
 					resultCalculatedFields = (String) resultComponent.getAttribute("calculatedFields");
 				}
@@ -2256,36 +2281,37 @@ public class JavaScriptBuilder extends Groupbox {
 				for (String calculateField : resultCalculatedFields.split(",")) {
 					fieldsSet.add(calculateField);
 				}
-			//} else if (this.ruleType == RuleReturnType.OBJECT) {
-			} else if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
-				for (int count = 0; count < this.jsRuleReturnTypeList.size() ; count ++) {
+				//} else if (this.ruleType == RuleReturnType.OBJECT) {
+			} else if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
 					String componentType = this.jsRuleReturnTypeList.get(count).getComponentType();
-					
+
 					//for deviation case we added this (old code: if (StringUtils.equalsIgnoreCase(componentType, "decimal")) {  )
-					if (StringUtils.equalsIgnoreCase(componentType, "decimal") || StringUtils.equalsIgnoreCase(componentType, "integer")) {
+					if (StringUtils.equalsIgnoreCase(componentType, "decimal")
+							|| StringUtils.equalsIgnoreCase(componentType, "integer")) {
 						Component calculateButton = treeCell.getFellowIfAny(uUID + "_btn_CALCULATE" + count);
-						if(calculateButton != null) {
-							if(calculateButton.isVisible()) {
+						if (calculateButton != null) {
+							if (calculateButton.isVisible()) {
 								actualBlock += "1" + "|";
 							} else {
-								actualBlock += "0"+ "|";
+								actualBlock += "0" + "|";
 							}
 						}
 					}
-					
+
 					Component objectResultComponent = treeCell.getFellowIfAny(uUID + "_RESULT" + count);
 					if (objectResultComponent != null) {
 						// Object Result Calculation Fields
 						String resultCalculatedFields = " ";
-						
+
 						String objectResultValue = "";
-						
+
 						if (objectResultComponent.isVisible()) {
 							objectResultValue = getOperandValue(objectResultComponent);
 						}
-						
+
 						objectResultList.add(objectResultValue);
-						
+
 						if (objectResultComponent.getAttribute("calculatedFields") != null) {
 							resultCalculatedFields = (String) objectResultComponent.getAttribute("calculatedFields");
 						}
@@ -2297,19 +2323,19 @@ public class JavaScriptBuilder extends Groupbox {
 							fieldsSet.add(calculateField);
 						}
 					}
-					
+
 				}
 			}
-			
+
 			if (elseCondition) {
 				this.query += " {\n";
 			} else {
 				this.query += ") {\n";
 			}
-			
+
 			this.spaceCount++;
-			if (treeItem.getTreechildren() != null && treeItem.getTreechildren().getChildren().size() >0) {
-				getQuery(treeItem.getTreechildren());	// Children Tree begins from here
+			if (treeItem.getTreechildren() != null && treeItem.getTreechildren().getChildren().size() > 0) {
+				getQuery(treeItem.getTreechildren()); // Children Tree begins from here
 			} else {
 				// Using the logicCount we are closing the braces
 				if (logicCount > 0 && treeItem.getTreechildren() == null) {
@@ -2322,31 +2348,30 @@ public class JavaScriptBuilder extends Groupbox {
 					flag = false;
 				}
 			}
-			
+
 			actualBlock += "~)|";
-			
-			
-			if (resultComponent != null && resultComponent.isVisible() ) {
-				for (int j= this.spaceCount; j>0 ; j--) {
+
+			if (resultComponent != null && resultComponent.isVisible()) {
+				for (int j = this.spaceCount; j > 0; j--) {
 					this.query += "\t\t";
 				}
-				
+
 				if (this.ruleType == RuleReturnType.STRING) {
 					this.query += "Result = '" + resultValue + "' ; return; ";
 				} else {
 					this.query += "Result = " + resultValue + " ; return; ";
 				}
-				
+
 				this.spaceCount--;
 				this.query += " \n ";
-				
-				for (int j= this.spaceCount; j>0 ; j--) {
+
+				for (int j = this.spaceCount; j > 0; j--) {
 					query += "\t\t";
 				}
-				
+
 				this.query += "}";
-			//} else if (this.ruleType == RuleReturnType.OBJECT) {
-			} else if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+				//} else if (this.ruleType == RuleReturnType.OBJECT) {
+			} else if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				queryResultList = new ArrayList<String>();
 
 				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
@@ -2355,13 +2380,13 @@ public class JavaScriptBuilder extends Groupbox {
 					if (objectResultComponent != null && objectResultComponent.isVisible()) {
 						JSRuleReturnType jsRuleReturnType = jsRuleReturnTypeList.get(count);
 						String resultLabel = jsRuleReturnType.getResultLabel();
-						
+
 						//if (StringUtils.isNotBlank(resultLabel)) {
-							queryResultList.add(resultLabel + objectResultList.get(count) + ";");
+						queryResultList.add(resultLabel + objectResultList.get(count) + ";");
 						//} else {
 						//	queryResultList.add(objectResultList.get(count));
 						//}
-						
+
 					}
 				}
 
@@ -2369,20 +2394,20 @@ public class JavaScriptBuilder extends Groupbox {
 					for (int j = this.spaceCount; j > 0; j--) {
 						this.query += "\t\t";
 					}
-					
+
 					this.query += "Result = ";
-					
+
 					for (String string : queryResultList) {
 						this.query += string;
 					}
-					
+
 					this.query += " return; ";
 				}
 
 				if (flag) {
 					this.spaceCount--;
 					this.query += "\n";
-					
+
 					for (int j = this.spaceCount; j > 0; j--) {
 						this.query += "\t\t";
 					}
@@ -2392,14 +2417,14 @@ public class JavaScriptBuilder extends Groupbox {
 			} else if (labelStatement != null) {
 				this.spaceCount--;
 				this.query += " \n ";
-				
+
 				for (int j = this.spaceCount; j > 0; j--) {
 					this.query += "\t\t";
 				}
-				
+
 				this.query += "}";
 			}
-			
+
 		}
 
 		logger.debug("Leaving");
@@ -2409,12 +2434,13 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Get Value from the components
+	 * 
 	 * @param component
 	 * @return
 	 */
 	public String getOperandValue(Component component) {
 		logger.debug("Entering");
-		
+
 		String operandValue = "";
 
 		if (component instanceof Combobox) {
@@ -2427,7 +2453,7 @@ public class JavaScriptBuilder extends Groupbox {
 					this.treeTab.setSelected(true);
 					throw new WrongValueException(component, Labels.getLabel("const_NO_SELECT"));
 				}
-			} 
+			}
 			operandValue = combobox.getSelectedItem().getValue();
 		} else if (component instanceof ExtendedCombobox) {
 			ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
@@ -2436,8 +2462,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 			if (extendedCombobox.isVisible()) {
 				extendedCombobox.setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-			} 
-			
+			}
+
 			operandValue = "'" + extendedCombobox.getValue().trim() + "'";
 		} else if (component instanceof Textbox) {
 			Textbox textbox = (Textbox) component;
@@ -2446,8 +2472,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 			if (textbox.isVisible()) {
 				textbox.setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-			} 
-			
+			}
+
 			operandValue = textbox.getValue().trim();
 		} else if (component instanceof Longbox) {
 			Longbox longbox = (Longbox) component;
@@ -2459,7 +2485,7 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				longbox.setValue((long) 0);
 			}
-			operandValue =  longbox.getValue().toString();
+			operandValue = longbox.getValue().toString();
 		} else if (component instanceof Intbox) {
 			Intbox intbox = (Intbox) component;
 			intbox.setErrorMessage("");
@@ -2467,8 +2493,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 			if (intbox.isVisible()) {
 				intbox.setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-			} 
-			
+			}
+
 			operandValue = intbox.getValue().toString();
 		} else if (component instanceof Decimalbox) {
 			Decimalbox decimalbox = (Decimalbox) component;
@@ -2477,11 +2503,11 @@ public class JavaScriptBuilder extends Groupbox {
 
 			if (decimalbox.isVisible()) {
 				decimalbox.setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-			} 
-			
+			}
+
 			operandValue = decimalbox.getValue().toString();
 		} else if (component instanceof Label) {
-			operandValue =  ((Label) component).getValue().toLowerCase();
+			operandValue = ((Label) component).getValue().toLowerCase();
 		}
 
 		logger.debug("Leaving");
@@ -2491,6 +2517,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Build treee from the actual Block
+	 * 
 	 * @param actualBlock
 	 */
 	public void buildQuery(String actualBlock) {
@@ -2542,8 +2569,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 		logger.debug("Leaving");
 	}
-	
-	private void setTreeSpace(Treeitem treeItem, Treeitem parentTreeItem){
+
+	private void setTreeSpace(Treeitem treeItem, Treeitem parentTreeItem) {
 		logger.debug("Entering");
 		int size = 0;
 		Treecell treeCell = (Treecell) treeItem.getTreerow().getChildren().get(0);
@@ -2580,14 +2607,14 @@ public class JavaScriptBuilder extends Groupbox {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		combobox.appendChild(comboitem);
 		combobox.setSelectedItem(comboitem);
-		
+
 		for (ValueLabel valueLabel : list) {
 			if (!StringUtils.trimToEmpty(excludeFields).contains(", " + valueLabel.getValue() + " ,")) {
 				comboitem = new Comboitem();
 				comboitem.setValue(valueLabel.getValue());
 				comboitem.setLabel(valueLabel.getLabel());
 				combobox.appendChild(comboitem);
-				
+
 				if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(valueLabel.getValue()))) {
 					combobox.setSelectedItem(comboitem);
 				}
@@ -2596,7 +2623,7 @@ public class JavaScriptBuilder extends Groupbox {
 	}
 
 	/**
-	 * Test the exact value from the listbox or the combobox are selected 
+	 * Test the exact value from the listbox or the combobox are selected
 	 */
 	public boolean listDataValidation(Component component, String fieldParm) {
 		boolean error = true;
@@ -2613,7 +2640,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Validate the Query
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void validateQuery() throws Exception {
 		logger.debug("Entering");
@@ -2634,7 +2662,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Simulate the Query
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void simulateQuery() throws Exception {
 		logger.debug("Entering");
@@ -2670,7 +2699,7 @@ public class JavaScriptBuilder extends Groupbox {
 		}
 
 		logger.debug("Leaving");
-	}	
+	}
 
 	public void setEditable(boolean editable) {
 		logger.debug("Entering");
@@ -2681,22 +2710,23 @@ public class JavaScriptBuilder extends Groupbox {
 			this.uniqueId = 0;
 			this.actualQuery = "";
 			this.codemirror.setValue(this.actualQuery);
-			
-			if ((this.ruleType == RuleReturnType.OBJECT) && (this.jsRuleReturnTypeList == null || this.jsRuleReturnTypeList.isEmpty())) {
+
+			if ((this.ruleType == RuleReturnType.OBJECT)
+					&& (this.jsRuleReturnTypeList == null || this.jsRuleReturnTypeList.isEmpty())) {
 				return;
 			}
-			
+
 			if (StringUtils.isBlank(actualBlock)) {
 				tree.getChildren().clear();
 				Treechildren treeChildren = new Treechildren();
-				
+
 				Treeitem ifCondition = createNewCondition(null, "IF");
 				treeChildren.appendChild(ifCondition);
 				setTreeSpace(ifCondition, null);
-				
+
 				Treeitem elseCondition = setElseCondition(treeChildren, ifCondition);
 				setTreeSpace(elseCondition, null);
-				
+
 				tree.appendChild(treeChildren);
 			}
 		} else {
@@ -2705,12 +2735,11 @@ public class JavaScriptBuilder extends Groupbox {
 				this.objectFieldList = PennantAppUtil.getRBFieldDetails(getModule(), getEvent());
 			}
 		}
-		
+
 		this.editable = editable;
 
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set the else block.
@@ -2724,7 +2753,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		String ifUUID = ifCondition.getTreerow().getChildren().get(0).getId();
 		String elseUUID = elseCondition.getTreerow().getChildren().get(0).getId();
-		
+
 		doSetButtonProperties(treeChildren, ifUUID, elseUUID, "ELSE");
 		return elseCondition;
 	}
@@ -2739,7 +2768,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		Textbox calculate = (Textbox) event.getData();
-		
+
 		if (objectFieldList == null || objectFieldList.isEmpty()) {
 			this.objectFieldList = PennantAppUtil.getRBFieldDetails(getModule(), getEvent());
 		}
@@ -2748,42 +2777,46 @@ public class JavaScriptBuilder extends Groupbox {
 		map.put("Formula", calculate.getValue());
 		map.put("returnType", this.getRuleType());
 		map.put("CalculateBox", calculate);
-		
-		Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultDialog.zul", this,map);
+
+		Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultDialog.zul", this, map);
 
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method for Simulation of builded code
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$btnSimulation(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		simulateQuery();
 		setSelectedTab(RuleConstants.TAB_SCRIPT);
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Method for Simulation of builded code
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$btnValidate(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		getSqlQuery();
 		System.out.println(this.actualBlock);
 		setSelectedTab(RuleConstants.TAB_SCRIPT);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 *  This Method is called when division button is clicked
+	 * This Method is called when division button is clicked
+	 * 
 	 * @param event
 	 */
 	public void onFulfillExtendedComobo(ForwardEvent event) {
@@ -2823,13 +2856,13 @@ public class JavaScriptBuilder extends Groupbox {
 				extendedComboValue = extendedComboValue.replace("[", "").replace("]", "").replace(" ", "");
 			}
 		}
-		
+
 		extendedCombo.setValue(extendedComboValue);
 		extendedCombo.setTooltiptext(extendedComboValue);
 
 		logger.debug("Leaving");
 	}
-	
+
 	//================================================================================
 	//============================== Getters and Setters =============================
 	//================================================================================
@@ -2850,15 +2883,15 @@ public class JavaScriptBuilder extends Groupbox {
 		fieldsSet = new HashSet<String>();
 		codemirror.setValue("");
 		sqlQuery = getQuery(tree.getTreechildren());
-		
-		for(String field : fieldsSet) {
-			if(StringUtils.isNotBlank(fields)) {
+
+		for (String field : fieldsSet) {
+			if (StringUtils.isNotBlank(fields)) {
 				fields += "," + field;
 			} else {
 				fields = field;
 			}
 		}
-		
+
 		actualQuery = StringReplacement.getReplacedQuery(sqlQuery, globalVariableList, null);
 		this.codemirror.setValue(actualQuery);
 
@@ -2927,25 +2960,25 @@ public class JavaScriptBuilder extends Groupbox {
 	public void setFields(String fields) {
 		this.fields = fields;
 	}
-	
-	public void setTreeTabVisible(boolean visible){
+
+	public void setTreeTabVisible(boolean visible) {
 		this.treeTabpanel.setVisible(visible);
 		this.treeTab.setVisible(visible);
-		
+
 		this.btnSimulation.setVisible(visible);
 		this.btnValidate.setVisible(visible);
 		this.toolbar.setVisible(visible);
 		setReadOnly(!visible);
-		
-		if(!visible){
+
+		if (!visible) {
 			this.scriptTab.setSelected(true);
 		}
 	}
-	
-	public boolean isTreeTabVisible(){
+
+	public boolean isTreeTabVisible() {
 		return this.treeTabpanel.isVisible();
 	}
-	
+
 	public void setSelectedTab(String tab) {
 		if (StringUtils.equals(tab, RuleTabs.DESIGN.name())) {
 			treeTab.setSelected(true);
@@ -2980,7 +3013,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 	public void setNoOfRowsVisible(int noOfRowsVisible) {
 		this.noOfRowsVisible = noOfRowsVisible;
-		
+
 		this.setHeight("100%");
 		this.tabPanelboxHeight = borderLayoutHeight - (noOfRowsVisible * 20) - 125;
 		this.codemirror.setHeight(tabPanelboxHeight + "px");
@@ -3002,7 +3035,7 @@ public class JavaScriptBuilder extends Groupbox {
 	public void setJsRuleReturnTypeList(List<JSRuleReturnType> jsRuleReturnTypeList) {
 		this.jsRuleReturnTypeList = jsRuleReturnTypeList;
 	}
-	
+
 	// public void setEntityCode(String entityCode){
 	// this.entityCode = entityCode;
 	// this.globalVariableList = SysParamUtil.getGlobaVariableList();

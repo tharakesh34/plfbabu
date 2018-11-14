@@ -41,11 +41,15 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
 
 public interface SalesOfficerDAO {
 	SalesOfficer getSalesOfficerById(String id, String type);
+
 	void update(SalesOfficer salesOfficer, String type);
+
 	void delete(SalesOfficer salesOfficer, String type);
+
 	String save(SalesOfficer salesOfficer, String type);
 }

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,31 +70,36 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements FinanceWorkFlowDAO {
 	private static Logger logger = Logger.getLogger(FinanceWorkFlowDAOImpl.class);
-	
+
 	public FinanceWorkFlowDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Finance Work Flow Definition details by key field
+	 * Fetch the Record Finance Work Flow Definition details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceWorkFlow
 	 */
 	@Override
-	public FinanceWorkFlow getFinanceWorkFlowById(final String finType, String finEvent, String moduleName, String type) {
+	public FinanceWorkFlow getFinanceWorkFlowById(final String finType, String finEvent, String moduleName,
+			String type) {
 		logger.debug("Entering");
 
 		StringBuilder selectSql = null;
 		MapSqlParameterSource source = null;
 
 		selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",lovDescFinTypeName,lovDescWorkFlowTypeName,LovDescWorkFlowRolesName, lovDescProductCodeName, LovDescFirstTaskOwner ");
-			selectSql.append(",lovDescFacilityTypeName ,ProductCategory, CollateralDesc, VasProductDesc,CommitmentTypeDesc ");
+			selectSql.append(
+					",lovDescFinTypeName,lovDescWorkFlowTypeName,LovDescWorkFlowRolesName, lovDescProductCodeName, LovDescFirstTaskOwner ");
+			selectSql.append(
+					",lovDescFacilityTypeName ,ProductCategory, CollateralDesc, VasProductDesc,CommitmentTypeDesc ");
 		}
 		selectSql.append(" From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -107,7 +111,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName.toUpperCase());
 
-		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
+		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceWorkFlow.class);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -119,33 +124,34 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Fetch the Workflow Type from the Defined prameters
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return WorkflowType
 	 */
 	@Override
 	public String getFinanceWorkFlowType(final String finType, String finEvent, String moduleName, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = null;
 		MapSqlParameterSource source = null;
-		
+
 		selectSql = new StringBuilder();
 		selectSql.append(" Select WorkFlowType From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName ");
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName);
-		
+
 		String workflowType = null;
 		try {
 			workflowType = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
@@ -159,193 +165,199 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		logger.debug("Leaving");
 		return workflowType;
 	}
-	
+
 	/**
-	 * Fetch the Record  Finance Work Flow Definition details by key field
+	 * Fetch the Record Finance Work Flow Definition details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceWorkFlow
 	 */
 	@Override
-	public List<FinanceWorkFlow> getFinanceWorkFlowListById(final String id,String moduleName, String type) {
+	public List<FinanceWorkFlow> getFinanceWorkFlowListById(final String id, String moduleName, String type) {
 		logger.debug("Entering");
 		FinanceWorkFlow financeWorkFlow = new FinanceWorkFlow();
 		financeWorkFlow.setId(id);
 		financeWorkFlow.setModuleName(moduleName);
-		
-		
+
 		StringBuilder selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",lovDescFinTypeName,lovDescWorkFlowTypeName,LovDescWorkFlowRolesName, lovDescProductCodeName, LovDescFirstTaskOwner ");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					",lovDescFinTypeName,lovDescWorkFlowTypeName,LovDescWorkFlowRolesName, lovDescProductCodeName, LovDescFirstTaskOwner ");
 			selectSql.append(",lovDescFacilityTypeName ");
 		}
 		selectSql.append(" From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType AND ModuleName=:ModuleName");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
-		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
-		
+		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceWorkFlow.class);
+
 		List<FinanceWorkFlow> returnList = null;
-		try{
-			returnList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			returnList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			returnList = new ArrayList<>();
 		}
 		logger.debug("Leaving");
 		return returnList;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Finance Work Flow Definition by key FinType
+	 * This method Deletes the Record from the LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Finance Work Flow Definition by key FinType
 	 * 
-	 * @param Finance Work Flow Definition (financeWorkFlow)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Work Flow Definition (financeWorkFlow)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinanceWorkFlow financeWorkFlow,String type) {
+	public void delete(FinanceWorkFlow financeWorkFlow, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LMTFinanceWorkFlowDef");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName");
-		
+
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp.
 	 *
-	 * save Finance Work Flow Definition 
+	 * save Finance Work Flow Definition
 	 * 
-	 * @param Finance Work Flow Definition (financeWorkFlow)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Work Flow Definition (financeWorkFlow)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(FinanceWorkFlow financeWorkFlow,String type) {
+	public String save(FinanceWorkFlow financeWorkFlow, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into LMTFinanceWorkFlowDef");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into LMTFinanceWorkFlowDef");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" 	RecordType, WorkflowId)");
 		insertSql.append(" Values(:FinType, :FinEvent, :ScreenCode, :WorkFlowType,:ModuleName");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return financeWorkFlow.getId();
 	}
-	
+
 	/**
 	 * Method to insert List of Workflow Details
 	 */
 	public void saveList(List<FinanceWorkFlow> financeWorkFlowList, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into LMTFinanceWorkFlowDef");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into LMTFinanceWorkFlowDef");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:FinType, :FinEvent, :ScreenCode, :WorkFlowType,:ModuleName, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(financeWorkFlowList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method updates the Record LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Finance Work Flow Definition by key FinType and Version
+	 * This method updates the Record LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Finance Work Flow Definition by key FinType and Version
 	 * 
-	 * @param Finance Work Flow Definition (financeWorkFlow)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Work Flow Definition (financeWorkFlow)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(FinanceWorkFlow financeWorkFlow,String type) {
+	public void update(FinanceWorkFlow financeWorkFlow, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
-		StringBuilder	updateSql =new StringBuilder("Update LMTFinanceWorkFlowDef");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+
+		StringBuilder updateSql = new StringBuilder("Update LMTFinanceWorkFlowDef");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ScreenCode = :ScreenCode, WorkFlowType = :WorkFlowType, ModuleName=:ModuleName");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent  AND ModuleName=:ModuleName");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	@Override
-	public List<String> getFinanceWorkFlowRoles(String module,String finEvent){
+	public List<String> getFinanceWorkFlowRoles(String module, String finEvent) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ModuleName", module);
 		source.addValue("FinEvent", finEvent);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append(" SELECT DISTINCT WD.WorkFlowRoles ");
 		selectSql.append(" FROM  LMTFinanceWorkFlowDef FWD INNER JOIN ");
 		selectSql.append(" WorkFlowDetails WD ON FWD.WorkFlowType = WD.WorkFlowType ");
 		selectSql.append(" Where FWD.ModuleName=:ModuleName and FWD.FinEvent =:FinEvent ");
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(),source,String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
-	
 
 	@Override
 	public boolean isWorkflowExists(String finType, String moduleName) {
@@ -353,14 +365,14 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("ModuleName", moduleName);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinType)");
 		selectSql.append(" From LMTFinanceWorkFlowDef_View ");
 		selectSql.append(" Where FinType=:FinType AND ModuleName=:ModuleName");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		
+		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
@@ -380,8 +392,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductCode);
 
 		try {
-			 count= this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
 		}
@@ -407,7 +419,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName.toUpperCase());
 
-		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(FinanceWorkFlow.class);
+		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceWorkFlow.class);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

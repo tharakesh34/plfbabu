@@ -53,10 +53,15 @@ import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 public interface PayOrderIssueService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	PayOrderIssueHeader getPayOrderIssueHeaderById(String id);
+
 	PayOrderIssueHeader getApprovedPayOrderIssueHeaderById(String id, String code);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

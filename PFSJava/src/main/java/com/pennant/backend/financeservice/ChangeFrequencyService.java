@@ -7,6 +7,6 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 public interface ChangeFrequencyService {
 
 	FinScheduleData doChangeFrequency(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst);
-	
+
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
 }

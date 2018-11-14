@@ -78,8 +78,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new JountAccountDetail
+	 * This method set the Work Flow id based on the module name and return the new JountAccountDetail
 	 * 
 	 * @return JountAccountDetail
 	 */
@@ -97,8 +96,8 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	/**
-	 * This method get the module from method getJountAccountDetail() and set
-	 * the new record flag as true and return JountAccountDetail()
+	 * This method get the module from method getJountAccountDetail() and set the new record flag as true and return
+	 * JountAccountDetail()
 	 * 
 	 * @return JountAccountDetail
 	 */
@@ -155,10 +154,8 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	/**
-	 * This method Deletes the Record from the FinJointAccountDetails or
-	 * FinJointAccountDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Jount Account Details by key
-	 * JointAccountId
+	 * This method Deletes the Record from the FinJointAccountDetails or FinJointAccountDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Jount Account Details by key JointAccountId
 	 * 
 	 * @param Jount
 	 *            Account Details (jountAccountDetail)
@@ -191,9 +188,8 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	/**
-	 * This method insert new Records into FinJointAccountDetails or
-	 * FinJointAccountDetails_Temp. it fetches the available Sequence form
-	 * SeqFinJointAccountDetails by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into FinJointAccountDetails or FinJointAccountDetails_Temp. it fetches the
+	 * available Sequence form SeqFinJointAccountDetails by using getNextidviewDAO().getNextId() method.
 	 *
 	 * save Jount Account Details
 	 * 
@@ -234,10 +230,8 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	/**
-	 * This method updates the Record FinJointAccountDetails or
-	 * FinJointAccountDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Jount Account Details by key
-	 * JointAccountId and Version
+	 * This method updates the Record FinJointAccountDetails or FinJointAccountDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Jount Account Details by key JointAccountId and Version
 	 * 
 	 * @param Jount
 	 *            Account Details (jountAccountDetail)

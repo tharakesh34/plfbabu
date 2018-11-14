@@ -4,14 +4,14 @@ package com.pennant.backend.model.applicationmaster;
  * Model class for the <b>StageTabDetail table</b>.<br>
  *
  */
-public class StageTabDetail{
-	
+public class StageTabDetail {
+
 	private int tabId;
-	private String tabCode; 
+	private String tabCode;
 	private String tabDescription;
-	private	String moduleName;
+	private String moduleName;
 	private String lovValue;
-	
+
 	public StageTabDetail() {
 		super();
 	}
@@ -56,5 +56,4 @@ public class StageTabDetail{
 		this.lovValue = lovValue;
 	}
 
-	
 }

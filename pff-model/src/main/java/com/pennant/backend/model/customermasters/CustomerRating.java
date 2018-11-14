@@ -68,11 +68,11 @@ public class CustomerRating extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -124,6 +124,7 @@ public class CustomerRating extends AbstractWorkflowEntity {
 	public void setCustRatingCode(String custRatingCode) {
 		this.custRatingCode = custRatingCode;
 	}
+
 	public String getCustRating() {
 		return custRating;
 	}
@@ -149,12 +150,12 @@ public class CustomerRating extends AbstractWorkflowEntity {
 	}
 
 	public String getLovDesccustRatingCodeDesc() {
-    	return lovDesccustRatingCodeDesc;
-    }
+		return lovDesccustRatingCodeDesc;
+	}
 
 	public void setLovDesccustRatingCodeDesc(String lovDesccustRatingCodeDesc) {
-    	this.lovDesccustRatingCodeDesc = lovDesccustRatingCodeDesc;
-    }
+		this.lovDesccustRatingCodeDesc = lovDesccustRatingCodeDesc;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -203,11 +204,11 @@ public class CustomerRating extends AbstractWorkflowEntity {
 	}
 
 	public void setLovDescCustRatingName(String lovDescCustRatingName) {
-	    this.lovDescCustRatingName = lovDescCustRatingName;
-    }
+		this.lovDescCustRatingName = lovDescCustRatingName;
+	}
 
 	public String getLovDescCustRatingName() {
-	    return lovDescCustRatingName;
-    }
+		return lovDescCustRatingName;
+	}
 
 }

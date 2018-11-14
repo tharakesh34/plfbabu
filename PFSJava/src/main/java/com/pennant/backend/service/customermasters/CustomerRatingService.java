@@ -53,10 +53,15 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 public interface CustomerRatingService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerRating getCustomerRatingById(long id,String type);
-	CustomerRating getApprovedCustomerRatingById(long id,String type);
+
+	CustomerRating getCustomerRatingById(long id, String type);
+
+	CustomerRating getApprovedCustomerRatingById(long id, String type);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 }

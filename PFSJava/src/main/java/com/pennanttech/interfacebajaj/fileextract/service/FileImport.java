@@ -45,22 +45,22 @@ public class FileImport {
 	private int totalRecords;
 	private boolean backUp = true;
 	public int row_NumberOfCells;
-	
+
 	//key fields need to map according to the responseFile format.
-	public static int						pos_BranchCode		= 6;
-	public static int						pos_AgreementNo		= 8;
-	public static int						pos_InstalmentNo	= 0;
-	public static int						pos_BFLReferenceNo	= 6;
-	public static int						pos_Batchid			= 1;
-	public static int						pos_AmountCleared	= 3;
-	public static int						pos_ClearingDate	= 4;
-	public static int						pos_Status			= 9;
-	public static int						pos_ReasonCode		= 10;
-	public static int						pos_Name			= 0;
-	public static int						pos_UMRNNo			= 2;
-	public static int						pos_AccountType		= 5;
-	public static int						pos_PaymentDue		= 7;
-	public static int						pos_FailureReasons	= 11;
+	public static int pos_BranchCode = 6;
+	public static int pos_AgreementNo = 8;
+	public static int pos_InstalmentNo = 0;
+	public static int pos_BFLReferenceNo = 6;
+	public static int pos_Batchid = 1;
+	public static int pos_AmountCleared = 3;
+	public static int pos_ClearingDate = 4;
+	public static int pos_Status = 9;
+	public static int pos_ReasonCode = 10;
+	public static int pos_Name = 0;
+	public static int pos_UMRNNo = 2;
+	public static int pos_AccountType = 5;
+	public static int pos_PaymentDue = 7;
+	public static int pos_FailureReasons = 11;
 
 	/**
 	 * Include the success records in the BatchLog, if BatchFileImport.isLogStatus() is true, default false
@@ -89,12 +89,12 @@ public class FileImport {
 		if (!filepath.exists()) {
 			filepath.mkdirs();
 		}
-		
+
 		writer = new BufferedWriter(new FileWriter(getFile()));
 		Files.copy(writer, getMedia().getReaderData());
 		writer.close();
 	}
-	
+
 	private void validateFileData() throws Exception {
 		try {
 			BufferedReader br = null;
@@ -119,7 +119,6 @@ public class FileImport {
 		}
 		logger.debug("Leaving");
 	}
-
 
 	protected void backUpFile() throws IOException {
 		File backup = new File(file.getParent() + "/BackUp");
@@ -147,11 +146,11 @@ public class FileImport {
 		}
 		setFile(file);
 	}
-	
+
 	public void setExcelMedia(Media media) throws Exception {
 
 		File file = validateFile(media.getName());
-		
+
 		this.media = media;
 
 		if (isExcelEmpty()) {
@@ -159,7 +158,7 @@ public class FileImport {
 		}
 		setFile(file);
 	}
-	
+
 	private boolean isExcelEmpty() {
 		if (getMedia().getByteData().equals(null)) {
 			return true;
@@ -183,7 +182,7 @@ public class FileImport {
 
 		return file;
 	}
-	
+
 	public void loadExcelFile(boolean isClientLoaction) throws Exception {
 		Assert.notNull(getFile(), Labels.getLabel("FIELD_NOT_BLANK", new String[] { "File Name" }));
 		if (isClientLoaction) {
@@ -191,7 +190,7 @@ public class FileImport {
 		}
 		validateExcelFile();
 	}
-	
+
 	private void writeToExcelFile() throws Exception {
 		byte[] data = media.getByteData();
 		if (getFile().exists()) {
@@ -222,7 +221,7 @@ public class FileImport {
 			}
 
 			Row row = sheet.getRow(0);
-			
+
 			if (row.getPhysicalNumberOfCells() != row_NumberOfCells) {
 				throw new Exception(
 						"The file has invalid header columns. the columns should be " + row_NumberOfCells + " .");
@@ -380,7 +379,7 @@ public class FileImport {
 		}
 		return null;
 	}
-	
+
 	protected String getCellValue(Row row, int pos) {
 		Cell cell = row.getCell(pos);
 		if (cell == null) {
@@ -397,7 +396,7 @@ public class FileImport {
 		}
 		return null;
 	}
-	
+
 	protected String getStringCellValue(Row row, int pos) {
 		Cell cell = row.getCell(pos);
 		if (cell == null) {

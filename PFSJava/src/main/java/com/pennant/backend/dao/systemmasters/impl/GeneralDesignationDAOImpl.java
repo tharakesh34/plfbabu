@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,50 +68,50 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> implements GeneralDesignationDAO {
 	private static Logger logger = Logger.getLogger(GeneralDesignationDAOImpl.class);
-	
+
 	public GeneralDesignationDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  General Designation details by key field
+	 * Fetch the Record General Designation details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return GeneralDesignation
 	 */
 	@Override
 	public GeneralDesignation getGeneralDesignationById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		GeneralDesignation generalDesignation = new GeneralDesignation();
 		generalDesignation.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select GenDesignation, GenDesgDesc, GenDesgIsActive," );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		StringBuilder selectSql = new StringBuilder("Select GenDesignation, GenDesgDesc, GenDesgIsActive,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTGenDesignations");
-		selectSql.append(StringUtils.trimToEmpty(type) );
+		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GenDesignation =:GenDesignation");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDesignation);
 		RowMapper<GeneralDesignation> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(GeneralDesignation.class);
-		
-		try{
-			generalDesignation = this.jdbcTemplate
-					.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			generalDesignation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			generalDesignation = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return generalDesignation;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String genDesignation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -129,7 +128,8 @@ public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> impl
 			sql = QueryUtil.getCountQuery("RMTGenDesignations_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "RMTGenDesignations_Temp", "RMTGenDesignations" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "RMTGenDesignations_Temp", "RMTGenDesignations" },
+					whereClause);
 			break;
 		}
 
@@ -148,7 +148,7 @@ public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> impl
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(GeneralDesignation generalDesignation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -172,11 +172,11 @@ public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> impl
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return generalDesignation.getId();
 	}
-	
+
 	@Override
 	public void update(GeneralDesignation generalDesignation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -201,27 +201,27 @@ public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> impl
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(GeneralDesignation generalDesignation, TableType tableType) {
-        logger.debug(Literal.ENTERING);
-		
+		logger.debug(Literal.ENTERING);
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" delete from RMTGenDesignations");
 		sql.append(tableType.getSuffix());
 		sql.append(" where GenDesignation =:GenDesignation");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(generalDesignation);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

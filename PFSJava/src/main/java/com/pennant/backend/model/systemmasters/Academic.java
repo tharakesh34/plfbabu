@@ -146,7 +146,7 @@ public class Academic extends AbstractWorkflowEntity implements Entity {
 	public void setBefImage(Academic beforeImage) {
 		this.befImage = beforeImage;
 	}
-	
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}

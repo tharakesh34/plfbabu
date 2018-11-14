@@ -13,9 +13,16 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public interface FeeReceiptService {
 
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type);
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException;
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doApprove(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	List<FinFeeDetail> getPaidFinFeeDetails(String finReference);
+
 	List<ErrorDetail> processFeePayment(FinServiceInstruction finServInst) throws Exception;
 }

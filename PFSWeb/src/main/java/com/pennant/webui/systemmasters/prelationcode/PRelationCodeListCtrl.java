@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.PRelationCode;
 import com.pennant.backend.service.systemmasters.PRelationCodeService;
 import com.pennant.webui.systemmasters.prelationcode.model.PRelationCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMasters/PRelationCode/PRelationCodeList.zul file.

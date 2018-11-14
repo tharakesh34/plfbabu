@@ -113,48 +113,46 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/TreasuaryFinance/treasuaryFinanceDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/TreasuaryFinance/treasuaryFinanceDialog.zul file.
  */
 public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeader> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(TreasuaryFinHeaderDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_TreasuaryFinHeaderDialog; 		
-	protected Textbox investmentRef; 						
-	protected CurrencyBox totPrinAmt; 						
-	protected Decimalbox totPrinAmttwo; 					
-	protected Space spaceTotPrinAmt; 						
+	protected Window window_TreasuaryFinHeaderDialog;
+	protected Textbox investmentRef;
+	protected CurrencyBox totPrinAmt;
+	protected Decimalbox totPrinAmttwo;
+	protected Space spaceTotPrinAmt;
 
-	protected ExtendedCombobox finCcy; 								
+	protected ExtendedCombobox finCcy;
 
-	protected Combobox profitDaysBasis; 					
-	protected Space  spaceprofitDaysBasis;							
-	protected Datebox startDate; 							
-	protected Space spaceStartDate; 						
-	protected Datebox maturityDate; 						
-	protected Space spaceMaturityDate; 						
-	protected Decimalbox prinInvested; 						
-	protected Decimalbox prinMaturity; 						
-	protected Decimalbox prinDueToInvest; 					
-	protected Decimalbox avgPftRate;	 					
+	protected Combobox profitDaysBasis;
+	protected Space spaceprofitDaysBasis;
+	protected Datebox startDate;
+	protected Space spaceStartDate;
+	protected Datebox maturityDate;
+	protected Space spaceMaturityDate;
+	protected Decimalbox prinInvested;
+	protected Decimalbox prinMaturity;
+	protected Decimalbox prinDueToInvest;
+	protected Decimalbox avgPftRate;
 
-	protected Row counterPartyRow_1;						
-	protected Row counterPartyRow_2;												
-	
+	protected Row counterPartyRow_1;
+	protected Row counterPartyRow_2;
+
 	protected Listbox listBoxAddDealTicket;
 	protected Groupbox gb_treasuryBasicasicDetails;
 	protected Grid grid_BasicDetails;
 	protected Div div_DealTicket;
 
 	// Recommendations Tab
-	protected Tabs 	tabsIndexCenter;
-	protected Tab 	investmentDetailsTab;
+	protected Tabs tabsIndexCenter;
+	protected Tab investmentDetailsTab;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 
 	// not auto wired vars
@@ -165,13 +163,12 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	private transient boolean validationOn;
 	private transient Object childWindowDialogCtrl = null;
 
-	
 	protected Button btnAddDealTicket;
 
 	// ServiceDAOs / Domain Classes
 	private transient TreasuaryFinanceService treasuaryFinanceService;
-	private FinanceDetail financeDetail = null; 
-	private List<ValueLabel> listProfitDaysBasis = PennantStaticListUtil.getProfitDaysBasis(); 
+	private FinanceDetail financeDetail = null;
+	private List<ValueLabel> listProfitDaysBasis = PennantStaticListUtil.getProfitDaysBasis();
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private BigDecimal totalPrincipalAmt = BigDecimal.ZERO;
@@ -182,6 +179,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	private String defaultPftDaysBasis = "A/A_360";
 
 	private NotificationService notificationService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -197,9 +195,8 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected TreasuaryFinance
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected TreasuaryFinance object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -221,7 +218,8 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 			}
 
-			doLoadWorkFlow(investmentFinHeader.isWorkflow(), investmentFinHeader.getWorkflowId(), investmentFinHeader.getNextTaskId());
+			doLoadWorkFlow(investmentFinHeader.isWorkflow(), investmentFinHeader.getWorkflowId(),
+					investmentFinHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -258,13 +256,13 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		int ccyFormat = CurrencyUtil.getFormat(getInvestmentFinHeader().getFinCcy());
 		// Empty sent any required attributes
 		this.investmentRef.setMaxlength(20);
-		
+
 		this.finCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
-        this.finCcy.setMandatoryStyle(true);
+		this.finCcy.setMandatoryStyle(true);
 		this.finCcy.setModuleName("Currency");
 		this.finCcy.setValueColumn("CcyCode");
 		this.finCcy.setDescColumn("CcyDesc");
@@ -311,13 +309,12 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("InvestmentFinHeaderDialog",getRole());
+		getUserWorkspace().allocateAuthorities("InvestmentFinHeaderDialog", getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_InvestmentFinHeaderDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_InvestmentFinHeaderDialog_btnEdit"));
@@ -327,11 +324,11 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		this.btnAddDealTicket.setVisible(getUserWorkspace().isAllowed("button_InvestmentFinHeaderDialog_btnDeal"));
 		this.div_DealTicket.setVisible(getUserWorkspace().isAllowed("button_InvestmentFinHeaderDialog_btnDeal"));
-		
-		if("Approved".equals(getInvestmentFinHeader().getRecordStatus())) {
+
+		if ("Approved".equals(getInvestmentFinHeader().getRecordStatus())) {
 			this.btnAddDealTicket.setVisible(false);
 		}
-		
+
 		this.listBoxAddDealTicket.setVisible(getUserWorkspace().isAllowed("InvestmentFinHeaderDialog_DealList"));
 		this.finCcy.setReadonly(!getUserWorkspace().isAllowed("InvestmentFinHeaderDialog_finCcy"));
 		logger.debug("Leaving");
@@ -341,7 +338,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -427,33 +424,33 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 */
 	public void doWriteBeanToComponents(InvestmentFinHeader aFinHeader) {
 		logger.debug("Entering");
-		
+
 		int ccyFormat = CurrencyUtil.getFormat(aFinHeader.getFinCcy());
 
 		this.investmentRef.setValue(aFinHeader.getInvestmentRef());
 		this.totPrinAmt.setValue(PennantAppUtil.formateAmount(aFinHeader.getTotPrincipalAmt(), ccyFormat));
 		this.totPrinAmttwo.setValue(PennantAppUtil.formateAmount(aFinHeader.getTotPrincipalAmt(), ccyFormat));
-	
-		if(aFinHeader.isNewRecord()){
+
+		if (aFinHeader.isNewRecord()) {
 			String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 			Currency currency = PennantAppUtil.getCurrencyBycode(localCcy);
 			this.finCcy.setValue(currency.getCcyCode());
 			this.finCcy.setDescription(currency.getCcyDesc());
 			ccyFormat = currency.getCcyEditField();
 			doSetFieldProperties();
-		}else{
+		} else {
 			this.finCcy.setValue(aFinHeader.getFinCcy(), CurrencyUtil.getCcyDesc(aFinHeader.getFinCcy()));
 		}
-		
+
 		String pftDaysBasis = aFinHeader.getProfitDaysBasis();
-		if(StringUtils.isBlank(pftDaysBasis)){
+		if (StringUtils.isBlank(pftDaysBasis)) {
 			pftDaysBasis = defaultPftDaysBasis;
 		}
-        
+
 		fillComboBox(this.profitDaysBasis, pftDaysBasis, listProfitDaysBasis, "");
 		this.startDate.setValue(aFinHeader.getStartDate());
-		this.maturityDate.setValue(aFinHeader.getMaturityDate());		
-		this.prinMaturity.setValue(PennantAppUtil.formateAmount(aFinHeader.getPrincipalMaturity(), ccyFormat));		
+		this.maturityDate.setValue(aFinHeader.getMaturityDate());
+		this.prinMaturity.setValue(PennantAppUtil.formateAmount(aFinHeader.getPrincipalMaturity(), ccyFormat));
 		this.recordStatus.setValue(aFinHeader.getRecordStatus());
 
 		List<FinanceDetail> finDetailsList = aFinHeader.getFinanceDetailsList();
@@ -476,9 +473,9 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 */
 	public void doWriteComponentsToBean(InvestmentFinHeader aInvestmentFinHeader, boolean isSave) {
 		logger.debug("Entering");
-		
+
 		int ccyFormat = CurrencyUtil.getFormat(this.finCcy.getValue());
-		
+
 		doSetLOVValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -489,15 +486,16 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		aInvestmentFinHeader.setInvestmentRef(this.investmentRef.getValue());
 		try {
-				aInvestmentFinHeader.setTotPrincipalAmt(PennantApplicationUtil.unFormateAmount(this.totPrinAmt.getValidateValue(), ccyFormat));
+			aInvestmentFinHeader.setTotPrincipalAmt(
+					PennantApplicationUtil.unFormateAmount(this.totPrinAmt.getValidateValue(), ccyFormat));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			if (StringUtils.isEmpty(this.finCcy.getValue())) {
-				throw new WrongValueException( this.finCcy, Labels.getLabel( "FIELD_NO_INVALID", 
-						new String[] { Labels .getLabel("label_TreasuaryFinHeaderDialog_finCcy.value") }));
+				throw new WrongValueException(this.finCcy, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_TreasuaryFinHeaderDialog_finCcy.value") }));
 			} else {
 				aInvestmentFinHeader.setFinCcy(this.finCcy.getValue());
 			}
@@ -519,12 +517,12 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		try {
 			aInvestmentFinHeader.setStartDate(this.startDate.getValue());
-			if(!this.startDate.isReadonly()){
-				if (DateUtility.compare(this.startDate.getValue(),
-						this.maturityDate.getValue()) >= 0) {
-					throw new WrongValueException(this.maturityDate, Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
-							Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
+			if (!this.startDate.isReadonly()) {
+				if (DateUtility.compare(this.startDate.getValue(), this.maturityDate.getValue()) >= 0) {
+					throw new WrongValueException(this.maturityDate,
+							Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[] { Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
+											Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -536,21 +534,24 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(this.counterPartyRow_2.isVisible() && isSave &&
-					PennantApplicationUtil.unFormateAmount(this.prinDueToInvest.getValue(), ccyFormat).compareTo(BigDecimal.ZERO) < 0){
-			
-				throw new WrongValueException(this.prinDueToInvest,Labels.getLabel("AMOUNT_NO_LESS",
-						new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_PrinDueToInvest.value"), "0" }));
+			if (this.counterPartyRow_2.isVisible() && isSave && PennantApplicationUtil
+					.unFormateAmount(this.prinDueToInvest.getValue(), ccyFormat).compareTo(BigDecimal.ZERO) < 0) {
+
+				throw new WrongValueException(this.prinDueToInvest, Labels.getLabel("AMOUNT_NO_LESS",
+						new String[] { Labels.getLabel("label_TreasuaryFinHeaderDialog_PrinDueToInvest.value"), "0" }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		aInvestmentFinHeader.setPrincipalInvested(PennantApplicationUtil.unFormateAmount(this.prinInvested.getValue(), ccyFormat));
-		aInvestmentFinHeader.setPrincipalMaturity(PennantApplicationUtil.unFormateAmount(this.prinMaturity .getValue(), ccyFormat));
-		aInvestmentFinHeader.setPrincipalDueToInvest(PennantApplicationUtil.unFormateAmount(this.prinDueToInvest.getValue(), ccyFormat));
+		aInvestmentFinHeader
+				.setPrincipalInvested(PennantApplicationUtil.unFormateAmount(this.prinInvested.getValue(), ccyFormat));
+		aInvestmentFinHeader
+				.setPrincipalMaturity(PennantApplicationUtil.unFormateAmount(this.prinMaturity.getValue(), ccyFormat));
+		aInvestmentFinHeader.setPrincipalDueToInvest(
+				PennantApplicationUtil.unFormateAmount(this.prinDueToInvest.getValue(), ccyFormat));
 
 		aInvestmentFinHeader.setAvgPftRate(this.avgPftRate.getValue());
 
@@ -568,13 +569,13 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 **/
 	private void showErrorDetails(ArrayList<WrongValueException> wve) {
 		logger.debug("Entering");
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
-			
+
 			this.investmentDetailsTab.setSelected(true);
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -588,8 +589,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aTreasuaryFinance
 	 * @throws InterruptedException
@@ -604,7 +604,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			// We don't create a new DomainObject() in the frontend.
 			// We GET it from the backend.
 			aInvestmentFinHeader = getTreasuaryFinanceService().getTreasuaryFinance();
-		} 
+		}
 
 		setInvestmentFinHeader(aInvestmentFinHeader);
 
@@ -626,14 +626,15 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			}
 		}
 
-		doSetFieldType();	
+		doSetFieldType();
 
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aInvestmentFinHeader);
 
 			getBorderLayoutHeight();
-			this.listBoxAddDealTicket.setHeight(getListBoxHeight(this.grid_BasicDetails.getRows().getVisibleItemCount() +2));
+			this.listBoxAddDealTicket
+					.setHeight(getListBoxHeight(this.grid_BasicDetails.getRows().getVisibleItemCount() + 2));
 
 			appendRecommendDetailTab();
 			setDialog(DialogType.EMBEDDED);
@@ -693,14 +694,12 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		map.put("control", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul",
-					tabpanel, map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", tabpanel, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * To set the customer id from Customer filter
@@ -709,18 +708,17 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	 * @throws InterruptedException
 	 */
 
-
 	public void onChange$startDate(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (DateUtility.compare(this.startDate.getValue(),
-				this.maturityDate.getValue()) >= 0) {
-			throw new WrongValueException(this.maturityDate,Labels.getLabel("DATE_ALLOWED_AFTER",
-					new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
-					Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
+		if (DateUtility.compare(this.startDate.getValue(), this.maturityDate.getValue()) >= 0) {
+			throw new WrongValueException(this.maturityDate,
+					Labels.getLabel("DATE_ALLOWED_AFTER",
+							new String[] { Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
+									Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 		}
 		if (DateUtility.compare(this.startDate.getValue(), DateUtility.getAppDate()) == -1) {
-			throw new WrongValueException(this.startDate,Labels.getLabel("DATE_PAST",
-					new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
+			throw new WrongValueException(this.startDate, Labels.getLabel("DATE_PAST",
+					new String[] { Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 		}
 
 		doFillTicketDetails(getInvestmentFinHeader().getFinanceDetailsList());
@@ -729,20 +727,19 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 	public void onChange$maturityDate(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (DateUtility.compare(this.startDate.getValue(),
-				this.maturityDate.getValue()) >= 0) {
-			throw new WrongValueException(this.maturityDate,Labels.getLabel("DATE_ALLOWED_AFTER",
-					new String[] {Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
-					Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
+		if (DateUtility.compare(this.startDate.getValue(), this.maturityDate.getValue()) >= 0) {
+			throw new WrongValueException(this.maturityDate,
+					Labels.getLabel("DATE_ALLOWED_AFTER",
+							new String[] { Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),
+									Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value") }));
 		}
 
 		doFillTicketDetails(getInvestmentFinHeader().getFinanceDetailsList());
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	public void doFillTicketDetails(List<FinanceDetail> finDetailList) {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 
 		Date startDate = this.startDate.getValue();
 		Date maturityDate = this.maturityDate.getValue();
@@ -759,7 +756,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		for (FinanceDetail finDetail : finDetailList) {
 			FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
-			
+
 			int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 			Listitem listitem = new Listitem();
@@ -771,7 +768,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			listcell = new Listcell(financeMain.getFinReference());
 			listitem.appendChild(listcell);
 
-			listcell = new Listcell(String.valueOf(financeMain.getLovDescCustCIF())); 
+			listcell = new Listcell(String.valueOf(financeMain.getLovDescCustCIF()));
 			listitem.appendChild(listcell);
 
 			listcell = new Listcell(String.valueOf(financeMain.getLovDescCustShrtName()));
@@ -781,14 +778,15 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
 
-			BigDecimal finAmount = financeMain.getFinAmount() ;
+			BigDecimal finAmount = financeMain.getFinAmount();
 			BigDecimal profitRate = financeMain.getRepayProfitRate();
 			BigDecimal profitAmt = CalculationUtil.calInterest(financeMain.getFinStartDate(),
 					financeMain.getMaturityDate(), finAmount, profitDaysBasis, profitRate);
 			profitAmt = profitAmt.setScale(0, RoundingMode.HALF_DOWN);
 			financeMain.setTotalRepayAmt(finAmount.add(profitAmt));
 
-			listcell = new Listcell(PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 9));
+			listcell = new Listcell(
+					PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 9));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
 
@@ -810,16 +808,17 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			maturityAmt = maturityAmt.add(financeMain.getTotalRepayAmt());
 		}
 		prinDueToInvestAmt = totalPrincipalAmt.subtract(principalAmt);
-		avgPftRateRt = CalculationUtil.calcAvgProfitRate(startDate, maturityDate, profitDaysBasis, principalAmt, maturityAmt);
+		avgPftRateRt = CalculationUtil.calcAvgProfitRate(startDate, maturityDate, profitDaysBasis, principalAmt,
+				maturityAmt);
 
 		int ccyFormat = CurrencyUtil.getFormat(getInvestmentFinHeader().getFinCcy());
-		this.prinInvested.setValue(PennantAppUtil.formateAmount(principalAmt, ccyFormat));	
+		this.prinInvested.setValue(PennantAppUtil.formateAmount(principalAmt, ccyFormat));
 		this.prinDueToInvest.setValue(PennantAppUtil.formateAmount(prinDueToInvestAmt, ccyFormat));
 		this.prinMaturity.setValue(PennantAppUtil.formateAmount(maturityAmt, ccyFormat));
 		this.avgPftRate.setValue(PennantApplicationUtil.formatRate(avgPftRateRt.doubleValue(), 9));
 
 		getInvestmentFinHeader().setAvgPftRate(avgPftRateRt);
-		logger.debug("Leaving");	
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -831,20 +830,24 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		setValidationOn(true);
 
 		if (!this.totPrinAmt.isReadonly()) {
-			this.totPrinAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_TotPrinAmt.value"), 
-					CurrencyUtil.getFormat(getInvestmentFinHeader().getFinCcy()), true, false));
+			this.totPrinAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_TotPrinAmt.value"),
+							CurrencyUtil.getFormat(getInvestmentFinHeader().getFinCcy()), true, false));
 		}
 
-		if (!this.profitDaysBasis.isDisabled()) {			
-			this.profitDaysBasis .setConstraint(new PTStringValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_ProfitDaysBasis.value"),null,true));
+		if (!this.profitDaysBasis.isDisabled()) {
+			this.profitDaysBasis.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_TreasuaryFinHeaderDialog_ProfitDaysBasis.value"), null, true));
 		}
 
-		if (!this.startDate.isDisabled()) {			
-			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value"),true));
+		if (!this.startDate.isDisabled()) {
+			this.startDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value"), true));
 		}
 
 		if (!this.maturityDate.isDisabled()) {
-			this.maturityDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),true));
+			this.maturityDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"), true));
 		}
 
 		logger.debug("Leaving");
@@ -866,9 +869,10 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		logger.debug("Leaving");
 	}
 
-	private void doSetLOVValidation() {		
-		if(finCcy.isButtonVisible()) {
-			this.finCcy.setConstraint(new PTStringValidator (Labels.getLabel("label_TreasuaryFinHeaderDialog_finCcy.value"),null,true,true));
+	private void doSetLOVValidation() {
+		if (finCcy.isButtonVisible()) {
+			this.finCcy.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_TreasuaryFinHeaderDialog_finCcy.value"), null, true, true));
 		}
 	}
 
@@ -907,13 +911,11 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		BeanUtils.copyProperties(getInvestmentFinHeader(), aTreasuaryFinHeader);
 		String tranType = PennantConstants.TRAN_WF;
 
-		aTreasuaryFinHeader.setUserAction(this.userAction.getSelectedItem()
-				.getLabel());
+		aTreasuaryFinHeader.setUserAction(this.userAction.getSelectedItem().getLabel());
 
 		// Show a confirm box
-		final String msg = Labels
-		.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-		+ "\n\n --> " + aTreasuaryFinHeader.getInvestmentRef();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aTreasuaryFinHeader.getInvestmentRef();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aTreasuaryFinHeader.getRecordType())) {
 				aTreasuaryFinHeader.setVersion(aTreasuaryFinHeader.getVersion() + 1);
@@ -961,18 +963,17 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		this.finCcy.setReadonly(isReadOnly("InvestmentFinHeaderDialog_finCcy"));
 		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_finCcy"), this.finCcy);
-		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_profitDaysBasis"), this.profitDaysBasis); 
+		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_profitDaysBasis"), this.profitDaysBasis);
 		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_startDate"), this.startDate);
 		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_maturityDate"), this.maturityDate);
 		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_prinInvested"), this.prinInvested);
 		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_prinMaturity"), this.prinMaturity);
-		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_prinDueToInvest"),this.prinDueToInvest);
+		readOnlyComponent(isReadOnly("InvestmentFinHeaderDialog_prinDueToInvest"), this.prinDueToInvest);
 
 		if (isReadOnly("InvestmentFinHeaderDialog_counterParty_Fields")) {
 			this.counterPartyRow_1.setVisible(false);
 			this.counterPartyRow_2.setVisible(false);
 		}
-
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1033,7 +1034,6 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * when clicks on button "SearchFinCcy"
 	 * 
@@ -1068,17 +1068,18 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		doWriteComponentsToBean(getInvestmentFinHeader(), false);
 
 		ErrorDetail errorDetail = null;
-		errorDetail = getTreasuaryFinanceService().treasuryFinHeaderDialogValidations(getInvestmentFinHeader(),  getUserWorkspace().getUserLanguage());
+		errorDetail = getTreasuaryFinanceService().treasuryFinHeaderDialogValidations(getInvestmentFinHeader(),
+				getUserWorkspace().getUserLanguage());
 
 		if (errorDetail != null) {
 			MessageUtil.showError(errorDetail.getError());
 			return;
-		}else{
+		} else {
 
 			FinanceMain financeMain = new FinanceMain();
 			financeMain.setNewRecord(true);
 
-			financeDetail.getFinScheduleData().setFinanceMain(financeMain);		
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			getInvestmentFinHeader().setFinanceDetail(financeDetail);
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -1087,8 +1088,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			map.put("investmentFinHeader", getInvestmentFinHeader());
 
 			try {
-				Executions.createComponents(
-						"/WEB-INF/pages/Finance/FinanceMain/InvestmentDealDialog.zul",
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/InvestmentDealDialog.zul",
 						window_TreasuaryFinHeaderDialog, map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -1099,6 +1099,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 	/**
 	 * Method for Double Click Event on Contribution Details
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1107,14 +1108,15 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxAddDealTicket.getSelectedItem();
-		doWriteComponentsToBean(getInvestmentFinHeader() , false);
+		doWriteComponentsToBean(getInvestmentFinHeader(), false);
 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceDetail financeDetail = (FinanceDetail) item.getAttribute("data");
 
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			if(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && !financeDetail.isDataFetchComplete()){
+			if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
+					&& !financeDetail.isDataFetchComplete()) {
 				getTreasuaryFinanceService().getFinanceDetailById(financeDetail, financeMain.getFinReference());
 			}
 			getInvestmentFinHeader().setFinanceDetail(financeDetail);
@@ -1128,8 +1130,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents(
-							"/WEB-INF/pages/Finance/FinanceMain/InvestmentDealDialog.zul",
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/InvestmentDealDialog.zul",
 							window_TreasuaryFinHeaderDialog, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
@@ -1141,7 +1142,8 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
@@ -1153,18 +1155,20 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-		
-		if (this.btnAddDealTicket.isVisible() && this.userAction.getSelectedItem() != null){
-			if (!("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
-				if(aInvestmentFinHeader.getFinanceDetailsList() == null || aInvestmentFinHeader.getFinanceDetailsList().isEmpty()) {
-					throw new WrongValueException( this.btnAddDealTicket, Labels.getLabel("label_TreasuaryFinHeaderDialog_Deals_List.value"));
+
+		if (this.btnAddDealTicket.isVisible() && this.userAction.getSelectedItem() != null) {
+			if (!("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
+				if (aInvestmentFinHeader.getFinanceDetailsList() == null
+						|| aInvestmentFinHeader.getFinanceDetailsList().isEmpty()) {
+					throw new WrongValueException(this.btnAddDealTicket,
+							Labels.getLabel("label_TreasuaryFinHeaderDialog_Deals_List.value"));
 				}
 			}
 		}
 
 		// fill the TreasuaryFinance object with the components data
-		doWriteComponentsToBean(aInvestmentFinHeader,true);
+		doWriteComponentsToBean(aInvestmentFinHeader, true);
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
@@ -1202,17 +1206,18 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 				}
 
 				//Mail Alert Notification for User
-				if(StringUtils.isNotBlank(aInvestmentFinHeader.getNextTaskId()) && 
-						!StringUtils.trimToEmpty(aInvestmentFinHeader.getNextRoleCode()).equals(aInvestmentFinHeader.getRoleCode())){
+				if (StringUtils.isNotBlank(aInvestmentFinHeader.getNextTaskId())
+						&& !StringUtils.trimToEmpty(aInvestmentFinHeader.getNextRoleCode())
+								.equals(aInvestmentFinHeader.getRoleCode())) {
 					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_TREASURY,
 							aInvestmentFinHeader);
 				}
-				
+
 				//Customer Notification for Role Identification
 				String msg = PennantApplicationUtil.getSavingStatus(aInvestmentFinHeader.getRoleCode(),
-						aInvestmentFinHeader.getNextRoleCode(), aInvestmentFinHeader.getInvestmentRef(), 
+						aInvestmentFinHeader.getNextRoleCode(), aInvestmentFinHeader.getInvestmentRef(),
 						Labels.getLabel("label_TreasuaryFinance_InvestMent"), aInvestmentFinHeader.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+				Clients.showNotification(msg, "info", null, null, -1);
 
 				closeDialog();
 			}
@@ -1311,7 +1316,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		InvestmentFinHeader aInvFinHeader;		
+		InvestmentFinHeader aInvFinHeader;
 		aInvFinHeader = (InvestmentFinHeader) auditHeader.getAuditDetail().getModelData();
 
 		try {
@@ -1319,7 +1324,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals( PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getTreasuaryFinanceService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
@@ -1327,7 +1332,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase( PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
 						if (aInvFinHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
@@ -1341,15 +1346,15 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doConfirm)) {
 						auditHeader = getTreasuaryFinanceService().doConfirm(auditHeader);
-					}else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels .getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl( this.window_TreasuaryFinHeaderDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_TreasuaryFinHeaderDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_TreasuaryFinHeaderDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_TreasuaryFinHeaderDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -1377,30 +1382,30 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		return processCompleted;
 	}
 
-	public BigDecimal getInvestMaturityAmt(BigDecimal finAmount, BigDecimal profitRate){
+	public BigDecimal getInvestMaturityAmt(BigDecimal finAmount, BigDecimal profitRate) {
 		logger.debug("Entering");
 
-		finAmount = PennantAppUtil.unFormateAmount(finAmount, CurrencyUtil.getFormat(getInvestmentFinHeader().getFinCcy()));
+		finAmount = PennantAppUtil.unFormateAmount(finAmount,
+				CurrencyUtil.getFormat(getInvestmentFinHeader().getFinCcy()));
 
-		BigDecimal 	maturityAmount = BigDecimal.ZERO;
-		BigDecimal 	prfBasis = BigDecimal.ZERO;
-		BigDecimal 	calMaturityAmount;
+		BigDecimal maturityAmount = BigDecimal.ZERO;
+		BigDecimal prfBasis = BigDecimal.ZERO;
+		BigDecimal calMaturityAmount;
 		String pftDaysBasis = null;
 
-		if(finAmount != null && profitRate.compareTo(BigDecimal.ZERO) == 1){
+		if (finAmount != null && profitRate.compareTo(BigDecimal.ZERO) == 1) {
 
 			Date startDate = this.startDate.getValue();
 			Date maturityDate = this.maturityDate.getValue();
 
-			if(this.profitDaysBasis.getSelectedItem() != null) {
+			if (this.profitDaysBasis.getSelectedItem() != null) {
 				pftDaysBasis = this.profitDaysBasis.getSelectedItem().getValue();
 			}
 
 			prfBasis = CalculationUtil.getInterestDays(startDate, maturityDate, pftDaysBasis);
-			calMaturityAmount = ((finAmount.multiply(profitRate)). divide(new BigDecimal(100))).multiply(prfBasis);
+			calMaturityAmount = ((finAmount.multiply(profitRate)).divide(new BigDecimal(100))).multiply(prfBasis);
 
 			maturityAmount = finAmount.add(calMaturityAmount);
-
 
 		}
 		logger.debug("Leaving");
@@ -1411,18 +1416,18 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 
 	private AuditHeader getAuditHeader(InvestmentFinHeader treasuaryFinHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, treasuaryFinHeader.getBefImage(), treasuaryFinHeader);
-		return new AuditHeader(treasuaryFinHeader.getInvestmentRef(), null, null, null, auditDetail, treasuaryFinHeader.getUserDetails(), getOverideMap());
+		return new AuditHeader(treasuaryFinHeader.getInvestmentRef(), null, null, null, auditDetail,
+				treasuaryFinHeader.getUserDetails(), getOverideMap());
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.investmentFinHeader);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.investmentFinHeader.getInvestmentRef());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1435,6 +1440,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1442,15 +1448,15 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	public TreasuaryFinanceService getTreasuaryFinanceService() {
 		return treasuaryFinanceService;
 	}
-	public void setTreasuaryFinanceService(
-			TreasuaryFinanceService treasuaryFinanceService) {
+
+	public void setTreasuaryFinanceService(TreasuaryFinanceService treasuaryFinanceService) {
 		this.treasuaryFinanceService = treasuaryFinanceService;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1458,6 +1464,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	public Object getChildWindowDialogCtrl() {
 		return childWindowDialogCtrl;
 	}
+
 	public void setChildWindowDialogCtrl(Object childWindowDialogCtrl) {
 		this.childWindowDialogCtrl = childWindowDialogCtrl;
 	}
@@ -1465,22 +1472,23 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	public InvestmentFinHeader getInvestmentFinHeader() {
 		return investmentFinHeader;
 	}
+
 	public void setInvestmentFinHeader(InvestmentFinHeader investmentFinHeader) {
 		this.investmentFinHeader = investmentFinHeader;
 	}
 
-	public void setTreasuryFinHeaderListCtrl(
-			TreasuryFinHeaderListCtrl treasuryFinHeaderListCtrl) {
+	public void setTreasuryFinHeaderListCtrl(TreasuryFinHeaderListCtrl treasuryFinHeaderListCtrl) {
 		this.treasuryFinHeaderListCtrl = treasuryFinHeaderListCtrl;
 	}
+
 	public TreasuryFinHeaderListCtrl getTreasuryFinHeaderListCtrl() {
 		return treasuryFinHeaderListCtrl;
 	}
 
-	public void setInvestmentFinHeaderList(
-			List<InvestmentFinHeader> investmentFinHeader) {
+	public void setInvestmentFinHeaderList(List<InvestmentFinHeader> investmentFinHeader) {
 		this.investmentFinHeaderList = investmentFinHeader;
 	}
+
 	public List<InvestmentFinHeader> getInvestmentFinHeaderList() {
 		return investmentFinHeaderList;
 	}
@@ -1488,6 +1496,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -1495,7 +1504,5 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
-
-
 
 }

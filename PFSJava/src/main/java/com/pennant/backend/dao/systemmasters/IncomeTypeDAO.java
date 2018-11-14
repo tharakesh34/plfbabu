@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -52,23 +53,24 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods declaration for the <b>IncomeType model</b> class.<br>
  * 
  */
-public interface IncomeTypeDAO extends BasicCrudDao<IncomeType>{
+public interface IncomeTypeDAO extends BasicCrudDao<IncomeType> {
 
 	IncomeType getIncomeTypeById(String id, String incomeExpense, String category, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param incomeTypeCode
-	 *           			 IncomeTypeCode of the incomeType.
+	 *            IncomeTypeCode of the incomeType.
 	 * @param incomeExpense
-	 *            			IncomeExpense of the incomeType.
+	 *            IncomeExpense of the incomeType.
 	 * @param category
-	 *            		Category of the incomeType.
+	 *            Category of the incomeType.
 	 * @param tableType
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String incomeTypeCode, String incomeExpense, String category, TableType tableType);
+
 	List<IncomeType> getIncomeTypeList();
 }

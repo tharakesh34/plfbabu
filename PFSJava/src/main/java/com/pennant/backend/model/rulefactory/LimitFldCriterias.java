@@ -15,11 +15,9 @@ public class LimitFldCriterias {
 
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
 
 	public String getQbFldType() {
 		return qbFldType;
@@ -52,7 +50,5 @@ public class LimitFldCriterias {
 	public void setQbFldCriteriaValues(String qbFldCriteriaValues) {
 		this.qbFldCriteriaValues = qbFldCriteriaValues;
 	}
-
-
 
 }

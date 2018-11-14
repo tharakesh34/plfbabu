@@ -28,9 +28,9 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 		super();
 	}
 
-	private FinanceMainDAO 		financeMainDAO;
-	private NotificationsDAO 	notificationsDAO;
-	private MailLogDAO 			mailLogDAO;
+	private FinanceMainDAO financeMainDAO;
+	private NotificationsDAO notificationsDAO;
+	private MailLogDAO mailLogDAO;
 	private NotificationService notificationService;
 
 	Date appDate = DateUtility.getAppDate();
@@ -43,13 +43,13 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 		//get List of References
 		List<FinanceMain> referenceList = getFinanceMainDAO().getFinanceRefByPriority();
 
-		if(maxAllowedDays != -1) {
-			List<FinanceMain> pendingRefList = getFinanceMainDAO().getFinanceRefByValueDate(appDate,maxAllowedDays);
+		if (maxAllowedDays != -1) {
+			List<FinanceMain> pendingRefList = getFinanceMainDAO().getFinanceRefByValueDate(appDate, maxAllowedDays);
 			referenceList.addAll(pendingRefList);
 		}
 
 		try {
-			for(FinanceMain finMain : referenceList) {
+			for (FinanceMain finMain : referenceList) {
 				boolean isMailSent;
 				//send mail
 				notificationService.sendNotifications(NotificationConstants.TEMPLATE_FOR_QP, finMain);
@@ -58,7 +58,7 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 				 * if(isMailSent){ MailLog mailLog = prepareMailLog(finMain); getMailLogDAO().saveMailLog(mailLog); }
 				 */
 			}
-		} catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -88,8 +88,6 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-
-
 	public NotificationsDAO getNotificationsDAO() {
 		return notificationsDAO;
 	}
@@ -105,6 +103,7 @@ public class PriorityNotificationProcess extends QuartzJobBean implements Statef
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}

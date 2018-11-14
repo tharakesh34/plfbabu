@@ -62,8 +62,7 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 	LegalDetail getLegalDetail(long legalReference, String type);
 
 	/**
-	 * Checks whether another record exists with the key attributes in the
-	 * specified table type.
+	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param legalReference
 	 *            legalReference of the LegalDetail.

@@ -27,8 +27,8 @@ public class ReturnedChequeListModelItemRender implements ListitemRenderer<Retur
 		lc = new Listcell(returnedCheque.getChequeNo());
 		lc.setParent(item);
 		returnedCheque.setCcyEditField(CurrencyUtil.getFormat(returnedCheque.getCurrency()));
-		lc = new Listcell(PennantApplicationUtil.amountFormate(returnedCheque.getAmount(),
-				returnedCheque.getCcyEditField()));
+		lc = new Listcell(
+				PennantApplicationUtil.amountFormate(returnedCheque.getAmount(), returnedCheque.getCcyEditField()));
 		lc.setParent(item);
 		lc = new Listcell(returnedCheque.getRecordStatus());
 		lc.setParent(item);

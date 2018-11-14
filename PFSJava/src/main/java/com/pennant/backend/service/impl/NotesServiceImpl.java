@@ -59,7 +59,7 @@ public class NotesServiceImpl implements NotesService {
 	public NotesServiceImpl() {
 		super();
 	}
-	
+
 	public NotesDAO getNotesDAO() {
 		return notesDAO;
 	}
@@ -78,25 +78,25 @@ public class NotesServiceImpl implements NotesService {
 	public void delete(Notes notes) {
 		getNotesDAO().delete(notes);
 	}
-	
+
 	@Override
 	public List<Notes> getNotesList(Notes notes, boolean isNotes) {
 		return getNotesDAO().getNotesList(notes, isNotes);
 	}
-	
+
 	@Override
 	public List<Notes> getNotesForAgreements(Notes notes) {
 		return getNotesDAO().getNotesForAgreements(notes);
 	}
-	
+
 	@Override
-	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes,String[] roleCodes) {
+	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes) {
 		return getNotesDAO().getNotesListByRole(notes, isNotes, roleCodes);
 	}
-	
+
 	@Override
 	public void deleteAllNotes(Notes notes) {
 		getNotesDAO().deleteAllNotes(notes);
 	}
-	
+
 }

@@ -53,15 +53,26 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 public interface FinanceSuspHeadDAO {
 
 	FinanceSuspHead getFinanceSuspHead();
+
 	FinanceSuspHead getNewFinanceSuspHead();
-	FinanceSuspHead getFinanceSuspHeadById(String finReference,String type);
+
+	FinanceSuspHead getFinanceSuspHeadById(String finReference, String type);
+
 	String save(FinanceSuspHead financeSuspHead, String type);
+
 	void update(FinanceSuspHead financeSuspHead, String type);
+
 	String saveSuspenseDetails(FinanceSuspDetails suspDetails, String type);
+
 	List<FinanceSuspDetails> getFinanceSuspDetailsListById(String finReference);
+
 	List<String> getSuspFinanceList();
+
 	void delete(FinanceSuspHead financeSuspHead, String string);
+
 	List<FinStatusDetail> getCustSuspDate(List<Long> custIdList);
+
 	void updateSuspFlag(String finReference);
+
 	Date getFinSuspDate(String finReference);
 }

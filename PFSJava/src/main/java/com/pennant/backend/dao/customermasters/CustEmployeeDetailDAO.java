@@ -50,8 +50,11 @@ import com.pennant.backend.model.customermasters.CustEmployeeDetail;
  */
 public interface CustEmployeeDetailDAO {
 
-	 CustEmployeeDetail getCustEmployeeDetailById(long id,String type);
-	 void update(CustEmployeeDetail custEmployeeDetail,String type);
-	 void delete(CustEmployeeDetail custEmployeeDetail,String type);
-	 long save(CustEmployeeDetail custEmployeeDetail,String type);
+	CustEmployeeDetail getCustEmployeeDetailById(long id, String type);
+
+	void update(CustEmployeeDetail custEmployeeDetail, String type);
+
+	void delete(CustEmployeeDetail custEmployeeDetail, String type);
+
+	long save(CustEmployeeDetail custEmployeeDetail, String type);
 }

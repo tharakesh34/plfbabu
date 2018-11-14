@@ -58,7 +58,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -72,55 +71,55 @@ public class LimitDetailListModelItemRenderer implements ListitemRenderer<LimitH
 
 		Listcell lc;
 		Label lb;
-		if(limitHeader.getRuleCode()!=null && StringUtils.isNotEmpty(limitHeader.getRuleCode())){
-			
+		if (limitHeader.getRuleCode() != null && StringUtils.isNotEmpty(limitHeader.getRuleCode())) {
+
 			lc = new Listcell(String.valueOf(limitHeader.getRuleCode()));
-		  	lc.setParent(item);
-		  	
-		  	lc = new Listcell(String.valueOf(limitHeader.getQueryDesc()));
-		  	lc.setParent(item);
-		  			  
-		}else{
-		if(limitHeader.getCustomerId()!=0 ){
-			lc = new Listcell(String.valueOf(limitHeader.getCustCIF()));
-		  	lc.setParent(item);
-		  	
-		  	lc = new Listcell();
-		  	lb=new Label();
-		  	lb.setValue(limitHeader.getCustShrtName());
-		  	lb.setParent(lc);
 			lc.setParent(item);
-			lc.setTooltip(limitHeader.getCustShrtName());
-		}else{
-			lc = new Listcell(String.valueOf(limitHeader.getCustGrpCode()));
-		  	lc.setParent(item);
-		  	lc = new Listcell();
-		  	lb=new Label();
-			lb.setValue(limitHeader.getGroupName());
-		  	lb.setParent(lc);
-			lc.setParent(item);		
-			lc.setTooltip(limitHeader.getGroupName());
-		}
+
+			lc = new Listcell(String.valueOf(limitHeader.getQueryDesc()));
+			lc.setParent(item);
+
+		} else {
+			if (limitHeader.getCustomerId() != 0) {
+				lc = new Listcell(String.valueOf(limitHeader.getCustCIF()));
+				lc.setParent(item);
+
+				lc = new Listcell();
+				lb = new Label();
+				lb.setValue(limitHeader.getCustShrtName());
+				lb.setParent(lc);
+				lc.setParent(item);
+				lc.setTooltip(limitHeader.getCustShrtName());
+			} else {
+				lc = new Listcell(String.valueOf(limitHeader.getCustGrpCode()));
+				lc.setParent(item);
+				lc = new Listcell();
+				lb = new Label();
+				lb.setValue(limitHeader.getGroupName());
+				lb.setParent(lc);
+				lc.setParent(item);
+				lc.setTooltip(limitHeader.getGroupName());
+			}
 		}
 		lc = new Listcell(limitHeader.getLimitStructureCode());
 		lc.setParent(item);
 		lc = new Listcell(limitHeader.getResponsibleBranchName());
 		lc.setParent(item);
-	  	lc = new Listcell(limitHeader.getLimitCcy());
+		lc = new Listcell(limitHeader.getLimitCcy());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateDate(limitHeader.getLimitExpiryDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateDate(limitHeader.getLimitRvwDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-		
-		lc = new Listcell();		
-		Checkbox ckActive= new Checkbox();
+		lc = new Listcell(PennantAppUtil.formateDate(limitHeader.getLimitExpiryDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.formateDate(limitHeader.getLimitRvwDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+
+		lc = new Listcell();
+		Checkbox ckActive = new Checkbox();
 		ckActive.setChecked(limitHeader.isActive());
 		ckActive.setDisabled(true);
 		ckActive.setParent(lc);
 		lc.setParent(item);
-		
-	  	lc = new Listcell(limitHeader.getRecordStatus());
+
+		lc = new Listcell(limitHeader.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(limitHeader.getRecordType()));
 		lc.setParent(item);

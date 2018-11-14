@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.collateral.impl;
 
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -73,27 +72,29 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 	public CollateralDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new Collateral 
+	 * This method set the Work Flow id based on the module name and return the new Collateral
+	 * 
 	 * @return Collateral
 	 */
 
 	@Override
 	public Collateral getCollateral() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("Collateral");
-		Collateral collateral= new Collateral();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Collateral");
+		Collateral collateral = new Collateral();
+		if (workFlowDetails != null) {
 			collateral.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return collateral;
 	}
 
-
 	/**
-	 * This method get the module from method getCollateral() and set the new record flag as true and return Collateral()   
+	 * This method get the module from method getCollateral() and set the new record flag as true and return
+	 * Collateral()
+	 * 
 	 * @return Collateral
 	 */
 
@@ -110,9 +111,10 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 	/**
 	 * Fetch the Record Collateral Details details by key field
 	 * 
-	 * @param caf (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param caf
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Collateral
 	 */
 	@Override
@@ -122,10 +124,12 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 
 		collateral.setCAFReference(caf);
 		collateral.setReference(ref);
-		
-		StringBuilder selectSql = new StringBuilder("Select CAFReference, Reference, LastReview, Currency, Value, Bankvaluation, Bankmargin, ActualCoverage, ProposedCoverage, Description,CustID");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select CAFReference, Reference, LastReview, Currency, Value, Bankvaluation, Bankmargin, ActualCoverage, ProposedCoverage, Description,CustID");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CcyFormat");
 		}
 		selectSql.append(" From Collateral");
@@ -147,13 +151,13 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 	}
 
 	/**
-	 * This method Deletes the Record from the Collateral or Collateral_Temp. if
-	 * Record not deleted then throws DataAccessException with error 41003.
-	 * delete Collateral Details by key CAFReference
+	 * This method Deletes the Record from the Collateral or Collateral_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Collateral Details by key CAFReference
 	 * 
-	 * @param Collateral Details (collateral)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Collateral
+	 *            Details (collateral)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -204,10 +208,14 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 
 		StringBuilder insertSql = new StringBuilder("Insert Into Collateral");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CAFReference, Reference, LastReview, Currency, Value, Bankvaluation, Bankmargin, ActualCoverage, ProposedCoverage, Description,CustID");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CAFReference, :Reference, :LastReview, :Currency, :Value, :Bankvaluation, :Bankmargin, :ActualCoverage, :ProposedCoverage, :Description, :CustID");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (CAFReference, Reference, LastReview, Currency, Value, Bankvaluation, Bankmargin, ActualCoverage, ProposedCoverage, Description,CustID");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:CAFReference, :Reference, :LastReview, :Currency, :Value, :Bankvaluation, :Bankmargin, :ActualCoverage, :ProposedCoverage, :Description, :CustID");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -218,9 +226,8 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 	}
 
 	/**
-	 * This method updates the Record Collateral or Collateral_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Collateral Details by key CAFReference and Version
+	 * This method updates the Record Collateral or Collateral_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Collateral Details by key CAFReference and Version
 	 * 
 	 * @param Collateral
 	 *            Details (collateral)
@@ -234,10 +241,12 @@ public class CollateralDAOImpl extends SequenceDao<Collateral> implements Collat
 	public void update(Collateral collateral, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update Collateral");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LastReview = :LastReview, Currency = :Currency, Value = :Value, Bankvaluation = :Bankvaluation, Bankmargin = :Bankmargin, ActualCoverage = :ActualCoverage, ProposedCoverage = :ProposedCoverage, Description = :Description, CustID = :CustID");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update Collateral");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set LastReview = :LastReview, Currency = :Currency, Value = :Value, Bankvaluation = :Bankvaluation, Bankmargin = :Bankmargin, ActualCoverage = :ActualCoverage, ProposedCoverage = :ProposedCoverage, Description = :Description, CustID = :CustID");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CAFReference =:CAFReference and Reference=:Reference");
 
 		if (!type.endsWith("_Temp")) {

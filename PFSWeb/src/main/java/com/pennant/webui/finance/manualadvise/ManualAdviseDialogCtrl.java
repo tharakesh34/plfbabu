@@ -138,29 +138,29 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	protected Hbox hbox_Sequence;
 	protected Groupbox adviseMovements;
-	protected Label	   label_FeeTypeID;
+	protected Label label_FeeTypeID;
 
 	private transient ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
 	private FinanceDetailService financeDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private transient FinanceTaxDetailService financeTaxDetailService;
-	
+
 	private EventManager eventManager;
 
 	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
-	
+
 	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
 
 	//FinanceDetails Fields
-	protected Label										lbl_LoanReference;
-	protected Label										lbl_LoanType;
-	protected Label										lbl_CustCIF;
-	protected Label										lbl_FinAmount;
-	protected Label										lbl_startDate;
-	protected Label										lbl_MaturityDate;
-	protected Groupbox									finBasicdetails;
-	
+	protected Label lbl_LoanReference;
+	protected Label lbl_LoanType;
+	protected Label lbl_CustCIF;
+	protected Label lbl_FinAmount;
+	protected Label lbl_startDate;
+	protected Label lbl_MaturityDate;
+	protected Groupbox finBasicdetails;
+
 	//GST Details
 	protected Groupbox gb_GSTDetails;
 	protected Label label_TaxComponent;
@@ -173,6 +173,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Decimalbox total;
 
 	private FinanceMain financeMain;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -260,7 +261,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
 		this.feeTypeID.setValidateColumns(new String[] { "FeeTypeCode" });
 		this.feeTypeID.setMandatoryStyle(true);
-		
+
 		this.adviseAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.adviseAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.adviseAmount.setScale(PennantConstants.defaultCCYDecPos);
@@ -431,29 +432,30 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				this.feeTypeID.setAttribute("TaxComponent", "");
 			}
 		}
-		
+
 		calculateGST();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onChange$adviseType(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		setFeeTypeFilters();
-		
+
 		calculateGST();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for getting Discrepancies based on Finance Amount
 	 */
 	public void onFulfill$adviseAmount(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if (this.adviseAmount.getActualValue() != null && this.adviseAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
+		if (this.adviseAmount.getActualValue() != null
+				&& this.adviseAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 			//do nothing
 		} else {
 			this.adviseAmount.setValue(BigDecimal.ZERO);
@@ -462,39 +464,42 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	private void calculateGST() {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean taxApplicable = (boolean) this.feeTypeID.getAttribute("TaxApplicable");
 		String taxComp = (String) this.feeTypeID.getAttribute("TaxComponent");
-		
+
 		if (taxApplicable) {
-			
+
 			this.gb_GSTDetails.setVisible(true);
-			FinanceDetail  financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
-			
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "",
+					false);
+
 			// For Calculating the GST amount, converting fees as FinFeeDetail and FinTypeFees and this is for inquiry purpose only, these values are not saving.
 			// GST Calculation is having FinFeeDetailService, so we just use the existing functionality and display the GST amounts.
 			if (financeDetail != null) {
 				BigDecimal adviseAmount = BigDecimal.ZERO;
 				FinFeeDetail finFeeDetail = new FinFeeDetail();
 				FinTypeFees finTypeFee = new FinTypeFees();
-				
-				financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
+
+				financeDetail.setFinanceTaxDetail(
+						financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-				
+
 				String custDftBranch = null;
 				String highPriorityState = null;
 				String highPriorityCountry = null;
-				if(financeDetail.getCustomerDetails() != null){
+				if (financeDetail.getCustomerDetails() != null) {
 					custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-					
+
 					List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
 					if (CollectionUtils.isNotEmpty(addressList)) {
 						for (CustomerAddres customerAddres : addressList) {
-							if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							if (customerAddres.getCustAddrPriority() == Integer
+									.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 								highPriorityState = customerAddres.getCustAddrProvince();
 								highPriorityCountry = customerAddres.getCustAddrCountry();
 								break;
@@ -502,68 +507,72 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 						}
 					}
 				}
-				
-				HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,custDftBranch, highPriorityState,highPriorityCountry, 
+
+				HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(
+						fromBranchCode, custDftBranch, highPriorityState, highPriorityCountry,
 						financeDetail.getFinanceTaxDetail(), financeMain.getFinBranch());
-				
+
 				if (this.adviseAmount.getActualValue() != null) {
-					adviseAmount = (PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
+					adviseAmount = (PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(),
+							PennantConstants.defaultCCYDecPos));
 				}
-				
+
 				finFeeDetail.setCalculatedAmount(adviseAmount);
-				
+
 				this.feeTypeID.getValidatedValue();
-				
+
 				finFeeDetail.setTaxComponent(taxComp);
 				finFeeDetail.setTaxApplicable(taxApplicable);
 				finTypeFee.setTaxComponent(taxComp);
 				finTypeFee.setTaxApplicable(taxApplicable);
 				finTypeFee.setAmount(adviseAmount);
-				
+
 				finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
 				finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
-				
+
 				String taxComponent = "";
-				
+
 				if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
 					taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
-				} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finFeeDetail.getTaxComponent())) {
+				} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
+						finFeeDetail.getTaxComponent())) {
 					taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
 				}
-				
+
 				this.label_TaxComponent.setValue(taxComponent);
-				
+
 				int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-				
+
 				this.feeAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				this.feeAmount.setScale(formatter);
 				this.feeAmount.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
 				readOnlyComponent(true, this.feeAmount);
-				
+
 				if (finFeeDetail.getFinTaxDetails() != null) {
 					FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
-					
+
 					this.cgst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.cgst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetCGST(), formatter));
-					
+
 					this.sgst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.sgst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetSGST(), formatter));
-					
+
 					this.igst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.igst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetIGST(), formatter));
-					
+
 					this.ugst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.ugst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetUGST(), formatter));
-					
+
 					BigDecimal totalGstAmount = BigDecimal.ZERO;
-					totalGstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
-					
+					totalGstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
+							.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
+
 					BigDecimal totalAmount = BigDecimal.ZERO;
 					totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
-					
+
 					this.totalGST.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.totalGST.setValue(PennantAppUtil.formateAmount(totalGstAmount, formatter));
-					
+
 					this.total.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.total.setValue(PennantAppUtil.formateAmount(totalAmount, formatter));
 				}
@@ -577,18 +586,18 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.totalGST.setValue(BigDecimal.ZERO);
 			this.total.setValue(BigDecimal.ZERO);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void setFeeTypeFilters() {
 		logger.debug(Literal.ENTERING);
-		
-		String adviseTypeValue= this.adviseType.getSelectedItem().getValue().toString();
-		
+
+		String adviseTypeValue = this.adviseType.getSelectedItem().getValue().toString();
+
 		Filter filter[] = null;
-		
-		if(StringUtils.equals(adviseTypeValue, PennantConstants.List_Select)) {
+
+		if (StringUtils.equals(adviseTypeValue, PennantConstants.List_Select)) {
 			filter = new Filter[1];
 			filter[0] = new Filter("ManualAdvice", 1, Filter.OP_EQUAL);
 		} else {
@@ -599,7 +608,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setFilters(filter);
 		this.feeTypeID.setValue("");
 		this.feeTypeID.setDescription("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -611,25 +620,27 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 */
 	public void doWriteBeanToComponents(ManualAdvise aManualAdvise) {
 		logger.debug(Literal.ENTERING);
-		
+
 		//FIXME to be changed on adding the payable advises. As of now Advise type is not visible
-	//	this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
-		
+		//	this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
+
 		this.lbl_LoanReference.setValue(financeMain.getFinReference());
 		this.lbl_LoanType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());
 		this.lbl_CustCIF.setValue(financeMain.getLovDescCustCIF() + " - " + financeMain.getLovDescCustShrtName());
 		this.lbl_FinAmount.setValue(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
-		this.lbl_startDate.setValue(DateUtility.formateDate(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
-		this.lbl_MaturityDate.setValue(DateUtility.formateDate(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
-		 
+		this.lbl_startDate
+				.setValue(DateUtility.formateDate(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_MaturityDate
+				.setValue(DateUtility.formateDate(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		setFeeTypeFilters();
 		//this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
 		this.feeTypeID.setAttribute("TaxApplicable", aManualAdvise.isTaxApplicable());
 		this.feeTypeID.setAttribute("TaxComponent", aManualAdvise.getTaxComponent());
-		
+
 		this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 		this.sequence.setValue(aManualAdvise.getSequence());
 		this.adviseAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getAdviseAmount(),
@@ -645,7 +656,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.feeTypeID.setDescription("");
 			this.valueDate.setValue(DateUtility.getAppDate());
 			this.postDate.setValue(DateUtility.getAppDate());
-			
+
 		} else {
 			if (aManualAdvise.getFeeTypeCode() != null) {
 				this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
@@ -660,57 +671,63 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		if (enqiryModule) {
 			this.adviseMovements.setVisible(true);
-			List<ManualAdviseMovements> advisemovementList = manualAdviseService.getAdivseMovements(this.manualAdvise
-					.getAdviseID());
+			List<ManualAdviseMovements> advisemovementList = manualAdviseService
+					.getAdivseMovements(this.manualAdvise.getAdviseID());
 			doFillMovementDetails(advisemovementList);
 		} else {
 			this.adviseMovements.setVisible(false);
 		}
 		this.recordStatus.setValue(manualAdvise.getRecordStatus());
-		
+
 		calculateGST();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * Method for Rendering 
+	 * Method for Rendering
+	 * 
 	 * @param advisemovementList
 	 */
 	private void doFillMovementDetails(List<ManualAdviseMovements> movementList) {
 		logger.debug("Entering");
-		
+
 		this.listBoxAdviseMovements.getItems().clear();
-		if(movementList != null && !movementList.isEmpty()){
+		if (movementList != null && !movementList.isEmpty()) {
 			for (ManualAdviseMovements movement : movementList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				
-				lc = new Listcell(DateUtility.formatDate(movement.getMovementDate(),DateFormat.LONG_DATE.getPattern()));
+
+				lc = new Listcell(
+						DateUtility.formatDate(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(),PennantConstants.defaultCCYDecPos));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(),
+						PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
-				
-				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getPaidAmount(),PennantConstants.defaultCCYDecPos));
+
+				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getPaidAmount(),
+						PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
-				
-				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getWaivedAmount(),PennantConstants.defaultCCYDecPos));
+
+				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getWaivedAmount(),
+						PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
-				
+
 				lc = new Listcell(movement.getStatus());
 				item.appendChild(lc);
-				
-				lc = new Listcell(PennantAppUtil.getlabelDesc(movement.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+
+				lc = new Listcell(PennantAppUtil.getlabelDesc(movement.getReceiptMode(),
+						PennantStaticListUtil.getReceiptModes()));
 				item.appendChild(lc);
 
 				this.listBoxAdviseMovements.appendChild(item);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -769,11 +786,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			if (this.adviseAmount.getActualValue() != null) {
 				aManualAdvise.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(),
 						PennantConstants.defaultCCYDecPos));
-				
+
 				if (StringUtils.equals(this.adviseType.getSelectedItem().getValue().toString(),
 						String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
-					aManualAdvise.setBalanceAmt(PennantApplicationUtil.unFormateAmount(
-							this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
+					aManualAdvise.setBalanceAmt(PennantApplicationUtil
+							.unFormateAmount(this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -803,13 +820,13 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aManualAdvise.setValueDate(this.valueDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aManualAdvise.setPostDate(this.postDate.getValue());
 		} catch (WrongValueException we) {
@@ -866,9 +883,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		doWriteBeanToComponents(manualAdvise);
 		this.btnDelete.setVisible(false);
-		
+
 		setDialog(DialogType.EMBEDDED);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -877,28 +894,26 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		//this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"), null, true, true));
 
-		this.feeTypeID.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
-
+		this.feeTypeID.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
 
 		if (!this.adviseType.isDisabled()) {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
 					Labels.getLabel("label_ManualAdviseDialog_AdviseType.value")));
 		}
- 
+
 		if (!this.adviseAmount.isReadonly()) {
 			this.adviseAmount.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_ManualAdviseDialog_AdviseAmount.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
-		if (!this.valueDate.isDisabled() ) {
-			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"),
-					true, null, null, true));
+		if (!this.valueDate.isDisabled()) {
+			this.valueDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"), true, null, null, true));
 		}
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -918,7 +933,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.waivedAmount.setConstraint("");
 		this.remarks.setConstraint("");
 		this.valueDate.setConstraint("");
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1082,7 +1096,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		readOnlyComponent(true, this.remarks);
 		readOnlyComponent(true, this.valueDate);
 		readOnlyComponent(true, this.postDate);
-		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1153,7 +1166,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		try {
 			if (doProcess(aManualAdvise, tranType)) {
 				refreshList();
-				
+
 				//Customer Notification for Role Identification
 				if (StringUtils.isBlank(aManualAdvise.getNextTaskId())) {
 					aManualAdvise.setNextRoleCode("");
@@ -1162,7 +1175,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 						aManualAdvise.getNextRoleCode(), aManualAdvise.getFinReference(), " Manual Advise ",
 						aManualAdvise.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
-				
+
 				// User Notifications Message/Alert
 				try {
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -1190,7 +1203,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-				
+
 				closeDialog();
 			}
 

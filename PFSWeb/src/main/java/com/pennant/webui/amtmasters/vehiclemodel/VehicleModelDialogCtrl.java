@@ -75,34 +75,31 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMaster/VehicleModel/vehicleModelDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/AMTMaster/VehicleModel/vehicleModelDialog.zul file.
  */
 public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 
 	private static final long serialVersionUID = 1605933161466141898L;
 
 	private static final Logger logger = Logger.getLogger(VehicleModelDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_VehicleModelDialog; // autowired
-	protected Textbox vehicleModelDesc; 		// autowired
+	protected Textbox vehicleModelDesc; // autowired
 	protected ExtendedCombobox vehicleManufacterId;
 
 	// not auto wired vars
-	private VehicleModel vehicleModel; 							 // overhanded per param
+	private VehicleModel vehicleModel; // overhanded per param
 	private transient VehicleModelListCtrl vehicleModelListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient VehicleModelService vehicleModelService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -119,9 +116,8 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected VehicleModel object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected VehicleModel object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -148,14 +144,12 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 				setVehicleModel(null);
 			}
 
-			doLoadWorkFlow(this.vehicleModel.isWorkflow(),
-					this.vehicleModel.getWorkflowId(),
+			doLoadWorkFlow(this.vehicleModel.isWorkflow(), this.vehicleModel.getWorkflowId(),
 					this.vehicleModel.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"VehicleModelDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "VehicleModelDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -164,8 +158,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 			// or
 			// delete vehicleModel here.
 			if (arguments.containsKey("vehicleModelListCtrl")) {
-				setVehicleModelListCtrl((VehicleModelListCtrl) arguments
-						.get("vehicleModelListCtrl"));
+				setVehicleModelListCtrl((VehicleModelListCtrl) arguments.get("vehicleModelListCtrl"));
 			} else {
 				setVehicleModelListCtrl(null);
 			}
@@ -184,26 +177,26 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.vehicleModelDesc.setMaxlength(50);
 		this.vehicleManufacterId.setInputAllowed(false);
-		this.vehicleManufacterId.setDisplayStyle(3); 
+		this.vehicleManufacterId.setDisplayStyle(3);
 		this.vehicleManufacterId.setMandatoryStyle(true);
 		this.vehicleManufacterId.setModuleName("VehicleManufacturer");
 		this.vehicleManufacterId.setValueColumn("ManufacturerId");
 		this.vehicleManufacterId.setDescColumn("ManufacturerName");
 		this.vehicleManufacterId.setValidateColumns(new String[] { "ManufacturerId" });
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
-		}else{
+
+		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
-		
-		logger.debug("Leaving") ;
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -211,21 +204,20 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
+		logger.debug("Entering");
+
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_VehicleModelDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VehicleModelDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VehicleModelDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_VehicleModelDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
-		logger.debug("Leaving") ;
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -303,12 +295,12 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.vehicleModel.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -318,13 +310,13 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 *            VehicleModel
 	 */
 	public void doWriteBeanToComponents(VehicleModel aVehicleModel) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.vehicleModelDesc.setValue(aVehicleModel.getVehicleModelDesc());
 		this.vehicleManufacterId.setValue(String.valueOf(aVehicleModel.getVehicleManufacturerId()));
-		if (aVehicleModel.isNewRecord()){
-			   this.vehicleManufacterId.setDescription("");
-		}else{
-			   this.vehicleManufacterId.setDescription(aVehicleModel.getLovDescVehicleManufacturerName());
+		if (aVehicleModel.isNewRecord()) {
+			this.vehicleManufacterId.setDescription("");
+		} else {
+			this.vehicleManufacterId.setDescription(aVehicleModel.getLovDescVehicleManufacturerName());
 		}
 		this.recordStatus.setValue(aVehicleModel.getRecordStatus());
 		logger.debug("Leaving");
@@ -336,35 +328,35 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 * @param aVehicleModel
 	 */
 	public void doWriteComponentsToBean(VehicleModel aVehicleModel) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			aVehicleModel.setLovDescVehicleManufacturerName(this.vehicleManufacterId.getDescription());
-			aVehicleModel.setVehicleManufacturerId(Long.parseLong(this.vehicleManufacterId.getValidatedValue()));	
-		}catch (WrongValueException we ) {
+			aVehicleModel.setVehicleManufacturerId(Long.parseLong(this.vehicleManufacterId.getValidatedValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-		    aVehicleModel.setVehicleModelDesc(this.vehicleModelDesc.getValue());
-		}catch (WrongValueException we ) {
+			aVehicleModel.setVehicleModelDesc(this.vehicleModelDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aVehicleModel.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -372,8 +364,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVehicleModel
 	 * @throws Exception
@@ -389,10 +380,10 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 			this.vehicleManufacterId.focus();
 		} else {
 			this.vehicleManufacterId.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -410,7 +401,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -419,11 +410,13 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
-		if (!this.vehicleModelDesc.isReadonly()){
-			this.vehicleModelDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleModelDialog_VehicleModelDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		}	
-	logger.debug("Leaving");
+
+		if (!this.vehicleModelDesc.isReadonly()) {
+			this.vehicleModelDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VehicleModelDialog_VehicleModelDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -433,7 +426,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.vehicleModelDesc.setConstraint("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	// CRUD operations
@@ -444,38 +437,39 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final VehicleModel aVehicleModel = new VehicleModel();
 		BeanUtils.copyProperties(getVehicleModel(), aVehicleModel);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_VehicleModelDialog_VehicleModelDesc.value")+" : "+aVehicleModel.getVehicleModelDesc();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_VehicleModelDialog_VehicleModelDesc.value") + " : "
+				+ aVehicleModel.getVehicleModelDesc();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aVehicleModel.getRecordType())){
-				aVehicleModel.setVersion(aVehicleModel.getVersion()+1);
+			if (StringUtils.isBlank(aVehicleModel.getRecordType())) {
+				aVehicleModel.setVersion(aVehicleModel.getVersion() + 1);
 				aVehicleModel.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aVehicleModel.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aVehicleModel,tranType)){
+				if (doProcess(aVehicleModel, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -485,32 +479,32 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
-		if (getVehicleModel().isNewRecord()){
+
+		if (getVehicleModel().isNewRecord()) {
 			vehicleManufacterId.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			vehicleManufacterId.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-	
+
 		this.vehicleModelDesc.setReadonly(isReadOnly("VehicleModelDialog_vehicleModelDesc"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
-			if (this.vehicleModel.isNewRecord()){
+
+			if (this.vehicleModel.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -521,14 +515,14 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		logger.debug("Entering");
 		this.vehicleManufacterId.setReadonly(true);
 		this.vehicleModelDesc.setReadonly(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -544,7 +538,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		this.vehicleManufacterId.setValue("");
 		this.vehicleManufacterId.setDescription("");
 		this.vehicleModelDesc.setValue("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -557,7 +551,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		final VehicleModel aVehicleModel = new VehicleModel();
 		BeanUtils.copyProperties(getVehicleModel(), aVehicleModel);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the VehicleModel object with the components data
@@ -566,34 +560,34 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
-		isNew = aVehicleModel.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aVehicleModel.getRecordType())){
-				aVehicleModel.setVersion(aVehicleModel.getVersion()+1);
-				if(isNew){
+		isNew = aVehicleModel.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aVehicleModel.getRecordType())) {
+				aVehicleModel.setVersion(aVehicleModel.getVersion() + 1);
+				if (isNew) {
 					aVehicleModel.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aVehicleModel.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aVehicleModel.setNewRecord(true);
 				}
 			}
-		}else{
-			aVehicleModel.setVersion(aVehicleModel.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aVehicleModel.setVersion(aVehicleModel.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			
-			if(doProcess(aVehicleModel,tranType)){
+
+			if (doProcess(aVehicleModel, tranType)) {
 				doWriteBeanToComponents(aVehicleModel);
 				refreshList();
 				closeDialog();
@@ -605,16 +599,16 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(VehicleModel aVehicleModel,String tranType){
+	private boolean doProcess(VehicleModel aVehicleModel, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
 		aVehicleModel.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVehicleModel.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVehicleModel.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -637,22 +631,21 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 					}
 				}
 			}
-			
-			
+
 			if (StringUtils.isBlank(nextTaskId)) {
 				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
-				
-				if (nextTasks!=null && nextTasks.length>0){
+
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-						
-						if(nextRoleCode.length()>1){
+
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -661,88 +654,88 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 			aVehicleModel.setNextTaskId(nextTaskId);
 			aVehicleModel.setRoleCode(getRole());
 			aVehicleModel.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aVehicleModel, tranType);
-			
+
+			auditHeader = getAuditHeader(aVehicleModel, tranType);
+
 			String operationRefs = getServiceOperations(taskId, aVehicleModel);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aVehicleModel, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aVehicleModel, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			
-			auditHeader =  getAuditHeader(aVehicleModel, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+
+			auditHeader = getAuditHeader(aVehicleModel, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
 
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
-		
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
+
 		VehicleModel aVehicleModel = (VehicleModel) auditHeader.getAuditDetail().getModelData();
-		
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getVehicleModelService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getVehicleModelService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getVehicleModelService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getVehicleModelService().doApprove(auditHeader);
 
-						if(aVehicleModel.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aVehicleModel.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getVehicleModelService().doReject(auditHeader);
-						if(aVehicleModel.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aVehicleModel.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_VehicleModelDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				auditHeader =	ErrorControl.showErrorDetails(this.window_VehicleModelDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(),true);
+				auditHeader = ErrorControl.showErrorDetails(this.window_VehicleModelDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -753,28 +746,27 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
-		
+
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	public void onFulfill$vehicleManufacterId(Event event){
-		logger.debug("Entering"+event);
-		   Object dataObject = vehicleManufacterId.getObject();
-		   if (dataObject instanceof String){
-			   this.vehicleManufacterId.setValue(dataObject.toString());
-			   this.vehicleManufacterId.setDescription("");
-		   }else{
-			   VehicleManufacturer details= (VehicleManufacturer) dataObject;
-				if (details != null) {
-					this.vehicleManufacterId.setValue(String.valueOf(details.getManufacturerId()));
-					this.vehicleManufacterId.setDescription(details.getManufacturerName());
-				}
-		   }
-		   logger.debug("Leaving"+event);
-		}
 
+	public void onFulfill$vehicleManufacterId(Event event) {
+		logger.debug("Entering" + event);
+		Object dataObject = vehicleManufacterId.getObject();
+		if (dataObject instanceof String) {
+			this.vehicleManufacterId.setValue(dataObject.toString());
+			this.vehicleManufacterId.setDescription("");
+		} else {
+			VehicleManufacturer details = (VehicleManufacturer) dataObject;
+			if (details != null) {
+				this.vehicleManufacterId.setValue(String.valueOf(details.getManufacturerId()));
+				this.vehicleManufacterId.setDescription(details.getManufacturerName());
+			}
+		}
+		logger.debug("Leaving" + event);
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -811,32 +803,32 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	public VehicleModelListCtrl getVehicleModelListCtrl() {
 		return this.vehicleModelListCtrl;
 	}
-	
-	private AuditHeader getAuditHeader(VehicleModel aVehicleModel, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVehicleModel.getBefImage(), aVehicleModel);   
-		return new AuditHeader(String.valueOf(aVehicleModel.getVehicleModelId()),null,null,null,auditDetail,aVehicleModel.getUserDetails(),getOverideMap());
+
+	private AuditHeader getAuditHeader(VehicleModel aVehicleModel, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVehicleModel.getBefImage(), aVehicleModel);
+		return new AuditHeader(String.valueOf(aVehicleModel.getVehicleModelId()), null, null, null, auditDetail,
+				aVehicleModel.getUserDetails(), getOverideMap());
 	}
-	
+
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_VehicleModelDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 	}
-	
-	
+
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering");
 		// logger.debug(event.toString());
-		
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
 		map.put("control", this);
-		
+
 		// call the zul-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
@@ -847,20 +839,22 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	}
 
 	private void doSetLOVValidation() {
-		this.vehicleManufacterId.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerId.value"), null, true,true));
+		this.vehicleManufacterId.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_VehicleManufacturerDialog_ManufacturerId.value"), null, true, true));
 	}
+
 	private void doRemoveLOVValidation() {
 		this.vehicleManufacterId.setConstraint("");
 	}
-	
-	private Notes getNotes(){
+
+	private Notes getNotes() {
 		Notes notes = new Notes();
 		notes.setModuleName("VehicleModel");
 		notes.setReference(String.valueOf(getVehicleModel().getVehicleModelId()));
 		notes.setVersion(getVehicleModel().getVersion());
 		return notes;
 	}
-	
+
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -872,9 +866,9 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getVehicleModelListCtrl().search();
-	} 
+	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;

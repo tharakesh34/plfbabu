@@ -64,13 +64,12 @@ import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.payorderissue.model.PayOrderIssueListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/PayOrderIssue/PayOrderIssueList.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssue/PayOrderIssueList.zul file.
  */
 public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> {
 	private static final long serialVersionUID = -6951358943287040101L;
@@ -121,7 +120,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		super.queueTableName = "PayOrderIssueHeader_View";
 		super.enquiryTableName = "PayOrderIssueHeader_View";
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 
@@ -138,7 +137,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PayOrderIssueList(Event event) {
-		
+
 		// Set the page level components.
 		setPageComponents(window_PayOrderIssueList, borderLayout_PayOrderIssueList, listBoxPayOrderIssue,
 				pagingPayOrderIssueList);
@@ -286,7 +285,8 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -299,7 +299,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
@@ -319,7 +319,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	public void setPayOrderIssueService(PayOrderIssueService payOrderIssueService) {
 		this.payOrderIssueService = payOrderIssueService;
 	}

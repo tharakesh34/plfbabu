@@ -19,46 +19,45 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
-
 public class FetchDedupDetails {
 
-	private static final Logger logger = Logger.getLogger(FetchDedupDetails.class);	
-	protected Window window_CustomerQDEDialog; 
+	private static final Logger logger = Logger.getLogger(FetchDedupDetails.class);
+	protected Window window_CustomerQDEDialog;
 	private static DedupParmService dedupParmService;
-	private int userAction= -1;
+	private int userAction = -1;
 
 	private String FINDEDUPLABELSWBG = "CustCIF,FinLimitRef,CustCRCPR,ChassisNumber,EngineNumber,DupReference,StartDate,"
 			+ "FinanceAmount,FinanceType,ProfitAmount,StageDesc,DedupeRule,OverrideUser";
 
 	private String FINDEDUPLABELSPBG = "CustCIF,CustCRCPR,ChassisNumber,EngineNumber,DupReference,StartDate,"
 			+ "FinanceAmount,FinanceType,ProfitAmount,StageDesc,DedupeRule,OverrideUser";
-	
-	
 
 	private CustomerDetails customerDetails;
 	private FinanceDetail financeDetail;
 	private List<FinanceDedup> financeDedupList;
 
-	public FetchDedupDetails(){
+	public FetchDedupDetails() {
 		super();
 	}
 
-	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails aCustomerDetails,Component parent){
+	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails aCustomerDetails,
+			Component parent) {
 		return new FetchDedupDetails(userRole, aCustomerDetails, parent).getCustomerDetails();
 	}
 
-	public static FinanceDetail getLoanDedup(String userRole, FinanceDetail aFinanceDetail,Component parent ,String curLoginUser){
-		return new FetchDedupDetails(userRole, aFinanceDetail, parent,curLoginUser).getFinanceDetail();
+	public static FinanceDetail getLoanDedup(String userRole, FinanceDetail aFinanceDetail, Component parent,
+			String curLoginUser) {
+		return new FetchDedupDetails(userRole, aFinanceDetail, parent, curLoginUser).getFinanceDetail();
 	}
-
 
 	/**
 	 * Method of Dedup Check for Customer Details
+	 * 
 	 * @param userRole
 	 * @param aCustomerDetails
 	 * @param parent
 	 */
-	private  FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails,Component parent){
+	private FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails, Component parent) {
 		super();
 
 		setCustomerDetails(aCustomerDetails);
@@ -66,20 +65,20 @@ public class FetchDedupDetails {
 		List<CustomerDedup> customerDedup = getDedupParmService().fetchCustomerDedupDetails(userRole, aCustomerDetails);
 		ShowDedupListBox details = null;
 
-		if(customerDedup.size() > 0) {
-			String compareFileds[]=new String[2];
-			compareFileds[0]=PennantConstants.CUST_DEDUP_LISTFILED2;
-			compareFileds[1]=PennantConstants.CUST_DEDUP_LISTFILED3;
-			Object dataObject = ShowDedupListBox.show(parent,customerDedup,PennantConstants.CUST_DEDUP_LIST_FIELDS,
-					aCustomerDetails.getCustomer(),aCustomerDetails.getCustomerDocumentsList(),compareFileds, null);
-			details 	= (ShowDedupListBox) dataObject;
+		if (customerDedup.size() > 0) {
+			String compareFileds[] = new String[2];
+			compareFileds[0] = PennantConstants.CUST_DEDUP_LISTFILED2;
+			compareFileds[1] = PennantConstants.CUST_DEDUP_LISTFILED3;
+			Object dataObject = ShowDedupListBox.show(parent, customerDedup, PennantConstants.CUST_DEDUP_LIST_FIELDS,
+					aCustomerDetails.getCustomer(), aCustomerDetails.getCustomerDocumentsList(), compareFileds, null);
+			details = (ShowDedupListBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());		
-				logger.debug("The User Action is "+details.getUserAction());
+				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
 			}
-		}else {
+		} else {
 			userAction = -1;
 		}
 
@@ -101,12 +100,13 @@ public class FetchDedupDetails {
 
 	/**
 	 * Method of Dedup Check for Finance Details
+	 * 
 	 * @param userRole
 	 * @param aFinanceDetail
 	 * @param parent
 	 */
 	@SuppressWarnings("unchecked")
-	private  FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail,Component parent,String curLoginUser){
+	private FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail, Component parent, String curLoginUser) {
 		super();
 
 		//Data Preparation for Rule Executions
@@ -125,49 +125,50 @@ public class FetchDedupDetails {
 		financeDedup.setCustDOB(customer.getCustDOB());
 		financeDedup.setMobileNumber(getCustMobileNum(aFinanceDetail));
 		financeDedup.setTradeLicenceNo(customer.getCustTradeLicenceNum());
-		
+
 		//Check Customer is Existing or New Customer Object
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-				
+
 		//finance data to set in to finance dedup 
 		financeDedup.setFinanceAmount(aFinanceMain.getFinAmount());
 		financeDedup.setProfitAmount(aFinanceMain.getTotalGrossPft());
 		financeDedup.setFinanceType(aFinanceMain.getFinType());
 		financeDedup.setStartDate(aFinanceMain.getFinStartDate());
 		financeDedup.setFinLimitRef(aFinanceMain.getFinLimitRef());
-		
+
 		financeDedup.setFinReference(aFinanceMain.getFinReference());
-		financeDedup.setLikeCustFName(financeDedup.getCustFName()!=null?"%"+financeDedup.getCustFName()+"%":"");
-		financeDedup.setLikeCustMName(financeDedup.getCustMName()!=null?"%"+financeDedup.getCustMName()+"%":"");
-		financeDedup.setLikeCustLName(financeDedup.getCustLName()!=null?"%"+financeDedup.getCustLName()+"%":"");
-		
-		
+		financeDedup
+				.setLikeCustFName(financeDedup.getCustFName() != null ? "%" + financeDedup.getCustFName() + "%" : "");
+		financeDedup
+				.setLikeCustMName(financeDedup.getCustMName() != null ? "%" + financeDedup.getCustMName() + "%" : "");
+		financeDedup
+				.setLikeCustLName(financeDedup.getCustLName() != null ? "%" + financeDedup.getCustLName() + "%" : "");
+
 		//For Existing Customer/ New Customer
 		List<FinanceDedup> loanDedup = new ArrayList<FinanceDedup>();
-		List<FinanceDedup> dedupeRuleData = getDedupParmService().fetchFinDedupDetails(userRole,financeDedup, 
+		List<FinanceDedup> dedupeRuleData = getDedupParmService().fetchFinDedupDetails(userRole, financeDedup,
 				curLoginUser, aFinanceMain.getFinType());
 		loanDedup.addAll(dedupeRuleData);
 
 		ShowDedupListBox details = null;
 		Object dataObject;
-		if(!loanDedup.isEmpty()) {
-			if(FinanceConstants.FIN_DIVISION_CORPORATE.equals(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision())){
-				
-				dataObject = ShowDedupListBox.show(parent,loanDedup,FINDEDUPLABELSWBG,
-						financeDedup, curLoginUser);
-			}else{
-				dataObject = ShowDedupListBox.show(parent,loanDedup,FINDEDUPLABELSPBG,
-						financeDedup, curLoginUser);
+		if (!loanDedup.isEmpty()) {
+			if (FinanceConstants.FIN_DIVISION_CORPORATE
+					.equals(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision())) {
+
+				dataObject = ShowDedupListBox.show(parent, loanDedup, FINDEDUPLABELSWBG, financeDedup, curLoginUser);
+			} else {
+				dataObject = ShowDedupListBox.show(parent, loanDedup, FINDEDUPLABELSPBG, financeDedup, curLoginUser);
 			}
-			details 	= (ShowDedupListBox) dataObject;
+			details = (ShowDedupListBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());		
-				logger.debug("The User Action is "+details.getUserAction());
+				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
-				setFinanceDedupList((List<FinanceDedup>)details.getObject());
+				setFinanceDedupList((List<FinanceDedup>) details.getObject());
 			}
-		}else {
+		} else {
 			userAction = -1;
 		}
 
@@ -183,16 +184,15 @@ public class FetchDedupDetails {
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(false);
 		}
 
-
 		setFinanceDetail(aFinanceDetail);
 	}
 
 	private String getCustMobileNum(FinanceDetail aFinanceDetail) {
 		String custMobileNumber = "";
-		if(aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null){
-			for(CustomerPhoneNumber custPhone: aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
-				if(custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)){
-					custMobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), 
+		if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+			for (CustomerPhoneNumber custPhone : aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
+				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+					custMobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
 							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
 					break;
 				}
@@ -201,7 +201,6 @@ public class FetchDedupDetails {
 		return custMobileNumber;
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -209,6 +208,7 @@ public class FetchDedupDetails {
 	public DedupParmService getDedupParmService() {
 		return dedupParmService;
 	}
+
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		FetchDedupDetails.dedupParmService = dedupParmService;
 	}
@@ -216,6 +216,7 @@ public class FetchDedupDetails {
 	public int getUserAction() {
 		return userAction;
 	}
+
 	public void setUserAction(int userAction) {
 		this.userAction = userAction;
 	}
@@ -223,6 +224,7 @@ public class FetchDedupDetails {
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
 	}
+
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
 	}
@@ -230,6 +232,7 @@ public class FetchDedupDetails {
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}

@@ -54,14 +54,21 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
  */
 public interface CustomerAddresService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerAddres getCustomerAddresById(long id,String addType);
-	CustomerAddres getApprovedCustomerAddresById(long  id,String addType);
-	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader);
-	AuditHeader doReject(AuditHeader auditHeader);
-	List<CustomerAddres> getApprovedCustomerAddresById(long  id);
-	AuditDetail doValidations(CustomerAddres customerAddres,String method);
-	int getVersion(long id, String addtype);
 
+	CustomerAddres getCustomerAddresById(long id, String addType);
+
+	CustomerAddres getApprovedCustomerAddresById(long id, String addType);
+
+	AuditHeader delete(AuditHeader auditHeader);
+
+	AuditHeader doApprove(AuditHeader auditHeader);
+
+	AuditHeader doReject(AuditHeader auditHeader);
+
+	List<CustomerAddres> getApprovedCustomerAddresById(long id);
+
+	AuditDetail doValidations(CustomerAddres customerAddres, String method);
+
+	int getVersion(long id, String addtype);
 
 }

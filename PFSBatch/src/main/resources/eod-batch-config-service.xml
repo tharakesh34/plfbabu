@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:lang="http://www.springframework.org/schema/lang"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:lang="http://www.springframework.org/schema/lang"
 	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
@@ -41,10 +42,10 @@
 		<property name="paymentRecoveryDetailDAO" ref="paymentRecoveryDetailDAO" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<bean id="paymentRecoveryHeaderDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryHeaderDAOImpl" parent="basicDao"/>
-	
-	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl" parent="basicDao"/>
+
+	<bean id="paymentRecoveryHeaderDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryHeaderDAOImpl" parent="basicDao" />
+
+	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl" parent="basicDao" />
 
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
@@ -53,10 +54,10 @@
 		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
 
-	<!-- Late Pay Buckets-->
+	<!-- Late Pay Buckets -->
 	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper">
 	</bean>
-	
+
 	<!-- Late Pay Interest -->
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
 	</bean>
@@ -94,7 +95,7 @@
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
-	
+
 	<!-- Finance Status movements -->
 	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper">
 	</bean>
@@ -104,7 +105,7 @@
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!-- Date Service -->
-	<bean id="dateService" class="com.pennant.app.core.DateService"  parent="serviceHelper">
+	<bean id="dateService" class="com.pennant.app.core.DateService" parent="serviceHelper">
 	</bean>
 	<!-- Date rollover -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
@@ -161,16 +162,14 @@
 
 	<!-- Income Amortization IND AS -->
 
-	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService"
-		parent="serviceHelper">
+	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService" parent="serviceHelper">
 		<property name="dataSource" ref="dataSource" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
 	</bean>
 
 	<!-- ProjectedAmortizationService -->
-	<bean id="projectedAmortizationService" class="com.pennant.app.core.ProjectedAmortizationService"
-		parent="serviceHelper">
+	<bean id="projectedAmortizationService" class="com.pennant.app.core.ProjectedAmortizationService" parent="serviceHelper">
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
@@ -178,5 +177,5 @@
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
-   
+
 </beans>

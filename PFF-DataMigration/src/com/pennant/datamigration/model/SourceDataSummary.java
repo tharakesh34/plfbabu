@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.aspose.pdf.Operator.BI;
-
 public class SourceDataSummary implements Serializable {
 
 	private static final long serialVersionUID = 1183720618731771888L;
@@ -46,8 +44,8 @@ public class SourceDataSummary implements Serializable {
 	private BigDecimal fsd_SchdPftPaid = BigDecimal.ZERO;
 	private BigDecimal fsd_SchdPriPaid = BigDecimal.ZERO;
 	private BigDecimal fsd_CpzAmount = BigDecimal.ZERO;
-	private BigDecimal fsd_FirstRepay =  BigDecimal.ZERO;
-	private BigDecimal fsd_LastRepay =  BigDecimal.ZERO;
+	private BigDecimal fsd_FirstRepay = BigDecimal.ZERO;
+	private BigDecimal fsd_LastRepay = BigDecimal.ZERO;
 	private BigDecimal rch_TotalReceiptAmount = BigDecimal.ZERO;
 	private BigDecimal rch_TotalWaivedAmount = BigDecimal.ZERO;
 	private BigDecimal rch_TotalFeeAmount = BigDecimal.ZERO;
@@ -66,7 +64,7 @@ public class SourceDataSummary implements Serializable {
 	private BigDecimal rad_TOTPAID_DOCC = BigDecimal.ZERO;
 	private BigDecimal rad_TOTPAID_APF = BigDecimal.ZERO;
 	private BigDecimal rad_TOTPAID_GINS = BigDecimal.ZERO;
-	private BigDecimal rad_TOTPAID_EXS   = BigDecimal.ZERO;
+	private BigDecimal rad_TOTPAID_EXS = BigDecimal.ZERO;
 	private BigDecimal rad_TOTPAID_PAC = BigDecimal.ZERO;
 	private BigDecimal rad_TOTPAID_INS = BigDecimal.ZERO;
 	private BigDecimal rad_TOTPAID_RI = BigDecimal.ZERO;
@@ -119,7 +117,7 @@ public class SourceDataSummary implements Serializable {
 	private String errors = "";
 	private String warnings = "";
 	private String information = "";
-	
+
 	public String getFm_FinReference() {
 		return fm_FinReference;
 	}

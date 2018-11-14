@@ -54,7 +54,6 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,20 +66,19 @@ public class BounceReasonListModelItemRenderer implements ListitemRenderer<Bounc
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, BounceReason bounceReason, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(bounceReason.getBounceCode());
+		lc = new Listcell(bounceReason.getBounceCode());
 		lc.setParent(item);
 		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getReasonType(),
 				bounceReason.getReasonType()));
-	  	lc.setParent(item);
+		lc.setParent(item);
 		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getCategoryType(),
 				bounceReason.getCategory()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(bounceReason.getReturnCode());
+		lc.setParent(item);
+		lc = new Listcell(bounceReason.getReturnCode());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -88,12 +86,12 @@ public class BounceReasonListModelItemRenderer implements ListitemRenderer<Bounc
 		cbActive.setChecked(bounceReason.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(bounceReason.getRecordStatus());
+		lc = new Listcell(bounceReason.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(bounceReason.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("bounceID", bounceReason.getBounceID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBounceReasonItemDoubleClicked");
 	}
 }

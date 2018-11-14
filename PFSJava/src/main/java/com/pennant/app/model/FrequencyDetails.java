@@ -52,30 +52,31 @@ import org.apache.commons.lang.StringUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FrequencyDetails implements Serializable {
-    
-    private static final long serialVersionUID = -7274099191177820109L;
-    
+
+	private static final long serialVersionUID = -7274099191177820109L;
+
 	private String frequency;
 	private String frequencyCode;
 	private int frequencyMonth;
 	private int frequencyDay;
 	private int terms;
-	private String  frequencyDescription;
-	private Date  nextFrequencyDate;
+	private String frequencyDescription;
+	private Date nextFrequencyDate;
 	private ErrorDetail errorDetails;
 	private List<Calendar> scheduleList;
-	
-	public FrequencyDetails(){
+
+	public FrequencyDetails() {
 		super();
-	} 
-	
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
-	public FrequencyDetails(String frequency ){
+
+	public FrequencyDetails(String frequency) {
 		this.frequency = frequency;
 	}
+
 	public String getFrequency() {
 		return frequency;
 	}
@@ -83,8 +84,9 @@ public class FrequencyDetails implements Serializable {
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
 	}
+
 	public char getCharFrequencyCode() {
-		if(StringUtils.trimToEmpty(frequencyCode).length()>0){
+		if (StringUtils.trimToEmpty(frequencyCode).length() > 0) {
 			return frequencyCode.trim().charAt(0);
 		}
 		return ' ';
@@ -93,6 +95,7 @@ public class FrequencyDetails implements Serializable {
 	public String getFrequencyCode() {
 		return frequencyCode;
 	}
+
 	public void setFrequencyCode(String frequencyCode) {
 		this.frequencyCode = frequencyCode;
 	}
@@ -100,6 +103,7 @@ public class FrequencyDetails implements Serializable {
 	public int getFrequencyMonth() {
 		return frequencyMonth;
 	}
+
 	public void setFrequencyMonth(int frequencyMonth) {
 		this.frequencyMonth = frequencyMonth;
 	}
@@ -107,6 +111,7 @@ public class FrequencyDetails implements Serializable {
 	public int getFrequencyDay() {
 		return frequencyDay;
 	}
+
 	public void setFrequencyDay(int frequencyDay) {
 		this.frequencyDay = frequencyDay;
 	}
@@ -114,13 +119,15 @@ public class FrequencyDetails implements Serializable {
 	public int getTerms() {
 		return terms;
 	}
+
 	public void setTerms(int terms) {
 		this.terms = terms;
-	} 
-	
+	}
+
 	public String getFrequencyDescription() {
 		return frequencyDescription;
 	}
+
 	public void setFrequencyDescription(String frequencyDescription) {
 		this.frequencyDescription = frequencyDescription;
 	}
@@ -128,6 +135,7 @@ public class FrequencyDetails implements Serializable {
 	public Date getNextFrequencyDate() {
 		return nextFrequencyDate;
 	}
+
 	public void setNextFrequencyDate(Date nextFrequencyDate) {
 		this.nextFrequencyDate = nextFrequencyDate;
 	}
@@ -135,6 +143,7 @@ public class FrequencyDetails implements Serializable {
 	public ErrorDetail getErrorDetails() {
 		return errorDetails;
 	}
+
 	public void setErrorDetails(ErrorDetail errorDetails) {
 		this.errorDetails = errorDetails;
 	}
@@ -142,8 +151,9 @@ public class FrequencyDetails implements Serializable {
 	public List<Calendar> getScheduleList() {
 		return scheduleList;
 	}
+
 	public void setScheduleList(List<Calendar> scheduleList) {
 		this.scheduleList = scheduleList;
 	}
-	
+
 }

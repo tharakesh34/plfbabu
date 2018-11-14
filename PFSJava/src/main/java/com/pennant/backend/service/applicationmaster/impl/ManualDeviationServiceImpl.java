@@ -64,10 +64,10 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ManualDeviation</b>.<br>
  */
 public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> implements ManualDeviationService {
-	private static final Logger	logger	= Logger.getLogger(ManualDeviationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ManualDeviationServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
-	private ManualDeviationDAO	manualDeviationDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private ManualDeviationDAO manualDeviationDAO;
 	private ProductDeviationDAO productDeviationDAO;
 
 	// ******************************************************//
@@ -103,7 +103,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 	public void setManualDeviationDAO(ManualDeviationDAO manualDeviationDAO) {
 		this.manualDeviationDAO = manualDeviationDAO;
 	}
-	
+
 	public ProductDeviationDAO getProductDeviationDAO() {
 		return productDeviationDAO;
 	}
@@ -360,8 +360,8 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 			boolean isDeviationCodeExists = productDeviationDAO.isExistsDeviationID(manualDeviation.getDeviationID(),
 					"_View");
 			if (isDeviationCodeExists) {
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", new String[] {
-						PennantJavaUtil.getLabel("label_Code") + ":" + manualDeviation.getCode() },
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006",
+						new String[] { PennantJavaUtil.getLabel("label_Code") + ":" + manualDeviation.getCode() },
 						null));
 			}
 		}

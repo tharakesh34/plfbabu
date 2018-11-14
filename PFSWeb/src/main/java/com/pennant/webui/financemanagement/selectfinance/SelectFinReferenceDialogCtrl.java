@@ -86,17 +86,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/
- * SelectFinanceTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
  */
 public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = Logger.getLogger(SelectFinReferenceDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_SelectFinReferenceDialog; // autoWired
 	protected ExtendedCombobox finReference; // autoWired
@@ -142,9 +140,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -155,16 +152,15 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// Set the page level components.
 		setPageComponents(window_SelectFinReferenceDialog);
 
-
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 			FinanceDetail befImage = new FinanceDetail();
-			if(this.financeDetail != null){
+			if (this.financeDetail != null) {
 				BeanUtils.copyProperties(this.financeDetail, befImage);
 				this.financeDetail.setBefImage(befImage);
 				setFinanceDetail(this.financeDetail);
-			}else{
+			} else {
 				setFinanceDetail(null);
 			}
 
@@ -293,12 +289,11 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			int allowedDays = SysParamUtil.getValueAsInt("REINSTATE_FINANCE_ALLOWEDDAYS");
 			Date appDate = DateUtility.getAppDate();
 			Date allowedDate = DateUtility.addDays(appDate, -allowedDays);
-			this.finReference.setFilters(new Filter[] {
-					new Filter("LastMntOn", allowedDate, Filter.OP_GREATER_THAN),
+			this.finReference.setFilters(new Filter[] { new Filter("LastMntOn", allowedDate, Filter.OP_GREATER_THAN),
 					new Filter("RcdMaintainSts", "", Filter.OP_EQUAL) });
 		}
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
-			this.finReference.setFilters(new Filter[] {	new Filter("FinIsActive", 0, Filter.OP_EQUAL)});
+			this.finReference.setFilters(new Filter[] { new Filter("FinIsActive", 0, Filter.OP_EQUAL) });
 		}
 
 	}
@@ -332,8 +327,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.custCIF.setValue(String.valueOf(finMain.getCustID()));
 				custDetail = getCustomerDetailsService().getCustomerDetailsById(finMain.getCustID(), true, "_View");
 				if (custDetail != null && custDetail.getCustomer() != null) {
-					this.label_SelectFinReferenceDialog_CustShrtName.setValue(custDetail.getCustomer()
-							.getCustShrtName());
+					this.label_SelectFinReferenceDialog_CustShrtName
+							.setValue(custDetail.getCustomer().getCustShrtName());
 				}
 
 				this.customerRow.setVisible(true);
@@ -356,9 +351,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doClearMessage();
 		this.finReference.setErrorMessage("");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 		if (StringUtils.isBlank(this.finReference.getValue())) {
 
@@ -428,8 +422,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			map.put("financeDetail", getFinacneDetail());
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions
-						.createComponents("/WEB-INF/pages/FinanceManagement/Provision/ProvisionDialog.zul", null, map);
+				Executions.createComponents("/WEB-INF/pages/FinanceManagement/Provision/ProvisionDialog.zul", null,
+						map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
@@ -459,8 +453,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				"_View", false);
 		financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
 		financeDetail.setCustomerDetails(custDetail);
-		financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE",
-				eventCode, moduleDefiner, false);
+		financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE", eventCode,
+				moduleDefiner, false);
 		return financeDetail;
 	}
 

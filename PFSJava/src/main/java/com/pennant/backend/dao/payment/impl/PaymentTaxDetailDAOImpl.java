@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.payment.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -75,14 +74,16 @@ public class PaymentTaxDetailDAOImpl extends BasicDao<PaymentTaxDetail> implemen
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PaymentDetailID", paymentDetailID);
 
-		StringBuilder selectSql = new StringBuilder("Select PaymentDetailID , PaymentID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST ");
+		StringBuilder selectSql = new StringBuilder(
+				"Select PaymentDetailID , PaymentID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST ");
 		selectSql.append(" From PaymentTaxDetail");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where PaymentDetailID =:PaymentDetailID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<PaymentTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentTaxDetail.class);
-		PaymentTaxDetail taxDetail = null; 
+		RowMapper<PaymentTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentTaxDetail.class);
+		PaymentTaxDetail taxDetail = null;
 		try {
 			taxDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -100,8 +101,10 @@ public class PaymentTaxDetailDAOImpl extends BasicDao<PaymentTaxDetail> implemen
 
 		StringBuilder insertSql = new StringBuilder("Insert Into PaymentTaxDetail");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (PaymentDetailID , PaymentID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST)");
-		insertSql.append(" Values(:PaymentDetailID , :PaymentID, :TaxComponent , :PaidCGST , :PaidSGST , :PaidUGST  , :PaidIGST, :TotalGST)");
+		insertSql.append(
+				" (PaymentDetailID , PaymentID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST)");
+		insertSql.append(
+				" Values(:PaymentDetailID , :PaymentID, :TaxComponent , :PaidCGST , :PaidSGST , :PaidUGST  , :PaidIGST, :TotalGST)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -109,7 +112,7 @@ public class PaymentTaxDetailDAOImpl extends BasicDao<PaymentTaxDetail> implemen
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void deleteByPaymentID(long paymentID, TableType tableType) {
 		logger.debug("Entering");
@@ -125,18 +128,18 @@ public class PaymentTaxDetailDAOImpl extends BasicDao<PaymentTaxDetail> implemen
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void delete(long receiptSeqID, TableType tableType) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PaymentDetailID", receiptSeqID);
-		
+
 		StringBuilder deleteSql = new StringBuilder(" DELETE From PaymentTaxDetail");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" where PaymentDetailID = :PaymentDetailID ");
-		
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");

@@ -41,7 +41,6 @@
  ********************************************************************************************
 */
 
-
 package com.pennant.webui.dedup.dedupfields;
 
 import java.util.ArrayList;
@@ -49,23 +48,24 @@ import java.util.List;
 
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
+
 public class BuilderUtilListbox {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ListModel operatorLabel() {
 
 		List data = new ArrayList();
-		data.add("EQUALS"); 
-		data.add("LIKE"); 
+		data.add("EQUALS");
+		data.add("LIKE");
 		return new ListModelList(data);
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ListModel operatorValue() {
 
 		List data = new ArrayList();
-		data.add(" = "); 
-		data.add(" LIKE "); 
+		data.add(" = ");
+		data.add(" LIKE ");
 		return new ListModelList(data);
 	}
 
@@ -73,10 +73,10 @@ public class BuilderUtilListbox {
 	public static ListModel getLogicModel() {
 
 		List data = new ArrayList();
-		data.add("AND"); 		
-		data.add("OR"); 
+		data.add("AND");
+		data.add("OR");
 
-		return new  ListModelList(data);
+		return new ListModelList(data);
 	}
-		
+
 }

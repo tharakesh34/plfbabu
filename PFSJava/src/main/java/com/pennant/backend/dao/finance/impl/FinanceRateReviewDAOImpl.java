@@ -80,13 +80,14 @@ public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implem
 	 * @return RepayInstruction
 	 */
 	@Override
-	public List<FinanceRateReview> getFinanceRateReviewById(final String id,Date date) {
+	public List<FinanceRateReview> getFinanceRateReviewById(final String id, Date date) {
 		logger.debug("Entering");
 
 		FinanceRateReview financeRateReview = new FinanceRateReview();
 		financeRateReview.setFinReference(id);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, RateType, Currency,ValueDate, EffectiveDate,");
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinReference, RateType, Currency,ValueDate, EffectiveDate,");
 		selectSql.append(" EventFromDate, EventToDate, RecalFromdate, RecalToDate, EMIAmount");
 		selectSql.append(" From FinanceRateReview");
 		selectSql.append(" Where FinReference =:FinReference and ValueDate = :ValueDate");
@@ -97,7 +98,7 @@ public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implem
 				.newInstance(FinanceRateReview.class);
 
 		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeRateReview = null;
@@ -114,7 +115,8 @@ public class FinanceRateReviewDAOImpl extends BasicDao<FinanceRateReview> implem
 		insertSql.append(" FinanceRateReview");
 		insertSql.append(" ( FinReference, RateType, Currency,ValueDate, EffectiveDate, EventFromDate, EventToDate, ");
 		insertSql.append("  RecalFromdate, RecalToDate, EMIAmount ) ");
-		insertSql.append(" Values ( :FinReference, :RateType, :Currency, :ValueDate , :EffectiveDate, :EventFromDate, ");
+		insertSql
+				.append(" Values ( :FinReference, :RateType, :Currency, :ValueDate , :EffectiveDate, :EventFromDate, ");
 		insertSql.append(" :EventToDate, :RecalFromdate, :RecalToDate, :EMIAmount)");
 
 		logger.debug("insertSql: " + insertSql.toString());

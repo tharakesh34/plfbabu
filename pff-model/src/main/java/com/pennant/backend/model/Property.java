@@ -46,7 +46,7 @@ public class Property {
 	private Object key;
 	private String value;
 	private String parent;
-	
+
 	public Property() {
 		super();
 	}
@@ -72,7 +72,7 @@ public class Property {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	public String getParent() {
 		return parent;
 	}

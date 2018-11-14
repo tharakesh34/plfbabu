@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.systemmasters.DivisionDetailService;
 import com.pennant.webui.systemmasters.divisiondetail.model.DivisionDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailList.zul file.

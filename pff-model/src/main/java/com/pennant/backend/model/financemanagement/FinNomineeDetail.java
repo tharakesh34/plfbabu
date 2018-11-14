@@ -53,12 +53,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinNomineeDetail table</b>.<br>
  *
  */
-public class FinNomineeDetail extends AbstractWorkflowEntity  implements Entity {
+public class FinNomineeDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long nomineeId = Long.MIN_VALUE;
 	private String finReference;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private FinNomineeDetail befImage;
 	private LoggedInUser userDetails;
 	private NomineeDetail nomineeDetail;
@@ -80,8 +80,8 @@ public class FinNomineeDetail extends AbstractWorkflowEntity  implements Entity 
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("nomineeDetail");
 		return excludeFields;
 	}
@@ -90,12 +90,14 @@ public class FinNomineeDetail extends AbstractWorkflowEntity  implements Entity 
 		return nomineeId;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.nomineeId = id;
 	}
+
 	public long getNomineeId() {
 		return nomineeId;
 	}
+
 	public void setNomineeId(long nomineeId) {
 		this.nomineeId = nomineeId;
 	}
@@ -103,6 +105,7 @@ public class FinNomineeDetail extends AbstractWorkflowEntity  implements Entity 
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -134,5 +137,5 @@ public class FinNomineeDetail extends AbstractWorkflowEntity  implements Entity 
 	public void setNomineeDetail(NomineeDetail nomineeDetail) {
 		this.nomineeDetail = nomineeDetail;
 	}
-	
+
 }

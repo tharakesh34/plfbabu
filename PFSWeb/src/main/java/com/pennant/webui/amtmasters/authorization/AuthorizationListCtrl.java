@@ -63,9 +63,9 @@ import com.pennant.backend.service.amtmasters.AuthorizationService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.amtmasters.authorization.model.AuthorizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/AMTMasters/Authorization/AuthorizationList.zul file.
@@ -136,7 +136,7 @@ public class AuthorizationListCtrl extends GFCBaseListCtrl<Authorization> {
 		registerButton(button_AuthorizationList_AuthorizationSearch);
 
 		fillComboBox(this.authType, "", PennantStaticListUtil.getAuthTypes(), "");
-		
+
 		registerField("authUserId");
 		registerField("authType", listheader_AuthType, SortOrder.DESC, authType, sortOperator_AuthType,
 				Operators.NUMERIC);

@@ -43,12 +43,14 @@ import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-/** Model class for the <b>FinanceType table</b>.<br> */
+/**
+ * Model class for the <b>FinanceType table</b>.<br>
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceType extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4098586745401583126L;
-	
+
 	//	Ordered Same AS Table please don't break It
 	private String product = "";
 	private String finType;
@@ -144,7 +146,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finCommitmentOvrride;
 	private boolean finCollateralOvrride;
 	private boolean partiallySecured;
-	
+
 	private boolean finPftUnChanged;
 	private Date startDate;
 	private Date endDate;
@@ -164,26 +166,26 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String frequencyDays;
 	// EMI Holiday Fields & BPI & Freezing Period
 	private boolean alwBPI;
-	private String	bpiTreatment;
-	private String	bpiPftDaysBasis;
-	private String 	pftDueSchOn;
-	private boolean	planEMIHAlw;
-	private String	planEMIHMethod;
+	private String bpiTreatment;
+	private String bpiPftDaysBasis;
+	private String pftDueSchOn;
+	private boolean planEMIHAlw;
+	private String planEMIHMethod;
 	private int planEMIHMaxPerYear;
 	private int planEMIHMax;
 	private int planEMIHLockPeriod;
-	private boolean	planEMICpz;
-	private int	unPlanEMIHLockPeriod;
-	private boolean	unPlanEMICpz;
+	private boolean planEMICpz;
+	private int unPlanEMIHLockPeriod;
+	private boolean unPlanEMICpz;
 	private boolean alwReage;
 	private boolean alwUnPlanEmiHoliday;
-	private boolean	reAgeCpz;
-	private int	fddLockPeriod;
-	private int	maxUnplannedEmi;
-	private int	maxReAgeHolidays;
-	
-	private String	roundingMode;
-	private int	roundingTarget = 0;
+	private boolean reAgeCpz;
+	private int fddLockPeriod;
+	private int maxUnplannedEmi;
+	private int maxReAgeHolidays;
+
+	private String roundingMode;
+	private int roundingTarget = 0;
 	private boolean developerFinance;
 
 	// Advised profit Rates
@@ -198,15 +200,15 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwMultiPartyDisb;
 	private boolean tDSApplicable;
 	private String addrLine1;
-	
+
 	//Profit on past Due
-	private String  pastduePftCalMthd;
+	private String pastduePftCalMthd;
 	private BigDecimal pastduePftMargin = BigDecimal.ZERO;
-	
+
 	//RollOver Details
 	private boolean rollOverFinance;
 	private String rollOverFrq;
-	
+
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
 	private boolean oDIncGrcDays;
@@ -216,22 +218,22 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
-	
+
 	// Step In Finance Details
 	private boolean stepFinance;
 	private boolean steppingMandatory;
 	private boolean alwManualSteps;
-	private String  alwdStepPolicies;
-	private String  dftStepPolicy;
-	private String  dftStepPolicyType;
-	private String  lovDescDftStepPolicyName;
+	private String alwdStepPolicies;
+	private String dftStepPolicy;
+	private String dftStepPolicyType;
+	private String lovDescDftStepPolicyName;
 	private String remarks;
 	private List<FinTypeVASProducts> finTypeVASProductsList;
-	
+
 	// Suspend details 
-	private String  finSuspTrigger;
-	private String  finSuspRemarks;
-	
+	private String finSuspTrigger;
+	private String finSuspRemarks;
+
 	private boolean newRecord;
 	private String lovValue;
 	private FinanceType befImage;
@@ -239,21 +241,21 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean quickDisb;
 	private String promotionCode;
 	private String promotionDesc;
-	
+
 	private long profitCenterID;
 	private String profitcenterCode;
 	private String profitCenterDesc;
-	
+
 	private String lovDescEntityCode;
 	private String lovDescEntityDesc;
-	
+
 	//cheque
-	private boolean								chequeCaptureReq;
+	private boolean chequeCaptureReq;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
 	private HashMap<String, AccountingSet> lovDescAERule = new HashMap<String, AccountingSet>();
-	
+
 	@XmlTransient
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -274,35 +276,35 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescEVFinAESellOrMaturityName;
 	private String lovDescPromoFinTypeDesc;
 	private String productCategory;
-	
+
 	// only used for API
 	private boolean promotionType = false;
 
-	private List<FinTypeAccount> finTypeAccounts=new ArrayList<FinTypeAccount>();
-	private List<FinTypeInsurances> finTypeInsurances=new ArrayList<FinTypeInsurances>();
-	private List<FinTypeAccounting> finTypeAccountingList=new ArrayList<FinTypeAccounting>();
-	private Map<String,Long> finTypeAccountingMap = new HashMap<String,Long>();
+	private List<FinTypeAccount> finTypeAccounts = new ArrayList<FinTypeAccount>();
+	private List<FinTypeInsurances> finTypeInsurances = new ArrayList<FinTypeInsurances>();
+	private List<FinTypeAccounting> finTypeAccountingList = new ArrayList<FinTypeAccounting>();
+	private Map<String, Long> finTypeAccountingMap = new HashMap<String, Long>();
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
 	private List<FinTypeExpense> finTypeExpenseList = new ArrayList<FinTypeExpense>();
-	
+
 	//Cost of funds
 	private String costOfFunds;
-	private List<IRRFinanceType> irrFinanceTypeList =new ArrayList<IRRFinanceType>();
-	
+	private List<IRRFinanceType> irrFinanceTypeList = new ArrayList<IRRFinanceType>();
+
 	//Collateral LTV Check Details
 	private String finLTVCheck;
-	
+
 	// Advance EMI Details
 	private boolean alwAdvEMI = false;
 	private int advEMIMinTerms;
 	private int advEMIMaxTerms;
 	private int advEMIDftTerms;
 	private String advEMISchdMthd;
-	
+
 	//Eligibility Method
 	private String eligibilityMethods;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -310,12 +312,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public FinanceType() {
 		super();
 	}
-	
+
 	public FinanceType(String id) {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finTypeAccounts");
@@ -346,7 +348,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finType;
 	}
@@ -362,7 +364,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public String getProduct() {
 		return product;
 	}
@@ -396,18 +398,20 @@ public class FinanceType extends AbstractWorkflowEntity {
 	}
 
 	public String getFinDivision() {
-    	return finDivision;
-    }
+		return finDivision;
+	}
+
 	public void setFinDivision(String finDivision) {
-    	this.finDivision = finDivision;
-    }
+		this.finDivision = finDivision;
+	}
 
 	public String getLovDescFinDivisionName() {
-    	return lovDescFinDivisionName;
-    }
+		return lovDescFinDivisionName;
+	}
+
 	public void setLovDescFinDivisionName(String lovDescFinDivisionName) {
-    	this.lovDescFinDivisionName = lovDescFinDivisionName;
-    }
+		this.lovDescFinDivisionName = lovDescFinDivisionName;
+	}
 
 	public String getFinDaysCalType() {
 		return finDaysCalType;
@@ -448,7 +452,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setLovDescFinContingentAcTypeName(String lovDescFinContingentAcTypeName) {
 		this.lovDescFinContingentAcTypeName = lovDescFinContingentAcTypeName;
 	}
-	
+
 	public String getFinSuspAcType() {
 		return finSuspAcType;
 	}
@@ -616,7 +620,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setFinMaxRate(BigDecimal finMaxRate) {
 		this.finMaxRate = finMaxRate;
 	}
-	
+
 	public boolean isAlwHybridRate() {
 		return alwHybridRate;
 	}
@@ -841,8 +845,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.finODRpyTries = finODRpyTries;
 	}
 
-	
-
 	public boolean isFinIsActive() {
 		return finIsActive;
 	}
@@ -854,6 +856,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -935,6 +938,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public long getDownPayRule() {
 		return downPayRule;
 	}
+
 	public void setDownPayRule(long downPayRule) {
 		this.downPayRule = downPayRule;
 	}
@@ -942,6 +946,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getDownPayRuleDesc() {
 		return downPayRuleDesc;
 	}
+
 	public void setDownPayRuleDesc(String downPayRuleDesc) {
 		this.downPayRuleDesc = downPayRuleDesc;
 	}
@@ -985,7 +990,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setPlanDeferCount(int planDeferCount) {
 		this.planDeferCount = planDeferCount;
 	}
-
 
 	public void setFinDepositRestrictedTo(String finDepositRestrictedTo) {
 		this.finDepositRestrictedTo = finDepositRestrictedTo;
@@ -1078,6 +1082,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getPftPayAcType() {
 		return pftPayAcType;
 	}
+
 	public void setPftPayAcType(String pftPayAcType) {
 		this.pftPayAcType = pftPayAcType;
 	}
@@ -1085,6 +1090,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getLovDescPftPayAcTypeName() {
 		return lovDescPftPayAcTypeName;
 	}
+
 	public void setLovDescPftPayAcTypeName(String lovDescPftPayAcTypeName) {
 		this.lovDescPftPayAcTypeName = lovDescPftPayAcTypeName;
 	}
@@ -1100,8 +1106,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.lovDescAERule.put(aEEvent, lovDescAERule);
 
 	}
-
-	
 
 	public HashMap<String, AccountingSet> getLovDescAERule() {
 		return lovDescAERule;
@@ -1147,8 +1151,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.finGrcMargin = finGrcMargin;
 	}
 
-	
-
 	public void setFinGrcScheduleOn(String finGrcScheduleOn) {
 		this.finGrcScheduleOn = finGrcScheduleOn;
 	}
@@ -1192,6 +1194,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getCollateralType() {
 		return collateralType;
 	}
+
 	public void setCollateralType(String collateralType) {
 		this.collateralType = collateralType;
 	}
@@ -1211,7 +1214,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getFinDepreciationFrq() {
 		return finDepreciationFrq;
 	}
-
 
 	public void setLovDescAERule(HashMap<String, AccountingSet> lovDescAERule) {
 		this.lovDescAERule = lovDescAERule;
@@ -1266,86 +1268,97 @@ public class FinanceType extends AbstractWorkflowEntity {
 	}
 
 	public void setFinPftUnChanged(boolean finPftUnChanged) {
-	    this.finPftUnChanged = finPftUnChanged;
-    }
+		this.finPftUnChanged = finPftUnChanged;
+	}
+
 	public boolean isFinPftUnChanged() {
-	    return finPftUnChanged;
-    }
+		return finPftUnChanged;
+	}
 
 	public boolean isApplyODPenalty() {
-    	return applyODPenalty;
-    }
+		return applyODPenalty;
+	}
+
 	public void setApplyODPenalty(boolean applyODPenalty) {
-    	this.applyODPenalty = applyODPenalty;
-    }
+		this.applyODPenalty = applyODPenalty;
+	}
 
 	public boolean isODIncGrcDays() {
-    	return oDIncGrcDays;
-    }
+		return oDIncGrcDays;
+	}
+
 	public void setODIncGrcDays(boolean oDIncGrcDays) {
-    	this.oDIncGrcDays = oDIncGrcDays;
-    }
+		this.oDIncGrcDays = oDIncGrcDays;
+	}
 
 	public String getODChargeType() {
-    	return oDChargeType;
-    }
+		return oDChargeType;
+	}
+
 	public void setODChargeType(String oDChargeType) {
-    	this.oDChargeType = oDChargeType;
-    }
+		this.oDChargeType = oDChargeType;
+	}
 
 	public int getODGraceDays() {
-    	return oDGraceDays;
-    }
+		return oDGraceDays;
+	}
+
 	public void setODGraceDays(int oDGraceDays) {
-    	this.oDGraceDays = oDGraceDays;
-    }
+		this.oDGraceDays = oDGraceDays;
+	}
 
 	public String getODChargeCalOn() {
-    	return oDChargeCalOn;
-    }
+		return oDChargeCalOn;
+	}
+
 	public void setODChargeCalOn(String oDChargeCalOn) {
-    	this.oDChargeCalOn = oDChargeCalOn;
-    }
+		this.oDChargeCalOn = oDChargeCalOn;
+	}
 
 	public BigDecimal getODChargeAmtOrPerc() {
-    	return oDChargeAmtOrPerc;
-    }
+		return oDChargeAmtOrPerc;
+	}
+
 	public void setODChargeAmtOrPerc(BigDecimal oDChargeAmtOrPerc) {
-    	this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
-    }
+		this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
+	}
 
 	public boolean isODAllowWaiver() {
-    	return oDAllowWaiver;
-    }
+		return oDAllowWaiver;
+	}
+
 	public void setODAllowWaiver(boolean oDAllowWaiver) {
-    	this.oDAllowWaiver = oDAllowWaiver;
-    }
+		this.oDAllowWaiver = oDAllowWaiver;
+	}
 
 	public BigDecimal getODMaxWaiverPerc() {
-    	return oDMaxWaiverPerc;
-    }
+		return oDMaxWaiverPerc;
+	}
+
 	public void setODMaxWaiverPerc(BigDecimal oDMaxWaiverPerc) {
-    	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
-    }
+		this.oDMaxWaiverPerc = oDMaxWaiverPerc;
+	}
 
 	public List<FinTypeAccount> getFinTypeAccounts() {
-    	return finTypeAccounts;
-    }
+		return finTypeAccounts;
+	}
 
 	public void setFinTypeAccounts(List<FinTypeAccount> finTypeAccounts) {
-    	this.finTypeAccounts = finTypeAccounts;
-    }
-	
+		this.finTypeAccounts = finTypeAccounts;
+	}
+
 	public List<FinTypeFees> getFinTypeFeesList() {
 		return finTypeFeesList;
 	}
+
 	public void setFinTypeFeesList(List<FinTypeFees> finTypeFeesList) {
 		this.finTypeFeesList = finTypeFeesList;
 	}
-	
+
 	public boolean isStepFinance() {
 		return stepFinance;
 	}
+
 	public void setStepFinance(boolean stepFinance) {
 		this.stepFinance = stepFinance;
 	}
@@ -1353,6 +1366,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isSteppingMandatory() {
 		return steppingMandatory;
 	}
+
 	public void setSteppingMandatory(boolean steppingMandatory) {
 		this.steppingMandatory = steppingMandatory;
 	}
@@ -1360,6 +1374,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isAlwManualSteps() {
 		return alwManualSteps;
 	}
+
 	public void setAlwManualSteps(boolean alwManualSteps) {
 		this.alwManualSteps = alwManualSteps;
 	}
@@ -1367,6 +1382,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getAlwdStepPolicies() {
 		return alwdStepPolicies;
 	}
+
 	public void setAlwdStepPolicies(String alwdStepPolicies) {
 		this.alwdStepPolicies = alwdStepPolicies;
 	}
@@ -1374,21 +1390,23 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getDftStepPolicy() {
 		return dftStepPolicy;
 	}
+
 	public void setDftStepPolicy(String dftStepPolicy) {
 		this.dftStepPolicy = dftStepPolicy;
 	}
 
 	public String getLovDescDftStepPolicyName() {
-	    return lovDescDftStepPolicyName;
-    }
+		return lovDescDftStepPolicyName;
+	}
 
 	public void setLovDescDftStepPolicyName(String lovDescDftStepPolicyName) {
-	    this.lovDescDftStepPolicyName = lovDescDftStepPolicyName;
-    }
+		this.lovDescDftStepPolicyName = lovDescDftStepPolicyName;
+	}
 
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -1396,6 +1414,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public Date getEndDate() {
 		return endDate;
 	}
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
@@ -1403,6 +1422,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getPastduePftCalMthd() {
 		return pastduePftCalMthd;
 	}
+
 	public void setPastduePftCalMthd(String pastduePftCalMthd) {
 		this.pastduePftCalMthd = pastduePftCalMthd;
 	}
@@ -1410,41 +1430,47 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public BigDecimal getPastduePftMargin() {
 		return pastduePftMargin;
 	}
+
 	public void setPastduePftMargin(BigDecimal pastduePftMargin) {
 		this.pastduePftMargin = pastduePftMargin;
 	}
 
 	public boolean isAllowDownpayPgm() {
-	    return allowDownpayPgm;
-    }
+		return allowDownpayPgm;
+	}
+
 	public boolean isAlwAdvanceRent() {
-	    return alwAdvanceRent;
-    }
+		return alwAdvanceRent;
+	}
 
 	public void setAlwAdvanceRent(boolean alwAdvanceRent) {
-	    this.alwAdvanceRent = alwAdvanceRent;
-    }
+		this.alwAdvanceRent = alwAdvanceRent;
+	}
+
 	public void setAllowDownpayPgm(boolean allowDownPayPgm) {
-	    this.allowDownpayPgm = allowDownPayPgm;
-    }
+		this.allowDownpayPgm = allowDownPayPgm;
+	}
 
 	public String getLovDescPromoFinTypeDesc() {
-	    return lovDescPromoFinTypeDesc;
-    }
+		return lovDescPromoFinTypeDesc;
+	}
+
 	public void setLovDescPromoFinTypeDesc(String lovDescPromoFinTypeDesc) {
-	    this.lovDescPromoFinTypeDesc = lovDescPromoFinTypeDesc;
-    }
+		this.lovDescPromoFinTypeDesc = lovDescPromoFinTypeDesc;
+	}
 
 	public String getFinAssetType() {
-	    return finAssetType;
-    }
+		return finAssetType;
+	}
+
 	public void setFinAssetType(String finAssetType) {
-	    this.finAssetType = finAssetType;
-    }
-	
+		this.finAssetType = finAssetType;
+	}
+
 	public boolean isAlwMultiPartyDisb() {
 		return alwMultiPartyDisb;
 	}
+
 	public void setAlwMultiPartyDisb(boolean alwMultiPartyDisb) {
 		this.alwMultiPartyDisb = alwMultiPartyDisb;
 	}
@@ -1452,6 +1478,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getGrcAdvBaseRate() {
 		return grcAdvBaseRate;
 	}
+
 	public void setGrcAdvBaseRate(String grcAdvBaseRate) {
 		this.grcAdvBaseRate = grcAdvBaseRate;
 	}
@@ -1459,6 +1486,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public BigDecimal getGrcAdvMargin() {
 		return grcAdvMargin;
 	}
+
 	public void setGrcAdvMargin(BigDecimal grcAdvMargin) {
 		this.grcAdvMargin = grcAdvMargin;
 	}
@@ -1466,6 +1494,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public BigDecimal getGrcAdvPftRate() {
 		return grcAdvPftRate;
 	}
+
 	public void setGrcAdvPftRate(BigDecimal grcAdvPftRate) {
 		this.grcAdvPftRate = grcAdvPftRate;
 	}
@@ -1473,6 +1502,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getRpyAdvBaseRate() {
 		return rpyAdvBaseRate;
 	}
+
 	public void setRpyAdvBaseRate(String rpyAdvBaseRate) {
 		this.rpyAdvBaseRate = rpyAdvBaseRate;
 	}
@@ -1480,6 +1510,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public BigDecimal getRpyAdvMargin() {
 		return rpyAdvMargin;
 	}
+
 	public void setRpyAdvMargin(BigDecimal rpyAdvMargin) {
 		this.rpyAdvMargin = rpyAdvMargin;
 	}
@@ -1487,56 +1518,61 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public BigDecimal getRpyAdvPftRate() {
 		return rpyAdvPftRate;
 	}
+
 	public void setRpyAdvPftRate(BigDecimal rpyAdvPftRate) {
 		this.rpyAdvPftRate = rpyAdvPftRate;
 	}
-	
+
 	public String getGrcAdvBaseRateDesc() {
-	    return grcAdvBaseRateDesc;
-    }
+		return grcAdvBaseRateDesc;
+	}
+
 	public void setGrcAdvBaseRateDesc(String grcAdvBaseRateDesc) {
-	    this.grcAdvBaseRateDesc = grcAdvBaseRateDesc;
-    }
+		this.grcAdvBaseRateDesc = grcAdvBaseRateDesc;
+	}
 
 	public String getRpyAdvBaseRateDesc() {
-	    return rpyAdvBaseRateDesc;
-    }
+		return rpyAdvBaseRateDesc;
+	}
+
 	public void setRpyAdvBaseRateDesc(String rpyAdvBaseRateDesc) {
-	    this.rpyAdvBaseRateDesc = rpyAdvBaseRateDesc;
-    }
-	
+		this.rpyAdvBaseRateDesc = rpyAdvBaseRateDesc;
+	}
+
 	public boolean isRollOverFinance() {
-	    return rollOverFinance;
-    }
+		return rollOverFinance;
+	}
+
 	public void setRollOverFinance(boolean rollOverFinance) {
-	    this.rollOverFinance = rollOverFinance;
-    }
-	
+		this.rollOverFinance = rollOverFinance;
+	}
+
 	public String getRollOverFrq() {
-	    return rollOverFrq;
-    }
+		return rollOverFrq;
+	}
+
 	public void setRollOverFrq(String rollOverFrq) {
-	    this.rollOverFrq = rollOverFrq;
-    }
-	
+		this.rollOverFrq = rollOverFrq;
+	}
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> financeTypeMap = new HashMap<String, Object>();	
+		HashMap<String, Object> financeTypeMap = new HashMap<String, Object>();
 		getDeclaredFieldValues(financeTypeMap);
 		return financeTypeMap;
 	}
 
-	public void getDeclaredFieldValues(HashMap<String, Object> financeTypeMap){
+	public void getDeclaredFieldValues(HashMap<String, Object> financeTypeMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				financeTypeMap.put("ft_"+this.getClass().getDeclaredFields()[i].getName(),
+				financeTypeMap.put("ft_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
 	}
-	
+
 	public String getFinSuspTrigger() {
 		return finSuspTrigger;
 	}
@@ -1640,7 +1676,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setRateChgAnyDay(boolean rateChgAnyDay) {
 		this.rateChgAnyDay = rateChgAnyDay;
 	}
-	
+
 	public String getProductCategory() {
 		return productCategory;
 	}
@@ -1660,6 +1696,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getPftDueSchOn() {
 		return pftDueSchOn;
 	}
+
 	public void setPftDueSchOn(String pftDueSchOn) {
 		this.pftDueSchOn = pftDueSchOn;
 	}
@@ -1667,6 +1704,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isManualSchedule() {
 		return manualSchedule;
 	}
+
 	public void setManualSchedule(boolean manualSchedule) {
 		this.manualSchedule = manualSchedule;
 	}
@@ -1674,27 +1712,29 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public List<FinTypeAccounting> getFinTypeAccountingList() {
 		return finTypeAccountingList;
 	}
+
 	public void setFinTypeAccountingList(List<FinTypeAccounting> finTypeAccountingList) {
 		this.finTypeAccountingList = finTypeAccountingList;
 		finTypeAccountingMap.clear();
-		if(finTypeAccountingList != null){
+		if (finTypeAccountingList != null) {
 			for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
 				finTypeAccountingMap.put(finTypeAcc.getEvent(), finTypeAcc.getAccountSetID());
 			}
 		}
 	}
-	
-	public Long getAccEventValue(String eventCode){
-		if(finTypeAccountingMap.get(eventCode) == null){
+
+	public Long getAccEventValue(String eventCode) {
+		if (finTypeAccountingMap.get(eventCode) == null) {
 			return Long.MIN_VALUE;
-		}else{
+		} else {
 			return finTypeAccountingMap.get(eventCode);
 		}
 	}
-	
+
 	public List<FinTypeInsurances> getFinTypeInsurances() {
 		return finTypeInsurances;
 	}
+
 	public void setFinTypeInsurances(List<FinTypeInsurances> finTypeInsurances) {
 		this.finTypeInsurances = finTypeInsurances;
 	}
@@ -1702,6 +1742,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isAlwBPI() {
 		return alwBPI;
 	}
+
 	public void setAlwBPI(boolean alwBPI) {
 		this.alwBPI = alwBPI;
 	}
@@ -1709,6 +1750,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getBpiTreatment() {
 		return bpiTreatment;
 	}
+
 	public void setBpiTreatment(String bpiTreatment) {
 		this.bpiTreatment = bpiTreatment;
 	}
@@ -1716,6 +1758,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isPlanEMIHAlw() {
 		return planEMIHAlw;
 	}
+
 	public void setPlanEMIHAlw(boolean planEMIHAlw) {
 		this.planEMIHAlw = planEMIHAlw;
 	}
@@ -1723,6 +1766,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getPlanEMIHMethod() {
 		return planEMIHMethod;
 	}
+
 	public void setPlanEMIHMethod(String planEMIHMethod) {
 		this.planEMIHMethod = planEMIHMethod;
 	}
@@ -1730,6 +1774,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getPlanEMIHMaxPerYear() {
 		return planEMIHMaxPerYear;
 	}
+
 	public void setPlanEMIHMaxPerYear(int planEMIHMaxPerYear) {
 		this.planEMIHMaxPerYear = planEMIHMaxPerYear;
 	}
@@ -1737,6 +1782,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getPlanEMIHMax() {
 		return planEMIHMax;
 	}
+
 	public void setPlanEMIHMax(int planEMIHMax) {
 		this.planEMIHMax = planEMIHMax;
 	}
@@ -1744,6 +1790,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getPlanEMIHLockPeriod() {
 		return planEMIHLockPeriod;
 	}
+
 	public void setPlanEMIHLockPeriod(int planEMIHLockPeriod) {
 		this.planEMIHLockPeriod = planEMIHLockPeriod;
 	}
@@ -1751,6 +1798,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isPlanEMICpz() {
 		return planEMICpz;
 	}
+
 	public void setPlanEMICpz(boolean planEMICpz) {
 		this.planEMICpz = planEMICpz;
 	}
@@ -1758,6 +1806,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getUnPlanEMIHLockPeriod() {
 		return unPlanEMIHLockPeriod;
 	}
+
 	public void setUnPlanEMIHLockPeriod(int unPlanEMIHLockPeriod) {
 		this.unPlanEMIHLockPeriod = unPlanEMIHLockPeriod;
 	}
@@ -1765,6 +1814,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isUnPlanEMICpz() {
 		return unPlanEMICpz;
 	}
+
 	public void setUnPlanEMICpz(boolean unPlanEMICpz) {
 		this.unPlanEMICpz = unPlanEMICpz;
 	}
@@ -1772,6 +1822,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public boolean isReAgeCpz() {
 		return reAgeCpz;
 	}
+
 	public void setReAgeCpz(boolean reAgeCpz) {
 		this.reAgeCpz = reAgeCpz;
 	}
@@ -1779,6 +1830,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getFddLockPeriod() {
 		return fddLockPeriod;
 	}
+
 	public void setFddLockPeriod(int fddLockPeriod) {
 		this.fddLockPeriod = fddLockPeriod;
 	}
@@ -1786,6 +1838,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getAlwdRpyMethods() {
 		return alwdRpyMethods;
 	}
+
 	public void setAlwdRpyMethods(String alwdRpyMethods) {
 		this.alwdRpyMethods = alwdRpyMethods;
 	}
@@ -1793,6 +1846,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getMaxUnplannedEmi() {
 		return maxUnplannedEmi;
 	}
+
 	public void setMaxUnplannedEmi(int maxUnplannedEmi) {
 		this.maxUnplannedEmi = maxUnplannedEmi;
 	}
@@ -1800,6 +1854,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public int getMaxReAgeHolidays() {
 		return maxReAgeHolidays;
 	}
+
 	public void setMaxReAgeHolidays(int maxReAgeHolidays) {
 		this.maxReAgeHolidays = maxReAgeHolidays;
 	}
@@ -1807,6 +1862,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public String getRoundingMode() {
 		return roundingMode;
 	}
+
 	public void setRoundingMode(String roundingMode) {
 		this.roundingMode = roundingMode;
 	}
@@ -1866,35 +1922,37 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setQuickDisb(boolean quickDisb) {
 		this.quickDisb = quickDisb;
 	}
-	
+
 	public String getPromotionCode() {
 		return promotionCode;
 	}
-	
+
 	public void setPromotionCode(String promotionCode) {
 		this.promotionCode = promotionCode;
 	}
-	
+
 	/**
-	 * Copy the Promotion Details to Finance Type 
+	 * Copy the Promotion Details to Finance Type
+	 * 
 	 * @param promotion
 	 */
-	public void setFInTypeFromPromotiion(Promotion promotion){
+	public void setFInTypeFromPromotiion(Promotion promotion) {
 		setPromotionCode(promotion.getPromotionCode());
 		setPromotionDesc(promotion.getPromotionDesc());
 		setFinIsDwPayRequired(promotion.isFinIsDwPayRequired());
 		setDownPayRule(promotion.getDownPayRule());
-		if (promotion.getActualInterestRate() != null && promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) != 0) {
+		if (promotion.getActualInterestRate() != null
+				&& promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) != 0) {
 			setFinIntRate(promotion.getActualInterestRate());
 		} else if (promotion.getFinBaseRate() != null) {
 			setFinBaseRate(promotion.getFinBaseRate());
 			setFinSplRate(promotion.getFinSplRate());
 			setFinMargin(promotion.getFinMargin());
 		}
-		
+
 		setApplyRpyPricing(promotion.isApplyRpyPricing());
 		setRpyPricingMethod(promotion.getRpyPricingMethod());
-		
+
 		setFinMinTerm(promotion.getFinMinTerm());
 		setFinMaxTerm(promotion.getFinMaxTerm());
 		setFinMinAmount(promotion.getFinMinAmount());
@@ -1967,14 +2025,15 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setFinCategoryDesc(String finCategoryDesc) {
 		this.finCategoryDesc = finCategoryDesc;
 	}
-	
+
 	public boolean isDeveloperFinance() {
 		return developerFinance;
 	}
+
 	public void setDeveloperFinance(boolean developerFinance) {
 		this.developerFinance = developerFinance;
 	}
-	
+
 	public List<IRRFinanceType> getIrrFinanceTypeList() {
 		return irrFinanceTypeList;
 	}
@@ -1982,14 +2041,15 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setIrrFinanceTypeList(List<IRRFinanceType> irrFinanceTypeList) {
 		this.irrFinanceTypeList = irrFinanceTypeList;
 	}
-	
+
 	public List<FinTypeExpense> getFinTypeExpenseList() {
 		return finTypeExpenseList;
 	}
+
 	public void setFinTypeExpenseList(List<FinTypeExpense> finTypeExpenseList) {
 		this.finTypeExpenseList = finTypeExpenseList;
 	}
-	
+
 	public String getLovDescEntityCode() {
 		return lovDescEntityCode;
 	}
@@ -2005,7 +2065,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setLovDescEntityDesc(String lovDescEntityDesc) {
 		this.lovDescEntityDesc = lovDescEntityDesc;
 	}
-	
+
 	public String getCostOfFunds() {
 		return costOfFunds;
 	}

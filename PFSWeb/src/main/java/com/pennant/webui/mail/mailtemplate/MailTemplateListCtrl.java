@@ -62,9 +62,9 @@ import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.webui.mail.mailtemplate.model.MailTemplateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul file.
@@ -139,7 +139,7 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> {
 				Operators.BOOLEAN);
 		registerField("smsTemplate", listheader_TemplateForSMS);
 		registerField("emailTemplate", listheader_TemplateForEMail);
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();

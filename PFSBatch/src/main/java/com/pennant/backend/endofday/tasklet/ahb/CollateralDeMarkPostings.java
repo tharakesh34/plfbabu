@@ -23,9 +23,8 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class CollateralDeMarkPostings implements Tasklet {
 	private Logger logger = Logger.getLogger(CollateralDeMarkPostings.class);
 
-
 	private DataSource dataSource;
-	private CollateralService	collateralService;
+	private CollateralService collateralService;
 
 	public CollateralDeMarkPostings() {
 		super();
@@ -55,9 +54,9 @@ public class CollateralDeMarkPostings implements Tasklet {
 			sqlStatement.setDate(5, DateUtility.getDBDate(valueDate.toString()));
 
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
@@ -136,7 +135,6 @@ public class CollateralDeMarkPostings implements Tasklet {
 
 		return selQuery.toString();
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

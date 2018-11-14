@@ -62,10 +62,10 @@ import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.webui.applicationmaster.taxdetail.model.TaxDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/TaxDetail/TaxDetailList.zul file.
@@ -107,8 +107,7 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 	protected Button button_TaxDetailList_TaxDetailSearch;
 
 	// Search Fields
-	
-	
+
 	private transient TaxDetailService taxDetailService;
 
 	/**
@@ -136,18 +135,22 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 	public void onCreate$window_TaxDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_TaxDetailList, borderLayout_TaxDetailList, listBoxTaxDetail,pagingTaxDetailList);
+		setPageComponents(window_TaxDetailList, borderLayout_TaxDetailList, listBoxTaxDetail, pagingTaxDetailList);
 		setItemRender(new TaxDetailListModelItemRenderer());
 		registerButton(button_TaxDetailList_TaxDetailSearch);
 		// Register buttons and fields.
 		registerButton(button_TaxDetailList_TaxDetailSearch);
 		registerButton(button_TaxDetailList_NewTaxDetail, "button_TaxDetailList_NewTaxDetail", true);
-		registerField("countryName", listheader_Country, SortOrder.ASC, country, sortOperator_Country,Operators.STRING);
-		registerField("provinceName", listheader_StateCode, SortOrder.ASC, stateCode, sortOperator_StateCode,Operators.STRING);
-		registerField("entityDesc", listheader_EntityCode, SortOrder.ASC, entityCode, sortOperator_EntityCode,Operators.STRING);
-		registerField("taxCode", listheader_TaxCode, SortOrder.ASC, taxCode, sortOperator_TaxCode,Operators.STRING);
-		registerField("pinCode", listheader_PinCode, SortOrder.ASC, pinCode, sortOperator_PinCode,Operators.STRING);
-		registerField("cityName", listheader_CityCode, SortOrder.ASC, cityCode, sortOperator_CityCode,Operators.STRING);
+		registerField("countryName", listheader_Country, SortOrder.ASC, country, sortOperator_Country,
+				Operators.STRING);
+		registerField("provinceName", listheader_StateCode, SortOrder.ASC, stateCode, sortOperator_StateCode,
+				Operators.STRING);
+		registerField("entityDesc", listheader_EntityCode, SortOrder.ASC, entityCode, sortOperator_EntityCode,
+				Operators.STRING);
+		registerField("taxCode", listheader_TaxCode, SortOrder.ASC, taxCode, sortOperator_TaxCode, Operators.STRING);
+		registerField("pinCode", listheader_PinCode, SortOrder.ASC, pinCode, sortOperator_PinCode, Operators.STRING);
+		registerField("cityName", listheader_CityCode, SortOrder.ASC, cityCode, sortOperator_CityCode,
+				Operators.STRING);
 		registerField("id");
 		registerField("country");
 		registerField("stateCode");
@@ -199,7 +202,6 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -210,7 +212,7 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 
 	public void onTaxDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxTaxDetail.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -220,13 +222,13 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( taxdetail.getId());
+		whereCond.append(taxdetail.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(taxdetail.getVersion());
-	
+
 		if (doCheckAuthority(taxdetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && taxdetail.getWorkflowId() == 0) {
@@ -236,10 +238,10 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -252,7 +254,7 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("taxdetail", taxdetail);
 		arg.put("taxdetailListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -282,7 +284,7 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

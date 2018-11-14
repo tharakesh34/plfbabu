@@ -36,13 +36,13 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 4678287540046204660L;
 	private static final Logger logger = Logger.getLogger(AuditReportCtrl.class);
 
-	protected Window  		window_AuditReport;
-	protected Borderlayout  borderlayout;
-	protected Tabbox         tabbox;
-	
-	protected Datebox 		fromDate;
-	protected Datebox 		toDate;
-	protected Combobox 		comboModuleList;
+	protected Window window_AuditReport;
+	protected Borderlayout borderlayout;
+	protected Tabbox tabbox;
+
+	protected Datebox fromDate;
+	protected Datebox toDate;
+	protected Combobox comboModuleList;
 
 	public AuditReportCtrl() {
 		super();
@@ -52,9 +52,10 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	/**
 	 * Method for Creating Window for Audit Report
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -68,55 +69,58 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		fillComboBox(comboModuleList, "", PennantAppUtil.getModuleList(true), "");
 		this.borderlayout.setHeight(getBorderLayoutHeight());
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for Generating Report on Click Search button
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$button_Search(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-		tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent().getParent();
+
+		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String reportName = "";
-		
-		this.fromDate.setConstraint(new PTDateValidator("From Date", true,null ,DateUtility.getSysDate(),true));
-		this.toDate.setConstraint(new PTDateValidator("To Date", true,null ,DateUtility.getSysDate(),true));
+
+		this.fromDate.setConstraint(new PTDateValidator("From Date", true, null, DateUtility.getSysDate(), true));
+		this.toDate.setConstraint(new PTDateValidator("To Date", true, null, DateUtility.getSysDate(), true));
 
 		try {
-			if(!this.comboModuleList.isDisabled() && this.comboModuleList.getSelectedIndex() <= 0){
+			if (!this.comboModuleList.isDisabled() && this.comboModuleList.getSelectedIndex() <= 0) {
 				throw new WrongValueException(comboModuleList, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_AuditReport_ModuleName.value")}));
+						new String[] { Labels.getLabel("label_AuditReport_ModuleName.value") }));
 			}
 			reportName = this.comboModuleList.getSelectedItem().getValue().toString();
-			map.put("reportName", reportName);	
+			map.put("reportName", reportName);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (fromDate.getValue() == null ) {
+			if (fromDate.getValue() == null) {
 				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.value"));
 			}
-			if (toDate.getValue() == null ) {
+			if (toDate.getValue() == null) {
 				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
 			}
 			if (fromDate.getValue().after(toDate.getValue())) {
 				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.NotGreater"));
 			}
-			map.put("fromDate", DateUtility.getDate(DateUtility.formatUtilDate(fromDate.getValue(), PennantConstants.dateFormat)));
+			map.put("fromDate",
+					DateUtility.getDate(DateUtility.formatUtilDate(fromDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (toDate.getValue() == null ) {
+			if (toDate.getValue() == null) {
 				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
 			}
-			map.put("toDate", DateUtility.getDate(DateUtility.formatUtilDate(toDate.getValue(), PennantConstants.dateFormat)));
+			map.put("toDate",
+					DateUtility.getDate(DateUtility.formatUtilDate(toDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -127,28 +131,28 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		wve = null;
-		
-		StringBuilder where= new StringBuilder(" Where AuditDateTime >= '"); 
+
+		StringBuilder where = new StringBuilder(" Where AuditDateTime >= '");
 		where.append(DateUtility.formatUtilDate(fromDate.getValue(), PennantConstants.DBDateFormat));
 		where.append("' AND AuditDateTime <= '");
 		where.append(DateUtility.formatUtilDate(toDate.getValue(), PennantConstants.DBDateFormat));
 		where.append(" 23:59:59'");
-		
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_AUDIT)+ "/" +reportName+ ".jasper";
-		
-		map.put("whereCondition",where);
-		map.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
-		map.put("signimage",PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
-		map.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_AUDIT) + "/" + reportName + ".jasper";
+
+		map.put("whereCondition", where);
+		map.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		map.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		map.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		map.put("userName", getUserWorkspace().getLoggedInUser().getUserName());
-		
+
 		File file = null;
 		DataSource auditDataSource = null;
-		try {			
-			file = new File(reportSrc) ;
-			if(file.exists()){
+		try {
+			file = new File(reportSrc);
+			if (file.exists()) {
 				byte[] buf = null;
 				auditDataSource = (DataSource) SpringUtil.getBean("auditDataSource");
 				buf = JasperRunManager.runReportToPdf(reportSrc, map, auditDataSource.getConnection());
@@ -164,14 +168,14 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				this.toDate.setConstraint("");
 				this.fromDate.setText("");
 				this.toDate.setText("");
-			}else{
+			} else {
 				MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
 			}
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showError(Labels.getLabel("message.error.reportNotFound"));
-		} finally{
+		} finally {
 			map = null;
 			where = null;
 			file = null;
@@ -179,7 +183,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 

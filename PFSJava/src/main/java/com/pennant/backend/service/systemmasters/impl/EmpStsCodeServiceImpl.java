@@ -63,8 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>EmpStsCode</b>.<br>
  * 
  */
-public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
-		EmpStsCodeService {
+public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements EmpStsCodeService {
 
 	private static Logger logger = Logger.getLogger(EmpStsCodeServiceImpl.class);
 
@@ -74,7 +73,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	public EmpStsCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,15 +95,12 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTEmpStsCodes/BMTEmpStsCodes_Temp by using EmpStsCodeDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using EmpStsCodeDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTEmpStsCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTEmpStsCodes/BMTEmpStsCodes_Temp by using EmpStsCodeDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using EmpStsCodeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTEmpStsCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -120,11 +116,10 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			return auditHeader;
 		}
 		TableType tableType = TableType.MAIN_TAB;
-		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail()
-				.getModelData();
+		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail().getModelData();
 
 		if (empStsCode.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (empStsCode.isNew()) {
@@ -142,12 +137,10 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTEmpStsCodes by using EmpStsCodeDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTEmpStsCodes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTEmpStsCodes by using EmpStsCodeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTEmpStsCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -162,9 +155,8 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail()
-				.getModelData();
-		getEmpStsCodeDAO().delete(empStsCode,TableType.MAIN_TAB);
+		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail().getModelData();
+		getEmpStsCodeDAO().delete(empStsCode, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -172,8 +164,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * getEmpStsCodeById fetch the details by using EmpStsCodeDAO's
-	 * getEmpStsCodeById method.
+	 * getEmpStsCodeById fetch the details by using EmpStsCodeDAO's getEmpStsCodeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -187,9 +178,8 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * getApprovedEmpStsCodeById fetch the details by using EmpStsCodeDAO's
-	 * getEmpStsCodeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTEmpStsCodes.
+	 * getApprovedEmpStsCodeById fetch the details by using EmpStsCodeDAO's getEmpStsCodeById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTEmpStsCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -200,19 +190,15 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getEmpStsCodeDAO().delete with parameters empStsCode,"" b) NEW Add
-	 * new record in to main table by using getEmpStsCodeDAO().save with
-	 * parameters empStsCode,"" c) EDIT Update record in the main table by using
-	 * getEmpStsCodeDAO().update with parameters empStsCode,"" 3) Delete the
-	 * record from the workFlow table by using getEmpStsCodeDAO().delete with
-	 * parameters empStsCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTEmpStsCodes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTEmpStsCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getEmpStsCodeDAO().delete with
+	 * parameters empStsCode,"" b) NEW Add new record in to main table by using getEmpStsCodeDAO().save with parameters
+	 * empStsCode,"" c) EDIT Update record in the main table by using getEmpStsCodeDAO().update with parameters
+	 * empStsCode,"" 3) Delete the record from the workFlow table by using getEmpStsCodeDAO().delete with parameters
+	 * empStsCode,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTEmpStsCodes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTEmpStsCodes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -228,15 +214,14 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			return auditHeader;
 		}
 		EmpStsCode empStsCode = new EmpStsCode();
-		BeanUtils.copyProperties((EmpStsCode) auditHeader.getAuditDetail()
-				.getModelData(), empStsCode);
+		BeanUtils.copyProperties((EmpStsCode) auditHeader.getAuditDetail().getModelData(), empStsCode);
 
 		getEmpStsCodeDAO().delete(empStsCode, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(empStsCodeDAO.getEmpStsCodeById(empStsCode.getEmpStsCode(), ""));
 		}
-		
+
 		if (empStsCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
@@ -248,8 +233,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			empStsCode.setNextTaskId("");
 			empStsCode.setWorkflowId(0);
 
-			if (empStsCode.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (empStsCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				empStsCode.setRecordType("");
 				getEmpStsCodeDAO().save(empStsCode, TableType.MAIN_TAB);
@@ -259,7 +243,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 				getEmpStsCodeDAO().update(empStsCode, TableType.MAIN_TAB);
 			}
 		}
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -272,13 +256,10 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getEmpStsCodeDAO().delete with parameters
-	 * empStsCode,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTEmpStsCodes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getEmpStsCodeDAO().delete with parameters empStsCode,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTEmpStsCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -292,8 +273,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail()
-				.getModelData();
+		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getEmpStsCodeDAO().delete(empStsCode, TableType.TEMP_TAB);
@@ -304,10 +284,8 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -315,8 +293,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -325,17 +302,16 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getEmpStsCodeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getEmpStsCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	
+
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
@@ -343,14 +319,13 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 		EmpStsCode empStsCode = (EmpStsCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (empStsCode.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())
+		if (empStsCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())
 				&& empStsCodeDAO.isDuplicateKey(empStsCode.getEmpStsCode(),
 						empStsCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_EmpStsCode") + ":"+ empStsCode.getEmpStsCode();
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			parameters[0] = PennantJavaUtil.getLabel("label_EmpStsCode") + ":" + empStsCode.getEmpStsCode();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

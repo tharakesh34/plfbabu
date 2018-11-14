@@ -68,10 +68,23 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 
-@XmlType(propOrder = { "applicationNo", "lovDescCustCIF", "finType", "finCcy", "finBranch","finReference", "profitDaysBasis", "finAmount", "finAssetValue", "downPayBank", "downPaySupl", "finRepayMethod", "finStartDate", "firstDroplineDate","allowGrcPeriod", "tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance", "alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate", "graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq",
-		"nextGrcPftDate", "grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd", "grcMinRate", "grcMaxRate", "grcMaxAmount", "grcAdvPftRate", "grcAdvBaseRate", "grcAdvMargin", "numberOfTerms", "reqRepayAmount", "repayRateBasis", "repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq", "nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq", "nextRepayCpzDate",
-		"maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "rpyAdvPftRate", "rpyAdvBaseRate", "rpyAdvMargin", "supplementRent", "increasedCost", "rolloverFrq", "nextRolloverDate", "finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays",
-		"alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate", "stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate" })
+@XmlType(propOrder = { "applicationNo", "lovDescCustCIF", "finType", "finCcy", "finBranch", "finReference",
+		"profitDaysBasis", "finAmount", "finAssetValue", "downPayBank", "downPaySupl", "finRepayMethod", "finStartDate",
+		"firstDroplineDate", "allowGrcPeriod", "tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance",
+		"alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate",
+		"graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq", "nextGrcPftDate",
+		"grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd",
+		"grcMinRate", "grcMaxRate", "grcMaxAmount", "grcAdvPftRate", "grcAdvBaseRate", "grcAdvMargin", "numberOfTerms",
+		"reqRepayAmount", "repayRateBasis", "repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin",
+		"scheduleMethod", "repayFrq", "nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq",
+		"nextRepayRvwDate", "repayCpzFrq", "nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate",
+		"rpyMaxRate", "rpyAdvPftRate", "rpyAdvBaseRate", "rpyAdvMargin", "supplementRent", "increasedCost",
+		"rolloverFrq", "nextRolloverDate", "finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef",
+		"repayAccountId", "depreciationFrq", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId",
+		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
+		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod",
+		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate",
+		"stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -2261,7 +2274,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"fm_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				fieldsAndValuesMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				fieldsAndValuesMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}

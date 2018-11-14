@@ -54,8 +54,8 @@ public interface ExpenseTypeDAO {
 	void delete(ExpenseType expenseType, String type);
 
 	long save(ExpenseType expenseType, String type);
-	
+
 	boolean isDuplicateKey(long expenseTypeId, String expenseTypeCode, TableType tableType);
-	
+
 	long getFinExpenseIdByExpType(String expTypeCode, String type);
 }

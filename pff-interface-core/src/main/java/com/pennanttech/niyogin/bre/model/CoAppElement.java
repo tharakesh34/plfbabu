@@ -12,13 +12,13 @@ import javax.xml.bind.annotation.XmlType;
 public class CoAppElement {
 
 	@XmlElement(name = "CODEMOGS")
-	private CodeMogs		codeMogs;
+	private CodeMogs codeMogs;
 
 	@XmlElement(name = "COBUREAU")
-	private CoAppBureau		coAppBureau;
+	private CoAppBureau coAppBureau;
 
 	@XmlElement(name = "COBUSINESS")
-	private CoAppBusiness	coAppBusiness;
+	private CoAppBusiness coAppBusiness;
 
 	public CodeMogs getCodeMogs() {
 		return codeMogs;

@@ -15,7 +15,7 @@ import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implements DDAPaymentInitiateDAO {
-     private static Logger logger = Logger.getLogger(DDAPaymentInitiateDAOImpl.class);
+	private static Logger logger = Logger.getLogger(DDAPaymentInitiateDAOImpl.class);
 
 	public DDAPaymentInitiateDAOImpl() {
 		super();
@@ -29,11 +29,12 @@ public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implemen
 	public void saveDDAPaymentInitDetails(DDAPayments ddaPaymentInitiation) {
 		logger.debug("Entering");
 
-		if(ddaPaymentInitiation.getId()== 0 || ddaPaymentInitiation.getId()==Long.MIN_VALUE){
-			ddaPaymentInitiation.setDdaSeqId(getNextId("SeqDDS_PFF_DD500"));	
+		if (ddaPaymentInitiation.getId() == 0 || ddaPaymentInitiation.getId() == Long.MIN_VALUE) {
+			ddaPaymentInitiation.setDdaSeqId(getNextId("SeqDDS_PFF_DD500"));
 		}
 
-		ddaPaymentInitiation.setDirectDebitRefNo(ddaPaymentInitiation.getdDAReferenceNo()+ddaPaymentInitiation.getDdaSeqId());
+		ddaPaymentInitiation
+				.setDirectDebitRefNo(ddaPaymentInitiation.getdDAReferenceNo() + ddaPaymentInitiation.getDdaSeqId());
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DDS_PFF_DD500");
 		insertSql.append(" (DDARefNo, DirectDebitRefNo, PFFData)");
@@ -61,7 +62,7 @@ public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(DDAPayments.class);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		
+
 		// Update Seq table to 0
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("UPDATE SeqDDS_PFF_DD500 SET SeqNo = 0");
@@ -91,7 +92,7 @@ public class DDAPaymentInitiateDAOImpl extends SequenceDao<DDAPayments> implemen
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
-		} catch(EmptyResultDataAccessException dae) {
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
 		}

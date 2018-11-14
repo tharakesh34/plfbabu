@@ -7,17 +7,17 @@ import com.pennant.backend.model.Entity;
 
 public class ServiceTaskDetail implements Serializable, Entity {
 
-	private static final long	serialVersionUID	= 5808007043258253326L;
+	private static final long serialVersionUID = 5808007043258253326L;
 
-	private long 				taskExecutionId = Long.MIN_VALUE;
-	private String				serviceModule;
-	private String				reference;
-	private String				serviceTaskId;
-	private String				serviceTaskName;
-	private long				userId;
-	private Timestamp			executedTime;
-	private String				status;
-	private String				remarks;
+	private long taskExecutionId = Long.MIN_VALUE;
+	private String serviceModule;
+	private String reference;
+	private String serviceTaskId;
+	private String serviceTaskName;
+	private long userId;
+	private Timestamp executedTime;
+	private String status;
+	private String remarks;
 
 	public ServiceTaskDetail() {
 		super();
@@ -101,7 +101,7 @@ public class ServiceTaskDetail implements Serializable, Entity {
 	public void setId(long id) {
 		this.taskExecutionId = id;
 	}
-	
+
 	public long getTaskExecutionId() {
 		return taskExecutionId;
 	}

@@ -16,161 +16,160 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate> implements MandateStatusUpdateDAO {
-     private static Logger logger = Logger.getLogger(MandateStatusUpdateDAOImpl.class);
-	
-	
-	public MandateStatusUpdateDAOImpl(){
+	private static Logger logger = Logger.getLogger(MandateStatusUpdateDAOImpl.class);
+
+	public MandateStatusUpdateDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  MandateStatus details by key field
+	 * Fetch the Record MandateStatus details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FileUpload
 	 */
 	@Override
-	public MandateStatusUpdate getFileUploadById(final long id, String type ) {
+	public MandateStatusUpdate getFileUploadById(final long id, String type) {
 		logger.debug("Entering");
 		MandateStatusUpdate mandateStatusUpdate = new MandateStatusUpdate();
 		mandateStatusUpdate.setId(id);
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" fileID,fileName,userId,startDate,endDate,totalCount,success,fail,remarks");
-		
-		if(type.contains("View")){
+
+		if (type.contains("View")) {
 			sql.append("");
-		}	
+		}
 		sql.append(" From MandateStatusUpdate");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FileID =:FileID");
-		
+
 		logger.debug("sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatusUpdate);
-		RowMapper<MandateStatusUpdate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MandateStatusUpdate.class);
-		
-		try{
-			mandateStatusUpdate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<MandateStatusUpdate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(MandateStatusUpdate.class);
+
+		try {
+			mandateStatusUpdate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			mandateStatusUpdate = null;
 		}
 		logger.debug("Leaving");
 		return mandateStatusUpdate;
 	}
-	
-	
-	
-	
+
 	/**
-	 * This method Deletes the Record from the FileUpload or FileUpload_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete FileUpload by key FileHeaderId
+	 * This method Deletes the Record from the FileUpload or FileUpload_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete FileUpload by key FileHeaderId
 	 * 
-	 * @param MandateStatusUpdate (mandateStatusUpdate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param MandateStatusUpdate
+	 *            (mandateStatusUpdate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(MandateStatusUpdate mandateStatusUpdate,String type) {
+	public void delete(MandateStatusUpdate mandateStatusUpdate, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder sql = new StringBuilder("Delete From MandateStatusUpdate");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FileID =:FileID");
-	
+
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatusUpdate);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into FileUpload or FileUpload_Temp.
-	 * it fetches the available Sequence form SeqMandatesStatus by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into FileUpload or FileUpload_Temp. it fetches the available Sequence form
+	 * SeqMandatesStatus by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save FileUpload 
+	 * save FileUpload
 	 * 
-	 * @param MandateStatusUpdate (fileUpload)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param MandateStatusUpdate
+	 *            (fileUpload)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public long save(MandateStatusUpdate mandateStatusUpdate,String type) {
+	public long save(MandateStatusUpdate mandateStatusUpdate, String type) {
 		logger.debug("Entering");
-		if (mandateStatusUpdate.getId()==Long.MIN_VALUE){
+		if (mandateStatusUpdate.getId() == Long.MIN_VALUE) {
 			mandateStatusUpdate.setId(getNextId("SeqMandateStatusUpdate"));
-			logger.debug("get NextID:"+mandateStatusUpdate.getId());
+			logger.debug("get NextID:" + mandateStatusUpdate.getId());
 		}
-		
-		StringBuilder sql =new StringBuilder("Insert Into MandateStatusUpdate ");
-		sql.append(StringUtils.trimToEmpty(type)+" (");
+
+		StringBuilder sql = new StringBuilder("Insert Into MandateStatusUpdate ");
+		sql.append(StringUtils.trimToEmpty(type) + " (");
 		sql.append(" fileID,filename,userId,startDate,endDate,totalCount,success,fail,remarks)");
 		sql.append(" Values(:fileID,:fileName,:userId,:startDate,:endDate,:totalCount,:success,:fail,:remarks)");
-		
+
 		logger.debug("sql: " + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatusUpdate);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return mandateStatusUpdate.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record FileUpload or FileUpload_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update FileUpload by key MandateID and Version
+	 * This method updates the Record FileUpload or FileUpload_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update FileUpload by key MandateID and Version
 	 * 
-	 * @param MandateStatusUpdate (fileUpload)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param MandateStatusUpdate
+	 *            (fileUpload)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(MandateStatusUpdate mandateStatusUpdate,String type) {
+	public void update(MandateStatusUpdate mandateStatusUpdate, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	sql =new StringBuilder("Update MandateStatusUpdate");
-		sql.append(StringUtils.trimToEmpty(type)+" Set"); 
+		StringBuilder sql = new StringBuilder("Update MandateStatusUpdate");
+		sql.append(StringUtils.trimToEmpty(type) + " Set");
 		sql.append(" fileName=:fileName,userId=:userId,");
-		sql.append(" startDate=:startDate,endDate=:endDate,totalCount=:totalCount,success=:success,fail=:fail,remarks=:remarks");
+		sql.append(
+				" startDate=:startDate,endDate=:endDate,totalCount=:totalCount,success=:success,fail=:fail,remarks=:remarks");
 		sql.append(" Where fileID =:fileID");
-		
-		/*if (!type.endsWith("_Temp")){
-			sql.append("  AND Version= :Version-1");
-		}*/
-		
+
+		/*
+		 * if (!type.endsWith("_Temp")){ sql.append("  AND Version= :Version-1"); }
+		 */
+
 		logger.debug("Sql: " + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatusUpdate);
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-
 
 	@Override
 	public int getFileCount(String fileName) {
@@ -178,22 +177,21 @@ public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate>
 		MandateStatusUpdate mandateStatusUpdate = new MandateStatusUpdate();
 		mandateStatusUpdate.setFileName(fileName);
 		StringBuilder sql = new StringBuilder("SELECT COUNT(*)");
-		
+
 		sql.append(" From MandateStatusUpdate");
 		sql.append(" Where FileName =:FileName");
-		
+
 		logger.debug("sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatusUpdate);
-		
+
 		logger.debug("Leaving");
-		
-			try {
-				return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);	
-			} catch(EmptyResultDataAccessException dae) {
-				logger.debug("Exception: ", dae);
-				return 0;
-			}
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
 	}
-	
-	
+
 }

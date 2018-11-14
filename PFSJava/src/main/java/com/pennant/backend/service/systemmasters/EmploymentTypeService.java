@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.EmploymentType;
 public interface EmploymentTypeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	EmploymentType getEmploymentTypeById(String id);
+
 	EmploymentType getApprovedEmploymentTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

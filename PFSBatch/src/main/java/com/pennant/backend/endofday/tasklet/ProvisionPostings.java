@@ -79,20 +79,20 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.BatchUtil;
 
 public class ProvisionPostings implements Tasklet {
-	private Logger						logger			= Logger.getLogger(ProvisionPostings.class);
+	private Logger logger = Logger.getLogger(ProvisionPostings.class);
 
-	private FinanceMainDAO				financeMainDAO;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private FinanceProfitDetailDAO		financeProfitDetailDAO;
-	private PostingsPreparationUtil		postingsPreparationUtil;
-	private ProvisionDAO				provisionDAO;
-	private ProvisionMovementDAO		provisionMovementDAO;
-	private DataSource					dataSource;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private ProvisionDAO provisionDAO;
+	private ProvisionMovementDAO provisionMovementDAO;
+	private DataSource dataSource;
 
-	private Date						dateValueDate	= null;
+	private Date dateValueDate = null;
 
-	int									postings		= 0;
-	int									processed		= 0;
+	int postings = 0;
+	int processed = 0;
 
 	public ProvisionPostings() {
 
@@ -139,8 +139,8 @@ public class ProvisionPostings implements Tasklet {
 					ProvisionMovement movement = prepareProvisionMovementData(resultSet);
 
 					financeMain = getFinanceMainDAO().getFinanceMainForBatch(resultSet.getString("FinReference"));
-					schdDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
-							resultSet.getString("FinReference"));
+					schdDetails = getFinanceScheduleDetailDAO()
+							.getFinSchdDetailsForBatch(resultSet.getString("FinReference"));
 
 					pftDetail = new FinanceProfitDetail();
 					pftDetail.setFinReference(resultSet.getString("FinReference"));
@@ -161,23 +161,22 @@ public class ProvisionPostings implements Tasklet {
 
 					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
-					
+
 					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
 
-
 					if (aeEvent.isPostingSucess()) {
-							movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
-							movement.setProvisionDue(BigDecimal.ZERO);
-							movement.setProvisionPostSts("C");
-							movement.setLinkedTranId(aeEvent.getLinkedTranId());
+						movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
+						movement.setProvisionDue(BigDecimal.ZERO);
+						movement.setProvisionPostSts("C");
+						movement.setLinkedTranId(aeEvent.getLinkedTranId());
 
-							//Update Provision Movement Details
-							getProvisionDAO().updateProvAmt(movement, "");
-							getProvisionMovementDAO().update(movement, "");
+						//Update Provision Movement Details
+						getProvisionDAO().updateProvAmt(movement, "");
+						getProvisionMovementDAO().update(movement, "");
 
-							postings++;
+						postings++;
 					}
-					
+
 					pftDetail = null;
 
 					processed = resultSet.getRow();

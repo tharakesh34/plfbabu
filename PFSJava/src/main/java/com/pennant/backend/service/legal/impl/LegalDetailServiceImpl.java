@@ -124,7 +124,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
-	private DocumentManagerDAO  documentManagerDAO;
+	private DocumentManagerDAO documentManagerDAO;
 
 	private LegalApplicantDetailService legalApplicantDetailService;
 	private LegalPropertyDetailService legalPropertyDetailService;
@@ -181,7 +181,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
-	
+
 	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
 		return collateralAssignmentDAO;
 	}
@@ -237,8 +237,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public void setLegalNoteService(LegalNoteService legalNoteService) {
 		this.legalNoteService = legalNoteService;
 	}
-	
-	
+
 	/**
 	 * Save the legal details from loan Origination
 	 */
@@ -256,15 +255,18 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			String recordType = assignment.getRecordType();
 
 			//Checking Record Exists or Not
-			boolean isExists = getLegalDetailDAO().isExists(assignment.getReference(), assignment.getCollateralRef(),"_View");
+			boolean isExists = getLegalDetailDAO().isExists(assignment.getReference(), assignment.getCollateralRef(),
+					"_View");
 
 			boolean isDelete = false;
 
 			//If Record type is delete then we will make it as a inactive
-			if (PennantConstants.RECORD_TYPE_DEL.equals(recordType) || PennantConstants.RECORD_TYPE_CAN.equals(recordType)) {
+			if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_CAN.equals(recordType)) {
 				isDelete = true;
 				if (isExists) {
-					getLegalDetailDAO().updateLegalDeatils(assignment.getReference(), assignment.getCollateralRef(), false);
+					getLegalDetailDAO().updateLegalDeatils(assignment.getReference(), assignment.getCollateralRef(),
+							false);
 				}
 			}
 
@@ -303,15 +305,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * LegalDetails/LegalDetails_Temp by using LegalDetailsDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using LegalDetailsDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtLegalDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table LegalDetails/LegalDetails_Temp
+	 * by using LegalDetailsDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using LegalDetailsDAO's update method 3) Audit the record in to AuditHeader and AdtLegalDetails
+	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -321,7 +320,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.info(Literal.ENTERING);
 
 		LegalDetail detail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (FinanceConstants.MODULE_NAME.equals(detail.getModule())) {
 			auditHeader = getAuditDetails(auditHeader, "saveOrUpdate");
 		} else {
@@ -365,31 +364,32 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalDocumentService().processingDocumentDetail(legalDetail, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		// PropertyTitles Details
 		if (legalDetail.getPropertyTitleList() != null && !legalDetail.getPropertyTitleList().isEmpty()) {
 			List<AuditDetail> details = legalDetail.getAuditDetailMap().get("PropertyTitles");
 			details = getLegalPropertyTitleService().processingDetails(legalDetail, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		// Ecd Details
 		if (legalDetail.getEcdDetailsList() != null && !legalDetail.getEcdDetailsList().isEmpty()) {
 			List<AuditDetail> details = legalDetail.getAuditDetailMap().get("EcdDetails");
 			details = getLegalECDetailService().processingDetails(legalDetail, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		// LegalNotes Details
 		if (legalDetail.getLegalNotesList() != null && !legalDetail.getLegalNotesList().isEmpty()) {
 			List<AuditDetail> details = legalDetail.getAuditDetailMap().get("LegalNotes");
 			details = getLegalNoteService().processingDetails(legalDetail, details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		// Convents Details
 		if (legalDetail.getCovenantTypeList() != null && !legalDetail.getCovenantTypeList().isEmpty()) {
-			List<AuditDetail>  details = processingCoventsDetails(legalDetail, tableType, auditHeader.getAuditTranType());
+			List<AuditDetail> details = processingCoventsDetails(legalDetail, tableType,
+					auditHeader.getAuditTranType());
 			auditDetails.addAll(details);
 		}
 
@@ -401,15 +401,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
-	
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table LegalDetails by using LegalDetailsDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtLegalDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * LegalDetails by using LegalDetailsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtLegalDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -418,7 +415,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		LegalDetail detail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
@@ -448,8 +445,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	}
 
 	/**
-	 * getLegalDetails fetch the details by using LegalDetailsDAO's
-	 * getLegalDetailsById method.
+	 * getLegalDetails fetch the details by using LegalDetailsDAO's getLegalDetailsById method.
 	 * 
 	 * @param legalId
 	 *            legalId of the LegalDetail.
@@ -464,28 +460,32 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		LegalDetail legalDetail = getLegalDetailDAO().getLegalDetail(legalId, tableType);
 		if (legalDetail != null) {
 			//Applicant details
-			legalDetail.setApplicantDetailList(getLegalApplicantDetailService().getApplicantDetailsList(legalId, tableType));
-			
+			legalDetail.setApplicantDetailList(
+					getLegalApplicantDetailService().getApplicantDetailsList(legalId, tableType));
+
 			//Property details
-			legalDetail.setPropertyDetailList(getLegalPropertyDetailService().getPropertyDetailsList(legalId, tableType));
-			
+			legalDetail
+					.setPropertyDetailList(getLegalPropertyDetailService().getPropertyDetailsList(legalId, tableType));
+
 			//Document details
 			legalDetail.setDocumentList(getLegalDocumentService().getLegalDocumenttDetailsList(legalId, tableType));
-			
+
 			//Property Titles 
 			legalDetail.setPropertyTitleList(getLegalPropertyTitleService().getDetailsList(legalId, tableType));
-			
+
 			//Ecd Details  
 			legalDetail.setEcdDetailsList(getLegalECDetailService().getDetailsList(legalId, tableType));
-			
+
 			//LegalNotes  
 			legalDetail.setLegalNotesList(getLegalNoteService().getDetailsList(legalId, tableType));
-			
+
 			// Covenant Details
-			legalDetail.setCovenantTypeList(getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), "_View", false));
+			legalDetail.setCovenantTypeList(
+					getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(legalDetail.getLoanReference(), "_View", false));
 
 			// Collateral Against Customer, document Details and setup details
-			CollateralSetup collateralSetup = getCollateralSetupService().getCollateralSetupForLegal(legalDetail.getCollateralReference());
+			CollateralSetup collateralSetup = getCollateralSetupService()
+					.getCollateralSetupForLegal(legalDetail.getCollateralReference());
 			if (collateralSetup != null) {
 				legalDetail.setCollateralDocumentList(collateralSetup.getDocuments());
 
@@ -494,8 +494,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				List<CoOwnerDetail> coOwnerDetailsList = collateralSetup.getCoOwnerDetailList();
 				if (CollectionUtils.isNotEmpty(coOwnerDetailsList)) {
 					for (CoOwnerDetail coOwnerDetail : coOwnerDetailsList) {
-						if(coOwnerDetail.getCustomerId() != 0){
-							CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(coOwnerDetail.getCustomerId(), false, "_View");
+						if (coOwnerDetail.getCustomerId() != 0) {
+							CustomerDetails customerDetails = getCustomerDetailsService()
+									.getCustomerDetailsById(coOwnerDetail.getCustomerId(), false, "_View");
 							if (customerDetails != null) {
 								customersList.add(customerDetails.getCustomer());
 							}
@@ -504,9 +505,10 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				}
 				legalDetail.setCustomerList(customersList);
 			}
-			
+
 			// Finance details
-			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(legalDetail.getLoanReference(), "_View", false);
+			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(legalDetail.getLoanReference(), "_View",
+					false);
 			if (financeMain != null) {
 				legalDetail.setFinAmount(financeMain.getFinAssetValue());
 				legalDetail.setFinType(financeMain.getFinType());
@@ -534,14 +536,13 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				}
 			}
 		}
-		
+
 		return legalDetail;
 	}
 
 	/**
-	 * getApprovedLegalDetailsById fetch the details by using LegalDetailsDAO's
-	 * getLegalDetailsById method . with parameter id and type as blank. it
-	 * fetches the approved records from the LegalDetails.
+	 * getApprovedLegalDetailsById fetch the details by using LegalDetailsDAO's getLegalDetailsById method . with
+	 * parameter id and type as blank. it fetches the approved records from the LegalDetails.
 	 * 
 	 * @param legalId
 	 *            legalId of the LegalDetail. (String)
@@ -552,18 +553,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getLegalDetailDAO().delete with parameters legalDetail,"" b) NEW
-	 * Add new record in to main table by using getLegalDetailDAO().save with
-	 * parameters legalDetail,"" c) EDIT Update record in the main table by
-	 * using getLegalDetailDAO().update with parameters legalDetail,"" 3) Delete
-	 * the record from the workFlow table by using getLegalDetailDAO().delete
-	 * with parameters legalDetail,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtLegalDetails by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtLegalDetails by
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getLegalDetailDAO().delete with
+	 * parameters legalDetail,"" b) NEW Add new record in to main table by using getLegalDetailDAO().save with
+	 * parameters legalDetail,"" c) EDIT Update record in the main table by using getLegalDetailDAO().update with
+	 * parameters legalDetail,"" 3) Delete the record from the workFlow table by using getLegalDetailDAO().delete with
+	 * parameters legalDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtLegalDetails by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLegalDetails by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
@@ -587,13 +584,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				return aAuditHeader;
 			}
 		}
-		
+
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(legalDetail.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(legalDetailDAO.getLegalDetail(legalDetail.getLegalId(), TableType.MAIN_TAB.getSuffix()));
+			auditHeader.getAuditDetail().setBefImage(
+					legalDetailDAO.getLegalDetail(legalDetail.getLegalId(), TableType.MAIN_TAB.getSuffix()));
 		}
 
 		if (legalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -607,7 +605,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			legalDetail.setNextTaskId("");
 			legalDetail.setWorkflowId(0);
 			legalDetail.setModule(FinanceConstants.MODULE_NAME);
- 
+
 			if (legalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				legalDetail.setRecordType("");
@@ -617,7 +615,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setRecordType("");
 				getLegalDetailDAO().update(legalDetail, TableType.MAIN_TAB);
 			}
-			
+
 			TableType tableType = TableType.MAIN_TAB;
 			// Legal Applicant Details
 			if (legalDetail.getApplicantDetailList() != null && !legalDetail.getApplicantDetailList().isEmpty()) {
@@ -639,21 +637,21 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details = getLegalDocumentService().processingDocumentDetail(legalDetail, details, tableType);
 				auditDetails.addAll(details);
 			}
-			
+
 			// PropertyTitles Details
 			if (legalDetail.getPropertyTitleList() != null && !legalDetail.getPropertyTitleList().isEmpty()) {
 				List<AuditDetail> details = legalDetail.getAuditDetailMap().get("PropertyTitles");
 				details = getLegalPropertyTitleService().processingDetails(legalDetail, details, tableType);
 				auditDetails.addAll(details);
 			}
-			
+
 			// Ecd Details
 			if (legalDetail.getEcdDetailsList() != null && !legalDetail.getEcdDetailsList().isEmpty()) {
 				List<AuditDetail> details = legalDetail.getAuditDetailMap().get("EcdDetails");
 				details = getLegalECDetailService().processingDetails(legalDetail, details, tableType);
 				auditDetails.addAll(details);
 			}
-			
+
 			// LegalNotes Details
 			if (legalDetail.getLegalNotesList() != null && !legalDetail.getLegalNotesList().isEmpty()) {
 				List<AuditDetail> details = legalDetail.getAuditDetailMap().get("LegalNotes");
@@ -666,15 +664,18 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new LegalDetail(), legalDetail.getExcludeFields());
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditDetailList.addAll(listDeletion(legalDetail, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
+		auditDetailList
+				.addAll(listDeletion(legalDetail, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		getLegalDetailDAO().delete(legalDetail, TableType.TEMP_TAB);
 
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],legalDetail.getBefImage(), legalDetail));
+		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				legalDetail.getBefImage(), legalDetail));
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],legalDetail.getBefImage(), legalDetail));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				legalDetail.getBefImage(), legalDetail));
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -683,13 +684,10 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getLegalDetailDAO().delete with parameters
-	 * legalDetail,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtLegalDetails by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getLegalDetailDAO().delete with parameters legalDetail,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtLegalDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -748,12 +746,10 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-	
+
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -799,7 +795,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalDocumentService().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		
+
 		// PropertyTitles Details validation
 		List<LegalPropertyTitle> propertyTitlesList = legalDetail.getPropertyTitleList();
 		if (propertyTitlesList != null && !propertyTitlesList.isEmpty()) {
@@ -807,7 +803,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalPropertyTitleService().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		
+
 		// EcdDetails validation
 		List<LegalECDetail> legalECDetailList = legalDetail.getEcdDetailsList();
 		if (legalECDetailList != null && !legalECDetailList.isEmpty()) {
@@ -815,7 +811,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details = getLegalECDetailService().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		
+
 		// LegalNotes validation
 		List<LegalNote> LegalNotesList = legalDetail.getLegalNotesList();
 		if (LegalNotesList != null && !LegalNotesList.isEmpty()) {
@@ -829,14 +825,13 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getLegalDetailDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getLegalDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method 
+	 * @param method
 	 * @return
 	 */
 
@@ -858,7 +853,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		// Query module, Validating the all quarry's raised by users resolved or not.
 		if ("doApprove".equals(method)) {
 			auditDetail = getQueryDetailService().validate(auditDetail);
@@ -910,28 +905,28 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					getLegalDocumentService().getDocumentDetailsAuditData(legalDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
-		
+
 		// Title Detail List
 		if (legalDetail.getPropertyTitleList() != null && legalDetail.getPropertyTitleList().size() > 0) {
 			auditDetailMap.put("PropertyTitles",
 					getLegalPropertyTitleService().getDetailsAuditData(legalDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("PropertyTitles"));
 		}
-		
+
 		// EcdDetails List
 		if (legalDetail.getEcdDetailsList() != null && legalDetail.getEcdDetailsList().size() > 0) {
 			auditDetailMap.put("EcdDetails",
 					getLegalECDetailService().getDetailsAuditData(legalDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("EcdDetails"));
 		}
-		
+
 		// Legal Notes List
 		if (legalDetail.getLegalNotesList() != null && legalDetail.getLegalNotesList().size() > 0) {
 			auditDetailMap.put("LegalNotes",
 					getLegalNoteService().getDetailsAuditData(legalDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("LegalNotes"));
 		}
-		
+
 		legalDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(legalDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -971,19 +966,20 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			auditList
 					.addAll(getLegalDocumentService().deleteDocumentDetails(documentDetails, tableType, auditTranType));
 		}
-		
+
 		// PropertyTitles
 		List<AuditDetail> propertyTitlesList = legalDetail.getAuditDetailMap().get("PropertyTitles");
 		if (propertyTitlesList != null && propertyTitlesList.size() > 0) {
-			auditList.addAll(getLegalPropertyTitleService().deleteDetails(propertyTitlesList, tableType, auditTranType));
+			auditList
+					.addAll(getLegalPropertyTitleService().deleteDetails(propertyTitlesList, tableType, auditTranType));
 		}
-		
+
 		// EcdDetails
 		List<AuditDetail> ecdDetailsList = legalDetail.getAuditDetailMap().get("EcdDetails");
 		if (ecdDetailsList != null && ecdDetailsList.size() > 0) {
 			auditList.addAll(getLegalECDetailService().deleteDetails(ecdDetailsList, tableType, auditTranType));
 		}
-		
+
 		// LegalNotes
 		List<AuditDetail> legalNotesList = legalDetail.getAuditDetailMap().get("LegalNotes");
 		if (legalNotesList != null && legalNotesList.size() > 0) {
@@ -993,7 +989,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return auditList;
 	}
-	
+
 	/**
 	 ********************************************************************************************
 	 * Processing the convents details which are added in legal details
@@ -1038,14 +1034,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				} else if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(),
 						(PennantConstants.RECORD_TYPE_NEW))) {
 					if (approveRec) {
-					}  
+					}
 				} else if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(),
 						(PennantConstants.RECORD_TYPE_UPD))) {
 				} else if (StringUtils.equalsIgnoreCase(finCovenantType.getRecordType(),
 						(PennantConstants.RECORD_TYPE_DEL))) {
 					if (approveRec) {
 						deleteRecord = true;
-					}  
+					}
 				}
 				if (deleteRecord) {
 					getFinCovenantTypeDAO().delete(finCovenantType, tableType.getSuffix());
@@ -1072,24 +1068,25 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
-	
-	/*Check the legal approved or not
+
+	/*
+	 * Check the legal approved or not
 	 */
 	@Override
 	public AuditHeader isLegalApproved(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
+
 		boolean isExists = getLegalDetailDAO().isExists(financeMain.getFinReference(), TableType.TEMP_TAB);
-		
+
 		if (isExists) {
 			AuditDetail auditDetail = auditHeader.getAuditDetail();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "LG001", null, null), auditHeader.getUsrLanguage()));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -1100,14 +1097,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	@Override
 	public List<LegalDetail> getApprovedLegalDetail(FinanceMain aFinanceMain) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		List<Long> idLIst = getLegalDetailDAO().getLegalIdListByFinRef(aFinanceMain.getFinReference(), "", null);
 		List<LegalDetail> detailList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(idLIst)) {
 			boolean modtDoc = true;
-			Branch branch =  getBranchService().getApprovedBranchById(aFinanceMain.getFinBranch());
+			Branch branch = getBranchService().getApprovedBranchById(aFinanceMain.getFinBranch());
 			String stateName = branch.getLovDescBranchProvinceName();
-			
+
 			if (isMODTDoc("ESFB_LEGAL_DETAIL_MODT_DOCUMENTS_GENERATION_STATES", stateName)) {
 				modtDoc = false;
 			}
@@ -1125,7 +1122,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return detailList;
 	}
-	
+
 	private boolean isMODTDoc(String smtParameter, String stateName) {
 		String rolesList = SysParamUtil.getValueAsString(smtParameter);
 		if (StringUtils.isEmpty(rolesList)) {
@@ -1139,6 +1136,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		}
 		return false;
 	}
+
 	/*
 	 * Formatting the details as per the marge fields
 	 */
@@ -1149,7 +1147,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 	private LegalDetail formateMergeDetails(LegalDetail legalDetail, boolean fromLoan) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		legalDetail.setStrAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
 
 		List<LegalDocument> documentList = legalDetail.getDocumentList();
@@ -1211,69 +1209,49 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 						modtString.append(detail.getTitleName()).append(". ");
 					}
 					modtString.append(detail.getPropertyOwnersName()).append(", ");
-					
+
 					if (StringUtils.trimToNull(detail.getRelationshipType()) != null) {
 						modtString.append(detail.getRelationshipType()).append(", ");
 					}
 					if (StringUtils.trimToNull(detail.getIDTypeName()) != null) {
 						modtString.append(detail.getIDTypeName()).append("-");
 					}
-					modtString.append(detail.getIDNo()).append(", aged about ").append(detail.getAge()).append(" years");
+					modtString.append(detail.getIDNo()).append(", aged about ").append(detail.getAge())
+							.append(" years");
 
 					/*
-					 * CustomerDetails customerDetails =
-					 * getCustomerDetailsService().getCustomerDetailsById(detail
-					 * .getCustomerId(), true, "_View"); //Customer High
-					 * Priority Mobile number if (customerDetails != null &&
-					 * CollectionUtils.isNotEmpty(customerDetails.
-					 * getCustomerPhoneNumList())) { for (CustomerPhoneNumber
-					 * phoneNumber : customerDetails.getCustomerPhoneNumList())
-					 * { if
-					 * (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)
-					 * == phoneNumber.getPhoneTypePriority()) {
-					 * modtString.append("Mobile No. ").append(phoneNumber.
-					 * getPhoneNumber()); break; } } } // Customer High Priority
-					 * Address number if (customerDetails != null &&
-					 * CollectionUtils.isNotEmpty(customerDetails.getAddressList
-					 * ())) { for (CustomerAddres addres :
-					 * customerDetails.getAddressList()) { if
-					 * (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)
-					 * == addres .getCustAddrPriority()) {
-					 * modtString.append(", is residing at "); if
-					 * (StringUtils.isNotBlank(addres.getCustAddrHNbr())) {
-					 * modtString.append(addres.getCustAddrHNbr()); } if
-					 * (StringUtils.isNotBlank(addres.getCustFlatNbr())) {
-					 * modtString.append(", ").append(addres.getCustFlatNbr());
-					 * } if (StringUtils.isNotBlank(addres.getCustAddrStreet()))
-					 * {
-					 * modtString.append(", ").append(addres.getCustAddrStreet()
-					 * ); } if
+					 * CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(detail
+					 * .getCustomerId(), true, "_View"); //Customer High Priority Mobile number if (customerDetails !=
+					 * null && CollectionUtils.isNotEmpty(customerDetails. getCustomerPhoneNumList())) { for
+					 * (CustomerPhoneNumber phoneNumber : customerDetails.getCustomerPhoneNumList()) { if
+					 * (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == phoneNumber.getPhoneTypePriority())
+					 * { modtString.append("Mobile No. ").append(phoneNumber. getPhoneNumber()); break; } } } //
+					 * Customer High Priority Address number if (customerDetails != null &&
+					 * CollectionUtils.isNotEmpty(customerDetails.getAddressList ())) { for (CustomerAddres addres :
+					 * customerDetails.getAddressList()) { if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)
+					 * == addres .getCustAddrPriority()) { modtString.append(", is residing at "); if
+					 * (StringUtils.isNotBlank(addres.getCustAddrHNbr())) { modtString.append(addres.getCustAddrHNbr());
+					 * } if (StringUtils.isNotBlank(addres.getCustFlatNbr())) {
+					 * modtString.append(", ").append(addres.getCustFlatNbr()); } if
+					 * (StringUtils.isNotBlank(addres.getCustAddrStreet())) {
+					 * modtString.append(", ").append(addres.getCustAddrStreet() ); } if
 					 * (StringUtils.isNotBlank(addres.getCustAddrLine1())) {
-					 * modtString.append(", ").append(addres.getCustAddrLine1())
-					 * ; } if
+					 * modtString.append(", ").append(addres.getCustAddrLine1()) ; } if
 					 * (StringUtils.isNotBlank(addres.getCustAddrLine2())) {
-					 * modtString.append(", ").append(addres.getCustAddrLine2())
-					 * ; } if
+					 * modtString.append(", ").append(addres.getCustAddrLine2()) ; } if
 					 * (StringUtils.isNotBlank(addres.getCustAddrLine3())) {
-					 * modtString.append(", ").append(addres.getCustAddrLine3())
-					 * ; } if
+					 * modtString.append(", ").append(addres.getCustAddrLine3()) ; } if
 					 * (StringUtils.isNotBlank(addres.getCustAddrLine4())) {
-					 * modtString.append(", ").append(addres.getCustAddrLine4())
-					 * ; } if
-					 * (StringUtils.isNotBlank(addres.getLovDescCustAddrCityName
-					 * ())) { modtString.append(", ").append(addres.
-					 * getLovDescCustAddrCityName()); }
+					 * modtString.append(", ").append(addres.getCustAddrLine4()) ; } if
+					 * (StringUtils.isNotBlank(addres.getLovDescCustAddrCityName ())) {
+					 * modtString.append(", ").append(addres. getLovDescCustAddrCityName()); }
 					 * 
-					 * if (StringUtils.isNotBlank(addres.
-					 * getLovDescCustAddrProvinceName())) {
-					 * modtString.append(", ").append(addres.
-					 * getLovDescCustAddrProvinceName()); } if
-					 * (StringUtils.isNotBlank(addres.getLovDescCustAddrCityName
-					 * ())) { modtString.append(", ").append(addres.
-					 * getLovDescCustAddrCityName()); } if
+					 * if (StringUtils.isNotBlank(addres. getLovDescCustAddrProvinceName())) {
+					 * modtString.append(", ").append(addres. getLovDescCustAddrProvinceName()); } if
+					 * (StringUtils.isNotBlank(addres.getLovDescCustAddrCityName ())) {
+					 * modtString.append(", ").append(addres. getLovDescCustAddrCityName()); } if
 					 * (StringUtils.isNotBlank(addres.getCustAddrZIP())) {
-					 * modtString.append(", ").append(addres.getCustAddrZIP());
-					 * } break; } } }
+					 * modtString.append(", ").append(addres.getCustAddrZIP()); } break; } } }
 					 */
 					if (StringUtils.trimToNull(detail.getRemarks()) != null) {
 						modtString.append(", ").append(detail.getRemarks()).append(".");
@@ -1315,11 +1293,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		if (CollectionUtils.isNotEmpty(jointAccountDetails)) {
 			for (JointAccountDetail detail : jointAccountDetails) {
 				if (StringUtils.trimToNull(detail.getLovDescCIFName()) != null) {
-					CustomerDetails customerDetails = getCustomerDetailsService().getCustomerDetailsById(detail.getCustID(), false, "_View");
+					CustomerDetails customerDetails = getCustomerDetailsService()
+							.getCustomerDetailsById(detail.getCustID(), false, "_View");
 					if (sb.length() > 0) {
-						sb.append(", ").append(detail.getLovDescCIFName()).append(". ").append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
+						sb.append(", ").append(detail.getLovDescCIFName()).append(". ")
+								.append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
 					} else {
-						sb.append(detail.getLovDescCIFName()).append(". ").append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
+						sb.append(detail.getLovDescCIFName()).append(". ")
+								.append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
 					}
 				}
 			}
@@ -1352,7 +1333,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return legalDetail;
 	}
-	
+
 	// Saving Documents
 	@Override
 	public void saveDocumentDetails(DocumentDetails documentDetails) {
@@ -1361,10 +1342,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		DocumentManager documentManager = new DocumentManager();
 		documentManager.setDocImage(documentDetails.getDocImage());
 		documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-		 
-		DocumentDetails oldDocumentDetails = getDocumentDetailsDAO().getDocumentDetails(documentDetails.getReferenceId(), documentDetails.getDocCategory(),
-				documentDetails.getDocModule(), TableType.MAIN_TAB.getSuffix());
-		
+
+		DocumentDetails oldDocumentDetails = getDocumentDetailsDAO().getDocumentDetails(
+				documentDetails.getReferenceId(), documentDetails.getDocCategory(), documentDetails.getDocModule(),
+				TableType.MAIN_TAB.getSuffix());
+
 		if (oldDocumentDetails != null && oldDocumentDetails.getDocId() != Long.MIN_VALUE) {
 			documentDetails.setDocId(oldDocumentDetails.getDocId());
 			getDocumentDetailsDAO().update(documentDetails, TableType.MAIN_TAB.getSuffix());
@@ -1373,12 +1355,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	// Saving Documents List
 	@Override
 	public void saveDocumentDetails(List<DocumentDetails> documentsList) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (CollectionUtils.isEmpty(documentsList)) {
 			return;
 		}
@@ -1391,24 +1373,23 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			details.setDocRefId(getDocumentManagerDAO().save(documentManager));
 			getDocumentDetailsDAO().save(details, TableType.MAIN_TAB.getSuffix());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	 /*
-	  * Getting the document details
-	  */
+
+	/*
+	 * Getting the document details
+	 */
 	@Override
 	public List<DocumentDetails> getDocumentDetails(String reference, String module) {
 		return getDocumentDetailsDAO().getDocumentDetailsByRef(reference, module, "", TableType.MAIN_TAB.getSuffix());
 	}
-	
+
 	@Override
 	public DocumentDetails getDocDetailByDocId(long docId, String type, boolean readAttachment) {
 		return getDocumentDetailsDAO().getDocumentDetailsById(docId, type, readAttachment);
 	}
-	
-		
+
 	/**
 	 ****************************************************************************
 	 * Legal details Fetching , validating and saving from loan *
@@ -1416,7 +1397,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 */
 
 	/*
-	 *  
+	 * 
 	 * Getting the legaldetails list based on the fin reference
 	 */
 	@Override
@@ -1425,7 +1406,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		List<LegalDetail> legalDetailsList = new ArrayList<>();
 
-		List<Long> idList = getLegalDetailDAO().getLegalIdListByFinRef(finReference, "_View", FinanceConstants.MODULE_NAME);
+		List<Long> idList = getLegalDetailDAO().getLegalIdListByFinRef(finReference, "_View",
+				FinanceConstants.MODULE_NAME);
 		if (CollectionUtils.isNotEmpty(idList)) {
 			for (Long legalId : idList) {
 				LegalDetail legalDetail = getLegalDetails(legalId, "_View");
@@ -1437,18 +1419,18 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return legalDetailsList;
 	}
-	
+
 	/*
 	 * Business validations
 	 */
 	@Override
 	public List<AuditDetail> validateDetailsFromLoan(FinanceDetail financeDetail, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
-		
+
 		List<LegalDetail> legalDetailList = financeDetail.getLegalDetailsList();
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		legalDetailList = getLegalDetailsAuditData(legalDetailList, auditTranType, method);
 
 		if (CollectionUtils.isNotEmpty(legalDetailList)) {
@@ -1461,11 +1443,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				auditDetails.addAll(validate(auditHeader, method));
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
- 
+
 	private LegalDetail setWorkFlowValues(FinanceDetail financeDetail, LegalDetail aLegalDetail, String method) {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
@@ -1519,7 +1501,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				}
 			}
 		}
-		
+
 		// Document details
 		List<LegalDocument> legaldDocumentDetails = aLegalDetail.getDocumentList();
 		if (CollectionUtils.isNotEmpty(legaldDocumentDetails)) {
@@ -1542,7 +1524,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				}
 			}
 		}
-		
+
 		// Legal Property Title
 		List<LegalPropertyTitle> legalPropertyTitles = aLegalDetail.getPropertyTitleList();
 		if (CollectionUtils.isNotEmpty(legalPropertyTitles)) {
@@ -1588,7 +1570,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				}
 			}
 		}
-		
+
 		// Legal Notes
 		List<LegalNote> legalNotes = aLegalDetail.getLegalNotesList();
 		if (CollectionUtils.isNotEmpty(legalNotes)) {
@@ -1626,10 +1608,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 	private AuditHeader getAuditHeader(LegalDetail aLegalDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLegalDetail.getBefImage(), aLegalDetail);
-		return new AuditHeader(aLegalDetail.getLegalReference(), null, null, null, auditDetail, aLegalDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(aLegalDetail.getLegalReference(), null, null, null, auditDetail,
+				aLegalDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-	
-	public List<LegalDetail> getLegalDetailsAuditData(List<LegalDetail> detailList, String auditTranType, String method) {
+
+	public List<LegalDetail> getLegalDetailsAuditData(List<LegalDetail> detailList, String auditTranType,
+			String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<LegalDetail> legalDetailsList = new ArrayList<>();
@@ -1673,7 +1657,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return legalDetailsList;
 	}
-	
+
 	/*
 	 * Processing the legal details based on the method
 	 */
@@ -1699,7 +1683,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		if (CollectionUtils.isNotEmpty(legalDetailsList)) {
 			int i = 0;
 			for (LegalDetail legalDetail : legalDetailsList) {
-				
+
 				if ("doApprove".equals(method)) {
 					legalDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					legalDetail.setRecordType("");
@@ -1726,7 +1710,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					break;
 				}
 				i = i + 1;
-				auditDetails.add(new AuditDetail(aAuditHeader.getAuditTranType(), i, fields[0], fields[1], legalDetail.getBefImage(), legalDetail));
+				auditDetails.add(new AuditDetail(aAuditHeader.getAuditTranType(), i, fields[0], fields[1],
+						legalDetail.getBefImage(), legalDetail));
 			}
 		}
 		logger.debug(Literal.LEAVING);

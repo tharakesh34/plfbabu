@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -69,23 +68,24 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements ScoringSlabDAO {
-   private static Logger logger = Logger.getLogger(ScoringSlabDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ScoringSlabDAOImpl.class);
 
 	public ScoringSlabDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new ScoringSlab 
+	 * This method set the Work Flow id based on the module name and return the new ScoringSlab
+	 * 
 	 * @return ScoringSlab
 	 */
 
 	@Override
 	public ScoringSlab getScoringSlab() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("ScoringSlab");
-		ScoringSlab scoringSlab= new ScoringSlab();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("ScoringSlab");
+		ScoringSlab scoringSlab = new ScoringSlab();
+		if (workFlowDetails != null) {
 			scoringSlab.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -93,7 +93,9 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	}
 
 	/**
-	 * This method get the module from method getScoringSlab() and set the new record flag as true and return ScoringSlab()   
+	 * This method get the module from method getScoringSlab() and set the new record flag as true and return
+	 * ScoringSlab()
+	 * 
 	 * @return ScoringSlab
 	 */
 
@@ -107,11 +109,12 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	}
 
 	/**
-	 * Fetch the Record  Scoring Slab Details details by key field
+	 * Fetch the Record Scoring Slab Details details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ScoringSlab
 	 */
 	@Override
@@ -125,7 +128,7 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		selectSql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescScoreGroupCode");
 		}
 		selectSql.append(" From RMTScoringSlab");
@@ -136,10 +139,9 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
 		RowMapper<ScoringSlab> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
-		try{
-			scoringSlab = this.jdbcTemplate.queryForObject(selectSql.toString()
-					, beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			scoringSlab = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scoringSlab = null;
 		}
@@ -151,13 +153,13 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		logger.debug("Entering");
 		ScoringSlab scoringSlab = new ScoringSlab();
 		scoringSlab.setScoreGroupId(scoreGrpId);
-		List<ScoringSlab>  scoringSlabList;
+		List<ScoringSlab> scoringSlabList;
 
-		StringBuilder	selectSql =new StringBuilder("Select ScoreGroupId, ScoringSlab, CreditWorthness");
+		StringBuilder selectSql = new StringBuilder("Select ScoreGroupId, ScoringSlab, CreditWorthness");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		selectSql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescScoreGroupCode");
 		}
 		selectSql.append(" From RMTScoringSlab");
@@ -168,9 +170,9 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
 		RowMapper<ScoringSlab> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
-		try{
-			scoringSlabList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			scoringSlabList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scoringSlabList = null;
 		}
@@ -178,22 +180,20 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		return scoringSlabList;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the RMTScoringSlab or RMTScoringSlab_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Scoring Slab Details by key ScoreGroupId
+	 * This method Deletes the Record from the RMTScoringSlab or RMTScoringSlab_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Scoring Slab Details by key ScoreGroupId
 	 * 
-	 * @param Scoring Slab Details (scoringSlab)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Scoring
+	 *            Slab Details (scoringSlab)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(ScoringSlab scoringSlab,String type) {
+	public void delete(ScoringSlab scoringSlab, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -203,26 +203,26 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTScoringSlab or RMTScoringSlab_Temp.
-	 * delete Scoring Slab Details by key ScoreGroupId
+	 * This method Deletes the Record from the RMTScoringSlab or RMTScoringSlab_Temp. delete Scoring Slab Details by key
+	 * ScoreGroupId
 	 * 
 	 */
 
-	public void delete(long scoreGroupId,String type) {
+	public void delete(long scoreGroupId, String type) {
 		logger.debug("Entering");
-		ScoringSlab scoringSlab=new ScoringSlab();
+		ScoringSlab scoringSlab = new ScoringSlab();
 		scoringSlab.setScoreGroupId(scoreGroupId);
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTScoringSlab");
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -232,29 +232,31 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+
 	/**
-	 * This method insert new Records into RMTScoringSlab or RMTScoringSlab_Temp.
-	 * it fetches the available Sequence form SeqRMTScoringSlab by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into RMTScoringSlab or RMTScoringSlab_Temp. it fetches the available Sequence form
+	 * SeqRMTScoringSlab by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Scoring Slab Details 
+	 * save Scoring Slab Details
 	 * 
-	 * @param Scoring Slab Details (scoringSlab)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Scoring
+	 *            Slab Details (scoringSlab)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public long save(ScoringSlab scoringSlab,String type) {
+	public long save(ScoringSlab scoringSlab, String type) {
 		logger.debug("Entering");
-		if (scoringSlab.getId()==Long.MIN_VALUE){
+		if (scoringSlab.getId() == Long.MIN_VALUE) {
 			scoringSlab.setId(getNextId("SeqRMTScoringSlab"));
-			logger.debug("get NextID:"+scoringSlab.getId());
+			logger.debug("get NextID:" + scoringSlab.getId());
 		}
 
-		StringBuilder insertSql =new StringBuilder("Insert Into RMTScoringSlab");
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTScoringSlab");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ScoreGroupId, ScoringSlab, CreditWorthness");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
@@ -272,31 +274,32 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	}
 
 	/**
-	 * This method updates the Record RMTScoringSlab or RMTScoringSlab_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Scoring Slab Details by key ScoreGroupId and Version
+	 * This method updates the Record RMTScoringSlab or RMTScoringSlab_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Scoring Slab Details by key ScoreGroupId and Version
 	 * 
-	 * @param Scoring Slab Details (scoringSlab)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Scoring
+	 *            Slab Details (scoringSlab)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public void update(ScoringSlab scoringSlab,String type) {
+	public void update(ScoringSlab scoringSlab, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update RMTScoringSlab");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update RMTScoringSlab");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CreditWorthness = :CreditWorthness");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
-		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ScoreGroupId =:ScoreGroupId AND ScoringSlab = :ScoringSlab");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 

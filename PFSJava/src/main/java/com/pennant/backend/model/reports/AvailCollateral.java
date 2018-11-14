@@ -13,80 +13,101 @@ public class AvailCollateral {
 	private String lastReview = "";
 	private String collateralLoc = "";
 	private String collateralDesc = "";
-	
+
 	public AvailCollateral() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getCollateralReference() {
-    	return collateralReference;
-    }
+		return collateralReference;
+	}
+
 	public void setCollateralReference(String collateralReference) {
-    	this.collateralReference = collateralReference;
-    }
+		this.collateralReference = collateralReference;
+	}
+
 	public String getCollateralType() {
-    	return collateralType;
-    }
+		return collateralType;
+	}
+
 	public void setCollateralType(String collateralType) {
-    	this.collateralType = collateralType;
-    }
+		this.collateralType = collateralType;
+	}
+
 	public String getCollateralComplete() {
-    	return collateralComplete;
-    }
+		return collateralComplete;
+	}
+
 	public void setCollateralComplete(String collateralComplete) {
-    	this.collateralComplete = collateralComplete;
-    }
+		this.collateralComplete = collateralComplete;
+	}
+
 	public String getCollateralCcy() {
-    	return collateralCcy;
-    }
+		return collateralCcy;
+	}
+
 	public void setCollateralCcy(String collateralCcy) {
-    	this.collateralCcy = collateralCcy;
-    }
+		this.collateralCcy = collateralCcy;
+	}
+
 	public String getCollateralExpiry() {
-    	return collateralExpiry;
-    }
+		return collateralExpiry;
+	}
+
 	public void setCollateralExpiry(String collateralExpiry) {
-    	this.collateralExpiry = collateralExpiry;
-    }
+		this.collateralExpiry = collateralExpiry;
+	}
+
 	public String getCollateralValue() {
-    	return collateralValue;
-    }
+		return collateralValue;
+	}
+
 	public void setCollateralValue(String collateralValue) {
-    	this.collateralValue = collateralValue;
-    }
+		this.collateralValue = collateralValue;
+	}
+
 	public String getMargin() {
-    	return margin;
-    }
+		return margin;
+	}
+
 	public void setMargin(String margin) {
-    	this.margin = margin;
-    }
+		this.margin = margin;
+	}
+
 	public String getBankValuation() {
-    	return bankValuation;
-    }
+		return bankValuation;
+	}
+
 	public void setBankValuation(String bankValuation) {
-    	this.bankValuation = bankValuation;
-    }
+		this.bankValuation = bankValuation;
+	}
+
 	public String getLastReview() {
-    	return lastReview;
-    }
+		return lastReview;
+	}
+
 	public void setLastReview(String lastReview) {
-    	this.lastReview = lastReview;
-    }
+		this.lastReview = lastReview;
+	}
+
 	public String getCollateralLoc() {
-    	return collateralLoc;
-    }
+		return collateralLoc;
+	}
+
 	public void setCollateralLoc(String collateralLoc) {
-    	this.collateralLoc = collateralLoc;
-    }
+		this.collateralLoc = collateralLoc;
+	}
+
 	public String getCollateralDesc() {
-    	return collateralDesc;
-    }
+		return collateralDesc;
+	}
+
 	public void setCollateralDesc(String collateralDesc) {
-    	this.collateralDesc = collateralDesc;
-    }
-	
+		this.collateralDesc = collateralDesc;
+	}
+
 }

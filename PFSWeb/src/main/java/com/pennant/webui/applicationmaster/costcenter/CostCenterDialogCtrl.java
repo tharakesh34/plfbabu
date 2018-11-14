@@ -66,33 +66,30 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/CostCenter/costCenterDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/CostCenter/costCenterDialog.zul file. <br>
  */
-public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
+public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CostCenterDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CostCenterDialog; 
-	protected Textbox 		costCenterCode; 
-	protected Textbox 		costCenterDesc; 
-	protected Checkbox 		active; 
+	protected Window window_CostCenterDialog;
+	protected Textbox costCenterCode;
+	protected Textbox costCenterDesc;
+	protected Checkbox active;
 	private CostCenter costCenter; // overhanded per param
 
 	private transient CostCenterListCtrl costCenterListCtrl; // overhanded per param
 	private transient CostCenterService costCenterService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -105,14 +102,13 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	protected void doSetProperties() {
 		super.pageRightName = "CostCenterDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.costCenter.getCostCenterID()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.costCenter.getCostCenterID()));
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -123,11 +119,10 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	 */
 	public void onCreate$window_CostCenterDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_CostCenterDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.costCenter = (CostCenter) arguments.get("costCenter");
@@ -141,16 +136,16 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 			CostCenter costCenter = new CostCenter();
 			BeanUtils.copyProperties(this.costCenter, costCenter);
 			this.costCenter.setBefImage(costCenter);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.costCenter.isWorkflow(), this.costCenter.getWorkflowId(),
 					this.costCenter.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -160,25 +155,24 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			this.costCenterCode.setMaxlength(15);
-			this.costCenterDesc.setMaxlength(50);
-		
+
+		this.costCenterCode.setMaxlength(15);
+		this.costCenterDesc.setMaxlength(50);
+
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -204,7 +198,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -237,7 +231,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -301,12 +295,6 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-
-
-
-
-
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -316,20 +304,19 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	 */
 	public void doWriteBeanToComponents(CostCenter aCostCenter) {
 		logger.debug(Literal.ENTERING);
-	
-			this.costCenterCode.setValue(aCostCenter.getCostCenterCode());
-			this.costCenterDesc.setValue(aCostCenter.getCostCenterDesc());
-			this.active.setChecked(aCostCenter.isActive());
-			if(aCostCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aCostCenter
-					.getRecordType())){
-				this.active.setChecked(true);
-				this.active.setDisabled(true);
-			}
-			this.recordStatus.setValue(aCostCenter.getRecordStatus());
-		
+
+		this.costCenterCode.setValue(aCostCenter.getCostCenterCode());
+		this.costCenterDesc.setValue(aCostCenter.getCostCenterDesc());
+		this.active.setChecked(aCostCenter.isActive());
+		if (aCostCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aCostCenter.getRecordType())) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
+		this.recordStatus.setValue(aCostCenter.getRecordStatus());
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -337,41 +324,41 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	 */
 	public void doWriteComponentsToBean(CostCenter aCostCenter) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Cost Center Code
 		try {
-		    aCostCenter.setCostCenterCode(this.costCenterCode.getValue());
-		}catch (WrongValueException we ) {
+			aCostCenter.setCostCenterCode(this.costCenterCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Cost Center Description
 		try {
-		    aCostCenter.setCostCenterDesc(this.costCenterDesc.getValue());
-		}catch (WrongValueException we ) {
+			aCostCenter.setCostCenterDesc(this.costCenterDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
 		try {
 			aCostCenter.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -422,28 +409,31 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.costCenterCode.isReadonly()){
-			this.costCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE,true));
+		if (!this.costCenterCode.isReadonly()) {
+			this.costCenterCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, true));
 		}
-		if (!this.costCenterDesc.isReadonly()){
-			this.costCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.costCenterDesc.isReadonly()) {
+			this.costCenterDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.costCenterCode.setConstraint("");
 		this.costCenterDesc.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
-	}
 
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Set Validations for LOV Fields
@@ -451,35 +441,33 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		//Cost Center ID
 		//Cost Center Code
 		//Cost Center Description
 		//Active
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -489,149 +477,28 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final CostCenter aCostCenter = new CostCenter();
 		BeanUtils.copyProperties(this.costCenter, aCostCenter);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_CostCenterDialog_CostCenterCode.value") + " : "
 				+ aCostCenter.getCostCenterCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aCostCenter.getRecordType()).equals("")){
-				aCostCenter.setVersion(aCostCenter.getVersion()+1);
+			if (StringUtils.trimToEmpty(aCostCenter.getRecordType()).equals("")) {
+				aCostCenter.setVersion(aCostCenter.getVersion() + 1);
 				aCostCenter.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aCostCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aCostCenter.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCostCenter.getNextTaskId(), aCostCenter);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aCostCenter,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				MessageUtil.showError(e);
-			}
-			
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.costCenter.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.costCenterCode);
-		} else {
-			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.costCenterCode);
-			
-		}
-	
-			readOnlyComponent(isReadOnly("CostCenterDialog_CostCenterDesc"), this.costCenterDesc);
-			readOnlyComponent(isReadOnly("CostCenterDialog_Active"), this.active);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.costCenter.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCostCenter.getNextTaskId(),
+							aCostCenter);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.costCenterCode);
-			readOnlyComponent(true, this.costCenterDesc);
-			readOnlyComponent(true, this.active);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.costCenterCode.setValue("");
-				this.costCenterDesc.setValue("");
-				this.active.setChecked(false);
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final CostCenter aCostCenter = new CostCenter();
-			BeanUtils.copyProperties(this.costCenter, aCostCenter);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aCostCenter);
-
-			isNew = aCostCenter.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aCostCenter.getRecordType())) {
-					aCostCenter.setVersion(aCostCenter.getVersion() + 1);
-					if (isNew) {
-						aCostCenter.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aCostCenter.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aCostCenter.setNewRecord(true);
-					}
-				}
-			} else {
-				aCostCenter.setVersion(aCostCenter.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -641,196 +508,315 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			logger.debug("Leaving");
+
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(CostCenter aCostCenter, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aCostCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aCostCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aCostCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aCostCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.costCenter.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+			readOnlyComponent(false, this.costCenterCode);
+		} else {
+			this.btnCancel.setVisible(true);
+			readOnlyComponent(true, this.costCenterCode);
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aCostCenter.getNextTaskId());
+		}
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aCostCenter);
-					}
+		readOnlyComponent(isReadOnly("CostCenterDialog_CostCenterDesc"), this.costCenterDesc);
+		readOnlyComponent(isReadOnly("CostCenterDialog_Active"), this.active);
 
-					if (isNotesMandatory(taskId, aCostCenter)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aCostCenter.setTaskId(taskId);
-				aCostCenter.setNextTaskId(nextTaskId);
-				aCostCenter.setRoleCode(getRole());
-				aCostCenter.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aCostCenter, tranType);
-				String operationRefs = getServiceOperations(taskId, aCostCenter);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aCostCenter, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.costCenter.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aCostCenter, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			CostCenter aCostCenter = (CostCenter) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		readOnlyComponent(true, this.costCenterCode);
+		readOnlyComponent(true, this.costCenterDesc);
+		readOnlyComponent(true, this.active);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = costCenterService.delete(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.costCenterCode.setValue("");
+		this.costCenterDesc.setValue("");
+		this.active.setChecked(false);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final CostCenter aCostCenter = new CostCenter();
+		BeanUtils.copyProperties(this.costCenter, aCostCenter);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aCostCenter);
+
+		isNew = aCostCenter.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCostCenter.getRecordType())) {
+				aCostCenter.setVersion(aCostCenter.getVersion() + 1);
+				if (isNew) {
+					aCostCenter.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aCostCenter.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aCostCenter.setNewRecord(true);
+				}
+			}
+		} else {
+			aCostCenter.setVersion(aCostCenter.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aCostCenter, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(CostCenter aCostCenter, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aCostCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aCostCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aCostCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aCostCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aCostCenter.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aCostCenter);
+				}
+
+				if (isNotesMandatory(taskId, aCostCenter)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aCostCenter.setTaskId(taskId);
+			aCostCenter.setNextTaskId(nextTaskId);
+			aCostCenter.setRoleCode(getRole());
+			aCostCenter.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aCostCenter, tranType);
+			String operationRefs = getServiceOperations(taskId, aCostCenter);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aCostCenter, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aCostCenter, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		CostCenter aCostCenter = (CostCenter) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = costCenterService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = costCenterService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = costCenterService.doApprove(auditHeader);
+
+						if (aCostCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = costCenterService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = costCenterService.doReject(auditHeader);
+						if (aCostCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = costCenterService.doApprove(auditHeader);
-
-							if (aCostCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = costCenterService.doReject(auditHeader);
-							if (aCostCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_CostCenterDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_CostCenterDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.costCenter), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CostCenterDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_CostCenterDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.costCenter), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(CostCenter aCostCenter, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aCostCenter.getBefImage(), aCostCenter);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aCostCenter.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setCostCenterService(CostCenterService costCenterService) {
-			this.costCenterService = costCenterService;
-		}
-			
+	private AuditHeader getAuditHeader(CostCenter aCostCenter, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCostCenter.getBefImage(), aCostCenter);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aCostCenter.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setCostCenterService(CostCenterService costCenterService) {
+		this.costCenterService = costCenterService;
+	}
+
 }

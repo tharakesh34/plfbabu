@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -64,11 +63,10 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implements InterestRateTypeDAO {
 	private static Logger logger = Logger.getLogger(InterestRateTypeDAOImpl.class);
-	
+
 	public InterestRateTypeDAOImpl() {
 		super();
 	}
-
 
 	/**
 	 * Fetch the Record Interest Rate Types details by key field
@@ -87,14 +85,16 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select IntRateTypeCode, IntRateTypeDesc, IntRateTypeIsActive,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTInterestRateTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where IntRateTypeCode =:IntRateTypeCode");
 
 		logger.debug("selectSql: " + selectSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateType);
-		RowMapper<InterestRateType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterestRateType.class);
+		RowMapper<InterestRateType> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterestRateType.class);
 
 		try {
 			interestRateType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -107,10 +107,8 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTInterestRateTypes or
-	 * BMTInterestRateTypes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Interest Rate Types by key
-	 * IntRateTypeCode
+	 * This method Deletes the Record from the BMTInterestRateTypes or BMTInterestRateTypes_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Interest Rate Types by key IntRateTypeCode
 	 * 
 	 * @param Interest
 	 *            Rate Types (interestRateType)
@@ -129,12 +127,12 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 		deleteSql.append(" Delete From BMTInterestRateTypes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where IntRateTypeCode =:IntRateTypeCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateType);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -146,8 +144,7 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 	}
 
 	/**
-	 * This method insert new Records into BMTInterestRateTypes or
-	 * BMTInterestRateTypes_Temp.
+	 * This method insert new Records into BMTInterestRateTypes or BMTInterestRateTypes_Temp.
 	 * 
 	 * save Interest Rate Types
 	 * 
@@ -167,13 +164,14 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 		insertSql.append("Insert Into BMTInterestRateTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (IntRateTypeCode, IntRateTypeDesc, IntRateTypeIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:IntRateTypeCode, :IntRateTypeDesc, :IntRateTypeIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());		
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateType);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -182,10 +180,8 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 	}
 
 	/**
-	 * This method updates the Record BMTInterestRateTypes or
-	 * BMTInterestRateTypes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Interest Rate Types by key
-	 * IntRateTypeCode and Version
+	 * This method updates the Record BMTInterestRateTypes or BMTInterestRateTypes_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Interest Rate Types by key IntRateTypeCode and Version
 	 * 
 	 * @param Interest
 	 *            Rate Types (interestRateType)
@@ -205,17 +201,19 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set IntRateTypeDesc = :IntRateTypeDesc,");
 		updateSql.append(" IntRateTypeIsActive = :IntRateTypeIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where IntRateTypeCode =:IntRateTypeCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateType);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

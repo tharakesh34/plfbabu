@@ -50,7 +50,7 @@ import com.pennant.backend.model.eodsnapshot.SnapShotConfiguration;
 import com.pennanttech.pff.core.TableType;
 
 public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfiguration> {
-	
+
 	/**
 	 * Fetch the Record SnapShotConfigurationdetails by key field
 	 * 
@@ -60,7 +60,8 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	 *            The type of the table.
 	 * @return SnapShotConfiguration
 	 */
-	SnapShotConfiguration getSnapShotConfiguration(long id,String type);
+	SnapShotConfiguration getSnapShotConfiguration(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -72,10 +73,10 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String fromTable, TableType tableType);	
-	
+	boolean isDuplicateKey(long id, String fromTable, TableType tableType);
+
 	/**
-	 * Fetch All Record SnapShotConfiguration Details 
+	 * Fetch All Record SnapShotConfiguration Details
 	 * 
 	 * @param id
 	 *            id of the SnapShotConfiguration.
@@ -84,15 +85,15 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	 * @return SnapShotConfiguration
 	 */
 	List<SnapShotConfiguration> getActiveConfigurationList();
-	
+
 	/**
-	 * Update Last run time Stamp for the SnapShotConfiguration Details 
+	 * Update Last run time Stamp for the SnapShotConfiguration Details
 	 * 
 	 * @param id
 	 *            id of the SnapShotConfiguration.
 	 * @param lastRunDate
 	 *            lastRunDate for the Configuration.
-	 *            
+	 * 
 	 */
-	void updateLastRunDate(long id,Timestamp lastRunDate);
+	void updateLastRunDate(long id, Timestamp lastRunDate);
 }

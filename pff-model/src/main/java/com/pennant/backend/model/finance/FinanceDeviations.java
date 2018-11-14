@@ -11,40 +11,40 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class FinanceDeviations extends AbstractWorkflowEntity implements java.io.Serializable, Entity {
-	private static final long	serialVersionUID	= 8456523350616062070L;
+	private static final long serialVersionUID = 8456523350616062070L;
 
-	private long				deviationId			= Long.MIN_VALUE;
-	private String				finReference;
-	private String				module;
-	private String				deviationCode;
+	private long deviationId = Long.MIN_VALUE;
+	private String finReference;
+	private String module;
+	private String deviationCode;
 
-	private String				deviationType;
-	private String				deviationValue;
-	private String				userRole;
-	private String				delegationRole;
-	private String				approvalStatus;
-	private Timestamp			deviationDate;
-	private String				deviationUserId;
-	private String				delegatedUserId;
-	private String				deviationCategory;
-	private boolean				deviProcessed=false;
-	private String				remarks;
-	private boolean				newRecord			= false;
-	private FinanceDeviations	befImage;
-	private boolean				approved;
+	private String deviationType;
+	private String deviationValue;
+	private String userRole;
+	private String delegationRole;
+	private String approvalStatus;
+	private Timestamp deviationDate;
+	private String deviationUserId;
+	private String delegatedUserId;
+	private String deviationCategory;
+	private boolean deviProcessed = false;
+	private String remarks;
+	private boolean newRecord = false;
+	private FinanceDeviations befImage;
+	private boolean approved;
 
-	private String				custCIF;
-	private String				custShrtName;
-	private long				custID;
+	private String custCIF;
+	private String custShrtName;
+	private long custID;
 	@XmlTransient
-	private LoggedInUser		userDetails;
-	private String				deviationCodeName;
-	private String				deviationCodeDesc;
+	private LoggedInUser userDetails;
+	private String deviationCodeName;
+	private String deviationCodeDesc;
 	private String deviationDesc;
-	private long				severity;
-	private String				severityCode;
-	private String				severityName;
-	private boolean 			markDeleted;
+	private long severity;
+	private String severityCode;
+	private String severityName;
+	private boolean markDeleted;
 
 	public FinanceDeviations() {
 		super();

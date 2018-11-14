@@ -55,7 +55,7 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 	private String fieldCode;
 	private String fieldCodeDesc;
 	private String fieldCodeType;
-	private boolean  fieldEdit;
+	private boolean fieldEdit;
 	private boolean isActive;
 	private boolean newRecord;
 	private String lovValue;
@@ -76,43 +76,39 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return fieldCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.fieldCode = id;
 	}
-	
+
 	public String getFieldCode() {
 		return fieldCode;
 	}
+
 	public void setFieldCode(String fieldCode) {
 		this.fieldCode = fieldCode;
 	}
-	
-	
-		
-	
+
 	public String getFieldCodeDesc() {
 		return fieldCodeDesc;
 	}
+
 	public void setFieldCodeDesc(String fieldCodeDesc) {
 		this.fieldCodeDesc = fieldCodeDesc;
 	}
-	
-	
-		
-	
+
 	public String getFieldCodeType() {
 		return fieldCodeType;
 	}
+
 	public void setFieldCodeType(String fieldCodeType) {
 		this.fieldCodeType = fieldCodeType;
 	}
-	
-	
+
 	public boolean isFieldEdit() {
 		return fieldEdit;
 	}
@@ -132,7 +128,7 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-	
+
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
@@ -144,7 +140,7 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -153,12 +149,12 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public LovFieldCode getBefImage(){
+	public LovFieldCode getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(LovFieldCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(LovFieldCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

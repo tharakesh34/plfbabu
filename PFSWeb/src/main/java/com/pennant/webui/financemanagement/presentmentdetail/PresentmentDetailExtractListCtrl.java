@@ -76,10 +76,10 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -132,7 +132,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onCreate$window_PresentmentExtractDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList, listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
+		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList,
+				listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -150,7 +151,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		this.fromdate.setFormat(PennantConstants.dateFormat);
 		this.toDate.setFormat(PennantConstants.dateFormat);
-		
+
 		this.entity.setModuleName("Entity");
 		this.entity.setMandatoryStyle(true);
 		this.entity.setDisplayStyle(2);
@@ -172,7 +173,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		String errorMsg = null;
 		PresentmentHeader detailHeader = new PresentmentHeader();
-		
+
 		doSetValidation();
 		doWriteComponentsToBean(detailHeader);
 		try {
@@ -189,15 +190,19 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		this.mandateType.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),PennantStaticListUtil.getMandateTypeList(), true));
-		this.fromdate.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
-		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_ToDate.value"), true));
-		this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_Entity.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
-		
+		this.mandateType
+				.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
+						PennantStaticListUtil.getMandateTypeList(), true));
+		this.fromdate.setConstraint(
+				new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
+		this.toDate
+				.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_ToDate.value"), true));
+		this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_Entity.value"),
+				PennantRegularExpressions.REGEX_ALPHANUM, true));
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -208,7 +213,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		
 		try {
 			detailHeader.setFromDate(this.fromdate.getValue());
 		} catch (WrongValueException we) {
@@ -219,30 +223,34 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			detailHeader.setMandateType(this.mandateType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
-				throw new WrongValueException(this.toDate, Labels.getLabel("NUMBER_MINVALUE", new String[] { Labels.getLabel("label_PresentmentDetailList_ToDate.value"),Labels.getLabel("label_PresentmentDetailList_Fromdate.value") }));
+				throw new WrongValueException(this.toDate,
+						Labels.getLabel("NUMBER_MINVALUE",
+								new String[] { Labels.getLabel("label_PresentmentDetailList_ToDate.value"),
+										Labels.getLabel("label_PresentmentDetailList_Fromdate.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
-				throw new WrongValueException(this.toDate, Labels.getLabel("label_Difference_between_days") + diffentDays);
+				throw new WrongValueException(this.toDate,
+						Labels.getLabel("label_Difference_between_days") + diffentDays);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			detailHeader.setEntityCode(this.entity.getValidatedValue());
 		} catch (WrongValueException we) {
@@ -261,7 +269,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
@@ -278,10 +286,10 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private String extractDetails(PresentmentHeader detailHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		detailHeader.setLoanType(this.loanType.getValue());
 		detailHeader.setFinBranch(this.branches.getValue());
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -317,7 +325,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onClick$btnloanType(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "FinanceType", this.loanType.getValue(), null);
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "FinanceType",
+				this.loanType.getValue(), null);
 		if (dataObject instanceof String) {
 			this.loanType.setValue(dataObject.toString());
 		} else {
@@ -399,5 +408,4 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.presentmentDetailService = presentmentDetailService;
 	}
 
-	
 }

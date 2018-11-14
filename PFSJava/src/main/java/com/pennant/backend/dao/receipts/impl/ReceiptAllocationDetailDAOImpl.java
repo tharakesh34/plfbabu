@@ -135,7 +135,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	//MIGRATION PURPOSE
 	@Override
 	public List<ReceiptAllocationDetail> getDMAllocationsByReference(String reference, String type) {
@@ -155,25 +155,26 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		selectSql.append(" Inner Join ReceiptAllocationDetail");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" T2 on T1.ReceiptID = T2.ReceiptID");
-		
+
 		//If required ignore cancelled receipts
 		selectSql.append(" where T1.Reference = :Reference");
 		selectSql.append(" Order by T2.ReceiptID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		List<ReceiptAllocationDetail> allocations = null;
-		
+
 		try {
-			RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptAllocationDetail.class);
+			RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(ReceiptAllocationDetail.class);
 			allocations = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			//
 		}
-		
+
 		logger.debug("Leaving");
 		return allocations;
-	
+
 	}
 
 }

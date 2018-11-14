@@ -163,11 +163,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceTypeDAO financeTypeDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-    private FinServiceInstrutionDAO finServiceInstructionDAO;
-	private ExtendedFieldHeaderDAO				extendedFieldHeaderDAO;
-	private ExtendedFieldDetailsService			extendedFieldDetailsService;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-
 
 	/**
 	 * Method for fetch DisbursementInquiryDetails by FinReference and linkedTranId
@@ -186,7 +185,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinanceMain financeMain = null;
 		List<ReturnDataSet> postingList;
 		List<Long> tranIdList = new ArrayList<>();
-		
+
 		financeMain = financeMainService.getFinanceMainByFinRef(disbursementServiceReq.getFinReference());
 		if (financeMain == null) {
 			DisbursementServiceReq error = new DisbursementServiceReq();
@@ -195,10 +194,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
 			return error;
 		}
-		List<FinServiceInstruction> finServiceInstruction = finServiceInstructionDAO.getFinServiceInstDetailsByServiceReqNo(disbursementServiceReq.getFinReference(),
+		List<FinServiceInstruction> finServiceInstruction = finServiceInstructionDAO
+				.getFinServiceInstDetailsByServiceReqNo(disbursementServiceReq.getFinReference(),
 						disbursementServiceReq.getServiceReqNo());
-		
-		if(CollectionUtils.isNullOrEmpty(finServiceInstruction)) {
+
+		if (CollectionUtils.isNullOrEmpty(finServiceInstruction)) {
 			inquiryDetails = new DisbursementServiceReq();
 			String valueParam[] = new String[1];
 			valueParam[0] = disbursementServiceReq.getFinReference();
@@ -211,7 +211,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		inquiryDetails.setFinReference(financeMain.getFinReference());
 		inquiryDetails.setFinStartDate(financeMain.getFinStartDate());
 
-		finAdvancePayments = finAdvancePaymentsService.getFinAdvancePaymentByFinRef(disbursementServiceReq.getFinReference(),finServiceInstruction.get(0).getFromDate());
+		finAdvancePayments = finAdvancePaymentsService.getFinAdvancePaymentByFinRef(
+				disbursementServiceReq.getFinReference(), finServiceInstruction.get(0).getFromDate());
 		if (CollectionUtils.isNullOrEmpty(finAdvancePayments)) {
 			inquiryDetails = new DisbursementServiceReq();
 			String valueParam[] = new String[1];
@@ -245,7 +246,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Leaving");
 		return inquiryDetails;
 	}
-	
+
 	/**
 	 * Method for fetch ZIPCode Details of corresponding pin code
 	 * 
@@ -942,8 +943,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				if (finScheduleData.getErrorDetails() != null) {
-					if(extendedDetailsList !=null && extendedDetailsList.size()>0){
-						addExtendedFields(finServiceInst, finType,FinanceConstants.FINSER_EVENT_ADDDISB,"ADSB");
+					if (extendedDetailsList != null && extendedDetailsList.size() > 0) {
+						addExtendedFields(finServiceInst, finType, FinanceConstants.FINSER_EVENT_ADDDISB, "ADSB");
 					}
 				}
 				financeDetail.setFinScheduleData(finScheduleData);
@@ -1028,9 +1029,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		return financeDetail;
 	}
 
-	private void addExtendedFields(FinServiceInstruction finServiceInst, FinanceType finType,String event,String code) {
+	private void addExtendedFields(FinServiceInstruction finServiceInst, FinanceType finType, String event,
+			String code) {
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory(), event,"");
+				ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory(), event, "");
 		List<ExtendedField> extendedFields = finServiceInst.getExtendedDetails();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Map<String, Object> prvExtFieldMap = new HashMap<>();
@@ -1043,7 +1045,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		tableName.append("_ED");
 		if (extendedFieldHeader != null) {
 			int sequenceNo = 0;
-			
+
 			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 			exdFieldRender.setReference(finServiceInst.getFinReference());
 			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1053,30 +1055,31 @@ public class FinServiceInstController extends SummaryDetailService {
 			exdFieldRender.setTypeCode(extendedFieldHeader.getSubModuleName());
 			List<ExtendedFieldData> prvExtendedFields = new ArrayList<>(1);
 			ExtendedFieldHeader curExtendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-						ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory(),event,"");
+					ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory(), event, "");
 			if (curExtendedFieldHeader != null) {
-					ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
-							ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory()+"_"+code,
-							finServiceInst.getFinReference());
-					if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
-						prvExtFieldMap = extendedFieldRender.getMapValues();
-						for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
-							ExtendedFieldData data = new ExtendedFieldData();
-							data.setFieldName(entry.getKey());
-							data.setFieldValue(entry.getValue());
-							prvExtendedFields.add(data);
-						}
+				ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
+						ExtendedFieldConstants.MODULE_LOAN, finType.getFinCategory() + "_" + code,
+						finServiceInst.getFinReference());
+				if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
+					prvExtFieldMap = extendedFieldRender.getMapValues();
+					for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
+						ExtendedFieldData data = new ExtendedFieldData();
+						data.setFieldName(entry.getKey());
+						data.setFieldValue(entry.getValue());
+						prvExtendedFields.add(data);
 					}
-					exdFieldRender.setNewRecord(false);
-					boolean checkFinReference = extendedFieldRenderDAO.isExists(finServiceInst.getFinReference(), 1, tableName.toString());
-					if(checkFinReference){
-						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					}else{
-						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
-					}
-					
-					exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
-				    exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				}
+				exdFieldRender.setNewRecord(false);
+				boolean checkFinReference = extendedFieldRenderDAO.isExists(finServiceInst.getFinReference(), 1,
+						tableName.toString());
+				if (checkFinReference) {
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else {
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				}
+
+				exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			}
 			if (extendedFields != null) {
 				for (ExtendedField extendedField : extendedFields) {
@@ -1094,7 +1097,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					mapValues.put("RecordType", "");
 					mapValues.put("WorkflowId", 0);
 					//mapValues.put("adfdaf", "");
-					
+
 					if (extendedField.getExtendedFieldDataList() != null) {
 						for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
 							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
@@ -1113,15 +1116,16 @@ public class FinServiceInstController extends SummaryDetailService {
 				Map<String, Object> mapValues = new HashMap<String, Object>();
 				exdFieldRender.setMapValues(mapValues);
 			}
-				if(exdFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					extendedFieldRenderDAO.save(exdFieldRender.getMapValues(), "", tableName.toString());	
-				}else{
-					extendedFieldRenderDAO.update(finServiceInst.getFinReference(), 1, exdFieldRender.getMapValues(), "", tableName.toString());
-				}
-				
+			if (exdFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				extendedFieldRenderDAO.save(exdFieldRender.getMapValues(), "", tableName.toString());
+			} else {
+				extendedFieldRenderDAO.update(finServiceInst.getFinReference(), 1, exdFieldRender.getMapValues(), "",
+						tableName.toString());
+			}
+
 		}
 	}
-	
+
 	public FinanceDetail doCancelDisbursement(FinServiceInstruction finServiceInst, FinanceDetail financeDetail,
 			String eventCode) {
 		logger.debug("Enteing");
@@ -1563,31 +1567,31 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceType finType = finScheduleData.getFinanceType();
 		List<ExtendedField> extendedDetailsList = finServiceInst.getExtendedDetails();
-		
+
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
 		boolean isOverDraft = false;
 		FinanceDetail response = null;
-		
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())){
+
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
 			isOverDraft = true;
 		}
-		
-		if(isOverDraft && !StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, finServiceInst.getRecalType())){
+
+		if (isOverDraft && !StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, finServiceInst.getRecalType())) {
 			response = new FinanceDetail();
 			String[] valueParm = new String[2];
 			valueParm[0] = "Recal type code";
 			valueParm[1] = CalculationConstants.EARLYPAY_ADJMUR;
 			doEmptyResponseObject(response);
-			response.setReturnStatus(
-					APIErrorHandlerService.getFailedStatus("90281", valueParm));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90281", valueParm));
 			return response;
 
 		}
-		
-		if(extendedDetailsList !=null && extendedDetailsList.size()>0){
-				addExtendedFields(finServiceInst, finType,FinanceConstants.FINSER_EVENT_RECEIPT,"RCPT");
+
+		if (extendedDetailsList != null && extendedDetailsList.size() > 0) {
+			addExtendedFields(finServiceInst, finType, FinanceConstants.FINSER_EVENT_RECEIPT, "RCPT");
 		}
-	
+
 		FinReceiptDetail finReceiptDetail = finServiceInst.getReceiptDetail();
 		if (finReceiptDetail == null) {
 			finReceiptDetail = new FinReceiptDetail();
@@ -2953,7 +2957,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		return errorDetails;
 	}
-	
+
 	/**
 	 * Method for fetch Customer Loan Details of corresponding userID
 	 * 
@@ -3096,7 +3100,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.cancelDisbursementService = cancelDisbursementService;
 	}
 
-
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
@@ -3108,7 +3111,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setzIPCodeDetailsService(ZIPCodeDetailsService zIPCodeDetailsService) {
 		this.zIPCodeDetailsService = zIPCodeDetailsService;
 	}
-	
+
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
 	}
@@ -3144,5 +3147,5 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
-       
+
 }

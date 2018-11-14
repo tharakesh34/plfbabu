@@ -69,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements PostingsDAO {
 	private static Logger logger = Logger.getLogger(PostingsDAOImpl.class);
-	
+
 	public PostingsDAOImpl() {
 		super();
 	}
@@ -93,8 +93,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
+		selectSql.append(
+				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(
+				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings ");
 		selectSql.append(" Where FinReference =:FinReference AND  LinkedTranId  IN(:LinkedTranId) ");
 
@@ -106,101 +108,85 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,String postingGroupBy) {
+	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
+			String postingGroupBy) {
 		logger.debug("Entering");
-		
+
 		ReturnDataSet dataSet = new ReturnDataSet();
 		dataSet.setFinReference(finReference);
 		dataSet.setFinEvent(finEvent);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
+		selectSql.append(
+				" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
 		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch, UserBranch ");
 		selectSql.append(" FROM Postings_View");
-		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN ("+finEvent+")");
-		if(!showZeroBal){
+		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN (" + finEvent + ")");
+		if (!showZeroBal) {
 			selectSql.append(" AND PostAmount != 0");
 		}
-		
-		if(StringUtils.equals(PennantConstants.EVENTBASE, postingGroupBy)){
+
+		if (StringUtils.equals(PennantConstants.EVENTBASE, postingGroupBy)) {
 			selectSql.append(" ORDER BY FinEvent, LinkedTranID ");
-		}
-		else if(StringUtils.equals(PennantConstants.POSTDATE, postingGroupBy)){
+		} else if (StringUtils.equals(PennantConstants.POSTDATE, postingGroupBy)) {
 			selectSql.append(" ORDER BY PostDate, LinkedTranID ");
-		}
-		else if(StringUtils.equals(PennantConstants.ACCNO, postingGroupBy)){
+		} else if (StringUtils.equals(PennantConstants.ACCNO, postingGroupBy)) {
 			selectSql.append(" ORDER BY Account, LinkedTranID ");
-		}else{
+		} else {
 			selectSql.append(" ORDER BY ValueDate, LinkedTranID ");
 		}
 		selectSql.append(" , TransOrder ");
-	
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId) {
 		logger.debug("Entering");
-		
+
 		ReturnDataSet dataSet = new ReturnDataSet();
 		dataSet.setLinkedTranId(linkedTranId);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
-		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
-		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
+		selectSql.append(
+				" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
+		selectSql.append(
+				" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
+		selectSql.append(
+				" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
 		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where LinkedTranId =:LinkedTranId");
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("LinkedTranId", tranIdList);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
+		selectSql.append(
+				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(
+				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LinkedTranId  IN(:LinkedTranId) ");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return postings;
-	}
-	
-	@Override
-	public List<ReturnDataSet> getPostingsByPostRef(Long postref) {
-		logger.debug("Entering");
-		
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Postref", postref);
-		
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" Where Postref  =:Postref) ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -208,13 +194,35 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		return postings;
 	}
 
+	@Override
+	public List<ReturnDataSet> getPostingsByPostRef(Long postref) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Postref", postref);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
+		selectSql.append(
+				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(
+				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
+		selectSql.append(" FROM Postings");
+		selectSql.append(" Where Postref  =:Postref) ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return postings;
+	}
 
 	@Override
 	public long saveHeader(ReturnDataSet dataSet, String status, String type) {
 		logger.debug("Entering");
-		
+
 		dataSet.setPostStatus(status);
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into EODPostingsHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -227,8 +235,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		logger.debug("Leaving");
 		return dataSet.getLinkedTranId();
 	}
-	
-	
+
 	@Override
 	public void saveBatch(List<ReturnDataSet> dataSetList) {
 		logger.debug("Entering");
@@ -239,7 +246,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
 		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");
 		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,");
-		insertSql.append(" PostBranch, AppDate, AppValueDate, UserBranch, PostCategory , CustAppDate, AccountType, OldLinkedTranId, EntityCode )");
+		insertSql.append(
+				" PostBranch, AppDate, AppValueDate, UserBranch, PostCategory , CustAppDate, AccountType, OldLinkedTranId, EntityCode )");
 		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
 		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account,");
 		insertSql.append(" :ShadowPosting,:PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,");
@@ -252,42 +260,42 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	//FIXME CH to be changed to Batch Update
-		@Override
+	@Override
 	public void updateStatusByLinkedTranId(long linkedTranId, String postStatus) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("LinkedTranId", linkedTranId);
 		paramSource.addValue("PostStatus", postStatus);
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Update Postings SET ");
 		insertSql.append(" PostStatus = :PostStatus where LinkedTranId = :LinkedTranId");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		this.jdbcTemplate.update(insertSql.toString(), paramSource);
 		logger.debug("Leaving");
 	}
 
-		//FIXME CH to be changed to Batch Update
-		@Override
-		public void updateStatusByFinRef(String finReference, String postStatus) {
-			logger.debug("Entering");
-			
-			MapSqlParameterSource paramSource = new MapSqlParameterSource();
-			paramSource.addValue("finReference", finReference);
-			paramSource.addValue("PostStatus", postStatus);
-			
-			StringBuilder insertSql = new StringBuilder();
-			insertSql.append(" Update Postings Set ");
-			insertSql.append(" PostStatus = :PostStatus where finReference = :finReference");
-			
-			logger.debug("insertSql: " + insertSql.toString());
-			this.jdbcTemplate.update(insertSql.toString(), paramSource);
-			logger.debug("Leaving");
-		}
+	//FIXME CH to be changed to Batch Update
+	@Override
+	public void updateStatusByFinRef(String finReference, String postStatus) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("finReference", finReference);
+		paramSource.addValue("PostStatus", postStatus);
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Update Postings Set ");
+		insertSql.append(" PostStatus = :PostStatus where finReference = :finReference");
+
+		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcTemplate.update(insertSql.toString(), paramSource);
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * Generate Linked Transaction ID
@@ -305,7 +313,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		logger.debug("Leaving" + count);
 		return count;
 	}
-	
+
 	/**
 	 * Generate Posting ID
 	 */
@@ -335,20 +343,20 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void deleteAll(String type) {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("DELETE FROM Postings").append(type);
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = null;
-		try{
+		try {
 			beanParameters = new BeanPropertySqlParameterSource("");
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 
 		} finally {
@@ -361,39 +369,39 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	 * Method for Fetching Posted Amount On Particular Finance Event
 	 */
 	@Override
-    public BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent , long linkedTranId) {
+	public BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent, long linkedTranId) {
 		logger.debug("Entering");
-		
+
 		BigDecimal totalPostAmount = BigDecimal.ZERO;
-		
+
 		ReturnDataSet set = new ReturnDataSet();
 		set.setFinReference(finReference);
 		set.setFinEvent(finEvent);
 		set.setLinkedTranId(linkedTranId);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT SUM(PostAmount) " );
+		StringBuilder selectSql = new StringBuilder(" SELECT SUM(PostAmount) ");
 		selectSql.append(" FROM Postings");
-		selectSql.append(" WHERE FinReference=:FinReference AND LinkedTranId=:LinkedTranId AND FinEvent =:FinEvent " );
+		selectSql.append(" WHERE FinReference=:FinReference AND LinkedTranId=:LinkedTranId AND FinEvent =:FinEvent ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(set);
-		
+
 		try {
 			totalPostAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			totalPostAmount = BigDecimal.ZERO;
 		}
-		
+
 		logger.debug("Leaving");
 		return totalPostAmount;
-    }
-	
+	}
+
 	/**
 	 * Method for Fetching Posted Amount On Particular Finance Event
 	 */
 	@Override
-    public List<Long> getLinkTranIdByRef(String finReference) {
+	public List<Long> getLinkTranIdByRef(String finReference) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -405,9 +413,9 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		eventCodeList.add("STAGE");
 		source.addValue("FinEvent", eventCodeList);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT DISTINCT LinkedTranId " );
+		StringBuilder selectSql = new StringBuilder(" SELECT DISTINCT LinkedTranId ");
 		selectSql.append(" FROM Postings");
-		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent IN( :FinEvent ) " );
+		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent IN( :FinEvent ) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Long> mapper = ParameterizedBeanPropertyRowMapper.newInstance(Long.class);
@@ -418,47 +426,52 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			logger.error("Exception: ", e);
 			linkedTranIdList = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return linkedTranIdList;
-    }
-	
-	
+	}
+
 	@Override
 	public List<ReturnDataSet> getPostingsbyFinanceBranch(String branchCode) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource mSource = new MapSqlParameterSource();
 		mSource.addValue("FinBranch", branchCode);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select * From ( SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
-		selectSql.append(" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
-		selectSql.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
+		selectSql
+				.append(" Select * From ( SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
+		selectSql.append(
+				" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
+		selectSql
+				.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
 		selectSql.append(" T1.PostToSys,T1.ExchangeRate, UserBranch  ");
 		selectSql.append(" FROM Postings T1 INNER JOIN  FinanceMain_Temp T2 on T1.FinReference = T2.FinReference");
 		selectSql.append(" Where T2.FinBranch = :FinBranch");
 		selectSql.append(" UNION ALL ");
 		selectSql.append(" SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
-		selectSql.append(" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
-		selectSql.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
+		selectSql.append(
+				" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
+		selectSql
+				.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
 		selectSql.append(" T1.PostToSys,T1.ExchangeRate, UserBranch  ");
 		selectSql.append(" FROM Postings T1 INNER JOIN FinanceMain T2 on T1.FinReference = T2.FinReference ");
-		selectSql.append(" Where NOT EXISTS (SELECT 1 FROM FinanceMain_Temp WHERE FinReference = T2.FinReference) and ");
+		selectSql
+				.append(" Where NOT EXISTS (SELECT 1 FROM FinanceMain_Temp WHERE FinReference = T2.FinReference) and ");
 		selectSql.append(" T2.FinBranch = :FinBranch)T1 order by T1.Account,T1.finReference,T1.TranCode ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), mSource, typeRowMapper);
 	}
-	
+
 	/*
 	 * Method to get the Trancode and DrOrCr to reversal the accounting in VasCancellation
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByVasref(String finReference,String finEvent) {
+	public List<ReturnDataSet> getPostingsByVasref(String finReference, String finEvent) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -480,8 +493,6 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	
-	 
 	/*
 	 * Method to get the Posting Details By FinRefernce
 	 */
@@ -496,15 +507,19 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		StringBuilder selectSql = new StringBuilder();
 		//FIX version 1.0
-		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate,");
-		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
-		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
+		selectSql.append(
+				" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate,");
+		selectSql.append(
+				" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
+		selectSql.append(
+				" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
+		selectSql.append(
+				" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
 		//FIX version 1.0
 		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
-		if(!reqReversals){
+		if (!reqReversals) {
 			selectSql.append(" and OldLinkedTranID = 0 ");
 		}
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
@@ -515,7 +530,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		logger.debug("Leaving");
 		List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>();
 		try {
-			returnDataSetList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+			returnDataSetList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			return Collections.emptyList();
@@ -523,20 +538,20 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		logger.debug("Leaving");
 		return returnDataSetList;
 	}
-	
+
 	@Override
 	public void updatePostCtg() {
 		logger.debug("Entering");
-		MapSqlParameterSource source=new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PostCategory", AccountConstants.POSTING_CATEGORY_ACUPDATE);
 		source.addValue("PostCategory_From", AccountConstants.POSTING_CATEGORY_EOD);
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update Postings");
 		updateSql.append(" set PostCategory=:PostCategory WHERE postCategory=:PostCategory_From");
 		logger.debug("updateSql: " + updateSql.toString());
-		
-		this.jdbcTemplate.update(updateSql.toString(),source);
+
+		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
@@ -544,46 +559,50 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	public List<ReturnDataSet> getPostingsByPostRef(long postrRef) {
 
 		logger.debug("Entering");
-		
+
 		ReturnDataSet dataSet = new ReturnDataSet();
 		dataSet.setPostref(String.valueOf(postrRef));
 		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		//FIX version 1.0
-		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate, ");
-		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
-		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
+		selectSql.append(
+				" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate, ");
+		selectSql.append(
+				" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
+		selectSql.append(
+				" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
+		selectSql.append(
+				" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
 		//FIX version 1.0
 		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where PostStatus = :PostStatus and Postref =:Postref");
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	
+
 	}
 
 	@Override
 	public void updateStatusByPostRef(long postRef, String postStatus) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("PostRef", String.valueOf(postRef));
 		paramSource.addValue("PostStatus", postStatus);
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Update Postings SET ");
 		insertSql.append(" PostStatus = :PostStatus where PostRef = :PostRef");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		this.jdbcTemplate.update(insertSql.toString(), paramSource);
 		logger.debug("Leaving");
-		
+
 	}
 }

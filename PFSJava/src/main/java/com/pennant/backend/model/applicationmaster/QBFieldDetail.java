@@ -60,12 +60,12 @@ public class QBFieldDetail extends AbstractWorkflowEntity {
 	private String qbFldName;
 	private String qbFldDesc;
 	private String qbFldType;
-	private int	   qbFldLen;
+	private int qbFldLen;
 	private String qbFldTableName;
 	private String qbStFlds;
 	private String moduleCode;
 
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	@SuppressWarnings("unused")
 	private QBFieldDetail befImage;
@@ -77,15 +77,15 @@ public class QBFieldDetail extends AbstractWorkflowEntity {
 
 	public QBFieldDetail(String entityCode) {
 		super();
-		this.entityCode= entityCode;
+		this.entityCode = entityCode;
 	}
 
 	public QBFieldDetail() {
 		super();
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("countryCodeName");
 		excludeFields.add("provinceCodeName");
 
@@ -100,79 +100,65 @@ public class QBFieldDetail extends AbstractWorkflowEntity {
 		return qbFldName;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.qbFldName = id;
 	}
- 
+
 	public String getQbModule() {
 		return qbModule;
 	}
-
 
 	public void setQbModule(String qbModule) {
 		this.qbModule = qbModule;
 	}
 
-
 	public String getQbFldName() {
 		return qbFldName;
 	}
-
 
 	public void setQbFldName(String qbFldName) {
 		this.qbFldName = qbFldName;
 	}
 
-
 	public String getQbFldDesc() {
 		return qbFldDesc;
 	}
-
 
 	public void setQbFldDesc(String qbFldDesc) {
 		this.qbFldDesc = qbFldDesc;
 	}
 
-
 	public String getQbFldType() {
 		return qbFldType;
 	}
-
 
 	public void setQbFldType(String qbFldType) {
 		this.qbFldType = qbFldType;
 	}
 
-
 	public int getQbFldLen() {
 		return qbFldLen;
 	}
-
 
 	public void setQbFldLen(int qbFldLen) {
 		this.qbFldLen = qbFldLen;
 	}
 
-
 	public String getQbFldTableName() {
 		return qbFldTableName;
 	}
-
 
 	public void setQbFldTableName(String qbFldTableName) {
 		this.qbFldTableName = qbFldTableName;
 	}
 
-
 	public String getQbStFlds() {
 		return qbStFlds;
 	}
 
-
 	public void setQbStFlds(String qbStFlds) {
 		this.qbStFlds = qbStFlds;
 	}
-
 
 	public String getEntityCode() {
 		return entityCode;
@@ -209,7 +195,8 @@ public class QBFieldDetail extends AbstractWorkflowEntity {
 	public String getModuleCode() {
 		return moduleCode;
 	}
+
 	public void setModuleCode(String moduleCode) {
 		this.moduleCode = moduleCode;
-	}	
+	}
 }

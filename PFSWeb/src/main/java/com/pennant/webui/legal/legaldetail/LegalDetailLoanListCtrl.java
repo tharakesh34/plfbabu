@@ -69,7 +69,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
+public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(LegalDetailLoanListCtrl.class);
 
@@ -82,7 +82,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 	private String roleCode = "";
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	
+
 	private List<LegalDetail> legalDetailsList;
 
 	/**
@@ -99,9 +99,8 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinAdvancePayment
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -137,18 +136,19 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 				try {
-					financeMainDialogCtrl.getClass().getMethod("setLegalDetailLoanListCtrl", this.getClass()).invoke(financeMainDialogCtrl, this);
+					financeMainDialogCtrl.getClass().getMethod("setLegalDetailLoanListCtrl", this.getClass())
+							.invoke(financeMainDialogCtrl, this);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
 			}
-			
+
 			if (arguments.containsKey("finHeaderList")) {
 				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 			} else {
 				appendFinBasicDetails(null);
 			}
-			
+
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -159,8 +159,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -182,7 +181,8 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 
 	/**
 	 * This method is for append finance basic details to respective parent tabs
-	 * @param arrayList 
+	 * 
+	 * @param arrayList
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
@@ -216,7 +216,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 		setLegalDetailsList(legalDetailsList);
 
 		getFinancedetail().setLegalDetailsList(legalDetailsList);
-		
+
 		if (CollectionUtils.isNotEmpty(legalDetailsList)) {
 			for (LegalDetail legalDetail : legalDetailsList) {
 
@@ -260,10 +260,10 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -288,7 +288,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail>  {
 			}
 		}
 		doShowDialogPage(legalDetail);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

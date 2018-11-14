@@ -61,13 +61,13 @@ import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization> implements ProjectedAmortizationDAO {
-             private static Logger logger = Logger.getLogger(ProjectedAmortizationDAOImpl.class);
+public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization>
+		implements ProjectedAmortizationDAO {
+	private static Logger logger = Logger.getLogger(ProjectedAmortizationDAOImpl.class);
 
 	public ProjectedAmortizationDAOImpl() {
 		super();
 	}
-
 
 	/**
 	 * 
@@ -84,15 +84,18 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		projectedAMZ.setActive(active);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
-		selectSql.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
+		selectSql
+				.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
+		selectSql
+				.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
 		selectSql.append(" From IncomeAmortization");
 		selectSql.append(" Where Active = :Active");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projectedAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		try {
 			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -116,18 +119,21 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		List<ProjectedAmortization> projAMZList = new ArrayList<ProjectedAmortization>();
 		ProjectedAmortization projectedAMZ = new ProjectedAmortization();
-		projectedAMZ.setFinReference(finRef); 
+		projectedAMZ.setFinReference(finRef);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
-		selectSql.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
+		selectSql
+				.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
+		selectSql
+				.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
 		selectSql.append(" From IncomeAmortization");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projectedAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		try {
 			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -154,15 +160,18 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		projectedAMZ.setCustID(custID);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
-		selectSql.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
+		selectSql
+				.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
+		selectSql
+				.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
 		selectSql.append(" From IncomeAmortization");
 		selectSql.append(" Where CustID = :CustID");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projectedAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		try {
 			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -191,15 +200,18 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		projectedAMZ.setIncomeType(incomeType);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
-		selectSql.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
+		selectSql
+				.append(" Select IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn");
+		selectSql
+				.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
 		selectSql.append(" From IncomeAmortization");
 		selectSql.append(" Where FinReference = :FinReference AND RefenceID = :RefenceID AND IncomeType = :IncomeType");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projectedAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		try {
 			projAMZList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -226,9 +238,12 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAmortization");
 		insertSql.append(" (IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn,");
-		insertSql.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
-		insertSql.append(" Values(:IncomeAmzID, :FinReference, :CustID, :FinType, :IncomeType, :RefenceID, :Amount, :LastMntOn,");
-		insertSql.append(" :CalcFactor, :AMZMethod, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
+		insertSql.append(
+				" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		insertSql.append(
+				" Values(:IncomeAmzID, :FinReference, :CustID, :FinType, :IncomeType, :RefenceID, :Amount, :LastMntOn,");
+		insertSql.append(
+				" :CalcFactor, :AMZMethod, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(proAmortization);
@@ -255,9 +270,12 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAmortization");
 		insertSql.append(" (IncomeAmzID, FinReference, CustID, FinType, IncomeType, RefenceID, Amount, LastMntOn,");
-		insertSql.append(" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
-		insertSql.append(" Values(:IncomeAmzID, :FinReference, :CustID, :FinType, :IncomeType, :RefenceID, :Amount, :LastMntOn,");
-		insertSql.append(" :CalcFactor, :AMZMethod, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
+		insertSql.append(
+				" CalcFactor, AMZMethod, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		insertSql.append(
+				" Values(:IncomeAmzID, :FinReference, :CustID, :FinType, :IncomeType, :RefenceID, :Amount, :LastMntOn,");
+		insertSql.append(
+				" :CalcFactor, :AMZMethod, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -276,7 +294,8 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update IncomeAmortization SET ");
-		updateSql.append(" Amount = :Amount, LastMntOn = :LastMntOn , CalcFactor = :CalcFactor, AMZMethod = :AMZMethod, Active = :Active");
+		updateSql.append(
+				" Amount = :Amount, LastMntOn = :LastMntOn , CalcFactor = :CalcFactor, AMZMethod = :AMZMethod, Active = :Active");
 		updateSql.append(" Where FinReference = :FinReference AND RefenceID = :RefenceID AND IncomeType = :IncomeType");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -318,9 +337,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	public List<ProjectedAccrual> getProjectedAccrualDetails() {
 		logger.debug("Entering");
 
-		List<ProjectedAccrual> projAccrualList = new ArrayList<ProjectedAccrual>(); 
+		List<ProjectedAccrual> projAccrualList = new ArrayList<ProjectedAccrual>();
 
-		StringBuilder selectSql = new StringBuilder(); 
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" ProjAccrualID, FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
 		selectSql.append(" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage)");
 
@@ -329,7 +348,8 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new ProjectedAccrual());
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
+		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAccrual.class);
 
 		try {
 			projAccrualList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -2,26 +2,25 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_AgreementFieldsDetailDialog" border="none" apply="${agreementFieldsDetailDialogCtrl}"
-		width="100%" height="100%" sizable="false">
+	<window id="window_AgreementFieldsDetailDialog" border="none" apply="${agreementFieldsDetailDialogCtrl}" width="100%"
+		height="100%" sizable="false">
 
 		<div id="toolbar" sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start">
-					<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-					<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-					<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-					<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+						sclass="z-toolbarbutton" />
+					<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+						sclass="z-toolbarbutton" />
+					<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+						sclass="z-toolbarbutton" />
+					<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+						sclass="z-toolbarbutton" />
 					<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
@@ -34,11 +33,10 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+					<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-					<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+						sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
@@ -46,13 +44,12 @@
 			<center border="none">
 				<groupbox>
 					<groupbox id="finBasicdetails"></groupbox>
-					<groupbox id="gbx_ArabicFieldDetail" style="border:medium none;overflow:auto;"
-						contentSclass="mygroupbox-cnt" ca:data-scrollable="true">
+					<groupbox id="gbx_ArabicFieldDetail" style="border:medium none;overflow:auto;" contentSclass="mygroupbox-cnt"
+						ca:data-scrollable="true">
 						<style>.mygroupbox-cnt { border: none;overflow:auto;}</style>
 						<groupbox id="gb_customerDetails" closable="false">
 							<caption id="caption_CustomerDetails" label="${c:l('CustomerDetailsinArabic')}" />
-							<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
-								style="border:0px">
+							<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="220px" />
 									<column />
@@ -64,14 +61,12 @@
 										<label value="${c:l('label_AgreementDialog_CustCityArabic.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="custCityArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="custCityArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_CustomerPoBox.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="custPoBox" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="custPoBox" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 
@@ -79,28 +74,24 @@
 										<label value="${c:l('label_AgreementDialog_CustNationalityArabic.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="custNationalityArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="custNationalityArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_CustomerContribution.value')}" />
 										<hbox>
 											<space id="space_CustomerContribution" spacing="2px" />
-											<textbox id="custContributionAmt" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="custContributionAmt" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 									<row>
 										<label value="${c:l('label_AgreementDialog_SellerNameArabic.value')}" />
 										<hbox>
 											<space id="space_sellerName" spacing="2px" />
-											<textbox id="sellerNameArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="sellerNameArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_Sellercity.value')}" />
 										<hbox>
 											<space id="space_sellerCity" spacing="2px" />
-											<textbox id="Sellercity" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="Sellercity" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 									</row>
@@ -110,14 +101,12 @@
 										<label value="${c:l('label_AgreementDialog_sellerContribution.value')}" />
 										<hbox>
 											<space id="space_sellerContribution" spacing="2px" />
-											<textbox id="sellerContributionAmt" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="sellerContributionAmt" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_SellerNationality.value')}" />
 										<hbox>
 											<space id="space_SellerNationality" spacing="2px" />
-											<textbox id="sellerNationalityArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="sellerNationalityArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 									<row>
@@ -125,8 +114,7 @@
 										<label value="${c:l('label_AgreementDialog_SellerInternal.value')}" />
 										<hbox>
 											<space id="space_SellerInternal" spacing="2px" />
-											<textbox id="sellerInternal" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="sellerInternal" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 								</rows>
@@ -134,8 +122,7 @@
 						</groupbox>
 						<groupbox id="gb_PropertyDetails" closable="false">
 							<caption id="caption_PropertyDetails" label="${c:l('PropertyDetailsinArabic')}" />
-							<grid id="grid_PropertyDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
-								style="border:0px">
+							<grid id="grid_PropertyDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="220px" />
 									<column />
@@ -147,14 +134,12 @@
 										<label value="${c:l('label_AgreementDialog_PropertyTypeArabic.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="propertyTypeArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="propertyTypeArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_PropertyDescArabic.value')}" />
 										<hbox>
 											<space id="space_propertyDescArabic" spacing="2px" sclass="mandatory" />
-											<textbox id="propertyDescArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="propertyDescArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 									<row>
@@ -162,29 +147,25 @@
 										<label value="${c:l('label_AgreementDialog_PropertyUse.value')}" />
 										<hbox>
 											<space id="space_propertyUse" spacing="2px" sclass="mandatory" />
-											<textbox id="propertyUse" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="propertyUse" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 										<label value="${c:l('label_AgreementDialog_PropertyOwner.value')}" />
 										<hbox>
 											<space id="space_propertyOwner" spacing="2px" sclass="mandatory" />
-											<textbox id="propertyOwner" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="propertyOwner" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 									<row>
 										<label value="${c:l('label_AgreementDialog_PlotUnitNumArabic.value')}" />
 										<hbox>
 											<space id="space_PlotUnitNumArabic" spacing="2px" sclass="mandatory" />
-											<textbox id="plotUnitNumArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="plotUnitNumArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_PropertyLocArabic.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="propertyLocArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="propertyLocArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 									<row>
@@ -192,14 +173,12 @@
 										<label value="${c:l('label_AgreementDialog_PlotArea.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="plotArea" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="plotArea" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_BuiltUpArea.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="builtUpArea" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="builtUpArea" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 									</row>
@@ -207,15 +186,13 @@
 										<label value="${c:l('label_AgreementDialog_Area.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="area" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="area" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 										<label value="${c:l('label_AgreementDialog_OtherbankNameArabic.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="otherbankNameArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="otherbankNameArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 									</row>
@@ -223,14 +200,12 @@
 										<label value="${c:l('label_AgreementDialog_SectorOrComArabic.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="sectorOrComArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="sectorOrComArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_FinAmountArabic.value')}" />
 										<hbox>
 											<space id="space_FinAmountArabic" spacing="2px" />
-											<textbox id="finAmountArabic" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="finAmountArabic" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 									</row>
@@ -240,14 +215,12 @@
 										<label value="${c:l('label_AgreementDialog_JointApplicantOrBorrower.value')}" />
 										<hbox>
 											<space id="space_JointApplicantOrBorrower" spacing="2px" />
-											<textbox id="JointApplicant" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="JointApplicant" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 										<label value="${c:l('label_AgreementDialog_AhbBranch.value')}" />
 										<hbox>
 											<space id="space_AhbBranch" spacing="2px" />
-											<textbox id="ahbBranch" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="ahbBranch" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 
@@ -256,15 +229,13 @@
 										<label value="${c:l('label_AgreementDialog_Institution.value')}" />
 										<hbox>
 											<space id="space_Institution" spacing="2px" />
-											<textbox id="institution" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="institution" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 										<label value="${c:l('label_AgreementDialog_FacilityName.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="facilityName" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="facilityName" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 									</row>
@@ -272,23 +243,20 @@
 										<label value="${c:l('label_AgreementDialog_BeneficiaryAmt.value')}" />
 										<hbox>
 											<space id="space_BeneficiaryAmt" spacing="2px" />
-											<textbox id="beneficiaryAmt" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="beneficiaryAmt" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 
 										<label value="${c:l('label_AgreementDialog_CollateralAuthority.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="collateralAuthority" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="collateralAuthority" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 									<row>
 										<label value="${c:l('label_AgreementDialog_collaeral1.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="collaeral1" maxlength="50" width="150px"
-												style="overflow: hidden;text-align:right;" />
+											<textbox id="collaeral1" maxlength="50" width="150px" style="overflow: hidden;text-align:right;" />
 										</hbox>
 									</row>
 								</rows>
@@ -302,8 +270,8 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_BundledProductsDetailDialog_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="label_BundledProductsDetailDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

@@ -48,9 +48,14 @@ import com.pennant.backend.model.systemmasters.BuilderGroup;
 public interface BuilderGroupService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BuilderGroup getBuilderGroup(long id);
+
 	BuilderGroup getApprovedBuilderGroup(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

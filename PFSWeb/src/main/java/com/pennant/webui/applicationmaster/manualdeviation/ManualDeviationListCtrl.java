@@ -72,41 +72,41 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * 
  */
 public class ManualDeviationListCtrl extends GFCBaseListCtrl<ManualDeviation> {
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(ManualDeviationListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ManualDeviationListCtrl.class);
 
-	protected Window							window_ManualDeviationList;
-	protected Borderlayout						borderLayout_ManualDeviationList;
-	protected Paging							pagingManualDeviationList;
-	protected Listbox							listBoxManualDeviation;
+	protected Window window_ManualDeviationList;
+	protected Borderlayout borderLayout_ManualDeviationList;
+	protected Paging pagingManualDeviationList;
+	protected Listbox listBoxManualDeviation;
 
 	// List headers
-	protected Listheader						listheader_Code;
-	protected Listheader						listheader_Description;
-	protected Listheader						listheader_Module;
-	protected Listheader						listheader_Categorization;
-	protected Listheader						listheader_Severity;
-	protected Listheader						listheader_Active;
+	protected Listheader listheader_Code;
+	protected Listheader listheader_Description;
+	protected Listheader listheader_Module;
+	protected Listheader listheader_Categorization;
+	protected Listheader listheader_Severity;
+	protected Listheader listheader_Active;
 
 	// checkRights
-	protected Button							button_ManualDeviationList_NewManualDeviation;
-	protected Button							button_ManualDeviationList_ManualDeviationSearch;
+	protected Button button_ManualDeviationList_NewManualDeviation;
+	protected Button button_ManualDeviationList_ManualDeviationSearch;
 
 	// Search Fields
-	protected Textbox							code;																	// autowired
-	protected Textbox							description;															// autowired
-	protected Textbox							module;																	// autowired
-	protected Textbox							categorization;															// autowired
-	protected Checkbox							active;																	// autowired
+	protected Textbox code; // autowired
+	protected Textbox description; // autowired
+	protected Textbox module; // autowired
+	protected Textbox categorization; // autowired
+	protected Checkbox active; // autowired
 
-	protected Listbox							sortOperator_Code;
-	protected Listbox							sortOperator_Description;
-	protected Listbox							sortOperator_Module;
-	protected Listbox							sortOperator_Categorization;
-	protected Listbox							sortOperator_Severity;
-	protected Listbox							sortOperator_Active;
+	protected Listbox sortOperator_Code;
+	protected Listbox sortOperator_Description;
+	protected Listbox sortOperator_Module;
+	protected Listbox sortOperator_Categorization;
+	protected Listbox sortOperator_Severity;
+	protected Listbox sortOperator_Active;
 
-	private transient ManualDeviationService	manualDeviationService;
+	private transient ManualDeviationService manualDeviationService;
 
 	/**
 	 * default constructor.<br>

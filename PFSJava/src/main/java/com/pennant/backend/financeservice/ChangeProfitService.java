@@ -8,7 +8,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 
 public interface ChangeProfitService {
 
-	FinScheduleData getChangeProfitDetails(FinScheduleData finScheduleData,BigDecimal amount);
+	FinScheduleData getChangeProfitDetails(FinScheduleData finScheduleData, BigDecimal amount);
 
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
 }

@@ -79,19 +79,19 @@ import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
 public class UploadHeaderServiceImpl implements UploadHeaderService {
 	private static final Logger logger = Logger.getLogger(UploadHeaderServiceImpl.class);
 
-	private UploadHeaderDAO 		uploadHeaderDAO;
-	private UploadFinExpensesDAO 	uploadFinExpensesDAO;
-	private FinExpenseDetailsDAO 	finExpenseDetailsDAO;
-	private FinExpenseMovementsDAO 	finExpenseMovementsDAO;
-	private ExpenseTypeService		expenseTypeService;
-	private FinanceMainDAO			financeMainDAO;
-	private FinanceTypeDAO 			financeTypeDAO;
+	private UploadHeaderDAO uploadHeaderDAO;
+	private UploadFinExpensesDAO uploadFinExpensesDAO;
+	private FinExpenseDetailsDAO finExpenseDetailsDAO;
+	private FinExpenseMovementsDAO finExpenseMovementsDAO;
+	private ExpenseTypeService expenseTypeService;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceTypeDAO financeTypeDAO;
 	private FinTypeExpenseService finTypeExpenseService;
 	private FeeTypeService feeTypeService;
 	private UploadTaxPercentDAO uploadTaxPercentDAO;
 	private FinFeeDetailService finFeeDetailService;
 	private UploadFinTypeExpenseDAO uploadFinTypeExpenseDAO;
-	
+
 	public UploadHeaderServiceImpl() {
 		super();
 	}
@@ -105,36 +105,37 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	public boolean isFileNameExist(String fileName) {
 		return this.uploadHeaderDAO.isFileNameExist(fileName);
 	}
-	
+
 	@Override
-	public long save (UploadHeader uploadHeader) {
+	public long save(UploadHeader uploadHeader) {
 		return this.uploadHeaderDAO.save(uploadHeader);
 	}
-	
+
 	@Override
 	public void saveUploadFinExpenses(List<UploadFinExpenses> uploadFinExpensesList) {
 		logger.debug("Entering");
-		
+
 		this.uploadFinExpensesDAO.saveUploadFinExpenses(uploadFinExpensesList);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	public List<FinanceMain> getFinancesByExpenseType (String finType, Date finApprovalStartDate, Date finApprovalEndDate) {
+	public List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate,
+			Date finApprovalEndDate) {
 		return this.financeMainDAO.getFinancesByExpenseType(finType, finApprovalStartDate, finApprovalEndDate);
 	}
-	
+
 	@Override
 	public long saveFinExpenseDetails(FinExpenseDetails finExpenseDetails) {
 		return this.finExpenseDetailsDAO.saveFinExpenseDetails(finExpenseDetails);
 	}
-	
+
 	@Override
 	public long saveFinExpenseMovements(FinExpenseMovements finExpenseMovements) {
 		return this.finExpenseMovementsDAO.saveFinExpenseMovements(finExpenseMovements);
 	}
-	
+
 	@Override
 	public long getFinExpenseIdByExpType(String expTypeCode) {
 		return this.expenseTypeService.getFinExpenseIdByExpType(expTypeCode, "");
@@ -149,12 +150,12 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	public FinanceMain getFinancesByFinReference(String finReference) {
 		return this.financeMainDAO.getFinanceMainForRpyCancel(finReference);
 	}
-	
+
 	@Override
 	public int getFinTypeCount(String finType) {
 		return this.financeTypeDAO.getFinTypeCount(finType, "");
 	}
-	
+
 	@Override
 	public int getFinanceCountById(String finReference) {
 		return this.financeMainDAO.getFinanceCountById(finReference, "", false);
@@ -163,61 +164,60 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	@Override
 	public void update(FinExpenseDetails finExpenseDetails) {
 		logger.debug("Entering");
-		
+
 		this.finExpenseDetailsDAO.update(finExpenseDetails);
-		
+
 		logger.debug("Leaving");
 	}
-	
 
 	@Override
 	public void updateRecordCounts(UploadHeader uploadHeader) {
 		logger.debug("Entering");
-		
+
 		this.uploadHeaderDAO.updateRecordCounts(uploadHeader);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public List<FinExpenseDetails> getFinExpenseDetailById(String reference) {
 		return this.finExpenseDetailsDAO.getFinExpenseDetailsById(reference);
 	}
 
 	@Override
-	public List<FinExpenseMovements> getFinExpenseMovementById(String reference,long finExpenseId) {
+	public List<FinExpenseMovements> getFinExpenseMovementById(String reference, long finExpenseId) {
 		return this.finExpenseMovementsDAO.getFinExpenseMovementById(reference, finExpenseId);
 	}
-	
+
 	@Override
 	public FinTypeExpense getFinExpensesByFinType(String finType, long expenseTypeId) {
 		return finTypeExpenseService.getFinExpensesByFinType(finType, expenseTypeId);
 	}
-	
+
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		
+
 		return finTypeExpenseService.doApprove(auditHeader);
 	}
-	
+
 	@Override
 	public long getFinFeeTypeIdByFeeType(String feeTypeCode) {
-	
+
 		return feeTypeService.getFinFeeTypeIdByFeeType(feeTypeCode);
 	}
-	
+
 	@Override
 	public void saveFeeUploadDetails(List<UploadTaxPercent> uploadDetailsList) {
-		
+
 		this.uploadTaxPercentDAO.saveUploadDetails(uploadDetailsList);
 	}
-	
+
 	@Override
 	public void saveExpenseUploadDetails(List<UploadFinTypeExpense> uploadDetailsList) {
 		this.uploadFinTypeExpenseDAO.saveUploadDetails(uploadDetailsList);
-		
+
 	}
-	
+
 	@Override
 	public List<UploadTaxPercent> getSuccesFailedCountForFactor(long uploadId) {
 		return this.uploadTaxPercentDAO.getSuccesFailedCount(uploadId);
@@ -228,18 +228,19 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 
 		return this.uploadFinTypeExpenseDAO.getSuccesFailedCount(uploadId);
 	}
-	
+
 	@Override
 	public void updateTaxPercent(UploadTaxPercent taxPercent) {
-		
+
 		finFeeDetailService.updateTaxPercent(taxPercent);
 	}
+
 	@Override
 	public void updateRecord(UploadHeader uploadHeader) {
 		this.uploadHeaderDAO.updateRecord(uploadHeader);
-		
+
 	}
-	
+
 	public void setUploadHeaderDAO(UploadHeaderDAO uploadHeaderDAO) {
 		this.uploadHeaderDAO = uploadHeaderDAO;
 	}

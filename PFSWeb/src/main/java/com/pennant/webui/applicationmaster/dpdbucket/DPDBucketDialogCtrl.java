@@ -66,30 +66,30 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/applicationmaster/DPDBucket/dPDBucketDialog.zul file. <br>
  */
 public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(DPDBucketDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(DPDBucketDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_DPDBucketDialog;
-	protected Textbox					bucketCode;
-	protected Textbox					bucketDesc;
-	protected Checkbox					active;
-	private DPDBucket					dPDBucket;															// overhanded per param
+	protected Window window_DPDBucketDialog;
+	protected Textbox bucketCode;
+	protected Textbox bucketDesc;
+	protected Checkbox active;
+	private DPDBucket dPDBucket; // overhanded per param
 
-	private transient DPDBucketListCtrl	dPDBucketListCtrl;													// overhanded per param
-	private transient DPDBucketService	dPDBucketService;
+	private transient DPDBucketListCtrl dPDBucketListCtrl; // overhanded per param
+	private transient DPDBucketService dPDBucketService;
 
 	/**
 	 * default constructor.<br>
@@ -289,13 +289,12 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		this.bucketCode.setValue(aDPDBucket.getBucketCode());
 		this.bucketDesc.setValue(aDPDBucket.getBucketDesc());
 		this.active.setChecked(aDPDBucket.isActive());
-		
-		if(aDPDBucket.isNew()  || PennantConstants.RECORD_TYPE_NEW.equals(aDPDBucket
-				.getRecordType())){
+
+		if (aDPDBucket.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aDPDBucket.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		
+
 		this.recordStatus.setValue(aDPDBucket.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
@@ -394,12 +393,14 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.bucketCode.isReadonly()) {
-			this.bucketCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DPDBucketDialog_BucketCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.bucketCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DPDBucketDialog_BucketCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.bucketDesc.isReadonly()) {
-			this.bucketDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DPDBucketDialog_BucketDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.bucketDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DPDBucketDialog_BucketDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -749,8 +750,8 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DPDBucketDialog, auditHeader);
 						return processCompleted;
 					}

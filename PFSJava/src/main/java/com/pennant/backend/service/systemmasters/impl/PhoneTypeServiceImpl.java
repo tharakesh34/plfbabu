@@ -73,7 +73,7 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	public PhoneTypeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -95,15 +95,12 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTPhoneTypes/BMTPhoneTypes_Temp by using PhoneTypeDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using PhoneTypeDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTPhoneTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTPhoneTypes/BMTPhoneTypes_Temp
+	 * by using PhoneTypeDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using PhoneTypeDAO's update method 3) Audit the record in to AuditHeader and AdtBMTPhoneTypes
+	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -121,12 +118,12 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 		TableType tableType = TableType.MAIN_TAB;
 		PhoneType phoneType = (PhoneType) auditHeader.getAuditDetail().getModelData();
 		if (phoneType.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
 		if (phoneType.isNew()) {
-			phoneType.setPhoneTypeCode(getPhoneTypeDAO().save(phoneType,tableType));
+			phoneType.setPhoneTypeCode(getPhoneTypeDAO().save(phoneType, tableType));
 			auditHeader.getAuditDetail().setModelData(phoneType);
 			auditHeader.setAuditReference(phoneType.getPhoneTypeCode());
 		} else {
@@ -139,12 +136,10 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTPhoneTypes by using PhoneTypeDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTPhoneTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTPhoneTypes by using PhoneTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTPhoneTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -167,8 +162,7 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * getPhoneTypeById fetch the details by using PhoneTypeDAO's
-	 * getPhoneTypeById method.
+	 * getPhoneTypeById fetch the details by using PhoneTypeDAO's getPhoneTypeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -182,9 +176,8 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * getApprovedPhoneTypeById fetch the details by using PhoneTypeDAO's
-	 * getPhoneTypeById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTPhoneTypes.
+	 * getApprovedPhoneTypeById fetch the details by using PhoneTypeDAO's getPhoneTypeById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTPhoneTypes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -195,19 +188,15 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getPhoneTypeDAO().delete with parameters phoneType,"" b) NEW Add
-	 * new record in to main table by using getPhoneTypeDAO().save with
-	 * parameters phoneType,"" c) EDIT Update record in the main table by using
-	 * getPhoneTypeDAO().update with parameters phoneType,"" 3) Delete the
-	 * record from the workFlow table by using getPhoneTypeDAO().delete with
-	 * parameters phoneType,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTPhoneTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTPhoneTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getPhoneTypeDAO().delete with
+	 * parameters phoneType,"" b) NEW Add new record in to main table by using getPhoneTypeDAO().save with parameters
+	 * phoneType,"" c) EDIT Update record in the main table by using getPhoneTypeDAO().update with parameters
+	 * phoneType,"" 3) Delete the record from the workFlow table by using getPhoneTypeDAO().delete with parameters
+	 * phoneType,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTPhoneTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTPhoneTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -224,11 +213,10 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 		}
 		PhoneType phoneType = new PhoneType();
 		BeanUtils.copyProperties((PhoneType) auditHeader.getAuditDetail().getModelData(), phoneType);
-		
+
 		getPhoneTypeDAO().delete(phoneType, TableType.TEMP_TAB);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(phoneType.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					phoneTypeDAO.getPhoneTypeById(phoneType.getId(), ""));
+			auditHeader.getAuditDetail().setBefImage(phoneTypeDAO.getPhoneTypeById(phoneType.getId(), ""));
 		}
 		if (phoneType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -263,13 +251,10 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getPhoneTypeDAO().delete with parameters
-	 * phoneType,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTPhoneTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getPhoneTypeDAO().delete with parameters phoneType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTPhoneTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -291,10 +276,8 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -302,7 +285,7 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -311,10 +294,9 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -327,16 +309,15 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 		// Get the model object.
 		PhoneType phoneType = (PhoneType) auditDetail.getModelData();
 		// Check the unique keys.
-		if (phoneType.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(phoneType.getRecordType())
+		if (phoneType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(phoneType.getRecordType())
 				&& phoneTypeDAO.isDuplicateKey(phoneType.getPhoneTypeCode(),
 						phoneType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_PhoneType_Code") + ":"+ phoneType.getPhoneTypeCode();
+			parameters[0] = PennantJavaUtil.getLabel("label_PhoneType_Code") + ":" + phoneType.getPhoneTypeCode();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-	
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

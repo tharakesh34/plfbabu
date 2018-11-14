@@ -9,8 +9,13 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public interface ReceiptRealizationService {
 
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type);
-	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader saveOrUpdate(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doApprove(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException;
 
 }

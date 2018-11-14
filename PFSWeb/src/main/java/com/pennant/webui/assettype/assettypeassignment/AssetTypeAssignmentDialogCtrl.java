@@ -51,33 +51,33 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 
-	private static final long serialVersionUID 	= 4558487274958745612L;
-	private static final Logger		logger		= Logger.getLogger(AssetTypeAssignmentDialogCtrl.class);
+	private static final long serialVersionUID = 4558487274958745612L;
+	private static final Logger logger = Logger.getLogger(AssetTypeAssignmentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 						window_AssetTypeAssignmentDialog;
-	
-	protected Groupbox						grid_fdDetails;
-	protected Tabpanel						extendedFieldTabPanel;
-	protected Intbox 						seqNo;
-	protected ExtendedCombobox				assetType;
+	protected Window window_AssetTypeAssignmentDialog;
 
-	private CollateralHeaderDialogCtrl 		collateralHeaderDialogCtrl;
-	private ExtendedFieldHeader 			extendedFieldHeader;
-	private ExtendedFieldRender 			extendedFieldRender;
-	private ExtendedFieldsGenerator 		generator;
-	private List<ExtendedFieldRender> 		extendedList = null;
-	private boolean 						newRecord = false;
-	private boolean 						isReadOnly = false;
-	private int 							ccyFormat = 0;
-	private AssetTypeService     	 		assetTypeService;
-	private ScriptValidationService      	scriptValidationService;
-	private String 							preValidationScript;
-	private String 							postValidationScript;
-	
+	protected Groupbox grid_fdDetails;
+	protected Tabpanel extendedFieldTabPanel;
+	protected Intbox seqNo;
+	protected ExtendedCombobox assetType;
+
+	private CollateralHeaderDialogCtrl collateralHeaderDialogCtrl;
+	private ExtendedFieldHeader extendedFieldHeader;
+	private ExtendedFieldRender extendedFieldRender;
+	private ExtendedFieldsGenerator generator;
+	private List<ExtendedFieldRender> extendedList = null;
+	private boolean newRecord = false;
+	private boolean isReadOnly = false;
+	private int ccyFormat = 0;
+	private AssetTypeService assetTypeService;
+	private ScriptValidationService scriptValidationService;
+	private String preValidationScript;
+	private String postValidationScript;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -114,15 +114,15 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "AssetTypeAssignmentDialog");
 			}
 		}
-		
+
 		if (arguments.containsKey("extendedFieldRender")) {
 			setExtendedFieldRender((ExtendedFieldRender) arguments.get("extendedFieldRender"));
 		}
-		
+
 		if (arguments.containsKey("isReadOnly")) {
 			isReadOnly = (Boolean) arguments.get("isReadOnly");
 		}
-		
+
 		if (arguments.containsKey("ccyFormat")) {
 			ccyFormat = (int) arguments.get("ccyFormat");
 		}
@@ -132,7 +132,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		generator.setWindow(this.window_AssetTypeAssignmentDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		this.generator.setRowWidth(180);
-		this.extendedFieldTabPanel.setHeight((borderLayoutHeight-75)+"px");
+		this.extendedFieldTabPanel.setHeight((borderLayoutHeight - 75) + "px");
 		generator.setReadOnly(isReadOnly);
 		generator.setCcyFormat(ccyFormat);
 
@@ -143,10 +143,10 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		doCheckRights();
 		doSetFieldProperties();
 		doShowDialog(getExtendedFieldRender());
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -162,7 +162,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			this.btnCtrl.setInitNew();
 			this.assetType.focus();
 		}
-		
+
 		doEdit();
 		try {
 
@@ -170,7 +170,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			this.assetType.setValue(getExtendedFieldRender().getTypeCode());
 			this.assetType.setDescription(getExtendedFieldRender().getTypeCodeDesc());
 
-			if(getExtendedFieldRender().getTypeCode() != null){
+			if (getExtendedFieldRender().getTypeCode() != null) {
 				AssetType assetType = assetTypeService.getAssetTypeById(getExtendedFieldRender().getTypeCode());
 				setPreValidationScript(assetType.getPreValidation());
 				setPostValidationScript(assetType.getPostValidation());
@@ -182,7 +182,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -192,16 +192,16 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		if (isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.assetType.setReadonly(false);
- 		} else {
+		} else {
 			this.assetType.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
+
 			if (this.extendedFieldRender.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				this.btnCancel.setVisible(false);
@@ -216,7 +216,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				this.btnCtrl.setWFBtnStatus_Edit(true);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -229,17 +229,17 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities("AssetTypeAssignmentDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AssetTypeAssignmentDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AssetTypeAssignmentDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AssetTypeAssignmentDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AssetTypeAssignmentDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -250,33 +250,34 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		this.assetType.setModuleName("AssetType");
 		this.assetType.setValueColumn("AssetType");
 		this.assetType.setDescColumn("AssetDesc");
-		this.assetType.setValidateColumns(new String[]{"AssetType"});
-		this.assetType.setFilters(new Filter[]{new Filter("Active", 1, Filter.OP_EQUAL)});
-		
+		this.assetType.setValidateColumns(new String[] { "AssetType" });
+		this.assetType.setFilters(new Filter[] { new Filter("Active", 1, Filter.OP_EQUAL) });
+
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * 
-	 * When user clicks on "btnSearch assetType" button
-	 * This method displays ExtendedSearchListBox with Asset Type details
+	 * When user clicks on "btnSearch assetType" button This method displays ExtendedSearchListBox with Asset Type
+	 * details
+	 * 
 	 * @param event
-	 * @throws ScriptException 
+	 * @throws ScriptException
 	 */
-	public void onFulfill$assetType(Event event) throws ScriptException{
-		logger.debug("Entering  "+event.toString());
-		
+	public void onFulfill$assetType(Event event) throws ScriptException {
+		logger.debug("Entering  " + event.toString());
+
 		Object dataObject = assetType.getObject();
-		if (dataObject instanceof String){
+		if (dataObject instanceof String) {
 			this.assetType.setValue(dataObject.toString());
 			this.assetType.setDescription("");
-		}else{
-			AssetType details= (AssetType) dataObject;
+		} else {
+			AssetType details = (AssetType) dataObject;
 			if (details != null) {
 				this.assetType.setValue(details.getAssetType());
 				this.assetType.setDescription(details.getAssetDesc());
 				try {
-					
+
 					this.assetType.setReadonly(true);
 					AssetType assetType = assetTypeService.getAssetTypeById(details.getAssetType());
 					getExtendedFieldRender().setTypeCode(assetType.getAssetType());
@@ -284,7 +285,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 					setPreValidationScript(assetType.getPreValidation());
 					setPostValidationScript(assetType.getPostValidation());
 					setExtendedFieldHeader(assetType.getExtendedFieldHeader());
-					
+
 					//Pre-Validation Checking & Setting Defaults
 					Map<String, Object> fieldValuesMap = null;
 					if (getExtendedFieldRender().getMapValues() != null) {
@@ -294,11 +295,12 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 					if (newRecord) {
 
 						//get pre-validation script if record is new
-						if(StringUtils.isNotEmpty(getPreValidationScript())){
-							ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(getPreValidationScript(), fieldValuesMap);
+						if (StringUtils.isNotEmpty(getPreValidationScript())) {
+							ScriptErrors defaults = getScriptValidationService()
+									.setPreValidationDefaults(getPreValidationScript(), fieldValuesMap);
 
 							// Initiation of Field Value Map
-							if(fieldValuesMap == null){
+							if (fieldValuesMap == null) {
 								fieldValuesMap = new HashMap<>();
 							}
 
@@ -307,7 +309,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 							for (int i = 0; i < defaultList.size(); i++) {
 								ScriptError dftKeyValue = defaultList.get(i);
 
-								if(fieldValuesMap.containsKey(dftKeyValue.getProperty())){
+								if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
 									fieldValuesMap.remove(dftKeyValue.getProperty());
 								}
 								fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
@@ -315,19 +317,19 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 						}
 					}
 
-					if(fieldValuesMap != null){
+					if (fieldValuesMap != null) {
 						generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
 					}
-					
+
 					generator.renderWindow(getExtendedFieldHeader(), newRecord);
 				} catch (ParseException e) {
 					logger.error(e);
 				}
 			}
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -342,8 +344,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException,
-			IllegalAccessException, InvocationTargetException, ParseException,
+	public void onClick$btnSave(Event event)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
 			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
 		logger.debug("Entering" + event.toString());
 		doSave();
@@ -362,20 +364,21 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * @throws NoSuchFieldException
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException 
+	 * @throws InvocationTargetException
 	 */
-	public void doSave() throws InterruptedException, ParseException,
-			ScriptException, IOException, NoSuchMethodException,
-			NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public void doSave() throws InterruptedException, ParseException, ScriptException, IOException,
+			NoSuchMethodException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+
 		try {
-			this.assetType.setConstraint(new PTStringValidator(Labels.getLabel("label_AssetTypeAssignmentDialog_AssetType.value"), null, true, true));
+			this.assetType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AssetTypeAssignmentDialog_AssetType.value"), null, true, true));
 			this.assetType.getValidatedValue();
 		} catch (WrongValueException e) {
-			throw e; 
+			throw e;
 		}
-		
+
 		final ExtendedFieldRender aExetendedFieldRender = getExtendedFieldRender();
 		boolean isNew = false;
 
@@ -384,16 +387,16 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		// Do data level validations here
 		Map<String, Object> map = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(map);
-		
+
 		// Post Validations for the Extended fields
-		if(StringUtils.isNotEmpty(getPostValidationScript())){
-			ScriptErrors postValidationErrors = getScriptValidationService().getPostValidationErrors(
-					getPostValidationScript(), map);
+		if (StringUtils.isNotEmpty(getPostValidationScript())) {
+			ScriptErrors postValidationErrors = getScriptValidationService()
+					.getPostValidationErrors(getPostValidationScript(), map);
 
 			// Preparing Wrong Value User UI exceptions
 			showErrorDetails(postValidationErrors);
 		}
-				
+
 		isNew = aExetendedFieldRender.isNew();
 		String tranType = "";
 
@@ -452,6 +455,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 	/**
 	 * Method for Rendering Asset Type Details through extended fields
+	 * 
 	 * @param aExetendedFieldRender
 	 * @param tranType
 	 * @return
@@ -481,7 +485,9 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", errParm, valueParm),getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -498,8 +504,10 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 							extendedList.add(aExetendedFieldRender);
 						} else if (aExetendedFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							for (int j = 0; j < getCollateralHeaderDialogCtrl().getExtendedFieldRenderList().size(); j++) {
-								ExtendedFieldRender render = getCollateralHeaderDialogCtrl().getExtendedFieldRenderList().get(j);
+							for (int j = 0; j < getCollateralHeaderDialogCtrl().getExtendedFieldRenderList()
+									.size(); j++) {
+								ExtendedFieldRender render = getCollateralHeaderDialogCtrl()
+										.getExtendedFieldRenderList().get(j);
 								if (render.getSeqNo() == aExetendedFieldRender.getSeqNo()) {
 									extendedList.add(render);
 								}
@@ -518,29 +526,29 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		if (!recordAdded) {
 			extendedList.add(aExetendedFieldRender);
 		}
-		
+
 		// Asset Type Details Rendering (Record Type details resetting)
-		if(isNewRecord()){
+		if (isNewRecord()) {
 			FinAssetTypes assetType = new FinAssetTypes();
 			assetType.setAssetType(aExetendedFieldRender.getTypeCode());
 			assetType.setSeqNo(aExetendedFieldRender.getSeqNo());
 			assetType.setRecordType(aExetendedFieldRender.getRecordType());
-			
+
 			getCollateralHeaderDialogCtrl().getFinAssetTypes().add(assetType);
-		}else{
+		} else {
 			// Fetch Related Finance Asset Type Details from List
 			List<FinAssetTypes> assets = getCollateralHeaderDialogCtrl().getFinAssetTypes();
-			if(assets != null){
+			if (assets != null) {
 				for (int i = 0; i < assets.size(); i++) {
 					FinAssetTypes finAssetType = assets.get(i);
-					if(StringUtils.equals(finAssetType.getAssetType(), aExetendedFieldRender.getTypeCode()) &&
-							finAssetType.getSeqNo() == aExetendedFieldRender.getSeqNo()){
+					if (StringUtils.equals(finAssetType.getAssetType(), aExetendedFieldRender.getTypeCode())
+							&& finAssetType.getSeqNo() == aExetendedFieldRender.getSeqNo()) {
 						finAssetType.setRecordType(aExetendedFieldRender.getRecordType());
 					}
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -553,39 +561,42 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(ExtendedFieldRender aExetendedFieldRender, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, null,aExetendedFieldRender);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, aExetendedFieldRender);
 
-		return new AuditHeader(getReference(),String.valueOf(aExetendedFieldRender.getSeqNo()), null, null,auditDetail, getUserWorkspace().getLoggedInUser(),getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aExetendedFieldRender.getSeqNo()), null, null,
+				auditDetail, getUserWorkspace().getLoggedInUser(), getOverideMap());
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException 
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void onClick$btnDelete(Event event) throws InterruptedException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Deletes a GuarantorDetail object from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException 
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
-	private void doDelete() throws InterruptedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	private void doDelete() throws InterruptedException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		final ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
 		BeanUtils.copyProperties(getExtendedFieldRender(), extendedFieldRender);
@@ -599,7 +610,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				extendedFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
 				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				extendedFieldRender.setNewRecord(true);
-				
+
 				if (isWorkFlowEnabled()) {
 					extendedFieldRender.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
@@ -626,7 +637,6 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Display Message in Error Box
 	 * 
@@ -637,44 +647,43 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(
-					this.window_AssetTypeAssignmentDialog, auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_AssetTypeAssignmentDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Showing UI Post validation Errors
+	 * 
 	 * @param postValidationErrors
 	 */
 	public void showErrorDetails(ScriptErrors postValidationErrors) {
 		List<ScriptError> errorList = postValidationErrors.getAll();
-		if(errorList == null || errorList.isEmpty()){
+		if (errorList == null || errorList.isEmpty()) {
 			return;
 		}
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
-			
-			if(extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty()) != null){
-				Component component = extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty());
+
+			if (extendedFieldTabPanel.getFellowIfAny("ad_" + error.getProperty()) != null) {
+				Component component = extendedFieldTabPanel.getFellowIfAny("ad_" + error.getProperty());
 				WrongValueException we = new WrongValueException(component, error.getValue());
 				wve.add(we);
 			}
 		}
-		
+
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
-				if(i == 0){
+				if (i == 0) {
 					Component comp = wvea[i].getComponent();
-					if(comp instanceof HtmlBasedComponent){
+					if (comp instanceof HtmlBasedComponent) {
 						Clients.scrollIntoView(comp);
 					}
 				}
@@ -682,9 +691,9 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -694,38 +703,43 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}
+
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
 	}
-	
+
 	public ExtendedFieldRender getExtendedFieldRender() {
 		return extendedFieldRender;
 	}
+
 	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
 		this.extendedFieldRender = extendedFieldRender;
 	}
-	
+
 	public ExtendedFieldsGenerator getGenerator() {
 		return generator;
 	}
+
 	public void setGenerator(ExtendedFieldsGenerator generator) {
 		this.generator = generator;
 	}
-	
+
 	public List<ExtendedFieldRender> getExtendedList() {
 		return extendedList;
 	}
+
 	public void setExtendedList(List<ExtendedFieldRender> extendedList) {
 		this.extendedList = extendedList;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -733,6 +747,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public CollateralHeaderDialogCtrl getCollateralHeaderDialogCtrl() {
 		return collateralHeaderDialogCtrl;
 	}
+
 	public void setCollateralHeaderDialogCtrl(CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
 		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
 	}
@@ -740,6 +755,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public AssetTypeService getAssetTypeService() {
 		return assetTypeService;
 	}
+
 	public void setAssetTypeService(AssetTypeService assetTypeService) {
 		this.assetTypeService = assetTypeService;
 	}
@@ -747,6 +763,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public String getPreValidationScript() {
 		return preValidationScript;
 	}
+
 	public void setPreValidationScript(String preValidationScript) {
 		this.preValidationScript = preValidationScript;
 	}
@@ -754,6 +771,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public String getPostValidationScript() {
 		return postValidationScript;
 	}
+
 	public void setPostValidationScript(String postValidationScript) {
 		this.postValidationScript = postValidationScript;
 	}
@@ -761,6 +779,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public ScriptValidationService getScriptValidationService() {
 		return scriptValidationService;
 	}
+
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
 	}

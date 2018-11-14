@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class InterfaceCustomerRating implements Serializable {
 
 	private static final long serialVersionUID = 5175493124775397032L;
-	
+
 	private long custID = Long.MIN_VALUE;
 	private String custRatingType;
 	private String custRatingCode;

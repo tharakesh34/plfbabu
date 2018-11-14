@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 
 	<display-name>pennApps Lending Factory</display-name>
-	
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -42,8 +41,8 @@
 	</listener>
 	<listener>
 		<display-name>Spring Request Context Listener</display-name>
-		<listener-class>
-			org.springframework.web.context.request.RequestContextListener</listener-class>
+		<listener-class>org.springframework.web.context.request.RequestContextListener
+		</listener-class>
 	</listener>
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -74,8 +73,8 @@
 	</filter-mapping>
 
 	<listener>
-		<listener-class>
-			org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher
+		</listener-class>
 	</listener>
 	<listener>
 		<description>Used to cleanup when a session is destroyed</description>
@@ -150,9 +149,8 @@
 	</error-page>
 
 	<!-- ==================== Default Welcome File List ==================== -->
-	<!-- When a request URI refers to a directory, the default servlet looks 
-		for the "welcome file" within that directory and display the corresponding 
-		resource URI. -->
+	<!-- When a request URI refers to a directory, the default servlet looks for the "welcome file" within that directory and 
+		display the corresponding resource URI. -->
 	<welcome-file-list>
 		<welcome-file>loginDialog.zul</welcome-file>
 	</welcome-file-list>

@@ -23,12 +23,12 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 
 public class ReceiptPaymentService extends ServiceHelper {
-	private static final long		serialVersionUID	= 1442146139821584760L;
-	private static Logger			logger				= Logger.getLogger(ReceiptPaymentService.class);
+	private static final long serialVersionUID = 1442146139821584760L;
+	private static Logger logger = Logger.getLogger(ReceiptPaymentService.class);
 
 	@Autowired
-	private FinExcessAmountDAO	finExcessAmountDAO;
-	private RepaymentProcessUtil	repaymentProcessUtil;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private RepaymentProcessUtil repaymentProcessUtil;
 
 	/**
 	 * @param custId
@@ -66,7 +66,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			if (finEODEvent.getIdxPresentment() <= 0) {
 				continue;
 			}
-			
+
 			FinanceMain finMain = finEODEvent.getFinanceMain();
 			String finReference = finMain.getFinReference();
 
@@ -74,7 +74,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			PresentmentDetail prestDetails = getPresentmentDetail(presentments, finReference, businessDate);
 			if (prestDetails != null) {
 
-				processprestment(prestDetails, finEODEvent, customer, businessDate,false);
+				processprestment(prestDetails, finEODEvent, customer, businessDate, false);
 
 			} else {
 				//if banking presentation not exists check advance EMI			
@@ -121,7 +121,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 	}
 
 	private void processprestment(PresentmentDetail presentmentDetail, FinEODEvent finEODEvent, Customer customer,
-			Date businessDate,boolean noReserve) throws Exception {
+			Date businessDate, boolean noReserve) throws Exception {
 
 		String finref = presentmentDetail.getFinReference();
 		Date schDate = presentmentDetail.getSchDate();
@@ -184,12 +184,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
 			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 			receiptDetails.add(receiptDetail);
-			
+
 		}
 
 		header.setReceiptDetails(receiptDetails);
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
-				finEODEvent.getFinType(), businessDate,businessDate);
+				finEODEvent.getFinType(), businessDate, businessDate);
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}

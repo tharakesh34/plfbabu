@@ -8,7 +8,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Caste extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3568541212131628117L;
-	
+
 	private long casteId = Long.MIN_VALUE;
 	private String casteCode;
 	private String casteDesc;
@@ -34,31 +34,35 @@ public class Caste extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return this.casteId;
 	}
-	public void setId (long casteId) {
+
+	public void setId(long casteId) {
 		this.casteId = casteId;
 	}
-	
+
 	public String getCasteCode() {
 		return casteCode;
 	}
+
 	public void setCasteCode(String casteCode) {
 		this.casteCode = casteCode;
 	}
-	
+
 	public String getCasteDesc() {
 		return casteDesc;
 	}
+
 	public void setCasteDesc(String casteDesc) {
 		this.casteDesc = casteDesc;
 	}
-	
+
 	public boolean isCasteIsActive() {
 		return casteIsActive;
 	}
+
 	public void setCasteIsActive(boolean casteIsActive) {
 		this.casteIsActive = casteIsActive;
 	}
@@ -66,31 +70,35 @@ public class Caste extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Caste getBefImage(){
+	public Caste getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Caste beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Caste beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.Sector;
 public interface SectorService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Sector getSectorById(String id);
+
 	Sector getApprovedSectorById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

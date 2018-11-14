@@ -102,7 +102,7 @@ public class ExtFinanceData implements java.io.Serializable {
 	private String errDesc;
 	private int planDeferCount;
 	private boolean stepFinance = false;
-	
+
 	private BigDecimal expGracePft = BigDecimal.ZERO;
 	private BigDecimal expGraceCpz = BigDecimal.ZERO;
 	private BigDecimal expGorssGracePft = BigDecimal.ZERO;

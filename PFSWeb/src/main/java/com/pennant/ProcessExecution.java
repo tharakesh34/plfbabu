@@ -118,8 +118,7 @@ public class ProcessExecution extends Panel {
 			hbox1.appendChild(label1);
 		}
 
-		label1.setValue(DateUtility.timeBetween(getProcess().getEndTime(),
-				getProcess().getStartTime()));
+		label1.setValue(DateUtility.timeBetween(getProcess().getEndTime(), getProcess().getStartTime()));
 
 		if (!"STARTING".equals(process.getStatus())) {
 			row1.setVisible(true);
@@ -164,7 +163,7 @@ public class ProcessExecution extends Panel {
 		label3.setValue(String.valueOf(getProcess().getProcessedCount()));
 
 		//=======
-		
+
 		row7 = (Row) getChildren(rows, "row7");
 		if (row7 == null) {
 			row7 = new Row();
@@ -181,11 +180,11 @@ public class ProcessExecution extends Panel {
 			row7.appendChild(label7);
 		}
 
-		label7.setValue(StringUtils.trimToEmpty(getProcess().getWait()));	
+		label7.setValue(StringUtils.trimToEmpty(getProcess().getWait()));
 		row7.setVisible(false);
-		
+
 		//
-		
+
 		row4 = (Row) getChildren(rows, "row4");
 		if (row4 == null) {
 			row4 = new Row();
@@ -202,8 +201,7 @@ public class ProcessExecution extends Panel {
 			row4.appendChild(label4);
 		}
 
-		label4.setValue(DateUtility.formatUtilDate(getProcess().getStartTime(),
-				PennantConstants.DBTimeFormat));
+		label4.setValue(DateUtility.formatUtilDate(getProcess().getStartTime(), PennantConstants.DBTimeFormat));
 
 		row5 = (Row) getChildren(rows, "row5");
 		if (row5 == null) {
@@ -221,8 +219,7 @@ public class ProcessExecution extends Panel {
 			row5.appendChild(label5);
 		}
 
-		label5.setValue(DateUtility.formatUtilDate(getProcess().getEndTime(),
-				PennantConstants.DBTimeFormat));
+		label5.setValue(DateUtility.formatUtilDate(getProcess().getEndTime(), PennantConstants.DBTimeFormat));
 
 		if ("EXECUTING".equals(process.getStatus())) {
 			row5.setVisible(false);
@@ -230,10 +227,8 @@ public class ProcessExecution extends Panel {
 			row5.setVisible(true);
 		}
 
-		if (getProcess().getActualCount() > 0
-				&& getProcess().getProcessedCount() > 0) {
-			percentage = getProcess().getProcessedCount() * 100
-					/ getProcess().getActualCount();
+		if (getProcess().getActualCount() > 0 && getProcess().getProcessedCount() > 0) {
+			percentage = getProcess().getProcessedCount() * 100 / getProcess().getActualCount();
 		}
 
 		row6 = (Row) getChildren(rows, "row6");
@@ -298,12 +293,12 @@ public class ProcessExecution extends Panel {
 			row2.setVisible(false);
 			row3.setVisible(false);
 			row7.setVisible(true);
-		}else{
+		} else {
 			row2.setVisible(true);
 			row3.setVisible(true);
 			row7.setVisible(false);
 		}
-		
+
 		if (process.getInfo() == null) {
 			this.setTooltiptext(this.getTitle());
 		} else {

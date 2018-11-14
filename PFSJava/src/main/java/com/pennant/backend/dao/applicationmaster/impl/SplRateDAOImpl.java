@@ -45,7 +45,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,11 +67,10 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	private static Logger logger = Logger.getLogger(SplRateDAOImpl.class);
-	
+
 	public SplRateDAOImpl() {
 		super();
 	}
-	
 
 	/**
 	 * Fetch the Record Special Rates details by key field
@@ -84,17 +82,18 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	 * @return SplRate
 	 */
 	@Override
-	public SplRate getSplRateById(final String id,Date date, String type) {
+	public SplRate getSplRateById(final String id, Date date, String type) {
 		logger.debug("Entering");
 		SplRate splRate = new SplRate();
 		splRate.setId(id);
 		splRate.setSREffDate(date);
 
-		StringBuilder selectSql = new StringBuilder("SELECT SRType, SREffDate, SRRate, DelExistingRates, LastMdfDate, " );
-		if(type.contains("View")){
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT SRType, SREffDate, SRRate, DelExistingRates, LastMdfDate, ");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescSRTypeName, ");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId  ");
 		selectSql.append(" FROM RMTSplRates");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -105,8 +104,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
 
 		try {
-			splRate = this.jdbcTemplate.queryForObject(
-					 selectSql.toString(), beanParameters, typeRowMapper);
+			splRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			splRate = null;
@@ -116,9 +114,8 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTSplRates or RMTSplRates_Temp.
-	 * if Record not deleted then throws DataAccessException with error 41003.
-	 * delete Special Rates by key SRType
+	 * This method Deletes the Record from the RMTSplRates or RMTSplRates_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Special Rates by key SRType
 	 * 
 	 * @param Special
 	 *            Rates (splRate)
@@ -132,17 +129,16 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	public void delete(SplRate splRate, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTSplRates");
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SRType =:SRType AND SREffDate=:SREffDate");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-					beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -170,26 +166,25 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	public void save(SplRate splRate, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into RMTSplRates");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (SRType, SREffDate, SRRate, DelExistingRates," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" (SRType, SREffDate, SRRate, DelExistingRates,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId,LastMdfDate)");
-		insertSql.append(" Values(:SRType, :SREffDate, :SRRate, :DelExistingRates," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+		insertSql.append(" Values(:SRType, :SREffDate, :SRRate, :DelExistingRates,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:LastMdfDate)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method updates the Record RMTSplRates or RMTSplRates_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Special Rates by key SRType and Version
+	 * This method updates the Record RMTSplRates or RMTSplRates_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Special Rates by key SRType and Version
 	 * 
 	 * @param Special
 	 *            Rates (splRate)
@@ -202,13 +197,13 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	public void update(SplRate splRate, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder updateSql = new StringBuilder("Update RMTSplRates");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set SRRate = :SRRate, DelExistingRates = :DelExistingRates,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, LastMdfDate=:LastMdfDate");
 		updateSql.append(" Where SRType =:SRType AND SREffDate=:SREffDate");
 
@@ -216,19 +211,18 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * To get base rate value using base rate code and effective date is less
-	 * than passed date
+	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
 	public boolean getSplRateListById(String sRType, Date sREffDate, String type) {
 		logger.debug("Entering");
@@ -251,15 +245,16 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Common Method for getting list<SplRate> of Objects Using id and date with type of table
+	 * 
 	 * @param id
 	 * @param date
 	 * @param type
 	 * @return
 	 */
-	private List<SplRate> getSplRateByType(final String id, Date date,String type) {
+	private List<SplRate> getSplRateByType(final String id, Date date, String type) {
 		logger.debug("Entering");
 		SplRate splRate = new SplRate();
 		splRate.setId(id);
@@ -269,18 +264,18 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		selectSql.append(" FROM RMTSplRates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SRType =:SRType AND SREffDate <=:SREffDate Order by SREffDate Desc");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
-		
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	public List<SplRate> getSplRateHistByType(String sRType, Date sREffDate) {
 		logger.debug("Entering");
-		
+
 		SplRate splRate = new SplRate();
 		splRate.setSRType(sRType);
 		splRate.setSREffDate(sREffDate);
@@ -290,21 +285,21 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		selectSql.append(" Where srtype = :SRType ");
 		selectSql.append(" AND sreffdate >= (select max(SREffDate) from RMTSPLRATES ");
 		selectSql.append(" Where srtype = :SRType AND sreffdate <= :SREffDate)");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
-		
-		List<SplRate> splRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
-		
+
+		List<SplRate> splRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 		logger.debug("Leaving");
 		return splRates;
 	}
 
 	@Override
-	public List<SplRate> getSRListByMdfDate(Date effDate,String type) {
+	public List<SplRate> getSRListByMdfDate(Date effDate, String type) {
 		logger.debug("Entering");
-		
+
 		SplRate splRate = new SplRate();
 		StringBuilder selectSql = new StringBuilder("SELECT SRType, SREffDate, SRRate, LastMdfDate");
 		selectSql.append(" FROM RMTSplRates");
@@ -312,25 +307,24 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		selectSql.append(" Where LastMdfDate ='");
 		selectSql.append(effDate);
 		selectSql.append('\'');
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
 		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
-		
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
-	 * To get Special rate value using special rate code and effective date is less than
-	 * or equal passed date
+	 * To get Special rate value using special rate code and effective date is less than or equal passed date
 	 */
 	public SplRate getSplRateByID(final String id, Date date) {
 		logger.debug("Entering");
 		SplRate splRate = null;
-		
-		List<SplRate>  splRates = getSplRateByType(id, date, "");
-		if(splRates.size()>0){
+
+		List<SplRate> splRates = getSplRateByType(id, date, "");
+		if (splRates.size() > 0) {
 			splRate = splRates.get(0);
 		}
 
@@ -339,9 +333,8 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTSplRates
-	 * If Record not deleted then throws DataAccessException
-	 * with error 41003. delete SplRates greater than effective date
+	 * This method Deletes the Record from the RMTSplRates If Record not deleted then throws DataAccessException with
+	 * error 41003. delete SplRates greater than effective date
 	 * 
 	 * @param SplRate
 	 *            (splRate)
@@ -371,7 +364,8 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	 * Fetch record count of special rate code.
 	 * 
 	 * @param repaySpecialRate
-	 * @param type (table type)
+	 * @param type
+	 *            (table type)
 	 * @return Integer
 	 */
 	@Override

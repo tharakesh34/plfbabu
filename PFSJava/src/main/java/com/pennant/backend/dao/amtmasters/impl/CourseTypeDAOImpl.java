@@ -69,11 +69,12 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 	}
 
 	/**
-	 * Fetch the Record  Course Type details by key field
+	 * Fetch the Record Course Type details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CourseType
 	 */
 	@Override
@@ -84,7 +85,7 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select CourseTypeCode, CourseTypeDesc, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From AMTCourseType");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -94,9 +95,9 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(courseType);
 		RowMapper<CourseType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CourseType.class);
 
-		try{
-			courseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			courseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			courseType = null;
 		}
@@ -105,13 +106,13 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 	}
 
 	/**
-	 * This method Deletes the Record from the AMTCourseType or AMTCourseType_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Course Type by key CourseTypeCode
+	 * This method Deletes the Record from the AMTCourseType or AMTCourseType_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Course Type by key CourseTypeCode
 	 * 
-	 * @param Course Type (courseType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Course
+	 *            Type (courseType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -122,10 +123,10 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 		StringBuilder deleteSql = new StringBuilder();
 
 		deleteSql.append("Delete From AMTCourseType");
-		deleteSql.append(StringUtils.trimToEmpty(type)); 
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CourseTypeCode =:CourseTypeCode");
 
-		logger.debug("deleteSql: " + deleteSql.toString()); 
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(courseType);
 
 		try {
@@ -142,28 +143,29 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 	/**
 	 * This method insert new Records into AMTCourseType or AMTCourseType_Temp.
 	 *
-	 * save Course Type 
+	 * save Course Type
 	 * 
-	 * @param Course Type (courseType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Course
+	 *            Type (courseType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(CourseType courseType,String type) {
+	public String save(CourseType courseType, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AMTCourseType");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append("(CourseTypeCode, CourseTypeDesc, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
-		insertSql.append(" Values(:CourseTypeCode, :CourseTypeDesc, :Version , :LastMntBy, " );
+		insertSql.append(" Values(:CourseTypeCode, :CourseTypeDesc, :Version , :LastMntBy, ");
 		insertSql.append(" :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		logger.debug("insertSql: " + insertSql.toString()); 
+		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(courseType);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -173,13 +175,13 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 	}
 
 	/**
-	 * This method updates the Record AMTCourseType or AMTCourseType_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Course Type by key CourseTypeCode and Version
+	 * This method updates the Record AMTCourseType or AMTCourseType_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Course Type by key CourseTypeCode and Version
 	 * 
-	 * @param Course Type (courseType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Course
+	 *            Type (courseType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -191,12 +193,13 @@ public class CourseTypeDAOImpl extends BasicDao<CourseType> implements CourseTyp
 
 		StringBuilder updateSql = new StringBuilder("Update AMTCourseType");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CourseTypeDesc = :CourseTypeDesc, " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Set CourseTypeDesc = :CourseTypeDesc, ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CourseTypeCode =:CourseTypeCode");
-		logger.debug("updateSql: " + updateSql.toString()); 
+		logger.debug("updateSql: " + updateSql.toString());
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");

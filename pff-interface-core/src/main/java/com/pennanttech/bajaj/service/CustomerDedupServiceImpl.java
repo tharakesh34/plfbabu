@@ -33,12 +33,12 @@ public class CustomerDedupServiceImpl extends BajajService implements CustomerDe
 		super();
 	}
 
-	private SimpleDateFormat	dateFormater	= new SimpleDateFormat("dd-MMM-yyyy");
+	private SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy");
 
 	public DedupCustomerResponse invokeDedup(DedupCustomerDetail dedupCustomerDetail) throws Exception {
 
-		String serviceURL = (String) getSMTParameter("POSIDEX_DEDUP_REQUEST_URL", String.class);		
-		
+		String serviceURL = (String) getSMTParameter("POSIDEX_DEDUP_REQUEST_URL", String.class);
+
 		DedupCustomerResponse customerResponse = null;
 		DedupeResponse response = null;
 
@@ -173,12 +173,13 @@ public class CustomerDedupServiceImpl extends BajajService implements CustomerDe
 			customerResponse.setErrorCode(response.getErrorDescription().getErrorCode());
 			customerResponse.setErrorDesc(response.getErrorDescription().getErrorDescription());
 		}
-		if(response.getDemographicDetails()!=null && !response.getDemographicDetails().isEmpty()){
+		if (response.getDemographicDetails() != null && !response.getDemographicDetails().isEmpty()) {
 			for (DemographicDetail detail : response.getDemographicDetails()) {
 				details.add(prepareCustomerDetail(detail));
 			}
 		}
-		if(response.getCustomerStatusResponse()!=null && response.getCustomerStatusResponse().getCustomerStatus()!=null){
+		if (response.getCustomerStatusResponse() != null
+				&& response.getCustomerStatusResponse().getCustomerStatus() != null) {
 			customerResponse.setErrorDesc(response.getCustomerStatusResponse().getCustomerStatus());
 		}
 
@@ -214,7 +215,7 @@ public class CustomerDedupServiceImpl extends BajajService implements CustomerDe
 		//Customer Adderess details List
 		if (detail.getCustAddressDetails() != null && !detail.getCustAddressDetails().isEmpty()) {
 			for (CustAddressDetail addressDetail : detail.getCustAddressDetails()) {
-				    addressList.add(setAddress(addressDetail));
+				addressList.add(setAddress(addressDetail));
 			}
 
 			customerDetail.setAddressList(addressList);

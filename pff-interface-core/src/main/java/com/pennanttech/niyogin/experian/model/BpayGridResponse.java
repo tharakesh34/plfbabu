@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "segmentCode", "timePeriodInd", "year", "weekNumber", "month",
-		 "assetClassification", "hdetailsResponse" })
+@XmlType(propOrder = { "segmentCode", "timePeriodInd", "year", "weekNumber", "month", "assetClassification",
+		"hdetailsResponse" })
 @XmlRootElement(name = "BPAYGRID")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BpayGridResponse implements Serializable {
@@ -17,34 +17,31 @@ public class BpayGridResponse implements Serializable {
 	private static final long serialVersionUID = 6501472708129670451L;
 
 	@XmlElement(name = "SegmentCode")
-    private String segmentCode;
-	
+	private String segmentCode;
+
 	@XmlElement(name = "TimePeriodInd")
-    private String timePeriodInd;
-	
+	private String timePeriodInd;
+
 	@XmlElement(name = "Year")
 	private int year;
-	
+
 	@XmlElement(name = "WeekNumber")
-    private String weekNumber;
-	
-	
+	private String weekNumber;
+
 	@XmlElement(name = "Monthvalue")
-    private String month;
-	
-	
+	private String month;
+
 	@XmlElement(name = "PaymentStatusValue")
-    private String paymentStatusValue;
-	
+	private String paymentStatusValue;
+
 	@XmlElement(name = "DaysPastDue")
 	private String[] daysPastDue;
-	
-	
+
 	@XmlElement(name = "AssetClassification")
 	private String assetClassification;
-	
+
 	@XmlElement(name = "HDETAILS")
-	private HDetailsResponse	hdetailsResponse;
+	private HDetailsResponse hdetailsResponse;
 
 	public int getYear() {
 		return year;

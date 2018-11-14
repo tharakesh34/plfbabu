@@ -118,7 +118,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 */
 	protected Window window_CustomerExtLiabilityDialog;
 
-	protected Row        row_custType;
+	protected Row row_custType;
 	protected Combobox custType;
 	protected Longbox custID;
 	protected Textbox custCIF;
@@ -253,11 +253,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerExtLiabilityDialog");
 				}
 			}
-			
+
 			if (getCustomerDialogCtrl() != null) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
-			
+
 			if (arguments.containsKey("samplingDialogCtrl")) {
 				row_custType.setVisible(true);
 				inputSource = "sampling";
@@ -272,7 +272,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				if (arguments.containsKey("coApplicants")) {
 					coApplicants = (Set<String>) arguments.get("coApplicants");
 				}
-				
+
 				this.externalLiability.setWorkflowId(0);
 				if (arguments.containsKey("roleCode") && !enqiryModule) {
 					userRole = arguments.get("roleCode").toString();
@@ -280,20 +280,18 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				}
 			}
 
-			
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
-			
+
 			doLoadWorkFlow(this.externalLiability.isWorkflow(), this.externalLiability.getWorkflowId(),
 					this.externalLiability.getNextTaskId());
-			
+
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerExtLiabilityDialog");
 			}
-			
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -322,8 +320,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.bankName.setValidateColumns(new String[] { "BankCode" });
 
 		this.otherFinInstitute.setMaxlength(50);
-		if (StringUtils.isNotBlank(externalLiability.getLoanBank())&& externalLiability.getLoanBank().equals(PennantConstants.OTHER_BANK)) {
-				this.space_Other.setClass(PennantConstants.mandateSclass);
+		if (StringUtils.isNotBlank(externalLiability.getLoanBank())
+				&& externalLiability.getLoanBank().equals(PennantConstants.OTHER_BANK)) {
+			this.space_Other.setClass(PennantConstants.mandateSclass);
 		}
 
 		this.finType.setMaxlength(8);
@@ -436,7 +435,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnDelete"));
@@ -444,8 +443,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Method for Calling list Of existed Customers
 	 * 
@@ -453,7 +451,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event)throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -465,12 +463,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	
-	private void onload() throws SuspendNotAllowedException,InterruptedException {
+
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		List<Filter> filtersList=new ArrayList<Filter>();
-		Filter filter =null;
+		List<Filter> filtersList = new ArrayList<Filter>();
+		Filter filter = null;
 		if (arguments.containsKey("samplingDialogCtrl")) {
 			if (!coApplicants.isEmpty()) {
 				filter = new Filter("custcif", coApplicants.toArray(new String[0]), Filter.OP_IN);
@@ -480,13 +478,13 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		} else {
 			filter = new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_EQUAL);
 		}
-		
+
 		filtersList.add(filter);
 		map.put("DialogCtrl", this);
 		map.put("filtersList", filtersList);
 		map.put("filtertype", "Extended");
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
@@ -582,7 +580,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (liability.getCustId() != Long.MIN_VALUE) {
 			this.custID.setValue(liability.getCustId());
 		}
-		
+
 		List<ValueLabel> customerTypes = new ArrayList<>();
 		if (row_custType.isVisible()) {
 			customerTypes.add(new ValueLabel("1", "Primary Customer"));
@@ -590,11 +588,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			fillComboBox(this.custType, liability.getCustType() == 0 ? customerTypes.get(0).getValue()
 					: String.valueOf(liability.getCustType()), customerTypes, "");
 		}
-		
-		if(row_custType.isVisible() && coApplicants.contains(liability.getCustCif())){
+
+		if (row_custType.isVisible() && coApplicants.contains(liability.getCustCif())) {
 			this.custType.setValue(customerTypes.get(1).getLabel());
 		}
-		
+
 		this.liabilitySeq.setValue(liability.getSeqNo());
 		this.finDate.setValue(liability.getFinDate());
 		this.bankName.setValue(liability.getLoanBank());
@@ -804,7 +802,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		setExternalLiability(aLiability);
 		logger.debug("Leaving");
 	}
-	
+
 	public void onChange$custType(Event event) {
 		logger.debug(Literal.ENTERING);
 		// this.reason.setErrorMessage("");
@@ -819,8 +817,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		logger.debug(Literal.ENTERING);
 		if (getSamplingDialogCtrl() != null && getSamplingDialogCtrl().getCustomerExtLiabilityDetailList() != null
 				&& getSamplingDialogCtrl().getCustomerExtLiabilityDetailList().size() > 0) {
-			
-			List<CustomerExtLiability> custExtLiabilityList = getSamplingDialogCtrl().getCustomerExtLiabilityDetailList();
+
+			List<CustomerExtLiability> custExtLiabilityList = getSamplingDialogCtrl()
+					.getCustomerExtLiabilityDetailList();
 			int idNumber = 0;
 			for (CustomerExtLiability customerExtLiability : custExtLiabilityList) {
 				if (customerExtLiability.getCustCif().equals(this.custCIF.getValue())) {
@@ -836,7 +835,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	}
 
 	private void visibleComponent(Integer type) {
-		 CustomerExtLiability extLiability = this.externalLiability.getBefImage();
+		CustomerExtLiability extLiability = this.externalLiability.getBefImage();
 		if (type == 2) {
 			this.custCIF.setValue("");
 			this.custShrtName.setValue("");
@@ -850,8 +849,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.liabilitySeq.setValue(this.externalLiability.getSeqNo());
 		}
 	}
-	
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -1241,7 +1239,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (enqiryModule) {
 			return true;
 		}
-		
+
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
@@ -1429,7 +1427,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_LiabilitySeq") + ":" + valueParm[1];
-		
+
 		List<CustomerExtLiability> custExtLiabilityList = null;
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerExtLiabilityDetailList() != null
@@ -1447,7 +1445,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				CustomerExtLiability customerExtLiability = custExtLiabilityList.get(i);
 
 				if (aCustomerExtLiability.getSeqNo() == customerExtLiability.getSeqNo()
-						&& aCustomerExtLiability.getCustId() == customerExtLiability.getCustId()) { 
+						&& aCustomerExtLiability.getCustId() == customerExtLiability.getCustId()) {
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),

@@ -59,44 +59,46 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/reports/DealWiseIncomeReport.zul file.
+ * This is the controller class for the /WEB-INF/pages/reports/DealWiseIncomeReport.zul file.
  */
-public class DealWiseIncomeReportCtrl extends  GFCBaseCtrl<ReportConfiguration> {
+public class DealWiseIncomeReportCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
 	private static final Logger logger = Logger.getLogger(DealWiseIncomeReportCtrl.class);
 
 	protected Window window_DealWiseIncomeReportCtrl;
-	
+
 	private Date dateValueDate = null;
-	private DailyDownloadInterfaceService dailyDownloadInterfaceService; 
-	protected Tabbox         tabbox;
+	private DailyDownloadInterfaceService dailyDownloadInterfaceService;
+	protected Tabbox tabbox;
 
 	public DealWiseIncomeReportCtrl() {
 		super();
 	}
-	
-	/** 
-	 * On creating Window 
+
+	/**
+	 * On creating Window
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_DealWiseIncomeReportCtrl(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		try{
-			tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent();
+		try {
+			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent();
 
 			dateValueDate = DateUtility.getAppDate();
 
-			Date prvMnthStartDate = DateUtility.getMonthStartDate(DateUtility.addDays(DateUtility.getMonthStartDate(dateValueDate), -1));
+			Date prvMnthStartDate = DateUtility
+					.getMonthStartDate(DateUtility.addDays(DateUtility.getMonthStartDate(dateValueDate), -1));
 
 			//Saving new Income Account Transaction Details From Core System
 			getDailyDownloadInterfaceService().processIncomeAccTransactions(prvMnthStartDate);
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("MonthEndReportEvent", event);
-			Window   child_Window = (Window) Executions.createComponents("/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul", null, map);
+			Window child_Window = (Window) Executions
+					.createComponents("/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul", null, map);
 			child_Window.onClose();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -111,9 +113,8 @@ public class DealWiseIncomeReportCtrl extends  GFCBaseCtrl<ReportConfiguration> 
 		return dailyDownloadInterfaceService;
 	}
 
-	public void setDailyDownloadInterfaceService(
-			DailyDownloadInterfaceService dailyDownloadInterfaceService) {
+	public void setDailyDownloadInterfaceService(DailyDownloadInterfaceService dailyDownloadInterfaceService) {
 		this.dailyDownloadInterfaceService = dailyDownloadInterfaceService;
 	}
-	
+
 }

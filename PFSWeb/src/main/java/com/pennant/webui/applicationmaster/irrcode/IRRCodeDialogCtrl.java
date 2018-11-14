@@ -84,8 +84,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/IRRCode/iRRCodeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/IRRCode/iRRCodeDialog.zul file. <br>
  */
 public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 
@@ -93,9 +92,8 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	private static final Logger logger = Logger.getLogger(IRRCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_IRRCodeDialog;
 	protected Textbox iRRCode;
@@ -104,9 +102,9 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	protected Button button_IRRFeeTypeList_NewIRRFeeType;
 	protected Listbox listBoxIRRFeeType;
 	private IRRCode aIRRCode; // overhanded per param
-	
-	protected Grid				grid_Basicdetails;
-	protected Paging			pagingIRRCodeDialog;
+
+	protected Grid grid_Basicdetails;
+	protected Paging pagingIRRCodeDialog;
 
 	private transient IRRCodeListCtrl iRRCodeListCtrl; // overhanded per param
 	private transient IRRCodeService iRRCodeService;
@@ -133,8 +131,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -179,13 +176,13 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 			} else {
 				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
-			
+
 			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 170;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listBoxIRRFeeType.setHeight(listboxHeight + "px");
 			int listRows = Math.round(listboxHeight / 24) - 1;
 			pagingIRRCodeDialog.setPageSize(listRows);
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.aIRRCode);
@@ -204,7 +201,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 		logger.debug(Literal.ENTERING);
 		this.iRRCode.setMaxlength(8);
 		this.iRRCodeDesc.setMaxlength(50);
-		
+
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
 	}
@@ -262,8 +259,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -275,8 +271,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -533,7 +528,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 		}
 
 		doWriteBeanToComponents(iRRCode);
-		
+
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
@@ -576,7 +571,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-	 
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -591,8 +586,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -657,17 +651,17 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 		} else {
 			readOnlyComponent(true, this.iRRCode);
 			this.btnCancel.setVisible(true);
-		} 
-		
+		}
+
 		if (StringUtils.equals(aIRRCode.getRecordStatus(), PennantConstants.SHARIA_STATUS_APPROVED)) {
 			this.active.setDisabled(false);
 		} else {
 			this.active.setDisabled(true);
 		}
-		
+
 		readOnlyComponent(isReadOnly("IRRCodeDialog_IRRCodeDesc"), this.iRRCodeDesc);
 		readOnlyComponent(isReadOnly("IRRCodeDialog_IRRCodeDesc"), this.button_IRRFeeTypeList_NewIRRFeeType);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -731,8 +725,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 		// Add the FeeType Detail list
 		/*
 		 * if(getIrrFeeTypesList() == null || getIrrFeeTypesList().isEmpty()){
-		 * MessageUtil.showError(Labels.getLabel("label_IRRCode_Validation"));
-		 * return; }
+		 * MessageUtil.showError(Labels.getLabel("label_IRRCode_Validation")); return; }
 		 */
 		aIRRCode.setIrrFeeTypesList(getIrrFeeTypesList());
 

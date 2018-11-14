@@ -33,7 +33,6 @@ public class NiyoginUtility {
 		}
 	}
 
-
 	/**
 	 * Method for sort the given CustomerPhoneNumberList based on their Priority High to Low.
 	 * 
@@ -78,7 +77,7 @@ public class NiyoginUtility {
 		}
 		return phoneNumber;
 	}
-	
+
 	public static CustomerPhoneNumber getPhone(List<CustomerPhoneNumber> phoneList) {
 		CustomerPhoneNumber phone = new CustomerPhoneNumber();
 		if (phoneList != null && !phoneList.isEmpty()) {
@@ -89,7 +88,7 @@ public class NiyoginUtility {
 		}
 		return phone;
 	}
-	
+
 	public static String getEmail(List<CustomerEMail> customerEMailList) {
 		String emailId = "";
 		if (customerEMailList != null && !customerEMailList.isEmpty()) {
@@ -101,7 +100,7 @@ public class NiyoginUtility {
 		}
 		return emailId;
 	}
-	
+
 	public static CustomerAddres getAddress(List<CustomerAddres> addressList) {
 		CustomerAddres address = new CustomerAddres();
 		if (addressList != null && !addressList.isEmpty()) {
@@ -112,7 +111,7 @@ public class NiyoginUtility {
 		}
 		return address;
 	}
-	
+
 	/**
 	 * Method to fetch customer phone number.
 	 * 
@@ -266,50 +265,52 @@ public class NiyoginUtility {
 		if (value != 0) {
 			String subString = String.valueOf(value).substring(String.valueOf(value).indexOf('.'));
 			if (!subString.contains("E")) {
-				
+
 				if (decPos > 0) {
 					sb.append('.');
 					for (int i = 0; i < decPos; i++) {
 						sb.append('0');
 					}
 				}
-				
+
 				java.text.DecimalFormat df = new java.text.DecimalFormat();
 				df.applyPattern(sb.toString());
 				String returnResult = df.format(value);
 				returnResult = returnResult.replaceAll("[0]*$", "");
-				if(returnResult.endsWith(".")){
+				if (returnResult.endsWith(".")) {
 					returnResult = returnResult + "00";
-				}else if(returnResult.contains(".") && returnResult.substring(returnResult.indexOf('.')+1).length() == 1){
+				} else if (returnResult.contains(".")
+						&& returnResult.substring(returnResult.indexOf('.') + 1).length() == 1) {
 					returnResult = returnResult + "0";
 				}
-				
-				if(returnResult.startsWith(".")){
-					returnResult = "0"+returnResult;
+
+				if (returnResult.startsWith(".")) {
+					returnResult = "0" + returnResult;
 				}
 				return returnResult;
 			} else {
-				
-				String actValue = String.valueOf(value).substring(0,String.valueOf(value).indexOf('.'));
-				int powValue = Integer.parseInt(String.valueOf(value).substring(String.valueOf(value).indexOf('E')+1));
-				
+
+				String actValue = String.valueOf(value).substring(0, String.valueOf(value).indexOf('.'));
+				int powValue = Integer
+						.parseInt(String.valueOf(value).substring(String.valueOf(value).indexOf('E') + 1));
+
 				String string = "0.";
-				if(powValue < 0){
-					powValue = 0-powValue;
-					if(powValue > 0){
-						for (int i = 0; i < powValue-1; i++) {
+				if (powValue < 0) {
+					powValue = 0 - powValue;
+					if (powValue > 0) {
+						for (int i = 0; i < powValue - 1; i++) {
 							string = string.concat("0");
 						}
 					}
 				}
-				
+
 				string += actValue;
 				return string;
 			}
 		} else {
 			String string = "0.";
 			for (int i = 0; i < 2; i++) {
-				string =string.concat("0");
+				string = string.concat("0");
 			}
 			return string;
 

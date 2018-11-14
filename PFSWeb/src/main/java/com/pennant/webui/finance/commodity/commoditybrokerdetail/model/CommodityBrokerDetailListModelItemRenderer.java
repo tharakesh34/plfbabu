@@ -58,8 +58,8 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for list items in the list box.
  * 
  */
-public class CommodityBrokerDetailListModelItemRenderer implements ListitemRenderer<CommodityBrokerDetail>,
-		Serializable {
+public class CommodityBrokerDetailListModelItemRenderer
+		implements ListitemRenderer<CommodityBrokerDetail>, Serializable {
 
 	private static final long serialVersionUID = -3419874747206428796L;
 

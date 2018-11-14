@@ -12,8 +12,8 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class DateRollOverService extends ServiceHelper {
 
-	private static Logger		logger				= Logger.getLogger(DateRollOverService.class);
-	private static final long	serialVersionUID	= -3371115026576113554L;
+	private static Logger logger = Logger.getLogger(DateRollOverService.class);
+	private static final long serialVersionUID = -3371115026576113554L;
 
 	public CustEODEvent process(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
@@ -55,7 +55,7 @@ public class DateRollOverService extends ServiceHelper {
 			if (finEODEvent.getIdxRpyPftRvw() >= 0) {
 				setNextRepayRvwDate(finEODEvent, custEODEvent.getEodValueDate());
 			}
-			
+
 			if (finEODEvent.isRateReviewExist()) {
 				custEODEvent.setRateRvwExist(true);
 			}

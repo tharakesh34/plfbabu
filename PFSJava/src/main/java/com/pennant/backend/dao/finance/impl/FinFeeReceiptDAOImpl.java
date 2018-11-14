@@ -170,9 +170,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	}
 
 	/**
-	 * This method Deletes the Record from the FinFeeReceipt or
-	 * FinFeeReceipt_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Goods Details by key LoanRefNumber
+	 * This method Deletes the Record from the FinFeeReceipt or FinFeeReceipt_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeReceipt)
@@ -244,9 +243,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	}
 
 	/**
-	 * This method updates the Record FinFeeReceipt or FinFeeReceipt_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinFeeReceipt or FinFeeReceipt_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeReceipt)
@@ -314,7 +312,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
-	
+
 	}
 
 }

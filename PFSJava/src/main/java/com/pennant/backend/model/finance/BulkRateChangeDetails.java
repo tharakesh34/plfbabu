@@ -18,11 +18,11 @@ public class BulkRateChangeDetails extends AbstractWorkflowEntity {
 	private String finCCY;
 	private String custCIF;
 	private boolean allowRateChange = false;
-	private BigDecimal finAmount 	= BigDecimal.ZERO;
-	private BigDecimal oldProfitRate 	= BigDecimal.ZERO;
-	private BigDecimal newProfitRate 	= BigDecimal.ZERO;
-	private BigDecimal oldProfit 	= BigDecimal.ZERO;
-	private BigDecimal newProfit 	= BigDecimal.ZERO;
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal oldProfitRate = BigDecimal.ZERO;
+	private BigDecimal newProfitRate = BigDecimal.ZERO;
+	private BigDecimal oldProfit = BigDecimal.ZERO;
+	private BigDecimal newProfit = BigDecimal.ZERO;
 
 	// View Fields
 	private int lovDescFinFormatter;
@@ -39,13 +39,13 @@ public class BulkRateChangeDetails extends AbstractWorkflowEntity {
 
 	private String status;
 	private String errorMsg;
-	
+
 	public BulkRateChangeDetails() {
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("BulkRateChangeDetails"));
 	}
 
-	public Set<String> getExcludeFields(){
+	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
 	}
@@ -63,7 +63,7 @@ public class BulkRateChangeDetails extends AbstractWorkflowEntity {
 		return bulkRateChangeRef;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.bulkRateChangeRef = id;
 	}
 

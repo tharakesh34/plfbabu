@@ -73,7 +73,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	public WeekendMasterServiceImpl() {
 		super();
 	}
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -91,15 +91,12 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * SMTWeekendMaster/SMTWeekendMaster_Temp by using WeekendMasterDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using WeekendMasterDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtSMTWeekendMaster by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * SMTWeekendMaster/SMTWeekendMaster_Temp by using WeekendMasterDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using WeekendMasterDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtSMTWeekendMaster by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -116,19 +113,16 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 			return auditHeader;
 		}
 		String tableType = "";
-		WeekendMaster weekendMaster = (WeekendMaster) auditHeader
-		.getAuditDetail().getModelData();
+		WeekendMaster weekendMaster = (WeekendMaster) auditHeader.getAuditDetail().getModelData();
 
 		if (weekendMaster.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (weekendMaster.isNew()) {
-			weekendMaster.setWeekendCode(getWeekendMasterDAO().save(
-					weekendMaster, tableType));
+			weekendMaster.setWeekendCode(getWeekendMasterDAO().save(weekendMaster, tableType));
 			auditHeader.getAuditDetail().setModelData(weekendMaster);
-			auditHeader.setAuditReference(weekendMaster
-					.getWeekendCode());
+			auditHeader.setAuditReference(weekendMaster.getWeekendCode());
 		} else {
 			getWeekendMasterDAO().update(weekendMaster, tableType);
 		}
@@ -139,12 +133,10 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table SMTWeekendMaster by using WeekendMasterDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtSMTWeekendMaster by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * SMTWeekendMaster by using WeekendMasterDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtSMTWeekendMaster by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -159,8 +151,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
-		WeekendMaster weekendMaster = (WeekendMaster) auditHeader
-		.getAuditDetail().getModelData();
+		WeekendMaster weekendMaster = (WeekendMaster) auditHeader.getAuditDetail().getModelData();
 		getWeekendMasterDAO().delete(weekendMaster, "");
 
 		// auditID = getAuditHeaderDAO().addAudit(auditHeader);
@@ -169,8 +160,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * getWeekendMasterById fetch the details by using WeekendMasterDAO's
-	 * getWeekendMasterById method.
+	 * getWeekendMasterById fetch the details by using WeekendMasterDAO's getWeekendMasterById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -184,9 +174,8 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * getApprovedWeekendMasterById fetch the details by using
-	 * WeekendMasterDAO's getWeekendMasterById method . with parameter id and
-	 * type as blank. it fetches the approved records from the SMTWeekendMaster.
+	 * getApprovedWeekendMasterById fetch the details by using WeekendMasterDAO's getWeekendMasterById method . with
+	 * parameter id and type as blank. it fetches the approved records from the SMTWeekendMaster.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,20 +186,15 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getWeekendMasterDAO().delete with parameters weekendMaster,"" b)
-	 * NEW Add new record in to main table by using getWeekendMasterDAO().save
-	 * with parameters weekendMaster,"" c) EDIT Update record in the main table
-	 * by using getWeekendMasterDAO().update with parameters weekendMaster,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getWeekendMasterDAO().delete with parameters weekendMaster,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtSMTWeekendMaster by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtSMTWeekendMaster by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getWeekendMasterDAO().delete with
+	 * parameters weekendMaster,"" b) NEW Add new record in to main table by using getWeekendMasterDAO().save with
+	 * parameters weekendMaster,"" c) EDIT Update record in the main table by using getWeekendMasterDAO().update with
+	 * parameters weekendMaster,"" 3) Delete the record from the workFlow table by using getWeekendMasterDAO().delete
+	 * with parameters weekendMaster,"_Temp" 4) Audit the record in to AuditHeader and AdtSMTWeekendMaster by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSMTWeekendMaster
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -264,13 +248,10 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getWeekendMasterDAO().delete with parameters
-	 * weekendMaster,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtSMTWeekendMaster by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getWeekendMasterDAO().delete with parameters weekendMaster,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtSMTWeekendMaster by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -278,8 +259,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering ");
-		WeekendMaster weekendMaster = (WeekendMaster) auditHeader
-		.getAuditDetail().getModelData();
+		WeekendMaster weekendMaster = (WeekendMaster) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
@@ -295,20 +275,16 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -317,32 +293,27 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		WeekendMaster weekendMaster = (WeekendMaster) auditDetail
-		.getModelData();
+		WeekendMaster weekendMaster = (WeekendMaster) auditDetail.getModelData();
 
 		WeekendMaster tempWeekendMaster = null;
 		if (weekendMaster.isWorkflow()) {
-			tempWeekendMaster = getWeekendMasterDAO().getWeekendMasterByID(
-					weekendMaster.getId(), "_Temp");
+			tempWeekendMaster = getWeekendMasterDAO().getWeekendMasterByID(weekendMaster.getId(), "_Temp");
 		}
 
-		WeekendMaster befWeekendMaster = getWeekendMasterDAO()
-		.getWeekendMasterByID(weekendMaster.getId(), "");
+		WeekendMaster befWeekendMaster = getWeekendMasterDAO().getWeekendMasterByID(weekendMaster.getId(), "");
 		WeekendMaster oldWeekendMaster = weekendMaster.getBefImage();
 
 		String[] valueParm = new String[1];
@@ -350,8 +321,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 
 		valueParm[0] = weekendMaster.getId();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_WeekendCode") + ":"
-		+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_WeekendCode") + ":" + valueParm[0];
 
 		if (weekendMaster.isNew()) { // for New record or new record into work
 			// flow
@@ -361,28 +331,20 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 				if (befWeekendMaster != null) { // Record Already Exists in the
 					// table
 					// then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41001",
-							errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (weekendMaster.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (weekendMaster.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befWeekendMaster != null || tempWeekendMaster != null) { // if records
-																// already exists
-																// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+						// already exists
+						// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befWeekendMaster == null || tempWeekendMaster != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -395,54 +357,37 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 				if (befWeekendMaster == null) { // if records not exists in the
 					// main
 					// table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41002",
-							errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldWeekendMaster != null
-							&& !oldWeekendMaster.getLastMntOn().equals(
-									befWeekendMaster.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldWeekendMaster.getLastMntOn().equals(befWeekendMaster.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempWeekendMaster == null) { // if records not exists in the
 					// Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005",
-							errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempWeekendMaster != null
-						&& oldWeekendMaster != null
-						&& !oldWeekendMaster.getLastMntOn().equals(
-								tempWeekendMaster.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005",
-							errParm, null));
+				if (tempWeekendMaster != null && oldWeekendMaster != null
+						&& !oldWeekendMaster.getLastMntOn().equals(tempWeekendMaster.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 		// auditDetail.setErrorDetail(new
 		// ErrorDetails(PennantConstants.KEY_FIELD,"81001",errParm,null));
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !weekendMaster.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !weekendMaster.isWorkflow()) {
 			auditDetail.setBefImage(befWeekendMaster);
 		}
 

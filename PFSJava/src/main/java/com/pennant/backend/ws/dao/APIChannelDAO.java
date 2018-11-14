@@ -19,7 +19,7 @@ public interface APIChannelDAO {
 	APIChannel getChannelDetails();
 
 	APIChannel getNewChannelDetails();
-	
+
 	//ChannelAuthDetails
 	long save(APIChannelIP aPIChannelIP, String tableType);
 
@@ -34,7 +34,7 @@ public interface APIChannelDAO {
 	APIChannelIP getChannelAuthDetails();
 
 	APIChannelIP getNewChannelAuthDetails();
-	
+
 	long getChannelId(String channelId, String channelIp) throws APIException;
 
 	APIChannelIP getChannelIpDetail(long channelId, long id);

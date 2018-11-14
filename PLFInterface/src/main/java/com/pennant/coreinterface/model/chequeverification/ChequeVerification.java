@@ -115,7 +115,7 @@ public class ChequeVerification implements Serializable {
 	public void setChequeStsList(List<ChequeStatus> chequeStsList) {
 		this.chequeStsList = chequeStsList;
 	}
-	
+
 	public String getChequeNumber() {
 		return chequeNumber;
 	}

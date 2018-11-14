@@ -84,30 +84,28 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul file.
  */
 public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 4157448822555239535L;
 	private static final Logger logger = Logger.getLogger(CovenantDetailListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinCovenantTypeList;
-	
+
 	protected Button btnNew_NewFinCovenantType;
 
 	protected Listbox listBoxFinCovenantType;
-	
+
 	// For Dynamically calling of this Controller
 	private FinanceDetail financedetail;
 	private FinanceMain financeMain;
@@ -115,20 +113,21 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Component parent = null;
 	private Tab parentTab = null;
 	private List<FinCovenantType> finCovenantTypesDetailList = new ArrayList<FinCovenantType>();
-	private int ccyFormat=0;
+	private int ccyFormat = 0;
 	private transient boolean recSave = false;
 	private String roleCode = "";
 	private boolean isEnquiry = false;
 	private transient boolean newFinance;
 	protected Groupbox finBasicdetails;
-	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinCovenantType finCovenantTypes;
 	private transient FinCovenantTypeService finCovenantTypeService;
-	protected transient FinanceSelectCtrl	financeSelectCtrl	= null;
+	protected transient FinanceSelectCtrl financeSelectCtrl = null;
 	private CustomerDetailsService customerDetailsService;
 	private FinanceDetailService financeDetailService;
-	
-	private boolean covenantDetail=true;
+
+	private boolean covenantDetail = true;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -143,11 +142,10 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected CovenantType object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected CovenantType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -164,12 +162,11 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			// Get the required arguments.
 			this.finCovenantTypes = (FinCovenantType) arguments.get("finCovenantTypes");
-			
 
 			if (arguments.containsKey("roleCode")) {
 				roleCode = (String) arguments.get("roleCode");
 			}
-			
+
 			if (arguments.containsKey("financeSelectCtrl")) {
 				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
 			}
@@ -177,11 +174,10 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 				setFinanceMain((FinanceMain) arguments.get("financeMain"));
 			}
 
-			
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
-				if (getFinancedetail()!=null) {
-					if(getFinancedetail().getCovenantTypeList() != null){
+				if (getFinancedetail() != null) {
+					if (getFinancedetail().getCovenantTypeList() != null) {
 						setFinCovenantTypeDetailList(getFinancedetail().getCovenantTypeList());
 					}
 				}
@@ -193,23 +189,22 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 				setFinancedetail(getFinancedetail());
 				Cloner cloner = new Cloner();
 				befImage = cloner.deepClone(getFinancedetail().getFinScheduleData().getFinanceMain());
-				getFinancedetail().getFinScheduleData().getFinanceMain()
-						.setBefImage(befImage);
+				getFinancedetail().getFinScheduleData().getFinanceMain().setBefImage(befImage);
 			}
-			
+
 			FinanceMain financeMain = getFinancedetail().getFinScheduleData().getFinanceMain();
 			// Render the page and display the data.
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				if(!enqiryModule){
+				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateRoleAuthorities(getRole(),this.pageRightName);
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
-			
+
 			doEdit();
 			doCheckRights();
 			doSetFieldProperties();
@@ -222,20 +217,20 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Saves the components to table. <br>
 	 * 
@@ -251,16 +246,15 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		boolean isNew = false;
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		
-		if(this.userAction.getSelectedItem() != null &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_FINALIZED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_APPROVED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED) &&
-				!this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)){
+		if (this.userAction.getSelectedItem() != null
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_FINALIZED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_APPROVED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED)
+				&& !this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)) {
 			recSave = true;
 		}
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
@@ -287,13 +281,15 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		if(aFinanceDetail !=null){
+		if (aFinanceDetail != null) {
 			aFinanceDetail.setCovenantTypeList(finCovenantTypesDetailList);
 		}
-		/*for (FinCovenantType finCovenantType : aFinanceDetail.getCovenantTypeList()) {
-			finCovenantType.setWorkflowId(aFinanceDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-			
-		}*/
+		/*
+		 * for (FinCovenantType finCovenantType : aFinanceDetail.getCovenantTypeList()) {
+		 * finCovenantType.setWorkflowId(aFinanceDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
+		 * 
+		 * }
+		 */
 		aFinanceMain.setRcdMaintainSts(financedetail.getModuleDefiner());
 
 		// save it to database
@@ -320,7 +316,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -331,7 +327,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug("Entering");
@@ -417,7 +413,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -427,10 +423,10 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private AuditHeader getAuditHeader(FinanceDetail aFinanceDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceDetail.getBefImage(), aFinanceDetail);
-		return new AuditHeader(String.valueOf(aFinanceDetail.getFinScheduleData().getFinReference()), 
-				null, null, null, auditDetail, aFinanceDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aFinanceDetail.getFinScheduleData().getFinReference()), null, null, null,
+				auditDetail, aFinanceDetail.getUserDetails(), getOverideMap());
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
@@ -441,13 +437,14 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws InterruptedException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws InterfaceException 
-	 * @throws JaxenException 
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException, JaxenException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException,
+			InterfaceException, IllegalAccessException, InvocationTargetException, JaxenException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -462,7 +459,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getFinanceDetailService().delete(auditHeader,false);
+						auditHeader = getFinanceDetailService().delete(auditHeader, false);
 						deleteNotes = true;
 					} else {
 						auditHeader = getFinanceDetailService().saveOrUpdate(auditHeader, false);
@@ -470,20 +467,20 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getFinanceDetailService().doApprove(auditHeader,false);
+						auditHeader = getFinanceDetailService().doApprove(auditHeader, false);
 
 						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getFinanceDetailService().doReject(auditHeader,false);
+						auditHeader = getFinanceDetailService().doReject(auditHeader, false);
 						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinCovenantTypeList, auditHeader);
 						return processCompleted;
@@ -517,7 +514,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
@@ -529,8 +526,6 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 			getFinanceSelectCtrl().getListBoxFinance().getListModel();
 		}
 	}
-	
-	
 
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
@@ -541,7 +536,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnEdit(Event event) {
 		doEdit();
 	}
-	
+
 	/**
 	 * when user clicks on button "Notes"
 	 * 
@@ -551,6 +546,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.financedetail.getFinScheduleData().getFinanceMain());
 	}
+
 	@Override
 	public String getReference() {
 		return this.financedetail.getFinReference() + "";
@@ -564,7 +560,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
-		
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -574,14 +570,14 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 	}
-	
-	
+
 	private void doCheckRights() {
 		logger.debug("Entering");
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeList_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeList_btnEdit"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeList_btnSave"));
-		this.btnNew_NewFinCovenantType.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
+		this.btnNew_NewFinCovenantType
+				.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
 		this.btnDelete.setVisible(false);
 		this.btnCancel.setVisible(false);
 		logger.debug("leaving");
@@ -593,7 +589,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -603,8 +599,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -629,16 +624,15 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
-	
+
 		try {
-			
+
 			logger.debug("Entering");
 
 			// set ReadOnly mode accordingly if the object is new or not.
@@ -657,7 +651,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 					btnCancel.setVisible(false);
 				}
 			}
-			
+
 			if (enqiryModule) {
 				this.btnCtrl.setBtnStatus_Enquiry();
 			}
@@ -665,11 +659,11 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 			doCheckEnquiry();
 			doWriteBeanToComponents();
 
-			this.listBoxFinCovenantType.setHeight(borderLayoutHeight - 226 +"px");
+			this.listBoxFinCovenantType.setHeight(borderLayoutHeight - 226 + "px");
 			if (parent != null) {
-				this.window_FinCovenantTypeList.setHeight(borderLayoutHeight-75+"px");
+				this.window_FinCovenantTypeList.setHeight(borderLayoutHeight - 75 + "px");
 				parent.appendChild(this.window_FinCovenantTypeList);
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
 
@@ -678,7 +672,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -698,7 +692,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
@@ -708,7 +702,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnCancel(Event event) {
 		doCancel();
 	}
-	
+
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -724,63 +718,61 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
-	
-	
 
-	
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param commodityHeader
-	 *            
+	 * 
 	 */
 	public void doWriteBeanToComponents() {
 		logger.debug("Entering ");
-		
+
 		doFillFinCovenantTypeDetails(getFinCovenantTypeDetailList());
-		
+
 		logger.debug("Leaving ");
 	}
-	
+
 	private void doCheckEnquiry() {
-		if(isEnquiry){
+		if (isEnquiry) {
 			this.btnNew_NewFinCovenantType.setVisible(false);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void onCovenantTypeValidation(Event event){
+	public void onCovenantTypeValidation(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		String userAction = "";
 		FinanceDetail finDetail = null;
-		Map<String,Object> map = new HashMap<String,Object>();
-		if(event.getData() != null){
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (event.getData() != null) {
 			map = (Map<String, Object>) event.getData();
 		}
 
-		if(map.containsKey("userAction")){
+		if (map.containsKey("userAction")) {
 			userAction = (String) map.get("userAction");
 		}
-		
-		if(map.containsKey("financeDetail")){
+
+		if (map.containsKey("financeDetail")) {
 			finDetail = (FinanceDetail) map.get("financeDetail");
 		}
-		
+
 		recSave = false;
-		if("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction)
-				|| "Reject".equalsIgnoreCase(userAction) || "Resubmit".equalsIgnoreCase(userAction)){
+		if ("Save".equalsIgnoreCase(userAction) || "Cancel".equalsIgnoreCase(userAction)
+				|| "Reject".equalsIgnoreCase(userAction) || "Resubmit".equalsIgnoreCase(userAction)) {
 			recSave = true;
 		}
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
-			if(!recSave){
+			if (!recSave) {
 				FinanceMain main = null;
 				if (getFinanceMainDialogCtrl() != null) {
 					try {
 						if (financeMainDialogCtrl.getClass().getMethod("getFinanceMain") != null) {
-							Object object = financeMainDialogCtrl.getClass().getMethod("getFinanceMain").invoke(financeMainDialogCtrl);
+							Object object = financeMainDialogCtrl.getClass().getMethod("getFinanceMain")
+									.invoke(financeMainDialogCtrl);
 							if (object != null) {
 								main = (FinanceMain) object;
 							}
@@ -789,32 +781,32 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 						logger.error("Exception: ", e);
 					}
 				}
-				if (this.listBoxFinCovenantType.getItems() != null && !this.listBoxFinCovenantType.getItems().isEmpty()) {
+				if (this.listBoxFinCovenantType.getItems() != null
+						&& !this.listBoxFinCovenantType.getItems().isEmpty()) {
 					if (main != null && main.getFinAmount() != null) {
-						
+
 					}
 				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		showErrorDetails(wve);
-		
-		if(finDetail !=null){
+
+		if (finDetail != null) {
 			finDetail.setCovenantTypeList(finCovenantTypesDetailList);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	private void showErrorDetails(ArrayList<WrongValueException> wve) {
 		logger.debug("Entering");
 
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 
-			if(parentTab != null){
+			if (parentTab != null) {
 				parentTab.setSelected(true);
 			}
 
@@ -830,7 +822,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnNew_NewFinCovenantType(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.btnNew_NewFinCovenantType);
-		
+
 		final FinCovenantType aFinCovenantType = new FinCovenantType();
 		aFinCovenantType.setFinReference(financedetail.getFinScheduleData().getFinReference());
 		aFinCovenantType.setNewRecord(true);
@@ -842,7 +834,8 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("covenantDetailListCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", roleCode);
-		map.put("allowedRoles",StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
+		map.put("allowedRoles",
+				StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
 		map.put("financeDetail", getFinancedetail());
 		map.put("covenantDetail", covenantDetail);
 
@@ -865,7 +858,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 			final FinCovenantType aFinCovenantType = (FinCovenantType) listitem.getAttribute("data");
 			if (isDeleteRecord(aFinCovenantType.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
-			}else{
+			} else {
 				aFinCovenantType.setNewRecord(false);
 
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -874,12 +867,14 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("covenantDetailListCtrl", this);
 				map.put("roleCode", roleCode);
 				map.put("enqModule", isEnquiry);
-				map.put("allowedRoles",StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
+				map.put("allowedRoles",
+						StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
 				map.put("financeDetail", getFinancedetail());
 
 				// call the ZUL-file with the parameters packed in a map
 				try {
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CovenantDetailDialog.zul", null, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CovenantDetailDialog.zul", null,
+							map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -925,32 +920,29 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	
-	
-	
-	private boolean isDeleteRecord(String rcdType){
-		if(StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,rcdType) || 
-				StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)){
+	private boolean isDeleteRecord(String rcdType) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, rcdType)
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails(FinanceMain aFinanceMain) {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("parentCtrl", this );
+			map.put("parentCtrl", this);
 			map.put("finHeaderList", getHeaderBasicDetails(getFinanceMain()));
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 	}
-	
 
 	/**
 	 * fill finance basic details to List
@@ -959,8 +951,8 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private ArrayList<Object> getHeaderBasicDetails(FinanceMain aFinanceMain) {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
-		Customer aCustomer= new Customer();
-		aCustomer=getCustomerDetailsService().getCustomerShrtName(aFinanceMain.getCustID());
+		Customer aCustomer = new Customer();
+		aCustomer = getCustomerDetailsService().getCustomerShrtName(aFinanceMain.getCustID());
 		arrayList.add(0, aFinanceMain.getFinType());
 		arrayList.add(1, aFinanceMain.getFinCcy());
 		arrayList.add(2, aFinanceMain.getScheduleMethod());
@@ -979,15 +971,15 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
+
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
@@ -995,14 +987,15 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public List<FinCovenantType> getFinCovenantTypeDetailList() {
 		return finCovenantTypesDetailList;
 	}
-	public void setFinCovenantTypeDetailList(
-			List<FinCovenantType> finCovenantTypesDetailList) {
+
+	public void setFinCovenantTypeDetailList(List<FinCovenantType> finCovenantTypesDetailList) {
 		this.finCovenantTypesDetailList = finCovenantTypesDetailList;
 	}
 
 	public boolean isNewFinance() {
 		return newFinance;
 	}
+
 	public void setNewFinance(boolean newFinance) {
 		this.newFinance = newFinance;
 	}
@@ -1010,6 +1003,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinancedetail(FinanceDetail financedetail) {
 		this.financedetail = financedetail;
 	}
+
 	public FinanceDetail getFinancedetail() {
 		return financedetail;
 	}
@@ -1017,10 +1011,11 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
+
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
-	
+
 	public FinCovenantType getFinCovenantTypes() {
 		return finCovenantTypes;
 	}
@@ -1036,7 +1031,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
 		this.finCovenantTypeService = finCovenantTypeService;
 	}
-	
+
 	public FinanceSelectCtrl getFinanceSelectCtrl() {
 		return financeSelectCtrl;
 	}

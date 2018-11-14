@@ -60,20 +60,20 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class ScoringTypeListModelItemRenderer implements ListitemRenderer<ScoringType>, Serializable {
 
 	private static final long serialVersionUID = 7903665974929957450L;
-	
+
 	public ScoringTypeListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ScoringType scoringType, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(scoringType.getScoType());
+		lc = new Listcell(scoringType.getScoType());
 		lc.setParent(item);
-	  	lc = new Listcell(scoringType.getScoDesc());
+		lc = new Listcell(scoringType.getScoDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(scoringType.getRecordStatus());
+		lc = new Listcell(scoringType.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(scoringType.getRecordType()));
 		lc.setParent(item);

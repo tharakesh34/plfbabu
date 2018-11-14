@@ -69,9 +69,9 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CustomerNotesType /customerNotesTypeDialog.zul
@@ -98,10 +98,9 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 	private transient CustomerNotesTypeListCtrl customerNotesTypeListCtrl; // overHanded per parameters
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchCustNotesTypeArchiveFrq; // autoWired
 	protected Textbox lovDescCustNotesTypeArcFrqName;
-	
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerNotesTypeService customerNotesTypeService;
@@ -413,7 +412,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerNotesType);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -433,15 +432,15 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		setValidationOn(true);
 
 		if (!this.custNotesTypeCode.isReadonly()) {
-			this.custNotesTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.custNotesTypeCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.custNotesTypeDesc.isReadonly()) {
-			this.custNotesTypeDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.custNotesTypeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -462,8 +461,8 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescCustNotesTypeArcFrqName.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeArchiveFrq.value"), null, true));
+		this.lovDescCustNotesTypeArcFrqName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerNotesTypeDialog_CustNotesTypeArchiveFrq.value"), null, true));
 	}
 
 	/**
@@ -801,8 +800,8 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerNotesTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -905,12 +904,10 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		getCustomerNotesTypeListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.customerNotesType.getCustNotesTypeCode());
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -59,11 +59,10 @@ import com.pennanttech.pff.core.util.DateUtil;
 public final class DateUtility extends DateUtil {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
 
-	
-	private DateUtility(){
+	private DateUtility() {
 		super();
 	}
-	
+
 	/**
 	 * Returns the string representation with the specified pattern of the server time.
 	 * 
@@ -100,7 +99,7 @@ public final class DateUtility extends DateUtil {
 	public static String getAppDate(DateFormat dateFormat) {
 		return format(getAppDate(), dateFormat);
 	}
-	
+
 	/**
 	 * Returns the string representation with the specified date format pattern of the application date.
 	 * 
@@ -133,7 +132,7 @@ public final class DateUtility extends DateUtil {
 	public static java.util.Date getNextBusinessdate() {
 		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 	}
-	
+
 	/**
 	 * Returns a {@link java.util.Date} object that represents the Next business date.
 	 * 
@@ -185,7 +184,7 @@ public final class DateUtility extends DateUtil {
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
 		}
-		if(uDate == null){
+		if (uDate == null) {
 			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
@@ -199,7 +198,7 @@ public final class DateUtility extends DateUtil {
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
 		}
-		if(uDate == null){
+		if (uDate == null) {
 			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
@@ -256,7 +255,7 @@ public final class DateUtility extends DateUtil {
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
 		}
-		if(uDate == null){
+		if (uDate == null) {
 			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
@@ -376,8 +375,8 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the month part of the Date. This method is provided because
-	 * <code> getMonth() <code> method in Date is deprecated
+	 * Returns the month part of the Date. This method is provided because <code> getMonth() <code> method in Date is
+	 * deprecated
 	 * 
 	 * @param date
 	 *            (Date)
@@ -427,8 +426,8 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the year part of the Date. This method is provided because
-	 * <code> getYear() <code> method in Date is deprecated
+	 * Returns the year part of the Date. This method is provided because <code> getYear() <code> method in Date is
+	 * deprecated
 	 * 
 	 * @param date
 	 *            (Date)
@@ -552,10 +551,8 @@ public final class DateUtility extends DateUtil {
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = 0;
 		if (includeDate2
-				&& getMonthEndDate(date1)
-						.compareTo(
-								getUtilDate(formatUtilDate(date1, PennantConstants.DBDateFormat),
-										PennantConstants.DBDateFormat)) == 0) {
+				&& getMonthEndDate(date1).compareTo(getUtilDate(formatUtilDate(date1, PennantConstants.DBDateFormat),
+						PennantConstants.DBDateFormat)) == 0) {
 
 			if (convert(addDays(date1, 1)).get(Calendar.YEAR) != convert(date1).get(Calendar.YEAR)) {
 				years++;
@@ -662,12 +659,12 @@ public final class DateUtility extends DateUtil {
 		if (endTime == null || startTime == null) {
 			return "";
 		}
-		return new SimpleDateFormat("HH:mm:ss").format(convert(new GregorianCalendar(
-				getYearsBetween(endTime, startTime), getMonthsBetween(endTime, startTime) % 12, getDay(endTime)
-						- getDay(startTime), convert(endTime).get(Calendar.HOUR)
-						- convert(startTime).get(Calendar.HOUR), convert(endTime).get(Calendar.MINUTE)
-						- convert(startTime).get(Calendar.MINUTE), convert(endTime).get(Calendar.SECOND)
-						- convert(startTime).get(Calendar.SECOND))));
+		return new SimpleDateFormat("HH:mm:ss")
+				.format(convert(new GregorianCalendar(getYearsBetween(endTime, startTime),
+						getMonthsBetween(endTime, startTime) % 12, getDay(endTime) - getDay(startTime),
+						convert(endTime).get(Calendar.HOUR) - convert(startTime).get(Calendar.HOUR),
+						convert(endTime).get(Calendar.MINUTE) - convert(startTime).get(Calendar.MINUTE),
+						convert(endTime).get(Calendar.SECOND) - convert(startTime).get(Calendar.SECOND))));
 
 	}
 
@@ -717,56 +714,54 @@ public final class DateUtility extends DateUtil {
 
 		return new java.util.Date(xmlCalendar.toGregorianCalendar().getTimeInMillis());
 	}
-	
+
 	public static String timeBetween(java.util.Date endTime, java.util.Date startTime, String format) {
-		if(endTime == null || startTime == null ){
+		if (endTime == null || startTime == null) {
 			return "";
 		}
-		
+
 		long diff = endTime.getTime() - startTime.getTime();
-		
+
 		long diffSeconds = diff / 1000 % 60;
 		long diffMinutes = diff / (60 * 1000) % 60;
 		long diffHours = diff / (60 * 60 * 1000) % 24;
-		
+
 		int seconds = 0;
-		if(diffSeconds > 0) {
+		if (diffSeconds > 0) {
 			seconds = Integer.parseInt(String.valueOf(diffSeconds));
-		} 
-		
+		}
+
 		int minutes = 0;
-		if(diffMinutes > 0) {
+		if (diffMinutes > 0) {
 			minutes = Integer.parseInt(String.valueOf(diffMinutes));
-		} 
-		
+		}
+
 		int hours = 0;
-		if(diffHours > 0) {
+		if (diffHours > 0) {
 			hours = Integer.parseInt(String.valueOf(diffHours));
-		} 
-		
-		
+		}
+
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, hours);
 		cal.set(Calendar.MINUTE, minutes);
 		cal.set(Calendar.SECOND, seconds);
-		
-		
-		return  new SimpleDateFormat(format).format(cal.getTime());
+
+		return new SimpleDateFormat(format).format(cal.getTime());
 	}
 
 	public static java.util.Date getPostDate() {
 		String setPostingDateTo = SysParamUtil.getValueAsString(PennantConstants.SET_POSTDATE_TO);
 		java.util.Date postingDate = getAppDate();
-		
+
 		if (!StringUtils.equals(setPostingDateTo, SysParamUtil.Param.APP_DATE.getCode())) {
 			postingDate = getAppDate();
 		} else {
 			postingDate = getAppValueDate();
 		}
-		
+
 		return postingDate;
 	}
-	
+
 	/**
 	 * Returns the date of the month
 	 * 

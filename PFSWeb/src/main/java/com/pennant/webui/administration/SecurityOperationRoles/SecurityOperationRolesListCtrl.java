@@ -61,9 +61,10 @@ import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.service.administration.SecurityOperationService;
 import com.pennant.webui.administration.securityoperation.model.SecurityOperationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityOperationRoles/OperationRolesList.zul
@@ -71,37 +72,37 @@ import com.pennanttech.framework.core.constants.SortOrder;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOperation>  {
+public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOperation> {
 
-	 private static final long serialVersionUID = -577256448245687404L;
-	 private static final Logger logger = Logger.getLogger(SecurityOperationRolesListCtrl.class);
+	private static final long serialVersionUID = -577256448245687404L;
+	private static final Logger logger = Logger.getLogger(SecurityOperationRolesListCtrl.class);
 
-	 protected Window        window_OperationRolesList;                      
-	 protected Borderlayout  borderLayout_OperationRolesList;  
-	 private   Paging        pagingOperationRolesList;  
-	 private   Listbox       listBoxOperationRoles;
-	 
-	 protected Listheader    listheader_OprCode;                                  
-	 protected Listheader    listheader_OprDesc;   
-	 
-	 protected Button        button_OperationRolesList_OperationRolesSearchDialog;
-	 protected Button        button_OperationRolesList_PrintList;                 
-	
-	 protected Textbox oprCode;
-	 protected Textbox oprDesc;
-	 
-	 protected Listbox sortOperator_oprDesc;
-	 protected Listbox sortOperator_oprCode;
-	 
-	 private transient SecurityOperationService    securityOperationService;
+	protected Window window_OperationRolesList;
+	protected Borderlayout borderLayout_OperationRolesList;
+	private Paging pagingOperationRolesList;
+	private Listbox listBoxOperationRoles;
 
-	 /**
-	  * default constructor.<br>
-	  */
-	 public SecurityOperationRolesListCtrl (){
-		 super();
-	 }
-	 
+	protected Listheader listheader_OprCode;
+	protected Listheader listheader_OprDesc;
+
+	protected Button button_OperationRolesList_OperationRolesSearchDialog;
+	protected Button button_OperationRolesList_PrintList;
+
+	protected Textbox oprCode;
+	protected Textbox oprDesc;
+
+	protected Listbox sortOperator_oprDesc;
+	protected Listbox sortOperator_oprCode;
+
+	private transient SecurityOperationService securityOperationService;
+
+	/**
+	 * default constructor.<br>
+	 */
+	public SecurityOperationRolesListCtrl() {
+		super();
+	}
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "SecurityOperation";
@@ -123,7 +124,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 
 		// Register buttons and fields.
 		registerButton(button_OperationRolesList_OperationRolesSearchDialog);
-		registerField("oprID",SortOrder.ASC);
+		registerField("oprID", SortOrder.ASC);
 		registerField("oprCode", listheader_OprCode, SortOrder.NONE, oprCode, sortOperator_oprCode, Operators.STRING);
 		registerField("oprDesc", listheader_OprDesc, SortOrder.NONE, oprDesc, sortOperator_oprDesc, Operators.STRING);
 
@@ -152,7 +153,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 		doReset();
 		search();
 	}
-	 
+
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
 	 * see: com.pennant.webui.administration.securityoperation.model.SecurityOperationListModelItemRenderer.java <br>
@@ -215,7 +216,8 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 
 		try {
 			Executions.createComponents(
-					"/WEB-INF/pages/Administration/SecurityOperationRoles/SecurityOperationRolesDialog.zul", null, aruments);
+					"/WEB-INF/pages/Administration/SecurityOperationRoles/SecurityOperationRolesDialog.zul", null,
+					aruments);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

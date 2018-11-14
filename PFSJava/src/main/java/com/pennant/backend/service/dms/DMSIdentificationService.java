@@ -7,6 +7,6 @@ import com.pennanttech.model.dms.DMSDocumentDetails;
 
 public interface DMSIdentificationService {
 	public void identifyExternalDocument(AuditHeader auditHeader);
+
 	public List<DMSDocumentDetails> getDmsDocumentDetails(long dmsId);
 }
-

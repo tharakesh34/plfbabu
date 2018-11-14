@@ -43,18 +43,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinCollaterals table</b>.<br>
  * 
  */
-@XmlType(propOrder = {
-		"collateralType"
-})
+@XmlType(propOrder = { "collateralType" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private String finReference = null;
 	private long collateralSeq = Long.MIN_VALUE;
-	
-	@XmlElement(name="type")
+
+	@XmlElement(name = "type")
 	private String collateralType;
 	private long custID;
 	private String reference;
@@ -71,7 +69,7 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	private String lastChequeNo;
 	private String status;
 	private String remarks;
-	
+
 	private boolean newRecord = false;
 	private String lovValue;
 	private FinCollaterals befImage;
@@ -85,7 +83,7 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	public FinCollaterals() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("markStatus");
@@ -98,17 +96,17 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	}
 
 	// Getter and Setter methods
-	
+
 	public long getId() {
 		return collateralSeq;
 	}
-	
+
 	@Override
-    public void setId(long id) {
-	    this.collateralSeq = id;
-	    
-    }
-	
+	public void setId(long id) {
+		this.collateralSeq = id;
+
+	}
+
 	public long getCollateralSeq() {
 		return collateralSeq;
 	}
@@ -284,7 +282,7 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
+
 	public String getMarkStatus() {
 		return markStatus;
 	}
@@ -292,5 +290,5 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	public void setMarkStatus(String markStatus) {
 		this.markStatus = markStatus;
 	}
-	
+
 }

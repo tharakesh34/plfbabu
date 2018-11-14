@@ -30,9 +30,8 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	private static final Logger logger = Logger.getLogger(OverdraftScheduleDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_OverdraftScheduleDetailDialog; // autoWired
 
@@ -67,9 +66,8 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -94,7 +92,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 		doShowDialog();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
@@ -108,9 +106,10 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 				try {
 					Class[] paramType = { this.getClass() };
 					Object[] stringParameter = { this };
-					if (financeMainDialogCtrl.getClass().getMethod("setOverdraftScheduleDetailDialogCtrl", paramType) != null) {
+					if (financeMainDialogCtrl.getClass().getMethod("setOverdraftScheduleDetailDialogCtrl",
+							paramType) != null) {
 						financeMainDialogCtrl.getClass().getMethod("setOverdraftScheduleDetailDialogCtrl", paramType)
-						.invoke(financeMainDialogCtrl, stringParameter);
+								.invoke(financeMainDialogCtrl, stringParameter);
 					}
 
 				} catch (Exception e) {
@@ -140,48 +139,51 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 
 		this.schdl_finType.setValue(financeMain.getFinType());
 		this.schdl_finReference.setValue(financeMain.getFinReference());
-		this.schdl_odYears.setValue(String.valueOf(financeMain.getNumberOfTerms()/12));
-		this.schdl_odMonths.setValue(String.valueOf(financeMain.getNumberOfTerms()%12));
+		this.schdl_odYears.setValue(String.valueOf(financeMain.getNumberOfTerms() / 12));
+		this.schdl_odMonths.setValue(String.valueOf(financeMain.getNumberOfTerms() % 12));
 		this.schdl_odBranch.setValue(financeMain.getFinBranch());
 		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.schdl_odLimit.setValue(PennantAppUtil.formateAmount(financeMain.getFinAssetValue(), 
+		this.schdl_odLimit.setValue(PennantAppUtil.formateAmount(financeMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
-		this.schdl_dropLineFrequency.setValue(FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
+		this.schdl_dropLineFrequency
+				.setValue(FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
 		this.schdl_customer.setValue(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
-		
+
 		listBoxSchedule.getItems().clear();
 		Listitem item;
 		int formatter = CurrencyUtil.getFormat(aFinSchdData.getFinanceMain().getFinCcy());
-		for(int i = 0;i < aFinSchdData.getOverdraftScheduleDetails().size();i++){
+		for (int i = 0; i < aFinSchdData.getOverdraftScheduleDetails().size(); i++) {
 
 			OverdraftScheduleDetail curSchd = null;
 			curSchd = aFinSchdData.getOverdraftScheduleDetails().get(i);
 
 			item = new Listitem();
-			Listcell lc= new Listcell(DateUtility.formatDate(curSchd.getDroplineDate(),DateFormat.SHORT_DATE.getPattern()));
+			Listcell lc = new Listcell(
+					DateUtility.formatDate(curSchd.getDroplineDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setStyle("font-weight:bold;");
 			item.appendChild(lc);
 
 			String eventName = "";
-			if(i==0){
+			if (i == 0) {
 				eventName = "Overdraft Created";
-			}else if(i== (aFinSchdData.getOverdraftScheduleDetails().size()-1)){
+			} else if (i == (aFinSchdData.getOverdraftScheduleDetails().size() - 1)) {
 				eventName = "Limit Drop / Expiry";
-			}else{
+			} else {
 				eventName = "Limit Drop";
 			}
-			lc= new Listcell(eventName);
+			lc = new Listcell(eventName);
 			lc.setStyle("font-weight:bold;");
 			item.appendChild(lc);
 
-			lc= new Listcell(PennantApplicationUtil.formatRate(curSchd.getDroplineRate().doubleValue(),formatter) + "%");
+			lc = new Listcell(
+					PennantApplicationUtil.formatRate(curSchd.getDroplineRate().doubleValue(), formatter) + "%");
 			item.appendChild(lc);
 
-			lc= new Listcell(PennantAppUtil.amountFormate(curSchd.getLimitDrop(),formatter));
+			lc = new Listcell(PennantAppUtil.amountFormate(curSchd.getLimitDrop(), formatter));
 			lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
 			item.appendChild(lc);
 
-			lc= new Listcell(PennantAppUtil.amountFormate(curSchd.getODLimit(),formatter));
+			lc = new Listcell(PennantAppUtil.amountFormate(curSchd.getODLimit(), formatter));
 			item.appendChild(lc);
 			listBoxSchedule.appendChild(item);
 		}
@@ -192,6 +194,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -199,6 +202,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -206,6 +210,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}

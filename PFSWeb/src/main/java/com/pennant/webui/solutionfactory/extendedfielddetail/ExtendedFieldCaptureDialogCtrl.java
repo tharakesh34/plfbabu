@@ -51,15 +51,14 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHeader> {
+public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 
 	private static final long serialVersionUID = -8108473227202001840L;
 	private static final Logger logger = Logger.getLogger(ExtendedFieldCaptureDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ExtendedFieldCaptureDialog;
 	protected Tabpanel extendedFieldTabPanel;
@@ -77,7 +76,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	private String queryCode = "";
 	private boolean newRecord = false;
 	private boolean isReadOnly = false;
-	private boolean	newExtendedField	      = false;
+	private boolean newExtendedField = false;
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
 	private DedupParmService dedupParmService;
@@ -100,14 +99,14 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_ExtendedFieldCaptureDialog(Event event)
-			throws Exception {
+	public void onCreate$window_ExtendedFieldCaptureDialog(Event event) throws Exception {
 		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_ExtendedFieldCaptureDialog);
 
 		if (arguments.containsKey("extendedFieldRenderDialogCtrl")) {
-			setExtendedFieldRenderDialogCtrl((ExtendedFieldRenderDialogCtrl) arguments.get("extendedFieldRenderDialogCtrl"));
+			setExtendedFieldRenderDialogCtrl(
+					(ExtendedFieldRenderDialogCtrl) arguments.get("extendedFieldRenderDialogCtrl"));
 			setNewExtendedField(true);
 		}
 		if (arguments.containsKey("extendedFieldHeader")) {
@@ -137,13 +136,13 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
-		
+
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(260);
-		this.extendedFieldTabPanel.setHeight((borderLayoutHeight-175)+"px");
+		this.extendedFieldTabPanel.setHeight((borderLayoutHeight - 175) + "px");
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
 			this.btnSave.setVisible(false);
@@ -155,22 +154,23 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 
 			generator.setReadOnly(!isReadOnly);
 		}
-		
+
 		//Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender().getMapValues() != null) {
 			fieldValuesMap = getExtendedFieldRender().getMapValues();
 		}
-		
+
 		if (newRecord) {
-			
+
 			//get pre-validation script if record is new
 			String preValidationScript = getExtendedFieldRenderDialogCtrl().getPreValidationScript();
-			if(StringUtils.isNotEmpty(preValidationScript)){
-				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript, fieldValuesMap);
+			if (StringUtils.isNotEmpty(preValidationScript)) {
+				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
+						fieldValuesMap);
 
 				// Initiation of Field Value Map
-				if(fieldValuesMap == null){
+				if (fieldValuesMap == null) {
 					fieldValuesMap = new HashMap<>();
 				}
 
@@ -179,7 +179,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 				for (int i = 0; i < defaultList.size(); i++) {
 					ScriptError dftKeyValue = defaultList.get(i);
 
-					if(fieldValuesMap.containsKey(dftKeyValue.getProperty())){
+					if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
 						fieldValuesMap.remove(dftKeyValue.getProperty());
 					}
 					fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
@@ -187,23 +187,23 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 			}
 			this.btnDelete.setVisible(false);
 		}
-		if(getExtendedFieldRender().getRecordStatus()!=null){
-			if(getExtendedFieldRender().getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)){
+		if (getExtendedFieldRender().getRecordStatus() != null) {
+			if (getExtendedFieldRender().getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
 				this.btnDelete.setVisible(false);
 			}
 		}
-		if(fieldValuesMap != null){
+		if (fieldValuesMap != null) {
 			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
 		}
 
 		try {
 			this.seqNo.setValue(getExtendedFieldRender().getSeqNo());
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
-			
+
 			// Height Calculation
-			int height = borderLayoutHeight-100;
-			this.window_ExtendedFieldCaptureDialog.setHeight(height+"px");
-			
+			int height = borderLayoutHeight - 100;
+			this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -224,8 +224,8 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException,
-			IllegalAccessException, InvocationTargetException, ParseException,
+	public void onClick$btnSave(Event event)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
 			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
 		logger.debug("Entering" + event.toString());
 		doSave();
@@ -238,12 +238,12 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		doDelete();
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Deletes a ExtendedFieldRender object from database.<br>
 	 * 
@@ -292,7 +292,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -329,9 +329,9 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 				}
 				if (duplicateRecord) {
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -364,7 +364,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		}
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Saves the components to table. <br>
 	 * 
@@ -378,11 +378,11 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public void doSave() throws InterruptedException, ParseException,
-			ScriptException, IOException, NoSuchMethodException,
+	public void doSave()
+			throws InterruptedException, ParseException, ScriptException, IOException, NoSuchMethodException,
 			NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		logger.debug("Entering");
-		
+
 		final ExtendedFieldRender aExetendedFieldRender = getExtendedFieldRender();
 		boolean isNew = false;
 
@@ -391,25 +391,25 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		// Do data level validations here
 		Map<String, Object> fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(fielValueMap);
-		
+
 		if (this.queryId > 0) {
-			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode, FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
-			
+			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode,
+					FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
+
 			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
 					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
 					+ this.querySubCode + "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
-					+ " union all " 
-					+ " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
+					+ " union all " + " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
 					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
 					+ this.querySubCode + "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
 					+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + this.querySubCode
 					+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
-			
-			List<CollateralSetup> collateralSetupList =  this.dedupParmService.queryExecution(sqlQuery, fielValueMap);
-			
-			if(collateralSetupList != null && !collateralSetupList.isEmpty()) {
+
+			List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery, fielValueMap);
+
+			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
 				boolean recordFound = true;
-				
+
 				if (collateralSetupList.size() == 1) {
 					if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils.equals(
 							collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
@@ -424,36 +424,34 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 						}
 					}
 				}
-				if(recordFound) {
+				if (recordFound) {
 					MessageUtil.showError("This collateral already used by some other customer.");
 					return;
 				}
 			}
 		}
-		
+
 		// Post Validations for the Extended fields
 		String postValidationScript = getExtendedFieldRenderDialogCtrl().getPostValidationScript();
-		if(StringUtils.isNotEmpty(postValidationScript)){
-			ScriptErrors postValidationErrors = getScriptValidationService().getPostValidationErrors(postValidationScript, fielValueMap);
+		if (StringUtils.isNotEmpty(postValidationScript)) {
+			ScriptErrors postValidationErrors = getScriptValidationService()
+					.getPostValidationErrors(postValidationScript, fielValueMap);
 
 			// Preparing Wrong Value User UI exceptions
 			showErrorDetails(postValidationErrors);
 		}
-		
+
 		isNew = aExetendedFieldRender.isNew();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aExetendedFieldRender.getRecordType())) {
-				aExetendedFieldRender.setVersion(aExetendedFieldRender
-						.getVersion() + 1);
+				aExetendedFieldRender.setVersion(aExetendedFieldRender.getVersion() + 1);
 				if (isNew) {
-					aExetendedFieldRender
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aExetendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aExetendedFieldRender
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aExetendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aExetendedFieldRender.setNewRecord(true);
 				}
 			}
@@ -467,17 +465,13 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 			}
 
 			if (StringUtils.isBlank(aExetendedFieldRender.getRecordType())) {
-				aExetendedFieldRender.setVersion(aExetendedFieldRender
-						.getVersion() + 1);
+				aExetendedFieldRender.setVersion(aExetendedFieldRender.getVersion() + 1);
 				aExetendedFieldRender.setRecordType(PennantConstants.RCD_UPD);
 			}
 
-			if (aExetendedFieldRender.getRecordType().equals(
-					PennantConstants.RCD_ADD)
-					&& isNewRecord()) {
+			if (aExetendedFieldRender.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
-			} else if (aExetendedFieldRender.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (aExetendedFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
@@ -485,17 +479,13 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		// save it to database
 		try {
 
-			AuditHeader auditHeader = newFieldProcess(aExetendedFieldRender,
-					tranType);
-			auditHeader = ErrorControl.showErrorDetails(
-					this.window_ExtendedFieldCaptureDialog, auditHeader);
+			AuditHeader auditHeader = newFieldProcess(aExetendedFieldRender, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldCaptureDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
-			if (retValue == PennantConstants.porcessCONTINUE
-					|| retValue == PennantConstants.porcessOVERIDE) {
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 
 				// Fields Rendering in List box dynamically
-				getExtendedFieldRenderDialogCtrl().doFillExtendedFieldDetails(
-						getExtendedList());
+				getExtendedFieldRenderDialogCtrl().doFillExtendedFieldDetails(getExtendedList());
 
 				// Close Dialog Window
 				closeDialog();
@@ -507,13 +497,11 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader newFieldProcess(
-			ExtendedFieldRender aExetendedFieldRender, String tranType) {
+	private AuditHeader newFieldProcess(ExtendedFieldRender aExetendedFieldRender, String tranType) {
 		logger.debug("Entering");
 		boolean recordAdded = false;
 
-		AuditHeader auditHeader = getAuditHeader(aExetendedFieldRender,
-				tranType);
+		AuditHeader auditHeader = getAuditHeader(aExetendedFieldRender, tranType);
 		extendedList = new ArrayList<ExtendedFieldRender>();
 
 		String[] valueParm = new String[2];
@@ -526,19 +514,18 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		errParm[1] = PennantJavaUtil.getLabel("") + ":" + valueParm[1];
 
 		if (getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList() != null
-				&& !getExtendedFieldRenderDialogCtrl()
-						.getExtendedFieldRenderList().isEmpty()) {
+				&& !getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList().isEmpty()) {
 
-			for (int i = 0; i < getExtendedFieldRenderDialogCtrl()
-					.getExtendedFieldRenderList().size(); i++) {
-				ExtendedFieldRender fieldRender = getExtendedFieldRenderDialogCtrl()
-						.getExtendedFieldRenderList().get(i);
+			for (int i = 0; i < getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList().size(); i++) {
+				ExtendedFieldRender fieldRender = getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList()
+						.get(i);
 
 				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD,
-								"41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -555,8 +542,10 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 							extendedList.add(aExetendedFieldRender);
 						} else if (aExetendedFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							for (int j = 0; j < getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList().size(); j++) {
-								ExtendedFieldRender render = getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList().get(j);
+							for (int j = 0; j < getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList()
+									.size(); j++) {
+								ExtendedFieldRender render = getExtendedFieldRenderDialogCtrl()
+										.getExtendedFieldRenderList().get(j);
 								if (render.getSeqNo() == aExetendedFieldRender.getSeqNo()) {
 									extendedList.add(render);
 								}
@@ -578,9 +567,10 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Method for Showing UI Post validation Errors
+	 * 
 	 * @param postValidationErrors
 	 */
 	public void showErrorDetails(ScriptErrors postValidationErrors) {
@@ -591,9 +581,9 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
-			
-			if(extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty()) != null){
-				Component component = extendedFieldTabPanel.getFellowIfAny("ad_"+error.getProperty());
+
+			if (extendedFieldTabPanel.getFellowIfAny("ad_" + error.getProperty()) != null) {
+				Component component = extendedFieldTabPanel.getFellowIfAny("ad_" + error.getProperty());
 				if (component instanceof CurrencyBox) {
 					CurrencyBox box = (CurrencyBox) component;
 					component = box.getErrorComp();
@@ -602,15 +592,15 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 				wve.add(we);
 			}
 		}
-		
+
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
-				if(i == 0){
+				if (i == 0) {
 					Component comp = wvea[i].getComponent();
-					if(comp instanceof HtmlBasedComponent){
+					if (comp instanceof HtmlBasedComponent) {
 						Clients.scrollIntoView(comp);
 					}
 				}
@@ -618,7 +608,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 	}
 
 	/**
@@ -628,15 +618,11 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(
-			ExtendedFieldRender aExetendedFieldRender, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, null,
-				aExetendedFieldRender);
+	private AuditHeader getAuditHeader(ExtendedFieldRender aExetendedFieldRender, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, aExetendedFieldRender);
 
-		return new AuditHeader(getReference(),
-				String.valueOf(aExetendedFieldRender.getSeqNo()), null, null,
-				auditDetail, getUserWorkspace().getLoggedInUser(),
-				getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aExetendedFieldRender.getSeqNo()), null, null,
+				auditDetail, getUserWorkspace().getLoggedInUser(), getOverideMap());
 	}
 
 	/**
@@ -649,10 +635,8 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(
-					this.window_ExtendedFieldCaptureDialog, auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_ExtendedFieldCaptureDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -673,9 +657,8 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		ExtendedFieldDetail detail = (ExtendedFieldDetail) list.get(1);
 
 		HashMap<String, Object> selectedValues = new HashMap<String, Object>();
-		Object dataObject = ExtendedMultipleSearchListBox.show(
-				this.window_ExtendedFieldCaptureDialog, detail.getFieldList(),
-				selectedValues);
+		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_ExtendedFieldCaptureDialog,
+				detail.getFieldList(), selectedValues);
 		if (dataObject instanceof String) {
 			textbox.setValue(dataObject.toString());
 		} else {
@@ -718,8 +701,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		return extendedFieldRenderDialogCtrl;
 	}
 
-	public void setExtendedFieldRenderDialogCtrl(
-			ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl) {
+	public void setExtendedFieldRenderDialogCtrl(ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl) {
 		this.extendedFieldRenderDialogCtrl = extendedFieldRenderDialogCtrl;
 	}
 
@@ -763,5 +745,4 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		this.dedupParmService = dedupParmService;
 	}
 
-	
 }

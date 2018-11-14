@@ -49,8 +49,7 @@ import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennanttech.pff.core.TableType;
 
 public interface NPABucketDAO extends BasicCrudDao<NPABucket> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -60,7 +59,8 @@ public interface NPABucketDAO extends BasicCrudDao<NPABucket> {
 	 *            The type of the table.
 	 * @return NPABucket
 	 */
-	NPABucket getNPABucket(long bucketID,String type);
+	NPABucket getNPABucket(long bucketID, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -73,6 +73,7 @@ public interface NPABucketDAO extends BasicCrudDao<NPABucket> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType);
-	List<NPABucket> getNPABuckets();	
-	
+
+	List<NPABucket> getNPABuckets();
+
 }

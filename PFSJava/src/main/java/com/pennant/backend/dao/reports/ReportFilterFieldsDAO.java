@@ -54,11 +54,18 @@ import com.pennant.backend.model.reports.ReportFilterFields;
 public interface ReportFilterFieldsDAO {
 
 	ReportFilterFields getReportFilterFields();
+
 	ReportFilterFields getNewReportFilterFields();
-	ReportFilterFields getReportFilterFieldsById(long id,String type);
-	List<ReportFilterFields> getReportFilterFieldsByReportId(final long reportId,String type);
-	void update(ReportFilterFields reportFilterFields,String type);
-	void delete(ReportFilterFields reportFilterFields,String type);
-	void deleteByReportId(final long reportId,String type);
-	long save(ReportFilterFields reportFilterFields,String type);
+
+	ReportFilterFields getReportFilterFieldsById(long id, String type);
+
+	List<ReportFilterFields> getReportFilterFieldsByReportId(final long reportId, String type);
+
+	void update(ReportFilterFields reportFilterFields, String type);
+
+	void delete(ReportFilterFields reportFilterFields, String type);
+
+	void deleteByReportId(final long reportId, String type);
+
+	long save(ReportFilterFields reportFilterFields, String type);
 }

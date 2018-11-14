@@ -98,7 +98,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	private String toCcy;
 	private boolean marginDeviation = false;
 	private String inputSource;
-	
+
 	private boolean jointCust = false;
 	private int custType;
 
@@ -117,7 +117,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 		excludeFields.add("custShrtName");
 		excludeFields.add("incomeTypeDesc");
 		excludeFields.add("categoryDesc");
-		
+
 		excludeFields.add("sourceId");
 		excludeFields.add("totalRepayAmt");
 		excludeFields.add("maturityDate");
@@ -148,7 +148,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public long getLinkId() {
 		return linkId;
 	}
@@ -220,7 +220,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	public void setCategoryDesc(String categoryDesc) {
 		this.categoryDesc = categoryDesc;
 	}
-	
+
 	public BigDecimal getIncome() {
 		return income;
 	}
@@ -332,7 +332,7 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	public void setJointCust(boolean jointCust) {
 		this.jointCust = jointCust;
 	}
-	
+
 	public int getCustType() {
 		return custType;
 	}
@@ -349,9 +349,9 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 		this.inputSource = inputSource;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 	}
 
 	public BigDecimal getCalculatedAmount() {

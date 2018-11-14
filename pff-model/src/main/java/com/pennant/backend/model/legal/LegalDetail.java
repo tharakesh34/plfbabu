@@ -105,8 +105,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>();
 	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
-	
+
 	// ------------ Document generation required fields---------//
 	private String custName;
 	private List<JointAccountDetail> coApplicantList;
@@ -136,8 +135,8 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("propertyTitleList");
 		excludeFields.add("ecdDetailsList");
 		excludeFields.add("legalNotesList");
-		excludeFields.add("collateralDocumentList"); 
-		excludeFields.add("covenantTypeList"); 
+		excludeFields.add("collateralDocumentList");
+		excludeFields.add("covenantTypeList");
 		excludeFields.add("branchDesc");
 		excludeFields.add("finType");
 		excludeFields.add("finNextRoleCode");
@@ -454,8 +453,6 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	public void setDocImage(byte[] docImage) {
 		this.docImage = docImage;
 	}
-
-	 
 
 	public String getCustName() {
 		return custName;

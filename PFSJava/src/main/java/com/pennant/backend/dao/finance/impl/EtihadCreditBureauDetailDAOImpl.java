@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -62,17 +61,19 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 /**
  * DAO methods implementation for the <b>EtihadCreditBureauDetail model</b> class.<br>
  */
-public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureauDetail> implements EtihadCreditBureauDetailDAO {
+public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureauDetail>
+		implements EtihadCreditBureauDetailDAO {
 	private static Logger logger = Logger.getLogger(EtihadCreditBureauDetailDAOImpl.class);
-	
+
 	public EtihadCreditBureauDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Equipment Loan Details details by key field
 	 * 
-	 * @param id (String)
+	 * @param id
+	 *            (String)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return EtihadCreditBureauDetail
@@ -82,13 +83,15 @@ public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureau
 		logger.debug("Entering");
 		EtihadCreditBureauDetail etihadCreditBureauDetail = new EtihadCreditBureauDetail();
 		etihadCreditBureauDetail.setId(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference,BureauScore ,TotOutstandingAmt,TotOverdueAmt,DefaultContracts,TotMonthlyInst, ");
-		selectSql.append(" WorstCurrPayDelay,WorstPayDelay,WorstStatus,OldConStartDate,NewConStartDate,OtherBankFinType, ");
+		selectSql.append(
+				"Select FinReference,BureauScore ,TotOutstandingAmt,TotOverdueAmt,DefaultContracts,TotMonthlyInst, ");
+		selectSql.append(
+				" WorstCurrPayDelay,WorstPayDelay,WorstStatus,OldConStartDate,NewConStartDate,OtherBankFinType, ");
 		selectSql.append(" NoOfInquiry,NoOfContractsInst,NoOfContractsNonInst,NoOfContractsCredit, ");
-		
-		if(type.contains("View")){
+
+		if (type.contains("View")) {
 			selectSql.append(" ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
@@ -96,28 +99,26 @@ public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureau
 		selectSql.append(" From EtihadCreditBureauDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(etihadCreditBureauDetail);
 		RowMapper<EtihadCreditBureauDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(EtihadCreditBureauDetail.class);
-		
-		try{
-			etihadCreditBureauDetail = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			etihadCreditBureauDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			etihadCreditBureauDetail = null;
 		}
 		logger.debug("Leaving");
 		return etihadCreditBureauDetail;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the EtihadCreditBureauDetail or
-	 * EtihadCreditBureauDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Equipment Loan Details by key
-	 * EquipmentLoanId
+	 * This method Deletes the Record from the EtihadCreditBureauDetail or EtihadCreditBureauDetail_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Equipment Loan Details by key EquipmentLoanId
 	 * 
 	 * @param Equipment
 	 *            Loan Details (etihadCreditBureauDetail)
@@ -128,7 +129,7 @@ public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureau
 	 * 
 	 */
 	@Override
-	public void delete(EtihadCreditBureauDetail etihadCreditBureauDetail,String type) {
+	public void delete(EtihadCreditBureauDetail etihadCreditBureauDetail, String type) {
 		logger.debug("Entering");
 
 		StringBuilder deleteSql = new StringBuilder();
@@ -138,18 +139,17 @@ public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureau
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(etihadCreditBureauDetail);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into EtihadCreditBureauDetail or
-	 * EtihadCreditBureauDetail_Temp. it fetches the available Sequence form
-	 * SeqEtihadCreditBureauDetail by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into EtihadCreditBureauDetail or EtihadCreditBureauDetail_Temp. it fetches the
+	 * available Sequence form SeqEtihadCreditBureauDetail by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Equipment Loan Details
 	 * 
@@ -161,36 +161,39 @@ public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureau
 	 * @throws DataAccessException
 	 * 
 	 */
-	public String save(EtihadCreditBureauDetail etihadCreditBureauDetail,String type) {
+	public String save(EtihadCreditBureauDetail etihadCreditBureauDetail, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder();
+
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into EtihadCreditBureauDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference,BureauScore ,TotOutstandingAmt,TotOverdueAmt,DefaultContracts,TotMonthlyInst," );
-		insertSql.append(" WorstCurrPayDelay,WorstPayDelay,WorstStatus,OldConStartDate,NewConStartDate,OtherBankFinType,");
+		insertSql
+				.append(" (FinReference,BureauScore ,TotOutstandingAmt,TotOverdueAmt,DefaultContracts,TotMonthlyInst,");
+		insertSql.append(
+				" WorstCurrPayDelay,WorstPayDelay,WorstStatus,OldConStartDate,NewConStartDate,OtherBankFinType,");
 		insertSql.append(" NoOfInquiry,NoOfContractsInst,NoOfContractsNonInst,NoOfContractsCredit,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :BureauScore , :TotOutstandingAmt, :TotOverdueAmt, :DefaultContracts, :TotMonthlyInst,");
-		insertSql.append(" :WorstCurrPayDelay, :WorstPayDelay, :WorstStatus, :OldConStartDate, :NewConStartDate, :OtherBankFinType,");
+		insertSql.append(
+				" Values( :FinReference, :BureauScore , :TotOutstandingAmt, :TotOverdueAmt, :DefaultContracts, :TotMonthlyInst,");
+		insertSql.append(
+				" :WorstCurrPayDelay, :WorstPayDelay, :WorstStatus, :OldConStartDate, :NewConStartDate, :OtherBankFinType,");
 		insertSql.append(" :NoOfInquiry, :NoOfContractsInst, :NoOfContractsNonInst, :NoOfContractsCredit,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(etihadCreditBureauDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return etihadCreditBureauDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record EtihadCreditBureauDetail or
-	 * EtihadCreditBureauDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Equipment Loan Details by key
-	 * EquipmentLoanId and Version
+	 * This method updates the Record EtihadCreditBureauDetail or EtihadCreditBureauDetail_Temp. if Record not updated
+	 * then throws DataAccessException with error 41004. update Equipment Loan Details by key EquipmentLoanId and
+	 * Version
 	 * 
 	 * @param Equipment
 	 *            Loan Details (etihadCreditBureauDetail)
@@ -201,36 +204,41 @@ public class EtihadCreditBureauDetailDAOImpl extends BasicDao<EtihadCreditBureau
 	 * 
 	 */
 	@Override
-	public void update(EtihadCreditBureauDetail etihadCreditBureauDetail,String type) {
+	public void update(EtihadCreditBureauDetail etihadCreditBureauDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder();
+
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update EtihadCreditBureauDetail");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BureauScore = :BureauScore," );
-		updateSql.append(" TotOutstandingAmt = :TotOutstandingAmt, TotOverdueAmt = :TotOverdueAmt, DefaultContracts = :DefaultContracts, " );
-		updateSql.append(" TotMonthlyInst = :TotMonthlyInst, WorstCurrPayDelay = :WorstCurrPayDelay, WorstPayDelay = :WorstPayDelay, " );
-		updateSql.append(" WorstStatus = :WorstStatus,  OldConStartDate = :OldConStartDate, NewConStartDate = :NewConStartDate, " );
-		updateSql.append(" OtherBankFinType = :OtherBankFinType,  NoOfInquiry = :NoOfInquiry, NoOfContractsInst = :NoOfContractsInst, " );
-		updateSql.append(" NoOfContractsNonInst = :NoOfContractsNonInst,  NoOfContractsCredit = :NoOfContractsCredit,  " );
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set BureauScore = :BureauScore,");
+		updateSql.append(
+				" TotOutstandingAmt = :TotOutstandingAmt, TotOverdueAmt = :TotOverdueAmt, DefaultContracts = :DefaultContracts, ");
+		updateSql.append(
+				" TotMonthlyInst = :TotMonthlyInst, WorstCurrPayDelay = :WorstCurrPayDelay, WorstPayDelay = :WorstPayDelay, ");
+		updateSql.append(
+				" WorstStatus = :WorstStatus,  OldConStartDate = :OldConStartDate, NewConStartDate = :NewConStartDate, ");
+		updateSql.append(
+				" OtherBankFinType = :OtherBankFinType,  NoOfInquiry = :NoOfInquiry, NoOfContractsInst = :NoOfContractsInst, ");
+		updateSql.append(
+				" NoOfContractsNonInst = :NoOfContractsNonInst,  NoOfContractsCredit = :NoOfContractsCredit,  ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(etihadCreditBureauDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

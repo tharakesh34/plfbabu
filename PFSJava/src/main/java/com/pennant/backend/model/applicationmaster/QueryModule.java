@@ -8,7 +8,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class QueryModule extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1000185170961421001L;
-	
+
 	private String queryModuleCode;
 	private String queryModuleDesc;
 	private String TableName;
@@ -16,7 +16,7 @@ public class QueryModule extends AbstractWorkflowEntity {
 	private String ResultColumns;
 	private boolean subQuery;
 
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private QueryModule befImage;
 	private LoggedInUser userDetails;
@@ -27,27 +27,25 @@ public class QueryModule extends AbstractWorkflowEntity {
 
 	public QueryModule(String queryModuleCode) {
 		super();
-		this.queryModuleCode= queryModuleCode;
+		this.queryModuleCode = queryModuleCode;
 	}
-	
-	
 
-	public QueryModule(String queryModuleCode, String tableName,  String resultColumns) {
-	    super();
-	    this.queryModuleCode = queryModuleCode;
-	    TableName = tableName;
-	    ResultColumns = resultColumns;
-    }
+	public QueryModule(String queryModuleCode, String tableName, String resultColumns) {
+		super();
+		this.queryModuleCode = queryModuleCode;
+		TableName = tableName;
+		ResultColumns = resultColumns;
+	}
 
 	public QueryModule() {
 		super();
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("countryCodeName");
 		excludeFields.add("provinceCodeName");
-		
+
 		return excludeFields;
 	}
 
@@ -59,41 +57,41 @@ public class QueryModule extends AbstractWorkflowEntity {
 		return queryModuleCode;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.queryModuleCode = id;
 	}
 
 	public String getQueryModuleCode() {
-    	return queryModuleCode;
-    }
+		return queryModuleCode;
+	}
 
 	public void setQueryModuleCode(String queryModuleCode) {
-    	this.queryModuleCode = queryModuleCode;
-    }
+		this.queryModuleCode = queryModuleCode;
+	}
 
 	public String getQueryModuleDesc() {
-    	return queryModuleDesc;
-    }
+		return queryModuleDesc;
+	}
 
 	public void setQueryModuleDesc(String queryModuleDesc) {
-    	this.queryModuleDesc = queryModuleDesc;
-    }
-	
+		this.queryModuleDesc = queryModuleDesc;
+	}
+
 	public String getTableName() {
-    	return TableName;
-    }
+		return TableName;
+	}
 
 	public void setTableName(String tableName) {
-    	TableName = tableName;
-    }
+		TableName = tableName;
+	}
 
 	public String getResultColumns() {
-    	return ResultColumns;
-    }
+		return ResultColumns;
+	}
 
 	public void setResultColumns(String resultColumns) {
-    	ResultColumns = resultColumns;
-    }
+		ResultColumns = resultColumns;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -111,12 +109,12 @@ public class QueryModule extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public QueryModule getBefImage(){
+	public QueryModule getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(QueryModule beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(QueryModule beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -136,10 +134,10 @@ public class QueryModule extends AbstractWorkflowEntity {
 	}
 
 	public void setDisplayColumns(String displayColumns) {
-	    this.displayColumns = displayColumns;
-    }
+		this.displayColumns = displayColumns;
+	}
 
 	public String getDisplayColumns() {
-	    return displayColumns;
-    }
+		return displayColumns;
+	}
 }

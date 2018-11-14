@@ -65,29 +65,29 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 	private static final long serialVersionUID = -1770311750492286100L;
 
 	public AccountsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Accounts acounts, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(acounts.getAccountId());
+		lc = new Listcell(acounts.getAccountId());
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getAcCcy());
+		lc = new Listcell(acounts.getAcCcy());
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getAcType());
+		lc = new Listcell(acounts.getAcType());
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getAcBranch());
+		lc = new Listcell(acounts.getAcBranch());
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getLovDescCustCIF());
-	  	lc.setParent(item);
-	  	lc = new Listcell(acounts.getAcFullName());
+		lc = new Listcell(acounts.getLovDescCustCIF());
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getAcShortName());
+		lc = new Listcell(acounts.getAcFullName());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(acounts.getAcPurpose()
-				,PennantStaticListUtil.getAccountPurpose()));
+		lc = new Listcell(acounts.getAcShortName());
+		lc.setParent(item);
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(acounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbInternalAc = new Checkbox();
@@ -119,15 +119,14 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 		cbAcClosed.setChecked(acounts.isAcClosed());
 		lc.appendChild(cbAcClosed);
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getHostAcNumber());
+		lc = new Listcell(acounts.getHostAcNumber());
 		lc.setParent(item);
-	  	lc = new Listcell(acounts.getRecordStatus());
+		lc = new Listcell(acounts.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(acounts.getRecordType()));
 		lc.setParent(item);
- 		item.setAttribute("data", acounts);
+		item.setAttribute("data", acounts);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onAccountsItemDoubleClicked");
 	}
 
- 
 }

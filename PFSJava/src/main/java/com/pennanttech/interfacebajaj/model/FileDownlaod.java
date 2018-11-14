@@ -3,7 +3,7 @@ package com.pennanttech.interfacebajaj.model;
 import java.util.Date;
 
 public class FileDownlaod {
-	
+
 	private long Id;
 	private String finReference;
 	private String partnerBankCode;
@@ -51,7 +51,6 @@ public class FileDownlaod {
 		this.partnerBankName = partnerBankName;
 	}
 
-	
 	public String getAlwFileDownload() {
 		return alwFileDownload;
 	}
@@ -83,7 +82,6 @@ public class FileDownlaod {
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-
 
 	public Date getEndTime() {
 		return endTime;

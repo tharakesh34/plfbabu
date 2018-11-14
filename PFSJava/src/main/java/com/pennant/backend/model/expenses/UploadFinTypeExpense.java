@@ -46,15 +46,16 @@ import java.math.BigDecimal;
 
 public class UploadFinTypeExpense {
 
-	private long		uploadId		= Long.MIN_VALUE;
-	private String		finType			= null;
-	private String		expenseTypeCode	= null;
-	private long		expenseId		= Long.MIN_VALUE;
-	private BigDecimal	percentage		= BigDecimal.ZERO;
-	private BigDecimal	amountValue		= BigDecimal.ZERO;
-	private String		status;
-	private String		reason;
-	private int			count			= 0;
+	private long uploadId = Long.MIN_VALUE;
+	private String finType = null;
+	private String expenseTypeCode = null;
+	private long expenseId = Long.MIN_VALUE;
+	private BigDecimal percentage = BigDecimal.ZERO;
+	private BigDecimal amountValue = BigDecimal.ZERO;
+	private String status;
+	private String reason;
+	private int count = 0;
+
 	public UploadFinTypeExpense() {
 		super();
 	}

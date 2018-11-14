@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -103,8 +102,7 @@ public class TransactionCodeDAOImpl extends BasicDao<TransactionCode> implements
 				.newInstance(TransactionCode.class);
 
 		try {
-			transactionCode = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource,
-					typeRowMapper);
+			transactionCode = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			transactionCode = null;
@@ -129,8 +127,8 @@ public class TransactionCodeDAOImpl extends BasicDao<TransactionCode> implements
 			sql = QueryUtil.getCountQuery("BMTTransactionCode_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil
-					.getCountQuery(new String[] { "BMTTransactionCode_Temp", "BMTTransactionCode" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "BMTTransactionCode_Temp", "BMTTransactionCode" },
+					whereClause);
 			break;
 		}
 

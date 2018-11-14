@@ -20,11 +20,11 @@ public class CibilReportViewCtrl extends GFCBaseCtrl<Object> {
 	private String ctype;
 
 	public void onCreate$window_Report(Event event) throws Exception {
-		
+
 		setPageComponents(window_Report);
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("reportData")) {
-			this.data =  (String) arguments.get("reportData");
+			this.data = (String) arguments.get("reportData");
 		} else {
 			this.data = null;
 		}

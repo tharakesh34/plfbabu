@@ -54,7 +54,7 @@ public interface LegalPropertyDetailDAO extends BasicCrudDao<LegalPropertyDetail
 	 * 
 	 * @param legalPropertyId
 	 *            legalPropertyId of the LegalPropertyDetail.
-	 * @param legalId 
+	 * @param legalId
 	 * @param tableType
 	 *            The type of the table.
 	 * @return LegalPropertyDetail
@@ -64,6 +64,5 @@ public interface LegalPropertyDetailDAO extends BasicCrudDao<LegalPropertyDetail
 	void deleteList(LegalPropertyDetail propertyDetail, String tableType);
 
 	List<LegalPropertyDetail> getPropertyDetailsList(long legalId, String tableType);
-
 
 }

@@ -31,7 +31,7 @@ public class DataMigrationProcess {
 			int count = 0;
 			boolean isVerify = false;
 			boolean printTime = true;
-			
+
 			Date sysDateI1 = new Date();
 
 			getFetchService().cleanDestination();
@@ -39,20 +39,20 @@ public class DataMigrationProcess {
 			rid.setFinTypes(getFetchService().getFinTypeList(typeStage2));
 			rid.setFeeVsGLList(getFetchService().getFeeVsGLList());
 			Date sysDateI2 = new Date();
-			
+
 			if (printTime) {
-				System.out.println("Time for Clean Destination Tables in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
+				System.out.println("Time for Clean Destination Tables in MSeconds: "
+						+ (sysDateI2.getTime() - sysDateI1.getTime()));
 			}
 
 			// Fetching List of all Finance Reference Details
 			sysDateI1 = new Date();
 			List<String> finRefList = getDetailService().getFinanceReferenceList(typeStage2);
 			sysDateI2 = new Date();
-			
+
 			if (printTime) {
 				System.out.println("Time for List Fetch in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
 			}
-
 
 			sysDate1 = new Date();
 			printTime = false;
@@ -61,7 +61,7 @@ public class DataMigrationProcess {
 
 				String printMsg = "Fetch for ".concat(finReference).concat(" Started.").concat(String.valueOf(count));
 				System.out.println(printMsg);
-				
+
 				//*****FOR DEBUG*//
 				//if (!StringUtils.equals(finReference, "SEPNMLE0117889")) { continue; }
 

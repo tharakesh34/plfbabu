@@ -55,10 +55,10 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ErrorUtil implements Serializable {
 	private static final long serialVersionUID = 6700340086746473118L;
-	
+
 	private List<ErrorDetail> errorDetails = null;
 	private static ErrorDetailService errorDetailService;
-	
+
 	private ErrorUtil() {
 		super();
 	}
@@ -96,7 +96,6 @@ public class ErrorUtil implements Serializable {
 		return errorDetailService.getErrorDetail(errorCode);
 	}
 
-	
 	private HashMap<String, ErrorDetail> getErrorsByErrorCodes(String errorLanguage, List<ErrorDetail> errorDetails) {
 		HashMap<String, ErrorDetail> hashMap = new HashMap<String, ErrorDetail>();
 
@@ -122,7 +121,7 @@ public class ErrorUtil implements Serializable {
 		}
 		return oldDetail;
 	}
-	
+
 	public void setErrorDetailService(ErrorDetailService errorDetailService) {
 		ErrorUtil.errorDetailService = errorDetailService;
 	}

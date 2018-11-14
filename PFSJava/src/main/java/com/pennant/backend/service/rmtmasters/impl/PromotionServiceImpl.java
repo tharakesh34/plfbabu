@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.service.rmtmasters.impl;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,15 +76,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class PromotionServiceImpl extends GenericService<Promotion> implements PromotionService {
 	private static final Logger logger = Logger.getLogger(PromotionServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private PromotionDAO promotionDAO;
-	
+
 	//Child Services
 	private FinTypeFeesService finTypeFeesService;
 	private FinTypeInsurancesService finTypeInsurancesService;
 	private FinTypeAccountingService finTypeAccountingService;
-	
+
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
@@ -133,13 +134,15 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		// Finance Type Insurances
 		if (promotion.getFinTypeInsurancesList() != null && promotion.getFinTypeInsurancesList().size() > 0) {
 			List<AuditDetail> insuranceDetails = promotion.getAuditDetailMap().get("FinTypeInsurance");
-			insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails, tableType);
+			insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
+					tableType);
 			auditDetailsList.addAll(insuranceDetails);
 		}
 		// Finance Type Accounting
 		if (promotion.getFinTypeAccountingList() != null && promotion.getFinTypeAccountingList().size() > 0) {
 			List<AuditDetail> accountingDetails = promotion.getAuditDetailMap().get("FinTypeAccounting");
-			accountingDetails = this.finTypeAccountingService.processFinTypeAccountingDetails(accountingDetails, tableType);
+			accountingDetails = this.finTypeAccountingService.processFinTypeAccountingDetails(accountingDetails,
+					tableType);
 			auditDetailsList.addAll(accountingDetails);
 		}
 
@@ -164,9 +167,9 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "delete");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -178,15 +181,15 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		getPromotionDAO().delete(promotion, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
 	public List<AuditDetail> deleteChilds(Promotion promotion, String tableType, String auditTranType) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
 		// Fees
@@ -206,7 +209,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		}
 
 		logger.debug("Leaving");
-		
+
 		return auditDetailsList;
 	}
 
@@ -266,8 +269,10 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		if (promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(promotionCode, moduleId));
-			promotion.setFinTypeInsurancesList(getFinTypeInsurancesService().getFinTypeInsuranceListByID(promotionCode, moduleId));
-			promotion.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(promotionCode, moduleId));
+			promotion.setFinTypeInsurancesList(
+					getFinTypeInsurancesService().getFinTypeInsuranceListByID(promotionCode, moduleId));
+			promotion.setFinTypeAccountingList(
+					getFinTypeAccountingService().getFinTypeAccountingListByID(promotionCode, moduleId));
 		}
 
 		logger.debug("Leaving");
@@ -291,8 +296,10 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		if (childExist && promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(promotionCode, moduleId));
-			promotion.setFinTypeInsurancesList(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(promotionCode, moduleId));
-			promotion.setFinTypeAccountingList(getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(promotionCode, moduleId));
+			promotion.setFinTypeInsurancesList(
+					getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(promotionCode, moduleId));
+			promotion.setFinTypeAccountingList(
+					getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(promotionCode, moduleId));
 		}
 
 		logger.debug("Leaving");
@@ -312,7 +319,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	@Override
 	public boolean getPromtionExist(String promotionCode, String type) {
 		logger.debug("Entering");
-		
+
 		boolean promotionExist = false;
 
 		if (getPromotionDAO().getPromtionCodeCount(promotionCode, type) != 0) {
@@ -390,7 +397,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				List<AuditDetail> insuranceDetails = promotion.getAuditDetailMap().get("FinTypeInsurance");
 
 				if (insuranceDetails != null && !insuranceDetails.isEmpty()) {
-					insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails, "");
+					insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
+							"");
 					auditDetailsList.addAll(insuranceDetails);
 				}
 			}
@@ -399,7 +407,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				List<AuditDetail> accountingDetails = promotion.getAuditDetailMap().get("FinTypeAccounting");
 
 				if (accountingDetails != null && !accountingDetails.isEmpty()) {
-					accountingDetails = this.finTypeAccountingService.processFinTypeAccountingDetails(accountingDetails, "");
+					accountingDetails = this.finTypeAccountingService.processFinTypeAccountingDetails(accountingDetails,
+							"");
 					auditDetailsList.addAll(accountingDetails);
 				}
 			}
@@ -409,10 +418,12 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		// List
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(promotion, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader
+				.setAuditDetails(processChildsAudit(deleteChilds(promotion, "_Temp", auditHeader.getAuditTranType())));
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Promotion(), promotion.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], promotion.getBefImage(), promotion));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				promotion.getBefImage(), promotion));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
@@ -453,7 +464,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		// List
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(promotion, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader
+				.setAuditDetails(processChildsAudit(deleteChilds(promotion, "_Temp", auditHeader.getAuditTranType())));
 		getPromotionDAO().delete(promotion, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -478,7 +490,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		// List
@@ -495,7 +507,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
@@ -553,8 +565,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				finTypeFees.setNextTaskId(promotion.getNextTaskId());
 			}
 
-			auditDetailMap.put("FinTypeFees", this.finTypeFeesService.setFinTypeFeesAuditData(
-					promotion.getFinTypeFeesList(), auditTranType, method));
+			auditDetailMap.put("FinTypeFees", this.finTypeFeesService
+					.setFinTypeFeesAuditData(promotion.getFinTypeFeesList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeFees"));
 		}
 
@@ -571,8 +583,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				finTypeInsurances.setNextTaskId(promotion.getNextTaskId());
 			}
 
-			auditDetailMap.put("FinTypeInsurance", finTypeInsurancesService.setFinTypeInsuranceDetailsAuditData(
-					promotion.getFinTypeInsurancesList(), auditTranType, method));
+			auditDetailMap.put("FinTypeInsurance", finTypeInsurancesService
+					.setFinTypeInsuranceDetailsAuditData(promotion.getFinTypeInsurancesList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeInsurance"));
 		}
 
@@ -589,8 +601,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				finTypeAccounting.setNextTaskId(promotion.getNextTaskId());
 			}
 
-			auditDetailMap.put("FinTypeAccounting", finTypeAccountingService.setFinTypeAccountingAuditData(
-					promotion.getFinTypeAccountingList(), auditTranType, method));
+			auditDetailMap.put("FinTypeAccounting", finTypeAccountingService
+					.setFinTypeAccountingAuditData(promotion.getFinTypeAccountingList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeAccounting"));
 		}
 
@@ -602,7 +614,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		return auditHeader;
 	}
-
 
 	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
@@ -681,16 +692,19 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		if (promotion.isNew()) { // for New record or new record into work flow
 			if (!promotion.isWorkflow()) {// With out Work flow only new records
 				if (befPromotion != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (PennantConstants.RECORD_TYPE_NEW.equals(promotion.getRecordType())) { // if records type is new
 					if (befPromotion != null || tempPromotion != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPromotion == null || tempPromotion != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -702,22 +716,26 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldPromotion != null && !oldPromotion.getLastMntOn().equals(befPromotion.getLastMntOn())) {
-						if (PennantConstants.TRAN_DEL.equalsIgnoreCase(StringUtils.trimToEmpty(auditDetail
-								.getAuditTranType()))) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						if (PennantConstants.TRAN_DEL
+								.equalsIgnoreCase(StringUtils.trimToEmpty(auditDetail.getAuditTranType()))) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempPromotion == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempPromotion != null && oldPromotion != null
 						&& !oldPromotion.getLastMntOn().equals(tempPromotion.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -795,12 +813,12 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * @param financeType
 	 */
 	@Override
-	public int getFinanceTypeCountById(String finType)  {
+	public int getFinanceTypeCountById(String finType) {
 		logger.debug("Entering");
 		int financeTypeCount = 0;
 		financeTypeCount = getPromotionDAO().getFinanceTypeCountById(finType);
 		logger.debug("Leaving");
-		
+
 		return financeTypeCount;
 	}
 
@@ -810,9 +828,9 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * @param productCode
 	 */
 	@Override
-	public List<Promotion> getPromotionsByFinType(String finType,String type) {
+	public List<Promotion> getPromotionsByFinType(String finType, String type) {
 		logger.debug("Entering");
 		logger.debug("Leaving");
-		return getPromotionDAO().getPromotionsByFinType(finType,type);
+		return getPromotionDAO().getPromotionsByFinType(finType, type);
 	}
 }

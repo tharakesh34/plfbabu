@@ -96,7 +96,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			view = "customer_income_details";
 			table = "link_cust_incomes";
 		}
-		
+
 		if (type.equals("_temp")) {
 			view = view.concat("_view");
 		} else {
@@ -115,10 +115,12 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			query.append(" Where linkid =:linkId and custid = :custId and incometype = :incomeType ");
 			query.append(" and incomeExpense = :incomeExpense and category=:category");
 		} else {
-			query.append(" select cu.custid, incd.income, incd.incometype, incd.incomeExpense, incd.category, incd.margin,");
+			query.append(
+					" select cu.custid, incd.income, incd.incometype, incd.incomeExpense, incd.category, incd.margin,");
 			query.append(" it.incometypedesc, ic.categorydesc, ");
 			query.append(" cu.custcif, cu.custshrtname, cu.custbaseccy toccy, ");
-			query.append(" incd.Version, incd.LastMntOn, incd.LastMntBy, incd.RecordStatus, incd.RoleCode, incd.NextRoleCode,");
+			query.append(
+					" incd.Version, incd.LastMntOn, incd.LastMntBy, incd.RecordStatus, incd.RoleCode, incd.NextRoleCode,");
 			query.append(" incd.TaskId, incd.NextTaskId, incd.RecordType, incd.WorkflowId");
 			query.append(" from income_details");
 			query.append(type).append(" incd");
@@ -136,7 +138,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			query.append(" Where incd.linkid =:linkId and cu.custid = :custId and incd.incometype = :incomeType ");
 			query.append(" and incd.incomeExpense = :incomeExpense and incd.category=:category");
 		}
-			
+
 		logger.trace(Literal.SQL + query.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
@@ -185,7 +187,6 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	@Override
 	public void setLinkId(CustomerIncome customerIncome) {
 		logger.debug(Literal.ENTERING);
@@ -254,7 +255,6 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		this.jdbcTemplate.batchUpdate(query.toString(), beanParameters);
 	}
 
-	
 	/**
 	 * Fetch current version of the record.
 	 * 
@@ -270,7 +270,6 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		sql.append(" where custid= :custId and incomeExpense= :incomeExpense");
 		sql.append(" and incomeType= :incomeType and category =:category");
 
-		
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custId", customerIncome.getCustId());
@@ -278,9 +277,9 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		source.addValue("incomeType", customerIncome.getIncomeType());
 		source.addValue("jointCust", customerIncome.isJointCust());
 		source.addValue("category", customerIncome.getCategory());
-		
+
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		try {
 			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
@@ -309,7 +308,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 
 		return linkid;
 	}
-	
+
 	@Override
 	public List<CustomerIncome> getIncomesByFinReference(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -321,7 +320,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		query.append(" union all");
 		query.append(" select custid, finreference from finjointaccountdetails_view) fm");
 		query.append(" on fm.custid=ci.custid where fm.finreference = :finreference");
-		
+
 		logger.trace(Literal.SQL + query.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
@@ -336,7 +335,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 			return new ArrayList<>();
 		}
 	}
-	
+
 	@Override
 	public List<CustomerIncome> getIncomesBySamplingId(long samplingId) {
 		logger.debug(Literal.ENTERING);

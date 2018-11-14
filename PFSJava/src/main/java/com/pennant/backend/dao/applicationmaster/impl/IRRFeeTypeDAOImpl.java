@@ -63,8 +63,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>IRRFeeType</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>IRRFeeType</code> with set of CRUD operations.
  */
 public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTypeDAO {
 	private static Logger logger = Logger.getLogger(IRRFeeTypeDAOImpl.class);
@@ -80,7 +79,8 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" iRRID, feeTypeID, feePercentage, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From IRRFeeTypes");
 		sql.append(type);
 		sql.append(" Where iRRID = :iRRID AND feeTypeID = :feeTypeID ");
@@ -115,7 +115,8 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		if (type.contains("View")) {
 			sql.append(" feeTypeCode, feeTypeDesc,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From IRRFeeTypes");
 		sql.append(type);
 		sql.append(" Where iRRID = :iRRID ");
@@ -135,13 +136,9 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		return feeTypes;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Records from the CollateralThirdParty or
-	 * CollateralThirdParty_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete CollateralThirdParty Details
-	 * by key reference
+	 * This method Deletes the Records from the CollateralThirdParty or CollateralThirdParty_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete CollateralThirdParty Details by key reference
 	 * 
 	 * @param CollateralThirdParty
 	 *            Details (collateralThirdParty)
@@ -171,10 +168,12 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		StringBuilder sql = new StringBuilder(" insert into IRRFeeTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (IRRID, feeTypeID, feePercentage, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iRRID, :feeTypeID, :feePercentage, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

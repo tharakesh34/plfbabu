@@ -59,10 +59,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ReasionCode table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","reasonTypeID","reasonCategoryID","code","description","active"})
+@XmlType(propOrder = { "id", "reasonTypeID", "reasonCategoryID", "code", "description", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ReasonCode extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class ReasonCode extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private Long reasonTypeID;
@@ -71,18 +71,18 @@ private static final long serialVersionUID = 1L;
 	private String reasonCategoryCode;
 	private String reasonTypeDesc;
 	private String reasonCategoryDesc;
-    private String code;
-    private String description;
-    private boolean active;
+	private String code;
+	private String description;
+	private boolean active;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ReasonCode befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -95,20 +95,20 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("reasonTypeCode");
-			excludeFields.add("reasonCategoryCode");
-			excludeFields.add("reasonTypeDesc");
-			excludeFields.add("reasonCategoryDesc");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("reasonTypeCode");
+		excludeFields.add("reasonCategoryCode");
+		excludeFields.add("reasonTypeDesc");
+		excludeFields.add("reasonCategoryDesc");
+		return excludeFields;
 	}
 
-	
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -116,6 +116,7 @@ private static final long serialVersionUID = 1L;
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
@@ -135,7 +136,7 @@ private static final long serialVersionUID = 1L;
 	public void setReasonCategoryCode(String reasonCategoryCode) {
 		this.reasonCategoryCode = reasonCategoryCode;
 	}
-	
+
 	public String getReasonTypeDesc() {
 		return reasonTypeDesc;
 	}
@@ -155,17 +156,19 @@ private static final long serialVersionUID = 1L;
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -173,7 +176,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -182,25 +185,26 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public ReasonCode getBefImage(){
+	public ReasonCode getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ReasonCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ReasonCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
 	public Long getReasonTypeID() {
 		return reasonTypeID;
 	}

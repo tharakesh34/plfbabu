@@ -55,7 +55,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -63,21 +62,21 @@ import com.pennant.util.PennantAppUtil;
 public class DedupFieldsListModelItemRenderer implements ListitemRenderer<DedupFields>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public DedupFieldsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, DedupFields dedupFields, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(dedupFields.getFieldName());
+		lc = new Listcell(dedupFields.getFieldName());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(dedupFields.getFieldControl(),
-				PennantStaticListUtil.getFieldTypeList()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(dedupFields.getRecordStatus());
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(dedupFields.getFieldControl(), PennantStaticListUtil.getFieldTypeList()));
+		lc.setParent(item);
+		lc = new Listcell(dedupFields.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(dedupFields.getRecordType()));
 		lc.setParent(item);

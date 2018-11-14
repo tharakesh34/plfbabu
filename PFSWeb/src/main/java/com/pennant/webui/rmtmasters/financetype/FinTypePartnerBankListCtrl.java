@@ -69,11 +69,12 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/FinTypePartnerBank/FinTypePartnerBankList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.applicationmaster/FinTypePartnerBank/FinTypePartnerBankList.zul file.
  * 
  */
 public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> {
@@ -81,26 +82,25 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 	private static final Logger logger = Logger.getLogger(FinTypePartnerBankListCtrl.class);
 
 	protected Window window_FinTypePartnerBankList;
-	
+
 	private Component parent = null;
 	protected Button button_FinTypePartnerBankList_NewFinTypePartnerBank;
-	
-	private List<FinTypePartnerBank>			finTypePartnerBankList	= new ArrayList<FinTypePartnerBank>();
+
+	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
 	protected Listbox listBoxFinTypePartnerBank;
-	
+
 	private String roleCode = "";
 	private String finCcy = "";
 	private String finType = "";
 	private String finTypeDesc = "";
 	protected boolean isOverdraft = false;
 	private boolean isCompReadonly = false;
-	private String finDivision=null;
-	
-	
+	private String finDivision = null;
+
 	private Object mainController;
-	
+
 	// Search Fields
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -160,10 +160,10 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 				this.finTypePartnerBankList = (List<FinTypePartnerBank>) arguments.get("finTypePartnerBankList");
 			}
 			if (arguments.containsKey("isOverdraft")) {
-				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+				this.isOverdraft = (Boolean) arguments.get("isOverdraft");
 			}
 			if (arguments.containsKey("finDivision")) {
-				this.finDivision =  (String)arguments.get("finDivision");
+				this.finDivision = (String) arguments.get("finDivision");
 			}
 			doCheckRights();
 			doShowDialog();
@@ -174,39 +174,41 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 
 		logger.debug("Leaving");
 	}
-	
+
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		//getUserWorkspace().allocateAuthorities(super.pageRightName, roleCode);
 		this.button_FinTypePartnerBankList_NewFinTypePartnerBank.setVisible(!isCompReadonly);
-		
+
 		logger.debug("leaving");
 	}
-	
-	private void doShowDialog() throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+
+	private void doShowDialog()
+			throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
-		
+
 		doFillFinTypePartnerBanks(this.finTypePartnerBankList);
-		
+
 		if (parent != null) {
 			this.window_FinTypePartnerBankList.setHeight(this.borderLayoutHeight - 90 + "px");
 			this.listBoxFinTypePartnerBank.setHeight(this.borderLayoutHeight - 125 + "px");
- 			parent.appendChild(this.window_FinTypePartnerBankList);
+			parent.appendChild(this.window_FinTypePartnerBankList);
 		}
-		
+
 		try {
-			getMainController().getClass().getMethod("setFinTypePartnerBankListCtrl", this.getClass()).invoke(mainController, this);
+			getMainController().getClass().getMethod("setFinTypePartnerBankListCtrl", this.getClass())
+					.invoke(mainController, this);
 		} catch (InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		logger.debug("leaving");
 	}
-	
+
 	public void doFillFinTypePartnerBanks(List<FinTypePartnerBank> finTypePartnerBankList) {
 		logger.debug("Entering");
-		
+
 		try {
 			if (finTypePartnerBankList != null) {
 				setFinTypePartnerBankList(finTypePartnerBankList);
@@ -215,41 +217,39 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	private void fillFinTypePartnerBank(List<FinTypePartnerBank> finTypePartnerBankList) {
 		this.listBoxFinTypePartnerBank.getItems().clear();
-		
-		List<ValueLabel>  purposeList = PennantStaticListUtil.getPurposeList();
-		List<ValueLabel>  paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
-		
+
+		List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
+		List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
+
 		for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
 			Listitem item = new Listitem();
 			Listcell lc;
-		  
+
 			lc = new Listcell(PennantAppUtil.getlabelDesc(finTypePartnerBank.getPurpose(), purposeList));
 			lc.setParent(item);
-			
-		  	
+
 			lc = new Listcell(PennantAppUtil.getlabelDesc(finTypePartnerBank.getPaymentMode(), paymentModesList));
-		  	lc.setParent(item);
-		   
-		  	lc = new Listcell(String.valueOf(finTypePartnerBank.getPartnerBankName()));
 			lc.setParent(item);
-		  	
+
+			lc = new Listcell(String.valueOf(finTypePartnerBank.getPartnerBankName()));
+			lc.setParent(item);
+
 			lc = new Listcell(finTypePartnerBank.getRecordStatus());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(finTypePartnerBank.getRecordType());
 			lc.setParent(item);
 
 			item.setAttribute("data", finTypePartnerBank);
-			
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypePartnerBankItemDoubleClicked");
-			
-			
+
 			this.listBoxFinTypePartnerBank.appendChild(item);
 		}
 	}
@@ -262,19 +262,18 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 	 */
 	public void onClick$button_FinTypePartnerBankList_NewFinTypePartnerBank(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinTypePartnerBank fintypepartnerbank = new FinTypePartnerBank();
 		fintypepartnerbank.setNewRecord(true);
 		fintypepartnerbank.setFinType(this.finType);
 		fintypepartnerbank.setFinTypeDesc(this.finTypeDesc);
 		fintypepartnerbank.setWorkflowId(getWorkFlowId());
-		
+
 		// Display the dialog page.
 		doShowDialogPage(fintypepartnerbank);
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
@@ -285,16 +284,16 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 	 */
 	public void onFinTypePartnerBankItemDoubleClicked(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) item.getAttribute("data");
-		
+
 		if (!StringUtils.equals(finTypePartnerBank.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 			finTypePartnerBank.setNewRecord(false);
-			finTypePartnerBank.setFinTypeDesc(this.finTypeDesc);			
+			finTypePartnerBank.setFinTypeDesc(this.finTypeDesc);
 			doShowDialogPage(finTypePartnerBank);
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -312,15 +311,15 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		map.put("fintypepartnerbankListCtrl", this);
 		map.put("role", roleCode);
 		map.put("amountFormatter", CurrencyUtil.getFormat(this.finCcy));
-		
-		if(StringUtils.isNotEmpty(finDivision)){
-		map.put("finDivision",finDivision);
+
+		if (StringUtils.isNotEmpty(finDivision)) {
+			map.put("finDivision", finDivision);
 		}
-			
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerBankDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerBankDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -340,8 +339,7 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		return finTypePartnerBankList;
 	}
 
-	public void setFinTypePartnerBankList(
-			List<FinTypePartnerBank> finTypePartnerBankList) {
+	public void setFinTypePartnerBankList(List<FinTypePartnerBank> finTypePartnerBankList) {
 		this.finTypePartnerBankList = finTypePartnerBankList;
 	}
 }

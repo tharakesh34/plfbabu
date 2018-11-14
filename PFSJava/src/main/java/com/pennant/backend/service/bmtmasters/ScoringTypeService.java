@@ -47,13 +47,20 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.ScoringType;
 
 public interface ScoringTypeService {
-	
+
 	ScoringType getScoringType();
+
 	ScoringType getNewScoringType();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ScoringType getScoringTypeById(String id);
+
 	ScoringType getApprovedScoringTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

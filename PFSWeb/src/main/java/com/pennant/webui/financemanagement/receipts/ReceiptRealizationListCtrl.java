@@ -42,13 +42,13 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptRealization/ReceiptRealizationList.zul file.
@@ -72,7 +72,6 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Listheader listheader_ReceiptRealizationCusomer;
 	protected Listheader listheader_ReceiptRealizationCustName;
 
-
 	protected Button btnNew;
 	protected Button btnSearch;
 
@@ -92,12 +91,13 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Listbox sortOperator_receiptRealizationFinType;
 	protected Listbox sortOperator_receiptRealizationFinBranch;
 
-	protected int   oldVar_sortOperator_custCIF; 
-	protected int   oldVar_sortOperator_finType;
-	protected int   oldVar_sortOperator_finBranch;
+	protected int oldVar_sortOperator_custCIF;
+	protected int oldVar_sortOperator_finType;
+	protected int oldVar_sortOperator_finBranch;
 
 	private transient ReceiptRealizationService receiptRealizationService;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
 	/**
 	 * The default constructor.
 	 */
@@ -122,7 +122,8 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	 */
 	public void onCreate$window_ReceiptRealizationList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_ReceiptRealizationList, borderLayout_ReceiptRealizationList, listBoxReceiptRealization, pagingReceiptRealizationList);
+		setPageComponents(window_ReceiptRealizationList, borderLayout_ReceiptRealizationList, listBoxReceiptRealization,
+				pagingReceiptRealizationList);
 		setItemRender(new ReceiptRealizationListModelItemRenderer());
 		registerButton(btnNew, "button_AcademicList_NewAcademic", false);
 		registerButton(btnSearch);
@@ -139,28 +140,30 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		registerField("receiptPurpose", listheader_ReceiptRealizationPurpose, SortOrder.NONE, purpose,
 				sortOperator_receiptRealizationPurpose, Operators.STRING);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
-		registerField("receiptMode", listheader_ReceiptRealizationMode, SortOrder.NONE, receiptMode, sortOperator_receiptRealizationReceiptMode,
-				Operators.STRING);
+		registerField("receiptMode", listheader_ReceiptRealizationMode, SortOrder.NONE, receiptMode,
+				sortOperator_receiptRealizationReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_ReceiptRealizationAmount);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_ReceiptRealizationAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_receiptAllocationType, Operators.STRING);
 		registerField("finType", listheader_ReceiptRealizationFinType, SortOrder.NONE, finType,
 				sortOperator_receiptRealizationFinType, Operators.STRING);
-		registerField("finBranch", listheader_ReceiptRealizationFinBranch, SortOrder.NONE, finBranch, sortOperator_receiptRealizationFinBranch,
-				Operators.STRING);
+		registerField("finBranch", listheader_ReceiptRealizationFinBranch, SortOrder.NONE, finBranch,
+				sortOperator_receiptRealizationFinBranch, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		this.searchObject.addWhereClause(" FinIsActive = 1 AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' "
-				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND (RecordType IS NOT NULL AND RecordType<>'' )) ) "
-				+ " AND (ReceiptMode = '"+RepayConstants.RECEIPTMODE_CHEQUE+"' OR ReceiptMode = '"+RepayConstants.RECEIPTMODE_DD+"') ");
+		this.searchObject.addWhereClause(" FinIsActive = 1 AND (ReceiptModeStatus = '"
+				+ RepayConstants.PAYSTATUS_APPROVED + "' " + " OR ( ReceiptModeStatus = '"
+				+ RepayConstants.PAYSTATUS_REALIZED + "' AND (RecordType IS NOT NULL AND RecordType<>'' )) ) "
+				+ " AND (ReceiptMode = '" + RepayConstants.RECEIPTMODE_CHEQUE + "' OR ReceiptMode = '"
+				+ RepayConstants.RECEIPTMODE_DD + "') ");
 	}
 
 	/**
@@ -187,9 +190,9 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		this.finBranch.setValue("");
 		this.sortOperator_receiptRealizationFinBranch.setSelectedIndex(0);
 		this.listBoxReceiptRealization.getItems().clear();
-		this.oldVar_sortOperator_custCIF=0;
-		this.oldVar_sortOperator_finType=0;
-		this.oldVar_sortOperator_finBranch=0;
+		this.oldVar_sortOperator_custCIF = 0;
+		this.oldVar_sortOperator_finType = 0;
+		this.oldVar_sortOperator_finBranch = 0;
 		doReset();
 		search();
 	}
@@ -235,24 +238,24 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		// If record is in Deposit Process, not allowed to do the Process on Realization
-		if(header.isDepositProcess()){
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=header.getReference();
-			errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"65034", errParm,valueParm)
-					, getUserWorkspace().getUserLanguage());
+		// If record is in Deposit Process, not allowed to do the Process on Realization
+		if (header.isDepositProcess()) {
+
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = header.getReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 			return;
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion()
-		+ " ";
+		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
 
 		if (doCheckAuthority(header, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -281,7 +284,8 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		arg.put("receiptRealizationListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -299,7 +303,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -312,7 +316,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -320,7 +324,8 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.customer.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -342,15 +347,15 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if(this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptRealizationList, "FinanceType", this.finType.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptRealizationList,
+					"FinanceType", this.finType.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finType.setValue(selectedValues);
 			}
 
-		}else{
+		} else {
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList, "FinanceType");
 			if (dataObject instanceof String) {
@@ -366,60 +371,64 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	}
 
 	/**
-	 * When user clicks on "btnSearchBranchCode" button
-	 * This method displays ExtendedSearchListBox with branch details
+	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchBranch(Event event){
-		logger.debug("Entering  "+event.toString());
+	public void onClick$btnSearchBranch(Event event) {
+		logger.debug("Entering  " + event.toString());
 
-		if(this.oldVar_sortOperator_finBranch == Filter.OP_IN || this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
+				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptRealizationList, "Branch", this.finBranch.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptRealizationList,
+					"Branch", this.finBranch.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
-		}else{
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList,"Branch");
-			if (dataObject instanceof String){
+		} else {
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList, "Branch");
+			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
-			}else{
-				Branch details= (Branch) dataObject;
+			} else {
+				Branch details = (Branch) dataObject;
 				if (details != null) {
 					this.finBranch.setValue(details.getBranchCode());
 				}
 			}
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// On Change Events for Multi-Selection Listbox's for Search operators
 
 	public void onSelect$sortOperator_receiptRealizationCustomer(Event event) {
-		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_receiptRealizationCustomer, oldVar_sortOperator_custCIF, this.customer);
+		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_receiptRealizationCustomer,
+				oldVar_sortOperator_custCIF, this.customer);
 	}
 
 	public void onSelect$sortOperator_finType(Event event) {
-		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_receiptRealizationFinType, oldVar_sortOperator_finType, this.finType);
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_receiptRealizationFinType,
+				oldVar_sortOperator_finType, this.finType);
 	}
 
 	public void onSelect$sortOperator_finBranch(Event event) {
-		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_receiptRealizationFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
+		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_receiptRealizationFinBranch,
+				oldVar_sortOperator_finBranch, this.finBranch);
 	}
 
-	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
+	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
 
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
 
-		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
-			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
+		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
+			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
 				textbox.setValue("");
 			}
-		}else{
-			if(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN){
+		} else {
+			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
 				textbox.setValue("");
 			}
 		}

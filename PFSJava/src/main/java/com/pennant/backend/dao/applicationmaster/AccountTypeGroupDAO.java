@@ -5,9 +5,9 @@ import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennanttech.pff.core.TableType;
 
 public interface AccountTypeGroupDAO extends BasicCrudDao<AccountTypeGroup> {
-	
+
 	AccountTypeGroup getAccountTypeGroupById(long id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 

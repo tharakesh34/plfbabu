@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface OtherBankFinanceTypeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	OtherBankFinanceType getOtherBankFinanceTypeById(String id);
+
 	OtherBankFinanceType getApprovedOtherBankFinanceTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

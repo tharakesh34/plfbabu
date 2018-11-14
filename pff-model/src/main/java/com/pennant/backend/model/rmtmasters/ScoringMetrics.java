@@ -58,7 +58,7 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	private long scoreGroupId = 0; //Scoring Group ID
 	private long scoringId; //Scoring Metric Id
 	private String categoryType;
-	
+
 	private String lovDescScoringGroupCode; //Scoring Group Code
 	private String lovDescScoringCode; //Scoring Metric Group Id/Rule Code
 	private String lovDescScoringCodeDesc;//Scoring Metric Group Desc/ Rule Desc
@@ -67,12 +67,12 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	private int lovDescScoreMetricSeq; // Scoring Metric Group Seq / Rule Seq order
 	private String lovDescSQLRule;
 	private BigDecimal lovDescExecutedScore; // Scoring Metric Group Seq / Rule Seq order
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private ScoringMetrics befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -93,27 +93,31 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	public long getId() {
 		return scoreGroupId;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.scoreGroupId = id;
 	}
 
 	public long getScoreGroupId() {
 		return scoreGroupId;
 	}
+
 	public void setScoreGroupId(long scoreGroupId) {
 		this.scoreGroupId = scoreGroupId;
 	}
-	
+
 	public String getLovDescScoringGroupCode() {
-    	return lovDescScoringGroupCode;
-    }
+		return lovDescScoringGroupCode;
+	}
+
 	public void setLovDescScoringGroupCode(String lovDescScoringGroupCode) {
-    	this.lovDescScoringGroupCode = lovDescScoringGroupCode;
-    }
+		this.lovDescScoringGroupCode = lovDescScoringGroupCode;
+	}
 
 	public long getScoringId() {
 		return scoringId;
 	}
+
 	public void setScoringId(long scoringId) {
 		this.scoringId = scoringId;
 	}
@@ -121,31 +125,35 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	public void setLovDescScoringCode(String lovDescScoringCode) {
 		this.lovDescScoringCode = lovDescScoringCode;
 	}
+
 	public String getLovDescScoringCode() {
 		return lovDescScoringCode;
 	}
 
 	public String getLovDescScoringCodeDesc() {
-    	return lovDescScoringCodeDesc;
-    }
+		return lovDescScoringCodeDesc;
+	}
+
 	public void setLovDescScoringCodeDesc(String lovDescScoringCodeDesc) {
-    	this.lovDescScoringCodeDesc = lovDescScoringCodeDesc;
-    }
+		this.lovDescScoringCodeDesc = lovDescScoringCodeDesc;
+	}
 
 	public int getLovDescScoreMetricSeq() {
-    	return lovDescScoreMetricSeq;
-    }
+		return lovDescScoreMetricSeq;
+	}
+
 	public void setLovDescScoreMetricSeq(int lovDescScoreMetricSeq) {
-    	this.lovDescScoreMetricSeq = lovDescScoreMetricSeq;
-    }
+		this.lovDescScoreMetricSeq = lovDescScoreMetricSeq;
+	}
 
 	public String getLovDescSQLRule() {
-    	return lovDescSQLRule;
-    }
+		return lovDescSQLRule;
+	}
+
 	public void setLovDescSQLRule(String lovDescSQLRule) {
-    	this.lovDescSQLRule = lovDescSQLRule;
-    }
-	
+		this.lovDescSQLRule = lovDescSQLRule;
+	}
+
 	public BigDecimal getLovDescExecutedScore() {
 
 		if (lovDescExecutedScore == null) {
@@ -155,34 +163,37 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	}
 
 	public void setLovDescExecutedScore(BigDecimal lovDescExecutedScore) {
-    	this.lovDescExecutedScore = lovDescExecutedScore;
-    }
+		this.lovDescExecutedScore = lovDescExecutedScore;
+	}
 
 	public String getCategoryType() {
-    	return categoryType;
-    }
+		return categoryType;
+	}
+
 	public void setCategoryType(String categoryType) {
-    	this.categoryType = categoryType;
-    }
+		this.categoryType = categoryType;
+	}
 
 	public BigDecimal getLovDescMetricMaxPoints() {
-    	return lovDescMetricMaxPoints;
-    }
+		return lovDescMetricMaxPoints;
+	}
 
 	public void setLovDescMetricMaxPoints(BigDecimal lovDescMetricMaxPoints) {
-    	this.lovDescMetricMaxPoints = lovDescMetricMaxPoints;
-    }
+		this.lovDescMetricMaxPoints = lovDescMetricMaxPoints;
+	}
 
 	public String getLovDescMetricTotPerc() {
-    	return lovDescMetricTotPerc;
-    }
+		return lovDescMetricTotPerc;
+	}
+
 	public void setLovDescMetricTotPerc(String lovDescMetricTotPerc) {
-    	this.lovDescMetricTotPerc = lovDescMetricTotPerc;
-    }
+		this.lovDescMetricTotPerc = lovDescMetricTotPerc;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -190,20 +201,23 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public ScoringMetrics getBefImage(){
+	public ScoringMetrics getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(ScoringMetrics beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ScoringMetrics beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

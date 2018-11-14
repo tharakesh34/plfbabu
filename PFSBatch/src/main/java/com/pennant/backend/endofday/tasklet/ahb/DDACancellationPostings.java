@@ -24,25 +24,20 @@ public class DDACancellationPostings implements Tasklet {
 
 	private Logger logger = Logger.getLogger(DDACancellationPostings.class);
 
+	private DDAControllerService ddaControllerService;
+	private DDAProcessService ddaProcessService;
 
-	private DDAControllerService	ddaControllerService;
-	private DDAProcessService	    ddaProcessService;
-	
-
-	private DataSource 				dataSource;
-	
+	private DataSource dataSource;
 
 	public DDACancellationPostings() {
 		super();
 	}
 
 	@Override
-	public RepeatStatus execute(StepContribution arg, ChunkContext context)
-			throws Exception {
-		Date	appDate = DateUtility.getAppDate();
+	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
+		Date appDate = DateUtility.getAppDate();
 
-		logger.debug("START: DDA Cancellation Postings for Value Date: "
-				+ appDate);
+		logger.debug("START: DDA Cancellation Postings for Value Date: " + appDate);
 
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
@@ -58,13 +53,11 @@ public class DDACancellationPostings implements Tasklet {
 			sqlStatement.setInt(2, 1);
 			sqlStatement.setBoolean(3, false);
 			sqlStatement.setString(4, "M");
-			sqlStatement.setDate(5,
-					DateUtility.getDBDate(appDate.toString()));
+			sqlStatement.setDate(5, DateUtility.getDBDate(appDate.toString()));
 
 			resultSet = sqlStatement.executeQuery();
 			resultSet.next();
-			BatchUtil.setExecution(context, "TOTAL",
-					String.valueOf(resultSet.getInt(1)));
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(resultSet.getInt(1)));
 			resultSet.close();
 			sqlStatement.close();
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
@@ -72,8 +65,7 @@ public class DDACancellationPostings implements Tasklet {
 			sqlStatement.setInt(2, 1);
 			sqlStatement.setBoolean(3, false);
 			sqlStatement.setString(4, "M");
-			sqlStatement.setDate(5,
-					DateUtility.getDBDate(appDate.toString()));
+			sqlStatement.setDate(5, DateUtility.getDBDate(appDate.toString()));
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 
@@ -101,11 +93,9 @@ public class DDACancellationPostings implements Tasklet {
 			}
 		}
 
-		logger.debug("COMPLETE: DDA Cancellation Postings for Value Date: "
-				+ appDate);
+		logger.debug("COMPLETE: DDA Cancellation Postings for Value Date: " + appDate);
 		return RepeatStatus.FINISHED;
 	}
-	
 
 	/**
 	 * Method for prepare SQL query to fetch DDA cancellation details for Matured finances
@@ -118,11 +108,11 @@ public class DDACancellationPostings implements Tasklet {
 		selQuery.append(" INNER JOIN FinPftDetails T3 ON T1.FinReference = T3.FinReference");
 		selQuery.append(" WHERE T1.DdaReferenceNo = T2.DdaReference AND T2.Purpose = ? AND T2.Active = ?");
 		selQuery.append(" AND T1.FinIsActive = ? AND T1.ClosingStatus = ? AND T3.FullPaidDate = ? ");
-		
+
 		return selQuery.toString();
 
 	}
-	
+
 	/**
 	 * Method for get total record count query
 	 * 
@@ -141,7 +131,7 @@ public class DDACancellationPostings implements Tasklet {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public DDAControllerService getDdaControllerService() {
 		return ddaControllerService;
 	}
@@ -149,7 +139,7 @@ public class DDACancellationPostings implements Tasklet {
 	public void setDdaControllerService(DDAControllerService ddaControllerService) {
 		this.ddaControllerService = ddaControllerService;
 	}
-	
+
 	public DDAProcessService getDdaProcessService() {
 		return ddaProcessService;
 	}

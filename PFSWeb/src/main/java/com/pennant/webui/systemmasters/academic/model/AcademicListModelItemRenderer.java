@@ -59,11 +59,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class AcademicListModelItemRenderer implements ListitemRenderer<Academic>, Serializable {
 
 	private static final long serialVersionUID = 3736186724610414895L;
-	
+
 	public AcademicListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Academic academic, int count) throws Exception {
 
@@ -78,9 +78,9 @@ public class AcademicListModelItemRenderer implements ListitemRenderer<Academic>
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(academic.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", academic.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onAcademicItemDoubleClicked");
 	}
 }

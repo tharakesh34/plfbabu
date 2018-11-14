@@ -92,12 +92,11 @@ public class AddSecondaryAccountDialogCtrl extends GFCBaseCtrl<SecondaryAccount>
 	private String repayAccountId;
 	List<SecondaryAccount> accounList = new ArrayList<>();
 	boolean isListModified = false;
-	
-	
+
 	/**
 	 * default constructor.<br>
 	 */
-	public AddSecondaryAccountDialogCtrl(){
+	public AddSecondaryAccountDialogCtrl() {
 		super();
 	}
 
@@ -105,7 +104,7 @@ public class AddSecondaryAccountDialogCtrl extends GFCBaseCtrl<SecondaryAccount>
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	public void onCreate$window_SecondaryAccountDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -316,8 +315,8 @@ public class AddSecondaryAccountDialogCtrl extends GFCBaseCtrl<SecondaryAccount>
 		logger.debug("Entering");
 
 		if (!this.priority.isReadonly()) {
-			this.priority.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_AddSecondaryAccountDialog_Priority.value"), true, false));
+			this.priority.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_AddSecondaryAccountDialog_Priority.value"), true, false));
 		}
 
 	}

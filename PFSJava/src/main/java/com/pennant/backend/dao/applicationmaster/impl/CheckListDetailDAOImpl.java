@@ -72,23 +72,22 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements CheckListDetailDAO {
 	private static Logger logger = Logger.getLogger(CheckListDetailDAOImpl.class);
-	
 
-	
 	public CheckListDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new CheckListDetail 
+	 * This method set the Work Flow id based on the module name and return the new CheckListDetail
+	 * 
 	 * @return CheckListDetail
 	 */
 	@Override
 	public CheckListDetail getCheckListDetail() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("CheckListDetail");
-		CheckListDetail checkListDetail= new CheckListDetail();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("CheckListDetail");
+		CheckListDetail checkListDetail = new CheckListDetail();
+		if (workFlowDetails != null) {
 			checkListDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -96,7 +95,9 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 	}
 
 	/**
-	 * This method get the module from method getCheckListDetail() and set the new record flag as true and return CheckListDetail()   
+	 * This method get the module from method getCheckListDetail() and set the new record flag as true and return
+	 * CheckListDetail()
+	 * 
 	 * @return CheckListDetail
 	 */
 	@Override
@@ -109,11 +110,12 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 	}
 
 	/**
-	 * Fetch the Record  Check List Details details by key field
+	 * Fetch the Record Check List Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CheckListDetail
 	 */
 	@Override
@@ -121,72 +123,78 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 		logger.debug("Entering");
 		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId" );
+		selectSql.append(" RecordType, WorkflowId");
 		selectSql.append(" From RMTCheckListDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
-		
-		try{
-			checkListDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CheckListDetail.class);
+
+		try {
+			checkListDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			checkListDetail = null;
 		}
 		logger.debug("Leaving");
 		return checkListDetail;
 	}
-	
+
 	/**
-	 * Fetch the Record  Check List Details details by key field
+	 * Fetch the Record Check List Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CheckListDetail
 	 */
 	@Override
 	public CheckListDetail getCheckListDetailByDocType(String docType, String finType) {
 		logger.debug("Entering");
-		MapSqlParameterSource source=new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DocType", docType);
 		source.addValue("FinType", finType);
 		source.addValue("FinRefType", FinanceConstants.PROCEDT_CHECKLIST);
-		
-		StringBuilder selectSql = new StringBuilder(" select * from RMTCheckListDetails where DocType=:DocType and CheckListId ");
-		selectSql.append(" in (select FinRefId from LMTFinRefDetail where FinRefType=:FinRefType and  FinType=:FinType )");
-		
+
+		StringBuilder selectSql = new StringBuilder(
+				" select * from RMTCheckListDetails where DocType=:DocType and CheckListId ");
+		selectSql.append(
+				" in (select FinRefId from LMTFinRefDetail where FinRefType=:FinRefType and  FinType=:FinType )");
+
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
-		
-		try{
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
-			logger.debug("Exception",e);
+		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CheckListDetail.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.debug("Exception", e);
 		}
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type) {
 		logger.debug("Entering");
 		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setCheckListId(checkListId);
-		List<CheckListDetail>  chkListDetailList;
+		List<CheckListDetail> chkListDetailList;
 
 		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
 		selectSql.append(", AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId" );
+		selectSql.append(" RecordType, WorkflowId");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
-		selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
 		}
 		selectSql.append(" From RMTCheckListDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -194,29 +202,30 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
+		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CheckListDetail.class);
 
-		try{
-			chkListDetailList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			chkListDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			chkListDetailList = null;
 		}
 		logger.debug("Leaving");
 		return chkListDetailList;
 	}
-	
+
 	public List<CheckListDetail> getCheckListDetailByChkList(final Map<String, Set<Long>> checkListIdMap, String type) {
 		logger.debug("Entering");
-		List<CheckListDetail>  chkListDetailList;
+		List<CheckListDetail> chkListDetailList;
 
 		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
 		selectSql.append(", AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId" );
+		selectSql.append(" RecordType, WorkflowId");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
-		selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
 		}
 		selectSql.append(" From RMTCheckListDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -224,28 +233,27 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource(checkListIdMap);
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckListDetail.class);
+		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CheckListDetail.class);
 
-		try{
-			chkListDetailList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			chkListDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			chkListDetailList = null;
 		}
 		logger.debug("Leaving");
 		return chkListDetailList;
 	}
-	
-	
-	
+
 	/**
-	 * This method Deletes the Record from the RMTCheckListDetails or RMTCheckListDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Check List Details by key CheckListId
+	 * This method Deletes the Record from the RMTCheckListDetails or RMTCheckListDetails_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Check List Details by key CheckListId
 	 * 
-	 * @param Check List Details (checkListDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Check
+	 *            List Details (checkListDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -253,7 +261,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 	public void delete(CheckListDetail checkListDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTCheckListDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
@@ -270,73 +278,76 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method Deletes the Record from the RMTCheckListDetail or RMTCheckListDetail_Temp.
-
+	 * 
 	 * delete Educational Expenses by key loanRefNumber
 	 * 
 	 */
-	public void delete(long checkListId,String type) {
+	public void delete(long checkListId, String type) {
 		logger.debug("Entering");
 		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setCheckListId(checkListId);
 
-		StringBuilder deleteSql =new StringBuilder();
+		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From RMTCheckListDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CheckListId =:CheckListId");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(checkListDetail.getId());
-		errParm[0]=PennantJavaUtil.getLabel("label_AnsSeqNo")+":"+valueParm[0];
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = String.valueOf(checkListDetail.getId());
+		errParm[0] = PennantJavaUtil.getLabel("label_AnsSeqNo") + ":" + valueParm[0];
 		logger.debug("DeleteSql: " + deleteSql.toString());
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into RMTCheckListDetails or RMTCheckListDetails_Temp.
 	 *
-	 * save Check List Details 
+	 * save Check List Details
 	 * 
-	 * @param Check List Details (checkListDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Check
+	 *            List Details (checkListDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CheckListDetail checkListDetail,String type) {
+	public long save(CheckListDetail checkListDetail, String type) {
 		logger.debug("Entering");
-		StringBuilder insertSql =new StringBuilder("Insert Into RMTCheckListDetails");
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTCheckListDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired, DocType, RemarksMand");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(" Values( :CheckListId, :AnsSeqNo, :AnsDesc, :AnsCond, :RemarksAllow, :DocRequired,:DocType, :RemarksMand");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
+		insertSql.append(
+				" Values( :CheckListId, :AnsSeqNo, :AnsDesc, :AnsCond, :RemarksAllow, :DocRequired,:DocType, :RemarksMand");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
 		insertSql.append(", :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return checkListDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record RMTCheckListDetails or RMTCheckListDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Check List Details by key CheckListId and Version
+	 * This method updates the Record RMTCheckListDetails or RMTCheckListDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Check List Details by key CheckListId and Version
 	 * 
-	 * @param Check List Details (checkListDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Check
+	 *            List Details (checkListDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -345,24 +356,27 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 	public void update(CheckListDetail checkListDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update RMTCheckListDetails");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update RMTCheckListDetails");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set AnsDesc = :AnsDesc, AnsCond = :AnsCond");
-		updateSql.append(", RemarksAllow = :RemarksAllow, DocRequired = :DocRequired,DocType=:DocType, RemarksMand = :RemarksMand");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
-		updateSql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		updateSql.append(
+				", RemarksAllow = :RemarksAllow, DocRequired = :DocRequired,DocType=:DocType, RemarksMand = :RemarksMand");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
+		updateSql.append(
+				", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
-		
+
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

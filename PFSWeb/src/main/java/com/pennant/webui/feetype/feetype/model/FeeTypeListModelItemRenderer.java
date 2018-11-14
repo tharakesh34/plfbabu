@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,9 +66,9 @@ public class FeeTypeListModelItemRenderer implements ListitemRenderer<FeeType>, 
 	public void render(Listitem item, FeeType feeType, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(feeType.getFeeTypeCode());
+		lc = new Listcell(feeType.getFeeTypeCode());
 		lc.setParent(item);
-	  	lc = new Listcell(feeType.getFeeTypeDesc());
+		lc = new Listcell(feeType.getFeeTypeDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		Checkbox checkbox = new Checkbox();
@@ -77,13 +76,13 @@ public class FeeTypeListModelItemRenderer implements ListitemRenderer<FeeType>, 
 		checkbox.setDisabled(true);
 		checkbox.setParent(lc);
 		lc.setParent(item);
-	  	lc = new Listcell(feeType.getRecordStatus());
+		lc = new Listcell(feeType.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(feeType.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", feeType.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onFeeTypeItemDoubleClicked");
 	}
 }

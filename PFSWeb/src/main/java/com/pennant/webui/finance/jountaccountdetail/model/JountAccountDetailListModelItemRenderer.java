@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -63,18 +62,18 @@ public class JountAccountDetailListModelItemRenderer implements ListitemRenderer
 	private static final long serialVersionUID = 1L;
 
 	public JountAccountDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, JointAccountDetail jountAccountDetail, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(jountAccountDetail.getCustCIF()+"-"+jountAccountDetail.getLovDescCIFName());
+		lc = new Listcell(jountAccountDetail.getCustCIF() + "-" + jountAccountDetail.getLovDescCIFName());
 		lc.setParent(item);
-	  	lc = new Listcell(jountAccountDetail.getRepayAccountId());
+		lc = new Listcell(jountAccountDetail.getRepayAccountId());
 		lc.setParent(item);
-	  	lc = new Listcell(jountAccountDetail.getRecordStatus());
+		lc = new Listcell(jountAccountDetail.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(jountAccountDetail.getRecordType()));
 		lc.setParent(item);

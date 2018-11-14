@@ -10,18 +10,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AddOrRemoveHold implements Serializable {
 
 	private static final long serialVersionUID = -5637756045210123456L;
-	
+
 	private String referenceNum;
 	private String branchCode;
 	private String returnCode;
 	private String returnText;
 	private long timeStamp;
 	private List<AccountDetail> accountDetail;
-	
+
 	public AddOrRemoveHold() {
-		
+
 	}
-	
+
 	@XmlElement(name = "ReferenceNum")
 	public String getReferenceNum() {
 		return referenceNum;
@@ -57,7 +57,7 @@ public class AddOrRemoveHold implements Serializable {
 	public void setReturnText(String returnText) {
 		this.returnText = returnText;
 	}
-	
+
 	@XmlElement(name = "TimeStamp")
 	public long getTimeStamp() {
 		return timeStamp;
@@ -66,7 +66,7 @@ public class AddOrRemoveHold implements Serializable {
 	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
-	
+
 	@XmlElement(name = "AccountDetails")
 	public List<AccountDetail> getAccountDetail() {
 		return accountDetail;

@@ -66,30 +66,29 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PinCode</code> with set of CRUD operations.
  */
 public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
-	private static Logger	logger	= Logger.getLogger(PinCodeDAOImpl.class);
-
-	
+	private static Logger logger = Logger.getLogger(PinCodeDAOImpl.class);
 
 	public PinCodeDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public PinCode getPinCode(long pinCodeId,String type) {
+	public PinCode getPinCode(long pinCodeId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" pinCodeId, pinCode, city, areaName, active, groupId,serviceable,");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(",pCCityName");
 		}
 		sql.append(" From PinCodes");
 		sql.append(type);
 		sql.append(" Where pinCodeId = :pinCodeId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -108,10 +107,10 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 
 		logger.debug(Literal.LEAVING);
 		return pinCode;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long pinCodeId,String pinCode, TableType tableType) {
+	public boolean isDuplicateKey(long pinCodeId, String pinCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -135,7 +134,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("pinCodeId", pinCodeId);
 		paramSource.addValue("pinCode", pinCode);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -146,24 +145,26 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(PinCode pinCode,TableType tableType) {
+	public String save(PinCode pinCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into PinCodes");
+		StringBuilder sql = new StringBuilder(" insert into PinCodes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (pinCodeId, pinCode, city, areaName, active,groupId,serviceable, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :pinCodeId, :pinCode, :city, :areaName, :active, :groupId,:serviceable,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		if (pinCode.getPinCodeId() <= 0) {
 			pinCode.setPinCodeId(getNextId("SeqPinCodes"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
@@ -176,25 +177,26 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(pinCode.getPinCodeId());
-	}	
+	}
 
 	@Override
-	public void update(PinCode pinCode,TableType tableType) {
+	public void update(PinCode pinCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update PinCodes" );
+		StringBuilder sql = new StringBuilder("update PinCodes");
 		sql.append(tableType.getSuffix());
-		sql.append("  set pinCode = :pinCode, city = :city, areaName= :areaName, active = :active,groupId=:groupId,serviceable=:serviceable, ");
+		sql.append(
+				"  set pinCode = :pinCode, city = :city, areaName= :areaName, active = :active,groupId=:groupId,serviceable=:serviceable, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where pinCodeId = :pinCodeId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -202,7 +204,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -235,20 +237,19 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	@Override
 	public boolean isCityCodeExists(String pcCity) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("City", pcCity);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(City)");
 		selectSql.append(" From PinCodes_View ");
 		selectSql.append(" Where City=:City");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		
+		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
@@ -261,11 +262,12 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" pinCodeId, pinCode, city, areaName, active,groupId, serviceable,");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append("pCCountry,pCProvince,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PinCodes");
 		sql.append(type);
 
@@ -290,5 +292,5 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		logger.debug(Literal.LEAVING);
 		return pinCode;
 	}
-	
-}	
+
+}

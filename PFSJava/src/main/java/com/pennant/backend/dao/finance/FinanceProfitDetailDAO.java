@@ -91,6 +91,7 @@ public interface FinanceProfitDetailDAO {
 	FinanceProfitDetail getFinProfitDetailsForSummary(String finReference);
 
 	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
+
 	FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference, boolean isActive);
 
 	void updateEOD(FinanceProfitDetail finProfitDetails, boolean posted, boolean monthend);
@@ -102,14 +103,14 @@ public interface FinanceProfitDetailDAO {
 	void updateTDDetailsEOD(Date valueDate);
 
 	void updateReceivableDetailsEOD(Date valueDate);
-	
+
 	void updateBounceDetailsEOD(Date valueDate);
 
 	int getCurOddays(String finReference, String type);
-	
+
 	boolean isSuspenseFinance(String finReference);
-	
+
 	BigDecimal getTotalCustomerExposre(long custId);
-	
+
 	BigDecimal getTotalCoApplicantsExposre(String finReferece);
 }

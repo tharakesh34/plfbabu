@@ -45,25 +45,22 @@ import com.pennant.backend.ws.dao.APIChannelDAO;
 import com.pennant.ws.exception.APIException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-public class APIChannelServiceImpl  extends GenericService<APIChannel> implements APIChannelService {
+public class APIChannelServiceImpl extends GenericService<APIChannel> implements APIChannelService {
 	private static final Logger logger = Logger.getLogger(APIChannelServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private APIChannelDAO apiChannelDAO;
 	private Set<String> excludeFields;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * ChannelDetails/ChannelDetails_Temp by using ChannelDetailsDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ChannelDetailsDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtChannelDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * ChannelDetails/ChannelDetails_Temp by using ChannelDetailsDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using ChannelDetailsDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader 
+	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
@@ -71,29 +68,30 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		APIChannel apiChannel = (APIChannel) auditHeader.getAuditDetail().getModelData();
 
 		if (apiChannel.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (apiChannel.isNew()) {
-			apiChannel.setId(apiChannelDAO.save(apiChannel,tableType));
+			apiChannel.setId(apiChannelDAO.save(apiChannel, tableType));
 			auditHeader.getAuditDetail().setModelData(apiChannel);
 			auditHeader.setAuditReference(String.valueOf(apiChannel.getId()));
-		}else{
-			apiChannelDAO.update(apiChannel,tableType);
+		} else {
+			apiChannelDAO.update(apiChannel, tableType);
 		}
 
 		//Retrieving List of Audit Details For ChannelAuthDetails  related modules
-		if(auditHeader.getAuditDetails()!=null && !auditHeader.getAuditDetails().isEmpty()){
-			auditHeader.setAuditDetails(processingChannelAuthDetailsList(auditHeader.getAuditDetails(),tableType,apiChannel));
+		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+			auditHeader.setAuditDetails(
+					processingChannelAuthDetailsList(auditHeader.getAuditDetails(), tableType, apiChannel));
 		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -102,12 +100,10 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table ChannelDetails by using ChannelDetailsDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtChannelDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * ChannelDetails by using ChannelDetailsDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -117,24 +113,23 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		auditHeader = businessValidation(auditHeader,"delete");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "delete");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		APIChannel apiChannel = (APIChannel) auditHeader.getAuditDetail().getModelData();
-		apiChannelDAO.deleteChannelAuthDetails(apiChannel.getId(),"");
+		apiChannelDAO.deleteChannelAuthDetails(apiChannel.getId(), "");
 		apiChannelDAO.deleteChannelDetails(apiChannel, "");
-		auditHeader=resetAuditDetails(auditHeader, apiChannel, auditHeader.getAuditTranType());
+		auditHeader = resetAuditDetails(auditHeader, apiChannel, auditHeader.getAuditTranType());
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
 	/**
-	 * getChannelDetailsById fetch the details by using ChannelDetailsDAO's getChannelDetailsById
-	 * method.
+	 * getChannelDetailsById fetch the details by using ChannelDetailsDAO's getChannelDetailsById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -144,27 +139,23 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	 */
 
 	public APIChannel getChannelDetailsById(long id) {
-		APIChannel apiChannel = apiChannelDAO.getChannelDetailsById(id,"_View");
-		if(apiChannel!=null){
+		APIChannel apiChannel = apiChannelDAO.getChannelDetailsById(id, "_View");
+		if (apiChannel != null) {
 			apiChannel.setIpList(apiChannelDAO.getChannelAuthDetailsByChannelId(apiChannel.getId(), "_View"));
 		}
 		return apiChannel;
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getChannelDetailsDAO().delete with parameters ChannelDetails,"" b) NEW Add new
-	 * record in to main table by using getChannelDetailsDAO().save with parameters
-	 * ChannelDetails,"" c) EDIT Update record in the main table by using
-	 * getChannelDetailsDAO().update with parameters ChannelDetails,"" 3) Delete the record
-	 * from the workFlow table by using getChannelDetailsDAO().delete with parameters
-	 * ChannelDetails,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtChannelDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getChannelDetailsDAO().delete with
+	 * parameters ChannelDetails,"" b) NEW Add new record in to main table by using getChannelDetailsDAO().save with
+	 * parameters ChannelDetails,"" c) EDIT Update record in the main table by using getChannelDetailsDAO().update with
+	 * parameters ChannelDetails,"" 3) Delete the record from the workFlow table by using getChannelDetailsDAO().delete
+	 * with parameters ChannelDetails,"_Temp" 4) Audit the record in to AuditHeader and AdtChannelDetails by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtChannelDetails by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -173,19 +164,19 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		String tranType="";		
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		if (!auditHeader.isNextProcess()){
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		List<AuditDetail> auditDetails= auditHeader.getAuditDetails();
+		List<AuditDetail> auditDetails = auditHeader.getAuditDetails();
 		APIChannel apiChannel = new APIChannel(0);
 		BeanUtils.copyProperties((APIChannel) auditHeader.getAuditDetail().getModelData(), apiChannel);
 
 		if (apiChannel.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 			delete(auditHeader);
 		} else {
 			apiChannel.setRoleCode("");
@@ -195,23 +186,22 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 			apiChannel.setWorkflowId(0);
 
 			if (apiChannel.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				apiChannel.setRecordType("");
-				apiChannelDAO.save(apiChannel,"");
+				apiChannelDAO.save(apiChannel, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				apiChannel.setRecordType("");
-				apiChannelDAO.update(apiChannel,"");
+				apiChannelDAO.update(apiChannel, "");
 			}
 			//Retrieving List of Audit Details For utilityDetail  related modules
-			if(auditHeader.getAuditDetails()!=null && !auditHeader.getAuditDetails().isEmpty()){
-				auditDetails = processingChannelAuthDetailsList(auditHeader.getAuditDetails(),"",apiChannel);
+			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+				auditDetails = processingChannelAuthDetailsList(auditHeader.getAuditDetails(), "", apiChannel);
 			}
-
 
 		}
 		apiChannelDAO.deleteChannelAuthDetails(apiChannel.getId(), "_Temp");
-		apiChannelDAO.deleteChannelDetails(apiChannel,"_Temp");
+		apiChannelDAO.deleteChannelDetails(apiChannel, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		auditHeader.setAuditDetails(auditDetails);
@@ -226,29 +216,26 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getChannelDetailsDAO().delete with parameters
-	 * ChannelDetails,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getChannelDetailsDAO().delete with parameters ChannelDetails,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		APIChannel apiChannel = (APIChannel) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		apiChannelDAO.deleteChannelAuthDetails(apiChannel.getId(),"_Temp");
+		apiChannelDAO.deleteChannelAuthDetails(apiChannel.getId(), "_Temp");
 		apiChannelDAO.deleteChannelDetails(apiChannel, "_Temp");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -256,10 +243,8 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -267,28 +252,27 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		APIChannel aChannelDetails = (APIChannel) auditHeader.getAuditDetail().getModelData();
 		excludeFields = aChannelDetails.getExcludeFields();
 
-		if(auditHeader.getAuditDetails()!=null && !auditHeader.getAuditDetails().isEmpty()){
+		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			for (AuditDetail detail : auditHeader.getAuditDetails()) {
-				auditHeader.setErrorList(detail.getErrorDetails());	
+				auditHeader.setErrorList(detail.getErrorDetails());
 			}
 		}
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getChannelDetailsDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getChannelDetailsDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -297,37 +281,39 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering ");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		APIChannel apiChannel = (APIChannel) auditDetail.getModelData();
 		APIChannel tempChannelDetails = null;
 		if (apiChannel.isWorkflow()) {
-			tempChannelDetails = apiChannelDAO.getChannelDetailsById(apiChannel.getId(),"_Temp");
+			tempChannelDetails = apiChannelDAO.getChannelDetailsById(apiChannel.getId(), "_Temp");
 		}
 		APIChannel befChannelDetails = apiChannelDAO.getChannelDetailsById(apiChannel.getId(), "");
 		APIChannel oldChannelDetails = apiChannel.getBefImage();
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=apiChannel.getCode();
-		errParm[0]=PennantJavaUtil.getLabel("label_ChannelDetailsDialog_ChannelDetailsCode.value")+":"+valueParm[0];
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = apiChannel.getCode();
+		errParm[0] = PennantJavaUtil.getLabel("label_ChannelDetailsDialog_ChannelDetailsCode.value") + ":"
+				+ valueParm[0];
 
 		if (apiChannel.isNew()) { // for New record or new record into work flow
 
 			if (!apiChannel.isWorkflow()) {// With out Work flow only new records
 				if (befChannelDetails != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41014",errParm,valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (apiChannel.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befChannelDetails != null || tempChannelDetails != null) { // if records already exists in the
-																					// main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm,
-								valueParm));
+																						// main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, valueParm));
 					}
 				} else {
 					if (befChannelDetails == null || tempChannelDetails != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -337,35 +323,44 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 			if (!apiChannel.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befChannelDetails == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,valueParm));
-				}else{
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
 
-					if (oldChannelDetails != null && !oldChannelDetails.getLastMntOn().equals(befChannelDetails.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,valueParm));
+					if (oldChannelDetails != null
+							&& !oldChannelDetails.getLastMntOn().equals(befChannelDetails.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempChannelDetails == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				if (tempChannelDetails != null && oldChannelDetails != null && !oldChannelDetails.getLastMntOn().equals(tempChannelDetails.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,valueParm));
+				if (tempChannelDetails != null && oldChannelDetails != null
+						&& !oldChannelDetails.getLastMntOn().equals(tempChannelDetails.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
+
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !apiChannel.isWorkflow()) {
-		
+
 			auditDetail.setBefImage(befChannelDetails);
-			
+
 			if (apiChannel.getIpList() != null && !apiChannel.getIpList().isEmpty()) {
 				for (APIChannelIP channelIP : apiChannel.getIpList()) {
-					channelIP.setBefImage(apiChannelDAO.getChannelIpDetail( channelIP.getChannelId(), channelIP.getId()));
+					channelIP
+							.setBefImage(apiChannelDAO.getChannelIpDetail(channelIP.getChannelId(), channelIP.getId()));
 				}
 			}
 		}
@@ -375,84 +370,90 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 
 	/**
 	 * Common Method for Retrieving AuditDetails List
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private AuditHeader getAuditDetails(AuditHeader auditHeader,String method){
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
 
 		APIChannel apiChannel = (APIChannel) auditHeader.getAuditDetail().getModelData();
-		String auditTranType="";
+		String auditTranType = "";
 
-		if("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method) ){
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (apiChannel.isWorkflow()) {
-				auditTranType= PennantConstants.TRAN_WF;
+				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		if (apiChannel.getIpList() != null && apiChannel.getIpList().size() > 0){
-			auditHeader.setAuditDetails(setChannelAuthDetailsAuditData(apiChannel,auditTranType,method));
+		if (apiChannel.getIpList() != null && apiChannel.getIpList().size() > 0) {
+			auditHeader.setAuditDetails(setChannelAuthDetailsAuditData(apiChannel, auditTranType, method));
 		}
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
 	 * @param APIChannel
 	 * @param auditTranType
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setChannelAuthDetailsAuditData(APIChannel apiChannel,String auditTranType,String method) {
+	private List<AuditDetail> setChannelAuthDetailsAuditData(APIChannel apiChannel, String auditTranType,
+			String method) {
 		logger.debug("Entering ");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		boolean delete=false;
+		boolean delete = false;
 
-		if ((PennantConstants.RECORD_TYPE_DEL.equals(apiChannel.getRecordType()) && "doApprove".equalsIgnoreCase(method)) || "delete".equals(method)) {
-			delete=true;
+		if ((PennantConstants.RECORD_TYPE_DEL.equals(apiChannel.getRecordType())
+				&& "doApprove".equalsIgnoreCase(method)) || "delete".equals(method)) {
+			delete = true;
 		}
 		for (int i = 0; i < apiChannel.getIpList().size(); i++) {
-			APIChannelIP aPIChannelIP  = apiChannel.getIpList().get(i);
+			APIChannelIP aPIChannelIP = apiChannel.getIpList().get(i);
 			aPIChannelIP.setWorkflowId(apiChannel.getWorkflowId());
-			excludeFields= aPIChannelIP.getExcludeFields();
-			String[] fields = PennantJavaUtil.getFieldDetails(new APIChannelIP(),excludeFields);
+			excludeFields = aPIChannelIP.getExcludeFields();
+			String[] fields = PennantJavaUtil.getFieldDetails(new APIChannelIP(), excludeFields);
 
-			boolean isRcdType= false;
+			boolean isRcdType = false;
 
-			if(delete){
+			if (delete) {
 				aPIChannelIP.setRecordType(PennantConstants.RECORD_TYPE_MDEL);
-			}else{
+			} else {
 				if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					aPIChannelIP.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					isRcdType=true;
-				}else if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					isRcdType = true;
+				} else if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					aPIChannelIP.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					isRcdType=true;
-				}else if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					isRcdType = true;
+				} else if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					aPIChannelIP.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					isRcdType=true;
+					isRcdType = true;
 				}
 			}
-			if("saveOrUpdate".equals(method) && (isRcdType && aPIChannelIP.isWorkflow())){
+			if ("saveOrUpdate".equals(method) && (isRcdType && aPIChannelIP.isWorkflow())) {
 				aPIChannelIP.setNewRecord(true);
 			}
 
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
+					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 						|| aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 			aPIChannelIP.setRecordStatus(apiChannel.getRecordStatus());
 			aPIChannelIP.setUserDetails(apiChannel.getUserDetails());
 			aPIChannelIP.setLastMntOn(apiChannel.getLastMntOn());
 			aPIChannelIP.setLastMntBy(apiChannel.getLastMntBy());
-			if(StringUtils.isNotEmpty(aPIChannelIP.getRecordType())){
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],  aPIChannelIP.getBefImage(), aPIChannelIP));
+			if (StringUtils.isNotEmpty(aPIChannelIP.getRecordType())) {
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], aPIChannelIP.getBefImage(),
+						aPIChannelIP));
 			}
 		}
 		logger.debug("Leaving ");
@@ -461,36 +462,38 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 
 	/**
 	 * Method For Preparing List of AuditDetails for utilityDetail
+	 * 
 	 * @param auditDetails
 	 * @param type
 	 * @param beneficiaryId
 	 * @return
 	 */
-	private List<AuditDetail> processingChannelAuthDetailsList(List<AuditDetail> auditDetails, String type, APIChannel apiChannel) {
+	private List<AuditDetail> processingChannelAuthDetailsList(List<AuditDetail> auditDetails, String type,
+			APIChannel apiChannel) {
 		logger.debug("Entering ");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
-		boolean approveRec=false;
+		boolean approveRec = false;
 
 		for (AuditDetail auditDetail : auditDetails) {
 			APIChannelIP aPIChannelIP = (APIChannelIP) auditDetail.getModelData();
 			saveRecord = false;
 			updateRecord = false;
-			deleteRecord = false;                                                                                                      
-			approveRec=false;
+			deleteRecord = false;
+			approveRec = false;
 			String rcdType = "";
 			String recordStatus = "";
 
 			aPIChannelIP.setChannelId(apiChannel.getId());
 			if (StringUtils.isEmpty(type)) {
-				aPIChannelIP.setVersion(aPIChannelIP.getVersion()+1);
-				approveRec=true;
+				aPIChannelIP.setVersion(aPIChannelIP.getVersion() + 1);
+				approveRec = true;
 			}
 
 			if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (aPIChannelIP.isNewRecord() || aPIChannelIP.getId()==Long.MIN_VALUE) {
+			} else if (aPIChannelIP.isNewRecord() || aPIChannelIP.getId() == Long.MIN_VALUE) {
 				saveRecord = true;
 				if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					aPIChannelIP.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -517,8 +520,8 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 				}
 			}
 			if (StringUtils.isEmpty(type)) {
-				aPIChannelIP.setVersion(aPIChannelIP.getVersion()+1);
-				approveRec=true;
+				aPIChannelIP.setVersion(aPIChannelIP.getVersion() + 1);
+				approveRec = true;
 				aPIChannelIP.setRoleCode("");
 				aPIChannelIP.setNextRoleCode("");
 				aPIChannelIP.setTaskId("");
@@ -526,7 +529,7 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 				aPIChannelIP.setRecordType("");
 				aPIChannelIP.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
-			}else{
+			} else {
 				aPIChannelIP.setRoleCode(apiChannel.getRoleCode());
 				aPIChannelIP.setNextRoleCode(apiChannel.getNextRoleCode());
 				aPIChannelIP.setTaskId(apiChannel.getTaskId());
@@ -563,17 +566,17 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader resetAuditDetails(AuditHeader auditHeader, APIChannel aPIChannel,String tranType){
+	private AuditHeader resetAuditDetails(AuditHeader auditHeader, APIChannel aPIChannel, String tranType) {
 		logger.debug("Entering :");
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(aPIChannel);
 
-		if(auditHeader.getAuditDetails()!=null && !auditHeader.getAuditDetails().isEmpty()){
-			List<AuditDetail> auditDetails= new ArrayList<AuditDetail>();
+		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 			for (AuditDetail detail : auditHeader.getAuditDetails()) {
-				APIChannelIP authenticationDetails=(APIChannelIP) detail.getModelData(); 
+				APIChannelIP authenticationDetails = (APIChannelIP) detail.getModelData();
 				detail.setAuditTranType(tranType);
 				authenticationDetails.setRecordType("");
 				authenticationDetails.setRoleCode("");
@@ -588,12 +591,12 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 		}
 		logger.debug("Leaving :");
 		return auditHeader;
-	} 
-
+	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
-	}	
+	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -607,13 +610,13 @@ public class APIChannelServiceImpl  extends GenericService<APIChannel> implement
 	public APIChannel getNewChannelDetails() {
 		return apiChannelDAO.getNewChannelDetails();
 	}
-	
+
 	public void setApiChannelDAO(APIChannelDAO apiChannelDAO) {
 		this.apiChannelDAO = apiChannelDAO;
 	}
 
 	@Override
-	public long getChannelId(String channelId, String channelIp) throws APIException{
+	public long getChannelId(String channelId, String channelIp) throws APIException {
 		return apiChannelDAO.getChannelId(channelId, channelIp);
 	}
 }

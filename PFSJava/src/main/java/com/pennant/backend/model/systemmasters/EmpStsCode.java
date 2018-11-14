@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class EmpStsCode extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 5510099428934198554L;
-	
+
 	private String empStsCode;
 	private String empStsDesc;
 	private boolean empStsIsActive;
@@ -80,31 +80,35 @@ public class EmpStsCode extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return empStsCode;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.empStsCode = id;
 	}
-	
+
 	public String getEmpStsCode() {
 		return empStsCode;
 	}
+
 	public void setEmpStsCode(String empStsCode) {
 		this.empStsCode = empStsCode;
 	}
-	
+
 	public String getEmpStsDesc() {
 		return empStsDesc;
 	}
+
 	public void setEmpStsDesc(String empStsDesc) {
 		this.empStsDesc = empStsDesc;
 	}
-	
+
 	public boolean isEmpStsIsActive() {
 		return empStsIsActive;
 	}
+
 	public void setEmpStsIsActive(boolean empStsIsActive) {
 		this.empStsIsActive = empStsIsActive;
 	}
@@ -112,31 +116,35 @@ public class EmpStsCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public EmpStsCode getBefImage(){
+	public EmpStsCode getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(EmpStsCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(EmpStsCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

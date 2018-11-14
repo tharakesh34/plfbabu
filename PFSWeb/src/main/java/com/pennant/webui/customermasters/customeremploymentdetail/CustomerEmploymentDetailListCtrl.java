@@ -62,9 +62,9 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.webui.customermasters.customeremploymentdetail.model.CustomerEmploymentDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail
@@ -145,8 +145,8 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 				sortOperator_custEmpDesg, Operators.STRING);
 		registerField("lovDescCustEmpDeptName", listheader_CustEmpDept, SortOrder.NONE, custEmpDept,
 				sortOperator_custEmpDept, Operators.STRING);
-		registerField("lovDescCustEmpTypeName", listheader_CustEmpID, SortOrder.NONE, custEmpID,
-				sortOperator_custEmpID, Operators.STRING);
+		registerField("lovDescCustEmpTypeName", listheader_CustEmpID, SortOrder.NONE, custEmpID, sortOperator_custEmpID,
+				Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -209,8 +209,8 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-		
-			long custEmpId=(long) item.getAttribute("custEmpId");
+
+			long custEmpId = (long) item.getAttribute("custEmpId");
 			final CustomerEmploymentDetail customerEmploymentDetail = customerEmploymentDetailService
 					.getCustomerEmploymentDetailByCustEmpId(custEmpId);
 

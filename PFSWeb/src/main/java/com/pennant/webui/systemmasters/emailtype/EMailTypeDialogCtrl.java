@@ -74,34 +74,30 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/EMailType/EMailTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/EMailType/EMailTypeDialog.zul file.
  */
 public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	private static final long serialVersionUID = 9178689186745872648L;
 	private static final Logger logger = Logger.getLogger(EMailTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_EMailTypeDialog; 	// autoWired
+	protected Window window_EMailTypeDialog; // autoWired
 
-	protected Textbox	emailTypeCode; 			// autoWired
-	protected Textbox 	emailTypeDesc; 			// autoWired
-	protected Intbox 	emailTypePriority; 		// autoWired
-	protected Checkbox 	emailTypeIsActive; 		// autoWired
-	protected Row		row_EmailTypePriority;
-
-	
+	protected Textbox emailTypeCode; // autoWired
+	protected Textbox emailTypeDesc; // autoWired
+	protected Intbox emailTypePriority; // autoWired
+	protected Checkbox emailTypeIsActive; // autoWired
+	protected Row row_EmailTypePriority;
 
 	// not autoWired variables
-	private EMailType eMailType; 			// overHanded per parameter
+	private EMailType eMailType; // overHanded per parameter
 	private transient EMailTypeListCtrl eMailTypeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient EMailTypeService eMailTypeService;
 
@@ -120,9 +116,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected EMailType object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected EMailType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -133,8 +128,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		// Set the page level components.
 		setPageComponents(window_EMailTypeDialog);
 
-		try{
-			
+		try {
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -148,15 +143,12 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 				setEMailType(null);
 			}
 
-			doLoadWorkFlow(this.eMailType.isWorkflow(),
-					this.eMailType.getWorkflowId(),
-					this.eMailType.getNextTaskId());
+			doLoadWorkFlow(this.eMailType.isWorkflow(), this.eMailType.getWorkflowId(), this.eMailType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"EMailTypeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "EMailTypeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -166,8 +158,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 			// or
 			// delete eMailType here.
 			if (arguments.containsKey("eMailTypeListCtrl")) {
-				setEMailTypeListCtrl((EMailTypeListCtrl) arguments
-						.get("eMailTypeListCtrl"));
+				setEMailTypeListCtrl((EMailTypeListCtrl) arguments.get("eMailTypeListCtrl"));
 			} else {
 				setEMailTypeListCtrl(null);
 			}
@@ -195,19 +186,18 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
+
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		}
+	}
 
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -321,8 +311,9 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		}
 		this.emailTypeIsActive.setChecked(aEMailType.isEmailTypeIsActive());
 		this.recordStatus.setValue(aEMailType.getRecordStatus());
-		
-		if(aEMailType.isNew() || (aEMailType.getRecordType() != null ? aEMailType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aEMailType.isNew() || (aEMailType.getRecordType() != null ? aEMailType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.emailTypeIsActive.setChecked(true);
 			this.emailTypeIsActive.setDisabled(true);
 		}
@@ -384,8 +375,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEMailType
 	 * @throws Exception
@@ -433,18 +423,21 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.emailTypeCode.isReadonly()){
-			this.emailTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EMailTypeDialog_EmailTypeCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.emailTypeCode.isReadonly()) {
+			this.emailTypeCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EMailTypeDialog_EmailTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.emailTypeDesc.isReadonly()){
-			this.emailTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EMailTypeDialog_EmailTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.emailTypeDesc.isReadonly()) {
+			this.emailTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EMailTypeDialog_EmailTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.emailTypePriority.isReadonly()) {
-			this.emailTypePriority.setConstraint(new PTNumberValidator(Labels.getLabel("label_EMailTypeDialog_EmailTypePriority.value"),
-					true, false));
+			this.emailTypePriority.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EMailTypeDialog_EmailTypePriority.value"), true, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -500,9 +493,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				Labels.getLabel("label_EMailTypeDialog_EmailTypeCode.value")+" : "+aEMailType.getEmailTypeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_EMailTypeDialog_EmailTypeCode.value") + " : " + aEMailType.getEmailTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aEMailType.getRecordType())) {
 				aEMailType.setVersion(aEMailType.getVersion() + 1);
@@ -797,8 +789,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_EMailTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -843,8 +835,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	 */
 	private AuditHeader getAuditHeader(EMailType aEMailType, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aEMailType.getBefImage(), aEMailType);
-		return new AuditHeader(String.valueOf(aEMailType.getId()), null, null,
-				null, auditDetail, aEMailType.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aEMailType.getId()), null, null, null, auditDetail,
+				aEMailType.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -884,7 +876,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	private void refreshList() {
 		getEMailTypeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.eMailType.getEmailTypeCode());
@@ -897,6 +889,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -904,6 +897,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	public EMailType getEMailType() {
 		return this.eMailType;
 	}
+
 	public void setEMailType(EMailType eMailType) {
 		this.eMailType = eMailType;
 	}
@@ -911,6 +905,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	public void setEMailTypeService(EMailTypeService eMailTypeService) {
 		this.eMailTypeService = eMailTypeService;
 	}
+
 	public EMailTypeService getEMailTypeService() {
 		return this.eMailTypeService;
 	}
@@ -918,6 +913,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	public void setEMailTypeListCtrl(EMailTypeListCtrl eMailTypeListCtrl) {
 		this.eMailTypeListCtrl = eMailTypeListCtrl;
 	}
+
 	public EMailTypeListCtrl getEMailTypeListCtrl() {
 		return this.eMailTypeListCtrl;
 	}

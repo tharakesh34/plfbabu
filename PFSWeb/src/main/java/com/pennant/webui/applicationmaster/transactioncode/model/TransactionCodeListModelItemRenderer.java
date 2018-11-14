@@ -76,8 +76,8 @@ public class TransactionCodeListModelItemRenderer implements ListitemRenderer<Tr
 		lc.setParent(item);
 		lc = new Listcell(transactionCode.getTranDesc());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionCode.getTranType(),
-				PennantStaticListUtil.getTranTypeBoth()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(transactionCode.getTranType(), PennantStaticListUtil.getTranTypeBoth()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbTranIsActive = new Checkbox();

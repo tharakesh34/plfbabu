@@ -33,7 +33,7 @@ public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess 
 
 		HandlingInstruction handlInstResponse = null;
 		try {
-			handlInstResponse = getHandlingInstructionProcess().sendHandlingInstruction(handlingInstruction, 
+			handlInstResponse = getHandlingInstructionProcess().sendHandlingInstruction(handlingInstruction,
 					InterfaceMasterConfigUtil.FINANCE_MAINTENANCE);
 		} catch (JaxenException jax) {
 			logger.error("Exception: ", jax);
@@ -52,8 +52,7 @@ public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess 
 		return handlingInstructionProcess;
 	}
 
-	public void setHandlingInstructionProcess(
-			HandlingInstructionProcess handlingInstructionProcess) {
+	public void setHandlingInstructionProcess(HandlingInstructionProcess handlingInstructionProcess) {
 		this.handlingInstructionProcess = handlingInstructionProcess;
 	}
 

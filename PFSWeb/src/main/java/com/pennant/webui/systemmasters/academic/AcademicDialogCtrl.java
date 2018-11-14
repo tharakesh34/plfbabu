@@ -55,7 +55,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	private transient AcademicListCtrl academicListCtrl;
 
 	private transient boolean validationOn;
-	
+
 	private transient AcademicService academicService;
 
 	/**
@@ -104,7 +104,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-			} 
+			}
 
 			doSetFieldProperties();
 			doCheckRights();
@@ -122,13 +122,13 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.academicLevel.setMaxlength(8);
 		this.academicDecipline.setMaxlength(8);
 		this.academicDesc.setMaxlength(50);
 
 		setStatusDetails();
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -137,9 +137,9 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AcademicDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AcademicDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AcademicDialog_btnDelete"));
@@ -315,11 +315,11 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 				btnCancel.setVisible(false);
 			}
 		}
-		
+
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
-		
+
 		// fill the components with the data
 		doWriteBeanToComponents(academic);
 		setDialog(DialogType.EMBEDDED);
@@ -336,20 +336,20 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		setValidationOn(true);
 
 		if (!this.academicLevel.isReadonly()) {
-			this.academicLevel.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AcademicDialog_AcademicLevel.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
-					true));
+			this.academicLevel
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_AcademicDialog_AcademicLevel.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
 		if (!this.academicDecipline.isReadonly()) {
-			this.academicDecipline.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AcademicDialog_AcademicDecipline.value"),
-					PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+			this.academicDecipline.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AcademicDialog_AcademicDecipline.value"),
+							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
 		}
 		if (!this.academicDesc.isReadonly()) {
-			this.academicDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AcademicDialog_AcademicDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION,
-					true));
+			this.academicDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_AcademicDialog_AcademicDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -395,7 +395,6 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Deletes a Academic entity from database.<br>
 	 * 
@@ -675,7 +674,6 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		AuditHeader aAuditHeader = auditHeader;
 		Academic aAcademic = (Academic) aAuditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-		
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
@@ -703,8 +701,8 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 						}
 
 					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AcademicDialog, aAuditHeader);
 						return processCompleted;
 					}
@@ -772,7 +770,6 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		return String.valueOf(this.academic.getAcademicID());
 	}
 
-
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -780,7 +777,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
-	
+
 	public void setAcademicService(AcademicService academicService) {
 		this.academicService = academicService;
 	}

@@ -2,7 +2,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -18,10 +17,9 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class InsuranceTypeProviderDAOImpl extends BasicDao<InsuranceTypeProvider>
-		implements InsuranceTypeProviderDAO {
+public class InsuranceTypeProviderDAOImpl extends BasicDao<InsuranceTypeProvider> implements InsuranceTypeProviderDAO {
 	private static Logger logger = Logger.getLogger(InsuranceTypeProviderDAOImpl.class);
-	
+
 	public InsuranceTypeProviderDAOImpl() {
 		super();
 	}
@@ -71,7 +69,8 @@ public class InsuranceTypeProviderDAOImpl extends BasicDao<InsuranceTypeProvider
 	 * @return FinanceType
 	 */
 	@Override
-	public InsuranceTypeProvider getInsuranceTypeProviderByID(InsuranceTypeProvider insuranceTypeProvider, String type) {
+	public InsuranceTypeProvider getInsuranceTypeProviderByID(InsuranceTypeProvider insuranceTypeProvider,
+			String type) {
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder("SELECT InsuranceType,ProviderCode, ");
@@ -91,8 +90,8 @@ public class InsuranceTypeProviderDAOImpl extends BasicDao<InsuranceTypeProvider
 				.newInstance(InsuranceTypeProvider.class);
 
 		try {
-			insuranceTypeProvider = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			insuranceTypeProvider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			insuranceTypeProvider = null;

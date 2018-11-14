@@ -52,32 +52,32 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */          
+	 */
 	protected Window window_BlacklistCustomerDialog; // autoWired
 
-	protected Textbox 				custCIF; // autoWired
-	protected Datebox 				custDOB; // autoWired
-	protected Textbox 				custFName; // autoWired
-	protected Textbox 				custLName; // autoWired
-	protected Textbox 				custSName; // autoWired
-	protected Textbox 				custEID; // autoWired
-	protected Textbox 				custAadhar; // autoWired
-	protected Textbox 				custCin; // autoWired
+	protected Textbox custCIF; // autoWired
+	protected Datebox custDOB; // autoWired
+	protected Textbox custFName; // autoWired
+	protected Textbox custLName; // autoWired
+	protected Textbox custSName; // autoWired
+	protected Textbox custEID; // autoWired
+	protected Textbox custAadhar; // autoWired
+	protected Textbox custCin; // autoWired
 	//protected Textbox 				custPassport; // autoWired
 	//protected Textbox 				custMobileNum; // autoWired
 	//protected Textbox				phoneCountryCode; // autoWired						
 	//protected Textbox				phoneAreaCode;	// autoWired									
-	protected Textbox				custMobileNum;		// autoWired								
-	protected ExtendedCombobox		employer; // autoWired
-	protected ExtendedCombobox 		custNationality;
-	protected Checkbox              custIsActive; 
-	protected Combobox              custCtgType; 
-	protected Space	                space_CustSName;
-	protected Space	                space_CustFName;
-	protected Space	                space_CustLName;
-	protected Space	                space_CustCin;
-	protected Label                 label_BlacklistCustomerDialog_CustDOB;
-	
+	protected Textbox custMobileNum; // autoWired								
+	protected ExtendedCombobox employer; // autoWired
+	protected ExtendedCombobox custNationality;
+	protected Checkbox custIsActive;
+	protected Combobox custCtgType;
+	protected Space space_CustSName;
+	protected Space space_CustFName;
+	protected Space space_CustLName;
+	protected Space space_CustCin;
+	protected Label label_BlacklistCustomerDialog_CustDOB;
+
 	private transient boolean validationOn;
 	private boolean isRetailCustomer = false;
 	private boolean isCorp = false;
@@ -105,9 +105,8 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Currency object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Currency object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -121,8 +120,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		try {
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("blackListCustomer")) {
-				this.blacklistCustomer = (BlackListCustomers) arguments
-						.get("blackListCustomer");
+				this.blacklistCustomer = (BlackListCustomers) arguments.get("blackListCustomer");
 				BlackListCustomers befImage = new BlackListCustomers();
 				BeanUtils.copyProperties(this.blacklistCustomer, befImage);
 				this.blacklistCustomer.setBefImage(befImage);
@@ -132,16 +130,15 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 				setBlacklistCustomer(null);
 			}
 
-			doLoadWorkFlow(this.blacklistCustomer.isWorkflow(),
-					this.blacklistCustomer.getWorkflowId(),
+			doLoadWorkFlow(this.blacklistCustomer.isWorkflow(), this.blacklistCustomer.getWorkflowId(),
 					this.blacklistCustomer.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
-			}else{
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
-			}	
+			}
 
 			// READ OVERHANDED parameters !
 			// we get the currencyListWindow controller. So we have access
@@ -149,8 +146,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			// or
 			// delete currency here.
 			if (arguments.containsKey("blacklistCustomerListCtrl")) {
-				setBlacklistCustomerListCtrl((BlacklistCustomerListCtrl) arguments
-						.get("blacklistCustomerListCtrl"));
+				setBlacklistCustomerListCtrl((BlacklistCustomerListCtrl) arguments.get("blacklistCustomerListCtrl"));
 			} else {
 				setBlacklistCustomerListCtrl(null);
 			}
@@ -180,10 +176,10 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setMaxlength(50);
 		this.custLName.setMaxlength(50);
 		this.custEID.setMaxlength(20);
-	//	this.custPassport.setMaxlength(20);
+		//	this.custPassport.setMaxlength(20);
 		this.custMobileNum.setMaxlength(10);
 		this.custAadhar.setMaxlength(14);
-		
+
 		// Employer ExtendedCombobox
 		this.employer.setInputAllowed(true);
 		this.employer.setModuleName("EmployerDetail");
@@ -191,7 +187,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.employer.setDescColumn("EmpName");
 		this.employer.setValidateColumns(new String[] { "EmpIndustry" });
 		this.employer.setMaxlength(8);
-		
+
 		// custNationality ExtendedCombobox
 		this.custNationality.setInputAllowed(true);
 		this.custNationality.setMaxlength(3);
@@ -212,25 +208,19 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_blacklistCustomerList_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_BlacklistCustomerDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_BlacklistCustomerDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_BlacklistCustomerDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_blacklistCustomerList_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BlacklistCustomerDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BlacklistCustomerDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BlacklistCustomerDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
 	}
-	
-	
+
 	public void onChange$custCtgType(Event event) {
 		doRemoveValidation();
 		doClearMessage();
@@ -246,7 +236,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.employer.getButton().setDisabled(true);
 		this.employer.setValue("");
 		this.employer.setDescription("");
-	    this.custSName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustSName"));
+		this.custSName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustSName"));
 		this.custFName.setValue("");
 		this.space_CustSName.setSclass("mandatory");
 		this.custCin.setReadonly(isReadOnly("BlacklistCustomerDialog_CustCin"));
@@ -256,10 +246,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custLName.setValue("");
 		this.space_CustLName.setSclass("");
 		this.custAadhar.setReadonly(true);
-		isRetailCustomer= false;
+		isRetailCustomer = false;
 		isCorp = true;
 		this.space_CustCin.setSclass("mandatory");
-		label_BlacklistCustomerDialog_CustDOB.setValue(Labels.getLabel("label_BlacklistCustomerDialog_CustIncorp.value"));
+		label_BlacklistCustomerDialog_CustDOB
+				.setValue(Labels.getLabel("label_BlacklistCustomerDialog_CustIncorp.value"));
 	}
 
 	private void setValuesForRetailCust() {
@@ -268,7 +259,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.space_CustSName.setSclass("");
 		this.custCin.setValue("");
 		this.custCin.setReadonly(true);
- 		this.employer.setReadonly(isReadOnly("BlacklistCustomerDialog_Employer"));
+		this.employer.setReadonly(isReadOnly("BlacklistCustomerDialog_Employer"));
 		this.employer.getButton().setDisabled(false);
 		this.custFName.setReadonly(isReadOnly("BlacklistCustomerDialog_CustFName"));
 		this.space_CustFName.setSclass("mandatory");
@@ -276,7 +267,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.space_CustLName.setSclass("mandatory");
 		this.space_CustCin.setSclass("");
 		this.custAadhar.setReadonly(isReadOnly("BlacklistCustomerDialog_CustAadhaar"));
-		isRetailCustomer= true;
+		isRetailCustomer = true;
 		label_BlacklistCustomerDialog_CustDOB.setValue(Labels.getLabel("label_BlacklistCustomerDialog_CustDOB.value"));
 	}
 
@@ -371,15 +362,15 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 */
 	public void doWriteBeanToComponents(BlackListCustomers aBlackListCustomers) {
 		logger.debug("Entering ");
-		
+
 		this.custCIF.setValue(aBlackListCustomers.getCustCIF());
 		this.custDOB.setValue(aBlackListCustomers.getCustDOB());
 		this.custFName.setValue(aBlackListCustomers.getCustFName());
-		fillComboBox(this.custCtgType,aBlackListCustomers.getCustCtgCode(),custCtgCodeList,"");
-		
-		if("RETAIL".equals(this.custCtgType.getValue())){
+		fillComboBox(this.custCtgType, aBlackListCustomers.getCustCtgCode(), custCtgCodeList, "");
+
+		if ("RETAIL".equals(this.custCtgType.getValue())) {
 			setValuesForRetailCust();
-		} else if("CORPORATE".equals(this.custCtgType.getValue())) {
+		} else if ("CORPORATE".equals(this.custCtgType.getValue())) {
 			setValuesForCorpCust();
 		}
 
@@ -400,11 +391,10 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custIsActive.setChecked(aBlackListCustomers.isCustIsActive());
 
 		if (aBlackListCustomers.isNew()
-				|| (aBlackListCustomers.getRecordType() != null ? aBlackListCustomers
-						.getRecordType() : "")
+				|| (aBlackListCustomers.getRecordType() != null ? aBlackListCustomers.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
-				this.custIsActive.setChecked(true);
-				this.custIsActive.setDisabled(true);
+			this.custIsActive.setChecked(true);
+			this.custIsActive.setDisabled(true);
 		}
 		logger.debug("Leaving ");
 	}
@@ -434,33 +424,31 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			finBlacklistCust.setCustLName(this.custLName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			finBlacklistCust.setCustCompName(this.custSName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		try {
 			finBlacklistCust.setCustCRCPR((this.custEID.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			finBlacklistCust.setCustAadhaar((PennantApplicationUtil.unFormatEIDNumber(this.custAadhar.getValue())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		try {
 			finBlacklistCust.setCustCtgCode((this.custCtgType.getSelectedItem().getValue().toString()));
 		} catch (WrongValueException we) {
@@ -478,14 +466,12 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			wve.add(we);
 		}
 		try {
-			finBlacklistCust.setCustNationality(this.custNationality
-					.getValidatedValue());
+			finBlacklistCust.setCustNationality(this.custNationality.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			finBlacklistCust.setLovDescNationalityDesc(this.custNationality
-					.getDescription());
+			finBlacklistCust.setLovDescNationalityDesc(this.custNationality.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -497,8 +483,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			wve.add(we);
 		}
 		try {
-			finBlacklistCust.setLovDescEmpName(this.employer
-					.getDescription());
+			finBlacklistCust.setLovDescEmpName(this.employer.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -522,28 +507,27 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		logger.debug("Leaving ");
 	}
 
-	public void onChange$custEID(Event event){
+	public void onChange$custEID(Event event) {
 		logger.debug("Entering");
 		this.custEID.setValue(PennantApplicationUtil.formatEIDNumber(this.custEID.getValue()));
 		logger.debug("Leaving");
 	}
-	
-	public void onChange$custAadhar(Event event){
+
+	public void onChange$custAadhar(Event event) {
 		logger.debug("Entering");
 		this.custAadhar.setValue(PennantApplicationUtil.formatEIDNumber(this.custAadhar.getValue()));
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCurrency
 	 * @throws Exception
 	 */
-	public void doShowDialog(BlackListCustomers aFinBlacklistCust)
-			throws Exception {
+	public void doShowDialog(BlackListCustomers aFinBlacklistCust) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -590,15 +574,16 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		setValidationOn(true);
 
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BlacklistCustomerDialog_CustCIF.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.custCIF
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustCIF.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.custDOB.isReadonly()) {
-			this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustDOB.value"), false, startDate, appStartDate, false));
+			this.custDOB
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustDOB.value"),
+							false, startDate, appStartDate, false));
 		}
-		
-		
+
 		if (isRetailCustomer) {
 			if (!this.custFName.isReadonly()) {
 				this.custFName.setConstraint(
@@ -627,7 +612,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustSName.value"),
 								PennantRegularExpressions.REGEX_NAME, true));
 			}
-           
+
 			if (isCorp) {
 				if (!this.custCin.isReadonly()) {
 					this.custCin.setConstraint(
@@ -637,38 +622,38 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			}
 
 		}
-		
+
 		if (!this.custEID.isReadonly()) {
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-				this.custEID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
-						PennantRegularExpressions.REGEX_PASSPORT, false));
-			}else{
-				this.custEID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER, false));
+				this.custEID.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
+								PennantRegularExpressions.REGEX_PASSPORT, false));
+			} else {
+				this.custEID.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
+								PennantRegularExpressions.REGEX_PANNUMBER, false));
 			}
-			
-		}
-		
-		if (!this.custCtgType.isDisabled()) {
-			this.custCtgType.setConstraint(new StaticListValidator(custCtgCodeList, Labels
-					.getLabel("label_BlacklistCustomerDialog_CustCtgType.value")));
+
 		}
 
-		
+		if (!this.custCtgType.isDisabled()) {
+			this.custCtgType.setConstraint(new StaticListValidator(custCtgCodeList,
+					Labels.getLabel("label_BlacklistCustomerDialog_CustCtgType.value")));
+		}
+
 		if (!this.custMobileNum.isReadonly()) {
-			this.custMobileNum.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false));
+			this.custMobileNum.setConstraint(new PTMobileNumberValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false));
 		}
 		if (!this.custNationality.isReadonly()) {
-			this.custNationality.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BlacklistCustomerDialog_CustNationality.value"),
-					PennantRegularExpressions.REGEX_ALPHA, false));
+			this.custNationality.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_CustNationality.value"),
+							PennantRegularExpressions.REGEX_ALPHA, false));
 		}
 		if (!this.employer.isReadonly()) {
-			this.employer.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BlacklistCustomerDialog_Employer.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, false));
+			this.employer.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BlacklistCustomerDialog_Employer.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		logger.debug("Leaving ");
 	}
@@ -678,7 +663,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering ");
-		
+
 		setValidationOn(false);
 		this.custCIF.setConstraint("");
 		this.custDOB.setConstraint("");
@@ -690,13 +675,12 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.employer.setConstraint("");
 		this.custSName.setConstraint("");
 		this.custCin.setConstraint("");
-		
+
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
-	 * Removes the Validation by setting the accordingly constraints to the
-	 * LOVfields.
+	 * Removes the Validation by setting the accordingly constraints to the LOVfields.
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
@@ -709,7 +693,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Enterring");
-		
+
 		this.custCIF.setErrorMessage("");
 		this.custDOB.setErrorMessage("");
 		this.custFName.setErrorMessage("");
@@ -744,8 +728,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_BlacklistCustomerDialog_CustCIF.value")+" : "+aBlackListCustomers.getCustCIF();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BlacklistCustomerDialog_CustCIF.value") + " : "
+				+ aBlackListCustomers.getCustCIF();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aBlackListCustomers.getRecordType())) {
 				aBlackListCustomers.setVersion(aBlackListCustomers.getVersion() + 1);
@@ -764,7 +749,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 					refreshList();
 					closeDialog();
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -776,7 +761,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
-		
+
 		if (getBlacklistCustomer().isNewRecord()) {
 			this.custCIF.setReadonly(false);
 			this.btnCancel.setVisible(false);
@@ -819,7 +804,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering ");
-		
+
 		this.custCIF.setReadonly(true);
 		this.custDOB.setDisabled(true);
 		this.custFName.setReadonly(true);
@@ -859,7 +844,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custNationality.setValue("");
 		this.employer.setValue("");
 		this.custIsActive.setChecked(false);
-		
+
 		logger.debug("Leaving ");
 	}
 
@@ -935,7 +920,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 */
 	private boolean doProcess(BlackListCustomers aFinBlacklistCust, String tranType) {
 		logger.debug("Entering ");
-		
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -998,7 +983,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aFinBlacklistCust,	PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aFinBlacklistCust, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
@@ -1032,8 +1017,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getBlacklistCustomerService().delete(auditHeader);
 
 						deleteNotes = true;
@@ -1041,31 +1025,27 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 						auditHeader = getBlacklistCustomerService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getBlacklistCustomerService().doApprove(auditHeader);
 
 						if (aFinBlklistCust.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getBlacklistCustomerService().doReject(auditHeader);
 						if (aFinBlklistCust.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),
-								null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BlacklistCustomerDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_BlacklistCustomerDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_BlacklistCustomerDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -1100,10 +1080,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(BlackListCustomers aBlackListCustomers, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aBlackListCustomers.getBefImage(), aBlackListCustomers);
-		return new AuditHeader(String.valueOf(aBlackListCustomers.getId()), null, null,
-				null, auditDetail, aBlackListCustomers.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBlackListCustomers.getBefImage(), aBlackListCustomers);
+		return new AuditHeader(String.valueOf(aBlackListCustomers.getId()), null, null, null, auditDetail,
+				aBlackListCustomers.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1117,10 +1096,8 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_BlacklistCustomerDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_BlacklistCustomerDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1138,12 +1115,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.blacklistCustomer);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.blacklistCustomer.getCustCIF());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1157,7 +1133,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.validationOn = validationOn;
 	}
 
-
 	public BlackListCustomers getBlacklistCustomer() {
 		return blacklistCustomer;
 	}
@@ -1170,8 +1145,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		return blacklistCustomerListCtrl;
 	}
 
-	public void setBlacklistCustomerListCtrl(
-			BlacklistCustomerListCtrl blacklistCustomerListCtrl) {
+	public void setBlacklistCustomerListCtrl(BlacklistCustomerListCtrl blacklistCustomerListCtrl) {
 		this.blacklistCustomerListCtrl = blacklistCustomerListCtrl;
 	}
 
@@ -1179,8 +1153,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		return blacklistCustomerService;
 	}
 
-	public void setBlacklistCustomerService(
-			BlacklistCustomerService blacklistCustomerService) {
+	public void setBlacklistCustomerService(BlacklistCustomerService blacklistCustomerService) {
 		this.blacklistCustomerService = blacklistCustomerService;
 	}
 

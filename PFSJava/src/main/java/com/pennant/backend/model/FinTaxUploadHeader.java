@@ -15,28 +15,28 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity {
-	private static final long			serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long						batchReference;
-	private String						fileName;
-	private long						numberofRecords;
-	private Date						batchCreatedDate;
-	private Date						batchApprovedDate;
-	private boolean						newRecord			= false;
-	private String						status;
-	private FinTaxUploadHeader          befImage; 
-	private LoggedInUser				userDetails;
-	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
-	private List<FinTaxUploadDetail>	finTaxUploadDetailList;
-	private boolean                     totalSelected;
+	private long batchReference;
+	private String fileName;
+	private long numberofRecords;
+	private Date batchCreatedDate;
+	private Date batchApprovedDate;
+	private boolean newRecord = false;
+	private String status;
+	private FinTaxUploadHeader befImage;
+	private LoggedInUser userDetails;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private List<FinTaxUploadDetail> finTaxUploadDetailList;
+	private boolean totalSelected;
 
-	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("totalSelected");
-		
+
 		return excludeFields;
 	}
+
 	// Getter and Setter methods
 	public long getId() {
 		return batchReference;

@@ -51,24 +51,24 @@ import org.zkoss.zk.ui.util.DesktopCleanup;
 
 import com.pennant.app.util.SessionUtil;
 
-public class UserDesktopCleanup  implements DesktopCleanup{
+public class UserDesktopCleanup implements DesktopCleanup {
 	private static final Logger logger = Logger.getLogger(UserDesktopCleanup.class);
-	
+
 	public UserDesktopCleanup() {
-		
+
 	}
-	
+
 	@Override
 	public void cleanup(Desktop arg0) throws Exception {
 		logger.debug("Entering");
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		if("/pages/index.zul".equals(arg0.getRequestPath())){
+		if ("/pages/index.zul".equals(arg0.getRequestPath())) {
 			//WebAuthenticationDetails details = (WebAuthenticationDetails)currentUser.getDetails();
 			//Set DeskTop Active is false because Session is Active but index.zul is not in open 
 			//SessionUtil.getActiveDeskTopsMap().put(currentUser.getName()+"-"+details.getSessionId(), false);
 			SessionUtil.getActiveDeskTopsMap().put(currentUser.getName(), false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 }

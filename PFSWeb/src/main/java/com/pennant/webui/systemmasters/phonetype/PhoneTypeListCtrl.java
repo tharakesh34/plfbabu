@@ -65,9 +65,9 @@ import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.systemmasters.PhoneTypeService;
 import com.pennant.webui.systemmasters.phonetype.model.PhoneTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/PhoneType/PhoneTypeList.zul file.
@@ -89,7 +89,7 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> {
 	protected Textbox phoneTypeDesc;
 	protected Intbox phoneTypePriority;
 	protected Checkbox phoneTypeIsActive;
-	protected Row	   row_PhoneTypePriority;
+	protected Row row_PhoneTypePriority;
 
 	protected Listbox sortOperator_phoneTypeDesc;
 	protected Listbox sortOperator_phoneTypeCode;

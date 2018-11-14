@@ -52,13 +52,21 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 public interface ManualAdviseService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ManualAdvise getManualAdviseById(long adviseID);
+
 	ManualAdvise getApprovedManualAdvise(long adviseID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<ManualAdviseMovements> getAdivseMovements(long id);
+
 	FinanceMain getFinanceDetails(String finReference);
+
 	String getTaxComponent(Long adviseID, String type);
-	
+
 }

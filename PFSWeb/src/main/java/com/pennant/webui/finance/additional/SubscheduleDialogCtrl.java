@@ -73,29 +73,29 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
-	private static final long			serialVersionUID	= -4863495235148249386L;
-	private static final Logger			logger				= Logger.getLogger(SubscheduleDialogCtrl.class);
+	private static final long serialVersionUID = -4863495235148249386L;
+	private static final Logger logger = Logger.getLogger(SubscheduleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_SubScheduleDialog;
-	protected Datebox					firstDate;
-	protected FrequencyBox				termFrq;
-	protected Intbox					numOfTerms;
-	protected Row						firstDateRow;
-	protected Row						numOfTermsRow;
-	protected Row						frqRow;
+	protected Window window_SubScheduleDialog;
+	protected Datebox firstDate;
+	protected FrequencyBox termFrq;
+	protected Intbox numOfTerms;
+	protected Row firstDateRow;
+	protected Row numOfTermsRow;
+	protected Row frqRow;
 
 	// not auto wired vars
-	private FinScheduleData				finScheduleData;														// overhanded per param
-	private FinanceScheduleDetail		financeScheduleDetail;													// overhanded per param
-	private ScheduleDetailDialogCtrl	scheduleDetailDialogCtrl;
+	private FinScheduleData finScheduleData; // overhanded per param
+	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
-	private transient boolean			validationOn;
+	private transient boolean validationOn;
 
 	/**
 	 * default constructor.<br>
@@ -218,16 +218,12 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		try {
-			Date newSchdDate = DateUtility.getDate(DateUtility.formatUtilDate(this.firstDate.getValue(),
-					PennantConstants.dateFormat));
+			Date newSchdDate = DateUtility
+					.getDate(DateUtility.formatUtilDate(this.firstDate.getValue(), PennantConstants.dateFormat));
 			if (newSchdDate.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) <= 0) {
-				throw new WrongValueException(this.firstDate,
-						Labels.getLabel(
-								"DATE_ALLOWED_AFTER",
-								new String[] {
-										Labels.getLabel("label_SubScheduleDialog_firstDate.value"),
-										DateUtility.formatToShortDate(getFinScheduleData().getFinanceMain()
-												.getMaturityDate()) }));
+				throw new WrongValueException(this.firstDate, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] {
+						Labels.getLabel("label_SubScheduleDialog_firstDate.value"),
+						DateUtility.formatToShortDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 			}
 
 		} catch (WrongValueException we) {
@@ -273,12 +269,11 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.numOfTerms.isVisible()) {
-			this.numOfTerms.setConstraint(new PTNumberValidator(Labels.getLabel("label_SubScheduleDialog_Terms.value"),
-					true, false));
+			this.numOfTerms.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_SubScheduleDialog_Terms.value"), true, false));
 		}
-		this.firstDate.setConstraint("NO EMPTY:"
-				+ Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_SubScheduleDialog_firstDate.value") }));
+		this.firstDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+				new String[] { Labels.getLabel("label_SubScheduleDialog_firstDate.value") }));
 		logger.debug("Leaving");
 	}
 
@@ -316,7 +311,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -357,8 +352,8 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				if ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(
-						BigDecimal.ZERO) > 0))
+				if ((curSchd.isRepayOnSchDate()
+						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
 						&& !curSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_MATURITY)) {
 					comboitem = new Comboitem();
 					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));

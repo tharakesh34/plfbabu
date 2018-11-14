@@ -14,7 +14,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
-public class BulkRateChangeListModelItemRenderer implements ListitemRenderer<BulkRateChangeHeader>, Serializable{
+public class BulkRateChangeListModelItemRenderer implements ListitemRenderer<BulkRateChangeHeader>, Serializable {
 
 	private static final long serialVersionUID = 5574543684897936853L;
 
@@ -34,10 +34,11 @@ public class BulkRateChangeListModelItemRenderer implements ListitemRenderer<Bul
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(bulkRateChangeHeader.getToDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantApplicationUtil.formatRate(bulkRateChangeHeader.getRateChange().doubleValue(), 
+		lc = new Listcell(PennantApplicationUtil.formatRate(bulkRateChangeHeader.getRateChange().doubleValue(),
 				PennantConstants.rateFormate));
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(bulkRateChangeHeader.getReCalType(), PennantStaticListUtil.getSchCalCodes()));
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(bulkRateChangeHeader.getReCalType(),
+				PennantStaticListUtil.getSchCalCodes()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(bulkRateChangeHeader.getLastMntOn()));
 		lc.setParent(item);

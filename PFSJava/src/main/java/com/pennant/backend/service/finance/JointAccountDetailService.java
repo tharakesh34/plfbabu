@@ -55,32 +55,56 @@ import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 
 public interface JointAccountDetailService {
-	
+
 	JointAccountDetail getJountAccountDetail();
+
 	JointAccountDetail getNewJountAccountDetail();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	JointAccountDetail getJountAccountDetailById(long id);
+
 	JointAccountDetail getApprovedJountAccountDetailById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	List<JointAccountDetail> getJoinAccountDetail(String finReference, String tableType);
+
 	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jountAccountDetail);
+
 	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jountAccountDetail);
+
 	List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jountAccountDetail);
+
 	FinanceExposure getExposureSummaryDetail(List<FinanceExposure> exposerList);
+
 	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+
 	BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail);
+
 	List<AuditDetail> saveOrUpdate(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
-	List<AuditDetail> doApprove(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType, String finSourceId);
-	List<AuditDetail> validate(List<JointAccountDetail> jointAcDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
+
+	List<AuditDetail> doApprove(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType,
+			String finSourceId);
+
+	List<AuditDetail> validate(List<JointAccountDetail> jointAcDetailList, long workflowId, String method,
+			String auditTranType, String usrLanguage);
+
 	List<AuditDetail> delete(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
+
 	List<CustomerIncome> getJointAccountIncomeList(long custID);
+
 	List<FinanceExposure> getJointExposureList(List<String> listCIF);
+
 	List<CustomerExtLiability> getJointExtLiabilityByCustomer(long custID);
+
 	List<FinanceEnquiry> getJointCustFinanceExposureByCustomer(long custID);
 
 	//10-Jul-2018 BUG FIX related to TktNo:127415
-	List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType, String auditTranType);
+	List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType,
+			String auditTranType);
 }

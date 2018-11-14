@@ -17,19 +17,34 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface ReceiptService {
 
-	FinReceiptData getFinReceiptDataById(String finReference, String eventCode,String procEdtEvent, String userRole);
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReversal(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException, Exception;
+	FinReceiptData getFinReceiptDataById(String finReference, String eventCode, String procEdtEvent, String userRole);
+
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doReversal(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doApprove(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException, Exception;
+
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment, String type);
+
 	FinReceiptData calculateRepayments(FinReceiptData finReceiptData, boolean isPresentment);
-	FinReceiptData recalEarlypaySchdl(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction, String purpose, BigDecimal partPaidAmt) 
-			throws IllegalAccessException, 
-	InvocationTargetException, InterfaceException;
+
+	FinReceiptData recalEarlypaySchdl(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction,
+			String purpose, BigDecimal partPaidAmt)
+			throws IllegalAccessException, InvocationTargetException, InterfaceException;
+
 	List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal totReceiptAmount,
 			Date valueDate, List<FinanceRepayments> repayments, boolean resetReq);
+
 	Date getMaxReceiptDate(String finReference);
+
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction, String method);
+
 	boolean isReceiptsPending(String finreference);
 }

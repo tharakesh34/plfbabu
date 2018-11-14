@@ -6,175 +6,175 @@ import java.util.Date;
 
 public class FinanceProfitDetail implements Serializable {
 
-	private static final long	serialVersionUID	= 6601637251967752181L;
+	private static final long serialVersionUID = 6601637251967752181L;
 
-	private String				finReference;
-	private long				custId				= Long.MIN_VALUE;
-	private String				finBranch;
-	private String				finType;
-	private Date				lastMdfDate;
-	private BigDecimal			totalPftSchd		= BigDecimal.ZERO;
-	private BigDecimal			totalPftCpz			= BigDecimal.ZERO;
-	private BigDecimal			totalPftPaid		= BigDecimal.ZERO;
-	private BigDecimal			totalPftBal			= BigDecimal.ZERO;
-	private BigDecimal			totalPftPaidInAdv	= BigDecimal.ZERO;
-	private BigDecimal			totalAdvPftSchd		= BigDecimal.ZERO;		//New Field 
-	private BigDecimal			totalRbtSchd		= BigDecimal.ZERO;		//New Field 
-	private BigDecimal			totalpriSchd		= BigDecimal.ZERO;
-	private BigDecimal			totalPriPaid		= BigDecimal.ZERO;
-	private BigDecimal			totalPriPaidInAdv	= BigDecimal.ZERO;		//New Field 
-	private BigDecimal			totalPriBal			= BigDecimal.ZERO;
+	private String finReference;
+	private long custId = Long.MIN_VALUE;
+	private String finBranch;
+	private String finType;
+	private Date lastMdfDate;
+	private BigDecimal totalPftSchd = BigDecimal.ZERO;
+	private BigDecimal totalPftCpz = BigDecimal.ZERO;
+	private BigDecimal totalPftPaid = BigDecimal.ZERO;
+	private BigDecimal totalPftBal = BigDecimal.ZERO;
+	private BigDecimal totalPftPaidInAdv = BigDecimal.ZERO;
+	private BigDecimal totalAdvPftSchd = BigDecimal.ZERO; //New Field 
+	private BigDecimal totalRbtSchd = BigDecimal.ZERO; //New Field 
+	private BigDecimal totalpriSchd = BigDecimal.ZERO;
+	private BigDecimal totalPriPaid = BigDecimal.ZERO;
+	private BigDecimal totalPriPaidInAdv = BigDecimal.ZERO; //New Field 
+	private BigDecimal totalPriBal = BigDecimal.ZERO;
 	//	Till date
-	private BigDecimal			tdSchdPft			= BigDecimal.ZERO;
-	private BigDecimal			tdPftCpz			= BigDecimal.ZERO;
-	private BigDecimal			tdSchdPftPaid		= BigDecimal.ZERO;
-	private BigDecimal			tdSchdPftBal		= BigDecimal.ZERO;
-	private BigDecimal			tdSchdAdvPft		= BigDecimal.ZERO;		//New Field 
-	private BigDecimal			tdSchdRbt			= BigDecimal.ZERO;		//New Field
-	private BigDecimal			pftAmz				= BigDecimal.ZERO;
-	private BigDecimal			pftAmzNormal		= BigDecimal.ZERO;		//New Field 
-	private BigDecimal			pftAmzPD			= BigDecimal.ZERO;		//New Field 
-	private BigDecimal			pftAmzSusp			= BigDecimal.ZERO;
-	private BigDecimal			tdSchdPri			= BigDecimal.ZERO;
-	private BigDecimal			tdSchdPriPaid		= BigDecimal.ZERO;
-	private BigDecimal			tdSchdPriBal		= BigDecimal.ZERO;
+	private BigDecimal tdSchdPft = BigDecimal.ZERO;
+	private BigDecimal tdPftCpz = BigDecimal.ZERO;
+	private BigDecimal tdSchdPftPaid = BigDecimal.ZERO;
+	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;
+	private BigDecimal tdSchdAdvPft = BigDecimal.ZERO; //New Field 
+	private BigDecimal tdSchdRbt = BigDecimal.ZERO; //New Field
+	private BigDecimal pftAmz = BigDecimal.ZERO;
+	private BigDecimal pftAmzNormal = BigDecimal.ZERO; //New Field 
+	private BigDecimal pftAmzPD = BigDecimal.ZERO; //New Field 
+	private BigDecimal pftAmzSusp = BigDecimal.ZERO;
+	private BigDecimal tdSchdPri = BigDecimal.ZERO;
+	private BigDecimal tdSchdPriPaid = BigDecimal.ZERO;
+	private BigDecimal tdSchdPriBal = BigDecimal.ZERO;
 	//After posting
-	private BigDecimal			amzTillLBD			= BigDecimal.ZERO;
-	private BigDecimal			lpiTillLBD			= BigDecimal.ZERO;
-	private BigDecimal			gstLpiTillLBD		= BigDecimal.ZERO;
-	private BigDecimal			lppTillLBD			= BigDecimal.ZERO;
-	private BigDecimal			gstLppTillLBD		= BigDecimal.ZERO;
-	private BigDecimal			amzTillLBDNormal	= BigDecimal.ZERO;		//new
-	private BigDecimal			amzTillLBDPD		= BigDecimal.ZERO;		//new
-	private BigDecimal			amzTillLBDPIS		= BigDecimal.ZERO;		//new
+	private BigDecimal amzTillLBD = BigDecimal.ZERO;
+	private BigDecimal lpiTillLBD = BigDecimal.ZERO;
+	private BigDecimal gstLpiTillLBD = BigDecimal.ZERO;
+	private BigDecimal lppTillLBD = BigDecimal.ZERO;
+	private BigDecimal gstLppTillLBD = BigDecimal.ZERO;
+	private BigDecimal amzTillLBDNormal = BigDecimal.ZERO; //new
+	private BigDecimal amzTillLBDPD = BigDecimal.ZERO; //new
+	private BigDecimal amzTillLBDPIS = BigDecimal.ZERO; //new
 
 	// others
-	private String				RepayFrq;
-	private String				CustCIF;
-	private String				FinCcy;
-	private String				FinPurpose;
-	private Date				FinContractDate;
-	private Date				FinApprovedDate;
-	private Date				FinStartDate;
-	private Date				MaturityDate;
-	private Date				FullPaidDate;
-	private BigDecimal			FinAmount			= BigDecimal.ZERO;
-	private BigDecimal			DownPayment			= BigDecimal.ZERO;
-	private BigDecimal			advanceEMI			= BigDecimal.ZERO;
-	private BigDecimal			CurReducingRate		= BigDecimal.ZERO;
-	private BigDecimal			curFlatRate			= BigDecimal.ZERO;
-	private BigDecimal			ODPrincipal			= BigDecimal.ZERO;
-	private BigDecimal			ODProfit			= BigDecimal.ZERO;
-	private BigDecimal			PenaltyPaid			= BigDecimal.ZERO;
-	private BigDecimal			PenaltyDue			= BigDecimal.ZERO;
-	private BigDecimal			PenaltyWaived		= BigDecimal.ZERO;
+	private String RepayFrq;
+	private String CustCIF;
+	private String FinCcy;
+	private String FinPurpose;
+	private Date FinContractDate;
+	private Date FinApprovedDate;
+	private Date FinStartDate;
+	private Date MaturityDate;
+	private Date FullPaidDate;
+	private BigDecimal FinAmount = BigDecimal.ZERO;
+	private BigDecimal DownPayment = BigDecimal.ZERO;
+	private BigDecimal advanceEMI = BigDecimal.ZERO;
+	private BigDecimal CurReducingRate = BigDecimal.ZERO;
+	private BigDecimal curFlatRate = BigDecimal.ZERO;
+	private BigDecimal ODPrincipal = BigDecimal.ZERO;
+	private BigDecimal ODProfit = BigDecimal.ZERO;
+	private BigDecimal PenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal PenaltyDue = BigDecimal.ZERO;
+	private BigDecimal PenaltyWaived = BigDecimal.ZERO;
 
-	private Date				NSchdDate;
-	private BigDecimal			NSchdPri			= BigDecimal.ZERO;
-	private BigDecimal			NSchdPft			= BigDecimal.ZERO;
-	private BigDecimal			NSchdPriDue			= BigDecimal.ZERO;
-	private BigDecimal			NSchdPftDue			= BigDecimal.ZERO;
+	private Date NSchdDate;
+	private BigDecimal NSchdPri = BigDecimal.ZERO;
+	private BigDecimal NSchdPft = BigDecimal.ZERO;
+	private BigDecimal NSchdPriDue = BigDecimal.ZERO;
+	private BigDecimal NSchdPftDue = BigDecimal.ZERO;
 
-	private boolean				PftInSusp;
+	private boolean PftInSusp;
 
-	private String				FinStatus;
-	private String				FinStsReason;
-	private String				FinWorstStatus;
-	private int					NOInst				= 0;
-	private int					NOPaidInst			= 0;
-	private int					NOODInst			= 0;
-	private String				FinAccount;
-	private String				FinAcType;
-	private String				DisbAccountId;
-	private String				DisbActCcy;
-	private String				RepayAccountId;
-	private String				FinCustPftAccount;
-	private String				IncomeAccount;								//Pending
-	private String				UEIncomeSuspAccount;						//Pending
-	private String				FinCommitmentRef;
-	private boolean				FinIsActive;
-	private Date				firstRepayDate;
-	private BigDecimal			FirstRepayAmt		= BigDecimal.ZERO;
-	private BigDecimal			finalRepayAmt		= BigDecimal.ZERO;
-	private int					curODDays			= 0;
-	private int					actualODDays		= 0;
-	private int					dueBucket			= 0;
+	private String FinStatus;
+	private String FinStsReason;
+	private String FinWorstStatus;
+	private int NOInst = 0;
+	private int NOPaidInst = 0;
+	private int NOODInst = 0;
+	private String FinAccount;
+	private String FinAcType;
+	private String DisbAccountId;
+	private String DisbActCcy;
+	private String RepayAccountId;
+	private String FinCustPftAccount;
+	private String IncomeAccount; //Pending
+	private String UEIncomeSuspAccount; //Pending
+	private String FinCommitmentRef;
+	private boolean FinIsActive;
+	private Date firstRepayDate;
+	private BigDecimal FirstRepayAmt = BigDecimal.ZERO;
+	private BigDecimal finalRepayAmt = BigDecimal.ZERO;
+	private int curODDays = 0;
+	private int actualODDays = 0;
+	private int dueBucket = 0;
 
-	private Date				firstODDate;
-	private Date				prvODDate;
-	private String				closingStatus;
-	private String				finCategory;
-	private Date				prvRpySchDate;
-	private BigDecimal			prvRpySchPri		= BigDecimal.ZERO;
-	private BigDecimal			prvRpySchPft		= BigDecimal.ZERO;
-	private Date				latestRpyDate;
-	private BigDecimal			latestRpyPri		= BigDecimal.ZERO;
-	private BigDecimal			latestRpyPft		= BigDecimal.ZERO;
-	private BigDecimal			totalWriteoff		= BigDecimal.ZERO;
+	private Date firstODDate;
+	private Date prvODDate;
+	private String closingStatus;
+	private String finCategory;
+	private Date prvRpySchDate;
+	private BigDecimal prvRpySchPri = BigDecimal.ZERO;
+	private BigDecimal prvRpySchPft = BigDecimal.ZERO;
+	private Date latestRpyDate;
+	private BigDecimal latestRpyPri = BigDecimal.ZERO;
+	private BigDecimal latestRpyPft = BigDecimal.ZERO;
+	private BigDecimal totalWriteoff = BigDecimal.ZERO;
 	// Depreciation
-	private BigDecimal			accumulatedDepPri	= BigDecimal.ZERO;
-	private BigDecimal			depreciatePri		= BigDecimal.ZERO;
+	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
+	private BigDecimal depreciatePri = BigDecimal.ZERO;
 	//others
-	private BigDecimal			disburse			= BigDecimal.ZERO;
-	private BigDecimal			downpay				= BigDecimal.ZERO;
+	private BigDecimal disburse = BigDecimal.ZERO;
+	private BigDecimal downpay = BigDecimal.ZERO;
 
-	private BigDecimal			acrTillLBD			= BigDecimal.ZERO;
-	private BigDecimal			EarnedPft			= BigDecimal.ZERO;
-	private BigDecimal			Unearned			= BigDecimal.ZERO;
-	private BigDecimal			pftAccrued			= BigDecimal.ZERO;
-	private BigDecimal			pftAccrueSusp		= BigDecimal.ZERO;
+	private BigDecimal acrTillLBD = BigDecimal.ZERO;
+	private BigDecimal EarnedPft = BigDecimal.ZERO;
+	private BigDecimal Unearned = BigDecimal.ZERO;
+	private BigDecimal pftAccrued = BigDecimal.ZERO;
+	private BigDecimal pftAccrueSusp = BigDecimal.ZERO;
 
 	//New fields on 14APR17. If possible rearrange the fields to keep relevent fields together
-	private int					maxODDays			= 0;
-	private boolean				calPftOnPD			= false;
-	private String				pftOnPDMethod		= "";
-	private BigDecimal			pftOnPDMrg			= BigDecimal.ZERO;
-	private BigDecimal			totPftOnPD			= BigDecimal.ZERO;
-	private BigDecimal			totPftOnPDPaid		= BigDecimal.ZERO;
-	private BigDecimal			totPftOnPDWaived	= BigDecimal.ZERO;
-	private BigDecimal			totPftOnPDDue		= BigDecimal.ZERO;
-	private BigDecimal			acrSuspTillLBD		= BigDecimal.ZERO;
-	private BigDecimal			prvMthAmz			= BigDecimal.ZERO;
-	private BigDecimal			prvMthAmzNrm		= BigDecimal.ZERO;
-	private BigDecimal			prvMthAmzPD			= BigDecimal.ZERO;
-	private BigDecimal			prvMthAmzSusp		= BigDecimal.ZERO;
-	private BigDecimal			prvMthAcr			= BigDecimal.ZERO;
-	private BigDecimal			prvMthAcrSusp		= BigDecimal.ZERO;
-	private Date				firstDisbDate;
-	private Date				latestDisbDate;
-	private int					futureInst			= 0;
-	private int					remainingTenor		= 0;
-	private int					totalTenor			= 0;
-	private BigDecimal			excessAmt			= BigDecimal.ZERO;
-	private BigDecimal			emiInAdvance		= BigDecimal.ZERO;
-	private BigDecimal			payableAdvise		= BigDecimal.ZERO;
-	private BigDecimal			excessAmtResv		= BigDecimal.ZERO;
-	private BigDecimal			emiInAdvanceResv	= BigDecimal.ZERO;
-	private BigDecimal			payableAdviseResv	= BigDecimal.ZERO;
-	private String				productCategory;
+	private int maxODDays = 0;
+	private boolean calPftOnPD = false;
+	private String pftOnPDMethod = "";
+	private BigDecimal pftOnPDMrg = BigDecimal.ZERO;
+	private BigDecimal totPftOnPD = BigDecimal.ZERO;
+	private BigDecimal totPftOnPDPaid = BigDecimal.ZERO;
+	private BigDecimal totPftOnPDWaived = BigDecimal.ZERO;
+	private BigDecimal totPftOnPDDue = BigDecimal.ZERO;
+	private BigDecimal acrSuspTillLBD = BigDecimal.ZERO;
+	private BigDecimal prvMthAmz = BigDecimal.ZERO;
+	private BigDecimal prvMthAmzNrm = BigDecimal.ZERO;
+	private BigDecimal prvMthAmzPD = BigDecimal.ZERO;
+	private BigDecimal prvMthAmzSusp = BigDecimal.ZERO;
+	private BigDecimal prvMthAcr = BigDecimal.ZERO;
+	private BigDecimal prvMthAcrSusp = BigDecimal.ZERO;
+	private Date firstDisbDate;
+	private Date latestDisbDate;
+	private int futureInst = 0;
+	private int remainingTenor = 0;
+	private int totalTenor = 0;
+	private BigDecimal excessAmt = BigDecimal.ZERO;
+	private BigDecimal emiInAdvance = BigDecimal.ZERO;
+	private BigDecimal payableAdvise = BigDecimal.ZERO;
+	private BigDecimal excessAmtResv = BigDecimal.ZERO;
+	private BigDecimal emiInAdvanceResv = BigDecimal.ZERO;
+	private BigDecimal payableAdviseResv = BigDecimal.ZERO;
+	private String productCategory;
 
 	//Newly Added Fields for SOA 
-	private BigDecimal			futureRpyPri		= BigDecimal.ZERO;
-	private BigDecimal			futureRpyPft		= BigDecimal.ZERO;
-	private BigDecimal			totChargesPaid		= BigDecimal.ZERO;
-	private BigDecimal			linkedFinRef		= BigDecimal.ZERO;
-	private BigDecimal			closedlinkedFinRef	= BigDecimal.ZERO;
-	private BigDecimal			bounceAmt			= BigDecimal.ZERO;
-	private BigDecimal			bounceAmtDue		= BigDecimal.ZERO;
-	private BigDecimal			bounceAmtPaid		= BigDecimal.ZERO;
-	private BigDecimal			upfrontFee			= BigDecimal.ZERO;
-	private BigDecimal			lastDisburseDate	= BigDecimal.ZERO;
-	private BigDecimal			receivableAdvise	= BigDecimal.ZERO;
-	private BigDecimal			excessAmtBal		= BigDecimal.ZERO;
-	private BigDecimal			emiInAdvanceBal		= BigDecimal.ZERO;
-	private BigDecimal			receivableAdviseBal	= BigDecimal.ZERO;
-	private BigDecimal			payableAdviseBal	= BigDecimal.ZERO;
-	
+	private BigDecimal futureRpyPri = BigDecimal.ZERO;
+	private BigDecimal futureRpyPft = BigDecimal.ZERO;
+	private BigDecimal totChargesPaid = BigDecimal.ZERO;
+	private BigDecimal linkedFinRef = BigDecimal.ZERO;
+	private BigDecimal closedlinkedFinRef = BigDecimal.ZERO;
+	private BigDecimal bounceAmt = BigDecimal.ZERO;
+	private BigDecimal bounceAmtDue = BigDecimal.ZERO;
+	private BigDecimal bounceAmtPaid = BigDecimal.ZERO;
+	private BigDecimal upfrontFee = BigDecimal.ZERO;
+	private BigDecimal lastDisburseDate = BigDecimal.ZERO;
+	private BigDecimal receivableAdvise = BigDecimal.ZERO;
+	private BigDecimal excessAmtBal = BigDecimal.ZERO;
+	private BigDecimal emiInAdvanceBal = BigDecimal.ZERO;
+	private BigDecimal receivableAdviseBal = BigDecimal.ZERO;
+	private BigDecimal payableAdviseBal = BigDecimal.ZERO;
+
 	// External Fields For Amortization Purpose
-	private BigDecimal 			lpiAmount			= BigDecimal.ZERO;
-	private BigDecimal 			gstLpiAmount		= BigDecimal.ZERO;
-	private BigDecimal 			lppAmount			= BigDecimal.ZERO;
-	private BigDecimal 			gstLppAmount		= BigDecimal.ZERO;
+	private BigDecimal lpiAmount = BigDecimal.ZERO;
+	private BigDecimal gstLpiAmount = BigDecimal.ZERO;
+	private BigDecimal lppAmount = BigDecimal.ZERO;
+	private BigDecimal gstLppAmount = BigDecimal.ZERO;
 
 	public FinanceProfitDetail() {
 
@@ -1303,7 +1303,7 @@ public class FinanceProfitDetail implements Serializable {
 	public void setDueBucket(int dueBucket) {
 		this.dueBucket = dueBucket;
 	}
-	
+
 	public int getActualODDays() {
 		return actualODDays;
 	}

@@ -18,7 +18,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-public class PresentmentReasonCodeServiceImpl extends GenericService<PresentmentReasonCode> implements PresentmentReasonCodeService {
+public class PresentmentReasonCodeServiceImpl extends GenericService<PresentmentReasonCode>
+		implements PresentmentReasonCodeService {
 	private static Logger logger = Logger.getLogger(PresentmentReasonCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -27,7 +28,6 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 	public PresentmentReasonCodeServiceImpl() {
 		super();
 	}
-	
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -39,7 +39,8 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 			return auditHeader;
 		}
 		String tableType = "";
-		PresentmentReasonCode presentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail().getModelData();
+		PresentmentReasonCode presentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail()
+				.getModelData();
 
 		if (presentmentReasonCode.isWorkflow()) {
 			tableType = "_Temp";
@@ -75,7 +76,8 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		PresentmentReasonCode presentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail().getModelData();
+		PresentmentReasonCode presentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail()
+				.getModelData();
 		getPresentmentReasonCodeDAO().delete(presentmentReasonCode, "");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -92,7 +94,8 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 			return auditHeader;
 		}
 		PresentmentReasonCode presentmentReasonCode = new PresentmentReasonCode();
-		BeanUtils.copyProperties((PresentmentReasonCode) auditHeader.getAuditDetail().getModelData(), presentmentReasonCode);
+		BeanUtils.copyProperties((PresentmentReasonCode) auditHeader.getAuditDetail().getModelData(),
+				presentmentReasonCode);
 		if (presentmentReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getPresentmentReasonCodeDAO().delete(presentmentReasonCode, "");
@@ -133,7 +136,8 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		PresentmentReasonCode presentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail().getModelData();
+		PresentmentReasonCode presentmentReasonCode = (PresentmentReasonCode) auditHeader.getAuditDetail()
+				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getPresentmentReasonCodeDAO().delete(presentmentReasonCode, "_Temp");
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -141,11 +145,9 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 		return auditHeader;
 	}
 
-
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -153,8 +155,7 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 		return auditHeader;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -162,33 +163,34 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 		PresentmentReasonCode tempPresentmentReasonCode = null;
 
 		if (presentmentReasonCode.isWorkflow()) {
-			tempPresentmentReasonCode = getPresentmentReasonCodeDAO().getPresentmentReasonCodeById(presentmentReasonCode.getId(), "_Temp");
+			tempPresentmentReasonCode = getPresentmentReasonCodeDAO()
+					.getPresentmentReasonCodeById(presentmentReasonCode.getId(), "_Temp");
 		}
 
-		PresentmentReasonCode befPresentmentReasonCode = getPresentmentReasonCodeDAO().getPresentmentReasonCodeById(presentmentReasonCode.getId(), "");
-		PresentmentReasonCode oldPresentmentReasonCode = presentmentReasonCode.getBefImage() ;
+		PresentmentReasonCode befPresentmentReasonCode = getPresentmentReasonCodeDAO()
+				.getPresentmentReasonCodeById(presentmentReasonCode.getId(), "");
+		PresentmentReasonCode oldPresentmentReasonCode = presentmentReasonCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = presentmentReasonCode.getCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_Code") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParm[0];
 
 		if (presentmentReasonCode.isNew()) { // for New record or new record into work flow
 
 			if (!presentmentReasonCode.isWorkflow()) {// With out Work flow only new records
 				if (befPresentmentReasonCode != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (presentmentReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new 
 					if (befPresentmentReasonCode != null || tempPresentmentReasonCode != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPresentmentReasonCode == null || tempPresentmentReasonCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -196,37 +198,34 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!presentmentReasonCode.isWorkflow()) { // With out Work flow for update and delete
 				if (befPresentmentReasonCode == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
-					if (oldPresentmentReasonCode != null
-							&& !oldPresentmentReasonCode.getLastMntOn().equals(befPresentmentReasonCode.getLastMntOn())) {
+					if (oldPresentmentReasonCode != null && !oldPresentmentReasonCode.getLastMntOn()
+							.equals(befPresentmentReasonCode.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempPresentmentReasonCode == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempPresentmentReasonCode != null
-						&& oldPresentmentReasonCode != null
+				if (tempPresentmentReasonCode != null && oldPresentmentReasonCode != null
 						&& !oldPresentmentReasonCode.getLastMntOn().equals(tempPresentmentReasonCode.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !presentmentReasonCode.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !presentmentReasonCode.isWorkflow()) {
 			auditDetail.setBefImage(befPresentmentReasonCode);
 		}
 		logger.debug("Leaving");
@@ -248,7 +247,6 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 	public PresentmentReasonCodeDAO getPresentmentReasonCodeDAO() {
 		return presentmentReasonCodeDAO;
 	}
-
 
 	public void setPresentmentReasonCodeDAO(PresentmentReasonCodeDAO presentmentReasonCodeDAO) {
 		this.presentmentReasonCodeDAO = presentmentReasonCodeDAO;

@@ -174,17 +174,18 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected Listbox sortOperator_ExpiryDate;
 	protected Listbox sortOperator_Status;
 	protected Listbox sortOperator_btnbranchDetails;
-	protected ExtendedCombobox entityCode; 
+	protected ExtendedCombobox entityCode;
 	protected Listbox sortOperator_entityCode;
 
 	private transient MandateService mandateService;
 	private transient boolean validationOn;
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
-	
-	@Autowired(required =true)
+
+	@Autowired(required = true)
 	private MandateProcess mandateProcess;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -217,7 +218,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
+		fillComboBox(this.status, "",
+				PennantStaticListUtil
+						.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
 				Collections.singletonList(MandateConstants.STATUS_FIN));
 
 		registerField("inputDate");
@@ -237,7 +240,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("maxLimit", listheader_Amount);
 		registerField("custShrtName", listheader_CustName, SortOrder.NONE);
-		registerField("entityCode",entityCode, SortOrder.NONE,sortOperator_entityCode, Operators.STRING);
+		registerField("entityCode", entityCode, SortOrder.NONE, sortOperator_entityCode, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -265,7 +268,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			listHeader_CheckBox_Name.getChildren().clear();
 		}
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
-		
+
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setTextBoxWidth(135);
 		this.entityCode.setMandatoryStyle(true);
@@ -356,21 +359,23 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc.setParent(item);
 			lc = new Listcell(mandate.getAccNumber());
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
+			lc = new Listcell(
+					PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
 			lc.setParent(item);
-			if(mandate.getMaxLimit()!= null){
-			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit().multiply(new BigDecimal(100)),
-					CurrencyUtil.getFormat(mandate.getMandateCcy())));
+			if (mandate.getMaxLimit() != null) {
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(mandate.getMaxLimit().multiply(new BigDecimal(100)),
+								CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			} else {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
 						CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			}
-			
+
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(),
-					PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), PennantStaticListUtil
+					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);
@@ -541,7 +546,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		try {
 			if (!this.entityCode.isReadonly())
-				this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true,true));
+				this.entityCode.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
 			this.entityCode.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -709,37 +715,36 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		try {
 			btnDownload.setDisabled(true);
-			/*DataEngineExport dataEngine = null;
-			dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser().getLoginUsrID(),
-					App.DATABASE.name());
+			/*
+			 * DataEngineExport dataEngine = null; dataEngine = new DataEngineExport(dataSource,
+			 * getUserWorkspace().getLoggedInUser().getLoginUsrID(), App.DATABASE.name());
+			 * 
+			 * Map<String, Object> filterMap = new HashMap<>(); Map<String, Object> parameterMap = new HashMap<>();
+			 * filterMap.put("MANDATEID", mandateIdList); filterMap.put("FROMDATE", this.fromDate.getValue());
+			 * filterMap.put("TODATE", this.toDate.getValue()); parameterMap.put("USER_NAME",
+			 * getUserWorkspace().getLoggedInUser().getUserName());
+			 * 
+			 * if (StringUtils.trimToNull(this.branchDetails.getValue()) != null) { filterMap.put("BRANCHCODE",
+			 * Arrays.asList(this.branchDetails.getValue().split(","))); }
+			 * 
+			 * dataEngine.setFilterMap(filterMap); dataEngine.setParameterMap(parameterMap);
+			 * dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
+			 * dataEngine.exportData("MANDATES_EXPORT");
+			 */
 
-			Map<String, Object> filterMap = new HashMap<>();
-			Map<String, Object> parameterMap = new HashMap<>();
-			filterMap.put("MANDATEID", mandateIdList);
-			filterMap.put("FROMDATE", this.fromDate.getValue());
-			filterMap.put("TODATE", this.toDate.getValue());
-			parameterMap.put("USER_NAME", getUserWorkspace().getLoggedInUser().getUserName());
-
-			if (StringUtils.trimToNull(this.branchDetails.getValue()) != null) {
-				filterMap.put("BRANCHCODE", Arrays.asList(this.branchDetails.getValue().split(",")));
-			}
-
-			dataEngine.setFilterMap(filterMap);
-			dataEngine.setParameterMap(parameterMap);
-			dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
-			dataEngine.exportData("MANDATES_EXPORT");*/
-				
-
-			MandateProcessThread process = new MandateProcessThread(mandateIdList, fromDate.getValue(), toDate.getValue(), getUserWorkspace().getLoggedInUser().getUserId() ,getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue(), this.entityCode.getValue());
+			MandateProcessThread process = new MandateProcessThread(mandateIdList, fromDate.getValue(),
+					toDate.getValue(), getUserWorkspace().getLoggedInUser().getUserId(),
+					getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue(),
+					this.entityCode.getValue());
 			Thread thread = new Thread(process);
 			thread.start();
-			
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "MANDATES");
 
 			MessageUtil.showMessage("File Download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_MandatesFileDownlaods", args);
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_MandatesFileDownlaods",
+					args);
 			MandateProcessThread.sleep(4000);
 
 		} catch (Exception e) {
@@ -797,7 +802,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
-	
+
 	public class MandateProcessThread extends Thread {
 
 		List<Long> mandateIdList;
@@ -809,7 +814,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		String entity;
 
 		public MandateProcessThread(List<Long> mandateIdList, Date fromDate, Date toDate, long userId, String userName,
-				String branchDetails,String entity) {
+				String branchDetails, String entity) {
 			this.userId = userId;
 			this.mandateIdList = mandateIdList;
 			this.fromDate = fromDate;
@@ -824,7 +829,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		@Override
 		public void run() {
 			try {
-				
+
 				if (mandateProcess != null) {
 					mandateProcess.sendReqest(mandateIdList, this.fromDate, this.toDate,
 							getUserWorkspace().getLoggedInUser().getUserId(),
@@ -836,7 +841,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -847,7 +852,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -860,7 +865,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -868,7 +873,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;

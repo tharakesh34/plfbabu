@@ -48,7 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.eodsnapshot.SnapShotCondition;
 
 public interface SnapShotConditionsDAO extends BasicCrudDao<SnapShotCondition> {
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -60,8 +60,8 @@ public interface SnapShotConditionsDAO extends BasicCrudDao<SnapShotCondition> {
 	 *            The type of the table.
 	 * @return SnapShotConditions
 	 */
-	SnapShotCondition getSnapShotConditions(long id,int executionOrder,String type);
+	SnapShotCondition getSnapShotConditions(long id, int executionOrder, String type);
 
 	List<SnapShotCondition> getApprovedTabelConditions(long id);
-	
+
 }

@@ -24,10 +24,10 @@ import com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse;
 public class DisbursementResponse extends AbstarctDisbursementResponse {
 
 	@Autowired
-	private PaymentProcess		paymentProcess;
+	private PaymentProcess paymentProcess;
 
 	@Autowired
-	private DisbursementProcess	disbursementProcess;
+	private DisbursementProcess disbursementProcess;
 
 	public DisbursementResponse() {
 		super();

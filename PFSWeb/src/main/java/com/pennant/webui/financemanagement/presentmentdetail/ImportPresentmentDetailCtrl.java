@@ -19,13 +19,13 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
@@ -111,7 +111,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				fileImport = null;
 				txtFileName.setText(media.getName());
 				setFileImportData(media.getName().substring(media.getName().lastIndexOf('.')));
-				fileImport.row_NumberOfCells=row_NumberOfCells;
+				fileImport.row_NumberOfCells = row_NumberOfCells;
 				fileImport.setExcelMedia(media);
 				fileImport.loadExcelFile(true);
 				renderPannel();
@@ -126,13 +126,13 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	private void setFileImportData(String contentType) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		if (fileImport == null) {
-			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId(),contentType);
+			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId(),
+					contentType);
 		}
 
 		logger.debug(Literal.LEAVING);

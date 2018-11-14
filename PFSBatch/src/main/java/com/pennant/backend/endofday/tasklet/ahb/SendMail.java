@@ -19,32 +19,30 @@ public class SendMail implements Tasklet {
 	private DataSource dataSource;
 	PrepareMailData prepareMailData;
 
-	public RepeatStatus execute(StepContribution contribution,
-			ChunkContext chunkContext) throws Exception {
+	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		Date appDate = DateUtility.getAppDate();
 
 		logger.debug("START: Send Mail for Value Date: " + appDate);
-		
+
 		getPrepareMailData().processData("PDC", appDate);
-						
+
 		return RepeatStatus.FINISHED;
 	}
-	
-	
-	
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}
+
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	
+
 	public PrepareMailData getPrepareMailData() {
 		return prepareMailData;
 	}
+
 	public void setPrepareMailData(PrepareMailData prepareMailData) {
 		this.prepareMailData = prepareMailData;
 	}
-	
-	
+
 }

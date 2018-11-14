@@ -8,9 +8,9 @@ public class CoreBankBlackListCustomer implements Serializable {
 	private static final long serialVersionUID = -7710307262877674024L;
 
 	public CoreBankBlackListCustomer() {
-    	super();
-    }
-    
+		super();
+	}
+
 	private String custCIF;
 	private String custFName;
 	private String custLName;

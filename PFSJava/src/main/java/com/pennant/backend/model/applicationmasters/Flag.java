@@ -77,9 +77,9 @@ public class Flag extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -89,38 +89,35 @@ public class Flag extends AbstractWorkflowEntity {
 	public String getId() {
 		return flagCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.flagCode = id;
 	}
-	
+
 	public String getFlagCode() {
 		return flagCode;
 	}
+
 	public void setFlagCode(String flagCode) {
 		this.flagCode = flagCode;
 	}
-	
-	
-		
-	
+
 	public String getFlagDesc() {
 		return flagDesc;
 	}
+
 	public void setFlagDesc(String flagDesc) {
 		this.flagDesc = flagDesc;
 	}
-	
-	
-		
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -128,7 +125,7 @@ public class Flag extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -137,12 +134,12 @@ public class Flag extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public Flag getBefImage(){
+	public Flag getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(Flag beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Flag beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

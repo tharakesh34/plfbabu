@@ -53,28 +53,28 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
-	private static final long	serialVersionUID	= 4783031677099154138L;
-	private static final Logger	logger				= Logger.getLogger(UploadFinTypeExpenseCtrl.class);
+	private static final long serialVersionUID = 4783031677099154138L;
+	private static final Logger logger = Logger.getLogger(UploadFinTypeExpenseCtrl.class);
 
-	protected Window			window_FinTypeExpenseUpload;
-	protected Button			btnUpload;
-	protected Button			btnSave;
-	protected Button			btnRefresh;
-	protected Button			btnDownload;
-	protected Textbox			txtFileName;
-	protected Label				totalCount;
-	protected Label				successCount;
-	protected Label				failedCount;
-	protected Grid				statusGrid;
-	private Label				label_fileName;
-	
-	private Workbook			workbook			= null;
-	private DataFormatter		objDefaultFormat	= new DataFormatter();								// for cell value formating
-	private FormulaEvaluator	formulaEvaluator	= null;												// for cell value formating
-	private String				errorMsg			= null;
-	private ExcelFileImport		fileImport			= null;
+	protected Window window_FinTypeExpenseUpload;
+	protected Button btnUpload;
+	protected Button btnSave;
+	protected Button btnRefresh;
+	protected Button btnDownload;
+	protected Textbox txtFileName;
+	protected Label totalCount;
+	protected Label successCount;
+	protected Label failedCount;
+	protected Grid statusGrid;
+	private Label label_fileName;
+
+	private Workbook workbook = null;
+	private DataFormatter objDefaultFormat = new DataFormatter(); // for cell value formating
+	private FormulaEvaluator formulaEvaluator = null; // for cell value formating
+	private String errorMsg = null;
+	private ExcelFileImport fileImport = null;
 	private UploadHeader uploadHeader = new UploadHeader();
-	private UploadHeaderService	uploadHeaderService;
+	private UploadHeaderService uploadHeaderService;
 
 	public UploadFinTypeExpenseCtrl() {
 		super();
@@ -96,19 +96,20 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		UploadHeader uploadHeader = new UploadHeader();
 		BeanUtils.copyProperties(this.uploadHeader, uploadHeader);
 		this.uploadHeader.setBefImage(uploadHeader);
-		
+
 		// Render the page and display the data.
-		doLoadWorkFlow(this.uploadHeader.isWorkflow(), this.uploadHeader.getWorkflowId(), this.uploadHeader.getNextTaskId());
-		
+		doLoadWorkFlow(this.uploadHeader.isWorkflow(), this.uploadHeader.getWorkflowId(),
+				this.uploadHeader.getNextTaskId());
+
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 		}
-		
+
 		doSetFieldProperties();
 		doCheckRights();
 		doShowDialog(this.uploadHeader);
-		
+
 		this.statusGrid.setVisible(false);
 		this.btnDownload.setVisible(false);
 	}
@@ -118,20 +119,20 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.statusGrid.setVisible(false);
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-		
+
 		//this.btnUpload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Browse"));
 		//this.btnRefresh.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
 		//this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
@@ -139,7 +140,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Displays the dialog page.
 	 * 
@@ -168,16 +169,16 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				//btnCancel.setVisible(false);
 			}
 		}
-		
+
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
-		
+
 		//setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -205,6 +206,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
@@ -235,7 +237,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		doRemoveValidation();
 		doResetData();
 		Media media = event.getMedia();
-		
+
 		try {
 			if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
 					|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
@@ -255,7 +257,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * when the "Process" button is clicked. <br>
 	 * 
@@ -263,18 +265,16 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	public void onClick$btnDownload(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		String whereCond = "and FILENAME in (" + "'" + this.txtFileName.getValue()+ "'" + ")";
+
+		String whereCond = "and FILENAME in (" + "'" + this.txtFileName.getValue() + "'" + ")";
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		searchCriteriaDesc.append("File Name is " + this.txtFileName.getValue());
-		
+
 		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "LoanTypeExpenseMaster",
 				whereCond, searchCriteriaDesc, this.window_FinTypeExpenseUpload, true);
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	
 	/**
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
@@ -289,10 +289,10 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		Iterator<Row> rows = sheet.iterator();
 
-		String finType 			= null;
-		String expenseTypeCode	= null;
-		String percentage 		= null;
-		String amountValue 		= null;
+		String finType = null;
+		String expenseTypeCode = null;
+		String percentage = null;
+		String amountValue = null;
 
 		while (rows.hasNext()) {
 
@@ -346,7 +346,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			if (uploadDetail.getFinType().length() > 8) {
 
-				reason = "Loan Type : (" + uploadDetail.getFinType() + ") length is exceeded, it should be lessthan or equals to 8.";
+				reason = "Loan Type : (" + uploadDetail.getFinType()
+						+ ") length is exceeded, it should be lessthan or equals to 8.";
 				valid = false;
 				uploadDetail.setFinType(uploadDetail.getFinType().substring(0, 8));
 			} else {
@@ -463,9 +464,11 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		} else if (expenseType.length() > 8) {
 			if (valid) {
 				valid = false;
-				reason = "Expense Type Code : (" + expenseType + ") length is exceeded, it should be lessthan or equal to 8.";
+				reason = "Expense Type Code : (" + expenseType
+						+ ") length is exceeded, it should be lessthan or equal to 8.";
 			} else {
-				reason = reason + "| Expense Type Code : (" + expenseType + ") length is exceeded, it should be lessthan or equal to 8.";
+				reason = reason + "| Expense Type Code : (" + expenseType
+						+ ") length is exceeded, it should be lessthan or equal to 8.";
 			}
 			uploadDetail.setExpenseTypeCode(expenseType.substring(0, 8));
 		} else {
@@ -606,7 +609,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		AuditHeader auditHeader = null;
 		UploadHeader uploadHeader = null;
 		if (this.fileImport != null) {
-			
+
 			this.workbook = this.fileImport.writeFile();
 			if (this.workbook != null) {
 				if (this.workbook instanceof HSSFWorkbook) {
@@ -614,117 +617,123 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				} else if (this.workbook instanceof XSSFWorkbook) {
 					this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) this.workbook);
 				}
-			List<String> keys = getRowValuesByIndex(this.workbook, 0, 0);
-			
-			if (!keys.contains("Loan Type") || !keys.contains("Expense Type Code") || !keys.contains("Amount") || !keys.contains("Percentage (%)")) {
-				throw new Exception("The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
-			}
-			
-			Sheet sheet = this.workbook.getSheetAt(0);
-			if (sheet.getPhysicalNumberOfRows() > 0) {
-				uploadHeader = new UploadHeader();
-				uploadHeader.setFileName(this.txtFileName.getValue());
-				uploadHeader.setTransactionDate(DateUtility.getSysDate());
-				uploadHeader.setModule("FinTypeExpense");
-				uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-				uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				
-				long uploadId = this.uploadHeaderService.save(uploadHeader);
-				
-				//Process the Upload Details
-				List<UploadFinTypeExpense> uploadDetails = processUploadDetails(uploadId);
+				List<String> keys = getRowValuesByIndex(this.workbook, 0, 0);
 
-				if (uploadDetails != null && !uploadDetails.isEmpty()) {
+				if (!keys.contains("Loan Type") || !keys.contains("Expense Type Code") || !keys.contains("Amount")
+						|| !keys.contains("Percentage (%)")) {
+					throw new Exception(
+							"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+				}
 
-					this.uploadHeaderService.saveExpenseUploadDetails(uploadDetails);
-					FinTypeExpense finTypeExpense = null;
+				Sheet sheet = this.workbook.getSheetAt(0);
+				if (sheet.getPhysicalNumberOfRows() > 0) {
+					uploadHeader = new UploadHeader();
+					uploadHeader.setFileName(this.txtFileName.getValue());
+					uploadHeader.setTransactionDate(DateUtility.getSysDate());
+					uploadHeader.setModule("FinTypeExpense");
+					uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-					for (UploadFinTypeExpense uploadDetail : uploadDetails) {
+					long uploadId = this.uploadHeaderService.save(uploadHeader);
 
-						long finExpenseId = uploadDetail.getExpenseId();
-						String finType = uploadDetail.getFinType();
+					//Process the Upload Details
+					List<UploadFinTypeExpense> uploadDetails = processUploadDetails(uploadId);
 
-						if (finExpenseId != 0 && finExpenseId != Long.MIN_VALUE) {
+					if (uploadDetails != null && !uploadDetails.isEmpty()) {
 
-							finTypeExpense = this.uploadHeaderService.getFinExpensesByFinType(finType, finExpenseId);
+						this.uploadHeaderService.saveExpenseUploadDetails(uploadDetails);
+						FinTypeExpense finTypeExpense = null;
 
-							if (finTypeExpense == null) {
-								finTypeExpense = new FinTypeExpense();
-								finTypeExpense.setFinType(finType);
-								finTypeExpense.setExpenseTypeID(finExpenseId);
-								
-								if (uploadDetail.getAmountValue().compareTo(BigDecimal.ZERO) >= 1) {
-									finTypeExpense
-											.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-									finTypeExpense.setAmount(uploadDetail.getAmountValue());
-									finTypeExpense.setPercentage(BigDecimal.ZERO);
+						for (UploadFinTypeExpense uploadDetail : uploadDetails) {
+
+							long finExpenseId = uploadDetail.getExpenseId();
+							String finType = uploadDetail.getFinType();
+
+							if (finExpenseId != 0 && finExpenseId != Long.MIN_VALUE) {
+
+								finTypeExpense = this.uploadHeaderService.getFinExpensesByFinType(finType,
+										finExpenseId);
+
+								if (finTypeExpense == null) {
+									finTypeExpense = new FinTypeExpense();
+									finTypeExpense.setFinType(finType);
+									finTypeExpense.setExpenseTypeID(finExpenseId);
+
+									if (uploadDetail.getAmountValue().compareTo(BigDecimal.ZERO) >= 1) {
+										finTypeExpense
+												.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+										finTypeExpense.setAmount(uploadDetail.getAmountValue());
+										finTypeExpense.setPercentage(BigDecimal.ZERO);
+									} else {
+										finTypeExpense.setPercentage(uploadDetail.getPercentage());
+										finTypeExpense
+												.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE);
+										finTypeExpense.setCalculateOn(PennantConstants.EXPENSE_CALCULATEDON_LOAN);
+									}
+									finTypeExpense.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+									finTypeExpense.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+									finTypeExpense.setUserDetails(getUserWorkspace().getLoggedInUser());
+									finTypeExpense.setActive(true);
+									finTypeExpense.setVersion(finTypeExpense.getVersion() + 1);
+									finTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+									tranType = PennantConstants.TRAN_ADD;
 								} else {
-									finTypeExpense.setPercentage(uploadDetail.getPercentage());
-									finTypeExpense.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE);
-									finTypeExpense.setCalculateOn(PennantConstants.EXPENSE_CALCULATEDON_LOAN);
-								}
-								finTypeExpense.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-								finTypeExpense.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								finTypeExpense.setUserDetails(getUserWorkspace().getLoggedInUser());
-								finTypeExpense.setActive(true);
-								finTypeExpense.setVersion(finTypeExpense.getVersion() + 1);
-								finTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-								tranType = PennantConstants.TRAN_ADD;
-							} else {
-								finTypeExpense.setBefImage(finTypeExpense);
-								finTypeExpense.setVersion(finTypeExpense.getVersion() + 1);
+									finTypeExpense.setBefImage(finTypeExpense);
+									finTypeExpense.setVersion(finTypeExpense.getVersion() + 1);
 
-								if (uploadDetail.getAmountValue().compareTo(BigDecimal.ZERO) >= 1) {
-									finTypeExpense.setAmount(uploadDetail.getAmountValue());
-									finTypeExpense
-											.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-									finTypeExpense.setPercentage(BigDecimal.ZERO);
-									finTypeExpense.setCalculateOn("");
-								} else {
-									finTypeExpense.setPercentage(uploadDetail.getPercentage());
-									finTypeExpense.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE);
-									finTypeExpense.setCalculateOn(PennantConstants.EXPENSE_UPLOAD_LOAN);
-									finTypeExpense.setAmount(BigDecimal.ZERO);
+									if (uploadDetail.getAmountValue().compareTo(BigDecimal.ZERO) >= 1) {
+										finTypeExpense.setAmount(uploadDetail.getAmountValue());
+										finTypeExpense
+												.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+										finTypeExpense.setPercentage(BigDecimal.ZERO);
+										finTypeExpense.setCalculateOn("");
+									} else {
+										finTypeExpense.setPercentage(uploadDetail.getPercentage());
+										finTypeExpense
+												.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE);
+										finTypeExpense.setCalculateOn(PennantConstants.EXPENSE_UPLOAD_LOAN);
+										finTypeExpense.setAmount(BigDecimal.ZERO);
 
+									}
+									finTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+									tranType = PennantConstants.TRAN_UPD;
 								}
-								finTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-								tranType = PennantConstants.TRAN_UPD;
+								auditHeader = getAuditHeader(finTypeExpense, tranType);
+								auditHeader = uploadHeaderService.doApprove(auditHeader);
 							}
-							auditHeader = getAuditHeader(finTypeExpense, tranType);
-							auditHeader = uploadHeaderService.doApprove(auditHeader);
 						}
 					}
-				}
-				List<UploadFinTypeExpense> countList = this.uploadHeaderService.getSuccesFailedCountExpense(uploadId);
-				int totCount = 0;
-				for (UploadFinTypeExpense expenseUpload : countList) {
-					if (StringUtils.equals(expenseUpload.getStatus(), PennantConstants.UPLOAD_STATUS_SUCCESS)) {
-						totCount += expenseUpload.getCount();
-						uploadHeader.setSuccessCount(expenseUpload.getCount());
-					} else {
-						totCount += expenseUpload.getCount();
-						uploadHeader.setFailedCount(expenseUpload.getCount());
+					List<UploadFinTypeExpense> countList = this.uploadHeaderService
+							.getSuccesFailedCountExpense(uploadId);
+					int totCount = 0;
+					for (UploadFinTypeExpense expenseUpload : countList) {
+						if (StringUtils.equals(expenseUpload.getStatus(), PennantConstants.UPLOAD_STATUS_SUCCESS)) {
+							totCount += expenseUpload.getCount();
+							uploadHeader.setSuccessCount(expenseUpload.getCount());
+						} else {
+							totCount += expenseUpload.getCount();
+							uploadHeader.setFailedCount(expenseUpload.getCount());
+						}
 					}
+
+					uploadHeader.setTotalRecords(totCount);
+					this.uploadHeaderService.updateRecord(uploadHeader);
+
+					Clients.showNotification("Data imported successfully.", "info", null, null, -1);
+
+					//Create backup file
+					this.fileImport.backUpFile();
+
+					//doResetData();
+					this.statusGrid.setVisible(true);
+					this.btnDownload.setVisible(true);
+					this.totalCount.setValue(String.valueOf(uploadHeader.getTotalRecords()));
+					this.successCount.setValue(String.valueOf(uploadHeader.getSuccessCount()));
+					this.failedCount.setValue(String.valueOf(uploadHeader.getFailedCount()));
+				} else {
+					MessageUtil.showError("File should not contain the data.");
 				}
-				
-				uploadHeader.setTotalRecords(totCount);
-				this.uploadHeaderService.updateRecord(uploadHeader);
-
-				Clients.showNotification("Data imported successfully.", "info", null, null, -1);
-
-				//Create backup file
-				this.fileImport.backUpFile();
-				
-				//doResetData();
-				this.statusGrid.setVisible(true);
-				this.btnDownload.setVisible(true);
-				this.totalCount.setValue(String.valueOf(uploadHeader.getTotalRecords()));
-				this.successCount.setValue(String.valueOf(uploadHeader.getSuccessCount()));
-				this.failedCount.setValue(String.valueOf(uploadHeader.getFailedCount()));
-			} else {
-				MessageUtil.showError("File should not contain the data.");
 			}
-		}
 		}
 		logger.debug(Literal.LEAVING);
 	}

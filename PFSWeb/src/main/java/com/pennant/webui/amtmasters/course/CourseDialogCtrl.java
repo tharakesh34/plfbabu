@@ -71,32 +71,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMaster/Course/courseDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/AMTMaster/Course/courseDialog.zul file.
  */
 public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	private static final long serialVersionUID = -1686162064448478533L;
 	private static final Logger logger = Logger.getLogger(CourseDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window       window_CourseDialog;        // autowired
-	protected Textbox      courseName;                 // autowired
-	protected Textbox      courseDesc;                 // autowired
-	
+	protected Window window_CourseDialog; // autowired
+	protected Textbox courseName; // autowired
+	protected Textbox courseDesc; // autowired
+
 	// not auto wired vars
-	private Course         course;                     // overhanded per param
-	private transient CourseListCtrl courseListCtrl;   // overhanded per param
+	private Course course; // overhanded per param
+	private transient CourseListCtrl courseListCtrl; // overhanded per param
 
-	private transient boolean       validationOn;
-	
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
-	private transient CourseService    courseService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-
+	private transient CourseService courseService;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -113,9 +110,8 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Course object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Course object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -143,13 +139,11 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 				setCourse(null);
 			}
 
-			doLoadWorkFlow(this.course.isWorkflow(),
-					this.course.getWorkflowId(), this.course.getNextTaskId());
+			doLoadWorkFlow(this.course.isWorkflow(), this.course.getWorkflowId(), this.course.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CourseDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CourseDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -177,20 +171,20 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.courseName.setMaxlength(10);
 		this.courseDesc.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
-		}else{
+
+		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -198,11 +192,10 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -212,7 +205,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CourseDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -282,9 +275,10 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
-	 * When user clicks on "Notes" button 
+	 * When user clicks on "Notes" button
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -299,12 +293,12 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.course.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -314,7 +308,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	 *            Course
 	 */
 	public void doWriteBeanToComponents(Course aCourse) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.courseName.setValue(aCourse.getCourseName());
 		this.courseDesc.setValue(aCourse.getCourseDesc());
 
@@ -328,27 +322,27 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	 * @param aCourse
 	 */
 	public void doWriteComponentsToBean(Course aCourse) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aCourse.setCourseName(this.courseName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCourse.setCourseDesc(this.courseDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -362,8 +356,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCourse
 	 * @throws Exception
@@ -379,10 +372,10 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 			this.courseName.focus();
 		} else {
 			this.courseDesc.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -400,7 +393,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -410,12 +403,14 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.courseName.isReadonly()){
-			this.courseName.setConstraint(new PTStringValidator(Labels.getLabel("label_CourseDialog_CourseName.value"), PennantRegularExpressions.REGEX_UPPERCASENAME, true));
-		}	
-		if (!this.courseDesc.isReadonly()){
-			this.courseDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CourseDialog_CourseDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		}	
+		if (!this.courseName.isReadonly()) {
+			this.courseName.setConstraint(new PTStringValidator(Labels.getLabel("label_CourseDialog_CourseName.value"),
+					PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+		}
+		if (!this.courseDesc.isReadonly()) {
+			this.courseDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CourseDialog_CourseDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -429,10 +424,13 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		this.courseDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
+
 	private void doSetLOVValidation() {
 	}
+
 	private void doRemoveLOVValidation() {
 	}
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -443,7 +441,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		this.courseDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	// CRUD operations
 
 	/**
@@ -452,31 +450,31 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final Course aCourse = new Course();
 		BeanUtils.copyProperties(getCourse(), aCourse);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_CourseDialog_CourseName.value")+" : "+aCourse.getCourseName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CourseDialog_CourseName.value") + " : " + aCourse.getCourseName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCourse.getRecordType())){
-				aCourse.setVersion(aCourse.getVersion()+1);
+			if (StringUtils.isBlank(aCourse.getRecordType())) {
+				aCourse.setVersion(aCourse.getVersion() + 1);
 				aCourse.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCourse.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aCourse,tranType)){
+				if (doProcess(aCourse, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
 			} catch (DataAccessException e) {
@@ -486,35 +484,35 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getCourse().isNewRecord()){
+		if (getCourse().isNewRecord()) {
 			this.courseName.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.courseName.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 
 		this.courseDesc.setReadonly(isReadOnly("CourseDialog_courseDesc"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.course.isNewRecord()){
+			if (this.course.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 		logger.debug("Leaving");
@@ -528,13 +526,13 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		this.courseName.setReadonly(true);
 		this.courseDesc.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -574,32 +572,32 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		// Do data level validations here
 
 		isNew = aCourse.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCourse.getRecordType())){
-				aCourse.setVersion(aCourse.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCourse.getRecordType())) {
+				aCourse.setVersion(aCourse.getVersion() + 1);
+				if (isNew) {
 					aCourse.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCourse.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCourse.setNewRecord(true);
 				}
 			}
-		}else{
-			aCourse.setVersion(aCourse.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCourse.setVersion(aCourse.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aCourse,tranType)){
+			if (doProcess(aCourse, tranType)) {
 				doWriteBeanToComponents(aCourse);
 				refreshList();
 				closeDialog();
@@ -611,11 +609,11 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(Course aCourse,String tranType){
+	private boolean doProcess(Course aCourse, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCourse.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCourse.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -644,21 +642,20 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 				}
 			}
 
-
 			if (StringUtils.isBlank(nextTaskId)) {
 				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
-							nextRoleCode =nextRoleCode.concat(",");
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -668,87 +665,87 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 			aCourse.setRoleCode(getRole());
 			aCourse.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCourse, tranType);
+			auditHeader = getAuditHeader(aCourse, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCourse);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCourse, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aCourse, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 
-			auditHeader =  getAuditHeader(aCourse, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+			auditHeader = getAuditHeader(aCourse, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
-
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
 		Course aCourse = (Course) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCourseService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getCourseService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getCourseService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCourseService().doApprove(auditHeader);
 
-						if(aCourse.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aCourse.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCourseService().doReject(auditHeader);
-						if(aCourse.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCourse.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CourseDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_CourseDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CourseDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.course),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.course), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -771,7 +768,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	private void refreshList() {
 		getCourseListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.course.getCourseName());
@@ -813,27 +810,27 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		return this.courseListCtrl;
 	}
 
-	private AuditHeader getAuditHeader(Course aCourse, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCourse.getBefImage(), aCourse);   
-		return new AuditHeader(aCourse.getCourseName(),null,null,null,auditDetail,aCourse.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(Course aCourse, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCourse.getBefImage(), aCourse);
+		return new AuditHeader(aCourse.getCourseName(), null, null, null, auditDetail, aCourse.getUserDetails(),
+				getOverideMap());
 	}
+
 	/**
 	 * Display Message in Error Box
+	 * 
 	 * @param e
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CourseDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 	}
-	
-	
-
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;

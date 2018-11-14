@@ -53,17 +53,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class VASProductCategory extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				productCtg;
-	private String				productCtgDesc;
-	private boolean				active = true;
+	private String productCtg;
+	private String productCtgDesc;
+	private boolean active = true;
 
-	private boolean				newRecord;
-	private String				lovValue;
-	private VASProductCategory	befImage;
+	private boolean newRecord;
+	private String lovValue;
+	private VASProductCategory befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();

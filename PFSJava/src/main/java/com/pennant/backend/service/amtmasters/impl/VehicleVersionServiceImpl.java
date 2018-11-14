@@ -74,7 +74,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	public VehicleVersionServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -82,6 +82,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -89,20 +90,18 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	public VehicleVersionDAO getVehicleVersionDAO() {
 		return vehicleVersionDAO;
 	}
+
 	public void setVehicleVersionDAO(VehicleVersionDAO vehicleVersionDAO) {
 		this.vehicleVersionDAO = vehicleVersionDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * AMTVehicleVersion/AMTVehicleVersion_Temp by using VehicleVersionDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using VehicleVersionDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtAMTVehicleVersion by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * AMTVehicleVersion/AMTVehicleVersion_Temp by using VehicleVersionDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using VehicleVersionDAO's update method 3) Audit the record
+	 * in to AuditHeader and AdtAMTVehicleVersion by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -118,19 +117,16 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 			return auditHeader;
 		}
 		String tableType = "";
-		VehicleVersion vehicleVersion = (VehicleVersion) auditHeader
-		.getAuditDetail().getModelData();
+		VehicleVersion vehicleVersion = (VehicleVersion) auditHeader.getAuditDetail().getModelData();
 
 		if (vehicleVersion.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (vehicleVersion.isNew()) {
-			vehicleVersion.setId(getVehicleVersionDAO().save(vehicleVersion,
-					tableType));
+			vehicleVersion.setId(getVehicleVersionDAO().save(vehicleVersion, tableType));
 			auditHeader.getAuditDetail().setModelData(vehicleVersion);
-			auditHeader.setAuditReference(String.valueOf(vehicleVersion
-					.getVehicleVersionId()));
+			auditHeader.setAuditReference(String.valueOf(vehicleVersion.getVehicleVersionId()));
 		} else {
 			getVehicleVersionDAO().update(vehicleVersion, tableType);
 		}
@@ -142,12 +138,10 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table AMTVehicleVersion by using VehicleVersionDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtAMTVehicleVersion by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * AMTVehicleVersion by using VehicleVersionDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtAMTVehicleVersion by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -163,8 +157,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 			return auditHeader;
 		}
 
-		VehicleVersion vehicleVersion = (VehicleVersion) auditHeader
-		.getAuditDetail().getModelData();
+		VehicleVersion vehicleVersion = (VehicleVersion) auditHeader.getAuditDetail().getModelData();
 		getVehicleVersionDAO().delete(vehicleVersion, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -173,8 +166,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * getVehicleVersionById fetch the details by using VehicleVersionDAO's
-	 * getVehicleVersionById method.
+	 * getVehicleVersionById fetch the details by using VehicleVersionDAO's getVehicleVersionById method.
 	 * 
 	 * @param id
 	 *            (int)
@@ -189,10 +181,8 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * getApprovedVehicleVersionById fetch the details by using
-	 * VehicleVersionDAO's getVehicleVersionById method . with parameter id and
-	 * type as blank. it fetches the approved records from the
-	 * AMTVehicleVersion.
+	 * getApprovedVehicleVersionById fetch the details by using VehicleVersionDAO's getVehicleVersionById method . with
+	 * parameter id and type as blank. it fetches the approved records from the AMTVehicleVersion.
 	 * 
 	 * @param id
 	 *            (int)
@@ -204,20 +194,15 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getVehicleVersionDAO().delete with parameters vehicleVersion,"" b)
-	 * NEW Add new record in to main table by using getVehicleVersionDAO().save
-	 * with parameters vehicleVersion,"" c) EDIT Update record in the main table
-	 * by using getVehicleVersionDAO().update with parameters vehicleVersion,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getVehicleVersionDAO().delete with parameters vehicleVersion,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtAMTVehicleVersion by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtAMTVehicleVersion by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getVehicleVersionDAO().delete with
+	 * parameters vehicleVersion,"" b) NEW Add new record in to main table by using getVehicleVersionDAO().save with
+	 * parameters vehicleVersion,"" c) EDIT Update record in the main table by using getVehicleVersionDAO().update with
+	 * parameters vehicleVersion,"" 3) Delete the record from the workFlow table by using getVehicleVersionDAO().delete
+	 * with parameters vehicleVersion,"_Temp" 4) Audit the record in to AuditHeader and AdtAMTVehicleVersion by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAMTVehicleVersion
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -233,11 +218,9 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 		}
 
 		VehicleVersion vehicleVersion = new VehicleVersion();
-		BeanUtils.copyProperties((VehicleVersion) auditHeader.getAuditDetail()
-				.getModelData(), vehicleVersion);
+		BeanUtils.copyProperties((VehicleVersion) auditHeader.getAuditDetail().getModelData(), vehicleVersion);
 
-		if (vehicleVersion.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (vehicleVersion.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getVehicleVersionDAO().delete(vehicleVersion, "");
@@ -249,8 +232,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 			vehicleVersion.setNextTaskId("");
 			vehicleVersion.setWorkflowId(0);
 
-			if (vehicleVersion.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (vehicleVersion.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				vehicleVersion.setRecordType("");
 				getVehicleVersionDAO().save(vehicleVersion, "");
@@ -276,13 +258,10 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getVehicleVersionDAO().delete with parameters
-	 * vehicleVersion,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtAMTVehicleVersion by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getVehicleVersionDAO().delete with parameters vehicleVersion,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtAMTVehicleVersion by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -297,8 +276,7 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 			return auditHeader;
 		}
 
-		VehicleVersion vehicleVersion = (VehicleVersion) auditHeader
-		.getAuditDetail().getModelData();
+		VehicleVersion vehicleVersion = (VehicleVersion) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getVehicleVersionDAO().delete(vehicleVersion, "_Temp");
@@ -310,20 +288,17 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -332,38 +307,32 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getCourseDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getCourseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		VehicleVersion vehicleVersion = (VehicleVersion) auditDetail
-		.getModelData();
+		VehicleVersion vehicleVersion = (VehicleVersion) auditDetail.getModelData();
 
 		VehicleVersion tempVehicleVersion = null;
 		if (vehicleVersion.isWorkflow()) {
-			tempVehicleVersion = getVehicleVersionDAO().getVehicleVersionById(
-					vehicleVersion.getId(), "_Temp");
+			tempVehicleVersion = getVehicleVersionDAO().getVehicleVersionById(vehicleVersion.getId(), "_Temp");
 		}
-		VehicleVersion befVehicleVersion = getVehicleVersionDAO()
-		.getVehicleVersionById(vehicleVersion.getId(), "");
+		VehicleVersion befVehicleVersion = getVehicleVersionDAO().getVehicleVersionById(vehicleVersion.getId(), "");
 
 		VehicleVersion oldVehicleVersion = vehicleVersion.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
 		valueParm[0] = String.valueOf(vehicleVersion.getId());
-		errParm[0] = PennantJavaUtil.getLabel("label_VehicleVersionId") + ":"
-		+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_VehicleVersionId") + ":" + valueParm[0];
 
 		if (vehicleVersion.isNew()) { // for New record or new record into work
 			// flow
@@ -374,26 +343,22 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 				if (befVehicleVersion != null) { // Record Already Exists in the
 					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (vehicleVersion.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (vehicleVersion.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befVehicleVersion != null || tempVehicleVersion != null) { // if
 						// records already exists
 						// in the
 						// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befVehicleVersion == null || tempVehicleVersion != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41005", errParm, valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -406,24 +371,19 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 				if (befVehicleVersion == null) { // if records not exists in the
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldVehicleVersion != null
-							&& !oldVehicleVersion.getLastMntOn().equals(
-									befVehicleVersion.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldVehicleVersion.getLastMntOn().equals(befVehicleVersion.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetail(
-											PennantConstants.KEY_FIELD,
-											"41003", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil
-									.getErrorDetail(new ErrorDetail(
-											PennantConstants.KEY_FIELD,
-											"41004", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
@@ -432,34 +392,30 @@ public class VehicleVersionServiceImpl extends GenericService<VehicleVersion> im
 				if (tempVehicleVersion == null) { // if records not exists in
 					// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempVehicleVersion != null && oldVehicleVersion != null
-						&& !oldVehicleVersion.getLastMntOn().equals(
-								tempVehicleVersion.getLastMntOn())) {
+						&& !oldVehicleVersion.getLastMntOn().equals(tempVehicleVersion.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		VehicleVersion vehiclevers =  getVehicleVersionDAO().getVehicleVersionByType(vehicleVersion, "_View"); 
-		if(vehiclevers != null){
-			String[] errParm1= new String[1];
-			String[] valueParm1= new String[2];
+		VehicleVersion vehiclevers = getVehicleVersionDAO().getVehicleVersionByType(vehicleVersion, "_View");
+		if (vehiclevers != null) {
+			String[] errParm1 = new String[1];
+			String[] valueParm1 = new String[2];
 			valueParm1[0] = vehiclevers.getLovDescVehicleModelDesc();
 			valueParm1[1] = vehiclevers.getVehicleVersionCode();
-			errParm1[0]=PennantJavaUtil.getLabel("label_VehicleModel")+":"+valueParm1[0]+ ","+PennantJavaUtil.getLabel("label_VehicleVersionCode")+":"+ valueParm1[1];		
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1,null));
+			errParm1[0] = PennantJavaUtil.getLabel("label_VehicleModel") + ":" + valueParm1[0] + ","
+					+ PennantJavaUtil.getLabel("label_VehicleVersionCode") + ":" + valueParm1[1];
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1, null));
 		}
-	
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !vehicleVersion.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !vehicleVersion.isWorkflow()) {
 			vehicleVersion.setBefImage(befVehicleVersion);
 		}
 

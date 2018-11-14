@@ -90,55 +90,54 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerPRelation/customerPRelationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPRelation/customerPRelationDialog.zul
+ * file.
  */
 public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> {
 	private static final long serialVersionUID = -4928858312962975781L;
 	private static final Logger logger = Logger.getLogger(CustomerPRelationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CustomerPRelationDialog; // autowired
+	protected Window window_CustomerPRelationDialog; // autowired
 
-	protected Intbox 		pRCustPRSNo; 					// autowired
-	protected Textbox 		pRRelationCode; 				// autowired
-	protected Textbox 		pRRelationCustID; 				// autowired
-	protected Checkbox 		pRisGuardian; 					// autowired
-	protected Textbox 		pRFName; 						// autowired
-	protected Textbox 		pRMName; 						// autowired
-	protected Textbox 		pRLName; 						// autowired
-	protected Textbox 		pRSName; 						// autowired
-	protected Textbox 		pRFNameLclLng; 					// autowired
-	protected Textbox 		pRMNameLclLng; 					// autowired
-	protected Textbox 		pRLNameLclLng; 					// autowired
-	protected Datebox 		pRDOB; 							// autowired
-	protected Textbox 		pRAddrHNbr; 					// autowired
-	protected Textbox 		pRAddrFNbr; 					// autowired
-	protected Textbox 		pRAddrStreet; 					// autowired
-	protected Textbox 		pRAddrLine1; 					// autowired
-	protected Textbox 		pRAddrLine2; 					// autowired
-	protected Textbox 		pRAddrPOBox; 					// autowired
-	protected Textbox 		pRAddrCity; 					// autowired
-	protected Textbox 		pRAddrProvince; 				// autowired
-	protected Textbox 		pRAddrCountry; 					// autowired
-	protected Textbox 		pRAddrZIP; 						// autowired
-	protected Textbox 		pRPhone; 						// autowired
-	protected Textbox 		pRMail; 						// autowired
-	protected Longbox 		pRCustID;						// autowired
-	protected Textbox 		custCIF;						// autowired
-	protected Label 		custShrtName;					// autowired
-	
+	protected Intbox pRCustPRSNo; // autowired
+	protected Textbox pRRelationCode; // autowired
+	protected Textbox pRRelationCustID; // autowired
+	protected Checkbox pRisGuardian; // autowired
+	protected Textbox pRFName; // autowired
+	protected Textbox pRMName; // autowired
+	protected Textbox pRLName; // autowired
+	protected Textbox pRSName; // autowired
+	protected Textbox pRFNameLclLng; // autowired
+	protected Textbox pRMNameLclLng; // autowired
+	protected Textbox pRLNameLclLng; // autowired
+	protected Datebox pRDOB; // autowired
+	protected Textbox pRAddrHNbr; // autowired
+	protected Textbox pRAddrFNbr; // autowired
+	protected Textbox pRAddrStreet; // autowired
+	protected Textbox pRAddrLine1; // autowired
+	protected Textbox pRAddrLine2; // autowired
+	protected Textbox pRAddrPOBox; // autowired
+	protected Textbox pRAddrCity; // autowired
+	protected Textbox pRAddrProvince; // autowired
+	protected Textbox pRAddrCountry; // autowired
+	protected Textbox pRAddrZIP; // autowired
+	protected Textbox pRPhone; // autowired
+	protected Textbox pRMail; // autowired
+	protected Longbox pRCustID; // autowired
+	protected Textbox custCIF; // autowired
+	protected Label custShrtName; // autowired
+
 	// Space Id's Checking for Mandatory or not
 	protected Space space_pRRelationCustID;
 	// not auto wired vars
@@ -146,34 +145,34 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	private transient CustomerPRelationListCtrl customerPRelationListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchPRCustid;
 
-	protected Button btnSearchPRRelationCode; 	// autowire
+	protected Button btnSearchPRRelationCode; // autowire
 	protected Textbox lovDescPRRelationCodeName;
-	protected Button btnSearchPRAddrCity; 		// autowire
+	protected Button btnSearchPRAddrCity; // autowire
 	protected Textbox lovDescPRAddrCityName;
-	protected Button btnSearchPRAddrProvince; 	// autowire
+	protected Button btnSearchPRAddrProvince; // autowire
 	protected Textbox lovDescPRAddrProvinceName;
-	protected Button btnSearchPRAddrCountry; 	// autowire
+	protected Button btnSearchPRAddrCountry; // autowire
 	protected Textbox lovDescPRAddrCountryName;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CustomerPRelationService customerPRelationService;
 	private transient CustomerSelectCtrl customerSelectCtrl;
 
-	private boolean newRecord=false;
-	private boolean newCustomer=false;
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
 	private List<CustomerPRelation> customerPRelations;
 	private CustomerDialogCtrl customerDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject ;
-	private Boolean minor=false;
+	protected JdbcSearchObject<Customer> newSearchObject;
+	private Boolean minor = false;
 	private transient String CUSTCIF_REGEX;
 	String parms[] = new String[4];
-	private String moduleType="";
+	private String moduleType = "";
 	Date appStartDate = DateUtility.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -189,9 +188,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerPRelation object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerPRelation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -207,7 +205,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 
 		if (arguments.containsKey("customerPRelation")) {
 			this.customerPRelation = (CustomerPRelation) arguments.get("customerPRelation");
-			CustomerPRelation befImage =new CustomerPRelation();
+			CustomerPRelation befImage = new CustomerPRelation();
 			BeanUtils.copyProperties(this.customerPRelation, befImage);
 			this.customerPRelation.setBefImage(befImage);
 
@@ -215,37 +213,37 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		} else {
 			setCustomerPRelation(null);
 		}
-		
+
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
 
-		if(getCustomerPRelation().isNewRecord()){
+		if (getCustomerPRelation().isNewRecord()) {
 			setNewRecord(true);
 		}
 
-		if(arguments.containsKey("customerDialogCtrl")){
+		if (arguments.containsKey("customerDialogCtrl")) {
 
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
 			setNewCustomer(true);
 
-			if(arguments.containsKey("newRecord")){
+			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
-			}else{
+			} else {
 				setNewRecord(false);
 			}
 			this.customerPRelation.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
-				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), 
-				"CustomerPRelationDialog");
+			if (arguments.containsKey("roleCode")) {
+				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"),
+						"CustomerPRelationDialog");
 			}
 		}
 
-		doLoadWorkFlow(this.customerPRelation.isWorkflow(),this.customerPRelation.getWorkflowId(),
+		doLoadWorkFlow(this.customerPRelation.isWorkflow(), this.customerPRelation.getWorkflowId(),
 				this.customerPRelation.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerPRelationDialog");
 		}
 
@@ -261,7 +259,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 
 		if (arguments.containsKey("isMinor")) {
 			setMinor((Boolean) arguments.get("isMinor"));
-		}else{
+		} else {
 			setMinor(getCustomerPRelation().isPRisGuardian());
 		}
 
@@ -313,14 +311,14 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		this.CUSTCIF_REGEX = "[" + parms[0] + "]{" + parms[1] + "}";
 		this.pRRelationCustID.setMaxlength(Integer.parseInt(parms[1]));
 
-		if(isNewRecord()){
+		if (isNewRecord()) {
 			this.btnSearchPRAddrProvince.setVisible(false);
 			this.btnSearchPRAddrCity.setVisible(false);
 		}
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -331,8 +329,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -415,7 +412,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	}
 
 	// OnCheck CheckBox Events
-	
+
 	public void onCheck$pRisGuardian(Event event) {
 		gaurdianCheck(true);
 	}
@@ -426,7 +423,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 */
 	private void gaurdianCheck(boolean isMinor) {
 		logger.debug("Entering");
-		if(isMinor){
+		if (isMinor) {
 			this.pRisGuardian.setDisabled(isReadOnly("CustomerPRelationDialog_pRisGuardian"));
 			if (this.pRisGuardian.isChecked()) {
 				this.space_pRRelationCustID.setStyle("background-color:red");
@@ -435,7 +432,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 				this.pRRelationCustID.setValue("");
 				this.space_pRRelationCustID.setStyle("background-color:white");
 			}
-		}else{
+		} else {
 			this.pRisGuardian.setChecked(false);
 			this.pRisGuardian.setDisabled(true);
 			this.space_pRRelationCustID.setStyle("background-color:white");
@@ -466,7 +463,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void doWriteBeanToComponents(CustomerPRelation aCustomerPRelation) {
 		logger.debug("Entering");
 
-		if(aCustomerPRelation.getPRCustID()!=Long.MIN_VALUE){
+		if (aCustomerPRelation.getPRCustID() != Long.MIN_VALUE) {
 			this.pRCustID.setValue(aCustomerPRelation.getPRCustID());
 		}
 
@@ -474,7 +471,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		this.pRRelationCode.setValue(aCustomerPRelation.getPRRelationCode());
 		this.pRRelationCustID.setValue(StringUtils.trimToEmpty(aCustomerPRelation.getPRRelationCustID()));
 
-		if(isMinor()){
+		if (isMinor()) {
 			this.pRisGuardian.setChecked(aCustomerPRelation.isPRisGuardian());
 		}
 		gaurdianCheck(isMinor());
@@ -499,26 +496,32 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		this.pRAddrZIP.setValue(aCustomerPRelation.getPRAddrZIP());
 		this.pRPhone.setValue(aCustomerPRelation.getPRPhone());
 		this.pRMail.setValue(aCustomerPRelation.getPRMail());
-		this.custCIF.setValue(aCustomerPRelation.getLovDescCustCIF()==null?"":aCustomerPRelation.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerPRelation.getLovDescCustShrtName()==null?"":aCustomerPRelation.getLovDescCustShrtName().trim());
+		this.custCIF.setValue(
+				aCustomerPRelation.getLovDescCustCIF() == null ? "" : aCustomerPRelation.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerPRelation.getLovDescCustShrtName() == null ? ""
+				: aCustomerPRelation.getLovDescCustShrtName().trim());
 
-		if (isNewRecord()){
+		if (isNewRecord()) {
 			this.lovDescPRRelationCodeName.setValue("");
 			this.lovDescPRAddrCityName.setValue("");
 			this.lovDescPRAddrProvinceName.setValue("");
 			this.lovDescPRAddrCountryName.setValue("");
-		}else{
-			if(isNewCustomer()){
+		} else {
+			if (isNewCustomer()) {
 				this.lovDescPRRelationCodeName.setValue(aCustomerPRelation.getLovDescPRRelationCodeName());
 				this.lovDescPRAddrCityName.setValue(aCustomerPRelation.getLovDescPRAddrCityName());
 				this.lovDescPRAddrProvinceName.setValue(aCustomerPRelation.getLovDescPRAddrProvinceName());
 				this.lovDescPRAddrCountryName.setValue(aCustomerPRelation.getLovDescPRAddrCountryName());
 
-			}else{
-				this.lovDescPRRelationCodeName.setValue(aCustomerPRelation.getPRRelationCode()+"-"+aCustomerPRelation.getLovDescPRRelationCodeName());
-				this.lovDescPRAddrCityName.setValue(aCustomerPRelation.getPRAddrCity()+"-"+aCustomerPRelation.getLovDescPRAddrCityName());
-				this.lovDescPRAddrProvinceName.setValue(aCustomerPRelation.getPRAddrProvince()+"-"+aCustomerPRelation.getLovDescPRAddrProvinceName());
-				this.lovDescPRAddrCountryName.setValue(aCustomerPRelation.getPRAddrCountry()+"-"+aCustomerPRelation.getLovDescPRAddrCountryName());
+			} else {
+				this.lovDescPRRelationCodeName.setValue(aCustomerPRelation.getPRRelationCode() + "-"
+						+ aCustomerPRelation.getLovDescPRRelationCodeName());
+				this.lovDescPRAddrCityName.setValue(
+						aCustomerPRelation.getPRAddrCity() + "-" + aCustomerPRelation.getLovDescPRAddrCityName());
+				this.lovDescPRAddrProvinceName.setValue(aCustomerPRelation.getPRAddrProvince() + "-"
+						+ aCustomerPRelation.getLovDescPRAddrProvinceName());
+				this.lovDescPRAddrCountryName.setValue(
+						aCustomerPRelation.getPRAddrCountry() + "-" + aCustomerPRelation.getLovDescPRAddrCountryName());
 			}
 		}
 		this.recordStatus.setValue(aCustomerPRelation.getRecordStatus());
@@ -538,139 +541,139 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		try {
 			aCustomerPRelation.setPRCustID(this.pRCustID.longValue());
 			aCustomerPRelation.setLovDescCustCIF(this.custCIF.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRCustPRSNo(this.pRCustPRSNo.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setLovDescPRRelationCodeName(this.lovDescPRRelationCodeName.getValue());
-			aCustomerPRelation.setPRRelationCode(this.pRRelationCode.getValue());	
-		}catch (WrongValueException we ) {
+			aCustomerPRelation.setPRRelationCode(this.pRRelationCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRRelationCustID(StringUtils.trimToEmpty(this.pRRelationCustID.getValue()));
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRisGuardian(this.pRisGuardian.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRFName(this.pRFName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRMName(this.pRMName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRLName(this.pRLName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRSName(this.pRSName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRFNameLclLng(this.pRFNameLclLng.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRMNameLclLng(this.pRMNameLclLng.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRLNameLclLng(this.pRLNameLclLng.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRDOB(this.pRDOB.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrHNbr(this.pRAddrHNbr.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrFNbr(this.pRAddrFNbr.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrStreet(this.pRAddrStreet.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrLine1(this.pRAddrLine1.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrLine2(this.pRAddrLine2.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrPOBox(this.pRAddrPOBox.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setLovDescPRAddrCityName(this.lovDescPRAddrCityName.getValue());
-			aCustomerPRelation.setPRAddrCity(this.pRAddrCity.getValue());	
-		}catch (WrongValueException we ) {
+			aCustomerPRelation.setPRAddrCity(this.pRAddrCity.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setLovDescPRAddrProvinceName(this.lovDescPRAddrProvinceName.getValue());
-			aCustomerPRelation.setPRAddrProvince(this.pRAddrProvince.getValue());	
-		}catch (WrongValueException we ) {
+			aCustomerPRelation.setPRAddrProvince(this.pRAddrProvince.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setLovDescPRAddrCountryName(this.lovDescPRAddrCountryName.getValue());
-			aCustomerPRelation.setPRAddrCountry(this.pRAddrCountry.getValue());	
-		}catch (WrongValueException we ) {
+			aCustomerPRelation.setPRAddrCountry(this.pRAddrCountry.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRAddrZIP(this.pRAddrZIP.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRPhone(this.pRPhone.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerPRelation.setPRMail(this.pRMail.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -685,8 +688,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerPRelation
 	 * @throws InterruptedException
@@ -702,12 +704,12 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 			this.custCIF.focus();
 		} else {
 			this.custCIF.focus();
-			if (isNewCustomer()){
+			if (isNewCustomer()) {
 				doEdit();
-			}else  if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -718,12 +720,12 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerPRelation);
 
-			if(isNewCustomer()){
+			if (isNewCustomer()) {
 				this.window_CustomerPRelationDialog.setHeight("60%");
 				this.window_CustomerPRelationDialog.setWidth("85%");
 				this.groupboxWf.setVisible(false);
-				this.window_CustomerPRelationDialog.doModal() ;
-			}else{
+				this.window_CustomerPRelationDialog.doModal();
+			} else {
 				this.window_CustomerPRelationDialog.setWidth("100%");
 				this.window_CustomerPRelationDialog.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
@@ -742,78 +744,97 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		doClearMessage();
 		setValidationOn(true);
 
-		if (!this.pRCustID.isReadonly()){
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRCustID.value"),null,true));
-		}	
-		if (!this.pRFName.isReadonly()){
-			this.pRFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRFName.value"), 
-					PennantRegularExpressions.REGEX_NAME, true));
-		}	
-		if (!this.pRMName.isReadonly()){
-			if(StringUtils.isNotBlank(this.pRMName.getValue())){
-				this.pRMName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMName.value"), 
-						PennantRegularExpressions.REGEX_NAME, true));
+		if (!this.pRCustID.isReadonly()) {
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRCustID.value"), null, true));
+		}
+		if (!this.pRFName.isReadonly()) {
+			this.pRFName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRFName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
+		}
+		if (!this.pRMName.isReadonly()) {
+			if (StringUtils.isNotBlank(this.pRMName.getValue())) {
+				this.pRMName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 		}
-		if(this.pRisGuardian.isChecked()){
-			this.pRRelationCustID.setConstraint(new PTStringValidator(Labels.getLabel(
-					"MAND_FIELD_ALLOWED_CHARS",new String[] {Labels.getLabel(
-					"label_CustomerDialog_CustCIF.value"),parms[0], parms[1] }),this.CUSTCIF_REGEX));
+		if (this.pRisGuardian.isChecked()) {
+			this.pRRelationCustID.setConstraint(new PTStringValidator(
+					Labels.getLabel("MAND_FIELD_ALLOWED_CHARS",
+							new String[] { Labels.getLabel("label_CustomerDialog_CustCIF.value"), parms[0], parms[1] }),
+					this.CUSTCIF_REGEX));
 		}
-		if (!this.pRLName.isReadonly()){
-			this.pRLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRLName.value"), 
-					PennantRegularExpressions.REGEX_NAME, true));
-		}	
-		if (!this.pRSName.isReadonly()){
-			this.pRSName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRSName.value"), 
-					PennantRegularExpressions.REGEX_NAME, true));
-		}	
-		if(!this.pRDOB.isReadonly()){
-			this.pRDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerPRelationDialog_PRDOB.value"),true,startDate,appStartDate,false));
+		if (!this.pRLName.isReadonly()) {
+			this.pRLName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRLName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
+		}
+		if (!this.pRSName.isReadonly()) {
+			this.pRSName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRSName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
+		}
+		if (!this.pRDOB.isReadonly()) {
+			this.pRDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerPRelationDialog_PRDOB.value"),
+					true, startDate, appStartDate, false));
 		}
 		boolean addressConstraint = false;
-		if (StringUtils.isBlank(this.pRAddrHNbr.getValue())
-				&& StringUtils.isBlank(this.pRAddrFNbr.getValue())
-				&& StringUtils.isBlank(this.pRAddrStreet.getValue())
-				&& StringUtils.isBlank(this.pRAddrLine1.getValue())
+		if (StringUtils.isBlank(this.pRAddrHNbr.getValue()) && StringUtils.isBlank(this.pRAddrFNbr.getValue())
+				&& StringUtils.isBlank(this.pRAddrStreet.getValue()) && StringUtils.isBlank(this.pRAddrLine1.getValue())
 				&& StringUtils.isBlank(this.pRAddrLine2.getValue())) {
 			addressConstraint = true;
 		}
 		if (addressConstraint) {
-			this.pRAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrHNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, true));
-		}	
+			this.pRAddrHNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrHNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
+		}
 		if (addressConstraint) {
-			this.pRAddrFNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrFNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
-		}	
+			this.pRAddrFNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrFNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
 		if (addressConstraint) {
-			this.pRAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
-		}	
+			this.pRAddrStreet.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrStreet.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
+		}
 		if (addressConstraint) {
-			this.pRAddrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrLine1.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
-		}	
+			this.pRAddrLine1.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
 		if (addressConstraint) {
-			this.pRAddrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrLine2.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.pRAddrLine2.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrLine2.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 
-		if (!this.pRPhone.isReadonly()){
-			this.pRPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CustomerPRelationDialog_PRPhone.value"),true));
-		}	
-		if (!this.pRAddrPOBox.isReadonly()){
-			this.pRAddrPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrPOBox.value"), PennantRegularExpressions.REGEX_ALPHANUM, false));
-		}	
-		if (!this.pRAddrZIP.isReadonly()){
-				this.pRAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
-		}	
-		if (!this.pRMail.isReadonly()){
-			this.pRMail.setConstraint(new PTEmailValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMail.value"),false));
+		if (!this.pRPhone.isReadonly()) {
+			this.pRPhone.setConstraint(
+					new PTPhoneNumberValidator(Labels.getLabel("label_CustomerPRelationDialog_PRPhone.value"), true));
 		}
-		if(StringUtils.isNotEmpty(this.pRRelationCustID.getValue())){
-			this.pRRelationCustID.setConstraint(new PTStringValidator(
-					Labels.getLabel("FIELD_ALLOWED_CHARS",new String[] {Labels.getLabel("label_CustomerPRelationDialog_PRRelationCustID.value"),
-							SysParamUtil.getValueAsString("CIF_CHAR"),
-							SysParamUtil.getValueAsString("CIF_LENGTH") }),this.CUSTCIF_REGEX));
+		if (!this.pRAddrPOBox.isReadonly()) {
+			this.pRAddrPOBox.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrPOBox.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+		if (!this.pRAddrZIP.isReadonly()) {
+			this.pRAddrZIP.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrZIP.value"),
+							PennantRegularExpressions.REGEX_ZIP, false));
+		}
+		if (!this.pRMail.isReadonly()) {
+			this.pRMail.setConstraint(
+					new PTEmailValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMail.value"), false));
+		}
+		if (StringUtils.isNotEmpty(this.pRRelationCustID.getValue())) {
+			this.pRRelationCustID.setConstraint(new PTStringValidator(Labels.getLabel("FIELD_ALLOWED_CHARS",
+					new String[] { Labels.getLabel("label_CustomerPRelationDialog_PRRelationCustID.value"),
+							SysParamUtil.getValueAsString("CIF_CHAR"), SysParamUtil.getValueAsString("CIF_LENGTH") }),
+					this.CUSTCIF_REGEX));
 		}
 		logger.debug("Leaving");
 	}
@@ -853,13 +874,17 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-		this.lovDescPRRelationCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRRelationCode.value"),null,true));
+		this.lovDescPRRelationCodeName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerPRelationDialog_PRRelationCode.value"), null, true));
 
-		this.lovDescPRAddrCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrCity.value"),null,true));
+		this.lovDescPRAddrCityName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrCity.value"), null, true));
 
-		this.lovDescPRAddrProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrProvince.value"),null,true));
+		this.lovDescPRAddrProvinceName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerPRelationDialog_PRAddrProvince.value"), null, true));
 
-		this.lovDescPRAddrCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrCountry.value"),null,true));
+		this.lovDescPRAddrCountryName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerPRelationDialog_PRAddrCountry.value"), null, true));
 
 		logger.debug("Leaving");
 	}
@@ -927,41 +952,41 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		logger.debug("Entering");
 		final CustomerPRelation aCustomerPRelation = new CustomerPRelation();
 		BeanUtils.copyProperties(getCustomerPRelation(), aCustomerPRelation);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + 
-		"\n\n --> " + aCustomerPRelation.getPRCustID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerPRelation.getPRCustID();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerPRelation.getRecordType())){
-				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion()+1);
+			if (StringUtils.isBlank(aCustomerPRelation.getRecordType())) {
+				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion() + 1);
 				aCustomerPRelation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				aCustomerPRelation.setNewRecord(true);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCustomerPRelation.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(isNewCustomer()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCustomerProcess(aCustomerPRelation,tranType);
+				if (isNewCustomer()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newCustomerProcess(aCustomerPRelation, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						//getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
 						// send the data back to customer
 						closeDialog();
-					}	
-				}else if(doProcess(aCustomerPRelation,tranType)){
+					}
+				} else if (doProcess(aCustomerPRelation, tranType)) {
 					refreshList();
 					closeDialog();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -975,15 +1000,15 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (isNewRecord()){
+		if (isNewRecord()) {
 
-			if(isNewCustomer()){
-				this.btnCancel.setVisible(false);	
+			if (isNewCustomer()) {
+				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-			}else{
+			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.pRCustID.setReadonly(true);
 			this.btnSearchPRCustid.setVisible(false);
@@ -1014,30 +1039,30 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		this.pRPhone.setReadonly(isReadOnly("CustomerPRelationDialog_pRPhone"));
 		this.pRMail.setReadonly(isReadOnly("CustomerPRelationDialog_pRMail"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.customerPRelation.isNewRecord()){
+			if (this.customerPRelation.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
-			if(newCustomer){
-				if("ENQ".equals(this.moduleType)){
+		} else {
+			if (newCustomer) {
+				if ("ENQ".equals(this.moduleType)) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
-				}else if (isNewRecord()){
+				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
@@ -1045,8 +1070,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewCustomer()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewCustomer()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1083,13 +1108,13 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		this.pRMail.setReadonly(true);
 		this.btnSearchPRCustid.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -1157,61 +1182,61 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		// Do data level validations here
 
 		isNew = aCustomerPRelation.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCustomerPRelation.getRecordType())){
-				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aCustomerPRelation.getRecordType())) {
+				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion() + 1);
+				if (isNew) {
 					aCustomerPRelation.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCustomerPRelation.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerPRelation.setNewRecord(true);
 				}
 			}
-		}else{
-			if(isNewCustomer()){
-				if(isNewRecord()){
+		} else {
+			if (isNewCustomer()) {
+				if (isNewRecord()) {
 					aCustomerPRelation.setVersion(1);
 					aCustomerPRelation.setRecordType(PennantConstants.RCD_ADD);
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aCustomerPRelation.getRecordType())){
-					aCustomerPRelation.setVersion(aCustomerPRelation.getVersion()+1);
+				if (StringUtils.isBlank(aCustomerPRelation.getRecordType())) {
+					aCustomerPRelation.setVersion(aCustomerPRelation.getVersion() + 1);
 					aCustomerPRelation.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aCustomerPRelation.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aCustomerPRelation.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
-				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion()+1);
-				if(isNew){
-					tranType =PennantConstants.TRAN_ADD;
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+			} else {
+				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
 		}
 
 		// save it to database
 		try {
-			if(isNewCustomer()){
-				AuditHeader auditHeader =  newCustomerProcess(aCustomerPRelation,tranType);
+			if (isNewCustomer()) {
+				AuditHeader auditHeader = newCustomerProcess(aCustomerPRelation, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					//getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
 					// send the data back to customer
 					closeDialog();
 				}
-			}else if(doProcess(aCustomerPRelation,tranType)){
+			} else if (doProcess(aCustomerPRelation, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -1230,18 +1255,20 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerPRelation (CustomerPRelation)
+	 * @param aCustomerPRelation
+	 *            (CustomerPRelation)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerPRelation aCustomerPRelation,String tranType){
+	private boolean doProcess(CustomerPRelation aCustomerPRelation, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCustomerPRelation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerPRelation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1271,19 +1298,19 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 			}
 
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -1293,23 +1320,23 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 			aCustomerPRelation.setRoleCode(getRole());
 			aCustomerPRelation.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCustomerPRelation, tranType);
+			auditHeader = getAuditHeader(aCustomerPRelation, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCustomerPRelation);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCustomerPRelation, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					auditHeader = getAuditHeader(aCustomerPRelation, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aCustomerPRelation, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCustomerPRelation, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
@@ -1327,58 +1354,53 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		CustomerPRelation  aCustomerPRelation= (CustomerPRelation) auditHeader.getAuditDetail().getModelData();
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		CustomerPRelation aCustomerPRelation = (CustomerPRelation) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCustomerPRelationService().delete(auditHeader);
 						deleteNotes = true;
-					}else{
-						auditHeader = getCustomerPRelationService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getCustomerPRelationService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerPRelationService().doApprove(auditHeader);
-						if (aCustomerPRelation.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCustomerPRelationService().doReject(auditHeader);
-						if (aCustomerPRelation.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aCustomerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CustomerPRelationDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CustomerPRelationDialog, auditHeader);
 						return processCompleted;
 					}
 				}
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_CustomerPRelationDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
 					if (deleteNotes) {
 						deleteNotes(getNotes(this.customerPRelation), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -1395,94 +1417,95 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 
 	// Search Button Component Events
 
-	public void onClick$btnSearchPRRelationCode(Event event){
+	public void onClick$btnSearchPRRelationCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog,"PRelationCode");
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog, "PRelationCode");
+		if (dataObject instanceof String) {
 			this.pRRelationCode.setValue(dataObject.toString());
 			this.lovDescPRRelationCodeName.setValue("");
-		}else{
-			PRelationCode details= (PRelationCode) dataObject;
+		} else {
+			PRelationCode details = (PRelationCode) dataObject;
 			if (details != null) {
 				this.pRRelationCode.setValue(details.getLovValue());
-				this.lovDescPRRelationCodeName.setValue(details.getLovValue()+"-"+details.getPRelationDesc());
+				this.lovDescPRRelationCodeName.setValue(details.getLovValue() + "-" + details.getPRelationDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchPRAddrCity(Event event){
+	public void onClick$btnSearchPRAddrCity(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("PCProvince", this.pRAddrProvince.getValue(), Filter.OP_EQUAL);  
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("PCProvince", this.pRAddrProvince.getValue(), Filter.OP_EQUAL);
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog,"City",filters );
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog, "City", filters);
+		if (dataObject instanceof String) {
 			this.pRAddrCity.setValue(dataObject.toString());
 			this.lovDescPRAddrCityName.setValue("");
-		}else{
-			City details= (City) dataObject;
+		} else {
+			City details = (City) dataObject;
 			if (details != null) {
 				this.pRAddrCity.setValue(StringUtils.trimToEmpty(details.getPCCity()));
-				this.lovDescPRAddrCityName.setValue(StringUtils.trimToEmpty(details.getPCCity())+"-"+details.getPCCityName());
+				this.lovDescPRAddrCityName
+						.setValue(StringUtils.trimToEmpty(details.getPCCity()) + "-" + details.getPCCityName());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchPRAddrProvince(Event event){
+	public void onClick$btnSearchPRAddrProvince(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String sPRAddrProvince= this.pRAddrProvince.getValue();
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("CPCountry", this.pRAddrCountry.getValue(), Filter.OP_EQUAL);  
+		String sPRAddrProvince = this.pRAddrProvince.getValue();
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CPCountry", this.pRAddrCountry.getValue(), Filter.OP_EQUAL);
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog,"Province",filters);
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog, "Province", filters);
+		if (dataObject instanceof String) {
 			this.pRAddrProvince.setValue(dataObject.toString());
 			this.lovDescPRAddrProvinceName.setValue("");
-		}else{
-			Province details= (Province) dataObject;
+		} else {
+			Province details = (Province) dataObject;
 			if (details != null) {
 				this.pRAddrProvince.setValue(details.getCPProvince());
-				this.lovDescPRAddrProvinceName.setValue(details.getLovValue()+"-"+details.getCPProvinceName());
+				this.lovDescPRAddrProvinceName.setValue(details.getLovValue() + "-" + details.getCPProvinceName());
 			}
 		}
 
-		if (!StringUtils.trimToEmpty(sPRAddrProvince).equals(this.pRAddrProvince.getValue())){
+		if (!StringUtils.trimToEmpty(sPRAddrProvince).equals(this.pRAddrProvince.getValue())) {
 			this.pRAddrCity.setValue("");
 			this.lovDescPRAddrCityName.setValue("");
 			this.btnSearchPRAddrCity.setVisible(false);
 		}
 
-		if(StringUtils.isNotEmpty(this.lovDescPRAddrProvinceName.getValue())){		   
-			this.btnSearchPRAddrCity.setVisible(true);		   
-		}else{
+		if (StringUtils.isNotEmpty(this.lovDescPRAddrProvinceName.getValue())) {
+			this.btnSearchPRAddrCity.setVisible(true);
+		} else {
 			this.lovDescPRAddrCityName.setValue("");
-			this.btnSearchPRAddrCity.setVisible(false);	
+			this.btnSearchPRAddrCity.setVisible(false);
 		}
-		logger.debug("Leaving" + event.toString()); 
+		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchPRAddrCountry(Event event){
+	public void onClick$btnSearchPRAddrCountry(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String sPRAddrCountry= this.pRAddrCountry.getValue();
+		String sPRAddrCountry = this.pRAddrCountry.getValue();
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog,"Country");
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerPRelationDialog, "Country");
+		if (dataObject instanceof String) {
 			this.pRAddrCountry.setValue(dataObject.toString());
 			this.lovDescPRAddrCountryName.setValue("");
-		}else{
-			Country details= (Country) dataObject;
+		} else {
+			Country details = (Country) dataObject;
 			if (details != null) {
 				this.pRAddrCountry.setValue(details.getLovValue());
-				this.lovDescPRAddrCountryName.setValue(details.getLovValue()+"-"+details.getCountryDesc());
+				this.lovDescPRAddrCountryName.setValue(details.getLovValue() + "-" + details.getCountryDesc());
 			}
 		}
-		if (!StringUtils.trimToEmpty(sPRAddrCountry).equals(this.pRAddrCountry.getValue())){
+		if (!StringUtils.trimToEmpty(sPRAddrCountry).equals(this.pRAddrCountry.getValue())) {
 			this.pRAddrProvince.setValue("");
 			this.lovDescPRAddrProvinceName.setValue("");
 			this.pRAddrCity.setValue("");
@@ -1490,24 +1513,25 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 			this.btnSearchPRAddrCity.setVisible(false);
 		}
 
-		if(StringUtils.isNotEmpty(this.lovDescPRAddrCountryName.getValue())){		   
-			this.btnSearchPRAddrProvince.setVisible(true);		   
-		}else{		   
+		if (StringUtils.isNotEmpty(this.lovDescPRAddrCountryName.getValue())) {
+			this.btnSearchPRAddrProvince.setVisible(true);
+		} else {
 			this.lovDescPRAddrProvinceName.setValue("");
 			this.lovDescPRAddrCityName.setValue("");
-			this.btnSearchPRAddrProvince.setVisible(false);	
-			this.btnSearchPRAddrCity.setVisible(false);	
+			this.btnSearchPRAddrProvince.setVisible(false);
+			this.btnSearchPRAddrCity.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for Calling list Of existed Customers
+	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -1515,32 +1539,35 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException{
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
-		map.put("filtertype","Extended");
-		map.put("custCtgType",PennantConstants.PFF_CUSTCTG_INDIV);
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",	null, map);
+		map.put("filtertype", "Extended");
+		map.put("custCtgType", PennantConstants.PFF_CUSTCTG_INDIV);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.pRCustID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
-		if(aCustomer.isCustIsMinor()){
+		if (aCustomer.isCustIsMinor()) {
 			this.pRisGuardian.setChecked(aCustomer.isCustIsMinor());
 		}
 		gaurdianCheck(aCustomer.isCustIsMinor());
@@ -1559,11 +1586,10 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(CustomerPRelation aCustomerPRelation, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerPRelation.getBefImage(), aCustomerPRelation);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerPRelation.getBefImage(), aCustomerPRelation);
 
-		return new AuditHeader(getReference(),String.valueOf(aCustomerPRelation.getPRCustID()), null,
-				null, auditDetail, aCustomerPRelation.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aCustomerPRelation.getPRCustID()), null, null,
+				auditDetail, aCustomerPRelation.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1576,8 +1602,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerPRelationDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1602,8 +1627,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 */
 	@Override
 	protected String getReference() {
-		return String.valueOf(getCustomerPRelation().getPRCustID())+
-		PennantConstants.KEY_SEPERATOR+String.valueOf(getCustomerPRelation().getPRCustPRSNo());
+		return String.valueOf(getCustomerPRelation().getPRCustID()) + PennantConstants.KEY_SEPERATOR
+				+ String.valueOf(getCustomerPRelation().getPRCustPRSNo());
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1612,6 +1637,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1619,6 +1645,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public CustomerPRelation getCustomerPRelation() {
 		return this.customerPRelation;
 	}
+
 	public void setCustomerPRelation(CustomerPRelation customerPRelation) {
 		this.customerPRelation = customerPRelation;
 	}
@@ -1626,6 +1653,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setCustomerPRelationService(CustomerPRelationService customerPRelationService) {
 		this.customerPRelationService = customerPRelationService;
 	}
+
 	public CustomerPRelationService getCustomerPRelationService() {
 		return this.customerPRelationService;
 	}
@@ -1633,6 +1661,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setCustomerPRelationListCtrl(CustomerPRelationListCtrl customerPRelationListCtrl) {
 		this.customerPRelationListCtrl = customerPRelationListCtrl;
 	}
+
 	public CustomerPRelationListCtrl getCustomerPRelationListCtrl() {
 		return this.customerPRelationListCtrl;
 	}
@@ -1640,6 +1669,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {
 		this.customerSelectCtrl = customerSelectctrl;
 	}
+
 	public CustomerSelectCtrl getCustomerSelectCtrl() {
 		return customerSelectCtrl;
 	}
@@ -1647,6 +1677,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
@@ -1654,6 +1685,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -1661,6 +1693,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
+
 	public boolean isNewCustomer() {
 		return newCustomer;
 	}
@@ -1668,6 +1701,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	public void setCustomerPRelations(List<CustomerPRelation> customerPRelations) {
 		this.customerPRelations = customerPRelations;
 	}
+
 	public List<CustomerPRelation> getCustomerPRelations() {
 		return customerPRelations;
 	}

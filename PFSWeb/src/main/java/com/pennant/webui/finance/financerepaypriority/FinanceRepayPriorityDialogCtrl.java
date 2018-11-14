@@ -70,22 +70,20 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/FinanceRepayPriority/financeRepayPriorityDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceRepayPriority/financeRepayPriorityDialog.zul file.
  */
 public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPriority> {
 	private static final long serialVersionUID = 2259700048994840972L;
 	private static final Logger logger = Logger.getLogger(FinanceRepayPriorityDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinanceRepayPriorityDialog; // autowired
 	protected Textbox finType; // autowired
@@ -96,15 +94,13 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	private transient FinanceRepayPriorityListCtrl financeRepayPriorityListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchFinType; // autowire
 	protected Textbox lovDescFinTypeName;
-	
 
 	// ServiceDAOs / Domain Classes
 	private transient FinanceRepayPriorityService financeRepayPriorityService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -121,9 +117,8 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceRepayPriority object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceRepayPriority object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -139,11 +134,9 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
-
 			// READ OVERHANDED params !
 			if (arguments.containsKey("financeRepayPriority")) {
-				this.financeRepayPriority = (FinanceRepayPriority) arguments
-						.get("financeRepayPriority");
+				this.financeRepayPriority = (FinanceRepayPriority) arguments.get("financeRepayPriority");
 				FinanceRepayPriority befImage = new FinanceRepayPriority();
 				BeanUtils.copyProperties(this.financeRepayPriority, befImage);
 				this.financeRepayPriority.setBefImage(befImage);
@@ -153,14 +146,12 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 				setFinanceRepayPriority(null);
 			}
 
-			doLoadWorkFlow(this.financeRepayPriority.isWorkflow(),
-					this.financeRepayPriority.getWorkflowId(),
+			doLoadWorkFlow(this.financeRepayPriority.isWorkflow(), this.financeRepayPriority.getWorkflowId(),
 					this.financeRepayPriority.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"FinanceRepayPriorityDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceRepayPriorityDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -170,8 +161,8 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 			// or
 			// delete financeRepayPriority here.
 			if (arguments.containsKey("financeRepayPriorityListCtrl")) {
-				setFinanceRepayPriorityListCtrl((FinanceRepayPriorityListCtrl) arguments
-						.get("financeRepayPriorityListCtrl"));
+				setFinanceRepayPriorityListCtrl(
+						(FinanceRepayPriorityListCtrl) arguments.get("financeRepayPriorityListCtrl"));
 			} else {
 				setFinanceRepayPriorityListCtrl(null);
 			}
@@ -190,20 +181,20 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.finType.setMaxlength(8);
 		this.finPriority.setMaxlength(4);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -211,11 +202,10 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -225,7 +215,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceRepayPriorityDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -303,11 +293,11 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.financeRepayPriority.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -317,14 +307,15 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 *            FinanceRepayPriority
 	 */
 	public void doWriteBeanToComponents(FinanceRepayPriority aFinanceRepayPriority) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.finType.setValue(aFinanceRepayPriority.getFinType());
 		this.finPriority.setValue(aFinanceRepayPriority.getFinPriority());
 
-		if (aFinanceRepayPriority.isNewRecord()){
+		if (aFinanceRepayPriority.isNewRecord()) {
 			this.lovDescFinTypeName.setValue("");
-		}else{
-			this.lovDescFinTypeName.setValue(aFinanceRepayPriority.getFinType()+"-"+aFinanceRepayPriority.getLovDescFinTypeName());
+		} else {
+			this.lovDescFinTypeName
+					.setValue(aFinanceRepayPriority.getFinType() + "-" + aFinanceRepayPriority.getLovDescFinTypeName());
 		}
 		this.recordStatus.setValue(aFinanceRepayPriority.getRecordStatus());
 		logger.debug("Leaving");
@@ -336,28 +327,28 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * @param aFinanceRepayPriority
 	 */
 	public void doWriteComponentsToBean(FinanceRepayPriority aFinanceRepayPriority) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aFinanceRepayPriority.setLovDescFinTypeName(this.lovDescFinTypeName.getValue());
-			aFinanceRepayPriority.setFinType(this.finType.getValue());	
-		}catch (WrongValueException we ) {
+			aFinanceRepayPriority.setFinType(this.finType.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceRepayPriority.setFinPriority(this.finPriority.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -371,8 +362,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceRepayPriority
 	 * @throws Exception
@@ -388,10 +378,10 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 			this.finType.focus();
 		} else {
 			this.finPriority.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -403,13 +393,13 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 			doWriteBeanToComponents(aFinanceRepayPriority);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_FinanceRepayPriorityDialog.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -419,9 +409,10 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.finPriority.isReadonly()){
-			this.finPriority.setConstraint(new PTNumberValidator(Labels.getLabel("label_FinanceRepayPriorityDialog_FinPriority.value"), true));
-		}	
+		if (!this.finPriority.isReadonly()) {
+			this.finPriority.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_FinanceRepayPriorityDialog_FinPriority.value"), true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -443,31 +434,32 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final FinanceRepayPriority aFinanceRepayPriority = new FinanceRepayPriority();
 		BeanUtils.copyProperties(getFinanceRepayPriority(), aFinanceRepayPriority);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "+ 
-				Labels.getLabel("label_FinanceRepayPriorityDialog_FinType.value")+" : "+aFinanceRepayPriority.getFinType()+"-"+aFinanceRepayPriority.getLovDescFinTypeName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinanceRepayPriorityDialog_FinType.value") + " : "
+				+ aFinanceRepayPriority.getFinType() + "-" + aFinanceRepayPriority.getLovDescFinTypeName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinanceRepayPriority.getRecordType())){
-				aFinanceRepayPriority.setVersion(aFinanceRepayPriority.getVersion()+1);
+			if (StringUtils.isBlank(aFinanceRepayPriority.getRecordType())) {
+				aFinanceRepayPriority.setVersion(aFinanceRepayPriority.getVersion() + 1);
 				aFinanceRepayPriority.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aFinanceRepayPriority.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aFinanceRepayPriority,tranType)){
+				if (doProcess(aFinanceRepayPriority, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
 			} catch (DataAccessException e) {
@@ -484,28 +476,28 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getFinanceRepayPriority().isNewRecord()){
+		if (getFinanceRepayPriority().isNewRecord()) {
 			this.btnSearchFinType.setDisabled(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.btnSearchFinType.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
 
 		readOnlyComponent(isReadOnly("FinanceRepayPriorityDialog_finPriority"), this.finPriority);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.financeRepayPriority.isNewRecord()){
+			if (this.financeRepayPriority.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
@@ -520,13 +512,13 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		this.btnSearchFinType.setDisabled(true);
 		this.finPriority.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -567,32 +559,32 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		// Do data level validations here
 
 		isNew = aFinanceRepayPriority.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aFinanceRepayPriority.getRecordType())){
-				aFinanceRepayPriority.setVersion(aFinanceRepayPriority.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aFinanceRepayPriority.getRecordType())) {
+				aFinanceRepayPriority.setVersion(aFinanceRepayPriority.getVersion() + 1);
+				if (isNew) {
 					aFinanceRepayPriority.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aFinanceRepayPriority.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aFinanceRepayPriority.setNewRecord(true);
 				}
 			}
-		}else{
-			aFinanceRepayPriority.setVersion(aFinanceRepayPriority.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aFinanceRepayPriority.setVersion(aFinanceRepayPriority.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aFinanceRepayPriority,tranType)){
+			if (doProcess(aFinanceRepayPriority, tranType)) {
 				doWriteBeanToComponents(aFinanceRepayPriority);
 				refreshList();
 				closeDialog();
@@ -604,11 +596,11 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(FinanceRepayPriority aFinanceRepayPriority,String tranType){
+	private boolean doProcess(FinanceRepayPriority aFinanceRepayPriority, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aFinanceRepayPriority.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinanceRepayPriority.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -637,19 +629,18 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 				}
 			}
 
-
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -659,87 +650,87 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 			aFinanceRepayPriority.setRoleCode(getRole());
 			aFinanceRepayPriority.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aFinanceRepayPriority, tranType);
+			auditHeader = getAuditHeader(aFinanceRepayPriority, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aFinanceRepayPriority);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aFinanceRepayPriority, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aFinanceRepayPriority, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 
-			auditHeader =  getAuditHeader(aFinanceRepayPriority, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+			auditHeader = getAuditHeader(aFinanceRepayPriority, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
-
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
 		FinanceRepayPriority aFinanceRepayPriority = (FinanceRepayPriority) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getFinanceRepayPriorityService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getFinanceRepayPriorityService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getFinanceRepayPriorityService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getFinanceRepayPriorityService().doApprove(auditHeader);
 
-						if(aFinanceRepayPriority.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aFinanceRepayPriority.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getFinanceRepayPriorityService().doReject(auditHeader);
-						if(aFinanceRepayPriority.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aFinanceRepayPriority.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinanceRepayPriorityDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_FinanceRepayPriorityDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinanceRepayPriorityDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.financeRepayPriority),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.financeRepayPriority), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -756,21 +747,20 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		return processCompleted;
 	}
 
-	public void onClick$btnSearchFinType(Event event){
+	public void onClick$btnSearchFinType(Event event) {
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceRepayPriorityDialog,"FinanceType");
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceRepayPriorityDialog, "FinanceType");
+		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
 			this.lovDescFinTypeName.setValue("");
-		}else{
-			FinanceType details= (FinanceType) dataObject;
+		} else {
+			FinanceType details = (FinanceType) dataObject;
 			if (details != null) {
 				this.finType.setValue(details.getFinType());
-				this.lovDescFinTypeName.setValue(details.getFinType()+"-"+details.getFinTypeDesc());
+				this.lovDescFinTypeName.setValue(details.getFinType() + "-" + details.getFinTypeDesc());
 			}
 		}
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -808,39 +798,41 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		return this.financeRepayPriorityListCtrl;
 	}
 
-	private AuditHeader getAuditHeader(FinanceRepayPriority aFinanceRepayPriority, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceRepayPriority.getBefImage(), aFinanceRepayPriority);   
-		return new AuditHeader(aFinanceRepayPriority.getFinType(),null,null,null,auditDetail,aFinanceRepayPriority.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(FinanceRepayPriority aFinanceRepayPriority, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceRepayPriority.getBefImage(),
+				aFinanceRepayPriority);
+		return new AuditHeader(aFinanceRepayPriority.getFinType(), null, null, null, auditDetail,
+				aFinanceRepayPriority.getUserDetails(), getOverideMap());
 	}
 
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_FinanceRepayPriorityDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 	}
 
-
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.financeRepayPriority);
 	}
 
 	private void doSetLOVValidation() {
-		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceRepayPriorityDialog_FinType.value"), null, true));
+		this.lovDescFinTypeName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_FinanceRepayPriorityDialog_FinType.value"), null, true));
 	}
+
 	private void doRemoveLOVValidation() {
 		this.lovDescFinTypeName.setConstraint("");
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.financeRepayPriority.getFinType());
 	}
-
 
 	@Override
 	protected void doClearMessage() {
@@ -853,9 +845,9 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getFinanceRepayPriorityListCtrl().search();
-	} 
+	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;

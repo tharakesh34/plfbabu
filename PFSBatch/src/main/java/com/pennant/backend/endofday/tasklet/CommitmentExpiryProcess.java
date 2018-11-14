@@ -18,100 +18,101 @@ import com.pennant.app.util.DateUtility;
 
 public class CommitmentExpiryProcess implements Tasklet {
 	private Logger logger = Logger.getLogger(CommitmentExpiryProcess.class);
-	
+
 	private DataSource dataSource;
-	
+
 	private Date dateValueDate = null;
 	private ExecutionContext stepExecutionContext;
 
 	public CommitmentExpiryProcess() {
 		//
 	}
-	
+
 	@Override
-	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
+	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getAppValueDate();
 
-		logger.debug("START: Commitment Expiry Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
+		logger.debug("START: Commitment Expiry Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
 
-		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();	
+		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		Connection connection = null;
 		PreparedStatement sqlStatement = null;
-		
+
 		try {
-			
+
 			//Update of Commitment Details as per Expiry Date
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
-			sqlStatement.setString(1, DateUtility.addDays(dateValueDate,-1).toString());
+			sqlStatement.setString(1, DateUtility.addDays(dateValueDate, -1).toString());
 			sqlStatement.executeUpdate();
 			sqlStatement.close();
-			
+
 			//Update Non-Performing Status of Commitment
 			try {
 				sqlStatement = connection.prepareStatement(resetCmtNonPerformStatus());
 				sqlStatement.executeUpdate();
 				sqlStatement.close();
-				
+
 				sqlStatement = connection.prepareStatement(UpdateCmtNonPerformStatusQuery());
 				sqlStatement.executeUpdate();
 				sqlStatement.close();
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
-		
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
-		}finally {
-			if (sqlStatement!=null) {
+		} finally {
+			if (sqlStatement != null) {
 				sqlStatement.close();
 			}
 		}
 
-		logger.debug("COMPLETE: Commitment Expiry Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
+		logger.debug("COMPLETE: Commitment Expiry Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	/**
-	 * Method for preparation of Update Query To update 
+	 * Method for preparation of Update Query To update
 	 * 
 	 * @param updateQuery
 	 * @return
 	 */
 	private String prepareUpdateQuery() {
-		
+
 		StringBuilder updateQuery = new StringBuilder(" Update Commitments SET CmtAvailable = 0 ");
 		updateQuery.append(" Where CmtExpDate = ?");
 		return updateQuery.toString();
 
 	}
-	
+
 	/**
-	 * Method for preparation of Update Query To update 
+	 * Method for preparation of Update Query To update
 	 * 
 	 * @param updateQuery
 	 * @return
 	 */
 	private String UpdateCmtNonPerformStatusQuery() {
-		
-		StringBuilder updateQuery = new StringBuilder(" Update Commitments SET NonPerforming = 1 " );
-		updateQuery.append(" WHERE CmtReference IN( SELECT DISTINCT FinCommitmentRef from FinanceMain " );
-		updateQuery.append(" where FinReference IN(SELECT FinReference from FinSuspHead where FinIsInSusp = 1) AND FinCommitmentRef != '')");
+
+		StringBuilder updateQuery = new StringBuilder(" Update Commitments SET NonPerforming = 1 ");
+		updateQuery.append(" WHERE CmtReference IN( SELECT DISTINCT FinCommitmentRef from FinanceMain ");
+		updateQuery.append(
+				" where FinReference IN(SELECT FinReference from FinSuspHead where FinIsInSusp = 1) AND FinCommitmentRef != '')");
 		return updateQuery.toString();
-		
+
 	}
-	
+
 	/**
-	 * Method for preparation of Update Query To update 
+	 * Method for preparation of Update Query To update
 	 * 
 	 * @param updateQuery
 	 * @return
 	 */
 	private String resetCmtNonPerformStatus() {
-		return " Update Commitments SET NonPerforming = 0 " ;
+		return " Update Commitments SET NonPerforming = 0 ";
 	}
 
 	// ******************************************************//
@@ -121,8 +122,9 @@ public class CommitmentExpiryProcess implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}
-	
+
 }

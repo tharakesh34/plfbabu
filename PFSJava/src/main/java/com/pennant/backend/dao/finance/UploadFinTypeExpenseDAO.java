@@ -47,9 +47,9 @@ import java.util.List;
 import com.pennant.backend.model.expenses.UploadFinTypeExpense;
 
 public interface UploadFinTypeExpenseDAO {
-	
+
 	void saveUploadDetails(List<UploadFinTypeExpense> uploadDetailsList);
-	
+
 	List<UploadFinTypeExpense> getSuccesFailedCount(long uploadId);
-	
+
 }

@@ -73,17 +73,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/RejectDetail/rejectDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/RejectDetail/rejectDetailDialog.zul file.
  */
 public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	private static final long serialVersionUID = -2229794581795422226L;
 	private static final Logger logger = Logger.getLogger(RejectDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_RejectDetailDialog; // autoWired
 	protected Textbox rejectCode; // autoWired
@@ -95,9 +93,9 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	private RejectDetail rejectDetail; // overHanded per parameter
 	private transient RejectDetailListCtrl rejectDetailListCtrl; // overHanded
 																	// per
-	// Button controller for the CRUD buttons
+																	// Button controller for the CRUD buttons
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient RejectDetailService rejectDetailService;
 
@@ -116,9 +114,8 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected RejectDetail object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected RejectDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -150,7 +147,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "RejectDetailDialog");
-			}else{
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -197,8 +194,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -305,13 +301,12 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		this.rejectCode.setValue(aRejectDetail.getRejectCode());
 		this.rejectDesc.setValue(aRejectDetail.getRejectDesc());
 		this.rejectIsActive.setChecked(aRejectDetail.isRejectIsActive());
-		fillComboBox(this.rejectType,aRejectDetail.getRejectType(),PennantStaticListUtil.getRejectTypeList(),"");
-		
+		fillComboBox(this.rejectType, aRejectDetail.getRejectType(), PennantStaticListUtil.getRejectTypeList(), "");
+
 		this.recordStatus.setValue(aRejectDetail.getRecordStatus());
 
-		if (aRejectDetail.isNew()
-				|| (aRejectDetail.getRecordType() != null ? aRejectDetail.getRecordType() : "")
-						.equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (aRejectDetail.isNew() || (aRejectDetail.getRecordType() != null ? aRejectDetail.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.rejectIsActive.setChecked(true);
 			this.rejectIsActive.setDisabled(true);
 		}
@@ -367,8 +362,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRejectDetail
 	 * @throws Exception
@@ -418,18 +412,19 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		setValidationOn(true);
 
 		if (!this.rejectCode.isReadonly()) {
-			this.rejectCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_RejectDetailDialog_RejectCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
-					true));
+			this.rejectCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_RejectDetailDialog_RejectCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.rejectDesc.isReadonly()) {
-			this.rejectDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_RejectDetailDialog_RejectDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.rejectDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_RejectDetailDialog_RejectDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		// Reject Type
 		if (!this.rejectType.isDisabled()) {
-			this.rejectType.setConstraint(new StaticListValidator(PennantStaticListUtil.getRejectTypeList(), Labels.getLabel("label_RejectDetailDialog_RejectType.value")));
+			this.rejectType.setConstraint(new StaticListValidator(PennantStaticListUtil.getRejectTypeList(),
+					Labels.getLabel("label_RejectDetailDialog_RejectType.value")));
 		}
 		logger.debug("Leaving");
 	}
@@ -511,7 +506,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -769,8 +764,8 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_RejectDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -854,7 +849,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	private void refreshList() {
 		getRejectDetailListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.rejectDetail.getRejectCode());

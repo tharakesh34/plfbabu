@@ -52,7 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class Question extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long questionId = Long.MIN_VALUE;
 	private String questionDesc;
 	private String answerA;
@@ -61,7 +61,7 @@ public class Question extends AbstractWorkflowEntity implements Entity {
 	private String answerD;
 	private String correctAnswer;
 	private boolean questionIsActive;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private Question befImage;
 	private LoggedInUser userDetails;
@@ -80,95 +80,79 @@ public class Question extends AbstractWorkflowEntity implements Entity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public long getId() {
 		return questionId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.questionId = id;
 	}
-	
+
 	public long getQuestionId() {
 		return questionId;
 	}
+
 	public void setQuestionId(long questionId) {
 		this.questionId = questionId;
 	}
-	
-	
-		
-	
+
 	public String getQuestionDesc() {
 		return questionDesc;
 	}
+
 	public void setQuestionDesc(String questionDesc) {
 		this.questionDesc = questionDesc;
 	}
-	
-	
-		
-	
+
 	public String getAnswerA() {
 		return answerA;
 	}
+
 	public void setAnswerA(String answerA) {
 		this.answerA = answerA;
 	}
-	
-	
-		
-	
+
 	public String getAnswerB() {
 		return answerB;
 	}
+
 	public void setAnswerB(String answerB) {
 		this.answerB = answerB;
 	}
-	
-	
-		
-	
+
 	public String getAnswerC() {
 		return answerC;
 	}
+
 	public void setAnswerC(String answerC) {
 		this.answerC = answerC;
 	}
-	
-	
-		
-	
+
 	public String getAnswerD() {
 		return answerD;
 	}
+
 	public void setAnswerD(String answerD) {
 		this.answerD = answerD;
 	}
-	
-	
-		
-	
+
 	public String getCorrectAnswer() {
 		return correctAnswer;
 	}
+
 	public void setCorrectAnswer(String correctAnswer) {
 		this.correctAnswer = correctAnswer;
 	}
-	
-	
-		
-	
+
 	public boolean isQuestionIsActive() {
 		return questionIsActive;
 	}
+
 	public void setQuestionIsActive(boolean questionIsActive) {
 		this.questionIsActive = questionIsActive;
 	}
-	
-	
-		
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -176,7 +160,7 @@ public class Question extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -185,12 +169,12 @@ public class Question extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public Question getBefImage(){
+	public Question getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(Question beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Question beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

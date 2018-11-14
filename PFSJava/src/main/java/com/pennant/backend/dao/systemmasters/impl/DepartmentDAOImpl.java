@@ -90,11 +90,12 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 		department.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DeptCode, DeptDesc, DeptIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT DeptCode, DeptDesc, DeptIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTDepartments");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DeptCode =:DeptCode") ;
+		selectSql.append(" Where DeptCode =:DeptCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
@@ -111,8 +112,7 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTDepartments or
-	 * BMTDepartments_Temp. if Record not deleted then throws
+	 * This method Deletes the Record from the BMTDepartments or BMTDepartments_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Departments by key DeptCode
 	 * 
 	 * @param Departments
@@ -132,7 +132,7 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where DeptCode =:DeptCode");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
 
@@ -151,8 +151,7 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	}
 
 	/**
-	 * This method insert new Records into BMTDepartments or
-	 * BMTDepartments_Temp.
+	 * This method insert new Records into BMTDepartments or BMTDepartments_Temp.
 	 * 
 	 * save Departments
 	 * 
@@ -171,11 +170,12 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 
 		insertSql.append("Insert Into BMTDepartments");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (DeptCode, DeptDesc, DeptIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (DeptCode, DeptDesc, DeptIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:DeptCode, :DeptDesc, :DeptIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:DeptCode, :DeptDesc, :DeptIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.trace(Literal.SQL + insertSql.toString());
@@ -191,9 +191,8 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	}
 
 	/**
-	 * This method updates the Record BMTDepartments or BMTDepartments_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Departments by key DeptCode and Version
+	 * This method updates the Record BMTDepartments or BMTDepartments_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Departments by key DeptCode and Version
 	 * 
 	 * @param Departments
 	 *            (department)
@@ -206,21 +205,22 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	@Override
 	public void update(Department department, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update BMTDepartments");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set DeptDesc = :DeptDesc, DeptIsActive = :DeptIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set DeptDesc = :DeptDesc, DeptIsActive = :DeptIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DeptCode =:DeptCode ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -231,9 +231,13 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 
 	/**
 	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
+	 * 
+	 * @param errorId
+	 *            (String)
+	 * @param Id
+	 *            (String)
+	 * @param userLanguage
+	 *            (String)
 	 * @return ErrorDetails
 	 */
 	@Override

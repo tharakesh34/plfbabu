@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Mandate table</b>.<br>
  *
  */
-public class MandateStatusUpdate  implements Entity {
+public class MandateStatusUpdate implements Entity {
 	private long fileID = Long.MIN_VALUE;
 	private String fileName;
 	private long userId;
@@ -69,6 +69,7 @@ public class MandateStatusUpdate  implements Entity {
 	private String lovValue;
 	private Mandate befImage;
 	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -93,7 +94,6 @@ public class MandateStatusUpdate  implements Entity {
 	public void setId(long id) {
 		this.fileID = id;
 	}
-
 
 	public String getFileName() {
 		return fileName;
@@ -160,8 +160,6 @@ public class MandateStatusUpdate  implements Entity {
 	public void setBefImage(Mandate beforeImage) {
 		this.befImage = beforeImage;
 	}
-
-
 
 	public long getFileID() {
 		return fileID;

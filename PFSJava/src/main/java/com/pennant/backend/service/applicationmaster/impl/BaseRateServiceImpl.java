@@ -70,20 +70,21 @@ import com.pennanttech.pff.core.TableType;
 public class BaseRateServiceImpl extends GenericService<BaseRate> implements BaseRateService {
 	private static Logger logger = Logger.getLogger(BaseRateDAOImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private BaseRateDAO baseRateDAO;
 
 	public BaseRateServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
-	}	
+	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -91,19 +92,17 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	public BaseRateDAO getBaseRateDAO() {
 		return baseRateDAO;
 	}
+
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
 	}
-	
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTBaseRates/RMTBaseRates_Temp by using BaseRateDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using BaseRateDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtRMTBaseRates by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table RMTBaseRates/RMTBaseRates_Temp
+	 * by using BaseRateDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using BaseRateDAO's update method 3) Audit the record in to AuditHeader and AdtRMTBaseRates by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -113,27 +112,27 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-				
+
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		BaseRate baseRate = (BaseRate) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		
+
 		if (baseRate.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (baseRate.isNew()) {
-			getBaseRateDAO().save(baseRate,tableType);
+			getBaseRateDAO().save(baseRate, tableType);
 			auditHeader.getAuditDetail().setModelData(baseRate);
-			auditHeader.setAuditReference(baseRate.getBRType() +PennantConstants.KEY_SEPERATOR
+			auditHeader.setAuditReference(baseRate.getBRType() + PennantConstants.KEY_SEPERATOR
 					+ DateUtility.formatDate(baseRate.getBREffDate(), PennantConstants.DBDateFormat));
-		}else{
-			getBaseRateDAO().update(baseRate,tableType);
+		} else {
+			getBaseRateDAO().update(baseRate, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -143,12 +142,10 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTBaseRates by using BaseRateDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtRMTBaseRates by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTBaseRates by using BaseRateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtRMTBaseRates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -159,22 +156,21 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		BaseRate baseRate = (BaseRate) auditHeader.getAuditDetail().getModelData();
 		getBaseRateDAO().delete(baseRate, TableType.MAIN_TAB);
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * getBaseRateById fetch the details by using BaseRateDAO's getBaseRateById
-	 * method.
+	 * getBaseRateById fetch the details by using BaseRateDAO's getBaseRateById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -183,26 +179,24 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * @return BaseRate
 	 */
 	@Override
-	public BaseRate getBaseRateById(String bRType, String currency,Date bREffDate) {
-		return getBaseRateDAO().getBaseRateById(bRType,currency,bREffDate,"_View");
+	public BaseRate getBaseRateById(String bRType, String currency, Date bREffDate) {
+		return getBaseRateDAO().getBaseRateById(bRType, currency, bREffDate, "_View");
 	}
 
 	/**
-	 * getApprovedBaseRateById fetch the details by using BaseRateDAO's
-	 * getBaseRateById method . with parameter id and type as blank. it fetches
-	 * the approved records from the RMTBaseRates.
+	 * getApprovedBaseRateById fetch the details by using BaseRateDAO's getBaseRateById method . with parameter id and
+	 * type as blank. it fetches the approved records from the RMTBaseRates.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return BaseRate
 	 */
-	public BaseRate getApprovedBaseRateById(String bRType, String currency,Date bREffDate) {
-		return getBaseRateDAO().getBaseRateById(bRType,currency,bREffDate,"_AView");
+	public BaseRate getApprovedBaseRateById(String bRType, String currency, Date bREffDate) {
+		return getBaseRateDAO().getBaseRateById(bRType, currency, bREffDate, "_AView");
 	}
-	
+
 	/**
-	 * getBaseRateDelById fetch the details by using BaseRateDAO's getBaseRateDelById
-	 * method.
+	 * getBaseRateDelById fetch the details by using BaseRateDAO's getBaseRateDelById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -212,7 +206,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 */
 	@Override
 	public boolean getBaseRateListById(String bRType, String currency, Date bREffDate) {
-		return getBaseRateDAO().getBaseRateListById(bRType,currency,bREffDate,"");
+		return getBaseRateDAO().getBaseRateListById(bRType, currency, bREffDate, "");
 	}
 
 	/**
@@ -242,11 +236,12 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 
 		BaseRate baseRate = new BaseRate();
 		BeanUtils.copyProperties((BaseRate) auditHeader.getAuditDetail().getModelData(), baseRate);
-		
+
 		getBaseRateDAO().delete(baseRate, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(baseRateDAO.getBaseRateById(baseRate.getBRType(), baseRate.getCurrency(), baseRate.getBREffDate(), ""));
+			auditHeader.getAuditDetail().setBefImage(baseRateDAO.getBaseRateById(baseRate.getBRType(),
+					baseRate.getCurrency(), baseRate.getBREffDate(), ""));
 		}
 
 		if (baseRate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -275,7 +270,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 			getBaseRateDAO().deleteByEffDate(baseRate, "_Temp");
 			getBaseRateDAO().deleteByEffDate(baseRate, "");
 		}
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -288,41 +283,36 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getBaseRateDAO().delete with parameters
-	 * baseRate,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtRMTBaseRates by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getBaseRateDAO().delete with parameters baseRate,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtRMTBaseRates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		BaseRate baseRate= (BaseRate) auditHeader.getAuditDetail().getModelData();
+		BaseRate baseRate = (BaseRate) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getBaseRateDAO().delete(baseRate, TableType.TEMP_TAB);
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -330,42 +320,40 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getBaseRateDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getBaseRateDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
 		BaseRate baseRate = (BaseRate) auditDetail.getModelData();
-	
+
 		// Check the unique keys.
-		if (baseRate.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())
-				&& baseRateDAO.isDuplicateKey(baseRate.getBRType(),baseRate.getBREffDate(),baseRate.getCurrency(), baseRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (baseRate.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())
+				&& baseRateDAO.isDuplicateKey(baseRate.getBRType(), baseRate.getBREffDate(), baseRate.getCurrency(),
+						baseRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_BRType") + ": " + baseRate.getBRType();
 			parameters[1] = PennantJavaUtil.getLabel("label_BREffDate") + ": " + baseRate.getBREffDate();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

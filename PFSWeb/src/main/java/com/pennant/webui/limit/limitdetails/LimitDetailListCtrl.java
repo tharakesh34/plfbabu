@@ -80,51 +80,48 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.limit.limitdetails.model.LimitDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul file.<br>
  * ************************************************************<br>
  */
 public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger				logger				= Logger.getLogger(LimitDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LimitDetailListCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ************************************************************************
 	 */
-	protected Window 		window_LimitDetailsList;
-	protected Borderlayout  borderLayout_LimitDetailsList;
-	protected Paging 		pagingLimitDetailsList;
-	protected Listbox 		listBoxLimitDetails;
+	protected Window window_LimitDetailsList;
+	protected Borderlayout borderLayout_LimitDetailsList;
+	protected Paging pagingLimitDetailsList;
+	protected Listbox listBoxLimitDetails;
 
 	// List headers
-	protected Listheader 	listheader_Name;
-	protected Listheader 	listheader_Id;
-	protected Listheader 	listheader_ResponsibleBranch;
-	protected Listheader 	listheader_LimitStructureCode;
-	protected Listheader 	listheader_Currency;
-	protected Listheader 	listheader_ExpiryDate;
-	protected Listheader 	listheader_ReviewDate;
-	protected Listheader	listheader_Active;
-	protected Listheader 	listheader_RecordStatus;
-	protected Listheader 	listheader_RecordType;
+	protected Listheader listheader_Name;
+	protected Listheader listheader_Id;
+	protected Listheader listheader_ResponsibleBranch;
+	protected Listheader listheader_LimitStructureCode;
+	protected Listheader listheader_Currency;
+	protected Listheader listheader_ExpiryDate;
+	protected Listheader listheader_ReviewDate;
+	protected Listheader listheader_Active;
+	protected Listheader listheader_RecordStatus;
+	protected Listheader listheader_RecordType;
 
 	// checkRights
-	protected Button 		btnHelp;
-	protected Button 		button_LimitDetailsList_NewLimitDetails;
-	protected Button 		button_LimitDetailsList_LimitDetailsSearch;
-	protected Label  		label_LimitDetailsList_RecordStatus;
-	protected Label  		label_LimitDetailsList_RecordType;
+	protected Button btnHelp;
+	protected Button button_LimitDetailsList_NewLimitDetails;
+	protected Button button_LimitDetailsList_LimitDetailsSearch;
+	protected Label label_LimitDetailsList_RecordStatus;
+	protected Label label_LimitDetailsList_RecordType;
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<LimitHeader> searchObj;
@@ -132,43 +129,43 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	private transient LimitDetailService limitDetailService;
 	private transient WorkFlowDetails workFlowDetails = null;
 
-	protected Textbox 		name;
-	protected Listbox 		sortOperator_Name;
+	protected Textbox name;
+	protected Listbox sortOperator_Name;
 
-	protected Textbox 		id;
-	protected Listbox 		sortOperator_Id;
+	protected Textbox id;
+	protected Listbox sortOperator_Id;
 
-	protected Textbox 		responsibleBranch;
-	protected Listbox 		sortOperator_ResponsibleBranch;
+	protected Textbox responsibleBranch;
+	protected Listbox sortOperator_ResponsibleBranch;
 
-	protected Textbox 		currency;
-	protected Listbox 		sortOperator_Currency;
+	protected Textbox currency;
+	protected Listbox sortOperator_Currency;
 
-	protected Datebox 		expiryDate;
-	protected Listbox 		sortOperator_ExpiryDate;
+	protected Datebox expiryDate;
+	protected Listbox sortOperator_ExpiryDate;
 
-	protected Datebox 		reviewDate;
-	protected Listbox 		sortOperator_ReviewDate;
+	protected Datebox reviewDate;
+	protected Listbox sortOperator_ReviewDate;
 
-	protected Textbox		limitStructureCode;
-	protected Listbox 		sortOperator_LimitStructureCode;
+	protected Textbox limitStructureCode;
+	protected Listbox sortOperator_LimitStructureCode;
 
-	protected Listbox 		sortOperator_active;
-	protected Checkbox 		active;
+	protected Listbox sortOperator_active;
+	protected Checkbox active;
 
-	protected Textbox 		recordStatus;
-	protected Listbox 		recordType;
-	protected Listbox 		sortOperator_RecordStatus;
-	protected Listbox 		sortOperator_RecordType;
-	protected Grid 			searchGrid;
-	protected Textbox 		moduleType;
-	protected Radio 		fromApproved;
-	protected Radio 		fromWorkFlow;
-	protected Row 			workFlowFrom;
-	private   Textbox		limitType;
+	protected Textbox recordStatus;
+	protected Listbox recordType;
+	protected Listbox sortOperator_RecordStatus;
+	protected Listbox sortOperator_RecordType;
+	protected Grid searchGrid;
+	protected Textbox moduleType;
+	protected Radio fromApproved;
+	protected Radio fromWorkFlow;
+	protected Row workFlowFrom;
+	private Textbox limitType;
 
 	private transient boolean approvedList = false;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -186,14 +183,14 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		super.enquiryTableName = "LimitHeader_AView";
 	}
 
-	
 	// ***************************************************//
 	// *************** Component Events ******************//
 	// ***************************************************//
 
 	public void onCreate$window_LimitDetailsList(Event event) throws Exception {
 		logger.debug("Entering");
-		setPageComponents(window_LimitDetailsList, borderLayout_LimitDetailsList, listBoxLimitDetails, pagingLimitDetailsList);
+		setPageComponents(window_LimitDetailsList, borderLayout_LimitDetailsList, listBoxLimitDetails,
+				pagingLimitDetailsList);
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("LimitHeader");
 		boolean wfAvailable = true;
 		if (moduleMapping.getWorkflowType() != null) {
@@ -208,36 +205,42 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		} else {
 			wfAvailable = false;
 		}
-		
+
 		// ********************* DropDown ListBox ************************//
-
-
 
 		this.sortOperator_Id.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_Id.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ResponsibleBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_ResponsibleBranch
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_ResponsibleBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_Currency.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_Currency
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_Currency.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ExpiryDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_ExpiryDate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_ExpiryDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_ReviewDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_ReviewDate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_ReviewDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_LimitStructureCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_LimitStructureCode
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_LimitStructureCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_active.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_active
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_active.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		if (isWorkFlowEnabled()) {
-			this.sortOperator_RecordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_RecordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_RecordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_RecordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+			this.sortOperator_RecordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 			this.sortOperator_RecordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType = setRecordType(this.recordType);
 			this.sortOperator_RecordType.setSelectedIndex(1);
@@ -258,9 +261,10 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		this.pagingLimitDetailsList.setPageSize(getListRows());
 		this.pagingLimitDetailsList.setDetailed(true);
 
-		if(StringUtils.equals(LimitConstants.LIMIT_CUST, limitType.getValue())){
+		if (StringUtils.equals(LimitConstants.LIMIT_CUST, limitType.getValue())) {
 
-			this.sortOperator_Name.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_Name
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_Name.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 			listheader_Name.setSortAscending(new FieldComparator("CustShrtName, GroupName", true));
@@ -269,19 +273,21 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 			listheader_Id.setSortAscending(new FieldComparator("CustCIF, CustGrpCode", true));
 			listheader_Id.setSortDescending(new FieldComparator("CustCIF, CustGrpCode", false));
 
-		}else if(StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())){
-			this.sortOperator_Name.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		} else if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())) {
+			this.sortOperator_Name
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_Name.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			
+
 			listheader_Id.setSortAscending(new FieldComparator("RuleCode", true));
 			listheader_Id.setSortDescending(new FieldComparator("RuleCode", false));
 			listheader_Id.setLabel(Labels.getLabel("label_LimitDetailsList_Rule.value"));
-			
+
 			listheader_Name.setSortAscending(new FieldComparator("QueryDesc", true));
 			listheader_Name.setSortDescending(new FieldComparator("QueryDesc", false));
 			listheader_Name.setLabel("Description");
-		}else{
-			this.sortOperator_Name.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		} else {
+			this.sortOperator_Name
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_Name.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 			listheader_Name.setSortAscending(new FieldComparator("CustShrtName, GroupName,RuleCode", true));
@@ -371,7 +377,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		doSearch();
 	}
 
-	
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
@@ -385,9 +390,9 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		aLimitHeader.setNewRecord(true);
 		aLimitHeader.setWorkflowId(getWorkFlowId());
 		// Display the dialog page.
-		if(StringUtils.equals(LimitConstants.LIMIT_RULE,limitType.getValue())){
+		if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())) {
 			doShowDialogPage(aLimitHeader);
-		}else
+		} else
 			showDetailViewLimitHeader(aLimitHeader);
 
 		logger.debug("Leaving");
@@ -395,8 +400,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 	/**
 	 * This method is forwarded from the listboxes item renderer. <br>
-	 * see: com.pennant.webui.limit.limitdetail.model.
-	 * LimitDetailsListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.limit.limitdetail.model. LimitDetailsListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -410,7 +414,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
-		
+
 		LimitHeader aLimitHeader = null;
 		if (StringUtils.equals(limitType.getValue(), LimitConstants.LIMIT_UTILIZATION)) {
 			aLimitHeader = limitDetailService.getApprovedCustomerLimits(id);
@@ -421,13 +425,13 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		if (aLimitHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
-		}else{
+		} else {
 			aLimitHeader.setCustFullName(aLimitHeader.getCustShrtName());
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND HeaderId='" + aLimitHeader.getId() + "'  AND version=" + aLimitHeader.getVersion() + " ";
-
+		String whereCond = " AND HeaderId='" + aLimitHeader.getId() + "'  AND version=" + aLimitHeader.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(aLimitHeader, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -443,7 +447,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Invoke Search
 	 */
@@ -452,7 +455,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		doSearch();
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * when the "help" button is clicked. <br>
@@ -476,23 +478,21 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		doPrintResults();
 	}
 
-	
 	@Override
 	protected void doPrintResults() {
 		try {
-			if(StringUtils.equals(LimitConstants.LIMIT_UTILIZATION, limitType.getValue())){
+			if (StringUtils.equals(LimitConstants.LIMIT_UTILIZATION, limitType.getValue())) {
 				this.searchObj.addTabelName("LimitHeader_AView");
 				new PTListReportUtils("LimitUtilization", searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
-			}else{
+			} else {
 				this.searchObj.addTabelName("LimitHeader_View");
 				new PTListReportUtils(moduleCode, searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
 			}
-			
+
 		} catch (InterruptedException e) {
 			logger.error("Exception:", e);
 		}
 	}
-	
 
 	/**
 	 * When user clicks on "fromApproved"
@@ -529,7 +529,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("CustomerLimitDetailsList");
 		if (moduleType == null) {
-			this.button_LimitDetailsList_NewLimitDetails.setVisible(getUserWorkspace().isAllowed("button_CustomerLimitDetailsList_NewCustomerLimitDetails"));
+			this.button_LimitDetailsList_NewLimitDetails.setVisible(
+					getUserWorkspace().isAllowed("button_CustomerLimitDetailsList_NewCustomerLimitDetails"));
 		} else {
 			this.button_LimitDetailsList_NewLimitDetails.setVisible(false);
 		}
@@ -547,7 +548,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		Map<String, Object> arg = getDefaultArguments();
 
-
 		arg.put("enqiryModule", super.enqiryModule);
 		arg.put("limitHeader", aLimitHeader);
 		arg.put("limitDetailListCtrl", this);
@@ -560,7 +560,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 			} else {
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitDetailsDialog.zul", null, arg);
 			}
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 
@@ -570,9 +570,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	private void showDetailViewLimitHeader(LimitHeader aLimitHeader) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 
 		Map<String, Object> map = getDefaultArguments();
@@ -584,11 +583,9 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		}
 		map.put("LimitType", limitType.getValue());
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listbox Listmodel. This is
-		 * fine for synchronizing the data in the LimitDetailsListbox
-		 * from the dialog when we do a delete, edit or insert a
-		 * LimitDetails.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listbox Listmodel. This is fine for synchronizing the data in the LimitDetailsListbox from the dialog when we
+		 * do a delete, edit or insert a LimitDetails.
 		 */
 		map.put("limitDetailListCtrl", this);
 
@@ -619,9 +616,9 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		// ********************* DropDown ListBox ************************//
 		this.searchObj.addField("headerId");
 		this.searchObj.addSort("customerId", false);
-		if(StringUtils.equals(LimitConstants.LIMIT_CUST, limitType.getValue())){
-			this.searchObj.addFilterNull("Rulecode");			
-		}else if(StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())){
+		if (StringUtils.equals(LimitConstants.LIMIT_CUST, limitType.getValue())) {
+			this.searchObj.addFilterNull("Rulecode");
+		} else if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())) {
 			this.searchObj.addFilterNotNull("Rulecode");
 		}
 		this.searchObj.addField("CustShrtName");
@@ -672,16 +669,18 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 			this.searchObj.addTabelName("LimitHeader_AView");
 		}
 
-		if(StringUtils.equals(LimitConstants.LIMIT_CUST, limitType.getValue())){
+		if (StringUtils.equals(LimitConstants.LIMIT_CUST, limitType.getValue())) {
 
 			// Customer Group
 			if (!StringUtils.trimToEmpty(this.name.getValue()).equals("")) {
 				String condition = this.sortOperator_Name.getSelectedItem().getLabel();
 				String whereName = new String();
 				if (!condition.equals("%")) {
-					whereName = " CustShrtName " + condition +" '" + this.name.getValue() + "' OR GroupName " + condition +" '"+ this.name.getValue() + "'";
+					whereName = " CustShrtName " + condition + " '" + this.name.getValue() + "' OR GroupName "
+							+ condition + " '" + this.name.getValue() + "'";
 				} else {
-					whereName = " CustShrtName LIKE '"+ condition + this.name.getValue()  + condition +"' OR GroupName  LIKE '"+ condition + this.name.getValue() + condition + "'";
+					whereName = " CustShrtName LIKE '" + condition + this.name.getValue() + condition
+							+ "' OR GroupName  LIKE '" + condition + this.name.getValue() + condition + "'";
 				}
 				searchObj.addWhereClause(whereName);
 
@@ -691,22 +690,26 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 				String condition = this.sortOperator_Id.getSelectedItem().getLabel();
 				String whereId = new String();
 				if (!condition.equals("%")) {
-					whereId = " CustCIF " + condition +" '" + this.id.getValue() + "' OR CustGrpCode " + condition +" '"+ this.id.getValue() + "'";
+					whereId = " CustCIF " + condition + " '" + this.id.getValue() + "' OR CustGrpCode " + condition
+							+ " '" + this.id.getValue() + "'";
 				} else {
-					whereId = " CustCIF LIKE '"+ condition + this.id.getValue()  + condition +"' OR CustGrpCode  LIKE '"+ condition + this.id.getValue() + condition + "'";
+					whereId = " CustCIF LIKE '" + condition + this.id.getValue() + condition
+							+ "' OR CustGrpCode  LIKE '" + condition + this.id.getValue() + condition + "'";
 				}
 				searchObj.addWhereClause(whereId);
 
 			}
-		}else if(StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())){
+		} else if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())) {
 			//RuleCode
 			if (!StringUtils.trimToEmpty(this.id.getValue()).equals("")) {
-				searchObj = getSearchFilter(searchObj, this.sortOperator_Id.getSelectedItem(), this.id.getValue(), "RuleCode");
+				searchObj = getSearchFilter(searchObj, this.sortOperator_Id.getSelectedItem(), this.id.getValue(),
+						"RuleCode");
 			}
 			if (!StringUtils.trimToEmpty(this.name.getValue()).equals("")) {
-				searchObj = getSearchFilter(searchObj, this.sortOperator_Name.getSelectedItem(), this.name.getValue(), "QueryDesc");
+				searchObj = getSearchFilter(searchObj, this.sortOperator_Name.getSelectedItem(), this.name.getValue(),
+						"QueryDesc");
 			}
-		}else{
+		} else {
 			{
 
 				// Customer Group
@@ -714,9 +717,11 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 					String condition = this.sortOperator_Name.getSelectedItem().getLabel();
 					String whereName = new String();
 					if (!condition.equals("%")) {
-						whereName = " CustShrtName " + condition +" '" + this.name.getValue() + "' OR GroupName " + condition +" '"+ this.name.getValue() + "'";
+						whereName = " CustShrtName " + condition + " '" + this.name.getValue() + "' OR GroupName "
+								+ condition + " '" + this.name.getValue() + "'";
 					} else {
-						whereName = " CustShrtName LIKE '"+ condition + this.name.getValue()  + condition +"' OR GroupName  LIKE '"+ condition + this.name.getValue() + condition + "'";
+						whereName = " CustShrtName LIKE '" + condition + this.name.getValue() + condition
+								+ "' OR GroupName  LIKE '" + condition + this.name.getValue() + condition + "'";
 					}
 					searchObj.addWhereClause(whereName);
 
@@ -726,9 +731,11 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 					String condition = this.sortOperator_Id.getSelectedItem().getLabel();
 					String whereId = new String();
 					if (!condition.equals("%")) {
-						whereId = " CustCIF " + condition +" '" + this.id.getValue() + "' OR CustGrpCode " + condition +" '"+ this.id.getValue() + "'";
+						whereId = " CustCIF " + condition + " '" + this.id.getValue() + "' OR CustGrpCode " + condition
+								+ " '" + this.id.getValue() + "'";
 					} else {
-						whereId = " CustCIF LIKE '"+ condition + this.id.getValue()  + condition +"' OR CustGrpCode  LIKE '"+ condition + this.id.getValue() + condition + "'";
+						whereId = " CustCIF LIKE '" + condition + this.id.getValue() + condition
+								+ "' OR CustGrpCode  LIKE '" + condition + this.id.getValue() + condition + "'";
 					}
 					searchObj.addWhereClause(whereId);
 
@@ -738,40 +745,49 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		// Responsible Branch
 		if (!StringUtils.trimToEmpty(this.responsibleBranch.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_ResponsibleBranch.getSelectedItem(), this.responsibleBranch.getValue(), "ResponsibleBranchName");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_ResponsibleBranch.getSelectedItem(),
+					this.responsibleBranch.getValue(), "ResponsibleBranchName");
 		}
 		// Currency
 		if (!StringUtils.trimToEmpty(this.currency.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_Currency.getSelectedItem(), this.currency.getValue(), "limitCcy");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_Currency.getSelectedItem(),
+					this.currency.getValue(), "limitCcy");
 		}
 		// Expiry Date
 		if (this.expiryDate.getValue() != null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_ExpiryDate.getSelectedItem(), DateUtility.formatDate(this.expiryDate.getValue(), PennantConstants.DBDateFormat), "LimitExpiryDate");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_ExpiryDate.getSelectedItem(),
+					DateUtility.formatDate(this.expiryDate.getValue(), PennantConstants.DBDateFormat),
+					"LimitExpiryDate");
 		}
 		// Review Date
 		if (this.reviewDate.getValue() != null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_ReviewDate.getSelectedItem(), DateUtility.formatDate(this.reviewDate.getValue(), PennantConstants.DBDateFormat), "LimitRvwDate");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_ReviewDate.getSelectedItem(),
+					DateUtility.formatDate(this.reviewDate.getValue(), PennantConstants.DBDateFormat), "LimitRvwDate");
 		}
 
 		// Active
-		int intActive=0;
-		if(this.active.isChecked()){
-			intActive=1;
+		int intActive = 0;
+		if (this.active.isChecked()) {
+			intActive = 1;
 		}
-		searchObj = getSearchFilter(searchObj, this.sortOperator_active.getSelectedItem(),intActive, "Active");
+		searchObj = getSearchFilter(searchObj, this.sortOperator_active.getSelectedItem(), intActive, "Active");
 		// Limit Structure Code
 		if (!StringUtils.trimToEmpty(this.limitStructureCode.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_LimitStructureCode.getSelectedItem(), this.limitStructureCode.getValue(), "limitStructureCode");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_LimitStructureCode.getSelectedItem(),
+					this.limitStructureCode.getValue(), "limitStructureCode");
 		}
 
 		// Record Status
 		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordStatus.getSelectedItem(), this.recordStatus.getValue(), "RecordStatus");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
 		}
 
 		// Record Type
-		if (this.recordType.getSelectedItem() != null && !this.recordType.getSelectedItem().getValue().toString().isEmpty()) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
+		if (this.recordType.getSelectedItem() != null
+				&& !this.recordType.getSelectedItem().getValue().toString().isEmpty()) {
+			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
 
 		// Set the ListModel for the articles.
@@ -779,7 +795,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -790,7 +806,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -803,7 +819,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -811,7 +827,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.id.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -824,9 +841,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		}
 		logger.debug("Leaving ");
 	}
-
-
-
 
 	// ******************************************************//
 	// ****************** getter / setter ******************//

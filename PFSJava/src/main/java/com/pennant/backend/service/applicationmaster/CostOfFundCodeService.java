@@ -53,10 +53,15 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface CostOfFundCodeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CostOfFundCode getCostOfFundCodeById(String id);
+
 	CostOfFundCode getApprovedCostOfFundCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

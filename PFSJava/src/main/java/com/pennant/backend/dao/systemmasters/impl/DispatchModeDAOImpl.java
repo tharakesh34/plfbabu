@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +68,7 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 	public DispatchModeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Dispatch Mode Details details by key field
 	 * 
@@ -86,12 +85,13 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 		dispatchMode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DispatchModeCode, DispatchModeDesc, DispatchModeIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT DispatchModeCode, DispatchModeDesc, DispatchModeIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTDispatchModes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DispatchModeCode =:DispatchModeCode") ;
-				
+		selectSql.append(" Where DispatchModeCode =:DispatchModeCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dispatchMode);
 		RowMapper<DispatchMode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DispatchMode.class);
@@ -107,10 +107,8 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTDispatchModes or
-	 * BMTDispatchModes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Dispatch Mode Details by key
-	 * DispatchModeCode
+	 * This method Deletes the Record from the BMTDispatchModes or BMTDispatchModes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Dispatch Mode Details by key DispatchModeCode
 	 * 
 	 * @param Dispatch
 	 *            Mode Details (dispatchMode)
@@ -129,8 +127,8 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 		deleteSql.append("Delete From BMTDispatchModes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where DispatchModeCode =:DispatchModeCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dispatchMode);
 
 		try {
@@ -146,8 +144,7 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 	}
 
 	/**
-	 * This method insert new Records into BMTDispatchModes or
-	 * BMTDispatchModes_Temp.
+	 * This method insert new Records into BMTDispatchModes or BMTDispatchModes_Temp.
 	 * 
 	 * save Dispatch Mode Details
 	 * 
@@ -166,14 +163,15 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 
 		insertSql.append("Insert Into BMTDispatchModes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (DispatchModeCode, DispatchModeDesc, DispatchModeIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (DispatchModeCode, DispatchModeDesc, DispatchModeIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:DispatchModeCode, :DispatchModeDesc, :DispatchModeIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:DispatchModeCode, :DispatchModeDesc, :DispatchModeIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dispatchMode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -182,9 +180,8 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 	}
 
 	/**
-	 * This method updates the Record BMTDispatchModes or BMTDispatchModes_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Dispatch Mode Details by key DispatchModeCode and Version
+	 * This method updates the Record BMTDispatchModes or BMTDispatchModes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Dispatch Mode Details by key DispatchModeCode and Version
 	 * 
 	 * @param Dispatch
 	 *            Mode Details (dispatchMode)
@@ -202,24 +199,25 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 
 		updateSql.append("Update BMTDispatchModes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DispatchModeDesc = :DispatchModeDesc," );
+		updateSql.append(" Set DispatchModeDesc = :DispatchModeDesc,");
 		updateSql.append(" DispatchModeIsActive = :DispatchModeIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DispatchModeCode =:DispatchModeCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dispatchMode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

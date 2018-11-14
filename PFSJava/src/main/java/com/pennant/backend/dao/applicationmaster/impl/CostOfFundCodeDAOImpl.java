@@ -67,51 +67,49 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements CostOfFundCodeDAO {
 	private static Logger logger = Logger.getLogger(CostOfFundCodeDAOImpl.class);
-		
+
 	public CostOfFundCodeDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Base Rate Codes details by key field
+	 * Fetch the Record Base Rate Codes details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CostOfFundCode
 	 */
 	@Override
 	public CostOfFundCode getCostOfFundCodeById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		CostOfFundCode costOfFundCode = new CostOfFundCode();
 		costOfFundCode.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select CofCode, CofDesc, Active," );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		StringBuilder selectSql = new StringBuilder("Select CofCode, CofDesc, Active,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From CostOfFundCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CofCode =:CofCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				costOfFundCode);
-		RowMapper<CostOfFundCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CostOfFundCode.class);
-		
-		try{
-			costOfFundCode = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFundCode);
+		RowMapper<CostOfFundCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFundCode.class);
+
+		try {
+			costOfFundCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			costOfFundCode = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return costOfFundCode;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String cofCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -147,49 +145,49 @@ public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements C
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(CostOfFundCode costOfFundCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into CostOfFundCodes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (CofCode, CofDesc, Active," );
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		sql.append(" (CofCode, CofDesc, Active,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:CofCode, :CofDesc, :Active, :Version , :LastMntBy, :LastMntOn,:RecordStatus," );
+		sql.append(" values(:CofCode, :CofDesc, :Active, :Version , :LastMntBy, :LastMntOn,:RecordStatus,");
 		sql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costOfFundCode);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return costOfFundCode.getId();
 	}
-	
+
 	@Override
 	public void update(CostOfFundCode costOfFundCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update CostOfFundCodes");
-		sql.append(tableType.getSuffix()); 
+		sql.append(tableType.getSuffix());
 		sql.append(" set CofDesc = :CofDesc, Active = :Active,");
-		sql.append(" Version = :Version ,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
+		sql.append(" Version = :Version ,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where CofCode =:CofCode ");
-		/*sql.append(QueryUtil.getConcurrencyCondition(tableType));*/
-		
+		/* sql.append(QueryUtil.getConcurrencyCondition(tableType)); */
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costOfFundCode);
@@ -202,22 +200,22 @@ public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements C
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(CostOfFundCode costOfFundCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from CostOfFundCodes" );
+		StringBuilder sql = new StringBuilder("delete from CostOfFundCodes");
 		sql.append(tableType.getSuffix());
 		sql.append(" where CofCode =:CofCode");
-		/*sql.append(QueryUtil.getConcurrencyCondition(tableType));*/
-		
+		/* sql.append(QueryUtil.getConcurrencyCondition(tableType)); */
+
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costOfFundCode);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -231,7 +229,7 @@ public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements C
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public boolean isIdExists(String cofCode) {
 		logger.debug("Entering");

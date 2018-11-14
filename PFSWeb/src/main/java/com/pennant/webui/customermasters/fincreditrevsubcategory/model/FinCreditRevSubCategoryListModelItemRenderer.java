@@ -53,29 +53,28 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class FinCreditRevSubCategoryListModelItemRenderer implements ListitemRenderer<FinCreditRevSubCategory>, Serializable {
+public class FinCreditRevSubCategoryListModelItemRenderer
+		implements ListitemRenderer<FinCreditRevSubCategory>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	public FinCreditRevSubCategoryListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
-	public void render(Listitem item, FinCreditRevSubCategory finCreditRevSubCategory, int count)
-			throws Exception {
+	public void render(Listitem item, FinCreditRevSubCategory finCreditRevSubCategory, int count) throws Exception {
 		Listcell lc;
-	  	lc = new Listcell(finCreditRevSubCategory.getRecordStatus());
+		lc = new Listcell(finCreditRevSubCategory.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(finCreditRevSubCategory.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", finCreditRevSubCategory);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinCreditRevSubCategoryItemDoubleClicked");
-		
+
 	}
 }

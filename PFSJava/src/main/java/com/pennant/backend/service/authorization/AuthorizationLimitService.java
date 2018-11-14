@@ -42,16 +42,22 @@
 */
 package com.pennant.backend.service.authorization;
 
-import com.pennant.backend.model.authorization.AuthorizationLimit;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.authorization.AuthorizationLimit;
 
 public interface AuthorizationLimitService {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean hold);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean hold);
+
 	AuthorizationLimit getAuthorizationLimit(long id);
+
 	AuthorizationLimit getApprovedAuthorizationLimit(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader,boolean hold);
+
+	AuditHeader doApprove(AuditHeader auditHeader, boolean hold);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	AuditHeader validateFinanceAuthorizationLimit(AuditHeader auditHeader);
 }

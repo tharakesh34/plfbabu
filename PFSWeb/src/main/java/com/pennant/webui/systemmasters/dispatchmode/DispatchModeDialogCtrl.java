@@ -71,31 +71,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/DispatchMode/dispatchModeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/DispatchMode/dispatchModeDialog.zul file.
  */
 public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	private static final long serialVersionUID = 6974163751783013342L;
 	private static final Logger logger = Logger.getLogger(DispatchModeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_DispatchModeDialog; 	// autoWired
+	protected Window window_DispatchModeDialog; // autoWired
 
-	protected Textbox 	dispatchModeCode; 			// autoWired
-	protected Textbox 	dispatchModeDesc; 			// autoWired
-	protected Checkbox 	dispatchModeIsActive; 		// autoWired
-
+	protected Textbox dispatchModeCode; // autoWired
+	protected Textbox dispatchModeDesc; // autoWired
+	protected Checkbox dispatchModeIsActive; // autoWired
 
 	// not autoWiredd Variables
 	private DispatchMode dispatchMode; // overHanded per parameter
 	private transient DispatchModeListCtrl dispatchModeListCtrl;// overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient DispatchModeService dispatchModeService;
 
@@ -114,14 +111,13 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DispatchMode object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DispatchMode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_DispatchModeDialog(Event event)throws Exception {
+	public void onCreate$window_DispatchModeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -142,14 +138,12 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 				setDispatchMode(null);
 			}
 
-			doLoadWorkFlow(this.dispatchMode.isWorkflow(),
-					this.dispatchMode.getWorkflowId(),
+			doLoadWorkFlow(this.dispatchMode.isWorkflow(), this.dispatchMode.getWorkflowId(),
 					this.dispatchMode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"DispatchModeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DispatchModeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -158,8 +152,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 			// or
 			// delete dispatchMode here.
 			if (arguments.containsKey("dispatchModeListCtrl")) {
-				setDispatchModeListCtrl((DispatchModeListCtrl) arguments
-						.get("dispatchModeListCtrl"));
+				setDispatchModeListCtrl((DispatchModeListCtrl) arguments.get("dispatchModeListCtrl"));
 			} else {
 				setDispatchModeListCtrl(null);
 			}
@@ -197,8 +190,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -309,8 +301,9 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 		this.dispatchModeDesc.setValue(aDispatchMode.getDispatchModeDesc());
 		this.dispatchModeIsActive.setChecked(aDispatchMode.isDispatchModeIsActive());
 		this.recordStatus.setValue(aDispatchMode.getRecordStatus());
-		
-		if(aDispatchMode.isNew() || (aDispatchMode.getRecordType() != null ? aDispatchMode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aDispatchMode.isNew() || (aDispatchMode.getRecordType() != null ? aDispatchMode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.dispatchModeIsActive.setChecked(true);
 			this.dispatchModeIsActive.setDisabled(true);
 		}
@@ -362,8 +355,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDispatchMode
 	 * @throws Exception
@@ -411,13 +403,16 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.dispatchModeCode.isReadonly()){
-			this.dispatchModeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DispatchModeDialog_DispatchModeCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.dispatchModeCode.isReadonly()) {
+			this.dispatchModeCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DispatchModeDialog_DispatchModeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.dispatchModeDesc.isReadonly()){
-			this.dispatchModeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DispatchModeDialog_DispatchModeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.dispatchModeDesc.isReadonly()) {
+			this.dispatchModeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DispatchModeDialog_DispatchModeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -470,9 +465,9 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_DispatchModeDialog_DispatchModeCode.value")+" : "+aDispatchMode.getDispatchModeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_DispatchModeDialog_DispatchModeCode.value") + " : "
+				+ aDispatchMode.getDispatchModeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDispatchMode.getRecordType())) {
 				aDispatchMode.setVersion(aDispatchMode.getVersion() + 1);
@@ -752,8 +747,8 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DispatchModeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -797,8 +792,8 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	 */
 	private AuditHeader getAuditHeader(DispatchMode aDispatchMode, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDispatchMode.getBefImage(), aDispatchMode);
-		return new AuditHeader(String.valueOf(aDispatchMode.getId()), null,
-				null, null, auditDetail, aDispatchMode.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aDispatchMode.getId()), null, null, null, auditDetail,
+				aDispatchMode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -850,6 +845,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -857,6 +853,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	public DispatchMode getDispatchMode() {
 		return this.dispatchMode;
 	}
+
 	public void setDispatchMode(DispatchMode dispatchMode) {
 		this.dispatchMode = dispatchMode;
 	}
@@ -864,6 +861,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	public void setDispatchModeService(DispatchModeService dispatchModeService) {
 		this.dispatchModeService = dispatchModeService;
 	}
+
 	public DispatchModeService getDispatchModeService() {
 		return this.dispatchModeService;
 	}
@@ -871,6 +869,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	public void setDispatchModeListCtrl(DispatchModeListCtrl dispatchModeListCtrl) {
 		this.dispatchModeListCtrl = dispatchModeListCtrl;
 	}
+
 	public DispatchModeListCtrl getDispatchModeListCtrl() {
 		return this.dispatchModeListCtrl;
 	}

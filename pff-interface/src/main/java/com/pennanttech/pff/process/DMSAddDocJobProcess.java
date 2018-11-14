@@ -24,7 +24,7 @@ public class DMSAddDocJobProcess {
 	private int retryCount;
 	private int threadCount;
 	private int threadAwaitPeroid;
-	
+
 	public DMSAddDocJobProcess() {
 		super();
 	}

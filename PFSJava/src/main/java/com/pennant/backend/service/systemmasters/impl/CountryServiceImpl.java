@@ -64,18 +64,17 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>Country</b>.<br>
  * 
  */
-public class CountryServiceImpl extends GenericService<Country> implements
-		CountryService {
+public class CountryServiceImpl extends GenericService<Country> implements CountryService {
 
 	private static Logger logger = Logger.getLogger(CountryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CountryDAO countryDAO;
 
-	public CountryServiceImpl(){
+	public CountryServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -97,14 +96,11 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTCountries/BMTCountries_Temp by using CountryDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using CountryDAO's update method 3) Audit the record in
-	 * to AuditHeader and AdtBMTCountries by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTCountries/BMTCountries_Temp
+	 * by using CountryDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using CountryDAO's update method 3) Audit the record in to AuditHeader and AdtBMTCountries by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -142,12 +138,10 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTCountries by using CountryDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtBMTCountries by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTCountries by using CountryDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -173,8 +167,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * getCountryById fetch the details by using CountryDAO's getCountryById
-	 * method.
+	 * getCountryById fetch the details by using CountryDAO's getCountryById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -188,9 +181,8 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * getApprovedCountryById fetch the details by using CountryDAO's
-	 * getCountryById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTCountries.
+	 * getApprovedCountryById fetch the details by using CountryDAO's getCountryById method . with parameter id and type
+	 * as blank. it fetches the approved records from the BMTCountries.
 	 * 
 	 * @param id
 	 *            (String)
@@ -201,19 +193,15 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCountryDAO().delete with parameters country,"" b) NEW Add new
-	 * record in to main table by using getCountryDAO().save with parameters
-	 * country,"" c) EDIT Update record in the main table by using
-	 * getCountryDAO().update with parameters country,"" 3) Delete the record
-	 * from the workFlow table by using getCountryDAO().delete with parameters
-	 * country,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTCountries
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtBMTCountries by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCountryDAO().delete with parameters
+	 * country,"" b) NEW Add new record in to main table by using getCountryDAO().save with parameters country,"" c)
+	 * EDIT Update record in the main table by using getCountryDAO().update with parameters country,"" 3) Delete the
+	 * record from the workFlow table by using getCountryDAO().delete with parameters country,"_Temp" 4) Audit the
+	 * record in to AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -230,9 +218,8 @@ public class CountryServiceImpl extends GenericService<Country> implements
 			return auditHeader;
 		}
 		Country country = new Country();
-		BeanUtils.copyProperties((Country) auditHeader.getAuditDetail()
-				.getModelData(), country);
-		
+		BeanUtils.copyProperties((Country) auditHeader.getAuditDetail().getModelData(), country);
+
 		getCountryDAO().delete(country, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())) {
@@ -249,8 +236,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 			country.setNextTaskId("");
 			country.setWorkflowId(0);
 
-			if (country.getRecordType()
-					.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (country.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				country.setRecordType("");
 				getCountryDAO().save(country, TableType.MAIN_TAB);
@@ -274,12 +260,10 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCountryDAO().delete with parameters
-	 * country,"_Temp" 3) Audit the record in to AuditHeader and AdtBMTCountries
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCountryDAO().delete with parameters country,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -305,20 +289,16 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -327,16 +307,15 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getCountryDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getCountryDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @return
 	 */
-	
+
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
@@ -345,8 +324,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 		String code = country.getCountryCode();
 
 		// Check the unique keys.
-		if (country.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())
+		if (country.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())
 				&& countryDAO.isDuplicateKey(code, country.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_CountryCode") + ": " + code;
@@ -356,8 +334,8 @@ public class CountryServiceImpl extends GenericService<Country> implements
 		if (country.isSystemDefault()) {
 			String dftCountryCode = getCountryDAO().getSystemDefaultCount(code);
 			if (StringUtils.isNotEmpty(dftCountryCode)) {
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501", new String[] {
-						dftCountryCode, PennantJavaUtil.getLabel("Country") }, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
+						new String[] { dftCountryCode, PennantJavaUtil.getLabel("Country") }, null));
 			}
 		}
 

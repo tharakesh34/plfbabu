@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.webui.systemmasters.lovfielddetail.model.LovFieldDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul file.
@@ -129,7 +129,8 @@ public class LovFieldDetailListCtrl extends GFCBaseListCtrl<LovFieldDetail> {
 		setItemRender(new LovFieldDetailListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_LovFieldDetailList_NewLovFieldDetail, "button_LovFieldDetailList_NewLovFieldDetail", true);
+		registerButton(button_LovFieldDetailList_NewLovFieldDetail, "button_LovFieldDetailList_NewLovFieldDetail",
+				true);
 		registerButton(button_LovFieldDetailList_LovFieldDetailSearchDialog);
 
 		registerField("fieldCodeId");

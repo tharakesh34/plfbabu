@@ -64,8 +64,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	private MaritalStatusCode befImage;
 	private LoggedInUser userDetails;
 	private boolean systemDefault;
-	
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -86,6 +85,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return maritalStsCode;
 	}
+
 	public void setId(String id) {
 		this.maritalStsCode = id;
 	}
@@ -93,6 +93,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public String getMaritalStsCode() {
 		return maritalStsCode;
 	}
+
 	public void setMaritalStsCode(String maritalStsCode) {
 		this.maritalStsCode = maritalStsCode;
 	}
@@ -100,6 +101,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public String getMaritalStsDesc() {
 		return maritalStsDesc;
 	}
+
 	public void setMaritalStsDesc(String maritalStsDesc) {
 		this.maritalStsDesc = maritalStsDesc;
 	}
@@ -107,6 +109,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public boolean isMaritalStsIsActive() {
 		return maritalStsIsActive;
 	}
+
 	public void setMaritalStsIsActive(boolean maritalStsIsActive) {
 		this.maritalStsIsActive = maritalStsIsActive;
 	}
@@ -114,6 +117,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -121,6 +125,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -128,6 +133,7 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public MaritalStatusCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(MaritalStatusCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -135,18 +141,19 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isSystemDefault() {
-	    return systemDefault;
-    }
+		return systemDefault;
+	}
 
 	public void setSystemDefault(boolean systemDefault) {
-	    this.systemDefault = systemDefault;
-    }
-	
+		this.systemDefault = systemDefault;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

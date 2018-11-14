@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.Caste;
 import com.pennanttech.pff.core.TableType;
 
@@ -51,12 +52,14 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface CasteDAO {
 
-	void update(Caste caste,TableType type);
-	void delete(Caste caste,TableType type);
-	long save(Caste caste,TableType type);
-	
+	void update(Caste caste, TableType type);
+
+	void delete(Caste caste, TableType type);
+
+	long save(Caste caste, TableType type);
+
 	Caste getCasteById(long id, String type);
-	
+
 	boolean isDuplicateKey(String casteCode, TableType tableType);
 
 	int getCasteCount(String casteCode);

@@ -7,9 +7,9 @@ public class ManualAdviseReserve {
 	private long adviseID = 0;
 	private long receiptSeqID = 0;
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
-	
+
 	public ManualAdviseReserve() {
-		
+
 	}
 
 	// ******************************************************//
@@ -19,6 +19,7 @@ public class ManualAdviseReserve {
 	public long getAdviseID() {
 		return adviseID;
 	}
+
 	public void setAdviseID(long adviseID) {
 		this.adviseID = adviseID;
 	}
@@ -26,6 +27,7 @@ public class ManualAdviseReserve {
 	public BigDecimal getReservedAmt() {
 		return reservedAmt;
 	}
+
 	public void setReservedAmt(BigDecimal reservedAmt) {
 		this.reservedAmt = reservedAmt;
 	}
@@ -33,6 +35,7 @@ public class ManualAdviseReserve {
 	public long getReceiptSeqID() {
 		return receiptSeqID;
 	}
+
 	public void setReceiptSeqID(long receiptSeqID) {
 		this.receiptSeqID = receiptSeqID;
 	}

@@ -65,43 +65,44 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LimitDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "detailId","limitStructureDetailsID", "limitStructureDetails", "expiryDate", "limitCheck",
-		"limitChkMethod", "limitSanctioned", "reservedLimit", "limitActualexposure", "limitReservedexposure", "actualLimit" })
+@XmlType(propOrder = { "detailId", "limitStructureDetailsID", "limitStructureDetails", "expiryDate", "limitCheck",
+		"limitChkMethod", "limitSanctioned", "reservedLimit", "limitActualexposure", "limitReservedexposure",
+		"actualLimit" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class LimitDetails implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 1L;
-	
-	@XmlElement(name="limitDetailId")
+
+	@XmlElement(name = "limitDetailId")
 	private long detailId = Long.MIN_VALUE;
 	private long limitHeaderId;
 	private String limitGroup;
-	@XmlElement(name="structureDetailId")
+	@XmlElement(name = "structureDetailId")
 	private long limitStructureDetailsID;
-	
+
 	@XmlElement
 	private Date expiryDate;
-	
+
 	@XmlElement
 	private BigDecimal limitSanctioned = BigDecimal.ZERO;
-	
+
 	private BigDecimal actualexposure = BigDecimal.ZERO;
 
 	@XmlElement
 	private BigDecimal reservedLimit = BigDecimal.ZERO;
-	
-	@XmlElement(name="availableLimit")
+
+	@XmlElement(name = "availableLimit")
 	private BigDecimal actualLimit = BigDecimal.ZERO;
-	
+
 	private BigDecimal reservedexposure = BigDecimal.ZERO;
-	
+
 	private BigDecimal utilisedLimit = BigDecimal.ZERO;
-	
+
 	private BigDecimal nonRvlUtilised = BigDecimal.ZERO;
-	
+
 	@XmlElement
 	private boolean limitCheck;
-	
+
 	@XmlElement
 	private String limitChkMethod;
 	private int version;
@@ -110,8 +111,8 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private boolean editable;
 	private String limitLineDesc;
 	private String groupName;
-	private boolean limitRevolving=true;
-	private boolean revolving=true;
+	private boolean limitRevolving = true;
+	private boolean revolving = true;
 
 	// For customer limits service
 	private String limitLine;
@@ -130,8 +131,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private int orderSeq;
 	private int itemPriority;
 
-	
-	@XmlElement(name="structureDetail")
+	@XmlElement(name = "structureDetail")
 	private LimitStructureDetail limitStructureDetails;
 
 	@XmlTransient
@@ -175,7 +175,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private String userAction = "Save";
 	@XmlTransient
 	private long workflowId = 0;
-	
+
 	//API Purpose
 	@XmlElement(name = "actualexposure")
 	private BigDecimal limitActualexposure = BigDecimal.ZERO;
@@ -720,7 +720,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	public void setItemLevel(int itemLevel) {
 		this.itemLevel = itemLevel;
 	}
-	
+
 	public LimitStructureDetail getLimitStructureDetails() {
 		return limitStructureDetails;
 	}
@@ -736,6 +736,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	public void setItemPriority(int itemPriority) {
 		this.itemPriority = itemPriority;
 	}
+
 	public BigDecimal getLimitActualexposure() {
 		return limitActualexposure;
 	}
@@ -743,6 +744,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	public void setLimitActualexposure(BigDecimal limitActualexposure) {
 		this.limitActualexposure = limitActualexposure;
 	}
+
 	public BigDecimal getLimitReservedexposure() {
 		return limitReservedexposure;
 	}
@@ -750,7 +752,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	public void setLimitReservedexposure(BigDecimal limitReservedexposure) {
 		this.limitReservedexposure = limitReservedexposure;
 	}
-	
+
 	public BigDecimal getNonRvlUtilised() {
 		return nonRvlUtilised;
 	}

@@ -45,7 +45,7 @@ package com.pennant.backend.dao.applicationmaster;
 import com.pennant.backend.model.applicationmaster.ChequePurpose;
 
 public interface ChequePurposeDAO {
-	
+
 	ChequePurpose getChequePurposeById(String id, String type);
 
 	void update(ChequePurpose chequePurpose, String type);

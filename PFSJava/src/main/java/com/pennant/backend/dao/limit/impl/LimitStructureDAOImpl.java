@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.limit.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -70,10 +68,10 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements LimitStructureDAO {
 	private static Logger logger = Logger.getLogger(LimitStructureDAOImpl.class);
-	
-		
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new LimitStructure 
+	 * This method set the Work Flow id based on the module name and return the new LimitStructure
+	 * 
 	 * @return LimitStructure
 	 */
 
@@ -82,19 +80,19 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("LimitStructure");
 		LimitStructure limitStructure = new LimitStructure();
-		if (workFlowDetails != null){
+		if (workFlowDetails != null) {
 			limitStructure.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return limitStructure;
 	}
 
-
 	/**
-	 * This method get the module from method getLimitStructure() and set the new record flag as true and return LimitStructure()   
+	 * This method get the module from method getLimitStructure() and set the new record flag as true and return
+	 * LimitStructure()
+	 * 
 	 * @return LimitStructure
 	 */
-
 
 	@Override
 	public LimitStructure getNewLimitStructure() {
@@ -106,32 +104,35 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 	}
 
 	/**
-	 * Fetch the Record  Limit Structure details by key field
+	 * Fetch the Record Limit Structure details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitStructure
 	 */
 	@Override
 	public LimitStructure getLimitStructureById(final String id, String type) {
 		logger.debug("Entering");
 		LimitStructure limitStructure = getLimitStructure();
-		
+
 		limitStructure.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select StructureCode, StructureName,Active,LimitCategory,ShowLimitsIn");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select StructureCode, StructureName,Active,LimitCategory,ShowLimitsIn");
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From LimitStructure");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where StructureCode =:StructureCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructure);
 		RowMapper<LimitStructure> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitStructure.class);
-		
+
 		try {
-			limitStructure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			limitStructure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitStructure = null;
@@ -139,24 +140,24 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 		logger.debug("Leaving");
 		return limitStructure;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the LimitStructure or LimitStructure_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Limit Structure by key StructureCode
+	 * This method Deletes the Record from the LimitStructure or LimitStructure_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Limit Structure by key StructureCode
 	 * 
-	 * @param Limit Structure (limitStructure)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Structure (limitStructure)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(LimitStructure limitStructure,String type) {
+	public void delete(LimitStructure limitStructure, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LimitStructure");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where StructureCode =:StructureCode");
@@ -173,71 +174,76 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into LimitStructure or LimitStructure_Temp.
 	 *
-	 * save Limit Structure 
+	 * save Limit Structure
 	 * 
-	 * @param Limit Structure (limitStructure)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Structure (limitStructure)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(LimitStructure limitStructure,String type) {
+	public String save(LimitStructure limitStructure, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitStructure");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (StructureCode, StructureName, Active,LimitCategory,ShowLimitsIn");
-		insertSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:StructureCode, :StructureName, :Active,:LimitCategory, :ShowLimitsIn");
-		insertSql.append(", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructure);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitStructure.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record LimitStructure or LimitStructure_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Limit Structure by key StructureCode and Version
+	 * This method updates the Record LimitStructure or LimitStructure_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Limit Structure by key StructureCode and Version
 	 * 
-	 * @param Limit Structure (limitStructure)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Structure (limitStructure)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(LimitStructure limitStructure,String type) {
+	public void update(LimitStructure limitStructure, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update LimitStructure");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set StructureName = :StructureName, Active =:Active,LimitCategory =:LimitCategory, ShowLimitsIn = :ShowLimitsIn");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update LimitStructure");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set StructureName = :StructureName, Active =:Active,LimitCategory =:LimitCategory, ShowLimitsIn = :ShowLimitsIn");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where StructureCode =:StructureCode");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructure);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -255,14 +261,14 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 	@Override
 	public int getLimitStructureCountById(String structureCode, String tableType) {
 		logger.debug("Entering");
-		
+
 		LimitStructure limitStructure = new LimitStructure();
 		limitStructure.setStructureCode(structureCode);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM LimitStructure ");
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" WHERE StructureCode = :StructureCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 
 		int recordCount = 0;
@@ -280,17 +286,17 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 	@Override
 	public void updateReBuildField(String limitLine, String groupCode, boolean rebuild, String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		
-		StringBuilder	updateSql =new StringBuilder("Update LimitStructure");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+
+		StringBuilder updateSql = new StringBuilder("Update LimitStructure");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ReBuild = :ReBuild");
 		source.addValue("ReBuild", rebuild);
-		
+
 		if (!(StringUtils.isBlank(limitLine) && StringUtils.isBlank(groupCode))) {
 			updateSql.append(" Where StructureCode in (Select LimitStructureCode from LimitStructureDetails where ");
-			
+
 			if (StringUtils.isNotBlank(limitLine)) {
 				updateSql.append("LimitLine = :LimitLine)");
 				source.addValue("LimitLine", limitLine);
@@ -299,11 +305,11 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 				source.addValue("GroupCode", groupCode);
 			}
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		this.jdbcTemplate.update(updateSql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
 }

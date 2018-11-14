@@ -184,225 +184,225 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the /WEB-INF/pages/Commitment/Commitment/commitmentDialog.zul file.
  */
 public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(CommitmentDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(CommitmentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window										window_CommitmentDialog;
-	protected Label											label_windowTitle;
-	protected Row											row0;
-	protected Label											label_CmtReference;
-	protected Hlayout										hlayout_CmtReference;
-	protected Space											space_CmtReference;
-	protected Textbox										cmtReference;
-	protected Label											label_CustCIF;
-	protected Hlayout										hlayout_CustCIF;
-	protected Space											space_CustCIF;
+	protected Window window_CommitmentDialog;
+	protected Label label_windowTitle;
+	protected Row row0;
+	protected Label label_CmtReference;
+	protected Hlayout hlayout_CmtReference;
+	protected Space space_CmtReference;
+	protected Textbox cmtReference;
+	protected Label label_CustCIF;
+	protected Hlayout hlayout_CustCIF;
+	protected Space space_CustCIF;
 
-	protected Button										btnSearchCustCIF;
-	protected Button										viewCustInfo;
-	protected Longbox 										custID;
-	protected Textbox										custCIF;
-	protected Label											custName;
+	protected Button btnSearchCustCIF;
+	protected Button viewCustInfo;
+	protected Longbox custID;
+	protected Textbox custCIF;
+	protected Label custName;
 
-	protected Row											row1;
-	protected Label											label_CmtBranch;
-	protected ExtendedCombobox								cmtBranch;
-	protected Label											label_OpenAccount;
-	protected Hlayout										hlayout_OpenAccount;
-	protected Space											space_OpenAccount;
-	protected Checkbox										openAccount;
-	protected Row											row2;
-	protected Label											label_CmtAccount;
-	protected AccountSelectionBox							cmtAccount;
-	protected Label											label_CmtCcy;
-	protected ExtendedCombobox								cmtCcy;
-	protected ExtendedCombobox								facilityRef;
-	protected ExtendedCombobox								limitLine;
-	protected Row											row3;
-	protected Label											label_CmtPftRateMin;
-	protected Hlayout										hlayout_CmtPftRateMin;
-	protected Space											space_CmtPftRateMin;
-	protected Decimalbox									cmtPftRateMin;
-	protected Label											label_CmtPftRateMax;
-	protected Hlayout										hlayout_CmtPftRateMax;
-	protected Space											space_CmtPftRateMax;
-	protected Decimalbox									cmtPftRateMax;
-	protected Row											row4;
-	protected Label											label_CmtAmount;
-	protected Hlayout										hlayout_CmtAmount;
-	protected Space											space_CmtAmount;
-	protected CurrencyBox									cmtAmount;
-	protected Label											label_CmtUtilizedAmount;
-	protected Hlayout										hlayout_CmtUtilizedAmount;
-	protected Space											space_CmtUtilizedAmount;
-	protected Decimalbox									cmtUtilizedAmount;
-	protected Row											row5;
-	protected Label											label_CmtAvailable;
-	protected Hlayout										hlayout_CmtAvailable;
-	protected Space											space_CmtAvailable;
-	protected Decimalbox									cmtAvailable;
-	protected Label											label_CmtPromisedDate;
-	protected Hlayout										hlayout_CmtPromisedDate;
-	protected Space											space_CmtPromisedDate;
-	protected Datebox										cmtPromisedDate;
-	protected Row											row6;
-	protected Label											label_CmtStartDate;
-	protected Hlayout										hlayout_CmtStartDate;
-	protected Space											space_CmtStartDate;
-	protected Datebox										cmtStartDate;
-	protected Label											label_CmtExpDate;
-	protected Hlayout										hlayout_CmtExpDate;
-	protected Space											space_CmtExpDate;
-	protected Datebox										cmtExpDate;
-	protected Row											row7;
-	protected Label											label_CmtTitle;
-	protected Hlayout										hlayout_CmtTitle;
-	protected Space											space_CmtTitle;
-	protected Textbox										cmtTitle;
-	protected Label											label_CmtNotes;
-	protected Hlayout										hlayout_CmtNotes;
-	protected Space											space_CmtNotes;
-	protected Textbox										cmtNotes;
-	protected Row											row8;
-	protected Label											label_Revolving;
-	protected Hlayout										hlayout_Revolving;
-	protected Space											space_Revolving;
-	protected Checkbox										revolving;
-	protected Label											label_SharedCmt;
-	protected Hlayout										hlayout_SharedCmt;
-	protected Space											space_SharedCmt;
-	protected Checkbox										sharedCmt;
-	protected Row											row_Status;
-	protected Label											label_MultiBranch;
-	protected Hlayout										hlayout_MultiBranch;
-	protected Space											space_MultiBranch;
-	protected Checkbox										multiBranch;
-	protected Row											row10;
-	protected Row											row11;
-	protected Row											row12;
-	protected Label											label_CmtCharges;
-	protected Hlayout										hlayout_CmtCharges;
-	protected CurrencyBox									cmtCharges;
-	protected Hlayout										hlayout_CmtChargesAccount;
-	protected Label											label_CmtChargesAccount;
-	protected AccountSelectionBox							cmtChargesAccount;
-	protected Label											label_CmtActiveStatus;
-	protected Hlayout										hlayout_CmtActiveStatus;
-	protected Space											space_CmtActiveStatus;
-	protected Checkbox										cmtActiveStatus;
-	protected Label											label_CmtNonperformingStatus;
-	protected Hlayout										hlayout_CmtNonperformingStatus;
-	protected Space											space_CmtNonperformingStatus;
-	protected Checkbox										cmtNonperformingStatus;
-	protected Row											row13;
-	protected Label											cmtCommitments;
-	protected Label											cmtTotAmount;
-	protected Label											cmtUtilizedTotAmount;
-	protected Label											cmtUnUtilizedAmount;
-	protected Checkbox										cmtStopRateRange;
-	protected Label											label_CmtCommitments;
-	protected Label											label_CmtTotAmount;
-	protected Label											label_CmtUtilizedTotAmount;
-	protected Label											label_CmtUnUtilizedAmount;
-	protected Tab											tab_CommitmentDetails;
-	protected Tab											tab_CommitmentMovementDetails;
-	protected Tab											tab_CommitmentPostingDetails;
-	protected Listbox										listBoxCommitmentMovement;
-	protected Listbox										listBoxCommitmentPostings;
-	protected Listbox										listBoxCommitmentFinance;
-	protected Row											rowCmtSummary;
-	protected Row											rowCmtCount;
-	protected Row											rowCmtTotAmount;
-	protected Row											rowCmtUtilized;
-	protected Row											rowCmtUnUtilized;
+	protected Row row1;
+	protected Label label_CmtBranch;
+	protected ExtendedCombobox cmtBranch;
+	protected Label label_OpenAccount;
+	protected Hlayout hlayout_OpenAccount;
+	protected Space space_OpenAccount;
+	protected Checkbox openAccount;
+	protected Row row2;
+	protected Label label_CmtAccount;
+	protected AccountSelectionBox cmtAccount;
+	protected Label label_CmtCcy;
+	protected ExtendedCombobox cmtCcy;
+	protected ExtendedCombobox facilityRef;
+	protected ExtendedCombobox limitLine;
+	protected Row row3;
+	protected Label label_CmtPftRateMin;
+	protected Hlayout hlayout_CmtPftRateMin;
+	protected Space space_CmtPftRateMin;
+	protected Decimalbox cmtPftRateMin;
+	protected Label label_CmtPftRateMax;
+	protected Hlayout hlayout_CmtPftRateMax;
+	protected Space space_CmtPftRateMax;
+	protected Decimalbox cmtPftRateMax;
+	protected Row row4;
+	protected Label label_CmtAmount;
+	protected Hlayout hlayout_CmtAmount;
+	protected Space space_CmtAmount;
+	protected CurrencyBox cmtAmount;
+	protected Label label_CmtUtilizedAmount;
+	protected Hlayout hlayout_CmtUtilizedAmount;
+	protected Space space_CmtUtilizedAmount;
+	protected Decimalbox cmtUtilizedAmount;
+	protected Row row5;
+	protected Label label_CmtAvailable;
+	protected Hlayout hlayout_CmtAvailable;
+	protected Space space_CmtAvailable;
+	protected Decimalbox cmtAvailable;
+	protected Label label_CmtPromisedDate;
+	protected Hlayout hlayout_CmtPromisedDate;
+	protected Space space_CmtPromisedDate;
+	protected Datebox cmtPromisedDate;
+	protected Row row6;
+	protected Label label_CmtStartDate;
+	protected Hlayout hlayout_CmtStartDate;
+	protected Space space_CmtStartDate;
+	protected Datebox cmtStartDate;
+	protected Label label_CmtExpDate;
+	protected Hlayout hlayout_CmtExpDate;
+	protected Space space_CmtExpDate;
+	protected Datebox cmtExpDate;
+	protected Row row7;
+	protected Label label_CmtTitle;
+	protected Hlayout hlayout_CmtTitle;
+	protected Space space_CmtTitle;
+	protected Textbox cmtTitle;
+	protected Label label_CmtNotes;
+	protected Hlayout hlayout_CmtNotes;
+	protected Space space_CmtNotes;
+	protected Textbox cmtNotes;
+	protected Row row8;
+	protected Label label_Revolving;
+	protected Hlayout hlayout_Revolving;
+	protected Space space_Revolving;
+	protected Checkbox revolving;
+	protected Label label_SharedCmt;
+	protected Hlayout hlayout_SharedCmt;
+	protected Space space_SharedCmt;
+	protected Checkbox sharedCmt;
+	protected Row row_Status;
+	protected Label label_MultiBranch;
+	protected Hlayout hlayout_MultiBranch;
+	protected Space space_MultiBranch;
+	protected Checkbox multiBranch;
+	protected Row row10;
+	protected Row row11;
+	protected Row row12;
+	protected Label label_CmtCharges;
+	protected Hlayout hlayout_CmtCharges;
+	protected CurrencyBox cmtCharges;
+	protected Hlayout hlayout_CmtChargesAccount;
+	protected Label label_CmtChargesAccount;
+	protected AccountSelectionBox cmtChargesAccount;
+	protected Label label_CmtActiveStatus;
+	protected Hlayout hlayout_CmtActiveStatus;
+	protected Space space_CmtActiveStatus;
+	protected Checkbox cmtActiveStatus;
+	protected Label label_CmtNonperformingStatus;
+	protected Hlayout hlayout_CmtNonperformingStatus;
+	protected Space space_CmtNonperformingStatus;
+	protected Checkbox cmtNonperformingStatus;
+	protected Row row13;
+	protected Label cmtCommitments;
+	protected Label cmtTotAmount;
+	protected Label cmtUtilizedTotAmount;
+	protected Label cmtUnUtilizedAmount;
+	protected Checkbox cmtStopRateRange;
+	protected Label label_CmtCommitments;
+	protected Label label_CmtTotAmount;
+	protected Label label_CmtUtilizedTotAmount;
+	protected Label label_CmtUnUtilizedAmount;
+	protected Tab tab_CommitmentDetails;
+	protected Tab tab_CommitmentMovementDetails;
+	protected Tab tab_CommitmentPostingDetails;
+	protected Listbox listBoxCommitmentMovement;
+	protected Listbox listBoxCommitmentPostings;
+	protected Listbox listBoxCommitmentFinance;
+	protected Row rowCmtSummary;
+	protected Row rowCmtCount;
+	protected Row rowCmtTotAmount;
+	protected Row rowCmtUtilized;
+	protected Row rowCmtUnUtilized;
 
-	protected Groupbox										gbCommitmentSummary;
-	protected Grid											gridSummary;
-	protected Listbox										commitmentSummary;
+	protected Groupbox gbCommitmentSummary;
+	protected Grid gridSummary;
+	protected Listbox commitmentSummary;
 
-	protected Button 										btnSearchCommitmentFlags;
-	protected Textbox										commitmentFlags;
-	protected Label											label_CmtAvailableMonths;
-	protected Hlayout										hlayout_CmtAvailableMonths;
-	protected Space											space_CmtAvailableMonths;
-	protected Intbox										cmtAvailableMonths;
-	protected Label											label_CmtRvwDate;
-	protected Hlayout										hlayout_CmtRvwDate;
-	protected Space											space_CmtRvwDate;
-	protected Datebox										cmtRvwDate;
-	protected Label											label_CollateralRequired;
-	protected Hlayout										hlayout_CollateralRequired;
-	protected Space											space_CollateralRequired;
-	protected Checkbox										collateralRequired;
-	protected Datebox										cmtEndDate;	
+	protected Button btnSearchCommitmentFlags;
+	protected Textbox commitmentFlags;
+	protected Label label_CmtAvailableMonths;
+	protected Hlayout hlayout_CmtAvailableMonths;
+	protected Space space_CmtAvailableMonths;
+	protected Intbox cmtAvailableMonths;
+	protected Label label_CmtRvwDate;
+	protected Hlayout hlayout_CmtRvwDate;
+	protected Space space_CmtRvwDate;
+	protected Datebox cmtRvwDate;
+	protected Label label_CollateralRequired;
+	protected Hlayout hlayout_CollateralRequired;
+	protected Space space_CollateralRequired;
+	protected Checkbox collateralRequired;
+	protected Datebox cmtEndDate;
 
 	//Commitment Posting Details list headers
-	protected Listheader									listheader_Posting_LinkedTranId;
-	protected Listheader									listheader_Posting_DebitOrCredit;
-	protected Listheader									listheader_Posting_EntryDesc;
-	protected Listheader									listheader_Posting_PostDate;
-	protected Listheader									listheader_Posting_FinReference;
-	protected Listheader									listheader_Posting_AccountNo;
-	protected Listheader									listheader_Posting_Amount;
+	protected Listheader listheader_Posting_LinkedTranId;
+	protected Listheader listheader_Posting_DebitOrCredit;
+	protected Listheader listheader_Posting_EntryDesc;
+	protected Listheader listheader_Posting_PostDate;
+	protected Listheader listheader_Posting_FinReference;
+	protected Listheader listheader_Posting_AccountNo;
+	protected Listheader listheader_Posting_Amount;
 
 	// Commitment Rates Review				
-	protected Button 										btnNew_CmtRate;
-	protected Listbox										listBoxCmtRates;
+	protected Button btnNew_CmtRate;
+	protected Listbox listBoxCmtRates;
 
-	protected Tabs											tabsIndexCenter;
-	protected Tabpanels										tabpanelsBoxIndexCenter;
-	protected Tab											tab_Collateral;
-	protected Tab											tab_Customer;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab tab_Collateral;
+	protected Tab tab_Customer;
 
-	protected Component										checkListChildWindow;
-	protected Component 									collateralAssignmentWindow;
+	protected Component checkListChildWindow;
+	protected Component collateralAssignmentWindow;
 
 	//Controllers
-	private transient CommitmentListCtrl					commitmentListCtrl;	
-	private transient CustomerDialogCtrl					customerDialogCtrl;
-	private transient AgreementDetailDialogCtrl				agreementDetailDialogCtrl;
-	private transient FinanceCheckListReferenceDialogCtrl	financeCheckListReferenceDialogCtrl;
-	private transient CollateralHeaderDialogCtrl 		    collateralHeaderDialogCtrl;
-	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl;
+	private transient CommitmentListCtrl commitmentListCtrl;
+	private transient CustomerDialogCtrl customerDialogCtrl;
+	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl;
+	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
+	private transient CollateralHeaderDialogCtrl collateralHeaderDialogCtrl;
+	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
 
 	//Bean
-	private Commitment										commitment;																	
+	private Commitment commitment;
 
 	// ServiceDAOs / Domain Classes				
-	private transient AccountInterfaceService				accountInterfaceService;
-	private transient CustomerDetailsService				customerDetailsService;
-	private transient CommitmentService						commitmentService;
-	private transient PagedListService						pagedListService;
-	private transient AccountsService						accountsService;
+	private transient AccountInterfaceService accountInterfaceService;
+	private transient CustomerDetailsService customerDetailsService;
+	private transient CommitmentService commitmentService;
+	private transient PagedListService pagedListService;
+	private transient AccountsService accountsService;
 
-	private CommitmentDAO									commitmentDAO;
+	private CommitmentDAO commitmentDAO;
 
-	protected JdbcSearchObject<Customer>					custCIFSearchObject;
-	private EventManager 									eventManager;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private EventManager eventManager;
 	private NotificationService notificationService;
-	private LimitDetails									limitDetails;
+	private LimitDetails limitDetails;
 
-	protected String										selectMethodName		 = "onSelectTab";
-	private BigDecimal										oldCmtAmount			 = BigDecimal.ZERO;
+	protected String selectMethodName = "onSelectTab";
+	private BigDecimal oldCmtAmount = BigDecimal.ZERO;
 	//private BigDecimal									oldCmtCharges			 = BigDecimal.ZERO;
-	private boolean											maintain				 = false;
-	private boolean											newMaintain				 = false;
-	private boolean											proceed					 = true;
-	private boolean											isValidCust				 = true;
- 
-	private List<CommitmentRate> 							commitmentRateDetailList = new ArrayList<CommitmentRate>();
-	private List<FinFlagsDetail> 							cmtFlagsDetailList 		 = null;
-	private List<FinanceCheckListReference> 				collateralChecklists 	 = null;
-	private HashMap<Long, Long> 							selectedAnsCountMap 	 = null;
+	private boolean maintain = false;
+	private boolean newMaintain = false;
+	private boolean proceed = true;
+	private boolean isValidCust = true;
+
+	private List<CommitmentRate> commitmentRateDetailList = new ArrayList<CommitmentRate>();
+	private List<FinFlagsDetail> cmtFlagsDetailList = null;
+	private List<FinanceCheckListReference> collateralChecklists = null;
+	private HashMap<Long, Long> selectedAnsCountMap = null;
 
 	// Default Values
-	private Date											appDate				 	 = DateUtility.getAppDate();
-	private Date 											appEndDate 				 = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-	private int												defaultCCYDecPos		 = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+	private Date appDate = DateUtility.getAppDate();
+	private Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
+	private int defaultCCYDecPos = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
 	/**
 	 * default constructor.<br>
@@ -448,7 +448,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			} else {
 				setCommitment(null);
 			}
-			doLoadWorkFlow(this.commitment.isWorkflow(), this.commitment.getWorkflowId(), this.commitment.getNextTaskId());
+			doLoadWorkFlow(this.commitment.isWorkflow(), this.commitment.getWorkflowId(),
+					this.commitment.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -470,8 +471,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			if (StringUtils.trimToEmpty(commitment.getRecordType()).equals(PennantConstants.RECORD_TYPE_UPD)) {
 				maintain = true;
-			} else if (StringUtils.isBlank(commitment.getRecordType())
-					&& StringUtils.trimToEmpty(commitment.getRecordStatus()).equals(PennantConstants.RCD_STATUS_APPROVED)) {
+			} else if (StringUtils.isBlank(commitment.getRecordType()) && StringUtils
+					.trimToEmpty(commitment.getRecordStatus()).equals(PennantConstants.RCD_STATUS_APPROVED)) {
 				maintain = true;
 				newMaintain = true;
 				oldCmtAmount = getCommitment().getCmtAmount();
@@ -526,7 +527,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -540,7 +541,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onClick$btnCancel(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
@@ -585,7 +586,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering" + event.toString());
 		try {
 
-			ScreenCTL.displayNotes(getNotes("Commitment", getCommitment().getCmtReference(), getCommitment().getVersion()), this);
+			ScreenCTL.displayNotes(
+					getNotes("Commitment", getCommitment().getCmtReference(), getCommitment().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -611,23 +613,24 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	public void onChange$custCIF(Event event) throws InterruptedException, InterfaceException{
+	public void onChange$custCIF(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 
 		List<Filter> filterList = new ArrayList<>();
 		filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
-		
+
 		this.custCIF.clearErrorMessage();
 		Clients.clearWrongValue(this.btnSearchCustCIF);
-		
-		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), filterList);
-		if(customer == null) {
+
+		Customer customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), filterList);
+		if (customer == null) {
 			doResetValues();
 			isValidCust = false;
 			this.tab_Customer.setVisible(false);
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
 		} else {
 			doSetCustomer(customer, null);
 		}
@@ -636,14 +639,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	/**
-	 * View customer information 
+	 * View customer information
+	 * 
 	 * @param event
 	 */
 	public void onClick$viewCustInfo(Event event) {
 		logger.debug("Entering");
 
 		if (StringUtils.isBlank(this.custCIF.getValue())) {
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
 		}
 		try {
 			HashMap<String, Object> map = new HashMap<String, Object>();
@@ -654,7 +659,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			map.put("finReference", this.cmtReference.getValue());
 			map.put("finance", true);
 
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", window_CommitmentDialog, map);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul",
+					window_CommitmentDialog, map);
 
 			//Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", window_CommitmentDialog, map);
 
@@ -692,13 +698,14 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException, InterfaceException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		doClearMessage();
 		doResetValues();
 		isValidCust = true;
-		
+
 		this.custCIFSearchObject = newSearchObject;
 
 		Customer customer = (Customer) nCustomer;
@@ -720,7 +727,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param details
 	 * @throws InterruptedException
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
 	private void doChangeCustomer(Customer details) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
@@ -743,7 +750,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Facility Reference
 		Filter[] filters = new Filter[1];
-		long custid = StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0 : Long.valueOf(this.custCIF.getValue());
+		long custid = StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0
+				: Long.valueOf(this.custCIF.getValue());
 		filters[0] = new Filter("CustID", custid, Filter.OP_EQUAL);
 		this.facilityRef.setFilters(filters);
 
@@ -756,16 +764,19 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Limit Header
 		long headerId = 0;
-		LimitHeader limitHeader = getCommitmentService().getLimitHeaderByCustomerId(Long.valueOf(this.custCIF.getValue()));
+		LimitHeader limitHeader = getCommitmentService()
+				.getLimitHeaderByCustomerId(Long.valueOf(this.custCIF.getValue()));
 		if (limitHeader != null) {
 			headerId = limitHeader.getHeaderId();
-			limitHeader.setCustFullName(PennantApplicationUtil.getFullName(limitHeader.getCustFName(), limitHeader.getCustMName(), limitHeader.getCustFullName()));
-		} 
+			limitHeader.setCustFullName(PennantApplicationUtil.getFullName(limitHeader.getCustFName(),
+					limitHeader.getCustMName(), limitHeader.getCustFullName()));
+		}
 		this.limitLine.setFilters(getDefaultFilters(headerId));
 
 		// Fetching Commitment Check Lists Details
 		if (isWorkFlowEnabled()) {
-			setCommitment(getCommitmentService().getProcessEditorDetails(getCommitment(), getRole(), FinanceConstants.FINSER_EVENT_ORG));//TODO role or NextRole
+			setCommitment(getCommitmentService().getProcessEditorDetails(getCommitment(), getRole(),
+					FinanceConstants.FINSER_EVENT_ORG));//TODO role or NextRole
 		}
 
 		//Agreement Details Tab
@@ -773,12 +784,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Fill Check List Details based on Rule Execution if Rule Exist
 		appendCheckListDetailTab(getCommitment(), true);
-		
+
 		// Collateral Details Tab
 		appendCollateralAssignmentTab();
-		
+
 		//Document Details
-		if(documentDetailDialogCtrl != null){
+		if (documentDetailDialogCtrl != null) {
 			documentDetailDialogCtrl.doFillDocumentDetails(getCommitment().getDocuments());
 		}
 
@@ -787,7 +798,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * 
-	 * @param headerId 
+	 * @param headerId
 	 * @param size
 	 * @return
 	 */
@@ -887,7 +898,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		setFormatByCCy(this.cmtUtilizedAmount, defaultCCYDecPos);
 		setFormatByCCy(this.cmtAvailable, defaultCCYDecPos);
 
-		this.cmtChargesAccount.setAccountDetails(PennantConstants.COMMITMENT_FIN_TYPE, PennantConstants.COMMITMENT_FIN_EVENT, details.getCcyCode());
+		this.cmtChargesAccount.setAccountDetails(PennantConstants.COMMITMENT_FIN_TYPE,
+				PennantConstants.COMMITMENT_FIN_EVENT, details.getCcyCode());
 		this.cmtChargesAccount.setFormatter(details.getCcyEditField());
 
 		this.openAccount.setChecked(true);
@@ -897,7 +909,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	/**
-	 * 	Validate Customer CIF
+	 * Validate Customer CIF
 	 */
 	private void doValidateCustCIF() {
 		logger.debug("Entering");
@@ -907,14 +919,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		if (StringUtils.isBlank(this.custCIF.getValue())) {
 			this.tab_CommitmentDetails.setSelected(true);
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * onChanging Facility details
+	 * 
 	 * @param event
 	 */
 	public void onFulfill$facilityRef(Event event) {
@@ -923,7 +937,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (!maintain) {
 			Object dataObject = null;
 			dataObject = this.facilityRef.getObject();
-			if (dataObject instanceof String){
+			if (dataObject instanceof String) {
 				this.cmtReference.setValue("");
 				this.cmtReference.setReadonly(false);
 			} else {
@@ -968,6 +982,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * linked limit line is of revolving type Default to TRUE and allow change.<br>
 	 * linked limit line is of non-revolving type Default to FALSE and disable from maintenance.
+	 * 
 	 * @param details
 	 */
 	public void doCheckRevolving(LimitDetails details) {
@@ -986,6 +1001,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Check Method for collateral Required
+	 * 
 	 * @param event
 	 */
 	public void onCheck$collateralRequired(Event event) {
@@ -1029,7 +1045,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 
 			if (StringUtils.isBlank(this.cmtTitle.getValue())) {
-				setComponentAccessType("CommitmentDialog_CmtTitle", false, this.cmtTitle, this.space_CmtTitle, this.label_CmtTitle, this.hlayout_CmtTitle, null);
+				setComponentAccessType("CommitmentDialog_CmtTitle", false, this.cmtTitle, this.space_CmtTitle,
+						this.label_CmtTitle, this.hlayout_CmtTitle, null);
 			}
 
 			// Enquiry Mode
@@ -1093,19 +1110,27 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				this.userAction, this.cmtTitle, this.custCIF));
 
 		if (getCommitment().isNewRecord()) {
-			setComponentAccessType("CommitmentDialog_CmtTitle", false, this.cmtTitle, this.space_CmtTitle, this.label_CmtTitle, this.hlayout_CmtTitle, null);
-			setComponentAccessType("CommitmentDialog_CustCIF", false, this.custCIF, this.space_CustCIF, this.label_CustCIF, this.hlayout_CustCIF, null);
-			setComponentAccessType("CommitmentDialog_CustCIF", false, this.btnSearchCustCIF, this.space_CustCIF, this.label_CustCIF, this.hlayout_CustCIF, null);
-			setComponentAccessType("CommitmentDialog_CmtReference", false, this.cmtReference, this.space_CmtReference, this.label_CmtReference, this.hlayout_CmtReference, null);
+			setComponentAccessType("CommitmentDialog_CmtTitle", false, this.cmtTitle, this.space_CmtTitle,
+					this.label_CmtTitle, this.hlayout_CmtTitle, null);
+			setComponentAccessType("CommitmentDialog_CustCIF", false, this.custCIF, this.space_CustCIF,
+					this.label_CustCIF, this.hlayout_CustCIF, null);
+			setComponentAccessType("CommitmentDialog_CustCIF", false, this.btnSearchCustCIF, this.space_CustCIF,
+					this.label_CustCIF, this.hlayout_CustCIF, null);
+			setComponentAccessType("CommitmentDialog_CmtReference", false, this.cmtReference, this.space_CmtReference,
+					this.label_CmtReference, this.hlayout_CmtReference, null);
 			readOnlyComponent(true, this.cmtStopRateRange);
 
 			this.space_CmtPftRateMax.setSclass("");
 			this.tab_Customer.setVisible(false);
 		} else {
-			setComponentAccessType("CommitmentDialog_CmtTitle", true, this.cmtTitle, this.space_CmtTitle, this.label_CmtTitle, this.hlayout_CmtTitle, null);
-			setComponentAccessType("CommitmentDialog_CustCIF", true, this.custCIF, this.space_CustCIF, this.label_CustCIF, this.hlayout_CustCIF, null);
-			setComponentAccessType("CommitmentDialog_CustCIF", true, this.btnSearchCustCIF, this.space_CustCIF, this.label_CustCIF, this.hlayout_CustCIF, null);
-			setComponentAccessType("CommitmentDialog_CmtReference", true, this.cmtReference, this.space_CmtReference, this.label_CmtReference, this.hlayout_CmtReference, null);
+			setComponentAccessType("CommitmentDialog_CmtTitle", true, this.cmtTitle, this.space_CmtTitle,
+					this.label_CmtTitle, this.hlayout_CmtTitle, null);
+			setComponentAccessType("CommitmentDialog_CustCIF", true, this.custCIF, this.space_CustCIF,
+					this.label_CustCIF, this.hlayout_CustCIF, null);
+			setComponentAccessType("CommitmentDialog_CustCIF", true, this.btnSearchCustCIF, this.space_CustCIF,
+					this.label_CustCIF, this.hlayout_CustCIF, null);
+			setComponentAccessType("CommitmentDialog_CmtReference", true, this.cmtReference, this.space_CmtReference,
+					this.label_CmtReference, this.hlayout_CmtReference, null);
 
 			readOnlyComponent(isReadOnly("CommitmentDialog_CmtStopRateRange"), this.cmtStopRateRange);
 		}
@@ -1136,29 +1161,43 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.btnSearchCommitmentFlags.setDisabled(isReadOnly("CommitmentDialog_CommitmentFlags"));
 
-		setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount, this.space_OpenAccount, this.label_OpenAccount, this.hlayout_OpenAccount, null);
+		setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount, this.space_OpenAccount,
+				this.label_OpenAccount, this.hlayout_OpenAccount, null);
 		setAccountBoxAccess("CommitmentDialog_CmtAccount", tempReadOnly, this.cmtAccount, null);
 
-		setComponentAccessType("CommitmentDialog_CmtPftRateMin", tempReadOnly, this.cmtPftRateMin, this.space_CmtPftRateMin, this.label_CmtPftRateMin, this.hlayout_CmtPftRateMin, null);
-		setComponentAccessType("CommitmentDialog_CmtPftRateMax", tempReadOnly, this.cmtPftRateMax, this.space_CmtPftRateMax, this.label_CmtPftRateMax, this.hlayout_CmtPftRateMax, null);
+		setComponentAccessType("CommitmentDialog_CmtPftRateMin", tempReadOnly, this.cmtPftRateMin,
+				this.space_CmtPftRateMin, this.label_CmtPftRateMin, this.hlayout_CmtPftRateMin, null);
+		setComponentAccessType("CommitmentDialog_CmtPftRateMax", tempReadOnly, this.cmtPftRateMax,
+				this.space_CmtPftRateMax, this.label_CmtPftRateMax, this.hlayout_CmtPftRateMax, null);
 
 		setCurrencyBoxAccess("CommitmentDialog_CmtAmount", tempReadOnly, this.cmtAmount, null);
 
-		setComponentAccessType("CommitmentDialog_CmtPromisedDate", tempReadOnly, this.cmtPromisedDate, null, this.label_CmtPromisedDate, this.hlayout_CmtPromisedDate, null);
-		setComponentAccessType("CommitmentDialog_CmtStartDate", tempReadOnly, this.cmtStartDate, null, this.label_CmtStartDate, this.hlayout_CmtStartDate, null);
-		setComponentAccessType("CommitmentDialog_CmtEndDate", tempReadOnly, this.cmtEndDate, null, this.label_CmtStartDate, this.hlayout_CmtStartDate, null);
-		setComponentAccessType("CommitmentDialog_CmtExpDate", tempReadOnly, this.cmtExpDate, null, this.label_CmtExpDate, this.hlayout_CmtExpDate, null);
-		setComponentAccessType("CommitmentDialog_CmtRvwDate", tempReadOnly, this.cmtRvwDate, space_CmtRvwDate, this.label_CmtRvwDate, this.hlayout_CmtRvwDate, null);
+		setComponentAccessType("CommitmentDialog_CmtPromisedDate", tempReadOnly, this.cmtPromisedDate, null,
+				this.label_CmtPromisedDate, this.hlayout_CmtPromisedDate, null);
+		setComponentAccessType("CommitmentDialog_CmtStartDate", tempReadOnly, this.cmtStartDate, null,
+				this.label_CmtStartDate, this.hlayout_CmtStartDate, null);
+		setComponentAccessType("CommitmentDialog_CmtEndDate", tempReadOnly, this.cmtEndDate, null,
+				this.label_CmtStartDate, this.hlayout_CmtStartDate, null);
+		setComponentAccessType("CommitmentDialog_CmtExpDate", tempReadOnly, this.cmtExpDate, null,
+				this.label_CmtExpDate, this.hlayout_CmtExpDate, null);
+		setComponentAccessType("CommitmentDialog_CmtRvwDate", tempReadOnly, this.cmtRvwDate, space_CmtRvwDate,
+				this.label_CmtRvwDate, this.hlayout_CmtRvwDate, null);
 
-		setComponentAccessType("CommitmentDialog_MultiBranch", tempReadOnly, this.multiBranch, null, this.label_MultiBranch, this.hlayout_MultiBranch, null);
-		setComponentAccessType("CommitmentDialog_SharedCmt", tempReadOnly, this.sharedCmt, null, this.label_SharedCmt, this.hlayout_SharedCmt, null);
+		setComponentAccessType("CommitmentDialog_MultiBranch", tempReadOnly, this.multiBranch, null,
+				this.label_MultiBranch, this.hlayout_MultiBranch, null);
+		setComponentAccessType("CommitmentDialog_SharedCmt", tempReadOnly, this.sharedCmt, null, this.label_SharedCmt,
+				this.hlayout_SharedCmt, null);
 
-		setComponentAccessType("CommitmentDialog_CmtActiveStatus", tempReadOnly, this.cmtActiveStatus, null, this.label_CmtActiveStatus, this.hlayout_CmtActiveStatus, null);
-		setComponentAccessType("CommitmentDialog_CmtNonperformingStatus", tempReadOnly, this.cmtNonperformingStatus, null, this.label_CmtNonperformingStatus, this.hlayout_CmtNonperformingStatus, null);
-		setComponentAccessType("CommitmentDialog_CollateralRequired", tempReadOnly, this.collateralRequired, null, this.label_CollateralRequired, this.hlayout_CollateralRequired, null);
+		setComponentAccessType("CommitmentDialog_CmtActiveStatus", tempReadOnly, this.cmtActiveStatus, null,
+				this.label_CmtActiveStatus, this.hlayout_CmtActiveStatus, null);
+		setComponentAccessType("CommitmentDialog_CmtNonperformingStatus", tempReadOnly, this.cmtNonperformingStatus,
+				null, this.label_CmtNonperformingStatus, this.hlayout_CmtNonperformingStatus, null);
+		setComponentAccessType("CommitmentDialog_CollateralRequired", tempReadOnly, this.collateralRequired, null,
+				this.label_CollateralRequired, this.hlayout_CollateralRequired, null);
 		setCurrencyBoxAccess("CommitmentDialog_CmtCharges", tempReadOnly, this.cmtCharges, null);
 
-		setComponentAccessType("CommitmentDialog_CmtNotes", tempReadOnly, this.cmtNotes, null, this.label_CmtNotes, this.hlayout_CmtNotes, null);
+		setComponentAccessType("CommitmentDialog_CmtNotes", tempReadOnly, this.cmtNotes, null, this.label_CmtNotes,
+				this.hlayout_CmtNotes, null);
 
 		// Commitment Revolving
 		if (limitDetails != null && limitDetails.isRevolving()) {
@@ -1169,15 +1208,19 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Commitment Available Months
 		if (getCommitment().getCmtExpDate() != null && getCommitment().getCmtExpDate().compareTo(appEndDate) < 0) {
-			setComponentAccessType("CommitmentDialog_CmtAvailableMonths", tempReadOnly, this.cmtAvailableMonths, this.space_CmtAvailableMonths, this.label_CmtAvailableMonths, this.hlayout_CmtAvailableMonths, null);
+			setComponentAccessType("CommitmentDialog_CmtAvailableMonths", tempReadOnly, this.cmtAvailableMonths,
+					this.space_CmtAvailableMonths, this.label_CmtAvailableMonths, this.hlayout_CmtAvailableMonths,
+					null);
 		} else {
 			readOnlyComponent(true, this.cmtAvailableMonths);
 		}
 
 		if (!getCommitment().isNewRecord() && readOnly) {
-			setComponentAccessType("CommitmentDialog_CmtChargesAccount", true, this.cmtChargesAccount, null, this.label_CmtChargesAccount, this.hlayout_CmtChargesAccount, null);
+			setComponentAccessType("CommitmentDialog_CmtChargesAccount", true, this.cmtChargesAccount, null,
+					this.label_CmtChargesAccount, this.hlayout_CmtChargesAccount, null);
 		} else {
-			setComponentAccessType("CommitmentDialog_CmtChargesAccount", false, this.cmtChargesAccount, null, this.label_CmtChargesAccount, this.hlayout_CmtChargesAccount, null);
+			setComponentAccessType("CommitmentDialog_CmtChargesAccount", false, this.cmtChargesAccount, null,
+					this.label_CmtChargesAccount, this.hlayout_CmtChargesAccount, null);
 		}
 
 		this.cmtCharges.setMandatory(false);
@@ -1323,7 +1366,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void doWriteBeanToComponents(Commitment aCommitment) throws InterruptedException {
 		logger.debug("Entering");
 
-		if (aCommitment.isNewRecord()) {								// New Record
+		if (aCommitment.isNewRecord()) { // New Record
 			this.custName.setValue("");
 			this.cmtBranch.setDescription("");
 			this.facilityRef.setDescription("");
@@ -1363,7 +1406,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			// Limit Line
 			if (limitDetails != null) {
 				this.limitLine.setAttribute("limitLineId", aCommitment.getLimitLineId());
-				this.limitLine.setValue(limitDetails.getLimitLine(), StringUtils.trimToEmpty(limitDetails.getLimitLineDesc()));
+				this.limitLine.setValue(limitDetails.getLimitLine(),
+						StringUtils.trimToEmpty(limitDetails.getLimitLineDesc()));
 			}
 		}
 
@@ -1380,7 +1424,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Facility Reference
 		Filter[] filters = new Filter[1];
-		long custid = StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0 : Long.valueOf(this.custCIF.getValue());
+		long custid = StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0
+				: Long.valueOf(this.custCIF.getValue());
 		filters[0] = new Filter("CustID", custid, Filter.OP_EQUAL);
 		this.facilityRef.setFilters(filters);
 
@@ -1388,7 +1433,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (!StringUtils.trimToEmpty(aCommitment.getFacilityRef()).equals("")) {
 			this.facilityRef.setDescription(aCommitment.getFacilityRefDesc());
 		}
-
 
 		this.cmtStartDate.setValue(aCommitment.getCmtStartDate());
 		this.cmtEndDate.setValue(aCommitment.getCmtEndDate());
@@ -1414,7 +1458,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Changes
 		if (aCommitment.getCmtCharges() != null) {
-			this.cmtCharges.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtCharges(), defaultCCYDecPos));
+			this.cmtCharges
+					.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtCharges(), defaultCCYDecPos));
 		} else {
 			this.cmtCharges.setValue(aCommitment.getCmtCharges());
 		}
@@ -1423,8 +1468,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtNotes.setValue(aCommitment.getCmtNotes());
 
 		this.cmtAmount.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtAmount(), defaultCCYDecPos));
-		this.cmtUtilizedAmount.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtUtilizedAmount(),defaultCCYDecPos));
-		this.cmtAvailable.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtAvailable(), defaultCCYDecPos));
+		this.cmtUtilizedAmount
+				.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtUtilizedAmount(), defaultCCYDecPos));
+		this.cmtAvailable
+				.setValue(PennantApplicationUtil.formateAmount(aCommitment.getCmtAvailable(), defaultCCYDecPos));
 
 		if (!maintain) {
 			CaluculateSummary();
@@ -1432,9 +1479,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			//this.summaryCell.setValign("Top");
 		} else {
 			this.gridSummary.setVisible(true);
-			this.cmtTotAmount.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAmount(), defaultCCYDecPos));
-			this.cmtUtilizedTotAmount.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtUtilizedAmount(), defaultCCYDecPos));
-			this.cmtUnUtilizedAmount.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAvailable(), defaultCCYDecPos));
+			this.cmtTotAmount
+					.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAmount(), defaultCCYDecPos));
+			this.cmtUtilizedTotAmount.setValue(
+					PennantApplicationUtil.amountFormate(aCommitment.getCmtUtilizedAmount(), defaultCCYDecPos));
+			this.cmtUnUtilizedAmount
+					.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAvailable(), defaultCCYDecPos));
 		}
 
 		//Customer Details Tab Addition 
@@ -1481,7 +1531,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			aCommitment.setCmtTitle(this.cmtTitle.getValue());
 			if (!this.cmtTitle.isReadonly() && StringUtils.isBlank(this.cmtTitle.getValue())) {
-				throw new WrongValueException(this.cmtTitle, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CmtTitle.value") }));
+				throw new WrongValueException(this.cmtTitle, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_CommitmentDialog_CmtTitle.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1491,7 +1542,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			aCommitment.setCmtReference(this.cmtReference.getValue());
 			if (StringUtils.isBlank(this.cmtReference.getValue())) {
-				throw new WrongValueException(this.cmtReference, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CmtReference.value") }));
+				throw new WrongValueException(this.cmtReference, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_CommitmentDialog_CmtReference.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1500,7 +1552,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Customer CIF
 		try {
 			if (StringUtils.isEmpty(this.custCIF.getValue()) || !isValidCust) {
-				wve.add(new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") })));
+				wve.add(new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") })));
 			} else {
 				aCommitment.setCustID(this.custID.longValue());
 				aCommitment.setCustCIF(this.custCIF.getValue());
@@ -1514,7 +1567,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			aCommitment.setBranchDesc(this.cmtBranch.getDescription());
 			if (StringUtils.isEmpty(this.cmtBranch.getValue())) {
-				wve.add(new WrongValueException(this.cmtBranch, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CmtBranch.value") })));
+				wve.add(new WrongValueException(this.cmtBranch, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_CommitmentDialog_CmtBranch.value") })));
 			} else {
 				aCommitment.setCmtBranch(this.cmtBranch.getValidatedValue());
 			}
@@ -1525,7 +1579,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Commitment Currency
 		try {
 			if (StringUtils.isEmpty(this.cmtCcy.getValue())) {
-				wve.add(new WrongValueException(this.cmtCcy, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_CmtCcy.value") })));
+				wve.add(new WrongValueException(this.cmtCcy, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_CommitmentDialog_CmtCcy.value") })));
 			} else {
 				aCommitment.setCmtCcy(this.cmtCcy.getValidatedValue());
 			}
@@ -1569,8 +1624,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			if (aCommitment.getCmtPftRateMax().compareTo(aCommitment.getCmtPftRateMin()) < 0) {
 
-				throw new WrongValueException(this.cmtPftRateMax, Labels.getLabel("FIELD_IS_GREATER",
-						new String[] { Labels.getLabel("label_CommitmentDialog_CmtPftRateMax.value"), String.valueOf(this.cmtPftRateMin.getValue()) }));
+				throw new WrongValueException(this.cmtPftRateMax,
+						Labels.getLabel("FIELD_IS_GREATER",
+								new String[] { Labels.getLabel("label_CommitmentDialog_CmtPftRateMax.value"),
+										String.valueOf(this.cmtPftRateMin.getValue()) }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1590,13 +1647,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 				ErrorDetail errorDetails = null;
 				if (this.cmtAmount.getActualValue().compareTo(this.cmtUtilizedAmount.getValue()) < 0) {
-					BigDecimal percentage = this.cmtUtilizedAmount.getValue().subtract(this.cmtAmount.getActualValue()).multiply(BigDecimal.valueOf(100))
+					BigDecimal percentage = this.cmtUtilizedAmount.getValue().subtract(this.cmtAmount.getActualValue())
+							.multiply(BigDecimal.valueOf(100))
 							.divide(this.cmtAmount.getActualValue(), RoundingMode.HALF_DOWN);
 
 					if (percentage.compareTo(BigDecimal.valueOf(20)) <= 0) {
-						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60101", new String[] { percentage.toString() }, null), "");
+						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60101",
+								new String[] { percentage.toString() }, null), "");
 					} else {
-						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60102", new String[] { percentage.toString() }, null), "");
+						errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60102",
+								new String[] { percentage.toString() }, null), "");
 					}
 
 					if (errorDetails != null) {
@@ -1614,13 +1674,17 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			// Commitment Amount Validation with Available limit amount of the limit line assigned. 
 			if (limitDetails != null) {
-				BigDecimal limitAmt = PennantApplicationUtil.formateAmount(limitDetails.getLimitSanctioned().subtract(limitDetails.getReservedLimit()), defaultCCYDecPos);
-				if(this.cmtAmount.getActualValue().compareTo(limitAmt) > 0) {
-					wve.add(new WrongValueException(this.cmtAmount, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[] { Labels.getLabel("label_CommitmentDialog_CmtAmount.value"), 
-							Labels.getLabel("label_CommitmentDialog_LimitLineAvailableAmt.value") })));
+				BigDecimal limitAmt = PennantApplicationUtil.formateAmount(
+						limitDetails.getLimitSanctioned().subtract(limitDetails.getReservedLimit()), defaultCCYDecPos);
+				if (this.cmtAmount.getActualValue().compareTo(limitAmt) > 0) {
+					wve.add(new WrongValueException(this.cmtAmount,
+							Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+									new String[] { Labels.getLabel("label_CommitmentDialog_CmtAmount.value"),
+											Labels.getLabel("label_CommitmentDialog_LimitLineAvailableAmt.value") })));
 				}
 			}
-			aCommitment.setCmtAmount(PennantApplicationUtil.unFormateAmount(this.cmtAmount.getValidateValue(), defaultCCYDecPos));
+			aCommitment.setCmtAmount(
+					PennantApplicationUtil.unFormateAmount(this.cmtAmount.getValidateValue(), defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1628,7 +1692,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Utilized Amount
 		try {
 			if (this.cmtUtilizedAmount.getValue() != null) {
-				aCommitment.setCmtUtilizedAmount(PennantApplicationUtil.unFormateAmount(this.cmtUtilizedAmount.getValue(), defaultCCYDecPos));
+				aCommitment.setCmtUtilizedAmount(
+						PennantApplicationUtil.unFormateAmount(this.cmtUtilizedAmount.getValue(), defaultCCYDecPos));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1637,7 +1702,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Available Amount
 		try {
 			if (this.cmtAvailable.getValue() != null) {
-				aCommitment.setCmtAvailable(PennantApplicationUtil.unFormateAmount(this.cmtAvailable.getValue(), defaultCCYDecPos));
+				aCommitment.setCmtAvailable(
+						PennantApplicationUtil.unFormateAmount(this.cmtAvailable.getValue(), defaultCCYDecPos));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1657,23 +1723,31 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Commitment Start Date / First DrawdownDate
 		try {
 			if (this.cmtStartDate.getValue() == null) {
-				if (aCommitment.getCmtPromisedDate() != null && aCommitment.getCmtPromisedDate().compareTo(appDate) >= 0) {
+				if (aCommitment.getCmtPromisedDate() != null
+						&& aCommitment.getCmtPromisedDate().compareTo(appDate) >= 0) {
 					aCommitment.setCmtStartDate(aCommitment.getCmtPromisedDate());
 				} else {
 					aCommitment.setCmtStartDate(appDate);
 				}
 			} else {
-				if(!this.cmtStartDate.isReadonly() && !this.cmtStartDate.isDisabled()) {
+				if (!this.cmtStartDate.isReadonly() && !this.cmtStartDate.isDisabled()) {
 
-					if (this.cmtPromisedDate.getValue() != null && this.cmtPromisedDate.getValue().after(this.cmtStartDate.getValue())) {
-						throw new WrongValueException(this.cmtStartDate, Labels.getLabel( "DATE_ALLOWED_ON_AFTER",
-								new String[] { Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"), Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value") }));
+					if (this.cmtPromisedDate.getValue() != null
+							&& this.cmtPromisedDate.getValue().after(this.cmtStartDate.getValue())) {
+						throw new WrongValueException(this.cmtStartDate,
+								Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+										new String[] { Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"),
+												Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value") }));
 
 					} else {
 
-						if(this.cmtStartDate.getValue().before(appDate) || this.cmtStartDate.getValue().after(appEndDate) ){
-							throw new WrongValueException(this.cmtStartDate, Labels.getLabel( "DATE_ALLOWED_RANGE_EQUAL",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"), DateUtility.formatToShortDate(appDate), DateUtility.formatToShortDate(appEndDate) }));
+						if (this.cmtStartDate.getValue().before(appDate)
+								|| this.cmtStartDate.getValue().after(appEndDate)) {
+							throw new WrongValueException(this.cmtStartDate,
+									Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+											new String[] { Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"),
+													DateUtility.formatToShortDate(appDate),
+													DateUtility.formatToShortDate(appEndDate) }));
 						}
 					}
 				}
@@ -1692,24 +1766,35 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				if (!this.cmtExpDate.isReadonly() && !this.cmtExpDate.isDisabled()) {
 
 					if (limitDetails != null && limitDetails.getExpiryDate() != null) {
-						if(limitDetails.getExpiryDate().before(this.cmtExpDate.getValue())) {
-							throw new WrongValueException(this.cmtExpDate, Labels.getLabel( "DATE_ALLOWED_ON_BEFORE",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"), Labels.getLabel("label_CommitmentDialog_LimitLineExpDate.value") }));
+						if (limitDetails.getExpiryDate().before(this.cmtExpDate.getValue())) {
+							throw new WrongValueException(this.cmtExpDate, Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
+									new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
+											Labels.getLabel("label_CommitmentDialog_LimitLineExpDate.value") }));
 						}
 
-					} else if (this.cmtStartDate.getValue() != null && this.cmtStartDate.getValue().after(this.cmtExpDate.getValue())) {
-						throw new WrongValueException(this.cmtExpDate, Labels.getLabel( "DATE_ALLOWED_ON_AFTER",
-								new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"), Labels.getLabel("label_CommitmentDialog_CmtStartDate.value") }));
+					} else if (this.cmtStartDate.getValue() != null
+							&& this.cmtStartDate.getValue().after(this.cmtExpDate.getValue())) {
+						throw new WrongValueException(this.cmtExpDate,
+								Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+										new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
+												Labels.getLabel("label_CommitmentDialog_CmtStartDate.value") }));
 
-					} else if (this.cmtPromisedDate.getValue() != null && this.cmtPromisedDate.getValue().after(this.cmtExpDate.getValue())) {
-						throw new WrongValueException(this.cmtExpDate, Labels.getLabel( "DATE_ALLOWED_ON_AFTER",
-								new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"), Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value") }));
+					} else if (this.cmtPromisedDate.getValue() != null
+							&& this.cmtPromisedDate.getValue().after(this.cmtExpDate.getValue())) {
+						throw new WrongValueException(this.cmtExpDate,
+								Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+										new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
+												Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value") }));
 
 					} else {
 
-						if(this.cmtExpDate.getValue().before(appDate) || this.cmtExpDate.getValue().after(appEndDate) ){
-							throw new WrongValueException(this.cmtExpDate, Labels.getLabel( "DATE_ALLOWED_RANGE_EQUAL",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"), DateUtility.formatToShortDate(appDate), DateUtility.formatToShortDate(appEndDate) }));
+						if (this.cmtExpDate.getValue().before(appDate)
+								|| this.cmtExpDate.getValue().after(appEndDate)) {
+							throw new WrongValueException(this.cmtExpDate,
+									Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+											new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
+													DateUtility.formatToShortDate(appDate),
+													DateUtility.formatToShortDate(appEndDate) }));
 						}
 					}
 				}
@@ -1729,30 +1814,44 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					aCommitment.setCmtEndDate(appEndDate);
 				}
 			} else {
-				if(!this.cmtEndDate.isReadonly() && !this.cmtEndDate.isDisabled()) {
+				if (!this.cmtEndDate.isReadonly() && !this.cmtEndDate.isDisabled()) {
 
 					if (limitDetails != null && limitDetails.getExpiryDate() != null) {
-						if(limitDetails.getExpiryDate().before(this.cmtEndDate.getValue())) {
-							throw new WrongValueException(this.cmtEndDate, Labels.getLabel( "DATE_ALLOWED_ON_BEFORE",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"), Labels.getLabel("label_CommitmentDialog_LimitLineExpDate.value") }));
+						if (limitDetails.getExpiryDate().before(this.cmtEndDate.getValue())) {
+							throw new WrongValueException(this.cmtEndDate, Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
+									new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
+											Labels.getLabel("label_CommitmentDialog_LimitLineExpDate.value") }));
 						}
 
-					} else if (this.cmtExpDate.getValue() != null && this.cmtExpDate.getValue().before(this.cmtEndDate.getValue())) {
-						throw new WrongValueException(this.cmtEndDate, Labels.getLabel( "DATE_ALLOWED_ON_BEFORE",
-								new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"), Labels.getLabel("label_CommitmentDialog_CmtExpDate.value") }));
+					} else if (this.cmtExpDate.getValue() != null
+							&& this.cmtExpDate.getValue().before(this.cmtEndDate.getValue())) {
+						throw new WrongValueException(this.cmtEndDate,
+								Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
+										new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
+												Labels.getLabel("label_CommitmentDialog_CmtExpDate.value") }));
 
-					} else if (this.cmtStartDate.getValue() != null && this.cmtStartDate.getValue().after(this.cmtEndDate.getValue())) {
-						throw new WrongValueException(this.cmtEndDate, Labels.getLabel( "DATE_ALLOWED_ON_AFTER",
-								new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"), Labels.getLabel("label_CommitmentDialog_CmtStartDate.value") }));
+					} else if (this.cmtStartDate.getValue() != null
+							&& this.cmtStartDate.getValue().after(this.cmtEndDate.getValue())) {
+						throw new WrongValueException(this.cmtEndDate,
+								Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+										new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
+												Labels.getLabel("label_CommitmentDialog_CmtStartDate.value") }));
 
-					} else if (this.cmtPromisedDate.getValue() != null && this.cmtPromisedDate.getValue().after(this.cmtEndDate.getValue())) {
-						throw new WrongValueException(this.cmtEndDate, Labels.getLabel( "DATE_ALLOWED_ON_AFTER",
-								new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"), Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value") }));
+					} else if (this.cmtPromisedDate.getValue() != null
+							&& this.cmtPromisedDate.getValue().after(this.cmtEndDate.getValue())) {
+						throw new WrongValueException(this.cmtEndDate,
+								Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+										new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
+												Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value") }));
 					} else {
 
-						if(this.cmtEndDate.getValue().before(appDate) || this.cmtEndDate.getValue().after(appEndDate) ){
-							throw new WrongValueException(this.cmtEndDate, Labels.getLabel( "DATE_ALLOWED_RANGE_EQUAL",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"), DateUtility.formatToShortDate(appDate), DateUtility.formatToShortDate(appEndDate) }));
+						if (this.cmtEndDate.getValue().before(appDate)
+								|| this.cmtEndDate.getValue().after(appEndDate)) {
+							throw new WrongValueException(this.cmtEndDate,
+									Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+											new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
+													DateUtility.formatToShortDate(appDate),
+													DateUtility.formatToShortDate(appEndDate) }));
 						}
 					}
 				}
@@ -1766,11 +1865,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		//Commitment Available Months
 		try {
 			if (!this.cmtAvailableMonths.isReadonly() && !this.cmtAvailableMonths.isDisabled()) {
-				if(this.cmtExpDate.getValue() != null
-						&& (this.cmtExpDate.getValue().compareTo(appDate) > 0 && this.cmtExpDate.getValue().compareTo(appEndDate) < 0)) {
+				if (this.cmtExpDate.getValue() != null && (this.cmtExpDate.getValue().compareTo(appDate) > 0
+						&& this.cmtExpDate.getValue().compareTo(appEndDate) < 0)) {
 					if (this.cmtAvailableMonths.intValue() == 0) {
 
-						throw new WrongValueException(this.cmtAvailableMonths, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CmtAvailableMonths.value") }));
+						throw new WrongValueException(this.cmtAvailableMonths, Labels.getLabel("FIELD_IS_MAND",
+								new String[] { Labels.getLabel("label_CommitmentDialog_CmtAvailableMonths.value") }));
 					}
 				}
 			}
@@ -1789,20 +1889,23 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Commitment Charges
 		try {
-			aCommitment.setCmtCharges(PennantApplicationUtil.unFormateAmount(this.cmtCharges.getValidateValue(), defaultCCYDecPos));
+			aCommitment.setCmtCharges(
+					PennantApplicationUtil.unFormateAmount(this.cmtCharges.getValidateValue(), defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		// Commitment Charges Account
 		try {
-			if (this.cmtCharges.getActualValue() != null && this.cmtCharges.getActualValue().compareTo(BigDecimal.ZERO) != 0
+			if (this.cmtCharges.getActualValue() != null
+					&& this.cmtCharges.getActualValue().compareTo(BigDecimal.ZERO) != 0
 					&& StringUtils.isBlank(this.cmtChargesAccount.getValue())) {
 
 				throw new WrongValueException(this.cmtChargesAccount, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_CommitmentDialog_CmtChargesAccount.value") }));
 			}
-			aCommitment.setChargesAccount(PennantApplicationUtil.unFormatAccountNumber(this.cmtChargesAccount.getValue()));
+			aCommitment
+					.setChargesAccount(PennantApplicationUtil.unFormatAccountNumber(this.cmtChargesAccount.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1856,10 +1959,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		//  Facility Reference
 		try {
 			aCommitment.setFacilityRefDesc(this.facilityRef.getDescription());
-			if(this.facilityRef.getValue().equals("")) {
+			if (this.facilityRef.getValue().equals("")) {
 				//	wve.add(new WrongValueException(this.facilityRef, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_FacilityRef.value") })));
 			} else {
-				if(!this.facilityRef.isReadonly()){
+				if (!this.facilityRef.isReadonly()) {
 					this.facilityRef.validateValue(false);
 				}
 			}
@@ -1873,7 +1976,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			Object object = this.limitLine.getAttribute("limitLineId");
 
 			if (StringUtils.isEmpty(this.limitLine.getValue()) || object == null) {
-				wve.add(new WrongValueException(this.limitLine, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_LimitLine.value") })));
+				wve.add(new WrongValueException(this.limitLine, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_CommitmentDialog_LimitLine.value") })));
 			} else {
 				aCommitment.setLimitLineId(Long.valueOf(object.toString()));
 			}
@@ -1906,7 +2010,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 				if (newMaintain) {
 					// get previous commitment amount
-					aCommitment.getCommitmentMovement().setMovementAmount(aCommitment.getCmtAmount().subtract(oldCmtAmount));
+					aCommitment.getCommitmentMovement()
+							.setMovementAmount(aCommitment.getCmtAmount().subtract(oldCmtAmount));
 				} else {
 					if (aCommitment.isNewRecord()) {
 						aCommitment.getCommitmentMovement().setMovementAmount(aCommitment.getCmtAmount());
@@ -1940,9 +2045,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
-				if(i == 0){
+				if (i == 0) {
 					Component comp = wvea[i].getComponent();
-					if(comp instanceof HtmlBasedComponent){
+					if (comp instanceof HtmlBasedComponent) {
 						Clients.scrollIntoView(comp);
 					}
 				}
@@ -1971,8 +2076,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("customerDetails", getCommitment().getCustomerDetails());
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
- 
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
+
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -2003,7 +2109,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				final HashMap<String, Object> map = getDefaultArguments();
 				map.put("agreementList", getCommitment().getAggrements());
 
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul", getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
 			}
 		}
 
@@ -2049,7 +2156,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				map.put("checkList", getCommitment().getCheckLists());
 				map.put("finCheckRefList", getCommitment().getCommitmentCheckLists());
 
-				checkListChildWindow = Executions.createComponents("/WEB-INF/pages/LMTMasters/FinanceCheckListReference/FinanceCheckListReferenceDialog.zul",
+				checkListChildWindow = Executions.createComponents(
+						"/WEB-INF/pages/LMTMasters/FinanceCheckListReference/FinanceCheckListReferenceDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_CHECKLIST), map);
 				Tab tab = getTab(AssetConstants.UNIQUE_ID_CHECKLIST);
 				if (tab != null) {
@@ -2075,16 +2183,20 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_COLLATERAL, false);
 			tab_Collateral = getTab(AssetConstants.UNIQUE_ID_COLLATERAL);
-		} 
+		}
 
 		clearTabpanelChildren(AssetConstants.UNIQUE_ID_COLLATERAL);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("collateralAssignmentList", getCommitment().getCollateralAssignmentList());
-		map.put("customerId", StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0 : Long.valueOf(this.custCIF.getValue()));
-		map.put("utilizedAmount", getCommitment().getCmtUtilizedAmount() == null ? BigDecimal.ZERO : getCommitment().getCmtUtilizedAmount());
-		map.put("totalValue", getCommitment().getCmtAmount() == null ? BigDecimal.ZERO : getCommitment().getCmtAmount());
+		map.put("customerId",
+				StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0 : Long.valueOf(this.custCIF.getValue()));
+		map.put("utilizedAmount", getCommitment().getCmtUtilizedAmount() == null ? BigDecimal.ZERO
+				: getCommitment().getCmtUtilizedAmount());
+		map.put("totalValue",
+				getCommitment().getCmtAmount() == null ? BigDecimal.ZERO : getCommitment().getCmtAmount());
 
-		collateralAssignmentWindow = Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul", 
+		collateralAssignmentWindow = Executions.createComponents(
+				"/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
 
 		logger.debug("Leaving");
@@ -2126,7 +2238,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			map.put("notes", getNotes(this.commitment));
 			map.put("control", this);
 			try {
-				Executions.createComponents("/WEB-INF/pages/notes/notes.zul", getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
+				Executions.createComponents("/WEB-INF/pages/notes/notes.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
@@ -2166,7 +2279,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			// Customer CIF
 			try {
 				if (StringUtils.isBlank(this.custCIF.getValue())) {
-					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -2175,7 +2289,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			// Commitment Branch
 			try {
 				if (StringUtils.isBlank(this.cmtBranch.getValidatedValue())) {
-					throw new WrongValueException(this.cmtBranch, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CmtBranch.value") }));
+					throw new WrongValueException(this.cmtBranch, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_CommitmentDialog_CmtBranch.value") }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -2184,7 +2299,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			//Commitment Currency
 			try {
 				if (StringUtils.isBlank(this.cmtCcy.getValidatedValue())) {
-					throw new WrongValueException(this.cmtCcy, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CommitmentDialog_CmtCcy.value") }));
+					throw new WrongValueException(this.cmtCcy, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_CommitmentDialog_CmtCcy.value") }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -2223,13 +2339,15 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Commitment Reference
 		if (!this.cmtReference.isReadonly()) {
-			this.cmtReference.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtReference.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
+			this.cmtReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtReference.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 
 		}
 		// Customer CIF
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CustCIF.value"),null, true, true));
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CustCIF.value"), null, true, true));
 		}
 
 		// Commitment Title
@@ -2240,19 +2358,24 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Commitment Profit Rate Min
 		if (!this.cmtPftRateMin.isReadonly()) {
-			this.cmtPftRateMin.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_CommitmentDialog_CmtPftRateMin.value")));
+			this.cmtPftRateMin.setConstraint(
+					new RateValidator(13, 9, Labels.getLabel("label_CommitmentDialog_CmtPftRateMin.value")));
 		}
 		// Commitment Profit Rate Max
 		if (!this.cmtPftRateMax.isReadonly()) {
-			this.cmtPftRateMax.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_CommitmentDialog_CmtPftRateMax.value")));
+			this.cmtPftRateMax.setConstraint(
+					new RateValidator(13, 9, Labels.getLabel("label_CommitmentDialog_CmtPftRateMax.value")));
 		}
 		// Commitment Amount
 		if (!this.cmtAmount.isReadonly()) {
-			this.cmtAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommitmentDialog_CmtAmount.value"), defaultCCYDecPos, true, false, 0));
+			this.cmtAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CommitmentDialog_CmtAmount.value"), defaultCCYDecPos, true, false, 0));
 		}
 		// Commitment Utilized Amount
 		if (!this.cmtUtilizedAmount.isReadonly()) {
-			this.cmtUtilizedAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommitmentDialog_CmtUtilizedAmount.value"), defaultCCYDecPos, false, false, 0));
+			this.cmtUtilizedAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_CommitmentDialog_CmtUtilizedAmount.value"),
+							defaultCCYDecPos, false, false, 0));
 		}
 
 		// Available Amount
@@ -2264,7 +2387,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Promised Date
 		if (!this.cmtPromisedDate.isReadonly() && !this.cmtPromisedDate.isDisabled()) {
-			this.cmtPromisedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value"), false, appDate, appEndDate, true));
+			this.cmtPromisedDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CommitmentDialog_CmtPromisedDate.value"), false, appDate, appEndDate, true));
 		}
 
 		// CmtStart Date
@@ -2284,12 +2408,14 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// CmtRvwDate
 		if (!this.cmtRvwDate.isReadonly() && !this.cmtRvwDate.isDisabled()) {
-			this.cmtRvwDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtRvwDate.value"), true, appDate, appEndDate, true));
+			this.cmtRvwDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CommitmentDialog_CmtRvwDate.value"), true, appDate, appEndDate, true));
 		}
 
 		// Commitment Charges
 		if (!this.cmtCharges.isReadonly()) {
-			this.cmtCharges.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommitmentDialog_CmtCharges.value"), defaultCCYDecPos, false, false, 0));
+			this.cmtCharges.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CommitmentDialog_CmtCharges.value"), defaultCCYDecPos, false, false, 0));
 		}
 
 		// Commitment Notes
@@ -2300,12 +2426,14 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// CmtAvailableMonths
 		if (!this.cmtAvailableMonths.isReadonly() && !this.cmtAvailableMonths.isDisabled()) {
-			this.cmtAvailableMonths.setConstraint(new PTNumberValidator(Labels.getLabel("label_CommitmentDialog_CmtAvailableMonths.value"), false, false));
+			this.cmtAvailableMonths.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_CommitmentDialog_CmtAvailableMonths.value"), false, false));
 		}
 
 		// Commitment Flags
 		if (!this.btnSearchCommitmentFlags.isDisabled()) {
-			this.commitmentFlags.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CommitmentFlags.value"), null, false));
+			this.commitmentFlags.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommitmentDialog_CommitmentFlags.value"), null, false));
 		}
 
 		logger.debug("Leaving");
@@ -2347,16 +2475,19 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Commitment Branch
 		if (cmtBranch.isButtonVisible()) {
-			this.cmtBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtBranch.value"), null, true, true));
+			this.cmtBranch.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtBranch.value"), null, true, true));
 		}
 
 		// Commitment Currency
 		if (cmtCcy.isButtonVisible()) {
-			this.cmtCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtCcy.value"), null, true, true));
+			this.cmtCcy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtCcy.value"), null, true, true));
 		}
 		// Commitment Account
 		if (!openAccount.isChecked()) {
-			this.cmtAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtAccount.value"), null, true));
+			this.cmtAccount.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtAccount.value"), null, true));
 		}
 
 		/*
@@ -2426,19 +2557,19 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Reset the values when customer changed
 	 */
 	private void doResetValues() {
 		logger.debug("Entering");
-		
+
 		this.cmtChargesAccount.setCustCIF("");
 		this.cmtChargesAccount.setValue("");
 		this.limitLine.setValue("", "");
 		this.facilityRef.setValue("", "");
 		this.custName.setValue("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -2477,8 +2608,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 				if (isWorkFlowEnabled()) {
 					aCommitment.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aCommitment.getCommitmentMovement().setRecordStatus(
-							userAction.getSelectedItem().getValue().toString());
+					aCommitment.getCommitmentMovement()
+							.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aCommitment.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCommitment.getNextTaskId(),
@@ -2552,7 +2683,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
@@ -2593,7 +2725,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			//Commitment CheckList Details Saving
 			if (checkListChildWindow != null) {
 				boolean validationSuccess = doSave_CheckList(aCommitment, false);
-				if(!validationSuccess){
+				if (!validationSuccess) {
 					return;
 				}
 			} else {
@@ -2608,15 +2740,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					aCommitment.setCollateralAssignmentList(null);
 				}
 			} else {
-				if(aCommitment.getCollateralAssignmentList() != null && aCommitment.getCollateralAssignmentList().size() > 0) {
-					for(CollateralAssignment collateralAssignment : aCommitment.getCollateralAssignmentList()) {
+				if (aCommitment.getCollateralAssignmentList() != null
+						&& aCommitment.getCollateralAssignmentList().size() > 0) {
+					for (CollateralAssignment collateralAssignment : aCommitment.getCollateralAssignmentList()) {
 
 						if (StringUtils.isBlank(collateralAssignment.getRecordType())) {
 							collateralAssignment.setVersion(collateralAssignment.getVersion() + 1);
 							collateralAssignment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							collateralAssignment.setNewRecord(true);
 
-						} else if(collateralAssignment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						} else if (collateralAssignment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							collateralAssignment.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 						}
 					}
@@ -2674,8 +2807,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						notificationService.sendNotifications(notification, aCommitment,
-								aCommitment.getCmtTitle(), null);
+						notificationService.sendNotifications(notification, aCommitment, aCommitment.getCmtTitle(),
+								null);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
@@ -2684,23 +2817,25 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 				// User Notifications Message/Alert
 				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) &&
-							!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) &&
-							!this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 
 						// Send message Notification to Users
 						String reference = aCommitment.getCmtReference();
 						String nextRoleCodes = aCommitment.getNextRoleCode();
-						if(StringUtils.isNotEmpty(nextRoleCodes)){
+						if (StringUtils.isNotEmpty(nextRoleCodes)) {
 							Notify notify = Notify.valueOf("ROLE");
-							String[] to=nextRoleCodes.split(",");					
-							if(StringUtils.isNotEmpty(reference)){
-								if(!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aCommitment.getRecordStatus())){
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE")+" with Reference"+":"+reference, notify,to);
+							String[] to = nextRoleCodes.split(",");
+							if (StringUtils.isNotEmpty(reference)) {
+								if (!PennantConstants.RCD_STATUS_CANCELLED
+										.equalsIgnoreCase(aCommitment.getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, notify, to);
 								}
 							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify,to);
-							} 
+								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -2714,8 +2849,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				if (StringUtils.isBlank(aCommitment.getNextTaskId())) {
 					aCommitment.setNextRoleCode("");
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(aCommitment.getRoleCode(), aCommitment.getNextRoleCode(), 
-						aCommitment.getCmtReference(), " Commitment ",aCommitment.getRecordStatus());
+				String msg = PennantApplicationUtil.getSavingStatus(aCommitment.getRoleCode(),
+						aCommitment.getNextRoleCode(), aCommitment.getCmtReference(), " Commitment ",
+						aCommitment.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				//Closing Dialog
@@ -2733,7 +2869,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * This method set the check list details to aCommitment
 	 * 
 	 * @param aCommitment
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	protected boolean doSave_CheckList(Commitment aCommitment, boolean isForAgreementGen) throws Exception {
 		logger.debug("Entering ");
@@ -2744,7 +2880,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		map.put("financeMainDialogCtrl", this);
 		map.put("userAction", this.userAction.getSelectedItem().getLabel());
 
-		if(isForAgreementGen){
+		if (isForAgreementGen) {
 			map.put("agreement", isForAgreementGen);
 		}
 		try {
@@ -2890,8 +3026,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 						// ErrorDetails(PennantConstants.ERR_9999,
 						// Labels.getLabel("InvalidWorkFlowMethod"),
 						// null,PennantConstants.ERR_SEV_ERROR));
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null, null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null, null));
 
 						retValue = ErrorControl.showErrorControl(this.window_CommitmentDialog, auditHeader);
 						return processCompleted;
@@ -2941,7 +3077,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		return new AuditHeader(aCommitment.getCmtReference(), null, null, null, auditDetail,
 				aCommitment.getUserDetails(), getOverideMap());
 	}
-	
+
 	@Override
 	public String getReference() {
 		return this.cmtReference.getValue();
@@ -3025,7 +3161,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering  " + event.toString());
 
 		this.commitmentFlags.setErrorMessage("");
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_CommitmentDialog, "Flag", this.commitmentFlags.getValue(), null);
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_CommitmentDialog, "Flag",
+				this.commitmentFlags.getValue(), null);
 
 		if (dataObject != null) {
 			String details = (String) dataObject;
@@ -3156,8 +3293,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentSummary.getTotUtilizedAmoun(),
 						commitmentSummary.getCcyEditField()));
 				listcell.setParent(listitem);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentSummary.getTotComtAmount()
-						.subtract(commitmentSummary.getTotUtilizedAmoun()), commitmentSummary.getCcyEditField()));
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(
+						commitmentSummary.getTotComtAmount().subtract(commitmentSummary.getTotUtilizedAmoun()),
+						commitmentSummary.getCcyEditField()));
 				listcell.setParent(listitem);
 
 				this.commitmentSummary.appendChild(listitem);
@@ -3206,7 +3344,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 		}
 
-		if (this.cmtCharges.getActualValue() != null && this.cmtCharges.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
+		if (this.cmtCharges.getActualValue() != null
+				&& this.cmtCharges.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 			this.cmtChargesAccount.setMandatoryStyle(true);
 		} else {
 			this.cmtChargesAccount.setMandatoryStyle(false);
@@ -3228,8 +3367,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			this.space_CmtPftRateMax.setSclass("");
 		}
 
-		if ((this.cmtPftRateMin.getValue() != null && this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) > 0) || 
-				(this.cmtPftRateMax.getValue() != null && this.cmtPftRateMax.getValue().compareTo(BigDecimal.ZERO) > 0)) {
+		if ((this.cmtPftRateMin.getValue() != null && this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) > 0)
+				|| (this.cmtPftRateMax.getValue() != null
+						&& this.cmtPftRateMax.getValue().compareTo(BigDecimal.ZERO) > 0)) {
 
 			this.cmtStopRateRange.setDisabled(false);
 		} else {
@@ -3246,8 +3386,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void onChange$cmtPftRateMax(Event event) {
 		logger.debug("Entering :" + event.toString());
 
-		if ((this.cmtPftRateMax.getValue() != null && this.cmtPftRateMax.getValue().compareTo(BigDecimal.ZERO) > 0) || 
-				(this.cmtPftRateMin.getValue() != null && this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) > 0)) {
+		if ((this.cmtPftRateMax.getValue() != null && this.cmtPftRateMax.getValue().compareTo(BigDecimal.ZERO) > 0)
+				|| (this.cmtPftRateMin.getValue() != null
+						&& this.cmtPftRateMin.getValue().compareTo(BigDecimal.ZERO) > 0)) {
 
 			this.cmtStopRateRange.setDisabled(false);
 		} else {
@@ -3267,8 +3408,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtExpDate.clearErrorMessage();
 		this.cmtAvailableMonths.clearErrorMessage();
 
-		if (this.cmtExpDate.getValue() != null
-				&& (this.cmtExpDate.getValue().compareTo(appDate) > 0 && this.cmtExpDate.getValue().compareTo(appEndDate) < 0)) {
+		if (this.cmtExpDate.getValue() != null && (this.cmtExpDate.getValue().compareTo(appDate) > 0
+				&& this.cmtExpDate.getValue().compareTo(appEndDate) < 0)) {
 
 			this.space_CmtAvailableMonths.setSclass("mandatory");
 			this.cmtAvailableMonths.setReadonly(false);
@@ -3305,7 +3446,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				lc.setParent(item);
 				lc = new Listcell(financeMain.getFinType());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(),CurrencyUtil.getFormat(financeMain.getFinCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(),
+						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(financeMain.getFinCcy());
@@ -3348,7 +3490,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private void getCommitmentMovementDetails(String cmtReference, String finReference) {
 		logger.debug("Entering");
 
-		JdbcSearchObject<CommitmentMovement> searchObject = new JdbcSearchObject<CommitmentMovement>(CommitmentMovement.class);
+		JdbcSearchObject<CommitmentMovement> searchObject = new JdbcSearchObject<CommitmentMovement>(
+				CommitmentMovement.class);
 		searchObject.addTabelName("CommitmentMovements");
 		searchObject.addFilterEqual("CmtReference", cmtReference);
 		searchObject.addSortDesc("MovementDate, MovementOrder");
@@ -3375,20 +3518,20 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				listcell.setParent(listItem);
 				listcell = new Listcell(DateUtility.formatToLongDate(commitmentMovement.getMovementDate()));
 				listcell.setParent(listItem);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentMovement.getMovementAmount(),
-						defaultCCYDecPos));
+				listcell = new Listcell(
+						PennantApplicationUtil.amountFormate(commitmentMovement.getMovementAmount(), defaultCCYDecPos));
 				listcell.setParent(listItem);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentMovement.getCmtAmount(),
-						defaultCCYDecPos));
+				listcell = new Listcell(
+						PennantApplicationUtil.amountFormate(commitmentMovement.getCmtAmount(), defaultCCYDecPos));
 				listcell.setParent(listItem);
 				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentMovement.getCmtUtilizedAmount(),
 						defaultCCYDecPos));
 				listcell.setParent(listItem);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentMovement.getCmtAvailable(),
-						defaultCCYDecPos));
+				listcell = new Listcell(
+						PennantApplicationUtil.amountFormate(commitmentMovement.getCmtAvailable(), defaultCCYDecPos));
 				listcell.setParent(listItem);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(commitmentMovement.getCmtCharges(),
-						defaultCCYDecPos));
+				listcell = new Listcell(
+						PennantApplicationUtil.amountFormate(commitmentMovement.getCmtCharges(), defaultCCYDecPos));
 				listcell.setParent(listItem);
 				this.listBoxCommitmentMovement.appendChild(listItem);
 			}
@@ -3398,7 +3541,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	public class compareLinkedTransId implements Comparator<ReturnDataSet>, Serializable {
-		private static final long	serialVersionUID	= -3639465555049007637L;
+		private static final long serialVersionUID = -3639465555049007637L;
 
 		public compareLinkedTransId() {
 
@@ -3418,7 +3561,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	class postingGroupListModelItemRenderer implements ListitemRenderer<ReturnDataSet>, Serializable {
 
-		private static final long	serialVersionUID	= 3413747054505038584L;
+		private static final long serialVersionUID = 3413747054505038584L;
 
 		public postingGroupListModelItemRenderer() {
 
@@ -3438,7 +3581,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				Listcell listcell;
 				listcell = new Listcell("");
 				listcell.setParent(item);
-				listcell = new Listcell(PennantAppUtil.getlabelDesc(returnDataSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
+				listcell = new Listcell(
+						PennantAppUtil.getlabelDesc(returnDataSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
 				listcell.setParent(item);
 				listcell = new Listcell(returnDataSet.getTranDesc());
 				listcell.setParent(item);
@@ -3448,7 +3592,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				listcell.setParent(item);
 				listcell = new Listcell(PennantApplicationUtil.formatAccountNumber(returnDataSet.getAccount()));
 				listcell.setParent(item);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(returnDataSet.getPostAmount(),defaultCCYDecPos));
+				listcell = new Listcell(
+						PennantApplicationUtil.amountFormate(returnDataSet.getPostAmount(), defaultCCYDecPos));
 				listcell.setParent(item);
 			}
 			logger.debug("Leaving");
@@ -3465,7 +3610,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		searchObject.addFilterEqual("FinReference", cmtReference);
 
 		this.listBoxCommitmentPostings.setItemRenderer(new postingGroupListModelItemRenderer());
-		this.listBoxCommitmentPostings.setModel(new GroupsModelArray(getPagedListService().getBySearchObject(searchObject).toArray(), new compareLinkedTransId()));
+		this.listBoxCommitmentPostings.setModel(new GroupsModelArray(
+				getPagedListService().getBySearchObject(searchObject).toArray(), new compareLinkedTransId()));
 
 		logger.debug("Leaving");
 	}
@@ -3493,7 +3639,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			this.rowCmtSummary.setVisible(false);
 			this.rowCmtCount.setVisible(false);
 
-			if (!isReadOnly("CommitmentDialog_CmtReference") && StringUtils.trimToEmpty(this.facilityRef.getValue()).equals("")) {
+			if (!isReadOnly("CommitmentDialog_CmtReference")
+					&& StringUtils.trimToEmpty(this.facilityRef.getValue()).equals("")) {
 				this.facilityRef.setReadonly(false);
 			}
 
@@ -3604,8 +3751,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components Commitment flags
-	 * list
+	 * Method Used for set list of values been class to components Commitment flags list
 	 * 
 	 * @param Commitment
 	 */
@@ -3613,7 +3759,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		setCmtFlagsDetailList(flagDetails);
-		if(flagDetails == null || flagDetails.isEmpty()){
+		if (flagDetails == null || flagDetails.isEmpty()) {
 			return;
 		}
 
@@ -3633,7 +3779,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	/**
-	 * Method for Used for render the Data from List 
+	 * Method for Used for render the Data from List
 	 * 
 	 * @param cmtFlagDetailList
 	 */
@@ -3643,7 +3789,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		Map<String, FinFlagsDetail> flagMap = new HashMap<>();
 		List<String> finFlagList = Arrays.asList(this.commitmentFlags.getValue().split(","));
 
-		if(this.cmtFlagsDetailList == null){
+		if (this.cmtFlagsDetailList == null) {
 			this.cmtFlagsDetailList = new ArrayList<>();
 		}
 
@@ -3651,20 +3797,20 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			flagMap.put(flagDetail.getFlagCode(), flagDetail);
 		}
 		for (String flagCode : finFlagList) {
-			if(StringUtils.isEmpty(flagCode)){
+			if (StringUtils.isEmpty(flagCode)) {
 				continue;
 			}
 
 			// Check object is already exists in saved list or not
-			if(flagMap.containsKey(flagCode)){
+			if (flagMap.containsKey(flagCode)) {
 				// Do Nothing
 
 				//Removing from map to identify existing modifications
 				boolean isDelete = false;
 				if (this.userAction.getSelectedItem() != null) {
-					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-							this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-							this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+							|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
 						isDelete = true;
 					}
 				}
@@ -3774,7 +3920,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				//map.put("isFinanceProcess", isFinanceProcess);
 
 				try {
-					Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null, map);
+					Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null,
+							map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -3782,6 +3929,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * 
 	 * @param commitmentRates
@@ -3791,7 +3939,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.listBoxCmtRates.getItems().clear();
 		if (commitmentRates != null) {
-			for (CommitmentRate commitmentRate  : commitmentRates) {
+			for (CommitmentRate commitmentRate : commitmentRates) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(commitmentRate.getCmtRvwFrq());
@@ -3800,17 +3948,22 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				lc.setParent(item);
 
 				if (commitmentRate.getCmtBaseRate() != null) {
-					lc = new Listcell(PennantApplicationUtil.formatRate((commitmentRate.getCmtMargin() == null ? BigDecimal.ZERO : commitmentRate.getCmtMargin()).doubleValue(), 2));
+					lc = new Listcell(PennantApplicationUtil.formatRate(
+							(commitmentRate.getCmtMargin() == null ? BigDecimal.ZERO : commitmentRate.getCmtMargin())
+									.doubleValue(),
+							2));
 					lc.setParent(item);
 					lc = new Listcell("");
 					lc.setParent(item);
 				} else {
 					lc = new Listcell("");
 					lc.setParent(item);
-					lc = new Listcell(PennantApplicationUtil.formatRate(commitmentRate.getCmtActualRate().doubleValue(), 2));//PennantConstants.rateFormate // SATYA 
+					lc = new Listcell(
+							PennantApplicationUtil.formatRate(commitmentRate.getCmtActualRate().doubleValue(), 2));//PennantConstants.rateFormate // SATYA 
 					lc.setParent(item);
 				}
-				lc = new Listcell(PennantApplicationUtil.formatRate(commitmentRate.getCmtCalculatedRate().doubleValue(), 2));
+				lc = new Listcell(
+						PennantApplicationUtil.formatRate(commitmentRate.getCmtCalculatedRate().doubleValue(), 2));
 				lc.setParent(item);
 
 				item.setAttribute("data", commitmentRate);
@@ -3904,14 +4057,23 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @return
 	 */
-	private ArrayList<Object> getHeaderBasicDetails() {	
+	private ArrayList<Object> getHeaderBasicDetails() {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 		arrayList.add(0, this.custCIF.getValue());
 		arrayList.add(1, this.cmtReference.getValue());
 		arrayList.add(2, this.cmtCcy.getValue());
-		arrayList.add(3, PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(this.cmtAmount.getActualValue(), defaultCCYDecPos), defaultCCYDecPos));
-		arrayList.add(4, PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(this.cmtUtilizedAmount.getValue(), defaultCCYDecPos), defaultCCYDecPos));
-		arrayList.add(5, PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(this.cmtAvailable.getValue(), defaultCCYDecPos), defaultCCYDecPos));
+		arrayList.add(3,
+				PennantApplicationUtil.amountFormate(
+						PennantApplicationUtil.unFormateAmount(this.cmtAmount.getActualValue(), defaultCCYDecPos),
+						defaultCCYDecPos));
+		arrayList.add(4,
+				PennantApplicationUtil.amountFormate(
+						PennantApplicationUtil.unFormateAmount(this.cmtUtilizedAmount.getValue(), defaultCCYDecPos),
+						defaultCCYDecPos));
+		arrayList.add(5,
+				PennantApplicationUtil.amountFormate(
+						PennantApplicationUtil.unFormateAmount(this.cmtAvailable.getValue(), defaultCCYDecPos),
+						defaultCCYDecPos));
 		return arrayList;
 	}
 
@@ -3923,8 +4085,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 */
-	public void onSelectTab(ForwardEvent event) throws IllegalAccessException, InvocationTargetException,
-	InterruptedException, ParseException {
+	public void onSelectTab(ForwardEvent event)
+			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
 
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");
@@ -3967,14 +4129,14 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		case AssetConstants.UNIQUE_ID_COLLATERAL:
 			if (collateralHeaderDialogCtrl != null) {
 				collateralHeaderDialogCtrl.doSetLabels(getHeaderBasicDetails());
-			} 
+			}
 			doValidateCustCIF();
-			break;	
+			break;
 
 		case AssetConstants.UNIQUE_ID_DOCUMENTDETAIL:
 			if (documentDetailDialogCtrl != null) {
 				documentDetailDialogCtrl.doSetLabels(getHeaderBasicDetails());
-			}  
+			}
 			break;
 
 		case AssetConstants.UNIQUE_ID_RECOMMENDATIONS:
@@ -4011,9 +4173,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Method for Fetching Document Details for Check list processing
+	 * 
 	 * @return
 	 */
-	public List<DocumentDetails> getDocumentDetails(){
+	public List<DocumentDetails> getDocumentDetails() {
 		if (documentDetailDialogCtrl != null) {
 			return documentDetailDialogCtrl.getDocumentDetailsList();
 		}
@@ -4022,12 +4185,13 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Method for fetching Customer Basic Details for Document Details processing
+	 * 
 	 * @return
 	 */
-	public List<Object> getCustomerBasicDetails(){
+	public List<Object> getCustomerBasicDetails() {
 
 		List<Object> custBasicDetails = null;
-		if(commitment.getCustomerDetails() != null && commitment.getCustomerDetails().getCustomer() != null){
+		if (commitment.getCustomerDetails() != null && commitment.getCustomerDetails().getCustomer() != null) {
 			custBasicDetails = new ArrayList<>();
 			custBasicDetails.add(commitment.getCustomerDetails().getCustomer().getCustID());
 			custBasicDetails.add(commitment.getCustomerDetails().getCustomer().getCustCIF());
@@ -4086,6 +4250,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
 	}
+
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
@@ -4101,6 +4266,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void setCommitmentRateDetailList(List<CommitmentRate> commitmentRateDetailList) {
 		this.commitmentRateDetailList = commitmentRateDetailList;
 	}
+
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
 		return documentDetailDialogCtrl;
 	}
@@ -4133,8 +4299,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
 		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
 	}
-	public void setCollateralHeaderDialogCtrl(
-			CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
+
+	public void setCollateralHeaderDialogCtrl(CollateralHeaderDialogCtrl collateralHeaderDialogCtrl) {
 		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
 	}
 
@@ -4154,7 +4320,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtFlagsDetailList = cmtFlagsDetailList;
 	}
 
-
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
@@ -4166,9 +4331,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}
+
 	public HashMap<Long, Long> getSelectedAnsCountMap() {
 		return selectedAnsCountMap;
 	}
+
 	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
 	}

@@ -75,35 +75,33 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Country/CountryDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Country/CountryDialog.zul file.
  */
 public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	private static final long serialVersionUID = 223801324705386693L;
 	private static final Logger logger = Logger.getLogger(CountryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CountryDialog; 		// autoWired
+	protected Window window_CountryDialog; // autoWired
 
-	protected Textbox 		countryCode; 				// autoWired
-	protected Textbox 		countryDesc; 				// autoWired
-	protected Decimalbox 	countryParentLimit; 		// autoWired
-	protected Decimalbox 	countryResidenceLimit; 		// autoWired
-	protected Decimalbox 	countryRiskLimit; 			// autoWired
-	protected Checkbox 		countryIsActive; 			// autoWired
-	protected Checkbox 		systemDefault; 			// autoWired
-	
+	protected Textbox countryCode; // autoWired
+	protected Textbox countryDesc; // autoWired
+	protected Decimalbox countryParentLimit; // autoWired
+	protected Decimalbox countryResidenceLimit; // autoWired
+	protected Decimalbox countryRiskLimit; // autoWired
+	protected Checkbox countryIsActive; // autoWired
+	protected Checkbox systemDefault; // autoWired
+
 	// not autoWired variables
-	private Country country; 					// over handed per parameter
+	private Country country; // over handed per parameter
 	private transient CountryListCtrl countryListCtrl; // overHanded per
 	// parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CountryService countryService;
 
@@ -122,9 +120,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Country object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Country object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -151,14 +148,12 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 				setCountry(null);
 			}
 
-			doLoadWorkFlow(this.country.isWorkflow(),
-					this.country.getWorkflowId(), this.country.getNextTaskId());
+			doLoadWorkFlow(this.country.isWorkflow(), this.country.getWorkflowId(), this.country.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CountryDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CountryDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -168,8 +163,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 			// or
 			// delete country here.
 			if (arguments.containsKey("countryListCtrl")) {
-				setCountryListCtrl((CountryListCtrl) arguments
-						.get("countryListCtrl"));
+				setCountryListCtrl((CountryListCtrl) arguments.get("countryListCtrl"));
 			} else {
 				setCountryListCtrl(null);
 			}
@@ -219,8 +213,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -333,8 +326,9 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		this.countryIsActive.setChecked(aCountry.isCountryIsActive());
 		this.systemDefault.setChecked(aCountry.isSystemDefault());
 		this.recordStatus.setValue(aCountry.getRecordStatus());
-		
-		if(aCountry.isNew() || (aCountry.getRecordType() != null ? aCountry.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCountry.isNew() || (aCountry.getRecordType() != null ? aCountry.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.countryIsActive.setChecked(true);
 			this.countryIsActive.setDisabled(true);
 		}
@@ -364,20 +358,17 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 			wve.add(we);
 		}
 		try {
-			aCountry.setCountryParentLimit(PennantAppUtil.unFormateAmount(
-					this.countryParentLimit.getValue(), 0));
+			aCountry.setCountryParentLimit(PennantAppUtil.unFormateAmount(this.countryParentLimit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCountry.setCountryResidenceLimit(PennantAppUtil.unFormateAmount(
-					this.countryResidenceLimit.getValue(), 0));
+			aCountry.setCountryResidenceLimit(PennantAppUtil.unFormateAmount(this.countryResidenceLimit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCountry.setCountryRiskLimit(PennantAppUtil.unFormateAmount(
-					this.countryRiskLimit.getValue(), 0));
+			aCountry.setCountryRiskLimit(PennantAppUtil.unFormateAmount(this.countryRiskLimit.getValue(), 0));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -409,8 +400,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCountry
 	 * @throws Exception
@@ -443,7 +433,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_CountryDialog.onClose();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 		logger.debug("Leaving");
@@ -457,27 +447,29 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 
 		setValidationOn(true);
 
-		if (!this.countryCode.isReadonly()){
-			this.countryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.countryCode.isReadonly()) {
+			this.countryCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.countryDesc.isReadonly()){
-			this.countryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryDesc.value"), 
-					PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+		if (!this.countryDesc.isReadonly()) {
+			this.countryDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryDesc.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 
 		if (!this.countryParentLimit.isReadonly()) {
-			this.countryParentLimit.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CountryDialog_CountryParentLimit.value"), 0, false));
+			this.countryParentLimit.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_CountryDialog_CountryParentLimit.value"), 0, false));
 		}
 		if (!this.countryResidenceLimit.isReadonly()) {
-			this.countryResidenceLimit.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CountryDialog_CountryResidenceLimit.value"), 0, false));
+			this.countryResidenceLimit.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CountryDialog_CountryResidenceLimit.value"), 0, false));
 		}
 		if (!this.countryRiskLimit.isReadonly()) {
-			this.countryRiskLimit.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CountryDialog_CountryRiskLimit.value"), 0, false));
+			this.countryRiskLimit.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_CountryDialog_CountryRiskLimit.value"), 0, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -537,9 +529,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				Labels.getLabel("label_CountryDialog_CountryCode.value")+" : "+aCountry.getCountryCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CountryDialog_CountryCode.value") + " : " + aCountry.getCountryCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCountry.getRecordType())) {
 				aCountry.setVersion(aCountry.getVersion() + 1);
@@ -697,7 +688,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 				closeDialog();
 			}
 
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -826,8 +817,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCountryService().doApprove(auditHeader);
 
 						if (aCountry.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -842,8 +832,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CountryDialog, auditHeader);
 						return processCompleted;
 					}
@@ -888,10 +878,9 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	 */
 	private AuditHeader getAuditHeader(Country aCountry, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCountry.getBefImage(), aCountry);
-		return new AuditHeader(String.valueOf(aCountry.getId()), null, null,
-				null, auditDetail, aCountry.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCountry.getBefImage(), aCountry);
+		return new AuditHeader(String.valueOf(aCountry.getId()), null, null, null, auditDetail,
+				aCountry.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -906,7 +895,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CountryDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_CountryDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -931,7 +920,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	private void refreshList() {
 		getCountryListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.country.getCountryCode());
@@ -944,6 +933,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -951,6 +941,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	public Country getCountry() {
 		return this.country;
 	}
+
 	public void setCountry(Country country) {
 		this.country = country;
 	}
@@ -958,6 +949,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	public void setCountryService(CountryService countryService) {
 		this.countryService = countryService;
 	}
+
 	public CountryService getCountryService() {
 		return this.countryService;
 	}
@@ -965,6 +957,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	public void setCountryListCtrl(CountryListCtrl countryListCtrl) {
 		this.countryListCtrl = countryListCtrl;
 	}
+
 	public CountryListCtrl getCountryListCtrl() {
 		return this.countryListCtrl;
 	}

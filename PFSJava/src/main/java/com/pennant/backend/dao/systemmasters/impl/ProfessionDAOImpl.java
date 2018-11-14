@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,11 +68,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class ProfessionDAOImpl extends BasicDao<Profession> implements ProfessionDAO {
 	private static Logger logger = Logger.getLogger(ProfessionDAOImpl.class);
-	
+
 	public ProfessionDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Professions details by key field
 	 * 
@@ -86,13 +85,14 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 	@Override
 	public Profession getProfessionById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		Profession profession = new Profession();
 		profession.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select ProfessionCode, ProfessionDesc, ProfessionIsActive,  SelfEmployee, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTProfessions");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ProfessionCode =:ProfessionCode");
@@ -110,7 +110,7 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 		logger.debug("Leaving");
 		return profession;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String professionCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -146,7 +146,7 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(Profession profession, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -158,7 +158,8 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:ProfessionCode, :ProfessionDesc, :ProfessionIsActive, :SelfEmployee, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -173,7 +174,7 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 		logger.debug(Literal.LEAVING);
 		return profession.getId();
 	}
-	
+
 	@Override
 	public void update(Profession profession, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -181,8 +182,10 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update BMTProfessions");
 		sql.append(tableType.getSuffix());
-		sql.append(" set ProfessionDesc = :ProfessionDesc, ProfessionIsActive = :ProfessionIsActive,  SelfEmployee = :SelfEmployee, ");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(
+				" set ProfessionDesc = :ProfessionDesc, ProfessionIsActive = :ProfessionIsActive,  SelfEmployee = :SelfEmployee, ");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where ProfessionCode =:ProfessionCode");
@@ -200,24 +203,24 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(Profession profession, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from BMTProfessions");
 		sql.append(tableType.getSuffix());
 		sql.append(" where ProfessionCode =:ProfessionCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(profession);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

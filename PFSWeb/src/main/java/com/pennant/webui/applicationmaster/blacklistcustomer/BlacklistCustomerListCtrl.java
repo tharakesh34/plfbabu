@@ -23,11 +23,11 @@ import com.pennant.backend.service.applicationmaster.BlacklistCustomerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.applicationmaster.blacklistcustomer.model.BlacklistCustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -80,8 +80,8 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	// checkRights
 	protected Button button_BlacklistCustomerList_NewBlacklistCustomer;
 	protected Button button_BlacklistCustomerList_SearchDialog;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
-	
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
 	private transient BlacklistCustomerService blacklistCustomerService;
 
 	/**
@@ -105,7 +105,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 		super.doAddFilters();
 		Filter filter = SearchFilterControl.getFilter("mobileNumber", this.mobileNum.getValue(),
 				sortOperator_mobileNum);
-		if(filter != null){
+		if (filter != null) {
 			searchObject.addFilter(filter);
 		}
 	}
@@ -136,10 +136,14 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 
 		registerField("custCIF", listheader_CustomerCIF, SortOrder.ASC, customerCIF, sortOperator_customerCIF,
 				Operators.STRING);
-	/*	registerField("custFName", listheader_CustFName, SortOrder.NONE, custFName, sortOperator_custFName,
-				Operators.STRING);*/
-		/*registerField("custLName", listheader_CustLName, SortOrder.NONE, custLName, sortOperator_custLName,
-				Operators.STRING);*/
+		/*
+		 * registerField("custFName", listheader_CustFName, SortOrder.NONE, custFName, sortOperator_custFName,
+		 * Operators.STRING);
+		 */
+		/*
+		 * registerField("custLName", listheader_CustLName, SortOrder.NONE, custLName, sortOperator_custLName,
+		 * Operators.STRING);
+		 */
 		registerField("custDOB", listheader_CustDOB, SortOrder.NONE, custDOB, sortOperator_custDOB, Operators.DATE);
 		registerField("custCRCPR", listheader_CustEID, SortOrder.NONE, custEID, sortOperator_custEID, Operators.STRING);
 		registerField("custPassportNo", listheader_Passport, SortOrder.NONE, passport, sortOperator_passport,
@@ -298,7 +302,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 		this.custDOB.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.recordStatus.setMaxlength(50);
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -309,7 +313,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -322,7 +326,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -330,7 +334,8 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.customerCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -343,7 +348,6 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 		}
 		logger.debug("Leaving ");
 	}
-
 
 	public void setBlacklistCustomerService(BlacklistCustomerService blacklistCustomerService) {
 		this.blacklistCustomerService = blacklistCustomerService;

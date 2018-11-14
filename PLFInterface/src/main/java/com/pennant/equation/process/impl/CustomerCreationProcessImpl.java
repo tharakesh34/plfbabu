@@ -27,63 +27,63 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	}
 
 	@Override
-	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {	
+	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
-		String pcml = "PFFCIF";		
+		String pcml = "PFFCIF";
 		String custCIF = "";
 
-		try{	
+		try {
 			as400 = this.hostConnection.getConnection();
 
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
-			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000");
 			pcmlDoc.setValue(pcml + ".@ERPRM", "");
 
-			pcmlDoc.setValue(pcml + ".@REQDTA.Operation", customer.getOperation()); 		//Customer Is Block or Add
-			pcmlDoc.setValue(pcml + ".@REQDTA.CustCtgType", customer.getCustCtgType()); 	//Customer Category Type
-			pcmlDoc.setValue(pcml + ".@REQDTA.FinReference", customer.getFinReference()); 	//Finance Reference
+			pcmlDoc.setValue(pcml + ".@REQDTA.Operation", customer.getOperation()); //Customer Is Block or Add
+			pcmlDoc.setValue(pcml + ".@REQDTA.CustCtgType", customer.getCustCtgType()); //Customer Category Type
+			pcmlDoc.setValue(pcml + ".@REQDTA.FinReference", customer.getFinReference()); //Finance Reference
 
-			if("A".equals(customer.getOperation())){
-				pcmlDoc.setValue(pcml + ".@REQDTA.CustCIF", customer.getCustCIF()); 		//Customer CIF
-				pcmlDoc.setValue(pcml + ".@REQDTA.CustType", customer.getCustType()); 		//Customer Type
-				pcmlDoc.setValue(pcml + ".@REQDTA.ShortName", customer.getShortName().length() > 15 ? 
-						customer.getShortName().subSequence(0, 14): customer.getShortName()); 	//Short Name
-				pcmlDoc.setValue(pcml + ".@REQDTA.Country", customer.getCountry()); 		//Parent Country
-				pcmlDoc.setValue(pcml + ".@REQDTA.Branch", customer.getBranch()); 			//Default Branch
-				pcmlDoc.setValue(pcml + ".@REQDTA.Currency", customer.getCurrency()); 		//Basic Currency
+			if ("A".equals(customer.getOperation())) {
+				pcmlDoc.setValue(pcml + ".@REQDTA.CustCIF", customer.getCustCIF()); //Customer CIF
+				pcmlDoc.setValue(pcml + ".@REQDTA.CustType", customer.getCustType()); //Customer Type
+				pcmlDoc.setValue(pcml + ".@REQDTA.ShortName", customer.getShortName().length() > 15
+						? customer.getShortName().subSequence(0, 14) : customer.getShortName()); //Short Name
+				pcmlDoc.setValue(pcml + ".@REQDTA.Country", customer.getCountry()); //Parent Country
+				pcmlDoc.setValue(pcml + ".@REQDTA.Branch", customer.getBranch()); //Default Branch
+				pcmlDoc.setValue(pcml + ".@REQDTA.Currency", customer.getCurrency()); //Basic Currency
 			}
 
 			logger.debug(" Before PCML Call");
 			this.hostConnection.callAPI(pcmlDoc, pcml);
 			logger.debug(" After PCML Call");
 
-			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {	
-				custCIF = getString(pcmlDoc, pcml, ".@RSPDTA.CustCIF"); 					//Customer mnemonic
-				if(StringUtils.isEmpty(custCIF)){
-					throw new InterfaceException("9999","Customer Not Created.");
+			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
+				custCIF = getString(pcmlDoc, pcml, ".@RSPDTA.CustCIF"); //Customer mnemonic
+				if (StringUtils.isEmpty(custCIF)) {
+					throw new InterfaceException("9999", "Customer Not Created.");
 				}
 			} else {
-				logger.info("Customer Not Created.");	
-				throw new InterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
+				logger.info("Customer Not Created.");
+				throw new InterfaceException("9999", getString(pcmlDoc, pcml, ".@ERPRM"));
 			}
 
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);	
+			logger.error("Exception: ", e);
 			throw e;
 		} catch (PcmlException e) {
-			logger.error("Exception: ", e);	
+			logger.error("Exception: ", e);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		}finally{
+		} finally {
 			this.hostConnection.closeConnection(as400);
 		}
 		logger.debug("Leaving");
 		return custCIF;
 	}
-	
+
 	/**
 	 * Method to fetching customer dedup details from Equation
 	 */
@@ -101,7 +101,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	}
 
 	@Override
-	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail)	throws InterfaceException {
+	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail) throws InterfaceException {
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -123,6 +123,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	public HostConnection getHostConnection() {
 		return hostConnection;
 	}
+
 	public void setHostConnection(HostConnection hostConnection) {
 		this.hostConnection = hostConnection;
 	}

@@ -65,31 +65,31 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	private String accountType;
 	private String accountBranch;
 	private String lovDescAccountTypeName;
-	private String lovDescAccountBranchName;	
+	private String lovDescAccountBranchName;
 	private String accountSubHeadRule;
-	private String lovDescAccountSubHeadRuleName;	
+	private String lovDescAccountSubHeadRuleName;
 	private String transcationCode;
-	private String lovDescTranscationCodeName;	
+	private String lovDescTranscationCodeName;
 	private String rvsTransactionCode;
 	private String lovDescRvsTransactionCodeName;
 	private String amountRule;
 	private String chargeType;
 	private String postToSys;
 	private int derivedTranOrder;
-	
+
 	private String feeCode;
 	//private String ruleDecider;
 	private String lovDescFeeCodeName;
 	private boolean entryByInvestment;
 	private boolean openNewFinAc;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private TransactionEntry befImage;
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	private String lovDescEventCodeName;
 	private String lovDescEventCodeDesc;
 	private String lovDescAccSetCodeName;
@@ -110,53 +110,47 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public long getId() {
 		return accountSetid;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.accountSetid = id;
 	}
-	
+
 	public long getAccountSetid() {
 		return accountSetid;
 	}
+
 	public void setAccountSetid(long accountSetid) {
 		this.accountSetid = accountSetid;
 	}
-	
-	
-		
-	
+
 	public int getTransOrder() {
 		return transOrder;
 	}
+
 	public void setTransOrder(int transOrder) {
 		this.transOrder = transOrder;
 	}
-	
-	
-		
-	
+
 	public String getTransDesc() {
 		return transDesc;
 	}
+
 	public void setTransDesc(String transDesc) {
 		this.transDesc = transDesc;
 	}
-	
-	
-		
-	
+
 	public String getDebitcredit() {
 		return debitcredit;
 	}
+
 	public void setDebitcredit(String debitcredit) {
 		this.debitcredit = debitcredit;
 	}
-			
-	
+
 	/**
 	 * @return the shadowPosting
 	 */
@@ -165,7 +159,8 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	/**
-	 * @param shadowPosting the shadowPosting to set
+	 * @param shadowPosting
+	 *            the shadowPosting to set
 	 */
 	public void setShadowPosting(boolean shadowPosting) {
 		this.shadowPosting = shadowPosting;
@@ -179,7 +174,8 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	/**
-	 * @param account the account to set
+	 * @param account
+	 *            the account to set
 	 */
 	public void setAccount(String account) {
 		this.account = account;
@@ -188,10 +184,10 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	public String getAccountType() {
 		return accountType;
 	}
+
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
 	}
-	
 
 	/**
 	 * @return the accountBranch
@@ -201,7 +197,8 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	/**
-	 * @param accountBranch the accountBranch to set
+	 * @param accountBranch
+	 *            the accountBranch to set
 	 */
 	public void setAccountBranch(String accountBranch) {
 		this.accountBranch = accountBranch;
@@ -211,69 +208,62 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 		return this.lovDescAccountTypeName;
 	}
 
-	public void setLovDescAccountTypeName (String lovDescAccountTypeName) {
+	public void setLovDescAccountTypeName(String lovDescAccountTypeName) {
 		this.lovDescAccountTypeName = lovDescAccountTypeName;
 	}
-	
-		
-	
+
 	public String getAccountSubHeadRule() {
 		return accountSubHeadRule;
 	}
+
 	public void setAccountSubHeadRule(String accountSubHeadRule) {
 		this.accountSubHeadRule = accountSubHeadRule;
 	}
-	
 
 	public String getLovDescAccountSubHeadRuleName() {
 		return this.lovDescAccountSubHeadRuleName;
 	}
 
-	public void setLovDescAccountSubHeadRuleName (String lovDescAccountSubHeadRuleName) {
+	public void setLovDescAccountSubHeadRuleName(String lovDescAccountSubHeadRuleName) {
 		this.lovDescAccountSubHeadRuleName = lovDescAccountSubHeadRuleName;
 	}
-	
-		
-	
+
 	public String getTranscationCode() {
 		return transcationCode;
 	}
+
 	public void setTranscationCode(String transcationCode) {
 		this.transcationCode = transcationCode;
 	}
-	
 
 	public String getLovDescTranscationCodeName() {
 		return this.lovDescTranscationCodeName;
 	}
 
-	public void setLovDescTranscationCodeName (String lovDescTranscationCodeName) {
+	public void setLovDescTranscationCodeName(String lovDescTranscationCodeName) {
 		this.lovDescTranscationCodeName = lovDescTranscationCodeName;
 	}
-	
-		
-	
+
 	public String getRvsTransactionCode() {
 		return rvsTransactionCode;
 	}
+
 	public void setRvsTransactionCode(String rvsTransactionCode) {
 		this.rvsTransactionCode = rvsTransactionCode;
 	}
-	
 
 	public String getLovDescRvsTransactionCodeName() {
 		return this.lovDescRvsTransactionCodeName;
 	}
 
-	public void setLovDescRvsTransactionCodeName (String lovDescRvsTransactionCodeName) {
+	public void setLovDescRvsTransactionCodeName(String lovDescRvsTransactionCodeName) {
 		this.lovDescRvsTransactionCodeName = lovDescRvsTransactionCodeName;
 	}
-	
-		
-	
+
 	public String getAmountRule() {
 		return amountRule;
 	}
+
 	public void setAmountRule(String amountRule) {
 		this.amountRule = amountRule;
 	}
@@ -285,7 +275,7 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -294,12 +284,12 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public TransactionEntry getBefImage(){
+	public TransactionEntry getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(TransactionEntry beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(TransactionEntry beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -342,13 +332,12 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	}
 
 	/**
-	 * @param lovDescAccountBranchName the lovDescAccountBranchName to set
+	 * @param lovDescAccountBranchName
+	 *            the lovDescAccountBranchName to set
 	 */
 	public void setLovDescAccountBranchName(String lovDescAccountBranchName) {
 		this.lovDescAccountBranchName = lovDescAccountBranchName;
 	}
-
-
 
 	public String getLovDescEventCodeDesc() {
 		return lovDescEventCodeDesc;
@@ -374,9 +363,9 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 		this.feeCode = feeCode;
 	}
 
-	/*public String getRuleDecider() {
-		return ruleDecider;
-	}*/
+	/*
+	 * public String getRuleDecider() { return ruleDecider; }
+	 */
 
 	public String getLovDescFeeCodeName() {
 		return lovDescFeeCodeName;
@@ -386,43 +375,48 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 		this.lovDescFeeCodeName = lovDescFeeCodeName;
 	}
 
-	/*public void setRuleDecider(String ruleDecider) {
-		this.ruleDecider = ruleDecider;
-	}*/
+	/*
+	 * public void setRuleDecider(String ruleDecider) { this.ruleDecider = ruleDecider; }
+	 */
 
 	public void setChargeType(String chargeType) {
-	    this.chargeType = chargeType;
-    }
+		this.chargeType = chargeType;
+	}
+
 	public String getChargeType() {
-	    return chargeType;
-    }
+		return chargeType;
+	}
 
 	public String getPostToSys() {
 		return postToSys;
 	}
+
 	public void setPostToSys(String postToSys) {
 		this.postToSys = postToSys;
 	}
 
 	public void setEntryByInvestment(boolean entryByInvestment) {
-	    this.entryByInvestment = entryByInvestment;
-    }
+		this.entryByInvestment = entryByInvestment;
+	}
+
 	public boolean isEntryByInvestment() {
-	    return entryByInvestment;
-    }
+		return entryByInvestment;
+	}
 
 	public void setOpenNewFinAc(boolean openNewFinAc) {
-	    this.openNewFinAc = openNewFinAc;
-    }
+		this.openNewFinAc = openNewFinAc;
+	}
+
 	public boolean isOpenNewFinAc() {
-	    return openNewFinAc;
-    }
+		return openNewFinAc;
+	}
 
 	public int getDerivedTranOrder() {
-	    return derivedTranOrder;
-    }
+		return derivedTranOrder;
+	}
+
 	public void setDerivedTranOrder(int derivedTranOrder) {
-	    this.derivedTranOrder = derivedTranOrder;
-    }
-	
+		this.derivedTranOrder = derivedTranOrder;
+	}
+
 }

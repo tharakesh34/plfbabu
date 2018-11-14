@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennanttech.pff.core.TableType;
@@ -52,12 +53,12 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface DesignationDAO extends BasicCrudDao<Designation> {
 
-	Designation getDesignationById(String id,String type);
-	
+	Designation getDesignationById(String id, String type);
+
 	/**
 	 * 
 	 * @param designationCode
-	 *             of Designation
+	 *            of Designation
 	 * @param tableType
 	 *            of Designation
 	 * @return

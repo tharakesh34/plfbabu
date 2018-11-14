@@ -71,13 +71,13 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.service.AmazonS3Bucket;
 
 /**
@@ -161,10 +161,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
-		registerField("EndTime");	
+		registerField("EndTime");
 		registerField("ConfigId");
 		registerField("PostEvent");
-		
+
 		doRenderPage();
 		search();
 
@@ -322,11 +322,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 			File file = new File(builder.toString());
 
-			 if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("Mandate request for file generation failed.");
 			}
-
 
 			if (!com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
 				if (!file.exists()) {
@@ -334,7 +333,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 					downlaod.setTooltiptext("File not available.");
 				}
 			}
-			
+
 			lc.setParent(item);
 
 		}

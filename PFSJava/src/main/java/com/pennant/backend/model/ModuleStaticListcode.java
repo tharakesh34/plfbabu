@@ -44,43 +44,50 @@ package com.pennant.backend.model;
 
 import java.io.Serializable;
 
-public class ModuleStaticListcode implements Serializable{
+public class ModuleStaticListcode implements Serializable {
 
 	private static final long serialVersionUID = -2824453371288579564L;
-	
+
 	private String listCode;
 	private String moduleListName;
 	private String[] fieldHeading;
-	private String[] valueLabel; 
-	
-	public ModuleStaticListcode(String listCode,String moduleListName,String[] fieldHeading,String[] valueLabel){
+	private String[] valueLabel;
+
+	public ModuleStaticListcode(String listCode, String moduleListName, String[] fieldHeading, String[] valueLabel) {
 		this.listCode = listCode;
-		this.moduleListName =moduleListName;
-		this.fieldHeading=fieldHeading;
-		this.valueLabel=valueLabel;
+		this.moduleListName = moduleListName;
+		this.fieldHeading = fieldHeading;
+		this.valueLabel = valueLabel;
 	}
-	
+
 	public String getListCode() {
 		return listCode;
 	}
+
 	public void setListCode(String listCode) {
 		this.listCode = listCode;
 	}
+
 	public String getModuleListName() {
 		return moduleListName;
 	}
+
 	public void setModuleListName(String moduleListName) {
 		this.moduleListName = moduleListName;
 	}
+
 	public String[] getFieldHeading() {
 		return fieldHeading;
 	}
+
 	public void setFieldHeading(String[] fieldHeading) {
 		this.fieldHeading = fieldHeading;
 	}
+
 	public void setValueLabel(String[] valueLabel) {
 		this.valueLabel = valueLabel;
 	}
+
 	public String[] getValueLabel() {
 		return valueLabel;
 	}

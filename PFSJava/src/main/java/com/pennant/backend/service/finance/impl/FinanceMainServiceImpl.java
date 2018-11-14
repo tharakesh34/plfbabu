@@ -55,7 +55,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
  * Service implementation for methods that depends on <b>FinanceMain</b>.
  */
 public class FinanceMainServiceImpl extends GenericService<FinanceMain> implements FinanceMainService {
-	private FinanceMainDAO	financeMainDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public FinanceMainServiceImpl() {
 		super();
@@ -79,6 +79,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public FinanceMain getFinanceMainByFinRef(String finRefernce) {
 		return financeMainDAO.getFinanceMainById(finRefernce, "", false);
 	}
+
 	/**
 	 * Method to get Finance related data.
 	 * 
@@ -112,8 +113,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	 * @return Integer
 	 */
 	@Override
-	public int loanMandateSwapping(String finReference, long newMandateID,String repayMethod) {
-		return financeMainDAO.loanMandateSwapping(finReference, newMandateID,repayMethod);
+	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod) {
+		return financeMainDAO.loanMandateSwapping(finReference, newMandateID, repayMethod);
 	}
 
 	/**
@@ -131,50 +132,55 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 
 	/**
 	 * Method to get Finance related data.
+	 * 
 	 * @param custId
 	 */
 	@Override
 	public List<FinanceMain> getFinanceByCustId(long custId) {
 		return financeMainDAO.getFinanceByCustId(custId);
 	}
+
 	/**
 	 * Method to get Finance related data.
+	 * 
 	 * @param collateralRef
 	 */
 	@Override
 	public List<FinanceMain> getFinanceByCollateralRef(String collateralRef) {
 		return financeMainDAO.getFinanceByCollateralRef(collateralRef);
 	}
-	
+
 	/**
 	 * Method to get FinanceReferences by Given MandateId.
+	 * 
 	 * @param mandateId
 	 */
 	@Override
 	public List<String> getFinReferencesByMandateId(long mandateId) {
 		return financeMainDAO.getFinReferencesByMandateId(mandateId);
 	}
+
 	/**
 	 * Method to get FinanceReferences by Given custId with FinActiveStatus.
+	 * 
 	 * @param custId
 	 * @param finActiveStatus
 	 */
 	@Override
 	public List<String> getFinReferencesByCustID(long custId, String finActiveStatus) {
-		return financeMainDAO.getFinReferencesByCustID(custId,finActiveStatus);
+		return financeMainDAO.getFinReferencesByCustID(custId, finActiveStatus);
 	}
 
 	@Override
 	public List<String> getFinanceMainbyCustId(long custID) {
 		return financeMainDAO.getFinReferencesByCustID(custID);
 	}
-	
 
 	@Override
 	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
 		return financeMainDAO.getCustomerODLoanDetails(userID);
 	}
-	
+
 	/**
 	 * @param financeMainDAO
 	 *            the financeMainDAO to set

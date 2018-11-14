@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.DispatchMode;
 
 /**
@@ -50,8 +51,11 @@ import com.pennant.backend.model.systemmasters.DispatchMode;
  */
 public interface DispatchModeDAO {
 
-	DispatchMode getDispatchModeById(String id,String type);
-	void update(DispatchMode dispatchMode,String type);
-	void delete(DispatchMode dispatchMode,String type);
-	String save(DispatchMode dispatchMode,String type);
+	DispatchMode getDispatchModeById(String id, String type);
+
+	void update(DispatchMode dispatchMode, String type);
+
+	void delete(DispatchMode dispatchMode, String type);
+
+	String save(DispatchMode dispatchMode, String type);
 }

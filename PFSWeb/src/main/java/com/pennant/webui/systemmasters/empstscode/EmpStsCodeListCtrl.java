@@ -63,10 +63,10 @@ import com.pennant.backend.service.systemmasters.EmpStsCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.systemmasters.empstscode.model.EmpStsCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/EmpStsCode/EmpStsCodeList.zul file.
@@ -219,8 +219,8 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND EmpStsCode='" + empStsCode.getEmpStsCode() + "' AND version="
-				+ empStsCode.getVersion() + " ";
+		String whereCond = " AND EmpStsCode='" + empStsCode.getEmpStsCode() + "' AND version=" + empStsCode.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(empStsCode, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

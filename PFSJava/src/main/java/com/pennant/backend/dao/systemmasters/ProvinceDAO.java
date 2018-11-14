@@ -42,6 +42,7 @@
  */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennanttech.pff.core.TableType;
@@ -50,12 +51,14 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods declaration for the <b>Province model</b> class.<br>
  * 
  */
-public interface ProvinceDAO extends BasicCrudDao<Province>  {
+public interface ProvinceDAO extends BasicCrudDao<Province> {
 
-	Province getProvinceById(String cPCountry, String cPProvince,String type);
-	Province getProvinceById( String cPProvince,String type);
+	Province getProvinceById(String cPCountry, String cPProvince, String type);
+
+	Province getProvinceById(String cPProvince, String type);
+
 	String getSystemDefaultCount(String cpprovince);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -66,7 +69,10 @@ public interface ProvinceDAO extends BasicCrudDao<Province>  {
 	 * @return
 	 */
 	boolean isDuplicateKey(String cPCountry, String cPProvince, TableType tableType);
-	boolean count(String taxStateCode,String cPProvince, TableType tableType);
+
+	boolean count(String taxStateCode, String cPProvince, TableType tableType);
+
 	int getBusinessAreaCount(String stateCodeValue, String type);
+
 	int geStateCodeCount(String taxStateCode, String cpProvince, String type);
 }

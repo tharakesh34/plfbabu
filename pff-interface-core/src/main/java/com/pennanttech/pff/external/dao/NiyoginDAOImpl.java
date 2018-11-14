@@ -39,13 +39,13 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class NiyoginDAOImpl {
-	private static final Logger				logger	= Logger.getLogger(NiyoginDAOImpl.class);
-	protected DataSource					dataSource;
-	protected JdbcTemplate					jdbcTemplate;
-	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
+	private static final Logger logger = Logger.getLogger(NiyoginDAOImpl.class);
+	protected DataSource dataSource;
+	protected JdbcTemplate jdbcTemplate;
+	protected NamedParameterJdbcTemplate namedJdbcTemplate;
 
-	protected DataSourceTransactionManager	transManager;
-	protected DefaultTransactionDefinition	transDef;
+	protected DataSourceTransactionManager transManager;
+	protected DefaultTransactionDefinition transDef;
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -229,7 +229,7 @@ public class NiyoginDAOImpl {
 		logger.debug("Leaving");
 		return customerEMails;
 	}
-	
+
 	/**
 	 * Fetch the Customer PhoneNumber By its CustPhoneId
 	 * 
@@ -242,26 +242,28 @@ public class NiyoginDAOImpl {
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+		selectSql.append(
+				" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
-		selectSql.append(StringUtils.trimToEmpty(type) );
-		selectSql.append(" Where PhoneCustID =:PhoneCustID") ; 
-		
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PhoneCustID =:PhoneCustID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPhoneNumber.class);
-		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedJdbcTemplate.query(selectSql.toString(),
+				beanParameters, typeRowMapper);
 		logger.debug("Leaving ");
-		return  customerPhoneNumbers;
+		return customerPhoneNumbers;
 	}
 
 	public long getPincodeGroupId(String pincode) {
@@ -326,7 +328,7 @@ public class NiyoginDAOImpl {
 	 * @return extendedFieldDetailList
 	 * @throws Exception
 	 */
-	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames){
+	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -442,7 +444,6 @@ public class NiyoginDAOImpl {
 		return 0;
 	}
 
-	
 	/**
 	 * Method for get the Email's of a Customer
 	 * 
@@ -471,7 +472,8 @@ public class NiyoginDAOImpl {
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			logger.debug(Literal.LEAVING);
-			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(CustomerEMail.class);
 			logger.debug(Literal.LEAVING);
 			return this.namedJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 		} catch (Exception e) {
@@ -480,7 +482,6 @@ public class NiyoginDAOImpl {
 		}
 	}
 
-	
 	/**
 	 * Method for get the hold reasons.
 	 * 
@@ -569,30 +570,30 @@ public class NiyoginDAOImpl {
 		return null;
 	}
 
-	
 	/**
-	 * Fetch the Record  LOV Field Details details by key field
+	 * Fetch the Record LOV Field Details details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LovFieldDetail
 	 */
 	public String getLovFieldDetailByCode(String fieldCodeValue, String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("FieldCode", "PUR_LOAN");
 		paramMap.addValue("FieldCodeValue", fieldCodeValue);
-		
-		StringBuilder selectSql = new StringBuilder("Select valueDesc " );
-		selectSql.append(" From RMTLovFieldDetail"+ StringUtils.trimToEmpty(type) );
+
+		StringBuilder selectSql = new StringBuilder("Select valueDesc ");
+		selectSql.append(" From RMTLovFieldDetail" + StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FieldCode =:FieldCode AND FieldCodeValue =:FieldCodeValue ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		try{
-			return this.namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			return this.namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
 		}
@@ -600,26 +601,23 @@ public class NiyoginDAOImpl {
 
 	public long getCustomerId(String custCIF) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("custCIF", custCIF);
-		
-		StringBuilder selectSql = new StringBuilder("Select CustID " );
-		selectSql.append(" From Customers" );
+
+		StringBuilder selectSql = new StringBuilder("Select CustID ");
+		selectSql.append(" From Customers");
 		selectSql.append(" Where custCIF =:custCIF ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			return this.namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, Long.class);
-		}catch (EmptyResultDataAccessException e) {
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return 0;
 		}
 	}
 
-	
-
-	
 	/**
 	 * Fetch the customer documents for the specified customer
 	 * 
@@ -637,12 +635,14 @@ public class NiyoginDAOImpl {
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
 		selectSql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
-		selectSql.append(", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
+		selectSql.append(
+				", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
 		selectSql.append(", DocPurpose, DocUri");
 		if (type.contains("View")) {
 			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
 			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
-			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
+			selectSql.append(
+					" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
 		}
 		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -653,17 +653,17 @@ public class NiyoginDAOImpl {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-					CustomerDocument.class);
-			
-			return this.namedJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
+			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(CustomerDocument.class);
+
+			return this.namedJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return Collections.emptyList();
 		}
 	}
-	
+
 	/**
 	 * Method for fetch the CustomerTypeCode description for given CustTypeCode.
 	 * 
@@ -686,7 +686,5 @@ public class NiyoginDAOImpl {
 		}
 		return null;
 	}
-
-
 
 }

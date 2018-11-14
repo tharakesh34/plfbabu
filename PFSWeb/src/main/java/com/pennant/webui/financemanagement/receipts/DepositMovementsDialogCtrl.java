@@ -94,33 +94,33 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(DepositMovementsDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(DepositMovementsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_DepositMovementsDialog;
-	protected CurrencyBox						transactionAmount;
-	protected ExtendedCombobox					partnerBankId;
-	protected Datebox							transactionDate;
-	protected Uppercasebox						depositSlipNumber;
-	protected Listbox							listBox_DenominationsList;
-	protected Listbox							listBoxPosting;
-	protected Tablechildren						tablechildren_CashDenominations;
-	protected Groupbox							groupBox_Cheque;
-	protected Listbox							listBoxChequeOrDD;
-	protected Tabpanel 							tabpanel_BasicDetails;
-	protected Tabpanel 							tabpanel_Postings;
-	protected Tab 								receiptDetailsTab;
-	protected Tab 								postingDetailsTab;
+	protected Window window_DepositMovementsDialog;
+	protected CurrencyBox transactionAmount;
+	protected ExtendedCombobox partnerBankId;
+	protected Datebox transactionDate;
+	protected Uppercasebox depositSlipNumber;
+	protected Listbox listBox_DenominationsList;
+	protected Listbox listBoxPosting;
+	protected Tablechildren tablechildren_CashDenominations;
+	protected Groupbox groupBox_Cheque;
+	protected Listbox listBoxChequeOrDD;
+	protected Tabpanel tabpanel_BasicDetails;
+	protected Tabpanel tabpanel_Postings;
+	protected Tab receiptDetailsTab;
+	protected Tab postingDetailsTab;
 
-	private DepositMovements					depositMovements;
+	private DepositMovements depositMovements;
 
-	private transient DepositMovementsListCtrl	depositMovementsListCtrl;
-	private transient DepositDetailsService		depositDetailsService;
-	private List<CashDenomination>				cashDenominations	= new ArrayList<CashDenomination>();
+	private transient DepositMovementsListCtrl depositMovementsListCtrl;
+	private transient DepositDetailsService depositDetailsService;
+	private List<CashDenomination> cashDenominations = new ArrayList<CashDenomination>();
 
 	/**
 	 * default constructor.<br>
@@ -169,7 +169,8 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			this.depositMovements.setBefImage(depositMovements);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.depositMovements.isWorkflow(), this.depositMovements.getWorkflowId(), this.depositMovements.getNextTaskId());
+			doLoadWorkFlow(this.depositMovements.isWorkflow(), this.depositMovements.getWorkflowId(),
+					this.depositMovements.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
@@ -190,12 +191,12 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onSelect$receiptDetailsTab(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		doShowDialog(this.depositMovements);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -405,7 +406,8 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 			lc.setParent(item);
 
 			// Total Amount
-			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(), PennantConstants.defaultCCYDecPos);
+			BigDecimal amount = PennantAppUtil.formateAmount(cashDenomination.getAmount(),
+					PennantConstants.defaultCCYDecPos);
 			Decimalbox amountBox = new Decimalbox();
 			amountBox.setMaxlength(18);
 			amountBox.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
@@ -474,7 +476,8 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		// Posting Details Rendering
 		if (depositMovements.getLinkedTranId() > 0) {
-			List<ReturnDataSet> postings = this.depositDetailsService.getPostingsByLinkTransId(depositMovements.getLinkedTranId());
+			List<ReturnDataSet> postings = this.depositDetailsService
+					.getPostingsByLinkTransId(depositMovements.getLinkedTranId());
 			doFillPostings(postings);
 			this.listBoxPosting.setHeight(getListBoxHeight(6));
 		}
@@ -502,7 +505,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		logger.debug("Entering");
 
 		this.listBoxChequeOrDD.getItems().clear();
-		
+
 		if (CollectionUtils.isNotEmpty(depositChequesList)) {
 			Listitem item;
 			for (DepositCheques depositCheque : depositChequesList) {
@@ -525,15 +528,17 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				//lc = new Listcell(depositCheque.getPartnerBankCode());
 				//lc.setParent(item);
 				//Amount
-				lc = new Listcell(PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
+				lc = new Listcell(
+						PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				//Receipt Purpose
-				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(), PennantStaticListUtil.getReceiptPurpose()));
+				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(),
+						PennantStaticListUtil.getReceiptPurpose()));
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());
 				lc.setParent(item);
-				
+
 				//Postings
 				Button postings = new Button("Postings");
 				lc = new Listcell();
@@ -551,22 +556,23 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClickPostings(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		DepositCheques depositCheque = (DepositCheques) event.getData();
-		
+
 		if (depositCheque.getLinkedTranId() <= 0) {
 			MessageUtil.showError("Postings not available.");
 			return;
 		}
-		
-		List<ReturnDataSet> postings = this.depositDetailsService.getPostingsByLinkTransId(depositCheque.getLinkedTranId());
+
+		List<ReturnDataSet> postings = this.depositDetailsService
+				.getPostingsByLinkTransId(depositCheque.getLinkedTranId());
 		doFillPostings(postings);
 		this.postingDetailsTab.setSelected(true);
 		this.listBoxPosting.setHeight(getListBoxHeight(6));
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -580,7 +586,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		if (CollectionUtils.isNotEmpty(postingList)) {
 			this.listBoxPosting.getItems().clear();
-			
+
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
 				item = new Listitem();
@@ -603,12 +609,13 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+						CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell("");
 				lc.setParent(item);
-				
+
 				this.listBoxPosting.appendChild(item);
 			}
 		}

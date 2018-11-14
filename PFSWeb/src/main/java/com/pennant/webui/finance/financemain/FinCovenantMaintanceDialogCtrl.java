@@ -86,8 +86,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinCovenantMaintanceDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinCovenantMaintanceDialog.zul file.
  */
 public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
@@ -131,8 +130,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -234,7 +232,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinCovenantMaintanceDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		this.btnNew_NewFinCovenantType.setVisible(getUserWorkspace().isAllowed("btnNew_FinCovenantMaintanceDialog_NewFinCovenantType"));
+		this.btnNew_NewFinCovenantType
+				.setVisible(getUserWorkspace().isAllowed("btnNew_FinCovenantMaintanceDialog_NewFinCovenantType"));
 
 		// Schedule related buttons
 		logger.debug("Leaving");
@@ -271,8 +270,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -605,7 +603,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuditHeader aAuditHeader = auditHeader;
-		FinMaintainInstruction aFinMaintainInstruction = (FinMaintainInstruction) aAuditHeader.getAuditDetail().getModelData();
+		FinMaintainInstruction aFinMaintainInstruction = (FinMaintainInstruction) aAuditHeader.getAuditDetail()
+				.getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -743,7 +742,6 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		map.put("finCovenantTypes", aFinCovenantType);
 		map.put("newRecord", "true");
 		map.put("moduleDefiner", moduleDefiner);
-				
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -792,8 +790,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param dcoType
@@ -982,6 +979,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
+
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}

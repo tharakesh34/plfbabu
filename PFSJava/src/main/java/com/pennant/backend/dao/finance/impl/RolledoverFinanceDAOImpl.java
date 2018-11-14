@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,19 +20,20 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> implements RolledoverFinanceDAO {
 	private static Logger logger = Logger.getLogger(RolledoverFinanceDAOImpl.class);
-	
+
 	public RolledoverFinanceDAOImpl() {
 		super();
 	}
 
 	@Override
-    public RolledoverFinanceHeader getRolledoverFinanceHeader(String finReference, String type) {
+	public RolledoverFinanceHeader getRolledoverFinanceHeader(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		RolledoverFinanceHeader header = new RolledoverFinanceHeader();
 		header.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, CustPayment, PaymentAccount, LatePayAmount, LatePayWaiverAmount ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select FinReference, CustPayment, PaymentAccount, LatePayAmount, LatePayWaiverAmount ");
 		selectSql.append(" From RolledoverFinanceHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference ");
@@ -41,27 +41,27 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		RowMapper<RolledoverFinanceHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(RolledoverFinanceHeader.class);
+				.newInstance(RolledoverFinanceHeader.class);
 
 		try {
-			header = this.jdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);
+			header = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			header = null;
 		}
 		logger.debug("Leaving");
 		return header;
-    }
+	}
 
 	@Override
-    public List<RolledoverFinanceDetail> getRolledoverDetailList(String finReference, String type) {
+	public List<RolledoverFinanceDetail> getRolledoverDetailList(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		RolledoverFinanceDetail detail = new RolledoverFinanceDetail();
 		detail.setNewFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, NewFinReference, RolloverAmount, CustPayment,");
+		StringBuilder selectSql = new StringBuilder(
+				" Select FinReference, NewFinReference, RolloverAmount, CustPayment,");
 		selectSql.append(" StartDate, RolloverDate, FinAmount, TotalProfit, ProfitRate, TotalPftBal, TotalPriBal ");
 		selectSql.append(" From RolledoverFinanceDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -70,16 +70,16 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<RolledoverFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(RolledoverFinanceDetail.class);
+				.newInstance(RolledoverFinanceDetail.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-    }
-	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
 	@Override
-    public void saveHeader(RolledoverFinanceHeader header, String type) {
+	public void saveHeader(RolledoverFinanceHeader header, String type) {
 		logger.debug("Entering");
-		 
+
 		StringBuilder insertSql = new StringBuilder(" Insert Into RolledoverFinanceHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, CustPayment, PaymentAccount, LatePayAmount, LatePayWaiverAmount) ");
@@ -92,26 +92,26 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-    }
+	}
 
 	@Override
-    public void deleteHeader(String finReference, String type) {
+	public void deleteHeader(String finReference, String type) {
 		logger.debug("Entering");
-		
-		Map<String,String> map=new HashMap<String, String>();
+
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("FinReference", finReference);
-		
+
 		StringBuilder deleteSql = new StringBuilder(" Delete From RolledoverFinanceHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference = :FinReference ");
-		
+
 		logger.debug("deleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), map);	
+		this.jdbcTemplate.update(deleteSql.toString(), map);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void updateHeader(RolledoverFinanceHeader header, String type) {
+	public void updateHeader(RolledoverFinanceHeader header, String type) {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update RolledoverFinanceHeader");
@@ -125,10 +125,10 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void saveDetailList(List<RolledoverFinanceDetail> details, String type) {
+	public void saveDetailList(List<RolledoverFinanceDetail> details, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RolledoverFinanceDetail");
@@ -141,10 +141,10 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(details.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void deleteListByRef(String finReference, String type) {
+	public void deleteListByRef(String finReference, String type) {
 		logger.debug("Entering");
 		RolledoverFinanceDetail detail = new RolledoverFinanceDetail();
 		detail.setNewFinReference(finReference);
@@ -157,6 +157,6 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 }

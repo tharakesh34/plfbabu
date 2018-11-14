@@ -63,9 +63,9 @@ public class CustomerNotesTypeListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -228283421898600121L;
 
 	public CustomerNotesTypeListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerNotesType customerNotesType, int count) throws Exception {
 
@@ -86,9 +86,9 @@ public class CustomerNotesTypeListModelItemRenderer implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customerNotesType.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", customerNotesType.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerNotesTypeItemDoubleClicked");
 	}
 }

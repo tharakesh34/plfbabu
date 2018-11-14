@@ -41,12 +41,17 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amtmasters;
+
 import com.pennant.backend.model.amtmasters.VehicleModel;
 
 public interface VehicleModelDAO {
 	VehicleModel getVehicleModelById(long id, long vehicleManufacturerId, String type);
+
 	void update(VehicleModel vehicleModel, String type);
+
 	void delete(VehicleModel vehicleModel, String type);
+
 	long save(VehicleModel vehicleModel, String type);
+
 	VehicleModel getVehicleModelByModelDesc(VehicleModel vehicleModel, String type);
 }

@@ -56,7 +56,7 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 	private long oprID;
 	private String lovDescOprCd;// operation code
 	private String lovDescOprDesc;
-	
+
 	private LoggedInUser userDetails;
 	private SecurityUserOperations befImage;
 	private boolean newRecord;

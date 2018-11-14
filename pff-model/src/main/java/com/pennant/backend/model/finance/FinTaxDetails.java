@@ -39,7 +39,7 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 	private BigDecimal remFeeTGST = BigDecimal.ZERO;
 
 	private boolean newRecord;
-	
+
 	public FinTaxDetails() {
 		super();
 	}

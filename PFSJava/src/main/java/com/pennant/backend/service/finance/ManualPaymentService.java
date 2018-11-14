@@ -13,14 +13,26 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface ManualPaymentService {
 
-	List<FinanceRepayments> getFinRepayListByFinRef(String finRef, boolean isRpyCancelProc,String type);
+	List<FinanceRepayments> getFinRepayListByFinRef(String finRef, boolean isRpyCancelProc, String type);
+
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
-	RepayData getRepayDataById(String finReference, String eventCode,String procEdtEvent, String userRole);
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	RepayData getRepayDataById(String finReference, String eventCode, String procEdtEvent, String userRole);
+
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doApprove(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	FinanceDetail getAccountingDetail(FinanceDetail financeDetail, String eventCodeRef);
+
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
+
 	RepayData doCalcRepayments(RepayData repayData, FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst);
+
 	RepayData setEarlyRepayEffectOnSchedule(RepayData repayData, FinServiceInstruction finServiceInst);
 }

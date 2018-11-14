@@ -63,8 +63,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>PaymentInstruction</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>PaymentInstruction</code> with set of CRUD operations.
  */
 public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> implements PaymentInstructionDAO {
 	private static Logger logger = Logger.getLogger(PaymentInstructionDAOImpl.class);
@@ -312,8 +311,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different
-	 * Finances/Commitments
+	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
 	 */
 	@Override
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {

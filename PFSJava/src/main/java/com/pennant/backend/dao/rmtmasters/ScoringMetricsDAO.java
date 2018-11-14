@@ -42,18 +42,25 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 
 public interface ScoringMetricsDAO {
 
-	ScoringMetrics getScoringMetricsById(String id,String type);
-	void update(ScoringMetrics scoringMetrics,String type);
-	void delete(ScoringMetrics scoringMetrics,String type);
-	String save(ScoringMetrics scoringMetrics,String type);
+	ScoringMetrics getScoringMetricsById(String id, String type);
+
+	void update(ScoringMetrics scoringMetrics, String type);
+
+	void delete(ScoringMetrics scoringMetrics, String type);
+
+	String save(ScoringMetrics scoringMetrics, String type);
+
 	List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId, String categoryType, String type);
-	void delete(long scoreGroupId , String type);
+
+	void delete(long scoreGroupId, String type);
+
 	int getScoringMetricsByRuleCode(long ruleId, String type);
-	
+
 }

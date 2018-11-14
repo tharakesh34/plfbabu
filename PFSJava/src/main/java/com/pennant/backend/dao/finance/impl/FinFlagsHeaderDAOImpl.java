@@ -1,6 +1,5 @@
 package com.pennant.backend.dao.finance.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -23,7 +22,7 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 	public FinFlagsHeaderDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinanceFlags
 	 * 
@@ -63,11 +62,12 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 	/**
 	 * This method insert new Records into FinFlagsHeader or FinFlagsHeader_Temp.
 	 *
-	 * save FinFlagsHeader 
+	 * save FinFlagsHeader
 	 * 
-	 * @param financeFlags (financeFlags)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param financeFlags
+	 *            (financeFlags)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -80,13 +80,14 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 		insertSql.append(" FinFlagsHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference,");
-		insertSql.append(" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
+		insertSql.append(
+				" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
 		insertSql.append(" values (:FinReference,");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -120,7 +121,7 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
@@ -138,9 +139,9 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 
 		FinanceFlag financeFlags = new FinanceFlag();
 		financeFlags.setFinReference(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder(" Select FinReference, ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" FinType, FinTypeDesc,FinCategory, ");
 			selectSql.append(" CustCIF,FinBranch,BranchDesc, FinStartDate,NumberOfTerms,GraceTerms, MaturityDate, ");
 			selectSql.append(" FinCcy,FinAmount, FinRepaymentAmount,ScheduleMethod, ");
@@ -154,12 +155,10 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		RowMapper<FinanceFlag> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FinanceFlag.class);
+		RowMapper<FinanceFlag> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceFlag.class);
 
 		try {
-			financeFlags = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			financeFlags = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeFlags = null;
@@ -169,13 +168,13 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 	}
 
 	/**
-	 * This method Deletes the Record from the FinFlagsHeader or FinFlagsHeader_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete finance Flags by key FinReference
+	 * This method Deletes the Record from the FinFlagsHeader or FinFlagsHeader_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete finance Flags by key FinReference
 	 * 
-	 * @param Finance Flag (FinanceFlag)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Flag (FinanceFlag)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -192,7 +191,5 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-
-	
 
 }

@@ -61,5 +61,5 @@ public interface DeviationDetailDAO {
 
 	List<DeviationDetail> getDeviationDetailsByDeviationId(long id, String type);
 
-	List<DeviationDetail> getDeviationDetailsByModuleFinType(String finType, String module,String type);
+	List<DeviationDetail> getDeviationDetailsByModuleFinType(String finType, String module, String type);
 }

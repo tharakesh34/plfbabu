@@ -17,15 +17,13 @@ import com.pennant.backend.util.DeviationConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  implements FinanceDeviationsDAO{
-   private static Logger logger = Logger.getLogger(FinanceDeviationsDAOImpl.class);
+public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> implements FinanceDeviationsDAO {
+	private static Logger logger = Logger.getLogger(FinanceDeviationsDAOImpl.class);
 
-	
-	public FinanceDeviationsDAOImpl(){
+	public FinanceDeviationsDAOImpl() {
 		super();
 	}
-	
-	
+
 	/**
 	 * get Deviation Details List based on finance reference
 	 * 
@@ -45,9 +43,10 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDeviations.class);
+		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceDeviations.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -70,12 +69,11 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 				.newInstance(FinanceDeviations.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}	
+	}
 
 	/**
-	 * This method updates the Record BMTAcademics or BMTAcademics_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Academic Details by key AcademicLevel and Version
+	 * This method updates the Record BMTAcademics or BMTAcademics_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Academic Details by key AcademicLevel and Version
 	 * 
 	 * @param Academic
 	 *            Details (academic)
@@ -85,7 +83,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
 	public void update(FinanceDeviations financeDeviations, String type) {
 		logger.debug(Literal.ENTERING);
@@ -94,7 +92,8 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Set FinReference = :FinReference, Module = :Module, DeviationCode =:DeviationCode, ");
 		sql.append(" DeviationType = :DeviationType , DeviationValue = :DeviationValue, UserRole = :UserRole,");
-		sql.append(" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
+		sql.append(
+				" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
 		sql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
 		sql.append(" DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId, ");
 		sql.append(" MarkDeleted = :MarkDeleted");
@@ -106,10 +105,10 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 
 		logger.debug(Literal.LEAVING);
 	}
-		
-		/**
-		 * save Deviation details
-		 */
+
+	/**
+	 * save Deviation details
+	 */
 	@Override
 	public long save(FinanceDeviations financeDeviations, String type) {
 		logger.debug("Entering");
@@ -135,7 +134,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		logger.debug("Leaving");
 		return financeDeviations.getId();
 	}
-	
+
 	@Override
 	public void delete(FinanceDeviations financeDeviations, String type) {
 		logger.debug("Entering");
@@ -157,23 +156,24 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	public void deleteCheckListRef(String finReference, String module, String refId,String type) {
+	public void deleteCheckListRef(String finReference, String module, String refId, String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinReference", finReference);
 		mapSqlParameterSource.addValue("Module", module);
-		mapSqlParameterSource.addValue("CheckExpired", refId+DeviationConstants.CL_EXPIRED);
-		mapSqlParameterSource.addValue("CheckPostoned", refId+DeviationConstants.CL_POSTPONED);
-		mapSqlParameterSource.addValue("CheckWaived", refId+DeviationConstants.CL_WAIVED);
+		mapSqlParameterSource.addValue("CheckExpired", refId + DeviationConstants.CL_EXPIRED);
+		mapSqlParameterSource.addValue("CheckPostoned", refId + DeviationConstants.CL_POSTPONED);
+		mapSqlParameterSource.addValue("CheckWaived", refId + DeviationConstants.CL_WAIVED);
 
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From FinanceDeviations");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where  FinReference = :FinReference and Module = :Module and ");
-		deleteSql.append("( DeviationCode =:CheckExpired or DeviationCode =:CheckPostoned or DeviationCode =:CheckWaived)");
+		deleteSql.append(
+				"( DeviationCode =:CheckExpired or DeviationCode =:CheckPostoned or DeviationCode =:CheckWaived)");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 
@@ -206,8 +206,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		logger.debug("Leaving");
 	}
 
-	
-		@Override
+	@Override
 	public void deleteById(FinanceDeviations financeDeviations, String type) {
 		logger.debug("Entering");
 
@@ -227,6 +226,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations>  im
 		}
 		logger.debug("Leaving");
 	}
+
 	//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 	@Override
 	public void updateMarkDeleted(long deviationId, String finReference) {

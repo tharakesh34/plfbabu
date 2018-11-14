@@ -187,8 +187,8 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (object instanceof SecurityUserOperationsDialogCtrl) {
-			this.window_SecuritySearchDialog.setTitle(Labels
-					.getLabel("window_SecuritySearchDialogCtrl_Operations.title"));
+			this.window_SecuritySearchDialog
+					.setTitle(Labels.getLabel("window_SecuritySearchDialogCtrl_Operations.title"));
 			this.label_Name.setValue(Labels.getLabel("label_SecuritySearchDialogCtrl_OprCode"));
 			for (Object key : dataMap.keySet()) {
 				SecurityOperation aSecurityOperation = (SecurityOperation) dataMap.get(key);
@@ -232,8 +232,8 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 					int count = (Integer) object.getClass()
 							.getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class })
 							.invoke(object, new Object[] { searchResult });
-					this.label_SearchResult.setValue(Labels.getLabel("label_SecuritySearchResults.value") + " "
-							+ String.valueOf(count));
+					this.label_SearchResult.setValue(
+							Labels.getLabel("label_SecuritySearchResults.value") + " " + String.valueOf(count));
 
 				} else if (object instanceof SecurityOperationRolesDialogCtrl) {
 					searchResult[0] = searchOpId;
@@ -241,24 +241,25 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 					int count = (Integer) object.getClass()
 							.getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class })
 							.invoke(object, new Object[] { searchResult });
-					this.label_SearchResult.setValue(Labels.getLabel("label_SecuritySearchResults.value") + " "
-							+ String.valueOf(count));
+					this.label_SearchResult.setValue(
+							Labels.getLabel("label_SecuritySearchResults.value") + " " + String.valueOf(count));
 
-				}else if (object instanceof SecurityRoleGroupsDialogCtrl) {
+				} else if (object instanceof SecurityRoleGroupsDialogCtrl) {
 					searchResult[0] = searchOpId;
 					searchResult[1] = this.name.getValue();
 					int count = (Integer) object.getClass()
 							.getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class })
 							.invoke(object, new Object[] { searchResult });
-					this.label_SearchResult.setValue(Labels.getLabel("label_SecuritySearchResults.value") + " "
-							+ String.valueOf(count));
-				}else if (object instanceof SecurityGroupRightsDialogCtrl) {
+					this.label_SearchResult.setValue(
+							Labels.getLabel("label_SecuritySearchResults.value") + " " + String.valueOf(count));
+				} else if (object instanceof SecurityGroupRightsDialogCtrl) {
 					searchResult[0] = searchOpId;
 					searchResult[1] = this.name.getValue();
-					int count = (Integer) object.getClass().getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class })
+					int count = (Integer) object.getClass()
+							.getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class })
 							.invoke(object, new Object[] { searchResult });
-					this.label_SearchResult.setValue(Labels.getLabel("label_SecuritySearchResults.value") + " "
-							+ String.valueOf(count));
+					this.label_SearchResult.setValue(
+							Labels.getLabel("label_SecuritySearchResults.value") + " " + String.valueOf(count));
 				}
 
 			} else {
@@ -268,10 +269,10 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 				 * invoking doShowSearchResult() of object eg.SecurityUserDialogCtrl using reflection and passing
 				 * searchResultList and filters as arguments
 				 */
-				object.getClass().getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class })
-						.invoke(object, new Object[] { searchResult });
-				this.label_SearchResult.setValue(Labels.getLabel("label_SecuritySearchResults.value") + " "
-						+ String.valueOf(dataMap.size()));
+				object.getClass().getDeclaredMethod("doShowSearchResult", new Class[] { Object[].class }).invoke(object,
+						new Object[] { searchResult });
+				this.label_SearchResult.setValue(
+						Labels.getLabel("label_SecuritySearchResults.value") + " " + String.valueOf(dataMap.size()));
 			}
 		} else {
 			this.window_SecuritySearchDialog.onClose();
@@ -296,5 +297,3 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 		return searchResultlist;
 	}
 }
-
-	

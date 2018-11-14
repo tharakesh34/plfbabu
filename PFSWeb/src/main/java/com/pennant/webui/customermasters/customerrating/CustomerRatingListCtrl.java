@@ -61,9 +61,9 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.service.customermasters.CustomerRatingService;
 import com.pennant.webui.customermasters.customerrating.model.CustomerRatingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingList.zul file.
@@ -86,7 +86,7 @@ public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 	protected Textbox custRatingType;
 	protected Textbox custRatingCode;
 	protected Textbox custRating;
-	
+
 	protected Listbox sortOperator_custRating;
 	protected Listbox sortOperator_custCIF;
 	protected Listbox sortOperator_custRatingType;
@@ -125,7 +125,8 @@ public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 		setItemRender(new CustomerRatingListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_CustomerRatingList_NewCustomerRating, "button_CustomerRatingList_NewCustomerRating", true);
+		registerButton(button_CustomerRatingList_NewCustomerRating, "button_CustomerRatingList_NewCustomerRating",
+				true);
 		registerButton(button_CustomerRatingList_CustomerRatingSearchDialog);
 
 		registerField("custID");

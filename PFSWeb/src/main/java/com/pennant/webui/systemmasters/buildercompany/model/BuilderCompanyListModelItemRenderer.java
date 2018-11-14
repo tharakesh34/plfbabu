@@ -52,7 +52,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -65,23 +64,22 @@ public class BuilderCompanyListModelItemRenderer implements ListitemRenderer<Bui
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, BuilderCompany builderCompany, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(builderCompany.getName());
+		lc = new Listcell(builderCompany.getName());
 		lc.setParent(item);
-	  	lc = new Listcell(builderCompany.getSegmentation());
+		lc = new Listcell(builderCompany.getSegmentation());
 		lc.setParent(item);
-	    lc = new Listcell(String.valueOf(builderCompany.getGroupId() + "-" + builderCompany.getGroupIdName()));
+		lc = new Listcell(String.valueOf(builderCompany.getGroupId() + "-" + builderCompany.getGroupIdName()));
 		lc.setParent(item);
-	  	lc = new Listcell(builderCompany.getRecordStatus());
+		lc = new Listcell(builderCompany.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(builderCompany.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", builderCompany.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBuilderCompanyItemDoubleClicked");
 	}
 }

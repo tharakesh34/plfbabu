@@ -45,7 +45,6 @@ package com.pennant.backend.dao.solutionfactory;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 
 public interface DeviationParamDAO {
-	
 
 	DeviationParam getDeviationParamById(String id, String type);
 

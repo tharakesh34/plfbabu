@@ -21,15 +21,15 @@ public class LimitGroupItems extends AbstractWorkflowEntity {
 	private String itemCode;
 	private String itemName;
 	private String itemCodes;
-	private int    itemSeq;
-	
+	private int itemSeq;
+
 	private long createdBy;
 	private Timestamp createdOn;
 	private boolean newRecord = false;
 	private String lovValue;
 	private LimitGroup befImage;
 	private LoggedInUser userDetails;
-	
+
 	private int key;
 
 	public boolean isNew() {
@@ -98,8 +98,7 @@ public class LimitGroupItems extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public XMLGregorianCalendar getCreatedDate()
-			throws DatatypeConfigurationException {
+	public XMLGregorianCalendar getCreatedDate() throws DatatypeConfigurationException {
 
 		if (createdOn == null) {
 			return null;

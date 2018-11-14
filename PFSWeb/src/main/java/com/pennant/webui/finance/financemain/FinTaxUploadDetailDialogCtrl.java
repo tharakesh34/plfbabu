@@ -112,8 +112,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			this.finTaxUploadDetailListCtrl = (FinTaxUploadDetailListCtrl) arguments.get("finTaxUploadDetailListCtrl");
 
 			/*
-			 * if (this.finTaxUploadHeader == null) { throw new
-			 * Exception(Labels.getLabel("error.unhandled")); }
+			 * if (this.finTaxUploadHeader == null) { throw new Exception(Labels.getLabel("error.unhandled")); }
 			 */
 
 			// Store the before image.

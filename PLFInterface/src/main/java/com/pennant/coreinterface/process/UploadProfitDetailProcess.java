@@ -7,7 +7,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface UploadProfitDetailProcess {
 
-	void doUploadPftDetails(List<EodFinProfitDetail> profitDetails,	boolean isItFirstCall) 
-			throws InterfaceException;
+	void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws InterfaceException;
 
 }

@@ -1,6 +1,5 @@
 package com.pennant.webui.collateral.collateralstructure;
 
-
 import java.math.BigDecimal;
 
 import javax.script.Bindings;
@@ -30,28 +29,26 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/finance/parameters/projectSummaryDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/finance/parameters/projectSummaryDialog.zul file.
  */
 public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	private static final long serialVersionUID = -546886879998950467L;
 	private static final Logger logger = Logger.getLogger(ScriptValidationResultCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ScriptValidationResult; 		// autowired
+	protected Window window_ScriptValidationResult; // autowired
 
-	protected Codemirror 	condition;							// autowired
-	protected Grid 			fields; 							// autowired
-	protected Rows 			rows_Fields; 						// autowired
-	protected Button 		btn_Stimulate;						// autowired
-	protected Row 			rowResult;							// autowired
-	protected Label 		result;								// autowired
-	protected Textbox 		textbox;
-	
+	protected Codemirror condition; // autowired
+	protected Grid fields; // autowired
+	protected Rows rows_Fields; // autowired
+	protected Button btn_Stimulate; // autowired
+	protected Row rowResult; // autowired
+	protected Label result; // autowired
+	protected Textbox textbox;
+
 	private JSONArray variables = new JSONArray();
 	private String scriptRule;
 
@@ -63,7 +60,7 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	// Component Events
 
 	/**
@@ -108,13 +105,14 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 
 	/**
 	 * Method for Simulate the Existed rule
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 * @throws ScriptException
 	 */
-	public void onClick$btn_Stimulate(Event event) throws InterruptedException,ScriptException {
+	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
-		
+
 		// create a script engine manager
 		ScriptEngineManager factory = new ScriptEngineManager();
 		// create a JavaScript engine
@@ -125,42 +123,44 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
 				if (!"errors".equals(variable.get("name"))) {
-					textbox = (Textbox) rows_Fields.getFellowIfAny(variable
-							.get("name").toString().trim());
+					textbox = (Textbox) rows_Fields.getFellowIfAny(variable.get("name").toString().trim());
 					// bindings to the engine
-					bindings.put(textbox.getId().trim(), textbox.getValue()== null ? BigDecimal.ZERO : textbox.getValue());
+					bindings.put(textbox.getId().trim(),
+							textbox.getValue() == null ? BigDecimal.ZERO : textbox.getValue());
 				}
 			}
 			// Execute the engine
-			String rule="function Validation(){"+scriptRule+"}Validation();";
-			
+			String rule = "function Validation(){" + scriptRule + "}Validation();";
+
 			ScriptErrors errors = new ScriptErrors();
 			bindings.put("errors", errors);
-			engine.eval(rule, bindings);			
-			
+			engine.eval(rule, bindings);
+
 			// Print the results
 
-			String errorMessage = ""; 
-			if(errors.getAll().isEmpty()){
+			String errorMessage = "";
+			if (errors.getAll().isEmpty()) {
 				errorMessage = Labels.getLabel("message_NoError");
-			}else{
+			} else {
 				for (ScriptError error : errors.getAll()) {
-					if(StringUtils.isNotEmpty(error.getCode())){
-						errorMessage =  errorMessage.concat(error.getCode() + " (" + error.getProperty() + ") : "+ error.getValue()) +" \n\n ";
-					}else{
-						errorMessage =  errorMessage.concat(" (" + error.getProperty() + ") : "+ error.getValue()) +" \n\n ";
+					if (StringUtils.isNotEmpty(error.getCode())) {
+						errorMessage = errorMessage.concat(
+								error.getCode() + " (" + error.getProperty() + ") : " + error.getValue()) + " \n\n ";
+					} else {
+						errorMessage = errorMessage.concat(" (" + error.getProperty() + ") : " + error.getValue())
+								+ " \n\n ";
 					}
 				}
 			}
-				
+
 			// make result row visible and set value
-			this.rowResult.setVisible(true);		
+			this.rowResult.setVisible(true);
 			this.result.setValue(errorMessage);
-			
+
 			bindings = null;
 			engine = null;
 			factory = null;
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

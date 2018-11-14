@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,59 +68,61 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implements EmployerDetailDAO {
-   private static Logger logger = Logger.getLogger(EmployerDetailDAOImpl.class);
-	
+	private static Logger logger = Logger.getLogger(EmployerDetailDAOImpl.class);
+
 	public EmployerDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Employer Detail details by key field
+	 * Fetch the Record Employer Detail details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return EmployerDetail
 	 */
 	@Override
 	public EmployerDetail getEmployerDetailById(final long id, String type) {
 		logger.debug("Entering");
 		EmployerDetail employerDetail = new EmployerDetail();
-		
+
 		employerDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescIndustryDesc,lovDescCountryDesc,lovDescProvinceName,lovDescCityName");
 		}
 		selectSql.append(" From EmployerDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where EmployerId =:EmployerId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		RowMapper<EmployerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmployerDetail.class);
-		
-		try{
-			employerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			employerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			employerDetail = null;
 		}
 		logger.debug("Leaving");
 		return employerDetail;
 	}
-	
-	
+
 	/**
-	 * This method Deletes the Record from the EmployerDetail or EmployerDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Employer Detail by key EmployerId
+	 * This method Deletes the Record from the EmployerDetail or EmployerDetail_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Employer Detail by key EmployerId
 	 * 
-	 * @param Employer Detail (employerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Employer
+	 *            Detail (employerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -129,7 +130,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	public void delete(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From EmployerDetail");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where EmployerId =:EmployerId");
@@ -137,7 +138,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 		logger.trace(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -150,56 +151,61 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * This method insert new Records into EmployerDetail or EmployerDetail_Temp.
-	 * it fetches the available Sequence form SeqEmployerDetail by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into EmployerDetail or EmployerDetail_Temp. it fetches the available Sequence form
+	 * SeqEmployerDetail by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Employer Detail 
+	 * save Employer Detail
 	 * 
-	 * @param Employer Detail (employerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Employer
+	 *            Detail (employerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
 	public String save(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		if (employerDetail.getId()==Long.MIN_VALUE){
+		if (employerDetail.getId() == Long.MIN_VALUE) {
 			employerDetail.setId(getNextId("SeqEmployerDetail"));
-			logger.debug("get NextID:"+employerDetail.getId());
+			logger.debug("get NextID:" + employerDetail.getId());
 		}
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into EmployerDetail");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into EmployerDetail");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:EmployerId, :EmpIndustry, :EmpName, :EstablishDate, :EmpAddrHNbr, :EmpFlatNbr, :EmpAddrStreet, :EmpAddrLine1, :EmpAddrLine2, :EmpPOBox, :EmpCountry, :EmpProvince, :EmpCity, :EmpPhone, :EmpFax, :EmpTelexNo, :EmpEmailId, :EmpWebSite, :ContactPersonName, :ContactPersonNo, :EmpAlocationType, :BankRefNo, :EmpIsActive");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				" (EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:EmployerId, :EmpIndustry, :EmpName, :EstablishDate, :EmpAddrHNbr, :EmpFlatNbr, :EmpAddrStreet, :EmpAddrLine1, :EmpAddrLine2, :EmpPOBox, :EmpCountry, :EmpProvince, :EmpCity, :EmpPhone, :EmpFax, :EmpTelexNo, :EmpEmailId, :EmpWebSite, :ContactPersonName, :ContactPersonNo, :EmpAlocationType, :BankRefNo, :EmpIsActive");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.trace(Literal.SQL + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(employerDetail.getId());
 	}
-	
+
 	/**
-	 * This method updates the Record EmployerDetail or EmployerDetail_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Employer Detail by key EmployerId and Version
+	 * This method updates the Record EmployerDetail or EmployerDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Employer Detail by key EmployerId and Version
 	 * 
-	 * @param Employer Detail (employerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Employer
+	 *            Detail (employerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -210,10 +216,10 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update EmployerDetail");
 		updateSql.append(tableType.getSuffix());
-		updateSql
-				.append(" Set EmpIndustry = :EmpIndustry, EmpName = :EmpName, EstablishDate = :EstablishDate, EmpAddrHNbr = :EmpAddrHNbr, EmpFlatNbr = :EmpFlatNbr, EmpAddrStreet = :EmpAddrStreet, EmpAddrLine1 = :EmpAddrLine1, EmpAddrLine2 = :EmpAddrLine2, EmpPOBox = :EmpPOBox, EmpCountry = :EmpCountry, EmpProvince = :EmpProvince, EmpCity = :EmpCity, EmpPhone = :EmpPhone, EmpFax = :EmpFax, EmpTelexNo = :EmpTelexNo, EmpEmailId = :EmpEmailId, EmpWebSite = :EmpWebSite, ContactPersonName = :ContactPersonName, ContactPersonNo = :ContactPersonNo, EmpAlocationType = :EmpAlocationType, BankRefNo = :BankRefNo, EmpIsActive = :EmpIsActive");
-		updateSql
-				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" Set EmpIndustry = :EmpIndustry, EmpName = :EmpName, EstablishDate = :EstablishDate, EmpAddrHNbr = :EmpAddrHNbr, EmpFlatNbr = :EmpFlatNbr, EmpAddrStreet = :EmpAddrStreet, EmpAddrLine1 = :EmpAddrLine1, EmpAddrLine2 = :EmpAddrLine2, EmpPOBox = :EmpPOBox, EmpCountry = :EmpCountry, EmpProvince = :EmpProvince, EmpCity = :EmpCity, EmpPhone = :EmpPhone, EmpFax = :EmpFax, EmpTelexNo = :EmpTelexNo, EmpEmailId = :EmpEmailId, EmpWebSite = :EmpWebSite, ContactPersonName = :ContactPersonName, ContactPersonNo = :ContactPersonNo, EmpAlocationType = :EmpAlocationType, BankRefNo = :BankRefNo, EmpIsActive = :EmpIsActive");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where EmployerId =:EmployerId");
 		//updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -235,5 +241,4 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 		return false;
 	}
 
-	
 }

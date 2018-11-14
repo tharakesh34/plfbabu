@@ -8,43 +8,43 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "houseNo", "societyName", "landmark", "careOf", "category", "city", "country", "district", "pin", "state" })
+@XmlType(propOrder = { "houseNo", "societyName", "landmark", "careOf", "category", "city", "country", "district", "pin",
+		"state" })
 @XmlRootElement(name = "address")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CibilConsumerAddress implements Serializable{
+public class CibilConsumerAddress implements Serializable {
 
 	private static final long serialVersionUID = -7988120811703719720L;
 
 	@XmlElement(name = "ADDRESS1_HOUSE_NO")
-	private String	houseNo;
+	private String houseNo;
 
 	@XmlElement(name = "ADDRESS1_SOCIETY_NAME")
-	private String	societyName;
+	private String societyName;
 
 	@XmlElement(name = "ADDRESS1_LANDMARK")
-	private String	landmark;
+	private String landmark;
 
 	@XmlElement(name = "ADDRESS1_CARE_OF")
-	private String	careOf;
+	private String careOf;
 
 	@XmlElement(name = "ADDRESS1_CATEGORY")
-	private String	category;
+	private String category;
 
 	@XmlElement(name = "ADDRESS1_CITY")
-	private String	city;
+	private String city;
 
 	@XmlElement(name = "ADDRESS1_COUNTRY")
-	private String	country;
+	private String country;
 
 	@XmlElement(name = "ADDRESS1_DISTRICT")
-	private String	district;
+	private String district;
 
 	@XmlElement(name = "ADDRESS1_PIN")
-	private String	pin;
-	
-	@XmlElement(name = "ADDRESS1_STATE")
-	private String	state;
+	private String pin;
 
+	@XmlElement(name = "ADDRESS1_STATE")
+	private String state;
 
 	public String getHouseNo() {
 		return houseNo;

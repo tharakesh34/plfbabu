@@ -34,20 +34,20 @@ import org.json.JSONObject;
 
 public class ConvertCsvToJson {
 
-	private Workbook			workbook				= null;
-	private FormulaEvaluator	objFormulaEvaluator		= null;						// for cell value formating
-	public static final String	SEPARETOR				= "_";
-	private DataFormatter		objDefaultFormat		= new DataFormatter();		// for cell value formating
-	public static final String	TRUE					= "true";
-	public static final String	FALSE					= "false";
-	public static final String	_ID						= "_id";
-	public static final String	NA						= "NA";
-	public static final String	A						= "A";
-	public static final String	ROOTKEY					= "<ROOT>_id";
-	public static final String	SAMPLE_DATE_FRMT		= "yyyy-MM-dd'T'hh:mm:ss";
-	public static final String	SAMPLE_DATE_FRMT_OLD	= "dd-MMM-yyyy";
-	public static final String	VAS						= "vas";
-	public static final String	EXT_DETAILS				= "extendedDetails";
+	private Workbook workbook = null;
+	private FormulaEvaluator objFormulaEvaluator = null; // for cell value formating
+	public static final String SEPARETOR = "_";
+	private DataFormatter objDefaultFormat = new DataFormatter(); // for cell value formating
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
+	public static final String _ID = "_id";
+	public static final String NA = "NA";
+	public static final String A = "A";
+	public static final String ROOTKEY = "<ROOT>_id";
+	public static final String SAMPLE_DATE_FRMT = "yyyy-MM-dd'T'hh:mm:ss";
+	public static final String SAMPLE_DATE_FRMT_OLD = "dd-MMM-yyyy";
+	public static final String VAS = "vas";
+	public static final String EXT_DETAILS = "extendedDetails";
 
 	public static void main(String args[]) {
 		Pattern pattern = Pattern.compile(",");
@@ -56,7 +56,7 @@ public class ConvertCsvToJson {
 			BufferedReader in = new BufferedReader(new FileReader(file));
 			ConvertCsvToJson convert = new ConvertCsvToJson();
 			convert.doProcess(file, file.getName());
-			
+
 			/*
 			 * List<PostingsDownload> players = in.lines().skip(1).map(line -> { String[] x = pattern.split(line); try {
 			 * return new PostingsDownload(Long.parseLong(x[0]), x[1], x[2], x[3], x[4], x[5], new BigDecimal(x[6]),
@@ -75,54 +75,54 @@ public class ConvertCsvToJson {
 	 * 
 	 */
 	public JSONArray doProcess(File file, String sourceFileName) throws Exception {
-		
+
 		JSONArray jsonArray = new JSONArray();
 
 		try {
-		inIt(file);
+			inIt(file);
 
-		List<String> keys = getAllKeysByIndex(workbook, 0);
-		Sheet sheet = workbook.getSheetAt(0);
-		
-		Iterator<Row> rows = sheet.iterator();
-		while (rows.hasNext()) {
-			JSONObject finalRequestJson = new JSONObject();
-			JSONObject jsonForextendedField = new JSONObject();
-			Row row = rows.next();
-			int rowIndex = row.getRowNum();
-			int cellIndex = 0;
-			Iterator<Cell> cellIterator = row.cellIterator();
-			// to check how many cells are blank in a row.
-			List<Integer> emptyCellList = new ArrayList<Integer>();
-			cellRenderer: while (cellIterator.hasNext()) {
-				Cell cell = cellIterator.next();
-				int columnIndex = cell.getColumnIndex() + 1;
-				// skipping header and other column value which is not inside header
-				if (rowIndex > 0 && columnIndex <= keys.size()) {
-					// parent value shouldn't be blank in hierarchy.
-					if (cell.toString().equals("") && keys.get(cellIndex).contains(SEPARETOR)) {
-						finalRequestJson = new JSONObject(); // resting
-						emptyCellList.add(1);
-					} else { // parent key cell is not blank
-						emptyCellList.add(0);
-						objFormulaEvaluator.evaluate(cell);
-						String cellValueStr = objDefaultFormat.formatCellValue(cell, objFormulaEvaluator);
-						boolean isMappingFound = doCompare(keys.get(cellIndex),
-								getValueByColumnType(cell, cellValueStr), finalRequestJson, jsonForextendedField);
-						if (!isMappingFound) { // no mapping found for cell value
-							break cellRenderer;
+			List<String> keys = getAllKeysByIndex(workbook, 0);
+			Sheet sheet = workbook.getSheetAt(0);
+
+			Iterator<Row> rows = sheet.iterator();
+			while (rows.hasNext()) {
+				JSONObject finalRequestJson = new JSONObject();
+				JSONObject jsonForextendedField = new JSONObject();
+				Row row = rows.next();
+				int rowIndex = row.getRowNum();
+				int cellIndex = 0;
+				Iterator<Cell> cellIterator = row.cellIterator();
+				// to check how many cells are blank in a row.
+				List<Integer> emptyCellList = new ArrayList<Integer>();
+				cellRenderer: while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					int columnIndex = cell.getColumnIndex() + 1;
+					// skipping header and other column value which is not inside header
+					if (rowIndex > 0 && columnIndex <= keys.size()) {
+						// parent value shouldn't be blank in hierarchy.
+						if (cell.toString().equals("") && keys.get(cellIndex).contains(SEPARETOR)) {
+							finalRequestJson = new JSONObject(); // resting
+							emptyCellList.add(1);
+						} else { // parent key cell is not blank
+							emptyCellList.add(0);
+							objFormulaEvaluator.evaluate(cell);
+							String cellValueStr = objDefaultFormat.formatCellValue(cell, objFormulaEvaluator);
+							boolean isMappingFound = doCompare(keys.get(cellIndex),
+									getValueByColumnType(cell, cellValueStr), finalRequestJson, jsonForextendedField);
+							if (!isMappingFound) { // no mapping found for cell value
+								break cellRenderer;
+							}
+							cellIndex++;
 						}
-						cellIndex++;
 					}
 				}
+				// checking finalRequestJson having value or not
+				if (isJsonObjectValueEmpty(finalRequestJson)) {
+					finalRequestJson = new JSONObject(); // resting
+				}
+				jsonArray.put(finalRequestJson);
+				System.out.println("my final result = " + finalRequestJson);
 			}
-			// checking finalRequestJson having value or not
-			if (isJsonObjectValueEmpty(finalRequestJson)) {
-				finalRequestJson = new JSONObject(); // resting
-			}
-			jsonArray.put(finalRequestJson);
-			System.out.println("my final result = " + finalRequestJson);
-		}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

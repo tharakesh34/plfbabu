@@ -19,9 +19,9 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 @XmlAccessorType(XmlAccessType.NONE)
 
 public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@XmlElement
 	private String finReference = null;
 	@XmlElement
@@ -29,9 +29,9 @@ public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private BigDecimal actualRate = BigDecimal.ZERO;
 	@XmlElement
-	private	String baseRate;
+	private String baseRate;
 	@XmlElement
-	private String  splRate;
+	private String splRate;
 	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
 	@XmlElement
@@ -42,63 +42,79 @@ public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal oDLimit = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal limitIncreaseAmt = BigDecimal.ZERO;
-	
-	public OverdraftScheduleDetail(){
+
+	public OverdraftScheduleDetail() {
 		super();
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
+
 	public Date getDroplineDate() {
 		return droplineDate;
 	}
+
 	public void setDroplineDate(Date droplineDate) {
 		this.droplineDate = droplineDate;
 	}
+
 	public BigDecimal getActualRate() {
 		return actualRate;
 	}
+
 	public void setActualRate(BigDecimal actualRate) {
 		this.actualRate = actualRate;
 	}
+
 	public String getBaseRate() {
 		return baseRate;
 	}
+
 	public void setBaseRate(String baseRate) {
 		this.baseRate = baseRate;
 	}
+
 	public String getSplRate() {
 		return splRate;
 	}
+
 	public void setSplRate(String splRate) {
 		this.splRate = splRate;
 	}
+
 	public BigDecimal getMargin() {
 		return margin;
 	}
+
 	public void setMargin(BigDecimal margin) {
 		this.margin = margin;
 	}
+
 	public BigDecimal getLimitDrop() {
 		return limitDrop;
 	}
+
 	public void setLimitDrop(BigDecimal limitDrop) {
 		this.limitDrop = limitDrop;
 	}
-	
+
 	public BigDecimal getDroplineRate() {
 		return droplineRate;
 	}
+
 	public void setDroplineRate(BigDecimal droplineRate) {
 		this.droplineRate = droplineRate;
 	}
+
 	public BigDecimal getODLimit() {
 		return oDLimit;
 	}
+
 	public void setODLimit(BigDecimal oDLimit) {
 		this.oDLimit = oDLimit;
 	}

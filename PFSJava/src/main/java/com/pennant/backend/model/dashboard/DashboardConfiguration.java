@@ -54,35 +54,35 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class DashboardConfiguration extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 7784852736807398980L;
-	
+
 	private String dashboardCode;
 	private String dashboardDesc;
 	private String dashboardType;
 
-	private String   query;
-	private String   dataXML;
-	private boolean  drillDownChart;
-	private boolean  lovDescIsDataAsXml;
+	private String query;
+	private String dataXML;
+	private boolean drillDownChart;
+	private boolean lovDescIsDataAsXml;
 	private String remarks;
 	private String dimension;
 	private String caption;
 	private String subCaption;
-	private  boolean        adtDataSource;
-	private  boolean        multiSeries;
-	private ChartsConfig    lovDescChartsConfig;
+	private boolean adtDataSource;
+	private boolean multiSeries;
+	private ChartsConfig lovDescChartsConfig;
 	private String seriesType;
 	private String seriesValues;
 	private String fieldQuery;
 	private String colorRangeXML;
-	
+
 	private boolean newRecord;
 	private String lovValue;
 	private DashboardConfiguration befImage;
 	private LoggedInUser userDetails;
-	private Object  lovDescDataObject;
-	private long    lovDescUsrId;
-	private String  lovDescUsrRoles;
-	
+	private Object lovDescDataObject;
+	private long lovDescUsrId;
+	private String lovDescUsrRoles;
+
 	public String getDimension() {
 		return dimension;
 	}
@@ -107,7 +107,6 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 		this.subCaption = subCaption;
 	}
 
-
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -116,46 +115,44 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 		super();
 	}
 
-	
 	//Getter and Setter methods
 
 	public String getId() {
 		return dashboardCode;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.dashboardCode = id;
 	}
 
 	public String getDashboardCode() {
 		return dashboardCode;
 	}
+
 	public void setDashboardCode(String dashboardCode) {
 		this.dashboardCode = dashboardCode;
 	}
 
-
-
 	public String getDashboardDesc() {
 		return dashboardDesc;
 	}
+
 	public void setDashboardDesc(String dashboardDesc) {
 		this.dashboardDesc = dashboardDesc;
 	}
 
-
-
 	public String getDashboardType() {
 		return dashboardType;
 	}
+
 	public void setDashboardType(String dashboardType) {
 		this.dashboardType = dashboardType;
 	}
 
-
 	public String getQuery() {
 		return query;
 	}
+
 	public void setQuery(String query) {
 		this.query = query;
 	}
@@ -176,12 +173,12 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public DashboardConfiguration getBefImage(){
+	public DashboardConfiguration getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(DashboardConfiguration beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(DashboardConfiguration beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -207,7 +204,7 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 	public ChartsConfig getLovDescChartsConfig() {
 		return lovDescChartsConfig;
 	}
-	
+
 	public void setAdtDataSource(boolean adtDataSource) {
 		this.adtDataSource = adtDataSource;
 	}
@@ -247,6 +244,7 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 	public boolean isMultiSeries() {
 		return multiSeries;
 	}
+
 	public String getDataXML() {
 		return dataXML;
 	}
@@ -270,8 +268,7 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 	public boolean isDrillDownChart() {
 		return drillDownChart;
 	}
-	
-	
+
 	public String getSeriesType() {
 		return seriesType;
 	}
@@ -304,12 +301,12 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 		this.colorRangeXML = colorRangeXML;
 	}
 
-	public String getRenderAs(){
-		if("Column+Line".equals(getDashboardType()) || "Staked Column+Line".equals(getDashboardType())){
+	public String getRenderAs() {
+		if ("Column+Line".equals(getDashboardType()) || "Staked Column+Line".equals(getDashboardType())) {
 			return "Line";
-		}else if("area".equals(getDashboardType())){
+		} else if ("area".equals(getDashboardType())) {
 			return "Area";
 		}
 		return null;
-	} 
+	}
 }

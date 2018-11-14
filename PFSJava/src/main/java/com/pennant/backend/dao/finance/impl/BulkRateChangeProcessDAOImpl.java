@@ -21,16 +21,16 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHeader> implements BulkRateChangeProcessDAO {
+public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHeader>
+		implements BulkRateChangeProcessDAO {
 	private static Logger logger = Logger.getLogger(BulkRateChangeProcessDAOImpl.class);
 
 	public BulkRateChangeProcessDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new BulkRateChangeHeader
+	 * This method set the Work Flow id based on the module name and return the new BulkRateChangeHeader
 	 * 
 	 * @return BulkRateChangeHeader
 	 */
@@ -47,8 +47,8 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 	}
 
 	/**
-	 * This method get the module from method getBulkRateChangeHeader() and set the new
-	 * record flag as true and return BulkRateChangeHeader()
+	 * This method get the module from method getBulkRateChangeHeader() and set the new record flag as true and return
+	 * BulkRateChangeHeader()
 	 * 
 	 * @return BulkRateChangeHeader
 	 */
@@ -66,9 +66,10 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 	 *
 	 * save BulkRateChangeHeader
 	 * 
-	 * @param BulkRateChangeHeader (bulkRateChangeHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param BulkRateChangeHeader
+	 *            (bulkRateChangeHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -87,14 +88,16 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 
 		insertSql.append("Insert Into BulkRateChangeHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BulkRateChangeRef, FinType, FromDate, ToDate, RateChange, ReCalType, RuleType," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (BulkRateChangeRef, FinType, FromDate, ToDate, RateChange, ReCalType, RuleType,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId, Status) ");
-		insertSql.append(" Values (:BulkRateChangeRef, :FinType, :FromDate, :ToDate, :RateChange, :ReCalType, :RuleType," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" Values (:BulkRateChangeRef, :FinType, :FromDate, :ToDate, :RateChange, :ReCalType, :RuleType,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId, :Status)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -102,16 +105,14 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 		return bulkRateChangeHeader.getBulkRateChangeRef();
 	}
 
-
-
 	/**
-	 * This method updates the Record BulkRateChangeHeader or BulkRateChangeHeader_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update BulkRateChangeHeader by key Code and Version
+	 * This method updates the Record BulkRateChangeHeader or BulkRateChangeHeader_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update BulkRateChangeHeader by key Code and Version
 	 * 
-	 * @param BulkRateChangeHeader (bulkRateChangeHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param BulkRateChangeHeader
+	 *            (bulkRateChangeHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -125,18 +126,20 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 
 		updateSql.append("Update BulkRateChangeHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinType = :FinType, FromDate = :FromDate, ToDate = :ToDate," );
-		updateSql.append(" RateChange = :RateChange, ReCalType = :ReCalType, RuleType = :RuleType," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Status = :Status" );
+		updateSql.append(" Set FinType = :FinType, FromDate = :FromDate, ToDate = :ToDate,");
+		updateSql.append(" RateChange = :RateChange, ReCalType = :ReCalType, RuleType = :RuleType,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Status = :Status");
 		updateSql.append("  Where BulkRateChangeRef = :BulkRateChangeRef ");
 
-		/*if (!type.endsWith("_TEMP")) {	//TODO
-			updateSql.append(" AND Version = :Version-1");
-		}*/
+		/*
+		 * if (!type.endsWith("_TEMP")) { //TODO updateSql.append(" AND Version = :Version-1"); }
+		 */
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -148,9 +151,9 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 	}
 
 	/**
-	 * This method Deletes the Record from the BulkRateChangeHeader or
-	 * BulkRateChangeHeader_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete BulkRateChangeHeader Details by key BulkRateChangeHeaderLevel
+	 * This method Deletes the Record from the BulkRateChangeHeader or BulkRateChangeHeader_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete BulkRateChangeHeader Details by key
+	 * BulkRateChangeHeaderLevel
 	 * 
 	 * @param BulkRateChangeHeader
 	 *            Details (bulkRateChangeHeader)
@@ -171,11 +174,11 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where  BulkRateChangeRef = :BulkRateChangeRef ");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -203,21 +206,24 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 		bulkRateChangeHeader.setBulkRateChangeRef(bulkRateChangeRef);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select BulkRateChangeRef, FinType, FromDate, ToDate, RateChange, ReCalType, RuleType," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Status" );
-		if(type.contains("View")){
+		selectSql.append(" Select BulkRateChangeRef, FinType, FromDate, ToDate, RateChange, ReCalType, RuleType,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Status");
+		if (type.contains("View")) {
 			selectSql.append(", lovDescSqlQuery, lovDescQueryDesc, lovDescFinTypeDesc");
 		}
 		selectSql.append(" FROM  BulkRateChangeHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef ") ;
+		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
-		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeHeader.class);
+		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BulkRateChangeHeader.class);
 
 		try {
-			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			bulkRateChangeHeader = null;
@@ -237,21 +243,24 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 		bulkRateChangeHeader.setToDate(toDate);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select BulkRateChangeRef, FinType, FromDate, ToDate, RateChange, ReCalType, RuleType," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Status" );
-		if(type.contains("View")){
+		selectSql.append(" Select BulkRateChangeRef, FinType, FromDate, ToDate, RateChange, ReCalType, RuleType,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Status");
+		if (type.contains("View")) {
 			selectSql.append(", lovDescSqlQuery, lovDescQueryDesc, lovDescFinTypeDesc");
 		}
 		selectSql.append(" FROM  BulkRateChangeHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FromDate = :FromDate AND ToDate = :ToDate ") ;
+		selectSql.append(" Where FromDate = :FromDate AND ToDate = :ToDate ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
-		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BulkRateChangeHeader.class);
+		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BulkRateChangeHeader.class);
 
 		try {
-			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
 			bulkRateChangeHeader = null;

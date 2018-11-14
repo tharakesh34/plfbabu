@@ -48,9 +48,14 @@ import com.pennant.backend.model.systemmasters.BuilderProjcet;
 public interface BuilderProjcetService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BuilderProjcet getBuilderProjcet(long id);
+
 	BuilderProjcet getApprovedBuilderProjcet(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -131,20 +131,16 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-import bsh.This;
-
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
+ * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
  */
 public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -6646226859133636932L;
 	private static final Logger logger = Logger.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinEnqHeaderDialog; // autoWired
 	protected Borderlayout borderlayoutFinEnqHeader; // autoWired
@@ -229,9 +225,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Academic object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Academic object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception

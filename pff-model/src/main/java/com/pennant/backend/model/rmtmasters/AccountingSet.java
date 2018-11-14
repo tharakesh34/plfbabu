@@ -64,24 +64,24 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 3832850641524383002L;
-	
+
 	private long accountSetid = Long.MIN_VALUE;
 	private String eventCode;
 	private String lovDescEventCodeName;
 	private String accountSetCode;
 	private String accountSetCodeName;
 	private boolean entryByInvestment;
-	
+
 	private boolean newRecord;
 	private String lovValue;
 	private AccountingSet befImage;
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private boolean SystemDefault;
 
-	private List<TransactionEntry> lovDescTransactionEntries=new ArrayList<TransactionEntry>();
-	
+	private List<TransactionEntry> lovDescTransactionEntries = new ArrayList<TransactionEntry>();
+
 	@XmlTransient
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -101,24 +101,27 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return accountSetid;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.accountSetid = id;
 	}
-	
+
 	public long getAccountSetid() {
 		return accountSetid;
 	}
+
 	public void setAccountSetid(long accountSetid) {
 		this.accountSetid = accountSetid;
 	}
-	
+
 	public String getEventCode() {
 		return eventCode;
 	}
+
 	public void setEventCode(String eventCode) {
 		this.eventCode = eventCode;
 	}
@@ -126,56 +129,63 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescEventCodeName() {
 		return this.lovDescEventCodeName;
 	}
-	public void setLovDescEventCodeName (String lovDescEventCodeName) {
+
+	public void setLovDescEventCodeName(String lovDescEventCodeName) {
 		this.lovDescEventCodeName = lovDescEventCodeName;
 	}
-	
+
 	public String getAccountSetCode() {
 		return accountSetCode;
 	}
+
 	public void setAccountSetCode(String accountSetCode) {
 		this.accountSetCode = accountSetCode;
 	}
-	
+
 	public String getAccountSetCodeName() {
 		return accountSetCodeName;
 	}
+
 	public void setAccountSetCodeName(String accountSetCodeName) {
 		this.accountSetCodeName = accountSetCodeName;
 	}
 
 	public void setEntryByInvestment(boolean entryByInvestment) {
-	    this.entryByInvestment = entryByInvestment;
-    }
+		this.entryByInvestment = entryByInvestment;
+	}
 
 	public boolean isEntryByInvestment() {
-	    return entryByInvestment;
-    }
+		return entryByInvestment;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public AccountingSet getBefImage(){
+	public AccountingSet getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(AccountingSet beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AccountingSet beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -184,6 +194,7 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 		//this.lovDescTransactionEntries.clear();
 		this.lovDescTransactionEntries = transactionEntries;
 	}
+
 	public List<TransactionEntry> getTransactionEntries() {
 		return lovDescTransactionEntries;
 	}
@@ -191,6 +202,7 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
@@ -198,12 +210,13 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 	public boolean isSystemDefault() {
 		return SystemDefault;
 	}
+
 	public void setSystemDefault(boolean systemDefault) {
 		SystemDefault = systemDefault;
 	}
-	
-	public String getStringaERuleId(){
+
+	public String getStringaERuleId() {
 		return String.valueOf(this.accountSetid);
 	}
-	
+
 }

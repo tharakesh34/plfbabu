@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.DirectorDetail;
@@ -51,13 +52,20 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
  */
 public interface DirectorDetailDAO {
 
-	 DirectorDetail getDirectorDetail();
-	 DirectorDetail getNewDirectorDetail();
-	 DirectorDetail getDirectorDetailById(final long id,final long custID,String type);
-	 void update(DirectorDetail directorDetail,String type);
-	 void delete(DirectorDetail directorDetail,String type);
-	 long save(DirectorDetail directorDetail,String type);
-	 List<DirectorDetail> getCustomerDirectorByCustomer(long id, String type);
-	 void delete(long custID, String tableType);
-	
+	DirectorDetail getDirectorDetail();
+
+	DirectorDetail getNewDirectorDetail();
+
+	DirectorDetail getDirectorDetailById(final long id, final long custID, String type);
+
+	void update(DirectorDetail directorDetail, String type);
+
+	void delete(DirectorDetail directorDetail, String type);
+
+	long save(DirectorDetail directorDetail, String type);
+
+	List<DirectorDetail> getCustomerDirectorByCustomer(long id, String type);
+
+	void delete(long custID, String tableType);
+
 }

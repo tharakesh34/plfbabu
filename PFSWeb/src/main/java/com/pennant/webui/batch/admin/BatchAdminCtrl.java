@@ -62,67 +62,67 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
  */
 public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
-	private static final long		serialVersionUID	= 4309463490869641570L;
-	private static final Logger		logger				= Logger.getLogger(BatchAdminCtrl.class);
+	private static final long serialVersionUID = 4309463490869641570L;
+	private static final Logger logger = Logger.getLogger(BatchAdminCtrl.class);
 
-	protected Window				window_BatchAdmin;
-	protected Textbox				lable_LastBusiness_Date;
-	protected Textbox				lable_NextBusiness_Date;
-	protected Textbox				lable_Value_Date;
-	protected Checkbox				lock;
-	protected Timer					timer;
-	protected Textbox				estimatedTime;
-	protected Textbox				completedTime;
-	protected Label					label_elapsed_Time;
-	protected Hbox					batchStatus;
-	protected Button				btnStartJob;
-	protected Button				btnStaleJob;
-	protected Label					lable_current_step;
-	protected Borderlayout			borderLayoutBatchAdmin;
+	protected Window window_BatchAdmin;
+	protected Textbox lable_LastBusiness_Date;
+	protected Textbox lable_NextBusiness_Date;
+	protected Textbox lable_Value_Date;
+	protected Checkbox lock;
+	protected Timer timer;
+	protected Textbox estimatedTime;
+	protected Textbox completedTime;
+	protected Label label_elapsed_Time;
+	protected Hbox batchStatus;
+	protected Button btnStartJob;
+	protected Button btnStaleJob;
+	protected Label lable_current_step;
+	protected Borderlayout borderLayoutBatchAdmin;
 	// protected Hbox panelCustomerMicroEOD;
 
-	protected Label					status				= new Label();
+	protected Label status = new Label();
 
-	String[]						args				= new String[1];
-	private boolean					isInitialise		= false;
-	private boolean					islock				= false;
+	String[] args = new String[1];
+	private boolean isInitialise = false;
+	private boolean islock = false;
 
-	protected ProcessExecution		beforeEOD;
-	protected ProcessExecution		prepareCustomerQueue;
+	protected ProcessExecution beforeEOD;
+	protected ProcessExecution prepareCustomerQueue;
 
-	protected ProcessExecution		masterStep;
-	protected ProcessExecution		microEOD;
-	protected ProcessExecution		microEODMonitor;
+	protected ProcessExecution masterStep;
+	protected ProcessExecution microEOD;
+	protected ProcessExecution microEODMonitor;
 
-	protected ProcessExecution		snapShotPreparation;
-	protected ProcessExecution		accountsUpdate;
-	protected ProcessExecution		dataExtract;
-	protected ProcessExecution		alm;
-	protected ProcessExecution		controlDump;
-	protected ProcessExecution		posidex;
-	protected ProcessExecution		dataMart;
-	protected ProcessExecution		trailBalance;
-	protected ProcessExecution		sapGL;
-	protected ProcessExecution		cibil;
-	protected ProcessExecution		gstTaxDownload;
-	protected ProcessExecution		limitsUpdate;
-	protected ProcessExecution		limitCustomerGroupsUpdate;
-	protected ProcessExecution		prepareCustomerGroupQueue;
-	protected ProcessExecution		profitDetailsUpdate;
-	protected ProcessExecution		dmLoanDetailsMonthly;
-	protected ProcessExecution		dmLoanBalancesMonthly;
-	protected ProcessExecution		dmDisbDetailsMonthly;
-	protected ProcessExecution		processInActiveFinances;
-	protected ProcessExecution		incomeAmortization;
+	protected ProcessExecution snapShotPreparation;
+	protected ProcessExecution accountsUpdate;
+	protected ProcessExecution dataExtract;
+	protected ProcessExecution alm;
+	protected ProcessExecution controlDump;
+	protected ProcessExecution posidex;
+	protected ProcessExecution dataMart;
+	protected ProcessExecution trailBalance;
+	protected ProcessExecution sapGL;
+	protected ProcessExecution cibil;
+	protected ProcessExecution gstTaxDownload;
+	protected ProcessExecution limitsUpdate;
+	protected ProcessExecution limitCustomerGroupsUpdate;
+	protected ProcessExecution prepareCustomerGroupQueue;
+	protected ProcessExecution profitDetailsUpdate;
+	protected ProcessExecution dmLoanDetailsMonthly;
+	protected ProcessExecution dmLoanBalancesMonthly;
+	protected ProcessExecution dmDisbDetailsMonthly;
+	protected ProcessExecution processInActiveFinances;
+	protected ProcessExecution incomeAmortization;
 
-	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
-	private JobExecution			jobExecution;
+	Map<String, ExecutionStatus> processMap = new HashMap<String, ExecutionStatus>();
+	private JobExecution jobExecution;
 
-	private DataSource 				dataSource;
-	
+	private DataSource dataSource;
+
 	// Collection Process
 	private boolean collectionProcess = false;
-	
+
 	public enum PFSBatchProcessess {
 		beforeEOD,
 		prepareCustomerQueue,
@@ -163,7 +163,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
 		// databaseBackupBeforEod.setVisible(false);
 		// panelCustomerMicroEOD.setVisible(true);
-		
+
 		if (!isInitialise) {
 			setDates();
 			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
@@ -237,9 +237,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 	}
-	
+
 	/**
 	 * used for Collections
+	 * 
 	 * @param uri
 	 * @param tabName
 	 * @param args
@@ -295,14 +296,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			logger.error("Exception: ", e);
 		}
 		completedTime.setValue(BatchMonitor.getProcessingTime());
-		
+
 		if ("FAILED".equals(jobStatus) || "STOPPED".equals(jobStatus)) {
 			status.setStyle("color:red;");
 			this.btnStartJob.setLabel("Restart");
 			this.btnStartJob.setTooltiptext("Restart Job");
 			estimatedTime.setValue("");
 		}
-		
+
 		if ("COMPLETED".equals(jobStatus)) {
 			this.btnStartJob.setLabel("Start");
 			this.btnStartJob.setTooltiptext("Start");
@@ -337,19 +338,16 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			BatchMonitor.jobExecutionId = 0;
-			
+
 			//Collection Interfaces Execution
-			/*if (collectionProcess) {
-				try {
-					Map<String, Object> arguments = new HashMap<String, Object>();
-					arguments.put("EOD", "EOD");
-					
-					Clients.showNotification("Collection process initiated.", "info", null, null, -1);
-					createNewPage("/WEB-INF/pages/Collections/CollectionDialog.zul", "menu_Item_CollectionsExtract", arguments);
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
-			}*/
+			/*
+			 * if (collectionProcess) { try { Map<String, Object> arguments = new HashMap<String, Object>();
+			 * arguments.put("EOD", "EOD");
+			 * 
+			 * Clients.showNotification("Collection process initiated.", "info", null, null, -1);
+			 * createNewPage("/WEB-INF/pages/Collections/CollectionDialog.zul", "menu_Item_CollectionsExtract",
+			 * arguments); } catch (Exception e) { MessageUtil.showError(e); } }
+			 */
 		}
 	}
 
@@ -529,19 +527,19 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case beforeEOD:
 				renderDetials(this.beforeEOD, status);
 				break;
-				
+
 			case prepareCustomerQueue:
 				renderDetials(this.prepareCustomerQueue, status);
 				break;
-				
+
 			case masterStep:
 				renderDetials(this.masterStep, status);
 				break;
-				
+
 			case microEOD:
 				renderDetials(this.microEOD, status);
 				break;
-				
+
 			case microEODMonitor:
 				renderDetials(this.microEODMonitor, status);
 				break;
@@ -549,19 +547,19 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case accountsUpdate:
 				renderDetials(this.accountsUpdate, status);
 				break;
-				
+
 			case snapShotPreparation:
 				renderDetials(this.snapShotPreparation, status);
 				break;
-				
+
 			case dataExtract:
 				renderDetials(this.dataExtract, status);
 				break;
-				
+
 			case alm:
 				renderDetials(this.alm, status);
 				break;
-				
+
 			case posidex:
 				renderDetials(this.posidex, status);
 				break;
@@ -600,7 +598,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				break;
 			case prepareCustomerGroupQueue:
 				renderDetials(this.prepareCustomerGroupQueue, status);
-				break;		
+				break;
 			case profitDetailsUpdate:
 				renderDetials(this.profitDetailsUpdate, status);
 				break;
@@ -610,10 +608,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case incomeAmortization:
 				renderDetials(this.incomeAmortization, status);
 				break;
-				
+
 			default:
 				break;
-				
+
 			}
 		}
 
@@ -782,9 +780,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 	}
 
-	protected Listbox	listBoxThread;
-	protected Intbox	noOfthread;
-	protected Longbox	noOfCustomer;
+	protected Listbox listBoxThread;
+	protected Intbox noOfthread;
+	protected Longbox noOfCustomer;
 
 	public void doFillCustomerEodDetails(ExecutionStatus status) {
 		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));

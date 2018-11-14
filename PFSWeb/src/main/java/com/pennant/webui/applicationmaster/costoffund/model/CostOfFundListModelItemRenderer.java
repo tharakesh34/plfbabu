@@ -75,7 +75,7 @@ public class CostOfFundListModelItemRenderer implements ListitemRenderer<CostOfF
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formateDate(CostOfFund.getCofEffDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(CostOfFund.getCofRate(),PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(PennantAppUtil.amountFormate(CostOfFund.getCofRate(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(CostOfFund.getRecordStatus());

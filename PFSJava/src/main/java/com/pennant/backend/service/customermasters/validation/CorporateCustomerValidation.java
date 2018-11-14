@@ -16,137 +16,126 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CorporateCustomerValidation {
 
-	private CorporateCustomerDetailDAO  corporateCustomerDetailDAO;
-	
-	public CorporateCustomerValidation(CorporateCustomerDetailDAO  corporateCustomerDetailDAO) {
+	private CorporateCustomerDetailDAO corporateCustomerDetailDAO;
+
+	public CorporateCustomerValidation(CorporateCustomerDetailDAO corporateCustomerDetailDAO) {
 		this.corporateCustomerDetailDAO = corporateCustomerDetailDAO;
 	}
-	
+
 	/**
 	 * @return the CorporateCustomerDetailDAO
 	 */
 	public CorporateCustomerDetailDAO getCorporateCustomerDetailDAO() {
 		return corporateCustomerDetailDAO;
 	}
-	
 
-	public AuditHeader corporateDetailValidation(AuditHeader auditHeader, String method){
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+	public AuditHeader corporateDetailValidation(AuditHeader auditHeader, String method) {
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
 
-	public List<AuditDetail> corporateDetailListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
+	public List<AuditDetail> corporateDetailListValidation(List<AuditDetail> auditDetails, String method,
+			String usrLanguage) {
 
-		if(auditDetails!=null && auditDetails.size()>0){
+		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
-				details.add(auditDetail); 		
+				AuditDetail auditDetail = validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail);
 			}
 			return details;
 		}
 		return new ArrayList<AuditDetail>();
 	}
 
+	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
 
-	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		CorporateCustomerDetail corporateCustomerDetail = (CorporateCustomerDetail) auditDetail.getModelData();
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		CorporateCustomerDetail corporateCustomerDetail= (CorporateCustomerDetail) 
-		auditDetail.getModelData();
-
-		CorporateCustomerDetail tempCorporateCustomerDetail= null;
-		if (corporateCustomerDetail.isWorkflow()){
-			tempCorporateCustomerDetail = getCorporateCustomerDetailDAO().getCorporateCustomerDetailById(
-					corporateCustomerDetail.getId(), "_Temp");
+		CorporateCustomerDetail tempCorporateCustomerDetail = null;
+		if (corporateCustomerDetail.isWorkflow()) {
+			tempCorporateCustomerDetail = getCorporateCustomerDetailDAO()
+					.getCorporateCustomerDetailById(corporateCustomerDetail.getId(), "_Temp");
 		}
-		CorporateCustomerDetail befCorporateCustomerDetail= getCorporateCustomerDetailDAO().getCorporateCustomerDetailById(
-				corporateCustomerDetail.getId(), "");
+		CorporateCustomerDetail befCorporateCustomerDetail = getCorporateCustomerDetailDAO()
+				.getCorporateCustomerDetailById(corporateCustomerDetail.getId(), "");
 
-		CorporateCustomerDetail oldCorporateCustomerDetail= corporateCustomerDetail.getBefImage();
+		CorporateCustomerDetail oldCorporateCustomerDetail = corporateCustomerDetail.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = String.valueOf(corporateCustomerDetail.getId());
+		errParm[0] = PennantJavaUtil.getLabel("label_CustId") + ":" + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(corporateCustomerDetail.getId());
-		errParm[0]=PennantJavaUtil.getLabel("label_CustId")+":"+valueParm[0];
+		if (corporateCustomerDetail.isNew()) { // for New record or new record into work flow
 
-		if (corporateCustomerDetail.isNew()){ // for New record or new record into work flow
-
-			if (!corporateCustomerDetail.isWorkflow()){// With out Work flow only new records  
-				if (befCorporateCustomerDetail !=null){	// Record Already Exists in the table then error  
+			if (!corporateCustomerDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befCorporateCustomerDetail != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
-									errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (corporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befCorporateCustomerDetail !=null || tempCorporateCustomerDetail!=null ){ // if records already exists in the main table
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (corporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befCorporateCustomerDetail != null || tempCorporateCustomerDetail != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", 
-										errParm,valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befCorporateCustomerDetail ==null || tempCorporateCustomerDetail!=null ){
+				} else { // if records not exists in the Main flow table
+					if (befCorporateCustomerDetail == null || tempCorporateCustomerDetail != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
-										errParm,valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!corporateCustomerDetail.isWorkflow()){	// With out Work flow for update and delete
+			if (!corporateCustomerDetail.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befCorporateCustomerDetail ==null){ // if records not exists in the main table
+				if (befCorporateCustomerDetail == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", 
-									errParm,valueParm), usrLanguage));
-				}else{
-					if (oldCorporateCustomerDetail!=null && 
-							!oldCorporateCustomerDetail.getLastMntOn().equals(
-									befCorporateCustomerDetail.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)){
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldCorporateCustomerDetail != null && !oldCorporateCustomerDetail.getLastMntOn()
+							.equals(befCorporateCustomerDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003",
-											errParm,valueParm), usrLanguage));
-						}else{
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", 
-											errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempCorporateCustomerDetail==null ){ // if records not exists in the Work flow table 
+				if (tempCorporateCustomerDetail == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
-									errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempCorporateCustomerDetail!=null && oldCorporateCustomerDetail!=null && 
-						!oldCorporateCustomerDetail.getLastMntOn().equals(
-								tempCorporateCustomerDetail.getLastMntOn())){ 
+				if (tempCorporateCustomerDetail != null && oldCorporateCustomerDetail != null
+						&& !oldCorporateCustomerDetail.getLastMntOn()
+								.equals(tempCorporateCustomerDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", 
-									errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !corporateCustomerDetail.isWorkflow()){
-			corporateCustomerDetail.setBefImage(befCorporateCustomerDetail);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !corporateCustomerDetail.isWorkflow()) {
+			corporateCustomerDetail.setBefImage(befCorporateCustomerDetail);
 		}
 
 		return auditDetail;
 	}
 
-	
 }

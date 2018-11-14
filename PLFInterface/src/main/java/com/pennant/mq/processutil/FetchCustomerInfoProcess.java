@@ -31,7 +31,7 @@ import com.pennant.mqconnection.MessageQueueClient;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 enum ADDRESSTYPES {
-	RETAILRESIDENCE,RETAILOFFICE, RETAILHOMECOUNTRY, SMEESTMAIN, SMEESTOTHER, PHONECODES
+	RETAILRESIDENCE, RETAILOFFICE, RETAILHOMECOUNTRY, SMEESTMAIN, SMEESTOTHER, PHONECODES
 };
 
 public class FetchCustomerInfoProcess extends MQProcess {
@@ -43,7 +43,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	}
 
 	private MQInterfaceDAO mqInterfaceDAO;
-	
+
 	/**
 	 * Process the GetCustomerDetails based on the given CIF and Message format and send response
 	 * 
@@ -72,15 +72,17 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		try {
 
 			// Generate Request Element for MQ Call
-			OMElement request = PFFXmlUtil.generateRequest(header, factory, getRequestElement(custCIF, referenceNum, factory));
+			OMElement request = PFFXmlUtil.generateRequest(header, factory,
+					getRequestElement(custCIF, referenceNum, factory));
 
 			// Fetch Response element from Client using MQ call
-			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
-		}		
+		}
 		logger.debug("Leaving");
 		return setCustomerDetails(response, header);
 
@@ -102,7 +104,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 		PFFXmlUtil.setOMChildElement(factory, customerRequest, "ReferenceNum", referenceNum);
 		PFFXmlUtil.setOMChildElement(factory, customerRequest, "CIF", custCIF);
-		PFFXmlUtil.setOMChildElement(factory, customerRequest, "TimeStamp",	
+		PFFXmlUtil.setOMChildElement(factory, customerRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 
 		requestElement.addChild(customerRequest);
@@ -139,14 +141,14 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 		detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/getCustomerDetailsReply", responseElement);
 		header = PFFXmlUtil.parseHeader(responseElement, header);
-		header = getReturnStatus(detailElement, header,responseElement);
+		header = getReturnStatus(detailElement, header, responseElement);
 
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 
 		custDataElement = detailElement.getFirstChildWithName(new QName("Retail"));
-		if ( custDataElement.getFirstChildWithName(new QName("PersonalInfo")) == null) {
+		if (custDataElement.getFirstChildWithName(new QName("PersonalInfo")) == null) {
 
 			// Fetch Data for SME Category Customer
 			custDetailElement = custDataElement.getFirstChildWithName(new QName("SMECustDetails"));
@@ -188,7 +190,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			customer.setCustLng(getMqInterfaceDAO().getMDMCode(customer.getCustLng(), "MCM_BMTLANGUAGE"));
 		}
 		if (customer.getCustSalutationCode() != null) {
-			customer.setCustSalutationCode(getMqInterfaceDAO().getMDMCode(customer.getCustSalutationCode(), "MCM_BMTSALUTATIONS"));
+			customer.setCustSalutationCode(
+					getMqInterfaceDAO().getMDMCode(customer.getCustSalutationCode(), "MCM_BMTSALUTATIONS"));
 		}
 		if (customer.getCustIndustry() != null) {
 			customer.setCustIndustry(getMqInterfaceDAO().getMDMCode(customer.getCustIndustry(), "mcm_bmtindustries"));
@@ -201,11 +204,13 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			customer.setCustDftBranch(getMqInterfaceDAO().getMDMCode(customer.getCustDftBranch(), "mcm_rmtbranches"));
 		}
 		if (customer.getCustNationality() != null) {
-			customer.setCustNationality(getMqInterfaceDAO().getMDMCode(customer.getCustNationality(), "mcm_bmtcountries"));
+			customer.setCustNationality(
+					getMqInterfaceDAO().getMDMCode(customer.getCustNationality(), "mcm_bmtcountries"));
 		}
 
 		if (customer.getCustMaritalSts() != null) {
-			customer.setCustMaritalSts(getMqInterfaceDAO().getMDMCode(customer.getCustMaritalSts(), "MCM_BMTMARITALSTATUSCODES"));
+			customer.setCustMaritalSts(
+					getMqInterfaceDAO().getMDMCode(customer.getCustMaritalSts(), "MCM_BMTMARITALSTATUSCODES"));
 		}
 
 		if (customer.getCustCOB() != null) {
@@ -227,7 +232,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		// Customer Employment Details
 		InterfaceCustEmployeeDetail custEmployeeDetail = null;
 
-		InterfaceCoreCustomer coreCustomer  = new InterfaceCoreCustomer();
+		InterfaceCoreCustomer coreCustomer = new InterfaceCoreCustomer();
 		coreCustomer.setNewRecord(true);
 
 		switch (custType) {
@@ -236,21 +241,23 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			custEmployeeDetail = setEmploymentInfo(employmentInfoElement, coreCustomer);
 
 			// Indemity FAX Service
-			List<InterfaceCustomerPhoneNumber> custPhoneList = setIndemityFaxInfo(custDataElement.getFirstChildWithName(
-					new QName("Indemity")), custCIF);
-			if(custPhoneList != null) {
-				if(interfaceCustDetail.getCustomerPhoneNumList() != null && !interfaceCustDetail.getCustomerPhoneNumList().isEmpty()){
+			List<InterfaceCustomerPhoneNumber> custPhoneList = setIndemityFaxInfo(
+					custDataElement.getFirstChildWithName(new QName("Indemity")), custCIF);
+			if (custPhoneList != null) {
+				if (interfaceCustDetail.getCustomerPhoneNumList() != null
+						&& !interfaceCustDetail.getCustomerPhoneNumList().isEmpty()) {
 					interfaceCustDetail.getCustomerPhoneNumList().addAll(custPhoneList);
 				} else {
 					interfaceCustDetail.setCustomerPhoneNumList(custPhoneList);
 				}
-			}	
+			}
 
 			// Indemity EMail Service
-			List<InterfaceCustomerEMail> custEmailList = setIndemityEmailInfo(custDataElement.getFirstChildWithName(
-					new QName("Indemity")), custCIF);
-			if(custEmailList != null) {
-				if(interfaceCustDetail.getCustomerEMailList() != null  && !interfaceCustDetail.getCustomerEMailList().isEmpty()){
+			List<InterfaceCustomerEMail> custEmailList = setIndemityEmailInfo(
+					custDataElement.getFirstChildWithName(new QName("Indemity")), custCIF);
+			if (custEmailList != null) {
+				if (interfaceCustDetail.getCustomerEMailList() != null
+						&& !interfaceCustDetail.getCustomerEMailList().isEmpty()) {
 					interfaceCustDetail.getCustomerEMailList().addAll(custEmailList);
 				} else {
 					interfaceCustDetail.setCustomerEMailList(custEmailList);
@@ -271,27 +278,30 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		interfaceCustDetail.setCustEmployeeDetail(custEmployeeDetail);
 
 		// SMS Service
-		List<InterfaceCustomerPhoneNumber> custSMSPhoneList = setSMSServiceInfo(custDataElement.getFirstChildWithName(
-				new QName("SmsServices")), custCIF);
-		if(custSMSPhoneList != null) {
-			if(interfaceCustDetail.getCustomerPhoneNumList() != null && !interfaceCustDetail.getCustomerPhoneNumList().isEmpty()){
+		List<InterfaceCustomerPhoneNumber> custSMSPhoneList = setSMSServiceInfo(
+				custDataElement.getFirstChildWithName(new QName("SmsServices")), custCIF);
+		if (custSMSPhoneList != null) {
+			if (interfaceCustDetail.getCustomerPhoneNumList() != null
+					&& !interfaceCustDetail.getCustomerPhoneNumList().isEmpty()) {
 				interfaceCustDetail.getCustomerPhoneNumList().addAll(custSMSPhoneList);
 			} else {
 				interfaceCustDetail.setCustomerPhoneNumList(custSMSPhoneList);
 			}
-		}	
-		
+		}
+
 		// POA Service
-		coreCustomer = setPOAServiceInfo(custDataElement.getFirstChildWithName(new QName("PowerOfAttorney")), coreCustomer);
+		coreCustomer = setPOAServiceInfo(custDataElement.getFirstChildWithName(new QName("PowerOfAttorney")),
+				coreCustomer);
 
 		// Rating Service
 		coreCustomer = setRatingServiceInfo(custDataElement.getFirstChildWithName(new QName("Rating")), coreCustomer);
 
 		// Relational Details
-		coreCustomer = setRelationDetails(custDataElement.getFirstChildWithName(new QName("RelationDetails")),coreCustomer);
+		coreCustomer = setRelationDetails(custDataElement.getFirstChildWithName(new QName("RelationDetails")),
+				coreCustomer);
 
 		// KYC Details
-		coreCustomer = setKYCDetails(custDataElement.getFirstChildWithName(new QName("KYC")),coreCustomer);
+		coreCustomer = setKYCDetails(custDataElement.getFirstChildWithName(new QName("KYC")), coreCustomer);
 
 		interfaceCustDetail.setInterfaceCoreCustomer(coreCustomer);
 
@@ -301,6 +311,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 	/**
 	 * Method for Preparation of Contact Details information
+	 * 
 	 * @param contactDetailElement
 	 * @param customer
 	 * @return
@@ -311,7 +322,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		if (contactDetailElement == null) {
 			return null;
 		}
-		customer.setCustRO1(PFFXmlUtil.getStringValue(contactDetailElement, "RelationshipManager")); 
+		customer.setCustRO1(PFFXmlUtil.getStringValue(contactDetailElement, "RelationshipManager"));
 		customer.setCustDftBranch(PFFXmlUtil.getStringValue(contactDetailElement, "BranchCode"));
 		//PFFXmlUtil.getStringValue(contactDetailElement, "LineManager");
 
@@ -321,8 +332,9 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 	/**
 	 * Method for Preparation of KYC Details
+	 * 
 	 * @param kycElement
-	 * @param coreCustomer 
+	 * @param coreCustomer
 	 */
 	private InterfaceCoreCustomer setKYCDetails(OMElement kycElement, InterfaceCoreCustomer coreCustomer) {
 		logger.debug("Entering");
@@ -333,38 +345,38 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 		coreCustomer.setKycRiskLevel(PFFXmlUtil.getStringValue(kycElement, "KYCRiskLevel"));
 		coreCustomer.setIntroducer(PFFXmlUtil.getStringValue(kycElement, "Introducer"));
-		coreCustomer.setReferenceName(PFFXmlUtil.getStringValue(kycElement, "ReferenceName")); 
-		coreCustomer.setPurposeOfRelationShip(PFFXmlUtil.getStringValue(kycElement, "PurposeOfRelationShip")); 
-		coreCustomer.setPurposeOfRelationShip(PFFXmlUtil.getStringValue(kycElement, "SourceOfIncome")); 
-		coreCustomer.setExpectedTypeOfTrans(PFFXmlUtil.getStringValue(kycElement,"ExpectedTypeOfTrans")); 
+		coreCustomer.setReferenceName(PFFXmlUtil.getStringValue(kycElement, "ReferenceName"));
+		coreCustomer.setPurposeOfRelationShip(PFFXmlUtil.getStringValue(kycElement, "PurposeOfRelationShip"));
+		coreCustomer.setPurposeOfRelationShip(PFFXmlUtil.getStringValue(kycElement, "SourceOfIncome"));
+		coreCustomer.setExpectedTypeOfTrans(PFFXmlUtil.getStringValue(kycElement, "ExpectedTypeOfTrans"));
 		coreCustomer.setMonthlyOutageVolume(PFFXmlUtil.getStringValue(kycElement, "MonthlyOutageVolume"));
 		coreCustomer.setMonthlyIncomeVolume(PFFXmlUtil.getStringValue(kycElement, "MonthlyIncomeVolume"));
-		coreCustomer.setMaximumSingleDeposit(PFFXmlUtil.getStringValue(kycElement, "MaximumSingleDeposit")); 
-		coreCustomer.setMaximumSingleWithdrawal(PFFXmlUtil.getStringValue(kycElement, "MaximumSingleWithdrawal")); 
-		coreCustomer.setAnnualIncome(PFFXmlUtil.getStringValue(kycElement, "AnnualIncome")); 
-		coreCustomer.setCountryOfOriginOfFunds(PFFXmlUtil.getStringValue(kycElement, "CountryOfOriginOfFunds")); 
-		coreCustomer.setCountryOfSourceOfIncome(PFFXmlUtil.getStringValue(kycElement, "CountryOfSourceOfIncome")); 
-		coreCustomer.setSourceOfWealth(PFFXmlUtil.getStringValue(kycElement, "SourceOfWealth")); 
+		coreCustomer.setMaximumSingleDeposit(PFFXmlUtil.getStringValue(kycElement, "MaximumSingleDeposit"));
+		coreCustomer.setMaximumSingleWithdrawal(PFFXmlUtil.getStringValue(kycElement, "MaximumSingleWithdrawal"));
+		coreCustomer.setAnnualIncome(PFFXmlUtil.getStringValue(kycElement, "AnnualIncome"));
+		coreCustomer.setCountryOfOriginOfFunds(PFFXmlUtil.getStringValue(kycElement, "CountryOfOriginOfFunds"));
+		coreCustomer.setCountryOfSourceOfIncome(PFFXmlUtil.getStringValue(kycElement, "CountryOfSourceOfIncome"));
+		coreCustomer.setSourceOfWealth(PFFXmlUtil.getStringValue(kycElement, "SourceOfWealth"));
 		coreCustomer.setIsKYCUptoDate(PFFXmlUtil.getStringValue(kycElement, "IsKYCUptoDate"));
-		coreCustomer.setListedOnStockExchange(PFFXmlUtil.getStringValue(kycElement, "ListedOnStockExchange")); 
-		coreCustomer.setNameOfExchange(PFFXmlUtil.getStringValue(kycElement, "NameOfExchange")); 
-		coreCustomer.setStockCodeOfCustomer(PFFXmlUtil.getStringValue(kycElement, "StockCodeOfCustomer")); 
-		coreCustomer.setCustomerVisitReport(PFFXmlUtil.getStringValue(kycElement, "CustomerVisitReport")); 
-		coreCustomer.setInitialDeposit(PFFXmlUtil.getStringValue(kycElement, "InitialDeposit")); 
-		coreCustomer.setFutureDeposit(PFFXmlUtil.getStringValue(kycElement, "FutureDeposit")); 
-		coreCustomer.setAnnualTurnOver(PFFXmlUtil.getStringValue(kycElement, "AnnualTurnOver")); 
-		coreCustomer.setParentCompanyDetails(PFFXmlUtil.getStringValue(kycElement, "ParentCompanyDetails")); 
-		coreCustomer.setNameOfParentCompany(PFFXmlUtil.getStringValue(kycElement, "NameOfParentCompany")); 
-		coreCustomer.setParentCompanyPlaceOfIncorp(PFFXmlUtil.getStringValue(kycElement, "ParentCompanyPlaceOfIncorp")); 
-		coreCustomer.setEmirateOfIncop(PFFXmlUtil.getStringValue(kycElement, "EmirateOfIncop")); 
-		coreCustomer.setNameOfApexCompany(PFFXmlUtil.getStringValue(kycElement, "NameOfApexCompany")); 
+		coreCustomer.setListedOnStockExchange(PFFXmlUtil.getStringValue(kycElement, "ListedOnStockExchange"));
+		coreCustomer.setNameOfExchange(PFFXmlUtil.getStringValue(kycElement, "NameOfExchange"));
+		coreCustomer.setStockCodeOfCustomer(PFFXmlUtil.getStringValue(kycElement, "StockCodeOfCustomer"));
+		coreCustomer.setCustomerVisitReport(PFFXmlUtil.getStringValue(kycElement, "CustomerVisitReport"));
+		coreCustomer.setInitialDeposit(PFFXmlUtil.getStringValue(kycElement, "InitialDeposit"));
+		coreCustomer.setFutureDeposit(PFFXmlUtil.getStringValue(kycElement, "FutureDeposit"));
+		coreCustomer.setAnnualTurnOver(PFFXmlUtil.getStringValue(kycElement, "AnnualTurnOver"));
+		coreCustomer.setParentCompanyDetails(PFFXmlUtil.getStringValue(kycElement, "ParentCompanyDetails"));
+		coreCustomer.setNameOfParentCompany(PFFXmlUtil.getStringValue(kycElement, "NameOfParentCompany"));
+		coreCustomer.setParentCompanyPlaceOfIncorp(PFFXmlUtil.getStringValue(kycElement, "ParentCompanyPlaceOfIncorp"));
+		coreCustomer.setEmirateOfIncop(PFFXmlUtil.getStringValue(kycElement, "EmirateOfIncop"));
+		coreCustomer.setNameOfApexCompany(PFFXmlUtil.getStringValue(kycElement, "NameOfApexCompany"));
 		coreCustomer.setNoOfEmployees(PFFXmlUtil.getStringValue(kycElement, "NoOfEmployees"));
 		coreCustomer.setNoOfUAEBranches(PFFXmlUtil.getStringValue(kycElement, "NoOfUAEBranches"));
-		coreCustomer.setNoOfOverseasBranches(PFFXmlUtil.getStringValue(kycElement, "NoOfOverseasBranches")); 
-		coreCustomer.setOverSeasbranches(PFFXmlUtil.getStringValue(kycElement, "OverSeasbranches")); 
-		coreCustomer.setNameOfAuditors(PFFXmlUtil.getStringValue(kycElement, "NameOfAuditors")); 
-		coreCustomer.setFinancialHighlights(PFFXmlUtil.getStringValue(kycElement, "FinancialHighlights")); 
-		coreCustomer.setBankingRelationShip(PFFXmlUtil.getStringValue(kycElement, "BankingRelationShip")); 
+		coreCustomer.setNoOfOverseasBranches(PFFXmlUtil.getStringValue(kycElement, "NoOfOverseasBranches"));
+		coreCustomer.setOverSeasbranches(PFFXmlUtil.getStringValue(kycElement, "OverSeasbranches"));
+		coreCustomer.setNameOfAuditors(PFFXmlUtil.getStringValue(kycElement, "NameOfAuditors"));
+		coreCustomer.setFinancialHighlights(PFFXmlUtil.getStringValue(kycElement, "FinancialHighlights"));
+		coreCustomer.setBankingRelationShip(PFFXmlUtil.getStringValue(kycElement, "BankingRelationShip"));
 		coreCustomer.setpFFICertfication(PFFXmlUtil.getStringValue(kycElement, "PFFICertfication"));
 
 		logger.debug("Leaving");
@@ -373,10 +385,12 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 	/**
 	 * Method for preparation of Relation Details
+	 * 
 	 * @param relationDetailElement
-	 * @param coreCustomer 
+	 * @param coreCustomer
 	 */
-	private InterfaceCoreCustomer setRelationDetails(OMElement relationDetailElement, InterfaceCoreCustomer coreCustomer) {
+	private InterfaceCoreCustomer setRelationDetails(OMElement relationDetailElement,
+			InterfaceCoreCustomer coreCustomer) {
 		logger.debug("Entering");
 
 		if (relationDetailElement == null || coreCustomer == null) {
@@ -393,8 +407,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * Method for preparation of Rating Details
 	 * 
 	 * @param ratingElement
-	 * @param coreCustomer 
-	 * @return 
+	 * @param coreCustomer
+	 * @return
 	 */
 	private InterfaceCoreCustomer setRatingServiceInfo(OMElement ratingElement, InterfaceCoreCustomer coreCustomer) {
 		logger.debug("Entering");
@@ -403,9 +417,10 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			return coreCustomer;
 		}
 
-		coreCustomer.setInternalRating(PFFXmlUtil.getStringValue(ratingElement, "InternalRating")); 
-		coreCustomer.setDateOfInternalRating(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(ratingElement, "DateOfInternalRating"), 
-				InterfaceMasterConfigUtil.SHORT_DATE));
+		coreCustomer.setInternalRating(PFFXmlUtil.getStringValue(ratingElement, "InternalRating"));
+		coreCustomer.setDateOfInternalRating(
+				DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(ratingElement, "DateOfInternalRating"),
+						InterfaceMasterConfigUtil.SHORT_DATE));
 
 		logger.debug("Leaving");
 		return coreCustomer;
@@ -415,8 +430,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * Method for preparation of Power of Attorney Details
 	 * 
 	 * @param poaInfoElement
-	 * @param coreCustomer 
-	 * @return 
+	 * @param coreCustomer
+	 * @return
 	 */
 	private InterfaceCoreCustomer setPOAServiceInfo(OMElement poaInfoElement, InterfaceCoreCustomer coreCustomer) {
 		logger.debug("Entering");
@@ -424,20 +439,21 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		if (poaInfoElement == null || coreCustomer == null) {
 			return coreCustomer;
 		}
-		coreCustomer.setpOAFlag(PFFXmlUtil.getStringValue(poaInfoElement, "POAFlag")); 
+		coreCustomer.setpOAFlag(PFFXmlUtil.getStringValue(poaInfoElement, "POAFlag"));
 		coreCustomer.setpOACIF(PFFXmlUtil.getStringValue(poaInfoElement, "POACIF"));
-		coreCustomer.setpOAHoldersname(PFFXmlUtil.getStringValue(poaInfoElement, "POAHolderName")); 
-		coreCustomer.setPassportNumber(PFFXmlUtil.getStringValue(poaInfoElement, "POAPassportNumber")); 
-		coreCustomer.setEmiratesIDNumber(PFFXmlUtil.getStringValue(poaInfoElement, "POAIDNumber")); 
-		coreCustomer.setNationality(PFFXmlUtil.getStringValue(poaInfoElement, "POANationality")); 
-		coreCustomer.setpOAIssuancedate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(poaInfoElement, "POAIssuanceDate"),
-				InterfaceMasterConfigUtil.SHORT_DATE)); 
-		coreCustomer.setpOAExpirydate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(poaInfoElement, "POAExpiryDate"),
-				InterfaceMasterConfigUtil.SHORT_DATE));  
-		coreCustomer.setPassportExpiryDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(poaInfoElement, "POApassportExpiryDate"),
-				InterfaceMasterConfigUtil.SHORT_DATE));  
-		coreCustomer.setEmiratesIDExpiryDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(poaInfoElement, "POAIDExpiryDate"),
-				InterfaceMasterConfigUtil.SHORT_DATE)); 
+		coreCustomer.setpOAHoldersname(PFFXmlUtil.getStringValue(poaInfoElement, "POAHolderName"));
+		coreCustomer.setPassportNumber(PFFXmlUtil.getStringValue(poaInfoElement, "POAPassportNumber"));
+		coreCustomer.setEmiratesIDNumber(PFFXmlUtil.getStringValue(poaInfoElement, "POAIDNumber"));
+		coreCustomer.setNationality(PFFXmlUtil.getStringValue(poaInfoElement, "POANationality"));
+		coreCustomer.setpOAIssuancedate(DateUtility.convertDateFromMQ(
+				PFFXmlUtil.getStringValue(poaInfoElement, "POAIssuanceDate"), InterfaceMasterConfigUtil.SHORT_DATE));
+		coreCustomer.setpOAExpirydate(DateUtility.convertDateFromMQ(
+				PFFXmlUtil.getStringValue(poaInfoElement, "POAExpiryDate"), InterfaceMasterConfigUtil.SHORT_DATE));
+		coreCustomer.setPassportExpiryDate(
+				DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(poaInfoElement, "POApassportExpiryDate"),
+						InterfaceMasterConfigUtil.SHORT_DATE));
+		coreCustomer.setEmiratesIDExpiryDate(DateUtility.convertDateFromMQ(
+				PFFXmlUtil.getStringValue(poaInfoElement, "POAIDExpiryDate"), InterfaceMasterConfigUtil.SHORT_DATE));
 
 		logger.debug("Leaving");
 
@@ -519,10 +535,11 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	/**
 	 * 
 	 * @param employmentInfoElement
-	 * @param coreCustomer 
+	 * @param coreCustomer
 	 * @return
 	 */
-	private InterfaceCustEmployeeDetail setEmploymentInfo(OMElement employmentInfoElement, InterfaceCoreCustomer coreCustomer) {
+	private InterfaceCustEmployeeDetail setEmploymentInfo(OMElement employmentInfoElement,
+			InterfaceCoreCustomer coreCustomer) {
 		logger.debug("Entering");
 
 		if (employmentInfoElement == null) {
@@ -535,15 +552,17 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		customerEmployeeDetail.setEmpName(0);//PFFXmlUtil.getStringValue(employmentInfoElement, "EmpName")
 		customerEmployeeDetail.setEmpDesg(PFFXmlUtil.getStringValue(employmentInfoElement, "Occupation"));
 		customerEmployeeDetail.setEmpDept(PFFXmlUtil.getStringValue(employmentInfoElement, "Department"));
-		customerEmployeeDetail.setEmpFrom(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(
-				employmentInfoElement, "EmpStartDate"),InterfaceMasterConfigUtil.SHORT_DATE));
+		customerEmployeeDetail.setEmpFrom(
+				DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(employmentInfoElement, "EmpStartDate"),
+						InterfaceMasterConfigUtil.SHORT_DATE));
 		customerEmployeeDetail.setMonthlyIncome(PFFXmlUtil.getBigDecimalValue(employmentInfoElement, "Salary"));
 
 		//Not Available fields saved in CoreCustomer Object
 		coreCustomer.setSalaryCurrency(PFFXmlUtil.getStringValue(employmentInfoElement, "SalaryCurrency"));
 		coreCustomer.setSalary(PFFXmlUtil.getBigDecimalValue(employmentInfoElement, "Salary"));
-		coreCustomer.setSalaryDateFreq(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(employmentInfoElement, "SalaryDateFreq"),
-				InterfaceMasterConfigUtil.SHORT_DATE));
+		coreCustomer.setSalaryDateFreq(
+				DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(employmentInfoElement, "SalaryDateFreq"),
+						InterfaceMasterConfigUtil.SHORT_DATE));
 		coreCustomer.setBusinessType(PFFXmlUtil.getStringValue(employmentInfoElement, "BusinessType"));
 		coreCustomer.setNameOfBusiness(PFFXmlUtil.getStringValue(employmentInfoElement, "NameOfBusiness"));
 
@@ -555,10 +574,11 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	/**
 	 * 
 	 * @param financialInfoElement
-	 * @param coreCustomer 
-	 * @return 
+	 * @param coreCustomer
+	 * @return
 	 */
-	private InterfaceCustEmployeeDetail setCustFinancialInfo(OMElement financialInfoElement, InterfaceCoreCustomer coreCustomer) {
+	private InterfaceCustEmployeeDetail setCustFinancialInfo(OMElement financialInfoElement,
+			InterfaceCoreCustomer coreCustomer) {
 		logger.debug("Entering");
 
 		if (financialInfoElement == null) {
@@ -568,12 +588,13 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		InterfaceCustEmployeeDetail customerEmployeeDetail = new InterfaceCustEmployeeDetail();
 
 		customerEmployeeDetail.setEmpStatus("SME");
-		customerEmployeeDetail.setMonthlyIncome(new BigDecimal(PFFXmlUtil.getStringValue(financialInfoElement, "TurnOver")));
+		customerEmployeeDetail
+				.setMonthlyIncome(new BigDecimal(PFFXmlUtil.getStringValue(financialInfoElement, "TurnOver")));
 		customerEmployeeDetail.setEmpSector(PFFXmlUtil.getStringValue(financialInfoElement, "NatureOfBusiness"));
 
 		// Saved the Not Available fields in CoreCustomer
 		coreCustomer.setNoOfEmployees(PFFXmlUtil.getStringValue(financialInfoElement, "NoOfEmployees"));
-		coreCustomer.setTotalNoOfPartners(PFFXmlUtil.getIntValue(financialInfoElement, "TotalNoOfPartners")); 
+		coreCustomer.setTotalNoOfPartners(PFFXmlUtil.getIntValue(financialInfoElement, "TotalNoOfPartners"));
 		coreCustomer.setModeOfOperation(PFFXmlUtil.getStringValue(financialInfoElement, "ModeOfOperation"));
 		coreCustomer.setPowerOfAttorney(PFFXmlUtil.getStringValue(financialInfoElement, "PowerOfAttorney"));
 		coreCustomer.setAuditedFinancials(PFFXmlUtil.getStringValue(financialInfoElement, "AuditedFinancials"));
@@ -601,7 +622,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @param custType
 	 * @return
 	 */
-	private List<InterfaceCustomerDocument> setCustomerdocuments(OMElement custDocDetailElement, int custType, String custCIF) {
+	private List<InterfaceCustomerDocument> setCustomerdocuments(OMElement custDocDetailElement, int custType,
+			String custCIF) {
 		logger.debug("Entering");
 
 		if (custDocDetailElement == null) {
@@ -612,14 +634,20 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 		if (custType == 1) {
 			// custDocDetailElement.getFirstChildWithName(new QName("IDType")).getText();
-			docList.addAll(setCustDocumentsByType(custDocDetailElement,	"EmiratesID", InterfaceMasterConfigUtil.getDocEmiratesId(), custCIF));
-			docList.addAll(setCustDocumentsByType(custDocDetailElement,	"Passport", InterfaceMasterConfigUtil.getDocPassportId(), custCIF));
-			docList.addAll(setCustDocumentsByType(custDocDetailElement,	"ResidenceVisa", InterfaceMasterConfigUtil.getDocResidenceVisa(), custCIF));
-			docList.addAll(setCustDocumentsByType(custDocDetailElement,	"USID", InterfaceMasterConfigUtil.getDocUSID(), custCIF));
+			docList.addAll(setCustDocumentsByType(custDocDetailElement, "EmiratesID",
+					InterfaceMasterConfigUtil.getDocEmiratesId(), custCIF));
+			docList.addAll(setCustDocumentsByType(custDocDetailElement, "Passport",
+					InterfaceMasterConfigUtil.getDocPassportId(), custCIF));
+			docList.addAll(setCustDocumentsByType(custDocDetailElement, "ResidenceVisa",
+					InterfaceMasterConfigUtil.getDocResidenceVisa(), custCIF));
+			docList.addAll(setCustDocumentsByType(custDocDetailElement, "USID", InterfaceMasterConfigUtil.getDocUSID(),
+					custCIF));
 
 		} else {
-			docList.addAll(setCustDocumentsByType(custDocDetailElement,	"TradeLicense", InterfaceMasterConfigUtil.getDocTradeLicence(), custCIF));
-			docList.addAll(setCustDocumentsByType(custDocDetailElement,	"CommRegistration", InterfaceMasterConfigUtil.getDocCommRegistration(), custCIF));
+			docList.addAll(setCustDocumentsByType(custDocDetailElement, "TradeLicense",
+					InterfaceMasterConfigUtil.getDocTradeLicence(), custCIF));
+			docList.addAll(setCustDocumentsByType(custDocDetailElement, "CommRegistration",
+					InterfaceMasterConfigUtil.getDocCommRegistration(), custCIF));
 			// PFFXmlUtil.getStringValue(custDocDetailElement, "DocumentIDNumber");
 			// PFFXmlUtil.getStringValue(custDocDetailElement, "TradeLicenseIssueAuthority");
 			// PFFXmlUtil.getStringValue(custDocDetailElement, "TradeLicenseIssueAuthorityISO");
@@ -641,7 +669,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		return docList;
 	}
 
-	private List<InterfaceCustomerDocument> setCustDocumentsByType(OMElement custDocDetailElement, String docType, String[] idType, String custCIF) {
+	private List<InterfaceCustomerDocument> setCustDocumentsByType(OMElement custDocDetailElement, String docType,
+			String[] idType, String custCIF) {
 
 		logger.debug("Entering");
 
@@ -652,18 +681,22 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		switch (docType) {
 		case "EmiratesID":
 			docID = docType + "No";
-			customerDocuments.setCustDocIssuedOn(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "IssueDate"),
+			customerDocuments.setCustDocIssuedOn(DateUtility.convertDateFromMQ(
+					PFFXmlUtil.getStringValue(custDocDetailElement, docType + "IssueDate"),
 					InterfaceMasterConfigUtil.SHORT_DATE));
-			customerDocuments.setCustDocExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, "UaeIDExpDate"),
-					InterfaceMasterConfigUtil.SHORT_DATE));
+			customerDocuments.setCustDocExpDate(
+					DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, "UaeIDExpDate"),
+							InterfaceMasterConfigUtil.SHORT_DATE));
 
 			break;
 		case "ResidenceVisa":
 			docID = docType + "No";
-			customerDocuments.setCustDocIssuedOn(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "IssueDate"),
+			customerDocuments.setCustDocIssuedOn(DateUtility.convertDateFromMQ(
+					PFFXmlUtil.getStringValue(custDocDetailElement, docType + "IssueDate"),
 					InterfaceMasterConfigUtil.SHORT_DATE));
-			customerDocuments.setCustDocExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "ExpDate"),
-					InterfaceMasterConfigUtil.SHORT_DATE));
+			customerDocuments.setCustDocExpDate(
+					DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "ExpDate"),
+							InterfaceMasterConfigUtil.SHORT_DATE));
 
 			break;
 		case "USID":
@@ -672,10 +705,12 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 		default:
 			docID = docType + "Number";
-			customerDocuments.setCustDocIssuedOn(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "IssueDate"),
+			customerDocuments.setCustDocIssuedOn(DateUtility.convertDateFromMQ(
+					PFFXmlUtil.getStringValue(custDocDetailElement, docType + "IssueDate"),
 					InterfaceMasterConfigUtil.SHORT_DATE));
-			customerDocuments.setCustDocExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "ExpDate"),
-					InterfaceMasterConfigUtil.SHORT_DATE));
+			customerDocuments.setCustDocExpDate(
+					DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDocDetailElement, docType + "ExpDate"),
+							InterfaceMasterConfigUtil.SHORT_DATE));
 
 			break;
 		}
@@ -684,7 +719,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		customerDocuments.setLovDescCustDocCategory(idType[1]);
 		customerDocuments.setCustDocTitle(PFFXmlUtil.getStringValue(custDocDetailElement, docID));
 
-		if(StringUtils.isNotBlank(customerDocuments.getCustDocTitle())) {
+		if (StringUtils.isNotBlank(customerDocuments.getCustDocTitle())) {
 			docList.add(customerDocuments);
 		}
 		logger.debug("Leaving");
@@ -694,12 +729,13 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 	/**
 	 * Method for Preparation of Customer Details
+	 * 
 	 * @param custDetailElement
 	 * @param custType
 	 * @return
 	 */
-	private InterfaceCustomer setCustomerDetails(OMElement custDetailElement,
-			InterfaceCustomer customer, int custType) {
+	private InterfaceCustomer setCustomerDetails(OMElement custDetailElement, InterfaceCustomer customer,
+			int custType) {
 		logger.debug("Entering");
 
 		if (custDetailElement == null) {
@@ -718,8 +754,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			customer.setCustFName(PFFXmlUtil.getStringValue(custDetailElement, "FirstName"));
 			customer.setCustLName(PFFXmlUtil.getStringValue(custDetailElement, "FamilyName"));
 			customer.setCustMName(PFFXmlUtil.getStringValue(custDetailElement, "SecondName"));
-			customer.setCustDOB(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDetailElement, "DateOfBirth"),
-					InterfaceMasterConfigUtil.SHORT_DATE));
+			customer.setCustDOB(DateUtility.convertDateFromMQ(
+					PFFXmlUtil.getStringValue(custDetailElement, "DateOfBirth"), InterfaceMasterConfigUtil.SHORT_DATE));
 			customer.setCustPOB(PFFXmlUtil.getStringValue(custDetailElement, "PlaceOfBirth"));
 			customer.setCustLng(PFFXmlUtil.getStringValue(custDetailElement, "LanguageISO"));
 			customer.setCustSector(PFFXmlUtil.getStringValue(custDetailElement, "SectorISO"));
@@ -730,7 +766,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			customer.setCustCOB(PFFXmlUtil.getStringValue(custDetailElement, "CountryOfbirth"));
 			customer.setCustMaritalSts(PFFXmlUtil.getStringValue(custDetailElement, "MaritalStatusISO"));
 			int dependents = 0;
-			if(PFFXmlUtil.getStringValue(custDetailElement, "NoOfDependents") != null){
+			if (PFFXmlUtil.getStringValue(custDetailElement, "NoOfDependents") != null) {
 				dependents = Integer.parseInt(PFFXmlUtil.getStringValue(custDetailElement, "NoOfDependents"));
 			}
 			customer.setNoOfDependents(dependents);
@@ -743,11 +779,12 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		} else {
 
 			customer.setCustSts(PFFXmlUtil.getStringValue(custDetailElement, "CustStatus"));
-			customer.setCustFName(PFFXmlUtil.getStringValue(custDetailElement,"NameOfEstablishment"));
+			customer.setCustFName(PFFXmlUtil.getStringValue(custDetailElement, "NameOfEstablishment"));
 			customer.setCustShrtName(PFFXmlUtil.getStringValue(custDetailElement, "EstablishmentShortName"));
 			customer.setCustCoreBank(PFFXmlUtil.getStringValue(custDetailElement, "Mnemonic"));
-			customer.setCustDOB(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDetailElement, "DateOfIncorporation"),
-					InterfaceMasterConfigUtil.SHORT_DATE));
+			customer.setCustDOB(
+					DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(custDetailElement, "DateOfIncorporation"),
+							InterfaceMasterConfigUtil.SHORT_DATE));
 			customer.setCustLng(PFFXmlUtil.getStringValue(custDetailElement, "LanguageCode"));
 			customer.setCustIndustry(PFFXmlUtil.getStringValue(custDetailElement, "IndustryCode"));
 			customer.setCustAddlVar82(PFFXmlUtil.getStringValue(custDetailElement, "Target"));
@@ -770,7 +807,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @param custType
 	 * @return
 	 */
-	private List<InterfaceCustomerPhoneNumber> setCustomerPhoneNumber(OMElement addrElement, int custType, String custCIF) {
+	private List<InterfaceCustomerPhoneNumber> setCustomerPhoneNumber(OMElement addrElement, int custType,
+			String custCIF) {
 		logger.debug("Entering");
 
 		if (addrElement == null) {
@@ -789,32 +827,40 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			try {
 				if (ofceAddElement != null) {
 					String parentTag = "OfficeAddress/";
-					phoneList = setCustomerPhoneNumberByType(ofceAddElement, path + parentTag+ "OfficePhoneNumbers/OfficePhoneNo",
+					phoneList = setCustomerPhoneNumberByType(ofceAddElement,
+							path + parentTag + "OfficePhoneNumbers/OfficePhoneNo",
 							InterfaceMasterConfigUtil.OFFICEPHONENO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(ofceAddElement, path + parentTag+ "OfficeFaxNumbers/OfficeFaxNo",
-							InterfaceMasterConfigUtil.OFFICEFAXNO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(ofceAddElement, path + parentTag+ "OfficeMobileNumbers/OfficeMobileNo",
+					phoneList = setCustomerPhoneNumberByType(ofceAddElement,
+							path + parentTag + "OfficeFaxNumbers/OfficeFaxNo", InterfaceMasterConfigUtil.OFFICEFAXNO,
+							phoneList, custCIF);
+					phoneList = setCustomerPhoneNumberByType(ofceAddElement,
+							path + parentTag + "OfficeMobileNumbers/OfficeMobileNo",
 							InterfaceMasterConfigUtil.OFFICEMOBILENO, phoneList, custCIF);
 				}
 
 				if (resAddElement != null) {
 					String parentTag = "ResidenceAddress/";
-					phoneList = setCustomerPhoneNumberByType(resAddElement, path + parentTag+ "ResidencePhoneNumbers/ResidencePhoneNo",
+					phoneList = setCustomerPhoneNumberByType(resAddElement,
+							path + parentTag + "ResidencePhoneNumbers/ResidencePhoneNo",
 							InterfaceMasterConfigUtil.RESIDENCEPHONENO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(resAddElement, path + parentTag+ "ResidenceFaxNumbers/ResidenceFaxNo",
+					phoneList = setCustomerPhoneNumberByType(resAddElement,
+							path + parentTag + "ResidenceFaxNumbers/ResidenceFaxNo",
 							InterfaceMasterConfigUtil.RESIDENCEFAXNO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(resAddElement,	path+ parentTag+ "ResidenceMobileNumbers/ResidenceMobileNo",
+					phoneList = setCustomerPhoneNumberByType(resAddElement,
+							path + parentTag + "ResidenceMobileNumbers/ResidenceMobileNo",
 							InterfaceMasterConfigUtil.RESIDENCEMOBILENO, phoneList, custCIF);
 				}
 
 				if (hcAddElement != null) {
 					String parentTag = "HomeCountryAddress/";
-					phoneList = setCustomerPhoneNumberByType(hcAddElement, path + parentTag + "HCPhoneNumbers/HCPhoneNo", 
-							InterfaceMasterConfigUtil.HCPHONENO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(hcAddElement,	path + parentTag + "HCFaxNumbers/HCFaxNo", 
+					phoneList = setCustomerPhoneNumberByType(hcAddElement,
+							path + parentTag + "HCPhoneNumbers/HCPhoneNo", InterfaceMasterConfigUtil.HCPHONENO,
+							phoneList, custCIF);
+					phoneList = setCustomerPhoneNumberByType(hcAddElement, path + parentTag + "HCFaxNumbers/HCFaxNo",
 							InterfaceMasterConfigUtil.HCFAXNO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(hcAddElement,	path + parentTag + "HCMobileNumbers/HCMobileNo", 
-							InterfaceMasterConfigUtil.HCMOBILENO, phoneList, custCIF);
+					phoneList = setCustomerPhoneNumberByType(hcAddElement,
+							path + parentTag + "HCMobileNumbers/HCMobileNo", InterfaceMasterConfigUtil.HCMOBILENO,
+							phoneList, custCIF);
 				}
 			} catch (JaxenException je) {
 				logger.error("Exception: ", je);
@@ -830,21 +876,27 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			try {
 				if (estMainAddElement != null) {
 					String parentTag = "EstMainAddress/";
-					phoneList = setCustomerPhoneNumberByType(estMainAddElement, path + parentTag+ "EstPhoneNumbers/EstPhoneNo",
-							InterfaceMasterConfigUtil.ESTPHONENO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(estMainAddElement, path + parentTag+ "EstFaxNumbers/EstFaxNo",	
-							InterfaceMasterConfigUtil.ESTFAXNO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(estMainAddElement, path + parentTag+ "EstMobileNumbers/EstMobileNo",
-							InterfaceMasterConfigUtil.ESTMOBILENO, phoneList, custCIF);
+					phoneList = setCustomerPhoneNumberByType(estMainAddElement,
+							path + parentTag + "EstPhoneNumbers/EstPhoneNo", InterfaceMasterConfigUtil.ESTPHONENO,
+							phoneList, custCIF);
+					phoneList = setCustomerPhoneNumberByType(estMainAddElement,
+							path + parentTag + "EstFaxNumbers/EstFaxNo", InterfaceMasterConfigUtil.ESTFAXNO, phoneList,
+							custCIF);
+					phoneList = setCustomerPhoneNumberByType(estMainAddElement,
+							path + parentTag + "EstMobileNumbers/EstMobileNo", InterfaceMasterConfigUtil.ESTMOBILENO,
+							phoneList, custCIF);
 				}
 
 				if (estOtherAddElement != null) {
 					String parentTag = "EstOtherAddress/";
-					phoneList = setCustomerPhoneNumberByType(estOtherAddElement, path + parentTag+ "EstOtherPhoneNumbers/EstOtherPhoneNo",
+					phoneList = setCustomerPhoneNumberByType(estOtherAddElement,
+							path + parentTag + "EstOtherPhoneNumbers/EstOtherPhoneNo",
 							InterfaceMasterConfigUtil.ESTOTHERPHONENO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(estOtherAddElement, path + parentTag+ "EstOtherFaxNumbers/EstOtherFaxNo",
+					phoneList = setCustomerPhoneNumberByType(estOtherAddElement,
+							path + parentTag + "EstOtherFaxNumbers/EstOtherFaxNo",
 							InterfaceMasterConfigUtil.ESTOTHERFAXNO, phoneList, custCIF);
-					phoneList = setCustomerPhoneNumberByType(estOtherAddElement, path + parentTag+ "EstOtherMobileNumbers/EstOtherMobileNo",
+					phoneList = setCustomerPhoneNumberByType(estOtherAddElement,
+							path + parentTag + "EstOtherMobileNumbers/EstOtherMobileNo",
 							InterfaceMasterConfigUtil.ESTOTHERMOBILENO, phoneList, custCIF);
 				}
 			} catch (JaxenException je) {
@@ -866,7 +918,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @return
 	 * @throws JaxenException
 	 */
-	private List<InterfaceCustomerPhoneNumber> setCustomerPhoneNumberByType(OMElement element, String path, String type, 
+	private List<InterfaceCustomerPhoneNumber> setCustomerPhoneNumberByType(OMElement element, String path, String type,
 			List<InterfaceCustomerPhoneNumber> phoneList, String custCIF) throws JaxenException {
 		logger.debug("Entering");
 
@@ -887,7 +939,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			custPhoneNum.setPhoneNumber(PFFXmlUtil.getStringValue(omElement, "SubsidiaryNumber"));
 			phoneList.add(custPhoneNum);
 		}
-		
+
 		logger.debug("Leaving");
 
 		return phoneList;
@@ -917,14 +969,15 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			try {
 				if (ofceAddElement != null) {
 					String parentTag = "OfficeAddress/";
-					emailList.addAll(setCustomerEmailByType(ofceAddElement, path+ parentTag + "OfficeEmailAddresses/",
-							"OfficeEmailAddress",InterfaceMasterConfigUtil.getPersonalEmail(), custCIF));
+					emailList.addAll(setCustomerEmailByType(ofceAddElement, path + parentTag + "OfficeEmailAddresses/",
+							"OfficeEmailAddress", InterfaceMasterConfigUtil.getPersonalEmail(), custCIF));
 				}
 
 				if (resAddElement != null) {
 					String parentTag = "ResidenceAddress/";
-					emailList.addAll(setCustomerEmailByType(resAddElement, path + parentTag + "ResidenceEmailAddresses/",
-							"ResidenceEmailAddress", InterfaceMasterConfigUtil.getResidenceEmail(), custCIF));
+					emailList
+							.addAll(setCustomerEmailByType(resAddElement, path + parentTag + "ResidenceEmailAddresses/",
+									"ResidenceEmailAddress", InterfaceMasterConfigUtil.getResidenceEmail(), custCIF));
 				}
 
 			} catch (Exception ex) {
@@ -947,8 +1000,9 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 				if (estOtherAddElement != null) {
 					String parentTag = "EstOtherAddress/";
-					emailList.addAll(setCustomerEmailByType(estMainAddElement, path + parentTag + "EstOtherEmailAddresses/", 
-							"EstOtherEmailAddress", InterfaceMasterConfigUtil.getEstOtherEmail(), custCIF));
+					emailList.addAll(
+							setCustomerEmailByType(estMainAddElement, path + parentTag + "EstOtherEmailAddresses/",
+									"EstOtherEmailAddress", InterfaceMasterConfigUtil.getEstOtherEmail(), custCIF));
 				}
 			} catch (Exception ex) {
 				logger.error("Exception: ", ex);
@@ -1002,8 +1056,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<InterfaceCustomerAddress> setCustomerAddress(
-			OMElement addrElement, int custType, String custCIF) throws InterfaceException {
+	private List<InterfaceCustomerAddress> setCustomerAddress(OMElement addrElement, int custType, String custCIF)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (addrElement == null) {
@@ -1014,18 +1068,18 @@ public class FetchCustomerInfoProcess extends MQProcess {
 
 		if (custType == 1) {
 
-			addrList = setCustomerAddressByType(addrElement,InterfaceMasterConfigUtil.getRetailOfficeAddress(),
+			addrList = setCustomerAddressByType(addrElement, InterfaceMasterConfigUtil.getRetailOfficeAddress(),
 					ADDRESSTYPES.RETAILOFFICE, addrList, custCIF);
-			addrList = setCustomerAddressByType(addrElement,InterfaceMasterConfigUtil.getRetailResidenceAddress(),
+			addrList = setCustomerAddressByType(addrElement, InterfaceMasterConfigUtil.getRetailResidenceAddress(),
 					ADDRESSTYPES.RETAILRESIDENCE, addrList, custCIF);
-			addrList = setCustomerAddressByType(addrElement,InterfaceMasterConfigUtil.getRetailHomeCountryAddress(),
+			addrList = setCustomerAddressByType(addrElement, InterfaceMasterConfigUtil.getRetailHomeCountryAddress(),
 					ADDRESSTYPES.RETAILHOMECOUNTRY, addrList, custCIF);
 
 		} else {
 
-			addrList = setCustomerAddressByType(addrElement,InterfaceMasterConfigUtil.getSMEEstMainAddress(),
+			addrList = setCustomerAddressByType(addrElement, InterfaceMasterConfigUtil.getSMEEstMainAddress(),
 					ADDRESSTYPES.SMEESTMAIN, addrList, custCIF);
-			addrList = setCustomerAddressByType(addrElement,InterfaceMasterConfigUtil.getSMEEstOtherAddress(),
+			addrList = setCustomerAddressByType(addrElement, InterfaceMasterConfigUtil.getSMEEstOtherAddress(),
 					ADDRESSTYPES.SMEESTOTHER, addrList, custCIF);
 
 		}
@@ -1042,8 +1096,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<InterfaceCustomerAddress> setCustomerAddressByType(OMElement element, String[] addressTypes, ADDRESSTYPES type,
-			List<InterfaceCustomerAddress> list, String custCIF)throws InterfaceException {
+	private List<InterfaceCustomerAddress> setCustomerAddressByType(OMElement element, String[] addressTypes,
+			ADDRESSTYPES type, List<InterfaceCustomerAddress> list, String custCIF) throws InterfaceException {
 		logger.debug("Entering");
 
 		String[] keyTags = getkeyTags(type);
@@ -1070,7 +1124,8 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		address.setCustAddrLine1(PFFXmlUtil.getStringValue(addElement, keyTags[5]));
 		address.setCustAddrCountry(PFFXmlUtil.getStringValue(addElement, keyTags[8]));
 		if (address.getCustAddrCountry() != null) {
-			address.setCustAddrCountry(getMqInterfaceDAO().getMDMCode(address.getCustAddrCountry(), "mcm_bmtcountries"));
+			address.setCustAddrCountry(
+					getMqInterfaceDAO().getMDMCode(address.getCustAddrCountry(), "mcm_bmtcountries"));
 		}
 		address.setCustAddrProvince(PFFXmlUtil.getStringValue(addElement, keyTags[6]));
 		// String landMark = PFFXmlUtil.getStringValue(addElement, keyTags[5]);
@@ -1091,40 +1146,32 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		switch (type) {
 
 		case RETAILOFFICE:
-			keyTags = new String[] { "OfficeAddress", "OfficePOBox",
-					"OfficeFlatNo", "OfficeBuildingName", "OfficeStreetName",
-					"OfficeNearstLandmark", "OfficeEmirate",
-					"OfficeEmirateISO", "OfficeCountry", "OfficeCountryISO" };
+			keyTags = new String[] { "OfficeAddress", "OfficePOBox", "OfficeFlatNo", "OfficeBuildingName",
+					"OfficeStreetName", "OfficeNearstLandmark", "OfficeEmirate", "OfficeEmirateISO", "OfficeCountry",
+					"OfficeCountryISO" };
 			break;
 		case RETAILRESIDENCE:
-			keyTags = new String[] { "ResidenceAddress", "ResidencePOBox",
-					"ResidenceFlatNo", "ResidenceBuildingName", "ResidenceStreetName",
-					"ResidenceNearstLandmark", "ResidenceEmirate",
-					"ResidenceEmirateISO", "ResidenceCountry", "ResidenceCountryISO" };
+			keyTags = new String[] { "ResidenceAddress", "ResidencePOBox", "ResidenceFlatNo", "ResidenceBuildingName",
+					"ResidenceStreetName", "ResidenceNearstLandmark", "ResidenceEmirate", "ResidenceEmirateISO",
+					"ResidenceCountry", "ResidenceCountryISO" };
 			break;
 		case RETAILHOMECOUNTRY:
-			keyTags = new String[] { "HomeCountryAddress", "HCPOBox",
-					"HCFlatNo", "HCBuildingName", "HCStreetName",
-					"HCNearestLandmark", "HCEmirate",
-					"HCEmirateISO", "HCCountryCode", "HCCountryCodeISO" };
+			keyTags = new String[] { "HomeCountryAddress", "HCPOBox", "HCFlatNo", "HCBuildingName", "HCStreetName",
+					"HCNearestLandmark", "HCEmirate", "HCEmirateISO", "HCCountryCode", "HCCountryCodeISO" };
 			break;
 		case SMEESTMAIN:
-			keyTags = new String[] { "EstMainAddress", "EstMainPOBox",
-					"EstMainFlatNo", "EstMainBuildingName", "EstMainStreetName",
-					"EstMainNearstLandmark", "EstMainEmirate",
-					"EstMainEmirateISO", "EstMainCountry", "HomeCountryCountryISO" };
+			keyTags = new String[] { "EstMainAddress", "EstMainPOBox", "EstMainFlatNo", "EstMainBuildingName",
+					"EstMainStreetName", "EstMainNearstLandmark", "EstMainEmirate", "EstMainEmirateISO",
+					"EstMainCountry", "HomeCountryCountryISO" };
 			break;
 		case SMEESTOTHER:
-			keyTags = new String[] {"EstOtherAddress", "EstOtherPOBox",
-					"EstOtherFlatNo", "EstOtherBuildingName", "EstOtherStreetName",
-					"EstOtherNearstLandmark", "EstOtherEmirate",
-					"EstOtherEmirateISO", "EstOtherCountry", "EstOtherCountryISO" };
+			keyTags = new String[] { "EstOtherAddress", "EstOtherPOBox", "EstOtherFlatNo", "EstOtherBuildingName",
+					"EstOtherStreetName", "EstOtherNearstLandmark", "EstOtherEmirate", "EstOtherEmirateISO",
+					"EstOtherCountry", "EstOtherCountryISO" };
 			break;
 		case PHONECODES:
-			keyTags = new String[] { "OfficeAddress", "EstPOBox",
-					"EstFlatNo", "EstBuildingName", "EstStreetName",
-					"EstNearstLandmark", "EstEmirate",
-					"EstEmirateISO", "EstCountry", "EstCountryISO" };
+			keyTags = new String[] { "OfficeAddress", "EstPOBox", "EstFlatNo", "EstBuildingName", "EstStreetName",
+					"EstNearstLandmark", "EstEmirate", "EstEmirateISO", "EstCountry", "EstCountryISO" };
 			break;
 		default:
 			break;
@@ -1139,6 +1186,5 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	public void setMqInterfaceDAO(MQInterfaceDAO mqInterfaceDAO) {
 		this.mqInterfaceDAO = mqInterfaceDAO;
 	}
-
 
 }

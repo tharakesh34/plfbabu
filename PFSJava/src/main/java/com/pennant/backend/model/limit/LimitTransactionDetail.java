@@ -16,14 +16,14 @@ import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceMain;
 
-@XmlType(propOrder = { "headerId", "custCIF", "custGrpCode", "referenceCode", "referenceNumber", "limitCurrency", "limitAmount",
-		"returnStatus" })
+@XmlType(propOrder = { "headerId", "custCIF", "custGrpCode", "referenceCode", "referenceNumber", "limitCurrency",
+		"limitAmount", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class LimitTransactionDetail implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 3749037992177767072L;
 	private long transactionId = Long.MIN_VALUE;
-	@XmlElement(name="limitId")
+	@XmlElement(name = "limitId")
 	private long headerId;
 	@XmlElement
 	private String referenceCode;

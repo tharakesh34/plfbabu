@@ -13,14 +13,14 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.util.PennantAppUtil;
 
-public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<FinanceEnquiry>, Serializable{
+public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<FinanceEnquiry>, Serializable {
 
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	public FinanceEnquiryListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceEnquiry enquiry, int count) throws Exception {
 
@@ -48,23 +48,23 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc = new Listcell(enquiry.getFinCcy());
 		lc.setParent(item);
 		BigDecimal finAmount = enquiry.getFinCurrAssetValue();
-		if(enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+		if (enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
-		if(enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0){
+		if (enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(enquiry.getInsuranceAmt());
 		}
-		
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount,CurrencyUtil.getFormat(enquiry.getFinCcy())));
+
+		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
-		if(enquiry.getFinRepaymentAmount()!=null){
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount
-					.subtract(enquiry.getFinRepaymentAmount()),CurrencyUtil.getFormat(enquiry.getFinCcy())));
+		if (enquiry.getFinRepaymentAmount() != null) {
+			lc = new Listcell(PennantAppUtil.amountFormate(finAmount.subtract(enquiry.getFinRepaymentAmount()),
+					CurrencyUtil.getFormat(enquiry.getFinCcy())));
 			lc.setStyle("text-align:right");
-		}else{
+		} else {
 			lc = new Listcell("");
-			
+
 		}
 		lc.setParent(item);
 		item.setAttribute("data", enquiry);

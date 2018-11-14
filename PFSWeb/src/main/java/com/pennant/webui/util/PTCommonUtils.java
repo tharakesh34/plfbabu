@@ -26,19 +26,20 @@ public class PTCommonUtils implements Serializable {
 	}
 
 	/**
-	 * EN: Creates the TapPanels Content from a loaded zul-template. The caller
-	 * mainController can be overhanded.<br>
-	 * DE: Erzeugt den Inhalt des tabPanels aus einer zul-Datei. Der aufrufende
-	 * MainController selbst kann übergeben werden.
+	 * EN: Creates the TapPanels Content from a loaded zul-template. The caller mainController can be overhanded.<br>
+	 * DE: Erzeugt den Inhalt des tabPanels aus einer zul-Datei. Der aufrufende MainController selbst kann übergeben
+	 * werden.
 	 * 
 	 * @param tabPanelID
 	 * @param mainCtrl
 	 * @param mainCtrlName
 	 * @param zulFilePathName
 	 */
-	public static void createTabPanelContent(Tabpanel tabPanelID, Object mainCtrl, String mainCtrlName, String zulFilePathName) {
+	public static void createTabPanelContent(Tabpanel tabPanelID, Object mainCtrl, String mainCtrlName,
+			String zulFilePathName) {
 
-		if (tabPanelID != null && mainCtrl != null && !StringUtils.isEmpty(mainCtrlName) && !StringUtils.isEmpty(zulFilePathName)) {
+		if (tabPanelID != null && mainCtrl != null && !StringUtils.isEmpty(mainCtrlName)
+				&& !StringUtils.isEmpty(zulFilePathName)) {
 
 			// overhanded this controller self in the paramMap
 			final Map<String, Object> map = Collections.singletonMap(mainCtrlName, mainCtrl);

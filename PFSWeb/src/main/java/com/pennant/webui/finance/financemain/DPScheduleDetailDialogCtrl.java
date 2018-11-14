@@ -77,50 +77,49 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	private static final Logger logger = Logger.getLogger(DPScheduleDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_DPScheduleDetailDialog; 			// autoWired
-	protected Listbox 		listBoxSchedule; 						// autoWired
-	protected Borderlayout  borderlayoutScheduleDetail;				// autoWired
+	protected Window window_DPScheduleDetailDialog; // autoWired
+	protected Listbox listBoxSchedule; // autoWired
+	protected Borderlayout borderlayoutScheduleDetail; // autoWired
 
 	//Finance Schedule Details Tab
-	protected Grid 			grid_effRateOfReturn; 					// autoWired
+	protected Grid grid_effRateOfReturn; // autoWired
 
-	protected Label			schdl_finType;
-	protected Label			schdl_finReference;
-	protected Label			schdl_finCcy;
-	protected Label			schdl_profitDaysBasis;
-	protected Label			schdl_noOfTerms;
-	protected Label			schdl_grcEndDate;
-	protected Label			schdl_startDate;
-	protected Label			schdl_maturityDate;
-	protected Decimalbox	schdl_purchasePrice;
-	protected Decimalbox	schdl_otherExp;
-	protected Decimalbox	schdl_totalCost;
-	protected Decimalbox	schdl_totalPft;
-	protected Decimalbox	schdl_contractPrice;
-	protected Label 		schdl_BankShare;
-	protected Label 		schdl_NonBankShare;
+	protected Label schdl_finType;
+	protected Label schdl_finReference;
+	protected Label schdl_finCcy;
+	protected Label schdl_profitDaysBasis;
+	protected Label schdl_noOfTerms;
+	protected Label schdl_grcEndDate;
+	protected Label schdl_startDate;
+	protected Label schdl_maturityDate;
+	protected Decimalbox schdl_purchasePrice;
+	protected Decimalbox schdl_otherExp;
+	protected Decimalbox schdl_totalCost;
+	protected Decimalbox schdl_totalPft;
+	protected Decimalbox schdl_contractPrice;
+	protected Label schdl_BankShare;
+	protected Label schdl_NonBankShare;
 
-	public 	  Label 		effectiveRateOfReturn; 					
+	public Label effectiveRateOfReturn;
 
-	protected Label			label_ScheduleDetailDialog_FinType;
-	protected Label			label_ScheduleDetailDialog_FinReference;
-	protected Label			label_ScheduleDetailDialog_FinCcy;
-	protected Label			label_ScheduleDetailDialog_ProfitDaysBasis;
-	protected Label			label_ScheduleDetailDialog_NoOfTerms;
-	protected Label			label_ScheduleDetailDialog_GrcEndDate;
-	protected Label			label_ScheduleDetailDialog_StartDate;
-	protected Label			label_ScheduleDetailDialog_MaturityDate;
-	protected Label			label_ScheduleDetailDialog_PurchasePrice;
+	protected Label label_ScheduleDetailDialog_FinType;
+	protected Label label_ScheduleDetailDialog_FinReference;
+	protected Label label_ScheduleDetailDialog_FinCcy;
+	protected Label label_ScheduleDetailDialog_ProfitDaysBasis;
+	protected Label label_ScheduleDetailDialog_NoOfTerms;
+	protected Label label_ScheduleDetailDialog_GrcEndDate;
+	protected Label label_ScheduleDetailDialog_StartDate;
+	protected Label label_ScheduleDetailDialog_MaturityDate;
+	protected Label label_ScheduleDetailDialog_PurchasePrice;
 
-	protected Listheader    listheader_ScheduleDetailDialog_Date;
-	protected Listheader    listheader_ScheduleDetailDialog_CalProfit;
-	protected Listheader    listheader_ScheduleDetailDialog_Principal;
-	protected Listheader    listheader_ScheduleDetailDialog_Total;
-	protected Listheader    listheader_ScheduleDetailDialog_ScheduleEndBal;
+	protected Listheader listheader_ScheduleDetailDialog_Date;
+	protected Listheader listheader_ScheduleDetailDialog_CalProfit;
+	protected Listheader listheader_ScheduleDetailDialog_Principal;
+	protected Listheader listheader_ScheduleDetailDialog_Total;
+	protected Listheader listheader_ScheduleDetailDialog_ScheduleEndBal;
 
 	private Object financeMainDialogCtrl = null;
 	private FinScheduleData finScheduleData = null;
@@ -143,9 +142,8 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -175,44 +173,59 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 
 	/**
 	 * 
-	 * Set the Labels for the ListHeader and Basic Details based oon the Finance Types
-	 * right is only a string. <br>
+	 * Set the Labels for the ListHeader and Basic Details based oon the Finance Types right is only a string. <br>
 	 */
 	private void doSetLabels() {
 		logger.debug("Entering");
 		String product = getFinScheduleData().getFinanceType().getFinCategory();
 
-		FinanceMain financeMain = getFinScheduleData().getFinanceMain();		
+		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		this.schdl_finType.setValue(financeMain.getLovDescFinTypeName());
 		this.schdl_finCcy.setValue(financeMain.getFinCcy());
-		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis()));
+		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+				PennantStaticListUtil.getProfitDaysBasis()));
 
-		String productType = (product.substring(0, 1)).toUpperCase()+(product.substring(1)).toLowerCase();
-		label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinType.value"));
+		String productType = (product.substring(0, 1)).toUpperCase() + (product.substring(1)).toLowerCase();
+		label_ScheduleDetailDialog_FinType
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinType.value"));
 		//Showing Product Details for Promotion Type
-		if(StringUtils.isNotEmpty(getFinScheduleData().getFinanceType().getProduct())){
-			label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("label_"+productType+"FinanceMainDialog_PromotionCode.value"));
+		if (StringUtils.isNotEmpty(getFinScheduleData().getFinanceType().getProduct())) {
+			label_ScheduleDetailDialog_FinType
+					.setValue(Labels.getLabel("label_" + productType + "FinanceMainDialog_PromotionCode.value"));
 		}
 
-		label_ScheduleDetailDialog_FinReference.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinReference.value"));
-		label_ScheduleDetailDialog_FinCcy.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinCcy.value"));
-		label_ScheduleDetailDialog_ProfitDaysBasis.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_ProfitDaysBasis.value"));
-		label_ScheduleDetailDialog_NoOfTerms.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_NumberOfTerms.value"));
-		label_ScheduleDetailDialog_GrcEndDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinGracePeriodEndDate.value"));
-		label_ScheduleDetailDialog_StartDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinStartDate.value"));
-		label_ScheduleDetailDialog_MaturityDate.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_FinMaturityDate.value"));
-		label_ScheduleDetailDialog_PurchasePrice.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_PurchasePrice.value"));
+		label_ScheduleDetailDialog_FinReference
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinReference.value"));
+		label_ScheduleDetailDialog_FinCcy
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinCcy.value"));
+		label_ScheduleDetailDialog_ProfitDaysBasis
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_ProfitDaysBasis.value"));
+		label_ScheduleDetailDialog_NoOfTerms
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_NumberOfTerms.value"));
+		label_ScheduleDetailDialog_GrcEndDate.setValue(
+				Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinGracePeriodEndDate.value"));
+		label_ScheduleDetailDialog_StartDate
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinStartDate.value"));
+		label_ScheduleDetailDialog_MaturityDate
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_FinMaturityDate.value"));
+		label_ScheduleDetailDialog_PurchasePrice
+				.setValue(Labels.getLabel("label_" + productType + "_ScheduleDetailDialog_PurchasePrice.value"));
 
-		listheader_ScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Date"));
-		listheader_ScheduleDetailDialog_CalProfit.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_SchProfit"));
-		listheader_ScheduleDetailDialog_Principal.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Principal"));
-		listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Total"));
-		listheader_ScheduleDetailDialog_ScheduleEndBal.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_ScheduleEndBal"));
+		listheader_ScheduleDetailDialog_Date
+				.setLabel(Labels.getLabel("listheader_" + productType + "_ScheduleDetailDialog_Date"));
+		listheader_ScheduleDetailDialog_CalProfit
+				.setLabel(Labels.getLabel("listheader_" + productType + "_ScheduleDetailDialog_SchProfit"));
+		listheader_ScheduleDetailDialog_Principal
+				.setLabel(Labels.getLabel("listheader_" + productType + "_ScheduleDetailDialog_Principal"));
+		listheader_ScheduleDetailDialog_Total
+				.setLabel(Labels.getLabel("listheader_" + productType + "_ScheduleDetailDialog_Total"));
+		listheader_ScheduleDetailDialog_ScheduleEndBal
+				.setLabel(Labels.getLabel("listheader_" + productType + "_ScheduleDetailDialog_ScheduleEndBal"));
 
-		if(financeMain.getFinStartDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0){
+		if (financeMain.getFinStartDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
 			label_ScheduleDetailDialog_GrcEndDate.setVisible(false);
 			schdl_grcEndDate.setVisible(false);
-		}else{
+		} else {
 			label_ScheduleDetailDialog_GrcEndDate.setVisible(true);
 			schdl_grcEndDate.setVisible(true);
 		}
@@ -238,11 +251,11 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 			doFillScheduleList(scheduleData);
 
 			getBorderLayoutHeight();
-			this.window_DPScheduleDetailDialog.setHeight(borderLayoutHeight-15+"px");
-			this.listBoxSchedule.setHeight(borderLayoutHeight-170+"px");
+			this.window_DPScheduleDetailDialog.setHeight(borderLayoutHeight - 15 + "px");
+			this.listBoxSchedule.setHeight(borderLayoutHeight - 170 + "px");
 			setDialog(DialogType.EMBEDDED);
 			this.window_DPScheduleDetailDialog.doModal();
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -256,8 +269,8 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	 */
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		
-		if(aFinSchData != null ){
+
+		if (aFinSchData != null) {
 			FinanceMain financeMain = aFinSchData.getFinanceMain();
 			int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 			this.schdl_finReference.setValue(financeMain.getFinReference());
@@ -266,10 +279,10 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 			this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 			this.schdl_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
 			this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
-	
+
 			// Down Payment Schedule List Items
 			if (!aFinSchData.getFinanceScheduleDetails().isEmpty()) {
-	
+
 				finRender = new FinScheduleListItemRenderer();
 				for (FinanceScheduleDetail aScheduleDetail : aFinSchData.getFinanceScheduleDetails()) {
 					finRender.doFillDPSchedule(this.listBoxSchedule, aScheduleDetail, ccyFormatter);
@@ -294,7 +307,7 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -308,7 +321,6 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 		logger.debug("Leaving " + event.toString());
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -316,6 +328,7 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -323,6 +336,7 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -330,6 +344,7 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -337,6 +352,7 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}

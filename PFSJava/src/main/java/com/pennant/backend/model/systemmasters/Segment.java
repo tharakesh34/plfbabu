@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Segment extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -6863006316236098523L;
-	
+
 	private String segmentCode;
 	private String segmentDesc;
 	private boolean segmentIsActive;
@@ -78,31 +78,35 @@ public class Segment extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return segmentCode;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.segmentCode = id;
 	}
-	
+
 	public String getSegmentCode() {
 		return segmentCode;
 	}
+
 	public void setSegmentCode(String segmentCode) {
 		this.segmentCode = segmentCode;
 	}
-	
+
 	public String getSegmentDesc() {
 		return segmentDesc;
 	}
+
 	public void setSegmentDesc(String segmentDesc) {
 		this.segmentDesc = segmentDesc;
 	}
-	
+
 	public boolean isSegmentIsActive() {
 		return segmentIsActive;
 	}
+
 	public void setSegmentIsActive(boolean segmentIsActive) {
 		this.segmentIsActive = segmentIsActive;
 	}
@@ -110,27 +114,31 @@ public class Segment extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Segment getBefImage(){
+	public Segment getBefImage() {
 		return this.befImage;
-	}	
-	public void setBefImage(Segment beforeImage){
-		this.befImage=beforeImage;
+	}
+
+	public void setBefImage(Segment beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

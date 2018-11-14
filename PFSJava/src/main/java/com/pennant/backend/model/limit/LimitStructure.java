@@ -73,7 +73,7 @@ public class LimitStructure extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String structureCode;
-	
+
 	@XmlElement
 	private String structureName;
 	// private String type;
@@ -81,11 +81,11 @@ public class LimitStructure extends AbstractWorkflowEntity {
 	private String limitCategory;
 	// private String typeName;
 	private String showLimitsIn;
-	
+
 	@XmlElement
 	private boolean active;
-	
-	@XmlElement(name="structureDetail")
+
+	@XmlElement(name = "structureDetail")
 	private List<LimitStructureDetail> limitStructureDetailItemsList;
 
 	private long createdBy;
@@ -97,7 +97,7 @@ public class LimitStructure extends AbstractWorkflowEntity {
 	private LimitStructure befImage;
 	private LoggedInUser userDetails;
 	private boolean scheduled = false;
-	
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 

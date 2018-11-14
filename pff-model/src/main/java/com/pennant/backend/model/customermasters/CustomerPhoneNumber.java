@@ -59,7 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-@XmlType(propOrder = {"phoneTypeCode", "phoneCountryCode", "phoneAreaCode", "phoneNumber","phoneTypePriority"})
+@XmlType(propOrder = { "phoneTypeCode", "phoneCountryCode", "phoneAreaCode", "phoneNumber", "phoneTypePriority" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 
@@ -81,14 +81,14 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	private String lovValue;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-	@XmlElement(name ="priority" )
+	@XmlElement(name = "priority")
 	private int phoneTypePriority;
 
 	private CustomerPhoneNumber befImage;
 	private LoggedInUser userDetails;
 	private String sourceId;
 	private String phoneRegex;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -102,14 +102,13 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("sourceId");
 		excludeFields.add("phoneRegex");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -117,13 +116,15 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public long getId() {
 		return phoneCustID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.phoneCustID = id;
 	}
 
 	public long getPhoneCustID() {
 		return phoneCustID;
 	}
+
 	public void setPhoneCustID(long phoneCustID) {
 		this.phoneCustID = phoneCustID;
 	}
@@ -131,6 +132,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -138,6 +140,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getPhoneTypeCode() {
 		return phoneTypeCode;
 	}
+
 	public void setPhoneTypeCode(String phoneTypeCode) {
 		this.phoneTypeCode = phoneTypeCode;
 	}
@@ -145,6 +148,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getLovDescPhoneTypeCodeName() {
 		return this.lovDescPhoneTypeCodeName;
 	}
+
 	public void setLovDescPhoneTypeCodeName(String lovDescPhoneTypeCodeName) {
 		this.lovDescPhoneTypeCodeName = lovDescPhoneTypeCodeName;
 	}
@@ -152,6 +156,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getPhoneCountryCode() {
 		return phoneCountryCode;
 	}
+
 	public void setPhoneCountryCode(String phoneCountryCode) {
 		this.phoneCountryCode = phoneCountryCode;
 	}
@@ -159,6 +164,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getPhoneAreaCode() {
 		return phoneAreaCode;
 	}
+
 	public void setPhoneAreaCode(String phoneAreaCode) {
 		this.phoneAreaCode = phoneAreaCode;
 	}
@@ -166,6 +172,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
+
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
@@ -173,6 +180,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -180,6 +188,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -187,6 +196,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -194,32 +204,36 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
-	public CustomerPhoneNumber getBefImage(){
+	public CustomerPhoneNumber getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerPhoneNumber beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerPhoneNumber beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 	}
 
 	public void setLovDescPhoneCountryName(String lovDescPhoneCountryName) {
 		this.lovDescPhoneCountryName = lovDescPhoneCountryName;
 	}
+
 	public String getLovDescPhoneCountryName() {
 		return lovDescPhoneCountryName;
 	}
@@ -235,6 +249,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public int getPhoneTypePriority() {
 		return phoneTypePriority;
 	}
+
 	public void setPhoneTypePriority(int phoneTypePriority) {
 		this.phoneTypePriority = phoneTypePriority;
 	}

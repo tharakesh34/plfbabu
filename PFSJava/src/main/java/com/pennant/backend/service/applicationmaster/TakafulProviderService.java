@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface TakafulProviderService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	TakafulProvider getTakafulProviderById(String id);
+
 	TakafulProvider getApprovedTakafulProviderById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -121,15 +121,16 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				}
 			}
 			Branch fromBranch = getBranchDAO().getBranchById(financeMain.getFinBranch(), "");
-			
+
 			if (fromBranch == null) {
 				return; //FIXME write this case as a error message
 			}
-			
+
 			// Check whether State level Tax Details exists or not
-			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(), fromBranch.getBranchProvince());
+			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(),
+					fromBranch.getBranchProvince());
 			//Province companyProvince = this.provinceService.getApprovedProvinceById(entity.getCountry(), entity.getStateCode());
-			
+
 			if (companyProvince != null) {
 
 				if (StringUtils.isBlank(companyProvince.getCPProvince())
@@ -330,7 +331,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						}
 						advTran.setFeeCode(movement.getFeeTypeCode());
 						advTran.setFeeDescription(movement.getFeeTypeDesc());
-						
+
 						if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
 							advTran.setFeeAmount(movement.getPaidAmount().subtract(gstAmount)); //Fee Amount with out GST
 						} else {

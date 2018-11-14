@@ -48,14 +48,21 @@ import com.pennant.backend.model.lmtmasters.FacilityReference;
 import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
 
 public interface FacilityReferenceDetailService {
-	
+
 	FacilityReferenceDetail getNewFacilityReferenceDetail();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FacilityReferenceDetail getFacilityReferenceDetailById(long id);
+
 	FacilityReferenceDetail getApprovedFacilityReferenceDetailById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	FacilityReference getFacilityReference(String finType);
-	
+
 }

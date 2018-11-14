@@ -30,10 +30,10 @@ import com.pennanttech.pennapps.core.App;
 
 public class PostPastDueSMS implements Tasklet {
 
-	private Logger			logger	= Logger.getLogger(PostPastDueSMS.class);
+	private Logger logger = Logger.getLogger(PostPastDueSMS.class);
 
-	private DataSource		dataSource;
-	private ExtTablesDAO	extTablesDAO;
+	private DataSource dataSource;
+	private ExtTablesDAO extTablesDAO;
 
 	public PostPastDueSMS() {
 		super();
@@ -50,14 +50,14 @@ public class PostPastDueSMS implements Tasklet {
 		PreparedStatement sqlStatement = null;
 
 		try {
-			int configureOdDays=5;
+			int configureOdDays = 5;
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(getCountQuery());
 			sqlStatement.setInt(1, configureOdDays);
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
@@ -79,7 +79,7 @@ public class PostPastDueSMS implements Tasklet {
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
-		}finally {
+		} finally {
 			if (resultSet != null) {
 				resultSet.close();
 			}
@@ -145,7 +145,8 @@ public class PostPastDueSMS implements Tasklet {
 
 		addLine(tabDat, getDate(resultSet.getDate("PrvODDate")));
 		addLine(tabDat, getAmt(resultSet.getBigDecimal("ODPrincipal").add(resultSet.getBigDecimal("ODProfit")), ccy));
-		addLine(tabDat, getAmt(resultSet.getBigDecimal("TotalPriBal").add(resultSet.getBigDecimal("TotalPftBal")), ccy));
+		addLine(tabDat,
+				getAmt(resultSet.getBigDecimal("TotalPriBal").add(resultSet.getBigDecimal("TotalPftBal")), ccy));
 		addLine(tabDat, String.valueOf(resultSet.getInt("NOInst") - resultSet.getInt("NOPaidInst")));
 		appendColon(tabDat, 50);// Free space
 		return tabDat.toString();
@@ -176,7 +177,8 @@ public class PostPastDueSMS implements Tasklet {
 	}
 
 	private String prepareSelectQuery() {
-		StringBuilder query = new StringBuilder(" select fpd.FinBranch,fpd.CustCIF,fpd.FinReference,fpd.FinType,fpd.FinAmount,");
+		StringBuilder query = new StringBuilder(
+				" select fpd.FinBranch,fpd.CustCIF,fpd.FinReference,fpd.FinType,fpd.FinAmount,");
 		query.append(" fpd.FinCcy,fpd.PrvODDate,fpd.ODPrincipal, fpd.ODProfit,fpd.TotalPriBal,fpd.TotalPftBal,");
 		query.append(" fpd.NOInst,fpd.NOPaidInst,su.UsrFName,su.UsrMName,su.UsrLName");
 		query.append(" from FinPftDetails fpd  ");

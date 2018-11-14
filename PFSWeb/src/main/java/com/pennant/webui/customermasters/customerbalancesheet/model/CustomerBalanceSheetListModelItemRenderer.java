@@ -65,36 +65,36 @@ public class CustomerBalanceSheetListModelItemRenderer implements ListitemRender
 	private static final long serialVersionUID = -4954735333466148555L;
 
 	public CustomerBalanceSheetListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerBalanceSheet data, int count) throws Exception {
 
-		if (item instanceof Listgroup) { 
-			item.appendChild(new Listcell(String.valueOf(data.getLovDescCustCIF()))); 
-		} else if (item instanceof Listgroupfoot) { 
+		if (item instanceof Listgroup) {
+			item.appendChild(new Listcell(String.valueOf(data.getLovDescCustCIF())));
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(6);
-			item.appendChild(cell); 
-		} else { 
+			item.appendChild(cell);
+		} else {
 			Listcell lc;
 			lc = new Listcell("");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(data.getTotalAssets(),0));
+			lc = new Listcell(PennantAppUtil.amountFormate(data.getTotalAssets(), 0));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(data.getTotalLiabilities(),0));
+			lc = new Listcell(PennantAppUtil.amountFormate(data.getTotalLiabilities(), 0));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(data.getNetProfit(),0));
+			lc = new Listcell(PennantAppUtil.amountFormate(data.getNetProfit(), 0));
 			lc.setParent(item);
 			lc = new Listcell(data.getRecordStatus());
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(data.getRecordType()));
 			lc.setParent(item);
-			
+
 			item.setAttribute("id", data.getId());
 			item.setAttribute("custId", data.getCustId());
-			
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerBalanceSheetItemDoubleClicked");
 		}
 	}

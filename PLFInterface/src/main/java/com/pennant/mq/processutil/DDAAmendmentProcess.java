@@ -24,7 +24,7 @@ public class DDAAmendmentProcess extends MQProcess {
 	public DDAAmendmentProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the DDA_Amendment Request and send Response
 	 * 
@@ -45,14 +45,15 @@ public class DDAAmendmentProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(ddaAmendmentReq, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -68,9 +69,9 @@ public class DDAAmendmentProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	private DDAAmendment setDDAAmendmentReplyInfo(OMElement responseElement, AHBMQHeader header) 
+	private DDAAmendment setDDAAmendmentReplyInfo(OMElement responseElement, AHBMQHeader header)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -110,7 +111,7 @@ public class DDAAmendmentProcess extends MQProcess {
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(DDAAmendment ddaAmendmentReq, String referenceNum, OMFactory factory) 
+	private OMElement getRequestElement(DDAAmendment ddaAmendmentReq, String referenceNum, OMFactory factory)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -129,7 +130,7 @@ public class DDAAmendmentProcess extends MQProcess {
 		requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		requestElement.addChild(rootElement);
 		logger.debug("Leaving");
-		
+
 		return requestElement;
 	}
 

@@ -44,51 +44,51 @@ import com.pennanttech.pff.external.ExperianBureauService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianBureauServiceImpl extends NiyoginService implements ExperianBureauService {
-	private static final Logger	logger						= Logger.getLogger(ExperianBureauServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ExperianBureauServiceImpl.class);
 
-	private final String		commercialConfigFileName	= "experianBureauCommercial.properties";
-	private final String		consumerConfigFileName		= "experianBureauConsumer.properties";
-	private String				consumerUrl;
-	private String				commercialUrl;
+	private final String commercialConfigFileName = "experianBureauCommercial.properties";
+	private final String consumerConfigFileName = "experianBureauConsumer.properties";
+	private String consumerUrl;
+	private String commercialUrl;
 
-	private String				CONSUMER_CAIS_HIST			= "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
-	private String				COMMERCIAL_BPAYGRID			= "$.data.COMMCRED.BPAYGRID";
+	private String CONSUMER_CAIS_HIST = "$.data.CAIS_Account.CAIS_Account_DETAILS.CAIS_Account_History";
+	private String COMMERCIAL_BPAYGRID = "$.data.COMMCRED.BPAYGRID";
 
 	//Experian Bureau
-	public static final String	REQ_SEND					= "REQSENDEXPBURU";
-	public static final String	STATUSCODE					= "STATUSEXPBURU";
-	public static final String	RSN_CODE					= "REASONEXPBURU";
-	public static final String	REMARKS						= "REMARKSEXPBURU";
+	public static final String REQ_SEND = "REQSENDEXPBURU";
+	public static final String STATUSCODE = "STATUSEXPBURU";
+	public static final String RSN_CODE = "REASONEXPBURU";
+	public static final String REMARKS = "REMARKSEXPBURU";
 
-	public static final String	NO_OF_ENQUIRES				= "NOOFENQUIRES";
-	public static final String	RESTRUCTURED_FLAG			= "RESTRUCTUREDLOAN";
-	public static final String	SUIT_FILED_FLAG				= "SUITFILED";
-	public static final String	WILLFUL_DEFAULTER_FLAG		= "WILLFULDEFAULTER";
-	public static final String	WRITE_OFF_FLAG				= "EXPBWRUTEOFF";
-	public static final String	SETTLED_FLAG_FLAG			= "EXPBSETTLED";
-	public static final String	NO_EMI_BOUNCES_IN3M			= "EMI3MONTHS";
-	public static final String	NO_EMI_BOUNCES_IN6M			= "EMI6MNTHS";
-	public static final String	STATUS						= "STATUS";
-	public static final String	WRITEOFF					= "25";
-	public static final String	SETTLE						= "23";
-	public static final String	PANNUMBER					= "PANNUMBER";
+	public static final String NO_OF_ENQUIRES = "NOOFENQUIRES";
+	public static final String RESTRUCTURED_FLAG = "RESTRUCTUREDLOAN";
+	public static final String SUIT_FILED_FLAG = "SUITFILED";
+	public static final String WILLFUL_DEFAULTER_FLAG = "WILLFULDEFAULTER";
+	public static final String WRITE_OFF_FLAG = "EXPBWRUTEOFF";
+	public static final String SETTLED_FLAG_FLAG = "EXPBSETTLED";
+	public static final String NO_EMI_BOUNCES_IN3M = "EMI3MONTHS";
+	public static final String NO_EMI_BOUNCES_IN6M = "EMI6MNTHS";
+	public static final String STATUS = "STATUS";
+	public static final String WRITEOFF = "25";
+	public static final String SETTLE = "23";
+	public static final String PANNUMBER = "PANNUMBER";
 
-	public final String			COAPP_REQ_SEND					= "COAPPREQSENDEXPBURU";
-	public final String			COAPP_STATUSCODE				= "COAPPSTATUSEXPBURU";
-	public final String			COAPP_RSN_CODE					= "COAPPREASONEXPBURU";
-	public final String			COAPP_REMARKS					= "COAPPREMARKSEXPBURU";
-	public final String			COAPP_NO_OF_ENQUIRES			= "COAPPNOOFENQUIRES";
-	public final String			COAPP_RESTRUCTURED_FLAG			= "COAPPRESTRUCTUREDLOAN";
-	public final String			COAPP_SUIT_FILED_FLAG			= "COAPPSUITFILED";
-	public final String			COAPP_WILLFUL_DEFAULTER_FLAG	= "COAPPWILLFULDEFAULTER";
-	public final String			COAPP_WRITE_OFF_FLAG			= "COAPPEXPBWRUTEOFF";
-	public final String			COAPP_SETTLED_FLAG_FLAG			= "COAPPEXPBSETTLED";
-	public final String			COAPP_NO_EMI_BOUNCES_IN3M		= "COAPPEMI3MONTHS";
-	public final String			COAPP_NO_EMI_BOUNCES_IN6M		= "COAPPEMI6MNTHS";
-	public final String			COAPP_STATUS					= "COAPPSTATUS";
-	public final String			COAPP_PANNUMBER					= "COAPPPANNUMBER";
+	public final String COAPP_REQ_SEND = "COAPPREQSENDEXPBURU";
+	public final String COAPP_STATUSCODE = "COAPPSTATUSEXPBURU";
+	public final String COAPP_RSN_CODE = "COAPPREASONEXPBURU";
+	public final String COAPP_REMARKS = "COAPPREMARKSEXPBURU";
+	public final String COAPP_NO_OF_ENQUIRES = "COAPPNOOFENQUIRES";
+	public final String COAPP_RESTRUCTURED_FLAG = "COAPPRESTRUCTUREDLOAN";
+	public final String COAPP_SUIT_FILED_FLAG = "COAPPSUITFILED";
+	public final String COAPP_WILLFUL_DEFAULTER_FLAG = "COAPPWILLFULDEFAULTER";
+	public final String COAPP_WRITE_OFF_FLAG = "COAPPEXPBWRUTEOFF";
+	public final String COAPP_SETTLED_FLAG_FLAG = "COAPPEXPBSETTLED";
+	public final String COAPP_NO_EMI_BOUNCES_IN3M = "COAPPEMI3MONTHS";
+	public final String COAPP_NO_EMI_BOUNCES_IN6M = "COAPPEMI6MNTHS";
+	public final String COAPP_STATUS = "COAPPSTATUS";
+	public final String COAPP_PANNUMBER = "COAPPPANNUMBER";
 
-	private Date				appDate						= getAppDate();
+	private Date appDate = getAppDate();
 
 	/**
 	 * Method for execute Experian Bureau service<br>
@@ -105,7 +105,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 
@@ -128,7 +128,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		Map<String, Object> coAppplicantsdata = new HashMap<>();
 		for (CustomerDetails coAppCustomerDetail : coApplicantCustomers) {
 			executeBureau(financeDetail, coAppCustomerDetail);
-			processCoAppResponse(coAppplicantsdata,appplicationdata);
+			processCoAppResponse(coAppplicantsdata, appplicationdata);
 		}
 		Map<String, Object> mapvalidData = validateExtendedMapValues(coAppplicantsdata);
 		prepareResponseObj(mapvalidData, financeDetail);
@@ -195,7 +195,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, commercialConfigFileName);
 				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
 				//process the response map
-				prepareCommercialExtendedMap(mapvalidData,jsonResponse);
+				prepareCommercialExtendedMap(mapvalidData, jsonResponse);
 				appplicationdata.putAll(mapvalidData);
 			}
 		} catch (Exception e) {
@@ -252,7 +252,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, consumerConfigFileName);
 				Map<String, Object> mapvalidData = validateExtendedMapValues(mapdata);
 				//process the response map
-				prepareConsumerExtendedMap(mapvalidData,jsonResponse);
+				prepareConsumerExtendedMap(mapvalidData, jsonResponse);
 				appplicationdata.putAll(mapvalidData);
 			}
 		} catch (Exception e) {
@@ -489,7 +489,8 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 	 * @param extendedFieldMap
 	 * @return
 	 */
-	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap, String jsonResponse) {
+	private Map<String, Object> prepareCommercialExtendedMap(Map<String, Object> extendedFieldMap,
+			String jsonResponse) {
 		logger.debug(Literal.ENTERING);
 
 		List<BillPayGrid> billPayGridList = null;
@@ -672,7 +673,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		for (int i = 0; i < caisAccountHistories.size(); i++) {
 			CAISAccountHistory casisHistory = caisAccountHistories.get(i);
-			Date bpayDate=null;
+			Date bpayDate = null;
 			try {
 				bpayDate = dateFormat.parse("01-" + casisHistory.getMonth() + "-" + casisHistory.getYear());
 			} catch (Exception e) {
@@ -699,7 +700,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		logger.debug(Literal.LEAVING);
 		return false;
 	}
-	
+
 	/**
 	 * Method for prepare the CoApplicants data as a String value by seperating each CoApplicant data with delimeter.
 	 * 
@@ -726,7 +727,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for combining both coApplicantsMap data and currentDataMap data by appending a delimeter.
 	 * 
@@ -742,7 +743,7 @@ public class ExperianBureauServiceImpl extends NiyoginService implements Experia
 		value = getval(coApplicantsMap.get(coAppKey)) + getval(currentDataMap.get(curMapKey)) + LIST_DELIMETER;
 		coApplicantsMap.put(coAppKey, value);
 	}
-	
+
 	/**
 	 * 
 	 * This Comparator class is used to sort the BillPayGrid based on their BillPayDate, Sorts from Latest date to

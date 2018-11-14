@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.findedup;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -52,10 +53,14 @@ import com.pennant.backend.model.finance.FinanceDedup;
  */
 public interface FinanceDedupeDAO {
 
-	void saveList(List<FinanceDedup> dedups,String type);
+	void saveList(List<FinanceDedup> dedups, String type);
+
 	List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode);
+
 	void deleteList(String finReference);
+
 	void updateList(List<FinanceDedup> dedups);
+
 	void moveData(String finReference, String type);
-	
+
 }

@@ -18,73 +18,73 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TradeLine implements Serializable {
 
-	private static final long	serialVersionUID	= -4900876489170496613L;
+	private static final long serialVersionUID = -4900876489170496613L;
 
 	@XmlElement(name = "ACCOUNT-NO")
-	private String				accountNo;
+	private String accountNo;
 
 	@XmlElement(name = "CREDIT-GRANTOR")
-	private String				creditGrantor;
+	private String creditGrantor;
 
 	@XmlElement(name = "LAST-REPORTED-DATE")
-	private Date				lastReportedDate;
+	private Date lastReportedDate;
 
 	@XmlElement(name = "ASSET-CLASSIFICATION")
-	private String				assetClassification;
+	private String assetClassification;
 
 	@XmlElement(name = "CURRENT-BALANCE")
-	private BigDecimal			currentBalance		= BigDecimal.ZERO;
+	private BigDecimal currentBalance = BigDecimal.ZERO;
 
 	@XmlElement(name = "DPD")
-	private String				dpd;
+	private String dpd;
 
 	@XmlElement(name = "CREDIT-FACILITY-TYPE")
-	private String				creditFacilityType;
+	private String creditFacilityType;
 
 	@XmlElement(name = "CREDIT-FACILITY-STATUS")
-	private String				creditFacilityStatus;
+	private String creditFacilityStatus;
 
 	@XmlElement(name = "SANCTIONED-AMOUNT")
-	private BigDecimal			sanctionedAmount	= BigDecimal.ZERO;
+	private BigDecimal sanctionedAmount = BigDecimal.ZERO;
 
 	@XmlElement(name = "SANCTION-DATE")
-	private Date				sanctionDate;
+	private Date sanctionDate;
 
 	@XmlElement(name = "DRAWING-POWER")
-	private String				drawingPower;
+	private String drawingPower;
 
 	@XmlElement(name = "DISBURSED-AMOUNT")
-	private BigDecimal			disbursedAmount		= BigDecimal.ZERO;
+	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 
 	@XmlElement(name = "OVERDUE-AMOUNT")
-	private BigDecimal			overdueAmount		= BigDecimal.ZERO;
+	private BigDecimal overdueAmount = BigDecimal.ZERO;
 
 	@XmlElement(name = "ISSUED-CURRENCY")
-	private String				issuedCurrency;
+	private String issuedCurrency;
 
 	@XmlElement(name = "SUIT-FILED-AND-WILFUL-DEFAULTS")
-	private SuitfiledAndWilful	suitFiledAndWilfulDefaults;
+	private SuitfiledAndWilful suitFiledAndWilfulDefaults;
 
 	@XmlElement(name = "BORROWER-NAME")
-	private String				borrowerName;
+	private String borrowerName;
 
 	@XmlElement(name = "PAYMENT-HISTORY")
-	private String				paymentHistory;
+	private String paymentHistory;
 
 	@XmlElement(name = "ACCOUNT-STATUS")
-	private String				accountStatus;
+	private String accountStatus;
 
 	@XmlElement(name = "LENDER-TYPE")
-	private String				lenderType;
+	private String lenderType;
 
 	@XmlElement(name = "WRITEOFF-AMOUNT")
-	private BigDecimal			writeoffAmount		= BigDecimal.ZERO;
+	private BigDecimal writeoffAmount = BigDecimal.ZERO;
 
 	@XmlElement(name = "CREDIT-FACILITY-GROUP")
-	private String				creditFacilityGroup;
+	private String creditFacilityGroup;
 
 	@XmlElement(name = "DERIVED-ACCOUNT-STATUS")
-	private String				derivedAccStatus;
+	private String derivedAccStatus;
 
 	public String getDerivedAccStatus() {
 		return derivedAccStatus;

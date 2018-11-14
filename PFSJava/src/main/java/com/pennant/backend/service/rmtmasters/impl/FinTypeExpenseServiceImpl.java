@@ -67,9 +67,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> implements FinTypeExpenseService {
-	private static final Logger	logger	= Logger.getLogger(FinTypeExpenseServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeExpenseServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
+	private AuditHeaderDAO auditHeaderDAO;
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 
 	// ******************************************************//
@@ -102,10 +102,10 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinTypeExpense/FinTypeExpense_Temp
-	 * by using FinTypeExpenseDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinTypeExpenseDAO's update method 3) Audit the record in to AuditHeader and AdtFinTypeExpense
-	 * by using auditHeaderDAO.addAudit(auditHeader)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinTypeExpense/FinTypeExpense_Temp by using FinTypeExpenseDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using FinTypeExpenseDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtFinTypeExpense by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -195,9 +195,9 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 		String tranType = "";
 		//auditHeader = businessValidation(auditHeader, "doApprove");
 
-		/*if (!auditHeader.isNextProcess()) {
-			return auditHeader;
-		}*/
+		/*
+		 * if (!auditHeader.isNextProcess()) { return auditHeader; }
+		 */
 
 		FinTypeExpense finTypeExpense = new FinTypeExpense("");
 		BeanUtils.copyProperties((FinTypeExpense) auditHeader.getAuditDetail().getModelData(), finTypeExpense);
@@ -222,8 +222,8 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 				getFinTypeExpenseDAO().update(finTypeExpense, "");
 			}
 		}
-		if(finTypeExpense.isWorkflow()){
-		getFinTypeExpenseDAO().delete(finTypeExpense, "_TEMP");
+		if (finTypeExpense.isWorkflow()) {
+			getFinTypeExpenseDAO().delete(finTypeExpense, "_TEMP");
 		}
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -388,7 +388,8 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeExpense(), new FinTypeExpense().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeExpense(),
+				new FinTypeExpense().getExcludeFields());
 		for (int i = 0; i < finTypeExpenseList.size(); i++) {
 			FinTypeExpense finTypeExpense = finTypeExpenseList.get(i);
 
@@ -519,7 +520,8 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (finTypeExpenseList != null && !finTypeExpenseList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeExpense(), new FinTypeExpense().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeExpense(),
+					new FinTypeExpense().getExcludeFields());
 			for (int i = 0; i < finTypeExpenseList.size(); i++) {
 				FinTypeExpense finTypeExpense = finTypeExpenseList.get(i);
 				if (StringUtils.isNotEmpty(finTypeExpense.getRecordType()) || StringUtils.isEmpty(tableType)) {
@@ -536,7 +538,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 
 	@Override
 	public FinTypeExpense getFinExpensesByFinType(String finType, long expenseTypeId) {
-		
+
 		return finTypeExpenseDAO.getFinTypeExpenseByFinType(finType, expenseTypeId, "_View");
 	}
 

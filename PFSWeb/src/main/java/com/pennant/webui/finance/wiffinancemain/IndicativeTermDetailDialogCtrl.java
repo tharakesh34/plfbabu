@@ -97,89 +97,87 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.PTCKeditor;
+import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.AgreementEngine;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/LMTMasters/CarLoanDetail/carLoanDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/LMTMasters/CarLoanDetail/carLoanDetailDialog.zul file.
  */
 public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDetail> {
 	private static final long serialVersionUID = 5058430665774376406L;
 	private static final Logger logger = Logger.getLogger(IndicativeTermDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_IndTermDetailDialog; 	// autowired
-	
-	protected Textbox rpsnName;						// autowired
-	protected ExtendedCombobox rpsnDesg;			// autowired
-	protected Textbox custName;						// autowired		
-	protected Label custShrtName;					// autowired		
-	protected Longbox custId;						// autowired		
-	protected ExtendedCombobox facilityType;		// autowired
-	protected Textbox pricing;						// autowired
-	protected Textbox repayments;					// autowired
-	protected Textbox lCPeriod;						// autowired
-	protected Textbox usancePeriod;					// autowired
-	protected Checkbox securityClean;				// autowired
-	protected PTCKeditor securityName;				// autowired
-	protected Textbox utilization;					 // autowired
-	protected PTCKeditor commission;				 // autowired
-	protected PTCKeditor purpose;					 // autowired
-	protected PTCKeditor guarantee;				     // autowired
-	protected PTCKeditor covenants;				     // autowired
-	protected PTCKeditor documentsRequired;		     // autowired
-	protected Intbox  tenorYear;                     // autowired
-	protected Intbox  tenorMonth;                    // autowired
-	protected Textbox tenorDesc;                     // autowired
-	protected Combobox transactionType;              // autowired
-	protected Textbox agentBank;                     // autowired
-	protected Space space_AgentBank;                 // autowired
-	protected CurrencyBox totalFacility;             // autowired
-	protected ExtendedCombobox totalFacilityCCY;     // autowired
-	protected CurrencyBox underWriting;              // autowired
-	protected ExtendedCombobox underWritingCCY;      // autowired
-	protected CurrencyBox propFinalTake;             // autowired
-	protected ExtendedCombobox propFinalTakeCCY;     // autowired
-	protected Textbox otherDetails;                  // autowired
-	protected Space space_OtherDetails;              // autowired
-	protected Row row_totalFacility;                 // autowired
-	protected Row row_underWriting;                 // autowired
-	protected Row row_propFinalTake;                 // autowired
-	protected Button   btnGenerateTermSheet;
-	
+	protected Window window_IndTermDetailDialog; // autowired
+
+	protected Textbox rpsnName; // autowired
+	protected ExtendedCombobox rpsnDesg; // autowired
+	protected Textbox custName; // autowired		
+	protected Label custShrtName; // autowired		
+	protected Longbox custId; // autowired		
+	protected ExtendedCombobox facilityType; // autowired
+	protected Textbox pricing; // autowired
+	protected Textbox repayments; // autowired
+	protected Textbox lCPeriod; // autowired
+	protected Textbox usancePeriod; // autowired
+	protected Checkbox securityClean; // autowired
+	protected PTCKeditor securityName; // autowired
+	protected Textbox utilization; // autowired
+	protected PTCKeditor commission; // autowired
+	protected PTCKeditor purpose; // autowired
+	protected PTCKeditor guarantee; // autowired
+	protected PTCKeditor covenants; // autowired
+	protected PTCKeditor documentsRequired; // autowired
+	protected Intbox tenorYear; // autowired
+	protected Intbox tenorMonth; // autowired
+	protected Textbox tenorDesc; // autowired
+	protected Combobox transactionType; // autowired
+	protected Textbox agentBank; // autowired
+	protected Space space_AgentBank; // autowired
+	protected CurrencyBox totalFacility; // autowired
+	protected ExtendedCombobox totalFacilityCCY; // autowired
+	protected CurrencyBox underWriting; // autowired
+	protected ExtendedCombobox underWritingCCY; // autowired
+	protected CurrencyBox propFinalTake; // autowired
+	protected ExtendedCombobox propFinalTakeCCY; // autowired
+	protected Textbox otherDetails; // autowired
+	protected Space space_OtherDetails; // autowired
+	protected Row row_totalFacility; // autowired
+	protected Row row_underWriting; // autowired
+	protected Row row_propFinalTake; // autowired
+	protected Button btnGenerateTermSheet;
+
 	protected Row row_LCPeriod;
 	protected Row row_UsancePeriod;
-	
+
 	// For Dynamically calling of this Controller
 	private Div toolbar;
 	private Object financeMainDialogCtrl;
 	private Tabpanel panel = null;
-	
-	
+
 	private transient boolean newFinance;
-	
+
 	// ServiceDAOs / Domain Classes
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private transient boolean recSave = false;
 	private IndicativeTermDetail indicativeTermDetail;
 	private CustomerDetailsService customerDetailsService;
 	private CustomerDetails customerDetails = null;
-	private String userRole="";
+	private String userRole = "";
 	private List<ValueLabel> transactionTypesList = PennantStaticListUtil.getTransactionTypesList();
-	private transient WorkFlowDetails workFlowDetails=null;
+	private transient WorkFlowDetails workFlowDetails = null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -193,16 +191,15 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CarLoanDetail object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CarLoanDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	
+
 	public void onCreate$window_IndTermDetailDialog(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
@@ -210,12 +207,12 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		setPageComponents(window_IndTermDetailDialog);
 
 		try {
-  			/* set components visible dependent of the users rights */
-			
+			/* set components visible dependent of the users rights */
+
 			if (event.getTarget().getParent() != null) {
 				panel = (Tabpanel) event.getTarget().getParent();
 			}
-			
+
 			if (arguments.containsKey("indicativeTermDetail")) {
 				indicativeTermDetail = (IndicativeTermDetail) arguments.get("indicativeTermDetail");
 			} else {
@@ -223,47 +220,48 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 			}
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
-				
+
 				try {
-					financeMainDialogCtrl.getClass().getMethod("setIndicativeTermDetailDialogCtrl", 
-							this.getClass()).invoke(financeMainDialogCtrl, this);
+					financeMainDialogCtrl.getClass().getMethod("setIndicativeTermDetailDialogCtrl", this.getClass())
+							.invoke(financeMainDialogCtrl, this);
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-				
+
 				setNewFinance(true);
-			
+
 				this.window_IndTermDetailDialog.setTitle("");
-				
+
 			}
-			
+
 			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "IndicativeTermDetailDialog");
 			}
-			
+
 			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("IndicativeTermDetail");
-			if ( moduleMapping.getWorkflowType() != null){
+			if (moduleMapping.getWorkflowType() != null) {
 				workFlowDetails = WorkFlowUtil.getWorkFlowDetails("IndicativeTermDetail");
-				if (workFlowDetails==null){
+				if (workFlowDetails == null) {
 					setWorkFlowEnabled(false);
 					this.indicativeTermDetail.setWorkflowId(0);
-				}else{
+				} else {
 					setWorkFlowEnabled(true);
 					setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
-				long workflowid=workFlowDetails.getId();
-				indicativeTermDetail.setWorkflowId(workflowid);
+					long workflowid = workFlowDetails.getId();
+					indicativeTermDetail.setWorkflowId(workflowid);
 				}
 			}
-			doLoadWorkFlow(this.indicativeTermDetail.isWorkflow(), this.indicativeTermDetail.getWorkflowId(), this.indicativeTermDetail.getNextTaskId());
+			doLoadWorkFlow(this.indicativeTermDetail.isWorkflow(), this.indicativeTermDetail.getWorkflowId(),
+					this.indicativeTermDetail.getNextTaskId());
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			if (isWorkFlowEnabled() && !isNewFinance()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "IndicativeTermDetailDialog");
 			}
-			
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getIndicativeTermDetail());
@@ -279,19 +277,19 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		// Empty sent any required attributes
 		this.rpsnName.setMaxlength(50);
 		this.rpsnDesg.setMaxlength(8);
-        this.rpsnDesg.setMandatoryStyle(true);
-        this.rpsnDesg.setModuleName("GeneralDesignation");
+		this.rpsnDesg.setMandatoryStyle(true);
+		this.rpsnDesg.setModuleName("GeneralDesignation");
 		this.rpsnDesg.setValueColumn("GenDesignation");
 		this.rpsnDesg.setDescColumn("GenDesgDesc");
 		this.rpsnDesg.setValidateColumns(new String[] { "GenDesignation" });
 		this.custName.setMaxlength(100);
 		this.facilityType.setMaxlength(8);
-        this.facilityType.setMandatoryStyle(true);
-        this.facilityType.setModuleName("FacilityType");
+		this.facilityType.setMandatoryStyle(true);
+		this.facilityType.setModuleName("FacilityType");
 		this.facilityType.setValueColumn("FacilityType");
 		this.facilityType.setDescColumn("FacilityDesc");
 		this.facilityType.setValidateColumns(new String[] { "FacilityType" });
@@ -306,7 +304,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.agentBank.setMaxlength(200);
 		this.otherDetails.setMaxlength(200);
 		this.totalFacility.setMandatory(true);
-		this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
+		this.totalFacility.setFormat(PennantApplicationUtil
+				.getAmountFormate(CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
 		this.totalFacility.setScale(CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY()));
 		this.totalFacilityCCY.setMaxlength(3);
 		this.totalFacilityCCY.setMandatoryStyle(true);
@@ -315,7 +314,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.totalFacilityCCY.setDescColumn("CcyDesc");
 		this.totalFacilityCCY.setValidateColumns(new String[] { "CcyCode" });
 		this.underWriting.setMandatory(true);
-		this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
+		this.underWriting.setFormat(PennantApplicationUtil
+				.getAmountFormate(CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
 		this.underWriting.setScale(CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY()));
 		this.underWritingCCY.setMaxlength(3);
 		this.underWritingCCY.setMandatoryStyle(true);
@@ -324,7 +324,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.underWritingCCY.setDescColumn("CcyDesc");
 		this.underWritingCCY.setValidateColumns(new String[] { "CcyCode" });
 		this.propFinalTake.setMandatory(true);
-		this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
+		this.propFinalTake.setFormat(PennantApplicationUtil
+				.getAmountFormate(CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
 		this.propFinalTake.setScale(CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY()));
 		this.propFinalTakeCCY.setMaxlength(3);
 		this.propFinalTakeCCY.setMandatoryStyle(true);
@@ -332,7 +333,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.propFinalTakeCCY.setValueColumn("CcyCode");
 		this.propFinalTakeCCY.setDescColumn("CcyDesc");
 		this.propFinalTakeCCY.setValidateColumns(new String[] { "CcyCode" });
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -356,7 +357,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	public void onFulfill$underWritingCCY(Event event) {
 		logger.debug("Entering " + event.toString());
 		Object dataObject = underWritingCCY.getObject();
@@ -372,7 +373,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	public void onFulfill$propFinalTakeCCY(Event event) {
 		logger.debug("Entering " + event.toString());
 		Object dataObject = propFinalTakeCCY.getObject();
@@ -388,18 +389,17 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("IndicativeTermDetailDialog",userRole);
+		getUserWorkspace().allocateAuthorities("IndicativeTermDetailDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_IndicativeTermDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_IndicativeTermDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_IndicativeTermDetailDialog_btnDelete"));
@@ -443,61 +443,68 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
-	public void onClick$btnGenerateTermSheet(Event event) throws Exception{
+	public void onClick$btnGenerateTermSheet(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		FinanceDetail detail = null;
 		String finDivision = "";
-  	    Date date = DateUtility.getAppDate();
+		Date date = DateUtility.getAppDate();
 
 		try {
-			Object object = getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail").invoke(financeMainDialogCtrl);
+			Object object = getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail")
+					.invoke(financeMainDialogCtrl);
 			if (object != null) {
 				detail = (FinanceDetail) object;
 			}
-			if (detail!=null && detail.getFinScheduleData() != null && detail.getFinScheduleData().getFinanceMain() != null) {
+			if (detail != null && detail.getFinScheduleData() != null
+					&& detail.getFinScheduleData().getFinanceMain() != null) {
 				FinanceMain main = detail.getFinScheduleData().getFinanceMain();
-				if(main != null){
-					int format=CurrencyUtil.getFormat(main.getFinCcy());
-					
+				if (main != null) {
+					int format = CurrencyUtil.getFormat(main.getFinCcy());
+
 					finDivision = detail.getFinScheduleData().getFinanceType().getFinDivision();
 					doWriteComponentsToBean(indicativeTermDetail);
 
-					indicativeTermDetail.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
+					indicativeTermDetail
+							.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
 					indicativeTermDetail.setFinPurpose(main.getFinPurpose());
-					indicativeTermDetail.setTenor(indicativeTermDetail.getTenorYear()+" Years "+indicativeTermDetail.getTenorMonth()+" Months ");
+					indicativeTermDetail.setTenor(indicativeTermDetail.getTenorYear() + " Years "
+							+ indicativeTermDetail.getTenorMonth() + " Months ");
 					indicativeTermDetail.setFinCcy(main.getFinCcy());
 					indicativeTermDetail.setAppDate(DateUtility.formatToLongDate(date));
-					int tempYear = Integer.parseInt(date.toString().substring(0,4));
+					int tempYear = Integer.parseInt(date.toString().substring(0, 4));
 
-					indicativeTermDetail.setAppLastYear(String.valueOf(tempYear-1));
-					indicativeTermDetail.setAppPastYear(String.valueOf(tempYear-2));
+					indicativeTermDetail.setAppLastYear(String.valueOf(tempYear - 1));
+					indicativeTermDetail.setAppPastYear(String.valueOf(tempYear - 2));
 
-					customerDetails = getCustomerDetailsService().getCustomerDetailsbyIdandPhoneType(main.getCustID(), "FAX");
+					customerDetails = getCustomerDetailsService().getCustomerDetailsbyIdandPhoneType(main.getCustID(),
+							"FAX");
 
-					if(customerDetails.getCustomerPhoneNumList() != null && customerDetails.getCustomerPhoneNumList().size() > 0){
-						indicativeTermDetail.setFax(customerDetails.getCustomerPhoneNumList().get(0).getPhoneNumber()
-								== null ? "" : customerDetails.getCustomerPhoneNumList().get(0).getPhoneNumber());
+					if (customerDetails.getCustomerPhoneNumList() != null
+							&& customerDetails.getCustomerPhoneNumList().size() > 0) {
+						indicativeTermDetail
+								.setFax(customerDetails.getCustomerPhoneNumList().get(0).getPhoneNumber() == null ? ""
+										: customerDetails.getCustomerPhoneNumList().get(0).getPhoneNumber());
 					} else {
 						indicativeTermDetail.setFax("");
 					}
-					if(customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0){
-						indicativeTermDetail.setCity(customerDetails.getAddressList().get(0).getCustAddrCity() 
-								== null ? "" : customerDetails.getAddressList().get(0).getCustAddrCity());
+					if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+						indicativeTermDetail.setCity(customerDetails.getAddressList().get(0).getCustAddrCity() == null
+								? "" : customerDetails.getAddressList().get(0).getCustAddrCity());
 					} else {
 						indicativeTermDetail.setCity("");
 					}
 
-					if(customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0){
-						indicativeTermDetail.setCountry(customerDetails.getAddressList().get(0).getCustAddrCountry()
-								== null ? "" : customerDetails.getAddressList().get(0).getCustAddrCountry());
+					if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+						indicativeTermDetail
+								.setCountry(customerDetails.getAddressList().get(0).getCustAddrCountry() == null ? ""
+										: customerDetails.getAddressList().get(0).getCustAddrCountry());
 					} else {
 						indicativeTermDetail.setCountry("");
 					}
 
-					if(customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0){
-						indicativeTermDetail.setPoBox(customerDetails.getAddressList().get(0).getCustAddrZIP() 
-								== null ? "" : customerDetails.getAddressList().get(0).getCustAddrZIP());
+					if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+						indicativeTermDetail.setPoBox(customerDetails.getAddressList().get(0).getCustAddrZIP() == null
+								? "" : customerDetails.getAddressList().get(0).getCustAddrZIP());
 					} else {
 						indicativeTermDetail.setPoBox("");
 					}
@@ -509,25 +516,26 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 				throw e;
 			}
 		}
-		
+
 		try {
 			String sheetName = "";
-			if(StringUtils.isNotBlank(indicativeTermDetail.getUsancePeriod()) && StringUtils.isNotBlank(indicativeTermDetail.getLCPeriod())){
+			if (StringUtils.isNotBlank(indicativeTermDetail.getUsancePeriod())
+					&& StringUtils.isNotBlank(indicativeTermDetail.getLCPeriod())) {
 				sheetName = "IndicativeTermSheet_LC_Usance.docx";
-			}else if(StringUtils.isNotBlank(indicativeTermDetail.getUsancePeriod())){
+			} else if (StringUtils.isNotBlank(indicativeTermDetail.getUsancePeriod())) {
 				sheetName = "IndicativeTermSheet_Usance.docx";
-			}else if(StringUtils.isNotBlank(indicativeTermDetail.getLCPeriod())){
+			} else if (StringUtils.isNotBlank(indicativeTermDetail.getLCPeriod())) {
 				sheetName = "IndicativeTermSheet_LC.docx";
-			}else{
+			} else {
 				sheetName = "IndicativeTermSheet.docx";
 			}
-			
-			if(StringUtils.isNotBlank(finDivision)){
-				sheetName = finDivision+"_"+sheetName;
+
+			if (StringUtils.isNotBlank(finDivision)) {
+				sheetName = finDivision + "_" + sheetName;
 			}
-			
+
 			AgreementEngine engine = new AgreementEngine(sheetName);
-			String refNo =  detail.getFinScheduleData().getFinanceMain().getFinReference();
+			String refNo = detail.getFinScheduleData().getFinanceMain().getFinReference();
 			String reportName = refNo + "_TermSheet.docx";
 			engine.setTemplate("");
 			//engine.loadTemplateWithFontSize(11);
@@ -535,7 +543,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 			engine.showDocument(this.window_IndTermDetailDialog, reportName, SaveFormat.DOCX);
 			engine.close();
 			engine = null;
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -605,10 +613,10 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 			getIndicativeTermDetail().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			getIndicativeTermDetail().setNewRecord(true);
 		}
-	
+
 		try {
-			getFinanceMainDialogCtrl().getClass().getMethod("setIndicativeTermDetail", IndicativeTermDetail.class).invoke(
-					getFinanceMainDialogCtrl(), this.getIndicativeTermDetail());
+			getFinanceMainDialogCtrl().getClass().getMethod("setIndicativeTermDetail", IndicativeTermDetail.class)
+					.invoke(getFinanceMainDialogCtrl(), this.getIndicativeTermDetail());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -620,16 +628,16 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 * 
 	 * @param event
 	 * @return
-	 * */
-	
+	 */
+
 	public void onAssetClose(Event event) {
 		logger.debug("Entering" + event.toString());
-			try {
-				financeMainDialogCtrl.getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(
-						financeMainDialogCtrl, this.isDataChanged());
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-			}
+		try {
+			financeMainDialogCtrl.getClass().getMethod("setAssetDataChanged", Boolean.class)
+					.invoke(financeMainDialogCtrl, this.isDataChanged());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -641,12 +649,12 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
-		
+
 		doWriteBeanToComponents(this.indicativeTermDetail.getBefImage());
 		doReadOnly();
-		
+
 		this.btnCtrl.setInitEdit();
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -658,7 +666,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 */
 	public void doWriteBeanToComponents(IndicativeTermDetail indicativeTermDetail) {
 		logger.debug("Entering");
-		
+
 		this.rpsnName.setValue(indicativeTermDetail.getRpsnName());
 		this.rpsnDesg.setValue(indicativeTermDetail.getRpsnDesg());
 		this.rpsnDesg.setDescription(indicativeTermDetail.getLovDescRpsnDesgName());
@@ -682,19 +690,19 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.tenorMonth.setValue(indicativeTermDetail.getTenorMonth());
 		this.tenorDesc.setValue(indicativeTermDetail.getTenorDesc());
 		onCheckSecurity();
-		fillComboBox(this.transactionType, indicativeTermDetail.getTransactionType(),transactionTypesList, "");
+		fillComboBox(this.transactionType, indicativeTermDetail.getTransactionType(), transactionTypesList, "");
 		this.agentBank.setValue(indicativeTermDetail.getAgentBank());
 		this.otherDetails.setValue(indicativeTermDetail.getOtherDetails());
-		this.totalFacility.setValue(PennantAppUtil.formateAmount(indicativeTermDetail.getTotalFacility(), 
+		this.totalFacility.setValue(PennantAppUtil.formateAmount(indicativeTermDetail.getTotalFacility(),
 				CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
 		this.totalFacilityCCY.setValue(indicativeTermDetail.getTotalFacilityCCY());
-		this.underWriting.setValue(PennantAppUtil.formateAmount(indicativeTermDetail.getUnderWriting(), 
+		this.underWriting.setValue(PennantAppUtil.formateAmount(indicativeTermDetail.getUnderWriting(),
 				CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
 		this.underWritingCCY.setValue(indicativeTermDetail.getUnderWritingCCY());
-		this.propFinalTake.setValue(PennantAppUtil.formateAmount(indicativeTermDetail.getPropFinalTake(), 
+		this.propFinalTake.setValue(PennantAppUtil.formateAmount(indicativeTermDetail.getPropFinalTake(),
 				CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
 		this.propFinalTakeCCY.setValue(indicativeTermDetail.getPropFinalTakeCCY());
-		
+
 		if (indicativeTermDetail.isNewRecord()) {
 			this.facilityType.setDescription("");
 			this.totalFacilityCCY.setDescription("");
@@ -711,25 +719,24 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		logger.debug("Leaving");
 	}
 
-	
-	public void doFillScheduleData(FinanceDetail detail){
+	public void doFillScheduleData(FinanceDetail detail) {
 		logger.debug("Entering");
-		
+
 		FinanceMain main = detail.getFinScheduleData().getFinanceMain();
-		
+
 		String rate = PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2);
-		String[] rateFields = new String[]{rate,  PennantAppUtil.getlabelDesc(main.getRepayRateBasis(),
-				PennantStaticListUtil.getInterestRateType(true))};
+		String[] rateFields = new String[] { rate, PennantAppUtil.getlabelDesc(main.getRepayRateBasis(),
+				PennantStaticListUtil.getInterestRateType(true)) };
 		this.pricing.setValue(Labels.getLabel("label_IndTermDetailDialog_Pricing", rateFields));
-		
-		String[] descFields = new String[]{String.valueOf(main.getNumberOfTerms()), main.getScheduleMethod(), 
+
+		String[] descFields = new String[] { String.valueOf(main.getNumberOfTerms()), main.getScheduleMethod(),
 				FrequencyUtil.getFrequencyDetail(main.getRepayFrq()).getFrequencyDescription(),
-				DateUtility.formatToLongDate(main.getMaturityDate())};
+				DateUtility.formatToLongDate(main.getMaturityDate()) };
 		this.repayments.setValue(Labels.getLabel("label_IndTermDetailDialog_Repayments", descFields));
-		
-		if(detail.getFinScheduleData().getFinanceType().isFinIsAlwMD()){
+
+		if (detail.getFinScheduleData().getFinanceType().isFinIsAlwMD()) {
 			this.utilization.setValue(Labels.getLabel("label_IndTermDetailDialog_Utilization_MultiDisbursement"));
-		}else{
+		} else {
 			this.utilization.setValue(Labels.getLabel("label_IndTermDetailDialog_Utilization_SingleDisbursement"));
 		}
 		logger.debug("Leaving");
@@ -742,7 +749,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 */
 	public void doWriteComponentsToBean(IndicativeTermDetail aIndicativeTermDetail) {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			aIndicativeTermDetail.setRpsnName(this.rpsnName.getValue());
@@ -823,33 +830,34 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(!this.tenorYear.isReadonly() && this.tenorYear.intValue() == 0 && this.tenorMonth.intValue() == 0){
-				this.tenorYear.setConstraint(new  PTNumberValidator(Labels.getLabel("label_IndTermDetailDialog_tenorYear.value") , true, false));
-			} 
+			if (!this.tenorYear.isReadonly() && this.tenorYear.intValue() == 0 && this.tenorMonth.intValue() == 0) {
+				this.tenorYear.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_IndTermDetailDialog_tenorYear.value"), true, false));
+			}
 			aIndicativeTermDetail.setTenorYear(this.tenorYear.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aIndicativeTermDetail.setTenorMonth(this.tenorMonth.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(StringUtils.isNotEmpty(this.tenorDesc.getValue())){
-			aIndicativeTermDetail.setTenorDesc(this.tenorDesc.getValue());
-			} else if(!this.tenorDesc.isReadonly()){
-				throw new WrongValueException( this.tenorDesc, Labels.getLabel( "FIELD_NO_EMPTY",
-						new String[] {Labels.getLabel("label_IndTermDetailDialog_tenorDesc.value")}));
+			if (StringUtils.isNotEmpty(this.tenorDesc.getValue())) {
+				aIndicativeTermDetail.setTenorDesc(this.tenorDesc.getValue());
+			} else if (!this.tenorDesc.isReadonly()) {
+				throw new WrongValueException(this.tenorDesc, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_IndTermDetailDialog_tenorDesc.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if ("#".equals(getComboboxValue(this.transactionType))) {
 				throw new WrongValueException(this.transactionType, Labels.getLabel("STATIC_INVALID",
@@ -861,14 +869,13 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
 
 		try {
 			aIndicativeTermDetail.setAgentBank(this.agentBank.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
+
 		try {
 			aIndicativeTermDetail.setOtherDetails(this.otherDetails.getValue());
 		} catch (WrongValueException we) {
@@ -876,54 +883,57 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 
 		try {
-			if(this.row_totalFacility.isVisible()){
+			if (this.row_totalFacility.isVisible()) {
 				aIndicativeTermDetail.setTotalFacilityCCY(this.totalFacilityCCY.getValidatedValue());
-			} 
-		}catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			if(this.row_totalFacility.isVisible()){
-				aIndicativeTermDetail.setTotalFacility(PennantAppUtil.unFormateAmount(this.totalFacility.getValidateValue(),
-						CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
 			}
-		}catch (WrongValueException we) {
-			wve.add(we);
-		}
-		
-		try {
-			if(this.row_underWriting.isVisible()){
-				aIndicativeTermDetail.setUnderWritingCCY(this.underWritingCCY.getValidatedValue());
-			} 
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.row_underWriting.isVisible()){
-				aIndicativeTermDetail.setUnderWriting(PennantAppUtil.unFormateAmount(this.underWriting.getValidateValue(),
-						CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
+			if (this.row_totalFacility.isVisible()) {
+				aIndicativeTermDetail
+						.setTotalFacility(PennantAppUtil.unFormateAmount(this.totalFacility.getValidateValue(),
+								CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY())));
 			}
-		}catch (WrongValueException we) {
-			wve.add(we);
-		}
-		
-		try {
-			if(this.row_propFinalTake.isVisible()){
-				aIndicativeTermDetail.setPropFinalTakeCCY(this.propFinalTakeCCY.getValidatedValue());
-			} 
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if(this.row_propFinalTake.isVisible()){
-				aIndicativeTermDetail.setPropFinalTake(PennantAppUtil.unFormateAmount(this.propFinalTake.getValidateValue(),
-						CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
-			} 
-		}catch (WrongValueException we) {
+			if (this.row_underWriting.isVisible()) {
+				aIndicativeTermDetail.setUnderWritingCCY(this.underWritingCCY.getValidatedValue());
+			}
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+		try {
+			if (this.row_underWriting.isVisible()) {
+				aIndicativeTermDetail
+						.setUnderWriting(PennantAppUtil.unFormateAmount(this.underWriting.getValidateValue(),
+								CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY())));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.row_propFinalTake.isVisible()) {
+				aIndicativeTermDetail.setPropFinalTakeCCY(this.propFinalTakeCCY.getValidatedValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.row_propFinalTake.isVisible()) {
+				aIndicativeTermDetail
+						.setPropFinalTake(PennantAppUtil.unFormateAmount(this.propFinalTake.getValidateValue(),
+								CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY())));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!recSave) {
@@ -945,21 +955,20 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param indicativeTermDetail
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(IndicativeTermDetail indicativeTermDetail) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (indicativeTermDetail.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
-			
+
 			if (isNewFinance()) {
 				doEdit();
 			} else if (isWorkFlowEnabled()) {
@@ -974,11 +983,11 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(indicativeTermDetail);
-			
+
 			if (panel != null) {
 				this.toolbar.setVisible(false);
 				this.groupboxWf.setVisible(true);
-				this.window_IndTermDetailDialog.setHeight((borderLayoutHeight-50)+ "px");
+				this.window_IndTermDetailDialog.setHeight((borderLayoutHeight - 50) + "px");
 				panel.appendChild(this.window_IndTermDetailDialog);
 			} else {
 				setDialog(DialogType.EMBEDDED);
@@ -996,63 +1005,78 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	private void doSetValidation() {
 		logger.debug("Entering");
 
-		boolean isTranTypeSyndication = this.transactionType.getSelectedItem().getValue().equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
-		
+		boolean isTranTypeSyndication = this.transactionType.getSelectedItem().getValue()
+				.equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
+
 		if (!this.rpsnName.isReadonly()) {
-			this.rpsnName.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_RpsnName.value") ,
-					PennantRegularExpressions.REGEX_NAME, true));
+			this.rpsnName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_RpsnName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.pricing.isReadonly()) {
-			this.pricing.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_Pricing.value") ,
+			this.pricing.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_Pricing.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
 		if (!this.repayments.isReadonly()) {
-			this.repayments.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_Repayments.value") ,
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
+			this.repayments
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_Repayments.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
 		if (!this.lCPeriod.isReadonly()) {
-			this.lCPeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_LCPeriod.value") ,
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
+			this.lCPeriod
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_LCPeriod.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
 		if (!this.usancePeriod.isReadonly()) {
-			this.usancePeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_UsancePeriod.value") ,
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
+			this.usancePeriod.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_UsancePeriod.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
 		if (!this.utilization.isReadonly()) {
-			this.utilization.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_Utilization.value") ,
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
+			this.utilization
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_Utilization.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
 		if (!this.tenorYear.isReadonly()) {
-			this.tenorYear.setConstraint(new PTNumberValidator(Labels.getLabel("label_IndTermDetailDialog_tenorYear.value") , false, false));
+			this.tenorYear.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_IndTermDetailDialog_tenorYear.value"), false, false));
 		}
 		if (!this.tenorMonth.isReadonly()) {
-			this.tenorMonth.setConstraint(new  PTNumberValidator(Labels.getLabel("label_IndTermDetailDialog_tenorMonth.value") , false, false, 0, 11));
+			this.tenorMonth.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_IndTermDetailDialog_tenorMonth.value"), false, false, 0, 11));
 		}
 		if (!this.tenorDesc.isReadonly()) {
-			this.tenorDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_tenorDesc.value") ,
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
+			this.tenorDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_tenorDesc.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
-		if(isTranTypeSyndication){
+		if (isTranTypeSyndication) {
 			if (!this.totalFacilityCCY.isReadonly()) {
-				this.totalFacilityCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_totalFacilityCCY.value"),null,true,true));
+				this.totalFacilityCCY.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_IndTermDetailDialog_totalFacilityCCY.value"), null, true, true));
 			}
 			if (!this.underWritingCCY.isReadonly()) {
-				this.underWritingCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_underWritingCCY.value"),null,true,true));
+				this.underWritingCCY.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_IndTermDetailDialog_underWritingCCY.value"), null, true, true));
 			}
 			if (!this.propFinalTakeCCY.isReadonly()) {
-				this.propFinalTakeCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_propFinalTakeCCY.value"),null,true,true));
+				this.propFinalTakeCCY.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_IndTermDetailDialog_propFinalTakeCCY.value"), null, true, true));
 			}
 			if (!this.totalFacility.isReadonly()) {
-				this.totalFacility.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_totalFacility.value"),
-						CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY()),true,false));
+				this.totalFacility.setConstraint(
+						new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_totalFacility.value"),
+								CurrencyUtil.getFormat(getIndicativeTermDetail().getTotalFacilityCCY()), true, false));
 			}
 			if (!this.underWriting.isReadonly()) {
-				this.underWriting.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_underWriting.value"),
-						CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY()),true,false));
+				this.underWriting.setConstraint(
+						new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_underWriting.value"),
+								CurrencyUtil.getFormat(getIndicativeTermDetail().getUnderWritingCCY()), true, false));
 			}
 			if (!this.propFinalTake.isReadonly()) {
-				this.propFinalTake.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_propFinalTake.value"),
-						CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY()),true,false));
+				this.propFinalTake.setConstraint(
+						new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_propFinalTake.value"),
+								CurrencyUtil.getFormat(getIndicativeTermDetail().getPropFinalTakeCCY()), true, false));
 			}
 		}
 		logger.debug("Leaving");
@@ -1088,8 +1112,10 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.rpsnDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_RpsnDesg.value"),null,true,true));
-		this.facilityType.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_FacilityType.value"),null,true,true));
+		this.rpsnDesg.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_RpsnDesg.value"), null, true, true));
+		this.facilityType.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_IndTermDetailDialog_FacilityType.value"), null, true, true));
 		logger.debug("Leaving");
 	}
 
@@ -1139,7 +1165,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a CarLoanDetail object from database.<br>
 	 * 
@@ -1151,7 +1177,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		BeanUtils.copyProperties(getIndicativeTermDetail(), aIndicativeTermDetail);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aIndicativeTermDetail.getFinReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aIndicativeTermDetail.getFinReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aIndicativeTermDetail.getRecordType())) {
 				aIndicativeTermDetail.setVersion(aIndicativeTermDetail.getVersion() + 1);
@@ -1216,8 +1243,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		readOnlyComponent(isReadOnly("IndicativeTermDetailDialog_underWritingCCY"), this.underWritingCCY);
 		readOnlyComponent(isReadOnly("IndicativeTermDetailDialog_propFinalTake"), this.propFinalTake);
 		readOnlyComponent(isReadOnly("IndicativeTermDetailDialog_propFinalTakeCCY"), this.propFinalTakeCCY);
-		
-	//	this.btnGenerateTermSheet.setDisabled(isReadOnly("IndicativeTermDetailDialog_btnGenerateTermSheet"));
+
+		//	this.btnGenerateTermSheet.setDisabled(isReadOnly("IndicativeTermDetailDialog_btnGenerateTermSheet"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1277,7 +1304,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.underWritingCCY.setReadonly(true);
 		this.propFinalTake.setDisabled(true);
 		this.propFinalTakeCCY.setReadonly(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1325,7 +1352,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		this.underWritingCCY.setValue("");
 		this.propFinalTake.setValue("");
 		this.propFinalTakeCCY.setValue("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1339,7 +1366,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		final IndicativeTermDetail aIndicativeTermDetail = new IndicativeTermDetail();
 		BeanUtils.copyProperties(getIndicativeTermDetail(), aIndicativeTermDetail);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		doSetLOVValidation();
@@ -1403,7 +1430,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		aIndicativeTermDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aIndicativeTermDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {
-			
+
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
 			aIndicativeTermDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -1513,7 +1540,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 
 	public void onFulfill$facilityType(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = facilityType.getObject();
 		if (dataObject instanceof String) {
 			this.facilityType.setValue("");
@@ -1523,11 +1550,11 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 			if (detail != null) {
 				this.facilityType.setValue(detail.getFacilityType());
 				this.facilityType.setDescription(detail.getFacilityDesc());
-				
-				if("L".equals(detail.getFacilityFor())){
+
+				if ("L".equals(detail.getFacilityFor())) {
 					this.row_LCPeriod.setVisible(true);
 					this.row_UsancePeriod.setVisible(true);
-				}else{
+				} else {
 					this.row_LCPeriod.setVisible(false);
 					this.row_UsancePeriod.setVisible(false);
 					this.lCPeriod.setValue("");
@@ -1537,31 +1564,32 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void onCheck$securityClean(Event event){
+
+	public void onCheck$securityClean(Event event) {
 		logger.debug("Entering" + event.toString());
 		onCheckSecurity();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void onCheckSecurity(){
-		if(this.securityClean.isChecked()){
+
+	private void onCheckSecurity() {
+		if (this.securityClean.isChecked()) {
 			this.securityName.setReadonly(true);
 			this.securityName.setValue("");
-		}else{
+		} else {
 			this.securityName.setReadonly(isReadOnly("IndicativeTermDetailDialog_securityName"));
 		}
 	}
 
-	public void doCheckTransactionType(){
+	public void doCheckTransactionType() {
 		logger.debug("Entering");
 		doClearMessage();
-		boolean isTranTypeSyndiation = this.transactionType.getSelectedItem().getValue().equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
-		if(isTranTypeSyndiation){
+		boolean isTranTypeSyndiation = this.transactionType.getSelectedItem().getValue()
+				.equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
+		if (isTranTypeSyndiation) {
 			this.row_totalFacility.setVisible(true);
 			this.row_underWriting.setVisible(true);
 			this.row_propFinalTake.setVisible(true);
-		}else{
+		} else {
 			this.row_totalFacility.setVisible(false);
 			this.row_underWriting.setVisible(false);
 			this.row_propFinalTake.setVisible(false);
@@ -1577,16 +1605,15 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		}
 		logger.debug("Leaving");
 	}
-	
-	public void onChange$transactionType(Event event){
+
+	public void onChange$transactionType(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCheckTransactionType();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -1595,9 +1622,10 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(IndicativeTermDetail aIndicativeTermDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aIndicativeTermDetail.getBefImage(), aIndicativeTermDetail);
-		return new AuditHeader(String.valueOf(aIndicativeTermDetail.getFinReference()), null, null, null,
-				auditDetail, aIndicativeTermDetail.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aIndicativeTermDetail.getBefImage(),
+				aIndicativeTermDetail);
+		return new AuditHeader(String.valueOf(aIndicativeTermDetail.getFinReference()), null, null, null, auditDetail,
+				aIndicativeTermDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1627,12 +1655,11 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.indicativeTermDetail);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.indicativeTermDetail.getFinReference());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1645,6 +1672,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1652,6 +1680,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	public boolean isNewFinance() {
 		return newFinance;
 	}
+
 	public void setNewFinance(boolean newFinance) {
 		this.newFinance = newFinance;
 	}
@@ -1659,6 +1688,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -1666,6 +1696,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	public IndicativeTermDetail getIndicativeTermDetail() {
 		return indicativeTermDetail;
 	}
+
 	public void setIndicativeTermDetail(IndicativeTermDetail indicativeTermDetail) {
 		this.indicativeTermDetail = indicativeTermDetail;
 	}
@@ -1677,5 +1708,5 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
-	
+
 }

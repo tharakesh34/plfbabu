@@ -71,7 +71,6 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class NotificationsDAOImpl extends SequenceDao<Notifications> implements NotificationsDAO {
 	private static Logger logger = Logger.getLogger(NotificationsDAOImpl.class);
 
-
 	public NotificationsDAOImpl() {
 		super();
 	}
@@ -388,7 +387,6 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
 	}
-
 
 	@Override
 	public List<MailData> getMailData(String mailName) {

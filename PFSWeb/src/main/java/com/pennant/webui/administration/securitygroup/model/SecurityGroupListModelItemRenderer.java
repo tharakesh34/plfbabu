@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -61,12 +60,13 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class SecurityGroupListModelItemRenderer implements ListitemRenderer<SecurityGroup>, Serializable {
 
 	private static final long serialVersionUID = -3424682216721299542L;
+
 	public SecurityGroupListModelItemRenderer() {
 	}
-	
+
 	@Override
 	public void render(Listitem item, SecurityGroup securityGroups, int count) throws Exception {
-	
+
 		Listcell lc;
 		lc = new Listcell(securityGroups.getGrpCode());
 		lc.setParent(item);
@@ -76,9 +76,9 @@ public class SecurityGroupListModelItemRenderer implements ListitemRenderer<Secu
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(securityGroups.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", securityGroups.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");
 
 	}

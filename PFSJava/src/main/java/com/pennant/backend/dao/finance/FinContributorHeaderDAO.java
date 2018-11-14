@@ -42,14 +42,20 @@
 */
 
 package com.pennant.backend.dao.finance;
+
 import com.pennant.backend.model.finance.FinContributorHeader;
 
 public interface FinContributorHeaderDAO {
 
 	FinContributorHeader getFinContributorHeader();
+
 	FinContributorHeader getNewFinContributorHeader();
-	FinContributorHeader getFinContributorHeaderById(String id,String type);
-	void update(FinContributorHeader finContributorHeader,String type);
-	void delete(String finReference,String type);
-	String save(FinContributorHeader finContributorHeader,String type);
+
+	FinContributorHeader getFinContributorHeaderById(String id, String type);
+
+	void update(FinContributorHeader finContributorHeader, String type);
+
+	void delete(String finReference, String type);
+
+	String save(FinContributorHeader finContributorHeader, String type);
 }

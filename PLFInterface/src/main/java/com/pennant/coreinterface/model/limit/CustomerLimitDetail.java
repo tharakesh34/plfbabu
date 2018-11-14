@@ -16,12 +16,12 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 public class CustomerLimitDetail implements Serializable {
 
 	private static final long serialVersionUID = -5384003278372748606L;
-	
+
 	// request fields
 	private String referenceNumber;
 	private String limitRef;
 	private String branchCode;
-	
+
 	// response fields
 	private String custCIF;
 	private String limitDesc;
@@ -89,7 +89,7 @@ public class CustomerLimitDetail implements Serializable {
 	public void setLimitRef(String limitRef) {
 		this.limitRef = limitRef;
 	}
-	
+
 	@XmlElement(name = "BranchCode")
 	public String getBranchCode() {
 		return branchCode;
@@ -98,7 +98,7 @@ public class CustomerLimitDetail implements Serializable {
 	public void setBranchCode(String branchCode) {
 		this.branchCode = branchCode;
 	}
-	
+
 	@XmlElement(name = "LimitDesc")
 	public String getLimitDesc() {
 		return limitDesc;
@@ -474,5 +474,5 @@ public class CustomerLimitDetail implements Serializable {
 			return dateFormat.format(v);
 		}
 	}
-	
+
 }

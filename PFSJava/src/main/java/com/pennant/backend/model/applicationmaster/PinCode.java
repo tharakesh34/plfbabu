@@ -54,8 +54,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>PinCode table</b>.<br>
  *
  */
-public class PinCode extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class PinCode extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long pinCodeId = Long.MIN_VALUE;
 	private String pinCode;
@@ -63,18 +63,18 @@ private static final long serialVersionUID = 1L;
 	private String pCCityName;
 	private String areaName;
 	private String pCProvince;
-	private String pCCountry ;
+	private String pCCountry;
 	private String lovDescPCCountryName;
 	private String lovDescPCProvinceName;
 	private String gstin;
 	private boolean active;
 	private long groupId;
 	private boolean serviceable;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private PinCode befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -103,51 +103,57 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("pCCityName");
-			excludeFields.add("pCProvince");
-			excludeFields.add("lovDescPCProvinceName");
-			excludeFields.add("pCCountry");
-			excludeFields.add("gstin");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("pCCityName");
+		excludeFields.add("pCProvince");
+		excludeFields.add("lovDescPCProvinceName");
+		excludeFields.add("pCCountry");
+		excludeFields.add("gstin");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return pinCodeId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.pinCodeId = id;
 	}
+
 	public long getPinCodeId() {
 		return pinCodeId;
 	}
+
 	public void setPinCodeId(long pinCodeId) {
 		this.pinCodeId = pinCodeId;
 	}
-	
+
 	public String getPinCode() {
 		return pinCode;
 	}
+
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
 	}
-	
+
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -155,7 +161,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -164,26 +170,25 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public PinCode getBefImage(){
+	public PinCode getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(PinCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(PinCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-
 
 	public String getpCCountry() {
 		return pCCountry;
@@ -196,6 +201,7 @@ private static final long serialVersionUID = 1L;
 	public String getPCCityName() {
 		return pCCityName;
 	}
+
 	public void setPCCityName(String pCCityName) {
 		this.pCCityName = pCCityName;
 	}
@@ -256,6 +262,4 @@ private static final long serialVersionUID = 1L;
 		this.serviceable = serviceable;
 	}
 
-
 }
-

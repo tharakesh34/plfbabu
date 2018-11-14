@@ -25,7 +25,7 @@ public class FinCustomerDetailProcess extends MQProcess {
 		super();
 	}
 
-	public FinanceCustomerDetails fetchFinCustomerDetails(FinanceCustomerDetails financeCustomerDetails, 
+	public FinanceCustomerDetails fetchFinCustomerDetails(FinanceCustomerDetails financeCustomerDetails,
 			String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
@@ -38,14 +38,15 @@ public class FinCustomerDetailProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(financeCustomerDetails, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -55,7 +56,8 @@ public class FinCustomerDetailProcess extends MQProcess {
 		return setFetchFinCustomerDetailReply(response, header);
 	}
 
-	private FinanceCustomerDetails setFetchFinCustomerDetailReply(OMElement responseElement, AHBMQHeader header) throws InterfaceException {
+	private FinanceCustomerDetails setFetchFinCustomerDetailReply(OMElement responseElement, AHBMQHeader header)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -64,7 +66,7 @@ public class FinCustomerDetailProcess extends MQProcess {
 		FinanceCustomerDetails financeCustomerDetails = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/FetchFinanceCustomerDetailReply", 
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/FetchFinanceCustomerDetailReply",
 					responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
@@ -92,8 +94,8 @@ public class FinCustomerDetailProcess extends MQProcess {
 
 		OMElement requestElement = null;
 		financeCustomerDetails.setReferenceNum(referenceNum);
-		financeCustomerDetails.setTimeStamp(Long.parseLong(PFFXmlUtil
-				.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME)));
+		financeCustomerDetails
+				.setTimeStamp(Long.parseLong(PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME)));
 
 		OMElement element = doMarshalling(financeCustomerDetails);
 		OMElement rootElement = factory.createOMElement(new QName("FetchFinanceCustomerDetailsRequest"));

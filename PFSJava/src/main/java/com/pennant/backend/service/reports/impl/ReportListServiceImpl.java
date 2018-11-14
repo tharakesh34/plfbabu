@@ -66,21 +66,22 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class ReportListServiceImpl extends GenericService<ReportList> implements ReportListService {
 	private static final Logger logger = Logger.getLogger(ReportListServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReportListDAO reportListDAO;
 
 	public ReportListServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -88,6 +89,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 	public ReportListDAO getReportListDAO() {
 		return reportListDAO;
 	}
+
 	public void setReportListDAO(ReportListDAO reportListDAO) {
 		this.reportListDAO = reportListDAO;
 	}
@@ -96,43 +98,43 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 	public ReportList getReportList() {
 		return getReportListDAO().getReportList();
 	}
+
 	@Override
 	public ReportList getNewReportList() {
 		return getReportListDAO().getNewReportList();
 	}
-	
+
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table ReportList/ReportList_Temp 
-	 * 			by using ReportListDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using ReportListDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtReportList by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table ReportList/ReportList_Temp by
+	 * using ReportListDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using ReportListDAO's update method 3) Audit the record in to AuditHeader and AdtReportList by using
+	 * auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		ReportList reportList = (ReportList) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (reportList.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (reportList.isNew()) {
-			getReportListDAO().save(reportList,tableType);
-		}else{
-			getReportListDAO().update(reportList,tableType);
+			getReportListDAO().save(reportList, tableType);
+		} else {
+			getReportListDAO().update(reportList, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -142,26 +144,27 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table ReportList by using ReportListDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtReportList by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * ReportList by using ReportListDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtReportList by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		ReportList reportList = (ReportList) auditHeader.getAuditDetail().getModelData();
-		getReportListDAO().delete(reportList,"");
-		
+		getReportListDAO().delete(reportList, "");
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -169,24 +172,28 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 
 	/**
 	 * getReportListById fetch the details by using ReportListDAO's getReportListById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ReportList
 	 */
 	@Override
 	public ReportList getReportListById(String id) {
-		return getReportListDAO().getReportListById(id,"_View");
+		return getReportListDAO().getReportListById(id, "_View");
 	}
-	
+
 	/**
-	 * getApprovedReportListById fetch the details by using ReportListDAO's getReportListById method .
-	 * with parameter id and type as blank. it fetches the approved records from the ReportList.
-	 * @param id (String)
+	 * getApprovedReportListById fetch the details by using ReportListDAO's getReportListById method . with parameter id
+	 * and type as blank. it fetches the approved records from the ReportList.
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return ReportList
 	 */
 	public ReportList getApprovedReportListById(String id) {
-		return getReportListDAO().getReportListById(id,"_AView");
+		return getReportListDAO().getReportListById(id, "_AView");
 	}
 
 	/**
@@ -253,17 +260,18 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getReportListDAO().delete with parameters reportList,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtReportList by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getReportListDAO().delete with parameters reportList,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtReportList by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -272,7 +280,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 		ReportList reportList = (ReportList) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getReportListDAO().delete(reportList,"_Temp");
+		getReportListDAO().delete(reportList, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -281,112 +289,113 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getReportListDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getReportListDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAddressTypeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAddressTypeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		ReportList reportList= (ReportList) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		ReportList reportList = (ReportList) auditDetail.getModelData();
 
-		ReportList tempReportList= null;
-		if (reportList.isWorkflow()){
+		ReportList tempReportList = null;
+		if (reportList.isWorkflow()) {
 			tempReportList = getReportListDAO().getReportListById(reportList.getId(), "_Temp");
 		}
-		ReportList befReportList= getReportListDAO().getReportListById(reportList.getId(), "");
+		ReportList befReportList = getReportListDAO().getReportListById(reportList.getId(), "");
 
-		ReportList oldReportList= reportList.getBefImage();
+		ReportList oldReportList = reportList.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = reportList.getId();
+		errParm[0] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=reportList.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_Code")+":"+valueParm[0];
+		if (reportList.isNew()) { // for New record or new record into work flow
 
-		if (reportList.isNew()){ // for New record or new record into work flow
-
-			if (!reportList.isWorkflow()){// With out Work flow only new records  
-				if (befReportList !=null){	// Record Already Exists in the table then error  
+			if (!reportList.isWorkflow()) {// With out Work flow only new records  
+				if (befReportList != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (reportList.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befReportList !=null || tempReportList!=null ){ // if records already exists in the main table
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (reportList.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befReportList != null || tempReportList != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befReportList ==null || tempReportList!=null ){
+				} else { // if records not exists in the Main flow table
+					if (befReportList == null || tempReportList != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!reportList.isWorkflow()){	// With out Work flow for update and delete
+			if (!reportList.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befReportList ==null){ // if records not exists in the main table
+				if (befReportList == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldReportList!=null && !oldReportList.getLastMntOn().equals(befReportList.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldReportList != null && !oldReportList.getLastMntOn().equals(befReportList.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempReportList==null ){ // if records not exists in the Work flow table 
+				if (tempReportList == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempReportList!=null && oldReportList!=null && !oldReportList.getLastMntOn().equals(tempReportList.getLastMntOn())){ 
+				if (tempReportList != null && oldReportList != null
+						&& !oldReportList.getLastMntOn().equals(tempReportList.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !reportList.isWorkflow()){
-			reportList.setBefImage(befReportList);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !reportList.isWorkflow()) {
+			reportList.setBefImage(befReportList);
 		}
 
 		return auditDetail;

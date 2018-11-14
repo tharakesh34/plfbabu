@@ -132,7 +132,7 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 		setPageComponents(window_CustomerDocumentList, borderLayout_CustomerDocumentList, listBoxCustomerDocument,
 				pagingCustomerDocumentList);
 		setItemRender(new CustomerDocumentListModelItemRenderer(verificationDocuments));
-		
+
 		// Register buttons and fields.
 		registerButton(button_CustomerDocumentList_NewCustomerDocument,
 				"button_CustomerDocumentList_NewCustomerDocument", true);
@@ -250,7 +250,6 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 		arg.put("customerDocumentListCtrl", this);
 		arg.put("newRecord", customerDocument.isNew());
 		arg.put("verificationDocuments", verificationDocuments);
-		
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul",

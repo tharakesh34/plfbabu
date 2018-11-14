@@ -41,12 +41,17 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amtmasters;
+
 import com.pennant.backend.model.amtmasters.Authorization;
 
 public interface AuthorizationDAO {
 	Authorization getAuthorizationById(long id, String type);
+
 	void update(Authorization authorization, String type);
+
 	void delete(Authorization authorization, String type);
+
 	long save(Authorization authorization, String type);
+
 	Authorization getAuthorization(long authUserId, String authType, String type);
 }

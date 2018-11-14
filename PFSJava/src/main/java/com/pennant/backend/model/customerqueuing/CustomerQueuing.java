@@ -5,23 +5,23 @@ import java.util.Date;
 
 public class CustomerQueuing implements Serializable {
 
-	private static final long	serialVersionUID	= 6724157480105725958L;
+	private static final long serialVersionUID = 6724157480105725958L;
 
-	private long				custID;
-	private Date				eodDate;
-	private int					threadId;
-	private int					progress;
+	private long custID;
+	private Date eodDate;
+	private int threadId;
+	private int progress;
 
-	private Date				startTime;
-	private Date				endTime;
-	
-	private boolean				loanExist;
-	private boolean				limitRebuild;
+	private Date startTime;
+	private Date endTime;
 
-	private boolean				eodProcess;
-	
+	private boolean loanExist;
+	private boolean limitRebuild;
+
+	private boolean eodProcess;
+
 	//Unused variable for bean parameter. Temporary
-	private boolean				active;
+	private boolean active;
 
 	//	private String				errorLog;
 	//	private String				status;
@@ -108,7 +108,7 @@ public class CustomerQueuing implements Serializable {
 	public void setEodProcess(boolean eodProcess) {
 		this.eodProcess = eodProcess;
 	}
-	
+
 	public boolean isLoanExist() {
 		return loanExist;
 	}

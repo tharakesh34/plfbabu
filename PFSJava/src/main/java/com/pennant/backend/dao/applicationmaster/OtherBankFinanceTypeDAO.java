@@ -49,7 +49,7 @@ import com.pennanttech.pff.core.TableType;
 public interface OtherBankFinanceTypeDAO extends BasicCrudDao<OtherBankFinanceType> {
 
 	OtherBankFinanceType getOtherBankFinanceTypeById(String id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 

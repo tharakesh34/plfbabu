@@ -67,15 +67,15 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 		StringBuilder insertSql = new StringBuilder(
 				"INSERT INTO SecLoginLog(LoginLogID,loginUsrLogin,LoginTime,LoginIP,LoginBrowserType,LoginStsID,");
 		insertSql.append("LoginSessionID,LoginError)");
-		insertSql
-				.append("VALUES (:LoginLogID,:loginUsrLogin,:LoginTime,:LoginIP,:LoginBrowserType,:LoginStsID,:LoginSessionID,:LoginError)");
+		insertSql.append(
+				"VALUES (:LoginLogID,:loginUsrLogin,:LoginTime,:LoginIP,:LoginBrowserType,:LoginStsID,:LoginSessionID,:LoginError)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(logingLog);
 		jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving ");
-		
+
 		return logingLog.getId();
 	}
 

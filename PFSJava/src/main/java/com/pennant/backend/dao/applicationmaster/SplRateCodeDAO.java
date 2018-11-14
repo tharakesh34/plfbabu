@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 
 /**
@@ -48,7 +49,10 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
  */
 public interface SplRateCodeDAO {
 	SplRateCode getSplRateCodeById(String id, String type);
+
 	void update(SplRateCode splRateCode, String type);
+
 	void delete(SplRateCode splRateCode, String type);
+
 	String save(SplRateCode splRateCode, String type);
 }

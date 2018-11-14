@@ -10,9 +10,9 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
-public class IncomeExpenseDetailListModelItemRender implements ListitemRenderer<IncomeExpenseHeader>, Serializable  {
+public class IncomeExpenseDetailListModelItemRender implements ListitemRenderer<IncomeExpenseHeader>, Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	public IncomeExpenseDetailListModelItemRender() {
 		super();
 	}
@@ -20,7 +20,7 @@ public class IncomeExpenseDetailListModelItemRender implements ListitemRenderer<
 	@Override
 	public void render(Listitem item, IncomeExpenseHeader incExpHeader, int index) throws Exception {
 		Listcell lc;
-		
+
 		lc = new Listcell(incExpHeader.getCustCif());
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(incExpHeader.getFinancialYear()));
@@ -32,9 +32,7 @@ public class IncomeExpenseDetailListModelItemRender implements ListitemRenderer<
 		item.setAttribute("id", incExpHeader.getId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onIncomeExpenseItemDoubleClicked");
-		
+
 	}
-	
-	
 
 }

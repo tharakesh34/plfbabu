@@ -290,7 +290,8 @@ public class QueryBuilder extends Groupbox {
 						&& leftOperandType.getSelectedItem().getValue().equals(PennantConstants.FIELDLIST)) {
 					QBFieldDetail fielddetails = (QBFieldDetail) ((Combobox) leftOperand).getSelectedItem()
 							.getAttribute("FieldDetails");
-					String excludefields1 = getExcludeFieldsByOperands((Combobox) leftOperand, "operator", fielddetails);
+					String excludefields1 = getExcludeFieldsByOperands((Combobox) leftOperand, "operator",
+							fielddetails);
 					fillComboBox(comboBox, comboBox.getSelectedItem().getValue().toString(), operatorsList,
 							excludefields1);
 
@@ -480,8 +481,8 @@ public class QueryBuilder extends Groupbox {
 				}
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_rightOperandType") != null
 						&& treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand") != null) {
-					Combobox rightOperandType = (Combobox) treeCell.getFellowIfAny(treeCell.getId()
-							+ "_rightOperandType");
+					Combobox rightOperandType = (Combobox) treeCell
+							.getFellowIfAny(treeCell.getId() + "_rightOperandType");
 					Component rightOperand = (Component) treeCell.getFellowIfAny(treeCell.getId() + "_rightOperand");
 					rightOperandType.setSelectedIndex(0);
 					if (rightOperand instanceof Combobox) {
@@ -500,8 +501,8 @@ public class QueryBuilder extends Groupbox {
 				}
 				if (operandtype.getSelectedItem().getValue().equals(PennantConstants.FIELDLIST)
 						&& ((Combobox) operand).getSelectedIndex() != 0) {
-					QBFieldDetail fielddetails = (QBFieldDetail) ((Combobox) operand).getSelectedItem().getAttribute(
-							"FieldDetails");
+					QBFieldDetail fielddetails = (QBFieldDetail) ((Combobox) operand).getSelectedItem()
+							.getAttribute("FieldDetails");
 					String uUID = treeCell.getId();
 					if (treeCell.getFellowIfAny(uUID + "_operator") != null) {
 						Combobox comboBox = (Combobox) treeCell.getFellowIfAny(uUID + "_operator");
@@ -713,7 +714,8 @@ public class QueryBuilder extends Groupbox {
 	 *            (Combobox),leftOperand(Component)
 	 * @return excludeFields(String)
 	 */
-	public String getExcludeFieldsByRightOperandType(Combobox operator, Component leftOperand, Combobox leftOperandType) {
+	public String getExcludeFieldsByRightOperandType(Combobox operator, Component leftOperand,
+			Combobox leftOperandType) {
 		String excludeFields = "";
 		String selectedOperator = operator.getSelectedItem().getLabel();
 		try {
@@ -793,8 +795,8 @@ public class QueryBuilder extends Groupbox {
 													.toLowerCase().contains(PennantConstants.VARCHAR))
 											|| (((Combobox) leftOperand).getSelectedItem().getTooltiptext()
 													.toLowerCase().contains(PennantConstants.CHAR))) {
-										excludeFields = "," + PennantConstants.DBVALUE + ","
-												+ PennantConstants.SUBQUERY + "," + PennantConstants.CALCVALUE + ",";
+										excludeFields = "," + PennantConstants.DBVALUE + "," + PennantConstants.SUBQUERY
+												+ "," + PennantConstants.CALCVALUE + ",";
 									} else if ((((Combobox) leftOperand).getSelectedItem().getTooltiptext()
 											.toLowerCase().contains(PennantConstants.DATETIME))
 											|| (((Combobox) leftOperand).getSelectedItem().getTooltiptext()
@@ -810,8 +812,8 @@ public class QueryBuilder extends Groupbox {
 													.toLowerCase().contains(PennantConstants.DECIMAL))
 											|| (((Combobox) leftOperand).getSelectedItem().getTooltiptext()
 													.toLowerCase().contains(PennantConstants.INT))) {
-										excludeFields = "," + PennantConstants.DBVALUE + ","
-												+ PennantConstants.SUBQUERY + "," + PennantConstants.STATICTEXT + ",";
+										excludeFields = "," + PennantConstants.DBVALUE + "," + PennantConstants.SUBQUERY
+												+ "," + PennantConstants.STATICTEXT + ",";
 									}
 								}
 							}
@@ -994,14 +996,13 @@ public class QueryBuilder extends Groupbox {
 										.contains(globalVariable.getType().toUpperCase())) {
 									comboitem.setLabel(globalVariable.getName());
 									comboitem.setValue(globalVariable.getName());
-									comboitem
-											.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
+									comboitem.setTooltiptext("Data Type : " + globalVariable.getType().toUpperCase());
 									comboitem.setAttribute("GlobalVariableDetails", globalVariable);
 									comboitem.setAttribute("OperandType", operandtype);
 									operand.appendChild(comboitem);
 									operand.setAttribute("GlobalVariableDetails", globalVariable);
-									if (StringUtils.trimToEmpty(value).equals(
-											StringUtils.trimToEmpty(globalVariable.getName()))) {
+									if (StringUtils.trimToEmpty(value)
+											.equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 										operand.setSelectedItem(comboitem);
 									}
 								}
@@ -1023,8 +1024,8 @@ public class QueryBuilder extends Groupbox {
 								comboitem.setAttribute("OperandType", operandtype);
 								operand.appendChild(comboitem);
 								operand.setAttribute("GlobalVariableDetails", globalVariable);
-								if (StringUtils.trimToEmpty(value).equals(
-										StringUtils.trimToEmpty(globalVariable.getName()))) {
+								if (StringUtils.trimToEmpty(value)
+										.equals(StringUtils.trimToEmpty(globalVariable.getName()))) {
 									operand.setSelectedItem(comboitem);
 								}
 							}
@@ -1070,7 +1071,8 @@ public class QueryBuilder extends Groupbox {
 						comboitem.setAttribute("OperandType", operandtype);
 						operand.appendChild(comboitem);
 						operand.setAttribute("FieldDetails", fieldDetails);
-						if (StringUtils.trimToEmpty(value).equals(StringUtils.trimToEmpty(fieldDetails.getQbFldName()))) {
+						if (StringUtils.trimToEmpty(value)
+								.equals(StringUtils.trimToEmpty(fieldDetails.getQbFldName()))) {
 							operand.setSelectedItem(comboitem);
 						}
 					}
@@ -1092,8 +1094,8 @@ public class QueryBuilder extends Groupbox {
 							if (leftOperand.getSelectedIndex() > 0) {
 								if (leftOperand.getSelectedItem().getTooltiptext()
 										.contains(fieldDetails.getQbFldType().toUpperCase())) {
-									comboitem.setLabel(fieldDetails.getQbFldName() + "(" + fieldDetails.getQbFldLen()
-											+ ")");
+									comboitem.setLabel(
+											fieldDetails.getQbFldName() + "(" + fieldDetails.getQbFldLen() + ")");
 									comboitem.setValue(fieldDetails.getQbFldName());
 									comboitem
 											.setTooltiptext("Data Type : " + fieldDetails.getQbFldType().toUpperCase());
@@ -1101,8 +1103,8 @@ public class QueryBuilder extends Groupbox {
 									comboitem.setAttribute("OperandType", operandtype);
 									operand.appendChild(comboitem);
 									operand.setAttribute("FieldDetails", fieldDetails);
-									if (StringUtils.trimToEmpty(value).equals(
-											StringUtils.trimToEmpty(fieldDetails.getQbFldName()))) {
+									if (StringUtils.trimToEmpty(value)
+											.equals(StringUtils.trimToEmpty(fieldDetails.getQbFldName()))) {
 										operand.setSelectedItem(comboitem);
 									}
 								}
@@ -1125,8 +1127,8 @@ public class QueryBuilder extends Groupbox {
 								comboitem.setAttribute("OperandType", operandtype);
 								operand.appendChild(comboitem);
 								operand.setAttribute("FieldDetails", fieldDetails);
-								if (StringUtils.trimToEmpty(value).equals(
-										StringUtils.trimToEmpty(fieldDetails.getQbFldName()))) {
+								if (StringUtils.trimToEmpty(value)
+										.equals(StringUtils.trimToEmpty(fieldDetails.getQbFldName()))) {
 									operand.setSelectedItem(comboitem);
 								}
 							}
@@ -1252,8 +1254,8 @@ public class QueryBuilder extends Groupbox {
 		Combobox operandType = (Combobox) button.getAttribute("OperandType");
 		Treecell treeCell = (Treecell) operandType.getParent();
 		Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
-		QBFieldDetail fielddetails = (QBFieldDetail) ((Combobox) leftOperand).getSelectedItem().getAttribute(
-				"FieldDetails");
+		QBFieldDetail fielddetails = (QBFieldDetail) ((Combobox) leftOperand).getSelectedItem()
+				.getAttribute("FieldDetails");
 		Combobox operator = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_operator");
 		String moduleCode = fielddetails.getModuleCode();
 		// Filter[] filters = new Filter[1] ;
@@ -1340,7 +1342,8 @@ public class QueryBuilder extends Groupbox {
 			component = treeCell.getFellowIfAny(uUID + "_leftOperand");
 			Combobox operator = (Combobox) treeCell.getFellowIfAny(uUID + "_operator");
 			if ((((Combobox) operator).getSelectedItem().getLabel().equals(Labels.getLabel("EXISTS_LABEL")))
-					|| (((Combobox) operator).getSelectedItem().getLabel().equals(Labels.getLabel("NOTEXISTS_LABEL")))) {
+					|| (((Combobox) operator).getSelectedItem().getLabel()
+							.equals(Labels.getLabel("NOTEXISTS_LABEL")))) {
 				value = "";
 			} else {
 				value = getOperandValue(component);
@@ -1410,22 +1413,21 @@ public class QueryBuilder extends Groupbox {
 				return ((Combobox) component).getSelectedItem().getValue().toString();
 			}
 
-		}else if(component instanceof Textbox){
-			if(((Textbox) component).isVisible()){
-				((Textbox)component).setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-				return "'"+((Textbox)component).getValue().trim()+"'" ;
+		} else if (component instanceof Textbox) {
+			if (((Textbox) component).isVisible()) {
+				((Textbox) component).setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
+				return "'" + ((Textbox) component).getValue().trim() + "'";
 			} else {
 				((Textbox) component).setConstraint("");
 				((Textbox) component).setValue("");
 
-				return ((Textbox)component).getValue() ;
+				return ((Textbox) component).getValue();
 			}
-		}else if(component instanceof Longbox){
-			if(((Longbox) component).isVisible()){
-				((Longbox)component).setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
-				return ((Longbox)component).getValue().toString();
+		} else if (component instanceof Longbox) {
+			if (((Longbox) component).isVisible()) {
+				((Longbox) component).setConstraint("NO EMPTY:" + Labels.getLabel("const_NO_EMPTY"));
+				return ((Longbox) component).getValue().toString();
 
-				
 			}
 		} else if (component instanceof Longbox) {
 			if (((Longbox) component).isVisible()) {
@@ -1463,23 +1465,23 @@ public class QueryBuilder extends Groupbox {
 				return ((Combobox) component).getSelectedItem().getValue().toString();
 			}
 		} else if (component instanceof Textbox) {
-			if(((Textbox) component).getValue().contains(",")){
-				if(!((Textbox) component).isReadonly()){
-					String staticvalue=((Textbox)component).getValue();
-					String[] values=staticvalue.split(",");
-					String newValue=StringUtils.join(values,"'");
-					return "("+"'"+newValue.replace("'","','")+"'"+")";
-				}else{
-					String staticvalue=((Textbox)component).getValue().trim();
-					String[] values=staticvalue.split(",");
-					String newValue=StringUtils.join(values,"'");
+			if (((Textbox) component).getValue().contains(",")) {
+				if (!((Textbox) component).isReadonly()) {
+					String staticvalue = ((Textbox) component).getValue();
+					String[] values = staticvalue.split(",");
+					String newValue = StringUtils.join(values, "'");
+					return "(" + "'" + newValue.replace("'", "','") + "'" + ")";
+				} else {
+					String staticvalue = ((Textbox) component).getValue().trim();
+					String[] values = staticvalue.split(",");
+					String newValue = StringUtils.join(values, "'");
 
 					System.out.println(newValue);
 					return "(" + "'" + newValue.trim().replace("' ", "','") + "'" + ")";
 				}
 
-			}else{
-				return "("+"'"+((Textbox)component).getValue().trim()+"'"+")" ;
+			} else {
+				return "(" + "'" + ((Textbox) component).getValue().trim() + "'" + ")";
 
 			}
 		}
@@ -1529,7 +1531,8 @@ public class QueryBuilder extends Groupbox {
 	 * @param value
 	 * @param list
 	 */
-	public void fillComboBoxByValueLabels(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
+	public void fillComboBoxByValueLabels(Combobox combobox, String value, List<ValueLabel> list,
+			String excludeFields) {
 		fillComboBox(combobox, value, list, excludeFields);
 	}
 
@@ -1567,8 +1570,8 @@ public class QueryBuilder extends Groupbox {
 		boolean error = true;
 		Combobox comp = (Combobox) component;
 
-		for(int i = 0;i<comp.getItemCount();i++){
-			if(comp.getValue().equals(comp.getItemAtIndex(i).getLabel())){
+		for (int i = 0; i < comp.getItemCount(); i++) {
+			if (comp.getValue().equals(comp.getItemAtIndex(i).getLabel())) {
 
 				comp.setSelectedIndex(i);
 				error = false;
@@ -1671,7 +1674,8 @@ public class QueryBuilder extends Groupbox {
 		searchObject.addWhereClause(this.textbox.getValue());
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		try {
-			searchObject.addFields(PennantAppUtil.getQueryModuleCustomColumns(queryModule.getResultColumns() .toLowerCase()));
+			searchObject.addFields(
+					PennantAppUtil.getQueryModuleCustomColumns(queryModule.getResultColumns().toLowerCase()));
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -1727,8 +1731,8 @@ public class QueryBuilder extends Groupbox {
 			for (int i = 0; i < str.length; i++) {
 				int index = str[i].indexOf(':');
 				if (index > 0) {
-					String data = map.get(str[i].substring(0, index).toLowerCase()) == null ? "0" : map.get(
-							str[i].substring(0, index).toLowerCase()).toString();
+					String data = map.get(str[i].substring(0, index).toLowerCase()) == null ? "0"
+							: map.get(str[i].substring(0, index).toLowerCase()).toString();
 					String type = str[i].substring(index + 1);
 					// A == Amount Field
 					// D == Date Field

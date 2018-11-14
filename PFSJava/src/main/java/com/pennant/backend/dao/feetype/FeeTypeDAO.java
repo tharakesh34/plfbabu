@@ -48,12 +48,12 @@ import com.pennanttech.pff.core.TableType;
 
 public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	FeeType getFeeTypeById(long id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param feeTypeID
-	 *             feeTypeID of the feeType.
+	 *            feeTypeID of the feeType.
 	 * @param feeTypeCode
 	 *            feeTypeCode of the feeType.
 	 * @param tableType
@@ -65,11 +65,11 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	FeeType getApprovedFeeTypeByFeeCode(String feeTyeCode);
 
 	int getAccountingSetIdCount(long accountSetId, String type);
-	
+
 	long getFinFeeTypeIdByFeeType(String feeTypeCode, String type);
 
 	FeeType getTaxDetailByCode(String feeTypeCode);
 
 	String getTaxCompByCode(String feeTypeCode);
-	
+
 }

@@ -26,10 +26,10 @@ import com.pennanttech.pff.external.PostingDownloadService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class PostingDownloadServiceImpl extends NiyoginService implements PostingDownloadService {
-	private final Logger	logger	= Logger.getLogger(getClass());
+	private final Logger logger = Logger.getLogger(getClass());
 
-	private DataSource		dataSource;
-	private String			serviceUrl;
+	private DataSource dataSource;
+	private String serviceUrl;
 
 	@Override
 	public void sendPostings(Date postingDate, long userId) {

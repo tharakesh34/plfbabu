@@ -21,9 +21,9 @@ public class DealerResponse implements java.io.Serializable, Entity {
 	private boolean processed;
 
 	public DealerResponse() {
-		
+
 	}
-	
+
 	public long getDealerResponseId() {
 		return dealerResponseId;
 	}
@@ -130,11 +130,11 @@ public class DealerResponse implements java.io.Serializable, Entity {
 	}
 
 	public boolean isProcessed() {
-	    return processed;
-    }
+		return processed;
+	}
 
 	public void setProcessed(boolean processed) {
-	    this.processed = processed;
-    }
+		this.processed = processed;
+	}
 
 }

@@ -420,5 +420,4 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		this.docOriginal = docOriginal;
 	}
 
-
 }

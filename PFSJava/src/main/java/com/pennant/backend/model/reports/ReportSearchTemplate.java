@@ -46,72 +46,89 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class ReportSearchTemplate extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -619353564397203914L;
-	
-	private long      reportID;
-	private long      fieldID  ; 
-	private long      usrID  ; 
-	private String    filter;
-	private String    fieldType ;
-	private String    fieldValue ;
-	private String    templateName ;
-	private boolean   newRecord=false;
-	private String    lovValue;
+
+	private long reportID;
+	private long fieldID;
+	private long usrID;
+	private String filter;
+	private String fieldType;
+	private String fieldValue;
+	private String templateName;
+	private boolean newRecord = false;
+	private String lovValue;
 
 	public ReportSearchTemplate() {
 		super();
 	}
-	
+
 	public long getReportID() {
 		return reportID;
 	}
+
 	public void setReportID(long reportID) {
 		this.reportID = reportID;
 	}
+
 	public long getFieldID() {
 		return fieldID;
 	}
+
 	public void setFieldID(long fieldID) {
 		this.fieldID = fieldID;
 	}
+
 	public String getFilter() {
 		return filter;
 	}
+
 	public void setFilter(String filter) {
 		this.filter = filter;
 	}
+
 	public String getFieldType() {
 		return fieldType;
 	}
+
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
 	}
+
 	public String getFieldValue() {
 		return fieldValue;
 	}
+
 	public void setFieldValue(String fieldValue) {
 		this.fieldValue = fieldValue;
 	}
+
 	public String getTemplateName() {
 		return templateName;
 	}
+
 	public void setTemplateName(String templateName) {
 		this.templateName = templateName;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
+
 	public void setUsrID(long usrID) {
 		this.usrID = usrID;
 	}
+
 	public long getUsrID() {
 		return usrID;
 	}

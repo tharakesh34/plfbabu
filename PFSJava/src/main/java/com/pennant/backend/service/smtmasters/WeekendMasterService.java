@@ -51,12 +51,17 @@ import com.pennant.backend.model.smtmasters.WeekendMaster;
  * 
  */
 public interface WeekendMasterService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	WeekendMaster getWeekendMasterById(String id);
+
 	WeekendMaster getApprovedWeekendMasterById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

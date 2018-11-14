@@ -59,8 +59,8 @@ import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * Used to specify Date type selection in <b>DedupValidation</b> class.
@@ -69,9 +69,8 @@ public class DedupValidation implements Serializable {
 	private static final long serialVersionUID = -4728201973665323130L;
 	private static final Logger logger = Logger.getLogger(DedupValidation.class);
 
-	private NorkamCheckService	norkamCheckService;
-	private FinanceReferenceDetailService  financeReferenceDetailService;
-
+	private NorkamCheckService norkamCheckService;
+	private FinanceReferenceDetailService financeReferenceDetailService;
 
 	/**
 	 * Do check and validate all types of dedup
@@ -82,37 +81,39 @@ public class DedupValidation implements Serializable {
 	 * @param curLoginUser
 	 * 
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public  boolean doCheckDedup(FinanceDetail aFinanceDetail,String ref,String role,Window window,String curLoginUser) throws Exception {
+	public boolean doCheckDedup(FinanceDetail aFinanceDetail, String ref, String role, Window window,
+			String curLoginUser) throws Exception {
 		try {
 			// Customer Dedup Process Check
-			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),ref,role,window,curLoginUser);
-			if(!processCompleted){
+			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),
+					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(), ref, role, window, curLoginUser);
+			if (!processCompleted) {
 				return false;
 			}
 
 			//Finance Dedup List Process Checking
-			processCompleted = doFinanceDedupe(aFinanceDetail,role,window,curLoginUser);
-			if(!processCompleted){
+			processCompleted = doFinanceDedupe(aFinanceDetail, role, window, curLoginUser);
+			if (!processCompleted) {
 				return false;
 			}
 
 			// Black List Process Check
-			processCompleted = doBlacklistCheck(aFinanceDetail,role,window,curLoginUser);
+			processCompleted = doBlacklistCheck(aFinanceDetail, role, window, curLoginUser);
 			if (!processCompleted) {
 				return false;
 			}
 
 			//PoliceCase List Process Check
-			processCompleted = doPoliceCaseCheck(aFinanceDetail,role,window,curLoginUser);
-			if(!processCompleted){
+			processCompleted = doPoliceCaseCheck(aFinanceDetail, role, window, curLoginUser);
+			if (!processCompleted) {
 				return false;
 			}
 
 			//Returned Cheque List
-			processCompleted = doReturnChequeDedupe(aFinanceDetail,role,window);
-			if(!processCompleted){
+			processCompleted = doReturnChequeDedupe(aFinanceDetail, role, window);
+			if (!processCompleted) {
 				return false;
 			}
 
@@ -126,14 +127,15 @@ public class DedupValidation implements Serializable {
 
 	/**
 	 * Method for Process Checking of Customer Dedup Details
+	 * 
 	 * @param aFinanceDetail
 	 * @param role
 	 * @param window
 	 * @param curLoginUser
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private boolean doCustomerDedupe(CustomerDetails details,String finType, String ref, String role, Window window,
+	private boolean doCustomerDedupe(CustomerDetails details, String finType, String ref, String role, Window window,
 			String curLoginUser) throws Exception {
 		logger.debug("Entering");
 
@@ -159,19 +161,20 @@ public class DedupValidation implements Serializable {
 
 	/**
 	 * Method for Process Checking of Finance Dedup Details
+	 * 
 	 * @param aFinanceDetail
 	 * @param role
 	 * @param window
 	 * @param curLoginUser
 	 * @return
 	 */
-	private boolean doFinanceDedupe(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) {
+	private boolean doFinanceDedupe(FinanceDetail aFinanceDetail, String role, Window window, String curLoginUser) {
 
 		boolean isProcessCompleted;
 		aFinanceDetail = FetchDedupDetails.getLoanDedup(role, aFinanceDetail, window, curLoginUser);
 
-		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isDedupFound()&& 
-				!aFinanceDetail.getFinScheduleData().getFinanceMain().isSkipDedup()) {
+		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isDedupFound()
+				&& !aFinanceDetail.getFinScheduleData().getFinanceMain().isSkipDedup()) {
 			isProcessCompleted = false;
 		} else {
 			isProcessCompleted = true;
@@ -181,38 +184,40 @@ public class DedupValidation implements Serializable {
 
 	/**
 	 * Method for Process check of Returned Cheque Details
+	 * 
 	 * @param aFinanceDetail
 	 * @param role
 	 * @param window
 	 * @return
 	 */
-	private boolean doReturnChequeDedupe(FinanceDetail aFinanceDetail,String role,Window window) {
+	private boolean doReturnChequeDedupe(FinanceDetail aFinanceDetail, String role, Window window) {
 		logger.debug("Entering");
 
 		boolean isProcessCompleted = true;
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
 
 		//Dedupe Check is done if the customer exists in CoreBank
-		if(StringUtils.isNotBlank(corebank)){
+		if (StringUtils.isNotBlank(corebank)) {
 
 			// Return Cheques display or not validation based on Process editor Details
-			List<Long> list = getFinanceReferenceDetailService().getRefIdListByFinType(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(), 
-					FinanceConstants.FINSER_EVENT_ORG , role, "_TRCView");
+			List<Long> list = getFinanceReferenceDetailService().getRefIdListByFinType(
+					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),
+					FinanceConstants.FINSER_EVENT_ORG, role, "_TRCView");
 
 			//If List doesnot exists based on conditions , no need to display return cheques window.
-			if(list == null || list.isEmpty()){
+			if (list == null || list.isEmpty()) {
 				isProcessCompleted = true;
-			}else{
+			} else {
 
 				aFinanceDetail = FetchReturnedCheques.getReturnedChequeCustomer(aFinanceDetail, window);
 
-				if (aFinanceDetail.getFinScheduleData().getFinanceMain().isChequeFound()){
-					if(aFinanceDetail.getFinScheduleData().getFinanceMain().isChequeOverride()) {
+				if (aFinanceDetail.getFinScheduleData().getFinanceMain().isChequeFound()) {
+					if (aFinanceDetail.getFinScheduleData().getFinanceMain().isChequeOverride()) {
 						isProcessCompleted = true;
 					} else {
 						isProcessCompleted = false;
 					}
-				}else {
+				} else {
 					isProcessCompleted = true;
 				}
 			}
@@ -224,22 +229,24 @@ public class DedupValidation implements Serializable {
 
 	/**
 	 * Method for Checking Process of Black List Details
+	 * 
 	 * @param aFinanceDetail
 	 * @param role
 	 * @param window
 	 * @param curLoginUser
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	private boolean doBlacklistCheck(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterfaceException {
+	private boolean doBlacklistCheck(FinanceDetail aFinanceDetail, String role, Window window, String curLoginUser)
+			throws InterfaceException {
 
 		boolean isProcessCompleted;
 
-		aFinanceDetail = FetchBlackListDetails.getBlackListCustomers(role, aFinanceDetail ,window, curLoginUser);
+		aFinanceDetail = FetchBlackListDetails.getBlackListCustomers(role, aFinanceDetail, window, curLoginUser);
 
-		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklisted()){
-			if(aFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklistOverride()) {
+		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklisted()) {
+			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklistOverride()) {
 				isProcessCompleted = true;
-			}else{
+			} else {
 				isProcessCompleted = false;
 			}
 		} else {
@@ -248,7 +255,7 @@ public class DedupValidation implements Serializable {
 
 		// norkom checking for Blacklisted customers
 
-		if(isProcessCompleted) {
+		if (isProcessCompleted) {
 			isProcessCompleted = doNorkomCheck(aFinanceDetail.getCustomerDetails());
 		}
 
@@ -257,10 +264,11 @@ public class DedupValidation implements Serializable {
 
 	/**
 	 * Blacklist customer checking with norkom interface
-	 * @param customerDetails 
+	 * 
+	 * @param customerDetails
 	 * 
 	 * @return
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
 	private boolean doNorkomCheck(CustomerDetails customerDetails) throws InterfaceException {
 		logger.debug("Entering");
@@ -279,9 +287,9 @@ public class DedupValidation implements Serializable {
 
 		InterfaceNorkamCheck norkomCheck = getNorkamCheckService().doNorkamCheck(interfaceNorkamCheck);
 
-		if(StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+		if (StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 			isProcessCompleted = true;
-		} else if(StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.BLACKLIST_HIT)) {
+		} else if (StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.BLACKLIST_HIT)) {
 			try {
 				if (MessageUtil.confirm(Labels.getLabel("NORKOM_BLACKLIST")) == MessageUtil.YES) {
 					isProcessCompleted = true;
@@ -299,16 +307,17 @@ public class DedupValidation implements Serializable {
 
 	/**
 	 * Method for Process check of Police & Court Case Details
+	 * 
 	 * @param aFinanceDetail
 	 * @return
 	 */
-	private boolean doPoliceCaseCheck(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser){
+	private boolean doPoliceCaseCheck(FinanceDetail aFinanceDetail, String role, Window window, String curLoginUser) {
 		boolean processCompleted;
-		aFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(role, aFinanceDetail ,window, curLoginUser);
-		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()){
-			if(aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
+		aFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(role, aFinanceDetail, window, curLoginUser);
+		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()) {
+			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
 				processCompleted = true;
-			}else{
+			} else {
 				processCompleted = false;
 			}
 		} else {
@@ -317,10 +326,10 @@ public class DedupValidation implements Serializable {
 		return processCompleted;
 	}
 
-
 	public NorkamCheckService getNorkamCheckService() {
 		return norkamCheckService;
 	}
+
 	public void setNorkamCheckService(NorkamCheckService norkamCheckService) {
 		this.norkamCheckService = norkamCheckService;
 	}
@@ -328,8 +337,8 @@ public class DedupValidation implements Serializable {
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return financeReferenceDetailService;
 	}
-	public void setFinanceReferenceDetailService(
-			FinanceReferenceDetailService financeReferenceDetailService) {
+
+	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
 

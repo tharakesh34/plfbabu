@@ -14,31 +14,31 @@ import javax.xml.bind.annotation.XmlType;
 		"matchedFields" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExperianDedup implements Serializable {
-	private static final long	serialVersionUID	= -1568085405736640269L;
+	private static final long serialVersionUID = -1568085405736640269L;
 
 	@XmlElement(name = "applicant_type")
-	private String				applicantType;
+	private String applicantType;
 	@XmlElement(name = "first_name")
-	private String				firstName;
+	private String firstName;
 	@XmlElement(name = "last_name")
-	private String				lastName;
-	private String				gender;
-	private Date				dob;
-	private String				emailId;
-	private String				pan;
-	private String				aadhaar;
-	private String				passport;
-	private String				linkedin;
-	private String				facebook;
-	private String				twitter;
-	private String				statusCode;
-	private String				message;
+	private String lastName;
+	private String gender;
+	private Date dob;
+	private String emailId;
+	private String pan;
+	private String aadhaar;
+	private String passport;
+	private String linkedin;
+	private String facebook;
+	private String twitter;
+	private String statusCode;
+	private String message;
 	@XmlElement(name = "exact_match")
-	private String				exactMatch;
-	private Address				address;
-	private Phone				phone;
+	private String exactMatch;
+	private Address address;
+	private Phone phone;
 	@XmlElement(name = "matched_fields")
-	private List<MatchedField>	matchedFields;
+	private List<MatchedField> matchedFields;
 
 	public ExperianDedup() {
 		super();

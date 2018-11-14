@@ -52,14 +52,14 @@ import java.util.Date;
  */
 public class FinSalariedPayment implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	private String 		finReference;
-	private String 		priAccount;
-	private String 		secAccount;
-	private Date 		nextPayDate;
-	private BigDecimal 	nextPayment = BigDecimal.ZERO;
-	private Date 		valueDate;
-	
+
+	private String finReference;
+	private String priAccount;
+	private String secAccount;
+	private Date nextPayDate;
+	private BigDecimal nextPayment = BigDecimal.ZERO;
+	private Date valueDate;
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -67,43 +67,49 @@ public class FinSalariedPayment implements java.io.Serializable {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getPriAccount() {
 		return priAccount;
 	}
+
 	public void setPriAccount(String priAccount) {
 		this.priAccount = priAccount;
 	}
-	
+
 	public String getSecAccount() {
 		return secAccount;
 	}
+
 	public void setSecAccount(String secAccount) {
 		this.secAccount = secAccount;
 	}
-	
+
 	public Date getNextPayDate() {
 		return nextPayDate;
 	}
+
 	public void setNextPayDate(Date nextPayDate) {
 		this.nextPayDate = nextPayDate;
 	}
-	
+
 	public BigDecimal getNextPayment() {
 		return nextPayment;
 	}
+
 	public void setNextPayment(BigDecimal nextPayment) {
 		this.nextPayment = nextPayment;
 	}
-	
+
 	public Date getValueDate() {
 		return valueDate;
 	}
+
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
-	
+
 }

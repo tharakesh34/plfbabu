@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "instalmentType", "sactionAmt", "purposeOfLoan", "tenure", "intrestType", "rateOfIntrest",
 		"instalmentAmt", "instalmentStartdate", "instalmentSchedule", "processingFees", "penaltyCharges",
 		"documentationCharges", "foreclosure", "chargesForDihorner", "defaultEmiCharges", "insuranceGstAmt",
-		"disbursementOfLoan", "insuranceAmount", "loanType","bankDetails" })
+		"disbursementOfLoan", "insuranceAmount", "loanType", "bankDetails" })
 @XmlRootElement(name = "FormData")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FormData {
@@ -21,66 +21,65 @@ public class FormData {
 	private List<CoBorrower> coBorrowers;
 
 	@XmlElement(name = "instalment_type")
-	private String		instalmentType;
-	
-	@XmlElement(name = "purpose_of_loan")
-	private String		purposeOfLoan;
+	private String instalmentType;
 
-	private int			tenure;
+	@XmlElement(name = "purpose_of_loan")
+	private String purposeOfLoan;
+
+	private int tenure;
 
 	@XmlElement(name = "intrest_type")
-	private String		intrestType;
-	
+	private String intrestType;
+
 	@XmlElement(name = "borrower_pan")
-	private String		borrowerPan;
-	
+	private String borrowerPan;
+
 	@XmlElement(name = "sancation_amount")
-	private BigDecimal		sactionAmt		= BigDecimal.ZERO;
+	private BigDecimal sactionAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "rate_of_intrest")
-	private String	rateOfIntrest;
+	private String rateOfIntrest;
 
 	@XmlElement(name = "instalment_amount")
-	private BigDecimal	instalmentAmt		= BigDecimal.ZERO;
+	private BigDecimal instalmentAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "instalment_startdate")
-	private String		instalmentStartdate;
+	private String instalmentStartdate;
 
 	@XmlElement(name = "instalment_schedule")
-	private int			instalmentSchedule;
+	private int instalmentSchedule;
 
 	@XmlElement(name = "processing_fees")
-	private String		processingFees;
+	private String processingFees;
 
 	@XmlElement(name = "penal_charges")
-	private String		penaltyCharges;
+	private String penaltyCharges;
 
 	@XmlElement(name = "documentation_charges")
-	private String		documentationCharges;
+	private String documentationCharges;
 
-	private String		foreclosure;
+	private String foreclosure;
 
 	@XmlElement(name = "charges_for_dihorner")
-	private String		chargesForDihorner;
+	private String chargesForDihorner;
 
 	@XmlElement(name = "default_emi_charges")
-	private String		defaultEmiCharges;
+	private String defaultEmiCharges;
 
 	@XmlElement(name = "insurance_amount_gst")
-	private String		insuranceGstAmt;
+	private String insuranceGstAmt;
 
 	@XmlElement(name = "disbursement_of_loan")
-	private BigDecimal	disbursementOfLoan	= BigDecimal.ZERO;
+	private BigDecimal disbursementOfLoan = BigDecimal.ZERO;
 
 	@XmlElement(name = "loan_type")
-	private String		loanType;
-	
-	@XmlElement(name = "insurance")
-	private BigDecimal	insuranceAmount		= BigDecimal.ZERO;
-	
-	@XmlElement(name="bank_details")
-	private List<CustomerBankData> bankDetails;
+	private String loanType;
 
+	@XmlElement(name = "insurance")
+	private BigDecimal insuranceAmount = BigDecimal.ZERO;
+
+	@XmlElement(name = "bank_details")
+	private List<CustomerBankData> bankDetails;
 
 	public String getPurposeOfLoan() {
 		return purposeOfLoan;
@@ -209,7 +208,7 @@ public class FormData {
 	public void setLoanType(String loanType) {
 		this.loanType = loanType;
 	}
-	
+
 	public String getBorrowerPan() {
 		return borrowerPan;
 	}
@@ -225,7 +224,7 @@ public class FormData {
 	public void setSactionAmt(BigDecimal sactionAmt) {
 		this.sactionAmt = sactionAmt;
 	}
-	
+
 	public BigDecimal getInsuranceAmount() {
 		return insuranceAmount;
 	}
@@ -249,6 +248,7 @@ public class FormData {
 	public void setInstalmentType(String instalmentType) {
 		this.instalmentType = instalmentType;
 	}
+
 	public List<CustomerBankData> getBankDetails() {
 		return bankDetails;
 	}

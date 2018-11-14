@@ -36,11 +36,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerDirectorListItemRenderer implements ListitemRenderer<DirectorDetail>, Serializable {
 
 	private static final long serialVersionUID = 6321996138703133595L;
-	
+
 	public CustomerDirectorListItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, DirectorDetail detail, int count) throws Exception {
 
@@ -49,24 +49,24 @@ public class CustomerDirectorListItemRenderer implements ListitemRenderer<Direct
 		lc.setParent(item);
 		lc = new Listcell(detail.getShortName());
 		lc.setParent(item);
-		if(detail.getRecordType().equals(PennantConstants.RCD_ADD) || 
-				detail.getRecordType().equals(PennantConstants.RCD_UPD)){
+		if (detail.getRecordType().equals(PennantConstants.RCD_ADD)
+				|| detail.getRecordType().equals(PennantConstants.RCD_UPD)) {
 			lc = new Listcell(detail.getLovDescCustGenderCodeName());
 			lc.setParent(item);
 			lc = new Listcell(detail.getLovDescCustSalutationCodeName());
 			lc.setParent(item);
-		}else{
-			lc = new Listcell(detail.getCustGenderCode()+"-"+detail.getLovDescCustGenderCodeName());
+		} else {
+			lc = new Listcell(detail.getCustGenderCode() + "-" + detail.getLovDescCustGenderCodeName());
 			lc.setParent(item);
-			lc = new Listcell(detail.getCustSalutationCode()+"-"+detail.getLovDescCustSalutationCodeName());
+			lc = new Listcell(detail.getCustSalutationCode() + "-" + detail.getLovDescCustSalutationCodeName());
 			lc.setParent(item);
 		}
-		
+
 		lc = new Listcell(detail.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("data", detail);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerDirectorItemDoubleClicked");
-	}	
+	}
 }

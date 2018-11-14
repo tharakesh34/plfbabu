@@ -71,31 +71,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/EmploymentType/employmentTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/EmploymentType/employmentTypeDialog.zul file.
  */
 public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	private static final long serialVersionUID = -6632169221044686005L;
-	private static final Logger logger = Logger
-			.getLogger(EmploymentTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(EmploymentTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  		window_EmploymentTypeDialog;
+	protected Window window_EmploymentTypeDialog;
 
-	protected Uppercasebox	empType; 					
-	protected Textbox 		empTypeDesc; 		
-	protected Checkbox empTypeIsActive; 			// autoWired
+	protected Uppercasebox empType;
+	protected Textbox empTypeDesc;
+	protected Checkbox empTypeIsActive; // autoWired
 
 	// not auto wired Var's
 	private EmploymentType employmentType; // overHanded per parameter
 	private transient EmploymentTypeListCtrl employmentTypeListCtrl; // overHanded
-																	// per parameter
+																		// per parameter
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient EmploymentTypeService employmentTypeService;
 
@@ -114,9 +111,8 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected EmploymentType object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected EmploymentType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -133,8 +129,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 			doCheckRights();
 
 			if (arguments.containsKey("employmentType")) {
-				this.employmentType = (EmploymentType) arguments
-						.get("employmentType");
+				this.employmentType = (EmploymentType) arguments.get("employmentType");
 				EmploymentType befImage = new EmploymentType();
 				BeanUtils.copyProperties(this.employmentType, befImage);
 				this.employmentType.setBefImage(befImage);
@@ -144,15 +139,13 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 				setEmploymentType(null);
 			}
 
-			doLoadWorkFlow(this.employmentType.isWorkflow(),
-					this.employmentType.getWorkflowId(),
+			doLoadWorkFlow(this.employmentType.isWorkflow(), this.employmentType.getWorkflowId(),
 					this.employmentType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"EmploymentTypeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "EmploymentTypeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -162,8 +155,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 			// or
 			// delete employmentType here.
 			if (arguments.containsKey("employmentTypeListCtrl")) {
-				setEmploymentTypeListCtrl((EmploymentTypeListCtrl) arguments
-						.get("employmentTypeListCtrl"));
+				setEmploymentTypeListCtrl((EmploymentTypeListCtrl) arguments.get("employmentTypeListCtrl"));
 			} else {
 				setEmploymentTypeListCtrl(null);
 			}
@@ -194,20 +186,15 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_EmploymentTypeDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_EmploymentTypeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_EmploymentTypeDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_EmploymentTypeDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_EmploymentTypeDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_EmploymentTypeDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_EmploymentTypeDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_EmploymentTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -307,8 +294,9 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		this.empTypeDesc.setValue(aEmploymentType.getEmpTypeDesc());
 		this.recordStatus.setValue(aEmploymentType.getRecordStatus());
 		this.empTypeIsActive.setChecked(aEmploymentType.isEmpTypeIsActive());
-		
-		if(aEmploymentType.isNew() || (aEmploymentType.getRecordType() != null ? aEmploymentType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aEmploymentType.isNew() || (aEmploymentType.getRecordType() != null ? aEmploymentType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.empTypeIsActive.setChecked(true);
 			this.empTypeIsActive.setDisabled(true);
 		}
@@ -359,8 +347,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEmploymentType
 	 * @throws Exception
@@ -377,7 +364,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		} else {
 			if (isWorkFlowEnabled()) {
 				this.empTypeDesc.focus();
-				if (StringUtils.isNotBlank(aEmploymentType.getRecordType())){
+				if (StringUtils.isNotBlank(aEmploymentType.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
@@ -393,7 +380,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 			doWriteBeanToComponents(aEmploymentType);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_EmploymentTypeDialog.onClose();
 		} catch (Exception e) {
@@ -410,12 +397,14 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 
 		setValidationOn(true);
 		if (!this.empType.isReadonly()) {
-			this.empType.setConstraint(new PTStringValidator(Labels.getLabel("label_EmploymentTypeDialog_EmpType.value"), 
-					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+			this.empType
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmploymentTypeDialog_EmpType.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		if (!this.empTypeDesc.isReadonly()) {
-			this.empTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EmploymentTypeDialog_EmpTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.empTypeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_EmploymentTypeDialog_EmpTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -455,13 +444,13 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		this.empTypeDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getEmploymentTypeListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -478,9 +467,8 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> " + Labels.getLabel("label_EmploymentTypeDialog_EmpType.value")+" : "+aEmploymentType.getEmpType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_EmploymentTypeDialog_EmpType.value") + " : " + aEmploymentType.getEmpType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aEmploymentType.getRecordType())) {
 				aEmploymentType.setVersion(aEmploymentType.getVersion() + 1);
@@ -519,10 +507,9 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 			this.empType.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-		this.empTypeDesc
-				.setReadonly(isReadOnly("EmploymentTypeDialog_empTypeDesc"));
+		this.empTypeDesc.setReadonly(isReadOnly("EmploymentTypeDialog_empTypeDesc"));
 		this.empTypeIsActive.setDisabled(isReadOnly("EmploymentTypeDialog_EmpTypeIsActive"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -652,23 +639,19 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aEmploymentType.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aEmploymentType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aEmploymentType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aEmploymentType
-				.setUserDetails(getUserWorkspace().getLoggedInUser());
+		aEmploymentType.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aEmploymentType.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aEmploymentType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aEmploymentType
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aEmploymentType.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -714,8 +697,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aEmploymentType,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aEmploymentType, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -748,57 +730,49 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		EmploymentType aEmploymentType = (EmploymentType) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
-		
+		boolean deleteNotes = false;
+
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getEmploymentTypeService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getEmploymentTypeService().delete(auditHeader);
 
-						deleteNotes=true;	
+						deleteNotes = true;
 					} else {
-						auditHeader = getEmploymentTypeService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getEmploymentTypeService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getEmploymentTypeService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getEmploymentTypeService().doApprove(auditHeader);
 
-						if(aEmploymentType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;		
+						if (aEmploymentType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getEmploymentTypeService().doReject(
-								auditHeader);
-						if(aEmploymentType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getEmploymentTypeService().doReject(auditHeader);
+						if (aEmploymentType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_EmploymentTypeDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_EmploymentTypeDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_EmploymentTypeDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_EmploymentTypeDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.employmentType),true);
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.employmentType), true);
 					}
 				}
 
@@ -818,7 +792,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -828,12 +802,10 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(EmploymentType aEmploymentType,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aEmploymentType.getBefImage(), aEmploymentType);
-		return new AuditHeader(String.valueOf(aEmploymentType.getId()), null,
-				null, null, auditDetail, aEmploymentType.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(EmploymentType aEmploymentType, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aEmploymentType.getBefImage(), aEmploymentType);
+		return new AuditHeader(String.valueOf(aEmploymentType.getId()), null, null, null, auditDetail,
+				aEmploymentType.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -847,9 +819,8 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
-			ErrorControl.showErrorControl(this.window_EmploymentTypeDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_EmploymentTypeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -879,6 +850,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -886,22 +858,23 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	public EmploymentType getEmploymentType() {
 		return this.employmentType;
 	}
+
 	public void setEmploymentType(EmploymentType employmentType) {
 		this.employmentType = employmentType;
 	}
 
-	public void setEmploymentTypeService(
-			EmploymentTypeService employmentTypeService) {
+	public void setEmploymentTypeService(EmploymentTypeService employmentTypeService) {
 		this.employmentTypeService = employmentTypeService;
 	}
+
 	public EmploymentTypeService getEmploymentTypeService() {
 		return this.employmentTypeService;
 	}
 
-	public void setEmploymentTypeListCtrl(
-			EmploymentTypeListCtrl employmentTypeListCtrl) {
+	public void setEmploymentTypeListCtrl(EmploymentTypeListCtrl employmentTypeListCtrl) {
 		this.employmentTypeListCtrl = employmentTypeListCtrl;
 	}
+
 	public EmploymentTypeListCtrl getEmploymentTypeListCtrl() {
 		return this.employmentTypeListCtrl;
 	}

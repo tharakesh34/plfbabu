@@ -30,9 +30,8 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<Notification> 
 	private static final Logger logger = Logger.getLogger(NotificationLogDetailsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 
 	protected Window window_NotificationLogEnquiryDialog;
@@ -167,7 +166,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<Notification> 
 	public void doFillNotificationEmail(List<Notification> notifications) {
 		this.listBoxNotificationLogEmail.getItems().clear();
 		if (notifications != null) {
-			
+
 			for (Notification notification : notifications) {
 				String emailId = "";
 				for (MessageAddress messageAddress : notification.getAddressesList()) {

@@ -74,33 +74,31 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Administration/SecurityRole/securityRoleDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Administration/SecurityRole/securityRoleDialog.zul file.
  */
 public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	private static final long serialVersionUID = 8969578420575594907L;
 	private static final Logger logger = Logger.getLogger(SecurityRoleDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window     window_SecurityRoleDialog;                   // autoWired
-	protected Combobox   roleApp;                                     // autoWired
-	protected Textbox    roleCd;                                      // autoWired
-	protected Textbox    roleDesc;                                    // autoWired
-	protected Textbox    roleCategory;                                // autoWired
-	
-	// not auto wired variables
-	private SecurityRole     securityRole;                              // overHanded per parameter
-	private transient    SecurityRoleListCtrl securityRoleListCtrl; 	// overHanded per parameter
+	protected Window window_SecurityRoleDialog; // autoWired
+	protected Combobox roleApp; // autoWired
+	protected Textbox roleCd; // autoWired
+	protected Textbox roleDesc; // autoWired
+	protected Textbox roleCategory; // autoWired
 
-	private transient boolean  validationOn;
-	
+	// not auto wired variables
+	private SecurityRole securityRole; // overHanded per parameter
+	private transient SecurityRoleListCtrl securityRoleListCtrl; // overHanded per parameter
+
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
-	private transient SecurityRoleService  securityRoleService;
-	private transient PagedListService      pagedListService;
+	private transient SecurityRoleService securityRoleService;
+	private transient PagedListService pagedListService;
 
 	/**
 	 * default constructor.<br>
@@ -117,9 +115,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SecurityRole object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SecurityRole object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -131,7 +128,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		setPageComponents(window_SecurityRoleDialog);
 
 		try {
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 			if (arguments.containsKey("securityRole")) {
@@ -144,14 +141,12 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 				setSecurityRole(null);
 			}
 
-			doLoadWorkFlow(this.securityRole.isWorkflow(),
-					this.securityRole.getWorkflowId(),
+			doLoadWorkFlow(this.securityRole.isWorkflow(), this.securityRole.getWorkflowId(),
 					this.securityRole.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SecurityRoleDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SecurityRoleDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -186,9 +181,9 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		this.roleDesc.setMaxlength(100);
 		this.roleCategory.setMaxlength(100);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving ");
@@ -199,8 +194,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
@@ -329,8 +323,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		try {
 			String strRoleApp = (String) this.roleApp.getSelectedItem().getValue();
 			if (StringUtils.isBlank(strRoleApp)) {
-				throw new WrongValueException(this.roleApp,Labels.getLabel("STATIC_INVALID"
-						,new String[] { Labels.getLabel("label_SecurityRoleDialog_RoleApp.value") }));
+				throw new WrongValueException(this.roleApp, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_SecurityRoleDialog_RoleApp.value") }));
 			}
 			aSecurityRole.setRoleApp(Integer.parseInt(strRoleApp));
 
@@ -340,28 +334,28 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		try {
 			aSecurityRole.setRoleCd(this.roleCd.getValue());
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aSecurityRole.setRoleDesc(this.roleDesc.getValue());
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 
 			aSecurityRole.setRoleCategory(this.roleCategory.getValue());
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -375,8 +369,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityRole
 	 * @throws Exception
@@ -392,15 +385,15 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 			this.roleApp.focus();
 		} else {
 			this.roleDesc.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
-		}	
+		}
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityRole);
@@ -425,17 +418,19 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		setValidationOn(true);
 
 		if (!this.roleApp.isDisabled()) {
-			this.roleApp.setConstraint(new StaticListValidator(PennantStaticListUtil.getAppCodes()
-					,Labels.getLabel("label_SecurityRoleDialog_RoleApp.value")));
+			this.roleApp.setConstraint(new StaticListValidator(PennantStaticListUtil.getAppCodes(),
+					Labels.getLabel("label_SecurityRoleDialog_RoleApp.value")));
 		}
 
-		if (!this.roleCd.isReadonly()){
-			this.roleCd.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRoleDialog_RoleCd.value"),PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+		if (!this.roleCd.isReadonly()) {
+			this.roleCd.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRoleDialog_RoleCd.value"),
+					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 
-		if (!this.roleDesc.isReadonly()){
-			this.roleDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRoleDialog_RoleDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.roleDesc.isReadonly()) {
+			this.roleDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityRoleDialog_RoleDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving ");
@@ -455,7 +450,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 
 	/**
 	 * This method set constraints for LOV fields
-	 * @return void 
+	 * 
+	 * @return void
 	 */
 	private void doSetLOVValidation() {
 
@@ -492,28 +488,28 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		logger.debug("Entering ");
 		final SecurityRole aSecurityRole = new SecurityRole();
 		BeanUtils.copyProperties(getSecurityRole(), aSecurityRole);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> "+ 
-				Labels.getLabel("label_SecurityRoleDialog_RoleCd.value")+" : "+aSecurityRole.getRoleCd();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SecurityRoleDialog_RoleCd.value") + " : " + aSecurityRole.getRoleCd();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aSecurityRole.getRecordType())){
-				aSecurityRole.setVersion(aSecurityRole.getVersion()+1);
+			if (StringUtils.isBlank(aSecurityRole.getRecordType())) {
+				aSecurityRole.setVersion(aSecurityRole.getVersion() + 1);
 				aSecurityRole.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aSecurityRole.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(doProcess(aSecurityRole,tranType)){
+				if (doProcess(aSecurityRole, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
 			} catch (DataAccessException e) {
@@ -530,10 +526,10 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	private void doEdit() {
 		logger.debug("Entering ");
 
-		if (getSecurityRole().isNewRecord()){
+		if (getSecurityRole().isNewRecord()) {
 			this.roleApp.setDisabled(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.roleApp.setDisabled(true);
 			this.roleCd.setReadonly(true);
 			this.btnCancel.setVisible(true);
@@ -543,19 +539,19 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		this.roleDesc.setReadonly(isReadOnly("SecurityRoleDialog_roleDesc"));
 		this.roleCategory.setReadonly(isReadOnly("SecurityRoleDialog_roleCategory"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.securityRole.isNewRecord()){
+			if (this.securityRole.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				this.roleApp.setDisabled(false);
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 		logger.debug("Leaving ");
@@ -571,13 +567,13 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		this.roleDesc.setReadonly(true);
 		this.roleCategory.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -621,32 +617,32 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		// Do data level validations here
 
 		isNew = aSecurityRole.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aSecurityRole.getRecordType())){
-				aSecurityRole.setVersion(aSecurityRole.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aSecurityRole.getRecordType())) {
+				aSecurityRole.setVersion(aSecurityRole.getVersion() + 1);
+				if (isNew) {
 					aSecurityRole.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aSecurityRole.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSecurityRole.setNewRecord(true);
 				}
 			}
-		}else{
-			aSecurityRole.setVersion(aSecurityRole.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aSecurityRole.setVersion(aSecurityRole.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aSecurityRole,tranType)){
+			if (doProcess(aSecurityRole, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -658,17 +654,17 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	}
 
 	/**
-	 * * This Method used for setting all workFlow details from userWorkSpace
-	 *  and setting audit details to auditHeader
+	 * * This Method used for setting all workFlow details from userWorkSpace and setting audit details to auditHeader
+	 * 
 	 * @param aSecurityRole
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(SecurityRole aSecurityRole,String tranType){
+	private boolean doProcess(SecurityRole aSecurityRole, String tranType) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aSecurityRole.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityRole.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -697,19 +693,19 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 				}
 			}
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
-							nextRoleCode =nextRoleCode.concat(",");
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -718,25 +714,25 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 			aSecurityRole.setRoleCode(getRole());
 			aSecurityRole.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aSecurityRole, tranType);
+			auditHeader = getAuditHeader(aSecurityRole, tranType);
 			String operationRefs = getServiceOperations(taskId, aSecurityRole);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aSecurityRole, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					auditHeader = getAuditHeader(aSecurityRole, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aSecurityRole, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aSecurityRole, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving ");
 		return processCompleted;
@@ -744,61 +740,63 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 
 	/**
 	 *
-	 * This Method used for calling the all Database  operations from the service by passing the  
-	 * auditHeader and operationRefs(Method) as String
+	 * This Method used for calling the all Database operations from the service by passing the auditHeader and
+	 * operationRefs(Method) as String
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		SecurityRole aSecurityRole=(SecurityRole)auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		SecurityRole aSecurityRole = (SecurityRole) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getSecurityRoleService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getSecurityRoleService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getSecurityRoleService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getSecurityRoleService().doApprove(auditHeader);
 
-						if(aSecurityRole.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aSecurityRole.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getSecurityRoleService().doReject(auditHeader);
-						if(aSecurityRole.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aSecurityRole.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(this.window_SecurityRoleDialog,auditHeader);
-						return processCompleted; 
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_SecurityRoleDialog, auditHeader);
+						return processCompleted;
 					}
 				}
 
 				auditHeader = ErrorControl.showErrorDetails(this.window_SecurityRoleDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					if(deleteNotes){
-						deleteNotes(getNotes(this.securityRole),true);
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.securityRole), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -816,20 +814,22 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	// WorkFlow Components
 
 	/**
-	 * This method creates AudiHeader Object and returns that Object 
+	 * This method creates AudiHeader Object and returns that Object
+	 * 
 	 * @param aSecurityRole
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(SecurityRole aSecurityRole, String tranType){
+	private AuditHeader getAuditHeader(SecurityRole aSecurityRole, String tranType) {
 		logger.debug("Entering ");
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityRole.getBefImage(), aSecurityRole);   
-		return new AuditHeader(getReference(),null,null,null,auditDetail
-				,aSecurityRole.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityRole.getBefImage(), aSecurityRole);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aSecurityRole.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
 	 * When user Clicks on "Notes" button
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -837,14 +837,13 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		doShowNotes(this.securityRole);
 	}
 
-
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getSecurityRoleListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.securityRole.getRoleID());
@@ -857,6 +856,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -864,6 +864,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	public SecurityRole getSecurityRole() {
 		return this.securityRole;
 	}
+
 	public void setSecurityRole(SecurityRole securityRole) {
 		this.securityRole = securityRole;
 	}
@@ -871,6 +872,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	public void setSecurityRoleService(SecurityRoleService securityRoleService) {
 		this.securityRoleService = securityRoleService;
 	}
+
 	public SecurityRoleService getSecurityRoleService() {
 		return this.securityRoleService;
 	}
@@ -878,6 +880,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	public void setSecurityRoleListCtrl(SecurityRoleListCtrl securityRoleListCtrl) {
 		this.securityRoleListCtrl = securityRoleListCtrl;
 	}
+
 	public SecurityRoleListCtrl getSecurityRoleListCtrl() {
 		return this.securityRoleListCtrl;
 	}
@@ -885,6 +888,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

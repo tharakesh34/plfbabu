@@ -97,15 +97,12 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * SMTHolidayMaster/SMTHolidayMaster_Temp by using HolidayMasterDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using HolidayMasterDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtSMTHolidayMaster by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * SMTHolidayMaster/SMTHolidayMaster_Temp by using HolidayMasterDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using HolidayMasterDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtSMTHolidayMaster by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -147,12 +144,10 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table SMTHolidayMaster by using HolidayMasterDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtSMTHolidayMaster by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * SMTHolidayMaster by using HolidayMasterDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtSMTHolidayMaster by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -176,8 +171,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * getHolidayMasterById fetch the details by using HolidayMasterDAO's
-	 * getHolidayMasterById method.
+	 * getHolidayMasterById fetch the details by using HolidayMasterDAO's getHolidayMasterById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -191,9 +185,8 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * getApprovedHolidayMasterCodeYear fetch the details by using
-	 * HolidayMasterDAO's getHolidayMasterById method . with parameter code and
-	 * Year. it fetches the approved records from the SMTHolidayMaster.
+	 * getApprovedHolidayMasterCodeYear fetch the details by using HolidayMasterDAO's getHolidayMasterById method . with
+	 * parameter code and Year. it fetches the approved records from the SMTHolidayMaster.
 	 * 
 	 * @param code
 	 *            (String)
@@ -205,9 +198,8 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * getApprovedHolidayMasterById fetch the details by using
-	 * HolidayMasterDAO's getHolidayMasterById method . with parameter id and
-	 * type. it fetches the approved records from the SMTHolidayMaster.
+	 * getApprovedHolidayMasterById fetch the details by using HolidayMasterDAO's getHolidayMasterById method . with
+	 * parameter id and type. it fetches the approved records from the SMTHolidayMaster.
 	 * 
 	 * @param id
 	 *            (String)
@@ -216,22 +208,17 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	public HolidayMaster getApprovedHolidayMasterById(String id, BigDecimal year) {
 		return getHolidayMasterDAO().getHolidayMasterByID(id, year, "_AView");
 	}
-	
-	
+
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCountryDAO().delete with parameters country,"" b) NEW Add new
-	 * record in to main table by using getCountryDAO().save with parameters
-	 * country,"" c) EDIT Update record in the main table by using
-	 * getCountryDAO().update with parameters country,"" 3) Delete the record
-	 * from the workFlow table by using getCountryDAO().delete with parameters
-	 * country,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTCountries
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtBMTCountries by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCountryDAO().delete with parameters
+	 * country,"" b) NEW Add new record in to main table by using getCountryDAO().save with parameters country,"" c)
+	 * EDIT Update record in the main table by using getCountryDAO().update with parameters country,"" 3) Delete the
+	 * record from the workFlow table by using getCountryDAO().delete with parameters country,"_Temp" 4) Audit the
+	 * record in to AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -285,10 +272,8 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -305,10 +290,9 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -354,20 +338,18 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 				// with work flow
 
 				if (holidayMaster.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																									// records
 																								// type
-					// is new
+																								// is new
 					if (befHolidayMaster != null || tempHolidayMaster != null) { // if
-																					// records
-						// already exists
-						// in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+																						// records
+																					// already exists
+																					// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befHolidayMaster == null || tempHolidayMaster != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 
@@ -384,13 +366,13 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 				} else {
 					if (oldHolidayMaster != null
 							&& !oldHolidayMaster.getLastMntOn().equals(befHolidayMaster.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -418,12 +400,10 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCountryDAO().delete with parameters
-	 * country,"_Temp" 3) Audit the record in to AuditHeader and AdtBMTCountries
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCountryDAO().delete with parameters country,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)

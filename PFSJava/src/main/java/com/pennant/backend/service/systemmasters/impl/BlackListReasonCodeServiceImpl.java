@@ -61,12 +61,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * Service implementation for methods that depends on
- * <b>BlackListReasonCode</b>.<br>
+ * Service implementation for methods that depends on <b>BlackListReasonCode</b>.<br>
  * 
  */
-public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReasonCode> implements
-		BlackListReasonCodeService {
+public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReasonCode>
+		implements BlackListReasonCodeService {
 
 	private static Logger logger = Logger.getLogger(BlackListReasonCodeServiceImpl.class);
 
@@ -76,7 +75,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	public BlackListReasonCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -98,16 +97,12 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTBlackListRsnCodes/BMTBlackListRsnCodes_Temp by using
-	 * BlackListReasonCodeDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using
-	 * BlackListReasonCodeDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtBMTBlackListRsnCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTBlackListRsnCodes/BMTBlackListRsnCodes_Temp by using BlackListReasonCodeDAO's save method b) Update the Record
+	 * in the table. based on the module workFlow Configuration. by using BlackListReasonCodeDAO's update method 3)
+	 * Audit the record in to AuditHeader and AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -124,20 +119,17 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			return auditHeader;
 		}
 		String tableType = "";
-		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditHeader
-				.getAuditDetail().getModelData();
+		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditHeader.getAuditDetail().getModelData();
 		if (blackListReasonCode.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (blackListReasonCode.isNew()) {
-			blackListReasonCode.setId(getBlackListReasonCodeDAO().save(
-					blackListReasonCode, tableType));
+			blackListReasonCode.setId(getBlackListReasonCodeDAO().save(blackListReasonCode, tableType));
 			auditHeader.getAuditDetail().setModelData(blackListReasonCode);
 			auditHeader.setAuditReference(blackListReasonCode.getBLRsnCode());
 		} else {
-			getBlackListReasonCodeDAO()
-					.update(blackListReasonCode, tableType);
+			getBlackListReasonCodeDAO().update(blackListReasonCode, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -147,12 +139,10 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTBlackListRsnCodes by using BlackListReasonCodeDAO's delete
-	 * method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTBlackListRsnCodes by using BlackListReasonCodeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -167,8 +157,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditHeader
-				.getAuditDetail().getModelData();
+		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditHeader.getAuditDetail().getModelData();
 		getBlackListReasonCodeDAO().delete(blackListReasonCode, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -177,8 +166,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * getBlackListReasonCodeById fetch the details by using
-	 * BlackListReasonCodeDAO's getBlackListReasonCodeById method.
+	 * getBlackListReasonCodeById fetch the details by using BlackListReasonCodeDAO's getBlackListReasonCodeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -188,15 +176,12 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	 */
 	@Override
 	public BlackListReasonCode getBlackListReasonCodeById(String id) {
-		return getBlackListReasonCodeDAO().getBlackListReasonCodeById(id,
-				"_View");
+		return getBlackListReasonCodeDAO().getBlackListReasonCodeById(id, "_View");
 	}
 
 	/**
-	 * getApprovedBlackListReasonCodeById fetch the details by using
-	 * BlackListReasonCodeDAO's getBlackListReasonCodeById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * BMTBlackListRsnCodes.
+	 * getApprovedBlackListReasonCodeById fetch the details by using BlackListReasonCodeDAO's getBlackListReasonCodeById
+	 * method . with parameter id and type as blank. it fetches the approved records from the BMTBlackListRsnCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -207,22 +192,16 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getBlackListReasonCodeDAO().delete with parameters
-	 * blackListReasonCode,"" b) NEW Add new record in to main table by using
-	 * getBlackListReasonCodeDAO().save with parameters blackListReasonCode,""
-	 * c) EDIT Update record in the main table by using
-	 * getBlackListReasonCodeDAO().update with parameters
-	 * blackListReasonCode,"" 3) Delete the record from the workFlow table by
-	 * using getBlackListReasonCodeDAO().delete with parameters
-	 * blackListReasonCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getBlackListReasonCodeDAO().delete
+	 * with parameters blackListReasonCode,"" b) NEW Add new record in to main table by using
+	 * getBlackListReasonCodeDAO().save with parameters blackListReasonCode,"" c) EDIT Update record in the main table
+	 * by using getBlackListReasonCodeDAO().update with parameters blackListReasonCode,"" 3) Delete the record from the
+	 * workFlow table by using getBlackListReasonCodeDAO().delete with parameters blackListReasonCode,"_Temp" 4) Audit
+	 * the record in to AuditHeader and AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and AdtBMTBlackListRsnCodes by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -240,11 +219,10 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			return auditHeader;
 		}
 		BlackListReasonCode blackListReasonCode = new BlackListReasonCode();
-		BeanUtils.copyProperties((BlackListReasonCode) auditHeader
-				.getAuditDetail().getModelData(), blackListReasonCode);
+		BeanUtils.copyProperties((BlackListReasonCode) auditHeader.getAuditDetail().getModelData(),
+				blackListReasonCode);
 
-		if (blackListReasonCode.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (blackListReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getBlackListReasonCodeDAO().delete(blackListReasonCode, "");
 		} else {
@@ -254,8 +232,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			blackListReasonCode.setNextTaskId("");
 			blackListReasonCode.setWorkflowId(0);
 
-			if (blackListReasonCode.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (blackListReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				blackListReasonCode.setRecordType("");
 				getBlackListReasonCodeDAO().save(blackListReasonCode, "");
@@ -280,13 +257,11 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getBlackListReasonCodeDAO().delete with
-	 * parameters blackListReasonCode,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTBlackListRsnCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getBlackListReasonCodeDAO().delete with parameters blackListReasonCode,"_Temp" 3) Audit
+	 * the record in to AuditHeader and AdtBMTBlackListRsnCodes by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -299,8 +274,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
-		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditHeader
-				.getAuditDetail().getModelData();
+		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getBlackListReasonCodeDAO().delete(blackListReasonCode, "_Temp");
@@ -311,20 +285,16 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -333,42 +303,36 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getBlackListReasonCodeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getBlackListReasonCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditDetail
-				.getModelData();
+		BlackListReasonCode blackListReasonCode = (BlackListReasonCode) auditDetail.getModelData();
 		BlackListReasonCode tempBlackListReasonCode = null;
 
 		if (blackListReasonCode.isWorkflow()) {
 			tempBlackListReasonCode = getBlackListReasonCodeDAO()
-					.getBlackListReasonCodeById(blackListReasonCode.getId(),
-							"_Temp");
+					.getBlackListReasonCodeById(blackListReasonCode.getId(), "_Temp");
 		}
 
 		BlackListReasonCode befBlackListReasonCode = getBlackListReasonCodeDAO()
 				.getBlackListReasonCodeById(blackListReasonCode.getId(), "");
-		BlackListReasonCode oldBlackListReasonCode = blackListReasonCode
-				.getBefImage();
+		BlackListReasonCode oldBlackListReasonCode = blackListReasonCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = blackListReasonCode.getBLRsnCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_BLRsnCode") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_BLRsnCode") + ":" + valueParm[0];
 
 		if (blackListReasonCode.isNew()) { // for New record or new record into
 			// work flow
@@ -376,32 +340,22 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			if (!blackListReasonCode.isWorkflow()) {// With out Work flow only
 														// new records
 				if (befBlackListReasonCode != null) { // Record Already Exists
-														// in the table then
+															// in the table then
 														// error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (blackListReasonCode.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befBlackListReasonCode != null
-							|| tempBlackListReasonCode != null) { // if records
-																// already exists
-																// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+				if (blackListReasonCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befBlackListReasonCode != null || tempBlackListReasonCode != null) { // if records
+																									// already exists
+																								// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befBlackListReasonCode == null
-							|| tempBlackListReasonCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+					if (befBlackListReasonCode == null || tempBlackListReasonCode != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -409,28 +363,21 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!blackListReasonCode.isWorkflow()) { // With out Work flow for
-														// update and delete
+															// update and delete
 
 				if (befBlackListReasonCode == null) { // if records not exists
 					// in the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldBlackListReasonCode != null
-							&& !oldBlackListReasonCode.getLastMntOn().equals(
-									befBlackListReasonCode.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldBlackListReasonCode.getLastMntOn().equals(befBlackListReasonCode.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -439,28 +386,18 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 				if (tempBlackListReasonCode == null) { // if records not exists
 					// in the Work flow
 					// table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempBlackListReasonCode != null
-						&& oldBlackListReasonCode != null
-						&& !oldBlackListReasonCode.getLastMntOn().equals(
-								tempBlackListReasonCode.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempBlackListReasonCode != null && oldBlackListReasonCode != null
+						&& !oldBlackListReasonCode.getLastMntOn().equals(tempBlackListReasonCode.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !blackListReasonCode.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !blackListReasonCode.isWorkflow()) {
 			auditDetail.setBefImage(befBlackListReasonCode);
 		}
 

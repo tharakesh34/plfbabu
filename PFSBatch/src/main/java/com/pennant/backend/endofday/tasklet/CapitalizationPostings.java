@@ -71,18 +71,18 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 
 public class CapitalizationPostings implements Tasklet {
 
-	private Logger					logger			= Logger.getLogger(CapitalizationPostings.class);
+	private Logger logger = Logger.getLogger(CapitalizationPostings.class);
 
-	private FinanceProfitDetailDAO	financeProfitDetailDAO;
-	private SuspensePostingUtil		suspensePostingUtil;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private SuspensePostingUtil suspensePostingUtil;
 
-	private DataSource				dataSource;
+	private DataSource dataSource;
 
-	private Date					dateValueDate	= null;
-	private Date					dateAppDate		= null;
+	private Date dateValueDate = null;
+	private Date dateAppDate = null;
 
-	private ExecutionContext		jobExecutionContext;
-	private ExecutionContext		stepExecutionContext;
+	private ExecutionContext jobExecutionContext;
+	private ExecutionContext stepExecutionContext;
 
 	public CapitalizationPostings() {
 
@@ -122,11 +122,11 @@ public class CapitalizationPostings implements Tasklet {
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 				aeEvent.setFinReference(resultSet.getString("FinReference"));
 				amountCodes.setCpzCur(resultSet.getBigDecimal("CpzAmount"));
-				amountCodes.setCpzPrv(resultSet.getBigDecimal("PrvCpzAmt") == null ? BigDecimal.ZERO : resultSet
-						.getBigDecimal("PrvCpzAmt"));
+				amountCodes.setCpzPrv(resultSet.getBigDecimal("PrvCpzAmt") == null ? BigDecimal.ZERO
+						: resultSet.getBigDecimal("PrvCpzAmt"));
 				amountCodes.setCpzTot(resultSet.getBigDecimal("TotalCpz"));
-				amountCodes.setCpzNxt(amountCodes.getCpzTot().subtract(amountCodes.getCpzPrv())
-						.subtract(amountCodes.getCpzCur()));
+				amountCodes.setCpzNxt(
+						amountCodes.getCpzTot().subtract(amountCodes.getCpzPrv()).subtract(amountCodes.getCpzCur()));
 
 				// **** Accounting Set Execution for Amortization ******//
 
@@ -139,7 +139,6 @@ public class CapitalizationPostings implements Tasklet {
 				aeEvent.setSchdDate(resultSet.getDate("NextRepayDate"));
 				aeEvent.setFinType(resultSet.getString("FinType"));
 				aeEvent.setCustID(resultSet.getLong("CustID"));
-
 
 				//Postings Process
 				//FIXME: 050517 Needs to fill return dataset

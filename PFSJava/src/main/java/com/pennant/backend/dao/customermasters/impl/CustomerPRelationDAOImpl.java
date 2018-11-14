@@ -67,52 +67,51 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 
 	private static Logger logger = Logger.getLogger(CustomerPRelationDAOImpl.class);
 
-
 	public CustomerPRelationDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Customer P Relation details by key field
+	 * Fetch the Record Customer P Relation details by key field
 	 * 
-	 * @param id (long)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (long)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerPRelation
 	 */
 	@Override
-	public CustomerPRelation getCustomerPRelationByID(final long pRCustID,int pRCustPRSNo, String type) {
+	public CustomerPRelation getCustomerPRelationByID(final long pRCustID, int pRCustPRSNo, String type) {
 		logger.debug("Entering");
 		CustomerPRelation customerPRelation = new CustomerPRelation();
 		customerPRelation.setId(pRCustID);
 		customerPRelation.setPRCustPRSNo(pRCustPRSNo);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select PRCustID, PRCustPRSNo, PRRelationCode," );
+		selectSql.append("Select PRCustID, PRCustPRSNo, PRRelationCode,");
 		selectSql.append(" PRRelationCustID, PRisGuardian, PRFName, PRMName, PRLName,");
-		selectSql.append(" PRSName, PRFNameLclLng, PRMNameLclLng, PRLNameLclLng, PRDOB, PRAddrHNbr," );
-		selectSql.append(" PRAddrFNbr, PRAddrStreet, PRAddrLine1," );
-		selectSql.append(" PRAddrLine2, PRAddrPOBox, PRAddrCity, PRAddrProvince, PRAddrCountry," );
-		selectSql.append(" PRAddrZIP, PRPhone, PRMail," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPRRelationCodeName, lovDescPRAddrCityName, lovDescPRAddrProvinceName," );
+		selectSql.append(" PRSName, PRFNameLclLng, PRMNameLclLng, PRLNameLclLng, PRDOB, PRAddrHNbr,");
+		selectSql.append(" PRAddrFNbr, PRAddrStreet, PRAddrLine1,");
+		selectSql.append(" PRAddrLine2, PRAddrPOBox, PRAddrCity, PRAddrProvince, PRAddrCountry,");
+		selectSql.append(" PRAddrZIP, PRPhone, PRMail,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPRRelationCodeName, lovDescPRAddrCityName, lovDescPRAddrProvinceName,");
 			selectSql.append(" lovDescPRAddrCountryName, lovDescCustCIF, lovDescCustShrtName, lovDescCustRecordType, ");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomersPRelations");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PRCustID =:PRCustID AND PRCustPRSNo=:PRCustPRSNo ") ;
-		
+		selectSql.append(" Where PRCustID =:PRCustID AND PRCustPRSNo=:PRCustPRSNo ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
-		RowMapper<CustomerPRelation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPRelation.class);
+		RowMapper<CustomerPRelation> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPRelation.class);
 
-		try{
-			customerPRelation = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			customerPRelation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerPRelation = null;
 		}
@@ -121,13 +120,9 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 		return customerPRelation;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the CustomersPRelations or
-	 * CustomersPRelations_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Customer P Relation by key
-	 * PRCustID
+	 * This method Deletes the Record from the CustomersPRelations or CustomersPRelations_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Customer P Relation by key PRCustID
 	 * 
 	 * @param Customer
 	 *            P Relation (customerPRelation)
@@ -138,19 +133,19 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	 * 
 	 */
 	@Override
-	public void delete(CustomerPRelation customerPRelation,String type) {
+	public void delete(CustomerPRelation customerPRelation, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" Delete From CustomersPRelations");
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PRCustID =:PRCustID AND PRCustPRSNo=:PRCustPRSNo");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
-		
-		try{
+
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
@@ -166,21 +161,21 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	 * Method for Deletion of Customer Related List of CustomerRatings
 	 */
 	@Override
-	public void deleteByCustomer(final long id,String type) {
+	public void deleteByCustomer(final long id, String type) {
 		logger.debug("Entering delete Method");
 		int recordCount = 0;
 		CustomerPRelation customerPRelation = new CustomerPRelation();
 		customerPRelation.setId(id);
 
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From CustomersPRelations" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(" Delete From CustomersPRelations");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PRCustID =:PRCustID ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
@@ -193,9 +188,8 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	}
 
 	/**
-	 * This method insert new Records into CustomersPRelations or
-	 * CustomersPRelations_Temp. it fetches the available Sequence form
-	 * SeqCustomersPRelations by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into CustomersPRelations or CustomersPRelations_Temp. it fetches the available
+	 * Sequence form SeqCustomersPRelations by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Customer P Relation
 	 * 
@@ -208,32 +202,32 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	 * 
 	 */
 	@Override
-	public long save(CustomerPRelation customerPRelation,String type) {
+	public long save(CustomerPRelation customerPRelation, String type) {
 		logger.debug("Entering");
-		
-		if(StringUtils.isNotEmpty(type) && customerPRelation.getPRCustPRSNo()==0){
-			int sNo= getMaxSeqNo(customerPRelation.getPRCustID());
-			customerPRelation.setPRCustPRSNo(sNo+1);
+
+		if (StringUtils.isNotEmpty(type) && customerPRelation.getPRCustPRSNo() == 0) {
+			int sNo = getMaxSeqNo(customerPRelation.getPRCustID());
+			customerPRelation.setPRCustPRSNo(sNo + 1);
 		}
 
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CustomersPRelations" ); 
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (PRCustID, PRCustPRSNo, PRRelationCode, PRRelationCustID, PRisGuardian," );
-		insertSql.append(" PRFName, PRMName, PRLName, PRSName, PRFNameLclLng, PRMNameLclLng, PRLNameLclLng," );
+		insertSql.append(" Insert Into CustomersPRelations");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (PRCustID, PRCustPRSNo, PRRelationCode, PRRelationCustID, PRisGuardian,");
+		insertSql.append(" PRFName, PRMName, PRLName, PRSName, PRFNameLclLng, PRMNameLclLng, PRLNameLclLng,");
 		insertSql.append(" PRDOB, PRAddrHNbr, PRAddrFNbr, PRAddrStreet, PRAddrLine1, PRAddrLine2, PRAddrPOBox,");
-		insertSql.append(" PRAddrCity, PRAddrProvince, PRAddrCountry, PRAddrZIP, PRPhone, PRMail," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId," );
-		insertSql.append(" NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" PRAddrCity, PRAddrProvince, PRAddrCountry, PRAddrZIP, PRPhone, PRMail,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:PRCustID, :PRCustPRSNo, :PRRelationCode, :PRRelationCustID, :PRisGuardian,");
 		insertSql.append(" :PRFName, :PRMName, :PRLName, :PRSName, :PRFNameLclLng, :PRMNameLclLng,");
-		insertSql.append(" :PRLNameLclLng, :PRDOB, :PRAddrHNbr, :PRAddrFNbr, :PRAddrStreet, :PRAddrLine1," );
-		insertSql.append(" :PRAddrLine2, :PRAddrPOBox, :PRAddrCity, :PRAddrProvince,:PRAddrCountry," );
-		insertSql.append(" :PRAddrZIP, :PRPhone, :PRMail," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus," );
+		insertSql.append(" :PRLNameLclLng, :PRDOB, :PRAddrHNbr, :PRAddrFNbr, :PRAddrStreet, :PRAddrLine1,");
+		insertSql.append(" :PRAddrLine2, :PRAddrPOBox, :PRAddrCity, :PRAddrProvince,:PRAddrCountry,");
+		insertSql.append(" :PRAddrZIP, :PRPhone, :PRMail,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus,");
 		insertSql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
-		
-		 logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -242,45 +236,45 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	}
 
 	/**
-	 * This method updates the Record CustomersPRelations or CustomersPRelations_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer P Relation by key PRCustID and Version
+	 * This method updates the Record CustomersPRelations or CustomersPRelations_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer P Relation by key PRCustID and Version
 	 * 
-	 * @param Customer P Relation (customerPRelation)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            P Relation (customerPRelation)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerPRelation customerPRelation,String type) {
+	public void update(CustomerPRelation customerPRelation, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" Update CustomersPRelations" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PRRelationCode = :PRRelationCode, PRRelationCustID = :PRRelationCustID," );
-		updateSql.append(" PRisGuardian = :PRisGuardian, PRFName = :PRFName, PRMName = :PRMName," );
-		updateSql.append(" PRLName = :PRLName, PRSName = :PRSName, PRFNameLclLng = :PRFNameLclLng," );
-		updateSql.append(" PRMNameLclLng = :PRMNameLclLng, PRLNameLclLng = :PRLNameLclLng, PRDOB = :PRDOB," );
-		updateSql.append(" PRAddrHNbr = :PRAddrHNbr, PRAddrFNbr = :PRAddrFNbr, PRAddrStreet = :PRAddrStreet," );
-		updateSql.append(" PRAddrLine1 = :PRAddrLine1, PRAddrLine2 = :PRAddrLine2, PRAddrPOBox = :PRAddrPOBox," );
-		updateSql.append(" PRAddrCity = :PRAddrCity, PRAddrProvince = :PRAddrProvince," );
-		updateSql.append(" PRAddrCountry = :PRAddrCountry, PRAddrZIP = :PRAddrZIP, PRPhone = :PRPhone," );
-		updateSql.append(" PRMail = :PRMail, " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Update CustomersPRelations");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set PRRelationCode = :PRRelationCode, PRRelationCustID = :PRRelationCustID,");
+		updateSql.append(" PRisGuardian = :PRisGuardian, PRFName = :PRFName, PRMName = :PRMName,");
+		updateSql.append(" PRLName = :PRLName, PRSName = :PRSName, PRFNameLclLng = :PRFNameLclLng,");
+		updateSql.append(" PRMNameLclLng = :PRMNameLclLng, PRLNameLclLng = :PRLNameLclLng, PRDOB = :PRDOB,");
+		updateSql.append(" PRAddrHNbr = :PRAddrHNbr, PRAddrFNbr = :PRAddrFNbr, PRAddrStreet = :PRAddrStreet,");
+		updateSql.append(" PRAddrLine1 = :PRAddrLine1, PRAddrLine2 = :PRAddrLine2, PRAddrPOBox = :PRAddrPOBox,");
+		updateSql.append(" PRAddrCity = :PRAddrCity, PRAddrProvince = :PRAddrProvince,");
+		updateSql.append(" PRAddrCountry = :PRAddrCountry, PRAddrZIP = :PRAddrZIP, PRPhone = :PRPhone,");
+		updateSql.append(" PRMail = :PRMail, ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode,");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PRCustID =:PRCustID AND PRCustPRSNo=:PRCustPRSNo");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -292,18 +286,19 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 
 	/**
 	 * Method For Generating PRelation SeqNo dynamically by getting max number
+	 * 
 	 * @param pRCustID
 	 * @return
 	 */
 	public int getMaxSeqNo(long pRCustID) {
 		logger.debug("Entering");
-		int count =0; 
+		int count = 0;
 
 		try {
-			StringBuilder selectSql = new StringBuilder("select max(PRCustPRSNo)" );
+			StringBuilder selectSql = new StringBuilder("select max(PRCustPRSNo)");
 			selectSql.append(" FROM CustomersPRelations_VIEW WHERE PRCustID =");
 			selectSql.append(pRCustID);
-			
+
 			logger.debug("selectSql: " + selectSql.toString());
 			count = this.jdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Integer.class);
 		} catch (Exception e) {
@@ -313,39 +308,39 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 		return count;
 	}
 
-	/** 
+	/**
 	 * Method For getting List of CustomerPRelation objects for Customer
 	 */
 	@Override
-	public List<CustomerPRelation> getCustomerPRelationByCustomer(long id,String type) {
+	public List<CustomerPRelation> getCustomerPRelationByCustomer(long id, String type) {
 		logger.debug("Entering");
-		
+
 		CustomerPRelation customerPRelation = new CustomerPRelation();
 		customerPRelation.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select PRCustID, PRCustPRSNo, PRRelationCode," );
+		StringBuilder selectSql = new StringBuilder("Select PRCustID, PRCustPRSNo, PRRelationCode,");
 		selectSql.append(" PRRelationCustID, PRisGuardian, PRFName, PRMName, PRLName, PRSName, PRFNameLclLng,");
-		selectSql.append(" PRMNameLclLng, PRLNameLclLng, PRDOB, PRAddrHNbr, PRAddrFNbr, PRAddrStreet," );
-		selectSql.append(" PRAddrLine1, PRAddrLine2, PRAddrPOBox, PRAddrCity, PRAddrProvince," );
-		selectSql.append(" PRAddrCountry, PRAddrZIP, PRPhone, PRMail," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPRRelationCodeName, lovDescPRAddrCityName, lovDescPRAddrProvinceName," );
-			selectSql.append(" lovDescPRAddrCountryName, lovDescCustCIF, lovDescCustShrtName," );
+		selectSql.append(" PRMNameLclLng, PRLNameLclLng, PRDOB, PRAddrHNbr, PRAddrFNbr, PRAddrStreet,");
+		selectSql.append(" PRAddrLine1, PRAddrLine2, PRAddrPOBox, PRAddrCity, PRAddrProvince,");
+		selectSql.append(" PRAddrCountry, PRAddrZIP, PRPhone, PRMail,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPRRelationCodeName, lovDescPRAddrCityName, lovDescPRAddrProvinceName,");
+			selectSql.append(" lovDescPRAddrCountryName, lovDescCustCIF, lovDescCustShrtName,");
 			selectSql.append(" lovDescCustRecordType, ");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomersPRelations");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PRCustID =:PRCustID ") ;
-		
+		selectSql.append(" Where PRCustID =:PRCustID ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPRelation);
-		RowMapper<CustomerPRelation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPRelation.class);
-		
+		RowMapper<CustomerPRelation> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPRelation.class);
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 }

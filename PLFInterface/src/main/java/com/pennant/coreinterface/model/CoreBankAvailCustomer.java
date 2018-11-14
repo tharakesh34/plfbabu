@@ -4,26 +4,26 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class CoreBankAvailCustomer implements Serializable {
-	
+
 	private static final long serialVersionUID = 8740382994704771360L;
-	
+
 	public CoreBankAvailCustomer() {
-    	super();
-    }
-	
+		super();
+	}
+
 	private String custMnemonic;
 	private String offBSRequired;
 	private String acRcvblRequired;
 	private String acPayblRequired;
 	private String acUnclsRequired;
 	private String collateralRequired;
-	
+
 	private int offBSCount = 0;
 	private int acRcvblCount = 0;
 	private int acPayblCount = 0;
 	private int acUnclsCount = 0;
 	private int collateralCount = 0;
-	
+
 	private BigDecimal custActualBal = BigDecimal.ZERO;
 	private BigDecimal custBlockedBal = BigDecimal.ZERO;
 	private BigDecimal custDeposit = BigDecimal.ZERO;
@@ -31,10 +31,9 @@ public class CoreBankAvailCustomer implements Serializable {
 	private BigDecimal totalCustBal = BigDecimal.ZERO;
 	private BigDecimal totalCustBlockedBal = BigDecimal.ZERO;
 	private CustomerLimit customerLimit = new CustomerLimit();
-	
-	
-	private String custRspData ;
-	
+
+	private String custRspData;
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -42,6 +41,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getCustMnemonic() {
 		return custMnemonic;
 	}
+
 	public void setCustMnemonic(String custMnemonic) {
 		this.custMnemonic = custMnemonic;
 	}
@@ -49,6 +49,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getOffBSRequired() {
 		return offBSRequired;
 	}
+
 	public void setOffBSRequired(String offBSRequired) {
 		this.offBSRequired = offBSRequired;
 	}
@@ -56,6 +57,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getAcRcvblRequired() {
 		return acRcvblRequired;
 	}
+
 	public void setAcRcvblRequired(String acRcvblRequired) {
 		this.acRcvblRequired = acRcvblRequired;
 	}
@@ -63,6 +65,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getAcPayblRequired() {
 		return acPayblRequired;
 	}
+
 	public void setAcPayblRequired(String acPayblRequired) {
 		this.acPayblRequired = acPayblRequired;
 	}
@@ -70,6 +73,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getAcUnclsRequired() {
 		return acUnclsRequired;
 	}
+
 	public void setAcUnclsRequired(String acUnclsRequired) {
 		this.acUnclsRequired = acUnclsRequired;
 	}
@@ -77,6 +81,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getCollateralRequired() {
 		return collateralRequired;
 	}
+
 	public void setCollateralRequired(String collateralRequired) {
 		this.collateralRequired = collateralRequired;
 	}
@@ -84,6 +89,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public int getOffBSCount() {
 		return offBSCount;
 	}
+
 	public void setOffBSCount(int offBSCount) {
 		this.offBSCount = offBSCount;
 	}
@@ -91,6 +97,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public int getAcRcvblCount() {
 		return acRcvblCount;
 	}
+
 	public void setAcRcvblCount(int acRcvblCount) {
 		this.acRcvblCount = acRcvblCount;
 	}
@@ -98,6 +105,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public int getAcPayblCount() {
 		return acPayblCount;
 	}
+
 	public void setAcPayblCount(int acPayblCount) {
 		this.acPayblCount = acPayblCount;
 	}
@@ -105,6 +113,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public int getAcUnclsCount() {
 		return acUnclsCount;
 	}
+
 	public void setAcUnclsCount(int acUnclsCount) {
 		this.acUnclsCount = acUnclsCount;
 	}
@@ -112,6 +121,7 @@ public class CoreBankAvailCustomer implements Serializable {
 	public int getCollateralCount() {
 		return collateralCount;
 	}
+
 	public void setCollateralCount(int collateralCount) {
 		this.collateralCount = collateralCount;
 	}
@@ -119,53 +129,65 @@ public class CoreBankAvailCustomer implements Serializable {
 	public String getCustRspData() {
 		return custRspData;
 	}
+
 	public void setCustRspData(String custRspData) {
 		this.custRspData = custRspData;
 	}
-	
+
 	public BigDecimal getCustActualBal() {
-    	return custActualBal;
-    }
+		return custActualBal;
+	}
+
 	public void setCustActualBal(BigDecimal custActualBal) {
-    	this.custActualBal = custActualBal;
-    }
+		this.custActualBal = custActualBal;
+	}
+
 	public BigDecimal getCustBlockedBal() {
-    	return custBlockedBal;
-    }
+		return custBlockedBal;
+	}
+
 	public void setCustBlockedBal(BigDecimal custBlockedBal) {
-    	this.custBlockedBal = custBlockedBal;
-    }
+		this.custBlockedBal = custBlockedBal;
+	}
+
 	public BigDecimal getCustDeposit() {
-    	return custDeposit;
-    }
+		return custDeposit;
+	}
+
 	public void setCustDeposit(BigDecimal custDeposit) {
-    	this.custDeposit = custDeposit;
-    }
+		this.custDeposit = custDeposit;
+	}
+
 	public BigDecimal getCustBlockedDeposit() {
-    	return custBlockedDeposit;
-    }
+		return custBlockedDeposit;
+	}
+
 	public void setCustBlockedDeposit(BigDecimal custBlockedDeposit) {
-    	this.custBlockedDeposit = custBlockedDeposit;
-    }
+		this.custBlockedDeposit = custBlockedDeposit;
+	}
+
 	public BigDecimal getTotalCustBal() {
-    	return totalCustBal;
-    }
+		return totalCustBal;
+	}
+
 	public void setTotalCustBal(BigDecimal totalCustBal) {
-    	this.totalCustBal = totalCustBal;
-    }
+		this.totalCustBal = totalCustBal;
+	}
+
 	public BigDecimal getTotalCustBlockedBal() {
-    	return totalCustBlockedBal;
-    }
+		return totalCustBlockedBal;
+	}
+
 	public void setTotalCustBlockedBal(BigDecimal totalCustBlockedBal) {
-    	this.totalCustBlockedBal = totalCustBlockedBal;
-    }
+		this.totalCustBlockedBal = totalCustBlockedBal;
+	}
+
 	public CustomerLimit getCustomerLimit() {
 		return customerLimit;
 	}
+
 	public void setCustomerLimit(CustomerLimit customerLimit) {
 		this.customerLimit = customerLimit;
 	}
-	
 
-	
 }

@@ -19,14 +19,15 @@ public class FinanceMainExtServiceImpl implements FinanceMainExtService {
 	@Override
 	public void saveFinanceMainExtDetails(FinanceMainExt financeMainExt) {
 		logger.debug("Entering");
-		
-		FinanceMainExt aFinanceMainExt = getFinanceMainExtDAO().getFinanceMainExtByRef(financeMainExt.getFinReference());
-		if(aFinanceMainExt == null) {
+
+		FinanceMainExt aFinanceMainExt = getFinanceMainExtDAO()
+				.getFinanceMainExtByRef(financeMainExt.getFinReference());
+		if (aFinanceMainExt == null) {
 			getFinanceMainExtDAO().save(financeMainExt);
 		} else {
 			getFinanceMainExtDAO().update(financeMainExt);
 		}
-		
+
 		logger.debug("Leaving");
 
 	}
@@ -38,11 +39,11 @@ public class FinanceMainExtServiceImpl implements FinanceMainExtService {
 	 * 
 	 */
 	@Override
-    public FinanceMainExt getNstlAccNumber(String finReference, boolean processFlag) {
+	public FinanceMainExt getNstlAccNumber(String finReference, boolean processFlag) {
 		FinanceMainExt financeMainExt = getFinanceMainExtDAO().getNstlAccNumber(finReference, processFlag);
 		return financeMainExt;
-    }
-	
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -57,7 +58,7 @@ public class FinanceMainExtServiceImpl implements FinanceMainExtService {
 
 	@Override
 	public FinanceMainExt getFinanceMainExtByRef(String finReference) {
-		
+
 		return getFinanceMainExtDAO().getFinanceMainExtByRef(finReference);
 	}
 }

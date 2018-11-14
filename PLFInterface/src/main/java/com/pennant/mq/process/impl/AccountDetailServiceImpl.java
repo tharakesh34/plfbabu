@@ -41,7 +41,8 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 
 		List<CoreBankAccountDetail> accDetail = null;
 		try {
-			accDetail = getFetchAllAccountsProcess().fetchCustomerAccounts(accountDetail, InterfaceMasterConfigUtil.FETCH_ACCOUNTS);
+			accDetail = getFetchAllAccountsProcess().fetchCustomerAccounts(accountDetail,
+					InterfaceMasterConfigUtil.FETCH_ACCOUNTS);
 		} catch (JaxenException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -61,12 +62,14 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 	 * @return CoreBankAccountDetail
 	 */
 	@Override
-	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail) throws InterfaceException {
+	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> accDetailList = null;
 		try {
-			accDetailList = getFetchAccountDetailProcess().fetchAccountDetails(accountDetail, InterfaceMasterConfigUtil.FETCH_ACCDETAILS);
+			accDetailList = getFetchAccountDetailProcess().fetchAccountDetails(accountDetail,
+					InterfaceMasterConfigUtil.FETCH_ACCDETAILS);
 		} catch (JaxenException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -85,8 +88,8 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 
 		List<CoreBankAccountDetail> accountList = new ArrayList<CoreBankAccountDetail>();
 		int count = 0;
-		for(CoreBankAccountDetail bankAccount : bankAccountDetails) {
-			bankAccount.setAccountNumber(StringUtils.leftPad("101020025"+ ++count, 13, "1"));
+		for (CoreBankAccountDetail bankAccount : bankAccountDetails) {
+			bankAccount.setAccountNumber(StringUtils.leftPad("101020025" + ++count, 13, "1"));
 			accountList.add(bankAccount);
 		}
 
@@ -102,9 +105,9 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 		coreAcctList = fetchAccountsListAvailableBal(coreAcctList, false);
 
 		logger.debug("Leaving");
-		if(coreAcctList != null && !coreAcctList.isEmpty()){
+		if (coreAcctList != null && !coreAcctList.isEmpty()) {
 			return coreAcctList.get(0);
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -116,8 +119,8 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 
 		List<CoreBankAccountDetail> accDetailList = null;
 		try {
-			for(CoreBankAccountDetail bankAccountDetail : coreAcctList) {
-				accDetailList = getFetchAccountDetailProcess().fetchAccountDetails(bankAccountDetail, 
+			for (CoreBankAccountDetail bankAccountDetail : coreAcctList) {
+				accDetailList = getFetchAccountDetailProcess().fetchAccountDetails(bankAccountDetail,
 						InterfaceMasterConfigUtil.FETCH_ACCDETAILS);
 			}
 		} catch (JaxenException e) {
@@ -129,7 +132,6 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 		return accDetailList;
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -137,13 +139,15 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 	public FetchAllAccountsProcess getFetchAllAccountsProcess() {
 		return fetchAllAccountsProcess;
 	}
+
 	public void setFetchAllAccountsProcess(FetchAllAccountsProcess fetchAllAccountsProcess) {
 		this.fetchAllAccountsProcess = fetchAllAccountsProcess;
 	}
-	
+
 	public FetchAccountDetailProcess getFetchAccountDetailProcess() {
 		return fetchAccountDetailProcess;
 	}
+
 	public void setFetchAccountDetailProcess(FetchAccountDetailProcess fetchAccountDetailProcess) {
 		this.fetchAccountDetailProcess = fetchAccountDetailProcess;
 	}

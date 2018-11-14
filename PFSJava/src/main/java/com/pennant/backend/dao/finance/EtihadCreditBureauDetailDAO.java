@@ -45,13 +45,15 @@ package com.pennant.backend.dao.finance;
 
 import com.pennant.backend.model.finance.EtihadCreditBureauDetail;
 
-
 /**
  * DAO methods declaration for the <b>EtihadCreditBureauDetail model</b> class.<br>
  */
 public interface EtihadCreditBureauDetailDAO {
-	EtihadCreditBureauDetail getEtihadCreditBureauDetailByID(String id,String type);
-	void update(EtihadCreditBureauDetail etihadCreditBureauDetail,String type);
-	void delete(EtihadCreditBureauDetail etihadCreditBureauDetail,String type);
-	String save(EtihadCreditBureauDetail etihadCreditBureauDetail,String type);
+	EtihadCreditBureauDetail getEtihadCreditBureauDetailByID(String id, String type);
+
+	void update(EtihadCreditBureauDetail etihadCreditBureauDetail, String type);
+
+	void delete(EtihadCreditBureauDetail etihadCreditBureauDetail, String type);
+
+	String save(EtihadCreditBureauDetail etihadCreditBureauDetail, String type);
 }

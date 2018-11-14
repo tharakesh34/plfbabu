@@ -63,76 +63,81 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustomerIdentityDAOImpl extends BasicDao<CustomerIdentity> implements CustomerIdentityDAO {
 	private static Logger logger = Logger.getLogger(CustomerIdentityDAOImpl.class);
-		
+
 	public CustomerIdentityDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Customer Identity Details details by key field
+	 * Fetch the Record Customer Identity Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerIdentity
 	 */
 	@Override
-	public CustomerIdentity getCustomerIdentityByID(final long id,String idType, String type) {
+	public CustomerIdentity getCustomerIdentityByID(final long id, String idType, String type) {
 		logger.debug("Entering");
 		CustomerIdentity customerIdentity = new CustomerIdentity();
 		customerIdentity.setId(id);
 		customerIdentity.setIdType(idType);
-		
-		StringBuilder selectSql = new StringBuilder("SELECT IdCustID,IdLocation, IdExpiresOn, IdIssuedOn,IdIssueCountry, IdRef, IdIssuedBy, IdType,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescCustRecordType,lovDescCustCIF, lovDescCustShrtName,lovDescIdTypeName, lovDescIdIssueCountryName, ");
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT IdCustID,IdLocation, IdExpiresOn, IdIssuedOn,IdIssueCountry, IdRef, IdIssuedBy, IdType,");
+		if (type.contains("View")) {
+			selectSql.append(
+					" lovDescCustRecordType,lovDescCustCIF, lovDescCustShrtName,lovDescIdTypeName, lovDescIdIssueCountryName, ");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustIdentities");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where IdCustID =:idCustID AND IdType =:idType" );
-		
+		selectSql.append(" Where IdCustID =:idCustID AND IdType =:idType");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
-		RowMapper<CustomerIdentity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIdentity.class);
-		
-		try{
-			customerIdentity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CustomerIdentity> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerIdentity.class);
+
+		try {
+			customerIdentity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerIdentity = null;
 		}
 		logger.debug("Leaving");
 		return customerIdentity;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the CustIdentities or CustIdentities_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Identity Details by key IdCustID
+	 * This method Deletes the Record from the CustIdentities or CustIdentities_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Customer Identity Details by key IdCustID
 	 * 
-	 * @param Customer Identity Details (customerIdentity)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Identity Details (customerIdentity)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerIdentity customerIdentity,String type) {
+	public void delete(CustomerIdentity customerIdentity, String type) {
 		logger.debug("Entering");
-		
+
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From CustIdentities");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where IdCustID =:IdCustID AND IdType =:IdType");
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
-		
-		try{
+
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -141,78 +146,84 @@ public class CustomerIdentityDAOImpl extends BasicDao<CustomerIdentity> implemen
 		}
 		logger.debug("Leaving delete Method");
 	}
-	
+
 	/**
 	 * This method insert new Records into CustIdentities or CustIdentities_Temp.
 	 *
-	 * save Customer Identity Details 
+	 * save Customer Identity Details
 	 * 
-	 * @param Customer Identity Details (customerIdentity)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Identity Details (customerIdentity)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerIdentity customerIdentity,String type) {
+	public long save(CustomerIdentity customerIdentity, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into CustIdentities");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (IdCustID, IdType, IdIssuedBy, IdRef, IdIssueCountry, IdIssuedOn, IdExpiresOn, IdLocation," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:IdCustID, :IdType, :IdIssuedBy, :IdRef, :IdIssueCountry, :IdIssuedOn, :IdExpiresOn, :IdLocation," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+		insertSql.append(" (IdCustID, IdType, IdIssuedBy, IdRef, IdIssueCountry, IdIssuedOn, IdExpiresOn, IdLocation,");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:IdCustID, :IdType, :IdIssuedBy, :IdRef, :IdIssueCountry, :IdIssuedOn, :IdExpiresOn, :IdLocation,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return customerIdentity.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record CustIdentities or CustIdentities_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Identity Details by key IdCustID and Version
+	 * This method updates the Record CustIdentities or CustIdentities_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Identity Details by key IdCustID and Version
 	 * 
-	 * @param Customer Identity Details (customerIdentity)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Identity Details (customerIdentity)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerIdentity customerIdentity,String type) {
+	public void update(CustomerIdentity customerIdentity, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustIdentities");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IdIssuedBy = :IdIssuedBy, IdRef = :IdRef," );
-		updateSql.append(" IdIssueCountry = :IdIssueCountry, IdIssuedOn = :IdIssuedOn, IdExpiresOn = :IdExpiresOn, IdLocation = :IdLocation" );
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set IdIssuedBy = :IdIssuedBy, IdRef = :IdRef,");
+		updateSql.append(
+				" IdIssueCountry = :IdIssueCountry, IdIssuedOn = :IdIssuedOn, IdExpiresOn = :IdExpiresOn, IdLocation = :IdLocation");
+		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where IdCustID =:IdCustID AND IdType =:IdType");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

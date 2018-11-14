@@ -63,6 +63,7 @@ public class ExtendedFieldDetailListModelItemRenderer implements ListitemRendere
 
 	private static final long serialVersionUID = -7165820550098919114L;
 	private List<ValueLabel> modulesList = null;
+
 	public ExtendedFieldDetailListModelItemRenderer(List<ValueLabel> modulesList) {
 		this.modulesList = modulesList;
 	}

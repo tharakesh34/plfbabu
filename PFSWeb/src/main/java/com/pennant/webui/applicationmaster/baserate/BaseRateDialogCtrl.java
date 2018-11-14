@@ -79,17 +79,15 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/BaseRate/baseRateDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/BaseRate/baseRateDialog.zul file.
  */
 public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	private static final long serialVersionUID = -5990530952612454146L;
 	private static final Logger logger = Logger.getLogger(BaseRateDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BaseRateDialog;
 
@@ -99,7 +97,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	protected Decimalbox bRRate;
 	protected Checkbox deleteRate;
 	protected Checkbox bRTypeIsActive;
-	
+
 	// not autoWired Var's
 	private BaseRate baseRate; // overHanded per parameter
 	private transient BaseRateListCtrl baseRateListCtrl; // overHanded per
@@ -125,9 +123,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected BaseRate object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected BaseRate object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -154,15 +151,12 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 				setBaseRate(null);
 			}
 
-			doLoadWorkFlow(this.baseRate.isWorkflow(),
-					this.baseRate.getWorkflowId(),
-					this.baseRate.getNextTaskId());
+			doLoadWorkFlow(this.baseRate.isWorkflow(), this.baseRate.getWorkflowId(), this.baseRate.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"BaseRateDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "BaseRateDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -172,8 +166,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 			// or
 			// delete baseRate here.
 			if (arguments.containsKey("baseRateListCtrl")) {
-				setBaseRateListCtrl((BaseRateListCtrl) arguments
-						.get("baseRateListCtrl"));
+				setBaseRateListCtrl((BaseRateListCtrl) arguments.get("baseRateListCtrl"));
 			} else {
 				setBaseRateListCtrl(null);
 			}
@@ -227,20 +220,15 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_BaseRateDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_BaseRateDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_BaseRateDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_BaseRateDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BaseRateDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BaseRateDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BaseRateDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BaseRateDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -339,18 +327,18 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.bRType.setValue(aBaseRate.getBRType());
 		this.currency.setValue(aBaseRate.getCurrency());
 		this.bREffDate.setValue(aBaseRate.getBREffDate());
-		this.bRRate.setValue(aBaseRate.getBRRate() == null ? BigDecimal.ZERO
-				: aBaseRate.getBRRate());
+		this.bRRate.setValue(aBaseRate.getBRRate() == null ? BigDecimal.ZERO : aBaseRate.getBRRate());
 		this.deleteRate.setChecked(aBaseRate.isDelExistingRates());
 		this.bRTypeIsActive.setChecked(aBaseRate.isbRTypeIsActive());
-		
-		if(aBaseRate.isNew() || (aBaseRate.getRecordType() != null ? aBaseRate.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aBaseRate.isNew() || (aBaseRate.getRecordType() != null ? aBaseRate.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.bRTypeIsActive.setChecked(true);
 			this.bRTypeIsActive.setDisabled(true);
 		}
-		
-		if(aBaseRate.getBREffDate() != null &&
-				DateUtility.compare(aBaseRate.getBREffDate(), DateUtility.getAppDate()) < 0){
+
+		if (aBaseRate.getBREffDate() != null
+				&& DateUtility.compare(aBaseRate.getBREffDate(), DateUtility.getAppDate()) < 0) {
 			this.bRRate.setDisabled(true);
 		}
 
@@ -382,8 +370,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 			wve.add(we);
 		}
 		try {
-			aBaseRate.setCurrency(this.currency.getValidatedValue()
-					.toUpperCase());
+			aBaseRate.setCurrency(this.currency.getValidatedValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -406,13 +393,13 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aBaseRate.setbRTypeIsActive(this.bRTypeIsActive.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		aBaseRate.setLastMdfDate(DateUtility.getAppDate());
 
 		doRemoveValidation();
@@ -433,8 +420,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBaseRate
 	 * @throws Exception
@@ -463,10 +449,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 
 			// Checking condition for deletion of Object or not
 			/*
-			 * if(baseRate.getRecordStatus().equals(Labels.getLabel("Approved")))
-			 * { final boolean baseRateDel=
-			 * getBaseRateService().getBaseRateListById(
-			 * baseRate.getBRType(),baseRate.getBREffDate()); if(baseRateDel){
+			 * if(baseRate.getRecordStatus().equals(Labels.getLabel("Approved"))) { final boolean baseRateDel=
+			 * getBaseRateService().getBaseRateListById( baseRate.getBRType(),baseRate.getBREffDate()); if(baseRateDel){
 			 * this.btnDelete.setVisible(false); } }
 			 */
 		}
@@ -493,24 +477,21 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		setValidationOn(true);
 
 		if (!this.bREffDate.isDisabled()) {
-			this.bREffDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_BaseRateDialog_BREffDate.value"), true));
+			this.bREffDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_BaseRateDialog_BREffDate.value"), true));
 
 		}
 		if (!this.bRType.isReadonly()) {
-			this.bRType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BaseRateDialog_BRType.value"), null, true,
-					true));
+			this.bRType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BaseRateDialog_BRType.value"), null, true, true));
 		}
 		if (!this.currency.isReadonly()) {
-			this.currency.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BaseRateDialog_Currency.value"), null,
-					true, true));
+			this.currency.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BaseRateDialog_Currency.value"), null, true, true));
 		}
 		if (!this.bRRate.isReadonly()) {
-			this.bRRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_BaseRateDialog_BRRate.value"), 9, true,
-					false, 9999));
+			this.bRRate.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_BaseRateDialog_BRRate.value"), 9, true, false, 9999));
 		}
 		logger.debug("Leaving");
 	}
@@ -554,14 +535,12 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	public void dateValidation() {
 		Date curBussniessDate = DateUtility.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
-		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward
-				* -1);
+		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
 
 		int daysForward = SysParamUtil.getValueAsInt("FVRC");
 		Date dateForward = DateUtility.addDays(curBussniessDate, daysForward);
 
-		if (this.bREffDate.getValue().before(dateBackward)
-				|| this.bREffDate.getValue().after(dateForward)) {
+		if (this.bREffDate.getValue().before(dateBackward) || this.bREffDate.getValue().after(dateForward)) {
 			throw new WrongValueException(bREffDate,
 					Labels.getLabel("DATE_ALLOWED_RANGE",
 							new String[] { Labels.getLabel("label_BaseRateDialog_BREffDate.value"),
@@ -584,12 +563,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_BaseRateDialog_BRType.value")
-				+ " : "
-				+ aBaseRate.getBRType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BaseRateDialog_BRType.value") + " : " + aBaseRate.getBRType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aBaseRate.getRecordType())) {
 				aBaseRate.setVersion(aBaseRate.getVersion() + 1);
@@ -611,7 +586,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 
 			} catch (Exception e) {
 				MessageUtil.showError(e);
-			}		
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -747,7 +722,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
-		}		
+		}
 		logger.debug("Leaving");
 	}
 
@@ -769,16 +744,14 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aBaseRate.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aBaseRate.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aBaseRate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aBaseRate.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aBaseRate.setRecordStatus(userAction.getSelectedItem().getValue()
-					.toString());
+			aBaseRate.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
@@ -829,8 +802,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aBaseRate,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aBaseRate, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -861,55 +833,42 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		BaseRate aBaseRate = (BaseRate) auditHeader.getAuditDetail()
-				.getModelData();
+		BaseRate aBaseRate = (BaseRate) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getBaseRateService().delete(auditHeader);
 
 						deleteNotes = true;
 					} else {
-						auditHeader = getBaseRateService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getBaseRateService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getBaseRateService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getBaseRateService().doApprove(auditHeader);
 
-						if (aBaseRate.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aBaseRate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getBaseRateService()
-								.doReject(auditHeader);
-						if (aBaseRate.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getBaseRateService().doReject(auditHeader);
+						if (aBaseRate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_BaseRateDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_BaseRateDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_BaseRateDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_BaseRateDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -944,10 +903,9 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(BaseRate aBaseRate, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aBaseRate.getBefImage(), aBaseRate);
-		return new AuditHeader(getReference(), null, null, null, auditDetail,
-				aBaseRate.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBaseRate.getBefImage(), aBaseRate);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aBaseRate.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -961,10 +919,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_BaseRateDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_BaseRateDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -988,10 +944,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 */
 	@Override
 	protected String getReference() {
-		return getBaseRate().getBRType()
-				+ PennantConstants.KEY_SEPERATOR
-				+ DateUtility.formatDate(getBaseRate().getBREffDate(),
-						PennantConstants.DBDateFormat);
+		return getBaseRate().getBRType() + PennantConstants.KEY_SEPERATOR
+				+ DateUtility.formatDate(getBaseRate().getBREffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

@@ -369,7 +369,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			doClearMessage();
 			findUser = false;
 			com.pennanttech.pennapps.core.security.model.SecurityUser user = null;
-			if (authType.getValue().equals(Labels.getLabel("label_Auth_Type_External")) && StringUtils.isNotBlank(usrLogin.getValue())) {
+			if (authType.getValue().equals(Labels.getLabel("label_Auth_Type_External"))
+					&& StringUtils.isNotBlank(usrLogin.getValue())) {
 
 				user = getUserSearch().searchForUser(usrLogin.getValue());
 				usrEmail.setValue(user.getEmail());
@@ -924,7 +925,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (!this.usrMobile.isReadonly()) {
 			if (StringUtils.isNotEmpty(this.usrMobile.getValue())) {
 				this.usrMobile.setConstraint(
-						new PTMobileNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), true, PennantRegularExpressions.MOBILE_REGEX));
+						new PTMobileNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), true,
+								PennantRegularExpressions.MOBILE_REGEX));
 			} else {
 				this.usrMobile.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), false));

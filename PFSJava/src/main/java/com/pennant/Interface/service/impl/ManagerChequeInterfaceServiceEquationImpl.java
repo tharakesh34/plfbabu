@@ -12,17 +12,16 @@ import com.pennant.equation.process.ManagerChequeProcess;
 public class ManagerChequeInterfaceServiceEquationImpl implements ManagerChequeInterfaceService {
 	private static Logger logger = Logger.getLogger(ManagerChequeInterfaceServiceEquationImpl.class);
 
-
 	protected ManagerChequeProcess managerChequeProcess;
 
 	/**
 	 * Method for validate the Cheque Number
+	 * 
 	 * @param accountNum
 	 * @param chequeNum
 	 * @throws AccountNotFoundException
 	 */
-	public void validateChequeNumber(String accountNum, String chequeNum)
-			throws AccountNotFoundException {
+	public void validateChequeNumber(String accountNum, String chequeNum) throws AccountNotFoundException {
 		logger.debug("Entering");
 		try {
 			//Connecting to CoreBanking Interface
@@ -37,6 +36,7 @@ public class ManagerChequeInterfaceServiceEquationImpl implements ManagerChequeI
 
 	/**
 	 * Method for validate the Cheque Number
+	 * 
 	 * @param accountNum
 	 * @param chequeNo
 	 * @param chqAmount
@@ -46,16 +46,12 @@ public class ManagerChequeInterfaceServiceEquationImpl implements ManagerChequeI
 	public String addStopOrderInEquation(String accountNum, String chequeNo, BigDecimal chqAmount, String draftCcy)
 			throws AccountNotFoundException {
 		logger.debug("Entering");
-		/*try {
-			//Connecting to CoreBanking Interface
-			return getManagerChequeProcess().addStopOrder(accountNum, chequeNo, chqAmount, draftCcy);
-		} catch (AccountNotFoundException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			logger.debug("Leaving");
-		}*/
-		
+		/*
+		 * try { //Connecting to CoreBanking Interface return getManagerChequeProcess().addStopOrder(accountNum,
+		 * chequeNo, chqAmount, draftCcy); } catch (AccountNotFoundException e) { logger.error("Exception: ", e); throw
+		 * e; } finally { logger.debug("Leaving"); }
+		 */
+
 		return "0099";//AHB
 	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

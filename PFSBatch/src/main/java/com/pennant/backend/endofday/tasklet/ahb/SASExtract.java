@@ -28,43 +28,44 @@ public class SASExtract implements Tasklet {
 
 	private DataSource dataSource;
 
-	public RepeatStatus execute(StepContribution contribution,
-			ChunkContext chunkContext) throws Exception {
+	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		Date appDate = DateUtility.getAppDate();
 
 		logger.debug("START: SAS Extract for Value Date: " + appDate);
-		
+
 		Connection connection = null;
 		ResultSet resultSet = null;
-		Statement statement=null;
-		
+		Statement statement = null;
+
 		try {
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			statement = connection.createStatement();
-			String[] fileNames = { "PFF_PastDue_SAS_view", "PFF_PaymentSchedule_SAS_view", "PFF_PaymentDaily_SAS_view", "PFF_FIN_DTL_SAS_view","PFF_TRAND_DTL_SAS_View","PFF_FIN_LMS_SAS_view" };
+			String[] fileNames = { "PFF_PastDue_SAS_view", "PFF_PaymentSchedule_SAS_view", "PFF_PaymentDaily_SAS_view",
+					"PFF_FIN_DTL_SAS_view", "PFF_TRAND_DTL_SAS_View", "PFF_FIN_LMS_SAS_view" };
 			for (String fileName : fileNames) {
-			
-			resultSet = statement.executeQuery(getQuery(fileName));
-	       
-	        String txtFile = prepareName(fileName);
-	        createFile(resultSet,  PathUtil.getPath(PathUtil.SAS_EXTRACTS_LOCATION)+txtFile, true, BatchFileUtil.DELIMITER);
+
+				resultSet = statement.executeQuery(getQuery(fileName));
+
+				String txtFile = prepareName(fileName);
+				createFile(resultSet, PathUtil.getPath(PathUtil.SAS_EXTRACTS_LOCATION) + txtFile, true,
+						BatchFileUtil.DELIMITER);
 			}
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("Finreference :", e);
 			throw e;
 		} finally {
 			if (resultSet != null) {
 				resultSet.close();
 			}
-			
+
 			if (statement != null) {
 				statement.close();
 			}
-			
+
 		}
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	/**
 	 * Creating txt file with header and data
 	 * 
@@ -75,8 +76,8 @@ public class SASExtract implements Tasklet {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	private void createFile(ResultSet resultSet, String filename,
-			Boolean colomnName, String charSep) throws SQLException,IOException {
+	private void createFile(ResultSet resultSet, String filename, Boolean colomnName, String charSep)
+			throws SQLException, IOException {
 		logger.debug("Entering");
 		FileWriter cname = null;
 		try {
@@ -92,8 +93,7 @@ public class SASExtract implements Tasklet {
 
 				}
 				String tempcolumnName = columnNames.toString();
-				String finalcolumnName = tempcolumnName.substring(0,
-						tempcolumnName.length() - 1);
+				String finalcolumnName = tempcolumnName.substring(0, tempcolumnName.length() - 1);
 				columnNames.append(finalcolumnName);
 				cname.append(columnNames);
 				cname.flush();
@@ -106,8 +106,7 @@ public class SASExtract implements Tasklet {
 			while (resultSet.next()) {
 				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 					if (resultSet.getObject(i) != null) {
-						String data = resultSet.getObject(i).toString()
-								.replaceAll(charSep, "");
+						String data = resultSet.getObject(i).toString().replaceAll(charSep, "");
 						columnData.append(data);
 						columnData.append(charSep);
 					} else {
@@ -118,8 +117,7 @@ public class SASExtract implements Tasklet {
 
 				}
 				String tempcolumnData = columnData.toString();
-				String finalcolumnData = tempcolumnData.substring(0,
-						tempcolumnData.length() - 1);
+				String finalcolumnData = tempcolumnData.substring(0, tempcolumnData.length() - 1);
 				cname.append(finalcolumnData);
 				columnData = new StringBuilder();
 				cname.append(System.getProperty("line.separator"));
@@ -167,7 +165,6 @@ public class SASExtract implements Tasklet {
 		selectQuery.append("select * from " + tableName);
 		return selectQuery.toString();
 	}
-	
 
 	public DataSource getDataSource() {
 		return dataSource;

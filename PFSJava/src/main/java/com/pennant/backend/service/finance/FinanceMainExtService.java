@@ -7,7 +7,7 @@ public interface FinanceMainExtService {
 	void saveFinanceMainExtDetails(FinanceMainExt financeMainExt);
 
 	FinanceMainExt getNstlAccNumber(String finReference, boolean processFlag);
-	
+
 	FinanceMainExt getFinanceMainExtByRef(String finReference);
 
 }

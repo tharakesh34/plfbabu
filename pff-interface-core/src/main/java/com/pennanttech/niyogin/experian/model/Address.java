@@ -12,26 +12,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "address")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Address implements Serializable {
-	
+
 	private static final long serialVersionUID = 3703871006940742948L;
 
 	@XmlElement(name = "ADDRESS1_HOUSE_NO")
-	private String	houseNo;
+	private String houseNo;
 
 	@XmlElement(name = "ADDRESS1_LANDMARK")
-	private String	landmark;
+	private String landmark;
 
 	@XmlElement(name = "ADDRESS1_CITY")
-	private String	city;
+	private String city;
 
 	@XmlElement(name = "ADDRESS1_COUNTRY")
-	private String	country;
+	private String country;
 
 	@XmlElement(name = "ADDRESS1_PIN")
-	private String	pin;
+	private String pin;
 
 	@XmlElement(name = "ADDRESS1_STATE")
-	private String	state;
+	private String state;
 
 	public String getHouseNo() {
 		return houseNo;

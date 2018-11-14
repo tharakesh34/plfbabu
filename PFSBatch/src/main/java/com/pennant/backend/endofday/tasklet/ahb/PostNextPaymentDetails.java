@@ -22,8 +22,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 
 public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
-	private static final long	serialVersionUID	= 426232865118229782L;
-	private static Logger		logger				= Logger.getLogger(PostNextPaymentDetails.class);
+	private static final long serialVersionUID = 426232865118229782L;
+	private static Logger logger = Logger.getLogger(PostNextPaymentDetails.class);
 
 	public PostNextPaymentDetails() {
 		super();
@@ -46,9 +46,9 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 			sqlStatement = connection.prepareStatement(getCountQuery());
 			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getAppValueDate().toString()));
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
@@ -179,8 +179,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 	}
 
 	/**
-	 * Method for prepare SQL query to fetch allocated commodity inventories for
-	 * cancellation
+	 * Method for prepare SQL query to fetch allocated commodity inventories for cancellation
 	 * 
 	 */
 	private String prepareSelectQuery() {

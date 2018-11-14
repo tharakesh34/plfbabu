@@ -14,31 +14,31 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CodeMogs {
 	@XmlElement(name = "DOB")
-	private String		dob;
+	private String dob;
 
 	@XmlElement(name = "MINIMUMAGE")
-	private int			minAge;
+	private int minAge;
 
 	@XmlElement(name = "MAXIMUMAGE")
-	private int			maxAge;
+	private int maxAge;
 
 	@XmlElement(name = "AUTHORITY")
-	private String		authority;
+	private String authority;
 
 	@XmlElement(name = "CURRENTRESIDENCEPINCODE")
-	private String		currentResidencePincode;
+	private String currentResidencePincode;
 
 	@XmlElement(name = "PERMANENTRESIDENCEPINCODE")
-	private String		permanentResidencePincode;
+	private String permanentResidencePincode;
 
 	@XmlElement(name = "RELATIONSHIPOFSECONDARYCOAPPLICANTWITHPRIMARYCOAPPLICANT")
-	private String		relOfScndaryCoAppWithPrimaryCoApp;
+	private String relOfScndaryCoAppWithPrimaryCoApp;
 
 	@XmlElement(name = "COAPPLICANTPANNUMBER")
-	private String		coAppPanNumber;
+	private String coAppPanNumber;
 
 	@XmlElement(name = "SALARYTOPARTNERORDIRECTOR")
-	private BigDecimal	salToPartnerOrDirector	= BigDecimal.ZERO;
+	private BigDecimal salToPartnerOrDirector = BigDecimal.ZERO;
 
 	public String getDob() {
 		return dob;

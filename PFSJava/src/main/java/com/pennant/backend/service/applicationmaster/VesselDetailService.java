@@ -43,16 +43,20 @@
 
 package com.pennant.backend.service.applicationmaster;
 
-
 import com.pennant.backend.model.applicationmaster.VesselDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface VesselDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	VesselDetail getVesselDetailById(String id);
+
 	VesselDetail getApprovedVesselDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

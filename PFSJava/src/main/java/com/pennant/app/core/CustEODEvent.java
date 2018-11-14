@@ -8,20 +8,20 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 public class CustEODEvent extends AbstractEntity {
-	private static final long	serialVersionUID	= -8270026465500688782L;
-	private Customer			customer;
-	private Date				eodDate;
-	private Date				eodValueDate;
+	private static final long serialVersionUID = -8270026465500688782L;
+	private Customer customer;
+	private Date eodDate;
+	private Date eodValueDate;
 
-	private List<FinEODEvent>	finEODEvents		= new ArrayList<FinEODEvent>(1);
-	private boolean				updCustomer			= false;
-	private boolean				pastDueExist		= false;
-	private boolean				dateRollover		= false;
-	private boolean				rateRvwExist		= false;
-	private boolean				disbExist			= false;
-	private boolean				dueExist			= false;
-	private boolean				checkPresentment	= false;
-	private boolean				eodSuccess			= true;
+	private List<FinEODEvent> finEODEvents = new ArrayList<FinEODEvent>(1);
+	private boolean updCustomer = false;
+	private boolean pastDueExist = false;
+	private boolean dateRollover = false;
+	private boolean rateRvwExist = false;
+	private boolean disbExist = false;
+	private boolean dueExist = false;
+	private boolean checkPresentment = false;
+	private boolean eodSuccess = true;
 
 	public Customer getCustomer() {
 		return customer;

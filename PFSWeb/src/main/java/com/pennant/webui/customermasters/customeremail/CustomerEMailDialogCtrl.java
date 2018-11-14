@@ -97,9 +97,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	private static final Logger logger = Logger.getLogger(CustomerEMailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerEMailDialog; // autoWired
 
@@ -136,8 +135,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	private String userRole = "";
 	private boolean isFinanceProcess = false;
 	private boolean workflow = false;
-	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
-			.getCustomerEmailPriority();
+	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil.getCustomerEmailPriority();
 
 	/**
 	 * default constructor.<br>
@@ -154,15 +152,13 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerEMail object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerEMail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerEMailDialog(Event event)
-			throws Exception {
+	public void onCreate$window_CustomerEMailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -171,8 +167,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		try {
 
 			if (arguments.containsKey("customerEMail")) {
-				this.customerEMail = (CustomerEMail) arguments
-						.get("customerEMail");
+				this.customerEMail = (CustomerEMail) arguments.get("customerEMail");
 				CustomerEMail befImage = new CustomerEMail();
 				BeanUtils.copyProperties(this.customerEMail, befImage);
 				this.customerEMail.setBefImage(befImage);
@@ -190,8 +185,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			}
 
 			if (arguments.containsKey("customerDialogCtrl")) {
-				setCustomerDialogCtrl((CustomerDialogCtrl) arguments
-						.get("customerDialogCtrl"));
+				setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
 				setNewCustomer(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -202,8 +196,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 				this.customerEMail.setWorkflowId(0);
 				if (arguments.containsKey("roleCode")) {
 					userRole = arguments.get("roleCode").toString();
-					getUserWorkspace().allocateRoleAuthorities(userRole,
-							"CustomerEMailDialog");
+					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerEMailDialog");
 				}
 			}
 			if (arguments.containsKey("customerViewDialogCtrl")) {
@@ -221,21 +214,19 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerEMailDialog");
 				}
 			}
-			
+
 			if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
-			
-			doLoadWorkFlow(this.customerEMail.isWorkflow(),
-					this.customerEMail.getWorkflowId(),
+
+			doLoadWorkFlow(this.customerEMail.isWorkflow(), this.customerEMail.getWorkflowId(),
 					this.customerEMail.getNextTaskId());
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CustomerEMailDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerEMailDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -244,8 +235,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			// or
 			// delete customerEMail here.
 			if (arguments.containsKey("customerEMailListCtrl")) {
-				setCustomerEMailListCtrl((CustomerEMailListCtrl) arguments
-						.get("customerEMailListCtrl"));
+				setCustomerEMailListCtrl((CustomerEMailListCtrl) arguments.get("customerEMailListCtrl"));
 			} else {
 				setCustomerEMailListCtrl(null);
 			}
@@ -280,8 +270,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		this.custEMailTypeCode.setModuleName("EMailType");
 		this.custEMailTypeCode.setValueColumn("EmailTypeCode");
 		this.custEMailTypeCode.setDescColumn("EmailTypeDesc");
-		this.custEMailTypeCode
-				.setValidateColumns(new String[] { "EmailTypeCode" });
+		this.custEMailTypeCode.setValidateColumns(new String[] { "EmailTypeCode" });
 		this.custEMail.setMaxlength(100);
 
 		if (isWorkFlowEnabled()) {
@@ -298,21 +287,16 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("CustomerEMailDialog", userRole);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_CustomerEMailDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_CustomerEMailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_CustomerEMailDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_CustomerEMailDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerEMailDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerEMailDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerEMailDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerEMailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -412,21 +396,18 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			this.custID.setValue(aCustomerEMail.getCustID());
 		}
 		this.custEMailTypeCode.setValue(aCustomerEMail.getCustEMailTypeCode());
-		fillComboBox(this.custEMailPriority,
-				String.valueOf(aCustomerEMail.getCustEMailPriority()),
+		fillComboBox(this.custEMailPriority, String.valueOf(aCustomerEMail.getCustEMailPriority()),
 				CustomerPriorityList, "");
 		this.custEMail.setValue(aCustomerEMail.getCustEMail());
-		this.custCIF.setValue(aCustomerEMail.getLovDescCustCIF() == null ? ""
-				: aCustomerEMail.getLovDescCustCIF().trim());
-		this.custShrtName
-				.setValue(aCustomerEMail.getLovDescCustShrtName() == null ? ""
-						: aCustomerEMail.getLovDescCustShrtName().trim());
+		this.custCIF
+				.setValue(aCustomerEMail.getLovDescCustCIF() == null ? "" : aCustomerEMail.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(
+				aCustomerEMail.getLovDescCustShrtName() == null ? "" : aCustomerEMail.getLovDescCustShrtName().trim());
 
 		if (isNewRecord()) {
 			this.custEMailTypeCode.setDescription("");
 		} else {
-			this.custEMailTypeCode.setDescription(aCustomerEMail
-					.getLovDescCustEMailTypeCode());
+			this.custEMailTypeCode.setDescription(aCustomerEMail.getLovDescCustEMailTypeCode());
 		}
 		this.recordStatus.setValue(aCustomerEMail.getRecordStatus());
 		logger.debug("Leaving");
@@ -450,25 +431,23 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			wve.add(we);
 		}
 		try {
-			aCustomerEMail.setLovDescCustEMailTypeCode(this.custEMailTypeCode
-					.getDescription());
-			aCustomerEMail.setCustEMailTypeCode(this.custEMailTypeCode
-					.getValidatedValue());
+			aCustomerEMail.setLovDescCustEMailTypeCode(this.custEMailTypeCode.getDescription());
+			aCustomerEMail.setCustEMailTypeCode(this.custEMailTypeCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-			
+
 		try {
 			if ("#".equals(getComboboxValue(this.custEMailPriority))) {
 				aCustomerEMail.setCustEMailPriority(0);
 			} else {
 				aCustomerEMail.setCustEMailPriority(Integer.valueOf(getComboboxValue(this.custEMailPriority)));
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aCustomerEMail.setCustEMail(this.custEMail.getValue());
 		} catch (WrongValueException we) {
@@ -494,8 +473,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerEMail
 	 * @throws Exception
@@ -564,20 +542,18 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		setValidationOn(true);
 
 		if (this.btnSearchPRCustid.isVisible()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerEMailDialog_CustID.value"), null,
-					true));
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerEMailDialog_CustID.value"), null, true));
 		}
-		
+
 		if (!this.custEMailPriority.isDisabled()) {
-			this.custEMailPriority.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerEMailDialog_CustEMailPriority.value"), null, true));
+			this.custEMailPriority.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerEMailDialog_CustEMailPriority.value"), null, true));
 		}
-				 
+
 		if (!this.custEMail.isReadonly()) {
-			this.custEMail.setConstraint(new PTEmailValidator(Labels
-					.getLabel("label_CustomerEMailDialog_CustEMail.value"),
-					true));
+			this.custEMail.setConstraint(
+					new PTEmailValidator(Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"), true));
 		}
 		logger.debug("Leaving");
 	}
@@ -599,9 +575,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custEMailTypeCode.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value"),
-				null, true, true));
+		this.custEMailTypeCode.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value"), null, true, true));
 		logger.debug("Leaving");
 	}
 
@@ -650,20 +625,16 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value")
-				+ " : " + aCustomerEMail.getCustEMailTypeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value") + " : "
+				+ aCustomerEMail.getCustEMailTypeCode();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerEMail.getRecordType())) {
 				aCustomerEMail.setVersion(aCustomerEMail.getVersion() + 1);
 				aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess
-						&& getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails()
-								.getCustomer().isWorkflow()) {
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
+						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
 					aCustomerEMail.setNewRecord(true);
 				}
 				if (isWorkFlowEnabled()) {
@@ -678,15 +649,11 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 
 				if (isNewCustomer()) {
 					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCustomerEmailProcess(
-							aCustomerEMail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(
-							this.window_CustomerEMailDialog, auditHeader);
+					AuditHeader auditHeader = newCustomerEmailProcess(aCustomerEMail, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE
-							|| retValue == PennantConstants.porcessOVERIDE) {
-						getCustomerDialogCtrl().doFillCustomerEmailDetails(
-								this.customerEmails);
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						getCustomerDialogCtrl().doFillCustomerEmailDetails(this.customerEmails);
 						// send the data back to customer
 						closeDialog();
 					}
@@ -715,10 +682,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
-			this.custEMailTypeCode
-					.setReadonly(isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
-			this.custEMailTypeCode
-					.setMandatoryStyle(!isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
+			this.custEMailTypeCode.setReadonly(isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
+			this.custEMailTypeCode.setMandatoryStyle(!isReadOnly("CustomerEMailDialog_custEMailTypeCode"));
 		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
@@ -726,8 +691,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		}
 		this.custCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("CustomerEMailDialog_custID"));
-		this.custEMailPriority
-				.setDisabled(isReadOnly("CustomerEMailDialog_custEMailPriority"));
+		this.custEMailPriority.setDisabled(isReadOnly("CustomerEMailDialog_custEMailPriority"));
 		this.custEMail.setReadonly(isReadOnly("CustomerEMailDialog_custEMail"));
 
 		if (isWorkFlowEnabled()) {
@@ -764,8 +728,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	public boolean isReadOnly(String componentName) {
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
-			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails()
-					.getCustomer().isWorkflow();
+			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -842,11 +805,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			if (StringUtils.isBlank(aCustomerEMail.getRecordType())) {
 				aCustomerEMail.setVersion(aCustomerEMail.getVersion() + 1);
 				if (isNew) {
-					aCustomerEMail
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aCustomerEMail
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerEMail.setNewRecord(true);
 				}
 			}
@@ -868,12 +829,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 					aCustomerEMail.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if (aCustomerEMail.getRecordType().equals(
-						PennantConstants.RCD_ADD)
-						&& isNewRecord()) {
+				if (aCustomerEMail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
 					tranType = PennantConstants.TRAN_ADD;
-				} else if (aCustomerEMail.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
@@ -891,15 +849,11 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		try {
 
 			if (isNewCustomer()) {
-				AuditHeader auditHeader = newCustomerEmailProcess(
-						aCustomerEMail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_CustomerEMailDialog, auditHeader);
+				AuditHeader auditHeader = newCustomerEmailProcess(aCustomerEMail, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE
-						|| retValue == PennantConstants.porcessOVERIDE) {
-					getCustomerDialogCtrl().doFillCustomerEmailDetails(
-							this.customerEmails);
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCustomerDialogCtrl().doFillCustomerEmailDetails(this.customerEmails);
 					// send the data back to customer
 					closeDialog();
 				}
@@ -915,8 +869,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader newCustomerEmailProcess(CustomerEMail aCustomerEMail,
-			String tranType) {
+	private AuditHeader newCustomerEmailProcess(CustomerEMail aCustomerEMail, String tranType) {
 		logger.debug("Entering");
 		boolean recordAdded = false;
 
@@ -929,76 +882,59 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		valueParm[0] = aCustomerEMail.getLovDescCustCIF();
 		valueParm[1] = aCustomerEMail.getCustEMailTypeCode();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"
-				+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode") + ":"
-				+ valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode") + ":" + valueParm[1];
 
 		if (getCustomerDialogCtrl().getCustomerEmailDetailList() != null
 				&& getCustomerDialogCtrl().getCustomerEmailDetailList().size() > 0) {
-			for (int i = 0; i < getCustomerDialogCtrl()
-					.getCustomerEmailDetailList().size(); i++) {
-				CustomerEMail customerEMail = getCustomerDialogCtrl()
-						.getCustomerEmailDetailList().get(i);
-				
+			for (int i = 0; i < getCustomerDialogCtrl().getCustomerEmailDetailList().size(); i++) {
+				CustomerEMail customerEMail = getCustomerDialogCtrl().getCustomerEmailDetailList().get(i);
+
 				if (isNewRecord()) {
 
 					if (customerEMail.getCustEMailPriority() == aCustomerEMail.getCustEMailPriority()) {
-						valueParm[1]=this.custEMailPriority.getSelectedItem().getLabel();
-						errParm[1] = PennantJavaUtil.getLabel("label_CustEMailPriority") + ":"+valueParm[1];
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						valueParm[1] = this.custEMailPriority.getSelectedItem().getLabel();
+						errParm[1] = PennantJavaUtil.getLabel("label_CustEMailPriority") + ":" + valueParm[1];
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "30702", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 				}
 
-				if (aCustomerEMail.getCustEMailTypeCode().equals(
-						customerEMail.getCustEMailTypeCode())) { // Both Current
-																	// and
-																	// Existing
-																	// list
-																	// rating
-																	// same
+				if (aCustomerEMail.getCustEMailTypeCode().equals(customerEMail.getCustEMailTypeCode())) { // Both Current
+																												// and
+																											// Existing
+																											// list
+																											// rating
+																											// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if (aCustomerEMail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_UPD)) {
-							aCustomerEMail
-									.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						if (aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+							aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded = true;
 							customerEmails.add(aCustomerEMail);
-						} else if (aCustomerEMail.getRecordType().equals(
-								PennantConstants.RCD_ADD)) {
+						} else if (aCustomerEMail.getRecordType().equals(PennantConstants.RCD_ADD)) {
 							recordAdded = true;
-						} else if (aCustomerEMail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
-							aCustomerEMail
-									.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+						} else if (aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 							recordAdded = true;
 							customerEmails.add(aCustomerEMail);
-						} else if (aCustomerEMail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_CAN)) {
+						} else if (aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							for (int j = 0; j < getCustomerDialogCtrl()
-									.getCustomerDetails()
-									.getCustomerEMailList().size(); j++) {
-								CustomerEMail email = getCustomerDialogCtrl()
-										.getCustomerDetails()
+							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerEMailList()
+									.size(); j++) {
+								CustomerEMail email = getCustomerDialogCtrl().getCustomerDetails()
 										.getCustomerEMailList().get(j);
-								if (email.getCustID() == aCustomerEMail
-										.getCustID()
-										&& email.getCustEMailTypeCode()
-												.equals(aCustomerEMail
-														.getCustEMailTypeCode())) {
+								if (email.getCustID() == aCustomerEMail.getCustID()
+										&& email.getCustEMailTypeCode().equals(aCustomerEMail.getCustEMailTypeCode())) {
 									customerEmails.add(email);
 								}
 							}
@@ -1040,22 +976,19 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aCustomerEMail.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aCustomerEMail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerEMail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerEMail.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aCustomerEMail.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aCustomerEMail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aCustomerEMail
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aCustomerEMail.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -1103,8 +1036,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aCustomerEMail,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aCustomerEMail, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -1135,8 +1067,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		CustomerEMail aCustomerEMail = (CustomerEMail) auditHeader
-				.getAuditDetail().getModelData();
+		CustomerEMail aCustomerEMail = (CustomerEMail) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -1144,45 +1075,32 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getCustomerEMailService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getCustomerEMailService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getCustomerEMailService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getCustomerEMailService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getCustomerEMailService().doApprove(
-								auditHeader);
-						if (aCustomerEMail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getCustomerEMailService().doApprove(auditHeader);
+						if (aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getCustomerEMailService().doReject(
-								auditHeader);
-						if (aCustomerEMail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getCustomerEMailService().doReject(auditHeader);
+						if (aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CustomerEMailDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CustomerEMailDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_CustomerEMailDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_CustomerEMailDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -1219,8 +1137,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 			EMailType details = (EMailType) dataObject;
 			if (details != null) {
 				this.custEMailTypeCode.setValue(details.getEmailTypeCode());
-				this.custEMailTypeCode.setDescription(details
-						.getEmailTypeDesc());
+				this.custEMailTypeCode.setDescription(details.getEmailTypeDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1233,8 +1150,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event)
-			throws SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -1246,16 +1162,13 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException,
-			InterruptedException {
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.newSearchObject);
-		Executions.createComponents(
-				"/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",
-				null, map);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
@@ -1265,8 +1178,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,
-			JdbcSearchObject<Customer> newSearchObject)
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
@@ -1286,13 +1198,10 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CustomerEMail aCustomerEMail,
-			String tranType) {
+	private AuditHeader getAuditHeader(CustomerEMail aCustomerEMail, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerEMail.getBefImage(), aCustomerEMail);
-		return new AuditHeader(getReference(), String.valueOf(aCustomerEMail
-				.getCustID()), null, null, auditDetail,
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEMail.getBefImage(), aCustomerEMail);
+		return new AuditHeader(getReference(), String.valueOf(aCustomerEMail.getCustID()), null, null, auditDetail,
 				aCustomerEMail.getUserDetails(), getOverideMap());
 	}
 
@@ -1307,10 +1216,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CustomerEMailDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_CustomerEMailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1358,8 +1265,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		this.customerEMail = customerEMail;
 	}
 
-	public void setCustomerEMailService(
-			CustomerEMailService customerEMailService) {
+	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
 		this.customerEMailService = customerEMailService;
 	}
 
@@ -1367,8 +1273,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		return this.customerEMailService;
 	}
 
-	public void setCustomerEMailListCtrl(
-			CustomerEMailListCtrl customerEMailListCtrl) {
+	public void setCustomerEMailListCtrl(CustomerEMailListCtrl customerEMailListCtrl) {
 		this.customerEMailListCtrl = customerEMailListCtrl;
 	}
 

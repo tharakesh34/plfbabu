@@ -61,7 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	private String  investmentRef = null;
+	private String investmentRef = null;
 	private BigDecimal totPrincipalAmt = BigDecimal.ZERO;
 	private String finCcy;
 	private String profitDaysBasis;
@@ -73,7 +73,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	private BigDecimal avgPftRate = BigDecimal.ZERO;
 	private boolean approvalRequired;
 	private boolean totalDealsApproved;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private InvestmentFinHeader befImage;
 	private LoggedInUser userDetails;
@@ -81,7 +81,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private FinanceDetail financeDetail = null;
 	private List<FinanceDetail> financeDetailsList = new ArrayList<FinanceDetail>();
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -110,7 +110,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 		return investmentRef;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.investmentRef = id;
 	}
 
@@ -133,6 +133,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	public String getFinCcy() {
 		return finCcy;
 	}
+
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
 	}
@@ -140,6 +141,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	public String getProfitDaysBasis() {
 		return profitDaysBasis;
 	}
+
 	public void setProfitDaysBasis(String profitDaysBasis) {
 		this.profitDaysBasis = profitDaysBasis;
 	}
@@ -155,6 +157,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	public Date getMaturityDate() {
 		return maturityDate;
 	}
+
 	public void setMaturityDate(Date maturityDate) {
 		this.maturityDate = maturityDate;
 	}
@@ -186,6 +189,7 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	public BigDecimal getAvgPftRate() {
 		return avgPftRate;
 	}
+
 	public void setAvgPftRate(BigDecimal avgPftRate) {
 		this.avgPftRate = avgPftRate;
 	}
@@ -193,17 +197,18 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	public boolean isApprovalRequired() {
 		return approvalRequired;
 	}
+
 	public void setApprovalRequired(boolean approvalRequired) {
 		this.approvalRequired = approvalRequired;
 	}
 
 	public void setTotalDealsApproved(boolean totalDealsApproved) {
-	    this.totalDealsApproved = totalDealsApproved;
-    }
+		this.totalDealsApproved = totalDealsApproved;
+	}
 
 	public boolean isTotalDealsApproved() {
-	    return totalDealsApproved;
-    }
+		return totalDealsApproved;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -221,12 +226,12 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public InvestmentFinHeader getBefImage(){
+	public InvestmentFinHeader getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(InvestmentFinHeader beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(InvestmentFinHeader beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -246,19 +251,19 @@ public class InvestmentFinHeader extends AbstractWorkflowEntity {
 	}
 
 	public List<FinanceDetail> getFinanceDetailsList() {
-    	return financeDetailsList;
-    }
+		return financeDetailsList;
+	}
 
 	public void setFinanceDetailsList(List<FinanceDetail> financeDetailsList) {
-    	this.financeDetailsList = financeDetailsList;
-    }
+		this.financeDetailsList = financeDetailsList;
+	}
 
 	public FinanceDetail getFinanceDetail() {
-    	return financeDetail;
-    }
+		return financeDetail;
+	}
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
-    	this.financeDetail = financeDetail;
-    }
+		this.financeDetail = financeDetail;
+	}
 
 }

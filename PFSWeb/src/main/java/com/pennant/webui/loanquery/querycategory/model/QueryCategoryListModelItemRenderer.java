@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,14 +65,13 @@ public class QueryCategoryListModelItemRenderer implements ListitemRenderer<Quer
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, QueryCategory queryCategory, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(queryCategory.getCode());
+		lc = new Listcell(queryCategory.getCode());
 		lc.setParent(item);
-	  	lc = new Listcell(queryCategory.getDescription());
+		lc = new Listcell(queryCategory.getDescription());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -81,12 +79,12 @@ public class QueryCategoryListModelItemRenderer implements ListitemRenderer<Quer
 		cbActive.setChecked(queryCategory.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(queryCategory.getRecordStatus());
+		lc = new Listcell(queryCategory.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(queryCategory.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", queryCategory.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onQueryCategoryItemDoubleClicked");
 	}
 }

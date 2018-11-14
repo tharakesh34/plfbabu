@@ -28,7 +28,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.external.SAPGLProcess;
 
-public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
+public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 	public static DataEngineStatus SAP_GL_STATUS = new DataEngineStatus("GL_TRANSACTION_SUMMARY_EXPORT");
 
 	private Map<String, String> parameters = new HashMap<>();
@@ -42,18 +42,17 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
 		this.appDate = appDate;
 	}
-	
 
 	@Override
 	public void process(Object... objects) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void extractReport(String[] entityDetails) throws Exception {
 		this.entityCode = entityDetails[0];
 		this.entityDescription = entityDetails[1];
-		
+
 		try {
 			generate();
 			exportSummaryReport();
@@ -62,14 +61,14 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		} catch (Exception e) {
 			SAP_GL_STATUS.setStatus("F");
 			logger.error(Literal.EXCEPTION, e);
-		} 
+		}
 	}
-	
+
 	public void extractReport(Date startDate, Date endDate) throws Exception {
 		generate();
-				
+
 		exportSummaryReport();
-		
+
 		exportTransactionReport();
 	}
 
@@ -78,11 +77,11 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		initilize();
 
 		Map<String, TrailBalance> transactions = getTransactions();
-		
+
 		SAP_GL_STATUS.setTotalRecords(transactions.size());
 
 		saveTransactionDetails(transactions.values());
-		
+
 		groupTransactions();
 
 		saveTransactionSummary();
@@ -105,14 +104,15 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 
 	private Date getCurrentTrialBalanceStartDate() throws Exception {
 		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER WHERE DIMENSION = ?) AND DIMENSION = ? AND ENTITYCODE = ?";
-		return jdbcTemplate.queryForObject(query, new Object[]{"STATE", "STATE", entityCode}, Date.class);
+		return jdbcTemplate.queryForObject(query, new Object[] { "STATE", "STATE", entityCode }, Date.class);
 	}
 
 	private Map<String, TrailBalance> getTransactions() throws Exception {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" SELECT  ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
-		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR,AM.FINTYPE  FROM POSTINGS P");
+		sql.append(
+				" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR,AM.FINTYPE  FROM POSTINGS P");
 		sql.append(" INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = P.POSTBRANCH");
 		sql.append(" INNER JOIN RMTCOUNTRYVSPROVINCE S ON S.CPPROVINCE = B.BRANCHPROVINCE");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
@@ -121,9 +121,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
 		sql.append(" GROUP BY ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
 		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR, AM.FINTYPE ORDER BY S.BUSINESSAREA");
-		
-		
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", startDate);
 		paramMap.addValue("MONTH_ENDDATE", endDate);
@@ -147,12 +145,12 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 						while (rs.next()) {
 							key = "";
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("ENTITYCODE")));
-							
+
 							// FIXME ENTITYCODE is hard coded other than loans.
-							if(StringUtils.equals("", key)) {
+							if (StringUtils.equals("", key)) {
 								key = "01";
 							}
-							
+
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("HOSTACCOUNT")));
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("BUSINESSAREA")));
 
@@ -207,7 +205,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 
 		StringBuilder sql = new StringBuilder();
 		paramMap = new MapSqlParameterSource();
-	
+
 		sql.append("SELECT SYSPARMCODE, SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE");
 		sql.append(" IN (:HKONT, :BLART, :BUKRS, :BUPLA, :UMSKZ, :GSBER, :PRCTR, :KOSTL,");
 		sql.append(" :APP_DFT_CURR, :SAPGL_TRAN_RECORD_COUNT)");
@@ -262,10 +260,10 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 
 			transactions.add(item);
 		}
-		
+
 		List<TrailBalance> nonZeorList = new ArrayList<>();
 		for (List<TrailBalance> trailBalances : entityMap.values()) {
-			int i= 0;
+			int i = 0;
 			for (TrailBalance tb : trailBalances) {
 				if (BigDecimal.ZERO.compareTo(tb.getTransactionAmount()) < 0) {
 					tb.setId(++i);
@@ -273,7 +271,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 				}
 			}
 		}
-		
+
 		parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(nonZeorList.toArray()));
 	}
 
@@ -282,16 +280,15 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_SUMMARY_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
-		
+
 		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("START_DATE", startDate);
 		paramMap.addValue("END_DATE", endDate);
 		paramMap.addValue("GL_TRANSACTION_EXPORT", "GL_TRANSACTION_EXPORT");
 		paramMap.addValue("GL_TRANSACTION_SUMMARY_EXPORT", "GL_TRANSACTION_SUMMARY_EXPORT");
-		
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN (");
 		sql.append("SELECT ID FROM DATA_ENGINE_STATUS where ValueDate BETWEEN :START_DATE AND :END_DATE AND NAME IN(");
@@ -304,7 +301,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		sql.append(":GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 	}
-	
+
 	private int saveTranactions(int fromRange, int toRange, String entity) {
 		MapSqlParameterSource parameterSource;
 
@@ -327,7 +324,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 		}
 		return 0;
 	}
-	
+
 	private void update(int page) {
 		MapSqlParameterSource paramMap;
 
@@ -345,26 +342,27 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-		
+
 	private void exportSummaryReport() {
 		logger.info("Generating Transaction summary report ..");
 		String query = "select count(*) count, ENTITY from TRANSACTION_SUMMARY_REPORT GROUP BY ENTITY";
-		
+
 		jdbcTemplate.query(query, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				try {
 					Map<String, Object> filterMap = new HashMap<>();
 					Map<String, Object> parameterMap = new HashMap<>();
-					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, appDate);
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+							appDate);
 					//parameterMap.put("ENTITY", entityCode);
 					//filterMap.put("ENTITY", entityCode);
-					
+
 					parameterMap.put("ENTITY_CODE", entityCode + "_CF_SAP_GL_REPORT_HDR_PA");
-					
+
 					export.setParameterMap(parameterMap);
 					export.setFilterMap(filterMap);
-					
+
 					export.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 				} catch (Exception e) {
 					throw new SQLException();
@@ -372,12 +370,11 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 			}
 		});
 	}
-	
-	
+
 	private void exportTransactionReport() {
 		logger.info("Generating Transaction detail report ..");
 		String query = "select count(*) count, ENTITY from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY ENTITY";
-		
+
 		jdbcTemplate.query(query, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -385,16 +382,16 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 					Map<String, Object> filterMap = new HashMap<>();
 					Map<String, Object> parameterMap = new HashMap<>();
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
-					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, appDate);
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+							appDate);
 					//parameterMap.put("ENTITY", entityCode);
 					filterMap.put("ENTITY", entityCode);
-					
+
 					parameterMap.put("ENTITY_CODE", entityCode + "_CF_SAP_GL_REPORT_LINE_PA");
 
-					
 					export.setParameterMap(parameterMap);
 					export.setFilterMap(filterMap);
-					
+
 					export.exportData("GL_TRANSACTION_EXPORT");
 				} catch (Exception e) {
 					throw new SQLException();
@@ -402,7 +399,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 			}
 		});
 	}
-	
+
 	private void groupTransactions() throws Exception {
 		int pageSize = Integer.parseInt(parameters.get("SAPGL_TRAN_RECORD_COUNT"));
 
@@ -426,7 +423,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 				for (int page = 1; page <= pages; page++) {
 					pageItr = page;
 					mainRecords = mainRecords + saveTranactions(fromRange, toRange, rs.getString("ENTITY"));
- 					pagesInserted = true;
+					pagesInserted = true;
 					fromRange = toRange + 1;
 					toRange = toRange + pageSize;
 					update(pageItr);
@@ -449,7 +446,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 
 		});
 	}
-	
+
 	private Map<Integer, BigDecimal> getSummaryAmounts(int pageItr, String entity) {
 		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
 
@@ -466,7 +463,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 
 		return map;
 	}
-		
+
 	private void saveTransactionSummary(int pageItr, String entity) throws SQLException {
 		Map<Integer, BigDecimal> map = getSummaryAmounts(pageItr, entity);
 
@@ -541,7 +538,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 			throw new SQLException("Unable to insert the summary records for the page " + pageItr);
 		}
 	}
-	
+
 	private int getFinancialMonth() {
 		int financialMonth = 0;
 		int month = DateUtil.getMonth(endDate);
@@ -589,7 +586,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 
 		return financialMonth;
 	}
-	
+
 	private void saveTransactionSummary() throws Exception {
 		MapSqlParameterSource paramMap;
 
@@ -623,7 +620,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess{
 			throw new Exception("Unable to prpare the transaction summary report.");
 		}
 	}
-	
+
 	private BigDecimal getAmount(ResultSet rs, String columnName) throws SQLException {
 		BigDecimal amount;
 

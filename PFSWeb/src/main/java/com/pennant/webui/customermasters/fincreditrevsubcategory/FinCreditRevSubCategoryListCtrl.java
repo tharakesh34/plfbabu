@@ -66,9 +66,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.customermasters.fincreditrevsubcategory.model.FinCreditRevSubCategoryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.PTListReportUtils;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Customers/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul
@@ -79,9 +79,8 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 	private static final Logger logger = Logger.getLogger(FinCreditRevSubCategoryListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinCreditRevSubCategoryList; // autowired
 	protected Borderlayout borderLayout_FinCreditRevSubCategoryList; // autowired
@@ -100,7 +99,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<FinCreditRevSubCategory> searchObj;
-	
+
 	private transient FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 
 	/**
@@ -109,7 +108,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 	public FinCreditRevSubCategoryListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		moduleCode = "FinCreditRevSubCategory";
@@ -117,29 +116,28 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 	public void onCreate$window_FinCreditRevSubCategoryList(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_FinCreditRevSubCategoryList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
 		this.pagingFinCreditRevSubCategoryList.setPageSize(10);
 		this.pagingFinCreditRevSubCategoryList.setDetailed(true);
 
-		
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 			this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
 			this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
-		}else{
+		} else {
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
 		}
-		
+
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<FinCreditRevSubCategory>(FinCreditRevSubCategory.class,getListRows());
+		this.searchObj = new JdbcSearchObject<FinCreditRevSubCategory>(FinCreditRevSubCategory.class, getListRows());
 		this.searchObj.addSort("SubCategoryCode", false);
 		// Workflow
 		if (isWorkFlowEnabled()) {
@@ -150,17 +148,18 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 				button_FinCreditRevSubCategoryList_NewFinCreditRevSubCategory.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		} else {
 			this.searchObj.addTabelName("FinCreditRevSubCategory_AView");
 		}
 
 		setSearchObj(this.searchObj);
 		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj,this.listBoxFinCreditRevSubCategory,this.pagingFinCreditRevSubCategoryList);
+		getPagedListWrapper().init(this.searchObj, this.listBoxFinCreditRevSubCategory,
+				this.pagingFinCreditRevSubCategoryList);
 		// set the itemRenderer
 		this.listBoxFinCreditRevSubCategory.setItemRenderer(new FinCreditRevSubCategoryListModelItemRenderer());
-					
+
 		logger.debug("Leaving");
 	}
 
@@ -170,21 +169,22 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinCreditRevSubCategoryList");
-		
+
 		//this.button_FinCreditRevSubCategoryList_NewFinCreditRevSubCategory.setVisible(getUserWorkspace().isAllowed("button_FinCreditRevSubCategoryList_NewFinCreditRevSubCategory"));
 		//this.button_FinCreditRevSubCategoryList_FinCreditRevSubCategorySearchDialog.setVisible(getUserWorkspace().isAllowed("button_FinCreditRevSubCategoryList_FinCreditRevSubCategoryFindDialog"));
 		//this.button_FinCreditRevSubCategoryList_PrintList.setVisible(getUserWorkspace().isAllowed("button_FinCreditRevSubCategoryList_PrintList"));
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * This method is forwarded from the listboxes item renderer. <br>
-	 * see: com.pennant.webui.customers.fincreditrevsubcategory.model.FinCreditRevSubCategoryListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.customers.fincreditrevsubcategory.model.FinCreditRevSubCategoryListModelItemRenderer.java
+	 * <br>
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	
+
 	public void onFinCreditRevSubCategoryItemDoubleClicked(Event event) throws Exception {
 		logger.debug(event.toString());
 
@@ -193,31 +193,38 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final FinCreditRevSubCategory aFinCreditRevSubCategory = (FinCreditRevSubCategory) item.getAttribute("data");
-			final FinCreditRevSubCategory finCreditRevSubCategory = getFinCreditRevSubCategoryService().getFinCreditRevSubCategoryById(aFinCreditRevSubCategory.getId());
-			
-			if(finCreditRevSubCategory==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=aFinCreditRevSubCategory.getId();
-				errParm[0]=PennantJavaUtil.getLabel("label_SubCategoryCode")+":"+valueParm[0];
+			final FinCreditRevSubCategory aFinCreditRevSubCategory = (FinCreditRevSubCategory) item
+					.getAttribute("data");
+			final FinCreditRevSubCategory finCreditRevSubCategory = getFinCreditRevSubCategoryService()
+					.getFinCreditRevSubCategoryById(aFinCreditRevSubCategory.getId());
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+			if (finCreditRevSubCategory == null) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinCreditRevSubCategory.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_SubCategoryCode") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
-			}else{
-				if(isWorkFlowEnabled()){
-					String whereCond =  " AND SubCategoryCode='"+ finCreditRevSubCategory.getSubCategoryCode()+"' AND version=" + finCreditRevSubCategory.getVersion()+" ";
+			} else {
+				if (isWorkFlowEnabled()) {
+					String whereCond = " AND SubCategoryCode='" + finCreditRevSubCategory.getSubCategoryCode()
+							+ "' AND version=" + finCreditRevSubCategory.getVersion() + " ";
 
-					boolean userAcces =  validateUserAccess(finCreditRevSubCategory.getWorkflowId(),getUserWorkspace().getLoggedInUser().getUserId(), "FinCreditRevSubCategory", whereCond, finCreditRevSubCategory.getTaskId(), finCreditRevSubCategory.getNextTaskId());
-					if (userAcces){
+					boolean userAcces = validateUserAccess(finCreditRevSubCategory.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "FinCreditRevSubCategory", whereCond,
+							finCreditRevSubCategory.getTaskId(), finCreditRevSubCategory.getNextTaskId());
+					if (userAcces) {
 						showDetailView(finCreditRevSubCategory);
-					}else{
+					} else {
 						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					showDetailView(finCreditRevSubCategory);
 				}
-			}	
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -228,7 +235,8 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 	public void onClick$button_FinCreditRevSubCategoryList_NewFinCreditRevSubCategory(Event event) throws Exception {
 		logger.debug(event.toString());
 		// create a new FinCreditRevSubCategory object, We GET it from the backend.
-		final FinCreditRevSubCategory aFinCreditRevSubCategory = getFinCreditRevSubCategoryService().getNewFinCreditRevSubCategory();
+		final FinCreditRevSubCategory aFinCreditRevSubCategory = getFinCreditRevSubCategoryService()
+				.getNewFinCreditRevSubCategory();
 		showDetailView(aFinCreditRevSubCategory);
 		logger.debug("Leaving");
 	}
@@ -237,17 +245,17 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param FinCreditRevSubCategory (aFinCreditRevSubCategory)
+	 * @param FinCreditRevSubCategory
+	 *            (aFinCreditRevSubCategory)
 	 * @throws Exception
 	 */
 	private void showDetailView(FinCreditRevSubCategory aFinCreditRevSubCategory) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		if (aFinCreditRevSubCategory.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aFinCreditRevSubCategory.setWorkflowId(getWorkFlowId());
 		}
@@ -255,16 +263,17 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 		Map<String, Object> map = getDefaultArguments();
 		map.put("finCreditRevSubCategory", aFinCreditRevSubCategory);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listbox Listmodel. This is
-		 * fine for synchronizing the data in the FinCreditRevSubCategoryListbox from the
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listbox Listmodel. This is fine for synchronizing the data in the FinCreditRevSubCategoryListbox from the
 		 * dialog when we do a delete, edit or insert a FinCreditRevSubCategory.
 		 */
 		map.put("finCreditRevSubCategoryListCtrl", this);
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryDialog.zul",null,map);
+			Executions.createComponents(
+					"/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -299,19 +308,18 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 		logger.debug("Leaving");
 	}
 
-	
 	/*
 	 * call the FinCreditRevSubCategory dialog
 	 */
-	
-	public void onClick$button_FinCreditRevSubCategoryList_FinCreditRevSubCategorySearchDialog(Event event) throws Exception {
+
+	public void onClick$button_FinCreditRevSubCategoryList_FinCreditRevSubCategorySearchDialog(Event event)
+			throws Exception {
 		logger.debug("Entering");
 		logger.debug(event.toString());
 		/*
-		 * we can call our FinCreditRevSubCategoryDialog zul-file with parameters. So we can
-		 * call them with a object of the selected FinCreditRevSubCategory. For handed over
-		 * these parameter only a Map is accepted. So we put the FinCreditRevSubCategory object
-		 * in a HashMap.
+		 * we can call our FinCreditRevSubCategoryDialog zul-file with parameters. So we can call them with a object of
+		 * the selected FinCreditRevSubCategory. For handed over these parameter only a Map is accepted. So we put the
+		 * FinCreditRevSubCategory object in a HashMap.
 		 */
 		Map<String, Object> map = getDefaultArguments();
 		map.put("finCreditRevSubCategoryCtrl", this);
@@ -319,7 +327,9 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategorySearchDialog.zul",null,map);
+			Executions.createComponents(
+					"/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategorySearchDialog.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -335,7 +345,8 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 	public void onClick$button_FinCreditRevSubCategoryList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		logger.debug(event.toString());
-		new PTListReportUtils("FinCreditRevSubCategory", getSearchObj(),this.pagingFinCreditRevSubCategoryList.getTotalSize()+1);
+		new PTListReportUtils("FinCreditRevSubCategory", getSearchObj(),
+				this.pagingFinCreditRevSubCategoryList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 

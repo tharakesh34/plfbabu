@@ -90,6 +90,6 @@ public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce);
 
 	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> tranIdList, String finReference);
-	
-	List<FinAdvancePayments>getFinAdvancePaymentByFinRef(String finRefernce,Date toDate);
+
+	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate);
 }

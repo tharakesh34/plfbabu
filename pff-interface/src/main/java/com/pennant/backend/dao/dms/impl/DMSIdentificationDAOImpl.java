@@ -172,7 +172,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DMSDocumentDetails> im
 		logger.debug(Literal.LEAVING);
 		return dmsDocumentDetails;
 	}
-	
+
 	@Override
 	public void setDataSource(DataSource dataSource) {
 		super.setDataSource(dataSource);

@@ -49,8 +49,7 @@ import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface TaxDetailDAO extends BasicCrudDao<TaxDetail> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -60,7 +59,8 @@ public interface TaxDetailDAO extends BasicCrudDao<TaxDetail> {
 	 *            The type of the table.
 	 * @return TaxDetail
 	 */
-	TaxDetail getTaxDetail(long id,String type);
+	TaxDetail getTaxDetail(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -73,8 +73,9 @@ public interface TaxDetailDAO extends BasicCrudDao<TaxDetail> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long id, String taxCode, TableType tableType);
-	
-	List<TaxDetail> getTaxDetailbystateCode(String Statecode,String type);
+
+	List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type);
+
 	int getGSTNumberCount(String entityCode, String taxCode, String string);
-	
+
 }

@@ -46,11 +46,9 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * DAO methods implementation for the <b>CustomerEmploymentDetail model</b> class.<br>
  * 
  */
-public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploymentDetail> implements
-		CustomerEmploymentDetailDAO {
-private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
-
-	
+public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploymentDetail>
+		implements CustomerEmploymentDetailDAO {
+	private static Logger logger = Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
 
 	public CustomerEmploymentDetailDAOImpl() {
 		super();
@@ -90,8 +88,8 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerEmploymentDetail = null;
@@ -117,8 +115,7 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 
 		try {
-			int custEmployment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					Integer.class);
+			int custEmployment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 			logger.debug("Leaving");
 			return custEmployment;
 		} catch (Exception e) {
@@ -147,8 +144,8 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerEmploymentDetail = null;
@@ -157,7 +154,6 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		return customerEmploymentDetail;
 	}
 
-	
 	/**
 	 * This method Deletes the Record from the CustomerEmpDetails or CustomerEmpDetails_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Employment Details by key CustID
@@ -279,7 +275,6 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		logger.debug("Leaving Update Method");
 	}
 
-
 	@Override
 	public List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type) {
 		logger.debug("Entering");
@@ -303,8 +298,8 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CustomerEmploymentDetail.class);
 
-		List<CustomerEmploymentDetail> custEmploymentDetails = this.jdbcTemplate.query(
-				selectSql.toString(), beanParameters, typeRowMapper);
+		List<CustomerEmploymentDetail> custEmploymentDetails = this.jdbcTemplate.query(selectSql.toString(),
+				beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");
 		return custEmploymentDetails;
@@ -349,10 +344,10 @@ private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOIm
 
 		logger.debug("insertSql: " + selectSql.toString());
 		int returnRcds = 0;
-		try{
-			returnRcds = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class); 
+		try {
+			returnRcds = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (Exception e) {
-			
+
 		}
 		logger.debug("Leaving");
 		return returnRcds;

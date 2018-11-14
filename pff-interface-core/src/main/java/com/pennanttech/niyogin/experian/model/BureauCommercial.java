@@ -17,31 +17,30 @@ public class BureauCommercial implements Serializable {
 	private static final long serialVersionUID = -1729491218914314327L;
 
 	@XmlElement(name = "STG_UNQ_REF_ID")
-	private long	stgUnqRefId;
+	private long stgUnqRefId;
 
 	@XmlElement(name = "APPLICATION_ID")
-	private long	applicationId;
+	private long applicationId;
 	@XmlElement(name = "CIF")
-	private String	custCIF;
-	private String	finReference;
+	private String custCIF;
+	private String finReference;
 	private Applicant applicant;
 
 	@XmlElement(name = "company_name")
-	private String	companyName;
+	private String companyName;
 
 	@XmlElement(name = "company_address")
-	private CompanyAddress	companyAddress;
+	private CompanyAddress companyAddress;
 
 	@XmlElement(name = "COMPANY_MOBILE")
-	private String	companyMobile;
+	private String companyMobile;
 
 	@XmlElement(name = "COMPANY_PAN")
-	private String	companyPan;
+	private String companyPan;
 
 	@XmlElement(name = "LEGAL_ENTITY")
-	private String	legalEntity;
+	private String legalEntity;
 
-	
 	public long getStgUnqRefId() {
 		return stgUnqRefId;
 	}

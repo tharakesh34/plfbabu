@@ -26,9 +26,9 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanceService {
 
-	private static final Logger	logger				= Logger.getLogger(HoldFinanceServiceImpl.class);
-	private String				extConfigFileName	= "holdFinance.properties";
-	private String				serviceUrl;
+	private static final Logger logger = Logger.getLogger(HoldFinanceServiceImpl.class);
+	private String extConfigFileName = "holdFinance.properties";
+	private String serviceUrl;
 
 	/**
 	 * Method for execute Hold Loan service<br>
@@ -38,12 +38,12 @@ public class HoldFinanceServiceImpl extends NiyoginService implements HoldFinanc
 	@Override
 	public AuditHeader executeHoldFinance(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(serviceUrl)) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 

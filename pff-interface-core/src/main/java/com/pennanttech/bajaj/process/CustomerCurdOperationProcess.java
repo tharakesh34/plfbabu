@@ -21,7 +21,7 @@ import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.customer.CustomerProcedure;
 
-public class CustomerCurdOperationProcess{
+public class CustomerCurdOperationProcess {
 	private static final Logger logger = Logger.getLogger(CustomerCurdOperationProcess.class);
 
 	private DataSource dataSource;
@@ -33,11 +33,10 @@ public class CustomerCurdOperationProcess{
 		this.finOneDataSource = finOneDataSource;
 		jdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
 	}
-	
 
 	public void process() {
 		logger.debug(Literal.ENTERING);
-		if ("Y".equalsIgnoreCase((String)getSMTParameter("GCD_FINONE_SCHDLR_STATE", String.class))) {
+		if ("Y".equalsIgnoreCase((String) getSMTParameter("GCD_FINONE_SCHDLR_STATE", String.class))) {
 			MapSqlParameterSource parmMap;
 			StringBuilder sql = getSql();
 
@@ -70,7 +69,8 @@ public class CustomerCurdOperationProcess{
 		sql.append(" DateLastUpdate, NationalId, PassportNo, Nationality, PanNo, RegionId, BankType, EntityFlag,");
 		sql.append(" ContactPerson, CustSearchId, SectorId, FraudFlag, FraudScore, EmiCardElig, AddressDetail,");
 		sql.append(" BankDetail, NomineeName, NomineeAddress, NomineeRelationship, Field9, Field10,");
-		sql.append(" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId,Custid,RequestSeq");
+		sql.append(
+				" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId,Custid,RequestSeq");
 		sql.append(" FROM  GCDCUSTOMERS Where StatusFromFinnOne = :StatusFromFinnOne");
 		return sql;
 	}
@@ -168,7 +168,8 @@ public class CustomerCurdOperationProcess{
 	public void updateFailStatus(GcdCustomer gcdCustomer) {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("UPDATE GCDCUSTOMERS SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason,IsSuccess = 0");
+		updateSql.append(
+				"UPDATE GCDCUSTOMERS SET StatusFromFinnOne = :StatusFromFinnOne, RejectionReason = :RejectionReason,IsSuccess = 0");
 		updateSql.append(" Where CustId =:CustId and RequestSeq =:RequestSeq");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
@@ -199,6 +200,7 @@ public class CustomerCurdOperationProcess{
 		jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+
 	protected Object getSMTParameter(String sysParmCode, Class<?> type) {
 		MapSqlParameterSource paramMap;
 

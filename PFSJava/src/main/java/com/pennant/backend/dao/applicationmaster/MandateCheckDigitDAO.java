@@ -58,9 +58,9 @@ public interface MandateCheckDigitDAO extends BasicCrudDao<MandateCheckDigit> {
 	 * @return MandateCheckDigit
 	 */
 	MandateCheckDigit getMandateCheckDigit(int checkDigitValue, String type);
-	
+
 	boolean isDuplicateKey(long checkDigitValue, TableType tableType);
-	
-	int getCheckDigit(int checkDigitValue,String lookUpValue,String tableType);
+
+	int getCheckDigit(int checkDigitValue, String lookUpValue, String tableType);
 
 }

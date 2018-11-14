@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -93,7 +92,8 @@ public class InsurancePolicyDAOImpl extends BasicDao<InsurancePolicy> implements
 			sql.append("InsuranceTypeDesc,TakafulName,");
 		}
 
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From InsurancePolicy");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where PolicyCode =:PolicyCode");
@@ -104,8 +104,7 @@ public class InsurancePolicyDAOImpl extends BasicDao<InsurancePolicy> implements
 				.newInstance(InsurancePolicy.class);
 
 		try {
-			insurancePolicy = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters,
-					typeRowMapper);
+			insurancePolicy = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			insurancePolicy = null;
@@ -172,11 +171,13 @@ public class InsurancePolicyDAOImpl extends BasicDao<InsurancePolicy> implements
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(policyCode,policyDesc,insuranceType,insuranceProvider,policyRate,features,");
 		sql.append(" active,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
 		sql.append(" :policyCode,:policyDesc,:insuranceType,:insuranceProvider,:policyRate,:features,");
 		sql.append(" :active,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("sql: " + sql.toString());
 
@@ -206,7 +207,8 @@ public class InsurancePolicyDAOImpl extends BasicDao<InsurancePolicy> implements
 		updateSql.append("Update InsurancePolicy");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append("  Set PolicyDesc=:PolicyDesc,InsuranceType=:InsuranceType,");
-		updateSql.append(" InsuranceProvider=:InsuranceProvider,PolicyRate=:PolicyRate,Features=:Features, active=:active,");
+		updateSql.append(
+				" InsuranceProvider=:InsuranceProvider,PolicyRate=:PolicyRate,Features=:Features, active=:active,");
 		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
 		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");

@@ -73,34 +73,32 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/LovFieldDetail/lovFieldDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/LovFieldDetail/lovFieldDetailDialog.zul file.
  */
 public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	private static final long serialVersionUID = -3760682176867299742L;
 	private static final Logger logger = Logger.getLogger(LovFieldDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window            window_LovFieldDetailDialog;
-	protected ExtendedCombobox           fieldCode;                	
-	protected Uppercasebox           fieldCodeValue;             
-	protected Textbox           valueDesc;            		
-	protected Checkbox          isActive;                   
-	protected Checkbox          systemDefault;               
-	
+	protected Window window_LovFieldDetailDialog;
+	protected ExtendedCombobox fieldCode;
+	protected Uppercasebox fieldCodeValue;
+	protected Textbox valueDesc;
+	protected Checkbox isActive;
+	protected Checkbox systemDefault;
+
 	// not auto wired variables
-	private LovFieldDetail      lovFieldDetail;                     // over handed per parameters
+	private LovFieldDetail lovFieldDetail; // over handed per parameters
 	private transient LovFieldDetailListCtrl lovFieldDetailListCtrl;// over handed per parameters
 
-	private transient boolean       validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
 	private transient LovFieldDetailService lovFieldDetailService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -117,9 +115,8 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected LovFieldDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected LovFieldDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -144,15 +141,13 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 				setLovFieldDetail(null);
 			}
 
-			doLoadWorkFlow(this.lovFieldDetail.isWorkflow(),
-					this.lovFieldDetail.getWorkflowId(),
+			doLoadWorkFlow(this.lovFieldDetail.isWorkflow(), this.lovFieldDetail.getWorkflowId(),
 					this.lovFieldDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"LovFieldDetailDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "LovFieldDetailDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -162,8 +157,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 			// or
 			// delete lovFieldDetail here.
 			if (arguments.containsKey("lovFieldDetailListCtrl")) {
-				setLovFieldDetailListCtrl((LovFieldDetailListCtrl) arguments
-						.get("lovFieldDetailListCtrl"));
+				setLovFieldDetailListCtrl((LovFieldDetailListCtrl) arguments.get("lovFieldDetailListCtrl"));
 			} else {
 				setLovFieldDetailListCtrl(null);
 			}
@@ -182,7 +176,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.fieldCode.setMaxlength(10);
 		this.fieldCode.getTextbox().setMaxlength(50);
@@ -193,9 +187,9 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.fieldCode.setModuleName("LovFieldCode");
 		this.fieldCode.setValueColumn("FieldCode");
 		this.fieldCode.setDescColumn("FieldCodeDesc");
-		this.fieldCode.setValidateColumns(new String[]{"FieldCode"});
-		
-		logger.debug("Leaving") ;
+		this.fieldCode.setValidateColumns(new String[] { "FieldCode" });
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -203,11 +197,10 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnEdit"));
@@ -215,7 +208,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -293,13 +286,13 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.lovFieldDetail.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
 		this.btnDelete.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -309,21 +302,22 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 *            LovFieldDetail
 	 */
 	public void doWriteBeanToComponents(LovFieldDetail aLovFieldDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.fieldCode.setValue(aLovFieldDetail.getFieldCode());
 		this.fieldCodeValue.setValue(aLovFieldDetail.getFieldCodeValue());
 		this.valueDesc.setValue(aLovFieldDetail.getValueDesc());
 		this.isActive.setChecked(aLovFieldDetail.isIsActive());
 		this.systemDefault.setChecked(aLovFieldDetail.isSystemDefault());
 
-		if (aLovFieldDetail.isNewRecord()){
+		if (aLovFieldDetail.isNewRecord()) {
 			this.fieldCode.setDescription("");
-		}else{
+		} else {
 			this.fieldCode.setDescription(aLovFieldDetail.getLovDescFieldCodeName());
 		}
 		this.recordStatus.setValue(aLovFieldDetail.getRecordStatus());
-		
-		if(aLovFieldDetail.isNew() || (aLovFieldDetail.getRecordType() != null ? aLovFieldDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aLovFieldDetail.isNew() || (aLovFieldDetail.getRecordType() != null ? aLovFieldDetail.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.isActive.setChecked(true);
 			this.isActive.setDisabled(true);
 		}
@@ -336,41 +330,41 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * @param aLovFieldDetail
 	 */
 	public void doWriteComponentsToBean(LovFieldDetail aLovFieldDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aLovFieldDetail.setLovDescFieldCodeName(this.fieldCode.getDescription());
-			aLovFieldDetail.setFieldCode(this.fieldCode.getValidatedValue());	
-		}catch (WrongValueException we ) {
+			aLovFieldDetail.setFieldCode(this.fieldCode.getValidatedValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aLovFieldDetail.setFieldCodeValue(this.fieldCodeValue.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aLovFieldDetail.setValueDesc(this.valueDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aLovFieldDetail.setIsActive(this.isActive.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aLovFieldDetail.setSystemDefault(this.systemDefault.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -383,8 +377,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLovFieldDetail
 	 * @throws Exception
@@ -400,12 +393,12 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 			this.fieldCode.focus();
 		} else {
 			this.fieldCodeValue.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(aLovFieldDetail.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -424,7 +417,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -435,15 +428,18 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		setValidationOn(true);
 
 		if (!this.fieldCodeValue.isReadonly()) {
-			this.fieldCodeValue.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCodeValue.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
+			this.fieldCodeValue.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCodeValue.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
 		if (!this.valueDesc.isReadonly()) {
-			this.valueDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_ValueDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.valueDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_ValueDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.fieldCode.isReadonly()) {
-			this.fieldCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true,true));
+			this.fieldCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -459,6 +455,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.fieldCode.setConstraint("");
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -470,14 +467,14 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.valueDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getLovFieldDetailListCtrl().search();
-	} 
-	
+	}
+
 	// CRUD operations
 
 	/**
@@ -486,34 +483,35 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
-		
+		logger.debug("Entering");
+
 		final LovFieldDetail aLovFieldDetail = new LovFieldDetail();
 		BeanUtils.copyProperties(getLovFieldDetail(), aLovFieldDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") +"\n\n --> " + 
-				Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value")+" : "+aLovFieldDetail.getFieldCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value") + " : "
+				+ aLovFieldDetail.getFieldCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aLovFieldDetail.getRecordType())){
-				aLovFieldDetail.setVersion(aLovFieldDetail.getVersion()+1);
+			if (StringUtils.isBlank(aLovFieldDetail.getRecordType())) {
+				aLovFieldDetail.setVersion(aLovFieldDetail.getVersion() + 1);
 				aLovFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aLovFieldDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aLovFieldDetail,tranType)){
+				if (doProcess(aLovFieldDetail, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -527,12 +525,12 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getLovFieldDetail().isNewRecord()){
+		if (getLovFieldDetail().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.btnDelete.setVisible(false);
 			this.fieldCode.setReadonly(isReadOnly("LovFieldDetailDialog_fieldCode"));
 			this.fieldCodeValue.setReadonly(isReadOnly("LovFieldDetailDialog_fieldCodeValue"));
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.fieldCode.setReadonly(true);
 			this.fieldCodeValue.setReadonly(true);
@@ -542,19 +540,19 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.isActive.setDisabled(isReadOnly("LovFieldDetailDialog_isActive"));
 		this.systemDefault.setDisabled(isReadOnly("LovFieldDetailDialog_systemDefault"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.lovFieldDetail.isNewRecord()){
+			if (this.lovFieldDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 				btnDelete.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -572,13 +570,13 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.isActive.setDisabled(true);
 		this.systemDefault.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -590,13 +588,13 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		
+
 		// remove validation, if there are a save before
 		this.fieldCode.setValue("");
 		this.fieldCode.setDescription("");
 		this.fieldCodeValue.setValue("");
 		this.isActive.setChecked(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -607,7 +605,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final LovFieldDetail aLovFieldDetail = new LovFieldDetail();
 		BeanUtils.copyProperties(getLovFieldDetail(), aLovFieldDetail);
 		boolean isNew = false;
@@ -622,32 +620,32 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		// Do data level validations here
 
 		isNew = aLovFieldDetail.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aLovFieldDetail.getRecordType())){
-				aLovFieldDetail.setVersion(aLovFieldDetail.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aLovFieldDetail.getRecordType())) {
+				aLovFieldDetail.setVersion(aLovFieldDetail.getVersion() + 1);
+				if (isNew) {
 					aLovFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aLovFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aLovFieldDetail.setNewRecord(true);
 				}
 			}
-		}else{
-			aLovFieldDetail.setVersion(aLovFieldDetail.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aLovFieldDetail.setVersion(aLovFieldDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aLovFieldDetail,tranType)){
+			if (doProcess(aLovFieldDetail, tranType)) {
 				doWriteBeanToComponents(aLovFieldDetail);
 				refreshList();
 				closeDialog();
@@ -658,19 +656,20 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the workFlow Details List to Object
+	 * 
 	 * @param aLovFieldDetail
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(LovFieldDetail aLovFieldDetail,String tranType){
+	private boolean doProcess(LovFieldDetail aLovFieldDetail, String tranType) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aLovFieldDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLovFieldDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -699,21 +698,20 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 				}
 			}
 
-
 			if (!StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
-				
+				nextRoleCode = getFirstTaskOwner();
+
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -723,98 +721,94 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 			aLovFieldDetail.setRoleCode(getRole());
 			aLovFieldDetail.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aLovFieldDetail, tranType);
+			auditHeader = getAuditHeader(aLovFieldDetail, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aLovFieldDetail);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aLovFieldDetail, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aLovFieldDetail, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aLovFieldDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aLovFieldDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
 		LovFieldDetail aLovFieldDetail = (LovFieldDetail) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getLovFieldDetailService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getLovFieldDetailService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getLovFieldDetailService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getLovFieldDetailService().doApprove(auditHeader);
 
-						if(aLovFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aLovFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getLovFieldDetailService().doReject(auditHeader);
-						if(aLovFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aLovFieldDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(this.window_LovFieldDetailDialog,
-								auditHeader);
-						return processCompleted; 
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_LovFieldDetailDialog, auditHeader);
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_LovFieldDetailDialog, 
-						auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_LovFieldDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.lovFieldDetail),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.lovFieldDetail), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -830,47 +824,48 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
-	 * @param aLovFieldDetail 
+	 * 
+	 * @param aLovFieldDetail
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(LovFieldDetail aLovFieldDetail, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aLovFieldDetail.getBefImage(), aLovFieldDetail);   
-		return new AuditHeader(String.valueOf(aLovFieldDetail.getFieldCodeId()),
-				null,null,null,auditDetail,aLovFieldDetail.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(LovFieldDetail aLovFieldDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLovFieldDetail.getBefImage(), aLovFieldDetail);
+		return new AuditHeader(String.valueOf(aLovFieldDetail.getFieldCodeId()), null, null, null, auditDetail,
+				aLovFieldDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
-	 * when "btnNotes" is clicked 
+	 * when "btnNotes" is clicked
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.lovFieldDetail);
 	}
-	
+
 	/**
 	 * Display Message in Error Box
+	 * 
 	 * @param e
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,
-					e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_LovFieldDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.lovFieldDetail.getFieldCodeId());
@@ -883,6 +878,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -890,6 +886,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	public LovFieldDetail getLovFieldDetail() {
 		return this.lovFieldDetail;
 	}
+
 	public void setLovFieldDetail(LovFieldDetail lovFieldDetail) {
 		this.lovFieldDetail = lovFieldDetail;
 	}
@@ -897,6 +894,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
 	}
+
 	public LovFieldDetailService getLovFieldDetailService() {
 		return this.lovFieldDetailService;
 	}
@@ -904,6 +902,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	public void setLovFieldDetailListCtrl(LovFieldDetailListCtrl lovFieldDetailListCtrl) {
 		this.lovFieldDetailListCtrl = lovFieldDetailListCtrl;
 	}
+
 	public LovFieldDetailListCtrl getLovFieldDetailListCtrl() {
 		return this.lovFieldDetailListCtrl;
 	}
@@ -911,6 +910,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

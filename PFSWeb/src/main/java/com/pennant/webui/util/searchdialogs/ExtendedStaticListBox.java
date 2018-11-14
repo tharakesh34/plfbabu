@@ -79,12 +79,9 @@ import com.pennant.util.PennantLOVListUtil;
 
 /**
  * This class creates a modal window as a dialog in which the user <br>
- * can search and select a branch object. By onClosing this box <b>returns</b>
- * an object or null. <br>
- * The object can returned by selecting and clicking the OK button or by
- * DoubleClicking on an item from the list.<br>
- * Further the count of results can limited by manipulating the value of a table
- * field for the sql where clause.<br>
+ * can search and select a branch object. By onClosing this box <b>returns</b> an object or null. <br>
+ * The object can returned by selecting and clicking the OK button or by DoubleClicking on an item from the list.<br>
+ * Further the count of results can limited by manipulating the value of a table field for the sql where clause.<br>
  */
 public class ExtendedStaticListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -102,9 +99,9 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	private Object objClass = null;
 	private transient PagedListService pagedListService;
 	private String[] fieldString = null;
-	private ArrayList<ValueLabel>  arrayList;
+	private ArrayList<ValueLabel> arrayList;
 	private ModuleListcode moduleListcode;
-	
+
 	public ExtendedStaticListBox() {
 		super();
 	}
@@ -114,21 +111,20 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	 * 
 	 * @param parent
 	 *            The parent component
-	 *            
+	 * 
 	 * @return a BeanObject from the listBox or null.
 	 */
-	
-	public static Object show(Component parent,String listCode) {
-		return new ExtendedStaticListBox(parent,listCode).getObject();
-	}	
+
+	public static Object show(Component parent, String listCode) {
+		return new ExtendedStaticListBox(parent, listCode).getObject();
+	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ExtendedStaticListBox(Component parent,String listCode) {
+	private ExtendedStaticListBox(Component parent, String listCode) {
 		super();
 		setList(listCode);
 		setParent(parent);
@@ -140,11 +136,10 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 	private void createBox() {
-		logger.debug("Entering Method createBox()"); 
-		
-		
+		logger.debug("Entering Method createBox()");
+
 		// Window
-		this.setWidth(String.valueOf(this._width+5) + "px");
+		this.setWidth(String.valueOf(this._width + 5) + "px");
 		this.setHeight(String.valueOf(this._height) + "px");
 		this.setVisible(true);
 		this.setClosable(true);
@@ -197,12 +192,12 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 
 		final Listhead listhead = new Listhead();
 		listhead.setParent(this.listbox);
-		
+
 		final Listheader listheaderCode = new Listheader();
 		listheaderCode.setSclass("BCMListHeader");
 		listheaderCode.setParent(listhead);
 		listheaderCode.setLabel(moduleListcode.getFieldHeading()[0]);
-		
+
 		final Listheader listheader = new Listheader();
 		listheader.setSclass("BCMListHeader");
 		listheader.setParent(listhead);
@@ -243,7 +238,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 		btnOK.setParent(divSouth);
 
 		// Button
-		final Button btnClear= new Button();
+		final Button btnClear = new Button();
 		btnClear.setStyle("padding-left: 5px");
 		btnClear.setLabel("Clear");
 		btnClear.addEventListener("onClick", new OnClearListener());
@@ -251,26 +246,25 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 
 		/**
 		 * init the model.<br>
-		 * The ResultObject is a helper class that holds the generic list and
-		 * the totalRecord count as int value.
+		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
 		 */
-		
+
 		arrayList = moduleListcode.getValueLabels();
-		if(arrayList!=null){
+		if (arrayList != null) {
 			this._paging.setTotalSize(arrayList.size());
-		}else{
+		} else {
 			this._paging.setTotalSize(0);
 		}
 
 		setListModelList(new ListModelList(getListData(0)));
 		this.listbox.setModel(getListModelList());
-		
+
 		try {
 			doModal();
 		} catch (final SuspendNotAllowedException e) {
 			logger.fatal("", e);
 			this.detach();
-		} 	
+		}
 
 		logger.debug("Leaving Method createBox()");
 	}
@@ -279,15 +273,14 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class SearchBoxItemRenderer implements ListitemRenderer<ValueLabel> {
-		
+
 		public SearchBoxItemRenderer() {
-			
+
 		}
-		
 
 		@Override
 		public void render(Listitem item, ValueLabel valueLabel, int count) throws Exception {
-			
+
 			Listcell lc = new Listcell();
 			lc = new Listcell(valueLabel.getLabel());
 			lc = new Listcell(valueLabel.getValue());
@@ -308,48 +301,46 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	 */
 	public void onDoubleClicked(Event event) {
 		logger.debug("Entering Method onDoubleClicked()");
-		
+
 		if (this.listbox.getSelectedItem() != null) {
-			logger.debug("Selected Item :"+this.listbox.getSelectedItem().getValue());
+			logger.debug("Selected Item :" + this.listbox.getSelectedItem().getValue());
 			final Listitem li = this.listbox.getSelectedItem();
-			final Object object= li.getAttribute("data");
-			
+			final Object object = li.getAttribute("data");
+
 			final Listcell lc = (Listcell) li.getFirstChild();
 			try {
-				
+
 				@SuppressWarnings("rawtypes")
-				Class[] stringType = { Class.forName( "java.lang.String" ) };
-		        Object[] stringParameter = { lc.getLabel() };
-		        if (object.getClass().getMethod( "setLovValue", stringType)!=null){
-		        	object.getClass().getMethod( "setLovValue", stringType).invoke( object, stringParameter );	
-		        }
-		        
+				Class[] stringType = { Class.forName("java.lang.String") };
+				Object[] stringParameter = { lc.getLabel() };
+				if (object.getClass().getMethod("setLovValue", stringType) != null) {
+					object.getClass().getMethod("setLovValue", stringType).invoke(object, stringParameter);
+				}
 
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
 			setObject(object);
 			this.onClose();
-		}else{
+		} else {
 			logger.debug("Selected Item null");
 		}
 		logger.debug("Leaving Method onDoubleClicked()");
 	}
-	
+
 	/**
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and
-	 * pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
 	 */
 	@SuppressWarnings("rawtypes")
 	public final class OnPagingEventListener implements EventListener {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -362,8 +353,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	}
 
 	/**
-	 * Refreshes the list by calling the DAO methode with the modified search
-	 * object. <br>
+	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
 	 * @param so
 	 *            SearchObject, holds the entity and properties to search. <br>
@@ -373,7 +363,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(int start) {
 		logger.debug("Entering Method refreshModel");
-		
+
 		// clear old data
 		getListModelList().clear();
 
@@ -389,18 +379,18 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	 */
 	@SuppressWarnings("rawtypes")
 	final class OnCloseListener implements EventListener {
-		
+
 		public OnCloseListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
 			if (ExtendedStaticListBox.this.listbox.getSelectedItem() != null) {
 				final Listitem li = ExtendedStaticListBox.this.listbox.getSelectedItem();
-				final Object object= li.getAttribute("data");
-				
+				final Object object = li.getAttribute("data");
+
 				setObject(object);
 			}
 			onClose();
@@ -409,11 +399,11 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 
 	@SuppressWarnings("rawtypes")
 	final class OnClearListener implements EventListener {
-		
+
 		public OnClearListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setObject(String.valueOf(""));
@@ -421,8 +411,6 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 		}
 	}
 
-	
-	
 	// ************************************************* //
 	// **************** Setter/Getter ****************** //
 	// ************************************************* //
@@ -434,7 +422,6 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	private void setObject(Object objClass) {
 		this.objClass = objClass;
 	}
-
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
@@ -455,17 +442,15 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	}
 
 	public PagedListService getPagedListService() {
-		if (this.pagedListService==null){
-			this.pagedListService= (PagedListService) SpringUtil.getBean("pagedListService");	
+		if (this.pagedListService == null) {
+			this.pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		}
 		return pagedListService;
 	}
 
-
 	public String[] getFieldString() {
 		return fieldString;
 	}
-
 
 	public void setFieldString(String[] fieldString) {
 		this.fieldString = fieldString;
@@ -473,19 +458,19 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 
 	public Collection<ValueLabel> getListData(int start) {
 		Collection<ValueLabel> list = new ArrayList<ValueLabel>();
-		
-		if (arrayList!=null){
+
+		if (arrayList != null) {
 			for (int i = start; i < arrayList.size(); i++) {
 				list.add(arrayList.get(i));
-				if(list.size()==getPageSize()){
+				if (list.size() == getPageSize()) {
 					break;
 				}
 			}
-		}  
+		}
 		return list;
 	}
 
-	public void setList(String listCode){
+	public void setList(String listCode) {
 		this.moduleListcode = PennantLOVListUtil.getModuleMap(listCode);
 		System.out.println(moduleListcode);
 	}

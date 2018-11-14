@@ -67,12 +67,12 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RateUtil implements Serializable {
 
-	private static final long	serialVersionUID	= 3360714221070313516L;
-	private static Logger		logger				= Logger.getLogger(RateUtil.class);
+	private static final long serialVersionUID = 3360714221070313516L;
+	private static Logger logger = Logger.getLogger(RateUtil.class);
 
-	private static BaseRateDAO	baseRateDAO;
-	private static SplRateDAO	splRateDAO;
-	private static CostOfFundDAO		costOfFundDAO;
+	private static BaseRateDAO baseRateDAO;
+	private static SplRateDAO splRateDAO;
+	private static CostOfFundDAO costOfFundDAO;
 
 	/**
 	 * To Calculate Effective Rate Based on Base rate and Special rate Codes.
@@ -88,17 +88,15 @@ public class RateUtil implements Serializable {
 
 		if (rateDetail == null) {
 			rateDetail = new RateDetail();
-			errorDetails.add(new ErrorDetail(" ", "30561",
-					new String[] { PennantJavaUtil.getLabel("label_BaseRate") }, new String[] { "null" }));
+			errorDetails.add(new ErrorDetail(" ", "30561", new String[] { PennantJavaUtil.getLabel("label_BaseRate") },
+					new String[] { "null" }));
 			error = true;
 		}
 
-		if (!error
-				&& (StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getBaseRateCode())) && StringUtils
-						.isEmpty(StringUtils.trimToEmpty(rateDetail.getSplRateCode())))) {
-			errorDetails.add(new ErrorDetail("Rate", "30559", new String[] {
-					PennantJavaUtil.getLabel("label_BaseRate"), PennantJavaUtil.getLabel("label_SplRateCode") },
-					new String[] { "null" }));
+		if (!error && (StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getBaseRateCode()))
+				&& StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getSplRateCode())))) {
+			errorDetails.add(new ErrorDetail("Rate", "30559", new String[] { PennantJavaUtil.getLabel("label_BaseRate"),
+					PennantJavaUtil.getLabel("label_SplRateCode") }, new String[] { "null" }));
 			error = true;
 		}
 
@@ -140,9 +138,9 @@ public class RateUtil implements Serializable {
 
 			if (!error) {
 				if (StringUtils.isNotBlank(rateDetail.getSplRateCode())) {
-					BigDecimal splRate = getSplRateDAO().getSplRateByID(rateDetail.getSplRateCode(),
-							rateDetail.getValueDate()).getSRRate();
-					rateDetail.setSplRefRate(splRate == null ? BigDecimal.ZERO: splRate);
+					BigDecimal splRate = getSplRateDAO()
+							.getSplRateByID(rateDetail.getSplRateCode(), rateDetail.getValueDate()).getSRRate();
+					rateDetail.setSplRefRate(splRate == null ? BigDecimal.ZERO : splRate);
 				} else {
 					rateDetail.setSplRefRate(BigDecimal.ZERO);
 				}
@@ -163,10 +161,10 @@ public class RateUtil implements Serializable {
 			// NET RATE.
 			// FOR Loans: Base Rate - Special Rate + Margin
 			// FOR Deposits: Base Rate + Special Rates - Margin
-			rateDetail.setNetRefRateDeposit(rateDetail.getBaseRefRate().add(rateDetail.getSplRefRate())
-					.subtract(rateDetail.getMargin()));
-			rateDetail.setNetRefRateLoan(rateDetail.getBaseRefRate().subtract(rateDetail.getSplRefRate())
-					.add(rateDetail.getMargin()));
+			rateDetail.setNetRefRateDeposit(
+					rateDetail.getBaseRefRate().add(rateDetail.getSplRefRate()).subtract(rateDetail.getMargin()));
+			rateDetail.setNetRefRateLoan(
+					rateDetail.getBaseRefRate().subtract(rateDetail.getSplRefRate()).add(rateDetail.getMargin()));
 		}
 
 		if (errorDetails.size() > 0) {
@@ -285,9 +283,9 @@ public class RateUtil implements Serializable {
 
 			splRateVal = splRates.get(i).getSRRate();
 		}
-		
-		netRefRate = baseRateVal.subtract(splRateVal).add(finSchdDetails.get(iSchd).getMrgRate() == null? 
-				BigDecimal.ZERO : finSchdDetails.get(iSchd).getMrgRate());
+
+		netRefRate = baseRateVal.subtract(splRateVal).add(finSchdDetails.get(iSchd).getMrgRate() == null
+				? BigDecimal.ZERO : finSchdDetails.get(iSchd).getMrgRate());
 		calRate = getEffRate(netRefRate, minRate, maxRate);
 
 		logger.debug("Leaving");
@@ -332,7 +330,7 @@ public class RateUtil implements Serializable {
 		logger.debug("Leaving");
 		return effRate;
 	}
-	
+
 	/**
 	 * Calculates The Rate and Shows the value in the rateBox
 	 * 
@@ -341,7 +339,7 @@ public class RateUtil implements Serializable {
 	 */
 	public static RateDetail cofRate(String cofRateCode, String currency) {
 		logger.debug("Entering");
-		
+
 		RateDetail rate = new RateDetail();
 		rate.setBaseRateCode(cofRateCode);
 		rate.setCurrency(currency);
@@ -351,10 +349,10 @@ public class RateUtil implements Serializable {
 		rate = getCofRefRate(rate);
 		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), null, null));
 		logger.debug("Leaving");
-		
+
 		return rate;
 	}
-	
+
 	/**
 	 * To Calculate Effective Rate Based on Base rate and Special rate Codes.
 	 * 
@@ -369,16 +367,14 @@ public class RateUtil implements Serializable {
 
 		if (rateDetail == null) {
 			rateDetail = new RateDetail();
-			errorDetails.add(new ErrorDetail(" ", "30561",
-					new String[] { PennantJavaUtil.getLabel("label_BaseRate") }, new String[] { "null" }));
+			errorDetails.add(new ErrorDetail(" ", "30561", new String[] { PennantJavaUtil.getLabel("label_BaseRate") },
+					new String[] { "null" }));
 			error = true;
 		}
 
-		if (!error
-				&& StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getBaseRateCode()))) {
-			errorDetails.add(new ErrorDetail("Rate", "30559", new String[] {
-					PennantJavaUtil.getLabel("label_BaseRate")},
-					new String[] { "null" }));
+		if (!error && StringUtils.isEmpty(StringUtils.trimToEmpty(rateDetail.getBaseRateCode()))) {
+			errorDetails.add(new ErrorDetail("Rate", "30559",
+					new String[] { PennantJavaUtil.getLabel("label_BaseRate") }, new String[] { "null" }));
 			error = true;
 		}
 
@@ -456,7 +452,7 @@ public class RateUtil implements Serializable {
 	public void setSplRateDAO(SplRateDAO splRateDAO) {
 		RateUtil.splRateDAO = splRateDAO;
 	}
-	
+
 	public static CostOfFundDAO getCostOfFundDAO() {
 		return costOfFundDAO;
 	}

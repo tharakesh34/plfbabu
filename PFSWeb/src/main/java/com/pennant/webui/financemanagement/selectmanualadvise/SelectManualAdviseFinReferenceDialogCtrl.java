@@ -65,24 +65,23 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/
- * SelectFinanceTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
  */
 public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = Logger.getLogger(SelectManualAdviseFinReferenceDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_SelectFinanceReferenceDialog; // autoWired
 	protected ExtendedCombobox finReference; // autoWired
 	protected Button btnProceed; // autoWireddialogCtrl
-	private ManualAdvise manualAdvise= null;
+	private ManualAdvise manualAdvise = null;
 	private ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -98,9 +97,8 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -120,9 +118,10 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			MessageUtil.showError(e);
 		}
 		showSelectPaymentHeaderDialog();
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * Opens the SelectPaymentHeaderDialog window modal.
 	 */
@@ -147,7 +146,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -163,20 +162,22 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (!doFieldValidation()) {
 			return;
 		}
-		FinanceMain financeMain = manualAdviseService.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
-		
+		FinanceMain financeMain = manualAdviseService
+				.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
+
 		HashMap<String, Object> arg = new HashMap<String, Object>();
 		arg.put("manualAdvise", manualAdvise);
 		arg.put("manualAdviseListCtrl", manualAdviseListCtrl);
 		arg.put("financeMain", financeMain);
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null,
+					arg);
 			this.window_SelectFinanceReferenceDialog.onClose();
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -186,14 +187,15 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	 * @return
 	 */
 	private boolean doFieldValidation() {
-	
+
 		doClearMessage();
 		doRemoveValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			if (StringUtils.trimToNull(this.finReference.getValue()) == null) {
-				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY", new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
+				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
 			}
 		} catch (WrongValueException e) {
 			wve.add(e);
@@ -220,7 +222,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		this.finReference.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Setting the amount formats based on currency
 	 * 
@@ -235,6 +237,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 
 		logger.debug("Leaving " + event.toString());
 	}
+
 	// Getters and Setters
 	public ManualAdviseListCtrl getManualAdviseListCtrl() {
 		return manualAdviseListCtrl;
@@ -243,12 +246,14 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	public void setManualAdviseListCtrl(ManualAdviseListCtrl manualAdviseListCtrl) {
 		this.manualAdviseListCtrl = manualAdviseListCtrl;
 	}
+
 	public ManualAdvise getManualAdvise() {
 		return manualAdvise;
 	}
 
 	public void setManualAdvise(ManualAdvise manualAdvise) {
 	}
+
 	public ManualAdviseService getManualAdviseService() {
 		return manualAdviseService;
 	}

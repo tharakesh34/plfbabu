@@ -89,56 +89,56 @@ import com.pennanttech.framework.web.AbstractDialogController;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
-	private static final long					serialVersionUID	= -1351367303946249042L;
-	private static final Logger					logger				= Logger.getLogger(NotesCtrl.class);
+	private static final long serialVersionUID = -1351367303946249042L;
+	private static final Logger logger = Logger.getLogger(NotesCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_notesDialog;
-	protected Tabbox							tabbox;
-	protected Listbox							listboxNotes;
-	protected Listhead							listheadNotes;
-	protected PTCKeditor						remarks;
-	protected Textbox							remarksText;
-	protected Radiogroup						remarkType;
-	protected Label								label_NotesDialog_AlignType;
-	protected Radiogroup						alignType;
-	protected Hlayout							hlayout_cbType;
-	protected Div								div_toolbar;
-	protected Label								label_title;
-	protected Separator							separator1;
-	protected Separator							separator2;
-	protected Space								space_type1;
-	protected Space								space_type2;
-	protected Label								label_NotesDialog_Type;
+	protected Window window_notesDialog;
+	protected Tabbox tabbox;
+	protected Listbox listboxNotes;
+	protected Listhead listheadNotes;
+	protected PTCKeditor remarks;
+	protected Textbox remarksText;
+	protected Radiogroup remarkType;
+	protected Label label_NotesDialog_AlignType;
+	protected Radiogroup alignType;
+	protected Hlayout hlayout_cbType;
+	protected Div div_toolbar;
+	protected Label label_title;
+	protected Separator separator1;
+	protected Separator separator2;
+	protected Space space_type1;
+	protected Space space_type2;
+	protected Label label_NotesDialog_Type;
 
 	// not auto wired variables
-	private Notes								notes;															// overHanded per parameter
-	private NotesCtrl							notesCtrl;
+	private Notes notes; // overHanded per parameter
+	private NotesCtrl notesCtrl;
 
-	private transient NotesService				notesService;
+	private transient NotesService notesService;
 	// not auto wired variables
-	private Notes								newNotes;														// overHanded per parameter
+	private Notes newNotes; // overHanded per parameter
 
-	private AbstractDialogController<Object>	mainControl			= null;
-	private transient boolean					validationOn;
-	private List<ValueLabel>					remarkTypeList		= PennantStaticListUtil.getRemarkType();
-	private List<ValueLabel>					recommandTypeList	= PennantStaticListUtil.getRecommandType();
-	private List<ValueLabel>					alignTypeList		= PennantStaticListUtil.getAlignType();
-	private List<Notes>							notesList;
-	private boolean								isFinanceNotes		= false;
-	private boolean								isRecommendMand		= false;
-	private String								roleCode			= "";
-	private String								moduleName			= "";
-	private Tabpanel							tabpanel			= null;
-	private boolean								isEnquiry			= false;
-	private boolean								isNotFinanceProcess	= false;
+	private AbstractDialogController<Object> mainControl = null;
+	private transient boolean validationOn;
+	private List<ValueLabel> remarkTypeList = PennantStaticListUtil.getRemarkType();
+	private List<ValueLabel> recommandTypeList = PennantStaticListUtil.getRecommandType();
+	private List<ValueLabel> alignTypeList = PennantStaticListUtil.getAlignType();
+	private List<Notes> notesList;
+	private boolean isFinanceNotes = false;
+	private boolean isRecommendMand = false;
+	private String roleCode = "";
+	private String moduleName = "";
+	private Tabpanel tabpanel = null;
+	private boolean isEnquiry = false;
+	private boolean isNotFinanceProcess = false;
 
-	private FinBasicDetailsCtrl					finBasicDetailsCtrl;
-	private CollateralBasicDetailsCtrl			collateralBasicDetailsCtrl;
-	protected Groupbox							finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	protected Groupbox finBasicdetails;
 
 	public NotesCtrl() {
 		super();

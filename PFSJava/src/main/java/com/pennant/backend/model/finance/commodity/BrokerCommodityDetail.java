@@ -54,16 +54,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class BrokerCommodityDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 5232119312085110695L;
-	
-	private String     brokerCode = null;
-	private String     commodityCode = null;
 
-	private boolean    newRecord=false;
-	private String     lovValue;
-	private String     CommodityUnitCode;
-	private String     CommodityUnitName;
-	private String     lovDescCommodityDesc;
-	
+	private String brokerCode = null;
+	private String commodityCode = null;
+
+	private boolean newRecord = false;
+	private String lovValue;
+	private String CommodityUnitCode;
+	private String CommodityUnitName;
+	private String lovDescCommodityDesc;
+
 	private BrokerCommodityDetail befImage;
 	private LoggedInUser userDetails;
 
@@ -87,26 +87,29 @@ public class BrokerCommodityDetail extends AbstractWorkflowEntity {
 		excludeFields.add("CommodityUnitName");
 		return excludeFields;
 	}
-	
+
 	//Getter and Setter methods
 
 	public String getId() {
 		return brokerCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.brokerCode = id;
 	}
 
 	public String getBrokerCode() {
 		return brokerCode;
 	}
+
 	public void setBrokerCode(String brokerCode) {
 		this.brokerCode = brokerCode;
 	}
-	
+
 	public String getCommodityCode() {
 		return commodityCode;
 	}
+
 	public void setCommodityCode(String commodityCode) {
 		this.commodityCode = commodityCode;
 	}
@@ -114,6 +117,7 @@ public class BrokerCommodityDetail extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -121,20 +125,23 @@ public class BrokerCommodityDetail extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public BrokerCommodityDetail getBefImage(){
+	public BrokerCommodityDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(BrokerCommodityDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BrokerCommodityDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

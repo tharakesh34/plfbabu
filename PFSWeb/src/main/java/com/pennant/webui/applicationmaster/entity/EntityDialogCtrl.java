@@ -78,17 +78,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/Entity/entityDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/Entity/entityDialog.zul file. <br>
  */
 public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(EntityDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_EntityDialog;
 	protected Textbox entityCode;
@@ -110,9 +108,10 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 	private transient EntityListCtrl entityListCtrl; // overhanded per param
 	private transient EntityService entityService;
-	
+
 	//Adding the CIN NO Field
 	private Uppercasebox cINNumber;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -133,8 +132,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -226,7 +224,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.entityPOBox.setMaxlength(8);
 
 		this.cINNumber.setMaxlength(21);
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -247,7 +245,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$country(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = country.getObject();
@@ -261,7 +259,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			this.pinCode.setDescription("");
 			fillPindetails(null, null);
 		} else if (!(dataObject instanceof String)) {
-			Country country = (Country) dataObject; 
+			Country country = (Country) dataObject;
 			if (country == null) {
 				fillProvinceDetails(null);
 			}
@@ -284,13 +282,14 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	private void fillProvinceDetails(String country){
+
+	private void fillProvinceDetails(String country) {
 		this.stateCode.setMandatoryStyle(true);
 		this.stateCode.setModuleName("Province");
 		this.stateCode.setValueColumn("CPProvince");
 		this.stateCode.setDescColumn("CPProvinceName");
 		this.stateCode.setValidateColumns(new String[] { "CPProvince" });
-		
+
 		Filter[] filters1 = new Filter[1];
 
 		if (country == null || country.equals("")) {
@@ -301,6 +300,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		this.stateCode.setFilters(filters1);
 	}
+
 	public void onFulfill$stateCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -499,8 +499,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -512,8 +511,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -612,9 +610,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		
+
 		this.cINNumber.setValue(aEntity.getcINNumber());
-		
+
 		this.recordStatus.setValue(aEntity.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
@@ -851,8 +849,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		}
 		//CIN Number Validation
 		if (!this.cINNumber.isReadonly()) {
-			this.cINNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_CINNumber.value"),
-					null, true));
+			this.cINNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_EntityDialog_CINNumber.value"), null, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -877,7 +875,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.entityAddrHNbr.setConstraint("");
 		this.entityFlatNbr.setConstraint("");
 		this.entityAddrStreet.setConstraint("");
-		
+
 		this.cINNumber.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
@@ -913,8 +911,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1002,9 +999,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		readOnlyComponent(isReadOnly("EntityDialog_EntityFlatNbr"), this.entityAddrStreet);
 		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrStreet"), this.entityPOBox);
 		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.active);
-		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.gstinAvailable);	//TODO crate right
-		
-		readOnlyComponent(isReadOnly("EntityDialog_CINNumber"),this.cINNumber);
+		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.gstinAvailable); //TODO crate right
+
+		readOnlyComponent(isReadOnly("EntityDialog_CINNumber"), this.cINNumber);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1046,8 +1043,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		readOnlyComponent(true, this.gstinAvailable);
 
 		// readOnlyComponent(true, this.active);
-		readOnlyComponent(true,this.cINNumber);
-		
+		readOnlyComponent(true, this.cINNumber);
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1085,9 +1082,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		this.active.setChecked(false);
 		this.gstinAvailable.setChecked(false);
-		
+
 		this.cINNumber.setValue("");
-		
+
 		logger.debug("Leaving");
 	}
 

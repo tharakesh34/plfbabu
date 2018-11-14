@@ -63,16 +63,15 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>AccountEngineEvent model</b> class.<br>
  * 
  */
-public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	implements AccountEngineEventDAO {
+public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent> implements AccountEngineEventDAO {
 	private static Logger logger = Logger.getLogger(AccountEngineEventDAOImpl.class);
 
 	public AccountEngineEventDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new AccountEngineEvent
+	 * This method set the Work Flow id based on the module name and return the new AccountEngineEvent
 	 * 
 	 * @return AccountEngineEvent
 	 */
@@ -89,8 +88,8 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 	}
 
 	/**
-	 * This method get the module from method getAccountEngineEvent() and set
-	 * the new record flag as true and return AccountEngineEvent()
+	 * This method get the module from method getAccountEngineEvent() and set the new record flag as true and return
+	 * AccountEngineEvent()
 	 * 
 	 * @return AccountEngineEvent
 	 */
@@ -119,18 +118,20 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 		accountEngineEvent.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("Select AEEventCode, AEEventCodeDesc," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("Select AEEventCode, AEEventCodeDesc,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTAEEvents");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AEEventCode =:AEEventCode") ;
+		selectSql.append(" Where AEEventCode =:AEEventCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
-		RowMapper<AccountEngineEvent> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountEngineEvent.class);
+		RowMapper<AccountEngineEvent> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AccountEngineEvent.class);
 
 		try {
-			accountEngineEvent = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
+			accountEngineEvent = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accountEngineEvent = null;
@@ -140,9 +141,8 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTAEEvents or BMTAEEvents_Temp.
-	 * if Record not deleted then throws DataAccessException with error 41003.
-	 * delete Accounting Engine Event by key AEEventCode
+	 * This method Deletes the Record from the BMTAEEvents or BMTAEEvents_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Accounting Engine Event by key AEEventCode
 	 * 
 	 * @param Accounting
 	 *            Engine Event (accountEngineEvent)
@@ -161,8 +161,8 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 		deleteSql.append("Delete From BMTAEEvents");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where AEEventCode =:AEEventCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
 
 		try {
@@ -197,14 +197,15 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 
 		insertSql.append("Insert Into BMTAEEvents");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (AEEventCode, AEEventCodeDesc," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (AEEventCode, AEEventCodeDesc,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:AEEventCode, :AEEventCodeDesc, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:AEEventCode, :AEEventCodeDesc, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -213,9 +214,8 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 	}
 
 	/**
-	 * This method updates the Record BMTAEEvents or BMTAEEvents_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Accounting Engine Event by key AEEventCode and Version
+	 * This method updates the Record BMTAEEvents or BMTAEEvents_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Accounting Engine Event by key AEEventCode and Version
 	 * 
 	 * @param Accounting
 	 *            Engine Event (accountEngineEvent)
@@ -233,18 +233,19 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent>	impl
 
 		updateSql.append("Update BMTAEEvents");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set AEEventCodeDesc = :AEEventCodeDesc," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set AEEventCodeDesc = :AEEventCodeDesc,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where AEEventCode =:AEEventCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountEngineEvent);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

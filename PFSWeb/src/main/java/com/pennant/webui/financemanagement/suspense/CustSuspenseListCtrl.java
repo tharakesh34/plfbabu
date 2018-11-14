@@ -68,10 +68,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.suspense.model.CustSuspenseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul file.
@@ -122,20 +122,19 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 		super();
 	}
 
-	
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
 		searchObject.addFilter(new Filter("custSuspTrigger", "M", Filter.OP_EQUAL));
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "CustomerSuspense";
 		super.pageRightName = "SuspenseList";
 		super.tableName = "Customers_AView";
 		super.queueTableName = "Customers_View";
-		this.menuItemRightName = (String)arguments.get("rightName");
+		this.menuItemRightName = (String) arguments.get("rightName");
 
 		if ("CUSTSUSPHEAD".equals(moduleName.getValue())) {
 			this.module = "CustSuspense";
@@ -344,7 +343,6 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -366,7 +364,8 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;

@@ -60,36 +60,38 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeChargesDAO {
 	private static Logger logger = Logger.getLogger(FinFeeChargesDAOImpl.class);
-		
+
 	public FinFeeChargesDAOImpl() {
 		super();
 	}
-		
+
 	/**
 	 * Method for Fetching Fee charge Details list based upon Reference
 	 */
 	@Override
 	public FeeRule getFeeChargesByFinRefAndFee(String finReference, String feeCode, String tableType) {
 		logger.debug("Entering");
-		
+
 		FeeRule feeRule = new FeeRule();
 		feeRule.setFinReference(finReference);
 		feeRule.setFeeCode(feeCode);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference , SchDate , FinEvent, FeeCode , SeqNo, FeeCodeDesc , FeeOrder , FeeToFinance, " );
-		selectSql.append(" AllowWaiver, WaiverPerc,CalFeeAmount, FeeAmount, WaiverAmount, PaidAmount, ExcludeFromRpt, CalFeeModify, FeeMethod, ScheduleTerms " );
+		selectSql.append(
+				" SELECT FinReference , SchDate , FinEvent, FeeCode , SeqNo, FeeCodeDesc , FeeOrder , FeeToFinance, ");
+		selectSql.append(
+				" AllowWaiver, WaiverPerc,CalFeeAmount, FeeAmount, WaiverAmount, PaidAmount, ExcludeFromRpt, CalFeeModify, FeeMethod, ScheduleTerms ");
 		selectSql.append(" FROM FinFeeCharges");
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" WHERE  FinReference=:FinReference AND FeeCode=:FeeCode ORDER BY SchDate, FeeOrder");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
 		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	/**
 	 * Method for Fetching Fee charge Details list based upon Reference
 	 */
@@ -102,8 +104,8 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 		updateSql.append(StringUtils.trimToEmpty(tableType));
 		updateSql.append(" Set ExcludeFromRpt = :ExcludeFromRpt ");
 		updateSql.append(" WHERE FinReference=:FinReference AND FeeCode=:FeeCode");
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -118,18 +120,20 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 	 * Method for saving Fee charge Details list
 	 */
 	@Override
-	public void saveChargesBatch(List<FeeRule> chargeList,boolean isWIF,  String tableType) {
+	public void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			insertSql.append(" INSERT INTO WIFFinFeeCharges");
-		}else{
+		} else {
 			insertSql.append(" INSERT INTO FinFeeCharges");
 		}
 		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql.append(" (FinReference , SchDate , FinEvent , FeeCode , SeqNo, FeeCodeDesc , FeeOrder ,FeeToFinance, AllowWaiver, WaiverPerc,CalFeeAmount, FeeAmount, WaiverAmount, PaidAmount, CalFeeModify, FeeMethod, ScheduleTerms) ");
-		insertSql.append(" VALUES (:FinReference , :SchDate , :FinEvent, :FeeCode , :SeqNo, :FeeCodeDesc , :FeeOrder ,:FeeToFinance, :AllowWaiver, :WaiverPerc,:CalFeeAmount, :FeeAmount, :WaiverAmount, :PaidAmount, :CalFeeModify, :FeeMethod, :ScheduleTerms) ");
+		insertSql.append(
+				" (FinReference , SchDate , FinEvent , FeeCode , SeqNo, FeeCodeDesc , FeeOrder ,FeeToFinance, AllowWaiver, WaiverPerc,CalFeeAmount, FeeAmount, WaiverAmount, PaidAmount, CalFeeModify, FeeMethod, ScheduleTerms) ");
+		insertSql.append(
+				" VALUES (:FinReference , :SchDate , :FinEvent, :FeeCode , :SeqNo, :FeeCodeDesc , :FeeOrder ,:FeeToFinance, :AllowWaiver, :WaiverPerc,:CalFeeAmount, :FeeAmount, :WaiverAmount, :PaidAmount, :CalFeeModify, :FeeMethod, :ScheduleTerms) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(chargeList.toArray());
@@ -141,17 +145,17 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 	 * Method for saving Fee charge Details list
 	 */
 	@Override
-	public void deleteChargesBatch(String finReference,String finEvent, boolean isWIF, String tableType) {
+	public void deleteChargesBatch(String finReference, String finEvent, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		FeeRule feeRule = new FeeRule();
 		feeRule.setFinReference(finReference);
 		feeRule.setFinEvent(finEvent);
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		if(isWIF){
-			deleteSql.append(" DELETE FROM WIFFinFeeCharges");	
-		}else{
+		if (isWIF) {
+			deleteSql.append(" DELETE FROM WIFFinFeeCharges");
+		} else {
 			deleteSql.append(" DELETE FROM FinFeeCharges");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
@@ -162,56 +166,59 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Fetching Fee charge Details list based upon Reference
 	 */
 	@Override
-    public List<FeeRule> getFeeChargesByFinRef(String finReference, String finEvent, boolean isWIF, String tableType) {
+	public List<FeeRule> getFeeChargesByFinRef(String finReference, String finEvent, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		FeeRule feeRule = new FeeRule();
 		feeRule.setFinReference(finReference);
 		feeRule.setFinEvent(finEvent);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference , SchDate , FinEvent, FeeCode , SeqNo, FeeCodeDesc , FeeOrder , FeeToFinance, " );
-		selectSql.append(" AllowWaiver, WaiverPerc, CalFeeAmount, FeeAmount, WaiverAmount, PaidAmount, CalFeeModify,FeeMethod, ScheduleTerms " );
-		if(isWIF){
+		selectSql.append(
+				" SELECT FinReference , SchDate , FinEvent, FeeCode , SeqNo, FeeCodeDesc , FeeOrder , FeeToFinance, ");
+		selectSql.append(
+				" AllowWaiver, WaiverPerc, CalFeeAmount, FeeAmount, WaiverAmount, PaidAmount, CalFeeModify,FeeMethod, ScheduleTerms ");
+		if (isWIF) {
 			selectSql.append(" FROM WIFFinFeeCharges");
-		}else {
-			
-			if(!"_VIEW".equalsIgnoreCase(tableType) && !"_AVIEW".equalsIgnoreCase(tableType)){
-				selectSql.append("	, ExcludeFromRpt ");  
+		} else {
+
+			if (!"_VIEW".equalsIgnoreCase(tableType) && !"_AVIEW".equalsIgnoreCase(tableType)) {
+				selectSql.append("	, ExcludeFromRpt ");
 			}
 			selectSql.append(" FROM FinFeeCharges");
 		}
-		
+
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" WHERE  FinReference=:FinReference ");
-		if(StringUtils.isNotEmpty(finEvent)){
+		if (StringUtils.isNotEmpty(finEvent)) {
 			selectSql.append(" AND FinEvent=:FinEvent ");
 		}
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
 		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
+	}
 
 	@Override
 	public FeeRule getInsFee(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		FeeRule feeRule = new FeeRule();
 		feeRule.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT SUM(FeeAmount) FeeAmount, SUM(WaiverAmount) WaiverAmount, SUM(PaidAmount) PaidAmount " );
+		selectSql.append(
+				" SELECT SUM(FeeAmount) FeeAmount, SUM(WaiverAmount) WaiverAmount, SUM(PaidAmount) PaidAmount ");
 		selectSql.append(" FROM FinFeeCharges");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FinReference=:FinReference AND FeeCode IN ('" );
+		selectSql.append(" WHERE FinReference=:FinReference AND FeeCode IN ('");
 		selectSql.append(RuleConstants.TAKAFUL_FEE);
 		selectSql.append("', '");
 		selectSql.append(RuleConstants.AUTOINS_FEE);
@@ -220,14 +227,14 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
 		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
-		
+
 		try {
 			feeRule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			feeRule = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return feeRule;
 	}

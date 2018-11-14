@@ -49,11 +49,18 @@ import com.pennant.backend.model.feetype.FeeType;
 public interface FeeTypeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FeeType getFeeTypeById(long id);
+
 	FeeType getApprovedFeeTypeById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	long getFinFeeTypeIdByFeeType(String feeTypeCode);
+
 	String getTaxCompByCode(String feeTypeCode);
 }

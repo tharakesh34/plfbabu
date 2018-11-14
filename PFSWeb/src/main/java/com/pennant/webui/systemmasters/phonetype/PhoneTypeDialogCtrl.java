@@ -76,33 +76,31 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/PhoneType/phoneTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/PhoneType/phoneTypeDialog.zul file.
  */
 public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	private static final long serialVersionUID = -5966260372580930309L;
 	private static final Logger logger = Logger.getLogger(PhoneTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_PhoneTypeDialog; 		
-	protected Textbox 	phoneTypeCode; 					
-	protected Textbox 	phoneTypeDesc; 		
-	protected Combobox  phoneTypeRegex;
-	protected Intbox 	phoneTypePriority; 				
-	protected Checkbox 	phoneTypeIsActive; 	
-	protected Row		row_PhoneTypePriority;
+	protected Window window_PhoneTypeDialog;
+	protected Textbox phoneTypeCode;
+	protected Textbox phoneTypeDesc;
+	protected Combobox phoneTypeRegex;
+	protected Intbox phoneTypePriority;
+	protected Checkbox phoneTypeIsActive;
+	protected Row row_PhoneTypePriority;
 
 	// not autoWired variables
-	private 		  PhoneType 		phoneType; 			// over handed per parameter
-	private transient PhoneTypeListCtrl phoneTypeListCtrl; 	// over handed per
+	private PhoneType phoneType; // over handed per parameter
+	private transient PhoneTypeListCtrl phoneTypeListCtrl; // over handed per
 	// parameter
 
-	private transient boolean 	validationOn;
-	
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
 	private transient PhoneTypeService phoneTypeService;
 
@@ -121,9 +119,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected PhoneType object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected PhoneType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -148,15 +145,12 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 				setPhoneType(null);
 			}
 
-			doLoadWorkFlow(this.phoneType.isWorkflow(),
-					this.phoneType.getWorkflowId(),
-					this.phoneType.getNextTaskId());
+			doLoadWorkFlow(this.phoneType.isWorkflow(), this.phoneType.getWorkflowId(), this.phoneType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"PhoneTypeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "PhoneTypeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -166,8 +160,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 			// or
 			// delete phoneType here.
 			if (arguments.containsKey("phoneTypeListCtrl")) {
-				setPhoneTypeListCtrl((PhoneTypeListCtrl) arguments
-						.get("phoneTypeListCtrl"));
+				setPhoneTypeListCtrl((PhoneTypeListCtrl) arguments.get("phoneTypeListCtrl"));
 			} else {
 				setPhoneTypeListCtrl(null);
 			}
@@ -202,8 +195,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -309,7 +301,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		logger.debug("Entering");
 		this.phoneTypeCode.setValue(aPhoneType.getPhoneTypeCode());
 		this.phoneTypeDesc.setValue(aPhoneType.getPhoneTypeDesc());
-		fillComboBox(this.phoneTypeRegex, aPhoneType.getPhoneTypeRegex(), PennantStaticListUtil.getPhoneTypeRegex(), "");
+		fillComboBox(this.phoneTypeRegex, aPhoneType.getPhoneTypeRegex(), PennantStaticListUtil.getPhoneTypeRegex(),
+				"");
 		if (ImplementationConstants.ALLOW_PHONETYPE_PRIORITY) {
 			this.phoneTypePriority.setValue(aPhoneType.getPhoneTypePriority());
 			this.row_PhoneTypePriority.setVisible(true);
@@ -318,8 +311,9 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		}
 		this.phoneTypeIsActive.setChecked(aPhoneType.isPhoneTypeIsActive());
 		this.recordStatus.setValue(aPhoneType.getRecordStatus());
-		
-		if(aPhoneType.isNew() || (aPhoneType.getRecordType() != null ? aPhoneType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aPhoneType.isNew() || (aPhoneType.getRecordType() != null ? aPhoneType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.phoneTypeIsActive.setChecked(true);
 			this.phoneTypeIsActive.setDisabled(true);
 		}
@@ -338,8 +332,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aPhoneType.setPhoneTypeCode(this.phoneTypeCode.getValue()
-					.toUpperCase());
+			aPhoneType.setPhoneTypeCode(this.phoneTypeCode.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -349,8 +342,11 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 			wve.add(we);
 		}
 		try {
-			if (this.phoneTypeRegex.getSelectedItem()==null || StringUtils.trimToEmpty(this.phoneTypeRegex.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(this.phoneTypeRegex,Labels.getLabel("STATIC_INVALID",new String[]{Labels.getLabel("label_PhoneTypeDialog_PhoneTypeRegex.value")}));
+			if (this.phoneTypeRegex.getSelectedItem() == null
+					|| StringUtils.trimToEmpty(this.phoneTypeRegex.getSelectedItem().getValue().toString())
+							.equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.phoneTypeRegex, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_PhoneTypeDialog_PhoneTypeRegex.value") }));
 			}
 			aPhoneType.setPhoneTypeRegex(this.phoneTypeRegex.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
@@ -389,8 +385,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPhoneType
 	 * @throws Exception
@@ -439,15 +434,19 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.phoneTypeCode.isReadonly()){
-			this.phoneTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypeCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.phoneTypeCode.isReadonly()) {
+			this.phoneTypeCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.phoneTypeDesc.isReadonly()){
-			this.phoneTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.phoneTypeDesc.isReadonly()) {
+			this.phoneTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.phoneTypePriority.isReadonly()) {
-			this.phoneTypePriority.setConstraint(new PTNumberValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypePriority.value"), true));
+			this.phoneTypePriority.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_PhoneTypeDialog_PhoneTypePriority.value"), true));
 		}
 		logger.debug("Leaving");
 	}
@@ -503,9 +502,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-		Labels.getLabel("label_PhoneTypeDialog_PhoneTypeCode.value")+" : "+aPhoneType.getPhoneTypeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_PhoneTypeDialog_PhoneTypeCode.value") + " : " + aPhoneType.getPhoneTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aPhoneType.getRecordType())) {
 				aPhoneType.setVersion(aPhoneType.getVersion() + 1);
@@ -523,7 +521,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 					refreshList();
 					closeDialog();
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -735,7 +733,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aPhoneType,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aPhoneType, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -794,8 +792,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_PhoneTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -826,7 +824,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	}
 
 	// WorkFlow Details
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -838,10 +836,9 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 */
 	private AuditHeader getAuditHeader(PhoneType aPhoneType, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aPhoneType.getBefImage(), aPhoneType);
-		return new AuditHeader(String.valueOf(aPhoneType.getId()), null, null,
-				null, auditDetail, aPhoneType.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPhoneType.getBefImage(), aPhoneType);
+		return new AuditHeader(String.valueOf(aPhoneType.getId()), null, null, null, auditDetail,
+				aPhoneType.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -856,7 +853,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_PhoneTypeDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_PhoneTypeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -887,7 +884,6 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		return String.valueOf(this.phoneType.getPhoneTypeCode());
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -895,6 +891,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -902,6 +899,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	public PhoneType getPhoneType() {
 		return this.phoneType;
 	}
+
 	public void setPhoneType(PhoneType phoneType) {
 		this.phoneType = phoneType;
 	}
@@ -909,6 +907,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	public void setPhoneTypeService(PhoneTypeService phoneTypeService) {
 		this.phoneTypeService = phoneTypeService;
 	}
+
 	public PhoneTypeService getPhoneTypeService() {
 		return this.phoneTypeService;
 	}
@@ -916,6 +915,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	public void setPhoneTypeListCtrl(PhoneTypeListCtrl phoneTypeListCtrl) {
 		this.phoneTypeListCtrl = phoneTypeListCtrl;
 	}
+
 	public PhoneTypeListCtrl getPhoneTypeListCtrl() {
 		return this.phoneTypeListCtrl;
 	}

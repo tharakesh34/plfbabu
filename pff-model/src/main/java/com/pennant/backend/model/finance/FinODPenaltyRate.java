@@ -34,7 +34,7 @@ public class FinODPenaltyRate implements Entity {
 	@XmlElement(name = "odMaxWaiverPerc")
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private long logKey = 0;
-	
+
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinODPenaltyRate validateFinODPenaltyRate = this;
@@ -61,7 +61,7 @@ public class FinODPenaltyRate implements Entity {
 	public void setId(long id) {
 		this.logKey = id;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

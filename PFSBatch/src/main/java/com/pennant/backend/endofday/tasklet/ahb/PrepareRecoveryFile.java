@@ -74,11 +74,11 @@ import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
 
 public class PrepareRecoveryFile implements Tasklet {
 
-	private static Logger				logger		= Logger.getLogger(PrepareRecoveryFile.class);
+	private static Logger logger = Logger.getLogger(PrepareRecoveryFile.class);
 
-	private PaymentRecoveryHeaderDAO	paymentRecoveryHeaderDAO;
-	private DataSource					dataSource;
-	String								logRefernce	= "";
+	private PaymentRecoveryHeaderDAO paymentRecoveryHeaderDAO;
+	private DataSource dataSource;
+	String logRefernce = "";
 
 	public PrepareRecoveryFile() {
 
@@ -101,9 +101,9 @@ public class PrepareRecoveryFile implements Tasklet {
 			sqlStatement = connection.prepareStatement(getCountQuery());
 			sqlStatement.setString(1, batchRef);
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
@@ -133,7 +133,8 @@ public class PrepareRecoveryFile implements Tasklet {
 
 			String rpyMethod = ImplementationConstants.REPAY_HIERARCHY_METHOD;
 
-			if (rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FIPCS) || rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FPICS)) {
+			if (rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FIPCS)
+					|| rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FPICS)) {
 
 				sqlStatement = connection.prepareStatement(prepareChargesQuery());
 				sqlStatement.setString(1, batchRef);
@@ -206,7 +207,7 @@ public class PrepareRecoveryFile implements Tasklet {
 		addField(builder, resultSet.getString("CustomerReference"));
 		addField(builder, resultSet.getString("DebitCurrency"));
 		addField(builder, resultSet.getString("CreditCurrency"));
-		
+
 		int code = CurrencyUtil.getFormat(resultSet.getString("DebitCurrency"));
 		String amount = PennantApplicationUtil.formateAmount(resultSet.getBigDecimal("PaymentAmount"), code).toString();
 		addField(builder, amount);
@@ -284,7 +285,8 @@ public class PrepareRecoveryFile implements Tasklet {
 	 * @param accNumber
 	 * @param list
 	 */
-	public void addEntryRelatedToAccount(List<PaymentRecoveryDetail> groupedList, String accNumber, List<PaymentRecoveryDetail> list) {
+	public void addEntryRelatedToAccount(List<PaymentRecoveryDetail> groupedList, String accNumber,
+			List<PaymentRecoveryDetail> list) {
 		logger.debug(" Entering ");
 		for (PaymentRecoveryDetail paymentRecoveryDetail : list) {
 			if (paymentRecoveryDetail.getPrimaryDebitAccount().equals(accNumber)) {

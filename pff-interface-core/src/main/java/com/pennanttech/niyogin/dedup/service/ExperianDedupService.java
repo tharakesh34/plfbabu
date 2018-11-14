@@ -32,25 +32,25 @@ import com.pennanttech.pff.external.ExternalDedup;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class ExperianDedupService extends NiyoginService implements ExternalDedup {
-	private static final Logger	logger				= Logger.getLogger(ExperianDedupService.class);
+	private static final Logger logger = Logger.getLogger(ExperianDedupService.class);
 
-	private final String		extConfigFileName	= "experianDedup.properties";
-	private String				serviceUrl;
+	private final String extConfigFileName = "experianDedup.properties";
+	private String serviceUrl;
 
-	private String				APPLICANT			= "A";
-	private String				COAPPLICANT			= "C";
+	private String APPLICANT = "A";
+	private String COAPPLICANT = "C";
 
 	//Experian Dedup
-	public static final String	REQ_SEND			= "REQSENDEXPDUDP";
-	public static final String	STATUSCODE			= "STATUSEXPDUDP";
-	public static final String	RSN_CODE			= "REASONEXPDUDP";
-	public static final String	REMARKS				= "REMARKSEXPDUDP";
+	public static final String REQ_SEND = "REQSENDEXPDUDP";
+	public static final String STATUSCODE = "STATUSEXPDUDP";
+	public static final String RSN_CODE = "REASONEXPDUDP";
+	public static final String REMARKS = "REMARKSEXPDUDP";
 
 	//Form Fields
-	public static final String	MATCH				= "MATCH";
-	public static final String	FORM_FLDS_FACEBOOK	= "FBID";
-	public static final String	FORM_FLDS_LINKEDIN	= "LINKEDID";
-	public static final String	FORM_FLDS_TWITTER	= "TWITTERID";
+	public static final String MATCH = "MATCH";
+	public static final String FORM_FLDS_FACEBOOK = "FBID";
+	public static final String FORM_FLDS_LINKEDIN = "LINKEDID";
+	public static final String FORM_FLDS_TWITTER = "TWITTERID";
 
 	/**
 	 * Method for check the Dedup details of the Customer and Co_Applicants and set the response details to
@@ -93,7 +93,7 @@ public class ExperianDedupService extends NiyoginService implements ExternalDedu
 		//prepare request object
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> extendedMap = null;
-		if(financeDetail.getExtendedFieldRender() != null) {
+		if (financeDetail.getExtendedFieldRender() != null) {
 			extendedMap = getExtendedMapValues(financeDetail);
 		}
 		Map<String, Object> appplicationdata = new HashMap<>();

@@ -12,12 +12,12 @@ import javax.xml.bind.annotation.XmlType;
 public class HoldReason {
 
 	@XmlElement(name = "code")
-	private String	code;
+	private String code;
 
 	@XmlElement(name = "description")
-	private String	description;
+	private String description;
 
-	private String	holdCatageory;
+	private String holdCatageory;
 
 	public String getDescription() {
 		return description;

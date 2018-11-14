@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface NPABucketConfigurationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	NPABucketConfiguration getNPABucketConfiguration(long configID);
+
 	NPABucketConfiguration getApprovedNPABucketConfiguration(long configID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

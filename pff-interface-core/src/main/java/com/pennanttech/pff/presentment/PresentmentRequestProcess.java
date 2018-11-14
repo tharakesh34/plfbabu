@@ -1,6 +1,5 @@
 package com.pennanttech.pff.presentment;
 
-
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,17 +25,17 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.InterfaceConstants.Status;
 
-
 public class PresentmentRequestProcess extends DatabaseDataEngine {
 
 	private List<Long> idList;
 	private long presentmentId;
 	private boolean isError;
-	private long							processedCount	= 0;
-	protected final static Logger			logger	= LoggerFactory.getLogger(PresentmentRequestProcess.class.getClass());
-	protected NamedParameterJdbcTemplate	parameterJdbcTemplate;
+	private long processedCount = 0;
+	protected final static Logger logger = LoggerFactory.getLogger(PresentmentRequestProcess.class.getClass());
+	protected NamedParameterJdbcTemplate parameterJdbcTemplate;
 
-	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList, long presentmentId, boolean isError) {
+	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList,
+			long presentmentId, boolean isError) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.idList = idList;
 		this.presentmentId = presentmentId;
@@ -63,7 +62,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 				boolean isBatchFail = false;
 				try {
 					clearTables();
-					
+
 					while (rs.next()) {
 						processedCount++;
 						try {
@@ -80,7 +79,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 					logger.error("Exception :", e);
 					isBatchFail = true;
 				} finally {
-					
+
 					if (!isBatchFail) {
 						try {
 							prepareRequestFile();
@@ -89,7 +88,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 							isBatchFail = true;
 						}
 					}
-					
+
 					if (isBatchFail) {
 						clearTables();
 					} else {
@@ -132,7 +131,8 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-		sql.append(" T2.FINTYPE, T2.CUSTID ,T5.CustCIF, T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(
+				" T2.FINTYPE, T2.CUSTID ,T5.CustCIF, T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T9.FINDIVISION ENTITYCODE, T10.CCYMINORCCYUNITS FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
@@ -147,7 +147,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		sql.append(" WHERE T1.ID IN(:IdList) AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
 		return sql;
 	}
-	
+
 	private void save(MapSqlParameterSource map) {
 		StringBuilder sql = new StringBuilder("insert into PDC_CONSL_EMI_DTL_TEMP");
 		sql.append(" (PR_KEY, BR_CODE, AGREEMENTNO, MICR_CODE, ACC_TYPE, LEDGER_FOLIO, FINWARE_ACNO,");
@@ -195,12 +195,12 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 			map.addValue("BFL_REF", rs.getString("BRANCHSWIFTBRNCDE"));
 		}
 		map.addValue("BATCHID", rs.getString("PresentmentRef"));
-		
+
 		//Presentment amount convertion using currency minor units..
 		BigDecimal presentAmt = rs.getBigDecimal("PRESENTMENTAMT");
 		int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
 		BigDecimal checqueAmt = presentAmt.divide(new BigDecimal(ccyMinorUnits));
-		
+
 		map.addValue("CHEQUEAMOUNT", checqueAmt);
 		map.addValue("PRESENTATIONDATE", rs.getDate("PRESENTMENTDATE"));
 		map.addValue("RESUB_FLAG", Status.N.name());
@@ -238,7 +238,8 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append( " UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
+		sql.append(
+				" UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -254,7 +255,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void updatePresentmentDetails(List<Long> idList, String status) {
 		logger.debug(Literal.ENTERING);
 
@@ -262,7 +263,8 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID IN(:IDList) AND EXCLUDEREASON = :EXCLUDEREASON ");
+		sql.append(
+				" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID IN(:IDList) AND EXCLUDEREASON = :EXCLUDEREASON ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -291,10 +293,10 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 	private void copyDataFromTempToMainTables() {
 		logger.debug(Literal.ENTERING);
 
-		parameterJdbcTemplate.update("INSERT INTO PDC_CONSL_EMI_DTL SELECT * FROM PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
+		parameterJdbcTemplate.update("INSERT INTO PDC_CONSL_EMI_DTL SELECT * FROM PDC_CONSL_EMI_DTL_TEMP",
+				new MapSqlParameterSource());
 
 		logger.debug(Literal.LEAVING);
 	}
 
 }
-

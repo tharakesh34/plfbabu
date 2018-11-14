@@ -84,28 +84,27 @@ public class VehicleModel extends AbstractWorkflowEntity implements Entity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public long getId() {
 		return vehicleModelId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.vehicleModelId = id;
 	}
-	
+
 	public long getVehicleModelId() {
 		return vehicleModelId;
 	}
+
 	public void setVehicleModelId(long vehicleModelId) {
 		this.vehicleModelId = vehicleModelId;
 	}
-	
-	
-		
-	
+
 	public String getVehicleModelDesc() {
 		return vehicleModelDesc;
 	}
+
 	public void setVehicleModelDesc(String vehicleModelDesc) {
 		this.vehicleModelDesc = vehicleModelDesc;
 	}
@@ -117,7 +116,7 @@ public class VehicleModel extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -126,12 +125,12 @@ public class VehicleModel extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public VehicleModel getBefImage(){
+	public VehicleModel getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(VehicleModel beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(VehicleModel beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -154,8 +153,7 @@ public class VehicleModel extends AbstractWorkflowEntity implements Entity {
 		return lovDescVehicleManufacturerName;
 	}
 
-	public void setLovDescVehicleManufacturerName(
-			String lovDescVehicleManufacturerName) {
+	public void setLovDescVehicleManufacturerName(String lovDescVehicleManufacturerName) {
 		this.lovDescVehicleManufacturerName = lovDescVehicleManufacturerName;
 	}
 }

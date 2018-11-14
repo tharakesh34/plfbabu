@@ -55,12 +55,18 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface BranchService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Branch getBranchById(String id);
+
 	Branch getApprovedBranchById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	List<Branch> getBrachDetailsByBranchCode(List<String> finBranches);
+
 	boolean getUnionTerrotory(String cpProvince);
 }

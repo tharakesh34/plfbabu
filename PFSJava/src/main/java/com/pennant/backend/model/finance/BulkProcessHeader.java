@@ -13,9 +13,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class BulkProcessHeader extends AbstractWorkflowEntity implements Entity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long bulkProcessId= Long.MIN_VALUE;
+	private long bulkProcessId = Long.MIN_VALUE;
 	private Date fromDate;
 	private Date toDate;
 	private Date reCalFromDate;
@@ -24,19 +24,18 @@ public class BulkProcessHeader extends AbstractWorkflowEntity implements Entity 
 	private String addTermAfter;
 	private BigDecimal newProcessedRate;
 	private String reCalType;
-	private String lovDescReCalType="";
-	private String bulkProcessFor; 
+	private String lovDescReCalType = "";
+	private String bulkProcessFor;
 	private String ruleType;
 	private String lovDescSqlQuery;
 	private boolean lovDescIsOlddataChanged;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private BulkProcessHeader befImage;
 	private LoggedInUser userDetails;
 
 	private List<BulkProcessDetails> bulkProcessDetailsList;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -46,161 +45,180 @@ public class BulkProcessHeader extends AbstractWorkflowEntity implements Entity 
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("BulkProcessHeader"));
 	}
-	
+
 	public BulkProcessHeader(long id) {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getBulkProcessId() {
-    	return bulkProcessId;
-    }
+		return bulkProcessId;
+	}
+
 	public void setBulkProcessId(long bulkProcessId) {
-    	this.bulkProcessId = bulkProcessId;
-    }
+		this.bulkProcessId = bulkProcessId;
+	}
+
 	public Date getFromDate() {
-    	return fromDate;
-    }
+		return fromDate;
+	}
+
 	public void setFromDate(Date fromDate) {
-    	this.fromDate = fromDate;
-    }
+		this.fromDate = fromDate;
+	}
+
 	public Date getToDate() {
-    	return toDate;
-    }
+		return toDate;
+	}
+
 	public void setToDate(Date toDate) {
-    	this.toDate = toDate;
-    }
+		this.toDate = toDate;
+	}
+
 	public BigDecimal getNewProcessedRate() {
-    	return newProcessedRate;
-    }
+		return newProcessedRate;
+	}
+
 	public void setNewProcessedRate(BigDecimal newProcessedRate) {
-    	this.newProcessedRate = newProcessedRate;
-    }
+		this.newProcessedRate = newProcessedRate;
+	}
+
 	public String getReCalType() {
-    	return reCalType;
-    }
+		return reCalType;
+	}
+
 	public void setReCalType(String reCalType) {
-    	this.reCalType = reCalType;
-    }
+		this.reCalType = reCalType;
+	}
+
 	public boolean isNewRecord() {
-    	return newRecord;
-    }
+		return newRecord;
+	}
+
 	public void setNewRecord(boolean newRecord) {
-    	this.newRecord = newRecord;
-    }
+		this.newRecord = newRecord;
+	}
+
 	public String getLovValue() {
-    	return lovValue;
-    }
+		return lovValue;
+	}
+
 	public void setLovValue(String lovValue) {
-    	this.lovValue = lovValue;
-    }
+		this.lovValue = lovValue;
+	}
+
 	public BulkProcessHeader getBefImage() {
-    	return befImage;
-    }
+		return befImage;
+	}
+
 	public void setBefImage(BulkProcessHeader befImage) {
-    	this.befImage = befImage;
-    }
+		this.befImage = befImage;
+	}
+
 	public LoggedInUser getUserDetails() {
-    	return userDetails;
-    }
+		return userDetails;
+	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
-    	this.userDetails = userDetails;
-    }
+		this.userDetails = userDetails;
+	}
+
 	public long getId() {
-	    return bulkProcessId;
-    }
+		return bulkProcessId;
+	}
 
 	public void setId(long id) {
-	    this.bulkProcessId = id;
-    }
-	
+		this.bulkProcessId = id;
+	}
+
 	public List<BulkProcessDetails> getBulkProcessDetailsList() {
-    	return bulkProcessDetailsList;
-    }
+		return bulkProcessDetailsList;
+	}
 
 	public void setBulkProcessDetailsList(List<BulkProcessDetails> lovDescBulkProcessDetails) {
-    	this.bulkProcessDetailsList = lovDescBulkProcessDetails;
-    }
+		this.bulkProcessDetailsList = lovDescBulkProcessDetails;
+	}
 
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-	    return auditDetailMap;
-    }
+		return auditDetailMap;
+	}
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-	    this.auditDetailMap = auditDetailMap;
-    }
+		this.auditDetailMap = auditDetailMap;
+	}
 
 	public String getBulkProcessFor() {
-	    return bulkProcessFor;
-    }
+		return bulkProcessFor;
+	}
 
 	public void setBulkProcessFor(String bulkProcessFor) {
-	    this.bulkProcessFor = bulkProcessFor;
-    }
+		this.bulkProcessFor = bulkProcessFor;
+	}
 
 	public Date getReCalFromDate() {
-	    return reCalFromDate;
-    }
+		return reCalFromDate;
+	}
 
 	public void setReCalFromDate(Date reCalFromDate) {
-	    this.reCalFromDate = reCalFromDate;
-    }
+		this.reCalFromDate = reCalFromDate;
+	}
 
 	public Date getReCalToDate() {
-	    return reCalToDate;
-    }
+		return reCalToDate;
+	}
 
 	public void setReCalToDate(Date reCalToDate) {
-	    this.reCalToDate = reCalToDate;
-    }
+		this.reCalToDate = reCalToDate;
+	}
 
 	public boolean isExcludeDeferement() {
-	    return excludeDeferement;
-    }
+		return excludeDeferement;
+	}
 
 	public void setExcludeDeferement(boolean excludeDeferement) {
-	    this.excludeDeferement = excludeDeferement;
-    }
+		this.excludeDeferement = excludeDeferement;
+	}
 
 	public String getAddTermAfter() {
-	    return addTermAfter;
-    }
+		return addTermAfter;
+	}
 
 	public void setAddTermAfter(String addTermAfter) {
-	    this.addTermAfter = addTermAfter;
-    }
+		this.addTermAfter = addTermAfter;
+	}
 
 	public String getRuleType() {
-	    return ruleType;
-    }
+		return ruleType;
+	}
 
 	public void setRuleType(String ruleType) {
-	    this.ruleType = ruleType;
-    }
+		this.ruleType = ruleType;
+	}
 
 	public String getLovDescSqlQuery() {
-	    return lovDescSqlQuery;
-    }
+		return lovDescSqlQuery;
+	}
 
 	public void setLovDescSqlQuery(String lovDescSqlQuery) {
-	    this.lovDescSqlQuery = lovDescSqlQuery;
-    }
+		this.lovDescSqlQuery = lovDescSqlQuery;
+	}
 
 	public boolean isLovDescIsOlddataChanged() {
-    	return lovDescIsOlddataChanged;
-    }
+		return lovDescIsOlddataChanged;
+	}
 
 	public void setLovDescIsOlddataChanged(boolean lovDescIsOlddataChanged) {
-    	this.lovDescIsOlddataChanged = lovDescIsOlddataChanged;
-    }
+		this.lovDescIsOlddataChanged = lovDescIsOlddataChanged;
+	}
 
 	public String getLovDescReCalType() {
 		return lovDescReCalType;
 	}
+
 	public void setLovDescReCalType(String lovDescReCalType) {
 		this.lovDescReCalType = lovDescReCalType;
 	}

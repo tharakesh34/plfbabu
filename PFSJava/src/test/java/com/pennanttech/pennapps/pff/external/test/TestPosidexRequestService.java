@@ -11,10 +11,10 @@ import org.testng.annotations.Test;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.external.posidex.PosidexDataExtarct;
 
-public class TestPosidexRequestService  {
-	
+public class TestPosidexRequestService {
+
 	private DataSource dataSource;
-	
+
 	@BeforeTest
 	public void start() {
 		try {
@@ -28,7 +28,8 @@ public class TestPosidexRequestService  {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new PosidexDataExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
+			new PosidexDataExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate())
+					.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

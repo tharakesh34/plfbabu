@@ -80,24 +80,27 @@ public class GeneralDepartment extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return genDepartment;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.genDepartment = id;
 	}
-	
+
 	public String getGenDepartment() {
 		return genDepartment;
 	}
+
 	public void setGenDepartment(String genDepartment) {
 		this.genDepartment = genDepartment;
 	}
-	
+
 	public String getGenDeptDesc() {
 		return genDeptDesc;
 	}
+
 	public void setGenDeptDesc(String genDeptDesc) {
 		this.genDeptDesc = genDeptDesc;
 	}
@@ -105,30 +108,35 @@ public class GeneralDepartment extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public GeneralDepartment getBefImage(){
+	public GeneralDepartment getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(GeneralDepartment beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(GeneralDepartment beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
 	public boolean isGenDeptIsActive() {
 		return genDeptIsActive;
 	}

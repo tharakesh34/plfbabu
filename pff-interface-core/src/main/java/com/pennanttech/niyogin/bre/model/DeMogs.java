@@ -13,46 +13,46 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeMogs {
 	@XmlElement(name = "DATEOFINC")
-	private String	dateOfInc;
+	private String dateOfInc;
 
 	@XmlElement(name = "TYPEOFINDUSTRY")
-	private String	typeOfIndustry;
+	private String typeOfIndustry;
 
 	@XmlElement(name = "OPERATIONALOFFICEPINCODE")
-	private String	operationalOffcPincode;
+	private String operationalOffcPincode;
 
 	@XmlElement(name = "REGISTEREDOFFICEPINCODE")
-	private String	registeredOffcPincode;
+	private String registeredOffcPincode;
 
 	@XmlElement(name = "GSTIN")
-	private String	gstin;
+	private String gstin;
 
 	@XmlElement(name = "CATEGORYOFAPPLICANT")
-	private String	categoryOfApplicant;
+	private String categoryOfApplicant;
 
 	@XmlElement(name = "PANNUMBER")
-	private String	panNumber;
+	private String panNumber;
 
 	@XmlElement(name = "RESIDENCETYPEOFMDORPROPREITORORMANAGINGPARTNER")
-	private String	residenceTypeOfMDorPROPTRYorMNGNGPARTNER;
+	private String residenceTypeOfMDorPROPTRYorMNGNGPARTNER;
 
 	@XmlElement(name = "MOBILENUMBER")
-	private String	mobileNumber;
+	private String mobileNumber;
 
 	@XmlElement(name = "EMAIL")
-	private String	email;
+	private String email;
 
 	@XmlElement(name = "APPLICANTADHAAR")
-	private String	applicantAdhaar;
+	private String applicantAdhaar;
 
 	@XmlElement(name = "UDYOGADHAAR")
-	private String	udyogadhaar;
+	private String udyogadhaar;
 
 	@XmlElement(name = "YEARSATCURRENTRESIDENCEPROPORMPORMDETC")
-	private int		yrsAtCurResidencePROPorMPorMDetc;
+	private int yrsAtCurResidencePROPorMPorMDetc;
 
 	@XmlElement(name = "ZIPCODE")
-	private String	zipCode;
+	private String zipCode;
 
 	public String getDateOfInc() {
 		return dateOfInc;

@@ -73,38 +73,34 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/SalesOfficer/salesOfficerDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SalesOfficer/salesOfficerDialog.zul file.
  */
 public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	private static final long serialVersionUID = 352659757425874223L;
 	private static final Logger logger = Logger.getLogger(SalesOfficerDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window 	window_SalesOfficerDialog; 	// autoWired
-	protected Textbox 	salesOffCode; 				// autoWired
-	protected Textbox 	salesOffFName; 				// autoWired
-	protected Textbox 	salesOffMName; 				// autoWired
-	protected Textbox 	salesOffLName;			    // autoWired
-	protected Textbox 	salesOffShrtName; 			// autoWired
-	protected ExtendedCombobox 	salesOffDept; 				// autoWired
-	protected Checkbox 	salesOffIsActive; 			// autoWired
 
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_SalesOfficerDialog; // autoWired
+	protected Textbox salesOffCode; // autoWired
+	protected Textbox salesOffFName; // autoWired
+	protected Textbox salesOffMName; // autoWired
+	protected Textbox salesOffLName; // autoWired
+	protected Textbox salesOffShrtName; // autoWired
+	protected ExtendedCombobox salesOffDept; // autoWired
+	protected Checkbox salesOffIsActive; // autoWired
 
 	// not auto wired variables
-	private SalesOfficer salesOfficer; 							 // overHanded per parameter
+	private SalesOfficer salesOfficer; // overHanded per parameter
 	private transient SalesOfficerListCtrl salesOfficerListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient SalesOfficerService salesOfficerService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -121,9 +117,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SalesOfficer object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SalesOfficer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -137,7 +132,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		try {
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			if (arguments.containsKey("salesOfficer")) {
 				this.salesOfficer = (SalesOfficer) arguments.get("salesOfficer");
 				SalesOfficer befImage = new SalesOfficer();
@@ -149,14 +144,12 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 				setSalesOfficer(null);
 			}
 
-			doLoadWorkFlow(this.salesOfficer.isWorkflow(),
-					this.salesOfficer.getWorkflowId(),
+			doLoadWorkFlow(this.salesOfficer.isWorkflow(), this.salesOfficer.getWorkflowId(),
 					this.salesOfficer.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SalesOfficerDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SalesOfficerDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -165,8 +158,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 			// or
 			// delete salesOfficer here.
 			if (arguments.containsKey("salesOfficerListCtrl")) {
-				setSalesOfficerListCtrl((SalesOfficerListCtrl) arguments
-						.get("salesOfficerListCtrl"));
+				setSalesOfficerListCtrl((SalesOfficerListCtrl) arguments.get("salesOfficerListCtrl"));
 			} else {
 				setSalesOfficerListCtrl(null);
 			}
@@ -198,8 +190,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		this.salesOffDept.setModuleName("Department");
 		this.salesOffDept.setValueColumn("DeptCode");
 		this.salesOffDept.setDescColumn("DeptDesc");
-		this.salesOffDept.setValidateColumns(new String[]{"DeptCode"});
-		
+		this.salesOffDept.setValidateColumns(new String[] { "DeptCode" });
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -214,22 +206,17 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_SalesOfficerDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_SalesOfficerDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_SalesOfficerDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_SalesOfficerDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SalesOfficerDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SalesOfficerDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SalesOfficerDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SalesOfficerDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
@@ -340,8 +327,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 			this.salesOffDept.setDescription(aSalesOfficer.getLovDescSalesOffDeptName());
 		}
 		this.recordStatus.setValue(aSalesOfficer.getRecordStatus());
-		
-		if(aSalesOfficer.isNew() || (aSalesOfficer.getRecordType() != null ? aSalesOfficer.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aSalesOfficer.isNew() || (aSalesOfficer.getRecordType() != null ? aSalesOfficer.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.salesOffIsActive.setChecked(true);
 			this.salesOffIsActive.setDisabled(true);
 		}
@@ -390,8 +378,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 			wve.add(we);
 		}
 		try {
-			aSalesOfficer
-					.setSalesOffIsActive(this.salesOffIsActive.isChecked());
+			aSalesOfficer.setSalesOffIsActive(this.salesOffIsActive.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -413,14 +400,12 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSalesOfficer
 	 * @throws Exception
 	 */
-	public void doShowDialog(SalesOfficer aSalesOfficer)
-			throws Exception {
+	public void doShowDialog(SalesOfficer aSalesOfficer) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -464,28 +449,39 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.salesOffCode.isReadonly()){
-			this.salesOffCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}
-		
-		if (!this.salesOffFName.isReadonly()){
-			this.salesOffFName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffFName.value"), PennantRegularExpressions.REGEX_NAME, true));
-		}
-		
-		if (!this.salesOffMName.isReadonly()){
-			this.salesOffMName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffMName.value"), PennantRegularExpressions.REGEX_NAME, true));
+		if (!this.salesOffCode.isReadonly()) {
+			this.salesOffCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.salesOffLName.isReadonly()){
-			this.salesOffLName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffLName.value"), PennantRegularExpressions.REGEX_NAME, true));
+		if (!this.salesOffFName.isReadonly()) {
+			this.salesOffFName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffFName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 
-		if (!this.salesOffShrtName.isReadonly()){
-			this.salesOffShrtName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffShrtName.value"), PennantRegularExpressions.REGEX_NAME, true));
+		if (!this.salesOffMName.isReadonly()) {
+			this.salesOffMName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffMName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		
+
+		if (!this.salesOffLName.isReadonly()) {
+			this.salesOffLName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffLName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
+		}
+
+		if (!this.salesOffShrtName.isReadonly()) {
+			this.salesOffShrtName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffShrtName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
+		}
+
 		if (!this.salesOffDept.isReadonly()) {
-			this.salesOffDept.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), null, true,true));
+			this.salesOffDept.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -534,9 +530,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_SalesOfficerDialog_SalesOffCode.value")+" : "+aSalesOfficer.getSalesOffCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SalesOfficerDialog_SalesOffCode.value") + " : "
+				+ aSalesOfficer.getSalesOffCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSalesOfficer.getRecordType())) {
 				aSalesOfficer.setVersion(aSalesOfficer.getVersion() + 1);
@@ -578,17 +574,12 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 			this.btnCancel.setVisible(true);
 		}
 
-		this.salesOffFName
-				.setReadonly(isReadOnly("SalesOfficerDialog_salesOffFName"));
-		this.salesOffMName
-				.setReadonly(isReadOnly("SalesOfficerDialog_salesOffMName"));
-		this.salesOffLName
-				.setReadonly(isReadOnly("SalesOfficerDialog_salesOffLName"));
-		this.salesOffShrtName
-				.setReadonly(isReadOnly("SalesOfficerDialog_salesOffShrtName"));
+		this.salesOffFName.setReadonly(isReadOnly("SalesOfficerDialog_salesOffFName"));
+		this.salesOffMName.setReadonly(isReadOnly("SalesOfficerDialog_salesOffMName"));
+		this.salesOffLName.setReadonly(isReadOnly("SalesOfficerDialog_salesOffLName"));
+		this.salesOffShrtName.setReadonly(isReadOnly("SalesOfficerDialog_salesOffShrtName"));
 		this.salesOffDept.setReadonly(isReadOnly("SalesOfficerDialog_salesOffDept"));
-		this.salesOffIsActive
-				.setDisabled(isReadOnly("SalesOfficerDialog_salesOffIsActive"));
+		this.salesOffIsActive.setDisabled(isReadOnly("SalesOfficerDialog_salesOffIsActive"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -680,11 +671,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 			if (StringUtils.isBlank(aSalesOfficer.getRecordType())) {
 				aSalesOfficer.setVersion(aSalesOfficer.getVersion() + 1);
 				if (isNew) {
-					aSalesOfficer
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aSalesOfficer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aSalesOfficer
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aSalesOfficer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSalesOfficer.setNewRecord(true);
 				}
 			}
@@ -730,8 +719,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSalesOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aSalesOfficer.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSalesOfficer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSalesOfficer.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -743,8 +731,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aSalesOfficer
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aSalesOfficer.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -792,8 +779,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aSalesOfficer,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aSalesOfficer, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -828,57 +814,43 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		SalesOfficer aSalesOfficer = (SalesOfficer) auditHeader
-				.getAuditDetail().getModelData();
+		SalesOfficer aSalesOfficer = (SalesOfficer) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getSalesOfficerService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getSalesOfficerService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getSalesOfficerService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getSalesOfficerService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getSalesOfficerService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getSalesOfficerService().doApprove(auditHeader);
 
-						if (aSalesOfficer.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aSalesOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSalesOfficerService().doReject(
-								auditHeader);
-						if (aSalesOfficer.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getSalesOfficerService().doReject(auditHeader);
+						if (aSalesOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_SalesOfficerDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_SalesOfficerDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_SalesOfficerDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_SalesOfficerDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -906,7 +878,6 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		return processCompleted;
 	}
 
-
 	// WorkFlow Components
 
 	/**
@@ -916,13 +887,10 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(SalesOfficer aSalesOfficer,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSalesOfficer.getBefImage(), aSalesOfficer);
-		return new AuditHeader(aSalesOfficer.getSalesOffCode(), null, null,
-				null, auditDetail, aSalesOfficer.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(SalesOfficer aSalesOfficer, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSalesOfficer.getBefImage(), aSalesOfficer);
+		return new AuditHeader(aSalesOfficer.getSalesOffCode(), null, null, null, auditDetail,
+				aSalesOfficer.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -935,10 +903,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_SalesOfficerDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_SalesOfficerDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -996,8 +962,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		return this.salesOfficerService;
 	}
 
-	public void setSalesOfficerListCtrl(
-			SalesOfficerListCtrl salesOfficerListCtrl) {
+	public void setSalesOfficerListCtrl(SalesOfficerListCtrl salesOfficerListCtrl) {
 		this.salesOfficerListCtrl = salesOfficerListCtrl;
 	}
 
@@ -1005,8 +970,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		return this.salesOfficerListCtrl;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

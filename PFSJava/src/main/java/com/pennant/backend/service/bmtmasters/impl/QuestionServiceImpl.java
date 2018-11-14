@@ -66,36 +66,40 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class QuestionServiceImpl extends GenericService<Question> implements QuestionService {
 	private static final Logger logger = Logger.getLogger(QuestionServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
-	
+
 	private QuestionDAO questionDAO;
 
 	public QuestionServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the questionDAO
 	 */
 	public QuestionDAO getQuestionDAO() {
 		return questionDAO;
 	}
+
 	/**
-	 * @param questionDAO the questionDAO to set
+	 * @param questionDAO
+	 *            the questionDAO to set
 	 */
 	public void setQuestionDAO(QuestionDAO questionDAO) {
 		this.questionDAO = questionDAO;
@@ -108,6 +112,7 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 	public Question getQuestion() {
 		return getQuestionDAO().getQuestion();
 	}
+
 	/**
 	 * @return the question for New Record
 	 */
@@ -116,42 +121,40 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 		return getQuestionDAO().getNewQuestion();
 	}
 
-	
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table BMTQuestion/BMTQuestion_Temp 
-	 * 			by using QuestionDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using QuestionDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtBMTQuestion by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTQuestion/BMTQuestion_Temp by
+	 * using QuestionDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using QuestionDAO's update method 3) Audit the record in to AuditHeader and AdtBMTQuestion by using
+	 * auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		Question question = (Question) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (question.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (question.isNew()) {
-			question.setId(getQuestionDAO().save(question,tableType));
+			question.setId(getQuestionDAO().save(question, tableType));
 			auditHeader.getAuditDetail().setModelData(question);
 			auditHeader.setAuditReference(String.valueOf(question.getQuestionId()));
-		}else{
-			getQuestionDAO().update(question,tableType);
+		} else {
+			getQuestionDAO().update(question, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -161,27 +164,28 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table BMTQuestion by using QuestionDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtBMTQuestion by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTQuestion by using QuestionDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTQuestion by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		Question question = (Question) auditHeader.getAuditDetail().getModelData();
-		getQuestionDAO().delete(question,"");
-		
+		getQuestionDAO().delete(question, "");
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -189,25 +193,30 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 
 	/**
 	 * getQuestionById fetch the details by using QuestionDAO's getQuestionById method.
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Question
 	 */
-	
+
 	@Override
 	public Question getQuestionById(long id) {
-		return getQuestionDAO().getQuestionById(id,"_View");
+		return getQuestionDAO().getQuestionById(id, "_View");
 	}
+
 	/**
-	 * getApprovedQuestionById fetch the details by using QuestionDAO's getQuestionById method .
-	 * with parameter id and type as blank. it fetches the approved records from the BMTQuestion.
-	 * @param id (int)
+	 * getApprovedQuestionById fetch the details by using QuestionDAO's getQuestionById method . with parameter id and
+	 * type as blank. it fetches the approved records from the BMTQuestion.
+	 * 
+	 * @param id
+	 *            (int)
 	 * @return Question
 	 */
-	
+
 	public Question getApprovedQuestionById(long id) {
-		return getQuestionDAO().getQuestionById(id,"_AView");
+		return getQuestionDAO().getQuestionById(id, "_AView");
 	}
 
 	/**
@@ -274,127 +283,137 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getQuestionDAO().delete with parameters question,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtBMTQuestion by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getQuestionDAO().delete with parameters question,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTQuestion by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.debug("Entering");
-			auditHeader = businessValidation(auditHeader,"doReject");
-			if (!auditHeader.isNextProcess()) {
-				logger.debug("Leaving");
-				return auditHeader;
-			}
 
-			Question question = (Question) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getQuestionDAO().delete(question,"_Temp");
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");
-			
-			return auditHeader;
-		}
-
-		/**
-		 * businessValidation method do the following steps.
-		 * 1)	get the details from the auditHeader. 
-		 * 2)	fetch the details from the tables
-		 * 3)	Validate the Record based on the record details. 
-		 * 4) 	Validate for any business validation.
-		 * 5)	for any mismatch conditions Fetch the error details from getQuestionDAO().getErrorDetail with Error ID and language as parameters.
-		 * 6)	if any error/Warnings  then assign the to auditHeader 
-		 * @param AuditHeader (auditHeader)    
-		 * @return auditHeader
-		 */
-
-		
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
-			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
-			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-			Question question= (Question) auditDetail.getModelData();
-			
-			Question tempQuestion= null;
-			if (question.isWorkflow()){
-				tempQuestion = getQuestionDAO().getQuestionById(question.getId(), "_Temp");
-			}
-			Question befQuestion= getQuestionDAO().getQuestionById(question.getId(), "");
-			
-			Question oldQuestion= question.getBefImage();
-			
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=String.valueOf(question.getId());
-			errParm[0]=PennantJavaUtil.getLabel("label_QuestionId")+":"+valueParm[0];
-			
-			if (question.isNew()){ // for New record or new record into work flow
-				
-				if (!question.isWorkflow()){// With out Work flow only new records  
-					if (befQuestion !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-					}	
-				}else{ // with work flow
-					if (question.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befQuestion !=null || tempQuestion!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-						}
-					}else{ // if records not exists in the Main flow table
-						if (befQuestion ==null || tempQuestion!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-						}
-					}
-				}
-			}else{
-				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!question.isWorkflow()){	// With out Work flow for update and delete
-				
-					if (befQuestion ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-					}else{
-						if (oldQuestion!=null && !oldQuestion.getLastMntOn().equals(befQuestion.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
-							}
-						}
-					}
-				}else{
-				
-					if (tempQuestion==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-					
-					if (tempQuestion!=null  && oldQuestion!=null && !oldQuestion.getLastMntOn().equals(tempQuestion.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-				}
-			}
+		Question question = (Question) auditHeader.getAuditDetail().getModelData();
 
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			if("doApprove".equals(StringUtils.trimToEmpty(method)) || !question.isWorkflow()){
-				question.setBefImage(befQuestion);	
-			}
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getQuestionDAO().delete(question, "_Temp");
 
-			return auditDetail;
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getQuestionDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = nextProcess(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		Question question = (Question) auditDetail.getModelData();
+
+		Question tempQuestion = null;
+		if (question.isWorkflow()) {
+			tempQuestion = getQuestionDAO().getQuestionById(question.getId(), "_Temp");
 		}
+		Question befQuestion = getQuestionDAO().getQuestionById(question.getId(), "");
+
+		Question oldQuestion = question.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = String.valueOf(question.getId());
+		errParm[0] = PennantJavaUtil.getLabel("label_QuestionId") + ":" + valueParm[0];
+
+		if (question.isNew()) { // for New record or new record into work flow
+
+			if (!question.isWorkflow()) {// With out Work flow only new records  
+				if (befQuestion != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (question.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befQuestion != null || tempQuestion != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befQuestion == null || tempQuestion != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					}
+				}
+			}
+		} else {
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!question.isWorkflow()) { // With out Work flow for update and delete
+
+				if (befQuestion == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldQuestion != null && !oldQuestion.getLastMntOn().equals(befQuestion.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
+						}
+					}
+				}
+			} else {
+
+				if (tempQuestion == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				}
+
+				if (tempQuestion != null && oldQuestion != null
+						&& !oldQuestion.getLastMntOn().equals(tempQuestion.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !question.isWorkflow()) {
+			question.setBefImage(befQuestion);
+		}
+
+		return auditDetail;
+	}
 
 }

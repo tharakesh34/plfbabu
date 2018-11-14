@@ -17,30 +17,30 @@ public class ConsumerAddress implements Serializable {
 
 	@XmlElement(name = "ADDRESS1_HOUSE_NO")
 	private String houseNo;
-	
+
 	@XmlElement(name = "ADDRESS1_LANDMARK")
-    private String landmark;
-	
+	private String landmark;
+
 	@XmlElement(name = "ADDRESS1_CARE_OF")
-    private String careOf;
-	
+	private String careOf;
+
 	@XmlElement(name = "ADDRESS1_CITY")
-    private String city;
-	
+	private String city;
+
 	@XmlElement(name = "ADDRESS1_COUNTRY")
-    private String country;
-	
+	private String country;
+
 	@XmlElement(name = "ADDRESS1_DISTRICT")
-    private String district;
-	
+	private String district;
+
 	@XmlElement(name = "ADDRESS1_PIN")
-    private String pin;
-	
+	private String pin;
+
 	@XmlElement(name = "ADDRESS1_STATE")
-    private String state;
-	
+	private String state;
+
 	@XmlElement(name = "ADDRESS1_SUB_DISTRICT")
-    private String subDistrict;
+	private String subDistrict;
 
 	public String getHouseNo() {
 		return houseNo;

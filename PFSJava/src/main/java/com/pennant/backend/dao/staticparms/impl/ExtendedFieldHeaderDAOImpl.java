@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +70,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader> implements ExtendedFieldHeaderDAO {
 	private static Logger logger = Logger.getLogger(ExtendedFieldHeaderDAOImpl.class);
-	
+
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
 	public ExtendedFieldHeaderDAOImpl() {
@@ -79,11 +78,12 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	}
 
 	/**
-	 * Fetch the Record  Extended Field Header details by key field
+	 * Fetch the Record Extended Field Header details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ExtendedFieldHeader
 	 */
 	@Override
@@ -93,9 +93,9 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		extendedFieldHeader.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,Event," );
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,Event,");
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
 		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
 		selectSql.append(" From ExtendedFieldHeader");
@@ -104,11 +104,12 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldHeader.class);
 
-		try{
-			extendedFieldHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			extendedFieldHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			extendedFieldHeader = null;
 		}
@@ -125,10 +126,10 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		MapSqlParameterSource source = null;
 		source = new MapSqlParameterSource();
-		
+
 		source.addValue("ModuleName", moduleName.toUpperCase());
 		source.addValue("SubModuleName", subModuleName.toUpperCase());
-		 
+
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
 		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
@@ -143,7 +144,8 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			selectSql.append("AND Event = :Event ");
 		}
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldHeader.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -160,7 +162,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,
 			String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = null;
 
 		source = new MapSqlParameterSource();
@@ -187,9 +189,10 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
-	 * To Set  dataSource
+	 * To Set dataSource
+	 * 
 	 * @param dataSource
 	 */
 	public void setAuditDataSource(DataSource dataSource) {
@@ -210,37 +213,38 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 * 
 	 */
 	@Override
-	public void delete(ExtendedFieldHeader extendedFieldHeader,String type) {
+	public void delete(ExtendedFieldHeader extendedFieldHeader, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
 		StringBuilder deleteSql = new StringBuilder("Delete From ExtendedFieldHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ModuleId =:ModuleId");
-		
+
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		
-		try{
+
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method insert new Records into ExtendedFieldHeader or ExtendedFieldHeader_Temp.
-	 * it fetches the available Sequence form SeqExtendedFieldHeader by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into ExtendedFieldHeader or ExtendedFieldHeader_Temp. it fetches the available
+	 * Sequence form SeqExtendedFieldHeader by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Extended Field Header 
+	 * save Extended Field Header
 	 * 
-	 * @param Extended Field Header (extendedFieldHeader)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Extended
+	 *            Field Header (extendedFieldHeader)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -287,23 +291,24 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 * 
 	 */
 	@Override
-	public void update(ExtendedFieldHeader extendedFieldHeader,String type) {
+	public void update(ExtendedFieldHeader extendedFieldHeader, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder("Update ExtendedFieldHeader");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set  ModuleName = :ModuleName, " );
-		updateSql.append(" SubModuleName = :SubModuleName,Event = :Event, TabHeading = :TabHeading, " );
+
+		StringBuilder updateSql = new StringBuilder("Update ExtendedFieldHeader");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set  ModuleName = :ModuleName, ");
+		updateSql.append(" SubModuleName = :SubModuleName,Event = :Event, TabHeading = :TabHeading, ");
 		updateSql.append(" NumberOfColumns = :NumberOfColumns, ");
 		updateSql.append(" PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, ");
 		updateSql.append(" PreValidation = :PreValidation, PostValidation = :PostValidation, ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ModuleId =:ModuleId");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
@@ -316,9 +321,10 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Creating table structure for New Module & SubModule combination
+	 * 
 	 * @param tableName
 	 */
 	@Override
@@ -464,7 +470,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		}
 
 	}
-	
+
 	/**
 	 * Method to prepare tableName based on given module,submodule and count
 	 * 
@@ -509,46 +515,29 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		syntax.append(StringUtils.trimToEmpty(tableType));
 		return syntax.toString();
 	}
-	
-	
+
 	/**
 	 * Method for Creating table structure for New Module & SubModule combination
+	 * 
 	 * @param tableName
 	 */
 	@Override
-	public void dropTable(String module, String subModule){/*
-		logger.debug("Entering");
-
-		for (int i = 0; i < 3; i++) {
-			String tableType = "";
-			if(i == 0){
-				tableType = "_Temp";
-			}
-
-			//For SQL server
-			StringBuilder syntax = new StringBuilder();
-			syntax.append("drop table ");
-			if(i == 2){
-				syntax.append("Adt");
-			}
-			syntax.append(module);
-			syntax.append("_");
-			syntax.append(subModule);
-			syntax.append("_ED");
-			syntax.append(StringUtils.trimToEmpty(tableType));
-
-			try {
-				logger.debug("dropsql: " + syntax.toString());
-				if(i == 2){// Audit DB
-					this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString());
-				}else{
-					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
-				}
-			} catch (Exception e) {
-				logger.debug("Exception: ", e);
-			}
-
-		}
-	*/}
+	public void dropTable(String module, String subModule) {
+		/*
+		 * logger.debug("Entering");
+		 * 
+		 * for (int i = 0; i < 3; i++) { String tableType = ""; if(i == 0){ tableType = "_Temp"; }
+		 * 
+		 * //For SQL server StringBuilder syntax = new StringBuilder(); syntax.append("drop table "); if(i == 2){
+		 * syntax.append("Adt"); } syntax.append(module); syntax.append("_"); syntax.append(subModule);
+		 * syntax.append("_ED"); syntax.append(StringUtils.trimToEmpty(tableType));
+		 * 
+		 * try { logger.debug("dropsql: " + syntax.toString()); if(i == 2){// Audit DB
+		 * this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString()); }else{
+		 * this.jdbcTemplate.getJdbcOperations().update(syntax.toString()); } } catch (Exception e) {
+		 * logger.debug("Exception: ", e); }
+		 * 
+		 * }
+		 */}
 
 }

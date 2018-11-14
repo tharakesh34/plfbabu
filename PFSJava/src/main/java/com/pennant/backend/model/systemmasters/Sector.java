@@ -54,9 +54,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class Sector extends AbstractWorkflowEntity {
- 
+
 	private static final long serialVersionUID = -408619530246963653L;
-	
+
 	private String sectorCode;
 	private String sectorDesc;
 	private BigDecimal sectorLimit;
@@ -82,38 +82,43 @@ public class Sector extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return sectorCode;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.sectorCode = id;
 	}
-	
+
 	public String getSectorCode() {
 		return sectorCode;
 	}
+
 	public void setSectorCode(String sectorCode) {
 		this.sectorCode = sectorCode;
 	}
-	
+
 	public String getSectorDesc() {
 		return sectorDesc;
 	}
+
 	public void setSectorDesc(String sectorDesc) {
 		this.sectorDesc = sectorDesc;
 	}
-	
+
 	public BigDecimal getSectorLimit() {
 		return sectorLimit;
 	}
+
 	public void setSectorLimit(BigDecimal sectorLimit) {
 		this.sectorLimit = sectorLimit;
 	}
-	
+
 	public boolean isSectorIsActive() {
 		return sectorIsActive;
 	}
+
 	public void setSectorIsActive(boolean sectorIsActive) {
 		this.sectorIsActive = sectorIsActive;
 	}
@@ -121,30 +126,35 @@ public class Sector extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Sector getBefImage(){
+	public Sector getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Sector beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Sector beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

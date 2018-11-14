@@ -61,8 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>LegalPropertyTitle</b>.<br>
+ * Service implementation for methods that depends on <b>LegalPropertyTitle</b>.<br>
  */
 public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle> {
 	private static final Logger logger = Logger.getLogger(LegalPropertyTitleService.class);
@@ -96,9 +95,11 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 		LegalPropertyTitle tempPropertyTitle = null;
 
 		if (propertyTitle.isWorkflow()) {
-			tempPropertyTitle = getLegalPropertyTitleDAO().getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(), TableType.TEMP_TAB.getSuffix());
+			tempPropertyTitle = getLegalPropertyTitleDAO()
+					.getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(), TableType.TEMP_TAB.getSuffix());
 		}
-		LegalPropertyTitle befPropertyTitle = getLegalPropertyTitleDAO().getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(), TableType.MAIN_TAB.getSuffix());
+		LegalPropertyTitle befPropertyTitle = getLegalPropertyTitleDAO()
+				.getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(), TableType.MAIN_TAB.getSuffix());
 		LegalPropertyTitle oldPropertyTitleDetail = propertyTitle.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -157,8 +158,7 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 		return auditDetail;
 	}
 
-	public List<AuditDetail> getDetailsAuditData(LegalDetail legalDetail, String auditTranType,
-			String method) {
+	public List<AuditDetail> getDetailsAuditData(LegalDetail legalDetail, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -292,8 +292,7 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 		return auditDetails;
 	}
 
-	public List<AuditDetail> deleteDetails(List<AuditDetail> propertyTitles, String tableType,
-			String auditTranType) {
+	public List<AuditDetail> deleteDetails(List<AuditDetail> propertyTitles, String tableType, String auditTranType) {
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
 		LegalPropertyTitle propertyTitle = null;

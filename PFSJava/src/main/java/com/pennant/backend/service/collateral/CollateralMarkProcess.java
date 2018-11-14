@@ -25,10 +25,9 @@ public class CollateralMarkProcess {
 	public CollateralMarkProcess() {
 		//empty constructor
 	}
-	
-	private AccountInterfaceService  accountInterfaceService;
-	protected CollateralMarkDAO collateralMarkDAO;
 
+	private AccountInterfaceService accountInterfaceService;
+	protected CollateralMarkDAO collateralMarkDAO;
 
 	/**
 	 * Method for process collateral data and send Mark request to interface
@@ -39,9 +38,10 @@ public class CollateralMarkProcess {
 	public CollateralMark markCollateral(List<FinCollaterals> finCollateralDetailsList) throws InterfaceException {
 		logger.debug("Entering");
 
-		if(finCollateralDetailsList != null && !finCollateralDetailsList.isEmpty()) {
+		if (finCollateralDetailsList != null && !finCollateralDetailsList.isEmpty()) {
 
-			CollateralMark collateralMark = processCollateralData(finCollateralDetailsList, FinanceConstants.COLLATERAL_MARK);
+			CollateralMark collateralMark = processCollateralData(finCollateralDetailsList,
+					FinanceConstants.COLLATERAL_MARK);
 
 			//send Colleteral Marking request
 			CollateralMark coltralMarkReq = new CollateralMark();
@@ -50,7 +50,7 @@ public class CollateralMarkProcess {
 			CollateralMark colteralMarkRes = getAccountInterfaceService().collateralMarking(coltralMarkReq);
 
 			saveColletralDetails(collateralMark, colteralMarkRes);
-			
+
 			return colteralMarkRes;
 		}
 
@@ -67,12 +67,13 @@ public class CollateralMarkProcess {
 	public void deMarkCollateral(List<FinCollaterals> finCollateralList) throws InterfaceException {
 		logger.debug("Entering");
 
-		if(finCollateralList != null && !finCollateralList.isEmpty()) {
+		if (finCollateralList != null && !finCollateralList.isEmpty()) {
 
 			FinCollateralMark finCollateralMark = validateCollateralReq(finCollateralList);
-			
-			if(finCollateralMark != null) {
-				CollateralMark collateralMark = processCollateralData(finCollateralList, FinanceConstants.COLLATERAL_DEMARK);
+
+			if (finCollateralMark != null) {
+				CollateralMark collateralMark = processCollateralData(finCollateralList,
+						FinanceConstants.COLLATERAL_DEMARK);
 
 				//send Collateral Marking request
 				CollateralMark coltralMarkReq = new CollateralMark();
@@ -96,7 +97,7 @@ public class CollateralMarkProcess {
 	private FinCollateralMark validateCollateralReq(List<FinCollaterals> finCollateralDetailsList) {
 		logger.debug("Entering");
 
-		for(FinCollaterals finCollaterals: finCollateralDetailsList) {
+		for (FinCollaterals finCollaterals : finCollateralDetailsList) {
 			return getCollateralMarkDAO().getCollateralById(finCollaterals.getReference());
 		}
 		logger.debug("Leaving");
@@ -107,7 +108,7 @@ public class CollateralMarkProcess {
 	 * 
 	 * 
 	 * @param finCollateralDetailsList
-	 * @param markStatus 
+	 * @param markStatus
 	 * @return
 	 */
 	private CollateralMark processCollateralData(List<FinCollaterals> finCollateralDetailsList, String markStatus) {
@@ -116,26 +117,26 @@ public class CollateralMarkProcess {
 		CollateralMark collateralMark = new CollateralMark();
 
 		if (finCollateralDetailsList != null && !finCollateralDetailsList.isEmpty()) {
-			
+
 			collateralMark.setAccountDetail(null);
 			List<DepositDetail> depositList = new ArrayList<DepositDetail>();
-		
+
 			for (FinCollaterals finCollaterals : finCollateralDetailsList) {
 				DepositDetail depositDetail = new DepositDetail();
-				
+
 				depositDetail.setDepositID(finCollaterals.getReference());
 				depositDetail.setInsAmount(finCollaterals.getValue());
 				depositDetail.setBlockingDate(DateUtility.getAppDate());
-				depositDetail.setReason(StringUtils.trimToEmpty(finCollaterals.getRemarks()).length() > 65 ? 
-						finCollaterals.getRemarks().substring(0, 64) : finCollaterals.getRemarks());
+				depositDetail.setReason(StringUtils.trimToEmpty(finCollaterals.getRemarks()).length() > 65
+						? finCollaterals.getRemarks().substring(0, 64) : finCollaterals.getRemarks());
 
 				depositList.add(depositDetail);
 				collateralMark.setFinReference(finCollaterals.getFinReference());
 			}
-			
+
 			collateralMark.setDepositDetail(depositList);
 			collateralMark.setStatus(markStatus);
-			
+
 			return collateralMark;
 		}
 
@@ -152,10 +153,10 @@ public class CollateralMarkProcess {
 	private void saveColletralDetails(CollateralMark colateralMarkReq, CollateralMark colteralMarkRes) {
 		logger.debug("Enetering");
 
-		if(colateralMarkReq != null && colteralMarkRes != null) {
-			
+		if (colateralMarkReq != null && colteralMarkRes != null) {
+
 			FinCollateralMark finCollateralMark = new FinCollateralMark();
-			
+
 			finCollateralMark.setBranchCode(colateralMarkReq.getBranchCode());
 			finCollateralMark.setStatus(colateralMarkReq.getStatus());
 			finCollateralMark.setFinReference(colateralMarkReq.getFinReference());
@@ -164,16 +165,16 @@ public class CollateralMarkProcess {
 			finCollateralMark.setReturnCode(colteralMarkRes.getReturnCode());
 			finCollateralMark.setReturnText(colteralMarkRes.getReturnText());
 
-			for(DepositDetail depositDetail: colateralMarkReq.getDepositDetail()) {
+			for (DepositDetail depositDetail : colateralMarkReq.getDepositDetail()) {
 				finCollateralMark.setDepositID(depositDetail.getDepositID());
 				finCollateralMark.setInsAmount(depositDetail.getInsAmount());
 				finCollateralMark.setBlockingDate(depositDetail.getBlockingDate());
 				finCollateralMark.setReason(depositDetail.getReason());
 
-				if(StringUtils.equals(colteralMarkRes.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+				if (StringUtils.equals(colteralMarkRes.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 					finCollateralMark.setProcessed(true);
 				}
-				
+
 				// Save the Collateral Mark or DeMark request and response data
 				finCollateralMark.setId(Long.MIN_VALUE);
 				getCollateralMarkDAO().save(finCollateralMark);
@@ -184,13 +185,13 @@ public class CollateralMarkProcess {
 
 	public void deMarkCollateral(FinCollaterals finCollaterals) throws InterfaceException {
 		logger.debug("Enetering");
-		
+
 		List<FinCollaterals> finCollatList = null;
-		if(finCollaterals != null) {
+		if (finCollaterals != null) {
 			finCollatList = new ArrayList<FinCollaterals>();
 			finCollatList.add(finCollaterals);
 		}
-		
+
 		// Send Collateral De-Mark Request
 		deMarkCollateral(finCollatList);
 		logger.debug("Leaving");
@@ -198,16 +199,17 @@ public class CollateralMarkProcess {
 
 	/**
 	 * Method for fetching Collateral De-Marking status
+	 * 
 	 * @param finReference
-	 * @param markStatus 
+	 * @param markStatus
 	 * 
 	 * @return boolean
 	 */
 	public boolean getCollatDeMarkStatus(String finReference, String markStatus) {
 		logger.debug("Enetering");
 		boolean deMarkSts = false;
-		FinCollateralMark finCollatMark = getCollateralMarkDAO().getCollatDeMarkStatus(finReference,markStatus);
-		if(finCollatMark != null) {
+		FinCollateralMark finCollatMark = getCollateralMarkDAO().getCollatDeMarkStatus(finReference, markStatus);
+		if (finCollatMark != null) {
 			deMarkSts = true;
 		}
 		logger.debug("Leaving");
@@ -216,29 +218,29 @@ public class CollateralMarkProcess {
 
 	public void doCollateralDemark(List<FinCollateralMark> collatDeMarkList) throws InterfaceException {
 		logger.debug("Entering");
-		
-		if(collatDeMarkList != null && collatDeMarkList.isEmpty()) {
+
+		if (collatDeMarkList != null && collatDeMarkList.isEmpty()) {
 			FinCollaterals finCollateral = new FinCollaterals();
 			List<FinCollaterals> list = new ArrayList<FinCollaterals>();
-			
-			for(FinCollateralMark collaterals: collatDeMarkList) {
+
+			for (FinCollateralMark collaterals : collatDeMarkList) {
 				finCollateral.setReference(collaterals.getDepositID());
 				finCollateral.setValue(collaterals.getInsAmount());
-				
+
 				list.add(finCollateral);
 			}
-			
+
 			// send Collateral de mark request to middleware
 			deMarkCollateral(list);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	public List<FinCollateralMark> getCollateralList(String finReference) {
 		return getCollateralMarkDAO().getCollateralList(finReference);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

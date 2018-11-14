@@ -59,43 +59,43 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>PartnerBank table</b>.<br>
  *
  */
-public class PartnerBank extends AbstractWorkflowEntity implements Entity{
-	private static final long	serialVersionUID	= 1L;
+public class PartnerBank extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
-	private long 				partnerBankId = Long.MIN_VALUE;
-	private String				partnerBankCode;
-	private String				partnerBankName;
-	private String				bankCode;
-	private String				bankCodeName;
-	private String				bankBranchCode;
-	private String				bankBranchCodeName;
-	private String				branchMICRCode;
-	private String				branchIFSCCode;
-	private String				branchCity;
-	private String				utilityCode;
-	private String				accountNo;
-	private String				acType;
-	private String 				acTypeName;
-	private String 				fileName;
-	private boolean				alwFileDownload;
-	private int					inFavourLength;
-	private boolean				active;
-	private boolean				alwDisb;
-	private boolean				alwPayment;
-	private boolean				alwReceipt;
+	private long partnerBankId = Long.MIN_VALUE;
+	private String partnerBankCode;
+	private String partnerBankName;
+	private String bankCode;
+	private String bankCodeName;
+	private String bankBranchCode;
+	private String bankBranchCodeName;
+	private String branchMICRCode;
+	private String branchIFSCCode;
+	private String branchCity;
+	private String utilityCode;
+	private String accountNo;
+	private String acType;
+	private String acTypeName;
+	private String fileName;
+	private boolean alwFileDownload;
+	private int inFavourLength;
+	private boolean active;
+	private boolean alwDisb;
+	private boolean alwPayment;
+	private boolean alwReceipt;
 
-	private boolean				newRecord;
-	private String				lovValue;
-	private PartnerBank			befImage;
-	private LoggedInUser		userDetails;
-	private String				hostGLCode;
-	private String				profitCenterID;
-	private String				costCenterID;
-	private String              entity;
-	private String              entityDesc;
-	
-	private List<PartnerBankModes>partnerBankModesList = new ArrayList<PartnerBankModes>();
-	private List<PartnerBranchModes>partnerBranchModesList = new ArrayList<PartnerBranchModes>();
+	private boolean newRecord;
+	private String lovValue;
+	private PartnerBank befImage;
+	private LoggedInUser userDetails;
+	private String hostGLCode;
+	private String profitCenterID;
+	private String costCenterID;
+	private String entity;
+	private String entityDesc;
+
+	private List<PartnerBankModes> partnerBankModesList = new ArrayList<PartnerBankModes>();
+	private List<PartnerBranchModes> partnerBranchModesList = new ArrayList<PartnerBranchModes>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -109,7 +109,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		super();
 		this.setPartnerBankId(partnerBankId);
 	}
-	
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -119,8 +118,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		excludeFields.add("entityDesc");
 		return excludeFields;
 	}
-
-
 
 	public String getPartnerBankCode() {
 		return partnerBankCode;
@@ -276,7 +273,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		this.inFavourLength = inFavourLength;
 	}
 
-
 	public String getAcTypeName() {
 		return acTypeName;
 	}
@@ -288,14 +284,14 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	@Override
 	public void setId(long id) {
 		this.partnerBankId = id;
-		
+
 	}
 
 	@Override
 	public long getId() {
 		return partnerBankId;
 	}
-	
+
 	public long getPartnerBankId() {
 		return partnerBankId;
 	}
@@ -335,9 +331,11 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	public void setAlwReceipt(boolean alwReceipt) {
 		this.alwReceipt = alwReceipt;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
 	public String getHostGLCode() {
 		return hostGLCode;
 	}
@@ -393,7 +391,5 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
 	}
-
-
 
 }

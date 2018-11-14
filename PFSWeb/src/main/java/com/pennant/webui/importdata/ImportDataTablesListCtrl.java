@@ -27,99 +27,100 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -886667223042963669L;
 	private static final Logger logger = Logger.getLogger(ImportDataTablesListCtrl.class);
 
-	protected Window     window_ImportData;          // autowired
-	protected Listbox 	listBoxcoreBanking;          // autowired
-	protected Button     btnImportData;              // autowired
-	
+	protected Window window_ImportData; // autowired
+	protected Listbox listBoxcoreBanking; // autowired
+	protected Button btnImportData; // autowired
+
 	private DailyDownloadInterfaceService dailyDownloadInterfaceService;
 	private List<ValueLabel> tablesList = PennantStaticListUtil.getImportTablesList();
 	private String allowedDailyDownloadList = SysParamUtil.getValueAsString("DAILY_DOWNLOADS");
-	
+
 	public ImportDataTablesListCtrl() {
 		super();
 	}
-	
+
 	/**
-	 * onCreate$window_ImportData Event  
+	 * onCreate$window_ImportData Event
+	 * 
 	 * @param event
 	 */
-	public void onCreate$window_ImportData(Event event){
-		logger.debug("Entering "+event);
+	public void onCreate$window_ImportData(Event event) {
+		logger.debug("Entering " + event);
 		doFillListBoxcoreBanking();
-		logger.debug("Leaving "+event);
+		logger.debug("Leaving " + event);
 	}
 
 	/**
-	 * onClick$btnImportData Event  
+	 * onClick$btnImportData Event
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnImportData(Event event){
-		logger.debug("Entering "+event);
+	public void onClick$btnImportData(Event event) {
+		logger.debug("Entering " + event);
 		Label status;
 		boolean isExecuted = false;
-		try{
+		try {
 			Set<Listitem> selectedItems = listBoxcoreBanking.getSelectedItems();
 			List<String> tableNamesList = new ArrayList<String>();
 
-			if(selectedItems.isEmpty()){
+			if (selectedItems.isEmpty()) {
 				MessageUtil.showError(Labels.getLabel("ImportDataList_NoEmpty"));
 				return;
 			}
-			
-			for(Listitem selectedItem : selectedItems){
-				tableNamesList.add(((Listcell)selectedItem.getFirstChild()).getId());
+
+			for (Listitem selectedItem : selectedItems) {
+				tableNamesList.add(((Listcell) selectedItem.getFirstChild()).getId());
 			}
 
-			for(String tableName : tableNamesList){
-				status = (Label)this.listBoxcoreBanking.getFellowIfAny(tableName+"status");
-				if(tableName.equals(PennantConstants.DAILYDOWNLOAD_CURRENCY)){
+			for (String tableName : tableNamesList) {
+				status = (Label) this.listBoxcoreBanking.getFellowIfAny(tableName + "status");
+				if (tableName.equals(PennantConstants.DAILYDOWNLOAD_CURRENCY)) {
 					isExecuted = getDailyDownloadInterfaceService().processCurrencyDetails();
-				}else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_RELATIONSHIPOFFICER)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_RELATIONSHIPOFFICER)) {
 					isExecuted = getDailyDownloadInterfaceService().processRelationshipOfficerDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTTYPE)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTTYPE)) {
 					isExecuted = getDailyDownloadInterfaceService().processCustomerTypeDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_DEPARMENT)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_DEPARMENT)) {
 					isExecuted = getDailyDownloadInterfaceService().processDepartmentDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTGROUP)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTGROUP)) {
 					isExecuted = getDailyDownloadInterfaceService().processCustomerGroupDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_ACCOUNTTYPE)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_ACCOUNTTYPE)) {
 					isExecuted = getDailyDownloadInterfaceService().processAccountTypeDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTRATING)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTRATING)) {
 					isExecuted = getDailyDownloadInterfaceService().processCustomerRatingDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_ABUSERS)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_ABUSERS)) {
 					isExecuted = getDailyDownloadInterfaceService().processAbuserDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTOMERS)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTOMERS)) {
 					isExecuted = getDailyDownloadInterfaceService().processCustomerDetails();
-				}else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_COUNTRY)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_COUNTRY)) {
 					isExecuted = getDailyDownloadInterfaceService().processCountryDetails();
-				}else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTSTATUSCODES)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTSTATUSCODES)) {
 					isExecuted = getDailyDownloadInterfaceService().processCustStatusCodeDetails();
-				}else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_INDUSTRY)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_INDUSTRY)) {
 					isExecuted = getDailyDownloadInterfaceService().processIndustryDetails();
-				}else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_BRANCH)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_BRANCH)) {
 					isExecuted = getDailyDownloadInterfaceService().processBranchDetails();
-				}else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_SYSINTACCOUNTDEF)){
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_SYSINTACCOUNTDEF)) {
 					isExecuted = getDailyDownloadInterfaceService().processInternalAccDetails();
-				} else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_TRANSACTIONCODE)){
-				    isExecuted = getDailyDownloadInterfaceService().processTransactionCodeDetails();
-			    } else if(tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_IDENTITYTYPE)){
-				    isExecuted = getDailyDownloadInterfaceService().processIdentityTypeDetails();
-			    }
-				setStatus(isExecuted,status);
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_TRANSACTIONCODE)) {
+					isExecuted = getDailyDownloadInterfaceService().processTransactionCodeDetails();
+				} else if (tableName.equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_IDENTITYTYPE)) {
+					isExecuted = getDailyDownloadInterfaceService().processIdentityTypeDetails();
+				}
+				setStatus(isExecuted, status);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving "+event);
+		logger.debug("Leaving " + event);
 	}
 
-
-	public void setStatus(boolean isExecuted,Label status){
+	public void setStatus(boolean isExecuted, Label status) {
 		logger.debug("Entering ");
-		if(isExecuted){
+		if (isExecuted) {
 			status.setValue("Completed");
 			status.setStyle("color:Green");
-		}else{
+		} else {
 			status.setValue("Not Completed");
 			status.setStyle("color:Red");
 		}
@@ -127,20 +128,20 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	/**
-	 *  Method for Filling listBoxcoreBanking
+	 * Method for Filling listBoxcoreBanking
 	 */
-	public void doFillListBoxcoreBanking(){
+	public void doFillListBoxcoreBanking() {
 		logger.debug("Entering");
-		
+
 		Listitem item;
 		Listcell lc;
 		Label label;
 
-		for(int i=0; i <tablesList.size(); i++){
+		for (int i = 0; i < tablesList.size(); i++) {
 
 			item = new Listitem();
-			item.setDisabled(!allowForDownload(tablesList.get(i).getValue()));	
-			
+			item.setDisabled(!allowForDownload(tablesList.get(i).getValue()));
+
 			lc = new Listcell(tablesList.get(i).getValue());
 			lc.setId(tablesList.get(i).getValue());
 			lc.setParent(item);
@@ -151,7 +152,7 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 			label = new Label();
 			label.setValue("Not Yet Started");
 			label.setStyle("color:#80BFFF");
-			label.setId(tablesList.get(i).getValue()+"status");
+			label.setId(tablesList.get(i).getValue() + "status");
 			lc.appendChild(label);
 			lc.setParent(item);
 			item.setParent(listBoxcoreBanking);
@@ -159,25 +160,25 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Leaving");
 	}
 
-	private boolean allowForDownload(String code){
+	private boolean allowForDownload(String code) {
 		String[] dailyDownloads = allowedDailyDownloadList.split(",");
 		for (String downloadName : dailyDownloads) {
-			if(code.equalsIgnoreCase(StringUtils.trimToEmpty(downloadName))){
+			if (code.equalsIgnoreCase(StringUtils.trimToEmpty(downloadName))) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-		
+
 	public DailyDownloadInterfaceService getDailyDownloadInterfaceService() {
 		return dailyDownloadInterfaceService;
 	}
-	public void setDailyDownloadInterfaceService(
-			DailyDownloadInterfaceService dailyDownloadInterfaceService) {
+
+	public void setDailyDownloadInterfaceService(DailyDownloadInterfaceService dailyDownloadInterfaceService) {
 		this.dailyDownloadInterfaceService = dailyDownloadInterfaceService;
 	}
 

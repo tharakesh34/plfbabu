@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -65,11 +64,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements GroupStatusCodeDAO {
 	private static Logger logger = Logger.getLogger(GroupStatusCodeDAOImpl.class);
-	
+
 	public GroupStatusCodeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Group Status Codes details by key field
 	 * 
@@ -86,15 +85,17 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 		groupStatusCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT GrpStsCode, GrpStsDescription, GrpStsIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT GrpStsCode, GrpStsDescription, GrpStsIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTGrpStatusCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where GrpStsCode =:GrpStsCode") ;
-				
+		selectSql.append(" Where GrpStsCode =:GrpStsCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
-		RowMapper<GroupStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GroupStatusCode.class);
+		RowMapper<GroupStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(GroupStatusCode.class);
 
 		try {
 			groupStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -107,10 +108,8 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTGrpStatusCodes or
-	 * BMTGrpStatusCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Group Status Codes by key
-	 * GrpStsCode
+	 * This method Deletes the Record from the BMTGrpStatusCodes or BMTGrpStatusCodes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Group Status Codes by key GrpStsCode
 	 * 
 	 * @param Group
 	 *            Status Codes (groupStatusCode)
@@ -129,12 +128,12 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 		deleteSql.append("Delete From BMTGrpStatusCodes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where GrpStsCode =:GrpStsCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -146,8 +145,7 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 	}
 
 	/**
-	 * This method insert new Records into BMTGrpStatusCodes or
-	 * BMTGrpStatusCodes_Temp.
+	 * This method insert new Records into BMTGrpStatusCodes or BMTGrpStatusCodes_Temp.
 	 * 
 	 * save Group Status Codes
 	 * 
@@ -167,14 +165,15 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 
 		insertSql.append("Insert Into BMTGrpStatusCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (GrpStsCode, GrpStsDescription, GrpStsIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (GrpStsCode, GrpStsDescription, GrpStsIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:GrpStsCode, :GrpStsDescription, :GrpStsIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:GrpStsCode, :GrpStsDescription, :GrpStsIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -183,10 +182,8 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 	}
 
 	/**
-	 * This method updates the Record BMTGrpStatusCodes or
-	 * BMTGrpStatusCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Group Status Codes by key
-	 * GrpStsCode and Version
+	 * This method updates the Record BMTGrpStatusCodes or BMTGrpStatusCodes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Group Status Codes by key GrpStsCode and Version
 	 * 
 	 * @param Group
 	 *            Status Codes (groupStatusCode)
@@ -205,16 +202,17 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 
 		updateSql.append("Update BMTGrpStatusCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set GrpStsDescription = :GrpStsDescription, GrpStsIsActive = :GrpStsIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set GrpStsDescription = :GrpStsDescription, GrpStsIsActive = :GrpStsIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where GrpStsCode =:GrpStsCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -223,5 +221,5 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

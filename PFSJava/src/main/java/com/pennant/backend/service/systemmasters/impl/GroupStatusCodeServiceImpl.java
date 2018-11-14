@@ -65,8 +65,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>GroupStatusCode</b>.<br>
  * 
  */
-public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
-		implements GroupStatusCodeService {
+public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode> implements GroupStatusCodeService {
 
 	private static Logger logger = Logger.getLogger(GroupStatusCodeServiceImpl.class);
 
@@ -76,7 +75,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	public GroupStatusCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -98,15 +97,12 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTGrpStatusCodes/BMTGrpStatusCodes_Temp by using GroupStatusCodeDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using GroupStatusCodeDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtBMTGrpStatusCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTGrpStatusCodes/BMTGrpStatusCodes_Temp by using GroupStatusCodeDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using GroupStatusCodeDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -122,16 +118,14 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 			return auditHeader;
 		}
 		String tableType = "";
-		GroupStatusCode groupStatusCode = (GroupStatusCode) auditHeader
-				.getAuditDetail().getModelData();
+		GroupStatusCode groupStatusCode = (GroupStatusCode) auditHeader.getAuditDetail().getModelData();
 
 		if (groupStatusCode.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (groupStatusCode.isNew()) {
-			groupStatusCode.setId(getGroupStatusCodeDAO().save(groupStatusCode,
-					tableType));
+			groupStatusCode.setId(getGroupStatusCodeDAO().save(groupStatusCode, tableType));
 			auditHeader.getAuditDetail().setModelData(groupStatusCode);
 			auditHeader.setAuditReference(groupStatusCode.getId());
 		} else {
@@ -145,12 +139,10 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTGrpStatusCodes by using GroupStatusCodeDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTGrpStatusCodes by using GroupStatusCodeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -166,8 +158,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		GroupStatusCode groupStatusCode = (GroupStatusCode) auditHeader
-				.getAuditDetail().getModelData();
+		GroupStatusCode groupStatusCode = (GroupStatusCode) auditHeader.getAuditDetail().getModelData();
 
 		getGroupStatusCodeDAO().delete(groupStatusCode, "");
 
@@ -177,8 +168,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * getGroupStatusCodeById fetch the details by using GroupStatusCodeDAO's
-	 * getGroupStatusCodeById method.
+	 * getGroupStatusCodeById fetch the details by using GroupStatusCodeDAO's getGroupStatusCodeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -192,10 +182,8 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * getApprovedGroupStatusCodeById fetch the details by using
-	 * GroupStatusCodeDAO's getGroupStatusCodeById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * BMTGrpStatusCodes.
+	 * getApprovedGroupStatusCodeById fetch the details by using GroupStatusCodeDAO's getGroupStatusCodeById method .
+	 * with parameter id and type as blank. it fetches the approved records from the BMTGrpStatusCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -206,21 +194,15 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getGroupStatusCodeDAO().delete with parameters groupStatusCode,""
-	 * b) NEW Add new record in to main table by using
-	 * getGroupStatusCodeDAO().save with parameters groupStatusCode,"" c) EDIT
-	 * Update record in the main table by using getGroupStatusCodeDAO().update
-	 * with parameters groupStatusCode,"" 3) Delete the record from the workFlow
-	 * table by using getGroupStatusCodeDAO().delete with parameters
-	 * groupStatusCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtBMTGrpStatusCodes
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getGroupStatusCodeDAO().delete with
+	 * parameters groupStatusCode,"" b) NEW Add new record in to main table by using getGroupStatusCodeDAO().save with
+	 * parameters groupStatusCode,"" c) EDIT Update record in the main table by using getGroupStatusCodeDAO().update
+	 * with parameters groupStatusCode,"" 3) Delete the record from the workFlow table by using
+	 * getGroupStatusCodeDAO().delete with parameters groupStatusCode,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -236,11 +218,9 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 			return auditHeader;
 		}
 		GroupStatusCode groupStatusCode = new GroupStatusCode();
-		BeanUtils.copyProperties((GroupStatusCode) auditHeader.getAuditDetail()
-				.getModelData(), groupStatusCode);
+		BeanUtils.copyProperties((GroupStatusCode) auditHeader.getAuditDetail().getModelData(), groupStatusCode);
 
-		if (groupStatusCode.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (groupStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getGroupStatusCodeDAO().delete(groupStatusCode, "");
@@ -251,8 +231,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 			groupStatusCode.setNextTaskId("");
 			groupStatusCode.setWorkflowId(0);
 
-			if (groupStatusCode.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (groupStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				groupStatusCode.setRecordType("");
 				getGroupStatusCodeDAO().save(groupStatusCode, "");
@@ -276,13 +255,10 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getGroupStatusCodeDAO().delete with
-	 * parameters groupStatusCode,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getGroupStatusCodeDAO().delete with parameters groupStatusCode,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTGrpStatusCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -296,8 +272,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		GroupStatusCode groupStatusCode = (GroupStatusCode) auditHeader
-				.getAuditDetail().getModelData();
+		GroupStatusCode groupStatusCode = (GroupStatusCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getGroupStatusCodeDAO().delete(groupStatusCode, "_Temp");
@@ -308,20 +283,16 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -330,40 +301,35 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getGroupStatusCodeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getGroupStatusCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		GroupStatusCode groupStatusCode = (GroupStatusCode) auditDetail
-				.getModelData();
+		GroupStatusCode groupStatusCode = (GroupStatusCode) auditDetail.getModelData();
 		GroupStatusCode tempGroupStatusCode = null;
 
 		if (groupStatusCode.isWorkflow()) {
-			tempGroupStatusCode = getGroupStatusCodeDAO()
-					.getGroupStatusCodeById(groupStatusCode.getId(), "_Temp");
+			tempGroupStatusCode = getGroupStatusCodeDAO().getGroupStatusCodeById(groupStatusCode.getId(), "_Temp");
 		}
 
-		GroupStatusCode befGroupStatusCode = getGroupStatusCodeDAO()
-				.getGroupStatusCodeById(groupStatusCode.getId(), "");
+		GroupStatusCode befGroupStatusCode = getGroupStatusCodeDAO().getGroupStatusCodeById(groupStatusCode.getId(),
+				"");
 		GroupStatusCode oldGroupStatusCode = groupStatusCode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = groupStatusCode.getGrpStsCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_GrpStsCode") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_GrpStsCode") + ":" + valueParm[0];
 
 		if (groupStatusCode.isNew()) { // for New record or new record into work
 			// flow
@@ -371,30 +337,20 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 				// records
 				if (befGroupStatusCode != null) { // Record Already Exists in
 					// the table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (groupStatusCode.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befGroupStatusCode != null
-							|| tempGroupStatusCode != null) { // if
-						  					// records already exists
-											// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+				if (groupStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
+					if (befGroupStatusCode != null || tempGroupStatusCode != null) { // if
+						// records already exists
+						// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befGroupStatusCode == null
-							|| tempGroupStatusCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+					if (befGroupStatusCode == null || tempGroupStatusCode != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -402,55 +358,38 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode>
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!groupStatusCode.isWorkflow()) { // With out Work flow for
-													// update and delete
+														// update and delete
 
 				if (befGroupStatusCode == null) { // if records not exists in
-													// the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+														// the main table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldGroupStatusCode != null
-							&& !oldGroupStatusCode.getLastMntOn().equals(
-									befGroupStatusCode.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldGroupStatusCode.getLastMntOn().equals(befGroupStatusCode.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempGroupStatusCode == null) { // if records not exists in
 					// the Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempGroupStatusCode != null
-						&& oldGroupStatusCode != null
-						&& !oldGroupStatusCode.getLastMntOn().equals(
-								tempGroupStatusCode.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempGroupStatusCode != null && oldGroupStatusCode != null
+						&& !oldGroupStatusCode.getLastMntOn().equals(tempGroupStatusCode.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !groupStatusCode.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !groupStatusCode.isWorkflow()) {
 			auditDetail.setBefImage(befGroupStatusCode);
 		}
 		logger.debug("Leaving");

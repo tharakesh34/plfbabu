@@ -63,10 +63,10 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.service.applicationmaster.PinCodeService;
 import com.pennant.webui.applicationmaster.pincode.model.PinCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.master/PinCode/PinCodeList.zul file.
@@ -96,12 +96,12 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	protected Textbox areaName; // autowired
 	protected Textbox city; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_City;
 	protected Listbox sortOperator_AreaName;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient PinCodeService pinCodeService;
 
 	/**
@@ -129,8 +129,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	public void onCreate$window_PinCodeList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_PinCodeList, borderLayout_PinCodeList, listBoxPinCode,
-				pagingPinCodeList);
+		setPageComponents(window_PinCodeList, borderLayout_PinCodeList, listBoxPinCode, pagingPinCodeList);
 		setItemRender(new PinCodeListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -140,7 +139,8 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		registerField("pinCodeId");
 		registerField("pinCode", listheader_PinCode, SortOrder.NONE, pinCode, sortOperator_PinCode, Operators.STRING);
 		registerField("pCCityName", listheader_City, SortOrder.NONE, city, sortOperator_City, Operators.STRING);
-		registerField("areaName", listheader_AreaName, SortOrder.NONE, areaName, sortOperator_AreaName, Operators.STRING);
+		registerField("areaName", listheader_AreaName, SortOrder.NONE, areaName, sortOperator_AreaName,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -188,7 +188,6 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -199,7 +198,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 
 	public void onPinCodeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPinCode.getSelectedItem();
 		final long pinCodeId = (long) selectedItem.getAttribute("pinCodeId");
@@ -209,13 +208,13 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  PinCodeId = ");
-		whereCond.append( pincode.getPinCodeId());
+		whereCond.append(pincode.getPinCodeId());
 		whereCond.append(" AND  version=");
 		whereCond.append(pincode.getVersion());
-	
+
 		if (doCheckAuthority(pincode, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && pincode.getWorkflowId() == 0) {
@@ -225,10 +224,10 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -241,7 +240,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("pincode", pincode);
 		arg.put("pincodeListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -271,7 +270,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

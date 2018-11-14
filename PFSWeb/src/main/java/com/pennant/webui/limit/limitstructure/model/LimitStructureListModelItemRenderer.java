@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.limit.LimitStructure;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,19 +66,19 @@ public class LimitStructureListModelItemRenderer implements ListitemRenderer<Lim
 	public void render(Listitem item, LimitStructure limitStructure, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(limitStructure.getStructureCode());
+		lc = new Listcell(limitStructure.getStructureCode());
 		lc.setParent(item);
-	  	lc = new Listcell(limitStructure.getStructureName());
+		lc = new Listcell(limitStructure.getStructureName());
 		lc.setParent(item);
-				
+
 		lc = new Listcell();
-		Checkbox ckActive= new Checkbox();
+		Checkbox ckActive = new Checkbox();
 		ckActive.setChecked(limitStructure.isActive());
 		ckActive.setDisabled(true);
 		ckActive.setParent(lc);
 		lc.setParent(item);
-		
-	  	lc = new Listcell(limitStructure.getRecordStatus());
+
+		lc = new Listcell(limitStructure.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(limitStructure.getRecordType()));
 		lc.setParent(item);

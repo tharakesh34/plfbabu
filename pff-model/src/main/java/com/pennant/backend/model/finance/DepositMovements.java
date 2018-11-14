@@ -16,7 +16,7 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
-	private long movementId = Long.MIN_VALUE;	// Auto Generated Sequence
+	private long movementId = Long.MIN_VALUE; // Auto Generated Sequence
 	private long depositId = 0;
 	private String transactionType;
 	private BigDecimal reservedAmount = BigDecimal.ZERO;
@@ -29,14 +29,14 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 	private long linkedTranId = 0;
 	private boolean newRecord = false;
 	private DepositMovements befImage;
-	
+
 	private String branchCode;
 	private String branchDesc;
 	private String depositType;
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	private List<CashDenomination> denominationList = null;
 	private List<DepositCheques> depositChequesList = null;
 

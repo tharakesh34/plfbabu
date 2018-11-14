@@ -71,32 +71,30 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/PRelationCode/pRelationCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/PRelationCode/pRelationCodeDialog.zul file.
  */
 public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	private static final long serialVersionUID = -6648670330847809858L;
 	private static final Logger logger = Logger.getLogger(PRelationCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_PRelationCodeDialog; 	
+	protected Window window_PRelationCodeDialog;
 
-	protected Textbox 		pRelationCode; 					
-	protected Textbox 		pRelationDesc; 					
-	protected Checkbox 		relationCodeIsActive; 			
+	protected Textbox pRelationCode;
+	protected Textbox pRelationDesc;
+	protected Checkbox relationCodeIsActive;
 
 	// not autoWired Var's
-	private PRelationCode 					mPRelationCode; 		// over handed per parameter
-	private transient PRelationCodeListCtrl pRelationCodeListCtrl; 	// over handed per parameter
+	private PRelationCode mPRelationCode; // over handed per parameter
+	private transient PRelationCodeListCtrl pRelationCodeListCtrl; // over handed per parameter
 
-	private transient boolean 	validationOn;
-	
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
-	private transient PRelationCodeService 	pRelationCodeService;
+	private transient PRelationCodeService pRelationCodeService;
 
 	/**
 	 * default constructor.<br>
@@ -113,9 +111,8 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected PRelationCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected PRelationCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -140,14 +137,12 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 				setMPRelationCode(null);
 			}
 
-			doLoadWorkFlow(this.mPRelationCode.isWorkflow(),
-					this.mPRelationCode.getWorkflowId(),
+			doLoadWorkFlow(this.mPRelationCode.isWorkflow(), this.mPRelationCode.getWorkflowId(),
 					this.mPRelationCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"PRelationCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "PRelationCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -156,8 +151,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 			// or
 			// delete pRelationCode here.
 			if (arguments.containsKey("pRelationCodeListCtrl")) {
-				setPRelationCodeListCtrl((PRelationCodeListCtrl) arguments
-						.get("pRelationCodeListCtrl"));
+				setPRelationCodeListCtrl((PRelationCodeListCtrl) arguments.get("pRelationCodeListCtrl"));
 			} else {
 				setPRelationCodeListCtrl(null);
 			}
@@ -169,7 +163,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 			MessageUtil.showError(e);
 			this.window_PRelationCodeDialog.onClose();
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -190,8 +184,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -213,9 +206,9 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -224,9 +217,9 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -236,9 +229,9 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_PRelationCodeDialog);
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -248,9 +241,9 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -259,9 +252,9 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -301,8 +294,9 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		this.pRelationDesc.setValue(aPRelationCode.getPRelationDesc());
 		this.relationCodeIsActive.setChecked(aPRelationCode.isRelationCodeIsActive());
 		this.recordStatus.setValue(aPRelationCode.getRecordStatus());
-		
-		if(aPRelationCode.isNew() || (aPRelationCode.getRecordType() != null ? aPRelationCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aPRelationCode.isNew() || (aPRelationCode.getRecordType() != null ? aPRelationCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.relationCodeIsActive.setChecked(true);
 			this.relationCodeIsActive.setDisabled(true);
 		}
@@ -322,25 +316,25 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 
 		try {
 			aPRelationCode.setPRelationCode(this.pRelationCode.getValue().toUpperCase());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aPRelationCode.setPRelationDesc(this.pRelationDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aPRelationCode.setRelationCodeIsActive(this.relationCodeIsActive.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -354,8 +348,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPRelationCode
 	 * @throws Exception
@@ -370,13 +363,13 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 			// setFocus
 			this.pRelationCode.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.pRelationDesc.focus();
 				if (StringUtils.isNotBlank(aPRelationCode.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -405,12 +398,15 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.pRelationCode.isReadonly()){
-			this.pRelationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PRelationCodeDialog_PRelationCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.pRelationCode.isReadonly()) {
+			this.pRelationCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PRelationCodeDialog_PRelationCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.pRelationDesc.isReadonly()){
-			this.pRelationDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_PRelationCodeDialog_PRelationDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.pRelationDesc.isReadonly()) {
+			this.pRelationDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PRelationCodeDialog_PRelationDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -462,32 +458,32 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 
 		final PRelationCode aPRelationCode = new PRelationCode();
 		BeanUtils.copyProperties(getMPRelationCode(), aPRelationCode);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-		Labels.getLabel("label_PRelationCodeDialog_PRelationCode.value")+" : "+aPRelationCode.getPRelationCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_PRelationCodeDialog_PRelationCode.value") + " : "
+				+ aPRelationCode.getPRelationCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aPRelationCode.getRecordType())){
-				aPRelationCode.setVersion(aPRelationCode.getVersion()+1);
+			if (StringUtils.isBlank(aPRelationCode.getRecordType())) {
+				aPRelationCode.setVersion(aPRelationCode.getVersion() + 1);
 				aPRelationCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aPRelationCode.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(doProcess(aPRelationCode,tranType)){
+				if (doProcess(aPRelationCode, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
-			}			
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -498,26 +494,26 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getMPRelationCode().isNewRecord()){
+		if (getMPRelationCode().isNewRecord()) {
 			this.pRelationCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.pRelationCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.pRelationDesc.setReadonly(isReadOnly("PRelationCodeDialog_pRelationDesc"));
 		this.relationCodeIsActive.setDisabled(isReadOnly("PRelationCodeDialog_relationCodeIsActive"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.mPRelationCode.isNewRecord()){
+			if (this.mPRelationCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -534,12 +530,12 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		this.pRelationDesc.setReadonly(true);
 		this.relationCodeIsActive.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -580,31 +576,31 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		// Do data level validations here
 
 		isNew = aPRelationCode.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aPRelationCode.getRecordType())){
-				aPRelationCode.setVersion(aPRelationCode.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aPRelationCode.getRecordType())) {
+				aPRelationCode.setVersion(aPRelationCode.getVersion() + 1);
+				if (isNew) {
 					aPRelationCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aPRelationCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aPRelationCode.setNewRecord(true);
 				}
 			}
-		}else{
-			aPRelationCode.setVersion(aPRelationCode.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aPRelationCode.setVersion(aPRelationCode.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
-			if(doProcess(aPRelationCode,tranType)){
+			if (doProcess(aPRelationCode, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -616,22 +612,24 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aPRelationCode (PRelationCode)
+	 * @param aPRelationCode
+	 *            (PRelationCode)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PRelationCode aPRelationCode,String tranType){
+	private boolean doProcess(PRelationCode aPRelationCode, String tranType) {
 		logger.debug("Entering");
 
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aPRelationCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aPRelationCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -659,19 +657,19 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 				}
 			}
 			if (!StringUtils.isBlank(nextTaskId)) {
-				
-				nextRoleCode= getFirstTaskOwner();
+
+				nextRoleCode = getFirstTaskOwner();
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -681,93 +679,93 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 			aPRelationCode.setRoleCode(getRole());
 			aPRelationCode.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aPRelationCode, tranType);
+			auditHeader = getAuditHeader(aPRelationCode, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aPRelationCode);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aPRelationCode, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aPRelationCode, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{			
-			auditHeader =  getAuditHeader(aPRelationCode, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aPRelationCode, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
-	/**	
-	 * Get the result after processing DataBase Operations 
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		PRelationCode aPRelationCode = (PRelationCode) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
+		boolean deleteNotes = false;
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getPRelationCodeService().delete(auditHeader);
 						deleteNotes = true;
-					}else{
-						auditHeader = getPRelationCodeService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getPRelationCodeService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getPRelationCodeService().doApprove(auditHeader);
 
-						if(aPRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aPRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getPRelationCodeService().doReject(auditHeader);
 
-						if(aPRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aPRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_PRelationCodeDialog, auditHeader);
-						return processCompleted; 
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_PRelationCodeDialog, auditHeader);
+						return processCompleted;
 					}
 				}
 				auditHeader = ErrorControl.showErrorDetails(this.window_PRelationCodeDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.mPRelationCode),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.mPRelationCode), true);
 					}
 				}
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -786,30 +784,31 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 
 	/**
 	 * Get Audit Header Details
-	 * @param aPRelationCode 
+	 * 
+	 * @param aPRelationCode
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(PRelationCode aPRelationCode,String tranType) {
+	private AuditHeader getAuditHeader(PRelationCode aPRelationCode, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aPRelationCode.getBefImage(), aPRelationCode);
-		return new AuditHeader(String.valueOf(aPRelationCode.getId()), null, null,
-				null, auditDetail, aPRelationCode.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPRelationCode.getBefImage(), aPRelationCode);
+		return new AuditHeader(String.valueOf(aPRelationCode.getId()), null, null, null, auditDetail,
+				aPRelationCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
 
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_PRelationCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -818,8 +817,10 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	}
 
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -832,13 +833,12 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 */
 	private void refreshList() {
 		getPRelationCodeListCtrl().search();
-	} 
-	
+	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.mPRelationCode.getPRelationCode());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -847,6 +847,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -854,6 +855,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	public PRelationCode getMPRelationCode() {
 		return this.mPRelationCode;
 	}
+
 	public void setMPRelationCode(PRelationCode mPRelationCode) {
 		this.mPRelationCode = mPRelationCode;
 	}
@@ -861,6 +863,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	public void setPRelationCodeService(PRelationCodeService pRelationCodeService) {
 		this.pRelationCodeService = pRelationCodeService;
 	}
+
 	public PRelationCodeService getPRelationCodeService() {
 		return this.pRelationCodeService;
 	}
@@ -868,6 +871,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	public void setPRelationCodeListCtrl(PRelationCodeListCtrl pRelationCodeListCtrl) {
 		this.pRelationCodeListCtrl = pRelationCodeListCtrl;
 	}
+
 	public PRelationCodeListCtrl getPRelationCodeListCtrl() {
 		return this.pRelationCodeListCtrl;
 	}

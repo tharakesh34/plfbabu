@@ -68,66 +68,62 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implements LovFieldDetailDAO {
-     private static Logger logger = Logger.getLogger(LovFieldDetailDAOImpl.class);
-	
-	
+	private static Logger logger = Logger.getLogger(LovFieldDetailDAOImpl.class);
+
 	public LovFieldDetailDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  LOV Field Details details by key field
+	 * Fetch the Record LOV Field Details details by key field
 	 * 
-	 * @param id (int)
+	 * @param id
+	 *            (int)
 	 * 
 	 * 
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LovFieldDetail
 	 */
 	@Override
-	public LovFieldDetail getLovFieldDetailById(String fieldCode, String fieldCodeValue,String type) {
+	public LovFieldDetail getLovFieldDetailById(String fieldCode, String fieldCodeValue, String type) {
 		logger.debug("Entering");
 		LovFieldDetail lovFieldDetail = new LovFieldDetail();
 		lovFieldDetail.setFieldCode(fieldCode);
 		lovFieldDetail.setFieldCodeValue(fieldCodeValue);
-		
-		StringBuilder selectSql = new StringBuilder("Select FieldCodeId, FieldCode," );
-		selectSql.append(" FieldCodeValue, valueDesc, isActive,SystemDefault," );
-		if(type.contains("View")){
+
+		StringBuilder selectSql = new StringBuilder("Select FieldCodeId, FieldCode,");
+		selectSql.append(" FieldCodeValue, valueDesc, isActive,SystemDefault,");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescFieldCodeName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From RMTLovFieldDetail"+ StringUtils.trimToEmpty(type) );
+		selectSql.append(" From RMTLovFieldDetail" + StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FieldCode =:FieldCode AND FieldCodeValue =:FieldCodeValue ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
-		RowMapper<LovFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LovFieldDetail.class);
-		
-		try{
-			lovFieldDetail = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<LovFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LovFieldDetail.class);
+
+		try {
+			lovFieldDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			lovFieldDetail = null;
 		}
 		logger.debug("Leaving");
 		return lovFieldDetail;
 	}
-	
-	
-	
+
 	/**
-	 * This method Deletes the Record from the RMTLovFieldDetail or RMTLovFieldDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete LOV Field Details by key FieldCodeId
+	 * This method Deletes the Record from the RMTLovFieldDetail or RMTLovFieldDetail_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete LOV Field Details by key FieldCodeId
 	 * 
-	 * @param LOV Field Details (lovFieldDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param LOV
+	 *            Field Details (lovFieldDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -135,16 +131,16 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 	public void delete(LovFieldDetail lovFieldDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTLovFieldDetail");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where FieldCodeId =:FieldCodeId");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
-		          
-		try{
+
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -156,11 +152,10 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * This method insert new Records into RMTLovFieldDetail or
-	 * RMTLovFieldDetail_Temp. it fetches the available Sequence form
-	 * SeqRMTLovFieldDetail by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into RMTLovFieldDetail or RMTLovFieldDetail_Temp. it fetches the available
+	 * Sequence form SeqRMTLovFieldDetail by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save LOV Field Details
 	 * 
@@ -175,40 +170,40 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 	@Override
 	public String save(LovFieldDetail lovFieldDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
-		if (lovFieldDetail.getId()==Long.MIN_VALUE){
+
+		if (lovFieldDetail.getId() == Long.MIN_VALUE) {
 			lovFieldDetail.setId(getNextId("SeqRMTLovFieldDetail"));
-			logger.debug("get NextID:"+lovFieldDetail.getId());
+			logger.debug("get NextID:" + lovFieldDetail.getId());
 		}
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTLovFieldDetail" );
+
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTLovFieldDetail");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (FieldCodeId, FieldCode, FieldCodeValue,valueDesc, isActive,SystemDefault,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:FieldCodeId, :FieldCode, :FieldCodeValue, :valueDesc, :isActive,:SystemDefault," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FieldCodeId, :FieldCode, :FieldCodeValue, :valueDesc, :isActive,:SystemDefault,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(lovFieldDetail.getId());
 	}
-	
+
 	/**
-	 * This method updates the Record RMTLovFieldDetail or RMTLovFieldDetail_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update LOV Field Details by key FieldCodeId and Version
+	 * This method updates the Record RMTLovFieldDetail or RMTLovFieldDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update LOV Field Details by key FieldCodeId and Version
 	 * 
-	 * @param LOV Field Details (lovFieldDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param LOV
+	 *            Field Details (lovFieldDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -216,20 +211,21 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 	@Override
 	public void update(LovFieldDetail lovFieldDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update RMTLovFieldDetail");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set FieldCode = :FieldCode," );
-		updateSql.append(" FieldCodeValue =:FieldCodeValue, valueDesc =:valueDesc,isActive =:isActive , SystemDefault=:SystemDefault," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
+		updateSql.append(" Set FieldCode = :FieldCode,");
+		updateSql.append(
+				" FieldCodeValue =:FieldCodeValue, valueDesc =:valueDesc,isActive =:isActive , SystemDefault=:SystemDefault,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FieldCodeId =:FieldCodeId ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
-		logger.trace(Literal.SQL +  updateSql.toString());
+
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -239,9 +235,7 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
-	
+
 	/**
 	 * Fetch the count of system default values by key field
 	 * 
@@ -252,7 +246,7 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 	 * @return Gender
 	 */
 	@Override
-	public int getSystemDefaultCount(String fieldCode,String fieldCodeValue) {
+	public int getSystemDefaultCount(String fieldCode, String fieldCodeValue) {
 		logger.debug("Entering");
 		LovFieldDetail lovFieldDetail = new LovFieldDetail();
 		lovFieldDetail.setFieldCode(fieldCode);
@@ -262,17 +256,18 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT Count(*) FROM  RMTLovFieldDetail_View ");
-		selectSql.append(" Where FieldCode = :FieldCode  and FieldCodeValue !=:FieldCodeValue and SystemDefault = :SystemDefault");
+		selectSql.append(
+				" Where FieldCode = :FieldCode  and FieldCodeValue !=:FieldCodeValue and SystemDefault = :SystemDefault");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		int sysDftCount = 0;
 		try {
 			sysDftCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-        } catch (Exception e) {
-        	logger.warn("Exception: ", e);
-        	sysDftCount = 0;
-        }
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			sysDftCount = 0;
+		}
 		logger.debug("Leaving");
 		return sysDftCount;
 
@@ -313,5 +308,5 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 }

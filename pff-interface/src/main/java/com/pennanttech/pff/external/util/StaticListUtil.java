@@ -218,8 +218,7 @@ public class StaticListUtil {
 
 		return enqSegmentValueLabl;
 	}
-	
-	
+
 	public static ArrayList<ValueLabel> getAccountSummary() {
 
 		ArrayList<ValueLabel> accSummaryValueLabl = new ArrayList<ValueLabel>();
@@ -297,8 +296,7 @@ public class StaticListUtil {
 		return values;
 
 	}
-	
-	
+
 	public static final HashMap<String, String> getCibilOccupationCode() {
 		HashMap<String, String> occupationTypes = new HashMap<String, String>();
 		occupationTypes.put("01", "Salaried");
@@ -308,7 +306,7 @@ public class StaticListUtil {
 		return occupationTypes;
 
 	}
-	
+
 	public static final HashMap<String, String> getCibilIncomeIndicator() {
 		HashMap<String, String> incomeIndicator = new HashMap<String, String>();
 		incomeIndicator.put("G", "Gross Income");
@@ -316,7 +314,7 @@ public class StaticListUtil {
 		return incomeIndicator;
 
 	}
-	
+
 	public static final HashMap<String, String> getCibilMonthlyAnnualIncomeIndicator() {
 		HashMap<String, String> incomeIndicator = new HashMap<String, String>();
 		incomeIndicator.put("M", "Monthly");
@@ -324,7 +322,7 @@ public class StaticListUtil {
 		return incomeIndicator;
 
 	}
-	
+
 	public static final HashMap<String, String> getCibilAddrCategory() {
 		HashMap<String, String> addrCategory = new HashMap<String, String>();
 		addrCategory.put("01", "Permanent Address");
@@ -334,8 +332,7 @@ public class StaticListUtil {
 		return addrCategory;
 
 	}
-	
-	
+
 	public static final HashMap<String, String> getCibilResidenceCode() {
 		HashMap<String, String> residenceCode = new HashMap<String, String>();
 		residenceCode.put("01", "Owned");
@@ -343,7 +340,7 @@ public class StaticListUtil {
 		return residenceCode;
 
 	}
-	
+
 	public static final HashMap<String, String> getCibilIDTypes() {
 		HashMap<String, String> telephoneTypes = new HashMap<String, String>();
 		telephoneTypes.put("01", "Pan Number");
@@ -355,7 +352,7 @@ public class StaticListUtil {
 		return telephoneTypes;
 
 	}
-	
+
 	public static final HashMap<String, String> getCibilOnwerShipTypes() {
 		HashMap<String, String> ownershipTypes = new HashMap<String, String>();
 		ownershipTypes.put("1", "Individual");
@@ -365,8 +362,7 @@ public class StaticListUtil {
 		return ownershipTypes;
 
 	}
-	
-	
+
 	public static final HashMap<String, String> getCibilPaymentFreqTypes() {
 		HashMap<String, String> ownershipTypes = new HashMap<String, String>();
 		ownershipTypes.put("01", "Weekly");
@@ -376,7 +372,5 @@ public class StaticListUtil {
 		return ownershipTypes;
 
 	}
-	
-	
-	
+
 }

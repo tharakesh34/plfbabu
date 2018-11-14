@@ -73,16 +73,15 @@ import com.pennant.util.PennantAppUtil;
 public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	boolean multiselect=false;
-	private ArrayList<ValueLabel> statusTypeList = PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+	boolean multiselect = false;
+	private ArrayList<ValueLabel> statusTypeList = PennantStaticListUtil
+			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 	String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 
-	
 	public MandateListModelItemRenderer(boolean multiselect) {
 		super();
 		this.multiselect = multiselect;
 	}
-
 
 	@Override
 	public void render(Listitem item, Mandate mandate, int count) throws Exception {
@@ -92,7 +91,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 			listbox.setCheckmark(true);
 		}
 		Listcell lc;
-		
+
 		lc = new Listcell(String.valueOf(mandate.getMandateID()));
 		lc.setParent(item);
 		lc = new Listcell(mandate.getCustCIF());
@@ -107,14 +106,16 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
 		lc.setParent(item);
-		lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),CurrencyUtil.getFormat(mandate.getMandateCcy())));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+				CurrencyUtil.getFormat(mandate.getMandateCcy())));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
 		String status = PennantAppUtil.getlabelDesc(mandate.getStatus(), statusTypeList);
 		if (StringUtils.isEmpty(status)) {
-			if (StringUtils.isEmpty(mandate.getStatus()) || StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)) {
-				status=Labels.getLabel("label_Mandate_" + customMandateStatus);
+			if (StringUtils.isEmpty(mandate.getStatus())
+					|| StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)) {
+				status = Labels.getLabel("label_Mandate_" + customMandateStatus);
 			}
 		}
 		lc = new Listcell(status);
@@ -125,7 +126,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(mandate.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", mandate.getId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");

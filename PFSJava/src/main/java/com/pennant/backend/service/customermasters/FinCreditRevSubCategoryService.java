@@ -50,15 +50,23 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 
 public interface FinCreditRevSubCategoryService {
-	
+
 	FinCreditRevSubCategory getFinCreditRevSubCategory();
+
 	FinCreditRevSubCategory getNewFinCreditRevSubCategory();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinCreditRevSubCategory getFinCreditRevSubCategoryById(String id);
+
 	FinCreditRevSubCategory getApprovedFinCreditRevSubCategoryById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<AuditDetail> finCreditRevSubCategoryListValidation(List<AuditDetail> details,
-            String method, String usrLanguage);
+
+	List<AuditDetail> finCreditRevSubCategoryListValidation(List<AuditDetail> details, String method,
+			String usrLanguage);
 }

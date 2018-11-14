@@ -91,17 +91,15 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/FinanceManagement/Suspense/SusoenseDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SusoenseDialog.zul file.
  */
 public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 7798200490595650451L;
 	private static final Logger logger = Logger.getLogger(CustSuspenseDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustSuspenseDialog; // autowired
 	protected Textbox custCIF; // autowired
@@ -120,20 +118,19 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	private Customer customer; // overhanded per param
 	private transient CustSuspenseListCtrl custSuspenseListCtrl; // overhanded per param
 
-
 	private transient boolean validationOn;
-	
+
 	private String menuItemRightName = null;
 
 	// ServiceDAOs / Domain Classes
 	private CustomerService customerService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
-	
+
 	private String suspTrigger = "";
 
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private NotificationService notificationService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -149,9 +146,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Suspense object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Suspense object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -214,8 +210,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
-		if(!getCustomer().isNewRecord()) {
+
+		if (!getCustomer().isNewRecord()) {
 			this.custCIF.setSclass("");
 			this.btnSearchCustCIF.setVisible(false);
 			this.custSuspDate.setSclass("");
@@ -226,12 +222,10 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 	public void onCheck$custSuspSts(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-/*		if(isDataChanged()) {
-			this.btnSave.setVisible(true);
-		} else {
-			this.btnSave.setVisible(false);
-		}*/
+
+		/*
+		 * if(isDataChanged()) { this.btnSave.setVisible(true); } else { this.btnSave.setVisible(false); }
+		 */
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -239,7 +233,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -277,13 +271,13 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 */
 	public void doWriteBeanToComponents(Customer aCustomer) {
 		logger.debug("Entering");
-		
+
 		suspTrigger = aCustomer.getCustSuspTrigger();
-		if(!aCustomer.isNewRecord()) {
+		if (!aCustomer.isNewRecord()) {
 			this.custSuspDate.setDisabled(true);
 			this.space_custCIF.setSclass("");
 			this.space_custSuspDate.setSclass("");
-			
+
 			//this.custSuspSts.setDisabled(true);
 			//this.custSuspRemarks.setDisabled(true);
 		}
@@ -294,14 +288,14 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		this.lovDescCustDftBranch.setValue(aCustomer.getLovDescCustDftBranchName());
 		this.custSuspSts.setChecked(aCustomer.isCustSuspSts());
 		this.custSuspDate.setValue(aCustomer.getCustSuspDate());
-		if(aCustomer.getCustSuspDate() == null){
+		if (aCustomer.getCustSuspDate() == null) {
 			Date appDate = DateUtility.getAppDate();
 			this.custSuspDate.setValue(appDate);
-			this.custSuspSts.setChecked(true); 
+			this.custSuspSts.setChecked(true);
 		}
-		
+
 		String remarks = getCustomerService().getCustSuspRemarks(aCustomer.getCustID());
-		if(!StringUtils.isBlank(remarks)) {
+		if (!StringUtils.isBlank(remarks)) {
 			this.custSuspRemarks.setValue(remarks);
 		}
 		logger.debug("Leaving");
@@ -334,11 +328,11 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		}
 		try {
 			aCustomer.setCustSuspSts(this.custSuspSts.isChecked());
-			if(this.custSuspSts.isChecked()) {
+			if (this.custSuspSts.isChecked()) {
 				aCustomer.setCustSuspTrigger("M");
 			} else {
 				aCustomer.setCustSuspTrigger("");
-				if(StringUtils.isBlank(suspTrigger)) {
+				if (StringUtils.isBlank(suspTrigger)) {
 					throw new WrongValueException(this.custSuspSts, Labels.getLabel("CUSTOMER_SUSPENSE"));
 				}
 			}
@@ -348,9 +342,11 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		try {
 			aCustomer.setCustSuspDate(this.custSuspDate.getValue());
 			Date appStartDate = DateUtility.getAppDate();
-			if(DateUtility.compare(this.custSuspDate.getValue(), appStartDate) > 0) {
-				throw new WrongValueException(this.custSuspDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL", new String[]{
-						DateUtility.formatToLongDate(this.custSuspDate.getValue()), DateUtility.formatToLongDate(appStartDate)}));
+			if (DateUtility.compare(this.custSuspDate.getValue(), appStartDate) > 0) {
+				throw new WrongValueException(this.custSuspDate,
+						Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
+								new String[] { DateUtility.formatToLongDate(this.custSuspDate.getValue()),
+										DateUtility.formatToLongDate(appStartDate) }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -377,15 +373,14 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSuspHead
 	 * @throws Exception
 	 */
 	public void doShowDialog(Customer aCustomer) throws Exception {
 		logger.debug("Entering");
-		
+
 		// set Readonly mode accordingly if the object is new or not.
 		if (aCustomer.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -393,10 +388,10 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			// setFocus
 			this.custCIF.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				//doReadOnly();
 				//doEdit();
@@ -423,35 +418,34 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("CustSuspenseDialog",getRole(), menuItemRightName);
-		
+		getUserWorkspace().allocateAuthorities("CustSuspenseDialog", getRole(), menuItemRightName);
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustSuspenseDialog_btnNew"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustSuspenseDialog_btnSave"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustSuspenseDialog_btnEdit"));
 		this.btnNotes.setVisible(false);
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustSuspenseDialog_btnDelete"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getCustomer().isNewRecord()){
+		if (getCustomer().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.custCIF.setReadonly(false);
 			this.custSuspSts.setDisabled(false);
-		}else{
+		} else {
 			this.custCIF.setReadonly(true);
 		}
 
@@ -460,26 +454,26 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		this.custID.setReadonly(isReadOnly("CustSuspenseDialog_custID"));
 		this.custSuspSts.setDisabled(isReadOnly("CustSuspenseDialog_custSuspSts"));
 		this.custSuspRemarks.setReadonly(isReadOnly("CustSuspenseDialog_custSuspRemarks"));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.customer.isNewRecord()){
+			if (this.customer.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			//btnCancel.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * when the "edit" button is clicked. <br>
 	 * 
@@ -487,17 +481,17 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.btnEdit.setVisible(false);
 		this.btnSave.setVisible(false);
 		this.btnCancel.setVisible(true);
-		
+
 		this.custSuspSts.setDisabled(false);
 		this.custSuspRemarks.setDisabled(false);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCancel();
@@ -505,22 +499,23 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		this.custSuspRemarks.setDisabled(true);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
+	public void onClick$btnDelete(Event event)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void doCancel() {
 		logger.debug("Entering");
 		doWriteBeanToComponents(this.customer.getBefImage());
@@ -529,7 +524,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		this.btnEdit.setVisible(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
@@ -546,11 +541,12 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * Deletes a Customer Suspense details from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private void doDelete() throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
+	private void doDelete()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		final Customer aCustomer = new Customer();
@@ -558,9 +554,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_TargetDetailDialog_TargetCode.value")+" : "+aCustomer.getCustID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_TargetDetailDialog_TargetCode.value") + " : " + aCustomer.getCustID();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomer.getRecordType())) {
 				aCustomer.setVersion(aCustomer.getVersion() + 1);
@@ -589,7 +584,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
@@ -633,25 +629,26 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 				// Save the Customer Suspense details into Log Table
 				getCustomerService().saveCustSuspMovements(prepareSuspMovementDetail(aCustomer));
-				
+
 				refreshList();
 
 				//Customer Notification for Role Identification
-				if(StringUtils.isBlank(aCustomer.getNextTaskId())){
+				if (StringUtils.isBlank(aCustomer.getNextTaskId())) {
 					aCustomer.setNextRoleCode("");
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(aCustomer.getRoleCode(),aCustomer.getNextRoleCode(), 
-						aCustomer.getCustCIF(), " Customer Suspense ", aCustomer.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+				String msg = PennantApplicationUtil.getSavingStatus(aCustomer.getRoleCode(),
+						aCustomer.getNextRoleCode(), aCustomer.getCustCIF(), " Customer Suspense ",
+						aCustomer.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 
 				//Mail Alert Notification for User
-				if(StringUtils.isNotBlank(aCustomer.getNextTaskId()) && 
-						!StringUtils.trimToEmpty(aCustomer.getNextRoleCode()).equals(aCustomer.getRoleCode())){
+				if (StringUtils.isNotBlank(aCustomer.getNextTaskId())
+						&& !StringUtils.trimToEmpty(aCustomer.getNextRoleCode()).equals(aCustomer.getRoleCode())) {
 					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_MANUALSUSPENSE, aCustomer);
 				}
 
 				closeDialog();
-			} 
+			}
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -668,34 +665,36 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	private Customer prepareSuspMovementDetail(Customer aCustomer) {
 		logger.debug("Entering");
-		
-		if(aCustomer.isCustSuspSts()) {
+
+		if (aCustomer.isCustSuspSts()) {
 			aCustomer.setCustSuspMvtType("S");
 		} else {
 			aCustomer.setCustSuspMvtType("N");
 		}
 		aCustomer.setCustSuspAprDate(new Timestamp(System.currentTimeMillis()));
 		aCustomer.setCustSuspEffDate(new Timestamp(System.currentTimeMillis()));
-		
+
 		logger.debug("Leaving");
-		
+
 		return aCustomer;
 	}
 
 	/**
 	 * Method for Processing Finance Detail Object for Database Operation
+	 * 
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws AccountNotFoundException 
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(Customer aCustomer, String tranType) throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(Customer aCustomer, String tranType)
+			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
@@ -784,17 +783,17 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * 
 	 * 
@@ -802,32 +801,32 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
-		
+
 		Customer customer = (Customer) nCustomer;
-		if(customer != null){
+		if (customer != null) {
 			this.custID.setValue(customer.getCustID());
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
 			this.custBranch.setValue(customer.getCustDftBranch());
 			this.lovDescCustDftBranch.setValue(customer.getLovDescCustDftBranchName());
 			validateSuspendCustomer();
-		}else{
+		} else {
 			this.custCIF.setValue("");
 			this.custShrtName.setValue("");
 		}
-		
-		
+
 		logger.debug("Leaving ");
 	}
-	
+
 	private void validateSuspendCustomer() {
 
 		Customer suspendCustomer = getCustomerService().getSuspendCustomer(this.custID.getValue());
-		if(suspendCustomer != null) {
+		if (suspendCustomer != null) {
 			//this.btnSave.setVisible(false);
 			//this.btnEdit.setVisible(true);
 			doEdit();
@@ -849,14 +848,16 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 	/**
 	 * Method for Processing Workflow Method
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws AccountNotFoundException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws AccountNotFoundException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -875,14 +876,14 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						
+
 						if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							
+
 							// Remove customer from Suspense mode
 							aCustomer.setCustSuspSts(false);
 							aCustomer.setCustSuspDate(null);
 							aCustomer.setCustSuspTrigger("");
-							
+
 							// Save Customer Suspense movements
 							aCustomer.setCustSuspMvtType("N");
 							aCustomer.setCustSuspAprDate(DateUtility.getTimestamp(new Date()));
@@ -897,7 +898,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 						aCustomer.setNextRoleCode("");
 						aCustomer.setRecordType("");
 						aCustomer.setWorkflowId(0);
-						
+
 						getCustomerService().updateCustSuspenseDetails(aCustomer, "");
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
@@ -911,8 +912,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustSuspenseDialog, auditHeader);
 						return processCompleted;
 					}
@@ -943,9 +944,9 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		}
 		logger.debug("Leaving");
 		return processCompleted;
-		
+
 	}
-	
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -967,9 +968,10 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader getAuditHeader(Customer aCustomer, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);   
-		return new AuditHeader(aCustomer.getCustCIF(),null,null,null,auditDetail,aCustomer.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(Customer aCustomer, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
+		return new AuditHeader(aCustomer.getCustCIF(), null, null, null, auditDetail, aCustomer.getUserDetails(),
+				getOverideMap());
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -989,20 +991,20 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving");
 	}
 
-	private Notes getNotes(){
+	private Notes getNotes() {
 		Notes notes = new Notes();
 		notes.setModuleName("Suspense");
 		notes.setVersion(getCustomer().getVersion());
 		return notes;
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getCustSuspenseListCtrl().search();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1014,7 +1016,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	public void setCustSuspenseListCtrl(CustSuspenseListCtrl custSuspenseListCtrl) {
 		this.custSuspenseListCtrl = custSuspenseListCtrl;
 	}
-	
+
 	public CustomerService getCustomerService() {
 		return customerService;
 	}
@@ -1034,6 +1036,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

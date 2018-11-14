@@ -121,103 +121,103 @@ import com.rits.cloning.Cloner;
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul
  */
-public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
-	private static final long								serialVersionUID					= 966281186831332116L;
-	private static final Logger								logger								= Logger.getLogger(ReceiptCancellationDialogCtrl.class);
+public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
+	private static final long serialVersionUID = 966281186831332116L;
+	private static final Logger logger = Logger.getLogger(ReceiptCancellationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window										window_ReceiptCancellationDialog;
-	protected Borderlayout									borderlayout_Realization;
-	protected Label 										windowTitle;
+	protected Window window_ReceiptCancellationDialog;
+	protected Borderlayout borderlayout_Realization;
+	protected Label windowTitle;
 
 	//Receipt Details
-	protected Textbox										finType;
-	protected Textbox										finReference;
-	protected Textbox										finCcy;
-	protected Textbox										finBranch;
-	protected Textbox										custCIF;
+	protected Textbox finType;
+	protected Textbox finReference;
+	protected Textbox finCcy;
+	protected Textbox finBranch;
+	protected Textbox custCIF;
 
-	protected Combobox										receiptPurpose;
-	protected Combobox										excessAdjustTo;
-	protected Combobox										receiptMode;
-	protected CurrencyBox									receiptAmount;
-	protected Combobox										allocationMethod;
-	protected Combobox										effScheduleMethod;
-	protected ExtendedCombobox								bounceCode;
-	protected CurrencyBox									bounceCharge;
-	protected Textbox										bounceRemarks;
-	protected ExtendedCombobox								cancelReason;
+	protected Combobox receiptPurpose;
+	protected Combobox excessAdjustTo;
+	protected Combobox receiptMode;
+	protected CurrencyBox receiptAmount;
+	protected Combobox allocationMethod;
+	protected Combobox effScheduleMethod;
+	protected ExtendedCombobox bounceCode;
+	protected CurrencyBox bounceCharge;
+	protected Textbox bounceRemarks;
+	protected ExtendedCombobox cancelReason;
 
-	protected Groupbox										gb_ReceiptDetails;
-	protected Caption										caption_receiptDetail;
-	protected Label											label_ReceiptCancellationDialog_favourNo;
-	protected Uppercasebox									favourNo;
-	protected Datebox										valueDate;
-	protected ExtendedCombobox								bankCode;
-	protected Textbox										favourName;
-	protected Datebox										depositDate;
-	protected Uppercasebox									depositNo;
-	protected Uppercasebox									paymentRef;
-	protected Uppercasebox									transactionRef;
-	protected AccountSelectionBox							chequeAcNo;
-	protected ExtendedCombobox								fundingAccount;
-	protected Datebox										receivedDate;
-	protected Textbox										remarks;
-	protected Label											label_ReceiptCancellationDialog_BounceDate;
-	protected Hbox											hbox_ReceiptCancellationDialog_BounceDate;
-	protected Datebox										bounceDate;
-	
-	protected Row											row_BounceReason;	
-	protected Row											row_CancelReason;	
-	protected Row											row_BounceRemarks;	
+	protected Groupbox gb_ReceiptDetails;
+	protected Caption caption_receiptDetail;
+	protected Label label_ReceiptCancellationDialog_favourNo;
+	protected Uppercasebox favourNo;
+	protected Datebox valueDate;
+	protected ExtendedCombobox bankCode;
+	protected Textbox favourName;
+	protected Datebox depositDate;
+	protected Uppercasebox depositNo;
+	protected Uppercasebox paymentRef;
+	protected Uppercasebox transactionRef;
+	protected AccountSelectionBox chequeAcNo;
+	protected ExtendedCombobox fundingAccount;
+	protected Datebox receivedDate;
+	protected Textbox remarks;
+	protected Label label_ReceiptCancellationDialog_BounceDate;
+	protected Hbox hbox_ReceiptCancellationDialog_BounceDate;
+	protected Datebox bounceDate;
 
-	protected Row											row_favourNo;	
-	protected Row											row_BankCode;	
-	protected Row											row_DepositDate;	
-	protected Row											row_PaymentRef;	
-	protected Row											row_ChequeAcNo;	
-	protected Row											row_fundingAcNo;	
-	protected Row											row_remarks;	
-	
+	protected Row row_BounceReason;
+	protected Row row_CancelReason;
+	protected Row row_BounceRemarks;
+
+	protected Row row_favourNo;
+	protected Row row_BankCode;
+	protected Row row_DepositDate;
+	protected Row row_PaymentRef;
+	protected Row row_ChequeAcNo;
+	protected Row row_fundingAcNo;
+	protected Row row_remarks;
+
 	// Payment Schedule Details
-	protected Textbox										payment_finType;
-	protected Textbox										payment_finReference;
-	protected Textbox										payment_finCcy;
-	protected Textbox										payment_CustCIF;
-	protected Textbox										payment_finBranch;
-	
+	protected Textbox payment_finType;
+	protected Textbox payment_finReference;
+	protected Textbox payment_finCcy;
+	protected Textbox payment_CustCIF;
+	protected Textbox payment_finBranch;
+
 	// List Header Details on payent Details
-	protected Listheader									listheader_Tds;
-	protected Listheader									listheader_LatePft;
-	protected Listheader									listheader_Refund;
-	protected Listheader									listheader_Penalty;
-	protected Listheader									listheader_InsPayment;
-	protected Listheader									listheader_SchdFee;
-	protected Listheader									listheader_SuplRent;
-	protected Listheader									listheader_IncrCost;
-	
-	protected Listbox										listBoxReceipts;
-	protected Listbox										listBoxPayment;
-	protected Listbox										listBoxPosting;
-	protected Tab											receiptDetailsTab;
-	protected Tab											repaymentDetailsTab;
-	protected Tab											postingDetailsTab;
+	protected Listheader listheader_Tds;
+	protected Listheader listheader_LatePft;
+	protected Listheader listheader_Refund;
+	protected Listheader listheader_Penalty;
+	protected Listheader listheader_InsPayment;
+	protected Listheader listheader_SchdFee;
+	protected Listheader listheader_SuplRent;
+	protected Listheader listheader_IncrCost;
+
+	protected Listbox listBoxReceipts;
+	protected Listbox listBoxPayment;
+	protected Listbox listBoxPosting;
+	protected Tab receiptDetailsTab;
+	protected Tab repaymentDetailsTab;
+	protected Tab postingDetailsTab;
 
 	// Postings Details
-	protected Textbox										posting_finType;
-	protected Textbox										posting_finReference;
-	protected Textbox										posting_finCcy;
-	protected Textbox										posting_CustCIF;
-	protected Textbox										posting_finBranch;
-	
-	private FinReceiptHeader								receiptHeader						= null;
-	private ReceiptCancellationListCtrl						receiptCancellationListCtrl;						
-	private ReceiptCancellationService						receiptCancellationService;						
-	private RuleService										ruleService;						
-	private RuleExecutionUtil								ruleExecutionUtil;						
+	protected Textbox posting_finType;
+	protected Textbox posting_finReference;
+	protected Textbox posting_finCcy;
+	protected Textbox posting_CustCIF;
+	protected Textbox posting_finBranch;
+
+	private FinReceiptHeader receiptHeader = null;
+	private ReceiptCancellationListCtrl receiptCancellationListCtrl;
+	private ReceiptCancellationService receiptCancellationService;
+	private RuleService ruleService;
+	private RuleExecutionUtil ruleExecutionUtil;
 	private String module;
 
 	/**
@@ -231,9 +231,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected void doSetProperties() {
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			super.pageRightName = "ReceiptBounceDialog";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+		} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			super.pageRightName = "ReceiptCancellationDialog";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+		} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.pageRightName = "ReceiptCancellationDialog";
 		}
 	}
@@ -262,27 +262,28 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				Cloner cloner = new Cloner();
 				befImage = cloner.deepClone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
-				
-				if(getReceiptHeader().getManualAdvise() != null){
+
+				if (getReceiptHeader().getManualAdvise() != null) {
 					ManualAdvise adviseBefImage = cloner.deepClone(getReceiptHeader().getManualAdvise());
 					getReceiptHeader().getManualAdvise().setBefImage(adviseBefImage);
 				}
 			}
-			
+
 			this.module = (String) arguments.get("module");
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 				super.pageRightName = "ReceiptBounceDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_ReceiptBounceDialog.title"));
-			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_ReceiptCancellationDialog.title"));
-			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+			} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_FeeReceiptCancellationDialog.title"));
 				this.repaymentDetailsTab.setVisible(false);
 			}
-			
-			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments.get("receiptCancellationListCtrl");
+
+			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments
+					.get("receiptCancellationListCtrl");
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
@@ -332,20 +333,20 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_" + this.pageRightName + "_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_" + this.pageRightName + "_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_" + this.pageRightName + "_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_" + this.pageRightName + "_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		// Bounce Reason Fields
-		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceCode"), this.bounceCode);
+		readOnlyComponent(isReadOnly(this.pageRightName + "_bounceCode"), this.bounceCode);
 		//readOnlyComponent(isReadOnly("+this.pageRightName+"_bounceCharge"), this.bounceCharge);
 		readOnlyComponent(true, this.bounceCharge);
-		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceRemarks"), this.bounceRemarks);
-		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceDate"), this.bounceDate);
-		readOnlyComponent(isReadOnly(this.pageRightName+"_cancelReason"), this.cancelReason);
-		
+		readOnlyComponent(isReadOnly(this.pageRightName + "_bounceRemarks"), this.bounceRemarks);
+		readOnlyComponent(isReadOnly(this.pageRightName + "_bounceDate"), this.bounceDate);
+		readOnlyComponent(isReadOnly(this.pageRightName + "_cancelReason"), this.cancelReason);
+
 		logger.debug("Leaving");
 	}
 
@@ -354,12 +355,12 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		//Empty sent any required attributes
 		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
 		//Receipts Details
-		this.receiptAmount.setProperties(true , formatter);
+		this.receiptAmount.setProperties(true, formatter);
 
 		this.cancelReason.setModuleName("RejectDetail");
 		this.cancelReason.setMandatoryStyle(true);
@@ -367,7 +368,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.cancelReason.setDescColumn("RejectDesc");
 		this.cancelReason.setDisplayStyle(2);
 		this.cancelReason.setValidateColumns(new String[] { "RejectCode" });
-		this.cancelReason.setFilters(new Filter[] { new Filter("RejectType", PennantConstants.Reject_Payment, Filter.OP_EQUAL) });
+		this.cancelReason.setFilters(
+				new Filter[] { new Filter("RejectType", PennantConstants.Reject_Payment, Filter.OP_EQUAL) });
 
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
@@ -398,16 +400,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bankCode.setDescColumn("BankName");
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
-		
+
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
-		this.bounceCode.setValueColumn("BounceID");	
+		this.bounceCode.setValueColumn("BounceID");
 		this.bounceCode.setValueType(DataType.LONG);
 		this.bounceCode.setDescColumn("Reason");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Lovdesccategory", "Reason" });
-		
-		this.bounceCharge.setProperties(false , formatter);
+		this.bounceCode.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
+
+		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
 
 		logger.debug("Leaving");
@@ -453,7 +455,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
@@ -461,22 +463,22 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.receiptCancellationListCtrl.search();
 	}
 
-
 	/**
 	 * Method for Setting Fields based on Receipt Mode selected
+	 * 
 	 * @param recMode
 	 */
 	private void checkByReceiptMode(String recMode, boolean isUserAction) {
 		logger.debug("Entering");
 
-		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
-				StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)
+				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 
-		} else{
+		} else {
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
@@ -493,12 +495,14 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 
-				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
+				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
-					this.label_ReceiptCancellationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptCancellationDialog_ChequeFavourNo.value"));
-				}else{
+					this.label_ReceiptCancellationDialog_favourNo
+							.setValue(Labels.getLabel("label_ReceiptCancellationDialog_ChequeFavourNo.value"));
+				} else {
 					this.row_ChequeAcNo.setVisible(false);
-					this.label_ReceiptCancellationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptCancellationDialog_DDFavourNo.value"));
+					this.label_ReceiptCancellationDialog_favourNo
+							.setValue(Labels.getLabel("label_ReceiptCancellationDialog_DDFavourNo.value"));
 				}
 
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
@@ -541,43 +545,42 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		//Duplicate Creation of Object
 		Cloner cloner = new Cloner();
 		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		boolean recReject = false;
 		if (this.userAction.getSelectedItem() != null
 				&& ("Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-						|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) || "Cancel"
-						.equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
+						|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
 			recReject = true;
 		}
 
-		if(!recReject){
+		if (!recReject) {
 			doSetValidation();
 		}
-		
+
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
-			
+
 			try {
 				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
 
-
 			// Bounce Details capturing
 			ManualAdvise bounce = aReceiptHeader.getManualAdvise();
-			if(bounce == null){
+			if (bounce == null) {
 				bounce = new ManualAdvise();
 			}
 
-			
 			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 			bounce.setFinReference(aReceiptHeader.getReference());
 			bounce.setFeeTypeID(0);
 			bounce.setSequence(0);
 			try {
-				bounce.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.bounceCharge.getActualValue(), CurrencyUtil.getFormat(aReceiptHeader.getFinCcy())));
+				bounce.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.bounceCharge.getActualValue(),
+						CurrencyUtil.getFormat(aReceiptHeader.getFinCcy())));
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
@@ -616,17 +619,17 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.receiptDetailsTab.setSelected(true);
 				throw new WrongValuesException(wvea);
 			}
-			
+
 			aReceiptHeader.setManualAdvise(bounce);
-		}else{
+		} else {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
-			
+
 			try {
 				aReceiptHeader.setCancelReason(this.cancelReason.getValue());
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
-			
+
 			doRemoveValidation();
 
 			if (!wve.isEmpty()) {
@@ -637,7 +640,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.receiptDetailsTab.setSelected(true);
 				throw new WrongValuesException(wvea);
 			}
-			
+
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
 		}
 
@@ -653,7 +656,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			aReceiptHeader.setVersion(aReceiptHeader.getVersion() + 1);
 			tranType = PennantConstants.TRAN_UPD;
 		}
-		
+
 		try {
 			if (doProcess(aReceiptHeader, tranType)) {
 
@@ -676,7 +679,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$bounceCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -716,7 +719,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -724,21 +727,25 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Entering");
 
 		if (!this.bounceCode.isReadonly()) {
-			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceReason.value"), null,true, true));
-		}
-		
-		if (!this.cancelReason.isReadonly()) {
-			this.cancelReason.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_CancelReason.value"), null,true, true));
+			this.bounceCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReceiptCancellationDialog_BounceReason.value"), null, true, true));
 		}
 
-		if(!this.bounceRemarks.isReadonly()){
-			this.bounceRemarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceRemarks.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+		if (!this.cancelReason.isReadonly()) {
+			this.cancelReason.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReceiptCancellationDialog_CancelReason.value"), null, true, true));
 		}
-		
-		if (!this.bounceDate.isDisabled() ) {
-			this.bounceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceDate.value"),
-					true, getReceiptHeader().getReceiptDate(), true, true));
+
+		if (!this.bounceRemarks.isReadonly()) {
+			this.bounceRemarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceRemarks.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
+		}
+
+		if (!this.bounceDate.isDisabled()) {
+			this.bounceDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceDate.value"), true,
+							getReceiptHeader().getReceiptDate(), true, true));
 		}
 
 		logger.debug("Leaving");
@@ -760,9 +767,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Method for Writing Data into Fields from Bean
+	 * 
 	 * @throws InterruptedException
 	 */
 	private void doWriteBeanToComponents() throws InterruptedException {
@@ -770,45 +777,51 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
-		
-		this.finType.setValue(header.getFinType()+"-"+header.getFinTypeDesc());
+
+		this.finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
 		this.finReference.setValue(header.getReference());
-		this.finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
-		this.finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
-		this.custCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
+		this.finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
+		this.finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
+		;
+		this.custCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		this.remarks.setValue(header.getRemarks());
-		
+
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
+				"");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
 
-		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
-		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
+		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
+				"");
+		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(),
+				",NOEFCT,");
 		this.cancelReason.setValue(header.getCancelReason(), header.getCancelReasonDesc());
 		checkByReceiptMode(header.getReceiptMode(), false);
 		this.bounceDate.setValue(header.getBounceDate());
-		if(header.getBounceDate() == null){
+		if (header.getBounceDate() == null) {
 			this.bounceDate.setValue(DateUtility.getAppDate());
 		}
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			this.bounceDate.setValue(null);
 		}
 		ManualAdvise bounceReason = header.getManualAdvise();
-		if(bounceReason != null){
+		if (bounceReason != null) {
 			this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
-			this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(),finFormatter));
+			this.bounceCharge
+					.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), finFormatter));
 			this.bounceRemarks.setValue(bounceReason.getRemarks());
 		}
-		
+
 		// Repayments Schedule Basic Details
-		this.payment_finType.setValue(header.getFinType()+"-"+header.getFinTypeDesc());
+		this.payment_finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
 		this.payment_finReference.setValue(header.getReference());
-		this.payment_finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
-		this.payment_finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
-		this.payment_CustCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
-		
+		this.payment_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
+		this.payment_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
+		;
+		this.payment_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
+
 		boolean isBounceProcess = false;
 		this.listBoxReceipts.getItems().clear();
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
@@ -818,7 +831,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.cancelReason.setReadonly(true);
 			this.label_ReceiptCancellationDialog_BounceDate.setVisible(true);
 			this.hbox_ReceiptCancellationDialog_BounceDate.setVisible(true);
-		}else{
+		} else {
 			this.row_BounceReason.setVisible(false);
 			this.row_BounceRemarks.setVisible(false);
 			this.bounceCode.setMandatoryStyle(false);
@@ -830,16 +843,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		// Separating Receipt Amounts based on user entry, if exists
 		List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
-		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
+		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
-				
+
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
 				doFillReceipts(receiptDetail, finFormatter);
 				boolean isReceiptModeDetail = false;
-				
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
+
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
@@ -854,54 +867,57 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
-					
+
 					isReceiptModeDetail = true;
 				}
-				
+
 				// If Bounce Process and not a Receipt Mode Record then Continue process
-				if(isBounceProcess && !isReceiptModeDetail){
+				if (isBounceProcess && !isReceiptModeDetail) {
 					continue;
 				}
 
 				// Getting All Repayments Schedule Details for Display of Payments
 				List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
 				for (int j = 0; j < repayHeaderList.size(); j++) {
-					if(repayHeaderList.get(j).getRepayScheduleDetails() != null){
+					if (repayHeaderList.get(j).getRepayScheduleDetails() != null) {
 						rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
 					}
 				}
 			}
 
 			// Making Single Set of Repay Schedule Details and sent to Rendering
-			if(!rpySchdList.isEmpty()){
-				
+			if (!rpySchdList.isEmpty()) {
+
 				Cloner cloner = new Cloner();
 				List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
 				Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
-				
+
 				for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 
 					RepayScheduleDetail curRpySchd = null;
-					if(rpySchdMap.containsKey(rpySchd.getSchDate())){
+					if (rpySchdMap.containsKey(rpySchd.getSchDate())) {
 						curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
-						
-						if(curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0){
+
+						if (curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0) {
 							curRpySchd.setPrincipalSchdBal(rpySchd.getPrincipalSchdBal());
 						}
-						
-						if(curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0){
+
+						if (curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0) {
 							curRpySchd.setProfitSchdBal(rpySchd.getProfitSchdBal());
 						}
-						
-						curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
-						curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+
+						curRpySchd.setPrincipalSchdPayNow(
+								curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
+						curRpySchd.setProfitSchdPayNow(
+								curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
 						curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
-						curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
+						curRpySchd.setLatePftSchdPayNow(
+								curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 						curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
 						curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
 						curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
 						rpySchdMap.remove(rpySchd.getSchDate());
-					}else{
+					} else {
 						curRpySchd = rpySchd;
 					}
 
@@ -913,32 +929,34 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}
 
 			// Posting Details
-			this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
+			this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog,
+					"onSelectPostingsTab");
 		}
 
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Receipt Amount Details
 	 */
-	private void doFillReceipts(FinReceiptDetail receiptDetail, int finFormatter){
+	private void doFillReceipts(FinReceiptDetail receiptDetail, int finFormatter) {
 		logger.debug("Entering");
 
 		Listitem item = new Listitem();
 		Listcell lc = null;
 		String label = "";
-		if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS) || 
-				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV) || 
-				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)){
+		if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+				|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+				|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)) {
 
-			label = Labels.getLabel("label_ReceiptCancellationDialog_ExcessType_"+receiptDetail.getPaymentType());
+			label = Labels.getLabel("label_ReceiptCancellationDialog_ExcessType_" + receiptDetail.getPaymentType());
 
-		}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)){
+		} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 			label = receiptDetail.getFeeTypeDesc();
-		}else{
-			label = PennantAppUtil.getlabelDesc(receiptDetail.getPaymentType(), PennantStaticListUtil.getReceiptModes());
+		} else {
+			label = PennantAppUtil.getlabelDesc(receiptDetail.getPaymentType(),
+					PennantStaticListUtil.getReceiptModes());
 		}
 
 		lc = new Listcell(label);
@@ -949,41 +967,44 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_"+receiptDetail.getStatus()));
-		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED)){
+		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_" + receiptDetail.getStatus()));
+		if (StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED)) {
 			lc.setStyle("font-weight:bold;color: #0252d3;");
-		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)){
+		} else if (StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			lc.setStyle("font-weight:bold;color: #00a83d;");
-		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
+		} else if (StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
 			lc.setStyle("font-weight:bold;color: #f44b42;");
-		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_CANCEL)){
+		} else if (StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			lc.setStyle("font-weight:bold;color: #f48341;");
 		}
 		lc.setParent(item);
 		this.listBoxReceipts.appendChild(item);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Selecting Posting Details tab
+	 * 
 	 * @param event
 	 */
 	public void onSelectPostingsTab(ForwardEvent event) {
 		logger.debug("Entering");
-		
-		this.postingDetailsTab.removeForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
-		
+
+		this.postingDetailsTab.removeForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog,
+				"onSelectPostingsTab");
+
 		FinReceiptHeader header = getReceiptHeader();
 		// Repayments Schedule Basic Details
-		this.posting_finType.setValue(header.getFinType()+"-"+header.getFinTypeDesc());
+		this.posting_finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
 		this.posting_finReference.setValue(header.getReference());
-		this.posting_finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
-		this.posting_finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
-		this.posting_CustCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
-		
+		this.posting_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
+		this.posting_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
+		;
+		this.posting_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
+
 		// Posting Details Rendering
-			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByPostRef(header.getReceiptID());
-			doFillPostings(postings);
+		List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByPostRef(header.getReceiptID());
+		doFillPostings(postings);
 		logger.debug("Leaving");
 	}
 
@@ -1113,18 +1134,18 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
-						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow())
-						.subtract(refundPft);
+						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow()).subtract(refundPft);
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				
+
 				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
 						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal())
 						.add(repaySchd.getSchdSuplRentBal()).add(repaySchd.getSchdIncrCostBal());
-						
-				lc = new Listcell(PennantAppUtil.amountFormate(netBalance.subtract(netPay.subtract(
-						repaySchd.getPenaltyPayNow()).subtract(repaySchd.getLatePftSchdPayNow())), finFormatter));
+
+				lc = new Listcell(PennantAppUtil.amountFormate(netBalance.subtract(
+						netPay.subtract(repaySchd.getPenaltyPayNow()).subtract(repaySchd.getLatePftSchdPayNow())),
+						finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				item.setAttribute("data", repaySchd);
@@ -1177,14 +1198,14 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.listheader_Refund.setVisible(true);
 			totalSchAmount = totalSchAmount.subtract(paymentMap.get("totalRefund"));
 			fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund"), finFormatter);
-		}else{
+		} else {
 			this.listheader_Refund.setVisible(false);
 		}
 		if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0) {
 			this.listheader_Penalty.setVisible(true);
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalCharge"));
 			fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge"), finFormatter);
-		}else{
+		} else {
 			this.listheader_Penalty.setVisible(false);
 		}
 		if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
@@ -1194,14 +1215,15 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if (paymentMap.get("totalTds").compareTo(BigDecimal.ZERO) > 0) {
 			fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"), paymentMap.get("totalTds"), finFormatter);
 			this.listheader_Tds.setVisible(true);
-		}else{
+		} else {
 			this.listheader_Tds.setVisible(false);
 		}
 		if (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));
 			this.listheader_LatePft.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft"), finFormatter);
-		}else{
+			fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft"),
+					finFormatter);
+		} else {
 			this.listheader_LatePft.setVisible(false);
 		}
 		if (paymentMap.get("totalPri").compareTo(BigDecimal.ZERO) > 0) {
@@ -1213,28 +1235,30 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
 			this.listheader_InsPayment.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid"), finFormatter);
-		}else{
+		} else {
 			this.listheader_InsPayment.setVisible(false);
 		}
 		if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
 			this.listheader_SchdFee.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"), paymentMap.get("schdFeePaid"), finFormatter);
-		}else{
+		} else {
 			this.listheader_SchdFee.setVisible(false);
 		}
 		if (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdSuplRentPaid"));
 			this.listheader_SuplRent.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid"), finFormatter);
-		}else{
+			fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid"),
+					finFormatter);
+		} else {
 			this.listheader_SuplRent.setVisible(false);
 		}
 		if (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdIncrCostPaid"));
 			this.listheader_IncrCost.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid"), finFormatter);
-		}else{
+			fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid"),
+					finFormatter);
+		} else {
 			this.listheader_IncrCost.setVisible(false);
 		}
 
@@ -1269,22 +1293,23 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.listBoxPayment.appendChild(item);
 
 	}
-	
+
 	/**
 	 * Method for Showing Posting Details which are going to be reversed
+	 * 
 	 * @param linkedTranId
 	 */
 	private void doFillPostings(List<ReturnDataSet> postingList) {
 		logger.debug("Entering");
-		
-		if(postingList != null && !postingList.isEmpty()){
+
+		if (postingList != null && !postingList.isEmpty()) {
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
 				item = new Listitem();
 				Listcell lc = new Listcell();
-				if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)){
+				if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 					lc = new Listcell(Labels.getLabel("common.Debit"));
-				}else if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)){
+				} else if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)) {
 					lc = new Listcell(Labels.getLabel("common.Credit"));
 				}
 				lc.setParent(item);
@@ -1300,7 +1325,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+						CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell("");
@@ -1310,7 +1336,6 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		}
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * Method for Processing Finance Detail Object for Database Operation
@@ -1318,7 +1343,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws Exception {
 		logger.debug("Entering");
@@ -1329,8 +1354,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
-		if(aReceiptHeader.getManualAdvise() != null){
+
+		if (aReceiptHeader.getManualAdvise() != null) {
 			aReceiptHeader.getManualAdvise().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aReceiptHeader.getManualAdvise().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aReceiptHeader.getManualAdvise().setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -1340,8 +1365,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			String taskId = getTaskId(getRole());
 			String nextTaskId;
 			aReceiptHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			
-			if(aReceiptHeader.getManualAdvise() != null){
+
+			if (aReceiptHeader.getManualAdvise() != null) {
 				aReceiptHeader.getManualAdvise().setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			}
 
@@ -1383,8 +1408,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			aReceiptHeader.setNextTaskId(nextTaskId);
 			aReceiptHeader.setRoleCode(getRole());
 			aReceiptHeader.setNextRoleCode(nextRoleCode);
-			
-			if(aReceiptHeader.getManualAdvise() != null){
+
+			if (aReceiptHeader.getManualAdvise() != null) {
 				aReceiptHeader.getManualAdvise().setTaskId(taskId);
 				aReceiptHeader.getManualAdvise().setNextTaskId(nextTaskId);
 				aReceiptHeader.getManualAdvise().setRoleCode(getRole());
@@ -1420,7 +1445,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
 		logger.debug("Entering");
@@ -1453,8 +1478,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ReceiptCancellationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1482,7 +1507,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
-		} 
+		}
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
@@ -1494,7 +1519,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	private AuditHeader getAuditHeader(FinReceiptHeader receiptHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, receiptHeader);
-		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail, receiptHeader.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail,
+				receiptHeader.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1519,6 +1545,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	public FinReceiptHeader getReceiptHeader() {
 		return receiptHeader;
 	}
+
 	public void setReceiptHeader(FinReceiptHeader receiptHeader) {
 		this.receiptHeader = receiptHeader;
 	}
@@ -1526,6 +1553,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	public ReceiptCancellationService getReceiptCancellationService() {
 		return receiptCancellationService;
 	}
+
 	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
 		this.receiptCancellationService = receiptCancellationService;
 	}
@@ -1533,6 +1561,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	public RuleService getRuleService() {
 		return ruleService;
 	}
+
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
@@ -1540,6 +1569,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}
+
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}

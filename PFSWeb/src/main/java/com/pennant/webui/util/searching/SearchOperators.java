@@ -56,8 +56,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
  * corresponding to the com.trg.search.Search.java class. <br>
  * from the Hibernate-Generic-DAO framework. <br>
  * <br>
- * The domain model have no corresponding table in a database and has a fixed
- * length of records that should see as the search operators of what to search. <br>
+ * The domain model have no corresponding table in a database and has a fixed length of records that should see as the
+ * search operators of what to search. <br>
  * It's used only for showing the several operators in a dropdown list. <br>
  * <br>
  * Int | sign | search operator <br>
@@ -70,7 +70,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
  * 4 | <= | less or equal <br>
  * 5 | >= | greater or equal <br>
  * 7 | ~ | ilike <br>
- *<br>
+ * <br>
  * 
  * @changes 05/15/2009: sge Migrating the list models for paging. <br>
  *          07/24/2009: sge changes for clustering.<br>
@@ -158,7 +158,7 @@ public class SearchOperators implements Serializable {
 
 		return result;
 	}
-	
+
 	public List<SearchOperators> getAlphaNumOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
@@ -180,7 +180,6 @@ public class SearchOperators implements Serializable {
 		return result;
 	}
 
-	
 	public List<SearchOperators> getMultiStringOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
@@ -198,7 +197,7 @@ public class SearchOperators implements Serializable {
 
 		return result;
 	}
-	
+
 	public List<SearchOperators> getMultiDateOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
@@ -234,30 +233,29 @@ public class SearchOperators implements Serializable {
 
 		return result;
 	}
-	
+
 	public List<SearchOperators> getEqualOperators() {
-		
+
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
-		
+
 		// list position 0
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
-		
+
 		return result;
 	}
-	
+
 	public List<SearchOperators> getEqualOrNotOperators() {
-		
+
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
-		
+
 		// list position 0
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 1
 		result.add(new SearchOperators(Filter.OP_NOT_EQUAL, "<>", "not equal"));
-		
+
 		return result;
 	}
-	
-	
+
 	public List<SearchOperators> getSimpleStringOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
@@ -269,7 +267,7 @@ public class SearchOperators implements Serializable {
 
 		return result;
 	}
-	
+
 	public List<SearchOperators> getSimpleNumericOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
@@ -287,7 +285,7 @@ public class SearchOperators implements Serializable {
 
 		return result;
 	}
-	
+
 	public List<SearchOperators> getSimpleAlphaNumOperators() {
 
 		List<SearchOperators> result = new ArrayList<SearchOperators>();
@@ -386,7 +384,7 @@ public class SearchOperators implements Serializable {
 			listbox.setSelectedIndex(2);
 		}
 	}
-	
+
 	/**
 	 * Restore the AlphaNumeric operators sign in the operators listbox by comparing the <br>
 	 * value of the filter. <br>
@@ -416,9 +414,9 @@ public class SearchOperators implements Serializable {
 			listbox.setSelectedIndex(6);
 		}
 	}
-	
+
 	/**
-	 * Restore the string operators sign in the operators listbox 
+	 * Restore the string operators sign in the operators listbox
 	 * 
 	 * @param listbox
 	 *            Listbox that shows the operator signs.
@@ -460,7 +458,7 @@ public class SearchOperators implements Serializable {
 			listbox.setSelectedIndex(5);
 		}
 	}
-	
+
 	/**
 	 * Restore the boolean operator sign in the boolean operators listbox by comparing the <br>
 	 * value of the filter. <br>
@@ -476,9 +474,7 @@ public class SearchOperators implements Serializable {
 			listbox.setSelectedIndex(1);
 		} else if (filter.getOperator() == Filter.OP_NOT_EQUAL) {
 			listbox.setSelectedIndex(2);
-		} 
+		}
 	}
-	
-	
-	
+
 }

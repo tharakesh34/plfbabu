@@ -66,8 +66,8 @@ import com.pennanttech.pff.core.TableType;
 /**
  * Service implementation for methods that depends on <b>FinTypePartnerBank</b>.<br>
  */
-public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartnerBank> implements
-		FinTypePartnerBankService {
+public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartnerBank>
+		implements FinTypePartnerBankService {
 	private static final Logger logger = Logger.getLogger(FinTypePartnerBankServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -157,8 +157,8 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			for (int i = 0; i < finTypePartnerBankList.size(); i++) {
 				FinTypePartnerBank finTypePartnerBank = finTypePartnerBankList.get(i);
 				if (StringUtils.isNotEmpty(finTypePartnerBank.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypePartnerBank
-							.getBefImage(), finTypePartnerBank));
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							finTypePartnerBank.getBefImage(), finTypePartnerBank));
 				}
 			}
 			getFinTypePartnerBankDAO().deleteByFinType(finType, tableType);
@@ -191,7 +191,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	public FinTypePartnerBank getApprovedFinTypePartnerBank(String finType, long iD) {
 		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, iD, "_AView");
 	}
-	
+
 	@Override
 	public List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type) {
 		return getFinTypePartnerBankDAO().getFinTypePartnerBank(finType, type);
@@ -231,8 +231,8 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		getFinTypePartnerBankDAO().delete(finTypePartnerBank, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(finTypePartnerBank.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					finTypePartnerBankDAO.getFinTypePartnerBank(finTypePartnerBank.getFinType(), finTypePartnerBank.getID(), ""));
+			auditHeader.getAuditDetail().setBefImage(finTypePartnerBankDAO
+					.getFinTypePartnerBank(finTypePartnerBank.getFinType(), finTypePartnerBank.getID(), ""));
 		}
 
 		if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -337,11 +337,11 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 
 		FinTypePartnerBank tempFinTypePartnerBank = null;
 		if (finTypePartnerBank.isWorkflow()) {
-			tempFinTypePartnerBank = getFinTypePartnerBankDAO().getFinTypePartnerBank(finTypePartnerBank.getFinType(), finTypePartnerBank.getId(),
-					"_Temp");
+			tempFinTypePartnerBank = getFinTypePartnerBankDAO().getFinTypePartnerBank(finTypePartnerBank.getFinType(),
+					finTypePartnerBank.getId(), "_Temp");
 		}
-		FinTypePartnerBank befFinTypePartnerBank = getFinTypePartnerBankDAO().getFinTypePartnerBank(
-				finTypePartnerBank.getFinType(), finTypePartnerBank.getId(), "");
+		FinTypePartnerBank befFinTypePartnerBank = getFinTypePartnerBankDAO()
+				.getFinTypePartnerBank(finTypePartnerBank.getFinType(), finTypePartnerBank.getId(), "");
 
 		FinTypePartnerBank oldFinTypePartnerBank = finTypePartnerBank.getBefImage();
 
@@ -353,16 +353,19 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		if (finTypePartnerBank.isNew()) { // for New record or new record into work flow
 			if (!finTypePartnerBank.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypePartnerBank != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
 					if (befFinTypePartnerBank != null || tempFinTypePartnerBank != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinTypePartnerBank == null || tempFinTypePartnerBank != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -370,28 +373,31 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!finTypePartnerBank.isWorkflow()) { // With out Work flow for update and delete
 				if (befFinTypePartnerBank == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldFinTypePartnerBank != null
 							&& !oldFinTypePartnerBank.getLastMntOn().equals(befFinTypePartnerBank.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempFinTypePartnerBank == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
 				if (tempFinTypePartnerBank != null && oldFinTypePartnerBank != null
 						&& !oldFinTypePartnerBank.getLastMntOn().equals(tempFinTypePartnerBank.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -445,8 +451,8 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 				}
 			}
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypePartnerBank
-					.getBefImage(), finTypePartnerBank));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					finTypePartnerBank.getBefImage(), finTypePartnerBank));
 		}
 
 		logger.debug("Leaving");
@@ -540,7 +546,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		logger.debug("Leaving");
 		return getFinTypePartnerBankDAO().getPartnerBankCount(finType, paymentType, purpose, partnerBankID);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

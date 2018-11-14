@@ -28,26 +28,26 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class CancelDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements CancelDisbursementService {
 	private static Logger logger = Logger.getLogger(CancelDisbursementServiceImpl.class);
-	
-	private FinanceDataValidation		financeDataValidation;
-	private FinServiceInstrutionDAO     finServiceInstructionDAO;
+
+	private FinanceDataValidation financeDataValidation;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
 
 	public FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
-		
+
 		// Schedule Recalculation Locking Period Applicability
-		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
-						&& (i != sdSize - 1) && i != 0){
+				if (DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0
+						&& (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
-				}else{
+				} else {
 					curSchd.setRecalLock(false);
 				}
 			}
@@ -67,11 +67,11 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	public AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = new AuditDetail();
-		
+
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		// validate disb amount
-		if(finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+		if (finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement amount";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
@@ -80,15 +80,15 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 		boolean isValidDate = false;
 		List<FinAdvancePayments> finAdvancePayments = financeDetail.getAdvancePaymentsList();
 		if (finAdvancePayments != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
-			for(FinAdvancePayments finAdvancePayment: financeDetail.getAdvancePaymentsList()) {
-				
+			for (FinAdvancePayments finAdvancePayment : financeDetail.getAdvancePaymentsList()) {
+
 				// Validate from date
 				if (DateUtility.compare(finServiceInstruction.getFromDate(), finAdvancePayment.getLlDate()) == 0
 						&& !(StringUtils.equals(finAdvancePayment.getStatus(), "CANCELED"))) {
 					isValidDate = true;
 				}
 			}
-			
+
 			if (!isValidDate) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "From date:" + DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
@@ -117,10 +117,9 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm)));
 			return auditDetail;
 		}
-		
 
-			//validate ServiceReqNo
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
+		//validate ServiceReqNo
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
 				&& !(StringUtils.isEmpty(finServiceInstruction.getServiceReqNo()))) {
 			List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO.getFinServInstByServiceReqNo(
 					finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
@@ -143,11 +142,10 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 				}
 			}
 		}
-				
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
 
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
@@ -160,6 +158,5 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
-
 
 }

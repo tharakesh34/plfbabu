@@ -64,9 +64,9 @@ import com.pennant.backend.service.smtmasters.WeekendMasterService;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.smtmasters.weekendmaster.model.WeekendMasterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterList.zul file.

@@ -63,24 +63,24 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
-	
+
 	private long custID = Long.MIN_VALUE;
 	@XmlElement
 	private int chequeSeq;
 	@XmlElement
 	private Date monthYear;
 	@XmlElement
-	private BigDecimal 	totChequePayment = BigDecimal.ZERO;
+	private BigDecimal totChequePayment = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal 	salary = BigDecimal.ZERO;
-	private BigDecimal 	debits = BigDecimal.ZERO;
+	private BigDecimal salary = BigDecimal.ZERO;
+	private BigDecimal debits = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal 	returnChequeAmt = BigDecimal.ZERO;
+	private BigDecimal returnChequeAmt = BigDecimal.ZERO;
 	@XmlElement
 	private int returnChequeCount;
 	private String remarks;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerChequeInfo befImage;
 	private LoggedInUser userDetails;
@@ -88,7 +88,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
 	private String sourceId;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -102,33 +102,36 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("sourceId");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return custID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.custID = id;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
+
 	public int getChequeSeq() {
 		return chequeSeq;
 	}
+
 	public void setChequeSeq(int chequeSeq) {
 		this.chequeSeq = chequeSeq;
 	}
@@ -136,6 +139,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public Date getMonthYear() {
 		return monthYear;
 	}
+
 	public void setMonthYear(Date monthYear) {
 		this.monthYear = monthYear;
 	}
@@ -143,6 +147,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public BigDecimal getTotChequePayment() {
 		return totChequePayment;
 	}
+
 	public void setTotChequePayment(BigDecimal totChequePayment) {
 		this.totChequePayment = totChequePayment;
 	}
@@ -150,6 +155,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public BigDecimal getSalary() {
 		return salary;
 	}
+
 	public void setSalary(BigDecimal salary) {
 		this.salary = salary;
 	}
@@ -157,6 +163,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public BigDecimal getDebits() {
 		return debits;
 	}
+
 	public void setDebits(BigDecimal debits) {
 		this.debits = debits;
 	}
@@ -164,6 +171,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public BigDecimal getReturnChequeAmt() {
 		return returnChequeAmt;
 	}
+
 	public void setReturnChequeAmt(BigDecimal returnChequeAmt) {
 		this.returnChequeAmt = returnChequeAmt;
 	}
@@ -171,10 +179,11 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public int getReturnChequeCount() {
 		return returnChequeCount;
 	}
+
 	public void setReturnChequeCount(int returnChequeCount) {
 		this.returnChequeCount = returnChequeCount;
 	}
-	
+
 	public String getRemarks() {
 		return remarks;
 	}
@@ -186,27 +195,31 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerChequeInfo getBefImage(){
+	public CustomerChequeInfo getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerChequeInfo beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerChequeInfo beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -214,6 +227,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -221,6 +235,7 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -228,13 +243,14 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 	}
 
 	public String getSourceId() {

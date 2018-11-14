@@ -63,17 +63,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements ChequePurposeDAO {
 	private static Logger logger = Logger.getLogger(ChequePurposeDAOImpl.class);
-	
+
 	public ChequePurposeDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Cheque Purpose details by key field
+	 * Fetch the Record Cheque Purpose details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ChequePurpose
 	 */
 	@Override
@@ -84,8 +85,9 @@ public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements Che
 		chequePurpose.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select Code, Description, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From ChequePurpose");
@@ -96,9 +98,9 @@ public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements Che
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(chequePurpose);
 		RowMapper<ChequePurpose> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequePurpose.class);
 
-		try{
-			chequePurpose = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			chequePurpose = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			chequePurpose = null;
 		}
@@ -107,18 +109,18 @@ public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements Che
 	}
 
 	/**
-	 * This method Deletes the Record from the ChequePurpose or ChequePurpose_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Cheque Purpose by key Code
+	 * This method Deletes the Record from the ChequePurpose or ChequePurpose_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Cheque Purpose by key Code
 	 * 
-	 * @param Cheque Purpose (chequePurpose)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Cheque
+	 *            Purpose (chequePurpose)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void delete(ChequePurpose chequePurpose,String type) {
+	public void delete(ChequePurpose chequePurpose, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -128,12 +130,12 @@ public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements Che
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(chequePurpose);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -142,26 +144,29 @@ public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements Che
 	/**
 	 * This method insert new Records into ChequePurpose or ChequePurpose_Temp.
 	 *
-	 * save Cheque Purpose 
+	 * save Cheque Purpose
 	 * 
-	 * @param Cheque Purpose (chequePurpose)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Cheque
+	 *            Purpose (chequePurpose)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public String save(ChequePurpose chequePurpose,String type) {
+	public String save(ChequePurpose chequePurpose, String type) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql =new StringBuilder("Insert Into ChequePurpose");
+		StringBuilder insertSql = new StringBuilder("Insert Into ChequePurpose");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (Code, Description, Active");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:Code, :Description, :Active");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -172,28 +177,29 @@ public class ChequePurposeDAOImpl extends BasicDao<ChequePurpose> implements Che
 	}
 
 	/**
-	 * This method updates the Record ChequePurpose or ChequePurpose_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Cheque Purpose by key Code and Version
+	 * This method updates the Record ChequePurpose or ChequePurpose_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Cheque Purpose by key Code and Version
 	 * 
-	 * @param Cheque Purpose (chequePurpose)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Cheque
+	 *            Purpose (chequePurpose)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(ChequePurpose chequePurpose,String type) {
+	public void update(ChequePurpose chequePurpose, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update ChequePurpose");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update ChequePurpose");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set Description = :Description, Active = :Active");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Code =:Code");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 

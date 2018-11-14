@@ -45,17 +45,17 @@ package com.pennant.backend.model.expenses;
 import java.math.BigDecimal;
 
 public class UploadTaxPercent {
-	
-	private long		uploadId		= 0;
-	private String		finReference	= null;
 
-	private String		feeTypeCode		= null;
-	private long		feeTypeId		= 0;
-	private BigDecimal	taxPercent		= BigDecimal.ZERO;
-	private String		status;
-	private String		reason;
-	private int			count			= 0;
-	
+	private long uploadId = 0;
+	private String finReference = null;
+
+	private String feeTypeCode = null;
+	private long feeTypeId = 0;
+	private BigDecimal taxPercent = BigDecimal.ZERO;
+	private String status;
+	private String reason;
+	private int count = 0;
+
 	public UploadTaxPercent() {
 		super();
 	}
@@ -91,6 +91,7 @@ public class UploadTaxPercent {
 	public void setFeeTypeId(long feeTypeId) {
 		this.feeTypeId = feeTypeId;
 	}
+
 	public BigDecimal getTaxPercent() {
 		return taxPercent;
 	}
@@ -123,5 +124,4 @@ public class UploadTaxPercent {
 		this.count = count;
 	}
 
-	
 }

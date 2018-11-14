@@ -13,28 +13,28 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "bureauconsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CriffBureauCommercial implements Serializable {
-	private static final long	serialVersionUID	= -8306856974384474724L;
+	private static final long serialVersionUID = -8306856974384474724L;
 
 	@XmlElement(name = "APPLICATION_ID")
-	private long				applicationId;
+	private long applicationId;
 	@XmlElement(name = "STG_UNQ_REF_ID")
-	private long				StgUnqRefId;
+	private long StgUnqRefId;
 	@XmlElement(name = "CIF")
-	private String				custCIF;
-	private String				finReference;
+	private String custCIF;
+	private String finReference;
 	@XmlElement(name = "company_name")
-	private String				companyName;
+	private String companyName;
 	@XmlElement(name = "COMPANY_MOBILE")
-	private String				companyMobile;
+	private String companyMobile;
 	@XmlElement(name = "COMPANY_PAN")
-	private String				companyPAN;
+	private String companyPAN;
 	@XmlElement(name = "LEGAL_ENTITY")
-	private String				legalEntity;
-	
+	private String legalEntity;
+
 	@XmlElement(name = "applicant")
-	private Applicant			applicant;
+	private Applicant applicant;
 	@XmlElement(name = "company_address")
-	private CompanyAddress		companyAddress;
+	private CompanyAddress companyAddress;
 
 	public long getApplicationId() {
 		return applicationId;

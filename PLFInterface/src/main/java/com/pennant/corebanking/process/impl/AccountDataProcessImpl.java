@@ -8,12 +8,12 @@ import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
-public class AccountDataProcessImpl extends GenericProcess implements AccountDataProcess{
+public class AccountDataProcessImpl extends GenericProcess implements AccountDataProcess {
 
 	public AccountDataProcessImpl() {
 		super();
 	}
-	
+
 	@Override
 	public int removeAccountHolds() throws InterfaceException {
 		return 0;
@@ -24,7 +24,7 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 			throws InterfaceException {
 		return null;
 	}
-	
+
 	/**
 	 * Method to create customer Account in corebank system
 	 * 
@@ -35,6 +35,7 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 		interfaceAccount.setAccountNumber("123456789789");
 		return interfaceAccount;
 	}
+
 	@Override
 	public CollateralMark collateralMarking(CollateralMark collateralMark) throws InterfaceException {
 		CollateralMark collateralMarkRes = new CollateralMark();

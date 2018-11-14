@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
@@ -17,8 +16,7 @@
 
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
-								<button id="btnPrint" label="${c:l('label_Print')}"
-									tooltiptext="${c:l('btnPrint.tooltiptext')}" sclass="z-toolbarbutton" />
+								<button id="btnPrint" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrint.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 
 							<!-- SEARCH AREA -->
@@ -28,10 +26,9 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
-								<button id="btnClose" label="${c:l('label_Close')}"
-									tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose" label="${c:l('label_Close')}" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -41,12 +38,10 @@
 
 					<vlayout>
 						<hlayout>
-							<button id="btnPrintFromFinance" label="${c:l('label_Print')}"
-								tooltiptext="${c:l('btnPrint.tooltiptext')}" />
+							<button id="btnPrintFromFinance" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrint.tooltiptext')}" />
 						</hlayout>
 						<groupbox id="gb_basicDetails">
-							<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
-								style="border:0px">
+							<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="220px" />
 									<column />
@@ -55,23 +50,19 @@
 								</columns>
 								<rows>
 									<row>
-										<label id="label_AgreementGenerationDialog_CustCIF"
-											value="${c:l('label_AgreementGenerationDialog_CustCIF.value')}" />
+										<label id="label_AgreementGenerationDialog_CustCIF" value="${c:l('label_AgreementGenerationDialog_CustCIF.value')}" />
 										<hbox>
 											<extendedcombobox id="custCIF" />
 										</hbox>
-										<label id="label_AgreementGenerationDialog_PurchRegOffice"
-											value="${c:l('label_AgreementGenerationDialog_PurchRegOffice.value')}" />
+										<label id="label_AgreementGenerationDialog_PurchRegOffice" value="${c:l('label_AgreementGenerationDialog_PurchRegOffice.value')}" />
 										<hbox>
 											<extendedcombobox id="purchRegOffice" />
 										</hbox>
 									</row>
 									<row>
-										<label id="label_AgreementGenerationDialog_ContractAmt"
-											value="${c:l('label_AgreementGenerationDialog_ContractAmt.value')}" />
+										<label id="label_AgreementGenerationDialog_ContractAmt" value="${c:l('label_AgreementGenerationDialog_ContractAmt.value')}" />
 										<currencyBox id="contractAmt" />
-										<label id="label_AgreementGenerationDialog_Rate"
-											value="${c:l('label_AgreementGenerationDialog_Rate.value')}" />
+										<label id="label_AgreementGenerationDialog_Rate" value="${c:l('label_AgreementGenerationDialog_Rate.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<decimalbox id="rate" width="200px" maxlength="15" />
@@ -79,14 +70,12 @@
 
 									</row>
 									<row>
-										<label id="label_AgreementGenerationDialog_Date"
-											value="${c:l('label_AgreementGenerationDialog_Date.value')}" />
+										<label id="label_AgreementGenerationDialog_Date" value="${c:l('label_AgreementGenerationDialog_Date.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<datebox id="contractDate" width="200px" />
 										</hbox>
-										<label id="label_AgreementGenerationDialog_fax"
-											value="${c:l('label_AgreementGenerationDialog_fax.value')}" />
+										<label id="label_AgreementGenerationDialog_fax" value="${c:l('label_AgreementGenerationDialog_fax.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<textbox id="faxCountryCode" width="45px" />
@@ -97,22 +86,19 @@
 										</hbox>
 									</row>
 									<row>
-										<label id="label_AgreementGenerationDialog_TitleNo"
-											value="${c:l('label_AgreementGenerationDialog_TitleNo.value')}" />
+										<label id="label_AgreementGenerationDialog_TitleNo" value="${c:l('label_AgreementGenerationDialog_TitleNo.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<textbox id="titleNo" width="200px" maxlength="200" />
 										</hbox>
-										<label id="label_AgreementGenerationDialog_Purchaddress"
-											value="${c:l('label_AgreementGenerationDialog_Purchaddress.value')}" />
+										<label id="label_AgreementGenerationDialog_Purchaddress" value="${c:l('label_AgreementGenerationDialog_Purchaddress.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<textbox id="purchaddress" width="200px" multiline="true" />
 										</hbox>
 									</row>
 									<row>
-										<label id="label_AgreementGenerationDialog_Attention"
-											value="${c:l('label_AgreementGenerationDialog_Attention.value')}" />
+										<label id="label_AgreementGenerationDialog_Attention" value="${c:l('label_AgreementGenerationDialog_Attention.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<textbox id="attention" width="200px" />
@@ -129,8 +115,8 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="75%">
 							<radiogroup id="userAction" name="action" />
-							<label id="label_AgreementGenerationDialog_RecordStatus"
-								value="${c:l('label_AgreementGenerationDialog_RecordStatus.value')}:" sclass="label-status" />
+							<label id="label_AgreementGenerationDialog_RecordStatus" value="${c:l('label_AgreementGenerationDialog_RecordStatus.value')}:"
+								sclass="label-status" />
 							<label id="recordStatus" style="font-weight:bold;" />
 						</hbox>
 					</groupbox>

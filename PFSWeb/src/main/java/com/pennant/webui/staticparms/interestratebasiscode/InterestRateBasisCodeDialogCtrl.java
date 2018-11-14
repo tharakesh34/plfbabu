@@ -71,8 +71,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/StaticParms/InterestRateBasisCode
+ * This is the controller class for the /WEB-INF/pages/StaticParms/InterestRateBasisCode
  * /interestRateBasisCodeDialog.zul file.
  */
 public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBasisCode> {
@@ -80,22 +79,21 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	private static final Logger logger = Logger.getLogger(InterestRateBasisCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_InterestRateBasisCodeDialog; // autoWired
+	protected Window window_InterestRateBasisCodeDialog; // autoWired
 
-	protected Textbox 	intRateBasisCode; 					// autoWired
-	protected Textbox 	intRateBasisDesc; 					// autoWired
-	protected Checkbox 	intRateBasisIsActive; 				// autoWired
+	protected Textbox intRateBasisCode; // autoWired
+	protected Textbox intRateBasisDesc; // autoWired
+	protected Checkbox intRateBasisIsActive; // autoWired
 
 	// not autoWired variables
 	private InterestRateBasisCode interestRateBasisCode; // over handed per parameter
 	private transient InterestRateBasisCodeListCtrl interestRateBasisCodeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient InterestRateBasisCodeService interestRateBasisCodeService;
 
@@ -114,14 +112,13 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected InterestRateBasisCode
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected InterestRateBasisCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_InterestRateBasisCodeDialog(Event event)throws Exception {
+	public void onCreate$window_InterestRateBasisCodeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -133,8 +130,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("interestRateBasisCode")) {
-				this.interestRateBasisCode = (InterestRateBasisCode) arguments
-						.get("interestRateBasisCode");
+				this.interestRateBasisCode = (InterestRateBasisCode) arguments.get("interestRateBasisCode");
 				InterestRateBasisCode befImage = new InterestRateBasisCode();
 				BeanUtils.copyProperties(this.interestRateBasisCode, befImage);
 				this.interestRateBasisCode.setBefImage(befImage);
@@ -143,14 +139,12 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 				setInterestRateBasisCode(null);
 			}
 
-			doLoadWorkFlow(this.interestRateBasisCode.isWorkflow(),
-					this.interestRateBasisCode.getWorkflowId(),
+			doLoadWorkFlow(this.interestRateBasisCode.isWorkflow(), this.interestRateBasisCode.getWorkflowId(),
 					this.interestRateBasisCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"InterestRateBasisCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "InterestRateBasisCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -160,8 +154,8 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 			// or
 			// delete interestRateBasisCode here.
 			if (arguments.containsKey("interestRateBasisCodeListCtrl")) {
-				setInterestRateBasisCodeListCtrl((InterestRateBasisCodeListCtrl) arguments
-						.get("interestRateBasisCodeListCtrl"));
+				setInterestRateBasisCodeListCtrl(
+						(InterestRateBasisCodeListCtrl) arguments.get("interestRateBasisCodeListCtrl"));
 			} else {
 				setInterestRateBasisCodeListCtrl(null);
 			}
@@ -188,10 +182,10 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
+
 		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -201,8 +195,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -248,8 +241,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		MessageUtil
-		.showHelpWindow(event, window_InterestRateBasisCodeDialog);
+		MessageUtil.showHelpWindow(event, window_InterestRateBasisCodeDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -313,9 +305,9 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 		this.intRateBasisDesc.setValue(aInterestRateBasisCode.getIntRateBasisDesc());
 		this.intRateBasisIsActive.setChecked(aInterestRateBasisCode.isIntRateBasisIsActive());
 		this.recordStatus.setValue(aInterestRateBasisCode.getRecordStatus());
-		
-		if(aInterestRateBasisCode.isNew() || 
-				StringUtils.trimToEmpty(aInterestRateBasisCode.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aInterestRateBasisCode.isNew() || StringUtils.trimToEmpty(aInterestRateBasisCode.getRecordType())
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.intRateBasisIsActive.setChecked(true);
 			this.intRateBasisIsActive.setDisabled(true);
 		}
@@ -367,13 +359,12 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aInterestRateBasisCode
 	 * @throws Exception
 	 */
-	public void doShowDialog(InterestRateBasisCode aInterestRateBasisCode)throws Exception {
+	public void doShowDialog(InterestRateBasisCode aInterestRateBasisCode) throws Exception {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -415,12 +406,15 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.intRateBasisCode.isReadonly()){
-			this.intRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+		if (!this.intRateBasisCode.isReadonly()) {
+			this.intRateBasisCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		if (!this.intRateBasisDesc.isReadonly()){
-			this.intRateBasisDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.intRateBasisDesc.isReadonly()) {
+			this.intRateBasisDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -471,13 +465,14 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 		logger.debug("Entering");
 
 		final InterestRateBasisCode aInterestRateBasisCode = new InterestRateBasisCode();
-		BeanUtils.copyProperties(getInterestRateBasisCode(),aInterestRateBasisCode);
+		BeanUtils.copyProperties(getInterestRateBasisCode(), aInterestRateBasisCode);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisCode.value")+" : "+aInterestRateBasisCode.getIntRateBasisCode();
-		
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_InterestRateBasisCodeDialog_IntRateBasisCode.value") + " : "
+				+ aInterestRateBasisCode.getIntRateBasisCode();
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aInterestRateBasisCode.getRecordType())) {
 				aInterestRateBasisCode.setVersion(aInterestRateBasisCode.getVersion() + 1);
@@ -577,7 +572,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 		logger.debug("Entering");
 
 		final InterestRateBasisCode aInterestRateBasisCode = new InterestRateBasisCode();
-		BeanUtils.copyProperties(getInterestRateBasisCode(),aInterestRateBasisCode);
+		BeanUtils.copyProperties(getInterestRateBasisCode(), aInterestRateBasisCode);
 		boolean isNew = false;
 
 		// force validation, if on, than execute by component.getValue()
@@ -631,7 +626,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(InterestRateBasisCode aInterestRateBasisCode,String tranType) {
+	private boolean doProcess(InterestRateBasisCode aInterestRateBasisCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -697,7 +692,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aInterestRateBasisCode,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aInterestRateBasisCode, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -724,8 +719,8 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		InterestRateBasisCode aInterestRateBasisCode = (InterestRateBasisCode) auditHeader
-		.getAuditDetail().getModelData();
+		InterestRateBasisCode aInterestRateBasisCode = (InterestRateBasisCode) auditHeader.getAuditDetail()
+				.getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -753,9 +748,9 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(this.window_InterestRateBasisCodeDialog,auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_InterestRateBasisCodeDialog, auditHeader);
 						return processCompleted;
 					}
 				}
@@ -795,10 +790,9 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	 */
 	private AuditHeader getAuditHeader(InterestRateBasisCode aInterestRateBasisCode, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aInterestRateBasisCode.getBefImage(), aInterestRateBasisCode);
-		return new AuditHeader(String.valueOf(aInterestRateBasisCode.getId()),
-				null, null, null, auditDetail,
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aInterestRateBasisCode.getBefImage(),
+				aInterestRateBasisCode);
+		return new AuditHeader(String.valueOf(aInterestRateBasisCode.getId()), null, null, null, auditDetail,
 				aInterestRateBasisCode.getUserDetails(), getOverideMap());
 	}
 
@@ -851,6 +845,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -858,14 +853,15 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	public InterestRateBasisCode getInterestRateBasisCode() {
 		return this.interestRateBasisCode;
 	}
-	public void setInterestRateBasisCode(
-			InterestRateBasisCode interestRateBasisCode) {
+
+	public void setInterestRateBasisCode(InterestRateBasisCode interestRateBasisCode) {
 		this.interestRateBasisCode = interestRateBasisCode;
 	}
 
 	public void setInterestRateBasisCodeService(InterestRateBasisCodeService interestRateBasisCodeService) {
 		this.interestRateBasisCodeService = interestRateBasisCodeService;
 	}
+
 	public InterestRateBasisCodeService getInterestRateBasisCodeService() {
 		return this.interestRateBasisCodeService;
 	}
@@ -873,6 +869,7 @@ public class InterestRateBasisCodeDialogCtrl extends GFCBaseCtrl<InterestRateBas
 	public void setInterestRateBasisCodeListCtrl(InterestRateBasisCodeListCtrl interestRateBasisCodeListCtrl) {
 		this.interestRateBasisCodeListCtrl = interestRateBasisCodeListCtrl;
 	}
+
 	public InterestRateBasisCodeListCtrl getInterestRateBasisCodeListCtrl() {
 		return this.interestRateBasisCodeListCtrl;
 	}

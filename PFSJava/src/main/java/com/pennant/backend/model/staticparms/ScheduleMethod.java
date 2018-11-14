@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class ScheduleMethod extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -3168357022890935914L;
 
 	private String schdMethod;
@@ -77,24 +77,27 @@ public class ScheduleMethod extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return schdMethod;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.schdMethod = id;
 	}
-	
+
 	public String getSchdMethod() {
 		return schdMethod;
 	}
+
 	public void setSchdMethod(String schdMethod) {
 		this.schdMethod = schdMethod;
 	}
-	
+
 	public String getSchdMethodDesc() {
 		return schdMethodDesc;
 	}
+
 	public void setSchdMethodDesc(String schdMethodDesc) {
 		this.schdMethodDesc = schdMethodDesc;
 	}
@@ -102,27 +105,31 @@ public class ScheduleMethod extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public ScheduleMethod getBefImage(){
+	public ScheduleMethod getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(ScheduleMethod beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ScheduleMethod beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

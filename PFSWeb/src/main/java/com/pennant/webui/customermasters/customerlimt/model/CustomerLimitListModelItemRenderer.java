@@ -59,11 +59,11 @@ import com.pennant.backend.model.customermasters.CustomerLimit;
 public class CustomerLimitListModelItemRenderer implements ListitemRenderer<CustomerLimit>, Serializable {
 
 	private static final long serialVersionUID = 2274326782681085785L;
-	
+
 	public CustomerLimitListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerLimit customerLimit, int count) throws Exception {
 
@@ -74,9 +74,9 @@ public class CustomerLimitListModelItemRenderer implements ListitemRenderer<Cust
 		lc.setParent(item);
 		lc = new Listcell(customerLimit.getLimitCategory());
 		lc.setParent(item);
-	  	lc = new Listcell(customerLimit.getBranch());
+		lc = new Listcell(customerLimit.getBranch());
 		lc.setParent(item);
-	  	lc = new Listcell(customerLimit.getCurrency());
+		lc = new Listcell(customerLimit.getCurrency());
 		lc.setParent(item);
 		item.setAttribute("data", customerLimit);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerItemDoubleClicked");

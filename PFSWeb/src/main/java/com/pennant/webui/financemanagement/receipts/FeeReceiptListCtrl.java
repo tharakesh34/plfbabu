@@ -44,6 +44,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/FeeReceipt/FeeReceiptList.zul file.
  */
@@ -66,7 +67,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_FeeReceiptCusomer;
 	protected Listheader listheader_FeeReceiptCustName;
 
-
 	protected Button btnNew;
 	protected Button btnSearch;
 
@@ -86,9 +86,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_FeeReceiptFinType;
 	protected Listbox sortOperator_FeeReceiptFinBranch;
 
-	protected int   oldVar_sortOperator_custCIF; 
-	protected int   oldVar_sortOperator_finType;
-	protected int   oldVar_sortOperator_finBranch;
+	protected int oldVar_sortOperator_custCIF;
+	protected int oldVar_sortOperator_finType;
+	protected int oldVar_sortOperator_finBranch;
 
 	private FeeReceiptService feeReceiptService;
 
@@ -96,7 +96,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_FeeReceiptSearchTranRef;
 	protected Listheader listheader_FeeReceipt_ReceiptRef;
 	protected Listheader listheader_FeeReceipt_ReceiptDate;
-		
+
 	/**
 	 * The default constructor.
 	 */
@@ -134,29 +134,31 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				sortOperator_FeeReceiptCustomer, Operators.STRING);
 		registerField("custShrtName", listheader_FeeReceiptCustName, SortOrder.NONE, customer,
 				sortOperator_FeeReceiptCustomer, Operators.STRING);
-		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), ",SchdlRepayment,EarlyPayment,EarlySettlement,");
+		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(),
+				",SchdlRepayment,EarlyPayment,EarlySettlement,");
 		registerField("receiptPurpose", listheader_FeeReceiptPurpose, SortOrder.NONE, purpose,
 				sortOperator_FeeReceiptPurpose, Operators.STRING);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
-		registerField("receiptMode", listheader_FeeReceiptMode, SortOrder.NONE, receiptMode, sortOperator_FeeReceiptReceiptMode,
-				Operators.STRING);
+		registerField("receiptMode", listheader_FeeReceiptMode, SortOrder.NONE, receiptMode,
+				sortOperator_FeeReceiptReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_FeeReceiptAmount);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_FeeReceiptAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_FeeReceiptAllocationType, Operators.STRING);
-		registerField("finType", listheader_FeeReceiptFinType, SortOrder.NONE, finType,
-				sortOperator_FeeReceiptFinType, Operators.STRING);
-		registerField("finBranch", listheader_FeeReceiptFinBranch, SortOrder.NONE, finBranch, sortOperator_FeeReceiptFinBranch,
+		registerField("finType", listheader_FeeReceiptFinType, SortOrder.NONE, finType, sortOperator_FeeReceiptFinType,
 				Operators.STRING);
+		registerField("finBranch", listheader_FeeReceiptFinBranch, SortOrder.NONE, finBranch,
+				sortOperator_FeeReceiptFinBranch, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		this.searchObject.addWhereClause(" ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_FEES+"' AND RecordType IS NOT NULL ");
+		this.searchObject.addWhereClause(
+				" ReceiptModeStatus = '" + RepayConstants.PAYSTATUS_FEES + "' AND RecordType IS NOT NULL ");
 	}
 
 	/**
@@ -183,9 +185,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.finBranch.setValue("");
 		this.sortOperator_FeeReceiptFinBranch.setSelectedIndex(0);
 		this.listBoxFeeReceipt.getItems().clear();
-		this.oldVar_sortOperator_custCIF=0;
-		this.oldVar_sortOperator_finType=0;
-		this.oldVar_sortOperator_finBranch=0;
+		this.oldVar_sortOperator_custCIF = 0;
+		this.oldVar_sortOperator_finType = 0;
+		this.oldVar_sortOperator_finBranch = 0;
 		doReset();
 		search();
 	}
@@ -233,7 +235,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion()+ " ";
+		String whereCond = " ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
 
 		if (doCheckAuthority(header, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -271,21 +273,22 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * When user clicks on  "btnSearchCustCIF" button
+	 * When user clicks on "btnSearchCustCIF" button
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchCustCIF(Event event) throws  SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		if(this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_FeeReceiptList, "Customer", this.customer.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FeeReceiptList, "Customer",
+					this.customer.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.customer.setValue(selectedValues);
 			}
 
-		}else{
+		} else {
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "Customer");
 			if (dataObject instanceof String) {
@@ -308,15 +311,15 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if(this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_FeeReceiptList, "FinanceType", this.finType.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FeeReceiptList, "FinanceType",
+					this.finType.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finType.setValue(selectedValues);
 			}
 
-		}else{
+		} else {
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "FinanceType");
 			if (dataObject instanceof String) {
@@ -332,60 +335,64 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * When user clicks on "btnSearchBranchCode" button
-	 * This method displays ExtendedSearchListBox with branch details
+	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchBranch(Event event){
-		logger.debug("Entering  "+event.toString());
+	public void onClick$btnSearchBranch(Event event) {
+		logger.debug("Entering  " + event.toString());
 
-		if(this.oldVar_sortOperator_finBranch == Filter.OP_IN || this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
+				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_FeeReceiptList, "Branch", this.finBranch.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FeeReceiptList, "Branch",
+					this.finBranch.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
-		}else{
-			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList,"Branch");
-			if (dataObject instanceof String){
+		} else {
+			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "Branch");
+			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
-			}else{
-				Branch details= (Branch) dataObject;
+			} else {
+				Branch details = (Branch) dataObject;
 				if (details != null) {
 					this.finBranch.setValue(details.getBranchCode());
 				}
 			}
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// On Change Events for Multi-Selection Listbox's for Search operators
 
 	public void onSelect$sortOperator_FeeReceiptCustomer(Event event) {
-		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_FeeReceiptCustomer, oldVar_sortOperator_custCIF, this.customer);
+		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_FeeReceiptCustomer,
+				oldVar_sortOperator_custCIF, this.customer);
 	}
 
 	public void onSelect$sortOperator_finType(Event event) {
-		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_FeeReceiptFinType, oldVar_sortOperator_finType, this.finType);
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_FeeReceiptFinType,
+				oldVar_sortOperator_finType, this.finType);
 	}
 
 	public void onSelect$sortOperator_finBranch(Event event) {
-		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_FeeReceiptFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
+		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_FeeReceiptFinBranch,
+				oldVar_sortOperator_finBranch, this.finBranch);
 	}
 
-	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
+	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
 
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
 
-		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
-			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
+		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
+			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
 				textbox.setValue("");
 			}
-		}else{
-			if(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN){
+		} else {
+			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
 				textbox.setValue("");
 			}
 		}

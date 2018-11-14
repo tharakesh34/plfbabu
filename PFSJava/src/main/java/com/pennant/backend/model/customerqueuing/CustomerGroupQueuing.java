@@ -5,21 +5,21 @@ import java.util.Date;
 
 public class CustomerGroupQueuing implements Serializable {
 
-	private static final long	serialVersionUID	= 6724157480105725958L;
+	private static final long serialVersionUID = 6724157480105725958L;
 
-	private long				groupId;
-	private Date				eodDate;
-	private Date				startTime;
-	private Date				endTime;
-	private int					progress;
-	private String				errorLog;
-	private String				status;
-	
-	private boolean				eodProcess;
-	
+	private long groupId;
+	private Date eodDate;
+	private Date startTime;
+	private Date endTime;
+	private int progress;
+	private String errorLog;
+	private String status;
+
+	private boolean eodProcess;
+
 	//Unused variable for bean parameter. Temporary
-	private boolean				active;
-	
+	private boolean active;
+
 	public CustomerGroupQueuing() {
 		super();
 	}
@@ -31,7 +31,7 @@ public class CustomerGroupQueuing implements Serializable {
 	public void setGroupId(long groupId) {
 		this.groupId = groupId;
 	}
-	
+
 	public String getErrorLog() {
 		return errorLog;
 	}

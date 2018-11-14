@@ -53,10 +53,15 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface BaseRateCodeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BaseRateCode getBaseRateCodeById(String id);
+
 	BaseRateCode getApprovedBaseRateCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

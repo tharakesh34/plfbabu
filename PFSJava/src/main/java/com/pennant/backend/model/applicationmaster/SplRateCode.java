@@ -52,7 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class SplRateCode extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1056160810527031921L;
 
-	private String sRType ;
+	private String sRType;
 	private String sRTypeDesc;
 	private boolean sRIsActive;
 	private boolean newRecord;
@@ -80,13 +80,15 @@ public class SplRateCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return sRType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.sRType = id;
 	}
 
 	public String getSRType() {
 		return sRType;
 	}
+
 	public void setSRType(String sRType) {
 		this.sRType = sRType;
 	}
@@ -94,6 +96,7 @@ public class SplRateCode extends AbstractWorkflowEntity {
 	public String getSRTypeDesc() {
 		return sRTypeDesc;
 	}
+
 	public void setSRTypeDesc(String sRTypeDesc) {
 		this.sRTypeDesc = sRTypeDesc;
 	}
@@ -101,6 +104,7 @@ public class SplRateCode extends AbstractWorkflowEntity {
 	public boolean isSRIsActive() {
 		return sRIsActive;
 	}
+
 	public void setSRIsActive(boolean sRIsActive) {
 		this.sRIsActive = sRIsActive;
 	}
@@ -108,6 +112,7 @@ public class SplRateCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -115,20 +120,23 @@ public class SplRateCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public SplRateCode getBefImage(){
+	public SplRateCode getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(SplRateCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SplRateCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

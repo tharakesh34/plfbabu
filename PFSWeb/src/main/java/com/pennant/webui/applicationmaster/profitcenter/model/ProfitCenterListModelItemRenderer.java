@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,14 +65,13 @@ public class ProfitCenterListModelItemRenderer implements ListitemRenderer<Profi
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, ProfitCenter profitCenter, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(profitCenter.getProfitCenterCode());
+		lc = new Listcell(profitCenter.getProfitCenterCode());
 		lc.setParent(item);
-	  	lc = new Listcell(profitCenter.getProfitCenterDesc());
+		lc = new Listcell(profitCenter.getProfitCenterDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -81,12 +79,12 @@ public class ProfitCenterListModelItemRenderer implements ListitemRenderer<Profi
 		cbActive.setChecked(profitCenter.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(profitCenter.getRecordStatus());
+		lc = new Listcell(profitCenter.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(profitCenter.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("profitCenterID", profitCenter.getProfitCenterID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onProfitCenterItemDoubleClicked");
 	}
 }

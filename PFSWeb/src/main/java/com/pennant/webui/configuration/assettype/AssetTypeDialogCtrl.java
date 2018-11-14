@@ -97,11 +97,10 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/configuration/AssetType/assetTypeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/configuration/AssetType/assetTypeDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
-public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
+public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(AssetTypeDialogCtrl.class);
@@ -111,26 +110,26 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window 		window_AssetTypeDialog; 
-	protected Uppercasebox 	assetType; 
-	protected Textbox 		assetDesc; 
-	protected Textbox 		remarks; 
-	protected Checkbox 		active; 
-	protected Codemirror 	preValidation; 
-	protected Codemirror 	postValidation; 
-	protected Grid 			preValidationGrid;
-	protected Grid 			postValidationGrid;
-	protected Tab			extendedDetailsTab;
-	protected Tab			preValidationTab;
-	protected Tab			postValidationTab;
-	protected Tabpanel		extendedFieldTabpanel;
-	private transient AssetTypeListCtrl assetTypeListCtrl; 
-	private transient AssetTypeService 	assetTypeService;
+	protected Window window_AssetTypeDialog;
+	protected Uppercasebox assetType;
+	protected Textbox assetDesc;
+	protected Textbox remarks;
+	protected Checkbox active;
+	protected Codemirror preValidation;
+	protected Codemirror postValidation;
+	protected Grid preValidationGrid;
+	protected Grid postValidationGrid;
+	protected Tab extendedDetailsTab;
+	protected Tab preValidationTab;
+	protected Tab postValidationTab;
+	protected Tabpanel extendedFieldTabpanel;
+	private transient AssetTypeListCtrl assetTypeListCtrl;
+	private transient AssetTypeService assetTypeService;
 	private transient ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
-	protected Button 							btnCopyTo;
+	protected Button btnCopyTo;
 
-	private AssetType 	assetConfigurationType; 
-	private boolean 	enqModule=false;
+	private AssetType assetConfigurationType;
+	private boolean enqModule = false;
 	protected Label preModuleDesc;
 	protected Label preSubModuleDesc;
 	protected Label postModuleDesc;
@@ -143,11 +142,11 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	protected Button button_post_Simulate;
 	JSONArray variables = new JSONArray();
 	private List<String> fieldNames = new ArrayList<String>();
-	protected boolean 							alwCopyOption = false;
-	protected boolean 							isCopyProcess = false;
-	protected boolean 							preScriptValidated = false;
-	protected boolean 							postScriptValidated = false;
-	
+	protected boolean alwCopyOption = false;
+	protected boolean isCopyProcess = false;
+	protected boolean preScriptValidated = false;
+	protected boolean postScriptValidated = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -155,23 +154,20 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		super();
 	}
 
-
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "AssetTypeDialog";
 	}
 
-
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected AssetType object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected AssetType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_AssetTypeDialog(Event event) throws Exception {
-		logger.debug("Entring" +event.toString());
+		logger.debug("Entring" + event.toString());
 		try {
 
 			// Set the page level components.
@@ -179,18 +175,18 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
-				enqModule=(Boolean) arguments.get("enqModule");
-			}else{
-				enqModule=false;
+				enqModule = (Boolean) arguments.get("enqModule");
+			} else {
+				enqModule = false;
 			}
-			
+
 			this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
 			this.isCopyProcess = (Boolean) arguments.get("isCopyProcess");
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("assetConfigurationType")) {
 				this.assetConfigurationType = (AssetType) arguments.get("assetConfigurationType");
-				AssetType befImage =new AssetType();
+				AssetType befImage = new AssetType();
 				BeanUtils.copyProperties(this.assetConfigurationType, befImage);
 				this.assetConfigurationType.setBefImage(befImage);
 
@@ -198,12 +194,13 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 			} else {
 				setAssetType(null);
 			}
-			doLoadWorkFlow(this.assetConfigurationType.isWorkflow(),this.assetConfigurationType.getWorkflowId(),this.assetConfigurationType.getNextTaskId());
+			doLoadWorkFlow(this.assetConfigurationType.isWorkflow(), this.assetConfigurationType.getWorkflowId(),
+					this.assetConfigurationType.getNextTaskId());
 
-			if (isWorkFlowEnabled() && !enqModule){
-				this.userAction	= setListRecordStatus(this.userAction);
+			if (isWorkFlowEnabled() && !enqModule) {
+				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "AssetTypeDialog");
-			}else{
+			} else {
 				getUserWorkspace().allocateAuthorities("AssetTypeDialog");
 			}
 
@@ -221,52 +218,55 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving" +event.toString());
-	}
-	
-	/**
-	 * Method for setting label details on Header in Selecting Tab
-	 * @param event
-	 */
-	public void onSelect$preValidationTab(Event event) {
-		logger.debug("Entering" + event.toString());
-		
-		this.preModuleDesc.setValue(CollateralConstants.MODULE_NAME);
-		this.preSubModuleDesc.setValue(this.assetType.getValue());
-		this.prevalidationListbox.getItems().clear();
-		renderScriptFields(prevalidationListbox);
-		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
+	 * @param event
+	 */
+	public void onSelect$preValidationTab(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		this.preModuleDesc.setValue(CollateralConstants.MODULE_NAME);
+		this.preSubModuleDesc.setValue(this.assetType.getValue());
+		this.prevalidationListbox.getItems().clear();
+		renderScriptFields(prevalidationListbox);
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$postValidationTab(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.postModuleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.postSubModuleDesc.setValue(this.assetType.getValue());
 		this.postValidationListbox.getItems().clear();
 		renderScriptFields(postValidationListbox);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for rendering Field Details from Extended fields for Validations & Simulation
+	 * 
 	 * @param listbox
 	 */
-	private void renderScriptFields(Listbox listbox){
+	private void renderScriptFields(Listbox listbox) {
 		logger.debug("Entering");
-		
+
 		if (getExtendedFieldDialogCtrl() != null) {
-			List<ExtendedFieldDetail>  extFieldList= getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+			List<ExtendedFieldDetail> extFieldList = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 			if (extFieldList != null && !extFieldList.isEmpty()) {
 				for (ExtendedFieldDetail details : extFieldList) {
-					if (!StringUtils.equals(details.getRecordType(),PennantConstants.RECORD_TYPE_DEL) && 
-							!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+							&& !StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 						Listitem item = new Listitem();
 						Listcell lc = new Listcell(details.getFieldName());
 						lc.setParent(item);
@@ -277,10 +277,10 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -289,10 +289,10 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 */
 	public void onUser$btnPreValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event , false, false)) {
+		if (validate(event, false, false)) {
 			preScriptValidated = true;
 			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.preValidation.getValue().trim())){
+			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.preValidation.getValue());
@@ -301,7 +301,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -310,10 +310,10 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 */
 	public void onUser$btnPostValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			postScriptValidated = true;
 			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.postValidation.getValue().trim())){
+			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.postValidation.getValue());
@@ -322,7 +322,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * 
 	 * @param event
@@ -330,6 +330,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	public void onChange$postValidation(Event event) {
 		postScriptValidated = false;
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -338,7 +339,6 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		preScriptValidated = false;
 	}
 
-			
 	/**
 	 * CALL THE RESULT ZUL FILE
 	 * 
@@ -350,16 +350,17 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("variables", jsonArray);
 		map.put("scriptRule", scriptRule);
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS
 	 * 
@@ -367,7 +368,8 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations) throws InterruptedException {
+	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations)
+			throws InterruptedException {
 		boolean noerrors = true;
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
@@ -415,36 +417,39 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 	/**
 	 * Method for Checking script has Error Details information or not.
+	 * 
 	 * @param isPostValidation
 	 * @return
 	 * @throws InterruptedException
 	 */
 	private boolean validateResult(boolean isPostValidation, boolean bothValidations) throws InterruptedException {
 
-		if(!bothValidations){
-			if(isPostValidation){
+		if (!bothValidations) {
+			if (isPostValidation) {
 				if (!this.postValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
-			}else{
+			} else {
 				if (!this.preValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}
-		}else{
-			if (StringUtils.isNotEmpty(this.preValidation.getValue()) && !this.preValidation.getValue().contains("errors")) {
+		} else {
+			if (StringUtils.isNotEmpty(this.preValidation.getValue())
+					&& !this.preValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Pre Validations.");
 				return false;
-			}else if(StringUtils.isNotEmpty(this.postValidation.getValue()) && !this.postValidation.getValue().contains("errors")){
+			} else if (StringUtils.isNotEmpty(this.postValidation.getValue())
+					&& !this.postValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Post Validations.");
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -453,13 +458,13 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 */
 	public void onUser$btnPreSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event , false , false)) {
+		if (validate(event, false, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.preValidation.getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -468,13 +473,12 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 */
 	public void onUser$btnPostSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.postValidation.getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
 
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
@@ -485,25 +489,27 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	public void onClick$btnEdit(Event event) {
 		doEdit();
 	}
-	
+
 	/**
 	 * Method for On click action on Copy button to make Duplicate record with existing Data
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeAssetWindow();
-			Events.postEvent("onClick$button_AssetTypeList_NewAssetType",
-					assetTypeListCtrl.window_AssetTypeList, this.assetConfigurationType);
+			Events.postEvent("onClick$button_AssetTypeList_NewAssetType", assetTypeListCtrl.window_AssetTypeList,
+					this.assetConfigurationType);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Checking Actual Initiated Owner of the Record
+	 * 
 	 * @return
 	 */
 	private boolean isMaintainable() {
@@ -542,8 +548,8 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InterruptedException 
-	 * @throws ParseException 
+	 * @throws InterruptedException
+	 * @throws ParseException
 	 */
 	public void onClick$btnCancel(Event event) throws ParseException, InterruptedException {
 		doCancel();
@@ -567,32 +573,30 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 */
 	public void onClick$btnSave(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		// TODO: Open Comment If, save is working on ZK scripts for validation 
-		/*boolean validationReq = true;
-		if (this.userAction.getSelectedItem() != null){
-			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-					this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
-					this.userAction.getSelectedItem().getLabel().contains("Decline")) {
-				validationReq = false;
-			}
-		}*/
-		
+		/*
+		 * boolean validationReq = true; if (this.userAction.getSelectedItem() != null){ if
+		 * ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Reject") ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Decline")) { validationReq = false; } }
+		 */
+
 		// Pre Validation Checking for Validated or not
-		if(StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated){
+		if (StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated) {
 			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
 					new String[] { Labels.getLabel("Tab_PreValidation") }));
 			return;
 		}
-		
+
 		// Post Validation Checking for Validated or not
-		if(StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated){
+		if (StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated) {
 			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
 					new String[] { Labels.getLabel("Tab_PostValidation") }));
 			return;
 		}
-		
+
 		// Validation Details are correct and validated
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -658,12 +662,12 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 			// fill the components with the data
 			doWriteBeanToComponents(aAssetType);
-			
-			int height = getContentAreaHeight() ;
-			this.preValidationGrid.setHeight(height-150+"px");
-			this.postValidationGrid.setHeight(height-150+"px");
-			this.preValidation.setHeight(height-160+"px");
-			this.postValidation.setHeight(height-160+"px");
+
+			int height = getContentAreaHeight();
+			this.preValidationGrid.setHeight(height - 150 + "px");
+			this.postValidationGrid.setHeight(height - 150 + "px");
+			this.preValidation.setHeight(height - 160 + "px");
+			this.postValidation.setHeight(height - 160 + "px");
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -685,9 +689,9 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		} else {
 			this.assetType.setReadonly(true);
 			this.btnCancel.setVisible(true);
-			if(StringUtils.equals(getAssetType().getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+			if (StringUtils.equals(getAssetType().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				this.active.setDisabled(true);
-			}else{				
+			} else {
 				this.active.setDisabled(isReadOnly("AssetTypeDialog_Active"));
 			}
 			this.btnCopyTo.setVisible(isMaintainable() && alwCopyOption);
@@ -741,11 +745,10 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AssetTypeDialog_btnNew"));
@@ -754,32 +757,31 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AssetTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.assetType.setMaxlength(8);
 		this.assetDesc.setMaxlength(20);
 		this.remarks.setMaxlength(1000);
 		setStatusDetails();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method for setting Basic Details on Selecting Extended Details Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$extendedDetailsTab(Event event) {
-		getExtendedFieldDialogCtrl().doSetBasicDetail(
-				AssetConstants.EXTENDEDFIELDS_MODULE, this.assetType.getValue(), this.assetDesc.getValue());
+		getExtendedFieldDialogCtrl().doSetBasicDetail(AssetConstants.EXTENDEDFIELDS_MODULE, this.assetType.getValue(),
+				this.assetDesc.getValue());
 	}
-
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -788,23 +790,23 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 *            AssetType
 	 */
 	public void doWriteBeanToComponents(AssetType aAssetType) {
-		logger.debug("Entering") ;
-		
-		if(aAssetType.isNewRecord()) {
+		logger.debug("Entering");
+
+		if (aAssetType.isNewRecord()) {
 			this.active.setChecked(true);
-		}else{
+		} else {
 			this.active.setChecked(aAssetType.isActive());
 		}
-	
+
 		this.preValidation.setValue(aAssetType.getPreValidation());
 		this.postValidation.setValue(aAssetType.getPostValidation());
 		this.assetType.setValue(aAssetType.getAssetType());
 		this.assetDesc.setValue(aAssetType.getAssetDesc());
 		this.remarks.setValue(aAssetType.getRemarks());
-		
+
 		//Extended Field Details tab
 		appendExtendedFieldsTab();
-		
+
 		// Default Values Setting for Script Validations
 		postScriptValidated = true;
 		preScriptValidated = true;
@@ -819,7 +821,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * @param aAssetType
 	 */
 	public void doWriteComponentsToBean(AssetType aAssetType) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -827,40 +829,41 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		//Asset Type
 		try {
 			aAssetType.setAssetType(this.assetType.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Asset Description
 		try {
 			aAssetType.setAssetDesc(this.assetDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Remarks
 		try {
 			aAssetType.setRemarks(this.remarks.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
 		try {
 			aAssetType.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAssetType.setPreValidation(this.preValidation.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAssetType.setPostValidation(this.postValidation.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Extended Field Details 
 		if (getExtendedFieldDialogCtrl() != null) {
-			ExtendedFieldHeader extendedFieldHeader = getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
+			ExtendedFieldHeader extendedFieldHeader = getExtendedFieldDialogCtrl()
+					.doSave_ExtendedFields(extendedDetailsTab);
 			extendedFieldHeader.setModuleName(AssetConstants.EXTENDEDFIELDS_MODULE);
 			extendedFieldHeader.setSubModuleName(aAssetType.getAssetType());
 			aAssetType.setExtendedFieldHeader(extendedFieldHeader);
@@ -869,7 +872,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -879,23 +882,25 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
 		//Asset Type
-		if (!this.assetType.isReadonly()){
-			this.assetType.setConstraint(new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_AssetType.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHA,true));
+		if (!this.assetType.isReadonly()) {
+			this.assetType.setConstraint(new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_AssetType.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
 		//Asset Description
-		if (!this.assetDesc.isReadonly()){
-			this.assetDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_AssetDescription.value"),null,true));
+		if (!this.assetDesc.isReadonly()) {
+			this.assetDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_AssetDescription.value"), null, true));
 		}
 		//Remarks
-		if (!this.remarks.isReadonly()){
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_Remarks.value"),null,false));
+		if (!this.remarks.isReadonly()) {
+			this.remarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_Remarks.value"), null, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -910,7 +915,6 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		this.remarks.setConstraint("");
 		logger.debug("Leaving");
 	}
-
 
 	//Append ExtendedFieldsTab 
 	private void appendExtendedFieldsTab() {
@@ -931,7 +935,8 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 			}
 			map.put("moduleName", AssetConstants.EXTENDEDFIELDS_MODULE);
 
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul", extendedFieldTabpanel, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul",
+					extendedFieldTabpanel, map);
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -966,8 +971,9 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * Cancel the actual operation. <br>
 	 * <br>
 	 * Resets to the original status.<br>
-	 * @throws InterruptedException 
-	 * @throws ParseException 
+	 * 
+	 * @throws InterruptedException
+	 * @throws ParseException
 	 * 
 	 */
 	private void doCancel() throws ParseException, InterruptedException {
@@ -1014,10 +1020,9 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 		logger.debug("Leaving");
 	}
-	
-	
+
 	public void closeAssetWindow() {
-		
+
 		if (getExtendedFieldDialogCtrl() != null) {
 			getExtendedFieldDialogCtrl().closeDialog();
 		}
@@ -1146,7 +1151,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * 
 	 */
 
-	private boolean doProcess(AssetType aAssetType,String tranType){
+	private boolean doProcess(AssetType aAssetType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1262,13 +1267,15 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param  AuditHeader auditHeader
-	 * @param method  (String)
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1298,8 +1305,8 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 						}
 					} else {
 
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AssetTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1333,16 +1340,17 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(AssetType aAssetType, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAssetType.getBefImage(), aAssetType);   
-		return new AuditHeader(aAssetType.getAssetType(),null,null,null,auditDetail,aAssetType.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(AssetType aAssetType, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAssetType.getBefImage(), aAssetType);
+		return new AuditHeader(aAssetType.getAssetType(), null, null, null, auditDetail, aAssetType.getUserDetails(),
+				getOverideMap());
 	}
-
 
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.assetConfigurationType.getId());
 	}
+
 	public AssetType getAssetType() {
 		return this.assetConfigurationType;
 	}
@@ -1370,12 +1378,15 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	public ExtendedFieldDialogCtrl getExtendedFieldDialogCtrl() {
 		return extendedFieldDialogCtrl;
 	}
+
 	public void setExtendedFieldDialogCtrl(ExtendedFieldDialogCtrl extendedFieldDialogCtrl) {
 		this.extendedFieldDialogCtrl = extendedFieldDialogCtrl;
 	}
+
 	public List<String> getFieldNames() {
 		return fieldNames;
 	}
+
 	public void setFieldNames(List<String> fieldNames) {
 		this.fieldNames = fieldNames;
 	}

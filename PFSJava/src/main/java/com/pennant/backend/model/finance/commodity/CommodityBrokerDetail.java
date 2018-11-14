@@ -55,42 +55,42 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 5232119312085110695L;
-	
-	private String     brokerCode = null;
-	private long       brokerCustID;
 
-	private Date       brokerFrom;
-	private String     brokerAddrHNbr;
-	private String     brokerAddrFlatNbr;
-	private String     brokerAddrStreet;
-	private String     brokerAddrLane1;
-	private String     brokerAddrLane2;
-	private String     brokerAddrPOBox;
-	private String     brokerAddrCountry;
-	private String     brokerAddrProvince;
-	private String     brokerAddrCity;
-	private String     brokerAddrZIP;
-	private String     brokerAddrPhone;
-	private String     brokerAddrFax;
-	private String     brokerEmail;
-	private String     agreementRef;
+	private String brokerCode = null;
+	private long brokerCustID;
+
+	private Date brokerFrom;
+	private String brokerAddrHNbr;
+	private String brokerAddrFlatNbr;
+	private String brokerAddrStreet;
+	private String brokerAddrLane1;
+	private String brokerAddrLane2;
+	private String brokerAddrPOBox;
+	private String brokerAddrCountry;
+	private String brokerAddrProvince;
+	private String brokerAddrCity;
+	private String brokerAddrZIP;
+	private String brokerAddrPhone;
+	private String brokerAddrFax;
+	private String brokerEmail;
+	private String agreementRef;
 	private BigDecimal feeOnUnsold = BigDecimal.ZERO;
-	private String 	   accountNumber;
-	private String 	   lovDescCommodityDetail;
+	private String accountNumber;
+	private String lovDescCommodityDetail;
 	private List<BrokerCommodityDetail> brokerCommodityList;
 	private BigDecimal commissionRate;
-	
-	private String     lovDescBrokerCIF;
-	private String     lovDescBrokerShortName;
-	private String     lovDescBrokerAddrCountryName;
-	private String     lovDescBrokerAddrProvinceName;
-	private String     lovDescBrokerAddrCityName;
-	
-	private boolean    newRecord;
-	private String     lovValue;
+
+	private String lovDescBrokerCIF;
+	private String lovDescBrokerShortName;
+	private String lovDescBrokerAddrCountryName;
+	private String lovDescBrokerAddrProvinceName;
+	private String lovDescBrokerAddrCityName;
+
+	private boolean newRecord;
+	private String lovValue;
 	private CommodityBrokerDetail befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -110,29 +110,30 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 		return brokerCode;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.brokerCode = id;
 	}
 
 	public String getBrokerCode() {
 		return brokerCode;
 	}
+
 	public void setBrokerCode(String brokerCode) {
 		this.brokerCode = brokerCode;
 	}
 
-
 	public long getBrokerCustID() {
 		return brokerCustID;
 	}
+
 	public void setBrokerCustID(long brokerCustID) {
 		this.brokerCustID = brokerCustID;
 	}
 
-	
 	public String getBrokerAddrHNbr() {
 		return brokerAddrHNbr;
 	}
+
 	public void setBrokerAddrHNbr(String brokerAddrHNbr) {
 		this.brokerAddrHNbr = brokerAddrHNbr;
 	}
@@ -140,6 +141,7 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	public String getBrokerAddrFlatNbr() {
 		return brokerAddrFlatNbr;
 	}
+
 	public void setBrokerAddrFlatNbr(String brokerAddrFlatNbr) {
 		this.brokerAddrFlatNbr = brokerAddrFlatNbr;
 	}
@@ -147,12 +149,15 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	public String getBrokerAddrStreet() {
 		return brokerAddrStreet;
 	}
+
 	public void setBrokerAddrStreet(String brokerAddrStreet) {
 		this.brokerAddrStreet = brokerAddrStreet;
 	}
+
 	public String getBrokerAddrLane1() {
 		return brokerAddrLane1;
 	}
+
 	public void setBrokerAddrLane1(String brokerAddrLane1) {
 		this.brokerAddrLane1 = brokerAddrLane1;
 	}
@@ -160,18 +165,23 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	public String getBrokerAddrLane2() {
 		return brokerAddrLane2;
 	}
+
 	public void setBrokerAddrLane2(String brokerAddrLane2) {
 		this.brokerAddrLane2 = brokerAddrLane2;
 	}
+
 	public String getBrokerAddrPOBox() {
 		return brokerAddrPOBox;
 	}
+
 	public void setBrokerAddrPOBox(String brokerAddrPOBox) {
 		this.brokerAddrPOBox = brokerAddrPOBox;
 	}
+
 	public String getBrokerAddrCountry() {
 		return brokerAddrCountry;
 	}
+
 	public void setBrokerAddrCountry(String brokerAddrCountry) {
 		this.brokerAddrCountry = brokerAddrCountry;
 	}
@@ -179,49 +189,63 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	public String getBrokerAddrProvince() {
 		return brokerAddrProvince;
 	}
+
 	public void setBrokerAddrProvince(String brokerAddrProvince) {
 		this.brokerAddrProvince = brokerAddrProvince;
 	}
+
 	public String getBrokerAddrCity() {
 		return brokerAddrCity;
 	}
+
 	public void setBrokerAddrCity(String brokerAddrCity) {
 		this.brokerAddrCity = brokerAddrCity;
 	}
+
 	public String getBrokerAddrZIP() {
 		return brokerAddrZIP;
 	}
+
 	public void setBrokerAddrZIP(String brokerAddrZIP) {
 		this.brokerAddrZIP = brokerAddrZIP;
 	}
+
 	public String getBrokerAddrPhone() {
 		return brokerAddrPhone;
 	}
+
 	public void setBrokerAddrPhone(String brokerAddrPhone) {
 		this.brokerAddrPhone = brokerAddrPhone;
 	}
+
 	public String getBrokerAddrFax() {
 		return brokerAddrFax;
 	}
+
 	public void setBrokerAddrFax(String brokerAddrFax) {
 		this.brokerAddrFax = brokerAddrFax;
 	}
+
 	public String getBrokerEmail() {
 		return brokerEmail;
 	}
+
 	public void setBrokerEmail(String brokerEmail) {
 		this.brokerEmail = brokerEmail;
 	}
+
 	public String getAgreementRef() {
 		return agreementRef;
 	}
+
 	public void setAgreementRef(String agreementRef) {
 		this.agreementRef = agreementRef;
 	}
-	
+
 	public BigDecimal getFeeOnUnsold() {
 		return feeOnUnsold;
 	}
+
 	public void setFeeOnUnsold(BigDecimal feeOnUnsold) {
 		this.feeOnUnsold = feeOnUnsold;
 	}
@@ -229,6 +253,7 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	public String getAccountNumber() {
 		return accountNumber;
 	}
+
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
@@ -236,13 +261,15 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	public String getLovDescCommodityDetail() {
 		return lovDescCommodityDetail;
 	}
+
 	public void setLovDescCommodityDetail(String lovDescCommodityDetail) {
 		this.lovDescCommodityDetail = lovDescCommodityDetail;
 	}
-	
+
 	public List<BrokerCommodityDetail> getBrokerCommodityList() {
 		return brokerCommodityList;
 	}
+
 	public void setBrokerCommodityList(List<BrokerCommodityDetail> brokerCommodityList) {
 		this.brokerCommodityList = brokerCommodityList;
 	}
@@ -263,12 +290,12 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public CommodityBrokerDetail getBefImage(){
+	public CommodityBrokerDetail getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(CommodityBrokerDetail beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(CommodityBrokerDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -279,8 +306,7 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public void setLovDescBrokerAddrCountryName(
-			String lovDescBrokerAddrCountryName) {
+	public void setLovDescBrokerAddrCountryName(String lovDescBrokerAddrCountryName) {
 		this.lovDescBrokerAddrCountryName = lovDescBrokerAddrCountryName;
 	}
 
@@ -288,8 +314,7 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 		return lovDescBrokerAddrCountryName;
 	}
 
-	public void setLovDescBrokerAddrProvinceName(
-			String lovDescBrokerAddrProvinceName) {
+	public void setLovDescBrokerAddrProvinceName(String lovDescBrokerAddrProvinceName) {
 		this.lovDescBrokerAddrProvinceName = lovDescBrokerAddrProvinceName;
 	}
 
@@ -330,11 +355,11 @@ public class CommodityBrokerDetail extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getCommissionRate() {
-	    return commissionRate;
-    }
+		return commissionRate;
+	}
 
 	public void setCommissionRate(BigDecimal commissionRate) {
-	    this.commissionRate = commissionRate;
-    }
+		this.commissionRate = commissionRate;
+	}
 
 }

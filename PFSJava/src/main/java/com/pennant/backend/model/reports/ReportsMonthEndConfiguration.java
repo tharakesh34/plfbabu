@@ -8,55 +8,61 @@ public class ReportsMonthEndConfiguration {
 	private String reportName;
 	private String reportDesc;
 	private boolean active;
-	
+
 	public ReportsMonthEndConfiguration() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-		
+
 	public long getReportId() {
-    	return reportId;
-    }
+		return reportId;
+	}
+
 	public void setReportId(long reportId) {
-    	this.reportId = reportId;
-    }
-	
+		this.reportId = reportId;
+	}
+
 	public String getGroupCode() {
-    	return groupCode;
-    }
+		return groupCode;
+	}
+
 	public void setGroupCode(String groupCode) {
-    	this.groupCode = groupCode;
-    }
-	
+		this.groupCode = groupCode;
+	}
+
 	public String getGroupDesc() {
-    	return groupDesc;
-    }
+		return groupDesc;
+	}
+
 	public void setGroupDesc(String groupDesc) {
-    	this.groupDesc = groupDesc;
-    }
-	
+		this.groupDesc = groupDesc;
+	}
+
 	public String getReportName() {
-    	return reportName;
-    }
+		return reportName;
+	}
+
 	public void setReportName(String reportName) {
-    	this.reportName = reportName;
-    }
-	
+		this.reportName = reportName;
+	}
+
 	public String getReportDesc() {
-    	return reportDesc;
-    }
+		return reportDesc;
+	}
+
 	public void setReportDesc(String reportDesc) {
-    	this.reportDesc = reportDesc;
-    }
-	
+		this.reportDesc = reportDesc;
+	}
+
 	public boolean isActive() {
-	    return active;
-    }
+		return active;
+	}
+
 	public void setActive(boolean active) {
-	    this.active = active;
-    }
-	
+		this.active = active;
+	}
+
 }

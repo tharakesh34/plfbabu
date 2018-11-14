@@ -49,8 +49,8 @@ public class SecurityUserOperationRoles extends AbstractWorkflowEntity {
 	private long usrID;
 	private long oprID;
 	private long roleID;
-	
-    private String roleCd; 
+
+	private String roleCd;
 	private String appCode;
 	private String usrEmail;
 	private String lovDescFirstName;

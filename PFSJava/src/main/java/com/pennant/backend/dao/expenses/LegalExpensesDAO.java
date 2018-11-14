@@ -54,7 +54,7 @@ public interface LegalExpensesDAO {
 
 	void delete(LegalExpenses legalExpenses, String type);
 
-	long  save(LegalExpenses legalExpenses, String type);
-	
+	long save(LegalExpenses legalExpenses, String type);
+
 	BigDecimal getTotalCharges(String finReference);
 }

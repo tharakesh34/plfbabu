@@ -67,27 +67,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>SnapShotConditions</code> with set of CRUD operations.
  */
 public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> implements SnapShotConditionsDAO {
-	private static Logger				logger	= Logger.getLogger(SnapShotConditionsDAOImpl.class);
-
-	
+	private static Logger logger = Logger.getLogger(SnapShotConditionsDAOImpl.class);
 
 	public SnapShotConditionsDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public SnapShotCondition getSnapShotConditions(long id, int executionOrder,String type) {
+	public SnapShotCondition getSnapShotConditions(long id, int executionOrder, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, executionOrder, condition, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From EODSnapShotConditions");
 		sql.append(type);
 		sql.append(" Where id = :id AND executionOrder = :executionOrder");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -96,7 +95,8 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 		snapShotConditions.setExecutionOrder(executionOrder);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
-		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotCondition.class);
+		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SnapShotCondition.class);
 
 		try {
 			snapShotConditions = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -107,21 +107,23 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 
 		logger.debug(Literal.LEAVING);
 		return snapShotConditions;
-	}		
-	
+	}
+
 	@Override
-	public String save(SnapShotCondition snapShotConditions,TableType tableType) {
+	public String save(SnapShotCondition snapShotConditions, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into EODSnapShotConditions");
+		StringBuilder sql = new StringBuilder(" insert into EODSnapShotConditions");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, executionOrder, condition, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :executionOrder, :condition, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
@@ -134,14 +136,14 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(snapShotConditions.getId());
-	}	
+	}
 
 	@Override
-	public void update(SnapShotCondition snapShotConditions,TableType tableType) {
+	public void update(SnapShotCondition snapShotConditions, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EODSnapShotConditions" );
+		StringBuilder sql = new StringBuilder("update EODSnapShotConditions");
 		sql.append(tableType.getSuffix());
 		sql.append("  set condition = :condition, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -149,10 +151,10 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id AND executionOrder = :executionOrder ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -160,7 +162,7 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -196,21 +198,22 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 	@Override
 	public List<SnapShotCondition> getApprovedTabelConditions(long id) {
 		logger.debug(Literal.ENTERING);
-		List<SnapShotCondition> conditions= new ArrayList<SnapShotCondition>();
+		List<SnapShotCondition> conditions = new ArrayList<SnapShotCondition>();
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, executionOrder, condition ");
 		sql.append(" From EODSnapShotConditions");
 		sql.append(" Where id = :id ORDER BY executionOrder");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		SnapShotCondition snapShotConditions = new SnapShotCondition();
 		snapShotConditions.setId(id);
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
-		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotCondition.class);
+		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SnapShotCondition.class);
 
 		try {
 			conditions = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -221,7 +224,6 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 
 		logger.debug(Literal.LEAVING);
 		return conditions;
-	}		
+	}
 
-	
-}	
+}

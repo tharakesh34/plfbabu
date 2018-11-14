@@ -2022,7 +2022,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				extendedCombobox.setErrorMessage("");
 
 				StringBuilder sb = new StringBuilder();
-				sb.append(childArray[0]).append(delimiter).append(StringUtils.isEmpty(combobox.getValue()) ? " " : combobox.getValue()).append(delimiter)
+				sb.append(childArray[0]).append(delimiter)
+						.append(StringUtils.isEmpty(combobox.getValue()) ? " " : combobox.getValue()).append(delimiter)
 						.append(childArray[2]);
 				filters.add(sb.toString());
 			}

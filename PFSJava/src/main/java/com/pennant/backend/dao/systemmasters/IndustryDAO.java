@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Industry;
 import com.pennanttech.pff.core.TableType;
@@ -52,8 +53,8 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface IndustryDAO extends BasicCrudDao<Industry> {
 
-	Industry getIndustryById(String id,String type);
-	
+	Industry getIndustryById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 

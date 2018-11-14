@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.CostOfFundCode;
 import com.pennanttech.pff.core.TableType;
@@ -51,7 +52,7 @@ import com.pennanttech.pff.core.TableType;
 public interface CostOfFundCodeDAO extends BasicCrudDao<CostOfFundCode> {
 
 	CostOfFundCode getCostOfFundCodeById(String id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -62,7 +63,7 @@ public interface CostOfFundCodeDAO extends BasicCrudDao<CostOfFundCode> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String bRType, TableType tableType);
+
 	boolean isIdExists(String cofCode);
-	
-	
+
 }

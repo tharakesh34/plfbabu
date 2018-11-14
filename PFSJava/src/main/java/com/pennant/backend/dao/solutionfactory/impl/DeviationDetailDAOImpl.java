@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.solutionfactory.impl;
 
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -70,36 +69,36 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements DeviationDetailDAO {
-   private static Logger logger = Logger.getLogger(DeviationDetailDAOImpl.class);
-	
-	
+	private static Logger logger = Logger.getLogger(DeviationDetailDAOImpl.class);
+
 	public DeviationDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new DeviationDetail 
+	 * This method set the Work Flow id based on the module name and return the new DeviationDetail
+	 * 
 	 * @return DeviationDetail
 	 */
 
 	@Override
 	public DeviationDetail getDeviationDetail() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("DeviationDetail");
-		DeviationDetail deviationDetail= new DeviationDetail();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("DeviationDetail");
+		DeviationDetail deviationDetail = new DeviationDetail();
+		if (workFlowDetails != null) {
 			deviationDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return deviationDetail;
 	}
 
-
 	/**
-	 * This method get the module from method getDeviationDetail() and set the new record flag as true and return DeviationDetail()   
+	 * This method get the module from method getDeviationDetail() and set the new record flag as true and return
+	 * DeviationDetail()
+	 * 
 	 * @return DeviationDetail
 	 */
-
 
 	@Override
 	public DeviationDetail getNewDeviationDetail() {
@@ -111,50 +110,54 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 	}
 
 	/**
-	 * Fetch the Record  Deviation Details details by key field
+	 * Fetch the Record Deviation Details details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return DeviationDetail
 	 */
 	@Override
-	public DeviationDetail getDeviationDetailById(final long id,String userRole, String type) {
+	public DeviationDetail getDeviationDetailById(final long id, String userRole, String type) {
 		logger.debug("Entering");
 		DeviationDetail deviationDetail = getDeviationDetail();
-		
+
 		deviationDetail.setId(id);
 		deviationDetail.setUserRole(userRole);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select DeviationID, UserRole, DeviatedValue");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From DeviationDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DeviationID =:DeviationID and UserRole=:UserRole ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
-		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DeviationDetail.class);
-		
-		try{
-			deviationDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DeviationDetail.class);
+
+		try {
+			deviationDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			deviationDetail = null;
 		}
 		logger.debug("Leaving");
 		return deviationDetail;
 	}
-	
+
 	/**
-	 * Fetch the Record  Deviation Details details by key field
+	 * Fetch the Record Deviation Details details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return DeviationDetail
 	 */
 	@Override
@@ -162,155 +165,163 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		logger.debug("Entering");
 		DeviationDetail deviationDetail = getDeviationDetail();
 		deviationDetail.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select DeviationID, UserRole, DeviatedValue");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From DeviationDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DeviationID =:DeviationID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
-		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DeviationDetail.class);
-		
+		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DeviationDetail.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	/**
-	 * Fetch the Record  Deviation Details details by key field
+	 * Fetch the Record Deviation Details details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return DeviationDetail
 	 */
 	@Override
-	public List<DeviationDetail> getDeviationDetailsByModuleFinType(String finType,String module, String type) {
+	public List<DeviationDetail> getDeviationDetailsByModuleFinType(String finType, String module, String type) {
 		logger.debug("Entering");
-		MapSqlParameterSource map=new MapSqlParameterSource();
+		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("FinType", finType);
 		map.addValue("Module", module);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select DeviationID, UserRole, DeviatedValue");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From DeviationDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DeviationID IN (Select DeviationID from DeviationHeader where Module = :Module and FinType = :FinType) ");
-		
+		selectSql.append(
+				" Where DeviationID IN (Select DeviationID from DeviationHeader where Module = :Module and FinType = :FinType) ");
+
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DeviationDetail.class);
-		
+		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DeviationDetail.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
 	}
-	
-	
-	
+
 	/**
-	 * This method Deletes the Record from the DeviationDetails or DeviationDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Deviation Details by key DeviationID
+	 * This method Deletes the Record from the DeviationDetails or DeviationDetails_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Deviation Details by key DeviationID
 	 * 
-	 * @param Deviation Details (deviationDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Deviation
+	 *            Details (deviationDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(DeviationDetail deviationDetail,String type) {
+	public void delete(DeviationDetail deviationDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From DeviationDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where DeviationID =:DeviationID and UserRole=:UserRole ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into DeviationDetails or DeviationDetails_Temp.
-	 * it fetches the available Sequence form SeqDeviationDetails by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into DeviationDetails or DeviationDetails_Temp. it fetches the available Sequence
+	 * form SeqDeviationDetails by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Deviation Details 
+	 * save Deviation Details
 	 * 
-	 * @param Deviation Details (deviationDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Deviation
+	 *            Details (deviationDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public long save(DeviationDetail deviationDetail,String type) {
+	public long save(DeviationDetail deviationDetail, String type) {
 		logger.debug("Entering");
-		StringBuilder insertSql =new StringBuilder("Insert Into DeviationDetails");
+		StringBuilder insertSql = new StringBuilder("Insert Into DeviationDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (DeviationID, UserRole, DeviatedValue");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:DeviationID, :UserRole, :DeviatedValue");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return deviationDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record DeviationDetails or DeviationDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Deviation Details by key DeviationID and Version
+	 * This method updates the Record DeviationDetails or DeviationDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Deviation Details by key DeviationID and Version
 	 * 
-	 * @param Deviation Details (deviationDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Deviation
+	 *            Details (deviationDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(DeviationDetail deviationDetail,String type) {
+	public void update(DeviationDetail deviationDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update DeviationDetails");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update DeviationDetails");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set DeviatedValue = :DeviatedValue");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DeviationID =:DeviationID and UserRole=:UserRole ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

@@ -43,21 +43,21 @@ import com.pennanttech.pff.external.LegalDeskService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskService {
-	private static final Logger	logger					= Logger.getLogger(LegalDeskServiceImpl.class);
-	private final String		extConfigFileName		= "legalDesk.properties";
-	private String				serviceUrl;
+	private static final Logger logger = Logger.getLogger(LegalDeskServiceImpl.class);
+	private final String extConfigFileName = "legalDesk.properties";
+	private String serviceUrl;
 
 	//Form Fields
-	public static final String	FORM_FLDS_LOANPURPOSE	= "LOANPURPOSE";
+	public static final String FORM_FLDS_LOANPURPOSE = "LOANPURPOSE";
 
-	public static final String	STAMP_FEE				= "STAMP_FEE";
-	public static final String	INSURANCE_FEE			= "INSURANCE_FEE";
-	private Map<String, Object>	extendedMap				= null;
+	public static final String STAMP_FEE = "STAMP_FEE";
+	public static final String INSURANCE_FEE = "INSURANCE_FEE";
+	private Map<String, Object> extendedMap = null;
 	//Legal Desk
-	public static final String	REQ_SEND				= "REQSENDLEGDESK";
-	public static final String	STATUSCODE				= "STATUSLEGDESK";
-	public static final String	RSN_CODE				= "REASONLEGDESK";
-	public static final String	REMARKS					= "REMARKSLEGDESK";
+	public static final String REQ_SEND = "REQSENDLEGDESK";
+	public static final String STATUSCODE = "STATUSLEGDESK";
+	public static final String RSN_CODE = "REASONLEGDESK";
+	public static final String REMARKS = "REMARKSLEGDESK";
 
 	/**
 	 * Method for execute the LegalDesk.
@@ -66,17 +66,17 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader executeLegalDesk(AuditHeader auditHeader,String apiType) throws InterfaceException {
+	public AuditHeader executeLegalDesk(AuditHeader auditHeader, String apiType) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(serviceUrl)) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Map<String, Object> appplicationdata = new HashMap<>();
-		LegalDeskRequest legalDeskRequest = prepareRequestObj(financeDetail,apiType);
+		LegalDeskRequest legalDeskRequest = prepareRequestObj(financeDetail, apiType);
 
 		//send request and log
 		String reference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
@@ -93,11 +93,11 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			errorDesc = getErrorMessage(jsonResponse);
 
 			doInterfaceLogging(reference, reuestString, jsonResponse, errorCode, errorDesc, reqSentOn);
-			
+
 			appplicationdata.put(RSN_CODE, errorCode);
 			appplicationdata.put(REMARKS, getTrimmedMessage(errorDesc));
 			appplicationdata.put(STATUSCODE, getStatusCode(jsonResponse));
-			
+
 			if (StringUtils.isEmpty(errorCode)) {
 				//read values from response and load it to extended map
 				Map<String, Object> mapdata = getPropValueFromResp(jsonResponse, extConfigFileName);
@@ -123,7 +123,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * Method for prepare the LegalDeskRequest request object.
 	 * 
 	 * @param financeDetail
-	 * @param apiType 
+	 * @param apiType
 	 * @return
 	 */
 	private LegalDeskRequest prepareRequestObj(FinanceDetail financeDetail, String apiType) {
@@ -136,7 +136,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		legalDeskRequest.setStampPaperData(prepareStampPaperData(financeDetail));
 		legalDeskRequest.setSignersInfo(prepareSignersInfo(financeDetail));
 		legalDeskRequest.setFormData(prepareFormData(financeDetail));
-		if(StringUtils.equals(PennantConstants.METHOD_OFFERLETTER,apiType )) {
+		if (StringUtils.equals(PennantConstants.METHOD_OFFERLETTER, apiType)) {
 			legalDeskRequest.setApiType("createOfferLetter");
 		} else {
 			legalDeskRequest.setApiType("createLoanAgreement");
@@ -183,13 +183,13 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	}
 
 	private BigDecimal getFeeAmount(List<FinFeeDetail> feeDetailsList, String Code) {
-		BigDecimal feeAmount=BigDecimal.ZERO;
+		BigDecimal feeAmount = BigDecimal.ZERO;
 		if (feeDetailsList != null && !feeDetailsList.isEmpty()) {
 			for (FinFeeDetail finFee : feeDetailsList) {
 				String feeCode = (String) getSMTParameter(Code, String.class);
 				if (StringUtils.isNotBlank(feeCode)) {
 					if (StringUtils.equals(finFee.getFeeTypeCode(), feeCode)) {
-						feeAmount= finFee.getRemainingFee();
+						feeAmount = finFee.getRemainingFee();
 						break;
 					}
 				}
@@ -343,7 +343,7 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 			instType = App.getLabel("label_Flat_Convert_Reduce");
 		}
 		//TODO:removed there in latest requirement
-		/*formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList()));*/
+		/* formData.setBorrowerPan(getPanNumber(financeDetail.getCustomerDetails().getCustomerDocumentsList())); */
 		formData.setInstalmentType(installmentType);
 		BigDecimal sactionAmt = finMain.getFinAmount();
 		formData.setSactionAmt(formateAmount(sactionAmt));
@@ -365,9 +365,9 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 		List<FinFeeDetail> fereedetails = financeDetail.getFinScheduleData().getFinFeeDetailList();
 		formData.setInsuranceAmount(formateAmount(getFeeAmount(fereedetails, INSURANCE_FEE)));
 		List<CustomerBankInfo> bankDetails = new ArrayList<CustomerBankInfo>();
-		List <CustomerBankData> bankData = new ArrayList<CustomerBankData> ();
-		if(financeDetail.getCustomerDetails()!=null) {
-			 bankDetails=financeDetail.getCustomerDetails().getCustomerBankInfoList();
+		List<CustomerBankData> bankData = new ArrayList<CustomerBankData>();
+		if (financeDetail.getCustomerDetails() != null) {
+			bankDetails = financeDetail.getCustomerDetails().getCustomerBankInfoList();
 		}
 		for (CustomerBankInfo customerBankInfo : bankDetails) {
 			CustomerBankData CustomerBankData = new CustomerBankData();
@@ -423,7 +423,8 @@ public class LegalDeskServiceImpl extends NiyoginService implements LegalDeskSer
 	 * @param errorDesc
 	 * @param reqSentOn
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc, Timestamp reqSentOn) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
+			Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);

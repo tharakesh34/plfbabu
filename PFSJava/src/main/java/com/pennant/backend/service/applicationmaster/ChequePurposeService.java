@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface ChequePurposeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ChequePurpose getChequePurposeById(String id);
+
 	ChequePurpose getApprovedChequePurposeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

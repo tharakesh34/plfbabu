@@ -10,7 +10,7 @@ import com.pennant.backend.model.ValueLabel;
 public enum DocumentCategories {
 
 	CUSTOMER("CUSTOMER", Labels.getLabel("label_documents_category_customer")),
-	FINANCE("FINANCE",Labels.getLabel("label_documents_category_loan")),
+	FINANCE("FINANCE", Labels.getLabel("label_documents_category_loan")),
 	COLLATERAL("COLLATERAL", Labels.getLabel("label_documents_category_collateral")),
 	VERIFICATION_TV("VERIFICATION_TV", Labels.getLabel("label_documents_category_tv")),
 	VERIFICATION_RCU("VERIFICATION_RCU", Labels.getLabel("label_documents_category_rcu")),

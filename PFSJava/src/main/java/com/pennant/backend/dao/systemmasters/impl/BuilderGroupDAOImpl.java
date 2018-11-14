@@ -62,8 +62,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>BuilderGroup</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>BuilderGroup</code> with set of CRUD operations.
  */
 public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements BuilderGroupDAO {
 	private static Logger logger = Logger.getLogger(BuilderGroupDAOImpl.class);

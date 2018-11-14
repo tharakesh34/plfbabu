@@ -60,27 +60,27 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class ProductListModelItemRenderer implements ListitemRenderer<Product>, Serializable {
 
 	private static final long serialVersionUID = -3304155174434504951L;
-	
+
 	public ProductListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Product product, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(product.getProductCode());
+		lc = new Listcell(product.getProductCode());
 		lc.setParent(item);
-	  	lc = new Listcell(product.getProductDesc());
+		lc = new Listcell(product.getProductDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(product.getRecordStatus());
+		lc = new Listcell(product.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(product.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", product.getId());
-		item.setAttribute("code",product.getProductCode());
-		
+		item.setAttribute("code", product.getProductCode());
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onProductItemDoubleClicked");
 	}
 }

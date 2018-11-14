@@ -1,7 +1,5 @@
 package com.pennant.backend.dao.payorderissue.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +16,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> implements PayOrderIssueHeaderDAO {
 	private static Logger logger = Logger.getLogger(PayOrderIssueHeaderDAOImpl.class);
-	
+
 	public PayOrderIssueHeaderDAOImpl() {
 		super();
 	}
@@ -26,11 +24,12 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 	/**
 	 * This method insert new Records into PayOrderIssueHeader or PayOrderIssueHeader_Temp.
 	 *
-	 * save PayOrderIssueHeader 
+	 * save PayOrderIssueHeader
 	 * 
-	 * @param paymentOrderIssue (paymentOrderIssue)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param paymentOrderIssue
+	 *            (paymentOrderIssue)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -38,24 +37,26 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 	@Override
 	public void save(PayOrderIssueHeader payOrderIssueHeader, String type) {
 		logger.debug("Entering");
-	
+
 		StringBuilder insertSql = new StringBuilder("Insert Into ");
 		insertSql.append(" PayOrderIssueHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference,TotalPOAmount,TotalPOCount,IssuedPOAmount,IssuedPOCount,PODueAmount,PODueCount,");
-		insertSql.append(" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
-		insertSql.append(" values (:FinReference,:TotalPOAmount,:TotalPOCount,:IssuedPOAmount,:IssuedPOCount,:PODueAmount,:PODueCount,");
+		insertSql.append(
+				" (FinReference,TotalPOAmount,TotalPOCount,IssuedPOAmount,IssuedPOCount,PODueAmount,PODueCount,");
+		insertSql.append(
+				" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
+		insertSql.append(
+				" values (:FinReference,:TotalPOAmount,:TotalPOCount,:IssuedPOAmount,:IssuedPOCount,:PODueAmount,:PODueCount,");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(payOrderIssueHeader);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
-
 
 	/**
 	 * This method updates the Record PayOrderIssueHeader or PayOrderIssueHeader_Temp. if Record not updated then throws
@@ -76,7 +77,8 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 		StringBuilder updateSql = new StringBuilder("Update PayOrderIssueHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set TotalPOAmount = :TotalPOAmount,TotalPOCount = :TotalPOCount,");
-		updateSql.append(" IssuedPOAmount = :IssuedPOAmount,IssuedPOCount =:IssuedPOCount,PODueAmount = :PODueAmount,PODueCount = :PODueCount,");
+		updateSql.append(
+				" IssuedPOAmount = :IssuedPOAmount,IssuedPOCount =:IssuedPOCount,PODueAmount = :PODueAmount,PODueCount = :PODueCount,");
 		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
 		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");
@@ -86,7 +88,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(paymentOrderIssue);
@@ -105,8 +107,9 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 
 		PayOrderIssueHeader paymentOrderIssue = new PayOrderIssueHeader();
 		paymentOrderIssue.setFinReference(finReference);
-		StringBuilder selectSql = new StringBuilder(" Select FinReference,TotalPOAmount,TotalPOCount,IssuedPOAmount,IssuedPOCount,PODueAmount,PODueCount,");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		StringBuilder selectSql = new StringBuilder(
+				" Select FinReference,TotalPOAmount,TotalPOCount,IssuedPOAmount,IssuedPOCount,PODueAmount,PODueCount,");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" FinType,CustCIF,CustID,CustshrtName, FinTypeDesc, FinCcy, ");
 			selectSql.append(" alwMultiPartyDisb, ");
 			selectSql.append(" FinIsActive, ");
@@ -120,11 +123,10 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(paymentOrderIssue);
 		RowMapper<PayOrderIssueHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(PayOrderIssueHeader.class);
+				.newInstance(PayOrderIssueHeader.class);
 
 		try {
-			paymentOrderIssue = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			paymentOrderIssue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			paymentOrderIssue = null;
@@ -134,13 +136,13 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 	}
 
 	/**
-	 * This method Deletes the Record from the PayOrderIssueHeader or PayOrderIssueHeader_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete PayOrderIssueHeader by key FinReference
+	 * This method Deletes the Record from the PayOrderIssueHeader or PayOrderIssueHeader_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete PayOrderIssueHeader by key FinReference
 	 * 
-	 * @param payment OrderIssue (paymentOrderIssue)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param payment
+	 *            OrderIssue (paymentOrderIssue)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

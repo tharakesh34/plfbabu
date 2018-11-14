@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,23 +67,22 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements OverdueChargeDAO {
 	private static Logger logger = Logger.getLogger(OverdueChargeDAOImpl.class);
-		
+
 	public OverdueChargeDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new OverdueCharge
+	 * This method set the Work Flow id based on the module name and return the new OverdueCharge
 	 * 
 	 * @return OverdueCharge
 	 */
 	@Override
 	public OverdueCharge getOverdueCharge() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("OverdueCharge");
-		OverdueCharge overdueCharge= new OverdueCharge();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("OverdueCharge");
+		OverdueCharge overdueCharge = new OverdueCharge();
+		if (workFlowDetails != null) {
 			overdueCharge.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -93,8 +90,8 @@ public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements Ove
 	}
 
 	/**
-	 * This method get the module from method getOverdueCharge() and set the new
-	 * record flag as true and return OverdueCharge()
+	 * This method get the module from method getOverdueCharge() and set the new record flag as true and return
+	 * OverdueCharge()
 	 * 
 	 * @return OverdueCharge
 	 */
@@ -108,100 +105,102 @@ public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements Ove
 	}
 
 	/**
-	 * Fetch the Record  Overdue Charge Details details by key field
+	 * Fetch the Record Overdue Charge Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return OverdueCharge
 	 */
 	@Override
 	public OverdueCharge getOverdueChargeById(final String id, String type) {
 		logger.debug("Entering");
 		OverdueCharge overdueCharge = new OverdueCharge();
-		
+
 		overdueCharge.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select ODCRuleCode, ODCPLAccount, ODCCharityAccount, ");
 		selectSql.append(" ODCPLSubHead,ODCCharitySubHead, ODCPLShare,ODCSweepCharges,ODCRuleDescription");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		selectSql.append(" RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescODCPLAccountName,lovDescODCCharityAccountName");
 			selectSql.append(",lovDescODCPLSubHeadName,lovDescODCCharitySubHeadName");
 		}
 		selectSql.append(" From FinODCHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ODCRuleCode =:ODCRuleCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
 		RowMapper<OverdueCharge> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OverdueCharge.class);
-		
-		try{
-			overdueCharge = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			overdueCharge = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			overdueCharge = null;
 		}
 		logger.debug("Leaving");
 		return overdueCharge;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the FinODCHeader or FinODCHeader_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Overdue Charge Details by key ODCRuleCode
+	 * This method Deletes the Record from the FinODCHeader or FinODCHeader_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Overdue Charge Details by key ODCRuleCode
 	 * 
-	 * @param Overdue Charge Details (overdueCharge)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Overdue
+	 *            Charge Details (overdueCharge)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(OverdueCharge overdueCharge,String type) {
+	public void delete(OverdueCharge overdueCharge, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From FinODCHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ODCRuleCode =:ODCRuleCode");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into FinODCHeader or FinODCHeader_Temp.
 	 *
-	 * save Overdue Charge Details 
+	 * save Overdue Charge Details
 	 * 
-	 * @param Overdue Charge Details (overdueCharge)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Overdue
+	 *            Charge Details (overdueCharge)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(OverdueCharge overdueCharge,String type) {
+	public String save(OverdueCharge overdueCharge, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into FinODCHeader");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinODCHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ODCRuleCode, ODCPLAccount, ODCCharityAccount, ODCPLSubHead, " );
+		insertSql.append(" (ODCRuleCode, ODCPLAccount, ODCCharityAccount, ODCPLSubHead, ");
 		insertSql.append(" ODCCharitySubHead,ODCPLShare,ODCSweepCharges,ODCRuleDescription");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
@@ -209,55 +208,58 @@ public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements Ove
 		insertSql.append(" :ODCCharitySubHead, :ODCPLShare,:ODCSweepCharges, :ODCRuleDescription");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
 		insertSql.append(" :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return overdueCharge.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record FinODCHeader or FinODCHeader_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Overdue Charge Details by key ODCRuleCode and Version
+	 * This method updates the Record FinODCHeader or FinODCHeader_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Overdue Charge Details by key ODCRuleCode and Version
 	 * 
-	 * @param Overdue Charge Details (overdueCharge)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Overdue
+	 *            Charge Details (overdueCharge)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(OverdueCharge overdueCharge,String type) {
+	public void update(OverdueCharge overdueCharge, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update FinODCHeader");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update FinODCHeader");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ODCPLAccount = :ODCPLAccount, ODCCharityAccount = :ODCCharityAccount,");
-		updateSql.append(" ODCPLSubHead = :ODCPLSubHead, ODCCharitySubHead = :ODCCharitySubHead, ODCPLShare = :ODCPLShare,");
-		updateSql.append(" ODCSweepCharges = :ODCSweepCharges, ODCRuleDescription = :ODCRuleDescription, Version = :Version , ");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
+		updateSql.append(
+				" ODCPLSubHead = :ODCPLSubHead, ODCCharitySubHead = :ODCCharitySubHead, ODCPLShare = :ODCPLShare,");
+		updateSql.append(
+				" ODCSweepCharges = :ODCSweepCharges, ODCRuleDescription = :ODCRuleDescription, Version = :Version , ");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ODCRuleCode =:ODCRuleCode");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

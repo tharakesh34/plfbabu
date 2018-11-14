@@ -2,7 +2,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -30,20 +29,21 @@ public class SecondaryAccountDAOImpl extends BasicDao<SecondaryAccount> implemen
 	}
 
 	@Override
-	public List<SecondaryAccount> getSecondaryAccountsByFinRef(String finReference,String type) {
+	public List<SecondaryAccount> getSecondaryAccountsByFinRef(String finReference, String type) {
 		logger.debug("Entering");
 		SecondaryAccount account = new SecondaryAccount();
 		account.setFinReference(finReference);
-		
-		StringBuilder selectSql = new StringBuilder("Select finReference, priority,accountNumber,finEvent");		
+
+		StringBuilder selectSql = new StringBuilder("Select finReference, priority,accountNumber,finEvent");
 		selectSql.append(" From SecondaryAccounts");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where finReference = :finReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(account);
-		RowMapper<SecondaryAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecondaryAccount.class);
-		
+		RowMapper<SecondaryAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SecondaryAccount.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -56,15 +56,12 @@ public class SecondaryAccountDAOImpl extends BasicDao<SecondaryAccount> implemen
 
 		updateSql.append("Update secondaryAccounts");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set Priority = :Priority,AccountNumber = :AccountNumber,");
+		updateSql.append(" Set Priority = :Priority,AccountNumber = :AccountNumber,");
 		updateSql.append("  Where Finreference =:Finreference ");
 
 		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				secondaryAccount);
-		recordCount = this.jdbcTemplate.update(
-				updateSql.toString(), beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secondaryAccount);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			logger.debug("Error in Update Method Count :" + recordCount);
@@ -77,12 +74,12 @@ public class SecondaryAccountDAOImpl extends BasicDao<SecondaryAccount> implemen
 	public void delete(String finReference, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-      
-		SecondaryAccount account= new SecondaryAccount();
-        account.setFinReference(finReference);
-		
+
+		SecondaryAccount account = new SecondaryAccount();
+		account.setFinReference(finReference);
+
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From secondaryAccounts");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where  finReference =:finReference ");
@@ -105,7 +102,7 @@ public class SecondaryAccountDAOImpl extends BasicDao<SecondaryAccount> implemen
 	}
 
 	@Override
-	public void save(List<SecondaryAccount> secondaryAccount,String moduleDefiner, String type) {
+	public void save(List<SecondaryAccount> secondaryAccount, String moduleDefiner, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder();

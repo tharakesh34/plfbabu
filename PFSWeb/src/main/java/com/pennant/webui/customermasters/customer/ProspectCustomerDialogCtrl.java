@@ -69,23 +69,21 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customer/customerDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/customerDialog.zul file.
  */
 public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 9031340167587772517L;
 	private static final Logger logger = Logger.getLogger(ProspectCustomerDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ProspectCustomerDialog; // autowired
 
@@ -114,11 +112,10 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -130,7 +127,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		setPageComponents(window_ProspectCustomerDialog);
 
 		logger.debug("Entering");
-		
+
 		try {
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -171,16 +168,14 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnEdit.setVisible(false);
 		this.btnDelete.setVisible(false);
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_CustomerDialog_btnSave"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		// Customer related List Buttons
 		logger.debug("Leaving");
@@ -192,11 +187,9 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 				CustomerDetails customerDetails = getCustomerDetailsService().getCustomerById(customer.getCustID());
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerDetails", customerDetails);
-				map.put("moduleType",PennantConstants.MODULETYPE_ENQ);
+				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 				map.put("ProspectCustomerEnq", "ProspectCustomerEnq");
-				Executions.createComponents(
-						"/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
-						null, map);
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -213,8 +206,8 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws IllegalAccessException
 	 * @throws CustomerNotFoundException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException,
-			ParseException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnSave(Event event)
+			throws InterruptedException, ParseException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
@@ -255,11 +248,11 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 */
 	public void onFulfill$lovDescCustCIF(Event event) {
 		Object dataObject = this.lovDescCustCIF.getObject();
-		
+
 		lovDescCustShrtName.setValue("");
 		this.lovDescCustCIF.setValue("");
-		this.customer=null;
-		
+		this.customer = null;
+
 		if (dataObject instanceof Customer) {
 			this.customer = (Customer) dataObject;
 			this.lovDescCustCIF.setValue(customer.getCustCIF());
@@ -276,8 +269,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws ParseException
 	 * @throws CustomerNotFoundException
 	 */
-	public void doWriteComponentsToBean(Customer aCustomer)
-			throws ParseException, InterfaceException {
+	public void doWriteComponentsToBean(Customer aCustomer) throws ParseException, InterfaceException {
 		logger.debug("Entering");
 		doSetValidation();
 
@@ -291,20 +283,19 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 
 		try {
 			if (this.customer != null) {
-				aCustomer.setCustCoreBank(StringUtils
-						.trimToEmpty(this.custCoreBank.getValue()));
+				aCustomer.setCustCoreBank(StringUtils.trimToEmpty(this.custCoreBank.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		showErrorDetails(wve);
-		if(this.customer!=null){
+		if (this.customer != null) {
 			aCustomer.setCustID(this.customer.getCustID());
-		}else {
-			throw new WrongValueException(this.lovDescCustCIF, Labels.getLabel("FIELD_NO_INVALID", 
+		} else {
+			throw new WrongValueException(this.lovDescCustCIF, Labels.getLabel("FIELD_NO_INVALID",
 					new String[] { Labels.getLabel("label_ProspectCustomerDialog_CustID.value") }));
 		}
-		
+
 		doRemoveValidation();
 		logger.debug("Leaving");
 	}
@@ -330,8 +321,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
 	 * @throws Exception
@@ -355,20 +345,16 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Entering");
 
 		doClearMessage();
-		this.lovDescCustCIF.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_ProspectCustomerDialog_CustID.value"), null, true));
-		this.custCoreBank.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_ProspectCustomerDialog_CustCoreBank.value"), PennantRegularExpressions.REGEX_CUSTCIF,
-				true));
+		this.lovDescCustCIF.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_ProspectCustomerDialog_CustID.value"), null, true));
+		this.custCoreBank
+				.setConstraint(new PTStringValidator(Labels.getLabel("label_ProspectCustomerDialog_CustCoreBank.value"),
+						PennantRegularExpressions.REGEX_CUSTCIF, true));
 
 		/*
-		 * if (!this.lovDescCustCIF.isReadonly()) {
-		 * this.lovDescCustCIF.setConstraint(new
-		 * PTStringValidator(Labels.getLabel
-		 * ("label_FinanceMainDialog_CustID.value"), null, true)); } if
-		 * (!this.custCoreBank.isReadonly()) {
-		 * this.custCoreBank.setConstraint(new
-		 * PTStringValidator(Labels.getLabel(
+		 * if (!this.lovDescCustCIF.isReadonly()) { this.lovDescCustCIF.setConstraint(new
+		 * PTStringValidator(Labels.getLabel ("label_FinanceMainDialog_CustID.value"), null, true)); } if
+		 * (!this.custCoreBank.isReadonly()) { this.custCoreBank.setConstraint(new PTStringValidator(Labels.getLabel(
 		 * "label_CustomerDialog_CustCoreBank.value"), null, true)); }
 		 */
 	}
@@ -436,8 +422,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public void doSave() throws InterruptedException, ParseException,
-	InterfaceException, IllegalAccessException,
+	public void doSave() throws InterruptedException, ParseException, InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -454,7 +439,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		boolean coreBankIdExist = getCustomerDetailsService().getCustomerByCoreBankId(aCustomer.getCustCoreBank());
 		if (coreBankIdExist) {
 			// Show Confirmation Message
-			Clients.showNotification(Labels.getLabel("label_CustCoreBank_Exist"),"warning", null, null, -1);
+			Clients.showNotification(Labels.getLabel("label_CustCoreBank_Exist"), "warning", null, null, -1);
 			this.custCoreBank.setValue("");
 			return;
 		}
@@ -485,8 +470,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		return customerDetailsService;
 	}
 
-	public void setCustomerDetailsService(
-			CustomerDetailsService customerDetailsService) {
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
 }

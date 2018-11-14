@@ -15,26 +15,26 @@ public class DealerResponseServiceImpl implements DealerResponseService {
 	public DealerResponseServiceImpl() {
 		super();
 	}
-	
+
 	public DealerResponseDAO getDealerResponseDAO() {
-	    return dealerResponseDAO;
-    }
+		return dealerResponseDAO;
+	}
 
 	public void setDealerResponseDAO(DealerResponseDAO dealerResponseDAO) {
-	    this.dealerResponseDAO = dealerResponseDAO;
-    }
+		this.dealerResponseDAO = dealerResponseDAO;
+	}
 
 	@Override
-    public void save(DealerResponse dealerResponse) {
+	public void save(DealerResponse dealerResponse) {
 		logger.debug(" Entering ");
 		getDealerResponseDAO().save(dealerResponse, "");
-	    logger.debug(" Leaving ");
-	    
-    }
+		logger.debug(" Leaving ");
+
+	}
 
 	@Override
-    public int getCountByProcessed(String finReference, boolean processed) {
-	    return getDealerResponseDAO().getCountByProcessed(finReference, processed, "");
-    }
+	public int getCountByProcessed(String finReference, boolean processed) {
+		return getDealerResponseDAO().getCountByProcessed(finReference, processed, "");
+	}
 
 }

@@ -63,9 +63,9 @@ import com.pennant.backend.model.bmtmasters.RatingType;
 import com.pennant.backend.service.bmtmasters.RatingTypeService;
 import com.pennant.webui.bmtmasters.ratingtype.model.RatingTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/BMTMasters/RatingType/RatingTypeList.zul file.
@@ -144,7 +144,8 @@ public class RatingTypeListCtrl extends GFCBaseListCtrl<RatingType> {
 				sortOperator_ratingTypeDesc, Operators.STRING);
 		registerField("valueType", listheader_ValueType, SortOrder.NONE, valueType, sortOperator_valueType,
 				Operators.BOOLEAN);
-		registerField("valueLen", listheader_ValueLen, SortOrder.NONE, valueLen, sortOperator_valueLen, Operators.NUMERIC);
+		registerField("valueLen", listheader_ValueLen, SortOrder.NONE, valueLen, sortOperator_valueLen,
+				Operators.NUMERIC);
 		registerField("ratingIsActive", listheader_RatingIsActive, SortOrder.NONE, ratingIsActive,
 				sortOperator_ratingIsActive, Operators.BOOLEAN);
 

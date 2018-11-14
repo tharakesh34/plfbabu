@@ -24,11 +24,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.applicationmaster.policecase.model.PoliceCaseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PoliceCaseListCtrl extends GFCBaseListCtrl<PoliceCaseDetail> {
@@ -94,19 +94,18 @@ public class PoliceCaseListCtrl extends GFCBaseListCtrl<PoliceCaseDetail> {
 		super.doAddFilters();
 
 		super.searchObject.addFilter(new Filter("CustCIF", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
-		
+
 		String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
 				this.phoneAreaCode.getValue(), this.policeCaseCustMobileNumber.getValue());
-		Filter filter = SearchFilterControl.getFilter("mobileNumber", phoneNumber,
-				sortOperator_custMobileNumber);
-		if(filter != null){
+		Filter filter = SearchFilterControl.getFilter("mobileNumber", phoneNumber, sortOperator_custMobileNumber);
+		if (filter != null) {
 			searchObject.addFilter(filter);
 		}
-		
-		if (StringUtils.isNotBlank(this.policeCaseCustEIDNumber.getValue())){
-			String eIDNumber=PennantApplicationUtil.unFormatEIDNumber(this.policeCaseCustEIDNumber.getValue());
-			super.searchObject.addFilter(SearchFilterControl.getFilter("custCRCPR", eIDNumber,
-					sortOperator_policeCaseCustEidNumber));
+
+		if (StringUtils.isNotBlank(this.policeCaseCustEIDNumber.getValue())) {
+			String eIDNumber = PennantApplicationUtil.unFormatEIDNumber(this.policeCaseCustEIDNumber.getValue());
+			super.searchObject.addFilter(
+					SearchFilterControl.getFilter("custCRCPR", eIDNumber, sortOperator_policeCaseCustEidNumber));
 		}
 	}
 
@@ -132,8 +131,8 @@ public class PoliceCaseListCtrl extends GFCBaseListCtrl<PoliceCaseDetail> {
 		setItemRender(new PoliceCaseListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_PoliceCaseList_NewPoliceCase,
-				"button_PoliceCaseCustomersList_NewPoliceCaseCustomersList", true);
+		registerButton(button_PoliceCaseList_NewPoliceCase, "button_PoliceCaseCustomersList_NewPoliceCaseCustomersList",
+				true);
 		registerButton(button_PoliceCaseList_PoliceCaseSearchDialog);
 
 		registerField("custCIF", listheader_PoliceCaseCustCIF, SortOrder.ASC, policeCaseCustCIF,
@@ -150,7 +149,6 @@ public class PoliceCaseListCtrl extends GFCBaseListCtrl<PoliceCaseDetail> {
 		registerField("mobileNumber", listheader_PoliceCaseCustMobileNumber);
 		registerField("custNationality", listheader_PoliceCaseCustNationality, SortOrder.NONE,
 				policeCaseCustNationality, sortOperator_custNationality, Operators.STRING);
-
 
 		SearchFilterControl.renderOperators(this.sortOperator_custMobileNumber, Operators.STRING);
 		SearchFilterControl.renderOperators(this.sortOperator_policeCaseCustEidNumber, Operators.STRING);

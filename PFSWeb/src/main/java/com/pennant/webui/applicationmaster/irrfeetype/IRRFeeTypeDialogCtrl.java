@@ -80,8 +80,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/IRRFeeType/iRRFeeTypeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/IRRFeeType/iRRFeeTypeDialog.zul file. <br>
  */
 public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 
@@ -89,9 +88,8 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 	private static final Logger logger = Logger.getLogger(IRRFeeTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_IRRFeeTypeDialog;
 	// protected ExtendedCombobox iRRID;
@@ -104,9 +102,9 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 	private List<IRRFeeType> irrFeeTypesList;
 	private boolean newRecord;
 	private IRRCodeService irrCodeService;
-	private String userRole="";
+	private String userRole = "";
 	private boolean isCompReadonly = false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -127,8 +125,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -149,12 +146,12 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 			if (this.iRRFeeType == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
-			
+
 			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, super.pageRightName);
 			}
-			
+
 			if (arguments.containsKey("isCompReadonly")) {
 				this.isCompReadonly = (boolean) arguments.get("isCompReadonly");
 			}
@@ -168,14 +165,11 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 			doLoadWorkFlow(this.iRRFeeType.isWorkflow(), this.iRRFeeType.getWorkflowId(),
 					this.iRRFeeType.getNextTaskId());
 
-			/*if (isWorkFlowEnabled()) {
-				if (!enqiryModule) {
-					this.userAction = setListRecordStatus(this.userAction);
-				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-			} else {
-				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
-			}*/
+			/*
+			 * if (isWorkFlowEnabled()) { if (!enqiryModule) { this.userAction = setListRecordStatus(this.userAction); }
+			 * getUserWorkspace().allocateAuthorities(this.pageRightName, getRole()); } else {
+			 * getUserWorkspace().allocateAuthorities(this.pageRightName, null); }
+			 */
 
 			doSetFieldProperties();
 			doCheckRights();
@@ -199,21 +193,21 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		this.feeTypeID.setValueColumn("FeeTypeCode");
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
 		this.feeTypeID.setValidateColumns(new String[] { "FeeTypeCode" });
-		
+
 		ArrayList<String> list = new ArrayList<>();
 		list.add(RepayConstants.ALLOCATION_BOUNCE);
 		list.add(RepayConstants.ALLOCATION_ODC);
 		list.add(RepayConstants.ALLOCATION_LPFT);
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = Filter.notIn("FeeTypeCode", list);
 		feeTypeID.setFilters(filters);
-	
+
 		this.feePercentage.setMaxlength(6);
 		this.feePercentage.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.feePercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.feePercentage.setScale(PennantConstants.defaultCCYDecPos);
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -226,7 +220,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		logger.debug(Literal.ENTERING);
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName, userRole);
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_IRRFeeTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_IRRFeeTypeDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_IRRFeeTypeDialog_btnDelete"));
@@ -275,8 +269,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -288,8 +281,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -367,7 +359,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 
 		this.feeTypeID.setValue(aIRRFeeType.getFeeTypeCode());
 		this.feePercentage.setValue(aIRRFeeType.getFeePercentage());
-		
+
 		if (aIRRFeeType.isNewRecord()) {
 			this.feeTypeID.setDescription("");
 		} else {
@@ -486,10 +478,14 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.feeTypeID.isReadonly()) {
-			this.feeTypeID.setConstraint(new PTStringValidator(Labels.getLabel("label_IRRFeeTypeDialog_FeeTypeID.value"),PennantRegularExpressions.REGEX_NAME, true));
+			this.feeTypeID
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IRRFeeTypeDialog_FeeTypeID.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.feePercentage.isReadonly()) {
-			this.feePercentage.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IRRFeeTypeDialog_FeePercentage.value"), PennantConstants.defaultCCYDecPos, true, false, 0, 100));
+			this.feePercentage
+					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IRRFeeTypeDialog_FeePercentage.value"),
+							PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -526,8 +522,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {

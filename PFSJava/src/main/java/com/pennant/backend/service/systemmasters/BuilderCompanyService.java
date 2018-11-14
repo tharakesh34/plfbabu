@@ -48,9 +48,14 @@ import com.pennant.backend.model.systemmasters.BuilderCompany;
 public interface BuilderCompanyService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BuilderCompany getBuilderCompany(long id);
+
 	BuilderCompany getApprovedBuilderCompany(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

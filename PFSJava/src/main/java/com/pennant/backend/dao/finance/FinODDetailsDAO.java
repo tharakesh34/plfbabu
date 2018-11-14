@@ -110,9 +110,9 @@ public interface FinODDetailsDAO {
 	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate);
 
 	int getFinCurSchdODDays(String finReference, Date finODSchdDate);
-	
+
 	void updateList(List<FinODDetails> overdues);
-	
+
 	void updateODDetails(List<FinODDetails> overdues);
 
 	//EOD
@@ -121,10 +121,9 @@ public interface FinODDetailsDAO {
 	void deleteAfterODDate(String finReference, Date odDate);
 
 	void saveList(List<FinODDetails> finOdDetails);
-	
-    List<FinODDetails> getFinODPenalityByFinRef(String finReference,boolean ispft,boolean isRender);
+
+	List<FinODDetails> getFinODPenalityByFinRef(String finReference, boolean ispft, boolean isRender);
 
 	List<FinODDetails> getFinODDetailsByFinRef(String finReference, String type);
-    
 
 }

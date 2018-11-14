@@ -65,26 +65,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>CostCenter</code> with set of CRUD operations.
  */
 public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCenterDAO {
-	private static Logger	logger	= Logger.getLogger(CostCenterDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(CostCenterDAOImpl.class);
 
 	public CostCenterDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public CostCenter getCostCenter(long costCenterID,String type) {
+	public CostCenter getCostCenter(long costCenterID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" costCenterID, costCenterCode, costCenterDesc, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CostCenters");
 		sql.append(type);
 		sql.append(" Where costCenterID = :costCenterID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -103,10 +103,10 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 
 		logger.debug(Literal.LEAVING);
 		return costCenter;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long costCenterID,String costCenterCode, TableType tableType) {
+	public boolean isDuplicateKey(long costCenterID, String costCenterCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -130,7 +130,7 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("costCenterID", costCenterID);
 		paramSource.addValue("costCenterCode", costCenterCode);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -141,24 +141,26 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(CostCenter costCenter,TableType tableType) {
+	public String save(CostCenter costCenter, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into CostCenters");
+		StringBuilder sql = new StringBuilder(" insert into CostCenters");
 		sql.append(tableType.getSuffix());
 		sql.append(" (costCenterID, costCenterCode, costCenterDesc, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :costCenterID, :costCenterCode, :costCenterDesc, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		if (costCenter.getCostCenterID() <= 0) {
 			costCenter.setCostCenterID(getNextId("SeqCostCenters"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costCenter);
@@ -171,14 +173,14 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(costCenter.getCostCenterID());
-	}	
+	}
 
 	@Override
-	public void update(CostCenter costCenter,TableType tableType) {
+	public void update(CostCenter costCenter, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update CostCenters" );
+		StringBuilder sql = new StringBuilder("update CostCenters");
 		sql.append(tableType.getSuffix());
 		sql.append("  set costCenterCode = :costCenterCode, costCenterDesc = :costCenterDesc, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -186,10 +188,10 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where costCenterID = :costCenterID ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costCenter);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -197,7 +199,7 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -230,6 +232,4 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	
-}	
+}

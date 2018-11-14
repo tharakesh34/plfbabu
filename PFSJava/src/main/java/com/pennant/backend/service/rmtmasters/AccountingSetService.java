@@ -52,16 +52,26 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 
 public interface AccountingSetService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	AccountingSet getAccountingSetById(long id);
+
 	AccountingSet getApprovedAccountingSetById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	TransactionEntry getNewTransactionEntry();
-	AccountingSet getAccSetSysDflByEvent(String event,String setCode,String type);
+
+	AccountingSet getAccSetSysDflByEvent(String event, String setCode, String type);
+
 	List<TransactionEntry> getODTransactionEntries();
-	Map<String,List<FinTypeFees>> fetchFinTypeFees(AccountingSet aAccountingSet);
+
+	Map<String, List<FinTypeFees>> fetchFinTypeFees(AccountingSet aAccountingSet);
+
 	long getAccountingSetId(String event, String setCode);
 }

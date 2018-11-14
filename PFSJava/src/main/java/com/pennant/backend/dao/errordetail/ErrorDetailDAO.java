@@ -53,6 +53,6 @@ public interface ErrorDetailDAO {
 	void delete(ErrorDetail errorDetail, String type);
 
 	String save(ErrorDetail errorDetail, String type);
-	
+
 	ErrorDetail getErrorDetail(String errorCode);
 }

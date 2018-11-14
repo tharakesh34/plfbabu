@@ -14,7 +14,7 @@ public class SnapshotService {
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	private static final String			snapshotQuery_FinPftDetails	= "INSERT INTO FinPftDetails_SnapShot  "
+	private static final String snapshotQuery_FinPftDetails = "INSERT INTO FinPftDetails_SnapShot  "
 			+ "SELECT :AppDate,FINREFERENCE,CUSTID,FINBRANCH,FINTYPE,"
 			+ "LASTMDFDATE,TOTALPFTSCHD,TOTALPFTCPZ,TOTALPFTPAID,TOTALPFTBAL,TOTALPFTPAIDINADV,TOTALPRIPAID,"
 			+ "TOTALPRIBAL,TDSCHDPFT,TDPFTCPZ,TDSCHDPFTPAID,TDSCHDPFTBAL,PFTACCRUED,PFTACCRUESUSP,PFTAMZ,"
@@ -35,8 +35,8 @@ public class SnapshotService {
 			+ "PAYABLEADVISERESV,TOTCHARGESPAID,LINKEDFINREF,CLOSEDLINKEDFINREF,UPFRONTFEE,BOUNCEAMTDUE,"
 			+ "BOUNCEAMTPAID,BOUNCEAMT,RECEIVABLEADVISE,EXCESSAMTBAL,EMIINADVANCEBAL,RECEIVABLEADVISEBAL,PAYABLEADVISEBAL, "
 			+ "LpiTillLBD,LppTillLBD,GstLpiTillLBD,GstLppTillLBD from FinPftDetails";
-	
-	private static final String			snapshotQuery_FinOdDetails	= "INSERT INTO FINODDETAILS_SnapShot  "
+
+	private static final String snapshotQuery_FinOdDetails = "INSERT INTO FINODDETAILS_SnapShot  "
 			+ "SELECT :AppDate,FINREFERENCE,FINODSCHDDATE,FINODFOR,FINBRANCH,FINTYPE,"
 			+ "CUSTID,FINODTILLDATE,FINCURODAMT,FINCURODPRI,FINCURODPFT,FINMAXODAMT,FINMAXODPRI,FINMAXODPFT,GRACEDAYS,INCGRACEDAYS,"
 			+ "FINCURODDAYS,TOTPENALTYAMT,TOTWAIVED,TOTPENALTYPAID,TOTPENALTYBAL,FINLMDFDATE,LPIAMT,LPIPAID,LPIBAL,LPIWAIVED,ODCHARGETYPE,"
@@ -66,9 +66,9 @@ public class SnapshotService {
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AppDate", date);
-		
+
 		logger.debug("selectSql: " + snapshotQuery_FinPftDetails);
-		
+
 		try {
 			return this.namedParameterJdbcTemplate.update(snapshotQuery_FinPftDetails, source);
 		} catch (EmptyResultDataAccessException dae) {
@@ -88,9 +88,9 @@ public class SnapshotService {
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AppDate", date);
-		
+
 		logger.debug("selectSql: " + snapshotQuery_FinOdDetails);
-		
+
 		try {
 			return this.namedParameterJdbcTemplate.update(snapshotQuery_FinOdDetails, source);
 		} catch (EmptyResultDataAccessException dae) {

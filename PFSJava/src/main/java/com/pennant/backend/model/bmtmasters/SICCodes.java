@@ -65,7 +65,6 @@ public class SICCodes extends AbstractWorkflowEntity {
 
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -86,6 +85,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public String getId() {
 		return sicCode;
 	}
+
 	public void setId(String id) {
 		this.sicCode = id;
 	}
@@ -93,6 +93,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public String getSicCode() {
 		return sicCode;
 	}
+
 	public void setSicCode(String sicCode) {
 		this.sicCode = sicCode;
 	}
@@ -100,6 +101,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public String getSicDesc() {
 		return sicDesc;
 	}
+
 	public void setSicDesc(String sicDesc) {
 		this.sicDesc = sicDesc;
 	}
@@ -107,6 +109,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -114,6 +117,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -121,6 +125,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public SICCodes getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(SICCodes beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -128,6 +133,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -135,6 +141,7 @@ public class SICCodes extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}

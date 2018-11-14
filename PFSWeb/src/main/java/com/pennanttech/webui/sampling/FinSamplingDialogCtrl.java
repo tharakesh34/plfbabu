@@ -111,12 +111,12 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl")).setFinSamplingDialogCtrl(this);
 		}
 		this.sampling = financeDetail.getSampling();
-		
+
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 			finBasicdetails.setVisible(false);
 		}
-		
+
 		if (this.sampling == null) {
 
 			// this.sampling = new Sampling();
@@ -146,8 +146,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doWriteBeanToComponents(this.sampling);
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -315,7 +314,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	public void renderSamplingDtails(Sampling sampling) {
-		if(sampling == null){
+		if (sampling == null) {
 			return;
 		}
 		this.sampling = sampling;
@@ -324,7 +323,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		Row row;
 		Label label;
 		Cell cell;
-			rows_Sampling.getChildren().clear();
+		rows_Sampling.getChildren().clear();
 		for (SamplingDetail sd : sampling.getSamplingDetailsList()) {
 			// Render collateral Caption
 			if (StringUtils.isNotEmpty(sd.getCaption())) {
@@ -382,7 +381,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		fieldName = fieldName.toUpperCase();
 		Textbox textbox = getTextbox();
 		textbox.setReadonly(false);
-		
+
 		if (this.enqiryModule) {
 			textbox.setReadonly(true);
 		}
@@ -499,18 +498,18 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-			int decision = Integer.parseInt(getComboboxValue(this.samplingDecision).toString());
-			sampling.setDecision(decision);
-			if (sampling.getDecision() == Decision.RESUBMIT.getKey()
-					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
-				throw new WrongValueException(this.samplingDecision,
-						"Sampling Resubmit is allowed only when user action is save");
-			}
-			if (decision == 0 && !this.recSave) {
-				throw new WrongValueException(this.samplingDecision,
-						Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
-			}
-		
+		int decision = Integer.parseInt(getComboboxValue(this.samplingDecision).toString());
+		sampling.setDecision(decision);
+		if (sampling.getDecision() == Decision.RESUBMIT.getKey()
+				&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)) {
+			throw new WrongValueException(this.samplingDecision,
+					"Sampling Resubmit is allowed only when user action is save");
+		}
+		if (decision == 0 && !this.recSave) {
+			throw new WrongValueException(this.samplingDecision,
+					Labels.getLabel("STATIC_INVALID", new String[] { "Decision should be mandatory" }));
+		}
+
 		try {
 			sampling.setRemarks(this.samplingRemarks.getValue());
 		} catch (WrongValueException we) {

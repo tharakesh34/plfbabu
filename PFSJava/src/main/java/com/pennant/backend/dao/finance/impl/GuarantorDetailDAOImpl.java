@@ -51,15 +51,14 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> implements GuarantorDetailDAO {
-    private static Logger logger = Logger.getLogger(GuarantorDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(GuarantorDetailDAOImpl.class);
 
 	public GuarantorDetailDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new GuarantorDetail
+	 * This method set the Work Flow id based on the module name and return the new GuarantorDetail
 	 * 
 	 * @return GuarantorDetail
 	 */
@@ -77,8 +76,8 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 	}
 
 	/**
-	 * This method get the module from method getGuarantorDetail() and set the
-	 * new record flag as true and return GuarantorDetail()
+	 * This method get the module from method getGuarantorDetail() and set the new record flag as true and return
+	 * GuarantorDetail()
 	 * 
 	 * @return GuarantorDetail
 	 */
@@ -137,10 +136,8 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 	}
 
 	/**
-	 * This method Deletes the Record from the FinGuarantorsDetails or
-	 * FinGuarantorsDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Guarantor Details by key
-	 * GuarantorId
+	 * This method Deletes the Record from the FinGuarantorsDetails or FinGuarantorsDetails_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Guarantor Details by key GuarantorId
 	 * 
 	 * @param Guarantor
 	 *            Details (guarantorDetail)
@@ -173,9 +170,8 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 	}
 
 	/**
-	 * This method insert new Records into FinGuarantorsDetails or
-	 * FinGuarantorsDetails_Temp. it fetches the available Sequence form
-	 * SeqFinGuarantorsDetails by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into FinGuarantorsDetails or FinGuarantorsDetails_Temp. it fetches the available
+	 * Sequence form SeqFinGuarantorsDetails by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Guarantor Details
 	 * 
@@ -223,10 +219,8 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 	}
 
 	/**
-	 * This method updates the Record FinGuarantorsDetails or
-	 * FinGuarantorsDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Guarantor Details by key
-	 * GuarantorId and Version
+	 * This method updates the Record FinGuarantorsDetails or FinGuarantorsDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Guarantor Details by key GuarantorId and Version
 	 * 
 	 * @param Guarantor
 	 *            Details (guarantorDetail)

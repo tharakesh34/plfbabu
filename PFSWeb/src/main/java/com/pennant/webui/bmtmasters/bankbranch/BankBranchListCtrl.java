@@ -63,9 +63,9 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.webui.bmtmasters.bankbranch.model.BankBranchListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -121,7 +121,6 @@ public class BankBranchListCtrl extends GFCBaseListCtrl<BankBranch> implements S
 		super.queueTableName = "BankBranches_View";
 		super.enquiryTableName = "BankBranches_TView";
 	}
-	
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.

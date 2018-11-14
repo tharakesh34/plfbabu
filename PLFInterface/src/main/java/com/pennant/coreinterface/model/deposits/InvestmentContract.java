@@ -127,7 +127,7 @@ public class InvestmentContract implements Serializable {
 	public void setCategoryID(String categoryID) {
 		this.categoryID = categoryID;
 	}
-	
+
 	private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat(InterfaceMasterConfigUtil.MQDATE);
 

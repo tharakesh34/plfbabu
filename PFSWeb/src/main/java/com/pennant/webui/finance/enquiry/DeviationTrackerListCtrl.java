@@ -76,42 +76,40 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul file.
  */
 public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations> {
-	private static final long						serialVersionUID	= 2808357374960437326L;
-	private static final Logger						logger				= Logger.getLogger(DeviationTrackerListCtrl.class);
+	private static final long serialVersionUID = 2808357374960437326L;
+	private static final Logger logger = Logger.getLogger(DeviationTrackerListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window								window_DeviationTrackerList;											// autowired
-	protected Borderlayout							borderLayout_DeviationTrackerList;										// autowired
-	protected Listbox								listBoxApprovedDeviationDetails;										// autowired
+	protected Window window_DeviationTrackerList; // autowired
+	protected Borderlayout borderLayout_DeviationTrackerList; // autowired
+	protected Listbox listBoxApprovedDeviationDetails; // autowired
 
-	protected Textbox								finreference;															// autowired
-	protected Listbox								sortOperator_finreference;												// autowired
+	protected Textbox finreference; // autowired
+	protected Listbox sortOperator_finreference; // autowired
 
-	protected Datebox								deviationDate;															// autowired
-	protected Listbox								sortOperator_deviationDate;											// autowired
+	protected Datebox deviationDate; // autowired
+	protected Listbox sortOperator_deviationDate; // autowired
 
 	// List headers
 
 	// checkRights
-	protected Button								btnHelp;																// autowired
-	protected Button								button_DeviationTrackerList_Search;									// autowired
-	protected Button								button_DeviationTrackerList_PrintList;									// autowired
+	protected Button btnHelp; // autowired
+	protected Button button_DeviationTrackerList_Search; // autowired
+	protected Button button_DeviationTrackerList_PrintList; // autowired
 
 	// NEEDED for the ReUse in the SearchWindow
-	protected JdbcSearchObject<FinanceDeviations>	searchObj;
+	protected JdbcSearchObject<FinanceDeviations> searchObj;
 
 	/**
 	 * default constructor.<br>
@@ -119,21 +117,21 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 	public DeviationTrackerListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
-		
+
 	}
 
 	public void onCreate$window_DeviationTrackerList(Event event) throws Exception {
 		logger.debug("Entering");
 
-		this.sortOperator_deviationDate.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getNumericOperators()));
+		this.sortOperator_deviationDate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_deviationDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finreference.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+		this.sortOperator_finreference
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finreference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		/* set components visible dependent on the users rights */
@@ -152,11 +150,11 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities("WIFFinanceMainList");
-		this.button_DeviationTrackerList_Search.setVisible(getUserWorkspace().isAllowed(
-				"button_WIFFinanceMainList_WIFFinanceMainFindDialog"));
+		this.button_DeviationTrackerList_Search
+				.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_WIFFinanceMainFindDialog"));
 		/*
-		 * this.button_DeviationTrackerList_PrintList.setVisible(getUserWorkspace
-		 * ().isAllowed( "button_WIFFinanceMainList_PrintList"));
+		 * this.button_DeviationTrackerList_PrintList.setVisible(getUserWorkspace ().isAllowed(
+		 * "button_WIFFinanceMainList_PrintList"));
 		 */
 
 		logger.debug("Leaving");
@@ -248,7 +246,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 		logger.debug("Leaving");
 	}
 
-	List<ValueLabel>	chkdevTypes	= PennantStaticListUtil.getCheckListDeviationType();
+	List<ValueLabel> chkdevTypes = PennantStaticListUtil.getCheckListDeviationType();
 
 	public void doFillDeviationDetails(List<FinanceDeviations> financeDeviations, Listbox listbox) {
 		logger.debug("Entering");
@@ -262,7 +260,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 
 			listcell = getNewListCell(deviationDetail.getFinReference());
 			listGroup.appendChild(listcell);
-			
+
 			listcell = getNewListCell(deviationDetail.getCustCIF());
 			listGroup.appendChild(listcell);
 
@@ -302,26 +300,25 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 			listGroup.appendChild(listcell);
 
 			List<CheckListDetail> checkListDetails = getCheckListDetail(checkList.getCheckListId());
-			String status="";
-			if (checkListDetails!=null) {
-				status=getStatus(deviationDetail, checkList, checkListDetails);
+			String status = "";
+			if (checkListDetails != null) {
+				status = getStatus(deviationDetail, checkList, checkListDetails);
 			}
 			listcell = getNewListCell(status);
 			listGroup.appendChild(listcell);
 
 			listbox.appendChild(listGroup);
-			
-			if (checkListDetails==null) {
+
+			if (checkListDetails == null) {
 				continue;
 			}
-
 
 			for (CheckListDetail checkListDetail : checkListDetails) {
 				Listitem listitem = new Listitem();
 
 				listcell = getNewListCell("");
 				listitem.appendChild(listcell);
-				
+
 				listcell = getNewListCell("");
 				listitem.appendChild(listcell);
 
@@ -339,7 +336,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 
 				listcell = getNewListCell("");
 				listitem.appendChild(listcell);
-			
+
 				listcell = getNewListCell("");
 				listitem.appendChild(listcell);
 
@@ -349,7 +346,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 				listbox.appendChild(listitem);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -456,7 +453,8 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 	private List<CustomerDocument> getCustomerDcuments(long value, List<String> doctypes) {
 		logger.debug(" Entering ");
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<CustomerDocument> searchObject = new JdbcSearchObject<CustomerDocument>(CustomerDocument.class);
+		JdbcSearchObject<CustomerDocument> searchObject = new JdbcSearchObject<CustomerDocument>(
+				CustomerDocument.class);
 		searchObject.addTabelName("CustomerDocuments");
 		searchObject.addFilterEqual("CustID", value);
 		searchObject.addFilterIn("CustDocCategory", doctypes, false);

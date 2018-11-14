@@ -2,9 +2,9 @@ package com.pennant.webservice.model;
 
 public class ReferenceData {
 
-	String mdmCode; 		// MDM Code
-	String t24Code; 		// T24 Code
-	String desc; 			// Description
+	String mdmCode; // MDM Code
+	String t24Code; // T24 Code
+	String desc; // Description
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -133,7 +133,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	 * @return List<FinAdvancePayments>
 	 */
 
-
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce) {
 		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRefernce, "");
@@ -841,7 +840,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate) {
-		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finRefernce,toDate, "");
+		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finRefernce, toDate, "");
 	}
 
 }

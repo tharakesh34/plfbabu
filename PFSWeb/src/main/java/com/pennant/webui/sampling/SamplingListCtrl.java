@@ -77,8 +77,7 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -105,12 +104,11 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 				Operators.STRING);
 		registerField("keyReference", listheader_LoanReference, SortOrder.ASC, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
-		registerField("finType", listheader_LoanType, SortOrder.ASC, loanType,
-				sortOperator_LoanType, Operators.STRING);
+		registerField("finType", listheader_LoanType, SortOrder.ASC, loanType, sortOperator_LoanType, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
-		if(enqiryModule){
+		if (enqiryModule) {
 			workFlowFrom.setVisible(false);
 			fromWorkFlow.setChecked(true);
 		}
@@ -124,8 +122,7 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -135,8 +132,7 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -147,8 +143,8 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -211,8 +207,7 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

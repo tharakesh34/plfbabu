@@ -45,20 +45,21 @@ package com.pennant.app.constants;
 import org.apache.commons.lang.StringUtils;
 
 public class HolidayHandlerTypes {
-	
-	//Handler Types
-	public static final String MOVE_NEXT 				= "N";
-	public static final String MOVE_NONE 				= "A";
-	public static final String MOVE_PREVIOUS 			= "P";
-	public static final String MOVE_NEXT_NONE 			= "NA";
-	public static final String MOVE_NEXT_PREVIOUS 		= "NP";
-	public static final String MOVE_PREVIOUS_NONE 		= "PA";
-	public static final String MOVE_PREVIOUS_NEXT 		= "PN";
-	
-	public static final String HOLIDAYTYPE_NORMAL 		= "N";
-	public static final String HOLIDAYTYPE_PERMINENT	= "P";
 
-	public HolidayHandlerTypes() {}
+	//Handler Types
+	public static final String MOVE_NEXT = "N";
+	public static final String MOVE_NONE = "A";
+	public static final String MOVE_PREVIOUS = "P";
+	public static final String MOVE_NEXT_NONE = "NA";
+	public static final String MOVE_NEXT_PREVIOUS = "NP";
+	public static final String MOVE_PREVIOUS_NONE = "PA";
+	public static final String MOVE_PREVIOUS_NEXT = "PN";
+
+	public static final String HOLIDAYTYPE_NORMAL = "N";
+	public static final String HOLIDAYTYPE_PERMINENT = "P";
+
+	public HolidayHandlerTypes() {
+	}
 
 	//This method should be changed based on the configuration
 	public static String getHolidayCode(String code) {
@@ -80,12 +81,12 @@ public class HolidayHandlerTypes {
 		if (("").equals(code)) {
 			return MOVE_NONE;
 		}
-		
+
 		if ("WBMURCM".equals(code) || "WBMURCMT".equals(code)) {//Finance Type
 			return MOVE_PREVIOUS;
 		} else {
 			return MOVE_NEXT;
 		}
 	}
-	
+
 }

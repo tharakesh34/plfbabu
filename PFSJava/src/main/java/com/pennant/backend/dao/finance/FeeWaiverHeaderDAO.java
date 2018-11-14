@@ -50,9 +50,9 @@ import com.pennant.backend.model.finance.FeeWaiverHeader;
 public interface FeeWaiverHeaderDAO extends BasicCrudDao<FeeWaiverHeader> {
 
 	FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finReference, String type);
-	
+
 	FeeWaiverHeader getFeeWaiverHeaderById(long waiverId, String type);
-	
+
 	List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type);
 
 }

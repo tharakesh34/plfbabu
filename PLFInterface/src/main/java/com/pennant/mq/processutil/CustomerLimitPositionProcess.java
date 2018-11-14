@@ -29,7 +29,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	public CustomerLimitPositionProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the CustomerLimitPosition Request and send Response
 	 * 
@@ -37,7 +37,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @param msgFormat
 	 * @return CustomerLimitPositionReply
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq, String msgFormat)
 			throws JaxenException {
@@ -52,14 +52,15 @@ public class CustomerLimitPositionProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(limitPositionReq, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -76,7 +77,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @param header
 	 * @return
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private CustomerLimitPosition setLimitPositionResponse(OMElement responseElement, AHBMQHeader header)
 			throws JaxenException {
@@ -85,13 +86,14 @@ public class CustomerLimitPositionProcess extends MQProcess {
 		if (responseElement == null) {
 			return null;
 		}
-		
+
 		CustomerLimitPosition limitPosition = null;
 
 		try {
 			String path = "/HB_EAI_REPLY/Reply/CustomerLimitSummaryReply";
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/CustomerLimitSummaryReply", responseElement);
-			OMElement limitElement = PFFXmlUtil.getOMElement(path+"/Limits", responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/CustomerLimitSummaryReply",
+					responseElement);
+			OMElement limitElement = PFFXmlUtil.getOMElement(path + "/Limits", responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
 
@@ -100,12 +102,12 @@ public class CustomerLimitPositionProcess extends MQProcess {
 				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
-			List<CustomerLimitSummary> limitSummaryList = getLimitSummary(limitElement, path+"/Limits/Summary");
-			
+			List<CustomerLimitSummary> limitSummaryList = getLimitSummary(limitElement, path + "/Limits/Summary");
+
 			limitPosition = new CustomerLimitPosition();
 			limitPosition = (CustomerLimitPosition) doUnMarshalling(detailElement, limitPosition);
-			
-			if(limitPosition != null) {
+
+			if (limitPosition != null) {
 				limitPosition.setLimitSummary(limitSummaryList);
 			}
 		} catch (InterfaceException e) {
@@ -125,7 +127,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 			return null;
 		}
 
-		List<CustomerLimitSummary> limitSummaryList= new ArrayList<CustomerLimitSummary>();
+		List<CustomerLimitSummary> limitSummaryList = new ArrayList<CustomerLimitSummary>();
 		AXIOMXPath xpath = new AXIOMXPath(absPath);
 
 		@SuppressWarnings("unchecked")
@@ -135,12 +137,12 @@ public class CustomerLimitPositionProcess extends MQProcess {
 			custLimitSummary.setLimitReference(PFFXmlUtil.getStringValue(omElement, "LimitReference"));
 			custLimitSummary.setLimitDesc(PFFXmlUtil.getStringValue(omElement, "LimitDesc"));
 			custLimitSummary.setLimitCurrency(PFFXmlUtil.getStringValue(omElement, "LimitCurrency"));
-			custLimitSummary.setLimitExpiryDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "LimitExpiryDate"), 
-					InterfaceMasterConfigUtil.MQDATE));
+			custLimitSummary.setLimitExpiryDate(DateUtility.convertDateFromMQ(
+					PFFXmlUtil.getStringValue(omElement, "LimitExpiryDate"), InterfaceMasterConfigUtil.MQDATE));
 			custLimitSummary.setAppovedAmount(PFFXmlUtil.getBigDecimalValue(omElement, "AppovedAmount"));
 			custLimitSummary.setBlocked(PFFXmlUtil.getBigDecimalValue(omElement, "Blocked"));
 			custLimitSummary.setAvailable(PFFXmlUtil.getBigDecimalValue(omElement, "Available"));
-			
+
 			limitSummaryList.add(custLimitSummary);
 		}
 		logger.debug("Leaving");
@@ -157,30 +159,29 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @return OMElement
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(CustomerLimitPosition limitPositionReq, String referenceNum,
-			OMFactory factory) throws InterfaceException {
+	private OMElement getRequestElement(CustomerLimitPosition limitPositionReq, String referenceNum, OMFactory factory)
+			throws InterfaceException {
 
 		logger.debug("Entering");
 
-		/*OMElement requestElement = null;
-		limitPositionReq.setReferenceNum(referenceNum);
-		limitPositionReq.setTimeStamp(Long.valueOf(PFFXmlUtil.getTodayDateTime(null)));
+		/*
+		 * OMElement requestElement = null; limitPositionReq.setReferenceNum(referenceNum);
+		 * limitPositionReq.setTimeStamp(Long.valueOf(PFFXmlUtil.getTodayDateTime(null)));
+		 * 
+		 * OMElement element = doMarshalling(limitPositionReq); OMElement rootElement = factory.createOMElement(new
+		 * QName("CustomerLimitSummaryRequest"));
+		 * 
+		 * @SuppressWarnings("unchecked") Iterator<OMElement> iteator = element.getChildElements(); while
+		 * (iteator.hasNext()) { rootElement.addChild(iteator.next()); } requestElement = factory.createOMElement(new
+		 * QName(InterfaceMasterConfigUtil.REQUEST)); requestElement.addChild(rootElement);
+		 */
 
-		OMElement element = doMarshalling(limitPositionReq);
-		OMElement rootElement = factory.createOMElement(new QName("CustomerLimitSummaryRequest"));
-		@SuppressWarnings("unchecked")
-		Iterator<OMElement> iteator = element.getChildElements();
-		while (iteator.hasNext()) {
-			rootElement.addChild(iteator.next());
-		}
-		requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
-		requestElement.addChild(rootElement);*/
-		
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement detailRequest = factory.createOMElement("CustomerLimitSummaryRequest", null);
 
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNum", referenceNum);
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerReference", limitPositionReq.getCustomerReference());
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerReference",
+				limitPositionReq.getCustomerReference());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "BranchCode", limitPositionReq.getBranchCode());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));

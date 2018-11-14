@@ -70,8 +70,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFundDAO {
-	private static Logger	 logger	= Logger.getLogger(CostOfFundDAOImpl.class);
-	
+	private static Logger logger = Logger.getLogger(CostOfFundDAOImpl.class);
+
 	public CostOfFundDAOImpl() {
 		super();
 	}
@@ -88,13 +88,14 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 	@Override
 	public CostOfFund getCostOfFundById(final String cofCode, String currency, Date cofEffDate, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		CostOfFund costOfFund = new CostOfFund();
 		costOfFund.setCofCode(cofCode);
 		costOfFund.setCurrency(currency);
 		costOfFund.setCofEffDate(cofEffDate);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CofCode, Currency, CofEffDate, cofRate, DelExistingRates, Active,");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT CofCode, Currency, CofEffDate, cofRate, DelExistingRates, Active,");
 		if (type.contains("View")) {
 			selectSql.append(" LovDescCofTypeName, ");
 		}
@@ -108,17 +109,16 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
 		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
 		try {
-			costOfFund = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			costOfFund = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			costOfFund = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return costOfFund;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String cofCode, Date cofEffDate, String currency, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -156,7 +156,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(CostOfFund costOfFund, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -198,7 +198,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, LastMdfDate=:LastMdfDate ");
 		sql.append(" where CofCode =:CofCode AND CofEffDate = :CofEffDate AND Currency = :Currency");
-		/*sql.append(QueryUtil.getConcurrencyCondition(tableType));*/
+		/* sql.append(QueryUtil.getConcurrencyCondition(tableType)); */
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -212,22 +212,22 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
-	public void delete(CostOfFund costOfFund, TableType tableType ) {
+	public void delete(CostOfFund costOfFund, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" delete from CostOfFunds");
 		sql.append(tableType.getSuffix());
 		sql.append(" where CofCode =:CofCode and CofEffDate = :CofEffDate and Currency = :Currency");
-		/*sql.append(QueryUtil.getConcurrencyCondition(tableType));*/
-		
+		/* sql.append(QueryUtil.getConcurrencyCondition(tableType)); */
+
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costOfFund);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -241,10 +241,10 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 
 		logger.debug(Literal.LEAVING);
 	}
-		
+
 	/**
-	 * Common method for CostOfFunds to get the costOfFund and
-	 * get the List of objects less than passed Effective CostOfFund Date
+	 * Common method for CostOfFunds to get the costOfFund and get the List of objects less than passed Effective
+	 * CostOfFund Date
 	 * 
 	 * @param cofCode
 	 * @param cofEffDate
@@ -261,14 +261,15 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		StringBuilder selectSql = new StringBuilder("SELECT CofCode,Currency,CofEffDate,cofRate,LastMdfDate ");
 		selectSql.append(" FROM CostOfFunds");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CofCode =:CofCode and Currency =:Currency and CofEffDate <=:CofEffDate  Order by CofEffDate Desc");
+		selectSql.append(
+				" Where CofCode =:CofCode and Currency =:Currency and CofEffDate <=:CofEffDate  Order by CofEffDate Desc");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
 		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
-		
+
 		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		
+
 		logger.debug("Leaving");
 		return costOfFunds;
 	}
@@ -285,22 +286,21 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		selectSql.append(" Where cofCode = :CofCode AND Currency = :Currency ");
 		selectSql.append(" AND cofeffdate >= (select max(CofEffDate) from COSTOFFUNDS ");
 		selectSql.append(" Where cofCode = :CofCode AND Currency = :Currency AND CofEffDate <= :CofEffDate)");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
 		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
-		
-		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
-		
+
+		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 		logger.debug("Leaving");
 		return costOfFunds;
 	}
 
 	/**
-	 * To get base rate value using base rate code and effective date is less
-	 * than passed date
+	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
-	public CostOfFund getCostOfFundByType(final String cofCode, String currency,  Date cofEffDate) {
+	public CostOfFund getCostOfFundByType(final String cofCode, String currency, Date cofEffDate) {
 		logger.debug("Entering");
 		CostOfFund costOfFund = null;
 
@@ -314,8 +314,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 	}
 
 	/**
-	 * To get base rate value using base rate code and effective date is less
-	 * than passed date
+	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
 	public boolean getCostOfFundListById(String cofCode, String currency, Date cofEffDate, String type) {
 		logger.debug("Entering");
@@ -339,33 +338,32 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 			return false;
 		}
 		return true;
-	}	
+	}
 
 	@Override
 	public List<CostOfFund> getBSRListByMdfDate(Date effDate, String type) {
 		logger.debug("Entering");
-		
-		CostOfFund costOfFund =new CostOfFund();
+
+		CostOfFund costOfFund = new CostOfFund();
 		StringBuilder selectSql = new StringBuilder("SELECT CofCode,Currency,CofEffDate,cofRate,LastMdfDate ");
 		selectSql.append(" FROM CostOfFunds");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LastMdfDate='");
 		selectSql.append(effDate);
 		selectSql.append('\'');
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
 		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
-		
-		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+
+		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return costOfFunds;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the CostOfFunds
-	 * If Record not deleted then throws DataAccessException
-	 * with error 41003. delete CostOfFunds greater than effective date
+	 * This method Deletes the Record from the CostOfFunds If Record not deleted then throws DataAccessException with
+	 * error 41003. delete CostOfFunds greater than effective date
 	 * 
 	 * @param CostOfFunds
 	 *            (costOfFund)
@@ -376,7 +374,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 	public void deleteByEffDate(CostOfFund costOfFund, String type) {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder(" Delete From CostOfFunds");
-		deleteSql.append(StringUtils.trimToEmpty(type)); 
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CofCode =:CofCode and Currency = :Currency and CofEffDate > :CofEffDate");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);

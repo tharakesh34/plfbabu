@@ -7,19 +7,19 @@ import java.util.Set;
 import com.pennant.backend.model.Entity;
 
 public class LimitReferenceMapping implements java.io.Serializable, Entity {
-	private static final long	serialVersionUID	= 1L;
-	private long				referenceId			= Long.MIN_VALUE;
-	private String				referenceCode;
-	private String				referenceNumber;
-	private String				limitLine;
-	private String				finCcy;
-	private String				loanStatus;
-	private long				headerId;
+	private static final long serialVersionUID = 1L;
+	private long referenceId = Long.MIN_VALUE;
+	private String referenceCode;
+	private String referenceNumber;
+	private String limitLine;
+	private String finCcy;
+	private String loanStatus;
+	private long headerId;
 
-	private BigDecimal			loanAmount;
-	private BigDecimal			outstandingAmount;
-	private boolean				newRecord			= false;
-	private boolean				proceeed			= true;
+	private BigDecimal loanAmount;
+	private BigDecimal outstandingAmount;
+	private boolean newRecord = false;
+	private boolean proceeed = true;
 
 	public boolean isNew() {
 		return isNewRecord();

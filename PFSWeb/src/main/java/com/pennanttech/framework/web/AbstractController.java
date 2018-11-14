@@ -79,10 +79,10 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * ZK zul page.
  */
 public abstract class AbstractController<T> extends GenericForwardComposer<Component> implements Serializable {
-	private static final long	serialVersionUID		= -1171206258809472640L;
-	private static final Logger	logger					= Logger.getLogger(AbstractController.class);
+	private static final long serialVersionUID = -1171206258809472640L;
+	private static final Logger logger = Logger.getLogger(AbstractController.class);
 
-	public static final int		LIST_AREA_HEIGHT_OFFSET	= 58;
+	public static final int LIST_AREA_HEIGHT_OFFSET = 58;
 
 	/**
 	 * Returns the pixel width of the client's desktop.
@@ -117,20 +117,20 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	// TODO:
 
-	protected Window				window;
-	protected final Borderlayout	borderlayoutMain		= (Borderlayout) Path
-																	.getComponent("/outerIndexWindow/borderlayoutMain");
-	private transient boolean		workFlowEnabled;
-	private transient long			workFlowId				= 0;
-	private transient boolean		firstTask;
-	private transient String		firstTaskRole;
-	protected transient boolean		enqiryModule;
-	protected transient String		moduleCode;
+	protected Window window;
+	protected final Borderlayout borderlayoutMain = (Borderlayout) Path
+			.getComponent("/outerIndexWindow/borderlayoutMain");
+	private transient boolean workFlowEnabled;
+	private transient long workFlowId = 0;
+	private transient boolean firstTask;
+	private transient String firstTaskRole;
+	protected transient boolean enqiryModule;
+	protected transient String moduleCode;
 
-	protected Button				print;
-	protected Button				help;
+	protected Button print;
+	protected Button help;
 
-	public static final String		RIGHT_NOT_ACCESSIBLE	= "RIGHT_NOT_ACCESSIBLE";
+	public static final String RIGHT_NOT_ACCESSIBLE = "RIGHT_NOT_ACCESSIBLE";
 
 	public boolean isWorkFlowEnabled() {
 		return workFlowEnabled;
@@ -164,14 +164,14 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		this.firstTaskRole = firstTaskRole;
 	}
 
-	protected String						pageRightName;
-	protected List<ButtonControl>			buttonControls	= new ArrayList<ButtonControl>();
+	protected String pageRightName;
+	protected List<ButtonControl> buttonControls = new ArrayList<ButtonControl>();
 
 	/**
 	 * A map of parameters that is accessible by <code>this</code> variable
 	 * 
 	 */
-	protected transient Map<String, Object>	arguments;
+	protected transient Map<String, Object> arguments;
 
 	protected void setPageComponents(Window window) {
 		this.window = window;
@@ -181,25 +181,25 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		this.window = window;
 	}
 
-	private transient UserService						userService;
-	protected transient FinanceWorkFlowService			financeWorkFlowService;
+	private transient UserService userService;
+	protected transient FinanceWorkFlowService financeWorkFlowService;
 
-	protected transient WorkflowEngine					workFlow		= null;
-	protected transient String							role			= "";
+	protected transient WorkflowEngine workFlow = null;
+	protected transient String role = "";
 	// Variables that are required for workflow
 
-	protected West										menuWest;
-	protected Groupbox									groupboxMenu;
-	private HashMap<String, ArrayList<ErrorDetail>>	overideMap		= new HashMap<String, ArrayList<ErrorDetail>>();
-	private String										reaOnlyStyle	= "#F2F2F2";
-	private String										generalStyle	= "#FFFFFF";
+	protected West menuWest;
+	protected Groupbox groupboxMenu;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private String reaOnlyStyle = "#F2F2F2";
+	private String generalStyle = "#FFFFFF";
 
-	protected String									nextRoleCode	= "";
-	protected String									taskId			= "";
-	protected String									nextTaskId		= "";
-	protected boolean									auditingReq;
-	protected String									operationRefs	= "";
-	private boolean										validation		= true;
+	protected String nextRoleCode = "";
+	protected String taskId = "";
+	protected String nextTaskId = "";
+	protected boolean auditingReq;
+	protected String operationRefs = "";
+	private boolean validation = true;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -309,7 +309,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		logger.debug("Leaving");
 	}
 
-	private transient UserWorkspace	userWorkspace;
+	private transient UserWorkspace userWorkspace;
 
 	@Override
 	public void onEvent(Event evt) throws Exception {
@@ -373,10 +373,10 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 	}
 
-	private int					listRows;
-	private static final int	listRowHeight		= 28;
-	private static final int	rowheight			= 26;
-	public int					borderLayoutHeight	= 0;
+	private int listRows;
+	private static final int listRowHeight = 28;
+	private static final int rowheight = 26;
+	public int borderLayoutHeight = 0;
 
 	public int getGridRows() {
 		return Math.round(this.borderLayoutHeight / rowheight) - 1;
@@ -583,7 +583,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 * 
 	 * @param Combobox
 	 *            (combobox) String (label)
-	 * */
+	 */
 	public boolean isValidComboValue(Combobox combobox, String label) {
 		if (!combobox.isDisabled() && combobox.getSelectedIndex() <= 0) {
 			throw new WrongValueException(combobox, Labels.getLabel("STATIC_INVALID", new String[] { label }));
@@ -1107,21 +1107,21 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		} else {
 			divisionField = "lovDescFinDivision";
 		}
-			wherQuery.append(" FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision =");
-			wherQuery.append(divisionField);
-			wherQuery.append(" and usrid =");
-			wherQuery.append(getUserWorkspace().getLoggedInUser().getUserId());
-			wherQuery.append(")");
-		
-			return wherQuery.toString();	
+		wherQuery.append(" FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision =");
+		wherQuery.append(divisionField);
+		wherQuery.append(" and usrid =");
+		wherQuery.append(getUserWorkspace().getLoggedInUser().getUserId());
+		wherQuery.append(")");
+
+		return wherQuery.toString();
 	}
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 
-	private PagedListWrapper<T>			pagedListWrapper;
-	
+	private PagedListWrapper<T> pagedListWrapper;
+
 	public PagedListWrapper<T> getPagedListWrapper() {
 		return pagedListWrapper;
 	}
@@ -1160,7 +1160,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		return searchObj;
 	}
 
-	public JdbcSearchObject<T> getSearchFilter(JdbcSearchObject<T> searchObj, int filter, Object value, String fieldName) {
+	public JdbcSearchObject<T> getSearchFilter(JdbcSearchObject<T> searchObj, int filter, Object value,
+			String fieldName) {
 		switch (filter) {
 		case -1:
 			break;
@@ -1235,7 +1236,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	protected boolean isNotesMandatory(String taskId, Object object) {
 		return workFlow.isNotesMandatory(taskId, object);
 	}
-	
+
 	/**
 	 * Returns value of the argument configured as configured as query string for the page in mainmenu.xml
 	 * 
@@ -1258,7 +1259,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 		return argumentValue;
 	}
-	
+
 	/**
 	 * Shows Workflow window.
 	 * 
@@ -1300,75 +1301,76 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		arg.put("moduleCode", moduleCode);
 		arg.put("keyValue", keyValue);
 		arg.put("map", map);
-		
-		if(moduleCode == null) {
+
+		if (moduleCode == null) {
 			arg.put("moduleCode", map.get("moduleCode"));
 		}
 
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/ActivityLog.zul", window, arg);
 	}
-	
+
 	/**
-	 * Set Focus Component true when multiple group boxes  
+	 * Set Focus Component true when multiple group boxes
+	 * 
 	 * @param component
 	 * @return
 	 */
-	protected boolean setComponentFocus(Component component){
+	protected boolean setComponentFocus(Component component) {
 		logger.debug("Entering");
 
-		if(!(component instanceof Button)){
-			if(component instanceof CurrencyBox){
-				CurrencyBox ccyBox = (CurrencyBox)component;
+		if (!(component instanceof Button)) {
+			if (component instanceof CurrencyBox) {
+				CurrencyBox ccyBox = (CurrencyBox) component;
 				ccyBox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Textbox){
-				Textbox textbox = (Textbox)component;
+			if (component instanceof Textbox) {
+				Textbox textbox = (Textbox) component;
 				textbox.setFocus(true);
 				return true;
 			}
-			if(component instanceof ExtendedCombobox){
-				ExtendedCombobox extendedCombobox = (ExtendedCombobox)component;
+			if (component instanceof ExtendedCombobox) {
+				ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
 				extendedCombobox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Intbox){
-				Intbox intbox = (Intbox)component;
+			if (component instanceof Intbox) {
+				Intbox intbox = (Intbox) component;
 				intbox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Combobox){
-				Combobox combobox = (Combobox)component;
+			if (component instanceof Combobox) {
+				Combobox combobox = (Combobox) component;
 				combobox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Uppercasebox){
-				Uppercasebox uppercasebox = (Uppercasebox)component;
+			if (component instanceof Uppercasebox) {
+				Uppercasebox uppercasebox = (Uppercasebox) component;
 				uppercasebox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Longbox){
-				Longbox longbox = (Longbox)component;
+			if (component instanceof Longbox) {
+				Longbox longbox = (Longbox) component;
 				longbox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Decimalbox){
-				Decimalbox decimalbox = (Decimalbox)component;
+			if (component instanceof Decimalbox) {
+				Decimalbox decimalbox = (Decimalbox) component;
 				decimalbox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Datebox){
-				Datebox datebox = (Datebox)component;
+			if (component instanceof Datebox) {
+				Datebox datebox = (Datebox) component;
 				datebox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Checkbox){
-				Checkbox checkbox = (Checkbox)component;
+			if (component instanceof Checkbox) {
+				Checkbox checkbox = (Checkbox) component;
 				checkbox.setFocus(true);
 				return true;
 			}
-			if(component instanceof Radiogroup){
-				Radiogroup radiogroup = (Radiogroup)component;
+			if (component instanceof Radiogroup) {
+				Radiogroup radiogroup = (Radiogroup) component;
 				radiogroup.setFocus(true);
 				return true;
 			}

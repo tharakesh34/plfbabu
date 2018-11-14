@@ -92,7 +92,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
 		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
 		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD,");
-		selectSql.append(" AmzTillLBD, LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
+		selectSql.append(
+				" AmzTillLBD, LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
 		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
 		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,MaturityDate, ");
@@ -107,8 +108,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finProfitDetails = null;
@@ -134,7 +134,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
 		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
 		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD,");
-		selectSql.append(" AmzTillLBD, LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
+		selectSql.append(
+				" AmzTillLBD, LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
 		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
 		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,FullPaidDate, ");
@@ -152,13 +153,13 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceProfitDetail.class);
 
-		List<FinanceProfitDetail> finPftDetails = this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		List<FinanceProfitDetail> finPftDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 
 		logger.debug("Leaving");
 		return finPftDetails;
 	}
-	
+
 	/**
 	 * Method for get the FinanceProfitDetail Object by Key finReference
 	 */
@@ -176,7 +177,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
 		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
 		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD,");
-		selectSql.append(" AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
+		selectSql.append(
+				" AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
 		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
 		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,FullPaidDate, ");
@@ -189,7 +191,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceProfitDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -216,8 +219,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finProfitDetails = null;
@@ -236,7 +238,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 		finProfitDetails.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("Select AcrTillLBD, PftAmzSusp,  AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD ");
+		StringBuilder selectSql = new StringBuilder(
+				"Select AcrTillLBD, PftAmzSusp,  AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD ");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -246,8 +249,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finProfitDetails = null;
@@ -277,8 +279,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finProfitDetails = null;
@@ -306,7 +307,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal, FinStartDate,");
 		selectSql.append(" NOInst, MaturityDate, FirstRepayAmt, NSchdDate, NSchdPri, NSchdPft, FirstRepayDate,");
 		selectSql.append(" NSchdDate, PrvRpySchDate, ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, ");
-		selectSql.append(" TotalPftPaidInAdv, TotalPriPaidInAdv, AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, TdSchdPftPaid,");
+		selectSql.append(
+				" TotalPftPaidInAdv, TotalPriPaidInAdv, AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, TdSchdPftPaid,");
 		selectSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
@@ -317,8 +319,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finProfitDetails = null;
@@ -358,9 +359,12 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
 		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, TdSchdRbt = :TdSchdRbt, TotalAdvPftSchd = :TotalAdvPftSchd,");
 		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
-		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
-		updateSql.append(" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus, ActualODDays = :ActualODDays,");
-		updateSql.append(" AmzTillLBD=:AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD ");
+		updateSql.append(
+				" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
+		updateSql.append(
+				" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus, ActualODDays = :ActualODDays,");
+		updateSql.append(
+				" AmzTillLBD=:AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD ");
 		/*
 		 * updateSql.append(" ExcessAmt = :ExcessAmt, ");
 		 * updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ");
@@ -429,7 +433,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
-		updateSql.append(" AmzTillLBD = :AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD, GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
+		updateSql.append(
+				" AmzTillLBD = :AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD, GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
 		updateSql.append(" AmzTillLBDPD = :AmzTillLBDPD, AmzTillLBDPIS = :AmzTillLBDPIS,");
 		updateSql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD, PrvMthAmz = :PrvMthAmz,");
 		updateSql.append(" PrvMthAmzNrm = :PrvMthAmzNrm, PrvMthAmzPD = :PrvMthAmzPD, PrvMthAmzSusp = :PrvMthAmzSusp,");
@@ -466,7 +471,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid,");
 		insertSql.append(" TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued,");
 		insertSql.append(" PftAccrueSusp, PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal,");
-		insertSql.append(" AcrTillLBD, AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, RepayFrq, CustCIF, FinCcy, FinPurpose, FinContractDate,");
+		insertSql.append(
+				" AcrTillLBD, AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, RepayFrq, CustCIF, FinCcy, FinPurpose, FinContractDate,");
 		insertSql.append(" FinApprovedDate, FinStartDate, MaturityDate, FullPaidDate, FinAmount,");
 		insertSql.append(" DownPayment, CurReducingRate, CurFlatRate, TotalpriSchd, ODPrincipal, ODProfit,");
 		insertSql.append(" PenaltyPaid, PenaltyDue, PenaltyWaived, NSchdDate, NSchdPri, NSchdPft,");
@@ -490,7 +496,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
 		insertSql.append(" :TotalPriBal, :TdSchdPft, :TdPftCpz, :TdSchdPftPaid, :TdSchdPftBal, :PftAccrued, ");
 		insertSql.append(" :PftAccrueSusp, :PftAmz, :PftAmzSusp, :TdSchdPri, :TdSchdPriPaid, :TdSchdPriBal, ");
-		insertSql.append(" :AcrTillLBD, :AmzTillLBD,:LpiTillLBD, :LppTillLBD,:GstLpiTillLBD, :GstLppTillLBD, :RepayFrq, :CustCIF, :FinCcy, :FinPurpose, :FinContractDate,");
+		insertSql.append(
+				" :AcrTillLBD, :AmzTillLBD,:LpiTillLBD, :LppTillLBD,:GstLpiTillLBD, :GstLppTillLBD, :RepayFrq, :CustCIF, :FinCcy, :FinPurpose, :FinContractDate,");
 		insertSql.append(" :FinApprovedDate, :FinStartDate, :MaturityDate, :FullPaidDate, :FinAmount, ");
 		insertSql.append(" :DownPayment, :CurReducingRate, :CurFlatRate, :TotalpriSchd, :ODPrincipal, :ODProfit,");
 		insertSql.append(" :PenaltyPaid, :PenaltyDue, :PenaltyWaived, :NSchdDate, :NSchdPri, :NSchdPft,");
@@ -498,7 +505,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" :NOInst, :NOPaidInst, :NOODInst, :FinAccount, :FinAcType, :DisbAccountId, :DisbActCcy,");
 		insertSql.append(" :RepayAccountId, :FinCustPftAccount, :IncomeAccount, :UEIncomeSuspAccount,");
 		insertSql.append(" :FinCommitmentRef, :FinIsActive, :FirstRepayDate, :FirstRepayAmt, :FinalRepayAmt,");
-		insertSql.append(" :CurODDays, :ActualODDays, :MaxODDays, :FirstODDate, :PrvODDate, :ClosingStatus, :FinCategory,");
+		insertSql.append(
+				" :CurODDays, :ActualODDays, :MaxODDays, :FirstODDate, :PrvODDate, :ClosingStatus, :FinCategory,");
 		insertSql.append(" :PrvRpySchDate, :PrvRpySchPri, :PrvRpySchPft, :LatestRpyDate, :LatestRpyPri,");
 		insertSql.append(" :LatestRpyPft, :TotalWriteoff, :AccumulatedDepPri, :DepreciatePri, :TotalAdvPftSchd,");
 		insertSql.append(" :TotalRbtSchd, :TotalPriPaidInAdv, :TdSchdAdvPft, :TdSchdRbt, :PftAmzNormal, :PftAmzPD,");
@@ -532,8 +540,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		try {
-			accruedAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					BigDecimal.class);
+			accruedAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accruedAmount = BigDecimal.ZERO;
@@ -548,8 +555,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
 		try {
 			this.jdbcTemplate.update("DELETE FROM FinPftDetails_Temp", beanParameters);
-			this.jdbcTemplate.update("INSERT INTO FinPftDetails_Temp  SELECT * FROM FinPftDetails",
-					beanParameters);
+			this.jdbcTemplate.update("INSERT INTO FinPftDetails_Temp  SELECT * FROM FinPftDetails", beanParameters);
 
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -596,21 +602,21 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Updation of Finance Active Status after Finance Cancellation
 	 */
 	@Override
 	public void UpdateActiveSts(String finReference, boolean isActive) {
 		logger.debug("Entering");
-		
+
 		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 		finProfitDetails.setFinReference(finReference);
 		finProfitDetails.setFinIsActive(isActive);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
 		updateSql.append(" Set FinIsActive = :FinIsActive Where FinReference =:FinReference");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
@@ -680,7 +686,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived, TotPftOnPDDue = :TotPftOnPDDue,");
 		updateSql.append(" NOInst = :NOInst, NOPaidInst = :NOPaidInst, NOODInst = :NOODInst,");
 		updateSql.append(" FutureInst = :FutureInst, RemainingTenor = :RemainingTenor, TotalTenor = :TotalTenor,");
-		updateSql.append(" ODPrincipal = :ODPrincipal, ODProfit = :ODProfit, CurODDays = :CurODDays, ActualODDays = :ActualODDays,");
+		updateSql.append(
+				" ODPrincipal = :ODPrincipal, ODProfit = :ODProfit, CurODDays = :CurODDays, ActualODDays = :ActualODDays,");
 		updateSql.append(" MaxODDays = :MaxODDays, FirstODDate = :FirstODDate, PrvODDate = :PrvODDate,");
 		updateSql.append(" PenaltyPaid = :PenaltyPaid, PenaltyDue = :PenaltyDue, PenaltyWaived = :PenaltyWaived,");
 		updateSql.append(" FirstRepayDate = :FirstRepayDate, FirstRepayAmt = :FirstRepayAmt,");
@@ -697,7 +704,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate");
 
 		if (posted) {
-			updateSql.append(" ,AmzTillLBD = :AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
+			updateSql.append(
+					" ,AmzTillLBD = :AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
 			updateSql.append(" AmzTillLBDPD = :AmzTillLBDPD, AmzTillLBDPIS = :AmzTillLBDPIS,");
 			updateSql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD ");
 		}
@@ -723,7 +731,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -753,7 +761,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -762,20 +770,26 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" MERGE INTO Finpftdetails FP ");
-		updateSql.append(" USING ( Select  FS.FINREFERENCE,SUM(FS.PROFITSCHD)PROFITSCHD,SUM(FS.SCHDPFTPAID)SCHDPFTPAID,");
+		updateSql.append(
+				" USING ( Select  FS.FINREFERENCE,SUM(FS.PROFITSCHD)PROFITSCHD,SUM(FS.SCHDPFTPAID)SCHDPFTPAID,");
 		updateSql.append(" SUM(FS.PROFITSCHD-FS.SCHDPFTPAID)PROFITSCHD_SCHDPFTPAID,");
-		updateSql.append(" SUM(FS.PRINCIPALSCHD)PRINCIPALSCHD,SUM(FS.SCHDPRIPAID)SCHDPRIPAID,SUM(FS.PRINCIPALSCHD-FS.SCHDPRIPAID) PRINCIPALSCHD_SCHDPRIPAID,");
+		updateSql.append(
+				" SUM(FS.PRINCIPALSCHD)PRINCIPALSCHD,SUM(FS.SCHDPRIPAID)SCHDPRIPAID,SUM(FS.PRINCIPALSCHD-FS.SCHDPRIPAID) PRINCIPALSCHD_SCHDPRIPAID,");
 		updateSql.append(" SUM(CPZAMOUNT) TDPFTCPZ");
 		updateSql.append(" from FINSCHEDULEDETAILS FS inner join ");
 		updateSql.append(" Finpftdetails FP on FS.FINREFERENCE = FP.FINREFERENCE ");
 		updateSql.append(" where (FP.Finisactive=1 or (FP.FinIsActive = '0' and FP.LatestRpyDate = :valueDate))");
 		updateSql.append(" and FS.SCHDATE <= :valueDate");
 		updateSql.append(" group by  FS.FINREFERENCE ) T2");
-		updateSql.append(" ON (T2.FINREFERENCE = FP.FINREFERENCE and (T2.PRINCIPALSCHD_SCHDPRIPAID != FP.TDSCHDPRIBAL or T2.PROFITSCHD_SCHDPFTPAID != FP.TDSCHDPFTBAL");
-		updateSql.append(" or FP.TDSCHDPRIPAID != T2.SCHDPRIPAID or FP.TDSCHDPFTPAID!= T2.SCHDPFTPAID Or FP.TDPFTCPZ != T2.TDPFTCPZ))");
-		updateSql.append(" WHEN MATCHED THEN UPDATE SET FP.TDSCHDPFT = T2.PROFITSCHD, FP.TDSCHDPFTPAID =  T2.SCHDPFTPAID,");
+		updateSql.append(
+				" ON (T2.FINREFERENCE = FP.FINREFERENCE and (T2.PRINCIPALSCHD_SCHDPRIPAID != FP.TDSCHDPRIBAL or T2.PROFITSCHD_SCHDPFTPAID != FP.TDSCHDPFTBAL");
+		updateSql.append(
+				" or FP.TDSCHDPRIPAID != T2.SCHDPRIPAID or FP.TDSCHDPFTPAID!= T2.SCHDPFTPAID Or FP.TDPFTCPZ != T2.TDPFTCPZ))");
+		updateSql.append(
+				" WHEN MATCHED THEN UPDATE SET FP.TDSCHDPFT = T2.PROFITSCHD, FP.TDSCHDPFTPAID =  T2.SCHDPFTPAID,");
 		updateSql.append(" FP.TDSCHDPFTBAL = T2.PROFITSCHD_SCHDPFTPAID, FP.TDSCHDPRI =  T2.PRINCIPALSCHD,");
-		updateSql.append(" FP.TDSCHDPRIPAID =  T2.SCHDPRIPAID, FP.TDSCHDPRIBAL =  T2.PRINCIPALSCHD_SCHDPRIPAID, FP.TDPFTCPZ = T2.TDPFTCPZ ");
+		updateSql.append(
+				" FP.TDSCHDPRIPAID =  T2.SCHDPRIPAID, FP.TDSCHDPRIBAL =  T2.PRINCIPALSCHD_SCHDPRIPAID, FP.TDPFTCPZ = T2.TDPFTCPZ ");
 
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
@@ -800,7 +814,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" and MA.AdviseType = '1' and BounceID <= 0 ");
 		updateSql.append(" group by  MA.FINREFERENCE ) T2");
 		updateSql.append(" ON (T2.FINREFERENCE = FP.FINREFERENCE ) ");
-		updateSql.append(" WHEN MATCHED THEN UPDATE SET FP.RECEIVABLEADVISE = T2.RECEIVABLEADVISE, FP.RECEIVABLEADVISEBAL = T2.RECEIVABLEADVISEBAL");
+		updateSql.append(
+				" WHEN MATCHED THEN UPDATE SET FP.RECEIVABLEADVISE = T2.RECEIVABLEADVISE, FP.RECEIVABLEADVISEBAL = T2.RECEIVABLEADVISEBAL");
 
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
@@ -827,7 +842,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" group by  MA.FINREFERENCE ) T2");
 		updateSql.append(" ON (T2.FINREFERENCE = FP.FINREFERENCE ) ");
 		//	updateSql.append(" ( FP.BOUNCEAMT != T2.BOUNCEAMT or FP.BOUNCEAMTPAID != T2.BOUNCEAMTPAID or FP.BOUNCEAMTDUE != T2.BOUNCEAMTDUE))");
-		updateSql.append(" WHEN MATCHED THEN UPDATE SET FP.BOUNCEAMT = T2.BOUNCEAMT, FP.BOUNCEAMTPAID = T2.BOUNCEAMTPAID, FP.BOUNCEAMTDUE = T2.BOUNCEAMTDUE");
+		updateSql.append(
+				" WHEN MATCHED THEN UPDATE SET FP.BOUNCEAMT = T2.BOUNCEAMT, FP.BOUNCEAMTPAID = T2.BOUNCEAMTPAID, FP.BOUNCEAMTDUE = T2.BOUNCEAMTDUE");
 
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("valueDate", valueDate);
@@ -840,7 +856,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * @param finReference
 	 * @param type
 	 * 
-	 * method return curOddays from FinPFtDetails Based On Reference
+	 *            method return curOddays from FinPFtDetails Based On Reference
 	 */
 	@Override
 	public int getCurOddays(String finReference, String type) {
@@ -861,15 +877,15 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * @param finReference
 	 * @param type
 	 * 
-	 * method return PFTINSUSP from FinPFtDetails Based On Reference
+	 *            method return PFTINSUSP from FinPFtDetails Based On Reference
 	 */
 	@Override
-	public 	boolean isSuspenseFinance(String finReference) {
+	public boolean isSuspenseFinance(String finReference) {
 		logger.debug("Entering");
 		try {
 			MapSqlParameterSource source = new MapSqlParameterSource();

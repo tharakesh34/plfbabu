@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -64,44 +63,44 @@ public class CheckListDetailListModelItemRenderer implements ListitemRenderer<Ch
 	private static final long serialVersionUID = -7502706317125873983L;
 
 	public CheckListDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CheckListDetail checkListDetail, int count) throws Exception {
 
 		Listcell lc;
-		
-	  	lc = new Listcell(checkListDetail.getAnsDesc());
+
+		lc = new Listcell(checkListDetail.getAnsDesc());
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox cbMandatory = new Checkbox();
 		cbMandatory.setDisabled(true);
 		cbMandatory.setChecked(checkListDetail.isRemarksAllow());
 		lc.appendChild(cbMandatory);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox docMandatory = new Checkbox();
 		docMandatory.setDisabled(true);
 		docMandatory.setChecked(checkListDetail.isDocRequired());
 		lc.appendChild(docMandatory);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
 		cbActive.setDisabled(true);
 		cbActive.setChecked(checkListDetail.isRemarksMand());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-		
-	  	lc = new Listcell(checkListDetail.getRecordStatus());
+
+		lc = new Listcell(checkListDetail.getRecordStatus());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantJavaUtil.getLabel(checkListDetail.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("data", checkListDetail);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCheckListDetailItemDoubleClicked");
 	}

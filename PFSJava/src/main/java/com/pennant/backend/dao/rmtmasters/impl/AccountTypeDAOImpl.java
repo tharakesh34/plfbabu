@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class AccountTypeDAOImpl extends BasicDao<AccountType> implements AccountTypeDAO {
 	private static Logger logger = Logger.getLogger(AccountTypeDAOImpl.class);
-	
+
 	public AccountTypeDAOImpl() {
 		super();
 	}
@@ -91,24 +91,23 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 
 		StringBuilder selectSql = new StringBuilder("Select  AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode,");
 		selectSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AssertOrLiability, OnBalanceSheet, AllowOverDraw , ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AcLmtCategory, ProfitCenterID, CostCenterID, TaxApplicable,  ACCADDLVAR1, ACCADDLVAR2, ACCADDLCHAR1, ExtractionType" );
-		if(type.contains("View")){
-			selectSql.append(",GroupCode,  GroupDescription, costCenterDesc, profitCenterDesc,CostCenterCode,ProfitCenterCode");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(
+				" TaskId, NextTaskId, RecordType, WorkflowId, AcLmtCategory, ProfitCenterID, CostCenterID, TaxApplicable,  ACCADDLVAR1, ACCADDLVAR2, ACCADDLCHAR1, ExtractionType");
+		if (type.contains("View")) {
+			selectSql.append(
+					",GroupCode,  GroupDescription, costCenterDesc, profitCenterDesc,CostCenterCode,ProfitCenterCode");
 		}
-		selectSql.append(" From RMTAccountTypes" );
+		selectSql.append(" From RMTAccountTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AcType =:AcType");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				accountType);
-		RowMapper<AccountType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AccountType.class);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
+		RowMapper<AccountType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountType.class);
 
 		try {
-			accountType = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);
+			accountType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			accountType = null;
@@ -118,9 +117,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTAccountTypes or
-	 * RMTAccountTypes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Account Types by key AcType
+	 * This method Deletes the Record from the RMTAccountTypes or RMTAccountTypes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Account Types by key AcType
 	 * 
 	 * @param Account
 	 *            Types (accountType)
@@ -136,16 +134,14 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTAccountTypes");
-		deleteSql.append(StringUtils.trimToEmpty(type) ); 
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where AcType =:AcType");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				accountType);
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-					beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -157,8 +153,7 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	}
 
 	/**
-	 * This method insert new Records into RMTAccountTypes or
-	 * RMTAccountTypes_Temp.
+	 * This method insert new Records into RMTAccountTypes or RMTAccountTypes_Temp.
 	 * 
 	 * save Account Types
 	 * 
@@ -173,21 +168,24 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	@Override
 	public String save(AccountType accountType, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTAccountTypes" );
+
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTAccountTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode," );
-		insertSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AcLmtCategory, AssertOrLiability, OnBalanceSheet, AllowOverDraw ,");
+		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode,");
+		insertSql.append(
+				" InternalAc, CustSysAc, AcTypeIsActive, AcLmtCategory, AssertOrLiability, OnBalanceSheet, AllowOverDraw ,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ProfitCenterID, CostCenterID, TaxApplicable,  ACCADDLVAR1, ACCADDLVAR2, ACCADDLCHAR1, ExtractionType)");
-		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose,  :AcTypeGrpId, :AcHeadCode, " );
-		insertSql.append(" :InternalAc, :CustSysAc,:AcTypeIsActive, :AcLmtCategory, :AssertOrLiability, :OnBalanceSheet, :AllowOverDraw ," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ProfitCenterID, :CostCenterID, :TaxApplicable,  :ACCADDLVAR1, :ACCADDLVAR2, :ACCADDLCHAR1, :ExtractionType)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				accountType);
+		insertSql.append(
+				" TaskId, NextTaskId, RecordType, WorkflowId, ProfitCenterID, CostCenterID, TaxApplicable,  ACCADDLVAR1, ACCADDLVAR2, ACCADDLCHAR1, ExtractionType)");
+		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose,  :AcTypeGrpId, :AcHeadCode, ");
+		insertSql.append(
+				" :InternalAc, :CustSysAc,:AcTypeIsActive, :AcLmtCategory, :AssertOrLiability, :OnBalanceSheet, :AllowOverDraw ,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
+		insertSql.append(
+				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ProfitCenterID, :CostCenterID, :TaxApplicable,  :ACCADDLVAR1, :ACCADDLVAR2, :ACCADDLCHAR1, :ExtractionType)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
@@ -195,9 +193,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	}
 
 	/**
-	 * This method updates the Record RMTAccountTypes or RMTAccountTypes_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Account Types by key AcType and Version
+	 * This method updates the Record RMTAccountTypes or RMTAccountTypes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Account Types by key AcType and Version
 	 * 
 	 * @param Account
 	 *            Types (accountType)
@@ -211,34 +208,34 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	public void update(AccountType accountType, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountTypes");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose,  AcTypeGrpId = :AcTypeGrpId," );
-		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc, AcLmtCategory=:AcLmtCategory," );
-		updateSql.append(" CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive, AssertOrLiability = :AssertOrLiability, OnBalanceSheet = :OnBalanceSheet, AllowOverDraw = :AllowOverDraw ,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose,  AcTypeGrpId = :AcTypeGrpId,");
+		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc, AcLmtCategory=:AcLmtCategory,");
+		updateSql.append(
+				" CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive, AssertOrLiability = :AssertOrLiability, OnBalanceSheet = :OnBalanceSheet, AllowOverDraw = :AllowOverDraw ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, TaxApplicable = :TaxApplicable, ACCADDLVAR1 = :ACCADDLVAR1, ACCADDLVAR2 = :ACCADDLVAR2, ACCADDLCHAR1 = :ACCADDLCHAR1, ExtractionType = :ExtractionType" );
+		updateSql.append(" NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, TaxApplicable = :TaxApplicable, ACCADDLVAR1 = :ACCADDLVAR1, ACCADDLVAR2 = :ACCADDLVAR2, ACCADDLCHAR1 = :ACCADDLCHAR1, ExtractionType = :ExtractionType");
 		updateSql.append(" Where AcType =:AcType");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				accountType);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),
-				beanParameters);
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Fetch the Record Account Types details by key field
 	 * 
@@ -252,15 +249,14 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	public List<ValueLabel> getAccountTypeDesc(final List<String> acTypeList) {
 		logger.debug("Entering");
 
-		StringBuilder selectSql = new StringBuilder("Select AcType Label, AcTypeDesc Value From RMTAccountTypes" );
+		StringBuilder selectSql = new StringBuilder("Select AcType Label, AcTypeDesc Value From RMTAccountTypes");
 		selectSql.append(" Where AcType IN(:acTypeList)");
-		
+
 		Map<String, List<String>> params = new HashMap<String, List<String>>();
 		params.put("acTypeList", acTypeList);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
-
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), params, typeRowMapper);
@@ -282,7 +278,7 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
 	@Override
 	public int getgetAccountTypeByCost(long costCenterID, String type) {
 		AccountType accountType = new AccountType();
@@ -300,4 +296,3 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }
-	

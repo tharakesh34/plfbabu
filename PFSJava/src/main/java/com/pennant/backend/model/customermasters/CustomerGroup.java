@@ -52,9 +52,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
-	
+
 	private static final long serialVersionUID = 6577918356160899476L;
-	
+
 	private long custGrpID = Long.MIN_VALUE;
 	private String custGrpCode;
 	private String custGrpDesc;
@@ -83,38 +83,43 @@ public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return custGrpID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.custGrpID = id;
 	}
-	
+
 	public long getCustGrpID() {
 		return custGrpID;
 	}
+
 	public void setCustGrpID(long custGrpID) {
 		this.custGrpID = custGrpID;
 	}
-	
+
 	public String getCustGrpCode() {
 		return custGrpCode;
 	}
+
 	public void setCustGrpCode(String custGrpCode) {
 		this.custGrpCode = custGrpCode;
 	}
-	
+
 	public String getCustGrpDesc() {
 		return custGrpDesc;
 	}
+
 	public void setCustGrpDesc(String custGrpDesc) {
 		this.custGrpDesc = custGrpDesc;
 	}
-	
+
 	public String getCustGrpRO1() {
 		return custGrpRO1;
 	}
+
 	public void setCustGrpRO1(String custGrpRO1) {
 		this.custGrpRO1 = custGrpRO1;
 	}
@@ -122,6 +127,7 @@ public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustGrpRO1Name() {
 		return lovDescCustGrpRO1Name;
 	}
+
 	public void setLovDescCustGrpRO1Name(String lovDescCustGrpRO1Name) {
 		this.lovDescCustGrpRO1Name = lovDescCustGrpRO1Name;
 	}
@@ -129,6 +135,7 @@ public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
 	public long getCustGrpLimit() {
 		return custGrpLimit;
 	}
+
 	public void setCustGrpLimit(long custGrpLimit) {
 		this.custGrpLimit = custGrpLimit;
 	}
@@ -136,34 +143,39 @@ public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
 	public boolean isCustGrpIsActive() {
 		return custGrpIsActive;
 	}
+
 	public void setCustGrpIsActive(boolean custGrpIsActive) {
 		this.custGrpIsActive = custGrpIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerGroup getBefImage(){
+	public CustomerGroup getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerGroup beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerGroup beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

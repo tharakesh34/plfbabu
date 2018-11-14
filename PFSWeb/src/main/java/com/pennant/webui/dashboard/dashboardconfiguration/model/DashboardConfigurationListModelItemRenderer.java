@@ -59,8 +59,8 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listitems in the listbox.
  * 
  */
-public class DashboardConfigurationListModelItemRenderer implements ListitemRenderer<DashboardConfiguration>,
-		Serializable {
+public class DashboardConfigurationListModelItemRenderer
+		implements ListitemRenderer<DashboardConfiguration>, Serializable {
 
 	private static final long serialVersionUID = -2685804825608978299L;
 

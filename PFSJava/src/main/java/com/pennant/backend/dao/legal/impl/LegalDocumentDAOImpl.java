@@ -64,13 +64,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>LegalDocument</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>LegalDocument</code> with set of CRUD operations.
  */
 public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements LegalDocumentDAO {
 	private static Logger logger = Logger.getLogger(LegalDocumentDAOImpl.class);
-
-	
 
 	public LegalDocumentDAOImpl() {
 		super();
@@ -83,9 +80,11 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalId, legalDocumentId, documentDate, documentDetail, documentNo, surveyNo, ");
-		sql.append(" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
+		sql.append(
+				" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
 		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalDocuments");
 		sql.append(type);
 		sql.append(" Where legalDocumentId = :legalDocumentId And LegalId = :LegalId");
@@ -117,9 +116,11 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalId, legalDocumentId, documentDate, documentDetail, documentNo, surveyNo, ");
-		sql.append(" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
+		sql.append(
+				" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
 		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalDocuments");
 		sql.append(type);
 		sql.append(" Where LegalId = :LegalId");
@@ -140,7 +141,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String save(LegalDocument legalDocument, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -149,14 +150,18 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		StringBuilder sql = new StringBuilder(" insert into LegalDocuments");
 		sql.append(tableType.getSuffix());
 		sql.append("(legalDocumentId, legalId, documentDate, documentDetail, documentNo, surveyNo, ");
-		sql.append("documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
+		sql.append(
+				"documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
 		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalDocumentId, :legalId, :documentDate, :documentDetail, :documentNo, :surveyNo, ");
-		sql.append( " :documentType, :documentCategory, :scheduleType, :documentName, :documentTypeVerify, :documentRemarks, :documentReference, ");
+		sql.append(
+				" :documentType, :documentCategory, :scheduleType, :documentName, :documentTypeVerify, :documentRemarks, :documentReference, ");
 		sql.append(" :documentTypeApprove, :documentAccepted, :uploadDocumentType,");
-		sql.append( " :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalDocument.getLegalDocumentId() == Long.MIN_VALUE) {
 			legalDocument.setLegalDocumentId(getNextId("SeqLegalDocuments"));
@@ -185,9 +190,12 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		StringBuilder sql = new StringBuilder("update LegalDocuments");
 		sql.append(tableType.getSuffix());
 		sql.append("  set legalId = :legalId, documentDate = :documentDate, documentDetail = :documentDetail, ");
-		sql.append(" documentNo = :documentNo, surveyNo = :surveyNo, documentType = :documentType, documentName = :documentName,");
-		sql.append(" documentCategory = :documentCategory, scheduleType = :scheduleType, documentTypeVerify = :documentTypeVerify, ");
-		sql.append(" documentRemarks = :documentRemarks, documentReference = :documentReference, documentTypeApprove = :documentTypeApprove, ");
+		sql.append(
+				" documentNo = :documentNo, surveyNo = :surveyNo, documentType = :documentType, documentName = :documentName,");
+		sql.append(
+				" documentCategory = :documentCategory, scheduleType = :scheduleType, documentTypeVerify = :documentTypeVerify, ");
+		sql.append(
+				" documentRemarks = :documentRemarks, documentReference = :documentReference, documentTypeApprove = :documentTypeApprove, ");
 		sql.append(" documentAccepted = :documentAccepted, uploadDocumentType = :uploadDocumentType, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
@@ -235,11 +243,11 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 
 		logger.debug(Literal.LEAVING);
 	}
- 
+
 	@Override
 	public void deleteList(LegalDocument documentDetail, String tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LegalDocuments");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where legalId = :legalId");
@@ -247,9 +255,8 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 }

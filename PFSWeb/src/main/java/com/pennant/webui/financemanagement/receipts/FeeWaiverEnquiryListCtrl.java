@@ -93,17 +93,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
  */
 public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5081318673331825306L;
 	private static final Logger logger = Logger.getLogger(FeeWaiverEnquiryListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FeeWaiverEnquiry; // autowired
 	protected Borderlayout borderlayout_FinanceSelect; // autowired
@@ -183,9 +181,8 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the Search window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the Search window we check, if the ZUL-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -472,8 +469,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	/**
-	 * When user clicks on "btnSearchBranchCode" button This method displays
-	 * ExtendedSearchListBox with branch details
+	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
 	 * 
 	 * @param event
 	 */
@@ -996,20 +992,20 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	private void openFeeWaiverHeaderDialog(Listitem item) throws Exception {
 		logger.debug("Entering ");
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
-			// Fee Waivers
-			FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
-			feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
-			feeWaiverHeader = feeWaiverHeaderService.getFeeWiaverEnquiryList(feeWaiverHeader);
-			if (feeWaiverHeader.getFeeWaiverDetails().isEmpty()) {
-				MessageUtil.showMessage("Waiver is not Initiated for the LAN :" + aFinanceMain.getFinReference());
-				return;
-			}
-			// FinanceDetails
-			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
+		// CAST AND STORE THE SELECTED OBJECT
+		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+		// Fee Waivers
+		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
+		feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
+		feeWaiverHeader = feeWaiverHeaderService.getFeeWiaverEnquiryList(feeWaiverHeader);
+		if (feeWaiverHeader.getFeeWaiverDetails().isEmpty()) {
+			MessageUtil.showMessage("Waiver is not Initiated for the LAN :" + aFinanceMain.getFinReference());
+			return;
+		}
+		// FinanceDetails
+		FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
 
-			showFeeWaiverHeaderView(feeWaiverHeader, financeDetail);
+		showFeeWaiverHeaderView(feeWaiverHeader, financeDetail);
 		logger.debug("Leaving ");
 	}
 

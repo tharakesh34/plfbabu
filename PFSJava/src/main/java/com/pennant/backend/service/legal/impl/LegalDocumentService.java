@@ -285,7 +285,9 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 				legalDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				if ((legalDocument.getDocumentReference() == 0 || legalDocument.getDocumentReference() == Long.MIN_VALUE) && legalDocument.getDocImage() != null) {
+				if ((legalDocument.getDocumentReference() == 0
+						|| legalDocument.getDocumentReference() == Long.MIN_VALUE)
+						&& legalDocument.getDocImage() != null) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(legalDocument.getDocImage());
 					legalDocument.setDocumentReference(getDocumentManagerDAO().save(documentManager));
@@ -294,7 +296,9 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 			}
 
 			if (updateRecord) {
-				if ((legalDocument.getDocumentReference() == 0 || legalDocument.getDocumentReference() == Long.MIN_VALUE) && legalDocument.getDocImage() != null) {
+				if ((legalDocument.getDocumentReference() == 0
+						|| legalDocument.getDocumentReference() == Long.MIN_VALUE)
+						&& legalDocument.getDocImage() != null) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(legalDocument.getDocImage());
 					legalDocument.setDocumentReference(getDocumentManagerDAO().save(documentManager));
@@ -336,8 +340,10 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 		List<LegalDocument> documents = getLegalDocumentDAO().getLegalDocumenttDetailsList(legalId, type);
 		if (CollectionUtils.isNotEmpty(documents)) {
 			for (LegalDocument legalDocument : documents) {
-				if (legalDocument.getDocumentReference() != 0 && legalDocument.getDocumentReference() != Long.MIN_VALUE) {
-					DocumentManager documentManager = getDocumentManagerDAO().getById(legalDocument.getDocumentReference());
+				if (legalDocument.getDocumentReference() != 0
+						&& legalDocument.getDocumentReference() != Long.MIN_VALUE) {
+					DocumentManager documentManager = getDocumentManagerDAO()
+							.getById(legalDocument.getDocumentReference());
 					legalDocument.setDocImage(documentManager.getDocImage());
 				}
 			}

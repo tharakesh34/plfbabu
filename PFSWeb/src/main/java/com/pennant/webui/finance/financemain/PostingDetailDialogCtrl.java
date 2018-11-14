@@ -75,13 +75,12 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private static final Logger logger = Logger.getLogger(PostingDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_PostingDetailDialog; 		
-	protected Listbox 		listBoxPosting;					
-	protected Checkbox		showZeroCals;						
+	protected Window window_PostingDetailDialog;
+	protected Listbox listBoxPosting;
+	protected Checkbox showZeroCals;
 
 	private List<ReturnDataSet> postingDetails;
 
@@ -137,15 +136,15 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 */
 	public void doShowDialog() throws Exception {
 		logger.debug("Entering");
-		
+
 		try {
 
 			//Fill Posting Details
 			doFillPostings();
 
 			getBorderLayoutHeight();
-			this.listBoxPosting.setHeight((this.borderLayoutHeight- 100) +"px");
-			this.window_PostingDetailDialog.setHeight((this.borderLayoutHeight-80)+"px");
+			this.listBoxPosting.setHeight((this.borderLayoutHeight - 100) + "px");
+			this.window_PostingDetailDialog.setHeight((this.borderLayoutHeight - 80) + "px");
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -164,18 +163,18 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private void doFillPostings() {
 		logger.debug("Entering");
 		this.listBoxPosting.getItems().clear();
-		if(postingDetails != null && !postingDetails.isEmpty()){
+		if (postingDetails != null && !postingDetails.isEmpty()) {
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingDetails) {
-				
-				if(!this.showZeroCals.isChecked()){
-					if(returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) == 0){
+
+				if (!this.showZeroCals.isChecked()) {
+					if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) == 0) {
 						continue;
 					}
 				}
 				item = new Listitem();
-				Listcell lc = new Listcell(PennantAppUtil.getlabelDesc(
-						returnDataSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
+				Listcell lc = new Listcell(
+						PennantAppUtil.getlabelDesc(returnDataSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getTranDesc());
 				lc.setParent(item);
@@ -189,7 +188,8 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+						CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell("");
@@ -199,7 +199,7 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * when the "BtnPrintPostings" button is clicked. <br>
 	 * 
@@ -208,9 +208,9 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 */
 	public void onClick$btnPrintPostings(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		String       usrName     = getUserWorkspace().getLoggedInUser().getUserName();
-		List<Object> list        = null;
-		
+		String usrName = getUserWorkspace().getLoggedInUser().getUserName();
+		List<Object> list = null;
+
 		list = new ArrayList<Object>();
 		List<TransactionDetail> accountingDetails = new ArrayList<TransactionDetail>();
 		for (ReturnDataSet dataSet : postingDetails) {
@@ -222,19 +222,21 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setTransDesc(dataSet.getTranDesc());
 			detail.setCcy(dataSet.getAcCcy());
 			detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
-			detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
+			detail.setPostAmount(
+					PennantAppUtil.amountFormate(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			detail.setRevTranCode(dataSet.getRevTranCode());
 			detail.setPostDate(DateUtility.formatDate(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
 			detail.setValueDate(DateUtility.formatDate(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 			accountingDetails.add(detail);
 		}
 
-		Window window= (Window) this.window_PostingDetailDialog.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
-		if(!accountingDetails.isEmpty()){
+		Window window = (Window) this.window_PostingDetailDialog.getParent().getParent().getParent().getParent()
+				.getParent().getParent().getParent();
+		if (!accountingDetails.isEmpty()) {
 			list.add(accountingDetails);
 		}
 
-		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail",true, list, true, 1, usrName,window);
+		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", true, list, true, 1, usrName, window);
 		logger.debug("Leaving" + event.toString());
 	}
 

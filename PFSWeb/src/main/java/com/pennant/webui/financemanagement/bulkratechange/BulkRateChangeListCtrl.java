@@ -23,9 +23,9 @@ import com.pennant.backend.service.finance.BulkRateChangeProcessService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader> {
 	private static final long serialVersionUID = 9086034736503097868L;
@@ -92,7 +92,8 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader
 		setItemRender(new BulkRateChangeListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_BulkRateChangeList_NewBulkRateChange, "button_BulkRateChangeList_NewBulkRateChange", true);
+		registerButton(button_BulkRateChangeList_NewBulkRateChange, "button_BulkRateChangeList_NewBulkRateChange",
+				true);
 		registerButton(button_BulkRateChangeList_BulkRateChangeSearchDialog);
 
 		registerField("BulkRateChangeRef", listheader_BulkRateReference, SortOrder.ASC, bulkRateReference,
@@ -166,7 +167,8 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			BulkRateChangeHeader aBulkRateChangeHeader = (BulkRateChangeHeader) item.getAttribute("data");
-			BulkRateChangeHeader bulkRateChangeHeader =  bulkRateChangeProcessService.getApprovedBulkRateChangeHeaderByRef(aBulkRateChangeHeader.getBulkRateChangeRef());
+			BulkRateChangeHeader bulkRateChangeHeader = bulkRateChangeProcessService
+					.getApprovedBulkRateChangeHeaderByRef(aBulkRateChangeHeader.getBulkRateChangeRef());
 
 			if (bulkRateChangeHeader == null) {
 				MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -174,8 +176,8 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND BulkRateChangeRef ='" + bulkRateChangeHeader.getBulkRateChangeRef() + "' AND version="
-					+ bulkRateChangeHeader.getVersion() + " ";
+			String whereCond = " AND BulkRateChangeRef ='" + bulkRateChangeHeader.getBulkRateChangeRef()
+					+ "' AND version=" + bulkRateChangeHeader.getVersion() + " ";
 
 			if (doCheckAuthority(bulkRateChangeHeader, whereCond)) {
 				// Set the latest work-flow id for the new maintenance request.

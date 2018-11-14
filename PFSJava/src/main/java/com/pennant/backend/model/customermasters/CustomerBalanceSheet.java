@@ -68,7 +68,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerBalanceSheet befImage;
 	private LoggedInUser userDetails;
@@ -93,13 +93,15 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public String getId() {
 		return financialYear;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.financialYear = id;
 	}
 
 	public long getCustId() {
 		return custId;
 	}
+
 	public void setCustId(long custId) {
 		this.custId = custId;
 	}
@@ -107,6 +109,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public String getFinancialYear() {
 		return financialYear;
 	}
+
 	public void setFinancialYear(String financialYear) {
 		this.financialYear = financialYear;
 	}
@@ -114,6 +117,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getTotalAssets() {
 		return totalAssets;
 	}
+
 	public void setTotalAssets(BigDecimal totalAssets) {
 		this.totalAssets = totalAssets;
 	}
@@ -121,6 +125,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getTotalLiabilities() {
 		return totalLiabilities;
 	}
+
 	public void setTotalLiabilities(BigDecimal totalLiabilities) {
 		this.totalLiabilities = totalLiabilities;
 	}
@@ -128,6 +133,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getNetProfit() {
 		return netProfit;
 	}
+
 	public void setNetProfit(BigDecimal netProfit) {
 		this.netProfit = netProfit;
 	}
@@ -135,6 +141,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getNetSales() {
 		return netSales;
 	}
+
 	public void setNetSales(BigDecimal netSales) {
 		this.netSales = netSales;
 	}
@@ -142,6 +149,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getNetIncome() {
 		return netIncome;
 	}
+
 	public void setNetIncome(BigDecimal netIncome) {
 		this.netIncome = netIncome;
 	}
@@ -149,6 +157,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getOperatingProfit() {
 		return operatingProfit;
 	}
+
 	public void setOperatingProfit(BigDecimal operatingProfit) {
 		this.operatingProfit = operatingProfit;
 	}
@@ -156,6 +165,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getCashFlow() {
 		return cashFlow;
 	}
+
 	public void setCashFlow(BigDecimal cashFlow) {
 		this.cashFlow = cashFlow;
 	}
@@ -163,6 +173,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getBookValue() {
 		return bookValue;
 	}
+
 	public void setBookValue(BigDecimal bookValue) {
 		this.bookValue = bookValue;
 	}
@@ -170,6 +181,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public BigDecimal getMarketValue() {
 		return marketValue;
 	}
+
 	public void setMarketValue(BigDecimal marketValue) {
 		this.marketValue = marketValue;
 	}
@@ -177,6 +189,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -184,6 +197,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -191,6 +205,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -198,6 +213,7 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -205,26 +221,29 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerBalanceSheet getBefImage(){
+	public CustomerBalanceSheet getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerBalanceSheet beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerBalanceSheet beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 	}
 }

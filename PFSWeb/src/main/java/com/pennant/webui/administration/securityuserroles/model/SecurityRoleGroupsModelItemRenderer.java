@@ -51,27 +51,24 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.administration.SecurityGroup;
 
-
 public class SecurityRoleGroupsModelItemRenderer implements ListitemRenderer<SecurityGroup>, Serializable {
 
 	private static final long serialVersionUID = 2251512646510457618L;
-	
+
 	public SecurityRoleGroupsModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, SecurityGroup securityGroup, int count) throws Exception {
 
-		Listcell lc=new Listcell(securityGroup.getGrpCode());
-     	lc.setParent(item);
+		Listcell lc = new Listcell(securityGroup.getGrpCode());
+		lc.setParent(item);
 		lc = new Listcell(securityGroup.getGrpDesc());
 		lc.setParent(item);
-		
-	    item.setAttribute("id", securityGroup.getId());
-	    
-	    ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");	  	  	
+
+		item.setAttribute("id", securityGroup.getId());
+
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");
 	}
 }
-
-

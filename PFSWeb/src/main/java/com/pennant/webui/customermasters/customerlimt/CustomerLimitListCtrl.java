@@ -66,54 +66,51 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
  */
 public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	private static final long serialVersionUID = 9086034736503097868L;
 	private static final Logger logger = Logger.getLogger(CustomerLimitListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUl-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CustomerLimitList; 			// autowired
-	protected Borderlayout 	borderLayout_CustomerLimitList; 	// autowired
-	protected Paging 		pagingCustomerLimitList; 		// autowired
-	protected Listbox 		listBoxCustomerLimit; 			// autowired
+	protected Window window_CustomerLimitList; // autowired
+	protected Borderlayout borderLayout_CustomerLimitList; // autowired
+	protected Paging pagingCustomerLimitList; // autowired
+	protected Listbox listBoxCustomerLimit; // autowired
 
 	// List headers
-	protected Listheader listheader_CustCIF; 		// autowired
-	protected Listheader listheader_CustShrtName;	// autowired
-	protected Listheader listheader_Country;	// autowired
-	protected Listheader listheader_custGroupName; 	// autowired
-	protected Listheader listheader_Currency;	// autowired
+	protected Listheader listheader_CustCIF; // autowired
+	protected Listheader listheader_CustShrtName; // autowired
+	protected Listheader listheader_Country; // autowired
+	protected Listheader listheader_custGroupName; // autowired
+	protected Listheader listheader_Currency; // autowired
 
 	// checkRights
-	protected Button btnHelp; 									// autowired
-	protected Button button_CustomerLimitList_NewCustomerLimit; 			// autowired
-	protected Button button_CustomerLimitList_CustomerLimitSearchDialog; 	// autowired
-	protected Button button_CustomerLimitList_PrintList; 			// autowired
-	
+	protected Button btnHelp; // autowired
+	protected Button button_CustomerLimitList_NewCustomerLimit; // autowired
+	protected Button button_CustomerLimitList_CustomerLimitSearchDialog; // autowired
+	protected Button button_CustomerLimitList_PrintList; // autowired
+
 	private CustomerLimitIntefaceService custLimitIntefaceService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
 	public CustomerLimitListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
-		
+
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -121,7 +118,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_CustomerLimitList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -141,34 +138,34 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 		this.listheader_custGroupName.setSortDescending(new FieldComparator("custGroupName", false));
 		this.listheader_Currency.setSortAscending(new FieldComparator("currency", true));
 		this.listheader_Currency.setSortDescending(new FieldComparator("currency", false));
-		
+
 		Map<String, Object> custLimitMap = getCustLimitIntefaceService().fetchCustLimitEnqList(1, getListRows());
-		
+
 		List<CustomerLimit> list = new ArrayList<CustomerLimit>();
-		if(custLimitMap.containsKey("CustLimitList")){
+		if (custLimitMap.containsKey("CustLimitList")) {
 			list = (List<CustomerLimit>) custLimitMap.get("CustLimitList");
 		}
-		
-		getPagedListWrapper().initList(list,this.listBoxCustomerLimit,this.pagingCustomerLimitList);
+
+		getPagedListWrapper().initList(list, this.listBoxCustomerLimit, this.pagingCustomerLimitList);
 		this.pagingCustomerLimitList.setTotalSize((Integer) custLimitMap.get("TotalSize"));
-		this.pagingCustomerLimitList.setActivePage(((Integer) custLimitMap.get("PageNumber"))-1);
+		this.pagingCustomerLimitList.setActivePage(((Integer) custLimitMap.get("PageNumber")) - 1);
 		this.listBoxCustomerLimit.setItemRenderer(new CustomerLimitListModelItemRenderer());
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("CustomerList");
-		
-		this.button_CustomerLimitList_NewCustomerLimit.setVisible(getUserWorkspace()
-				.isAllowed("button_CustomerLimitList_NewCustomerLimit"));
-		this.button_CustomerLimitList_CustomerLimitSearchDialog.setVisible(getUserWorkspace()
-				.isAllowed("button_CustomerLimitList_CustomerLimitSearchDialog"));
-		this.button_CustomerLimitList_PrintList.setVisible(getUserWorkspace()
-				.isAllowed("button_CustomerLimitList_PrintList"));
+
+		this.button_CustomerLimitList_NewCustomerLimit
+				.setVisible(getUserWorkspace().isAllowed("button_CustomerLimitList_NewCustomerLimit"));
+		this.button_CustomerLimitList_CustomerLimitSearchDialog
+				.setVisible(getUserWorkspace().isAllowed("button_CustomerLimitList_CustomerLimitSearchDialog"));
+		this.button_CustomerLimitList_PrintList
+				.setVisible(getUserWorkspace().isAllowed("button_CustomerLimitList_PrintList"));
 		logger.debug("Leaving");
 	}
 
@@ -188,55 +185,52 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			CustomerLimit customerLimit = (CustomerLimit) item.getAttribute("data");
-				showDetailView(customerLimit);
-		}	
+			showDetailView(customerLimit);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Build the Customer Dialog Window with Existing Core banking Data
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	/*public void buildDialogWindow(Customer customer) throws Exception{
-		logger.debug("Entering");
-		// create a new Customer object, We GET it from the backEnd.
-		CustomerDetails aCustomerDetails = getCustomerDetailsService().getNewCustomer();
-		customer = getCustomerDetailsService().fetchCustomerDetails(customer);
-		aCustomerDetails.setCustomer(customer);		
-		showDetailView(aCustomerDetails);
-		logger.debug("Leaving");
-	}*/
+	/*
+	 * public void buildDialogWindow(Customer customer) throws Exception{ logger.debug("Entering"); // create a new
+	 * Customer object, We GET it from the backEnd. CustomerDetails aCustomerDetails =
+	 * getCustomerDetailsService().getNewCustomer(); customer =
+	 * getCustomerDetailsService().fetchCustomerDetails(customer); aCustomerDetails.setCustomer(customer);
+	 * showDetailView(aCustomerDetails); logger.debug("Leaving"); }
+	 */
 
 	/**
 	 * Opens the detail view. <br>
 	 * OverHanded some params in a map if needed. <br>
 	 * 
-	 * @param CustomerDetails (aCustomerDetails)
+	 * @param CustomerDetails
+	 *            (aCustomerDetails)
 	 * @throws Exception
 	 */
 	private void showDetailView(CustomerLimit customerLimit) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 
 		Map<String, Object> map = getDefaultArguments();
 		map.put("customerLimit", customerLimit);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listBox ListModel. This is
-		 * fine for synchronizing the data in the CustomerListbox from the
-		 * dialog when we do a delete, edit or insert a Customer.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listBox ListModel. This is fine for synchronizing the data in the CustomerListbox from the dialog when we do
+		 * a delete, edit or insert a Customer.
 		 */
 		map.put("customerListCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiryList.zul",
-					null,map);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiryList.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -273,15 +267,15 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 
 	/**
 	 * Method for call the Customer dialog
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$button_CustomerList_CustomerSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		/*
-		 * we can call our CustomerDialog zul-file with parameters. So we can
-		 * call them with a object of the selected CustomerDetails. For handed over
-		 * these parameter only a Map is accepted. So we put the CustomerDetails object
+		 * we can call our CustomerDialog zul-file with parameters. So we can call them with a object of the selected
+		 * CustomerDetails. For handed over these parameter only a Map is accepted. So we put the CustomerDetails object
 		 * in a HashMap.
 		 */
 		Map<String, Object> map = getDefaultArguments();
@@ -290,9 +284,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul",
-							null,map);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -307,7 +299,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	 */
 	public void onClick$button_CustomerList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-	//	PTReportUtils.getReport("Customer", getSearchObj());
+		//	PTReportUtils.getReport("Customer", getSearchObj());
 		logger.debug("Leaving" + event.toString());
 	}
 

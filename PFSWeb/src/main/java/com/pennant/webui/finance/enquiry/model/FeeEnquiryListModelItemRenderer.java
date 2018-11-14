@@ -12,7 +12,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.util.PennantAppUtil;
 
-public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeDetail>, Serializable{
+public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeDetail>, Serializable {
 
 	private static final long serialVersionUID = 3541122568618470160L;
 	private int formatter;
@@ -21,16 +21,17 @@ public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeD
 		super();
 		this.formatter = formatter;
 	}
+
 	@Override
 	public void render(Listitem item, FinFeeDetail finFeeDetail, int count) throws Exception {
-		
-		if (item instanceof Listgroup) { 
+
+		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(finFeeDetail.getFinEvent()));
-		} else if (item instanceof Listgroupfoot) { 
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(6);
-			item.appendChild(cell); 
-		} else { 
+			item.appendChild(cell);
+		} else {
 
 			Listcell lc;
 			String feeType = finFeeDetail.getFeeTypeDesc();
@@ -62,14 +63,14 @@ public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeD
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			if (StringUtils.equals("#",finFeeDetail.getPaymentRef())) {
+			if (StringUtils.equals("#", finFeeDetail.getPaymentRef())) {
 				lc = new Listcell("");
 			} else {
 				lc = new Listcell(finFeeDetail.getPaymentRef());
 			}
 			lc.setParent(item);
 
-			if (StringUtils.equals("#",finFeeDetail.getPaymentRef())) {
+			if (StringUtils.equals("#", finFeeDetail.getPaymentRef())) {
 				lc = new Listcell("");
 			} else {
 				lc = new Listcell(finFeeDetail.getFeeScheduleMethod());

@@ -25,8 +25,7 @@ public class FetchDepositsProcess extends MQProcess {
 		super();
 	}
 
-	public FetchDeposit fetchCustomerDeposits(FetchDeposit fetchDeposit, String msgFormat) 
-			throws InterfaceException {
+	public FetchDeposit fetchCustomerDeposits(FetchDeposit fetchDeposit, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (fetchDeposit == null) {
@@ -38,15 +37,16 @@ public class FetchDepositsProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(fetchDeposit, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch(InterfaceException pffe) {
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -63,7 +63,7 @@ public class FetchDepositsProcess extends MQProcess {
 	 * @return FetchDeposit
 	 * @throws InterfaceException
 	 */
-	private FetchDeposit setFetchDepositRplyInfo(OMElement responseElement, AHBMQHeader header) 
+	private FetchDeposit setFetchDepositRplyInfo(OMElement responseElement, AHBMQHeader header)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -73,7 +73,7 @@ public class FetchDepositsProcess extends MQProcess {
 		FetchDeposit fetchDepositRply = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/GetInvestmentAccountReply", 
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/GetInvestmentAccountReply",
 					responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
@@ -104,7 +104,7 @@ public class FetchDepositsProcess extends MQProcess {
 	 * @return OMElement
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(FetchDeposit fetchDeposit, String referenceNum, OMFactory factory) 
+	private OMElement getRequestElement(FetchDeposit fetchDeposit, String referenceNum, OMFactory factory)
 			throws InterfaceException {
 		logger.debug("Entering");
 

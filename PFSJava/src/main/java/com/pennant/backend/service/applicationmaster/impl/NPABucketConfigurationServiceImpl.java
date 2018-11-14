@@ -64,12 +64,12 @@ import com.pennanttech.pff.core.TableType;
 /**
  * Service implementation for methods that depends on <b>NPABucketConfiguration</b>.<br>
  */
-public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketConfiguration> implements
-		NPABucketConfigurationService {
-	private static final Logger			logger	= Logger.getLogger(NPABucketConfigurationServiceImpl.class);
+public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketConfiguration>
+		implements NPABucketConfigurationService {
+	private static final Logger logger = Logger.getLogger(NPABucketConfigurationServiceImpl.class);
 
-	private AuditHeaderDAO				auditHeaderDAO;
-	private NPABucketConfigurationDAO	nPABucketConfigurationDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private NPABucketConfigurationDAO nPABucketConfigurationDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -136,14 +136,14 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		}
 
 		if (nPABucketConfiguration.isNew()) {
-			nPABucketConfiguration.setId(Long.parseLong(getNPABucketConfigurationDAO().save(nPABucketConfiguration,
-					tableType)));
+			nPABucketConfiguration
+					.setId(Long.parseLong(getNPABucketConfigurationDAO().save(nPABucketConfiguration, tableType)));
 			auditHeader.getAuditDetail().setModelData(nPABucketConfiguration);
 			auditHeader.setAuditReference(String.valueOf(nPABucketConfiguration.getProductCode()));
 		} else {
 			getNPABucketConfigurationDAO().update(nPABucketConfiguration, tableType);
 		}
-		
+
 		if (TableType.MAIN_TAB.equals(tableType)) {
 			FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getProductCode());
 		}
@@ -249,7 +249,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		if (nPABucketConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getNPABucketConfigurationDAO().delete(nPABucketConfiguration, TableType.MAIN_TAB);
-	
+
 		} else {
 			nPABucketConfiguration.setRoleCode("");
 			nPABucketConfiguration.setNextRoleCode("");
@@ -267,9 +267,9 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 				getNPABucketConfigurationDAO().update(nPABucketConfiguration, TableType.MAIN_TAB);
 			}
 		}
-		
+
 		FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getProductCode());
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -361,25 +361,30 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 
 			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : "
 					+ nPABucketConfiguration.getProductCode() + " and ";
-			parameters[1] = PennantJavaUtil.getLabel("label_BucketCode") + " : " + nPABucketConfiguration.getBucketCode();
+			parameters[1] = PennantJavaUtil.getLabel("label_BucketCode") + " : "
+					+ nPABucketConfiguration.getBucketCode();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		if (!(StringUtils.equals(method, PennantConstants.method_doReject)
 				|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(nPABucketConfiguration.getRecordType()))) {
-			
-			int count = nPABucketConfigurationDAO.getByProductCode(nPABucketConfiguration.getProductCode(), 
-					nPABucketConfiguration.getDueDays(),nPABucketConfiguration.getConfigID(), "");
+
+			int count = nPABucketConfigurationDAO.getByProductCode(nPABucketConfiguration.getProductCode(),
+					nPABucketConfiguration.getDueDays(), nPABucketConfiguration.getConfigID(), "");
 
 			if (count != 0) {
 				String[] parameters = new String[2];
 				String[] parametersDueDays = new String[2];
-				
-				parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : " + nPABucketConfiguration.getProductCode();
-				parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + " : " + nPABucketConfiguration.getDueDays();
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, parametersDueDays), usrLanguage));
+				parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + " : "
+						+ nPABucketConfiguration.getProductCode();
+				parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + " : "
+						+ nPABucketConfiguration.getDueDays();
+
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, parametersDueDays),
+						usrLanguage));
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

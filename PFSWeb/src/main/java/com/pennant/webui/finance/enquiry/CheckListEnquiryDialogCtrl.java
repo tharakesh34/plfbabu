@@ -20,18 +20,17 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 	private static final Logger logger = Logger.getLogger(CheckListEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CheckListEnquiryDialog; 		
-	protected Listbox 		listBoxCheckList;					
-	protected Borderlayout 	borderlayoutCheckListEnquiry; 		
+	protected Window window_CheckListEnquiryDialog;
+	protected Listbox listBoxCheckList;
+	protected Borderlayout borderlayoutCheckListEnquiry;
 
 	// not auto wired variables
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinanceCheckListReference> financeCheckListReference;
-	private Tabpanel 		tabpanel_ChkDetails;
+	private Tabpanel tabpanel_ChkDetails;
 
 	/**
 	 * default constructor.<br>
@@ -44,7 +43,7 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-                                           
+
 	/**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
@@ -59,7 +58,7 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 		// Set the page level components.
 		setPageComponents(window_CheckListEnquiryDialog);
 
-		if(event.getTarget().getParent().getParent() != null){
+		if (event.getTarget().getParent().getParent() != null) {
 			tabpanel_ChkDetails = (Tabpanel) event.getTarget().getParent().getParent();
 		}
 
@@ -70,7 +69,8 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 		}
 
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
 		//Render List in Listbox
@@ -90,16 +90,16 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 		logger.debug("Entering");
 
 		try {
-			
-			this.listBoxCheckList.setItemRenderer(new CheckListDetailEnquiryListItemRenderer()); 
+
+			this.listBoxCheckList.setItemRenderer(new CheckListDetailEnquiryListItemRenderer());
 			getPagedListWrapper().initList(getFinanceCheckListReference(), listBoxCheckList, new Paging());
-			
-			if(tabpanel_ChkDetails != null){
+
+			if (tabpanel_ChkDetails != null) {
 
 				getBorderLayoutHeight();
-				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				this.listBoxCheckList.setHeight(this.borderLayoutHeight-rowsHeight-90+"px");
-				this.window_CheckListEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-45+"px");
+				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+				this.listBoxCheckList.setHeight(this.borderLayoutHeight - rowsHeight - 90 + "px");
+				this.window_CheckListEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 45 + "px");
 				tabpanel_ChkDetails.appendChild(this.window_CheckListEnquiryDialog);
 
 			}
@@ -116,6 +116,7 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 	public List<FinanceCheckListReference> getFinanceCheckListReference() {
 		return financeCheckListReference;
 	}
+
 	public void setFinanceCheckListReference(List<FinanceCheckListReference> financeCheckListReference) {
 		this.financeCheckListReference = financeCheckListReference;
 	}

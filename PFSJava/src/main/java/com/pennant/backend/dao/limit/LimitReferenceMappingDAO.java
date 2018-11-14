@@ -12,12 +12,12 @@ public interface LimitReferenceMappingDAO {
 
 	LimitReferenceMapping getLimitReferencemapping(String reference, long headerId);
 
-	List<LimitReferenceMapping> getLimitReferences(long headerid,String limitLine);
-	
+	List<LimitReferenceMapping> getLimitReferences(long headerid, String limitLine);
+
 	int isLimitLineExist(String lmtline);
 
 	boolean deleteByHeaderID(long headerID);
-	
+
 	// Limit Rebuild
 	void saveBatch(List<LimitReferenceMapping> lmtReferenceMapping);
 

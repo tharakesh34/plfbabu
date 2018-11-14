@@ -77,9 +77,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.configuration.vasconfiguration.model.VASConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -103,7 +103,7 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	protected Listheader listheader_VASCode;
 	protected Listheader listheader_VASCategory;
 	protected Listheader listheader_Manufacturer;
-	
+
 	protected Listheader listheader_RecAgainst;
 	protected Listheader listheader_FeeAccrued;
 	protected Listheader listheader_RecurringType;
@@ -120,16 +120,16 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	protected Listbox sortOperator_ProductCode;
 	protected Textbox productDesc;
 	protected Listbox sortOperator_ProductDesc;
-	
+
 	protected Textbox vasType;
 	protected Listbox sortOperator_VASType;
-	
+
 	protected Textbox vasCategory;
 	protected Listbox sortOperator_VASCategory;
-	
+
 	protected Textbox manufacturer;
 	protected Listbox sortOperator_manufacturer;
-	
+
 	protected Combobox recAgainst;
 	protected Listbox sortOperator_RecAgainst;
 	protected Checkbox feeAccrued;
@@ -160,49 +160,51 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 
 	/**
 	 * Method for Creating window for VAS Configuration details list
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_VASConfigurationList(Event event) throws Exception {
-		logger.debug("Entering :"+event.toString());
+		logger.debug("Entering :" + event.toString());
 
 		// Set the page level components.
-		setPageComponents(window_VASConfigurationList, borderLayout_VASConfigurationList, listBoxVASConfiguration, pagingVASConfigurationList);
+		setPageComponents(window_VASConfigurationList, borderLayout_VASConfigurationList, listBoxVASConfiguration,
+				pagingVASConfigurationList);
 		setItemRender(new VASConfigurationListModelItemRenderer());
-		fillComboBox(this.recAgainst, null, PennantStaticListUtil.getRecAgainstTypes(),"");
+		fillComboBox(this.recAgainst, null, PennantStaticListUtil.getRecAgainstTypes(), "");
 		// Register buttons and fields.
-		registerButton(button_VASConfigurationList_NewVASConfiguration, "button_VASConfigurationList_NewVASConfiguration", true);
+		registerButton(button_VASConfigurationList_NewVASConfiguration,
+				"button_VASConfigurationList_NewVASConfiguration", true);
 		registerButton(button_VASConfigurationList_VASConfigurationSearch);
 
 		registerField("productCode", listheader_ProductCode, SortOrder.ASC, productCode, sortOperator_ProductCode,
 				Operators.STRING);
 		registerField("productDesc", listheader_ProductDesc, SortOrder.NONE, productDesc, sortOperator_ProductDesc,
 				Operators.STRING);
-		
+
 		registerField("productType", listheader_VASCode, SortOrder.ASC, vasType, sortOperator_VASType,
 				Operators.STRING);
 		registerField("productCategory", listheader_VASCategory, SortOrder.NONE, vasCategory, sortOperator_VASCategory,
 				Operators.STRING);
-		
+
 		registerField("recAgainst", listheader_RecAgainst, SortOrder.NONE, recAgainst, sortOperator_RecAgainst,
 				Operators.SIMPLE_NUMARIC);
-		registerField("manufacturerName", listheader_Manufacturer, SortOrder.NONE, manufacturer, sortOperator_manufacturer,
-				Operators.STRING);
+		registerField("manufacturerName", listheader_Manufacturer, SortOrder.NONE, manufacturer,
+				sortOperator_manufacturer, Operators.STRING);
 		/*
-		registerField("feeAccrued", listheader_FeeAccrued, SortOrder.NONE, feeAccrued, sortOperator_FeeAccrued,
-				Operators.BOOLEAN);
-		registerField("recurringType", listheader_RecurringType, SortOrder.NONE, recurringType,
-				sortOperator_RecurringType, Operators.BOOLEAN);
-		registerField("preValidationReq", listheader_PreValidationReq, SortOrder.NONE, preValidationReq,
-				sortOperator_PreValidationReq, Operators.BOOLEAN);
-		registerField("postValidationReq", listheader_PostValidationReq, SortOrder.NONE, postValidationReq,
-				sortOperator_PostValidationReq, Operators.BOOLEAN);*/
+		 * registerField("feeAccrued", listheader_FeeAccrued, SortOrder.NONE, feeAccrued, sortOperator_FeeAccrued,
+		 * Operators.BOOLEAN); registerField("recurringType", listheader_RecurringType, SortOrder.NONE, recurringType,
+		 * sortOperator_RecurringType, Operators.BOOLEAN); registerField("preValidationReq",
+		 * listheader_PreValidationReq, SortOrder.NONE, preValidationReq, sortOperator_PreValidationReq,
+		 * Operators.BOOLEAN); registerField("postValidationReq", listheader_PostValidationReq, SortOrder.NONE,
+		 * postValidationReq, sortOperator_PostValidationReq, Operators.BOOLEAN);
+		 */
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
 
 	/**
@@ -212,9 +214,9 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_VASConfigurationList_VASConfigurationSearch(Event event) {
-		logger.debug("Entering :"+event.toString());
+		logger.debug("Entering :" + event.toString());
 		search();
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
 
 	/**
@@ -224,28 +226,29 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
-		logger.debug("Entering :"+event.toString());
+		logger.debug("Entering :" + event.toString());
 		doReset();
 		search();
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$button_VASConfigurationList_NewVASConfiguration(Event event) throws IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering :"+event.toString());
+	public void onClick$button_VASConfigurationList_NewVASConfiguration(Event event)
+			throws IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering :" + event.toString());
 
 		// Create a new entity.
 		VASConfiguration vASConfiguration = new VASConfiguration();
 		vASConfiguration.setNewRecord(true);
 		vASConfiguration.setWorkflowId(getWorkFlowId());
-		
+
 		// Copy Button Process
 		boolean isCopyProcess = false;
 		if (event.getData() != null) {
@@ -293,7 +296,7 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 		// Display the dialog page.
 		doShowDialogPage(vASConfiguration, isCopyProcess);
 
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
 
 	/**
@@ -304,7 +307,7 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onVASConfigurationItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering :"+event.toString());
+		logger.debug("Entering :" + event.toString());
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxVASConfiguration.getSelectedItem();
@@ -335,7 +338,7 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
 
 	/**
@@ -369,9 +372,9 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
-		logger.debug("Entering :"+event.toString());
+		logger.debug("Entering :" + event.toString());
 		doPrintResults();
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
 
 	/**
@@ -381,14 +384,15 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
-		logger.debug("Entering :"+event.toString());
+		logger.debug("Entering :" + event.toString());
 		doShowHelp(event);
-		logger.debug("Leaving :"+event.toString());
+		logger.debug("Leaving :" + event.toString());
 	}
-	
+
 	public VASConfigurationService getVasConfigurationService() {
 		return vasConfigurationService;
 	}
+
 	public void setVasConfigurationService(VASConfigurationService vASConfigurationService) {
 		this.vasConfigurationService = vASConfigurationService;
 	}

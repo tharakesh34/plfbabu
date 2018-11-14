@@ -56,24 +56,42 @@ import com.pennant.backend.model.facility.Facility;
 public interface FacilityService {
 
 	Facility getFacility();
+
 	Facility getNewFacility();
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	Facility getFacilityById( String id);
-	Facility getApprovedFacilityById( String id);
+
+	Facility getFacilityById(String id);
+
+	Facility getApprovedFacilityById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	Facility getFacilityChildRecords(Facility facility);
+
 	Facility setFacilityScoringDetails(Facility facility);
-	CustomerEligibilityCheck getCustomerEligibility(Customer customer,long custID);
+
+	CustomerEligibilityCheck getCustomerEligibility(Customer customer, long custID);
+
 	Collateral getNewCollateral();
+
 	FacilityDetail getNewFacilityDetail();
+
 	List<CustomerRating> getCustomerRatingByCustomer(long custId);
+
 	boolean doCheckBlackListedCustomer(AuditHeader auditHeader);
+
 	Facility getTotalAmountsInUSDAndBHD(Facility facility);
+
 	Facility setCustomerDocuments(Facility facility);
+
 	boolean checkFirstTaskOwnerAccess(long loginUsrID);
+
 	String getActualLevelAprroval(Facility facility);
+
 	Facility getLatestFacilityByCustID(long custID);
 }

@@ -59,33 +59,34 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinAssetEvaluationValidation {
-	
-	private static final Logger logger = Logger.getLogger(FinAssetEvaluationValidation.class);	
+
+	private static final Logger logger = Logger.getLogger(FinAssetEvaluationValidation.class);
 	private FinAssetEvaluationDAO finAssetEvaluationDAO;
-	
+
 	public FinAssetEvaluationValidation(FinAssetEvaluationDAO finAssetEvaluationDAO) {
 		this.finAssetEvaluationDAO = finAssetEvaluationDAO;
 	}
-	
+
 	public FinAssetEvaluationDAO getFinAssetEvaluationDAO() {
 		return finAssetEvaluationDAO;
 	}
 
-	public AuditHeader finAssetEvaluationValidation(AuditHeader auditHeader, String method){
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+	public AuditHeader finAssetEvaluationValidation(AuditHeader auditHeader, String method) {
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
-	
-	public List<AuditDetail> finAssetEvaluationListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
-		
-		if(auditDetails!=null && auditDetails.size()>0){
+
+	public List<AuditDetail> finAssetEvaluationListValidation(List<AuditDetail> auditDetails, String method,
+			String usrLanguage) {
+
+		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
-				details.add(auditDetail); 		
+				AuditDetail auditDetail = validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail);
 			}
 			return details;
 		}
@@ -99,11 +100,11 @@ public class FinAssetEvaluationValidation {
 
 		FinAssetEvaluation tempFinAssetEvaluation = null;
 		if (finAssetEvaluation.isWorkflow()) {
-			tempFinAssetEvaluation = getFinAssetEvaluationDAO().getFinAssetEvaluationByID(
-					finAssetEvaluation.getId(), "_Temp");
+			tempFinAssetEvaluation = getFinAssetEvaluationDAO().getFinAssetEvaluationByID(finAssetEvaluation.getId(),
+					"_Temp");
 		}
-		FinAssetEvaluation befFinAssetEvaluation = getFinAssetEvaluationDAO().getFinAssetEvaluationByID(
-				finAssetEvaluation.getId(), "");
+		FinAssetEvaluation befFinAssetEvaluation = getFinAssetEvaluationDAO()
+				.getFinAssetEvaluationByID(finAssetEvaluation.getId(), "");
 
 		FinAssetEvaluation oldFinAssetEvaluation = finAssetEvaluation.getBefImage();
 
@@ -115,28 +116,24 @@ public class FinAssetEvaluationValidation {
 		if (finAssetEvaluation.isNew()) { // for New record or new record into work flow
 
 			if (!finAssetEvaluation.isWorkflow()) {// With out Work flow only new
-												// records
+														// records
 				if (befFinAssetEvaluation != null) { // Record Already Exists in the
-													// table then error
+															// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (finAssetEvaluation.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befFinAssetEvaluation != null || tempFinAssetEvaluation != null) { 
+				if (finAssetEvaluation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befFinAssetEvaluation != null || tempFinAssetEvaluation != null) {
 						// if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinAssetEvaluation == null || tempFinAssetEvaluation != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41005", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -144,42 +141,39 @@ public class FinAssetEvaluationValidation {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!finAssetEvaluation.isWorkflow()) { // With out Work flow for update
-												// and delete
+				// and delete
 
 				if (befFinAssetEvaluation == null) { // if records not exists in the
-													// main table
+															// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinAssetEvaluation != null
-							&& !oldFinAssetEvaluation.getLastMntOn().equals(
-									befFinAssetEvaluation.getLastMntOn())) {
+							&& !oldFinAssetEvaluation.getLastMntOn().equals(befFinAssetEvaluation.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempFinAssetEvaluation == null) { // if records not exists in
-													// the Work flow table
+															// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinAssetEvaluation != null && oldFinAssetEvaluation != null
-						&& !oldFinAssetEvaluation.getLastMntOn().equals(
-								tempFinAssetEvaluation.getLastMntOn())) {
+						&& !oldFinAssetEvaluation.getLastMntOn().equals(tempFinAssetEvaluation.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -192,5 +186,5 @@ public class FinAssetEvaluationValidation {
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 }

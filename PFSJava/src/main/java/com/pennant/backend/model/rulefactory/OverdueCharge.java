@@ -69,21 +69,22 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	private String lovDescODCPLSubHeadName;
 	private String oDCCharitySubHead;
 	private String lovDescODCCharitySubHeadName;
-	
+
 	private BigDecimal oDCPLShare;
 	private boolean oDCSweepCharges;
 	private String oDCRuleDescription;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private OverdueCharge befImage;
 	private LoggedInUser userDetails;
 
-	private List<OverdueChargeDetail> lovDescOverdueChargeDetail=new ArrayList<OverdueChargeDetail>();
+	private List<OverdueChargeDetail> lovDescOverdueChargeDetail = new ArrayList<OverdueChargeDetail>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public void setChargeDetailEntries(List<OverdueChargeDetail> chargeDetailEntries) {
 		this.lovDescOverdueChargeDetail = chargeDetailEntries;
 	}
+
 	public List<OverdueChargeDetail> getChargeDetailEntries() {
 		return lovDescOverdueChargeDetail;
 	}
@@ -91,6 +92,7 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
@@ -106,22 +108,24 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public OverdueCharge() {
 		super();
 	}
+
 	public OverdueCharge(String id) {
 		super();
 		this.setId(id);
 	}
 
-
 	public String getId() {
 		return oDCRuleCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.oDCRuleCode = id;
 	}
 
 	public String getODCRuleCode() {
 		return oDCRuleCode;
 	}
+
 	public void setODCRuleCode(String oDCRuleCode) {
 		this.oDCRuleCode = oDCRuleCode;
 	}
@@ -129,6 +133,7 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public String getODCPLAccount() {
 		return oDCPLAccount;
 	}
+
 	public void setODCPLAccount(String oDCPLAccount) {
 		this.oDCPLAccount = oDCPLAccount;
 	}
@@ -136,13 +141,15 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public String getLovDescODCPLAccountName() {
 		return this.lovDescODCPLAccountName;
 	}
-	public void setLovDescODCPLAccountName (String lovDescODCPLAccountName) {
+
+	public void setLovDescODCPLAccountName(String lovDescODCPLAccountName) {
 		this.lovDescODCPLAccountName = lovDescODCPLAccountName;
 	}
 
 	public String getODCCharityAccount() {
 		return oDCCharityAccount;
 	}
+
 	public void setODCCharityAccount(String oDCCharityAccount) {
 		this.oDCCharityAccount = oDCCharityAccount;
 	}
@@ -150,13 +157,15 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public String getLovDescODCCharityAccountName() {
 		return this.lovDescODCCharityAccountName;
 	}
-	public void setLovDescODCCharityAccountName (String lovDescODCCharityAccountName) {
+
+	public void setLovDescODCCharityAccountName(String lovDescODCCharityAccountName) {
 		this.lovDescODCCharityAccountName = lovDescODCCharityAccountName;
 	}
 
 	public BigDecimal getODCPLShare() {
 		return oDCPLShare;
 	}
+
 	public void setODCPLShare(BigDecimal oDCPLShare) {
 		this.oDCPLShare = oDCPLShare;
 	}
@@ -164,6 +173,7 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public boolean isODCSweepCharges() {
 		return oDCSweepCharges;
 	}
+
 	public void setODCSweepCharges(boolean oDCSweepCharges) {
 		this.oDCSweepCharges = oDCSweepCharges;
 	}
@@ -171,6 +181,7 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -178,55 +189,63 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public OverdueCharge getBefImage(){
+	public OverdueCharge getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(OverdueCharge beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(OverdueCharge beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getoDCPLSubHead() {
-    	return oDCPLSubHead;
-    }
+		return oDCPLSubHead;
+	}
+
 	public void setoDCPLSubHead(String oDCPLSubHead) {
-    	this.oDCPLSubHead = oDCPLSubHead;
-    }
-	
+		this.oDCPLSubHead = oDCPLSubHead;
+	}
+
 	public String getLovDescODCPLSubHeadName() {
-    	return lovDescODCPLSubHeadName;
-    }
+		return lovDescODCPLSubHeadName;
+	}
+
 	public void setLovDescODCPLSubHeadName(String lovDescODCPLSubHeadName) {
-    	this.lovDescODCPLSubHeadName = lovDescODCPLSubHeadName;
-    }
-	
+		this.lovDescODCPLSubHeadName = lovDescODCPLSubHeadName;
+	}
+
 	public String getoDCCharitySubHead() {
-    	return oDCCharitySubHead;
-    }
+		return oDCCharitySubHead;
+	}
+
 	public void setoDCCharitySubHead(String oDCCharitySubHead) {
-    	this.oDCCharitySubHead = oDCCharitySubHead;
-    }
-	
+		this.oDCCharitySubHead = oDCCharitySubHead;
+	}
+
 	public String getLovDescODCCharitySubHeadName() {
-    	return lovDescODCCharitySubHeadName;
-    }
+		return lovDescODCCharitySubHeadName;
+	}
+
 	public void setLovDescODCCharitySubHeadName(String lovDescODCCharitySubHeadName) {
-    	this.lovDescODCCharitySubHeadName = lovDescODCCharitySubHeadName;
-    }
+		this.lovDescODCCharitySubHeadName = lovDescODCCharitySubHeadName;
+	}
 
 	public String getoDCRuleDescription() {
 		return oDCRuleDescription;
 	}
+
 	public void setoDCRuleDescription(String oDCRuleDescription) {
 		this.oDCRuleDescription = oDCRuleDescription;
 	}

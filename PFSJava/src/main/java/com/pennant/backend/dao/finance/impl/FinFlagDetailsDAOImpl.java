@@ -25,7 +25,7 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 	public FinFlagDetailsDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinanceFlag
 	 * 
@@ -44,6 +44,7 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		return finFlagsDetail;
 
 	}
+
 	/**
 	 * This method get the module from method getFinanceFlags() and set the new record flag as true and return
 	 * FinanceFlag
@@ -51,13 +52,14 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 	 * @return FinanceFlag
 	 */
 	@Override
-	public FinFlagsDetail getNewFinFlagsDetail()  {
+	public FinFlagsDetail getNewFinFlagsDetail() {
 		logger.debug("Entering");
 		FinFlagsDetail finFlagsDetail = getfinFlagDetails();
 		finFlagsDetail.setNewRecord(true);
 		logger.debug("Leaving");
 		return finFlagsDetail;
 	}
+
 	/**
 	 * This method insert new Records into FinanceFlags or FlagDetails_Temp.
 	 * 
@@ -79,10 +81,11 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		insertSql.append(" FlagDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (Reference,FlagCode,ModuleName,");
-		insertSql.append(" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
+		insertSql.append(
+				" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
 		insertSql.append(" values (:Reference,:FlagCode,:ModuleName, ");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		        
+
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -92,7 +95,7 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		logger.debug("Leaving");
 
 	}
-	
+
 	@Override
 	public List<FinFlagsDetail> getFinFlagsByFinRef(String finReference, String moduleName, String type) {
 		logger.debug("Entering");
@@ -104,29 +107,30 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		StringBuilder selectSql = new StringBuilder(" Select Reference,FlagCode,ModuleName, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		
+
 		selectSql.append(" From FlagDetails");
 
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where Reference =:Reference AND ModuleName = :ModuleName ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				FinFlagsDetail.class);
+		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFlagsDetail.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+
 	/**
-	 * Fetch the Record  Finance Flags details by key field
+	 * Fetch the Record Finance Flags details by key field
 	 * 
-	 * @param finRef (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param finRef
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return finFlagsDetail
 	 */
 	@Override
-	public FinFlagsDetail getFinFlagsByRef(final String finRef,String flagCode,String moduleName,String type) {
+	public FinFlagsDetail getFinFlagsByRef(final String finRef, String flagCode, String moduleName, String type) {
 		logger.debug("Entering");
 		FinFlagsDetail finFlagsDetail = new FinFlagsDetail();
 		finFlagsDetail.setReference(finRef);
@@ -142,27 +146,26 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		selectSql.append(" Where Reference =:Reference AND FlagCode =:FlagCode AND ModuleName =:ModuleName");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				FinFlagsDetail.class);
-		
-		try{
-			finFlagsDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFlagsDetail.class);
+
+		try {
+			finFlagsDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finFlagsDetail = null;
 		}
 		logger.debug("Leaving");
 		return finFlagsDetail;
 	}
+
 	/**
-	 * This method Deletes the Record from the FinanceFlags or FinanceFlags_Bonds_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Finance Flags by key finRef
+	 * This method Deletes the Record from the FinanceFlags or FinanceFlags_Bonds_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Flags by key finRef
 	 * 
-	 * @param Sukuk Brokers (finRef)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Sukuk
+	 *            Brokers (finRef)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -170,7 +173,7 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 	@Override
 	public void deleteList(String finRef, String module, String type) {
 		logger.debug("Entering");
-		FinFlagsDetail finFlagsDetail=new FinFlagsDetail();
+		FinFlagsDetail finFlagsDetail = new FinFlagsDetail();
 		finFlagsDetail.setReference(finRef);
 		finFlagsDetail.setModuleName(module);
 		StringBuilder deleteSql = new StringBuilder("Delete From ");
@@ -183,22 +186,22 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the FinanceFlags or FinanceFlags_Bonds_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Finance Flags by key finRef
+	 * This method Deletes the Record from the FinanceFlags or FinanceFlags_Bonds_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Flags by key finRef
 	 * 
-	 * @param Sukuk Brokers (finRef)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Sukuk
+	 *            Brokers (finRef)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void delete(String finRef,String flagCode, String moduleName,String type) {
+	public void delete(String finRef, String flagCode, String moduleName, String type) {
 		logger.debug("Entering");
-		FinFlagsDetail finFlagsDetail=new FinFlagsDetail();
+		FinFlagsDetail finFlagsDetail = new FinFlagsDetail();
 		finFlagsDetail.setReference(finRef);
 		finFlagsDetail.setFlagCode(flagCode);
 		finFlagsDetail.setModuleName(moduleName);
@@ -220,13 +223,13 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT ModuleName FROM ScheduleEffectModule WHERE SchdCanModify =:schdChangeReq ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
-	
+
 	@Override
 	public void savefinFlagList(List<FinFlagsDetail> finFlagsDetail, String type) {
 		logger.debug("Entering");
@@ -235,65 +238,68 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		insertSql.append(" FlagDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (Reference,FlagCode,ModuleName,");
-		insertSql.append(" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
+		insertSql.append(
+				" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
 		insertSql.append(" values (:Reference,:FlagCode,:ModuleName, ");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		        
+
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
-		        .createBatch(finFlagsDetail.toArray());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finFlagsDetail.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
-	
+
 	@Override
-    public void updateList(List<FinFlagsDetail> finFlagsDetail,String type) {
+	public void updateList(List<FinFlagsDetail> finFlagsDetail, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FlagDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Version = :Version," );
-		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, " );
-		updateSql.append(" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set Version = :Version,");
+		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, ");
+		updateSql.append(
+				" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Reference =:Reference  AND FlagCode =:FlagCode AND ModuleName = :ModuleName ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finFlagsDetail.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
-	    
-    }
-	
+
+	}
+
 	/**
 	 * Method for Updating Finance Flag Details
+	 * 
 	 * @param finFlagsDetail
 	 * @param type
 	 */
 	@Override
-	public void update(FinFlagsDetail finFlagsDetail,String type) {
+	public void update(FinFlagsDetail finFlagsDetail, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FlagDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Version = :Version," );
-		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, " );
-		updateSql.append(" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set Version = :Version,");
+		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, ");
+		updateSql.append(
+				" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Reference =:Reference  AND FlagCode =:FlagCode AND ModuleName=:ModuleName ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**
@@ -326,6 +332,5 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		logger.debug("Leaving");
 		return rcdCount;
 	}
-	
-	
+
 }

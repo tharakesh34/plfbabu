@@ -17,24 +17,24 @@ public class DatesComparison {
 		try {
 			List<FinanceDisbursement> disbList = getRequiredData();
 			DatesComparison comparison = new DatesComparison();
-			
+
 			List<FinanceDisbursement> apacheDisbList = comparison.getSortedDatesUsingApache(disbList);
 			System.out.println("Apache commons-lang Sorting.....Result");
-			for(FinanceDisbursement finDisb:apacheDisbList) {
+			for (FinanceDisbursement finDisb : apacheDisbList) {
 				System.out.println(DateUtility.formatDate(finDisb.getDisbDate(), "dd-MMM-yyyy"));
 			}
-			
+
 			List<FinanceDisbursement> finalDisbList = comparison.getSortedDatesUsingDateutility(disbList);
 			System.out.println("DateUtility Sorting.....Result");
-			for(FinanceDisbursement finDisb:finalDisbList) {
+			for (FinanceDisbursement finDisb : finalDisbList) {
 				System.out.println(DateUtility.formatDate(finDisb.getDisbDate(), "dd-MMM-yyyy"));
 			}
-			
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public List<FinanceDisbursement> getSortedDatesUsingDateutility(List<FinanceDisbursement> disbursementDetails) {
 		if (disbursementDetails != null && disbursementDetails.size() > 1) {
 			Collections.sort(disbursementDetails, new Comparator<FinanceDisbursement>() {
@@ -46,7 +46,7 @@ public class DatesComparison {
 		}
 		return disbursementDetails;
 	}
-	
+
 	public List<FinanceDisbursement> getSortedDatesUsingApache(List<FinanceDisbursement> disbursementDetails) {
 		if (disbursementDetails != null && disbursementDetails.size() > 1) {
 			Collections.sort(disbursementDetails, new Comparator<FinanceDisbursement>() {
@@ -58,7 +58,7 @@ public class DatesComparison {
 		}
 		return disbursementDetails;
 	}
-	
+
 	private static List<FinanceDisbursement> getRequiredData() throws ParseException {
 		List<FinanceDisbursement> disbList = new ArrayList<>();
 

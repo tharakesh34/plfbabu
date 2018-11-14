@@ -13,22 +13,22 @@ import com.pennant.coreinterface.process.CustomerCreationProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerCreationProcessImpl extends GenericProcess implements CustomerCreationProcess {
-	
+
 	private static Logger logger = Logger.getLogger(CustomerCreationProcessImpl.class);
 	private InterfaceDAO interfaceDAO;
-	
-	public CustomerCreationProcessImpl()  {
+
+	public CustomerCreationProcessImpl() {
 		super();
 	}
 
 	@Override
-	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {	
+	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return "";
 	}
-	
+
 	/**
 	 * Method for fetching customer dedup details from corebank system
 	 * 
@@ -43,12 +43,12 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	 * 
 	 */
 	@Override
-	public String createNewCustomer(InterfaceCustomerDetail customerDetail)	throws InterfaceException {
+	public String createNewCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException {
 		return "0000";
 	}
 
 	@Override
-	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail)	throws InterfaceException {
+	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail) throws InterfaceException {
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws InterfaceException {
 		return "0000";
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -68,6 +68,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
+
 	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}

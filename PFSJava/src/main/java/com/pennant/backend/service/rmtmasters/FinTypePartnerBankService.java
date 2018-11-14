@@ -51,19 +51,28 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 public interface FinTypePartnerBankService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinTypePartnerBank getFinTypePartnerBank(String finType, long iD);
+
 	FinTypePartnerBank getApprovedFinTypePartnerBank(String finType, long iD);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
-	List<AuditDetail> setFinTypePartnerBankDetailsAuditData(List<FinTypePartnerBank> finTypePartnerBankList, String auditTranType, String method);
+
+	List<AuditDetail> setFinTypePartnerBankDetailsAuditData(List<FinTypePartnerBank> finTypePartnerBankList,
+			String auditTranType, String method);
+
 	List<AuditDetail> processFinTypePartnerBankDetails(List<AuditDetail> auditDetails, String type);
+
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
-	
-	List<AuditDetail> delete(List<FinTypePartnerBank> finTypePartnerBankList,  String tableType, String auditTranType, String finType);
-	
+
+	List<AuditDetail> delete(List<FinTypePartnerBank> finTypePartnerBankList, String tableType, String auditTranType,
+			String finType);
+
 	List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type);
-	
+
 	int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID);
 }

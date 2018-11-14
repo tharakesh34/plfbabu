@@ -39,11 +39,10 @@ import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
 public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implements CreditInterfaceDAO {
 	private static final Logger logger = Logger.getLogger(CreditInterfaceDAOImpl.class);
-	
-	protected DefaultTransactionDefinition	transDef;
-	private PlatformTransactionManager	transactionManager;
 
-		
+	protected DefaultTransactionDefinition transDef;
+	private PlatformTransactionManager transactionManager;
+
 	/**
 	 * Method for fetch the ExtendedFieldDetails based on given fieldaNames
 	 * 
@@ -51,7 +50,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 	 * @return extendedFieldDetailList
 	 * @throws Exception
 	 */
-	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames){
+	public List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -104,7 +103,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 				tableName.append(customer.getCustCtgCode());
 				tableName.append("_ED");
 				extMapValues = getExtendedField(customer.getCustCIF(), tableName.toString());
-				
+
 				if (extMapValues != null) {
 					extendedFieldRender.setSeqNo(Integer.valueOf(extMapValues.get("SeqNo").toString()));
 				}
@@ -118,7 +117,6 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		return customerDetailList;
 
 	}
-	
 
 	public List<Customer> getCustomerByID(List<Long> customerIds, String type) throws InterfaceException {
 		logger.debug("Entering");
@@ -192,9 +190,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		}
 
 	}
-	
-	
-	
+
 	/**
 	 * Method For getting List of Customer related Addresses for Customer
 	 */
@@ -257,7 +253,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("Leaving");
 		return customerEMails;
 	}
-	
+
 	/**
 	 * Fetch the Customer PhoneNumber By its CustPhoneId
 	 * 
@@ -270,29 +266,30 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+		selectSql.append(
+				" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
-		selectSql.append(StringUtils.trimToEmpty(type) );
-		selectSql.append(" Where PhoneCustID =:PhoneCustID") ; 
-		
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PhoneCustID =:PhoneCustID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPhoneNumber.class);
-		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving ");
-		return  customerPhoneNumbers;
+		return customerPhoneNumbers;
 	}
-	
-	
+
 	public List<CustomerDocument> getCustomerDocumentByCustomer(long custId, String type) {
 		logger.debug("Entering");
 		CustomerDocument customerDocument = new CustomerDocument();
@@ -301,12 +298,14 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
 		selectSql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
-		selectSql.append(", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
+		selectSql.append(
+				", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
 		selectSql.append(", DocPurpose, DocUri");
 		if (type.contains("View")) {
 			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
 			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
-			selectSql.append(" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
+			selectSql.append(
+					" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
 		}
 		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -317,18 +316,17 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-					CustomerDocument.class);
-			
-			return this.jdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
+			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(CustomerDocument.class);
+
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return Collections.emptyList();
 		}
 	}
-	
-	
+
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName) {
 		logger.debug(Literal.ENTERING);
 
@@ -359,7 +357,6 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		return null;
 	}
 
-	
 	public Map<String, Object> getExtendedField(String reference, String tableName) {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> renderMap = null;
@@ -379,19 +376,18 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
-	
-	
+
 	@Override
 	public void save(ServiceTaskDetail serviceTaskDetail, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
 		// begin transaction
 		txStatus = transactionManager.getTransaction(txDef);
-		
+
 		if (serviceTaskDetail.getId() == Long.MIN_VALUE) {
 			//serviceTaskDetail.setId(getNextId("SeqBMTAcademics"));
 		}
@@ -433,19 +429,21 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT TaskExecutionId, ServiceModule, Reference, ServiceTaskId,");
 		selectSql.append(" ServiceTaskName, UserId, ExecutedTime, Status, Remarks From ServiceTaskDetails");
-		selectSql.append(" where ServiceModule=:ServiceModule AND Reference=:Reference AND ServiceTaskName=:ServiceTaskName");
+		selectSql.append(
+				" where ServiceModule=:ServiceModule AND Reference=:Reference AND ServiceTaskName=:ServiceTaskName");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug(Literal.LEAVING);
 		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
+			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(ServiceTaskDetail.class);
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(dae);
 			return Collections.emptyList();
 		}
 	}
-	
+
 	/**
 	 * Fetch the Record City details by key field
 	 * 
@@ -486,11 +484,11 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug(Literal.LEAVING);
 		return city;
 	}
-	
+
 	@Override
 	public void saveExtendedDetails(Map<String, Object> mappedValues, String type, String tableName) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
@@ -498,28 +496,28 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		// begin transaction
 		txStatus = transactionManager.getTransaction(txDef);
 		try {
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO ");
-		insertSql.append(tableName);
-		insertSql.append(StringUtils.trimToEmpty(type));
+			StringBuilder insertSql = new StringBuilder(" INSERT INTO ");
+			insertSql.append(tableName);
+			insertSql.append(StringUtils.trimToEmpty(type));
 
-		List<String> list = new ArrayList<String>(mappedValues.keySet());
-		String columnames = "";
-		String columnValues = "";
-		for (int i = 0; i < list.size(); i++) {
-			if (i < list.size() - 1) {
-				columnames = columnames.concat(list.get(i)).concat(" , ");
-				columnValues = columnValues.concat(":").concat(list.get(i)).concat(" , ");
-			} else {
-				columnames = columnames.concat(list.get(i));
-				columnValues = columnValues.concat(":").concat(list.get(i));
+			List<String> list = new ArrayList<String>(mappedValues.keySet());
+			String columnames = "";
+			String columnValues = "";
+			for (int i = 0; i < list.size(); i++) {
+				if (i < list.size() - 1) {
+					columnames = columnames.concat(list.get(i)).concat(" , ");
+					columnValues = columnValues.concat(":").concat(list.get(i)).concat(" , ");
+				} else {
+					columnames = columnames.concat(list.get(i));
+					columnValues = columnValues.concat(":").concat(list.get(i));
+				}
 			}
-		}
-		insertSql.append(" (" + columnames + ") values (" + columnValues + ")");
-		logger.debug("insertSql: " + insertSql.toString());
-		
+			insertSql.append(" (" + columnames + ") values (" + columnValues + ")");
+			logger.debug("insertSql: " + insertSql.toString());
+
 			this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 			transactionManager.commit(txStatus);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			transactionManager.rollback(txStatus);
 			throw e;
@@ -527,11 +525,12 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("Leaving");
 
 	}
-	
+
 	@Override
-	public void updateExtendedDetails(String reference, int seqNo, Map<String, Object> mappedValues, String type, String tableName) {
+	public void updateExtendedDetails(String reference, int seqNo, Map<String, Object> mappedValues, String type,
+			String tableName) {
 		logger.debug("Entering");
-		
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
@@ -539,37 +538,39 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		// begin transaction
 		txStatus = transactionManager.getTransaction(txDef);
 		try {
-		StringBuilder updateSql = new StringBuilder(" UPDATE ");
-		updateSql.append(tableName);
-		updateSql.append(StringUtils.trimToEmpty(type));
-		List<String> list = new ArrayList<String>(mappedValues.keySet());
-		StringBuilder query = new StringBuilder();
+			StringBuilder updateSql = new StringBuilder(" UPDATE ");
+			updateSql.append(tableName);
+			updateSql.append(StringUtils.trimToEmpty(type));
+			List<String> list = new ArrayList<String>(mappedValues.keySet());
+			StringBuilder query = new StringBuilder();
 
-		for (int i = 0; i < list.size(); i++) {
-			if (i == 0) {
-				query.append(" set ").append(list.get(i)).append("=:").append(list.get(i));
-			} else {
-				query.append(",").append(list.get(i)).append("=:").append(list.get(i));
+			for (int i = 0; i < list.size(); i++) {
+				if (i == 0) {
+					query.append(" set ").append(list.get(i)).append("=:").append(list.get(i));
+				} else {
+					query.append(",").append(list.get(i)).append("=:").append(list.get(i));
+				}
 			}
-		}
-		updateSql.append(query);
-		updateSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo).append("'");
-		
-		logger.debug("updateSql: " + updateSql.toString());
-		
+			updateSql.append(query);
+			updateSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo)
+					.append("'");
+
+			logger.debug("updateSql: " + updateSql.toString());
+
 			this.jdbcTemplate.update(updateSql.toString(), mappedValues);
 			transactionManager.commit(txStatus);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			transactionManager.rollback(txStatus);
-			throw e;		}
+			throw e;
+		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-	public List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference,String moduleValue) {
+	public List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference, String moduleValue) {
 		logger.debug("Entering");
-		String str="select T3.interfacevalue,T3.interfacesequence,T3.plfvalue from interface_fields T1 "
+		String str = "select T3.interfacevalue,T3.interfacesequence,T3.plfvalue from interface_fields T1 "
 				+ "inner join interfacemapping T2 on T2.INTERFACEID=T1.INTERFACEID "
 				+ "inner join mastermapping T3 on T3.INTERFACEMAPPINGID=T2.INTERFACEMAPPINGID "
 				+ "where T1.interfacename=:inerfaceReference and T1.module=:moduleValue";
@@ -579,16 +580,16 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("selectSql: " + str.toString());
 		logger.debug(Literal.LEAVING);
 		try {
-			RowMapper<InterfaceMappingDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterfaceMappingDetails.class);
+			RowMapper<InterfaceMappingDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(InterfaceMappingDetails.class);
 			return (List<InterfaceMappingDetails>) this.jdbcTemplate.query(str, paramMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception :", e);
 		}
 		return null;
 	}
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
 }
-

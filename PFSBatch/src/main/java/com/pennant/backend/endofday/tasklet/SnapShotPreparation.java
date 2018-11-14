@@ -15,12 +15,10 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.BatchUtil;
 
 public class SnapShotPreparation implements Tasklet {
-	private Logger					logger	= Logger.getLogger(SnapShotPreparation.class);
+	private Logger logger = Logger.getLogger(SnapShotPreparation.class);
 
-	private DataSource				dataSource;
-	private SnapshotService			snapshotService;
-
-
+	private DataSource dataSource;
+	private SnapshotService snapshotService;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {

@@ -14,7 +14,7 @@ public class SecondaryDebitAccount implements Serializable {
 	private String secondaryDebitAccount;
 	private Date scheduleDate;
 	private String custCIF;
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

@@ -15,18 +15,17 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CollateralThirdPartyValidation {
 
-	private CollateralThirdPartyDAO	collateralThirdPartyDAO;
+	private CollateralThirdPartyDAO collateralThirdPartyDAO;
 
 	public CollateralThirdPartyDAO getCollateralThirdPartyDAO() {
 		return collateralThirdPartyDAO;
 	}
 
-	public CollateralThirdPartyValidation(CollateralThirdPartyDAO	collateralThirdPartyDAO) {
+	public CollateralThirdPartyValidation(CollateralThirdPartyDAO collateralThirdPartyDAO) {
 		this.collateralThirdPartyDAO = collateralThirdPartyDAO;
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -70,13 +69,11 @@ public class CollateralThirdPartyValidation {
 
 				if (collateralThirdParty.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCollateralThirdParty != null || tempCollateralThirdParty != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCollateralThirdParty == null || tempCollateralThirdParty != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -90,13 +87,13 @@ public class CollateralThirdPartyValidation {
 
 					if (oldCollateralThirdParty != null
 							&& !oldCollateralThirdParty.getLastMntOn().equals(befCollateralThirdParty.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -112,9 +109,10 @@ public class CollateralThirdPartyValidation {
 				}
 			}
 		}
-		
-		if ((StringUtils.equals(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_DEL) ||
-				StringUtils.equals(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) && collateralThirdParty.getCustomerId() > 0) {
+
+		if ((StringUtils.equals(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+				|| StringUtils.equals(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_CAN))
+				&& collateralThirdParty.getCustomerId() > 0) {
 			boolean exist = getCollateralThirdPartyDAO().isThirdPartyUsed(collateralThirdParty.getCollateralRef(),
 					collateralThirdParty.getCustomerId());
 

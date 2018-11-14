@@ -65,14 +65,15 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
 	private static final String CON_DEBIT = "D"; //
 
-	public TaxDownlaodExtract(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate, Date toDate) {
+	public TaxDownlaodExtract(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate,
+			Date toDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.appDate = appDate;
 		this.valuedate = valueDate;
 	}
-	
+
 	@Override
 	public void process(Object... objects) {
 		try {
@@ -94,7 +95,8 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 				long id = saveHeader();
 				processTaxDownloadData(id);
 				if (processedCount <= 0) {
-					throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
+					throw new Exception("No records are available for the PostDates, FromDate: " + fromDate
+							+ ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
 				}
 				updateHeader(id, processedCount);
 			} catch (Exception e) {
@@ -111,7 +113,6 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
- 
 
 	/**
 	 * Process Tax Download Data
@@ -121,14 +122,14 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	 */
 	private void processTaxDownloadData(final long id) throws SQLException {
 		setGstTranasactioRecords();
-		
+
 		processTrnExtractionTypeData(id);
 		processSumExtractionTypeData(id);
 	}
 
 	private void processTrnExtractionTypeData(final long id) {
 		logger.debug(Literal.ENTERING);
-		 
+
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
@@ -195,7 +196,8 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		sql.append(" LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE  ");
 		sql.append(" INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE  ");
 		sql.append(" INNER JOIN RMTBranches T10 ON T10.BranchCode = T2.FinBranch  ");
-		sql.append(" WHERE T9.ExtractionType = :EXTRACTIONTYPE AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+		sql.append(
+				" WHERE T9.ExtractionType = :EXTRACTIONTYPE AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
 
 		parmMap.addValue("FROMDATE", fromDate);
 		parmMap.addValue("TODATE", toDate);
@@ -216,15 +218,15 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 				String ledgerCode = null;
 
 				entityName = rs.getString("ENTITYDESC");// 1
-				
+
 				String entityCode = rs.getString("ENTITYCODE");
 				// loan branch state
-				
+
 				loanProvince = rs.getString("BRANCHPROVINCE");
 				// Customer GSTIN State
-				
+
 				String gstinProvince = rs.getString("TAXPROVINCE");
-				
+
 				// Customer Very High Priority address state
 				custAddressProvince = rs.getString("CUSTADDRPROVINCE");
 
@@ -242,7 +244,8 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 				boolean registered = false;
 				boolean intra = false;
 
-				if (StringUtils.equals(loanProvince, gstinProvince) || StringUtils.equals(loanProvince, custAddressProvince)) {
+				if (StringUtils.equals(loanProvince, gstinProvince)
+						|| StringUtils.equals(loanProvince, custAddressProvince)) {
 					intra = true;
 				}
 
@@ -601,14 +604,14 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		taxDownload.setReverseChargeApplicable(revChargeApplicable ? CON_YES : CON_NO);
 		// InvoiceType
 		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
-		
+
 		//if (oldTransactionID != 0) {
-		if(rs.getString("DRORCR").equals(CON_DEBIT)){
+		if (rs.getString("DRORCR").equals(CON_DEBIT)) {
 			taxDownload.setInvoiceType(CON_C);
-			
+
 			if (oldTransactionID != 0) {
 				taxDownload.setOriginalInvoiceNo(
-					String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
+						String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
 			}
 		} else {
 			taxDownload.setInvoiceType(CON_I);
@@ -620,8 +623,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	}
 
 	/**
-	 * Loading the default values in to map to reduce the db iterations while
-	 * processing
+	 * Loading the default values in to map to reduce the db iterations while processing
 	 */
 	private void loadDefaults() {
 		logger.debug(Literal.ENTERING);
@@ -919,8 +921,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	}
 
 	/**
-	 * Clear the existing records from tax header if already available for the
-	 * same dates
+	 * Clear the existing records from tax header if already available for the same dates
 	 */
 	private void clearTaxHeader() {
 		logger.debug(Literal.ENTERING);
@@ -937,8 +938,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	}
 
 	/**
-	 * Clear the existing records from tax details if already available for the
-	 * same dates
+	 * Clear the existing records from tax details if already available for the same dates
 	 */
 	private void clearTaxdetails() {
 		logger.debug(Literal.ENTERING);
@@ -954,7 +954,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
-		
+
 		parameterJdbcTemplate.update(
 				"DELETE FROM TAXDOWNLOADSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
 				source);
@@ -964,11 +964,11 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	}
 
 	public void clearTranasctionDeatils() {
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
-		
+
 		parameterJdbcTemplate.update(
 				"DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
 				source);
@@ -986,7 +986,8 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FROMDATE", fromDate);
 		source.addValue("TODATE", toDate);
-		parameterJdbcTemplate.update("INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
+		parameterJdbcTemplate.update(
+				"INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
 				source);
 
 		logger.debug(Literal.LEAVING);
@@ -1096,134 +1097,136 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		EXTRACT_STATUS.setTotalRecords(totalRecords);
 		return totalRecords;
 	}
-	
+
 	public void processGstTransactionData() throws Exception {
 		long id = saveHeader();
 		processTrnExtractionTypeData(id);
 		if (processedCount <= 0) {
-			throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
+			throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: "
+					+ toDate + ", ApplicationDate: " + appDate);
 		}
 		updateHeader(id, processedCount);
 	}
+
 	public void processGstSummaryData() throws Exception {
 		long id = saveHeader();
 		processSumExtractionTypeData(id);
 		if (processedCount <= 0) {
-			throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
+			throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: "
+					+ toDate + ", ApplicationDate: " + appDate);
 		}
 		updateHeader(id, processedCount);
 	}
-	
+
 	// Get the total records for process monitor displaying
-		public long setGstSummaryRecords() {
-			MapSqlParameterSource parmMap = new MapSqlParameterSource();
-			StringBuilder sql = null;
-			
-			sql = new StringBuilder();
-			sql.append(" SELECT count(*) FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
-			sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
-			
-			parmMap.addValue("FROMDATE", fromDate);
-			parmMap.addValue("TODATE", toDate);
-			parmMap.addValue("TAXAPPLICABLE", true);
-			totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
-			EXTRACT_STATUS.setTotalRecords(totalRecords);
-			return totalRecords;
+	public long setGstSummaryRecords() {
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT count(*) FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
+		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+
+		parmMap.addValue("FROMDATE", fromDate);
+		parmMap.addValue("TODATE", toDate);
+		parmMap.addValue("TAXAPPLICABLE", true);
+		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
+		EXTRACT_STATUS.setTotalRecords(totalRecords);
+		return totalRecords;
+	}
+
+	// Get the total records count for GST Download
+	public long getGstTrnansactionRecordCount() {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("TRANSACTION_DATE_FROM", fromDate);
+		source.addValue("TRANSACTION_DATE_TO", toDate);
+		String sql = "SELECT count(*)  FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO";
+		return parameterJdbcTemplate.queryForObject(sql, source, Long.class);
+	}
+
+	// Get the total records for GST Download
+	public List<TaxDownload> getGstTrnansactionDeatils() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		RowMapper<TaxDownload> mapper = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				" SELECT TRANSACTION_DATE TransactionDate,  HOST_SYSTEM_TRANSACTION_ID HostSystemTransactionId,  TRANSACTION_TYPE TransactionType,  BUSINESS_AREA BusinessArea,");
+		sql.append(
+				" SOURCE_SYSTEM SourceSystem,  COMPANY_CODE CompanyCode,  REGISTERED_CUSTOMER RegisteredCustomer,  CUSTOMER_ID CustomerId,  CUSTOMER_NAME CustomerName,");
+		sql.append(
+				" CUSTOMER_GSTIN CustomerGstin,  CUSTOMER_ADDRESS CustomerAddress,  CUSTOMER_STATE_CODE CustomerStateCode,  ADDRESS_CHANGE_DATE AddressChangeDate,  PAN_NO PanNo,");
+		sql.append(
+				" LEDGER_CODE LedgerCode,  HSN_SAC_CODE HsnSacCode,  NATURE_OF_SERVICE NatureOfService,  LOAN_ACCOUNT_NO LoanAccountNo,  PRODUCT_CODE ProductCode, CHARGE_CODE ChargeCode,");
+		sql.append(
+				" LOAN_BRANCH LoanBranch,  LOAN_BRANCH_STATE LoanBranchState,  LOAN_SERVICING_BRANCH LoanServicingBranch,  BFL_GSTIN_NO BflGstinNo,  TXN_BRANCH_ADDRESS TxnBranchAddress,");
+		sql.append(
+				" TXN_BRANCH_STATE_CODE TxnBranchStateCode,  TRANSACTION_AMOUNT TransactionAmount,  REVERSE_CHARGE_APPLICABLE ReverseChargeApplicable,  INVOICE_TYPE InvoiceType,");
+		sql.append(
+				" ORIGINAL_INVOICE_NO OriginalInvoiceNo, LOAN_BRANCH_ADDRESS LoanBranchAddress, TO_STATE ToState, FROM_STATE FromState, BUSINESSDATETIME BusinessDatetime, PROCESSDATETIME ProcessDatetime,");
+		sql.append(
+				" PROCESSED_FLAG ProcessedFlag, AGREEMENTID AgreementId, CONSIDER_FOR_GST ConsiderForGst, EXEMPTED_STATE ExemptedState, EXEMPTED_CUSTOMER ExemptedCustomer ");
+		sql.append(
+				" FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("TRANSACTION_DATE_FROM", fromDate);
+		source.addValue("TRANSACTION_DATE_TO", toDate);
+
+		mapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDownload.class);
+		try {
+			return this.parameterJdbcTemplate.query(sql.toString(), source, mapper);
+		} catch (EmptyResultDataAccessException e) {
+		} finally {
+			source = null;
+			mapper = null;
+			logger.debug(Literal.LEAVING);
 		}
-		 
-		// Get the total records count for GST Download
-		public long getGstTrnansactionRecordCount() {
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("TRANSACTION_DATE_FROM", fromDate);
-			source.addValue("TRANSACTION_DATE_TO", toDate);
-			String sql = "SELECT count(*)  FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO";
-			return parameterJdbcTemplate.queryForObject(sql, source, Long.class);
+		return null;
+	}
+
+	// Get the total records count for GST Download
+	public long getGSTSummaryRecordCount() {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("TRANSACTION_DATE_FROM", fromDate);
+		source.addValue("TRANSACTION_DATE_TO", toDate);
+		String sql = "SELECT count(*)  FROM GSTSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO";
+		return parameterJdbcTemplate.queryForObject(sql, source, Long.class);
+	}
+
+	// Get the total records for GST Download
+	public List<TaxDownload> getGstSummaryDeatils() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		RowMapper<TaxDownload> mapper = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT TRANSACTION_DATE, ENTITYNAME, ENTITYGSTIN, LEDGERCODE, FINNONEBRANCHID");
+		sql.append(" ,REGISTEREDUNREGISTERED, INTERINTRASTATE, AMOUNT FROM GSTSUMMARYDETAILS ");
+		sql.append("  WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("TRANSACTION_DATE_FROM", fromDate);
+		source.addValue("TRANSACTION_DATE_TO", toDate);
+
+		mapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDownload.class);
+		try {
+			return this.parameterJdbcTemplate.query(sql.toString(), source, mapper);
+		} catch (EmptyResultDataAccessException e) {
+		} finally {
+			source = null;
+			mapper = null;
+			logger.debug(Literal.LEAVING);
 		}
-		
-		// Get the total records for GST Download
-		public List<TaxDownload> getGstTrnansactionDeatils() {
-			logger.debug(Literal.ENTERING);
-
-			MapSqlParameterSource source = null;
-			RowMapper<TaxDownload> mapper = null;
-
-			StringBuilder sql = new StringBuilder();
-			sql.append(
-					" SELECT TRANSACTION_DATE TransactionDate,  HOST_SYSTEM_TRANSACTION_ID HostSystemTransactionId,  TRANSACTION_TYPE TransactionType,  BUSINESS_AREA BusinessArea,");
-			sql.append(
-					" SOURCE_SYSTEM SourceSystem,  COMPANY_CODE CompanyCode,  REGISTERED_CUSTOMER RegisteredCustomer,  CUSTOMER_ID CustomerId,  CUSTOMER_NAME CustomerName,");
-			sql.append(
-					" CUSTOMER_GSTIN CustomerGstin,  CUSTOMER_ADDRESS CustomerAddress,  CUSTOMER_STATE_CODE CustomerStateCode,  ADDRESS_CHANGE_DATE AddressChangeDate,  PAN_NO PanNo,");
-			sql.append(
-					" LEDGER_CODE LedgerCode,  HSN_SAC_CODE HsnSacCode,  NATURE_OF_SERVICE NatureOfService,  LOAN_ACCOUNT_NO LoanAccountNo,  PRODUCT_CODE ProductCode, CHARGE_CODE ChargeCode,");
-			sql.append(
-					" LOAN_BRANCH LoanBranch,  LOAN_BRANCH_STATE LoanBranchState,  LOAN_SERVICING_BRANCH LoanServicingBranch,  BFL_GSTIN_NO BflGstinNo,  TXN_BRANCH_ADDRESS TxnBranchAddress,");
-			sql.append(
-					" TXN_BRANCH_STATE_CODE TxnBranchStateCode,  TRANSACTION_AMOUNT TransactionAmount,  REVERSE_CHARGE_APPLICABLE ReverseChargeApplicable,  INVOICE_TYPE InvoiceType,");
-			sql.append(
-					" ORIGINAL_INVOICE_NO OriginalInvoiceNo, LOAN_BRANCH_ADDRESS LoanBranchAddress, TO_STATE ToState, FROM_STATE FromState, BUSINESSDATETIME BusinessDatetime, PROCESSDATETIME ProcessDatetime,");
-			sql.append(
-					" PROCESSED_FLAG ProcessedFlag, AGREEMENTID AgreementId, CONSIDER_FOR_GST ConsiderForGst, EXEMPTED_STATE ExemptedState, EXEMPTED_CUSTOMER ExemptedCustomer ");
-			sql.append(
-					" FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO");
-
-			logger.debug("selectSql: " + sql.toString());
-
-			source = new MapSqlParameterSource();
-			source.addValue("TRANSACTION_DATE_FROM", fromDate);
-			source.addValue("TRANSACTION_DATE_TO", toDate);
-
-			mapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDownload.class);
-			try {
-				return this.parameterJdbcTemplate.query(sql.toString(), source, mapper);
-			} catch (EmptyResultDataAccessException e) {
-			} finally {
-				source = null;
-				mapper = null;
-				logger.debug(Literal.LEAVING);
-			}
-			return null;
-		}
-		
-		
-		// Get the total records count for GST Download
-		public long getGSTSummaryRecordCount() {
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("TRANSACTION_DATE_FROM", fromDate);
-			source.addValue("TRANSACTION_DATE_TO", toDate);
-			String sql = "SELECT count(*)  FROM GSTSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO";
-			return parameterJdbcTemplate.queryForObject(sql, source, Long.class);
-		}
-		
-		// Get the total records for GST Download
-		public List<TaxDownload> getGstSummaryDeatils() {
-			logger.debug(Literal.ENTERING);
-
-			MapSqlParameterSource source = null;
-			RowMapper<TaxDownload> mapper = null;
-
-			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT TRANSACTION_DATE, ENTITYNAME, ENTITYGSTIN, LEDGERCODE, FINNONEBRANCHID");
-			sql.append(" ,REGISTEREDUNREGISTERED, INTERINTRASTATE, AMOUNT FROM GSTSUMMARYDETAILS ");
-			sql.append("  WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO");
-
-			logger.debug("selectSql: " + sql.toString());
-
-			source = new MapSqlParameterSource();
-			source.addValue("TRANSACTION_DATE_FROM", fromDate);
-			source.addValue("TRANSACTION_DATE_TO", toDate);
-
-			mapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDownload.class);
-			try {
-				return this.parameterJdbcTemplate.query(sql.toString(), source, mapper);
-			} catch (EmptyResultDataAccessException e) {
-			} finally {
-				source = null;
-				mapper = null;
-				logger.debug(Literal.LEAVING);
-			}
-			return null;
-		}
+		return null;
+	}
 
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {

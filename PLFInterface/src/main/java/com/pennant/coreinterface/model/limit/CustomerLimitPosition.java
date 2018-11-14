@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CustomerLimitPosition implements Serializable {
 
 	private static final long serialVersionUID = 6044558650461849275L;
-	
+
 	private String referenceNum;
 	private String customerReference;
 	private String branchCode;
@@ -27,9 +27,8 @@ public class CustomerLimitPosition implements Serializable {
 	public CustomerLimitPosition() {
 		super();
 	}
-	
 
-	@XmlElement(name="ReferenceNum")
+	@XmlElement(name = "ReferenceNum")
 	public String getReferenceNum() {
 		return referenceNum;
 	}
@@ -56,7 +55,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.branchCode = branchCode;
 	}
 
-	@XmlElement(name="TotalOutstanding")
+	@XmlElement(name = "TotalOutstanding")
 	public BigDecimal getTotalOutstanding() {
 		return totalOutstanding;
 	}
@@ -65,7 +64,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.totalOutstanding = totalOutstanding;
 	}
 
-	@XmlElement(name="CustRef")
+	@XmlElement(name = "CustRef")
 	public String getCustRef() {
 		return custRef;
 	}
@@ -74,7 +73,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.custRef = custRef;
 	}
 
-	@XmlElement(name="GroupRef")
+	@XmlElement(name = "GroupRef")
 	public String getGroupRef() {
 		return groupRef;
 	}
@@ -109,8 +108,8 @@ public class CustomerLimitPosition implements Serializable {
 	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
-	
-	@XmlElement(name="Limits")
+
+	@XmlElement(name = "Limits")
 	public List<CustomerLimitSummary> getLimitSummary() {
 		return limitSummary;
 	}
@@ -118,7 +117,7 @@ public class CustomerLimitPosition implements Serializable {
 	public void setLimitSummary(List<CustomerLimitSummary> limitSummary) {
 		this.limitSummary = limitSummary;
 	}
-	
+
 	@XmlElement(name = "LimitCurrency")
 	public String getLimitCurrency() {
 		return limitCurrency;

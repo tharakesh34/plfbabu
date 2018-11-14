@@ -45,7 +45,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -100,7 +99,8 @@ public class UploadTaxPercentDAOImpl extends BasicDao<UploadTaxPercent> implemen
 		selectSql.append(" Where UploadId = :UploadId Group By STATUS");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<UploadTaxPercent> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadTaxPercent.class);
+		RowMapper<UploadTaxPercent> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(UploadTaxPercent.class);
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);

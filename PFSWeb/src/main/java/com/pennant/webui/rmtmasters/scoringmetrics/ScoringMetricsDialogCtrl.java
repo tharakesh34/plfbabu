@@ -79,49 +79,46 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RulesFactory/ScoringMetrics/scoringMetricsDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RulesFactory/ScoringMetrics/scoringMetricsDialog.zul file.
  */
 public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	private static final long serialVersionUID = 6462101709968848897L;
 	private static final Logger logger = Logger.getLogger(ScoringMetricsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  window_ScoringMetricsDialog;      // autoWired
-	protected Longbox scoringId;                        // autoWired
-	protected Decimalbox  metricMaxPoints;                  // autoWired
-	protected Textbox metricTotPercentage;              // autoWired
-	protected Textbox lovDescScoringCode;               // autoWired
-	protected Textbox lovDescScoringName;               // autoWired
-	
+	protected Window window_ScoringMetricsDialog; // autoWired
+	protected Longbox scoringId; // autoWired
+	protected Decimalbox metricMaxPoints; // autoWired
+	protected Textbox metricTotPercentage; // autoWired
+	protected Textbox lovDescScoringCode; // autoWired
+	protected Textbox lovDescScoringName; // autoWired
 
 	// not auto wired variables
 	private ScoringMetrics scoringMetrics; // over handed per parameter
 
 	private transient boolean validationOn;
-	
-	protected Button  btnSearchScoringCode;
-	protected Button  btnSearchFinScoringCode;
-	protected Button  btnSearchNFScoringCode;
 
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	private transient ScoringGroup scoringGroup =null;
+	protected Button btnSearchScoringCode;
+	protected Button btnSearchFinScoringCode;
+	protected Button btnSearchNFScoringCode;
+
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private transient ScoringGroup scoringGroup = null;
 	private ScoringGroupDialogCtrl scoringGroupDialogCtrl;
-	private List<ScoringMetrics>   scoringMetricsList;
-	private List<ScoringMetrics>   originalScoringMetricsList;
-	
+	private List<ScoringMetrics> scoringMetricsList;
+	private List<ScoringMetrics> originalScoringMetricsList;
+
 	private RuleService ruleService;
-	 
+
 	private String categoryValue = "";
 	private String categoryType = "";
 
@@ -140,9 +137,8 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ScoringMetrics object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ScoringMetrics object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -159,48 +155,48 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 		if (arguments.containsKey("scoringMetrics")) {
 			this.scoringMetrics = (ScoringMetrics) arguments.get("scoringMetrics");
-			ScoringMetrics befImage =new ScoringMetrics();
+			ScoringMetrics befImage = new ScoringMetrics();
 			BeanUtils.copyProperties(this.scoringMetrics, befImage);
 			this.scoringMetrics.setBefImage(befImage);
 			setScoringMetrics(this.scoringMetrics);
 		} else {
 			setScoringMetrics(null);
 		}
-		
+
 		if (arguments.containsKey("scoringGroup")) {
 			this.scoringGroup = (ScoringGroup) arguments.get("scoringGroup");
 			setScoringGroup(this.scoringGroup);
 		}
-		
+
 		if (arguments.containsKey("originalScoringMetricsList")) {
 			this.setOriginalScoringMetricsList((List<ScoringMetrics>) arguments.get("originalScoringMetricsList"));
 			setOriginalScoringMetricsList(this.originalScoringMetricsList);
 		}
-		
+
 		if (arguments.containsKey("categoryValue")) {
 			this.categoryValue = (String) arguments.get("categoryValue");
 		}
-		
+
 		if (arguments.containsKey("categoryType")) {
 			this.categoryType = (String) arguments.get("categoryType");
 		}
-		
+
 		if (arguments.containsKey("scoringGroupDialogCtrl")) {
 			this.scoringGroupDialogCtrl = (ScoringGroupDialogCtrl) arguments.get("scoringGroupDialogCtrl");
 			setScoringGroupDialogCtrl(this.scoringGroupDialogCtrl);
 		} else {
 			setScoringGroupDialogCtrl(null);
 		}
-		
-		if(arguments.containsKey("roleCode")){
+
+		if (arguments.containsKey("roleCode")) {
 			getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "ScoringMetricsDialog");
 		}
-		
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "ScoringMetricsDialog");
 		}
-		
+
 		// READ OVERHANDED parameters !
 		// we get the scoringMetricsListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -216,17 +212,17 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.metricMaxPoints.setMaxlength(4);
 		this.metricTotPercentage.setMaxlength(10);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -234,11 +230,10 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -247,7 +242,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ScoringMetricsDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ScoringMetricsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -325,12 +320,12 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.scoringMetrics.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -340,7 +335,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 *            ScoringMetrics
 	 */
 	public void doWriteBeanToComponents(ScoringMetrics aScoringMetrics) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.scoringId.setValue(aScoringMetrics.getScoringId());
 		this.lovDescScoringCode.setValue(aScoringMetrics.getLovDescScoringCode());
 		this.lovDescScoringName.setValue(aScoringMetrics.getLovDescScoringCodeDesc());
@@ -357,25 +352,25 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * @param aScoringMetrics
 	 */
 	public void doWriteComponentsToBean(ScoringMetrics aScoringMetrics) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aScoringMetrics.setScoringId(this.scoringId.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aScoringMetrics.setLovDescScoringCode(this.lovDescScoringCode.getValue());
 			aScoringMetrics.setLovDescScoringCodeDesc(this.lovDescScoringName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aScoringMetrics.setLovDescMetricMaxPoints(this.metricMaxPoints.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		aScoringMetrics.setCategoryType(this.categoryValue);
@@ -383,8 +378,8 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -398,8 +393,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScoringMetrics
 	 * @throws InterruptedException
@@ -426,23 +420,23 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
-	
+
 	// Search Button Component Events
-	
-	public void onClick$btnSearchScoringCode(Event event){
+
+	public void onClick$btnSearchScoringCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters=new Filter[2];
-		filters[0]=new Filter("RuleModule",RuleConstants.MODULE_SCORES,Filter.OP_EQUAL);
-		filters[1]=new Filter("RuleEvent",RuleConstants.EVENT_RSCORE,Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog,"Rule",filters);
-		if (dataObject instanceof String){
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("RuleModule", RuleConstants.MODULE_SCORES, Filter.OP_EQUAL);
+		filters[1] = new Filter("RuleEvent", RuleConstants.EVENT_RSCORE, Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog, "Rule", filters);
+		if (dataObject instanceof String) {
 			this.scoringId.setValue(Long.valueOf(0));
 			this.lovDescScoringCode.setValue("");
-		}else{
-			Rule details= (Rule) dataObject;
+		} else {
+			Rule details = (Rule) dataObject;
 			if (details != null) {
 				this.scoringId.setValue(details.getRuleId());
 				this.lovDescScoringCode.setValue(details.getRuleCode());
@@ -452,46 +446,44 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void onClick$btnSearchFinScoringCode(Event event){
+
+	public void onClick$btnSearchFinScoringCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters=new Filter[2];
-		filters[0]=new Filter("CategoryType","F",Filter.OP_EQUAL);
-		filters[1]=new Filter("CustCategory",this.categoryType,Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog,"CorpScoreGroupDetail",filters);
-		if (dataObject instanceof String){
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("CategoryType", "F", Filter.OP_EQUAL);
+		filters[1] = new Filter("CustCategory", this.categoryType, Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog, "CorpScoreGroupDetail",
+				filters);
+		if (dataObject instanceof String) {
 			this.scoringId.setValue(Long.valueOf(0));
 			this.lovDescScoringCode.setValue("");
-		}else{
-			CorpScoreGroupDetail details= (CorpScoreGroupDetail) dataObject;
+		} else {
+			CorpScoreGroupDetail details = (CorpScoreGroupDetail) dataObject;
 			if (details != null) {
-				
+
 				this.scoringId.setValue(details.getGroupId());
 				this.lovDescScoringCode.setValue(details.getGroupDesc());
 				this.lovDescScoringName.setValue(details.getGroupDesc());
-				
-				/*List<Rule> ruleList = getRuleService().getRulesByGroupId(details.getGroupId(),
-				 *  PennantRuleConstants.MODULE_SCORES, PennantRuleConstants.EVENT_FSCORE);
-				List<ScoringMetrics> subMetricList = new ArrayList<ScoringMetrics>();
-				ScoringMetrics metric = null;
-				BigDecimal totalSubGroupScore = BigDecimal.ZERO;
-				
-				for (Rule rule : ruleList) {
-					metric = new ScoringMetrics();
-					metric.setLovDescScoringCode(rule.getRuleCode());
-					metric.setLovDescScoringCodeDesc(rule.getRuleCodeDesc());
-					BigDecimal maxRuleScore = GetMax(rule.getSQLRule());
-					metric.setLovDescMetricMaxPoints(maxRuleScore);
-					totalSubGroupScore = totalSubGroupScore.add(maxRuleScore);
-					subMetricList.add(metric);
-				}*/
-				
+
+				/*
+				 * List<Rule> ruleList = getRuleService().getRulesByGroupId(details.getGroupId(),
+				 * PennantRuleConstants.MODULE_SCORES, PennantRuleConstants.EVENT_FSCORE); List<ScoringMetrics>
+				 * subMetricList = new ArrayList<ScoringMetrics>(); ScoringMetrics metric = null; BigDecimal
+				 * totalSubGroupScore = BigDecimal.ZERO;
+				 * 
+				 * for (Rule rule : ruleList) { metric = new ScoringMetrics();
+				 * metric.setLovDescScoringCode(rule.getRuleCode());
+				 * metric.setLovDescScoringCodeDesc(rule.getRuleCodeDesc()); BigDecimal maxRuleScore =
+				 * GetMax(rule.getSQLRule()); metric.setLovDescMetricMaxPoints(maxRuleScore); totalSubGroupScore =
+				 * totalSubGroupScore.add(maxRuleScore); subMetricList.add(metric); }
+				 */
+
 				List<NFScoreRuleDetail> ruleList = getRuleService().getNFRulesByGroupId(details.getGroupId());
 				List<ScoringMetrics> subMetricList = new ArrayList<ScoringMetrics>();
 				ScoringMetrics metric = null;
 				BigDecimal totalSubGroupScore = BigDecimal.ZERO;
-				
+
 				for (NFScoreRuleDetail rule : ruleList) {
 					metric = new ScoringMetrics();
 					metric.setLovDescScoringCode(String.valueOf(rule.getNFRuleId()));
@@ -500,9 +492,9 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 					totalSubGroupScore = totalSubGroupScore.add(rule.getMaxScore());
 					subMetricList.add(metric);
 				}
-				
+
 				this.metricMaxPoints.setValue(totalSubGroupScore);
-				if(getScoringGroupDialogCtrl().getFinScoreMap().containsKey(details.getGroupId())){
+				if (getScoringGroupDialogCtrl().getFinScoreMap().containsKey(details.getGroupId())) {
 					getScoringGroupDialogCtrl().getFinScoreMap().remove(details.getGroupId());
 				}
 				getScoringGroupDialogCtrl().getFinScoreMap().put(details.getGroupId(), subMetricList);
@@ -510,30 +502,31 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void onClick$btnSearchNFScoringCode(Event event){
+
+	public void onClick$btnSearchNFScoringCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters=new Filter[2];
-		filters[0]=new Filter("CategoryType","N",Filter.OP_EQUAL);
-		filters[1]=new Filter("CustCategory",this.categoryType,Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog,"CorpScoreGroupDetail",filters);
-		if (dataObject instanceof String){
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("CategoryType", "N", Filter.OP_EQUAL);
+		filters[1] = new Filter("CustCategory", this.categoryType, Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_ScoringMetricsDialog, "CorpScoreGroupDetail",
+				filters);
+		if (dataObject instanceof String) {
 			this.scoringId.setValue(Long.valueOf(0));
 			this.lovDescScoringCode.setValue("");
-		}else{
-			CorpScoreGroupDetail details= (CorpScoreGroupDetail) dataObject;
+		} else {
+			CorpScoreGroupDetail details = (CorpScoreGroupDetail) dataObject;
 			if (details != null) {
-				
+
 				this.scoringId.setValue(details.getGroupId());
 				this.lovDescScoringCode.setValue(details.getGroupDesc());
 				this.lovDescScoringName.setValue(details.getGroupDesc());
-				
+
 				List<NFScoreRuleDetail> ruleList = getRuleService().getNFRulesByGroupId(details.getGroupId());
 				List<ScoringMetrics> subMetricList = new ArrayList<ScoringMetrics>();
 				ScoringMetrics metric = null;
 				BigDecimal totalSubGroupScore = BigDecimal.ZERO;
-				
+
 				for (NFScoreRuleDetail rule : ruleList) {
 					metric = new ScoringMetrics();
 					metric.setLovDescScoringCode(String.valueOf(rule.getNFRuleId()));
@@ -543,7 +536,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 					subMetricList.add(metric);
 				}
 				this.metricMaxPoints.setValue(totalSubGroupScore);
-				if(getScoringGroupDialogCtrl().getFinScoreMap().containsKey(details.getGroupId())){
+				if (getScoringGroupDialogCtrl().getFinScoreMap().containsKey(details.getGroupId())) {
 					getScoringGroupDialogCtrl().getFinScoreMap().remove(details.getGroupId());
 				}
 				getScoringGroupDialogCtrl().getFinScoreMap().put(details.getGroupId(), subMetricList);
@@ -551,7 +544,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public BigDecimal GetMax(String rule) {
 		BigDecimal max = BigDecimal.ZERO;
 		String[] codevalue = rule.split("Result");
@@ -563,7 +556,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 				String code = codevalue[i].substring(codevalue[i].indexOf('=') + 1, codevalue[i].indexOf(';'));
 				System.out.println("values " + code);
 				if (code.contains("'")) {
-				code=code.replace("'", "");
+					code = code.replace("'", "");
 				}
 				//System.out.println(Integer.parseInt(code.trim()));
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -580,12 +573,15 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	private void doSetValidation() {
 		setValidationOn(true);
 	}
+
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescScoringCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringMetricsDialog_ScoringCode.value"),null,true));
+		this.lovDescScoringCode.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_ScoringMetricsDialog_ScoringCode.value"), null, true));
 		logger.debug("Leaving ");
 
 	}
+
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering ");
 		this.lovDescScoringCode.setConstraint("");
@@ -597,7 +593,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	private void doRemoveValidation() {
 	}
-	
+
 	/**
 	 * Method for remove Error Messages
 	 */
@@ -617,40 +613,42 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final ScoringMetrics aScoringMetrics = new ScoringMetrics();
 		BeanUtils.copyProperties(getScoringMetrics(), aScoringMetrics);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-								+ Labels.getLabel("listheader_ScoringMetricsCode.label")+":"+ aScoringMetrics.getLovDescScoringCode();
-	
+				+ Labels.getLabel("listheader_ScoringMetricsCode.label") + ":"
+				+ aScoringMetrics.getLovDescScoringCode();
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aScoringMetrics.getRecordType())){
-				aScoringMetrics.setVersion(aScoringMetrics.getVersion()+1);
+			if (StringUtils.isBlank(aScoringMetrics.getRecordType())) {
+				aScoringMetrics.setVersion(aScoringMetrics.getVersion() + 1);
 				aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aScoringMetrics.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if (StringUtils.trimToEmpty(aScoringMetrics.getRecordType()).equals(PennantConstants.RCD_UPD)) {
+			} else if (StringUtils.trimToEmpty(aScoringMetrics.getRecordType()).equals(PennantConstants.RCD_UPD)) {
 				aScoringMetrics.setVersion(aScoringMetrics.getVersion() + 1);
 				aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 			try {
-				tranType=PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader =  newScoringMetricsProcess(aScoringMetrics, tranType);
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newScoringMetricsProcess(aScoringMetrics, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_ScoringMetricsDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-	
-					getScoringGroupDialogCtrl().doFillScoringMetrics(doCalMetricPercentage(this.scoringMetricsList),this.categoryValue);
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+
+					getScoringGroupDialogCtrl().doFillScoringMetrics(doCalMetricPercentage(this.scoringMetricsList),
+							this.categoryValue);
 					this.window_ScoringMetricsDialog.onClose();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -663,21 +661,21 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
-		if("R".equals(this.categoryValue)){
+
+		if ("R".equals(this.categoryValue)) {
 			this.btnSearchScoringCode.setVisible(true);
-		}else if("F".equals(this.categoryValue)){
+		} else if ("F".equals(this.categoryValue)) {
 			this.btnSearchFinScoringCode.setVisible(true);
-		}else if("N".equals(this.categoryValue)){
+		} else if ("N".equals(this.categoryValue)) {
 			this.btnSearchNFScoringCode.setVisible(true);
 		}
 
-		if (getScoringMetrics().isNewRecord()){
+		if (getScoringMetrics().isNewRecord()) {
 			this.btnSearchScoringCode.setDisabled(false);
 			this.btnSearchFinScoringCode.setDisabled(false);
 			this.btnSearchNFScoringCode.setDisabled(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.btnSearchScoringCode.setDisabled(true);
 			this.btnSearchFinScoringCode.setDisabled(true);
 			this.btnSearchNFScoringCode.setDisabled(true);
@@ -688,21 +686,21 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		this.metricMaxPoints.setReadonly(isReadOnly("ScoringMetricsDialog_metricMaxPoints"));
 		this.metricTotPercentage.setReadonly(isReadOnly("ScoringMetricsDialog_metricTotPercentage"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.scoringMetrics.isNewRecord()){
+			if (this.scoringMetrics.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
-			if (this.scoringMetrics.isNewRecord()){
+		} else {
+			if (this.scoringMetrics.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_New();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 			}
 		}
@@ -718,13 +716,13 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		this.metricMaxPoints.setReadonly(true);
 		this.metricTotPercentage.setReadonly(true);
 		this.btnSearchScoringCode.setDisabled(true);
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -750,7 +748,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final ScoringMetrics aScoringMetrics = new ScoringMetrics();
 		BeanUtils.copyProperties(getScoringMetrics(), aScoringMetrics);
 		boolean isNew = false;
@@ -765,45 +763,46 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		// Do data level validations here
 
 		isNew = aScoringMetrics.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aScoringMetrics.getRecordType())){
-				aScoringMetrics.setVersion(aScoringMetrics.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aScoringMetrics.getRecordType())) {
+				aScoringMetrics.setVersion(aScoringMetrics.getVersion() + 1);
+				if (isNew) {
 					aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aScoringMetrics.setNewRecord(true);
 				}
 			}
-		}else{
-			/*set the tranType according to RecordType*/
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
+		} else {
+			/* set the tranType according to RecordType */
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
 				aScoringMetrics.setVersion(1);
 				aScoringMetrics.setRecordType(PennantConstants.RCD_ADD);
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 
-			if(StringUtils.isBlank(aScoringMetrics.getRecordType())){
-				tranType =PennantConstants.TRAN_UPD;
+			if (StringUtils.isBlank(aScoringMetrics.getRecordType())) {
+				tranType = PennantConstants.TRAN_UPD;
 				aScoringMetrics.setRecordType(PennantConstants.RCD_UPD);
 			}
-			if(PennantConstants.RCD_ADD.equals(aScoringMetrics.getRecordType()) && isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			} else if(PennantConstants.RECORD_TYPE_NEW.equals(aScoringMetrics.getRecordType())){
-				tranType =PennantConstants.TRAN_UPD;
-			} 
+			if (PennantConstants.RCD_ADD.equals(aScoringMetrics.getRecordType()) && isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (PennantConstants.RECORD_TYPE_NEW.equals(aScoringMetrics.getRecordType())) {
+				tranType = PennantConstants.TRAN_UPD;
+			}
 		}
 		try {
-			AuditHeader auditHeader =  newScoringMetricsProcess(aScoringMetrics,tranType);
+			AuditHeader auditHeader = newScoringMetricsProcess(aScoringMetrics, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_ScoringMetricsDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
-			if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-				getScoringGroupDialogCtrl().doFillScoringMetrics(doCalMetricPercentage(this.scoringMetricsList),this.categoryValue);
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getScoringGroupDialogCtrl().doFillScoringMetrics(doCalMetricPercentage(this.scoringMetricsList),
+						this.categoryValue);
 				this.window_ScoringMetricsDialog.onClose();
 			}
 		} catch (final DataAccessException e) {
@@ -812,53 +811,55 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method calculate the percentage of each metric scoring point of
-	 * total metric scoring points
+	 * This method calculate the percentage of each metric scoring point of total metric scoring points
 	 * 
 	 * @param scoringMetricsList
 	 */
-	public List<ScoringMetrics>  doCalMetricPercentage(List<ScoringMetrics> scoringMetricsList){
+	public List<ScoringMetrics> doCalMetricPercentage(List<ScoringMetrics> scoringMetricsList) {
 		logger.debug("Entering ");
 		BigDecimal totMetricScoringPoints = BigDecimal.ZERO; //total metric points
-		for(int i=0;i<scoringMetricsList.size();i++){
-			if(!(scoringMetricsList.get(i).getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-					||scoringMetricsList.get(i).getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))){
+		for (int i = 0; i < scoringMetricsList.size(); i++) {
+			if (!(scoringMetricsList.get(i).getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
+					|| scoringMetricsList.get(i).getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))) {
 
-				totMetricScoringPoints=totMetricScoringPoints.add(scoringMetricsList.get(i).getLovDescMetricMaxPoints());
+				totMetricScoringPoints = totMetricScoringPoints
+						.add(scoringMetricsList.get(i).getLovDescMetricMaxPoints());
 			}
 		}
-		if("R".equals(categoryValue)){
-			getScoringGroupDialogCtrl().getScoringGroup().setLovDescTotRetailScorPoints(totMetricScoringPoints.longValue());
-		}else if("F".equals(categoryValue)){
-			getScoringGroupDialogCtrl().getScoringGroup().setLovDescTotFinScorPoints(totMetricScoringPoints.longValue());
-		}else if("N".equals(categoryValue)){
+		if ("R".equals(categoryValue)) {
+			getScoringGroupDialogCtrl().getScoringGroup()
+					.setLovDescTotRetailScorPoints(totMetricScoringPoints.longValue());
+		} else if ("F".equals(categoryValue)) {
+			getScoringGroupDialogCtrl().getScoringGroup()
+					.setLovDescTotFinScorPoints(totMetricScoringPoints.longValue());
+		} else if ("N".equals(categoryValue)) {
 			getScoringGroupDialogCtrl().getScoringGroup().setLovDescTotNFScorPoints(totMetricScoringPoints.longValue());
 		}
-		
-		if(totMetricScoringPoints.compareTo(BigDecimal.ZERO)!=0 ){
-			for(ScoringMetrics scoringMetrics:scoringMetricsList){
 
-				if(!(scoringMetrics.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-						||scoringMetrics.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))){
+		if (totMetricScoringPoints.compareTo(BigDecimal.ZERO) != 0) {
+			for (ScoringMetrics scoringMetrics : scoringMetricsList) {
 
-					BigDecimal metricPerCentage=scoringMetrics.getLovDescMetricMaxPoints()
-								.multiply(new BigDecimal(100)).divide(totMetricScoringPoints, 2, RoundingMode.HALF_UP);
+				if (!(scoringMetrics.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
+						|| scoringMetrics.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))) {
+
+					BigDecimal metricPerCentage = scoringMetrics.getLovDescMetricMaxPoints()
+							.multiply(new BigDecimal(100)).divide(totMetricScoringPoints, 2, RoundingMode.HALF_UP);
 
 					scoringMetrics.setLovDescMetricTotPerc(metricPerCentage.toString());
 
-					if(StringUtils.isEmpty(scoringMetrics.getRecordType())){
+					if (StringUtils.isEmpty(scoringMetrics.getRecordType())) {
 						scoringMetrics.setRecordType(PennantConstants.RCD_UPD);
 					}
-				}else{
+				} else {
 					scoringMetrics.setLovDescMetricTotPerc("0");
 				}
 			}
-		}else{
-			for(ScoringMetrics scoringMetrics:scoringMetricsList){
+		} else {
+			for (ScoringMetrics scoringMetrics : scoringMetricsList) {
 				scoringMetrics.setLovDescMetricTotPerc("0");
-				if(StringUtils.isEmpty(scoringMetrics.getRecordType())){
+				if (StringUtils.isEmpty(scoringMetrics.getRecordType())) {
 					scoringMetrics.setRecordType(PennantConstants.RCD_UPD);
 				}
 			}
@@ -866,80 +867,80 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		logger.debug("Leaving ");
 		return scoringMetricsList;
 	}
-	
+
 	/**
 	 * Method for Checking list of Existing Data
+	 * 
 	 * @param aScoringMetrics
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader newScoringMetricsProcess(ScoringMetrics aScoringMetrics,String tranType){
+	private AuditHeader newScoringMetricsProcess(ScoringMetrics aScoringMetrics, String tranType) {
 		logger.debug("Entering ");
-		boolean recordAdded=false;
+		boolean recordAdded = false;
 
-		AuditHeader auditHeader= getAuditHeader(aScoringMetrics, tranType);
-		scoringMetricsList= new ArrayList<ScoringMetrics>();
+		AuditHeader auditHeader = getAuditHeader(aScoringMetrics, tranType);
+		scoringMetricsList = new ArrayList<ScoringMetrics>();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = String.valueOf(aScoringMetrics.getLovDescScoringCode());
-		errParm[0] = Labels.getLabel("label_ScoringMetricsDialog_ScoringMetricCode.value") + ":"+valueParm[0];
+		errParm[0] = Labels.getLabel("label_ScoringMetricsDialog_ScoringMetricCode.value") + ":" + valueParm[0];
 
-		if(getOriginalScoringMetricsList()!=null 
-				&& getOriginalScoringMetricsList().size()>0){
+		if (getOriginalScoringMetricsList() != null && getOriginalScoringMetricsList().size() > 0) {
 			for (int i = 0; i < getOriginalScoringMetricsList().size(); i++) {
 				ScoringMetrics scoringMetrics = getOriginalScoringMetricsList().get(i);
 
-				if( aScoringMetrics.getScoringId()== scoringMetrics.getScoringId()){ // Both Current and Existing list metric code same
+				if (aScoringMetrics.getScoringId() == scoringMetrics.getScoringId()) { // Both Current and Existing list metric code same
 
-					/*if same ScoringSlab added twice set error detail*/
-					if(aScoringMetrics.isNew()){
+					/* if same ScoringSlab added twice set error detail */
+					if (aScoringMetrics.isNew()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm)
-								, getUserWorkspace().getUserLanguage()));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
-					if(PennantConstants.TRAN_DEL.equals(tranType)){
-						if(PennantConstants.RECORD_TYPE_UPD.equals(aScoringMetrics.getRecordType())){
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aScoringMetrics.getRecordType())) {
 							aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							scoringMetricsList.add(aScoringMetrics);
-						}else if(PennantConstants.RCD_ADD.equals(aScoringMetrics.getRecordType())){
-							recordAdded=true;
-						}else if(PennantConstants.RECORD_TYPE_NEW.equals(aScoringMetrics.getRecordType())){
+						} else if (PennantConstants.RCD_ADD.equals(aScoringMetrics.getRecordType())) {
+							recordAdded = true;
+						} else if (PennantConstants.RECORD_TYPE_NEW.equals(aScoringMetrics.getRecordType())) {
 							aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							scoringMetricsList.add(aScoringMetrics);
-						}else if(PennantConstants.RECORD_TYPE_CAN.equals(aScoringMetrics.getRecordType())){
-							recordAdded=true;
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aScoringMetrics.getRecordType())) {
+							recordAdded = true;
 							for (int j = 0; j < getOriginalScoringMetricsList().size(); j++) {
-								ScoringMetrics scorMetrics  = getOriginalScoringMetricsList().get(j);
-								if( aScoringMetrics.getScoringId()== scorMetrics.getScoringId()){
+								ScoringMetrics scorMetrics = getOriginalScoringMetricsList().get(j);
+								if (aScoringMetrics.getScoringId() == scorMetrics.getScoringId()) {
 									scoringMetricsList.add(scorMetrics);
 								}
 							}
-						}else if(PennantConstants.RECORD_TYPE_DEL.equals(aScoringMetrics.getRecordType())){
+						} else if (PennantConstants.RECORD_TYPE_DEL.equals(aScoringMetrics.getRecordType())) {
 							aScoringMetrics.setNewRecord(true);
 						}
-					}else{
-						if(!PennantConstants.TRAN_UPD.equals(tranType) ){
+					} else {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							scoringMetricsList.add(scoringMetrics);
 						}
 					}
-				}else{
+				} else {
 					scoringMetricsList.add(scoringMetrics);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			scoringMetricsList.add(aScoringMetrics);
 		}
 		logger.debug("Leaving");
 		return auditHeader;
-	} 
-	
+	}
+
 	// WorkFlow Components
 
 	/**
@@ -949,10 +950,10 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(ScoringMetrics aScoringMetrics, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aScoringMetrics.getBefImage(), aScoringMetrics);   
-		return new AuditHeader(String.valueOf(aScoringMetrics.getScoreGroupId())
-				,null,null,null,auditDetail,aScoringMetrics.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(ScoringMetrics aScoringMetrics, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aScoringMetrics.getBefImage(), aScoringMetrics);
+		return new AuditHeader(String.valueOf(aScoringMetrics.getScoreGroupId()), null, null, null, auditDetail,
+				aScoringMetrics.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1015,6 +1016,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1022,6 +1024,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public ScoringMetrics getScoringMetrics() {
 		return this.scoringMetrics;
 	}
+
 	public void setScoringMetrics(ScoringMetrics scoringMetrics) {
 		this.scoringMetrics = scoringMetrics;
 	}
@@ -1029,6 +1032,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1036,6 +1040,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public ScoringGroup getScoringGroup() {
 		return scoringGroup;
 	}
+
 	public void setScoringGroup(ScoringGroup scoringGroup) {
 		this.scoringGroup = scoringGroup;
 	}
@@ -1043,14 +1048,15 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public ScoringGroupDialogCtrl getScoringGroupDialogCtrl() {
 		return scoringGroupDialogCtrl;
 	}
-	public void setScoringGroupDialogCtrl(
-			ScoringGroupDialogCtrl scoringGroupDialogCtrl) {
+
+	public void setScoringGroupDialogCtrl(ScoringGroupDialogCtrl scoringGroupDialogCtrl) {
 		this.scoringGroupDialogCtrl = scoringGroupDialogCtrl;
 	}
 
 	public void setScoringMetricsList(List<ScoringMetrics> scoringMetricsList) {
 		this.scoringMetricsList = scoringMetricsList;
 	}
+
 	public List<ScoringMetrics> getScoringMetricsList() {
 		return scoringMetricsList;
 	}
@@ -1063,8 +1069,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		return ruleService;
 	}
 
-	public void setOriginalScoringMetricsList(
-			List<ScoringMetrics> originalScoringMetricsList) {
+	public void setOriginalScoringMetricsList(List<ScoringMetrics> originalScoringMetricsList) {
 		this.originalScoringMetricsList = originalScoringMetricsList;
 	}
 

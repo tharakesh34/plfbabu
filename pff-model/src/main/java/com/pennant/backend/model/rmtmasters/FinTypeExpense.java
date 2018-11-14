@@ -60,26 +60,26 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinTypeExpense extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
-	private String				finType				= null;
-	private long				finTypeExpenseID	= Long.MIN_VALUE;
-	private long				expenseTypeID		= Long.MIN_VALUE;
-	private String				expenseTypeCode;
-	private String				expenseTypeDesc;
-	private String				calculationType;
-	private BigDecimal			amount				= BigDecimal.ZERO;
-	private BigDecimal			percentage			= BigDecimal.ZERO;
-	private String				calculateOn;
-	private boolean				amortReq;
-	private boolean				taxApplicable;
-	private boolean				active;
-	private String				finEvent			= "ADDDBSP"; //AccountEventConstants.ACCEVENT_ADDDBSP;
+	private static final long serialVersionUID = 1L;
+	private String finType = null;
+	private long finTypeExpenseID = Long.MIN_VALUE;
+	private long expenseTypeID = Long.MIN_VALUE;
+	private String expenseTypeCode;
+	private String expenseTypeDesc;
+	private String calculationType;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private BigDecimal percentage = BigDecimal.ZERO;
+	private String calculateOn;
+	private boolean amortReq;
+	private boolean taxApplicable;
+	private boolean active;
+	private String finEvent = "ADDDBSP"; //AccountEventConstants.ACCEVENT_ADDDBSP;
 
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private FinTypeExpense		befImage;
+	private boolean newRecord = false;
+	private String lovValue;
+	private FinTypeExpense befImage;
 
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -238,7 +238,7 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 		this.finTypeExpenseID = id;
 
 	}
-	
+
 	public String getFinEvent() {
 		return finEvent;
 	}

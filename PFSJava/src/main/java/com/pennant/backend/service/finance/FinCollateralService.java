@@ -39,8 +39,7 @@ public interface FinCollateralService {
 
 	FinCollaterals getApprovedFinCollateralsById(String financeReference, long id);
 
-	List<AuditDetail> saveOrUpdate(List<FinCollaterals> finCollaterals, String tableType,
-			String auditTranType);
+	List<AuditDetail> saveOrUpdate(List<FinCollaterals> finCollaterals, String tableType, String auditTranType);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -48,12 +47,11 @@ public interface FinCollateralService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	List<AuditDetail> doApprove(List<FinCollaterals> financeCollaterals, String tableType,
-	        String tranType, String finSourceId);
+	List<AuditDetail> doApprove(List<FinCollaterals> financeCollaterals, String tableType, String tranType,
+			String finSourceId);
 
-	List<AuditDetail> validate(List<FinCollaterals> finCollateralList, long workflowId,
-	        String method, String auditTranType, String usrLanguage);
+	List<AuditDetail> validate(List<FinCollaterals> finCollateralList, long workflowId, String method,
+			String auditTranType, String usrLanguage);
 
-	List<AuditDetail> delete(List<FinCollaterals> finCollateralList,
-			String tableType, String auditTranType);
+	List<AuditDetail> delete(List<FinCollaterals> finCollateralList, String tableType, String auditTranType);
 }

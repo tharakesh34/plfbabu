@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.commitment;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -53,19 +54,34 @@ import com.pennant.backend.model.reports.AvailCommitment;
 public interface CommitmentDAO {
 
 	Commitment getCommitment();
+
 	Commitment getNewCommitment();
-	Commitment getCommitmentById(String id,String type);
-	void update(Commitment commitment,String type);
-	void delete(Commitment commitment,String type);
-	String save(Commitment commitment,String type);
+
+	Commitment getCommitmentById(String id, String type);
+
+	void update(Commitment commitment, String type);
+
+	void delete(Commitment commitment, String type);
+
+	String save(Commitment commitment, String type);
+
 	int getCmtAmountCount(long custID);
+
 	Map<String, Object> getAmountSummary(long custID);
+
 	boolean updateCommitmentAmounts(String cmtReference, BigDecimal postingAmount, Date cmtExpDate);
+
 	List<AvailCommitment> getCommitmentListByCustId(long custId, String type);
+
 	Commitment getCommitmentByFacilityRef(final String id, String type);
+
 	List<CommitmentSummary> getCommitmentSummary(long custID);
+
 	void updateNonPerformStatus(String finCommitmentRef);
+
 	void deleteByRef(String cmtReference, String type);
+
 	Commitment getCommitmentByRef(String id, String type);
-	int getCommitmentCountById(String id, String type); 
+
+	int getCommitmentCountById(String id, String type);
 }

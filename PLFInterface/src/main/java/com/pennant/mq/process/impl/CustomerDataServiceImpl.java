@@ -18,14 +18,14 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerDataServiceImpl implements CustomerDataProcess {
 	private static final Logger logger = Logger.getLogger(CustomerDataServiceImpl.class);
-	
+
 	private FetchCustomerInfoProcess fetchCustomerInfoProcess;
 	private FinCustomerDetailProcess finCustomerDetailProcess;
 
 	public CustomerDataServiceImpl() {
 		//
 	}
-	
+
 	/**
 	 * Get Interface Customer Details by passing the Request to MQ<br>
 	 * getCustomerFullDetails method do the following steps.<br>
@@ -40,7 +40,8 @@ public class CustomerDataServiceImpl implements CustomerDataProcess {
 
 		InterfaceCustomerDetail detail = null;
 		try {
-			detail = getFetchCustomerInfoProcess().getCustomerFullDetails(custCIF, InterfaceMasterConfigUtil.GET_CUST_DETAIL);
+			detail = getFetchCustomerInfoProcess().getCustomerFullDetails(custCIF,
+					InterfaceMasterConfigUtil.GET_CUST_DETAIL);
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -52,8 +53,6 @@ public class CustomerDataServiceImpl implements CustomerDataProcess {
 
 		return detail;
 	}
-
-	
 
 	@Override
 	public List<CustomerCollateral> getCustomerCollateral(String custCIF) throws InterfaceException {
@@ -70,43 +69,44 @@ public class CustomerDataServiceImpl implements CustomerDataProcess {
 		logger.debug("Entering");
 		InterfaceCustomerDetail detail = null;
 		try {
-			detail = getFetchCustomerInfoProcess().getCustomerFullDetails(coreCust.getCustomerMnemonic(), InterfaceMasterConfigUtil.GET_CUST_DETAIL);
+			detail = getFetchCustomerInfoProcess().getCustomerFullDetails(coreCust.getCustomerMnemonic(),
+					InterfaceMasterConfigUtil.GET_CUST_DETAIL);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			coreCust.setCustomerMnemonic("");
 			throw new InterfaceException("PTI3001", e.getMessage());
 		}
-		
+
 		// Resetting customer CIF from fetch customer Information -- To be modified based on the information later
-		if(detail != null && StringUtils.isNotBlank(detail.getCustCIF())){
+		if (detail != null && StringUtils.isNotBlank(detail.getCustCIF())) {
 			coreCust.setCustomerMnemonic(detail.getCustCIF());
 		}
 		logger.debug("Leaving");
 		return coreCust;
 	}
 
-	public FinanceCustomerDetails fetchFinCustDetails(FinanceCustomerDetails financeCustomerDetails) 
+	public FinanceCustomerDetails fetchFinCustDetails(FinanceCustomerDetails financeCustomerDetails)
 			throws InterfaceException {
 		logger.debug("Entering");
 
-		if(financeCustomerDetails != null) {
-			return getFinCustomerDetailProcess().fetchFinCustomerDetails(financeCustomerDetails, 
+		if (financeCustomerDetails != null) {
+			return getFinCustomerDetailProcess().fetchFinCustomerDetails(financeCustomerDetails,
 					InterfaceMasterConfigUtil.FIN_CUSTOMER_DETAIL);
 		}
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public FetchCustomerInfoProcess getFetchCustomerInfoProcess() {
 		return fetchCustomerInfoProcess;
 	}
-	public void setFetchCustomerInfoProcess(
-			FetchCustomerInfoProcess fetchCustomerInfoProcess) {
+
+	public void setFetchCustomerInfoProcess(FetchCustomerInfoProcess fetchCustomerInfoProcess) {
 		this.fetchCustomerInfoProcess = fetchCustomerInfoProcess;
 	}
 

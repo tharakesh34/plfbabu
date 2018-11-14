@@ -43,19 +43,15 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/ReturnedCheque/returnedChequeDialog.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/ReturnedCheque/returnedChequeDialog.zul file.
  */
 public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails> {
 	private static final long serialVersionUID = -210929672381582779L;
-	private static Logger logger = Logger
-			.getLogger(ReturnedChequeDialogCtrl.class);
-	
+	private static Logger logger = Logger.getLogger(ReturnedChequeDialogCtrl.class);
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ReturnedChequeDialog; // autoWired
 
@@ -71,9 +67,9 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	private transient ReturnedChequeListCtrl returnedChequeListCtrl; // overHanded per parameter
 
 	private int ccyFormatter = 0;
-	
+
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient ReturnedChequeService returnedChequeService;
 
@@ -92,15 +88,13 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ReturnedCheque object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ReturnedCheque object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_ReturnedChequeDialog(Event event)
-			throws Exception {
+	public void onCreate$window_ReturnedChequeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -112,8 +106,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("returnedCheque")) {
-				this.returnedCheque = (ReturnedChequeDetails) arguments
-						.get("returnedCheque");
+				this.returnedCheque = (ReturnedChequeDetails) arguments.get("returnedCheque");
 				ReturnedChequeDetails befImage = new ReturnedChequeDetails();
 				BeanUtils.copyProperties(this.returnedCheque, befImage);
 				this.returnedCheque.setBefImage(befImage);
@@ -123,14 +116,12 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 				setReturnedCheque(null);
 			}
 
-			doLoadWorkFlow(this.returnedCheque.isWorkflow(),
-					this.returnedCheque.getWorkflowId(),
+			doLoadWorkFlow(this.returnedCheque.isWorkflow(), this.returnedCheque.getWorkflowId(),
 					this.returnedCheque.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ReturnedChequeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ReturnedChequeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -139,8 +130,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 			// or
 			// delete returnedCheque here.
 			if (arguments.containsKey("returnedChequeListCtrl")) {
-				setReturnedChequeListCtrl((ReturnedChequeListCtrl) arguments
-						.get("returnedChequeListCtrl"));
+				setReturnedChequeListCtrl((ReturnedChequeListCtrl) arguments.get("returnedChequeListCtrl"));
 			} else {
 				setReturnedChequeListCtrl(null);
 			}
@@ -169,7 +159,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		this.custCIF.setDescColumn("CustShrtName");
 		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
 		Filter coreCustFilter[] = new Filter[1];
-		coreCustFilter[0] = new Filter("CustCoreBank"," ",Filter.OP_NOT_EQUAL);
+		coreCustFilter[0] = new Filter("CustCoreBank", " ", Filter.OP_NOT_EQUAL);
 		this.custCIF.setFilters(coreCustFilter);
 		this.currency.setMaxlength(3);
 		this.currency.setMandatoryStyle(true);
@@ -179,10 +169,9 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		this.currency.setValidateColumns(new String[] { "CcyCode" });
 		this.currency.setTextBoxWidth(145);
 		this.amount.setMandatory(true);
-		 this.amount.setFormat(PennantApplicationUtil.getAmountFormate(
-				  ccyFormatter)); 
-		  this.amount.setScale(ccyFormatter);
-		 this.custCIF.setTextBoxWidth(145);
+		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.amount.setScale(ccyFormatter);
+		this.custCIF.setTextBoxWidth(145);
 		this.amount.setTextBoxWidth(150);
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -213,26 +202,22 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_ReturnedChequeDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_ReturnedChequeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_ReturnedChequeDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_ReturnedChequeDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReturnedChequeDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ReturnedChequeDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ReturnedChequeDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ReturnedChequeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving ");
@@ -323,28 +308,27 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 
 	private void doWriteBeanToComponents(ReturnedChequeDetails aReturnedCheque) {
 		logger.debug("Entering");
-		
+
 		this.returnDate.setValue(aReturnedCheque.getReturnDate());
 		this.returnReason.setValue(aReturnedCheque.getReturnReason());
 		this.custCIF.setValue(aReturnedCheque.getCustCIF());
 		this.chequeNo.setValue(aReturnedCheque.getChequeNo());
 		this.currency.setValue(aReturnedCheque.getCurrency());
-		if(aReturnedCheque.isNewRecord()){
+		if (aReturnedCheque.isNewRecord()) {
 			ccyFormatter = 2;
 			this.currency.setDescription("");
 			this.custCIF.setDescription("");
-			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(),ccyFormatter));
-		}else{
+			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(), ccyFormatter));
+		} else {
 			this.custCIF.setDescription(aReturnedCheque.getCustShrtName());
 			this.currency.setDescription(aReturnedCheque.getCcyDesc());
 			returnedCheque.setCcyEditField(CurrencyUtil.getFormat(returnedCheque.getCurrency()));
 			ccyFormatter = aReturnedCheque.getCcyEditField();
-			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(),ccyFormatter));
+			this.amount.setValue(PennantAppUtil.formateAmount(aReturnedCheque.getAmount(), ccyFormatter));
 
 		}
-		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(
-				  ccyFormatter)); 
-		  this.amount.setScale(ccyFormatter);
+		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.amount.setScale(ccyFormatter);
 		this.recordStatus.setValue(aReturnedCheque.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -374,7 +358,8 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		}
 
 		try {
-			aReturnedCheque.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getValidateValue(), ccyFormatter));
+			aReturnedCheque
+					.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -393,7 +378,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		 aReturnedCheque.setCcyEditField(ccyFormatter);
+		aReturnedCheque.setCcyEditField(ccyFormatter);
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
@@ -412,15 +397,13 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReturnedCheque
 	 * 
 	 * @throws Exception
 	 */
-	public void doShowDialog(ReturnedChequeDetails aReturnedCheque)
-			throws Exception {
+	public void doShowDialog(ReturnedChequeDetails aReturnedCheque) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -452,7 +435,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 			doWriteBeanToComponents(aReturnedCheque);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ReturnedChequeDialog.onClose();
 		} catch (Exception e) {
@@ -470,35 +453,33 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		Date appStartDate = DateUtility.getAppDate();
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 		if (!this.returnReason.isReadonly()) {
-			this.returnReason.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ReturnedChequeDialog_ReturnReason.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.returnReason.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReturnedChequeDialog_ReturnReason.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.chequeNo.isReadonly()) {
-				this.chequeNo.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_ReturnedChequeDialog_ChequeNo.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true,6,50));
-			
+			this.chequeNo
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReturnedChequeDialog_ChequeNo.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true, 6, 50));
+
 		}
 		if (!this.returnDate.isDisabled()) {
-			this.returnDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_ReturnedChequeDialog_ReturnDate.value"),
-					true,startDate,appStartDate,false));
+			this.returnDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_ReturnedChequeDialog_ReturnDate.value"),
+							true, startDate, appStartDate, false));
 
 		}
 		if (!this.amount.isDisabled()) {
-			this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_ReturnedChequeDialog_Amount.value"), 0, true, true));
+			this.amount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_ReturnedChequeDialog_Amount.value"), 0, true, true));
 		}
 		if (!this.currency.isReadonly()) {
-			this.currency.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ReturnedChequeDialog_Currency.value"),
-					null, true, true));
+			this.currency.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReturnedChequeDialog_Currency.value"), null, true, true));
 		}
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ReturnedChequeDialog_CustCIF.value"),
-					null, true, true));
+			this.custCIF.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReturnedChequeDialog_CustCIF.value"), null, true, true));
 		}
 		logger.debug("Leaving ");
 	}
@@ -556,10 +537,10 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_ReturnedChequeDialog_CustCIF.value")+" : "+aReturnedCheque.getCustCIF()+","+
-				Labels.getLabel("label_ReturnedChequeDialog_ChequeNo.value")+" : "+aReturnedCheque.getChequeNo();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ReturnedChequeDialog_CustCIF.value") + " : " + aReturnedCheque.getCustCIF()
+				+ "," + Labels.getLabel("label_ReturnedChequeDialog_ChequeNo.value") + " : "
+				+ aReturnedCheque.getChequeNo();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aReturnedCheque.getRecordType())) {
 				aReturnedCheque.setVersion(aReturnedCheque.getVersion() + 1);
@@ -579,7 +560,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 					closeDialog();
 				}
 
-			}  catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -696,11 +677,9 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 			if (StringUtils.isBlank(aReturnedCheque.getRecordType())) {
 				aReturnedCheque.setVersion(aReturnedCheque.getVersion() + 1);
 				if (isNew) {
-					aReturnedCheque
-					.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aReturnedCheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aReturnedCheque
-					.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aReturnedCheque.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aReturnedCheque.setNewRecord(true);
 				}
 			}
@@ -722,7 +701,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 				closeDialog();
 			}
 
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
@@ -740,30 +719,25 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReturnedChequeDetails aReturnedCheque,
-			String tranType) {
+	private boolean doProcess(ReturnedChequeDetails aReturnedCheque, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aReturnedCheque.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aReturnedCheque.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReturnedCheque.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aReturnedCheque
-		.setUserDetails(getUserWorkspace().getLoggedInUser());
+		aReturnedCheque.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aReturnedCheque.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aReturnedCheque.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aReturnedCheque
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aReturnedCheque.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -809,8 +783,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aReturnedCheque,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aReturnedCheque, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
@@ -838,57 +811,43 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		ReturnedChequeDetails aRetunedCheque = (ReturnedChequeDetails) auditHeader
-				.getAuditDetail().getModelData();
+		ReturnedChequeDetails aRetunedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getReturnedChequeService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getReturnedChequeService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getReturnedChequeService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getReturnedChequeService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getReturnedChequeService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getReturnedChequeService().doApprove(auditHeader);
 
-						if (aRetunedCheque.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aRetunedCheque.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getReturnedChequeService().doReject(
-								auditHeader);
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getReturnedChequeService().doReject(auditHeader);
 
-						if (aRetunedCheque.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aRetunedCheque.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_ReturnedChequeDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ReturnedChequeDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_ReturnedChequeDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_ReturnedChequeDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -924,12 +883,10 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(ReturnedChequeDetails aReturnedCheque,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aReturnedCheque.getBefImage(), aReturnedCheque);
-		return new AuditHeader(getReference(), null, null, null, auditDetail,
-				aReturnedCheque.getUserDetails(), getOverideMap());
+	private AuditHeader getAuditHeader(ReturnedChequeDetails aReturnedCheque, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aReturnedCheque.getBefImage(), aReturnedCheque);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aReturnedCheque.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -944,16 +901,12 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		doShowNotes(this.returnedCheque);
 	}
 
-	
-
 	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getReturnedCheque().getCustCIF()
-				+ PennantConstants.KEY_SEPERATOR
-				+ getReturnedCheque().getChequeNo();
+		return getReturnedCheque().getCustCIF() + PennantConstants.KEY_SEPERATOR + getReturnedCheque().getChequeNo();
 	}
 
 	/**
@@ -967,10 +920,8 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ReturnedChequeDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_ReturnedChequeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -985,8 +936,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		return returnedChequeService;
 	}
 
-	public void setReturnedChequeService(
-			ReturnedChequeService returnedChequeService) {
+	public void setReturnedChequeService(ReturnedChequeService returnedChequeService) {
 		this.returnedChequeService = returnedChequeService;
 	}
 
@@ -1002,8 +952,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		return returnedChequeListCtrl;
 	}
 
-	public void setReturnedChequeListCtrl(
-			ReturnedChequeListCtrl returnedChequeListCtrl) {
+	public void setReturnedChequeListCtrl(ReturnedChequeListCtrl returnedChequeListCtrl) {
 		this.returnedChequeListCtrl = returnedChequeListCtrl;
 	}
 

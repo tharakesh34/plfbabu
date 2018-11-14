@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.collateral;
+
 import java.util.List;
 
 import com.pennant.backend.model.collateral.FacilityDetail;
@@ -48,11 +49,18 @@ import com.pennant.backend.model.collateral.FacilityDetail;
 public interface FacilityDetailDAO {
 
 	FacilityDetail getFacilityDetail();
+
 	FacilityDetail getNewFacilityDetail();
+
 	FacilityDetail getFacilityDetailById(final String facref, String type);
-	void update(FacilityDetail facilityDetail,String type);
-	void delete(FacilityDetail facilityDetail,String type);
-	String save(FacilityDetail facilityDetail,String type);
+
+	void update(FacilityDetail facilityDetail, String type);
+
+	void delete(FacilityDetail facilityDetail, String type);
+
+	String save(FacilityDetail facilityDetail, String type);
+
 	List<FacilityDetail> getFacilityDetailsByCAF(String cafReference, String string);
+
 	void deleteByCAF(String cafReference, String tableType);
 }

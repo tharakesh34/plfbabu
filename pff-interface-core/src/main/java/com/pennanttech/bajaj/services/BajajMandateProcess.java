@@ -59,7 +59,6 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 
 	}
 
-
 	public void updateRegistrationActiveFlag(long mandateID) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -85,13 +84,16 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		insertSql.append(" (APPLID, CUSTOMERID, AGREEMENTNO, DI_DATE, SPONSOR_BANK_CODE, UTILITY_CODE, COMPANYID,");
 		insertSql.append(" ACCOUNTTYPE, ACCOUNTNO, BANKNAME, IFSCCODE, AMTINWORDS, ECS_AMOUNT,");
 		insertSql.append(" APPFORMNO, MOBILENO, EMAILID, ECSSTARTDATE, ECSENDDATE, ACCONTHOLDER,");
-		insertSql.append(" MANDATEBARCODE, CREATIONDATE, MODIFICATIONDATE, MAKERID, PROCESSFLAG, PROCESSDATE, OPENECSFLAG,");
+		insertSql.append(
+				" MANDATEBARCODE, CREATIONDATE, MODIFICATIONDATE, MAKERID, PROCESSFLAG, PROCESSDATE, OPENECSFLAG,");
 		insertSql.append(" MICRCODE, DEALID, BANK_BRANCH, PRODUCTFLAG, BRANCH,  MACHINE_FLAG,");
 		insertSql.append(" MACHINE_FLAG_UPLOAD_DATE, FIRST_DUE_DATE, MANDATE_ID, ACTIVE_FLAG)");
-		insertSql.append(" Values(:ApplId, :CustID, :OrgReference, :DiDate, :SponsorBankCode, :UtilityCode, :CompanyId,");
+		insertSql.append(
+				" Values(:ApplId, :CustID, :OrgReference, :DiDate, :SponsorBankCode, :UtilityCode, :CompanyId,");
 		insertSql.append(" :AccType, :AccNumber, :BankName, :IFSC, :AmountInWords, :MaxLimit,");
 		insertSql.append(" :AppFormNo, :PhoneNumber, :EmailId, :StartDate, :ExpiryDate, :AccHolderName,");
-		insertSql.append(" :BarCodeNumber, :InputDate, :ModificationDate, :ApprovalID, :ProcessFlag, :ProcessDate,:OpenMandate,");
+		insertSql.append(
+				" :BarCodeNumber, :InputDate, :ModificationDate, :ApprovalID, :ProcessFlag, :ProcessDate,:OpenMandate,");
 		insertSql.append(" :MICR, :OrgReference, :BranchDesc, :FinType, :LoanBranch, :MachineFlag,");
 		insertSql.append(" :MachineFlagUploadDate, :FirstDueDate, :MandateID, :ActiveFlag)");
 
@@ -125,7 +127,6 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 
 	}
 
-
 	private void setEntityCode(Mandate mandate) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
@@ -143,12 +144,11 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 				String entityCode = rs.getString("ENTITYCODE");
 				if (StringUtils.isNumeric(entityCode)) {
 					mandate.setCompanyId(entityCode);
-				} 
+				}
 			}
 		});
 
 	}
-
 
 	private void setAdditionalDetails(Mandate mandate) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -156,7 +156,8 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		StringBuilder sql = new StringBuilder("SELECT FM.FINSTARTDATE, FM.FINTYPE, FM.APPLICATIONNO,");
 		sql.append(" CE.CUSTEMAIL, BR.BRANCHDESC FROM FINANCEMAIN FM");
 		sql.append(" INNER JOIN CUSTOMERS CUST  ON CUST.CUSTID = FM.CUSTID");
-		sql.append(" LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = :CUSTEMAILPRIORITY");
+		sql.append(
+				" LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = :CUSTEMAILPRIORITY");
 		sql.append(" LEFT JOIN RMTBRANCHES BR ON BR.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" WHERE FM.FINREFERENCE = :FINREFERENCE");
 
@@ -175,17 +176,16 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 				if (mandate.getAppFormNo() == null) {
 					mandate.setAppFormNo(rs.getString("ApplicationNo"));
 				}
-				if(mandate.getEmailId() == null) {
-				mandate.setEmailId(rs.getString("CUSTEMAIL"));
+				if (mandate.getEmailId() == null) {
+					mandate.setEmailId(rs.getString("CUSTEMAIL"));
 				}
-				
+
 				if (mandate.getLoanBranch() == null) {
 					mandate.setLoanBranch(rs.getString("BRANCHDESC"));
 				}
 			}
 		});
 	}
-	
 
 	private void setDueDate(Mandate mandate) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -211,24 +211,24 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		paramMap.addValue("MACHINEFLAG", "Y");
 		paramMap.addValue("STATUS", "InProcess");
 
-		StringBuilder sql = new StringBuilder();		
+		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO MANDATESSTATUS");
 		sql.append(" SELECT MANDATE_ID, :AC, :REASON, :ChangeDate, Id");
 		sql.append(" From MANDATE_REGISTRATION MR");
 		sql.append(" INNER JOIN MANDATES M ON M.MANDATEID = MR.MANDATE_ID AND M.STATUS = :STATUS");
 		sql.append(" WHERE MACHINE_FLAG = :MACHINEFLAG and ACTIVE_FLAG = :ACTIVE_FLAG");
-		
+
 		TransactionStatus txnStatus = null;
 		try {
 			txnStatus = transManager.getTransaction(transDef);
 			namedJdbcTemplate.update(sql.toString(), paramMap);
-			
+
 			sql = new StringBuilder();
 			sql.append(" UPDATE MANDATES set STATUS = :AC where MANDATEID IN(");
-			sql.append(" select MANDATE_ID from MANDATE_REGISTRATION where MACHINE_FLAG = :MACHINEFLAG AND ACTIVE_FLAG = :ACTIVE_FLAG");
+			sql.append(
+					" select MANDATE_ID from MANDATE_REGISTRATION where MACHINE_FLAG = :MACHINEFLAG AND ACTIVE_FLAG = :ACTIVE_FLAG");
 			sql.append(" ) and STATUS = :STATUS");
 
-		
 			namedJdbcTemplate.update(sql.toString(), paramMap);
 			transManager.commit(txnStatus);
 		} catch (Exception e) {
@@ -237,9 +237,8 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		}
 
 	}
-	
-	
-	@Override 
+
+	@Override
 	protected Mandate getMandateById(final long id) {
 		Mandate mandate = super.getMandateById(id);
 
@@ -249,14 +248,15 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 
 		return mandate;
 	}
-	
+
 	private Mandate getMandateByIdFromAutoRegistration(final long id) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT ID RequestID, Mandate_ID MandateID, AGREEMENTNO FinReference, CUSTOMERID,  MICRCODE MICR, ACCOUNTNO AccNumber, OPENECSFLAG lovValue ");
+		sql.append(
+				" SELECT ID RequestID, Mandate_ID MandateID, AGREEMENTNO FinReference, CUSTOMERID,  MICRCODE MICR, ACCOUNTNO AccNumber, OPENECSFLAG lovValue ");
 		sql.append(" From MANDATE_REGISTRATION");
 		sql.append(" Where Mandate_ID =:MandateID and Machine_flag = :MachineFlag AND active_flag = :Active");
 		source = new MapSqlParameterSource();
@@ -267,7 +267,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
 		try {
 			return this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception  e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			source = null;
@@ -275,7 +275,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	@Override
 	protected void validateMandate(Mandate respMandate, Mandate mandate, StringBuilder remarks) {
 
@@ -299,8 +299,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 			}
 		}
 	}
-	
-	
+
 	@Override
 	protected void processSecondaryMandate(Mandate respMandate) {
 
@@ -311,7 +310,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 
 		}
 	}
-	
+
 	@Override
 	protected void processSwappedMandate(Mandate respMandate) {
 
@@ -321,15 +320,15 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 
 		}
 	}
-	
+
 	@Override
 	protected void addCustomParameter(Map<String, Object> parameterMap) {
-		
+
 		String entity = (String) parameterMap.get("ENTITY_CODE");
-		
+
 		parameterMap.put("ENTITY_CODE", entity + "_MANDATES_");
 	}
-	
+
 	private void makeSecondaryMandateInActive(long mandateID) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -345,7 +344,6 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 			logger.warn("Exception: ", e);
 		}
 	}
-
 
 	private boolean checkSecondaryMandate(long mandateID) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -364,8 +362,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		}
 		return false;
 	}
-	
-	
+
 	private boolean checkSwappedMandate(long mandateID) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -379,7 +376,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 			throw e;
 		}
 	}
-	
+
 	private void loanMandateSwapping(String finReference, long mandateId) {
 		logger.debug(Literal.ENTERING);
 
@@ -401,7 +398,7 @@ public class BajajMandateProcess extends AbstractMandateProcess {
 		logger.debug("updateSql: " + source.toString());
 
 	}
-	
+
 	public BankBranch getBankBrachByMicr(String micr) {
 		logger.debug("Entering");
 

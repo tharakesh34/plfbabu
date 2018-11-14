@@ -42,10 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -69,17 +67,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements TakafulProviderDAO {
 	private static Logger logger = Logger.getLogger(TakafulProviderDAOImpl.class);
-		
+
 	public TakafulProviderDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Employer Detail details by key field
+	 * Fetch the Record Employer Detail details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return TakafulProvider
 	 */
 	@Override
@@ -87,40 +86,44 @@ public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements
 		logger.debug("Entering");
 		TakafulProvider takafulProvider = new TakafulProvider();
 		takafulProvider.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate,");
-		selectSql.append(" EstablishedDate, Street, HouseNumber, AddrLine1, AddrLine2, Country, Province, City, ZipCode, Phone,");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate,");
+		selectSql.append(
+				" EstablishedDate, Street, HouseNumber, AddrLine1, AddrLine2, Country, Province, City, ZipCode, Phone,");
 		selectSql.append(" Fax, EmailId, WebSite, ContactPerson, ContactPersonNo, ProviderType, ExpiryDate,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescCountryDesc,lovDescProvinceDesc,lovDescCityDesc");
 		}
 		selectSql.append(" From TakafulProvider");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where TakafulCode = :TakafulCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
-		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TakafulProvider.class);
-		
-		try{
-			takafulProvider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(TakafulProvider.class);
+
+		try {
+			takafulProvider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			takafulProvider = null;
 		}
 		logger.debug("Leaving");
 		return takafulProvider;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the TakafulProvider or TakafulProvider_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Employer Detail by key EmployerId
+	 * This method Deletes the Record from the TakafulProvider or TakafulProvider_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Employer Detail by key EmployerId
 	 * 
-	 * @param Employer Detail (takafulProvider)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Employer
+	 *            Detail (takafulProvider)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -129,7 +132,7 @@ public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements
 	public void delete(TakafulProvider takafulProvider, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From TakafulProvider");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where TakafulCode = :TakafulCode");
@@ -146,49 +149,56 @@ public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into TakafulProvider or TakafulProvider_Temp.
-	 * it fetches the available Sequence form SeqTakafulProvider by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into TakafulProvider or TakafulProvider_Temp. it fetches the available Sequence
+	 * form SeqTakafulProvider by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Employer Detail 
+	 * save Employer Detail
 	 * 
-	 * @param Employer Detail (takafulProvider)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Employer
+	 *            Detail (takafulProvider)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void save(TakafulProvider takafulProvider,String type) {
+	public void save(TakafulProvider takafulProvider, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into TakafulProvider");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into TakafulProvider");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate, EstablishedDate, Street,HouseNumber, AddrLine1, ");
-		insertSql.append("  AddrLine2, Country, Province, City, ZipCode, Phone, Fax, EmailId, WebSite, ContactPerson, ContactPersonNo, ProviderType, ExpiryDate, ");
-		insertSql.append("  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:TakafulCode, :TakafulName, :TakafulType, :AccountNumber, :TakafulRate, :EstablishedDate, :Street, :HouseNumber, :AddrLine1, ");
-		insertSql.append("  :AddrLine2, :Country, :Province, :City, :ZipCode, :Phone, :Fax, :EmailId, :WebSite, :ContactPerson, :ContactPersonNo, :ProviderType, :ExpiryDate, ");
-		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				" (TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate, EstablishedDate, Street,HouseNumber, AddrLine1, ");
+		insertSql.append(
+				"  AddrLine2, Country, Province, City, ZipCode, Phone, Fax, EmailId, WebSite, ContactPerson, ContactPersonNo, ProviderType, ExpiryDate, ");
+		insertSql.append(
+				"  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:TakafulCode, :TakafulName, :TakafulType, :AccountNumber, :TakafulRate, :EstablishedDate, :Street, :HouseNumber, :AddrLine1, ");
+		insertSql.append(
+				"  :AddrLine2, :Country, :Province, :City, :ZipCode, :Phone, :Fax, :EmailId, :WebSite, :ContactPerson, :ContactPersonNo, :ProviderType, :ExpiryDate, ");
+		insertSql.append(
+				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method updates the Record TakafulProvider or TakafulProvider_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Employer Detail by key EmployerId and Version
+	 * This method updates the Record TakafulProvider or TakafulProvider_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Employer Detail by key EmployerId and Version
 	 * 
-	 * @param Employer Detail (takafulProvider)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Employer
+	 *            Detail (takafulProvider)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -197,47 +207,54 @@ public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements
 	public void update(TakafulProvider takafulProvider, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update TakafulProvider");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		
+		StringBuilder updateSql = new StringBuilder("Update TakafulProvider");
+		updateSql.append(StringUtils.trimToEmpty(type));
+
 		updateSql.append(" Set TakafulName = :TakafulName, TakafulType = :TakafulType,");
-		updateSql.append(" AccountNumber = :AccountNumber , TakafulRate = :TakafulRate, EstablishedDate = :EstablishedDate,");
-		updateSql.append(" Street = :Street , HouseNumber = :HouseNumber, AddrLine1 = :AddrLine1, AddrLine2 = :AddrLine2,");
-		updateSql.append(" Country = :Country , Province = :Province, City = :City, ZipCode = :ZipCode, Phone = :Phone, Fax = :Fax,");
-		updateSql.append(" EmailId = :EmailId, WebSite = :WebSite, ContactPerson = :ContactPerson, ContactPersonNo = :ContactPersonNo, ExpiryDate= :ExpiryDate, ProviderType= :ProviderType,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" AccountNumber = :AccountNumber , TakafulRate = :TakafulRate, EstablishedDate = :EstablishedDate,");
+		updateSql.append(
+				" Street = :Street , HouseNumber = :HouseNumber, AddrLine1 = :AddrLine1, AddrLine2 = :AddrLine2,");
+		updateSql.append(
+				" Country = :Country , Province = :Province, City = :City, ZipCode = :ZipCode, Phone = :Phone, Fax = :Fax,");
+		updateSql.append(
+				" EmailId = :EmailId, WebSite = :WebSite, ContactPerson = :ContactPerson, ContactPersonNo = :ContactPersonNo, ExpiryDate= :ExpiryDate, ProviderType= :ProviderType,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where TakafulCode = :TakafulCode");
-		
+
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public List<TakafulProvider> getTakafulProviders() {
 		logger.debug("Entering");
-		 List<TakafulProvider> takafulProvider = new  ArrayList<TakafulProvider>(1);
-		
-		StringBuilder selectSql = new StringBuilder("Select TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate");
+		List<TakafulProvider> takafulProvider = new ArrayList<TakafulProvider>(1);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate");
 		selectSql.append(" From TakafulProvider");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
-		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TakafulProvider.class);
-		
-		try{
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(TakafulProvider.class);
+
+		try {
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			takafulProvider = null;
 		}

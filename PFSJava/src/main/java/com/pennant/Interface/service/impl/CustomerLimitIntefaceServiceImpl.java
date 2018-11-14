@@ -210,8 +210,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	/**
-	 * Method for sending Reserve Utilization Request to ACP interface through
-	 * MQ
+	 * Method for sending Reserve Utilization Request to ACP interface through MQ
 	 * 
 	 * @param limitUtilReq
 	 * @throws InterfaceException
@@ -238,8 +237,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	/**
-	 * Method for sending Override&ReserveUtilization Request to ACP interface
-	 * through MQ
+	 * Method for sending Override&ReserveUtilization Request to ACP interface through MQ
 	 * 
 	 * @param limitUtilReq
 	 * @throws InterfaceException
@@ -254,8 +252,8 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 		}
 		CustomerLimitUtilization coreLimitUtilReq = new CustomerLimitUtilization();
 		BeanUtils.copyProperties(limitUtilReq, coreLimitUtilReq);
-		CustomerLimitUtilization coreLimitUtilReply = getCustomerLimitProcess().doOverrideAndReserveUtil(
-				coreLimitUtilReq);
+		CustomerLimitUtilization coreLimitUtilReply = getCustomerLimitProcess()
+				.doOverrideAndReserveUtil(coreLimitUtilReq);
 		LimitUtilization limitUtilization = null;
 		if (coreLimitUtilReply != null) {
 			limitUtilization = new LimitUtilization();
@@ -267,8 +265,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	/**
-	 * Method for sending Confirm Reservation Request to ACP interface through
-	 * MQ
+	 * Method for sending Confirm Reservation Request to ACP interface through MQ
 	 * 
 	 * @param limitUtilReq
 	 * @throws InterfaceException

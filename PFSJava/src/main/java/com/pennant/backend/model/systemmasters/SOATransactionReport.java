@@ -57,13 +57,13 @@ public class SOATransactionReport {
 	private String event;
 	private BigDecimal debitAmount;
 	private BigDecimal creditAmount;
-	
+
 	private BigDecimal ccyMinorCcyUnits;
 	private Date fromDate;
 	private Date toDate;
 	private int ccyEditField;
 	private int priority;
-	private BigDecimal balanceAmount ;
+	private BigDecimal balanceAmount;
 	private Date valueDate;
 
 	/**
@@ -72,7 +72,7 @@ public class SOATransactionReport {
 	public SOATransactionReport() {
 		super();
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -84,6 +84,7 @@ public class SOATransactionReport {
 	public Date getTransactionDate() {
 		return transactionDate;
 	}
+
 	public void setTransactionDate(Date transactionDate) {
 		this.transactionDate = transactionDate;
 	}
@@ -91,6 +92,7 @@ public class SOATransactionReport {
 	public String getEvent() {
 		return event;
 	}
+
 	public void setEvent(String event) {
 		this.event = event;
 	}

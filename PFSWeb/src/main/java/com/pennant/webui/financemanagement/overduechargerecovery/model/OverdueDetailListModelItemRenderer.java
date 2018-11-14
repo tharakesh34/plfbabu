@@ -61,13 +61,13 @@ import com.pennant.util.PennantAppUtil;
 public class OverdueDetailListModelItemRenderer implements ListitemRenderer<FinODDetails>, Serializable {
 
 	private static final long serialVersionUID = 3995133144435008423L;
-	
+
 	private int ccyFormatter = 0;
-	
+
 	public OverdueDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	public OverdueDetailListModelItemRenderer(int ccyFormatter) {
 		this.ccyFormatter = ccyFormatter;
 	}
@@ -82,38 +82,38 @@ public class OverdueDetailListModelItemRenderer implements ListitemRenderer<FinO
 		lc = new Listcell(String.valueOf(finODDetail.getFinCurODDays()));
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODPri(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODPri(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODPft(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODPft(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODAmt(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getFinCurODAmt(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyAmt(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyAmt(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotWaived(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotWaived(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyPaid(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyPaid(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyBal(),ccyFormatter));
+		lc = new Listcell(PennantAppUtil.amountFormate(finODDetail.getTotPenaltyBal(), ccyFormatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
 		lc = new Listcell(finODDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0 ? "Recovery" : "Collected");
-		if(finODDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0){
+		if (finODDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
 			lc.setStyle("font-weight:bold;color:red;");
-		}else{
+		} else {
 			lc.setStyle("font-weight:bold;color:green;");
 		}
 		lc.setParent(item);

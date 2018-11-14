@@ -95,8 +95,8 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	private FinanceProfitDetailDAO profitDetailsDAO;
 
 	public LiabilityRequestServiceImpl() {
-	    super();
-    }
+		super();
+	}
 
 	/**
 	 * @return the auditHeaderDAO
@@ -106,19 +106,23 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	}
 
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the liabilityRequestDAO
 	 */
 	public LiabilityRequestDAO getLiabilityRequestDAO() {
 		return liabilityRequestDAO;
 	}
+
 	/**
-	 * @param liabilityRequestDAO the liabilityRequestDAO to set
+	 * @param liabilityRequestDAO
+	 *            the liabilityRequestDAO to set
 	 */
 	public void setLiabilityRequestDAO(LiabilityRequestDAO liabilityRequestDAO) {
 		this.liabilityRequestDAO = liabilityRequestDAO;
@@ -131,6 +135,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	public LiabilityRequest getLiabilityRequest() {
 		return getLiabilityRequestDAO().getLiabilityRequest();
 	}
+
 	/**
 	 * @return the liabilityRequest for New Record
 	 */
@@ -139,54 +144,54 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		return getLiabilityRequestDAO().getNewLiabilityRequest();
 	}
 
-
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table FinLiabilityReq/FinLiabilityReq_Temp 
-	 * 			by using LiabilityRequestDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using LiabilityRequestDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinLiabilityReq/FinLiabilityReq_Temp by using LiabilityRequestDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using LiabilityRequestDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		return saveOrUpdate(auditHeader, false);
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table FinLiabilityReq/FinLiabilityReq_Temp 
-	 * 			by using LiabilityRequestDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using LiabilityRequestDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
-	 * @param boolean onlineRequest
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinLiabilityReq/FinLiabilityReq_Temp by using LiabilityRequestDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using LiabilityRequestDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
+	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate", online);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -197,9 +202,9 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
-		
+
 		if (liabilityRequest.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (liabilityRequest.isNew()) {
@@ -207,25 +212,25 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		} else {
 			getLiabilityRequestDAO().update(liabilityRequest, tableType);
 		}
-		
+
 		// Save Fee Charges List
 		//=======================================
 		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),liabilityRequest.getFinEvent(), false, tableType);
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), liabilityRequest.getFinEvent(),
+					false, tableType);
 		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(),liabilityRequest.getFinEvent(), false,tableType);
-		
+		saveFeeChargeList(financeDetail.getFinScheduleData(), liabilityRequest.getFinEvent(), false, tableType);
+
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType));
 		}
-		
+
 		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-				&& financeDetail.getDocumentDetailsList().size() > 0) {
+		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeMain,liabilityRequest.getFinEvent());
+			details = processingDocumentDetailsList(details, tableType, financeMain, liabilityRequest.getFinEvent());
 			auditDetails.addAll(details);
 		}
 
@@ -237,26 +242,27 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table FinLiabilityReq by using LiabilityRequestDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * FinLiabilityReq by using LiabilityRequestDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete",false);
+		auditHeader = businessValidation(auditHeader, "delete", false);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
-		getLiabilityRequestDAO().delete(liabilityRequest,"");
+		getLiabilityRequestDAO().delete(liabilityRequest, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -265,27 +271,32 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 	/**
 	 * getLiabilityRequestById fetch the details by using LiabilityRequestDAO's getLiabilityRequestById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LiabilityRequest
 	 */
 
 	@Override
 	public LiabilityRequest getLiabilityRequestById(long id) {
-		return getLiabilityRequestDAO().getLiabilityRequestById(id,"_View");
+		return getLiabilityRequestDAO().getLiabilityRequestById(id, "_View");
 	}
+
 	/**
 	 * getApprovedLiabilityRequestById fetch the details by using LiabilityRequestDAO's getLiabilityRequestById method .
 	 * with parameter id and type as blank. it fetches the approved records from the FinLiabilityReq.
-	 * @param id (String)
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return LiabilityRequest
 	 */
 
 	public LiabilityRequest getApprovedLiabilityRequestById(long id) {
-		return getLiabilityRequestDAO().getLiabilityRequestById(id,"_AView");
+		return getLiabilityRequestDAO().getLiabilityRequestById(id, "_AView");
 	}
-	
+
 	@Override
 	public String getProceedingWorkflow(String finType, String finEvent) {
 		logger.debug("Entering");
@@ -295,35 +306,37 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getLiabilityRequestDAO().delete with parameters liabilityRequest,""
-	 * 		b)  NEW		Add new record in to main table by using getLiabilityRequestDAO().save with parameters liabilityRequest,""
-	 * 		c)  EDIT	Update record in the main table by using getLiabilityRequestDAO().update with parameters liabilityRequest,""
-	 * 3)	Delete the record from the workFlow table by using getLiabilityRequestDAO().delete with parameters liabilityRequest,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getLiabilityRequestDAO().delete with
+	 * parameters liabilityRequest,"" b) NEW Add new record in to main table by using getLiabilityRequestDAO().save with
+	 * parameters liabilityRequest,"" c) EDIT Update record in the main table by using getLiabilityRequestDAO().update
+	 * with parameters liabilityRequest,"" 3) Delete the record from the workFlow table by using
+	 * getLiabilityRequestDAO().delete with parameters liabilityRequest,"_Temp" 4) Audit the record in to AuditHeader
+	 * and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 
-		public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		String tranType="";
+		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader,"doApprove",false);
+		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
 		LiabilityRequest liabilityRequest = new LiabilityRequest();
 		BeanUtils.copyProperties((LiabilityRequest) auditHeader.getAuditDetail().getModelData(), liabilityRequest);
-		
+
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		//Finance Stage Accounting Process
@@ -334,9 +347,9 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		}
 
 		if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getLiabilityRequestDAO().delete(liabilityRequest,"");
+			getLiabilityRequestDAO().delete(liabilityRequest, "");
 
 		} else {
 			liabilityRequest.setRoleCode("");
@@ -346,13 +359,13 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			liabilityRequest.setWorkflowId(0);
 
 			if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				liabilityRequest.setRecordType("");
-				getLiabilityRequestDAO().save(liabilityRequest,"");
+				getLiabilityRequestDAO().save(liabilityRequest, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				liabilityRequest.setRecordType("");
-				getLiabilityRequestDAO().update(liabilityRequest,"");
+				getLiabilityRequestDAO().update(liabilityRequest, "");
 			}
 		}
 
@@ -362,33 +375,35 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		// set Check list details Audit
 		//=======================================
-		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {					
+		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, ""));
 		}
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeMain,liabilityRequest.getFinEvent());
+			details = processingDocumentDetailsList(details, "", financeMain, liabilityRequest.getFinEvent());
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
-		
+
 		// Fee charges deletion
 		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner() ,false, "_Temp");
+		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
+				"_Temp");
 
 		// Checklist Details delete
 		//=======================================
 		tempAuditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
 
 		// Liability Request deletion
-		getLiabilityRequestDAO().delete(liabilityRequest,"_Temp");
-		if(StringUtils.equals(liabilityRequest.getFinEvent(),FinanceConstants.FINSER_EVENT_INSCLAIM)){	
+		getLiabilityRequestDAO().delete(liabilityRequest, "_Temp");
+		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinanceConstants.FINSER_EVENT_INSCLAIM)) {
 			Date curDate = DateUtility.getAppDate();
-			FinanceSuspHead finSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeMain.getFinReference(), "");
+			FinanceSuspHead finSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeMain.getFinReference(),
+					"");
 			boolean isSaveRcd = false;
-			if(finSuspHead == null){
+			if (finSuspHead == null) {
 				isSaveRcd = true;
 				finSuspHead = new FinanceSuspHead();
 				finSuspHead.setFinSuspDate(curDate);
@@ -409,7 +424,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			finSuspHead.setFinIsInSusp(true);
 			if (isSaveRcd) {
 				getFinanceSuspHeadDAO().save(finSuspHead, "");
-			}else{
+			} else {
 				getFinanceSuspHeadDAO().update(finSuspHead, "");
 			}
 		}
@@ -417,40 +432,42 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		// Audit Data
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		//Temp Table Audit
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(liabilityRequest);
 		auditHeader.setAuditDetails(tempAuditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
-		logger.debug("Leaving");		
+
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getLiabilityRequestDAO().delete with parameters liabilityRequest,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getLiabilityRequestDAO().delete with parameters liabilityRequest,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doApprove",false);
+		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 		String tranType = PennantConstants.TRAN_DEL;
-		
+
 		LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -461,32 +478,35 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		// Liability Request details
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getLiabilityRequestDAO().delete(liabilityRequest,"_Temp");
+		getLiabilityRequestDAO().delete(liabilityRequest, "_Temp");
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
-			for(DocumentDetails docDetails : financeDetail.getDocumentDetailsList()){
-				if(StringUtils.isNotBlank(docDetails.getRecordType())){
+			for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
+				if (StringUtils.isNotBlank(docDetails.getRecordType())) {
 					docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 				}
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details,  "_Temp", financeMain,liabilityRequest.getFinEvent());
+			details = processingDocumentDetailsList(details, "_Temp", financeMain, liabilityRequest.getFinEvent());
 			auditHeader.setAuditDetails(details);
 		}
 
 		// Fee charges deletion
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), liabilityRequest.getFinanceDetail().getModuleDefiner() ,false, "_Temp");
+		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
+				liabilityRequest.getFinanceDetail().getModuleDefiner(), false, "_Temp");
 
 		// Checklist Details delete
 		//=======================================
-		auditHeader.getAuditDetails().addAll(getCheckListDetailService().delete(liabilityRequest.getFinanceDetail(), "_Temp", tranType));
-		
+		auditHeader.getAuditDetails()
+				.addAll(getCheckListDetailService().delete(liabilityRequest.getFinanceDetail(), "_Temp", tranType));
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(liabilityRequest);
 
@@ -495,154 +515,173 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	validate the audit detail 
-	 * 2)	if any error/Warnings  then assign the to auditHeader
-	 * 3)   identify the nextprocess
-	 *  
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
+	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
+	 * assign the to auditHeader 3) identify the nextprocess
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
 		logger.debug("Entering");
-		
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,
+				onlineRequest);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
-		
+		auditHeader = nextProcess(auditHeader);
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getLiabilityRequestDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getLiabilityRequestDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		LiabilityRequest liabilityRequest= (LiabilityRequest) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		LiabilityRequest liabilityRequest = (LiabilityRequest) auditDetail.getModelData();
 
-		LiabilityRequest tempLiabilityRequest= null;
-		if (liabilityRequest.isWorkflow()){
+		LiabilityRequest tempLiabilityRequest = null;
+		if (liabilityRequest.isWorkflow()) {
 			tempLiabilityRequest = getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(), "_Temp");
 		}
-		LiabilityRequest befLiabilityRequest= getLiabilityRequestDAO().getLiabilityRequestById(liabilityRequest.getId(), "");
-		
-		LiabilityRequest oldLiabilityRequest= liabilityRequest.getBefImage();
+		LiabilityRequest befLiabilityRequest = getLiabilityRequestDAO()
+				.getLiabilityRequestById(liabilityRequest.getId(), "");
 
+		LiabilityRequest oldLiabilityRequest = liabilityRequest.getBefImage();
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=liabilityRequest.getFinReference();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = liabilityRequest.getFinReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (liabilityRequest.isNew()){ // for New record or new record into work flow
+		if (liabilityRequest.isNew()) { // for New record or new record into work flow
 
-			if (!liabilityRequest.isWorkflow()){// With out Work flow only new records  
-				if (befLiabilityRequest !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				
+			if (!liabilityRequest.isWorkflow()) {// With out Work flow only new records  
+				if (befLiabilityRequest != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+
 				// NOC Issuance checking
 				int count = getLiabilityRequestDAO().getFinareferenceCount(liabilityRequest.getFinReference(), "_View");
-				
-				if(count > 0){
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm,valueParm), usrLanguage));
-				}else if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befLiabilityRequest !=null || tempLiabilityRequest!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm,valueParm), usrLanguage));
+
+				if (count > 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm, valueParm), usrLanguage));
+				} else if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befLiabilityRequest != null || tempLiabilityRequest != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41041", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befLiabilityRequest ==null || tempLiabilityRequest!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befLiabilityRequest == null || tempLiabilityRequest != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!liabilityRequest.isWorkflow()){	// With out Work flow for update and delete
+			if (!liabilityRequest.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befLiabilityRequest ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldLiabilityRequest!=null && !oldLiabilityRequest.getLastMntOn().equals(befLiabilityRequest.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+				if (befLiabilityRequest == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldLiabilityRequest != null
+							&& !oldLiabilityRequest.getLastMntOn().equals(befLiabilityRequest.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempLiabilityRequest==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempLiabilityRequest == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (oldLiabilityRequest!=null && tempLiabilityRequest!=null && !oldLiabilityRequest.getLastMntOn().equals(tempLiabilityRequest.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (oldLiabilityRequest != null && tempLiabilityRequest != null
+						&& !oldLiabilityRequest.getLastMntOn().equals(tempLiabilityRequest.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		if(StringUtils.equals(liabilityRequest.getFinEvent(),FinanceConstants.FINSER_EVENT_INSCLAIM)){
-			FinanceProfitDetail financeProfitDetail =getProfitDetailsDAO().getFinProfitDetailsById(liabilityRequest.getFinReference());
-			if(financeProfitDetail!=null){
-				BigDecimal outStanding=financeProfitDetail.getTotalpriSchd().add(financeProfitDetail.getTotalPftSchd()).
-						subtract(financeProfitDetail.getTotalPriPaid()).subtract(financeProfitDetail.getTotalPftPaid());
-				if(liabilityRequest.getInsClaimAmount().compareTo(outStanding)>0){
+		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+			FinanceProfitDetail financeProfitDetail = getProfitDetailsDAO()
+					.getFinProfitDetailsById(liabilityRequest.getFinReference());
+			if (financeProfitDetail != null) {
+				BigDecimal outStanding = financeProfitDetail.getTotalpriSchd()
+						.add(financeProfitDetail.getTotalPftSchd()).subtract(financeProfitDetail.getTotalPriPaid())
+						.subtract(financeProfitDetail.getTotalPftPaid());
+				if (liabilityRequest.getInsClaimAmount().compareTo(outStanding) > 0) {
 					String[] errParm1 = new String[2];
 					String[] valueParm1 = new String[2];
-					
-					int  finformatter =CurrencyUtil.getFormat(liabilityRequest.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());;
-					valueParm1[0] = PennantApplicationUtil.formateAmount(liabilityRequest.getInsClaimAmount(),finformatter).toString();
+
+					int finformatter = CurrencyUtil.getFormat(
+							liabilityRequest.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+					;
+					valueParm1[0] = PennantApplicationUtil
+							.formateAmount(liabilityRequest.getInsClaimAmount(), finformatter).toString();
 					errParm1[0] = PennantJavaUtil.getLabel("label_InsCLaim") + ":" + valueParm1[0];
-					valueParm1[1] = PennantApplicationUtil.formateAmount(outStanding,finformatter).toString();
+					valueParm1[1] = PennantApplicationUtil.formateAmount(outStanding, finformatter).toString();
 					errParm1[1] = PennantJavaUtil.getLabel("label_OutStandingPrincipal") + ":" + valueParm1[1];
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "30568", errParm1, valueParm1), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "30568", errParm1, valueParm1), usrLanguage));
 
 				}
 			}
 		}
-		
+
 		// ###_0.2
 		for (FinFlagsDetail finFlagsDetail : liabilityRequest.getFinanceDetail().getFinFlagsDetails()) {
-			if(StringUtils.equals(finFlagsDetail.getFlagCode(), "NONOC")){
+			if (StringUtils.equals(finFlagsDetail.getFlagCode(), "NONOC")) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41102", null)));
 				break;
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !liabilityRequest.isWorkflow()){
-			auditDetail.setBefImage(befLiabilityRequest);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !liabilityRequest.isWorkflow()) {
+			auditDetail.setBefImage(befLiabilityRequest);
 		}
 
 		return auditDetail;
 	}
-	
-    //Document Details List Maintenance
-  	public void listDocDeletion(FinanceDetail custDetails, String tableType) {
-  		getDocumentDetailsDAO().deleteList(
-  				new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()), tableType);
-  	}
- 
-	
+
+	//Document Details List Maintenance
+	public void listDocDeletion(FinanceDetail custDetails, String tableType) {
+		getDocumentDetailsDAO().deleteList(new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()),
+				tableType);
+	}
+
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
 
@@ -666,14 +705,15 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
-		
+
 		//Finance Check List Details 
 		//=======================================
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
+				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
+						auditTranType, method));
 			}
 		} else {
 			String tableType = "_Temp";
@@ -681,14 +721,14 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 					PennantConstants.RECORD_TYPE_DEL)) {
 				tableType = "";
 			}
-			
 
 			String finReference = financeDetail.getFinScheduleData().getFinReference();
-			financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);				
+			financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);
 			financeDetail.setFinanceCheckList(financeCheckList);
 
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
+				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
+						auditTranType, method));
 			}
 		}
 

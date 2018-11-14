@@ -57,8 +57,8 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinProfitDetail(getFinPftDetailRef(finReference, custpftDet));
 
 			// FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
-					finReference, TableType.MAIN_TAB.getSuffix(), false);
+			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO()
+					.getFinScheduleDetails(finReference, TableType.MAIN_TAB.getSuffix(), false);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
 			setEventFlags(custEODEvent, finEODEvent);
@@ -72,7 +72,7 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
-	
+
 	/**
 	 * 
 	 * @param custEODEvent
@@ -83,30 +83,30 @@ public class LoadFinanceData extends ServiceHelper {
 	 */
 	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, String finReference) throws Exception {
 		logger.debug(" Entering ");
- 
+
 		FinEODEvent finEODEvent = new FinEODEvent();
- 
+
 		FinanceMain finMain = getFinanceMainDAO().getFinMainsForEODByFinRef(finReference, false);
 		FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsByFinRef(finReference, false);
- 
+
 		// FINANCE MAIN
 		finEODEvent.setFinanceMain(finMain);
 		String finType = finEODEvent.getFinanceMain().getFinType();
- 
+
 		// FINANCE TYPE
 		FinanceType financeType = getFinanceType(finType);
 		finEODEvent.setFinType(financeType);
- 
+
 		// FINPROFIT DETAILS
 		finEODEvent.setFinProfitDetail(finPftDetail);
- 
+
 		// FINSCHDULE DETAILS
 		List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
 				TableType.MAIN_TAB.getSuffix(), false);
 		finEODEvent.setFinanceScheduleDetails(finSchdDetails);
- 
+
 		custEODEvent.getFinEODEvents().add(finEODEvent);
- 
+
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
@@ -182,7 +182,7 @@ public class LoadFinanceData extends ServiceHelper {
 					continue;
 				}
 			}
-			
+
 			// Paid Principal OR Paid Interest Less than scheduled amounts
 			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
 					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
@@ -342,7 +342,7 @@ public class LoadFinanceData extends ServiceHelper {
 					if (!listSave.isEmpty()) {
 						getFinODDetailsDAO().saveList(listSave);
 					}
-					listSave=null;
+					listSave = null;
 				}
 			}
 
@@ -390,11 +390,9 @@ public class LoadFinanceData extends ServiceHelper {
 		// getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
 		/*
-		 * //update customer if (custEODEvent.isUpdCustomer()) { Customer
-		 * customer = custEODEvent.getCustomer(); long custID =
-		 * customer.getCustID(); String custSts = customer.getCustSts(); Date
-		 * stsChgDate = customer.getCustStsChgDate();
-		 * getCustomerDAO().updateCustStatus(custSts, stsChgDate, custID); }
+		 * //update customer if (custEODEvent.isUpdCustomer()) { Customer customer = custEODEvent.getCustomer(); long
+		 * custID = customer.getCustID(); String custSts = customer.getCustSts(); Date stsChgDate =
+		 * customer.getCustStsChgDate(); getCustomerDAO().updateCustStatus(custSts, stsChgDate, custID); }
 		 */
 		logger.debug(" Leaving ");
 		returnDataSets.clear();

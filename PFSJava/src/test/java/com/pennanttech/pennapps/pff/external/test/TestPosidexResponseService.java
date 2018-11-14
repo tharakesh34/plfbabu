@@ -1,6 +1,5 @@
 package com.pennanttech.pennapps.pff.external.test;
 
-
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pff.core.services.PosidexResponseService;
 import org.springframework.context.ApplicationContext;
@@ -23,10 +22,10 @@ public class TestPosidexResponseService {
 		}
 	}
 
-	@Test(enabled=false)
+	@Test(enabled = false)
 	public void process() {
 		try {
-			responceService.receiveResponse(new Long(1000),DateUtil.getSysDate(),DateUtil.getSysDate());
+			responceService.receiveResponse(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

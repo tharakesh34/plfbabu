@@ -78,42 +78,40 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Provision/ProvisionMovement/ProvisionMovementList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Provision/ProvisionMovement/ProvisionMovementList.zul file.
  */
 public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDetails> {
 	private static final long serialVersionUID = -1620412127444337321L;
 	private static final Logger logger = Logger.getLogger(SuspenseDetailEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_SuspenseEnquiryDialog; 			// autowired
+	protected Window window_SuspenseEnquiryDialog; // autowired
 
-	protected Listbox 		listBoxSuspDetails; 				// autowired
-	protected Listbox 		listBoxSuspPostings; 				// autowired
-	protected Grid 			grid_Basicdetails;					// autowired
-	protected Div 			div_toolbar;						// autowired
+	protected Listbox listBoxSuspDetails; // autowired
+	protected Listbox listBoxSuspPostings; // autowired
+	protected Grid grid_Basicdetails; // autowired
+	protected Div div_toolbar; // autowired
 
-	protected Textbox 		finReference;			// autowired
-	protected Textbox 		finBranch; 				// autowired
-	protected Textbox 		finType; 				// autowired
-	protected Longbox 		custID; 				// autowired
-	protected Textbox 		lovDescCustCIF; 		// autowired
-	protected Label   		custShrtName;			// autowired
-	protected Intbox   		finSuspSeq;				// autowired
-	protected Checkbox 		finIsInSusp; 			// autowired
-	protected Checkbox 		manualSusp; 			// autowired
-	protected Decimalbox 	finSuspAmt; 			// autowired
-	protected Decimalbox 	finCurSuspAmt; 			// autowired
-	protected Datebox 		finSuspDate; 			// autowired
-	protected Datebox 		finSuspTrfDate; 		// autowired
-	private Tabpanel 		tabPanel_dialogWindow;
+	protected Textbox finReference; // autowired
+	protected Textbox finBranch; // autowired
+	protected Textbox finType; // autowired
+	protected Longbox custID; // autowired
+	protected Textbox lovDescCustCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Intbox finSuspSeq; // autowired
+	protected Checkbox finIsInSusp; // autowired
+	protected Checkbox manualSusp; // autowired
+	protected Decimalbox finSuspAmt; // autowired
+	protected Decimalbox finCurSuspAmt; // autowired
+	protected Datebox finSuspDate; // autowired
+	protected Datebox finSuspTrfDate; // autowired
+	private Tabpanel tabPanel_dialogWindow;
 
 	// checkRights
-	protected Button btnHelp; 		// autowired
+	protected Button btnHelp; // autowired
 
 	// NEEDED for the ReUse in the SearchWindow
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
@@ -136,9 +134,8 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected ProvisionMovement object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected ProvisionMovement object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -151,8 +148,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 
 		try {
 			if (event.getTarget().getParent().getParent() != null) {
-				tabPanel_dialogWindow = (Tabpanel) event.getTarget()
-						.getParent().getParent();
+				tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 			}
 
 			if (arguments.containsKey("suspHead")) {
@@ -165,8 +161,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 			}
 
 			if (arguments.containsKey("suspenseListCtrl")) {
-				setSuspenseListCtrl((SuspenseListCtrl) arguments
-						.get("suspenseListCtrl"));
+				setSuspenseListCtrl((SuspenseListCtrl) arguments.get("suspenseListCtrl"));
 			} else {
 				setSuspenseListCtrl(null);
 			}
@@ -203,21 +198,22 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 			// stores the initial data for comparing if they are changed
 			// during user action.
 
-			if(tabPanel_dialogWindow != null){
-				
+			if (tabPanel_dialogWindow != null) {
+
 				this.div_toolbar.setVisible(false);
 				this.window_SuspenseEnquiryDialog.setBorder("none");
 				this.window_SuspenseEnquiryDialog.setTitle("");
 
 				getBorderLayoutHeight();
-				int headerRowHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				int rowsHeight = headerRowHeight + this.grid_Basicdetails.getRows().getVisibleItemCount()*20 + 100;
-				this.listBoxSuspDetails.setHeight(this.borderLayoutHeight-rowsHeight + 20 +"px");
-				this.listBoxSuspPostings.setHeight(this.borderLayoutHeight-rowsHeight -10+"px");
-				this.window_SuspenseEnquiryDialog.setHeight(this.borderLayoutHeight-headerRowHeight+"px");
+				int headerRowHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()
+						* 20;
+				int rowsHeight = headerRowHeight + this.grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100;
+				this.listBoxSuspDetails.setHeight(this.borderLayoutHeight - rowsHeight + 20 + "px");
+				this.listBoxSuspPostings.setHeight(this.borderLayoutHeight - rowsHeight - 10 + "px");
+				this.window_SuspenseEnquiryDialog.setHeight(this.borderLayoutHeight - headerRowHeight + "px");
 				tabPanel_dialogWindow.appendChild(this.window_SuspenseEnquiryDialog);
 
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
 
@@ -237,10 +233,10 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	 *            aSuspHead
 	 */
 	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
-		if(aSuspHead != null){
-			if(tabPanel_dialogWindow == null){
+		if (aSuspHead != null) {
+			if (tabPanel_dialogWindow == null) {
 
 				this.finReference.setValue(aSuspHead.getFinReference());
 				this.finBranch.setValue(aSuspHead.getFinBranch());
@@ -255,10 +251,8 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 			int format = CurrencyUtil.getFormat(aSuspHead.getFinCcy());
 			this.finIsInSusp.setChecked(aSuspHead.isFinIsInSusp());
 			this.manualSusp.setChecked(aSuspHead.isManualSusp());
-			this.finSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinSuspAmt(),
-					format));
-			this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinCurSuspAmt(),
-					format));
+			this.finSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinSuspAmt(), format));
+			this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinCurSuspAmt(), format));
 			this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 			this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 
@@ -274,11 +268,10 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	 * 
 	 * @param transactionEntryList
 	 */
-	public void doFilllistbox(List<FinanceSuspDetails> financeSuspDetails,int formatter) {
+	public void doFilllistbox(List<FinanceSuspDetails> financeSuspDetails, int formatter) {
 		logger.debug("Entering");
 		if (financeSuspDetails != null) {
-			getPagedListWrapper().initList(financeSuspDetails, 
-					this.listBoxSuspDetails, new Paging());
+			getPagedListWrapper().initList(financeSuspDetails, this.listBoxSuspDetails, new Paging());
 			this.listBoxSuspDetails.setItemRenderer(new SuspenseDetailListModelItemRenderer(formatter));
 		}
 		logger.debug("Leaving");
@@ -290,10 +283,10 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	 * @param transactionEntryList
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void doFillPostingslistbox(List<ReturnDataSet> financeSuspPostings,int formatter) {
+	public void doFillPostingslistbox(List<ReturnDataSet> financeSuspPostings, int formatter) {
 		logger.debug("Entering");
-		this.listBoxSuspPostings.setModel(new GroupsModelArray(
-				financeSuspPostings.toArray(),new LoanEnquiryPostingsComparator()));
+		this.listBoxSuspPostings
+				.setModel(new GroupsModelArray(financeSuspPostings.toArray(), new LoanEnquiryPostingsComparator()));
 		this.listBoxSuspPostings.setItemRenderer(new LoanEnquiryPostingsListItemRenderer(formatter));
 		logger.debug("Leaving");
 	}
@@ -307,7 +300,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		try {
-			if(tabPanel_dialogWindow == null){
+			if (tabPanel_dialogWindow == null) {
 				closeDialog();
 			}
 		} catch (final WrongValuesException e) {
@@ -336,6 +329,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	public void setSuspHead(FinanceSuspHead suspHead) {
 		this.suspHead = suspHead;
 	}
+
 	public FinanceSuspHead getSuspHead() {
 		return suspHead;
 	}
@@ -343,6 +337,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	public void setSuspenseListCtrl(SuspenseListCtrl suspenseListCtrl) {
 		this.suspenseListCtrl = suspenseListCtrl;
 	}
+
 	public SuspenseListCtrl getSuspenseListCtrl() {
 		return suspenseListCtrl;
 	}

@@ -77,34 +77,34 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
-	
+public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
+
 	private static final long serialVersionUID = 4521079241535245640L;
 
 	private static final Logger logger = Logger.getLogger(FinTypeAccountingListCtrl.class);
 
 	protected Window window_FinTypeAccountingList;
-	
+
 	private Component parent = null;
 	private Tab parentTab = null;
-	
-	private List<FinTypeAccounting>			finTypeAccountingList	= new ArrayList<FinTypeAccounting>();
-	private Map<String,FinTypeAccounting> 	finTypeAccEventMap = new LinkedHashMap<String,FinTypeAccounting>();
 
-	private Listbox							listBoxAccountingDetails;
-	
+	private List<FinTypeAccounting> finTypeAccountingList = new ArrayList<FinTypeAccounting>();
+	private Map<String, FinTypeAccounting> finTypeAccEventMap = new LinkedHashMap<String, FinTypeAccounting>();
+
+	private Listbox listBoxAccountingDetails;
+
 	private String roleCode = "";
 	private String finType = "";
 	protected boolean isOverdraft = false;
 	private boolean isCompReadonly = false;
 	private boolean allowRIAInvestment = false;
 	private boolean validate = false;
-	
+
 	private Object mainController;
 	protected int moduleId;
-	
+
 	private List<AccountEngineEvent> accEventStaticList = new ArrayList<AccountEngineEvent>();
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -116,11 +116,11 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	protected void doSetProperties() {
 		super.pageRightName = "FinTypeAccountingList";
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinTypeAccountingList(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		// Set the page level components.
 		setPageComponents(window_FinTypeAccountingList);
 
@@ -128,46 +128,46 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			if (event.getTarget().getParent() != null) {
 				parent = event.getTarget().getParent();
 			}
-			
+
 			if (arguments.containsKey("parentTab")) {
 				parentTab = (Tab) arguments.get("parentTab");
 			}
-			
+
 			if (arguments.containsKey("roleCode")) {
 				roleCode = (String) arguments.get("roleCode");
 				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "FinTypeAccountingList");
 			}
-			
+
 			if (arguments.containsKey("finType")) {
 				finType = (String) arguments.get("finType");
 			}
-			
+
 			if (arguments.containsKey("moduleId")) {
-				moduleId =  (int) arguments.get("moduleId");
+				moduleId = (int) arguments.get("moduleId");
 			}
-			
+
 			if (arguments.containsKey("allowRIAInvestment")) {
 				this.allowRIAInvestment = (boolean) arguments.get("allowRIAInvestment");
 			}
-			
+
 			if (arguments.containsKey("mainController")) {
 				this.mainController = (Object) arguments.get("mainController");
 			}
-			
+
 			if (arguments.containsKey("isCompReadonly")) {
 				this.isCompReadonly = (boolean) arguments.get("isCompReadonly");
 			}
-			
+
 			if (arguments.containsKey("finTypeAccountingList")) {
 				this.finTypeAccountingList = (List<FinTypeAccounting>) arguments.get("finTypeAccountingList");
 			}
-			
+
 			if (arguments.containsKey("isOverdraft")) {
-				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+				this.isOverdraft = (Boolean) arguments.get("isOverdraft");
 			}
 
 			this.listBoxAccountingDetails.setHeight(this.borderLayoutHeight - 120 + "px");
-			
+
 			doEdit();
 			doCheckRights();
 			doSetFieldProperties();
@@ -176,53 +176,55 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			MessageUtil.showError(e);
 			this.window_FinTypeAccountingList.onClose();
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	private void doEdit() {
-		
+
 	}
 
 	private void doSetFieldProperties() {
-		
+
 	}
 
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities("FinTypeInsuranceList", roleCode);
-		
+
 		logger.debug("leaving");
 	}
 
-	private void doShowDialog() throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+	private void doShowDialog()
+			throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
-		
+
 		if (this.isOverdraft) {
 			accEventStaticList = PennantAppUtil.getOverdraftAccountingEvents();
 		} else {
-			accEventStaticList =  PennantAppUtil.getAccountingEvents();
+			accEventStaticList = PennantAppUtil.getAccountingEvents();
 		}
-		
+
 		doFillFinTypeAccountingList(this.finTypeAccountingList);
-		
+
 		if (parent != null) {
 			this.window_FinTypeAccountingList.setHeight(borderLayoutHeight - 75 + "px");
 			parent.appendChild(this.window_FinTypeAccountingList);
 		}
-		
+
 		try {
-			getMainController().getClass().getMethod("setFinTypeAccountingListCtrl", this.getClass()).invoke(mainController, this);
+			getMainController().getClass().getMethod("setFinTypeAccountingListCtrl", this.getClass())
+					.invoke(mainController, this);
 		} catch (InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		doSetAccountingMandatory();
-		
+
 		logger.debug("leaving");
 	}
-	
+
 	private void doSetAccountingMandatory() {
 		logger.debug("Entering");
 
@@ -234,7 +236,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			return;
 		}
 
-		if(ImplementationConstants.ALLOW_ADDDBSF) {
+		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			if (isOverdraft) {
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
 			} else {
@@ -263,29 +265,29 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMENDMENT, true);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SEGMENT, true);
 		}
-		
+
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_CANCELFIN, true);
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_DISBINS, true);
-		
+
 		if (financeTypeDialogCtrl.finDepreciationReq.isChecked() && !isOverdraft) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, true);
 		}
-		
+
 		boolean vasFlag = false;
 		if (StringUtils.isNotBlank(financeTypeDialogCtrl.alwdVasProduct.getValue())) {
 			vasFlag = true;
 		}
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_ACCRUAL, vasFlag);
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
-		
+
 		if (financeTypeDialogCtrl.alwPlanDeferment.isChecked()) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, true);
 		}
-		
+
 		if (financeTypeDialogCtrl.finIsAlwDifferment.isChecked()) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY, true);
 		}
-	
+
 		if (financeTypeDialogCtrl.finIsIntCpz.isChecked() || financeTypeDialogCtrl.finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);
@@ -293,7 +295,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		} else {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
 		}
-		
+
 		if (StringUtils.equals(getComboboxValue(financeTypeDialogCtrl.cbfinProductType),
 				FinanceConstants.PRODUCT_ISTISNA)) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, true);
@@ -304,32 +306,33 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		logger.debug("leaving");
 	}
 
-	public void setAccountingMandStyle(String eventCode, boolean mandatory){
-		if(this.listBoxAccountingDetails.getFellowIfAny(eventCode) != null){
+	public void setAccountingMandStyle(String eventCode, boolean mandatory) {
+		if (this.listBoxAccountingDetails.getFellowIfAny(eventCode) != null) {
 			ExtendedCombobox exCombobox = (ExtendedCombobox) this.listBoxAccountingDetails.getFellowIfAny(eventCode);
-			if(exCombobox.isReadonly()){
+			if (exCombobox.isReadonly()) {
 				exCombobox.setMandatoryStyle(false);
-			}else{
+			} else {
 				exCombobox.setMandatoryStyle(mandatory);
 			}
 		}
 	}
-	
-	public List<FinTypeAccounting> doSave () {
+
+	public List<FinTypeAccounting> doSave() {
 		logger.debug("Entering");
-		
+
 		List<FinTypeAccounting> finTypeAccountingList = processAccountingDetails();
-		
+
 		logger.debug("leaving");
-		
+
 		return finTypeAccountingList;
 	}
-	
+
 	public void doFillFinTypeAccountingList(List<FinTypeAccounting> finTypeAccountingList) {
 		logger.debug("Entering");
 
 		for (AccountEngineEvent accountEngineEvent : accEventStaticList) {
-			FinTypeAccounting finTypeAcc = fetchExistingFinTypeAcc(finTypeAccountingList, accountEngineEvent.getAEEventCode());
+			FinTypeAccounting finTypeAcc = fetchExistingFinTypeAcc(finTypeAccountingList,
+					accountEngineEvent.getAEEventCode());
 
 			if (finTypeAcc == null) {
 				FinTypeAccounting finTypeAccNew = getNewFinTypeAccounting();
@@ -386,7 +389,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	private FinTypeAccounting fetchExistingFinTypeAcc(List<FinTypeAccounting> finTypeAccountingList, String eventCode) {
 		for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
 			if (StringUtils.equals(finTypeAcc.getEvent(), eventCode)) {
@@ -396,8 +399,8 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 
 		return null;
 	}
-	
-	private FinTypeAccounting getNewFinTypeAccounting(){
+
+	private FinTypeAccounting getNewFinTypeAccounting() {
 		FinTypeAccounting finTypeAccNew = new FinTypeAccounting();
 		finTypeAccNew.setNewRecord(true);
 		finTypeAccNew.setFinType(this.finType);
@@ -434,8 +437,8 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 		return "";
 	}
-	
-	private ExtendedCombobox getExtendedCombobox(String eventCode){	
+
+	private ExtendedCombobox getExtendedCombobox(String eventCode) {
 		ExtendedCombobox extendedCombobox = new ExtendedCombobox();
 		extendedCombobox.setMaxlength(8);
 		extendedCombobox.setModuleName("AccountingSet");
@@ -453,18 +456,19 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	public List<FinTypeAccounting> processAccountingDetails() {
 		if (this.listBoxAccountingDetails.getItems() != null && !this.listBoxAccountingDetails.getItems().isEmpty()) {
 			ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-			
+
 			for (Listitem listitem : this.listBoxAccountingDetails.getItems()) {
 				List<Listcell> listCells = listitem.getChildren();
 				boolean isEventCode = true;
-				
+
 				for (Listcell listcell : listCells) {
 					if (!isEventCode) {
 						ExtendedCombobox extCombobox = (ExtendedCombobox) listcell.getFirstChild();
 						String eventCode = extCombobox.getId();
 						FinTypeAccounting finAccounting = finTypeAccEventMap.get(eventCode);
 						if (validate && extCombobox.isMandatory() && !extCombobox.isReadonly()) {
-							extCombobox.setConstraint(new PTStringValidator(finAccounting.getEventDesc(), null, true, true));
+							extCombobox.setConstraint(
+									new PTStringValidator(finAccounting.getEventDesc(), null, true, true));
 							try {
 								extCombobox.getValidatedValue();
 							} catch (WrongValueException we) {
@@ -500,7 +504,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 					isEventCode = !isEventCode;
 				}
 			}
-			
+
 			if (wve.size() > 0) {
 				WrongValueException[] wvea = new WrongValueException[wve.size()];
 				for (int i = 0; i < wve.size(); i++) {
@@ -512,45 +516,47 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 						}
 					}
 				}
-				
+
 				this.parentTab.setSelected(true);
-				
+
 				throw new WrongValuesException(wvea);
 			}
 		}
-		
+
 		return processWorkflowDetails();
 	}
 
-
-	private List<FinTypeAccounting> processWorkflowDetails(){
+	private List<FinTypeAccounting> processWorkflowDetails() {
 		List<FinTypeAccounting> finTypeAccList = new ArrayList<FinTypeAccounting>();
 		for (FinTypeAccounting finAccounting : finTypeAccEventMap.values()) {
 			FinTypeAccounting finTypeAccBefImg = finAccounting.getBefImage();
-			if(finTypeAccBefImg == null){
-				if(finAccounting.getAccountSetID() != Long.MIN_VALUE){
+			if (finTypeAccBefImg == null) {
+				if (finAccounting.getAccountSetID() != Long.MIN_VALUE) {
 					finTypeAccList.add(finAccounting);
 				}
-			}else{
-				if(finTypeAccBefImg.getAccountSetID() != Long.MIN_VALUE && finAccounting.getAccountSetID() == Long.MIN_VALUE){
+			} else {
+				if (finTypeAccBefImg.getAccountSetID() != Long.MIN_VALUE
+						&& finAccounting.getAccountSetID() == Long.MIN_VALUE) {
 					if (StringUtils.isBlank(finAccounting.getRecordType())) {
 						finAccounting.setVersion(finAccounting.getVersion() + 1);
 						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 						finAccounting.setNewRecord(true);
-					} else if (StringUtils.trimToEmpty(finAccounting.getRecordType()).equals(PennantConstants.RCD_UPD)) {
+					} else if (StringUtils.trimToEmpty(finAccounting.getRecordType())
+							.equals(PennantConstants.RCD_UPD)) {
 						finAccounting.setVersion(finAccounting.getVersion() + 1);
 						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}else if (StringUtils.trimToEmpty(finAccounting.getRecordType()).equals(PennantConstants.RECORD_TYPE_UPD)) {
+					} else if (StringUtils.trimToEmpty(finAccounting.getRecordType())
+							.equals(PennantConstants.RECORD_TYPE_UPD)) {
 						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}else if (finAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (finAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 					}
-				}else if(finTypeAccBefImg.getAccountSetID() == Long.MIN_VALUE &&
-						finAccounting.getAccountSetID() != Long.MIN_VALUE){
+				} else if (finTypeAccBefImg.getAccountSetID() == Long.MIN_VALUE
+						&& finAccounting.getAccountSetID() != Long.MIN_VALUE) {
 					finAccounting.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}else if(finTypeAccBefImg.getAccountSetID() != Long.MIN_VALUE && 
-						finAccounting.getAccountSetID() != Long.MIN_VALUE && 
-						finTypeAccBefImg.getAccountSetID() != finAccounting.getAccountSetID()){
+				} else if (finTypeAccBefImg.getAccountSetID() != Long.MIN_VALUE
+						&& finAccounting.getAccountSetID() != Long.MIN_VALUE
+						&& finTypeAccBefImg.getAccountSetID() != finAccounting.getAccountSetID()) {
 					if (StringUtils.isBlank(finAccounting.getRecordType())) {
 						finAccounting.setVersion(finAccounting.getVersion() + 1);
 						finAccounting.setRecordType(PennantConstants.RCD_UPD);
@@ -559,12 +565,12 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 				finTypeAccList.add(finAccounting);
 			}
 		}
-		
+
 		return finTypeAccList;
 	}
-	
-	public void setRIAAccountingProps(String eventCode, boolean allowRIAInvestment){
-		if(this.listBoxAccountingDetails.getFellowIfAny(eventCode) != null){
+
+	public void setRIAAccountingProps(String eventCode, boolean allowRIAInvestment) {
+		if (this.listBoxAccountingDetails.getFellowIfAny(eventCode) != null) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("EventCode", eventCode, Filter.OP_EQUAL);
 			filters[1] = new Filter("EntryByInvestment", allowRIAInvestment ? 1 : 0, Filter.OP_EQUAL);

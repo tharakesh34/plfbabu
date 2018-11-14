@@ -9,8 +9,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
-public class CustomerProcedure  extends StoredProcedure {
-	
+public class CustomerProcedure extends StoredProcedure {
 
 	public CustomerProcedure(DataSource dataSource, String procedureName) {
 		super(dataSource, procedureName);

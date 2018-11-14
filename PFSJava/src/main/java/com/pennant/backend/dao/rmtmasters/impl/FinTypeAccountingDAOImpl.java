@@ -71,7 +71,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	public FinTypeAccountingDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinanceType
 	 * 
@@ -86,8 +86,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	}
 
 	/**
-	 * This method get the module from method getFinanceType() and set the new record flag as true and
-	 * return FinanceType()
+	 * This method get the module from method getFinanceType() and set the new record flag as true and return
+	 * FinanceType()
 	 * 
 	 * @return FinanceType
 	 */
@@ -100,15 +100,13 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		return finTypeAccounting;
 	}
 
-
-
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinTypeAccounting List
 	 */
 	@Override
@@ -131,13 +129,13 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
-		
+		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTypeAccounting.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	
+
 	@Override
 	public List<FinTypeAccounting> getFinTypeAccountingByFinType(String finType, int moduleId) {
 		logger.debug("Entering");
@@ -147,23 +145,23 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Event, AccountSetID ");
 		selectSql.append(" FROM FinTypeAccounting");
 		selectSql.append(" Where FinType = :FinType And ModuleId = :ModuleId");
-		
+
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
-		
+		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTypeAccounting.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	
+
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinTypeAccounting
 	 */
 	@Override
@@ -172,7 +170,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Event, AccountSetID, ");
 		if (type.contains("View")) {
-		selectSql.append(" lovDescEventAccountingName,lovDescAccountingName,");
+			selectSql.append(" lovDescEventAccountingName,lovDescAccountingName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
@@ -183,7 +181,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
+		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTypeAccounting.class);
 
 		try {
 			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -201,9 +200,9 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	 * save Finance Types
 	 * 
 	 * @param Finance
-	 *         Types (financeType)
+	 *            Types (financeType)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -212,17 +211,17 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	@Override
 	public String save(FinTypeAccounting finTypeAccounting, String type) {
 		logger.debug("Entering ");
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into FinTypeAccounting" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (FinType, Event, AccountSetID," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId)" );
-		insertSql.append(" Values(:FinType, :Event, :AccountSetID," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinTypeAccounting");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (FinType, Event, AccountSetID,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId)");
+		insertSql.append(" Values(:FinType, :Event, :AccountSetID,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
@@ -230,14 +229,13 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	}
 
 	/**
-	 * This method updates the Record FinTypeAccounting or FinTypeAccounting_Temp. if Record not updated
-	 * then throws DataAccessException with error 41004. update Finance Types by key FinType and
-	 * Version
+	 * This method updates the Record FinTypeAccounting or FinTypeAccounting_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
 	 * @param Finance
-	 *         Types (financeType)
+	 *            Types (financeType)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -247,73 +245,71 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	public void update(FinTypeAccounting finTypeAccounting, String type) {
 		int recordCount = 0;
 		logger.debug("Entering ");
-		
-		StringBuilder updateSql = new StringBuilder("Update FinTypeAccounting" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
+
+		StringBuilder updateSql = new StringBuilder("Update FinTypeAccounting");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set AccountSetID = :AccountSetID,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleId = :ModuleId" );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleId = :ModuleId");
 		updateSql.append(" Where FinType=:FinType And Event=:Event And ModuleId = :ModuleId");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
-	
-	
+
 	/**
-	 * This method Deletes the Record from the FinTypeAccounting or FinTypeAccounting_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the FinTypeAccounting or FinTypeAccounting_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param Finance
-	 *         Types (financeType)
+	 *            Types (financeType)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinTypeAccounting finTypeAccounting,String type) {
+	public void delete(FinTypeAccounting finTypeAccounting, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeAccounting");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append("  Where FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * This method initialize the Record.
 	 * 
 	 * @param FinanceType
-	 *         (financeType)
+	 *            (financeType)
 	 * @return FinanceType
 	 */
-	
+
 	@Override
 	public void deleteByFinType(String finType, int moduleId, String type) {
 		logger.debug("Entering");
@@ -334,22 +330,21 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	@Override
 	public Long getAccountSetID(String finType, String event, int moduleId) {
 		logger.debug("Entering");
 
-		if(StringUtils.isEmpty(finType) || StringUtils.isEmpty(event)){
+		if (StringUtils.isEmpty(finType) || StringUtils.isEmpty(event)) {
 			logger.debug("Leaving");
 			return Long.MIN_VALUE;
 		}
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("Event", event);
 		source.addValue("ModuleId", moduleId);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT AccountSetID  FROM FinTypeAccounting ");
 		selectSql.append(" Where FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
 
@@ -357,7 +352,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		Long result = Long.MIN_VALUE;
 		try {
-			result =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			result = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		}
@@ -366,39 +361,39 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	}
 
 	@Override
-	public List<String> getFinTypeAccounting(String event,Long accountSetId, int moduleId) {
+	public List<String> getFinTypeAccounting(String event, Long accountSetId, int moduleId) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("Event", event);
 		mapSqlParameterSource.addValue("AccountSetID", accountSetId);
 		mapSqlParameterSource.addValue("ModuleId", moduleId);
-		
+
 		StringBuilder selectSql = new StringBuilder(" Select FinType FROM FinTypeAccounting");
-		selectSql.append(" Where Event = :Event AND AccountSetID = :AccountSetID AND ModuleId = :ModuleId" );
-		
+		selectSql.append(" Where Event = :Event AND AccountSetID = :AccountSetID AND ModuleId = :ModuleId");
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
 	}
-	
+
 	@Override
 	public List<Long> getFinTypeAccounting(String fintype, List<String> events, int moduleId) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinType", fintype);
 		mapSqlParameterSource.addValue("Event", events);
 		mapSqlParameterSource.addValue("ModuleId", moduleId);
-		
+
 		StringBuilder selectSql = new StringBuilder(" Select AccountSetID FROM FinTypeAccounting");
-		selectSql.append(" Where FinType = :FinType AND Event IN (:Event)  AND ModuleId = :ModuleId" );
-		
+		selectSql.append(" Where FinType = :FinType AND Event IN (:Event)  AND ModuleId = :ModuleId");
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, Long.class);
 	}
-	
+
 	@Override
 	public int getAccountingSetIdCount(long accountSetId, String type) {
 		logger.debug("Entering");
@@ -425,5 +420,5 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		return count;
 	}
-	
+
 }

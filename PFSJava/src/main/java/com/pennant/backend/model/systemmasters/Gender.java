@@ -81,10 +81,11 @@ public class Gender extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return genderCode;
 	}
+
 	public void setId(String id) {
 		this.genderCode = id;
 	}
@@ -92,6 +93,7 @@ public class Gender extends AbstractWorkflowEntity {
 	public String getGenderCode() {
 		return genderCode;
 	}
+
 	public void setGenderCode(String genderCode) {
 		this.genderCode = genderCode;
 	}
@@ -99,6 +101,7 @@ public class Gender extends AbstractWorkflowEntity {
 	public String getGenderDesc() {
 		return genderDesc;
 	}
+
 	public void setGenderDesc(String genderDesc) {
 		this.genderDesc = genderDesc;
 	}
@@ -106,6 +109,7 @@ public class Gender extends AbstractWorkflowEntity {
 	public boolean isGenderIsActive() {
 		return genderIsActive;
 	}
+
 	public void setGenderIsActive(boolean genderIsActive) {
 		this.genderIsActive = genderIsActive;
 	}
@@ -113,6 +117,7 @@ public class Gender extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -120,6 +125,7 @@ public class Gender extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -127,6 +133,7 @@ public class Gender extends AbstractWorkflowEntity {
 	public Gender getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Gender beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -134,17 +141,18 @@ public class Gender extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isSystemDefault() {
-	    return systemDefault;
-    }
+		return systemDefault;
+	}
 
 	public void setSystemDefault(boolean systemDefault) {
-	    this.systemDefault = systemDefault;
-    }
+		this.systemDefault = systemDefault;
+	}
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();

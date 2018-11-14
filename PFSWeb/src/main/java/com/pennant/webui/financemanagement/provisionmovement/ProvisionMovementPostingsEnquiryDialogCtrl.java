@@ -71,41 +71,39 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Provision/ProvisionMovement/ProvisionMovementList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Provision/ProvisionMovement/ProvisionMovementList.zul file.
  */
 public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private static final long serialVersionUID = -1620412127444337321L;
 	private static final Logger logger = Logger.getLogger(ProvisionMovementPostingsEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ProvisionMovementPostingsEnquiryList; 			// autowired
+	protected Window window_ProvisionMovementPostingsEnquiryList; // autowired
 
-	protected Listbox 		listBoxProvisionMovementPostings; 		// autowired
-	protected Grid 			grid_Basicdetails;						// autowired
-	
-	protected Textbox 		finReference;			// autowired
-	protected Textbox 		finBranch; 				// autowired
-	protected Textbox 		finType; 				// autowired
-	protected Longbox 		custID; 				// autowired
-	protected Textbox 		lovDescCustCIF; 		// autowired
-	protected Label   		custShrtName;			// autowired
-	protected Checkbox 		useNFProv; 				// autowired
-	protected Checkbox 		autoReleaseNFP; 		// autowired
-	protected Decimalbox 	principalDue; 			// autowired
-	protected Decimalbox 	profitDue; 				// autowired
-	protected Decimalbox 	dueTotal; 				// autowired
-	protected Decimalbox 	nonFormulaProv; 		// autowired
-	protected Datebox 		dueFromDate; 			// autowired
-	protected Decimalbox 	provisionedAmt; 		// autowired
-	protected Datebox 		lastFullyPaidDate; 			// autowired
+	protected Listbox listBoxProvisionMovementPostings; // autowired
+	protected Grid grid_Basicdetails; // autowired
+
+	protected Textbox finReference; // autowired
+	protected Textbox finBranch; // autowired
+	protected Textbox finType; // autowired
+	protected Longbox custID; // autowired
+	protected Textbox lovDescCustCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Checkbox useNFProv; // autowired
+	protected Checkbox autoReleaseNFP; // autowired
+	protected Decimalbox principalDue; // autowired
+	protected Decimalbox profitDue; // autowired
+	protected Decimalbox dueTotal; // autowired
+	protected Decimalbox nonFormulaProv; // autowired
+	protected Datebox dueFromDate; // autowired
+	protected Decimalbox provisionedAmt; // autowired
+	protected Datebox lastFullyPaidDate; // autowired
 
 	// checkRights
-	protected Button btnHelp; 		// autowired
+	protected Button btnHelp; // autowired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<ProvisionMovement> searchObj;
@@ -113,7 +111,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	private transient ProvisionMovement provisionMovement = null;
 	private ProvisionMovementEnquiryDialogCtrl movementEnquiryDialogCtrl;
 	int listRows;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -129,9 +127,8 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected ProvisionMovement object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected ProvisionMovement object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -148,21 +145,19 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 			}
 
 			if (arguments.containsKey("provisionMovement")) {
-				this.setProvisionMovement((ProvisionMovement) arguments
-						.get("provisionMovement"));
+				this.setProvisionMovement((ProvisionMovement) arguments.get("provisionMovement"));
 			}
 
 			if (arguments.containsKey("movementEnquiryDialogCtrl")) {
-				setMovementEnquiryDialogCtrl((ProvisionMovementEnquiryDialogCtrl) arguments
-						.get("movementEnquiryDialogCtrl"));
+				setMovementEnquiryDialogCtrl(
+						(ProvisionMovementEnquiryDialogCtrl) arguments.get("movementEnquiryDialogCtrl"));
 			} else {
 				setMovementEnquiryDialogCtrl(null);
 			}
 
 			getBorderLayoutHeight();
 			grid_Basicdetails.getRows().getVisibleItemCount();
-			int dialogHeight = grid_Basicdetails.getRows()
-					.getVisibleItemCount() * 20 + 100;
+			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listBoxProvisionMovementPostings.setHeight(listboxHeight + "px");
 			listRows = Math.round(listboxHeight / 24) - 1;
@@ -174,7 +169,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -201,7 +196,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 
 			// stores the initial data for comparing if they are changed
 			// during user action.
-			
+
 			getMovementEnquiryDialogCtrl().window_ProvisionMovementList.setVisible(false);
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
@@ -212,18 +207,18 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aProvisionMovement
 	 *            Provision
 	 */
-	public void doWriteBeanToComponents(ProvisionMovement aProvisionMovement,Provision provision) {
-		logger.debug("Entering") ;
-		
+	public void doWriteBeanToComponents(ProvisionMovement aProvisionMovement, Provision provision) {
+		logger.debug("Entering");
+
 		int format = CurrencyUtil.getFormat(provision.getFinCcy());
-		
+
 		this.finReference.setValue(aProvisionMovement.getFinReference());
 		this.finBranch.setValue(provision.getFinBranch());
 		this.finType.setValue(provision.getFinType());
@@ -233,22 +228,20 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 		this.useNFProv.setChecked(aProvisionMovement.isUseNFProv());
 		this.autoReleaseNFP.setChecked(aProvisionMovement.isAutoReleaseNFP());
 		this.provisionedAmt.setValue(aProvisionMovement.getProvisionedAmt());
-		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getPrincipalDue(),
-				format));
-		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getProfitDue(),
-				format));
-		this.dueTotal.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getPrincipalDue().
-				add(aProvisionMovement.getProfitDue()),format));
-		this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getNonFormulaProv().
-				add(aProvisionMovement.getProfitDue()),format));
+		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getPrincipalDue(), format));
+		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvisionMovement.getProfitDue(), format));
+		this.dueTotal.setValue(PennantAppUtil
+				.formateAmount(aProvisionMovement.getPrincipalDue().add(aProvisionMovement.getProfitDue()), format));
+		this.nonFormulaProv.setValue(PennantAppUtil
+				.formateAmount(aProvisionMovement.getNonFormulaProv().add(aProvisionMovement.getProfitDue()), format));
 		this.dueFromDate.setValue(aProvisionMovement.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvisionMovement.getLastFullyPaidDate());
-		
+
 		doFilllistbox(aProvisionMovement.getPostingsList());
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for rendering list of TransactionEntry
 	 * 
@@ -257,8 +250,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	public void doFilllistbox(List<ReturnDataSet> postingsList) {
 		logger.debug("Entering");
 		if (postingsList != null) {
-			getPagedListWrapper().initList(postingsList, 
-					this.listBoxProvisionMovementPostings, new Paging());
+			getPagedListWrapper().initList(postingsList, this.listBoxProvisionMovementPostings, new Paging());
 			this.listBoxProvisionMovementPostings.setItemRenderer(new ProvisionPostingsListModelItemRenderer());
 		}
 		logger.debug("Leaving");
@@ -301,6 +293,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	public JdbcSearchObject<ProvisionMovement> getSearchObj() {
 		return this.searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<ProvisionMovement> searchObj) {
 		this.searchObj = searchObj;
 	}
@@ -308,6 +301,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	public void setProvision(Provision provision) {
 		this.provision = provision;
 	}
+
 	public Provision getProvision() {
 		return provision;
 	}
@@ -315,6 +309,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	public void setMovementEnquiryDialogCtrl(ProvisionMovementEnquiryDialogCtrl movementEnquiryDialogCtrl) {
 		this.movementEnquiryDialogCtrl = movementEnquiryDialogCtrl;
 	}
+
 	public ProvisionMovementEnquiryDialogCtrl getMovementEnquiryDialogCtrl() {
 		return movementEnquiryDialogCtrl;
 	}
@@ -322,6 +317,7 @@ public class ProvisionMovementPostingsEnquiryDialogCtrl extends GFCBaseCtrl<Retu
 	public void setProvisionMovement(ProvisionMovement provisionMovement) {
 		this.provisionMovement = provisionMovement;
 	}
+
 	public ProvisionMovement getProvisionMovement() {
 		return provisionMovement;
 	}

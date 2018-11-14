@@ -81,13 +81,12 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.collateral.collateralstructure.model.CollateralStructureListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Collateral/CollateralstructureList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Collateral/CollateralstructureList.zul file.
  */
 public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStructure> implements Serializable {
 
@@ -128,7 +127,7 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	protected Listbox sortOperator_Active;
 
 	private transient CollateralStructureService collateralStructureService;
-	
+
 	List<ValueLabel> listLtvType = PennantStaticListUtil.getListLtvTypes();
 
 	/**
@@ -148,40 +147,44 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_CollateralStructureList(Event event)
-			throws Exception {
+	public void onCreate$window_CollateralStructureList(Event event) throws Exception {
 		// Set the page level components.
-		setPageComponents(window_CollateralStructureList, borderLayout_CollateralStructureList, listBoxCollateralStructure, pagingCollateralStructureList);
+		setPageComponents(window_CollateralStructureList, borderLayout_CollateralStructureList,
+				listBoxCollateralStructure, pagingCollateralStructureList);
 		setItemRender(new CollateralStructureListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_CollateralStructureList_NewCollateralStructure, "button_CollateralStructureList_NewCollateralStructure", true);
+		registerButton(button_CollateralStructureList_NewCollateralStructure,
+				"button_CollateralStructureList_NewCollateralStructure", true);
 		registerButton(button_CollateralStructureList_CollateralStructureSearch);
 
-		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType, sortOperator_CollateralType,Operators.STRING);
-		registerField("collateralDesc", listheader_CollateralDesc, SortOrder.ASC, collateralDesc, sortOperator_CollateralDescription,Operators.STRING);
+		registerField("collateralType", listheader_CollateralType, SortOrder.ASC, collateralType,
+				sortOperator_CollateralType, Operators.STRING);
+		registerField("collateralDesc", listheader_CollateralDesc, SortOrder.ASC, collateralDesc,
+				sortOperator_CollateralDescription, Operators.STRING);
 		registerField("ltvType", listheader_LtvType, SortOrder.ASC, ltvType, sortOperator_LtvType, Operators.STRING);
-		registerField("marketableSecurities", listheader_MarketableSecurities, SortOrder.ASC, marketableSecurities, sortOperator_MarketableSecurities, Operators.BOOLEAN);
-		registerField("preValidationReq", listheader_PreValidationReq, SortOrder.ASC, preValidationReq, sortOperator_PreValidationReq, Operators.BOOLEAN);
-		registerField("postValidationReq", listheader_PostValidationReq, SortOrder.ASC, postValidationReq, sortOperator_PostValidationReq, Operators.BOOLEAN);
+		registerField("marketableSecurities", listheader_MarketableSecurities, SortOrder.ASC, marketableSecurities,
+				sortOperator_MarketableSecurities, Operators.BOOLEAN);
+		registerField("preValidationReq", listheader_PreValidationReq, SortOrder.ASC, preValidationReq,
+				sortOperator_PreValidationReq, Operators.BOOLEAN);
+		registerField("postValidationReq", listheader_PostValidationReq, SortOrder.ASC, postValidationReq,
+				sortOperator_PostValidationReq, Operators.BOOLEAN);
 		registerField("active", listheader_Active, SortOrder.ASC, active, sortOperator_Active, Operators.BOOLEAN);
 
 		fillComboBox(this.ltvType, "", listLtvType, "");
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -191,8 +194,7 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -203,22 +205,22 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$button_CollateralStructureList_NewCollateralStructure(Event event) throws IllegalAccessException, InvocationTargetException {
+	public void onClick$button_CollateralStructureList_NewCollateralStructure(Event event)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		// Create a new entity.
 		CollateralStructure aCollateralStructure = new CollateralStructure();
 		aCollateralStructure.setNewRecord(true);
 		aCollateralStructure.setWorkflowId(getWorkFlowId());
-		
+
 		// Copy Button Process
 		boolean isCopyProcess = false;
 		if (event.getData() != null) {
@@ -265,14 +267,14 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 		}
 
 		// Display the dialog page.
-		doShowDialogPage(aCollateralStructure , isCopyProcess);
+		doShowDialogPage(aCollateralStructure, isCopyProcess);
 
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -286,7 +288,8 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 
 		// Get the selected entity.
 		String collateralType = (String) selectedItem.getAttribute("CollateralType");
-		CollateralStructure collateralStructure = collateralStructureService.getCollateralStructureByType(collateralType);
+		CollateralStructure collateralStructure = collateralStructureService
+				.getCollateralStructureByType(collateralType);
 
 		if (collateralStructure == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -326,7 +329,8 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 		arg.put("alwCopyOption", this.button_CollateralStructureList_NewCollateralStructure.isVisible());
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/CollateralStructureDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/CollateralStructureDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -335,8 +339,7 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -376,5 +379,5 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
 	}
-	
+
 }

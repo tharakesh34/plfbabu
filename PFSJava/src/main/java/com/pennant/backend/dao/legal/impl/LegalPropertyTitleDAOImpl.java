@@ -63,8 +63,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>LegalPropertyTitle</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>LegalPropertyTitle</code> with set of CRUD operations.
  */
 public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> implements LegalPropertyTitleDAO {
 	private static Logger logger = Logger.getLogger(LegalPropertyTitleDAOImpl.class);
@@ -106,27 +105,30 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 		logger.debug(Literal.LEAVING);
 		return legalPropertyTitle;
 	}
-	
+
 	@Override
-	public  List<LegalPropertyTitle>  getLegalPropertyTitleList(long legalId, String type) {
+	public List<LegalPropertyTitle> getLegalPropertyTitleList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalPropertyTitleId, legalId, title, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalPropertyTitle");
 		sql.append(type);
 		sql.append(" Where legalId = :legalId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		LegalPropertyTitle legalPropertyTitle = new LegalPropertyTitle();
-		legalPropertyTitle.setLegalId(legalId);;
-		
+		legalPropertyTitle.setLegalId(legalId);
+		;
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalPropertyTitle);
-		RowMapper<LegalPropertyTitle> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalPropertyTitle.class);
+		RowMapper<LegalPropertyTitle> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LegalPropertyTitle.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (Exception e) {
@@ -226,7 +228,7 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 
 	@Override
 	public void deleteList(LegalPropertyTitle legalPropertyTitle, String tableType) {
-	
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LegalPropertyTitle");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where legalId = :legalId");
@@ -235,7 +237,5 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(legalPropertyTitle);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-	
-	
 
 }

@@ -33,9 +33,9 @@ public class CommitmentRuleData {
 	private String custTypeCode;
 
 	public CommitmentRuleData() {
-		
+
 	}
-	
+
 	public BigDecimal getCmtAmount() {
 		return cmtAmount;
 	}

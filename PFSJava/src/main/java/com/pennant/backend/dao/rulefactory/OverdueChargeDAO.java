@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.rulefactory;
+
 import com.pennant.backend.model.rulefactory.OverdueCharge;
 
 /**
@@ -49,11 +50,16 @@ import com.pennant.backend.model.rulefactory.OverdueCharge;
  * 
  */
 public interface OverdueChargeDAO {
-	
+
 	OverdueCharge getOverdueCharge();
+
 	OverdueCharge getNewOverdueCharge();
-	OverdueCharge getOverdueChargeById(String id,String type);
-	void update(OverdueCharge overdueCharge,String type);
-	void delete(OverdueCharge overdueCharge,String type);
-	String save(OverdueCharge overdueCharge,String type);
+
+	OverdueCharge getOverdueChargeById(String id, String type);
+
+	void update(OverdueCharge overdueCharge, String type);
+
+	void delete(OverdueCharge overdueCharge, String type);
+
+	String save(OverdueCharge overdueCharge, String type);
 }

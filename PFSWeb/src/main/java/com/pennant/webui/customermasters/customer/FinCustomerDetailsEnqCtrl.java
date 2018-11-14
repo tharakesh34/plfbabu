@@ -74,20 +74,18 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
  */
 public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 	private static final long serialVersionUID = 9086034736503097868L;
 	private static final Logger logger = Logger.getLogger(FinCustomerDetailsEnqCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUl-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinCustomerDetailsEnq; // autowired
-	
+
 	// ===================Customer Infomation
 	protected Tabbox tabboxFinCustomer;
 	protected Tab customerInfoTab;
@@ -140,11 +138,10 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -189,12 +186,12 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				if (custAgreementData == null) {
 					// Customer Data
 					isCustomerChanged = true;
-					custAgreementData = getCustomerAggrementData(custid,null);
+					custAgreementData = getCustomerAggrementData(custid, null);
 				} else {
 					// if Joint Customer chnaged Data
 					if (custAgreementData.getCustId() != custid) {
 						isCustomerChanged = true;
-						custAgreementData = getCustomerAggrementData(custid,null);
+						custAgreementData = getCustomerAggrementData(custid, null);
 					}
 				}
 				if (StringUtils.isNotBlank(jointcustCif) && jointCustAgreementData == null) {
@@ -204,7 +201,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				this.finCustSysref.setValue(finReference);
 				this.finCustBranch.setValue(custAgreementData.getFinBranch());
 				this.finCustName.setValue(custAgreementData.getCustName());
-				this.finCustIDTypeNo.setValue("Passport"+"-"+custAgreementData.getCustPassport());// Passport-03
+				this.finCustIDTypeNo.setValue("Passport" + "-" + custAgreementData.getCustPassport());// Passport-03
 				this.finCustAccNo.setValue("");
 				this.finCustNationality.setValue(custAgreementData.getCustNationality());
 				this.finCustOccupation.setValue(custAgreementData.getCustEmpStsCode());
@@ -225,12 +222,16 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					this.finCustPrvYOE.setValue(employer[3]);
 				}
 				if (StringUtils.isNotBlank(custAgreementData.getCustDOB())) {
-					this.finCustFDOB.setValue(DateUtility.formatToLongDate(DateUtility.getDBDate(custAgreementData.getCustDOB())));
-					this.finCustFAge.setValue(String.valueOf(DateUtility.getYearsBetween(DateUtility.getDBDate(custAgreementData.getCustDOB()), appldate)));
+					this.finCustFDOB.setValue(
+							DateUtility.formatToLongDate(DateUtility.getDBDate(custAgreementData.getCustDOB())));
+					this.finCustFAge.setValue(String.valueOf(DateUtility
+							.getYearsBetween(DateUtility.getDBDate(custAgreementData.getCustDOB()), appldate)));
 				}
 				if (jointCustAgreementData != null && StringUtils.isNotBlank(jointCustAgreementData.getCustDOB())) {
-					this.finCustSDOB.setValue(DateUtility.formatToLongDate(DateUtility.getDBDate(jointCustAgreementData.getCustDOB())));
-					this.finCustSAge.setValue(String.valueOf(DateUtility.getYearsBetween(DateUtility.getDBDate(jointCustAgreementData.getCustDOB()), appldate)));
+					this.finCustSDOB.setValue(
+							DateUtility.formatToLongDate(DateUtility.getDBDate(jointCustAgreementData.getCustDOB())));
+					this.finCustSAge.setValue(String.valueOf(DateUtility
+							.getYearsBetween(DateUtility.getDBDate(jointCustAgreementData.getCustDOB()), appldate)));
 				}
 				this.finCustSector.setValue("");//custAgreementData.getCustSector()
 				this.finCustSubSector.setValue("");//custAgreementData.getCustSubSector()
@@ -269,11 +270,12 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				cell = new Listcell(formatdAmount(financeMain.getTotalOriginal()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-/*				int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(),financeMain.getMaturityDate(), true);
-				cell = new Listcell(formatdAmount(financeMain.getTotalRepayAmt().divide(new BigDecimal(installmentMnts), RoundingMode.HALF_DOWN)));
-				cell.setStyle("text-align:right;");
-				cell.setParent(item);
-*/				cell = new Listcell(formatdAmount(financeMain.getTotalOutStanding()));
+				/*
+				 * int installmentMnts =
+				 * DateUtility.getMonthsBetween(financeMain.getFinStartDate(),financeMain.getMaturityDate(), true); cell
+				 * = new Listcell(formatdAmount(financeMain.getTotalRepayAmt().divide(new BigDecimal(installmentMnts),
+				 * RoundingMode.HALF_DOWN))); cell.setStyle("text-align:right;"); cell.setParent(item);
+				 */ cell = new Listcell(formatdAmount(financeMain.getTotalOutStanding()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
 				cell = new Listcell(financeMain.getFinStatus());
@@ -281,7 +283,8 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				cell = new Listcell(String.valueOf(financeMain.getOverDueInstlments()));
 				cell.setParent(item);
 				this.listBoxFinances.appendChild(item);
-				cell = new Listcell(formatdAmount(financeMain.getOverDuePrincipal().add(financeMain.getOverDueProfit())));
+				cell = new Listcell(
+						formatdAmount(financeMain.getOverDuePrincipal().add(financeMain.getOverDueProfit())));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
 			}
@@ -317,7 +320,8 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 		renderIncomeExpense(incomeMap, totIncome, expenseMap, totExpense, ccyFormatter);
 	}
 
-	private void renderIncomeExpense(Map<String, List<CustomerIncome>> incomeMap, BigDecimal totIncome, Map<String, List<CustomerIncome>> expenseMap, BigDecimal totExpense, int ccyFormatter) {
+	private void renderIncomeExpense(Map<String, List<CustomerIncome>> incomeMap, BigDecimal totIncome,
+			Map<String, List<CustomerIncome>> expenseMap, BigDecimal totExpense, int ccyFormatter) {
 		this.listBoxCustomerIncome.getItems().clear();
 		Listitem item;
 		Listcell cell;
@@ -338,7 +342,8 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
 						total = total.add(customerIncome.getIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(),
+								CurrencyUtil.getFormat(customerIncome.getToCcy())));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 						item.setAttribute("data", customerIncome);
@@ -381,7 +386,8 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 						cell = new Listcell(customerIncome.getIncomeTypeDesc());
 						cell.setParent(item);
 						total = total.add(customerIncome.getIncome());
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
+						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(),
+								CurrencyUtil.getFormat(customerIncome.getToCcy())));
 						cell.setStyle("text-align:right;");
 						cell.setParent(item);
 						item.setAttribute("data", customerIncome);
@@ -424,7 +430,8 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 
 	private AgreementDetail getCustomerAggrementData(long custID, String custCIF) {
 		// AgreementDetail Data
-		JdbcSearchObject<AgreementDetail> jdbcSearchObject = new JdbcSearchObject<AgreementDetail>(AgreementDetail.class);
+		JdbcSearchObject<AgreementDetail> jdbcSearchObject = new JdbcSearchObject<AgreementDetail>(
+				AgreementDetail.class);
 		jdbcSearchObject.addTabelName("CustomerAgreementDetail_View");
 		if (StringUtils.isNotBlank(custCIF)) {
 			jdbcSearchObject.addFilterEqual("CustCIF", custCIF);
@@ -437,7 +444,6 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 		}
 		return null;
 	}
-
 
 	private List<CustomerIncome> getCustomerIncomeDetails(long custID, String incomeExpense) {
 		// Customer Income and Expense Data
@@ -452,7 +458,8 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 
 	private List<CustomerEmploymentDetail> getCustomerEmpDetails(long custID) {
 		// Customer Income and Expense Data
-		JdbcSearchObject<CustomerEmploymentDetail> jdbcSearchObject = new JdbcSearchObject<CustomerEmploymentDetail>(CustomerEmploymentDetail.class);
+		JdbcSearchObject<CustomerEmploymentDetail> jdbcSearchObject = new JdbcSearchObject<CustomerEmploymentDetail>(
+				CustomerEmploymentDetail.class);
 		jdbcSearchObject.addTabelName("CustomerEmpDetails_AView");
 		jdbcSearchObject.addFilterEqual("CustID", custID);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
@@ -469,48 +476,50 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				isCurrentEmp = true;
 				employer[0] = customerEmploymentDetail.getLovDesccustEmpName();
 				toDate = DateUtility.getAppDate();
-			} 
-			if(fromDate == null){
+			}
+			if (fromDate == null) {
 				fromDate = customerEmploymentDetail.getCustEmpFrom();
-			}else{
-				if(customerEmploymentDetail.getCustEmpFrom() != null && 
-						 customerEmploymentDetail.getCustEmpFrom().compareTo(fromDate) < 0){
+			} else {
+				if (customerEmploymentDetail.getCustEmpFrom() != null
+						&& customerEmploymentDetail.getCustEmpFrom().compareTo(fromDate) < 0) {
 					fromDate = customerEmploymentDetail.getCustEmpFrom();
 				}
 			}
-			if(!isCurrentEmp){
-				if(toDate == null){
+			if (!isCurrentEmp) {
+				if (toDate == null) {
 					toDate = customerEmploymentDetail.getCustEmpTo();
 					employer[0] = customerEmploymentDetail.getLovDesccustEmpName();
-				}else{
-					if(customerEmploymentDetail.getCustEmpTo() != null && 
-							customerEmploymentDetail.getCustEmpTo().compareTo(toDate) > 0){
+				} else {
+					if (customerEmploymentDetail.getCustEmpTo() != null
+							&& customerEmploymentDetail.getCustEmpTo().compareTo(toDate) > 0) {
 						toDate = customerEmploymentDetail.getCustEmpTo();
 						employer[0] = customerEmploymentDetail.getLovDesccustEmpName();
 					}
 				}
 			}
 		}
-		if(customerEmploymentDetails.size() == 1){
+		if (customerEmploymentDetails.size() == 1) {
 			employer[2] = employer[0];
-		}else{
+		} else {
 			for (CustomerEmploymentDetail customerEmpDetail : customerEmploymentDetails) {
-				if(previousDate == null){
-					if(customerEmpDetail.getCustEmpTo().compareTo(toDate) != 0){
+				if (previousDate == null) {
+					if (customerEmpDetail.getCustEmpTo().compareTo(toDate) != 0) {
 						previousDate = customerEmpDetail.getCustEmpTo();
 						employer[2] = customerEmpDetail.getLovDesccustEmpName();
 					}
-				}else{
-					if(customerEmpDetail.getCustEmpTo() != null && 
-							customerEmpDetail.getCustEmpTo().compareTo(previousDate) > 0){
+				} else {
+					if (customerEmpDetail.getCustEmpTo() != null
+							&& customerEmpDetail.getCustEmpTo().compareTo(previousDate) > 0) {
 						previousDate = customerEmpDetail.getCustEmpTo();
 						employer[2] = customerEmpDetail.getLovDesccustEmpName();
 					}
 				}
 			}
 		}
-		employer[1] = fromDate == null || toDate == null ? "" : String.valueOf(DateUtility.getYearsBetween(fromDate, toDate));
-		employer[3] = fromDate == null || previousDate == null ? "" : String.valueOf(DateUtility.getYearsBetween(fromDate, previousDate));
+		employer[1] = fromDate == null || toDate == null ? ""
+				: String.valueOf(DateUtility.getYearsBetween(fromDate, toDate));
+		employer[3] = fromDate == null || previousDate == null ? ""
+				: String.valueOf(DateUtility.getYearsBetween(fromDate, previousDate));
 		return employer;
 	}
 

@@ -61,54 +61,52 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	private static final Logger logger = Logger.getLogger(IstisnaDisbursementDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_IstisnaDisbursement;			// autowired
-	
+	protected Window window_IstisnaDisbursement; // autowired
+
 	// common fields 
-	protected Datebox 		 disbDate; 				         	// autowired
-	protected Textbox        contractorName;					// autowired
-	protected CurrencyBox    disbAmount;						// autowired
-	protected ExtendedCombobox  disbExpType;					// autowired
-	
-	protected Decimalbox     disbRetPerc;						// autowired
-	protected Decimalbox     disbRetAmount;						// autowired
-	protected Textbox        disbRemarks;						// autowired
-	protected Checkbox       autoDisb;							// autowired
-	protected FrequencyBox   consultFeeFrq;						// autowired
-	protected Datebox 		 consultFeeStartDate; 				// autowired
-	protected Datebox 		 consultFeeEndDate;		         	// autowired
-	protected Space 		 space_FeeStartDate;
-	protected Space			 space_FeeEndDate;	
-	
-	protected AccountSelectionBox        disbAccountId;						// autowired
+	protected Datebox disbDate; // autowired
+	protected Textbox contractorName; // autowired
+	protected CurrencyBox disbAmount; // autowired
+	protected ExtendedCombobox disbExpType; // autowired
 
+	protected Decimalbox disbRetPerc; // autowired
+	protected Decimalbox disbRetAmount; // autowired
+	protected Textbox disbRemarks; // autowired
+	protected Checkbox autoDisb; // autowired
+	protected FrequencyBox consultFeeFrq; // autowired
+	protected Datebox consultFeeStartDate; // autowired
+	protected Datebox consultFeeEndDate; // autowired
+	protected Space space_FeeStartDate;
+	protected Space space_FeeEndDate;
 
-	protected Textbox		 moduleName;
-	protected Row			 row_DisbRet;	 
+	protected AccountSelectionBox disbAccountId; // autowired
+
+	protected Textbox moduleName;
+	protected Row row_DisbRet;
 
 	// not auto wired vars
-	private FinanceDisbursement financeDisbursement; 	// overhanded per param
-	private FinanceDetail financeDetail; 	// overhanded per param
+	private FinanceDisbursement financeDisbursement; // overhanded per param
+	private FinanceDetail financeDetail; // overhanded per param
 
-	private transient BigDecimal 	oldVar_disbAmount;
+	private transient BigDecimal oldVar_disbAmount;
 	private transient boolean validationOn;
-	
-	private boolean newRecord=false;
-	private boolean newDisbursement=false;
-	
+
+	private boolean newRecord = false;
+	private boolean newDisbursement = false;
+
 	private List<FinanceDisbursement> financeDisbursements;
-	private DisbursementDetailDialogCtrl  disbursementDetailDialogCtrl;
-	protected JdbcSearchObject<FinanceDisbursement> newSearchObject ;
-	private  int formatter = 0;
+	private DisbursementDetailDialogCtrl disbursementDetailDialogCtrl;
+	protected JdbcSearchObject<FinanceDisbursement> newSearchObject;
+	private int formatter = 0;
 	//private String currency = "";
 	private Date startDate = null;
 	private Date grcEndDate = null;
-	private boolean isEnq = false;	
-	
-	private AccountsService  accountsService;
+	private boolean isEnq = false;
+
+	private AccountsService accountsService;
 	private AccountInterfaceService accountInterfaceService;
 	private ContractorAssetDetail contractorAssetDetail;
 	private List<ContractorAssetDetail> contractorAssetDetails;
@@ -116,8 +114,8 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	/**
 	 * default constructor.<br>
 	 */
-     public IstisnaDisbursementDetailDialogCtrl() {
-	           super();
+	public IstisnaDisbursementDetailDialogCtrl() {
+		super();
 	}
 
 	@Override
@@ -128,13 +126,12 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceDisbursement object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceDisbursement object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
-	 */	
+	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_IstisnaDisbursement(Event event) throws Exception {
 		logger.debug("Entering");
@@ -152,68 +149,70 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		} else {
 			setFinanceDisbursement(null);
 		}
-		
+
 		if (arguments.containsKey("currency")) {
 			//this.currency = (String) arguments.get("currency");
-		} 
-		
+		}
+
 		if (arguments.containsKey("isEnq")) {
 			this.isEnq = (Boolean) arguments.get("isEnq");
-		} 
-		
+		}
+
 		if (arguments.containsKey("startDate")) {
 			this.startDate = (Date) arguments.get("startDate");
-		} 
+		}
 		if (arguments.containsKey("grcEndDate")) {
 			this.grcEndDate = (Date) arguments.get("grcEndDate");
-		} 
-		
+		}
+
 		if (arguments.containsKey("FinanceDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("FinanceDetail");
-		} 
-		
-		if(getFinanceDisbursement().isNewRecord()){
+		}
+
+		if (getFinanceDisbursement().isNewRecord()) {
 			setNewRecord(true);
 		}
 
-		if(arguments.containsKey("disbursementDetailDialogCtrl")){
+		if (arguments.containsKey("disbursementDetailDialogCtrl")) {
 
-			setDisbursementDetailDialogCtrl((DisbursementDetailDialogCtrl) arguments.get("disbursementDetailDialogCtrl"));
+			setDisbursementDetailDialogCtrl(
+					(DisbursementDetailDialogCtrl) arguments.get("disbursementDetailDialogCtrl"));
 			setNewDisbursement(true);
 
-			if(arguments.containsKey("newRecord")){
+			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
-			}else{
+			} else {
 				setNewRecord(false);
 			}
-			
+
 			this.financeDisbursement.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
+			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceDisbursementDialog");
 			}
-			
-			formatter=CurrencyUtil.getFormat(this.disbursementDetailDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+
+			formatter = CurrencyUtil.getFormat(this.disbursementDetailDialogCtrl.getFinanceDetail().getFinScheduleData()
+					.getFinanceMain().getFinCcy());
 		}
-		
-		if(arguments.containsKey("formatter")){
+
+		if (arguments.containsKey("formatter")) {
 			this.formatter = (Integer) arguments.get("formatter");
 		}
-		
-		if(arguments.containsKey("ContractorAssetDetail")){
+
+		if (arguments.containsKey("ContractorAssetDetail")) {
 			this.contractorAssetDetail = (ContractorAssetDetail) arguments.get("ContractorAssetDetail");
 		}
-		if(arguments.containsKey("ContractorAssetDetails")){
+		if (arguments.containsKey("ContractorAssetDetails")) {
 			this.contractorAssetDetails = (List<ContractorAssetDetail>) arguments.get("ContractorAssetDetails");
 		}
-		doLoadWorkFlow(this.financeDisbursement.isWorkflow(),this.financeDisbursement.getWorkflowId(),
+		doLoadWorkFlow(this.financeDisbursement.isWorkflow(), this.financeDisbursement.getWorkflowId(),
 				this.financeDisbursement.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceDisbursementDialog");
 		}
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -222,11 +221,12 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		doShowDialog(getFinanceDisbursement());
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
-	 * @throws InterruptedException 
-	 * @throws SuspendNotAllowedException 
+	 * 
+	 * @throws InterruptedException
+	 * @throws SuspendNotAllowedException
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
@@ -243,10 +243,10 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		this.disbRetAmount.setScale(formatter);
 		this.disbRetAmount.setMaxlength(18);
 		this.disbRemarks.setMaxlength(100);
-		
-		if("E".equals(getFinanceDisbursement().getDisbType())){
+
+		if ("E".equals(getFinanceDisbursement().getDisbType())) {
 			this.disbExpType.setMandatoryStyle(true);
-		}else{
+		} else {
 			this.disbExpType.setMandatoryStyle(false);
 		}
 		this.disbExpType.setInputAllowed(false);
@@ -255,65 +255,65 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		this.disbExpType.setValueColumn("ExpenceTypeId");
 		this.disbExpType.setDescColumn("ExpenceTypeName");
 		this.disbExpType.setValidateColumns(new String[] { "ExpenceTypeId" });
-		Filter[] filter =  new Filter[1];
+		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("ExpenseFor", FinanceConstants.EXPENSE_FOR_ADVANCEBILLING, Filter.OP_EQUAL);
 		this.disbExpType.setFilters(filter);
-		
+
 		this.consultFeeStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.consultFeeEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		String finType = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
 		String finCCY = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		int format =CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
-		if("E".equals(getFinanceDisbursement().getDisbType())){
+		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+
+		if ("E".equals(getFinanceDisbursement().getDisbType())) {
 			this.disbAccountId.setAccountDetails(finType, AccountConstants.FinanceAccount_ISEXPACCT, finCCY);
 			this.disbAccountId.setFormatter(format);
-	        this.disbAccountId.setCustCIF("");
-		} else if("A".equals(getFinanceDisbursement().getDisbType())) {
+			this.disbAccountId.setCustCIF("");
+		} else if ("A".equals(getFinanceDisbursement().getDisbType())) {
 			this.disbAccountId.setAccountDetails(finType, AccountConstants.FinanceAccount_ISCONTADV, finCCY);
 			this.disbAccountId.setFormatter(format);
-	        this.disbAccountId.setCustCIF(this.contractorAssetDetail.getLovDescCustCIF());
-		} else if("C".equals(getFinanceDisbursement().getDisbType())) {
-			this.disbAccountId.setAccountDetails(finType, AccountConstants.FinanceAccount_ISCNSLTACCT , finCCY);
+			this.disbAccountId.setCustCIF(this.contractorAssetDetail.getLovDescCustCIF());
+		} else if ("C".equals(getFinanceDisbursement().getDisbType())) {
+			this.disbAccountId.setAccountDetails(finType, AccountConstants.FinanceAccount_ISCNSLTACCT, finCCY);
 			this.disbAccountId.setFormatter(format);
-	        this.disbAccountId.setCustCIF(this.contractorAssetDetail.getLovDescCustCIF());
-		} else if("B".equals(getFinanceDisbursement().getDisbType())) {
-			this.disbAccountId.setAccountDetails(finType, AccountConstants.FinanceAccount_ISBILLACCT , finCCY);
+			this.disbAccountId.setCustCIF(this.contractorAssetDetail.getLovDescCustCIF());
+		} else if ("B".equals(getFinanceDisbursement().getDisbType())) {
+			this.disbAccountId.setAccountDetails(finType, AccountConstants.FinanceAccount_ISBILLACCT, finCCY);
 			this.disbAccountId.setFormatter(format);
-	        this.disbAccountId.setCustCIF(this.contractorAssetDetail.getLovDescCustCIF());
+			this.disbAccountId.setCustCIF(this.contractorAssetDetail.getLovDescCustCIF());
 		}
-		if("E".equals(getFinanceDisbursement().getDisbType())){
+		if ("E".equals(getFinanceDisbursement().getDisbType())) {
 			this.disbAccountId.setMandatoryStyle(false);
-		}else{
+		} else {
 			this.disbAccountId.setMandatoryStyle(true);
 		}
-		 
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
-	public  void onCheck$autoDisb(Event event){
-		if("E".equals(getFinanceDisbursement().getDisbType())){
-			if(this.autoDisb.isChecked()){
+	public void onCheck$autoDisb(Event event) {
+		if ("E".equals(getFinanceDisbursement().getDisbType())) {
+			if (this.autoDisb.isChecked()) {
 				this.disbAccountId.setMandatoryStyle(true);
-			}else{
+			} else {
 				this.disbAccountId.setMandatoryStyle(false);
 			}
 		}
 	}
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -332,10 +332,11 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnSave(Event event)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -369,10 +370,11 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnDelete(Event event)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
@@ -421,38 +423,40 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 */
 	public void doWriteBeanToComponents(FinanceDisbursement aFinanceDisbursement) {
 		logger.debug("Entering");
-		
-		if(contractorAssetDetail != null){
+
+		if (contractorAssetDetail != null) {
 			this.contractorName.setValue(contractorAssetDetail.getContractorName());
 		}
-		
+
 		this.disbDate.setValue(aFinanceDisbursement.getDisbDate());
-		if("B".equals(aFinanceDisbursement.getDisbType())){
+		if ("B".equals(aFinanceDisbursement.getDisbType())) {
 			this.disbAmount.setValue(PennantAppUtil.formateAmount(aFinanceDisbursement.getDisbClaim(), formatter));
-		}else{
+		} else {
 			this.disbAmount.setValue(PennantAppUtil.formateAmount(aFinanceDisbursement.getDisbAmount(), formatter));
 		}
-		this.disbAccountId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceDisbursement.getDisbAccountId()));
-		this.disbExpType.setValue(String.valueOf(aFinanceDisbursement.getDisbExpType() == 0 ? "" : 
-			aFinanceDisbursement.getDisbExpType()), aFinanceDisbursement.getLovDescDisbExpType());
+		this.disbAccountId
+				.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceDisbursement.getDisbAccountId()));
+		this.disbExpType.setValue(
+				String.valueOf(aFinanceDisbursement.getDisbExpType() == 0 ? "" : aFinanceDisbursement.getDisbExpType()),
+				aFinanceDisbursement.getLovDescDisbExpType());
 		this.disbRetAmount.setValue(PennantAppUtil.formateAmount(aFinanceDisbursement.getDisbRetAmount(), formatter));
 		this.disbRetPerc.setValue(aFinanceDisbursement.getDisbRetPerc());
 		this.disbRemarks.setValue(aFinanceDisbursement.getDisbRemarks());
 		this.autoDisb.setChecked(aFinanceDisbursement.isAutoDisb());
-		
-		if("B".equals(getFinanceDisbursement().getDisbType()) && isNewRecord()) {
+
+		if ("B".equals(getFinanceDisbursement().getDisbType()) && isNewRecord()) {
 			this.disbRetPerc.setValue(contractorAssetDetail.getDftRetentionPerc());
 		}
 
 		this.consultFeeFrq.setValue(aFinanceDisbursement.getConsultFeeFrq());
 		this.consultFeeStartDate.setValue(aFinanceDisbursement.getConsultFeeStartDate());
 		this.consultFeeEndDate.setValue(aFinanceDisbursement.getConsultFeeEndDate());
-		
-		if(StringUtils.isEmpty(aFinanceDisbursement.getConsultFeeFrq())){
+
+		if (StringUtils.isEmpty(aFinanceDisbursement.getConsultFeeFrq())) {
 			this.consultFeeStartDate.setDisabled(true);
 			this.consultFeeEndDate.setDisabled(true);
 		}
-		
+
 		this.recordStatus.setValue(aFinanceDisbursement.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -461,117 +465,134 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceDisbursement
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinanceDisbursement aFinanceDisbursement, ContractorAssetDetail aContractorAssetDetail) throws InterruptedException {
+	public void doWriteComponentsToBean(FinanceDisbursement aFinanceDisbursement,
+			ContractorAssetDetail aContractorAssetDetail) throws InterruptedException {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		int formatter=CurrencyUtil.getFormat(this.disbursementDetailDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		int formatter = CurrencyUtil.getFormat(
+				this.disbursementDetailDialogCtrl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if("E".equals(aFinanceDisbursement.getDisbType())){
+			if ("E".equals(aFinanceDisbursement.getDisbType())) {
 				aFinanceDisbursement.setContractorId(0);
-			}else{
+			} else {
 				aFinanceDisbursement.setContractorId(aContractorAssetDetail.getContractorId());
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceDisbursement.setDisbDate(this.disbDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceDisbursement.setLovDescDisbExpType(this.disbExpType.getDescription());
-			aFinanceDisbursement.setDisbExpType(Long.valueOf(StringUtils.isEmpty(this.disbExpType.getValue()) ? "0" : this.disbExpType.getValue()));
-		}catch (WrongValueException we ) {
+			aFinanceDisbursement.setDisbExpType(
+					Long.valueOf(StringUtils.isEmpty(this.disbExpType.getValue()) ? "0" : this.disbExpType.getValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			this.disbAccountId.getValidatedValue();
-			aFinanceDisbursement.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAccountId.getValue()));
-		}catch (WrongValueException we ) {
+			aFinanceDisbursement
+					.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAccountId.getValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if("B".equals(aFinanceDisbursement.getDisbType())){
-				aFinanceDisbursement.setDisbClaim(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
-			}else{
-				aFinanceDisbursement.setDisbAmount(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
+			if ("B".equals(aFinanceDisbursement.getDisbType())) {
+				aFinanceDisbursement
+						.setDisbClaim(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
+			} else {
+				aFinanceDisbursement
+						.setDisbAmount(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	 
+
 		try {
-			if("B".equals(aFinanceDisbursement.getDisbType())){
-				if(!PennantConstants.RECORD_TYPE_DEL.equals(aContractorAssetDetail.getRecordType()) && 
-						!PennantConstants.RECORD_TYPE_CAN.equals(aContractorAssetDetail.getRecordType())) {
-					if(isNewRecord()){
-						aContractorAssetDetail.setTotClaimAmt(aContractorAssetDetail.getTotClaimAmt().add(aFinanceDisbursement.getDisbClaim()));
-					}else{
-						aContractorAssetDetail.setTotClaimAmt(aContractorAssetDetail.getTotClaimAmt().add(aFinanceDisbursement.getDisbClaim()).subtract(PennantAppUtil.unFormateAmount(this.oldVar_disbAmount, formatter)));
+			if ("B".equals(aFinanceDisbursement.getDisbType())) {
+				if (!PennantConstants.RECORD_TYPE_DEL.equals(aContractorAssetDetail.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_CAN.equals(aContractorAssetDetail.getRecordType())) {
+					if (isNewRecord()) {
+						aContractorAssetDetail.setTotClaimAmt(
+								aContractorAssetDetail.getTotClaimAmt().add(aFinanceDisbursement.getDisbClaim()));
+					} else {
+						aContractorAssetDetail.setTotClaimAmt(
+								aContractorAssetDetail.getTotClaimAmt().add(aFinanceDisbursement.getDisbClaim())
+										.subtract(PennantAppUtil.unFormateAmount(this.oldVar_disbAmount, formatter)));
 					}
 
-					if(aContractorAssetDetail.getAssetValue().compareTo(aContractorAssetDetail.getTotClaimAmt()) < 0){
-						throw new WrongValueException(this.disbAmount,Labels.getLabel("label_ContractorBilling_TotBillClaim") +
-								PennantAppUtil.amountFormate(aContractorAssetDetail.getAssetValue(), formatter));
+					if (aContractorAssetDetail.getAssetValue().compareTo(aContractorAssetDetail.getTotClaimAmt()) < 0) {
+						throw new WrongValueException(this.disbAmount,
+								Labels.getLabel("label_ContractorBilling_TotBillClaim") + PennantAppUtil
+										.amountFormate(aContractorAssetDetail.getAssetValue(), formatter));
 					}
 				}
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if("A".equals(aFinanceDisbursement.getDisbType())){
-				if(!PennantConstants.RECORD_TYPE_DEL.equals(aContractorAssetDetail.getRecordType()) && 
-						!PennantConstants.RECORD_TYPE_CAN.equals(aContractorAssetDetail.getRecordType())) {
-					if(isNewRecord()){
-						aContractorAssetDetail.setTotAdvanceAmt(aContractorAssetDetail.getTotAdvanceAmt().add(aFinanceDisbursement.getDisbAmount()));
-					}else{
-						aContractorAssetDetail.setTotAdvanceAmt(aContractorAssetDetail.getTotAdvanceAmt().add(aFinanceDisbursement.getDisbAmount()).subtract(PennantAppUtil.unFormateAmount(this.oldVar_disbAmount, formatter)));
+			if ("A".equals(aFinanceDisbursement.getDisbType())) {
+				if (!PennantConstants.RECORD_TYPE_DEL.equals(aContractorAssetDetail.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_CAN.equals(aContractorAssetDetail.getRecordType())) {
+					if (isNewRecord()) {
+						aContractorAssetDetail.setTotAdvanceAmt(
+								aContractorAssetDetail.getTotAdvanceAmt().add(aFinanceDisbursement.getDisbAmount()));
+					} else {
+						aContractorAssetDetail.setTotAdvanceAmt(
+								aContractorAssetDetail.getTotAdvanceAmt().add(aFinanceDisbursement.getDisbAmount())
+										.subtract(PennantAppUtil.unFormateAmount(this.oldVar_disbAmount, formatter)));
 					}
-					
-					if(aContractorAssetDetail.getAssetValue().compareTo(aContractorAssetDetail.getTotAdvanceAmt()) < 0){
-						throw new WrongValueException(this.disbAmount,Labels.getLabel("label_ContractorAdvance_TotAdvAmt") + 
-								PennantAppUtil.amountFormate(aContractorAssetDetail.getAssetValue(), formatter));
+
+					if (aContractorAssetDetail.getAssetValue()
+							.compareTo(aContractorAssetDetail.getTotAdvanceAmt()) < 0) {
+						throw new WrongValueException(this.disbAmount,
+								Labels.getLabel("label_ContractorAdvance_TotAdvAmt") + PennantAppUtil
+										.amountFormate(aContractorAssetDetail.getAssetValue(), formatter));
 					}
 				}
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			aFinanceDisbursement.setDisbRetAmount(PennantAppUtil.unFormateAmount(this.disbRetAmount.getValue(),formatter));
-		}catch (WrongValueException we ) {
+			aFinanceDisbursement
+					.setDisbRetAmount(PennantAppUtil.unFormateAmount(this.disbRetAmount.getValue(), formatter));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceDisbursement.setDisbRetPerc(this.disbRetPerc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceDisbursement.setAutoDisb(this.autoDisb.isChecked());
 			aFinanceDisbursement.setDisbIsActive(true);
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceDisbursement.setDisbRemarks(this.disbRemarks.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 
 			aFinanceDisbursement.setConsultFeeFrq("");
-			if("C".equals(aFinanceDisbursement.getDisbType())){
+			if ("C".equals(aFinanceDisbursement.getDisbType())) {
 				if (this.consultFeeFrq.isValidComboValue()) {
-					aFinanceDisbursement.setConsultFeeFrq(this.consultFeeFrq.getValue() == null ? "" : this.consultFeeFrq.getValue());
+					aFinanceDisbursement.setConsultFeeFrq(
+							this.consultFeeFrq.getValue() == null ? "" : this.consultFeeFrq.getValue());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -579,24 +600,24 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		}
 		try {
 			aFinanceDisbursement.setConsultFeeStartDate(this.consultFeeStartDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinanceDisbursement.setConsultFeeEndDate(this.consultFeeEndDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		Date curBDay = DateUtility.getAppDate();
 		aFinanceDisbursement.setDisbReqDate(curBDay);
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		doClearMessage();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
 			}
@@ -612,8 +633,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceDisbursement
 	 * @throws InterruptedException
@@ -629,12 +649,12 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 			this.disbDate.focus();
 		} else {
 			this.disbDate.focus();
-			if (isNewDisbursement()){
+			if (isNewDisbursement()) {
 				doEdit();
-			}else  if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Enquiry();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -645,12 +665,12 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 			// fill the components with the data
 			doWriteBeanToComponents(aFinanceDisbursement);
 
-			if(isNewDisbursement() || isEnq){
+			if (isNewDisbursement() || isEnq) {
 				this.window_IstisnaDisbursement.setHeight("280px");
 				this.window_IstisnaDisbursement.setWidth("90%");
 				this.groupboxWf.setVisible(false);
-				this.window_IstisnaDisbursement.doModal() ;
-			}else{
+				this.window_IstisnaDisbursement.doModal();
+			} else {
 				this.window_IstisnaDisbursement.setWidth("100%");
 				this.window_IstisnaDisbursement.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
@@ -670,40 +690,49 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		logger.debug("Entering");
 		doClearMessage();
 		setValidationOn(true);
-		
+
 		String schDate = DateUtility.formatToLongDate(this.disbDate.getValue());
-		
+
 		if (!this.disbDate.isDisabled()) {
-			this.disbDate.setConstraint(new PTDateValidator(Labels.getLabel("label_Istisna"+this.moduleName.getValue()+"Dialog_disbDate.value"),
-					true,startDate , grcEndDate ,true));
+			this.disbDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_Istisna" + this.moduleName.getValue() + "Dialog_disbDate.value"), true,
+					startDate, grcEndDate, true));
 		}
 		if (!this.disbAmount.isDisabled()) {
-			this.disbAmount.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_Istisna"+this.moduleName.getValue()+"Dialog_disbAmount.value"), formatter, true, false));
+			this.disbAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_Istisna" + this.moduleName.getValue() + "Dialog_disbAmount.value"),
+					formatter, true, false));
 		}
-		if (!this.disbAccountId.isReadonly()){
-			if(!StringUtils.equals("E", getFinanceDisbursement().getDisbType())||this.autoDisb.isChecked()) {
-				this.disbAccountId.setConstraint(new PTStringValidator(Labels.getLabel("label_Istisna"+this.moduleName.getValue()+"Dialog_disbAccountId.value"), null, true));
+		if (!this.disbAccountId.isReadonly()) {
+			if (!StringUtils.equals("E", getFinanceDisbursement().getDisbType()) || this.autoDisb.isChecked()) {
+				this.disbAccountId.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_Istisna" + this.moduleName.getValue() + "Dialog_disbAccountId.value"),
+						null, true));
 			}
 		}
 		if (!this.disbRetPerc.isDisabled() && row_DisbRet.isVisible()) {
-			this.disbRetPerc.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_Istisna"+this.moduleName.getValue()+"Dialog_disbRetPerc.value"), 2, true, false));
+			this.disbRetPerc.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_Istisna" + this.moduleName.getValue() + "Dialog_disbRetPerc.value"), 2, true,
+					false));
 		}
 		String consFeeFrq = this.consultFeeFrq.getValue();
-		if(!StringUtils.isEmpty(consFeeFrq) && schDate != null){
-			
+		if (!StringUtils.isEmpty(consFeeFrq) && schDate != null) {
+
 			Date strtDate = this.consultFeeStartDate.getValue();
 			if (!this.consultFeeStartDate.isDisabled()) {
-				this.consultFeeStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_Istisna"+this.moduleName.getValue()+"Dialog_consultFeeStartDate.value"),
-						true,this.disbDate.getValue() , grcEndDate ,true));
+				this.consultFeeStartDate.setConstraint(new PTDateValidator(
+						Labels.getLabel(
+								"label_Istisna" + this.moduleName.getValue() + "Dialog_consultFeeStartDate.value"),
+						true, this.disbDate.getValue(), grcEndDate, true));
 			}
-			if (!this.consultFeeEndDate.isDisabled() && strtDate!= null) {
-				this.consultFeeEndDate.setConstraint(new PTDateValidator(Labels.getLabel("label_Istisna"+this.moduleName.getValue()+"Dialog_consultFeeEndDate.value"),
-						true,strtDate , grcEndDate ,true));
+			if (!this.consultFeeEndDate.isDisabled() && strtDate != null) {
+				this.consultFeeEndDate.setConstraint(new PTDateValidator(
+						Labels.getLabel(
+								"label_Istisna" + this.moduleName.getValue() + "Dialog_consultFeeEndDate.value"),
+						true, strtDate, grcEndDate, true));
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -713,16 +742,16 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		setValidationOn(false);
-		
+
 		this.disbDate.setConstraint("");
- 		this.disbAmount.setConstraint("");
+		this.disbAmount.setConstraint("");
 		this.disbAccountId.setConstraint("");
- 		this.disbRetAmount.setConstraint("");
+		this.disbRetAmount.setConstraint("");
 		this.disbRetPerc.setConstraint("");
 		this.disbRemarks.setConstraint("");
 		this.consultFeeStartDate.setConstraint("");
 		this.consultFeeEndDate.setConstraint("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -730,13 +759,14 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		
+
 		boolean isMand = false;
-		if("E".equals(getFinanceDisbursement().getDisbType())){
+		if ("E".equals(getFinanceDisbursement().getDisbType())) {
 			isMand = true;
 		}
-		this.disbExpType.setConstraint(new PTStringValidator(Labels.getLabel("label_Istisna"+this.moduleName.getValue()+"Dialog_disbExpType.value"),
-				null, isMand,true));
+		this.disbExpType.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_Istisna" + this.moduleName.getValue() + "Dialog_disbExpType.value"), null,
+				isMand, true));
 	}
 
 	/**
@@ -752,9 +782,9 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
-		
+
 		this.disbDate.setErrorMessage("");
- 		this.disbAmount.setErrorMessage("");
+		this.disbAmount.setErrorMessage("");
 		this.disbRetPerc.setErrorMessage("");
 		this.disbRetAmount.setErrorMessage("");
 		this.disbRemarks.setErrorMessage("");
@@ -763,7 +793,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		this.consultFeeFrq.setErrorMessage("");
 		this.consultFeeStartDate.setErrorMessage("");
 		this.consultFeeEndDate.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -773,54 +803,57 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 * Deletes a FinanceDisbursement object from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	private void doDelete() throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		Cloner cloner = new Cloner();
 		final FinanceDisbursement aFinanceDisbursement = cloner.deepClone(getFinanceDisbursement());
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-		      Labels.getLabel("label_IstisnaBillingDialog_disbDate.value")+" : "+ DateUtility.formatToLongDate(aFinanceDisbursement.getDisbDate());
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_IstisnaBillingDialog_disbDate.value") + " : "
+				+ DateUtility.formatToLongDate(aFinanceDisbursement.getDisbDate());
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinanceDisbursement.getRecordType())){
-				aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion()+1);
+			if (StringUtils.isBlank(aFinanceDisbursement.getRecordType())) {
+				aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion() + 1);
 				aFinanceDisbursement.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				aFinanceDisbursement.setNewRecord(true);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aFinanceDisbursement.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(isNewDisbursement()){
-					
-					if("B".equals(aFinanceDisbursement.getDisbType())){
-						contractorAssetDetail.setTotClaimAmt(contractorAssetDetail.getTotClaimAmt().subtract(aFinanceDisbursement.getDisbClaim()));
+				if (isNewDisbursement()) {
+
+					if ("B".equals(aFinanceDisbursement.getDisbType())) {
+						contractorAssetDetail.setTotClaimAmt(
+								contractorAssetDetail.getTotClaimAmt().subtract(aFinanceDisbursement.getDisbClaim()));
 					}
-					
-					if("A".equals(aFinanceDisbursement.getDisbType())){
-						contractorAssetDetail.setTotAdvanceAmt(contractorAssetDetail.getTotAdvanceAmt().subtract(aFinanceDisbursement.getDisbAmount()));
+
+					if ("A".equals(aFinanceDisbursement.getDisbType())) {
+						contractorAssetDetail.setTotAdvanceAmt(contractorAssetDetail.getTotAdvanceAmt()
+								.subtract(aFinanceDisbursement.getDisbAmount()));
 					}
-					
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newBillingProcess(aFinanceDisbursement,tranType);
+
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newBillingProcess(aFinanceDisbursement, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_IstisnaDisbursement, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getDisbursementDetailDialogCtrl().doFillDisbursementDetails(this.financeDisbursements);
-					fillContractorList(aFinanceDisbursement,contractorAssetDetail);
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						getDisbursementDetailDialogCtrl().doFillDisbursementDetails(this.financeDisbursements);
+						fillContractorList(aFinanceDisbursement, contractorAssetDetail);
 						closeDialog();
-					}	
+					}
 
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -830,41 +863,43 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 
 	/**
 	 * Method for Resetting Contractor Totals Details
+	 * 
 	 * @param aFinanceDisbursement
 	 * @param bContractorAssetDetail
 	 */
-	private void fillContractorList(FinanceDisbursement aFinanceDisbursement, ContractorAssetDetail bContractorAssetDetail){
+	private void fillContractorList(FinanceDisbursement aFinanceDisbursement,
+			ContractorAssetDetail bContractorAssetDetail) {
 
 		//Billing case && Advance
-		if("B".equals(aFinanceDisbursement.getDisbType()) || "A".equals(aFinanceDisbursement.getDisbType())) {
-			ContractorAssetDetail acontractorAssetDetail = null ;
-			int i=0;
-			for (; i < contractorAssetDetails.size() ; i++) {
+		if ("B".equals(aFinanceDisbursement.getDisbType()) || "A".equals(aFinanceDisbursement.getDisbType())) {
+			ContractorAssetDetail acontractorAssetDetail = null;
+			int i = 0;
+			for (; i < contractorAssetDetails.size(); i++) {
 				acontractorAssetDetail = contractorAssetDetails.get(i);
-				if(bContractorAssetDetail.getContractorId() == acontractorAssetDetail.getContractorId()){
+				if (bContractorAssetDetail.getContractorId() == acontractorAssetDetail.getContractorId()) {
 					break;
 				}
-				acontractorAssetDetail= null;
+				acontractorAssetDetail = null;
 			}
 
-			if(acontractorAssetDetail != null){
+			if (acontractorAssetDetail != null) {
 
-				double assetValue = bContractorAssetDetail.getAssetValue().doubleValue();			
+				double assetValue = bContractorAssetDetail.getAssetValue().doubleValue();
 				double amount = 0;
 
-				if(!PennantConstants.RECORD_TYPE_DEL.equals(bContractorAssetDetail.getRecordType()) && 
-						!PennantConstants.RECORD_TYPE_CAN.equals(bContractorAssetDetail.getRecordType())) {
-					if("B".equals(aFinanceDisbursement.getDisbType())){
-						amount = ((bContractorAssetDetail.getTotClaimAmt().doubleValue())
-								/assetValue) * 100;
-						bContractorAssetDetail.setLovDescClaimPercent(PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(amount), 2));
+				if (!PennantConstants.RECORD_TYPE_DEL.equals(bContractorAssetDetail.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_CAN.equals(bContractorAssetDetail.getRecordType())) {
+					if ("B".equals(aFinanceDisbursement.getDisbType())) {
+						amount = ((bContractorAssetDetail.getTotClaimAmt().doubleValue()) / assetValue) * 100;
+						bContractorAssetDetail.setLovDescClaimPercent(
+								PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(amount), 2));
 						contractorAssetDetails.remove(i);
 						contractorAssetDetails.add(i, bContractorAssetDetail);
 						getDisbursementDetailDialogCtrl().doFillContractorDetails(contractorAssetDetails);
 					}
-					if(!PennantConstants.RECORD_TYPE_DEL.equals(bContractorAssetDetail.getRecordType()) && 
-							!PennantConstants.RECORD_TYPE_CAN.equals(bContractorAssetDetail.getRecordType())) {
-						if("A".equals(aFinanceDisbursement.getDisbType())){
+					if (!PennantConstants.RECORD_TYPE_DEL.equals(bContractorAssetDetail.getRecordType())
+							&& !PennantConstants.RECORD_TYPE_CAN.equals(bContractorAssetDetail.getRecordType())) {
+						if ("A".equals(aFinanceDisbursement.getDisbType())) {
 							contractorAssetDetails.remove(i);
 							contractorAssetDetails.add(i, bContractorAssetDetail);
 							getDisbursementDetailDialogCtrl().doFillContractorDetails(contractorAssetDetails);
@@ -874,22 +909,22 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 			}
 		}
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
-		if (isNewRecord()){
-			if(isNewDisbursement()){
-				this.btnCancel.setVisible(false);	
+
+		if (isNewRecord()) {
+			if (isNewDisbursement()) {
+				this.btnCancel.setVisible(false);
 			}
 			this.disbDate.setDisabled(isReadOnly("FinanceDisbursementDialog_disbDate"));
- 		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.disbDate.setDisabled(true);
- 		}
+		}
 		this.contractorName.setReadonly(true);
 		this.disbAccountId.setReadonly(isReadOnly("FinanceDisbursementDialog_disbAccountId"));
 		this.disbAmount.setDisabled(isReadOnly("FinanceDisbursementDialog_disbAmount"));
@@ -901,28 +936,28 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		this.consultFeeFrq.setDisabled(isReadOnly("FinanceDisbursementDialog_consultFeeFrq"));
 		this.consultFeeStartDate.setDisabled(isReadOnly("FinanceDisbursementDialog_consultFeeStartDate"));
 		this.consultFeeEndDate.setDisabled(isReadOnly("FinanceDisbursementDialog_consultFeeEndDate"));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.financeDisbursement.isNewRecord()){
+			if (this.financeDisbursement.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 
-			if(newDisbursement){
-				if (isNewRecord()){
+			if (newDisbursement) {
+				if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newDisbursement);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
@@ -930,90 +965,97 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewDisbursement()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewDisbursement()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
 	}
-	
-	public void onChange$disbRetPerc(Event event){
+
+	public void onChange$disbRetPerc(Event event) {
 		logger.debug("Entering" + event.toString());
-		if(this.disbAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
+		if (this.disbAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal retPerc = BigDecimal.ZERO;
-			if(this.disbRetPerc.getValue() != null){
+			if (this.disbRetPerc.getValue() != null) {
 				retPerc = this.disbRetPerc.getValue();
 			}
-			this.disbRetAmount.setValue((this.disbAmount.getActualValue().multiply(retPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-		}else{
-			this.disbRetAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,formatter));
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-	
-	public void onFulfill$disbAmount(Event event){
-		logger.debug("Entering" + event.toString());
-		if(this.disbAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0 && "B".equals(getFinanceDisbursement().getDisbType())){
-			BigDecimal retPerc = BigDecimal.ZERO;
-			if(this.disbRetPerc.getValue() != null){
-				retPerc = this.disbRetPerc.getValue();
-			}
-			this.disbRetAmount.setValue((this.disbAmount.getActualValue().multiply(retPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-		}else{
-			this.disbRetAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,formatter));
+			this.disbRetAmount.setValue((this.disbAmount.getActualValue().multiply(retPerc)).divide(new BigDecimal(100),
+					0, RoundingMode.HALF_DOWN));
+		} else {
+			this.disbRetAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onChange$disbDate(Event event){
+	public void onFulfill$disbAmount(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Date retentionTillDate = null;
-		if(contractorAssetDetail != null){
-			retentionTillDate = contractorAssetDetail.getRetentionTillDate();
-		}
-		
-		if(this.disbDate.getValue() != null && retentionTillDate != null){
-			if(this.disbDate.getValue().compareTo(retentionTillDate) <= 0){
-				this.disbRetPerc.setValue(contractorAssetDetail.getDftRetentionPerc());
-			}else{
-				this.disbRetPerc.setValue(BigDecimal.ZERO);
-			}
-		}else{
-			if(this.disbRetPerc.getValue() == null){
-				this.disbRetPerc.setValue(BigDecimal.ZERO);
-			}
-		}
-		
-		if(this.disbDate.getValue() == null){
-			this.disbRetPerc.setValue(BigDecimal.ZERO);
-		}
-		
-		if(this.disbAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0 && "B".equals(getFinanceDisbursement().getDisbType())){
+		if (this.disbAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
+				&& "B".equals(getFinanceDisbursement().getDisbType())) {
 			BigDecimal retPerc = BigDecimal.ZERO;
-			if(this.disbRetPerc.getValue() != null){
+			if (this.disbRetPerc.getValue() != null) {
 				retPerc = this.disbRetPerc.getValue();
 			}
-			this.disbRetAmount.setValue((this.disbAmount.getActualValue().multiply(retPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-		}else{
-			this.disbRetAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,formatter));
+			this.disbRetAmount.setValue((this.disbAmount.getActualValue().multiply(retPerc)).divide(new BigDecimal(100),
+					0, RoundingMode.HALF_DOWN));
+		} else {
+			this.disbRetAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 		}
-		
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
+	public void onChange$disbDate(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Date retentionTillDate = null;
+		if (contractorAssetDetail != null) {
+			retentionTillDate = contractorAssetDetail.getRetentionTillDate();
+		}
+
+		if (this.disbDate.getValue() != null && retentionTillDate != null) {
+			if (this.disbDate.getValue().compareTo(retentionTillDate) <= 0) {
+				this.disbRetPerc.setValue(contractorAssetDetail.getDftRetentionPerc());
+			} else {
+				this.disbRetPerc.setValue(BigDecimal.ZERO);
+			}
+		} else {
+			if (this.disbRetPerc.getValue() == null) {
+				this.disbRetPerc.setValue(BigDecimal.ZERO);
+			}
+		}
+
+		if (this.disbDate.getValue() == null) {
+			this.disbRetPerc.setValue(BigDecimal.ZERO);
+		}
+
+		if (this.disbAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
+				&& "B".equals(getFinanceDisbursement().getDisbType())) {
+			BigDecimal retPerc = BigDecimal.ZERO;
+			if (this.disbRetPerc.getValue() != null) {
+				retPerc = this.disbRetPerc.getValue();
+			}
+			this.disbRetAmount.setValue((this.disbAmount.getActualValue().multiply(retPerc)).divide(new BigDecimal(100),
+					0, RoundingMode.HALF_DOWN));
+		} else {
+			this.disbRetAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
 	/**
 	 * On Selecting GracePeriod Profit Frequency Code
-	 * @param event 
+	 * 
+	 * @param event
 	 */
 	public void onSelectCode$consultFeeFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		consultancyDatesReset();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * On Selecting GracePeriod Profit Frequency Month
+	 * 
 	 * @param event
 	 */
 	public void onSelectMonth$consultFeeFrq(Event event) {
@@ -1021,9 +1063,10 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		consultancyDatesReset();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * On Selecting GracePeriod Profit Frequency Day
+	 * 
 	 * @param event
 	 */
 	public void onSelectDay$consultFeeFrq(Event event) {
@@ -1031,9 +1074,9 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		consultancyDatesReset();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void consultancyDatesReset(){
-		if(StringUtils.isNotBlank(this.consultFeeFrq.getValue()) && (this.consultFeeFrq.getValue().length() == 5)){
+
+	private void consultancyDatesReset() {
+		if (StringUtils.isNotBlank(this.consultFeeFrq.getValue()) && (this.consultFeeFrq.getValue().length() == 5)) {
 			this.consultFeeStartDate.setDisabled(isReadOnly("FinanceDisbursementDialog_consultFeeStartDate"));
 			this.consultFeeEndDate.setDisabled(isReadOnly("FinanceDisbursementDialog_consultFeeEndDate"));
 			this.space_FeeEndDate.setSclass(PennantConstants.mandateSclass);
@@ -1042,7 +1085,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 			this.disbDate.setErrorMessage("");
 			this.consultFeeStartDate.setValue(this.disbDate.getValue());
 			this.consultFeeEndDate.setValue(grcEndDate);
-		}else{
+		} else {
 			this.consultFeeStartDate.setDisabled(true);
 			this.consultFeeEndDate.setDisabled(true);
 			this.consultFeeStartDate.setText("");
@@ -1054,14 +1097,15 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 
 	/**
 	 * Method for Fetching Account Balance
+	 * 
 	 * @param acId
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private String getAcBalance(String acId){
+	private String getAcBalance(String acId) {
 		if (StringUtils.isNotBlank(acId)) {
 			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId), formatter);
-		}else{
+		} else {
 			return "";
 		}
 	}
@@ -1071,23 +1115,23 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		
+
 		this.disbDate.setDisabled(true);
 		this.disbAccountId.setReadonly(true);
 		this.disbAmount.setDisabled(true);
-		this.disbExpType .setReadonly(true);
+		this.disbExpType.setReadonly(true);
 		this.autoDisb.setDisabled(true);
 		this.disbRetPerc.setDisabled(true);
 		this.disbRetAmount.setDisabled(true);
 		this.disbRemarks.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -1106,15 +1150,15 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		this.disbRetPerc.setText("");
 		this.disbRetAmount.setText("");
 		this.disbRemarks.setText("");
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Saves the components to table. <br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	public void doSave() throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
@@ -1123,70 +1167,70 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		boolean isNew = false;
 		Cloner acloner = new Cloner();
 		final ContractorAssetDetail aContractorAssetDetail = acloner.deepClone(contractorAssetDetail);
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the FinanceDisbursement object with the components data
-		doWriteComponentsToBean(aFinanceDisbursement,aContractorAssetDetail);
+		doWriteComponentsToBean(aFinanceDisbursement, aContractorAssetDetail);
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
 		isNew = aFinanceDisbursement.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aFinanceDisbursement.getRecordType())){
-				aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aFinanceDisbursement.getRecordType())) {
+				aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion() + 1);
+				if (isNew) {
 					aFinanceDisbursement.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aFinanceDisbursement.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aFinanceDisbursement.setNewRecord(true);
 				}
 			}
-		}else{
+		} else {
 
-			if(isNewDisbursement()){
-				if(isNewRecord()){
+			if (isNewDisbursement()) {
+				if (isNewRecord()) {
 					aFinanceDisbursement.setVersion(1);
 					aFinanceDisbursement.setRecordType(PennantConstants.RCD_ADD);
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aFinanceDisbursement.getRecordType())){
-					aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion()+1);
+				if (StringUtils.isBlank(aFinanceDisbursement.getRecordType())) {
+					aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion() + 1);
 					aFinanceDisbursement.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aFinanceDisbursement.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aFinanceDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aFinanceDisbursement.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aFinanceDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
-				aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion()+1);
-				if(isNew){
-					tranType =PennantConstants.TRAN_ADD;
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+			} else {
+				aFinanceDisbursement.setVersion(aFinanceDisbursement.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
 		}
 
 		// save it to database
 		try {
-			if(isNewDisbursement()){
-				AuditHeader auditHeader =  newBillingProcess(aFinanceDisbursement,tranType);
+			if (isNewDisbursement()) {
+				AuditHeader auditHeader = newBillingProcess(aFinanceDisbursement, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_IstisnaDisbursement, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getDisbursementDetailDialogCtrl().doFillDisbursementDetails(this.financeDisbursements);
-					fillContractorList(aFinanceDisbursement,aContractorAssetDetail);
+					fillContractorList(aFinanceDisbursement, aContractorAssetDetail);
 					closeDialog();
 				}
 			}
@@ -1197,11 +1241,10 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		logger.debug("Leaving");
 	}
 
+	private AuditHeader newBillingProcess(FinanceDisbursement aFinanceDisbursement, String tranType) {
+		boolean recordAdded = false;
 
-	private AuditHeader newBillingProcess(FinanceDisbursement aFinanceDisbursement,String tranType){
-		boolean recordAdded=false;
-
-		AuditHeader auditHeader= getAuditHeader(aFinanceDisbursement, tranType);
+		AuditHeader auditHeader = getAuditHeader(aFinanceDisbursement, tranType);
 		financeDisbursements = new ArrayList<FinanceDisbursement>();
 
 		String[] valueParm = new String[2];
@@ -1210,55 +1253,57 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		valueParm[0] = aFinanceDisbursement.getFinReference();
 		valueParm[1] = DateUtility.formatToLongDate(aFinanceDisbursement.getDisbDate());
 
-		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":"+ StringUtils.trimToEmpty(valueParm[0]);
-		errParm[1] = PennantJavaUtil.getLabel("label_SchDate") + ":"+valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + StringUtils.trimToEmpty(valueParm[0]);
+		errParm[1] = PennantJavaUtil.getLabel("label_SchDate") + ":" + valueParm[1];
 
-		if(getDisbursementDetailDialogCtrl().getDisbursementDetails() != null && getDisbursementDetailDialogCtrl().getDisbursementDetails().size()>0){
+		if (getDisbursementDetailDialogCtrl().getDisbursementDetails() != null
+				&& getDisbursementDetailDialogCtrl().getDisbursementDetails().size() > 0) {
 			for (int i = 0; i < getDisbursementDetailDialogCtrl().getDisbursementDetails().size(); i++) {
-				FinanceDisbursement financeDisbursement = getDisbursementDetailDialogCtrl().getDisbursementDetails().get(i);
+				FinanceDisbursement financeDisbursement = getDisbursementDetailDialogCtrl().getDisbursementDetails()
+						.get(i);
 
-				if(DateUtility.compare(financeDisbursement.getDisbDate(),aFinanceDisbursement.getDisbDate()) == 0 &&
-						financeDisbursement.getContractorId() == aFinanceDisbursement.getContractorId() &&
-						financeDisbursement.getDisbType().equals(aFinanceDisbursement.getDisbType())){ // Both Current and Existing list Date same
+				if (DateUtility.compare(financeDisbursement.getDisbDate(), aFinanceDisbursement.getDisbDate()) == 0
+						&& financeDisbursement.getContractorId() == aFinanceDisbursement.getContractorId()
+						&& financeDisbursement.getDisbType().equals(aFinanceDisbursement.getDisbType())) { // Both Current and Existing list Date same
 
-					if(isNewRecord()){
+					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), 
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
-					if(PennantConstants.TRAN_DEL.equals(tranType)){
-						if(PennantConstants.RECORD_TYPE_UPD.equals(aFinanceDisbursement.getRecordType())){
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aFinanceDisbursement.getRecordType())) {
 							aFinanceDisbursement.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							financeDisbursements.add(aFinanceDisbursement);
-						}else if(PennantConstants.RCD_ADD.equals(aFinanceDisbursement.getRecordType())){
-							recordAdded=true;
-						}else if(PennantConstants.RECORD_TYPE_NEW.equals(aFinanceDisbursement.getRecordType())){
+						} else if (PennantConstants.RCD_ADD.equals(aFinanceDisbursement.getRecordType())) {
+							recordAdded = true;
+						} else if (PennantConstants.RECORD_TYPE_NEW.equals(aFinanceDisbursement.getRecordType())) {
 							aFinanceDisbursement.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							financeDisbursements.add(aFinanceDisbursement);
-						}else if(PennantConstants.RECORD_TYPE_CAN.equals(aFinanceDisbursement.getRecordType())){
-							recordAdded=true;
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aFinanceDisbursement.getRecordType())) {
+							recordAdded = true;
 							//No Such Case
 						}
-					}else{
-						if(!PennantConstants.TRAN_UPD.equals(tranType)){
+					} else {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							financeDisbursements.add(financeDisbursement);
 						}
 					}
-				}else{
+				} else {
 					financeDisbursements.add(financeDisbursement);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			financeDisbursements.add(aFinanceDisbursement);
 		}
 		return auditHeader;
-	} 
-	
+	}
+
 	// WorkFlow Components
 
 	/**
@@ -1269,10 +1314,11 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceDisbursement aFinanceDisbursement, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aFinanceDisbursement.getBefImage(), aFinanceDisbursement);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceDisbursement.getBefImage(),
+				aFinanceDisbursement);
 
-		return new AuditHeader(getReference(),String.valueOf(aFinanceDisbursement.getFinReference()+"-"+aFinanceDisbursement.getDisbDate()), null,
+		return new AuditHeader(getReference(),
+				String.valueOf(aFinanceDisbursement.getFinReference() + "-" + aFinanceDisbursement.getDisbDate()), null,
 				null, auditDetail, aFinanceDisbursement.getUserDetails(), getOverideMap());
 	}
 
@@ -1286,8 +1332,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_IstisnaDisbursement, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1307,13 +1352,13 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 		doShowNotes(this.financeDisbursement);
 	}
 
-	/** 
+	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getFinanceDisbursement().getFinReference()+PennantConstants.KEY_SEPERATOR +
-					getFinanceDisbursement().getDisbDate();
+		return getFinanceDisbursement().getFinReference() + PennantConstants.KEY_SEPERATOR
+				+ getFinanceDisbursement().getDisbDate();
 	}
 
 	// ******************************************************//
@@ -1323,6 +1368,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1330,6 +1376,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	public FinanceDisbursement getFinanceDisbursement() {
 		return this.financeDisbursement;
 	}
+
 	public void setFinanceDisbursement(FinanceDisbursement customerRating) {
 		this.financeDisbursement = customerRating;
 	}
@@ -1337,6 +1384,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -1344,6 +1392,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	public boolean isNewDisbursement() {
 		return newDisbursement;
 	}
+
 	public void setNewDisbursement(boolean newDisbursement) {
 		this.newDisbursement = newDisbursement;
 	}
@@ -1351,14 +1400,15 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	public DisbursementDetailDialogCtrl getDisbursementDetailDialogCtrl() {
 		return disbursementDetailDialogCtrl;
 	}
-	public void setDisbursementDetailDialogCtrl(
-			DisbursementDetailDialogCtrl disbursementDetailDialogCtrl) {
+
+	public void setDisbursementDetailDialogCtrl(DisbursementDetailDialogCtrl disbursementDetailDialogCtrl) {
 		this.disbursementDetailDialogCtrl = disbursementDetailDialogCtrl;
 	}
 
 	public AccountsService getAccountsService() {
 		return accountsService;
 	}
+
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
 	}
@@ -1366,14 +1416,15 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
-	public void setAccountInterfaceService(
-			AccountInterfaceService accountInterfaceService) {
+
+	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}

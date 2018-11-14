@@ -33,7 +33,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 	 * @return DDARequestReply
 	 * @throws InterfaceException
 	 */
-	public AddOrRemoveHold sendAddOrRemoveHoldReq(AddOrRemoveHold addHold, String msgFormat) throws InterfaceException  {
+	public AddOrRemoveHold sendAddOrRemoveHoldReq(AddOrRemoveHold addHold, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (addHold == null) {
@@ -45,14 +45,15 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
-		try {		
+		try {
 			OMElement requestElement = getRequestElement(addHold, referenceNum, factory, msgFormat);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -67,10 +68,11 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 	 * 
 	 * @param responseElement
 	 * @param header
-	 * @param msgFormat 
+	 * @param msgFormat
 	 * @return
 	 */
-	private AddOrRemoveHold setAddOrRemoveHoldReply(OMElement responseElement,	AHBMQHeader header, String msgFormat) throws InterfaceException {
+	private AddOrRemoveHold setAddOrRemoveHoldReply(OMElement responseElement, AHBMQHeader header, String msgFormat)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -80,13 +82,13 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 
 		try {
 			String parentTag = "AddHoldReply";
-			if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.REMOVE_HOLD)) {
+			if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.REMOVE_HOLD)) {
 				parentTag = "RemoveHoldReply";
 			}
 
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/"+parentTag, responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/" + parentTag, responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
-			header = getReturnStatus(detailElement, header,responseElement);
+			header = getReturnStatus(detailElement, header, responseElement);
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
@@ -96,7 +98,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 			OMElement rootElement = OMAbstractFactory.getOMFactory().createOMElement(new QName("AddOrRemoveHold"));
 			@SuppressWarnings("unchecked")
 			Iterator<OMElement> iterator = detailElement.getChildElements();
-			while(iterator.hasNext()) {
+			while (iterator.hasNext()) {
 				rootElement.addChild(iterator.next());
 			}
 			accHoldReply = new AddOrRemoveHold();
@@ -117,18 +119,19 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 	 * @param ddsRequest
 	 * @param referenceNum
 	 * @param factory
-	 * @param msgFormat 
+	 * @param msgFormat
 	 * @return
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(AddOrRemoveHold addHold, String referenceNum, OMFactory factory, String msgFormat) throws InterfaceException {
+	private OMElement getRequestElement(AddOrRemoveHold addHold, String referenceNum, OMFactory factory,
+			String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = null;
 		addHold.setReferenceNum(referenceNum);
 		OMElement element = doMarshalling(addHold);
 		OMElement rootElement = factory.createOMElement(new QName("AddHoldRequest"));
-		if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.REMOVE_HOLD)) {
+		if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.REMOVE_HOLD)) {
 			rootElement = factory.createOMElement(new QName("RemoveHoldRequest"));
 		}
 		@SuppressWarnings("unchecked")

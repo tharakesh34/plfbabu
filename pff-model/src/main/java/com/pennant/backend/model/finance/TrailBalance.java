@@ -42,7 +42,7 @@ public class TrailBalance implements Serializable {
 	public void setHeaderId(long headerId) {
 		this.headerId = headerId;
 	}
-	
+
 	public String getDimention() {
 		return dimention;
 	}

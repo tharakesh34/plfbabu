@@ -17,7 +17,7 @@ import com.pennant.backend.dao.finance.FinanceMainExtDAO;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.util.FinanceConstants;
 
-public class DDAPaymentInitiationProcess  extends QuartzJobBean implements StatefulJob, Serializable {
+public class DDAPaymentInitiationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 
 	private static final long serialVersionUID = 809983809253088428L;
 	private static final Logger logger = Logger.getLogger(DDAPaymentInitiationProcess.class);
@@ -38,7 +38,7 @@ public class DDAPaymentInitiationProcess  extends QuartzJobBean implements State
 		logger.debug("Entering");
 
 		logger.debug("-----------------------------------------------------------------");
-		logger.debug("DDA Payment Initiation Job started at:"+System.currentTimeMillis());
+		logger.debug("DDA Payment Initiation Job started at:" + System.currentTimeMillis());
 		logger.debug("-----------------------------------------------------------------");
 
 		Date appDate = DateUtility.getAppDate();
@@ -53,7 +53,7 @@ public class DDAPaymentInitiationProcess  extends QuartzJobBean implements State
 		// Fetch Previous day DDA payment initiation details 
 		List<DDAPayments> backUpDDAPaymentList = getDdaPaymentInitiateDAO().fetchDDAInitDetails();
 
-		if(backUpDDAPaymentList != null && !backUpDDAPaymentList.isEmpty()) {
+		if (backUpDDAPaymentList != null && !backUpDDAPaymentList.isEmpty()) {
 
 			// Copy the DDS_PFF_DD500 data into Log Table
 			getDdaPaymentInitiateDAO().logDDAPaymentInitDetails(backUpDDAPaymentList);
@@ -63,28 +63,27 @@ public class DDAPaymentInitiationProcess  extends QuartzJobBean implements State
 		getDdaPaymentInitiateDAO().deleteDDAPaymentInitDetails();
 
 		// fetch DDA Payment Initiation details from PFF by appdate
-		List<DDAPayments> finDDAPaymentList = getFinanceMainDAO().getDDAPaymentsList(FinanceConstants.REPAYMTH_AUTODDA, appDate);
+		List<DDAPayments> finDDAPaymentList = getFinanceMainDAO().getDDAPaymentsList(FinanceConstants.REPAYMTH_AUTODDA,
+				appDate);
 
-		if(finDDAPaymentList != null && !finDDAPaymentList.isEmpty()) {
-			for(DDAPayments ddaPayments: finDDAPaymentList) {
-				
+		if (finDDAPaymentList != null && !finDDAPaymentList.isEmpty()) {
+			for (DDAPayments ddaPayments : finDDAPaymentList) {
+
 				// Fetch Repayment Account IBAN number
 				String repayIBAN = getFinanceMainExtDAO().getRepayIBAN(ddaPayments.getFinReference());
-				
-				ddaPayments.setdDARefNo(ddaPayments.getdDAReferenceNo()+"-"+DateUtility.format(appDate, dateFormat2));
-				ddaPayments.setpFFData(ddaPayments.getCustCIF()
-						+";"+ ddaPayments.getFinReference() 
-						+";"+ ddaPayments.getFinReference()
-						+";"+ ddaPayments.getFinRepaymentAmount()
-						+";"+ DateUtility.format(ddaPayments.getSchDate(), dateFormat3)
-						+";"+ ddaPayments.getdDAReferenceNo() 
-						+";"+ repayIBAN);
+
+				ddaPayments
+						.setdDARefNo(ddaPayments.getdDAReferenceNo() + "-" + DateUtility.format(appDate, dateFormat2));
+				ddaPayments.setpFFData(ddaPayments.getCustCIF() + ";" + ddaPayments.getFinReference() + ";"
+						+ ddaPayments.getFinReference() + ";" + ddaPayments.getFinRepaymentAmount() + ";"
+						+ DateUtility.format(ddaPayments.getSchDate(), dateFormat3) + ";"
+						+ ddaPayments.getdDAReferenceNo() + ";" + repayIBAN);
 
 				// Save DDA Payment Details into DDS_PFF_DD500 table
 				try {
 					getDdaPaymentInitiateDAO().saveDDAPaymentInitDetails(ddaPayments);
-				} catch(Exception e) {
-					logger.error("Exception: ", e); 
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
 				}
 			}
 		}
@@ -111,6 +110,7 @@ public class DDAPaymentInitiationProcess  extends QuartzJobBean implements State
 	public void setDdaPaymentInitiateDAO(DDAPaymentInitiateDAO ddaPaymentInitiateDAO) {
 		this.ddaPaymentInitiateDAO = ddaPaymentInitiateDAO;
 	}
+
 	public FinanceMainExtDAO getFinanceMainExtDAO() {
 		return financeMainExtDAO;
 	}

@@ -69,8 +69,7 @@ public interface QueryDetailService {
 	AuditDetail validate(AuditDetail auditDetail);
 
 	List<QueryDetail> getUnClosedQurysForGivenRole(String finReference, String currentRole);
-	
+
 	AuditHeader queryModuleUpdate(AuditHeader auditHeader);
 
-	
 }

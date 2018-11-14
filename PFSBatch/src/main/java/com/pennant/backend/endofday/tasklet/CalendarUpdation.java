@@ -63,38 +63,36 @@ public class CalendarUpdation implements Tasklet {
 	private CalendarInterfaceService calendarInterfaceService;
 	boolean COREBANK_CALENDAR_REQ = false;
 
-
 	public CalendarUpdation() {
 		super();
 	}
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		
+
 		// Date Parameter List
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: CalendarUpdation for Value Date: " + valueDate);
 		try {
 			// Accounts Accrual Balance reset to Zero
-			getAccountsDAO().updateAccrualBalance(); 
+			getAccountsDAO().updateAccrualBalance();
 
 			//Calendar Updation from Core Bank only When Flag becomes TRUE
-			if(COREBANK_CALENDAR_REQ){
+			if (COREBANK_CALENDAR_REQ) {
 				getCalendarInterfaceService().calendarUpdate();
-			}else{
+			} else {
 				//BETTER TO MAKE SURE NEXT BUSINESS DATE AND COONFIRM WITH EOD USER
 			}
 
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
-		} 
+		}
 
-		logger.debug("COMPLETE: CalendarUpdation for Value Date: "+ valueDate);
-		
+		logger.debug("COMPLETE: CalendarUpdation for Value Date: " + valueDate);
+
 		return RepeatStatus.FINISHED;
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -103,6 +101,7 @@ public class CalendarUpdation implements Tasklet {
 	public void setCalendarInterfaceService(CalendarInterfaceService calendarInterfaceService) {
 		this.calendarInterfaceService = calendarInterfaceService;
 	}
+
 	public CalendarInterfaceService getCalendarInterfaceService() {
 		return calendarInterfaceService;
 	}
@@ -110,9 +109,9 @@ public class CalendarUpdation implements Tasklet {
 	public void setAccountsDAO(AccountsDAO accountsDAO) {
 		this.accountsDAO = accountsDAO;
 	}
+
 	public AccountsDAO getAccountsDAO() {
 		return accountsDAO;
 	}
-
 
 }

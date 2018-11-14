@@ -18,11 +18,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> implements FinanceStepDetailDAO {
 	private static Logger logger = Logger.getLogger(FinanceStepDetailDAOImpl.class);
-	
+
 	public FinanceStepDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new StepPolicyDetail
 	 * 
@@ -37,8 +37,8 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 	}
 
 	/**
-	 * This method get the module from method getStepPolicyDetail() and set the new record flag as true and
-	 * return StepPolicyDetail()
+	 * This method get the module from method getStepPolicyDetail() and set the new record flag as true and return
+	 * StepPolicyDetail()
 	 * 
 	 * @return StepPolicyDetail
 	 */
@@ -55,23 +55,26 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 	 * Fetch the Record Finance Types details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return StepPolicyDetail
 	 */
 	@Override
-	public List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(final String finReference, String type, boolean isWIF) {
+	public List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(final String finReference, String type,
+			boolean isWIF) {
 		logger.debug("Entering");
-		
+
 		FinanceStepPolicyDetail finStepPolicy = new FinanceStepPolicyDetail();
 		finStepPolicy.setFinReference(finReference);
-		
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc, SteppedEMI, ");
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(isWIF){
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc, SteppedEMI, ");
+		selectSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (isWIF) {
 			selectSql.append(" FROM WIFFinStepPolicyDetail");
-		}else{
+		} else {
 			selectSql.append(" FROM FinStepPolicyDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -79,8 +82,9 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepPolicy);
-		RowMapper<FinanceStepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceStepPolicyDetail.class);
-		
+		RowMapper<FinanceStepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceStepPolicyDetail.class);
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -90,9 +94,10 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 	 * 
 	 * save StepPolicyDetails
 	 * 
-	 * @param FinanceStepPolicyDetail (StepPolicyDetail)
+	 * @param FinanceStepPolicyDetail
+	 *            (StepPolicyDetail)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -100,50 +105,52 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 	@Override
 	public void saveList(List<FinanceStepPolicyDetail> finStepDetailList, boolean isWIF, String type) {
 		logger.debug("Entering ");
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into " );
-		if(isWIF){
+
+		StringBuilder insertSql = new StringBuilder("Insert Into ");
+		if (isWIF) {
 			insertSql.append(" WIFFinStepPolicyDetail");
-		}else{
+		} else {
 			insertSql.append(" FinStepPolicyDetail");
 		}
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, " );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(
+				" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finStepDetailList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
 	}
 
 	/**
-	 * This method Deletes the Record from the StepPolicyDetails or StepPolicyDetails_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the StepPolicyDetails or StepPolicyDetails_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param Finance
-	 *         Types (StepPolicyDetail)
+	 *            Types (StepPolicyDetail)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void deleteList(String finReference, boolean isWIF,String type) {
+	public void deleteList(String finReference, boolean isWIF, String type) {
 		logger.debug("Entering");
-		
+
 		FinanceStepPolicyDetail finStepPolicy = new FinanceStepPolicyDetail();
 		finStepPolicy.setFinReference(finReference);
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From ");
-		if(isWIF){
+		if (isWIF) {
 			deleteSql.append(" WIFFinStepPolicyDetail");
-		}else{
+		} else {
 			deleteSql.append(" FinStepPolicyDetail");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(type));

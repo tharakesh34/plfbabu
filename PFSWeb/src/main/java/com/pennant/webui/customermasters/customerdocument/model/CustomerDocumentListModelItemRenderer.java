@@ -61,13 +61,13 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class CustomerDocumentListModelItemRenderer implements ListitemRenderer<CustomerDocument>, Serializable {
 	private static final long serialVersionUID = -2861700164113321338L;
-	
+
 	private List<DocumentDetails> verificationDocuments;
 
 	public CustomerDocumentListModelItemRenderer(List<DocumentDetails> verificationDocuments) {
 		this.verificationDocuments = verificationDocuments;
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerDocument customerDocument, int count) throws Exception {
 

@@ -71,28 +71,29 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	public CustomerBankInfoDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Customer Bank details by key field
+	 * Fetch the Record Customer Bank details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerBankInfo
 	 */
-	
-	
+
 	@Override
-	public CustomerBankInfo getCustomerBankInfoById(long bankId,String type){
+	public CustomerBankInfo getCustomerBankInfoById(long bankId, String type) {
 		logger.debug("Entering");
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
 		customerBankInfo.setBankId(bankId);
-		StringBuilder selectSql = new StringBuilder();	
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT bankId, CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
-		selectSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		selectSql.append(
+				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		selectSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -100,16 +101,15 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" FROM  CustomerBankInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BankId = :BankId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerBankInfo.class);
+		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerBankInfo.class);
 
-		try{
-			customerBankInfo = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			customerBankInfo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerBankInfo = null;
 		}
@@ -119,18 +119,19 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 	/**
 	 * Method to return the customer email based on given customer id
-	 * */
-	public List<CustomerBankInfo> getBankInfoByCustomer(final long id,String type) {
+	 */
+	public List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type) {
 		logger.debug("Entering");
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
 		customerBankInfo.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder();	
+
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
-		selectSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		selectSql.append(
+				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		selectSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -138,48 +139,48 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" FROM  CustomerBankInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerBankInfo.class);
-		
-		List<CustomerBankInfo> custBankInformation = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-		
+		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerBankInfo.class);
+
+		List<CustomerBankInfo> custBankInformation = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
 		logger.debug("Leaving");
 		return custBankInformation;
-	}	
-	
-	
+	}
+
 	/**
-	 * This method Deletes the Record from the CustomerBankInfo or CustomerBankInfo_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Bank by key CustID
+	 * This method Deletes the Record from the CustomerBankInfo or CustomerBankInfo_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Customer Bank by key CustID
 	 * 
-	 * @param Customer Bank (customerBankInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (customerBankInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerBankInfo customerBankInfo,String type) {
+	public void delete(CustomerBankInfo customerBankInfo, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder(" Delete From CustomerBankInfo");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BankId =:BankId");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -188,14 +189,15 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	/**
 	 * This method Deletes the Record from the CustomerBankInfo or CustomerBankInfo_Temp for the Customer.
 	 * 
-	 * @param Customer Bank (customerBankInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (customerBankInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByCustomer(long custID,String type) {
+	public void deleteByCustomer(long custID, String type) {
 		logger.debug("Entering");
 
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
@@ -204,8 +206,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		deleteSql.append(" Delete From CustomerBankInfo");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -214,17 +216,18 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	/**
 	 * This method insert new Records into CustomerBankInfo or CustomerBankInfo_Temp.
 	 *
-	 * save Customer Bank 
+	 * save Customer Bank
 	 * 
-	 * @param Customer Bank (customerBankInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (customerBankInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerBankInfo customerBankInfo,String type) {
+	public long save(CustomerBankInfo customerBankInfo, String type) {
 		logger.debug("Entering");
 
 		if (customerBankInfo.getBankId() == Long.MIN_VALUE) {
@@ -234,21 +237,24 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into CustomerBankInfo");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount," );
-		insertSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		insertSql.append(" (BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
+		insertSql.append(
+				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		insertSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		insertSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
 
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:BankId, :CustID, :BankName, :AccountNumber, :AccountType, :SalaryAccount,");
-		insertSql.append(" :CreditTranNo, :CreditTranAmt, :CreditTranAvg, :DebitTranNo, :DebitTranAmt, :CashDepositNo, :CashDepositAmt,");
-		insertSql.append(" :CashWithdrawalNo, :CashWithdrawalAmt, :ChqDepositNo, :ChqDepositAmt, :ChqIssueNo, :ChqIssueAmt,");
+		insertSql.append(
+				" :CreditTranNo, :CreditTranAmt, :CreditTranAvg, :DebitTranNo, :DebitTranAmt, :CashDepositNo, :CashDepositAmt,");
+		insertSql.append(
+				" :CashWithdrawalNo, :CashWithdrawalAmt, :ChqDepositNo, :ChqDepositAmt, :ChqIssueNo, :ChqIssueAmt,");
 		insertSql.append(" :InwardChqBounceNo, :OutwardChqBounceNo, :EodBalMin, :EodBalMax, :EodBalAvg,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -257,41 +263,47 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	}
 
 	/**
-	 * This method updates the Record CustomerBankInfo or CustomerBankInfo_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Bank by key CustID and Version
+	 * This method updates the Record CustomerBankInfo or CustomerBankInfo_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Bank by key CustID and Version
 	 * 
-	 * @param Customer Bank (customerBankInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (customerBankInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerBankInfo customerBankInfo,String type) {
+	public void update(CustomerBankInfo customerBankInfo, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerBankInfo");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		
-		updateSql.append(" Set AccountNumber = :AccountNumber, AccountType = :AccountType,SalaryAccount = :SalaryAccount,");
-		updateSql.append(" CreditTranNo = :CreditTranNo, CreditTranAmt = :CreditTranAmt, CreditTranAvg = :CreditTranAvg, DebitTranNo = :DebitTranNo,");
-		updateSql.append("DebitTranAmt = :DebitTranAmt, CashDepositNo = :CashDepositNo, CashDepositAmt = :CashDepositAmt,");
-		updateSql.append("CashWithdrawalNo = :CashWithdrawalNo,CashWithdrawalAmt = :CashWithdrawalAmt, ChqDepositNo = :ChqDepositNo, ChqDepositAmt = :ChqDepositAmt,");
-		updateSql.append("ChqIssueNo = :ChqIssueNo, ChqIssueAmt = :ChqIssueAmt, InwardChqBounceNo = :InwardChqBounceNo, OutwardChqBounceNo = :OutwardChqBounceNo, EodBalMin = :EodBalMin,");
+
+		updateSql.append(
+				" Set AccountNumber = :AccountNumber, AccountType = :AccountType,SalaryAccount = :SalaryAccount,");
+		updateSql.append(
+				" CreditTranNo = :CreditTranNo, CreditTranAmt = :CreditTranAmt, CreditTranAvg = :CreditTranAvg, DebitTranNo = :DebitTranNo,");
+		updateSql.append(
+				"DebitTranAmt = :DebitTranAmt, CashDepositNo = :CashDepositNo, CashDepositAmt = :CashDepositAmt,");
+		updateSql.append(
+				"CashWithdrawalNo = :CashWithdrawalNo,CashWithdrawalAmt = :CashWithdrawalAmt, ChqDepositNo = :ChqDepositNo, ChqDepositAmt = :ChqDepositAmt,");
+		updateSql.append(
+				"ChqIssueNo = :ChqIssueNo, ChqIssueAmt = :ChqIssueAmt, InwardChqBounceNo = :InwardChqBounceNo, OutwardChqBounceNo = :OutwardChqBounceNo, EodBalMin = :EodBalMin,");
 		updateSql.append("EodBalMax = :EodBalMax, EodBalAvg = :EodBalAvg,");
-		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where BankId = :BankId ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -402,20 +414,21 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		customerBankInfo.setBankName(bankName);
 		customerBankInfo.setAccountNumber(accountNumber);
 		customerBankInfo.setBankId(bankId);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From CustomerBankInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID and BankName=:BankName and AccountNumber=:AccountNumber and bankId != :bankId");
-		
+		selectSql.append(
+				" Where CustID = :custID and BankName=:BankName and AccountNumber=:AccountNumber and bankId != :bankId");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		
+
 		try {
 			int bankRcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 			logger.debug("Leaving");
-			return 	bankRcdCount;
-		} catch(Exception e) {
+			return bankRcdCount;
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			throw e;
 		}
@@ -424,12 +437,13 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	@Override
 	public CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo customerBankInfo, String type) {
 		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder();	
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT bankId, CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
-		selectSql.append(" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
+		selectSql.append(
+				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		selectSql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -437,16 +451,15 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" FROM  CustomerBankInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :CustID and BankName = :BankName and BankId =:BankId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerBankInfo.class);
+		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerBankInfo.class);
 
-		try{
-			customerBankInfo = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			customerBankInfo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerBankInfo = null;
 		}
@@ -470,27 +483,32 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
 	@Override
-	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId){
+	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custId);
-		
-		StringBuilder selectSql = new StringBuilder();	
-		selectSql.append("select coalesce(sum(CreditTranNo),0) as CreditTranNo ,coalesce(sum(CreditTranAmt),0) as CreditTranAmt, coalesce(sum(CreditTranAvg),0) as CreditTranAvg, coalesce(sum(DebitTranNo),0) as DebitTranNo,");
-		selectSql.append("coalesce(sum(DebitTranAmt),0) as DebitTranAmt, coalesce(sum(CashDepositNo),0) CashDepositNo, coalesce(sum(CashDepositAmt),0) as CashDepositAmt, coalesce(sum(CashWithdrawalNo),0) as CashWithdrawalNo,");
-		selectSql.append("coalesce(sum(CashWithdrawalAmt),0) as CashWithdrawalAmt, coalesce(sum(ChqDepositNo),0) as ChqDepositNo, coalesce(sum(ChqDepositAmt),0) as ChqDepositAmt, coalesce(sum(ChqIssueNo),0) as ChqIssueNo,");
-		selectSql.append("coalesce(sum(ChqIssueAmt),0) as ChqIssueAmt, coalesce(sum(InwardChqBounceNo),0) as InwardChqBounceNo, coalesce(sum(OutwardChqBounceNo),0) as OutwardChqBounceNo,");
-		selectSql.append("coalesce(sum (EodBalMin),0) as EodBalMin, coalesce(sum(EodBalMax),0) as EodBalMax, coalesce(sum(EodBalAvg),0) as EodBalAvg");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				"select coalesce(sum(CreditTranNo),0) as CreditTranNo ,coalesce(sum(CreditTranAmt),0) as CreditTranAmt, coalesce(sum(CreditTranAvg),0) as CreditTranAvg, coalesce(sum(DebitTranNo),0) as DebitTranNo,");
+		selectSql.append(
+				"coalesce(sum(DebitTranAmt),0) as DebitTranAmt, coalesce(sum(CashDepositNo),0) CashDepositNo, coalesce(sum(CashDepositAmt),0) as CashDepositAmt, coalesce(sum(CashWithdrawalNo),0) as CashWithdrawalNo,");
+		selectSql.append(
+				"coalesce(sum(CashWithdrawalAmt),0) as CashWithdrawalAmt, coalesce(sum(ChqDepositNo),0) as ChqDepositNo, coalesce(sum(ChqDepositAmt),0) as ChqDepositAmt, coalesce(sum(ChqIssueNo),0) as ChqIssueNo,");
+		selectSql.append(
+				"coalesce(sum(ChqIssueAmt),0) as ChqIssueAmt, coalesce(sum(InwardChqBounceNo),0) as InwardChqBounceNo, coalesce(sum(OutwardChqBounceNo),0) as OutwardChqBounceNo,");
+		selectSql.append(
+				"coalesce(sum (EodBalMin),0) as EodBalMin, coalesce(sum(EodBalMax),0) as EodBalMax, coalesce(sum(EodBalAvg),0) as EodBalAvg");
 		selectSql.append(" FROM  CustomerBankInfo");
 		selectSql.append(" Where CustID in (:CustID)");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerBankInfo.class);
 
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);	
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerBankInfo.class);
+
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 	}
 }

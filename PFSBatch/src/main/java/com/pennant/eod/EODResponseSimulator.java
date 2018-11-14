@@ -23,23 +23,23 @@ import com.pennant.eod.beans.PaymentRecoveryHeader;
 
 public class EODResponseSimulator {
 
-	private static Logger		logger				= Logger.getLogger(EODResponseSimulator.class);
+	private static Logger logger = Logger.getLogger(EODResponseSimulator.class);
 
-	public static final String	DELIMITER			= "|";
+	public static final String DELIMITER = "|";
 
-	public static final String	HEADER				= "H";
-	public static final String	DETAILS				= "B";
-	public static final String	FOOTER				= "T";
+	public static final String HEADER = "H";
+	public static final String DETAILS = "B";
+	public static final String FOOTER = "T";
 
-	public static final String	BATCH_CODE			= "T24_ACCT_POST";
-	public static final String	FILE_EXT			= ".txt";
-	public static final String	REQ_FILE			= "AccountPost_Daily_";
-	public static final String	RSP_FILE			= "AccountPost_Resp_Daily_";
-	public static final String	FILE_DATE_FORMAT	= "YYYYMMdd";
+	public static final String BATCH_CODE = "T24_ACCT_POST";
+	public static final String FILE_EXT = ".txt";
+	public static final String REQ_FILE = "AccountPost_Daily_";
+	public static final String RSP_FILE = "AccountPost_Resp_Daily_";
+	public static final String FILE_DATE_FORMAT = "YYYYMMdd";
 
 	// attributes
-	public static final String	REQUEST_DATA		= "RequestData";
-	public static final String	RESPONSE_DATA		= "ResponseData";
+	public static final String REQUEST_DATA = "RequestData";
+	public static final String RESPONSE_DATA = "ResponseData";
 
 	public static void main(String[] args) throws Exception {
 		EODResponseSimulator.writeFile();
@@ -47,14 +47,13 @@ public class EODResponseSimulator {
 
 	/**
 	 * @param header
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static void writeFile() throws Exception {
 
 		logger.debug(" Entering ");
 
 		try {
-			
 
 			String roothpath = "D:/configlocation/PFF/AHB/Downloads/EOD/";
 
@@ -84,13 +83,13 @@ public class EODResponseSimulator {
 				lines.addAll(writeDetails(header));
 
 				lines.add(writeFooter(header));
-				
-				FileWriter fileWriter=new FileWriter(wfile);
-				
+
+				FileWriter fileWriter = new FileWriter(wfile);
+
 				String newLine = System.getProperty("line.separator");
-				
+
 				for (String adada : lines) {
-					fileWriter.write(adada+newLine);
+					fileWriter.write(adada + newLine);
 				}
 				fileWriter.close();
 
@@ -110,7 +109,7 @@ public class EODResponseSimulator {
 
 	/**
 	 * @param header
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static PaymentRecoveryHeader readData(BufferedReader reader) throws Exception {
 		logger.debug(" Entering ");
@@ -175,7 +174,7 @@ public class EODResponseSimulator {
 	/**
 	 * @param details
 	 * @param header
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	private static void readHeader(String[] details, PaymentRecoveryHeader header) throws ParseException {
 		logger.debug(" Entering ");
@@ -206,7 +205,7 @@ public class EODResponseSimulator {
 	/**
 	 * @param details
 	 * @param heade
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	private static void readDetails(String[] details, PaymentRecoveryHeader header) throws ParseException {
 		logger.debug(" Entering ");
@@ -218,7 +217,7 @@ public class EODResponseSimulator {
 		recoveryDetail.setPrimaryDebitAccount(details[2]);
 		recoveryDetail.setSecondaryDebitAccounts(details[3]);
 		recoveryDetail.setCreditAccount(details[4]);
-		recoveryDetail.setScheduleDate(DateUtility.parse(details[5],PennantConstants.DBDateFormat));
+		recoveryDetail.setScheduleDate(DateUtility.parse(details[5], PennantConstants.DBDateFormat));
 		recoveryDetail.setFinanceReference(details[6]);
 		recoveryDetail.setCustomerReference(details[7]);
 		recoveryDetail.setDebitCurrency(details[8]);
@@ -228,10 +227,10 @@ public class EODResponseSimulator {
 		recoveryDetail.setFinanceBranch(details[12]);
 		recoveryDetail.setFinanceType(details[13]);
 		recoveryDetail.setFinancePurpose(details[14]);
-//		recoveryDetail.setSysTranRef(details[15]);
-//		recoveryDetail.setPrimaryAcDebitAmt(details[16]);
-//		recoveryDetail.setSecondaryDebitAccounts(details[17]);
-//		recoveryDetail.setPaymentStatus(details[18]);
+		//		recoveryDetail.setSysTranRef(details[15]);
+		//		recoveryDetail.setPrimaryAcDebitAmt(details[16]);
+		//		recoveryDetail.setSecondaryDebitAccounts(details[17]);
+		//		recoveryDetail.setPaymentStatus(details[18]);
 
 		header.getPaymentRecoveryDetails().add(recoveryDetail);
 		logger.debug(" Leaving ");
@@ -254,7 +253,7 @@ public class EODResponseSimulator {
 		builder.append(DELIMITER);
 		builder.append(header.getFileName());
 		builder.append(DELIMITER);
-		builder.append(DateUtility.format(header.getFileCreationDate(),DateUtility.DateFormat.SHORT_DATE_TIME));
+		builder.append(DateUtility.format(header.getFileCreationDate(), DateUtility.DateFormat.SHORT_DATE_TIME));
 
 		logger.debug(" Leaving ");
 		return builder.toString();
@@ -298,7 +297,7 @@ public class EODResponseSimulator {
 			builder.append(DELIMITER);
 			builder.append(recoveryDetail.getCreditAccount());
 			builder.append(DELIMITER);
-			builder.append(DateUtility.format(recoveryDetail.getScheduleDate(),PennantConstants.DBDateFormat));
+			builder.append(DateUtility.format(recoveryDetail.getScheduleDate(), PennantConstants.DBDateFormat));
 			builder.append(DELIMITER);
 			builder.append(recoveryDetail.getFinanceReference());
 			builder.append(DELIMITER);
@@ -321,7 +320,7 @@ public class EODResponseSimulator {
 			// dummy response
 			builder.append("T24Reference");
 			builder.append(DELIMITER);
-//			recoveryDetail.setPaymentAmount(BigDecimal.ZERO);//over due Check
+			//			recoveryDetail.setPaymentAmount(BigDecimal.ZERO);//over due Check
 			builder.append(recoveryDetail.getPaymentAmount());
 			builder.append(DELIMITER);
 			builder.append(0);

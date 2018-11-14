@@ -16,20 +16,20 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 public class DepositDetail implements Serializable {
 
 	private static final long serialVersionUID = -1095187366632375060L;
-	
+
 	private String depositID;
 	private BigDecimal insAmount = BigDecimal.ZERO;
 	private Date blockingDate;
 	private String reason;
-	
+
 	public DepositDetail() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	@XmlElement(name = "DepositID")
 	public String getDepositID() {
 		return depositID;
@@ -53,7 +53,7 @@ public class DepositDetail implements Serializable {
 	public Date getBlockingDate() {
 		return blockingDate;
 	}
-	
+
 	public void setBlockingDate(Date blockingDate) {
 		this.blockingDate = blockingDate;
 	}

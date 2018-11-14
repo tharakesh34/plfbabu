@@ -50,13 +50,11 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.masters.AuthorizationDetailService;
 
 /**
- * Service implementation for methods that depends on
- * <b>AuthorizationDetail</b>.<br>
+ * Service implementation for methods that depends on <b>AuthorizationDetail</b>.<br>
  * 
  */
-public class AuthorizationDetailServiceImpl extends
-		GenericService<AuthorizationDetail> implements
-		AuthorizationDetailService {
+public class AuthorizationDetailServiceImpl extends GenericService<AuthorizationDetail>
+		implements AuthorizationDetailService {
 	private AuthorizationDetailDAO authorizationDetailDAO;
 
 	/**
@@ -70,15 +68,12 @@ public class AuthorizationDetailServiceImpl extends
 	 * @param authorizationDetailDAO
 	 *            the authorizationDetailDAO to set
 	 */
-	public void setAuthorizationDetailDAO(
-			AuthorizationDetailDAO authorizationDetailDAO) {
+	public void setAuthorizationDetailDAO(AuthorizationDetailDAO authorizationDetailDAO) {
 		this.authorizationDetailDAO = authorizationDetailDAO;
 	}
 
-	
-
 	@Override
 	public List<AuthorizationDetail> getAuthorizationDetails(String channelCode, String channelIP) {
-		return getAuthorizationDetailDAO().getAuthorizationDetails(channelCode,channelIP);
+		return getAuthorizationDetailDAO().getAuthorizationDetails(channelCode, channelIP);
 	}
 }

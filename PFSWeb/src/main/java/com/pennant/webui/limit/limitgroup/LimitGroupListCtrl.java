@@ -64,14 +64,13 @@ import com.pennant.backend.model.limit.LimitGroup;
 import com.pennant.backend.service.limit.LimitGroupService;
 import com.pennant.webui.limit.limitgroup.model.LimitGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/Limit/LimitGroup/LimitGroupList.zul
- * file.<br>
+ * This is the controller class for the /WEB-INF/pages/Limit/LimitGroup/LimitGroupList.zul file.<br>
  * ************************************************************<br>
  * 
  */
@@ -80,44 +79,42 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	private static final Logger logger = Logger.getLogger(LimitGroupListCtrl.class);
 
 	/*
-	 * ************************************************************************	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ * All the components that are defined
+	 * here and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ************************************************************************
 	 */
-	protected Window 							window_LimitGroupList; 
-	protected Borderlayout 						borderLayout_LimitGroupList; 
-	protected Paging 							pagingLimitGroupList; 
-	protected Listbox 							listBoxLimitGroup; 
+	protected Window window_LimitGroupList;
+	protected Borderlayout borderLayout_LimitGroupList;
+	protected Paging pagingLimitGroupList;
+	protected Listbox listBoxLimitGroup;
 
 	// List headers
-	protected Listheader 						listheader_GroupCode; 
-	protected Listheader 						listheader_GroupName; 
-	protected Listheader						listheader_Active;
-	protected Listheader						listheader_GroupCategory;
+	protected Listheader listheader_GroupCode;
+	protected Listheader listheader_GroupName;
+	protected Listheader listheader_Active;
+	protected Listheader listheader_GroupCategory;
 
 	// checkRights
-	protected Button 							button_LimitGroupList_NewLimitGroup; 
-	protected Button 							button_LimitGroupList_LimitGroupSearch; 
-	protected Button 							button_LimitGroupList_PrintList; 
-	protected Label  							label_LimitGroupList_RecordStatus; 							
-	protected Label  							label_LimitGroupList_RecordType; 							
+	protected Button button_LimitGroupList_NewLimitGroup;
+	protected Button button_LimitGroupList_LimitGroupSearch;
+	protected Button button_LimitGroupList_PrintList;
+	protected Label label_LimitGroupList_RecordStatus;
+	protected Label label_LimitGroupList_RecordType;
 
 	// NEEDED for the ReUse in the SearchWindow
-	private transient LimitGroupService 		limitGroupService;
+	private transient LimitGroupService limitGroupService;
 
-	protected Textbox 							groupCode; 
-	protected Listbox 							sortOperator_GroupCode; 
+	protected Textbox groupCode;
+	protected Listbox sortOperator_GroupCode;
 
-	protected Textbox 							groupName; 
-	protected Listbox 							sortOperator_GroupName; 
-	
-	protected Textbox 							groupCategory; 
-	protected Listbox 							sortOperator_GroupCategory; 
-	
-	protected Listbox 							sortOperator_active;
-	protected Checkbox 							active;
+	protected Textbox groupName;
+	protected Listbox sortOperator_GroupName;
 
+	protected Textbox groupCategory;
+	protected Listbox sortOperator_GroupCategory;
+
+	protected Listbox sortOperator_active;
+	protected Checkbox active;
 
 	/**
 	 * default constructor.<br>
@@ -142,7 +139,6 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	public void onCreate$window_LimitGroupList(Event event) throws Exception {
 		logger.debug("Entering");
 
-
 		// Set the page level components.
 		setPageComponents(window_LimitGroupList, borderLayout_LimitGroupList, listBoxLimitGroup, pagingLimitGroupList);
 		setItemRender(new LimitGroupListModelItemRenderer());
@@ -151,17 +147,14 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 		registerButton(button_LimitGroupList_NewLimitGroup, "button_LimitGroupList_NewLimitGroup", true);
 		registerButton(button_LimitGroupList_LimitGroupSearch);
 
-
-		registerField("groupCode", listheader_GroupCode, SortOrder.ASC, groupCode,
-				sortOperator_GroupCode, Operators.STRING);
-		registerField("groupName", listheader_GroupName, SortOrder.ASC, groupName,
-				sortOperator_GroupName, Operators.STRING);
+		registerField("groupCode", listheader_GroupCode, SortOrder.ASC, groupCode, sortOperator_GroupCode,
+				Operators.STRING);
+		registerField("groupName", listheader_GroupName, SortOrder.ASC, groupName, sortOperator_GroupName,
+				Operators.STRING);
 		registerField("limitCategory", listheader_GroupCategory, SortOrder.ASC, groupCategory,
 				sortOperator_GroupCategory, Operators.STRING);
-		
-		registerField("active", listheader_Active, SortOrder.NONE, active,
-				sortOperator_active, Operators.BOOLEAN);
 
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -174,11 +167,10 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	 * Invoke Search
 	 */
 	public void onClick$button_LimitGroupList_LimitGroupSearch(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		search();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
@@ -191,12 +183,11 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 		search();
 	}
 
-
 	/**
 	 * Call the LimitGroup dialog with a new empty entry. <br>
 	 */
 	public void onClick$button_LimitGroupList_NewLimitGroup(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		// create a new LimitGroup object, We GET it from the backend.
 
 		LimitGroup limitGroup = new LimitGroup();
@@ -205,8 +196,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 
 		// Display the dialog page.
 		doShowDialogPage(limitGroup);
-		logger.debug("Leaving" +event.toString());
-
+		logger.debug("Leaving" + event.toString());
 
 	}
 
@@ -219,7 +209,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	 */
 
 	public void onLimitGroupItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxLimitGroup.getSelectedItem();
@@ -234,7 +224,8 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND GroupCode='" + limitGroup.getGroupCode()+ "'  AND version="+ limitGroup.getVersion() + " ";
+		String whereCond = " AND GroupCode='" + limitGroup.getGroupCode() + "'  AND version=" + limitGroup.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(limitGroup, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -246,10 +237,8 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * Displays the dialog page with the required parameters as map.
@@ -265,7 +254,6 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 		arg.put("limitGroupListCtrl", this);
 		arg.put("enqiryModule", super.enqiryModule);
 
-
 		try {
 			Executions.createComponents("/WEB-INF/pages/Limit/LimitGroup/LimitGroupDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -274,7 +262,6 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
@@ -313,8 +300,6 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-
-
 
 	// ******************************************************//
 	// ****************** getter / setter  ******************//

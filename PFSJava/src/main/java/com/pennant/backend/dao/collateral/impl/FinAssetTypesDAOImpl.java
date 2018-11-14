@@ -65,8 +65,8 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	}
 
 	/**
-	 * This method updates the Record or FinAssetTypes_Temp. if Record not
-	 * updated then throws DataAccessException with error 41004.
+	 * This method updates the Record or FinAssetTypes_Temp. if Record not updated then throws DataAccessException with
+	 * error 41004.
 	 * 
 	 * @param FinAssetTypes
 	 *            (finAssetTypes)
@@ -106,8 +106,7 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	}
 
 	/**
-	 * Method for Fetching List of Assigned FinAssetTypes to the Reference based
-	 * on Module
+	 * Method for Fetching List of Assigned FinAssetTypes to the Reference based on Module
 	 */
 	@Override
 	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
@@ -161,9 +160,8 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	}
 
 	/**
-	 * This method Deletes the Record from the FinAssetTypes or
-	 * FinAssetTypes_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete FinAssetTypes
+	 * This method Deletes the Record from the FinAssetTypes or FinAssetTypes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete FinAssetTypes
 	 * 
 	 * @param FinAssetTypes
 	 *            (finAssetTypes)

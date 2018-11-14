@@ -47,21 +47,28 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinStageAccountingLog;
 
-
 /**
  * DAO methods declaration for the <b>ReturnDataSet model</b> class.<br>
  * 
  */
 public interface FinStageAccountingLogDAO {
-	
-	long getLinkedTranId(String finReference,String finevent, String roleCode);
+
+	long getLinkedTranId(String finReference, String finevent, String roleCode);
+
 	void saveStageAccountingLog(FinStageAccountingLog stageAccountingLog);
+
 	void deleteByRefandRole(String finReference, String finEvent, String roleCode);
+
 	List<Long> getLinkedTranIdList(String finReference, String finEvent);
-	void update(String finReference, String finEvent,boolean processed);
+
+	void update(String finReference, String finEvent, boolean processed);
+
 	int getTranCountByReceiptNo(String receiptNo);
+
 	void updateByReceiptNo(String receiptNo);
+
 	List<Long> getTranIdListByReceipt(String receiptNo);
+
 	void deleteByReceiptNo(String receiptNo);
-	
+
 }

@@ -24,37 +24,38 @@
  */
 package com.pennant.backend.model.commitment;
 
-
 /**
  * Model class for the <b>Commitment table</b>.<br>
  * 
  */
 public class CommitmentType {
-	
+
 	private String typeCode;
 	private String description;
 	private boolean active;
-	
-	
+
 	public String getTypeCode() {
 		return typeCode;
 	}
+
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
-	
+
 }

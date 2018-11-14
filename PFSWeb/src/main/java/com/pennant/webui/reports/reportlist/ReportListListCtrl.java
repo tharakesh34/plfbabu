@@ -61,9 +61,9 @@ import com.pennant.backend.model.reports.ReportList;
 import com.pennant.backend.service.reports.ReportListService;
 import com.pennant.webui.reports.reportlist.model.ReportListListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/ReportList/ReportListList.zul file.
@@ -131,8 +131,8 @@ public class ReportListListCtrl extends GFCBaseListCtrl<ReportList> {
 		registerField("Module", listheader_Module, SortOrder.ASC, module, sortOperator_module, Operators.STRING);
 		registerField("reportFileName", listheader_ReportFileName, SortOrder.NONE, reportFileName,
 				sortOperator_repFileName, Operators.STRING);
-		registerField("reportHeading", listheader_ReportHeading, SortOrder.NONE, reportHeading,
-				sortOperator_repHeading, Operators.STRING);
+		registerField("reportHeading", listheader_ReportHeading, SortOrder.NONE, reportHeading, sortOperator_repHeading,
+				Operators.STRING);
 		registerField("moduleType", listheader_ModuleType, SortOrder.NONE, moduleType, sortOperator_moduleType,
 				Operators.STRING);
 

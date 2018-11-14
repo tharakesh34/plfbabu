@@ -59,6 +59,7 @@ public class PTReportUtils implements Serializable {
 
 	private static final long serialVersionUID = 8400638894656139790L;
 	private static final Logger logger = Logger.getLogger(PTReportUtils.class);
+
 	@SuppressWarnings("rawtypes")
 	public static void getPTReport(String model, List searchObj, int maxResults) throws InterruptedException {
 		logger.debug("Entering ");
@@ -72,11 +73,11 @@ public class PTReportUtils implements Serializable {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
-	}	
-	
+	}
+
 	public static void getReport(String model, JdbcSearchObject<?> searchObj) throws InterruptedException {
-		PagedListService listService=(PagedListService) SpringUtil.getBean("pagedListService");		
-		getPTReport(model,listService.getBySearchObject(searchObj),searchObj.getMaxResults());		
+		PagedListService listService = (PagedListService) SpringUtil.getBean("pagedListService");
+		getPTReport(model, listService.getBySearchObject(searchObj), searchObj.getMaxResults());
 	}
 
 }

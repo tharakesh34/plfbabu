@@ -67,51 +67,49 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseRateCodeDAO {
 	private static Logger logger = Logger.getLogger(BaseRateCodeDAOImpl.class);
-		
+
 	public BaseRateCodeDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Base Rate Codes details by key field
+	 * Fetch the Record Base Rate Codes details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return BaseRateCode
 	 */
 	@Override
 	public BaseRateCode getBaseRateCodeById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BaseRateCode baseRateCode = new BaseRateCode();
 		baseRateCode.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select BRType, BRTypeDesc, BRTypeIsActive," );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode," );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		StringBuilder selectSql = new StringBuilder("Select BRType, BRTypeDesc, BRTypeIsActive,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTBaseRateCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BRType =:BRType");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				baseRateCode);
-		RowMapper<BaseRateCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BaseRateCode.class);
-		
-		try{
-			baseRateCode = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRateCode);
+		RowMapper<BaseRateCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRateCode.class);
+
+		try {
+			baseRateCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			baseRateCode = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return baseRateCode;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String bRType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -147,49 +145,49 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(BaseRateCode baseRateCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into RMTBaseRateCodes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BRType, BRTypeDesc, BRTypeIsActive," );
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		sql.append(" (BRType, BRTypeDesc, BRTypeIsActive,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:BRType, :BRTypeDesc, :BRTypeIsActive, :Version , :LastMntBy, :LastMntOn,:RecordStatus," );
+		sql.append(" values(:BRType, :BRTypeDesc, :BRTypeIsActive, :Version , :LastMntBy, :LastMntOn,:RecordStatus,");
 		sql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRateCode);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return baseRateCode.getId();
 	}
-	
+
 	@Override
 	public void update(BaseRateCode baseRateCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update RMTBaseRateCodes");
-		sql.append(tableType.getSuffix()); 
+		sql.append(tableType.getSuffix());
 		sql.append(" set BRTypeDesc = :BRTypeDesc, BRTypeIsActive = :BRTypeIsActive,");
-		sql.append(" Version = :Version ,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
+		sql.append(" Version = :Version ,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where BRType =:BRType ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRateCode);
@@ -202,22 +200,22 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(BaseRateCode baseRateCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from RMTBaseRateCodes" );
+		StringBuilder sql = new StringBuilder("delete from RMTBaseRateCodes");
 		sql.append(tableType.getSuffix());
 		sql.append(" where BRType =:BRType");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRateCode);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {

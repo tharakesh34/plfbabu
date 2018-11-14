@@ -108,38 +108,38 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class CommitmentServiceImpl extends GenericService<Commitment> implements CommitmentService {
-	private static final Logger		logger	= Logger.getLogger(CommitmentServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CommitmentServiceImpl.class);
 
-	private PostingsPreparationUtil				postingsPreparationUtil;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
 	//Service Classes
-	private CheckListDetailService				checkListDetailService;
-	private CustomerDetailsService				customerDetailsService;
+	private CheckListDetailService checkListDetailService;
+	private CustomerDetailsService customerDetailsService;
 
 	// DAO Classes
-	private AuditHeaderDAO						auditHeaderDAO;
-	private CommitmentDAO						commitmentDAO;
-	private CommitmentRateDAO					commitmentRateDAO;
-	private CommitmentMovementDAO				commitmentMovementDAO;
-	private FinanceCheckListReferenceDAO		financeCheckListReferenceDAO;
-	private FinanceReferenceDetailDAO			financeReferenceDetailDAO;
-	private DocumentDetailsDAO					documentDetailsDAO;
-	private DocumentManagerDAO					documentManagerDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private CommitmentDAO commitmentDAO;
+	private CommitmentRateDAO commitmentRateDAO;
+	private CommitmentMovementDAO commitmentMovementDAO;
+	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private DocumentManagerDAO documentManagerDAO;
 
-	private CustomerDocumentDAO					customerDocumentDAO;
-	private FinFlagDetailsDAO 					finFlagDetailsDAO;
-	private CollateralAssignmentDAO 			collateralAssignmentDAO;
-	private RuleDAO								ruleDAO;
-	private LimitDetailDAO 						limitDetailDAO;
-	private LimitHeaderDAO 						limitHeaderDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
+	private FinFlagDetailsDAO finFlagDetailsDAO;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private RuleDAO ruleDAO;
+	private LimitDetailDAO limitDetailDAO;
+	private LimitHeaderDAO limitHeaderDAO;
 
 	// Validation Service Classes
-	private FlagDetailValidation				flagDetailValidation;
-	private CommitmentRateValidation 			commitmentRateValidation;
-	private CollateralAssignmentValidation 		collateralAssignmentValidation;
-	private DocumentDetailValidation			documentDetailValidation;
+	private FlagDetailValidation flagDetailValidation;
+	private CommitmentRateValidation commitmentRateValidation;
+	private CollateralAssignmentValidation collateralAssignmentValidation;
+	private DocumentDetailValidation documentDetailValidation;
 
-	private LimitManagement						limitManagement;
+	private LimitManagement limitManagement;
 
 	public CommitmentServiceImpl() {
 		super();
@@ -187,6 +187,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	/**
 	 * Commitment Flag Validation
+	 * 
 	 * @return
 	 */
 	public FlagDetailValidation getFlagDetailValidation() {
@@ -198,6 +199,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	/**
 	 * Commitment Review Rates Validation
+	 * 
 	 * @return
 	 */
 	public CommitmentRateValidation getCommitmentRateValidation() {
@@ -210,11 +212,13 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	/**
 	 * Commitment Document Validations
+	 * 
 	 * @return
 	 */
 	public DocumentDetailValidation getDocumentDetailValidation() {
 		if (documentDetailValidation == null) {
-			this.documentDetailValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO, customerDocumentDAO);
+			this.documentDetailValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
+					customerDocumentDAO);
 		}
 		return documentDetailValidation;
 	}
@@ -261,27 +265,32 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		if (commitment != null) {
 
 			//Commitment Movements
-			commitment.setCommitmentMovement(getCommitmentMovementDAO().getCommitmentMovementById(cmtReference, "_View"));
+			commitment
+					.setCommitmentMovement(getCommitmentMovementDAO().getCommitmentMovementById(cmtReference, "_View"));
 
 			//Flag Details
-			commitment.setCmtFlagDetailList(getFinFlagDetailsDAO().getFinFlagsByFinRef(cmtReference,CommitmentConstants.MODULE_NAME, "_View"));
+			commitment.setCmtFlagDetailList(
+					getFinFlagDetailsDAO().getFinFlagsByFinRef(cmtReference, CommitmentConstants.MODULE_NAME, "_View"));
 
 			//Commitment Review Rates
 			commitment.setCommitmentRateList(getCommitmentRateDAO().getCommitmentRatesByCmtRef(cmtReference, "_View"));
 
 			// Customer Details
-			commitment.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(commitment.getCustID(), true, "_View"));
+			commitment.setCustomerDetails(
+					getCustomerDetailsService().getCustomerDetailsById(commitment.getCustID(), true, "_View"));
 
 			// Collateral Details
-			commitment.setCollateralAssignmentList(getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(cmtReference, CommitmentConstants.MODULE_NAME, "_View"));
+			commitment.setCollateralAssignmentList(getCollateralAssignmentDAO()
+					.getCollateralAssignmentByFinRef(cmtReference, CommitmentConstants.MODULE_NAME, "_View"));
 
 			// Not Required Other Process details for the Enquiry
 			if (!isEnquiry) {
 				// Customer Details
-				commitment.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(commitment.getCustID(), true, "_View"));
+				commitment.setCustomerDetails(
+						getCustomerDetailsService().getCustomerDetailsById(commitment.getCustID(), true, "_View"));
 
 				// Document Details
-				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(cmtReference,	
+				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(cmtReference,
 						CommitmentConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
 				if (commitment.getDocuments() != null && !commitment.getDocuments().isEmpty()) {
 					commitment.getDocuments().addAll(documentList);
@@ -290,9 +299,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				}
 
 				// Agreement Details & Check List Details
-				if(StringUtils.isNotEmpty(commitment.getRecordType()) && 
-						!StringUtils.equals(commitment.getRecordType(), PennantConstants.RECORD_TYPE_UPD) &&
-						!StringUtils.equals(commitment.getRecordType(), PennantConstants.RECORD_TYPE_DEL)){
+				if (StringUtils.isNotEmpty(commitment.getRecordType())
+						&& !StringUtils.equals(commitment.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
+						&& !StringUtils.equals(commitment.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 					commitment = getProcessEditorDetails(commitment, nextRoleCode, FinanceConstants.FINSER_EVENT_ORG);
 				}
 			}
@@ -319,7 +328,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
 
 		// Fetch Total Process editor Details 
-		List<FinanceReferenceDetail> cmtRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(CommitmentConstants.WF_NEWCOMMITMENT, 
+		List<FinanceReferenceDetail> cmtRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
+				CommitmentConstants.WF_NEWCOMMITMENT,
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_CMTVIEW");
 
 		if (cmtRefDetails != null && !cmtRefDetails.isEmpty()) {
@@ -350,7 +360,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		return commitment;
 	}
 
-
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
@@ -378,7 +387,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -408,7 +418,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			auditHeader.getAuditDetail().setModelData(commitment);
 			auditHeader.setAuditReference(commitment.getCmtReference());
 
-			if (StringUtils.isBlank(commitment.getRecordType()) || StringUtils.trimToEmpty(commitment.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (StringUtils.isBlank(commitment.getRecordType())
+					|| StringUtils.trimToEmpty(commitment.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 				commitment.getCommitmentMovement().setMovementType("NC");
 			} else {
 				commitment.getCommitmentMovement().setMovementType("MC");
@@ -424,18 +435,18 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			//Commitment Movement
 			getCommitmentMovementDAO().update(commitment.getCommitmentMovement(), tableType);
 
-			/*if (commitment.getRecordStatus().equalsIgnoreCase("Approved")
-			        && commitment.getRecordType() != null) {
-				commitment.getCommitmentMovement().setMovementType("NC");
-				getCommitmentMovementDAO().save(commitment.getCommitmentMovement(), tableType);
-			} else {
-				commitment.getCommitmentMovement().setMovementType("MC");
-			}*/
+			/*
+			 * if (commitment.getRecordStatus().equalsIgnoreCase("Approved") && commitment.getRecordType() != null) {
+			 * commitment.getCommitmentMovement().setMovementType("NC");
+			 * getCommitmentMovementDAO().save(commitment.getCommitmentMovement(), tableType); } else {
+			 * commitment.getCommitmentMovement().setMovementType("MC"); }
+			 */
 		}
 
 		//Commitment Movements
 		if (commitment.getCommitmentMovement() != null) {
-			AuditDetail details = commitment.getCommitmentMovement().getLovDescAuditDetailMap().get("CommitmentMovement");
+			AuditDetail details = commitment.getCommitmentMovement().getLovDescAuditDetailMap()
+					.get("CommitmentMovement");
 			details = processingCommitmentMovementList(details, tableType, 0);
 			auditDetails.add(details);
 		}
@@ -512,8 +523,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		return auditHeader;
 	}
 
-
-
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
@@ -572,8 +581,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				} else {
 
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
-					auditHeader.setErrorDetails(new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(), 
-							errorMessage.substring(errorMessage.indexOf('-') + 1).trim(), null));
+					auditHeader.setErrorDetails(
+							new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(),
+									errorMessage.substring(errorMessage.indexOf('-') + 1).trim(), null));
 					return auditHeader;
 				}
 
@@ -590,8 +600,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				} else {
 
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
-					auditHeader.setErrorDetails(new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(), 
-							errorMessage.substring(errorMessage.indexOf('-') + 1).trim(), null));
+					auditHeader.setErrorDetails(
+							new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(),
+									errorMessage.substring(errorMessage.indexOf('-') + 1).trim(), null));
 					return auditHeader;
 				}
 
@@ -601,7 +612,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		// Commitment Movements
 		if (commitment.getCommitmentMovement() != null) {
-			AuditDetail details = commitment.getCommitmentMovement().getLovDescAuditDetailMap().get("CommitmentMovement");
+			AuditDetail details = commitment.getCommitmentMovement().getLovDescAuditDetailMap()
+					.get("CommitmentMovement");
 			details = processingCommitmentMovementList(details, "", linkTranid);
 			auditDetails.add(details);
 		}
@@ -609,7 +621,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		// Commitment Flag Details
 		if (commitment.getCmtFlagDetailList() != null && commitment.getCmtFlagDetailList().size() > 0) {
 			List<AuditDetail> details = commitment.getAuditDetailMap().get("FlagDetails");
-			details = processingCmtFlagDetailList(details, commitment.getCmtReference(),"");
+			details = processingCmtFlagDetailList(details, commitment.getCmtReference(), "");
 			auditDetails.addAll(details);
 		}
 
@@ -644,15 +656,18 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		getCommitmentDAO().delete(commitment, "_Temp");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(commitment, "_Temp", auditHeader.getAuditTranType())));
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, commitment.getBefImage(), commitment));
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(commitment, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, commitment.getBefImage(), commitment));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(commitment);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, commitment.getBefImage(), commitment));
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, commitment.getBefImage(), commitment));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -685,8 +700,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getCommitmentDAO().delete(commitment, "_Temp");
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, commitment.getBefImage(), commitment));
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(commitment, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, commitment.getBefImage(), commitment));
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(commitment, "_Temp", auditHeader.getAuditTranType())));
 
 		//Add Audit
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -701,14 +718,16 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
 		logger.debug("Entering");
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, onlineRequest);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,
+				onlineRequest);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
@@ -743,7 +762,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		List<FinanceCheckListReference> cmtCheckList = commitment.getCommitmentCheckLists();
 		if (cmtCheckList != null && !cmtCheckList.isEmpty()) {
 			List<AuditDetail> auditDetailList;
-			auditDetailList = getCheckListDetailService().validate(commitment.getAuditDetailMap().get("CheckListDetails"), method, usrLanguage);
+			auditDetailList = getCheckListDetailService()
+					.validate(commitment.getAuditDetailMap().get("CheckListDetails"), method, usrLanguage);
 			auditDetails.addAll(auditDetailList);
 		}
 
@@ -773,7 +793,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -803,56 +824,59 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 			if (!commitment.isWorkflow()) {// With out Work flow only new records  
 				if (befCommitment != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (commitment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCommitment != null || tempCommitment != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCommitment == null || tempCommitment != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
 			Commitment facilityRef = getCommitmentDAO().getCommitmentByFacilityRef(commitment.getId(), "_AView");
 			if (facilityRef != null) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-						"41001", errParmFacRef, valueParmFacRef), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParmFacRef, valueParmFacRef),
+						usrLanguage));
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!commitment.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befCommitment == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldCommitment != null && !oldCommitment.getLastMntOn().equals(befCommitment.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempCommitment == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldCommitment != null && !oldCommitment.getLastMntOn().equals(tempCommitment.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -937,7 +961,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	/**
 	 * Get record count from commitment table
 	 * 
-	 * @param id (commitment Reference)
+	 * @param id
+	 *            (commitment Reference)
 	 * @return Integer
 	 */
 	@Override
@@ -1005,7 +1030,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				tableType = "";
 			}
 
-			commitmentCheckLists = getCheckListDetailService().getCheckListByFinRef(commitment.getCmtReference(), tableType);				
+			commitmentCheckLists = getCheckListDetailService().getCheckListByFinRef(commitment.getCmtReference(),
+					tableType);
 			commitment.setCommitmentCheckLists(commitmentCheckLists);
 
 			if (commitmentCheckLists != null && !commitmentCheckLists.isEmpty()) {
@@ -1016,7 +1042,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		// Collateral Assignment Details
 		if (commitment.getCollateralAssignmentList() != null && commitment.getCollateralAssignmentList().size() > 0) {
-			auditDetailMap.put("CollateralAssignments", setCollateralAssignmentAuditData(commitment, auditTranType, method));
+			auditDetailMap.put("CollateralAssignments",
+					setCollateralAssignmentAuditData(commitment, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("CollateralAssignments"));
 		}
 
@@ -1043,7 +1070,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setCommitmentMovementAuditData(Commitment commitment, String auditTranType, String method) {
+	private List<AuditDetail> setCommitmentMovementAuditData(Commitment commitment, String auditTranType,
+			String method) {
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -1091,7 +1119,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			commitmentMovement.setLastMntOn(commitment.getLastMntOn());
 			commitmentMovement.setLastMntBy(commitment.getLastMntBy());
 
-			auditDetails.add(new AuditDetail(auditTranType, +1, fields[0], fields[1], "CommitmentMovement", commitmentMovement));
+			auditDetails.add(
+					new AuditDetail(auditTranType, +1, fields[0], fields[1], "CommitmentMovement", commitmentMovement));
 		}
 
 		logger.debug("Leaving ");
@@ -1137,7 +1166,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				flagDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				flagDetail.setNewRecord(true);
 			}
 
@@ -1157,7 +1186,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			flagDetail.setLastMntOn(commitment.getLastMntOn());
 			flagDetail.setLastMntBy(commitment.getLastMntBy());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], flagDetail.getBefImage(), flagDetail));
+			auditDetails.add(
+					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], flagDetail.getBefImage(), flagDetail));
 		}
 
 		logger.debug("Leaving");
@@ -1167,7 +1197,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
-	 * @param Commitment Rates
+	 * @param Commitment
+	 *            Rates
 	 * @param auditTranType
 	 * @param method
 	 * @return
@@ -1203,7 +1234,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				commitmentRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				commitmentRate.setNewRecord(true);
 			}
 
@@ -1223,7 +1254,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			commitmentRate.setLastMntOn(commitment.getLastMntOn());
 			commitmentRate.setLastMntBy(commitment.getLastMntBy());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], commitmentRate.getBefImage(), commitmentRate));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], commitmentRate.getBefImage(),
+					commitmentRate));
 		}
 
 		logger.debug("Leaving");
@@ -1273,7 +1305,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			cmtChekListRef.setLastMntBy(commitment.getLastMntBy());
 			cmtChekListRef.setWorkflowId(commitment.getWorkflowId());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], cmtChekListRef.getBefImage(), cmtChekListRef));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], cmtChekListRef.getBefImage(),
+					cmtChekListRef));
 		}
 
 		logger.debug("Leaving");
@@ -1288,10 +1321,11 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @param method
 	 * @return
 	 */
-	public List<AuditDetail> setCollateralAssignmentAuditData(Commitment commitment, String auditTranType, String method) {
+	public List<AuditDetail> setCollateralAssignmentAuditData(Commitment commitment, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();		
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		CollateralAssignment assignment = new CollateralAssignment();
 		String[] fields = PennantJavaUtil.getFieldDetails(assignment, assignment.getExcludeFields());
 
@@ -1339,7 +1373,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			collateralAssignment.setLastMntBy(commitment.getLastMntBy());
 			collateralAssignment.setLastMntOn(commitment.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], collateralAssignment.getBefImage(), collateralAssignment));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					collateralAssignment.getBefImage(), collateralAssignment));
 		}
 
 		logger.debug("Leaving");
@@ -1406,7 +1441,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			documentDetail.setLastMntBy(commitment.getLastMntBy());
 			documentDetail.setLastMntOn(commitment.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetail.getBefImage(), documentDetail));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetail.getBefImage(),
+					documentDetail));
 		}
 
 		logger.debug("Leaving");
@@ -1522,9 +1558,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingCmtFlagDetailList(List<AuditDetail> auditDetails, String cmtReference, String type) {
+	private List<AuditDetail> processingCmtFlagDetailList(List<AuditDetail> auditDetails, String cmtReference,
+			String type) {
 		logger.debug("Entering");
-
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1534,12 +1570,12 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinFlagsDetail finFlagsDetail = (FinFlagsDetail) auditDetails.get(i).getModelData();
 
-			saveRecord 			= false;
-			updateRecord 		= false;
-			deleteRecord 		= false;
-			approveRec 			= false;
-			String rcdType		= "";
-			String recordStatus	= "";
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
 
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
@@ -1598,7 +1634,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			}
 
 			if (deleteRecord) {
-				getFinFlagDetailsDAO().delete(finFlagsDetail.getReference(),finFlagsDetail.getFlagCode(),finFlagsDetail.getModuleName(),  type);
+				getFinFlagDetailsDAO().delete(finFlagsDetail.getReference(), finFlagsDetail.getFlagCode(),
+						finFlagsDetail.getModuleName(), type);
 			}
 
 			if (approveRec) {
@@ -1622,7 +1659,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @param custId
 	 * @return
 	 */
-	private List<AuditDetail> processingCommitmentRatesList(List<AuditDetail> auditDetails, String cmtReference, String type) {
+	private List<AuditDetail> processingCommitmentRatesList(List<AuditDetail> auditDetails, String cmtReference,
+			String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -1664,7 +1702,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				} else if (commitmentRate.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					commitmentRate.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
-			} else if (commitmentRate.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {	
+			} else if (commitmentRate.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
@@ -1762,7 +1800,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @param custId
 	 * @return
 	 */
-	public List<AuditDetail> processingCollateralAssignmentList(List<AuditDetail> auditDetails, String cmtReference, String type) {
+	public List<AuditDetail> processingCollateralAssignmentList(List<AuditDetail> auditDetails, String cmtReference,
+			String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -1858,7 +1897,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, Commitment commitment, String type) {
+	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, Commitment commitment,
+			String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -2005,7 +2045,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		if (commitment.getCommitmentMovement() != null) {
 			CommitmentMovement commMovement = commitment.getCommitmentMovement();
 			String[] fields = PennantJavaUtil.getFieldDetails(commMovement, commMovement.getExcludeFields());
-			auditList.add(new AuditDetail(auditTranType, +1, fields[0], fields[1], commMovement.getBefImage(), commMovement));
+			auditList.add(
+					new AuditDetail(auditTranType, +1, fields[0], fields[1], commMovement.getBefImage(), commMovement));
 
 			getCommitmentMovementDAO().delete(commitment.getCommitmentMovement(), tableType);
 		}
@@ -2017,9 +2058,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			String[] fields = PennantJavaUtil.getFieldDetails(cmtFlag, cmtFlag.getExcludeFields());
 
 			for (FinFlagsDetail cmtFlagDetail : commitment.getCmtFlagDetailList()) {
-				auditList.add(new  AuditDetail(auditTranType, auditList.size()+1, fields[0], fields[1], cmtFlagDetail.getBefImage(), cmtFlagDetail));
+				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
+						cmtFlagDetail.getBefImage(), cmtFlagDetail));
 			}
-			getFinFlagDetailsDAO().deleteList(commitment.getCmtReference(),CommitmentConstants.MODULE_NAME, tableType);
+			getFinFlagDetailsDAO().deleteList(commitment.getCmtReference(), CommitmentConstants.MODULE_NAME, tableType);
 		}
 
 		// Commitment Review Rates
@@ -2029,7 +2071,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			String[] fields = PennantJavaUtil.getFieldDetails(cmtRate, cmtRate.getExcludeFields());
 
 			for (CommitmentRate commitmentRate : commitment.getCommitmentRateList()) {
-				auditList.add(new  AuditDetail(auditTranType, auditList.size()+1, fields[0], fields[1], commitmentRate.getBefImage(), commitmentRate));
+				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
+						commitmentRate.getBefImage(), commitmentRate));
 			}
 			getCommitmentRateDAO().deleteByCmtReference(commitment.getCmtReference(), tableType);
 		}
@@ -2041,19 +2084,21 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			String[] fields = PennantJavaUtil.getFieldDetails(new DocumentDetails(), finCheckList.getExcludeFields());
 
 			for (FinanceCheckListReference finCheckListRef : commitment.getCommitmentCheckLists()) {
-				auditList.add(new  AuditDetail(auditTranType, auditList.size()+1, fields[0], fields[1], finCheckListRef.getBefImage(), finCheckListRef));
+				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
+						finCheckListRef.getBefImage(), finCheckListRef));
 			}
 			getFinanceCheckListReferenceDAO().delete(commitment.getCmtReference(), tableType);
 		}
 
 		//Collateral assignment Details
-		if(commitment.getCollateralAssignmentList() != null && !commitment.getCollateralAssignmentList().isEmpty()){
+		if (commitment.getCollateralAssignmentList() != null && !commitment.getCollateralAssignmentList().isEmpty()) {
 
 			CollateralAssignment collAssignment = new CollateralAssignment();
 			String[] fields = PennantJavaUtil.getFieldDetails(collAssignment, collAssignment.getExcludeFields());
 
 			for (CollateralAssignment assignment : commitment.getCollateralAssignmentList()) {
-				auditList.add(new  AuditDetail(auditTranType, auditList.size()+1, fields[0], fields[1], assignment.getBefImage(), assignment));
+				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
+						assignment.getBefImage(), assignment));
 			}
 			getCollateralAssignmentDAO().deleteByReference(commitment.getCmtReference(), tableType);
 		}
@@ -2065,7 +2110,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
 
 			for (DocumentDetails docDetail : commitment.getDocuments()) {
-				auditList.add(new  AuditDetail(auditTranType, auditList.size()+1, fields[0], fields[1], docDetail.getBefImage(), docDetail));
+				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
+						docDetail.getBefImage(), docDetail));
 			}
 			getDocumentDetailsDAO().deleteList(commitment.getDocuments(), tableType);
 		}
@@ -2076,6 +2122,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	/**
 	 * Document Details List Maintenance
+	 * 
 	 * @param commitment
 	 * @param tableType
 	 */
@@ -2092,7 +2139,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	private CustomerDocument getCustomerDocument(DocumentDetails documentDetail, Commitment commitment) {
 		logger.debug("Entering ");
 
-		CustomerDocument customerDocument = getCustomerDocumentDAO().getCustomerDocumentById(commitment.getCustID(), documentDetail.getDocCategory(), "");
+		CustomerDocument customerDocument = getCustomerDocumentDAO().getCustomerDocumentById(commitment.getCustID(),
+				documentDetail.getDocCategory(), "");
 
 		if (customerDocument == null) {
 			customerDocument = new CustomerDocument();
@@ -2102,7 +2150,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			customerDocument.setCustDocVerifiedBy(documentDetail.getCustDocVerifiedBy());
 			customerDocument.setNewRecord(true);
 			//Need to add customerid  customerDocument.setCustID(commitment.getCustID());//FIXME
-			
+
 		}
 
 		customerDocument.setCustID(commitment.getCustID());
@@ -2120,7 +2168,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		customerDocument.setCustDocCategory(documentDetail.getDocCategory());
 		customerDocument.setCustDocName(documentDetail.getDocName());
 		customerDocument.setLovDescCustDocCategory(documentDetail.getLovDescDocCategoryName());
-		
+
 		if (customerDocument.getDocRefId() <= 0) {
 			DocumentManager documentManager = new DocumentManager();
 			documentManager.setDocImage(documentDetail.getDocImage());
@@ -2175,9 +2223,11 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					if (StringUtils.isNotEmpty(transType)) {
 
 						// check and change below line for Complete code
-						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses()).invoke(object, object.getClass().getClasses());
+						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
+								.invoke(object, object.getClass().getClasses());
 
-						auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
+						auditDetailsList.add(
+								new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
 					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
@@ -2226,6 +2276,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
+
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
@@ -2286,10 +2337,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		return financeCheckListReferenceDAO;
 	}
 
-	public void setFinanceCheckListReferenceDAO(
-			FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
+	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
 		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
 	}
+
 	public FinFlagDetailsDAO getFinFlagDetailsDAO() {
 		return finFlagDetailsDAO;
 	}
@@ -2301,6 +2352,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
 		return collateralAssignmentDAO;
 	}
+
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}

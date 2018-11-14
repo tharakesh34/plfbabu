@@ -17,14 +17,14 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class SnapShotService extends SnapShotDataExecution {
 
 	private static final Logger logger = Logger.getLogger(SnapShotService.class);
-	private boolean snapCleared=false;
-	
+	private boolean snapCleared = false;
+
 	public boolean intialiseSanpshot() {
 		logger.info(Literal.ENTERING);
 
 		customerConfigurations = new ArrayList<SnapShotConfiguration>();
-		incDownLoadConfigurations= new ArrayList<SnapShotConfiguration>();
-		
+		incDownLoadConfigurations = new ArrayList<SnapShotConfiguration>();
+
 		List<SnapShotConfiguration> snapShotConfigurations = getActiveConfigurationList();
 
 		for (SnapShotConfiguration snapShotConfiguration : snapShotConfigurations) {
@@ -40,7 +40,7 @@ public class SnapShotService extends SnapShotDataExecution {
 				break;
 			}
 
-			if(!snapCleared){
+			if (!snapCleared) {
 				switch (snapShotConfiguration.getClearingType()) {
 				case 0:
 					break;
@@ -51,21 +51,21 @@ public class SnapShotService extends SnapShotDataExecution {
 					clearData(snapShotConfiguration.getToTable(), true);
 				}
 			}
-		}	
+		}
 		logger.info(Literal.LEAVING);
 
 		return true;
 	}
 
-	public boolean addCustomerSnapShot(long custID,boolean snapCleared) {
+	public boolean addCustomerSnapShot(long custID, boolean snapCleared) {
 		logger.info(Literal.ENTERING);
 
-		this.snapCleared=snapCleared;
+		this.snapCleared = snapCleared;
 		if (!snapCleared) {
-			this.snapCleared= intialiseSanpshot();
-			
+			this.snapCleared = intialiseSanpshot();
+
 		}
-		
+
 		if (!snapCleared) {
 			return snapCleared;
 		}
@@ -74,11 +74,12 @@ public class SnapShotService extends SnapShotDataExecution {
 		param.put("CustomerId", custID);
 
 		for (SnapShotConfiguration configuration : customerConfigurations) {
-			Timestamp runDate=new Timestamp(System.currentTimeMillis());
+			Timestamp runDate = new Timestamp(System.currentTimeMillis());
 
 			switch (configuration.getExecutionType()) {
 			case 1:
-				String columns =StringUtils.join(configuration.getColumns(),","); ;
+				String columns = StringUtils.join(configuration.getColumns(), ",");
+				;
 				int recordCount = 0;
 
 				for (SnapShotCondition condition : configuration.getConditions()) {
@@ -88,26 +89,27 @@ public class SnapShotService extends SnapShotDataExecution {
 					recordCount = recordCount + generateSnapShotData(sqlQry, param, configuration.getFromTable());
 				}
 
-				updateLastRunDate(configuration.getId(),runDate);
+				updateLastRunDate(configuration.getId(), runDate);
 
-				 // Logging Information 
-				  StringBuffer buffer= new StringBuffer("Snap Shot Completed For Customer ID ");
-				  buffer.append(custID); buffer.append(" From ");
-				  buffer.append(configuration.getFromTable());
-				  
-				  buffer.append(" To ");
-				  buffer.append(configuration.getToTable());
-				  
-				  buffer.append(" Number of Records ");
-				  buffer.append(recordCount);
-				  
-				  logger.debug(buffer);
-				 
+				// Logging Information 
+				StringBuffer buffer = new StringBuffer("Snap Shot Completed For Customer ID ");
+				buffer.append(custID);
+				buffer.append(" From ");
+				buffer.append(configuration.getFromTable());
+
+				buffer.append(" To ");
+				buffer.append(configuration.getToTable());
+
+				buffer.append(" Number of Records ");
+				buffer.append(recordCount);
+
+				logger.debug(buffer);
+
 				break;
 
 			default:
 				logger.error("In valid Execution Type for " + configuration.getFromTable());
-				throw new AppException("SNAP001", "In valid Execution Type for "+configuration.getFromTable());
+				throw new AppException("SNAP001", "In valid Execution Type for " + configuration.getFromTable());
 			}
 
 		}
@@ -117,55 +119,57 @@ public class SnapShotService extends SnapShotDataExecution {
 	}
 
 	public boolean incDownLoad(boolean fullDownLoad) {
-		
+
 		Map<String, Object> param = new HashMap<>();
-		
-		
+
 		for (SnapShotConfiguration configuration : incDownLoadConfigurations) {
 
-			if(fullDownLoad){
+			if (fullDownLoad) {
 				clearData(configuration.getToTable(), true);
 			}
 
 			Timestamp startDate = configuration.getLastRunDate();
-			Timestamp endDate=new Timestamp(System.currentTimeMillis());
+			Timestamp endDate = new Timestamp(System.currentTimeMillis());
 
 			switch (configuration.getExecutionType()) {
 			case 1:
-				String columns =StringUtils.join(configuration.getColumns(),","); ;
+				String columns = StringUtils.join(configuration.getColumns(), ",");
+				;
 				int recordCount = 0;
-				
+
 				for (SnapShotCondition condition : configuration.getConditions()) {
-					
-					String sqlQry = getSqlQry(configuration.getFromSchema(),configuration.getFromTable(), configuration.getToTable(), columns, condition,fullDownLoad);
-					
-					if(!fullDownLoad){
+
+					String sqlQry = getSqlQry(configuration.getFromSchema(), configuration.getFromTable(),
+							configuration.getToTable(), columns, condition, fullDownLoad);
+
+					if (!fullDownLoad) {
 						param.put("ENDDATE", endDate);
-						if(startDate!=null){
-							param.put("STARTDATE",startDate);
-							sqlQry = StringUtils.replace(sqlQry, "{LASTMNTON}","  LASTMNTON >= :STARTDATE AND LASTMNTON <= :ENDDATE ");
-						}else{
-							sqlQry = StringUtils.replace(sqlQry, "{LASTMNTON}","  LASTMNTON <= :ENDDATE ");
+						if (startDate != null) {
+							param.put("STARTDATE", startDate);
+							sqlQry = StringUtils.replace(sqlQry, "{LASTMNTON}",
+									"  LASTMNTON >= :STARTDATE AND LASTMNTON <= :ENDDATE ");
+						} else {
+							sqlQry = StringUtils.replace(sqlQry, "{LASTMNTON}", "  LASTMNTON <= :ENDDATE ");
 						}
 					}
-					
+
 					recordCount = recordCount + generateSnapShotData(sqlQry, param, configuration.getFromTable());
 				}
 
 				updateLastRunDate(configuration.getId(), endDate);
 
-				 // Logging Information 
-				  StringBuffer buffer= new StringBuffer("Snap Shot Completed For Table");
-				  buffer.append(configuration.getFromTable()); 
-				  buffer.append(" Number of Records ");
-				  buffer.append(recordCount);
-				  logger.debug(buffer);
-				 
+				// Logging Information 
+				StringBuffer buffer = new StringBuffer("Snap Shot Completed For Table");
+				buffer.append(configuration.getFromTable());
+				buffer.append(" Number of Records ");
+				buffer.append(recordCount);
+				logger.debug(buffer);
+
 				break;
 
 			default:
 				logger.error("In valid Execution Type for " + configuration.getFromTable());
-				throw new AppException("SNAP001", "In valid Execution Type for "+configuration.getFromTable());
+				throw new AppException("SNAP001", "In valid Execution Type for " + configuration.getFromTable());
 			}
 
 		}

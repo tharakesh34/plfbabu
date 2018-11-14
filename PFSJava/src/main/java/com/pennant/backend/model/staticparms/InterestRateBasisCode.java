@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class InterestRateBasisCode extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3132970492211301519L;
-	
+
 	private String intRateBasisCode;
 	private String intRateBasisDesc;
 	private boolean intRateBasisIsActive;
@@ -82,6 +82,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return intRateBasisCode;
 	}
+
 	public void setId(String id) {
 		this.intRateBasisCode = id;
 	}
@@ -89,6 +90,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public String getIntRateBasisCode() {
 		return intRateBasisCode;
 	}
+
 	public void setIntRateBasisCode(String intRateBasisCode) {
 		this.intRateBasisCode = intRateBasisCode;
 	}
@@ -96,6 +98,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public String getIntRateBasisDesc() {
 		return intRateBasisDesc;
 	}
+
 	public void setIntRateBasisDesc(String intRateBasisDesc) {
 		this.intRateBasisDesc = intRateBasisDesc;
 	}
@@ -103,6 +106,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public boolean isIntRateBasisIsActive() {
 		return intRateBasisIsActive;
 	}
+
 	public void setIntRateBasisIsActive(boolean intRateBasisIsActive) {
 		this.intRateBasisIsActive = intRateBasisIsActive;
 	}
@@ -110,6 +114,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -117,6 +122,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -124,6 +130,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public InterestRateBasisCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(InterestRateBasisCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -131,6 +138,7 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

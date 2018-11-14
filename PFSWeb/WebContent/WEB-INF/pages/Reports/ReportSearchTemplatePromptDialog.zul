@@ -2,19 +2,14 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_ReportSearchTemplateDialog" border="normal"
-		closable="true" title="Enter Template Name" width="600px"
-		height="160px" sizable="false"
-		apply="${reportSearchTemplateDialog}">
+	<window id="window_ReportSearchTemplateDialog" border="normal" closable="true" title="Enter Template Name"
+		width="600px" height="160px" sizable="false" apply="${reportSearchTemplateDialog}">
 
 		<borderlayout id="borderlayout">
 			<center border="none" autoscroll="true">
-				<grid id="dymanicFieldsGrid" sclass="GridLayoutNoBorder"
-					fixedLayout="true">
+				<grid id="dymanicFieldsGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
 					<columns>
 						<column width="20%" />
 						<column width="50%" />
@@ -25,18 +20,14 @@
 							<label value="Template Name" />
 							<hbox>
 								<space spacing="2px" sclass="mandatory" />
-								<textbox id="templateName" width="250px"
-									maxlength="200" />
+								<textbox id="templateName" width="250px" maxlength="200" />
 							</hbox>
-							<button id="btnSaveTemplate" height="20"
-								image="/images/icons/btn_save2_16x16.gif"
-								tooltiptext="Save Template" />
+							<button id="btnSaveTemplate" height="20" image="/images/icons/btn_save2_16x16.gif" tooltiptext="Save Template" />
 						</row>
 						<row valign="middle">
 							<label value="Save For" />
 							<radiogroup id="saveTemplateFor">
-								<radio id="currentUser"
-									label="Current User" selected="true" />
+								<radio id="currentUser" label="Current User" selected="true" />
 								<space spacing="20px" />
 								<radio id="allUsers" label="All Users" />
 							</radiogroup>
@@ -44,8 +35,7 @@
 					</rows>
 				</grid>
 			</center>
-			<south border="none" margins="1,0,0,0" size="30px"
-				splittable="false">
+			<south border="none" margins="1,0,0,0" size="30px" splittable="false">
 
 			</south>
 		</borderlayout>

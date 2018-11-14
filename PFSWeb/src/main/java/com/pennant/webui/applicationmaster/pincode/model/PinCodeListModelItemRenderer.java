@@ -19,14 +19,13 @@ public class PinCodeListModelItemRenderer implements ListitemRenderer<PinCode>, 
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, PinCode pinCode, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(pinCode.getPinCode());
+		lc = new Listcell(pinCode.getPinCode());
 		lc.setParent(item);
-	  	lc = new Listcell(pinCode.getPCCityName());
+		lc = new Listcell(pinCode.getPCCityName());
 		lc.setParent(item);
 		lc = new Listcell(pinCode.getAreaName());
 		lc.setParent(item);
@@ -36,12 +35,12 @@ public class PinCodeListModelItemRenderer implements ListitemRenderer<PinCode>, 
 		cbActive.setChecked(pinCode.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(pinCode.getRecordStatus());
+		lc = new Listcell(pinCode.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(pinCode.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("pinCodeId", pinCode.getPinCodeId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPinCodeItemDoubleClicked");
 	}
 }

@@ -338,7 +338,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				if(mandateProcess != null) {
+				if (mandateProcess != null) {
 					mandateProcess.processResponseFile(userId, file, media);
 				}
 			} catch (Exception e) {

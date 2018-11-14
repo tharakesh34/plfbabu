@@ -51,29 +51,30 @@ import java.util.List;
  * Model class for the <b>Academic table</b>.<br>
  *
  */
-public class RolledoverFinanceHeader implements java.io.Serializable  {
+public class RolledoverFinanceHeader implements java.io.Serializable {
 
 	private static final long serialVersionUID = -1472467289111692722L;
-	
+
 	private String finReference;
 	private BigDecimal custPayment = BigDecimal.ZERO;
 	private String paymentAccount;
 	private BigDecimal latePayAmount = BigDecimal.ZERO;
 	private BigDecimal latePayWaiverAmount = BigDecimal.ZERO;
-	
+
 	private List<RolledoverFinanceDetail> rolledoverFinanceDetails = new ArrayList<>(1);
 
 	public RolledoverFinanceHeader() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-		
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -81,6 +82,7 @@ public class RolledoverFinanceHeader implements java.io.Serializable  {
 	public BigDecimal getCustPayment() {
 		return custPayment;
 	}
+
 	public void setCustPayment(BigDecimal custPayment) {
 		this.custPayment = custPayment;
 	}
@@ -88,29 +90,33 @@ public class RolledoverFinanceHeader implements java.io.Serializable  {
 	public String getPaymentAccount() {
 		return paymentAccount;
 	}
+
 	public void setPaymentAccount(String paymentAccount) {
 		this.paymentAccount = paymentAccount;
 	}
 
 	public List<RolledoverFinanceDetail> getRolledoverFinanceDetails() {
-	    return rolledoverFinanceDetails;
-    }
+		return rolledoverFinanceDetails;
+	}
+
 	public void setRolledoverFinanceDetails(List<RolledoverFinanceDetail> rolledoverFinanceDetails) {
-	    this.rolledoverFinanceDetails = rolledoverFinanceDetails;
-    }
+		this.rolledoverFinanceDetails = rolledoverFinanceDetails;
+	}
 
 	public BigDecimal getLatePayAmount() {
-	    return latePayAmount;
-    }
+		return latePayAmount;
+	}
+
 	public void setLatePayAmount(BigDecimal latePayAmount) {
-	    this.latePayAmount = latePayAmount;
-    }
+		this.latePayAmount = latePayAmount;
+	}
 
 	public BigDecimal getLatePayWaiverAmount() {
-	    return latePayWaiverAmount;
-    }
+		return latePayWaiverAmount;
+	}
+
 	public void setLatePayWaiverAmount(BigDecimal latePayWaiverAmount) {
-	    this.latePayWaiverAmount = latePayWaiverAmount;
-    }
+		this.latePayWaiverAmount = latePayWaiverAmount;
+	}
 
 }

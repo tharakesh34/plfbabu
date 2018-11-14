@@ -62,11 +62,11 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.BatchUtil;
 
 public class FinanceMovement extends ServiceHelper implements Tasklet {
-	private static final long		serialVersionUID	= 6169223754136126786L;
-	private Logger					logger				= Logger.getLogger(FinanceMovement.class);
+	private static final long serialVersionUID = 6169223754136126786L;
+	private Logger logger = Logger.getLogger(FinanceMovement.class);
 
-	int								processed			= 0;
-	private StatusMovementService	statusMovementService;
+	int processed = 0;
+	private StatusMovementService statusMovementService;
 
 	public FinanceMovement() {
 		super();
@@ -167,22 +167,26 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 	private String queryPDToNormalCount() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append("select count(*) from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
-		sqlQuery.append(" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
+		sqlQuery.append(
+				"select count(*) from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
+		sqlQuery.append(
+				" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
 		sqlQuery.append(" where FinODTillDate=? and fpd.CurODDays=0  ");
 		return sqlQuery.toString();
 	}
 
 	private String queryPDToPISCount() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select count(*) from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t  ");
+		sqlQuery.append(
+				" select count(*) from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t  ");
 		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
 		return sqlQuery.toString();
 	}
 
 	private String queryPSIToNormalCount() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select count(*) from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
+		sqlQuery.append(
+				" select count(*) from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
 		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
 		return sqlQuery.toString();
 	}
@@ -197,15 +201,18 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 	private String getPDToNormal() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append("select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
-		sqlQuery.append(" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
+		sqlQuery.append(
+				"select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
+		sqlQuery.append(
+				" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
 		sqlQuery.append(" where FinODTillDate=? and fpd.CurODDays=0   ");
 		return sqlQuery.toString();
 	}
 
 	private String getPDToPIS() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select * from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t  ");
+		sqlQuery.append(
+				" select * from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t  ");
 		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
 		return sqlQuery.toString();
 	}
@@ -213,7 +220,8 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 	@SuppressWarnings("unused")
 	private String getPSIToNormal() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select * from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
+		sqlQuery.append(
+				" select * from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
 		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
 		return sqlQuery.toString();
 	}

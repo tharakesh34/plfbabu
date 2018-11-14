@@ -61,10 +61,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BounceReason table</b>.<br>
  *
  */
-@XmlType(propOrder = {"bounceID","bounceCode","reasonType","category","reason","action","feeID","returnID","active"})
+@XmlType(propOrder = { "bounceID", "bounceCode", "reasonType", "category", "reason", "action", "feeID", "returnID",
+		"active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BounceReason extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class BounceReason extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long bounceID = 0;
 	private String bounceCode;
@@ -73,21 +74,21 @@ private static final long serialVersionUID = 1L;
 	private String categoryDesc;
 	private String reason;
 	private int action;
-	private long ruleID=0;
+	private long ruleID = 0;
 	private String ruleCode;
 	private String ruleCodeDesc;
 	private String returnCode;
 	private String lovdesccategory;
 	private boolean active;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private BounceReason befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -100,7 +101,7 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("ruleCode");
@@ -113,58 +114,68 @@ private static final long serialVersionUID = 1L;
 	public long getId() {
 		return bounceID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.bounceID = id;
 	}
+
 	public long getBounceID() {
 		return bounceID;
 	}
+
 	public void setBounceID(long bounceID) {
 		this.bounceID = bounceID;
 	}
-	
+
 	public String getBounceCode() {
 		return bounceCode;
 	}
+
 	public void setBounceCode(String bounceCode) {
 		this.bounceCode = bounceCode;
 	}
-	
+
 	public int getReasonType() {
 		return reasonType;
 	}
+
 	public void setReasonType(int reasonType) {
 		this.reasonType = reasonType;
 	}
-	
+
 	public int getCategory() {
 		return category;
 	}
+
 	public void setCategory(int category) {
 		this.category = category;
 		this.categoryDesc = PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getCategoryType(), category);
 	}
+
 	public String getReason() {
 		return reason;
 	}
+
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
 	public int getAction() {
 		return action;
 	}
+
 	public void setAction(int action) {
 		this.action = action;
 	}
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -172,7 +183,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -181,19 +192,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public BounceReason getBefImage(){
+	public BounceReason getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(BounceReason beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BounceReason beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -204,11 +215,10 @@ private static final long serialVersionUID = 1L;
 	public void setReturnCode(String returnCode) {
 		this.returnCode = returnCode;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-
 
 	public String getRuleCode() {
 		return ruleCode;
@@ -268,5 +278,5 @@ private static final long serialVersionUID = 1L;
 	public void setLovdesccategory(String lovdesccategory) {
 		this.lovdesccategory = lovdesccategory;
 	}
-	
+
 }

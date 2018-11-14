@@ -94,26 +94,24 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RulesFactory/StepPolicyHeader/stepPolicyDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RulesFactory/StepPolicyHeader/stepPolicyDialog.zul file.
  */
 public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = Logger.getLogger(StepPolicyDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_StepPolicyDialog;      // autowired
+	protected Window window_StepPolicyDialog; // autowired
 
-	protected Uppercasebox 	policyCode; 				  // autowired
-	protected Textbox 		policyDesc; 			      // autowired
-	protected Intbox 		noOfSteps; 		              // autowired
-	protected Combobox      stepType;
-	protected Grid 			grid_Basicdetails;			  // autoWired
-	protected Listbox 		listBoxStepPolicyDetail;
+	protected Uppercasebox policyCode; // autowired
+	protected Textbox policyDesc; // autowired
+	protected Intbox noOfSteps; // autowired
+	protected Combobox stepType;
+	protected Grid grid_Basicdetails; // autoWired
+	protected Listbox listBoxStepPolicyDetail;
 
 	// not auto wired vars
 	private StepPolicyHeader stepPolicyHeader; // overhanded per param
@@ -126,8 +124,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private List<StepPolicyDetail> stepPolicyDetailList = new ArrayList<StepPolicyDetail>();
 	int listRows;
-	protected boolean										recSave;
-	
+	protected boolean recSave;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -143,9 +141,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected StepPolicyHeader object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected StepPolicyHeader object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -160,8 +157,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("stepPolicyHeader")) {
-				this.stepPolicyHeader = (StepPolicyHeader) arguments
-						.get("stepPolicyHeader");
+				this.stepPolicyHeader = (StepPolicyHeader) arguments.get("stepPolicyHeader");
 				StepPolicyHeader befImage = new StepPolicyHeader();
 				BeanUtils.copyProperties(this.stepPolicyHeader, befImage);
 				this.stepPolicyHeader.setBefImage(befImage);
@@ -170,8 +166,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				setStepPolicyHeader(null);
 			}
 
-			doLoadWorkFlow(this.stepPolicyHeader.isWorkflow(),
-					this.stepPolicyHeader.getWorkflowId(),
+			doLoadWorkFlow(this.stepPolicyHeader.isWorkflow(), this.stepPolicyHeader.getWorkflowId(),
 					this.stepPolicyHeader.getNextTaskId());
 
 			/* set components visible dependent of the users rights */
@@ -179,8 +174,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"StepPolicyDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "StepPolicyDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -189,15 +183,13 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 			// or
 			// delete stepPolicyHeader here.
 			if (arguments.containsKey("stepPolicyListCtrl")) {
-				setStepPolicyListCtrl((StepPolicyListCtrl) arguments
-						.get("stepPolicyListCtrl"));
+				setStepPolicyListCtrl((StepPolicyListCtrl) arguments.get("stepPolicyListCtrl"));
 			} else {
 				setStepPolicyListCtrl(null);
 			}
 
 			getBorderLayoutHeight();
-			int dialogHeight = grid_Basicdetails.getRows()
-					.getVisibleItemCount() * 20 + 100;
+			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listBoxStepPolicyDetail.setHeight(listboxHeight + "px");
 			listRows = Math.round(listboxHeight / 24) - 1;
@@ -217,7 +209,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-	
+
 		this.policyCode.setMaxlength(8);
 		this.policyDesc.setMaxlength(50);
 		this.noOfSteps.setMaxlength(2);
@@ -235,20 +227,20 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("StepPolicyDialog",getRole());
+		getUserWorkspace().allocateAuthorities("StepPolicyDialog", getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_StepPolicyDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_StepPolicyDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_StepPolicyDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_StepPolicyDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		this.button_StepPolicyDialog_btnNew_StepPolicyDetail.setVisible(getUserWorkspace().isAllowed("button_StepPolicyDialog_btnNew_StepPolicyDetail"));
+		this.button_StepPolicyDialog_btnNew_StepPolicyDetail
+				.setVisible(getUserWorkspace().isAllowed("button_StepPolicyDialog_btnNew_StepPolicyDetail"));
 
 		logger.debug("Leaving");
 	}
@@ -357,7 +349,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aStepPolicyHeader
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteComponentsToBean(StepPolicyHeader aStepPolicyHeader) throws InterruptedException {
 		logger.debug("Entering");
@@ -396,57 +388,62 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Leaving");
 	}
 
-
-	public boolean validateStepPolicies() throws InterruptedException{
+	public boolean validateStepPolicies() throws InterruptedException {
 		logger.debug("Entering");
 		BigDecimal tenorPercTotal = BigDecimal.ZERO;
 		BigDecimal emiPercTotal = BigDecimal.ZERO;
 		int totalSteps = 0;
-		if(StringUtils.isBlank(this.policyCode.getValue()) || StringUtils.isBlank(this.policyDesc.getValue())){
+		if (StringUtils.isBlank(this.policyCode.getValue()) || StringUtils.isBlank(this.policyDesc.getValue())) {
 			return false;
 		}
-		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()){
-			
+		if (getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()) {
+
 			int stepCount = 0;
 			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
-				if(!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
-						!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
+				if (!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						&& !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+								.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					stepCount = stepCount + 1;
 				}
 			}
-			
-			if(stepCount < 2) {
+
+			if (stepCount < 2) {
 				MessageUtil.showError(Labels.getLabel("StepPolicyDetail_Count_IS_EQUAL_OR_GREATER"));
 				return false;
 			}
-			
+
 			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
-				if(!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
-						!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
+				if (!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						&& !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+								.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					tenorPercTotal = tenorPercTotal.add(stepPolicyDetail.getTenorSplitPerc());
 					emiPercTotal = emiPercTotal.add(stepPolicyDetail.getEmiSplitPerc());
 					totalSteps++;
 				}
 			}
-			if(tenorPercTotal.compareTo(new BigDecimal(100)) != 0) {
+			if (tenorPercTotal.compareTo(new BigDecimal(100)) != 0) {
 				MessageUtil.showError(Labels.getLabel("TenorSplitPerc_IS_EQUAL_OR_LESSER"));
 				return false;
 			}
-			
-			if(StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(), FinanceConstants.STEPTYPE_EMI)){
-				BigDecimal emiPerc = emiPercTotal.divide(new BigDecimal(totalSteps),RoundingMode.HALF_UP);
-				if(emiPerc.compareTo(new BigDecimal(100)) != 0) {
+
+			if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
+					FinanceConstants.STEPTYPE_EMI)) {
+				BigDecimal emiPerc = emiPercTotal.divide(new BigDecimal(totalSteps), RoundingMode.HALF_UP);
+				if (emiPerc.compareTo(new BigDecimal(100)) != 0) {
 					MessageUtil.showError(Labels.getLabel("EMISplitPerc_IS_EQUAL_OR_LESSER"));
 					return false;
 				}
-			}else if(StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(), FinanceConstants.STEPTYPE_PRIBAL)){
+			} else if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
+					FinanceConstants.STEPTYPE_PRIBAL)) {
 				BigDecimal priPerc = emiPercTotal;
-				if(priPerc.compareTo(new BigDecimal(100)) != 0) {
+				if (priPerc.compareTo(new BigDecimal(100)) != 0) {
 					MessageUtil.showError(Labels.getLabel("PRISplitPerc_IS_EQUAL"));
 					return false;
 				}
 			}
-		}else{
+		} else {
 			MessageUtil.showError(Labels.getLabel("StepDetail_NoEmpty"));
 			return false;
 		}
@@ -504,22 +501,24 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Entering");
 		this.listBoxStepPolicyDetail.getItems().clear();
 		setStepPolicyDetailList(stepPolicyDetails);
-		if(stepPolicyDetails != null && !stepPolicyDetails.isEmpty()){
+		if (stepPolicyDetails != null && !stepPolicyDetails.isEmpty()) {
 			Comparator<Object> comp = new BeanComparator<Object>("stepNumber");
-			Collections.sort(stepPolicyDetails,comp);
+			Collections.sort(stepPolicyDetails, comp);
 			this.noOfSteps.setValue(stepPolicyDetails.size());
 			for (StepPolicyDetail stepPolicyDetail : stepPolicyDetails) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(String.valueOf(stepPolicyDetail.getStepNumber()));
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.formatRate(stepPolicyDetail.getTenorSplitPerc().doubleValue(),2)+"%");
+				lc = new Listcell(
+						PennantApplicationUtil.formatRate(stepPolicyDetail.getTenorSplitPerc().doubleValue(), 2) + "%");
 				lc.setStyle("text-align: right");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.formatRate(stepPolicyDetail.getRateMargin().doubleValue(), 9));
 				lc.setStyle("text-align: right");
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.formatRate(stepPolicyDetail.getEmiSplitPerc().doubleValue(),2)+"%");
+				lc = new Listcell(
+						PennantApplicationUtil.formatRate(stepPolicyDetail.getEmiSplitPerc().doubleValue(), 2) + "%");
 				lc.setStyle("text-align: right");
 				lc.setParent(item);
 				lc = new Listcell(stepPolicyDetail.getRecordStatus());
@@ -541,17 +540,22 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.policyCode.isReadonly()){
-			this.policyCode.setConstraint(new PTStringValidator(Labels.getLabel("label_StepPolicyDialog_PolicyCode.value"), PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE,true));
+		if (!this.policyCode.isReadonly()) {
+			this.policyCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_StepPolicyDialog_PolicyCode.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
-		if (!this.policyDesc.isReadonly()){
-			this.policyDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_StepPolicyDialog_PolicyDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.policyDesc.isReadonly()) {
+			this.policyDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_StepPolicyDialog_PolicyDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
-		if (!this.stepType.isDisabled()){
-			this.stepType.setConstraint(new StaticListValidator(PennantStaticListUtil.getStepType(), Labels.getLabel("label_StepPolicyDialog_StepType.value")));
+
+		if (!this.stepType.isDisabled()) {
+			this.stepType.setConstraint(new StaticListValidator(PennantStaticListUtil.getStepType(),
+					Labels.getLabel("label_StepPolicyDialog_StepType.value")));
 		}
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -615,8 +619,9 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				Labels.getLabel("label_StepPolicyDialog_PolicyCode.value") +" : "+ aStepPolicyHeader.getPolicyCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_StepPolicyDialog_PolicyCode.value") + " : "
+				+ aStepPolicyHeader.getPolicyCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aStepPolicyHeader.getRecordType())) {
 				aStepPolicyHeader.setVersion(aStepPolicyHeader.getVersion() + 1);
@@ -727,7 +732,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-		
+
 		if (this.userAction.getSelectedItem() != null) {
 			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -737,11 +742,11 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				recSave = true;
 			}
 		}
-		
+
 		// fill the StepPolicyHeader object with the components data
 		doWriteComponentsToBean(aStepPolicyHeader);
 
-		if(!recSave && !validateStepPolicies()){
+		if (!recSave && !validateStepPolicies()) {
 			return;
 		}
 
@@ -927,7 +932,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_StepPolicyDialog, auditHeader);
 						return processCompleted;
@@ -964,9 +969,6 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 	// Search Button Component Events
 
-
-
-
 	/**
 	 * Call the StepPolicyDetail dialog with a new empty entry. <br>
 	 */
@@ -983,11 +985,11 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		map.put("stepPolicyDialogCtrl", this);
 		map.put("policyDesc", this.policyDesc.getValue());
 		map.put("role", getRole());
-		map.put("totTenorPerc",getTotTenorPerc());
+		map.put("totTenorPerc", getTotTenorPerc());
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyDetailDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyDetailDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -1006,9 +1008,11 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		StepPolicyDetail stepPolicyDetail = (StepPolicyDetail) item.getAttribute("data");
 
-		if (StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) || StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+		if (StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)
+				|| StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 			MessageUtil.showError("Not Allowed to maintain This Record");
-		}else{
+		} else {
 			stepPolicyDetail.setPolicyCode(this.policyCode.getValue());
 			stepPolicyDetail.setNewRecord(false);
 			final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -1018,14 +1022,14 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 			map.put("policyDesc", this.policyDesc.getValue());
 			map.put("role", getRole());
 			BigDecimal totTenorPerc = getTotTenorPerc();
-			if(stepPolicyDetail.getTenorSplitPerc() != null){
+			if (stepPolicyDetail.getTenorSplitPerc() != null) {
 				totTenorPerc = totTenorPerc.subtract(stepPolicyDetail.getTenorSplitPerc());
 			}
-			map.put("totTenorPerc",totTenorPerc);
+			map.put("totTenorPerc", totTenorPerc);
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents(
-						"/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyDetailDialog.zul", null, map);
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyDetailDialog.zul",
+						null, map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
@@ -1033,20 +1037,21 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-
-	public BigDecimal getTotTenorPerc(){
+	public BigDecimal getTotTenorPerc() {
 		BigDecimal totTenorPerc = BigDecimal.ZERO;
-		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()) {
+		if (getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()) {
 			for (StepPolicyDetail stepPolicyDetail : getStepPolicyDetailList()) {
-				if(stepPolicyDetail.getTenorSplitPerc() != null && !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) && 
-				!StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
+				if (stepPolicyDetail.getTenorSplitPerc() != null
+						&& !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+								.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						&& !StringUtils.trimToEmpty(stepPolicyDetail.getRecordType())
+								.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					totTenorPerc = totTenorPerc.add(stepPolicyDetail.getTenorSplitPerc());
 				}
 			}
 		}
 		return totTenorPerc;
 	}
-
 
 	// WorkFlow Components
 
@@ -1059,8 +1064,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 */
 	private AuditHeader getAuditHeader(StepPolicyHeader aStepPolicyHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aStepPolicyHeader.getBefImage(), aStepPolicyHeader);
-		return new AuditHeader(String.valueOf(aStepPolicyHeader.getPolicyCode()), 
-				null, null, null, auditDetail, aStepPolicyHeader.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aStepPolicyHeader.getPolicyCode()), null, null, null, auditDetail,
+				aStepPolicyHeader.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1094,12 +1099,10 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		doShowNotes(this.stepPolicyHeader);
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.stepPolicyHeader.getPolicyCode());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1108,6 +1111,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1115,6 +1119,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	public StepPolicyHeader getStepPolicyHeader() {
 		return this.stepPolicyHeader;
 	}
+
 	public void setStepPolicyHeader(StepPolicyHeader stepPolicyHeader) {
 		this.stepPolicyHeader = stepPolicyHeader;
 	}
@@ -1122,6 +1127,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
 	}
+
 	public StepPolicyService getStepPolicyService() {
 		return this.stepPolicyService;
 	}
@@ -1137,6 +1143,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1144,6 +1151,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	public void setStepPolicyDetailList(List<StepPolicyDetail> stepPolicyDetailList) {
 		this.stepPolicyDetailList = stepPolicyDetailList;
 	}
+
 	public List<StepPolicyDetail> getStepPolicyDetailList() {
 		return stepPolicyDetailList;
 	}

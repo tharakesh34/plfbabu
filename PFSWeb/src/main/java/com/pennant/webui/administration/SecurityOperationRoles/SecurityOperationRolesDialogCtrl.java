@@ -85,12 +85,12 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * @author S081
@@ -99,7 +99,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperation> {
 	private static final long serialVersionUID = 4149506032336052235L;
 	private static final Logger logger = Logger.getLogger(SecurityOperationRolesDialogCtrl.class);
-	
+
 	protected Window win_Operation_Roles_Dialog;
 
 	protected Borderlayout borderLayout_SecurityUsersRoles;
@@ -110,7 +110,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	protected Listbox listbox_AssignedRoles;
 	protected Panel panel_OperationRoleGroups;
 	protected Panel panel_SecurityGroupRights;
-	
+
 	protected Button btnSelectRoles;
 	protected Button btnUnSelectRoles;
 	protected Button btnUnSelectAllRoles;
@@ -124,10 +124,10 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	protected Label label_LastName;
 	protected Label label_OperationCode;
 	protected Label label_OperationDesc;
-	
+
 	protected JdbcSearchObject<SecurityOperationRoles> searchObj;
 	protected Label recordType;
-	
+
 	// Button controller for the CRUD buttons
 
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -167,9 +167,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Securityoperations object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Securityoperations object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -197,14 +196,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			this.label_OperationCode.setValue(getSecurityOperation().getOprCode());
 			this.label_OperationDesc.setValue(getSecurityOperation().getOprDesc());
 			//
-			this.searchObj = new JdbcSearchObject<SecurityOperationRoles>(
-					SecurityOperationRoles.class, getListRows());
+			this.searchObj = new JdbcSearchObject<SecurityOperationRoles>(SecurityOperationRoles.class, getListRows());
 			this.searchObj.addSort("roleCd", false);
 			this.searchObj.addTabelName("SecOperations");
 			//
 
-			ModuleMapping moduleMapping = PennantJavaUtil
-					.getModuleMap("SecurityOperationRoles");
+			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("SecurityOperationRoles");
 			if (moduleMapping.getWorkflowType() != null) {
 				workFlowDetails = WorkFlowUtil.getWorkFlowDetails("SecurityOperationRoles");
 
@@ -216,11 +213,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 					setWorkFlowId(workFlowDetails.getId());
 				}
 			}
-			doLoadWorkFlow(this.securityOperation.isWorkflow(),	this.securityOperation.getWorkflowId(),this.securityOperation.getNextTaskId());
+			doLoadWorkFlow(this.securityOperation.isWorkflow(), this.securityOperation.getWorkflowId(),
+					this.securityOperation.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),"SecurityOperationRolesDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SecurityOperationRolesDialog");
 			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
@@ -253,6 +251,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		logger.debug("Leaving " + event.toString());
 
 	}
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -337,8 +336,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		logger.debug("Leaving ");
 	}
-	
-	
+
 	// 1 Enquiry
 	// 2 New Record
 	// 3 InitEdit
@@ -348,22 +346,22 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
-		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes,
-				isWorkFlowEnabled(), isFirstTask(), this.userAction,
-				this.listbox_UnAssignedRoles, this.listbox_UnAssignedRoles));
+		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
+				this.userAction, this.listbox_UnAssignedRoles, this.listbox_UnAssignedRoles));
 
-		/*if (getSecurityOperation().getNextRoleCode().equals("")
-				|| getSecurityOperation().getNextRoleCode().equals("MSTGRP1_MAKER")) {
-			this.btnNotes.setVisible(false);
-		}*/
-		
-		if (StringUtils.isNotBlank(getSecurityOperation().getRecordType())){
+		/*
+		 * if (getSecurityOperation().getNextRoleCode().equals("") ||
+		 * getSecurityOperation().getNextRoleCode().equals("MSTGRP1_MAKER")) { this.btnNotes.setVisible(false); }
+		 */
+
+		if (StringUtils.isNotBlank(getSecurityOperation().getRecordType())) {
 			this.btnNotes.setVisible(true);
-		}else{
+		} else {
 			this.btnNotes.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -373,8 +371,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		this.btnUnSelectAllRoles.setVisible(true);
 
 		if ("Submitted".equals(getSecurityOperation().getRecordStatus())
-				|| ("Saved".equals(getSecurityOperation().getRecordStatus()) && "MSTGRP1_APPROVER"
-						.equals(getSecurityOperation().getNextRoleCode()))) {
+				|| ("Saved".equals(getSecurityOperation().getRecordStatus())
+						&& "MSTGRP1_APPROVER".equals(getSecurityOperation().getNextRoleCode()))) {
 			this.btnSelectRoles.setVisible(false);
 			this.btnUnSelectRoles.setVisible(false);
 			this.btnUnSelectAllRoles.setVisible(false);
@@ -393,10 +391,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		this.panel_SecurityGroupRights.setOpen(false);
 		this.listbox_OperationRoleGroups.getItems().clear();
 		this.listbox_SecurityGroupRights.getItems().clear();
-		this.panel_OperationRoleGroups.setTitle(Labels
-				.getLabel("panel_RoleGroups.title"));
-		this.panel_SecurityGroupRights.setTitle(Labels
-				.getLabel("panel_GroupRights.title"));
+		this.panel_OperationRoleGroups.setTitle(Labels.getLabel("panel_RoleGroups.title"));
+		this.panel_SecurityGroupRights.setTitle(Labels.getLabel("panel_GroupRights.title"));
 
 		logger.debug("Leaving ");
 	}
@@ -410,12 +406,11 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		getUserWorkspace().allocateAuthorities("SecurityOperationRolesDialog",getRole());
+		getUserWorkspace().allocateAuthorities("SecurityOperationRolesDialog", getRole());
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SecurityOperationRolesDialog_btnSave"));
 		this.btnCancel.setVisible(getUserWorkspace().isAllowed("button_SecurityOperationRolesDialog_btnCancel"));
 
@@ -431,6 +426,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -439,11 +435,9 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 */
 	public void doWriteBeanToComponents(SecurityOperation aSecurityOperation) {
 
-		refreshListBox(getAssigneListWrapper(),
-				new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
+		refreshListBox(getAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
 				this.listbox_AssignedRoles);
-		refreshListBox(getUnAssigneListWrapper(),
-				new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
+		refreshListBox(getUnAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
 				this.listbox_UnAssignedRoles);
 
 		this.recordStatus.setValue(aSecurityOperation.getRecordStatus());
@@ -451,22 +445,18 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	}
 
 	/**
-	 * This method do the following 1)compare oldAssigned map and new assigned
-	 * map a)if roleId not in oldselectedMap and in new selectedMap creates new
-	 * SecurityOperation Object, sets data and add it to SecurityUser
-	 * LovDescAssignedRoles b)if roleId in oldselectedMap and not in new
-	 * selectedMap gets the SecurityOperation from back end , sets RecordStatus
-	 * "DELETE" add it to SecurityUser LovDescAssignedRoles
+	 * This method do the following 1)compare oldAssigned map and new assigned map a)if roleId not in oldselectedMap and
+	 * in new selectedMap creates new SecurityOperation Object, sets data and add it to SecurityUser
+	 * LovDescAssignedRoles b)if roleId in oldselectedMap and not in new selectedMap gets the SecurityOperation from
+	 * back end , sets RecordStatus "DELETE" add it to SecurityUser LovDescAssignedRoles
 	 */
 	public void doWriteComponentsToBean(SecurityOperation aSecurityOperation) {
-
 
 		List<SecurityOperationRoles> secOprRoles = new ArrayList<SecurityOperationRoles>();
 
 		if (addHashMap != null && !addHashMap.isEmpty()) {
 
-			Iterator<SecurityOperationRoles> addList = addHashMap.values()
-					.iterator();
+			Iterator<SecurityOperationRoles> addList = addHashMap.values().iterator();
 
 			while (addList.hasNext()) {
 				SecurityOperationRoles securityOperationRoles = addList.next();
@@ -476,8 +466,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		if (delHashMap != null && !delHashMap.isEmpty()) {
 
-			Iterator<SecurityOperationRoles> delList = delHashMap.values()
-					.iterator();
+			Iterator<SecurityOperationRoles> delList = delHashMap.values().iterator();
 
 			while (delList.hasNext()) {
 				SecurityOperationRoles securityOperationRoles = delList.next();
@@ -487,8 +476,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		}
 		if (cancilHashMap != null && !cancilHashMap.isEmpty()) {
 
-			Iterator<SecurityOperationRoles> cancilList = cancilHashMap.values()
-					.iterator();
+			Iterator<SecurityOperationRoles> cancilList = cancilHashMap.values().iterator();
 
 			while (cancilList.hasNext()) {
 				SecurityOperationRoles securityOperationRoles = cancilList.next();
@@ -524,8 +512,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		if (!PennantConstants.RECORD_TYPE_DEL.equals(aSecurityOperation
-				.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aSecurityOperation.getRecordType()) && isValidation()) {
 			// doSetValidation();
 			// fill the Branch object with the components data
 			doWriteComponentsToBean(aSecurityOperation);
@@ -542,11 +529,9 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			if (StringUtils.isBlank(aSecurityOperation.getRecordType())) {
 				aSecurityOperation.setVersion(aSecurityOperation.getVersion() + 1);
 				if (isNew) {
-					aSecurityOperation
-					.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aSecurityOperation.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aSecurityOperation
-					.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aSecurityOperation.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSecurityOperation.setNewRecord(true);
 				}
 			}
@@ -558,13 +543,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		try {
-         	if (doProcess(aSecurityOperation, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			
+			if (doProcess(aSecurityOperation, tranType)) {
+				refreshList();
+				closeDialog();
+			}
 
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
@@ -573,8 +557,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		logger.debug("Leaving ");
 	}
-		
-		
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -594,23 +577,20 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityOperation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityOperation.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aSecurityOperation.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aSecurityOperation.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			aSecurityOperation.setUserAction(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(aSecurityOperation.getUserAction())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aSecurityOperation
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aSecurityOperation.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -656,8 +636,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aSecurityOperation,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aSecurityOperation, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -692,8 +671,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
-		SecurityOperation aSecurityOperation = (SecurityOperation) auditHeader
-				.getAuditDetail().getModelData();
+		SecurityOperation aSecurityOperation = (SecurityOperation) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
@@ -701,43 +679,32 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 				if (StringUtils.isBlank(method)) {
 
-					auditHeader = getSecurityOperationRolesService().saveOrUpdate(
-							auditHeader);
+					auditHeader = getSecurityOperationRolesService().saveOrUpdate(auditHeader);
 					// }
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getSecurityOperationRolesService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getSecurityOperationRolesService().doApprove(auditHeader);
 
-						if (aSecurityOperation.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSecurityOperationRolesService().doReject(
-								auditHeader);
-						if (aSecurityOperation.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getSecurityOperationRolesService().doReject(auditHeader);
+						if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.win_Operation_Roles_Dialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.win_Operation_Roles_Dialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.win_Operation_Roles_Dialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.win_Operation_Roles_Dialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -796,18 +763,19 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		doSetPanelProperties();
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("SecurityOperationRolesDialogCtrl", this);
-		map.put("FILTERTYPE","USERROLE");
-		map.put("FILTERCODE",filterCode);
-		map.put("FILTERVALUE",filterValue);
+		map.put("FILTERTYPE", "USERROLE");
+		map.put("FILTERCODE", filterCode);
+		map.put("FILTERVALUE", filterValue);
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Administration/SecuritySearchDialog.zul",this.win_Operation_Roles_Dialog,map);
+			Executions.createComponents("/WEB-INF/pages/Administration/SecuritySearchDialog.zul",
+					this.win_Operation_Roles_Dialog, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * This method displays the filtered data in unAssigned Groups panel .
 	 * 
@@ -827,7 +795,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		logger.debug("Leaving");
 		return listbox_UnAssignedRoles.getItemCount();
 	}
-	
+
 	/**
 	 * when clicks on "btnSelectRoles"
 	 * 
@@ -875,13 +843,11 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 */
 	private void setAssignedRoles() {
 
-		Iterator<Listitem> selecctedItems = this.listbox_UnAssignedRoles
-				.getSelectedItems().iterator();
+		Iterator<Listitem> selecctedItems = this.listbox_UnAssignedRoles.getSelectedItems().iterator();
 
 		while (selecctedItems.hasNext()) {
 			Listitem item = selecctedItems.next();
-			SecurityOperationRoles detail = (SecurityOperationRoles) item
-					.getAttribute("data");
+			SecurityOperationRoles detail = (SecurityOperationRoles) item.getAttribute("data");
 			Long key = detail.getRoleID();
 
 			if (StringUtils.isBlank(detail.getRecordType())) {
@@ -894,30 +860,27 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				}
 				addHashMap.put(key, detail);
 
-			} 
+			}
 
 		}
 
-		getAssigneListWrapper().initList(
-				new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
+		getAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
 				this.listbox_AssignedRoles, new Paging());
-		getUnAssigneListWrapper().initList(
-				new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
+		getUnAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
 				this.listbox_UnAssignedRoles, new Paging());
 
 	}
+
 	/**
 	 * Used to set the Unassingned roles
 	 */
 	private void setUnAssignedRoles() {
 		logger.debug("Entering");
-		Iterator<Listitem> selecctedItems = this.listbox_AssignedRoles
-				.getSelectedItems().iterator();
+		Iterator<Listitem> selecctedItems = this.listbox_AssignedRoles.getSelectedItems().iterator();
 
 		while (selecctedItems.hasNext()) {
 			Listitem item = selecctedItems.next();
-			SecurityOperationRoles detail = (SecurityOperationRoles) item
-					.getAttribute("data");
+			SecurityOperationRoles detail = (SecurityOperationRoles) item.getAttribute("data");
 			Long key = detail.getRoleID();
 
 			if (StringUtils.isBlank(detail.getRecordType())) {
@@ -928,8 +891,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				}
 				delHashMap.put(key, detail);
 
-			} else if (PennantConstants.RECORD_TYPE_NEW.equals(detail
-					.getRecordType())) {
+			} else if (PennantConstants.RECORD_TYPE_NEW.equals(detail.getRecordType())) {
 				addHashMap.remove(key);
 
 				if (!detail.isNewRecord()) {
@@ -942,16 +904,14 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 					detail.setRecordType("");
 					detail.setNewRecord(false);
 				}
-			} 
+			}
 			unAssignedHashMap.put(key, detail);
 			assignedHashMap.remove(key);
 		}
 
-		getAssigneListWrapper().initList(
-				new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
+		getAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
 				this.listbox_AssignedRoles, new Paging());
-		getUnAssigneListWrapper().initList(
-				new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
+		getUnAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
 				this.listbox_UnAssignedRoles, new Paging());
 
 		logger.debug("Leaving");
@@ -983,23 +943,25 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		if (item != null) {
 			SecurityOperationRoles aSecurityOperationRoles = (SecurityOperationRoles) item.getAttribute("data");
-			this.panel_OperationRoleGroups.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroups.value")
-					+ " - " + aSecurityOperationRoles.getLovDescRoleCd());
+			this.panel_OperationRoleGroups.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroups.value") + " - "
+					+ aSecurityOperationRoles.getLovDescRoleCd());
 			this.listbox_OperationRoleGroups.setVisible(true);
 			this.listbox_OperationRoleGroups.getItems().clear();
 			this.listbox_SecurityGroupRights.getItems().clear();
 			this.panel_SecurityGroupRights.setOpen(false);
-			this.panel_SecurityGroupRights.setTitle(Labels .getLabel("listbox_SecurityUserRoleGroupRights.value"));
+			this.panel_SecurityGroupRights.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroupRights.value"));
 
-			List<SecurityRoleGroups> roleGroupsList = getSecurityOperationRolesService().getApprovedRoleGroupsByRoleId(aSecurityOperationRoles.getRoleID());
-			
+			List<SecurityRoleGroups> roleGroupsList = getSecurityOperationRolesService()
+					.getApprovedRoleGroupsByRoleId(aSecurityOperationRoles.getRoleID());
+
 			Paging paging = new Paging();
-			if(roleGroupsList.size() > 0){
+			if (roleGroupsList.size() > 0) {
 				paging.setPageSize(roleGroupsList.size());
 			}
-			
-			getRoleGroupsListWrapper().initList( new ArrayList<SecurityRoleGroups>(roleGroupsList), this.listbox_OperationRoleGroups, paging);
-			this.listbox_OperationRoleGroups .setItemRenderer(new SecurityGroupListModelItemRenderer());
+
+			getRoleGroupsListWrapper().initList(new ArrayList<SecurityRoleGroups>(roleGroupsList),
+					this.listbox_OperationRoleGroups, paging);
+			this.listbox_OperationRoleGroups.setItemRenderer(new SecurityGroupListModelItemRenderer());
 		}
 		logger.debug("Leaving ");
 	}
@@ -1033,20 +995,21 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		if (item != null) {
 			securityRoleGroups = (SecurityRoleGroups) item.getAttribute("data");
 		}
-		this.panel_SecurityGroupRights.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroupRights.value")
-				+ " - "+ securityRoleGroups.getLovDescGrpCode());
+		this.panel_SecurityGroupRights.setTitle(Labels.getLabel("listbox_SecurityUserRoleGroupRights.value") + " - "
+				+ securityRoleGroups.getLovDescGrpCode());
 
 		SecurityGroup secGroups = new SecurityGroup();
 		secGroups.setGrpID(securityRoleGroups.getGrpID());
 		List<SecurityGroupRights> grpRightsList = getSecurityOperationRolesService().getGroupRightsByGrpId(secGroups);
 
-		Paging paging=   new Paging();
+		Paging paging = new Paging();
 
-		if(grpRightsList.size() > 0) {
+		if (grpRightsList.size() > 0) {
 			paging.setPageSize(grpRightsList.size());
 		}
 
-		getGroupRightsListWrapper().initList(new ArrayList<SecurityGroupRights>(grpRightsList),this.listbox_SecurityGroupRights, paging);
+		getGroupRightsListWrapper().initList(new ArrayList<SecurityGroupRights>(grpRightsList),
+				this.listbox_SecurityGroupRights, paging);
 		this.listbox_SecurityGroupRights.setItemRenderer(new GroupRightListModelItemRenderer());
 		logger.debug("Leaving ");
 	}
@@ -1057,14 +1020,13 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * @param listbox
 	 * @param SecurityOperationRoles
 	 */
-	public class SecurityUserRoleListModelItemRenderer implements
-	ListitemRenderer<SecurityOperationRoles>, Serializable {
+	public class SecurityUserRoleListModelItemRenderer
+			implements ListitemRenderer<SecurityOperationRoles>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityOperationRoles oprRoles, int count)
-				throws Exception {
+		public void render(Listitem item, SecurityOperationRoles oprRoles, int count) throws Exception {
 
 			Listcell listCell;
 
@@ -1074,8 +1036,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			listCell = new Listcell(oprRoles.getLovDescRoleDesc());
 			listCell.setParent(item);
 			item.setAttribute("data", oprRoles);
-			item.addForward("onDoubleClick", win_Operation_Roles_Dialog,
-					"onSecurityRoleItemDoubleClicked", item);
+			item.addForward("onDoubleClick", win_Operation_Roles_Dialog, "onSecurityRoleItemDoubleClicked", item);
 		}
 	}
 
@@ -1085,14 +1046,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * @param listbox
 	 * @param SecurityOperationRoles
 	 */
-	public class SecurityGroupListModelItemRenderer implements
-	ListitemRenderer<SecurityRoleGroups>, Serializable {
+	public class SecurityGroupListModelItemRenderer implements ListitemRenderer<SecurityRoleGroups>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityRoleGroups roleGroups,
-				int count) throws Exception {
+		public void render(Listitem item, SecurityRoleGroups roleGroups, int count) throws Exception {
 
 			Listcell listCell;
 
@@ -1102,8 +1061,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			listCell = new Listcell(roleGroups.getLovDescGrpDesc());
 			listCell.setParent(item);
 			item.setAttribute("data", roleGroups);
-			item.addForward("onDoubleClick", win_Operation_Roles_Dialog,
-					"onSecurityGroupItemDoubleClicked", item);
+			item.addForward("onDoubleClick", win_Operation_Roles_Dialog, "onSecurityGroupItemDoubleClicked", item);
 		}
 	}
 
@@ -1113,14 +1071,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * @param listbox
 	 * @param SecurityUserRoles
 	 */
-	public static class GroupRightListModelItemRenderer implements
-	ListitemRenderer<SecurityGroupRights>, Serializable {
+	public static class GroupRightListModelItemRenderer implements ListitemRenderer<SecurityGroupRights>, Serializable {
 
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityGroupRights groupRights,
-				int count) throws Exception {
+		public void render(Listitem item, SecurityGroupRights groupRights, int count) throws Exception {
 
 			Listcell listCell;
 
@@ -1130,6 +1086,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			item.setAttribute("data", groupRights);
 		}
 	}
+
 	/**
 	 * This method used when search button is clicked
 	 */
@@ -1140,8 +1097,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		List<SecurityOperationRoles> unassignedList = new ArrayList<SecurityOperationRoles>();
 		if (filterCode == -1) {
-			unassignedList = new ArrayList<SecurityOperationRoles>(
-					unAssignedHashMap.values());
+			unassignedList = new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values());
 		} else {
 			for (SecurityOperationRoles oprRoles : unAssignedHashMap.values()) {
 
@@ -1159,29 +1115,29 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				case Filter.OP_LIKE:
 					if (oprRoles.getLovDescRoleCd().contains(filterValue)) {
 						unassignedList.add(oprRoles);
-					}	
+					}
 					break;
-				default:	
-					
+				default:
+
 				}
-				
+
 			}
 		}
 
-		refreshListBox(getUnAssigneListWrapper(), unassignedList,
-				this.listbox_UnAssignedRoles);
+		refreshListBox(getUnAssigneListWrapper(), unassignedList, this.listbox_UnAssignedRoles);
 	}
 
-	private void refreshListBox(PagedListWrapper<SecurityOperationRoles> listWrapper,List<SecurityOperationRoles> oprRoles, Listbox listBox) {
-		Paging paging=   new Paging();
+	private void refreshListBox(PagedListWrapper<SecurityOperationRoles> listWrapper,
+			List<SecurityOperationRoles> oprRoles, Listbox listBox) {
+		Paging paging = new Paging();
 
-		if(oprRoles.size() > 0) {
+		if (oprRoles.size() > 0) {
 			paging.setPageSize(oprRoles.size());
 		}
 		listWrapper.initList(oprRoles, listBox, paging);
 		listBox.setItemRenderer(new SecurityUserRoleListModelItemRenderer());
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.securityOperation.getOprID());
@@ -1198,15 +1154,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(SecurityOperation aSecurityOperation,
-			String tranType) {
+	private AuditHeader getAuditHeader(SecurityOperation aSecurityOperation, String tranType) {
 		logger.debug("Entering ");
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSecurityOperation.getBefImage(), aSecurityOperation);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityOperation.getBefImage(), aSecurityOperation);
 
-		AuditHeader auditHeader = new AuditHeader(String.valueOf(aSecurityOperation
-				.getId()), null, null, null, auditDetail,
-				aSecurityOperation.getUserDetails(), getOverideMap());
+		AuditHeader auditHeader = new AuditHeader(String.valueOf(aSecurityOperation.getId()), null, null, null,
+				auditDetail, aSecurityOperation.getUserDetails(), getOverideMap());
 		auditHeader.setAuditModule(SecurityOperationRoles.class.getSimpleName());
 		return auditHeader;
 	}
@@ -1218,10 +1171,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.win_Operation_Roles_Dialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.win_Operation_Roles_Dialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1240,11 +1191,9 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		doShowNotes(this.securityOperation);
 	}
 
-
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
 
 	public SecurityOperation getSecurityOperation() {
 		return securityOperation;
@@ -1257,9 +1206,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	@SuppressWarnings("unchecked")
 	public PagedListWrapper<SecurityOperationRoles> getAssigneListWrapper() {
 		if (this.assigneListWrapper == null) {
-			this.assigneListWrapper = (PagedListWrapper<SecurityOperationRoles>) SpringUtil
-					.getBean("pagedListWrapper");
-			
+			this.assigneListWrapper = (PagedListWrapper<SecurityOperationRoles>) SpringUtil.getBean("pagedListWrapper");
+
 		}
 
 		return assigneListWrapper;
@@ -1275,22 +1223,19 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		return unAssigneListWrapper;
 	}
 
-	public void setRoleGroupsListWrapper(
-			PagedListWrapper<SecurityRoleGroups> roleGroupsListWrapper) {
+	public void setRoleGroupsListWrapper(PagedListWrapper<SecurityRoleGroups> roleGroupsListWrapper) {
 		this.roleGroupsListWrapper = roleGroupsListWrapper;
 	}
 
 	@SuppressWarnings("unchecked")
 	public PagedListWrapper<SecurityRoleGroups> getRoleGroupsListWrapper() {
 		if (this.roleGroupsListWrapper == null) {
-			this.roleGroupsListWrapper = (PagedListWrapper<SecurityRoleGroups>) SpringUtil
-					.getBean("pagedListWrapper");
+			this.roleGroupsListWrapper = (PagedListWrapper<SecurityRoleGroups>) SpringUtil.getBean("pagedListWrapper");
 		}
 		return roleGroupsListWrapper;
 	}
 
-	public void setGroupRightsListWrapper(
-			PagedListWrapper<SecurityGroupRights> groupRightsListWrapper) {
+	public void setGroupRightsListWrapper(PagedListWrapper<SecurityGroupRights> groupRightsListWrapper) {
 		this.groupRightsListWrapper = groupRightsListWrapper;
 	}
 
@@ -1307,8 +1252,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		return securityOperationRolesService;
 	}
 
-	public void setSecurityOperationRolesService(
-			SecurityOperationRolesService securityOperationRolesService) {
+	public void setSecurityOperationRolesService(SecurityOperationRolesService securityOperationRolesService) {
 		this.securityOperationRolesService = securityOperationRolesService;
 	}
 
@@ -1316,8 +1260,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		return operationRolesListCtrl;
 	}
 
-	public void setOperationRolesListCtrl(
-			SecurityOperationRolesListCtrl operationRolesListCtrl) {
+	public void setOperationRolesListCtrl(SecurityOperationRolesListCtrl operationRolesListCtrl) {
 		this.operationRolesListCtrl = operationRolesListCtrl;
 	}
 
@@ -1328,6 +1271,5 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	public void setSearchObj(JdbcSearchObject<SecurityOperationRoles> searchObj) {
 		this.searchObj = searchObj;
 	}
-
 
 }

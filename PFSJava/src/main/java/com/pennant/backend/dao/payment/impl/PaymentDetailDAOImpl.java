@@ -67,28 +67,28 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PaymentDetail</code> with set of CRUD operations.
  */
 public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements PaymentDetailDAO {
-	private static Logger				logger	= Logger.getLogger(PaymentDetailDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(PaymentDetailDAOImpl.class);
 
 	public PaymentDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public PaymentDetail getPaymentDetail(long paymentDetailId,String type) {
+	public PaymentDetail getPaymentDetail(long paymentDetailId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("paymentDetailId, paymentId, amountType, amount, referenceId, amountType,referenceId,");
-		}	
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PaymentDetails");
 		sql.append(type);
 		sql.append(" Where paymentDetailId = :paymentDetailId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -106,25 +106,27 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 		logger.debug(Literal.LEAVING);
 		return paymentDetail;
-	}		
-	
+	}
+
 	@Override
-	public String save(PaymentDetail paymentDetail,TableType tableType) {
+	public String save(PaymentDetail paymentDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into PaymentDetails");
+		StringBuilder sql = new StringBuilder(" insert into PaymentDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :paymentDetailId, :paymentId, :amountType, :amount, :referenceId, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the sequence number.
 		if (paymentDetail.getPaymentDetailId() <= 0) {
 			paymentDetail.setPaymentDetailId(getNextId("SeqPaymentDetails"));
-		 }
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentDetail);
@@ -136,24 +138,24 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		}
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(paymentDetail.getPaymentDetailId());
-	}	
+	}
 
 	@Override
-	public void update(PaymentDetail paymentDetail,TableType tableType) {
+	public void update(PaymentDetail paymentDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update PaymentDetails" );
+		StringBuilder sql = new StringBuilder("update PaymentDetails");
 		sql.append(tableType.getSuffix());
 		sql.append("  set paymentId = :paymentId, amount = :amount, referenceId = :referenceId, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where paymentDetailId = :paymentDetailId ");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentDetail);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -190,20 +192,21 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	@Override
 	public void deleteList(PaymentDetail paymentDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from PaymentDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" where paymentId = :paymentId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentDetail);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -213,12 +216,10 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	
 	@Override
 	public boolean isDuplicateKey(long paymentDetailId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -257,16 +258,17 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 	@Override
 	public List<PaymentDetail> getPaymentDetailList(long paymentId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,FeeTypeDesc,FeeTypeCode" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,FeeTypeDesc,FeeTypeCode");
 		sql.append(" From PaymentDetails");
 		sql.append(type);
 		sql.append(" Where paymentId = :paymentId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -280,5 +282,5 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
-}	
+
+}

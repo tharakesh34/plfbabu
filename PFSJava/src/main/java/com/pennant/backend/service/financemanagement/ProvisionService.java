@@ -52,15 +52,27 @@ import com.pennant.backend.model.financemanagement.Provision;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface ProvisionService {
-	
+
 	Provision getProvision();
+
 	Provision getNewProvision();
-	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader saveOrUpdate(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	Provision getProvisionById(String id, boolean isEnquiry);
+
 	Provision getApprovedProvisionById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doApprove(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	FinanceProfitDetail getProfitDetailById(String finReference);
+
 	List<Provision> getProcessedProvisions();
 }

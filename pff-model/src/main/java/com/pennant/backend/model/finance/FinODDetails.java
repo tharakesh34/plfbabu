@@ -51,7 +51,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * Model class for the <b>FinODDetails table</b>.<br>
  *
@@ -60,69 +59,66 @@ import javax.xml.bind.annotation.XmlType;
 		"oDChargeType" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinODDetails implements java.io.Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
-	@XmlElement(name="odDate")
+	@XmlElement(name = "odDate")
 	private Date finODSchdDate;
 	private String finODFor;
 	private String finBranch;
 	private String finType;
 	private long custID;
 	private Date finODTillDate;
-	@XmlElement(name="odAmount")
+	@XmlElement(name = "odAmount")
 	private BigDecimal finCurODAmt = BigDecimal.ZERO;
 	private BigDecimal finCurODPri = BigDecimal.ZERO;
 	private BigDecimal finCurODPft = BigDecimal.ZERO;
 	private BigDecimal finMaxODAmt = BigDecimal.ZERO;
 	private BigDecimal finMaxODPri = BigDecimal.ZERO;
 	private BigDecimal finMaxODPft = BigDecimal.ZERO;
-	private int graceDays=0;
+	private int graceDays = 0;
 	private boolean incGraceDays;
-	private int finCurODDays=0;
-	
+	private int finCurODDays = 0;
+
 	private BigDecimal totWaived = BigDecimal.ZERO;
-	@XmlElement(name="odCharge")
+	@XmlElement(name = "odCharge")
 	private BigDecimal totPenaltyAmt = BigDecimal.ZERO;
-	@XmlElement(name="odChargePaid")
+	@XmlElement(name = "odChargePaid")
 	private BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
-	
-	@XmlElement(name="odPft")
+
+	@XmlElement(name = "odPft")
 	private BigDecimal lPIAmt = BigDecimal.ZERO;
-	@XmlElement(name="odPftPaid")
+	@XmlElement(name = "odPftPaid")
 	private BigDecimal lPIPaid = BigDecimal.ZERO;
 	private BigDecimal lPIBal = BigDecimal.ZERO;
 	private BigDecimal lPIWaived = BigDecimal.ZERO;
-	
+
 	private Date finLMdfDate;
-	
+
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
 	private boolean oDIncGrcDays;
-	@XmlElement(name="chargeType")
+	@XmlElement(name = "chargeType")
 	private String oDChargeType;
-	private int oDGraceDays=0;
+	private int oDGraceDays = 0;
 	private String oDChargeCalOn;
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
-	
+
 	/*
-	 * These fields used in bulk upload (Ex: EOD)
-	 * rcdAction = "" No action Required
-	 * rcdAction = "I" record to be inserted
-	 * rcdAction = "U" record to be updated
-	 * rcdAction = "D" record to be deleted
+	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
+	 * inserted rcdAction = "U" record to be updated rcdAction = "D" record to be deleted
 	 * 
-	 */ 
+	 */
 	private String rcdAction = "";
-	
+
 	public FinODDetails() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -130,213 +126,244 @@ public class FinODDetails implements java.io.Serializable {
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
-	
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
-	
+		this.finReference = finReference;
+	}
+
 	public Date getFinODSchdDate() {
-    	return finODSchdDate;
-    }
+		return finODSchdDate;
+	}
+
 	public void setFinODSchdDate(Date finODSchdDate) {
-    	this.finODSchdDate = finODSchdDate;
-    }
-	
+		this.finODSchdDate = finODSchdDate;
+	}
+
 	public String getFinODFor() {
-    	return finODFor;
-    }
+		return finODFor;
+	}
+
 	public void setFinODFor(String finODFor) {
-    	this.finODFor = finODFor;
-    }
-	
+		this.finODFor = finODFor;
+	}
+
 	public String getFinBranch() {
-    	return finBranch;
-    }
+		return finBranch;
+	}
+
 	public void setFinBranch(String finBranch) {
-    	this.finBranch = finBranch;
-    }
-	
+		this.finBranch = finBranch;
+	}
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
+
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
-	
+		this.finType = finType;
+	}
+
 	public long getCustID() {
-    	return custID;
-    }
+		return custID;
+	}
+
 	public void setCustID(long custID) {
-    	this.custID = custID;
-    }
-	
+		this.custID = custID;
+	}
+
 	public Date getFinODTillDate() {
-    	return finODTillDate;
-    }
+		return finODTillDate;
+	}
+
 	public void setFinODTillDate(Date finODTillDate) {
-    	this.finODTillDate = finODTillDate;
-    }
-	
+		this.finODTillDate = finODTillDate;
+	}
+
 	public BigDecimal getFinCurODAmt() {
-    	return finCurODAmt;
-    }
+		return finCurODAmt;
+	}
+
 	public void setFinCurODAmt(BigDecimal finCurODAmt) {
-    	this.finCurODAmt = finCurODAmt;
-    }
-	
+		this.finCurODAmt = finCurODAmt;
+	}
+
 	public BigDecimal getFinCurODPri() {
-    	return finCurODPri;
-    }
+		return finCurODPri;
+	}
+
 	public void setFinCurODPri(BigDecimal finCurODPri) {
-    	this.finCurODPri = finCurODPri;
-    }
-	
+		this.finCurODPri = finCurODPri;
+	}
+
 	public BigDecimal getFinCurODPft() {
-    	return finCurODPft;
-    }
+		return finCurODPft;
+	}
+
 	public void setFinCurODPft(BigDecimal finCurODPft) {
-    	this.finCurODPft = finCurODPft;
-    }
-	
+		this.finCurODPft = finCurODPft;
+	}
+
 	public BigDecimal getFinMaxODAmt() {
-    	return finMaxODAmt;
-    }
+		return finMaxODAmt;
+	}
+
 	public void setFinMaxODAmt(BigDecimal finMaxODAmt) {
-    	this.finMaxODAmt = finMaxODAmt;
-    }
-	
+		this.finMaxODAmt = finMaxODAmt;
+	}
+
 	public BigDecimal getFinMaxODPri() {
-    	return finMaxODPri;
-    }
+		return finMaxODPri;
+	}
+
 	public void setFinMaxODPri(BigDecimal finMaxODPri) {
-    	this.finMaxODPri = finMaxODPri;
-    }
-	
+		this.finMaxODPri = finMaxODPri;
+	}
+
 	public BigDecimal getFinMaxODPft() {
-    	return finMaxODPft;
-    }
+		return finMaxODPft;
+	}
+
 	public void setFinMaxODPft(BigDecimal finMaxODPft) {
-    	this.finMaxODPft = finMaxODPft;
-    }
-	
+		this.finMaxODPft = finMaxODPft;
+	}
+
 	public int getGraceDays() {
-    	return graceDays;
-    }
+		return graceDays;
+	}
+
 	public void setGraceDays(int graceDays) {
-    	this.graceDays = graceDays;
-    }
-	
+		this.graceDays = graceDays;
+	}
+
 	public boolean isIncGraceDays() {
-    	return incGraceDays;
-    }
+		return incGraceDays;
+	}
+
 	public void setIncGraceDays(boolean incGraceDays) {
-    	this.incGraceDays = incGraceDays;
-    }
-	
+		this.incGraceDays = incGraceDays;
+	}
+
 	public int getFinCurODDays() {
-    	return finCurODDays;
-    }
+		return finCurODDays;
+	}
+
 	public void setFinCurODDays(int finCurODDays) {
-    	this.finCurODDays = finCurODDays;
-    }
-	
+		this.finCurODDays = finCurODDays;
+	}
+
 	public BigDecimal getTotPenaltyAmt() {
-    	return totPenaltyAmt;
-    }
+		return totPenaltyAmt;
+	}
+
 	public void setTotPenaltyAmt(BigDecimal totPenaltyAmt) {
-    	this.totPenaltyAmt = totPenaltyAmt;
-    }
-	
+		this.totPenaltyAmt = totPenaltyAmt;
+	}
+
 	public BigDecimal getTotWaived() {
-    	return totWaived;
-    }
+		return totWaived;
+	}
+
 	public void setTotWaived(BigDecimal totWaived) {
-    	this.totWaived = totWaived;
-    }
-	
+		this.totWaived = totWaived;
+	}
+
 	public BigDecimal getTotPenaltyPaid() {
-    	return totPenaltyPaid;
-    }
+		return totPenaltyPaid;
+	}
+
 	public void setTotPenaltyPaid(BigDecimal totPenaltyPaid) {
-    	this.totPenaltyPaid = totPenaltyPaid;
-    }
-	
+		this.totPenaltyPaid = totPenaltyPaid;
+	}
+
 	public BigDecimal getTotPenaltyBal() {
-    	return totPenaltyBal;
-    }
+		return totPenaltyBal;
+	}
+
 	public void setTotPenaltyBal(BigDecimal totPenaltyBal) {
-    	this.totPenaltyBal = totPenaltyBal;
-    }
-	
+		this.totPenaltyBal = totPenaltyBal;
+	}
+
 	public Date getFinLMdfDate() {
-    	return finLMdfDate;
-    }
+		return finLMdfDate;
+	}
+
 	public void setFinLMdfDate(Date finLMdfDate) {
-    	this.finLMdfDate = finLMdfDate;
-    }
-	
+		this.finLMdfDate = finLMdfDate;
+	}
+
 	public boolean isApplyODPenalty() {
-    	return applyODPenalty;
-    }
+		return applyODPenalty;
+	}
+
 	public void setApplyODPenalty(boolean applyODPenalty) {
-    	this.applyODPenalty = applyODPenalty;
-    }
-	
+		this.applyODPenalty = applyODPenalty;
+	}
+
 	public boolean isODIncGrcDays() {
-    	return oDIncGrcDays;
-    }
+		return oDIncGrcDays;
+	}
+
 	public void setODIncGrcDays(boolean oDIncGrcDays) {
-    	this.oDIncGrcDays = oDIncGrcDays;
-    }
-	
+		this.oDIncGrcDays = oDIncGrcDays;
+	}
+
 	public String getODChargeType() {
-    	return oDChargeType;
-    }
+		return oDChargeType;
+	}
+
 	public void setODChargeType(String oDChargeType) {
-    	this.oDChargeType = oDChargeType;
-    }
-	
+		this.oDChargeType = oDChargeType;
+	}
+
 	public int getODGraceDays() {
-    	return oDGraceDays;
-    }
+		return oDGraceDays;
+	}
+
 	public void setODGraceDays(int oDGraceDays) {
-    	this.oDGraceDays = oDGraceDays;
-    }
-	
+		this.oDGraceDays = oDGraceDays;
+	}
+
 	public String getODChargeCalOn() {
-    	return oDChargeCalOn;
-    }
+		return oDChargeCalOn;
+	}
+
 	public void setODChargeCalOn(String oDChargeCalOn) {
-    	this.oDChargeCalOn = oDChargeCalOn;
-    }
-	
+		this.oDChargeCalOn = oDChargeCalOn;
+	}
+
 	public BigDecimal getODChargeAmtOrPerc() {
-    	return oDChargeAmtOrPerc;
-    }
+		return oDChargeAmtOrPerc;
+	}
+
 	public void setODChargeAmtOrPerc(BigDecimal oDChargeAmtOrPerc) {
-    	this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
-    }
-	
+		this.oDChargeAmtOrPerc = oDChargeAmtOrPerc;
+	}
+
 	public boolean isODAllowWaiver() {
-    	return oDAllowWaiver;
-    }
+		return oDAllowWaiver;
+	}
+
 	public void setODAllowWaiver(boolean oDAllowWaiver) {
-    	this.oDAllowWaiver = oDAllowWaiver;
-    }
-	
+		this.oDAllowWaiver = oDAllowWaiver;
+	}
+
 	public BigDecimal getODMaxWaiverPerc() {
-    	return oDMaxWaiverPerc;
-    }
+		return oDMaxWaiverPerc;
+	}
+
 	public void setODMaxWaiverPerc(BigDecimal oDMaxWaiverPerc) {
-    	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
-    }
-//	
+		this.oDMaxWaiverPerc = oDMaxWaiverPerc;
+	}
+
+	//	
 	public BigDecimal getLPIAmt() {
 		return lPIAmt;
 	}

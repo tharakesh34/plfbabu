@@ -3,7 +3,6 @@ package com.pennant.eod.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,12 +24,18 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		logger.debug(" Entering ");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into PaymentRecoveryDetail");
-		insertSql.append("(BatchRefNumber,TransactionReference,PrimaryDebitAccount,SecondaryDebitAccounts,CreditAccount,ScheduleDate,");
-		insertSql.append("FinanceReference,CustomerReference,DebitCurrency,CreditCurrency,PaymentAmount,TransactionPurpose,FinanceBranch,FinanceType,");
-		insertSql.append("FinancePurpose,SysTranRef,PrimaryAcDebitAmt,SecondaryAcDebitAmt,PaymentStatus,Priority,FinRpyFor,FinEvent) Values ");
-		insertSql.append("(:BatchRefNumber, :TransactionReference, :PrimaryDebitAccount, :SecondaryDebitAccounts, :CreditAccount, :ScheduleDate, ");
-		insertSql.append(":FinanceReference, :CustomerReference, :DebitCurrency, :CreditCurrency, :PaymentAmount, :TransactionPurpose, :FinanceBranch, ");
-		insertSql.append(":FinanceType, :FinancePurpose, :SysTranRef, :PrimaryAcDebitAmt, :SecondaryAcDebitAmt, :PaymentStatus,:Priority,:FinRpyFor,:FinEvent)");
+		insertSql.append(
+				"(BatchRefNumber,TransactionReference,PrimaryDebitAccount,SecondaryDebitAccounts,CreditAccount,ScheduleDate,");
+		insertSql.append(
+				"FinanceReference,CustomerReference,DebitCurrency,CreditCurrency,PaymentAmount,TransactionPurpose,FinanceBranch,FinanceType,");
+		insertSql.append(
+				"FinancePurpose,SysTranRef,PrimaryAcDebitAmt,SecondaryAcDebitAmt,PaymentStatus,Priority,FinRpyFor,FinEvent) Values ");
+		insertSql.append(
+				"(:BatchRefNumber, :TransactionReference, :PrimaryDebitAccount, :SecondaryDebitAccounts, :CreditAccount, :ScheduleDate, ");
+		insertSql.append(
+				":FinanceReference, :CustomerReference, :DebitCurrency, :CreditCurrency, :PaymentAmount, :TransactionPurpose, :FinanceBranch, ");
+		insertSql.append(
+				":FinanceType, :FinancePurpose, :SysTranRef, :PrimaryAcDebitAmt, :SecondaryAcDebitAmt, :PaymentStatus,:Priority,:FinRpyFor,:FinEvent)");
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detail.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
@@ -40,21 +45,24 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 	public void update(List<PaymentRecoveryDetail> detail) {
 		logger.debug(" Entering ");
 		StringBuilder insertSql = new StringBuilder("Update PaymentRecoveryDetail");
-		insertSql.append(" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt, SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
+		insertSql.append(
+				" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt, SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
 		insertSql.append(" PaymentStatus=:PaymentStatus where TransactionReference=:TransactionReference");
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detail.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
 	}
+
 	@Override
 	public void update(PaymentRecoveryDetail detail) {
 		logger.debug(" Entering ");
 		StringBuilder insertSql = new StringBuilder("Update PaymentRecoveryDetail");
-		insertSql.append(" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt,SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
+		insertSql.append(
+				" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt,SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
 		insertSql.append("PaymentStatus=:PaymentStatus where TransactionReference=:TransactionReference");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 	}
 
 	@Override
@@ -67,7 +75,8 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		selectSql.append(" where BatchRefNumber=:BatchRefNumber order by PrimaryDebitAccount,priority ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
+		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentRecoveryDetail.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -76,9 +85,10 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		}
 		return null;
 	}
-	
+
 	@Override
-	public List<PaymentRecoveryDetail> getPaymentRecoveryByid(String bathRef,String finreference,Date scheduleDate,String finEvent) {
+	public List<PaymentRecoveryDetail> getPaymentRecoveryByid(String bathRef, String finreference, Date scheduleDate,
+			String finEvent) {
 		logger.debug(" Entering ");
 		PaymentRecoveryDetail header = new PaymentRecoveryDetail();
 		header.setBatchRefNumber(bathRef);
@@ -86,14 +96,16 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		header.setScheduleDate(scheduleDate);
 		header.setFinEvent(finEvent);
 		StringBuilder selectSql = new StringBuilder("SELECT * From PaymentRecoveryDetail");
-		selectSql.append(" where BatchRefNumber=:BatchRefNumber and FinanceReference = :FinanceReference and ScheduleDate=:ScheduleDate");
+		selectSql.append(
+				" where BatchRefNumber=:BatchRefNumber and FinanceReference = :FinanceReference and ScheduleDate=:ScheduleDate");
 		if (!StringUtils.isBlank(finEvent)) {
 			selectSql.append("  and FinEvent=:FinEvent");
 		}
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
-		
+		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentRecoveryDetail.class);
+
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -101,20 +113,21 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		}
 		return null;
 	}
-	
+
 	@Override
-	public List<PaymentRecoveryDetail> getPaymentRecoveryByCustomer(String bathRef,String customerID) {
+	public List<PaymentRecoveryDetail> getPaymentRecoveryByCustomer(String bathRef, String customerID) {
 		logger.debug(" Entering ");
 		PaymentRecoveryDetail header = new PaymentRecoveryDetail();
 		header.setBatchRefNumber(bathRef);
 		header.setCustomerReference(customerID);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT * From PaymentRecoveryDetail");
 		selectSql.append(" where BatchRefNumber=:BatchRefNumber and CustomerReference = :CustomerReference");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
-		
+		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentRecoveryDetail.class);
+
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

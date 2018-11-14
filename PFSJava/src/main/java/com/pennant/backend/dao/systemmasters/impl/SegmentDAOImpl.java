@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -65,11 +64,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 	private static Logger logger = Logger.getLogger(SegmentDAOImpl.class);
-	
+
 	public SegmentDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Segments details by key field
 	 * 
@@ -85,9 +84,10 @@ public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 		Segment segment = new Segment();
 		segment.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select SegmentCode, SegmentDesc, SegmentIsActive,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTSegments");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SegmentCode =:SegmentCode");
@@ -106,9 +106,8 @@ public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTSegments or BMTSegments_Temp.
-	 * if Record not deleted then throws DataAccessException with error 41003.
-	 * delete Segments by key SegmentCode
+	 * This method Deletes the Record from the BMTSegments or BMTSegments_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Segments by key SegmentCode
 	 * 
 	 * @param Segments
 	 *            (segment)
@@ -123,16 +122,16 @@ public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTSegments");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SegmentCode =:SegmentCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(segment);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -160,17 +159,18 @@ public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 	public String save(Segment segment, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTSegments");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (SegmentCode, SegmentDesc, SegmentIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:SegmentCode, :SegmentDesc, :SegmentIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(segment);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -179,9 +179,8 @@ public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 	}
 
 	/**
-	 * This method updates the Record BMTSegments or BMTSegments_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Segments by key SegmentCode and Version
+	 * This method updates the Record BMTSegments or BMTSegments_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Segments by key SegmentCode and Version
 	 * 
 	 * @param Segments
 	 *            (segment)
@@ -200,17 +199,19 @@ public class SegmentDAOImpl extends BasicDao<Segment> implements SegmentDAO {
 		updateSql.append("Update BMTSegments");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set SegmentDesc = :SegmentDesc, SegmentIsActive = :SegmentIsActive,");
-		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where SegmentCode =:SegmentCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(segment);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

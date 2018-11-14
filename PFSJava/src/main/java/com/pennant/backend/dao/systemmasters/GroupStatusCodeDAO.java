@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.GroupStatusCode;
 
 /**
@@ -49,9 +50,12 @@ import com.pennant.backend.model.systemmasters.GroupStatusCode;
  * 
  */
 public interface GroupStatusCodeDAO {
-	
-	GroupStatusCode getGroupStatusCodeById(String id,String type);
-	void update(GroupStatusCode groupStatusCode,String type);
-	void delete(GroupStatusCode groupStatusCode,String type);
-	String save(GroupStatusCode groupStatusCode,String type);
+
+	GroupStatusCode getGroupStatusCodeById(String id, String type);
+
+	void update(GroupStatusCode groupStatusCode, String type);
+
+	void delete(GroupStatusCode groupStatusCode, String type);
+
+	String save(GroupStatusCode groupStatusCode, String type);
 }

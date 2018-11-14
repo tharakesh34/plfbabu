@@ -68,10 +68,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.model.FinTaxUploadDetailItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -80,56 +80,56 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHeader> {
 
-	private static final long			serialVersionUID	= -5901195042041627750L;
-	private final static Logger			logger				= Logger.getLogger(FinTaxUploadDetailListCtrl.class);
+	private static final long serialVersionUID = -5901195042041627750L;
+	private final static Logger logger = Logger.getLogger(FinTaxUploadDetailListCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the ZUL-file are getting autoWired by our 'extends
 	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window					window_FinTaxUploadDetailList;												// autoWired
-	protected Borderlayout				borderLayout_FinTaxDetailUploadList;										// autoWired
-	protected Paging					pagingFinTaxDetailUploadList;												// autoWired
-	protected Listbox					listBoxFinTaxUploadDetail;
-	protected Grid						searchGrid;																	// autoWired
+	protected Window window_FinTaxUploadDetailList; // autoWired
+	protected Borderlayout borderLayout_FinTaxDetailUploadList; // autoWired
+	protected Paging pagingFinTaxDetailUploadList; // autoWired
+	protected Listbox listBoxFinTaxUploadDetail;
+	protected Grid searchGrid; // autoWired
 
 	// List headers
-	protected Listheader				listheader_BatchReference;													// autoWired
-	protected Listheader				listheader_FileName;														// autoWired
-	protected Listheader				listheader_BatchCreatedDate;												// autoWired
-	protected Listheader				listheader_NumberOfRecords;													// autoWired
-	protected Listheader				listheader_Status;															// autoWired
-	protected Listheader				listheader_RecordStatus;													// autoWired
-	protected Listheader				listheader_RecordType;														// autoWired
+	protected Listheader listheader_BatchReference; // autoWired
+	protected Listheader listheader_FileName; // autoWired
+	protected Listheader listheader_BatchCreatedDate; // autoWired
+	protected Listheader listheader_NumberOfRecords; // autoWired
+	protected Listheader listheader_Status; // autoWired
+	protected Listheader listheader_RecordStatus; // autoWired
+	protected Listheader listheader_RecordType; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 
-	protected Textbox					batchReference;																// autowired
-	protected Listbox					sortOperator_BatchReference;												// autowired
+	protected Textbox batchReference; // autowired
+	protected Listbox sortOperator_BatchReference; // autowired
 
-	protected Textbox					fileName;																	// autowired
-	protected Listbox					sortOperator_FileName;														// autowired
+	protected Textbox fileName; // autowired
+	protected Listbox sortOperator_FileName; // autowired
 
-	protected Datebox					batchCreationDate;															// autowired
-	protected Listbox					sortOperator_BatchCreationDate;												// autowired
+	protected Datebox batchCreationDate; // autowired
+	protected Listbox sortOperator_BatchCreationDate; // autowired
 
-	protected Datebox					batchApprovedDate;															// autowired
-	protected Listbox					sortOperator_BatchApprovedDate;												// autowired
+	protected Datebox batchApprovedDate; // autowired
+	protected Listbox sortOperator_BatchApprovedDate; // autowired
 
-	protected Combobox					recordStatus;																// autowired
-	protected Listbox					sortOperator_RecordStatus;													// autowired
+	protected Combobox recordStatus; // autowired
+	protected Listbox sortOperator_RecordStatus; // autowired
 
-	protected Listbox					recordType;																	// autowired
-	protected Listbox					sortOperator_RecordType;													// autowired
+	protected Listbox recordType; // autowired
+	protected Listbox sortOperator_RecordType; // autowired
 
-	protected Listheader				listheader_LoanStatus;
+	protected Listheader listheader_LoanStatus;
 
 	// checkRights
-	protected Button					button_FinTaxUploadDetailList_Search;										// autoWired
-	protected Button					button_FinTaxUploadDetailList_NewFinTaxUploadDetail;						// autoWired
+	protected Button button_FinTaxUploadDetailList_Search; // autoWired
+	protected Button button_FinTaxUploadDetailList_NewFinTaxUploadDetail; // autoWired
 
-	private FinTaxUploadDetailService	finTaxUploadDetailService;
+	private FinTaxUploadDetailService finTaxUploadDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -176,11 +176,11 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		registerField("batchApprovedDate", listheader_BatchCreatedDate, SortOrder.NONE, batchApprovedDate,
 				sortOperator_BatchApprovedDate, Operators.DATE);
 
-		registerField("numberofRecords",listheader_NumberOfRecords);
-		registerField("status",listheader_Status);
-		
-		registerField("RecordStatus",listheader_RecordStatus);
-		registerField("RecordType",listheader_RecordType);
+		registerField("numberofRecords", listheader_NumberOfRecords);
+		registerField("status", listheader_Status);
+
+		registerField("RecordStatus", listheader_RecordStatus);
+		registerField("RecordType", listheader_RecordType);
 		doSeFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
@@ -242,8 +242,8 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 
 		// Get the selected entity.
 		long reference = (Long) selectedItem.getAttribute("id");
-		
-		FinTaxUploadHeader finTaxUploadHeader=finTaxUploadDetailService.getFinTaxUploadHeaderByRef(reference);
+
+		FinTaxUploadHeader finTaxUploadHeader = finTaxUploadDetailService.getFinTaxUploadHeaderByRef(reference);
 
 		if (finTaxUploadHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -259,12 +259,13 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 			if (isWorkFlowEnabled() && finTaxUploadHeader.getWorkflowId() == 0) {
 				finTaxUploadHeader.setWorkflowId(getWorkFlowId());
 			}
-			
+
 			doLoadWorkFlow(finTaxUploadHeader.isWorkflow(), finTaxUploadHeader.getWorkflowId(),
 					finTaxUploadHeader.getNextTaskId());
-			
-			List<FinTaxUploadDetail> finTaxUploadDetailList = finTaxUploadDetailService
-					.getFinTaxDetailUploadById(String.valueOf(finTaxUploadHeader.getBatchReference()),"_View","'"+PennantConstants.RCD_STATUS_APPROVED+"'");
+
+			List<FinTaxUploadDetail> finTaxUploadDetailList = finTaxUploadDetailService.getFinTaxDetailUploadById(
+					String.valueOf(finTaxUploadHeader.getBatchReference()), "_View",
+					"'" + PennantConstants.RCD_STATUS_APPROVED + "'");
 			finTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
 			doShowDialogPage(finTaxUploadHeader);
 		} else {
@@ -289,7 +290,6 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		}
 		arg.put("finTaxUploadDetailListCtrl", this);
 		arg.put("finTaxUploadHeader", aFinTaxDetailUploadheader);
-
 
 		// call the zul-file with the parameters packed in a map
 		try {
@@ -324,8 +324,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		doShowHelp(event);
 
 	}
-	
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -335,8 +334,6 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	public void onClick$button_FinTaxUploadDetailList_Search(Event event) {
 		search();
 	}
-	
-	
 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.

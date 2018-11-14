@@ -78,10 +78,10 @@ public class VesselDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("vesselTypeName");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("vesselTypeName");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -91,11 +91,11 @@ public class VesselDetail extends AbstractWorkflowEntity {
 	public String getId() {
 		return vesselTypeID;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.vesselTypeID = id;
 	}
-	
+
 	public String getVesselTypeID() {
 		return vesselTypeID;
 	}
@@ -104,14 +104,14 @@ public class VesselDetail extends AbstractWorkflowEntity {
 		this.vesselTypeID = vesselTypeID;
 	}
 
-	
 	public String getVesselSubType() {
 		return vesselSubType;
 	}
+
 	public void setVesselSubType(String vesselSubType) {
 		this.vesselSubType = vesselSubType;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -119,7 +119,7 @@ public class VesselDetail extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -128,12 +128,12 @@ public class VesselDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public VesselDetail getBefImage(){
+	public VesselDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(VesselDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(VesselDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -145,26 +145,26 @@ public class VesselDetail extends AbstractWorkflowEntity {
 	}
 
 	public boolean isActive() {
-	    return active;
-    }
+		return active;
+	}
 
 	public void setActive(boolean active) {
-	    this.active = active;
-    }
+		this.active = active;
+	}
 
 	public String getVesselTypeName() {
-	    return vesselTypeName;
-    }
+		return vesselTypeName;
+	}
 
 	public void setVesselTypeName(String vesselTypeName) {
-	    this.vesselTypeName = vesselTypeName;
-    }
+		this.vesselTypeName = vesselTypeName;
+	}
 
 	public String getVesselType() {
-	    return vesselType;
-    }
+		return vesselType;
+	}
 
 	public void setVesselType(String vesselType) {
-	    this.vesselType = vesselType;
-    }
+		this.vesselType = vesselType;
+	}
 }

@@ -6,12 +6,12 @@ import java.util.Date;
 
 public class EodFinProfitDetail implements Serializable {
 
-    private static final long serialVersionUID = 6601637251967752181L;
-    
-    public EodFinProfitDetail() {
-    	super();
-    }
-    
+	private static final long serialVersionUID = 6601637251967752181L;
+
+	public EodFinProfitDetail() {
+		super();
+	}
+
 	private String finReference;
 	private long custId = Long.MIN_VALUE;
 	private String finBranch;
@@ -43,86 +43,86 @@ public class EodFinProfitDetail implements Serializable {
 	private BigDecimal amzTodayToNBD = BigDecimal.ZERO;
 	private BigDecimal lpiTillLBD = BigDecimal.ZERO;
 	private BigDecimal lppTillLBD = BigDecimal.ZERO;
-	
-	private String     RepayFrq;
-	private String     CustCIF;
-	private String     FinCcy;
-	private String     FinPurpose;
-	private Date       FinContractDate;
-	private Date       FinApprovedDate;
-	private Date       FinStartDate;
-	private Date       MaturityDate;
-	private Date       FullPaidDate;
-	private BigDecimal FinAmount =  BigDecimal.ZERO;
-	private BigDecimal DownPayment =  BigDecimal.ZERO;
-	private BigDecimal CurReducingRate =  BigDecimal.ZERO;
-	private BigDecimal curFlatRate =  BigDecimal.ZERO;
-	private BigDecimal TotalpriSchd =  BigDecimal.ZERO;
-	private BigDecimal EarlyPaidAmt =  BigDecimal.ZERO;
-	private BigDecimal ODPrincipal =  BigDecimal.ZERO;
-	private BigDecimal ODProfit =  BigDecimal.ZERO;
-	private BigDecimal CRBODPrincipal =  BigDecimal.ZERO;
-	private BigDecimal CRBODProfit =  BigDecimal.ZERO;
-	private BigDecimal PenaltyPaid =  BigDecimal.ZERO;
-	private BigDecimal PenaltyDue =  BigDecimal.ZERO;
-	private BigDecimal PenaltyWaived =  BigDecimal.ZERO;
-	private Date       NSchdDate;
-	private BigDecimal NSchdPri =  BigDecimal.ZERO;
-	private BigDecimal NSchdPft =  BigDecimal.ZERO;
-	private BigDecimal NSchdPriDue =  BigDecimal.ZERO;
-	private BigDecimal NSchdPftDue =  BigDecimal.ZERO;
-	private BigDecimal AccruePft =  BigDecimal.ZERO;
-	private BigDecimal EarnedPft =  BigDecimal.ZERO;
-	private BigDecimal Unearned =  BigDecimal.ZERO;
-	private boolean    PftInSusp;
-	private BigDecimal SuspPft =  BigDecimal.ZERO;
-	private BigDecimal PftAccrueTsfd =  BigDecimal.ZERO;
-	private String     FinStatus;
-	private String     FinStsReason;
-	private String     FinWorstStatus;
-	private BigDecimal insPaidAmt =  BigDecimal.ZERO;
-	private BigDecimal AdminPaidAmt =  BigDecimal.ZERO;
-	private BigDecimal insCal =  BigDecimal.ZERO;
-	private long       NOInst =  Long.MIN_VALUE;
-	private long       NOPaidInst =  Long.MIN_VALUE;
-	private long       NOODInst =  0;
-	private int        CRBODInst =  0;
-	private String     FinAccount;
-	private String     FinAcType;
-	private String     DisbAccountId;
-	private String     DisbActCcy;
-	private String     RepayAccountId;
-	private String     FinCustPftAccount;
-	private String     IncomeAccount;
-	private String     UEIncomeSuspAccount;
-	private String     FinCommitmentRef;
-	private boolean     FinIsActive;
-	private long       NORepayments =  Long.MIN_VALUE;
+
+	private String RepayFrq;
+	private String CustCIF;
+	private String FinCcy;
+	private String FinPurpose;
+	private Date FinContractDate;
+	private Date FinApprovedDate;
+	private Date FinStartDate;
+	private Date MaturityDate;
+	private Date FullPaidDate;
+	private BigDecimal FinAmount = BigDecimal.ZERO;
+	private BigDecimal DownPayment = BigDecimal.ZERO;
+	private BigDecimal CurReducingRate = BigDecimal.ZERO;
+	private BigDecimal curFlatRate = BigDecimal.ZERO;
+	private BigDecimal TotalpriSchd = BigDecimal.ZERO;
+	private BigDecimal EarlyPaidAmt = BigDecimal.ZERO;
+	private BigDecimal ODPrincipal = BigDecimal.ZERO;
+	private BigDecimal ODProfit = BigDecimal.ZERO;
+	private BigDecimal CRBODPrincipal = BigDecimal.ZERO;
+	private BigDecimal CRBODProfit = BigDecimal.ZERO;
+	private BigDecimal PenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal PenaltyDue = BigDecimal.ZERO;
+	private BigDecimal PenaltyWaived = BigDecimal.ZERO;
+	private Date NSchdDate;
+	private BigDecimal NSchdPri = BigDecimal.ZERO;
+	private BigDecimal NSchdPft = BigDecimal.ZERO;
+	private BigDecimal NSchdPriDue = BigDecimal.ZERO;
+	private BigDecimal NSchdPftDue = BigDecimal.ZERO;
+	private BigDecimal AccruePft = BigDecimal.ZERO;
+	private BigDecimal EarnedPft = BigDecimal.ZERO;
+	private BigDecimal Unearned = BigDecimal.ZERO;
+	private boolean PftInSusp;
+	private BigDecimal SuspPft = BigDecimal.ZERO;
+	private BigDecimal PftAccrueTsfd = BigDecimal.ZERO;
+	private String FinStatus;
+	private String FinStsReason;
+	private String FinWorstStatus;
+	private BigDecimal insPaidAmt = BigDecimal.ZERO;
+	private BigDecimal AdminPaidAmt = BigDecimal.ZERO;
+	private BigDecimal insCal = BigDecimal.ZERO;
+	private long NOInst = Long.MIN_VALUE;
+	private long NOPaidInst = Long.MIN_VALUE;
+	private long NOODInst = 0;
+	private int CRBODInst = 0;
+	private String FinAccount;
+	private String FinAcType;
+	private String DisbAccountId;
+	private String DisbActCcy;
+	private String RepayAccountId;
+	private String FinCustPftAccount;
+	private String IncomeAccount;
+	private String UEIncomeSuspAccount;
+	private String FinCommitmentRef;
+	private boolean FinIsActive;
+	private long NORepayments = Long.MIN_VALUE;
 	private Date FirstRepayDate;
-	private BigDecimal FirstRepayAmt =  BigDecimal.ZERO;
-	private BigDecimal LastRepayAmt =  BigDecimal.ZERO;
-	private int 	   oDDays = 0;
-	private int 	   CRBODDays = 0;
-	private Date 	   firstODDate;
-	private Date 	   lastODDate;
-	private Date 	   cRBFirstODDate;
-	private Date 	   cRBLastODDate;
-	
-	private String     closingStatus;
-	private String     finCategory;
-	private Date 	   lastRpySchDate;
-	private Date 	   nextRpySchDate;
-	private BigDecimal lastRpySchPri =  BigDecimal.ZERO;
-	private BigDecimal lastRpySchPft =  BigDecimal.ZERO;
-	private Date       latestRpyDate;
+	private BigDecimal FirstRepayAmt = BigDecimal.ZERO;
+	private BigDecimal LastRepayAmt = BigDecimal.ZERO;
+	private int oDDays = 0;
+	private int CRBODDays = 0;
+	private Date firstODDate;
+	private Date lastODDate;
+	private Date cRBFirstODDate;
+	private Date cRBLastODDate;
+
+	private String closingStatus;
+	private String finCategory;
+	private Date lastRpySchDate;
+	private Date nextRpySchDate;
+	private BigDecimal lastRpySchPri = BigDecimal.ZERO;
+	private BigDecimal lastRpySchPft = BigDecimal.ZERO;
+	private Date latestRpyDate;
 	private BigDecimal latestRpyPri = BigDecimal.ZERO;
 	private BigDecimal latestRpyPft = BigDecimal.ZERO;
-	private Date       latestWriteOffDate;
+	private Date latestWriteOffDate;
 	private BigDecimal totalWriteoff = BigDecimal.ZERO;
-	
+
 	private BigDecimal nextRepayAmt = BigDecimal.ZERO;
 	private boolean salariedCustomer = false;
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -130,6 +130,7 @@ public class EodFinProfitDetail implements Serializable {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -137,6 +138,7 @@ public class EodFinProfitDetail implements Serializable {
 	public long getCustId() {
 		return custId;
 	}
+
 	public void setCustId(long custId) {
 		this.custId = custId;
 	}
@@ -144,6 +146,7 @@ public class EodFinProfitDetail implements Serializable {
 	public String getFinBranch() {
 		return finBranch;
 	}
+
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
@@ -151,6 +154,7 @@ public class EodFinProfitDetail implements Serializable {
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -158,6 +162,7 @@ public class EodFinProfitDetail implements Serializable {
 	public Date getLastMdfDate() {
 		return lastMdfDate;
 	}
+
 	public void setLastMdfDate(Date lastMdfDate) {
 		this.lastMdfDate = lastMdfDate;
 	}
@@ -165,6 +170,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPftSchd() {
 		return totalPftSchd;
 	}
+
 	public void setTotalPftSchd(BigDecimal totalPftSchd) {
 		this.totalPftSchd = totalPftSchd;
 	}
@@ -172,6 +178,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPftCpz() {
 		return totalPftCpz;
 	}
+
 	public void setTotalPftCpz(BigDecimal totalPftCpz) {
 		this.totalPftCpz = totalPftCpz;
 	}
@@ -179,6 +186,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPftPaid() {
 		return totalPftPaid;
 	}
+
 	public void setTotalPftPaid(BigDecimal totalPftPaid) {
 		this.totalPftPaid = totalPftPaid;
 	}
@@ -186,6 +194,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPftBal() {
 		return totalPftBal;
 	}
+
 	public void setTotalPftBal(BigDecimal totalPftBal) {
 		this.totalPftBal = totalPftBal;
 	}
@@ -193,6 +202,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPftPaidInAdv() {
 		return totalPftPaidInAdv;
 	}
+
 	public void setTotalPftPaidInAdv(BigDecimal totalPftPaidInAdv) {
 		this.totalPftPaidInAdv = totalPftPaidInAdv;
 	}
@@ -200,6 +210,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPriPaid() {
 		return totalPriPaid;
 	}
+
 	public void setTotalPriPaid(BigDecimal totalPriPaid) {
 		this.totalPriPaid = totalPriPaid;
 	}
@@ -207,6 +218,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTotalPriBal() {
 		return totalPriBal;
 	}
+
 	public void setTotalPriBal(BigDecimal totalPriBal) {
 		this.totalPriBal = totalPriBal;
 	}
@@ -214,6 +226,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdSchdPft() {
 		return tdSchdPft;
 	}
+
 	public void setTdSchdPft(BigDecimal tdSchdPft) {
 		this.tdSchdPft = tdSchdPft;
 	}
@@ -221,6 +234,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdPftCpz() {
 		return tdPftCpz;
 	}
+
 	public void setTdPftCpz(BigDecimal tdPftCpz) {
 		this.tdPftCpz = tdPftCpz;
 	}
@@ -228,6 +242,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdSchdPftPaid() {
 		return tdSchdPftPaid;
 	}
+
 	public void setTdSchdPftPaid(BigDecimal tdSchdPftPaid) {
 		this.tdSchdPftPaid = tdSchdPftPaid;
 	}
@@ -235,6 +250,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdSchdPftBal() {
 		return tdSchdPftBal;
 	}
+
 	public void setTdSchdPftBal(BigDecimal tdSchdPftBal) {
 		this.tdSchdPftBal = tdSchdPftBal;
 	}
@@ -242,6 +258,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdPftAccrued() {
 		return tdPftAccrued;
 	}
+
 	public void setTdPftAccrued(BigDecimal tdPftAccrued) {
 		this.tdPftAccrued = tdPftAccrued;
 	}
@@ -249,6 +266,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdPftAccrueSusp() {
 		return tdPftAccrueSusp;
 	}
+
 	public void setTdPftAccrueSusp(BigDecimal tdPftAccrueSusp) {
 		this.tdPftAccrueSusp = tdPftAccrueSusp;
 	}
@@ -256,6 +274,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdPftAmortized() {
 		return tdPftAmortized;
 	}
+
 	public void setTdPftAmortized(BigDecimal tdPftAmortized) {
 		this.tdPftAmortized = tdPftAmortized;
 	}
@@ -263,6 +282,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdPftAmortizedSusp() {
 		return tdPftAmortizedSusp;
 	}
+
 	public void setTdPftAmortizedSusp(BigDecimal tdPftAmortizedSusp) {
 		this.tdPftAmortizedSusp = tdPftAmortizedSusp;
 	}
@@ -270,6 +290,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdSchdPri() {
 		return tdSchdPri;
 	}
+
 	public void setTdSchdPri(BigDecimal tdSchdPri) {
 		this.tdSchdPri = tdSchdPri;
 	}
@@ -277,6 +298,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdSchdPriPaid() {
 		return tdSchdPriPaid;
 	}
+
 	public void setTdSchdPriPaid(BigDecimal tdSchdPriPaid) {
 		this.tdSchdPriPaid = tdSchdPriPaid;
 	}
@@ -284,6 +306,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getTdSchdPriBal() {
 		return tdSchdPriBal;
 	}
+
 	public void setTdSchdPriBal(BigDecimal tdSchdPriBal) {
 		this.tdSchdPriBal = tdSchdPriBal;
 	}
@@ -291,6 +314,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getAcrTillLBD() {
 		return acrTillLBD;
 	}
+
 	public void setAcrTillLBD(BigDecimal acrTillLBD) {
 		this.acrTillLBD = acrTillLBD;
 	}
@@ -298,6 +322,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getAcrTillNBD() {
 		return acrTillNBD;
 	}
+
 	public void setAcrTillNBD(BigDecimal acrTillNBD) {
 		this.acrTillNBD = acrTillNBD;
 	}
@@ -305,6 +330,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getAcrTodayToNBD() {
 		return acrTodayToNBD;
 	}
+
 	public void setAcrTodayToNBD(BigDecimal acrTodayToNBDate) {
 		this.acrTodayToNBD = acrTodayToNBDate;
 	}
@@ -312,6 +338,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getAmzTillNBD() {
 		return amzTillNBD;
 	}
+
 	public void setAmzTillNBD(BigDecimal amzTillNBD) {
 		this.amzTillNBD = amzTillNBD;
 	}
@@ -319,6 +346,7 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getAmzTillLBD() {
 		return amzTillLBD;
 	}
+
 	public void setAmzTillLBD(BigDecimal amzTillLBD) {
 		this.amzTillLBD = amzTillLBD;
 	}
@@ -326,474 +354,559 @@ public class EodFinProfitDetail implements Serializable {
 	public BigDecimal getAmzTodayToNBD() {
 		return amzTodayToNBD;
 	}
+
 	public void setAmzTodayToNBD(BigDecimal amzTodayToNBDate) {
 		this.amzTodayToNBD = amzTodayToNBDate;
 	}
-	
+
 	public String getRepayFrq() {
-    	return RepayFrq;
-    }
+		return RepayFrq;
+	}
+
 	public void setRepayFrq(String repayFrq) {
-    	RepayFrq = repayFrq;
-    }
-	
+		RepayFrq = repayFrq;
+	}
+
 	public String getCustCIF() {
-    	return CustCIF;
-    }
+		return CustCIF;
+	}
+
 	public void setCustCIF(String custCIF) {
-    	CustCIF = custCIF;
-    }
-	
+		CustCIF = custCIF;
+	}
+
 	public String getFinCcy() {
-    	return FinCcy;
-    }
+		return FinCcy;
+	}
+
 	public void setFinCcy(String finCcy) {
-    	FinCcy = finCcy;
-    }
-	
+		FinCcy = finCcy;
+	}
+
 	public String getFinPurpose() {
-    	return FinPurpose;
-    }
+		return FinPurpose;
+	}
+
 	public void setFinPurpose(String finPurpose) {
-    	FinPurpose = finPurpose;
-    }
-	
+		FinPurpose = finPurpose;
+	}
+
 	public Date getFinContractDate() {
-    	return FinContractDate;
-    }
+		return FinContractDate;
+	}
+
 	public void setFinContractDate(Date finContractDate) {
-    	FinContractDate = finContractDate;
-    }
-	
+		FinContractDate = finContractDate;
+	}
+
 	public Date getFinApprovedDate() {
-    	return FinApprovedDate;
-    }
+		return FinApprovedDate;
+	}
+
 	public void setFinApprovedDate(Date finApprovedDate) {
-    	FinApprovedDate = finApprovedDate;
-    }
-	
+		FinApprovedDate = finApprovedDate;
+	}
+
 	public Date getFinStartDate() {
-    	return FinStartDate;
-    }
+		return FinStartDate;
+	}
+
 	public void setFinStartDate(Date finStartDate) {
-    	FinStartDate = finStartDate;
-    }
-	
+		FinStartDate = finStartDate;
+	}
+
 	public Date getMaturityDate() {
-    	return MaturityDate;
-    }
+		return MaturityDate;
+	}
+
 	public void setMaturityDate(Date maturityDate) {
-    	MaturityDate = maturityDate;
-    }
-	
+		MaturityDate = maturityDate;
+	}
+
 	public Date getFullPaidDate() {
-    	return FullPaidDate;
-    }
+		return FullPaidDate;
+	}
+
 	public void setFullPaidDate(Date fullPaidDate) {
-    	FullPaidDate = fullPaidDate;
-    }
-	
+		FullPaidDate = fullPaidDate;
+	}
+
 	public BigDecimal getFinAmount() {
-    	return FinAmount;
-    }
+		return FinAmount;
+	}
+
 	public void setFinAmount(BigDecimal finAmount) {
-    	FinAmount = finAmount;
-    }
-	
+		FinAmount = finAmount;
+	}
+
 	public BigDecimal getDownPayment() {
-    	return DownPayment;
-    }
+		return DownPayment;
+	}
+
 	public void setDownPayment(BigDecimal downPayment) {
-    	DownPayment = downPayment;
-    }
-	
+		DownPayment = downPayment;
+	}
+
 	public BigDecimal getCurReducingRate() {
-    	return CurReducingRate;
-    }
+		return CurReducingRate;
+	}
+
 	public void setCurReducingRate(BigDecimal curReducingRate) {
-    	CurReducingRate = curReducingRate;
-    }
-	
+		CurReducingRate = curReducingRate;
+	}
+
 	public BigDecimal getCurFlatRate() {
-    	return curFlatRate;
-    }
+		return curFlatRate;
+	}
+
 	public void setCurFlatRate(BigDecimal curFlatRate) {
-    	this.curFlatRate = curFlatRate;
-    }
-	
+		this.curFlatRate = curFlatRate;
+	}
+
 	public BigDecimal getTotalpriSchd() {
-    	return TotalpriSchd;
-    }
+		return TotalpriSchd;
+	}
+
 	public void setTotalpriSchd(BigDecimal totalpriSchd) {
-    	TotalpriSchd = totalpriSchd;
-    }
-	
+		TotalpriSchd = totalpriSchd;
+	}
+
 	public BigDecimal getEarlyPaidAmt() {
-    	return EarlyPaidAmt;
-    }
+		return EarlyPaidAmt;
+	}
+
 	public void setEarlyPaidAmt(BigDecimal earlyPaidAmt) {
-    	EarlyPaidAmt = earlyPaidAmt;
-    }
-	
+		EarlyPaidAmt = earlyPaidAmt;
+	}
+
 	public BigDecimal getODPrincipal() {
-    	return ODPrincipal;
-    }
+		return ODPrincipal;
+	}
+
 	public void setODPrincipal(BigDecimal oDPrincipal) {
-    	ODPrincipal = oDPrincipal;
-    }
-	
+		ODPrincipal = oDPrincipal;
+	}
+
 	public BigDecimal getODProfit() {
-    	return ODProfit;
-    }
+		return ODProfit;
+	}
+
 	public void setODProfit(BigDecimal oDProfit) {
-    	ODProfit = oDProfit;
-    }
-	
+		ODProfit = oDProfit;
+	}
+
 	public BigDecimal getPenaltyPaid() {
-    	return PenaltyPaid;
-    }
+		return PenaltyPaid;
+	}
+
 	public void setPenaltyPaid(BigDecimal penaltyPaid) {
-    	PenaltyPaid = penaltyPaid;
-    }
-	
+		PenaltyPaid = penaltyPaid;
+	}
+
 	public BigDecimal getPenaltyDue() {
-    	return PenaltyDue;
-    }
+		return PenaltyDue;
+	}
+
 	public void setPenaltyDue(BigDecimal penaltyDue) {
-    	PenaltyDue = penaltyDue;
-    }
-	
+		PenaltyDue = penaltyDue;
+	}
+
 	public BigDecimal getPenaltyWaived() {
-    	return PenaltyWaived;
-    }
+		return PenaltyWaived;
+	}
+
 	public void setPenaltyWaived(BigDecimal penaltyWaived) {
-    	PenaltyWaived = penaltyWaived;
-    }
-	
+		PenaltyWaived = penaltyWaived;
+	}
+
 	public Date getNSchdDate() {
-    	return NSchdDate;
-    }
+		return NSchdDate;
+	}
+
 	public void setNSchdDate(Date nSchdDate) {
-    	NSchdDate = nSchdDate;
-    }
-	
+		NSchdDate = nSchdDate;
+	}
+
 	public BigDecimal getNSchdPri() {
-    	return NSchdPri;
-    }
+		return NSchdPri;
+	}
+
 	public void setNSchdPri(BigDecimal nSchdPri) {
-    	NSchdPri = nSchdPri;
-    }
-	
+		NSchdPri = nSchdPri;
+	}
+
 	public BigDecimal getNSchdPft() {
-    	return NSchdPft;
-    }
+		return NSchdPft;
+	}
+
 	public void setNSchdPft(BigDecimal nSchdPft) {
-    	NSchdPft = nSchdPft;
-    }
-	
+		NSchdPft = nSchdPft;
+	}
+
 	public BigDecimal getNSchdPriDue() {
-    	return NSchdPriDue;
-    }
+		return NSchdPriDue;
+	}
+
 	public void setNSchdPriDue(BigDecimal nSchdPriDue) {
-    	NSchdPriDue = nSchdPriDue;
-    }
-	
+		NSchdPriDue = nSchdPriDue;
+	}
+
 	public BigDecimal getNSchdPftDue() {
-    	return NSchdPftDue;
-    }
+		return NSchdPftDue;
+	}
+
 	public void setNSchdPftDue(BigDecimal nSchdPftDue) {
-    	NSchdPftDue = nSchdPftDue;
-    }
-	
+		NSchdPftDue = nSchdPftDue;
+	}
+
 	public BigDecimal getAccruePft() {
-    	return AccruePft;
-    }
+		return AccruePft;
+	}
+
 	public void setAccruePft(BigDecimal accruePft) {
-    	AccruePft = accruePft;
-    }
-	
+		AccruePft = accruePft;
+	}
+
 	public BigDecimal getEarnedPft() {
-    	return EarnedPft;
-    }
+		return EarnedPft;
+	}
+
 	public void setEarnedPft(BigDecimal earnedPft) {
-    	EarnedPft = earnedPft;
-    }
-	
+		EarnedPft = earnedPft;
+	}
+
 	public BigDecimal getUnearned() {
-    	return Unearned;
-    }
+		return Unearned;
+	}
+
 	public void setUnearned(BigDecimal unearned) {
-    	Unearned = unearned;
-    }
-	
+		Unearned = unearned;
+	}
+
 	public boolean getPftInSusp() {
-    	return PftInSusp;
-    }
+		return PftInSusp;
+	}
+
 	public void setPftInSusp(boolean pftInSusp) {
-    	PftInSusp = pftInSusp;
-    }
-	
+		PftInSusp = pftInSusp;
+	}
+
 	public BigDecimal getSuspPft() {
-    	return SuspPft;
-    }
+		return SuspPft;
+	}
+
 	public void setSuspPft(BigDecimal suspPft) {
-    	SuspPft = suspPft;
-    }
-	
+		SuspPft = suspPft;
+	}
+
 	public BigDecimal getPftAccrueTsfd() {
-    	return PftAccrueTsfd;
-    }
+		return PftAccrueTsfd;
+	}
+
 	public void setPftAccrueTsfd(BigDecimal pftAccrueTsfd) {
-    	PftAccrueTsfd = pftAccrueTsfd;
-    }
-	
+		PftAccrueTsfd = pftAccrueTsfd;
+	}
+
 	public String getFinStatus() {
-    	return FinStatus;
-    }
+		return FinStatus;
+	}
+
 	public void setFinStatus(String finStatus) {
-    	FinStatus = finStatus;
-    }
-	
+		FinStatus = finStatus;
+	}
+
 	public String getFinStsReason() {
-    	return FinStsReason;
-    }
+		return FinStsReason;
+	}
+
 	public void setFinStsReason(String finStsReason) {
-    	FinStsReason = finStsReason;
-    }
-	
+		FinStsReason = finStsReason;
+	}
+
 	public String getFinWorstStatus() {
-    	return FinWorstStatus;
-    }
+		return FinWorstStatus;
+	}
+
 	public void setFinWorstStatus(String finWorstStatus) {
-    	FinWorstStatus = finWorstStatus;
-    }
-	
+		FinWorstStatus = finWorstStatus;
+	}
+
 	public BigDecimal getInsPaidAmt() {
-    	return insPaidAmt;
-    }
+		return insPaidAmt;
+	}
+
 	public void setInsPaidAmt(BigDecimal insPaidAmt) {
-    	this.insPaidAmt = insPaidAmt;
-    }
-	
+		this.insPaidAmt = insPaidAmt;
+	}
+
 	public BigDecimal getAdminPaidAmt() {
-    	return AdminPaidAmt;
-    }
+		return AdminPaidAmt;
+	}
+
 	public void setAdminPaidAmt(BigDecimal adminPaidAmt) {
-    	AdminPaidAmt = adminPaidAmt;
-    }
-	
+		AdminPaidAmt = adminPaidAmt;
+	}
+
 	public BigDecimal getInsCal() {
-    	return insCal;
-    }
+		return insCal;
+	}
+
 	public void setInsCal(BigDecimal insCal) {
-    	this.insCal = insCal;
-    }
-	
+		this.insCal = insCal;
+	}
+
 	public long getNOInst() {
-    	return NOInst;
-    }
+		return NOInst;
+	}
+
 	public void setNOInst(long nOInst) {
-    	NOInst = nOInst;
-    }
-	
+		NOInst = nOInst;
+	}
+
 	public long getNOPaidInst() {
-    	return NOPaidInst;
-    }
+		return NOPaidInst;
+	}
+
 	public void setNOPaidInst(long nOPaidInst) {
-    	NOPaidInst = nOPaidInst;
-    }
-	
+		NOPaidInst = nOPaidInst;
+	}
+
 	public long getNOODInst() {
-    	return NOODInst;
-    }
+		return NOODInst;
+	}
+
 	public void setNOODInst(long nOODInst) {
-    	NOODInst = nOODInst;
-    }
-	
+		NOODInst = nOODInst;
+	}
+
 	public String getFinAccount() {
-    	return FinAccount;
-    }
+		return FinAccount;
+	}
+
 	public void setFinAccount(String finAccount) {
-    	FinAccount = finAccount;
-    }
-	
+		FinAccount = finAccount;
+	}
+
 	public String getFinAcType() {
-    	return FinAcType;
-    }
+		return FinAcType;
+	}
+
 	public void setFinAcType(String finAcType) {
-    	FinAcType = finAcType;
-    }
-	
+		FinAcType = finAcType;
+	}
+
 	public String getDisbAccountId() {
-    	return DisbAccountId;
-    }
+		return DisbAccountId;
+	}
+
 	public void setDisbAccountId(String disbAccountId) {
-    	DisbAccountId = disbAccountId;
-    }
-	
+		DisbAccountId = disbAccountId;
+	}
+
 	public String getDisbActCcy() {
-    	return DisbActCcy;
-    }
+		return DisbActCcy;
+	}
+
 	public void setDisbActCcy(String disbActCcy) {
-    	DisbActCcy = disbActCcy;
-    }
-	
+		DisbActCcy = disbActCcy;
+	}
+
 	public String getRepayAccountId() {
-    	return RepayAccountId;
-    }
+		return RepayAccountId;
+	}
+
 	public void setRepayAccountId(String repayAccountId) {
-    	RepayAccountId = repayAccountId;
-    }
-	
+		RepayAccountId = repayAccountId;
+	}
+
 	public String getFinCustPftAccount() {
-    	return FinCustPftAccount;
-    }
+		return FinCustPftAccount;
+	}
+
 	public void setFinCustPftAccount(String finCustPftAccount) {
-    	FinCustPftAccount = finCustPftAccount;
-    }
-	
+		FinCustPftAccount = finCustPftAccount;
+	}
+
 	public String getIncomeAccount() {
-    	return IncomeAccount;
-    }
+		return IncomeAccount;
+	}
+
 	public void setIncomeAccount(String incomeAccount) {
-    	IncomeAccount = incomeAccount;
-    }
-	
+		IncomeAccount = incomeAccount;
+	}
+
 	public String getUEIncomeSuspAccount() {
-    	return UEIncomeSuspAccount;
-    }
+		return UEIncomeSuspAccount;
+	}
+
 	public void setUEIncomeSuspAccount(String uEIncomeSuspAccount) {
-    	UEIncomeSuspAccount = uEIncomeSuspAccount;
-    }
-	
+		UEIncomeSuspAccount = uEIncomeSuspAccount;
+	}
+
 	public String getFinCommitmentRef() {
-    	return FinCommitmentRef;
-    }
+		return FinCommitmentRef;
+	}
+
 	public void setFinCommitmentRef(String finCommitmentRef) {
-    	FinCommitmentRef = finCommitmentRef;
-    }
-	
+		FinCommitmentRef = finCommitmentRef;
+	}
+
 	public boolean getFinIsActive() {
-    	return FinIsActive;
-    }
+		return FinIsActive;
+	}
+
 	public void setFinIsActive(boolean finIsActive) {
-    	FinIsActive = finIsActive;
-    }
-	
+		FinIsActive = finIsActive;
+	}
+
 	public long getNORepayments() {
-    	return NORepayments;
-    }
+		return NORepayments;
+	}
+
 	public void setNORepayments(long nORepayments) {
-    	NORepayments = nORepayments;
-    }
-	
+		NORepayments = nORepayments;
+	}
+
 	public Date getFirstRepayDate() {
 		return FirstRepayDate;
 	}
+
 	public void setFirstRepayDate(Date firstRepayDate) {
 		FirstRepayDate = firstRepayDate;
 	}
+
 	public BigDecimal getFirstRepayAmt() {
-    	return FirstRepayAmt;
-    }
-	
+		return FirstRepayAmt;
+	}
+
 	public void setFirstRepayAmt(BigDecimal firstRepayAmt) {
-    	FirstRepayAmt = firstRepayAmt;
-    }
+		FirstRepayAmt = firstRepayAmt;
+	}
+
 	public BigDecimal getLastRepayAmt() {
-    	return LastRepayAmt;
-    }
+		return LastRepayAmt;
+	}
+
 	public void setLastRepayAmt(BigDecimal lastRepayAmt) {
-    	LastRepayAmt = lastRepayAmt;
-    }
+		LastRepayAmt = lastRepayAmt;
+	}
+
 	public int getoDDays() {
 		return oDDays;
 	}
+
 	public void setoDDays(int oDDays) {
 		this.oDDays = oDDays;
 	}
+
 	public Date getFirstODDate() {
 		return firstODDate;
 	}
+
 	public void setFirstODDate(Date firstODDate) {
 		this.firstODDate = firstODDate;
 	}
+
 	public Date getLastODDate() {
 		return lastODDate;
 	}
+
 	public void setLastODDate(Date lastODDate) {
 		this.lastODDate = lastODDate;
 	}
+
 	public String getClosingStatus() {
 		return closingStatus;
 	}
+
 	public void setClosingStatus(String closingStatus) {
 		this.closingStatus = closingStatus;
 	}
+
 	public String getFinCategory() {
 		return finCategory;
 	}
+
 	public void setFinCategory(String finCategory) {
 		this.finCategory = finCategory;
 	}
+
 	public Date getLastRpySchDate() {
 		return lastRpySchDate;
 	}
+
 	public void setLastRpySchDate(Date lastRpySchDate) {
 		this.lastRpySchDate = lastRpySchDate;
 	}
+
 	public Date getNextRpySchDate() {
 		return nextRpySchDate;
 	}
+
 	public void setNextRpySchDate(Date nextRpySchDate) {
 		this.nextRpySchDate = nextRpySchDate;
 	}
+
 	public BigDecimal getLastRpySchPri() {
 		return lastRpySchPri;
 	}
+
 	public void setLastRpySchPri(BigDecimal lastRpySchPri) {
 		this.lastRpySchPri = lastRpySchPri;
 	}
+
 	public BigDecimal getLastRpySchPft() {
 		return lastRpySchPft;
 	}
+
 	public void setLastRpySchPft(BigDecimal lastRpySchPft) {
 		this.lastRpySchPft = lastRpySchPft;
 	}
+
 	public Date getLatestRpyDate() {
 		return latestRpyDate;
 	}
+
 	public void setLatestRpyDate(Date latestRpyDate) {
 		this.latestRpyDate = latestRpyDate;
 	}
+
 	public BigDecimal getLatestRpyPri() {
 		return latestRpyPri;
 	}
+
 	public void setLatestRpyPri(BigDecimal latestRpyPri) {
 		this.latestRpyPri = latestRpyPri;
 	}
+
 	public BigDecimal getLatestRpyPft() {
 		return latestRpyPft;
 	}
+
 	public void setLatestRpyPft(BigDecimal latestRpyPft) {
 		this.latestRpyPft = latestRpyPft;
 	}
+
 	public Date getLatestWriteOffDate() {
 		return latestWriteOffDate;
 	}
+
 	public void setLatestWriteOffDate(Date latestWriteOffDate) {
 		this.latestWriteOffDate = latestWriteOffDate;
 	}
+
 	public BigDecimal getTotalWriteoff() {
 		return totalWriteoff;
 	}
+
 	public void setTotalWriteoff(BigDecimal totalWriteoff) {
 		this.totalWriteoff = totalWriteoff;
 	}
-	
+
 	public BigDecimal getNextRepayAmt() {
 		return nextRepayAmt;
 	}
+
 	public void setNextRepayAmt(BigDecimal nextRepayAmt) {
 		this.nextRepayAmt = nextRepayAmt;
 	}
@@ -801,56 +914,71 @@ public class EodFinProfitDetail implements Serializable {
 	public boolean isSalariedCustomer() {
 		return salariedCustomer;
 	}
+
 	public void setSalariedCustomer(boolean salariedCustomer) {
 		this.salariedCustomer = salariedCustomer;
 	}
-	
+
 	public Date getCRBFirstODDate() {
-	    return cRBFirstODDate;
-    }
+		return cRBFirstODDate;
+	}
+
 	public void setCRBFirstODDate(Date cRBFirstODDate) {
-	    this.cRBFirstODDate = cRBFirstODDate;
-    }
-	
+		this.cRBFirstODDate = cRBFirstODDate;
+	}
+
 	public Date getCRBLastODDate() {
-	    return cRBLastODDate;
-    }
+		return cRBLastODDate;
+	}
+
 	public void setCRBLastODDate(Date cRBLastODDate) {
-	    this.cRBLastODDate = cRBLastODDate;
-    }
+		this.cRBLastODDate = cRBLastODDate;
+	}
+
 	public int getCRBODDays() {
 		return CRBODDays;
 	}
+
 	public void setCRBODDays(int cRBODDays) {
 		CRBODDays = cRBODDays;
 	}
+
 	public int getCRBODInst() {
 		return CRBODInst;
 	}
+
 	public void setCRBODInst(int cRBODInst) {
 		CRBODInst = cRBODInst;
 	}
+
 	public BigDecimal getCRBODPrincipal() {
 		return CRBODPrincipal;
 	}
+
 	public void setCRBODPrincipal(BigDecimal cRBODPrincipal) {
 		CRBODPrincipal = cRBODPrincipal;
 	}
+
 	public BigDecimal getCRBODProfit() {
 		return CRBODProfit;
 	}
+
 	public void setCRBODProfit(BigDecimal cRBODProfit) {
 		CRBODProfit = cRBODProfit;
 	}
+
 	public BigDecimal getLpiTillLBD() {
 		return lpiTillLBD;
 	}
+
 	public void setLpiTillLBD(BigDecimal lpiTillLBD) {
 		this.lpiTillLBD = lpiTillLBD;
 	}
+
 	public BigDecimal getLppTillLBD() {
 		return lppTillLBD;
 	}
+
 	public void setLppTillLBD(BigDecimal lppTillLBD) {
 		this.lppTillLBD = lppTillLBD;
 	}

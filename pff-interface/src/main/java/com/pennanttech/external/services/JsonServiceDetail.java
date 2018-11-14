@@ -15,11 +15,11 @@ public class JsonServiceDetail implements Serializable {
 	private boolean excludeEmpty;
 	private HttpMethod method;
 	private String serviceName;
-	
+
 	private transient Object requestData;
 	private String requestString;
 	private String responseString;
-	
+
 	public String getReference() {
 		return reference;
 	}

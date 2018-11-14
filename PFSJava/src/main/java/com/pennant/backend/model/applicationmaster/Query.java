@@ -39,7 +39,7 @@ public class Query extends AbstractWorkflowEntity {
 
 	private String queryCode;
 	private String queryModule;
- 	private String queryDesc;
+	private String queryDesc;
 	private String sqlQuery;
 	private String actualBlock;
 	private boolean subQuery;
@@ -74,7 +74,7 @@ public class Query extends AbstractWorkflowEntity {
 		excludeFields.add("resultColumns");
 		excludeFields.add("displayColumns");
 		excludeFields.add("queryModuleObj");
-		
+
 		return excludeFields;
 	}
 
@@ -117,7 +117,7 @@ public class Query extends AbstractWorkflowEntity {
 	public String getSqlQuery() {
 		return sqlQuery;
 	}
-	
+
 	public String getSQLQuery() {
 		return sqlQuery;
 	}
@@ -143,36 +143,36 @@ public class Query extends AbstractWorkflowEntity {
 	}
 
 	public String getQueryModuleDesc() {
-    	return queryModuleDesc;
-    }
+		return queryModuleDesc;
+	}
 
 	public void setQueryModuleDesc(String queryModuleDesc) {
-    	this.queryModuleDesc = queryModuleDesc;
-    }
+		this.queryModuleDesc = queryModuleDesc;
+	}
 
 	public String getTableName() {
-    	return this.tableName;
-    }
+		return this.tableName;
+	}
 
 	public void setTableName(String tableName) {
-    	this.tableName = tableName;
-    }
+		this.tableName = tableName;
+	}
 
 	public String getResultColumns() {
-    	return this.resultColumns;
-    }
+		return this.resultColumns;
+	}
 
 	public void setResultColumns(String resultColumns) {
-    	this.resultColumns = resultColumns;
-    }
+		this.resultColumns = resultColumns;
+	}
 
 	public String getDisplayColumns() {
-    	return displayColumns;
-    }
+		return displayColumns;
+	}
 
 	public void setDisplayColumns(String displayColumns) {
-    	this.displayColumns = displayColumns;
-    }
+		this.displayColumns = displayColumns;
+	}
 
 	public QueryModule getQueryModuleObj() {
 		this.queryModuleObj = null;
@@ -182,14 +182,14 @@ public class Query extends AbstractWorkflowEntity {
 		queryModuleObj.setTableName(this.tableName);
 		queryModuleObj.setResultColumns(this.resultColumns);
 		queryModuleObj.setDisplayColumns(this.displayColumns);
-		
-    	return queryModuleObj;
-    }
+
+		return queryModuleObj;
+	}
 
 	public void setQueryModuleObj(QueryModule queryModule) {
-    	this.queryModuleObj = queryModule;
-    }
- 
+		this.queryModuleObj = queryModule;
+	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -225,6 +225,7 @@ public class Query extends AbstractWorkflowEntity {
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}

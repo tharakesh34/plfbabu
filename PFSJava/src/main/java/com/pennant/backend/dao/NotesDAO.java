@@ -48,7 +48,7 @@ import com.pennant.backend.model.Notes;
 
 public interface NotesDAO {
 	List<Notes> getNotesList(Notes notes, boolean isNotes);
-	
+
 	List<Notes> getNotesForAgreements(Notes notes);
 
 	/**

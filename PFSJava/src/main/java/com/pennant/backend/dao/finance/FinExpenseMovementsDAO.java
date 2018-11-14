@@ -47,9 +47,9 @@ import java.util.List;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
 
 public interface FinExpenseMovementsDAO {
-	
+
 	long saveFinExpenseMovements(FinExpenseMovements finExpenseMovements);
-	
-	List<FinExpenseMovements> getFinExpenseMovementById(String financeRef,long finExpenseId);
-	
+
+	List<FinExpenseMovements> getFinExpenseMovementById(String financeRef, long finExpenseId);
+
 }

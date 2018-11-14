@@ -88,16 +88,16 @@ public class StepPolicyListModelItemRenderer implements ListitemRenderer<StepPol
 		lc.setParent(item);
 
 		if (StringUtils.trimToEmpty(stepPolicyHeader.getRateMargin()).endsWith("||")) {
-			lc = new Listcell(stepPolicyHeader.getRateMargin().substring(0,
-					stepPolicyHeader.getRateMargin().length() - 3));
+			lc = new Listcell(
+					stepPolicyHeader.getRateMargin().substring(0, stepPolicyHeader.getRateMargin().length() - 3));
 		} else {
 			lc = new Listcell(stepPolicyHeader.getRateMargin());
 		}
 		lc.setParent(item);
 
 		if (StringUtils.trimToEmpty(stepPolicyHeader.getEmiSplitPerc()).endsWith("||")) {
-			lc = new Listcell(stepPolicyHeader.getEmiSplitPerc().substring(0,
-					stepPolicyHeader.getEmiSplitPerc().length() - 3));
+			lc = new Listcell(
+					stepPolicyHeader.getEmiSplitPerc().substring(0, stepPolicyHeader.getEmiSplitPerc().length() - 3));
 		} else {
 			lc = new Listcell(stepPolicyHeader.getEmiSplitPerc());
 		}

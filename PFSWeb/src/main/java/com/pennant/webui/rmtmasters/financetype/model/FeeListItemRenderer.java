@@ -61,11 +61,11 @@ public class FeeListItemRenderer implements ListitemRenderer<Rule>, Serializable
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FeeListItemRenderer.class);
-	
+
 	public FeeListItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Rule fee, int count) throws Exception {
 
@@ -83,11 +83,10 @@ public class FeeListItemRenderer implements ListitemRenderer<Rule>, Serializable
 		lc = new Listcell(fee.getRecordType());
 		lc.setParent(item);
 		item.setAttribute("data", fee);
-		
-		ComponentsCtrl.applyForward(item,"onDoubleClick=onFeeItemDoubleClicked");
-		
+
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onFeeItemDoubleClicked");
+
 		logger.debug("Leaving");
 	}
-
 
 }

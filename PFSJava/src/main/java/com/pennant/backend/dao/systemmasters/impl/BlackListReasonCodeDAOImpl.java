@@ -68,7 +68,7 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 	public BlackListReasonCodeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Black List Reasons details by key field
 	 * 
@@ -84,19 +84,21 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 		BlackListReasonCode blackListReasonCode = new BlackListReasonCode();
 		blackListReasonCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("Select BLRsnCode, BLRsnDesc, BLIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append("Select BLRsnCode, BLRsnDesc, BLIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTBlackListRsnCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where  BLRsnCode =:BLRsnCode") ;
+		selectSql.append(" Where  BLRsnCode =:BLRsnCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListReasonCode);
-		RowMapper<BlackListReasonCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BlackListReasonCode.class);
+		RowMapper<BlackListReasonCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BlackListReasonCode.class);
 
 		try {
-			blackListReasonCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,	typeRowMapper);
+			blackListReasonCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			blackListReasonCode = null;
@@ -106,10 +108,8 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTBlackListRsnCodes or
-	 * BMTBlackListRsnCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Black List Reasons by key
-	 * BLRsnCode
+	 * This method Deletes the Record from the BMTBlackListRsnCodes or BMTBlackListRsnCodes_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Black List Reasons by key BLRsnCode
 	 * 
 	 * @param Black
 	 *            List Reasons (blackListReasonCode)
@@ -124,12 +124,12 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTBlackListRsnCodes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BLRsnCode =:BLRsnCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListReasonCode);
 
 		try {
@@ -145,8 +145,7 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 	}
 
 	/**
-	 * This method insert new Records into BMTBlackListRsnCodes or
-	 * BMTBlackListRsnCodes_Temp.
+	 * This method insert new Records into BMTBlackListRsnCodes or BMTBlackListRsnCodes_Temp.
 	 * 
 	 * save Black List Reasons
 	 * 
@@ -162,17 +161,18 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 	public String save(BlackListReasonCode blackListReasonCode, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTBlackListRsnCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BLRsnCode, BLRsnDesc, BLIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, " );
+		insertSql.append(" (BLRsnCode, BLRsnDesc, BLIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, ");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:BLRsnCode, :BLRsnDesc, :BLIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:BLRsnCode, :BLRsnDesc, :BLIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListReasonCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -181,10 +181,8 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 	}
 
 	/**
-	 * This method updates the Record BMTBlackListRsnCodes or
-	 * BMTBlackListRsnCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Black List Reasons by key
-	 * BLRsnCode and Version
+	 * This method updates the Record BMTBlackListRsnCodes or BMTBlackListRsnCodes_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Black List Reasons by key BLRsnCode and Version
 	 * 
 	 * @param Black
 	 *            List Reasons (blackListReasonCode)
@@ -199,21 +197,22 @@ public class BlackListReasonCodeDAOImpl extends BasicDao<BlackListReasonCode> im
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTBlackListRsnCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BLRsnDesc = :BLRsnDesc, BLIsActive = :BLIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set BLRsnDesc = :BLRsnDesc, BLIsActive = :BLIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BLRsnCode =:BLRsnCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListReasonCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

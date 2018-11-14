@@ -56,9 +56,9 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class PrepareCustomerQueue implements Tasklet {
 
-	private Logger				logger	= Logger.getLogger(PrepareCustomerQueue.class);
+	private Logger logger = Logger.getLogger(PrepareCustomerQueue.class);
 
-	private CustomerQueuingDAO	customerQueuingDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 
 	public PrepareCustomerQueue() {
 

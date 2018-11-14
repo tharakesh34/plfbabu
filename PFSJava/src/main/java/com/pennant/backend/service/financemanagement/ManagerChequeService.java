@@ -55,17 +55,28 @@ import com.pennant.backend.model.financemanagement.ManagerCheque;
 public interface ManagerChequeService {
 
 	ManagerCheque getManagerCheque();
+
 	ManagerCheque getNewManagerCheque();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ManagerCheque getManagerChequeById(long id);
+
 	ManagerCheque getApprovedManagerChequeById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	FinanceMain getFinanceMainByFinReference(String finReference);
+
 	BigDecimal getTotalChqAmtByFinReference(String finReference);
+
 	DocumentDetails getManagerChequeDocDetailByDocId(long docId);
+
 	String validateChqNumberInEquation(String accountNum, String chequeNum) throws AccountNotFoundException;
+
 	long getNextId();
 }

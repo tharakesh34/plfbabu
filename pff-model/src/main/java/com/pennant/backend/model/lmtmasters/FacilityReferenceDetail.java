@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FacilityReferenceDetail extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 6569842731762889262L;
-	
+
 	private long finRefDetailId = Long.MIN_VALUE;
 	private String finType;
 	private int finRefType;
@@ -79,7 +79,6 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	private boolean lovDescIsRemarksAllowed;
 	private long lovDescCheckMinCount;
 	private long lovDescCheckMaxCount;
-	
 
 	private String lovDescElgRuleValue;
 	private String lovDescAggReportName;
@@ -95,13 +94,13 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 
 	private String lovDescElgCalVal;
 	private BigDecimal lovDescRuleResult;
-	
+
 	private String lovDescFinCcyCode;
 	private String lovDescProductCodeName;
 	private String lovDescRuleReturnType;
-	
+
 	private List<CheckListDetail> lovDescCheckListAnsDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -123,13 +122,11 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 
 	//Getter and Setter methods
 
-
 	// Getter and Setter methods
 
 	public long getId() {
 		return finRefDetailId;
 	}
-
 
 	public void setId(long id) {
 		this.finRefDetailId = id;
@@ -142,9 +139,7 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	public void setFinRefDetailId(long finRefDetailId) {
 		this.finRefDetailId = finRefDetailId;
 
-	}		
-
-
+	}
 
 	public String getFinType() {
 		return finType;
@@ -153,9 +148,7 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	public void setFinType(String finType) {
 		this.finType = finType;
 
-	}		
-
-
+	}
 
 	public boolean isOverRide() {
 		return overRide;
@@ -180,9 +173,7 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	public void setFinRefType(int finRefType) {
 		this.finRefType = finRefType;
 
-	}		
-
-
+	}
 
 	public long getFinRefId() {
 		return finRefId;
@@ -252,7 +243,6 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 		return this.befImage;
 	}
 
-
 	public void setBefImage(FacilityReferenceDetail beforeImage) {
 		this.befImage = beforeImage;
 
@@ -274,7 +264,6 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 		this.lovDescRefDesc = lovDescRefDesc;
 	}
 
-
 	public String getLovDescCodelov() {
 		return lovDescCodelov;
 	}
@@ -290,14 +279,14 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	public void setLovDescNamelov(String lovDescNamelov) {
 		this.lovDescNamelov = lovDescNamelov;
 	}
-	
+
 	public String getLovDescAggImage() {
-    	return lovDescAggImage;
-    }
+		return lovDescAggImage;
+	}
 
 	public void setLovDescAggImage(String lovDescAggImage) {
-    	this.lovDescAggImage = lovDescAggImage;
-    }
+		this.lovDescAggImage = lovDescAggImage;
+	}
 
 	public String getLovDescElgRuleValue() {
 		return lovDescElgRuleValue;
@@ -347,8 +336,6 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 		this.lovDescCheckMaxCount = lovDescCheckMaxCount;
 	}
 
-
-
 	public int getLovDescminScore() {
 		return lovDescminScore;
 	}
@@ -390,42 +377,42 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	}
 
 	public void setLovDescFinCcyCode(String lovDescFinCcyCode) {
-	    this.lovDescFinCcyCode = lovDescFinCcyCode;
-    }
+		this.lovDescFinCcyCode = lovDescFinCcyCode;
+	}
 
 	public String getLovDescFinCcyCode() {
-	    return lovDescFinCcyCode;
-    }
+		return lovDescFinCcyCode;
+	}
 
 	public void setLovDescProductCodeName(String lovDescProductCodeName) {
-	    this.lovDescProductCodeName = lovDescProductCodeName;
-    }
+		this.lovDescProductCodeName = lovDescProductCodeName;
+	}
 
 	public String getLovDescProductCodeName() {
-	    return lovDescProductCodeName;
-    }
+		return lovDescProductCodeName;
+	}
 
 	public void setLovDescRuleReturnType(String lovDescRuleReturnType) {
-	    this.lovDescRuleReturnType = lovDescRuleReturnType;
-    }
+		this.lovDescRuleReturnType = lovDescRuleReturnType;
+	}
 
 	public String getLovDescRuleReturnType() {
-	    return lovDescRuleReturnType;
-    }
+		return lovDescRuleReturnType;
+	}
 
 	public void setLovDescCheckListAnsDetails(List<CheckListDetail> lovDescCheckListAnsDetails) {
-	    this.lovDescCheckListAnsDetails = lovDescCheckListAnsDetails;
-    }
+		this.lovDescCheckListAnsDetails = lovDescCheckListAnsDetails;
+	}
 
 	public List<CheckListDetail> getLovDescCheckListAnsDetails() {
-	    return lovDescCheckListAnsDetails;
-    }
+		return lovDescCheckListAnsDetails;
+	}
 
 	public String getAggType() {
-	    return aggType;
-    }
+		return aggType;
+	}
 
 	public void setAggType(String aggType) {
-	    this.aggType = aggType;
-    }
+		this.aggType = aggType;
+	}
 }

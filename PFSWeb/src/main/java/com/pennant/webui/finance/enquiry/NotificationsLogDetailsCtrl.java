@@ -11,7 +11,6 @@ import com.pennant.backend.model.finance.FinODDetails;
 
 public class NotificationsLogDetailsCtrl {
 
-	
 	protected Window window_OverdueEnquiryDialog; // autoWired
 	protected Listbox listBoxOverdue; // autoWired
 	protected Borderlayout borderlayoutOverdueEnquiry; // autoWired
@@ -19,9 +18,6 @@ public class NotificationsLogDetailsCtrl {
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinODDetails> finODDetailList;
-	private int ccyformat = 0; 
-	
-	
-	
-	
+	private int ccyformat = 0;
+
 }

@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.staticparms;
+
 import com.pennant.backend.model.staticparms.Frequency;
 
 /**
@@ -50,8 +51,11 @@ import com.pennant.backend.model.staticparms.Frequency;
  */
 public interface FrequencyDAO {
 
-	Frequency getFrequencyById(String id,String type);
-	void update(Frequency frequency,String type);
-	void delete(Frequency frequency,String type);
-	String save(Frequency frequency,String type);
+	Frequency getFrequencyById(String id, String type);
+
+	void update(Frequency frequency, String type);
+
+	void delete(Frequency frequency, String type);
+
+	String save(Frequency frequency, String type);
 }

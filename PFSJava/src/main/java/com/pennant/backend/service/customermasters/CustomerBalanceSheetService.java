@@ -51,11 +51,16 @@ import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
  * 
  */
 public interface CustomerBalanceSheetService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerBalanceSheet getCustomerBalanceSheetById(String id, long custId);
+
 	CustomerBalanceSheet getApprovedCustomerBalanceSheetById(String id, long custId);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

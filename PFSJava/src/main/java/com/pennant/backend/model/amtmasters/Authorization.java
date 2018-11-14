@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class Authorization extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long authUserId = Long.MIN_VALUE;
 	private String authUserIdName;
 	private String authType;
@@ -70,7 +70,7 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private Authorization befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -84,13 +84,13 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("authUserIdName");
-			excludeFields.add("authTypeName");
-			excludeFields.add("authDeptName");
-			excludeFields.add("authDesigName");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("authUserIdName");
+		excludeFields.add("authTypeName");
+		excludeFields.add("authDeptName");
+		excludeFields.add("authDesigName");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -100,96 +100,91 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 	public long getId() {
 		return authUserId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.authUserId = id;
 	}
-	
+
 	public long getAuthUserId() {
 		return authUserId;
 	}
+
 	public void setAuthUserId(long authUserId) {
 		this.authUserId = authUserId;
 	}
-	
+
 	public String getAuthUserIdName() {
 		return this.authUserIdName;
 	}
 
-	public void setAuthUserIdName (String authUserIdName) {
+	public void setAuthUserIdName(String authUserIdName) {
 		this.authUserIdName = authUserIdName;
 	}
-	
-		
-	
+
 	public String getAuthType() {
 		return authType;
 	}
+
 	public void setAuthType(String authType) {
 		this.authType = authType;
 	}
-	
+
 	public String getAuthTypeName() {
 		return this.authTypeName;
 	}
 
-	public void setAuthTypeName (String authTypeName) {
+	public void setAuthTypeName(String authTypeName) {
 		this.authTypeName = authTypeName;
 	}
-	
-		
-	
+
 	public String getAuthName() {
 		return authName;
 	}
+
 	public void setAuthName(String authName) {
 		this.authName = authName;
 	}
-	
-	
-		
-	
+
 	public String getAuthDept() {
 		return authDept;
 	}
+
 	public void setAuthDept(String authDept) {
 		this.authDept = authDept;
 	}
-	
+
 	public String getAuthDeptName() {
 		return this.authDeptName;
 	}
 
-	public void setAuthDeptName (String authDeptName) {
+	public void setAuthDeptName(String authDeptName) {
 		this.authDeptName = authDeptName;
 	}
-	
-		
-	
+
 	public String getAuthDesig() {
 		return authDesig;
 	}
+
 	public void setAuthDesig(String authDesig) {
 		this.authDesig = authDesig;
 	}
-	
+
 	public String getAuthDesigName() {
 		return this.authDesigName;
 	}
 
-	public void setAuthDesigName (String authDesigName) {
+	public void setAuthDesigName(String authDesigName) {
 		this.authDesigName = authDesigName;
 	}
-	
-		
-	
+
 	public String getAuthSignature() {
 		return authSignature;
 	}
+
 	public void setAuthSignature(String authSignature) {
 		this.authSignature = authSignature;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -197,7 +192,7 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -206,12 +201,12 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public Authorization getBefImage(){
+	public Authorization getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(Authorization beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Authorization beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

@@ -72,41 +72,44 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> implements BlackListCustomerDAO {
 	private static Logger logger = Logger.getLogger(BlackListCustomerDAOImpl.class);
-	
+
 	public BlackListCustomerDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-    public BlackListCustomers getBlackListCustomers() {
+	public BlackListCustomers getBlackListCustomers() {
 		logger.debug(Literal.ENTERING);
 		BlackListCustomers blackListCustomers = new BlackListCustomers();
 		logger.debug(Literal.LEAVING);
 		return blackListCustomers;
-    }
-	
+	}
+
 	@Override
-    public BlackListCustomers getBlacklistCustomerById(String id, String type) {
+	public BlackListCustomers getBlacklistCustomerById(String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
-		BlackListCustomers blacklistCustomer= new BlackListCustomers();
+
+		BlackListCustomers blacklistCustomer = new BlackListCustomers();
 		blacklistCustomer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(
+				" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		selectSql.append(" CustCtgCode, CustCompName, CustAadhaar, CustCin");
-		if(type.contains("_View")) {
+		if (type.contains("_View")) {
 			selectSql.append(" ,lovDescNationalityDesc,lovDescEmpName ");
 		}
 		selectSql.append(" From BlackListCustomer");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustCIF =:CustCIF ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blacklistCustomer);
-		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BlackListCustomers.class);
+		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BlackListCustomers.class);
 
 		try {
 			blacklistCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -114,49 +117,49 @@ public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> imple
 			logger.error("Exception: ", e);
 			blacklistCustomer = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return blacklistCustomer;
-    }
-	
-	@Override
-    public BlackListCustomers getNewBlacklistCustomer() {
-		logger.debug("Entering ");
-		
-		BlackListCustomers blackListedCustomer = getBlackListCustomers();
-		blackListedCustomer.setNewRecord(true);
-		
-		logger.debug("Leaving ");
-		return blackListedCustomer;
-    }
+	}
 
 	@Override
-    public void saveList(List<FinBlacklistCustomer> blackList,String type) {
+	public BlackListCustomers getNewBlacklistCustomer() {
+		logger.debug("Entering ");
+
+		BlackListCustomers blackListedCustomer = getBlackListCustomers();
+		blackListedCustomer.setNewRecord(true);
+
+		logger.debug("Leaving ");
+		return blackListedCustomer;
+	}
+
+	@Override
+	public void saveList(List<FinBlacklistCustomer> blackList, String type) {
 		logger.debug(Literal.ENTERING);
-		
-    	StringBuilder insertSql = new StringBuilder("Insert Into FinBlackListDetail");
-    	insertSql.append(StringUtils.trimToEmpty(type));
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinBlackListDetail");
+		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference , CustCIF , CustFName , CustLName , ");
 		insertSql.append(" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ");
 		insertSql.append(" Employer , WatchListRule , Override , OverrideUser )");
 		insertSql.append(" Values( ");
 		insertSql.append(" :FinReference , :CustCIF , :CustFName , :CustLName , ");
-		insertSql.append(" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber , :CustNationality , ");
+		insertSql.append(
+				" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber , :CustNationality , ");
 		insertSql.append(" :Employer , :WatchListRule , :Override , :OverrideUser)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
-		        .createBatch(blackList.toArray());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(blackList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		
+
 		logger.debug(Literal.LEAVING);
-    }
-	
+	}
+
 	@Override
-    public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode) {
+	public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BlackListCustomers blackListCustomer = new BlackListCustomers();
 		blackListCustomer.setFinReference(finReference);
 		blackListCustomer.setWatchListRule(queryCode);
@@ -171,16 +174,17 @@ public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
-		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
+		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinBlacklistCustomer.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
-	
+	}
+
 	@Override
-    public List<FinBlacklistCustomer> fetchFinBlackList(String finReference) {
+	public List<FinBlacklistCustomer> fetchFinBlackList(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinBlacklistCustomer finBlacklistCustomer = new FinBlacklistCustomer();
 		finBlacklistCustomer.setFinReference(finReference);
 
@@ -192,53 +196,58 @@ public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
+		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinBlacklistCustomer.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
+	}
 
 	@Override
-    public List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule) {
+	public List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder selectSql = new StringBuilder(" Select CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive ");
+		selectSql.append(
+				" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive ");
 		selectSql.append(" From BlackListCustomer ");
 		selectSql.append(watchRule);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blCustData);
-		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BlackListCustomers.class);
+		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BlackListCustomers.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
+	}
 
 	@Override
-    public void updateList(List<FinBlacklistCustomer> blackList) {
+	public void updateList(List<FinBlacklistCustomer> blackList) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinBlackListDetail");
-		updateSql.append(" Set CustFName = :CustFName," );
-		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, " );
-		updateSql.append(" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality," );
-		updateSql.append(" Employer = :Employer, WatchListRule = :WatchListRule, Override = :Override, OverrideUser = :OverrideUser" );
+		updateSql.append(" Set CustFName = :CustFName,");
+		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, ");
+		updateSql.append(
+				" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality,");
+		updateSql.append(
+				" Employer = :Employer, WatchListRule = :WatchListRule, Override = :Override, OverrideUser = :OverrideUser");
 		updateSql.append(" Where FinReference =:FinReference  AND CustCIF =:CustCIF");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(blackList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		
+
 		logger.debug(Literal.LEAVING);
-	    
-    }
-	
+
+	}
+
 	@Override
-    public void deleteList(String finReference) {
+	public void deleteList(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BlackListCustomers blackListCustomer = new BlackListCustomers();
 		blackListCustomer.setFinReference(finReference);
 
@@ -248,41 +257,44 @@ public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> imple
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		
+
 		logger.debug(Literal.LEAVING);
-    }
+	}
 
 	@Override
 	public void update(BlackListCustomers finBlacklistCustomer, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update BlackListCustomer");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
-		updateSql.append(" CustDOB=:CustDOB, CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, " );
-		updateSql.append(" Employer=:Employer, CustIsActive = :CustIsActive, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , ");
+		updateSql.append(
+				" CustDOB=:CustDOB, CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, ");
+		updateSql.append(
+				" Employer=:Employer, CustIsActive = :CustIsActive, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, ");
-		updateSql.append(" CustCtgCode = :CustCtgCode, CustCompName = :CustCompName, CustAadhaar = :CustAadhaar, CustCin = :CustCin");
+		updateSql.append(
+				" CustCtgCode = :CustCtgCode, CustCompName = :CustCompName, CustAadhaar = :CustAadhaar, CustCin = :CustCin");
 		updateSql.append(" WHERE CustCIF=:CustCIF ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(BlackListCustomers finBlacklistCustomer, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
 
@@ -290,12 +302,12 @@ public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> imple
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where CustCIF =:CustCIF");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -306,60 +318,66 @@ public class BlackListCustomerDAOImpl extends BasicDao<BlackListCustomers> imple
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	@Override
 	public String save(BlackListCustomers finBlacklistCustomer, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into BlackListCustomer");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append("(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, ");
-		insertSql.append(" Employer, CustIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(
+				"(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, ");
+		insertSql.append(
+				" Employer, CustIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId, CustCtgCode, CustCompName, CustAadhaar, CustCin)");
 		insertSql.append(" Values(");
-		insertSql.append(" :CustCIF , :CustFName , :CustLName, :CustDOB , :CustCRCPR , :CustPassportNo, :MobileNumber, :CustNationality, ");
-		insertSql.append(" :Employer, :CustIsActive, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :CustCIF , :CustFName , :CustLName, :CustDOB , :CustCRCPR , :CustPassportNo, :MobileNumber, :CustNationality, ");
+		insertSql.append(
+				" :Employer, :CustIsActive, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId, :CustCtgCode, :CustCompName, :CustAadhaar, :CustCin)");
 
 		logger.trace(Literal.SQL + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 		return finBlacklistCustomer.getId();
 	}
-	
+
 	@Override
-    public void moveData(String finReference, String suffix) {
+	public void moveData(String finReference, String suffix) {
 		logger.debug(" Entering ");
 		try {
-	        if (StringUtils.isBlank(suffix)) {
-	            return;
-	        }
-	        
-	        MapSqlParameterSource map=new MapSqlParameterSource();
-	        map.addValue("FinReference", finReference);
-	        
-	        StringBuilder selectSql = new StringBuilder();
-	        selectSql.append(" SELECT * FROM FinBlackListDetail");
-	        selectSql.append(" WHERE FinReference = :FinReference ");
-	        
-	        RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
-	        List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
-	        
-	        if (list!=null && !list.isEmpty()) {
-	        	saveList(list,suffix);
-            }
-	        
-        } catch (DataAccessException e) {
-	     logger.debug(e);
-        }
-	    logger.debug(" Leaving ");
-	    
-    }
+			if (StringUtils.isBlank(suffix)) {
+				return;
+			}
+
+			MapSqlParameterSource map = new MapSqlParameterSource();
+			map.addValue("FinReference", finReference);
+
+			StringBuilder selectSql = new StringBuilder();
+			selectSql.append(" SELECT * FROM FinBlackListDetail");
+			selectSql.append(" WHERE FinReference = :FinReference ");
+
+			RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(FinBlacklistCustomer.class);
+			List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+
+			if (list != null && !list.isEmpty()) {
+				saveList(list, suffix);
+			}
+
+		} catch (DataAccessException e) {
+			logger.debug(e);
+		}
+		logger.debug(" Leaving ");
+
+	}
 
 	@Override
 	public boolean isDuplicateKey(String custCIF, TableType tableType) {

@@ -14,16 +14,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class AccountDetail implements Serializable {
 
 	private static final long serialVersionUID = -2954512651820573662L;
-	
+
 	private String accNum;
 	private String description;
 	private BigDecimal insAmount = BigDecimal.ZERO;
 	private Date blockingDate;
 
 	public AccountDetail() {
-		
+
 	}
-	
+
 	@XmlElement(name = "AccNum")
 	public String getAccNum() {
 		return accNum;
@@ -56,20 +56,20 @@ public class AccountDetail implements Serializable {
 	public Date getBlockingDate() {
 		return blockingDate;
 	}
-	
-	 private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
-	        private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-	        @Override
-	        public Date unmarshal(final String v) throws Exception {
-	            return dateFormat.parse(v);
-	        }
+	private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
+		private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-	        @Override
-	        public String marshal(final Date v) throws Exception {
-	            return dateFormat.format(v);
-	        }
-	    }
+		@Override
+		public Date unmarshal(final String v) throws Exception {
+			return dateFormat.parse(v);
+		}
+
+		@Override
+		public String marshal(final Date v) throws Exception {
+			return dateFormat.format(v);
+		}
+	}
 
 	public void setBlockingDate(Date blockingDate) {
 		this.blockingDate = blockingDate;

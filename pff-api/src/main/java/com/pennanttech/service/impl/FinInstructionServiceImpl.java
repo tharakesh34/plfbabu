@@ -738,8 +738,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-			if (financeMain.getMaturityDate() !=null && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-					financeMain.setCalMaturity(financeMain.getMaturityDate());	
+			if (financeMain.getMaturityDate() != null
+					&& StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+				financeMain.setCalMaturity(financeMain.getMaturityDate());
 			}
 		}
 
@@ -1780,6 +1781,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		return false;
 	}
+
 	/**
 	 * Method for get Loan Reference,Customer CIF, Customer Name.
 	 */
@@ -1790,21 +1792,20 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		LoanPendingDetails custLoanDetails = new LoanPendingDetails();
 		List<LoanPendingData> customerODLoanData = null;
 		customerODLoanData = finServiceInstController.getCustomerODLoanDetails(userID);
-		
-		
+
 		if (CollectionUtils.isNullOrEmpty(customerODLoanData)) {
 			LoanPendingDetails error = new LoanPendingDetails();
-			String [] param=new String[2];
+			String[] param = new String[2];
 			param[0] = "User ID";
 			param[1] = String.valueOf(userID);
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", param));
 			return error;
 		}
-		
-		if(customerODLoanData !=null){
+
+		if (customerODLoanData != null) {
 			custLoanDetails.setCustomerODLoanDataList(customerODLoanData);
 		}
-		
+
 		custLoanDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		logger.debug("Entering");

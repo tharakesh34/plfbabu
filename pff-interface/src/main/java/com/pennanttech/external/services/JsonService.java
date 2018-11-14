@@ -31,10 +31,10 @@ import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class JsonService<T> {
 	protected static Logger logger = Logger.getLogger(JsonService.class.getClass());
-	
+
 	protected static final String READ_TIMEOUT = "exteranal.interface.read.timeout";
 	protected static final String CONNECTION_TIMEOUT = "exteranal.interface.connection.timeout";
-	
+
 	protected int readTimeout = 0;
 	protected int connTimeout = 0;
 
@@ -69,7 +69,8 @@ public abstract class JsonService<T> {
 
 		String url = App.getProperty(serviceDetail.getServiceUrl());
 		HttpMethod method = serviceDetail.getMethod();
-		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(), serviceDetail.getRequestString()));
+		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(),
+				serviceDetail.getRequestString()));
 
 		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(), serviceDetail.getHeaders());
 		getHttpHeader(serviceDetail.getHeaders());
@@ -91,7 +92,7 @@ public abstract class JsonService<T> {
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
 			response = getTemplate().exchange(url, method, httpEntity, String.class);
-			
+
 			serviceDetail.setResponseString(response.getBody());
 		} catch (ResourceAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -115,7 +116,8 @@ public abstract class JsonService<T> {
 		} finally {
 			logger.trace(String.format("Response Data %s", serviceDetail.getResponseString()));
 			if (logDetail != null) {
-				logDetail.setResponse(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getResponseString()), 1000));
+				logDetail.setResponse(
+						StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getResponseString()), 1000));
 				logDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
 				logDetail.setStatus(status);
 				logDetail.setErrorCode(errorCode);
@@ -175,7 +177,7 @@ public abstract class JsonService<T> {
 		return resp;
 	}
 
-	private ObjectMapper getObjectMapper(JsonServiceDetail jsonServiceDetail ) {
+	private ObjectMapper getObjectMapper(JsonServiceDetail jsonServiceDetail) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
 		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -196,6 +198,7 @@ public abstract class JsonService<T> {
 		return mapper;
 
 	}
+
 	protected void logRequest(InterfaceLogDetail logDetail) {
 		logger.debug(Literal.ENTERING);
 		if (interfaceLoggingDAO != null) {
@@ -211,7 +214,7 @@ public abstract class JsonService<T> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	protected long getTransactionId() {
 		if (interfaceLoggingDAO != null) {
 			return interfaceLoggingDAO.getSequence();

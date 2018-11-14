@@ -54,7 +54,7 @@ public class EquationCustomerGroup extends AbstractWorkflowEntity {
 	public EquationCustomerGroup() {
 		super();
 	}
-	
+
 	private long custGrpID = Long.MIN_VALUE;
 	private String custGrpCode;
 	private String custGrpDesc;
@@ -62,31 +62,35 @@ public class EquationCustomerGroup extends AbstractWorkflowEntity {
 	private String lovDescCustGrpRO1Name;
 	private long custGrpLimit;
 	private boolean custGrpIsActive;
-	
+
 	public long getCustGrpID() {
 		return custGrpID;
 	}
+
 	public void setCustGrpID(long custGrpID) {
 		this.custGrpID = custGrpID;
 	}
-	
+
 	public String getCustGrpCode() {
 		return custGrpCode;
 	}
+
 	public void setCustGrpCode(String custGrpCode) {
 		this.custGrpCode = custGrpCode;
 	}
-	
+
 	public String getCustGrpDesc() {
 		return custGrpDesc;
 	}
+
 	public void setCustGrpDesc(String custGrpDesc) {
 		this.custGrpDesc = custGrpDesc;
 	}
-	
+
 	public String getCustGrpRO1() {
 		return custGrpRO1;
 	}
+
 	public void setCustGrpRO1(String custGrpRO1) {
 		this.custGrpRO1 = custGrpRO1;
 	}
@@ -94,6 +98,7 @@ public class EquationCustomerGroup extends AbstractWorkflowEntity {
 	public String getLovDescCustGrpRO1Name() {
 		return lovDescCustGrpRO1Name;
 	}
+
 	public void setLovDescCustGrpRO1Name(String lovDescCustGrpRO1Name) {
 		this.lovDescCustGrpRO1Name = lovDescCustGrpRO1Name;
 	}
@@ -101,6 +106,7 @@ public class EquationCustomerGroup extends AbstractWorkflowEntity {
 	public long getCustGrpLimit() {
 		return custGrpLimit;
 	}
+
 	public void setCustGrpLimit(long custGrpLimit) {
 		this.custGrpLimit = custGrpLimit;
 	}
@@ -108,6 +114,7 @@ public class EquationCustomerGroup extends AbstractWorkflowEntity {
 	public boolean isCustGrpIsActive() {
 		return custGrpIsActive;
 	}
+
 	public void setCustGrpIsActive(boolean custGrpIsActive) {
 		this.custGrpIsActive = custGrpIsActive;
 	}

@@ -72,32 +72,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/BankDetail
- * /bankDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/BankDetail /bankDetailDialog.zul file.
  */
 public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	private static final long serialVersionUID = -2489293301745014852L;
 	private static final Logger logger = Logger.getLogger(BankDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_BankDetailDialog;	// autoWired
+	protected Window window_BankDetailDialog; // autoWired
 
-	protected Textbox 		bankCode; 						// autoWired
-	protected Textbox 		bankName; 						// autoWired
-	protected Checkbox 		active; 					// autoWired
-	protected Intbox 		accNoLength;
-	protected Textbox 		bankShortCode;
+	protected Textbox bankCode; // autoWired
+	protected Textbox bankName; // autoWired
+	protected Checkbox active; // autoWired
+	protected Intbox accNoLength;
+	protected Textbox bankShortCode;
 	// not autoWired variables
 	private BankDetail bankDetail; // overHanded per parameter
 	private transient BankDetailListCtrl bankDetailListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient BankDetailService bankDetailService;
 
@@ -116,9 +113,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected BankDetail
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected BankDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -144,15 +140,13 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 				setBankDetail(null);
 			}
 
-			doLoadWorkFlow(this.bankDetail.isWorkflow(),
-					this.bankDetail.getWorkflowId(),
+			doLoadWorkFlow(this.bankDetail.isWorkflow(), this.bankDetail.getWorkflowId(),
 					this.bankDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"BankDetailDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "BankDetailDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -163,8 +157,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			// or
 			// delete bankDetail here.
 			if (arguments.containsKey("bankDetailListCtrl")) {
-				setBankDetailListCtrl((BankDetailListCtrl) arguments
-						.get("bankDetailListCtrl"));
+				setBankDetailListCtrl((BankDetailListCtrl) arguments.get("bankDetailListCtrl"));
 			} else {
 				setBankDetailListCtrl(null);
 			}
@@ -204,8 +197,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -315,8 +307,9 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.accNoLength.setValue(aBankDetail.getAccNoLength());
 		this.bankShortCode.setValue(aBankDetail.getBankShortCode());
 		this.recordStatus.setValue(aBankDetail.getRecordStatus());
-		
-		if(aBankDetail.isNew() || (aBankDetail.getRecordType() != null ? aBankDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aBankDetail.isNew() || (aBankDetail.getRecordType() != null ? aBankDetail.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -353,19 +346,25 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		try {
 			this.accNoLength.setConstraint("");
 			this.accNoLength.setErrorMessage("");
-			
+
 			if (this.accNoLength.getValue() == null) {
-				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(LengthConstants.LEN_ACCOUNT)}));
+				throw new WrongValueException(this.accNoLength,
+						Labels.getLabel("NUMBER_RANGE_EQ",
+								new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",
+										String.valueOf(LengthConstants.LEN_ACCOUNT) }));
 			}
-			
+
 			int accNoLegthValue = this.accNoLength.getValue();
-			
+
 			if (!this.accNoLength.isReadonly()) {
 				if (accNoLegthValue < 0 || accNoLegthValue > LengthConstants.LEN_ACCOUNT) {
-					throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(LengthConstants.LEN_ACCOUNT)}));
+					throw new WrongValueException(this.accNoLength,
+							Labels.getLabel("NUMBER_RANGE_EQ",
+									new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",
+											String.valueOf(LengthConstants.LEN_ACCOUNT) }));
 				}
 			}
-			
+
 			aBankDetail.setAccNoLength(accNoLegthValue);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -394,8 +393,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBankDetail
 	 * @throws Exception
@@ -445,20 +443,22 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 
 		setValidationOn(true);
 
-		if (!this.bankCode.isReadonly()){
-			this.bankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.bankCode.isReadonly()) {
+			this.bankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.bankName.isReadonly()){
-			this.bankName.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankName.value"), 
+		if (!this.bankName.isReadonly()) {
+			this.bankName.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankName.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
-		if (!this.bankShortCode.isReadonly()){
-			this.bankShortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankShortCode.value"), 
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+
+		if (!this.bankShortCode.isReadonly()) {
+			this.bankShortCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankShortCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -493,12 +493,12 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
-		
+
 		this.bankCode.setErrorMessage("");
 		this.bankName.setErrorMessage("");
 		this.accNoLength.setErrorMessage("");
 		this.bankShortCode.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -517,9 +517,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_BankDetailDialog_BankCode.value")+" : "+aBankDetail.getBankCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BankDetailDialog_BankCode.value") + " : " + aBankDetail.getBankCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aBankDetail.getRecordType())) {
 				aBankDetail.setVersion(aBankDetail.getVersion() + 1);
@@ -592,7 +591,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.active.setDisabled(true);
 		this.accNoLength.setReadonly(true);
 		this.bankShortCode.setReadonly(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -812,8 +811,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BankDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -857,8 +856,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	 */
 	private AuditHeader getAuditHeader(BankDetail aBankDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBankDetail.getBefImage(), aBankDetail);
-		return new AuditHeader(String.valueOf(aBankDetail.getId()),
-				null, null, null, auditDetail, aBankDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aBankDetail.getId()), null, null, null, auditDetail,
+				aBankDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -899,7 +898,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	private void refreshList() {
 		getBankDetailListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.bankDetail.getBankCode());
@@ -912,6 +911,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -919,6 +919,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	public BankDetail getBankDetail() {
 		return this.bankDetail;
 	}
+
 	public void setBankDetail(BankDetail bankDetail) {
 		this.bankDetail = bankDetail;
 	}
@@ -926,6 +927,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
+
 	public BankDetailService getBankDetailService() {
 		return this.bankDetailService;
 	}
@@ -933,6 +935,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	public void setBankDetailListCtrl(BankDetailListCtrl bankDetailListCtrl) {
 		this.bankDetailListCtrl = bankDetailListCtrl;
 	}
+
 	public BankDetailListCtrl getBankDetailListCtrl() {
 		return this.bankDetailListCtrl;
 	}

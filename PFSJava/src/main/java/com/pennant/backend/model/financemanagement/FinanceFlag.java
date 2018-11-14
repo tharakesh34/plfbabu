@@ -47,38 +47,37 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinCollaterals table</b>.<br>
  * 
  */
-@XmlType(propOrder ={
-		"finReference", "finFlagDetailList","returnStatus"})
+@XmlType(propOrder = { "finReference", "finFlagDetailList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceFlag extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	@XmlElement
-	private String 			finReference;
-	
-	private String 			finCategory;
-	private String 			custCIF;
-	private String 			finType;
-	private String 			finTypeDesc;
-	private String 			finCcy;
-	private String 			finBranch;
-	private String 			finBranchDesc;
-	private int 			numberOfTerms = 0;
-	private int 			graceTerms = 0;
-	private Date 			finStartDate;
-	private Date 			maturityDate;
-	private BigDecimal 		finAmount = BigDecimal.ZERO;
-	private BigDecimal 		downPayBank = BigDecimal.ZERO;
-	private BigDecimal 		downPaySupl = BigDecimal.ZERO;
-	private BigDecimal 		feeChargeAmt = BigDecimal.ZERO;
-	private BigDecimal 		finRepaymentAmount = BigDecimal.ZERO;
-	private BigDecimal 		totalProfit = BigDecimal.ZERO;
-	private BigDecimal 		effectiveRateOfReturn;
+	private String finReference;
 
-	private boolean 		newRecord;
-	private FinanceFlag 	befImage;
+	private String finCategory;
+	private String custCIF;
+	private String finType;
+	private String finTypeDesc;
+	private String finCcy;
+	private String finBranch;
+	private String finBranchDesc;
+	private int numberOfTerms = 0;
+	private int graceTerms = 0;
+	private Date finStartDate;
+	private Date maturityDate;
+	private BigDecimal finAmount = BigDecimal.ZERO;
+	private BigDecimal downPayBank = BigDecimal.ZERO;
+	private BigDecimal downPaySupl = BigDecimal.ZERO;
+	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
+	private BigDecimal finRepaymentAmount = BigDecimal.ZERO;
+	private BigDecimal totalProfit = BigDecimal.ZERO;
+	private BigDecimal effectiveRateOfReturn;
+
+	private boolean newRecord;
+	private FinanceFlag befImage;
 	private LoggedInUser userDetails;
 
-	private boolean  scheduleChange;
+	private boolean scheduleChange;
 	@XmlElementWrapper(name = "flags")
 	@XmlElement(name = "flag")
 	private List<FinFlagsDetail> finFlagDetailList = new ArrayList<FinFlagsDetail>();
@@ -89,11 +88,12 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public boolean isNew() {
 		return isNewRecord();
 	}
+
 	public FinanceFlag() {
 		super();
 	}
-	
-	public FinanceFlag(String  finReference) {
+
+	public FinanceFlag(String finReference) {
 		super();
 		this.finReference = finReference;
 	}
@@ -131,6 +131,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -138,6 +139,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -145,13 +147,15 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public Date getMaturityDate() {
 		return maturityDate;
 	}
+
 	public void setMaturityDate(Date maturityDate) {
 		this.maturityDate = maturityDate;
 	}
-	
+
 	public FinanceFlag getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(FinanceFlag befImage) {
 		this.befImage = befImage;
 	}
@@ -159,6 +163,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -166,6 +171,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -173,6 +179,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public BigDecimal getFeeChargeAmt() {
 		return feeChargeAmt;
 	}
+
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
 		this.feeChargeAmt = feeChargeAmt;
 	}
@@ -180,6 +187,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public Date getFinStartDate() {
 		return finStartDate;
 	}
+
 	public void setFinStartDate(Date finStartDate) {
 		this.finStartDate = finStartDate;
 	}
@@ -187,6 +195,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public int getNumberOfTerms() {
 		return numberOfTerms;
 	}
+
 	public void setNumberOfTerms(int numberOfTerms) {
 		this.numberOfTerms = numberOfTerms;
 	}
@@ -194,6 +203,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public int getGraceTerms() {
 		return graceTerms;
 	}
+
 	public void setGraceTerms(int graceTerms) {
 		this.graceTerms = graceTerms;
 	}
@@ -201,6 +211,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public BigDecimal getFinAmount() {
 		return finAmount;
 	}
+
 	public void setFinAmount(BigDecimal finAmount) {
 		this.finAmount = finAmount;
 	}
@@ -208,6 +219,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public BigDecimal getDownPaySupl() {
 		return downPaySupl;
 	}
+
 	public void setDownPaySupl(BigDecimal downPaySupl) {
 		this.downPaySupl = downPaySupl;
 	}
@@ -215,13 +227,15 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public BigDecimal getTotalProfit() {
 		return totalProfit;
 	}
+
 	public void setTotalProfit(BigDecimal totalProfit) {
 		this.totalProfit = totalProfit;
 	}
-	
+
 	public String getFinCcy() {
 		return finCcy;
 	}
+
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
 	}
@@ -229,6 +243,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public BigDecimal getEffectiveRateOfReturn() {
 		return effectiveRateOfReturn;
 	}
+
 	public void setEffectiveRateOfReturn(BigDecimal effectiveRateOfReturn) {
 		this.effectiveRateOfReturn = effectiveRateOfReturn;
 	}
@@ -236,20 +251,23 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public String getFinBranch() {
 		return finBranch;
 	}
+
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
-	
+
 	public String getFinCategory() {
 		return finCategory;
 	}
+
 	public void setFinCategory(String finCategory) {
 		this.finCategory = finCategory;
 	}
-	
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
@@ -257,50 +275,64 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public BigDecimal getFinRepaymentAmount() {
 		return finRepaymentAmount;
 	}
+
 	public void setFinRepaymentAmount(BigDecimal finRepaymentAmount) {
 		this.finRepaymentAmount = finRepaymentAmount;
 	}
-	
+
 	public String getCustCIF() {
-	    return custCIF;
-    }
+		return custCIF;
+	}
+
 	public void setCustCIF(String custCIF) {
-	    this.custCIF = custCIF;
-    }
+		this.custCIF = custCIF;
+	}
+
 	public String getFinTypeDesc() {
-	    return finTypeDesc;
-    }
+		return finTypeDesc;
+	}
+
 	public void setFinTypeDesc(String finTypeDesc) {
-	    this.finTypeDesc = finTypeDesc;
-    }
+		this.finTypeDesc = finTypeDesc;
+	}
+
 	public String getFinBranchDesc() {
-	    return finBranchDesc;
-    }
+		return finBranchDesc;
+	}
+
 	public void setFinBranchDesc(String finBranchDesc) {
-	    this.finBranchDesc = finBranchDesc;
-    }
+		this.finBranchDesc = finBranchDesc;
+	}
+
 	public BigDecimal getDownPayBank() {
-	    return downPayBank;
-    }
+		return downPayBank;
+	}
+
 	public void setDownPayBank(BigDecimal downPayBank) {
-	    this.downPayBank = downPayBank;
-    }
+		this.downPayBank = downPayBank;
+	}
+
 	public List<FinFlagsDetail> getFinFlagDetailList() {
-	    return finFlagDetailList;
-    }
+		return finFlagDetailList;
+	}
+
 	public void setFinFlagDetailList(List<FinFlagsDetail> finFlagDetailList) {
-	    this.finFlagDetailList = finFlagDetailList;
-    }
+		this.finFlagDetailList = finFlagDetailList;
+	}
+
 	public boolean isScheduleChange() {
 		return scheduleChange;
 	}
+
 	public void setScheduleChange(boolean scheduleChange) {
 		this.scheduleChange = scheduleChange;
 	}
+
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
+
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
-	}	
+	}
 }

@@ -14,30 +14,31 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlType(propOrder = { "vasProduct", "mandatory" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinTypeVASProducts extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	private String 				finType;
+	private String finType;
 	@XmlElement
-	private String 				vasProduct;
-	private String				vasProductDesc;
+	private String vasProduct;
+	private String vasProductDesc;
 	@XmlElement
-	private boolean 			mandatory;
-	private String				mandatoryDesc;
-	private boolean 			newRecord = false;
-	private FinTypeVASProducts 	befImage;
-	private LoggedInUser 		userDetails;
+	private boolean mandatory;
+	private String mandatoryDesc;
+	private boolean newRecord = false;
+	private FinTypeVASProducts befImage;
+	private LoggedInUser userDetails;
 	private String productType;
 	private String productCtg;
 	private String recAgainst;
-	private String productCtgDesc; 
+	private String productCtgDesc;
 	private String manufacturerDesc;
 	private BigDecimal vasFee;
-	private HashMap<String, List<AuditDetail>>	auditDetailMap 			= new HashMap<String, List<AuditDetail>>();
-	
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("vasProductDesc");
@@ -50,59 +51,74 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 		excludeFields.add("vasFee");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
+
 	public String getVasProduct() {
 		return vasProduct;
 	}
+
 	public void setVasProduct(String vasProduct) {
 		this.vasProduct = vasProduct;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public FinTypeVASProducts getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(FinTypeVASProducts befImage) {
 		this.befImage = befImage;
 	}
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
 	public String getVasProductDesc() {
 		return vasProductDesc;
 	}
+
 	public void setVasProductDesc(String vasProductDesc) {
 		this.vasProductDesc = vasProductDesc;
 	}
+
 	public String getMandatoryDesc() {
 		return mandatoryDesc;
 	}
+
 	public void setMandatoryDesc(String mandatoryDesc) {
 		this.mandatoryDesc = mandatoryDesc;
 	}
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-	    return auditDetailMap;
-    }
+		return auditDetailMap;
+	}
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-	    this.auditDetailMap = auditDetailMap;
-    }
+		this.auditDetailMap = auditDetailMap;
+	}
 
 	public boolean isMandatory() {
 		return mandatory;
@@ -159,5 +175,5 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 	public void setVasFee(BigDecimal vasFee) {
 		this.vasFee = vasFee;
 	}
-	
+
 }

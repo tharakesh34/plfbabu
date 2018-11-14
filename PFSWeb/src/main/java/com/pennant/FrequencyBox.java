@@ -134,16 +134,20 @@ public class FrequencyBox extends Hbox {
 
 	/**
 	 * The controller calls this event handler when user select the frequency Month.
-	 * @param event   An event sent to the event handler of the component.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onSelectFrqCode(Event event) {
 		setFrqCodeDetails();
 		Events.postEvent("onSelectCode", this, null);
 	}
-	
+
 	/**
 	 * The controller calls this event handler when user select the frequency Month.
-	 * @param event   An event sent to the event handler of the component.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onSelectFrqMonth(Event event) {
 		setFrqMonthDetails();
@@ -152,7 +156,9 @@ public class FrequencyBox extends Hbox {
 
 	/**
 	 * The controller calls this event handler when user select the frequency Day.
-	 * @param event  An event sent to the event handler of the component.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onSelectFrqDay(Event event) {
 		setFrqDayDetails();
@@ -160,8 +166,7 @@ public class FrequencyBox extends Hbox {
 	}
 
 	/**
-	 * This method is To fill frequency code with values by calling
-	 * getFrequency() method of FrequencyUtil Class
+	 * This method is To fill frequency code with values by calling getFrequency() method of FrequencyUtil Class
 	 * 
 	 * @param frqency
 	 */
@@ -189,8 +194,7 @@ public class FrequencyBox extends Hbox {
 	}
 
 	/**
-	 * This method is To fill frequency month with values by calling
-	 * getFrequencyMth() method of FrequencyUtil Class
+	 * This method is To fill frequency month with values by calling getFrequencyMth() method of FrequencyUtil Class
 	 * 
 	 * @param frqency
 	 */
@@ -218,7 +222,7 @@ public class FrequencyBox extends Hbox {
 				this.frqMonth.setSelectedItem(comboitem);
 			}
 		}
-		
+
 		boolean doDisableTemp = this.frqMonthDisable;
 		switch (frqCode.charAt(0)) {
 		case 'M':
@@ -241,14 +245,13 @@ public class FrequencyBox extends Hbox {
 	}
 
 	/**
-	 * This method is To fill frequency days with values by calling getFrqdays()
-	 * method of FrequencyUtil Class
+	 * This method is To fill frequency days with values by calling getFrqdays() method of FrequencyUtil Class
 	 * 
 	 * @param frqency
 	 */
 	private void fillFrqDay(String frqency) {
 		clearData(this.frqDay);
-		if(frqency != null){
+		if (frqency != null) {
 			frqency = frqency.replace("#", "00");
 		}
 		List<ValueLabel> frqDaysList = FrequencyUtil.getFrqdays(frqency);
@@ -261,8 +264,8 @@ public class FrequencyBox extends Hbox {
 		this.frqDay.setSelectedItem(comboitem);
 
 		for (int i = 0; i < frqDaysList.size(); i++) {
-			
-			if(StringUtils.isNotEmpty(alwFrqDays) && !alwFrqDays.contains(","+frqDaysList.get(i).getValue()+",")){
+
+			if (StringUtils.isNotEmpty(alwFrqDays) && !alwFrqDays.contains("," + frqDaysList.get(i).getValue() + ",")) {
 				continue;
 			}
 			comboitem = new Comboitem();
@@ -273,19 +276,18 @@ public class FrequencyBox extends Hbox {
 				this.frqDay.setSelectedItem(comboitem);
 			}
 		}
-		
+
 		if (FrequencyUtil.getFrequencyCode(frqency).equals(FrequencyCodeTypes.FRQ_DAILY)) {
 			doDisable(this.frqDay, true);
-		}else{
+		} else {
 			doDisable(this.frqDay, this.frqDayDisable);
 		}
 	}
 
 	/**
-	 * This method is To fill the Frequency Month and Day value based on the
-	 * selected value of Frequency code parms are Selected value of frequency
-	 * code and frequency code comboBox name and names of the month and day
-	 * comboBoxes and a text field name to store the selected day value
+	 * This method is To fill the Frequency Month and Day value based on the selected value of Frequency code parms are
+	 * Selected value of frequency code and frequency code comboBox name and names of the month and day comboBoxes and a
+	 * text field name to store the selected day value
 	 **/
 	public void setFrqCodeDetails() {
 		logger.debug("Entering");
@@ -311,27 +313,25 @@ public class FrequencyBox extends Hbox {
 			default:
 				fillDays = false;
 			}
-			
+
 			if (fillDays) {
 				this.frqValue.setValue(frqCode + "0000");
 			} else {
 				this.frqValue.setValue(frqCode);
 			}
-			
+
 			fillFrqMonth(this.frqValue.getValue());
-			
+
 			if (fillDays) {
 				fillFrqDay(this.frqValue.getValue());
 				this.frqDay.setSelectedIndex(0);
 				this.frqDay.setFocus(true);
-				this.frqDay.setSelectionRange(0, this.frqDay.getValue()
-						.length());
+				this.frqDay.setSelectionRange(0, this.frqDay.getValue().length());
 				this.frqMonth.setSelectedIndex(1);
 			} else {
 				this.frqMonth.setSelectedIndex(0);
 				this.frqMonth.setFocus(true);
-				this.frqMonth.setSelectionRange(0, this.frqMonth.getValue()
-						.length());
+				this.frqMonth.setSelectionRange(0, this.frqMonth.getValue().length());
 			}
 		} else {
 			this.frqMonth.setSelectedIndex(0);
@@ -342,10 +342,9 @@ public class FrequencyBox extends Hbox {
 	}
 
 	/**
-	 * This method is To fill the Frequency Month value based on the selected
-	 * value of Frequency Code params: Selected comboBox value as a
-	 * String,Parent comboBox(frequency code) Selected value as a String, Two
-	 * ComboBoxes (Month and Day) Names and the TextBox Name
+	 * This method is To fill the Frequency Month value based on the selected value of Frequency Code params: Selected
+	 * comboBox value as a String,Parent comboBox(frequency code) Selected value as a String, Two ComboBoxes (Month and
+	 * Day) Names and the TextBox Name
 	 */
 	private void setFrqMonthDetails() {
 		logger.debug("Entering");
@@ -363,8 +362,7 @@ public class FrequencyBox extends Hbox {
 	}
 
 	/**
-	 * This method is To set the Frequency value based on the selected value of
-	 * Frequency day value
+	 * This method is To set the Frequency value based on the selected value of Frequency day value
 	 */
 	private void setFrqDayDetails() {
 		logger.debug("Entering");
@@ -375,11 +373,10 @@ public class FrequencyBox extends Hbox {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * This method is for changing Frequency based on new start date
 	 */
-	public void updateFrequency(String month,String day) {
+	public void updateFrequency(String month, String day) {
 		logger.debug("Entering");
 		if (!PennantConstants.List_Select.equals(getFrqCodeValue())) {
 			fillFrqMonth(month);
@@ -439,19 +436,14 @@ public class FrequencyBox extends Hbox {
 	 **/
 	public boolean isValidComboValue() {
 		if (!this.frqCode.isDisabled() && this.frqCode.getSelectedIndex() <= 0) {
-			throw new WrongValueException(this.frqCode, Labels.getLabel(
-					"STATIC_INVALID",
-					new String[] { Labels.getLabel("label_FrqCode.value") }));
-		} else if (!this.frqMonth.isDisabled()
-				&& this.frqMonth.getSelectedIndex() <= 0) {
-			throw new WrongValueException(this.frqMonth, Labels.getLabel(
-					"STATIC_INVALID",
-					new String[] { Labels.getLabel("label_FrqMth.value") }));
-		} else if (!this.frqDay.isDisabled()
-				&& this.frqDay.getSelectedIndex() <= 0) {
-			throw new WrongValueException(this.frqDay, Labels.getLabel(
-					"STATIC_INVALID",
-					new String[] { Labels.getLabel("label_FrqDay.value") }));
+			throw new WrongValueException(this.frqCode,
+					Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FrqCode.value") }));
+		} else if (!this.frqMonth.isDisabled() && this.frqMonth.getSelectedIndex() <= 0) {
+			throw new WrongValueException(this.frqMonth,
+					Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FrqMth.value") }));
+		} else if (!this.frqDay.isDisabled() && this.frqDay.getSelectedIndex() <= 0) {
+			throw new WrongValueException(this.frqDay,
+					Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FrqDay.value") }));
 		}
 		return true;
 	}
@@ -479,24 +471,22 @@ public class FrequencyBox extends Hbox {
 		setDisableFrqDay(isDisable);
 	}
 
-	
-	public void setDisableFrqCode(boolean isDisable){
+	public void setDisableFrqCode(boolean isDisable) {
 		doDisable(this.frqCode, isDisable);
 	}
-	
-	public void setDisableFrqMonth(boolean isDisable){
+
+	public void setDisableFrqMonth(boolean isDisable) {
 		this.frqMonthDisable = isDisable;
 		doDisable(this.frqMonth, isDisable);
 	}
-	
-	public void setDisableFrqDay(boolean isDisable){
+
+	public void setDisableFrqDay(boolean isDisable) {
 		this.frqDayDisable = isDisable;
 		doDisable(this.frqDay, isDisable);
 	}
-	
+
 	/**
-	 * This method will set disable properties for combobox which is passed as
-	 * parameter
+	 * This method will set disable properties for combobox which is passed as parameter
 	 * 
 	 * @param combobox
 	 * @param isDisable
@@ -518,12 +508,12 @@ public class FrequencyBox extends Hbox {
 		}
 	}
 
-	public void setErrorMessage(String msg){
+	public void setErrorMessage(String msg) {
 		this.frqCode.setErrorMessage(msg);
 		this.frqMonth.setErrorMessage(msg);
 		this.frqDay.setErrorMessage(msg);
 	}
-	
+
 	public String getValue() {
 		return this.frqValue.getValue();
 	}
@@ -534,7 +524,7 @@ public class FrequencyBox extends Hbox {
 		fillFrqDay(frqValue);
 		this.frqValue.setValue(frqValue);
 	}
-	
+
 	/**
 	 * This method is used to get selected combobox value
 	 * 
@@ -560,11 +550,11 @@ public class FrequencyBox extends Hbox {
 	}
 
 	public void setAlwFrqDays(String alwFrqDays) {
-		if(StringUtils.isNotEmpty(alwFrqDays)){
-			this.alwFrqDays = ","+alwFrqDays+",";
+		if (StringUtils.isNotEmpty(alwFrqDays)) {
+			this.alwFrqDays = "," + alwFrqDays + ",";
 		}
 	}
-	
+
 	public boolean setVisible(boolean visible) {
 		return super.setVisible(visible);
 	}

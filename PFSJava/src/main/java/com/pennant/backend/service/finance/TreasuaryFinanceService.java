@@ -54,22 +54,41 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public interface TreasuaryFinanceService {
 
 	InvestmentFinHeader getTreasuaryFinance();
+
 	InvestmentFinHeader getNewTreasuaryFinance();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	InvestmentFinHeader getTreasuaryFinanceById(String id);
+
 	InvestmentFinHeader getApprovedTreasuaryFinanceById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException;
+
 	AuditHeader doConfirm(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<FinanceDetail> getFinanceDetails(InvestmentFinHeader investmentFinHeader);
-	FinanceDetail getFinanceDetailById(FinanceDetail financeDetail, String finReference); 
-	InvestmentFinHeader getTreasuaryFinHeader(String finReference, String tableType); 
-	void setDocumentDetails(FinanceDetail financeDetail) ;
-	void setFeeCharges(FinanceDetail financeDetail, String type) ;
+
+	FinanceDetail getFinanceDetailById(FinanceDetail financeDetail, String finReference);
+
+	InvestmentFinHeader getTreasuaryFinHeader(String finReference, String tableType);
+
+	void setDocumentDetails(FinanceDetail financeDetail);
+
+	void setFeeCharges(FinanceDetail financeDetail, String type);
+
 	void setFinanceDetails(FinanceDetail financeDetail, String strTab, String userRole);
-	ErrorDetail  investmentDealValidations(FinanceDetail aFinanceDetail,InvestmentFinHeader investmentFinHeader , String usrLanguage);
-	ErrorDetail  treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader , String usrLanguage);
+
+	ErrorDetail investmentDealValidations(FinanceDetail aFinanceDetail, InvestmentFinHeader investmentFinHeader,
+			String usrLanguage);
+
+	ErrorDetail treasuryFinHeaderDialogValidations(InvestmentFinHeader investmentFinHeader, String usrLanguage);
+
 	AuditHeader saveOrUpdateDeal(AuditHeader auditHeader);
+
 	String getCustStatusByMinDueDays();
 }

@@ -8,6 +8,7 @@ public interface CreditInformation {
 
 	AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer) throws Exception;
 
-	CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails, FinanceMain financeMain, boolean override) throws Exception;
+	CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails, FinanceMain financeMain, boolean override)
+			throws Exception;
 
 }

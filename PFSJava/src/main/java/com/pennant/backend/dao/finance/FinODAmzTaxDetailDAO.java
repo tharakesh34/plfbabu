@@ -41,8 +41,8 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.finance;
-import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 
+import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 
 public interface FinODAmzTaxDetailDAO {
 

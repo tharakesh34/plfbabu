@@ -2,14 +2,14 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 
-public class TATNotificationCode implements Serializable{
+public class TATNotificationCode implements Serializable {
 
 	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 6255981029525749939L;
-	
-    private long tatNotificationId = Long.MIN_VALUE;
+	private static final long serialVersionUID = 6255981029525749939L;
+
+	private long tatNotificationId = Long.MIN_VALUE;
 	private String tatNotificationCode;
 	private String tatNotificationDesc;
 	private String time;
@@ -62,9 +62,9 @@ public class TATNotificationCode implements Serializable{
 	public String getTime() {
 		return time;
 	}
+
 	public void setTime(String time) {
 		this.time = time;
 	}
-	
-	
+
 }

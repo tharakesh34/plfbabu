@@ -108,7 +108,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Datebox raisedOn; // autowired
 	protected Textbox queryCtg; // autowired
 	protected Textbox module; // autowired
-	
+
 	protected Listbox sortOperator_Id;
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_Status;
@@ -117,11 +117,10 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Listbox sortOperator_RaisedOn;
 	protected Listbox sortOperator_QueryCtg;
 	protected Listbox sortOperator_Module;
-	
-	
+
 	private transient QueryDetailService queryDetailService;
 	private final List<ValueLabel> queryModuleStatusList = PennantStaticListUtil.getQueryModuleStatusList();
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -150,22 +149,25 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		setPageComponents(window_QueryDetailList, borderLayout_QueryDetailList, listBoxQueryDetail,
 				pagingQueryDetailList);
 		setItemRender(new QueryDetailListModelItemRenderer());
-		
+
 		// Register buttons and fields.
 		registerButton(button_QueryDetailList_QueryDetailSearch);
 		//registerButton(button_QueryDetailList_NewQueryDetail, "button_QueryDetailList_NewQueryDetail", true);
 		this.button_QueryDetailList_NewQueryDetail.setVisible(false);
 
 		registerField("id");
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
+				Operators.STRING);
 		registerField("categoryId");
-		registerField("qryNotes");		
-		registerField("raisedBy",listheader_RaisedBy,SortOrder.NONE,raisedBy,sortOperator_RaisedBy,Operators.SIMPLE_NUMARIC);		
+		registerField("qryNotes");
+		registerField("raisedBy", listheader_RaisedBy, SortOrder.NONE, raisedBy, sortOperator_RaisedBy,
+				Operators.SIMPLE_NUMARIC);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
-		registerField("raisedOn", listheader_RaisedOn, SortOrder.NONE, raisedOn, sortOperator_RaisedOn, Operators.DATE);		
-		registerField("categoryCode",listheader_QryCtg,SortOrder.NONE,queryCtg,sortOperator_QueryCtg, Operators.STRING);	
-		registerField("categoryDescription");	
-		registerField("usrLogin");	
+		registerField("raisedOn", listheader_RaisedOn, SortOrder.NONE, raisedOn, sortOperator_RaisedOn, Operators.DATE);
+		registerField("categoryCode", listheader_QryCtg, SortOrder.NONE, queryCtg, sortOperator_QueryCtg,
+				Operators.STRING);
+		registerField("categoryDescription");
+		registerField("usrLogin");
 		registerField("Module", module, SortOrder.NONE, sortOperator_Module, Operators.BOOLEAN);
 		fillComboBox(this.status, "", queryModuleStatusList, "");
 		// Render the page and display the data.
@@ -182,7 +184,6 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	public void onClick$button_QueryDetailList_QueryDetailSearch(Event event) {
 		search();
 	}
-	
 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
@@ -214,7 +215,6 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -225,7 +225,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 	public void onQueryDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxQueryDetail.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -235,13 +235,13 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( querydetail.getId());
+		whereCond.append(querydetail.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(querydetail.getVersion());
-	
+
 		if (doCheckAuthority(querydetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && querydetail.getWorkflowId() == 0) {
@@ -251,10 +251,10 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -267,7 +267,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("queryDetail", querydetail);
 		arg.put("queryDetailListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailNewDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -277,7 +277,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void doShowDialogPage(QueryDetail querydetail) {
 		logger.debug(Literal.ENTERING);
 
@@ -285,7 +285,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		arg.put("queryDetail", querydetail);
 		arg.put("queryDetailListCtrl", this);
 		arg.put("legalModuleName", querydetail.getModule());
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -315,7 +315,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 
@@ -337,5 +337,5 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	public void setQueryDetailService(QueryDetailService queryDetailService) {
 		this.queryDetailService = queryDetailService;
 	}
-	
+
 }

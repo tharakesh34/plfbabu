@@ -45,7 +45,6 @@ package com.pennant.backend.dao.others.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -73,11 +72,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements JVPostingEntryDAO {
 	private static Logger logger = Logger.getLogger(JVPostingEntryDAOImpl.class);
-	
+
 	public JVPostingEntryDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new JVPostingEntry
 	 * 
@@ -114,34 +113,31 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	 * @return JVPostingEntry
 	 */
 	@Override
-	public JVPostingEntry getJVPostingEntryById(final long id,
-	        long txnReference, long acEntryRef, String type) {
+	public JVPostingEntry getJVPostingEntryById(final long id, long txnReference, long acEntryRef, String type) {
 		logger.debug("Entering");
 		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
 		jVPostingEntry.setId(id);
 		jVPostingEntry.setTxnReference(txnReference);
 		jVPostingEntry.setAcEntryRef(acEntryRef);
-		
 
 		StringBuilder selectSql = new StringBuilder(
-		        "Select  FileName,BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		selectSql
-		        .append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				"Select  FileName,BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
+		selectSql.append(
+				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",TxnDesc");
 		}
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef");
+		selectSql.append(
+				" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		try {
-			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			jVPostingEntry = null;
@@ -160,15 +156,14 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	 * @return JVPostingEntry
 	 */
 	@Override
-	public List<JVPostingEntry> getJVPostingEntryListById(final long id,
-	        String type) {
+	public List<JVPostingEntry> getJVPostingEntryListById(final long id, String type) {
 		logger.debug("Entering");
 		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
 		jVPostingEntry.setId(id);
 		StringBuilder selectSql = new StringBuilder(
-		        "Select  FileName, BatchReference,AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus , PostingStatus, ExternalAccount,LinkedTranId");
-		selectSql
-		        .append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				"Select  FileName, BatchReference,AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus , PostingStatus, ExternalAccount,LinkedTranId");
+		selectSql.append(
+				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",TxnDesc,derivedTxnRef");
 		}
@@ -178,12 +173,10 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -196,32 +189,28 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	 * @return JVPostingEntry
 	 */
 	@Override
-	public List<JVPostingEntry> getFailureJVPostingEntryListById(final long id,
-	        String type) {
+	public List<JVPostingEntry> getFailureJVPostingEntryListById(final long id, String type) {
 		logger.debug("Entering");
 		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
 		jVPostingEntry.setId(id);
 		jVPostingEntry.setPostingStatus(PennantConstants.POSTSTS_SUCCESS);
 		StringBuilder selectSql = new StringBuilder(
-		        "Select  FileName, BatchReference,AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus , PostingStatus, ExternalAccount, LinkedTranId");
-		selectSql
-		        .append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				"Select  FileName, BatchReference,AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus , PostingStatus, ExternalAccount, LinkedTranId");
+		selectSql.append(
+				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",TxnDesc");
 		}
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-		        .append(" Where BatchReference =:BatchReference AND PostingStatus !=:PostingStatus ");
+		selectSql.append(" Where BatchReference =:BatchReference AND PostingStatus !=:PostingStatus ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -243,14 +232,13 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		StringBuilder deleteSql = new StringBuilder("Delete From JVPostingEntry");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql
-		        .append(" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef");
+		deleteSql.append(
+				" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -282,27 +270,28 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		if (jVPostingEntry.getTxnReference() == 0) {
 			// Getting max Sequence Number Form Entry Sequence Table for Current Day and Current Batch File
 			JVPostingEntry aJVPostingEntry = getNewJVPostingEntry();
-			aJVPostingEntry.setDaySeqDate(DateUtility.getDBDate(DateUtility.format(DateUtility.getSysDate(),PennantConstants.DBDateFormat)));
+			aJVPostingEntry.setDaySeqDate(
+					DateUtility.getDBDate(DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat)));
 			aJVPostingEntry.setDaySeqNo(0);
 			jVPostingEntry.setTxnReference(getMaxSeqNumForCurrentDay(aJVPostingEntry) + 1);
 
 			// Updating Latest Sequence No in Entry table for Current Day and Current Batch File 
 			aJVPostingEntry.setDaySeqNo((int) jVPostingEntry.getTxnReference());
 			upDateSeqNoForCurrentDayBatch(aJVPostingEntry);
-			if(!jVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)){
-				jVPostingEntry.setDerivedTxnRef(jVPostingEntry.getTxnReference()-1);
+			if (!jVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)) {
+				jVPostingEntry.setDerivedTxnRef(jVPostingEntry.getTxnReference() - 1);
 			}
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into JVPostingEntry");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-		        .append(" (FileName, BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		insertSql
-		        .append(",Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DerivedTxnRef)");
-		insertSql
-		        .append(" Values(:FileName, :BatchReference, :AcEntryRef, :HostSeqNo, :Account, :AcType, :AccountName, :TxnCCy, :TxnEntry, :AccCCy, :TxnCode, :PostingDate, :ValueDate, :TxnAmount, :TxnReference, :NarrLine1, :NarrLine2, :NarrLine3, :NarrLine4, :ExchRate_Batch, :ExchRate_Ac, :TxnAmount_Batch, :TxnAmount_Ac, :ModifiedFlag, :DeletedFlag, :ValidationStatus, :PostingStatus, :ExternalAccount, :LinkedTranId");
-		insertSql
-		        .append(",:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId ,:DerivedTxnRef)");
+		insertSql.append(
+				" (FileName, BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
+		insertSql.append(
+				",Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DerivedTxnRef)");
+		insertSql.append(
+				" Values(:FileName, :BatchReference, :AcEntryRef, :HostSeqNo, :Account, :AcType, :AccountName, :TxnCCy, :TxnEntry, :AccCCy, :TxnCode, :PostingDate, :ValueDate, :TxnAmount, :TxnReference, :NarrLine1, :NarrLine2, :NarrLine3, :NarrLine4, :ExchRate_Batch, :ExchRate_Ac, :TxnAmount_Batch, :TxnAmount_Ac, :ModifiedFlag, :DeletedFlag, :ValidationStatus, :PostingStatus, :ExternalAccount, :LinkedTranId");
+		insertSql.append(
+				",:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId ,:DerivedTxnRef)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -331,20 +320,18 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder("Insert Into JVPostingEntry");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-		        .append(" (FileName, BatchReference, AcEntryRef, AcType, HostSeqNo, Account, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		insertSql
-		        .append(",Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-		        .append(" Values(:FileName, :BatchReference, :AcEntryRef, :AcType, :HostSeqNo, :Account,:AccountName, :TxnCCy, :TxnEntry, :AccCCy, :TxnCode, :PostingDate, :ValueDate, :TxnAmount, :TxnReference, :NarrLine1, :NarrLine2, :NarrLine3, :NarrLine4, :ExchRate_Batch, :ExchRate_Ac, :TxnAmount_Batch, :TxnAmount_Ac, :ModifiedFlag, :DeletedFlag, :ValidationStatus, :PostingStatus, :ExternalAccount,:LinkedTranId");
-		insertSql
-		        .append(",:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (FileName, BatchReference, AcEntryRef, AcType, HostSeqNo, Account, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
+		insertSql.append(
+				",Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:FileName, :BatchReference, :AcEntryRef, :AcType, :HostSeqNo, :Account,:AccountName, :TxnCCy, :TxnEntry, :AccCCy, :TxnCode, :PostingDate, :ValueDate, :TxnAmount, :TxnReference, :NarrLine1, :NarrLine2, :NarrLine3, :NarrLine4, :ExchRate_Batch, :ExchRate_Ac, :TxnAmount_Batch, :TxnAmount_Ac, :ModifiedFlag, :DeletedFlag, :ValidationStatus, :PostingStatus, :ExternalAccount,:LinkedTranId");
+		insertSql.append(
+				",:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
-		        .createBatch(aJVPostingEntryList.toArray());
-		int[] cont = this.jdbcTemplate.batchUpdate(insertSql.toString(),
-		        beanParameters);
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(aJVPostingEntryList.toArray());
+		int[] cont = this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving Updated Count ==" + cont.length);
 	}
 
@@ -358,8 +345,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			nextTxnReference = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, Long.class);
+			nextTxnReference = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 			nextTxnReference = nextTxnReference + 1;
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -390,12 +376,12 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account, AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId");
-		updateSql
-		        .append(", Version=:Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND TxnReference = :TxnReference  AND AcEntryRef = :AcEntryRef");
+		updateSql.append(
+				" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account, AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId");
+		updateSql.append(
+				", Version=:Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference  AND AcEntryRef = :AcEntryRef");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -415,8 +401,8 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set DeletedFlag = :DeletedFlag ");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND TxnReference = :TxnReference  AND AcEntryRef = :AcEntryRef ");
+		updateSql.append(
+				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference  AND AcEntryRef = :AcEntryRef ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -435,12 +421,11 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account,  AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId ");
-		updateSql
-		        .append(", LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, WorkflowId = :WorkflowId");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef");
+		updateSql.append(
+				" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account,  AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId ");
+		updateSql.append(", LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -459,10 +444,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set  AcType=:AcType, AccCCy=:AccCCy, AccountName=:AccountName, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, LinkedTranId=:LinkedTranId");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND Account = :Account ");
+		updateSql.append(
+				" Set  AcType=:AcType, AccCCy=:AccCCy, AccountName=:AccountName, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, LinkedTranId=:LinkedTranId");
+		updateSql.append(" Where BatchReference =:BatchReference AND Account = :Account ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -477,24 +461,21 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 	@Override
 	public void updateListValidationStatus(List<JVPostingEntry> aJVPostingEntryList, String type,
-	        boolean isAccountWise) {
+			boolean isAccountWise) {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set  AcType=:AcType, AccCCy=:AccCCy, AccountName=:AccountName,ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus,LinkedTranId=:LinkedTranId");
+		updateSql.append(
+				" Set  AcType=:AcType, AccCCy=:AccCCy, AccountName=:AccountName,ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus,LinkedTranId=:LinkedTranId");
 		if (isAccountWise) {
-			updateSql
-			        .append(" Where BatchReference =:BatchReference AND Account = :Account ");
+			updateSql.append(" Where BatchReference =:BatchReference AND Account = :Account ");
 		} else {
 			updateSql.append(" Where BatchReference =:BatchReference ");
 		}
 
 		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
-		        .createBatch(aJVPostingEntryList.toArray());
-		int[] cont = this.jdbcTemplate.batchUpdate(updateSql.toString(),
-		        beanParameters);
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(aJVPostingEntryList.toArray());
+		int[] cont = this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving Updated Count ==" + cont.length);
 	}
 
@@ -504,10 +485,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND Account = :Account AND DeletedFlag = 0");
+		updateSql.append(
+				" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
+		updateSql.append(" Where BatchReference =:BatchReference AND Account = :Account AND DeletedFlag = 0");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -525,10 +505,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND DeletedFlag = 1");
+		updateSql.append(
+				" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
+		updateSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 1");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -545,8 +524,8 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set  PostingStatus = :PostingStatus");
-		updateSql
-		        .append(" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef ");
+		updateSql.append(
+				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -559,7 +538,6 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Leaving");
 	}
 
-
 	@Override
 	public void deleteByID(JVPostingEntry jVPostingEntry, String tableType) {
 		logger.debug("Entering");
@@ -568,8 +546,8 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		aJVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
 		StringBuilder deleteSql = new StringBuilder("Delete From JVPostingEntry");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql
-		        .append(" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef ");
+		deleteSql.append(
+				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
@@ -584,8 +562,8 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	}
 
 	@Override
-	public JVPostingEntry getJVPostingEntryById(long batchRef,
-	        long txnReference, String account, String txnEntry, BigDecimal txnAmount, String type) {
+	public JVPostingEntry getJVPostingEntryById(long batchRef, long txnReference, String account, String txnEntry,
+			BigDecimal txnAmount, String type) {
 		logger.debug("Entering");
 		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
 		jVPostingEntry.setBatchReference(batchRef);
@@ -595,25 +573,23 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		jVPostingEntry.setTxnAmount(txnAmount);
 
 		StringBuilder selectSql = new StringBuilder(
-		        "Select FileName, BatchReference, AcEntryRef, HostSeqNo, Account,  AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount,LinkedTranId ");
-		selectSql
-		        .append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				"Select FileName, BatchReference, AcEntryRef, HostSeqNo, Account,  AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount,LinkedTranId ");
+		selectSql.append(
+				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",TxnCCyName,TxnCCyEditField,TxnDesc,AccCCyName,AccCCyEditField,AcCcyNumber,TxnCcyNumber");
 		}
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-		        .append(" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND TxnEntry = :TxnEntry AND Account = :Account AND TxnAmount = :TxnAmount ");
+		selectSql.append(
+				" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND TxnEntry = :TxnEntry AND Account = :Account AND TxnAmount = :TxnAmount ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		try {
-			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			jVPostingEntry = null;
@@ -623,104 +599,87 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	}
 
 	@Override
-	public List<JVPostingEntry> getDistinctJVPostingEntryListById(JVPostingEntry jVPostingEntry,
-	        String type) {
+	public List<JVPostingEntry> getDistinctJVPostingEntryListById(JVPostingEntry jVPostingEntry, String type) {
 		logger.debug("Entering");
 		StringBuilder selectSql = new StringBuilder("select DISTINCT Account, AcType, ExternalAccount,AccCcy ");
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-		        .append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
+		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
-	public List<JVPostingEntry> getDistinctJVPostingEntryValidationStatusById(
-	        JVPostingEntry jVPostingEntry, String type) {
+	public List<JVPostingEntry> getDistinctJVPostingEntryValidationStatusById(JVPostingEntry jVPostingEntry,
+			String type) {
 		logger.debug("Entering");
 		StringBuilder selectSql = new StringBuilder("select distinct ValidationStatus");
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-		        .append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
+		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
-	public List<JVPostingEntry> getDistinctJVPostingEntryPostingStatusById(
-	        JVPostingEntry jVPostingEntry, String type) {
+	public List<JVPostingEntry> getDistinctJVPostingEntryPostingStatusById(JVPostingEntry jVPostingEntry, String type) {
 		logger.debug("Entering");
 		StringBuilder selectSql = new StringBuilder("select distinct PostingStatus");
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-		        .append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
+		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
-	public List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef,
-	        String type) {
+	public List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef, String type) {
 		logger.debug("Entering");
 		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
 		jVPostingEntry.setBatchReference(batchRef);
 		StringBuilder selectSql = new StringBuilder(
-		        "Select FileName, BatchReference, HostSeqNo, Account,  AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus , ExternalAccount, LinkedTranId");
-		selectSql
-		        .append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				"Select FileName, BatchReference, HostSeqNo, Account,  AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus , ExternalAccount, LinkedTranId");
+		selectSql.append(
+				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",TxnDesc");
 		}
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-		        .append(" Where BatchReference =:BatchReference AND DeletedFlag = 1 ");
+		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 1 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
-	public void updateListPostingStatus(List<JVPostingEntry> aJVPostingEntryList, String type,
-	        boolean isTxnRefWise) {
+	public void updateListPostingStatus(List<JVPostingEntry> aJVPostingEntryList, String type, boolean isTxnRefWise) {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set  PostingStatus = :PostingStatus");
 		if (isTxnRefWise) {
-			updateSql
-			        .append(" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef ");
+			updateSql.append(
+					" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef ");
 		} else {
 			updateSql.append(" Where BatchReference =:BatchReference ");
 		}
 		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
-		        .createBatch(aJVPostingEntryList.toArray());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(aJVPostingEntryList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Entering");
 	}
@@ -730,36 +689,34 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		logger.debug("Entering");
 		int count = 0;
 		StringBuilder selectSql = new StringBuilder(
-		        "Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
+				"Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
 			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-        } catch (EmptyResultDataAccessException e) {
-        	logger.warn("Exception: ", e);
-        	count = 0;
-        }
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
 		if (count == 0) {
-			selectSql = new StringBuilder(
-			        "Insert into SeqJVPostingEntry (SeqDate, SeqNo)");
+			selectSql = new StringBuilder("Insert into SeqJVPostingEntry (SeqDate, SeqNo)");
 			selectSql.append(" Values (:DaySeqDate, :DaySeqNo)");
 			logger.debug("inserttSql: " + selectSql.toString());
 			SqlParameterSource beanParameters1 = new BeanPropertySqlParameterSource(jVPostingEntry);
 			this.jdbcTemplate.update(selectSql.toString(), beanParameters1);
 
 			selectSql = new StringBuilder(
-			        "Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
+					"Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
 			logger.debug("selectSql: " + selectSql.toString());
 			SqlParameterSource beanParameters2 = new BeanPropertySqlParameterSource(jVPostingEntry);
 			try {
-				count = this.jdbcTemplate.queryForObject(selectSql.toString(),
-						beanParameters2, Integer.class);
+				count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters2, Integer.class);
 			} catch (EmptyResultDataAccessException e) {
 				logger.warn("Exception: ", e);
 				count = 0;
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return count;
 	}
@@ -783,13 +740,12 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	}
 
 	@Override
-    public void deleteIAEntries(long batchReference) {
+	public void deleteIAEntries(long batchReference) {
 		logger.debug("Entering");
 		JVPostingEntry aJVPostingEntry = new JVPostingEntry();
 		aJVPostingEntry.setBatchReference(batchReference);
 		StringBuilder deleteSql = new StringBuilder("Delete From JVPostingEntry_Temp");
-		deleteSql
-		        .append(" Where BatchReference =:BatchReference AND ExternalAccount = 0 ");
+		deleteSql.append(" Where BatchReference =:BatchReference AND ExternalAccount = 0 ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aJVPostingEntry);
 		try {
@@ -798,37 +754,35 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");	    
-    }
+		logger.debug("Leaving");
+	}
 
 	@Override
-	public JVPostingEntry getJVPostingEntrybyDerivedTxnRef(long derivedTxnRef,long batchReference) {
+	public JVPostingEntry getJVPostingEntrybyDerivedTxnRef(long derivedTxnRef, long batchReference) {
 
 		logger.debug("Entering");
 		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
 		jVPostingEntry.setDerivedTxnRef(derivedTxnRef);
 		jVPostingEntry.setBatchReference(batchReference);
-		
+
 		StringBuilder selectSql = new StringBuilder(
-		        "select T1.Account,T1.TxnCode,T2.TranDesc as DebitTxnDesc from JVPostingEntry_view T1,BMTTransactionCode T2 ");
-		selectSql
-		        .append(" where T1.TxnCode=T2.TranCode and T1.DerivedTxnRef =:DerivedTxnRef and T1.BatchReference =:BatchReference");
+				"select T1.Account,T1.TxnCode,T2.TranDesc as DebitTxnDesc from JVPostingEntry_view T1,BMTTransactionCode T2 ");
+		selectSql.append(
+				" where T1.TxnCode=T2.TranCode and T1.DerivedTxnRef =:DerivedTxnRef and T1.BatchReference =:BatchReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		try {
-			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			jVPostingEntry = null;
 		}
 		logger.debug("Leaving");
 		return jVPostingEntry;
-	
+
 	}
 
 }

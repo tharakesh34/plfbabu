@@ -45,8 +45,6 @@ package com.pennant.webui.rmtmasters.customertype.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
@@ -54,7 +52,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
 /**
@@ -77,16 +74,15 @@ public class CustomerTypeListModelItemRenderer implements ListitemRenderer<Custo
 		lc.setParent(item);
 		lc = new Listcell(customerType.getCustTypeDesc());
 		lc.setParent(item);
-		/*if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerType.getCustTypeCtg())) {
-			lc = new Listcell(Labels.getLabel("label_Corporate"));
-		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerType.getCustTypeCtg())) {
-			lc = new Listcell(Labels.getLabel("label_Individual"));
-		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, customerType.getCustTypeCtg())) {
-			lc = new Listcell(Labels.getLabel("label_Financial"));
-		} else {
-			lc = new Listcell("");
-		}*/
-		lc=new Listcell(customerType.getCustctgdesc());
+		/*
+		 * if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerType.getCustTypeCtg())) { lc = new
+		 * Listcell(Labels.getLabel("label_Corporate")); } else if
+		 * (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerType.getCustTypeCtg())) { lc = new
+		 * Listcell(Labels.getLabel("label_Individual")); } else if
+		 * (StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, customerType.getCustTypeCtg())) { lc = new
+		 * Listcell(Labels.getLabel("label_Financial")); } else { lc = new Listcell(""); }
+		 */
+		lc = new Listcell(customerType.getCustctgdesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbCustTypeIsActive = new Checkbox();

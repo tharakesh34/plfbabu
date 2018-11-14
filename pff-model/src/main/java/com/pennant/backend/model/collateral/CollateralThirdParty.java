@@ -13,22 +13,22 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralThirdParty extends AbstractWorkflowEntity {
-	private static final long		serialVersionUID	= 1L;
-	private String					collateralRef;
-	private long					customerId;
-	private boolean					newRecord			= false;
-	
-	@XmlElement(name="thirdPartyCif")
-	private String					custCIF;
-	private String					custShrtName;
-	private String					custCRCPR;
-	private String					custPassportNo;
-	private String					custNationality;
-	private String					custCtgCode;
+	private static final long serialVersionUID = 1L;
+	private String collateralRef;
+	private long customerId;
+	private boolean newRecord = false;
 
-	private CollateralThirdParty	befImage;
+	@XmlElement(name = "thirdPartyCif")
+	private String custCIF;
+	private String custShrtName;
+	private String custCRCPR;
+	private String custPassportNo;
+	private String custNationality;
+	private String custCtgCode;
+
+	private CollateralThirdParty befImage;
 	@XmlTransient
-	private LoggedInUser			userDetails;
+	private LoggedInUser userDetails;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();

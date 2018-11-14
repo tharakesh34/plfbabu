@@ -50,8 +50,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.ManualAdvise;
 
 /**
- * Service declaration for methods that depends on
- * <b>Fee Waiver </b>.<br>
+ * Service declaration for methods that depends on <b>Fee Waiver </b>.<br>
  * 
  */
 public interface FeeWaiverHeaderService {
@@ -65,13 +64,13 @@ public interface FeeWaiverHeaderService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	List<ManualAdvise> getManualAdviseByFinRef(String finReference);
 
 	List<FinODDetails> getFinODBalByFinRef(String finReference);
-	
-	FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finReference,String type);
-	
+
+	FeeWaiverHeader getFeeWaiverHeaderByFinRef(String finReference, String type);
+
 	FeeWaiverHeader getFeeWiaverEnquiryList(FeeWaiverHeader feeWaiverHeader);
-	
+
 }

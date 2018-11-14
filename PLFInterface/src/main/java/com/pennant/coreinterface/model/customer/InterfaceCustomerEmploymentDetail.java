@@ -21,9 +21,8 @@ import java.util.Date;
  */
 public class InterfaceCustomerEmploymentDetail implements Serializable {
 
-
 	private static final long serialVersionUID = -6181309908843301343L;
-	
+
 	private long custID;
 	private long custEmpName;
 	private String lovDesccustEmpName;

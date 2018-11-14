@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -64,28 +63,29 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> implements CustEmployeeDetailDAO {
 	private static Logger logger = Logger.getLogger(CustEmployeeDetailDAOImpl.class);
-	
+
 	public CustEmployeeDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Customer Bank details by key field
+	 * Fetch the Record Customer Bank details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustEmployeeDetail
 	 */
 	@Override
-	public CustEmployeeDetail getCustEmployeeDetailById(final long id,String type) {
+	public CustEmployeeDetail getCustEmployeeDetailById(final long id, String type) {
 		logger.debug("Entering");
 		CustEmployeeDetail custEmployeeDetail = new CustEmployeeDetail();
 		custEmployeeDetail.setId(id);
-		StringBuilder selectSql = new StringBuilder();	
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg, ");
 		selectSql.append(" EmpDept, EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescEmpStatus,lovDescEmpSector,lovDescProfession,lovDescEmpName,lovDescEmpDesg,");
 			selectSql.append(" lovDescEmpDept,lovDescOtherIncome,lovDescCustShrtName,lovDescCustCIF, EmpAlocType,");
 		}
@@ -94,16 +94,15 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 		selectSql.append(" FROM  CustEmployeeDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :CustID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custEmployeeDetail);
-		RowMapper<CustEmployeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustEmployeeDetail.class);
+		RowMapper<CustEmployeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustEmployeeDetail.class);
 
-		try{
-			custEmployeeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			custEmployeeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			custEmployeeDetail = null;
 		}
@@ -111,36 +110,35 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 		return custEmployeeDetail;
 	}
 
-	
 	/**
-	 * This method Deletes the Record from the CustEmployeeDetail or CustEmployeeDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Bank by key CustID
+	 * This method Deletes the Record from the CustEmployeeDetail or CustEmployeeDetail_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Customer Bank by key CustID
 	 * 
-	 * @param Customer Bank (custEmployeeDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (custEmployeeDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustEmployeeDetail custEmployeeDetail,String type) {
+	public void delete(CustEmployeeDetail custEmployeeDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder(" Delete From CustEmployeeDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custEmployeeDetail);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -149,32 +147,34 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 	/**
 	 * This method insert new Records into CustEmployeeDetail or CustEmployeeDetail_Temp.
 	 *
-	 * save Customer Bank 
+	 * save Customer Bank
 	 * 
-	 * @param Customer Bank (custEmployeeDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (custEmployeeDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustEmployeeDetail custEmployeeDetail,String type) {
+	public long save(CustEmployeeDetail custEmployeeDetail, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into CustEmployeeDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg," );
-		insertSql.append(" EmpDept , EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" (CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg,");
+		insertSql.append(" EmpDept , EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :EmpStatus, :EmpSector, :Profession, :EmpName , :EmpNameForOthers, :EmpDesg,");
-		insertSql.append(" :EmpDept , :EmpFrom, :MonthlyIncome, :OtherIncome, :AdditionalIncome," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(
+				" Values(:CustID, :EmpStatus, :EmpSector, :Profession, :EmpName , :EmpNameForOthers, :EmpDesg,");
+		insertSql.append(" :EmpDept , :EmpFrom, :MonthlyIncome, :OtherIncome, :AdditionalIncome,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custEmployeeDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -183,38 +183,40 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 	}
 
 	/**
-	 * This method updates the Record CustEmployeeDetail or CustEmployeeDetail_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Bank by key CustID and Version
+	 * This method updates the Record CustEmployeeDetail or CustEmployeeDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Bank by key CustID and Version
 	 * 
-	 * @param Customer Bank (custEmployeeDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Bank (custEmployeeDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustEmployeeDetail custEmployeeDetail,String type) {
+	public void update(CustEmployeeDetail custEmployeeDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustEmployeeDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set EmpStatus = :EmpStatus, EmpSector = :EmpSector," );
-		updateSql.append(" Profession = :Profession, EmpName = :EmpName, EmpNameForOthers = :EmpNameForOthers,  EmpDesg = :EmpDesg,");
+		updateSql.append(" Set EmpStatus = :EmpStatus, EmpSector = :EmpSector,");
+		updateSql.append(
+				" Profession = :Profession, EmpName = :EmpName, EmpNameForOthers = :EmpNameForOthers,  EmpDesg = :EmpDesg,");
 		updateSql.append(" EmpDept = :EmpDept, EmpFrom = :EmpFrom, MonthlyIncome = :MonthlyIncome,");
 		updateSql.append(" OtherIncome = :OtherIncome, AdditionalIncome = :AdditionalIncome,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where CustID =:CustID ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custEmployeeDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

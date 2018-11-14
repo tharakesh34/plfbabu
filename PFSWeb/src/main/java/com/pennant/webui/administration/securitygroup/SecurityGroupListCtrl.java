@@ -62,9 +62,9 @@ import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.service.administration.SecurityGroupService;
 import com.pennant.webui.administration.securitygroup.model.SecurityGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityGroup/SecurityGroupList.zul file.
@@ -91,7 +91,6 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 	protected Listbox sortOperator_grpID;
 	protected Listbox sortOperator_grpCode;
 	protected Listbox sortOperator_grpDesc;
-	
 
 	private transient SecurityGroupService securityGroupService;
 	private transient String moduleType;
@@ -109,10 +108,10 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 		this.moduleType = getArgument("moduleType");
 		super.pageRightName = "SecurityGroupList";
 		super.tableName = "SecGroups_View";
-		
-		if("GRPRIGHT".equals(this.moduleType)){
+
+		if ("GRPRIGHT".equals(this.moduleType)) {
 			super.queueTableName = "SecGroups_AView";
-		}else{
+		} else {
 			super.queueTableName = "SecGroups_View";
 		}
 	}
@@ -130,9 +129,10 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 		setItemRender(new SecurityGroupListModelItemRenderer());
 
 		// Register buttons and fields.
-		if(!"GRPRIGHT".equals(this.moduleType)){
-			registerButton(button_SecurityGroupList_NewSecurityGroup, "button_SecurityGroupList_NewSecurityGroup", true);
-		}else{
+		if (!"GRPRIGHT".equals(this.moduleType)) {
+			registerButton(button_SecurityGroupList_NewSecurityGroup, "button_SecurityGroupList_NewSecurityGroup",
+					true);
+		} else {
 			this.button_SecurityGroupList_NewSecurityGroup.setVisible(false);
 		}
 		registerButton(button_SecurityGroupList_SecurityGroupSearchDialog);
@@ -242,11 +242,12 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 		aruments.put("newRecord", aSecurityGroup.isNew());
 
 		try {
-			
-			if(this.moduleType!=null && this.moduleType.equals("GRPRIGHT")){
-				Executions.createComponents("/WEB-INF/pages/Administration/SecurityGroupRights"
-						+ "/SecurityGroupRightsDialog.zul", null, aruments);
-			}else{				
+
+			if (this.moduleType != null && this.moduleType.equals("GRPRIGHT")) {
+				Executions.createComponents(
+						"/WEB-INF/pages/Administration/SecurityGroupRights" + "/SecurityGroupRightsDialog.zul", null,
+						aruments);
+			} else {
 				Executions.createComponents("/WEB-INF/pages/Administration/SecurityGroup" + "/SecurityGroupDialog.zul",
 						null, aruments);
 			}

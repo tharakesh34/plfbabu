@@ -9,7 +9,7 @@ import com.pennant.backend.service.mandate.UploadSecondaryMandateService;
 public class UploadSecondaryMandateServiceImpl implements UploadSecondaryMandateService {
 
 	private UploadSecondaryMandateDAO uploadSecondaryMandateDAO;
-	
+
 	@Override
 	public void save(UploadSecondaryMandate secondaryMandateStatus) {
 		uploadSecondaryMandateDAO.save(secondaryMandateStatus);
@@ -21,8 +21,8 @@ public class UploadSecondaryMandateServiceImpl implements UploadSecondaryMandate
 	}
 
 	@Override
-	public List<UploadSecondaryMandate> getReportData(long headerId, long userId,String module) {
-		return uploadSecondaryMandateDAO.getReportData(headerId,userId,module);
+	public List<UploadSecondaryMandate> getReportData(long headerId, long userId, String module) {
+		return uploadSecondaryMandateDAO.getReportData(headerId, userId, module);
 	}
 
 	public UploadSecondaryMandateDAO getUploadSecondaryMandateDAO() {

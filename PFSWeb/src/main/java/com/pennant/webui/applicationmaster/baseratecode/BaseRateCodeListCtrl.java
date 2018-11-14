@@ -61,9 +61,9 @@ import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.webui.applicationmaster.baseratecode.model.BaseRateCodeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/BaseRateCode/BaseRateCodeList.zul file.

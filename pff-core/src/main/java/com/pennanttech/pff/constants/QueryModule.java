@@ -1,10 +1,7 @@
 package com.pennanttech.pff.constants;
 
-
 public enum QueryModule {
-	LOAN_ORIGINATION(1, "Loan Origination"),
-	SAMPLING(2, "Sampling"),
-	LEGAL_VERIFICATION(3, "Legal verification");
+	LOAN_ORIGINATION(1, "Loan Origination"), SAMPLING(2, "Sampling"), LEGAL_VERIFICATION(3, "Legal verification");
 
 	private final Integer key;
 	private final String value;
@@ -21,7 +18,7 @@ public enum QueryModule {
 	public String getValue() {
 		return value;
 	}
-	
+
 	public static QueryModule getModuleType(Integer key) {
 		for (QueryModule type : values()) {
 			if ((type.getKey()) == key) {

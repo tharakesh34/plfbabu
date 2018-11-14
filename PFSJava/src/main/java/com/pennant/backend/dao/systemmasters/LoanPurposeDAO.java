@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennanttech.pff.core.TableType;
@@ -50,10 +51,10 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods declaration for the <b>LoanPurpose model</b> class.<br>
  * 
  */
-public interface LoanPurposeDAO extends BasicCrudDao<LoanPurpose>{
+public interface LoanPurposeDAO extends BasicCrudDao<LoanPurpose> {
 
-	LoanPurpose getLoanPurposeById(String id,String type);
-	
+	LoanPurpose getLoanPurposeById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 

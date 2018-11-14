@@ -1,4 +1,5 @@
 package com.pennanttech.pennapps.pff.test;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -7,8 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 public class ResponseStatus {
 
 	@XmlElement(name = "cif")
-	private String			CIF;
-	private ReturnStatus	returnStatus;
+	private String CIF;
+	private ReturnStatus returnStatus;
 
 	public String getCIF() {
 		return CIF;

@@ -69,38 +69,35 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/SubSegment/subSegmentDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/SubSegment/subSegmentDialog.zul file.
  */
 public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	private static final long serialVersionUID = -3976608317795122426L;
 	private static final Logger logger = Logger.getLogger(SubSegmentDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_SubSegmentDialog;
-	protected Textbox 	segmentCode; 			
-	protected Textbox 	subSegmentCode; 		
-	protected Textbox 	subSegmentDesc; 		
-	protected Checkbox 	subSegmentIsActive; 
+	protected Window window_SubSegmentDialog;
+	protected Textbox segmentCode;
+	protected Textbox subSegmentCode;
+	protected Textbox subSegmentDesc;
+	protected Checkbox subSegmentIsActive;
 
 	// not autoWired variables
 	private SubSegment subSegment; // overHanded per parameter
 	private transient SubSegmentListCtrl subSegmentListCtrl; // overHanded per parameter
 
-	private transient boolean 	validationOn;
+	private transient boolean validationOn;
 
-	protected Button btnSearchSegmentCode; 	// autoWire
+	protected Button btnSearchSegmentCode; // autoWire
 	protected Textbox lovDescSegmentCodeName;
-	
 
 	// ServiceDAOs / Domain Classes
 	private transient SubSegmentService subSegmentService;
@@ -120,9 +117,8 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SubSegment object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SubSegment object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -150,14 +146,12 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 				setSubSegment(null);
 			}
 
-			doLoadWorkFlow(this.subSegment.isWorkflow(),
-					this.subSegment.getWorkflowId(),
+			doLoadWorkFlow(this.subSegment.isWorkflow(), this.subSegment.getWorkflowId(),
 					this.subSegment.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SubSegmentDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SubSegmentDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -166,8 +160,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 			// or
 			// delete subSegment here.
 			if (arguments.containsKey("subSegmentListCtrl")) {
-				setSubSegmentListCtrl((SubSegmentListCtrl) arguments
-						.get("subSegmentListCtrl"));
+				setSubSegmentListCtrl((SubSegmentListCtrl) arguments.get("subSegmentListCtrl"));
 			} else {
 				setSubSegmentListCtrl(null);
 			}
@@ -190,7 +183,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 		this.segmentCode.setMaxlength(8);
 		this.subSegmentCode.setMaxlength(8);
 		this.subSegmentDesc.setMaxlength(50);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -199,15 +192,14 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SubSegmentDialog_btnNew"));
-		if(PennantConstants.CHANGE_SEGMENT){
+		if (PennantConstants.CHANGE_SEGMENT) {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SubSegmentDialog_btnEdit"));
 		}
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SubSegmentDialog_btnDelete"));
@@ -312,16 +304,17 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 		this.subSegmentCode.setValue(aSubSegment.getSubSegmentCode());
 		this.subSegmentDesc.setValue(aSubSegment.getSubSegmentDesc());
 		this.subSegmentIsActive.setChecked(aSubSegment.isSubSegmentIsActive());
-		
+
 		if (aSubSegment.isNewRecord()) {
 			this.lovDescSegmentCodeName.setValue("");
 		} else {
-			this.lovDescSegmentCodeName.setValue(aSubSegment.getSegmentCode() + "-" + aSubSegment.getLovDescSegmentCodeName());
+			this.lovDescSegmentCodeName
+					.setValue(aSubSegment.getSegmentCode() + "-" + aSubSegment.getLovDescSegmentCodeName());
 		}
-		
+
 		this.recordStatus.setValue(aSubSegment.getRecordStatus());
-		
-		if(aSubSegment.isNew() || StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, aSubSegment.getRecordType())){
+
+		if (aSubSegment.isNew() || StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, aSubSegment.getRecordType())) {
 			this.subSegmentIsActive.setChecked(true);
 			this.subSegmentIsActive.setDisabled(true);
 		}
@@ -378,8 +371,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSubSegment
 	 * @throws Exception
@@ -414,7 +406,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 			doWriteBeanToComponents(aSubSegment);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_SubSegmentDialog.onClose();
 		} catch (Exception e) {
@@ -429,13 +421,16 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		if (!this.subSegmentCode.isReadonly()){
-			this.subSegmentCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SubSegmentCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.subSegmentCode.isReadonly()) {
+			this.subSegmentCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SubSegmentCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.subSegmentDesc.isReadonly()){
-			this.subSegmentDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SubSegmentDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.subSegmentDesc.isReadonly()) {
+			this.subSegmentDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SubSegmentDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -457,7 +452,8 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSegmentCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SegmentCode.value"), null, true));
+		this.lovDescSegmentCodeName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_SubSegmentDialog_SegmentCode.value"), null, true));
 		logger.debug("Leaving");
 	}
 
@@ -483,7 +479,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a SubSegment object from database.<br>
 	 * 
@@ -496,8 +492,8 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aSubSegment.getSegmentCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aSubSegment.getSegmentCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSubSegment.getRecordType())) {
 				aSubSegment.setVersion(aSubSegment.getVersion() + 1);
@@ -545,7 +541,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 
 		this.subSegmentDesc.setReadonly(isReadOnly("SubSegmentDialog_subSegmentDesc"));
 		this.subSegmentIsActive.setDisabled(isReadOnly("SubSegmentDialog_subSegmentIsActive"));
-		if(PennantConstants.CHANGE_SEGMENT) {
+		if (PennantConstants.CHANGE_SEGMENT) {
 			this.btnSearchSegmentCode.setDisabled(isReadOnly("SubSegmentDialog_segmentCode"));
 		}
 		if (isWorkFlowEnabled()) {
@@ -707,10 +703,10 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 					}
 				}
 			}
-			
+
 			if (!StringUtils.isBlank(nextTaskId)) {
 				nextRoleCode = getFirstTaskOwner();
-				
+
 				String[] nextTasks = nextTaskId.split(";");
 
 				if (nextTasks != null && nextTasks.length > 0) {
@@ -802,8 +798,8 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SubSegmentDialog, auditHeader);
 						return processCompleted;
 					}
@@ -867,8 +863,8 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	 */
 	private AuditHeader getAuditHeader(SubSegment aSubSegment, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSubSegment.getBefImage(), aSubSegment);
-		return new AuditHeader(getReference(), null, null,
-				null, auditDetail, aSubSegment.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aSubSegment.getUserDetails(),
+				getOverideMap());
 
 	}
 
@@ -915,8 +911,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	 */
 	@Override
 	protected String getReference() {
-		return getSubSegment().getSubSegmentCode()+PennantConstants.KEY_SEPERATOR +
-					getSubSegment().getSegmentCode();
+		return getSubSegment().getSubSegmentCode() + PennantConstants.KEY_SEPERATOR + getSubSegment().getSegmentCode();
 	}
 
 	// ******************************************************//
@@ -926,6 +921,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -933,6 +929,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	public SubSegment getSubSegment() {
 		return this.subSegment;
 	}
+
 	public void setSubSegment(SubSegment subSegment) {
 		this.subSegment = subSegment;
 	}
@@ -940,6 +937,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	public void setSubSegmentService(SubSegmentService subSegmentService) {
 		this.subSegmentService = subSegmentService;
 	}
+
 	public SubSegmentService getSubSegmentService() {
 		return this.subSegmentService;
 	}
@@ -947,6 +945,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	public void setSubSegmentListCtrl(SubSegmentListCtrl subSegmentListCtrl) {
 		this.subSegmentListCtrl = subSegmentListCtrl;
 	}
+
 	public SubSegmentListCtrl getSubSegmentListCtrl() {
 		return this.subSegmentListCtrl;
 	}

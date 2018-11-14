@@ -64,8 +64,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FinMaintainInstruction</code> with
- * set of CRUD operations.
+ * Data access layer implementation for <code>FinMaintainInstruction</code> with set of CRUD operations.
  */
 
 public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstruction>

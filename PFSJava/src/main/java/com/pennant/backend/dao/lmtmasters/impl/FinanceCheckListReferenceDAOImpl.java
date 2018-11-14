@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,31 +74,31 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	public FinanceCheckListReferenceDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinanceCheckListReference 
+	 * This method set the Work Flow id based on the module name and return the new FinanceCheckListReference
+	 * 
 	 * @return FinanceCheckListReference
 	 */
 
 	@Override
 	public FinanceCheckListReference getFinanceCheckListReference() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("FinanceCheckListReference");
-		FinanceCheckListReference financeCheckListReference= new FinanceCheckListReference();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceCheckListReference");
+		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
+		if (workFlowDetails != null) {
 			financeCheckListReference.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return financeCheckListReference;
 	}
 
-
 	/**
-	 * This method get the module from method getFinanceCheckListReference()
-	 *  and set the new record flag as true and return FinanceCheckListReference()   
+	 * This method get the module from method getFinanceCheckListReference() and set the new record flag as true and
+	 * return FinanceCheckListReference()
+	 * 
 	 * @return FinanceCheckListReference
 	 */
-
 
 	@Override
 	public FinanceCheckListReference getNewFinanceCheckListReference() {
@@ -111,16 +110,17 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	}
 
 	/**
-	 * Fetch the Record  Finance Check List Details details by key field
+	 * Fetch the Record Finance Check List Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceCheckListReference
 	 */
 	@Override
-	public FinanceCheckListReference getFinanceCheckListReferenceById(final String id,long questionId
-			,long answer ,String type) {
+	public FinanceCheckListReference getFinanceCheckListReferenceById(final String id, long questionId, long answer,
+			String type) {
 		logger.debug("Entering");
 		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
 
@@ -131,7 +131,7 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		StringBuilder selectSql = new StringBuilder("Select FinReference, QuestionId, Answer,Remarks");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		selectSql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescQuesDesc, lovDescAnswerDesc ");
 		}
 		selectSql.append(" From FinanceCheckListRef");
@@ -141,12 +141,12 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeCheckListReference);
 		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinanceCheckListReference.class);
+				.newInstance(FinanceCheckListReference.class);
 
-		try{
-			financeCheckListReference = this.jdbcTemplate.queryForObject(selectSql.toString()
-					, beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			financeCheckListReference = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeCheckListReference = null;
 		}
@@ -155,42 +155,45 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	}
 
 	/**
-	 * Fetch the Record  Finance Check List Details details by key field
+	 * Fetch the Record Finance Check List Details details by key field
 	 * 
-	 * @param finReference (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param finReference
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceCheckListReference
 	 */
 	@Override
-	public List<FinanceCheckListReference> getCheckListByFinRef(final String finReference,String showStageCheckListIds, String type) {
+	public List<FinanceCheckListReference> getCheckListByFinRef(final String finReference, String showStageCheckListIds,
+			String type) {
 		logger.debug("Entering");
-		
+
 		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
 		financeCheckListReference.setId(finReference);
-		List<FinanceCheckListReference>  finCheckListRefList= null;
-		
+		List<FinanceCheckListReference> finCheckListRefList = null;
+
 		StringBuilder selectSql = new StringBuilder("Select FinReference, QuestionId, Answer,Remarks");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,lovDescQuesDesc, lovDescAnswerDesc ");
 		}
 		selectSql.append(" From FinanceCheckListRef");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference"); 
-		
-		if(StringUtils.isNotBlank(showStageCheckListIds)){
-			selectSql.append(" AND QuestionId IN("+showStageCheckListIds+") "); 
+		selectSql.append(" Where FinReference =:FinReference");
+
+		if (StringUtils.isNotBlank(showStageCheckListIds)) {
+			selectSql.append(" AND QuestionId IN(" + showStageCheckListIds + ") ");
 		}
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeCheckListReference);
-		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceCheckListReference.class);
+		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceCheckListReference.class);
 
-		try{
-			finCheckListRefList= this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);		
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			finCheckListRefList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finCheckListRefList = null;
 		}
@@ -199,19 +202,19 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	}
 
 	/**
-	 * This method Deletes the Record from the FinanceCheckListRef or FinanceCheckListRef_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Finance Check List Details by key FinReference
+	 * This method Deletes the Record from the FinanceCheckListRef or FinanceCheckListRef_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Finance Check List Details by key FinReference
 	 * 
-	 * @param Finance Check List Details (financeCheckListReference)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Check List Details (financeCheckListReference)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinanceCheckListReference financeCheckListReference,String type) {
+	public void delete(FinanceCheckListReference financeCheckListReference, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -221,22 +224,23 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeCheckListReference);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
-	 * This method deletes all the records with  finReference condition
+	 * This method deletes all the records with finReference condition
 	 */
-	public void delete(String  finReference,String type) {
+	public void delete(String finReference, String type) {
 		logger.debug("Entering");
-		FinanceCheckListReference financeCheckListReference=new FinanceCheckListReference();
+		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
 		financeCheckListReference.setFinReference(finReference);
 		StringBuilder deleteSql = new StringBuilder("Delete From FinanceCheckListRef");
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -251,21 +255,22 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	/**
 	 * This method insert new Records into FinanceCheckListRef or FinanceCheckListRef_Temp.
 	 *
-	 * save Finance Check List Details 
+	 * save Finance Check List Details
 	 * 
-	 * @param Finance Check List Details (financeCheckListReference)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Check List Details (financeCheckListReference)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public String save(FinanceCheckListReference financeCheckListReference,String type) {
+	public String save(FinanceCheckListReference financeCheckListReference, String type) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql =new StringBuilder("Insert Into FinanceCheckListRef");
+		StringBuilder insertSql = new StringBuilder("Insert Into FinanceCheckListRef");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, QuestionId, Answer,Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
@@ -283,30 +288,31 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	}
 
 	/**
-	 * This method updates the Record FinanceCheckListRef or FinanceCheckListRef_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Finance Check List Details by key FinReference and Version
+	 * This method updates the Record FinanceCheckListRef or FinanceCheckListRef_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Check List Details by key FinReference and Version
 	 * 
-	 * @param Finance Check List Details (financeCheckListReference)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Finance
+	 *            Check List Details (financeCheckListReference)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public void update(FinanceCheckListReference financeCheckListReference,String type) {
+	public void update(FinanceCheckListReference financeCheckListReference, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update FinanceCheckListRef");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update FinanceCheckListRef");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set Remarks=:Remarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId");
+		updateSql.append(
+				", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId");
 		updateSql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference AND QuestionId = :QuestionId AND Answer =:Answer");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 

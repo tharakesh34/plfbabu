@@ -45,7 +45,6 @@ import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
 public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 
 	private static final long serialVersionUID = 4783031677099154138L;
@@ -62,7 +61,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected Grid statusGrid;
 	protected Button btnDownload;
 	protected Label label_fileName;
-	
+
 	private Workbook workbook = null;
 	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
 	private FormulaEvaluator formulaEvaluator = null; // for cell value formating
@@ -88,125 +87,126 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	public void onCreate$window_FinFeeFactoreUpload(Event event) throws Exception {
 		// Store the before image.
-				UploadHeader uploadHeader = new UploadHeader();
-				BeanUtils.copyProperties(this.uploadHeader, uploadHeader);
-				this.uploadHeader.setBefImage(uploadHeader);
-				
-				// Render the page and display the data.
-				doLoadWorkFlow(this.uploadHeader.isWorkflow(), this.uploadHeader.getWorkflowId(), this.uploadHeader.getNextTaskId());
-				
-				if (isWorkFlowEnabled() && !enqiryModule) {
-					this.userAction = setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+		UploadHeader uploadHeader = new UploadHeader();
+		BeanUtils.copyProperties(this.uploadHeader, uploadHeader);
+		this.uploadHeader.setBefImage(uploadHeader);
+
+		// Render the page and display the data.
+		doLoadWorkFlow(this.uploadHeader.isWorkflow(), this.uploadHeader.getWorkflowId(),
+				this.uploadHeader.getNextTaskId());
+
+		if (isWorkFlowEnabled() && !enqiryModule) {
+			this.userAction = setListRecordStatus(this.userAction);
+			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
+		}
+
+		doSetFieldProperties();
+		doCheckRights();
+		doShowDialog(this.uploadHeader);
+
+		this.statusGrid.setVisible(false);
+		this.btnDownload.setVisible(false);
+	}
+
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
+	private void doSetFieldProperties() {
+		logger.debug("Entering");
+
+		this.statusGrid.setVisible(false);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set Visible for components by checking if there's a right for it.
+	 */
+	private void doCheckRights() {
+		logger.debug("Entering");
+
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+
+		//this.btnUpload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Browse"));
+		//this.btnRefresh.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
+		//this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Save"));
+		//this.btndownload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Report"));
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Displays the dialog page.
+	 * 
+	 * @param aAcademic
+	 *            The entity that need to be render.
+	 */
+	public void doShowDialog(UploadHeader uploadHeader) {
+		logger.debug("Entering");
+
+		// set ReadOnly mode accordingly if the object is new or not.
+		if (uploadHeader.isNew()) {
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+			this.txtFileName.focus();
+		} else {
+			if (isWorkFlowEnabled()) {
+				this.txtFileName.focus();
+				if (StringUtils.isNotBlank(uploadHeader.getRecordType())) {
+					this.btnNotes.setVisible(true);
 				}
-				
-				doSetFieldProperties();
-				doCheckRights();
-				doShowDialog(this.uploadHeader);
-				
-				this.statusGrid.setVisible(false);
-				this.btnDownload.setVisible(false);
+				doEdit();
+			} else {
+				//this.btnCtrl.setInitEdit();
+				//doReadOnly();
+				//btnCancel.setVisible(false);
 			}
+		}
 
-			/**
-			 * Set the properties of the fields, like maxLength.<br>
-			 */
-			private void doSetFieldProperties() {
-				logger.debug("Entering");
-				
-				this.statusGrid.setVisible(false);
+		if (enqiryModule) {
+			this.btnCtrl.setBtnStatus_Enquiry();
+		}
 
-				logger.debug("Leaving");
+		//setDialog(DialogType.EMBEDDED);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug("Entering");
+
+		if (this.uploadHeader.isNew()) {
+			this.btnUpload.setVisible(true);
+			this.btnUpload.setDisabled(false);
+		}
+		this.txtFileName.setReadonly(true);
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
-			/**
-			 * Set Visible for components by checking if there's a right for it.
-			 */
-			private void doCheckRights() {
-				logger.debug("Entering");
-				
-				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-				
-				//this.btnUpload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Browse"));
-				//this.btnRefresh.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
-				//this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Save"));
-				//this.btndownload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Report"));
-
-				logger.debug("Leaving");
+			if (this.uploadHeader.isNew()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-			
-			/**
-			 * Displays the dialog page.
-			 * 
-			 * @param aAcademic
-			 *            The entity that need to be render.
-			 */
-			public void doShowDialog(UploadHeader uploadHeader) {
-				logger.debug("Entering");
+		} else {
+			//this.btnCtrl.setBtnStatus_Edit();
+		}
 
-				// set ReadOnly mode accordingly if the object is new or not.
-				if (uploadHeader.isNew()) {
-					this.btnCtrl.setInitNew();
-					doEdit();
-					// setFocus
-					this.txtFileName.focus();
-				} else {
-					if (isWorkFlowEnabled()) {
-						this.txtFileName.focus();
-						if (StringUtils.isNotBlank(uploadHeader.getRecordType())) {
-							this.btnNotes.setVisible(true);
-						}
-						doEdit();
-					} else {
-						//this.btnCtrl.setInitEdit();
-						//doReadOnly();
-						//btnCancel.setVisible(false);
-					}
-				}
-				
-				if (enqiryModule) {
-					this.btnCtrl.setBtnStatus_Enquiry();
-				}
-				
-				//setDialog(DialogType.EMBEDDED);
+		logger.debug("Leaving ");
+	}
 
-				logger.debug("Leaving");
-			}
-			
-			/**
-			 * Set the components for edit mode. <br>
-			 */
-			private void doEdit() {
-				logger.debug("Entering");
-
-				if (this.uploadHeader.isNew()) {
-					this.btnUpload.setVisible(true);
-					this.btnUpload.setDisabled(false);
-				}
-				this.txtFileName.setReadonly(true);
-				if (isWorkFlowEnabled()) {
-					for (int i = 0; i < userAction.getItemCount(); i++) {
-						userAction.getItemAtIndex(i).setDisabled(false);
-					}
-					if (this.uploadHeader.isNew()) {
-						this.btnCtrl.setBtnStatus_Edit();
-						btnCancel.setVisible(false);
-					} else {
-						this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-					}
-				} else {
-					//this.btnCtrl.setBtnStatus_Edit();
-				}
-
-				logger.debug("Leaving ");
-			}
-	
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
-		
+
 		this.txtFileName.setConstraint("");
 		this.txtFileName.setErrorMessage("");
 
@@ -246,10 +246,10 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 			this.errorMsg = e.getMessage();
 			MessageUtil.showError(this.errorMsg);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * when the "Process" button is clicked. <br>
 	 * 
@@ -257,16 +257,16 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	public void onClick$btnDownload(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		String whereCond = "and FILENAME in (" + "'" + this.txtFileName.getValue() + "'" + ")";
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		searchCriteriaDesc.append("File Name is " + this.txtFileName.getValue());
-		
-		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "FeeFactoringExceptionReport",
-				whereCond, searchCriteriaDesc, this.window_FinFeeFactoreUpload, true);
+
+		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
+				"FeeFactoringExceptionReport", whereCond, searchCriteriaDesc, this.window_FinFeeFactoreUpload, true);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
@@ -315,7 +315,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 						uploadDetail.setFinReference("FINREF"); //FIXME default value
 					} else if (finReference.length() > 20) {
 						valid = false;
-						reason = "Expense Type Code : (" + finReference	+ ") length is exceeded, it should be lessthan or equal to 20.";
+						reason = "Expense Type Code : (" + finReference
+								+ ") length is exceeded, it should be lessthan or equal to 20.";
 						uploadDetail.setFinReference(finReference.substring(0, 20));
 					} else {
 						int count = this.uploadHeaderService.getFinanceCountById(finReference);
@@ -337,9 +338,11 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 					} else if (feeTypeCode.length() > 8) {
 						if (valid) {
 							valid = false;
-							reason = "Fee Type Code : (" + feeTypeCode + ") length is exceeded, it should be lessthan or equal to 8.";
+							reason = "Fee Type Code : (" + feeTypeCode
+									+ ") length is exceeded, it should be lessthan or equal to 8.";
 						} else {
-							reason = reason + "| Fee Type Code : (" + feeTypeCode + ") length is exceeded, it should be lessthan or equal to 8.";
+							reason = reason + "| Fee Type Code : (" + feeTypeCode
+									+ ") length is exceeded, it should be lessthan or equal to 8.";
 						}
 						uploadDetail.setFeeTypeCode(feeTypeCode.substring(0, 8));
 					} else {
@@ -413,20 +416,20 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		return uploadDetails;
 	}
-	
-	public List<String> getAllValuesOfRowByIndex(Workbook workbook , int sheetIndex, int rowindex) throws Exception {
+
+	public List<String> getAllValuesOfRowByIndex(Workbook workbook, int sheetIndex, int rowindex) throws Exception {
 		List<String> keys = new ArrayList<String>();
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		org.apache.poi.ss.usermodel.Row headings = sheet.getRow(rowindex);
-	
+
 		for (Cell cell : headings) {
-				formulaEvaluator.evaluate(cell);
-				String cellValueStr = objDefaultFormat.formatCellValue(cell, formulaEvaluator);
-				keys.add(cellValueStr.trim());
+			formulaEvaluator.evaluate(cell);
+			String cellValueStr = objDefaultFormat.formatCellValue(cell, formulaEvaluator);
+			keys.add(cellValueStr.trim());
 		}
 		return keys;
 	}
-	
+
 	/**
 	 * when the "refresh" button is clicked. <br>
 	 * 
@@ -435,32 +438,32 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		doResetData();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void doResetData() {
 		logger.debug(Literal.ENTERING);
-		
+
 		doRemoveValidation();
-		
+
 		this.txtFileName.setText("");
 		this.label_fileName.setValue("");
 		this.fileImport = null;
 		this.errorMsg = null;
-		
+
 		this.workbook = null;
 		this.objDefaultFormat = new DataFormatter();// for cell value formating
 		this.formulaEvaluator = null; // for cell value formating
-		
+
 		this.btnDownload.setVisible(false);
 		this.statusGrid.setVisible(false);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -476,11 +479,11 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.btnRefresh.setDisabled(true);
 
 		try {
-			
+
 			if (this.errorMsg != null) {
 				throw new Exception(this.errorMsg);
 			}
-			
+
 			doSave();
 
 		} catch (Exception e) {
@@ -500,22 +503,23 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
 				throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
 			} else {
 				boolean fileExist = this.uploadHeaderService.isFileNameExist(this.txtFileName.getValue());
 				if (fileExist) {
-					throw new WrongValueException(this.txtFileName, this.txtFileName.getValue() + ": file name already Exist.");
+					throw new WrongValueException(this.txtFileName,
+							this.txtFileName.getValue() + ": file name already Exist.");
 				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -523,7 +527,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -536,16 +540,17 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			if (this.workbook != null) {
 				if (this.workbook instanceof HSSFWorkbook) {
-					
+
 					this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) this.workbook);
 				} else {
 					this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
 				}
 				List<String> keys = getAllValuesOfRowByIndex(this.workbook, 0, 0);
-				
-				if (!keys.contains("Loan Reference") ) {
-					
-					throw new Exception("The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+
+				if (!keys.contains("Loan Reference")) {
+
+					throw new Exception(
+							"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
 				}
 				Sheet sheet = this.workbook.getSheetAt(0);
 				if (sheet.getPhysicalNumberOfRows() > 1) {
@@ -567,11 +572,11 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 						this.uploadHeaderService.saveFeeUploadDetails(uploadDetails);
 
 						for (UploadTaxPercent uploadDetail : uploadDetails) {
-							
+
 							int count = this.uploadHeaderService.getFinanceCountById(uploadDetail.getFinReference());
-							if(uploadDetail.getFeeTypeId() != Long.MIN_VALUE && count > 0){
-							uploadDetail.setTaxPercent(uploadDetail.getTaxPercent());
-							this.uploadHeaderService.updateTaxPercent(uploadDetail);
+							if (uploadDetail.getFeeTypeId() != Long.MIN_VALUE && count > 0) {
+								uploadDetail.setTaxPercent(uploadDetail.getTaxPercent());
+								this.uploadHeaderService.updateTaxPercent(uploadDetail);
 							}
 						}
 					}
@@ -586,7 +591,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 							uploadHeader.setFailedCount(expenseUpload.getCount());
 						}
 					}
-					
+
 					uploadHeader.setTotalRecords(totCount);
 					this.uploadHeaderService.updateRecordCounts(uploadHeader);
 

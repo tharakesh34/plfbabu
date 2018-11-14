@@ -65,11 +65,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>DispatchMode</b>.<br>
  * 
  */
-public class DispatchModeServiceImpl extends GenericService<DispatchMode>
-		implements DispatchModeService {
+public class DispatchModeServiceImpl extends GenericService<DispatchMode> implements DispatchModeService {
 
-	private static final Logger logger = Logger
-			.getLogger(DispatchModeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DispatchModeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DispatchModeDAO dispatchModeDAO;
@@ -77,7 +75,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	public DispatchModeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -99,15 +97,12 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTDispatchModes/BMTDispatchModes_Temp by using DispatchModeDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using DispatchModeDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTDispatchModes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTDispatchModes/BMTDispatchModes_Temp by using DispatchModeDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using DispatchModeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTDispatchModes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -123,8 +118,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 			return auditHeader;
 		}
 		String tableType = "";
-		DispatchMode dispatchMode = (DispatchMode) auditHeader.getAuditDetail()
-				.getModelData();
+		DispatchMode dispatchMode = (DispatchMode) auditHeader.getAuditDetail().getModelData();
 
 		if (dispatchMode.isWorkflow()) {
 			tableType = "_Temp";
@@ -143,12 +137,10 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTDispatchModes by using DispatchModeDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtBMTDispatchModes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTDispatchModes by using DispatchModeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTDispatchModes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,8 +156,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 			return auditHeader;
 		}
 
-		DispatchMode dispatchMode = (DispatchMode) auditHeader.getAuditDetail()
-				.getModelData();
+		DispatchMode dispatchMode = (DispatchMode) auditHeader.getAuditDetail().getModelData();
 		getDispatchModeDAO().delete(dispatchMode, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -174,8 +165,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * getDispatchModeById fetch the details by using DispatchModeDAO's
-	 * getDispatchModeById method.
+	 * getDispatchModeById fetch the details by using DispatchModeDAO's getDispatchModeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -189,9 +179,8 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * getApprovedDispatchModeById fetch the details by using DispatchModeDAO's
-	 * getDispatchModeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTDispatchModes.
+	 * getApprovedDispatchModeById fetch the details by using DispatchModeDAO's getDispatchModeById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BMTDispatchModes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -202,20 +191,15 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDispatchModeDAO().delete with parameters dispatchMode,"" b) NEW
-	 * Add new record in to main table by using getDispatchModeDAO().save with
-	 * parameters dispatchMode,"" c) EDIT Update record in the main table by
-	 * using getDispatchModeDAO().update with parameters dispatchMode,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getDispatchModeDAO().delete with parameters dispatchMode,"_Temp" 4) Audit
-	 * the record in to AuditHeader and AdtBMTDispatchModes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtBMTDispatchModes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDispatchModeDAO().delete with
+	 * parameters dispatchMode,"" b) NEW Add new record in to main table by using getDispatchModeDAO().save with
+	 * parameters dispatchMode,"" c) EDIT Update record in the main table by using getDispatchModeDAO().update with
+	 * parameters dispatchMode,"" 3) Delete the record from the workFlow table by using getDispatchModeDAO().delete with
+	 * parameters dispatchMode,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTDispatchModes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTDispatchModes
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -232,11 +216,9 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 		}
 
 		DispatchMode dispatchMode = new DispatchMode();
-		BeanUtils.copyProperties((DispatchMode) auditHeader.getAuditDetail()
-				.getModelData(), dispatchMode);
+		BeanUtils.copyProperties((DispatchMode) auditHeader.getAuditDetail().getModelData(), dispatchMode);
 
-		if (dispatchMode.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (dispatchMode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getDispatchModeDAO().delete(dispatchMode, "");
@@ -248,8 +230,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 			dispatchMode.setNextTaskId("");
 			dispatchMode.setWorkflowId(0);
 
-			if (dispatchMode.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (dispatchMode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				dispatchMode.setRecordType("");
 				getDispatchModeDAO().save(dispatchMode, "");
@@ -275,13 +256,10 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getDispatchModeDAO().delete with parameters
-	 * dispatchMode,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTDispatchModes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getDispatchModeDAO().delete with parameters dispatchMode,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtBMTDispatchModes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -296,8 +274,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 			return auditHeader;
 		}
 
-		DispatchMode dispatchMode = (DispatchMode) auditHeader.getAuditDetail()
-				.getModelData();
+		DispatchMode dispatchMode = (DispatchMode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getDispatchModeDAO().delete(dispatchMode, "_Temp");
@@ -309,20 +286,16 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -331,18 +304,16 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getDispatchModeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getDispatchModeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -350,20 +321,17 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 		DispatchMode tempDispatchMode = null;
 
 		if (dispatchMode.isWorkflow()) {
-			tempDispatchMode = getDispatchModeDAO().getDispatchModeById(
-					dispatchMode.getId(), "_Temp");
+			tempDispatchMode = getDispatchModeDAO().getDispatchModeById(dispatchMode.getId(), "_Temp");
 		}
 
-		DispatchMode befDispatchMode = getDispatchModeDAO()
-				.getDispatchModeById(dispatchMode.getId(), "");
+		DispatchMode befDispatchMode = getDispatchModeDAO().getDispatchModeById(dispatchMode.getId(), "");
 		DispatchMode oldDispatchMode = dispatchMode.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = dispatchMode.getDispatchModeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_DispatchModeCode") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_DispatchModeCode") + ":" + valueParm[0];
 
 		if (dispatchMode.isNew()) { // for New record or new record into work
 			// flow
@@ -372,27 +340,19 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 				// records
 				if (befDispatchMode != null) { // Record Already Exists in the
 					// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (dispatchMode.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (dispatchMode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befDispatchMode != null || tempDispatchMode != null) { // if
-															// records already exists
-															// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+						// records already exists
+						// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDispatchMode == null || tempDispatchMode != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -404,24 +364,17 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 
 				if (befDispatchMode == null) { // if records not exists in the
 					// main table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldDispatchMode != null
-							&& !oldDispatchMode.getLastMntOn().equals(
-									befDispatchMode.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldDispatchMode.getLastMntOn().equals(befDispatchMode.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -429,27 +382,17 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 
 				if (tempDispatchMode == null) { // if records not exists in the
 					// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempDispatchMode != null
-						&& oldDispatchMode != null
-						&& !oldDispatchMode.getLastMntOn().equals(
-								tempDispatchMode.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempDispatchMode != null && oldDispatchMode != null
+						&& !oldDispatchMode.getLastMntOn().equals(tempDispatchMode.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !dispatchMode.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !dispatchMode.isWorkflow()) {
 			auditDetail.setBefImage(befDispatchMode);
 		}
 

@@ -12,7 +12,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 public class ReferenceID implements Serializable {
 
 	private static final long serialVersionUID = 1183720618731771888L;
-	private List <FinanceType> finTypes = new ArrayList<FinanceType>(1);
+	private List<FinanceType> finTypes = new ArrayList<FinanceType>(1);
 	private long manualAdviseID = 333;
 	private long excessID = 0;
 	private long excessMovementID = 0;
@@ -20,7 +20,7 @@ public class ReferenceID implements Serializable {
 	private long repayID = 0;
 	private long receiptAlocID = 0;
 	private Date appDate = DateUtility.getAppDate();
-	private List <FeeTypeVsGLMapping> feeVsGLList = new ArrayList<FeeTypeVsGLMapping>(1);
+	private List<FeeTypeVsGLMapping> feeVsGLList = new ArrayList<FeeTypeVsGLMapping>(1);
 	private long linkedTranID = 0;
 	private int tranOrder = 0;
 	private String account;
@@ -32,7 +32,7 @@ public class ReferenceID implements Serializable {
 	private BigDecimal odcReceived = BigDecimal.ZERO;
 	private BigDecimal bounceReceived = BigDecimal.ZERO;
 	private BigDecimal totalBankAmount = BigDecimal.ZERO;
-	
+
 	public long getManualAdviseID() {
 		return manualAdviseID;
 	}
@@ -81,19 +81,19 @@ public class ReferenceID implements Serializable {
 		this.appDate = appDate;
 	}
 
-	public List <FinanceType> getFinTypes() {
+	public List<FinanceType> getFinTypes() {
 		return finTypes;
 	}
 
-	public void setFinTypes(List <FinanceType> finTypes) {
+	public void setFinTypes(List<FinanceType> finTypes) {
 		this.finTypes = finTypes;
 	}
 
-	public List <FeeTypeVsGLMapping> getFeeVsGLList() {
+	public List<FeeTypeVsGLMapping> getFeeVsGLList() {
 		return feeVsGLList;
 	}
 
-	public void setFeeVsGLList(List <FeeTypeVsGLMapping> feeVsGLList) {
+	public void setFeeVsGLList(List<FeeTypeVsGLMapping> feeVsGLList) {
 		this.feeVsGLList = feeVsGLList;
 	}
 

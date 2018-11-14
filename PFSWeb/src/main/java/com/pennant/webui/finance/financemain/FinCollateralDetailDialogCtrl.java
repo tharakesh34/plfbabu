@@ -91,57 +91,54 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/FinCollateralDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinCollateralDetailDialog.zul file.
  */
 public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	private static final long serialVersionUID = -6959194080451993569L;
 	private static final Logger logger = Logger.getLogger(FinCollateralDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_FinCollateralDetailDialog; 
+	protected Window window_FinCollateralDetailDialog;
 
-	protected Borderlayout borderlayoutFinCollateralDetail; 
+	protected Borderlayout borderlayoutFinCollateralDetail;
 	// Finance Collaterals Details Tab
-	protected Label 			finType; 				
-	protected Label 			finReference; 			
-	protected Label 			custID; 				
-	protected Label 			finAmount; 				
-	protected Combobox 			collateralType; 		
+	protected Label finType;
+	protected Label finReference;
+	protected Label custID;
+	protected Label finAmount;
+	protected Combobox collateralType;
 
-	protected Groupbox 			gb_fdDetails; 			
-	protected Textbox 			FDReference; 			
-	protected Textbox 			FDCurrency; 			
-	protected Decimalbox 		FDAmount;				
-	protected Intbox 			FDTenor; 				
-	protected Decimalbox 		FDRate; 				
-	protected Datebox 			FDStartDate; 			
-	protected Datebox 			FDMaturityDate; 		
-	protected Textbox 			fdRemarks;
+	protected Groupbox gb_fdDetails;
+	protected Textbox FDReference;
+	protected Textbox FDCurrency;
+	protected Decimalbox FDAmount;
+	protected Intbox FDTenor;
+	protected Decimalbox FDRate;
+	protected Datebox FDStartDate;
+	protected Datebox FDMaturityDate;
+	protected Textbox fdRemarks;
 
-	protected Groupbox 			gb_pdcDetails;
-	protected Textbox 			pdcReference;
-	protected Textbox 			beneficiaryName;
-	protected ExtendedCombobox 	bankName;
-	protected Textbox 			firstChequeNbr;
-	protected Textbox 			lastChequeNbr;
-	protected Textbox 			pdcStatus;
-	protected Textbox 			pdcRemarks;
-	protected Button 			btnVerifyCheque;
-	
-	private String 				roleCode = "";
-	private FinanceMain 		financeMain = null;
-				
+	protected Groupbox gb_pdcDetails;
+	protected Textbox pdcReference;
+	protected Textbox beneficiaryName;
+	protected ExtendedCombobox bankName;
+	protected Textbox firstChequeNbr;
+	protected Textbox lastChequeNbr;
+	protected Textbox pdcStatus;
+	protected Textbox pdcRemarks;
+	protected Button btnVerifyCheque;
+
+	private String roleCode = "";
+	private FinanceMain financeMain = null;
 
 	private transient String oldVar_firstChequeNbr;
 	private transient String oldVar_lastChequeNbr;
@@ -151,15 +148,14 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 	private FinCollaterals finCollateral = null;
 	private transient boolean validationOn;
-	
+
 	private boolean newRecord = false;
 	private boolean newFinCollateral = false;
 	private String moduleType = "";
-	
-	private FinCollateralHeaderDialogCtrl 	 finCollateralHeaderDialogCtrl;
-	private DepositInterfaceService			 depositInterfaceService;
-	private ChequeVerifyInterfaceService 	 chequeVerifyInterfaceService;
 
+	private FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl;
+	private DepositInterfaceService depositInterfaceService;
+	private ChequeVerifyInterfaceService chequeVerifyInterfaceService;
 
 	/**
 	 * default constructor.<br>
@@ -175,11 +171,10 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -192,15 +187,13 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 		try {
 			if (arguments.containsKey("finCollateralDetail")) {
-				this.finCollateral = (FinCollaterals) arguments
-						.get("finCollateralDetail");
+				this.finCollateral = (FinCollaterals) arguments.get("finCollateralDetail");
 				setFinCollateral(finCollateral);
 			}
 
 			if (arguments.containsKey("financeMain")) {
 				this.financeMain = (FinanceMain) arguments.get("financeMain");
 			}
-			
 
 			if (arguments.containsKey("roleCode")) {
 				this.roleCode = (String) arguments.get("roleCode");
@@ -216,7 +209,8 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 			if (arguments.containsKey("finCollateralHeaderDialogCtrl")) {
 
-				setFinCollateralHeaderDialogCtrl((FinCollateralHeaderDialogCtrl) arguments.get("finCollateralHeaderDialogCtrl"));
+				setFinCollateralHeaderDialogCtrl(
+						(FinCollateralHeaderDialogCtrl) arguments.get("finCollateralHeaderDialogCtrl"));
 				setNewFinCollateral(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -225,14 +219,13 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 					setNewRecord(false);
 				}
 				this.finCollateral.setWorkflowId(0);
-				if(arguments.containsKey("roleCode")){
+				if (arguments.containsKey("roleCode")) {
 					setRole((String) arguments.get("roleCode"));
 					getUserWorkspace().allocateRoleAuthorities(getRole(), "FinCollateralDetailsDialog");
 				}
 			}
 
-			doLoadWorkFlow(this.finCollateral.isWorkflow(),
-					this.finCollateral.getWorkflowId(),
+			doLoadWorkFlow(this.finCollateral.isWorkflow(), this.finCollateral.getWorkflowId(),
 					this.finCollateral.getNextTaskId());
 
 			/* set components visible dependent of the users rights */
@@ -240,8 +233,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"FinCollateralDetailsDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinCollateralDetailsDialog");
 			}
 
 			// set Field Properties
@@ -283,21 +275,15 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FinCollateralDetailsDialog",
-				this.roleCode);
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_FinCollateralDetailsDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_FinCollateralDetailsDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_FinCollateralDetailsDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_FinCollateralDetailsDialog_btnSave"));
+		getUserWorkspace().allocateAuthorities("FinCollateralDetailsDialog", this.roleCode);
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinCollateralDetailsDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinCollateralDetailsDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinCollateralDetailsDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinCollateralDetailsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -378,12 +364,12 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
-		
+
 		doWriteBeanToComponents(this.finCollateral.getBefImage());
 		doReadOnly();
-		
+
 		this.btnCtrl.setInitEdit();
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -396,13 +382,12 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	public void doWriteBeanToComponents(FinCollaterals finCollaterals) {
 
 		logger.debug("Entering");
-		fillComboBox(this.collateralType, finCollaterals.getCollateralType(),
-				collateralList, "");
+		fillComboBox(this.collateralType, finCollaterals.getCollateralType(), collateralList, "");
 		showDetails();
-		
+
 		this.FDCurrency.setValue(finCollaterals.getCcy());
-		this.FDAmount.setValue(PennantAppUtil.formateAmount(finCollaterals
-				.getCoverage(), CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+		this.FDAmount.setValue(PennantAppUtil.formateAmount(finCollaterals.getCoverage(),
+				CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		this.FDTenor.setValue(finCollaterals.getTenor());
 		this.FDRate.setValue(finCollaterals.getRate());
 		this.FDStartDate.setValue(finCollaterals.getStartDate());
@@ -414,8 +399,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		this.lastChequeNbr.setValue(finCollaterals.getLastChequeNo());
 		this.pdcStatus.setValue(finCollaterals.getStatus());
 
-		if (StringUtils.equals(finCollaterals.getCollateralType(),
-				FinanceConstants.COLLATERAL_FIXEDDEPOSIT)) {
+		if (StringUtils.equals(finCollaterals.getCollateralType(), FinanceConstants.COLLATERAL_FIXEDDEPOSIT)) {
 			this.FDReference.setValue(finCollaterals.getReference());
 			this.fdRemarks.setValue(finCollaterals.getRemarks());
 		} else {
@@ -439,7 +423,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		try {
 			if (!this.collateralType.isDisabled() && "#".equals(getComboboxValue(this.collateralType))) {
 				throw new WrongValueException(this.collateralType, Labels.getLabel("STATIC_INVALID",
-								new String[] { Labels.getLabel("label_FinCollateralDetailDialog_CollateralType.value") }));
+						new String[] { Labels.getLabel("label_FinCollateralDetailDialog_CollateralType.value") }));
 			}
 			finCollaterals.setCollateralType(getComboboxValue(this.collateralType));
 		} catch (WrongValueException we) {
@@ -459,15 +443,15 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			}
 
 			try {
-				finCollaterals.setValue(PennantAppUtil.unFormateAmount(
-						this.FDAmount.getValue(), CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+				finCollaterals.setValue(PennantAppUtil.unFormateAmount(this.FDAmount.getValue(),
+						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				finCollaterals.setCoverage(PennantAppUtil.unFormateAmount(
-						this.FDAmount.getValue(), CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+				finCollaterals.setCoverage(PennantAppUtil.unFormateAmount(this.FDAmount.getValue(),
+						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -506,12 +490,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
-			/*try {
-				finCollaterals.setReference((this.beneficiaryName.getValue()));
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}*/
+
+			/*
+			 * try { finCollaterals.setReference((this.beneficiaryName.getValue())); } catch (WrongValueException we) {
+			 * wve.add(we); }
+			 */
 
 			try {
 				finCollaterals.setBankName(this.bankName.getValue());
@@ -542,7 +525,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 		}
 
 		doRemoveValidation();
@@ -561,8 +544,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinCollateral
 	 * @throws Exception
@@ -623,31 +605,31 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		doClearMessage();
 
 		if (gb_fdDetails.isVisible() && !this.FDReference.isReadonly()) {
-			this.FDReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_FDReference.value"), null, true));
-			this.fdRemarks.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_Remarks.value"), null, true));
+			this.FDReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_FDReference.value"), null, true));
+			this.fdRemarks.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_Remarks.value"), null, true));
 		}
 		if (gb_pdcDetails.isVisible() && !this.pdcReference.isReadonly()) {
-			this.pdcReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_PDCReference.value"), null, true));
-			
-			this.pdcRemarks.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_Remarks.value"), null, true));
-			
-			this.bankName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_BankName.value"), null, true));
-			
-			if(!this.pdcStatus.isReadonly()){
-				this.pdcStatus.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinCollateralDetailDialog_pdcStatus.value"), null, true));
+			this.pdcReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_PDCReference.value"), null, true));
+
+			this.pdcRemarks.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_Remarks.value"), null, true));
+
+			this.bankName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_BankName.value"), null, true));
+
+			if (!this.pdcStatus.isReadonly()) {
+				this.pdcStatus.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinCollateralDetailDialog_pdcStatus.value"), null, true));
 			}
-			
-			this.firstChequeNbr.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_FirstChequeNbr.value"), null, true));
-			
-			this.lastChequeNbr.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCollateralDetailDialog_LastChequeNbr.value"), null, true));
+
+			this.firstChequeNbr.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_FirstChequeNbr.value"), null, true));
+
+			this.lastChequeNbr.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCollateralDetailDialog_LastChequeNbr.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -668,7 +650,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 	/**
 	 * Method to clear error messages.
-	 * */
+	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -705,8 +687,8 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			fieldName = Labels.getLabel("label_FinCollateralDetailDialog_PDCReference.value");
 		}
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				fieldName +" : "+aFinCollaterals.getReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ fieldName + " : " + aFinCollaterals.getReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinCollaterals.getRecordType())) {
 				aFinCollaterals.setVersion(aFinCollaterals.getVersion() + 1);
@@ -723,15 +705,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			try {
 				if (isNewFinCollateral()) {
 					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCollateralProcess(
-							aFinCollaterals, tranType);
-					auditHeader = ErrorControl.showErrorDetails(
-							this.window_FinCollateralDetailDialog, auditHeader);
+					AuditHeader auditHeader = newCollateralProcess(aFinCollaterals, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_FinCollateralDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE
-							|| retValue == PennantConstants.porcessOVERIDE) {
-						getFinCollateralHeaderDialogCtrl()
-								.doFillCollateralDetails(this.finCollateralList);
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						getFinCollateralHeaderDialogCtrl().doFillCollateralDetails(this.finCollateralList);
 						closeDialog();
 					}
 
@@ -750,10 +728,8 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		logger.debug("Entering");
 		if (isNewRecord()) {
 			this.collateralType.setDisabled(isReadOnly("FinCollateralDetailsDialog_collateralType"));
-			this.FDReference
-			.setReadonly(isReadOnly("FinCollateralDetailsDialog_fdReference"));
-			this.pdcReference
-			.setReadonly(isReadOnly("FinCollateralDetailsDialog_pdcReference"));
+			this.FDReference.setReadonly(isReadOnly("FinCollateralDetailsDialog_fdReference"));
+			this.pdcReference.setReadonly(isReadOnly("FinCollateralDetailsDialog_pdcReference"));
 			if (isNewFinCollateral()) {
 				this.btnCancel.setVisible(false);
 			}
@@ -763,8 +739,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			this.pdcReference.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
-		this.collateralType
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_collateralType"));		
+		this.collateralType.setReadonly(isReadOnly("FinCollateralDetailsDialog_collateralType"));
 		this.FDCurrency.setReadonly(true);
 		this.FDAmount.setReadonly(true);
 		this.FDTenor.setReadonly(true);
@@ -773,21 +748,14 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		this.FDStartDate.setButtonVisible(false);
 		this.FDMaturityDate.setReadonly(true);
 		this.FDMaturityDate.setButtonVisible(false);
-		this.fdRemarks
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_fdRemarks"));
+		this.fdRemarks.setReadonly(isReadOnly("FinCollateralDetailsDialog_fdRemarks"));
 
-		this.beneficiaryName
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_beneficiaryName"));
-		this.bankName
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_bankName"));
-		this.firstChequeNbr
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_firstChequeNbr"));
-		this.lastChequeNbr
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_lastChequeNbr"));
-		this.pdcStatus
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_pdcStatus"));
-		this.pdcRemarks
-				.setReadonly(isReadOnly("FinCollateralDetailsDialog_pdcRemarks"));
+		this.beneficiaryName.setReadonly(isReadOnly("FinCollateralDetailsDialog_beneficiaryName"));
+		this.bankName.setReadonly(isReadOnly("FinCollateralDetailsDialog_bankName"));
+		this.firstChequeNbr.setReadonly(isReadOnly("FinCollateralDetailsDialog_firstChequeNbr"));
+		this.lastChequeNbr.setReadonly(isReadOnly("FinCollateralDetailsDialog_lastChequeNbr"));
+		this.pdcStatus.setReadonly(isReadOnly("FinCollateralDetailsDialog_pdcStatus"));
+		this.pdcRemarks.setReadonly(isReadOnly("FinCollateralDetailsDialog_pdcRemarks"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -875,10 +843,10 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 		// Write the additional validations as per below example
 		// Do data level validations here
-		
+
 		// Validate cheque range
 		doRevalidateChequeRange();
-		
+
 		isNew = aFinCollaterals.isNew();
 		String tranType = "";
 
@@ -887,8 +855,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			if (StringUtils.isBlank(aFinCollaterals.getRecordType())) {
 				aFinCollaterals.setVersion(aFinCollaterals.getVersion() + 1);
 				if (isNew) {
-					aFinCollaterals
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aFinCollaterals.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					aFinCollaterals.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aFinCollaterals.setNewRecord(true);
@@ -910,12 +877,9 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 					aFinCollaterals.setNewRecord(true);
 				}
 
-				if (aFinCollaterals.getRecordType().equals(
-						PennantConstants.RCD_ADD)
-						&& isNewRecord()) {
+				if (aFinCollaterals.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
 					tranType = PennantConstants.TRAN_ADD;
-				} else if (aFinCollaterals.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (aFinCollaterals.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
@@ -932,15 +896,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		// save it to database
 		try {
 			if (isNewFinCollateral()) {
-				AuditHeader auditHeader = newCollateralProcess(aFinCollaterals,
-						tranType);
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_FinCollateralDetailDialog, auditHeader);
+				AuditHeader auditHeader = newCollateralProcess(aFinCollaterals, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinCollateralDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE
-						|| retValue == PennantConstants.porcessOVERIDE) {
-					getFinCollateralHeaderDialogCtrl().doFillCollateralDetails(
-							this.finCollateralList);
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getFinCollateralHeaderDialogCtrl().doFillCollateralDetails(this.finCollateralList);
 					closeDialog();
 				}
 			}
@@ -957,17 +917,17 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 */
 	private void doRevalidateChequeRange() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		doClearMessage();
 		boolean dataChanged = false;
-		if(!StringUtils.equals(this.firstChequeNbr.getValue(), this.oldVar_firstChequeNbr)) {
+		if (!StringUtils.equals(this.firstChequeNbr.getValue(), this.oldVar_firstChequeNbr)) {
 			dataChanged = true;
 		}
-		
-		if(!StringUtils.equals(this.lastChequeNbr.getValue(), this.oldVar_lastChequeNbr)) {
+
+		if (!StringUtils.equals(this.lastChequeNbr.getValue(), this.oldVar_lastChequeNbr)) {
 			dataChanged = true;
 		}
-		if(dataChanged) {
+		if (dataChanged) {
 			if (MessageUtil.confirm(Labels.getLabel("CHEQUE_REVALIDATE")) == MessageUtil.YES) {
 				this.pdcStatus.setValue("");
 				return;
@@ -979,8 +939,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader newCollateralProcess(FinCollaterals aFinCollaterals,
-			String tranType) {
+	private AuditHeader newCollateralProcess(FinCollaterals aFinCollaterals, String tranType) {
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = getAuditHeader(aFinCollaterals, tranType);
@@ -991,53 +950,39 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 		valueParm[0] = aFinCollaterals.getCollateralType();
 		valueParm[1] = StringUtils.trimToEmpty(aFinCollaterals.getReference());
-		errParm[0] = PennantJavaUtil.getLabel("label_FinCollateralType") + ":"
-				+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_FDReference") + ":"
-				+ valueParm[1];
-		
+		errParm[0] = PennantJavaUtil.getLabel("label_FinCollateralType") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_FDReference") + ":" + valueParm[1];
 
 		if (getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList() != null
-				&& getFinCollateralHeaderDialogCtrl()
-						.getFinCollateralDetailsList().size() > 0) {
-			for (int i = 0; i < getFinCollateralHeaderDialogCtrl()
-					.getFinCollateralDetailsList().size(); i++) {
-				FinCollaterals finCollateral = getFinCollateralHeaderDialogCtrl()
-						.getFinCollateralDetailsList().get(i);
+				&& getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList().size() > 0) {
+			for (int i = 0; i < getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList().size(); i++) {
+				FinCollaterals finCollateral = getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList().get(i);
 
-				if (StringUtils.equals(finCollateral.getReference(),
-						aFinCollaterals.getReference())) { // Both Current and Existing list are having same record.
+				if (StringUtils.equals(finCollateral.getReference(), aFinCollaterals.getReference())) { // Both Current and Existing list are having same record.
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if (PennantConstants.RECORD_TYPE_UPD.equals(
-								aFinCollaterals.getRecordType())) {
-							aFinCollaterals
-									.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aFinCollaterals.getRecordType())) {
+							aFinCollaterals.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded = true;
 							finCollateralList.add(aFinCollaterals);
-						} else if (PennantConstants.RCD_ADD.equals(
-								aFinCollaterals.getRecordType())) {
-							recordAdded=true;
-						} else if (PennantConstants.RECORD_TYPE_NEW.equals(
-								aFinCollaterals.getRecordType())) {
-							aFinCollaterals
-									.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+						} else if (PennantConstants.RCD_ADD.equals(aFinCollaterals.getRecordType())) {
+							recordAdded = true;
+						} else if (PennantConstants.RECORD_TYPE_NEW.equals(aFinCollaterals.getRecordType())) {
+							aFinCollaterals.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 							recordAdded = true;
 							finCollateralList.add(aFinCollaterals);
-						} else if (PennantConstants.RECORD_TYPE_CAN.equals(
-								aFinCollaterals.getRecordType())) {
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aFinCollaterals.getRecordType())) {
 							recordAdded = true;
 						}
 					} else {
-						if ( !PennantConstants.TRAN_UPD.equals(tranType)) {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							finCollateralList.add(finCollateral);
 						}
 					}
@@ -1061,14 +1006,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(FinCollaterals aFinCollaterals,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aFinCollaterals.getBefImage(), aFinCollaterals);
+	private AuditHeader getAuditHeader(FinCollaterals aFinCollaterals, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinCollaterals.getBefImage(), aFinCollaterals);
 
-		return new AuditHeader(getReference(), String.valueOf(aFinCollaterals
-				.getCollateralSeq()), null, null, auditDetail,
-				aFinCollaterals.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aFinCollaterals.getCollateralSeq()), null, null,
+				auditDetail, aFinCollaterals.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1082,10 +1024,8 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(
-					this.window_FinCollateralDetailDialog, auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_FinCollateralDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1109,16 +1049,15 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		showDetails();
 		logger.debug("Leaving");
 	}
-	
-	private void showDetails(){
+
+	private void showDetails() {
 		logger.debug("Entering");
 		doClearMessage();
 		gb_fdDetails.setVisible(false);
 		this.gb_pdcDetails.setVisible(false);
 		clearValues();
 		if (this.collateralType.getSelectedIndex() != 0) {
-			String repayMthd = StringUtils.trimToEmpty(this.collateralType
-					.getSelectedItem().getValue().toString());
+			String repayMthd = StringUtils.trimToEmpty(this.collateralType.getSelectedItem().getValue().toString());
 			if (repayMthd.equals(FinanceConstants.COLLATERAL_FIXEDDEPOSIT)) {
 				this.gb_fdDetails.setVisible(true);
 				this.gb_pdcDetails.setVisible(false);
@@ -1149,12 +1088,12 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		this.pdcRemarks.setValue("");
 	}
 
-	public void onChange$FDReference(Event event) throws InterruptedException, WrongValueException, 
-														InterfaceException, ParseException {
+	public void onChange$FDReference(Event event)
+			throws InterruptedException, WrongValueException, InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		FinCollaterals finCollaterals = null;
-		
+
 		// Fetch Deposit Details from T24 interface
 		try {
 			if (!StringUtils.isBlank(this.FDReference.getValue())) {
@@ -1164,7 +1103,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			if (finCollaterals != null) {
 				this.FDReference.clearErrorMessage();
 				this.FDCurrency.setValue(finCollaterals.getCcy());
-				this.FDAmount.setValue(PennantAppUtil.formateAmount(finCollaterals.getValue(), 
+				this.FDAmount.setValue(PennantAppUtil.formateAmount(finCollaterals.getValue(),
 						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 				this.FDTenor.setValue(finCollaterals.getTenor());
 				this.FDRate.setValue(finCollaterals.getRate());
@@ -1180,7 +1119,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void clearDepositDetails() {
 		this.FDCurrency.setValue("");
 		this.FDAmount.setText("");
@@ -1199,18 +1138,18 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * @throws InterfaceException
 	 * @throws ParseException
 	 */
-	public void onClick$btnVerifyCheque(Event event) throws InterruptedException, WrongValueException, 
-			InterfaceException, ParseException {
+	public void onClick$btnVerifyCheque(Event event)
+			throws InterruptedException, WrongValueException, InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		// Validate the mandatory fields
 		if (StringUtils.isBlank(this.firstChequeNbr.getValue())) {
 			throw new WrongValueException(this.firstChequeNbr, Labels.getLabel("FIELD_IS_MAND",
-							new String[] { Labels.getLabel("label_FinCollateralDetailDialog_FirstChequeNbr.value") }));
+					new String[] { Labels.getLabel("label_FinCollateralDetailDialog_FirstChequeNbr.value") }));
 		}
 		if (StringUtils.isBlank(this.lastChequeNbr.getValue())) {
 			throw new WrongValueException(this.lastChequeNbr, Labels.getLabel("FIELD_IS_MAND",
-							new String[] { Labels.getLabel("label_FinCollateralDetailDialog_LastChequeNbr.value") }));
+					new String[] { Labels.getLabel("label_FinCollateralDetailDialog_LastChequeNbr.value") }));
 		}
 
 		// Verify Customer cheque details by sending request to middleware
@@ -1219,26 +1158,26 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 			if (chequeVerifyResponse != null) {
 				if (StringUtils.equals(chequeVerifyResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-					
+
 					this.pdcStatus.setValue("Valid range of cheques");
 					this.oldVar_firstChequeNbr = this.firstChequeNbr.getValue();
 					this.oldVar_lastChequeNbr = this.lastChequeNbr.getValue();
-					
+
 				} else {
 					if (chequeVerifyResponse.getChequeStsList() != null) {
-						
+
 						StringBuilder chkStatus = new StringBuilder();
-						
+
 						for (ChequeStatus chequeStatus : chequeVerifyResponse.getChequeStsList()) {
 							if (!StringUtils.isBlank(chkStatus.toString())) {
 								chkStatus.append(PennantConstants.DELIMITER_COMMA);
 							}
-							
+
 							chkStatus.append(chequeStatus.getChequeNo());
 							chkStatus.append("-");
 							chkStatus.append(chequeStatus.getValidity());
 						}
-						
+
 						// setting response status into status field
 						MessageUtil.showError(chkStatus.toString());
 						return;
@@ -1248,7 +1187,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 					}
 				}
 			} else {
-				throw new InterfaceException("PTI3001",	Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
+				throw new InterfaceException("PTI3001", Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
 			}
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
@@ -1276,15 +1215,16 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		chequeVerification.setChequeRangeTo(this.lastChequeNbr.getValue());
 
 		String remarks = this.pdcRemarks.getValue();
-		if(!StringUtils.isBlank(remarks) && remarks.length() > 50) {
+		if (!StringUtils.isBlank(remarks) && remarks.length() > 50) {
 			remarks = remarks.substring(0, 49);
 		}
 		chequeVerification.setRemarks(remarks);
 		chequeVerification.setBranchCode(custBranchCode);
 
 		// Send Cheque verification request to middleware
-		ChequeVerification chequeVerifyResponse = getChequeVerifyInterfaceService().verifySecurityCheque(chequeVerification);
-		
+		ChequeVerification chequeVerifyResponse = getChequeVerifyInterfaceService()
+				.verifySecurityCheque(chequeVerification);
+
 		logger.debug("Leaving");
 		return chequeVerifyResponse;
 	}
@@ -1294,8 +1234,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 */
 	@Override
 	protected String getReference() {
-		return getFinCollateral().getCollateralSeq()
-				+ PennantConstants.KEY_SEPERATOR
+		return getFinCollateral().getCollateralSeq() + PennantConstants.KEY_SEPERATOR
 				+ getFinCollateral().getFinReference();
 	}
 
@@ -1339,8 +1278,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		return finCollateralHeaderDialogCtrl;
 	}
 
-	public void setFinCollateralHeaderDialogCtrl(
-			FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl) {
+	public void setFinCollateralHeaderDialogCtrl(FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl) {
 		this.finCollateralHeaderDialogCtrl = finCollateralHeaderDialogCtrl;
 	}
 
@@ -1351,21 +1289,20 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
 	}
-	
+
 	public DepositInterfaceService getDepositInterfaceService() {
 		return depositInterfaceService;
 	}
 
-	public void setDepositInterfaceService(
-			DepositInterfaceService depositInterfaceService) {
+	public void setDepositInterfaceService(DepositInterfaceService depositInterfaceService) {
 		this.depositInterfaceService = depositInterfaceService;
 	}
+
 	public ChequeVerifyInterfaceService getChequeVerifyInterfaceService() {
 		return chequeVerifyInterfaceService;
 	}
 
-	public void setChequeVerifyInterfaceService(
-			ChequeVerifyInterfaceService chequeVerifyInterfaceService) {
+	public void setChequeVerifyInterfaceService(ChequeVerifyInterfaceService chequeVerifyInterfaceService) {
 		this.chequeVerifyInterfaceService = chequeVerifyInterfaceService;
 	}
 

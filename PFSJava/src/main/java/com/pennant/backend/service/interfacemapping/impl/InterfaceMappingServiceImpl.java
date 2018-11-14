@@ -67,11 +67,11 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping> implements InterfaceMappingService {
-	private static final Logger	logger	= Logger.getLogger(InterfaceMappingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(InterfaceMappingServiceImpl.class);
 
-	private InterfaceMappingDAO	interfaceMappingDAO;
-	private AuditHeaderDAO		auditHeaderDAO;
-	private MasterMappingDAO    masterMappingDao;
+	private InterfaceMappingDAO interfaceMappingDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private MasterMappingDAO masterMappingDao;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -88,15 +88,15 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		String tableType = "";
 		InterfaceMapping interfaceMapping = (InterfaceMapping) auditHeader.getAuditDetail().getModelData();
 
@@ -111,20 +111,20 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 		} else {
 			getInterfaceMappingDAO().update(interfaceMapping, tableType);
 		}
-		
+
 		//master mapping
 		if (interfaceMapping.getMasterMappingList() != null && interfaceMapping.getMasterMappingList().size() > 0) {
 			List<AuditDetail> details = interfaceMapping.getLovDescAuditDetailMap().get("MasterMapping");
 			details = processingMasterMappingList(details, tableType, interfaceMapping.getId());
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
@@ -140,14 +140,16 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	@Override
 	public InterfaceMapping getInterfaceMappingById(long id) {
 		InterfaceMapping interfaceMapping = getInterfaceMappingDAO().getInterfaceMappingById(id, "_View");
-		
-		/*if (interfaceMapping != null && StringUtils.equalsIgnoreCase(interfaceMapping.getMappingType(), CollectionConstants.INTERFACEMAPPING_MASTER)) {
-			interfaceMapping.setMasterMappingList(this.masterMappingDao.getMasterMappingDetails(interfaceMapping.getId(), "_View"));
-		}*/
-		
+
+		/*
+		 * if (interfaceMapping != null && StringUtils.equalsIgnoreCase(interfaceMapping.getMappingType(),
+		 * CollectionConstants.INTERFACEMAPPING_MASTER)) {
+		 * interfaceMapping.setMasterMappingList(this.masterMappingDao.getMasterMappingDetails(interfaceMapping.getId(),
+		 * "_View")); }
+		 */
+
 		return interfaceMapping;
 	}
-
 
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
@@ -162,7 +164,7 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -171,12 +173,13 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 
 		InterfaceMapping interfaceMapping = (InterfaceMapping) auditHeader.getAuditDetail().getModelData();
 		getInterfaceMappingDAO().delete(interfaceMapping, "");
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(interfaceMapping, "", auditHeader.getAuditTranType())));
-		
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(interfaceMapping, "", auditHeader.getAuditTranType())));
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
@@ -198,11 +201,11 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
-		String tranType="";
+
+		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
-		auditHeader = businessValidation(auditHeader,"doApprove");
+
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -211,9 +214,9 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 		BeanUtils.copyProperties((InterfaceMapping) auditHeader.getAuditDetail().getModelData(), interfaceMapping);
 
 		if (interfaceMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
-			getInterfaceMappingDAO().delete(interfaceMapping,"");
-			auditDetails.addAll(listDeletion(interfaceMapping, "",auditHeader.getAuditTranType()));
+			tranType = PennantConstants.TRAN_DEL;
+			getInterfaceMappingDAO().delete(interfaceMapping, "");
+			auditDetails.addAll(listDeletion(interfaceMapping, "", auditHeader.getAuditTranType()));
 
 		} else {
 			interfaceMapping.setRoleCode("");
@@ -223,22 +226,22 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 			interfaceMapping.setWorkflowId(0);
 
 			if (interfaceMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				interfaceMapping.setRecordType("");
-				getInterfaceMappingDAO().save(interfaceMapping,"");
+				getInterfaceMappingDAO().save(interfaceMapping, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				interfaceMapping.setRecordType("");
-				getInterfaceMappingDAO().update(interfaceMapping,"");
+				getInterfaceMappingDAO().update(interfaceMapping, "");
 			}
 		}
 
-		getInterfaceMappingDAO().delete(interfaceMapping,"_Temp");
+		getInterfaceMappingDAO().delete(interfaceMapping, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
-	
+
 		//Retrieving List of Audit Details For checkList details modules
-		
+
 		if (!interfaceMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			if (interfaceMapping.getMasterMappingList() != null && interfaceMapping.getMasterMappingList().size() > 0) {
 				List<AuditDetail> details = interfaceMapping.getLovDescAuditDetailMap().get("MasterMapping");
@@ -246,14 +249,15 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 				auditDetails.addAll(details);
 			}
 		}
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(interfaceMapping, "_Temp",auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(interfaceMapping, "_Temp", auditHeader.getAuditTranType())));
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(interfaceMapping);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
-		logger.debug("Leaving");		
+
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
@@ -271,7 +275,7 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -281,60 +285,60 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getInterfaceMappingDAO().delete(interfaceMapping, "_Temp");
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(interfaceMapping
-				, "_Temp",auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(interfaceMapping, "_Temp", auditHeader.getAuditTranType())));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
-	/** 
+	/**
 	 * Common Method for CheckList list validation
+	 * 
 	 * @param list
 	 * @param method
 	 * @param userDetails
 	 * @param lastMntON
 	 * @return
 	 */
-	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list){
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
 		logger.debug("Entering");
-	
-		List<AuditDetail> auditDetailsList =new ArrayList<AuditDetail>();
+
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
 		if (list != null && list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 
-				String transType="";
+				String transType = "";
 				String rcdType = "";
-				MasterMapping masterMapping = (MasterMapping) ((AuditDetail)list.get(i)).getModelData();			
+				MasterMapping masterMapping = (MasterMapping) ((AuditDetail) list.get(i)).getModelData();
 				rcdType = masterMapping.getRecordType();
 
 				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
-					transType= PennantConstants.TRAN_ADD;
-				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType) || 
-						PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
-					transType= PennantConstants.TRAN_DEL;
-				}else{
-					transType= PennantConstants.TRAN_UPD;
+					transType = PennantConstants.TRAN_ADD;
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType)
+						|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
+					transType = PennantConstants.TRAN_DEL;
+				} else {
+					transType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isNotEmpty(transType)){
+				if (StringUtils.isNotEmpty(transType)) {
 					//check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail)list.get(i)).getAuditSeq(),
+					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
 							masterMapping.getBefImage(), masterMapping));
 				}
 			}
 		}
-	
+
 		logger.debug("Leaving");
-		
+
 		return auditDetailsList;
 	}
 
-	
 	/**
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
@@ -345,41 +349,43 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
 	/**
 	 * Common Method for Retrieving AuditDetails List
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private AuditHeader getAuditDetails(AuditHeader auditHeader,String method ){
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 		InterfaceMapping interfacemapping = (InterfaceMapping) auditHeader.getAuditDetail().getModelData();
 
-		String auditTranType="";
+		String auditTranType = "";
 
-		if("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method) ){
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (interfacemapping.isWorkflow()) {
-				auditTranType= PennantConstants.TRAN_WF;
+				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
-		if(interfacemapping.getMasterMappingList()!=null && interfacemapping.getMasterMappingList().size()>0){
-			auditDetailMap.put("MasterMapping", setInterfaceMappingDetailAuditData(interfacemapping,auditTranType,method));
+		if (interfacemapping.getMasterMappingList() != null && interfacemapping.getMasterMappingList().size() > 0) {
+			auditDetailMap.put("MasterMapping",
+					setInterfaceMappingDetailAuditData(interfacemapping, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("MasterMapping"));
 		}
 
@@ -389,23 +395,25 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
 	 * @param educationalLoan
 	 * @param auditTranType
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setInterfaceMappingDetailAuditData(InterfaceMapping interfaceMapping,String auditTranType,String method) {
+	private List<AuditDetail> setInterfaceMappingDetailAuditData(InterfaceMapping interfaceMapping,
+			String auditTranType, String method) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new MasterMapping(),new MasterMapping().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new MasterMapping(), new MasterMapping().getExcludeFields());
 
 		for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
-			MasterMapping masterMapping  = interfaceMapping.getMasterMappingList().get(i);
-			
+			MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
+
 			// Skipping the process of current iteration when the child was not modified to avoid unnecessary processing
 			if (StringUtils.isEmpty(masterMapping.getRecordType())) {
 				continue;
@@ -414,17 +422,17 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 			masterMapping.setWorkflowId(interfaceMapping.getWorkflowId());
 			masterMapping.setInterfaceMappingId(interfaceMapping.getInterfaceMappingId());
 
-			boolean isRcdType= false;
+			boolean isRcdType = false;
 
 			if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				masterMapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType=true;
-			}else if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				isRcdType = true;
+			} else if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				masterMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				if (interfaceMapping.isWorkflow()) {
-					isRcdType=true;
-                }
-			}else if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					isRcdType = true;
+				}
+			} else if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				masterMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
@@ -432,14 +440,14 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 				masterMapping.setNewRecord(true);
 			}
 
-			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType= PennantConstants.TRAN_ADD;
+					auditTranType = PennantConstants.TRAN_ADD;
 				} else if (masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 						|| masterMapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType= PennantConstants.TRAN_DEL;
-				}else{
-					auditTranType= PennantConstants.TRAN_UPD;
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
@@ -447,76 +455,82 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 			masterMapping.setUserDetails(interfaceMapping.getUserDetails());
 			masterMapping.setLastMntOn(interfaceMapping.getLastMntOn());
 			masterMapping.setLastMntBy(interfaceMapping.getLastMntBy());
-			auditDetails.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], masterMapping.getBefImage(), masterMapping));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], masterMapping.getBefImage(),
+					masterMapping));
 		}
-		
+
 		logger.debug("Leaving ");
 		return auditDetails;
 	}
-	
+
 	/**
 	 * Method deletion of MasterMapping list with existing fee type
+	 * 
 	 * @param fee
 	 * @param tableType
 	 */
 	public List<AuditDetail> listDeletion(InterfaceMapping interfaceMapping, String tableType, String auditTranType) {
 		logger.debug("Entering ");
-		
+
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		
-		if(interfaceMapping.getMasterMappingList()!=null && interfaceMapping.getMasterMappingList().size()>0){
-			
-			List<MasterMapping>  masterMappingList = this.masterMappingDao.getMasterMappingDetails(interfaceMapping.getInterfaceMappingId(), tableType);
-		
+
+		if (interfaceMapping.getMasterMappingList() != null && interfaceMapping.getMasterMappingList().size() > 0) {
+
+			List<MasterMapping> masterMappingList = this.masterMappingDao
+					.getMasterMappingDetails(interfaceMapping.getInterfaceMappingId(), tableType);
+
 			if (masterMappingList != null && !masterMappingList.isEmpty()) {
-				
+
 				String[] fields = PennantJavaUtil.getFieldDetails(new MasterMapping());
 
 				for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
-					
+
 					MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
-					
+
 					if (!StringUtils.isEmpty(masterMapping.getRecordType()) || StringUtils.isEmpty(tableType)) {
-						auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], masterMapping.getBefImage(), masterMapping));
+						auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+								masterMapping.getBefImage(), masterMapping));
 					}
 				}
 
 				getMasterMappingDao().delete(interfaceMapping.getInterfaceMappingId(), tableType);
 			}
 		}
-		
+
 		logger.debug("Leaving ");
 		return auditList;
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Educational expenses
+	 * 
 	 * @param auditDetails
 	 * @param type
 	 * @param custId
 	 * @return
 	 */
-	private List<AuditDetail> processingMasterMappingList(List<AuditDetail> auditDetails, String type,long interfaceId) {
+	private List<AuditDetail> processingMasterMappingList(List<AuditDetail> auditDetails, String type,
+			long interfaceId) {
 		logger.debug("Entering ");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
-		boolean approveRec=false;
+		boolean approveRec = false;
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			MasterMapping mastermapping = (MasterMapping) auditDetails.get(i).getModelData();
 			saveRecord = false;
 			updateRecord = false;
-			deleteRecord = false;                                                                                                      
-			approveRec=false;
-			String rcdType ="";	
-			String recordStatus ="";
-			 
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+
 			mastermapping.setInterfaceMappingId(interfaceId);
 			if (StringUtils.isEmpty(type)) {
-				approveRec=true;
-				mastermapping.setVersion(mastermapping.getVersion()+1);
+				approveRec = true;
+				mastermapping.setVersion(mastermapping.getVersion() + 1);
 				mastermapping.setRoleCode("");
 				mastermapping.setNextRoleCode("");
 				mastermapping.setTaskId("");
@@ -526,37 +540,37 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 			mastermapping.setWorkflowId(0);
 
 			if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord=true;
-			}else  if(mastermapping.isNewRecord()){
-				saveRecord=true;
+				deleteRecord = true;
+			} else if (mastermapping.isNewRecord()) {
+				saveRecord = true;
 				if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					mastermapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);	
+					mastermapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					mastermapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					mastermapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			}else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if(approveRec){
-					saveRecord=true;
-				}else{
-					updateRecord=true;
+			} else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
-			}else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord=true;
-			}else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if(approveRec){
-					deleteRecord=true;
-				}else if(mastermapping.isNew()){
-					saveRecord=true;
-				}else {
-					updateRecord=true;
+			} else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (mastermapping.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
 				}
 			}
 
-			if(approveRec){
-				rcdType= mastermapping.getRecordType();
+			if (approveRec) {
+				rcdType = mastermapping.getRecordType();
 				recordStatus = mastermapping.getRecordStatus();
 				mastermapping.setRecordType("");
 				mastermapping.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -575,19 +589,18 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 				getMasterMappingDao().delete(mastermapping, type);
 			}
 
-			if(approveRec){
+			if (approveRec) {
 				mastermapping.setRecordType(rcdType);
 				mastermapping.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(mastermapping);
 		}
-		
+
 		logger.debug("Leaving ");
-		
-		return auditDetails;	
+
+		return auditDetails;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param auditDetail
@@ -600,27 +613,26 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 
 		// Get the model object.
 		InterfaceMapping interfaceMapping = (InterfaceMapping) auditDetail.getModelData();
-		
-		
+
 		String[] parameters = new String[2];
 		parameters[0] = PennantJavaUtil.getLabel("label_InterfaceName") + ": " + interfaceMapping.getInterfaceName();
 		parameters[1] = PennantJavaUtil.getLabel("label_InterfaceField") + ": " + interfaceMapping.getInterfaceField();
-		
-		
+
 		// Check the unique keys.
 		if (interfaceMapping.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(interfaceMapping.getRecordType())
-				&& interfaceMappingDAO.isDuplicateKey(interfaceMapping,interfaceMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				&& interfaceMappingDAO.isDuplicateKey(interfaceMapping,
+						interfaceMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditDetail;
 	}
-	
+
 	@Override
 	public List<String> getTableNameColumnsList(String tableName) {
 		return getInterfaceMappingDAO().getTableNameColumnsList(tableName);
@@ -630,7 +642,7 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	public List<String> getMappings(String tableName, String columnName) {
 		return this.masterMappingDao.getMappings(tableName, columnName);
 	}
-	
+
 	// Getters And Setters 
 
 	public InterfaceMappingDAO getInterfaceMappingDAO() {
@@ -648,7 +660,6 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
 
 	public MasterMappingDAO getMasterMappingDao() {
 		return masterMappingDao;

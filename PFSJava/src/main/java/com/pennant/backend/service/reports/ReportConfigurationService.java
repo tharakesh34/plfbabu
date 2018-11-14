@@ -40,7 +40,8 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */package com.pennant.backend.service.reports;
+ */
+package com.pennant.backend.service.reports;
 
 import java.util.Date;
 import java.util.List;
@@ -51,27 +52,37 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
 
-
-
 public interface ReportConfigurationService {
-	
+
 	ReportConfiguration getReportConfiguration();
+
 	ReportConfiguration getNewReportConfiguration();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ReportConfiguration getReportConfigurationById(long id);
+
 	ReportConfiguration getApprovedReportConfigurationById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	void saveOrUpdateSearchTemplate(List<ReportSearchTemplate> aReportSearchTemplateList, boolean isNew);
-	Map<Object, List<ReportSearchTemplate>> getTemplatesByReportID(long reportId,long usrId);	
-	int getRecordCountByTemplateName(long reportId,long usrId,String templateName);
+
+	Map<Object, List<ReportSearchTemplate>> getTemplatesByReportID(long reportId, long usrId);
+
+	int getRecordCountByTemplateName(long reportId, long usrId, String templateName);
+
 	boolean deleteSearchTemplate(long reportId, long usrId, String templateName);
-	
+
 	//Month End Report Queries
 	List<ValueLabel> getMonthEndReportGrpCodes();
+
 	List<ValueLabel> getReportListByGrpCode(String grpCode);
-	
+
 	//GST Invoice Report
 	boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate);
 }

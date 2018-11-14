@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_FinanceReferenceDetailDialog" border="normal" apply="${financeReferenceDetailDialogCtrl}" width="100%" height="100%" sizable="false">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_FinanceReferenceDetailDialog" border="normal" apply="${financeReferenceDetailDialogCtrl}"
+		width="100%" height="100%" sizable="false">
 		<borderlayout id="borderlayoutFinanceReferenceDetail">
 			<north>
 				<div sclass="z-toolbar">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
@@ -22,8 +29,10 @@
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -49,14 +58,10 @@
 									<label id="lovDescFinTypeDescName" value="" />
 								</row>
 								<row id="row_finEvent">
-									<label
-										id="label_FinanceReferenceDetailDialog_FinEvent"
-										value="${c:l('label_FinanceReferenceDetailDialog_FinEvent.value')}" />
+									<label id="label_FinanceReferenceDetailDialog_FinEvent" value="${c:l('label_FinanceReferenceDetailDialog_FinEvent.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
-										<combobox id="finEvent" disabled="true"
-											width="180px" />
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="finEvent" disabled="true" width="180px" />
 									</hbox>
 								</row>
 								<row visible="false">
@@ -135,17 +140,26 @@
 												<toolbar align="center" sclass="toolbar-center"></toolbar>
 												<!-- CRUD BUTTONS -->
 												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinanceCheckList" label="${c:l('label_New')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNew_FinanceCheckList" tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
+													<button id="btnNew_FinanceCheckList" label="${c:l('label_New')}"
+														autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnNew_FinanceCheckList"
+														tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxFinanceCheckList" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxFinanceCheckList" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_FinanceCheckList_QuestionId" label="${c:l('listheader_FinanceCheckList_QuestionId.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_FinanceCheckList_QuestionDesc" label="${c:l('listheader_FinanceCheckList_QuestionDesc.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_FinanceCheckList_Active" label="${c:l('listheader_FinanceCheckList_Active.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_FinanceCheckList_RecordStatus" label="${c:l('listheader_FinanceCheckList_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceCheckList_RecordType" label="${c:l('listheader_FinanceCheckList_RecordType.label')}" sort="false" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceCheckList_QuestionId" label="${c:l('listheader_FinanceCheckList_QuestionId.label')}"
+													sort="false" hflex="min" />
+												<listheader id="listheader_FinanceCheckList_QuestionDesc" label="${c:l('listheader_FinanceCheckList_QuestionDesc.label')}"
+													sort="false" hflex="min" />
+												<listheader id="listheader_FinanceCheckList_Active" label="${c:l('listheader_FinanceCheckList_Active.label')}"
+													sort="false" hflex="min" />
+												<listheader id="listheader_FinanceCheckList_RecordStatus" label="${c:l('listheader_FinanceCheckList_RecordStatus.label')}"
+													sort="false" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceCheckList_RecordType" label="${c:l('listheader_FinanceCheckList_RecordType.label')}"
+													sort="false" hflex="min" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -161,19 +175,27 @@
 												</toolbar>
 												<toolbar align="center" sclass="toolbar-center" />
 												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinanceAgreementLink" label="${c:l('label_New')}" tooltiptext="${c:l('button_NewFinanceAgreementLink.tooltiptext')}" />
+													<button id="btnNew_FinanceAgreementLink" label="${c:l('label_New')}"
+														tooltiptext="${c:l('button_NewFinanceAgreementLink.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listboxFinanceAgreementLink" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listboxFinanceAgreementLink" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_AggId" label="${c:l('listheader_AgreementDef_AggId.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_AggCode" label="${c:l('listheader_AgreementDef_AggCode.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_AggId" label="${c:l('listheader_AgreementDef_AggId.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_AggCode" label="${c:l('listheader_AgreementDef_AggCode.label')}" sort="auto"
+													hflex="min" />
 												<listheader id="listheader_AggName" label="${c:l('listheader_AggName.label')}" sort="auto" hflex="min" />
 												<listheader id="listheader_AggDesc" label="${c:l('listheader_AggDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceAgreementActive" label="${c:l('listheader_FinanceAgreementActive.label')}" hflex="min"></listheader>
-												<listheader id="listheader_AgreementRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceAgreementOperation" label="${c:l('listheader_FinanceAgreementOperation.label')}" hflex="min" visible="false"></listheader>
+												<listheader id="listheader_FinanceAgreementActive" label="${c:l('listheader_FinanceAgreementActive.label')}"
+													hflex="min"></listheader>
+												<listheader id="listheader_AgreementRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+													sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceAgreementOperation" label="${c:l('listheader_FinanceAgreementOperation.label')}"
+													hflex="min" visible="false"></listheader>
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -187,19 +209,29 @@
 												</toolbar>
 												<toolbar align="center" sclass="toolbar-center" />
 												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinanceEligibilityLink" label="${c:l('label_New')}" tooltiptext="${c:l('button_NewFFinanceEligibilityLink.tooltiptext')}" />
+													<button id="btnNew_FinanceEligibilityLink" label="${c:l('label_New')}"
+														tooltiptext="${c:l('button_NewFFinanceEligibilityLink.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxEligibilityRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxEligibilityRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_ElgRuleId" label="${c:l('listheader_ElgRuleId.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_ElgRuleSource" label="${c:l('listheader_ElgRuleSource.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_ElgRuleCode" label="${c:l('listheader_ElgRuleCode.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_ElgRuleDesc" label="${c:l('listheader_ElgRuleDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceEligibilityActive" label="${c:l('listheader_FinanceAgreementActive.label')}" hflex="min"></listheader>
-												<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_ElgRuleId" label="${c:l('listheader_ElgRuleId.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_ElgRuleSource" label="${c:l('listheader_ElgRuleSource.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader id="listheader_ElgRuleCode" label="${c:l('listheader_ElgRuleCode.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_ElgRuleDesc" label="${c:l('listheader_ElgRuleDesc.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_FinanceEligibilityActive" label="${c:l('listheader_FinanceAgreementActive.label')}"
+													hflex="min"></listheader>
+												<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+													hflex="min" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -220,19 +252,28 @@
 															</toolbar>
 															<toolbar align="center" sclass="toolbar-center" />
 															<toolbar align="end" sclass="toolbar-end">
-																<button id="btnNew_FinanceScoringGroup" label="${c:l('label_New')}" tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
+																<button id="btnNew_FinanceScoringGroup" label="${c:l('label_New')}"
+																	tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
 															</toolbar>
 														</hbox>
 													</div>
-													<listbox id="listBoxScoringGroup" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+													<listbox id="listBoxScoringGroup" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+														sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+														multiple="false">
 														<listhead sizable="true">
 															<listheader id="label_ScoreGroupId" label="${c:l('label_ScoreGroupId')}" sort="auto" hflex="min" />
-															<listheader id="listheader_ScoreGroupCode" label="${c:l('listheader_ScoreGroupCode.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_ScoreGroupName" label="${c:l('listheader_ScoreGroupName.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_MinScore" label="${c:l('listheader_MinScore.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_FinanceScoringGroupActive" label="${c:l('listheader_FinanceAgreementActive.label')}" hflex="min"></listheader>
-															<listheader id="listheader_sRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_sRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_ScoreGroupCode" label="${c:l('listheader_ScoreGroupCode.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_ScoreGroupName" label="${c:l('listheader_ScoreGroupName.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_MinScore" label="${c:l('listheader_MinScore.label')}" sort="auto"
+																hflex="min" visible="false" />
+															<listheader id="listheader_FinanceScoringGroupActive" label="${c:l('listheader_FinanceAgreementActive.label')}"
+																hflex="min"></listheader>
+															<listheader id="listheader_sRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_sRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+																hflex="min" visible="false" />
 														</listhead>
 													</listbox>
 												</groupbox>
@@ -246,19 +287,29 @@
 															</toolbar>
 															<toolbar align="center" sclass="toolbar-center" />
 															<toolbar align="end" sclass="toolbar-end">
-																<button id="btnNew_FinCorpScoringGroup" label="${c:l('label_New')}" tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
+																<button id="btnNew_FinCorpScoringGroup" label="${c:l('label_New')}"
+																	tooltiptext="${c:l('button_New_FinanceScoringGroup.tooltiptext')}" />
 															</toolbar>
 														</hbox>
 													</div>
-													<listbox id="listBoxCorpScoringGroup" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+													<listbox id="listBoxCorpScoringGroup" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+														sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+														multiple="false">
 														<listhead sizable="true">
-															<listheader id="label_CorpScoreGroupId" label="${c:l('label_ScoreGroupId')}" sort="auto" hflex="min" />
-															<listheader id="listheader_CorpScoreGroupCode" label="${c:l('listheader_ScoreGroupCode.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_CorpScoreGroupName" label="${c:l('listheader_ScoreGroupName.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_CorpMinScore" label="${c:l('listheader_MinScore.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_CorpFinanceScoringGroupActive" label="${c:l('listheader_FinanceAgreementActive.label')}" hflex="min"></listheader>
-															<listheader id="listheader_csRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_csRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															<listheader id="label_CorpScoreGroupId" label="${c:l('label_ScoreGroupId')}" sort="auto"
+																hflex="min" />
+															<listheader id="listheader_CorpScoreGroupCode" label="${c:l('listheader_ScoreGroupCode.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_CorpScoreGroupName" label="${c:l('listheader_ScoreGroupName.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_CorpMinScore" label="${c:l('listheader_MinScore.label')}" sort="auto"
+																hflex="min" visible="false" />
+															<listheader id="listheader_CorpFinanceScoringGroupActive" label="${c:l('listheader_FinanceAgreementActive.label')}"
+																hflex="min"></listheader>
+															<listheader id="listheader_csRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_csRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+																hflex="min" visible="false" />
 														</listhead>
 													</listbox>
 												</groupbox>
@@ -275,19 +326,29 @@
 												</toolbar>
 												<toolbar align="center" sclass="toolbar-center" />
 												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinanceAdvanceAccounting" label="${c:l('label_New')}" tooltiptext="${c:l('button_NewFinanceAdvanceAccountingLink.tooltiptext')}" />
+													<button id="btnNew_FinanceAdvanceAccounting" label="${c:l('label_New')}"
+														tooltiptext="${c:l('button_NewFinanceAdvanceAccountingLink.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxAccounts" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxAccounts" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_FinanceEventId" label="${c:l('listheader_FinanceEventId.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceEventName" label="${c:l('listheader_FinanceEventName.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceEventCode" label="${c:l('listheader_FinanceEventCode.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceEventDesc" label="${c:l('listheader_FinanceEventDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceAccountActive" sort="auto" label="${c:l('listheader_FinanceAccountActive.label')}" hflex="min" />
-												<listheader id="listheader_aRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_aRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceEventId" label="${c:l('listheader_FinanceEventId.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceEventName" label="${c:l('listheader_FinanceEventName.label')}"
+													sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceEventCode" label="${c:l('listheader_FinanceEventCode.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceEventDesc" label="${c:l('listheader_FinanceEventDesc.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceAccountActive" sort="auto"
+													label="${c:l('listheader_FinanceAccountActive.label')}" hflex="min" />
+												<listheader id="listheader_aRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader id="listheader_aRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+													hflex="min" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -301,19 +362,29 @@
 												</toolbar>
 												<toolbar align="center" sclass="toolbar-center" />
 												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinanceMailTemplate" label="${c:l('label_New')}" tooltiptext="${c:l('button_NewFinanceMailTemplateLink.tooltiptext')}" />
+													<button id="btnNew_FinanceMailTemplate" label="${c:l('label_New')}"
+														tooltiptext="${c:l('button_NewFinanceMailTemplateLink.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxTemplates" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxTemplates" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
-												<listheader id="listheader_FinanceTemplateId" label="${c:l('listheader_FinanceTemplateId.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceTemplateCode1" label="${c:l('listheader_FinanceTemplateCode.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceTemplateCode" label="${c:l('listheader_FinanceTemplateCode.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceTemplateDesc" label="${c:l('listheader_FinanceTemplateDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceTemplateActive" sort="auto" label="${c:l('listheader_FinanceTemplateActive.label')}" hflex="min" />
-												<listheader id="listheader_tRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_tRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceTemplateId" label="${c:l('listheader_FinanceTemplateId.label')}"
+													sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceTemplateCode1" label="${c:l('listheader_FinanceTemplateCode.label')}"
+													sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_FinanceTemplateCode" label="${c:l('listheader_FinanceTemplateCode.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceTemplateDesc" label="${c:l('listheader_FinanceTemplateDesc.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceTemplateActive" sort="auto"
+													label="${c:l('listheader_FinanceTemplateActive.label')}" hflex="min" />
+												<listheader id="listheader_tRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader id="listheader_tRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+													hflex="min" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -331,15 +402,23 @@
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxDedupRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxDedupRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
 												<listheader sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_DedupeOverride" label="${c:l('listheader_DedupeOverride.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_DedupRuleCode" label="${c:l('listheader_DedupRuleCode.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_DedupRuleDesc" label="${c:l('listheader_DedupRuleDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceDedupeActive" label="${c:l('listheader_FinanceDedupeActive.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FDRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FDRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_DedupeOverride" label="${c:l('listheader_DedupeOverride.label')}"
+													sort="auto" hflex="min" visible="false" />
+												<listheader id="listheader_DedupRuleCode" label="${c:l('listheader_DedupRuleCode.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_DedupRuleDesc" label="${c:l('listheader_DedupRuleDesc.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_FinanceDedupeActive" label="${c:l('listheader_FinanceDedupeActive.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FDRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader id="listheader_FDRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+													hflex="min" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -366,15 +445,23 @@
 															</toolbar>
 														</hbox>
 													</div>
-													<listbox id="listBoxCustDedupRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+													<listbox id="listBoxCustDedupRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+														sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+														multiple="false">
 														<listhead sizable="true">
 															<listheader sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_CustDedupeOverride" label="${c:l('listheader_CustDedupeOverride.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_CustDedupRuleCode" label="${c:l('listheader_CustDedupRuleCode.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_CustDedupRuleDesc" label="${c:l('listheader_CustDedupRuleDesc.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_CustDedupeActive" label="${c:l('listheader_CustDedupeActive.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_CDRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_CDRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_CustDedupeOverride" label="${c:l('listheader_CustDedupeOverride.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_CustDedupRuleCode" label="${c:l('listheader_CustDedupRuleCode.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_CustDedupRuleDesc" label="${c:l('listheader_CustDedupRuleDesc.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_CustDedupeActive" label="${c:l('listheader_CustDedupeActive.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_CDRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_CDRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+																hflex="min" visible="false" />
 														</listhead>
 													</listbox>
 												</groupbox>
@@ -392,15 +479,23 @@
 															</toolbar>
 														</hbox>
 													</div>
-													<listbox id="listBoxBlackListRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+													<listbox id="listBoxBlackListRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+														sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+														multiple="false">
 														<listhead sizable="true">
 															<listheader sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_BlackListOverride" label="${c:l('listheader_BlackListOverride.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_BlackListRuleCode" label="${c:l('listheader_BlackListRuleCode.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_BlackListRuleDesc" label="${c:l('listheader_BlackListRuleDesc.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_BlackListActive" label="${c:l('listheader_BlackListActive.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_BLRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_BLRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_BlackListOverride" label="${c:l('listheader_BlackListOverride.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_BlackListRuleCode" label="${c:l('listheader_BlackListRuleCode.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_BlackListRuleDesc" label="${c:l('listheader_BlackListRuleDesc.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_BlackListActive" label="${c:l('listheader_BlackListActive.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_BLRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_BLRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+																hflex="min" visible="false" />
 														</listhead>
 													</listbox>
 												</groupbox>
@@ -418,15 +513,23 @@
 															</toolbar>
 														</hbox>
 													</div>
-													<listbox id="listBoxPoliceRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+													<listbox id="listBoxPoliceRules" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+														sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+														multiple="false">
 														<listhead sizable="true">
 															<listheader sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_PoliceOverride" label="${c:l('listheader_PoliceOverride.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_PoliceRuleCode" label="${c:l('listheader_PoliceRuleCode.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_PoliceRuleDesc" label="${c:l('listheader_PoliceRuleDesc.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_PoliceActive" label="${c:l('listheader_PoliceActive.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_PCRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_PCRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_PoliceOverride" label="${c:l('listheader_PoliceOverride.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_PoliceRuleCode" label="${c:l('listheader_PoliceRuleCode.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_PoliceRuleDesc" label="${c:l('listheader_PoliceRuleDesc.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_PoliceActive" label="${c:l('listheader_PoliceActive.label')}" sort="auto"
+																hflex="min" />
+															<listheader id="listheader_PCRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_PCRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+																hflex="min" visible="false" />
 														</listhead>
 													</listbox>
 												</groupbox>
@@ -444,15 +547,23 @@
 															</toolbar>
 														</hbox>
 													</div>
-													<listbox id="listBoxReturnCheques" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+													<listbox id="listBoxReturnCheques" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+														sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+														multiple="false">
 														<listhead sizable="true">
 															<listheader sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_ReturnChqOverride" label="${c:l('listheader_ReturnChqOverride.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_ReturnChqRuleCode" label="${c:l('listheader_ReturnChqRuleCode.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_ReturnChqRuleDesc" label="${c:l('listheader_ReturnChqRuleDesc.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_ReturnChqActive" label="${c:l('listheader_ReturnChqActive.label')}" sort="auto" hflex="min" />
-															<listheader id="listheader_RCRecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-															<listheader id="listheader_RCRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_ReturnChqOverride" label="${c:l('listheader_ReturnChqOverride.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_ReturnChqRuleCode" label="${c:l('listheader_ReturnChqRuleCode.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_ReturnChqRuleDesc" label="${c:l('listheader_ReturnChqRuleDesc.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_ReturnChqActive" label="${c:l('listheader_ReturnChqActive.label')}"
+																sort="auto" hflex="min" />
+															<listheader id="listheader_RCRecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+																sort="auto" hflex="min" visible="false" />
+															<listheader id="listheader_RCRecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+																hflex="min" visible="false" />
 														</listhead>
 													</listbox>
 												</groupbox>
@@ -476,13 +587,19 @@
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxLimitService" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxLimitService" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
 												<listheader sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_LimitServiceId" label="${c:l('listheader_LimitId.label')}" sort="auto" visible="false" hflex="min"/>
-												<listheader id="listheader_LimitServiceCode" label="${c:l('listheader_LimitCode.label')}" sort="auto" hflex="min"/>
-												<listheader id="listheader_LimitServiceDesc" label="${c:l('listheader_LimitDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_LimitServiceActive" label="${c:l('listheader_LimitActive.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_LimitServiceId" label="${c:l('listheader_LimitId.label')}" sort="auto"
+													visible="false" hflex="min" />
+												<listheader id="listheader_LimitServiceCode" label="${c:l('listheader_LimitCode.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_LimitServiceDesc" label="${c:l('listheader_LimitDesc.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_LimitServiceActive" label="${c:l('listheader_LimitActive.label')}"
+													sort="auto" hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>
@@ -500,18 +617,24 @@
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBoxTatNotification" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listBoxTatNotification" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
 												<listheader sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_TatNotificationId" label="${c:l('listheader_TatNotificationId.label')}" sort="auto" visible="false" hflex="min"/>
-												<listheader id="listheader_TatNotificationCode" label="${c:l('listheader_TatNotificationCode.label')}" sort="auto" hflex="min"/>
-												<listheader id="listheader_TatNotificationDesc" label="${c:l('listheader_TatNotificationDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_TatNotificationActive" label="${c:l('listheader_TatNotificationActive.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_TatNotificationId" label="${c:l('listheader_TatNotificationId.label')}"
+													sort="auto" visible="false" hflex="min" />
+												<listheader id="listheader_TatNotificationCode" label="${c:l('listheader_TatNotificationCode.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_TatNotificationDesc" label="${c:l('listheader_TatNotificationDesc.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_TatNotificationActive" label="${c:l('listheader_TatNotificationActive.label')}"
+													sort="auto" hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>
 								</tabpanel>
-														<tabpanel>
+								<tabpanel>
 									<groupbox id="gb_FinanceTabs" sclass="gb-dialog">
 										<div sclass="z-toolbar" style="padding:0">
 											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;" widths="35%,30%,35%">
@@ -524,18 +647,24 @@
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listboxFinanceTabs" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"   sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
+										<listbox id="listboxFinanceTabs" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+											multiple="false">
 											<listhead sizable="true">
 												<listheader sort="auto" hflex="min" visible="false" />
-												<listheader id="listheader_FinanceTabsId" label="${c:l('listheader_FinanceTabsId.label')}" sort="auto" hflex="min"/>
-												<listheader id="listheader_FinanceTabsCode" label="${c:l('listheader_FinanceTabsCode.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceTabsDesc" label="${c:l('listheader_FinanceTabsDesc.label')}" sort="auto" hflex="min" />
-												<listheader id="listheader_FinanceTabsActive" label="${c:l('listheader_FinanceTabsActive.label')}" sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceTabsId" label="${c:l('listheader_FinanceTabsId.label')}" sort="auto"
+													hflex="min" />
+												<listheader id="listheader_FinanceTabsCode" label="${c:l('listheader_FinanceTabsCode.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceTabsDesc" label="${c:l('listheader_FinanceTabsDesc.label')}"
+													sort="auto" hflex="min" />
+												<listheader id="listheader_FinanceTabsActive" label="${c:l('listheader_FinanceTabsActive.label')}"
+													sort="auto" hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>
 								</tabpanel>
-		
+
 							</tabpanels>
 						</tabbox>
 					</groupbox>

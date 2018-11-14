@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class TransactionCode extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -2481059822866956040L;
-	
+
 	private String tranCode;
 	private String tranDesc;
 	private String tranType;
@@ -79,72 +79,81 @@ public class TransactionCode extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return tranCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.tranCode = id;
 	}
-	
+
 	public String getTranCode() {
 		return tranCode;
 	}
+
 	public void setTranCode(String tranCode) {
 		this.tranCode = tranCode;
 	}
-	
+
 	public String getTranDesc() {
 		return tranDesc;
 	}
+
 	public void setTranDesc(String tranDesc) {
 		this.tranDesc = tranDesc;
 	}
-	
+
 	public String getTranType() {
 		return tranType;
 	}
+
 	public void setTranType(String tranType) {
 		this.tranType = tranType;
 	}
-	
+
 	public boolean isTranIsActive() {
 		return tranIsActive;
 	}
+
 	public void setTranIsActive(boolean tranIsActive) {
 		this.tranIsActive = tranIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public TransactionCode getBefImage(){
+	public TransactionCode getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(TransactionCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(TransactionCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-	
+
 }

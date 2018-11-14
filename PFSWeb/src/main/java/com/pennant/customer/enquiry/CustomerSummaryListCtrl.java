@@ -82,21 +82,19 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Academic/CustomerSummary.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Academic/CustomerSummary.zul file.
  */
 public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 5327118548986437717L;
 	private static final Logger logger = Logger.getLogger(CustomerSummaryListCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerSummary;
 	protected Borderlayout borderLayout_AcademicList;
@@ -126,13 +124,12 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 
 	@Override
 	protected void doSetProperties() {
-		
+
 	}
-	
+
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected AcademicCode object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected AcademicCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -147,7 +144,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				long custid = Long.parseLong(arguments.get("custid").toString());
 				this.custID.setValue(custid);
 				this.custCIF.setValue(arguments.get("custCIF") != null ? arguments.get("custCIF").toString() : "");
-				this.custShrtName.setValue(arguments.get("custShrtName") != null ? arguments.get("custShrtName").toString() : "");
+				this.custShrtName.setValue(
+						arguments.get("custShrtName") != null ? arguments.get("custShrtName").toString() : "");
 				prepareTabs();
 			}
 			this.btnSearchCustCIF.setVisible(false);
@@ -160,7 +158,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 			this.window_CustomerSummary.setTitle(Labels.getLabel("menu_Item_CustomerSummary"));
 			this.window_CustomerSummary.doModal();
 		} else {
-			this.borderLayout_AcademicList.setHeight(borderLayoutHeight+ "px");
+			this.borderLayout_AcademicList.setHeight(borderLayoutHeight + "px");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -186,7 +184,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.searchObj = newSearchObject;
 		final Customer aCustomer = (Customer) nCustomer;
@@ -223,7 +222,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 			if (listBoxCustCollateral.getItems() != null) {
 				listBoxCustCollateral.getItems().clear();
 			}
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CustCIF.value") }));
+			throw new WrongValueException(this.custCIF,
+					Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CustCIF.value") }));
 		} else {
 			doSetCustomer(customer, null);
 		}
@@ -251,12 +251,12 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	 */
 	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		
+
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", searchObj);
-		
+
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
@@ -268,22 +268,28 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 		try {
 			if (this.custID.getValue() != null && this.custID.getValue() != 0) {
 				String custid = String.valueOf(this.custID.getValue());
-				JdbcSearchObject<FinanceEnquiry> finSearchObj = new JdbcSearchObject<FinanceEnquiry>(FinanceEnquiry.class);
+				JdbcSearchObject<FinanceEnquiry> finSearchObj = new JdbcSearchObject<FinanceEnquiry>(
+						FinanceEnquiry.class);
 				finSearchObj.addTabelName("Financemain_AView");
 				finSearchObj.addSort("CustID", false);
 				finSearchObj.addFilterEqual("CustID", custid);
-				fillFiannceListBox(getPagedListWrapper().getPagedListService().getBySearchObject(finSearchObj), this.listBoxFinance);
+				fillFiannceListBox(getPagedListWrapper().getPagedListService().getBySearchObject(finSearchObj),
+						this.listBoxFinance);
 				JdbcSearchObject<Commitment> cmtSearchObj = new JdbcSearchObject<Commitment>(Commitment.class);
 				cmtSearchObj.addTabelName("Commitments_AView");
 				cmtSearchObj.addSort("CustID", false);
 				cmtSearchObj.addFilterEqual("CustID", custid);
-				fillCommitmentListBox(getPagedListWrapper().getPagedListService().getBySearchObject(cmtSearchObj), this.listBoxCommitment);
+				fillCommitmentListBox(getPagedListWrapper().getPagedListService().getBySearchObject(cmtSearchObj),
+						this.listBoxCommitment);
 				fillLimitListBox(this.custCIF.getValue(), custBranch);
 				//doFillCustomerCollateral(getCustomerDataProcess().getCustomerCollateral(this.custCIF.getValue()));
-				JdbcSearchObject<CustomerCollateral> collateralSearchObj = new JdbcSearchObject<CustomerCollateral>(CustomerCollateral.class);
+				JdbcSearchObject<CustomerCollateral> collateralSearchObj = new JdbcSearchObject<CustomerCollateral>(
+						CustomerCollateral.class);
 				collateralSearchObj.addTabelName("Collateral_summary_view");
 				collateralSearchObj.addFilterEqual("custID", custid);
-				doFillCustomerCollateral(getPagedListWrapper().getPagedListService().getBySearchObject(collateralSearchObj), this.listBoxCustCollateral);
+				doFillCustomerCollateral(
+						getPagedListWrapper().getPagedListService().getBySearchObject(collateralSearchObj),
+						this.listBoxCustCollateral);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -335,7 +341,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 		map.put("financeEnquiry", (FinanceEnquiry) object);
 		map.put("enquiryType", "FINENQ");
 		try {
-			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -353,9 +360,9 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 			for (Commitment commitment : list) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				
+
 				int formatter = CurrencyUtil.getFormat(commitment.getCmtCcy());
-				
+
 				lc = new Listcell(commitment.getCmtReference());
 				lc.setParent(item);
 				lc = new Listcell(commitment.getCmtBranch());
@@ -366,7 +373,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				lc = new Listcell(DateUtility.formateDate(commitment.getCmtExpDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(),formatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(), formatter));
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtUtilizedAmount(), formatter));
 				lc.setParent(item);
@@ -376,7 +383,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				item.setAttribute("data", commitment);
 				if (!finance) {
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onCommitmentItemDoubleClicked");
+					ComponentsCtrl.applyForward(item, "onDoubleClick=onCommitmentItemDoubleClicked");
 				}
 				listbox.appendChild(item);
 			}
@@ -405,8 +412,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	 * Method for rendering list of TransactionEntry
 	 * 
 	 * @param custlimitCategoryList
-	 * @throws JaxenException 
-	 * @throws InterfaceException 
+	 * @throws JaxenException
+	 * @throws InterfaceException
 	 * @throws CustomerLimitProcessException
 	 * @throws InterruptedException
 	 */
@@ -414,10 +421,10 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 		logger.debug("Entering");
 		this.listBoxCustomerLimit.getItems().clear();
 		CustomerLimit limit = new CustomerLimit();
-		
+
 		limit.setCustMnemonic(custMnemonic);
-		if(StringUtils.isBlank(custBranch)) {
-			Customer customer  = (Customer) PennantAppUtil.getCustomerObject(custMnemonic, null);
+		if (StringUtils.isBlank(custBranch)) {
+			Customer customer = (Customer) PennantAppUtil.getCustomerObject(custMnemonic, null);
 			custBranch = customer.getCustDftBranch();
 		}
 		limit.setLimitBranch(custBranch);
@@ -439,8 +446,10 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				lc = new Listcell(category.getLimitCategoryDesc());
 				lc.setParent(item);
-				/*lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount(), category.getLimitCcyEdit()));
-				lc.setParent(item);*/
+				/*
+				 * lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount(),
+				 * category.getLimitCcyEdit())); lc.setParent(item);
+				 */
 				lc = new Listcell(PennantAppUtil.amountFormate(category.getLimitAmount(), category.getLimitCcyEdit()));
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(category.getAvailAmount(), category.getLimitCcyEdit()));
@@ -473,12 +482,14 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollCcy());
 				cell.setParent(item);
-				
+
 				//Date date = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getCollExpDate().toString()));
-				cell = new Listcell(DateUtility.formateDate((Date)customerCollateral.getCollExpDate(), PennantConstants.dateFormat));
+				cell = new Listcell(DateUtility.formateDate((Date) customerCollateral.getCollExpDate(),
+						PennantConstants.dateFormat));
 				cell.setParent(item);
 				//Date date1 = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getColllastRvwDate().toString()));
-				cell = new Listcell(DateUtility.formateDate((Date)customerCollateral.getColllastRvwDate(), PennantConstants.dateFormat));
+				cell = new Listcell(DateUtility.formateDate((Date) customerCollateral.getColllastRvwDate(),
+						PennantConstants.dateFormat));
 				cell.setParent(item);
 				//cell = new Listcell(PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollValue().toString()).divide(new BigDecimal(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell = new Listcell(customerCollateral.getCollValue().toString());
@@ -488,7 +499,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				cell = new Listcell(customerCollateral.getCollBankVal().toString());
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				BigDecimal per = new BigDecimal(customerCollateral.getCollBankValMar().toString()).divide(BigDecimal.valueOf(Math.pow(10, 2)), RoundingMode.HALF_UP);
+				BigDecimal per = new BigDecimal(customerCollateral.getCollBankValMar().toString())
+						.divide(BigDecimal.valueOf(Math.pow(10, 2)), RoundingMode.HALF_UP);
 				cell = new Listcell(per + "%");
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
@@ -520,9 +532,9 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	public CustomerDataProcess getCustomerDataProcess() {
 		return customerDataProcess;
 	}
+
 	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
 		this.customerDataProcess = customerDataProcess;
 	}
 
-	
 }

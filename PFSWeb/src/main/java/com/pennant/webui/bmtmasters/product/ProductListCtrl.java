@@ -63,10 +63,10 @@ import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.bmtmasters.product.model.ProductListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/Product/ProductList.zul file.
@@ -117,14 +117,14 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
 			filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
 			filters[2] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_EQUAL);
-			
+
 			this.searchObject.addFilterOr(filters);
-		}else{
+		} else {
 			this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
 			this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL);
 		}
 	}
-	
+
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -251,7 +251,7 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

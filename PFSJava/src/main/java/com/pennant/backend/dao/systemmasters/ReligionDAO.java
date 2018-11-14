@@ -47,7 +47,7 @@ import com.pennant.backend.model.systemmasters.Religion;
 import com.pennanttech.pff.core.TableType;
 
 public interface ReligionDAO extends BasicCrudDao<Religion> {
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -57,7 +57,8 @@ public interface ReligionDAO extends BasicCrudDao<Religion> {
 	 *            The type of the table.
 	 * @return Religion
 	 */
-	Religion getReligion(long religionId,String type);
+	Religion getReligion(long religionId, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -69,6 +70,6 @@ public interface ReligionDAO extends BasicCrudDao<Religion> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long religionId, String religionCode, TableType tableType);	
-	
+	boolean isDuplicateKey(long religionId, String religionCode, TableType tableType);
+
 }

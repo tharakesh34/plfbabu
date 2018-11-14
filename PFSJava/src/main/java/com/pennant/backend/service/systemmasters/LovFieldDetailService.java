@@ -51,11 +51,16 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
  * 
  */
 public interface LovFieldDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	LovFieldDetail getLovFieldDetailById(String fieldCode,String fieldCodeValue);
-	LovFieldDetail getApprovedLovFieldDetailById(String fieldCode,String fieldCodeValue);
+
+	LovFieldDetail getLovFieldDetailById(String fieldCode, String fieldCodeValue);
+
+	LovFieldDetail getApprovedLovFieldDetailById(String fieldCode, String fieldCodeValue);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

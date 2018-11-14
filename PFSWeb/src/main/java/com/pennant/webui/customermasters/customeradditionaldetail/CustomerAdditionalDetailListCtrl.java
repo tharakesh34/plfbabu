@@ -64,9 +64,9 @@ import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 import com.pennant.backend.service.customermasters.CustomerAdditionalDetailService;
 import com.pennant.webui.customermasters.customeradditionaldetail.model.CustomerAdditionalDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerAdditionalDetail
@@ -95,7 +95,7 @@ public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAd
 	protected Textbox academicDecipline;
 	protected Longbox custRefCustID;
 	protected Textbox custRefStaffID;
-	
+
 	protected Listbox sortOperator_custRefStaffID;
 	protected Listbox sortOperator_custCIF;
 	protected Listbox sortOperator_custAcademicLevel;
@@ -126,7 +126,7 @@ public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAd
 		super.queueTableName = "CustAdditionalDetails_View";
 		super.enquiryTableName = "CustAdditionalDetails_TView";
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();

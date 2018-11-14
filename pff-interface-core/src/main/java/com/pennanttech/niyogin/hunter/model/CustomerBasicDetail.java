@@ -14,8 +14,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerBasicDetail implements Serializable {
 
-	private static final long	serialVersionUID	= 1407465347792589188L;
-	
+	private static final long serialVersionUID = 1407465347792589188L;
+
 	private String name;
 	private Address address;
 	@XmlElement(name = "loan_amount")
@@ -66,8 +66,8 @@ public class CustomerBasicDetail implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CustomerBasicDetail [name=" + name + ", loanAmount=" + loanAmount + ", phone=" + phone + ", emailId=" + emailId
-				+ ", address=" + address + "]";
+		return "CustomerBasicDetail [name=" + name + ", loanAmount=" + loanAmount + ", phone=" + phone + ", emailId="
+				+ emailId + ", address=" + address + "]";
 	}
 
 }

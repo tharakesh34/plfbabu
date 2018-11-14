@@ -70,17 +70,16 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 
-public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenceDetail> implements FacilityReferenceDetailDAO {
-    private static Logger logger = Logger.getLogger(FacilityReferenceDetailDAOImpl.class);
+public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenceDetail>
+		implements FacilityReferenceDetailDAO {
+	private static Logger logger = Logger.getLogger(FacilityReferenceDetailDAOImpl.class);
 
 	public FacilityReferenceDetailDAOImpl() {
 		super();
 	}
-	
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new FacilityReferenceDetail
+	 * This method set the Work Flow id based on the module name and return the new FacilityReferenceDetail
 	 * 
 	 * @return FacilityReferenceDetail
 	 */
@@ -98,8 +97,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	}
 
 	/**
-	 * This method get the module from method getFacilityReferenceDetail() and
-	 * set the new record flag as true and return FacilityReferenceDetail()
+	 * This method get the module from method getFacilityReferenceDetail() and set the new record flag as true and
+	 * return FacilityReferenceDetail()
 	 * 
 	 * @return FacilityReferenceDetail
 	 */
@@ -129,8 +128,10 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		facilityReferenceDetail.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select FinRefDetailId, FinType, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage");
-		selectSql.append(",OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinRefDetailId, FinType, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage");
+		selectSql.append(
+				",OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescFinTypeDescName");
@@ -142,10 +143,12 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
+		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FacilityReferenceDetail.class);
 
 		try {
-			facilityReferenceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			facilityReferenceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			facilityReferenceDetail = null;
@@ -166,57 +169,62 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	 * @return List<FacilityReferenceDetail>
 	 */
 	@Override
-	public List<FacilityReferenceDetail> getFacilityReferenceDetail(final String financeType, String roleCode, String type) {
+	public List<FacilityReferenceDetail> getFacilityReferenceDetail(final String financeType, String roleCode,
+			String type) {
 		logger.debug("Entering");
 		FacilityReferenceDetail facilityReferenceDetail = getFacilityReferenceDetail();
 
 		facilityReferenceDetail.setFinType(financeType);
 		facilityReferenceDetail.setShowInStage(roleCode);
-		StringBuilder selectSql = new StringBuilder("Select FinRefDetailId, FinType,FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage");
-		selectSql.append(",OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinRefDetailId, FinType,FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage");
+		selectSql.append(
+				",OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescFinTypeDescName, lovDescRefDesc");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("_AAView") || StringUtils.trimToEmpty(type).contains("_TAView")) {
-			selectSql.append(",lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage");
+			selectSql.append(
+					",lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage");
 		} else if ("_AEView".equals(StringUtils.trimToEmpty(type)) || "_TEView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(",lovDescElgRuleValue,lovDescCodelov, lovDescNamelov");
-		} else if ("_ASGView".equals(StringUtils.trimToEmpty(type)) || "_TSGView".equals(StringUtils.trimToEmpty(type))) {
+		} else if ("_ASGView".equals(StringUtils.trimToEmpty(type))
+				|| "_TSGView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov");
-		} else if ("_ACSGView".equals(StringUtils.trimToEmpty(type)) || "_TCSGView".equals(StringUtils.trimToEmpty(type))) {
+		} else if ("_ACSGView".equals(StringUtils.trimToEmpty(type))
+				|| "_TCSGView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov");
 		} else if ("_AQView".equals(StringUtils.trimToEmpty(type)) || "_TQView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(",lovDescIsRemarksAllowed,lovDescCheckMinCount,lovDescCheckMaxCount, lovDescElgRuleValue ");
+			selectSql
+					.append(",lovDescIsRemarksAllowed,lovDescCheckMinCount,lovDescCheckMaxCount, lovDescElgRuleValue ");
 		} else if ("_ACView".equals(StringUtils.trimToEmpty(type)) || "_TCView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-		} else if ("_ATView".equals(StringUtils.trimToEmpty(type)) ||"_TTView".equals(StringUtils.trimToEmpty(type))) {
+		} else if ("_ATView".equals(StringUtils.trimToEmpty(type)) || "_TTView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
 		}
-		
+
 		selectSql.append(" From LMTFacilityRefDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType");
-		if(StringUtils.isNotBlank(roleCode)){
-			selectSql.append(" AND ShowInStage LIKE '%"+roleCode +",%' ");
+		if (StringUtils.isNotBlank(roleCode)) {
+			selectSql.append(" AND ShowInStage LIKE '%" + roleCode + ",%' ");
 		}
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
+		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FacilityReferenceDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
 
-
 	/**
-	 * This method Deletes the Record from the LMTFinRefDetail or
-	 * LMTFinRefDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Reference Details by
-	 * key FinRefDetailId
+	 * This method Deletes the Record from the LMTFinRefDetail or LMTFinRefDetail_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Reference Details by key FinRefDetailId
 	 * 
 	 * @param Finance
 	 *            Reference Details (facilityReferenceDetail)
@@ -249,9 +257,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	}
 
 	/**
-	 * This method insert new Records into LMTFinRefDetail or
-	 * LMTFinRefDetail_Temp. it fetches the available Sequence form
-	 * SeqLMTFinRefDetail by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into LMTFinRefDetail or LMTFinRefDetail_Temp. it fetches the available Sequence
+	 * form SeqLMTFinRefDetail by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Finance Reference Details
 	 * 
@@ -274,10 +281,14 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		StringBuilder insertSql = new StringBuilder("Insert Into LMTFacilityRefDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinRefDetailId, FinType, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage,OverRide,OverRideValue");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinRefDetailId, :FinType, :FinRefType, :FinRefId, :IsActive, :ShowInStage, :MandInputInStage, :AllowInputInStage,:OverRide,:OverRideValue");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (FinRefDetailId, FinType, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage,OverRide,OverRideValue");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:FinRefDetailId, :FinType, :FinRefType, :FinRefId, :IsActive, :ShowInStage, :MandInputInStage, :AllowInputInStage,:OverRide,:OverRideValue");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -288,9 +299,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	}
 
 	/**
-	 * This method updates the Record LMTFinRefDetail or LMTFinRefDetail_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Finance Reference Details by key FinRefDetailId and Version
+	 * This method updates the Record LMTFinRefDetail or LMTFinRefDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Reference Details by key FinRefDetailId and Version
 	 * 
 	 * @param Finance
 	 *            Reference Details (facilityReferenceDetail)
@@ -307,10 +317,10 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update LMTFacilityRefDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set FinType = :FinType, FinRefType = :FinRefType, FinRefId = :FinRefId, IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue");
-		updateSql
-				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" Set FinType = :FinType, FinRefType = :FinRefType, FinRefId = :FinRefId, IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinRefDetailId =:FinRefDetailId");
 
 		if (!type.endsWith("_Temp")) {
@@ -328,7 +338,6 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
@@ -344,52 +353,59 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String mandInputInStage,
 			List<String> groupIds, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder selectSql = new StringBuilder("Select FinRefDetailId, FinType,FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage");
-		selectSql.append(",OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinRefDetailId, FinType,FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage");
+		selectSql.append(
+				",OverRide,OverRideValue, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if ("_AEView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(",lovDescElgRuleValue,lovDescCodelov, lovDescNamelov,lovDescFinTypeDescName, lovDescRefDesc,lovDescFinCcyCode, lovDescProductCodeName,lovDescRuleReturnType ");
-		} else if ("_ASGView".equals(StringUtils.trimToEmpty(type)) ||"_ACSGView".equals(StringUtils.trimToEmpty(type))) {
-			selectSql.append(",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov,lovDescFinTypeDescName, lovDescRefDesc ");
+			selectSql.append(
+					",lovDescElgRuleValue,lovDescCodelov, lovDescNamelov,lovDescFinTypeDescName, lovDescRefDesc,lovDescFinCcyCode, lovDescProductCodeName,lovDescRuleReturnType ");
+		} else if ("_ASGView".equals(StringUtils.trimToEmpty(type))
+				|| "_ACSGView".equals(StringUtils.trimToEmpty(type))) {
+			selectSql.append(
+					",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov,lovDescFinTypeDescName, lovDescRefDesc ");
 		}
 		selectSql.append(" From LMTFacilityRefDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where " );
-		
-		if(StringUtils.isNotBlank(financeType)){
+		selectSql.append(" Where ");
+
+		if (StringUtils.isNotBlank(financeType)) {
 			selectSql.append(" FinType =:FinType AND ");
 		}
-		if(groupIds != null && groupIds.size() > 0){
+		if (groupIds != null && groupIds.size() > 0) {
 			selectSql.append(" FinRefId NOT IN (:GroupIds) AND ");
 		}
-		
-		if(mandInputInStage != null){
-			if("_AEView".equals(type)){
+
+		if (mandInputInStage != null) {
+			if ("_AEView".equals(type)) {
 				selectSql.append(" AllowInputInStage like '%" + mandInputInStage + ",%' AND ");
-			}else{
+			} else {
 				selectSql.append(" MandInputInStage like '%" + mandInputInStage + ",%' AND ");
-			}	
+			}
 		}
 		selectSql.append(" IsActive = 1 ");
-		
-		Map<String, List<String>> parameterMap=new HashMap<String, List<String>>();
+
+		Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
 		List<String> fintype = new ArrayList<String>();
 		fintype.add(financeType);
 		parameterMap.put("GroupIds", groupIds);
-		parameterMap.put("FinType",fintype);
-		
+		parameterMap.put("FinType", fintype);
+
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
+		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FacilityReferenceDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);
 
 	}
+
 	@Override
 	public void deleteByFinType(String finType, String type) {
 		logger.debug("Entering");
-		FacilityReferenceDetail facilityReferenceDetail=new FacilityReferenceDetail();
+		FacilityReferenceDetail facilityReferenceDetail = new FacilityReferenceDetail();
 		facilityReferenceDetail.setFinType(finType);
 		StringBuilder deleteSql = new StringBuilder("Delete From LMTFacilityRefDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -401,6 +417,7 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Fetch the Record Finance Reference Details details by key field
 	 * 
@@ -415,13 +432,14 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 		logger.debug("Entering");
 		FacilityReferenceDetail facilityReferenceDetail = getFacilityReferenceDetail();
 		facilityReferenceDetail.setFinType(finType);
-		StringBuilder selectSql = new StringBuilder("Select * from " );
+		StringBuilder selectSql = new StringBuilder("Select * from ");
 		selectSql.append(" FacilityReferenceDetail_View");
 		selectSql.append(" Where FinType =:FinType");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityReferenceDetail.class);
+		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FacilityReferenceDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

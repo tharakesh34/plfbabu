@@ -52,7 +52,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -65,25 +64,24 @@ public class BuilderProjcetListModelItemRenderer implements ListitemRenderer<Bui
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, BuilderProjcet builderProjcet, int count) throws Exception {
-        
+
 		Listcell lc;
-	    lc = new Listcell(String.valueOf(builderProjcet.getId()));
+		lc = new Listcell(String.valueOf(builderProjcet.getId()));
 		lc.setParent(item);
-	  	lc = new Listcell(builderProjcet.getName());
+		lc = new Listcell(builderProjcet.getName());
 		lc.setParent(item);
-	    lc = new Listcell(String.valueOf(builderProjcet.getBuilderId() + "-" + builderProjcet.getbuilderIdName()));
+		lc = new Listcell(String.valueOf(builderProjcet.getBuilderId() + "-" + builderProjcet.getbuilderIdName()));
 		lc.setParent(item);
-	  	lc = new Listcell(builderProjcet.getApfNo());
+		lc = new Listcell(builderProjcet.getApfNo());
 		lc.setParent(item);
-	  	lc = new Listcell(builderProjcet.getRecordStatus());
+		lc = new Listcell(builderProjcet.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(builderProjcet.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", builderProjcet.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBuilderProjcetItemDoubleClicked");
 	}
 }

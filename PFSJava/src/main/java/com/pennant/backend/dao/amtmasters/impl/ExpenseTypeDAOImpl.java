@@ -66,9 +66,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements ExpenseTypeDAO {
-	private static Logger	logger	= Logger.getLogger(ExpenseTypeDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ExpenseTypeDAOImpl.class);
 
-	
 	public ExpenseTypeDAOImpl() {
 		super();
 	}
@@ -101,8 +100,7 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		RowMapper<ExpenseType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExpenseType.class);
 
 		try {
-			expenseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			expenseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			expenseType = null;
@@ -110,8 +108,6 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		logger.debug("Leaving");
 		return expenseType;
 	}
-
-	
 
 	/**
 	 * This method Deletes the Record from the AMTExpenseType or AMTExpenseType_Temp. if Record not deleted then throws
@@ -176,7 +172,8 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		insertSql.append(" (ExpenseTypeId, ExpenseTypeCode, ExpenseTypeDesc , AmortReq, TaxApplicable, Active, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ExpenseTypeId, :ExpenseTypeCode, :ExpenseTypeDesc, :AmortReq, :TaxApplicable, :Active,");
+		insertSql.append(
+				" Values(:ExpenseTypeId, :ExpenseTypeCode, :ExpenseTypeDesc, :AmortReq, :TaxApplicable, :Active,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -264,21 +261,21 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public long getFinExpenseIdByExpType(String expTypeCode, String type) {
 		logger.debug("Entering");
-		
+
 		long finExpenseId = Long.MIN_VALUE;
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT ExpenseTypeId From ExpenseTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE  ExpenseTypeCode = :ExpenseTypeCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExpenseTypeCode", expTypeCode);
-		
+
 		try {
 			finExpenseId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -286,7 +283,7 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		}
 
 		logger.debug("Leaving");
-		
+
 		return finExpenseId;
 	}
 }

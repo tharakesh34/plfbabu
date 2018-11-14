@@ -24,7 +24,6 @@ public class JSONClient {
 		String json = "";
 		Response response = getClient(url, service, requestData);
 		json = response.readEntity(String.class);
-		
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);

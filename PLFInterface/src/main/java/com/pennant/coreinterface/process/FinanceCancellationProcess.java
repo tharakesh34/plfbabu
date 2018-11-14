@@ -7,7 +7,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface FinanceCancellationProcess {
 
-	List<FinanceCancellation> fetchCancelledFinancePostings(
-			String finReference, String linkedTranId) throws InterfaceException;
+	List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId)
+			throws InterfaceException;
 
 }

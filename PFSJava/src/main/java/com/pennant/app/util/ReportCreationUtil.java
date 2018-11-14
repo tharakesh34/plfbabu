@@ -81,9 +81,9 @@ public class ReportCreationUtil {
 			excelExporter.exportReport();
 			Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 		} else {
-				byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, mainDS);
-				logger.debug("Leaving");
-				return buf;
+			byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, mainDS);
+			logger.debug("Leaving");
+			return buf;
 		}
 		return null;
 

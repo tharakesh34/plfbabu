@@ -63,10 +63,10 @@ import com.pennant.backend.service.systemmasters.ProfessionService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.systemmasters.profession.model.ProfessionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMasters/Profession/ProfessionList.zul file.
@@ -79,28 +79,28 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ProfessionList; 
-	protected Borderlayout borderLayout_ProfessionList; 
-	protected Paging pagingProfessionList; 
-	protected Listbox listBoxProfession; 
+	protected Window window_ProfessionList;
+	protected Borderlayout borderLayout_ProfessionList;
+	protected Paging pagingProfessionList;
+	protected Listbox listBoxProfession;
 
-	protected Textbox professionCode; 
-	protected Textbox professionDesc; 
-	protected Checkbox professionIsActive; 
+	protected Textbox professionCode;
+	protected Textbox professionDesc;
+	protected Checkbox professionIsActive;
 
-	protected Listbox sortOperator_professionDesc; 
-	protected Listbox sortOperator_professionCode; 
-	protected Listbox sortOperator_professionIsActive; 
+	protected Listbox sortOperator_professionDesc;
+	protected Listbox sortOperator_professionCode;
+	protected Listbox sortOperator_professionIsActive;
 
 	// List headers
-	protected Listheader listheader_ProfessionCode; 
-	protected Listheader listheader_ProfessionDesc; 
-	protected Listheader listheader_ProfessionSelfEmployee; 
-	protected Listheader listheader_ProfessionIsActive; 
+	protected Listheader listheader_ProfessionCode;
+	protected Listheader listheader_ProfessionDesc;
+	protected Listheader listheader_ProfessionSelfEmployee;
+	protected Listheader listheader_ProfessionIsActive;
 
 	// checkRights
-	protected Button button_ProfessionList_NewProfession; 
-	protected Button button_ProfessionList_ProfessionSearchDialog; 
+	protected Button button_ProfessionList_NewProfession;
+	protected Button button_ProfessionList_ProfessionSearchDialog;
 
 	private transient ProfessionService professionService;
 
@@ -118,11 +118,11 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 		super.tableName = "BMTProfessions_AView";
 		super.queueTableName = "BMTProfessions_View";
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		super.searchObject.addFilter(new Filter("professionCode",PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		super.searchObject.addFilter(new Filter("professionCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 		// Set the page level components.
 		setPageComponents(window_ProfessionList, borderLayout_ProfessionList, listBoxProfession, pagingProfessionList);
 		setItemRender(new ProfessionListModelItemRenderer());
-		
+
 		// Register buttons and fields.
 		registerButton(button_ProfessionList_NewProfession, "button_ProfessionList_NewProfession", true);
 		registerButton(button_ProfessionList_ProfessionSearchDialog);
@@ -182,15 +182,15 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 	 */
 	public void onClick$button_ProfessionList_NewProfession(Event event) {
 		logger.debug("Entering");
-		
+
 		// Create a new entity.
 		Profession profession = new Profession();
 		profession.setNewRecord(true);
 		profession.setWorkflowId(getWorkFlowId());
-		
+
 		// Display the dialog page.
 		doShowDialogPage(profession);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -243,17 +243,17 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 	 */
 	private void doShowDialogPage(Profession profession) {
 		logger.debug("Entering");
-		
+
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("profession", profession);
 		arg.put("professionListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Profession/ProfessionDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

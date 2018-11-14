@@ -47,13 +47,20 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.Question;
 
 public interface QuestionService {
-	
+
 	Question getQuestion();
+
 	Question getNewQuestion();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Question getQuestionById(long id);
+
 	Question getApprovedQuestionById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

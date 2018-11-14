@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -89,11 +88,12 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 		loanPurpose.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive, EligibleAmount," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive, EligibleAmount,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  LoanPurposes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where LoanPurposeCode =:LoanPurposeCode") ;
+		selectSql.append(" Where LoanPurposeCode =:LoanPurposeCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(loanPurpose);
@@ -108,7 +108,7 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 		logger.debug("Leaving");
 		return loanPurpose;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String loanPurposeCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -148,17 +148,18 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 	@Override
 	public String save(LoanPurpose loanPurpose, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into LoanPurposes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive, EligibleAmount," );
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		sql.append(" (LoanPurposeCode, LoanPurposeDesc, LoanPurposeIsActive, EligibleAmount,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" values(:LoanPurposeCode, :LoanPurposeDesc, :LoanPurposeIsActive, :EligibleAmount," );
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(" values(:LoanPurposeCode, :LoanPurposeDesc, :LoanPurposeIsActive, :EligibleAmount,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(loanPurpose);
@@ -171,26 +172,27 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 		logger.debug(Literal.LEAVING);
 		return loanPurpose.getId();
 	}
-	
+
 	@Override
 	public void update(LoanPurpose loanPurpose, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update LoanPurposes");
 		sql.append(tableType.getSuffix());
-		sql.append(" set LoanPurposeDesc = :LoanPurposeDesc," );
-		sql.append(" LoanPurposeIsActive = :LoanPurposeIsActive, EligibleAmount = :EligibleAmount," );
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		sql.append(" set LoanPurposeDesc = :LoanPurposeDesc,");
+		sql.append(" LoanPurposeIsActive = :LoanPurposeIsActive, EligibleAmount = :EligibleAmount,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where LoanPurposeCode =:LoanPurposeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(loanPurpose);
-		int recordCount  = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -200,25 +202,24 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	@Override
 	public void delete(LoanPurpose addressType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append("delete from LoanPurposes");
 		sql.append(tableType.getSuffix());
 		sql.append(" where LoanPurposeCode = :LoanPurposeCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -229,5 +230,5 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 		}
 
 		logger.debug(Literal.LEAVING);
-	}	
+	}
 }

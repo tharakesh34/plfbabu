@@ -50,7 +50,6 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 
 	private List<ValueLabel> years = OrganizationUtil.getFinancialYears();
 
-	
 	public SchoolOrganizationSelectCtrl() {
 		super();
 	}

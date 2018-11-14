@@ -63,14 +63,13 @@ public class NPABucketListModelItemRenderer implements ListitemRenderer<NPABucke
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, NPABucket nPABucket, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(nPABucket.getBucketCode());
+		lc = new Listcell(nPABucket.getBucketCode());
 		lc.setParent(item);
-	  	lc = new Listcell(nPABucket.getBucketDesc());
+		lc = new Listcell(nPABucket.getBucketDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -78,12 +77,12 @@ public class NPABucketListModelItemRenderer implements ListitemRenderer<NPABucke
 		cbActive.setChecked(nPABucket.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(nPABucket.getRecordStatus());
+		lc = new Listcell(nPABucket.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(nPABucket.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("bucketID", nPABucket.getBucketID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onNPABucketItemDoubleClicked");
 	}
 }

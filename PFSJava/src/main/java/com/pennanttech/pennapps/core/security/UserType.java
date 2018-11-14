@@ -12,9 +12,9 @@
 package com.pennanttech.pennapps.core.security;
 
 /**
-	 * Enumerates the supported UserType.
-	 */
+ * Enumerates the supported UserType.
+ */
 public enum UserType {
 	USER, ADMIN
-		
+
 }

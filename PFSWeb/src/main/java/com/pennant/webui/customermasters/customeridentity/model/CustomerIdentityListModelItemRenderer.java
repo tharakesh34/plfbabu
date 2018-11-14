@@ -64,15 +64,15 @@ public class CustomerIdentityListModelItemRenderer implements ListitemRenderer<C
 	private static final long serialVersionUID = 2886661211489397173L;
 
 	public CustomerIdentityListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerIdentity customerIdentity, int count) throws Exception {
 
-		if (item instanceof Listgroup) { 
-			item.appendChild(new Listcell(String.valueOf(customerIdentity.getLovDescCustCIF()))); 
-		} else if (item instanceof Listgroupfoot) { 
+		if (item instanceof Listgroup) {
+			item.appendChild(new Listcell(String.valueOf(customerIdentity.getLovDescCustCIF())));
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(7);
 			item.appendChild(cell);
@@ -81,13 +81,14 @@ public class CustomerIdentityListModelItemRenderer implements ListitemRenderer<C
 			Listcell lc;
 			lc = new Listcell(customerIdentity.getLovDescCustCIF());
 			lc.setParent(item);
-			lc = new Listcell(customerIdentity.getIdType()+"-"+customerIdentity.getLovDescIdTypeName());
+			lc = new Listcell(customerIdentity.getIdType() + "-" + customerIdentity.getLovDescIdTypeName());
 			lc.setParent(item);
 			lc = new Listcell(customerIdentity.getIdIssuedBy());
 			lc.setParent(item);
 			lc = new Listcell(customerIdentity.getIdRef());
 			lc.setParent(item);
-			lc = new Listcell(customerIdentity.getIdIssueCountry()+"-"+customerIdentity.getLovDescIdIssueCountryName());
+			lc = new Listcell(
+					customerIdentity.getIdIssueCountry() + "-" + customerIdentity.getLovDescIdIssueCountryName());
 			lc.setParent(item);
 			lc = new Listcell(customerIdentity.getRecordStatus());
 			lc.setParent(item);
@@ -96,7 +97,7 @@ public class CustomerIdentityListModelItemRenderer implements ListitemRenderer<C
 
 			item.setAttribute("idCustID", customerIdentity.getId());
 			item.setAttribute("idType", customerIdentity.getIdType());
-			
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIdentityItemDoubleClicked");
 		}
 	}

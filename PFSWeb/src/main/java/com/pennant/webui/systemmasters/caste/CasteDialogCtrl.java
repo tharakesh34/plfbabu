@@ -70,8 +70,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Caste/casteDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Caste/casteDialog.zul file.
  */
 public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 
@@ -79,9 +78,8 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	private static final Logger logger = Logger.getLogger(CasteDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CasteDialog;
 	protected Textbox casteCode;
@@ -111,8 +109,8 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Caste object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Caste object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -180,8 +178,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -362,8 +359,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCaste
 	 * @throws Exception

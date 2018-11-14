@@ -41,7 +41,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	public AcademicServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -63,14 +63,11 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTAcademics/BMTAcademics_Temp by using AcademicDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using AcademicDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTAcademics by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTAcademics/BMTAcademics_Temp
+	 * by using AcademicDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using AcademicDAO's update method 3) Audit the record in to AuditHeader and AdtBMTAcademics by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -82,14 +79,13 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Academic academic = (Academic) auditHeader.getAuditDetail()
-				.getModelData();
+		Academic academic = (Academic) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (academic.isWorkflow()) {
@@ -111,12 +107,10 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTAcademics by using AcademicDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTAcademics by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTAcademics by using AcademicDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTAcademics by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -127,14 +121,13 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Academic academic = (Academic) auditHeader.getAuditDetail()
-				.getModelData();
+		Academic academic = (Academic) auditHeader.getAuditDetail().getModelData();
 		getAcademicDAO().delete(academic, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -143,8 +136,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * getAcademicById fetch the details by using AcademicDAO's getAcademicById
-	 * method.
+	 * getAcademicById fetch the details by using AcademicDAO's getAcademicById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -158,9 +150,8 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * getApprovedAcademicById fetch the details by using AcademicDAO's
-	 * getAcademicById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTAcademics.
+	 * getApprovedAcademicById fetch the details by using AcademicDAO's getAcademicById method . with parameter id and
+	 * type as blank. it fetches the approved records from the BMTAcademics.
 	 * 
 	 * @param id
 	 *            (String)
@@ -171,19 +162,15 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getAcademicDAO().delete with parameters academic,"" b) NEW Add new
-	 * record in to main table by using getAcademicDAO().save with parameters
-	 * academic,"" c) EDIT Update record in the main table by using
-	 * getAcademicDAO().update with parameters academic,"" 3) Delete the record
-	 * from the workFlow table by using getAcademicDAO().delete with parameters
-	 * academic,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTAcademics by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTAcademics by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getAcademicDAO().delete with
+	 * parameters academic,"" b) NEW Add new record in to main table by using getAcademicDAO().save with parameters
+	 * academic,"" c) EDIT Update record in the main table by using getAcademicDAO().update with parameters academic,""
+	 * 3) Delete the record from the workFlow table by using getAcademicDAO().delete with parameters academic,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtBMTAcademics by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and AdtBMTAcademics by using auditHeaderDAO.addAudit(auditHeader)
+	 * based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -194,15 +181,14 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		Academic academic = new Academic();
-		BeanUtils.copyProperties((Academic) auditHeader.getAuditDetail()
-				.getModelData(), academic);
+		BeanUtils.copyProperties((Academic) auditHeader.getAuditDetail().getModelData(), academic);
 
 		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
 
@@ -220,8 +206,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 			academic.setNextTaskId("");
 			academic.setWorkflowId(0);
 
-			if (academic.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (academic.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				academic.setRecordType("");
 				getAcademicDAO().save(academic, TableType.MAIN_TAB);
@@ -244,13 +229,10 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getAcademicDAO().delete with parameters
-	 * academic,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTAcademics by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getAcademicDAO().delete with parameters academic,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTAcademics by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -260,14 +242,13 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Academic academic = (Academic) auditHeader.getAuditDetail()
-				.getModelData();
+		Academic academic = (Academic) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
 
@@ -277,10 +258,8 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -291,7 +270,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}

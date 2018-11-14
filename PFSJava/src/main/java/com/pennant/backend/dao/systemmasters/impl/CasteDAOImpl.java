@@ -63,8 +63,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>Academic</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>Academic</code> with set of CRUD operations.
  */
 public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
 	private static Logger logger = Logger.getLogger(CasteDAOImpl.class);
@@ -239,8 +238,7 @@ public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
 	}
 
 	/**
-	 * Method for get total number of records from BMTAddressTypes master
-	 * table.<br>
+	 * Method for get total number of records from BMTAddressTypes master table.<br>
 	 * 
 	 * @param addrType
 	 * 

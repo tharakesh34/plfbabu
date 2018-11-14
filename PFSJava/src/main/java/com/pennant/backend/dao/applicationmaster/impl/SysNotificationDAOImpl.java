@@ -68,17 +68,17 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class SysNotificationDAOImpl extends SequenceDao<SysNotification> implements SysNotificationDAO {
 	private static Logger logger = Logger.getLogger(SysNotificationDAOImpl.class);
 
-
 	public SysNotificationDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Cheque Purpose details by key field
+	 * Fetch the Record Cheque Purpose details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SysNotification
 	 */
 	@Override
@@ -88,9 +88,11 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 
 		sysNotification.setSysNotificationId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select SysNotificationId, QueryCode, Description, TemplateCode, Doctype, DocName, DocImage,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		StringBuilder selectSql = new StringBuilder(
+				"Select SysNotificationId, QueryCode, Description, TemplateCode, Doctype, DocName, DocImage,");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,lovDescQueryDesc, lovDescTemplateDesc, lovDescSqlQuery");
 		}
 		selectSql.append(" From SysNotification");
@@ -99,11 +101,12 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
-		RowMapper<SysNotification> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SysNotification.class);
+		RowMapper<SysNotification> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SysNotification.class);
 
-		try{
-			sysNotification = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			sysNotification = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			sysNotification = null;
 		}
@@ -111,22 +114,20 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		return sysNotification;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the SysNotification or SysNotification_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Cheque Purpose by key Code
+	 * This method Deletes the Record from the SysNotification or SysNotification_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Cheque Purpose by key Code
 	 * 
-	 * @param Cheque Purpose (sysNotification)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Cheque
+	 *            Purpose (sysNotification)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(long id,String type) {
+	public void delete(long id, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -139,12 +140,12 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -153,18 +154,19 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 	/**
 	 * This method insert new Records into SysNotification or SysNotification_Temp.
 	 *
-	 * save Cheque Purpose 
+	 * save Cheque Purpose
 	 * 
-	 * @param Cheque Purpose (sysNotification)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Cheque
+	 *            Purpose (sysNotification)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public long save(SysNotification sysNotification,String type) {
+	public long save(SysNotification sysNotification, String type) {
 		logger.debug("Entering");
 
 		if (sysNotification.getId() == Long.MIN_VALUE) {
@@ -172,12 +174,15 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 			logger.debug("Next ID ; " + sysNotification.getSysNotificationId());
 		}
 
-		StringBuilder insertSql =new StringBuilder("Insert Into SysNotification");
+		StringBuilder insertSql = new StringBuilder("Insert Into SysNotification");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (SysNotificationId, QueryCode, Description, TemplateCode, Doctype, DocName, DocImage");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:SysNotificationId, :QueryCode, :Description, :TemplateCode, :Doctype, :DocName, :DocImage");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:SysNotificationId, :QueryCode, :Description, :TemplateCode, :Doctype, :DocName, :DocImage");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -190,30 +195,32 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 	}
 
 	/**
-	 * This method updates the Record SysNotification or SysNotification_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Cheque Purpose by key Code and Version
+	 * This method updates the Record SysNotification or SysNotification_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Cheque Purpose by key Code and Version
 	 * 
-	 * @param Cheque Purpose (sysNotification)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Cheque
+	 *            Purpose (sysNotification)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(SysNotification sysNotification,String type) {
+	public void update(SysNotification sysNotification, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update SysNotification");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set QueryCode = :QueryCode, Description = :Description, TemplateCode = :TemplateCode, Doctype = :Doctype, DocName = :DocName, DocImage = :DocImage,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update SysNotification");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set QueryCode = :QueryCode, Description = :Description, TemplateCode = :TemplateCode, Doctype = :Doctype, DocName = :DocName, DocImage = :DocImage,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SysNotificationId = :SysNotificationId");
 
-		/*if (!type.endsWith("_Temp")){
-			updateSql.append("  AND Version= :Version-1");
-		}*/
+		/*
+		 * if (!type.endsWith("_Temp")){ updateSql.append("  AND Version= :Version-1"); }
+		 */
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -233,14 +240,16 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		SysNotificationDetails details = new SysNotificationDetails();
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select CustID, CustCIF, CustShrtName, FinReference, FinBranch, FinCcy, FinCurODDays, FinCuRODAmt, FinPurpose ");
+		selectSql.append(
+				" Select CustID, CustCIF, CustShrtName, FinReference, FinBranch, FinCcy, FinCurODDays, FinCuRODAmt, FinPurpose ");
 		selectSql.append(" FROM  CustAlertsOD_View");
 		selectSql.append(" WHERE ");
 		selectSql.append(whereClause);
 		selectSql.append(" ORDER BY CustCIF");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(details);
-		RowMapper<SysNotificationDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SysNotificationDetails.class);
+		RowMapper<SysNotificationDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SysNotificationDetails.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -259,7 +268,7 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select TemplateId from Templates Where TemplateCode = :TemplateCode");
 
-		logger.debug("Query: "+ sql.toString());
+		logger.debug("Query: " + sql.toString());
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
@@ -281,9 +290,10 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		source.addValue("CustID", custID);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select CustEMail from (select CustEMail,row_number() over (order by CustEMail) row_num from CustomerEMails where CustID = :CustID AND CustEMailPriority = 1)T where row_num <= 1");
+		sql.append(
+				"select CustEMail from (select CustEMail,row_number() over (order by CustEMail) row_num from CustomerEMails where CustID = :CustID AND CustEMailPriority = 1)T where row_num <= 1");
 
-		logger.debug("Query: "+ sql.toString());
+		logger.debug("Query: " + sql.toString());
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);

@@ -31,7 +31,7 @@ import com.pennanttech.pff.model.external.controldump.ControlDump;
 
 public class ControlDumpExtract extends DatabaseDataEngine implements ControlDumpProcess {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CONTROL_DUMP_REQUEST");
-	
+
 	private Date appDate = null;
 	private MapSqlParameterSource sqlParameterSource;
 	private int batchSize = 50000;

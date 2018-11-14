@@ -76,35 +76,32 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/Salutation/salutationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/Salutation/salutationDialog.zul file.
  */
 public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	private static final long serialVersionUID = -3545695595801290469L;
 	private static final Logger logger = Logger.getLogger(SalutationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_SalutationDialog; 
-	protected Textbox 	salutationCode; 		 
-	protected Textbox 	saluationDesc; 			 
-	protected Checkbox 	salutationIsActive; 	 
-	protected Checkbox 	systemDefault; 	 
-	protected Combobox 	salutationGenderCode; 	 
+	protected Window window_SalutationDialog;
+	protected Textbox salutationCode;
+	protected Textbox saluationDesc;
+	protected Checkbox salutationIsActive;
+	protected Checkbox systemDefault;
+	protected Combobox salutationGenderCode;
 
 	// not auto wired variables
 	private Salutation salutation; // overHanded per parameter
 	private transient SalutationListCtrl salutationListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient SalutationService salutationService;
 	private Gender sysDefaultgender;
-
 
 	/**
 	 * default constructor.<br>
@@ -121,9 +118,8 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Salutation object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Salutation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -149,15 +145,13 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 				setSalutation(null);
 			}
 
-			doLoadWorkFlow(this.salutation.isWorkflow(),
-					this.salutation.getWorkflowId(),
+			doLoadWorkFlow(this.salutation.isWorkflow(), this.salutation.getWorkflowId(),
 					this.salutation.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SalutationDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SalutationDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -167,8 +161,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 			// or
 			// delete salutation here.
 			if (arguments.containsKey("salutationListCtrl")) {
-				setSalutationListCtrl((SalutationListCtrl) arguments
-						.get("salutationListCtrl"));
+				setSalutationListCtrl((SalutationListCtrl) arguments.get("salutationListCtrl"));
 			} else {
 				setSalutationListCtrl(null);
 			}
@@ -192,7 +185,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		// Empty sent any required attributes
 		this.salutationCode.setMaxlength(8);
 		this.saluationDesc.setMaxlength(50);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -201,8 +194,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -312,13 +304,14 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		this.saluationDesc.setValue(aSalutation.getSaluationDesc());
 		this.salutationIsActive.setChecked(aSalutation.isSalutationIsActive());
 		this.systemDefault.setChecked(aSalutation.isSystemDefault());
-		
+
 		List<ValueLabel> genderList = PennantAppUtil.getGenderCodes();
 		fillComboBox(this.salutationGenderCode, aSalutation.getSalutationGenderCode(), genderList, "");
 
 		this.recordStatus.setValue(aSalutation.getRecordStatus());
-		
-		if(aSalutation.isNew() || (aSalutation.getRecordType() != null ? aSalutation.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aSalutation.isNew() || (aSalutation.getRecordType() != null ? aSalutation.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.salutationIsActive.setChecked(true);
 			this.salutationIsActive.setDisabled(true);
 		}
@@ -357,9 +350,9 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 			wve.add(we);
 		}
 		try {
-			if(!this.salutationGenderCode.isDisabled() && this.salutationGenderCode.getSelectedIndex()<1){
+			if (!this.salutationGenderCode.isDisabled() && this.salutationGenderCode.getSelectedIndex() < 1) {
 				throw new WrongValueException(salutationGenderCode, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_SalutationDialog_SalutationGenderCode.value")}));
+						new String[] { Labels.getLabel("label_SalutationDialog_SalutationGenderCode.value") }));
 			}
 			aSalutation.setSalutationGenderCode(this.salutationGenderCode.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
@@ -382,8 +375,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSalutation
 	 * @throws Exception
@@ -413,13 +405,13 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSalutation);
-			
+
 			if (aSalutation.isNew() || isWorkFlowEnabled()) {
 				doCheckSystemDefault();
 			}
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_SalutationDialog.onClose();
 		} catch (Exception e) {
@@ -435,18 +427,21 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		logger.debug("Entering");
 
 		setValidationOn(true);
-		if (!this.salutationCode.isReadonly()){
-			this.salutationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SalutationDialog_SalutationCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.salutationCode.isReadonly()) {
+			this.salutationCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SalutationDialog_SalutationCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.saluationDesc.isReadonly()){
-			this.saluationDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SalutationDialog_SaluationDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.saluationDesc.isReadonly()) {
+			this.saluationDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SalutationDialog_SaluationDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (this.salutationGenderCode.isReadonly()) {
-			this.salutationGenderCode.setConstraint(new PTStringValidator(Labels.getLabel(
-					"label_SalutationDialog_SalutationGenderCode.value"), null, true));
+			this.salutationGenderCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SalutationDialog_SalutationGenderCode.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -503,9 +498,9 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-		Labels.getLabel("label_SalutationDialog_SalutationCode.value")+" : "+aSalutation.getSalutationCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SalutationDialog_SalutationCode.value") + " : "
+				+ aSalutation.getSalutationCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSalutation.getRecordType())) {
 				aSalutation.setVersion(aSalutation.getVersion() + 1);
@@ -546,7 +541,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		this.saluationDesc.setReadonly(isReadOnly("SalutationDialog_saluationDesc"));
 		this.salutationIsActive.setDisabled(isReadOnly("SalutationDialog_salutationIsActive"));
 		this.salutationGenderCode.setDisabled(isReadOnly("SalutationDialog_salutationGenderCode"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -795,8 +790,8 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SalutationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -840,10 +835,9 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Salutation aSalutation, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSalutation.getBefImage(), aSalutation);
-		return new AuditHeader(String.valueOf(aSalutation.getId()), null, null,
-				null, auditDetail, aSalutation.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSalutation.getBefImage(), aSalutation);
+		return new AuditHeader(String.valueOf(aSalutation.getId()), null, null, null, auditDetail,
+				aSalutation.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -858,7 +852,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_SalutationDialog,	auditHeader);
+			ErrorControl.showErrorControl(this.window_SalutationDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -884,45 +878,43 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		getSalutationListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.salutation.getSalutationCode());
 	}
-	
-	
-	public void setGenderSystemDefault(){
-		Filter[] systemDefault=new Filter[1];
-		systemDefault[0]=new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-		Object genderdef=	PennantAppUtil.getSystemDefault("Gender","", systemDefault);
-		if (genderdef!=null) {
-			sysDefaultgender=(Gender) genderdef;
+
+	public void setGenderSystemDefault() {
+		Filter[] systemDefault = new Filter[1];
+		systemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
+		Object genderdef = PennantAppUtil.getSystemDefault("Gender", "", systemDefault);
+		if (genderdef != null) {
+			sysDefaultgender = (Gender) genderdef;
 		}
 	}
-	
-	public void onChange$salutationGenderCode(Event event){
+
+	public void onChange$salutationGenderCode(Event event) {
 		logger.debug("Entering");
 		doCheckSystemDefault();
 		logger.debug("Leaving");
 	}
-	
-	public void doCheckSystemDefault(){
+
+	public void doCheckSystemDefault() {
 		logger.debug("Entering");
-		if (this.salutationGenderCode.getSelectedItem()!=null && !
-				this.salutationGenderCode.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
-			if (sysDefaultgender!=null && sysDefaultgender.getGenderCode().equals(this.salutationGenderCode.getSelectedItem().getValue().toString())) {
+		if (this.salutationGenderCode.getSelectedItem() != null && !this.salutationGenderCode.getSelectedItem()
+				.getValue().toString().equals(PennantConstants.List_Select)) {
+			if (sysDefaultgender != null && sysDefaultgender.getGenderCode()
+					.equals(this.salutationGenderCode.getSelectedItem().getValue().toString())) {
 				this.systemDefault.setDisabled(isReadOnly("SalutationDialog_systemDefault"));
-			}else{
+			} else {
 				this.systemDefault.setDisabled(true);
 				this.systemDefault.setChecked(false);
 			}
-		}else{
+		} else {
 			this.systemDefault.setDisabled(true);
 			this.systemDefault.setChecked(false);
 		}
 		logger.debug("Entering");
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -931,6 +923,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -938,6 +931,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	public Salutation getSalutation() {
 		return this.salutation;
 	}
+
 	public void setSalutation(Salutation salutation) {
 		this.salutation = salutation;
 	}
@@ -945,6 +939,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	public void setSalutationService(SalutationService salutationService) {
 		this.salutationService = salutationService;
 	}
+
 	public SalutationService getSalutationService() {
 		return this.salutationService;
 	}
@@ -952,6 +947,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	public void setSalutationListCtrl(SalutationListCtrl salutationListCtrl) {
 		this.salutationListCtrl = salutationListCtrl;
 	}
+
 	public SalutationListCtrl getSalutationListCtrl() {
 		return this.salutationListCtrl;
 	}

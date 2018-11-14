@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.smtmasters;
+
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 
 /**
@@ -50,10 +51,14 @@ import com.pennant.backend.model.smtmasters.WeekendMaster;
  */
 public interface WeekendMasterDAO {
 
-	WeekendMaster getWeekendMasterByID(String id,String type);
-	void update(WeekendMaster weekendMaster,String type);
-	void delete(WeekendMaster weekendMaster,String type);
-	String save(WeekendMaster weekendMaster,String type);
+	WeekendMaster getWeekendMasterByID(String id, String type);
+
+	void update(WeekendMaster weekendMaster, String type);
+
+	void delete(WeekendMaster weekendMaster, String type);
+
+	String save(WeekendMaster weekendMaster, String type);
+
 	//ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
 	WeekendMaster getWeekendMasterByCode(String weekendCode);
 }

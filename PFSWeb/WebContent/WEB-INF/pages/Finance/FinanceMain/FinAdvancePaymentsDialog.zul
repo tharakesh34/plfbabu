@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_FinAdvancePaymentsDialog" border="normal" apply="${finAdvancePaymentsDialogCtrl}" width="85%" height="70%" sizable="false">
+		<window id="window_FinAdvancePaymentsDialog" border="normal" apply="${finAdvancePaymentsDialogCtrl}" width="85%"
+			height="70%" sizable="false">
 			<borderlayout id="borderlayoutFinAdvancePayments">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
-								<button id="btnNew" visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnEdit" visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnDelete" visible="false" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnCancel" visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnNew" visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" visible="false" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
@@ -23,8 +31,10 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -41,96 +51,70 @@
 								</columns>
 								<rows>
 									<row>
-										<label
-											value="${c:l('label_FinAdvancePaymentsDialog_PaymentSequence.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentSequence.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<intbox
-												id="paymentSequence" />
+											<intbox id="paymentSequence" />
 										</hbox>
-										<cell colspan="2" rowspan="9"
-											valign="top">
-											<iframe id="docName"
-												width="100%">
+										<cell colspan="2" rowspan="9" valign="top">
+											<iframe id="docName" width="100%">
 											</iframe>
 										</cell>
 									</row>
 									<row>
-										<label
-											value="${c:l('label_FinAdvancePaymentsDialog_PaymentDetail.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentDetail.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox
-												id="paymentDetail" 
-												width="155px"/>
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="paymentDetail" width="155px" />
 										</hbox>
 									</row>
 									<row>
-										<label
-											value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="disbDate"
-												width="155px" />
-											<intbox id="disbSeq"
-												visible="false" />
-											<decimalbox
-												id="disbDateAmount" readonly="true" width="155px"
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="disbDate" width="155px" />
+											<intbox id="disbSeq" visible="false" />
+											<decimalbox id="disbDateAmount" readonly="true" width="155px"
 												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 										</hbox>
 									</row>
 									<row>
-										<label id="label_llDate"
-											value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
+										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
 										<hbox id="hbox_llDate">
-											<space spacing="2px"
-												sclass="mandatory" />
-											<datebox id="llDate"
-												width="155px" />
+											<space spacing="2px" sclass="mandatory" />
+											<datebox id="llDate" width="155px" />
 										</hbox>
 									</row>
 									<row>
-										<label
-											value="${c:l('label_FinAdvancePaymentsDialog_PaymentType.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentType.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="paymentType"
-												width="155px" />
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="paymentType" width="155px" />
 										</hbox>
 									</row>
 									<row>
-										<label
-											value="${c:l('label_FinAdvancePaymentsDialog_AmtToBeReleased.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_AmtToBeReleased.value')}" />
 										<hbox>
-											<currencyBox
-												id="amtToBeReleased" />
+											<currencyBox id="amtToBeReleased" />
 										</hbox>
 									</row>
 									<row>
 										<cell>
 											<hbox>
-												<label
-													id="label_PartnetBankID"
-													value="${c:l('label_FinAdvancePaymentsDialog_PartnerbankId.value')}" />
+												<label id="label_PartnetBankID" value="${c:l('label_FinAdvancePaymentsDialog_PartnerbankId.value')}" />
 											</hbox>
 										</cell>
 										<cell>
-											<extendedcombobox
-												id="partnerBankID" />
+											<extendedcombobox id="partnerBankID" />
 										</cell>
 									</row>
 									<row>
 										<hbox>
-											<label
-												value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
+											<label value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
 										</hbox>
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="transactionRef"
-												width="150px" />
+											<textbox id="transactionRef" width="150px" />
 										</hbox>
 									</row>
 									<row>
@@ -144,51 +128,40 @@
 											</hbox>
 										</cell>
 									</row>
-										<row visible="false">
-											<label
-												id="label_custContribution"
-												value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
-											<hbox
-												id="hbox_custContribution">
-												<currencyBox
-													id="custContribution" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label
-												id="label_sellerContribution"
-												value="${c:l('label_FinAdvancePaymentsDialog_SellerContribution.value')}" />
-											<hbox
-												id="hbox_sellerContribution">
-												<currencyBox
-													id="sellerContribution" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label
-												value="${c:l('label_FinAdvancePaymentsDialog_Description.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox
-													id="description" multiline="true" rows="3" />
-											</hbox>
-										</row>
-										<row visible="false">
-											<label id="label_DisbCCy"
-												value="${c:l('label_FinAdvancePaymentsDialog_DisbCCy.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<textbox id="disbCCy" />
-											</hbox>
-										</row>
-										<row visible="false">
+									<row visible="false">
+										<label id="label_custContribution" value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
+										<hbox id="hbox_custContribution">
+											<currencyBox id="custContribution" />
+										</hbox>
+									</row>
+									<row visible="false">
+										<label id="label_sellerContribution" value="${c:l('label_FinAdvancePaymentsDialog_SellerContribution.value')}" />
+										<hbox id="hbox_sellerContribution">
+											<currencyBox id="sellerContribution" />
+										</hbox>
+									</row>
+									<row visible="false">
+										<label value="${c:l('label_FinAdvancePaymentsDialog_Description.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="description" multiline="true" rows="3" />
+										</hbox>
+									</row>
+									<row visible="false">
+										<label id="label_DisbCCy" value="${c:l('label_FinAdvancePaymentsDialog_DisbCCy.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="disbCCy" />
+										</hbox>
+									</row>
+									<row visible="false">
 										<label id="label_Active" value="${c:l('label_FinAdvancePaymentsDialog_Active.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<checkbox id="active" />
 										</hbox>
-										</row>
-										<row visible="false">
+									</row>
+									<row visible="false">
 										<label id="label_InputDate" value="${c:l('label_FinAdvancePaymentsDialog_InputDate.value')}" />
 										<hbox>
 											<space spacing="2px" />
@@ -225,7 +198,7 @@
 										</hbox>
 										<label id="label_PrintingLoc" value="${c:l('label_FinAdvancePaymentsDialog_PrintingLoc.value')}" />
 										<hbox id="hbox_PrintingLoc">
-											<space spacing="2px" sclass="mandatory" id="printLoc"/>
+											<space spacing="2px" sclass="mandatory" id="printLoc" />
 											<textbox id="printingLoc" />
 										</hbox>
 									</row>

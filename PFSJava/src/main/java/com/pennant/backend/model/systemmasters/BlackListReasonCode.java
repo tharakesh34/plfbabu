@@ -82,6 +82,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return bLRsnCode;
 	}
+
 	public void setId(String id) {
 		this.bLRsnCode = id;
 	}
@@ -89,6 +90,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public String getBLRsnCode() {
 		return bLRsnCode;
 	}
+
 	public void setBLRsnCode(String bLRsnCode) {
 		this.bLRsnCode = bLRsnCode;
 	}
@@ -96,6 +98,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public String getBLRsnDesc() {
 		return bLRsnDesc;
 	}
+
 	public void setBLRsnDesc(String bLRsnDesc) {
 		this.bLRsnDesc = bLRsnDesc;
 	}
@@ -103,6 +106,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public boolean isBLIsActive() {
 		return bLIsActive;
 	}
+
 	public void setBLIsActive(boolean bLIsActive) {
 		this.bLIsActive = bLIsActive;
 	}
@@ -110,6 +114,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -117,6 +122,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -124,6 +130,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public BlackListReasonCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(BlackListReasonCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -131,6 +138,7 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

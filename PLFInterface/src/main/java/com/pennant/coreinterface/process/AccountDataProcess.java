@@ -9,20 +9,14 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountDataProcess {
 
-	
-	
 	int removeAccountHolds() throws InterfaceException;
 
-	List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst,
-			String holdType) throws InterfaceException;
+	List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst, String holdType) throws InterfaceException;
 
-	InterfaceAccount createAccount(InterfaceAccount accountDetail)
-			throws InterfaceException;
+	InterfaceAccount createAccount(InterfaceAccount accountDetail) throws InterfaceException;
 
-	CollateralMark collateralMarking(CollateralMark collateralMark)
-			throws InterfaceException;
+	CollateralMark collateralMarking(CollateralMark collateralMark) throws InterfaceException;
 
-	CollateralMark collateralDeMarking(CollateralMark collateralMark)
-			throws InterfaceException;
-	
+	CollateralMark collateralDeMarking(CollateralMark collateralMark) throws InterfaceException;
+
 }

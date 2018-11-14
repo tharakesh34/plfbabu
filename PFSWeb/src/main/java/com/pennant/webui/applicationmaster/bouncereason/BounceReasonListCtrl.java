@@ -71,7 +71,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/BounceReason/BounceReasonList.zul file.
+ * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/BounceReason/BounceReasonList.zul
+ * file.
  * 
  */
 public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
@@ -96,17 +97,17 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 
 	// Search Fields
 	protected Textbox bounceCode; // autowired
-    protected Combobox reasonType; // autowired
-    protected Combobox category; // autowired
+	protected Combobox reasonType; // autowired
+	protected Combobox category; // autowired
 	protected Textbox returnCode; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_BounceCode;
 	protected Listbox sortOperator_ReasonType;
 	protected Listbox sortOperator_Category;
 	protected Listbox sortOperator_ReturnCode;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient BounceReasonService bounceReasonService;
 
 	/**
@@ -141,20 +142,22 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		// Register buttons and fields.
 		registerButton(button_BounceReasonList_BounceReasonSearch);
 		registerButton(button_BounceReasonList_NewBounceReason, "button_BounceReasonList_NewBounceReason", true);
-		
+
 		fillList(reasonType, PennantStaticListUtil.getReasonType(), null);
 		fillList(category, PennantStaticListUtil.getCategoryType(), null);
-		
+
 		registerField("bounceID");
-		registerField("bounceCode", listheader_BounceCode, SortOrder.NONE, bounceCode, sortOperator_BounceCode, Operators.STRING);
+		registerField("bounceCode", listheader_BounceCode, SortOrder.NONE, bounceCode, sortOperator_BounceCode,
+				Operators.STRING);
 		registerField("reasonType", listheader_ReasonType, SortOrder.NONE, reasonType, sortOperator_ReasonType,
 				Operators.SIMPLE_NUMARIC);
 		registerField("category", listheader_Category, SortOrder.NONE, category, sortOperator_Category,
 				Operators.SIMPLE_NUMARIC);
-		registerField("reason");		
-		registerField("action");		
-		registerField("ruleID");		
-		registerField("returnCode", listheader_ReturnCode, SortOrder.NONE, returnCode, sortOperator_ReturnCode, Operators.STRING);
+		registerField("reason");
+		registerField("action");
+		registerField("ruleID");
+		registerField("returnCode", listheader_ReturnCode, SortOrder.NONE, returnCode, sortOperator_ReturnCode,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -202,7 +205,6 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -213,7 +215,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 
 	public void onBounceReasonItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxBounceReason.getSelectedItem();
 		final long bounceID = (long) selectedItem.getAttribute("bounceID");
@@ -223,13 +225,13 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  BounceID = ");
-		whereCond.append( bouncereason.getBounceID());
+		whereCond.append(bouncereason.getBounceID());
 		whereCond.append(" AND  version=");
 		whereCond.append(bouncereason.getVersion());
-	
+
 		if (doCheckAuthority(bouncereason, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && bouncereason.getWorkflowId() == 0) {
@@ -239,10 +241,10 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -255,9 +257,10 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("bounceReason", bouncereason);
 		arg.put("bounceReasonListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -284,7 +287,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 
@@ -302,7 +305,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-	
+
 	public void setBounceReasonService(BounceReasonService bounceReasonService) {
 		this.bounceReasonService = bounceReasonService;
 	}

@@ -38,364 +38,364 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Bureau {
 	@XmlElement(name = "NOOFBUSLOANSOPENEDL6M")
-	private int			noOfBusLoansOpenedL6M;
+	private int noOfBusLoansOpenedL6M;
 
 	@XmlElement(name = "LOANTYPE")
-	private String		loanType;
+	private String loanType;
 
 	@XmlElement(name = "PRODINDEXHL")
-	private int			prodIndexHL;
+	private int prodIndexHL;
 
 	@XmlElement(name = "PRODINDEXAL")
-	private int			prodIndexAL;
+	private int prodIndexAL;
 
 	@XmlElement(name = "PRODINDEXCC")
-	private int			prodIndexCC;
+	private int prodIndexCC;
 
 	@XmlElement(name = "PRODINDEXBLOD")
-	private int			prodIndexBLOD;
+	private int prodIndexBLOD;
 
 	@XmlElement(name = "PRODINDEXCLPTL")
-	private int			prodIndexCLPTL;
+	private int prodIndexCLPTL;
 
 	@XmlElement(name = "CLSTOTDISBAMTL12M")
-	private BigDecimal	clsTotDisbAmtL12M					= BigDecimal.ZERO;
+	private BigDecimal clsTotDisbAmtL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MINPCTPAIDUNSECL1M")
-	private BigDecimal	minPctPaidUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal minPctPaidUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "PCTTOTOVDHICRL1M")
-	private BigDecimal	pctTotOvdhicrL1M					= BigDecimal.ZERO;
+	private BigDecimal pctTotOvdhicrL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALMAXPCTPAIDSECL1M")
-	private BigDecimal	alMaxPctPaidSecL1M					= BigDecimal.ZERO;
+	private BigDecimal alMaxPctPaidSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MONSINCEL30POVRALL12M")
-	private int			monSinceL30pOvralL12M;
+	private int monSinceL30pOvralL12M;
 
 	@XmlElement(name = "ALWORSTAMTOVRDUESECL1M")
-	private BigDecimal	alWorstAmtOvrdueSecL1M				= BigDecimal.ZERO;
+	private BigDecimal alWorstAmtOvrdueSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "BALDISBAMTRATIOL1M")
-	private BigDecimal	balDisbAmtRatioL1M					= BigDecimal.ZERO;
+	private BigDecimal balDisbAmtRatioL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLSTOTDISBAMT")
-	private BigDecimal	clsTotDisbAmt						= BigDecimal.ZERO;
+	private BigDecimal clsTotDisbAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXDELINQUENCYSECL12M")
-	private BigDecimal	maxDelinquencySecL12M				= BigDecimal.ZERO;
+	private BigDecimal maxDelinquencySecL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOF90DPDACTVOVRALL12M")
-	private int			noOf90DpdActvOvralL12M;
+	private int noOf90DpdActvOvralL12M;
 
 	@XmlElement(name = "NOOF90DPDOVERALLL12M")
-	private int			noOf90DpdOverallL12M;
+	private int noOf90DpdOverallL12M;
 
 	@XmlElement(name = "MINIMUMLOANAMOUNT")
-	private BigDecimal	minLoanamount						= BigDecimal.ZERO;
+	private BigDecimal minLoanamount = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXIMUMLOANAMOUNT")
-	private BigDecimal	maxLoanamount						= BigDecimal.ZERO;
+	private BigDecimal maxLoanamount = BigDecimal.ZERO;
 
 	@XmlElement(name = "MINIMUMTENURE")
-	private BigDecimal	minTenure							= BigDecimal.ZERO;
+	private BigDecimal minTenure = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXIMUMTENURE")
-	private BigDecimal	maxTenure							= BigDecimal.ZERO;
+	private BigDecimal maxTenure = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOPREVIOUSLOANSASOFAPPLICATIONDATE")
-	private String		noPrvsLoansAsOfAppDate;
+	private String noPrvsLoansAsOfAppDate;
 
 	@XmlElement(name = "ISAPPLICANT90PLUSDPDINLASTSIXMONTHS")
-	private String		isApplicant90PlusDpdinL6M;
+	private String isApplicant90PlusDpdinL6M;
 
 	@XmlElement(name = "ISAPPLICANTSUBSTANDARDINLASTSIXMONTHS")
-	private String		isApplicantSubStandardinL6M;
+	private String isApplicantSubStandardinL6M;
 
 	@XmlElement(name = "ISAPPLICANTREPORTEDASLOSSINLASTSIXMONTHS")
-	private String		isApplicantReportedAsLossinL6M;
+	private String isApplicantReportedAsLossinL6M;
 
 	@XmlElement(name = "ISAPPLICANTDOUBTFULINLASTSIXMONTHS")
-	private String		isApplicantDoubtfulinL6M;
+	private String isApplicantDoubtfulinL6M;
 
 	@XmlElement(name = "ISAPPLICANTMENTIONEDASSMA")
-	private String		isApplicantMentionedAsSMA;
+	private String isApplicantMentionedAsSMA;
 
 	@XmlElement(name = "LASTUPDATEDATEINBUREAU")
-	private String		lastUpdateDtInBureau;
+	private String lastUpdateDtInBureau;
 
 	@XmlElement(name = "NOTENOUGHINFORMATION")
-	private String		notenoughInfo;
+	private String notenoughInfo;
 
 	@XmlElement(name = "LOANSTAKENPOSTFINANCIALYEARINBUREAU")
-	private BigDecimal	loansTakenPostFinancialyrInBureau	= BigDecimal.ZERO;
+	private BigDecimal loansTakenPostFinancialyrInBureau = BigDecimal.ZERO;
 
 	@XmlElement(name = "CURBUSLOANDISBAMT")
-	private BigDecimal	curBusLoanDisbAmt					= BigDecimal.ZERO;
+	private BigDecimal curBusLoanDisbAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXPCTPAIDUNSECL1M")
-	private BigDecimal	maxPctPaidUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal maxPctPaidUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ACTVTOTDISBAMT")
-	private BigDecimal	actTotDisbAmt						= BigDecimal.ZERO;
+	private BigDecimal actTotDisbAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALWORSTCURBALOVERALLL1M")
-	private BigDecimal	alWorstCurBalOverallL1M				= BigDecimal.ZERO;
+	private BigDecimal alWorstCurBalOverallL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "WORSTCURRENTBALOVERALLL1M")
-	private BigDecimal	worstCurBalOverallL1M				= BigDecimal.ZERO;
+	private BigDecimal worstCurBalOverallL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXPCTPAIDOVRALL1M")
-	private BigDecimal	maxPctPaidOvralL1M					= BigDecimal.ZERO;
+	private BigDecimal maxPctPaidOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLPCTTOTBALHICRL1M")
-	private BigDecimal	clPctTotBalHicrL1M					= BigDecimal.ZERO;
+	private BigDecimal clPctTotBalHicrL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "TOTDISBAMT")
-	private BigDecimal	totDisbAmt							= BigDecimal.ZERO;
+	private BigDecimal totDisbAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALAVGCURBALOVERALLL1M")
-	private BigDecimal	alAvgCurBalOverallL1M				= BigDecimal.ZERO;
+	private BigDecimal alAvgCurBalOverallL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALCURRENTBALOVRALL1M")
-	private BigDecimal	alCurBalOvralL1M					= BigDecimal.ZERO;
+	private BigDecimal alCurBalOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "WORSTCURRENTBALSECL1M")
-	private BigDecimal	worstCurBalSecL1M					= BigDecimal.ZERO;
+	private BigDecimal worstCurBalSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AVGCURRENTBALSECL1M")
-	private BigDecimal	avgCurBalSecL1M						= BigDecimal.ZERO;
+	private BigDecimal avgCurBalSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CURRENTBALSECL1M")
-	private BigDecimal	curBalSecL1M						= BigDecimal.ZERO;
+	private BigDecimal curBalSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALAVGCURBALSECL1M")
-	private BigDecimal	alAvgCurBalSecL1M					= BigDecimal.ZERO;
+	private BigDecimal alAvgCurBalSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALWORSTCURBALSECL1M")
-	private BigDecimal	alWorstCurBalSecL1M					= BigDecimal.ZERO;
+	private BigDecimal alWorstCurBalSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "WORSTCURRENTBALUNSECL1M")
-	private BigDecimal	worstCurBalUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal worstCurBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AVGCURRENTBALOVERALLL1M")
-	private BigDecimal	avgCurBalOverallL1M					= BigDecimal.ZERO;
+	private BigDecimal avgCurBalOverallL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "PCTTOTBALHICRL1M")
-	private BigDecimal	pctTotBalHicrL1M					= BigDecimal.ZERO;
+	private BigDecimal pctTotBalHicrL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLMAXPCTPAIDUNSECL1M")
-	private BigDecimal	clMaxPctPaidUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal clMaxPctPaidUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLMINPCTPAIDUNSECL1M")
-	private BigDecimal	clMinPctPaidUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal clMinPctPaidUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AVGCURRENTBALUNSECL1M")
-	private BigDecimal	avgCurBalUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal avgCurBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CURRENTBALUNSECL1M")
-	private BigDecimal	curBalUnSecL1M						= BigDecimal.ZERO;
+	private BigDecimal curBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALMINPCTPAIDUNSECL1M")
-	private BigDecimal	alMinPctPaidUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal alMinPctPaidUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALPCTTOTOVDHICRL1M")
-	private BigDecimal	alPctTotOvdHicrL1M					= BigDecimal.ZERO;
+	private BigDecimal alPctTotOvdHicrL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "PCTTOTOVDBALL1M")
-	private BigDecimal	pctTotOvdBalL1M						= BigDecimal.ZERO;
+	private BigDecimal pctTotOvdBalL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLMINPCTPAIDOVRALL1M")
-	private BigDecimal	clMinPctPaidOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal clMinPctPaidOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALMAXPCTPAIDUNSECL1M")
-	private BigDecimal	alMaxPctPaidUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal alMaxPctPaidUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AGEOLDESTPREV")
-	private BigDecimal	ageOldestPrev						= BigDecimal.ZERO;
+	private BigDecimal ageOldestPrev = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALWORSTCURTBALUNSECL1M")
-	private BigDecimal	alWorstCurtBalUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal alWorstCurtBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALMAXPCTPAIDOVRALL1M")
-	private BigDecimal	alMaxPctPaidOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal alMaxPctPaidOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALAVGCURBALUNSECL1M")
-	private BigDecimal	alAvgCurBalUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal alAvgCurBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "WORSTAMTOVEDUEUNSECL1M")
-	private BigDecimal	worstAmtOvedueUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal worstAmtOvedueUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AVGAMTOVRDUEUNSECL1M")
-	private BigDecimal	avgAmtOvrdueUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal avgAmtOvrdueUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CURRENTOVERDUEUNSECL1M")
-	private BigDecimal	curOverdueUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal curOverdueUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALPCTTOTOVDBALL1M")
-	private BigDecimal	alPctTotoVdbalL1M					= BigDecimal.ZERO;
+	private BigDecimal alPctTotoVdbalL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLWORPREVBALUNSECL1M")
-	private BigDecimal	clWorPrevBalUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal clWorPrevBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALPCTTOTBALHICRL1M")
-	private BigDecimal	alPctTotBalHicrL1M					= BigDecimal.ZERO;
+	private BigDecimal alPctTotBalHicrL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "RATIOACTVTOTLOANS")
-	private BigDecimal	ratioActvTotLoans					= BigDecimal.ZERO;
+	private BigDecimal ratioActvTotLoans = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLMAXPCTPAIDOVRALL1M")
-	private BigDecimal	clMaxPctPaidovralL1M				= BigDecimal.ZERO;
+	private BigDecimal clMaxPctPaidovralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "WORSTAMTOVRDUEOVRALL1M")
-	private BigDecimal	worstAmtOvrdueOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal worstAmtOvrdueOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AVGAMTOVRDUEOVRALL1M")
-	private BigDecimal	avgAmtOvrdueOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal avgAmtOvrdueOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CURRENTOVERDUEOVRALL1M")
-	private BigDecimal	curOverdueOvralL1M					= BigDecimal.ZERO;
+	private BigDecimal curOverdueOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXUNSECDISBAMTL12M")
-	private BigDecimal	maxUnSecDisbAmtL12M					= BigDecimal.ZERO;
+	private BigDecimal maxUnSecDisbAmtL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXSECDISBAMTL12M")
-	private BigDecimal	maxSecDisbAmtL12M					= BigDecimal.ZERO;
+	private BigDecimal maxSecDisbAmtL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXUNSECDISBAMTL6M")
-	private BigDecimal	maxUnSecDisbAmtL6M					= BigDecimal.ZERO;
+	private BigDecimal maxUnSecDisbAmtL6M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MINPCTPAIDOVRALL1M")
-	private BigDecimal	minPctPaidOvralL1M					= BigDecimal.ZERO;
+	private BigDecimal minPctPaidOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLWORPREVBALOVRALL1M")
-	private BigDecimal	clWorPrevBalOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal clWorPrevBalOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AGEOFCUSTOMER")
-	private int			ageOfCustomer;
+	private int ageOfCustomer;
 
 	@XmlElement(name = "ALWORSTAMTOVEDUEUNSECL1M")
-	private BigDecimal	alWorstAmtOvedueUnSecL1M			= BigDecimal.ZERO;
+	private BigDecimal alWorstAmtOvedueUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALAVGAMTOVRDUEUNSECL1M")
-	private BigDecimal	alAvgAmtOvrdueUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal alAvgAmtOvrdueUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALCURRENTOVERDUEUNSECL1M")
-	private BigDecimal	alCurOverdueUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal alCurOverdueUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALWORSTAMTOVRDUEOVRALL1M")
-	private BigDecimal	alWorstAmtOvrdueOvralL1M			= BigDecimal.ZERO;
+	private BigDecimal alWorstAmtOvrdueOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALAVGAMTOVRDUEOVRALL1M")
-	private BigDecimal	alAvgAmtOvrdueOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal alAvgAmtOvrdueOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALCURRENTOVERDUEOVRALL1M")
-	private BigDecimal	alCurOverdueOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal alCurOverdueOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "TOTALPREVLOANS")
-	private BigDecimal	totPrevLoans						= BigDecimal.ZERO;
+	private BigDecimal totPrevLoans = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXSECDISBAMTL6M")
-	private BigDecimal	maxSecDisbAmtL6M					= BigDecimal.ZERO;
+	private BigDecimal maxSecDisbAmtL6M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALMINPCTPAIDOVRALL1M")
-	private BigDecimal	alMinPctPaidOvralL1M				= BigDecimal.ZERO;
+	private BigDecimal alMinPctPaidOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLAVGCURBALUNSECL1M")
-	private BigDecimal	clAvgCurBalUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal clAvgCurBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLCURRENTBALUNSECL1M")
-	private BigDecimal	clCurBalUnSecL1M					= BigDecimal.ZERO;
+	private BigDecimal clCurBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "ALMINPCTPAIDSECL1M")
-	private BigDecimal	alMinPctPaidSecL1M					= BigDecimal.ZERO;
+	private BigDecimal alMinPctPaidSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXDELINQUENCYUNSECL12M")
-	private BigDecimal	maxDelinQuencyUnSecL12M				= BigDecimal.ZERO;
+	private BigDecimal maxDelinQuencyUnSecL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MINPCTPAIDSECL1M")
-	private BigDecimal	minPctPaidSecL1M					= BigDecimal.ZERO;
+	private BigDecimal minPctPaidSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXUNSECDISBAMTL3M")
-	private BigDecimal	maxUnSecDisbAmtL3M					= BigDecimal.ZERO;
+	private BigDecimal maxUnSecDisbAmtL3M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXSECDISBAMTL3M")
-	private BigDecimal	maxSecDisbAmtL3M					= BigDecimal.ZERO;
+	private BigDecimal maxSecDisbAmtL3M = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOFACTVLOANSONDISBDT")
-	private BigDecimal	noOfActvLoansOnDisbdt				= BigDecimal.ZERO;
+	private BigDecimal noOfActvLoansOnDisbdt = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLAVGCURBALOVERALLL1M")
-	private BigDecimal	clAvgCurBalOverallL1M				= BigDecimal.ZERO;
+	private BigDecimal clAvgCurBalOverallL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLCURRENTBALOVRALL1M")
-	private BigDecimal	clCurBalOvralL1M					= BigDecimal.ZERO;
+	private BigDecimal clCurBalOvralL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOFCLOSEDLOANSL12M")
-	private BigDecimal	noOfClosedLoansL12M					= BigDecimal.ZERO;
+	private BigDecimal noOfClosedLoansL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXDELINQUENCYOVERALLL12M")
-	private BigDecimal	maxDelinQuencyOverallL12M			= BigDecimal.ZERO;
+	private BigDecimal maxDelinQuencyOverallL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLPCTTOTOVDBALL1M")
-	private BigDecimal	clPctTotOvdBalL1M					= BigDecimal.ZERO;
+	private BigDecimal clPctTotOvdBalL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXPCTPAIDSECL1M")
-	private BigDecimal	maxPctPaidSecL1M					= BigDecimal.ZERO;
+	private BigDecimal maxPctPaidSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "AGELATESTPREV")
-	private BigDecimal	ageLattestprev						= BigDecimal.ZERO;
+	private BigDecimal ageLattestprev = BigDecimal.ZERO;
 
 	@XmlElement(name = "MONSINCEL30POVRALL6M")
-	private BigDecimal	monSinceL30pOvralL6M				= BigDecimal.ZERO;
+	private BigDecimal monSinceL30pOvralL6M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLWORSTCURBALUNSECL1M")
-	private BigDecimal	clWorstCurBalUnSecL1M				= BigDecimal.ZERO;
+	private BigDecimal clWorstCurBalUnSecL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOFCLOSEDLOANSL6M")
-	private BigDecimal	noOfClosedLoansL6M					= BigDecimal.ZERO;
+	private BigDecimal noOfClosedLoansL6M = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOF30DPDOVERALLL12M")
-	private BigDecimal	noOf30DpdOverallL12M				= BigDecimal.ZERO;
+	private BigDecimal noOf30DpdOverallL12M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXUNSECDISBAMTL1M")
-	private BigDecimal	maxUnSecDisbAmtL1M					= BigDecimal.ZERO;
+	private BigDecimal maxUnSecDisbAmtL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXDELINQUENCYOVERALLL6M")
-	private BigDecimal	maxDelinQuencyOverallL6M			= BigDecimal.ZERO;
+	private BigDecimal maxDelinQuencyOverallL6M = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOF30DPDOVERALLL6M")
-	private BigDecimal	noOf30DpdOverallL6M					= BigDecimal.ZERO;
+	private BigDecimal noOf30DpdOverallL6M = BigDecimal.ZERO;
 
 	@XmlElement(name = "CLWORSTCURBALOVERALLL1M")
-	private BigDecimal	clWorstCurBalOverallL1M				= BigDecimal.ZERO;
+	private BigDecimal clWorstCurBalOverallL1M = BigDecimal.ZERO;
 
 	@XmlElement(name = "SCORE")
-	private BigDecimal	score								= BigDecimal.ZERO;
+	private BigDecimal score = BigDecimal.ZERO;
 
 	@XmlElement(name = "ASSETCLASSIFICATION")
-	private BigDecimal	assetClassification					= BigDecimal.ZERO;
+	private BigDecimal assetClassification = BigDecimal.ZERO;
 
 	@XmlElement(name = "TOTALENQUIRIES")
-	private int			totalEnquiries;
+	private int totalEnquiries;
 
 	@XmlElement(name = "LIVETRADELINES")
-	private BigDecimal	liveTradelines						= BigDecimal.ZERO;
+	private BigDecimal liveTradelines = BigDecimal.ZERO;
 
 	@XmlElement(name = "RESTRUCTUREDFLAG")
-	private String		restructuredFlag;
+	private String restructuredFlag;
 
 	@XmlElement(name = "SFFLAG")
-	private String		sfFlag;
+	private String sfFlag;
 
 	@XmlElement(name = "WDFLAG")
-	private String		wdFlag;
+	private String wdFlag;
 
 	@XmlElement(name = "WOFLAG")
-	private String		woFlag;
+	private String woFlag;
 
 	@XmlElement(name = "SETTLEDFLAG")
-	private String		settledFlag;
+	private String settledFlag;
 
 	public int getNoOfBusLoansOpenedL6M() {
 		return noOfBusLoansOpenedL6M;

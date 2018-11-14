@@ -5,12 +5,10 @@ import java.math.BigDecimal;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-
-
 public class OverdueChargeDetail extends AbstractWorkflowEntity {
-	
-    private static final long serialVersionUID = -1032001125987199804L;
-    
+
+	private static final long serialVersionUID = -1032001125987199804L;
+
 	private String oDCRuleCode = null;
 	private String oDCCustCtg;
 	private String lovDescODCCustCtgName;
@@ -21,127 +19,142 @@ public class OverdueChargeDetail extends AbstractWorkflowEntity {
 	private int oDCGraceDays;
 	private boolean oDCAllowWaiver;
 	private BigDecimal oDCMaxWaiver;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private OverdueChargeDetail befImage;
 	private LoggedInUser userDetails;
-	
+
 	public OverdueChargeDetail() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public String getoDCRuleCode() {
-    	return oDCRuleCode;
-    }
+		return oDCRuleCode;
+	}
+
 	public void setoDCRuleCode(String oDCRuleCode) {
-    	this.oDCRuleCode = oDCRuleCode;
-    }
-	
+		this.oDCRuleCode = oDCRuleCode;
+	}
+
 	public String getoDCCustCtg() {
-    	return oDCCustCtg;
-    }
+		return oDCCustCtg;
+	}
+
 	public void setoDCCustCtg(String oDCCustCtg) {
-    	this.oDCCustCtg = oDCCustCtg;
-    }
-	
+		this.oDCCustCtg = oDCCustCtg;
+	}
+
 	public String getLovDescODCCustCtgName() {
-    	return lovDescODCCustCtgName;
-    }
+		return lovDescODCCustCtgName;
+	}
+
 	public void setLovDescODCCustCtgName(String lovDescODCCustCtgName) {
-    	this.lovDescODCCustCtgName = lovDescODCCustCtgName;
-    }
-	
+		this.lovDescODCCustCtgName = lovDescODCCustCtgName;
+	}
+
 	public String getoDCType() {
-    	return oDCType;
-    }
+		return oDCType;
+	}
+
 	public void setoDCType(String oDCType) {
-    	this.oDCType = oDCType;
-    }
-	
+		this.oDCType = oDCType;
+	}
+
 	public String getLovDescODCTypeName() {
-    	return lovDescODCTypeName;
-    }
+		return lovDescODCTypeName;
+	}
+
 	public void setLovDescODCTypeName(String lovDescODCTypeName) {
-    	this.lovDescODCTypeName = lovDescODCTypeName;
-    }
-	
+		this.lovDescODCTypeName = lovDescODCTypeName;
+	}
+
 	public String getoDCOn() {
-    	return oDCOn;
-    }
+		return oDCOn;
+	}
+
 	public void setoDCOn(String oDCOn) {
-    	this.oDCOn = oDCOn;
-    }
-	
+		this.oDCOn = oDCOn;
+	}
+
 	public BigDecimal getoDCAmount() {
-    	return oDCAmount;
-    }
+		return oDCAmount;
+	}
+
 	public void setoDCAmount(BigDecimal oDCAmount) {
-    	this.oDCAmount = oDCAmount;
-    }
-	
+		this.oDCAmount = oDCAmount;
+	}
+
 	public int getoDCGraceDays() {
-    	return oDCGraceDays;
-    }
+		return oDCGraceDays;
+	}
+
 	public void setoDCGraceDays(int oDCGraceDays) {
-    	this.oDCGraceDays = oDCGraceDays;
-    }
-	
+		this.oDCGraceDays = oDCGraceDays;
+	}
+
 	public boolean isoDCAllowWaiver() {
-    	return oDCAllowWaiver;
-    }
+		return oDCAllowWaiver;
+	}
+
 	public void setoDCAllowWaiver(boolean oDCAllowWaiver) {
-    	this.oDCAllowWaiver = oDCAllowWaiver;
-    }
-	
+		this.oDCAllowWaiver = oDCAllowWaiver;
+	}
+
 	public BigDecimal getoDCMaxWaiver() {
-    	return oDCMaxWaiver;
-    }
+		return oDCMaxWaiver;
+	}
+
 	public void setoDCMaxWaiver(BigDecimal oDCMaxWaiver) {
-    	this.oDCMaxWaiver = oDCMaxWaiver;
-    }
-	
+		this.oDCMaxWaiver = oDCMaxWaiver;
+	}
+
 	public boolean isNewRecord() {
-    	return newRecord;
-    }
+		return newRecord;
+	}
+
 	public void setNewRecord(boolean newRecord) {
-    	this.newRecord = newRecord;
-    }
-	
+		this.newRecord = newRecord;
+	}
+
 	public String getLovValue() {
-    	return lovValue;
-    }
+		return lovValue;
+	}
+
 	public void setLovValue(String lovValue) {
-    	this.lovValue = lovValue;
-    }
-	
+		this.lovValue = lovValue;
+	}
+
 	public OverdueChargeDetail getBefImage() {
-    	return befImage;
-    }
+		return befImage;
+	}
+
 	public void setBefImage(OverdueChargeDetail befImage) {
-    	this.befImage = befImage;
-    }
-	
+		this.befImage = befImage;
+	}
+
 	public LoggedInUser getUserDetails() {
-    	return userDetails;
-    }
+		return userDetails;
+	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
-    	this.userDetails = userDetails;
-    }
-	
+		this.userDetails = userDetails;
+	}
+
 	public String getId() {
-	    return oDCRuleCode;
-    }
+		return oDCRuleCode;
+	}
+
 	public void setId(String id) {
 		this.oDCRuleCode = id;
-	    
-    }
+
+	}
 
 }

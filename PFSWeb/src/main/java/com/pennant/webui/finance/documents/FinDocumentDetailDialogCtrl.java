@@ -99,59 +99,57 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/Contributor/DocumentDetailsDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/Contributor/DocumentDetailsDialog.zul file.
  */
 public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
-	private static final long	          serialVersionUID	      = -6959194080451993569L;
-	private static final Logger	          logger	              = Logger.getLogger(FinDocumentDetailDialogCtrl.class);
+	private static final long serialVersionUID = -6959194080451993569L;
+	private static final Logger logger = Logger.getLogger(FinDocumentDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window	                  window_FinDocumentDetailDialog;	                                                 // autowired
+	protected Window window_FinDocumentDetailDialog; // autowired
 
-	protected ExtendedCombobox            docCategory;                                                                // autowired
-	protected Textbox	                  documnetName;	                                                             // autowired
-	protected Checkbox                    docReceived;
+	protected ExtendedCombobox docCategory; // autowired
+	protected Textbox documnetName; // autowired
+	protected Checkbox docReceived;
 	protected Checkbox docOriginal;
-	protected Datebox                     docReceivedDt;
-	protected Space                       space_documentName;
-	protected Space                       space_docReceivedDt;
-	
-	protected Div		                  finDocumentDiv;	                                                             // autowired
+	protected Datebox docReceivedDt;
+	protected Space space_documentName;
+	protected Space space_docReceivedDt;
 
-	protected Row	                      statusRow;
+	protected Div finDocumentDiv; // autowired
+
+	protected Row statusRow;
 
 	// not auto wired vars
-	private DocumentDetails	              finDocumentDetail;	                                                     // overhanded per param
+	private DocumentDetails finDocumentDetail; // overhanded per param
 
-	private transient boolean	          validationOn;
-	
-	protected A	                          btnDownload;	                                                                 // autowire
+	private transient boolean validationOn;
+
+	protected A btnDownload; // autowire
 
 	// ServiceDAOs / Domain Classes
-	private transient CustomerSelectCtrl	customerSelectCtrl;
+	private transient CustomerSelectCtrl customerSelectCtrl;
 
-	private boolean	                      newRecord	              = false;
-	private boolean	                      newDocument	      = false;
-	private List<DocumentDetails>	      documentDetailList;
-	private DocumentDetailDialogCtrl	  documentDetailDialogCtrl;
-	protected JdbcSearchObject<Customer>	newSearchObject;
-	private String	                      moduleType	          = "";
-	private boolean	                      docIsMandatory;
-	private boolean 					  viewProcess = false;
-	private boolean 					  isCheckList = false;
-	private boolean 					  isDocAllowedForInput = false;
-	protected Button	                  btnUploadDoc;
-	protected Iframe	                  finDocumentPdfView;
+	private boolean newRecord = false;
+	private boolean newDocument = false;
+	private List<DocumentDetails> documentDetailList;
+	private DocumentDetailDialogCtrl documentDetailDialogCtrl;
+	protected JdbcSearchObject<Customer> newSearchObject;
+	private String moduleType = "";
+	private boolean docIsMandatory;
+	private boolean viewProcess = false;
+	private boolean isCheckList = false;
+	private boolean isDocAllowedForInput = false;
+	protected Button btnUploadDoc;
+	protected Iframe finDocumentPdfView;
 	//private List<ValueLabel>	documentTypes	      = PennantAppUtil.getDocumentTypes();
-	private Map<String, List<Listitem>>  checkListDocTypeMap = null;
+	private Map<String, List<Listitem>> checkListDocTypeMap = null;
 	protected Div docDiv;
-	
-	private String								moduleName;
+
+	private String moduleName;
 	private boolean isEditable;
 
 	/**
@@ -169,9 +167,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DocumentDetails object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DocumentDetails object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -188,8 +185,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			doCheckRights();
 
 			if (arguments.containsKey("finDocumentDetail")) {
-				this.finDocumentDetail = (DocumentDetails) arguments
-						.get("finDocumentDetail");
+				this.finDocumentDetail = (DocumentDetails) arguments.get("finDocumentDetail");
 				DocumentDetails befImage = new DocumentDetails();
 				BeanUtils.copyProperties(this.finDocumentDetail, befImage);
 				this.finDocumentDetail.setBefImage(befImage);
@@ -201,7 +197,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("moduleType")) {
 				this.moduleType = (String) arguments.get("moduleType");
 			}
-			
+
 			if (arguments.containsKey("docIsMandatory")) {
 				this.docIsMandatory = (boolean) arguments.get("docIsMandatory");
 			}
@@ -214,19 +210,17 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 
 			if (arguments.containsKey("checkListDocTypeMap")) {
-				checkListDocTypeMap = (Map<String, List<Listitem>>) arguments
-						.get("checkListDocTypeMap");
+				checkListDocTypeMap = (Map<String, List<Listitem>>) arguments.get("checkListDocTypeMap");
 			}
 
 			if (arguments.containsKey("isDocAllowedForInput")) {
-				isDocAllowedForInput = (Boolean) arguments
-						.get("isDocAllowedForInput");
+				isDocAllowedForInput = (Boolean) arguments.get("isDocAllowedForInput");
 			}
 
 			if (getDocumentDetails().isNewRecord()) {
 				setNewRecord(true);
 			}
-			
+
 			if (arguments.containsKey("enqiryModule")) {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 			}
@@ -234,11 +228,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (enqiryModule) {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
-			
+
 			if (arguments.containsKey("DocumentDetailDialogCtrl")) {
 
-				setDocumentDetailDialogCtrl((DocumentDetailDialogCtrl) arguments
-						.get("DocumentDetailDialogCtrl"));
+				setDocumentDetailDialogCtrl((DocumentDetailDialogCtrl) arguments.get("DocumentDetailDialogCtrl"));
 				setNewDocument(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -248,33 +241,29 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				}
 				this.finDocumentDetail.setWorkflowId(0);
 				if (arguments.containsKey("roleCode")) {
-					getUserWorkspace().allocateRoleAuthorities(
-							(String) arguments.get("roleCode"),
+					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"),
 							"DocumentDetailsDialog");
 				}
 			}
-			
+
 			if (arguments.containsKey("moduleName")) {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
-			
+
 			if (arguments.containsKey("isEditable")) {
 				isEditable = Boolean.parseBoolean(arguments.get("isEditable").toString());
 			}
 
-			doLoadWorkFlow(this.finDocumentDetail.isWorkflow(),
-					this.finDocumentDetail.getWorkflowId(),
+			doLoadWorkFlow(this.finDocumentDetail.isWorkflow(), this.finDocumentDetail.getWorkflowId(),
 					this.finDocumentDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"DocumentDetailsDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DocumentDetailsDialog");
 			}
-			
+
 			this.finDocumentDiv.setHeight(this.borderLayoutHeight - 260 + "px");// 425px
-			this.finDocumentPdfView.setHeight(this.borderLayoutHeight - 220
-					+ "px");// 425px
+			this.finDocumentPdfView.setHeight(this.borderLayoutHeight - 220 + "px");// 425px
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -288,8 +277,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
-	 * @throws InterruptedException 
-	 * @throws SuspendNotAllowedException 
+	 * 
+	 * @throws InterruptedException
+	 * @throws SuspendNotAllowedException
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
@@ -300,11 +290,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setModuleName("DocumentType");
 		this.docCategory.setValueColumn("DocTypeCode");
 		this.docCategory.setDescColumn("DocTypeDesc");
-		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
-		
-		if(docIsMandatory){
+		this.docCategory.setValidateColumns(new String[] { "DocTypeCode" });
+
+		if (docIsMandatory) {
 			this.space_documentName.setSclass("mandatory");
-		}else{
+		} else {
 			this.space_documentName.setSclass("");
 		}
 
@@ -325,8 +315,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -382,7 +371,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		String doctype = this.docCategory.getValue(); 
+		String doctype = this.docCategory.getValue();
 		logger.debug("Entering" + event.toString());
 		doDelete(doctype);
 		logger.debug("Leaving" + event.toString());
@@ -409,7 +398,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		doClose(this.btnSave.isVisible());
 	}
 
-	
 	/**
 	 * when the "Download" button is clicked. <br>
 	 * 
@@ -421,23 +409,24 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		doDownload();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
-	  * To Download the upload Document
+	 * To Download the upload Document
 	 */
 	private void doDownload() {
 		logger.debug("Entering");
 		AMedia amedia = null;
 		if (getDocumentDetails().getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(getDocumentDetails().getDocImage());
-			String docName=documnetName.getValue();
+			String docName = documnetName.getValue();
 			if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
 				amedia = new AMedia(docName, "pdf", "application/pdf", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
-			}else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
+					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
-			}else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				amedia = new AMedia(docName, "xlsx", "application/pdf", data);
 			}
 			Filedownload.save(amedia);
@@ -464,9 +453,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * 
 	 * @param combobox
 	 * @param value
-	 * @param list 
+	 * @param list
 	 */
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -475,49 +464,50 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
-	
+
 		this.docCategory.setValue(aDocumentDetails.getDocCategory());
 		this.docCategory.setDescription(aDocumentDetails.getLovDescDocCategoryName());
-		if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
+		if (checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
 			this.docCategory.setReadonly(true);
 		}
 		this.docCategory.setReadonly(true);
-		
+
 		this.documnetName.setValue(aDocumentDetails.getDocName());
 		this.documnetName.setAttribute("data", aDocumentDetails);
-		
 
 		AMedia amedia = null;
 		if (aDocumentDetails.getDocImage() != null) {
-//			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
-//			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
-//				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
-//			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
-//				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
-//			}else
-				
-			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG) ||
-					aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
+			//			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
+			//			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
+			//				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
+			//			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+			//				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
+			//			}else
+
+			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				this.docDiv.getChildren().clear();
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
-				ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + aDocumentDetails.getDocName()+ "</a> ");
-				
+				ageementLink
+						.setContent("<a href='' style = 'font-weight:bold'>" + aDocumentDetails.getDocName() + "</a> ");
+
 				List<Object> list = new ArrayList<Object>();
 				list.add(aDocumentDetails.getDoctype());
 				list.add(aDocumentDetails.getDocImage());
-				
+
 				ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
 				this.docDiv.appendChild(ageementLink);
-			}else{
+			} else {
 				amedia = new AMedia(aDocumentDetails.getDocName(), null, null, aDocumentDetails.getDocImage());
 			}
 			finDocumentPdfView.setContent(amedia);
 		}
-		
+
 		this.docReceived.setChecked(aDocumentDetails.isDocReceived());
 		this.docReceivedDt.setValue(aDocumentDetails.getDocReceivedDate());
-		
+
 		this.docOriginal.setChecked(aDocumentDetails.isDocOriginal());
 
 		this.documnetName.setReadonly(true);
@@ -529,7 +519,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} else {
 			this.docReceivedDt.setDisabled(true);
 			//this.documnetName.setReadonly(false);
-		//	this.space_documentName.setSclass("mandatory");
+			//	this.space_documentName.setSclass("mandatory");
 			this.btnUploadDoc.setVisible(true);
 		}
 
@@ -549,8 +539,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);
 		try {
-			if (this.docCategory.getValue() == null || this.docCategory.getValue().equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(this.docCategory, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
+			if (this.docCategory.getValue() == null
+					|| this.docCategory.getValue().equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.docCategory, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
 			} else {
 				this.docCategory.setReadonly(true);
 			}
@@ -559,10 +551,13 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (!(this.docReceived.isChecked())  && this.docIsMandatory &&(this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null)) {
-				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
+			if (!(this.docReceived.isChecked()) && this.docIsMandatory
+					&& (this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue())
+							|| this.documnetName.getAttribute("data") == null)) {
+				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED",
+						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
 			}
 			aDocumentDetails.setDocName(this.documnetName.getValue());
 			if (this.documnetName.getAttribute("data") != null) {
@@ -579,17 +574,17 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			wve.add(we);
 		}
 		aDocumentDetails.setDocReceived(this.docReceived.isChecked());
-		
+
 		try {
-			if(this.docReceived.isChecked()){				
+			if (this.docReceived.isChecked()) {
 				aDocumentDetails.setDocReceivedDate(this.docReceivedDt.getValue());
-			}else{
+			} else {
 				aDocumentDetails.setDocReceivedDate(DateUtility.getAppDate());
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (!this.docReceived.isChecked() && (StringUtils.isBlank(this.documnetName.getValue()))) {
 				throw new WrongValueException(this.docReceived, "Please check whether document is received or not");
@@ -597,7 +592,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentDetails.setDocOriginal(this.docOriginal.isChecked());
 		} catch (WrongValueException we) {
@@ -624,8 +619,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentDetails
 	 * @throws Exception
@@ -657,28 +651,29 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			// fill the components with the data
 			doWriteBeanToComponents(aDocumentDetails);
 			doSetDownLoadVisible();
-			boolean isContainsDocImg=aDocumentDetails.getDocImage()!=null?true:false;
+			boolean isContainsDocImg = aDocumentDetails.getDocImage() != null ? true : false;
 			this.btnDownload.setDisabled(!isContainsDocImg);
-			
-			if (isCheckList && StringUtils.trimToEmpty(aDocumentDetails.getRecordType()).equals(PennantConstants.RECORD_TYPE_CAN)) {
-				viewProcess=true;
+
+			if (isCheckList && StringUtils.trimToEmpty(aDocumentDetails.getRecordType())
+					.equals(PennantConstants.RECORD_TYPE_CAN)) {
+				viewProcess = true;
 			}
-			if(isCheckList && viewProcess){
+			if (isCheckList && viewProcess) {
 				this.btnDelete.setVisible(false);
 				this.btnSave.setVisible(false);
 				this.btnUploadDoc.setVisible(false);
 			}
-			if(checkListDocTypeMap!= null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
-				if(!isDocAllowedForInput){
+			if (checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
+				if (!isDocAllowedForInput) {
 					this.btnDelete.setVisible(false);
 					this.btnSave.setVisible(false);
 					this.btnUploadDoc.setVisible(false);
 				}
 			}
-			
+
 			doCheckEnquiry();
-		
-			 //doCheckDocumentOwner();
+
+			//doCheckDocumentOwner();
 			if (isNewDocument()) {
 				this.window_FinDocumentDetailDialog.setHeight("70%");
 				this.window_FinDocumentDetailDialog.setWidth("70%");
@@ -707,11 +702,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	private void doSetDownLoadVisible() {
 		this.btnDownload.setVisible(false);
-		if(StringUtils.isNotBlank(this.documnetName.getValue())){
+		if (StringUtils.isNotBlank(this.documnetName.getValue())) {
 			this.btnDownload.setLabel(this.documnetName.getValue());
 			this.btnDownload.setVisible(true);
 		}
-		
+
 	}
 
 	/**
@@ -725,12 +720,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (!this.documnetName.isReadonly() && !this.docReceived.isChecked() && this.docIsMandatory) {
 			mandatory = true;
 		}
-		this.documnetName.setConstraint(
-				new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value"), null, mandatory));
+		this.documnetName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value"), null, mandatory));
 
 		if (this.docReceived.isChecked()) {
-			this.docReceivedDt.setConstraint(new PTDateValidator(
-					Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate"), true));
+			this.docReceivedDt.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate"), true));
 			if (DateUtility.compare(this.docReceivedDt.getValue(), DateUtility.getAppDate()) == 1) {
 				throw new WrongValueException(this.docReceivedDt, Labels.getLabel("DATE_NO_FUTURE",
 						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate") }));
@@ -785,9 +780,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value")+" : "+aDocumentDetails.getDocCategory();
-		
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") + " : "
+				+ aDocumentDetails.getDocCategory();
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDocumentDetails.getRecordType())) {
 				aDocumentDetails.setVersion(aDocumentDetails.getVersion() + 1);
@@ -809,9 +805,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						getDocumentDetailDialogCtrl().doFillDocumentDetails(this.documentDetailList);
-						
-						if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
-							List<Listitem>  list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
+
+						if (checkListDocTypeMap != null
+								&& checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
+							List<Listitem> list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
 							for (int i = 0; i < list.size(); i++) {
 								list.get(i).setSelected(false);
 							}
@@ -877,9 +874,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} else {
 			btnDelete.setVisible(true);
 		}
-		
+
 		if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)
-				|| VerificationType.LV.getValue().equals(moduleName) || VerificationType.RCU.getValue().equals(moduleName)) {
+				|| VerificationType.LV.getValue().equals(moduleName)
+				|| VerificationType.RCU.getValue().equals(moduleName)) {
 			this.btnDelete.setVisible(isEditable);
 			this.btnSave.setVisible(isEditable);
 			this.documnetName.setDisabled(true);
@@ -887,10 +885,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.docReceived.setDisabled(!isEditable);
 		}
 
-		
 		logger.debug("Leaving");
 	}
-	
+
 	private void doCheckEnquiry() {
 		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.btnDelete.setVisible(false);
@@ -1011,15 +1008,16 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getDocumentDetailDialogCtrl().doFillDocumentDetails(this.documentDetailList);
 					// send the data back to customer
-					if(checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())){
-						List<Listitem>  list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
+					if (checkListDocTypeMap != null
+							&& checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
+						List<Listitem> list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
 						for (int i = 0; i < list.size(); i++) {
 							list.get(i).setDisabled(false);
 							list.get(i).setSelected(true);
 							list.get(i).setDisabled(true);
 						}
 					}
-					 closeDialog();
+					closeDialog();
 				}
 			}
 		} catch (Exception e) {
@@ -1040,18 +1038,21 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		valueParm[0] = aDocumentDetails.getDocCategory();
 		errParm[0] = PennantJavaUtil.getLabel("label_DocumnetCategory") + ":" + valueParm[0];
 
-		if (getDocumentDetailDialogCtrl().getDocumentDetailsList() != null && getDocumentDetailDialogCtrl().getDocumentDetailsList().size() > 0) {
+		if (getDocumentDetailDialogCtrl().getDocumentDetailsList() != null
+				&& getDocumentDetailDialogCtrl().getDocumentDetailsList().size() > 0) {
 			for (int i = 0; i < getDocumentDetailDialogCtrl().getDocumentDetailsList().size(); i++) {
 				DocumentDetails documentDetails = getDocumentDetailDialogCtrl().getDocumentDetailsList().get(i);
 
 				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both Current and Existing list rating same
 
 					if (isNewRecord()) {
-						if(!StringUtils.equals(documentDetails.getRecordType(), PennantConstants.RECORD_TYPE_CAN)){							
-							auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						if (!StringUtils.equals(documentDetails.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+							auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+									getUserWorkspace().getUserLanguage()));
 							return auditHeader;
 						}
-						
+
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -1067,12 +1068,14 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							documentDetailList.add(aDocumentDetails);
 						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aDocumentDetails.getRecordType())) {
 							recordAdded = true;
-							/*		for (int j = 0; j < getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().size(); j++) {
-										DocumentDetails detail =  getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().getContributorDetailList().get(j);
-										if(detail.getCustID() == aDocumentDetails.getCustID()){
-											contributorDetails.add(detail);
-										}
-									}*/
+							/*
+							 * for (int j = 0; j <
+							 * getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().
+							 * getContributorDetailList().size(); j++) { DocumentDetails detail =
+							 * getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().
+							 * getContributorDetailList().get(j); if(detail.getCustID() ==
+							 * aDocumentDetails.getCustID()){ contributorDetails.add(detail); } }
+							 */
 						}
 					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
@@ -1102,7 +1105,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private AuditHeader getAuditHeader(DocumentDetails aDocumentDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDocumentDetails.getBefImage(), aDocumentDetails);
 
-		return new AuditHeader(getReference(), String.valueOf(aDocumentDetails.getDocId()), null, null, auditDetail, aDocumentDetails.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aDocumentDetails.getDocId()), null, null, auditDetail,
+				aDocumentDetails.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1136,12 +1140,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		doShowNotes(this.finDocumentDetail);
 	}
 
-	public void onSelect$docCategory(Event  event){
-		
-		
+	public void onSelect$docCategory(Event event) {
+
 	}
-	
-	
+
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -1163,7 +1165,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.btnDownload.setLabel("");
 			this.finDocumentPdfView.setVisible(false);
 			this.finDocumentPdfView.setContent(null);
-			 this.documnetName.setAttribute("data", null);
+			this.documnetName.setAttribute("data", null);
 			Clients.clearWrongValue(docReceived);
 		} else {
 			this.docReceivedDt.setReadonly(true);
@@ -1174,7 +1176,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 	}
 
-	/** 
+	/**
 	 * Get the Reference value
 	 */
 	@Override
@@ -1226,19 +1228,17 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.newDocument = newDocument;
 	}
 
-	
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
 		return documentDetailDialogCtrl;
 	}
 
-	public void setDocumentDetailDialogCtrl(
-			DocumentDetailDialogCtrl documentDetailDialogCtrl) {
+	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		Media media = event.getMedia();
 		browseDoc(media, this.documnetName);
 		doSetDownLoadVisible();
@@ -1247,7 +1247,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		try {
 			boolean isSupported = true;
 			String docType = "";
@@ -1270,38 +1270,39 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
 				// Data Fill by QR Bar Code Reader
 				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
-					this.finDocumentPdfView.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
+					this.finDocumentPdfView
+							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
 				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
 					this.finDocumentPdfView.setContent(media);
-				}else if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)  || 
-						docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
+				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
+						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
+						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.getChildren().clear();
 					Html ageementLink = new Html();
 					ageementLink.setStyle("padding:10px;");
-					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName+ "</a> ");
+					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName + "</a> ");
 
 					List<Object> list = new ArrayList<Object>();
 					list.add(docType);
 					list.add(ddaImageData);
-					
+
 					ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
 					this.docDiv.appendChild(ageementLink);
 				}
 
-				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG) ||
-						docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
+				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.setVisible(true);
 					this.finDocumentPdfView.setVisible(false);
-				}else{
+				} else {
 					this.docDiv.setVisible(false);
 					this.finDocumentPdfView.setVisible(true);
 				}
-				
-				
+
 				textbox.setValue(fileName);
 				if (textbox.getAttribute("data") == null) {
-					DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType, 
+					DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
 							fileName, ddaImageData);
 					textbox.setAttribute("data", documentDetails);
 				} else {
@@ -1314,34 +1315,30 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (Exception ex) {
 			logger.error("Exception: ", ex);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void onDocumentClicked(Event event) throws Exception {
-		List<Object> list  = (List<Object>) event.getData();
-		
+		List<Object> list = (List<Object>) event.getData();
+
 		String docType = (String) list.get(0);
-		byte[] ddaImageData= (byte[]) list.get(1);
-		
-		if(docType.equals(PennantConstants.DOC_TYPE_WORD)){
+		byte[] ddaImageData = (byte[]) list.get(1);
+
+		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
 			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
-		}else if(docType.equals(PennantConstants.DOC_TYPE_MSG)){
+		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
-		}else if(docType.equals(PennantConstants.DOC_TYPE_EXCEL)){
+		} else if (docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
 		}
 	}
-	
-	/*private void doCheckDocumentOwner(){
-		if (getDocumentDetails().getLastMntBy() !=0 && getUserWorkspace().getLoggedInUser().getLoginUsrID() !=getDocumentDetails().getLastMntBy()) {
-			this.btnDelete.setVisible(false);
-			this.btnSave.setVisible(false);
-			this.btnUploadDoc.setVisible(false);
-		}
-	} 
-	*/
-	
-	
+
+	/*
+	 * private void doCheckDocumentOwner(){ if (getDocumentDetails().getLastMntBy() !=0 &&
+	 * getUserWorkspace().getLoggedInUser().getLoginUsrID() !=getDocumentDetails().getLastMntBy()) {
+	 * this.btnDelete.setVisible(false); this.btnSave.setVisible(false); this.btnUploadDoc.setVisible(false); } }
+	 */
+
 }

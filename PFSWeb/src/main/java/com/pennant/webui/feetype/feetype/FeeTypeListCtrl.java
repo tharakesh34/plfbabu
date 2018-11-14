@@ -63,39 +63,39 @@ import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.webui.feetype.feetype.model.FeeTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul file.
  */
 public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(FeeTypeListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FeeTypeListCtrl.class);
 
-	protected Window					window_FeeTypeList;
-	protected Borderlayout				borderLayout_FeeTypeList;
-	protected Paging					pagingFeeTypeList;
-	protected Listbox					listBoxFeeType;
+	protected Window window_FeeTypeList;
+	protected Borderlayout borderLayout_FeeTypeList;
+	protected Paging pagingFeeTypeList;
+	protected Listbox listBoxFeeType;
 
-	protected Listheader				listheader_FeeTypeCode;
-	protected Listheader				listheader_FeeTypeDesc;
-	protected Listheader				listheader_Active;
+	protected Listheader listheader_FeeTypeCode;
+	protected Listheader listheader_FeeTypeDesc;
+	protected Listheader listheader_Active;
 
-	protected Button					button_FeeTypeList_NewFeeType;
-	protected Button					button_FeeTypeList_FeeTypeSearch;
+	protected Button button_FeeTypeList_NewFeeType;
+	protected Button button_FeeTypeList_FeeTypeSearch;
 
-	protected Textbox					feeTypeCode;
-	protected Textbox					feeTypeDesc;
-	protected Checkbox					active;
+	protected Textbox feeTypeCode;
+	protected Textbox feeTypeDesc;
+	protected Checkbox active;
 
-	protected Listbox					sortOperator_FeeTypeCode;
-	protected Listbox					sortOperator_FeeTypeDesc;
-	protected Listbox					sortOperator_Active;
+	protected Listbox sortOperator_FeeTypeCode;
+	protected Listbox sortOperator_FeeTypeDesc;
+	protected Listbox sortOperator_Active;
 
-	private transient FeeTypeService	feeTypeService;
+	private transient FeeTypeService feeTypeService;
 
 	/**
 	 * default constructor.<br>

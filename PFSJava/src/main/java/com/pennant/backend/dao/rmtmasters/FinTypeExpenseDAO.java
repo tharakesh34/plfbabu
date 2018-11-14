@@ -68,9 +68,9 @@ public interface FinTypeExpenseDAO {
 	void delete(FinTypeExpense finTypeExpense, String type);
 
 	void deleteByFinType(String finType, String type);
-	
+
 	FinTypeExpense getFinTypeExpenseByFinType(String finType, long expenseTypeId, String type);
-	
+
 	boolean expenseExistingFinTypeExpense(long expenseId, String type);
 
 }

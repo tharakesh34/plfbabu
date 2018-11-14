@@ -63,9 +63,9 @@ import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennant.backend.service.applicationmaster.CheckListService;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CheckList/CheckListList.zul file.

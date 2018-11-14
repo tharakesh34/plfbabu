@@ -55,6 +55,6 @@ public interface QueueAssignmentService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	QueueAssignmentHeader getFinances(QueueAssignmentHeader aQueueAssignmentHeader);
-	
+
 	boolean checkIfUserAlreadyAccessed(String finReferences, String selectedUser, String roleCode);
 }

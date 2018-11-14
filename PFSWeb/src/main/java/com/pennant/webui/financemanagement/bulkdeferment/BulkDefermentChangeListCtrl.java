@@ -31,56 +31,57 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.enquiry.model.BulkDefermentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHeader> {
 	private static final long serialVersionUID = 9086034736503097868L;
 	private static final Logger logger = Logger.getLogger(BulkDefermentChangeListCtrl.class);
 
-	protected Window window_BulkRateChangeList; 
-	protected Borderlayout borderLayout_BulkRateChangeList; 
-	protected Paging pagingBulkRateChangeList; 
-	protected Listbox listBoxBulkRateChange; 
+	protected Window window_BulkRateChangeList;
+	protected Borderlayout borderLayout_BulkRateChangeList;
+	protected Paging pagingBulkRateChangeList;
+	protected Listbox listBoxBulkRateChange;
 
-	protected Listheader listheader_fromDate; 
-	protected Listheader listheader_toDate; 
-	protected Listheader listheader_newProcessedRate; 
-	protected Listheader listheader_reCalculationType; 
-	
-	protected Button button_BulkRateChangeList_NewBulkRateChange; 
-	protected Button button_BulkRateChangeList_BulkRateChangeSearchDialog; 
+	protected Listheader listheader_fromDate;
+	protected Listheader listheader_toDate;
+	protected Listheader listheader_newProcessedRate;
+	protected Listheader listheader_reCalculationType;
 
-	protected Datebox fromDate; 
-	protected Listbox sortOperator_fromDate; 
-	protected Datebox toDate; 
-	protected Listbox sortOperator_toDate; 
-	protected Decimalbox newProcessedRate; 
-	protected Listbox sortOperator_newProcessedRate; 
-	protected Combobox reCalculationType; 
-	protected Listbox sortOperator_reCalculationType; 
-	protected Textbox bulkProcessFor;   
+	protected Button button_BulkRateChangeList_NewBulkRateChange;
+	protected Button button_BulkRateChangeList_BulkRateChangeSearchDialog;
 
-	protected Listheader listheader_reCalFromDate; 
-	protected Listheader listheader_reCalToDate;  
-	protected Listbox    sortOperator_reCalFromDate; 
-	protected Datebox    reCalFromDate;              
-	protected Listbox    sortOperator_reCalToDate;   
-	protected Datebox    reCalToDate;                
+	protected Datebox fromDate;
+	protected Listbox sortOperator_fromDate;
+	protected Datebox toDate;
+	protected Listbox sortOperator_toDate;
+	protected Decimalbox newProcessedRate;
+	protected Listbox sortOperator_newProcessedRate;
+	protected Combobox reCalculationType;
+	protected Listbox sortOperator_reCalculationType;
+	protected Textbox bulkProcessFor;
 
-	private Tabbox	tabbox;
-	
-	protected Textbox moduleType; 
+	protected Listheader listheader_reCalFromDate;
+	protected Listheader listheader_reCalToDate;
+	protected Listbox sortOperator_reCalFromDate;
+	protected Datebox reCalFromDate;
+	protected Listbox sortOperator_reCalToDate;
+	protected Datebox reCalToDate;
+
+	private Tabbox tabbox;
+
+	protected Textbox moduleType;
 	protected Row reCalTypeRow;
-    protected Label label_BulkRateChangeSearch_newProcessedRate;
+	protected Label label_BulkRateChangeSearch_newProcessedRate;
 
 	// NEEDED for the ReUse in the SearchWindow
 	private FinanceDetailService financeDetailService;
 	private BulkDefermentChangeProcessService bulkDefermentChangeProcessService;
-    private boolean isBulkDeferment=false;
-   
-    private List<ValueLabel> listRecalType =PennantStaticListUtil.getSchCalCodes();
+	private boolean isBulkDeferment = false;
+
+	private List<ValueLabel> listRecalType = PennantStaticListUtil.getSchCalCodes();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -88,14 +89,12 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 		super();
 	}
 
-	
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
 		searchObject.addFilterNotEqual("RecordType", "");
 	}
 
-	
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "BulkProcessHeader";
@@ -131,7 +130,8 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 		setItemRender(new BulkDefermentListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_BulkRateChangeList_NewBulkRateChange, "button_BulkRateChangeList_NewBulkRateChange", true);
+		registerButton(button_BulkRateChangeList_NewBulkRateChange, "button_BulkRateChangeList_NewBulkRateChange",
+				true);
 		registerButton(button_BulkRateChangeList_BulkRateChangeSearchDialog);
 
 		registerField("BulkProcessId", SortOrder.ASC);
@@ -178,7 +178,6 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 		doReset();
 		search();
 	}
-	
 
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
@@ -198,11 +197,9 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 
 		BulkProcessHeader bulkProcessHeader = null;
 		if ("R".equals(StringUtils.trimToEmpty(bulkProcessFor))) {
-			bulkProcessHeader = bulkDefermentChangeProcessService.getBulkProcessHeaderById(
-					id, "R");
+			bulkProcessHeader = bulkDefermentChangeProcessService.getBulkProcessHeaderById(id, "R");
 		} else if ("D".equals(StringUtils.trimToEmpty(bulkProcessFor))) {
-			bulkProcessHeader = bulkDefermentChangeProcessService.getBulkProcessHeaderById(
-					id, "D");
+			bulkProcessHeader = bulkDefermentChangeProcessService.getBulkProcessHeaderById(id, "D");
 		}
 
 		if (bulkProcessHeader == null) {
@@ -241,14 +238,15 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 		map.put("bulkDefermentChangeListCtrl", this);
 		BulkProcessHeader bulkProcessHeader = new BulkProcessHeader();
 		bulkProcessHeader.setNewRecord(true);
-		if("R".equals(this.bulkProcessFor.getValue())) {
+		if ("R".equals(this.bulkProcessFor.getValue())) {
 			bulkProcessHeader.setBulkProcessFor("R");
 		} else {
 			bulkProcessHeader.setBulkProcessFor("D");
 		}
-		
+
 		map.put("bulkProcessHeader", bulkProcessHeader);
-		Executions.createComponents("/WEB-INF/pages/FinanceManagement/BulkDefermentChange/BulkDefermentChangeDialog.zul", null, map);
+		Executions.createComponents(
+				"/WEB-INF/pages/FinanceManagement/BulkDefermentChange/BulkDefermentChangeDialog.zul", null, map);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -257,9 +255,9 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 	 * 
 	 * @throws Exception
 	 */
-	public void buildDialogWindow(CustomerDetails customer,boolean newRecord) throws Exception{
+	public void buildDialogWindow(CustomerDetails customer, boolean newRecord) throws Exception {
 		logger.debug("Entering");
-		if (customer!=null) {
+		if (customer != null) {
 			if (newRecord) {
 				// create a new Customer object, We GET it from the backEnd.
 				//CustomerDetails aCustomerDetails = getCustomerDetailsService().getNewCustomer(false);
@@ -328,7 +326,8 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 		return bulkDefermentChangeProcessService;
 	}
 
-	public void setBulkDefermentChangeProcessService(BulkDefermentChangeProcessService bulkDefermentChangeProcessService) {
+	public void setBulkDefermentChangeProcessService(
+			BulkDefermentChangeProcessService bulkDefermentChangeProcessService) {
 		this.bulkDefermentChangeProcessService = bulkDefermentChangeProcessService;
 	}
 }

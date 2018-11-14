@@ -63,11 +63,11 @@ import com.pennant.util.PennantAppUtil;
 public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<ReinstateFinance>, Serializable {
 
 	private static final long serialVersionUID = 3736186724610414895L;
-	
+
 	public ReinstateFinanceListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ReinstateFinance reinstateFinance, int count) throws Exception {
 
@@ -84,26 +84,28 @@ public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<R
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(reinstateFinance.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(reinstateFinance.getGraceTerms()+reinstateFinance.getNumberOfTerms()));
+		lc = new Listcell(String.valueOf(reinstateFinance.getGraceTerms() + reinstateFinance.getNumberOfTerms()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(reinstateFinance.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(reinstateFinance.getFinCcy());
 		lc.setParent(item);
 		BigDecimal finAmount = reinstateFinance.getFinAmount();
-		if(reinstateFinance.getFeeChargeAmt() != null && reinstateFinance.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+		if (reinstateFinance.getFeeChargeAmt() != null
+				&& reinstateFinance.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(reinstateFinance.getFeeChargeAmt());
 		}
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount,CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
-		if(reinstateFinance.getFinRepaymentAmount()!=null){
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount
-					.subtract(reinstateFinance.getFinRepaymentAmount()),CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
+		if (reinstateFinance.getFinRepaymentAmount() != null) {
+			lc = new Listcell(PennantAppUtil.amountFormate(finAmount.subtract(reinstateFinance.getFinRepaymentAmount()),
+					CurrencyUtil.getFormat(reinstateFinance.getFinCcy())));
 			lc.setStyle("text-align:right");
-		}else{
+		} else {
 			lc = new Listcell("");
-			
+
 		}
 		lc.setParent(item);
 		lc = new Listcell(reinstateFinance.getRecordStatus());

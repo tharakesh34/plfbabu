@@ -47,13 +47,20 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 
 public interface FinanceWorkFlowService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceWorkFlow getFinanceWorkFlowById(String id, String finEvent, String moduleName);
+
 	FinanceWorkFlow getApprovedFinanceWorkFlowById(String id, String finEvent, String moduleName);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	String getFinanceWorkFlowType(String finType, String workflowCode,	String moduleName);
+
+	String getFinanceWorkFlowType(String finType, String workflowCode, String moduleName);
+
 	int getVASProductCode(String finType);
 }

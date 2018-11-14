@@ -82,13 +82,15 @@ public class RatingType extends AbstractWorkflowEntity {
 	public String getId() {
 		return ratingType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.ratingType = id;
 	}
 
 	public String getRatingType() {
 		return ratingType;
 	}
+
 	public void setRatingType(String ratingType) {
 		this.ratingType = ratingType;
 	}
@@ -96,6 +98,7 @@ public class RatingType extends AbstractWorkflowEntity {
 	public String getRatingTypeDesc() {
 		return ratingTypeDesc;
 	}
+
 	public void setRatingTypeDesc(String ratingTypeDesc) {
 		this.ratingTypeDesc = ratingTypeDesc;
 	}
@@ -103,6 +106,7 @@ public class RatingType extends AbstractWorkflowEntity {
 	public boolean isValueType() {
 		return valueType;
 	}
+
 	public void setValueType(boolean valueType) {
 		this.valueType = valueType;
 	}
@@ -110,6 +114,7 @@ public class RatingType extends AbstractWorkflowEntity {
 	public int getValueLen() {
 		return valueLen;
 	}
+
 	public void setValueLen(int valueLen) {
 		this.valueLen = valueLen;
 	}
@@ -117,6 +122,7 @@ public class RatingType extends AbstractWorkflowEntity {
 	public boolean isRatingIsActive() {
 		return ratingIsActive;
 	}
+
 	public void setRatingIsActive(boolean ratingIsActive) {
 		this.ratingIsActive = ratingIsActive;
 	}
@@ -124,6 +130,7 @@ public class RatingType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -131,20 +138,23 @@ public class RatingType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public RatingType getBefImage(){
+	public RatingType getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(RatingType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(RatingType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

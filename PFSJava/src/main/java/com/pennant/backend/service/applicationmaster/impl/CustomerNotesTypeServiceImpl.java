@@ -65,9 +65,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>CustomerNotesType</b>.<br>
  * 
  */
-public class CustomerNotesTypeServiceImpl extends
-		GenericService<CustomerNotesType> implements CustomerNotesTypeService {
-	
+public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesType>
+		implements CustomerNotesTypeService {
+
 	private static Logger logger = Logger.getLogger(CustomerNotesTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -76,7 +76,7 @@ public class CustomerNotesTypeServiceImpl extends
 	public CustomerNotesTypeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -93,20 +93,17 @@ public class CustomerNotesTypeServiceImpl extends
 		return customerNotesTypeDAO;
 	}
 
-	public void setCustomerNotesTypeDAO(
-			CustomerNotesTypeDAO customerNotesTypeDAO) {
+	public void setCustomerNotesTypeDAO(CustomerNotesTypeDAO customerNotesTypeDAO) {
 		this.customerNotesTypeDAO = customerNotesTypeDAO;
 	}
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTCustNotesTypes/BMTCustNotesTypes_Temp by using CustomerNotesTypeDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using CustomerNotesTypeDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtBMTCustNotesTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTCustNotesTypes/BMTCustNotesTypes_Temp by using CustomerNotesTypeDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using CustomerNotesTypeDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -122,16 +119,14 @@ public class CustomerNotesTypeServiceImpl extends
 			return auditHeader;
 		}
 		String tableType = "";
-		CustomerNotesType customerNotesType = (CustomerNotesType) auditHeader
-				.getAuditDetail().getModelData();
+		CustomerNotesType customerNotesType = (CustomerNotesType) auditHeader.getAuditDetail().getModelData();
 
 		if (customerNotesType.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (customerNotesType.isNew()) {
-			customerNotesType.setId(getCustomerNotesTypeDAO().save(
-					customerNotesType, tableType));
+			customerNotesType.setId(getCustomerNotesTypeDAO().save(customerNotesType, tableType));
 			auditHeader.getAuditDetail().setModelData(customerNotesType);
 			auditHeader.setAuditReference(customerNotesType.getId());
 		} else {
@@ -144,12 +139,10 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTCustNotesTypes by using CustomerNotesTypeDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTCustNotesTypes by using CustomerNotesTypeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,8 +157,7 @@ public class CustomerNotesTypeServiceImpl extends
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		CustomerNotesType customerNotesType = (CustomerNotesType) auditHeader
-				.getAuditDetail().getModelData();
+		CustomerNotesType customerNotesType = (CustomerNotesType) auditHeader.getAuditDetail().getModelData();
 
 		getCustomerNotesTypeDAO().delete(customerNotesType, "");
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -174,8 +166,7 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * getCustomerNotesTypeById fetch the details by using
-	 * CustomerNotesTypeDAO's getCustomerNotesTypeById method.
+	 * getCustomerNotesTypeById fetch the details by using CustomerNotesTypeDAO's getCustomerNotesTypeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -189,10 +180,8 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * getApprovedCustomerNotesTypeById fetch the details by using
-	 * CustomerNotesTypeDAO's getCustomerNotesTypeById method . with parameter
-	 * id and type as blank. it fetches the approved records from the
-	 * BMTCustNotesTypes.
+	 * getApprovedCustomerNotesTypeById fetch the details by using CustomerNotesTypeDAO's getCustomerNotesTypeById
+	 * method . with parameter id and type as blank. it fetches the approved records from the BMTCustNotesTypes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -203,22 +192,16 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCustomerNotesTypeDAO().delete with parameters
-	 * customerNotesType,"" b) NEW Add new record in to main table by using
-	 * getCustomerNotesTypeDAO().save with parameters customerNotesType,"" c)
-	 * EDIT Update record in the main table by using
-	 * getCustomerNotesTypeDAO().update with parameters customerNotesType,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getCustomerNotesTypeDAO().delete with parameters
-	 * customerNotesType,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtBMTCustNotesTypes
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerNotesTypeDAO().delete with
+	 * parameters customerNotesType,"" b) NEW Add new record in to main table by using getCustomerNotesTypeDAO().save
+	 * with parameters customerNotesType,"" c) EDIT Update record in the main table by using
+	 * getCustomerNotesTypeDAO().update with parameters customerNotesType,"" 3) Delete the record from the workFlow
+	 * table by using getCustomerNotesTypeDAO().delete with parameters customerNotesType,"_Temp" 4) Audit the record in
+	 * to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -234,11 +217,9 @@ public class CustomerNotesTypeServiceImpl extends
 			return auditHeader;
 		}
 		CustomerNotesType customerNotesType = new CustomerNotesType();
-		BeanUtils.copyProperties((CustomerNotesType) auditHeader
-				.getAuditDetail().getModelData(), customerNotesType);
+		BeanUtils.copyProperties((CustomerNotesType) auditHeader.getAuditDetail().getModelData(), customerNotesType);
 
-		if (customerNotesType.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (customerNotesType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getCustomerNotesTypeDAO().delete(customerNotesType, "");
 		} else {
@@ -248,8 +229,7 @@ public class CustomerNotesTypeServiceImpl extends
 			customerNotesType.setNextTaskId("");
 			customerNotesType.setWorkflowId(0);
 
-			if (customerNotesType.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (customerNotesType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerNotesType.setRecordType("");
 				getCustomerNotesTypeDAO().save(customerNotesType, "");
@@ -273,13 +253,10 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCustomerNotesTypeDAO().delete with
-	 * parameters customerNotesType,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTCustNotesTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerNotesTypeDAO().delete with parameters customerNotesType,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -293,8 +270,7 @@ public class CustomerNotesTypeServiceImpl extends
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		CustomerNotesType customerNotesType = (CustomerNotesType) auditHeader
-				.getAuditDetail().getModelData();
+		CustomerNotesType customerNotesType = (CustomerNotesType) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getCustomerNotesTypeDAO().delete(customerNotesType, "_Temp");
@@ -305,20 +281,16 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -327,74 +299,58 @@ public class CustomerNotesTypeServiceImpl extends
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getCustomerNotesTypeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getCustomerNotesTypeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		CustomerNotesType customerNotesType = (CustomerNotesType) auditDetail
-				.getModelData();
+		CustomerNotesType customerNotesType = (CustomerNotesType) auditDetail.getModelData();
 		CustomerNotesType tempCustomerNotesType = null;
 
 		if (customerNotesType.isWorkflow()) {
-			tempCustomerNotesType = getCustomerNotesTypeDAO()
-					.getCustomerNotesTypeById(customerNotesType.getId(),
-							"_Temp");
+			tempCustomerNotesType = getCustomerNotesTypeDAO().getCustomerNotesTypeById(customerNotesType.getId(),
+					"_Temp");
 		}
 
 		CustomerNotesType befCustomerNotesType = getCustomerNotesTypeDAO()
 				.getCustomerNotesTypeById(customerNotesType.getId(), "");
-		CustomerNotesType oldCustomerNotesType = customerNotesType
-				.getBefImage();
+		CustomerNotesType oldCustomerNotesType = customerNotesType.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = customerNotesType.getCustNotesTypeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_CustNotesTypeCode") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustNotesTypeCode") + ":" + valueParm[0];
 
 		if (customerNotesType.isNew()) { // for New record or new record into
-											// work flow
+												// work flow
 
 			if (!customerNotesType.isWorkflow()) {// With out Work flow only new
-													// records
+														// records
 				if (befCustomerNotesType != null) { // Record Already Exists in
 					// the table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (customerNotesType.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (customerNotesType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
-					if (befCustomerNotesType != null
-							|| tempCustomerNotesType != null) { // if records
-															// already exists
-											               //in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+					if (befCustomerNotesType != null || tempCustomerNotesType != null) { // if records
+						// already exists
+						//in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befCustomerNotesType == null
-							|| tempCustomerNotesType != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+					if (befCustomerNotesType == null || tempCustomerNotesType != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -406,51 +362,34 @@ public class CustomerNotesTypeServiceImpl extends
 
 				if (befCustomerNotesType == null) { // if records not exists in
 					// the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldCustomerNotesType != null
-							&& !oldCustomerNotesType.getLastMntOn().equals(
-									befCustomerNotesType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldCustomerNotesType.getLastMntOn().equals(befCustomerNotesType.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempCustomerNotesType == null) { // if records not exists in
 					// the Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempCustomerNotesType != null
-						&& oldCustomerNotesType != null
-						&& !oldCustomerNotesType.getLastMntOn().equals(
-								tempCustomerNotesType.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempCustomerNotesType != null && oldCustomerNotesType != null
+						&& !oldCustomerNotesType.getLastMntOn().equals(tempCustomerNotesType.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !customerNotesType.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerNotesType.isWorkflow()) {
 			auditDetail.setBefImage(befCustomerNotesType);
 		}
 		logger.debug("Leaving");

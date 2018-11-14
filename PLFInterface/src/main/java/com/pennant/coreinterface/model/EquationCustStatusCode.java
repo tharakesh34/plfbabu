@@ -54,21 +54,21 @@ public class EquationCustStatusCode extends AbstractWorkflowEntity {
 	public EquationCustStatusCode() {
 		super();
 	}
-	
+
 	private String custStsCode;
 	private String custStsDescription;
 	private int dueDays;
 	private boolean suspendProfit;
 	private boolean custStsIsActive;
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
-	
+
 	public String getCustStsCode() {
 		return custStsCode;
 	}
+
 	public void setCustStsCode(String custStsCode) {
 		this.custStsCode = custStsCode;
 	}
@@ -76,27 +76,31 @@ public class EquationCustStatusCode extends AbstractWorkflowEntity {
 	public String getCustStsDescription() {
 		return custStsDescription;
 	}
+
 	public void setCustStsDescription(String custStsDescription) {
 		this.custStsDescription = custStsDescription;
 	}
-	
+
 	public int getDueDays() {
 		return dueDays;
 	}
+
 	public void setDueDays(int dueDays) {
 		this.dueDays = dueDays;
 	}
-	
+
 	public boolean isSuspendProfit() {
 		return suspendProfit;
 	}
+
 	public void setSuspendProfit(boolean suspendProfit) {
 		this.suspendProfit = suspendProfit;
 	}
-	
+
 	public boolean isCustStsIsActive() {
 		return custStsIsActive;
 	}
+
 	public void setCustStsIsActive(boolean custStsIsActive) {
 		this.custStsIsActive = custStsIsActive;
 	}

@@ -43,8 +43,6 @@
 package com.pennant.backend.model.rmtmasters;
 
 import java.sql.Timestamp;
-
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,7 +79,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custctgdesc");
@@ -95,6 +93,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public String getId() {
 		return custTypeCode;
 	}
+
 	public void setId(String id) {
 		this.custTypeCode = id;
 	}
@@ -102,6 +101,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public String getCustTypeCode() {
 		return custTypeCode;
 	}
+
 	public void setCustTypeCode(String custTypeCode) {
 		this.custTypeCode = custTypeCode;
 	}
@@ -125,6 +125,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public String getCustTypeDesc() {
 		return custTypeDesc;
 	}
+
 	public void setCustTypeDesc(String custTypeDesc) {
 		this.custTypeDesc = custTypeDesc;
 	}
@@ -132,6 +133,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public boolean isCustTypeIsActive() {
 		return custTypeIsActive;
 	}
+
 	public void setCustTypeIsActive(boolean custTypeIsActive) {
 		this.custTypeIsActive = custTypeIsActive;
 	}
@@ -139,6 +141,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -146,6 +149,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -153,6 +157,7 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public CustomerType getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CustomerType beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -160,10 +165,11 @@ public class CustomerType extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

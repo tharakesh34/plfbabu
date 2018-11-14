@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Notifications table</b>.<br>
  *
  */
-public class Notifications extends AbstractWorkflowEntity implements Entity{
+public class Notifications extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 522289325946000330L;
 
@@ -70,7 +70,7 @@ public class Notifications extends AbstractWorkflowEntity implements Entity{
 	private String lovValue;
 	private Notifications befImage;
 	private LoggedInUser userDetails;
-	
+
 	private String templateTypeFields;
 	private String ruleReciepentFields;
 	private String ruleAttachmentFields;
@@ -87,125 +87,135 @@ public class Notifications extends AbstractWorkflowEntity implements Entity{
 		super();
 		this.setRuleCode(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//	
-	
+
 	public long getId() {
 		return ruleId;
 	}
+
 	public void setId(long ruleId) {
 		this.ruleId = ruleId;
 	}
-	
+
 	public long getRuleId() {
 		return ruleId;
 	}
+
 	public void setRuleId(long ruleId) {
 		this.ruleId = ruleId;
 	}
-	
+
 	public String getRuleCode() {
 		return ruleCode;
 	}
+
 	public void setRuleCode(String ruleCode) {
 		this.ruleCode = ruleCode;
 	}
-	
+
 	public String getRuleModule() {
 		return ruleModule;
 	}
+
 	public void setRuleModule(String ruleModule) {
 		this.ruleModule = ruleModule;
 	}
-	
+
 	public String getTemplateType() {
-	    return templateType;
-    }
+		return templateType;
+	}
+
 	public void setTemplateType(String templateType) {
-	    this.templateType = templateType;
-    }
+		this.templateType = templateType;
+	}
 
 	public String getRuleCodeDesc() {
 		return ruleCodeDesc;
 	}
+
 	public void setRuleCodeDesc(String ruleCodeDesc) {
 		this.ruleCodeDesc = ruleCodeDesc;
 	}
-	
+
 	public String getRuleTemplate() {
-	    return ruleTemplate;
-    }
+		return ruleTemplate;
+	}
 
 	public void setRuleTemplate(String ruleTemplate) {
-	    this.ruleTemplate = ruleTemplate;
-    }
+		this.ruleTemplate = ruleTemplate;
+	}
 
 	public String getActualBlockTemplate() {
-	    return actualBlockTemplate;
-    }
+		return actualBlockTemplate;
+	}
 
 	public void setActualBlockTemplate(String actualBlockTemplate) {
-	    this.actualBlockTemplate = actualBlockTemplate;
-    }
+		this.actualBlockTemplate = actualBlockTemplate;
+	}
 
 	public String getRuleReciepent() {
-	    return ruleReciepent;
-    }
+		return ruleReciepent;
+	}
 
 	public void setRuleReciepent(String ruleReciepent) {
-	    this.ruleReciepent = ruleReciepent;
-    }
+		this.ruleReciepent = ruleReciepent;
+	}
 
 	public String getActualBlockReciepent() {
-	    return actualBlockReciepent;
-    }
+		return actualBlockReciepent;
+	}
 
 	public void setActualBlockReciepent(String actualBlockReciepent) {
-	    this.actualBlockReciepent = actualBlockReciepent;
-    }
+		this.actualBlockReciepent = actualBlockReciepent;
+	}
 
 	public String getRuleAttachment() {
-	    return ruleAttachment;
-    }
+		return ruleAttachment;
+	}
 
 	public void setRuleAttachment(String ruleAttachment) {
-	    this.ruleAttachment = ruleAttachment;
-    }
+		this.ruleAttachment = ruleAttachment;
+	}
 
 	public String getActualBlockAtachment() {
-	    return actualBlockAtachment;
-    }
+		return actualBlockAtachment;
+	}
 
 	public void setActualBlockAtachment(String actualBlockAtachment) {
-	    this.actualBlockAtachment = actualBlockAtachment;
-    }
+		this.actualBlockAtachment = actualBlockAtachment;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Notifications getBefImage(){
+	public Notifications getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Notifications beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Notifications beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerRating;
@@ -50,12 +51,18 @@ import com.pennant.backend.model.customermasters.CustomerRating;
  * 
  */
 public interface CustomerRatingDAO {
-	 CustomerRating getCustomerRatingByID(long id,String ratingType,String type);
-	 List<CustomerRating> getCustomerRatingByCustomer(final long id,String type);
-	 void update(CustomerRating customerRating,String type);
-	 void delete(CustomerRating customerRating,String type);
-	 long save(CustomerRating customerRating,String type);
-	 void deleteByCustomer(final long customerId,String type);
-	 List<CustomerRating> getCustomerRatingByCustId(long id, String type);
-	
+	CustomerRating getCustomerRatingByID(long id, String ratingType, String type);
+
+	List<CustomerRating> getCustomerRatingByCustomer(final long id, String type);
+
+	void update(CustomerRating customerRating, String type);
+
+	void delete(CustomerRating customerRating, String type);
+
+	long save(CustomerRating customerRating, String type);
+
+	void deleteByCustomer(final long customerId, String type);
+
+	List<CustomerRating> getCustomerRatingByCustId(long id, String type);
+
 }

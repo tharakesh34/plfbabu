@@ -42,7 +42,6 @@
  **/
 package com.pennant.backend.dao.messages.impl;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -59,33 +58,34 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  *
  */
 public class UserContactsListDAOImpl extends BasicDao<UserContactsList> implements UserContactsListDAO {
-	Logger logger=Logger.getLogger(UserContactsListDAOImpl.class);
-	
+	Logger logger = Logger.getLogger(UserContactsListDAOImpl.class);
+
 	public UserContactsListDAOImpl() {
 		super();
 	}
 
 	/**
 	 * This Method selects the records from UserRoles_AView table with UsrID condition
+	 * 
 	 * @param secuser(SecUser)
 	 * @return UserContactsList
 	 */
 	@Override
 	public UserContactsList getUserContactsList(String usrID, String type) {
 		logger.debug("Entering ");
-		UserContactsList userContactsList=new UserContactsList();
+		UserContactsList userContactsList = new UserContactsList();
 		userContactsList.setUsrID(usrID);
-		StringBuilder  selectSql = new StringBuilder ();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  UsrID,Type,ContactsList,GroupName");
 		selectSql.append("  FROM USERCONTACTSLIST  where UsrID=:UsrID order by UsrID Asc ");
-		logger.debug("selectSql : " + selectSql.toString());      
+		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
 		RowMapper<UserContactsList> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(UserContactsList.class);
 		logger.debug("Leaving ");
-		try{
-			userContactsList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			userContactsList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
 		}
@@ -97,25 +97,25 @@ public class UserContactsListDAOImpl extends BasicDao<UserContactsList> implemen
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into USERCONTACTSLIST" );
-		insertSql.append(" (UsrID, Type, ContactsList, GroupName)" );
-		insertSql.append(" Values(:UsrID, :Type, :ContactsList, :GroupName)" );		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource  beanParameters =  new BeanPropertySqlParameterSource(userContactsList);
+		insertSql.append("Insert Into USERCONTACTSLIST");
+		insertSql.append(" (UsrID, Type, ContactsList, GroupName)");
+		insertSql.append(" Values(:UsrID, :Type, :ContactsList, :GroupName)");
+		logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
-
 	}
+
 	@Override
 	public void update(UserContactsList userContactsList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql =new StringBuilder("Update SecRoles"); 
+		StringBuilder updateSql = new StringBuilder("Update SecRoles");
 		updateSql.append(" Set UsrID = :UsrID, Type = :Type, ContactsList = :ContactsList, GroupName = :GroupName");
 
-		logger.debug("updateSql:"+updateSql.toString());
+		logger.debug("updateSql:" + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
@@ -124,16 +124,16 @@ public class UserContactsListDAOImpl extends BasicDao<UserContactsList> implemen
 	}
 
 	@Override
-	public void delete(String usrID,String type) {
+	public void delete(String usrID, String type) {
 		logger.debug("Entering");
-		UserContactsList userContactsList =new UserContactsList();
+		UserContactsList userContactsList = new UserContactsList();
 		userContactsList.setUsrID(usrID);
 		userContactsList.setType(type);
 
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From USERCONTACTSLIST" );
+		deleteSql.append(" Delete From USERCONTACTSLIST");
 		deleteSql.append(" Where UsrID =:UsrID and Type = :Type");
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
 
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);

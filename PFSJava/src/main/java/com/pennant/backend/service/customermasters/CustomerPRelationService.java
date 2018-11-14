@@ -53,10 +53,15 @@ import com.pennant.backend.model.customermasters.CustomerPRelation;
 public interface CustomerPRelationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerPRelation getCustomerPRelationById(long pRCustID,int pRCustPRSNo);
-	CustomerPRelation getApprovedCustomerPRelationById(long pRCustID,int pRCustPRSNo);
+
+	CustomerPRelation getCustomerPRelationById(long pRCustID, int pRCustPRSNo);
+
+	CustomerPRelation getApprovedCustomerPRelationById(long pRCustID, int pRCustPRSNo);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

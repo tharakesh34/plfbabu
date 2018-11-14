@@ -47,8 +47,7 @@ import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinanceStatusCodeDAO extends BasicCrudDao<FinanceStatusCode> {
-	
-	
+
 	/**
 	 * Fetch the Record FinanceStatusCode Details details by key field
 	 * 
@@ -58,7 +57,8 @@ public interface FinanceStatusCodeDAO extends BasicCrudDao<FinanceStatusCode> {
 	 *            The type of the table.
 	 * @return FinanceStatusCode
 	 */
-	FinanceStatusCode getFinanceStatusCode(long statusID,String type);
+	FinanceStatusCode getFinanceStatusCode(long statusID, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -70,6 +70,6 @@ public interface FinanceStatusCodeDAO extends BasicCrudDao<FinanceStatusCode> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long statusID, String statusCode, TableType tableType);	
-	
+	boolean isDuplicateKey(long statusID, String statusCode, TableType tableType);
+
 }

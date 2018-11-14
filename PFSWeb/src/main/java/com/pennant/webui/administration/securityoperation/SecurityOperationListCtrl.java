@@ -63,9 +63,9 @@ import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.service.administration.SecurityOperationService;
 import com.pennant.webui.administration.securityoperation.model.SecurityOperationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SecurityOperationListCtrl extends GFCBaseListCtrl<SecurityOperation> {
 
@@ -114,7 +114,7 @@ public class SecurityOperationListCtrl extends GFCBaseListCtrl<SecurityOperation
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_SecurityOperationList(Event event){
+	public void onCreate$window_SecurityOperationList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_SecurityOperationList, borderLayout_SecurityOperationList, listBoxSecurityOperation,
 				pagingSecurityOperationList);

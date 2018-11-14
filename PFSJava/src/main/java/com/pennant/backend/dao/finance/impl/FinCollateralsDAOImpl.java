@@ -93,10 +93,8 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 	}
 
 	/**
-	 * This method Deletes the Record from the FinCollaterals or
-	 * FinCollaterals_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete FinCollaterals by key
-	 * FinReference
+	 * This method Deletes the Record from the FinCollaterals or FinCollaterals_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete FinCollaterals by key FinReference
 	 * 
 	 * @param FinCollaterals
 	 *            (FinCollaterals)
@@ -126,8 +124,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 	}
 
 	/**
-	 * This method insert new Records into FinCollaterals or
-	 * FinCollaterals_Temp.
+	 * This method insert new Records into FinCollaterals or FinCollaterals_Temp.
 	 * 
 	 * save FinCollaterals
 	 * 
@@ -173,9 +170,8 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 	}
 
 	/**
-	 * This method updates the Record FinCollaterals or FinCollaterals_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update FinCollaterals by key FinReference and Version
+	 * This method updates the Record FinCollaterals or FinCollaterals_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update FinCollaterals by key FinReference and Version
 	 * 
 	 * @param FinCollaterals
 	 *            (FinCollaterals)

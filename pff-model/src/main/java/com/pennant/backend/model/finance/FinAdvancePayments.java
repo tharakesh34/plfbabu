@@ -62,8 +62,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "branchBankCode", "branchBankName",
-		"branchCode",
-		"iFSC", "custShrtName", "beneficiaryAccNo", "beneficiaryName", "linkedTranId", "partnerBankID",
+		"branchCode", "iFSC", "custShrtName", "beneficiaryAccNo", "beneficiaryName", "linkedTranId", "partnerBankID",
 		"phoneCountryCode", "phoneAreaCode", "phoneNumber", "remarks", "bankCode", "liabilityHoldName", "payableLoc",
 		"printingLoc", "valueDate", "llReferenceNo" })
 

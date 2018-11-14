@@ -58,22 +58,22 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
-public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  implements FeeReceiptService {
-	private static final Logger				logger	= Logger.getLogger(FeeReceiptServiceImpl.class);
+public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> implements FeeReceiptService {
+	private static final Logger logger = Logger.getLogger(FeeReceiptServiceImpl.class);
 
-	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
-	private FinReceiptDetailDAO				finReceiptDetailDAO;
-	private FinFeeDetailDAO					finFeeDetailDAO;
-	private PostingsPreparationUtil			postingsPreparationUtil;
-	private FinanceRepaymentsDAO			financeRepaymentsDAO;
-	private AccountingSetDAO				accountingSetDAO;
-	private AuditHeaderDAO 					auditHeaderDAO;
-	private FinFeeReceiptDAO                finFeeReceiptDAO;
-	private FinTypeAccountingDAO            finTypeAccountingDAO;
-	private PartnerBankDAO                  partnerBankDAO;
-	private PostingsDAO 					postingsDAO;
-	private FinTaxDetailsDAO                finTaxDetailsDAO;
-	protected transient WorkflowEngine	workFlow		= null;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	private AccountingSetDAO accountingSetDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private FinFeeReceiptDAO finFeeReceiptDAO;
+	private FinTypeAccountingDAO finTypeAccountingDAO;
+	private PartnerBankDAO partnerBankDAO;
+	private PostingsDAO postingsDAO;
+	private FinTaxDetailsDAO finTaxDetailsDAO;
+	protected transient WorkflowEngine workFlow = null;
 
 	public FeeReceiptServiceImpl() {
 		super();
@@ -94,28 +94,31 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, "_FView");
 
 		// Fetch Receipt Detail List
-		if(receiptHeader != null){
-			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_TView");
-			
+		if (receiptHeader != null) {
+			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID,
+					"_TView");
+
 			// Fetch Repay Headers List
-			List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO().getFinRepayHeadersByRef(receiptHeader.getReference(), TableType.TEMP_TAB.getSuffix());
+			List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO()
+					.getFinRepayHeadersByRef(receiptHeader.getReference(), TableType.TEMP_TAB.getSuffix());
 			for (FinReceiptDetail receiptDetail : receiptDetailList) {
 				for (FinRepayHeader finRepayHeader : rpyHeaderList) {
-					if(finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()){
+					if (finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()) {
 						receiptDetail.getRepayHeaders().add(finRepayHeader);
 					}
 				}
 			}
 			receiptHeader.setReceiptDetails(receiptDetailList);
-			
+
 			// Paid Fee Details
-			receiptHeader.setPaidFeeList(getFinFeeDetailDAO().getPaidFinFeeDetails(receiptHeader.getReference(), "_TView"));
+			receiptHeader
+					.setPaidFeeList(getFinFeeDetailDAO().getPaidFinFeeDetails(receiptHeader.getReference(), "_TView"));
 		}
 
 		logger.debug("Leaving");
 		return receiptHeader;
 	}
-	
+
 	/**
 	 * Method for Fetching List of Fee Details for Display purpose
 	 */
@@ -127,10 +130,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinReceiptHeader/FinReceiptHeader_Temp by
-	 * using FinReceiptHeaderDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using FinReceiptHeaderDAO's update method 3) Audit the record in to AuditHeader and AdtFinReceiptHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -140,8 +143,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-	InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -165,36 +168,36 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		long receiptID = receiptHeader.getReceiptID();
 		if (receiptHeader.isNew()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_FEES);
-			
+
 			// Save Receipt Header
 			receiptID = getFinReceiptHeaderDAO().save(receiptHeader, tableType);
-			
+
 		} else {
 			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
-			
+
 			// Delete Save Receipt Detail List by Reference
 			getFinReceiptDetailDAO().deleteByReceiptID(receiptID, tableType);
 
 			// Delete and Save FinRepayHeader Detail list by Reference
 			getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), tableType);
 		}
-		
+
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 			receiptDetail.setReceiptID(receiptID);
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, tableType);
-			
+
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
 			for (FinRepayHeader rpyHeader : rpyHeaderList) {
 				rpyHeader.setReceiptSeqID(receiptSeqID);
-				
+
 				//Save Repay Header details
 				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
 			}
 		}
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], receiptHeader
-				.getBefImage(), receiptHeader));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				receiptHeader.getBefImage(), receiptHeader));
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -206,8 +209,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters finReceiptHeader,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters finReceiptHeader,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -232,8 +235,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], receiptHeader
-				.getBefImage(), receiptHeader));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				receiptHeader.getBefImage(), receiptHeader));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
@@ -243,9 +246,9 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	/**
 	 * doApprove method do the following steps. Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. based on the Record type do
-	 * following actions Update record in the main table by using getFinReceiptHeaderDAO().update with
-	 * parameters FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * following actions Update record in the main table by using getFinReceiptHeaderDAO().update with parameters
+	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -255,8 +258,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-	InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -268,7 +271,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
-		
+
 		// Accounting Process Execution
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
@@ -277,29 +280,30 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		aeEvent.setCustID(receiptHeader.getCustID());
 		aeEvent.setBranch(receiptHeader.getFinBranch());
 		aeEvent.setCcy(receiptHeader.getFinCcy());
-		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());	
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setValueDate(DateUtility.getAppDate());
-		
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		if(amountCodes == null){
+		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
 		}
-		
+
 		FinReceiptDetail finreceiptDetail = receiptHeader.getReceiptDetails().get(0);
 		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(finreceiptDetail.getAmount());
 		amountCodes.setFinType(receiptHeader.getFinType());
-		
+
 		// Fetch Accounting Set ID
 		long accountingSetID = AccountingConfigCache.getAccountSetID(receiptHeader.getFinType(),
 				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
-		if(accountingSetID == 0 || accountingSetID == Long.MIN_VALUE){
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
+		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
+			auditHeader.setErrorDetails(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-			
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingSetID);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -316,18 +320,18 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
 		getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
-		
+
 		// Save Receipt Header
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
-			
+
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
-			
+
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
 			for (FinRepayHeader rpyHeader : rpyHeaderList) {
 				rpyHeader.setReceiptSeqID(receiptSeqID);
 				rpyHeader.setLinkedTranId(aeEvent.getLinkedTranId());
-				
+
 				//Save Repay Header details
 				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
 			}
@@ -346,8 +350,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], receiptHeader
-				.getBefImage(), receiptHeader));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				receiptHeader.getBefImage(), receiptHeader));
 
 		// Adding audit as Insert/Update/deleted into main table
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -359,8 +363,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID
+	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -405,13 +409,13 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		valueParm[0] = String.valueOf(receiptHeader.getReference());
 		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
 		if (receiptHeader.isNew()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-													// the
-					// table then error
+														// the
+													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -437,8 +441,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-													// the
-					// main table
+														// the
+													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -491,7 +495,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		return auditDetail;
 	}
 
-	private boolean getFeeReceiptExist(String reference, String receiptPurpose,long receiptId) {
+	private boolean getFeeReceiptExist(String reference, String receiptPurpose, long receiptId) {
 		logger.debug("Entering");
 
 		boolean codeExist = false;
@@ -504,20 +508,20 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 		return codeExist;
 	}
-	
+
 	@Override
-	public List<ErrorDetail>  processFeePayment(FinServiceInstruction finServInst) throws Exception{
-		FinReceiptHeader header= new FinReceiptHeader();
+	public List<ErrorDetail> processFeePayment(FinServiceInstruction finServInst) throws Exception {
+		FinReceiptHeader header = new FinReceiptHeader();
 		List<ErrorDetail> errorDetails = new ArrayList<>();
 		header.setReference(null);
-		long receiptId=finReceiptHeaderDAO.generatedReceiptID(header);
+		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		finServInst.setReceiptId(receiptId);
 		header.setExtReference(finServInst.getExternalReference());
 		header.setModule(finServInst.getModule());
 		header.setReceiptDate(finServInst.getValueDate());
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-        header.setReceiptID(receiptId);
+		header.setReceiptID(receiptId);
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 		header.setExcessAdjustTo(PennantConstants.List_Select);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
@@ -528,38 +532,38 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		header.setRemarks(finServInst.getReceiptDetail().getRemarks());
 		header.setFinCcy(finServInst.getCurrency());
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		
+
 		header.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		header.setNewRecord(true);
 		header.setLastMntBy(userDetails.getUserId());
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		header.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
 		header.setUserDetails(userDetails);
-		TableType tableType=TableType.MAIN_TAB;
+		TableType tableType = TableType.MAIN_TAB;
 		WorkFlowDetails workFlowDetails = null;
 		String roleCode = null;
 		String taskid = null;
 		String nextTaskId = null;
-		long  workFlowId = 0;
-        if (!finServInst.isNonStp()){
-		
+		long workFlowId = 0;
+		if (!finServInst.isNonStp()) {
+
 			workFlowDetails = WorkFlowUtil.getDetailsByType("FEERECEIPT_PROCESS");
 			if (workFlowDetails != null) {
 				workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
 				taskid = workFlow.getUserTaskId(workFlow.firstTaskOwner()); //### 19-07-2018 Ticket ID : 128015
 				workFlowId = workFlowDetails.getWorkFlowId();
 				roleCode = workFlow.firstTaskOwner();//### 19-07-2018 Ticket ID : 128015
-				
+
 				//nextTaskId = workFlow.getUserTaskId(workFlow.firstTaskOwner());//### 19-07-2018 Ticket ID : 128015
 				nextTaskId = workFlow.getNextUserTaskIdsAsString(taskid, header);
 				setNextRoleDetails(nextTaskId, workFlow, header);
 			}
-		header.setTaskId(taskid);
-		header.setNextTaskId(nextTaskId);
-		header.setRoleCode(roleCode);
-		header.setWorkflowId(workFlowId);
-		tableType=TableType.TEMP_TAB;
-        }
+			header.setTaskId(taskid);
+			header.setNextTaskId(nextTaskId);
+			header.setRoleCode(roleCode);
+			header.setWorkflowId(workFlowId);
+			tableType = TableType.TEMP_TAB;
+		}
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
 		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
@@ -577,18 +581,18 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		receiptDetail.setFundingAc(finServInst.getReceiptDetail().getFundingAc());
 		receiptDetail.setReceivedDate(finServInst.getReceiptDetail().getReceivedDate());
 		receiptDetail.setTransactionRef(finServInst.getReceiptDetail().getTransactionRef());
-	
+
 		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(receiptDetail.getFundingAc(), "");
 		if (partnerBank != null) {
 			receiptDetail.setPartnerBankAc(partnerBank.getAccountNo());
 			receiptDetail.setPartnerBankAcType(partnerBank.getAcType());
-		}else{
+		} else {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Invalid Funding Account";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 			return errorDetails;
 		}
-		
+
 		FinRepayHeader repayHeader = new FinRepayHeader();
 		repayHeader.setFinReference(header.getExtReference());
 		repayHeader.setValueDate(finServInst.getValueDate());
@@ -596,139 +600,143 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		repayHeader.setRepayAmount(header.getReceiptAmount());
 		receiptDetail.getRepayHeaders().add(repayHeader);
 		header.getReceiptDetails().add(receiptDetail);
-		
+
 		// Accounting Process Execution
-				AEEvent aeEvent = new AEEvent();
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
-				aeEvent.setFinReference(finServInst.getExternalReference());
-				aeEvent.setCustCIF(header.getCustCIF());
-				aeEvent.setCustID(header.getCustID());
-				aeEvent.setBranch(userDetails.getBranchCode());
-				aeEvent.setCcy(header.getFinCcy());
-				aeEvent.setFinType(finServInst.getFinType()!=null?finServInst.getFinType():"");
-				aeEvent.setPostingUserBranch(userDetails.getBranchCode());	
-				aeEvent.setValueDate(DateUtility.getAppDate());
-				long postingId =getPostingsDAO().getPostingId();
-				aeEvent.setPostRefId(receiptId);
-				aeEvent.setPostingId(postingId);
-				
-				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-				if(amountCodes == null){
-					amountCodes = new AEAmountCodes();
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
+		aeEvent.setFinReference(finServInst.getExternalReference());
+		aeEvent.setCustCIF(header.getCustCIF());
+		aeEvent.setCustID(header.getCustID());
+		aeEvent.setBranch(userDetails.getBranchCode());
+		aeEvent.setCcy(header.getFinCcy());
+		aeEvent.setFinType(finServInst.getFinType() != null ? finServInst.getFinType() : "");
+		aeEvent.setPostingUserBranch(userDetails.getBranchCode());
+		aeEvent.setValueDate(DateUtility.getAppDate());
+		long postingId = getPostingsDAO().getPostingId();
+		aeEvent.setPostRefId(receiptId);
+		aeEvent.setPostingId(postingId);
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+		}
+
+		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+		amountCodes.setFinType(finServInst.getFinType() != null ? finServInst.getFinType() : "");
+
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+
+		BigDecimal accountedAMount = prepareFeeRulesMap(amountCodes, dataMap, finServInst.getFinFeeDetails());
+		amountCodes.setImdAmount(receiptDetail.getAmount().subtract(accountedAMount));
+
+		amountCodes.setPaidFee(receiptDetail.getAmount());
+
+		// Fetch Accounting Set ID from Fintype ac
+
+		long accountingSetID = getFinTypeAccountingDAO().getAccountSetID(finServInst.getFinType(),
+				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+
+		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
+			errorDetails
+					.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
+			logger.debug("Leaving");
+			return errorDetails;
+		}
+		if (finServInst.isNonStp()) {
+			amountCodes.getDeclaredFieldValues(dataMap);
+			aeEvent.setDataMap(dataMap);
+			aeEvent.getAcSetIDList().add(accountingSetID);
+			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+		}
+
+		getFinReceiptHeaderDAO().save(header, tableType);
+		if (finServInst.getFinFeeDetails() != null && !finServInst.getFinFeeDetails().isEmpty()) {
+			for (FinFeeDetail feeDetail : finServInst.getFinFeeDetails()) {
+
+				// Building fin fee receipts
+				FinFeeReceipt feeReceipt = new FinFeeReceipt();
+				feeReceipt.setReceiptID(receiptId);
+				feeReceipt.setFeeTypeId(feeDetail.getFeeTypeID());
+				feeReceipt.setFeeTypeDesc(feeDetail.getFeeTypeDesc());
+				feeReceipt.setPaidAmount(feeDetail.getPaidAmount());
+				feeReceipt.setFeeTypeCode(feeDetail.getFeeTypeCode());
+				feeReceipt.setRecordType(PennantConstants.RCD_ADD);
+				feeReceipt.setNewRecord(true);
+				feeReceipt.setLastMntBy(userDetails.getUserId());
+				feeReceipt.setTaskId(taskid);
+				feeReceipt.setNextTaskId(nextTaskId);
+				feeReceipt.setRoleCode(roleCode);
+				feeReceipt.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				feeReceipt.setWorkflowId(workFlowId);
+
+				feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
+				feeDetail.setTransactionId(finServInst.getExternalReference());
+				feeDetail.setFinReference(finServInst.getFinReference());
+				feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				feeDetail.setLastMntBy(userDetails.getUserId());
+				feeDetail.setOriginationFee(true);
+
+				feeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				FinFeeDetail finFeeDetail = getFinFeeDetailDAO().getFeeDetailByExtReference(
+						feeDetail.getTransactionId(), feeDetail.getFeeTypeID(), tableType.getSuffix());
+				if (finFeeDetail != null) {
+					feeDetail.setCalculatedAmount(
+							finFeeDetail.getCalculatedAmount().add(feeDetail.getCalculatedAmount()));
+					feeDetail.setActualAmount(finFeeDetail.getActualAmount().add(feeDetail.getActualAmount()));
+					feeDetail.setRemainingFee(finFeeDetail.getRemainingFee().add(feeDetail.getRemainingFee()));
+					feeDetail.setWaivedAmount(finFeeDetail.getWaivedAmount().add(feeDetail.getWaivedAmount()));
+					feeDetail.setPaidAmount(finFeeDetail.getPaidAmount().add(feeDetail.getPaidAmount()));
+					feeDetail.setFeeID(finFeeDetail.getFeeID());
+					feeDetail.setPaidAmountOriginal(
+							finFeeDetail.getPaidAmountOriginal().add(feeDetail.getPaidAmountOriginal()));
+					feeDetail.setPaidAmountGST(finFeeDetail.getPaidAmountGST().add(feeDetail.getPaidAmountGST()));
+					feeDetail.setNetAmount(finFeeDetail.getNetAmount().add(feeDetail.getNetAmount()));
+					feeDetail.setNetAmountOriginal(
+							finFeeDetail.getNetAmountOriginal().add(feeDetail.getNetAmountOriginal()));
+					feeDetail.setNetAmountGST(finFeeDetail.getNetAmountGST().add(feeDetail.getNetAmountGST()));
+					feeDetail.setActualAmountOriginal(
+							finFeeDetail.getActualAmountOriginal().add(feeDetail.getActualAmountOriginal()));
+					feeDetail.setPaidAmountGST(finFeeDetail.getPaidAmountGST().add(feeDetail.getPaidAmountGST()));
+					getFinFeeDetailDAO().update(feeDetail, false, tableType.getSuffix());
+				} else {
+					feeDetail.setFeeID(getFinFeeDetailDAO().save(feeDetail, false, tableType.getSuffix()));
 				}
-				
-				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
-				amountCodes.setFinType(finServInst.getFinType()!=null?finServInst.getFinType():"");
-				
-				HashMap<String, Object> dataMap  = aeEvent.getDataMap();
-				
-                
-				BigDecimal accountedAMount=prepareFeeRulesMap(amountCodes, dataMap,finServInst.getFinFeeDetails());
-                	amountCodes.setImdAmount(receiptDetail.getAmount().subtract(accountedAMount));	
-                
-                	amountCodes.setPaidFee(receiptDetail.getAmount());
-				
-				// Fetch Accounting Set ID from Fintype ac
-			
-				long accountingSetID = getFinTypeAccountingDAO().getAccountSetID(finServInst.getFinType(), AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
-				
-				if(accountingSetID == 0 || accountingSetID == Long.MIN_VALUE){
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
-					logger.debug("Leaving");
-					return errorDetails;
+				feeReceipt.setFeeID(feeDetail.getFeeID());
+				getFinFeeReceiptDAO().save(feeReceipt, tableType.getSuffix());
+				if (feeDetail.getFinTaxDetails() != null && feeDetail.isAlwPreIncomization()) {
+					feeDetail.getFinTaxDetails().setFeeID(feeDetail.getFeeID());
+					getFinTaxDetailsDAO().save(feeDetail.getFinTaxDetails(), "");
 				}
-				if (finServInst.isNonStp())	{
-					amountCodes.getDeclaredFieldValues(dataMap);
-					aeEvent.setDataMap(dataMap);
-					aeEvent.getAcSetIDList().add(accountingSetID);
-					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-				}
-				
-				getFinReceiptHeaderDAO().save(header, tableType);
-				if (finServInst.getFinFeeDetails()!=null && !finServInst.getFinFeeDetails().isEmpty()){
-					for (FinFeeDetail feeDetail:finServInst.getFinFeeDetails()){
-						
-						// Building fin fee receipts
-						FinFeeReceipt feeReceipt= new FinFeeReceipt();
-						feeReceipt.setReceiptID(receiptId);
-						feeReceipt.setFeeTypeId(feeDetail.getFeeTypeID());
-						feeReceipt.setFeeTypeDesc(feeDetail.getFeeTypeDesc());
-						feeReceipt.setPaidAmount(feeDetail.getPaidAmount());
-						feeReceipt.setFeeTypeCode(feeDetail.getFeeTypeCode());
-						feeReceipt.setRecordType(PennantConstants.RCD_ADD);
-						feeReceipt.setNewRecord(true);
-						feeReceipt.setLastMntBy(userDetails.getUserId());
-						feeReceipt.setTaskId(taskid);
-						feeReceipt.setNextTaskId(nextTaskId);
-						feeReceipt.setRoleCode(roleCode);
-						feeReceipt.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-						feeReceipt.setWorkflowId(workFlowId);
-						
-						
-						feeDetail.setFinEvent( AccountEventConstants.ACCEVENT_ADDDBSP);
-						feeDetail.setTransactionId(finServInst.getExternalReference());
-						feeDetail.setFinReference(finServInst.getFinReference());
-						feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						feeDetail.setLastMntBy(userDetails.getUserId());
-						feeDetail.setOriginationFee(true);
-						
-						feeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-						FinFeeDetail finFeeDetail=getFinFeeDetailDAO().getFeeDetailByExtReference(feeDetail.getTransactionId(), feeDetail.getFeeTypeID(), tableType.getSuffix());
-						if (finFeeDetail!=null){
-							feeDetail.setCalculatedAmount(finFeeDetail.getCalculatedAmount().add(feeDetail.getCalculatedAmount()));	
-							feeDetail.setActualAmount(finFeeDetail.getActualAmount().add(feeDetail.getActualAmount()));
-							feeDetail.setRemainingFee(finFeeDetail.getRemainingFee().add(feeDetail.getRemainingFee()));
-							feeDetail.setWaivedAmount(finFeeDetail.getWaivedAmount().add(feeDetail.getWaivedAmount()));
-							feeDetail.setPaidAmount(finFeeDetail.getPaidAmount().add(feeDetail.getPaidAmount()));
-							feeDetail.setFeeID(finFeeDetail.getFeeID());
-							feeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmountOriginal().add(feeDetail.getPaidAmountOriginal()));
-							feeDetail.setPaidAmountGST(finFeeDetail.getPaidAmountGST().add(feeDetail.getPaidAmountGST()));
-							feeDetail.setNetAmount(finFeeDetail.getNetAmount().add(feeDetail.getNetAmount()));
-							feeDetail.setNetAmountOriginal(finFeeDetail.getNetAmountOriginal().add(feeDetail.getNetAmountOriginal()));
-							feeDetail.setNetAmountGST(finFeeDetail.getNetAmountGST().add(feeDetail.getNetAmountGST()));
-							feeDetail.setActualAmountOriginal(finFeeDetail.getActualAmountOriginal().add(feeDetail.getActualAmountOriginal()));
-							feeDetail.setPaidAmountGST(finFeeDetail.getPaidAmountGST().add(feeDetail.getPaidAmountGST()));
-							getFinFeeDetailDAO().update(feeDetail, false, tableType.getSuffix());
-						}else{
-							feeDetail.setFeeID(getFinFeeDetailDAO().save(feeDetail, false, tableType.getSuffix()));
-						}
-						feeReceipt.setFeeID(feeDetail.getFeeID());
-						getFinFeeReceiptDAO().save(feeReceipt, tableType.getSuffix());
-						if (feeDetail.getFinTaxDetails()!=null  && feeDetail.isAlwPreIncomization()){
-							feeDetail.getFinTaxDetails().setFeeID(feeDetail.getFeeID());
-							getFinTaxDetailsDAO().save(feeDetail.getFinTaxDetails(), "");
-						}
-					}
-				}
-				
-				// Save Receipt Header
-				for (FinReceiptDetail receiptDetails : header.getReceiptDetails()) {
-					receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
-					
-					long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetails, tableType);
-					
-					List<FinRepayHeader> rpyHeaderList = receiptDetails.getRepayHeaders();
-					for (FinRepayHeader rpyHeader : rpyHeaderList) {
-						rpyHeader.setReceiptSeqID(receiptSeqID);
-						rpyHeader.setLinkedTranId(aeEvent.getLinkedTranId());
-						
-						//Save Repay Header details
-						getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
-					}
-				}
-				
-				return errorDetails;	
+			}
+		}
+
+		// Save Receipt Header
+		for (FinReceiptDetail receiptDetails : header.getReceiptDetails()) {
+			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
+
+			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetails, tableType);
+
+			List<FinRepayHeader> rpyHeaderList = receiptDetails.getRepayHeaders();
+			for (FinRepayHeader rpyHeader : rpyHeaderList) {
+				rpyHeader.setReceiptSeqID(receiptSeqID);
+				rpyHeader.setLinkedTranId(aeEvent.getLinkedTranId());
+
+				//Save Repay Header details
+				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
+			}
+		}
+
+		return errorDetails;
 
 	}
-	
-	
-	private void setNextRoleDetails(String nextTaskId, WorkflowEngine workFlow,FinReceiptHeader header) {
+
+	private void setNextRoleDetails(String nextTaskId, WorkflowEngine workFlow, FinReceiptHeader header) {
 		// Set the role codes for the next tasks
 		String nextRoleCode = "";
 		String nextRole = "";
 		Map<String, String> baseRoleMap = null;
-		
+
 		if (workFlow != null && !StringUtils.isBlank(nextTaskId)) {
 			String[] nextTasks = nextTaskId.split(";");
 			if (nextTasks.length > 0) {
@@ -739,22 +747,23 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 					}
 					nextRole = workFlow.getUserTask(nextTaskId).getActor();
 					nextRoleCode += nextRole;
-					
+
 					String baseRole = "";
-					baseRole = StringUtils.trimToEmpty( workFlow.getUserTask(nextTasks[i]).getBaseActor());
+					baseRole = StringUtils.trimToEmpty(workFlow.getUserTask(nextTasks[i]).getBaseActor());
 					baseRoleMap.put(nextRole, baseRole);
 				}
 			}
-			
+
 			header.setNextRoleCode(nextRoleCode);
 
 			baseRoleMap = null;
 		}
- 	}
-	
-	private BigDecimal prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap,List<FinFeeDetail> finFeeDetailList) {
+	}
+
+	private BigDecimal prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap,
+			List<FinFeeDetail> finFeeDetailList) {
 		logger.debug("Entering");
-		BigDecimal accountedImd=BigDecimal.ZERO;
+		BigDecimal accountedImd = BigDecimal.ZERO;
 
 		if (finFeeDetailList != null) {
 			FeeRule feeRule;
@@ -763,7 +772,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			BigDecimal addFeeToFinance = BigDecimal.ZERO;
 			BigDecimal paidFee = BigDecimal.ZERO;
 			BigDecimal feeWaived = BigDecimal.ZERO;
-			
+
 			//VAS
 			BigDecimal deductVasDisb = BigDecimal.ZERO;
 			BigDecimal addVasToFinance = BigDecimal.ZERO;
@@ -773,91 +782,113 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 				feeRule = new FeeRule();
 
-				if (finFeeDetail.isAlwPreIncomization()){
-				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
-				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
-				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
-				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
-				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
-				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmountOriginal());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
-				
-				//GST Added
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
-				//Calculated Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
-				
-				//Paid Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
-	
-				//Net Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
+				if (finFeeDetail.isAlwPreIncomization()) {
+					feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
+					feeRule.setFeeAmount(finFeeDetail.getActualAmount());
+					feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
+					feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
+					feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
+					feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmountOriginal());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
 
-				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
 					//GST Added
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
-				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", 0);
-					//GST Added
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", 0);
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", 0);
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", 0);
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", 0);
-				}
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
+					//Calculated Amount 
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C",
+							finFeeDetail.getFinTaxDetails().getActualCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C",
+							finFeeDetail.getFinTaxDetails().getActualSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C",
+							finFeeDetail.getFinTaxDetails().getActualIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C",
+							finFeeDetail.getFinTaxDetails().getActualUGST());
 
-				if (StringUtils.equals(feeRule.getFeeToFinance(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
-					//GST Added
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeCGST());
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeSGST());
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeIGST());
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", finFeeDetail.getFinTaxDetails().getRemFeeUGST());
+					//Paid Amount 
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P",
+							finFeeDetail.getFinTaxDetails().getPaidCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P",
+							finFeeDetail.getFinTaxDetails().getPaidSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P",
+							finFeeDetail.getFinTaxDetails().getPaidIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P",
+							finFeeDetail.getFinTaxDetails().getPaidUGST());
 
-				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
-					//GST Added
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", 0);
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", 0);
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", 0);
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", 0);
-				}
+					//Net Amount 
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N",
+							finFeeDetail.getFinTaxDetails().getNetCGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N",
+							finFeeDetail.getFinTaxDetails().getNetSGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N",
+							finFeeDetail.getFinTaxDetails().getNetIGST());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N",
+							finFeeDetail.getFinTaxDetails().getNetUGST());
 
-				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
-					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
-						deductVasDisb = deductVasDisb.add(finFeeDetail.getActualAmount());
+					if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+							|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+							|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
+						//GST Added
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH",
+								finFeeDetail.getFinTaxDetails().getRemFeeCGST());
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH",
+								finFeeDetail.getFinTaxDetails().getRemFeeSGST());
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH",
+								finFeeDetail.getFinTaxDetails().getRemFeeIGST());
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH",
+								finFeeDetail.getFinTaxDetails().getRemFeeUGST());
+					} else {
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", 0);
+						//GST Added
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_SCH", 0);
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_SCH", 0);
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_SCH", 0);
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_SCH", 0);
 					}
-				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
-					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
-						addVasToFinance = addVasToFinance.add(finFeeDetail.getActualAmount());
-					}
-				}
 
-				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
-				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
-				accountedImd=accountedImd.add(finFeeDetail.getPaidAmountOriginal().add(finFeeDetail.getFinTaxDetails().getPaidTGST()));
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
-					paidVasFee = paidVasFee.add(finFeeDetail.getPaidAmount());
-					vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
-				}
+					if (StringUtils.equals(feeRule.getFeeToFinance(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
+						//GST Added
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF",
+								finFeeDetail.getFinTaxDetails().getRemFeeCGST());
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF",
+								finFeeDetail.getFinTaxDetails().getRemFeeSGST());
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF",
+								finFeeDetail.getFinTaxDetails().getRemFeeIGST());
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF",
+								finFeeDetail.getFinTaxDetails().getRemFeeUGST());
+
+					} else {
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
+						//GST Added
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_AF", 0);
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_AF", 0);
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_AF", 0);
+						dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_AF", 0);
+					}
+
+					if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+						deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
+						if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+							deductVasDisb = deductVasDisb.add(finFeeDetail.getActualAmount());
+						}
+					} else if (finFeeDetail.getFeeScheduleMethod()
+							.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
+						if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+							addVasToFinance = addVasToFinance.add(finFeeDetail.getActualAmount());
+						}
+					}
+
+					paidFee = paidFee.add(finFeeDetail.getPaidAmount());
+					feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
+					accountedImd = accountedImd.add(
+							finFeeDetail.getPaidAmountOriginal().add(finFeeDetail.getFinTaxDetails().getPaidTGST()));
+					if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+						paidVasFee = paidVasFee.add(finFeeDetail.getPaidAmount());
+						vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
+					}
 				}
 			}
 
@@ -865,7 +896,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			amountCodes.setAddFeeToFinance(addFeeToFinance);
 			amountCodes.setFeeWaived(feeWaived);
 			amountCodes.setPaidFee(paidFee);
-			
+
 			//VAS
 			amountCodes.setDeductVasDisb(deductVasDisb);
 			amountCodes.setAddVasToFinance(addVasToFinance);
@@ -876,7 +907,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		logger.debug("Leaving");
 		return accountedImd;
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -885,6 +915,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
 		return finReceiptHeaderDAO;
 	}
+
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
@@ -892,6 +923,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
 		return finReceiptDetailDAO;
 	}
+
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
@@ -899,6 +931,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -906,6 +939,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public FinFeeDetailDAO getFinFeeDetailDAO() {
 		return finFeeDetailDAO;
 	}
+
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
@@ -913,6 +947,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
+
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
@@ -920,6 +955,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
 		return financeRepaymentsDAO;
 	}
+
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
@@ -927,6 +963,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public AccountingSetDAO getAccountingSetDAO() {
 		return accountingSetDAO;
 	}
+
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
 		this.accountingSetDAO = accountingSetDAO;
 	}

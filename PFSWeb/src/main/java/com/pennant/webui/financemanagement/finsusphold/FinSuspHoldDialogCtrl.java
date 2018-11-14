@@ -89,44 +89,40 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/FinSuspHold
- * /finSuspHoldDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FinSuspHold /finSuspHoldDialog.zul file.
  */
 public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	private static final long serialVersionUID = -2489293301745014852L;
 	private static final Logger logger = Logger.getLogger(FinSuspHoldDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_FinSuspHoldDialog;	// autoWired
+	protected Window window_FinSuspHoldDialog; // autoWired
 
-	protected ExtendedCombobox 		product; 					// autoWired
-	protected ExtendedCombobox 		finType; 					// autoWired
-	protected ExtendedCombobox 		finReference; 				// autoWired
-	protected Textbox               custCIF; 				    // autowired
-	protected Longbox 	            custID;						// autowired
-	protected Button 	            btnSearchCustCIF;			// autowired
-	protected Label 	            custShrtName;			        // autowired
-	protected Checkbox 		        active; 					// autoWired
-
+	protected ExtendedCombobox product; // autoWired
+	protected ExtendedCombobox finType; // autoWired
+	protected ExtendedCombobox finReference; // autoWired
+	protected Textbox custCIF; // autowired
+	protected Longbox custID; // autowired
+	protected Button btnSearchCustCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Checkbox active; // autoWired
 
 	// not autoWired variables
 	private FinSuspHold finSuspHold; // overHanded per parameter
 	private transient FinSuspHoldListCtrl finSuspHoldListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	// ServiceDAOs / Domain Classes
 	private transient FinSuspHoldService finSuspHoldService;
-	
-	private String product_Temp = ""; 
-	private String finType_Temp = ""; 
+
+	private String product_Temp = "";
+	private String finType_Temp = "";
 
 	/**
 	 * default constructor.<br>
@@ -143,9 +139,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinSuspHold
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinSuspHold object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -167,13 +162,12 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				setFinSuspHold(null);
 			}
 
-			doLoadWorkFlow(this.finSuspHold.isWorkflow(),
-					this.finSuspHold.getWorkflowId(),
+			doLoadWorkFlow(this.finSuspHold.isWorkflow(), this.finSuspHold.getWorkflowId(),
 					this.finSuspHold.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),"FinSuspHoldDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinSuspHoldDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -183,8 +177,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 			// or
 			// delete finSuspHold here.
 			if (arguments.containsKey("finSuspHoldListCtrl")) {
-				setFinSuspHoldListCtrl((FinSuspHoldListCtrl) arguments
-						.get("finSuspHoldListCtrl"));
+				setFinSuspHoldListCtrl((FinSuspHoldListCtrl) arguments.get("finSuspHoldListCtrl"));
 			} else {
 				setFinSuspHoldListCtrl(null);
 			}
@@ -202,7 +195,6 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	public void onFulfill$product(Event event) {
 		logger.debug("Entering");
 
@@ -217,7 +209,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				this.product.setDescription(details.getProductDesc());
 			}
 		}
-		if(!StringUtils.equals(this.product.getValue(),this.product_Temp)){
+		if (!StringUtils.equals(this.product.getValue(), this.product_Temp)) {
 			this.finType.setValue("");
 			this.finType.setDescription("");
 			this.finType.setFilters(null);
@@ -228,10 +220,9 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 			this.finReference.setObject(null);
 			doSetFinTypeProperties(this.product.getValue());
 		}
-		 this.product_Temp = this.product.getValue();
+		this.product_Temp = this.product.getValue();
 		logger.debug("Leaving");
 	}
-
 
 	public void onFulfill$finType(Event event) {
 		logger.debug("Entering");
@@ -245,16 +236,16 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				this.finType.setValue(details.getFinType());
 				this.finType.setDescription(details.getFinTypeDesc());
 				this.product.setValue(details.getFinCategory());
-				Product productTemp =  getProductDetails(details.getFinCategory());
-				if(productTemp != null){
+				Product productTemp = getProductDetails(details.getFinCategory());
+				if (productTemp != null) {
 					this.product.setValue(productTemp.getProductCode());
 					this.product.setDescription(productTemp.getProductDesc());
 					this.product.setObject(productTemp);
 				}
 			}
 		}
-		
-		if(!StringUtils.equals(this.finType.getValue(), this.finType_Temp)){
+
+		if (!StringUtils.equals(this.finType.getValue(), this.finType_Temp)) {
 			this.finReference.setValue("");
 			this.finReference.setDescription("");
 			this.finReference.setFilters(null);
@@ -265,7 +256,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		this.finType_Temp = this.finType.getValue();
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$finReference(Event event) {
 		logger.debug("Entering");
 		Object dataObject = finReference.getObject();
@@ -280,99 +271,97 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				this.custID.setValue(details.getCustID());
 				this.custCIF.setValue(details.getLovDescCustCIF());
 				this.custShrtName.setValue(details.getLovDescCustShrtName());
-				FinanceType financeTypeTemp =  getFinanceTypeDetails(details.getFinType());
-				if(financeTypeTemp != null){
+				FinanceType financeTypeTemp = getFinanceTypeDetails(details.getFinType());
+				if (financeTypeTemp != null) {
 					this.finType.setDescription(financeTypeTemp.getFinTypeDesc());
 					this.finType.setObject(financeTypeTemp);
 				}
 				this.product.setValue(financeTypeTemp.getFinCategory());
-				Product productTemp =  getProductDetails(financeTypeTemp.getFinCategory());
-				if(productTemp != null){
+				Product productTemp = getProductDetails(financeTypeTemp.getFinCategory());
+				if (productTemp != null) {
 					this.product.setDescription(productTemp.getProductDesc());
 					this.product.setObject(productTemp);
 				}
 			}
 		}
 		this.product_Temp = this.product.getValue();
-		 this.finType_Temp = this.finType.getValue();
+		this.finType_Temp = this.finType.getValue();
 		logger.debug("Leaving");
 	}
 
-	
-	private FinanceType getFinanceTypeDetails(String finTypeTemp){
+	private FinanceType getFinanceTypeDetails(String finTypeTemp) {
 		logger.debug("Entering");
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<FinanceType> searchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		searchObject.addSort("FinType", false);
-		searchObject.addFilter(new Filter("FinType",finTypeTemp, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("FinType", finTypeTemp, Filter.OP_EQUAL));
 		List<FinanceType> finTypeList = pagedListService.getBySearchObject(searchObject);
-		if(finTypeList != null && !finTypeList.isEmpty()){
+		if (finTypeList != null && !finTypeList.isEmpty()) {
 			return finTypeList.get(0);
 		}
 		logger.debug("Leaving");
 		return null;
 	}
-	
-	private Product getProductDetails(String productTemp){
+
+	private Product getProductDetails(String productTemp) {
 		logger.debug("Entering");
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<Product> searchObject = new JdbcSearchObject<Product>(Product.class);
 		searchObject.addSort("ProductCode", false);
-		searchObject.addFilter(new Filter("ProductCode",productTemp, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("ProductCode", productTemp, Filter.OP_EQUAL));
 		List<Product> productList = pagedListService.getBySearchObject(searchObject);
-		if(productList != null && !productList.isEmpty()){
+		if (productList != null && !productList.isEmpty()) {
 			return productList.get(0);
 		}
 		logger.debug("Leaving");
 		return null;
 	}
-	
-	private void doSetFinTypeProperties(String productTemp){
+
+	private void doSetFinTypeProperties(String productTemp) {
 		logger.debug("Entering");
-		if(StringUtils.isNotEmpty(productTemp)){
-			this.finType.setFilters(new Filter[]{new Filter("FinCategory", productTemp, Filter.OP_EQUAL)});
+		if (StringUtils.isNotEmpty(productTemp)) {
+			this.finType.setFilters(new Filter[] { new Filter("FinCategory", productTemp, Filter.OP_EQUAL) });
 		}
 		logger.debug("Leaving");
 	}
 
-
-	private void doSetFinanceProperties(String finType){
+	private void doSetFinanceProperties(String finType) {
 		logger.debug("Entering");
-		if(StringUtils.isNotEmpty(finType)){
-			this.finReference.setFilters(new Filter[]{new Filter("FinType", finType, Filter.OP_EQUAL)});
+		if (StringUtils.isNotEmpty(finType)) {
+			this.finReference.setFilters(new Filter[] { new Filter("FinType", finType, Filter.OP_EQUAL) });
 		}
 		logger.debug("Leaving");
 	}
-	
-	public void onChange$custCIF(Event event) throws InterruptedException{
+
+	public void onChange$custCIF(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		this.custCIF.clearErrorMessage();
-		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
-		if(customer == null) {	
+		Customer customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
+		if (customer == null) {
 			this.custCIF.setValue("");
 			this.custID.setText("");
 			this.custShrtName.setValue("");
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
 		} else {
 			doSetCustomer(customer, null);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-
-
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
 		Customer customer = (Customer) nCustomer;
-		if(customer != null){
+		if (customer != null) {
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custID.setValue(customer.getCustID());
 			this.custShrtName.setValue(customer.getCustShrtName());
-		}else{
+		} else {
 			this.custCIF.setValue("");
 			this.custID.setText("");
 			this.custShrtName.setValue("");
@@ -397,12 +386,9 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-
-
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -447,12 +433,11 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FinSuspHoldDialog",getRole());
+		getUserWorkspace().allocateAuthorities("FinSuspHoldDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinSuspHoldDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinSuspHoldDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinSuspHoldDialog_btnDelete"));
@@ -566,10 +551,11 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 
 		this.product_Temp = this.product.getValue();
 		this.finType_Temp = this.finType.getValue();
-		
+
 		doSetFinTypeProperties(this.product.getValue());
 		doSetFinanceProperties(this.finType.getValue());
-		if(aFinSuspHold.isNew() || StringUtils.equals(aFinSuspHold.getRecordType(),PennantConstants.RECORD_TYPE_NEW)){
+		if (aFinSuspHold.isNew()
+				|| StringUtils.equals(aFinSuspHold.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -580,9 +566,9 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinSuspHold
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinSuspHold aFinSuspHold){
+	public void doWriteComponentsToBean(FinSuspHold aFinSuspHold) {
 		logger.debug("Entering");
 
 		doSetLOVValidation();
@@ -607,7 +593,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 			wve.add(we);
 		}
 		try {
-			aFinSuspHold.setCustID(this.custID.getValue()==null?0:this.custID.getValue());
+			aFinSuspHold.setCustID(this.custID.getValue() == null ? 0 : this.custID.getValue());
 			aFinSuspHold.setCustCIF(this.custCIF.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -636,8 +622,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinSuspHold
 	 * @throws Exception
@@ -741,8 +726,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + getValidationMsg();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ getValidationMsg();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinSuspHold.getRecordType())) {
 				aFinSuspHold.setVersion(aFinSuspHold.getVersion() + 1);
@@ -769,38 +754,38 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		logger.debug("Leaving");
 	}
 
-	
-	private String getValidationMsg(){
+	private String getValidationMsg() {
 		logger.debug("Entering");
 		String errMsg = "";
-		if(StringUtils.isNotEmpty(this.product.getValue())){
-			errMsg = Labels.getLabel("label_FinSuspHold_Product")+" : "+ this.product.getValue();
+		if (StringUtils.isNotEmpty(this.product.getValue())) {
+			errMsg = Labels.getLabel("label_FinSuspHold_Product") + " : " + this.product.getValue();
 		}
-		if(StringUtils.isNotEmpty(this.finType.getValue())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_FinType")+" : "+ this.finType.getValue();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_FinType")+" : "+ this.finType.getValue();
+		if (StringUtils.isNotEmpty(this.finType.getValue())) {
+			if (StringUtils.isEmpty(errMsg)) {
+				errMsg = Labels.getLabel("label_FinSuspHold_FinType") + " : " + this.finType.getValue();
+			} else {
+				errMsg = errMsg + "," + Labels.getLabel("label_FinSuspHold_FinType") + " : " + this.finType.getValue();
 			}
 		}
-		if(StringUtils.isNotEmpty(this.finReference.getValue())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_FinReference")+" : "+ this.finReference.getValue();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_FinReference")+" : "+ this.finReference.getValue();
+		if (StringUtils.isNotEmpty(this.finReference.getValue())) {
+			if (StringUtils.isEmpty(errMsg)) {
+				errMsg = Labels.getLabel("label_FinSuspHold_FinReference") + " : " + this.finReference.getValue();
+			} else {
+				errMsg = errMsg + "," + Labels.getLabel("label_FinSuspHold_FinReference") + " : "
+						+ this.finReference.getValue();
 			}
 		}
-		if(StringUtils.isNotEmpty(this.custCIF.getValue())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_CustCIF")+" : "+ this.custCIF.getValue();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_CustCIF")+" : "+ this.custCIF.getValue();
+		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
+			if (StringUtils.isEmpty(errMsg)) {
+				errMsg = Labels.getLabel("label_FinSuspHold_CustCIF") + " : " + this.custCIF.getValue();
+			} else {
+				errMsg = errMsg + "," + Labels.getLabel("label_FinSuspHold_CustCIF") + " : " + this.custCIF.getValue();
 			}
 		}
 		logger.debug("Leaving");
 		return errMsg;
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -888,11 +873,11 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		// fill the FinSuspHold object with the components data
 		doWriteComponentsToBean(aFinSuspHold);
 
-		if(!PennantConstants.RECORD_TYPE_DEL.equals(aFinSuspHold.getRecordType()) 
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aFinSuspHold.getRecordType())
 				&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 				&& !"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-				&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())){
-			if(!validateData()){
+				&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+			if (!validateData()) {
 				return;
 			}
 		}
@@ -930,10 +915,11 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
-				
-				String msg = PennantApplicationUtil.getSavingStatus(aFinSuspHold.getRoleCode(),aFinSuspHold.getNextRoleCode(), 
-						aFinSuspHold.getFinReference(), " Finance ", aFinSuspHold.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+
+				String msg = PennantApplicationUtil.getSavingStatus(aFinSuspHold.getRoleCode(),
+						aFinSuspHold.getNextRoleCode(), aFinSuspHold.getFinReference(), " Finance ",
+						aFinSuspHold.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 			}
 
 		} catch (Exception e) {
@@ -942,20 +928,19 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		logger.debug("Leaving");
 	}
 
-
-	private boolean validateData() throws InterruptedException{
+	private boolean validateData() throws InterruptedException {
 		logger.debug("Entering");
 		boolean validData = true;
-		if(StringUtils.isEmpty(this.product.getValidatedValue()) && 
-				StringUtils.isEmpty(this.finType.getValidatedValue()) && 
-				StringUtils.isEmpty(this.finReference.getValidatedValue()) && 
-				StringUtils.isEmpty(this.custCIF.getValue())){
+		if (StringUtils.isEmpty(this.product.getValidatedValue())
+				&& StringUtils.isEmpty(this.finType.getValidatedValue())
+				&& StringUtils.isEmpty(this.finReference.getValidatedValue())
+				&& StringUtils.isEmpty(this.custCIF.getValue())) {
 
-			String msg = Labels.getLabel("FinSuspHold_Mandatory",new String[]{
-					Labels.getLabel("label_FinSuspHoldDialog_Product.value"),
-					Labels.getLabel("label_FinSuspHoldDialog_FinType.value"),
-					Labels.getLabel("label_FinSuspHoldDialog_CustCIF.value"),
-					Labels.getLabel("label_FinSuspHoldDialog_FinReference.value")});
+			String msg = Labels.getLabel("FinSuspHold_Mandatory",
+					new String[] { Labels.getLabel("label_FinSuspHoldDialog_Product.value"),
+							Labels.getLabel("label_FinSuspHoldDialog_FinType.value"),
+							Labels.getLabel("label_FinSuspHoldDialog_CustCIF.value"),
+							Labels.getLabel("label_FinSuspHoldDialog_FinReference.value") });
 			MessageUtil.showError(msg);
 			validData = false;
 		}
@@ -1006,12 +991,12 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)){
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
 					processCompleted = true;
-				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else {
-					FinSuspHold tFinSuspHold=  (FinSuspHold) auditHeader.getAuditDetail().getModelData();
+					FinSuspHold tFinSuspHold = (FinSuspHold) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, aFinSuspHold);
 					auditHeader.getAuditDetail().setModelData(tFinSuspHold);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -1023,12 +1008,12 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				}
 
 				finishedTasks += (method + ";");
-				FinSuspHold tFinSuspHold=  (FinSuspHold) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tFinSuspHold,finishedTasks);
+				FinSuspHold tFinSuspHold = (FinSuspHold) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tFinSuspHold, finishedTasks);
 
 			}
 
-			FinSuspHold tFinSuspHold=  (FinSuspHold) auditHeader.getAuditDetail().getModelData();
+			FinSuspHold tFinSuspHold = (FinSuspHold) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tFinSuspHold);
@@ -1036,11 +1021,11 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
 			}
-			
+
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)|| "Save".equals(userAction.getSelectedItem().getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, aFinSuspHold);
 					auditHeader.getAuditDetail().setModelData(tFinSuspHold);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -1054,15 +1039,14 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	protected String getServiceTasks(String taskId, FinSuspHold finSuspHold,
-			String finishedTasks) {
+
+	protected String getServiceTasks(String taskId, FinSuspHold finSuspHold, String finishedTasks) {
 		logger.debug("Entering");
-      // changes regarding parallel work flow 
+		// changes regarding parallel work flow 
 		String nextRoleCode = StringUtils.trimToEmpty(finSuspHold.getNextRoleCode());
-		String nextRoleCodes[]=nextRoleCode.split(",");
-		
-		if (nextRoleCodes.length > 1 ) {
+		String nextRoleCodes[] = nextRoleCode.split(",");
+
+		if (nextRoleCodes.length > 1) {
 			return "";
 		}
 
@@ -1077,7 +1061,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		logger.debug("Leaving");
 		return serviceTasks;
 	}
-	
+
 	protected void setNextTaskDetails(String taskId, FinSuspHold finSuspHold) {
 		logger.debug("Entering");
 
@@ -1092,7 +1076,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		} else {
 			if ("Resubmit".equals(action)) {
 				nextTaskId = "";
-			}else if (!"Save".equals(action)) {
+			} else if (!"Save".equals(action)) {
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 			}
 		}
@@ -1121,7 +1105,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 					nextRoleCode += nextRole;
 					String baseRole = "";
 					if (!"Resubmit".equals(action)) {
-						baseRole= StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
+						baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
 					}
 					baseRoleMap.put(nextRole, baseRole);
 				}
@@ -1132,10 +1116,9 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		finSuspHold.setNextTaskId(nextTaskId);
 		finSuspHold.setRoleCode(getRole());
 		finSuspHold.setNextRoleCode(nextRoleCode);
-		
+
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * Get the result after processing DataBase Operations
@@ -1180,8 +1163,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinSuspHoldDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1225,8 +1208,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 */
 	private AuditHeader getAuditHeader(FinSuspHold aFinSuspHold, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinSuspHold.getBefImage(), aFinSuspHold);
-		return new AuditHeader(String.valueOf(aFinSuspHold.getId()),
-				null, null, null, auditDetail, aFinSuspHold.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aFinSuspHold.getId()), null, null, null, auditDetail,
+				aFinSuspHold.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1267,12 +1250,11 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	private void refreshList() {
 		getFinSuspHoldListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.finSuspHold.getSuspHoldID());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1281,6 +1263,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1288,6 +1271,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	public FinSuspHold getFinSuspHold() {
 		return this.finSuspHold;
 	}
+
 	public void setFinSuspHold(FinSuspHold finSuspHold) {
 		this.finSuspHold = finSuspHold;
 	}
@@ -1295,6 +1279,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	public void setFinSuspHoldService(FinSuspHoldService finSuspHoldService) {
 		this.finSuspHoldService = finSuspHoldService;
 	}
+
 	public FinSuspHoldService getFinSuspHoldService() {
 		return this.finSuspHoldService;
 	}
@@ -1302,6 +1287,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	public void setFinSuspHoldListCtrl(FinSuspHoldListCtrl finSuspHoldListCtrl) {
 		this.finSuspHoldListCtrl = finSuspHoldListCtrl;
 	}
+
 	public FinSuspHoldListCtrl getFinSuspHoldListCtrl() {
 		return this.finSuspHoldListCtrl;
 	}

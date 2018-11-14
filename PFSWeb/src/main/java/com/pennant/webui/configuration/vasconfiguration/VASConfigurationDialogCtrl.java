@@ -115,83 +115,82 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/Configuration/VASConfiguration/vASConfigurationDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Configuration/VASConfiguration/vASConfigurationDialog.zul file.
+ * <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(VASConfigurationDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(VASConfigurationDialogCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-	 * All the components that are defined here
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
-	 * GenericForwardComposer. 
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window							window_VASConfigurationDialog;
-	protected Uppercasebox						productCode;
-	protected Textbox							productDesc;
-	protected ExtendedCombobox					vasType;																	 
-	protected Textbox							vasCategory;																 
-	protected Combobox							recAgainst;
-	protected CurrencyBox						vasFee;																		 
-	protected Checkbox							allowFeeToModify;															 
-	protected ExtendedCombobox					manufacturer;																 
-	protected Checkbox							feeAccrued;
-	protected ExtendedCombobox					feeAccounting;
-	protected Label								label_AccrualAccounting;
-	protected ExtendedCombobox					accrualAccounting;
-	protected Checkbox							recurringType;
-	protected Intbox							freeLockPeriod;
-	protected Checkbox							preValidationReq;
-	protected Checkbox							postValidationReq;
-	protected Checkbox							active;
-	protected Textbox							remarks;
+	protected Window window_VASConfigurationDialog;
+	protected Uppercasebox productCode;
+	protected Textbox productDesc;
+	protected ExtendedCombobox vasType;
+	protected Textbox vasCategory;
+	protected Combobox recAgainst;
+	protected CurrencyBox vasFee;
+	protected Checkbox allowFeeToModify;
+	protected ExtendedCombobox manufacturer;
+	protected Checkbox feeAccrued;
+	protected ExtendedCombobox feeAccounting;
+	protected Label label_AccrualAccounting;
+	protected ExtendedCombobox accrualAccounting;
+	protected Checkbox recurringType;
+	protected Intbox freeLockPeriod;
+	protected Checkbox preValidationReq;
+	protected Checkbox postValidationReq;
+	protected Checkbox active;
+	protected Textbox remarks;
 
-	protected Tabbox							tabBoxIndexCenter;
-	protected Tabs								tabsIndexCenter;
-	protected Tabpanels							tabpanelsBoxIndexCenter;
-	protected Tab								basicDetailsTab;
-	protected Tab								extendedDetailsTab;
-	protected Tab								preValidationTab;
-	protected Tab								postValidationTab;
-	protected Tabpanel							extendedFieldTabpanel;
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab basicDetailsTab;
+	protected Tab extendedDetailsTab;
+	protected Tab preValidationTab;
+	protected Tab postValidationTab;
+	protected Tabpanel extendedFieldTabpanel;
 
-	protected Label								preModuleDesc;
-	protected Label								preSubModuleDesc;
+	protected Label preModuleDesc;
+	protected Label preSubModuleDesc;
 
-	protected Label								postModuleDesc;
-	protected Label								postSubModuleDesc;
+	protected Label postModuleDesc;
+	protected Label postSubModuleDesc;
 
-	protected Codemirror						postValidation;
-	protected Codemirror						preValidation;
-	protected Listbox							prevalidationListbox;
-	protected Listbox							postValidationListbox;
-	
-	protected Grid 								preValidationGrid;
-	protected Grid 								postValidationGrid;
-	protected Button 							btnCopyTo;
+	protected Codemirror postValidation;
+	protected Codemirror preValidation;
+	protected Listbox prevalidationListbox;
+	protected Listbox postValidationListbox;
 
-	private boolean								enqModule			= false;
+	protected Grid preValidationGrid;
+	protected Grid postValidationGrid;
+	protected Button btnCopyTo;
 
-	private VASConfiguration					vASConfiguration;
-	private transient VASConfigurationListCtrl	vASConfigurationListCtrl;
-	private transient ExtendedFieldDialogCtrl	extendedFieldDialogCtrl;
+	private boolean enqModule = false;
+
+	private VASConfiguration vASConfiguration;
+	private transient VASConfigurationListCtrl vASConfigurationListCtrl;
+	private transient ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
 	// ServiceDAOs / Domain Classes
-	private transient VASConfigurationService	vasConfigurationService;
+	private transient VASConfigurationService vasConfigurationService;
 
-	private	  JSONArray							variables			= new JSONArray();
-	protected Button							btnValidate;
-	protected Button							btnSimulate;
-	protected Button							button_pre_Simulate;
-	protected Button							button_post_Simulate;
-	private   List<String>  					fieldNames 			= new ArrayList<String>();
-	protected boolean 							alwCopyOption = false;
-	protected boolean 							isCopyProcess = false;
-	protected boolean 							preScriptValidated = false;
-	protected boolean 							postScriptValidated = false;
+	private JSONArray variables = new JSONArray();
+	protected Button btnValidate;
+	protected Button btnSimulate;
+	protected Button button_pre_Simulate;
+	protected Button button_post_Simulate;
+	private List<String> fieldNames = new ArrayList<String>();
+	protected boolean alwCopyOption = false;
+	protected boolean isCopyProcess = false;
+	protected boolean preScriptValidated = false;
+	protected boolean postScriptValidated = false;
 
 	/**
 	 * default constructor.<br>
@@ -225,10 +224,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			} else {
 				enqModule = false;
 			}
-			
+
 			this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
 			this.isCopyProcess = (Boolean) arguments.get("isCopyProcess");
-			
+
 			// Store the before image.
 			if (arguments.containsKey("vASConfiguration")) {
 				this.vASConfiguration = (VASConfiguration) arguments.get("vASConfiguration");
@@ -240,7 +239,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			} else {
 				setVASConfiguration(null);
 			}
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.vASConfiguration.isWorkflow(), this.vASConfiguration.getWorkflowId(),
 					this.vASConfiguration.getNextTaskId());
@@ -249,7 +248,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "VASConfigurationDialog");
 			} else {
-				if(!enqModule){
+				if (!enqModule) {
 					getUserWorkspace().allocateAuthorities("VASConfigurationDialog");
 				}
 			}
@@ -283,15 +282,16 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		doEdit();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for On click action on Copy button to make Duplicate record with existing Data
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeDialog();
 			Events.postEvent("onClick$button_VASConfigurationList_NewVASConfiguration",
@@ -299,9 +299,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Checking Actual Initiated Owner of the Record
+	 * 
 	 * @return
 	 */
 	private boolean isMaintainable() {
@@ -369,41 +370,30 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
-		// TODO: Open Comment If, save is working on ZK scripts for validation 
-		/*boolean validationReq = true;
-		if (this.userAction.getSelectedItem() != null){
-			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-					this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
-					this.userAction.getSelectedItem().getLabel().contains("Decline")) {
-				validationReq = false;
-			}
-		}
 
-		if(validationReq){
-			if ((StringUtils.isNotBlank(this.preValidation.getValue()) || 
-					StringUtils.isNotBlank(this.postValidation.getValue()))  && 
-					validate(event, false, true)) {
-				doSave();
-			}else if(StringUtils.isBlank(this.preValidation.getValue()) ||
-					StringUtils.isBlank(this.postValidation.getValue())){
-				doSave();
-			}
-		}else{
-			doSave();
-		}
-		 */ 
+		// TODO: Open Comment If, save is working on ZK scripts for validation 
+		/*
+		 * boolean validationReq = true; if (this.userAction.getSelectedItem() != null){ if
+		 * ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Reject") ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Decline")) { validationReq = false; } }
+		 * 
+		 * if(validationReq){ if ((StringUtils.isNotBlank(this.preValidation.getValue()) ||
+		 * StringUtils.isNotBlank(this.postValidation.getValue())) && validate(event, false, true)) { doSave(); }else
+		 * if(StringUtils.isBlank(this.preValidation.getValue()) ||
+		 * StringUtils.isBlank(this.postValidation.getValue())){ doSave(); } }else{ doSave(); }
+		 */
 
 		// Pre Validation Checking for Validated or not
-		if(StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated){
+		if (StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated) {
 			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
 					new String[] { Labels.getLabel("Tab_PreValidation") }));
 			return;
 		}
 
 		// Post Validation Checking for Validated or not
-		if(StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated){
+		if (StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated) {
 			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
 					new String[] { Labels.getLabel("Tab_PostValidation") }));
 			return;
@@ -443,8 +433,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		Object dataObject = feeAccounting.getObject();
 		if (dataObject instanceof String) {
 			this.feeAccounting.setObject(null);
-			this.feeAccounting.setValue("","");
-		}else{
+			this.feeAccounting.setValue("", "");
+		} else {
 			if (dataObject instanceof AccountingSet) {
 				AccountingSet accSet = (AccountingSet) dataObject;
 				this.feeAccounting.setObject(accSet);
@@ -459,8 +449,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		Object dataObject = accrualAccounting.getObject();
 		if (dataObject instanceof String) {
 			this.accrualAccounting.setObject(null);
-			this.accrualAccounting.setValue("","");
-		}else{
+			this.accrualAccounting.setValue("", "");
+		} else {
 			if (dataObject instanceof AccountingSet) {
 				AccountingSet accSet = (AccountingSet) dataObject;
 				this.accrualAccounting.setObject(accSet);
@@ -469,13 +459,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/*
 	 * Fetching the VasCategory details based on vas product type
 	 */
 	public void onFulfill$vasType(Event event) {
 		logger.debug("Entering " + event.toString());
-		
+
 		this.vasType.setConstraint("");
 		this.vasType.clearErrorMessage();
 		Object dataObject = this.vasType.getObject();
@@ -520,7 +510,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				btnCancel.setVisible(false);
 			}
 		}
-		
+
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
@@ -528,12 +518,12 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 			// fill the components with the data
 			doWriteBeanToComponents(aVASConfiguration);
-			
-			int height = getContentAreaHeight() ;
-			this.preValidationGrid.setHeight(height-150+"px");
-			this.postValidationGrid.setHeight(height-150+"px");
-			this.preValidation.setHeight(height-160+"px");
-			this.postValidation.setHeight(height-160+"px");
+
+			int height = getContentAreaHeight();
+			this.preValidationGrid.setHeight(height - 150 + "px");
+			this.postValidationGrid.setHeight(height - 150 + "px");
+			this.preValidation.setHeight(height - 160 + "px");
+			this.postValidation.setHeight(height - 160 + "px");
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -546,7 +536,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		boolean isWorkflowExists = getVasConfigurationService().isWorkflowExists(this.vASConfiguration.getProductCode());
+		boolean isWorkflowExists = getVasConfigurationService()
+				.isWorkflowExists(this.vASConfiguration.getProductCode());
 
 		if (this.vASConfiguration.isNewRecord()) {
 			this.productCode.setReadonly(false);
@@ -594,7 +585,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		if(isWorkflowExists){
+		if (isWorkflowExists) {
 			this.btnDelete.setVisible(false);
 		}
 
@@ -638,7 +629,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_VASConfigurationDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VASConfigurationDialog_btnEdit"));
@@ -654,7 +645,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.productCode.setMaxlength(8);
 		this.productDesc.setMaxlength(20);
 
@@ -663,9 +654,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.vasType.setValueColumn("ProductType");
 		this.vasType.setDescColumn("ProductTypeDesc");
 		this.vasType.setValidateColumns(new String[] { "ProductType" });
-		
-		this.vasFee.setProperties(true,  getCcyFormat());
-		
+
+		this.vasFee.setProperties(true, getCcyFormat());
+
 		this.manufacturer.setDisplayStyle(3);
 		this.manufacturer.setMandatoryStyle(true);
 		this.manufacturer.setModuleName("VehicleDealer");
@@ -677,7 +668,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		filters[0] = new Filter("DealerType", VASConsatnts.VASAGAINST_VASM, Filter.OP_EQUAL);
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.manufacturer.setFilters(filters);
-		
+
 		this.feeAccounting.setMandatoryStyle(true);
 		setPropertiesForAEExtCombobox(this.feeAccounting, AccountEventConstants.ACCEVENT_VAS_FEE);
 
@@ -780,47 +771,50 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$preValidationTab(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.preModuleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.preSubModuleDesc.setValue(this.vasType.getValue());
 		this.prevalidationListbox.getItems().clear();
 		renderScriptFields(prevalidationListbox);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$postValidationTab(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.postModuleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.postSubModuleDesc.setValue(this.vasType.getValue());
 		this.postValidationListbox.getItems().clear();
 		renderScriptFields(postValidationListbox);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for rendering Field Details from Extended fields for Validations & Simulation
+	 * 
 	 * @param listbox
 	 */
-	private void renderScriptFields(Listbox listbox){
+	private void renderScriptFields(Listbox listbox) {
 		logger.debug("Entering");
-		
+
 		if (getExtendedFieldDialogCtrl() != null) {
-			List<ExtendedFieldDetail>  extFieldList= getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+			List<ExtendedFieldDetail> extFieldList = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 			if (extFieldList != null && !extFieldList.isEmpty()) {
 				for (ExtendedFieldDetail details : extFieldList) {
-					if (!StringUtils.equals(details.getRecordType(),PennantConstants.RECORD_TYPE_DEL) && 
-							!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+							&& !StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 						Listitem item = new Listitem();
 						Listcell lc = new Listcell(details.getFieldName());
 						lc.setParent(item);
@@ -831,10 +825,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -843,10 +837,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	public void onUser$btnPreValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event , false, false)) {
+		if (validate(event, false, false)) {
 			preScriptValidated = true;
 			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.preValidation.getValue().trim())){
+			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.preValidation.getValue());
@@ -855,7 +849,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -864,10 +858,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	public void onUser$btnPostValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			postScriptValidated = true;
 			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.postValidation.getValue().trim())){
+			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.postValidation.getValue());
@@ -876,6 +870,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -883,6 +878,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void onChange$postValidation(Event event) {
 		postScriptValidated = false;
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -891,7 +887,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		preScriptValidated = false;
 	}
 
-	
 	/**
 	 * CALL THE RESULT ZUL FILE
 	 * 
@@ -903,16 +898,17 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("variables", jsonArray);
 		map.put("scriptRule", scriptRule);
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS
 	 * 
@@ -920,7 +916,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations) throws InterruptedException {
+	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations)
+			throws InterruptedException {
 		boolean noerrors = true;
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
@@ -968,36 +965,39 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 	/**
 	 * Method for Checking script has Error Details information or not.
+	 * 
 	 * @param isPostValidation
 	 * @return
 	 * @throws InterruptedException
 	 */
 	private boolean validateResult(boolean isPostValidation, boolean bothValidations) throws InterruptedException {
 
-		if(!bothValidations){
-			if(isPostValidation){
+		if (!bothValidations) {
+			if (isPostValidation) {
 				if (!this.postValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
-			}else{
+			} else {
 				if (!this.preValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}
-		}else{
-			if (StringUtils.isNotEmpty(this.preValidation.getValue()) && !this.preValidation.getValue().contains("errors")) {
+		} else {
+			if (StringUtils.isNotEmpty(this.preValidation.getValue())
+					&& !this.preValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Pre Validations.");
 				return false;
-			}else if(StringUtils.isNotEmpty(this.postValidation.getValue()) && !this.postValidation.getValue().contains("errors")){
+			} else if (StringUtils.isNotEmpty(this.postValidation.getValue())
+					&& !this.postValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Post Validations.");
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -1006,13 +1006,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	public void onUser$btnPreSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event , false , false)) {
+		if (validate(event, false, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.preValidation.getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -1021,13 +1021,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	public void onUser$btnPostSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.postValidation.getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	 
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -1036,12 +1036,14 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * @throws ParseException
 	 * 
 	 */
-	public void doWriteBeanToComponents(VASConfiguration aVASConfiguration) throws ParseException, InterruptedException {
+	public void doWriteBeanToComponents(VASConfiguration aVASConfiguration)
+			throws ParseException, InterruptedException {
 		logger.debug("Entering");
-		
+
 		this.productCode.setValue(aVASConfiguration.getProductCode());
 		this.productDesc.setValue(aVASConfiguration.getProductDesc());
-		fillComboBox(this.recAgainst, aVASConfiguration.getRecAgainst(), PennantStaticListUtil.getRecAgainstTypes(), "");
+		fillComboBox(this.recAgainst, aVASConfiguration.getRecAgainst(), PennantStaticListUtil.getRecAgainstTypes(),
+				"");
 		String vasCategory = "";
 		if (aVASConfiguration.getProductCategory() != null) {
 			vasCategory = aVASConfiguration.getProductCategory();
@@ -1061,7 +1063,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.remarks.setValue(aVASConfiguration.getRemarks());
 		this.vasFee.setValue(PennantApplicationUtil.formateAmount(aVASConfiguration.getVasFee(), getCcyFormat()));
 		this.allowFeeToModify.setChecked(aVASConfiguration.isAllowFeeToModify());
-		
+
 		this.preValidation.setValue(aVASConfiguration.getPreValidation());
 		this.postValidation.setValue(aVASConfiguration.getPostValidation());
 		this.preValidationTab.setDisabled(!aVASConfiguration.isPreValidationReq());
@@ -1070,10 +1072,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.postValidationReq.setChecked(aVASConfiguration.isPostValidationReq());
 
 		if (aVASConfiguration.isNewRecord()) {
-			if(isCopyProcess){
+			if (isCopyProcess) {
 				this.feeAccounting.setDescription(aVASConfiguration.getFeeAccountingName());
 				this.accrualAccounting.setDescription(aVASConfiguration.getAccrualAccountingName());
-			}else{
+			} else {
 				this.feeAccounting.setDescription("");
 				this.accrualAccounting.setDescription("");
 			}
@@ -1093,7 +1095,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		if (aVASConfiguration.isFeeAccrued()) {
 			this.accrualAccounting.setReadonly(isReadOnly("VASConfigurationDialog_AccrualAccounting"));
 			this.accrualAccounting.setMandatoryStyle(true);
- 		} else {
+		} else {
 			this.accrualAccounting.setReadonly(true);
 			this.accrualAccounting.setMandatoryStyle(false);
 		}
@@ -1104,12 +1106,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		// Accrual Accounting
 		this.accrualAccounting.setObject(aVASConfiguration.getAccrualAccounting());
-		this.accrualAccounting.setValue(aVASConfiguration.getAccrualAccountingName(), aVASConfiguration.getAccrualAccountingDesc());
-		
+		this.accrualAccounting.setValue(aVASConfiguration.getAccrualAccountingName(),
+				aVASConfiguration.getAccrualAccountingDesc());
+
 		// Default Values Setting for Script Validations
 		postScriptValidated = true;
 		preScriptValidated = true;
-		
+
 		// Extended Field Details tab
 		appendExtendedFieldsTab();
 
@@ -1138,7 +1141,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		//Basic Details Tab
-		
+
 		// Product Code
 		try {
 			aVASConfiguration.setProductCode(this.productCode.getValue());
@@ -1160,7 +1163,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		// VAS fee
 		try {
-			aVASConfiguration.setVasFee(PennantApplicationUtil.unFormateAmount(this.vasFee.getActualValue(), getCcyFormat()));
+			aVASConfiguration
+					.setVasFee(PennantApplicationUtil.unFormateAmount(this.vasFee.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1171,7 +1175,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Manufaturer
 		try {
 			aVASConfiguration.setManufacturerId(Long.valueOf(this.manufacturer.getValue()));
@@ -1179,14 +1183,16 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Recording Against
 		try {
-			if (this.recAgainst.getSelectedItem() != null && !"#".equals(this.recAgainst.getSelectedItem().getValue())) {
+			if (this.recAgainst.getSelectedItem() != null
+					&& !"#".equals(this.recAgainst.getSelectedItem().getValue())) {
 				aVASConfiguration.setRecAgainst(this.recAgainst.getSelectedItem().getValue().toString());
 			} else {
 				if (validationReq) {
-					throw new WrongValueException(this.recAgainst, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("label_VASConfigurationDialog_RecAgainst.value") }));
+					throw new WrongValueException(this.recAgainst, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_VASConfigurationDialog_RecAgainst.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1252,12 +1258,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			wve.add(we);
 		}
 		showErrorDetails(wve, basicDetailsTab);
-		
+
 		// Pre Valiadtion tab
 		if (this.preValidationReq.isChecked()) {
 			try {
-				if (validationReq &&  StringUtils.trimToNull(this.preValidation.getValue()) == null) {
-					throw new WrongValueException(preValidation, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CollateralStructureDialog_PreValidation.value") }));
+				if (validationReq && StringUtils.trimToNull(this.preValidation.getValue()) == null) {
+					throw new WrongValueException(preValidation, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_CollateralStructureDialog_PreValidation.value") }));
 				}
 				aVASConfiguration.setPreValidation(this.preValidation.getValue());
 			} catch (WrongValueException we) {
@@ -1272,8 +1279,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		// Post Validation
 		if (this.postValidationReq.isChecked()) {
 			try {
-				if (validationReq &&  StringUtils.trimToNull(this.postValidation.getValue()) == null) {
-					throw new WrongValueException(postValidation, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CollateralStructureDialog_PostValidation.value") }));
+				if (validationReq && StringUtils.trimToNull(this.postValidation.getValue()) == null) {
+					throw new WrongValueException(postValidation, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_CollateralStructureDialog_PostValidation.value") }));
 				}
 				aVASConfiguration.setPostValidation(this.postValidation.getValue());
 			} catch (WrongValueException we) {
@@ -1287,7 +1295,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		// Extended Field Details
 		if (getExtendedFieldDialogCtrl() != null) {
-			ExtendedFieldHeader extendedFieldHeader = getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
+			ExtendedFieldHeader extendedFieldHeader = getExtendedFieldDialogCtrl()
+					.doSave_ExtendedFields(extendedDetailsTab);
 			extendedFieldHeader.setModuleName(VASConsatnts.MODULE_NAME);
 			extendedFieldHeader.setSubModuleName(aVASConfiguration.getProductCode());
 			extendedFieldHeader.setTabHeading(aVASConfiguration.getProductDesc());
@@ -1296,7 +1305,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	// For Tab Wise validations
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
 		logger.debug("Entering");
@@ -1320,50 +1329,54 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug("Entering");
 		// Product Code
 		if (!this.productCode.isReadonly()) {
-			this.productCode.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_ProductCode.value"), 
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.productCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_ProductCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		// Product Description
 		if (!this.productDesc.isReadonly()) {
-			this.productDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASConfigurationDialog_ProductDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.productDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_ProductDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		//VAS Type
 		if (!this.vasType.isButtonDisabled()) {
-			this.vasType.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_VASType.value"),
-					null, true, true));
+			this.vasType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASConfigurationDialog_VASType.value"), null, true, true));
 		}
 		//vasFee
 		if (!this.vasFee.isReadonly()) {
-			this.vasFee.setConstraint(new PTDecimalValidator(Labels.getLabel("label_VASConfigurationDialog_VASFee.value"), getCcyFormat(), true, false));
+			this.vasFee.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_VASConfigurationDialog_VASFee.value"), getCcyFormat(), true, false));
 		}
-		
+
 		// Fee Accounting
 		if (!this.feeAccounting.isButtonDisabled()) {
-			this.feeAccounting.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_FeeAccounting.value"),
-					null, true, true));
+			this.feeAccounting.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASConfigurationDialog_FeeAccounting.value"), null, true, true));
 		}
 		// Accrual Accounting
 		if (this.feeAccrued.isChecked() && !this.accrualAccounting.isButtonDisabled()) {
-			this.accrualAccounting.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_AccrualAccounting.value"),
-					null, true, true));
+			this.accrualAccounting.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASConfigurationDialog_AccrualAccounting.value"), null, true, true));
 		}
 		// Free Lock Period
 		if (!this.freeLockPeriod.isReadonly()) {
-			this.freeLockPeriod.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_VASConfigurationDialog_FreeLockPeriod.value"), false, false, 0, 999));
+			this.freeLockPeriod.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_VASConfigurationDialog_FreeLockPeriod.value"), false, false, 0, 999));
 		}
-		
+
 		//Manufacturer
 		if (!this.manufacturer.isButtonDisabled()) {
-			this.manufacturer.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_Manufacturer.value"), null,
-					true, true));
+			this.manufacturer.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_VASConfigurationDialog_Manufacturer.value"), null, true, true));
 		}
-		
+
 		// Remarks
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_Remarks.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.remarks
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_Remarks.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
 		logger.debug("Leaving");
@@ -1621,7 +1634,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void closeDialog() {
 		super.closeDialog();
@@ -1630,7 +1643,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			getExtendedFieldDialogCtrl().closeDialog();
 		}
 	}
-
 
 	/**
 	 * Set the workFlow Details List to Object
@@ -1700,7 +1712,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			aVASConfiguration.setNextTaskId(nextTaskId);
 			aVASConfiguration.setRoleCode(getRole());
 			aVASConfiguration.setNextRoleCode(nextRoleCode);
-			
+
 			// Set workflow values
 			ExtendedFieldHeader extFldHeader = aVASConfiguration.getExtendedFieldHeader();
 			extFldHeader.setWorkflowId(aVASConfiguration.getWorkflowId());
@@ -1718,7 +1730,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				extFldHeader.setRecordType(aVASConfiguration.getRecordType());
 				extFldHeader.setNewRecord(aVASConfiguration.isNewRecord());
 			}
-			
+
 			for (ExtendedFieldDetail ext : extFldHeader.getExtendedFieldDetails()) {
 				ext.setWorkflowId(aVASConfiguration.getWorkflowId());
 				ext.setRecordStatus(aVASConfiguration.getRecordStatus());
@@ -1799,8 +1811,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 						}
 					} else {
 
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_VASConfigurationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1880,6 +1892,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public VASConfiguration getVASConfiguration() {
 		return this.vASConfiguration;
 	}
+
 	public void setVASConfiguration(VASConfiguration vASConfiguration) {
 		this.vASConfiguration = vASConfiguration;
 	}
@@ -1887,6 +1900,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void setVasConfigurationService(VASConfigurationService vASConfigurationService) {
 		this.vasConfigurationService = vASConfigurationService;
 	}
+
 	public VASConfigurationService getVasConfigurationService() {
 		return this.vasConfigurationService;
 	}
@@ -1894,6 +1908,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void setVASConfigurationListCtrl(VASConfigurationListCtrl vASConfigurationListCtrl) {
 		this.vASConfigurationListCtrl = vASConfigurationListCtrl;
 	}
+
 	public VASConfigurationListCtrl getVASConfigurationListCtrl() {
 		return this.vASConfigurationListCtrl;
 	}
@@ -1901,13 +1916,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public ExtendedFieldDialogCtrl getExtendedFieldDialogCtrl() {
 		return extendedFieldDialogCtrl;
 	}
+
 	public void setExtendedFieldDialogCtrl(ExtendedFieldDialogCtrl extendedFieldDialogCtrl) {
 		this.extendedFieldDialogCtrl = extendedFieldDialogCtrl;
 	}
-	
+
 	public List<String> getFieldNames() {
 		return fieldNames;
 	}
+
 	public void setFieldNames(List<String> fieldNames) {
 		this.fieldNames = fieldNames;
 	}

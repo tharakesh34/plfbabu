@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import java.util.Date;
 import java.util.List;
 
@@ -54,10 +55,10 @@ import com.pennanttech.pff.core.TableType;
 public interface CostOfFundDAO extends BasicCrudDao<CostOfFund> {
 
 	CostOfFund getCostOfFundById(String cofCode, String currency, Date cofEffDate, String type);
-	
+
 	/**
-	 *  Checks whether another record exists with the key attributes in the specified table type.
-	 *  
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
 	 * @param bRType
 	 *            bRType of the baseRate
 	 * @param bREffDate
@@ -68,11 +69,17 @@ public interface CostOfFundDAO extends BasicCrudDao<CostOfFund> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(String cofCode,Date cofEffDate, String currency, TableType tableType);
+	boolean isDuplicateKey(String cofCode, Date cofEffDate, String currency, TableType tableType);
+
 	CostOfFund getCostOfFundByType(final String cofCode, String currency, Date cofEffDate);
+
 	boolean getCostOfFundListById(String cofCode, String currency, Date cofEffDate, String type);
+
 	List<CostOfFund> getBSRListByMdfDate(Date cofEffDate, String type);
+
 	void deleteByEffDate(CostOfFund cofCode, String type);
+
 	int getCostOfFundCountById(String cofCode, String currency, String type);
+
 	List<CostOfFund> getCostOfFundHistByType(String cofCode, String currency, Date cofEffDate);
 }

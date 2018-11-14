@@ -9,54 +9,53 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
-public class PTWebValidator implements Constraint{
+public class PTWebValidator implements Constraint {
 	private String fieldParm;
-	private boolean mandatory=false;
+	private boolean mandatory = false;
 	private final String WEB_REGEX = "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
-	private int maxLength=100;
-	
-	public PTWebValidator(String fieldParm,boolean mandatory) {
+	private int maxLength = 100;
+
+	public PTWebValidator(String fieldParm, boolean mandatory) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
 	}
-	
+
 	@Override
 	public void validate(Component comp, Object value) throws WrongValueException {
-		String errorMessage=getErrorMessage(value);
-		if(StringUtils.isNotBlank(errorMessage)){
+		String errorMessage = getErrorMessage(value);
+		if (StringUtils.isNotBlank(errorMessage)) {
 			throw new WrongValueException(comp, errorMessage);
 		}
 	}
 
-	
-	
-	private String getErrorMessage(Object value){
+	private String getErrorMessage(Object value) {
 
-		String compValue=null;
-		boolean validRegex=false;
+		String compValue = null;
+		boolean validRegex = false;
 
-		if(value!=null){
-			compValue= value.toString();
+		if (value != null) {
+			compValue = value.toString();
 		}
-		
-		if (StringUtils.isBlank(compValue) ) {
-			if(isMandatory()){
-				return Labels.getLabel("FIELD_IS_MAND", new String[] {fieldParm});	
-			}else{
-				compValue="";
+
+		if (StringUtils.isBlank(compValue)) {
+			if (isMandatory()) {
+				return Labels.getLabel("FIELD_IS_MAND", new String[] { fieldParm });
+			} else {
+				compValue = "";
 				return null;
 			}
-		} else{
-			if(compValue.length()>maxLength){
-				return Labels.getLabel("FIELD_ALLOWED_MAXLENGTH", new String[] {fieldParm,String.valueOf(maxLength)});
+		} else {
+			if (compValue.length() > maxLength) {
+				return Labels.getLabel("FIELD_ALLOWED_MAXLENGTH",
+						new String[] { fieldParm, String.valueOf(maxLength) });
 			}
-	
+
 			Pattern pattern = Pattern.compile(WEB_REGEX);
-			Matcher matcher =  pattern.matcher(compValue);
-			validRegex=matcher.matches();
-			
-			if(!validRegex){
-					return Labels.getLabel("FIELD_WEBSITE", new String[] {fieldParm});
+			Matcher matcher = pattern.matcher(compValue);
+			validRegex = matcher.matches();
+
+			if (!validRegex) {
+				return Labels.getLabel("FIELD_WEBSITE", new String[] { fieldParm });
 			}
 		}
 		return null;
@@ -78,4 +77,3 @@ public class PTWebValidator implements Constraint{
 		this.mandatory = mandatory;
 	}
 }
-

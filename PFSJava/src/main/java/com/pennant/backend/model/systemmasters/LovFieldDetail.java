@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 8249116628404142373L;
-	
+
 	private long fieldCodeId = Long.MIN_VALUE;
 	private String fieldCode;
 	private String lovDescFieldCodeName;
@@ -85,24 +85,27 @@ public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return fieldCodeId;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.fieldCodeId = id;
 	}
-	
+
 	public long getFieldCodeId() {
 		return fieldCodeId;
 	}
+
 	public void setFieldCodeId(long fieldCodeId) {
 		this.fieldCodeId = fieldCodeId;
 	}
-	
+
 	public String getFieldCode() {
 		return fieldCode;
 	}
+
 	public void setFieldCode(String fieldCode) {
 		this.fieldCode = fieldCode;
 	}
@@ -110,20 +113,23 @@ public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescFieldCodeName() {
 		return this.lovDescFieldCodeName;
 	}
-	public void setLovDescFieldCodeName (String lovDescFieldCodeName) {
+
+	public void setLovDescFieldCodeName(String lovDescFieldCodeName) {
 		this.lovDescFieldCodeName = lovDescFieldCodeName;
 	}
-	
+
 	public String getFieldCodeValue() {
 		return fieldCodeValue;
 	}
+
 	public void setFieldCodeValue(String fieldCodeValue) {
 		this.fieldCodeValue = fieldCodeValue;
 	}
-	
+
 	public String getValueDesc() {
 		return valueDesc;
 	}
+
 	public void setValueDesc(String valueDesc) {
 		this.valueDesc = valueDesc;
 	}
@@ -131,6 +137,7 @@ public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isIsActive() {
 		return isActive;
 	}
+
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
@@ -138,39 +145,43 @@ public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public LovFieldDetail getBefImage(){
+	public LovFieldDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(LovFieldDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(LovFieldDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isSystemDefault() {
-	    return systemDefault;
-    }
+		return systemDefault;
+	}
 
 	public void setSystemDefault(boolean systemDefault) {
-	    this.systemDefault = systemDefault;
-    }
-	
+		this.systemDefault = systemDefault;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

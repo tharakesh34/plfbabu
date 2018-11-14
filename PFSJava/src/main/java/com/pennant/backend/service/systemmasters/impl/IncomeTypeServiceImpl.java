@@ -73,7 +73,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	public IncomeTypeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -95,15 +95,12 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTIncomeTypes/BMTIncomeTypes_Temp by using IncomeTypeDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using IncomeTypeDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTIncomeTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTIncomeTypes/BMTIncomeTypes_Temp by using IncomeTypeDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using IncomeTypeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTIncomeTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -114,15 +111,14 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
-		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail()
-				.getModelData();
-		
+
+		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail().getModelData();
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (incomeType.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -143,12 +139,10 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTIncomeTypes by using IncomeTypeDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTIncomeTypes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTIncomeTypes by using IncomeTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTIncomeTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -159,13 +153,12 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail()
-				.getModelData();
+		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail().getModelData();
 
 		getIncomeTypeDAO().delete(incomeType, TableType.MAIN_TAB);
 
@@ -175,8 +168,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	}
 
 	/**
-	 * getIncomeTypeById fetch the details by using IncomeTypeDAO's
-	 * getIncomeTypeById method.
+	 * getIncomeTypeById fetch the details by using IncomeTypeDAO's getIncomeTypeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -186,36 +178,31 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	 */
 	@Override
 	public IncomeType getIncomeTypeById(String id, String incomeExpense, String category) {
-		return getIncomeTypeDAO().getIncomeTypeById(id,incomeExpense,category, "_View");
+		return getIncomeTypeDAO().getIncomeTypeById(id, incomeExpense, category, "_View");
 	}
 
 	/**
-	 * getApprovedIncomeTypeById fetch the details by using IncomeTypeDAO's
-	 * getIncomeTypeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTIncomeTypes.
+	 * getApprovedIncomeTypeById fetch the details by using IncomeTypeDAO's getIncomeTypeById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTIncomeTypes.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return IncomeType
 	 */
 	public IncomeType getApprovedIncomeTypeById(String id, String incomeExpense, String category) {
-		return getIncomeTypeDAO().getIncomeTypeById(id,incomeExpense ,category,"_AView");
+		return getIncomeTypeDAO().getIncomeTypeById(id, incomeExpense, category, "_AView");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getIncomeTypeDAO().delete with parameters incomeType,"" b) NEW Add
-	 * new record in to main table by using getIncomeTypeDAO().save with
-	 * parameters incomeType,"" c) EDIT Update record in the main table by using
-	 * getIncomeTypeDAO().update with parameters incomeType,"" 3) Delete the
-	 * record from the workFlow table by using getIncomeTypeDAO().delete with
-	 * parameters incomeType,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTIncomeTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTIncomeTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getIncomeTypeDAO().delete with
+	 * parameters incomeType,"" b) NEW Add new record in to main table by using getIncomeTypeDAO().save with parameters
+	 * incomeType,"" c) EDIT Update record in the main table by using getIncomeTypeDAO().update with parameters
+	 * incomeType,"" 3) Delete the record from the workFlow table by using getIncomeTypeDAO().delete with parameters
+	 * incomeType,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTIncomeTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTIncomeTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -226,25 +213,25 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		IncomeType incomeType = new IncomeType();
-		BeanUtils.copyProperties((IncomeType) auditHeader.getAuditDetail()
-				.getModelData(), incomeType);
-		
+		BeanUtils.copyProperties((IncomeType) auditHeader.getAuditDetail().getModelData(), incomeType);
+
 		getIncomeTypeDAO().delete(incomeType, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(incomeTypeDAO.getIncomeTypeById(incomeType.getId(), incomeType.getIncomeExpense(), incomeType.getCategory(), ""));
+			auditHeader.getAuditDetail().setBefImage(incomeTypeDAO.getIncomeTypeById(incomeType.getId(),
+					incomeType.getIncomeExpense(), incomeType.getCategory(), ""));
 		}
 
 		if (incomeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getIncomeTypeDAO().delete(incomeType, TableType.MAIN_TAB);
-		} else { 
+		} else {
 			incomeType.setRoleCode("");
 			incomeType.setNextRoleCode("");
 			incomeType.setTaskId("");
@@ -274,13 +261,10 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getIncomeTypeDAO().delete with parameters
-	 * incomeType,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTIncomeTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getIncomeTypeDAO().delete with parameters incomeType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTIncomeTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -290,14 +274,13 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
-		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail()
-				.getModelData();
+
+		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getIncomeTypeDAO().delete(incomeType, TableType.TEMP_TAB);
 
@@ -307,10 +290,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -325,12 +306,11 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getIncomeTypeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getIncomeTypeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -343,8 +323,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		IncomeType incomeType = (IncomeType) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (incomeType.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())
+		if (incomeType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())
 				&& incomeTypeDAO.isDuplicateKey(incomeType.getIncomeTypeCode(), incomeType.getIncomeExpense(),
 						incomeType.getCategory(), incomeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
@@ -359,5 +338,5 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 }

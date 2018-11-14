@@ -11,22 +11,22 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
-	private static final long	serialVersionUID	= -1472467289111692722L;
-	
-	private long				groupId				= Long.MIN_VALUE;
-	private String				groupCode;
-	private int					acctTypeLevel;
-	private String				groupDescription;
-	private String				parentGroup;
-	private String				parentGroupDesc;
-	private long				parentGroupId;
-	private boolean				newRecord;
-	private String				lovValue;
-	private AccountTypeGroup			befImage;
+	private static final long serialVersionUID = -1472467289111692722L;
+
+	private long groupId = Long.MIN_VALUE;
+	private String groupCode;
+	private int acctTypeLevel;
+	private String groupDescription;
+	private String parentGroup;
+	private String parentGroupDesc;
+	private long parentGroupId;
+	private boolean newRecord;
+	private String lovValue;
+	private AccountTypeGroup befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 	private boolean groupIsActive;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -123,7 +123,6 @@ public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
 	public void setGroupCode(String groupCode) {
 		this.groupCode = groupCode;
 	}
-	
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -154,6 +153,6 @@ public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
 
 	public void setGroupIsActive(boolean groupIsActive) {
 		this.groupIsActive = groupIsActive;
-	}	
-		
+	}
+
 }

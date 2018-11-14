@@ -21,9 +21,9 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails> {
 	private static final long serialVersionUID = 1153958690214979057L;
-	private static final Logger	logger = Logger.getLogger(DmsDocumentDetailsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DmsDocumentDetailsDialogCtrl.class);
 	private Window window_DmsDocumentDetailDialog;
-	private List<DMSDocumentDetails> dmsDocumentDetaillog=null;
+	private List<DMSDocumentDetails> dmsDocumentDetaillog = null;
 	private DMSDocumentDetails dmsDocumentDetails;
 	private Label label_DmsDocumentDetailList_FinReference_Value;
 	private Label label_DmsDocumentDetailList_DmsDocumentStatus_Value;
@@ -46,17 +46,17 @@ public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails
 		// Set the page level components.
 		setPageComponents(window_DmsDocumentDetailDialog);
 		try {
-			if(arguments.containsKey("dmsDocumentDetaillog")){
-				this.dmsDocumentDetaillog=(List<DMSDocumentDetails>) arguments.get("dmsDocumentDetaillog");
+			if (arguments.containsKey("dmsDocumentDetaillog")) {
+				this.dmsDocumentDetaillog = (List<DMSDocumentDetails>) arguments.get("dmsDocumentDetaillog");
 			}
-			if(arguments.containsKey("dmsDocumentDetails")){
-				this.dmsDocumentDetails=(DMSDocumentDetails) arguments.get("dmsDocumentDetails");
+			if (arguments.containsKey("dmsDocumentDetails")) {
+				this.dmsDocumentDetails = (DMSDocumentDetails) arguments.get("dmsDocumentDetails");
 			}
 			if (enqiryModule) {
 				listBoxDmsDocumentErrorDetail.setHeight("350px");
 				this.borderlayout_DmsDocumentDetailDialog.setHeight(getBorderLayoutHeight());
 			}
-			doWriteBeanToComponents(dmsDocumentDetails,dmsDocumentDetaillog);
+			doWriteBeanToComponents(dmsDocumentDetails, dmsDocumentDetaillog);
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			closeDialog();
@@ -67,7 +67,7 @@ public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails
 
 	private void doWriteBeanToComponents(DMSDocumentDetails dmsDocumentDetails,
 			List<DMSDocumentDetails> dmsDocumentDetaillog) {
-		if(null!=dmsDocumentDetails){
+		if (null != dmsDocumentDetails) {
 			label_DmsDocumentDetailList_FinReference_Value.setValue(dmsDocumentDetails.getFinReference());
 			label_DmsDocumentDetailList_DmsId_Value.setValue(String.valueOf(dmsDocumentDetails.getId()));
 			label_DmsDocumentDetailList_DmsDocumentStatus_Value.setValue(dmsDocumentDetails.getStatus());
@@ -76,9 +76,9 @@ public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails
 	}
 
 	private void fillDmsDocumentDetails(List<DMSDocumentDetails> dmsDocumentDetaillog) {
-		if(CollectionUtils.isNotEmpty(dmsDocumentDetaillog)){
+		if (CollectionUtils.isNotEmpty(dmsDocumentDetaillog)) {
 			for (DMSDocumentDetails dmsDocumentDetails : dmsDocumentDetaillog) {
-				if(null!=dmsDocumentDetails && StringUtils.isNotBlank(dmsDocumentDetails.getErrorDesc())){
+				if (null != dmsDocumentDetails && StringUtils.isNotBlank(dmsDocumentDetails.getErrorDesc())) {
 					Listitem item = new Listitem();
 					Listcell abc = new Listcell();
 					Textbox test = new Textbox();
@@ -92,7 +92,7 @@ public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails
 			}
 		}
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 

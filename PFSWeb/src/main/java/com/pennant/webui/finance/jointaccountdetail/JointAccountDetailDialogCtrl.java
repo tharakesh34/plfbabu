@@ -111,17 +111,15 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.service.sampling.SamplingService;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/JountAccountDetail/jountAccountDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/JountAccountDetail/jountAccountDetailDialog.zul file.
  */
 public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(JointAccountDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_JountAccountDetailDialog;
 	protected Row row0;
@@ -142,7 +140,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Checkbox includeRepay;
 	protected Label label_RepayAccountId;
 	protected AccountSelectionBox repayAccountId;
-	
 
 	protected Row row2;
 	protected Label label_CustCIFStatus;
@@ -159,13 +156,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Hbox hbox_CatOfCoApplicant;
 	protected Space space_CatOfCoApplicant;
 	protected Combobox catOfCoApplicant;
-	
+
 	protected Checkbox includeIncome;
 
-	protected Checkbox															authoritySignatory;
-	protected Intbox															sequence;
-	protected Hbox																hbox_Sequence;
-	protected Label																label_Sequence;
+	protected Checkbox authoritySignatory;
+	protected Intbox sequence;
+	protected Hbox hbox_Sequence;
+	protected Label label_Sequence;
 
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
@@ -193,7 +190,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private transient JointAccountDetailListCtrl jountAccountDetailListCtrl; // overhanded per param
 	protected Button btnSearchCustCIF;
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient JointAccountDetailService jointAccountDetailService;
 	private transient PagedListService pagedListService;
@@ -202,14 +198,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private List<FinanceExposure> primaryList = null;
 	private List<FinanceExposure> secoundaryList = null;
 	private List<FinanceExposure> guarantorList = null;
-	BigDecimal totfinAmt =BigDecimal.ZERO;
-	BigDecimal totCurrentAmt =BigDecimal.ZERO;
-	BigDecimal totDueAmt =BigDecimal.ZERO;
+	BigDecimal totfinAmt = BigDecimal.ZERO;
+	BigDecimal totCurrentAmt = BigDecimal.ZERO;
+	BigDecimal totDueAmt = BigDecimal.ZERO;
 	long recordCount = 0;
 	String primaryCustId;
 	int ccyEditField = 0;
-	String finCcy="";
-	private String cif[]=null;
+	String finCcy = "";
+	private String cif[] = null;
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 	List<ValueLabel> coapplicantList = PennantAppUtil.getcoApplicants();
@@ -217,7 +213,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	CustomerDetailsService customerDetailsService;
 	@Autowired
 	private SamplingService samplingService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -231,11 +227,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected JountAccountDetail
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected JountAccountDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -247,7 +242,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		setPageComponents(window_JountAccountDetailDialog);
 
 		try {
-			
+
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
 			} else {
@@ -255,7 +250,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			}
 			if (arguments.containsKey("moduleType")) {
 				moduleType = (String) arguments.get("moduleType");
-			} 
+			}
 			// READ OVERHANDED params !
 			if (arguments.containsKey("jountAccountDetail")) {
 				this.jountAccountDetail = (JointAccountDetail) arguments.get("jountAccountDetail");
@@ -267,25 +262,26 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			} else {
 				setJountAccountDetail(null);
 			}
-			
+
 			if (arguments.containsKey("index")) {
 				this.index = (Integer) arguments.get("index");
 			}
-			
+
 			if (arguments.containsKey("ccy")) {
 				this.finCcy = (String) arguments.get("ccy");
 			}
-			
+
 			if (arguments.containsKey("ccDecimal")) {
 				this.ccyEditField = (Integer) arguments.get("ccDecimal");
 			}
-			
+
 			if (arguments.containsKey("filter")) {
 				this.cif = (String[]) arguments.get("filter");
 			}
-			
+
 			if (arguments.containsKey("finJointAccountCtrl")) {
-				setFinanceMainDialogCtrl((com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl) arguments.get("finJointAccountCtrl"));
+				setFinanceMainDialogCtrl((com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl) arguments
+						.get("finJointAccountCtrl"));
 				setNewContributor(true);
 				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);
@@ -298,32 +294,33 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					getUserWorkspace().allocateRoleAuthorities(getRole(), "JountAccountDetailDialog");
 				}
 			}
-			
+
 			if (arguments.containsKey("financeMain")) {
 				setFinanceMain((FinanceMain) arguments.get("financeMain"));
 			}
-			
+
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
-				if(financeDetail!=null && financeDetail.getSampling()!=null){
+				if (financeDetail != null && financeDetail.getSampling() != null) {
 					financeDetail.getSampling().getExcludeIncome().clear();
 					financeDetail.getSampling().getIncludeIncome().clear();
 				}
 			}
-			
+
 			if (arguments.containsKey("primaryCustID")) {
 				primaryCustId = (String) arguments.get("primaryCustID");
 			}
-			
-			doLoadWorkFlow(this.jountAccountDetail.isWorkflow(), this.jountAccountDetail.getWorkflowId(), this.jountAccountDetail.getNextTaskId());
+
+			doLoadWorkFlow(this.jountAccountDetail.isWorkflow(), this.jountAccountDetail.getWorkflowId(),
+					this.jountAccountDetail.getNextTaskId());
 			if (isWorkFlowEnabled() && !enqModule && !isNewContributor()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "JountAccountDetailDialog");
 			}
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			// READ OVERHANDED params !
 			// we get the jountAccountDetailListWindow controller. So we have
 			// access
@@ -335,7 +332,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			} else {
 				setJountAccountDetailListCtrl(null);
 			}
-			
+
 			this.listBox_JointAccountPrimary.setHeight(((this.borderLayoutHeight - 120 - 220) / 1) + "px");
 			this.listBox_JointAccountSecondary.setHeight(((this.borderLayoutHeight - 120 - 220) / 1) + "px");
 			this.listBox_JointAccountGuarantor.setHeight(((this.borderLayoutHeight - 120 - 220) / 1) + "px");
@@ -346,11 +343,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			sumPrimaryDetails = getJointAccountDetailService().getExposureSummaryDetail(primaryList);
 			sumSecondaryDetails = getJointAccountDetailService().getExposureSummaryDetail(secoundaryList);
 			sumGurantorDetails = getJointAccountDetailService().getExposureSummaryDetail(guarantorList);
-			
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getJountAccountDetail());
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -457,7 +454,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(getNotes("JountAccountDetail", String.valueOf(getJountAccountDetail().getJointAccountId()), getJountAccountDetail().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("JountAccountDetail",
+					String.valueOf(getJountAccountDetail().getJointAccountId()), getJountAccountDetail().getVersion()),
+					this);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -467,34 +466,35 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onChange$custCIF(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.custCIF.clearErrorMessage();
-		List<Filter>  list = null;
+		List<Filter> list = null;
 		if (cif != null) {
 			list = new ArrayList<>();
 			list.add(new Filter("CustCIF", cif, Filter.OP_NOT_IN));
 		}
 
-		customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), list);
+		customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), list);
 
-		if(customer == null) {
+		if (customer == null) {
 			this.custID.setValue(Long.valueOf(0));
 			this.custCIFName.setValue("");
 			this.primaryList = null;
 			this.secoundaryList = null;
 			this.guarantorList = null;
-			
+
 			this.listBox_JointAccountPrimary.getItems().clear();
 			this.listBox_JointAccountSecondary.getItems().clear();
 			this.listBox_JointAccountGuarantor.getItems().clear();
-			
+
 			setVisibleGrid();
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value")}));
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value") }));
 		} else {
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custID.setValue(customer.getCustID());
 			this.custCIFName.setValue(customer.getCustShrtName());
-			if(!(StringUtils.isEmpty(customer.getCustCoreBank())) && (customer.getCustCoreBank()!= null)){
+			if (!(StringUtils.isEmpty(customer.getCustCoreBank())) && (customer.getCustCoreBank() != null)) {
 				this.row1.setVisible(false);
-			}else{
+			} else {
 				this.row1.setVisible(false);
 				this.includeRepay.setChecked(false);
 				this.repayAccountId.setValue("");
@@ -507,16 +507,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onClick$btnSearchCustCIF(Event event) {
 		customer = null;
 		this.row1.setVisible(false);
-		Object dataObject=null;
-		
+		Object dataObject = null;
+
 		if (cif != null) {
 			Filter filter[] = new Filter[1];
-			if(cif[0] != null){
-			filter[0] = new Filter("CustCIF", cif, Filter.OP_NOT_IN);
-			//filter[1] = new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL);
-			 dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData",filter);
-			}else{
-			 dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData");	
+			if (cif[0] != null) {
+				filter[0] = new Filter("CustCIF", cif, Filter.OP_NOT_IN);
+				//filter[1] = new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL);
+				dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData", filter);
+			} else {
+				dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData");
 			}
 			if (dataObject instanceof String) {
 				this.custCIF.setValue(dataObject.toString());
@@ -530,9 +530,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					this.custCIF.setValue(customer.getCustCIF());
 					this.custID.setValue(customer.getCustID());
 					this.custCIFName.setValue(customer.getCustShrtName());
-					if(customer.getCustCoreBank()!= null && StringUtils.isNotEmpty(customer.getCustCoreBank())){
+					if (customer.getCustCoreBank() != null && StringUtils.isNotEmpty(customer.getCustCoreBank())) {
 						this.row1.setVisible(false);
-					}else{
+					} else {
 						this.row1.setVisible(false);
 						this.includeRepay.setChecked(false);
 						this.repayAccountId.setValue("");
@@ -544,80 +544,89 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	public void setCustomerDetails(Customer customer) {
-		if(customer !=null) {
+		if (customer != null) {
 			BigDecimal currentExpoSure = BigDecimal.ZERO;
-			getJountAccountDetail().setCustCIF(customer.getCustCIF());			
+			getJountAccountDetail().setCustCIF(customer.getCustCIF());
 
 			this.primaryList = getJointAccountDetailService().getPrimaryExposureList(getJountAccountDetail());
-			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.primaryList, getJountAccountDetail());
+			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.primaryList,
+					getJountAccountDetail());
 			getJountAccountDetail().setPrimaryExposure(String.valueOf(currentExpoSure));
 
 			this.secoundaryList = getJointAccountDetailService().getSecondaryExposureList(getJountAccountDetail());
-			currentExpoSure =  getJointAccountDetailService().doFillExposureDetails(this.secoundaryList, getJountAccountDetail());
+			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.secoundaryList,
+					getJountAccountDetail());
 			getJountAccountDetail().setSecondaryExposure(String.valueOf(currentExpoSure));
 
 			this.guarantorList = getJointAccountDetailService().getGuarantorExposureList(getJountAccountDetail());
-			currentExpoSure =  getJointAccountDetailService().doFillExposureDetails(this.guarantorList, getJountAccountDetail());
+			currentExpoSure = getJointAccountDetailService().doFillExposureDetails(this.guarantorList,
+					getJountAccountDetail());
 			getJountAccountDetail().setGuarantorExposure(String.valueOf(currentExpoSure));
 
 			this.sumPrimaryDetails = getJointAccountDetailService().getExposureSummaryDetail(primaryList);
 			this.sumSecondaryDetails = getJointAccountDetailService().getExposureSummaryDetail(secoundaryList);
 			this.sumGurantorDetails = getJointAccountDetailService().getExposureSummaryDetail(guarantorList);
-			
-			getJountAccountDetail().setCustomerIncomeList(getJointAccountDetailService().getJointAccountIncomeList(customer.getCustID()));
-			getJountAccountDetail().setCustomerExtLiabilityList(getJointAccountDetailService().getJointExtLiabilityByCustomer(customer.getCustID()));
-			getJountAccountDetail().setCustFinanceExposureList(getJointAccountDetailService().getJointCustFinanceExposureByCustomer(customer.getCustID()));
-			
-			if(this.primaryList != null) {
+
+			getJountAccountDetail().setCustomerIncomeList(
+					getJointAccountDetailService().getJointAccountIncomeList(customer.getCustID()));
+			getJountAccountDetail().setCustomerExtLiabilityList(
+					getJointAccountDetailService().getJointExtLiabilityByCustomer(customer.getCustID()));
+			getJountAccountDetail().setCustFinanceExposureList(
+					getJointAccountDetailService().getJointCustFinanceExposureByCustomer(customer.getCustID()));
+
+			if (this.primaryList != null) {
 				doFillPrimaryExposureDetails(this.primaryList);
 			}
 
-			if(this.secoundaryList != null) {
+			if (this.secoundaryList != null) {
 				doFillSecoundaryExposureDetails(this.secoundaryList);
 			}
 
-			if(this.guarantorList != null) {
+			if (this.guarantorList != null) {
 				doFillGuarantorExposureDetails(this.guarantorList);
 			}
 
 			setVisibleGrid();
-		}else{
+		} else {
 			this.primaryList = null;
 			this.secoundaryList = null;
 			this.guarantorList = null;
 		}
 	}
-	
-	public void onClick$viewCustInfo(Event event){
-		if((!this.custCIF.isDisabled()) && (this.custID.getValue() == null || this.custID.getValue() == 0)) {
+
+	public void onClick$viewCustInfo(Event event) {
+		if ((!this.custCIF.isDisabled()) && (this.custID.getValue() == null || this.custID.getValue() == 0)) {
 			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
-					new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value")}));
+					new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value") }));
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			
+
 			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
-				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(this.custID.longValue(),true,"_AView");
+				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(this.custID.longValue(),
+						true, "_AView");
 				map.put("customerDetails", customerDetails);
 				map.put("newRecord", false);
 				map.put("isEnqProcess", true);
 				map.put("CustomerEnq", true);
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
-			}else{
+			} else {
 				map.put("custCIF", this.custCIF.getValue());
-				customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
-				map.put("custid",customer.getCustID());
+				customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
+				map.put("custid", customer.getCustID());
 				map.put("jointcustid", this.custCIF.getValue());
-				
-				if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
+
+				if (getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())) {
 					map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
 					map.put("finReference", getFinanceMain().getFinReference());
 				}
 				map.put("finance", true);
-				if (StringUtils.equals(customer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
-					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", this.window_JountAccountDetailDialog, map);
-				}else{
-					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", this.window_JountAccountDetailDialog, map);
+				if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul",
+							this.window_JountAccountDetailDialog, map);
+				} else {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul",
+							this.window_JountAccountDetailDialog, map);
 				}
 			}
 		} catch (Exception e) {
@@ -646,12 +655,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	// GUI operations
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aJountAccountDetail
 	 * @throws InterruptedException
@@ -688,7 +696,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			doFillSecoundaryExposureDetails(this.secoundaryList);
 			doFillGuarantorExposureDetails(this.guarantorList);
 
-			setVisibleGrid();		
+			setVisibleGrid();
 
 			// fill the components with the data
 			doWriteBeanToComponents(aJountAccountDetail);
@@ -712,25 +720,25 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	private void setVisibleGrid() {
-		if (this.primaryList==null || this.primaryList.size()==0) {
+		if (this.primaryList == null || this.primaryList.size() == 0) {
 			this.gb_JointAccountPrimaryJoint.setVisible(false);
 		} else {
 			this.gb_JointAccountPrimaryJoint.setVisible(true);
 		}
 
-		if (this.secoundaryList==null || this.secoundaryList.size()==0) {
+		if (this.secoundaryList == null || this.secoundaryList.size() == 0) {
 			this.gb_JointAccountSecondaryJoint.setVisible(false);
 		} else {
 			this.gb_JointAccountSecondaryJoint.setVisible(true);
 		}
 
-		if (this.guarantorList==null || this.guarantorList.size()==0) {
+		if (this.guarantorList == null || this.guarantorList.size() == 0) {
 			this.gb_JointAccountGuarantorJoint.setVisible(false);
 		} else {
 			this.gb_JointAccountGuarantorJoint.setVisible(true);
 		}
 
-		if ((this.primaryList == null || this.primaryList.size()== 0)
+		if ((this.primaryList == null || this.primaryList.size() == 0)
 				&& (this.secoundaryList == null || this.secoundaryList.size() == 0)
 				&& (this.guarantorList == null || this.guarantorList.size() == 0)) {
 
@@ -762,7 +770,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.custCIF.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
-		readOnlyComponent(isReadOnly("JountAccountDetailDialog_catOfCoApplicant"),this.catOfCoApplicant);
+		readOnlyComponent(isReadOnly("JountAccountDetailDialog_catOfCoApplicant"), this.catOfCoApplicant);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -796,11 +804,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		logger.debug("Leaving");
 	}
-	
-	public boolean isReadOnly(String componentName){
+
+	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}
-	
+
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.custCIF.setReadonly(true);
@@ -817,14 +825,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	// Helpers
-	
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -834,7 +841,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSave"));
-			this.btnSearchCustCIF.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSearchCustCIF"));
+			this.btnSearchCustCIF
+					.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSearchCustCIF"));
 		}
 		logger.debug("Leaving");
 	}
@@ -848,10 +856,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIF.setMaxlength(12);
 		this.custCIFName.setMaxlength(50);
 		this.custCIFName.setReadonly(true);
-		if(!enqModule){
-		this.repayAccountId.setAccountDetails(getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceType().getFinType(), AccountConstants.FinanceAccount_REPY, finCcy);
-		this.repayAccountId.setFormatter(CurrencyUtil.getFormat(getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
-		this.repayAccountId.setBranchCode(getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch());
+		if (!enqModule) {
+			this.repayAccountId.setAccountDetails(
+					getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceType().getFinType(),
+					AccountConstants.FinanceAccount_REPY, finCcy);
+			this.repayAccountId.setFormatter(CurrencyUtil.getFormat(
+					getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+			this.repayAccountId.setBranchCode(
+					getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch());
 		}
 		if (!isNewRecord()) {
 			this.row1.setVisible(false);
@@ -878,11 +890,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIF.setValue(aJountAccountDetail.getCustCIF());
 		this.custID.setValue(aJountAccountDetail.getCustID());
 		this.includeRepay.setChecked(aJountAccountDetail.isIncludeRepay());
-		this.repayAccountId.setValue(PennantApplicationUtil.formatAccountNumber(aJountAccountDetail.getRepayAccountId()));
+		this.repayAccountId
+				.setValue(PennantApplicationUtil.formatAccountNumber(aJountAccountDetail.getRepayAccountId()));
 		this.custCIFName.setValue(aJountAccountDetail.getLovDescCIFName());
 		this.custCIFStatus.setValue(aJountAccountDetail.getStatus());
 		this.custCIFWorstStatus.setValue(aJountAccountDetail.getWorstStatus());
-		fillComboBox(this.catOfCoApplicant,aJountAccountDetail.getCatOfcoApplicant(),this.coapplicantList,"");	
+		fillComboBox(this.catOfCoApplicant, aJountAccountDetail.getCatOfcoApplicant(), this.coapplicantList, "");
 		this.recordStatus.setValue(aJountAccountDetail.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJountAccountDetail.getRecordType()));
 		this.authoritySignatory.setChecked(aJountAccountDetail.isAuthoritySignatory());
@@ -910,10 +923,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				listitem.appendChild(listcell);
 				listcell = new Listcell(primaryExposure.getFinCCY());
 				listitem.appendChild(listcell);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getFinanceAmt(), primaryExposure.getCcyEditField()));
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getFinanceAmt(),
+						primaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
+				listcell = new Listcell(PennantApplicationUtil
+						.amountFormate(primaryExposure.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 				listcell = new Listcell();
@@ -927,7 +942,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				listitem.appendChild(listcell);
 				listcell = new Listcell(primaryExposure.getPastdueDays());
 				listitem.appendChild(listcell);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getOverdueAmtBaseCCY(), baseCcyDecFormat));
+				listcell = new Listcell(
+						PennantApplicationUtil.amountFormate(primaryExposure.getOverdueAmtBaseCCY(), baseCcyDecFormat));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 				listitem.setAttribute("data", primaryExposure);
@@ -962,7 +978,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumPrimaryDetails.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumPrimaryDetails.getCurrentExpoSureinBaseCCY(),
+					baseCcyDecFormat));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -977,7 +994,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumPrimaryDetails.getOverdueAmtBaseCCY(), baseCcyDecFormat));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumPrimaryDetails.getOverdueAmtBaseCCY(),
+					baseCcyDecFormat));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -995,30 +1013,32 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			for (FinanceExposure secondaryExposure : secondaryExposureList) {
 				Listitem listitem = new Listitem();
 				Listcell listcell;
-				
+
 				listcell = new Listcell(secondaryExposure.getFinType());
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(secondaryExposure.getFinReference());
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(DateUtility.formatToLongDate(secondaryExposure.getFinStartDate()));
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(DateUtility.formatToLongDate(secondaryExposure.getMaturityDate()));
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(secondaryExposure.getFinCCY());
 				listitem.appendChild(listcell);
-				
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getFinanceAmt(), secondaryExposure.getCcyEditField()));
+
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getFinanceAmt(),
+						secondaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
+
+				listcell = new Listcell(PennantApplicationUtil
+						.amountFormate(secondaryExposure.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell();
 				if (secondaryExposure.isOverdue()) {
 					listcell.setLabel(PennantConstants.YES);
@@ -1026,17 +1046,18 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					listcell.setLabel(PennantConstants.NO);
 				}
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(secondaryExposure.getPastdueDays());
 				listitem.appendChild(listcell);
-				
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getOverdueAmtBaseCCY(), baseCcyDecFormat));
+
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getOverdueAmtBaseCCY(),
+						baseCcyDecFormat));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(secondaryExposure.getCustCif());
 				listitem.appendChild(listcell);
-				
+
 				listitem.setAttribute("data", secondaryExposure);
 				this.listBox_JointAccountSecondary.appendChild(listitem);
 			}
@@ -1069,7 +1090,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumSecondaryDetails.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
+			lc = new Listcell(PennantApplicationUtil
+					.amountFormate(this.sumSecondaryDetails.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1081,17 +1103,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
-			
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumSecondaryDetails.getOverdueAmtBaseCCY(), baseCcyDecFormat));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumSecondaryDetails.getOverdueAmtBaseCCY(),
+					baseCcyDecFormat));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
-			
+
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
-			
+
 			this.listBox_JointAccountSecondary.appendChild(item);
 		}
 		logger.debug("Leaving");
@@ -1105,30 +1127,32 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			for (FinanceExposure guarantorExposure : guarantorExposureList) {
 				Listitem listitem = new Listitem();
 				Listcell listcell;
-				
+
 				listcell = new Listcell(guarantorExposure.getFinType());
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(guarantorExposure.getFinReference());
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(DateUtility.formatToLongDate(guarantorExposure.getFinStartDate()));
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(DateUtility.formatToLongDate(guarantorExposure.getMaturityDate()));
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(guarantorExposure.getFinCCY());
 				listitem.appendChild(listcell);
-				
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getFinanceAmt(), guarantorExposure.getCcyEditField()));
+
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getFinanceAmt(),
+						guarantorExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
+
+				listcell = new Listcell(PennantApplicationUtil
+						.amountFormate(guarantorExposure.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell();
 				if (guarantorExposure.isOverdue()) {
 					listcell.setLabel(PennantConstants.YES);
@@ -1136,17 +1160,18 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					listcell.setLabel(PennantConstants.NO);
 				}
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(guarantorExposure.getPastdueDays());
 				listitem.appendChild(listcell);
-				
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getOverdueAmtBaseCCY(), baseCcyDecFormat));
+
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getOverdueAmtBaseCCY(),
+						baseCcyDecFormat));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				
+
 				listcell = new Listcell(guarantorExposure.getCustCif());
 				listitem.appendChild(listcell);
-				
+
 				listitem.setAttribute("data", guarantorExposure);
 				this.listBox_JointAccountGuarantor.appendChild(listitem);
 			}
@@ -1179,7 +1204,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumGurantorDetails.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
+			lc = new Listcell(PennantApplicationUtil
+					.amountFormate(this.sumGurantorDetails.getCurrentExpoSureinBaseCCY(), baseCcyDecFormat));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1191,21 +1217,21 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
-			
-			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumGurantorDetails.getOverdueAmtBaseCCY(), baseCcyDecFormat));
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(this.sumGurantorDetails.getOverdueAmtBaseCCY(),
+					baseCcyDecFormat));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
-			
+
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
-			
+
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
-			
-			
+
 			this.listBox_JointAccountGuarantor.appendChild(item);
 		}
 		logger.debug("Leaving");
@@ -1219,15 +1245,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void doWriteComponentsToBean(JointAccountDetail aJountAccountDetail) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		if(!this.includeRepay.isChecked()){
+		if (!this.includeRepay.isChecked()) {
 			this.repayAccountId.setErrorMessage("");
 		}
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Cust C I F
 		try {
 			aJountAccountDetail.setCustCIF(this.custCIF.getValue());
-			if((!this.custCIF.isDisabled()) && this.custID.getValue() == 0) {
-				wve.add(new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value")})));
+			if ((!this.custCIF.isDisabled()) && this.custID.getValue() == 0) {
+				wve.add(new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value") })));
 			}
 			aJountAccountDetail.setCustID(this.custID.getValue());
 		} catch (WrongValueException we) {
@@ -1247,7 +1274,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		// Repay Account Id
 		try {
-			aJountAccountDetail.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(this.repayAccountId.getValue()));
+			aJountAccountDetail
+					.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(this.repayAccountId.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1269,7 +1297,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aJountAccountDetail.setIncludeIncome(this.includeIncome.isChecked());
 		} catch (WrongValueException we) {
@@ -1286,7 +1314,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		aJountAccountDetail.setRecordStatus(this.recordStatus.getValue());
 		setJountAccountDetail(aJountAccountDetail);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1296,7 +1324,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private void doSetValidation() {
 		logger.debug("Entering");
 		if (this.repayAccountId.isVisible() && this.repayAccountId.getValue().isEmpty()) {
-			this.repayAccountId.setConstraint(new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_RepayAccountId.value"),null,true));
+			this.repayAccountId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_JountAccountDetailDialog_RepayAccountId.value"), null, true));
 		}
 
 		if (!this.sequence.isReadonly() && this.authoritySignatory.isChecked()) {
@@ -1325,7 +1354,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private void doSetLOVValidation() {
 		// Cust C I F
 		if (!btnSearchCustCIF.isDisabled()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value"),null,true));
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value"), null, true));
 		}
 	}
 
@@ -1355,18 +1385,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
 	/*
-	 * private void refreshList(){ final JdbcSearchObject<JountAccountDetail>
-	 * soJountAccountDetail = getJountAccountDetailListCtrl().getSearchObj();
-	 * getJountAccountDetailListCtrl
-	 * ().pagingJountAccountDetailList.setActivePage(0);
-	 * getJountAccountDetailListCtrl
+	 * private void refreshList(){ final JdbcSearchObject<JountAccountDetail> soJountAccountDetail =
+	 * getJountAccountDetailListCtrl().getSearchObj(); getJountAccountDetailListCtrl
+	 * ().pagingJountAccountDetailList.setActivePage(0); getJountAccountDetailListCtrl
 	 * ().getPagedListWrapper().setSearchObject(soJountAccountDetail);
 	 * if(getJountAccountDetailListCtrl().listBoxJountAccountDetail!=null){
-	 * getJountAccountDetailListCtrl().listBoxJountAccountDetail.getListModel();
-	 * } }
-
-	/**
-	 * Deletes a JountAccountDetail object from database.<br>
+	 * getJountAccountDetailListCtrl().listBoxJountAccountDetail.getListModel(); } }
+	 * 
+	 * /** Deletes a JountAccountDetail object from database.<br>
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -1376,7 +1402,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		BeanUtils.copyProperties(getJountAccountDetail(), aJountAccountDetail);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aJountAccountDetail.getCustCIF();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aJountAccountDetail.getCustCIF();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aJountAccountDetail.getRecordType())) {
 				aJountAccountDetail.setVersion(aJountAccountDetail.getVersion() + 1);
@@ -1432,12 +1459,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		final JointAccountDetail aJointAccountDetail = new JointAccountDetail();
 		BeanUtils.copyProperties(getJountAccountDetail(), aJointAccountDetail);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the DocumentDetails object with the components data
 		doWriteComponentsToBean(aJointAccountDetail);
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
@@ -1488,7 +1515,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				auditHeader = ErrorControl.showErrorDetails(this.window_JountAccountDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if(financeDetail!=null && financeDetail.getSampling()!=null){
+					if (financeDetail != null && financeDetail.getSampling() != null) {
 						samplingService.reCalculate(financeDetail);
 					}
 					getFinanceMainDialogCtrl().doFillJointDetails(this.jointAccountDetailList);
@@ -1527,10 +1554,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		// Checks whether jointAccount custCIF is same as actual custCIF
 		if (getFinanceMain() != null) {
 			if (StringUtils.trimToEmpty(primaryCustId).equals(aJountAccountDetail.getCustCIF())) {
-				auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+				auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+						getUserWorkspace().getUserLanguage()));
 			}
 		}
-		if (getFinanceMainDialogCtrl().getJountAccountDetailList() != null && getFinanceMainDialogCtrl().getJountAccountDetailList().size() > 0) {
+		if (getFinanceMainDialogCtrl().getJountAccountDetailList() != null
+				&& getFinanceMainDialogCtrl().getJountAccountDetailList().size() > 0) {
 			for (int i = 0; i < getFinanceMainDialogCtrl().getJountAccountDetailList().size(); i++) {
 				JointAccountDetail jountAccountDetail = getFinanceMainDialogCtrl().getJountAccountDetailList().get(i);
 				if (jountAccountDetail.getCustCIF().equals(aJountAccountDetail.getCustCIF())) { // Both
@@ -1541,10 +1571,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					// rating
 					// same
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					} else if (index != i) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
@@ -1615,7 +1649,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -1623,7 +1657,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	private AuditHeader getAuditHeader(JointAccountDetail aJountAccountDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJountAccountDetail.getBefImage(), aJountAccountDetail);
-		return new AuditHeader(String.valueOf(aJountAccountDetail.getJointAccountId()), null, null, null, auditDetail, aJountAccountDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aJountAccountDetail.getJointAccountId()), null, null, null, auditDetail,
+				aJountAccountDetail.getUserDetails(), getOverideMap());
 	}
 
 	public void onCheck$authoritySignatory(Event event) {
@@ -1642,7 +1677,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.sequence.setValue(0);
 		}
 	}
-	
+
 	public void onCheck$includeIncome(Event event) {
 		logger.debug(Literal.ENTERING);
 		Sampling sampling = financeDetail.getSampling();
@@ -1670,13 +1705,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.jountAccountDetail = jountAccountDetail;
 	}
 
-
 	public JointAccountDetailService getJointAccountDetailService() {
 		return jointAccountDetailService;
 	}
 
-	public void setJointAccountDetailService(
-			JointAccountDetailService jointAccountDetailService) {
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
 		this.jointAccountDetailService = jointAccountDetailService;
 	}
 
@@ -1724,7 +1757,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		return finJointAccountCtrl;
 	}
 
-	public void setFinanceMainDialogCtrl(com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl finJointAccountCtrl) {
+	public void setFinanceMainDialogCtrl(
+			com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl finJointAccountCtrl) {
 		this.finJointAccountCtrl = finJointAccountCtrl;
 	}
 
@@ -1738,17 +1772,21 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	private AccountsService accountsService;
 	private AccountInterfaceService accountInterfaceService;
+
 	public AccountsService getAccountsService() {
 		return accountsService;
 	}
+
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
 	}
+
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
+
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
-	
+
 }

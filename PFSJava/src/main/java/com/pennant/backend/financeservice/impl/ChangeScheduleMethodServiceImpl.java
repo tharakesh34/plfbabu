@@ -27,8 +27,8 @@ import com.rits.cloning.Cloner;
 
 public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodService {
 
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private static Logger				logger	= Logger.getLogger(ChangeScheduleMethodServiceImpl.class);
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private static Logger logger = Logger.getLogger(ChangeScheduleMethodServiceImpl.class);
 
 	@Override
 	/**
@@ -38,7 +38,8 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 	 * @param finServiceInstruction
 	 * @return FinScheduleData
 	 */
-	public FinScheduleData doChangeScheduleMethod(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction) {
+	public FinScheduleData doChangeScheduleMethod(FinScheduleData finScheduleData,
+			FinServiceInstruction finServiceInstruction) {
 		return recalScheduleData(finScheduleData, finServiceInstruction);
 	}
 
@@ -49,14 +50,15 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 	 * @param finServiceInstruction
 	 * @return FinScheduleData
 	 */
-	private FinScheduleData recalScheduleData(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction) {
+	private FinScheduleData recalScheduleData(FinScheduleData finScheduleData,
+			FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
 		// Check Date Status Specifier
 		FinScheduleData scheduleData = null;
 		Cloner cloner = new Cloner();
 		scheduleData = cloner.deepClone(finScheduleData);
-		
+
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -95,17 +97,17 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		String oldScheduleMethod = financeMain.getScheduleMethod();
 		financeMain.setScheduleMethod(finServiceInstruction.getSchdMethod());
 		financeMain.setRecalSchdMethod(finServiceInstruction.getSchdMethod());
-		
+
 		// Schedule Recalculation Locking Period Applicability
-		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
-						&& (i != sdSize - 1) && i != 0){
+				if (DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0
+						&& (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
-				}else{
+				} else {
 					curSchd.setRecalLock(false);
 				}
 			}
@@ -133,11 +135,11 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		}
 
 		scheduleData.getFinanceMain().setScheduleMethod(oldScheduleMethod);
-		
+
 		BigDecimal newTotalPft = scheduleData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
 		scheduleData.setPftChg(pftDiff);
-		
+
 		scheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return scheduleData;
@@ -171,15 +173,16 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		String finReference = finServiceInstruction.getFinReference();
 		Date fromDate = finServiceInstruction.getFromDate();
 		//Repayment Schedule Method (If not blanks validation already happens in defaulting)
-				if (	!StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
-						&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)
-						&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Schedule method";
-					valueParm[1] = CalculationConstants.SCHMTHD_EQUAL+", "+ CalculationConstants.SCHMTHD_PFT +", "+CalculationConstants.SCHMTHD_PRI_PFT;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337",valueParm)));
-					return auditDetail;
-				}
+		if (!StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
+				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)
+				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Schedule method";
+			valueParm[1] = CalculationConstants.SCHMTHD_EQUAL + ", " + CalculationConstants.SCHMTHD_PFT + ", "
+					+ CalculationConstants.SCHMTHD_PRI_PFT;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+			return auditDetail;
+		}
 		// validate Instruction details
 		boolean isWIF = finServiceInstruction.isWif();
 		// It shouldn't be past date when compare to appdate

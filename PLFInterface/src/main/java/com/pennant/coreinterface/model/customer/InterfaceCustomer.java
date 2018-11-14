@@ -23,7 +23,7 @@ import java.util.Date;
 public class InterfaceCustomer implements Serializable {
 
 	private static final long serialVersionUID = 8834741927485659871L;
-	
+
 	private long custID;
 	private String custCIF;
 	private String custCoreBank;
@@ -183,7 +183,7 @@ public class InterfaceCustomer implements Serializable {
 	private String custRelation;
 
 	public InterfaceCustomer() {
-		
+
 	}
 
 	// ******************************************************//
@@ -258,8 +258,7 @@ public class InterfaceCustomer implements Serializable {
 		return lovDescCustSalutationCodeName;
 	}
 
-	public void setLovDescCustSalutationCodeName(
-			String lovDescCustSalutationCodeName) {
+	public void setLovDescCustSalutationCodeName(String lovDescCustSalutationCodeName) {
 		this.lovDescCustSalutationCodeName = lovDescCustSalutationCodeName;
 	}
 
@@ -923,8 +922,7 @@ public class InterfaceCustomer implements Serializable {
 		return lovDescCustParentCountryName;
 	}
 
-	public void setLovDescCustParentCountryName(
-			String lovDescCustParentCountryName) {
+	public void setLovDescCustParentCountryName(String lovDescCustParentCountryName) {
 		this.lovDescCustParentCountryName = lovDescCustParentCountryName;
 	}
 
@@ -1028,8 +1026,7 @@ public class InterfaceCustomer implements Serializable {
 		return lovDescDispatchModeDescName;
 	}
 
-	public void setLovDescDispatchModeDescName(
-			String lovDescDispatchModeDescName) {
+	public void setLovDescDispatchModeDescName(String lovDescDispatchModeDescName) {
 		this.lovDescDispatchModeDescName = lovDescDispatchModeDescName;
 	}
 

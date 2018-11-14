@@ -73,14 +73,14 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEOD implements Tasklet {
 
-	private Logger						logger		= Logger.getLogger(MicroEOD.class);
-	private EodService					eodService;
-	private CustomerQueuingDAO			customerQueuingDAO;
-	private PlatformTransactionManager	transactionManager;
-	private DataSource					dataSource;
+	private Logger logger = Logger.getLogger(MicroEOD.class);
+	private EodService eodService;
+	private CustomerQueuingDAO customerQueuingDAO;
+	private PlatformTransactionManager transactionManager;
+	private DataSource dataSource;
 
 	// ##_0.2
-	private static final String			customerSQL	= "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
+	private static final String customerSQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
 
 	public MicroEOD() {
 
@@ -114,12 +114,12 @@ public class MicroEOD implements Tasklet {
 		List<Exception> exceptions = new ArrayList<Exception>(1);
 
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
-		
+
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		while ((customerQueuing = cursorItemReader.read()) != null) {
-			
+
 			long custId = customerQueuing.getCustID();
-			
+
 			try {
 				//update start
 				customerQueuingDAO.startEODForCID(custId);
@@ -134,7 +134,7 @@ public class MicroEOD implements Tasklet {
 					custEODEvent.setCustomer(customer);
 					custEODEvent.setEodDate(appDate);
 					custEODEvent.setEodValueDate(appDate);
-					
+
 					eodService.doProcess(custEODEvent);
 					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
 				} else {
@@ -142,10 +142,10 @@ public class MicroEOD implements Tasklet {
 						eodService.processCustomerRebuild(custId, true);
 					}
 				}
-				
+
 				//update  end
 				customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS);
-				
+
 				//commit
 				transactionManager.commit(txStatus);
 
@@ -166,7 +166,7 @@ public class MicroEOD implements Tasklet {
 		if (!exceptions.isEmpty()) {
 			Exception exception = new Exception(exceptions.get(0));
 			exceptions.clear();
-			exceptions=null;
+			exceptions = null;
 			throw exception;
 		}
 

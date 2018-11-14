@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 
 import com.pennant.backend.model.Entity;
 
-public class FinanceLimitProcess implements Serializable,Entity {
+public class FinanceLimitProcess implements Serializable, Entity {
 
 	private static final long serialVersionUID = -6204271721852032496L;
 
@@ -128,17 +128,17 @@ public class FinanceLimitProcess implements Serializable,Entity {
 	}
 
 	@Override
-    public boolean isNew() {
-	    return false;
-    }
+	public boolean isNew() {
+		return false;
+	}
 
 	@Override
-    public long getId() {
-	    return finLimitId;
-    }
+	public long getId() {
+		return finLimitId;
+	}
 
 	@Override
-    public void setId(long id) {
-	    this.finLimitId = id;
-    }
+	public void setId(long id) {
+		this.finLimitId = id;
+	}
 }

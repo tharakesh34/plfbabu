@@ -72,32 +72,31 @@ public class CourseType extends AbstractWorkflowEntity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return courseTypeCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.courseTypeCode = id;
 	}
-	
+
 	public String getCourseTypeCode() {
 		return courseTypeCode;
 	}
+
 	public void setCourseTypeCode(String courseTypeCode) {
 		this.courseTypeCode = courseTypeCode;
 	}
-	
-	
-		
-	
+
 	public String getCourseTypeDesc() {
 		return courseTypeDesc;
 	}
+
 	public void setCourseTypeDesc(String courseTypeDesc) {
 		this.courseTypeDesc = courseTypeDesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -105,7 +104,7 @@ public class CourseType extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -114,12 +113,12 @@ public class CourseType extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public CourseType getBefImage(){
+	public CourseType getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(CourseType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CourseType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

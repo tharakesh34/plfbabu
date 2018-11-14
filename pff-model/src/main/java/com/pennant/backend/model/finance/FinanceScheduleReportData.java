@@ -41,7 +41,6 @@
  ********************************************************************************************
 */
 
-
 package com.pennant.backend.model.finance;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,17 +59,17 @@ public class FinanceScheduleReportData {
 	private String totalAmount;
 	private String endBal;
 	private String noOfDays;
-	
+
 	// Overdraft Details
 	private String limitDrop;
 	private String availLimit;
 	private String totalLimit;
 	private String tdsAmount;
-	
+
 	public FinanceScheduleReportData() {
-		
+
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
@@ -80,12 +79,12 @@ public class FinanceScheduleReportData {
 	}
 
 	public String getSchdSeqNo() {
-    	return schdSeqNo;
-    }
+		return schdSeqNo;
+	}
 
 	public void setSchdSeqNo(String schdSeqNo) {
-    	this.schdSeqNo = schdSeqNo;
-    }
+		this.schdSeqNo = schdSeqNo;
+	}
 
 	public String getSchDate() {
 		return schDate;
@@ -96,64 +95,64 @@ public class FinanceScheduleReportData {
 	}
 
 	public String getPftAmount() {
-    	return pftAmount;
-    }
+		return pftAmount;
+	}
 
 	public void setPftAmount(String pftAmount) {
-    	this.pftAmount = pftAmount;
-    }
+		this.pftAmount = pftAmount;
+	}
 
 	public String getSchdPft() {
-    	return schdPft;
-    }
+		return schdPft;
+	}
 
 	public void setSchdPft(String schdPft) {
-    	this.schdPft = schdPft;
-    }
+		this.schdPft = schdPft;
+	}
 
 	public String getSchdPri() {
-    	return schdPri;
-    }
+		return schdPri;
+	}
 
 	public void setSchdPri(String schdPri) {
-    	this.schdPri = schdPri;
-    }
+		this.schdPri = schdPri;
+	}
 
 	public String getCpzAmount() {
-    	return cpzAmount;
-    }
+		return cpzAmount;
+	}
 
 	public void setCpzAmount(String cpzAmount) {
-    	this.cpzAmount = cpzAmount;
-    }
+		this.cpzAmount = cpzAmount;
+	}
 
 	public String getTotalAmount() {
-    	return totalAmount;
-    }
+		return totalAmount;
+	}
 
 	public void setTotalAmount(String totalAmount) {
-    	this.totalAmount = totalAmount;
-    }
+		this.totalAmount = totalAmount;
+	}
 
 	public String getEndBal() {
-    	return endBal;
-    }
+		return endBal;
+	}
 
 	public void setEndBal(String endBal) {
-    	this.endBal = endBal;
-    }
+		this.endBal = endBal;
+	}
 
 	public String getNoOfDays() {
-    	if(StringUtils.isBlank(noOfDays) || "0".equals(StringUtils.trimToEmpty(noOfDays))){
-    		return "";
-    	} else{
-    		return noOfDays;
-    	}
-    }
+		if (StringUtils.isBlank(noOfDays) || "0".equals(StringUtils.trimToEmpty(noOfDays))) {
+			return "";
+		} else {
+			return noOfDays;
+		}
+	}
 
 	public void setNoOfDays(String noOfDays) {
-    	this.noOfDays = noOfDays;
-    }
+		this.noOfDays = noOfDays;
+	}
 
 	public String getLimitDrop() {
 		return limitDrop;
@@ -182,6 +181,7 @@ public class FinanceScheduleReportData {
 	public String getTdsAmount() {
 		return tdsAmount;
 	}
+
 	public void setTdsAmount(String tdsAmount) {
 		this.tdsAmount = tdsAmount;
 	}
@@ -189,6 +189,7 @@ public class FinanceScheduleReportData {
 	public String getSchdFee() {
 		return schdFee;
 	}
+
 	public void setSchdFee(String schdFee) {
 		this.schdFee = schdFee;
 	}
@@ -200,6 +201,5 @@ public class FinanceScheduleReportData {
 	public void setInstNumber(String instNumber) {
 		this.instNumber = instNumber;
 	}
-	
 
 }

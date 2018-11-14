@@ -29,7 +29,8 @@ public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader
 	public void updateCount(PaymentRecoveryHeader header) {
 		logger.debug(" Entering ");
 		StringBuilder insertSql = new StringBuilder("Update PaymentRecoveryHeader");
-		insertSql.append(" set NumberofRecords = (select COUNT(*) from PaymentRecoveryDetail where BatchRefNumber=:BatchRefNumber)  ");
+		insertSql.append(
+				" set NumberofRecords = (select COUNT(*) from PaymentRecoveryDetail where BatchRefNumber=:BatchRefNumber)  ");
 		insertSql.append(" where BatchRefNumber = :BatchRefNumber");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -43,11 +44,13 @@ public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader
 		PaymentRecoveryHeader header = new PaymentRecoveryHeader();
 		header.setBatchRefNumber(batchReferenceNumber);
 
-		StringBuilder selectSql = new StringBuilder("SELECT BatchRefNumber,BatchType,FileName,FileCreationDate,NumberofRecords");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT BatchRefNumber,BatchType,FileName,FileCreationDate,NumberofRecords");
 		selectSql.append(" From PaymentRecoveryHeader  where BatchRefNumber=:BatchRefNumber");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentRecoveryHeader.class);
+		RowMapper<PaymentRecoveryHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PaymentRecoveryHeader.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

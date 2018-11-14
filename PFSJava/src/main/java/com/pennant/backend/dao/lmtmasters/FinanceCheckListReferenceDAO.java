@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.lmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -49,11 +50,19 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 public interface FinanceCheckListReferenceDAO {
 
 	FinanceCheckListReference getFinanceCheckListReference();
+
 	FinanceCheckListReference getNewFinanceCheckListReference();
-	FinanceCheckListReference getFinanceCheckListReferenceById(final String id,long questionId,long answerId , String type);
-	void update(FinanceCheckListReference financeCheckListReference,String type);
-	void delete(FinanceCheckListReference financeCheckListReference,String type);
-	String save(FinanceCheckListReference financeCheckListReference,String type);
+
+	FinanceCheckListReference getFinanceCheckListReferenceById(final String id, long questionId, long answerId,
+			String type);
+
+	void update(FinanceCheckListReference financeCheckListReference, String type);
+
+	void delete(FinanceCheckListReference financeCheckListReference, String type);
+
+	String save(FinanceCheckListReference financeCheckListReference, String type);
+
 	List<FinanceCheckListReference> getCheckListByFinRef(final String id, String showinStageCheckListIds, String type);
-	void delete(String  finReference,String type) ;
+
+	void delete(String finReference, String type);
 }

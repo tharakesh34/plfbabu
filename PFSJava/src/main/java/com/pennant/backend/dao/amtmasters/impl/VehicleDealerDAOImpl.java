@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.amtmasters.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
-import com.pennant.backend.model.collection.Collection;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -75,52 +73,46 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	public VehicleDealerDAOImpl() {
 		super();
 	}
-	
-	
-	/*@Override
-	public List<VehicleDealer> getVehicleDealerList(String type) {
-		logger.debug("Entering");
-		List<VehicleDealer> vehicleDealer = new ArrayList<VehicleDealer>();
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
-		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
-		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
-		selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
-		selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
-		selectSql.append(" FROM  AMTVehicleDealer");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleDealer.class);
 
-		try {
-			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vehicleDealer = null;
-		}
-		logger.debug("Leaving");
-		return vehicleDealer;
-		
-	} */
-	
-	
+	/*
+	 * @Override public List<VehicleDealer> getVehicleDealerList(String type) { logger.debug("Entering");
+	 * List<VehicleDealer> vehicleDealer = new ArrayList<VehicleDealer>(); StringBuilder selectSql = new
+	 * StringBuilder(); selectSql.
+	 * append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
+	 * selectSql.append(
+	 * "DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,"
+	 * ); selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
+	 * selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
+	 * selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
+	 * selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
+	 * selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
+	 * selectSql.append(" FROM  AMTVehicleDealer"); selectSql.append(StringUtils.trimToEmpty(type));
+	 * logger.debug("selectSql: " + selectSql.toString()); SqlParameterSource beanParameters = new
+	 * BeanPropertySqlParameterSource(vehicleDealer); RowMapper<VehicleDealer> typeRowMapper =
+	 * ParameterizedBeanPropertyRowMapper .newInstance(VehicleDealer.class);
+	 * 
+	 * try { vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper); }
+	 * catch (EmptyResultDataAccessException e) { logger.warn("Exception: ", e); vehicleDealer = null; }
+	 * logger.debug("Leaving"); return vehicleDealer;
+	 * 
+	 * }
+	 */
+
 	/**
 	 * get the Collection Tables List
 	 */
-	public List<VehicleDealer> getVehicleDealerList(String dealerType,String type) {
+	public List<VehicleDealer> getVehicleDealerList(String dealerType, String type) {
 		logger.debug("Entering");
 		VehicleDealer vehicleDealer = new VehicleDealer();
 		vehicleDealer.setDealerType(dealerType);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
+		selectSql.append(
+				"SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
+		selectSql.append(
+				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
 		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
 		selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
 		selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
@@ -132,26 +124,30 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		//MapSqlParameterSource source = new MapSqlParameterSource();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 
-		/*StringBuilder selectSql = new StringBuilder("select TABLE_NAME TableName, Status, ERROR_DESC ErrorMessage, EFFECTED_COUNT InsertCount");
-		selectSql.append(" From COLLECTIONS_TABLES");*/
+		/*
+		 * StringBuilder selectSql = new
+		 * StringBuilder("select TABLE_NAME TableName, Status, ERROR_DESC ErrorMessage, EFFECTED_COUNT InsertCount");
+		 * selectSql.append(" From COLLECTIONS_TABLES");
+		 */
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
-		List<VehicleDealer> collectionsVehicleDealerList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<VehicleDealer> collectionsVehicleDealerList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 
 		logger.debug("Leaving");
 
 		return collectionsVehicleDealerList;
 	}
-	
-	
+
 	/**
-	 * Fetch the Record  Vehicle Dealer details by key field
+	 * Fetch the Record Vehicle Dealer details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)s
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String)s ""/_Temp/_View
 	 * @return VehicleDealer
 	 */
 	@Override
@@ -161,12 +157,14 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		vehicleDealer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-		selectSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
+		selectSql.append(
+				"SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
+		selectSql.append(
+				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,");
 		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
 			selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
 		}
@@ -176,8 +174,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleDealer.class);
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
 
 		try {
 			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -188,7 +185,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug("Leaving");
 		return vehicleDealer;
 	}
-	
+
 	@Override
 	public VehicleDealer getOverDraftVehicleDealerById(String type) {
 		logger.debug("Entering");
@@ -197,37 +194,35 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT dealername,dealercity FROM AMTVehicleDealer_AView");
-		selectSql.append(" Where DealerType =:DealerType AND Active = 1 ORDER BY DealerName ASC,DealerCity ASC LIMIT 10");
-	
+		selectSql.append(
+				" Where DealerType =:DealerType AND Active = 1 ORDER BY DealerName ASC,DealerCity ASC LIMIT 10");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleDealer.class);
-		
-		Map<String,String> paramMap = new HashMap<>();
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
+
+		Map<String, String> paramMap = new HashMap<>();
 		paramMap.put("DealerType", "SOPT");
 
 		try {
 			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-			
+
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vehicleDealer = null;
 		}
 		logger.debug("Leaving");
 		return vehicleDealer;
-	} 
-	
-	
+	}
 
 	/**
-	 * This method Deletes the Record from the AMTVehicleDealer or AMTVehicleDealer_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Vehicle Dealer by key DealerId
+	 * This method Deletes the Record from the AMTVehicleDealer or AMTVehicleDealer_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Vehicle Dealer by key DealerId
 	 * 
-	 * @param Vehicle Dealer (vehicleDealer)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Vehicle
+	 *            Dealer (vehicleDealer)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -241,11 +236,10 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where DealerId =:DealerId");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 		try {
-			recordCount = this.jdbcTemplate.update(
-					deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -256,9 +250,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	}
 
 	/**
-	 * This method insert new Records into AMTVehicleDealer or
-	 * AMTVehicleDealer_Temp. it fetches the available Sequence form
-	 * SeqAMTVehicleDealer by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into AMTVehicleDealer or AMTVehicleDealer_Temp. it fetches the available Sequence
+	 * form SeqAMTVehicleDealer by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Vehicle Dealer
 	 * 
@@ -271,28 +264,31 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	 * 
 	 */
 	@Override
-	public long save(VehicleDealer vehicleDealer,String type) {
+	public long save(VehicleDealer vehicleDealer, String type) {
 		logger.debug("Entering");
-		if (vehicleDealer.getId()==Long.MIN_VALUE){
+		if (vehicleDealer.getId() == Long.MIN_VALUE) {
 			vehicleDealer.setId(getNextId("SeqAMTVehicleDealer"));
-			logger.debug("get NextID:"+vehicleDealer.getId());
+			logger.debug("get NextID:" + vehicleDealer.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into AMTVehicleDealer");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, " );
+		insertSql.append("(DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
 		insertSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,");
-		insertSql.append("Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,Code,");
+		insertSql.append(
+				"Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,Code,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,SellerType)");
 		insertSql.append(" Values(:DealerId,:DealerType, :DealerName,:DealerTelephone,:DealerFax,:DealerAddress1,");
-		insertSql.append(" :DealerAddress2,:DealerAddress3,:DealerAddress4,:DealerCountry,:DealerCity,:DealerProvince,");
-		insertSql.append(" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,:Code ,");
+		insertSql
+				.append(" :DealerAddress2,:DealerAddress3,:DealerAddress4,:DealerCountry,:DealerCity,:DealerProvince,");
+		insertSql.append(
+				" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,:Code ,");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:SellerType)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -300,13 +296,13 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	}
 
 	/**
-	 * This method updates the Record AMTVehicleDealer or AMTVehicleDealer_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Vehicle Dealer by key DealerId and Version
+	 * This method updates the Record AMTVehicleDealer or AMTVehicleDealer_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Vehicle Dealer by key DealerId and Version
 	 * 
-	 * @param Vehicle Dealer (vehicleDealer)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Vehicle
+	 *            Dealer (vehicleDealer)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -321,12 +317,15 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set DealerType = :DealerType, DealerName = :DealerName, ");
 		updateSql.append("DealerTelephone =:DealerTelephone,DealerFax = :DealerFax,DealerAddress1 = :DealerAddress1,");
-		updateSql.append("DealerAddress2 = :DealerAddress2,DealerAddress3 = :DealerAddress3,DealerAddress4 = :DealerAddress4,");
+		updateSql.append(
+				"DealerAddress2 = :DealerAddress2,DealerAddress3 = :DealerAddress3,DealerAddress4 = :DealerAddress4,");
 		updateSql.append(" DealerCountry = :DealerCountry,DealerCity = :DealerCity,DealerProvince = :DealerProvince,");
-		updateSql.append(" Email = :Email,POBox = :POBox,ZipCode = :ZipCode,Active = :Active,Emirates = :Emirates,CommisionPaidAt = :CommisionPaidAt,");
-		updateSql.append("CalculationRule = :CalculationRule,PaymentMode = :PaymentMode,AccountNumber = :AccountNumber,AccountingSetId = :AccountingSetId,Code = :Code,");
+		updateSql.append(
+				" Email = :Email,POBox = :POBox,ZipCode = :ZipCode,Active = :Active,Emirates = :Emirates,CommisionPaidAt = :CommisionPaidAt,");
+		updateSql.append(
+				"CalculationRule = :CalculationRule,PaymentMode = :PaymentMode,AccountNumber = :AccountNumber,AccountingSetId = :AccountingSetId,Code = :Code,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,SellerType = :SellerType ");
 		updateSql.append(" Where DealerId =:DealerId");
@@ -334,7 +333,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -345,56 +344,59 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	}
 
 	@Override
-    public boolean SearchName(String dealerName, String dealerType) {
+	public boolean SearchName(String dealerName, String dealerType) {
 		logger.debug("Entering");
 		logger.debug(" Inside searchname");
 		boolean status = false;
-		try{
-			String searchQuery="select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName and dealerType=:dealerType";
-			
+		try {
+			String searchQuery = "select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName and dealerType=:dealerType";
+
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("dealerName", dealerName);
 			parameterSource.addValue("dealerType", dealerType);
-			
-            int count =jdbcTemplate.queryForObject(searchQuery, parameterSource, Integer.class);
-			logger.debug(" dealer name  : "+count);
-			if(count != 0){
+
+			int count = jdbcTemplate.queryForObject(searchQuery, parameterSource, Integer.class);
+			logger.debug(" dealer name  : " + count);
+			if (count != 0) {
 				status = true;
 			}
-		}catch(IncorrectResultSizeDataAccessException e ){
-			logger.warn("Exception: ", e);				
+		} catch (IncorrectResultSizeDataAccessException e) {
+			logger.warn("Exception: ", e);
 		}
 		logger.debug("Leaving");
-		
-        return status;
-    }
+
+		return status;
+	}
+
 	/**
-	 * Fetch the Record  VehicleDealer details by key field
+	 * Fetch the Record VehicleDealer details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return count
 	 */
 	@Override
-	public int getVehicleDealerByType(final String dealerType,String name, long id,String type) {
+	public int getVehicleDealerByType(final String dealerType, String name, long id, String type) {
 		logger.debug("Entering");
 		VehicleDealer vehicleDealer = new VehicleDealer();
-		
-		vehicleDealer.setDealerType(dealerType);;
+
+		vehicleDealer.setDealerType(dealerType);
+		;
 		vehicleDealer.setDealerName(name);
 		vehicleDealer.setDealerId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From AMTVehicleDealer");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DealerType =:DealerType AND DealerName =:DealerName AND DealerId !=:DealerId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -412,8 +414,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			 count= this.jdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
 		}
@@ -461,9 +463,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
-
 	@Override
-	public VehicleDealer getVehicleDealerById(String code, String dealerType,String type) {
+	public VehicleDealer getVehicleDealerById(String code, String dealerType, String type) {
 
 		logger.debug("Entering");
 		VehicleDealer vehicleDealer = new VehicleDealer();
@@ -478,8 +479,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
-		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleDealer.class);
+		RowMapper<VehicleDealer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleDealer.class);
 
 		try {
 			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -489,7 +489,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		}
 		logger.debug("Leaving");
 		return vehicleDealer;
-	
+
 	}
 
 }

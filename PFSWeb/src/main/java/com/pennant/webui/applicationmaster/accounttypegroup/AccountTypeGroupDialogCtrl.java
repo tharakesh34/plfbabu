@@ -31,28 +31,28 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
-	private static final long					serialVersionUID	= -210929672381582779L;
-	private static final Logger					logger				= Logger.getLogger(AccountTypeGroupDialogCtrl.class);
+	private static final long serialVersionUID = -210929672381582779L;
+	private static final Logger logger = Logger.getLogger(AccountTypeGroupDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_AccounTypeGroupDialog;
+	protected Window window_AccounTypeGroupDialog;
 
-	protected Intbox							acctTypeLevel;
-	protected Textbox							groupCode;
-	protected Textbox							groupDescription;
-	protected ExtendedCombobox					parentGroupId;
+	protected Intbox acctTypeLevel;
+	protected Textbox groupCode;
+	protected Textbox groupDescription;
+	protected ExtendedCombobox parentGroupId;
 
 	// not autoWired Var's
-	private AccountTypeGroup					accountTypeGroup;															// overHanded per parameter
-	private transient AccountTypeGroupListCtrl	accountTypeGroupListCtrl;													// overHanded per parameter
+	private AccountTypeGroup accountTypeGroup; // overHanded per parameter
+	private transient AccountTypeGroupListCtrl accountTypeGroupListCtrl; // overHanded per parameter
 
-	private transient boolean					validationOn;
-	protected Checkbox groupIsActive;		// autoWired
+	private transient boolean validationOn;
+	protected Checkbox groupIsActive; // autoWired
 	// ServiceDAOs / Domain Classes
-	private transient AccountTypeGroupService	accountTypeGroupService;
+	private transient AccountTypeGroupService accountTypeGroupService;
 
 	/**
 	 * default constructor.<br>
@@ -273,12 +273,14 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 			this.parentGroupId.setAttribute("ParentGroupId", aAccountTypeGroup.getParentGroupId());
 			this.parentGroupId.setValue(aAccountTypeGroup.getParentGroup(), aAccountTypeGroup.getParentGroupDesc());
 		}
-		if(this.acctTypeLevel.getValue() > 1){
+		if (this.acctTypeLevel.getValue() > 1) {
 			this.parentGroupId.setMandatoryStyle(true);
-		}else{
+		} else {
 			this.parentGroupId.setSclass("");
 		}
-		if(aAccountTypeGroup.isNew() || (aAccountTypeGroup.getRecordType() != null ? aAccountTypeGroup.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aAccountTypeGroup.isNew()
+				|| (aAccountTypeGroup.getRecordType() != null ? aAccountTypeGroup.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.groupIsActive.setChecked(true);
 			this.groupIsActive.setDisabled(true);
 		}
@@ -396,30 +398,28 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		setValidationOn(true);
 
 		if (!this.acctTypeLevel.isReadonly()) {
-			this.acctTypeLevel.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AccounTypeGroupDialog_AcctTypeLevel.value"),
-					PennantRegularExpressions.REGEX_NUMERIC, false));
+			this.acctTypeLevel.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccounTypeGroupDialog_AcctTypeLevel.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		if (!this.groupCode.isReadonly()) {
-			this.groupCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AccounTypeGroupDialog_GroupCode.value"), PennantRegularExpressions.REGEX_ALPHANUM,
-					true));
+			this.groupCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_AccounTypeGroupDialog_GroupCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.groupDescription.isReadonly()) {
-			this.groupDescription.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AccounTypeGroupDialog_GroupDescription.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.groupDescription.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccounTypeGroupDialog_GroupDescription.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		if (!this.parentGroupId.isReadonly()) {
-			if(this.acctTypeLevel.getValue() > 1){
-			this.parentGroupId.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AccounTypeGroupDialog_ParentGroup.value"), null,
-					true));
-		}else{
-			this.parentGroupId.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AccounTypeGroupDialog_ParentGroup.value"), null,
-					false));
-		}
+			if (this.acctTypeLevel.getValue() > 1) {
+				this.parentGroupId.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_AccounTypeGroupDialog_ParentGroup.value"), null, true));
+			} else {
+				this.parentGroupId.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_AccounTypeGroupDialog_ParentGroup.value"), null, false));
+			}
 		}
 		logger.debug("Leaving ");
 	}
@@ -493,7 +493,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 					refreshList();
 					closeDialog();
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -583,9 +583,10 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 				Filter[] filters = new Filter[1];
 				filters[0] = new Filter("AcctTypeLevel", this.acctTypeLevel.getValue() - 1, Filter.OP_EQUAL);
 				this.parentGroupId.setFilters(filters);
-			}if(this.acctTypeLevel.getValue() > 1){
+			}
+			if (this.acctTypeLevel.getValue() > 1) {
 				this.parentGroupId.setMandatoryStyle(true);
-			}else{
+			} else {
 				this.parentGroupId.setMandatoryStyle(false);
 			}
 		} else {
@@ -800,8 +801,8 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AccounTypeGroupDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;

@@ -82,6 +82,7 @@ public class Language extends AbstractWorkflowEntity {
 	public String getId() {
 		return lngCode;
 	}
+
 	public void setId(String id) {
 		this.lngCode = id;
 	}
@@ -89,6 +90,7 @@ public class Language extends AbstractWorkflowEntity {
 	public String getLngCode() {
 		return lngCode;
 	}
+
 	public void setLngCode(String lngCode) {
 		this.lngCode = lngCode;
 	}
@@ -96,6 +98,7 @@ public class Language extends AbstractWorkflowEntity {
 	public String getLngDesc() {
 		return lngDesc;
 	}
+
 	public void setLngDesc(String lngDesc) {
 		this.lngDesc = lngDesc;
 	}
@@ -103,6 +106,7 @@ public class Language extends AbstractWorkflowEntity {
 	public int getLngNumber() {
 		return lngNumber;
 	}
+
 	public void setLngNumber(int lngNumber) {
 		this.lngNumber = lngNumber;
 	}
@@ -110,6 +114,7 @@ public class Language extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -117,6 +122,7 @@ public class Language extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -124,6 +130,7 @@ public class Language extends AbstractWorkflowEntity {
 	public Language getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Language beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -131,6 +138,7 @@ public class Language extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

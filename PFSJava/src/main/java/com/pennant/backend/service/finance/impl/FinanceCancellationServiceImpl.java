@@ -96,28 +96,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
-public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService  implements FinanceCancellationService {
+public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
 	private static final Logger logger = Logger.getLogger(FinanceCancellationServiceImpl.class);
-	
-	private DDAControllerService		ddaControllerService;
-	private FinanceReferenceDetailDAO 	financeReferenceDetailDAO;
-	private LimitInterfaceDAO 			limitInterfaceDAO;
-	private CustomerLimitIntefaceService custLimitIntefaceService;
-	private CollateralMarkProcess 		 collateralMarkProcess;
-	private LimitCheckDetails 			 limitCheckDetails;
-	private LimitManagement					limitManagement;
-	private FinAdvancePaymentsDAO 			finAdvancePaymentsDAO;
-	private FinTypeFeesDAO 					finTypeFeesDAO;
-	private FinReceiptHeaderDAO             finReceiptHeaderDAO;
-	private FinReceiptDetailDAO             finReceiptDetailDAO;
 
-	
+	private DDAControllerService ddaControllerService;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private LimitInterfaceDAO limitInterfaceDAO;
+	private CustomerLimitIntefaceService custLimitIntefaceService;
+	private CollateralMarkProcess collateralMarkProcess;
+	private LimitCheckDetails limitCheckDetails;
+	private LimitManagement limitManagement;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+
 	public FinanceCancellationServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Fetching FInance Details & Repay Schedule Details
+	 * 
 	 * @param finReference
 	 * @return
 	 */
@@ -130,62 +130,69 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finReference);
 		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
-		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
+		scheduleData.setFinanceType(
+				getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
 
 		//Finance Schedule Details
-		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
-		
+		scheduleData.setFinanceScheduleDetails(
+				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+
 		//Finance Disbursement Details
-		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		scheduleData.setDisbursementDetails(
+				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 
 		//Finance Accounting Fee Charge Details
-		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,procEdtEvent, false, "_TView"));
+		scheduleData
+				.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, false, "_TView"));
 
 		//Finance Customer Details			
-		if(scheduleData.getFinanceMain().getCustID() != 0 && scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE){
-			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
+		if (scheduleData.getFinanceMain().getCustID() != 0
+				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
+			financeDetail.setCustomerDetails(getCustomerDetailsService()
+					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
 		//Finance Agreement Details	
 		//=======================================
 		String finType = scheduleData.getFinanceType().getFinType();
-		financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType,procEdtEvent, userRole));
+		financeDetail
+				.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
 		// Finance Check List Details 
 		//=======================================
-		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType,procEdtEvent, userRole);
+		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType, procEdtEvent, userRole);
 
 		//Finance Stage Accounting Posting Details 
 		//=======================================
-		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
-				finType, procEdtEvent, FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
-		
+		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
+				procEdtEvent, FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
+
 		//Finance Guaranteer Details			
 		financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
 
 		//Finance Joint Account Details
-		financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
+		financeDetail
+				.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 
 		//Finance Overdue Penalty Rate Details
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		// Document Details
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
-				FinanceConstants.MODULE_NAME,procEdtEvent, "_View"));
-		
-		financeDetail.setAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference, "_View"));
+				FinanceConstants.MODULE_NAME, procEdtEvent, "_View"));
 
-		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType, AccountEventConstants.ACCEVENT_CANCELFIN, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+		financeDetail
+				.setAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference, "_View"));
+
+		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType,
+				AccountEventConstants.ACCEVENT_CANCELFIN, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
-		
-		
-		
+
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -197,13 +204,13 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @return auditHeader 
+	 * @return auditHeader
 	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-    @Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException{
+	@Override
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -218,7 +225,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
+
 		String finReference = financeMain.getFinReference();
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
@@ -230,31 +237,31 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 			financeMain.setFinIsActive(false);
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		}
-		
+
 		//Finance Stage Accounting Process
 		//=======================================
 		auditHeader = executeStageAccounting(auditHeader);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
-		
+
 		//Repayments Postings Details Process Execution
-		if(!financeMain.isWorkflow()){
-			if(FinanceConstants.ACCOUNTING_TOTALREVERSAL){
+		if (!financeMain.isWorkflow()) {
+			if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
 				//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
 				getPostingsPreparationUtil().postReveralsByFinreference(finReference);
-				logger.debug("Reverse Transaction Success for Reference : "+finReference);
-			}else{
+				logger.debug("Reverse Transaction Success for Reference : " + finReference);
+			} else {
 				//Event Based Accounting on Final Stage
 				Date curBDay = DateUtility.getAppDate();
 				auditHeader = executeAccountingProcess(auditHeader, curBDay);
-				
+
 				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 					return auditHeader;
 				}
 			}
 		}
-		
+
 		// Finance Main Details Save And Update
 		//=======================================
 		if (financeMain.isNew()) {
@@ -262,13 +269,15 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 		}
-		
+
 		// Save Fee Charges List
 		//=======================================
 		if (tableType == TableType.TEMP_TAB) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner() ,false, tableType.getSuffix());
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+					false, tableType.getSuffix());
 		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(), false,tableType.getSuffix());
+		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false,
+				tableType.getSuffix());
 
 		// set Finance Check List audit details to auditDetails
 		//=======================================
@@ -277,16 +286,16 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		}
 
 		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-				&& financeDetail.getDocumentDetailsList().size() > 0) {
+		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType.getSuffix(),financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),
+					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 		}
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-				fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -304,9 +313,9 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws InterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -319,16 +328,17 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 			return auditHeader;
 		}
 		String tranType = PennantConstants.TRAN_DEL;
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
+
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
-		cancelStageAccounting(financeMain.getFinReference(),financeDetail.getModuleDefiner());
-		
+		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
+
 		// Fee charges deletion
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner() ,false, "_Temp");
+		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
+				"_Temp");
 
 		// Checklist Details delete
 		//=======================================
@@ -336,20 +346,22 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
-			for(DocumentDetails docDetails : financeDetail.getDocumentDetailsList()){
+			for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details,  "_Temp",financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, "_Temp",
+					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 		}
-		
+
 		// ScheduleDetails deletion
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -374,12 +386,12 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-    @Override
+	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
@@ -394,15 +406,15 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Date curBDay = DateUtility.getAppDate();
-		
+
 		//Execute Accounting Details Process
 		//=======================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
-		
+
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO().getNextSchPayment(finReference, curBDay);
-		
+
 		financeMain.setFinIsActive(false);
 		financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		financeMain.setRcdMaintainSts("");
@@ -414,42 +426,43 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		//Finance Cancellation Posting Process Execution
 		//=====================================
-		if(FinanceConstants.ACCOUNTING_TOTALREVERSAL){
+		if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
 			//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
 			List<Long> tranIdlIst = getPostingsDAO().getLinkTranIdByRef(finReference);
-			if(tranIdlIst != null){
+			if (tranIdlIst != null) {
 				for (Long linkedTranID : tranIdlIst) {
 					getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranID);
-					logger.debug("Reverse Transaction Success for Transaction ID : "+linkedTranID);
+					logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranID);
 				}
 			}
 
 			// Finance Commitment Reference Posting Details
 			Commitment commitment = null;
-			if(StringUtils.isNotBlank(financeMain.getFinCommitmentRef())){
+			if (StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
 				commitment = getCommitmentDAO().getCommitmentById(financeMain.getFinCommitmentRef().trim(), "");
 
-				BigDecimal cmtUtlAmt = CalculationUtil.getConvertedAmount(financeMain.getFinCcy(), commitment.getCmtCcy(),
-						financeMain.getFinAmount());
-				getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), cmtUtlAmt.negate(),commitment.getCmtExpDate());
+				BigDecimal cmtUtlAmt = CalculationUtil.getConvertedAmount(financeMain.getFinCcy(),
+						commitment.getCmtCcy(), financeMain.getFinAmount());
+				getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), cmtUtlAmt.negate(),
+						commitment.getCmtExpDate());
 				CommitmentMovement cmtMovement = prepareCommitMovement(commitment, financeMain, cmtUtlAmt, 0);
-				if(cmtMovement != null){
+				if (cmtMovement != null) {
 					getCommitmentMovementDAO().save(cmtMovement, "");
 				}
 			}
-		}else{
-			
+		} else {
+
 			//Event Based Accounting on Final Stage
 			getPostingsPreparationUtil().postReveralsByFinreference(finReference);
 			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 				return auditHeader;
 			}
-			
+
 		}
-		
+
 		//Cancelling IMD receipts
-		List<Long> receiptIdList=getFinReceiptHeaderDAO().fetchReceiptIdList(finReference);
-		if (receiptIdList!=null && receiptIdList.size()>0){
+		List<Long> receiptIdList = getFinReceiptHeaderDAO().fetchReceiptIdList(finReference);
+		if (receiptIdList != null && receiptIdList.size() > 0) {
 			getFinReceiptHeaderDAO().cancelReceipts(finReference);
 			getFinReceiptDetailDAO().cancelReceiptDetails(receiptIdList);
 		}
@@ -457,50 +470,54 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
-		
+
 		// Profit Details Inactive status Updation
 		getProfitDetailsDAO().UpdateActiveSts(finReference, false);
-		
+
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "",financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, "", financeDetail.getFinScheduleData().getFinanceMain(),
+					financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
 
 		//Fee Charge Details
 		//=======================================
-		saveFeeChargeList(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(),false, "");
+		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false, "");
 
 		// set Check list details Audit
 		//=======================================
-		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {					
+		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, ""));
 		}
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		
+
 		// Fee charges deletion
 		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner() ,false, "_Temp");
-		
+		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
+				"_Temp");
+
 		//Disbursement Cancellation
 		processDisbursmentCancellation(financeDetail);
 
 		// Checklist Details delete
 		//=======================================
 		tempAuditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
-		
+
 		// Adding audit as deleted from TEMP table
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(tempAuditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		// Adding audit as Insert/Update/deleted into main table
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -509,12 +526,12 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		// Delinking collateral Assigned to Finance
 		//==========================================
-		if(ImplementationConstants.COLLATERAL_INTERNAL){
-			if(ImplementationConstants.COLLATERAL_DELINK_AUTO){
-				List<CollateralAssignment> colAssignList = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(
-						finReference,FinanceConstants.MODULE_NAME, "");
-				
-				if(colAssignList != null && !colAssignList.isEmpty()){
+		if (ImplementationConstants.COLLATERAL_INTERNAL) {
+			if (ImplementationConstants.COLLATERAL_DELINK_AUTO) {
+				List<CollateralAssignment> colAssignList = getCollateralAssignmentDAO()
+						.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "");
+
+				if (colAssignList != null && !colAssignList.isEmpty()) {
 					for (int i = 0; i < colAssignList.size(); i++) {
 						CollateralMovement movement = new CollateralMovement();
 						movement.setModule(FinanceConstants.MODULE_NAME);
@@ -529,36 +546,34 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 					getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
 				}
 			}
-		}else{
+		} else {
 			List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
-			if(collateralList != null && !collateralList.isEmpty()) {
+			if (collateralList != null && !collateralList.isEmpty()) {
 				getCollateralMarkProcess().deMarkCollateral(financeDetail.getFinanceCollaterals());
 			}
 		}
-		
+
 		// send DDA Cancellation Request to Interface
 		//==========================================
 		getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
-		
-		
+
 		// send Cancel Utilization Request to ACP Interface and save log details
 		//=======================================
 		if (ImplementationConstants.LIMIT_INTERNAL) {
 			getLimitManagement().processLoanCancel(financeDetail, false);
-		}else{
-			getLimitCheckDetails().doProcessLimits(financeDetail.getFinScheduleData().getFinanceMain(), FinanceConstants.CANCEL_UTILIZATION);
+		} else {
+			getLimitCheckDetails().doProcessLimits(financeDetail.getFinScheduleData().getFinanceMain(),
+					FinanceConstants.CANCEL_UTILIZATION);
 		}
-		
+
 		// Save Salaried Posting Details
 		saveFinSalPayment(financeDetail.getFinScheduleData(), orgNextSchd, true);
 		//updating the processed with 1 in finstageAccountingLog
 		getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-
-
 
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
@@ -587,7 +602,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
 
@@ -616,7 +631,8 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
+				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
+						auditTranType, method));
 			}
 		}
 		financeDetail.setAuditDetailMap(auditDetailMap);
@@ -662,21 +678,21 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 				// records
 				if (befFinanceMain != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
 					// records type is new
 					if (befFinanceMain != null || tempFinanceMain != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceMain == null || tempFinanceMain != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -688,18 +704,20 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 				if (befFinanceMain == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn()
-							.equals(befFinanceMain.getLastMntOn())) {
+					if (oldFinanceMain != null
+							&& !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
@@ -707,44 +725,44 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 				if (tempFinanceMain == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinanceMain != null && oldFinanceMain != null
 						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		
+
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
 		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
-		if(eodProgressCount > 0){
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
+		if (eodProgressCount > 0) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
-		
+
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			for (FinAdvancePayments finAdvPayment : list) {
 				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
 					//Disbursement instructions should be cancelled before canceling a loan.
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"60406", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60406", errParm, valueParm), usrLanguage));
 				}
-				
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON) ) {
+
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
 					//Disbursement instructions should be cancelled before canceling a loan.
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"60408", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60408", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeMain.isWorkflow()) {
@@ -753,17 +771,18 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		return auditDetail;
 	}
-	
+
 	/**
 	 * Method for Add a Movement Entry for Commitment Repayment Event, if Only for Revolving Commitment
+	 * 
 	 * @param commitment
 	 * @param dataSet
 	 * @param postAmount
 	 * @param linkedtranId
 	 * @return
 	 */
-	public CommitmentMovement prepareCommitMovement(Commitment commitment, FinanceMain financeMain, 
-			BigDecimal postAmount, long linkedtranId){
+	public CommitmentMovement prepareCommitMovement(Commitment commitment, FinanceMain financeMain,
+			BigDecimal postAmount, long linkedtranId) {
 
 		CommitmentMovement movement = new CommitmentMovement();
 		Date curBussDate = DateUtility.getAppDate();
@@ -773,14 +792,15 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		movement.setFinBranch(financeMain.getFinBranch());
 		movement.setFinType(financeMain.getFinType());
 		movement.setMovementDate(curBussDate);
-		movement.setMovementOrder(getCommitmentMovementDAO().getMaxMovementOrderByRef(commitment.getCmtReference())+1);
+		movement.setMovementOrder(
+				getCommitmentMovementDAO().getMaxMovementOrderByRef(commitment.getCmtReference()) + 1);
 		movement.setMovementType("FC");//Finance Cancellation
 		movement.setMovementAmount(postAmount);
 		movement.setCmtAmount(commitment.getCmtAmount());
 		movement.setCmtUtilizedAmount(commitment.getCmtUtilizedAmount().subtract(postAmount));
-		if(commitment.getCmtExpDate().compareTo(curBussDate) < 0){
+		if (commitment.getCmtExpDate().compareTo(curBussDate) < 0) {
 			movement.setCmtAvailable(BigDecimal.ZERO);
-		}else{
+		} else {
 			movement.setCmtAvailable(commitment.getCmtAvailable().add(postAmount));
 		}
 		movement.setCmtCharges(BigDecimal.ZERO);
@@ -800,32 +820,32 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 	}
 
-	
 	private List<AuditDetail> processDisbursmentCancellation(FinanceDetail financeDetail) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			int count = 0;
 			for (FinAdvancePayments finAdvpay : list) {
 				if (!StringUtils.trimToEmpty(finAdvpay.getStatus()).equals(DisbursementConstants.STATUS_CANCEL)) {
-					count=count+1;
-					String[] fields = PennantJavaUtil.getFieldDetails(new FinAdvancePayments(),		new FinAdvancePayments().getExcludeFields());
-					AuditDetail	auditDetail=new AuditDetail(PennantConstants.TRAN_UPD, count, fields[0], fields[1], finAdvpay.getBefImage(),
-							finAdvpay);
+					count = count + 1;
+					String[] fields = PennantJavaUtil.getFieldDetails(new FinAdvancePayments(),
+							new FinAdvancePayments().getExcludeFields());
+					AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, count, fields[0], fields[1],
+							finAdvpay.getBefImage(), finAdvpay);
 					auditDetails.add(auditDetail);
 					finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
 					finAdvancePaymentsDAO.update(finAdvpay, "");
-					
+
 				}
 			}
 			if (auditDetails.size() > 0) {
-				finAdvancePaymentsDAO.deleteByFinRef(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "_Temp");
+				finAdvancePaymentsDAO
+						.deleteByFinRef(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "_Temp");
 			}
 		}
 		return auditDetails;
 	}
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -833,28 +853,31 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	public DDAControllerService getDdaControllerService() {
 		return ddaControllerService;
 	}
+
 	public void setDdaControllerService(DDAControllerService ddaControllerService) {
 		this.ddaControllerService = ddaControllerService;
 	}
 
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-	    return financeReferenceDetailDAO;
-    }
+		return financeReferenceDetailDAO;
+	}
+
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-	    this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-    }
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
 
 	public LimitInterfaceDAO getLimitInterfaceDAO() {
-	    return limitInterfaceDAO;
-    }
+		return limitInterfaceDAO;
+	}
 
 	public void setLimitInterfaceDAO(LimitInterfaceDAO limitInterfaceDAO) {
-	    this.limitInterfaceDAO = limitInterfaceDAO;
-    }
+		this.limitInterfaceDAO = limitInterfaceDAO;
+	}
 
 	public CustomerLimitIntefaceService getCustLimitIntefaceService() {
 		return custLimitIntefaceService;
 	}
+
 	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
 		this.custLimitIntefaceService = custLimitIntefaceService;
 	}
@@ -866,7 +889,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
 		this.collateralMarkProcess = collateralMarkProcess;
 	}
-	
+
 	public LimitCheckDetails getLimitCheckDetails() {
 		return limitCheckDetails;
 	}
@@ -910,5 +933,5 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
-	
+
 }

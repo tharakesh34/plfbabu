@@ -17,14 +17,11 @@ import com.pennant.backend.model.finance.TATNotificationLog;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetailDAO {
-    private static Logger logger = Logger.getLogger(TATDetailDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(TATDetailDAOImpl.class);
 
 	public TATDetailDAOImpl() {
 		super();
 	}
-
-	
 
 	/**
 	 * Get TAT Detail
@@ -44,13 +41,11 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 			selectSql.append("group by Reference,RoleCode)T2 ON T1.Reference =T2.Reference ");
 			selectSql.append("and T1.RoleCode =T2.RoleCode and T1.SerialNo =T2.SerialNo");
 
-			RowMapper<TATDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(TATDetail.class);
+			RowMapper<TATDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TATDetail.class);
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 			logger.debug("selectSql: " + selectSql.toString());
 
-			detail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			detail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -140,7 +135,8 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 		notificationLog.setReference(tatDetail.getReference());
 		notificationLog.setRoleCode(tatDetail.getRoleCode());
 
-		StringBuilder selectSql = new StringBuilder("SELECT module, reference, count, RoleCode From TATNotificationLog");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT module, reference, count, RoleCode From TATNotificationLog");
 		selectSql.append(" Where module = :Module and Reference=:Reference AND RoleCode=:RoleCode");
 
 		RowMapper<TATNotificationLog> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -148,8 +144,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			notificationLog = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			notificationLog = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;
@@ -175,8 +170,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationCode);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			notificationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			notificationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return null;

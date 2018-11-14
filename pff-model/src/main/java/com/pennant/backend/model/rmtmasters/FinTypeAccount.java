@@ -43,7 +43,6 @@ package com.pennant.backend.model.rmtmasters;
  ********************************************************************************************
 */
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,13 +68,13 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 	private String accountReceivable;
 	private String defaultAccNum;
 	private String custAccountTypes;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinTypeAccount befImage;
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -88,76 +87,76 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
 	}
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return finType;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finType = id;
 	}
-		
-	
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
 
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
+		this.finType = finType;
+	}
 
 	public String getFinCcy() {
-    	return finCcy;
-    }
+		return finCcy;
+	}
 
 	public void setFinCcy(String finCcy) {
-    	this.finCcy = finCcy;
-    }
+		this.finCcy = finCcy;
+	}
 
 	public String getEvent() {
-    	return event;
-    }
+		return event;
+	}
 
 	public void setEvent(String event) {
-    	this.event = event;
-    }
+		this.event = event;
+	}
 
 	public boolean isAlwManualEntry() {
-    	return alwManualEntry;
-    }
+		return alwManualEntry;
+	}
 
 	public void setAlwManualEntry(boolean alwManualEntry) {
-    	this.alwManualEntry = alwManualEntry;
-    }
+		this.alwManualEntry = alwManualEntry;
+	}
 
 	public boolean isAlwCustomerAccount() {
-    	return alwCustomerAccount;
-    }
+		return alwCustomerAccount;
+	}
 
 	public void setAlwCustomerAccount(boolean alwCustomerAccount) {
-    	this.alwCustomerAccount = alwCustomerAccount;
-    }
+		this.alwCustomerAccount = alwCustomerAccount;
+	}
 
 	public String getAccountReceivable() {
-    	return accountReceivable;
-    }
+		return accountReceivable;
+	}
 
 	public void setAccountReceivable(String accountReceivable) {
-    	this.accountReceivable = accountReceivable;
-    }
+		this.accountReceivable = accountReceivable;
+	}
 
 	public String getCustAccountTypes() {
-    	return custAccountTypes;
-    }
+		return custAccountTypes;
+	}
 
 	public void setCustAccountTypes(String custAccountTypes) {
-    	this.custAccountTypes = custAccountTypes;
-    }
+		this.custAccountTypes = custAccountTypes;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -166,7 +165,7 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -175,12 +174,12 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public FinTypeAccount getBefImage(){
+	public FinTypeAccount getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(FinTypeAccount beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinTypeAccount beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -190,7 +189,7 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getDefaultAccNum() {
 		return defaultAccNum;
 	}
@@ -200,4 +199,3 @@ public class FinTypeAccount extends AbstractWorkflowEntity {
 	}
 
 }
-

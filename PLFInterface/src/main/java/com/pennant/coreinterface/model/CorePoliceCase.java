@@ -1,8 +1,9 @@
 package com.pennant.coreinterface.model;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class CorePoliceCase  implements Serializable {
+public class CorePoliceCase implements Serializable {
 
 	private static final long serialVersionUID = 384180539764860246L;
 
@@ -10,22 +11,22 @@ public class CorePoliceCase  implements Serializable {
 		super();
 	}
 
-	private String 		custCIF; 						
-	private String 		custFName;					
-	private String 		custLName;					
-	private String 		custMobileNumber;				
-	private String 		custNationality;				
-	private String 		custCRCPR;					
-	private String 		custPassPort;	
-	private Date 		custDOB;
-	private String 		custProduct;
-	private String 		policeCaseRule;
-	private boolean		override;
-
+	private String custCIF;
+	private String custFName;
+	private String custLName;
+	private String custMobileNumber;
+	private String custNationality;
+	private String custCRCPR;
+	private String custPassPort;
+	private Date custDOB;
+	private String custProduct;
+	private String policeCaseRule;
+	private boolean override;
 
 	public String getCustCIF() {
 		return custCIF;
 	}
+
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
@@ -33,6 +34,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustFName() {
 		return custFName;
 	}
+
 	public void setCustFName(String custFName) {
 		this.custFName = custFName;
 	}
@@ -40,6 +42,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustLName() {
 		return custLName;
 	}
+
 	public void setCustLName(String custLName) {
 		this.custLName = custLName;
 	}
@@ -47,6 +50,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustMobileNumber() {
 		return custMobileNumber;
 	}
+
 	public void setCustMobileNumber(String custMobileNumber) {
 		this.custMobileNumber = custMobileNumber;
 	}
@@ -54,6 +58,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustNationality() {
 		return custNationality;
 	}
+
 	public void setCustNationality(String custNationality) {
 		this.custNationality = custNationality;
 	}
@@ -61,6 +66,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustCRCPR() {
 		return custCRCPR;
 	}
+
 	public void setCustCRCPR(String custCRCPR) {
 		this.custCRCPR = custCRCPR;
 	}
@@ -68,6 +74,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustPassPort() {
 		return custPassPort;
 	}
+
 	public void setCustPassPort(String custPassPort) {
 		this.custPassPort = custPassPort;
 	}
@@ -75,6 +82,7 @@ public class CorePoliceCase  implements Serializable {
 	public Date getCustDOB() {
 		return custDOB;
 	}
+
 	public void setCustDOB(Date custDOB) {
 		this.custDOB = custDOB;
 	}
@@ -82,6 +90,7 @@ public class CorePoliceCase  implements Serializable {
 	public String getCustProduct() {
 		return custProduct;
 	}
+
 	public void setCustProduct(String custProduct) {
 		this.custProduct = custProduct;
 	}
@@ -89,10 +98,10 @@ public class CorePoliceCase  implements Serializable {
 	public String getPoliceCaseRule() {
 		return policeCaseRule;
 	}
+
 	public void setPoliceCaseRule(String policeCaseRule) {
 		this.policeCaseRule = policeCaseRule;
 	}
-
 
 	public boolean getOverride() {
 		return override;
@@ -101,6 +110,7 @@ public class CorePoliceCase  implements Serializable {
 	public boolean isOverride() {
 		return override;
 	}
+
 	public void setOverride(boolean override) {
 		this.override = override;
 	}

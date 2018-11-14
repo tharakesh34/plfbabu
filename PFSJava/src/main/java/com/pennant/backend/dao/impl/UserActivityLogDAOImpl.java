@@ -60,31 +60,33 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements UserActivityLogDAO {
 	private static Logger logger = Logger.getLogger(UserActivityLogDAOImpl.class);
-	
+
 	public UserActivityLogDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-    public void save(UserActivityLog userActivityLog) {
+	public void save(UserActivityLog userActivityLog) {
 		logger.debug("Entering");
-		
-		StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Task_Log " );
-		insertSql.append(" (Module, Reference, SerialNo, FromUser, RoleCode, Activity, ToUser, NextRoleCode, LogTime, ReassignedTime, Processed)");
-		insertSql.append(" Values( :Module, :Reference, :SerialNo, :FromUser, :RoleCode, :Activity, :ToUser, :NextRoleCode, :LogTime, :ReassignedTime, :Processed)");
+
+		StringBuilder insertSql = new StringBuilder(" INSERT INTO Task_Log ");
+		insertSql.append(
+				" (Module, Reference, SerialNo, FromUser, RoleCode, Activity, ToUser, NextRoleCode, LogTime, ReassignedTime, Processed)");
+		insertSql.append(
+				" Values( :Module, :Reference, :SerialNo, :FromUser, :RoleCode, :Activity, :ToUser, :NextRoleCode, :LogTime, :ReassignedTime, :Processed)");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userActivityLog);
 		logger.debug("Leaving");
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-    }
+	}
 
 	@Override
 	public void deleteByReference(String reference, String module) {
 		logger.debug("Entering");
-		UserActivityLog userAcitvity= new UserActivityLog();
+		UserActivityLog userAcitvity = new UserActivityLog();
 		userAcitvity.setReference(reference);
 		userAcitvity.setModule(module);
-		StringBuilder   selectSql = new StringBuilder("Delete from Task_Log ");
+		StringBuilder selectSql = new StringBuilder("Delete from Task_Log ");
 		selectSql.append(" Where Reference = :Reference and Module = :Module");
 		logger.debug("deleteSql: " + selectSql.toString());
 
@@ -94,32 +96,33 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 	}
 
 	@Override
-    public void saveList(List<UserActivityLog> logList) {
+	public void saveList(List<UserActivityLog> logList) {
 		logger.debug("Entering");
 		int serialNo = 0;
 		for (UserActivityLog userActivityLog : logList) {
-			if(serialNo==0){
+			if (serialNo == 0) {
 				StringBuilder selectSql = new StringBuilder();
-				selectSql.append(" SELECT COALESCE(MAX(SerialNo),0) FROM Task_Log WHERE Module=:Module AND Reference=:Reference");
+				selectSql.append(
+						" SELECT COALESCE(MAX(SerialNo),0) FROM Task_Log WHERE Module=:Module AND Reference=:Reference");
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userActivityLog);
 				logger.debug("selectSql: " + selectSql.toString());
 				try {
 					serialNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-				}catch (EmptyResultDataAccessException e) {
+				} catch (EmptyResultDataAccessException e) {
 					logger.warn("Exception: ", e);
 				}
 			}
-			serialNo = serialNo+1;
+			serialNo = serialNo + 1;
 			userActivityLog.setSerialNo(serialNo);
-	        save(userActivityLog);
-        }
+			save(userActivityLog);
+		}
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void updateFinStatus(String reference, String module) {
+	public void updateFinStatus(String reference, String module) {
 		logger.debug("Entering");
-		UserActivityLog userAcitvity= new UserActivityLog();
+		UserActivityLog userAcitvity = new UserActivityLog();
 		userAcitvity.setReference(reference);
 		userAcitvity.setModule(module);
 		userAcitvity.setProcessed(true);
@@ -130,7 +133,7 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userAcitvity);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
 	public String getPreviousRole(String module, String reference, String role) {

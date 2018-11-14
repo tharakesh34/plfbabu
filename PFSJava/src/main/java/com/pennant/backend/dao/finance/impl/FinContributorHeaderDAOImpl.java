@@ -70,7 +70,7 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 	public FinContributorHeaderDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinContributorHeader
 	 * 
@@ -91,8 +91,7 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 	}
 
 	/**
-	 * This method get the module from method getFinContributorHeader() 
-	 * and set the new record flag as true and return
+	 * This method get the module from method getFinContributorHeader() and set the new record flag as true and return
 	 * FinContributorHeader()
 	 * 
 	 * @return FinContributorHeader
@@ -123,9 +122,9 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 
 		contributorHeader.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference , MinContributors , " );
-		selectSql.append(" MaxContributors , MinContributionAmt , MaxContributionAmt , " );
-		selectSql.append(" CurContributors , CurContributionAmt , CurBankInvestment , " );
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference , MinContributors , ");
+		selectSql.append(" MaxContributors , MinContributionAmt , MaxContributionAmt , ");
+		selectSql.append(" CurContributors , CurContributionAmt , CurBankInvestment , ");
 		selectSql.append(" AvgMudaribRate , AlwContributorsToLeave , AlwContributorsToJoin , ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId ");
@@ -136,11 +135,10 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);
 		RowMapper<FinContributorHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FinContributorHeader.class);
+				.newInstance(FinContributorHeader.class);
 
 		try {
-			contributorHeader = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			contributorHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			contributorHeader = null;
@@ -150,8 +148,8 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 	}
 
 	/**
-	 * This method Deletes the Record from the FinContributorHeader or FinContributorHeader_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Main Detail by key FinReference
+	 * This method Deletes the Record from the FinContributorHeader or FinContributorHeader_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Finance Main Detail by key FinReference
 	 * 
 	 * @param Finance
 	 *            Main Detail (contributorHeader)
@@ -165,7 +163,7 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 	public void delete(String finReference, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		FinContributorHeader contributorHeader = new FinContributorHeader();
 		contributorHeader.setFinReference(finReference);
 
@@ -173,13 +171,12 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 		deleteSql.append(" FinContributorHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);
-		
+
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -210,17 +207,17 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 		StringBuilder insertSql = new StringBuilder("Insert Into ");
 		insertSql.append(" FinContributorHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" ( FinReference , MinContributors , MaxContributors , " );
-		insertSql.append(" MinContributionAmt , MaxContributionAmt , CurContributors , " );
-		insertSql.append(" CurContributionAmt , CurBankInvestment , AvgMudaribRate , " );
-		insertSql.append(" AlwContributorsToLeave , AlwContributorsToJoin , " );
-		insertSql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , " );
+		insertSql.append(" ( FinReference , MinContributors , MaxContributors , ");
+		insertSql.append(" MinContributionAmt , MaxContributionAmt , CurContributors , ");
+		insertSql.append(" CurContributionAmt , CurBankInvestment , AvgMudaribRate , ");
+		insertSql.append(" AlwContributorsToLeave , AlwContributorsToJoin , ");
+		insertSql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , ");
 		insertSql.append(" NextRoleCode , TaskId , NextTaskId , RecordType , WorkflowId) ");
-		insertSql.append(" VALUES ( :FinReference , :MinContributors , :MaxContributors , " );
-		insertSql.append(" :MinContributionAmt , :MaxContributionAmt , :CurContributors , " );
-		insertSql.append(" :CurContributionAmt , :CurBankInvestment , :AvgMudaribRate , " );
-		insertSql.append(" :AlwContributorsToLeave , :AlwContributorsToJoin , " );
-		insertSql.append(" :Version , :LastMntBy , :LastMntOn , :RecordStatus , :RoleCode , " );
+		insertSql.append(" VALUES ( :FinReference , :MinContributors , :MaxContributors , ");
+		insertSql.append(" :MinContributionAmt , :MaxContributionAmt , :CurContributors , ");
+		insertSql.append(" :CurContributionAmt , :CurBankInvestment , :AvgMudaribRate , ");
+		insertSql.append(" :AlwContributorsToLeave , :AlwContributorsToJoin , ");
+		insertSql.append(" :Version , :LastMntBy , :LastMntOn , :RecordStatus , :RoleCode , ");
 		insertSql.append(" :NextRoleCode , :TaskId , :NextTaskId , :RecordType , :WorkflowId) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -232,8 +229,8 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 	}
 
 	/**
-	 * This method updates the Record FinContributorHeader or FinContributorHeader_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
+	 * This method updates the Record FinContributorHeader or FinContributorHeader_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
 	 * 
 	 * @param Finance
 	 *            Main Detail (contributorHeader)
@@ -248,21 +245,21 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 	public void update(FinContributorHeader contributorHeader, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update ");
 		updateSql.append(" FinContributorHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" SET MinContributors =:MinContributors , " );
-		updateSql.append(" MaxContributors =:MaxContributors , MinContributionAmt =:MinContributionAmt , " );
-		updateSql.append(" MaxContributionAmt =:MaxContributionAmt , CurContributors =:CurContributors , " );
-		updateSql.append(" CurContributionAmt =:CurContributionAmt , CurBankInvestment =:CurBankInvestment , " );
-		updateSql.append(" AvgMudaribRate =:AvgMudaribRate , AlwContributorsToLeave =:AlwContributorsToLeave , " );
-		updateSql.append(" AlwContributorsToJoin =:AlwContributorsToJoin , " );
-		updateSql.append(" Version =:Version , LastMntBy =:LastMntBy , LastMntOn=:LastMntOn , " );
-		updateSql.append(" RecordStatus=:RecordStatus , RoleCode=:RoleCode , NextRoleCode=:NextRoleCode , " );
+		updateSql.append(" SET MinContributors =:MinContributors , ");
+		updateSql.append(" MaxContributors =:MaxContributors , MinContributionAmt =:MinContributionAmt , ");
+		updateSql.append(" MaxContributionAmt =:MaxContributionAmt , CurContributors =:CurContributors , ");
+		updateSql.append(" CurContributionAmt =:CurContributionAmt , CurBankInvestment =:CurBankInvestment , ");
+		updateSql.append(" AvgMudaribRate =:AvgMudaribRate , AlwContributorsToLeave =:AlwContributorsToLeave , ");
+		updateSql.append(" AlwContributorsToJoin =:AlwContributorsToJoin , ");
+		updateSql.append(" Version =:Version , LastMntBy =:LastMntBy , LastMntOn=:LastMntOn , ");
+		updateSql.append(" RecordStatus=:RecordStatus , RoleCode=:RoleCode , NextRoleCode=:NextRoleCode , ");
 		updateSql.append(" TaskId=:TaskId , NextTaskId=:NextTaskId , RecordType=:RecordType , WorkflowId=:WorkflowId ");
 		updateSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);

@@ -20,9 +20,9 @@ import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
 import com.pennant.backend.service.applicationmaster.PresentmentReasonCodeService;
 import com.pennant.webui.applicationmasters.presentmentreasoncode.model.PresentmentReasonCodeListModelItemRender;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentReasonCode> {
 	private static final long serialVersionUID = 3226455931949186314L;
@@ -64,7 +64,7 @@ public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentRe
 		super.tableName = "PresentmentReasonCode_AView";
 		super.queueTableName = "PresentmentReasonCode_View";
 	}
-	
+
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -73,20 +73,19 @@ public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentRe
 	 */
 	public void onCreate$window_PresentmentReasonCodeList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_PresentmentReasonCodeList, borderLayout_PresentmentReasonCodeList, listBoxPresentmentReasonCodeList,
-				pagingPresentmentReasonCodeList);
+		setPageComponents(window_PresentmentReasonCodeList, borderLayout_PresentmentReasonCodeList,
+				listBoxPresentmentReasonCodeList, pagingPresentmentReasonCodeList);
 		setItemRender(new PresentmentReasonCodeListModelItemRender());
 
 		// Register buttons and fields.
-		registerButton(button_PresentmentReasonCodeList_NewPresentmentReasonCodeList, "button_PresentmentReasonCodeList_NewPresentmentReasonCode", true);
+		registerButton(button_PresentmentReasonCodeList_NewPresentmentReasonCodeList,
+				"button_PresentmentReasonCodeList_NewPresentmentReasonCode", true);
 		registerButton(button_PresentmentReasonCodeList_PresentmentReasonCodeSearchDialog);
 
-		registerField("code", listheader_Code, SortOrder.ASC, code, sortOperator_Code,
-				Operators.STRING);
+		registerField("code", listheader_Code, SortOrder.ASC, code, sortOperator_Code, Operators.STRING);
 		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
 				Operators.STRING);
-		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active,
-				Operators.BOOLEAN);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -187,7 +186,8 @@ public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentRe
 		arg.put("presentmentReasonCodeListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeDialog.zul", null,
+			Executions.createComponents(
+					"/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);

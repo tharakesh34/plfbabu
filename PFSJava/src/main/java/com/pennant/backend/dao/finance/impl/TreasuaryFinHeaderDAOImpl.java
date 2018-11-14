@@ -27,7 +27,6 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -53,11 +52,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> implements TreasuaryFinHeaderDAO {
 	private static Logger logger = Logger.getLogger(TreasuaryFinHeaderDAOImpl.class);
-	
+
 	public TreasuaryFinHeaderDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new TreasuaryFinHeader
 	 * 
@@ -108,16 +107,13 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 		InvestmentFinHeader investmentFinance = new InvestmentFinHeader();
 		investmentFinance.setInvestmentRef(id);
 
-		StringBuilder selectSql = new StringBuilder(
-		        "Select InvestmentRef, TotPrincipalAmt, finCcy, ProfitDaysBasis, ");
-		selectSql
-		        .append(" StartDate, MaturityDate, PrincipalInvested, PrincipalMaturity, PrincipalDueToInvest,");
+		StringBuilder selectSql = new StringBuilder("Select InvestmentRef, TotPrincipalAmt, finCcy, ProfitDaysBasis, ");
+		selectSql.append(" StartDate, MaturityDate, PrincipalInvested, PrincipalMaturity, PrincipalDueToInvest,");
 		selectSql.append(" AvgPftRate, ApprovalRequired,");
-		selectSql
-		        .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql
-			        .append(" ,lovDescfinCcyName, lovDescFinFormatter");
+			selectSql.append(" ,lovDescfinCcyName, lovDescFinFormatter");
 		}
 		selectSql.append(" From InvestmentFinHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -126,11 +122,10 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(investmentFinance);
 		RowMapper<InvestmentFinHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(InvestmentFinHeader.class);
+				.newInstance(InvestmentFinHeader.class);
 
 		try {
-			investmentFinance = this.jdbcTemplate.queryForObject(
-			        selectSql.toString(), beanParameters, typeRowMapper);
+			investmentFinance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			investmentFinance = null;
@@ -155,31 +150,27 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 		InvestmentFinHeader investmentFinHeader = null;
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finReference);
-		
-		StringBuilder selectSql = new StringBuilder(
-		        "Select InvestmentRef, TotPrincipalAmt, finCcy,");
-		selectSql
-		        .append(" StartDate, MaturityDate, PrincipalInvested, PrincipalMaturity, PrincipalDueToInvest,");
+
+		StringBuilder selectSql = new StringBuilder("Select InvestmentRef, TotPrincipalAmt, finCcy,");
+		selectSql.append(" StartDate, MaturityDate, PrincipalInvested, PrincipalMaturity, PrincipalDueToInvest,");
 		selectSql.append(" AvgPftRate, ApprovalRequired,");
-		selectSql
-		        .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
 		if (StringUtils.trimToEmpty(tableType).contains("View")) {
 			selectSql.append("lovDescfinCcyName, lovDescFinFormatter");
 		}
 		selectSql.append(" From InvestmentFinHeader");
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" Where InvestmentRef = ");
-		selectSql
-		        .append(" (select InvestmentRef FROM FinanceMain_Temp where FinReference=:FinReference)");
+		selectSql.append(" (select InvestmentRef FROM FinanceMain_Temp where FinReference=:FinReference)");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		RowMapper<InvestmentFinHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(InvestmentFinHeader.class);
+				.newInstance(InvestmentFinHeader.class);
 
 		try {
-			invHeadeList = this.jdbcTemplate.query(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			invHeadeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			investmentFinHeader = new InvestmentFinHeader();
@@ -218,8 +209,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(investmentFinance);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -251,16 +241,16 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		insertSql = new StringBuilder("Insert Into InvestmentFinHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-		        .append(" (InvestmentRef, TotPrincipalAmt, finCcy, ProfitDaysBasis, StartDate, MaturityDate, PrincipalInvested, PrincipalMaturity, PrincipalDueToInvest,");
+		insertSql.append(
+				" (InvestmentRef, TotPrincipalAmt, finCcy, ProfitDaysBasis, StartDate, MaturityDate, PrincipalInvested, PrincipalMaturity, PrincipalDueToInvest,");
 		insertSql.append(" AvgPftRate, ApprovalRequired, TotalDealsApproved, ");
-		insertSql
-		        .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-		        .append(" Values(:InvestmentRef, :TotPrincipalAmt, :finCcy, :ProfitDaysBasis, :StartDate, :MaturityDate, :PrincipalInvested, :PrincipalMaturity, :PrincipalDueToInvest,");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:InvestmentRef, :TotPrincipalAmt, :finCcy, :ProfitDaysBasis, :StartDate, :MaturityDate, :PrincipalInvested, :PrincipalMaturity, :PrincipalDueToInvest,");
 		insertSql.append(" :AvgPftRate, :ApprovalRequired, :TotalDealsApproved,");
-		insertSql
-		        .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -301,12 +291,12 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		updateSql = new StringBuilder("Update InvestmentFinHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set TotPrincipalAmt = :TotPrincipalAmt, finCcy = :finCcy, ProfitDaysBasis = :ProfitDaysBasis, StartDate = :StartDate, MaturityDate = :MaturityDate, PrincipalInvested = :PrincipalInvested, PrincipalMaturity = :PrincipalMaturity, PrincipalDueToInvest = :PrincipalDueToInvest,");
-		updateSql
-		        .append(" AvgPftRate = :AvgPftRate, ApprovalRequired = :ApprovalRequired, TotalDealsApproved = :TotalDealsApproved, ");
-		updateSql
-		        .append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" Set TotPrincipalAmt = :TotPrincipalAmt, finCcy = :finCcy, ProfitDaysBasis = :ProfitDaysBasis, StartDate = :StartDate, MaturityDate = :MaturityDate, PrincipalInvested = :PrincipalInvested, PrincipalMaturity = :PrincipalMaturity, PrincipalDueToInvest = :PrincipalDueToInvest,");
+		updateSql.append(
+				" AvgPftRate = :AvgPftRate, ApprovalRequired = :ApprovalRequired, TotalDealsApproved = :TotalDealsApproved, ");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where InvestmentRef =:InvestmentRef");
 
 		if (!type.endsWith("_Temp")) {
@@ -325,13 +315,15 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 	}
 
 	@Override
-	public List<FinanceMain> getInvestmentDealList(InvestmentFinHeader investmentFinHeader,  String type) {
+	public List<FinanceMain> getInvestmentDealList(InvestmentFinHeader investmentFinHeader, String type) {
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference, FinType, FinCcy, FinBranch, CustID, FinAmount,  ProfitDaysBasis, ScheduleMethod, TotalRepayAmt, RepayProfitRate, ");
-		selectSql.append(" FinStartDate, MaturityDate, LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, ");
-		
+		selectSql.append(
+				" SELECT FinReference, FinType, FinCcy, FinBranch, CustID, FinAmount,  ProfitDaysBasis, ScheduleMethod, TotalRepayAmt, RepayProfitRate, ");
+		selectSql.append(
+				" FinStartDate, MaturityDate, LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, ");
+
 		if (StringUtils.containsIgnoreCase(type, "VIEW")) {
 			selectSql.append(" lovDescCustCif, lovDescCustShrtName, lovDescProductCodeName, lovDescFinFormatter,");
 			selectSql.append(" lovDescFinBranchName, lovDescFinTypeName, lovDescFinCcyName,");
@@ -356,13 +348,15 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference, FinType, FinCcy, FinBranch, CustID, FinAmount,  TotalProfit, ProfitDaysBasis,");
+		selectSql.append(
+				" SELECT FinReference, FinType, FinCcy, FinBranch, CustID, FinAmount,  TotalProfit, ProfitDaysBasis,");
 		selectSql.append(" ScheduleMethod, TotalRepayAmt, RepayProfitRate, ");
-		selectSql.append(" FinStartDate, MaturityDate, LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate,  ");
+		selectSql.append(
+				" FinStartDate, MaturityDate, LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate,  ");
 		selectSql.append(" DisbAccountId, RepayAccountId,  ");
 
 		if (StringUtils.containsIgnoreCase(tableType, "VIEW")) {
-			selectSql .append(" lovDescCustCif, lovDescCustShrtName, lovDescProductCodeName, lovDescFinFormatter,");
+			selectSql.append(" lovDescCustCif, lovDescCustShrtName, lovDescProductCodeName, lovDescFinFormatter,");
 			selectSql.append(" lovDescFinBranchName, lovDescFinTypeName, lovDescFinCcyName,");
 		}
 
@@ -374,13 +368,11 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("Leaving");
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			return financeMain;
@@ -398,8 +390,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 		header.setInvestmentRef(investmentReference);
 
 		beanParameters = new BeanPropertySqlParameterSource(header);
-		query = new StringBuilder(
-		        "SELECT count(*) FROM FinanceMain_Temp Where InvestmentRef = :InvestmentRef");
+		query = new StringBuilder("SELECT count(*) FROM FinanceMain_Temp Where InvestmentRef = :InvestmentRef");
 		logger.debug("selectSql: " + query.toString());
 
 		try {

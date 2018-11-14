@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.ValueLabel;
@@ -52,12 +53,18 @@ import com.pennant.backend.model.rmtmasters.AccountType;
  * 
  */
 public interface AccountTypeDAO {
-	
-	 AccountType getAccountTypeById(String id,String type);
-	 void update(AccountType accountType,String type);
-	 void delete(AccountType accountType,String type);
-	 String save(AccountType accountType,String type);
-	 List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
+
+	AccountType getAccountTypeById(String id, String type);
+
+	void update(AccountType accountType, String type);
+
+	void delete(AccountType accountType, String type);
+
+	String save(AccountType accountType, String type);
+
+	List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
+
 	int getgetAccountTypeByProfit(long profitCenterID, String type);
+
 	int getgetAccountTypeByCost(long costCenterID, String type);
 }

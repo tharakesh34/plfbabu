@@ -125,13 +125,13 @@ public class CostOfFundCodeListCtrl extends GFCBaseListCtrl<CostOfFundCode> {
 		setItemRender(new CostOfFundCodeListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_CostOfFundCodeList_NewCostOfFundCode, "button_CostOfFundCodeList_NewCostOfFundCode", true);
+		registerButton(button_CostOfFundCodeList_NewCostOfFundCode, "button_CostOfFundCodeList_NewCostOfFundCode",
+				true);
 		registerButton(button_CostOfFundCodeList_CostOfFundCodeSearchDialog);
 
 		registerField("cofCode", listheader_CofCode, SortOrder.ASC, cofCode, sortOperator_cofCode, Operators.STRING);
-		registerField("cofDesc", listheader_CofDesc, SortOrder.NONE, cofDesc, sortOperator_cofDesc,
-				Operators.STRING);
-				
+		registerField("cofDesc", listheader_CofDesc, SortOrder.NONE, cofDesc, sortOperator_cofDesc, Operators.STRING);
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -202,8 +202,8 @@ public class CostOfFundCodeListCtrl extends GFCBaseListCtrl<CostOfFundCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CofCode='" + costOfFundCode.getCofCode() + "' AND version=" + costOfFundCode.getVersion()
-				+ " ";
+		String whereCond = " AND CofCode='" + costOfFundCode.getCofCode() + "' AND version="
+				+ costOfFundCode.getVersion() + " ";
 
 		if (doCheckAuthority(costOfFundCode, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -232,8 +232,8 @@ public class CostOfFundCodeListCtrl extends GFCBaseListCtrl<CostOfFundCode> {
 		arg.put("costOfFundCodeListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CostOfFundCode/CostOfFundCodeDialog.zul", null,
-					arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CostOfFundCode/CostOfFundCodeDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

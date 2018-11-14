@@ -84,28 +84,26 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainList.zul file.
  */
 public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = 2808357374960437326L;
 	private static final Logger logger = Logger.getLogger(WIFFinanceMainListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_WIFFinanceMainList; 			// autowired
+	protected Window window_WIFFinanceMainList; // autowired
 	protected Borderlayout borderLayout_WIFFinanceMainList; // autowired
-	protected Paging pagingWIFFinanceMainList; 				// autowired
-	protected Listbox listBoxWIFFinanceMain; 				// autowired
+	protected Paging pagingWIFFinanceMainList; // autowired
+	protected Listbox listBoxWIFFinanceMain; // autowired
 
 	protected Textbox finReference; // autowired
 	protected Listbox sortOperator_finReference; // autowired
 	protected Textbox finType; // autowired
 	protected Listbox sortOperator_finType; // autowired
-	protected int     oldVar_sortOperator_finType;			// autoWired
+	protected int oldVar_sortOperator_finType; // autoWired
 	protected Textbox finCcy; // autowired
 	protected Listbox sortOperator_finCcy; // autowired
 	protected Textbox scheduleMethod; // autowired
@@ -119,28 +117,28 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Checkbox finIsActive; // autowired
 	protected Listbox sortOperator_finIsActive; // autowired
 	protected Textbox recordStatus; // autowired
-	protected Listbox recordType;	// autowired
+	protected Listbox recordType; // autowired
 	protected Listbox sortOperator_recordStatus; // autowired
 	protected Listbox sortOperator_recordType; // autowired
 
 	// List headers
-	protected Listheader listheader_FinReference; 			// autowired
+	protected Listheader listheader_FinReference; // autowired
 	protected Listheader listheader_PromotionCode;
-	protected Listheader listheader_FinType; 				// autowired
-	protected Listheader listheader_FinCcy; 				// autowired
-	protected Listheader listheader_ScheduleMethod; 		// autowired
-	protected Listheader listheader_Amount; 				// autowired
-	protected Listheader listheader_NoOfTerms; 				// autowired
-	protected Listheader listheader_StartDate; 				// autowired
-	protected Listheader listheader_GraceEndDate; 			// autowired
-	protected Listheader listheader_MaturityDate; 			// autowired
-	protected Listheader listheader_RecordStatus; 			// autowired
+	protected Listheader listheader_FinType; // autowired
+	protected Listheader listheader_FinCcy; // autowired
+	protected Listheader listheader_ScheduleMethod; // autowired
+	protected Listheader listheader_Amount; // autowired
+	protected Listheader listheader_NoOfTerms; // autowired
+	protected Listheader listheader_StartDate; // autowired
+	protected Listheader listheader_GraceEndDate; // autowired
+	protected Listheader listheader_MaturityDate; // autowired
+	protected Listheader listheader_RecordStatus; // autowired
 
 	// checkRights
-	protected Button btnHelp; 												// autowired
-	protected Button button_WIFFinanceMainList_NewWIFFinanceMain; 			// autowired
-	protected Button button_WIFFinanceMainList_WIFFinanceMainSearchDialog; 	// autowired
-	protected Button button_WIFFinanceMainList_PrintList; 					// autowired
+	protected Button btnHelp; // autowired
+	protected Button button_WIFFinanceMainList_NewWIFFinanceMain; // autowired
+	protected Button button_WIFFinanceMainList_WIFFinanceMainSearchDialog; // autowired
+	protected Button button_WIFFinanceMainList_PrintList; // autowired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<FinanceMain> searchObj;
@@ -151,62 +149,73 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	private Textbox loanType;//Field for Maintain Different Finance Product Types
 	private boolean isFacilityWIF = false;
+
 	/**
 	 * default constructor.<br>
 	 */
 	public WIFFinanceMainListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
-		isFacilityWIF = StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_FACILITY);
-		
+		isFacilityWIF = StringUtils.trimToEmpty(this.loanType.getValue())
+				.equals(FinanceConstants.FIN_DIVISION_FACILITY);
+
 		if (isFacilityWIF) {
 			moduleCode = "WIFFinanceMain";
 		} else {
 			moduleCode = null;
 		}
-		
-		
+
 	}
 
 	public void onCreate$window_WIFFinanceMainList(Event event) throws Exception {
 		logger.debug("Entering");
 
-		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+		this.sortOperator_finType
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finCcy
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_scheduleMethod.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_scheduleMethod
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scheduleMethod.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_profitDaysBasis.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_profitDaysBasis
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_profitDaysBasis.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finStartDate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_finStartDate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_finStartDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custID
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_finIsActive.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
+		this.sortOperator_finIsActive
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getBooleanOperators()));
 		this.sortOperator_finIsActive.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=setRecordType(this.recordType);	
+			this.recordType = setRecordType(this.recordType);
 			this.sortOperator_recordType.setSelectedIndex(0);
 			this.recordType.setSelectedIndex(0);
-		}else{
+		} else {
 			this.row_AlwWorkflow.setVisible(false);
 		}
 		/* set components visible dependent on the users rights */
@@ -239,7 +248,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.listheader_MaturityDate.setSortAscending(new FieldComparator("maturityDate", true));
 		this.listheader_MaturityDate.setSortDescending(new FieldComparator("maturityDate", false));
 
-		if(isFacilityWIF){
+		if (isFacilityWIF) {
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 		}
@@ -247,7 +256,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		doSearch();
 		// set the itemRenderer
 		this.listBoxWIFFinanceMain.setItemRenderer(new WIFFinanceMainListModelItemRenderer());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -257,9 +266,11 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("WIFFinanceMainList");
-		this.button_WIFFinanceMainList_NewWIFFinanceMain.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_NewWIFFinanceMain"));
+		this.button_WIFFinanceMainList_NewWIFFinanceMain
+				.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_NewWIFFinanceMain"));
 		this.button_WIFFinanceMainList_WIFFinanceMainSearchDialog.setVisible(true);
-		this.button_WIFFinanceMainList_PrintList.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_PrintList"));
+		this.button_WIFFinanceMainList_PrintList
+				.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_PrintList"));
 		logger.debug("Leaving");
 	}
 
@@ -280,27 +291,31 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 
 			boolean reqCustDetails = false;
-			if(StringUtils.isNotEmpty(this.loanType.getValue()) && !this.loanType.getValue().equals(FinanceConstants.FIN_DIVISION_COMMERCIAL)){
+			if (StringUtils.isNotEmpty(this.loanType.getValue())
+					&& !this.loanType.getValue().equals(FinanceConstants.FIN_DIVISION_COMMERCIAL)) {
 				reqCustDetails = true;
 			}
 
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aWIFFinanceMain = (FinanceMain) item.getAttribute("data");
-			final FinanceDetail financeDetail = getFinanceDetailService().getWIFFinance(aWIFFinanceMain.getId(),reqCustDetails, FinanceConstants.FINSER_EVENT_ORG);
-			if(!isFacilityWIF){
+			final FinanceDetail financeDetail = getFinanceDetailService().getWIFFinance(aWIFFinanceMain.getId(),
+					reqCustDetails, FinanceConstants.FINSER_EVENT_ORG);
+			if (!isFacilityWIF) {
 				financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
 			}
-			if(financeDetail==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=aWIFFinanceMain.getId();
-				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+			if (financeDetail == null) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aWIFFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
-			}else{
+			} else {
 				showDetailView(financeDetail);
-			}	
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -309,18 +324,17 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Call the WIFFinanceMain dialog with a new empty entry. <br>
 	 */
 	public void onClick$button_WIFFinanceMainList_NewWIFFinanceMain(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		// create a new WIFFinanceMain object, We GET it from the backend.
 		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(true);
 		aFinanceDetail.setNewRecord(true);
-		if(!isFacilityWIF){
+		if (!isFacilityWIF) {
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
 		}
 		/*
-		 * we can call our SelectFinanceType ZUL-file with parameters. So we can
-		 * call them with a object of the selected FinanceMain. For handed over
-		 * these parameter only a Map is accepted. So we put the FinanceMain object
-		 * in a HashMap.
+		 * we can call our SelectFinanceType ZUL-file with parameters. So we can call them with a object of the selected
+		 * FinanceMain. For handed over these parameter only a Map is accepted. So we put the FinanceMain object in a
+		 * HashMap.
 		 */
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("WIFFinanceMainDialogCtrl", new WIFFinanceMainDialogCtrl());
@@ -331,42 +345,41 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/WIFinanceTypeSelect.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/WIFinanceTypeSelect.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param WIFFinanceMain (aWIFFinanceMain)
+	 * @param WIFFinanceMain
+	 *            (aWIFFinanceMain)
 	 * @throws Exception
 	 */
 	private void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog zul-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 		FinanceMain aWIFFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		
+
 		if (aWIFFinanceMain.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aWIFFinanceMain.setWorkflowId(getWorkFlowId());
 		}
-		
+
 		aWIFFinanceMain.setNewRecord(aFinanceDetail.isNewRecord());
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aWIFFinanceMain);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDetail", aFinanceDetail);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listbox Listmodel. This is
-		 * fine for synchronizing the data in the WIFFinanceMainListbox from the
-		 * dialog when we do a delete, edit or insert a WIFFinanceMain.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listbox Listmodel. This is fine for synchronizing the data in the WIFFinanceMainListbox from the dialog when
+		 * we do a delete, edit or insert a WIFFinanceMain.
 		 */
 		map.put("wIFFinanceMainListCtrl", this);
 		map.put("loanType", this.loanType.getValue());
@@ -376,13 +389,14 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			String productType = this.loanType.getValue();
 
-			if(!productType.equals(FinanceConstants.FIN_DIVISION_RETAIL)){
+			if (!productType.equals(FinanceConstants.FIN_DIVISION_RETAIL)) {
 				productType = "";
-			}else{
+			} else {
 				productType = "RETAIL";
-				productType = (productType.substring(0, 1)).toUpperCase()+(productType.substring(1)).toLowerCase();
+				productType = (productType.substring(0, 1)).toUpperCase() + (productType.substring(1)).toLowerCase();
 			}
-			Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/"+productType+"WIFFinanceMainDialog.zul",null,map);
+			Executions.createComponents(
+					"/WEB-INF/pages/Finance/WIFFinanceMain/" + productType + "WIFFinanceMainDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -427,8 +441,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.profitDaysBasis.setValue("");
 		this.sortOperator_scheduleMethod.setSelectedIndex(0);
 		this.scheduleMethod.setValue("");
-		this.oldVar_sortOperator_finType=0;
-		if (isWorkFlowEnabled()){
+		this.oldVar_sortOperator_finType = 0;
+		if (isWorkFlowEnabled()) {
 			this.sortOperator_recordStatus.setSelectedIndex(0);
 			this.recordStatus.setValue("");
 			this.sortOperator_recordType.setSelectedIndex(0);
@@ -441,7 +455,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.pagingWIFFinanceMainList.setActivePage(0);
 		this.pagingWIFFinanceMainList.setDetailed(true);
 		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj,this.listBoxWIFFinanceMain,this.pagingWIFFinanceMainList);
+		getPagedListWrapper().init(this.searchObj, this.listBoxWIFFinanceMain, this.pagingWIFFinanceMainList);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -464,15 +478,16 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	public void onClick$button_WIFFinanceMainList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		new PTListReportUtils(this.loanType.getValue()+"WIF", getSearchObj(),this.pagingWIFFinanceMainList.getTotalSize()+1);
+		new PTListReportUtils(this.loanType.getValue() + "WIF", getSearchObj(),
+				this.pagingWIFFinanceMainList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
 	}
+
 	public void doSearch() {
 		logger.debug("Entering");
 
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class,
-				getListRows());
+		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class, getListRows());
 		this.searchObj.addSort("FinReference", false);
 		this.searchObj.addField("finReference");
 		this.searchObj.addField("finType");
@@ -507,28 +522,31 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				button_WIFFinanceMainList_NewWIFFinanceMain.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace()
-					.getUserRoles(), isFirstTask());
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		} else {
 			this.searchObj.addTabelName("WIFFinanceMain_View");
 		}
 		addDivisionFilters();
 		//CustId
 		if (StringUtils.isNotBlank(this.custID.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_custID.getSelectedItem(),this.custID.getValue(), "CustID");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(), this.custID.getValue(),
+					"CustID");
 		}
 		//ScheduleMethod
 		if (StringUtils.isNotBlank(this.scheduleMethod.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_scheduleMethod.getSelectedItem(),this.scheduleMethod.getValue(), "ScheduleMethod");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_scheduleMethod.getSelectedItem(),
+					this.scheduleMethod.getValue(), "ScheduleMethod");
 		}
 
 		//FinCcy
 		if (StringUtils.isNotBlank(this.finCcy.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finCcy.getSelectedItem(),this.finCcy.getValue(), "FinCcy");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finCcy.getSelectedItem(), this.finCcy.getValue(),
+					"FinCcy");
 		}
 		//FinReference
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(),this.finReference.getValue().trim(), "FinReference");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finReference.getSelectedItem(),
+					this.finReference.getValue().trim(), "FinReference");
 		}
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
 			// get the search operator
@@ -540,11 +558,14 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if (searchOpId == -1) {
 					// do nothing
 				} else if (searchOpId == Filter.OP_LIKE) {
-					searchObj.addFilter(new Filter("FinType", "%" + this.finType.getValue().toUpperCase() + "%", searchOpId));
+					searchObj.addFilter(
+							new Filter("FinType", "%" + this.finType.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == Filter.OP_IN) {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","),Filter.OP_IN));
+					this.searchObj
+							.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","), Filter.OP_IN));
 				} else if (searchOpId == Filter.OP_NOT_IN) {
-					this.searchObj.addFilter(new Filter("FinType", this.finType.getValue().trim().split(","),Filter.OP_NOT_IN));
+					this.searchObj.addFilter(
+							new Filter("FinType", this.finType.getValue().trim().split(","), Filter.OP_NOT_IN));
 				} else {
 					searchObj.addFilter(new Filter("FinType", this.finType.getValue(), searchOpId));
 				}
@@ -552,54 +573,62 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		//ProfitDayBasis
 		if (StringUtils.isNotBlank(this.profitDaysBasis.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_profitDaysBasis.getSelectedItem(),this.profitDaysBasis.getValue(), "ProfitDaysBasis");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_profitDaysBasis.getSelectedItem(),
+					this.profitDaysBasis.getValue(), "ProfitDaysBasis");
 		}
 		//FinStartDate
-		if (this.finStartDate.getValue()!=null) {
+		if (this.finStartDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finStartDate.getSelectedItem(),
 					this.finStartDate.getValue(), "FinStartDate");
 		}
 		//FinIsActive
-		int intActive=0;
-		if(this.finIsActive.isChecked()){
-			intActive=1;
+		int intActive = 0;
+		if (this.finIsActive.isChecked()) {
+			intActive = 1;
 		}
-		searchObj = getSearchFilter(searchObj, this.sortOperator_finIsActive.getSelectedItem(),intActive, "FinIsActive");
+		searchObj = getSearchFilter(searchObj, this.sortOperator_finIsActive.getSelectedItem(), intActive,
+				"FinIsActive");
 
 		// Record Status
 		if (StringUtils.isNotBlank(recordStatus.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordStatus.getSelectedItem(),
+					this.recordStatus.getValue(), "RecordStatus");
 		}
 
 		// Record Type
 		if (this.recordType.getSelectedItem() != null
 				&& !"".equals(StringUtils.trimToEmpty(String.valueOf(this.recordType.getSelectedItem().getValue())))) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
 
 		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj, this.listBoxWIFFinanceMain,this.pagingWIFFinanceMainList);
+		getPagedListWrapper().init(this.searchObj, this.listBoxWIFFinanceMain, this.pagingWIFFinanceMainList);
 
 		logger.debug("Leaving");
 	}
-	public void addDivisionFilters(){
+
+	public void addDivisionFilters() {
 		logger.debug("Entering");
-		if(StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_RETAIL)){
-			this.searchObj.addFilter(new Filter("LovDescFinDivisionName", FinanceConstants.FIN_DIVISION_RETAIL, Filter.OP_EQUAL));
-		}else if(StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_FACILITY)){
-			this.searchObj.addFilter(new Filter("LovDescFinDivisionName", FinanceConstants.FIN_DIVISION_RETAIL, Filter.OP_NOT_EQUAL));
-		}else if(StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_COMMERCIAL)){
-			this.searchObj.addFilter(new Filter("LovDescFinDivisionName", FinanceConstants.FIN_DIVISION_COMMERCIAL, Filter.OP_EQUAL));
+		if (StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_RETAIL)) {
+			this.searchObj.addFilter(
+					new Filter("LovDescFinDivisionName", FinanceConstants.FIN_DIVISION_RETAIL, Filter.OP_EQUAL));
+		} else if (StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_FACILITY)) {
+			this.searchObj.addFilter(
+					new Filter("LovDescFinDivisionName", FinanceConstants.FIN_DIVISION_RETAIL, Filter.OP_NOT_EQUAL));
+		} else if (StringUtils.trimToEmpty(this.loanType.getValue()).equals(FinanceConstants.FIN_DIVISION_COMMERCIAL)) {
+			this.searchObj.addFilter(
+					new Filter("LovDescFinDivisionName", FinanceConstants.FIN_DIVISION_COMMERCIAL, Filter.OP_EQUAL));
 		}
-		if(isFacilityWIF){
+		if (isFacilityWIF) {
 			this.searchObj.addFilter(Filter.isNotNull("FacilityType"));
-		}else{
+		} else {
 			this.searchObj.addFilter(Filter.isNull("FacilityType"));
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * when clicks on button "SearchFinType"
 	 * 
@@ -608,15 +637,15 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if(this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_WIFFinanceMainList, "FinanceType", this.finType.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_WIFFinanceMainList,
+					"FinanceType", this.finType.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finType.setValue(selectedValues);
 			}
 
-		}else{
+		} else {
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_WIFFinanceMainList, "FinanceType");
 			if (dataObject instanceof String) {
@@ -630,34 +659,34 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	// ************************************************************************ //
 	// **On Change Events for Multi-Selection Listbox's for Search operators*** //
 	// ************************************************************************ //
 
-		
 	public void onSelect$sortOperator_finType(Event event) {
-		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_finType, oldVar_sortOperator_finType, this.finType);
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_finType, oldVar_sortOperator_finType,
+				this.finType);
 	}
-	
-	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
+
+	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
 
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
 
-		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
-			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
+		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
+			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
 				textbox.setValue("");
 			}
-		}else{
-			if(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN){
+		} else {
+			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
 				textbox.setValue("");
 			}
 		}
 		return searchOpId;
 
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -665,6 +694,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public JdbcSearchObject<FinanceMain> getSearchObj() {
 		return this.searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<FinanceMain> so) {
 		this.searchObj = so;
 	}
@@ -672,6 +702,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}

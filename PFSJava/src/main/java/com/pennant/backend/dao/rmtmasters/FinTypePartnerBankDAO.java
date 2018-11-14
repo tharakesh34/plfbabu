@@ -48,8 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 
 public interface FinTypePartnerBankDAO extends BasicCrudDao<FinTypePartnerBank> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -66,6 +65,6 @@ public interface FinTypePartnerBankDAO extends BasicCrudDao<FinTypePartnerBank> 
 	List<FinTypePartnerBank> getFinTypePartnerBank(String finType, String type);
 
 	int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID);
-	
+
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
 }

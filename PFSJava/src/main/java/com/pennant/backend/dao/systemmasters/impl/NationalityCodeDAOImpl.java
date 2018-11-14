@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,11 +68,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements NationalityCodeDAO {
 	private static Logger logger = Logger.getLogger(NationalityCodeDAOImpl.class);
-	
+
 	public NationalityCodeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Nationalities details by key field
 	 * 
@@ -86,20 +85,22 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 	@Override
 	public NationalityCode getNationalityCodeById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		NationalityCode nationalityCodes = new NationalityCode();
 		nationalityCodes.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select NationalityCode, NationalityDesc, NationalityIsActive,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTNationalityCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where NationalityCode =:NationalityCode");
 
 		logger.debug("selectSql: " + selectSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nationalityCodes);
-		RowMapper<NationalityCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NationalityCode.class);
+		RowMapper<NationalityCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(NationalityCode.class);
 
 		try {
 			nationalityCodes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -110,7 +111,7 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 		logger.debug("Leaving");
 		return nationalityCodes;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String NationalityCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -127,7 +128,8 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 			sql = QueryUtil.getCountQuery("BMTNationalityCodes_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "BMTNationalityCodes_Temp", "BMTNationalityCodes" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "BMTNationalityCodes_Temp", "BMTNationalityCodes" },
+					whereClause);
 			break;
 		}
 
@@ -146,7 +148,7 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(NationalityCode nationalityCodes, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -158,13 +160,14 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:NationalityCode, :NationalityDesc, :NationalityIsActive,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nationalityCodes);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
@@ -174,7 +177,7 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 		logger.debug(Literal.LEAVING);
 		return nationalityCodes.getId();
 	}
-	
+
 	@Override
 	public void update(NationalityCode nationalityCodes, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -184,7 +187,8 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 		sql.append(tableType.getSuffix());
 		sql.append(" set  NationalityDesc = :NationalityDesc,");
 		sql.append(" NationalityIsActive = :NationalityIsActive,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where NationalityCode =:NationalityCode");
@@ -206,20 +210,20 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 	@Override
 	public void delete(NationalityCode nationalityCodes, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from BMTNationalityCodes");
 		sql.append(tableType.getSuffix());
 		sql.append(" where NationalityCode =:NationalityCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());		
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nationalityCodes);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

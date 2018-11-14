@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.PRelationCode;
 
 /**
@@ -49,9 +50,12 @@ import com.pennant.backend.model.systemmasters.PRelationCode;
  * 
  */
 public interface PRelationCodeDAO {
-	
-	PRelationCode getPRelationCodeById(String id,String type);
-	void update(PRelationCode pRelationCode,String type);
-	void delete(PRelationCode pRelationCode,String type);
-	String save(PRelationCode pRelationCode,String type);
+
+	PRelationCode getPRelationCodeById(String id, String type);
+
+	void update(PRelationCode pRelationCode, String type);
+
+	void delete(PRelationCode pRelationCode, String type);
+
+	String save(PRelationCode pRelationCode, String type);
 }

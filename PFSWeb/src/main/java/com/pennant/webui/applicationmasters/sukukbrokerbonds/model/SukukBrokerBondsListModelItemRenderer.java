@@ -57,7 +57,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,32 +66,36 @@ public class SukukBrokerBondsListModelItemRenderer implements ListitemRenderer<S
 	private static final long serialVersionUID = 1L;
 
 	public SukukBrokerBondsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, SukukBrokerBonds sukukBrokerBonds, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(sukukBrokerBonds.getBondCode());
+		lc = new Listcell(sukukBrokerBonds.getBondCode());
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(sukukBrokerBonds.getPaymentMode(), PennantStaticListUtil.getPaymentModes()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(sukukBrokerBonds.getIssuerAccount());
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(sukukBrokerBonds.getPaymentMode(),
+				PennantStaticListUtil.getPaymentModes()));
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(sukukBrokerBonds.getCommissionType(), PennantStaticListUtil.getCommissionType()));
-	  	lc.setParent(item);
-	  	String commission="";
-		if (StringUtils.trimToEmpty(sukukBrokerBonds.getCommissionType()).equals(PennantConstants.COMMISSION_TYPE_FLAT)) {
-			commission=PennantAppUtil.amountFormate(sukukBrokerBonds.getCommission(), 0);
-		} else if (StringUtils.trimToEmpty(sukukBrokerBonds.getCommissionType()).equals(PennantConstants.COMMISSION_TYPE_PERCENTAGE)) {
-			commission=PennantAppUtil.amountFormate(sukukBrokerBonds.getCommission(), 2);
+		lc = new Listcell(sukukBrokerBonds.getIssuerAccount());
+		lc.setParent(item);
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(sukukBrokerBonds.getCommissionType(),
+				PennantStaticListUtil.getCommissionType()));
+		lc.setParent(item);
+		String commission = "";
+		if (StringUtils.trimToEmpty(sukukBrokerBonds.getCommissionType())
+				.equals(PennantConstants.COMMISSION_TYPE_FLAT)) {
+			commission = PennantAppUtil.amountFormate(sukukBrokerBonds.getCommission(), 0);
+		} else if (StringUtils.trimToEmpty(sukukBrokerBonds.getCommissionType())
+				.equals(PennantConstants.COMMISSION_TYPE_PERCENTAGE)) {
+			commission = PennantAppUtil.amountFormate(sukukBrokerBonds.getCommission(), 2);
 		}
-	  	
-	  	lc = new Listcell(commission);
-	  	lc.setStyle("text-align:right;");
-	  	lc.setParent(item);
-	  	lc = new Listcell(sukukBrokerBonds.getRecordStatus());
+
+		lc = new Listcell(commission);
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+		lc = new Listcell(sukukBrokerBonds.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(sukukBrokerBonds.getRecordType()));
 		lc.setParent(item);

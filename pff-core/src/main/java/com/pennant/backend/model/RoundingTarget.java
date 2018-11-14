@@ -43,12 +43,10 @@
 package com.pennant.backend.model;
 
 public class RoundingTarget {
-	private int		minorUnit;
-	private int		roundingOrder;
-	private String	description;
+	private int minorUnit;
+	private int roundingOrder;
+	private String description;
 
-	
-	
 	public RoundingTarget(int minorUnit, int roundingOrder, String description) {
 		super();
 		this.minorUnit = minorUnit;

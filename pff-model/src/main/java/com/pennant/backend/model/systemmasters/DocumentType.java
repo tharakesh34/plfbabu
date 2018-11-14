@@ -95,14 +95,14 @@ public class DocumentType extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("categoryCode");
 		excludeFields.add("categoryDesc");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

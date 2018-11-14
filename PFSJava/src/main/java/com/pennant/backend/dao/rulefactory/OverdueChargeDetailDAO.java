@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.rulefactory;
+
 import java.util.List;
 
 import com.pennant.backend.model.rulefactory.OverdueChargeDetail;
@@ -53,10 +54,16 @@ import com.pennant.backend.model.rulefactory.OverdueChargeDetail;
 public interface OverdueChargeDetailDAO {
 
 	OverdueChargeDetail getOverdueChargeDetail();
+
 	OverdueChargeDetail getNewOverdueChargeDetail();
-	OverdueChargeDetail getOverdueChargeDetailById(String ruleCode,String ctgCode,String type);
-	void update(OverdueChargeDetail overdueChargeDetail,String type);
-	void delete(OverdueChargeDetail overdueChargeDetail,String type);
-	String save(OverdueChargeDetail overdueChargeDetail,String type);
-	List<OverdueChargeDetail> getListOverdueChargeDetailById(String id,String type);
+
+	OverdueChargeDetail getOverdueChargeDetailById(String ruleCode, String ctgCode, String type);
+
+	void update(OverdueChargeDetail overdueChargeDetail, String type);
+
+	void delete(OverdueChargeDetail overdueChargeDetail, String type);
+
+	String save(OverdueChargeDetail overdueChargeDetail, String type);
+
+	List<OverdueChargeDetail> getListOverdueChargeDetailById(String id, String type);
 }

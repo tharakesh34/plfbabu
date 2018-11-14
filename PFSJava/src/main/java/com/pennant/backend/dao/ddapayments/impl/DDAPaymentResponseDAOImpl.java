@@ -14,9 +14,8 @@ import com.pennant.backend.dao.ddapayments.DDAPaymentResponseDAO;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class DDAPaymentResponseDAOImpl  extends BasicDao<DDAPayments> implements DDAPaymentResponseDAO {
-    private static Logger logger = Logger.getLogger(DDAPaymentResponseDAOImpl.class);
-
+public class DDAPaymentResponseDAOImpl extends BasicDao<DDAPayments> implements DDAPaymentResponseDAO {
+	private static Logger logger = Logger.getLogger(DDAPaymentResponseDAOImpl.class);
 
 	public DDAPaymentResponseDAOImpl() {
 		super();
@@ -35,7 +34,7 @@ public class DDAPaymentResponseDAOImpl  extends BasicDao<DDAPayments> implements
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
-		} catch(EmptyResultDataAccessException dae) {
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return null;
 		}
@@ -85,7 +84,5 @@ public class DDAPaymentResponseDAOImpl  extends BasicDao<DDAPayments> implements
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-
-	
 
 }

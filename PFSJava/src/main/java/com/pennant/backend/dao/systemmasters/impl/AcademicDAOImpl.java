@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Academic</code> with set of CRUD operations.
  */
 public class AcademicDAOImpl extends SequenceDao<Academic> implements AcademicDAO {
-	private static Logger				logger	= LogManager.getLogger(AcademicDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AcademicDAOImpl.class);
 
 	public AcademicDAOImpl() {
 		super();

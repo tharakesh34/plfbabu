@@ -54,11 +54,17 @@ import com.pennant.backend.model.audit.AuditHeader;
  */
 public interface CostOfFundService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CostOfFund getCostOfFundById(String cofCode,String currency, Date cofEffDate);
-	CostOfFund getApprovedCostOfFundById(String bRType,String currency, Date cofEffDate);
+
+	CostOfFund getCostOfFundById(String cofCode, String currency, Date cofEffDate);
+
+	CostOfFund getApprovedCostOfFundById(String bRType, String currency, Date cofEffDate);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	boolean getCostOfFundListById(String cofCode,String currency, Date cofEffDate);
+
+	boolean getCostOfFundListById(String cofCode, String currency, Date cofEffDate);
 
 }

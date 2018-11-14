@@ -166,13 +166,12 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 				paymentInstMap.put("pi_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			
+
 			}
 		}
 		return paymentInstMap;
 	}
-	
-	
+
 	public long getId() {
 		return paymentInstructionId;
 	}

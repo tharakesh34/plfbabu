@@ -15,16 +15,16 @@ import javax.xml.bind.annotation.XmlType;
 public class Business {
 
 	@XmlElement(name = "BUSINESSPREMISESOWNERSHIP")
-	private String		busPremisesOwnership;
+	private String busPremisesOwnership;
 
 	@XmlElement(name = "ORGANIZATIONTYPE")
-	private String		orgType;
+	private String orgType;
 
 	@XmlElement(name = "NUMBEROFOWNERSORSHAREHOLDINGPATTERN")
-	private int			numbOfOwnersOrShareholdingPattern;
+	private int numbOfOwnersOrShareholdingPattern;
 
 	@XmlElement(name = "OPERATIONALBUSINESSVINTAGE")
-	private BigDecimal	operationalBusinessVintage	= BigDecimal.ZERO;
+	private BigDecimal operationalBusinessVintage = BigDecimal.ZERO;
 
 	public String getBusPremisesOwnership() {
 		return busPremisesOwnership;

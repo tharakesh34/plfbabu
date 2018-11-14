@@ -85,12 +85,9 @@ import com.pennant.util.PennantLOVListUtil;
 
 /**
  * This class creates a modal window as a dialog in which the user <br>
- * can search and select a branch object. By onClosing this box <b>returns</b>
- * an object or null. <br>
- * The object can returned by selecting and clicking the OK button or by
- * DoubleClicking on an item from the list.<br>
- * Further the count of results can limited by manipulating the value of a table
- * field for the sql where clause.<br>
+ * can search and select a branch object. By onClosing this box <b>returns</b> an object or null. <br>
+ * The object can returned by selecting and clicking the OK button or by DoubleClicking on an item from the list.<br>
+ * Further the count of results can limited by manipulating the value of a table field for the sql where clause.<br>
  */
 public class MultiSelectionStaticListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -108,13 +105,12 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 
 	private Object objClass = null;
 	private transient PagedListService pagedListService;
-	private String selectedValues=null;
-	private Map<String,String> checkMap=new HashMap<String,String>();
-	private ArrayList<ValueLabel>  arrayList;
-	private ArrayList<ValueLabel>  defaultValuesList = new ArrayList<ValueLabel>();
+	private String selectedValues = null;
+	private Map<String, String> checkMap = new HashMap<String, String>();
+	private ArrayList<ValueLabel> arrayList;
+	private ArrayList<ValueLabel> defaultValuesList = new ArrayList<ValueLabel>();
 	private ModuleListcode moduleListcode;
-	
-	
+
 	public MultiSelectionStaticListBox() {
 		super();
 	}
@@ -126,21 +122,19 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	
-	public static Object show(Component parent,String listCode,String selectedValues) {
-		return new MultiSelectionStaticListBox(parent,listCode,selectedValues).getObject();
-	}	
-	
+
+	public static Object show(Component parent, String listCode, String selectedValues) {
+		return new MultiSelectionStaticListBox(parent, listCode, selectedValues).getObject();
+	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private MultiSelectionStaticListBox(Component parent,String listCode,String selectedValues) {
+	private MultiSelectionStaticListBox(Component parent, String listCode, String selectedValues) {
 		super();
-		this.selectedValues=selectedValues;
+		this.selectedValues = selectedValues;
 		setList(listCode);
 		setCheckMap();
 		setParent(parent);
@@ -152,14 +146,14 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	 */
 	@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
 	private void createBox() {
-		logger.debug("Entering"); 
+		logger.debug("Entering");
 		// Window
-		this.setWidth(String.valueOf(this._width+5) + "px");
+		this.setWidth(String.valueOf(this._width + 5) + "px");
 		this.setHeight(String.valueOf(this._height) + "px");
 		this.setVisible(true);
 		this.setClosable(true);
 		this.setTitle(moduleListcode.getModuleListName());
-		
+
 		// Borderlayout
 		final Borderlayout bl = new Borderlayout();
 		bl.setHeight("100%");
@@ -193,7 +187,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 		center2.setBorder("none");
 		center2.setFlex(true);
 		center2.setParent(bl2);
-		
+
 		// Div Center area
 		final Div divCenter2 = new Div();
 		divCenter2.setWidth("100%");
@@ -215,12 +209,12 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 		listheaderCode.setSclass("BCMListHeaderCode");
 		listheaderCode.setParent(listhead);
 		listheaderCode.setLabel(moduleListcode.getFieldHeading()[0]);
-		
-		final Listheader listheaderDesc= new Listheader();
+
+		final Listheader listheaderDesc = new Listheader();
 		listheaderDesc.setSclass("BCMListHeaderDesc");
 		listheaderDesc.setParent(listhead);
 		listheaderDesc.setLabel(moduleListcode.getFieldHeading()[1]);
-		
+
 		final South south2 = new South();
 		south2.setBorder("none");
 		south2.setHeight("26px");
@@ -245,7 +239,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 		this._searchButton.setImage("/images/icons/search.gif");
 		this._searchButton.addEventListener("onClick", new OnSearchListener());
 		this._searchButton.setParent(hbox);
-		
+
 		final South south = new South();
 		south.setBorder("none");
 		south.setHeight("30px");
@@ -270,35 +264,34 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 		divSouth.appendChild(new Space());
 
 		// Button
-		final Button btnClear= new Button();
+		final Button btnClear = new Button();
 		btnClear.setStyle("padding-left: 5px");
 		btnClear.setLabel("Clear");
 		btnClear.addEventListener("onClick", new OnClearListener());
 		btnClear.setParent(divSouth);
-		
+
 		/**
 		 * init the model.<br>
-		 * The ResultObject is a helper class that holds the generic list and
-		 * the totalRecord count as int value.
+		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
 		 */
-		
+
 		arrayList = moduleListcode.getValueLabels();
 		defaultValuesList = moduleListcode.getValueLabels();
-		if(arrayList!=null){
+		if (arrayList != null) {
 			this._paging.setTotalSize(arrayList.size());
-		}else{
+		} else {
 			this._paging.setTotalSize(0);
 		}
 
 		setListModelList(new ListModelList(getListData(0)));
 		this.listbox.setModel(getListModelList());
-		
+
 		try {
 			doModal();
 		} catch (final SuspendNotAllowedException e) {
 			logger.fatal("", e);
 			this.detach();
-		} 
+		}
 
 		logger.debug("Leaving");
 	}
@@ -307,11 +300,11 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class SearchBoxItemRenderer implements ListitemRenderer<ValueLabel> {
-		
+
 		public SearchBoxItemRenderer() {
-			
+
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		@Override
 		public void render(Listitem item, ValueLabel valueLabel, int count) throws Exception {
@@ -337,16 +330,15 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and
-	 * pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
 	 */
 	@SuppressWarnings("rawtypes")
 	public final class OnPagingEventListener implements EventListener {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -359,33 +351,33 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	}
 
 	@SuppressWarnings("rawtypes")
-	public final class onCheckBoxCheked implements EventListener{
-		
+	public final class onCheckBoxCheked implements EventListener {
+
 		public onCheckBoxCheked() {
-			
-		}		
-		
+
+		}
+
 		public void onEvent(Event event) throws Exception {
-			
-			Checkbox checkbox =  (Checkbox) event.getTarget();
-			if (checkbox.isChecked()){
+
+			Checkbox checkbox = (Checkbox) event.getTarget();
+			if (checkbox.isChecked()) {
 				checkMap.put(checkbox.getValue().toString(), checkbox.getValue().toString());
-			}else{
+			} else {
 				checkMap.remove(checkbox.getValue());
 			}
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(int start) {
 		logger.debug("Entering Method refreshModel");
-		
+
 		// clear old data
 		getListModelList().clear();
-		if(arrayList!=null){
+		if (arrayList != null) {
 			this._paging.setTotalSize(arrayList.size());
-		}else{
+		} else {
 			this._paging.setTotalSize(0);
 		}
 		// set the model
@@ -399,11 +391,11 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	 * Inner OnSearchListener class.<br>
 	 */
 	final class OnSearchListener implements EventListener<Event> {
-		
+
 		public OnSearchListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			refreshSearchList();
@@ -411,30 +403,29 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 		}
 	}
 
-	
 	/**
 	 * Inner OnCloseListener class.<br>
 	 */
 	@SuppressWarnings("rawtypes")
 	final class OnCloseListener implements EventListener {
-		
+
 		public OnCloseListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
-			String returnValues=null;
-			Object[] object= checkMap.values().toArray();
+			String returnValues = null;
+			Object[] object = checkMap.values().toArray();
 			for (int i = 0; i < object.length; i++) {
-				if (returnValues==null){
-					returnValues=object[i].toString();
-				}else{
-					returnValues=returnValues+","+object[i].toString();
+				if (returnValues == null) {
+					returnValues = object[i].toString();
+				} else {
+					returnValues = returnValues + "," + object[i].toString();
 				}
 			}
-			
+
 			setObject(StringUtils.trimToEmpty(returnValues));
 			onClose();
 		}
@@ -444,18 +435,18 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	 * Method for Clearing Items from Search Box
 	 */
 	final class OnClearListener implements EventListener<Event> {
-		
+
 		public OnClearListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setObject("");
 			onClose();
 		}
 	}
-	
+
 	// ************************************************* //
 	// **************** Setter/Getter ****************** //
 	// ************************************************* //
@@ -487,16 +478,16 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	}
 
 	public PagedListService getPagedListService() {
-		if (this.pagedListService==null){
-			this.pagedListService= (PagedListService) SpringUtil.getBean("pagedListService");	
+		if (this.pagedListService == null) {
+			this.pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		}
 		return pagedListService;
 	}
-	
+
 	public void setCheckMap() {
-	
-		if (StringUtils.isNotBlank(selectedValues)){
-			String[] checkedValues= selectedValues.split(",");
+
+		if (StringUtils.isNotBlank(selectedValues)) {
+			String[] checkedValues = selectedValues.split(",");
 			for (int i = 0; i < checkedValues.length; i++) {
 				this.checkMap.put(checkedValues[i], checkedValues[i]);
 			}
@@ -518,25 +509,24 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 		return list;
 	}
 
-	public void setList(String listCode){
+	public void setList(String listCode) {
 		this.moduleListcode = PennantLOVListUtil.getModuleMap(listCode);
 		System.out.println(moduleListcode);
 	}
-	
-	
+
 	/**
 	 * This method is to process and show the results in the list based on search criteria
 	 */
-	private void refreshSearchList(){
-		if(StringUtils.isBlank(this._textbox.getValue())){
-			arrayList = defaultValuesList ;
-		}else{
-			if(defaultValuesList != null && !defaultValuesList.isEmpty()){
+	private void refreshSearchList() {
+		if (StringUtils.isBlank(this._textbox.getValue())) {
+			arrayList = defaultValuesList;
+		} else {
+			if (defaultValuesList != null && !defaultValuesList.isEmpty()) {
 				ArrayList<ValueLabel> newSearchValueList = null;
 				for (ValueLabel valueLabel : defaultValuesList) {
-					if(valueLabel.getValue().toUpperCase().contains(this._textbox.getValue().toUpperCase()) ||
-							valueLabel.getLabel().toUpperCase().contains(this._textbox.getValue().toUpperCase())){
-						if(newSearchValueList == null){
+					if (valueLabel.getValue().toUpperCase().contains(this._textbox.getValue().toUpperCase())
+							|| valueLabel.getLabel().toUpperCase().contains(this._textbox.getValue().toUpperCase())) {
+						if (newSearchValueList == null) {
 							newSearchValueList = new ArrayList<ValueLabel>();
 						}
 						newSearchValueList.add(valueLabel);
@@ -546,5 +536,5 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 			}
 		}
 	}
-	
+
 }

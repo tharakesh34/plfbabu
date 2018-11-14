@@ -49,8 +49,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>FeeWaiverDetails table</b>.<br>
@@ -59,25 +59,25 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 
-	private static final long	serialVersionUID	= -6234931333270161797L;
+	private static final long serialVersionUID = -6234931333270161797L;
 
-	private long				waiverDetailId		= Long.MIN_VALUE;
-	private long				waiverId			= Long.MIN_VALUE;
-	private long				adviseId			= Long.MIN_VALUE;
-	private Date				finODSchdDate;
-	private String				feeTypeCode;
-	private String				feeTypeDesc;
-	private BigDecimal			receivableAmount	= BigDecimal.ZERO;
-	private BigDecimal			receivedAmount		= BigDecimal.ZERO;
-	private BigDecimal			WaivedAmount		= BigDecimal.ZERO;
-	private BigDecimal			balanceAmount		= BigDecimal.ZERO;
-	private BigDecimal			currWaiverAmount	= BigDecimal.ZERO;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private FeeWaiverDetail		befImage;
-	private LoggedInUser		userDetails;
-	private Date				valueDate;
-	private String				waivedBy;
+	private long waiverDetailId = Long.MIN_VALUE;
+	private long waiverId = Long.MIN_VALUE;
+	private long adviseId = Long.MIN_VALUE;
+	private Date finODSchdDate;
+	private String feeTypeCode;
+	private String feeTypeDesc;
+	private BigDecimal receivableAmount = BigDecimal.ZERO;
+	private BigDecimal receivedAmount = BigDecimal.ZERO;
+	private BigDecimal WaivedAmount = BigDecimal.ZERO;
+	private BigDecimal balanceAmount = BigDecimal.ZERO;
+	private BigDecimal currWaiverAmount = BigDecimal.ZERO;
+	private boolean newRecord = false;
+	private String lovValue;
+	private FeeWaiverDetail befImage;
+	private LoggedInUser userDetails;
+	private Date valueDate;
+	private String waivedBy;
 
 	public FeeWaiverDetail() {
 		super();
@@ -97,7 +97,6 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
 
 	public long getWaiverId() {
 		return waiverId;
@@ -249,5 +248,5 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	public void setWaivedBy(String waivedBy) {
 		this.waivedBy = waivedBy;
 	}
-	
+
 }

@@ -71,30 +71,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/GroupStatusCode/groupStatusCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/GroupStatusCode/groupStatusCodeDialog.zul file.
  */
 public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	private static final long serialVersionUID = 3163745278891119377L;
 	private static final Logger logger = Logger.getLogger(GroupStatusCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_GroupStatusCodeDialog; 	
+	protected Window window_GroupStatusCodeDialog;
 
-	protected Textbox 		grpStsCode; 					
-	protected Textbox 		grpStsDescription; 				
-	protected Checkbox 		grpStsIsActive; 				
+	protected Textbox grpStsCode;
+	protected Textbox grpStsDescription;
+	protected Checkbox grpStsIsActive;
 
 	// not autoWired variables
 	private GroupStatusCode groupStatusCode; // over handed per parameter
 	private transient GroupStatusCodeListCtrl groupStatusCodeListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient GroupStatusCodeService groupStatusCodeService;
 
@@ -113,27 +111,25 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected GroupStatusCode object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected GroupStatusCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_GroupStatusCodeDialog(Event event)throws Exception {
+	public void onCreate$window_GroupStatusCodeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
 		setPageComponents(window_GroupStatusCodeDialog);
 
 		try {
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
 			if (arguments.containsKey("groupStatusCode")) {
-				this.groupStatusCode = (GroupStatusCode) arguments
-						.get("groupStatusCode");
+				this.groupStatusCode = (GroupStatusCode) arguments.get("groupStatusCode");
 				GroupStatusCode befImage = new GroupStatusCode();
 				BeanUtils.copyProperties(this.groupStatusCode, befImage);
 				this.groupStatusCode.setBefImage(befImage);
@@ -142,14 +138,12 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 				setGroupStatusCode(null);
 			}
 
-			doLoadWorkFlow(this.groupStatusCode.isWorkflow(),
-					this.groupStatusCode.getWorkflowId(),
+			doLoadWorkFlow(this.groupStatusCode.isWorkflow(), this.groupStatusCode.getWorkflowId(),
 					this.groupStatusCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"GroupStatusCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "GroupStatusCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -159,8 +153,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 			// or
 			// delete groupStatusCode here.
 			if (arguments.containsKey("groupStatusCodeListCtrl")) {
-				setGroupStatusCodeListCtrl((GroupStatusCodeListCtrl) arguments
-						.get("groupStatusCodeListCtrl"));
+				setGroupStatusCodeListCtrl((GroupStatusCodeListCtrl) arguments.get("groupStatusCodeListCtrl"));
 			} else {
 				setGroupStatusCodeListCtrl(null);
 			}
@@ -193,8 +186,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -303,8 +295,10 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		this.grpStsDescription.setValue(aGroupStatusCode.getGrpStsDescription());
 		this.grpStsIsActive.setChecked(aGroupStatusCode.isGrpStsIsActive());
 		this.recordStatus.setValue(aGroupStatusCode.getRecordStatus());
-		
-		if(aGroupStatusCode.isNew() || (aGroupStatusCode.getRecordType() != null ? aGroupStatusCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aGroupStatusCode.isNew()
+				|| (aGroupStatusCode.getRecordType() != null ? aGroupStatusCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.grpStsIsActive.setChecked(true);
 			this.grpStsIsActive.setDisabled(true);
 		}
@@ -356,13 +350,12 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGroupStatusCode
 	 * @throws Exception
 	 */
-	public void doShowDialog(GroupStatusCode aGroupStatusCode)throws Exception {
+	public void doShowDialog(GroupStatusCode aGroupStatusCode) throws Exception {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -390,7 +383,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 			doWriteBeanToComponents(aGroupStatusCode);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_GroupStatusCodeDialog.onClose();
 		} catch (Exception e) {
@@ -406,12 +399,15 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.grpStsCode.isReadonly()){
-			this.grpStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_GroupStatusCodeDialog_GrpStsCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
-		if (!this.grpStsDescription.isReadonly()){
-			this.grpStsDescription.setConstraint(new PTStringValidator(Labels.getLabel("label_GroupStatusCodeDialog_GrpStsDescription.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.grpStsCode.isReadonly()) {
+			this.grpStsCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GroupStatusCodeDialog_GrpStsCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
+		if (!this.grpStsDescription.isReadonly()) {
+			this.grpStsDescription.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GroupStatusCodeDialog_GrpStsDescription.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -465,9 +461,9 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-		Labels.getLabel("label_GroupStatusCodeDialog_GrpStsCode.value")+" : "+aGroupStatusCode.getGrpStsCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_GroupStatusCodeDialog_GrpStsCode.value") + " : "
+				+ aGroupStatusCode.getGrpStsCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aGroupStatusCode.getRecordType())) {
 				aGroupStatusCode.setVersion(aGroupStatusCode.getVersion() + 1);
@@ -491,7 +487,6 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set the components for edit mode. <br>
@@ -691,7 +686,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aGroupStatusCode,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aGroupStatusCode, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -754,8 +749,8 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_GroupStatusCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -796,12 +791,11 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(GroupStatusCode aGroupStatusCode,String tranType) {
+	private AuditHeader getAuditHeader(GroupStatusCode aGroupStatusCode, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aGroupStatusCode.getBefImage(), aGroupStatusCode);
-		return new AuditHeader(String.valueOf(aGroupStatusCode.getId()), null,
-				null, null, auditDetail, aGroupStatusCode.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aGroupStatusCode.getBefImage(), aGroupStatusCode);
+		return new AuditHeader(String.valueOf(aGroupStatusCode.getId()), null, null, null, auditDetail,
+				aGroupStatusCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -817,7 +811,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_GroupStatusCodeDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_GroupStatusCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -843,7 +837,6 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 		getGroupStatusCodeListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.groupStatusCode.getGrpStsCode());
@@ -856,6 +849,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -863,6 +857,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	public GroupStatusCode getGroupStatusCode() {
 		return this.groupStatusCode;
 	}
+
 	public void setGroupStatusCode(GroupStatusCode groupStatusCode) {
 		this.groupStatusCode = groupStatusCode;
 	}
@@ -870,6 +865,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	public void setGroupStatusCodeService(GroupStatusCodeService groupStatusCodeService) {
 		this.groupStatusCodeService = groupStatusCodeService;
 	}
+
 	public GroupStatusCodeService getGroupStatusCodeService() {
 		return this.groupStatusCodeService;
 	}
@@ -877,6 +873,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	public void setGroupStatusCodeListCtrl(GroupStatusCodeListCtrl groupStatusCodeListCtrl) {
 		this.groupStatusCodeListCtrl = groupStatusCodeListCtrl;
 	}
+
 	public GroupStatusCodeListCtrl getGroupStatusCodeListCtrl() {
 		return this.groupStatusCodeListCtrl;
 	}

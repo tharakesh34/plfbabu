@@ -65,7 +65,7 @@ public interface FinanceTypeDAO {
 	List<FinanceType> getFinTypeDetailForBatch();
 
 	int getFinanceTypeCountById(String finType);
-	
+
 	List<FinanceType> getFinanceTypeByProduct(String productCode);
 
 	String getAllowedCollateralTypes(String finType);
@@ -87,7 +87,7 @@ public interface FinanceTypeDAO {
 	boolean isDivisionCodeExistsInFinanceTypes(String divisionCode, String type);
 
 	boolean isCostOfFundsExist(String costOfFunds, String type);
-	
+
 	FinanceType getFinLtvCheckByFinType(String finType);
 
 	String getAllowedRepayMethods(String finType, String type);

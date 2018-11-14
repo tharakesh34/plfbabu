@@ -53,9 +53,14 @@ import com.pennant.backend.model.systemmasters.City;
 public interface CityService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	City getCityById(String pCCountry,String pCProvince,String pCCity);
-	City getApprovedCityById(String pCCountry,String pCProvince,String pCCity);
+
+	City getCityById(String pCCountry, String pCProvince, String pCCity);
+
+	City getApprovedCityById(String pCCountry, String pCProvince, String pCCity);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

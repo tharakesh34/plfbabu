@@ -13,11 +13,11 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
-public class FinMainReportData implements Serializable{
+public class FinMainReportData implements Serializable {
 
-    private static final long serialVersionUID = -1716545536082000070L;
+	private static final long serialVersionUID = -1716545536082000070L;
 
-    //Basic Details
+	//Basic Details
 	private String finReference;
 	private String finType;
 	private String finStatus;
@@ -43,7 +43,7 @@ public class FinMainReportData implements Serializable{
 	private String depreciationFrq;
 	private String overdueDays;
 	private String finSuspense;
-	
+
 	//Grace period Details
 	private String allowGrace;
 	private String grcPeriodEndDate;
@@ -61,7 +61,7 @@ public class FinMainReportData implements Serializable{
 	private String allowGrcRepay;
 	private String grcSchdMethod;
 	private String graceTerms;
-	
+
 	//Repay Period Details
 	private String numberOfTerms;
 	private String reqRepayAmount;
@@ -81,53 +81,53 @@ public class FinMainReportData implements Serializable{
 	private String nextRepayDate;
 	private String maturityDate;
 	private String repayPftOnPftFrq;
-	
+
 	//Over Due Penalty Rate Details
 	private String applyOverdue = "False";
 	private String incGrcDays = "False";
-	private String penaltyCalOn="";
+	private String penaltyCalOn = "";
 	private String grcDays = "";
 	private String penaltyType = "";
 	private String chargeAmt = "";
 	private String alwWaiver = "";
 	private String maxWaiver = "";
-	
+
 	//Finance Summary Details
 	private String totalDisb = "";
 	private String totalDownPayment = "";
-	
+
 	private String totalPriSchd = "";
 	private String totalPftSchd = "";
 	private String totalOriginal = "";
-	
+
 	private String outStandPrincipal = "";
 	private String outStandProfit = "";
 	private String totalOutStanding = "";
-	
+
 	private String schdPriPaid = "";
 	private String schdPftPaid = "";
 	private String totalPaid = "";
-	
+
 	private String unPaidPrincipal = "";
 	private String unPaidProfit = "";
 	private String totalUnPaid = "";
-	
+
 	private String overDuePrincipal = "";
 	private String overDueProfit = "";
 	private String totalOverDue = "";
-	
+
 	private String earnedPrincipal = "";
 	private String earnedProfit = "";
 	private String totalEarned = "";
-	
+
 	private String unEarnedPrincipal = "";
 	private String unEarnedProfit = "";
 	private String totalUnEarned = "";
-	
+
 	private String payOffPrincipal = "";
 	private String payOffProfit = "";
 	private String totalPayOff = "";
-	
+
 	//Totals
 	private String totalFees = "";
 	private String totalWaivers = "";
@@ -138,724 +138,868 @@ public class FinMainReportData implements Serializable{
 	private String finODTotPenaltyBal = "";
 
 	//Finance Installment Details
-	private String overDueInstlments = "";	
-	private String overDueInstlementPft	 = "";
+	private String overDueInstlments = "";
+	private String overDueInstlementPft = "";
 	private String finProfitrate = "";
-	private String paidInstlments = "";	
+	private String paidInstlments = "";
 	private String paidInstlementPft = "";
-	private String unPaidInstlments	 = "";	
+	private String unPaidInstlments = "";
 	private String unPaidInstlementPft = "";
-		
+
 	// Flags
 	private String applyDownPay = "False";
 	private String applyDifferment = "False";
 	private String applyRepayAccntId = "False";
 	private String custShrtName;
-	
+
 	public FinMainReportData() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
-	
+		this.finReference = finReference;
+	}
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
+
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
-	
+		this.finType = finType;
+	}
+
 	public String getFinStatus() {
-    	return finStatus;
-    }
+		return finStatus;
+	}
+
 	public void setFinStatus(String finStatus) {
-    	this.finStatus = finStatus;
-    }
-	
+		this.finStatus = finStatus;
+	}
+
 	public String getFinCcy() {
-    	return finCcy;
-    }
+		return finCcy;
+	}
+
 	public void setFinCcy(String finCcy) {
-    	this.finCcy = finCcy;
-    }
-	
+		this.finCcy = finCcy;
+	}
+
 	public String getProfitDaysBasis() {
-    	return profitDaysBasis;
-    }
+		return profitDaysBasis;
+	}
+
 	public void setProfitDaysBasis(String profitDaysBasis) {
-    	this.profitDaysBasis = profitDaysBasis;
-    }
-	
+		this.profitDaysBasis = profitDaysBasis;
+	}
+
 	public String getCustCIF() {
-    	return custCIF;
-    }
+		return custCIF;
+	}
+
 	public void setCustCIF(String custCIF) {
-    	this.custCIF = custCIF;
-    }
-	
+		this.custCIF = custCIF;
+	}
+
 	public String getFinBranch() {
-    	return finBranch;
-    }
+		return finBranch;
+	}
+
 	public void setFinBranch(String finBranch) {
-    	this.finBranch = finBranch;
-    }
-	
+		this.finBranch = finBranch;
+	}
+
 	public String getFinStartDate() {
-    	return finStartDate;
-    }
+		return finStartDate;
+	}
+
 	public void setFinStartDate(String finStartDate) {
-    	this.finStartDate = finStartDate;
-    }
-	
+		this.finStartDate = finStartDate;
+	}
+
 	public String getFinContractDate() {
-    	return finContractDate;
-    }
+		return finContractDate;
+	}
+
 	public void setFinContractDate(String finContractDate) {
-    	this.finContractDate = finContractDate;
-    }
-	
+		this.finContractDate = finContractDate;
+	}
+
 	public String getFinAmount() {
-    	return finAmount;
-    }
+		return finAmount;
+	}
+
 	public void setFinAmount(String finAmount) {
-    	this.finAmount = finAmount;
-    }
-	
+		this.finAmount = finAmount;
+	}
+
 	public String getFinRepaymentAmount() {
-    	return finRepaymentAmount;
-    }
+		return finRepaymentAmount;
+	}
+
 	public void setFinRepaymentAmount(String finRepaymentAmount) {
-    	this.finRepaymentAmount = finRepaymentAmount;
-    }
-	
+		this.finRepaymentAmount = finRepaymentAmount;
+	}
+
 	public String getDisbAccountId() {
-    	return disbAccountId;
-    }
+		return disbAccountId;
+	}
+
 	public void setDisbAccountId(String disbAccountId) {
-    	this.disbAccountId = disbAccountId;
-    }
-	
+		this.disbAccountId = disbAccountId;
+	}
+
 	public String getRepayAccountId() {
-    	return repayAccountId;
-    }
+		return repayAccountId;
+	}
+
 	public void setRepayAccountId(String repayAccountId) {
-    	this.repayAccountId = repayAccountId;
-    }
-	
+		this.repayAccountId = repayAccountId;
+	}
+
 	public String getFinAccount() {
-    	return finAccount;
-    }
+		return finAccount;
+	}
+
 	public void setFinAccount(String finAccount) {
-    	this.finAccount = finAccount;
-    }
-	
+		this.finAccount = finAccount;
+	}
+
 	public String getFinCustPftAccount() {
-    	return finCustPftAccount;
-    }
+		return finCustPftAccount;
+	}
+
 	public void setFinCustPftAccount(String finCustPftAccount) {
-    	this.finCustPftAccount = finCustPftAccount;
-    }
-	
+		this.finCustPftAccount = finCustPftAccount;
+	}
+
 	public String getDownPayBank() {
-    	return downPayBank;
-    }
+		return downPayBank;
+	}
+
 	public void setDownPayBank(String downPayBank) {
-    	this.downPayBank = downPayBank;
-    }
-	
+		this.downPayBank = downPayBank;
+	}
+
 	public String getDownPayAccount() {
-    	return downPayAccount;
-    }
+		return downPayAccount;
+	}
+
 	public void setDownPayAccount(String downPayAccount) {
-    	this.downPayAccount = downPayAccount;
-    }
-	
+		this.downPayAccount = downPayAccount;
+	}
+
 	public String getDownPaySupl() {
-    	return downPaySupl;
-    }
+		return downPaySupl;
+	}
+
 	public void setDownPaySupl(String downPaySupl) {
-    	this.downPaySupl = downPaySupl;
-    }
-	
+		this.downPaySupl = downPaySupl;
+	}
+
 	public String getDefferments() {
-    	return defferments;
-    }
+		return defferments;
+	}
+
 	public void setDefferments(String defferments) {
-    	this.defferments = defferments;
-    }
-	
+		this.defferments = defferments;
+	}
+
 	public String getPlanDeferCount() {
 		return planDeferCount;
 	}
+
 	public void setPlanDeferCount(String planDeferCount) {
 		this.planDeferCount = planDeferCount;
 	}
-	
+
 	public String getFinPurpose() {
-    	return finPurpose;
-    }
+		return finPurpose;
+	}
+
 	public void setFinPurpose(String finPurpose) {
-    	this.finPurpose = finPurpose;
-    }
-	
+		this.finPurpose = finPurpose;
+	}
+
 	public String getFinCommitRef() {
-    	return finCommitRef;
-    }
+		return finCommitRef;
+	}
+
 	public void setFinCommitRef(String finCommitRef) {
-    	this.finCommitRef = finCommitRef;
-    }
-	
+		this.finCommitRef = finCommitRef;
+	}
+
 	public String getDepreciationFrq() {
-    	return depreciationFrq;
-    }
+		return depreciationFrq;
+	}
+
 	public void setDepreciationFrq(String depreciationFrq) {
-    	this.depreciationFrq = depreciationFrq;
-    }
-	
+		this.depreciationFrq = depreciationFrq;
+	}
+
 	public String getAllowGrace() {
-    	return allowGrace;
-    }
+		return allowGrace;
+	}
+
 	public void setAllowGrace(String allowGrace) {
-    	this.allowGrace = allowGrace;
-    }
-	
+		this.allowGrace = allowGrace;
+	}
+
 	public String getGrcPeriodEndDate() {
-    	return grcPeriodEndDate;
-    }
+		return grcPeriodEndDate;
+	}
+
 	public void setGrcPeriodEndDate(String grcPeriodEndDate) {
-    	this.grcPeriodEndDate = grcPeriodEndDate;
-    }
-	
+		this.grcPeriodEndDate = grcPeriodEndDate;
+	}
+
 	public String getGrcRateBasis() {
-    	return grcRateBasis;
-    }
+		return grcRateBasis;
+	}
+
 	public void setGrcRateBasis(String grcRateBasis) {
-    	this.grcRateBasis = grcRateBasis;
-    }
-	
+		this.grcRateBasis = grcRateBasis;
+	}
+
 	public String getGrcPftRate() {
-    	return grcPftRate;
-    }
+		return grcPftRate;
+	}
+
 	public void setGrcPftRate(String grcPftRate) {
-    	this.grcPftRate = grcPftRate;
-    }
-	
+		this.grcPftRate = grcPftRate;
+	}
+
 	public String getGraceBaseRate() {
-    	return graceBaseRate;
-    }
+		return graceBaseRate;
+	}
+
 	public void setGraceBaseRate(String graceBaseRate) {
-    	this.graceBaseRate = graceBaseRate;
-    }
-	
+		this.graceBaseRate = graceBaseRate;
+	}
+
 	public String getGraceSpecialRate() {
-    	return graceSpecialRate;
-    }
+		return graceSpecialRate;
+	}
+
 	public void setGraceSpecialRate(String graceSpecialRate) {
-    	this.graceSpecialRate = graceSpecialRate;
-    }
-	
+		this.graceSpecialRate = graceSpecialRate;
+	}
+
 	public String getGrcMargin() {
-    	return grcMargin;
-    }
+		return grcMargin;
+	}
+
 	public void setGrcMargin(String grcMargin) {
-    	this.grcMargin = grcMargin;
-    }
-	
+		this.grcMargin = grcMargin;
+	}
+
 	public String getGracePftFrq() {
-    	return gracePftFrq;
-    }
+		return gracePftFrq;
+	}
+
 	public void setGracePftFrq(String gracePftFrq) {
-    	this.gracePftFrq = gracePftFrq;
-    }
-	
+		this.gracePftFrq = gracePftFrq;
+	}
+
 	public String getNextGrcPftDate() {
-    	return nextGrcPftDate;
-    }
+		return nextGrcPftDate;
+	}
+
 	public void setNextGrcPftDate(String nextGrcPftDate) {
-    	this.nextGrcPftDate = nextGrcPftDate;
-    }
-	
+		this.nextGrcPftDate = nextGrcPftDate;
+	}
+
 	public String getGrcPftRvwFrq() {
-    	return grcPftRvwFrq;
-    }
+		return grcPftRvwFrq;
+	}
+
 	public void setGrcPftRvwFrq(String grcPftRvwFrq) {
-    	this.grcPftRvwFrq = grcPftRvwFrq;
-    }
-	
+		this.grcPftRvwFrq = grcPftRvwFrq;
+	}
+
 	public String getNextGrcPftRvwDate() {
-    	return nextGrcPftRvwDate;
-    }
+		return nextGrcPftRvwDate;
+	}
+
 	public void setNextGrcPftRvwDate(String nextGrcPftRvwDate) {
-    	this.nextGrcPftRvwDate = nextGrcPftRvwDate;
-    }
-	
+		this.nextGrcPftRvwDate = nextGrcPftRvwDate;
+	}
+
 	public String getGrcCpzFrq() {
-    	return grcCpzFrq;
-    }
+		return grcCpzFrq;
+	}
+
 	public void setGrcCpzFrq(String grcCpzFrq) {
-    	this.grcCpzFrq = grcCpzFrq;
-    }
-	
+		this.grcCpzFrq = grcCpzFrq;
+	}
+
 	public String getNextGrcCpzDate() {
-    	return nextGrcCpzDate;
-    }
+		return nextGrcCpzDate;
+	}
+
 	public void setNextGrcCpzDate(String nextGrcCpzDate) {
-    	this.nextGrcCpzDate = nextGrcCpzDate;
-    }
-	
+		this.nextGrcCpzDate = nextGrcCpzDate;
+	}
+
 	public String getAllowGrcRepay() {
-    	return allowGrcRepay;
-    }
+		return allowGrcRepay;
+	}
+
 	public void setAllowGrcRepay(String allowGrcRepay) {
-    	this.allowGrcRepay = allowGrcRepay;
-    }
-	
+		this.allowGrcRepay = allowGrcRepay;
+	}
+
 	public String getGrcSchdMethod() {
-    	return grcSchdMethod;
-    }
+		return grcSchdMethod;
+	}
+
 	public void setGrcSchdMethod(String grcSchdMethod) {
-    	this.grcSchdMethod = grcSchdMethod;
-    }
-	
+		this.grcSchdMethod = grcSchdMethod;
+	}
+
 	public String getNumberOfTerms() {
-    	return numberOfTerms;
-    }
+		return numberOfTerms;
+	}
+
 	public void setNumberOfTerms(String numberOfTerms) {
-    	this.numberOfTerms = numberOfTerms;
-    }
-	
+		this.numberOfTerms = numberOfTerms;
+	}
+
 	public String getReqRepayAmount() {
-    	return reqRepayAmount;
-    }
+		return reqRepayAmount;
+	}
+
 	public void setReqRepayAmount(String reqRepayAmount) {
-    	this.reqRepayAmount = reqRepayAmount;
-    }
-	
+		this.reqRepayAmount = reqRepayAmount;
+	}
+
 	public String getRepayRateBasis() {
-    	return repayRateBasis;
-    }
+		return repayRateBasis;
+	}
+
 	public void setRepayRateBasis(String repayRateBasis) {
-    	this.repayRateBasis = repayRateBasis;
-    }
-	
+		this.repayRateBasis = repayRateBasis;
+	}
+
 	public String getRepayProfitRate() {
-    	return repayProfitRate;
-    }
+		return repayProfitRate;
+	}
+
 	public void setRepayProfitRate(String repayProfitRate) {
-    	this.repayProfitRate = repayProfitRate;
-    }
-	
+		this.repayProfitRate = repayProfitRate;
+	}
+
 	public String getRepayBaseRate() {
-    	return repayBaseRate;
-    }
+		return repayBaseRate;
+	}
+
 	public void setRepayBaseRate(String repayBaseRate) {
-    	this.repayBaseRate = repayBaseRate;
-    }
-	
+		this.repayBaseRate = repayBaseRate;
+	}
+
 	public String getRepaySpecialRate() {
-    	return repaySpecialRate;
-    }
+		return repaySpecialRate;
+	}
+
 	public void setRepaySpecialRate(String repaySpecialRate) {
-    	this.repaySpecialRate = repaySpecialRate;
-    }
-	
+		this.repaySpecialRate = repaySpecialRate;
+	}
+
 	public String getRepayMargin() {
-    	return repayMargin;
-    }
+		return repayMargin;
+	}
+
 	public void setRepayMargin(String repayMargin) {
-    	this.repayMargin = repayMargin;
-    }
-	
+		this.repayMargin = repayMargin;
+	}
+
 	public String getScheduleMethod() {
-    	return scheduleMethod;
-    }
+		return scheduleMethod;
+	}
+
 	public void setScheduleMethod(String scheduleMethod) {
-    	this.scheduleMethod = scheduleMethod;
-    }
-	
+		this.scheduleMethod = scheduleMethod;
+	}
+
 	public String getRepayPftFrq() {
-    	return repayPftFrq;
-    }
+		return repayPftFrq;
+	}
+
 	public void setRepayPftFrq(String repayPftFrq) {
-    	this.repayPftFrq = repayPftFrq;
-    }
-	
+		this.repayPftFrq = repayPftFrq;
+	}
+
 	public String getNextRepayPftDate() {
-    	return nextRepayPftDate;
-    }
+		return nextRepayPftDate;
+	}
+
 	public void setNextRepayPftDate(String nextRepayPftDate) {
-    	this.nextRepayPftDate = nextRepayPftDate;
-    }
-	
+		this.nextRepayPftDate = nextRepayPftDate;
+	}
+
 	public String getRepayRevFrq() {
-    	return repayRevFrq;
-    }
+		return repayRevFrq;
+	}
+
 	public void setRepayRevFrq(String repayRevFrq) {
-    	this.repayRevFrq = repayRevFrq;
-    }
-	
+		this.repayRevFrq = repayRevFrq;
+	}
+
 	public String getNextRepayRvwDate() {
-    	return nextRepayRvwDate;
-    }
+		return nextRepayRvwDate;
+	}
+
 	public void setNextRepayRvwDate(String nextRepayRvwDate) {
-    	this.nextRepayRvwDate = nextRepayRvwDate;
-    }
-	
+		this.nextRepayRvwDate = nextRepayRvwDate;
+	}
+
 	public String getRepayCpzFrq() {
-    	return repayCpzFrq;
-    }
+		return repayCpzFrq;
+	}
+
 	public void setRepayCpzFrq(String repayCpzFrq) {
-    	this.repayCpzFrq = repayCpzFrq;
-    }
-	
+		this.repayCpzFrq = repayCpzFrq;
+	}
+
 	public String getNextRepayCpzDate() {
-    	return nextRepayCpzDate;
-    }
+		return nextRepayCpzDate;
+	}
+
 	public void setNextRepayCpzDate(String nextRepayCpzDate) {
-    	this.nextRepayCpzDate = nextRepayCpzDate;
-    }
-	
+		this.nextRepayCpzDate = nextRepayCpzDate;
+	}
+
 	public String getRepayFrq() {
-    	return repayFrq;
-    }
+		return repayFrq;
+	}
+
 	public void setRepayFrq(String repayFrq) {
-    	this.repayFrq = repayFrq;
-    }
-	
+		this.repayFrq = repayFrq;
+	}
+
 	public String getNextRepayDate() {
-    	return nextRepayDate;
-    }
+		return nextRepayDate;
+	}
+
 	public void setNextRepayDate(String nextRepayDate) {
-    	this.nextRepayDate = nextRepayDate;
-    }
-	
+		this.nextRepayDate = nextRepayDate;
+	}
+
 	public String getMaturityDate() {
-    	return maturityDate;
-    }
+		return maturityDate;
+	}
+
 	public void setMaturityDate(String maturityDate) {
-    	this.maturityDate = maturityDate;
-    }
-	
+		this.maturityDate = maturityDate;
+	}
+
 	public String getRepayPftOnPftFrq() {
-    	return repayPftOnPftFrq;
-    }
+		return repayPftOnPftFrq;
+	}
+
 	public void setRepayPftOnPftFrq(String repayPftOnPftFrq) {
-    	this.repayPftOnPftFrq = repayPftOnPftFrq;
-    }
-	
+		this.repayPftOnPftFrq = repayPftOnPftFrq;
+	}
+
 	public String getApplyOverdue() {
-    	return applyOverdue;
-    }
+		return applyOverdue;
+	}
+
 	public void setApplyOverdue(String applyOverdue) {
-    	this.applyOverdue = applyOverdue;
-    }
-	
+		this.applyOverdue = applyOverdue;
+	}
+
 	public String getIncGrcDays() {
-    	return incGrcDays;
-    }
+		return incGrcDays;
+	}
+
 	public void setIncGrcDays(String incGrcDays) {
-    	this.incGrcDays = incGrcDays;
-    }
-	
+		this.incGrcDays = incGrcDays;
+	}
+
 	public String getPenaltyCalOn() {
-    	return penaltyCalOn;
-    }
+		return penaltyCalOn;
+	}
+
 	public void setPenaltyCalOn(String penaltyCalOn) {
-    	this.penaltyCalOn = penaltyCalOn;
-    }
-	
+		this.penaltyCalOn = penaltyCalOn;
+	}
+
 	public String getGrcDays() {
-    	return grcDays;
-    }
+		return grcDays;
+	}
+
 	public void setGrcDays(String grcDays) {
-    	this.grcDays = grcDays;
-    }
-	
+		this.grcDays = grcDays;
+	}
+
 	public String getPenaltyType() {
-    	return penaltyType;
-    }
+		return penaltyType;
+	}
+
 	public void setPenaltyType(String penaltyType) {
-    	this.penaltyType = penaltyType;
-    }
-	
+		this.penaltyType = penaltyType;
+	}
+
 	public String getChargeAmt() {
-    	return chargeAmt;
-    }
+		return chargeAmt;
+	}
+
 	public void setChargeAmt(String chargeAmt) {
-    	this.chargeAmt = chargeAmt;
-    }
-	
+		this.chargeAmt = chargeAmt;
+	}
+
 	public String getAlwWaiver() {
-    	return alwWaiver;
-    }
+		return alwWaiver;
+	}
+
 	public void setAlwWaiver(String alwWaiver) {
-    	this.alwWaiver = alwWaiver;
-    }
-	
+		this.alwWaiver = alwWaiver;
+	}
+
 	public String getMaxWaiver() {
-    	return maxWaiver;
-    }
+		return maxWaiver;
+	}
+
 	public void setMaxWaiver(String maxWaiver) {
-    	this.maxWaiver = maxWaiver;
-    }
-	
+		this.maxWaiver = maxWaiver;
+	}
+
 	public String getOverdueDays() {
 		return overdueDays;
 	}
+
 	public void setOverdueDays(String overdueDays) {
 		this.overdueDays = overdueDays;
 	}
-	
+
 	public String getFinSuspense() {
 		return finSuspense;
 	}
+
 	public void setFinSuspense(String finSuspense) {
 		this.finSuspense = finSuspense;
 	}
-	
+
 	public String getTotalDisb() {
-    	return totalDisb;
-    }
+		return totalDisb;
+	}
+
 	public void setTotalDisb(String totalDisb) {
-    	this.totalDisb = totalDisb;
-    }
+		this.totalDisb = totalDisb;
+	}
+
 	public String getTotalDownPayment() {
-    	return totalDownPayment;
-    }
+		return totalDownPayment;
+	}
+
 	public void setTotalDownPayment(String totalDownPayment) {
-    	this.totalDownPayment = totalDownPayment;
-    }
+		this.totalDownPayment = totalDownPayment;
+	}
+
 	public String getTotalPriSchd() {
-    	return totalPriSchd;
-    }
+		return totalPriSchd;
+	}
+
 	public void setTotalPriSchd(String totalPriSchd) {
-    	this.totalPriSchd = totalPriSchd;
-    }
+		this.totalPriSchd = totalPriSchd;
+	}
+
 	public String getTotalPftSchd() {
-    	return totalPftSchd;
-    }
+		return totalPftSchd;
+	}
+
 	public void setTotalPftSchd(String totalPftSchd) {
-    	this.totalPftSchd = totalPftSchd;
-    }
+		this.totalPftSchd = totalPftSchd;
+	}
+
 	public String getTotalOriginal() {
-    	return totalOriginal;
-    }
+		return totalOriginal;
+	}
+
 	public void setTotalOriginal(String totalOriginal) {
-    	this.totalOriginal = totalOriginal;
-    }
+		this.totalOriginal = totalOriginal;
+	}
+
 	public String getOutStandPrincipal() {
-    	return outStandPrincipal;
-    }
+		return outStandPrincipal;
+	}
+
 	public void setOutStandPrincipal(String outStandPrincipal) {
-    	this.outStandPrincipal = outStandPrincipal;
-    }
+		this.outStandPrincipal = outStandPrincipal;
+	}
+
 	public String getOutStandProfit() {
-    	return outStandProfit;
-    }
+		return outStandProfit;
+	}
+
 	public void setOutStandProfit(String outStandProfit) {
-    	this.outStandProfit = outStandProfit;
-    }
+		this.outStandProfit = outStandProfit;
+	}
+
 	public String getTotalOutStanding() {
-    	return totalOutStanding;
-    }
+		return totalOutStanding;
+	}
+
 	public void setTotalOutStanding(String totalOutStanding) {
-    	this.totalOutStanding = totalOutStanding;
-    }
+		this.totalOutStanding = totalOutStanding;
+	}
+
 	public String getSchdPriPaid() {
-    	return schdPriPaid;
-    }
+		return schdPriPaid;
+	}
+
 	public void setSchdPriPaid(String schdPriPaid) {
-    	this.schdPriPaid = schdPriPaid;
-    }
+		this.schdPriPaid = schdPriPaid;
+	}
+
 	public String getSchdPftPaid() {
-    	return schdPftPaid;
-    }
+		return schdPftPaid;
+	}
+
 	public void setSchdPftPaid(String schdPftPaid) {
-    	this.schdPftPaid = schdPftPaid;
-    }
+		this.schdPftPaid = schdPftPaid;
+	}
+
 	public String getTotalPaid() {
-    	return totalPaid;
-    }
+		return totalPaid;
+	}
+
 	public void setTotalPaid(String totalPaid) {
-    	this.totalPaid = totalPaid;
-    }
+		this.totalPaid = totalPaid;
+	}
+
 	public String getUnPaidPrincipal() {
-    	return unPaidPrincipal;
-    }
+		return unPaidPrincipal;
+	}
+
 	public void setUnPaidPrincipal(String unPaidPrincipal) {
-    	this.unPaidPrincipal = unPaidPrincipal;
-    }
+		this.unPaidPrincipal = unPaidPrincipal;
+	}
+
 	public String getUnPaidProfit() {
-    	return unPaidProfit;
-    }
+		return unPaidProfit;
+	}
+
 	public void setUnPaidProfit(String unPaidProfit) {
-    	this.unPaidProfit = unPaidProfit;
-    }
+		this.unPaidProfit = unPaidProfit;
+	}
+
 	public String getTotalUnPaid() {
-    	return totalUnPaid;
-    }
+		return totalUnPaid;
+	}
+
 	public void setTotalUnPaid(String totalUnPaid) {
-    	this.totalUnPaid = totalUnPaid;
-    }
+		this.totalUnPaid = totalUnPaid;
+	}
+
 	public String getOverDuePrincipal() {
-    	return overDuePrincipal;
-    }
+		return overDuePrincipal;
+	}
+
 	public void setOverDuePrincipal(String overDuePrincipal) {
-    	this.overDuePrincipal = overDuePrincipal;
-    }
+		this.overDuePrincipal = overDuePrincipal;
+	}
+
 	public String getOverDueProfit() {
-    	return overDueProfit;
-    }
+		return overDueProfit;
+	}
+
 	public void setOverDueProfit(String overDueProfit) {
-    	this.overDueProfit = overDueProfit;
-    }
+		this.overDueProfit = overDueProfit;
+	}
+
 	public String getTotalOverDue() {
-    	return totalOverDue;
-    }
+		return totalOverDue;
+	}
+
 	public void setTotalOverDue(String totalOverDue) {
-    	this.totalOverDue = totalOverDue;
-    }
+		this.totalOverDue = totalOverDue;
+	}
+
 	public String getEarnedPrincipal() {
-    	return earnedPrincipal;
-    }
+		return earnedPrincipal;
+	}
+
 	public void setEarnedPrincipal(String earnedPrincipal) {
-    	this.earnedPrincipal = earnedPrincipal;
-    }
+		this.earnedPrincipal = earnedPrincipal;
+	}
+
 	public String getEarnedProfit() {
-    	return earnedProfit;
-    }
+		return earnedProfit;
+	}
+
 	public void setEarnedProfit(String earnedProfit) {
-    	this.earnedProfit = earnedProfit;
-    }
+		this.earnedProfit = earnedProfit;
+	}
+
 	public String getTotalEarned() {
-    	return totalEarned;
-    }
+		return totalEarned;
+	}
+
 	public void setTotalEarned(String totalEarned) {
-    	this.totalEarned = totalEarned;
-    }
+		this.totalEarned = totalEarned;
+	}
+
 	public String getUnEarnedPrincipal() {
-    	return unEarnedPrincipal;
-    }
+		return unEarnedPrincipal;
+	}
+
 	public void setUnEarnedPrincipal(String unEarnedPrincipal) {
-    	this.unEarnedPrincipal = unEarnedPrincipal;
-    }
+		this.unEarnedPrincipal = unEarnedPrincipal;
+	}
+
 	public String getUnEarnedProfit() {
-    	return unEarnedProfit;
-    }
+		return unEarnedProfit;
+	}
+
 	public void setUnEarnedProfit(String unEarnedProfit) {
-    	this.unEarnedProfit = unEarnedProfit;
-    }
+		this.unEarnedProfit = unEarnedProfit;
+	}
+
 	public String getTotalUnEarned() {
-    	return totalUnEarned;
-    }
+		return totalUnEarned;
+	}
+
 	public void setTotalUnEarned(String totalUnEarned) {
-    	this.totalUnEarned = totalUnEarned;
-    }
+		this.totalUnEarned = totalUnEarned;
+	}
+
 	public String getPayOffPrincipal() {
-    	return payOffPrincipal;
-    }
+		return payOffPrincipal;
+	}
+
 	public void setPayOffPrincipal(String payOffPrincipal) {
-    	this.payOffPrincipal = payOffPrincipal;
-    }
+		this.payOffPrincipal = payOffPrincipal;
+	}
+
 	public String getPayOffProfit() {
-    	return payOffProfit;
-    }
+		return payOffProfit;
+	}
+
 	public void setPayOffProfit(String payOffProfit) {
-    	this.payOffProfit = payOffProfit;
-    }
+		this.payOffProfit = payOffProfit;
+	}
+
 	public String getTotalPayOff() {
-    	return totalPayOff;
-    }
+		return totalPayOff;
+	}
+
 	public void setTotalPayOff(String totalPayOff) {
-    	this.totalPayOff = totalPayOff;
-    }
+		this.totalPayOff = totalPayOff;
+	}
+
 	public String getTotalFees() {
-    	return totalFees;
-    }
+		return totalFees;
+	}
+
 	public void setTotalFees(String totalFees) {
-    	this.totalFees = totalFees;
-    }
+		this.totalFees = totalFees;
+	}
+
 	public String getTotalWaivers() {
-    	return totalWaivers;
-    }
+		return totalWaivers;
+	}
+
 	public void setTotalWaivers(String totalWaivers) {
-    	this.totalWaivers = totalWaivers;
-    }
+		this.totalWaivers = totalWaivers;
+	}
+
 	public String getFinODTotPenaltyAmt() {
-    	return finODTotPenaltyAmt;
-    }
+		return finODTotPenaltyAmt;
+	}
+
 	public void setFinODTotPenaltyAmt(String finODTotPenaltyAmt) {
-    	this.finODTotPenaltyAmt = finODTotPenaltyAmt;
-    }
+		this.finODTotPenaltyAmt = finODTotPenaltyAmt;
+	}
+
 	public String getFinODTotPenaltyPaid() {
-    	return finODTotPenaltyPaid;
-    }
+		return finODTotPenaltyPaid;
+	}
+
 	public void setFinODTotPenaltyPaid(String finODTotPenaltyPaid) {
-    	this.finODTotPenaltyPaid = finODTotPenaltyPaid;
-    }
+		this.finODTotPenaltyPaid = finODTotPenaltyPaid;
+	}
+
 	public String getFinODTotWaived() {
-    	return finODTotWaived;
-    }
+		return finODTotWaived;
+	}
+
 	public void setFinODTotWaived(String finODTotWaived) {
-    	this.finODTotWaived = finODTotWaived;
-    }
+		this.finODTotWaived = finODTotWaived;
+	}
+
 	public String getFinODTotPenaltyBal() {
-    	return finODTotPenaltyBal;
-    }
+		return finODTotPenaltyBal;
+	}
+
 	public void setFinODTotPenaltyBal(String finODTotPenaltyBal) {
-    	this.finODTotPenaltyBal = finODTotPenaltyBal;
-    }
+		this.finODTotPenaltyBal = finODTotPenaltyBal;
+	}
+
 	public String getOverDueInstlments() {
-    	return overDueInstlments;
-    }
+		return overDueInstlments;
+	}
+
 	public void setOverDueInstlments(String overDueInstlments) {
-    	this.overDueInstlments = overDueInstlments;
-    }
+		this.overDueInstlments = overDueInstlments;
+	}
+
 	public String getOverDueInstlementPft() {
-    	return overDueInstlementPft;
-    }
+		return overDueInstlementPft;
+	}
+
 	public void setOverDueInstlementPft(String overDueInstlementPft) {
-    	this.overDueInstlementPft = overDueInstlementPft;
-    }
+		this.overDueInstlementPft = overDueInstlementPft;
+	}
+
 	public String getFinProfitrate() {
-    	return finProfitrate;
-    }
+		return finProfitrate;
+	}
+
 	public void setFinProfitrate(String finProfitrate) {
-    	this.finProfitrate = finProfitrate;
-    }
+		this.finProfitrate = finProfitrate;
+	}
+
 	public String getPaidInstlments() {
-    	return paidInstlments;
-    }
+		return paidInstlments;
+	}
+
 	public void setPaidInstlments(String paidInstlments) {
-    	this.paidInstlments = paidInstlments;
-    }
+		this.paidInstlments = paidInstlments;
+	}
+
 	public String getPaidInstlementPft() {
-    	return paidInstlementPft;
-    }
+		return paidInstlementPft;
+	}
+
 	public void setPaidInstlementPft(String paidInstlementPft) {
-    	this.paidInstlementPft = paidInstlementPft;
-    }
+		this.paidInstlementPft = paidInstlementPft;
+	}
+
 	public String getUnPaidInstlments() {
-    	return unPaidInstlments;
-    }
+		return unPaidInstlments;
+	}
+
 	public void setUnPaidInstlments(String unPaidInstlments) {
-    	this.unPaidInstlments = unPaidInstlments;
-    }
+		this.unPaidInstlments = unPaidInstlments;
+	}
+
 	public String getUnPaidInstlementPft() {
-    	return unPaidInstlementPft;
-    }
+		return unPaidInstlementPft;
+	}
+
 	public void setUnPaidInstlementPft(String unPaidInstlementPft) {
-    	this.unPaidInstlementPft = unPaidInstlementPft;
-    }
+		this.unPaidInstlementPft = unPaidInstlementPft;
+	}
+
 	public String getCustShrtName() {
 		return custShrtName;
 	}
@@ -865,7 +1009,7 @@ public class FinMainReportData implements Serializable{
 	}
 
 	//Method for Preparing Finance Main Object for Report purpose
-	public FinMainReportData getFinMainReportData(FinScheduleData finSchData, FinanceSummary finSummary){
+	public FinMainReportData getFinMainReportData(FinScheduleData finSchData, FinanceSummary finSummary) {
 		FinMainReportData reportData = new FinMainReportData();
 		FinanceMain financeMain = finSchData.getFinanceMain();
 		FinanceSummary financeSummary = finSchData.getFinanceSummary();
@@ -874,7 +1018,7 @@ public class FinMainReportData implements Serializable{
 		// Finance Basic details
 		reportData.setFinReference(financeMain.getFinReference());
 		reportData.setFinType(financeMain.getFinType() + "-" + financeMain.getLovDescFinTypeName());
-		
+
 		if (financeMain.isFinIsActive()) {
 			reportData.setFinStatus("Active");
 		} else {
@@ -886,7 +1030,7 @@ public class FinMainReportData implements Serializable{
 				reportData.setFinStatus("Written-Off");
 			}
 		}
-		
+
 		reportData.setFinCcy(financeMain.getFinCcy());
 		reportData.setProfitDaysBasis(financeMain.getProfitDaysBasis());
 		//###Release PFFV1.0.6 - Changed the customer short name to Full Name
@@ -895,77 +1039,92 @@ public class FinMainReportData implements Serializable{
 		reportData.setFinBranch(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
 		reportData.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		reportData.setFinContractDate(DateUtility.formatToLongDate(financeMain.getFinContractDate()));
-		reportData.setFinAmount(PennantApplicationUtil.amountFormate(financeMain.getFinAmount(),ccyFormatter));
-		reportData.setFinRepaymentAmount(PennantApplicationUtil.amountFormate(financeMain.getFinAmount().subtract(financeMain.getFinRepaymentAmount()), ccyFormatter));
+		reportData.setFinAmount(PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), ccyFormatter));
+		reportData.setFinRepaymentAmount(PennantApplicationUtil
+				.amountFormate(financeMain.getFinAmount().subtract(financeMain.getFinRepaymentAmount()), ccyFormatter));
 		reportData.setDisbAccountId(PennantApplicationUtil.formatAccountNumber(financeMain.getDisbAccountId()));
 		reportData.setRepayAccountId(PennantApplicationUtil.formatAccountNumber(financeMain.getRepayAccountId()));
 		reportData.setFinAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getFinAccount()));
 		reportData.setFinCustPftAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getFinCustPftAccount()));
 		reportData.setDownPayBank(PennantApplicationUtil.amountFormate(financeMain.getDownPayBank(), ccyFormatter));
 		reportData.setDownPayAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getDownPayAccount()));
-		if(StringUtils.isNotBlank(financeMain.getDownPayAccount())){
+		if (StringUtils.isNotBlank(financeMain.getDownPayAccount())) {
 			reportData.setApplyDownPay("TRUE");
 		}
 		reportData.setDownPaySupl(PennantApplicationUtil.amountFormate(financeMain.getDownPaySupl(), ccyFormatter));
 		reportData.setDefferments(String.valueOf(financeMain.getDefferments()));
-		if(financeMain.getDefferments() != 0){
+		if (financeMain.getDefferments() != 0) {
 			reportData.setApplyDifferment("TRUE");
 		}
 		reportData.setPlanDeferCount(String.valueOf(financeMain.getPlanDeferCount()));
-		reportData.setFinPurpose(financeMain.getFinPurpose()+"-"+StringUtils.trimToEmpty(financeMain.getLovDescFinPurposeName()));
+		reportData.setFinPurpose(
+				financeMain.getFinPurpose() + "-" + StringUtils.trimToEmpty(financeMain.getLovDescFinPurposeName()));
 		reportData.setFinCommitRef(StringUtils.trimToEmpty(financeMain.getFinCommitmentRef()));
-		reportData.setDepreciationFrq(FrequencyUtil.getFrequencyDetail(financeMain.getDepreciationFrq()).getFrequencyDescription());
-		reportData.setOverdueDays(financeMain.getFinStatus() +"/"+financeSummary.getFinCurODDays());
-		
-		if(finSchData.isFinPftSuspended()){
-			reportData.setFinSuspense("True("+
-					DateUtility.formatToLongDate(finSchData.getFinSuspDate())+")");
+		reportData.setDepreciationFrq(
+				FrequencyUtil.getFrequencyDetail(financeMain.getDepreciationFrq()).getFrequencyDescription());
+		reportData.setOverdueDays(financeMain.getFinStatus() + "/" + financeSummary.getFinCurODDays());
+
+		if (finSchData.isFinPftSuspended()) {
+			reportData.setFinSuspense("True(" + DateUtility.formatToLongDate(finSchData.getFinSuspDate()) + ")");
 		} else {
 			reportData.setFinSuspense("False");
 		}
-		
+
 		// Grace Period Details
-		reportData.setAllowGrace(financeMain.isAllowGrcPeriod()? "TRUE" : "FALSE");
-		if(financeMain.isAllowGrcPeriod()){
-			reportData.setGraceTerms(String.valueOf(financeMain.getGraceTerms())); 
+		reportData.setAllowGrace(financeMain.isAllowGrcPeriod() ? "TRUE" : "FALSE");
+		if (financeMain.isAllowGrcPeriod()) {
+			reportData.setGraceTerms(String.valueOf(financeMain.getGraceTerms()));
 			reportData.setGrcPeriodEndDate(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
-			reportData.setGrcRateBasis("#".equals(StringUtils.trimToEmpty(financeMain.getGrcRateBasis())) ? financeMain.getGrcRateBasis() : "");
-			reportData.setGrcPftRate(PennantApplicationUtil.formatRate(financeMain.getGrcPftRate().doubleValue(), 2)+" %");
+			reportData.setGrcRateBasis("#".equals(StringUtils.trimToEmpty(financeMain.getGrcRateBasis()))
+					? financeMain.getGrcRateBasis() : "");
+			reportData.setGrcPftRate(
+					PennantApplicationUtil.formatRate(financeMain.getGrcPftRate().doubleValue(), 2) + " %");
 			reportData.setGraceBaseRate(StringUtils.trimToEmpty(financeMain.getGraceBaseRate()));
 			reportData.setGraceSpecialRate(StringUtils.trimToEmpty(financeMain.getGraceSpecialRate()));
 			reportData.setGrcMargin(PennantApplicationUtil.formatRate(financeMain.getGrcMargin().doubleValue(), 2));
-			reportData.setGracePftFrq(FrequencyUtil.getFrequencyDetail(
-					FrequencyUtil.getFrequencyCode(financeMain.getGrcPftFrq())).getFrequencyDescription());
+			reportData.setGracePftFrq(
+					FrequencyUtil.getFrequencyDetail(FrequencyUtil.getFrequencyCode(financeMain.getGrcPftFrq()))
+							.getFrequencyDescription());
 			reportData.setNextGrcPftDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftDate()));
-			reportData.setGrcPftRvwFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftRvwFrq()).getFrequencyDescription());
+			reportData.setGrcPftRvwFrq(
+					FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftRvwFrq()).getFrequencyDescription());
 			reportData.setNextGrcPftRvwDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftRvwDate()));
-			reportData.setGrcCpzFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcCpzFrq()).getFrequencyDescription());
+			reportData.setGrcCpzFrq(
+					FrequencyUtil.getFrequencyDetail(financeMain.getGrcCpzFrq()).getFrequencyDescription());
 			reportData.setNextGrcCpzDate(DateUtility.formatToLongDate(financeMain.getNextGrcCpzDate()));
 			reportData.setAllowGrcRepay(financeMain.isAllowGrcRepay() ? "True" : "False");
-			reportData.setGrcSchdMethod("#".equals(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd())) ? financeMain.getGrcSchdMthd() : "" );
+			reportData.setGrcSchdMethod("#".equals(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()))
+					? financeMain.getGrcSchdMthd() : "");
 		}
 
 		//  Repay Details 
-		if(financeMain.getNOInst() > 0) {
+		if (financeMain.getNOInst() > 0) {
 			reportData.setNumberOfTerms(String.valueOf(financeMain.getNOInst()));
 		} else {
 			reportData.setNumberOfTerms(String.valueOf(financeMain.getCalTerms()));
 		}
-		reportData.setReqRepayAmount(PennantApplicationUtil.amountFormate(financeMain.getFinRepaymentAmount(), ccyFormatter));
-		reportData.setRepayRateBasis("#".equals(financeMain.getRepayRateBasis()) ? "" : getlabelDesc(financeMain.getRepayRateBasis(), PennantStaticListUtil.getInterestRateType(false)));
-		reportData.setRepayProfitRate(financeMain.getRepayProfitRate()!=null ?PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2)+" %":"");
+		reportData.setReqRepayAmount(
+				PennantApplicationUtil.amountFormate(financeMain.getFinRepaymentAmount(), ccyFormatter));
+		reportData.setRepayRateBasis("#".equals(financeMain.getRepayRateBasis()) ? ""
+				: getlabelDesc(financeMain.getRepayRateBasis(), PennantStaticListUtil.getInterestRateType(false)));
+		reportData.setRepayProfitRate(financeMain.getRepayProfitRate() != null
+				? PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2) + " %" : "");
 		reportData.setRepayBaseRate(StringUtils.trimToEmpty(financeMain.getRepayBaseRate()));
-		if(StringUtils.isNotEmpty(StringUtils.trimToEmpty(financeMain.getRepayBaseRate()))){
+		if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(financeMain.getRepayBaseRate()))) {
 			reportData.setApplyRepayAccntId("TRUE");
 		}
 		reportData.setRepaySpecialRate(StringUtils.trimToEmpty(financeMain.getRepaySpecialRate()));
 		reportData.setRepayMargin(PennantApplicationUtil.formatRate(financeMain.getRepayMargin().doubleValue(), 2));
-		reportData.setScheduleMethod("#".equals(StringUtils.trimToEmpty(financeMain.getScheduleMethod())) ? "" : StringUtils.trimToEmpty(financeMain.getScheduleMethod()));
-		reportData.setRepayPftFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayPftFrq()).getFrequencyDescription());
+		reportData.setScheduleMethod("#".equals(StringUtils.trimToEmpty(financeMain.getScheduleMethod())) ? ""
+				: StringUtils.trimToEmpty(financeMain.getScheduleMethod()));
+		reportData.setRepayPftFrq(
+				FrequencyUtil.getFrequencyDetail(financeMain.getRepayPftFrq()).getFrequencyDescription());
 		reportData.setNextRepayPftDate(DateUtility.formatToLongDate(financeMain.getNextRepayPftDate()));
-		reportData.setRepayRevFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayRvwFrq()).getFrequencyDescription());
+		reportData.setRepayRevFrq(
+				FrequencyUtil.getFrequencyDetail(financeMain.getRepayRvwFrq()).getFrequencyDescription());
 		reportData.setNextRepayRvwDate(DateUtility.formatToLongDate(financeMain.getNextRepayRvwDate()));
-		reportData.setRepayCpzFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayCpzFrq()).getFrequencyDescription());
+		reportData.setRepayCpzFrq(
+				FrequencyUtil.getFrequencyDetail(financeMain.getRepayCpzFrq()).getFrequencyDescription());
 		reportData.setNextRepayCpzDate(DateUtility.formatToLongDate(financeMain.getNextRepayCpzDate()));
 		reportData.setRepayFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayFrq()).getFrequencyDescription());
 		reportData.setNextRepayDate(DateUtility.formatToLongDate(financeMain.getNextRepayDate()));
@@ -973,7 +1132,7 @@ public class FinMainReportData implements Serializable{
 		reportData.setRepayPftOnPftFrq(financeMain.isFinRepayPftOnFrq() ? "True" : "False");
 
 		//  OverDue Charges Details
-		if(finSchData.getFinODPenaltyRate() != null){
+		if (finSchData.getFinODPenaltyRate() != null) {
 			reportData.setApplyOverdue(finSchData.getFinODPenaltyRate().isApplyODPenalty() ? "True" : "False");
 			reportData.setIncGrcDays(finSchData.getFinODPenaltyRate().isODIncGrcDays() ? "True" : "False");
 			reportData.setPenaltyCalOn(finSchData.getFinODPenaltyRate().getODChargeCalOn());
@@ -981,76 +1140,94 @@ public class FinMainReportData implements Serializable{
 			reportData.setPenaltyType(finSchData.getFinODPenaltyRate().getODChargeType());
 			reportData.setChargeAmt(String.valueOf(finSchData.getFinODPenaltyRate().getODChargeAmtOrPerc()));
 			reportData.setAlwWaiver(finSchData.getFinODPenaltyRate().isODAllowWaiver() ? "True" : "False");
-			reportData.setMaxWaiver(String.valueOf(finSchData.getFinODPenaltyRate().getODMaxWaiverPerc())+" %");
+			reportData.setMaxWaiver(String.valueOf(finSchData.getFinODPenaltyRate().getODMaxWaiverPerc()) + " %");
 		}
-		
+
 		//Profit Details
-		
-		reportData.setTotalDisb(PennantApplicationUtil.amountFormate(financeSummary.getTotalDisbursement(), ccyFormatter));
-		reportData.setTotalDownPayment(PennantApplicationUtil.amountFormate(financeSummary.getTotalDownPayment(), ccyFormatter));
-		
+
+		reportData.setTotalDisb(
+				PennantApplicationUtil.amountFormate(financeSummary.getTotalDisbursement(), ccyFormatter));
+		reportData.setTotalDownPayment(
+				PennantApplicationUtil.amountFormate(financeSummary.getTotalDownPayment(), ccyFormatter));
+
 		//Totals
 		reportData.setTotalFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalFees(), ccyFormatter));
-		reportData.setTotalWaivers(PennantApplicationUtil.amountFormate(financeSummary.getTotalWaiverFee(), ccyFormatter));
-		reportData.setFinODTotPenaltyAmt(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
-		reportData.setFinODTotPenaltyPaid(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
-		reportData.setTotalPaidFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalPaidFee(), ccyFormatter));
-		reportData.setFinODTotWaived(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotWaived(), ccyFormatter));
-		reportData.setFinODTotPenaltyBal(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyBal(), ccyFormatter));
-		
+		reportData.setTotalWaivers(
+				PennantApplicationUtil.amountFormate(financeSummary.getTotalWaiverFee(), ccyFormatter));
+		reportData.setFinODTotPenaltyAmt(
+				PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
+		reportData.setFinODTotPenaltyPaid(
+				PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
+		reportData
+				.setTotalPaidFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalPaidFee(), ccyFormatter));
+		reportData.setFinODTotWaived(
+				PennantApplicationUtil.amountFormate(financeSummary.getFinODTotWaived(), ccyFormatter));
+		reportData.setFinODTotPenaltyBal(
+				PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyBal(), ccyFormatter));
+
 		//Profit Schedule Details
 		reportData.setTotalPriSchd(PennantApplicationUtil.amountFormate(finSummary.getTotalPriSchd(), ccyFormatter));
 		reportData.setTotalPftSchd(PennantApplicationUtil.amountFormate(finSummary.getTotalPftSchd(), ccyFormatter));
 		reportData.setTotalOriginal(PennantApplicationUtil.amountFormate(finSummary.getTotalOriginal(), ccyFormatter));
-		
-		reportData.setOutStandPrincipal(PennantApplicationUtil.amountFormate(finSummary.getOutStandPrincipal(), ccyFormatter));
-		reportData.setOutStandProfit(PennantApplicationUtil.amountFormate(finSummary.getOutStandProfit(), ccyFormatter));
-		reportData.setTotalOutStanding(PennantApplicationUtil.amountFormate(finSummary.getTotalOutStanding(), ccyFormatter));
-		
+
+		reportData.setOutStandPrincipal(
+				PennantApplicationUtil.amountFormate(finSummary.getOutStandPrincipal(), ccyFormatter));
+		reportData
+				.setOutStandProfit(PennantApplicationUtil.amountFormate(finSummary.getOutStandProfit(), ccyFormatter));
+		reportData.setTotalOutStanding(
+				PennantApplicationUtil.amountFormate(finSummary.getTotalOutStanding(), ccyFormatter));
+
 		reportData.setSchdPriPaid(PennantApplicationUtil.amountFormate(finSummary.getSchdPriPaid(), ccyFormatter));
 		reportData.setSchdPftPaid(PennantApplicationUtil.amountFormate(finSummary.getSchdPftPaid(), ccyFormatter));
 		reportData.setTotalPaid(PennantApplicationUtil.amountFormate(finSummary.getTotalPaid(), ccyFormatter));
-		
-		reportData.setUnPaidPrincipal(PennantApplicationUtil.amountFormate(finSummary.getUnPaidPrincipal(), ccyFormatter));
+
+		reportData.setUnPaidPrincipal(
+				PennantApplicationUtil.amountFormate(finSummary.getUnPaidPrincipal(), ccyFormatter));
 		reportData.setUnPaidProfit(PennantApplicationUtil.amountFormate(finSummary.getUnPaidProfit(), ccyFormatter));
 		reportData.setTotalUnPaid(PennantApplicationUtil.amountFormate(finSummary.getTotalUnPaid(), ccyFormatter));
-		
-		reportData.setOverDuePrincipal(PennantApplicationUtil.amountFormate(finSummary.getOverDuePrincipal(), ccyFormatter));
+
+		reportData.setOverDuePrincipal(
+				PennantApplicationUtil.amountFormate(finSummary.getOverDuePrincipal(), ccyFormatter));
 		reportData.setOverDueProfit(PennantApplicationUtil.amountFormate(finSummary.getOverDueProfit(), ccyFormatter));
 		reportData.setTotalOverDue(PennantApplicationUtil.amountFormate(finSummary.getTotalOverDue(), ccyFormatter));
-		
-		reportData.setEarnedPrincipal(PennantApplicationUtil.amountFormate(finSummary.getEarnedPrincipal(), ccyFormatter));
+
+		reportData.setEarnedPrincipal(
+				PennantApplicationUtil.amountFormate(finSummary.getEarnedPrincipal(), ccyFormatter));
 		reportData.setEarnedProfit(PennantApplicationUtil.amountFormate(finSummary.getEarnedProfit(), ccyFormatter));
 		reportData.setTotalEarned(PennantApplicationUtil.amountFormate(finSummary.getTotalEarned(), ccyFormatter));
-		
-		reportData.setUnEarnedPrincipal(PennantApplicationUtil.amountFormate(finSummary.getUnEarnedPrincipal(), ccyFormatter));
-		reportData.setUnEarnedProfit(PennantApplicationUtil.amountFormate(finSummary.getUnEarnedProfit(), ccyFormatter));
+
+		reportData.setUnEarnedPrincipal(
+				PennantApplicationUtil.amountFormate(finSummary.getUnEarnedPrincipal(), ccyFormatter));
+		reportData
+				.setUnEarnedProfit(PennantApplicationUtil.amountFormate(finSummary.getUnEarnedProfit(), ccyFormatter));
 		reportData.setTotalUnEarned(PennantApplicationUtil.amountFormate(finSummary.getTotalUnEarned(), ccyFormatter));
-		
-		reportData.setPayOffPrincipal(PennantApplicationUtil.amountFormate(finSummary.getPayOffPrincipal(), ccyFormatter));
+
+		reportData.setPayOffPrincipal(
+				PennantApplicationUtil.amountFormate(finSummary.getPayOffPrincipal(), ccyFormatter));
 		reportData.setPayOffProfit(PennantApplicationUtil.amountFormate(finSummary.getPayOffProfit(), ccyFormatter));
 		reportData.setTotalPayOff(PennantApplicationUtil.amountFormate(finSummary.getTotalPayOff(), ccyFormatter));
-		
+
 		//Finance Installment Details
 		reportData.setOverDueInstlments(String.valueOf(finSummary.getOverDueInstlments()));
-		reportData.setOverDueInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getOverDueInstlementPft(), ccyFormatter));
-		reportData.setFinProfitrate(PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2) +" %");
+		reportData.setOverDueInstlementPft(
+				PennantApplicationUtil.amountFormate(finSummary.getOverDueInstlementPft(), ccyFormatter));
+		reportData.setFinProfitrate(PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2) + " %");
 		reportData.setPaidInstlments(String.valueOf(finSummary.getPaidInstlments()));
 		reportData.setPaidInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getTotalPaid(), ccyFormatter));
-		
-		if(financeMain.getNOInst() > 0) {
+
+		if (financeMain.getNOInst() > 0) {
 			reportData.setUnPaidInstlments(String.valueOf(financeMain.getNOInst() - finSummary.getPaidInstlments()));
 		} else {
 			reportData.setUnPaidInstlments(String.valueOf(financeMain.getCalTerms() - finSummary.getPaidInstlments()));
 		}
-		reportData.setUnPaidInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()), 
-				ccyFormatter));
+		reportData.setUnPaidInstlementPft(PennantApplicationUtil
+				.amountFormate(finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()), ccyFormatter));
 
 		return reportData;
 	}
-	
+
 	private String getlabelDesc(String value, List<ValueLabel> list) {
-		if(value != null){
+		if (value != null) {
 			for (int i = 0; i < list.size(); i++) {
 				if (list.get(i).getValue().equalsIgnoreCase(value)) {
 					return list.get(i).getLabel();
@@ -1059,24 +1236,30 @@ public class FinMainReportData implements Serializable{
 		}
 		return "";
 	}
+
 	public String getApplyDownPay() {
-	    return applyDownPay;
-    }
+		return applyDownPay;
+	}
+
 	public void setApplyDownPay(String applyDownPay) {
-	    this.applyDownPay = applyDownPay;
-    }
+		this.applyDownPay = applyDownPay;
+	}
+
 	public String getApplyDifferment() {
-	    return applyDifferment;
-    }
+		return applyDifferment;
+	}
+
 	public void setApplyDifferment(String applyDifferment) {
-	    this.applyDifferment = applyDifferment;
-    }
+		this.applyDifferment = applyDifferment;
+	}
+
 	public String getApplyRepayAccntId() {
-	    return applyRepayAccntId;
-    }
+		return applyRepayAccntId;
+	}
+
 	public void setApplyRepayAccntId(String applyRepayAccntId) {
-	    this.applyRepayAccntId = applyRepayAccntId;
-    }
+		this.applyRepayAccntId = applyRepayAccntId;
+	}
 
 	public String getGraceTerms() {
 		return graceTerms;
@@ -1093,5 +1276,5 @@ public class FinMainReportData implements Serializable{
 	public void setTotalPaidFees(String totalPaidFees) {
 		this.totalPaidFees = totalPaidFees;
 	}
-	
+
 }

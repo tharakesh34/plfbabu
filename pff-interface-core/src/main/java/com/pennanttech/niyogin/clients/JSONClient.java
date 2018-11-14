@@ -27,24 +27,23 @@ import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 
 public class JSONClient {
 
-	private static final Logger	logger			= Logger.getLogger(JSONClient.class);
+	private static final Logger logger = Logger.getLogger(JSONClient.class);
 
-	private final static String	AUTHORIZATION	= "Authorization";
-	private static String		authorizationKey;
-	private NiyoginDAOImpl		niyoginDAOImpl;
-	
+	private final static String AUTHORIZATION = "Authorization";
+	private static String authorizationKey;
+	private NiyoginDAOImpl niyoginDAOImpl;
+
 	public String post(String url, String jsonInString) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		WebClient client = getClient(StringUtils.trimToEmpty(url));
 		logger.debug("Json Request String " + jsonInString);
 		Response response = client.post(jsonInString);
-		jsonInString=response.readEntity(String.class);
+		jsonInString = response.readEntity(String.class);
 		logger.debug("Json Response String " + jsonInString);
 		logger.debug(Literal.LEAVING);
 		return jsonInString;
 	}
-
 
 	public String getRequestString(Object requestData) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -57,7 +56,7 @@ public class JSONClient {
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
 		String jsonInString = null;
-		
+
 		try {
 			jsonInString = mapper.writeValueAsString(requestData);
 		} catch (Exception e) {
@@ -65,7 +64,6 @@ public class JSONClient {
 		}
 		return jsonInString;
 	}
-
 
 	public Object post(String url, Object requestData, Class<?> responseClass) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -133,7 +131,7 @@ public class JSONClient {
 	 * @param authorization
 	 * @return WebClient
 	 */
-	public  WebClient getClient(String serviceUrl) {
+	public WebClient getClient(String serviceUrl) {
 		logger.debug(Literal.ENTERING);
 		WebClient client = WebClient.create(serviceUrl);
 		client.accept(MediaType.APPLICATION_JSON);
@@ -153,7 +151,7 @@ public class JSONClient {
 	 * @param client
 	 * @return
 	 */
-	private  WebClient prepareHeader(WebClient client) {
+	private WebClient prepareHeader(WebClient client) {
 		logger.debug(Literal.ENTERING);
 		client.header(AUTHORIZATION, getAuthkey());
 		logger.debug(Literal.LEAVING);

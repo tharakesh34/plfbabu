@@ -168,7 +168,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			FinanceType financeType = finScheduleData.getFinanceType();
 			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
-			if(financeType.isFinIsGenRef()){
+			if (financeType.isFinIsGenRef()) {
 				financeMain.setFinReference(null);
 			}
 			if (StringUtils.isBlank(financeMain.getFinReference())) {
@@ -249,9 +249,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set required mandatory values into finance details object
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, userDetails, stp, false);
-			
-			if (financeDetail.getFinScheduleData().getExternalReference()!=null && !financeDetail.getFinScheduleData().getExternalReference().isEmpty()){
-				if (financeDetail.getFinScheduleData().isUpfrontAuto()){
+
+			if (financeDetail.getFinScheduleData().getExternalReference() != null
+					&& !financeDetail.getFinScheduleData().getExternalReference().isEmpty()) {
+				if (financeDetail.getFinScheduleData().isUpfrontAuto()) {
 					adjustFeesAuto(finScheduleData);
 				} else {
 
@@ -508,8 +509,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	 */
 
 	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF, LoggedInUser userDetails,
-			boolean stp, boolean approve)
-			throws IllegalAccessException, InvocationTargetException {
+			boolean stp, boolean approve) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
@@ -815,17 +815,17 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
 				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (!approve) {
-			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-			disbursementDetails.setDisbDate(financeMain.getFinStartDate());
-			disbursementDetails.setDisbAmount(financeMain.getFinAmount());
-			disbursementDetails.setVersion(1);
-			disbursementDetails.setDisbSeq(1);
-			disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
-			disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-			disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-			disbursementDetails
-					.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
-			finScheduleData.getDisbursementDetails().add(disbursementDetails);
+				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+				disbursementDetails.setDisbDate(financeMain.getFinStartDate());
+				disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+				disbursementDetails.setVersion(1);
+				disbursementDetails.setDisbSeq(1);
+				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
+				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+				disbursementDetails
+						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
+				finScheduleData.getDisbursementDetails().add(disbursementDetails);
 			}
 		}
 
@@ -1148,8 +1148,10 @@ public class CreateFinanceController extends SummaryDetailService {
 					FinanceConstants.FINSER_EVENT_ORG, "");
 
 			if (financeDetail != null) {
-				List<ExtendedField> extData=extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),FinanceConstants.FINSER_EVENT_ORG, finReference);
+				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
+						ExtendedFieldConstants.MODULE_LOAN,
+						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
+						FinanceConstants.FINSER_EVENT_ORG, finReference);
 				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -1215,8 +1217,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				schdDetail.setNextTaskId(financeMain.getNextTaskId());
 			}
 
-			
-
 			// Finance detail object
 			financeDetail.setUserAction("");
 			financeDetail.setExtSource(false);
@@ -1226,7 +1226,6 @@ public class CreateFinanceController extends SummaryDetailService {
 					financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
 				financeDetail.setFinScheduleData(finScheduleData);
 			}
-
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
@@ -1322,9 +1321,11 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				financeDetail.getFinScheduleData().setFinODPenaltyRate(finODPenaltyRate);
 				prepareResponse(financeDetail);
-				List<ExtendedField> extData=extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),FinanceConstants.FINSER_EVENT_ORG, finReference);
-				financeDetail.setExtendedDetails(extData);				
+				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
+						ExtendedFieldConstants.MODULE_LOAN,
+						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
+						FinanceConstants.FINSER_EVENT_ORG, finReference);
+				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
 				financeDetail = new FinanceDetail();

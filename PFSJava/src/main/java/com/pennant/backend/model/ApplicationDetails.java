@@ -44,35 +44,34 @@ package com.pennant.backend.model;
 
 import java.sql.Timestamp;
 
-
 public class ApplicationDetails implements java.io.Serializable, Entity {
-	
+
 	private static final long serialVersionUID = -292875688509626740L;
 
 	private long appId = Long.MIN_VALUE;
-	private String appCode="";
-	private String appDescription="";
-	private String appLink="";
+	private String appCode = "";
+	private String appDescription = "";
+	private String appLink = "";
 	private long LastMntBy;
 	private Timestamp lastMntOn;
 	private String lovValue;
-	public ApplicationDetails (){
-		
+
+	public ApplicationDetails() {
+
 	}
-	
+
 	public ApplicationDetails(long appId) {
 		super();
 		this.appId = appId;
 	}
 
-	public ApplicationDetails (long appId,String appCode,String appDescription,String appLink){
-		this.appId=appId;
-		this.appCode=appCode;
-		this.appDescription=appDescription;
-		this.appLink=appLink;
+	public ApplicationDetails(long appId, String appCode, String appDescription, String appLink) {
+		this.appId = appId;
+		this.appCode = appCode;
+		this.appDescription = appDescription;
+		this.appLink = appLink;
 	}
-	
-	
+
 	@Override
 	public long getId() {
 		return this.appId;
@@ -85,7 +84,7 @@ public class ApplicationDetails implements java.io.Serializable, Entity {
 
 	@Override
 	public void setId(long id) {
-		this.appId=id;
+		this.appId = id;
 	}
 
 	public long getAppId() {

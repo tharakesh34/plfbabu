@@ -7,25 +7,25 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class NorkamCheckServiceImpl implements NorkamCheckProcess {
-	
+
 	private NorkamCheckUtilProcess norkamCheckUtilProcess;
-	
+
 	public NorkamCheckServiceImpl() {
-		
+
 	}
 
 	@Override
-	public InterfaceNorkamCheck doNorkamProcess(InterfaceNorkamCheck interfaceNorkamCheck)
-			throws InterfaceException {
-		return getNorkamCheckUtilProcess().doNorkamCheck(interfaceNorkamCheck, InterfaceMasterConfigUtil.BLACKLIST_CHECK);
+	public InterfaceNorkamCheck doNorkamProcess(InterfaceNorkamCheck interfaceNorkamCheck) throws InterfaceException {
+		return getNorkamCheckUtilProcess().doNorkamCheck(interfaceNorkamCheck,
+				InterfaceMasterConfigUtil.BLACKLIST_CHECK);
 	}
-	
+
 	public NorkamCheckUtilProcess getNorkamCheckUtilProcess() {
 		return norkamCheckUtilProcess;
 	}
-	public void setNorkamCheckUtilProcess(
-			NorkamCheckUtilProcess norkamCheckUtilProcess) {
+
+	public void setNorkamCheckUtilProcess(NorkamCheckUtilProcess norkamCheckUtilProcess) {
 		this.norkamCheckUtilProcess = norkamCheckUtilProcess;
 	}
-	
+
 }

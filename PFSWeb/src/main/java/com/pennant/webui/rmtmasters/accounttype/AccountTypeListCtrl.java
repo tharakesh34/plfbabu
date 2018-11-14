@@ -64,9 +64,9 @@ import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.rmtmasters.accounttype.model.AccountTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/AccountType/AccountTypeList.zul file.
@@ -143,7 +143,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 		registerButton(button_AccountTypeList_AccountTypeSearchDialog);
 
 		fillComboBox(this.acPurpose, "", PennantStaticListUtil.getAccountPurpose(), "");
-		
+
 		registerField("acType", listheader_AcType, SortOrder.ASC, acType, sortOperator_acType, Operators.STRING);
 		registerField("acTypeDesc", listheader_AcTypeDesc, SortOrder.NONE, acTypeDesc, sortOperator_acTypeDesc,
 				Operators.STRING);
@@ -155,7 +155,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 				sortOperator_isCustSysAccount, Operators.BOOLEAN);
 		registerField("acTypeIsActive", listheader_AcTypeIsActive, SortOrder.NONE, acTypeIsActive,
 				sortOperator_acTypeIsActive, Operators.BOOLEAN);
-		
+
 		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
@@ -301,10 +301,10 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	private void doSetFieldProperties() {
 		this.acType.setMaxlength(14);
-		
+
 	}
 
 	public void setAccountTypeService(AccountTypeService accountTypeService) {

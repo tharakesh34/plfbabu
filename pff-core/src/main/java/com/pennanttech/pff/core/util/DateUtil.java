@@ -41,8 +41,8 @@ public class DateUtil {
 		LONG_TIME("HH:mm:ss"),
 		SHORT_DATE_TIME("dd/MM/yyyy HH:mm"),
 		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
-		
-		private final String	pattern;
+
+		private final String pattern;
 
 		private DateFormat(String pattern) {
 			this.pattern = pattern;
@@ -81,7 +81,7 @@ public class DateUtil {
 
 		return format(getSysDate(), dateFormat);
 	}
-	
+
 	/**
 	 * Returns the string representation with the specified date format pattern of the server time.
 	 * 
@@ -285,7 +285,7 @@ public class DateUtil {
 
 		return calendar.getTime();
 	}
-	
+
 	/**
 	 * Returns a {@link Date} object with the date part of the specified date.
 	 * 
@@ -343,10 +343,8 @@ public class DateUtil {
 		return convert(new GregorianCalendar(year, month, day));
 	}
 
-
 	/**
-	 * Returns {@link Date} by adding or subtracting the specified number of
-	 * months to the given {@link Date}.
+	 * Returns {@link Date} by adding or subtracting the specified number of months to the given {@link Date}.
 	 * 
 	 * @param date
 	 *            The date object on which add or subtract the months.
@@ -362,8 +360,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * Returns {@link Date} by adding or subtracting the specified number of
-	 * days to the given {@link Date}.
+	 * Returns {@link Date} by adding or subtracting the specified number of days to the given {@link Date}.
 	 * 
 	 * @param date
 	 *            The date object on which add or subtract the days.
@@ -382,8 +379,7 @@ public class DateUtil {
 	 * Returns {@link java.sql.Date} for the specified {@link Date}.
 	 * 
 	 * @param date
-	 *            The date object which which needs to be convert to
-	 *            {@link java.sql.Date} .
+	 *            The date object which which needs to be convert to {@link java.sql.Date} .
 	 * @return A {@link java.sql.Date}
 	 */
 	public static java.sql.Date getSqlDate(Date date) {
@@ -403,6 +399,7 @@ public class DateUtil {
 	public static int getYear(java.util.Date date) {
 		return date == null ? -1 : convert(date).get(Calendar.YEAR);
 	}
+
 	public static int getDate(java.util.Date date) {
 		return date == null ? -1 : convert(date).get(Calendar.DATE);
 	}

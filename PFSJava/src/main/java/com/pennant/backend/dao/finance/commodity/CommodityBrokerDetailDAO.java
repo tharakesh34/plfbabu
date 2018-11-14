@@ -42,17 +42,24 @@
 */
 
 package com.pennant.backend.dao.finance.commodity;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 
 public interface CommodityBrokerDetailDAO {
-	CommodityBrokerDetail getCommodityBrokerDetailById(String id,String type);
-	void update(CommodityBrokerDetail commodityBrokerDetail,String type);
-	void delete(CommodityBrokerDetail commodityBrokerDetail,String type);
-	String save(CommodityBrokerDetail commodityBrokerDetail,String type);
-	List<BrokerCommodityDetail> getBrokerCommodityDetails(String id,String type);
-	void saveCommodities(CommodityBrokerDetail commodityBrokerDetail,String type);
-	void deleteCommodities(CommodityBrokerDetail commodityBrokerDetail,String type); 
+	CommodityBrokerDetail getCommodityBrokerDetailById(String id, String type);
+
+	void update(CommodityBrokerDetail commodityBrokerDetail, String type);
+
+	void delete(CommodityBrokerDetail commodityBrokerDetail, String type);
+
+	String save(CommodityBrokerDetail commodityBrokerDetail, String type);
+
+	List<BrokerCommodityDetail> getBrokerCommodityDetails(String id, String type);
+
+	void saveCommodities(CommodityBrokerDetail commodityBrokerDetail, String type);
+
+	void deleteCommodities(CommodityBrokerDetail commodityBrokerDetail, String type);
 }

@@ -54,7 +54,7 @@ public interface TaskOwnersDAO {
 	void update(TaskOwners taskOwners);
 
 	void delete(TaskOwners taskOwners);
-	
+
 	void updateList(List<TaskOwners> taskOwnersList);
 
 	TaskOwners getTaskOwner(String finReference, String roleCode);

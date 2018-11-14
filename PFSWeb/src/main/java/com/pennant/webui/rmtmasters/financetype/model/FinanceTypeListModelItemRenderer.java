@@ -69,25 +69,27 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 	private static final long serialVersionUID = 2118469590661434900L;
 
 	boolean isOverdraft = false;
+
 	public FinanceTypeListModelItemRenderer() {
-		
+
 	}
-	
+
 	public FinanceTypeListModelItemRenderer(boolean isOverdraft) {
 		this.isOverdraft = isOverdraft;
 	}
+
 	@Override
 	public void render(Listitem item, FinanceType financeType, int count) throws Exception {
 
 		if (item instanceof Listgroup) {
-			Listcell  cell= new Listcell(financeType.getFinCategoryDesc());
+			Listcell cell = new Listcell(financeType.getFinCategoryDesc());
 			cell.setStyle("font-weight:bold;color:##FF4500;");
 			item.appendChild(cell);
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
-			if(!isOverdraft){
+			if (!isOverdraft) {
 				cell.setSpan(10);
-			}else{
+			} else {
 				cell.setSpan(9);
 			}
 			item.appendChild(cell);
@@ -103,12 +105,14 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 			lc = new Listcell(StringUtils.equals(financeType.getFinDaysCalType(), PennantConstants.List_Select) ? ""
 					: financeType.getFinDaysCalType());
 			lc.setParent(item);
-			/*lc = new Listcell(financeType.getFinAcType());
-			lc.setParent(item);*/
-			lc = new Listcell(PennantAppUtil.getlabelDesc(financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods()));
+			/*
+			 * lc = new Listcell(financeType.getFinAcType()); lc.setParent(item);
+			 */
+			lc = new Listcell(PennantAppUtil.getlabelDesc(financeType.getFinSchdMthd(),
+					PennantStaticListUtil.getScheduleMethods()));
 			lc.setParent(item);
-			
-			if(!isOverdraft){
+
+			if (!isOverdraft) {
 				lc = new Listcell();
 				Checkbox checkbox = new Checkbox();
 				checkbox.setChecked(financeType.isFInIsAlwGrace());
@@ -116,7 +120,7 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 				checkbox.setParent(lc);
 				lc.setParent(item);
 			}
-			
+
 			lc = new Listcell(financeType.getFinDivision());
 			lc.setParent(item);
 

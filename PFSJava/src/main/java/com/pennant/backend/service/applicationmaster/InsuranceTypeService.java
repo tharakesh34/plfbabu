@@ -46,12 +46,16 @@ package com.pennant.backend.service.applicationmaster;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.audit.AuditHeader;
 
-
 public interface InsuranceTypeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	InsuranceType getInsuranceTypeById(String id,String type);
+
+	InsuranceType getInsuranceTypeById(String id, String type);
+
 	InsuranceType getApprovedInsuranceTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -25,7 +25,7 @@ public class ButtonControl implements Serializable {
 	protected ButtonControl() {
 		super();
 	}
-	
+
 	public ButtonControl(Button button) {
 		this.button = button;
 	}

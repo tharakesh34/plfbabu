@@ -25,17 +25,17 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class BlacklistCheckService extends NiyoginService implements BlacklistCheck {
 
-	private static final Logger	logger				= Logger.getLogger(BlacklistCheckService.class);
-	private final String		extConfigFileName	= "hunter.properties";
-	private String				serviceUrl;
+	private static final Logger logger = Logger.getLogger(BlacklistCheckService.class);
+	private final String extConfigFileName = "hunter.properties";
+	private String serviceUrl;
 
 	//Hunter
-	public static final String	REQ_SEND			= "REQSENDEXPHNTR";
-	public static final String	STATUSCODE			= "STATUSEXPHNTR";
-	public static final String	RSN_CODE			= "REASONEXPHNTR";
-	public static final String	REMARKS				= "REMARKSEXPHNTR";
+	public static final String REQ_SEND = "REQSENDEXPHNTR";
+	public static final String STATUSCODE = "STATUSEXPHNTR";
+	public static final String RSN_CODE = "REASONEXPHNTR";
+	public static final String REMARKS = "REMARKSEXPHNTR";
 
-	public static final String	MATCH				= "HUNTERMATCH";
+	public static final String MATCH = "HUNTERMATCH";
 
 	/**
 	 * Method for check the Hunter details of the Customer and set these details to ExtendedFieldDetails.
@@ -47,7 +47,7 @@ public class BlacklistCheckService extends NiyoginService implements BlacklistCh
 	@Override
 	public AuditHeader checkHunterDetails(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(serviceUrl)) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;

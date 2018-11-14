@@ -125,56 +125,56 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
  */
 public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
-	private static final long						serialVersionUID	= 1L;
-	private static final Logger						logger				= Logger.getLogger(FeePostingsDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FeePostingsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window								window_feePostingsDialog;
-	protected Tab									tab_Accounting;
-	protected Combobox								postingAgainst;
-	protected ExtendedCombobox						reference;
-	protected ExtendedCombobox						feeTypeCode;
-	protected Textbox								remarks;
-	protected CurrencyBox							postingAmount;
-	protected ExtendedCombobox						postingCcy;
-	protected Datebox								postDate;
-	protected Datebox								valueDate;
-	protected ExtendedCombobox						postingDivision;
+	protected Window window_feePostingsDialog;
+	protected Tab tab_Accounting;
+	protected Combobox postingAgainst;
+	protected ExtendedCombobox reference;
+	protected ExtendedCombobox feeTypeCode;
+	protected Textbox remarks;
+	protected CurrencyBox postingAmount;
+	protected ExtendedCombobox postingCcy;
+	protected Datebox postDate;
+	protected Datebox valueDate;
+	protected ExtendedCombobox postingDivision;
 
-	private boolean									enqModule			= false;
+	private boolean enqModule = false;
 	// not auto wired vars
-	private transient FeePostingsListCtrl			feePostingsListCtrl;												// overhanded per
+	private transient FeePostingsListCtrl feePostingsListCtrl; // overhanded per
 
-	protected Tabbox								tabbox;
-	protected Component								jVSummaryEntryListPage;
-	protected Component								accountingEntryListPage;
+	protected Tabbox tabbox;
+	protected Component jVSummaryEntryListPage;
+	protected Component accountingEntryListPage;
 
 	// ServiceDAOs / Domain Classes
-	private transient FeePostingService				feePostingService;
-	private transient PostingsPreparationUtil		postingsPreparationUtil;
-	protected Textbox								moduleType;															// autowired
+	private transient FeePostingService feePostingService;
+	private transient PostingsPreparationUtil postingsPreparationUtil;
+	protected Textbox moduleType; // autowired
 
-	private FeePostings								feePostings;
-	protected ExtendedCombobox						partnerBankID;
-	private Currency								aCurrency			= null;
-	protected Tabpanels								tabpanelsBoxIndexCenter;
-	protected Tab									basicDetailsTab;
-	protected Tabbox								tabBoxIndexCenter;
-	protected Tabs									tabsIndexCenter;
-	protected String								selectMethodName	= "onSelectTab";
-	private transient AccountingDetailDialogCtrl	accountingDetailDialogCtrl;
-	private transient FinanceDetailService			financeDetailService;
-	private transient CustomerDetailsService        customerDetailsService;
-	private transient CollateralSetupService		collateralSetupService;
-	private transient LimitDetailService			limitDetailService;
-	private transient AccountingSetService			accountingSetService;
-	private AccountEngineExecution					engineExecution;
-	private boolean									isAccountingExecuted	= false;
-	Date											minReqPostingDate		= DateUtility
-			.addDays(DateUtility.getAppDate(), -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+	private FeePostings feePostings;
+	protected ExtendedCombobox partnerBankID;
+	private Currency aCurrency = null;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab basicDetailsTab;
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected String selectMethodName = "onSelectTab";
+	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
+	private transient FinanceDetailService financeDetailService;
+	private transient CustomerDetailsService customerDetailsService;
+	private transient CollateralSetupService collateralSetupService;
+	private transient LimitDetailService limitDetailService;
+	private transient AccountingSetService accountingSetService;
+	private AccountEngineExecution engineExecution;
+	private boolean isAccountingExecuted = false;
+	Date minReqPostingDate = DateUtility.addDays(DateUtility.getAppDate(),
+			-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
 
 	/**
 	 * default constructor.<br>
@@ -236,10 +236,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
-			
-				aCurrency = PennantAppUtil.getCurrencyBycode(SysParamUtil.getValueAsString("EXT_BASE_CCY"));
-				getFeePostings().setCurrency(aCurrency.getCcyCode());
-			
+			aCurrency = PennantAppUtil.getCurrencyBycode(SysParamUtil.getValueAsString("EXT_BASE_CCY"));
+			getFeePostings().setCurrency(aCurrency.getCcyCode());
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -395,7 +394,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		if (getFeePostings().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			
+
 		} else {
 			this.btnCancel.setVisible(true);
 			this.postDate.setDisabled(isReadOnly("FeePostingsDialog_postingDate"));
@@ -410,8 +409,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.valueDate.setDisabled(isReadOnly("FeePostingsDialog_valueDate"));
 		this.postingDivision.setReadonly(isReadOnly("FeePostingsDialog_postingDivision"));
 		this.remarks.setDisabled(isReadOnly("FeePostingsDialog_remarks"));
-		
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -463,28 +461,28 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			CollateralSetup collateralSetup = getCollateralSetupService()
 					.getApprovedCollateralSetupById(getFeePostings().getReference());
 			aeEvent.setCustID(collateralSetup.getDepositorId());
-		}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, getFeePostings().getPostAgainst())) {
-				LimitHeader header =getLimitDetailService().getCustomerLimits(Long.valueOf(getFeePostings().getReference()));
-				aeEvent.setCustID(header.getCustomerId());
+		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, getFeePostings().getPostAgainst())) {
+			LimitHeader header = getLimitDetailService()
+					.getCustomerLimits(Long.valueOf(getFeePostings().getReference()));
+			aeEvent.setCustID(header.getCustomerId());
 		}
-		
 
 		amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(getFeePostings().getPartnerBankAcType());
-		
+
 		aeEvent.setCcy(getFeePostings().getCurrency());
 		aeEvent.setFinReference(getFeePostings().getReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-		
+
 		getFeePostings().getDeclaredFieldValues(aeEvent.getDataMap());
 		aeEvent.getAcSetIDList().add(Long.valueOf(getFeePostings().getAccountSetId()));
-		
+
 		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 		getFeePostings().setReturnDataSetList(returnSetEntries);
 		accountingSetEntries.addAll(returnSetEntries);
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
-			isAccountingExecuted=true;
+			isAccountingExecuted = true;
 		}
 
 		logger.debug("Leaving");
@@ -509,10 +507,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("feePosting", getFeePostings());
-				if(getFeePostings().getAccountSetId()!=null){					
-					map.put("acSetID", Long.valueOf(getFeePostings().getAccountSetId()));
-				}
-			
+			if (getFeePostings().getAccountSetId() != null) {
+				map.put("acSetID", Long.valueOf(getFeePostings().getAccountSetId()));
+			}
+
 			if (enqiryModule) {
 				map.put("enqModule", true);
 			}
@@ -572,7 +570,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	public void doReadOnly(boolean readOnly) {
 
 		logger.debug("Entering");
-		
+
 		this.postingAgainst.setDisabled(true);
 		this.reference.setReadonly(true);
 		this.feeTypeCode.setReadonly(true);
@@ -583,9 +581,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.valueDate.setDisabled(true);
 		this.remarks.setDisabled(true);
 		this.postingDivision.setReadonly(true);
-		
+
 		logger.debug("Leaving");
-		
+
 	}
 
 	// Helpers
@@ -620,12 +618,12 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.feeTypeCode.setValueColumn("FeeTypeCode");
 		this.feeTypeCode.setDescColumn("FeeTypeDesc");
 		this.feeTypeCode.setValidateColumns(new String[] { "FeeTypeCode" });
-		
+
 		ArrayList<String> list = new ArrayList<>();
 		list.add(RepayConstants.ALLOCATION_BOUNCE);
 		list.add(RepayConstants.ALLOCATION_ODC);
 		list.add(RepayConstants.ALLOCATION_LPFT);
-		
+
 		Filter[] filters = new Filter[1];
 		filters[0] = Filter.notIn("FeeTypeCode", list);
 		feeTypeCode.setFilters(filters);
@@ -646,14 +644,13 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.postDate.setDisabled(true);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
 
 		this.postingDivision.setMandatoryStyle(true);
 		this.postingDivision.setModuleName("DivisionDetail");
 		this.postingDivision.setValueColumn("DivisionCode");
 		this.postingDivision.setDescColumn("DivisionCodeDesc");
 		this.postingDivision.setValidateColumns(new String[] { "DivisionCode" });
-		
+
 		this.postingAmount.setProperties(true, aCurrency.getCcyEditField());
 
 	}
@@ -669,18 +666,20 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		fillComboBox(this.postingAgainst, aFeePostings.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(),
 				"");
 		this.reference.setValue(aFeePostings.getReference());
-		this.feeTypeCode.setValue(aFeePostings.isNew() ? aFeePostings.getFeeTyeCode():aFeePostings.getFeeTyeCode().trim());
-		this.postingAmount.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
-		this.postingDivision.setValue(aFeePostings.getPostingDivision(),aFeePostings.getDivisionCodeDesc());
+		this.feeTypeCode
+				.setValue(aFeePostings.isNew() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
+		this.postingAmount
+				.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
+		this.postingDivision.setValue(aFeePostings.getPostingDivision(), aFeePostings.getDivisionCodeDesc());
 		this.postingCcy.setValue(aFeePostings.getCurrency());
-		if(aFeePostings.isNew()){
+		if (aFeePostings.isNew()) {
 			this.postDate.setValue(DateUtility.getAppDate());
-			this.valueDate.setValue(DateUtility.getAppDate());	
-		}else{			
+			this.valueDate.setValue(DateUtility.getAppDate());
+		} else {
 			this.postDate.setValue(aFeePostings.getPostDate());
 			this.valueDate.setValue(aFeePostings.getValueDate());
 		}
-		
+
 		if (!aFeePostings.isNew()) {
 			this.partnerBankID.setObject(new PartnerBank(aFeePostings.getPartnerBankId()));
 			this.partnerBankID.setValue(String.valueOf(aFeePostings.getPartnerBankId()));
@@ -761,23 +760,23 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		try {
-			if(!enqModule){
-			if ((this.valueDate.getValue().before(minReqPostingDate)
-					|| this.valueDate.getValue().after(DateUtility.getAppDate())) && !this.valueDate.isDisabled()) {
-				
-				String minreqPostDate =DateUtility.formatToShortDate(minReqPostingDate);
-				String currentDate = DateUtility.formatToShortDate(DateUtility.getAppDate());
-				
-				throw new WrongValueException(this.valueDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
-						new String[] { Labels.getLabel("label_feePostingsDialog_ValueDate.value"),
-								minreqPostDate,currentDate }));
+			if (!enqModule) {
+				if ((this.valueDate.getValue().before(minReqPostingDate)
+						|| this.valueDate.getValue().after(DateUtility.getAppDate())) && !this.valueDate.isDisabled()) {
+
+					String minreqPostDate = DateUtility.formatToShortDate(minReqPostingDate);
+					String currentDate = DateUtility.formatToShortDate(DateUtility.getAppDate());
+
+					throw new WrongValueException(this.valueDate,
+							Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+									new String[] { Labels.getLabel("label_feePostingsDialog_ValueDate.value"),
+											minreqPostDate, currentDate }));
+				}
+
+				aFeePostings.setValueDate(this.valueDate.getValue());
 			}
-			
-			aFeePostings.setValueDate(this.valueDate.getValue());
-	}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -841,20 +840,22 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 					new PTDecimalValidator(Labels.getLabel("label_feePostingsDialog_PostingAmount.value"),
 							aCurrency.getCcyEditField(), true, false));
 		}
-		
-		if (!this.postDate.isDisabled()){
-			this.postDate.setConstraint(new PTDateValidator(Labels.getLabel("label_feePostingsDialog_PostDate.value"), true));
-		}
-		
-		if (!this.postingDivision.isButtonDisabled()){
-			this.postingDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_feePostingsDialog_PostingDivision.value"), null, true, true));
+
+		if (!this.postDate.isDisabled()) {
+			this.postDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_feePostingsDialog_PostDate.value"), true));
 		}
 
-		if (!this.valueDate.isDisabled()){
-			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_feePostingsDialog_ValueDate.value"), true));
-		}	
+		if (!this.postingDivision.isButtonDisabled()) {
+			this.postingDivision.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_feePostingsDialog_PostingDivision.value"), null, true, true));
+		}
+
+		if (!this.valueDate.isDisabled()) {
+			this.valueDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_feePostingsDialog_ValueDate.value"), true));
+		}
 	}
-
 
 	/**
 	 * Remove Error Messages for Fields
@@ -873,7 +874,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		if (StringUtils.equals(module, AssetConstants.UNIQUE_ID_ACCOUNTING)) {
 			doWriteComponentsToBean(getFeePostings());
-			if(StringUtils.isEmpty(getFeePostings().getAccountSetId())){
+			if (StringUtils.isEmpty(getFeePostings().getAccountSetId())) {
 				if (tab != null) {
 					tab.setSelected(true);
 				}
@@ -966,17 +967,17 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$reference(Event event) {
 
 		logger.debug("Entering");
 
 		if (StringUtils.isBlank(this.reference.getValue())) {
 			this.reference.setValue("", "");
-			
+
 		} else {
 			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_LOAN)) {				
+					FinanceConstants.POSTING_AGAINST_LOAN)) {
 				FinanceMain financeMain = (FinanceMain) this.reference.getObject();
 				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
 				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
@@ -984,9 +985,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				this.partnerBankID.setValue("");
 				this.partnerBankID.setDescription("");
 				Filter[] partnerBank = new Filter[1];
-				partnerBank[0] = new Filter("ENTITY",financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
+				partnerBank[0] = new Filter("ENTITY", financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
 				this.partnerBankID.setFilters(partnerBank);
-			}else{
+			} else {
 				this.postingDivision.setReadonly(false);
 			}
 		}
@@ -998,7 +999,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.reference.setConstraint("");
 		this.reference.setErrorMessage("");
 		this.reference.setValue("", "");
-		this.postingDivision.setValue("","");
+		this.postingDivision.setValue("", "");
 		this.postingDivision.setReadonly(false);
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
@@ -1049,15 +1050,14 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aFeePosting);
 		validate = validateAccounting(validate);
-		
-		
+
 		// Accounting Details Validations
 		if (validate && !isAccountingExecuted) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
-	
-	    //if Accounting set not configured stop to save
+
+		//if Accounting set not configured stop to save
 		if (StringUtils.isEmpty(aFeePosting.getAccountSetId())) {
 			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
 			if (tab != null) {
@@ -1066,8 +1066,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			MessageUtil.showError("Accounting Set Not Configured for the Fee Code :" + aFeePosting.getFeeTyeCode());
 			return;
 		}
-	
-		
+
 		// doStoreInitValues();
 		isNew = aFeePosting.isNew();
 		String tranType = "";
@@ -1101,8 +1100,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				String msg = PennantApplicationUtil.getSavingStatus(aFeePosting.getRoleCode(),
 						aFeePosting.getNextRoleCode(), aFeePosting.getReference(), " Fee Postings ",
 						aFeePosting.getRecordStatus());
-				if(StringUtils.equals(aFeePosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
-					msg= "Fee Postings with Reference "+ aFeePosting.getReference() + " Approved Succesfully.";
+				if (StringUtils.equals(aFeePosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+					msg = "Fee Postings with Reference " + aFeePosting.getReference() + " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
 
@@ -1119,9 +1118,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
 				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
 				|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
-			validate=false;
-		}else{
-			validate=true;
+			validate = false;
+		} else {
+			validate = true;
 		}
 		return validate;
 	}
@@ -1148,7 +1147,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 * 
 	 */
 
@@ -1241,7 +1240,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * @param method
 	 *            (String)
 	 * @return boolean
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 * 
 	 */
 

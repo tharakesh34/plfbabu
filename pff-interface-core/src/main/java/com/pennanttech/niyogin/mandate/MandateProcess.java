@@ -30,21 +30,21 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.external.DocumentManagementService;
 import com.pennanttech.pff.external.mandate.AbstractMandateProcess;
 
-public class MandateProcess extends AbstractMandateProcess{
-	private static final Logger			logger	= Logger.getLogger(MandateProcess.class);
+public class MandateProcess extends AbstractMandateProcess {
+	private static final Logger logger = Logger.getLogger(MandateProcess.class);
 	private static final String MANDATE_POSITIVE_REPSONE = "ACTIVE";
 	private static final String SEPARATOR_DOT = ".";
 
 	@Autowired
 	private SearchProcessor searchProcessor;
-	
+
 	@Autowired(required = false)
-	private DocumentManagementService	documentManagementService;
+	private DocumentManagementService documentManagementService;
 
 	@Override
-	public DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Map<String, Object> filterMap, 
+	public DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Map<String, Object> filterMap,
 			Map<String, Object> parameterMap) throws Exception {
-		DataEngineStatus exportStatus=  super.genetare(dataEngine, userName, filterMap, parameterMap);
+		DataEngineStatus exportStatus = super.genetare(dataEngine, userName, filterMap, parameterMap);
 
 		String status = exportStatus.getStatus();
 
@@ -58,7 +58,7 @@ public class MandateProcess extends AbstractMandateProcess{
 			String secretKey = null;
 			String bucketName = null;
 			EventProperties properties = config.getEventProperties().get("COPY_TO_SFTP");
-			if(properties != null) {
+			if (properties != null) {
 				accessKey = EncryptionUtil.decrypt(properties.getAccessKey());
 				secretKey = EncryptionUtil.decrypt(properties.getSecretKey());
 				bucketName = properties.getBucketName();
@@ -74,8 +74,8 @@ public class MandateProcess extends AbstractMandateProcess{
 				search.addFilterIn("config_id", config.getId());
 
 				List<EventProperties> list = searchProcessor.getResults(search);
-				if(list != null) {
-					for(EventProperties prop: list) {
+				if (list != null) {
+					for (EventProperties prop : list) {
 						properties = prop;
 						accessKey = prop.getAccessKey();
 						secretKey = prop.getSecretKey();
@@ -84,7 +84,8 @@ public class MandateProcess extends AbstractMandateProcess{
 				}
 			}
 
-			File file = new File(config.getUploadPath().concat(File.separator).concat(String.valueOf(exportStatus.getId())));
+			File file = new File(
+					config.getUploadPath().concat(File.separator).concat(String.valueOf(exportStatus.getId())));
 			if (file.exists()) {
 				FileUtils.forceDelete(file);
 			}
@@ -96,7 +97,7 @@ public class MandateProcess extends AbstractMandateProcess{
 			FileUtils.copyFile(sourceFile, destFile);
 
 			@SuppressWarnings("unchecked")
-			List<Long> mandates = (List<Long>)filterMap.get("MandateId");
+			List<Long> mandates = (List<Long>) filterMap.get("MandateId");
 
 			// Fetch Mandate Document reference by mandateId
 			Search search = new Search(Mandate.class);
@@ -106,26 +107,28 @@ public class MandateProcess extends AbstractMandateProcess{
 			search.addField("MandateId");
 			search.addFilterIn("MandateId", mandates);
 
-			List<Mandate> list =   searchProcessor.getResults(search);
+			List<Mandate> list = searchProcessor.getResults(search);
 
 			for (Mandate mandate : list) {
 				// Fetch document from DMS by using document reference
 				String reference = String.valueOf(mandate.getMandateID());
-				DocumentDetails detail = documentManagementService.getExternalDocument(mandate.getExternalRef(), reference);
+				DocumentDetails detail = documentManagementService.getExternalDocument(mandate.getExternalRef(),
+						reference);
 				BufferedImage bufferedImage = null;
 				String formate[] = null;
-		        try {
-		        	URL url = new URL(detail.getDocUri());
-		        	bufferedImage = ImageIO.read(url);
-					if(StringUtils.contains(mandate.getDocumentName(), SEPARATOR_DOT)) {
-						formate = StringUtils.split(mandate.getDocumentName(), "//"+SEPARATOR_DOT);
+				try {
+					URL url = new URL(detail.getDocUri());
+					bufferedImage = ImageIO.read(url);
+					if (StringUtils.contains(mandate.getDocumentName(), SEPARATOR_DOT)) {
+						formate = StringUtils.split(mandate.getDocumentName(), "//" + SEPARATOR_DOT);
 					}
-					ImageIO.write(bufferedImage, formate[1], new File(file.getPath().concat(File.separator).concat(reference).concat("."+formate[1])));
-		        } catch (IOException e) {
-		           logger.error("Exception", e);
-		        }
+					ImageIO.write(bufferedImage, formate[1],
+							new File(file.getPath().concat(File.separator).concat(reference).concat("." + formate[1])));
+				} catch (IOException e) {
+					logger.error("Exception", e);
+				}
 			}
-			
+
 			if (file.isDirectory()) {
 				for (File item : file.listFiles()) {
 					getSFTPClient(accessKey, secretKey, properties).upload(item, bucketName);
@@ -141,9 +144,11 @@ public class MandateProcess extends AbstractMandateProcess{
 	private SftpClient getSFTPClient(String accessKey, String secretKey, EventProperties properties) {
 		SftpClient client = null;
 		if (properties.getPrivateKey() != null) {
-			client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey, secretKey, properties.getPrivateKey());
+			client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey,
+					secretKey, properties.getPrivateKey());
 		} else {
-			client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey, secretKey);
+			client = new SftpClient(properties.getHostName(), Integer.parseInt(properties.getPort()), accessKey,
+					secretKey);
 		}
 		return client;
 	}
@@ -193,19 +198,18 @@ public class MandateProcess extends AbstractMandateProcess{
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 	}
-	
-	
+
 	@Override
 	protected void logMandateHistory(Mandate respmandate, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		
-		StringBuilder sql =new StringBuilder("Insert Into MandatesStatus");
+
+		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus");
 		sql.append(" (mandateID, status, reason, changeDate, fileID)");
 		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
-		
+
 		paramMap.addValue("mandateID", respmandate.getMandateID());
-		
+
 		if (!MANDATE_POSITIVE_REPSONE.equals(respmandate.getStatus())) {
 			paramMap.addValue("STATUS", "REJECTED");
 		} else {
@@ -214,7 +218,7 @@ public class MandateProcess extends AbstractMandateProcess{
 		paramMap.addValue("REASON", respmandate.getReason());
 		paramMap.addValue("changeDate", getAppDate());
 		paramMap.addValue("fileID", requestId);
-		
+
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 		logger.debug(Literal.LEAVING);
 	}

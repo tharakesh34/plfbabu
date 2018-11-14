@@ -50,7 +50,7 @@ import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface DeviationConfigService {
-	
+
 	void processDelegationDeviation(List<DeviationHeader> deviationHeaders, String finType, LoggedInUser user);
 
 	FinanceType getFinanceType(String fintype);

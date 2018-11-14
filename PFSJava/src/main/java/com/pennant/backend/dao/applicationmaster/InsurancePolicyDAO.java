@@ -42,12 +42,16 @@
 */
 
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 
 public interface InsurancePolicyDAO {
-	InsurancePolicy getInsurancePolicyById(String id,String type);
-	void update(InsurancePolicy insurancePolicy,String type);
-	void delete(InsurancePolicy insurancePolicy,String type);
-	String save(InsurancePolicy insurancePolicy,String type);
+	InsurancePolicy getInsurancePolicyById(String id, String type);
+
+	void update(InsurancePolicy insurancePolicy, String type);
+
+	void delete(InsurancePolicy insurancePolicy, String type);
+
+	String save(InsurancePolicy insurancePolicy, String type);
 
 }

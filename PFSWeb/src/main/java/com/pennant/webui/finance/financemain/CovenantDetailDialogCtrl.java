@@ -104,7 +104,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	protected Textbox description;
 	protected Checkbox alwWaiver;
 	protected Checkbox alwPostpone;
-	protected Row  row_Postpone;
+	protected Row row_Postpone;
 
 	protected Label label_postponeDays;
 	protected Hbox hbox_postponeDays;
@@ -116,7 +116,6 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	// not auto wired vars
 	private FinCovenantType finCovenantTypes; // overhanded per param
 
-	
 	private transient boolean newFinance;
 
 	// ServiceDAOs / Domain Classes
@@ -131,14 +130,14 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 	private List<FinCovenantType> finCovenantTypesDetails;
 	private String allowedRoles;
-	
+
 	protected Label label_FinCovenantTypeDialog_MandRole;
-	protected Datebox	receivableDate;
+	protected Datebox receivableDate;
 	protected Space space_receivableDate;
 	private FinanceDetail financedetail;
-	
-	protected  Label label_FinCovenantTypeDialog_RecvbleDate;
-	protected boolean covenantDetail= false;
+
+	protected Label label_FinCovenantTypeDialog_RecvbleDate;
+	protected boolean covenantDetail = false;
 
 	/**
 	 * default constructor.<br>
@@ -168,7 +167,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		setPageComponents(window_FinCovenantTypeDialog);
 
 		try {
-		// READ OVERHANDED params !
+			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
 			} else {
@@ -209,9 +208,9 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				setNewFinance(true);
 				this.finCovenantTypes.setWorkflowId(0);
 			}
-			
+
 			if (arguments.containsKey("allowedRoles")) {
-				allowedRoles=(String) arguments.get("allowedRoles");
+				allowedRoles = (String) arguments.get("allowedRoles");
 			}
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -220,14 +219,14 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
 			}
-			
+
 			doLoadWorkFlow(this.finCovenantTypes.isWorkflow(), this.finCovenantTypes.getWorkflowId(),
 					this.finCovenantTypes.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !isNewFinance()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinCovenantTypeDialog");
-			}else{
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -328,7 +327,6 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		return String.valueOf(this.finCovenantTypes.getFinReference());
 	}
 
-
 	// GUI operations
 
 	/**
@@ -365,18 +363,19 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
-				if(StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, financedetail.getFinScheduleData().getFinanceMain().getRecordStatus())){
+				if (StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED,
+						financedetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
 					this.btnDelete.setVisible(false);
 					this.btnSave.setVisible(false);
-				}else{
+				} else {
 					this.btnDelete.setVisible(true);
 					this.btnSave.setVisible(true);
 				}
 				btnCancel.setVisible(false);
 			}
 		}
-		
-		if(enqModule){
+
+		if (enqModule) {
 			this.btnNew.setVisible(false);
 			this.btnEdit.setVisible(false);
 			this.btnDelete.setVisible(false);
@@ -438,9 +437,10 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.description.setReadonly(true);
 		this.alwWaiver.setDisabled(true);
 		this.alwPostpone.setDisabled(true);
-		if(StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, financedetail.getFinScheduleData().getFinanceMain().getRecordStatus())){
+		if (StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED,
+				financedetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
 			this.receivableDate.setDisabled(true);
-		}else{
+		} else {
 			this.receivableDate.setDisabled(false);
 		}
 
@@ -472,8 +472,8 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnSave"));
-		} 
-		
+		}
+
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -491,7 +491,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.covenantType.setValueColumn("DocTypeCode");
 		this.covenantType.setDescColumn("DocTypeDesc");
 		this.covenantType.setValidateColumns(new String[] { "DocTypeCode" });
-		
+
 		this.mandRole.setMaxlength(100);
 		this.mandRole.setTextBoxWidth(151);
 		this.mandRole.setMandatoryStyle(true);
@@ -499,14 +499,14 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.mandRole.setValueColumn("RoleCd");
 		this.mandRole.setDescColumn("RoleDesc");
 		this.mandRole.setValidateColumns(new String[] { "RoleCd" });
-		
-		if(!"".equals(StringUtils.trimToEmpty(allowedRoles))){
-			String[] roles=allowedRoles.split(";");
+
+		if (!"".equals(StringUtils.trimToEmpty(allowedRoles))) {
+			String[] roles = allowedRoles.split(";");
 			Filter[] fintypeRoles = new Filter[1];
 			fintypeRoles[0] = Filter.in("RoleCd", Arrays.asList(roles));
 			this.mandRole.setFilters(fintypeRoles);
 		}
-		
+
 		this.description.setMaxlength(500);
 		this.description.setWidth("191px");
 
@@ -553,16 +553,17 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
 
 		doSetWaiverProp();
-		
+
 		doSetPostponeProp();
-		
+
 		if (getFinCovenantType().isNewRecord()) {
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			this.mandRole.setVisible(false);
-		}if(aFinAdvnancePayments.getMandRole()!=null){
+		}
+		if (aFinAdvnancePayments.getMandRole() != null) {
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
 			this.mandRole.setVisible(true);
-		}else{
+		} else {
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			this.mandRole.setVisible(false);
 		}
@@ -590,7 +591,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		}
 
 		try {
-			if(this.mandRole.isVisible()){
+			if (this.mandRole.isVisible()) {
 				aFinCovenantType.setMandRole(this.mandRole.getValidatedValue());
 				aFinCovenantType.setMandRoleDesc(this.mandRole.getDescription());
 			}
@@ -639,8 +640,6 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		aFinCovenantType.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
-	
-	
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
@@ -649,20 +648,21 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Entering");
 
 		if (!this.description.isReadonly()) {
-			this.description.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCovenantTypeDialog_Description.value"), null, false));
+			this.description.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCovenantTypeDialog_Description.value"), null, false));
 		}
-		
-		if (this.alwPostpone.isChecked() && !this.receivableDate.isDisabled()){
-			this.receivableDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"),true));
+
+		if (this.alwPostpone.isChecked() && !this.receivableDate.isDisabled()) {
+			this.receivableDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"), true));
 		}
-		
-		if(this.receivableDate.getValue()!=null){
-		if (DateUtility.compare(this.receivableDate.getValue(), DateUtility.getAppDate()) == -1) {
-			throw new WrongValueException(this.receivableDate,Labels.getLabel("DATE_PAST",
-					new String[] {Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value") }));
+
+		if (this.receivableDate.getValue() != null) {
+			if (DateUtility.compare(this.receivableDate.getValue(), DateUtility.getAppDate()) == -1) {
+				throw new WrongValueException(this.receivableDate, Labels.getLabel("DATE_PAST",
+						new String[] { Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value") }));
+			}
 		}
-	}
 		logger.debug("Leaving");
 	}
 
@@ -685,12 +685,12 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		if (!this.covenantType.isReadonly()) {
-			this.covenantType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCovenantTypeDialog_CovenantType.value"), null, true, true));
+			this.covenantType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCovenantTypeDialog_CovenantType.value"), null, true, true));
 		}
 		if (!this.mandRole.isReadonly()) {
-			this.mandRole.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinCovenantTypeDialog_MandRole.value"), null, true, true));
+			this.mandRole.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinCovenantTypeDialog_MandRole.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -730,8 +730,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n"
-				+ Labels.getLabel("FinCovenantType_CovenantType") + " : "
-				+ aFinCovenantType.getCovenantType(); 
+				+ Labels.getLabel("FinCovenantType_CovenantType") + " : " + aFinCovenantType.getCovenantType();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinCovenantType.getRecordType())) {
@@ -750,16 +749,15 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			}
 
 			try {
-				
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getCovenantDetailListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
-						closeDialog();
-					}
-				
+
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCovenantDetailListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+					closeDialog();
+				}
 
 			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
@@ -857,14 +855,13 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		// save it to database
 		try {
 
-				AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getCovenantDetailListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
-					closeDialog();
-				}
-			
+			AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getCovenantDetailListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+				closeDialog();
+			}
 
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
@@ -893,7 +890,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				FinCovenantType loanDetail = getCovenantDetailListCtrl().getFinCovenantTypeDetailList().get(i);
 
 				if (StringUtils.equals(afinCovenantTypes.getCovenantType(), loanDetail.getCovenantType())) { // Both
-																												// Current
+																													// Current
 																												// and
 																												// Existing
 																												// list
@@ -901,9 +898,9 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 																												// same
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -924,9 +921,8 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 									.size(); j++) {
 								FinCovenantType detail = getCovenantDetailListCtrl().getFinancedetail()
 										.getCovenantTypeList().get(j);
-								if (detail.getFinReference() == afinCovenantTypes.getFinReference()
-										&& StringUtils.equals(detail.getCovenantType(),
-												afinCovenantTypes.getCovenantType())) {
+								if (detail.getFinReference() == afinCovenantTypes.getFinReference() && StringUtils
+										.equals(detail.getCovenantType(), afinCovenantTypes.getCovenantType())) {
 									finCovenantTypesDetails.add(detail);
 								}
 							}
@@ -951,7 +947,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	public void onCheck$alwWaiver(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSetWaiverProp();
-		
+
 		this.alwPostpone.setChecked(false);
 		this.receivableDate.setValue(null);
 		this.space_receivableDate.setSclass("");
@@ -964,13 +960,13 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.row_Postpone.setVisible(false);
 			this.mandRole.setVisible(false);
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
-		} else{
+		} else {
 			this.mandRole.setVisible(false);
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			this.row_Postpone.setVisible(true);
 		}
 	}
-	
+
 	/**
 	 * Change the branch for the Account on changing the finance Branch
 	 * 
@@ -987,14 +983,14 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (dcoType != null) {
 				this.covenantType.setValue(dcoType.getDocTypeCode());
 				this.covenantType.setDescription(dcoType.getDocTypeDesc());
-				validatewithCustDoc(dcoType.getDocTypeCode(),dcoType.getDocTypeDesc());
+				validatewithCustDoc(dcoType.getDocTypeCode(), dcoType.getDocTypeDesc());
 			}
 		}
 
 		logger.debug("Leaving");
 	}
 
-	private void validatewithCustDoc(String docTypeCode,String docDesc) {
+	private void validatewithCustDoc(String docTypeCode, String docDesc) {
 		logger.debug("Entering");
 		if (getFinancedetail().getCustomerDetails() != null
 				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
@@ -1014,7 +1010,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	public void onCheck$alwPostpone(Event event) throws Exception {
 		doSetPostponeProp();
 	}
-	
+
 	private void doSetPostponeProp() {
 		if (this.alwPostpone.isChecked()) {
 			this.mandRole.setVisible(false);
@@ -1023,12 +1019,12 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.space_receivableDate.setSclass("mandatory");
 			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(true);
 			this.receivableDate.setVisible(true);
-			
+
 		} else {
-			if(this.alwWaiver.isChecked()){
+			if (this.alwWaiver.isChecked()) {
 				this.mandRole.setVisible(false);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
-			}else{				
+			} else {
 				this.mandRole.setVisible(false);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			}
@@ -1040,7 +1036,6 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.space_receivableDate.setSclass("");
 		}
 	}
-	
 
 	// WorkFlow Components
 
@@ -1103,7 +1098,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	public void setFinCovenantTypeDetails(List<FinCovenantType> finCovenantTypesDetails) {
 		this.finCovenantTypesDetails = finCovenantTypesDetails;
 	}
-	
+
 	public void setFinancedetail(FinanceDetail financedetail) {
 		this.financedetail = financedetail;
 	}

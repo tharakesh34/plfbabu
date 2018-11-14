@@ -99,9 +99,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	private static final Logger logger = Logger.getLogger(SecurityRoleGroupsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window win_SecRoleGroupsDialog; // autoWired
 	protected Borderlayout borderLayout_SecurityRoleGroups; // autoWired
@@ -152,9 +151,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	// Components events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SecurityRole object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SecurityRole object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -181,11 +179,9 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		this.label_RoleDesc.setValue(getSecurityRole().getRoleDesc());
 		this.label_RoleCategory.setValue(getSecurityRole().getRoleCategory());
 		/* Fetch all AssignedGroups */
-		assignedGroupsList = getSecurityRoleGroupsService().getGroupsByRoleId(
-				getSecurityRole().getRoleID(), true);
+		assignedGroupsList = getSecurityRoleGroupsService().getGroupsByRoleId(getSecurityRole().getRoleID(), true);
 		/* Fetch all UnAssignedGroups */
-		unAssignedGroupsList = getSecurityRoleGroupsService()
-				.getGroupsByRoleId(getSecurityRole().getRoleID(), false);
+		unAssignedGroupsList = getSecurityRoleGroupsService().getGroupsByRoleId(getSecurityRole().getRoleID(), false);
 		tempUnAssignedGroupsList = unAssignedGroupsList;
 		doShowDialog();
 		setDialog(DialogType.EMBEDDED);
@@ -248,8 +244,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			Iterator it = list.iterator();
 			while (it.hasNext()) {
 				li = (Listitem) it.next();
-				final SecurityGroup aSecGroup = (SecurityGroup) li
-						.getAttribute("data");
+				final SecurityGroup aSecGroup = (SecurityGroup) li.getAttribute("data");
 				Listcell slecteditem = new Listcell();
 				Listcell slecteditemDesc = new Listcell();
 				List selectedRowValues = new ArrayList();// TO get each row
@@ -258,10 +253,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				slecteditem = (Listcell) selectedRowValues.get(0);
 				slecteditemDesc = (Listcell) selectedRowValues.get(1);
 				tempUnAsgnGroupsMap.remove(Long.valueOf(aSecGroup.getGrpID()));
-				getNewAssignedMap().put(Long.valueOf(aSecGroup.getGrpID()),
-						aSecGroup);
-				doFillListbox(this.listbox_AssignedGroups,
-						slecteditem.getLabel(), slecteditemDesc.getLabel(),
+				getNewAssignedMap().put(Long.valueOf(aSecGroup.getGrpID()), aSecGroup);
+				doFillListbox(this.listbox_AssignedGroups, slecteditem.getLabel(), slecteditemDesc.getLabel(),
 						aSecGroup);
 				listbox_UnAssignedGroups.removeItemAt(li.getIndex());
 
@@ -288,8 +281,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			Iterator it = list.iterator();
 			while (it.hasNext()) {
 				li = (Listitem) it.next();
-				final SecurityGroup aSecGroup = (SecurityGroup) li
-						.getAttribute("data");
+				final SecurityGroup aSecGroup = (SecurityGroup) li.getAttribute("data");
 				Listcell slecteditem = new Listcell();
 				Listcell slecteditemDesc = new Listcell();
 				List selectedRowValues = new ArrayList();// TO get each row
@@ -297,11 +289,9 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				selectedRowValues = li.getChildren();
 				slecteditem = (Listcell) selectedRowValues.get(0);
 				slecteditemDesc = (Listcell) selectedRowValues.get(1);
-				tempUnAsgnGroupsMap.put(Long.valueOf(aSecGroup.getGrpID()),
-						aSecGroup);
+				tempUnAsgnGroupsMap.put(Long.valueOf(aSecGroup.getGrpID()), aSecGroup);
 				getNewAssignedMap().remove(Long.valueOf(aSecGroup.getGrpID()));
-				doFillListbox(this.listbox_UnAssignedGroups,
-						slecteditem.getLabel(), slecteditemDesc.getLabel(),
+				doFillListbox(this.listbox_UnAssignedGroups, slecteditem.getLabel(), slecteditemDesc.getLabel(),
 						aSecGroup);
 				listbox_AssignedGroups.removeItemAt(li.getIndex());
 
@@ -328,8 +318,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			Iterator it = list.iterator();
 			while (it.hasNext()) {
 				li = (Listitem) it.next();
-				final SecurityGroup aSecGroup = (SecurityGroup) li
-						.getAttribute("data");
+				final SecurityGroup aSecGroup = (SecurityGroup) li.getAttribute("data");
 				Listcell slecteditem = new Listcell();
 				Listcell slecteditemDesc = new Listcell();
 				List selectedRowValues = new ArrayList();// TO get each row
@@ -337,11 +326,9 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				selectedRowValues = li.getChildren();
 				slecteditem = (Listcell) selectedRowValues.get(0);
 				slecteditemDesc = (Listcell) selectedRowValues.get(1);
-				tempUnAsgnGroupsMap.put(Long.valueOf(aSecGroup.getGrpID()),
-						aSecGroup);
+				tempUnAsgnGroupsMap.put(Long.valueOf(aSecGroup.getGrpID()), aSecGroup);
 				getNewAssignedMap().remove(Long.valueOf(aSecGroup.getGrpID()));
-				doFillListbox(this.listbox_UnAssignedGroups,
-						slecteditem.getLabel(), slecteditemDesc.getLabel(),
+				doFillListbox(this.listbox_UnAssignedGroups, slecteditem.getLabel(), slecteditemDesc.getLabel(),
 						aSecGroup);
 				listbox_AssignedGroups.removeItemAt(li.getIndex());
 			}
@@ -349,12 +336,10 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	}
 
 	/**
-	 * This method invokes when double clicked on Groups item and calls
-	 * showGroupRights() method
+	 * This method invokes when double clicked on Groups item and calls showGroupRights() method
 	 */
 
-	public void onSecurityGroupItemDoubleClicked(ForwardEvent event)
-			throws Exception {
+	public void onSecurityGroupItemDoubleClicked(ForwardEvent event) throws Exception {
 
 		logger.debug("Entering " + event.toString());
 		this.panel_SecurityGroupRights.setOpen(true);
@@ -377,9 +362,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		map.put("prevFilters", filters);
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/Administration/SecuritySearchDialog.zul",
-					null, map);
+			Executions.createComponents("/WEB-INF/pages/Administration/SecuritySearchDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -417,22 +400,19 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityRoleGroupsDialog_btnSave"));
-		this.btnCancel.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityRoleGroupsDialog_btnCancel"));
-		this.btnSelectGroups.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityRoleGroupsDialog_btnSelectGroups"));
-		this.btnUnSelectGroups.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityRoleGroupsDialog_btnUnSelectGroups"));
-		this.btnUnSelectAllGroups.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityRoleGroupsDialog_btnUnSelectAllGroups"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SecurityRoleGroupsDialog_btnSave"));
+		this.btnCancel.setVisible(getUserWorkspace().isAllowed("button_SecurityRoleGroupsDialog_btnCancel"));
+		this.btnSelectGroups
+				.setVisible(getUserWorkspace().isAllowed("button_SecurityRoleGroupsDialog_btnSelectGroups"));
+		this.btnUnSelectGroups
+				.setVisible(getUserWorkspace().isAllowed("button_SecurityRoleGroupsDialog_btnUnSelectGroups"));
+		this.btnUnSelectAllGroups
+				.setVisible(getUserWorkspace().isAllowed("button_SecurityRoleGroupsDialog_btnUnSelectAllGroups"));
 		logger.debug("Leaving ");
 	}
 
@@ -444,16 +424,14 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	public void doShowDialog() throws InterruptedException {
 		doSetPanelProperties();
 		for (SecurityGroup secGroup : unAssignedGroupsList) {
-			tempUnAsgnGroupsMap
-					.put(Long.valueOf(secGroup.getGrpID()), secGroup);
+			tempUnAsgnGroupsMap.put(Long.valueOf(secGroup.getGrpID()), secGroup);
 		}
 		doShowAssignedGroups();
 		doShowUnAssignedGroups();
 	}
 
 	/**
-	 * This method displays Assigned groups in Assigned groups panel by calling
-	 * doFillListbox()
+	 * This method displays Assigned groups in Assigned groups panel by calling doFillListbox()
 	 */
 	public void doShowAssignedGroups() {
 		logger.debug("Entering ");
@@ -462,31 +440,27 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		Collections.sort(assignedGroupsList, comp);
 		for (int i = 0; i < assignedGroupsList.size(); i++) {
 			SecurityGroup aSecurityGroup = assignedGroupsList.get(i);
-			doFillListbox(listbox_AssignedGroups, aSecurityGroup.getGrpCode(),
-					aSecurityGroup.getGrpDesc(), aSecurityGroup);
-			this.oldAssignedMap.put(Long.valueOf(aSecurityGroup.getGrpID()),
+			doFillListbox(listbox_AssignedGroups, aSecurityGroup.getGrpCode(), aSecurityGroup.getGrpDesc(),
 					aSecurityGroup);
+			this.oldAssignedMap.put(Long.valueOf(aSecurityGroup.getGrpID()), aSecurityGroup);
 		}
 		setOldAssignedMap(this.oldAssignedMap);
 		getNewAssignedMap().putAll(oldAssignedMap);
 	}
 
 	/**
-	 * This method displays UnAssigned groups in UnAssigned groups panel by
-	 * calling doFillListbox()
+	 * This method displays UnAssigned groups in UnAssigned groups panel by calling doFillListbox()
 	 */
 	public void doShowUnAssignedGroups() {
 		logger.debug("Entering");
 		this.listbox_UnAssignedGroups.getItems().clear();
-		unAssignedGroupsList = new ArrayList<SecurityGroup>(
-				tempUnAsgnGroupsMap.values());
+		unAssignedGroupsList = new ArrayList<SecurityGroup>(tempUnAsgnGroupsMap.values());
 		Comparator<SecurityGroup> comp = new BeanComparator<SecurityGroup>("grpCode");
 		Collections.sort(unAssignedGroupsList, comp);
 		for (int i = 0; i < unAssignedGroupsList.size(); i++) {
 			SecurityGroup aSecurityGroup = unAssignedGroupsList.get(i);
 
-			doFillListbox(listbox_UnAssignedGroups,
-					aSecurityGroup.getGrpCode(), aSecurityGroup.getGrpDesc(),
+			doFillListbox(listbox_UnAssignedGroups, aSecurityGroup.getGrpCode(), aSecurityGroup.getGrpDesc(),
 					aSecurityGroup);
 
 		}
@@ -501,8 +475,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * @param value2
 	 * @param SecurityRole
 	 */
-	private void doFillListbox(Listbox listbox, String value1, String value2,
-			SecurityGroup securityGroup) {
+	private void doFillListbox(Listbox listbox, String value1, String value2, SecurityGroup securityGroup) {
 		Listitem item = new Listitem(); // To Create List item
 		Listcell lc;
 		lc = new Listcell();
@@ -512,8 +485,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		lc.setLabel(value2);
 		lc.setParent(item);
 		item.setAttribute("data", securityGroup);
-		ComponentsCtrl.applyForward(item,
-				"onDoubleClick=onSecurityGroupItemDoubleClicked");
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");
 		listbox.appendChild(item);
 	}
 
@@ -522,8 +494,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	public void doShowGroupRights(ForwardEvent event)
-			throws InterruptedException {
+	public void doShowGroupRights(ForwardEvent event) throws InterruptedException {
 
 		logger.debug("Entering ");
 		Listitem item = (Listitem) event.getOrigin().getTarget();
@@ -532,19 +503,16 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			/* CAST AND STORE THE SELECTED OBJECT */
 			securityGroup = (SecurityGroup) item.getAttribute("data");
 		}
-		this.panel_SecurityGroupRights.setTitle(Labels
-				.getLabel("panel_SecRoleGroupsDailog_GroupRights.title")
-				+ " - " + securityGroup.getGrpCode());
+		this.panel_SecurityGroupRights.setTitle(
+				Labels.getLabel("panel_SecRoleGroupsDailog_GroupRights.title") + " - " + securityGroup.getGrpCode());
 
 		this.listbox_GroupsRights.getItems().clear();
 		List<SecurityGroupRights> groupRightsList = getSecurityRoleGroupsService()
 				.getSecurityGroupRightsByGrpId(securityGroup);
-		Comparator<SecurityGroupRights> comp = new BeanComparator<SecurityGroupRights>(
-				"lovDescRightName");
+		Comparator<SecurityGroupRights> comp = new BeanComparator<SecurityGroupRights>("lovDescRightName");
 		Collections.sort(groupRightsList, comp);
 		for (int i = 0; i < groupRightsList.size(); i++) {
-			SecurityGroupRights secGroupRights = (SecurityGroupRights) groupRightsList
-					.get(i);
+			SecurityGroupRights secGroupRights = (SecurityGroupRights) groupRightsList.get(i);
 			Listitem li = new Listitem(); // To Create List item
 			Listcell lc;
 			lc = new Listcell();
@@ -557,12 +525,10 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	}
 
 	/**
-	 * This method do the following 1)compare oldAssigned map and new assigned
-	 * map a)if GrpId not in oldselectedMap and in new selectedMap creates new
-	 * SecurityUserRoles Object, sets data and add it to SecurityRole
-	 * LovDescAssignedGroups b)if GrpId in oldselectedMap and not in new
-	 * selectedMap gets the SecurityUserRoles from back end , sets RecordStatus
-	 * "DELETE" it to SecurityRole LovDescAssignedGroups
+	 * This method do the following 1)compare oldAssigned map and new assigned map a)if GrpId not in oldselectedMap and
+	 * in new selectedMap creates new SecurityUserRoles Object, sets data and add it to SecurityRole
+	 * LovDescAssignedGroups b)if GrpId in oldselectedMap and not in new selectedMap gets the SecurityUserRoles from
+	 * back end , sets RecordStatus "DELETE" it to SecurityRole LovDescAssignedGroups
 	 */
 	public void doWriteComponentsToBean() {
 
@@ -572,25 +538,18 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			if (!getOldAssignedMap().containsKey(grpId)) {
 
 				SecurityRoleGroups aSecRoleGroups = new SecurityRoleGroups();
-				aSecRoleGroups.setGrpID(getNewAssignedMap().get(grpId)
-						.getGrpID());
-				aSecRoleGroups.setLovDescGrpCode(getNewAssignedMap().get(grpId)
-						.getGrpCode());
+				aSecRoleGroups.setGrpID(getNewAssignedMap().get(grpId).getGrpID());
+				aSecRoleGroups.setLovDescGrpCode(getNewAssignedMap().get(grpId).getGrpCode());
 				aSecRoleGroups.setRoleID(getSecurityRole().getRoleID());
-				aSecRoleGroups
-						.setLovDescRoleCode(getSecurityRole().getRoleCd());
-				aSecRoleGroups.setLastMntOn(new Timestamp(System
-						.currentTimeMillis()));
-				aSecRoleGroups.setLastMntBy(getUserWorkspace()
-						.getLoggedInUser().getUserId());
+				aSecRoleGroups.setLovDescRoleCode(getSecurityRole().getRoleCd());
+				aSecRoleGroups.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				aSecRoleGroups.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				aSecRoleGroups.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				aSecRoleGroups.setNextRoleCode("");
 				aSecRoleGroups.setNextTaskId("");
 				aSecRoleGroups.setTaskId("");
 				aSecRoleGroups.setRoleCode("");
-				selectedMap
-						.put(Long.valueOf(getNewAssignedMap().get(grpId)
-								.getGrpID()), aSecRoleGroups);
+				selectedMap.put(Long.valueOf(getNewAssignedMap().get(grpId).getGrpID()), aSecRoleGroups);
 
 			}
 		}
@@ -599,25 +558,18 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			if (!getNewAssignedMap().containsKey(grpId)) {
 				SecurityRoleGroups aSecRoleGroups = new SecurityRoleGroups();
 				aSecRoleGroups.setRoleID(getSecurityRole().getRoleID());
-				aSecRoleGroups.setGrpID(getOldAssignedMap().get(grpId)
-						.getGrpID());
-				aSecRoleGroups
-						.setLovDescRoleCode(getSecurityRole().getRoleCd());
-				aSecRoleGroups.setLovDescGrpCode(getOldAssignedMap().get(grpId)
-						.getGrpCode());
+				aSecRoleGroups.setGrpID(getOldAssignedMap().get(grpId).getGrpID());
+				aSecRoleGroups.setLovDescRoleCode(getSecurityRole().getRoleCd());
+				aSecRoleGroups.setLovDescGrpCode(getOldAssignedMap().get(grpId).getGrpCode());
 				aSecRoleGroups.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aSecRoleGroups.setLastMntOn(new Timestamp(System
-						.currentTimeMillis()));
+				aSecRoleGroups.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				aSecRoleGroups.setNextRoleCode("");
 				aSecRoleGroups.setNextTaskId("");
 				aSecRoleGroups.setTaskId("");
 				aSecRoleGroups.setRoleCode("");
 				aSecRoleGroups.setRecordStatus("");
-				aSecRoleGroups.setLastMntBy(getUserWorkspace()
-						.getLoggedInUser().getUserId());
-				deletedMap
-						.put(Long.valueOf(getOldAssignedMap().get(grpId)
-								.getGrpID()), aSecRoleGroups);
+				aSecRoleGroups.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				deletedMap.put(Long.valueOf(getOldAssignedMap().get(grpId).getGrpID()), aSecRoleGroups);
 			}
 		}
 	}
@@ -707,8 +659,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	@SuppressWarnings("unchecked")
 	public PagedListWrapper<SecurityGroup> getUnAssigneListWrapper() {
 		if (this.unAssigneListWrapper == null) {
-			this.unAssigneListWrapper = (PagedListWrapper<SecurityGroup>) SpringUtil
-					.getBean("pagedListWrapper");
+			this.unAssigneListWrapper = (PagedListWrapper<SecurityGroup>) SpringUtil.getBean("pagedListWrapper");
 		}
 
 		return unAssigneListWrapper;
@@ -722,8 +673,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		logger.debug("Entering ");
 		this.panel_SecurityGroupRights.setOpen(false);
 		this.listbox_GroupsRights.getItems().clear();
-		this.panel_SecurityGroupRights.setTitle(Labels
-				.getLabel("panel_SecRoleGroupsDailog_GroupRights.title"));
+		this.panel_SecurityGroupRights.setTitle(Labels.getLabel("panel_SecRoleGroupsDailog_GroupRights.title"));
 		logger.debug("Leaving ");
 	}
 
@@ -770,8 +720,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				auditHeader = getSecurityRoleGroupsService().save(auditHeader);
-				auditHeader = ErrorControl.showErrorDetails(
-						this.win_SecRoleGroupsDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.win_SecRoleGroupsDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -801,10 +750,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.win_SecRoleGroupsDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.win_SecRoleGroupsDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -818,20 +765,17 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(SecurityRole aSecurityRole,
-			String tranType) {
+	private AuditHeader getAuditHeader(SecurityRole aSecurityRole, String tranType) {
 
 		logger.debug("Entering ");
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSecurityRole.getBefImage(), aSecurityRole);
-		return new AuditHeader(String.valueOf(aSecurityRole.getId()), null,
-				null, null, auditDetail, getUserWorkspace().getLoggedInUser(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityRole.getBefImage(), aSecurityRole);
+		return new AuditHeader(String.valueOf(aSecurityRole.getId()), null, null, null, auditDetail,
+				getUserWorkspace().getLoggedInUser(), getOverideMap());
 	}
 
 	/**
-	 * This method prepares the audit details list and sets different
-	 * auditSequence for newly inserted records and deleted records
+	 * This method prepares the audit details list and sets different auditSequence for newly inserted records and
+	 * deleted records
 	 * 
 	 * @return
 	 */
@@ -840,14 +784,12 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		int count = 1;
-		String[] fields = PennantJavaUtil
-				.getFieldDetails(new SecurityRoleGroups());
+		String[] fields = PennantJavaUtil.getFieldDetails(new SecurityRoleGroups());
 
 		if (selectedMap != null && selectedMap.size() > 0) {
 			Collection<SecurityRoleGroups> collection = selectedMap.values();
 			for (final SecurityRoleGroups securityRolesGroups : collection) {
-				AuditDetail auditDetail = getAuditDetail(securityRolesGroups,
-						count, fields);
+				AuditDetail auditDetail = getAuditDetail(securityRolesGroups, count, fields);
 				if (auditDetail != null) {
 					auditDetails.add(auditDetail);
 					count++;
@@ -859,8 +801,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			Collection<SecurityRoleGroups> collection = deletedMap.values();
 			count = 1;
 			for (final SecurityRoleGroups securityRolesGroups : collection) {
-				AuditDetail auditDetail = getAuditDetail(securityRolesGroups,
-						count, fields);
+				AuditDetail auditDetail = getAuditDetail(securityRolesGroups, count, fields);
 				if (auditDetail != null) {
 					auditDetails.add(auditDetail);
 					count++;
@@ -879,26 +820,22 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * @param fields
 	 * @return
 	 */
-	private AuditDetail getAuditDetail(SecurityRoleGroups securityRolesGroups,
-			int auditSeq, String[] fields) {
+	private AuditDetail getAuditDetail(SecurityRoleGroups securityRolesGroups, int auditSeq, String[] fields) {
 		logger.debug("Entering ");
 		if (securityRolesGroups == null) {
 			return null;
 		}
 		String auditImage = "";
 		Object befImage = null;
-		if (securityRolesGroups.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_NEW)) {
+		if (securityRolesGroups.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			auditImage = PennantConstants.TRAN_ADD;
 		}
-		if (securityRolesGroups.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (securityRolesGroups.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			auditImage = PennantConstants.TRAN_DEL;
 			befImage = securityRolesGroups;
 		}
 		logger.debug("Leaving ");
-		return new AuditDetail(auditImage, auditSeq, fields[0], fields[1],
-				befImage, securityRolesGroups);
+		return new AuditDetail(auditImage, auditSeq, fields[0], fields[1], befImage, securityRolesGroups);
 	}
 
 	// ******************************************************//
@@ -925,8 +862,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		return securityRoleGroupsService;
 	}
 
-	public void setSecurityRoleGroupsService(
-			SecurityRoleGroupsService securityRoleGroupsService) {
+	public void setSecurityRoleGroupsService(SecurityRoleGroupsService securityRoleGroupsService) {
 		this.securityRoleGroupsService = securityRoleGroupsService;
 	}
 

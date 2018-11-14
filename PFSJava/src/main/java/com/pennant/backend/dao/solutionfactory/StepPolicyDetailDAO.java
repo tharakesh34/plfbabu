@@ -43,11 +43,9 @@
 
 package com.pennant.backend.dao.solutionfactory;
 
-
 import java.util.List;
 
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
-
 
 /**
  * DAO methods declaration for the <b>StepPolicyDetail model</b> class.<br>
@@ -56,11 +54,18 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 public interface StepPolicyDetailDAO {
 
 	StepPolicyDetail getStepPolicyDetail();
+
 	StepPolicyDetail getNewStepPolicyDetail();
-	StepPolicyDetail getStepPolicyDetailByID(StepPolicyDetail stepPolicyDetail, String type); 
-	List<StepPolicyDetail> getStepPolicyDetailListByID(final String id, String type); 
+
+	StepPolicyDetail getStepPolicyDetailByID(StepPolicyDetail stepPolicyDetail, String type);
+
+	List<StepPolicyDetail> getStepPolicyDetailListByID(final String id, String type);
+
 	void update(StepPolicyDetail stepPolicyDetail, String type);
+
 	String save(StepPolicyDetail stepPolicyDetail, String type);
+
 	void delete(StepPolicyDetail stepPolicyDetail, String type);
+
 	void deleteByPolicyCode(String finType, String type);
 }

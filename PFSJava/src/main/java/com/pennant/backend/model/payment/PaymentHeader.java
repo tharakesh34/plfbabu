@@ -188,7 +188,7 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 	public void setPaymentInstrType(String paymentInstrType) {
 		this.paymentInstrType = paymentInstrType;
 	}
-	
+
 	public long getLinkedTranId() {
 		return linkedTranId;
 	}

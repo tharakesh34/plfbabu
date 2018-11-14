@@ -54,12 +54,11 @@ public class DedupFields extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private String fieldName = null;
 	private String fieldControl;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private DedupFields befImage;
 	private LoggedInUser userDetails;
 	private int refType;
-	
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -75,27 +74,27 @@ public class DedupFields extends AbstractWorkflowEntity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return fieldName;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.fieldName = id;
 	}
-	
+
 	public String getFieldName() {
 		return fieldName;
 	}
+
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
 	}
-	
 
-	
 	public String getFieldControl() {
 		return fieldControl;
 	}
+
 	public void setFieldControl(String fieldControl) {
 		this.fieldControl = fieldControl;
 	}
@@ -107,7 +106,7 @@ public class DedupFields extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -116,12 +115,12 @@ public class DedupFields extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public DedupFields getBefImage(){
+	public DedupFields getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DedupFields beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DedupFields beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

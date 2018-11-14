@@ -78,8 +78,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/CustomerCategory/CustomerCategoryDialog.zul
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CustomerCategory/CustomerCategoryDialog.zul
  * file.
  */
 public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
@@ -87,23 +86,22 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	private static final Logger logger = Logger.getLogger(CustomerCategoryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_CustomerCategoryDialog; 	// autoWired
+	protected Window window_CustomerCategoryDialog; // autoWired
 
-	protected Textbox 	custCtgCode; 					// autoWired
-	protected Textbox 	custCtgDesc; 					// autoWired
-	protected Combobox 	custCtgType; 					// autoWired
-	protected Checkbox 	custCtgIsActive; 				// autoWired
+	protected Textbox custCtgCode; // autoWired
+	protected Textbox custCtgDesc; // autoWired
+	protected Combobox custCtgType; // autoWired
+	protected Checkbox custCtgIsActive; // autoWired
 
 	// not autoWired variables
-	private CustomerCategory customerCategory; 		// over handed per parameter
+	private CustomerCategory customerCategory; // over handed per parameter
 	private transient CustomerCategoryListCtrl customerCategoryListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CustomerCategoryService customerCategoryService;
 
@@ -122,9 +120,8 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerCategory
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerCategory object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -140,8 +137,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 			doCheckRights();
 
 			if (arguments.containsKey("customerCategory")) {
-				this.customerCategory = (CustomerCategory) arguments
-						.get("customerCategory");
+				this.customerCategory = (CustomerCategory) arguments.get("customerCategory");
 				CustomerCategory befImage = new CustomerCategory();
 				BeanUtils.copyProperties(this.customerCategory, befImage);
 				this.customerCategory.setBefImage(befImage);
@@ -150,14 +146,12 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 				setCustomerCategory(null);
 			}
 
-			doLoadWorkFlow(this.customerCategory.isWorkflow(),
-					this.customerCategory.getWorkflowId(),
+			doLoadWorkFlow(this.customerCategory.isWorkflow(), this.customerCategory.getWorkflowId(),
 					this.customerCategory.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CustomerCategoryDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerCategoryDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -167,8 +161,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 			// or
 			// delete customerCategory here.
 			if (arguments.containsKey("customerCategoryListCtrl")) {
-				setCustomerCategoryListCtrl((CustomerCategoryListCtrl) arguments
-						.get("customerCategoryListCtrl"));
+				setCustomerCategoryListCtrl((CustomerCategoryListCtrl) arguments.get("customerCategoryListCtrl"));
 			} else {
 				setCustomerCategoryListCtrl(null);
 			}
@@ -206,8 +199,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -333,8 +325,10 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		}
 		this.custCtgIsActive.setChecked(aCustomerCategory.isCustCtgIsActive());
 		this.recordStatus.setValue(aCustomerCategory.getRecordStatus());
-		
-		if(aCustomerCategory.isNew() || (aCustomerCategory.getRecordType() != null ? aCustomerCategory.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCustomerCategory.isNew()
+				|| (aCustomerCategory.getRecordType() != null ? aCustomerCategory.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.custCtgIsActive.setChecked(true);
 			this.custCtgIsActive.setDisabled(true);
 		}
@@ -354,8 +348,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aCustomerCategory.setCustCtgCode(this.custCtgCode.getValue()
-					.toUpperCase());
+			aCustomerCategory.setCustCtgCode(this.custCtgCode.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -364,20 +357,18 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(!this.custCtgType.isDisabled() && this.custCtgType.getSelectedIndex()<0){
+			if (!this.custCtgType.isDisabled() && this.custCtgType.getSelectedIndex() < 0) {
 				throw new WrongValueException(custCtgType, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_CustomerCategoryDialog_CustCtgType.value")}));
+						new String[] { Labels.getLabel("label_CustomerCategoryDialog_CustCtgType.value") }));
 			}
-			aCustomerCategory.setCustCtgType(this.custCtgType.getSelectedItem()
-					.getValue().toString());
+			aCustomerCategory.setCustCtgType(this.custCtgType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerCategory.setCustCtgIsActive(this.custCtgIsActive
-					.isChecked());
+			aCustomerCategory.setCustCtgIsActive(this.custCtgIsActive.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -400,8 +391,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerCategory
 	 * @throws Exception
@@ -451,18 +441,21 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 
 		setValidationOn(true);
 
-		if (!this.custCtgCode.isReadonly()){
-			this.custCtgCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerCategoryDialog_CustCtgCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+		if (!this.custCtgCode.isReadonly()) {
+			this.custCtgCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerCategoryDialog_CustCtgCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		if (!this.custCtgDesc.isReadonly()){
-			this.custCtgDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerCategoryDialog_CustCtgDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.custCtgDesc.isReadonly()) {
+			this.custCtgDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerCategoryDialog_CustCtgDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.custCtgType.isReadonly()) {
-			this.custCtgType.setConstraint(new PTStringValidator(Labels.getLabel(
-					"label_CustomerCategoryDialog_CustCtgType.value"), null, true));
+			this.custCtgType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerCategoryDialog_CustCtgType.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -518,8 +511,8 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aCustomerCategory.getCustCtgCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerCategory.getCustCtgCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerCategory.getRecordType())) {
 				aCustomerCategory.setVersion(aCustomerCategory.getVersion() + 1);
@@ -559,11 +552,11 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 			this.custCtgCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-		
+
 		this.custCtgDesc.setReadonly(isReadOnly("CustomerCategoryDialog_custCtgDesc"));
 		this.custCtgType.setDisabled(isReadOnly("CustomerCategoryDialog_custCtgType"));
 		this.custCtgIsActive.setDisabled(isReadOnly("CustomerCategoryDialog_custCtgIsActive"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -816,7 +809,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerCategoryDialog, auditHeader);
 						return processCompleted;
@@ -860,13 +853,11 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(CustomerCategory aCustomerCategory,
-			String tranType) {
+	private AuditHeader getAuditHeader(CustomerCategory aCustomerCategory, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerCategory.getBefImage(), aCustomerCategory);
-		return new AuditHeader(String.valueOf(aCustomerCategory.getId()), null,
-				null, null, auditDetail, aCustomerCategory.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerCategory.getBefImage(), aCustomerCategory);
+		return new AuditHeader(String.valueOf(aCustomerCategory.getId()), null, null, null, auditDetail,
+				aCustomerCategory.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -919,11 +910,11 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	private void refreshList() {
 		getCustomerCategoryListCtrl().search();
 	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.customerCategory.getCustCtgCode());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -932,6 +923,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -939,6 +931,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	public CustomerCategory getCustomerCategory() {
 		return this.customerCategory;
 	}
+
 	public void setCustomerCategory(CustomerCategory customerCategory) {
 		this.customerCategory = customerCategory;
 	}
@@ -946,6 +939,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	public void setCustomerCategoryService(CustomerCategoryService customerCategoryService) {
 		this.customerCategoryService = customerCategoryService;
 	}
+
 	public CustomerCategoryService getCustomerCategoryService() {
 		return this.customerCategoryService;
 	}
@@ -953,6 +947,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	public void setCustomerCategoryListCtrl(CustomerCategoryListCtrl customerCategoryListCtrl) {
 		this.customerCategoryListCtrl = customerCategoryListCtrl;
 	}
+
 	public CustomerCategoryListCtrl getCustomerCategoryListCtrl() {
 		return this.customerCategoryListCtrl;
 	}

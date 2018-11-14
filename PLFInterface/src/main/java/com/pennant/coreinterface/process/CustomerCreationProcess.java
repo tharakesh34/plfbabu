@@ -10,10 +10,10 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerCreationProcess {
 
-	String generateNewCIF(CoreBankNewCustomer customer)	throws InterfaceException;
-	
+	String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException;
+
 	String createNewCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException;
-	
+
 	List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup) throws InterfaceException;
 
 	void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail) throws InterfaceException;

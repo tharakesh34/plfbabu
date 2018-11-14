@@ -69,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements CustomerTypeDAO {
 	private static Logger logger = Logger.getLogger(CustomerTypeDAOImpl.class);
-	
+
 	public CustomerTypeDAOImpl() {
 		super();
 	}
@@ -102,8 +102,7 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 		RowMapper<CustomerType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerType.class);
 
 		try {
-			customerType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			customerType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerType = null;
@@ -202,7 +201,7 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 	@Override
 	public void update(CustomerType customerType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update RMTCustTypes");
 		updateSql.append(tableType.getSuffix());
@@ -249,8 +248,7 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 
 		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			recordCount = 0;

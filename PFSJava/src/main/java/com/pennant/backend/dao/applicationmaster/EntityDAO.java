@@ -47,8 +47,7 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennanttech.pff.core.TableType;
 
 public interface EntityDAO extends BasicCrudDao<Entity> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,9 +57,12 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	 *            The type of the table.
 	 * @return Entity
 	 */
-	Entity getEntity(String entityCode,String type);
-	boolean  count(String entity, String pANNumber, TableType tableType);
+	Entity getEntity(String entityCode, String type);
+
+	boolean count(String entity, String pANNumber, TableType tableType);
+
 	boolean panNumberExist(String pANNumber, String entityCode, TableType tableType);
+
 	Entity getEntityByFinDivision(String divisionCode, String type);
-	
+
 }

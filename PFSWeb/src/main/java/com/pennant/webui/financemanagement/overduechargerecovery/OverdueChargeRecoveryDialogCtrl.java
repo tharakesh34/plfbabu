@@ -90,9 +90,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -102,81 +102,81 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRecovery> {
 
-	private static final long							serialVersionUID	= 728436178283801925L;
-	private static final Logger							logger				= Logger.getLogger(OverdueChargeRecoveryDialogCtrl.class);
+	private static final long serialVersionUID = 728436178283801925L;
+	private static final Logger logger = Logger.getLogger(OverdueChargeRecoveryDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
 	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window									window_OverdueChargeRecoveryDialog;											// autowired
-	protected Textbox									finReference;																	// autowired
-	protected Datebox									finSchdDate;																	// autowired
-	protected Datebox									finStartDate;																	// autowired
-	protected Datebox									finMaturityDate;																// autowired
-	protected Decimalbox								finAmt;																		// autowired
-	protected Decimalbox								curFinAmt;																		// autowired
-	protected Decimalbox								curSchPriDue;																	// autowired
-	protected Decimalbox								curSchPftDue;																	// autowired
-	protected Decimalbox								totOvrDueChrg;																	// autowired
-	protected Decimalbox								totOvrDueChrgWaived;															// autowired
-	protected Decimalbox								totOvrDueChrgPaid;																// autowired
-	protected Decimalbox								totOvrDueChrgBal;																// autowired
-	protected Combobox									cbFinODFor;																	// autowired
-	protected Textbox									finBrnm;																		// autowired
-	protected Textbox									finType;																		// autowired
-	protected Longbox									finCustId;																		// autowired
-	protected Textbox									lovDescCustCIF;																// autowired
-	protected Label										custShrtName;																	// autowired
-	protected Textbox									finCcy;																		// autowired
-	protected Datebox									finODDate;																		// autowired
-	protected Decimalbox								finODPri;																		// autowired
-	protected Decimalbox								finODPft;																		// autowired
-	protected Decimalbox								finODTot;																		// autowired
-	protected Textbox									finODCRuleCode;																// autowired
-	protected Textbox									finODCPLAc;																	// autowired
-	protected Textbox									finODCCAc;																		// autowired
-	protected Decimalbox								finODCPLShare;																	// autowired
-	protected Checkbox									finODCSweep;																	// autowired
-	protected Textbox									finODCCustCtg;																	// autowired
-	protected Combobox									cbFinODCType;																	// autowired
-	protected Textbox									finODCOn;																		// autowired
-	protected Decimalbox								finODC;																		// autowired
-	protected Intbox									finODCGraceDays;																// autowired
-	protected Checkbox									finODCAlwWaiver;																// autowired
-	protected Decimalbox								finODCMaxWaiver;																// autowired
-	protected Decimalbox								finODCPenalty;																	// autowired
-	protected Decimalbox								finODCWaived;																	// autowired
-	protected Decimalbox								finODCPLPenalty;																// autowired
-	protected Decimalbox								finODCCPenalty;																// autowired
-	protected Decimalbox								finODCPaid;																	// autowired
-	protected Datebox									finODCLastPaidDate;															// autowired
-	protected Textbox									finODCRecoverySts;																// autowired
-	protected Button									btnRecoverNow;																	// autowired
-	protected Decimalbox								balChrgRecovery;																// autowired
-	protected Row										oDCWaivedRow;																	// autowired
-	protected Row										oDCAlwWaiverRow;																// autowired
-	protected Row										statusRow;
+	protected Window window_OverdueChargeRecoveryDialog; // autowired
+	protected Textbox finReference; // autowired
+	protected Datebox finSchdDate; // autowired
+	protected Datebox finStartDate; // autowired
+	protected Datebox finMaturityDate; // autowired
+	protected Decimalbox finAmt; // autowired
+	protected Decimalbox curFinAmt; // autowired
+	protected Decimalbox curSchPriDue; // autowired
+	protected Decimalbox curSchPftDue; // autowired
+	protected Decimalbox totOvrDueChrg; // autowired
+	protected Decimalbox totOvrDueChrgWaived; // autowired
+	protected Decimalbox totOvrDueChrgPaid; // autowired
+	protected Decimalbox totOvrDueChrgBal; // autowired
+	protected Combobox cbFinODFor; // autowired
+	protected Textbox finBrnm; // autowired
+	protected Textbox finType; // autowired
+	protected Longbox finCustId; // autowired
+	protected Textbox lovDescCustCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Textbox finCcy; // autowired
+	protected Datebox finODDate; // autowired
+	protected Decimalbox finODPri; // autowired
+	protected Decimalbox finODPft; // autowired
+	protected Decimalbox finODTot; // autowired
+	protected Textbox finODCRuleCode; // autowired
+	protected Textbox finODCPLAc; // autowired
+	protected Textbox finODCCAc; // autowired
+	protected Decimalbox finODCPLShare; // autowired
+	protected Checkbox finODCSweep; // autowired
+	protected Textbox finODCCustCtg; // autowired
+	protected Combobox cbFinODCType; // autowired
+	protected Textbox finODCOn; // autowired
+	protected Decimalbox finODC; // autowired
+	protected Intbox finODCGraceDays; // autowired
+	protected Checkbox finODCAlwWaiver; // autowired
+	protected Decimalbox finODCMaxWaiver; // autowired
+	protected Decimalbox finODCPenalty; // autowired
+	protected Decimalbox finODCWaived; // autowired
+	protected Decimalbox finODCPLPenalty; // autowired
+	protected Decimalbox finODCCPenalty; // autowired
+	protected Decimalbox finODCPaid; // autowired
+	protected Datebox finODCLastPaidDate; // autowired
+	protected Textbox finODCRecoverySts; // autowired
+	protected Button btnRecoverNow; // autowired
+	protected Decimalbox balChrgRecovery; // autowired
+	protected Row oDCWaivedRow; // autowired
+	protected Row oDCAlwWaiverRow; // autowired
+	protected Row statusRow;
 
 	// not auto wired vars
-	private OverdueChargeRecovery						overdueChargeRecovery;															// overhanded per param
-	private OverdueChargeRecovery						prvOverdueChargeRecovery;														// overhanded per param
-	private transient OverdueChargeRecoveryListCtrl		overdueChargeRecoveryListCtrl;													// overhanded per param
+	private OverdueChargeRecovery overdueChargeRecovery; // overhanded per param
+	private OverdueChargeRecovery prvOverdueChargeRecovery; // overhanded per param
+	private transient OverdueChargeRecoveryListCtrl overdueChargeRecoveryListCtrl; // overhanded per param
 
-	private transient boolean							validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient OverdueChargeRecoveryService		overdueChargeRecoveryService;
-	private transient PagedListService					pagedListService;
-	private transient FinanceTypeService				financeTypeService;
-	private HashMap<String, ArrayList<ErrorDetail>>	overideMap			= new HashMap<String, ArrayList<ErrorDetail>>();
-	private static ArrayList<ValueLabel>				finOdForList		= PennantStaticListUtil.getODCChargeFor();
-	private static ArrayList<ValueLabel>				finODCTypeList		= PennantStaticListUtil.getODCChargeType();
-	private transient OverDueRecoveryPostingsUtil		recoveryPostingsUtil;
-	Date												dateValueDate		= DateUtility.getAppValueDate();
-	private boolean										isInquiry			= false;
-	private transient BigDecimal						paidAmount			= new BigDecimal(0);
+	private transient OverdueChargeRecoveryService overdueChargeRecoveryService;
+	private transient PagedListService pagedListService;
+	private transient FinanceTypeService financeTypeService;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private static ArrayList<ValueLabel> finOdForList = PennantStaticListUtil.getODCChargeFor();
+	private static ArrayList<ValueLabel> finODCTypeList = PennantStaticListUtil.getODCChargeType();
+	private transient OverDueRecoveryPostingsUtil recoveryPostingsUtil;
+	Date dateValueDate = DateUtility.getAppValueDate();
+	private boolean isInquiry = false;
+	private transient BigDecimal paidAmount = new BigDecimal(0);
 
 	/**
 	 * default constructor.<br>
@@ -238,8 +238,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete overdueChargeRecovery here.
 		if (arguments.containsKey("overdueChargeRecoveryListCtrl")) {
-			setOverdueChargeRecoveryListCtrl((OverdueChargeRecoveryListCtrl) arguments
-					.get("overdueChargeRecoveryListCtrl"));
+			setOverdueChargeRecoveryListCtrl(
+					(OverdueChargeRecoveryListCtrl) arguments.get("overdueChargeRecoveryListCtrl"));
 		} else {
 			setOverdueChargeRecoveryListCtrl(null);
 		}
@@ -453,24 +453,23 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		this.finMaturityDate.setValue(aOverdueChargeRecovery.getLovDescMaturityDate());
 		this.finAmt.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescFinAmount(), format));
 		this.curFinAmt.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurFinAmt(), format));
-		this.curSchPriDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue(),//value1
+		this.curSchPriDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue(), //value1
 				format));
-		this.curSchPftDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPftDue(),//value2
+		this.curSchPftDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPftDue(), //value2
 				format));
-		this.totOvrDueChrg.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrg(),//value3
+		this.totOvrDueChrg.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrg(), //value3
 				format));
-		this.totOvrDueChrgWaived.setValue(PennantAppUtil.formateAmount(
-				aOverdueChargeRecovery.getLovDescTotOvrDueChrgWaived(), format));
-		this.totOvrDueChrgPaid.setValue(PennantAppUtil.formateAmount(
-				aOverdueChargeRecovery.getLovDescTotOvrDueChrgPaid(), format));
+		this.totOvrDueChrgWaived
+				.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrgWaived(), format));
+		this.totOvrDueChrgPaid
+				.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrgPaid(), format));
 		/*
-		 * this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrgBal(
-		 * ), format));
+		 * this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.
+		 * getLovDescTotOvrDueChrgBal( ), format));
 		 */
-		this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(
-				aOverdueChargeRecovery.getLovDescCurSchPriDue()
-						.subtract(aOverdueChargeRecovery.getLovDescCurSchPftDue())
-						.subtract(aOverdueChargeRecovery.getLovDescTotOvrDueChrg()), format));
+		this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue()
+				.subtract(aOverdueChargeRecovery.getLovDescCurSchPftDue())
+				.subtract(aOverdueChargeRecovery.getLovDescTotOvrDueChrg()), format));
 		//Overdue Recovery Details
 		this.finSchdDate.setValue(aOverdueChargeRecovery.getFinODSchdDate());
 		this.finODDate.setValue(aOverdueChargeRecovery.getMovementDate());
@@ -516,9 +515,9 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 * subtract(aOverdueChargeRecovery.getFinODCPaid()).subtract( aOverdueChargeRecovery.getFinODCWaiverPaid()),
 		 * format));
 		 */
-		this.balChrgRecovery.setValue(PennantAppUtil.formateAmount(
-				aOverdueChargeRecovery.getPenalty().subtract(aOverdueChargeRecovery.getFinODCPaid())
-						.subtract(aOverdueChargeRecovery.getWaivedAmt()), format));
+		this.balChrgRecovery.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getPenalty()
+				.subtract(aOverdueChargeRecovery.getFinODCPaid()).subtract(aOverdueChargeRecovery.getWaivedAmt()),
+				format));
 
 		//Extra fields 
 		/*
@@ -625,18 +624,20 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				BigDecimal reqWaiver = PennantAppUtil.getPercentageValue(this.finODCPenalty.getValue(),
 						getOverdueChargeRecovery().getFinODCMaxWaiver());
 				if (!this.finODCWaived.isDisabled() && this.finODCWaived.getValue() != null) {
-					if (this.finODCWaived.getValue().compareTo(
-							this.finODCPenalty.getValue().subtract(this.finODCPaid.getValue())) > 0
+					if (this.finODCWaived.getValue()
+							.compareTo(this.finODCPenalty.getValue().subtract(this.finODCPaid.getValue())) > 0
 							|| this.finODCWaived.getValue().compareTo(reqWaiver) > 0) {
-						throw new WrongValueException(this.finODCWaived, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-								new String[] { Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-										PennantAppUtil.formatAmount(reqWaiver, format, false) }));
+						throw new WrongValueException(this.finODCWaived,
+								Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+										new String[] {
+												Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
+												PennantAppUtil.formatAmount(reqWaiver, format, false) }));
 					}
 				} else if (this.finODCWaived.getValue() == null) {
 					this.finODCWaived.setValue(new BigDecimal(0));
 				}
-				aOverdueChargeRecovery.setFinODCWaived(PennantAppUtil.unFormateAmount(this.finODCWaived.getValue(),
-						format));
+				aOverdueChargeRecovery
+						.setFinODCWaived(PennantAppUtil.unFormateAmount(this.finODCWaived.getValue(), format));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -907,9 +908,9 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}/*
-		 * else{ this.btnCtrl.setBtnStatus_Edit(); btnCancel.setVisible(true); }
-		 */
+		} /*
+			 * else{ this.btnCtrl.setBtnStatus_Edit(); btnCancel.setVisible(true); }
+			 */
 		logger.debug("Leaving");
 	}
 
@@ -1174,8 +1175,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_OverdueChargeRecoveryDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1318,12 +1319,13 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		BigDecimal reqWaiver = PennantAppUtil.getPercentageValue(this.finODCPenalty.getValue(),
 				getOverdueChargeRecovery().getFinODCMaxWaiver());
 		if (!this.finODCWaived.isDisabled() && this.finODCWaived.getValue() != null) {
-			if (this.finODCWaived.getValue().compareTo(
-					this.finODCPenalty.getValue().subtract(this.finODCPaid.getValue())) > 0
+			if (this.finODCWaived.getValue()
+					.compareTo(this.finODCPenalty.getValue().subtract(this.finODCPaid.getValue())) > 0
 					|| this.finODCWaived.getValue().compareTo(reqWaiver) > 0) {
-				throw new WrongValueException(this.finODCWaived, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-						new String[] { Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-								PennantAppUtil.formatAmount(reqWaiver, format, false) }));
+				throw new WrongValueException(this.finODCWaived,
+						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+								new String[] { Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
+										PennantAppUtil.formatAmount(reqWaiver, format, false) }));
 			}
 		} else if (this.finODCWaived.getValue() == null) {
 			this.finODCWaived.setValue(new BigDecimal(0));
@@ -1334,8 +1336,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 		try {
 
-			FinanceMain financeMain = getRecoveryPostingsUtil().getFinanceMainDAO().getFinanceMainById(
-					getOverdueChargeRecovery().getFinReference(), "", false);
+			FinanceMain financeMain = getRecoveryPostingsUtil().getFinanceMainDAO()
+					.getFinanceMainById(getOverdueChargeRecovery().getFinReference(), "", false);
 			Date dateValueDate = DateUtility.getAppValueDate();
 			Date SchdDate = getOverdueChargeRecovery().getFinODSchdDate();
 			String finODFor = getOverdueChargeRecovery().getFinODFor();
@@ -1348,9 +1350,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 			String finDivision = getFinanceTypeService().getFinanceTypeByFinType(financeMain.getFinType())
 					.getFinDivision();//getFinanceTypeService().getFinanceType().getFinDivision();
 
-			List<Object> postingData = getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate,
-					SchdDate, finODFor, movementDate, penalty, prvPenaltyPaid, waiverAmt, chargeType, linkedTranId,
-					finDivision);
+			List<Object> postingData = getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, SchdDate,
+					finODFor, movementDate, penalty, prvPenaltyPaid, waiverAmt, chargeType, linkedTranId, finDivision);
 			paidAmount = (BigDecimal) postingData.get(3);
 
 			if (postingData != null && postingData.size() > 2 && postingData.get(2) != null

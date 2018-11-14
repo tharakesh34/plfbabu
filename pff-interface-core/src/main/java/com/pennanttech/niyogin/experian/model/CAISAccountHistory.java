@@ -14,15 +14,15 @@ import javax.xml.bind.annotation.XmlType;
 public class CAISAccountHistory implements Serializable {
 
 	private static final long serialVersionUID = 3196204061059085758L;
-	
+
 	@XmlElement(name = "Year")
-	private int		year;
+	private int year;
 	@XmlElement(name = "Month")
-	private int		month;
+	private int month;
 	@XmlElement(name = "Days_Past_Due")
-	private int		daysPastDue;
+	private int daysPastDue;
 	@XmlElement(name = "Asset_Classification")
-	private String	assetClassification;
+	private String assetClassification;
 
 	public int getYear() {
 		return year;

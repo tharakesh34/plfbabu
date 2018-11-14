@@ -55,8 +55,8 @@ public class PrepareMailData implements Serializable {
 			// MAIL_BODY
 			for (MailData mailData : mailDataList) {
 				MailTemplate template = new MailTemplate();
-				
-				template.getEmailIds().add( mailData.getMailTo());
+
+				template.getEmailIds().add(mailData.getMailTo());
 				template.setEmailSubject(mailData.getMailSubject());
 
 				// Trigger

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -65,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements IdentityDetailsDAO {
 	private static Logger logger = Logger.getLogger(IdentityDetailsDAOImpl.class);
-	
+
 	public IdentityDetailsDAOImpl() {
 		super();
 	}
@@ -86,15 +85,17 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 		identityDetails.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT IdentityType, IdentityDesc," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT IdentityType, IdentityDesc,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTIdentityType");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where IdentityType =:IdentityType") ;
-				
+		selectSql.append(" Where IdentityType =:IdentityType");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityDetails);
-		RowMapper<IdentityDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IdentityDetails.class);
+		RowMapper<IdentityDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(IdentityDetails.class);
 
 		try {
 			identityDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -107,10 +108,8 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTIdentityType or
-	 * BMTIdentityType_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Identity Details by key
-	 * IdentityType
+	 * This method Deletes the Record from the BMTIdentityType or BMTIdentityType_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Identity Details by key IdentityType
 	 * 
 	 * @param Identity
 	 *            Details (identityDetails)
@@ -129,8 +128,8 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 		deleteSql.append("Delete From BMTIdentityType");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where IdentityType =:IdentityType");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityDetails);
 
 		try {
@@ -147,8 +146,7 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 	}
 
 	/**
-	 * This method insert new Records into BMTIdentityType or
-	 * BMTIdentityType_Temp.
+	 * This method insert new Records into BMTIdentityType or BMTIdentityType_Temp.
 	 * 
 	 * save Identity Details
 	 * 
@@ -167,14 +165,15 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 
 		insertSql.append("Insert Into BMTIdentityType");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (IdentityType, IdentityDesc," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (IdentityType, IdentityDesc,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:IdentityType, :IdentityDesc, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:IdentityType, :IdentityDesc, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityDetails);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -183,9 +182,8 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 	}
 
 	/**
-	 * This method updates the Record BMTIdentityType or BMTIdentityType_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Identity Details by key IdentityType and Version
+	 * This method updates the Record BMTIdentityType or BMTIdentityType_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Identity Details by key IdentityType and Version
 	 * 
 	 * @param Identity
 	 *            Details (identityDetails)
@@ -203,16 +201,17 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 
 		updateSql.append("Update BMTIdentityType");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IdentityDesc = :IdentityDesc," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set IdentityDesc = :IdentityDesc,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where IdentityType =:IdentityType ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityDetails);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -221,5 +220,5 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

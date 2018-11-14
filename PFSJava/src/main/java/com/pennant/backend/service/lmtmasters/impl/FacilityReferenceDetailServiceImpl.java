@@ -72,11 +72,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * Service implementation for methods that depends on
- * <b>FacilityReferenceDetail</b>.<br>
+ * Service implementation for methods that depends on <b>FacilityReferenceDetail</b>.<br>
  * 
  */
-public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityReferenceDetail> implements FacilityReferenceDetailService {
+public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityReferenceDetail>
+		implements FacilityReferenceDetailService {
 	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -86,7 +86,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	public FacilityReferenceDetailServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -127,8 +127,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 
 	@Override
 	public FacilityReference getFacilityReference(String finType) {
-		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(
-				finType,FinanceConstants.FINSER_EVENT_ORG, FacilityConstants.MODULE_NAME, "_AView");
+		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(finType,
+				FinanceConstants.FINSER_EVENT_ORG, FacilityConstants.MODULE_NAME, "_AView");
 		FacilityReference financeReference = new FacilityReference();
 		financeReference.setFinType(finType);
 
@@ -138,7 +138,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 			financeReference.setLovDescWorkFlowTypeName(financeWorkFlow.getLovDescWorkFlowTypeName());
 			financeReference.setLovDescWorkFlowRolesName(financeWorkFlow.getLovDescWorkFlowRolesName());
 
-			List<FacilityReferenceDetail> refList = getFacilityReferenceDetailDAO().getFacilityReferenceDetailById(finType);
+			List<FacilityReferenceDetail> refList = getFacilityReferenceDetailDAO()
+					.getFacilityReferenceDetailById(finType);
 			financeReference.setCheckList(new ArrayList<FacilityReferenceDetail>());
 			financeReference.setAggrementList(new ArrayList<FacilityReferenceDetail>());
 			financeReference.setScoringGroupList(new ArrayList<FacilityReferenceDetail>());
@@ -156,10 +157,10 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 					case FinanceConstants.PROCEDT_RTLSCORE:
 						financeReference.getScoringGroupList().add(facRefDetail);
 						break;
-					case FinanceConstants.PROCEDT_CORPSCORE:	
+					case FinanceConstants.PROCEDT_CORPSCORE:
 						financeReference.getCorpScoringGroupList().add(facRefDetail);
 						break;
-					case FinanceConstants.PROCEDT_TEMPLATE:	
+					case FinanceConstants.PROCEDT_TEMPLATE:
 						financeReference.getMailTemplateList().add(facRefDetail);
 						break;
 					default:
@@ -172,7 +173,6 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 		return financeReference;
 	}
 
-
 	/**
 	 * @return the facilityReferenceDetail for New Record
 	 */
@@ -182,15 +182,12 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * LMTFinRefDetail/LMTFinRefDetail_Temp by using FacilityReferenceDetailDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using FacilityReferenceDetailDAO's update
-	 * method 3) Audit the record in to AuditHeader and AdtLMTFinRefDetail by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * LMTFinRefDetail/LMTFinRefDetail_Temp by using FacilityReferenceDetailDAO's save method b) Update the Record in
+	 * the table. based on the module workFlow Configuration. by using FacilityReferenceDetailDAO's update method 3)
+	 * Audit the record in to AuditHeader and AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -206,7 +203,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 			return auditHeader;
 		}
 		String tableType = "";
-		FacilityReferenceDetail facilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FacilityReferenceDetail facilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		if (facilityReferenceDetail.isWorkflow()) {
 			tableType = "_Temp";
@@ -227,12 +225,10 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table LMTFinRefDetail by using FacilityReferenceDetailDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * LMTFinRefDetail by using FacilityReferenceDetailDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -248,7 +244,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 			return auditHeader;
 		}
 
-		FacilityReferenceDetail facilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FacilityReferenceDetail facilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 		getFacilityReferenceDetailDAO().delete(facilityReferenceDetail, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -257,8 +254,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * getFacilityReferenceDetailById fetch the details by using
-	 * FacilityReferenceDetailDAO's getFacilityReferenceDetailById method.
+	 * getFacilityReferenceDetailById fetch the details by using FacilityReferenceDetailDAO's
+	 * getFacilityReferenceDetailById method.
 	 * 
 	 * @param id
 	 *            (int)
@@ -273,10 +270,9 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * getApprovedFacilityReferenceDetailById fetch the details by using
-	 * FacilityReferenceDetailDAO's getFacilityReferenceDetailById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * LMTFinRefDetail.
+	 * getApprovedFacilityReferenceDetailById fetch the details by using FacilityReferenceDetailDAO's
+	 * getFacilityReferenceDetailById method . with parameter id and type as blank. it fetches the approved records from
+	 * the LMTFinRefDetail.
 	 * 
 	 * @param id
 	 *            (int)
@@ -288,21 +284,16 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFacilityReferenceDetailDAO().delete with parameters
-	 * facilityReferenceDetail,"" b) NEW Add new record in to main table by using
-	 * getFacilityReferenceDetailDAO().save with parameters
-	 * facilityReferenceDetail,"" c) EDIT Update record in the main table by
-	 * using getFacilityReferenceDetailDAO().update with parameters
-	 * facilityReferenceDetail,"" 3) Delete the record from the workFlow table by
-	 * using getFacilityReferenceDetailDAO().delete with parameters
-	 * facilityReferenceDetail,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtLMTFinRefDetail by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFacilityReferenceDetailDAO().delete
+	 * with parameters facilityReferenceDetail,"" b) NEW Add new record in to main table by using
+	 * getFacilityReferenceDetailDAO().save with parameters facilityReferenceDetail,"" c) EDIT Update record in the main
+	 * table by using getFacilityReferenceDetailDAO().update with parameters facilityReferenceDetail,"" 3) Delete the
+	 * record from the workFlow table by using getFacilityReferenceDetailDAO().delete with parameters
+	 * facilityReferenceDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtLMTFinRefDetail by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLMTFinRefDetail
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -318,7 +309,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 		}
 
 		FacilityReferenceDetail facilityReferenceDetail = new FacilityReferenceDetail();
-		BeanUtils.copyProperties((FacilityReferenceDetail) auditHeader.getAuditDetail().getModelData(), facilityReferenceDetail);
+		BeanUtils.copyProperties((FacilityReferenceDetail) auditHeader.getAuditDetail().getModelData(),
+				facilityReferenceDetail);
 
 		if (facilityReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -358,13 +350,11 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFacilityReferenceDetailDAO().delete with
-	 * parameters facilityReferenceDetail,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtLMTFinRefDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFacilityReferenceDetailDAO().delete with parameters facilityReferenceDetail,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtLMTFinRefDetail by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -379,7 +369,8 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 			return auditHeader;
 		}
 
-		FacilityReferenceDetail facilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FacilityReferenceDetail facilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFacilityReferenceDetailDAO().delete(facilityReferenceDetail, "_Temp");
@@ -391,12 +382,10 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getFacilityReferenceDetailDAO().getErrorDetail with Error ID and language
-	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFacilityReferenceDetailDAO().getErrorDetail with
+	 * Error ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -420,9 +409,11 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 
 		FacilityReferenceDetail tempFacilityReferenceDetail = null;
 		if (facilityReferenceDetail.isWorkflow()) {
-			tempFacilityReferenceDetail = getFacilityReferenceDetailDAO().getFacilityReferenceDetailById(facilityReferenceDetail.getId(), "_Temp");
+			tempFacilityReferenceDetail = getFacilityReferenceDetailDAO()
+					.getFacilityReferenceDetailById(facilityReferenceDetail.getId(), "_Temp");
 		}
-		FacilityReferenceDetail befFacilityReferenceDetail = getFacilityReferenceDetailDAO().getFacilityReferenceDetailById(facilityReferenceDetail.getId(), "");
+		FacilityReferenceDetail befFacilityReferenceDetail = getFacilityReferenceDetailDAO()
+				.getFacilityReferenceDetailById(facilityReferenceDetail.getId(), "");
 		FacilityReferenceDetail oldFacilityReferenceDetail = facilityReferenceDetail.getBefImage();
 
 		String[] errParm = new String[1];
@@ -438,18 +429,21 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 				if (befFacilityReferenceDetail != null) { // Record Already
 					// Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (facilityReferenceDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					// records type is new
 					if (befFacilityReferenceDetail != null || tempFacilityReferenceDetail != null) {
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFacilityReferenceDetail == null || tempFacilityReferenceDetail != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -462,13 +456,20 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 				if (befFacilityReferenceDetail == null) { // if records not
 					// exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldFacilityReferenceDetail != null && !oldFacilityReferenceDetail.getLastMntOn().equals(befFacilityReferenceDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+					if (oldFacilityReferenceDetail != null && !oldFacilityReferenceDetail.getLastMntOn()
+							.equals(befFacilityReferenceDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
@@ -477,11 +478,15 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 				if (tempFacilityReferenceDetail == null) { // if records not
 					// exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempFacilityReferenceDetail != null && oldFacilityReferenceDetail != null && !oldFacilityReferenceDetail.getLastMntOn().equals(tempFacilityReferenceDetail.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				if (tempFacilityReferenceDetail != null && oldFacilityReferenceDetail != null
+						&& !oldFacilityReferenceDetail.getLastMntOn()
+								.equals(tempFacilityReferenceDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -502,15 +507,17 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	private CheckListDAO checkListDAO;
 	private CheckListDetailDAO checkListDetailDAO;
 	private FinanceCheckListReferenceDAO FinanceCheckListReferenceDAO;
+
 	/**
 	 * 
 	 * @param id
 	 * @param type
 	 * @return
 	 */
-	public List<FacilityReferenceDetail>  getCheckListByFinRef(final String finType){
+	public List<FacilityReferenceDetail> getCheckListByFinRef(final String finType) {
 		logger.debug("Entering ");
-		List<FacilityReferenceDetail> finRefDetailList =getFacilityReferenceDetailDAO().getFacilityReferenceDetail(finType,"", "_TQView");
+		List<FacilityReferenceDetail> finRefDetailList = getFacilityReferenceDetailDAO()
+				.getFacilityReferenceDetail(finType, "", "_TQView");
 		//		for(FacilityReferenceDetail   finRefDetail:finRefDetailList){
 		//			finRefDetail.setLovDesccheckListDetail(getCheckListDetailDAO()
 		//					.getCheckListDetailByChkList(finRefDetail.getFinRefId(), "_AView"));
@@ -519,25 +526,25 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 		logger.debug("Leaving ");
 		return finRefDetailList;
 	}
+
 	/**
 	 * 
 	 * @param id
 	 * @param type
 	 * @return
 	 */
-	public List<FinanceCheckListReference> getFinanceCheckListReferenceFinRef(final String id, String type){
+	public List<FinanceCheckListReference> getFinanceCheckListReferenceFinRef(final String id, String type) {
 
-		return getFinanceCheckListReferenceDAO().getCheckListByFinRef(id,null, type);
+		return getFinanceCheckListReferenceDAO().getCheckListByFinRef(id, null, type);
 
 	}
 
 	/**
 	 * Method for Fetching Eligibility Rule List based upon Finance Type
 	 */
-	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, 
-			String mandInputInStage, String type){
-		return getFacilityReferenceDetailDAO().getFinRefDetByRoleAndFinType(financeType, 
-				mandInputInStage,null, type);
+	public List<FacilityReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String mandInputInStage,
+			String type) {
+		return getFacilityReferenceDetailDAO().getFinRefDetByRoleAndFinType(financeType, mandInputInStage, null, type);
 	}
 
 	public void setCheckListDAO(CheckListDAO checkListDAO) {
@@ -547,6 +554,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	public CheckListDAO getCheckListDAO() {
 		return checkListDAO;
 	}
+
 	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
 		this.checkListDetailDAO = checkListDetailDAO;
 	}
@@ -555,8 +563,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 		return checkListDetailDAO;
 	}
 
-	public void setFinanceCheckListReferenceDAO(
-			FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
+	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
 		FinanceCheckListReferenceDAO = financeCheckListReferenceDAO;
 	}
 

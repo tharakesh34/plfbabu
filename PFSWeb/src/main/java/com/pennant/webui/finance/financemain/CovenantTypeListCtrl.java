@@ -31,9 +31,9 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.webui.systemmasters.covenant.model.CovenantListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/CovenantType.zul file.
@@ -101,8 +101,8 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 		//registerField("finReference");
 		registerField("finReference", listheader_CovenantReference, SortOrder.ASC, covenantReference,
 				sortOperator_CovenantReference, Operators.STRING);
-		registerField("covenantType", listheader_CovenantType, SortOrder.ASC, covenantType,
-				sortOperator_CovenantType, Operators.STRING);
+		registerField("covenantType", listheader_CovenantType, SortOrder.ASC, covenantType, sortOperator_CovenantType,
+				Operators.STRING);
 		registerField("alwWaiver", listheader_ALwWaiver, SortOrder.NONE, alwWaiver, sortOperator_alwaiver,
 				Operators.BOOLEAN);
 		registerField("alwPostpone", listheader_PostDoc, SortOrder.NONE, postDoc, sortOperator_postDoc,
@@ -170,8 +170,8 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 
 		// Get the selected entity.
 		FinCovenantType finCovenantType = (FinCovenantType) selectedItem.getAttribute("data");
-		finCovenantType=getFinCovenantTypeService().getFinCovenantTypeById(finCovenantType.getFinReference(),finCovenantType.getCovenantType(),"_View");
-		
+		finCovenantType = getFinCovenantTypeService().getFinCovenantTypeById(finCovenantType.getFinReference(),
+				finCovenantType.getCovenantType(), "_View");
 
 		if (finCovenantType == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -179,8 +179,8 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + finCovenantType.getFinReference()+ "' AND version=" + finCovenantType.getVersion()
-				+ " ";
+		String whereCond = " AND FinReference='" + finCovenantType.getFinReference() + "' AND version="
+				+ finCovenantType.getVersion() + " ";
 
 		if (doCheckAuthority(finCovenantType, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -207,7 +207,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("fincovenant", aFinCovenant);
 		arg.put("covenantListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CovenantTypeDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -236,7 +236,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 
@@ -249,8 +249,10 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		searchObject.addWhereClause("finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory)");
+		searchObject.addWhereClause(
+				"finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory)");
 	}
+
 	/**
 	 * When user clicks on "fromWorkFlow"
 	 * 

@@ -55,29 +55,29 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FeeType table</b>.<br>
  *
  */
-public class FeeType extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class FeeType extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
 	private String feeTypeDesc;
 	private boolean manualAdvice;
-	private int 	adviseType;
-	private Long 	accountSetId;
-	private String 	accountSetCode;
-	private String 	accountSetCodeName;
+	private int adviseType;
+	private Long accountSetId;
+	private String accountSetCode;
+	private String accountSetCodeName;
 	private boolean active;
 	private boolean newRecord;
 	private String lovValue;
 	private FeeType befImage;
-	private  LoggedInUser userDetails;
+	private LoggedInUser userDetails;
 	private String hostFeeTypeCode;
 	//GST fields
 	private boolean taxApplicable;
-	private String	taxComponent;
-	
+	private String taxComponent;
+
 	private boolean amortzReq;
-		
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -90,42 +90,46 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("accountSetCode");
 		excludeFields.add("accountSetCodeName");
-	return excludeFields;
+		return excludeFields;
 	}
 
 	public long getId() {
 		return feeTypeID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.feeTypeID = id;
 	}
+
 	public long getFeeTypeID() {
 		return feeTypeID;
 	}
+
 	public void setFeeTypeID(long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
-	
+
 	public String getFeeTypeCode() {
 		return feeTypeCode;
 	}
+
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
 	}
-	
+
 	public String getFeeTypeDesc() {
 		return feeTypeDesc;
 	}
+
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -133,7 +137,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -142,19 +146,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public FeeType getBefImage(){
+	public FeeType getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(FeeType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FeeType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -165,9 +169,11 @@ private static final long serialVersionUID = 1L;
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
 	public Long getAccountSetId() {
 		return accountSetId;
 	}
@@ -207,6 +213,7 @@ private static final long serialVersionUID = 1L;
 	public void setAdviseType(int adviseType) {
 		this.adviseType = adviseType;
 	}
+
 	public String getHostFeeTypeCode() {
 		return hostFeeTypeCode;
 	}
@@ -214,6 +221,7 @@ private static final long serialVersionUID = 1L;
 	public void setHostFeeTypeCode(String hostFeeTypeCode) {
 		this.hostFeeTypeCode = hostFeeTypeCode;
 	}
+
 	public boolean isTaxApplicable() {
 		return taxApplicable;
 	}
@@ -221,6 +229,7 @@ private static final long serialVersionUID = 1L;
 	public void setTaxApplicable(boolean taxApplicable) {
 		this.taxApplicable = taxApplicable;
 	}
+
 	public boolean isAmortzReq() {
 		return amortzReq;
 	}

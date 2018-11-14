@@ -59,11 +59,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>TaxDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","country","stateCode","entityCode","taxCode","addressLine1","addressLine2","addressLine3","addressLine4","pinCode"
-,"cityCode"})
+@XmlType(propOrder = { "id", "country", "stateCode", "entityCode", "taxCode", "addressLine1", "addressLine2",
+		"addressLine3", "addressLine4", "pinCode", "cityCode" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxDetail extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class TaxDetail extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String country;
@@ -81,14 +81,14 @@ private static final long serialVersionUID = 1L;
 	private String cityCode;
 	private String cityName;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private TaxDetail befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -101,45 +101,48 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("countryName");
-			excludeFields.add("provinceName");
-			excludeFields.add("cityName");
-			excludeFields.add("entityDesc");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("countryName");
+		excludeFields.add("provinceName");
+		excludeFields.add("cityName");
+		excludeFields.add("entityDesc");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
 
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
+
 	public String getCountryName() {
 		return this.countryName;
 	}
 
-	public void setCountryName (String countryName) {
+	public void setCountryName(String countryName) {
 		this.countryName = countryName;
 	}
-	
+
 	public String getStateCode() {
 		return stateCode;
 	}
+
 	public void setStateCode(String stateCode) {
 		this.stateCode = stateCode;
 	}
-	
+
 	public String getProvinceName() {
 		return provinceName;
 	}
@@ -151,59 +154,67 @@ private static final long serialVersionUID = 1L;
 	public String getEntityCode() {
 		return entityCode;
 	}
+
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
 	}
-	
+
 	public String getTaxCode() {
 		return taxCode;
 	}
+
 	public void setTaxCode(String taxCode) {
 		this.taxCode = taxCode;
 	}
-	
+
 	public String getAddressLine1() {
 		return addressLine1;
 	}
+
 	public void setAddressLine1(String addressLine1) {
 		this.addressLine1 = addressLine1;
 	}
-	
+
 	public String getAddressLine2() {
 		return addressLine2;
 	}
+
 	public void setAddressLine2(String addressLine2) {
 		this.addressLine2 = addressLine2;
 	}
-	
+
 	public String getAddressLine3() {
 		return addressLine3;
 	}
+
 	public void setAddressLine3(String addressLine3) {
 		this.addressLine3 = addressLine3;
 	}
-	
+
 	public String getAddressLine4() {
 		return addressLine4;
 	}
+
 	public void setAddressLine4(String addressLine4) {
 		this.addressLine4 = addressLine4;
 	}
-	
+
 	public String getPinCode() {
 		return pinCode;
 	}
+
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
 	}
-	
+
 	public String getCityCode() {
 		return cityCode;
 	}
+
 	public void setCityCode(String cityCode) {
 		this.cityCode = cityCode;
 	}
-	
+
 	public String getCityName() {
 		return cityName;
 	}
@@ -219,7 +230,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -228,19 +239,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public TaxDetail getBefImage(){
+	public TaxDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(TaxDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(TaxDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

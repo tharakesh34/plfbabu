@@ -81,15 +81,15 @@ public class Entity extends AbstractWorkflowEntity {
 	private String entityFlatNbr;
 	private String entityAddrStreet;
 	private String entityPOBox;
-    private String provinceName;
-    private String cityName;
-    private boolean gstinAvailable;
+	private String provinceName;
+	private String cityName;
+	private boolean gstinAvailable;
 	private boolean active;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
-	
+
 	private String cINNumber;
 
 	public String getEntityAddrLine1() {
@@ -158,7 +158,7 @@ public class Entity extends AbstractWorkflowEntity {
 		excludeFields.add("pinCodeName");
 		excludeFields.add("provinceName");
 		excludeFields.add("cityName");
-		
+
 		return excludeFields;
 	}
 

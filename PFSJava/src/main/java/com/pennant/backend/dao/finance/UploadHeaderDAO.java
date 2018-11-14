@@ -45,14 +45,14 @@ package com.pennant.backend.dao.finance;
 import com.pennant.backend.model.expenses.UploadHeader;
 
 public interface UploadHeaderDAO {
-	
+
 	UploadHeader getUploadHeader(long uploadId);
-	
+
 	boolean isFileNameExist(String fileName);
-	
+
 	long save(UploadHeader uploadHeader);
-	
+
 	void updateRecordCounts(UploadHeader uploadHeader);
-	
+
 	void updateRecord(UploadHeader uploadHeader);
 }

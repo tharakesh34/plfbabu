@@ -72,14 +72,13 @@ public class Province extends AbstractWorkflowEntity {
 	private boolean cPIsActive;
 	private boolean taxExempted;
 	private boolean unionTerritory;
-	private String  taxStateCode;
+	private String taxStateCode;
 	private boolean taxAvailable;
 	private String businessArea;
-	
+
 	private List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
-	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
-	
-	
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -100,13 +99,15 @@ public class Province extends AbstractWorkflowEntity {
 	public String getId() {
 		return cPProvince;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.cPProvince = id;
 	}
 
 	public String getCPCountry() {
 		return cPCountry;
 	}
+
 	public void setCPCountry(String cPCountry) {
 		this.cPCountry = cPCountry;
 	}
@@ -114,6 +115,7 @@ public class Province extends AbstractWorkflowEntity {
 	public String getLovDescCPCountryName() {
 		return this.lovDescCPCountryName;
 	}
+
 	public void setLovDescCPCountryName(String lovDescCPCountryName) {
 		this.lovDescCPCountryName = lovDescCPCountryName;
 	}
@@ -121,6 +123,7 @@ public class Province extends AbstractWorkflowEntity {
 	public String getCPProvince() {
 		return cPProvince;
 	}
+
 	public void setCPProvince(String cPProvince) {
 		this.cPProvince = cPProvince;
 	}
@@ -128,6 +131,7 @@ public class Province extends AbstractWorkflowEntity {
 	public String getCPProvinceName() {
 		return cPProvinceName;
 	}
+
 	public void setCPProvinceName(String cPProvinceName) {
 		this.cPProvinceName = cPProvinceName;
 	}
@@ -135,6 +139,7 @@ public class Province extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -142,31 +147,34 @@ public class Province extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Province getBefImage(){
+	public Province getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Province beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Province beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isSystemDefault() {
-	    return systemDefault;
-    }
+		return systemDefault;
+	}
 
 	public void setSystemDefault(boolean systemDefault) {
-	    this.systemDefault = systemDefault;
-    }
+		this.systemDefault = systemDefault;
+	}
 
 	public String getBankRefNo() {
 		return bankRefNo;
@@ -243,5 +251,5 @@ public class Province extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-	
+
 }

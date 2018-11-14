@@ -66,8 +66,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FinMaintainInstruction</b>.<br>
+ * Service implementation for methods that depends on <b>FinMaintainInstruction</b>.<br>
  * 
  */
 public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainInstruction>
@@ -112,15 +111,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinMaintainInstructions/BMTFinMaintainInstructions_Temp by using
-	 * FinMaintainInstructionDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using
-	 * FinMaintainInstructionDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtBMTFinMaintainInstructions by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinMaintainInstructions/BMTFinMaintainInstructions_Temp by using FinMaintainInstructionDAO's save method b)
+	 * Update the Record in the table. based on the module workFlow Configuration. by using FinMaintainInstructionDAO's
+	 * update method 3) Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -174,13 +170,10 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table FinMaintainInstructions by using FinMaintainInstructionDAO's delete
-	 * method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * FinMaintainInstructions by using FinMaintainInstructionDAO's delete method with type as Blank 3) Audit the record
+	 * in to AuditHeader and AdtBMTFinMaintainInstructions by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -211,10 +204,9 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * getFinMaintainInstructionByFinRef fetch the details by using
-	 * FinMaintainInstructionDAO's getFinMaintainInstructionById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * FinMaintainInstructions.
+	 * getFinMaintainInstructionByFinRef fetch the details by using FinMaintainInstructionDAO's
+	 * getFinMaintainInstructionById method . with parameter id and type as blank. it fetches the approved records from
+	 * the FinMaintainInstructions.
 	 * 
 	 * @param id
 	 *            (String)
@@ -226,22 +218,16 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinMaintainInstructionDAO().delete with parameters
-	 * FinMaintainInstruction,"" b) NEW Add new record in to main table by using
-	 * getFinMaintainInstructionDAO().save with parameters
-	 * FinMaintainInstruction,"" c) EDIT Update record in the main table by
-	 * using getFinMaintainInstructionDAO().update with parameters
-	 * FinMaintainInstruction,"" 3) Delete the record from the workFlow table by
-	 * using getFinMaintainInstructionDAO().delete with parameters
-	 * FinMaintainInstruction,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinMaintainInstructionDAO().delete
+	 * with parameters FinMaintainInstruction,"" b) NEW Add new record in to main table by using
+	 * getFinMaintainInstructionDAO().save with parameters FinMaintainInstruction,"" c) EDIT Update record in the main
+	 * table by using getFinMaintainInstructionDAO().update with parameters FinMaintainInstruction,"" 3) Delete the
+	 * record from the workFlow table by using getFinMaintainInstructionDAO().delete with parameters
+	 * FinMaintainInstruction,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtBMTFinMaintainInstructions by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -327,12 +313,10 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinMaintainInstructionDAO().delete with
-	 * parameters FinMaintainInstruction,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTFinMaintainInstructions by using
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinMaintainInstructionDAO().delete with parameters FinMaintainInstruction,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
@@ -367,10 +351,8 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -409,25 +391,26 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFinMaintainInstructionDAO().getErrorDetail with Error ID and language
-	 * as parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFinMaintainInstructionDAO().getErrorDetail with Error ID and language as parameters. if any
+	 * error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean isUniqueCheckReq) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
+			boolean isUniqueCheckReq) {
 		logger.debug("Entering");
 
 		// Get the model object.
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (isUniqueCheckReq && finMaintainInstruction.isNew() && finMaintainInstructionDAO.isDuplicateKey(
-				finMaintainInstruction.getEvent(), finMaintainInstruction.getFinReference(),
-				finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (isUniqueCheckReq && finMaintainInstruction.isNew()
+				&& finMaintainInstructionDAO.isDuplicateKey(finMaintainInstruction.getEvent(),
+						finMaintainInstruction.getFinReference(),
+						finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": "
 					+ finMaintainInstruction.getEvent();
@@ -780,12 +763,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (covenantType.isNew()) { // for New record or new record into work
-									// flow
+										// flow
 
 			if (!covenantType.isWorkflow()) {// With out Work flow only new
-												// records
+													// records
 				if (befFinCovenant != null) { // Record Already Exists in the
-												// table then error
+													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -793,14 +776,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				if (covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befFinCovenant != null || tempFinCovenantPay != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-								usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinCovenant == null || tempFinCovenantPay != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-								usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -808,10 +789,10 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!covenantType.isWorkflow()) { // With out Work flow for update
-												// and delete
+													// and delete
 
 				if (befFinCovenant == null) { // if records not exists in the
-												// main table
+													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -832,7 +813,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			} else {
 
 				if (tempFinCovenantPay == null) { // if records not exists in
-													// the
+														// the
 													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));

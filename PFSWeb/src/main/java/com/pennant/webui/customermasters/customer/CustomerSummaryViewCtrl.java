@@ -57,16 +57,15 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final Logger logger = Logger.getLogger(CustomerSummaryViewCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerSummaryDialog;
 	protected North north;
 	protected South south;
 	protected Label custMiddleName;
 	protected Label custLastName;
-	protected Label  custShrtName;
+	protected Label custShrtName;
 	protected Label custShrtName2;
 	protected Label recordStatus1;
 	private Progressmeter basicProgress;
@@ -116,9 +115,8 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -160,8 +158,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
 	 * @throws Exception
@@ -196,7 +193,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * 
 	 * @param aCustomer
 	 *            Customer
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) throws IOException {
@@ -211,14 +208,15 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		recordStatus1.setValue(aCustomer.getRecordStatus() + s);
 		basicProgress.setValue((i * 100) / 15);
 		basicProgress.setStyle("image-height: 5px;");
-		
+
 		AMedia amedia = null;
 		for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 			if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
-				if(customerDocument.getCustDocImage() == null) {
+				if (customerDocument.getCustDocImage() == null) {
 					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
-					} 
+						customerDocument.setCustDocImage(
+								PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+					}
 				}
 				amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
 				BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
@@ -228,7 +226,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 
-		if(!isCustPhotoAvail){
+		if (!isCustPhotoAvail) {
 			if (aCustomer.getLovDescCustGenderCodeName() != null
 					&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
 				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
@@ -239,16 +237,14 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 		}
-		
-		
-		if (aCustomer.getLovDescCustGenderCodeName() != null
-				&& !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
+
+		if (aCustomer.getLovDescCustGenderCodeName() != null && !aCustomer.getLovDescCustGenderCodeName().isEmpty()) {
 			if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("male")) {
 				customerPic.setSrc("images/icons/customerenquiry/male.png");
 			}
-				if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
-					customerPic.setSrc("images/icons/customerenquiry/female.png");
-				}
+			if (aCustomer.getLovDescCustGenderCodeName().equalsIgnoreCase("female")) {
+				customerPic.setSrc("images/icons/customerenquiry/female.png");
+			}
 		}
 		doFillCustomerLoanDetails(aCustomerDetails.getFinanceMainList());
 		doFillCustomerVASDetails(aCustomerDetails.getVasRecordingList());
@@ -302,14 +298,13 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				lc.setParent(item);
 
-
 				item.setAttribute("data", financeMain);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerAddressItemDoubleClicked");
 				this.listBoxCustomerLoanDetails.appendChild(item);
 
 			}
 		}
-		
+
 		if (this.listBoxCustomerLoanDetails.getItemCount() == 0) {
 
 			Listitem listitem = new Listitem();
@@ -339,7 +334,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.listBoxCustomerLoanDetails.appendChild(listitem);
 		}
 	}
-	
+
 	public void doFillCustomerCollateralDetails(List<CollateralSetup> customercollateralDetails) {
 		logger.debug("Entering");
 		this.listBoxCustomerCollateralDetails.getItems().clear();
@@ -375,7 +370,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 		}
-		
+
 		if (this.listBoxCustomerCollateralDetails.getItemCount() == 0) {
 
 			Listitem listitem = new Listitem();
@@ -436,7 +431,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 		}
-		
+
 		if (this.listBoxCustomerVasDetails.getItemCount() == 0) {
 
 			Listitem listitem = new Listitem();
@@ -461,6 +456,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 	}
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -473,32 +469,32 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void onClick$custSummaryy(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
-		
+
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("customerDetails", customerDetails);
 		arg.put("customerViewDialogCtrl", this);
-		if(!this.window_CustomerSummaryDialog.isVisible()){
+		if (!this.window_CustomerSummaryDialog.isVisible()) {
 			try {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSummaryView.zul", null, arg);
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSummaryView.zul", null,
+						arg);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	public void onClick$custDetailss(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
-		
-		Map<String, Object> arg = new  HashMap<>();
+
+		Map<String, Object> arg = new HashMap<>();
 		arg.put("customerDetails", customerDetails);
 		arg.put("customerViewDialogCtrl", this);
 		this.window_CustomerSummaryDialog.onClose();
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null,
-					arg);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

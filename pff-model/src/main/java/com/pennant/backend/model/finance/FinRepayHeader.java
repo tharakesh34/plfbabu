@@ -8,9 +8,9 @@ import java.util.List;
 
 public class FinRepayHeader implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long repayID = 0;
-	private long receiptSeqID = 0; 
+	private long receiptSeqID = 0;
 	private String finReference;
 	private Date valueDate;
 	private String finEvent;

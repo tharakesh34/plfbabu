@@ -90,36 +90,35 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	private static final Logger logger = Logger.getLogger(DisbursementDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_DisbursementDetailDialog; 			// autoWired
-	protected Borderlayout  borderlayoutDisbursementDetail;				// autoWired
+	protected Window window_DisbursementDetailDialog; // autoWired
+	protected Borderlayout borderlayoutDisbursementDetail; // autoWired
 
 	//Finance Document Details Tab
-	protected Label 		disb_finType; 								// autoWired
-	protected Label 		disb_schMethod; 							// autoWired
-	protected Label 		disb_finCcy; 								// autoWired
-	protected Label 		disb_profitDaysBasis; 						// autoWired
-	protected Label 		disb_noOfTerms; 							// autoWired
-	protected Label 		disb_grcEndDate; 							// autoWired	
-	protected Label 		disb_startDate;								// autoWired	
-	protected Label 		disb_maturityDate;							// autoWired	
-	protected Label 		label_DisbursementDetailDialog_GrcEndDate;	// autoWired	
-	protected Label 		label_DisbursementDetailDialog_FinType;		// autoWired	
-	protected Decimalbox 	disb_expenses;								// autoWired	
-	protected Decimalbox 	disb_totalBilling;							// autoWired	
-	protected Decimalbox 	disb_consultFee;							// autoWired	
-	protected Decimalbox 	disb_totalCost;								// autoWired	
+	protected Label disb_finType; // autoWired
+	protected Label disb_schMethod; // autoWired
+	protected Label disb_finCcy; // autoWired
+	protected Label disb_profitDaysBasis; // autoWired
+	protected Label disb_noOfTerms; // autoWired
+	protected Label disb_grcEndDate; // autoWired	
+	protected Label disb_startDate; // autoWired	
+	protected Label disb_maturityDate; // autoWired	
+	protected Label label_DisbursementDetailDialog_GrcEndDate; // autoWired	
+	protected Label label_DisbursementDetailDialog_FinType; // autoWired	
+	protected Decimalbox disb_expenses; // autoWired	
+	protected Decimalbox disb_totalBilling; // autoWired	
+	protected Decimalbox disb_consultFee; // autoWired	
+	protected Decimalbox disb_totalCost; // autoWired	
 
-	protected Button 		btnAddExpense;								// autoWired
-	protected Button 		btnAddContractAdv;							// autoWired
-	protected Button 		btnAddBilling;								// autoWired
-	protected Button 		btnAddConsultingFee;						// autoWired
-	protected Button 		btnAddContributor;						// autoWired
-	protected Listbox 		listBoxDisbursementDetail;					// autoWired
-	protected Listbox 		listBoxContributorDetails;					// autoWired
+	protected Button btnAddExpense; // autoWired
+	protected Button btnAddContractAdv; // autoWired
+	protected Button btnAddBilling; // autoWired
+	protected Button btnAddConsultingFee; // autoWired
+	protected Button btnAddContributor; // autoWired
+	protected Listbox listBoxDisbursementDetail; // autoWired
+	protected Listbox listBoxContributorDetails; // autoWired
 
 	private List<FinanceDisbursement> disbursementDetails = new ArrayList<FinanceDisbursement>();
 	private List<FinanceDisbursement> oldvar_disbursementDetails = new ArrayList<FinanceDisbursement>();
@@ -127,8 +126,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	private IstisnaFinanceMainDialogCtrl financeMainDialogCtrl = null;
 	private FinScheduleData finScheduleData = null;
 	private FinanceDetail financeDetail = null;
-	
-	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
+
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 
 	private String currency = "";
@@ -157,9 +156,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -189,7 +187,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		if (arguments.containsKey("roleCode")) {
 			setRole((String) arguments.get("roleCode"));
 		}
-		
+
 		if (arguments.containsKey("ccyFormatter")) {
 			ccyFormat = (Integer) arguments.get("ccyFormatter");
 		}
@@ -224,13 +222,16 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			if (getContractorAssetDetails() != null && getContractorAssetDetails().size() > 0) {
 				doFillContractorDetails(getContractorAssetDetails());
 			}
-			
+
 			if (getFinanceMainDialogCtrl() != null) {
 				try {
-					Class[] paramType = { Class.forName("com.pennant.webui.finance.financemain.DisbursementDetailDialogCtrl") };
-					Object[] stringParameter = {this};
-					if (financeMainDialogCtrl.getClass().getMethod("setDisbursementDetailDialogCtrl", paramType) != null) {
-						financeMainDialogCtrl.getClass().getMethod("setDisbursementDetailDialogCtrl", paramType).invoke(financeMainDialogCtrl, stringParameter);
+					Class[] paramType = {
+							Class.forName("com.pennant.webui.finance.financemain.DisbursementDetailDialogCtrl") };
+					Object[] stringParameter = { this };
+					if (financeMainDialogCtrl.getClass().getMethod("setDisbursementDetailDialogCtrl",
+							paramType) != null) {
+						financeMainDialogCtrl.getClass().getMethod("setDisbursementDetailDialogCtrl", paramType)
+								.invoke(financeMainDialogCtrl, stringParameter);
 					}
 
 				} catch (Exception e) {
@@ -239,26 +240,25 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			}
 
 			getBorderLayoutHeight();
-			this.window_DisbursementDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
+			this.window_DisbursementDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("FinanceMainDialog",getRole());
+		getUserWorkspace().allocateAuthorities("FinanceMainDialog", getRole());
 
 		this.btnAddExpense.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnAddExpense"));
 		this.btnAddContractAdv.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnAddContractAdv"));
@@ -278,20 +278,21 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		FinanceDisbursement disbursement = new FinanceDisbursement();
 		disbursement.setDisbType("E");
 
-		createNewDisbursement(disbursement,  new ContractorAssetDetail());
+		createNewDisbursement(disbursement, new ContractorAssetDetail());
 		logger.debug("Leaving" + event.toString());
 	}
 
 	// Finance Disbursement Details Contractor Advance
 	public void onClick$btnAddContractAdv(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		if(this.listBoxContributorDetails.getSelectedItem() == null) {
+		if (this.listBoxContributorDetails.getSelectedItem() == null) {
 			MessageUtil.showError("Please select Contractor");
 		} else {
 			FinanceDisbursement disbursement = new FinanceDisbursement();
 			disbursement.setDisbType("A");
 
-			createNewDisbursement(disbursement,(ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
+			createNewDisbursement(disbursement,
+					(ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -301,39 +302,42 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		logger.debug("Entering" + event.toString());
 		FinanceDisbursement disbursement = new FinanceDisbursement();
 		disbursement.setDisbType("C");
-		if(this.listBoxContributorDetails.getSelectedItem() == null) {
+		if (this.listBoxContributorDetails.getSelectedItem() == null) {
 			MessageUtil.showError("Please select Contractor");
-		} else {     
-			createNewDisbursement(disbursement, (ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
+		} else {
+			createNewDisbursement(disbursement,
+					(ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
 	// Finance Disbursement Details for Billing
-	public void onClick$btnAddBilling(Event event) throws Exception{
+	public void onClick$btnAddBilling(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		if(this.listBoxContributorDetails.getSelectedItem() == null) {
+		if (this.listBoxContributorDetails.getSelectedItem() == null) {
 			MessageUtil.showError("Please select Contractor");
 		} else {
 			FinanceDisbursement disbursement = new FinanceDisbursement();
 			disbursement.setDisbType("B");
 
-			createNewDisbursement(disbursement,(ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
+			createNewDisbursement(disbursement,
+					(ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	@SuppressWarnings("unchecked")
-	public void createNewDisbursement(FinanceDisbursement disbursement, ContractorAssetDetail contractorAssetDetail) throws Exception {
+	public void createNewDisbursement(FinanceDisbursement disbursement, ContractorAssetDetail contractorAssetDetail)
+			throws Exception {
 		logger.debug("Entering");
 
-		if(getFinanceMainDialogCtrl() != null){
+		if (getFinanceMainDialogCtrl() != null) {
 			try {
 
 				if (financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail") != null) {
-					List<Object> list = (List<Object>) financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail").invoke(financeMainDialogCtrl);
-					if(list != null){
+					List<Object> list = (List<Object>) financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail")
+							.invoke(financeMainDialogCtrl);
+					if (list != null) {
 						currency = (String) list.get(0);
 						startDate = (Date) list.get(1);
 						grcEndDate = (Date) list.get(2);
@@ -341,8 +345,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				}
 
 			} catch (Exception e) {
-				if(e.getCause().getClass().equals(WrongValuesException.class)){
-					throw e;	
+				if (e.getCause().getClass().equals(WrongValuesException.class)) {
+					throw e;
 				}
 				logger.error("Exception: ", e);
 			}
@@ -354,7 +358,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		disbursement.setDisbRetPaid(BigDecimal.ZERO);
 		disbursement.setRetPaidDate(null);
 		disbursement.setWorkflowId(0);
-		disbursement.setVersion(1);		
+		disbursement.setVersion(1);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDisbursement", disbursement);
@@ -381,59 +385,59 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		BigDecimal endingBal = BigDecimal.ZERO; 
-		BigDecimal istisnaExp = BigDecimal.ZERO; 
-		BigDecimal totBillingAmt = BigDecimal.ZERO; 
-		BigDecimal conslFee = BigDecimal.ZERO; 
-		BigDecimal totIstisnaCost = BigDecimal.ZERO; 
-		netAdvDueDetailMap= new HashMap<Long, BigDecimal>();
-		netRetDueDetailMap= new HashMap<Long, BigDecimal>();
+		BigDecimal endingBal = BigDecimal.ZERO;
+		BigDecimal istisnaExp = BigDecimal.ZERO;
+		BigDecimal totBillingAmt = BigDecimal.ZERO;
+		BigDecimal conslFee = BigDecimal.ZERO;
+		BigDecimal totIstisnaCost = BigDecimal.ZERO;
+		netAdvDueDetailMap = new HashMap<Long, BigDecimal>();
+		netRetDueDetailMap = new HashMap<Long, BigDecimal>();
 
 		this.listBoxDisbursementDetail.setSizedByContent(true);
 		this.listBoxDisbursementDetail.getItems().clear();
 		setDisbursementDetails(sortDisbDetails(disbursementDetails));
 		this.listBoxDisbursementDetail.setHeight("100px");
-		
+
 		Date startDate = null;
 
 		for (FinanceDisbursement disburse : disbursementDetails) {
-			
-			if(startDate == null){
+
+			if (startDate == null) {
 				startDate = disburse.getDisbDate();
 			}
 
 			BigDecimal netadv = BigDecimal.ZERO;
-			if(disburse.getContractorId() != 0 && netAdvDueDetailMap.containsKey(disburse.getContractorId())){
+			if (disburse.getContractorId() != 0 && netAdvDueDetailMap.containsKey(disburse.getContractorId())) {
 				netadv = netAdvDueDetailMap.get(disburse.getContractorId());
 			}
 
-			if("A".equals(disburse.getDisbType())){
+			if ("A".equals(disburse.getDisbType())) {
 				netadv = netadv.add(disburse.getDisbAmount());
-			}else if("B".equals(disburse.getDisbType())){
+			} else if ("B".equals(disburse.getDisbType())) {
 				netadv = netadv.subtract(disburse.getDisbClaim());
-				if(netadv.compareTo(BigDecimal.ZERO) < 0){
+				if (netadv.compareTo(BigDecimal.ZERO) < 0) {
 					disburse.setDisbAmount(netadv.negate());
 					netadv = BigDecimal.ZERO;
-				}else{
+				} else {
 					disburse.setDisbAmount(netadv);
 				}
-			}else if("C".equals(disburse.getDisbType())){
+			} else if ("C".equals(disburse.getDisbType())) {
 				netadv = netadv.add(disburse.getDisbAmount());
 			}
 
 			//Reset calculation for Retention Amount
-			if(disburse.getDisbAmount().compareTo(disburse.getDisbRetAmount())< 0){
+			if (disburse.getDisbAmount().compareTo(disburse.getDisbRetAmount()) < 0) {
 				disburse.setDisbRetAmount(disburse.getDisbAmount());
-			} 
+			}
 
-			if(disburse.getContractorId() != 0 ){
+			if (disburse.getContractorId() != 0) {
 				netAdvDueDetailMap.put(disburse.getContractorId(), netadv);
 				disburse.setNetAdvDue(netadv);
 			}
 			endingBal = endingBal.add(disburse.getDisbAmount());
 
 			BigDecimal netRet = BigDecimal.ZERO;
-			if(disburse.getContractorId() != 0 && netRetDueDetailMap.containsKey(disburse.getContractorId())){
+			if (disburse.getContractorId() != 0 && netRetDueDetailMap.containsKey(disburse.getContractorId())) {
 				netRet = netRetDueDetailMap.get(disburse.getContractorId());
 				netRetDueDetailMap.put(disburse.getContractorId(), netRet.add(disburse.getDisbRetAmount()));
 				disburse.setNetRetDue(netRet.add(disburse.getDisbRetAmount()));
@@ -443,20 +447,20 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			Listcell listcell;
 			listcell = new Listcell(DateUtility.formatToLongDate(disburse.getDisbDate()));
 			listitem.appendChild(listcell);
-			listcell = new Listcell(Labels.getLabel("label_DisbursementDetail_"+disburse.getDisbType()));
+			listcell = new Listcell(Labels.getLabel("label_DisbursementDetail_" + disburse.getDisbType()));
 			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbAmount(),formatter));
+			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbAmount(), formatter));
 			listcell.setStyle("text-align:right;");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbClaim(),formatter));
+			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbClaim(), formatter));
 			listcell.setStyle("text-align:right;");
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantApplicationUtil.formatAccountNumber(disburse.getDisbAccountId()));
 			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(endingBal,formatter));
+			listcell = new Listcell(PennantAppUtil.amountFormate(endingBal, formatter));
 			listcell.setStyle("text-align:right;");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbRetAmount(),formatter));
+			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbRetAmount(), formatter));
 			listcell.setStyle("text-align:right;");
 			listitem.appendChild(listcell);
 			listcell = new Listcell(disburse.getDisbRemarks());
@@ -467,33 +471,33 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 
 			//Amounts Calculation
 
-			if("B".equals(disburse.getDisbType())){
+			if ("B".equals(disburse.getDisbType())) {
 				totBillingAmt = totBillingAmt.add(disburse.getDisbClaim());
-			}else if("C".equals(disburse.getDisbType())){
+			} else if ("C".equals(disburse.getDisbType())) {
 				conslFee = conslFee.add(disburse.getDisbAmount());
-			}else if("E".equals(disburse.getDisbType())){
+			} else if ("E".equals(disburse.getDisbType())) {
 				istisnaExp = istisnaExp.add(disburse.getDisbAmount());
 			}
 
-			totIstisnaCost = totIstisnaCost.add(disburse.getDisbAmount());	
+			totIstisnaCost = totIstisnaCost.add(disburse.getDisbAmount());
 		}
-		
+
 		int size = disbursementDetails.size();
-		if(size > 2){
-			this.listBoxDisbursementDetail.setHeight((size+1) * 26 +"px");
+		if (size > 2) {
+			this.listBoxDisbursementDetail.setHeight((size + 1) * 26 + "px");
 		}
 
 		//Amount Labels Reset with Amounts
-		this.disb_totalCost.setValue(PennantAppUtil.formateAmount(totIstisnaCost,formatter));
-		this.disb_consultFee.setValue(PennantAppUtil.formateAmount(conslFee,formatter));
-		this.disb_totalBilling.setValue(PennantAppUtil.formateAmount(totBillingAmt,formatter));
-		this.disb_expenses.setValue(PennantAppUtil.formateAmount(istisnaExp,formatter));
+		this.disb_totalCost.setValue(PennantAppUtil.formateAmount(totIstisnaCost, formatter));
+		this.disb_consultFee.setValue(PennantAppUtil.formateAmount(conslFee, formatter));
+		this.disb_totalBilling.setValue(PennantAppUtil.formateAmount(totBillingAmt, formatter));
+		this.disb_expenses.setValue(PennantAppUtil.formateAmount(istisnaExp, formatter));
 
 		if (getFinanceMainDialogCtrl() != null) {
 			try {
 				if (financeMainDialogCtrl.getClass().getMethod("setFinAmount", BigDecimal.class, Date.class) != null) {
-					financeMainDialogCtrl.getClass().getMethod("setFinAmount", BigDecimal.class, Date.class).invoke(
-							financeMainDialogCtrl, totIstisnaCost,startDate);
+					financeMainDialogCtrl.getClass().getMethod("setFinAmount", BigDecimal.class, Date.class)
+							.invoke(financeMainDialogCtrl, totIstisnaCost, startDate);
 				}
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
@@ -514,16 +518,18 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
 
-			if (StringUtils.trimToEmpty(disbursement.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.trimToEmpty(disbursement.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 
-				if(getFinanceMainDialogCtrl() != null){
+				if (getFinanceMainDialogCtrl() != null) {
 					try {
 
 						if (financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail") != null) {
-							List<Object> list = (List<Object>) financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail").invoke(financeMainDialogCtrl);
-							if(list != null){
+							List<Object> list = (List<Object>) financeMainDialogCtrl.getClass()
+									.getMethod("doValidateFinDetail").invoke(financeMainDialogCtrl);
+							if (list != null) {
 								currency = (String) list.get(0);
 								startDate = (Date) list.get(1);
 								grcEndDate = (Date) list.get(2);
@@ -531,8 +537,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 						}
 
 					} catch (Exception e) {
-						if(e.getCause().getClass().equals(WrongValuesException.class)){
-							throw e;	
+						if (e.getCause().getClass().equals(WrongValuesException.class)) {
+							throw e;
 						}
 						logger.error("Exception: ", e);
 					}
@@ -540,7 +546,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 
 				ContractorAssetDetail aContractorAssetDetail = null;
 				for (ContractorAssetDetail contractorAssetDetail : contractorAssetDetails) {
-					if(contractorAssetDetail.getContractorId() == disbursement.getContractorId()){
+					if (contractorAssetDetail.getContractorId() == disbursement.getContractorId()) {
 						aContractorAssetDetail = contractorAssetDetail;
 						break;
 					}
@@ -558,7 +564,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				map.put("FinanceDetail", getFinanceDetail());
 
 				try {
-					Executions.createComponents(getZULPath(disbursement.getDisbType()), window_DisbursementDetailDialog, map);
+					Executions.createComponents(getZULPath(disbursement.getDisbType()), window_DisbursementDetailDialog,
+							map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -568,16 +575,17 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	}
 
 	// Contractor Details
-	public void onClick$btnAddContributor(Event event) throws Exception{
+	public void onClick$btnAddContributor(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		ContractorAssetDetail contractorAssetDetail = new ContractorAssetDetail();
-		contractorAssetDetail.setFinReference(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+		contractorAssetDetail
+				.setFinReference(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
 		List<ContractorAssetDetail> assetDetails = getContractorAssetDetails();
-		
+
 		long contractorId = 0;
-		if(assetDetails != null && !assetDetails.isEmpty()){
+		if (assetDetails != null && !assetDetails.isEmpty()) {
 			for (ContractorAssetDetail detail : assetDetails) {
-				if(detail.getContractorId() > contractorId){
+				if (detail.getContractorId() > contractorId) {
 					contractorId = detail.getContractorId();
 				}
 			}
@@ -591,15 +599,16 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public void createNewContractor(ContractorAssetDetail contractorAssetDetail) throws Exception {
 		logger.debug("Entering");
 
-		if(getFinanceMainDialogCtrl() != null){
-			
-			if(getFinanceMainDialogCtrl() != null){
+		if (getFinanceMainDialogCtrl() != null) {
+
+			if (getFinanceMainDialogCtrl() != null) {
 				try {
 
 					if (financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail") != null) {
 						@SuppressWarnings("unchecked")
-						List<Object> list = (List<Object>) financeMainDialogCtrl.getClass().getMethod("doValidateFinDetail").invoke(financeMainDialogCtrl);
-						if(list != null){
+						List<Object> list = (List<Object>) financeMainDialogCtrl.getClass()
+								.getMethod("doValidateFinDetail").invoke(financeMainDialogCtrl);
+						if (list != null) {
 							currency = (String) list.get(0);
 							startDate = (Date) list.get(1);
 							grcEndDate = (Date) list.get(2);
@@ -607,8 +616,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 					}
 
 				} catch (Exception e) {
-					if(e.getCause().getClass().equals(WrongValuesException.class)){
-						throw e;	
+					if (e.getCause().getClass().equals(WrongValuesException.class)) {
+						throw e;
 					}
 					MessageUtil.showError(e);
 				}
@@ -617,7 +626,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			contractorAssetDetail.setNewRecord(true);
 
 			contractorAssetDetail.setWorkflowId(0);
-			contractorAssetDetail.setVersion(1);		
+			contractorAssetDetail.setVersion(1);
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("contractorAssetDetail", contractorAssetDetail);
@@ -630,20 +639,22 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			//map.put("ccyFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 
 			try {
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul", window_DisbursementDetailDialog, map);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul",
+						window_DisbursementDetailDialog, map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 			logger.debug("Leaving");
 		}
 	}
-	
+
 	public void onContractroDetailItemDoubleClicked(Event event) throws InterruptedException {
 		Listitem listitem = this.listBoxContributorDetails.getSelectedItem();
 		if (listitem != null && listitem.getAttribute("data") != null) {
-			
+
 			final ContractorAssetDetail contractorAssetDetail = (ContractorAssetDetail) listitem.getAttribute("data");
-			if (StringUtils.trimToEmpty(contractorAssetDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.trimToEmpty(contractorAssetDetail.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 
@@ -654,10 +665,12 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				map.put("roleCode", getRole());
 				map.put("startDate", startDate);
 				map.put("grcEndDate", grcEndDate);
-				
+
 				// call the ZUL-file with the parameters packed in a map
 				try {
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul", window_DisbursementDetailDialog, map);
+					Executions.createComponents(
+							"/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul",
+							window_DisbursementDetailDialog, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -668,20 +681,22 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public void doFillContractorDetails(List<ContractorAssetDetail> contractorAssetDetails) {
 		this.listBoxContributorDetails.getItems().clear();
 		this.listBoxContributorDetails.setHeight("100px");
-		if (contractorAssetDetails != null) {		
+		if (contractorAssetDetails != null) {
 			setContractorAssetDetails(contractorAssetDetails);
 			for (ContractorAssetDetail contrAsstDtl : contractorAssetDetails) {
 
-				double totClaimAmt = PennantApplicationUtil.formateAmount(contrAsstDtl.getTotClaimAmt(), ccyFormat).doubleValue();
-				double assetValue = PennantApplicationUtil.formateAmount(contrAsstDtl.getAssetValue(), ccyFormat).doubleValue();
+				double totClaimAmt = PennantApplicationUtil.formateAmount(contrAsstDtl.getTotClaimAmt(), ccyFormat)
+						.doubleValue();
+				double assetValue = PennantApplicationUtil.formateAmount(contrAsstDtl.getAssetValue(), ccyFormat)
+						.doubleValue();
 
 				BigDecimal amount = BigDecimal.valueOf((totClaimAmt / assetValue) * 10000);
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(contrAsstDtl.getContractorName());
 				lc.setParent(item);
-				lc = new Listcell(StringUtils.isBlank(contrAsstDtl.getLovDescCustCIF()) ? "" : 
-					contrAsstDtl.getLovDescCustCIF() +"-"+contrAsstDtl.getLovDescCustShrtName());
+				lc = new Listcell(StringUtils.isBlank(contrAsstDtl.getLovDescCustCIF()) ? ""
+						: contrAsstDtl.getLovDescCustCIF() + "-" + contrAsstDtl.getLovDescCustShrtName());
 				lc.setParent(item);
 				lc = new Listcell(contrAsstDtl.getAssetDesc());
 				lc.setParent(item);
@@ -693,54 +708,53 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				lc.setParent(item);
 				lc = new Listcell(contrAsstDtl.getRecordType());
 				lc.setParent(item);
-				
-				if(PennantConstants.RECORD_TYPE_CAN.equals(contrAsstDtl.getRecordType())){
+
+				if (PennantConstants.RECORD_TYPE_CAN.equals(contrAsstDtl.getRecordType())) {
 					item.setDisabled(true);
-				}else{
+				} else {
 					item.setAttribute("data", contrAsstDtl);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onContractroDetailItemDoubleClicked");
 				}
 				this.listBoxContributorDetails.appendChild(item);
 			}
-			
+
 			int size = contractorAssetDetails.size();
-			if(size > 2){
-				this.listBoxContributorDetails.setHeight((size+1) * 26 +"px");
+			if (size > 2) {
+				this.listBoxContributorDetails.setHeight((size + 1) * 26 + "px");
 			}
 
 		}
 	}
-	
-	private String getZULPath(String disbType){
+
+	private String getZULPath(String disbType) {
 		logger.debug("Entering");
 
 		String zulPath = "";
-		if("A".equals(disbType)){
+		if ("A".equals(disbType)) {
 			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaContractorAdvanceDialog.zul";
-		}else if("B".equals(disbType)){
+		} else if ("B".equals(disbType)) {
 			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaBillingDialog.zul";
-		}else if("C".equals(disbType)){
+		} else if ("C".equals(disbType)) {
 			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaConsultingFeeDialog.zul";
-		}else if("E".equals(disbType)){
+		} else if ("E".equals(disbType)) {
 			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaExpensesDialog.zul";
 		}
 		logger.debug("Leaving");
 		return zulPath;
 	}
 
-	public List<FinanceDisbursement> sortDisbDetails(
-			List<FinanceDisbursement> financeDisbursement) {
+	public List<FinanceDisbursement> sortDisbDetails(List<FinanceDisbursement> financeDisbursement) {
 
 		if (financeDisbursement != null && financeDisbursement.size() > 0) {
 			Collections.sort(financeDisbursement, new Comparator<FinanceDisbursement>() {
 				@Override
 				public int compare(FinanceDisbursement detail1, FinanceDisbursement detail2) {
-					
+
 					int compareValue = DateUtility.compare(detail1.getDisbDate(), detail2.getDisbDate());
 					if (compareValue < 1) {
 						return -1;
-					}else if(compareValue == 0) {
-						if(detail1.getDisbType().compareTo(detail2.getDisbType()) > 0) {
+					} else if (compareValue == 0) {
+						if (detail1.getDisbType().compareTo(detail2.getDisbType()) > 0) {
 							return 1;
 						}
 					}
@@ -752,25 +766,28 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		return financeDisbursement;
 	}
 
-	public boolean validateContractorAssetDetails(FinanceDetail aFinanceDetail,Tab tab) throws InterruptedException {
+	public boolean validateContractorAssetDetails(FinanceDetail aFinanceDetail, Tab tab) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		List<ContractorAssetDetail> assetDetails = getContractorAssetDetails();
 
-		if(assetDetails == null || assetDetails.isEmpty()){
-			if(tab != null){
+		if (assetDetails == null || assetDetails.isEmpty()) {
+			if (tab != null) {
 				tab.setSelected(true);
 			}
 			MessageUtil.showError(Labels.getLabel("label_ContractorList_Empty"));
 			return false;
 		}
-		
+
 		boolean isValid = true;
 		for (ContractorAssetDetail contractorAssetDetail : contractorAssetDetails) {
-			if (!PennantConstants.RECORD_TYPE_DEL.equals(contractorAssetDetail.getRecordType()) && !PennantConstants.RECORD_TYPE_CAN.equals(contractorAssetDetail.getRecordType())) {
-				double amount = ((contractorAssetDetail.getTotClaimAmt().doubleValue()) /contractorAssetDetail.getAssetValue().doubleValue()) * 100;
+			if (!PennantConstants.RECORD_TYPE_DEL.equals(contractorAssetDetail.getRecordType())
+					&& !PennantConstants.RECORD_TYPE_CAN.equals(contractorAssetDetail.getRecordType())) {
+				double amount = ((contractorAssetDetail.getTotClaimAmt().doubleValue())
+						/ contractorAssetDetail.getAssetValue().doubleValue()) * 100;
 
-				contractorAssetDetail.setLovDescClaimPercent(PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(amount), 2));
+				contractorAssetDetail
+						.setLovDescClaimPercent(PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(amount), 2));
 
 				if (contractorAssetDetail.getLovDescClaimPercent() != null) {
 					if (contractorAssetDetail.getLovDescClaimPercent().compareTo(new BigDecimal(10000)) != 0) {
@@ -781,8 +798,8 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				}
 			}
 		}
-		if(!isValid) {
-			if(tab != null){
+		if (!isValid) {
+			if (tab != null) {
 				tab.setSelected(true);
 			}
 			MessageUtil.showError(Labels.getLabel("label_ContractorBilling_NotComplete"));
@@ -792,25 +809,27 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		aFinanceDetail.setContractorAssetDetails(assetDetails);
 		return true;
 	}
-	
+
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails() {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("parentCtrl", this );
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			map.put("parentCtrl", this);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
-		this.disb_noOfTerms.setValue(String.valueOf(getFinScheduleData().getFinanceMain().getNumberOfTerms() + 
-				getFinScheduleData().getFinanceMain().getGraceTerms()));
-		this.disb_maturityDate.setValue(DateUtility.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()));
+		this.disb_noOfTerms.setValue(String.valueOf(getFinScheduleData().getFinanceMain().getNumberOfTerms()
+				+ getFinScheduleData().getFinanceMain().getGraceTerms()));
+		this.disb_maturityDate
+				.setValue(DateUtility.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()));
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
 
@@ -821,6 +840,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public IstisnaFinanceMainDialogCtrl getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(IstisnaFinanceMainDialogCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -828,6 +848,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -835,6 +856,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -842,12 +864,12 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public List<FinanceDisbursement> getDisbursementDetails() {
 		return disbursementDetails;
 	}
+
 	public void setDisbursementDetails(List<FinanceDisbursement> disbursementDetails) {
 		this.disbursementDetails = disbursementDetails;
 	}
 
-	public void setOldvar_disbursementDetails(
-			List<FinanceDisbursement> oldvarDisbursementDetails) {
+	public void setOldvar_disbursementDetails(List<FinanceDisbursement> oldvarDisbursementDetails) {
 		this.oldvar_disbursementDetails = oldvarDisbursementDetails;
 	}
 
@@ -859,8 +881,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		return contractorAssetDetails;
 	}
 
-	public void setContractorAssetDetails(
-			List<ContractorAssetDetail> contractorAssetDetails) {
+	public void setContractorAssetDetails(List<ContractorAssetDetail> contractorAssetDetails) {
 		this.contractorAssetDetails = contractorAssetDetails;
 	}
 
@@ -868,8 +889,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		return oldvar_contractorAssetDetails;
 	}
 
-	public void setOldvar_contractorAssetDetails(
-			List<ContractorAssetDetail> oldvarContractorAssetDetails) {
+	public void setOldvar_contractorAssetDetails(List<ContractorAssetDetail> oldvarContractorAssetDetails) {
 		this.oldvar_contractorAssetDetails = oldvarContractorAssetDetails;
 	}
 

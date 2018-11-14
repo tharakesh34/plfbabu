@@ -67,14 +67,14 @@ import com.pennanttech.pff.core.TableType;
 public class CityServiceImpl extends GenericService<City> implements CityService {
 	private static Logger logger = Logger.getLogger(CityServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private CityDAO cityDAO;
 	private PinCodeDAO pinCodeDAO;
 
 	public CityServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -82,27 +82,26 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public CityDAO getCityDAO() {
 		return cityDAO;
 	}
+
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
 	}
-	
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTProvinceVsCity/RMTProvinceVsCity_Temp by using CityDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using CityDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtRMTProvinceVsCity by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * RMTProvinceVsCity/RMTProvinceVsCity_Temp by using CityDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using CityDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -111,27 +110,27 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering ");
-		
+
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		City city = (City) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
 		if (city.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (city.isNew()) {
-			getCityDAO().save(city,tableType);
+			getCityDAO().save(city, tableType);
 			auditHeader.getAuditDetail().setModelData(city);
-			auditHeader.setAuditReference(city.getPCCountry() +PennantConstants.KEY_SEPERATOR
-					+ city.getPCProvince()+PennantConstants.KEY_SEPERATOR+ city.getPCCity());
+			auditHeader.setAuditReference(city.getPCCountry() + PennantConstants.KEY_SEPERATOR + city.getPCProvince()
+					+ PennantConstants.KEY_SEPERATOR + city.getPCCity());
 
-		}else{
-			getCityDAO().update(city,tableType);
+		} else {
+			getCityDAO().update(city, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -141,12 +140,10 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTProvinceVsCity by using CityDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtRMTProvinceVsCity by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTProvinceVsCity by using CityDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -157,14 +154,14 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		logger.debug("Entering ");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		City city = (City) auditHeader.getAuditDetail().getModelData();
 		getCityDAO().delete(city, TableType.MAIN_TAB);
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
 		return auditHeader;
@@ -172,27 +169,27 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 
 	/**
 	 * getCityById fetch the details by using CityDAO's getCityById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return City
 	 */
 	@Override
 	public City getCityById(String pCCountry, String pCProvince, String pCCity) {
 		return getCityDAO().getCityById(pCCountry, pCProvince, pCCity, "_View");
 	}
-	
+
 	/**
-	 * getApprovedCityById fetch the details by using CityDAO's getCityById
-	 * method . with parameter id and type as blank. it fetches the approved
-	 * records from the RMTProvinceVsCity.
+	 * getApprovedCityById fetch the details by using CityDAO's getCityById method . with parameter id and type as
+	 * blank. it fetches the approved records from the RMTProvinceVsCity.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return City
 	 */
-	public City getApprovedCityById(String pCCountry, String pCProvince,
-			String pCCity) {
+	public City getApprovedCityById(String pCCountry, String pCProvince, String pCCity) {
 		return getCityDAO().getCityById(pCCountry, pCProvince, pCCity, "_AView");
 	}
 
@@ -222,13 +219,13 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 
 		City city = new City();
 		BeanUtils.copyProperties((City) auditHeader.getAuditDetail().getModelData(), city);
-		
+
 		getCityDAO().delete(city, TableType.TEMP_TAB);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(cityDAO.getCityById(city.getPCCountry(),
-					city.getPCProvince(), city.getPCCity(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(cityDAO.getCityById(city.getPCCountry(), city.getPCProvince(), city.getPCCity(), ""));
 		}
-		
+
 		if (city.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
@@ -252,7 +249,6 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 			}
 		}
 
-	
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -265,41 +261,36 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCityDAO().delete with parameters
-	 * city,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCityDAO().delete with parameters city,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering ");
-		
+
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		City city= (City) auditHeader.getAuditDetail().getModelData();
+		City city = (City) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getCityDAO().delete(city, TableType.TEMP_TAB);
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -307,17 +298,14 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	
-	
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
 	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
@@ -334,19 +322,18 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		City city = (City) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (city.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())
+		if (city.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())
 				&& cityDAO.isDuplicateKey(city.getPCCountry(), city.getPCProvince(), city.getPCCity(),
 						city.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];
 
-			parameters[0]=PennantJavaUtil.getLabel("label_PCCountry")+":"+city.getPCCountry();
-			parameters[1]=PennantJavaUtil.getLabel("label_PCProvince")+":"+city.getPCProvince();
-			parameters[2]=PennantJavaUtil.getLabel("label_PCCity")+":"+city.getPCCity();
+			parameters[0] = PennantJavaUtil.getLabel("label_PCCountry") + ":" + city.getPCCountry();
+			parameters[1] = PennantJavaUtil.getLabel("label_PCProvince") + ":" + city.getPCProvince();
+			parameters[2] = PennantJavaUtil.getLabel("label_PCCity") + ":" + city.getPCCity();
 
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41008", parameters, null));
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 		}
-		
+
 		// If City Code is already utilized in PinCode 
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, city.getRecordType())) {
 			boolean workflowExists = getPinCodeDAO().isCityCodeExists(city.getPCCity());
@@ -372,5 +359,5 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		this.pinCodeDAO = pinCodeDAO;
 	}
-	
+
 }

@@ -54,7 +54,7 @@ public class EquationRelationshipOfficer extends AbstractWorkflowEntity {
 	public EquationRelationshipOfficer() {
 		super();
 	}
-	
+
 	private String rOfficerCode = null;
 	private String rOfficerDesc;
 	private String rOfficerDeptCode;
@@ -64,24 +64,27 @@ public class EquationRelationshipOfficer extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getROfficerCode() {
 		return rOfficerCode;
 	}
+
 	public void setROfficerCode(String rOfficerCode) {
 		this.rOfficerCode = rOfficerCode;
 	}
-	
+
 	public String getROfficerDesc() {
 		return rOfficerDesc;
 	}
+
 	public void setROfficerDesc(String rOfficerDesc) {
 		this.rOfficerDesc = rOfficerDesc;
 	}
-		
+
 	public String getROfficerDeptCode() {
 		return rOfficerDeptCode;
 	}
+
 	public void setROfficerDeptCode(String rOfficerDeptCode) {
 		this.rOfficerDeptCode = rOfficerDeptCode;
 	}
@@ -89,13 +92,15 @@ public class EquationRelationshipOfficer extends AbstractWorkflowEntity {
 	public String getLovDescROfficerDeptCodeName() {
 		return this.lovDescROfficerDeptCodeName;
 	}
-	public void setLovDescROfficerDeptCodeName (String lovDescROfficerDeptCodeName) {
+
+	public void setLovDescROfficerDeptCodeName(String lovDescROfficerDeptCodeName) {
 		this.lovDescROfficerDeptCodeName = lovDescROfficerDeptCodeName;
 	}
-	
+
 	public boolean isROfficerIsActive() {
 		return rOfficerIsActive;
 	}
+
 	public void setROfficerIsActive(boolean rOfficerIsActive) {
 		this.rOfficerIsActive = rOfficerIsActive;
 	}

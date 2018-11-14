@@ -65,10 +65,10 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implements ExpenseTypeService {
-	private static final Logger	logger	= Logger.getLogger(ExpenseTypeServiceImpl.class);
-	private AuditHeaderDAO		auditHeaderDAO;
-	private ExpenseTypeDAO		expenseTypeDAO;
-	private FinTypeExpenseDAO	finTypeExpenseDAO;
+	private static final Logger logger = Logger.getLogger(ExpenseTypeServiceImpl.class);
+	private AuditHeaderDAO auditHeaderDAO;
+	private ExpenseTypeDAO expenseTypeDAO;
+	private FinTypeExpenseDAO finTypeExpenseDAO;
 
 	public ExpenseTypeServiceImpl() {
 		super();
@@ -191,7 +191,7 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 	public ExpenseType getApprovedExpenseTypeById(long id) {
 		return getExpenseTypeDAO().getExpenseTypeById(id, "_AView");
 	}
-	
+
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
@@ -325,16 +325,17 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 		// Check the unique keys.
 		if (expenseType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(expenseType.getRecordType())
 				&& expenseTypeDAO.isDuplicateKey(expenseType.getExpenseTypeId(), expenseType.getExpenseTypeCode(),
-				expenseType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB) ) {
+						expenseType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		// Checking Dependency Validation
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
-						&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(expenseType.getRecordType())) {
+				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(expenseType.getRecordType())) {
 			// Expense Type
-			boolean isExpenseExists = getFinTypeExpenseDAO().expenseExistingFinTypeExpense(expenseType.getExpenseTypeId(), "_View");
+			boolean isExpenseExists = getFinTypeExpenseDAO()
+					.expenseExistingFinTypeExpense(expenseType.getExpenseTypeId(), "_View");
 			if (isExpenseExists) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}

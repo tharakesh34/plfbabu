@@ -41,17 +41,24 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 
 public interface FinCreditRevSubCategoryDAO {
 
-	 FinCreditRevSubCategory getFinCreditRevSubCategory();
-	 FinCreditRevSubCategory getNewFinCreditRevSubCategory();
-	 FinCreditRevSubCategory getFinCreditRevSubCategoryById(String id,String type);
-	 void update(FinCreditRevSubCategory finCreditRevSubCategory,String type);
-	 void delete(FinCreditRevSubCategory finCreditRevSubCategory,String type);
-	 String save(FinCreditRevSubCategory finCreditRevSubCategory,String type);
-	 boolean updateSubCategories(List<FinCreditRevSubCategory> finCreditRevSubCategoryList);
+	FinCreditRevSubCategory getFinCreditRevSubCategory();
+
+	FinCreditRevSubCategory getNewFinCreditRevSubCategory();
+
+	FinCreditRevSubCategory getFinCreditRevSubCategoryById(String id, String type);
+
+	void update(FinCreditRevSubCategory finCreditRevSubCategory, String type);
+
+	void delete(FinCreditRevSubCategory finCreditRevSubCategory, String type);
+
+	String save(FinCreditRevSubCategory finCreditRevSubCategory, String type);
+
+	boolean updateSubCategories(List<FinCreditRevSubCategory> finCreditRevSubCategoryList);
 }

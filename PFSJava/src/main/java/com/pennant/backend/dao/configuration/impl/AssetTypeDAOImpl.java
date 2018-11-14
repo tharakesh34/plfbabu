@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.configuration.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -59,6 +58,7 @@ import com.pennant.backend.model.configuration.AssetType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+
 /**
  * DAO methods implementation for the <b>AssetType model</b> class.<br>
  * 
@@ -66,14 +66,14 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class AssetTypeDAOImpl extends BasicDao<AssetType> implements AssetTypeDAO {
 	private static Logger logger = Logger.getLogger(AssetTypeDAOImpl.class);
-	
+
 	public AssetTypeDAOImpl() {
 		super();
 	}
 
-
 	/**
-	 * This method set the Work Flow id based on the module name and return the new VASConfiguration 
+	 * This method set the Work Flow id based on the module name and return the new VASConfiguration
+	 * 
 	 * @return VASConfiguration
 	 */
 	@Override
@@ -83,9 +83,10 @@ public class AssetTypeDAOImpl extends BasicDao<AssetType> implements AssetTypeDA
 		return new AssetType();
 	}
 
-
 	/**
-	 * This method get the module from method getVASConfiguration() and set the new record flag as true and return VASConfiguration()   
+	 * This method get the module from method getVASConfiguration() and set the new record flag as true and return
+	 * VASConfiguration()
+	 * 
 	 * @return VASConfiguration
 	 */
 
@@ -97,12 +98,14 @@ public class AssetTypeDAOImpl extends BasicDao<AssetType> implements AssetTypeDA
 		logger.debug("Leaving");
 		return aAssetType;
 	}
+
 	/**
-	 * Fetch the Record  AssetType details by key field
+	 * Fetch the Record AssetType details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return AssetType
 	 */
 	@Override
@@ -112,130 +115,136 @@ public class AssetTypeDAOImpl extends BasicDao<AssetType> implements AssetTypeDA
 		assetType.setId(id);
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" assetType,assetDesc,remarks,active,preValidation,postValidation,");
-		
-		if(type.contains("View")){
+
+		if (type.contains("View")) {
 			sql.append("");
-		}	
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From AssetTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where AssetType =:AssetType");
-		
+
 		logger.debug("sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
 		RowMapper<AssetType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AssetType.class);
-		
-		try{
-			assetType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			assetType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			assetType = null;
 		}
 		logger.debug("Leaving");
 		return assetType;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the AssetTypes or AssetTypes_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete AssetType by key AssetType
+	 * This method Deletes the Record from the AssetTypes or AssetTypes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete AssetType by key AssetType
 	 * 
-	 * @param AssetType (assetType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param AssetType
+	 *            (assetType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(AssetType assetType,String type) {
+	public void delete(AssetType assetType, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder sql = new StringBuilder("Delete From AssetTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where AssetType =:AssetType");
-	
+
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into AssetTypes or AssetTypes_Temp.
 	 *
-	 * save AssetType 
+	 * save AssetType
 	 * 
-	 * @param AssetType (assetType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param AssetType
+	 *            (assetType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(AssetType assetType,String type) {
+	public String save(AssetType assetType, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder sql =new StringBuilder("Insert Into AssetTypes");
+
+		StringBuilder sql = new StringBuilder("Insert Into AssetTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (assetType,assetDesc,remarks,active,preValidation,postValidation,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
 		sql.append(" :assetType,:assetDesc,:remarks,:active,:preValidation,:postValidation,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("sql: " + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return assetType.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record AssetTypes or AssetTypes_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update AssetType by key AssetType and Version
+	 * This method updates the Record AssetTypes or AssetTypes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update AssetType by key AssetType and Version
 	 * 
-	 * @param AssetType (assetType)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param AssetType
+	 *            (assetType)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(AssetType assetType,String type) {
+	public void update(AssetType assetType, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	sql =new StringBuilder("Update AssetTypes");
-		sql.append(StringUtils.trimToEmpty(type)); 
-		sql.append(" Set assetType=:assetType, assetDesc=:assetDesc, remarks=:remarks,preValidation=:preValidation,postValidation=:postValidation,");
+		StringBuilder sql = new StringBuilder("Update AssetTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(
+				" Set assetType=:assetType, assetDesc=:assetDesc, remarks=:remarks,preValidation=:preValidation,postValidation=:postValidation,");
 		sql.append(" active=:active,");
-		sql.append(" Version=:Version , LastMntBy=:LastMntBy, LastMntOn=:LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode, NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId");
+		sql.append(
+				" Version=:Version , LastMntBy=:LastMntBy, LastMntOn=:LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode, NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId");
 		sql.append(" Where AssetType =:AssetType");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			sql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("Sql: " + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assetType);
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -251,7 +260,8 @@ public class AssetTypeDAOImpl extends BasicDao<AssetType> implements AssetTypeDA
 
 		sql.append("Select  Count(*) from (SELECT   *  FROM   FinAssetTypes_Temp  UNION ALL ");
 		sql.append("SELECT   *  FROM   FinAssetTypes ");
-		sql.append("WHERE     NOT EXISTS (SELECT  1 FROM  FinAssetTypes_Temp WHERE  AssetType = FinAssetTypes.AssetType)) T ");
+		sql.append(
+				"WHERE     NOT EXISTS (SELECT  1 FROM  FinAssetTypes_Temp WHERE  AssetType = FinAssetTypes.AssetType)) T ");
 		sql.append("Where T.AssetType = :AssetType");
 
 		source.addValue("AssetType", assetType);

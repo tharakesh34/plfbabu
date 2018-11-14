@@ -72,17 +72,17 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class ProvisionCalculationUtil implements Serializable {
-	private static final long			serialVersionUID	= 193855810060181970L;
-	private static Logger				logger				= Logger.getLogger(ProvisionCalculationUtil.class);
+	private static final long serialVersionUID = 193855810060181970L;
+	private static Logger logger = Logger.getLogger(ProvisionCalculationUtil.class);
 
-	private FinanceMainDAO				financeMainDAO;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private FinanceProfitDetailDAO		financeProfitDetailDAO;
-	private ProvisionDAO				provisionDAO;
-	private ProvisionMovementDAO		provisionMovementDAO;
-	private AccountEngineExecution		engineExecution;
-	private PostingsPreparationUtil		postingsPreparationUtil;
-	private FinanceTypeDAO				financeTypeDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private ProvisionDAO provisionDAO;
+	private ProvisionMovementDAO provisionMovementDAO;
+	private AccountEngineExecution engineExecution;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceTypeDAO financeTypeDAO;
 
 	public ProvisionCalculationUtil() {
 		super();
@@ -99,27 +99,27 @@ public class ProvisionCalculationUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	public ErrorDetail processProvCalculations(Provision procProvision, Date dateValueDate, boolean isProvRelated,
-			boolean isScrnLvlProc, boolean isFromCore) throws IllegalAccessException,
-			InvocationTargetException, InterfaceException {
+			boolean isScrnLvlProc, boolean isFromCore)
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 
 		logger.debug("Entering");
 
 		BigDecimal provCalculated = BigDecimal.ZERO;
 
-		FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsByRef(
-				procProvision.getFinReference());
+		FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO()
+				.getFinProfitDetailsByRef(procProvision.getFinReference());
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(procProvision.getFinReference());
-		List<FinanceScheduleDetail> schdDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
-				procProvision.getFinReference());
+		List<FinanceScheduleDetail> schdDetails = getFinanceScheduleDetailDAO()
+				.getFinSchdDetailsForBatch(procProvision.getFinReference());
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
 				AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, procProvision.getProvisionCalDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		
-		amountCodes.setProvDue(procProvision.getProvisionDue() == null ? BigDecimal.ZERO : procProvision
-				.getProvisionDue());
-		amountCodes.setProvAmt(procProvision.getProvisionedAmt() == null ? BigDecimal.ZERO : procProvision
-				.getProvisionedAmt());
+
+		amountCodes.setProvDue(
+				procProvision.getProvisionDue() == null ? BigDecimal.ZERO : procProvision.getProvisionDue());
+		amountCodes.setProvAmt(
+				procProvision.getProvisionedAmt() == null ? BigDecimal.ZERO : procProvision.getProvisionedAmt());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
@@ -208,15 +208,14 @@ public class ProvisionCalculationUtil implements Serializable {
 			//Provision Posting Process for Screen Level Process
 			boolean isPostingsSuccess = true;
 			if ((isScrnLvlProc || isFromCore) && movement != null) {
-				amountCodes.setProvDue(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement
-						.getProvisionDue());
+				amountCodes
+						.setProvDue(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement.getProvisionDue());
 
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PROVSN);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(procProvision.getProvisionCalDate());
 				Date dateAppDate = DateUtility.getAppDate();
 				aeEvent.setAppDate(dateAppDate);
-				
 
 				dataMap = new HashMap<String, Object>();
 				dataMap = amountCodes.getDeclaredFieldValues();
@@ -363,8 +362,8 @@ public class ProvisionCalculationUtil implements Serializable {
 	private ProvisionMovement prepareProvisionMovementData(Provision provision, Date valueDate) {
 		logger.debug("Entering");
 
-		ProvisionMovement provisionMovement = getProvisionMovementDAO().getProvisionMovementById(
-				provision.getFinReference(), valueDate, "");
+		ProvisionMovement provisionMovement = getProvisionMovementDAO()
+				.getProvisionMovementById(provision.getFinReference(), valueDate, "");
 
 		ProvisionMovement movement = new ProvisionMovement();
 		movement.setFinReference(provision.getFinReference());

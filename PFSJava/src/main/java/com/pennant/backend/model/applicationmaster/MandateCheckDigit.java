@@ -54,15 +54,15 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class MandateCheckDigit extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private int					checkDigitValue;
-	private String				lookUpValue;
-	private boolean				active;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private MandateCheckDigit	befImage;
-	private LoggedInUser		userDetails;
+	private int checkDigitValue;
+	private String lookUpValue;
+	private boolean active;
+	private boolean newRecord = false;
+	private String lovValue;
+	private MandateCheckDigit befImage;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();

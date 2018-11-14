@@ -96,42 +96,42 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 			window_NotificationsDialog; 	    
+	protected Window window_NotificationsDialog;
 
-	protected Textbox 			ruleCode;  					        
-	protected Textbox 			ruleCodeDesc;  					    
-	protected Combobox 			ruleModule;  					    
-	protected Combobox 			templateType;  					    
+	protected Textbox ruleCode;
+	protected Textbox ruleCodeDesc;
+	protected Combobox ruleModule;
+	protected Combobox templateType;
 
-	protected Tab   			tab_ruleTemplate; 					        
-	protected Tab   			tab_ruleReciepent; 					        
-	protected Tab   			tab_ruleAttachment; 					    
-	
-	protected Tabpanel			tabPanel_ruleTemplate;
-	protected Tabpanel			tabPanel_ruleReciepent;
-	protected Tabpanel			tabPanel_ruleAttachment;
+	protected Tab tab_ruleTemplate;
+	protected Tab tab_ruleReciepent;
+	protected Tab tab_ruleAttachment;
 
-	protected JavaScriptBuilder ruleTemplate; 					
-	protected JavaScriptBuilder ruleReciepent; 					
-	protected JavaScriptBuilder ruleAttachment; 				
+	protected Tabpanel tabPanel_ruleTemplate;
+	protected Tabpanel tabPanel_ruleReciepent;
+	protected Tabpanel tabPanel_ruleAttachment;
 
-	protected Groupbox 			gb_statusDetails;
-	protected Grid 				grid_basicDetail;
-	
-	protected Button 			btnValidate; 		
-	protected Button 			btnSimulation; 		
-	
-	private transient boolean 	validationOn;
-	
+	protected JavaScriptBuilder ruleTemplate;
+	protected JavaScriptBuilder ruleReciepent;
+	protected JavaScriptBuilder ruleAttachment;
+
+	protected Groupbox gb_statusDetails;
+	protected Grid grid_basicDetail;
+
+	protected Button btnValidate;
+	protected Button btnSimulation;
+
+	private transient boolean validationOn;
+
 	// not auto wired variables
-	private Notifications 					notifications; // overHanded per parameter
+	private Notifications notifications; // overHanded per parameter
 	private transient NotificationsListCtrl notificationsListCtrl; // overHanded per parameter
 	// ServiceDAOs / Domain Classes
-	private transient NotificationsService 	notificationsService;
-	
-	private List<ValueLabel> 				listRuleModule = new ArrayList<ValueLabel>();
-	private List<ValueLabel> 				listTemplateTypes = new ArrayList<ValueLabel>();
-	
+	private transient NotificationsService notificationsService;
+
+	private List<ValueLabel> listRuleModule = new ArrayList<ValueLabel>();
+	private List<ValueLabel> listTemplateTypes = new ArrayList<ValueLabel>();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -283,7 +283,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -305,8 +305,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	public void onChange$ruleModule(Event event) {
 		logger.debug("Entering");
 
-		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(), this.templateType.getSelectedItem()
-				.getValue().toString());
+		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
+				this.templateType.getSelectedItem().getValue().toString());
 
 		logger.debug("Leaving");
 	}
@@ -320,8 +320,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	public void onChange$templateType(Event event) {
 		logger.debug("Entering");
 
-		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(), this.templateType.getSelectedItem()
-				.getValue().toString());
+		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
+				this.templateType.getSelectedItem().getValue().toString());
 
 		logger.debug("Leaving");
 	}
@@ -437,15 +437,15 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleCode.setValue(aNotifications.getRuleCode());
 		this.ruleCodeDesc.setValue(aNotifications.getRuleCodeDesc());
 		this.recordStatus.setValue(aNotifications.getRecordStatus());
-		
+
 		this.listRuleModule = PennantStaticListUtil.getMailModulesList();
 		this.listTemplateTypes = PennantStaticListUtil.getTemplateForList();
-		
+
 		fillComboBox(this.ruleModule, aNotifications.getRuleModule(), listRuleModule, "");
 		fillComboBox(this.templateType, aNotifications.getTemplateType(), listTemplateTypes, "");
 
-		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(), this.templateType.getSelectedItem()
-				.getValue().toString());
+		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
+				this.templateType.getSelectedItem().getValue().toString());
 
 		logger.debug("Leaving");
 	}
@@ -588,17 +588,17 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
-			
+
 			tab.setSelected(true);
 			doRemoveValidation();
 			doRemoveLOVValidation();
-			
+
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			
+
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
 			}
-			
+
 			throw new WrongValuesException(wvea);
 		}
 
@@ -664,24 +664,28 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 
 		// Code
 		if (!this.ruleCode.isReadonly()) {
-			this.ruleCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_NotificationsDialog_RuleCode.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.ruleCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_NotificationsDialog_RuleCode.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		// Description
 		if (!this.ruleCodeDesc.isReadonly()) {
-			this.ruleCodeDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_NotificationsDialog_RuleCodeDesc.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.ruleCodeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_NotificationsDialog_RuleCodeDesc.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		
+
 		// Module
 		if (!this.ruleModule.isDisabled()) {
-			this.ruleModule.setConstraint(new StaticListValidator(listRuleModule, Labels.getLabel("label_NotificationsDialog_RuleModule.value")));
+			this.ruleModule.setConstraint(new StaticListValidator(listRuleModule,
+					Labels.getLabel("label_NotificationsDialog_RuleModule.value")));
 		}
-		
+
 		// Template Type
 		if (!this.templateType.isDisabled()) {
-			this.templateType.setConstraint(new StaticListValidator(listTemplateTypes, Labels.getLabel("label_NotificationsDialog_TemplateType.value")));
+			this.templateType.setConstraint(new StaticListValidator(listTemplateTypes,
+					Labels.getLabel("label_NotificationsDialog_TemplateType.value")));
 		}
 
 		logger.debug("Leaving");
@@ -802,9 +806,12 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 				this.btnDelete.setVisible(false);
 				this.btnSave.setVisible(false);
 			} else {
-				this.ruleTemplate.setTreeTabVisible(getUserWorkspace().isAllowed("button_NotificationsDialog_btnValidate"));
-				this.ruleReciepent.setTreeTabVisible(getUserWorkspace().isAllowed("button_NotificationsDialog_btnValidate"));
-				this.ruleAttachment.setTreeTabVisible(getUserWorkspace().isAllowed("button_NotificationsDialog_btnValidate"));
+				this.ruleTemplate
+						.setTreeTabVisible(getUserWorkspace().isAllowed("button_NotificationsDialog_btnValidate"));
+				this.ruleReciepent
+						.setTreeTabVisible(getUserWorkspace().isAllowed("button_NotificationsDialog_btnValidate"));
+				this.ruleAttachment
+						.setTreeTabVisible(getUserWorkspace().isAllowed("button_NotificationsDialog_btnValidate"));
 			}
 
 			if (PennantConstants.RECORD_TYPE_DEL.equals(this.notifications.getRecordType())) {
@@ -820,7 +827,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
+
 			if (this.notifications.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
@@ -971,7 +978,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			} else {
 				nextTaskId = StringUtils.trimToEmpty(aNotifications.getNextTaskId());
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-				
+
 				if ("".equals(nextTaskId)) {
 					nextTaskId = getNextTaskIds(taskId, aNotifications);
 				}
@@ -983,7 +990,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 					}
 				}
 			}
-			
+
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
@@ -1073,8 +1080,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_NotificationsDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1169,23 +1176,23 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 
 		javaScriptBuilder.getSqlQuery();
 		javaScriptBuilder.setSelectedTab(RuleConstants.TAB_SCRIPT);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * set the Java Script Builder Component
 	 */
 	private void doSetRuleBuilder() {
 		logger.debug("Entering");
-		
+
 		// Rule Building
 		String ruleModuleValue = this.ruleModule.getSelectedItem().getValue();
 		String templateTypeValue = this.templateType.getSelectedItem().getValue();
 		int noOfRowsVisible = this.grid_basicDetail.getRows().getVisibleItemCount();
 
 		List<JSRuleReturnType> jsRuleReturnTypeList = null;
-		
+
 		if (!StringUtils.equals(ruleModuleValue, PennantConstants.List_Select)
 				&& !StringUtils.equals(templateTypeValue, PennantConstants.List_Select)) {
 			this.ruleTemplate.setModule(ruleModuleValue);
@@ -1193,19 +1200,19 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			this.ruleTemplate.setNoOfRowsVisible(noOfRowsVisible);
 			this.ruleTemplate.setRuleType(RuleReturnType.INTEGER);
 			this.ruleTemplate.setEvent(ruleModuleValue);
-			
+
 			jsRuleReturnTypeList = new ArrayList<JSRuleReturnType>();
 			JSRuleReturnType jsRuleReturnType = new JSRuleReturnType();
 
 			ArrayList<ValueLabel> templatesList = PennantAppUtil.getTemplatesList(ruleModuleValue, templateTypeValue);
-			
+
 			if (templatesList != null && !templatesList.isEmpty()) {
 				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_COMBOBOX);
 				jsRuleReturnType.setListOfData(templatesList);
 			} else {
 				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
 			}
-			
+
 			jsRuleReturnTypeList.add(jsRuleReturnType);
 			this.ruleTemplate.setJsRuleReturnTypeList(jsRuleReturnTypeList);
 
@@ -1214,7 +1221,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			this.ruleReciepent.setNoOfRowsVisible(noOfRowsVisible);
 			this.ruleReciepent.setRuleType(RuleReturnType.STRING);
 			this.ruleReciepent.setEvent(ruleModuleValue);
-			
+
 			jsRuleReturnTypeList = new ArrayList<JSRuleReturnType>();
 			jsRuleReturnType = new JSRuleReturnType();
 			jsRuleReturnType.setResultLabel("");
@@ -1223,7 +1230,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			//jsRuleReturnType.setValueColumn("RoleID");
 			//jsRuleReturnType.setValidateColumns(new String[] { "RoleID", "RoleCd" });
 			jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_EXTENDEDCOMBOBOX);
-			
+
 			jsRuleReturnTypeList.add(jsRuleReturnType);
 			this.ruleReciepent.setJsRuleReturnTypeList(jsRuleReturnTypeList);
 
@@ -1232,7 +1239,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			this.ruleAttachment.setNoOfRowsVisible(noOfRowsVisible);
 			this.ruleAttachment.setRuleType(RuleReturnType.STRING);
 			this.ruleAttachment.setEvent(ruleModuleValue);
-			
+
 			jsRuleReturnTypeList = new ArrayList<JSRuleReturnType>();
 			jsRuleReturnType = new JSRuleReturnType();
 			jsRuleReturnType.setResultLabel("");
@@ -1240,24 +1247,24 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			jsRuleReturnType.setModuleName("DocumentType");
 			//jsRuleReturnType.setValueColumn("DocTypeCode");
 			//jsRuleReturnType.setValidateColumns(new String[] { "DocTypeCode", "DocTypeDesc" });
-			
+
 			jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_EXTENDEDCOMBOBOX);
-			
+
 			jsRuleReturnTypeList.add(jsRuleReturnType);
 			this.ruleAttachment.setJsRuleReturnTypeList(jsRuleReturnTypeList);
-			
+
 			if (this.notifications.isNewRecord()) {
 				if (!StringUtils.equals(ruleModuleValue, PennantConstants.List_Select)) {
 					this.ruleTemplate.setTreeTabVisible(true);
 					this.ruleTemplate.setSelectedTab(RuleConstants.TAB_DESIGN);
 					this.ruleTemplate.setActualBlock("");
 					this.ruleTemplate.setEditable(true);
-					
+
 					this.ruleReciepent.setTreeTabVisible(true);
 					this.ruleReciepent.setSelectedTab(RuleConstants.TAB_DESIGN);
 					this.ruleReciepent.setActualBlock("");
 					this.ruleReciepent.setEditable(true);
-					
+
 					this.ruleAttachment.setTreeTabVisible(true);
 					this.ruleAttachment.setSelectedTab(RuleConstants.TAB_DESIGN);
 					this.ruleAttachment.setActualBlock("");
@@ -1273,13 +1280,13 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 				this.ruleTemplate.setActualBlock(this.notifications.getActualBlockTemplate());
 				this.ruleTemplate.buildQuery(this.notifications.getActualBlockTemplate());
 				this.ruleTemplate.setFields(this.notifications.getTemplateTypeFields());
-				
+
 				this.ruleReciepent.setFields(this.notifications.getRuleReciepentFields());
 				this.ruleReciepent.setSqlQuery(this.notifications.getRuleReciepent());
 				this.ruleReciepent.setActualBlock(this.notifications.getActualBlockReciepent());
 				this.ruleReciepent.buildQuery(this.notifications.getActualBlockReciepent());
 				this.ruleReciepent.setFields(this.notifications.getRuleReciepentFields());
-				
+
 				this.ruleAttachment.setFields(this.notifications.getRuleAttachmentFields());
 				this.ruleAttachment.setSqlQuery(this.notifications.getRuleAttachment());
 				this.ruleAttachment.setActualBlock(this.notifications.getActualBlockAtachment());
@@ -1287,10 +1294,9 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 				this.ruleAttachment.setFields(this.notifications.getRuleAttachmentFields());
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1299,6 +1305,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}

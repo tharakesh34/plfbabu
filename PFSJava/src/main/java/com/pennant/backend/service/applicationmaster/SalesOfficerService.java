@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SalesOfficerService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SalesOfficer getSalesOfficerById(String id);
+
 	SalesOfficer getApprovedSalesOfficerById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

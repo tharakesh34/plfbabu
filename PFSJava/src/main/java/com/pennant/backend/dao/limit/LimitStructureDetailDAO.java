@@ -58,10 +58,10 @@ public interface LimitStructureDetailDAO {
 	void delete(LimitStructureDetail limitStructureDetail, String type);
 
 	long save(LimitStructureDetail limitStructureDetail, String type);
-	
-	void deleteByStructureCode(String code,String type);
-	
-	void deleteBySrtructureId(long id,String type);
+
+	void deleteByStructureCode(String code, String type);
+
+	void deleteBySrtructureId(long id, String type);
 
 	int validationCheck(String lmtGrp, String type);
 

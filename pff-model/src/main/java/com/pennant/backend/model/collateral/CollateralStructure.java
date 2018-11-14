@@ -68,65 +68,65 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"extendedFieldHeader", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralStructure extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	@XmlElement
-	private String				collateralType;
-	private String				collateralTypeName;
-	
+	private String collateralType;
+	private String collateralTypeName;
+
 	@XmlElement
-	private String				collateralDesc;
+	private String collateralDesc;
 	@XmlElement
-	private String				ltvType;
-	private String				ltvTypeName;
-	
-	@XmlElement(name="ltvPerc")
-	private BigDecimal			ltvPercentage;
-	
+	private String ltvType;
+	private String ltvTypeName;
+
+	@XmlElement(name = "ltvPerc")
+	private BigDecimal ltvPercentage;
+
 	@XmlElement
-	private boolean				marketableSecurities;
+	private boolean marketableSecurities;
 	@XmlElement
-	private boolean				active;
-	private boolean				preValidationReq;
-	private boolean				postValidationReq;
-	
+	private boolean active;
+	private boolean preValidationReq;
+	private boolean postValidationReq;
+
 	@XmlElement
-	private boolean				collateralLocReq;
+	private boolean collateralLocReq;
 	@XmlElement
-	private boolean				collateralValuatorReq;
-	
+	private boolean collateralValuatorReq;
+
 	@XmlElement
-	private String				remarks;
-	
-	@XmlElement(name="alwLtvWaiver")
-	private boolean				allowLtvWaiver;
-	
-	@XmlElement(name="maxLtvWaiverPerc")
-	private BigDecimal			maxLtvWaiver;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private CollateralStructure	befImage;
+	private String remarks;
+
+	@XmlElement(name = "alwLtvWaiver")
+	private boolean allowLtvWaiver;
+
+	@XmlElement(name = "maxLtvWaiverPerc")
+	private BigDecimal maxLtvWaiver;
+	private boolean newRecord = false;
+	private String lovValue;
+	private CollateralStructure befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
-	@XmlElement(name="extendedDetail")
-	private ExtendedFieldHeader	extendedFieldHeader;
-	
+	@XmlElement(name = "extendedDetail")
+	private ExtendedFieldHeader extendedFieldHeader;
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	
+
 	private String fields;
 	private String actualBlock;
 	private String sQLRule;
-	private String				preValidation;
-	private String				postValidation;
-	
-	private String				valuationFrequency;
-	private Date 				nextValuationDate;
-	private boolean 			valuationPending;
-	private long				queryId;
-	private String				queryCode;
-	private String				querySubCode;
+	private String preValidation;
+	private String postValidation;
+
+	private String valuationFrequency;
+	private Date nextValuationDate;
+	private boolean valuationPending;
+	private long queryId;
+	private String queryCode;
+	private String querySubCode;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -332,6 +332,7 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	public String getFields() {
 		return fields;
 	}
+
 	public void setFields(String fields) {
 		this.fields = fields;
 	}
@@ -339,6 +340,7 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	public String getActualBlock() {
 		return actualBlock;
 	}
+
 	public void setActualBlock(String actualBlock) {
 		this.actualBlock = actualBlock;
 	}
@@ -346,16 +348,17 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	public String getSQLRule() {
 		return sQLRule;
 	}
+
 	public void setSQLRule(String sQLRule) {
 		this.sQLRule = sQLRule;
 	}
-	
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> structureMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				structureMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass()
-						.getDeclaredFields()[i].get(this));
+				structureMap.put(this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
@@ -426,5 +429,5 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	public void setQuerySubCode(String querySubCode) {
 		this.querySubCode = querySubCode;
 	}
-	
+
 }

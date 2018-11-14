@@ -65,10 +65,10 @@ public class SukukBroker extends AbstractWorkflowEntity {
 	private String lovValue;
 	private SukukBroker befImage;
 	private LoggedInUser userDetails;
-	
-	private List<SukukBrokerBonds> sukukBrokerBonds=new ArrayList<SukukBrokerBonds>();
+
+	private List<SukukBrokerBonds> sukukBrokerBonds = new ArrayList<SukukBrokerBonds>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -82,10 +82,10 @@ public class SukukBroker extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("sukukBrokerBonds");
-	return excludeFields;
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -95,28 +95,27 @@ public class SukukBroker extends AbstractWorkflowEntity {
 	public String getId() {
 		return brokerCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.brokerCode = id;
 	}
-	
+
 	public String getBrokerCode() {
 		return brokerCode;
 	}
+
 	public void setBrokerCode(String brokerCode) {
 		this.brokerCode = brokerCode;
 	}
-	
-	
-		
-	
+
 	public String getBrokerDesc() {
 		return brokerDesc;
 	}
+
 	public void setBrokerDesc(String brokerDesc) {
 		this.brokerDesc = brokerDesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -124,7 +123,7 @@ public class SukukBroker extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -133,12 +132,12 @@ public class SukukBroker extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public SukukBroker getBefImage(){
+	public SukukBroker getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(SukukBroker beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SukukBroker beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -150,18 +149,18 @@ public class SukukBroker extends AbstractWorkflowEntity {
 	}
 
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-	    return auditDetailMap;
-    }
+		return auditDetailMap;
+	}
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-	    this.auditDetailMap = auditDetailMap;
-    }
+		this.auditDetailMap = auditDetailMap;
+	}
 
 	public List<SukukBrokerBonds> getSukukBrokerBonds() {
-	    return sukukBrokerBonds;
-    }
+		return sukukBrokerBonds;
+	}
 
 	public void setSukukBrokerBonds(List<SukukBrokerBonds> sukukBrokerBonds) {
-	    this.sukukBrokerBonds = sukukBrokerBonds;
-    }
+		this.sukukBrokerBonds = sukukBrokerBonds;
+	}
 }

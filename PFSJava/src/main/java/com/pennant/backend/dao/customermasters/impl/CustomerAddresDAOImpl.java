@@ -151,10 +151,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerAddresses or
-	 * CustomerAddresses_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Customer Address by key
-	 * CustID
+	 * This method Deletes the Record from the CustomerAddresses or CustomerAddresses_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Customer Address by key CustID
 	 * 
 	 * @param Customer
 	 *            Address (customerAddres)
@@ -189,8 +187,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	/**
-	 * Method for Deletion of Customer Related List of CustomerAddress for the
-	 * Customer
+	 * Method for Deletion of Customer Related List of CustomerAddress for the Customer
 	 */
 	public void deleteByCustomer(final long customerId, String type) {
 		logger.debug("Entering");
@@ -210,8 +207,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	/**
-	 * This method insert new Records into CustomerAddresses or
-	 * CustomerAddresses_Temp.
+	 * This method insert new Records into CustomerAddresses or CustomerAddresses_Temp.
 	 * 
 	 * save Customer Address
 	 * 
@@ -259,10 +255,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	/**
-	 * This method updates the Record CustomerAddresses or
-	 * CustomerAddresses_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Customer Address by key
-	 * CustID and Version
+	 * This method updates the Record CustomerAddresses or CustomerAddresses_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Address by key CustID and Version
 	 * 
 	 * @param Customer
 	 *            Address (customerAddres)
@@ -309,8 +303,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	/**
-	 * Method for get total number of records from BMTAddressTypes master
-	 * table.<br>
+	 * Method for get total number of records from BMTAddressTypes master table.<br>
 	 * 
 	 * @param addrType
 	 * 
@@ -342,8 +335,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	/**
-	 * Method for get total number of records from BMTAddressTypes master
-	 * table.<br>
+	 * Method for get total number of records from BMTAddressTypes master table.<br>
 	 * 
 	 * @param addrType
 	 * 
@@ -423,7 +415,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
-	
+
 	/**
 	 * Fetch the Record Customer Address details by key field
 	 * 
@@ -436,7 +428,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	@Override
 	public CustomerAddres getHighPriorityCustAddr(final long id, String type) {
 		logger.debug("Entering");
-		
+
 		CustomerAddres customerAddres = new CustomerAddres();
 		customerAddres.setId(id);
 		customerAddres.setCustAddrPriority(Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));

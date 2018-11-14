@@ -66,8 +66,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul file.
  */
 public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 	private static final long serialVersionUID = 8002179731510010018L;
@@ -233,7 +232,7 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 	 * @param academic
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(PFSParameter aPFSParameter){
+	private void doShowDialogPage(PFSParameter aPFSParameter) {
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
@@ -241,8 +240,8 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 		arg.put("pFSParameterListCtrl", this);
 
 		try {
-			Executions
-					.createComponents("/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

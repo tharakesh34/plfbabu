@@ -26,7 +26,7 @@ public class FetchAccountDetailProcess extends MQProcess {
 	public FetchAccountDetailProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the Fetch Account details Request and send response
 	 * 
@@ -38,7 +38,7 @@ public class FetchAccountDetailProcess extends MQProcess {
 	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail, String msgFormat)
 			throws JaxenException {
 		logger.debug("Entering");
-		
+
 		if (accountDetail == null || StringUtils.isBlank(accountDetail.getAccountNumber())) {
 			throw new InterfaceException("PTI3001", "Account Number Cannot be Blank");
 		}
@@ -48,31 +48,32 @@ public class FetchAccountDetailProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement fetchAccountReq = getRequestElement(accountDetail, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory, fetchAccountReq);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
-		
+
 		logger.debug("Leaving");
 		return prepareAccountDetails(response, header);
 
 	}
 
-
 	/**
 	 * Prepare Account Details
+	 * 
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 * @throws InterfaceException
 	 */
 	private List<CoreBankAccountDetail> prepareAccountDetails(OMElement responseElement, AHBMQHeader header)
@@ -83,7 +84,7 @@ public class FetchAccountDetailProcess extends MQProcess {
 			return null;
 		}
 		List<CoreBankAccountDetail> accSumaryList = new ArrayList<CoreBankAccountDetail>();
-		CoreBankAccountDetail accountDetail = new CoreBankAccountDetail();		
+		CoreBankAccountDetail accountDetail = new CoreBankAccountDetail();
 
 		OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/AccountDetailReply", responseElement);
 		header = PFFXmlUtil.parseHeader(responseElement, header);
@@ -91,12 +92,12 @@ public class FetchAccountDetailProcess extends MQProcess {
 
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			accountDetail.setErrorCode(header.getReturnCode());
-			if(StringUtils.isBlank(header.getReturnText())) {
+			if (StringUtils.isBlank(header.getReturnText())) {
 				header.setReturnText("Unable to fetch Account details");
 			}
 			accountDetail.setErrorMessage(header.getReturnText());
 		}
-		
+
 		accountDetail.setErrorCode(header.getReturnCode());
 		accountDetail.setErrorMessage(header.getReturnText());
 		accountDetail.setReferenceNumber(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
@@ -123,20 +124,21 @@ public class FetchAccountDetailProcess extends MQProcess {
 
 	/**
 	 * Prepare Fetch Account Detail Request Element to send Interface through MQ
+	 * 
 	 * @param accountDetail
 	 * @param referenceNum
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(CoreBankAccountDetail accountDetail,String referenceNum, OMFactory factory){
+	private OMElement getRequestElement(CoreBankAccountDetail accountDetail, String referenceNum, OMFactory factory) {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement fetchAccDetailReq = factory.createOMElement("AccountDetailRequest", null);
 
-		PFFXmlUtil.setOMChildElement(factory, fetchAccDetailReq, "ReferenceNum",referenceNum);
-		PFFXmlUtil.setOMChildElement(factory, fetchAccDetailReq, "AccountNumber",accountDetail.getAccountNumber());
-		
+		PFFXmlUtil.setOMChildElement(factory, fetchAccDetailReq, "ReferenceNum", referenceNum);
+		PFFXmlUtil.setOMChildElement(factory, fetchAccDetailReq, "AccountNumber", accountDetail.getAccountNumber());
+
 		PFFXmlUtil.setOMChildElement(factory, fetchAccDetailReq, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 		requestElement.addChild(fetchAccDetailReq);

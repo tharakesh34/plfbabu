@@ -44,7 +44,6 @@ package com.pennant.backend.dao.systemmasters.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -70,11 +69,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTypeDAO {
 	private static Logger logger = Logger.getLogger(IncomeTypeDAOImpl.class);
-	
+
 	public IncomeTypeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Income Types details by key field
 	 * 
@@ -85,24 +84,26 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 	 * @return IncomeType
 	 */
 	@Override
-	public IncomeType getIncomeTypeById(final String id,String incomeExpense,String category, String type) {
+	public IncomeType getIncomeTypeById(final String id, String incomeExpense, String category, String type) {
 		logger.debug("Entering");
-		
+
 		IncomeType incomeType = new IncomeType();
 		incomeType.setId(id);
 		incomeType.setCategory(category);
 		incomeType.setIncomeExpense(incomeExpense);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc,Margin ,IncomeTypeIsActive, " );
-		if(type.contains("View")){
+		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc,Margin ,IncomeTypeIsActive, ");
+		if (type.contains("View")) {
 			selectSql.append("lovDescCategoryName,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTIncomeTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where IncomeTypeCode =:IncomeTypeCode and IncomeExpense=:IncomeExpense and Category=:Category") ;
-				
+		selectSql.append(
+				" Where IncomeTypeCode =:IncomeTypeCode and IncomeExpense=:IncomeExpense and Category=:Category");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(incomeType);
 		RowMapper<IncomeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeType.class);
@@ -113,13 +114,13 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 			logger.error("Exception: ", e);
 			incomeType = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return incomeType;
 	}
-	
+
 	/**
-	 * Fetch the Record Income Types details 
+	 * Fetch the Record Income Types details
 	 * 
 	 * @param id
 	 *            (String)
@@ -130,11 +131,12 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 	@Override
 	public List<IncomeType> getIncomeTypeList() {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc, Margin ,IncomeTypeIsActive, lovDescCategoryName " );
+		selectSql.append(
+				"SELECT IncomeExpense,Category,IncomeTypeCode, IncomeTypeDesc, Margin ,IncomeTypeIsActive, lovDescCategoryName ");
 		selectSql.append(" FROM  BMTIncomeTypes_AView");
-				
+
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<IncomeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeType.class);
 
@@ -143,8 +145,7 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 	}
 
 	@Override
-	public boolean isDuplicateKey(String incomeTypeCode, String incomeExpense,
-			String category, TableType tableType) {
+	public boolean isDuplicateKey(String incomeTypeCode, String incomeExpense, String category, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -169,7 +170,7 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 		paramSource.addValue("incomeTypeCode", incomeTypeCode);
 		paramSource.addValue("incomeExpense", incomeExpense);
 		paramSource.addValue("category", category);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -192,7 +193,8 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:IncomeExpense,:Category,:IncomeTypeCode, :IncomeTypeDesc,:Margin, :IncomeTypeIsActive, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -208,7 +210,7 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 		logger.debug(Literal.LEAVING);
 		return incomeType.getId();
 	}
-	
+
 	@Override
 	public void update(IncomeType incomeType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -217,12 +219,13 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 		StringBuilder sql = new StringBuilder("update BMTIncomeTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" set  IncomeTypeDesc = :IncomeTypeDesc, IncomeTypeIsActive = :IncomeTypeIsActive, Margin=:Margin,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where IncomeTypeCode =:IncomeTypeCode and IncomeExpense=:IncomeExpense and Category=:Category");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(incomeType);
@@ -232,7 +235,7 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -245,18 +248,18 @@ public class IncomeTypeDAOImpl extends BasicDao<IncomeType> implements IncomeTyp
 		sql.append(tableType.getSuffix());
 		sql.append(" where IncomeTypeCode =:IncomeTypeCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(incomeType);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
-		}  catch (DataAccessException e) {
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		
+
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();

@@ -50,8 +50,11 @@ import com.pennant.backend.model.bmtmasters.RatingCode;
  */
 public interface RatingCodeDAO {
 
-	RatingCode getRatingCodeById(String ratingType, String ratingCode,String type);
+	RatingCode getRatingCodeById(String ratingType, String ratingCode, String type);
+
 	void update(RatingCode ratingCode, String type);
+
 	void delete(RatingCode ratingCode, String type);
+
 	String save(RatingCode ratingCode, String type);
 }

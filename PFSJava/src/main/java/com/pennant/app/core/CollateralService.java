@@ -16,18 +16,18 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CollateralService extends ServiceHelper {
 
-	private static final long		serialVersionUID	= -3371115026576113554L;
+	private static final long serialVersionUID = -3371115026576113554L;
 
-	private static Logger			logger				= Logger.getLogger(CollateralService.class);
+	private static Logger logger = Logger.getLogger(CollateralService.class);
 
-	private CollateralMarkProcess	collateralMarkProcess;
+	private CollateralMarkProcess collateralMarkProcess;
 
-	public static final String		collateralDemark	= " SELECT T1.FinReference, T1.Reference, T1.Value, T1.Remarks FROM FinCollaterals T1 "
-																+ " INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference "
-																+ " INNER JOIN CollateralMarkLog T3 ON T1.FinReference = T3.FinReference"
-																+ " INNER JOIN FinPftDetails T4 ON T1.FinReference = T4.FinReference"
-																+ " WHERE T2.FinIsActive = ? AND T2.ClosingStatus = ? AND T3.Status = ? "
-																+ " AND T3.Status <> ? AND T4.FullPaidDate = ? AND T2.CustID = ?";
+	public static final String collateralDemark = " SELECT T1.FinReference, T1.Reference, T1.Value, T1.Remarks FROM FinCollaterals T1 "
+			+ " INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference "
+			+ " INNER JOIN CollateralMarkLog T3 ON T1.FinReference = T3.FinReference"
+			+ " INNER JOIN FinPftDetails T4 ON T1.FinReference = T4.FinReference"
+			+ " WHERE T2.FinIsActive = ? AND T2.ClosingStatus = ? AND T3.Status = ? "
+			+ " AND T3.Status <> ? AND T4.FullPaidDate = ? AND T2.CustID = ?";
 
 	/**
 	 * Process Collateral request and do below Action<br>

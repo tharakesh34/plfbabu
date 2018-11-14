@@ -87,30 +87,27 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RulesFactory/RepayCancellation/RepayCancellationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RulesFactory/RepayCancellation/RepayCancellationDialog.zul file.
  */
 public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -4882190027181576764L;
 	private static final Logger logger = Logger.getLogger(RepayCancellationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_RepayCancellationDialog; // autowired
+	protected Window window_RepayCancellationDialog; // autowired
 
-	protected Label 		finReference; 					// autowired
-	protected Label 		finType; 						// autowired
-	protected Label 		custId; 						// autowired
-	protected Label 		finBranch; 						// autowired
-	protected Label 		postDate; 						// autowired
-	protected Label 		rpyAmount; 						// autowired
+	protected Label finReference; // autowired
+	protected Label finType; // autowired
+	protected Label custId; // autowired
+	protected Label finBranch; // autowired
+	protected Label postDate; // autowired
+	protected Label rpyAmount; // autowired
 
-
-	protected Grid 			grid_Basicdetails;				// autoWired
-	protected Listbox 		listBoxRepayDetail;
+	protected Grid grid_Basicdetails; // autoWired
+	protected Listbox listBoxRepayDetail;
 
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
@@ -118,12 +115,12 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// not auto wired vars
 	private transient FinanceSelectCtrl financeSelectCtrl; // overhanded per param
-	private FinanceDetail 			financeDetail = null;
-	private FinanceMain 			financeMain = null;
+	private FinanceDetail financeDetail = null;
+	private FinanceMain financeMain = null;
 
 	private transient boolean validationOn;
-	
-	protected Button btnHelp; 	// autowire
+
+	protected Button btnHelp; // autowire
 	protected Button btnRepayCancel;
 
 	// ServiceDAOs / Domain Classes
@@ -148,9 +145,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected RepayCancellation object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected RepayCancellation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -165,12 +161,9 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (arguments.containsKey("financeDetail")) {
 				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
 				FinanceMain befImage = new FinanceMain();
-				setFinanceMain(getFinanceDetail().getFinScheduleData()
-						.getFinanceMain());
-				BeanUtils.copyProperties(getFinanceDetail()
-						.getFinScheduleData().getFinanceMain(), befImage);
-				getFinanceDetail().getFinScheduleData().getFinanceMain()
-						.setBefImage(befImage);
+				setFinanceMain(getFinanceDetail().getFinScheduleData().getFinanceMain());
+				BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData().getFinanceMain(), befImage);
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setBefImage(befImage);
 				setFinanceDetail(getFinanceDetail());
 			}
 
@@ -181,8 +174,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// delete financeMain here.
 
 			if (arguments.containsKey("financeSelectCtrl")) {
-				setFinanceSelectCtrl((FinanceSelectCtrl) arguments
-						.get("financeSelectCtrl"));
+				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
 			}
 
 			if (arguments.containsKey("moduleDefiner")) {
@@ -198,7 +190,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-			doLoadWorkFlow(financeMain.isWorkflow(),financeMain.getWorkflowId(), financeMain.getNextTaskId());
+			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -225,12 +217,11 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("RepayCancelDialog",getRole(), menuItemRightName);
+		getUserWorkspace().allocateAuthorities("RepayCancelDialog", getRole(), menuItemRightName);
 		this.btnRepayCancel.setVisible(getUserWorkspace().isAllowed("button_RepayCancelDialog_btnSave"));
 		logger.debug("Leaving");
 	}
@@ -258,30 +249,29 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnRepayCancel(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		boolean recSave = false;
-		if (this.userAction.getSelectedItem() != null){
-			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+		if (this.userAction.getSelectedItem() != null) {
+			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 				recSave = true;
 			}
 		}
-		
-		if(isManualPostingReversal && !recSave){
-			
+
+		if (isManualPostingReversal && !recSave) {
+
 			// Show a confirm box for Manual Reversals
-			final String msg = Labels.getLabel(
-			"message.Question.Are_you_sure_todo_Manual_Reversal_Postings") + "\n";
+			final String msg = Labels.getLabel("message.Question.Are_you_sure_todo_Manual_Reversal_Postings") + "\n";
 			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			doSave();
+				doSave();
 			}
-		}else{
+		} else {
 			doSave();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -307,30 +297,29 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		int format=CurrencyUtil.getFormat(financeMain.getFinCcy());
-		
+		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		this.finReference.setValue(financeMain.getFinReference());
-		this.finType.setValue(financeMain.getFinType()+"-"+financeMain.getLovDescFinTypeName());
-		this.custId.setValue(financeMain.getLovDescCustCIF()+"-"+financeMain.getLovDescCustShrtName());
-		this.finBranch.setValue(financeMain.getFinBranch()+"-"+financeMain.getLovDescFinBranchName());
+		this.finType.setValue(financeMain.getFinType() + "-" + financeMain.getLovDescFinTypeName());
+		this.custId.setValue(financeMain.getLovDescCustCIF() + "-" + financeMain.getLovDescCustShrtName());
+		this.finBranch.setValue(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
 
 		List<FinanceRepayments> repayList = financeDetail.getFinScheduleData().getRepayDetails();
-		if(repayList != null && repayList.size() > 0){
-			
+		if (repayList != null && repayList.size() > 0) {
+
 			this.postDate.setValue(DateUtility.formatToLongDate(repayList.get(0).getFinPostDate()));
 			this.rpyAmount.setValue(PennantAppUtil.amountFormate(repayList.get(0).getFinRpyAmount(), format));
 			doFilllistbox(repayList);
-			
+
 			//Posting Details
-			if(repayList.get(0).getLinkedTranId() != 0){
+			if (repayList.get(0).getLinkedTranId() != 0) {
 				doFillPostingdetails(repayList.get(0).getLinkedTranId());
-			}else{
+			} else {
 				this.postingDetailsTab.setVisible(false);
 				isManualPostingReversal = true;
 			}
 		}
-		
+
 		this.recordStatus.setValue(financeMain.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -338,8 +327,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws Exception
@@ -376,13 +364,13 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (repayList != null && repayList.size() > 0) {
 
-			int formatter =CurrencyUtil.getFormat(financeMain.getFinCcy());
+			int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 			Listitem item = null;
 			String sclass = "text-align:right;";
 
-			for (int i=0; i < repayList.size();i++) {
+			for (int i = 0; i < repayList.size(); i++) {
 
-				FinanceRepayments repay  = repayList.get(i);
+				FinanceRepayments repay = repayList.get(i);
 
 				Listcell lc;
 				item = new Listitem();
@@ -423,7 +411,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
@@ -477,21 +466,22 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				//Customer Notification for Role Identification
-				if(StringUtils.isBlank(aFinanceMain.getNextTaskId())){
+				if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
 					aFinanceMain.setNextRoleCode("");
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),aFinanceMain.getNextRoleCode(), 
-						aFinanceMain.getFinReference(), " Finance ", aFinanceMain.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
+						aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Finance ",
+						aFinanceMain.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 
 				//Mail Alert Notification for User
-				if(StringUtils.isNotBlank(aFinanceMain.getNextTaskId()) && 
-						!StringUtils.trimToEmpty(aFinanceMain.getNextRoleCode()).equals(aFinanceMain.getRoleCode())){
+				if (StringUtils.isNotBlank(aFinanceMain.getNextTaskId()) && !StringUtils
+						.trimToEmpty(aFinanceMain.getNextRoleCode()).equals(aFinanceMain.getRoleCode())) {
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 
 				closeDialog();
-			} 
+			}
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -501,8 +491,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// WorkFlow Creations
 
-	private String getServiceTasks(String taskId, FinanceMain financeMain,
-			String finishedTasks) {
+	private String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks) {
 		logger.debug("Entering");
 
 		String serviceTasks = getServiceOperations(taskId, financeMain);
@@ -567,14 +556,16 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Processing Finance Detail Object for Database Operation
+	 * 
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -609,10 +600,10 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doSendNotification)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doSendNotification)) {
 
 				} else {
-					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -624,12 +615,13 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				finishedTasks += (method + ";");
-				FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain(),finishedTasks);
+				FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain(),
+						finishedTasks);
 
 			}
 
-			FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+			FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
@@ -641,7 +633,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)|| "Save".equals(userAction.getSelectedItem().getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -664,11 +656,12 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InterruptedException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -700,8 +693,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_RepayCancellationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -741,8 +734,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
-		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, 
-				auditDetail, afinanceDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
+				afinanceDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -755,12 +748,10 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		doShowNotes(this.financeMain);
 	}
 
-
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.financeMain.getFinReference());
 	}
-
 
 	protected void refreshMaintainList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceSelectCtrl().getSearchObj(true);
@@ -770,22 +761,22 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			getFinanceSelectCtrl().getListBoxFinance().getListModel();
 		}
 	}
- 
+
 	private void doFillPostingdetails(long linkedTranId) {
 		logger.debug("Entering");
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<ReturnDataSet> jdbcSearchObject = new JdbcSearchObject<ReturnDataSet>(ReturnDataSet.class);
 		jdbcSearchObject.addTabelName("Postings");
-		jdbcSearchObject.addFilterEqual("linkedTranId",linkedTranId);
+		jdbcSearchObject.addFilterEqual("linkedTranId", linkedTranId);
 		List<ReturnDataSet> postingList = pagedListService.getBySearchObject(jdbcSearchObject);
-		if(postingList != null && !postingList.isEmpty()){
+		if (postingList != null && !postingList.isEmpty()) {
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
 				item = new Listitem();
 				Listcell lc = new Listcell();
-				if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)){
+				if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 					lc = new Listcell(Labels.getLabel("common.Debit"));
-				}else if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)){
+				} else if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)) {
 					lc = new Listcell(Labels.getLabel("common.Credit"));
 				}
 				lc.setParent(item);
@@ -799,7 +790,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), CurrencyUtil.getFormat(financeMain.getFinCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);
 				this.listBoxCancelRepayPosting.appendChild(item);
@@ -807,7 +799,6 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -816,6 +807,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -823,6 +815,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public FinanceSelectCtrl getFinanceSelectCtrl() {
 		return financeSelectCtrl;
 	}
+
 	public void setFinanceSelectCtrl(FinanceSelectCtrl financeSelectCtrl) {
 		this.financeSelectCtrl = financeSelectCtrl;
 	}
@@ -830,6 +823,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public FinanceMain getFinanceMain() {
 		return financeMain;
 	}
+
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
 	}
@@ -837,8 +831,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public RepaymentCancellationService getRepaymentCancellationService() {
 		return repaymentCancellationService;
 	}
-	public void setRepaymentCancellationService(
-			RepaymentCancellationService repaymentCancellationService) {
+
+	public void setRepaymentCancellationService(RepaymentCancellationService repaymentCancellationService) {
 		this.repaymentCancellationService = repaymentCancellationService;
 	}
 
@@ -848,6 +842,6 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
-	}	
+	}
 
 }

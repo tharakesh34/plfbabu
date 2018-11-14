@@ -65,10 +65,10 @@ import com.pennanttech.pff.core.TableType;
  */
 public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDigit>
 		implements MandateCheckDigitService {
-	private static final Logger		logger	= Logger.getLogger(MandateCheckDigitServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MandateCheckDigitServiceImpl.class);
 
-	private AuditHeaderDAO			auditHeaderDAO;
-	private MandateCheckDigitDAO	mandateCheckDigitDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private MandateCheckDigitDAO mandateCheckDigitDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -312,7 +312,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(),method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -331,9 +331,9 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
-			
+
 		// Get the model object.
 		MandateCheckDigit checkDigit = (MandateCheckDigit) auditDetail.getModelData();
 
@@ -346,17 +346,18 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		if (!StringUtils.trimToEmpty(checkDigit.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)
 				&& !StringUtils.trimToEmpty(method).equals(PennantConstants.method_doReject)) {
-			
+
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(checkDigit.getLookUpValue());
 			errParm[0] = PennantJavaUtil.getLabel("label_LookUpValue") + " : " + valueParm[0];
 
-			int  countDuplicate = mandateCheckDigitDAO.getCheckDigit(checkDigit.getCheckDigitValue(), checkDigit.getLookUpValue(), "_View");
-			if(countDuplicate > 0){
+			int countDuplicate = mandateCheckDigitDAO.getCheckDigit(checkDigit.getCheckDigitValue(),
+					checkDigit.getLookUpValue(), "_View");
+			if (countDuplicate > 0) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 			}

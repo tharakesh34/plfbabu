@@ -48,7 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.loanquery.QueryDetail;
 
 public interface QueryDetailDAO extends BasicCrudDao<QueryDetail> {
-	
+
 	/**
 	 * Fetch the Record QueryDetail by key field
 	 * 
@@ -58,15 +58,14 @@ public interface QueryDetailDAO extends BasicCrudDao<QueryDetail> {
 	 *            The type of the table.
 	 * @return QueryDetail
 	 */
-	QueryDetail getQueryDetail(long id,String type);
+	QueryDetail getQueryDetail(long id, String type);
 
 	List<QueryDetail> getQueryMgmtList(String finReference, String type);
-	
+
 	List<QueryDetail> getQueryMgmtListForAgreements(String finReference, String type);
 
 	List<QueryDetail> getQueryMgmtListByRef(String reference, String type);
 
 	List<QueryDetail> getUnClosedQurysForGivenRole(String finReference, String assignedRole);
-	
-	
+
 }

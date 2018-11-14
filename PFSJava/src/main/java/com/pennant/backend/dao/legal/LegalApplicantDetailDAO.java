@@ -54,7 +54,7 @@ public interface LegalApplicantDetailDAO extends BasicCrudDao<LegalApplicantDeta
 	 * 
 	 * @param legalApplicantId
 	 *            legalApplicantId of the LegalApplicantDetail.
-	 * @param legalId 
+	 * @param legalId
 	 * @param tableType
 	 *            The type of the table.
 	 * @return LegalApplicantDetail

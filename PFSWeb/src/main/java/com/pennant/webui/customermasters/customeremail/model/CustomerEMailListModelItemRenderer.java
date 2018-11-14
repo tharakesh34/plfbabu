@@ -65,17 +65,17 @@ public class CustomerEMailListModelItemRenderer implements ListitemRenderer<Cust
 	public CustomerEMailListModelItemRenderer() {
 		//
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerEMail customerEMail, int count) throws Exception {
 
-		if (item instanceof Listgroup) { 
-			item.appendChild(new Listcell(String.valueOf(customerEMail.getLovDescCustCIF()))); 
-		}else if (item instanceof Listgroupfoot) { 
+		if (item instanceof Listgroup) {
+			item.appendChild(new Listcell(String.valueOf(customerEMail.getLovDescCustCIF())));
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(5);
-			item.appendChild(cell); 
-		} else { 
+			item.appendChild(cell);
+		} else {
 
 			Listcell lc;
 			lc = new Listcell(customerEMail.getLovDescCustCIF());
@@ -90,10 +90,10 @@ public class CustomerEMailListModelItemRenderer implements ListitemRenderer<Cust
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerEMail.getRecordType()));
 			lc.setParent(item);
-			
+
 			item.setAttribute("id", customerEMail.getCustID());
 			item.setAttribute("typeCode", customerEMail.getCustEMailTypeCode());
-			
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEMailItemDoubleClicked");
 		}
 	}

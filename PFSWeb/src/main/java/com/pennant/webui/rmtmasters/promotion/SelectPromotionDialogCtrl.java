@@ -80,26 +80,27 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	private static final long serialVersionUID = -5898229156972529248L;
-	private static final Logger					logger				= Logger.getLogger(SelectPromotionDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectPromotionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_SelectPromotionDialog;											
-	protected ExtendedCombobox					finType;																
-	protected Uppercasebox						promotionCode;
-	protected Button							btnProceed;
-	
-	private PromotionListCtrl					promotionListCtrl;
-	private Promotion							promotion;
-	private PromotionService					promotionService;
-	// Child Services
-	private FinTypeFeesService 					finTypeFeesService;
-	private FinTypeInsurancesService 			finTypeInsurancesService;
-	private FinTypeAccountingService 			finTypeAccountingService;
+	protected Window window_SelectPromotionDialog;
+	protected ExtendedCombobox finType;
+	protected Uppercasebox promotionCode;
+	protected Button btnProceed;
 
-	private String 								finCcy = "";
+	private PromotionListCtrl promotionListCtrl;
+	private Promotion promotion;
+	private PromotionService promotionService;
+	// Child Services
+	private FinTypeFeesService finTypeFeesService;
+	private FinTypeInsurancesService finTypeInsurancesService;
+	private FinTypeAccountingService finTypeAccountingService;
+
+	private String finCcy = "";
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -111,7 +112,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected void doSetProperties() {
 		super.pageRightName = "PromotionDialog";
 	}
-	
+
 	/**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected FinanceMain object in a Map.
@@ -127,49 +128,49 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("promotionListCtrl")) {
-			this.promotionListCtrl =  (PromotionListCtrl) arguments.get("promotionListCtrl");
+			this.promotionListCtrl = (PromotionListCtrl) arguments.get("promotionListCtrl");
 			setPromotionListCtrl(this.promotionListCtrl);
 		} else {
 			setPromotionListCtrl(null);
 		}
 
 		if (arguments.containsKey("promotion")) {
-			this.promotion =  (Promotion) arguments.get("promotion");
+			this.promotion = (Promotion) arguments.get("promotion");
 		}
 
-		doLoadWorkFlow(this.promotion.isWorkflow(),this.promotion.getWorkflowId(),this.promotion.getNextTaskId());
-		
+		doLoadWorkFlow(this.promotion.isWorkflow(), this.promotion.getWorkflowId(), this.promotion.getNextTaskId());
+
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-		} 
+		}
 
 		doSetFieldProperties();
-		doCheckRights();		
-		
+		doCheckRights();
+
 		this.window_SelectPromotionDialog.doModal();
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
-		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-		
-		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnSave"));	
+		logger.debug("Entering");
 
-		logger.debug("Leaving") ;
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+
+		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnSave"));
+
+		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		// Promotion Code
 		this.promotionCode.setMaxlength(8);
 
@@ -182,7 +183,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * When user clicks on button "btnProceed" button
 	 * 
@@ -192,15 +193,15 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-		doSetValidation();		
-		
+		doSetValidation();
+
 		doWriteComponentsToBean(this.promotion);
-		
+
 		doShowDialogPage(this.promotion);
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -226,29 +227,32 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		//Code
-		if (!this.promotionCode.isReadonly()){
-			this.promotionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
+		if (!this.promotionCode.isReadonly()) {
+			this.promotionCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		
+
 		//Finance Type
-		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null, true, true));
-		
+		this.finType.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null, true, true));
+
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$finType(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = finType.getObject();
-		
+
 		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
 			this.finType.setDescription("");
@@ -263,7 +267,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 	}
 
-	
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
@@ -275,7 +278,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -290,16 +293,17 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		try {
 			String promotionCodeValue = this.promotionCode.getValue();
 			boolean promotionExist = this.promotionService.getPromtionExist(promotionCodeValue, "_View");
-			
+
 			if (promotionExist) {
-				throw new WrongValueException(this.promotionCode, Labels.getLabel("label_SelectPromotionDialog_promotionExist.value"));
+				throw new WrongValueException(this.promotionCode,
+						Labels.getLabel("label_SelectPromotionDialog_promotionExist.value"));
 			}
-			
+
 			aPromotion.setPromotionCode(promotionCodeValue);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Finance Type
 		try {
 			FinanceType FinanceTypeObj = (FinanceType) this.finType.getObject();
@@ -309,17 +313,17 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 
 		if (wve.isEmpty()) {
-			List<FinTypeFees> finTypeFeesList = getFinTypeFeesService().getApprovedFinTypeFeesById(
-					aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
+			List<FinTypeFees> finTypeFeesList = getFinTypeFeesService()
+					.getApprovedFinTypeFeesById(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			List<FinTypeInsurances> finTypeInsurancesList = getFinTypeInsurancesService()
 					.getApprovedFinTypeInsuranceListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			List<FinTypeAccounting> finTypeAccountingList = getFinTypeAccountingService()
 					.getApprovedFinTypeAccountingListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
-			
+
 			//Fees
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finTypeFee.setVersion(1);
@@ -333,7 +337,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeFee.setFinType(aPromotion.getPromotionCode());
 				finTypeFee.setNewRecord(true);
 			}
-			
+
 			//Insurances
 			for (FinTypeInsurances finTypeInsurances : finTypeInsurancesList) {
 				finTypeInsurances.setVersion(1);
@@ -347,7 +351,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeInsurances.setFinType(aPromotion.getPromotionCode());
 				finTypeInsurances.setNewRecord(true);
 			}
-			
+
 			//Accounting
 			for (FinTypeAccounting finTypeAccounting : finTypeAccountingList) {
 				finTypeAccounting.setVersion(1);
@@ -361,7 +365,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeAccounting.setFinType(aPromotion.getPromotionCode());
 				finTypeAccounting.setNewRecord(true);
 			}
-			
+
 			aPromotion.setFinTypeFeesList(finTypeFeesList);
 			aPromotion.setFinTypeInsurancesList(finTypeInsurancesList);
 			aPromotion.setFinTypeAccountingList(finTypeAccountingList);
@@ -375,11 +379,11 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public Promotion getPromotion() {
 		return promotion;
 	}

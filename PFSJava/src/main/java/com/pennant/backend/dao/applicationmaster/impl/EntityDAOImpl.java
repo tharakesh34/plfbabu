@@ -71,23 +71,25 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 	public EntityDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public Entity getEntity(String entityCode,String type) {
+	public Entity getEntity(String entityCode, String type) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
-		if(type.contains("View")){
-			sql.append(" countryname,ProvinceName,CItyName,pincodename," );
+		sql.append(
+				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
+		if (type.contains("View")) {
+			sql.append(" countryname,ProvinceName,CItyName,pincodename,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber" );
-		
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber");
+
 		sql.append(" From Entity");
 		sql.append(type);
 		sql.append(" Where entityCode = :entityCode");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -106,23 +108,27 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 		logger.debug(Literal.LEAVING);
 		return entity;
-	}		
-	
+	}
+
 	@Override
-	public String save(Entity entity,TableType tableType) {
+	public String save(Entity entity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into Entity");
+		StringBuilder sql = new StringBuilder(" insert into Entity");
 		sql.append(tableType.getSuffix());
 		sql.append("(entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox, active, gstinAvailable, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber)" );
+		sql.append(
+				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox, active, gstinAvailable, ");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber)");
 		sql.append(" values(");
 		sql.append(" :entityCode, :entityDesc, :pANNumber, :country, :stateCode, :cityCode, ");
-		sql.append(" :pinCode,:entityAddrLine1,:entityAddrLine2,:entityAddrHNbr,:entityFlatNbr,:entityAddrStreet,:entityPOBox,:active, :gstinAvailable,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:cINNumber)");
-		
+		sql.append(
+				" :pinCode,:entityAddrLine1,:entityAddrLine2,:entityAddrHNbr,:entityFlatNbr,:entityAddrStreet,:entityPOBox,:active, :gstinAvailable,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:cINNumber)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
@@ -135,28 +141,30 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(entity.getEntityCode());
-	}	
+	}
 
 	@Override
-	public void update(Entity entity,TableType tableType) {
+	public void update(Entity entity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update Entity" );
+		StringBuilder sql = new StringBuilder("update Entity");
 		sql.append(tableType.getSuffix());
 		sql.append("  set entityDesc = :entityDesc, pANNumber = :pANNumber, country = :country, ");
-		sql.append(" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode,entityAddrLine1=:entityAddrLine1,entityAddrLine2=:entityAddrLine2,");
-		sql.append("entityAddrHNbr=:entityAddrHNbr,entityFlatNbr=:entityFlatNbr,entityAddrStreet=:entityAddrStreet,entityPOBox=:entityPOBox,");
+		sql.append(
+				" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode,entityAddrLine1=:entityAddrLine1,entityAddrLine2=:entityAddrLine2,");
+		sql.append(
+				"entityAddrHNbr=:entityAddrHNbr,entityFlatNbr=:entityFlatNbr,entityAddrStreet=:entityAddrStreet,entityPOBox=:entityPOBox,");
 		sql.append(" active = :active, gstinAvailable = :gstinAvailable,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,cINNumber =:cINNumber");
 		sql.append(" where entityCode = :entityCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -164,7 +172,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -196,18 +204,19 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	@Override
-	public boolean  count(String entityCode, String pANNumber, TableType tableType){
+	public boolean count(String entityCode, String pANNumber, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		String sql;
 		String whereClause = null;
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		if(StringUtils.isNotBlank(entityCode)) {
-			whereClause = "entityCode = :entityCode " ;
+		if (StringUtils.isNotBlank(entityCode)) {
+			whereClause = "entityCode = :entityCode ";
 			paramSource.addValue("entityCode", entityCode);
-		} else if(StringUtils.isNotBlank(pANNumber)) {
-			whereClause = "pANNumber = :pANNumber " ;
+		} else if (StringUtils.isNotBlank(pANNumber)) {
+			whereClause = "pANNumber = :pANNumber ";
 			paramSource.addValue("pANNumber", pANNumber);
 		}
 
@@ -236,7 +245,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public boolean panNumberExist(String pANNumber, String entityCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -272,25 +281,27 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public Entity getEntityByFinDivision(String divisionCode, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DivisionCode", divisionCode);
 
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
+		sql.append(
+				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
 		if (type.contains("View")) {
 			sql.append(" countryname,ProvinceName,CItyName,pincodename,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber");
 		sql.append(" From Entity");
 		sql.append(type);
 		sql.append(" Where entityCode = (Select EntityCode from SMTDivisionDetail where DivisionCode = :DivisionCode)");
-		
+
 		logger.debug("selectSql: " + sql.toString());
 
 		RowMapper<Entity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
@@ -304,5 +315,5 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 
 		logger.debug(Literal.LEAVING);
 		return entity;
-	}	
-}	
+	}
+}

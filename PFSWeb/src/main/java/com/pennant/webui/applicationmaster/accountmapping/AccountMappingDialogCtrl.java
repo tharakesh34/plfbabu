@@ -82,9 +82,9 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/applicationmaster/AccountMapping/accountMappingDialog.zul file.
@@ -92,23 +92,23 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(AccountMappingDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(AccountMappingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_AccountMappingDialog;
-	protected Textbox							account;
-	protected Textbox							hostAccount;
-	protected Listbox							listBoxAccountMap;
-	private AccountMapping						accountMapping;
-	protected ExtendedCombobox					finType;
+	protected Window window_AccountMappingDialog;
+	protected Textbox account;
+	protected Textbox hostAccount;
+	protected Listbox listBoxAccountMap;
+	private AccountMapping accountMapping;
+	protected ExtendedCombobox finType;
 
-	private transient AccountMappingListCtrl	accountMappingListCtrl;
-	private transient AccountMappingService		accountMappingService;
-	private RuleExecutionUtil					ruleExecutionUtil;
+	private transient AccountMappingListCtrl accountMappingListCtrl;
+	private transient AccountMappingService accountMappingService;
+	private RuleExecutionUtil ruleExecutionUtil;
 
 	/**
 	 * default constructor.<br>
@@ -189,7 +189,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.finType.setMandatoryStyle(true);
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -274,8 +274,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 					executeMap.put("acType", transactionEntry.getAccountType());
 					executeMap.put("ae_finType", financeType.getFinType());
-					String glCode = (String) ruleExecutionUtil.executeRule(rule == null ? "" : rule.getSQLRule(), executeMap, null,
-							RuleReturnType.CALCSTRING);
+					String glCode = (String) ruleExecutionUtil.executeRule(rule == null ? "" : rule.getSQLRule(),
+							executeMap, null, RuleReturnType.CALCSTRING);
 
 					if (StringUtils.isBlank(glCode)) {
 						continue;
@@ -823,7 +823,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			newRecord = (boolean) sapGlCode_Textbox.getAttribute("newRecord");
 			accountMapping = (AccountMapping) sapGlCode_Textbox.getAttribute("befImage");
 			accountMapping.setWorkflowId(this.accountMapping.getWorkflowId());
-			
+
 			sapGlCode_Textbox.setErrorMessage("");
 			accountType.setErrorMessage("");
 			if (!newRecord) {
@@ -834,15 +834,12 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			profitCenterId = (ExtendedCombobox) listItem.getFellow("profitCenter_" + count);
 			costCenterId = (ExtendedCombobox) listItem.getFellow("costCenter_" + count);
-			profitCenterId.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_ProfitCenter.value"),
-							null, true));
-			costCenterId
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_CostCenter.value"),
-							null, true));
-			accountType.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_AccountType.value"),
-							null, false));
+			profitCenterId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AccountMappingDialog_ProfitCenter.value"), null, true));
+			costCenterId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_CostCenter.value"), null, true));
+			accountType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AccountMappingDialog_AccountType.value"), null, false));
 			//GL Code
 			try {
 				accountMapping.setAccount(glCode_Label.getValue());

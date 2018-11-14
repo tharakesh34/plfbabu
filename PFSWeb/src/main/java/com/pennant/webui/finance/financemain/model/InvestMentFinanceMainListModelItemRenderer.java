@@ -56,7 +56,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -64,45 +63,50 @@ import com.pennant.util.PennantAppUtil;
 public class InvestMentFinanceMainListModelItemRenderer implements ListitemRenderer<FinanceMain>, Serializable {
 
 	private static final long serialVersionUID = -4562142056572229437L;
-	
+
 	public InvestMentFinanceMainListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceMain financeMain, int count) throws Exception {
-		int format=CurrencyUtil.getFormat(financeMain.getFinCcy());
+		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		Listcell lc;
 		lc = new Listcell();
-		
-		String custCIF =financeMain.getLovDescCustCIF();
-		if(financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE &&
-				StringUtils.isBlank(financeMain.getLovDescCustCIF())){
+
+		String custCIF = financeMain.getLovDescCustCIF();
+		if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE
+				&& StringUtils.isBlank(financeMain.getLovDescCustCIF())) {
 			custCIF = "In Process";
 			lc.setStyle("font-weight:bold;color:green;");
 		}
 		lc.setLabel(custCIF);
-		lc.setParent(item);		
+		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescCustShrtName());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getInvestmentRef());
+		lc = new Listcell(financeMain.getInvestmentRef());
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinReference());
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescProductCodeName());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getFinType());
+		lc = new Listcell(financeMain.getFinType());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getFinCcy());
+		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getScheduleMethod() == null ? "" : financeMain.getScheduleMethod());
+		lc = new Listcell(financeMain.getScheduleMethod() == null ? "" : financeMain.getScheduleMethod());
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount().subtract(financeMain.getDownPayment())
-				.add(financeMain.getFeeChargeAmt() == null ?BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-				.add(financeMain.getInsuranceAmt() == null ?BigDecimal.ZERO : financeMain.getInsuranceAmt()), format));
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(
+						financeMain.getFinAmount().subtract(financeMain.getDownPayment())
+								.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
+										: financeMain.getFeeChargeAmt())
+								.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO
+										: financeMain.getInsuranceAmt()),
+						format));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		item.setAttribute("data", financeMain);

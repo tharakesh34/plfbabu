@@ -62,30 +62,30 @@ public class SecurityRoleListModelItemRenderer implements ListitemRenderer<Secur
 
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(SecurityRoleListModelItemRenderer.class);
-	
+
 	public SecurityRoleListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, SecurityRole securityRole, int count) throws Exception {
-       logger.debug("Entering ");
+		logger.debug("Entering ");
 		Listcell lc;
-	  	lc = new Listcell(securityRole.getLovDescRoleAppName());
+		lc = new Listcell(securityRole.getLovDescRoleAppName());
 		lc.setParent(item);
-	  	lc = new Listcell(securityRole.getRoleCd());
+		lc = new Listcell(securityRole.getRoleCd());
 		lc.setParent(item);
-	  	lc = new Listcell(securityRole.getRoleDesc());
+		lc = new Listcell(securityRole.getRoleDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(securityRole.getRoleCategory());
+		lc = new Listcell(securityRole.getRoleCategory());
 		lc.setParent(item);
-	  	lc = new Listcell(securityRole.getRecordStatus());
+		lc = new Listcell(securityRole.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(securityRole.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", securityRole.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityRoleItemDoubleClicked");
 		logger.debug("Leaving ");
 	}

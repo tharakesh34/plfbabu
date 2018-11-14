@@ -55,7 +55,6 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -65,9 +64,9 @@ public class GuarantorDetailListModelItemRenderer implements ListitemRenderer<Gu
 	private static final long serialVersionUID = 1L;
 
 	public GuarantorDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, GuarantorDetail guarantorDetail, int count) throws Exception {
 
@@ -78,23 +77,23 @@ public class GuarantorDetailListModelItemRenderer implements ListitemRenderer<Gu
 		cbBankCustomer.setChecked(guarantorDetail.isBankCustomer());
 		lc.appendChild(cbBankCustomer);
 		lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getGuarantorCIF()+"-"+guarantorDetail.getGuarantorCIFName());
+		lc = new Listcell(guarantorDetail.getGuarantorCIF() + "-" + guarantorDetail.getGuarantorCIFName());
 		lc.setParent(item);
 		lc = new Listcell(guarantorDetail.getGuarantorIDTypeName());
-	  	lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getGuarantorIDNumber());
 		lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getName());
+		lc = new Listcell(guarantorDetail.getGuarantorIDNumber());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formatRate(guarantorDetail.getGuranteePercentage().doubleValue(),2));
-	  	lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getMobileNo());
+		lc = new Listcell(guarantorDetail.getName());
 		lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getEmailId());
+		lc = new Listcell(PennantApplicationUtil.formatRate(guarantorDetail.getGuranteePercentage().doubleValue(), 2));
 		lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getGuarantorProofName());
+		lc = new Listcell(guarantorDetail.getMobileNo());
 		lc.setParent(item);
-	  	lc = new Listcell(guarantorDetail.getRecordStatus());
+		lc = new Listcell(guarantorDetail.getEmailId());
+		lc.setParent(item);
+		lc = new Listcell(guarantorDetail.getGuarantorProofName());
+		lc.setParent(item);
+		lc = new Listcell(guarantorDetail.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(guarantorDetail.getRecordType()));
 		lc.setParent(item);

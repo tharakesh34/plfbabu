@@ -97,13 +97,13 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private String downPayRuleDesc;
 	private String rpyPricingCode;
 	private String rpyPricingDesc;
-	
+
 	private String lovValue;
-	
+
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	private List<FinTypeInsurances> finTypeInsurancesList = new ArrayList<FinTypeInsurances>();
-	private List<FinTypeAccounting>	finTypeAccountingList = new ArrayList<FinTypeAccounting>();
-	
+	private List<FinTypeAccounting> finTypeAccountingList = new ArrayList<FinTypeAccounting>();
+
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
@@ -133,7 +133,7 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

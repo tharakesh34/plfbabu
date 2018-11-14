@@ -71,8 +71,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMaster/VehicleDealer/VehicleDealerList.zul file.
+ * This is the controller class for the /WEB-INF/pages/AMTMaster/VehicleDealer/VehicleDealerList.zul file.
  */
 public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	private static final long serialVersionUID = 259921702952389829L;
@@ -134,19 +133,19 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 
 	@Override
 	protected void doAddFilters() {
-		if(module.equals("DSA")){
+		if (module.equals("DSA")) {
 			super.moduleCode = "DSA";
-		}else if(module.equals("DMA")){
+		} else if (module.equals("DMA")) {
 			super.moduleCode = "DMA";
-		}else if(module.equals("TVAGENCY")){
+		} else if (module.equals("TVAGENCY")) {
 			super.moduleCode = "TVAGENCY";
-		}else if(module.equals("RCUVAGENCY")){
+		} else if (module.equals("RCUVAGENCY")) {
 			super.moduleCode = "RCUVAGENCY";
-		}else if(module.equals("LVAGENCY")){
+		} else if (module.equals("LVAGENCY")) {
 			super.moduleCode = "LVAGENCY";
-		}else if(module.equals("FIAGENCY")){
+		} else if (module.equals("FIAGENCY")) {
 			super.moduleCode = "FIAGENCY";
-		}else if(module.equals("CONN")){
+		} else if (module.equals("CONN")) {
 			super.moduleCode = "CONN";
 		}
 		super.doAddFilters();
@@ -155,10 +154,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		searchObject.addFilterAnd(filters);
 	}
 
- 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -180,7 +177,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 				Operators.STRING);
 		registerField("dealerName", listheader_DealerName, SortOrder.NONE, dealerName, sortOperator_dealerName,
 				Operators.STRING);
-		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE, dealerTelephone, sortOperator_dealerTelephone, Operators.STRING);
+		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE, dealerTelephone,
+				sortOperator_dealerTelephone, Operators.STRING);
 		registerField("email", listheader_Email, SortOrder.NONE, email, sortOperator_email, Operators.STRING);
 		registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
 		registerField("dealerProvince", listheader_DealerProvince, SortOrder.NONE, dealerProvince,
@@ -196,8 +194,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -207,8 +204,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -219,8 +215,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -240,15 +235,14 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onVehicleDealerItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
-		
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxVehicleDealer.getSelectedItem();
@@ -305,18 +299,17 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.dealerId.setMaxlength(19);
 		this.dealerName.setMaxlength(50);
 		this.dealerTelephone.setMaxlength(10);
 		this.recordStatus.setMaxlength(50);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

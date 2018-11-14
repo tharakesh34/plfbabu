@@ -5,7 +5,6 @@
 // Generated on: 2016.05.07 at 06:25:23 PM IST 
 //
 
-
 package com.pennant.webservice.schema;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,11 +13,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -36,64 +36,55 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "status",
-    "extFinanceDetails"
-})
+@XmlType(name = "", propOrder = { "status", "extFinanceDetails" })
 @XmlRootElement(name = "PFSLoanCreationResponse")
 public class PFSLoanCreationResponse {
 
-    @XmlElement(name = "Status", required = true)
-    protected StatusType status;
-    @XmlElement(name = "ExtFinanceDetails", required = true)
-    protected ExtFinanceDetails extFinanceDetails;
+	@XmlElement(name = "Status", required = true)
+	protected StatusType status;
+	@XmlElement(name = "ExtFinanceDetails", required = true)
+	protected ExtFinanceDetails extFinanceDetails;
 
-    /**
-     * Gets the value of the status property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatusType }
-     *     
-     */
-    public StatusType getStatus() {
-        return status;
-    }
+	/**
+	 * Gets the value of the status property.
+	 * 
+	 * @return possible object is {@link StatusType }
+	 * 
+	 */
+	public StatusType getStatus() {
+		return status;
+	}
 
-    /**
-     * Sets the value of the status property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatusType }
-     *     
-     */
-    public void setStatus(StatusType value) {
-        this.status = value;
-    }
+	/**
+	 * Sets the value of the status property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link StatusType }
+	 * 
+	 */
+	public void setStatus(StatusType value) {
+		this.status = value;
+	}
 
-    /**
-     * Gets the value of the extFinanceDetails property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ExtFinanceDetails }
-     *     
-     */
-    public ExtFinanceDetails getExtFinanceDetails() {
-        return extFinanceDetails;
-    }
+	/**
+	 * Gets the value of the extFinanceDetails property.
+	 * 
+	 * @return possible object is {@link ExtFinanceDetails }
+	 * 
+	 */
+	public ExtFinanceDetails getExtFinanceDetails() {
+		return extFinanceDetails;
+	}
 
-    /**
-     * Sets the value of the extFinanceDetails property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ExtFinanceDetails }
-     *     
-     */
-    public void setExtFinanceDetails(ExtFinanceDetails value) {
-        this.extFinanceDetails = value;
-    }
+	/**
+	 * Sets the value of the extFinanceDetails property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link ExtFinanceDetails }
+	 * 
+	 */
+	public void setExtFinanceDetails(ExtFinanceDetails value) {
+		this.extFinanceDetails = value;
+	}
 
 }

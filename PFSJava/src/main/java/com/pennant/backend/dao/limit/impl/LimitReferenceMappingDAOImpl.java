@@ -18,14 +18,11 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapping>
 		implements LimitReferenceMappingDAO {
-	private static Logger				logger	= Logger.getLogger(LimitReferenceMappingDAOImpl.class);
+	private static Logger logger = Logger.getLogger(LimitReferenceMappingDAOImpl.class);
 
-	
 	public LimitReferenceMappingDAOImpl() {
 		super();
 	}
-
-	
 
 	/**
 	 * This method insert new Records into LIMIT_DETAILS or LIMIT_DETAILS_Temp. it fetches the available Sequence form
@@ -61,7 +58,7 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 		logger.debug("Leaving");
 		return limitReferenceMapping.getId();
 	}
-	
+
 	/**
 	 * 
 	 * @param lmtReferenceMapping
@@ -88,7 +85,6 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * Fetch the Record Limit items by key field

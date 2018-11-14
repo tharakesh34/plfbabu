@@ -23,8 +23,7 @@ import com.pennanttech.pff.core.TableType;
  * @author sreeravali.s
  *
  */
-public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDetails> implements
-        ReturnedChequeService {
+public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDetails> implements ReturnedChequeService {
 
 	private static Logger logger = Logger.getLogger(ReturnedChequeServiceImpl.class);
 
@@ -79,15 +78,14 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader
-				.getAuditDetail().getModelData();
-		
+		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail().getModelData();
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (returnedCheque.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -95,8 +93,8 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		if (returnedCheque.isNew()) {
 			getReturnedChequeDAO().save(returnedCheque, tableType);
 			auditHeader.getAuditDetail().setModelData(returnedCheque);
-			auditHeader.setAuditReference(String.valueOf(returnedCheque.getCustCIF())
-			        + PennantConstants.KEY_SEPERATOR + returnedCheque.getChequeNo());
+			auditHeader.setAuditReference(String.valueOf(returnedCheque.getCustCIF()) + PennantConstants.KEY_SEPERATOR
+					+ returnedCheque.getChequeNo());
 
 		} else {
 			getReturnedChequeDAO().update(returnedCheque, tableType);
@@ -126,8 +124,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail()
-		        .getModelData();
+		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail().getModelData();
 		getReturnedChequeDAO().delete(returnedCheque, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -161,8 +158,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		}
 
 		ReturnedChequeDetails returnedCheque = new ReturnedChequeDetails();
-		BeanUtils.copyProperties((ReturnedChequeDetails) auditHeader.getAuditDetail()
-		        .getModelData(), returnedCheque);
+		BeanUtils.copyProperties((ReturnedChequeDetails) auditHeader.getAuditDetail().getModelData(), returnedCheque);
 
 		if (returnedCheque.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -219,8 +215,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 			return auditHeader;
 		}
 
-		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail()
-		        .getModelData();
+		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getReturnedChequeDAO().delete(returnedCheque, TableType.TEMP_TAB);
 
@@ -240,8 +235,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-		        auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -266,13 +260,13 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (returnedCheque.isNew() 
-				&& PennantConstants.RECORD_TYPE_NEW.equals(returnedCheque.getRecordType())
-				&& returnedChequeDAO.isDuplicateKey(returnedCheque.getChequeNo(), returnedCheque.getCustCIF(), 
-				returnedCheque.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (returnedCheque.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(returnedCheque.getRecordType())
+				&& returnedChequeDAO.isDuplicateKey(returnedCheque.getChequeNo(), returnedCheque.getCustCIF(),
+						returnedCheque.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_ReturnedChequeCustCIF") + ": " + returnedCheque.getChequeNo();
+			parameters[0] = PennantJavaUtil.getLabel("label_ReturnedChequeCustCIF") + ": "
+					+ returnedCheque.getChequeNo();
 			parameters[1] = PennantJavaUtil.getLabel("label_CheuqeNo") + ": " + returnedCheque.getCustCIF();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
@@ -283,13 +277,13 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-		
+
 	@Override
-    public List<ReturnedCheques> fetchReturnedCheques(ReturnedCheques returnedCheques) {
-	 logger.debug("Entering");
-	    return returnedChequeDAO.fetchReturnedCheques(returnedCheques);
-	   
-    }
+	public List<ReturnedCheques> fetchReturnedCheques(ReturnedCheques returnedCheques) {
+		logger.debug("Entering");
+		return returnedChequeDAO.fetchReturnedCheques(returnedCheques);
+
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -311,5 +305,4 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	
 }

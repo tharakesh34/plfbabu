@@ -70,11 +70,12 @@ public class CustomerAdditionalDetailDAOImpl extends BasicDao<CustomerAdditional
 	}
 
 	/**
-	 * Fetch the Record  Customer Additional Details details by key field
+	 * Fetch the Record Customer Additional Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerAdditionalDetail
 	 */
 	@Override
@@ -85,44 +86,46 @@ public class CustomerAdditionalDetailDAOImpl extends BasicDao<CustomerAdditional
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT CustID, CustRefStaffID, CustRefCustID, AcademicDecipline, CustAcademicLevel,");
-		if(type.contains("View")){
-			selectSql.append(" lovDescCustAcademicLevelName, lovDescAcademicDeciplineName,lovDescCustCIF, " );
+		if (type.contains("View")) {
+			selectSql.append(" lovDescCustAcademicLevelName, lovDescAcademicDeciplineName,lovDescCustCIF, ");
 			selectSql.append("lovDescCustShrtName,lovDescCustRecordType,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustAdditionalDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID") ;
-		
+		selectSql.append(" Where CustID = :custID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
-		RowMapper<CustomerAdditionalDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAdditionalDetail.class);
-		
-		try{
-			customerAdditionalDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CustomerAdditionalDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerAdditionalDetail.class);
+
+		try {
+			customerAdditionalDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerAdditionalDetail = null;
 		}
 		logger.debug("Leaving ");
 		return customerAdditionalDetail;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the CustAdditionalDetails or CustAdditionalDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Additional Details by key CustID
+	 * This method Deletes the Record from the CustAdditionalDetails or CustAdditionalDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Customer Additional Details by key CustID
 	 * 
-	 * @param Customer Additional Details (customerAdditionalDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Additional Details (customerAdditionalDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerAdditionalDetail customerAdditionalDetail,String type) {
+	public void delete(CustomerAdditionalDetail customerAdditionalDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
@@ -130,90 +133,93 @@ public class CustomerAdditionalDetailDAOImpl extends BasicDao<CustomerAdditional
 		deleteSql.append("Delete From CustAdditionalDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
-		
-		try{
+
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * This method insert new Records into CustAdditionalDetails or CustAdditionalDetails_Temp.
 	 *
-	 * save Customer Additional Details 
+	 * save Customer Additional Details
 	 * 
-	 * @param Customer Additional Details (customerAdditionalDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Additional Details (customerAdditionalDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerAdditionalDetail customerAdditionalDetail,String type) {
+	public long save(CustomerAdditionalDetail customerAdditionalDetail, String type) {
 		logger.debug("Entering ");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into CustAdditionalDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, CustAcademicLevel, AcademicDecipline, CustRefCustID, CustRefStaffID," );
+		insertSql.append(" (CustID, CustAcademicLevel, AcademicDecipline, CustRefCustID, CustRefStaffID,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :CustAcademicLevel, :AcademicDecipline, :CustRefCustID, :CustRefStaffID, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(" Values(:CustID, :CustAcademicLevel, :AcademicDecipline, :CustRefCustID, :CustRefStaffID, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving ");
 		return customerAdditionalDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record CustAdditionalDetails or CustAdditionalDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Additional Details by key CustID and Version
+	 * This method updates the Record CustAdditionalDetails or CustAdditionalDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Customer Additional Details by key CustID and Version
 	 * 
-	 * @param Customer Additional Details (customerAdditionalDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Additional Details (customerAdditionalDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerAdditionalDetail customerAdditionalDetail,String type) {
+	public void update(CustomerAdditionalDetail customerAdditionalDetail, String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 
 		updateSql.append("Update CustAdditionalDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustAcademicLevel = :CustAcademicLevel, AcademicDecipline = :AcademicDecipline, " );
-		updateSql.append(" CustRefCustID = :CustRefCustID, CustRefStaffID = :CustRefStaffID ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set CustAcademicLevel = :CustAcademicLevel, AcademicDecipline = :AcademicDecipline, ");
+		updateSql.append(" CustRefCustID = :CustRefCustID, CustRefStaffID = :CustRefStaffID ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustID =:CustID ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

@@ -12,11 +12,11 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class DDAProcessmpl implements DDAProcess {
 
 	private static final Logger logger = Logger.getLogger(DDAProcessmpl.class);
-	
+
 	public DDAProcessmpl() {
-		
+
 	}
-	
+
 	@Override
 	public DDARegistration sendDDARequest(DDARegistration ddsRequest) throws InterfaceException {
 		logger.debug("Entering");
@@ -37,7 +37,7 @@ public class DDAProcessmpl implements DDAProcess {
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	@Override
 	public DDACancellation cancelDDARegistration(DDACancellation ddaCancellationReq) throws InterfaceException {
 		logger.debug("Entering");

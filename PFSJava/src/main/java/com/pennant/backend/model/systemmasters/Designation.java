@@ -84,6 +84,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public String getId() {
 		return desgCode;
 	}
+
 	public void setId(String id) {
 		this.desgCode = id;
 	}
@@ -91,6 +92,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public String getDesgCode() {
 		return desgCode;
 	}
+
 	public void setDesgCode(String desgCode) {
 		this.desgCode = desgCode;
 	}
@@ -98,6 +100,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public String getDesgDesc() {
 		return desgDesc;
 	}
+
 	public void setDesgDesc(String desgDesc) {
 		this.desgDesc = desgDesc;
 	}
@@ -105,6 +108,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public boolean isDesgIsActive() {
 		return desgIsActive;
 	}
+
 	public void setDesgIsActive(boolean desgIsActive) {
 		this.desgIsActive = desgIsActive;
 	}
@@ -112,6 +116,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -119,6 +124,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -126,6 +132,7 @@ public class Designation extends AbstractWorkflowEntity {
 	public Designation getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Designation beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -133,10 +140,11 @@ public class Designation extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -61,9 +61,9 @@ public class FacilityReferenceDetailListModelItemRenderer implements ListitemRen
 	private static final long serialVersionUID = 1L;
 
 	public FacilityReferenceDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CAFFacilityType facilityType, int count) throws Exception {
 

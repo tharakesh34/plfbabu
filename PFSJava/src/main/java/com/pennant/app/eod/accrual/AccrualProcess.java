@@ -55,20 +55,20 @@ public class AccrualProcess extends Thread {
 	private static final Logger logger = Logger.getLogger(AccrualProcess.class);
 
 	private static AccrualProcess me = null;
-	private  ExecutionStatus calculation = new ExecutionStatus();
-	private  ExecutionStatus posting = new ExecutionStatus();
-	
+	private ExecutionStatus calculation = new ExecutionStatus();
+	private ExecutionStatus posting = new ExecutionStatus();
+
 	public static String ACC_RUNNING = "";
 
-	private Date valueDate  = null;
-	private String branch 	= null;
+	private Date valueDate = null;
+	private String branch = null;
 	private AmortizationService amortizationService;
 
-	private AccrualProcess(){
+	private AccrualProcess() {
 		super();
 	}
 
-	private AccrualProcess(AmortizationService amortizationService, Date valueDate, String branch){
+	private AccrualProcess(AmortizationService amortizationService, Date valueDate, String branch) {
 		super();
 		this.amortizationService = amortizationService;
 		this.valueDate = valueDate;
@@ -76,14 +76,14 @@ public class AccrualProcess extends Thread {
 	}
 
 	public static AccrualProcess getInstance(AmortizationService amortizationService, Date valueDate, String branch) {
-		if(StringUtils.isEmpty(ACC_RUNNING) || me == null) {
+		if (StringUtils.isEmpty(ACC_RUNNING) || me == null) {
 			me = new AccrualProcess(amortizationService, valueDate, branch);
 		}
 		return me;
 	}
-	
+
 	public static AccrualProcess getInstance() {
-		if(me == null) {
+		if (me == null) {
 			me = new AccrualProcess();
 		}
 		return me;
@@ -94,14 +94,14 @@ public class AccrualProcess extends Thread {
 			ACC_RUNNING = "STARTED";
 			calculation.setExecutionName(PennantConstants.EOD_ACCRUAL_CALC);
 			posting.setExecutionName(PennantConstants.EOD_ACCRUAL_POSTING);
-			
+
 			calculation.setStartTime(new Date(System.currentTimeMillis()));
 			this.calculation.setStatus("EXECUTING");
-			try{
+			try {
 				amortizationService.doAccrualCalculation(calculation, valueDate);
 				calculation.setEndTime(new Date(System.currentTimeMillis()));
 				this.calculation.setStatus("COMPLETED");
-			}catch (Exception e) {
+			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				this.calculation.setStatus("FAILED");
 				ACC_RUNNING = "FAILED";
@@ -109,8 +109,7 @@ public class AccrualProcess extends Thread {
 			} finally {
 				calculation.setEndTime(new Date(System.currentTimeMillis()));
 			}
-			
-			
+
 			posting.setStartTime(new Date(System.currentTimeMillis()));
 			this.posting.setStatus("EXECUTING");
 			try {
@@ -125,7 +124,7 @@ public class AccrualProcess extends Thread {
 			} finally {
 				posting.setEndTime(new Date(System.currentTimeMillis()));
 			}
-			
+
 			ACC_RUNNING = "COMPLETED";
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -136,20 +135,19 @@ public class AccrualProcess extends Thread {
 	}
 
 	public ExecutionStatus getCalculation() {
-    	return calculation;
-    }
+		return calculation;
+	}
 
 	public void setCalculation(ExecutionStatus calculation) {
-    	this.calculation = calculation;
-    }
+		this.calculation = calculation;
+	}
 
 	public ExecutionStatus getPosting() {
-    	return posting;
-    }
+		return posting;
+	}
 
 	public void setPosting(ExecutionStatus posting) {
-    	this.posting = posting;
-    }
+		this.posting = posting;
+	}
 
-	
 }

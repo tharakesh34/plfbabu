@@ -12,11 +12,11 @@ public class HostStatusEnquiryServiceImpl implements HostStatusEnquiryService {
 
 		return getHostStatusEnquiryProcess().getHostStatus();
 	}
-	
-	public HostStatusEnquiryServiceImpl(){
+
+	public HostStatusEnquiryServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -24,6 +24,7 @@ public class HostStatusEnquiryServiceImpl implements HostStatusEnquiryService {
 	public HostStatusEnquiryProcess getHostStatusEnquiryProcess() {
 		return hostStatusEnquiryProcess;
 	}
+
 	public void setHostStatusEnquiryProcess(HostStatusEnquiryProcess hostStatusEnquiryProcess) {
 		this.hostStatusEnquiryProcess = hostStatusEnquiryProcess;
 	}

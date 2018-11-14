@@ -11,8 +11,8 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 
 public class AutoDisbursementService extends ServiceHelper {
-	private static final long	serialVersionUID	= 1442146139821584760L;
-	private Logger				logger				= Logger.getLogger(AutoDisbursementService.class);
+	private static final long serialVersionUID = 1442146139821584760L;
+	private Logger logger = Logger.getLogger(AutoDisbursementService.class);
 
 	/**
 	 * @param custId
@@ -32,8 +32,8 @@ public class AutoDisbursementService extends ServiceHelper {
 
 			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
-			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getDisbursementToday(finReference,
-					custEODEvent.getEodValueDate()));
+			finEODEvent.setFinanceDisbursements(
+					getFinanceDisbursementDAO().getDisbursementToday(finReference, custEODEvent.getEodValueDate()));
 
 			List<FinanceDisbursement> disbrusments = finEODEvent.getFinanceDisbursements();
 			for (FinanceDisbursement financeDisbursement : disbrusments) {
@@ -59,8 +59,9 @@ public class AutoDisbursementService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinProfitDetail(),finEODEvent.getFinanceScheduleDetails(),
-				AccountEventConstants.ACCEVENT_ADDDBSN, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinProfitDetail(),
+				finEODEvent.getFinanceScheduleDetails(), AccountEventConstants.ACCEVENT_ADDDBSN,
+				custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setDisburse(curDisbursment.getDisbAmount().add(curDisbursment.getFeeChargeAmt()));

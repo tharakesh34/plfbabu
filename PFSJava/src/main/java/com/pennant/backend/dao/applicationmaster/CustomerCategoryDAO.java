@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 
 /**
@@ -49,7 +50,10 @@ import com.pennant.backend.model.applicationmaster.CustomerCategory;
 public interface CustomerCategoryDAO {
 
 	CustomerCategory getCustomerCategoryById(String id, String type);
+
 	void update(CustomerCategory customerCategory, String type);
+
 	void delete(CustomerCategory customerCategory, String type);
+
 	String save(CustomerCategory customerCategory, String type);
 }

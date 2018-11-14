@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -66,58 +64,59 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class SukukBrokerDAOImpl extends BasicDao<SukukBroker> implements SukukBrokerDAO {
 	private static Logger logger = Logger.getLogger(SukukBrokerDAOImpl.class);
-		
+
 	public SukukBrokerDAOImpl() {
 		super();
 	}
-	
-	
+
 	/**
-	 * Fetch the Record  Sukuk Brokers details by key field
+	 * Fetch the Record Sukuk Brokers details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return SukukBroker
 	 */
 	@Override
 	public SukukBroker getSukukBrokerById(final String id, String type) {
 		logger.debug("Entering");
 		SukukBroker sukukBroker = new SukukBroker();
-		
+
 		sukukBroker.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select BrokerCode, BrokerDesc");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From SukukBrokers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BrokerCode =:BrokerCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBroker);
 		RowMapper<SukukBroker> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SukukBroker.class);
-		
-		try{
-			sukukBroker = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			sukukBroker = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			sukukBroker = null;
 		}
 		logger.debug("Leaving");
 		return sukukBroker;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the SukukBrokers or SukukBrokers_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Sukuk Brokers by key BrokerCode
+	 * This method Deletes the Record from the SukukBrokers or SukukBrokers_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Sukuk Brokers by key BrokerCode
 	 * 
-	 * @param Sukuk Brokers (sukukBroker)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Sukuk
+	 *            Brokers (sukukBroker)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -126,7 +125,7 @@ public class SukukBrokerDAOImpl extends BasicDao<SukukBroker> implements SukukBr
 	public void delete(SukukBroker sukukBroker, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From SukukBrokers");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BrokerCode =:BrokerCode");
@@ -143,47 +142,50 @@ public class SukukBrokerDAOImpl extends BasicDao<SukukBroker> implements SukukBr
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into SukukBrokers or SukukBrokers_Temp.
 	 *
-	 * save Sukuk Brokers 
+	 * save Sukuk Brokers
 	 * 
-	 * @param Sukuk Brokers (sukukBroker)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Sukuk
+	 *            Brokers (sukukBroker)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(SukukBroker sukukBroker,String type) {
+	public String save(SukukBroker sukukBroker, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into SukukBrokers");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into SukukBrokers");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (BrokerCode, BrokerDesc");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:BrokerCode, :BrokerDesc");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBroker);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return sukukBroker.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record SukukBrokers or SukukBrokers_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Sukuk Brokers by key BrokerCode and Version
+	 * This method updates the Record SukukBrokers or SukukBrokers_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Sukuk Brokers by key BrokerCode and Version
 	 * 
-	 * @param Sukuk Brokers (sukukBroker)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Sukuk
+	 *            Brokers (sukukBroker)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -192,21 +194,22 @@ public class SukukBrokerDAOImpl extends BasicDao<SukukBroker> implements SukukBr
 	public void update(SukukBroker sukukBroker, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update SukukBrokers");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update SukukBrokers");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set BrokerDesc = :BrokerDesc");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BrokerCode =:BrokerCode");
-		
+
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBroker);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

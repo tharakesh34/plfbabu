@@ -61,17 +61,15 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
  */
 public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(OverdueEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_OverdueEnquiryDialog; // autoWired
 	protected Listbox listBoxOverdue; // autoWired
@@ -80,7 +78,7 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinODDetails> finODDetailList;
-	private int ccyformat = 0; 
+	private int ccyformat = 0;
 
 	private FinanceDetailService financeDetailService;
 
@@ -99,9 +97,8 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -124,10 +121,9 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 		}
 
 		if (arguments.containsKey("ccyformat")) {
-			this.ccyformat = (Integer) arguments
-					.get("ccyformat");
+			this.ccyformat = (Integer) arguments.get("ccyformat");
 		}
-		
+
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
 					.get("financeEnquiryHeaderDialogCtrl");
@@ -141,8 +137,7 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
@@ -184,29 +179,28 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 				lc.setParent(item);
 				lc = new Listcell(DateUtility.formatToLongDate(finodDetail.getFinODTillDate()));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODAmt(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODAmt(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODPri(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODPri(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODPft(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODPft(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODAmt(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODAmt(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODPri(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODPri(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODPft(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODPft(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotPenaltyAmt(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotPenaltyAmt(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotWaived(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotWaived(), ccyformat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotPenaltyPaid(),ccyformat));
+				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotPenaltyPaid(), ccyformat));
 				lc.setParent(item);
 				this.listBoxOverdue.appendChild(item);
 			}
 		}
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

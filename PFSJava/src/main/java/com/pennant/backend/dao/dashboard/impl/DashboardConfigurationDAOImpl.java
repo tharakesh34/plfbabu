@@ -71,14 +71,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfiguration>
 		implements DashboardConfigurationDAO {
 	private static Logger logger = Logger.getLogger(DashboardConfigurationDAOImpl.class);
-	
+
 	public DashboardConfigurationDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new DashboardConfiguration
+	 * This method set the Work Flow id based on the module name and return the new DashboardConfiguration
 	 * 
 	 * @return DashboardConfiguration
 	 */
@@ -111,21 +110,21 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 
 		selectSql.append("Select DashboardCode, DashboardDesc, DashboardType,");
 		selectSql.append("	dimension, caption, subCaption,");
-		selectSql.append("  Query,remarks,DrillDownChart,multiSeries,SeriesType,SeriesValues,FieldQuery,DataXML, AdtDataSource,");
+		selectSql.append(
+				"  Query,remarks,DrillDownChart,multiSeries,SeriesType,SeriesValues,FieldQuery,DataXML, AdtDataSource,");
 		selectSql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId From DashboardConfiguration");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DashboardCode =:DashboardCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				dashboardConfiguration);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardConfiguration);
 		RowMapper<DashboardConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(DashboardConfiguration.class);
+				.newInstance(DashboardConfiguration.class);
 
 		try {
-			dashboardConfiguration = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);
+			dashboardConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			dashboardConfiguration = null;
@@ -135,9 +134,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	}
 
 	/**
-	 * This method Deletes the Record from the DashboardConfigurations or
-	 * DashboardConfiguration_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41004. delete Masters by key DashboardCode
+	 * This method Deletes the Record from the DashboardConfigurations or DashboardConfiguration_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41004. delete Masters by key DashboardCode
 	 * 
 	 * @param Masters
 	 *            (dashboardConfiguration)
@@ -158,11 +156,9 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 		deleteSql.append(" Where DashboardCode =:DashboardCode");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				dashboardConfiguration);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardConfiguration);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-					beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -173,8 +169,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	}
 
 	/**
-	 * This method insert new Records into DashboardConfigurations or
-	 * DashboardConfigurations_Temp.
+	 * This method insert new Records into DashboardConfigurations or DashboardConfigurations_Temp.
 	 * 
 	 * save Masters
 	 * 
@@ -195,17 +190,18 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 		insertSql.append("Insert Into DashboardConfiguration");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (DashboardCode, DashboardDesc, DashboardType,");
-		insertSql.append("  Dimension,Caption, SubCaption, Query, Remarks, DrillDownChart, MultiSeries, SeriesType, SeriesValues, FieldQuery, DataXML, AdtDataSource,");
+		insertSql.append(
+				"  Dimension,Caption, SubCaption, Query, Remarks, DrillDownChart, MultiSeries, SeriesType, SeriesValues, FieldQuery, DataXML, AdtDataSource,");
 		insertSql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:DashboardCode, :DashboardDesc, :DashboardType,");
-		insertSql.append(" :Dimension,:Caption, :SubCaption, :Query, :Remarks, :DrillDownChart, :MultiSeries, :SeriesType, :SeriesValues, :FieldQuery, :DataXML, :AdtDataSource,");
+		insertSql.append(
+				" :Dimension,:Caption, :SubCaption, :Query, :Remarks, :DrillDownChart, :MultiSeries, :SeriesType, :SeriesValues, :FieldQuery, :DataXML, :AdtDataSource,");
 		insertSql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				dashboardConfiguration);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardConfiguration);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
@@ -213,9 +209,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	}
 
 	/**
-	 * This method updates the Record DashboardConfigurations or DashboardConfigurations_Temp.
-	 * if Record not updated then throws DataAccessException with error 41003.
-	 * update Masters by key DashboardCode and Version
+	 * This method updates the Record DashboardConfigurations or DashboardConfigurations_Temp. if Record not updated
+	 * then throws DataAccessException with error 41003. update Masters by key DashboardCode and Version
 	 * 
 	 * @param Masters
 	 *            (dashboardDetail)
@@ -235,22 +230,23 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 		updateSql.append("Update DashboardConfiguration");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set DashboardDesc = :DashboardDesc,DashboardType = :DashboardType,");
-		updateSql.append(" Dimension=:Dimension,Caption=:Caption, SubCaption=:SubCaption, Query=:Query, Remarks=:Remarks, DrillDownChart=:DrillDownChart, MultiSeries=:MultiSeries,");
-		updateSql.append(" SeriesType=:SeriesType, SeriesValues=:SeriesValues, FieldQuery=:FieldQuery, DataXML=:DataXML, AdtDataSource=:AdtDataSource,  ");
-		updateSql.append(" Version=:Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" Dimension=:Dimension,Caption=:Caption, SubCaption=:SubCaption, Query=:Query, Remarks=:Remarks, DrillDownChart=:DrillDownChart, MultiSeries=:MultiSeries,");
+		updateSql.append(
+				" SeriesType=:SeriesType, SeriesValues=:SeriesValues, FieldQuery=:FieldQuery, DataXML=:DataXML, AdtDataSource=:AdtDataSource,  ");
+		updateSql.append(
+				" Version=:Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DashboardCode =:DashboardCode ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				dashboardConfiguration);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),
-				beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardConfiguration);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -258,7 +254,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Save the positions of the DashBoard for the user
 	 * 
-	 * @param dashboardPosition (DashboardPosition)
+	 * @param dashboardPosition
+	 *            (DashboardPosition)
 	 */
 	@Override
 	public void SavePositions(DashboardPosition dashboardPosition) {
@@ -274,18 +271,17 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 		insertSql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				dashboardPosition);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardPosition);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
-	
 	/**
-	 * Get the DashBoard Details from the database with the following conditions
-	 * User should have the rights and get the positions from the Dashboard positions  
+	 * Get the DashBoard Details from the database with the following conditions User should have the rights and get the
+	 * positions from the Dashboard positions
 	 * 
-	 * @param userId (long)
+	 * @param userId
+	 *            (long)
 	 */
 	@Override
 	public List<DashboardPosition> getDashboardPositionsByUser(long userId) {
@@ -319,7 +315,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Delete the Dash board positions for the user
 	 * 
-	 * @param userId (long)
+	 * @param userId
+	 *            (long)
 	 * 
 	 */
 	@Override
@@ -333,20 +330,19 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 		deleteSql.append(" Where UsrId = :UsrId  ");
 
 		logger.debug("deleteSql: " + deleteSql);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				dashboardPosition);
-		
-		 this.jdbcTemplate.update(deleteSql.toString(),
-					beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardPosition);
+
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * Get the DashBoard Details from the database with the following conditions
-	 * User should have the rights and get the positions from the Dashboard positions  
+	 * Get the DashBoard Details from the database with the following conditions User should have the rights and get the
+	 * positions from the Dashboard positions
 	 * 
-	 * @param userId (long)
+	 * @param userId
+	 *            (long)
 	 */
 	@Override
 	public List<DashboardConfiguration> getDashboardConfigurations(long userId) {
@@ -378,18 +374,17 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Get the chart Details From the Database
 	 * 
-	 * @param DashboardConfiguration (DashboardDetail)
+	 * @param DashboardConfiguration
+	 *            (DashboardDetail)
 	 */
-	@Override 
-	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration dashboardDetail)
-	throws DataAccessException{
+	@Override
+	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration dashboardDetail) throws DataAccessException {
 		logger.debug("Entering");
 		String selectSql = dashboardDetail.getQuery();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dashboardDetail);
 		ParameterizedBeanPropertyRowMapper<ChartSetElement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(ChartSetElement.class);
+				.newInstance(ChartSetElement.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql,
-				beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql, beanParameters, typeRowMapper);
 	}
 }

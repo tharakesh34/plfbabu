@@ -50,7 +50,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface FeePostingService {
 
-	
 	FeePostings getFeePostings();
 
 	FeePostings getNewFeePostings();

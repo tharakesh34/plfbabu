@@ -61,9 +61,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "custEMailTypeCode", "custEMail", "custEMailPriority" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerEMail extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -3217987429162088120L;
-	
+
 	private long custID = Long.MIN_VALUE;
 	@XmlElement
 	private String custEMailTypeCode;
@@ -79,7 +79,7 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
-	
+
 	private String sourceId;
 
 	public boolean isNew() {
@@ -95,33 +95,36 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("sourceId");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return custID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.custID = id;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
+
 	public String getCustEMailTypeCode() {
 		return custEMailTypeCode;
 	}
+
 	public void setCustEMailTypeCode(String custEMailTypeCode) {
 		this.custEMailTypeCode = custEMailTypeCode;
 	}
@@ -129,6 +132,7 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	public String getLovDescCustEMailTypeCode() {
 		return this.lovDescCustEMailTypeCode;
 	}
+
 	public void setLovDescCustEMailTypeCode(String lovDescCustEMailTypeCode) {
 		this.lovDescCustEMailTypeCode = lovDescCustEMailTypeCode;
 	}
@@ -136,41 +140,47 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	public int getCustEMailPriority() {
 		return custEMailPriority;
 	}
+
 	public void setCustEMailPriority(int custEMailPriority) {
 		this.custEMailPriority = custEMailPriority;
 	}
-	
+
 	public String getCustEMail() {
 		return custEMail;
 	}
+
 	public void setCustEMail(String custEMail) {
 		this.custEMail = custEMail;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerEMail getBefImage(){
+	public CustomerEMail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerEMail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerEMail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -178,6 +188,7 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -185,6 +196,7 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -192,15 +204,15 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
 
-	
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
-		
+		this.userDetails = userDetails;
+
 	}
 
 	public String getSourceId() {
@@ -211,5 +223,4 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 		this.sourceId = sourceId;
 	}
 
-	
 }

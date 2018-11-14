@@ -73,7 +73,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	public ScoringTypeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -81,6 +81,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -88,6 +89,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	public ScoringTypeDAO getScoringTypeDAO() {
 		return scoringTypeDAO;
 	}
+
 	public void setScoringTypeDAO(ScoringTypeDAO scoringTypeDAO) {
 		this.scoringTypeDAO = scoringTypeDAO;
 	}
@@ -96,44 +98,43 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	public ScoringType getScoringType() {
 		return getScoringTypeDAO().getScoringType();
 	}
+
 	@Override
 	public ScoringType getNewScoringType() {
 		return getScoringTypeDAO().getNewScoringType();
 	}
 
-
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table BMTScoringType/BMTScoringType_Temp 
-	 * 			by using ScoringTypeDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using ScoringTypeDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTScoringType/BMTScoringType_Temp by using ScoringTypeDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using ScoringTypeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		ScoringType scoringType = (ScoringType) auditHeader.getAuditDetail().getModelData();
 
 		if (scoringType.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (scoringType.isNew()) {
-			getScoringTypeDAO().save(scoringType,tableType);
-		}else{
-			getScoringTypeDAO().update(scoringType,tableType);
+			getScoringTypeDAO().save(scoringType, tableType);
+		} else {
+			getScoringTypeDAO().update(scoringType, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -143,25 +144,26 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table BMTScoringType by using ScoringTypeDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTScoringType by using ScoringTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		ScoringType scoringType = (ScoringType) auditHeader.getAuditDetail().getModelData();
-		getScoringTypeDAO().delete(scoringType,"");
+		getScoringTypeDAO().delete(scoringType, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -170,45 +172,50 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 
 	/**
 	 * getScoringTypeById fetch the details by using ScoringTypeDAO's getScoringTypeById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ScoringType
 	 */
 	@Override
 	public ScoringType getScoringTypeById(String id) {
-		return getScoringTypeDAO().getScoringTypeById(id,"_View");
+		return getScoringTypeDAO().getScoringTypeById(id, "_View");
 	}
 
 	/**
-	 * getApprovedScoringTypeById fetch the details by using ScoringTypeDAO's getScoringTypeById method .
-	 * with parameter id and type as blank. it fetches the approved records from the BMTScoringType.
-	 * @param id (String)
+	 * getApprovedScoringTypeById fetch the details by using ScoringTypeDAO's getScoringTypeById method . with parameter
+	 * id and type as blank. it fetches the approved records from the BMTScoringType.
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return ScoringType
 	 */
 
 	public ScoringType getApprovedScoringTypeById(String id) {
-		return getScoringTypeDAO().getScoringTypeById(id,"_AView");
+		return getScoringTypeDAO().getScoringTypeById(id, "_AView");
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getScoringTypeDAO().delete with parameters scoringType,""
-	 * 		b)  NEW		Add new record in to main table by using getScoringTypeDAO().save with parameters scoringType,""
-	 * 		c)  EDIT	Update record in the main table by using getScoringTypeDAO().update with parameters scoringType,""
-	 * 3)	Delete the record from the workFlow table by using getScoringTypeDAO().delete with parameters scoringType,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getScoringTypeDAO().delete with
+	 * parameters scoringType,"" b) NEW Add new record in to main table by using getScoringTypeDAO().save with
+	 * parameters scoringType,"" c) EDIT Update record in the main table by using getScoringTypeDAO().update with
+	 * parameters scoringType,"" 3) Delete the record from the workFlow table by using getScoringTypeDAO().delete with
+	 * parameters scoringType,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTScoringType by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTScoringType by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -217,9 +224,9 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 		BeanUtils.copyProperties((ScoringType) auditHeader.getAuditDetail().getModelData(), scoringType);
 
 		if (scoringType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getScoringTypeDAO().delete(scoringType,"");
+			getScoringTypeDAO().delete(scoringType, "");
 
 		} else {
 			scoringType.setRoleCode("");
@@ -229,17 +236,17 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 			scoringType.setWorkflowId(0);
 
 			if (scoringType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				scoringType.setRecordType("");
-				getScoringTypeDAO().save(scoringType,"");
+				getScoringTypeDAO().save(scoringType, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				scoringType.setRecordType("");
-				getScoringTypeDAO().update(scoringType,"");
+				getScoringTypeDAO().update(scoringType, "");
 			}
 		}
 
-		getScoringTypeDAO().delete(scoringType,"_Temp");
+		getScoringTypeDAO().delete(scoringType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -248,23 +255,24 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 		auditHeader.getAuditDetail().setModelData(scoringType);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getScoringTypeDAO().delete with parameters scoringType,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getScoringTypeDAO().delete with parameters scoringType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -273,7 +281,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 		ScoringType scoringType = (ScoringType) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getScoringTypeDAO().delete(scoringType,"_Temp");
+		getScoringTypeDAO().delete(scoringType, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -282,112 +290,114 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getScoringTypeDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getScoringTypeDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getScoringTypeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getScoringTypeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		ScoringType scoringType= (ScoringType) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		ScoringType scoringType = (ScoringType) auditDetail.getModelData();
 
-		ScoringType tempScoringType= null;
-		if (scoringType.isWorkflow()){
+		ScoringType tempScoringType = null;
+		if (scoringType.isWorkflow()) {
 			tempScoringType = getScoringTypeDAO().getScoringTypeById(scoringType.getId(), "_Temp");
 		}
-		ScoringType befScoringType= getScoringTypeDAO().getScoringTypeById(scoringType.getId(), "");
+		ScoringType befScoringType = getScoringTypeDAO().getScoringTypeById(scoringType.getId(), "");
 
-		ScoringType oldScoringType= scoringType.getBefImage();
+		ScoringType oldScoringType = scoringType.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = scoringType.getId();
+		errParm[0] = PennantJavaUtil.getLabel("label_ScoType") + ":" + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=scoringType.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_ScoType")+":"+valueParm[0];
+		if (scoringType.isNew()) { // for New record or new record into work flow
 
-		if (scoringType.isNew()){ // for New record or new record into work flow
-
-			if (!scoringType.isWorkflow()){// With out Work flow only new records  
-				if (befScoringType !=null){	// Record Already Exists in the table then error  
+			if (!scoringType.isWorkflow()) {// With out Work flow only new records  
+				if (befScoringType != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (scoringType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befScoringType !=null || tempScoringType!=null ){ // if records already exists in the main table
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (scoringType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befScoringType != null || tempScoringType != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befScoringType ==null || tempScoringType!=null ){
+				} else { // if records not exists in the Main flow table
+					if (befScoringType == null || tempScoringType != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!scoringType.isWorkflow()){	// With out Work flow for update and delete
+			if (!scoringType.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befScoringType ==null){ // if records not exists in the main table
+				if (befScoringType == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldScoringType!=null && !oldScoringType.getLastMntOn().equals(befScoringType.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldScoringType != null
+							&& !oldScoringType.getLastMntOn().equals(befScoringType.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempScoringType==null ){ // if records not exists in the Work flow table 
+				if (tempScoringType == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempScoringType!=null  && oldScoringType!=null && !oldScoringType.getLastMntOn().equals(tempScoringType.getLastMntOn())){ 
+				if (tempScoringType != null && oldScoringType != null
+						&& !oldScoringType.getLastMntOn().equals(tempScoringType.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method) ) || !scoringType.isWorkflow()){
-			scoringType.setBefImage(befScoringType);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !scoringType.isWorkflow()) {
+			scoringType.setBefImage(befScoringType);
 		}
 
 		return auditDetail;

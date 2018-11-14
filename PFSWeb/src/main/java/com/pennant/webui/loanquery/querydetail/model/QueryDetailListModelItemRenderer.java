@@ -64,21 +64,20 @@ public class QueryDetailListModelItemRenderer implements ListitemRenderer<QueryD
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, QueryDetail queryDetail, int count) throws Exception {
 
 		Listcell lc;
-		
-	  	lc = new Listcell(queryDetail.getFinReference());
+
+		lc = new Listcell(queryDetail.getFinReference());
 		lc.setParent(item);
-	    lc = new Listcell(String.valueOf(queryDetail.getId()));
+		lc = new Listcell(String.valueOf(queryDetail.getId()));
 		lc.setParent(item);
-	  	lc = new Listcell(String.valueOf(queryDetail.getRaisedBy() +" - "+queryDetail.getUsrLogin()));
+		lc = new Listcell(String.valueOf(queryDetail.getRaisedBy() + " - " + queryDetail.getUsrLogin()));
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatDate(queryDetail.getRaisedOn(),"dd/MM/yyy HH:mm:ss.SSS"));
+		lc = new Listcell(DateUtility.formatDate(queryDetail.getRaisedOn(), "dd/MM/yyy HH:mm:ss.SSS"));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(queryDetail.getCategoryCode()+" - "+queryDetail.getCategoryDescription()));
+		lc = new Listcell(String.valueOf(queryDetail.getCategoryCode() + " - " + queryDetail.getCategoryDescription()));
 		lc.setParent(item);
 		lc = new Listcell(queryDetail.getQryNotes());
 		lc.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
@@ -87,7 +86,7 @@ public class QueryDetailListModelItemRenderer implements ListitemRenderer<QueryD
 		lc = new Listcell(String.valueOf(queryDetail.getStatus()));
 		lc.setParent(item);
 		item.setAttribute("id", queryDetail.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onQueryDetailItemDoubleClicked");
 	}
 }

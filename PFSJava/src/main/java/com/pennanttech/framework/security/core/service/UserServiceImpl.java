@@ -58,16 +58,16 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 
 public class UserServiceImpl implements UserService {
-	private final static Logger	logger	= Logger.getLogger(UserServiceImpl.class);
-	
+	private final static Logger logger = Logger.getLogger(UserServiceImpl.class);
+
 	@Autowired
-	private UserDAO				userDAO;
+	private UserDAO userDAO;
 	@Autowired
-	private LanguageDAO			languageDAO;
+	private LanguageDAO languageDAO;
 	@Autowired
-	private SecurityRightDAO	securityRightDAO;
+	private SecurityRightDAO securityRightDAO;
 	@Autowired
-	private SecLoginlogDAO		secLoginlogDAO;
+	private SecLoginlogDAO secLoginlogDAO;
 
 	public UserServiceImpl() {
 		super();
@@ -137,11 +137,12 @@ public class UserServiceImpl implements UserService {
 	public List<SecurityRole> getUserRolesByUserID(long userID) {
 		return getUserDAO().getUserRolesByUserID(userID);
 	}
-	
+
 	@Override
 	public long logLoginAttempt(SecLoginlog logingLog) {
 		if (logger.isInfoEnabled()) {
-			logger.info("Login failed for: " + logingLog.getLoginUsrLogin() + " Host:" + logingLog.getLoginIP() + " SessionId: " + logingLog.getLoginSessionID());
+			logger.info("Login failed for: " + logingLog.getLoginUsrLogin() + " Host:" + logingLog.getLoginIP()
+					+ " SessionId: " + logingLog.getLoginSessionID());
 		}
 
 		long loginAttemptId = this.secLoginlogDAO.saveLog(logingLog);
@@ -149,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
 		return loginAttemptId;
 	}
-	
+
 	@Override
 	public void logLogOut(long loginId) {
 		secLoginlogDAO.logLogOut(loginId);

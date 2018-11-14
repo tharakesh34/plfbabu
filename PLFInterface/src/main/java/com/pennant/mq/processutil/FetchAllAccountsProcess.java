@@ -27,7 +27,7 @@ public class FetchAllAccountsProcess extends MQProcess {
 	public FetchAllAccountsProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the GetCustomerAccounts Request and send response
 	 * 
@@ -39,7 +39,7 @@ public class FetchAllAccountsProcess extends MQProcess {
 	public List<CoreBankAccountDetail> fetchCustomerAccounts(CoreBankAccountDetail accountDetail, String msgFormat)
 			throws JaxenException {
 		logger.debug("Entering");
-		
+
 		if (accountDetail == null || StringUtils.isBlank(accountDetail.getCustCIF())) {
 			throw new InterfaceException("PTI3001", "Customer Number Cannot be Blank");
 		}
@@ -49,31 +49,32 @@ public class FetchAllAccountsProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement fetchAccountReq = getRequestElement(accountDetail, msgFormat, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory, fetchAccountReq);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
-		
+
 		logger.debug("Leaving");
 		return prepareCustomerAccounts(response, header);
 
 	}
 
-
 	/**
 	 * Prepare Customer Accounts Information
+	 * 
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private List<CoreBankAccountDetail> prepareCustomerAccounts(OMElement responseElement, AHBMQHeader header)
 			throws JaxenException {
@@ -86,11 +87,11 @@ public class FetchAllAccountsProcess extends MQProcess {
 		OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/CustomerAccountsReply", responseElement);
 		header = PFFXmlUtil.parseHeader(responseElement, header);
 		header = getReturnStatus(detailElement, header, responseElement);
-		
+
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
-		
+
 		String accSumaryPath = "/HB_EAI_REPLY/Reply/CustomerAccountsReply/AccountSummaryReply";
 
 		//Prepare Account Summary information
@@ -101,14 +102,15 @@ public class FetchAllAccountsProcess extends MQProcess {
 	}
 
 	/**
-	 * Set CoreBankAccountDetail object from processed Response Element 
+	 * Set CoreBankAccountDetail object from processed Response Element
 	 * 
 	 * @param detailElement
 	 * @param targetPath
 	 * @return
 	 * @throws JaxenException
 	 */
-	private List<CoreBankAccountDetail> setAccountSummary(OMElement detailElement, String targetPath) throws JaxenException {
+	private List<CoreBankAccountDetail> setAccountSummary(OMElement detailElement, String targetPath)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (detailElement == null) {
@@ -120,7 +122,7 @@ public class FetchAllAccountsProcess extends MQProcess {
 		List<OMElement> accSumary = (List<OMElement>) xpath.selectNodes(detailElement);
 		for (OMElement omElement : accSumary) {
 			CoreBankAccountDetail accountDetail = new CoreBankAccountDetail();
-			
+
 			accountDetail.setReferenceNumber(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
 			accountDetail.setCustCIF(PFFXmlUtil.getStringValue(detailElement, "CustomerNumber"));
 			accountDetail.setAccountNumber(PFFXmlUtil.getStringValue(omElement, "AccountNumber"));
@@ -137,7 +139,7 @@ public class FetchAllAccountsProcess extends MQProcess {
 			accountDetail.setIntroducer(PFFXmlUtil.getStringValue(omElement, "AccountIntroducer"));
 			accountDetail.setPowerOfAttorneyFlag(PFFXmlUtil.getStringValue(omElement, "POAFlag"));
 			accountDetail.setPowerOfAttorneyCIF(PFFXmlUtil.getStringValue(omElement, "POACIF"));
-			
+
 			accSumaryList.add(accountDetail);
 		}
 		logger.debug("Leaving");
@@ -145,23 +147,24 @@ public class FetchAllAccountsProcess extends MQProcess {
 		return accSumaryList;
 	}
 
-
 	/**
 	 * Prepare Fetch All Accounts Request Element to send Interface through MQ
+	 * 
 	 * @param accountDetail
 	 * @param referenceNum
-	 * @param referenceNum2 
+	 * @param referenceNum2
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(CoreBankAccountDetail accountDetail,String msgFormat,String referenceNum, OMFactory factory){
+	private OMElement getRequestElement(CoreBankAccountDetail accountDetail, String msgFormat, String referenceNum,
+			OMFactory factory) {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement fetchAccReq = factory.createOMElement("CustomerAccountsRequest", null);
 
-		PFFXmlUtil.setOMChildElement(factory, fetchAccReq, "ReferenceNum",referenceNum);
-		PFFXmlUtil.setOMChildElement(factory, fetchAccReq, "CustomerNumber",accountDetail.getCustCIF());
+		PFFXmlUtil.setOMChildElement(factory, fetchAccReq, "ReferenceNum", referenceNum);
+		PFFXmlUtil.setOMChildElement(factory, fetchAccReq, "CustomerNumber", accountDetail.getCustCIF());
 		PFFXmlUtil.setOMChildElement(factory, fetchAccReq, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 		requestElement.addChild(fetchAccReq);

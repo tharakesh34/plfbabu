@@ -14,16 +14,16 @@ import javax.xml.bind.annotation.XmlType;
 public class StampPaperData {
 
 	@XmlElement(name = "first_party")
-	private String			firstParty;
+	private String firstParty;
 
 	@XmlElement(name = "first_party_address")
-	private PartyAddress	firstPartyAddress;
+	private PartyAddress firstPartyAddress;
 
 	@XmlElement(name = "stamp_amount")
-	private BigDecimal		stampAmount	= BigDecimal.ZERO;
+	private BigDecimal stampAmount = BigDecimal.ZERO;
 
 	@XmlElement(name = "stamp_duty_paid_by")
-	private String			stampDutyPaidBy;
+	private String stampDutyPaidBy;
 
 	public String getFirstParty() {
 		return firstParty;

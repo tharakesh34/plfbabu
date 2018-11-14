@@ -59,7 +59,7 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 	private long deviationID = Long.MIN_VALUE;
 	private String userRole;
 	private String deviatedValue;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private DeviationDetail befImage;
 	private LoggedInUser userDetails;
@@ -77,9 +77,9 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -89,38 +89,35 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 	public long getId() {
 		return deviationID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.deviationID = id;
 	}
-	
+
 	public long getDeviationID() {
 		return deviationID;
 	}
+
 	public void setDeviationID(long deviationID) {
 		this.deviationID = deviationID;
 	}
-	
-	
-		
-	
+
 	public String getUserRole() {
 		return userRole;
 	}
+
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
-	
-	
-		
-	
+
 	public String getDeviatedValue() {
 		return deviatedValue;
 	}
+
 	public void setDeviatedValue(String deviatedValue) {
 		this.deviatedValue = deviatedValue;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -128,7 +125,7 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -137,12 +134,12 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public DeviationDetail getBefImage(){
+	public DeviationDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DeviationDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DeviationDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

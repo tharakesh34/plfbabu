@@ -73,7 +73,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -81,6 +81,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public String getId() {
 		return custCtgCode;
 	}
+
 	public void setId(String id) {
 		this.custCtgCode = id;
 	}
@@ -88,6 +89,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public String getCustCtgCode() {
 		return custCtgCode;
 	}
+
 	public void setCustCtgCode(String custCtgCode) {
 		this.custCtgCode = custCtgCode;
 	}
@@ -95,13 +97,15 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public String getCustCtgDesc() {
 		return custCtgDesc;
 	}
+
 	public void setCustCtgDesc(String custCtgDesc) {
 		this.custCtgDesc = custCtgDesc;
 	}
-	
+
 	public boolean isCustCtgIsActive() {
 		return custCtgIsActive;
 	}
+
 	public void setCustCtgIsActive(boolean custCtgIsActive) {
 		this.custCtgIsActive = custCtgIsActive;
 	}
@@ -109,6 +113,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -116,6 +121,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -123,6 +129,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public CustomerCategory getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CustomerCategory beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -130,6 +137,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -137,6 +145,7 @@ public class CustomerCategory extends AbstractWorkflowEntity {
 	public void setCustCtgType(String custCtgType) {
 		this.custCtgType = custCtgType;
 	}
+
 	public String getCustCtgType() {
 		return custCtgType;
 	}

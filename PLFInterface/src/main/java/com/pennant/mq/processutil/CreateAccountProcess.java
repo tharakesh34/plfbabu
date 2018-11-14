@@ -23,11 +23,12 @@ public class CreateAccountProcess extends MQProcess {
 	public CreateAccountProcess() {
 		super();
 	}
+
 	private MQInterfaceDAO mqInterfaceDAO;
-	
+
 	/**
 	 * Process the CreateAccount Request and send Response
-	 *  
+	 * 
 	 * @param accountdetail
 	 * @param msgFormat
 	 * @return CoreBankAccountDetail
@@ -45,13 +46,15 @@ public class CreateAccountProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,getRequestElement(accountdetail, referenceNum, factory));
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory,
+					getRequestElement(accountdetail, referenceNum, factory));
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -63,34 +66,38 @@ public class CreateAccountProcess extends MQProcess {
 
 	/**
 	 * Prepare Create Account Request Element to send Interface through MQ
+	 * 
 	 * @param custCIF
 	 * @param referenceNum
 	 * @param factory
 	 * @return OMElement
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(InterfaceAccount accountdetail,String referenceNum,OMFactory factory) throws InterfaceException{
+	private OMElement getRequestElement(InterfaceAccount accountdetail, String referenceNum, OMFactory factory)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement createAccReq = factory.createOMElement("createAccountRequest", null);
 
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ReferenceNum",referenceNum);
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "CIF",accountdetail.getCustCIF());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "BranchCode",accountdetail.getBranchCode());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "BranchCodeISO",getMqInterfaceDAO().getPFFCode(accountdetail.getBranchCode(), "mcm_rmtbranches"));
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ReferenceNum", referenceNum);
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "CIF", accountdetail.getCustCIF());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "BranchCode", accountdetail.getBranchCode());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "BranchCodeISO",
+				getMqInterfaceDAO().getPFFCode(accountdetail.getBranchCode(), "mcm_rmtbranches"));
 		//PFFXmlUtil.setOMChildElement(factory, createAccReq, "CustomerType",accountdetail.getCustomerType());
 		//PFFXmlUtil.setOMChildElement(factory, createAccReq, "CustomerTypeISO",getMqInterfaceDAO().grtPFFCode(accountdetail.getCustomerType(), "mcm_rmtcusttypes"));
 		//PFFXmlUtil.setOMChildElement(factory, createAccReq, "ProductCode",accountdetail.getProductCode());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "customerType","Retail");
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "customerTypeISO","102468");
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ProductCode","1001");
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ProductCodeISO","103646"); 
-		
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "Currency",accountdetail.getCurrency());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "CurrencyISO",getMqInterfaceDAO().getPFFCode(accountdetail.getCurrency(), "mcm_rmtcurrencies"));
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "AccountName",accountdetail.getAccountName());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "AccountOfficer",accountdetail.getAccountOfficer());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "customerType", "Retail");
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "customerTypeISO", "102468");
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ProductCode", "1001");
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ProductCodeISO", "103646");
+
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "Currency", accountdetail.getCurrency());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "CurrencyISO",
+				getMqInterfaceDAO().getPFFCode(accountdetail.getCurrency(), "mcm_rmtcurrencies"));
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "AccountName", accountdetail.getAccountName());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "AccountOfficer", accountdetail.getAccountOfficer());
 
 		OMElement jointHolderElement = factory.createOMElement("jointHolders", null);
 
@@ -100,13 +107,14 @@ public class CreateAccountProcess extends MQProcess {
 
 		createAccReq.addChild(jointHolderElement);
 
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ModeOfOperation",accountdetail.getModeOfOperation());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "MinNoOfSignatory",accountdetail.getMinNoOfSignatory());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "Introducer",accountdetail.getIntroducer());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "PowerOfAttorneyFlag",accountdetail.getPowerOfAttorneyFlag());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ModeOfOperation", accountdetail.getModeOfOperation());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "MinNoOfSignatory", accountdetail.getMinNoOfSignatory());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "Introducer", accountdetail.getIntroducer());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "PowerOfAttorneyFlag",
+				accountdetail.getPowerOfAttorneyFlag());
 		//PFFXmlUtil.setOMChildElement(factory, createAccReq, "PowerOfAttorneyCIF",accountdetail.getPowerOfAttorneyCIF());
 		//PFFXmlUtil.setOMChildElement(factory, createAccReq, "IBAN",accountdetail.getIban());
-		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ShoppingCardIssue",accountdetail.getShoppingCardIssue());
+		PFFXmlUtil.setOMChildElement(factory, createAccReq, "ShoppingCardIssue", accountdetail.getShoppingCardIssue());
 		PFFXmlUtil.setOMChildElement(factory, createAccReq, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 
@@ -119,12 +127,14 @@ public class CreateAccountProcess extends MQProcess {
 
 	/**
 	 * prepare CoreBankAccountDetail object to return
+	 * 
 	 * @param responseElement
 	 * @param header
 	 * @return CoreBankAccountDetail
 	 * @throws InterfaceException
 	 */
-	private InterfaceAccount setCreateAccResponse(OMElement responseElement,AHBMQHeader header) throws InterfaceException{
+	private InterfaceAccount setCreateAccResponse(OMElement responseElement, AHBMQHeader header)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -133,7 +143,7 @@ public class CreateAccountProcess extends MQProcess {
 
 		OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/createAccountReply", responseElement);
 		header = PFFXmlUtil.parseHeader(responseElement, header);
-		header= getReturnStatus(detailElement, header, responseElement);
+		header = getReturnStatus(detailElement, header, responseElement);
 
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			throw new InterfaceException("PTI3002", header.getErrorMessage());
@@ -148,6 +158,7 @@ public class CreateAccountProcess extends MQProcess {
 
 		return accountDetail;
 	}
+
 	public MQInterfaceDAO getMqInterfaceDAO() {
 		return mqInterfaceDAO;
 	}

@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennanttech.pff.core.TableType;
@@ -52,14 +53,15 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface EmpStsCodeDAO extends BasicCrudDao<EmpStsCode> {
 
-	EmpStsCode getEmpStsCodeById(String id,String type);
+	EmpStsCode getEmpStsCodeById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param empStsCode
 	 *            of EmpStsCode
 	 * @param tableType
-	 *             of EmpStsCode
+	 *            of EmpStsCode
 	 * @return
 	 */
 	boolean isDuplicateKey(String empStsCode, TableType tableType);

@@ -72,7 +72,7 @@ public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements E
 	public EmploymentTypeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Employment Type details by key field
 	 * 
@@ -85,35 +85,32 @@ public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements E
 	@Override
 	public EmploymentType getEmploymentTypeById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		EmploymentType employmentType = new EmploymentType();
 		employmentType.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select EmpType, EmpTypeDesc, EmpTypeIsActive," );
+		StringBuilder selectSql = new StringBuilder("Select EmpType, EmpTypeDesc, EmpTypeIsActive,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From RMTEmpTypes" );
+		selectSql.append(" From RMTEmpTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where EmpType =:EmpType");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				employmentType);
-		RowMapper<EmploymentType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EmploymentType.class);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employmentType);
+		RowMapper<EmploymentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmploymentType.class);
 
 		try {
-			employmentType = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);
+			employmentType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			employmentType = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return employmentType;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String empType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -149,7 +146,7 @@ public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements E
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(EmploymentType employmentType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -173,11 +170,11 @@ public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements E
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return employmentType.getId();
 	}
-	
+
 	@Override
 	public void update(EmploymentType employmentType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -197,32 +194,32 @@ public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements E
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(employmentType);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		
+
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(EmploymentType employmentType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" delete from RMTEmpTypes");
-		sql.append(tableType.getSuffix()); 
+		sql.append(tableType.getSuffix());
 		sql.append(" where EmpType =:EmpType");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(employmentType);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

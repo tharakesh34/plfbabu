@@ -70,29 +70,27 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/IdentityDetails/identityDetailsDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/IdentityDetails/identityDetailsDialog.zul file.
  */
 public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	private static final long serialVersionUID = 8019703083764768044L;
 	private static final Logger logger = Logger.getLogger(IdentityDetailsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_IdentityDetailsDialog; 	
+	protected Window window_IdentityDetailsDialog;
 
-	protected Textbox 		identityType; 					
-	protected Textbox 		identityDesc; 	
+	protected Textbox identityType;
+	protected Textbox identityDesc;
 
 	// not autoWired variables
 	private IdentityDetails identityDetails; // over handed per parameter
 	private transient IdentityDetailsListCtrl identityDetailsListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient IdentityDetailsService identityDetailsService;
 
@@ -111,14 +109,13 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected IdentityDetails object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected IdentityDetails object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_IdentityDetailsDialog(Event event)throws Exception {
+	public void onCreate$window_IdentityDetailsDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -129,8 +126,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 			doCheckRights();
 
 			if (arguments.containsKey("identityDetails")) {
-				this.identityDetails = (IdentityDetails) arguments
-						.get("identityDetails");
+				this.identityDetails = (IdentityDetails) arguments.get("identityDetails");
 				IdentityDetails befImage = new IdentityDetails();
 				BeanUtils.copyProperties(this.identityDetails, befImage);
 				this.identityDetails.setBefImage(befImage);
@@ -140,14 +136,12 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 				setIdentityDetails(null);
 			}
 
-			doLoadWorkFlow(this.identityDetails.isWorkflow(),
-					this.identityDetails.getWorkflowId(),
+			doLoadWorkFlow(this.identityDetails.isWorkflow(), this.identityDetails.getWorkflowId(),
 					this.identityDetails.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"IdentityDetailsDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "IdentityDetailsDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -157,8 +151,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 			// or
 			// delete identityDetails here.
 			if (arguments.containsKey("identityDetailsListCtrl")) {
-				setIdentityDetailsListCtrl((IdentityDetailsListCtrl) arguments
-						.get("identityDetailsListCtrl"));
+				setIdentityDetailsListCtrl((IdentityDetailsListCtrl) arguments.get("identityDetailsListCtrl"));
 			} else {
 				setIdentityDetailsListCtrl(null);
 			}
@@ -191,8 +184,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -342,13 +334,12 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aIdentityDetails
 	 * @throws Exception
 	 */
-	public void doShowDialog(IdentityDetails aIdentityDetails)throws Exception {
+	public void doShowDialog(IdentityDetails aIdentityDetails) throws Exception {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -375,7 +366,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 			doWriteBeanToComponents(aIdentityDetails);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_IdentityDetailsDialog.onClose();
 		} catch (Exception e) {
@@ -392,12 +383,15 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 
 		setValidationOn(true);
 
-		if (!this.identityType.isReadonly()){
-			this.identityType.setConstraint(new PTStringValidator(Labels.getLabel("label_IdentityDetailsDialog_IdentityType.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.identityType.isReadonly()) {
+			this.identityType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_IdentityDetailsDialog_IdentityType.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.identityDesc.isReadonly()){
-			this.identityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_IdentityDetailsDialog_IdentityDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.identityDesc.isReadonly()) {
+			this.identityDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_IdentityDetailsDialog_IdentityDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -452,9 +446,9 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-		Labels.getLabel("label_IdentityDetailsDialog_IdentityType.value")+" : "+aIdentityDetails.getIdentityType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_IdentityDetailsDialog_IdentityType.value") + " : "
+				+ aIdentityDetails.getIdentityType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aIdentityDetails.getRecordType())) {
 				aIdentityDetails.setVersion(aIdentityDetails.getVersion() + 1);
@@ -679,7 +673,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aIdentityDetails,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aIdentityDetails, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -741,8 +735,8 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_IdentityDetailsDialog, auditHeader);
 						return processCompleted;
 					}
@@ -785,12 +779,11 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(IdentityDetails aIdentityDetails,String tranType) {
+	private AuditHeader getAuditHeader(IdentityDetails aIdentityDetails, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aIdentityDetails.getBefImage(), aIdentityDetails);
-		return new AuditHeader(String.valueOf(aIdentityDetails.getId()), null,
-				null, null, auditDetail, aIdentityDetails.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aIdentityDetails.getBefImage(), aIdentityDetails);
+		return new AuditHeader(String.valueOf(aIdentityDetails.getId()), null, null, null, auditDetail,
+				aIdentityDetails.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -806,7 +799,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_IdentityDetailsDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_IdentityDetailsDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -844,6 +837,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -851,6 +845,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	public IdentityDetails getIdentityDetails() {
 		return this.identityDetails;
 	}
+
 	public void setIdentityDetails(IdentityDetails identityDetails) {
 		this.identityDetails = identityDetails;
 	}
@@ -858,6 +853,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	public void setIdentityDetailsService(IdentityDetailsService identityDetailsService) {
 		this.identityDetailsService = identityDetailsService;
 	}
+
 	public IdentityDetailsService getIdentityDetailsService() {
 		return this.identityDetailsService;
 	}
@@ -865,6 +861,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	public void setIdentityDetailsListCtrl(IdentityDetailsListCtrl identityDetailsListCtrl) {
 		this.identityDetailsListCtrl = identityDetailsListCtrl;
 	}
+
 	public IdentityDetailsListCtrl getIdentityDetailsListCtrl() {
 		return this.identityDetailsListCtrl;
 	}

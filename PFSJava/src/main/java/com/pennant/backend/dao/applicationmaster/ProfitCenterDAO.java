@@ -47,8 +47,7 @@ import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennanttech.pff.core.TableType;
 
 public interface ProfitCenterDAO extends BasicCrudDao<ProfitCenter> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,7 +57,8 @@ public interface ProfitCenterDAO extends BasicCrudDao<ProfitCenter> {
 	 *            The type of the table.
 	 * @return ProfitCenter
 	 */
-	ProfitCenter getProfitCenter(long profitCenterID,String type);
+	ProfitCenter getProfitCenter(long profitCenterID, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -70,6 +70,6 @@ public interface ProfitCenterDAO extends BasicCrudDao<ProfitCenter> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long profitCenterID, String profitCenterCode, TableType tableType);	
-	
+	boolean isDuplicateKey(long profitCenterID, String profitCenterCode, TableType tableType);
+
 }

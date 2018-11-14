@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.GeneralDepartment;
  * 
  */
 public interface GeneralDepartmentService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	GeneralDepartment getGeneralDepartmentById(String id);
+
 	GeneralDepartment getApprovedGeneralDepartmentById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

@@ -47,13 +47,19 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 
 public interface DeviationParamService {
-	
-	/*DeviationParam getDeviationParam();
-	DeviationParam getNewDeviationParam();*/
+
+	/*
+	 * DeviationParam getDeviationParam(); DeviationParam getNewDeviationParam();
+	 */
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	DeviationParam getDeviationParamById(String id);
+
 	DeviationParam getApprovedDeviationParamById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

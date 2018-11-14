@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
@@ -75,8 +75,8 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	private int noOfContractsInst;
 	private int noOfContractsNonInst;
 	private int noOfContractsCredit;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private EtihadCreditBureauDetail befImage;
 	private LoggedInUser userDetails;
@@ -93,27 +93,29 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String finReference) {
+
+	public void setId(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -121,6 +123,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public int getBureauScore() {
 		return bureauScore;
 	}
+
 	public void setBureauScore(int bureauScore) {
 		this.bureauScore = bureauScore;
 	}
@@ -128,6 +131,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public BigDecimal getTotOutstandingAmt() {
 		return totOutstandingAmt;
 	}
+
 	public void setTotOutstandingAmt(BigDecimal totOutstandingAmt) {
 		this.totOutstandingAmt = totOutstandingAmt;
 	}
@@ -135,6 +139,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public BigDecimal getTotOverdueAmt() {
 		return totOverdueAmt;
 	}
+
 	public void setTotOverdueAmt(BigDecimal totOverdueAmt) {
 		this.totOverdueAmt = totOverdueAmt;
 	}
@@ -142,6 +147,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public int getDefaultContracts() {
 		return defaultContracts;
 	}
+
 	public void setDefaultContracts(int defaultContracts) {
 		this.defaultContracts = defaultContracts;
 	}
@@ -149,6 +155,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public BigDecimal getTotMonthlyInst() {
 		return totMonthlyInst;
 	}
+
 	public void setTotMonthlyInst(BigDecimal totMonthlyInst) {
 		this.totMonthlyInst = totMonthlyInst;
 	}
@@ -156,6 +163,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public String getWorstCurrPayDelay() {
 		return worstCurrPayDelay;
 	}
+
 	public void setWorstCurrPayDelay(String worstCurrPayDelay) {
 		this.worstCurrPayDelay = worstCurrPayDelay;
 	}
@@ -163,6 +171,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public String getWorstPayDelay() {
 		return worstPayDelay;
 	}
+
 	public void setWorstPayDelay(String worstPayDelay) {
 		this.worstPayDelay = worstPayDelay;
 	}
@@ -170,6 +179,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public String getWorstStatus() {
 		return worstStatus;
 	}
+
 	public void setWorstStatus(String worstStatus) {
 		this.worstStatus = worstStatus;
 	}
@@ -177,6 +187,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public Date getOldConStartDate() {
 		return oldConStartDate;
 	}
+
 	public void setOldConStartDate(Date oldConStartDate) {
 		this.oldConStartDate = oldConStartDate;
 	}
@@ -184,6 +195,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public Date getNewConStartDate() {
 		return newConStartDate;
 	}
+
 	public void setNewConStartDate(Date newConStartDate) {
 		this.newConStartDate = newConStartDate;
 	}
@@ -191,6 +203,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public String getOtherBankFinType() {
 		return otherBankFinType;
 	}
+
 	public void setOtherBankFinType(String otherBankFinType) {
 		this.otherBankFinType = otherBankFinType;
 	}
@@ -198,6 +211,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public int getNoOfInquiry() {
 		return noOfInquiry;
 	}
+
 	public void setNoOfInquiry(int noOfInquiry) {
 		this.noOfInquiry = noOfInquiry;
 	}
@@ -205,6 +219,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public int getNoOfContractsInst() {
 		return noOfContractsInst;
 	}
+
 	public void setNoOfContractsInst(int noOfContractsInst) {
 		this.noOfContractsInst = noOfContractsInst;
 	}
@@ -212,6 +227,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public int getNoOfContractsNonInst() {
 		return noOfContractsNonInst;
 	}
+
 	public void setNoOfContractsNonInst(int noOfContractsNonInst) {
 		this.noOfContractsNonInst = noOfContractsNonInst;
 	}
@@ -219,6 +235,7 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public int getNoOfContractsCredit() {
 		return noOfContractsCredit;
 	}
+
 	public void setNoOfContractsCredit(int noOfContractsCredit) {
 		this.noOfContractsCredit = noOfContractsCredit;
 	}
@@ -226,27 +243,31 @@ public class EtihadCreditBureauDetail extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public EtihadCreditBureauDetail getBefImage(){
+	public EtihadCreditBureauDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(EtihadCreditBureauDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(EtihadCreditBureauDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

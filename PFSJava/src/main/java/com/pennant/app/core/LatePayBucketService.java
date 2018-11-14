@@ -59,10 +59,10 @@ import com.pennant.backend.util.SMTParameterConstants;
 
 public class LatePayBucketService extends ServiceHelper {
 
-	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(LatePayBucketService.class);
+	private static final long serialVersionUID = 6161809223570900644L;
+	private static Logger logger = Logger.getLogger(LatePayBucketService.class);
 	@Autowired
-	private FinExcessAmountDAO	finExcessAmountDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	/**
 	 * Default constructor
@@ -79,7 +79,7 @@ public class LatePayBucketService extends ServiceHelper {
 	 */
 	public CustEODEvent processDPDBuketing(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
-		
+
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
@@ -220,7 +220,7 @@ public class LatePayBucketService extends ServiceHelper {
 		logger.debug(" Leaving ");
 		return true;
 	}
-	
+
 	/**
 	 * 
 	 * @param financeMain
@@ -243,7 +243,7 @@ public class LatePayBucketService extends ServiceHelper {
 			finProfitDetail.setCurODDays(newCurODDays);
 		}
 	}
-	
+
 	/**
 	 * @param finReference
 	 * @return

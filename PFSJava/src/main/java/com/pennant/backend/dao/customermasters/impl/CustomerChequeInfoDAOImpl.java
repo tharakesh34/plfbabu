@@ -67,28 +67,29 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> implements CustomerChequeInfoDAO {
 	private static Logger logger = Logger.getLogger(CustomerChequeInfoDAOImpl.class);
 
-	
 	public CustomerChequeInfoDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Customer EMails details by key field
+	 * Fetch the Record Customer EMails details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerChequeInfo
 	 */
 	@Override
-	public CustomerChequeInfo getCustomerChequeInfoById(final long id, int chequeSeq,String type) {
+	public CustomerChequeInfo getCustomerChequeInfoById(final long id, int chequeSeq, String type) {
 		logger.debug("Entering");
 		CustomerChequeInfo customerChequeInfo = new CustomerChequeInfo();
 		customerChequeInfo.setId(id);
 		customerChequeInfo.setChequeSeq(chequeSeq);
-		StringBuilder selectSql = new StringBuilder();	
-		selectSql.append(" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt, ReturnChequeCount, Remarks,");
-		if(type.contains("View")){
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt, ReturnChequeCount, Remarks,");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -96,16 +97,15 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 		selectSql.append(" FROM  CustomerChequeInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID AND ChequeSeq = :ChequeSeq");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
-		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerChequeInfo.class);
+		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerChequeInfo.class);
 
-		try{
-			customerChequeInfo = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			customerChequeInfo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerChequeInfo = null;
 		}
@@ -115,16 +115,17 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 
 	/**
 	 * Method to return the customer email based on given customer id
-	 * */
+	 */
 	@Override
-	public List<CustomerChequeInfo> getChequeInfoByCustomer(final long id,String type) {
+	public List<CustomerChequeInfo> getChequeInfoByCustomer(final long id, String type) {
 		logger.debug("Entering");
 		CustomerChequeInfo customerChequeInfo = new CustomerChequeInfo();
 		customerChequeInfo.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder();	
-		selectSql.append(" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt, ReturnChequeCount, Remarks,");
-		if(type.contains("View")){
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt, ReturnChequeCount, Remarks,");
+		if (type.contains("View")) {
 			selectSql.append(" ");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -132,47 +133,47 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 		selectSql.append(" FROM  CustomerChequeInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
-		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerChequeInfo.class);
-		
-		List<CustomerChequeInfo> custCheques = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerChequeInfo.class);
+
+		List<CustomerChequeInfo> custCheques = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return custCheques;
-	}	
-	
-	
+	}
+
 	/**
-	 * This method Deletes the Record from the CustomerChequeInfo or CustomerChequeInfo_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer EMails by key CustID
+	 * This method Deletes the Record from the CustomerChequeInfo or CustomerChequeInfo_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Customer EMails by key CustID
 	 * 
-	 * @param Customer EMails (customerChequeInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            EMails (customerChequeInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerChequeInfo customerChequeInfo,String type) {
+	public void delete(CustomerChequeInfo customerChequeInfo, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder(" Delete From CustomerChequeInfo");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID AND ChequeSeq = :ChequeSeq");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -181,14 +182,15 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 	/**
 	 * This method Deletes the Record from the CustomerChequeInfo or CustomerChequeInfo_Temp for the Customer.
 	 * 
-	 * @param Customer EMails (customerChequeInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            EMails (customerChequeInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByCustomer(long custID,String type) {
+	public void deleteByCustomer(long custID, String type) {
 		logger.debug("Entering");
 
 		CustomerChequeInfo customerChequeInfo = new CustomerChequeInfo();
@@ -197,8 +199,8 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 		deleteSql.append(" Delete From CustomerChequeInfo");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -207,30 +209,33 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 	/**
 	 * This method insert new Records into CustomerChequeInfo or CustomerChequeInfo_Temp.
 	 *
-	 * save Customer EMails 
+	 * save Customer EMails
 	 * 
-	 * @param Customer EMails (customerChequeInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            EMails (customerChequeInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerChequeInfo customerChequeInfo,String type) {
+	public long save(CustomerChequeInfo customerChequeInfo, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into CustomerChequeInfo");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits,  ReturnChequeAmt, ReturnChequeCount, Remarks," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(
+				" (CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits,  ReturnChequeAmt, ReturnChequeCount, Remarks,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :ChequeSeq, :MonthYear, :TotChequePayment, :Salary, :Debits, :ReturnChequeAmt, :ReturnChequeCount, :Remarks," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(
+				" Values(:CustID, :ChequeSeq, :MonthYear, :TotChequePayment, :Salary, :Debits, :ReturnChequeAmt, :ReturnChequeCount, :Remarks,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -239,36 +244,39 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 	}
 
 	/**
-	 * This method updates the Record CustomerChequeInfo or CustomerChequeInfo_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer EMails by key CustID and Version
+	 * This method updates the Record CustomerChequeInfo or CustomerChequeInfo_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer EMails by key CustID and Version
 	 * 
-	 * @param Customer EMails (customerChequeInfo)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            EMails (customerChequeInfo)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerChequeInfo customerChequeInfo,String type) {
+	public void update(CustomerChequeInfo customerChequeInfo, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerChequeInfo");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set MonthYear = :MonthYear, TotChequePayment = :TotChequePayment, Salary = :Salary, Debits = :Debits,");
-		updateSql.append(" ReturnChequeAmt = :ReturnChequeAmt, ReturnChequeCount = :ReturnChequeCount, Remarks = :Remarks," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(
+				" Set MonthYear = :MonthYear, TotChequePayment = :TotChequePayment, Salary = :Salary, Debits = :Debits,");
+		updateSql.append(
+				" ReturnChequeAmt = :ReturnChequeAmt, ReturnChequeCount = :ReturnChequeCount, Remarks = :Remarks,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where CustID =:CustID AND ChequeSeq =:ChequeSeq ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

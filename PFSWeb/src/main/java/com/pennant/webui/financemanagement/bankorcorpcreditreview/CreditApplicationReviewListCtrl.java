@@ -122,7 +122,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 	protected Button button_CreditApplicationReviewList_NewCreditApplicationReview;
 	protected Button button_CreditApplicationReviewList_FileUploadCreditApplicationReview;
-	
+
 	protected Button button_CreditAppReviewList_CreditAppReviewSearch;
 
 	private transient CreditApplicationReviewService creditApplicationReviewService;
@@ -177,8 +177,8 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 			String auditYears = "'" + dateAppCurrentYear + "','" + dateAppPrevYear + "','" + (dateAppPrevYear - 1)
 					+ "'";
-			String whereCondition = "AuditYear IN(" + auditYears + ")" + " OR " + " (AuditYear < "
-					+"'"+(dateAppPrevYear - 1)+"'" +")";
+			String whereCondition = "AuditYear IN(" + auditYears + ")" + " OR " + " (AuditYear < " + "'"
+					+ (dateAppPrevYear - 1) + "'" + ")";
 			this.searchObject.addWhereClause(whereCondition);
 		}
 
@@ -193,14 +193,15 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_CreditApplicationReviewList(Event event)  {
+	public void onCreate$window_CreditApplicationReviewList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_CreditApplicationReviewList, borderLayout_CreditApplicationReviewList,
 				listBoxCreditApplicationReview, pagingCreditApplicationReviewList);
 		setItemRender(new CreditApplicationReviewListModelItemRenderer());
 
 		// Register buttons and fields.
-		 registerButton(button_CreditApplicationReviewList_NewCreditApplicationReview, "button_CreditApplicationReviewList_NewCreditApplicationReview", true);
+		registerButton(button_CreditApplicationReviewList_NewCreditApplicationReview,
+				"button_CreditApplicationReviewList_NewCreditApplicationReview", true);
 
 		if (!isMaintinence) {
 			registerButton(button_CreditApplicationReviewList_NewCreditApplicationReview,
@@ -279,9 +280,10 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void onClick$button_CreditApplicationReviewList_NewCreditApplicationReview(Event event) throws InterruptedException  {
+	public void onClick$button_CreditApplicationReviewList_NewCreditApplicationReview(Event event)
+			throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		// create a new WIFFinanceMain object, We GET it from the backend.
 		final FinCreditReviewDetails aCreditReviewDetails = getCreditApplicationReviewService()
@@ -304,10 +306,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions
-					.createComponents(
-							"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationRevSelectCategoryType.zul",
-							null, map);
+			Executions.createComponents(
+					"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationRevSelectCategoryType.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -320,9 +321,10 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void onClick$button_CreditApplicationReviewList_FileUploadCreditApplicationReview(Event event) throws InterruptedException  {
+	public void onClick$button_CreditApplicationReviewList_FileUploadCreditApplicationReview(Event event)
+			throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		// create a new WIFFinanceMain object, We GET it from the backend.
 		final FinCreditReviewDetails aCreditReviewDetails = getCreditApplicationReviewService()
@@ -338,8 +340,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		 */
 		Map<String, Object> map = getDefaultArguments();
 		map.put("creditApplicationReviewDialogCtrl", new CreditApplicationReviewDialogCtrl());
-		map.put("corporateApplicationFinanceFileUploadDialogCtrl", new CorporateApplicationFinanceFileUploadDialogCtrl());
-		
+		map.put("corporateApplicationFinanceFileUploadDialogCtrl",
+				new CorporateApplicationFinanceFileUploadDialogCtrl());
+
 		// map.put("searchObject", this.searchObjCreditReviewDetails);
 		map.put("aCreditReviewDetails", aCreditReviewDetails);
 		map.put("creditApplicationReviewListCtrl", this);
@@ -347,9 +350,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions
-					.createComponents(
-							"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CorporateApplicationFinanceFileUploadDialog.zul",null, map);
+			Executions.createComponents(
+					"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CorporateApplicationFinanceFileUploadDialog.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -384,8 +387,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 				valueParm[0] = String.valueOf(aCreditReviewDetails.getDetailId());
 				errParm[0] = PennantJavaUtil.getLabel("label_CreditReviewId") + ":" + valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-						"41005", errParm, valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			} else {
 				List<FinCreditReviewSummary> listOfFinCreditReviewSummary = getCreditApplicationReviewService()
@@ -398,8 +402,8 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 					String whereCond = " AND Detailid=" + creditReviewDetails.getDetailId() + " AND version="
 							+ creditReviewDetails.getVersion() + " ";
 
-					boolean userAcces = validateUserAccess(creditReviewDetails.getWorkflowId(), getUserWorkspace()
-							.getLoggedInUser().getUserId(), "FinCreditReviewDetails", whereCond,
+					boolean userAcces = validateUserAccess(creditReviewDetails.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "FinCreditReviewDetails", whereCond,
 							creditReviewDetails.getTaskId(), creditReviewDetails.getNextTaskId());
 					if (userAcces) {
 						doShowDialogPage(creditReviewDetails);

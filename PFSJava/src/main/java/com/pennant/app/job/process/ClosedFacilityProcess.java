@@ -27,11 +27,11 @@ public class ClosedFacilityProcess extends QuartzJobBean implements StatefulJob,
 	private CustomerLimitIntefaceService custLimitIntefaceService;
 
 	@Override
-	protected void executeInternal(JobExecutionContext context)throws JobExecutionException {
+	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("Entering");
 
 		logger.debug("---------------------------------------------------------------");
-		logger.debug("PROCESSED CLOSED FACILITY Response Job started at:"+System.currentTimeMillis());
+		logger.debug("PROCESSED CLOSED FACILITY Response Job started at:" + System.currentTimeMillis());
 		logger.debug("---------------------------------------------------------------");
 
 		// FetchClosed facility details from INTER.PFF_CLOSED_LIMITS table in AXE_CREDIT schema
@@ -39,7 +39,7 @@ public class ClosedFacilityProcess extends QuartzJobBean implements StatefulJob,
 
 		// process the closed facility details
 		List<ClosedFacilityDetail> proClFacilityList = new ArrayList<ClosedFacilityDetail>();
-		for(ClosedFacilityDetail detail:clFacilityList) {
+		for (ClosedFacilityDetail detail : clFacilityList) {
 			detail.setProcessed(true);
 			detail.setProcessedDate(DateUtility.getAppDate());
 
@@ -51,14 +51,14 @@ public class ClosedFacilityProcess extends QuartzJobBean implements StatefulJob,
 		boolean status = getCustLimitIntefaceService().saveClosedFacilityDetails(proClFacilityList);
 
 		// Update the processed and processedDate flags in AXE_CREDIT schema
-		if(status) {
+		if (status) {
 			getCustLimitIntefaceService().updateClosedFacilityStatus(proClFacilityList);
 		}
-		
+
 		logger.debug("Leaving");
 
 		logger.debug("---------------------------------------------------------------");
-		logger.debug("PROCESSED CLOSED FACILITY Response Job ended at:"+System.currentTimeMillis());
+		logger.debug("PROCESSED CLOSED FACILITY Response Job ended at:" + System.currentTimeMillis());
 		logger.debug("---------------------------------------------------------------");
 	}
 

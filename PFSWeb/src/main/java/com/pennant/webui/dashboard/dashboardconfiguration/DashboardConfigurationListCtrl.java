@@ -63,9 +63,9 @@ import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.dashboard.dashboardconfiguration.model.DashboardConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/DashBoards/ DashboardConfiguration/dashboardConfigurationList.zul

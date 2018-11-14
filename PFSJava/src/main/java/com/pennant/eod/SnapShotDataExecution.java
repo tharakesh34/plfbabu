@@ -22,17 +22,17 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SnapShotDataExecution {
 
-	protected  SnapShotConfigurationDAO snapShotConfigurationDAO;
-	protected  SnapShotConditionsDAO snapShotConditionsDAO;
-	protected  SnapShotColumnDAO snapShotColumnDAO;
-	protected  List<SnapShotConfiguration> customerConfigurations;
-	protected  List<SnapShotConfiguration>  incDownLoadConfigurations;
-	
-	private  final Logger logger = Logger.getLogger(SnapShotDataExecution.class);
+	protected SnapShotConfigurationDAO snapShotConfigurationDAO;
+	protected SnapShotConditionsDAO snapShotConditionsDAO;
+	protected SnapShotColumnDAO snapShotColumnDAO;
+	protected List<SnapShotConfiguration> customerConfigurations;
+	protected List<SnapShotConfiguration> incDownLoadConfigurations;
 
-	private  NamedParameterJdbcTemplate snapShotJdbcTemplate;
+	private final Logger logger = Logger.getLogger(SnapShotDataExecution.class);
 
-	protected  List<SnapShotConfiguration> getActiveConfigurationList() {
+	private NamedParameterJdbcTemplate snapShotJdbcTemplate;
+
+	protected List<SnapShotConfiguration> getActiveConfigurationList() {
 		logger.info(Literal.ENTERING);
 
 		List<SnapShotConfiguration> snapShotConfigurations = new ArrayList<SnapShotConfiguration>();
@@ -51,21 +51,16 @@ public class SnapShotDataExecution {
 		return snapShotConfigurations;
 	}
 
-/*	protected  String getColumn(List<SnapShotColumn> columns) {
-		StringBuffer buffer = new StringBuffer();
+	/*
+	 * protected String getColumn(List<SnapShotColumn> columns) { StringBuffer buffer = new StringBuffer();
+	 * 
+	 * for (int i = 0; i < columns.size(); i++) { SnapShotColumn column = columns.get(i); if (i != 0) {
+	 * buffer.append(","); } buffer.append(column.getColumnName()); }
+	 * 
+	 * return buffer.toString(); }
+	 */
 
-		for (int i = 0; i < columns.size(); i++) {
-			SnapShotColumn column = columns.get(i);
-			if (i != 0) {
-				buffer.append(",");
-			}
-			buffer.append(column.getColumnName());
-		}
-
-		return buffer.toString();
-	}*/
-
-	protected  String getSqlQry(String fromSchema, String fromTable, String totable, String columns,
+	protected String getSqlQry(String fromSchema, String fromTable, String totable, String columns,
 			SnapShotCondition condition) {
 		StringBuffer buffer = new StringBuffer("INSERT INTO ");
 		buffer.append(totable);
@@ -102,7 +97,8 @@ public class SnapShotDataExecution {
 		return buffer.toString();
 	}
 
-	protected  String getSqlQry(String fromSchema, String fromTable, String totable, String columns,SnapShotCondition condition,boolean fullDownLoad) {
+	protected String getSqlQry(String fromSchema, String fromTable, String totable, String columns,
+			SnapShotCondition condition, boolean fullDownLoad) {
 		StringBuffer buffer = new StringBuffer("INSERT INTO ");
 		buffer.append(totable);
 		buffer.append(" ");
@@ -133,21 +129,21 @@ public class SnapShotDataExecution {
 		if (StringUtils.trimToNull(condition.getCondition()) != null) {
 			buffer.append(" WHERE ");
 			buffer.append(StringUtils.replace(condition.getCondition(), "{SCHMA}", fromSchema + "."));
-			if(!fullDownLoad){
+			if (!fullDownLoad) {
 				buffer.append(" AND {LASTMNTON} ");
 			}
-		}else{
+		} else {
 
-			if(!fullDownLoad){
+			if (!fullDownLoad) {
 				buffer.append(" Where {LASTMNTON} ");
 			}
-			
+
 		}
 
 		return buffer.toString();
 	}
-	
-	protected  boolean clearData(String table, boolean delete) {
+
+	protected boolean clearData(String table, boolean delete) {
 
 		try {
 			snapShotJdbcTemplate.update(getPreEODSqlQry(table, delete), new HashMap<String, Object>());
@@ -159,7 +155,7 @@ public class SnapShotDataExecution {
 		return true;
 	}
 
-	protected  int generateSnapShotData(String sql, Map<String, Object> param, String table) {
+	protected int generateSnapShotData(String sql, Map<String, Object> param, String table) {
 
 		try {
 			return snapShotJdbcTemplate.update(sql, param);
@@ -169,11 +165,11 @@ public class SnapShotDataExecution {
 		}
 	}
 
-	protected void updateLastRunDate(long id,Timestamp lastRunDate) {
+	protected void updateLastRunDate(long id, Timestamp lastRunDate) {
 		getSnapShotConfigurationDAO().updateLastRunDate(id, lastRunDate);
 	}
 
-	private  String getPreEODSqlQry(String table, boolean delete) {
+	private String getPreEODSqlQry(String table, boolean delete) {
 
 		StringBuffer buffer = new StringBuffer();
 
@@ -188,7 +184,7 @@ public class SnapShotDataExecution {
 		return buffer.toString();
 	}
 
-	public  SnapShotConfigurationDAO getSnapShotConfigurationDAO() {
+	public SnapShotConfigurationDAO getSnapShotConfigurationDAO() {
 		return snapShotConfigurationDAO;
 	}
 
@@ -196,7 +192,7 @@ public class SnapShotDataExecution {
 		this.snapShotConfigurationDAO = snapShotConfigurationDAO;
 	}
 
-	public  SnapShotConditionsDAO getSnapShotConditionsDAO() {
+	public SnapShotConditionsDAO getSnapShotConditionsDAO() {
 		return snapShotConditionsDAO;
 	}
 
@@ -204,7 +200,7 @@ public class SnapShotDataExecution {
 		this.snapShotConditionsDAO = snapShotConditionsDAO;
 	}
 
-	public  SnapShotColumnDAO getSnapShotColumnDAO() {
+	public SnapShotColumnDAO getSnapShotColumnDAO() {
 		return snapShotColumnDAO;
 	}
 

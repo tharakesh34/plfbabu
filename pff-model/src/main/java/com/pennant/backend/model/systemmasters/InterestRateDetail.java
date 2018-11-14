@@ -13,7 +13,7 @@ public class InterestRateDetail {
 	private int toTenure = 0;
 	private int noOfMonths = 0;
 	private BigDecimal interestRate = BigDecimal.ZERO;
-	private String interestType ;
+	private String interestType;
 
 	public int getFormTenure() {
 		return formTenure;

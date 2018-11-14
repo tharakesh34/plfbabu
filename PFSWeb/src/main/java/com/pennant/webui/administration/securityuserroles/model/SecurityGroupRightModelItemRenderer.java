@@ -51,21 +51,21 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.administration.SecurityRight;
 
-public class SecurityGroupRightModelItemRenderer implements ListitemRenderer<SecurityRight>, Serializable  {
+public class SecurityGroupRightModelItemRenderer implements ListitemRenderer<SecurityRight>, Serializable {
 
 	private static final long serialVersionUID = 8842120255261997095L;
 	SecurityRight secRights;
-	
+
 	public SecurityGroupRightModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, SecurityRight secRights, int count) throws Exception {
 
-		Listcell lc=new Listcell(secRights.getRightName());
+		Listcell lc = new Listcell(secRights.getRightName());
 		lc.setParent(item);
 		item.setAttribute("data", secRights);
-		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");		
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityGroupItemDoubleClicked");
 	}
 }

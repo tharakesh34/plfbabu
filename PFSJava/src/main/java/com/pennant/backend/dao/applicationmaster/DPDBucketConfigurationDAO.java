@@ -77,9 +77,9 @@ public interface DPDBucketConfigurationDAO extends BasicCrudDao<DPDBucketConfigu
 	boolean isDuplicateKey(long configID, String productCode, long bucketID, TableType tableType);
 
 	List<DPDBucketConfiguration> getDPDBucketConfigurations();
-	
-	public int getByProductCode(String producCode,int dueDys, String type);
-	
+
+	public int getByProductCode(String producCode, int dueDys, String type);
+
 	int getDPDBucketConfigurationDAOById(long bucketID, String type);
 
 	List<DPDBucketConfiguration> getDPDBucketConfigurations(String productCode);

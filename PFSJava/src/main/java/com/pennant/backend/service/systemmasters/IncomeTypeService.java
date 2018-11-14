@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.IncomeType;
  * 
  */
 public interface IncomeTypeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	IncomeType getIncomeTypeById(String id, String incomeExpense, String category);
+
 	IncomeType getApprovedIncomeTypeById(String id, String incomeExpense, String category);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

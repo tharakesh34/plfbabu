@@ -47,9 +47,9 @@ import java.util.Date;
 import com.pennant.backend.model.ExecutionStatus;
 
 public interface AmortizationService {
-	
+
 	void doAccrualCalculation(ExecutionStatus object, Date valueDate) throws Exception;
-	
-	 void doAccrualPosting(ExecutionStatus object, Date dateValueDate, String postBranch)throws Exception;
-	 
+
+	void doAccrualPosting(ExecutionStatus object, Date dateValueDate, String postBranch) throws Exception;
+
 }

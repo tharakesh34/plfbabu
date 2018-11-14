@@ -14,22 +14,21 @@ import com.pennant.app.eod.service.UploadFinPftDetailService;
 import com.pennant.app.eod.upload.UploadProfitDetailProcess;
 import com.pennant.webui.util.GFCBaseCtrl;
 
-
-public class UploadFinPftDetailsCtrl  extends GFCBaseCtrl<Object> {
+public class UploadFinPftDetailsCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = Logger.getLogger(UploadFinPftDetailsCtrl.class);
 
 	protected Window window_UploadFinPftDetails;
-	protected Button    btnUpload;      //autowire
+	protected Button btnUpload; //autowire
 	protected Timer timer;
-	
+
 	ProcessExecution processs;
-	
-	private UploadFinPftDetailService uploadFinPftDetailService; 
+
+	private UploadFinPftDetailService uploadFinPftDetailService;
 	UploadProfitDetailProcess process = UploadProfitDetailProcess.getInstance();
-		
-	public UploadFinPftDetailsCtrl(){
+
+	public UploadFinPftDetailsCtrl() {
 		super();
 	}
 
@@ -37,82 +36,78 @@ public class UploadFinPftDetailsCtrl  extends GFCBaseCtrl<Object> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	int calcPercentage = 0;
 	int postingPercentage = 0;
-	
-	
+
 	public void onCreate$window_UploadFinPftDetails(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
 		setPageComponents(window_UploadFinPftDetails);
 
-		logger.debug("Entering : "+event);
-		
-		if(!"".equals(UploadProfitDetailProcess.RUNNING)) {
+		logger.debug("Entering : " + event);
+
+		if (!"".equals(UploadProfitDetailProcess.RUNNING)) {
 			this.btnUpload.setDisabled(true);
 			doFillExecutions(process);
 		} else {
 			timer.stop();
 			this.btnUpload.setDisabled(false);
-			
+
 		}
-		
-		if("COMPLETED".equals(UploadProfitDetailProcess.RUNNING)) {
-			Clients.showNotification(Labels.getLabel("labels_ProcessCompleted.value"),  "info", null, null, -1);
+
+		if ("COMPLETED".equals(UploadProfitDetailProcess.RUNNING)) {
+			Clients.showNotification(Labels.getLabel("labels_ProcessCompleted.value"), "info", null, null, -1);
 			UploadProfitDetailProcess.RUNNING = "";
 		}
-		
-		if("FAILED".equals(UploadProfitDetailProcess.RUNNING)) {
+
+		if ("FAILED".equals(UploadProfitDetailProcess.RUNNING)) {
 			doFillExecutions(process);
-			Clients.showNotification(Labels.getLabel("labels_ProcessFailed.value"),  "info", null, null, -1);
+			Clients.showNotification(Labels.getLabel("labels_ProcessFailed.value"), "info", null, null, -1);
 			UploadProfitDetailProcess.RUNNING = "";
 			timer.stop();
 			this.btnUpload.setDisabled(false);
 		}
-		
-		logger.debug("Leaving  : "+event);
+
+		logger.debug("Leaving  : " + event);
 	}
 
+	public void onClick$btnUpload(Event event) {
+		logger.debug("Entering : " + event);
 
-	public void onClick$btnUpload(Event event){
-		logger.debug("Entering : "+event);
-		
 		try {
 			process = UploadProfitDetailProcess.getInstance(getUploadFinPftDetailService());
 			this.timer.start();
 			this.btnUpload.setDisabled(true);
 			process.start();
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		}finally {
+		} finally {
 			this.btnUpload.setDisabled(false);
 		}
-		logger.debug("Leaving  : "+event);
+		logger.debug("Leaving  : " + event);
 	}
-	
-	
+
 	/**
 	 * Method for Rendering Step Execution Details List
+	 * 
 	 * @param stepExecution
 	 * @throws Exception
 	 */
 	private void doFillExecutions(UploadProfitDetailProcess process) throws Exception {
 		logger.debug("Entering");
-		this.processs.setProcess(process.getStatus());	
+		this.processs.setProcess(process.getStatus());
 		this.processs.render();
 		logger.debug("Leaving");
 	}
-	
-	
+
 	public void onTimer$timer(Event event) {
 		logger.debug("Entering" + event.toString());
 		Events.postEvent("onCreate", this.window_UploadFinPftDetails, event);
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -121,11 +116,8 @@ public class UploadFinPftDetailsCtrl  extends GFCBaseCtrl<Object> {
 		return uploadFinPftDetailService;
 	}
 
-
-	public void setUploadFinPftDetailService(
-			UploadFinPftDetailService uploadFinPftDetailService) {
+	public void setUploadFinPftDetailService(UploadFinPftDetailService uploadFinPftDetailService) {
 		this.uploadFinPftDetailService = uploadFinPftDetailService;
 	}
 
-	
 }

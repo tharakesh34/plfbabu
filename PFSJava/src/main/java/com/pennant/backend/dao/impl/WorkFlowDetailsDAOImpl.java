@@ -60,9 +60,9 @@ import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO{
-	 private static Logger logger = Logger.getLogger(WorkFlowDetailsDAOImpl.class);
-	 
+public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO {
+	private static Logger logger = Logger.getLogger(WorkFlowDetailsDAOImpl.class);
+
 	// Adding a new cache property :
 	private LoadingCache<String, WorkFlowDetails> workflowCache = CacheBuilder.newBuilder().maximumSize(100)
 			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<String, WorkFlowDetails>() {
@@ -78,7 +78,6 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		super();
 	}
 
-
 	/**
 	 * Fetch the Record Work Flow details by key field
 	 * 
@@ -89,7 +88,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 * @return workFlowDetails
 	 */
 	// Updating the existing methods :
-	public WorkFlowDetails getWorkFlowDetailsByID(long id){
+	public WorkFlowDetails getWorkFlowDetailsByID(long id) {
 		try {
 			return workflowCache.get(String.valueOf(id));
 		} catch (ExecutionException e) {
@@ -97,52 +96,51 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		}
 		return loadWorkFlowDetails(id);
 	}
-	
+
 	/**
-	 * This method get the module from method getWorkFlowDetailsByType() and set the new
-	 * record flag as true and return workFlowDetails
+	 * This method get the module from method getWorkFlowDetailsByType() and set the new record flag as true and return
+	 * workFlowDetails
 	 * 
-	 *  
+	 * 
 	 * @return workFlowDetails
 	 */
-	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType){
+	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType) {
 		logger.debug("Entering + getWorkFlowDetailsByFlowType()");
-		
-		WorkFlowDetails workFlowDetails= new WorkFlowDetails();
+
+		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
 		workFlowDetails.setWorkFlowType(workFlowType);
-		
-		String selectListSql = 	"select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc," +
-				" WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive ," +
-				" Version , LastMntBy, LastMntOn from WorkFlowDetails " +
-				" where WorkFlowType =:WorkFlowType AND WorkFlowActive=1"; 
+
+		String selectListSql = "select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc,"
+				+ " WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive ,"
+				+ " Version , LastMntBy, LastMntOn from WorkFlowDetails "
+				+ " where WorkFlowType =:WorkFlowType AND WorkFlowActive=1";
 		logger.debug("selectListSql: " + selectListSql);
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.
-						newInstance(WorkFlowDetails.class);
-		
-		try{
-			workFlowDetails = this.jdbcTemplate.queryForObject(
-					selectListSql, beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(WorkFlowDetails.class);
+
+		try {
+			workFlowDetails = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
-			workFlowDetails  = null;
+			workFlowDetails = null;
 		}
-		
+
 		return workFlowDetails;
 	}
 
-	public List<WorkFlowDetails> getActiveWorkFlowDetails(){
+	public List<WorkFlowDetails> getActiveWorkFlowDetails() {
 		logger.debug("Entering + getWorkFlowDetailsByID()");
-		String selectListSql = 	"select WorkFlowId, WorkFlowType, WorkFlowSubType," +
-				" WorkFlowDesc, WorkFlowXml, WorkFlowRoles, FirstTaskOwner, WorkFlowActive, " +
-				" Version , LastMntBy, LastMntOn from WorkFlowDetails where WorkFlowActive=1"; 
+		String selectListSql = "select WorkFlowId, WorkFlowType, WorkFlowSubType,"
+				+ " WorkFlowDesc, WorkFlowXml, WorkFlowRoles, FirstTaskOwner, WorkFlowActive, "
+				+ " Version , LastMntBy, LastMntOn from WorkFlowDetails where WorkFlowActive=1";
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new WorkFlowDetails());
 		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(WorkFlowDetails.class);
-		return this.jdbcTemplate.query(selectListSql, beanParameters,typeRowMapper);	
-		
+		return this.jdbcTemplate.query(selectListSql, beanParameters, typeRowMapper);
+
 	}
 
 	/**
@@ -151,64 +149,62 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 * save WorkFlowDetails
 	 * 
 	 * @param WorkFlowDetails
-	 *             		(workFlowDetails)
+	 *            (workFlowDetails)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return workFlowId
 	 * 
 	 */
-	public long save(WorkFlowDetails workFlowDetails){
+	public long save(WorkFlowDetails workFlowDetails) {
 		logger.debug("Entering + save()");
-		long  workFlowId = getNextId("SeqWorkFlowDetails");
+		long workFlowId = getNextId("SeqWorkFlowDetails");
 		workFlowDetails.setId(workFlowId);
-		String insertSql = 	"insert into WorkFlowDetails (WorkFlowId, WorkFlowType, " +
-					" WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles," +
-					" FirstTaskOwner , WorkFlowActive, Version , LastMntBy, LastMntOn, JsonDesign,roleCode,nextRoleCode,taskId,nextTaskId) " +
-					" values(:WorkFlowId, :WorkFlowType, :WorkFlowSubType, :WorkFlowDesc, " +
-					" :WorkFlowXml,:WorkFlowRoles, :FirstTaskOwner, :WorkFlowActive," +
-					" :Version , :LastMntBy, :LastMntOn, :JsonDesign, :roleCode, :nextRoleCode, :taskId, :nextTaskId)";
+		String insertSql = "insert into WorkFlowDetails (WorkFlowId, WorkFlowType, "
+				+ " WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles,"
+				+ " FirstTaskOwner , WorkFlowActive, Version , LastMntBy, LastMntOn, JsonDesign,roleCode,nextRoleCode,taskId,nextTaskId) "
+				+ " values(:WorkFlowId, :WorkFlowType, :WorkFlowSubType, :WorkFlowDesc, "
+				+ " :WorkFlowXml,:WorkFlowRoles, :FirstTaskOwner, :WorkFlowActive,"
+				+ " :Version , :LastMntBy, :LastMntOn, :JsonDesign, :roleCode, :nextRoleCode, :taskId, :nextTaskId)";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		this.jdbcTemplate.update(insertSql, beanParameters);
-		
+
 		return workFlowId;
- 	}
-	
-	public void update(WorkFlowDetails workFlowDetails){
+	}
+
+	public void update(WorkFlowDetails workFlowDetails) {
 		logger.debug("Entering + update()");
-		int recordCount=0;
-		String updateSql = "update WorkFlowDetails set WorkFlowActive= :WorkFlowActive  ," +
-							" version=:version, lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + 
-							"where WorkFlowId= :WorkFlowId" ;
+		int recordCount = 0;
+		String updateSql = "update WorkFlowDetails set WorkFlowActive= :WorkFlowActive  ,"
+				+ " version=:version, lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + "where WorkFlowId= :WorkFlowId";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		recordCount = this.jdbcTemplate.update(updateSql, beanParameters);
-		logger.info("Number of Records Update :"+recordCount);
+		logger.info("Number of Records Update :" + recordCount);
 		clearWorkflowCache(workFlowDetails.getWorkFlowId()); // added this line to clear the cache after update.
 	}
 
 	// Adding new private methods :
-    private WorkFlowDetails loadWorkFlowDetails(long id) {  // same code from the current method getWorkflowDetailsById()
-    		logger.debug("id = "+id);
-    		WorkFlowDetails workFlowDetails=  new WorkFlowDetails();
-           workFlowDetails.setId(id);
-           logger.debug("Entering + getWorkFlowDetailsByID()");
+	private WorkFlowDetails loadWorkFlowDetails(long id) { // same code from the current method getWorkflowDetailsById()
+		logger.debug("id = " + id);
+		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
+		workFlowDetails.setId(id);
+		logger.debug("Entering + getWorkFlowDetailsByID()");
 
-           String selectListSql = "select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc," +
-                        " WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive, " +
-                        "Version , LastMntBy, LastMntOn, JsonDesign from WorkFlowDetails where WorkFlowId =:WorkFlowId"; 
-           logger.debug("selectListSql: " + selectListSql);
+		String selectListSql = "select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc,"
+				+ " WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive, "
+				+ "Version , LastMntBy, LastMntOn, JsonDesign from WorkFlowDetails where WorkFlowId =:WorkFlowId";
+		logger.debug("selectListSql: " + selectListSql);
 
-           SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-           RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-                        .newInstance(WorkFlowDetails.class);
-           try{
-                  workFlowDetails = this.jdbcTemplate.queryForObject(
-                               selectListSql, beanParameters, typeRowMapper);  
-           }catch (EmptyResultDataAccessException e) {
-        	   logger.warn("Exception: ", e);
-                  workFlowDetails  = null;
-           }
-           return workFlowDetails;
-    }
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
+		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(WorkFlowDetails.class);
+		try {
+			workFlowDetails = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			workFlowDetails = null;
+		}
+		return workFlowDetails;
+	}
 
 	public void clearWorkflowCache(long id) {
 		try {
@@ -253,10 +249,10 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 			workFlowDetails = null;
 			version = 0;
 		}
-		System.out.println("Returning version = "+ version);
+		System.out.println("Returning version = " + version);
 		return version;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isworkFlowTypeExist(String workFlowType) {
@@ -268,12 +264,10 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		String selectListSql = "select count(*) from WorkFlowDetails  where WorkFlowType =:WorkFlowType";
 		logger.debug("selectListSql: " + selectListSql);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				workFlowDetails);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		boolean result = false;
 		try {
-			int rowCount = this.jdbcTemplate.queryForInt(
-					selectListSql, beanParameters);
+			int rowCount = this.jdbcTemplate.queryForInt(selectListSql, beanParameters);
 			if (rowCount > 0) {
 				result = true;
 			}

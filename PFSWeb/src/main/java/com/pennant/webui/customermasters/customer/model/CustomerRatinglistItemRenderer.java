@@ -37,25 +37,28 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerRatinglistItemRenderer implements ListitemRenderer<CustomerRating>, Serializable {
 
 	private static final long serialVersionUID = 6321996138703133595L;
-	
+
 	public CustomerRatinglistItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerRating rating, int count) throws Exception {
 
 		Listcell lc;
-		if(StringUtils.equals(rating.getRecordType(),PennantConstants.RCD_ADD) || StringUtils.equals(rating.getRecordType(),PennantConstants.RCD_UPD)){
+		if (StringUtils.equals(rating.getRecordType(), PennantConstants.RCD_ADD)
+				|| StringUtils.equals(rating.getRecordType(), PennantConstants.RCD_UPD)) {
 			lc = new Listcell(rating.getLovDescCustRatingTypeName());
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell(rating.getCustRatingType());
 			lc.setParent(item);
 		}
-		lc = new Listcell(rating.getCustRatingCode() + (StringUtils.isBlank(rating.getLovDesccustRatingCodeDesc())?"":"-" + rating.getLovDesccustRatingCodeDesc()));
+		lc = new Listcell(rating.getCustRatingCode() + (StringUtils.isBlank(rating.getLovDesccustRatingCodeDesc()) ? ""
+				: "-" + rating.getLovDesccustRatingCodeDesc()));
 		lc.setParent(item);
-		lc = new Listcell(rating.getCustRating() + (StringUtils.isBlank(rating.getLovDescCustRatingName())?"":"-" + rating.getLovDescCustRatingName()));
+		lc = new Listcell(rating.getCustRating() + (StringUtils.isBlank(rating.getLovDescCustRatingName()) ? ""
+				: "-" + rating.getLovDescCustRatingName()));
 		lc.setParent(item);
 		lc = new Listcell(rating.getRecordStatus());
 		lc.setParent(item);
@@ -63,5 +66,5 @@ public class CustomerRatinglistItemRenderer implements ListitemRenderer<Customer
 		lc.setParent(item);
 		item.setAttribute("data", rating);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerRatingItemDoubleClicked");
-	}	
+	}
 }

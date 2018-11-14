@@ -83,7 +83,6 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	private boolean enquiry = false;
 	private boolean newRecord = false;
 	private boolean newLegalECDetails = false;
-	
 
 	private LegalECDetail legalECDetail;
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
@@ -109,8 +108,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -138,8 +136,8 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 			}
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
-			} 
-			
+			}
+
 			this.legalECDetail.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -230,8 +228,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -243,8 +240,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -412,8 +408,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -510,7 +505,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public boolean isReadOnly(String componentName) {
 		if (isWorkFlowEnabled() || isNewLegalECDetails()) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -650,7 +645,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 				if (oldLegalDetail.getSeqNum() == aLegalECDetail.getSeqNum()) {
 					duplicateRecord = true;
 				}
-				
+
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalECDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {

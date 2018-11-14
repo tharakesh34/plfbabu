@@ -36,24 +36,24 @@ public class CustomerIncomeValidation {
 		return customerIncomeDAO;
 	}
 
-	public AuditHeader incomeValidation(AuditHeader auditHeader, String method){
+	public AuditHeader incomeValidation(AuditHeader auditHeader, String method) {
 		customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(new Customer());
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), 0, method, auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), 0, method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
 
-	public List<AuditDetail> incomeListValidation(CustomerDetails customerDetails, String method,String  usrLanguage){
+	public List<AuditDetail> incomeListValidation(CustomerDetails customerDetails, String method, String usrLanguage) {
 		this.customerDetails = customerDetails;
 		List<AuditDetail> auditDetails = customerDetails.getAuditDetailMap().get("Income");
-		if(auditDetails!=null && !auditDetails.isEmpty()){
+		if (auditDetails != null && !auditDetails.isEmpty()) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), 0,  method, usrLanguage);
-				details.add(auditDetail); 		
-				if(!(auditDetail.getErrorDetails() != null && auditDetail.getErrorDetails().isEmpty())){
+				AuditDetail auditDetail = validate(auditDetails.get(i), 0, method, usrLanguage);
+				details.add(auditDetail);
+				if (!(auditDetail.getErrorDetails() != null && auditDetail.getErrorDetails().isEmpty())) {
 					break;
 				}
 			}
@@ -62,8 +62,8 @@ public class CustomerIncomeValidation {
 		return new ArrayList<AuditDetail>();
 	}
 
-	
-	public List<AuditDetail> incomeListValidation(List<AuditDetail> auditDetails, long samplingId, String method, String usrLanguage) {
+	public List<AuditDetail> incomeListValidation(List<AuditDetail> auditDetails, long samplingId, String method,
+			String usrLanguage) {
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
@@ -122,7 +122,7 @@ public class CustomerIncomeValidation {
 
 				if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCustomerIncome != null || tempCustomerIncome != null) { // if records already exists in the
-																					// main table
+																						// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

@@ -30,9 +30,9 @@ import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.systemmasters.AcademicService;
 import com.pennant.webui.systemmasters.academic.model.AcademicListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Academic/AcademicList.zul file.
@@ -199,7 +199,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("academic", academic);
 		arg.put("academicListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Academic/AcademicDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -228,7 +228,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

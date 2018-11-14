@@ -6,8 +6,8 @@ import java.util.Date;
 
 public class FinODAmzTaxDetail implements Serializable {
 
-    private static final long serialVersionUID = -5722811453434523809L;
-	
+	private static final long serialVersionUID = -5722811453434523809L;
+
 	private long taxSeqId = 0;
 	private String finReference;
 	private Date valueDate;
@@ -19,15 +19,15 @@ public class FinODAmzTaxDetail implements Serializable {
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
 	private BigDecimal TotalGST = BigDecimal.ZERO;
-	
+
 	public FinODAmzTaxDetail() {
-		
+
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getTaxSeqId() {
 		return taxSeqId;
 	}
@@ -35,7 +35,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	public void setTaxSeqId(long taxSeqId) {
 		this.taxSeqId = taxSeqId;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -115,5 +115,5 @@ public class FinODAmzTaxDetail implements Serializable {
 	public void setTaxType(String taxType) {
 		this.taxType = taxType;
 	}
-	
+
 }

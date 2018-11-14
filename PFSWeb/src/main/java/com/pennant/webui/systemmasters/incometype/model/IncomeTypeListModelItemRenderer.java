@@ -72,8 +72,8 @@ public class IncomeTypeListModelItemRenderer implements ListitemRenderer<IncomeT
 	public void render(Listitem item, IncomeType incomeType, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(PennantAppUtil.getlabelDesc(incomeType.getIncomeExpense(),
-				PennantStaticListUtil.getIncomeExpense()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(incomeType.getIncomeExpense(), PennantStaticListUtil.getIncomeExpense()));
 		lc.setParent(item);
 		lc = new Listcell(incomeType.getCategory());
 		lc.setParent(item);

@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.SubSegment;
 
 /**
@@ -49,9 +50,12 @@ import com.pennant.backend.model.systemmasters.SubSegment;
  * 
  */
 public interface SubSegmentDAO {
-	
-	SubSegment getSubSegmentById(String id,String subSegmentCode,String type);
-	void update(SubSegment subSegment,String type);
-	void delete(SubSegment subSegment,String type);
-	void save(SubSegment subSegment,String type);
+
+	SubSegment getSubSegmentById(String id, String subSegmentCode, String type);
+
+	void update(SubSegment subSegment, String type);
+
+	void delete(SubSegment subSegment, String type);
+
+	void save(SubSegment subSegment, String type);
 }

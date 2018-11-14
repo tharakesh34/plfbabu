@@ -94,11 +94,11 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 	protected Textbox code; // autowired
 	protected Textbox description; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient QueryCategoryService queryCategoryService;
 
 	/**
@@ -136,7 +136,8 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 
 		registerField("id");
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description, Operators.STRING);
+		registerField("description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -184,7 +185,6 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -195,7 +195,7 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 
 	public void onQueryCategoryItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxQueryCategory.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -205,13 +205,13 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( querycategory.getId());
+		whereCond.append(querycategory.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(querycategory.getVersion());
-	
+
 		if (doCheckAuthority(querycategory, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && querycategory.getWorkflowId() == 0) {
@@ -221,10 +221,10 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -237,7 +237,7 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("queryCategory", querycategory);
 		arg.put("queryCategoryListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryCategory/QueryCategoryDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -267,7 +267,7 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

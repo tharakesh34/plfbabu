@@ -57,8 +57,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * Validates the Frequency code and returns the FrequencyDetails object with any
- * errors.
+ * Validates the Frequency code and returns the FrequencyDetails object with any errors.
  */
 public class FrequencyUtil implements Serializable {
 	private static final long serialVersionUID = -1464410860290217531L;
@@ -141,8 +140,8 @@ public class FrequencyUtil implements Serializable {
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_QUARTERLY, Labels.getLabel("label_Select_Quarterly")));
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, Labels.getLabel("label_Select_BiMonthly")));
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, Labels.getLabel("label_Select_Monthly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, Labels
-				.getLabel("label_Select_Fortnightly")));
+		frequencyCode
+				.add(new ValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, Labels.getLabel("label_Select_Fortnightly")));
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, Labels.getLabel("label_Select_BiWeekly")));
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, Labels.getLabel("label_Select_Weekly")));
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_DAILY, Labels.getLabel("label_Select_Daily")));
@@ -205,7 +204,7 @@ public class FrequencyUtil implements Serializable {
 			break;
 		default:
 			break;
-			
+
 		}
 
 		return arrfrqMonth;
@@ -298,8 +297,7 @@ public class FrequencyUtil implements Serializable {
 	}
 
 	/*
-	 * Parse the Frequency and set any errors. Validate Frequency code,month and
-	 * day and set any errors.
+	 * Parse the Frequency and set any errors. Validate Frequency code,month and day and set any errors.
 	 * 
 	 * @Parm FrequencyDetails
 	 * 
@@ -321,8 +319,8 @@ public class FrequencyUtil implements Serializable {
 		switch (frequencyDetail.getFrequencyCode().charAt(0)) {
 		case 'Y':
 
-			frequencyDetail.setErrorDetails(validMonthDay(1, 12, 1,
-					frqMthDays[frequencyDetail.getFrequencyMonth() - 1], frequencyDetail));
+			frequencyDetail.setErrorDetails(
+					validMonthDay(1, 12, 1, frqMthDays[frequencyDetail.getFrequencyMonth() - 1], frequencyDetail));
 
 			if (frequencyDetail.getErrorDetails() != null) {
 				return frequencyDetail;
@@ -376,8 +374,8 @@ public class FrequencyUtil implements Serializable {
 				return frequencyDetail;
 			}
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Monthly") + ","
-					+ frequencyDetail.getFrequencyDay());
+			frequencyDetail.setFrequencyDescription(
+					Labels.getLabel("label_Select_Monthly") + "," + frequencyDetail.getFrequencyDay());
 			break;
 
 		case 'F':
@@ -387,8 +385,8 @@ public class FrequencyUtil implements Serializable {
 				return frequencyDetail;
 			}
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Fortnightly") + ","
-					+ frequencyDetail.getFrequencyDay());
+			frequencyDetail.setFrequencyDescription(
+					Labels.getLabel("label_Select_Fortnightly") + "," + frequencyDetail.getFrequencyDay());
 			break;
 
 		case 'X':
@@ -423,14 +421,14 @@ public class FrequencyUtil implements Serializable {
 			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Daily"));
 			break;
 		default:
-			frequencyDetail
-					.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, "Invalid Frequency Code", null));
+			frequencyDetail.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, "Invalid Frequency Code", null));
 		}
 
 		return frequencyDetail;
 	}
 
-	private static ErrorDetail getErrorDetail(String errorField, String errorCode, String[] errParm, String[] valueParm) {
+	private static ErrorDetail getErrorDetail(String errorField, String errorCode, String[] errParm,
+			String[] valueParm) {
 		return ErrorUtil.getErrorDetail(new ErrorDetail(errorField, errorCode, errParm, valueParm),
 				SessionUserDetails.getUserLanguage());
 	}
@@ -448,15 +446,15 @@ public class FrequencyUtil implements Serializable {
 
 		if (StringUtils.isBlank(frequencyDetails.getFrequency())) {
 			errParm[0] = " ";
-			frequencyDetails.setErrorDetails(getErrorDetail("Frequency", "51001", errParm,
-					new String[] { frequencyDetails.getFrequency() }));
+			frequencyDetails.setErrorDetails(
+					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
 			return frequencyDetails;
 		}
 
 		if (StringUtils.trimToEmpty(frequencyDetails.getFrequency()).length() != 5) {
 			errParm[0] = frequencyDetails.getFrequency();
-			frequencyDetails.setErrorDetails(getErrorDetail("Frequency", "51001", errParm,
-					new String[] { frequencyDetails.getFrequency() }));
+			frequencyDetails.setErrorDetails(
+					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
 			return frequencyDetails;
 		}
 
@@ -466,8 +464,8 @@ public class FrequencyUtil implements Serializable {
 			frequencyDetails.setFrequencyMonth(getIntFrequencyMth(frequencyDetails.getFrequency()));
 		} catch (NumberFormatException nfe) {
 			errParm[0] = Labels.getLabel("common.Month") + ":" + getFrequencyMth(frequencyDetails.getFrequency());
-			frequencyDetails.setErrorDetails(getErrorDetail("Frequency", "51001", errParm,
-					new String[] { frequencyDetails.getFrequency() }));
+			frequencyDetails.setErrorDetails(
+					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
 			return frequencyDetails;
 		}
 
@@ -475,8 +473,8 @@ public class FrequencyUtil implements Serializable {
 			frequencyDetails.setFrequencyDay(getIntFrequencyDay(frequencyDetails.getFrequency()));
 		} catch (NumberFormatException nfe) {
 			errParm[0] = Labels.getLabel("common.Day") + ":" + getFrequencyDay(frequencyDetails.getFrequency());
-			frequencyDetails.setErrorDetails(getErrorDetail("Frequency", "51001", errParm,
-					new String[] { frequencyDetails.getFrequency() }));
+			frequencyDetails.setErrorDetails(
+					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
 			return frequencyDetails;
 		}
 
@@ -550,7 +548,7 @@ public class FrequencyUtil implements Serializable {
 			int daysToAdd = 0;
 			String mainFrqString = freqDetails2.toString().substring(0, 1);
 
-			if ("W".equals(mainFrqString) ||"X".equals(mainFrqString)) {
+			if ("W".equals(mainFrqString) || "X".equals(mainFrqString)) {
 				return false;
 			}
 
@@ -710,8 +708,8 @@ public class FrequencyUtil implements Serializable {
 
 		if (terms <= 0) {
 			errParm[0] = ":" + terms;
-			frequencyDetails.setErrorDetails(getErrorDetail("Terms", "51003", errParm,
-					new String[] { String.valueOf(terms) }));
+			frequencyDetails
+					.setErrorDetails(getErrorDetail("Terms", "51003", errParm, new String[] { String.valueOf(terms) }));
 			return frequencyDetails;
 		}
 
@@ -746,7 +744,8 @@ public class FrequencyUtil implements Serializable {
 		FrequencyDetails frequencyDetails = getNextDate(frequency, terms, baseDate, handlerType, includeBaseDate);
 		int days = DateUtility.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
 		if (days <= requestedMinDays && requestedMinDays != 0) {
-			frequencyDetails = getNextDate(frequency, terms, frequencyDetails.getNextFrequencyDate(), handlerType, false);
+			frequencyDetails = getNextDate(frequency, terms, frequencyDetails.getNextFrequencyDate(), handlerType,
+					false);
 		}
 		return frequencyDetails;
 	}
@@ -800,14 +799,14 @@ public class FrequencyUtil implements Serializable {
 			calendarList.add((Calendar) freqDate.clone());
 		}
 
-		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
-				PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtility
+				.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
 		frequencyDetails.setScheduleList(calendarList);
 		return frequencyDetails;
 	}
 
 	private static FrequencyDetails getFortnightlySchedule(int terms, Date date, FrequencyDetails frequencyDetails,
-			String handlerType,int increment, boolean includeBaseDate) {
+			String handlerType, int increment, boolean includeBaseDate) {
 
 		List<Calendar> calendarList = new ArrayList<Calendar>();
 		Calendar baseDate = Calendar.getInstance();
@@ -857,9 +856,9 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
-				PennantConstants.DBDateFormat)));
-		
+		frequencyDetails.setNextFrequencyDate(DateUtility
+				.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
+
 		return frequencyDetails;
 
 	}
@@ -899,8 +898,8 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
-				PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtility
+				.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
 		return frequencyDetails;
 
 	}
@@ -962,8 +961,8 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
-				PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtility
+				.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
 		return frequencyDetails;
 
 	}
@@ -989,15 +988,14 @@ public class FrequencyUtil implements Serializable {
 			calendarList.add((Calendar) baseDate.clone());
 		}
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(),
-				PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtility
+				.getDBDate(DateUtility.formatDate(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
 		return frequencyDetails;
 
 	}
 
 	/**
-	 * Method for Checking a frequency code and Date, whether those are equal or
-	 * not
+	 * Method for Checking a frequency code and Date, whether those are equal or not
 	 * 
 	 * @param frequency
 	 * @param date
@@ -1033,8 +1031,8 @@ public class FrequencyUtil implements Serializable {
 			return false;
 		case 'X':
 
-			if ((weekDay == freqDetails.getFrequencyDay()) || (weekDay == (freqDetails.getFrequencyDay() - 7))
-					&& (dayOfMonth <= 28)) {
+			if ((weekDay == freqDetails.getFrequencyDay())
+					|| (weekDay == (freqDetails.getFrequencyDay() - 7)) && (dayOfMonth <= 28)) {
 				return true;
 			}
 			return false;
@@ -1079,8 +1077,8 @@ public class FrequencyUtil implements Serializable {
 		case 'H':
 
 			if ((freqDetails.getFrequencyMonth() == 1 || freqDetails.getFrequencyMonth() == 2
-					|| freqDetails.getFrequencyMonth() == 3 || freqDetails.getFrequencyMonth() == 4 || freqDetails
-					.getFrequencyMonth() == 5) && (month % 6 == freqDetails.getFrequencyMonth())) {
+					|| freqDetails.getFrequencyMonth() == 3 || freqDetails.getFrequencyMonth() == 4
+					|| freqDetails.getFrequencyMonth() == 5) && (month % 6 == freqDetails.getFrequencyMonth())) {
 
 				return validateDate(freqDetails.getFrequencyDay(), day, maxDaysOfMonth);
 			} else if ((freqDetails.getFrequencyMonth() == 6) && (month % 6 == 0)) {
@@ -1093,8 +1091,8 @@ public class FrequencyUtil implements Serializable {
 					|| freqDetails.getFrequencyMonth() == 3 || freqDetails.getFrequencyMonth() == 4
 					|| freqDetails.getFrequencyMonth() == 5 || freqDetails.getFrequencyMonth() == 6
 					|| freqDetails.getFrequencyMonth() == 7 || freqDetails.getFrequencyMonth() == 8
-					|| freqDetails.getFrequencyMonth() == 9 || freqDetails.getFrequencyMonth() == 10 || freqDetails
-					.getFrequencyMonth() == 11) && (month % 12 == freqDetails.getFrequencyMonth())) {
+					|| freqDetails.getFrequencyMonth() == 9 || freqDetails.getFrequencyMonth() == 10
+					|| freqDetails.getFrequencyMonth() == 11) && (month % 12 == freqDetails.getFrequencyMonth())) {
 
 				return validateDate(freqDetails.getFrequencyDay(), day, maxDaysOfMonth);
 			} else if ((freqDetails.getFrequencyMonth() == 12) && (month % 12 == 0)) {
@@ -1208,8 +1206,7 @@ public class FrequencyUtil implements Serializable {
 	}
 
 	/**
-	 * Method for Validating Frequencies as Frequency 1 must be less than or
-	 * Equal to Frequency 2
+	 * Method for Validating Frequencies as Frequency 1 must be less than or Equal to Frequency 2
 	 * 
 	 * @param frequency1
 	 * @param frequency2

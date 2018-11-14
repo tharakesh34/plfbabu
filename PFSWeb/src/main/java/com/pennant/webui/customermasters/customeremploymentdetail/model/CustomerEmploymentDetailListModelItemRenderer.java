@@ -57,14 +57,15 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerEmploymentDetailListModelItemRenderer implements ListitemRenderer<CustomerEmploymentDetail>, Serializable {
+public class CustomerEmploymentDetailListModelItemRenderer
+		implements ListitemRenderer<CustomerEmploymentDetail>, Serializable {
 
 	private static final long serialVersionUID = -6978886004363491169L;
-	
+
 	public CustomerEmploymentDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerEmploymentDetail customerEmploymentDetail, int count) throws Exception {
 
@@ -86,10 +87,10 @@ public class CustomerEmploymentDetailListModelItemRenderer implements ListitemRe
 
 		item.setAttribute("id", customerEmploymentDetail.getCustID());
 		item.setAttribute("empName", customerEmploymentDetail.getCustEmpName());
-		
+
 		item.setAttribute("custEmpId", customerEmploymentDetail.getCustEmpId());
 		item.setAttribute("data", customerEmploymentDetail);
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmploymentDetailItemDoubleClicked");
 	}
 }

@@ -11,22 +11,22 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -7903112168142979313L;
-	
-	private long                insId;
-	private String				reference;
-	private String				module;
-	private String				insuranceType;
-	private String				insReference;
-	private Date				InsSchDate;
-	private BigDecimal			insuranceRate = BigDecimal.ZERO;
-	private String				insuranceFrq;
-	private BigDecimal			amount = BigDecimal.ZERO;
-	private boolean				newRecord			= false;
-	private FinSchFrqInsurance	befImage;
-	private LoggedInUser		userDetails;
-	private BigDecimal			closingBalance;
-	private BigDecimal          insurancePaid= BigDecimal.ZERO;
-	private BigDecimal          insuranceWaived= BigDecimal.ZERO;
+
+	private long insId;
+	private String reference;
+	private String module;
+	private String insuranceType;
+	private String insReference;
+	private Date InsSchDate;
+	private BigDecimal insuranceRate = BigDecimal.ZERO;
+	private String insuranceFrq;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private boolean newRecord = false;
+	private FinSchFrqInsurance befImage;
+	private LoggedInUser userDetails;
+	private BigDecimal closingBalance;
+	private BigDecimal insurancePaid = BigDecimal.ZERO;
+	private BigDecimal insuranceWaived = BigDecimal.ZERO;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -51,7 +51,7 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 	public void setId(String id) {
 		this.reference = id;
 	}
-	
+
 	public long getInsId() {
 		return insId;
 	}
@@ -59,7 +59,7 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 	public void setInsId(long insId) {
 		this.insId = insId;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -99,6 +99,7 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 	public BigDecimal getInsuranceRate() {
 		return insuranceRate;
 	}
+
 	public void setInsuranceRate(BigDecimal insuranceRate) {
 		this.insuranceRate = insuranceRate;
 	}
@@ -158,6 +159,7 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 	public void setClosingBalance(BigDecimal closingBalance) {
 		this.closingBalance = closingBalance;
 	}
+
 	public BigDecimal getInsurancePaid() {
 		return insurancePaid;
 	}
@@ -173,6 +175,5 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 	public void setInsuranceWaived(BigDecimal insuranceWaived) {
 		this.insuranceWaived = insuranceWaived;
 	}
-
 
 }

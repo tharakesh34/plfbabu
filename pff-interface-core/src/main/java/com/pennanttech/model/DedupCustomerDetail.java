@@ -65,42 +65,42 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class DedupCustomerDetail implements java.io.Serializable {
-	private static final long			serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long						custID;
-	private boolean						newRecord			= false;
+	private long custID;
+	private boolean newRecord = false;
 
 	@XmlElement(name = "cif")
-	private String						custCIF;
+	private String custCIF;
 
-	private String						sourceId;
-	
+	private String sourceId;
+
 	private String finReference;
 	private String finType;
 	private String applicationNo;
 	private String accountNumber;
-	
+
 	@XmlElement(name = "personalInfo")
-	private Customer					customer;
+	private Customer customer;
 
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
-	private List<CustomerDocument>		customerDocumentsList;
+	private List<CustomerDocument> customerDocumentsList;
 
 	@XmlElementWrapper(name = "addresses")
 	@XmlElement(name = "address")
-	private List<CustomerAddres>		addressList;
+	private List<CustomerAddres> addressList;
 
 	@XmlElementWrapper(name = "phones")
 	@XmlElement(name = "phone")
-	private List<CustomerPhoneNumber>	customerPhoneNumList;
+	private List<CustomerPhoneNumber> customerPhoneNumList;
 
 	@XmlElementWrapper(name = "emails")
 	@XmlElement(name = "email")
-	private List<CustomerEMail>			customerEMailList;
+	private List<CustomerEMail> customerEMailList;
 
 	@XmlElement
-	private WSReturnStatus				returnStatus		= null;
+	private WSReturnStatus returnStatus = null;
 
 	public long getCustID() {
 		return custID;
@@ -216,16 +216,12 @@ public class DedupCustomerDetail implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "DedupCustomerDetail [custID=" + custID + ", newRecord="
-				+ newRecord + ", custCIF=" + custCIF + ", sourceId=" + sourceId
-				+ ", finReference=" + finReference + ", finType=" + finType
-				+ ", applicationNo=" + applicationNo + ", accountNumber="
-				+ accountNumber + ", customer=" + customer
-				+ ", customerDocumentsList=" + customerDocumentsList
-				+ ", addressList=" + addressList + ", customerPhoneNumList="
-				+ customerPhoneNumList + ", customerEMailList="
-				+ customerEMailList + ", returnStatus=" + returnStatus + "]";
+		return "DedupCustomerDetail [custID=" + custID + ", newRecord=" + newRecord + ", custCIF=" + custCIF
+				+ ", sourceId=" + sourceId + ", finReference=" + finReference + ", finType=" + finType
+				+ ", applicationNo=" + applicationNo + ", accountNumber=" + accountNumber + ", customer=" + customer
+				+ ", customerDocumentsList=" + customerDocumentsList + ", addressList=" + addressList
+				+ ", customerPhoneNumList=" + customerPhoneNumList + ", customerEMailList=" + customerEMailList
+				+ ", returnStatus=" + returnStatus + "]";
 	}
 
-	
 }

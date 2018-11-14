@@ -56,12 +56,20 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 public interface CustomerPhoneNumberService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerPhoneNumber getCustomerPhoneNumberById(long id,String typeCode);
-	CustomerPhoneNumber getApprovedCustomerPhoneNumberById(long id,String typeCode);
+
+	CustomerPhoneNumber getCustomerPhoneNumberById(long id, String typeCode);
+
+	CustomerPhoneNumber getApprovedCustomerPhoneNumberById(long id, String typeCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<CustomerPhoneNumber> getApprovedCustomerPhoneNumberById(long id);
-	AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber,String method);
+
+	AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber, String method);
+
 	int getVersion(long id, String typeCode);
 }

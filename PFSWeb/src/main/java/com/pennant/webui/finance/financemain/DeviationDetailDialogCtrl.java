@@ -37,51 +37,51 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
-	private static final long	serialVersionUID		= 2290501784830847866L;
-	private static final Logger	logger					= Logger.getLogger(DeviationDetailDialogCtrl.class);
+	private static final long serialVersionUID = 2290501784830847866L;
+	private static final Logger logger = Logger.getLogger(DeviationDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window			window_deviationDetailDialog;												// autoWired
-	protected Borderlayout		borderlayoutDeviationDetail;												// autoWired
-	protected North				northdeviationDetailDialog;
-	protected Button			btnProceed;
+	protected Window window_deviationDetailDialog; // autoWired
+	protected Borderlayout borderlayoutDeviationDetail; // autoWired
+	protected North northdeviationDetailDialog;
+	protected Button btnProceed;
 
-	protected Listbox			listBoxAutoDeviations;														// autoWired
-	protected Listbox			listBoxManualDeviations;													// autoWired
+	protected Listbox listBoxAutoDeviations; // autoWired
+	protected Listbox listBoxManualDeviations; // autoWired
 
-	private FinBasicDetailsCtrl	finBasicDetailsCtrl;
-	protected Groupbox			finBasicdetails;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+	protected Groupbox finBasicdetails;
 
-	private Object				financeMainDialogCtrl	= null;
-	private FinanceMain			financeMain;
-	private FinanceDetail		financeDetail			= null;
+	private Object financeMainDialogCtrl = null;
+	private FinanceMain financeMain;
+	private FinanceDetail financeDetail = null;
 
-	List<DeviationParam>		eligibilitiesList		= PennantAppUtil.getDeviationParams();
-	boolean						enquiry					= false;
-	boolean						loanEnquiry				= false;
-	int							ccyformat				= 0;
-	private String				roleCode				= null;
+	List<DeviationParam> eligibilitiesList = PennantAppUtil.getDeviationParams();
+	boolean enquiry = false;
+	boolean loanEnquiry = false;
+	int ccyformat = 0;
+	private String roleCode = null;
 
-	Tab							parenttab				= null;
-	private Tabpanel			tabPanel_dialogWindow;
+	Tab parenttab = null;
+	private Tabpanel tabPanel_dialogWindow;
 
-	
 	//Manual deviations
-	List<FinanceDeviations>		manualDeviationList		= null;
-	private Button				btnNew_ManualDeviation;
+	List<FinanceDeviations> manualDeviationList = null;
+	private Button btnNew_ManualDeviation;
 	List<ValueLabel> delegators = new ArrayList<>();
 
 	@Autowired
-	private DeviationHelper		deviationHelper;
+	private DeviationHelper deviationHelper;
 	@Autowired
-	private DeviationRenderer	deviationRenderer;
+	private DeviationRenderer deviationRenderer;
 
 	//for enquiry only
-	List<FinanceDeviations>		approvalLoanEnqList			= null;
-	List<FinanceDeviations>		inprocessLoanEnqList		= null;
+	List<FinanceDeviations> approvalLoanEnqList = null;
+	List<FinanceDeviations> inprocessLoanEnqList = null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -136,11 +136,11 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			if (arguments.containsKey("approvalLoanEnqList")) {
 				approvalLoanEnqList = (List<FinanceDeviations>) arguments.get("approvalLoanEnqList");
 			}
-			
+
 			if (arguments.containsKey("inprocessLoanEnqList")) {
 				inprocessLoanEnqList = (List<FinanceDeviations>) arguments.get("inprocessLoanEnqList");
 			}
-			
+
 			if (arguments.containsKey("ccyformat")) {
 				ccyformat = Integer.parseInt(arguments.get("ccyformat").toString());
 			}
@@ -168,9 +168,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				doCheckRight();
 			}
 			if (loanEnquiry || enquiry) {
-				this.btnNew_ManualDeviation.setVisible(false);	
+				this.btnNew_ManualDeviation.setVisible(false);
 			}
-			
+
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -208,24 +208,26 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				this.tabPanel_dialogWindow.appendChild(this.window_deviationDetailDialog);
 
 				//Auto deviation
-				List<FinanceDeviations> listAutoApproved =null;
-				List<FinanceDeviations> listManualApproved=null;
-				if (approvalLoanEnqList!=null) {
+				List<FinanceDeviations> listAutoApproved = null;
+				List<FinanceDeviations> listManualApproved = null;
+				if (approvalLoanEnqList != null) {
 					deviationRenderer.setDescriptions(approvalLoanEnqList);
-					listAutoApproved=deviationHelper.getDeviationDetais(approvalLoanEnqList, false);
+					listAutoApproved = deviationHelper.getDeviationDetais(approvalLoanEnqList, false);
 					listManualApproved = deviationHelper.getDeviationDetais(approvalLoanEnqList, true);
 				}
 				//manual deviation
-				List<FinanceDeviations> listAutoInProgress =null;
-				List<FinanceDeviations> listManualInProgress=null;
-				if (inprocessLoanEnqList!=null) {
+				List<FinanceDeviations> listAutoInProgress = null;
+				List<FinanceDeviations> listManualInProgress = null;
+				if (inprocessLoanEnqList != null) {
 					deviationRenderer.setDescriptions(inprocessLoanEnqList);
-					listAutoInProgress=deviationHelper.getDeviationDetais(inprocessLoanEnqList, false);
+					listAutoInProgress = deviationHelper.getDeviationDetais(inprocessLoanEnqList, false);
 					listManualInProgress = deviationHelper.getDeviationDetais(inprocessLoanEnqList, true);
 				}
-				
-				deviationRenderer.renderAutoDeviations(listAutoInProgress, listAutoApproved, this.listBoxAutoDeviations);
-				deviationRenderer.renderManualDeviations(listManualInProgress, listManualApproved, this.listBoxManualDeviations);
+
+				deviationRenderer.renderAutoDeviations(listAutoInProgress, listAutoApproved,
+						this.listBoxAutoDeviations);
+				deviationRenderer.renderManualDeviations(listManualInProgress, listManualApproved,
+						this.listBoxManualDeviations);
 				return;
 			} else {
 
@@ -453,6 +455,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		logger.debug(" Leaving ");
 
 	}
+
 	private String getReference(FinanceDeviations deviations) {
 		return deviations.getFinReference() + "_" + deviations.getDeviationId();
 	}

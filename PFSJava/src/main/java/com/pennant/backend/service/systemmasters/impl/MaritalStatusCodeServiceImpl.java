@@ -64,7 +64,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>MaritalStatusCode</b>.<br>
  * 
  */
-public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCode> implements MaritalStatusCodeService {
+public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCode>
+		implements MaritalStatusCodeService {
 
 	private static Logger logger = Logger.getLogger(MaritalStatusCodeServiceImpl.class);
 
@@ -74,7 +75,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	public MaritalStatusCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,16 +97,12 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTMaritalStatusCodes/BMTMaritalStatusCodes_Temp by using
-	 * MaritalStatusCodeDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using
-	 * MaritalStatusCodeDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtBMTMaritalStatusCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTMaritalStatusCodes/BMTMaritalStatusCodes_Temp by using MaritalStatusCodeDAO's save method b) Update the Record
+	 * in the table. based on the module workFlow Configuration. by using MaritalStatusCodeDAO's update method 3) Audit
+	 * the record in to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -122,11 +119,10 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 			return auditHeader;
 		}
 		TableType tableType = TableType.MAIN_TAB;
-		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader
-		.getAuditDetail().getModelData();
+		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader.getAuditDetail().getModelData();
 
 		if (maritalStatusCode.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (maritalStatusCode.isNew()) {
@@ -143,12 +139,10 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTMaritalStatusCodes by using MaritalStatusCodeDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTMaritalStatusCodes by using MaritalStatusCodeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,8 +158,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader
-		.getAuditDetail().getModelData();
+		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader.getAuditDetail().getModelData();
 
 		getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.MAIN_TAB);
 
@@ -175,8 +168,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * getMaritalStatusCodeById fetch the details by using
-	 * MaritalStatusCodeDAO's getMaritalStatusCodeById method.
+	 * getMaritalStatusCodeById fetch the details by using MaritalStatusCodeDAO's getMaritalStatusCodeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -190,10 +182,8 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * getApprovedMaritalStatusCodeById fetch the details by using
-	 * MaritalStatusCodeDAO's getMaritalStatusCodeById method . with parameter
-	 * id and type as blank. it fetches the approved records from the
-	 * BMTMaritalStatusCodes.
+	 * getApprovedMaritalStatusCodeById fetch the details by using MaritalStatusCodeDAO's getMaritalStatusCodeById
+	 * method . with parameter id and type as blank. it fetches the approved records from the BMTMaritalStatusCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -204,22 +194,16 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getMaritalStatusCodeDAO().delete with parameters
-	 * maritalStatusCode,"" b) NEW Add new record in to main table by using
-	 * getMaritalStatusCodeDAO().save with parameters maritalStatusCode,"" c)
-	 * EDIT Update record in the main table by using
-	 * getMaritalStatusCodeDAO().update with parameters maritalStatusCode,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getMaritalStatusCodeDAO().delete with parameters
-	 * maritalStatusCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getMaritalStatusCodeDAO().delete with
+	 * parameters maritalStatusCode,"" b) NEW Add new record in to main table by using getMaritalStatusCodeDAO().save
+	 * with parameters maritalStatusCode,"" c) EDIT Update record in the main table by using
+	 * getMaritalStatusCodeDAO().update with parameters maritalStatusCode,"" 3) Delete the record from the workFlow
+	 * table by using getMaritalStatusCodeDAO().delete with parameters maritalStatusCode,"_Temp" 4) Audit the record in
+	 * to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader) based on
+	 * the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -238,14 +222,14 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		}
 		MaritalStatusCode maritalStatusCode = new MaritalStatusCode();
 		BeanUtils.copyProperties((MaritalStatusCode) auditHeader.getAuditDetail().getModelData(), maritalStatusCode);
-		
+
 		getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					maritalStatusCodeDAO.getMaritalStatusCodeById(maritalStatusCode.getId(),""));
+			auditHeader.getAuditDetail()
+					.setBefImage(maritalStatusCodeDAO.getMaritalStatusCodeById(maritalStatusCode.getId(), ""));
 		}
-		
+
 		if (maritalStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
@@ -282,13 +266,10 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getMaritalStatusCodeDAO().delete with
-	 * parameters maritalStatusCode,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTMaritalStatusCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getMaritalStatusCodeDAO().delete with parameters maritalStatusCode,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -304,8 +285,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader
-		.getAuditDetail().getModelData();
+		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.TEMP_TAB);
@@ -316,10 +296,8 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -327,7 +305,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -336,40 +314,40 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getMaritalStatusCodeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getMaritalStatusCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	
+
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
 		// Get the model object.
 		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditDetail.getModelData();
 		// Check the unique keys.
-		if (maritalStatusCode.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
+		if (maritalStatusCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
 				&& maritalStatusCodeDAO.isDuplicateKey(maritalStatusCode.getMaritalStsCode(),
 						maritalStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_MaritalStsCode") + ":"+ maritalStatusCode.getMaritalStsCode();
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			parameters[0] = PennantJavaUtil.getLabel("label_MaritalStsCode") + ":"
+					+ maritalStatusCode.getMaritalStsCode();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		if (maritalStatusCode.isSystemDefault()) {
-			String dftMaritalStsCode = getMaritalStatusCodeDAO().getSystemDefaultCount(maritalStatusCode.getMaritalStsCode());
+			String dftMaritalStsCode = getMaritalStatusCodeDAO()
+					.getSystemDefaultCount(maritalStatusCode.getMaritalStsCode());
 			if (StringUtils.isNotEmpty(dftMaritalStsCode)) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
-						new String[]{dftMaritalStsCode,PennantJavaUtil.getLabel("MaritalStatusCode")}, null));
+						new String[] { dftMaritalStsCode, PennantJavaUtil.getLabel("MaritalStatusCode") }, null));
 			}
-        }
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

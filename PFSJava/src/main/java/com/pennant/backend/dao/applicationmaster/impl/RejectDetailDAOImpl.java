@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements RejectDetailDAO {
 	private static Logger logger = Logger.getLogger(RejectDetailDAOImpl.class);
-	
+
 	public RejectDetailDAOImpl() {
 		super();
 	}
@@ -91,7 +90,8 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select RejectCode, RejectDesc, RejectIsActive, RejectType,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTRejectCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where RejectCode =:RejectCode");
@@ -101,8 +101,7 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 		RowMapper<RejectDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RejectDetail.class);
 
 		try {
-			rejectDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			rejectDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			rejectDetail = null;
@@ -158,7 +157,8 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values (:RejectCode, :RejectDesc, :RejectIsActive, :RejectType,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -183,7 +183,8 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 		StringBuilder sql = new StringBuilder("update BMTRejectCodes");
 		sql.append(tableType.getSuffix());
 		sql.append(" set RejectDesc = :RejectDesc, RejectIsActive = :RejectIsActive,RejectType = :RejectType,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where RejectCode =:RejectCode");

@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class BundledProductsDetail extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
@@ -85,8 +85,8 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	private BigDecimal profitRate = BigDecimal.ZERO;
 	private boolean crossSellCard;
 	private boolean urgentIssuance;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private BundledProductsDetail befImage;
 	private LoggedInUser userDetails;
@@ -103,27 +103,29 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String finReference) {
+
+	public void setId(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -131,6 +133,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getCardProduct() {
 		return cardProduct;
 	}
+
 	public void setCardProduct(String cardProduct) {
 		this.cardProduct = cardProduct;
 	}
@@ -138,6 +141,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getSalesStaff() {
 		return salesStaff;
 	}
+
 	public void setSalesStaff(String salesStaff) {
 		this.salesStaff = salesStaff;
 	}
@@ -145,6 +149,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getEmbossingName() {
 		return embossingName;
 	}
+
 	public void setEmbossingName(String embossingName) {
 		this.embossingName = embossingName;
 	}
@@ -152,6 +157,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getStatusOfCust() {
 		return statusOfCust;
 	}
+
 	public void setStatusOfCust(String statusOfCust) {
 		this.statusOfCust = statusOfCust;
 	}
@@ -159,6 +165,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public BigDecimal getMinRepay() {
 		return minRepay;
 	}
+
 	public void setMinRepay(BigDecimal minRepay) {
 		this.minRepay = minRepay;
 	}
@@ -166,6 +173,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getBillingAcc() {
 		return billingAcc;
 	}
+
 	public void setBillingAcc(String billingAcc) {
 		this.billingAcc = billingAcc;
 	}
@@ -173,6 +181,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getStmtAddress() {
 		return stmtAddress;
 	}
+
 	public void setStmtAddress(String stmtAddress) {
 		this.stmtAddress = stmtAddress;
 	}
@@ -180,6 +189,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getStmtEmail() {
 		return stmtEmail;
 	}
+
 	public void setStmtEmail(String stmtEmail) {
 		this.stmtEmail = stmtEmail;
 	}
@@ -187,6 +197,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getPhysicalAddress() {
 		return physicalAddress;
 	}
+
 	public void setPhysicalAddress(String physicalAddress) {
 		this.physicalAddress = physicalAddress;
 	}
@@ -194,6 +205,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getContactNumber() {
 		return contactNumber;
 	}
+
 	public void setContactNumber(String contactNumber) {
 		this.contactNumber = contactNumber;
 	}
@@ -201,6 +213,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getRef1Name() {
 		return ref1Name;
 	}
+
 	public void setRef1Name(String ref1Name) {
 		this.ref1Name = ref1Name;
 	}
@@ -208,6 +221,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getRef1PhoneNum() {
 		return ref1PhoneNum;
 	}
+
 	public void setRef1PhoneNum(String ref1PhoneNum) {
 		this.ref1PhoneNum = ref1PhoneNum;
 	}
@@ -215,6 +229,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getRef1Email() {
 		return ref1Email;
 	}
+
 	public void setRef1Email(String ref1Email) {
 		this.ref1Email = ref1Email;
 	}
@@ -222,6 +237,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getRef2Name() {
 		return ref2Name;
 	}
+
 	public void setRef2Name(String ref2Name) {
 		this.ref2Name = ref2Name;
 	}
@@ -229,6 +245,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getRef2PhoneNum() {
 		return ref2PhoneNum;
 	}
+
 	public void setRef2PhoneNum(String ref2PhoneNum) {
 		this.ref2PhoneNum = ref2PhoneNum;
 	}
@@ -236,6 +253,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getRef2Email() {
 		return ref2Email;
 	}
+
 	public void setRef2Email(String ref2Email) {
 		this.ref2Email = ref2Email;
 	}
@@ -243,6 +261,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getBankName() {
 		return bankName;
 	}
+
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
@@ -250,6 +269,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getChequeNo() {
 		return chequeNo;
 	}
+
 	public void setChequeNo(String chequeNo) {
 		this.chequeNo = chequeNo;
 	}
@@ -257,6 +277,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public BigDecimal getChequeAmt() {
 		return chequeAmt;
 	}
+
 	public void setChequeAmt(BigDecimal chequeAmt) {
 		this.chequeAmt = chequeAmt;
 	}
@@ -264,6 +285,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getCardType() {
 		return cardType;
 	}
+
 	public void setCardType(String cardType) {
 		this.cardType = cardType;
 	}
@@ -271,6 +293,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public String getClassType() {
 		return classType;
 	}
+
 	public void setClassType(String classType) {
 		this.classType = classType;
 	}
@@ -278,6 +301,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public BigDecimal getLimitRecommended() {
 		return limitRecommended;
 	}
+
 	public void setLimitRecommended(BigDecimal limitRecommended) {
 		this.limitRecommended = limitRecommended;
 	}
@@ -285,6 +309,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public BigDecimal getLimitApproved() {
 		return limitApproved;
 	}
+
 	public void setLimitApproved(BigDecimal limitApproved) {
 		this.limitApproved = limitApproved;
 	}
@@ -292,6 +317,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public BigDecimal getProfitRate() {
 		return profitRate;
 	}
+
 	public void setProfitRate(BigDecimal profitRate) {
 		this.profitRate = profitRate;
 	}
@@ -299,6 +325,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public boolean isCrossSellCard() {
 		return crossSellCard;
 	}
+
 	public void setCrossSellCard(boolean crossSellCard) {
 		this.crossSellCard = crossSellCard;
 	}
@@ -306,6 +333,7 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public boolean isUrgentIssuance() {
 		return urgentIssuance;
 	}
+
 	public void setUrgentIssuance(boolean urgentIssuance) {
 		this.urgentIssuance = urgentIssuance;
 	}
@@ -313,27 +341,31 @@ public class BundledProductsDetail extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public BundledProductsDetail getBefImage(){
+	public BundledProductsDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(BundledProductsDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BundledProductsDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

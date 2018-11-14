@@ -64,17 +64,17 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements AuditHeaderDAO{
+public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements AuditHeaderDAO {
 	private static Logger logger = LogManager.getLogger(AuditHeaderDAOImpl.class);
-	
+
 	public AuditHeaderDAOImpl() {
 		super();
 	}
-	
-	public AuditHeader getNewAuditHeader(){
+
+	public AuditHeader getNewAuditHeader() {
 		return new AuditHeader();
 	}
-	
+
 	public long addAudit(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
@@ -100,43 +100,45 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		logger.debug(Literal.LEAVING);
 		return id;
 	}
-	
-	private long addAuditHeader(AuditHeader auditHeader){
+
+	private long addAuditHeader(AuditHeader auditHeader) {
 		logger.debug("addAuditHeader");
 		auditHeader.setId(getNextValue("SeqAuditHeader"));
 		StringBuilder insertSql = new StringBuilder();
-		
-		insertSql.append("insert into AuditHeader (AuditId,AuditDate,AuditUsrId,AuditModule,AuditBranchCode,AuditDeptCode,AuditTranType,");
+
+		insertSql.append(
+				"insert into AuditHeader (AuditId,AuditDate,AuditUsrId,AuditModule,AuditBranchCode,AuditDeptCode,AuditTranType,");
 		insertSql.append("AuditCustNo,AuditAccNo,AuditLoanNo,AuditReference,AuditSystemIP,AuditSessionID,");
-		insertSql.append("AuditInfo,Overide,AuditOveride," );
+		insertSql.append("AuditInfo,Overide,AuditOveride,");
 		insertSql.append("AuditPrinted,AuditRecovered,AuditErrorForRecocvery) ");
-		insertSql.append("values(:AuditId,:AuditDate,:AuditUsrId,:AuditModule,:AuditBranchCode,:AuditDeptCode,:AuditTranType,"); 
-		insertSql.append(":AuditCustNo,:AuditAccNo,:AuditLoanNo,:AuditReference,:AuditSystemIP,:AuditSessionID," );
-		insertSql.append(":AuditInfo, :Overide,:AuditOveride," );
+		insertSql.append(
+				"values(:AuditId,:AuditDate,:AuditUsrId,:AuditModule,:AuditBranchCode,:AuditDeptCode,:AuditTranType,");
+		insertSql.append(":AuditCustNo,:AuditAccNo,:AuditLoanNo,:AuditReference,:AuditSystemIP,:AuditSessionID,");
+		insertSql.append(":AuditInfo, :Overide,:AuditOveride,");
 		insertSql.append(":AuditPrinted,:AuditRecovered,:AuditErrorForRecocvery)");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(auditHeader);
 		jdbcTemplate.update(insertSql.toString(), beanParameters);
 		return auditHeader.getId();
 	}
-	
-	private void addAuditDetails(Object modelData,String insertString, boolean isExtendedModule){
+
+	private void addAuditDetails(Object modelData, String insertString, boolean isExtendedModule) {
 		logger.debug(Literal.ENTERING);
-		
-		logger.debug("SQL Qry"+insertString);
-		if(isExtendedModule){
+
+		logger.debug("SQL Qry" + insertString);
+		if (isExtendedModule) {
 			ExtendedFieldRender fieldRender = (ExtendedFieldRender) modelData;
 			jdbcTemplate.update(insertString, fieldRender.getAuditMapValues());
-		}else{
+		} else {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(modelData);
 			jdbcTemplate.update(insertString, beanParameters);
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	public void createAuditDetails(AuditHeader auditHeader){
+
+	public void createAuditDetails(AuditHeader auditHeader) {
 		List<AuditDetail> auditDetails = auditHeader.getAuditDetails();
-		
+
 		if (auditDetails != null && !auditDetails.isEmpty()) {
 			for (int i = 0; i < auditDetails.size(); i++) {
 				createAuditDetails(auditHeader, auditDetails.get(i));
@@ -144,48 +146,51 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		}
 	}
 
-	private void createAuditDetails(AuditHeader auditHeader,AuditDetail auditDetail){
+	private void createAuditDetails(AuditHeader auditHeader, AuditDetail auditDetail) {
 		logger.debug(Literal.ENTERING);
-		boolean after=false;
-		boolean before=false;
-		boolean workFlow=false;
-		
+		boolean after = false;
+		boolean before = false;
+		boolean workFlow = false;
+
 		if (auditDetail != null && auditDetail.getModelData() != null) {
-			if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_ADD)){
+			if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_ADD)) {
 				after = true;
-			}else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_UPD)){
-				after =true;
-				before=true;
-			}else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-				before=true;
-			}else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_WF)){
-				workFlow =true;
+			} else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+					.equalsIgnoreCase(PennantConstants.TRAN_UPD)) {
+				after = true;
+				before = true;
+			} else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+					.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+				before = true;
+			} else if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+					.equalsIgnoreCase(PennantConstants.TRAN_WF)) {
+				workFlow = true;
 			}
 
-			if (before && auditDetail.getBefImage()!=null){
-				addAuditDetails(auditDetail.getBefImage(), getInsertQry(auditDetail.getBefImage(),PennantConstants.TRAN_BEF_IMG,auditHeader,
-						auditDetail), auditDetail.isExtended());
+			if (before && auditDetail.getBefImage() != null) {
+				addAuditDetails(auditDetail.getBefImage(), getInsertQry(auditDetail.getBefImage(),
+						PennantConstants.TRAN_BEF_IMG, auditHeader, auditDetail), auditDetail.isExtended());
 			}
-			
-			if (after){
-				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(),PennantConstants.TRAN_AFT_IMG,auditHeader,
-						auditDetail), auditDetail.isExtended());
+
+			if (after) {
+				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(),
+						PennantConstants.TRAN_AFT_IMG, auditHeader, auditDetail), auditDetail.isExtended());
 			}
-			
-			if (workFlow){
-				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(),PennantConstants.TRAN_WF_IMG,auditHeader,
-						auditDetail), auditDetail.isExtended());
+
+			if (workFlow) {
+				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(),
+						PennantConstants.TRAN_WF_IMG, auditHeader, auditDetail), auditDetail.isExtended());
 			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String getInsertQry(Object dataObject, String imageType, AuditHeader auditHeader,AuditDetail auditDetail) {
+	private String getInsertQry(Object dataObject, String imageType, AuditHeader auditHeader, AuditDetail auditDetail) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into Adt");
-		if(auditDetail.isExtended()){
-			sql.append(((ExtendedFieldRender)dataObject).getTableName());
-		}else{
+		if (auditDetail.isExtended()) {
+			sql.append(((ExtendedFieldRender) dataObject).getTableName());
+		} else {
 			sql.append(ModuleUtil.getTableName(dataObject.getClass().getSimpleName()));
 		}
 		sql.append(" (");
@@ -204,7 +209,7 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		sql.append(",'");
 		sql.append(imageType);
 		sql.append("',");
-		sql.append(auditDetail.getAuditValue() );
+		sql.append(auditDetail.getAuditValue());
 		sql.append(")");
 		return sql.toString();
 	}

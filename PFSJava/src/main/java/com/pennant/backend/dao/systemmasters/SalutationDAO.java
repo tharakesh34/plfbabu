@@ -42,6 +42,7 @@
  */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennanttech.pff.core.TableType;
@@ -52,8 +53,8 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface SalutationDAO extends BasicCrudDao<Salutation> {
 
-	Salutation getSalutationById(String id,String type);
-	
+	Salutation getSalutationById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -64,7 +65,10 @@ public interface SalutationDAO extends BasicCrudDao<Salutation> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String salutationCode, TableType tableType);
+
 	String getSystemDefaultCount(String salutationCode);
-	void updateSytemDefaultByGender(String genderCode,boolean systemDefault);
+
+	void updateSytemDefaultByGender(String genderCode, boolean systemDefault);
+
 	int getGenderCodeCount(String genderCode, String type);
 }

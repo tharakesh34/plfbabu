@@ -16,24 +16,24 @@ import org.apache.commons.lang.StringUtils;
  * Model class for the <b>Customer table</b>.<br>
  *
  */
-@XmlType(propOrder = { "custCIF", "custCtgCode", "custDftBranch", "custFName","custLName", "custShrtName", "custDOB",
-		"custCRCPR", "custSector"})
+@XmlType(propOrder = { "custCIF", "custCtgCode", "custDftBranch", "custFName", "custLName", "custShrtName", "custDOB",
+		"custCRCPR", "custSector" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name="cif")
-	private String custCIF ;
+	@XmlElement(name = "cif")
+	private String custCIF;
 	private String finReference;
-	@XmlElement(name="lastName")
+	@XmlElement(name = "lastName")
 	private String custLName;
-	@XmlElement(name="firstName")
+	@XmlElement(name = "firstName")
 	private String custFName;
-	@XmlElement(name="shortName ")
+	@XmlElement(name = "shortName ")
 	private String custShrtName;
 	private String custMotherMaiden;
-	@XmlElement(name="dateofBirth")
+	@XmlElement(name = "dateofBirth")
 	private Date custDOB;
-	@XmlElement(name="custPAN")
+	@XmlElement(name = "custPAN")
 	private String custCRCPR;
 	private String custPassportNo;
 	private String mobileNumber;
@@ -46,26 +46,26 @@ public class CustomerDedup implements Serializable {
 	private String likeCustFName;
 	private String likeCustMName;
 	private String likeCustLName;
-	
+
 	//Audit Purpose Fields
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
-	
+
 	// For Internal use //Not in the table should be exculed for audit
-	private long custId =Long.MIN_VALUE;
+	private long custId = Long.MIN_VALUE;
 	private String custCoreBank;
-	@XmlElement(name="categoryCode")
+	@XmlElement(name = "categoryCode")
 	private String custCtgCode;
-	@XmlElement(name="defaultBranch")
+	@XmlElement(name = "defaultBranch")
 	private String custDftBranch;
-	@XmlElement(name="sector ")
+	@XmlElement(name = "sector ")
 	private String custSector;
 	private String custSubSector;
 	private String custDocType;
-	private String custDocTitle;	
+	private String custDocTitle;
 	private String custSalutationCode;
-	private Date   custPassportExpiry;
+	private Date custPassportExpiry;
 	private String custCOB;
 	private String custTradeLicenceNum;
 	private String custVisaNum;
@@ -89,13 +89,10 @@ public class CustomerDedup implements Serializable {
 	private String panNumber;
 	private String aadharNumber;
 
-
-
-	
-	public CustomerDedup(){
+	public CustomerDedup() {
 		super();
 	}
-	
+
 	//Getter and Setter methods
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -106,7 +103,7 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("custSector");
 		excludeFields.add("custSubSector");
 		excludeFields.add("custDocType");
-		excludeFields.add("custDocTitle");	
+		excludeFields.add("custDocTitle");
 		excludeFields.add("custSalutationCode");
 		excludeFields.add("custPassportExpiry");
 		excludeFields.add("custCOB");
@@ -136,7 +133,7 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("address");
 		return excludeFields;
 	}
-	
+
 	public String getCustCIF() {
 		return custCIF;
 	}
@@ -169,61 +166,72 @@ public class CustomerDedup implements Serializable {
 		this.custCRCPR = custCRCPR;
 	}
 
-
 	public String getCustShrtName() {
 		return custShrtName;
 	}
+
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
 	}
+
 	public Date getCustDOB() {
 		return custDOB;
 	}
+
 	public void setCustDOB(Date custDOB) {
 		this.custDOB = custDOB;
 	}
+
 	public String getCustPassportNo() {
 		return custPassportNo;
 	}
+
 	public CustomerDedup getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(CustomerDedup befImage) {
 		this.befImage = befImage;
 	}
-	
+
 	public boolean isChanged() {
-		boolean changed =false;
-		
-		if(befImage==null){
-			changed=true;
-		}else{
-			if (!StringUtils.trimToEmpty(befImage.getCustCIF()).equals(StringUtils.trim(getCustCIF()))){
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustCoreBank()).equals(StringUtils.trim(getCustCoreBank()))){
-				changed=true;
-			}else  if(!StringUtils.trimToEmpty(befImage.getCustShrtName()).equals(StringUtils.trim(getCustShrtName()))){
-				changed=true;
-			}else if(befImage.getCustDOB().equals(getCustDOB())){
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustPassportNo()).equals(StringUtils.trim(getCustPassportNo()))){
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustTradeLicenceNum()).equals(StringUtils.trim(getCustTradeLicenceNum()))){
-				changed=true;
-			}else if(!StringUtils.trimToEmpty(befImage.getCustVisaNum()).equals(StringUtils.trim(getCustVisaNum()))){
-				changed=true;
+		boolean changed = false;
+
+		if (befImage == null) {
+			changed = true;
+		} else {
+			if (!StringUtils.trimToEmpty(befImage.getCustCIF()).equals(StringUtils.trim(getCustCIF()))) {
+				changed = true;
+			} else if (!StringUtils.trimToEmpty(befImage.getCustCoreBank())
+					.equals(StringUtils.trim(getCustCoreBank()))) {
+				changed = true;
+			} else if (!StringUtils.trimToEmpty(befImage.getCustShrtName())
+					.equals(StringUtils.trim(getCustShrtName()))) {
+				changed = true;
+			} else if (befImage.getCustDOB().equals(getCustDOB())) {
+				changed = true;
+			} else if (!StringUtils.trimToEmpty(befImage.getCustPassportNo())
+					.equals(StringUtils.trim(getCustPassportNo()))) {
+				changed = true;
+			} else if (!StringUtils.trimToEmpty(befImage.getCustTradeLicenceNum())
+					.equals(StringUtils.trim(getCustTradeLicenceNum()))) {
+				changed = true;
+			} else if (!StringUtils.trimToEmpty(befImage.getCustVisaNum()).equals(StringUtils.trim(getCustVisaNum()))) {
+				changed = true;
 			}
 		}
-		
-		
+
 		return changed;
 	}
+
 	public String getCustNationality() {
 		return custNationality;
 	}
+
 	public void setCustNationality(String custNationality) {
 		this.custNationality = custNationality;
 	}
+
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
@@ -231,15 +239,15 @@ public class CustomerDedup implements Serializable {
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
+
 	public boolean isOverride() {
-	    return override;
-    }
+		return override;
+	}
 
 	public void setOverride(boolean override) {
-	    this.override = override;
-    }
+		this.override = override;
+	}
 
-	
 	public String getOverrideUser() {
 		return overrideUser;
 	}
@@ -247,7 +255,6 @@ public class CustomerDedup implements Serializable {
 	public void setOverrideUser(String overrideUser) {
 		this.overrideUser = overrideUser;
 	}
-
 
 	public String getQueryField() {
 		return queryField;
@@ -274,113 +281,116 @@ public class CustomerDedup implements Serializable {
 	}
 
 	public boolean isNewCustDedupRecord() {
-	    return newCustDedupRecord;
-    }
+		return newCustDedupRecord;
+	}
 
 	public void setNewCustDedupRecord(boolean newCustDedupRecord) {
-	    this.newCustDedupRecord = newCustDedupRecord;
-    }
+		this.newCustDedupRecord = newCustDedupRecord;
+	}
 
 	public String getFinReference() {
-	    return finReference;
-    }
+		return finReference;
+	}
 
 	public void setFinReference(String finReference) {
-	    this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
 
 	public String getDedupRule() {
-	    return dedupRule;
-    }
+		return dedupRule;
+	}
 
 	public void setDedupRule(String dedupRule) {
-	    this.dedupRule = dedupRule;
-    }
+		this.dedupRule = dedupRule;
+	}
 
 	public String getStage() {
-	    return stage;
-    }
+		return stage;
+	}
 
 	public void setStage(String stage) {
-	    this.stage = stage;
-    }
+		this.stage = stage;
+	}
 
 	public String getModule() {
-	    return module;
-    }
+		return module;
+	}
 
 	public void setModule(String module) {
-	    this.module = module;
-    }
-	
+		this.module = module;
+	}
+
 	public String getLikeCustFName() {
-	    return likeCustFName;
-    }
+		return likeCustFName;
+	}
 
 	public void setLikeCustFName(String likeCustFName) {
-	    this.likeCustFName = likeCustFName;
-    }
+		this.likeCustFName = likeCustFName;
+	}
 
 	public String getLikeCustMName() {
-	    return likeCustMName;
-    }
+		return likeCustMName;
+	}
 
 	public void setLikeCustMName(String likeCustMName) {
-	    this.likeCustMName = likeCustMName;
-    }
+		this.likeCustMName = likeCustMName;
+	}
 
 	public String getLikeCustLName() {
-	    return likeCustLName;
-    }
+		return likeCustLName;
+	}
 
 	public void setLikeCustLName(String likeCustLName) {
-	    this.likeCustLName = likeCustLName;
-    }
+		this.likeCustLName = likeCustLName;
+	}
 
 	public long getLastMntBy() {
-	    return lastMntBy;
-    }
+		return lastMntBy;
+	}
+
 	public void setLastMntBy(long lastMntBy) {
-	    this.lastMntBy = lastMntBy;
-    }
+		this.lastMntBy = lastMntBy;
+	}
 
 	public String getRoleCode() {
-	    return roleCode;
-    }
+		return roleCode;
+	}
+
 	public void setRoleCode(String roleCode) {
-	    this.roleCode = roleCode;
-    }
+		this.roleCode = roleCode;
+	}
 
 	public String getRecordStatus() {
-	    return recordStatus;
-    }
+		return recordStatus;
+	}
+
 	public void setRecordStatus(String recordStatus) {
-	    this.recordStatus = recordStatus;
-    }
+		this.recordStatus = recordStatus;
+	}
 
 	public long getCustId() {
-	    return custId;
-    }
+		return custId;
+	}
 
 	public void setCustId(long custId) {
-	    this.custId = custId;
-    }
+		this.custId = custId;
+	}
 
 	public String getCustCoreBank() {
-	    return custCoreBank;
-    }
+		return custCoreBank;
+	}
 
 	public void setCustCoreBank(String custCoreBank) {
-	    this.custCoreBank = custCoreBank;
-    }
+		this.custCoreBank = custCoreBank;
+	}
 
 	public String getCustCtgCode() {
-	    return custCtgCode;
-    }
+		return custCtgCode;
+	}
 
 	public void setCustCtgCode(String custCtgCode) {
-	    this.custCtgCode = custCtgCode;
-    }
+		this.custCtgCode = custCtgCode;
+	}
 
 	public String getCustDftBranch() {
 		return custDftBranch;
@@ -523,28 +533,28 @@ public class CustomerDedup implements Serializable {
 	}
 
 	public String getTradeLicenceNo() {
-	    return tradeLicenceNo;
-    }
+		return tradeLicenceNo;
+	}
 
 	public void setTradeLicenceNo(String tradeLicenceNo) {
-	    this.tradeLicenceNo = tradeLicenceNo;
-    }
+		this.tradeLicenceNo = tradeLicenceNo;
+	}
 
 	public String getRegistrationNo() {
-	    return registrationNo;
-    }
+		return registrationNo;
+	}
 
 	public void setRegistrationNo(String registrationNo) {
-	    this.registrationNo = registrationNo;
-    }
+		this.registrationNo = registrationNo;
+	}
 
 	public String getTitleDeedNo() {
-	    return titleDeedNo;
-    }
+		return titleDeedNo;
+	}
 
 	public void setTitleDeedNo(String titleDeedNo) {
-	    this.titleDeedNo = titleDeedNo;
-    }
+		this.titleDeedNo = titleDeedNo;
+	}
 
 	public int getAppScore() {
 		return appScore;
@@ -573,9 +583,11 @@ public class CustomerDedup implements Serializable {
 	public String getPanNumber() {
 		return panNumber;
 	}
+
 	public void setPanNumber(String panNumber) {
 		this.panNumber = panNumber;
 	}
+
 	public String getAadharNumber() {
 		return aadharNumber;
 	}

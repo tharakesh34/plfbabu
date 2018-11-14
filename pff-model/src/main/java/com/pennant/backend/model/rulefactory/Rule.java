@@ -64,7 +64,7 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 
 	private String ruleCode;
 	private String ruleModule;
- 	private String ruleEvent;
+	private String ruleEvent;
 	private String ruleCodeDesc;
 	private String waiverDecider;
 	private String lovDescGroupName;
@@ -109,13 +109,13 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("feeTypeDesc");
-		
+
 		return excludeFields;
 	}
 

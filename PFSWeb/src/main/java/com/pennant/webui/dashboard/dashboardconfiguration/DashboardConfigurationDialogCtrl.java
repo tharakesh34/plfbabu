@@ -93,8 +93,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
- * /WEB-INF/pages/DashBoards/DashboardConfiguration/dashboardConfigurationDialog.zul
- * file. <br>
+ * /WEB-INF/pages/DashBoards/DashboardConfiguration/dashboardConfigurationDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfiguration> {
@@ -102,58 +101,56 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	private static final Logger logger = Logger.getLogger(DashboardConfigurationDialogCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the ZUL-file are getting autoWired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	public Window 	      window_DashboardConfigurationDialog; 	// autoWired`
+	public Window window_DashboardConfigurationDialog; // autoWired`
 
-	protected Textbox 	  dashboardCode; 						// autoWired
-	protected Textbox     dashboardDesc; 					    // autoWired
-	protected Combobox 	  dashboardType; 						// autoWired
+	protected Textbox dashboardCode; // autoWired
+	protected Textbox dashboardDesc; // autoWired
+	protected Combobox dashboardType; // autoWired
 
-	protected Textbox     dashboardCaption;                 	// autoWired
-	protected Textbox     subCaption;	                        // autoWired
-	protected Textbox     xAxisName;	                        // autoWired
-	protected Textbox     yAxisName;	                        // autoWiredR
-	protected Codemirror  query; 		                        // autoWired
-	protected Codemirror  dataXML; 		                        // autoWired
-	protected Codemirror  remarks;                              // autoWired
-	protected Checkbox    isAdtDataSource;	                    // autoWired
-	protected Checkbox    isMultiSeries;                        // autoWired
-	protected Checkbox    isDataXML;                            // autoWired
-	protected Checkbox    isDrillDownChart;                     // autoWired
+	protected Textbox dashboardCaption; // autoWired
+	protected Textbox subCaption; // autoWired
+	protected Textbox xAxisName; // autoWired
+	protected Textbox yAxisName; // autoWiredR
+	protected Codemirror query; // autoWired
+	protected Codemirror dataXML; // autoWired
+	protected Codemirror remarks; // autoWired
+	protected Checkbox isAdtDataSource; // autoWired
+	protected Checkbox isMultiSeries; // autoWired
+	protected Checkbox isDataXML; // autoWired
+	protected Checkbox isDrillDownChart; // autoWired
 
-	protected Textbox     txtBgColor;                           // autoWired
-	protected Textbox     txtCanvasBgColor;                     // autoWired
-	protected Textbox     colb_BgColor;                         // autoWired
-	protected Textbox     colb_CanvasBgColor;                   // autoWired
-	protected Combobox    cbDimension;                          // autoWired
-	protected Button      btnValidate;                          // autoWired
+	protected Textbox txtBgColor; // autoWired
+	protected Textbox txtCanvasBgColor; // autoWired
+	protected Textbox colb_BgColor; // autoWired
+	protected Textbox colb_CanvasBgColor; // autoWired
+	protected Combobox cbDimension; // autoWired
+	protected Button btnValidate; // autoWired
 
-	protected Tab        dashBoardDetailsTab;                   // autoWired
-	protected Row         row_XYAxisNames;                      // autoWired
-	protected Row         row_DataXML;                          // autoWired
-	protected Row         row_queryData;                        // autoWired
-	protected Row         row_dataSource;                       // autoWired
-	protected Row         statusRow;							// autoWired
+	protected Tab dashBoardDetailsTab; // autoWired
+	protected Row row_XYAxisNames; // autoWired
+	protected Row row_DataXML; // autoWired
+	protected Row row_queryData; // autoWired
+	protected Row row_dataSource; // autoWired
+	protected Row statusRow; // autoWired
 
 	// not auto wired variables
 	private DashboardConfiguration dashboardConfiguration; // overHanded per parameter
 	private transient DashboardConfigurationListCtrl dashboardConfigurationListCtrl; // overHanded per parameter
 
 	//Used to create the new DashBoard
-	private DashboardCreate dashboardCreate ;
+	private DashboardCreate dashboardCreate;
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient DashboardConfigurationService dashboardConfigurationService;
 	private transient PagedListService pagedListService;
 
-	private List<ValueLabel> listDashboardType = PennantAppUtil.getDashBoardType(); 	// autoWiredgetChartDimensions()
+	private List<ValueLabel> listDashboardType = PennantAppUtil.getDashBoardType(); // autoWiredgetChartDimensions()
 	private List<ValueLabel> listDimensions = PennantAppUtil.getChartDimensions();
 
 	/**
@@ -173,14 +170,13 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DashboardDetail object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DashboardDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_DashboardConfigurationDialog(Event event)throws Exception {
+	public void onCreate$window_DashboardConfigurationDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -200,8 +196,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 			setDashboardConfiguration(null);
 		}
 
-		doLoadWorkFlow(this.dashboardConfiguration.isWorkflow(), this.dashboardConfiguration.getWorkflowId()
-				,this.dashboardConfiguration.getNextTaskId());
+		doLoadWorkFlow(this.dashboardConfiguration.isWorkflow(), this.dashboardConfiguration.getWorkflowId(),
+				this.dashboardConfiguration.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
@@ -212,7 +208,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete dashboardDetail here.
 		if (arguments.containsKey("dashboardConfigurationListCtrl")) {
-			setDashboardConfigurationListCtrl((DashboardConfigurationListCtrl) arguments.get("dashboardConfigurationListCtrl"));
+			setDashboardConfigurationListCtrl(
+					(DashboardConfigurationListCtrl) arguments.get("dashboardConfigurationListCtrl"));
 		} else {
 			setDashboardConfigurationListCtrl(null);
 		}
@@ -220,9 +217,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getDashboardConfiguration());
-		setListType(this.listDashboardType,this.dashboardType);
-		setListType(this.listDimensions,this.cbDimension);
-		logger.debug("Leaving"+event.toString());
+		setListType(this.listDashboardType, this.dashboardType);
+		setListType(this.listDimensions, this.cbDimension);
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -249,8 +246,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -271,9 +267,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -282,9 +278,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -294,10 +290,11 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_DashboardConfigurationDialog);
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * when the "isDataXML" Checkbox is clicked. <br>
 	 * 
@@ -305,39 +302,40 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @throws InterruptedException
 	 */
 	public void onCheck$isDataXML(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		this.isMultiSeries.setDisabled(false);
-		if(this.isDataXML.isChecked()){
+		if (this.isDataXML.isChecked()) {
 			this.row_queryData.setVisible(false);
 			this.row_dataSource.setVisible(false);
 			this.query.setValue("");
 			this.remarks.setValue("");
 			this.isDrillDownChart.setChecked(false);
 			this.row_DataXML.setVisible(true);
-		}else{
+		} else {
 			this.remarks.setReadonly(false);
 			this.row_DataXML.setVisible(false);
 			this.dataXML.setValue("");
 			this.row_queryData.setVisible(true);
 			this.row_dataSource.setVisible(true);
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
-	/** when the "isDrillDownChart" Check box is clicked. <br>
+	/**
+	 * when the "isDrillDownChart" Check box is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onCheck$isDrillDownChart(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
-		if(this.isDrillDownChart.isChecked()){
+		logger.debug("Entering" + event.toString());
+		if (this.isDrillDownChart.isChecked()) {
 			this.isMultiSeries.setChecked(false);
 			this.isMultiSeries.setDisabled(true);
-		}else{
+		} else {
 			this.isMultiSeries.setDisabled(false);
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 
 	}
 
@@ -348,9 +346,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -359,9 +357,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -374,12 +372,11 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		doClose(this.btnSave.isVisible());
 	}
 
-
 	public void onSelect$dashboardType(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		if(this.dashboardType.getSelectedItem().getLabel().equals(Labels.getLabel("label_Select_Pie"))){
+		if (this.dashboardType.getSelectedItem().getLabel().equals(Labels.getLabel("label_Select_Pie"))) {
 			this.row_XYAxisNames.setVisible(false);
-		}else{
+		} else {
 			this.row_XYAxisNames.setVisible(false);
 		}
 
@@ -391,23 +388,23 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	//Generate the chart based on the query and display it in chartSimulator.zul
-	public void onClick$btnValidate(Event event) throws SuspendNotAllowedException, InterruptedException{
-		logger.debug("Entering"+event.toString());
+	public void onClick$btnValidate(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering" + event.toString());
 		doSetValidation();
-		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration(); 
-		BeanUtils.copyProperties(getDashboardConfiguration(),aDashboardConfiguration);
+		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
+		BeanUtils.copyProperties(getDashboardConfiguration(), aDashboardConfiguration);
 		doWriteComponentsToBean(aDashboardConfiguration);
-		ChartUtil chartUtil=new ChartUtil();
-		try{
-			String chartStrXML="";
-			if(StringUtils.isBlank(aDashboardConfiguration.getDataXML())){
-				chartStrXML=getLabelAndValues(aDashboardConfiguration,chartUtil);
-			}else{
-				chartStrXML=aDashboardConfiguration.getDataXML();
+		ChartUtil chartUtil = new ChartUtil();
+		try {
+			String chartStrXML = "";
+			if (StringUtils.isBlank(aDashboardConfiguration.getDataXML())) {
+				chartStrXML = getLabelAndValues(aDashboardConfiguration, chartUtil);
+			} else {
+				chartStrXML = aDashboardConfiguration.getDataXML();
 			}
-			ChartDetail chartDetail=new ChartDetail();
+			ChartDetail chartDetail = new ChartDetail();
 			// to avoid id issue onclick simulate button
-			chartDetail.setChartId(aDashboardConfiguration.getDashboardCode()+"simulate"); 
+			chartDetail.setChartId(aDashboardConfiguration.getDashboardCode() + "simulate");
 			chartDetail.setStrXML(chartStrXML);
 			chartDetail.setChartHeight("450px");//85%-450px
 			chartDetail.setChartWidth("512px");//85%-512px
@@ -419,17 +416,18 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 			map.put("chartDetail", chartDetail);
 			map.put("dashboardConfigurationDialogCtrl", this);
 
-			/** we can additionally handed over the listBox or the controller self,
-			 * so we have in the dialog access to the listBox ListModel. This is
-			 * fine for synchronizing the data in the NationalityCodesListbox from
-			 * the dialog when we do a delete, edit or insert a Nationality.*/
+			/**
+			 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to
+			 * the listBox ListModel. This is fine for synchronizing the data in the NationalityCodesListbox from the
+			 * dialog when we do a delete, edit or insert a Nationality.
+			 */
 
 			map.put("welcomectrl", this);
 
 			// call the ZUL-file with the parameters packed in a map
 
-			Executions.createComponents("/Charts/chartSimulator.zul", null, map);	 
-			logger.debug("Leaving"+event.toString());
+			Executions.createComponents("/Charts/chartSimulator.zul", null, map);
+			logger.debug("Leaving" + event.toString());
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showError(Labels.getLabel("label_DashboardConfigurationDialog_UnCategorizedSQLException"));
@@ -466,13 +464,13 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		this.query.setValue(aDashboardConfiguration.getQuery());
 		this.dataXML.setValue(aDashboardConfiguration.getDataXML());
 		this.isDrillDownChart.setChecked(aDashboardConfiguration.isDrillDownChart());
-		if(aDashboardConfiguration.isDrillDownChart()){
+		if (aDashboardConfiguration.isDrillDownChart()) {
 			this.isMultiSeries.setDisabled(true);
 		}
-		if(StringUtils.isBlank(aDashboardConfiguration.getDataXML())){
+		if (StringUtils.isBlank(aDashboardConfiguration.getDataXML())) {
 			this.isDataXML.setChecked(false);
 
-		}else{
+		} else {
 			this.row_dataSource.setVisible(false);
 			this.row_queryData.setVisible(false);
 			this.row_DataXML.setVisible(true);
@@ -482,26 +480,26 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		this.isAdtDataSource.setChecked(aDashboardConfiguration.isAdtDataSource());
 		this.remarks.setValue(aDashboardConfiguration.getRemarks());
 		this.isMultiSeries.setChecked(aDashboardConfiguration.isMultiSeries());
-		if(aDashboardConfiguration.isNew()){
-			this.dashboardType.setValue(PennantAppUtil.getlabelDesc("",PennantAppUtil.getDashBoardType()));
-		}else{
+		if (aDashboardConfiguration.isNew()) {
+			this.dashboardType.setValue(PennantAppUtil.getlabelDesc("", PennantAppUtil.getDashBoardType()));
+		} else {
 			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(aDashboardConfiguration.getDashboardType()),PennantAppUtil.getDashBoardType()));
+					String.valueOf(aDashboardConfiguration.getDashboardType()), PennantAppUtil.getDashBoardType()));
 		}
-		if(aDashboardConfiguration.isNew()){
-			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(Labels
-							.getLabel("label_Select_2D")),PennantAppUtil.getChartDimensions()));
+		if (aDashboardConfiguration.isNew()) {
+			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(String.valueOf(Labels.getLabel("label_Select_2D")),
+					PennantAppUtil.getChartDimensions()));
 
-		}else{
+		} else {
 			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(
-					String.valueOf(aDashboardConfiguration.getDimension()),PennantAppUtil.getChartDimensions()));
+					String.valueOf(aDashboardConfiguration.getDimension()), PennantAppUtil.getChartDimensions()));
 
 		}
 
 		logger.debug("Leaving");
 	}
-	private void setListType(List<ValueLabel> listDashboardType,Combobox comboBox) {
+
+	private void setListType(List<ValueLabel> listDashboardType, Combobox comboBox) {
 		logger.debug("Entering ");
 		for (int i = 0; i < listDashboardType.size(); i++) {
 
@@ -513,6 +511,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -525,8 +524,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			ChartsConfig chartsConfig=new ChartsConfig(this.dashboardCaption.getValue(),this.subCaption.getValue()
-					,this.xAxisName.getValue(),this.yAxisName.getValue());
+			ChartsConfig chartsConfig = new ChartsConfig(this.dashboardCaption.getValue(), this.subCaption.getValue(),
+					this.xAxisName.getValue(), this.yAxisName.getValue());
 			aDashboardDetail.setLovDescChartsConfig(chartsConfig);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -562,8 +561,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		try {
 			String dashboardType = (String) this.dashboardType.getSelectedItem().getValue();
 			if (StringUtils.isBlank(dashboardType)) {
-				throw new WrongValueException(this.dashboardType,Labels.getLabel("STATIC_INVALID"
-						,new String[] { Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value") }));
+				throw new WrongValueException(this.dashboardType, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value") }));
 			}
 			aDashboardDetail.setDashboardType(dashboardType);
 		} catch (WrongValueException we) {
@@ -575,15 +574,10 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 			wve.add(we);
 		}
 
-
 		try {
 			if (StringUtils.isBlank(this.query.getValue()) && !this.isDataXML.isChecked()) {
-				throw new WrongValueException(
-						this.query,
-						Labels.getLabel(
-								"FIELD_NO_EMPTY",
-								new String[] { Labels
-										.getLabel("label_DashboardConfigurationDialog_Query.value") }));
+				throw new WrongValueException(this.query, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_DashboardConfigurationDialog_Query.value") }));
 			}
 			aDashboardDetail.setQuery(this.query.getValue());
 		} catch (WrongValueException we) {
@@ -607,42 +601,35 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		try {
 			if (this.isDrillDownChart.isChecked()) {
 				if (!StringUtils.containsIgnoreCase(this.query.getValue().trim(), "||")
-						|| StringUtils.countMatches(this.query.getValue(), "||")>3 
-						|| !StringUtils.containsIgnoreCase(this.query.getValue().trim(), "reference")){
-					throw new WrongValueException(
-							this.query,Labels
-							.getLabel("label_DashboardConfigurationDialog_QueryDrillDown.value"));
+						|| StringUtils.countMatches(this.query.getValue(), "||") > 3
+						|| !StringUtils.containsIgnoreCase(this.query.getValue().trim(), "reference")) {
+					throw new WrongValueException(this.query,
+							Labels.getLabel("label_DashboardConfigurationDialog_QueryDrillDown.value"));
 				}
 			}
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if (this.isDrillDownChart.isChecked()) {
-				if (!StringUtils.containsIgnoreCase(this.remarks.getValue().trim(), "||")){
-					throw new WrongValueException(
-							this.remarks,Labels
-							.getLabel("label_DashboardConfigurationDialog_RemarksDrillDown.value"));
+				if (!StringUtils.containsIgnoreCase(this.remarks.getValue().trim(), "||")) {
+					throw new WrongValueException(this.remarks,
+							Labels.getLabel("label_DashboardConfigurationDialog_RemarksDrillDown.value"));
 				}
 			}
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (StringUtils.isBlank(this.dataXML.getValue())  && this.isDataXML.isChecked()) {
-				throw new WrongValueException(
-						this.dataXML,
-						Labels.getLabel(
-								"FIELD_NO_EMPTY",
-								new String[] { Labels
-										.getLabel("label_DashboardConfigurationDialog_dataXML.value") }));
+			if (StringUtils.isBlank(this.dataXML.getValue()) && this.isDataXML.isChecked()) {
+				throw new WrongValueException(this.dataXML, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_DashboardConfigurationDialog_dataXML.value") }));
 			}
 
 			aDashboardDetail.setDataXML(this.dataXML.getValue());
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 
 		aDashboardDetail.setMultiSeries(this.isMultiSeries.isChecked());
 		aDashboardDetail.setDimension(this.cbDimension.getSelectedItem().getValue().toString());
@@ -667,8 +654,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDashboardDetail
 	 * @throws InterruptedException
@@ -722,6 +708,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -730,19 +717,26 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		setValidationOn(true);
 		//Code
 		if (!this.dashboardCode.isReadonly()) {
-			this.dashboardCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardCode.value"),PennantRegularExpressions.REGEX_ALPHA_CODE,true));
+			this.dashboardCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardCode.value"),
+							PennantRegularExpressions.REGEX_ALPHA_CODE, true));
 		}
 		//Description
-		if (!this.dashboardDesc.isReadonly()){
-			this.dashboardDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.dashboardDesc.isReadonly()) {
+			this.dashboardDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		//Type
 		if (!this.dashboardType.isDisabled()) {
-			this.dashboardType.setConstraint(new StaticListValidator(listDashboardType,Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value")));
+			this.dashboardType.setConstraint(new StaticListValidator(listDashboardType,
+					Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value")));
 		}
 		//Caption
-		if (!this.dashboardCaption.isReadonly()){
-			this.dashboardCaption.setConstraint(new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_Caption.value"),PennantRegularExpressions.REGEX_NAME,true));
+		if (!this.dashboardCaption.isReadonly()) {
+			this.dashboardCaption.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_Caption.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		logger.debug("Leaving");
@@ -787,6 +781,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	private void refreshList() {
 		getDashboardConfigurationListCtrl().search();
 	}
+
 	/**
 	 * Deletes a DashboardDetail object from database.<br>
 	 * 
@@ -799,8 +794,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-		+ "\n\n --> " + aDashboardConfiguration.getDashboardCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aDashboardConfiguration.getDashboardCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDashboardConfiguration.getRecordType())) {
 				aDashboardConfiguration.setVersion(aDashboardConfiguration.getVersion() + 1);
@@ -853,7 +848,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		this.remarks.setReadonly(isReadOnly("DashboardConfigurationDialog_Remarks"));
 		this.isMultiSeries.setDisabled(isReadOnly("DashboardConfigurationDialog_IsMultiSeries"));
 		this.isDrillDownChart.setDisabled(isReadOnly("DashboardConfigurationDialog_IsDrillDownChart"));
-		if(this.isDataXML.isChecked() || this.isDrillDownChart.isChecked()){
+		if (this.isDataXML.isChecked() || this.isDrillDownChart.isChecked()) {
 			this.isMultiSeries.setDisabled(true);
 		}
 		if (isWorkFlowEnabled()) {
@@ -921,8 +916,6 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		this.remarks.setValue("");
 		logger.debug("Leaving");
 	}
-
-
 
 	/**
 	 * Saves the components to table. <br>
@@ -1050,7 +1043,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 				for (int i = 0; i < list.length; i++) {
 					auditHeader = getAuditHeader(aDashboardConfiguration, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					if (!processCompleted) {
 						break;
 					}
 				}
@@ -1066,9 +1059,10 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		DashboardConfiguration aDashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail().getModelData();
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		DashboardConfiguration aDashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail()
+				.getModelData();
+		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
 		try {
@@ -1098,7 +1092,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),	null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DashboardConfigurationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1134,7 +1129,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	// +++++++++++++++++ WorkFlow Components+++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	/**
-
+	 * 
 	 * Get Audit Header Details
 	 * 
 	 * @param aDashboardDetail
@@ -1144,9 +1139,10 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(DashboardConfiguration aDashboardConfiguration, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDashboardConfiguration.getBefImage(), aDashboardConfiguration);
-		return new AuditHeader(String.valueOf(aDashboardConfiguration.getId()), null, null,
-				null, auditDetail, aDashboardConfiguration.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDashboardConfiguration.getBefImage(),
+				aDashboardConfiguration);
+		return new AuditHeader(String.valueOf(aDashboardConfiguration.getId()), null, null, null, auditDetail,
+				aDashboardConfiguration.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1161,54 +1157,52 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		doShowNotes(this.dashboardConfiguration);
 	}
 
-	
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.dashboardConfiguration.getDashboardCode());
 	}
-
 
 	//	--------------------------------------------------------------------------------------------------
 
 	public String getLabelAndValues(DashboardConfiguration dashboardConfiguration, ChartUtil chartUtil)
 			throws DataAccessException {
 		logger.debug("Entering ");
-		String whereCondition =getRoleList();
+		String whereCondition = getRoleList();
 		List<ChartSetElement> listSetElements = getDashboardConfigurationService().getLabelAndValues(
 				dashboardConfiguration, whereCondition, getUserWorkspace().getLoggedInUser(),
 				getUserWorkspace().getSecurityRoles());
-		if(listSetElements!=null && listSetElements.size()>0){
+		if (listSetElements != null && listSetElements.size() > 0) {
 			dashboardConfiguration.getLovDescChartsConfig().setSetElements(listSetElements);
 			dashboardConfiguration.getLovDescChartsConfig().setRemarks(dashboardConfiguration.getRemarks());
 		}
-		
-		if(chartUtil.isAGauge(dashboardConfiguration)){
+
+		if (chartUtil.isAGauge(dashboardConfiguration)) {
 			return dashboardConfiguration.getLovDescChartsConfig().getAGaugeXML();
-		}else if(dashboardConfiguration.isDrillDownChart()){
+		} else if (dashboardConfiguration.isDrillDownChart()) {
 			return dashboardConfiguration.getLovDescChartsConfig().getDrillDownChartXML();
-		}else if(chartUtil.isMultiSeries(dashboardConfiguration)){
-			return dashboardConfiguration.getLovDescChartsConfig().getSeriesChartXML(dashboardConfiguration.getRenderAs());
-		}else{
+		} else if (chartUtil.isMultiSeries(dashboardConfiguration)) {
+			return dashboardConfiguration.getLovDescChartsConfig()
+					.getSeriesChartXML(dashboardConfiguration.getRenderAs());
+		} else {
 			return dashboardConfiguration.getLovDescChartsConfig().getChartXML();
 		}
 	}
-	
+
 	public String getRoleList() {
 		List<SecurityRole> roles = getUserWorkspace().getSecurityRoles();
-		
-		String role="where rolecode in (";
-		for (int i = 0; i < roles.size(); i++) {
-			role=role+"'"+roles.get(i).getRoleCd()+"'";
 
-			if(i!=roles.size()-1){
-				role=role+",";
+		String role = "where rolecode in (";
+		for (int i = 0; i < roles.size(); i++) {
+			role = role + "'" + roles.get(i).getRoleCd() + "'";
+
+			if (i != roles.size() - 1) {
+				role = role + ",";
 			}
 		}
-		role=role+")";
+		role = role + ")";
 		return role;
 	}
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1216,6 +1210,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1223,6 +1218,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	public DashboardConfiguration getDashboardConfiguration() {
 		return dashboardConfiguration;
 	}
+
 	public void setDashboardConfiguration(DashboardConfiguration dashboardConfiguration) {
 		this.dashboardConfiguration = dashboardConfiguration;
 	}
@@ -1230,6 +1226,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	public DashboardConfigurationListCtrl getDashboardConfigurationListCtrl() {
 		return dashboardConfigurationListCtrl;
 	}
+
 	public void setDashboardConfigurationListCtrl(DashboardConfigurationListCtrl dashboardConfigurationListCtrl) {
 		this.dashboardConfigurationListCtrl = dashboardConfigurationListCtrl;
 	}
@@ -1237,6 +1234,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	public DashboardConfigurationService getDashboardConfigurationService() {
 		return dashboardConfigurationService;
 	}
+
 	public void setDashboardConfigurationService(DashboardConfigurationService dashboardConfigurationService) {
 		this.dashboardConfigurationService = dashboardConfigurationService;
 	}
@@ -1244,6 +1242,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1251,6 +1250,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	public DashboardCreate getDashboardCreate() {
 		return dashboardCreate;
 	}
+
 	public void setDashboardCreate(DashboardCreate dashboardCreate) {
 		this.dashboardCreate = dashboardCreate;
 	}

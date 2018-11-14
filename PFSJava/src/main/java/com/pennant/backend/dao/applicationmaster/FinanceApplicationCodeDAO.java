@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 
 /**
@@ -50,7 +51,10 @@ import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 public interface FinanceApplicationCodeDAO {
 
 	FinanceApplicationCode getFinanceApplicationCodeById(String id, String type);
+
 	void update(FinanceApplicationCode financeApplicationCode, String type);
+
 	void delete(FinanceApplicationCode financeApplicationCode, String type);
+
 	String save(FinanceApplicationCode financeApplicationCode, String type);
 }

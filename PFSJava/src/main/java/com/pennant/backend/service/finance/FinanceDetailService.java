@@ -89,115 +89,204 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinanceDetailService {
-	
+
 	FinanceDetail getFinanceDetail(boolean isWIF);
+
 	FinanceDetail getNewFinanceDetail(boolean isWIF);
-	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) ;
-	FinanceDetail getOriginationFinance(String financeReference,String nextRoleCode,String procEdtEvent,String userrole);
-	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent,String userrole);
+
+	AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean isWIF);
+
+	FinanceDetail getOriginationFinance(String financeReference, String nextRoleCode, String procEdtEvent,
+			String userrole);
+
+	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent, String userrole);
+
 	FinanceDetail getWIFFinance(String financeReference, boolean reqCustDetail, String procEdtEvent);
-	FinanceDetail getFinanceDetailById(String financeReference,boolean isWIF, String eventCode, boolean reqCustDetail, String procEdtEvent,String userrole);
-	FinanceDetail getApprovedFinanceDetailById(String financeReference,boolean isWIF);
-	AuditHeader delete(AuditHeader auditHeader,boolean isWIF);
-	AuditHeader doApprove(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, JaxenException;
-	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) ;
-	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole,String screenCode, String eventCode, String procEdtEvent, boolean extFieldsReq);
+
+	FinanceDetail getFinanceDetailById(String financeReference, boolean isWIF, String eventCode, boolean reqCustDetail,
+			String procEdtEvent, String userrole);
+
+	FinanceDetail getApprovedFinanceDetailById(String financeReference, boolean isWIF);
+
+	AuditHeader delete(AuditHeader auditHeader, boolean isWIF);
+
+	AuditHeader doApprove(AuditHeader auditHeader, boolean isWIF) throws InterfaceException, JaxenException;
+
+	AuditHeader doReject(AuditHeader auditHeader, boolean isWIF);
+
+	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole, String screenCode,
+			String eventCode, String procEdtEvent, boolean extFieldsReq);
+
 	boolean isFinReferenceExits(String financeReference, String tableType, boolean isWIF);
+
 	FinScheduleData getFinSchDataByFinRef(String financeReference, String type, long logKey);
-	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,String postingGroubBy);
+
+	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
+			String postingGroubBy);
+
 	FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired);
+
 	AuditHeader doCheckLimits(AuditHeader auditHeader);
+
 	void updateCustCIF(long custID, String finReference);
+
 	FinContributorHeader getFinContributorHeaderById(String finReference);
+
 	List<DocumentDetails> getFinDocByFinRef(String finReference, String finEvent, String type);
+
 	DocumentDetails getFinDocDetailByDocId(long docId);
-	
-	FinanceDetail fetchFinCustDetails(FinanceDetail financeDetail, String ctgType, String finType, String userRole, String procEdtEvent);
+
+	FinanceDetail fetchFinCustDetails(FinanceDetail financeDetail, String ctgType, String finType, String userRole,
+			String procEdtEvent);
+
 	List<FinanceRepayments> getFinanceRepaymentsByFinRef(final String id, boolean isRpyCancelProc);
+
 	AuditHeader doCheckExceptions(AuditHeader auditHeader);
-	
+
 	List<String> getFinanceReferenceList();
+
 	String getCustStatusByMinDueDays();
-	CustomerEligibilityCheck getCustEligibilityDetail(Customer customer, String productCode,String finReference, String finCcy, 
-				BigDecimal curFinRpyAmount,int months,  BigDecimal custDSR, List<JointAccountDetail> jointAccountDetails);
+
+	CustomerEligibilityCheck getCustEligibilityDetail(Customer customer, String productCode, String finReference,
+			String finCcy, BigDecimal curFinRpyAmount, int months, BigDecimal custDSR,
+			List<JointAccountDetail> jointAccountDetails);
+
 	FinanceSummary getFinanceProfitDetails(String finRef);
+
 	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
 
-	boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, 
-	String recalType, BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, String recalType,
+			BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
-	boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType, boolean excludeDeferment, 
-	String addTermAfter, Date calFromDate, Date calToDate) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-	
+
+	boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType,
+			boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts);
+
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
+
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);
+
 	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference);
+
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
+
 	List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail);
-	List<FeeRule> getApprovedFeeRules(String finReference,String finEvent,  boolean isWIF);
+
+	List<FeeRule> getApprovedFeeRules(String finReference, String finEvent, boolean isWIF);
+
 	List<CustomerIncome> prepareIncomeDetails();
-	CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer ,String finCcy) throws IllegalAccessException, InvocationTargetException;
+
+	CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer, String finCcy)
+			throws IllegalAccessException, InvocationTargetException;
+
 	boolean checkExistCustIsBlackListed(long custID);
+
 	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
+
 	BigDecimal getCustRepayBankTotal(long custId);
+
 	FeeRule getInsFee(String finReference);
+
 	FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData);
+
 	BigDecimal getAccrueAmount(String finReference);
+
 	List<FinanceSummary> getFinExposureByCustId(long custId);
-	
+
 	FeeRule getFeeChargesByFinRefAndFeeCode(String finReference, String feeCode, String tableType);
+
 	boolean updateFeeChargesByFinRefAndFeeCode(FeeRule feeRule, String tableType);
-	
-	String getUserRoleCodeByRefernce(long userId, String reference,List<String> roleCodes);
-	
+
+	String getUserRoleCodeByRefernce(long userId, String reference, List<String> roleCodes);
+
 	void updateFinancePriority();
+
 	void updateFinApprovalStatus(String finReference, String approvalStatus);
+
 	String getNextRoleCodeByRef(String finReference, String type);
+
 	FinanceMain getFinanceMain(String finReference, String type);
+
 	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
 
 	List<String> getRollOverLimitRefList();
+
 	List<String> getRollOverFinTypeList(String limitRef);
+
 	List<Date> getRollOverNextDateList(String limitRef, String finType);
+
 	List<RolledoverFinanceDetail> getRolloverFinanceList(String value, String value2, Date dbDate);
+
 	FinanceDetail getPreApprovalFinanceDetailsById(String finReference);
+
 	FinanceDetail getFinanceOrgDetails(FinanceMain financeMain, String type);
+
 	FinanceDetail getFinSchdDetailById(String finReference, String type, boolean isWIF);
-	TATDetail getTATDetail(String reference,String rolecode);
+
+	TATDetail getTATDetail(String reference, String rolecode);
+
 	void saveTATDetail(TATDetail tatDetail);
+
 	void updateTATDetail(TATDetail tatDetail);
+
 	String getApprovedRepayMethod(String finReference, String type);
+
 	DocumentDetails getFinDocDetailByDocId(long docId, String type, boolean readAttachment);
+
 	List<DocumentDetails> getDocumentDetails(String finReference, String finProcEvent);
+
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
-	List<FinTypeFees> getFinTypeFees(String finType,String eventCode, boolean origination, int moduleId);
+
+	List<FinTypeFees> getFinTypeFees(String finType, String eventCode, boolean origination, int moduleId);
+
 	BigDecimal getTotalRepayAmount(String finReference);
+
 	List<String> getUsersLoginList(List<String> nextRoleCodes);
-	FinanceDetail getWIFFinanceDetailById(String finReference, 	String procEdtEvent);
+
+	FinanceDetail getWIFFinanceDetailById(String finReference, String procEdtEvent);
+
 	List<FinanceDisbursement> getFinanceDisbursements(final String id, String type, boolean isWIF);
+
 	FinanceMain getFinanceMainParms(String finReference);
+
 	public void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType);
+
 	BigDecimal getFinAssetValue(String finReference);
+
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
+
 	FinScheduleData getFinSchDataForReceipt(String finReference, String type);
+
 	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(String finReference, String type, boolean isWIF);
+
 	List<FinanceScheduleDetail> getFinScheduleList(String finReference);
-	
+
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);
+
 	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
+
 	FinanceMain getFinanceMainForBatch(String finReference);
+
 	BigDecimal getOutStandingBalFromFees(String finReference);
-	
+
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
-	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction, WorkflowEngine engine) 
-			throws AppException, JaxenException, Exception;
+
+	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction,
+			WorkflowEngine engine) throws AppException, JaxenException, Exception;
+
 	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
+
 	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
+
 	DocumentDetails getDocumentDetails(long id, String type);
-	
+
 	//GST
 	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
+
 	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schDate);
- }
+}

@@ -54,15 +54,24 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
  * 
  */
 public interface FinTypeAccountingService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	List<FinTypeAccounting> getFinTypeAccountingListByID(String finType, int moduleId);
+
 	List<FinTypeAccounting> getApprovedFinTypeAccountingListByID(String id, int moduleId);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<AuditDetail> setFinTypeAccountingAuditData(List<FinTypeAccounting> finTypeAccountingList, String auditTranType, String method);
+
+	List<AuditDetail> setFinTypeAccountingAuditData(List<FinTypeAccounting> finTypeAccountingList, String auditTranType,
+			String method);
+
 	List<AuditDetail> processFinTypeAccountingDetails(List<AuditDetail> auditDetails, String type);
+
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
-	
-	List<AuditDetail> delete(List<FinTypeAccounting> finTypeAccountingList,  String tableType, String auditTranType, String finType, int moduleId);
+
+	List<AuditDetail> delete(List<FinTypeAccounting> finTypeAccountingList, String tableType, String auditTranType,
+			String finType, int moduleId);
 }

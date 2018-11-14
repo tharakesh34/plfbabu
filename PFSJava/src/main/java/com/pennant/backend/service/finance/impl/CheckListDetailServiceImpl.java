@@ -31,37 +31,35 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-public class CheckListDetailServiceImpl implements CheckListDetailService{
+public class CheckListDetailServiceImpl implements CheckListDetailService {
 	private static final Logger logger = Logger.getLogger(CheckListDetailServiceImpl.class);
-	
+
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private CheckListDetailDAO checkListDetailDAO;
 	private CustomerDocumentDAO customerDocumentDao;
-	
+
 	public CheckListDetailServiceImpl() {
 		super();
 	}
-	
-	
+
 	/**
-	 * Set CheckList Details to the Finance Detail and also 
-	 * set the checkListDetails to each FinanceReferenceDetail
+	 * Set CheckList Details to the Finance Detail and also set the checkListDetails to each FinanceReferenceDetail
+	 * 
 	 * @param financeDetail
 	 * @param finReferenceDetails
 	 */
 	@Override
-	public void fetchFinCheckListDetails(FinanceDetail financeDetail, List<FinanceReferenceDetail> financeReferenceList) {
+	public void fetchFinCheckListDetails(FinanceDetail financeDetail,
+			List<FinanceReferenceDetail> financeReferenceList) {
 		logger.debug("Entering");
 		processCheckListDetails(financeDetail, financeReferenceList);
 		logger.debug("Leaving");
 	}
-	
-	
-	
+
 	/**
-	 * Set CheckList Details to the Finance Detail and also 
-	 * set the checkListDetails to each FinanceReferenceDetail
+	 * Set CheckList Details to the Finance Detail and also set the checkListDetails to each FinanceReferenceDetail
+	 * 
 	 * @param commitment
 	 * @param finReferenceDetails
 	 */
@@ -73,25 +71,26 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Set CheckList Details to the Finance Detail and also 
-	 * set the checkListDetails to each FinanceReferenceDetail
+	 * Set CheckList Details to the Finance Detail and also set the checkListDetails to each FinanceReferenceDetail
+	 * 
 	 * @param financeDetail
 	 * @param finType
 	 * @param userRole
 	 */
 	@Override
-	public void setFinanceCheckListDetails(FinanceDetail financeDetail, String finType,String finEvent, String userRole) {
+	public void setFinanceCheckListDetails(FinanceDetail financeDetail, String finType, String finEvent,
+			String userRole) {
 		logger.debug("Entering");
-		List<FinanceReferenceDetail> financeReferenceList  = getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,
-				finEvent, userRole, "_AQView");
+		List<FinanceReferenceDetail> financeReferenceList = getFinanceReferenceDetailDAO()
+				.getFinanceReferenceDetail(finType, finEvent, userRole, "_AQView");
 		processCheckListDetails(financeDetail, financeReferenceList);
 		logger.debug("Leaving");
 	}
-	
-	
-	private void processCheckListDetails(FinanceDetail financeDetail, List<FinanceReferenceDetail> financeReferenceList) {
+
+	private void processCheckListDetails(FinanceDetail financeDetail,
+			List<FinanceReferenceDetail> financeReferenceList) {
 		logger.debug("Entering");
 		List<FinanceCheckListReference> financeCheckListReferenceList = null;
 		List<CheckListDetail> checkListDetailList = null;
@@ -100,17 +99,18 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		String showCheckListIds = "";
 		StringBuilder showCheckListIdSb = new StringBuilder();
 		Set<Long> checkListIdSet = new HashSet<Long>();
-		
+
 		if (financeReferenceList != null && !financeReferenceList.isEmpty()) {
 			for (FinanceReferenceDetail financeReferenceDetail : financeReferenceList) {
-				showCheckListIdSb.append(financeReferenceDetail.getFinRefId()+",");
+				showCheckListIdSb.append(financeReferenceDetail.getFinRefId() + ",");
 				checkListIdSet.add(financeReferenceDetail.getFinRefId());
 			}
 			// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
 			checkListIdMap.put("checkListIdMap", checkListIdSet);
 
-			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO().getCheckListDetailByChkList(checkListIdMap, "_AView");
-			
+			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO()
+					.getCheckListDetailByChkList(checkListIdMap, "_AView");
+
 			long prevCheckListId = 0L;
 			for (CheckListDetail checkListDetail : checkListDetailAllList) {
 				if (prevCheckListId == 0) {
@@ -133,48 +133,50 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 				}
 			}
 			// Use the last object.
-			for(FinanceReferenceDetail finRefDtl : financeReferenceList) {
-				if(finRefDtl.getFinRefId()==prevCheckListId) {
+			for (FinanceReferenceDetail finRefDtl : financeReferenceList) {
+				if (finRefDtl.getFinRefId() == prevCheckListId) {
 					finRefDtl.setLovDesccheckListDetail(checkListDetailList);
 					break;
 				}
 			}
 		}
-		
+
 		//Customer Document Details Fetching Depends on Customer & Doc Type List
 
-		 List<DocumentDetails> documentList = getCustomerDocumentDAO().getCustDocByCustId(
-				financeDetail.getFinScheduleData().getFinanceMain().getCustID(), "");
-		
-		if(financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()){
+		List<DocumentDetails> documentList = getCustomerDocumentDAO()
+				.getCustDocByCustId(financeDetail.getFinScheduleData().getFinanceMain().getCustID(), "");
+
+		if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
 			financeDetail.getDocumentDetailsList().addAll(documentList);
-		}else{
+		} else {
 			financeDetail.setDocumentDetailsList(documentList);
 		}
-	
-		if(showCheckListIdSb.toString().endsWith(",")){
-			showCheckListIds = showCheckListIdSb.substring(0, showCheckListIdSb.length()-1);
+
+		if (showCheckListIdSb.toString().endsWith(",")) {
+			showCheckListIds = showCheckListIdSb.substring(0, showCheckListIdSb.length() - 1);
 		}
-		
-		if(!financeDetail.getFinScheduleData().getFinanceMain().isNewRecord()){
-			financeCheckListReferenceList = getFinanceCheckListReferenceDAO().getCheckListByFinRef(finReference, showCheckListIds, "_View");
-		}else{
+
+		if (!financeDetail.getFinScheduleData().getFinanceMain().isNewRecord()) {
+			financeCheckListReferenceList = getFinanceCheckListReferenceDAO().getCheckListByFinRef(finReference,
+					showCheckListIds, "_View");
+		} else {
 			financeCheckListReferenceList = new ArrayList<FinanceCheckListReference>();
 		}
 		financeDetail.setCheckList(financeReferenceList);
 		financeDetail.setFinanceCheckList(financeCheckListReferenceList);
 
 		logger.debug("Leaving");
-	} 
-	
+	}
+
 	/**
-	 * Set CheckList Details to the Finance Detail and also 
-	 * set the checkListDetails to each FinanceReferenceDetail
+	 * Set CheckList Details to the Finance Detail and also set the checkListDetails to each FinanceReferenceDetail
+	 * 
 	 * @param collateralSetup
 	 * @param finReferenceDetails
 	 */
 	@Override
-	public void fetchCollateralCheckLists(CollateralSetup collateralSetup, List<FinanceReferenceDetail> financeReferenceList) {
+	public void fetchCollateralCheckLists(CollateralSetup collateralSetup,
+			List<FinanceReferenceDetail> financeReferenceList) {
 		logger.debug("Entering");
 
 		List<FinanceCheckListReference> collateralCheckLists = null;
@@ -194,7 +196,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 			// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
 			checkListIdMap.put("checkListIdMap", checkListIdSet);
 
-			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO().getCheckListDetailByChkList(checkListIdMap, "_AView");
+			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO()
+					.getCheckListDetailByChkList(checkListIdMap, "_AView");
 
 			long prevCheckListId = 0L;
 			for (CheckListDetail checkListDetail : checkListDetailAllList) {
@@ -226,7 +229,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		}
 
 		//Customer Document Details Fetching Depends on Customer & Doc Type List
-		List<DocumentDetails> documentList = getCustomerDocumentDAO().getCustDocByCustId(collateralSetup.getCustomerDetails().getCustomer().getCustID(), "");
+		List<DocumentDetails> documentList = getCustomerDocumentDAO()
+				.getCustDocByCustId(collateralSetup.getCustomerDetails().getCustomer().getCustID(), "");
 
 		if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 			collateralSetup.getDocuments().addAll(documentList);
@@ -238,7 +242,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		}
 
 		if (!collateralSetup.isNewRecord()) {
-			collateralCheckLists = getFinanceCheckListReferenceDAO().getCheckListByFinRef(collateralRef, showCheckListIds, "_View");
+			collateralCheckLists = getFinanceCheckListReferenceDAO().getCheckListByFinRef(collateralRef,
+					showCheckListIds, "_View");
 		} else {
 			collateralCheckLists = new ArrayList<FinanceCheckListReference>();
 		}
@@ -247,7 +252,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * 
 	 * @param commitment
@@ -267,13 +272,14 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 		if (financeReferenceList != null && !financeReferenceList.isEmpty()) {
 			for (FinanceReferenceDetail financeReferenceDetail : financeReferenceList) {
-				showCheckListIdSb.append(financeReferenceDetail.getFinRefId()+",");
+				showCheckListIdSb.append(financeReferenceDetail.getFinRefId() + ",");
 				checkListIdSet.add(financeReferenceDetail.getFinRefId());
 			}
 			// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
 			checkListIdMap.put("checkListIdMap", checkListIdSet);
 
-			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO().getCheckListDetailByChkList(checkListIdMap, "_AView");
+			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO()
+					.getCheckListDetailByChkList(checkListIdMap, "_AView");
 
 			long prevCheckListId = 0L;
 			for (CheckListDetail checkListDetail : checkListDetailAllList) {
@@ -297,8 +303,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 				}
 			}
 			// Use the last object.
-			for(FinanceReferenceDetail finRefDtl : financeReferenceList) {
-				if(finRefDtl.getFinRefId()==prevCheckListId) {
+			for (FinanceReferenceDetail finRefDtl : financeReferenceList) {
+				if (finRefDtl.getFinRefId() == prevCheckListId) {
 					finRefDtl.setLovDesccheckListDetail(checkListDetailList);
 					break;
 				}
@@ -306,36 +312,34 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		}
 
 		//Customer Document Details Fetching Depends on Customer & Doc Type List
-		List<DocumentDetails> documentList = getCustomerDocumentDAO().getCustDocByCustId(
-				commitment.getCustomerDetails().getCustomer().getCustID(), "");
+		List<DocumentDetails> documentList = getCustomerDocumentDAO()
+				.getCustDocByCustId(commitment.getCustomerDetails().getCustomer().getCustID(), "");
 
-		if(!commitment.isNewRecord() && (commitment.getDocuments() != null && !commitment.getDocuments().isEmpty())){
+		if (!commitment.isNewRecord() && (commitment.getDocuments() != null && !commitment.getDocuments().isEmpty())) {
 			commitment.getDocuments().addAll(documentList);
 		} else {
 			commitment.setDocuments(documentList);
 		}
 
-		if(showCheckListIdSb.toString().endsWith(",")){
-			showCheckListIds = showCheckListIdSb.substring(0, showCheckListIdSb.length()-1);
+		if (showCheckListIdSb.toString().endsWith(",")) {
+			showCheckListIds = showCheckListIdSb.substring(0, showCheckListIdSb.length() - 1);
 		}
 
-		if(commitment.isNewRecord()){
+		if (commitment.isNewRecord()) {
 			commitmentCheckLists = new ArrayList<FinanceCheckListReference>();
 		} else {
-			commitmentCheckLists = getFinanceCheckListReferenceDAO().getCheckListByFinRef(cmtReference, showCheckListIds, "_View");
+			commitmentCheckLists = getFinanceCheckListReferenceDAO().getCheckListByFinRef(cmtReference,
+					showCheckListIds, "_View");
 		}
 		commitment.setCheckLists(financeReferenceList);
 		commitment.setCommitmentCheckLists(commitmentCheckLists);
 
 		logger.debug("Leaving");
 	}
-	
 
-	 
-	
 	/**
-	 * Set CheckList Details to the Finance Detail and also 
-	 * set the checkListDetails to each FinanceReferenceDetail
+	 * Set CheckList Details to the Finance Detail and also set the checkListDetails to each FinanceReferenceDetail
+	 * 
 	 * @param VAS
 	 * @param finReferenceDetails
 	 */
@@ -360,7 +364,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 			// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
 			checkListIdMap.put("checkListIdMap", checkListIdSet);
 
-			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO().getCheckListDetailByChkList(checkListIdMap, "_AView");
+			List<CheckListDetail> checkListDetailAllList = getCheckListDetailDAO()
+					.getCheckListDetailByChkList(checkListIdMap, "_AView");
 
 			long prevCheckListId = 0L;
 			for (CheckListDetail checkListDetail : checkListDetailAllList) {
@@ -392,8 +397,9 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		}
 		//Customer Document Details Fetching Depends on Customer & Doc Type List
 		List<DocumentDetails> documentList = new ArrayList<>();
-		if(vasRecording.getVasCustomer() != null){
-			documentList = getCustomerDocumentDAO().getCustDocByCustId(vasRecording.getVasCustomer().getCustomerId(), "");
+		if (vasRecording.getVasCustomer() != null) {
+			documentList = getCustomerDocumentDAO().getCustDocByCustId(vasRecording.getVasCustomer().getCustomerId(),
+					"");
 		}
 		if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 			vasRecording.getDocuments().addAll(documentList);
@@ -416,7 +422,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to get FinanceCheckListReference By FinReference
 	 * 
@@ -428,8 +434,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 	public List<FinanceCheckListReference> getCheckListByFinRef(final String id, String type) {
 		return getFinanceCheckListReferenceDAO().getCheckListByFinRef(id, null, type);
 	}
-	
-	
+
 	/**
 	 * This method prepare audit details for FinanceCheckListReference list and deletes the list
 	 * 
@@ -443,23 +448,23 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		logger.debug("Entering ");
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 		FinanceCheckListReference object = new FinanceCheckListReference();
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
-		
+
 		if (finDetail.getFinanceCheckList() != null && !finDetail.getFinanceCheckList().isEmpty()) {
 			for (int i = 0; i < finDetail.getFinanceCheckList().size(); i++) {
 				FinanceCheckListReference finCheckListRef = finDetail.getFinanceCheckList().get(i);
-				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCheckListRef.getBefImage(), finCheckListRef));
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCheckListRef.getBefImage(),
+						finCheckListRef));
 			}
-			
-			getFinanceCheckListReferenceDAO().delete(finDetail.getFinanceCheckList().get(0).getFinReference(), tableType);
+
+			getFinanceCheckListReferenceDAO().delete(finDetail.getFinanceCheckList().get(0).getFinReference(),
+					tableType);
 		}
 		logger.debug("Leaving ");
 		return auditList;
 	}
-	
-	
-	
+
 	/**
 	 * Setting checkList audit details
 	 * 
@@ -469,13 +474,14 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 	 * @return
 	 */
 	@Override
-	public List<AuditDetail> getAuditDetail(Map<String, List<AuditDetail>> auditDetailMap, FinanceDetail financeDetail, String auditTranType, String method) {
+	public List<AuditDetail> getAuditDetail(Map<String, List<AuditDetail>> auditDetailMap, FinanceDetail financeDetail,
+			String auditTranType, String method) {
 		logger.debug("Entering");
-		
+
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceCheckListReference object = new FinanceCheckListReference();
 		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		for (int i = 0; i < financeDetail.getFinanceCheckList().size(); i++) {
 			FinanceCheckListReference finChekListRef = financeDetail.getFinanceCheckList().get(i);
@@ -483,7 +489,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 				if (StringUtils.trimToEmpty(finChekListRef.getRecordType()).equals(PennantConstants.RCD_ADD)) {
 					auditTranType = PennantConstants.TRAN_ADD;
 					//finChekListRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (StringUtils.trimToEmpty(finChekListRef.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (StringUtils.trimToEmpty(finChekListRef.getRecordType())
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_UPD;
 				} else {
 					auditTranType = PennantConstants.RCD_DEL;
@@ -497,18 +504,18 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 			finChekListRef.setLastMntOn(financeMain.getLastMntOn());
 			finChekListRef.setLastMntBy(financeMain.getLastMntBy());
 			finChekListRef.setWorkflowId(financeMain.getWorkflowId());
-			
+
 			if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(finChekListRef.getRecordType()).trim())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finChekListRef.getBefImage(), finChekListRef));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						finChekListRef.getBefImage(), finChekListRef));
 			}
 		}
-		
+
 		auditDetailMap.put("checkListDetails", auditDetails);
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
-	
+
 	/**
 	 * processing CheckListDetails
 	 * 
@@ -519,9 +526,9 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 	@Override
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering ");
-		
+
 		List<AuditDetail> auditDetails = financeDetail.getAuditDetailMap().get("checkListDetails");
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinanceCheckListReference finChecklistRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
 			finChecklistRef.setWorkflowId(0);
@@ -547,7 +554,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		logger.debug("Leaving ");
 		return auditDetails;
 	}
-	
+
 	/**
 	 * processing CheckListDetails
 	 * 
@@ -558,9 +565,9 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 	@Override
 	public List<AuditDetail> doApprove(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering ");
-		
+
 		List<AuditDetail> auditDetails = financeDetail.getAuditDetailMap().get("checkListDetails");
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinanceCheckListReference finChecklistRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
 			finChecklistRef.setWorkflowId(0);
@@ -586,267 +593,269 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		logger.debug("Leaving ");
 		return auditDetails;
 	}
-	
-	
-	public AuditHeader validate(AuditHeader auditHeader, String method){
 
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+	public AuditHeader validate(AuditHeader auditHeader, String method) {
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
-	
+
 	@Override
-	public List<AuditDetail> validate(List<AuditDetail> auditDetails, String method, String  usrLanguage){
+	public List<AuditDetail> validate(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 		logger.debug("Entering ");
 
 		if (auditDetails != null && !auditDetails.isEmpty()) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
-			FinanceCheckListReference finCheckListReference= (FinanceCheckListReference) auditDetails.get(0).getModelData();
-			
-			List<FinanceCheckListReference>	tempFinCheckListRefList = null;
-			if(finCheckListReference.isWorkflow()){
-				tempFinCheckListRefList = getFinanceCheckListReferenceDAO().getCheckListByFinRef(finCheckListReference.getId(),null,"_Temp");
+			FinanceCheckListReference finCheckListReference = (FinanceCheckListReference) auditDetails.get(0)
+					.getModelData();
+
+			List<FinanceCheckListReference> tempFinCheckListRefList = null;
+			if (finCheckListReference.isWorkflow()) {
+				tempFinCheckListRefList = getFinanceCheckListReferenceDAO()
+						.getCheckListByFinRef(finCheckListReference.getId(), null, "_Temp");
 			}
-			List<FinanceCheckListReference> befFinCheckListRefList= getFinanceCheckListReferenceDAO().getCheckListByFinRef(finCheckListReference.getId(),null, "");
-			
+			List<FinanceCheckListReference> befFinCheckListRefList = getFinanceCheckListReferenceDAO()
+					.getCheckListByFinRef(finCheckListReference.getId(), null, "");
+
 			for (int i = 0; i < auditDetails.size(); i++) {
-				FinanceCheckListReference finCheckListRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
-				FinanceCheckListReference tempFinCheckListRef= null,befFinCheckListRef= null;
-				if(tempFinCheckListRefList != null && !tempFinCheckListRefList.isEmpty()){
+				FinanceCheckListReference finCheckListRef = (FinanceCheckListReference) auditDetails.get(i)
+						.getModelData();
+				FinanceCheckListReference tempFinCheckListRef = null, befFinCheckListRef = null;
+				if (tempFinCheckListRefList != null && !tempFinCheckListRefList.isEmpty()) {
 					for (FinanceCheckListReference fincListRefTemp : tempFinCheckListRefList) {
-						if(finCheckListRef.getQuestionId() == fincListRefTemp.getQuestionId() &&
-								finCheckListRef.getAnswer() == fincListRefTemp.getAnswer()){
+						if (finCheckListRef.getQuestionId() == fincListRefTemp.getQuestionId()
+								&& finCheckListRef.getAnswer() == fincListRefTemp.getAnswer()) {
 							tempFinCheckListRef = fincListRefTemp;
-							break;	
+							break;
 						}
 					}
 				}
-				if(befFinCheckListRefList != null && !befFinCheckListRefList.isEmpty()){
+				if (befFinCheckListRefList != null && !befFinCheckListRefList.isEmpty()) {
 					for (FinanceCheckListReference fincListRefBef : befFinCheckListRefList) {
-						if(finCheckListRef.getQuestionId() == fincListRefBef.getQuestionId() &&
-								finCheckListRef.getAnswer() == fincListRefBef.getAnswer()){
+						if (finCheckListRef.getQuestionId() == fincListRefBef.getQuestionId()
+								&& finCheckListRef.getAnswer() == fincListRefBef.getAnswer()) {
 							befFinCheckListRef = fincListRefBef;
-							break;	
+							break;
 						}
 					}
 				}
-				AuditDetail auditDetail = validate(auditDetails.get(i),tempFinCheckListRef,befFinCheckListRef, method, usrLanguage);
+				AuditDetail auditDetail = validate(auditDetails.get(i), tempFinCheckListRef, befFinCheckListRef, method,
+						usrLanguage);
 				details.add(auditDetail);
 			}
 			return details;
 		}
-		
+
 		logger.debug("Leaving");
 		return new ArrayList<AuditDetail>();
 	}
 
-	
-	private AuditDetail validate(AuditDetail auditDetail,FinanceCheckListReference tempFinanceCheckListReference,FinanceCheckListReference befFinanceCheckListReference,
-			String usrLanguage, String method){
+	private AuditDetail validate(AuditDetail auditDetail, FinanceCheckListReference tempFinanceCheckListReference,
+			FinanceCheckListReference befFinanceCheckListReference, String usrLanguage, String method) {
 		logger.debug("Entering");
-		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		FinanceCheckListReference financeCheckListReference= (FinanceCheckListReference) auditDetail.getModelData();
-		FinanceCheckListReference oldFinanceCheckListReference= financeCheckListReference.getBefImage();
 
-		String[] errParm= new String[3];
-		String[] valueParm= new String[3];
-		valueParm[0]=financeCheckListReference.getFinReference();
-		valueParm[1]=financeCheckListReference.getLovDescQuesDesc();
-		valueParm[2]=financeCheckListReference.getLovDescAnswerDesc();
-		errParm[0]=PennantJavaUtil.getLabel("label_CheckListReference")+" : "+valueParm[0];
-		errParm[1]=PennantJavaUtil.getLabel("label_CheckList")+" : "+valueParm[1];
-		errParm[2]=PennantJavaUtil.getLabel("label_Answer")+" : "+valueParm[2];
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinanceCheckListReference financeCheckListReference = (FinanceCheckListReference) auditDetail.getModelData();
+		FinanceCheckListReference oldFinanceCheckListReference = financeCheckListReference.getBefImage();
 
-		if (financeCheckListReference.isNew()){ // for New record or new record into work flow
+		String[] errParm = new String[3];
+		String[] valueParm = new String[3];
+		valueParm[0] = financeCheckListReference.getFinReference();
+		valueParm[1] = financeCheckListReference.getLovDescQuesDesc();
+		valueParm[2] = financeCheckListReference.getLovDescAnswerDesc();
+		errParm[0] = PennantJavaUtil.getLabel("label_CheckListReference") + " : " + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CheckList") + " : " + valueParm[1];
+		errParm[2] = PennantJavaUtil.getLabel("label_Answer") + " : " + valueParm[2];
 
-			if (!financeCheckListReference.isWorkflow()){// With out Work flow only new records  
-				if (befFinanceCheckListReference !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008"
-							, errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)){ // if records type is new
-					if (befFinanceCheckListReference !=null || tempFinanceCheckListReference!=null ){ // if 
+		if (financeCheckListReference.isNew()) { // for New record or new record into work flow
+
+			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
+				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is new
+					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if 
 						//records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD
-								, "41008", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!financeCheckListReference.isWorkflow()){	// With out Work flow for update and delete
+			if (!financeCheckListReference.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
+				if (befFinanceCheckListReference == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldFinanceCheckListReference!=null 
-							&& !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldFinanceCheckListReference != null && !oldFinanceCheckListReference.getLastMntOn()
+							.equals(befFinanceCheckListReference.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
-				if (tempFinanceCheckListReference==null ){ // if records not exists in the Work flow table 
+			} else {
+				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
-				if (tempFinanceCheckListReference!=null && oldFinanceCheckListReference!=null 
-						&& !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
+				if (tempFinanceCheckListReference != null && oldFinanceCheckListReference != null
+						&& !oldFinanceCheckListReference.getLastMntOn()
+								.equals(tempFinanceCheckListReference.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeCheckListReference.isWorkflow()){
-			financeCheckListReference.setBefImage(befFinanceCheckListReference);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeCheckListReference.isWorkflow()) {
+			financeCheckListReference.setBefImage(befFinanceCheckListReference);
 		}
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
 
-	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method){
+	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		FinanceCheckListReference financeCheckListReference= (FinanceCheckListReference) auditDetail.getModelData();
 
-		FinanceCheckListReference tempFinanceCheckListReference= null;
-		if (financeCheckListReference.isWorkflow()){
-			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().
-			getFinanceCheckListReferenceById(financeCheckListReference.getId(),financeCheckListReference.getQuestionId(),
-					financeCheckListReference.getAnswer(),"_Temp");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinanceCheckListReference financeCheckListReference = (FinanceCheckListReference) auditDetail.getModelData();
+
+		FinanceCheckListReference tempFinanceCheckListReference = null;
+		if (financeCheckListReference.isWorkflow()) {
+			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById(
+					financeCheckListReference.getId(), financeCheckListReference.getQuestionId(),
+					financeCheckListReference.getAnswer(), "_Temp");
 		}
-		FinanceCheckListReference befFinanceCheckListReference= getFinanceCheckListReferenceDAO().
-		getFinanceCheckListReferenceById(financeCheckListReference.getId(),financeCheckListReference.getQuestionId(),
-				financeCheckListReference.getAnswer(), "");
+		FinanceCheckListReference befFinanceCheckListReference = getFinanceCheckListReferenceDAO()
+				.getFinanceCheckListReferenceById(financeCheckListReference.getId(),
+						financeCheckListReference.getQuestionId(), financeCheckListReference.getAnswer(), "");
 
-		FinanceCheckListReference oldFinanceCheckListReference= financeCheckListReference.getBefImage();
+		FinanceCheckListReference oldFinanceCheckListReference = financeCheckListReference.getBefImage();
 
+		String[] errParm = new String[3];
+		String[] valueParm = new String[3];
+		valueParm[0] = financeCheckListReference.getFinReference();
+		valueParm[1] = financeCheckListReference.getLovDescQuesDesc();
+		valueParm[2] = financeCheckListReference.getLovDescAnswerDesc();
+		errParm[0] = PennantJavaUtil.getLabel("label_CheckListReference") + " : " + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CheckList") + " : " + valueParm[1];
+		errParm[2] = PennantJavaUtil.getLabel("label_Answer") + " : " + valueParm[2];
 
-		String[] errParm= new String[3];
-		String[] valueParm= new String[3];
-		valueParm[0]=financeCheckListReference.getFinReference();
-		valueParm[1]=financeCheckListReference.getLovDescQuesDesc();
-		valueParm[2]=financeCheckListReference.getLovDescAnswerDesc();
-		errParm[0]=PennantJavaUtil.getLabel("label_CheckListReference")+" : "+valueParm[0];
-		errParm[1]=PennantJavaUtil.getLabel("label_CheckList")+" : "+valueParm[1];
-		errParm[2]=PennantJavaUtil.getLabel("label_Answer")+" : "+valueParm[2];
+		if (financeCheckListReference.isNew()) { // for New record or new record into work flow
 
-		if (financeCheckListReference.isNew()){ // for New record or new record into work flow
-
-			if (!financeCheckListReference.isWorkflow()){// With out Work flow only new records  
-				if (befFinanceCheckListReference !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008"
-							, errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)){ // if records type is new
-					if (befFinanceCheckListReference !=null || tempFinanceCheckListReference!=null ){ // if 
+			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
+				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is new
+					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if 
 						//records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD
-								, "41008", errParm,valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!financeCheckListReference.isWorkflow()){	// With out Work flow for update and delete
+			if (!financeCheckListReference.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befFinanceCheckListReference ==null){ // if records not exists in the main table
+				if (befFinanceCheckListReference == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldFinanceCheckListReference!=null 
-							&& !oldFinanceCheckListReference.getLastMntOn().equals(befFinanceCheckListReference.getLastMntOn())){
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldFinanceCheckListReference != null && !oldFinanceCheckListReference.getLastMntOn()
+							.equals(befFinanceCheckListReference.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)){
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
-				if (tempFinanceCheckListReference==null ){ // if records not exists in the Work flow table 
+			} else {
+				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
-				if (tempFinanceCheckListReference!=null && oldFinanceCheckListReference!=null 
-						&& !oldFinanceCheckListReference.getLastMntOn().equals(tempFinanceCheckListReference.getLastMntOn())){ 
+				if (tempFinanceCheckListReference != null && oldFinanceCheckListReference != null
+						&& !oldFinanceCheckListReference.getLastMntOn()
+								.equals(tempFinanceCheckListReference.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeCheckListReference.isWorkflow()){
-			financeCheckListReference.setBefImage(befFinanceCheckListReference);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeCheckListReference.isWorkflow()) {
+			financeCheckListReference.setBefImage(befFinanceCheckListReference);
 		}
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 	// Setters and getters
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-	    this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-    }
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
 
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-	    return financeReferenceDetailDAO;
-    }
-
+		return financeReferenceDetailDAO;
+	}
 
 	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
-	    this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
-    }
-
+		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
+	}
 
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
-	    return financeCheckListReferenceDAO;
-    }
-
+		return financeCheckListReferenceDAO;
+	}
 
 	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
-	    this.checkListDetailDAO = checkListDetailDAO;
-    }
-
+		this.checkListDetailDAO = checkListDetailDAO;
+	}
 
 	public CheckListDetailDAO getCheckListDetailDAO() {
-	    return checkListDetailDAO;
-    }
+		return checkListDetailDAO;
+	}
 
 	public CustomerDocumentDAO getCustomerDocumentDAO() {
-    	return customerDocumentDao;
-    }
+		return customerDocumentDao;
+	}
 
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDao) {
-    	this.customerDocumentDao = customerDocumentDao;
-    }
+		this.customerDocumentDao = customerDocumentDao;
+	}
 
 	@Override
 	public CheckListDetail getCheckListDetailByDocType(String docType, String finType) {
-		return	getCheckListDetailDAO().getCheckListDetailByDocType(docType, finType);
+		return getCheckListDetailDAO().getCheckListDetailByDocType(docType, finType);
 	}
-
 
 }

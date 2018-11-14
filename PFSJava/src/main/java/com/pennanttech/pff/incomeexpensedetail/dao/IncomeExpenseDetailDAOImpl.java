@@ -20,7 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 
-public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>  implements IncomeExpenseDetailDAO {
+public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail> implements IncomeExpenseDetailDAO {
 	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailDAOImpl.class);
 
 	@Override
@@ -33,10 +33,12 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into org_income_expenses");
 		sql.append(type);
-		sql.append(" (id, headerid, incomeexpense, incomeexpensecode, incomeexpensetype, category, units, unitprice, frequency, loockupid, total, consider, createdby, createdon,");
+		sql.append(
+				" (id, headerid, incomeexpense, incomeexpensecode, incomeexpensetype, category, units, unitprice, frequency, loockupid, total, consider, createdby, createdon,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
-		sql.append(" values(:id, :headerId, :incomeExpense, :incomeExpenseCode, :incomeExpenseType, :category, :units, :unitPrice,");
+		sql.append(
+				" values(:id, :headerId, :incomeExpense, :incomeExpenseCode, :incomeExpenseType, :category, :units, :unitPrice,");
 		sql.append(" :frequency, :loockUpId, :total, :consider, :createdBy, :createdOn,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode, :taskId, :nextTaskId, :recordType, :workflowId)");
@@ -56,10 +58,13 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		StringBuilder query = new StringBuilder();
 		query.append(" update org_income_expenses");
 		query.append(StringUtils.trimToEmpty(tableType));
-		query.append(" set incomeexpensecode = :incomeExpenseCode, category = :category, units = :units, unitprice = :unitPrice,");
+		query.append(
+				" set incomeexpensecode = :incomeExpenseCode, category = :category, units = :units, unitprice = :unitPrice,");
 		query.append(" frequency = :frequency, total = :total, consider = :consider,");
-		query.append(" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
-		query.append(" nextrolecode = :nextRoleCode, taskid = :taskId, nexttaskid = :nextTaskId, recordtype = :recordType, workflowid = :WorkflowId");
+		query.append(
+				" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
+		query.append(
+				" nextrolecode = :nextRoleCode, taskid = :taskId, nexttaskid = :nextTaskId, recordtype = :recordType, workflowid = :WorkflowId");
 		query.append(" where id = :id ");
 
 		logger.trace(Literal.SQL + query.toString());
@@ -90,7 +95,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -109,7 +114,8 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		paramSource.addValue("id", id);
 		paramSource.addValue("type", incomeType);
 
-		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);
+		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(IncomeExpenseDetail.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -124,7 +130,6 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 	}
 
-	
 	@Override
 	public List<Map<String, Object>> getTotal(Long custId, Integer financialYear) {
 		logger.debug(Literal.ENTERING);

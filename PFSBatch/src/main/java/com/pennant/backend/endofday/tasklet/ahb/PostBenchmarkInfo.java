@@ -21,11 +21,11 @@ import com.pennanttech.pennapps.core.App;
 
 public class PostBenchmarkInfo implements Tasklet {
 
-	private Logger			logger	= Logger.getLogger(PostBenchmarkInfo.class);
+	private Logger logger = Logger.getLogger(PostBenchmarkInfo.class);
 
 	// datasource object
-	private DataSource		dataSource;
-	private ExtTablesDAO	extTablesDAO;
+	private DataSource dataSource;
+	private ExtTablesDAO extTablesDAO;
 
 	public PostBenchmarkInfo() {
 		super();

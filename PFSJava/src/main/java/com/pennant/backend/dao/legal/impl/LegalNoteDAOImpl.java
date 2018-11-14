@@ -63,8 +63,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>LegalNote</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>LegalNote</code> with set of CRUD operations.
  */
 public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNoteDAO {
 	private static Logger logger = Logger.getLogger(LegalNoteDAOImpl.class);
@@ -238,7 +237,5 @@ public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNot
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(legalNote);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-
-	
 
 }

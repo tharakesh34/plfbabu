@@ -4,140 +4,170 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AvailFinance{
-	
-	private long   CustId;
-	private Date   finStartDate;
-	private String finCommitmentRef ="";
-	private String finType="";
-	private String finReference ="";
-	private String finCcy ="";
-	private String finAmount ="";
-	private String totalPftSchd ="";
-	private String drawnPrinciple ="";
-	private String finAmtBHD ="";
-	private String outStandingBal ="";
-	private String lastRepay ="";
-	private String maturityDate ="";
-	private String profitRate ="";
-	private String repayFrq ="";
-	private String status ="";
+public class AvailFinance {
+
+	private long CustId;
+	private Date finStartDate;
+	private String finCommitmentRef = "";
+	private String finType = "";
+	private String finReference = "";
+	private String finCcy = "";
+	private String finAmount = "";
+	private String totalPftSchd = "";
+	private String drawnPrinciple = "";
+	private String finAmtBHD = "";
+	private String outStandingBal = "";
+	private String lastRepay = "";
+	private String maturityDate = "";
+	private String profitRate = "";
+	private String repayFrq = "";
+	private String status = "";
 	private String finDivision = "";
 	private String finDivisionDesc = "";
-	private int    noInst = 0;
-	
+	private int noInst = 0;
+
 	public AvailFinance() {
 	}
-	
-	public Set<String> getExcludeFields(){
+
+	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finType");
 		excludeFields.add("totalPftSchd");
 		return excludeFields;
 	}
-	
+
 	public String getFinCommitmentRef() {
-    	return finCommitmentRef;
-    }
+		return finCommitmentRef;
+	}
+
 	public void setFinCommitmentRef(String finCommitmentRef) {
-    	this.finCommitmentRef = finCommitmentRef;
-    }
+		this.finCommitmentRef = finCommitmentRef;
+	}
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
+
 	public String getFinCcy() {
-    	return finCcy;
-    }
+		return finCcy;
+	}
+
 	public void setFinCcy(String finCcy) {
-    	this.finCcy = finCcy;
-    }
+		this.finCcy = finCcy;
+	}
+
 	public String getFinAmount() {
-    	return finAmount;
-    }
+		return finAmount;
+	}
+
 	public void setFinAmount(String finAmount) {
-    	this.finAmount = finAmount;
-    }
+		this.finAmount = finAmount;
+	}
+
 	public String getDrawnPrinciple() {
-    	return drawnPrinciple;
-    }
+		return drawnPrinciple;
+	}
+
 	public void setDrawnPrinciple(String drawnPrinciple) {
-    	this.drawnPrinciple = drawnPrinciple;
-    }
+		this.drawnPrinciple = drawnPrinciple;
+	}
+
 	public String getFinAmtBHD() {
-    	return finAmtBHD;
-    }
+		return finAmtBHD;
+	}
+
 	public void setFinAmtBHD(String finAmtBHD) {
-    	this.finAmtBHD = finAmtBHD;
-    }
+		this.finAmtBHD = finAmtBHD;
+	}
+
 	public String getOutStandingBal() {
-    	return outStandingBal;
-    }
+		return outStandingBal;
+	}
+
 	public void setOutStandingBal(String outStandingBal) {
-    	this.outStandingBal = outStandingBal;
-    }
+		this.outStandingBal = outStandingBal;
+	}
+
 	public String getLastRepay() {
-    	return lastRepay;
-    }
+		return lastRepay;
+	}
+
 	public void setLastRepay(String lastRepay) {
-    	this.lastRepay = lastRepay;
-    }
+		this.lastRepay = lastRepay;
+	}
+
 	public String getMaturityDate() {
-    	return maturityDate;
-    }
+		return maturityDate;
+	}
+
 	public void setMaturityDate(String maturityDate) {
-    	this.maturityDate = maturityDate;
-    }
+		this.maturityDate = maturityDate;
+	}
+
 	public String getProfitRate() {
-    	return profitRate;
-    }
+		return profitRate;
+	}
+
 	public void setProfitRate(String profitRate) {
-    	this.profitRate = profitRate;
-    }
+		this.profitRate = profitRate;
+	}
+
 	public String getRepayFrq() {
-    	return repayFrq;
-    }
+		return repayFrq;
+	}
+
 	public void setRepayFrq(String repayFrq) {
-    	this.repayFrq = repayFrq;
-    }
+		this.repayFrq = repayFrq;
+	}
+
 	public String getStatus() {
-    	return status;
-    }
+		return status;
+	}
+
 	public void setStatus(String status) {
-    	this.status = status;
-    }
+		this.status = status;
+	}
+
 	public String getFinDivision() {
-    	return finDivision;
-    }
+		return finDivision;
+	}
+
 	public void setFinDivision(String finDivision) {
-    	this.finDivision = finDivision;
-    }
+		this.finDivision = finDivision;
+	}
+
 	public String getFinDivisionDesc() {
-	    return finDivisionDesc;
-    }
+		return finDivisionDesc;
+	}
+
 	public void setFinDivisionDesc(String finDivisionDesc) {
-	    this.finDivisionDesc = finDivisionDesc;
-    }
-	
+		this.finDivisionDesc = finDivisionDesc;
+	}
+
 	public Date getFinStartDate() {
 		return finStartDate;
 	}
+
 	public void setFinStartDate(Date finStartDate) {
 		this.finStartDate = finStartDate;
 	}
-	
+
 	public int getNoInst() {
 		return noInst;
 	}
+
 	public void setNoInst(int noInst) {
 		this.noInst = noInst;
 	}
-	
+
 	public long getCustId() {
 		return CustId;
 	}
+
 	public void setCustId(long custId) {
 		CustId = custId;
 	}
@@ -157,5 +187,5 @@ public class AvailFinance{
 	public void setTotalPftSchd(String totalPftSchd) {
 		this.totalPftSchd = totalPftSchd;
 	}
-	
+
 }

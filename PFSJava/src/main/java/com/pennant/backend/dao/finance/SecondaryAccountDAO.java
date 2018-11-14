@@ -54,8 +54,12 @@ import com.pennant.backend.model.finance.SecondaryAccount;
 public interface SecondaryAccountDAO {
 
 	SecondaryAccount getSecondaryAccount();
-	List<SecondaryAccount> getSecondaryAccountsByFinRef(String finReference,String type);
-	void update(SecondaryAccount secondaryAccount,String type);
-	void delete(String secondaryAccount,String type);
-	void save(List<SecondaryAccount> secondaryAccount,String moduleDefiner,String type);
+
+	List<SecondaryAccount> getSecondaryAccountsByFinRef(String finReference, String type);
+
+	void update(SecondaryAccount secondaryAccount, String type);
+
+	void delete(String secondaryAccount, String type);
+
+	void save(List<SecondaryAccount> secondaryAccount, String moduleDefiner, String type);
 }

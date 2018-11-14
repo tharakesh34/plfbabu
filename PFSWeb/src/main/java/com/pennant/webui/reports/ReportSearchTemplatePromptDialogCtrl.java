@@ -57,32 +57,31 @@ import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/reports/ReportSearchTemplatePromptDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/reports/ReportSearchTemplatePromptDialog.zul file.
  */
 public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSearchTemplate> {
 	private static final long serialVersionUID = 4678287540046204660L;
 	private static final Logger logger = Logger.getLogger(ReportSearchTemplatePromptDialogCtrl.class);
 
-	protected Window     window_ReportSearchTemplateDialog;
-	protected Textbox    templateName;
-	protected Button     btnSaveTemplate;
-	protected ReportGenerationPromptDialogCtrl  reportGenerationPromptDialogCtrl;
-	private  ReportConfigurationService reportConfigurationService;
-    private  long reportId;
-    protected Radiogroup        saveTemplateFor;               // autowired
+	protected Window window_ReportSearchTemplateDialog;
+	protected Textbox templateName;
+	protected Button btnSaveTemplate;
+	protected ReportGenerationPromptDialogCtrl reportGenerationPromptDialogCtrl;
+	private ReportConfigurationService reportConfigurationService;
+	private long reportId;
+	protected Radiogroup saveTemplateFor; // autowired
 
-    public ReportSearchTemplatePromptDialogCtrl() {
-    	super();
-    }
+	public ReportSearchTemplatePromptDialogCtrl() {
+		super();
+	}
 
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-    
+
 	/**
-	 * On creating Window 
+	 * On creating Window
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -94,7 +93,8 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 		setPageComponents(window_ReportSearchTemplateDialog);
 
 		if (arguments.containsKey("reportGenerationPromptDialogCtrl")) {
-			this.reportGenerationPromptDialogCtrl = (ReportGenerationPromptDialogCtrl) arguments.get("reportGenerationPromptDialogCtrl");
+			this.reportGenerationPromptDialogCtrl = (ReportGenerationPromptDialogCtrl) arguments
+					.get("reportGenerationPromptDialogCtrl");
 
 		}
 		if (arguments.containsKey("reportId")) {
@@ -104,8 +104,10 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 		this.window_ReportSearchTemplateDialog.doModal();
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * on Click button "btnSaveTemplate"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -116,36 +118,36 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 	}
 
 	/**
-	 * This method calls reportGenerationPromptDialogCtrl's doSaveTemplate() method 
-	 * @throws InterruptedException 
-	 * @throws WrongValueException 
+	 * This method calls reportGenerationPromptDialogCtrl's doSaveTemplate() method
+	 * 
+	 * @throws InterruptedException
+	 * @throws WrongValueException
 	 */
-	private void dosaveTemplateName() throws WrongValueException, InterruptedException{
+	private void dosaveTemplateName() throws WrongValueException, InterruptedException {
 		logger.debug("Entering");
-		if(("").equals(this.templateName.getValue().trim())){
-			throw new WrongValueException( this.templateName,Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[] {Labels.getLabel("label_Template.label")}));
+		if (("").equals(this.templateName.getValue().trim())) {
+			throw new WrongValueException(this.templateName,
+					Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_Template.label") }));
 
-		}else{
-			long templateUser = -1; 
-			if(saveTemplateFor.getSelectedIndex() == 0){
+		} else {
+			long templateUser = -1;
+			if (saveTemplateFor.getSelectedIndex() == 0) {
 				templateUser = getUserWorkspace().getLoggedInUser().getUserId();
 			}
-			boolean  isSaved = this.reportGenerationPromptDialogCtrl.doSaveTemplate(
-					reportId ,templateUser,this.templateName.getValue());
-			if(isSaved){
-				Clients.showNotification(Labels.getLabel("label_SaveSucess"),  "info", null, null, -1);
+			boolean isSaved = this.reportGenerationPromptDialogCtrl.doSaveTemplate(reportId, templateUser,
+					this.templateName.getValue());
+			if (isSaved) {
+				Clients.showNotification(Labels.getLabel("label_SaveSucess"), "info", null, null, -1);
 				this.window_ReportSearchTemplateDialog.onClose();
 			}
 		}
 
-		logger.debug("Leaving");	
+		logger.debug("Leaving");
 	}
 
-
-
 	/**
-	 * on  Closing window 
+	 * on Closing window
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -154,11 +156,11 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 		this.window_ReportSearchTemplateDialog.onClose();
 		logger.debug("Leaving" + event.toString());
 	}
+
 	//Getters and Setters 
 	public void setReportConfigurationService(ReportConfigurationService reportConfigurationService) {
 		this.reportConfigurationService = reportConfigurationService;
 	}
-
 
 	public ReportConfigurationService getReportConfigurationService() {
 		return reportConfigurationService;

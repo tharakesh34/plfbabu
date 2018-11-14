@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.endofday.limitdecider;
 
-
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
@@ -57,21 +55,21 @@ public class EodBackupDecider implements JobExecutionDecider {
 	private Logger logger = Logger.getLogger(EodBackupDecider.class);
 
 	public EodBackupDecider() {
-		
+
 	}
-	
+
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug("Entering");
-		try{
+		try {
 			if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("EOD_DBBACKUP"))) {
 				return FlowExecutionStatus.UNKNOWN;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 		return FlowExecutionStatus.COMPLETED;
 
-	} 
+	}
 
 }

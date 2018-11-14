@@ -6,71 +6,79 @@ import java.util.Date;
 
 public class MonthlyAccumulateDetail implements Serializable {
 
-    private static final long serialVersionUID = -684680761469984700L; 
-	
-    private String finReference;
-    private Date monthEndDate;
-    private Date monthStartDate;
-    private BigDecimal pftAccrued = BigDecimal.ZERO;
-    private BigDecimal pftTsfd = BigDecimal.ZERO; // (Present Month Accrued + Total Pft Paid) - Previous Month Transfered
-    //FIXME: PV 14APR17
-    private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
-    private BigDecimal depreciatePri = BigDecimal.ZERO;
-  
-    public MonthlyAccumulateDetail() {
-    	
-    }
-    
- // ******************************************************//
- // ****************** getter / setter *******************//
- // ******************************************************//
-    
+	private static final long serialVersionUID = -684680761469984700L;
+
+	private String finReference;
+	private Date monthEndDate;
+	private Date monthStartDate;
+	private BigDecimal pftAccrued = BigDecimal.ZERO;
+	private BigDecimal pftTsfd = BigDecimal.ZERO; // (Present Month Accrued + Total Pft Paid) - Previous Month Transfered
+	//FIXME: PV 14APR17
+	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
+	private BigDecimal depreciatePri = BigDecimal.ZERO;
+
+	public MonthlyAccumulateDetail() {
+
+	}
+
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
-	
+		this.finReference = finReference;
+	}
+
 	public Date getMonthEndDate() {
-    	return monthEndDate;
-    }
+		return monthEndDate;
+	}
+
 	public void setMonthEndDate(Date monthEndDate) {
-    	this.monthEndDate = monthEndDate;
-    }
-	
+		this.monthEndDate = monthEndDate;
+	}
+
 	public BigDecimal getPftAccrued() {
-    	return pftAccrued;
-    }
+		return pftAccrued;
+	}
+
 	public void setPftAccrued(BigDecimal pftAccrued) {
-    	this.pftAccrued = pftAccrued;
-    }
-	
+		this.pftAccrued = pftAccrued;
+	}
+
 	public BigDecimal getPftTsfd() {
-    	return pftTsfd;
-    }
+		return pftTsfd;
+	}
+
 	public void setPftTsfd(BigDecimal pftTsfd) {
-    	this.pftTsfd = pftTsfd;
-    }
-	
+		this.pftTsfd = pftTsfd;
+	}
+
 	public BigDecimal getAccumulatedDepPri() {
-    	return accumulatedDepPri;
-    }
+		return accumulatedDepPri;
+	}
+
 	public void setAccumulatedDepPri(BigDecimal accumulatedDepPri) {
-    	this.accumulatedDepPri = accumulatedDepPri;
-    }
-	
+		this.accumulatedDepPri = accumulatedDepPri;
+	}
+
 	public BigDecimal getDepreciatePri() {
-    	return depreciatePri;
-    }
+		return depreciatePri;
+	}
+
 	public void setDepreciatePri(BigDecimal depreciatePri) {
-    	this.depreciatePri = depreciatePri;
-    }
+		this.depreciatePri = depreciatePri;
+	}
+
 	public Date getMonthStartDate() {
-	    return monthStartDate;
-    }
+		return monthStartDate;
+	}
+
 	public void setMonthStartDate(Date monthStartDate) {
-	    this.monthStartDate = monthStartDate;
-    }
-    
+		this.monthStartDate = monthStartDate;
+	}
+
 }

@@ -71,29 +71,26 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/StaticParms/ScheduleMethod/scheduleMethodDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/StaticParms/ScheduleMethod/scheduleMethodDialog.zul file.
  */
 public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	private static final long serialVersionUID = 8452766351018963227L;
 	private static final Logger logger = Logger.getLogger(ScheduleMethodDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_ScheduleMethodDialog; 	// autoWired
-	protected Textbox 	schdMethod; 					// autoWired
-	protected Textbox 	schdMethodDesc; 				// autoWired
-	
+	protected Window window_ScheduleMethodDialog; // autoWired
+	protected Textbox schdMethod; // autoWired
+	protected Textbox schdMethodDesc; // autoWired
 
 	// not auto wired variables
-	private ScheduleMethod scheduleMethod; 								// overHanded per parameter
-	private transient ScheduleMethodListCtrl scheduleMethodListCtrl; 	// overHanded per parameter
+	private ScheduleMethod scheduleMethod; // overHanded per parameter
+	private transient ScheduleMethodListCtrl scheduleMethodListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient ScheduleMethodService scheduleMethodService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
@@ -113,14 +110,13 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ScheduleMethod object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ScheduleMethod object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_ScheduleMethodDialog(Event event)throws Exception {
+	public void onCreate$window_ScheduleMethodDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -132,8 +128,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("scheduleMethod")) {
-				this.scheduleMethod = (ScheduleMethod) arguments
-						.get("scheduleMethod");
+				this.scheduleMethod = (ScheduleMethod) arguments.get("scheduleMethod");
 				ScheduleMethod befImage = new ScheduleMethod();
 				BeanUtils.copyProperties(this.scheduleMethod, befImage);
 				this.scheduleMethod.setBefImage(befImage);
@@ -143,14 +138,12 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 				setScheduleMethod(null);
 			}
 
-			doLoadWorkFlow(this.scheduleMethod.isWorkflow(),
-					this.scheduleMethod.getWorkflowId(),
+			doLoadWorkFlow(this.scheduleMethod.isWorkflow(), this.scheduleMethod.getWorkflowId(),
 					this.scheduleMethod.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ScheduleMethodDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ScheduleMethodDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -159,8 +152,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 			// or
 			// delete scheduleMethod here.
 			if (arguments.containsKey("scheduleMethodListCtrl")) {
-				setScheduleMethodListCtrl((ScheduleMethodListCtrl) arguments
-						.get("scheduleMethodListCtrl"));
+				setScheduleMethodListCtrl((ScheduleMethodListCtrl) arguments.get("scheduleMethodListCtrl"));
 			} else {
 				setScheduleMethodListCtrl(null);
 			}
@@ -198,8 +190,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -352,13 +343,12 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScheduleMethod
 	 * @throws Exception
 	 */
-	public void doShowDialog(ScheduleMethod aScheduleMethod)throws Exception {
+	public void doShowDialog(ScheduleMethod aScheduleMethod) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -401,12 +391,15 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 
 		setValidationOn(true);
 
-		if (!this.schdMethod.isReadonly()){
-			this.schdMethod.setConstraint(new PTStringValidator(Labels.getLabel("label_ScheduleMethodDialog_SchdMethod.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
-		}	
-		if (!this.schdMethodDesc.isReadonly()){
-			this.schdMethodDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ScheduleMethodDialog_SchdMethodDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.schdMethod.isReadonly()) {
+			this.schdMethod
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ScheduleMethodDialog_SchdMethod.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
+		}
+		if (!this.schdMethodDesc.isReadonly()) {
+			this.schdMethodDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ScheduleMethodDialog_SchdMethodDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -461,8 +454,9 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_ScheduleMethodDialog_SchdMethod.value")+" : "+aScheduleMethod.getSchdMethod();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ScheduleMethodDialog_SchdMethod.value") + " : "
+				+ aScheduleMethod.getSchdMethod();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aScheduleMethod.getRecordType())) {
@@ -584,11 +578,9 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 			if (StringUtils.isBlank(aScheduleMethod.getRecordType())) {
 				aScheduleMethod.setVersion(aScheduleMethod.getVersion() + 1);
 				if (isNew) {
-					aScheduleMethod
-					.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aScheduleMethod.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aScheduleMethod
-					.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aScheduleMethod.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aScheduleMethod.setNewRecord(true);
 				}
 			}
@@ -692,7 +684,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aScheduleMethod,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aScheduleMethod, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -751,8 +743,8 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ScheduleMethodDialog, auditHeader);
 						return processCompleted;
 					}
@@ -795,12 +787,11 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(ScheduleMethod aScheduleMethod,String tranType) {
+	private AuditHeader getAuditHeader(ScheduleMethod aScheduleMethod, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aScheduleMethod.getBefImage(), aScheduleMethod);
-		return new AuditHeader(aScheduleMethod.getSchdMethod(), null, null,
-				null, auditDetail, aScheduleMethod.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aScheduleMethod.getBefImage(), aScheduleMethod);
+		return new AuditHeader(aScheduleMethod.getSchdMethod(), null, null, null, auditDetail,
+				aScheduleMethod.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -814,7 +805,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ScheduleMethodDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_ScheduleMethodDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -838,8 +829,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	private void refreshList() {
 		getScheduleMethodListCtrl().search();
 	}
-	
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.scheduleMethod.getSchdMethod());
@@ -852,6 +842,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -859,6 +850,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	public ScheduleMethod getScheduleMethod() {
 		return this.scheduleMethod;
 	}
+
 	public void setScheduleMethod(ScheduleMethod scheduleMethod) {
 		this.scheduleMethod = scheduleMethod;
 	}
@@ -866,6 +858,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	public void setScheduleMethodService(ScheduleMethodService scheduleMethodService) {
 		this.scheduleMethodService = scheduleMethodService;
 	}
+
 	public ScheduleMethodService getScheduleMethodService() {
 		return this.scheduleMethodService;
 	}
@@ -873,6 +866,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	public void setScheduleMethodListCtrl(ScheduleMethodListCtrl scheduleMethodListCtrl) {
 		this.scheduleMethodListCtrl = scheduleMethodListCtrl;
 	}
+
 	public ScheduleMethodListCtrl getScheduleMethodListCtrl() {
 		return this.scheduleMethodListCtrl;
 	}
@@ -880,6 +874,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

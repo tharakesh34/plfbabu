@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class GroupStatusCode extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -5087295833493236885L;
 
 	private String grpStsCode;
@@ -82,6 +82,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return grpStsCode;
 	}
+
 	public void setId(String id) {
 		this.grpStsCode = id;
 	}
@@ -89,6 +90,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public String getGrpStsCode() {
 		return grpStsCode;
 	}
+
 	public void setGrpStsCode(String grpStsCode) {
 		this.grpStsCode = grpStsCode;
 	}
@@ -96,6 +98,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public String getGrpStsDescription() {
 		return grpStsDescription;
 	}
+
 	public void setGrpStsDescription(String grpStsDescription) {
 		this.grpStsDescription = grpStsDescription;
 	}
@@ -103,6 +106,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public boolean isGrpStsIsActive() {
 		return grpStsIsActive;
 	}
+
 	public void setGrpStsIsActive(boolean grpStsIsActive) {
 		this.grpStsIsActive = grpStsIsActive;
 	}
@@ -110,6 +114,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -117,6 +122,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -124,6 +130,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public GroupStatusCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(GroupStatusCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -131,6 +138,7 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

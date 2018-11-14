@@ -47,12 +47,17 @@ import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface VehicleManufacturerService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	VehicleManufacturer getVehicleManufacturerByName(long manufacturerId);
+
 	VehicleManufacturer getApprovedVehicleManufacturerByName(long manufacturerId);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 }

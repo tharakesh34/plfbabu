@@ -55,21 +55,21 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class InsurancePolicy extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				policyCode;
-	private String				policyDesc;
-	private String				insuranceType;
-	private String				InsuranceTypeDesc;
-	private String				insuranceProvider;
-	private String				TakafulName;
-	private BigDecimal			policyRate			= BigDecimal.ZERO;
-	private String				features;
-	private boolean				active;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private InsurancePolicy		befImage;
-	private LoggedInUser		userDetails;
+	private String policyCode;
+	private String policyDesc;
+	private String insuranceType;
+	private String InsuranceTypeDesc;
+	private String insuranceProvider;
+	private String TakafulName;
+	private BigDecimal policyRate = BigDecimal.ZERO;
+	private String features;
+	private boolean active;
+	private boolean newRecord = false;
+	private String lovValue;
+	private InsurancePolicy befImage;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -115,8 +115,6 @@ public class InsurancePolicy extends AbstractWorkflowEntity {
 		this.insuranceType = insuranceType;
 	}
 
-	
-
 	public String getInsuranceTypeDesc() {
 		return InsuranceTypeDesc;
 	}
@@ -149,7 +147,6 @@ public class InsurancePolicy extends AbstractWorkflowEntity {
 		this.insuranceProvider = insuranceProvider;
 	}
 
-	
 	public BigDecimal getPolicyRate() {
 		return policyRate;
 	}

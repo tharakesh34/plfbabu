@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class SalesOfficer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2264963791613334060L;
-	
+
 	private String salesOffCode;
 	private String salesOffFName;
 	private String salesOffMName;
@@ -81,96 +81,107 @@ public class SalesOfficer extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return salesOffCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.salesOffCode = id;
 	}
-	
+
 	public String getSalesOffCode() {
 		return salesOffCode;
 	}
+
 	public void setSalesOffCode(String salesOffCode) {
 		this.salesOffCode = salesOffCode;
 	}
-	
+
 	public String getSalesOffFName() {
 		return salesOffFName;
 	}
+
 	public void setSalesOffFName(String salesOffFName) {
 		this.salesOffFName = salesOffFName;
 	}
-	
+
 	public String getSalesOffMName() {
 		return salesOffMName;
 	}
+
 	public void setSalesOffMName(String salesOffMName) {
 		this.salesOffMName = salesOffMName;
 	}
-	
+
 	public String getSalesOffLName() {
 		return salesOffLName;
 	}
+
 	public void setSalesOffLName(String salesOffLName) {
 		this.salesOffLName = salesOffLName;
 	}
-	
+
 	public String getSalesOffShrtName() {
 		return salesOffShrtName;
 	}
+
 	public void setSalesOffShrtName(String salesOffShrtName) {
 		this.salesOffShrtName = salesOffShrtName;
 	}
-	
+
 	public String getSalesOffDept() {
 		return salesOffDept;
 	}
+
 	public void setSalesOffDept(String salesOffDept) {
 		this.salesOffDept = salesOffDept;
 	}
-	
+
 	public String getLovDescSalesOffDeptName() {
 		return this.lovDescSalesOffDeptName;
 	}
 
-	public void setLovDescSalesOffDeptName (String lovDescSalesOffDeptName) {
+	public void setLovDescSalesOffDeptName(String lovDescSalesOffDeptName) {
 		this.lovDescSalesOffDeptName = lovDescSalesOffDeptName;
 	}
-	
+
 	public boolean isSalesOffIsActive() {
 		return salesOffIsActive;
 	}
+
 	public void setSalesOffIsActive(boolean salesOffIsActive) {
 		this.salesOffIsActive = salesOffIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public SalesOfficer getBefImage(){
+	public SalesOfficer getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(SalesOfficer beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SalesOfficer beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

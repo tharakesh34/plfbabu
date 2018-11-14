@@ -51,12 +51,17 @@ import com.pennant.backend.model.rmtmasters.CustomerType;
  * 
  */
 public interface CustomerTypeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerType getCustomerTypeById(String id);
+
 	CustomerType getApprovedCustomerTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

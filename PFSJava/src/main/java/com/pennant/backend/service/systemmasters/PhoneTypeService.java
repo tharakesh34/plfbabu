@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.PhoneType;
  * 
  */
 public interface PhoneTypeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	PhoneType getPhoneTypeById(String id);
+
 	PhoneType getApprovedPhoneTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

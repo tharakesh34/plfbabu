@@ -75,7 +75,7 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 	public void setLegalECDetailDAO(LegalECDetailDAO legalECDetailDAO) {
 		this.legalECDetailDAO = legalECDetailDAO;
 	}
-	
+
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
@@ -94,11 +94,11 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 		LegalECDetail templegalECDetail = null;
 
 		if (legalECDetail.isWorkflow()) {
-			templegalECDetail = getLegalECDetailDAO()
-					.getLegalECDetail(legalECDetail.getLegalECId(), TableType.TEMP_TAB.getSuffix());
+			templegalECDetail = getLegalECDetailDAO().getLegalECDetail(legalECDetail.getLegalECId(),
+					TableType.TEMP_TAB.getSuffix());
 		}
-		LegalECDetail befLegalECDetail = getLegalECDetailDAO()
-				.getLegalECDetail(legalECDetail.getLegalECId(), TableType.MAIN_TAB.getSuffix());
+		LegalECDetail befLegalECDetail = getLegalECDetailDAO().getLegalECDetail(legalECDetail.getLegalECId(),
+				TableType.MAIN_TAB.getSuffix());
 		LegalECDetail oldLegalECDetail = legalECDetail.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -163,8 +163,7 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new LegalECDetail(),
-				new LegalECDetail().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalECDetail(), new LegalECDetail().getExcludeFields());
 		List<LegalECDetail> detailList = legalDetail.getEcdDetailsList();
 
 		for (int i = 0; i < detailList.size(); i++) {
@@ -296,8 +295,7 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
 		LegalECDetail legalECDetail = null;
-		String[] fields = PennantJavaUtil.getFieldDetails(new LegalECDetail(),
-				new LegalECDetail().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalECDetail(), new LegalECDetail().getExcludeFields());
 		for (int i = 0; i < legalECDetails.size(); i++) {
 			legalECDetail = (LegalECDetail) legalECDetails.get(i).getModelData();
 			legalECDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);

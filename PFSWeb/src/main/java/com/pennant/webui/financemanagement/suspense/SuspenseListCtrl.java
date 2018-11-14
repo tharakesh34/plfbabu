@@ -69,11 +69,11 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.financemanagement.suspense.model.SuspenseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul file.
@@ -115,7 +115,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 
 	private SuspenseService suspenseService;
 	protected JdbcSearchObject<FinanceSuspHead> searchObj;
-	
+
 	protected Textbox moduleName;
 	private String rightName = null;
 	//private String module = "";
@@ -134,7 +134,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 	protected void doSetProperties() {
 		//super.moduleCode = "Academic";
 		this.rightName = getArgument("rightName");
-	    super.moduleCode = "FinanceSuspHead";
+		super.moduleCode = "FinanceSuspHead";
 		super.pageRightName = "SuspenseList";
 		super.tableName = "FinSuspHead_AView";
 		super.queueTableName = "FinSuspHead_View";
@@ -198,14 +198,13 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 		registerField("finReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("custID", listheader_CustID, SortOrder.NONE, custID, sortOperator_custID, Operators.STRING);
-		registerField("finSuspDate",finSuspDate, SortOrder.NONE,  sortOperator_finSuspDate, Operators.DATE);
+		registerField("finSuspDate", finSuspDate, SortOrder.NONE, sortOperator_finSuspDate, Operators.DATE);
 		registerField("manualSusp", listheader_ManualSusp, SortOrder.NONE, manualSusp, sortOperator_manualSusp,
 				Operators.BOOLEAN);
 		registerField("LovDescCustCIFName");
 		registerField("finIsInSusp");
 		registerField("FinSuspAmt");
 		registerField("finCurSuspAmt");
-		
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -266,19 +265,19 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxSuspense.getSelectedItem();
 		boolean isEnquiry = true;
-		
+
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
 		String userRole = (String) selectedItem.getAttribute("userRole");
 
 		FinanceSuspHead suspHead = suspenseService.getFinanceSuspHeadById(id, enqiryModule, userRole, moduleDefiner);
-		
+
 		if (suspHead == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		if (StringUtils.isBlank(suspHead.getRecordType()) && !isEnquiry) {			
+
+		if (StringUtils.isBlank(suspHead.getRecordType()) && !isEnquiry) {
 			try {
 				doLoadWorkflow(suspHead.getFinType(), moduleDefiner);
 			} catch (Exception e) {
@@ -290,12 +289,12 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 			}
 
 			suspHead.setWorkflowId(getWorkFlowId());
-			
+
 		}
-		
+
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + suspHead.getFinReference() + "' AND Version="
-				+ suspHead.getVersion() + " ";
+		String whereCond = " AND FinReference='" + suspHead.getFinReference() + "' AND Version=" + suspHead.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(suspHead, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

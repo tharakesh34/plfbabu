@@ -68,55 +68,53 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
 	private static final Logger logger = Logger.getLogger(AccountSelectionBox.class);
-	
+
 	// Constants for the Manager Cheques 
 	public static final String MGRCHQ_CR_FIN_EVENT = "MGRCHQCR";
 	public static final String MGRCHQ_DR_FIN_EVENT = "MGRCHQDR";
 	public static final String NOTAPPLICABLE = "NA";
-	
-	private 	Space 				space;
-	private 	Uppercasebox		textbox;
-	private 	Button 				button;
-	private 	Decimalbox 			decimalbox;
-	private 	Hbox 				hbox;
-	
-	/*** Mandatory Properties **/
-	private 	String 				custCIF 			= ""; 		//mandatory
-	private 	String 				branchCode 			= ""; 		//mandatory
-	private 	int 				formatter 			= 0;
-	private static final int	    tb_Width	     	= 150;
-	private static final int	    db_Width	     	= 150;
 
-	private 	boolean 			alwManualInput 		= false;	//mandatory
-	private 	String 				accReceivables	 	= null;		//mandatory
-	private 	String 				accTypes 			= null;		//mandatory
-	private 	String 				currency 			= null;		//mandatory
-	private 	boolean 			mandatory 			= false;	//mandatory
+	private Space space;
+	private Uppercasebox textbox;
+	private Button button;
+	private Decimalbox decimalbox;
+	private Hbox hbox;
+
+	/*** Mandatory Properties **/
+	private String custCIF = ""; //mandatory
+	private String branchCode = ""; //mandatory
+	private int formatter = 0;
+	private static final int tb_Width = 150;
+	private static final int db_Width = 150;
+
+	private boolean alwManualInput = false; //mandatory
+	private String accReceivables = null; //mandatory
+	private String accTypes = null; //mandatory
+	private String currency = null; //mandatory
+	private boolean mandatory = false; //mandatory
 
 	private transient AccountInterfaceService accountInterfaceService;
-	private 	List<IAccounts> 	accountDetails = new ArrayList<IAccounts>();
-	private 	IAccounts			selectedAccount = null;
-	
-	private static final String	    errormesage1	 = "Invalid Account : ";
+	private List<IAccounts> accountDetails = new ArrayList<IAccounts>();
+	private IAccounts selectedAccount = null;
+
+	private static final String errormesage1 = "Invalid Account : ";
 
 	/**
-	 * AccountSelectionBox
-	 * Constructor
-	 * Defining the components and events
+	 * AccountSelectionBox Constructor Defining the components and events
 	 */
 	public AccountSelectionBox() {
 		super();
 		logger.debug("Entering");
-		
+
 		// Create default object. 
-		
+
 		this.space = new Space();
 		this.space.setWidth("2px");
 		this.appendChild(space);
@@ -148,7 +146,7 @@ public class AccountSelectionBox extends Hbox {
 		this.button.addForward("onClick", this, "onButtonClick");
 		this.hbox.appendChild(this.button);
 		this.appendChild(hbox);
-		
+
 		Space spaceBtwComp = new Space();
 		spaceBtwComp.setWidth("10px");
 		this.appendChild(spaceBtwComp);
@@ -163,72 +161,76 @@ public class AccountSelectionBox extends Hbox {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to set Account Selection box Properties with defined definition on Finance Type Configuration
+	 * 
 	 * @param finType
 	 * @param accEvent
 	 * @param finCcy
 	 */
-	public void  setAccountDetails(String finType, String accEvent, String finCcy) {
+	public void setAccountDetails(String finType, String accEvent, String finCcy) {
 		FinTypeAccount finTypeAc = PennantAppUtil.getFinanceAccounts(finType, accEvent, finCcy);
-		if(finTypeAc != null){
-			alwManualInput 		= finTypeAc.isAlwManualEntry();		
-			accReceivables	 	= finTypeAc.getAccountReceivable();
-			accTypes			= finTypeAc.getCustAccountTypes();
+		if (finTypeAc != null) {
+			alwManualInput = finTypeAc.isAlwManualEntry();
+			accReceivables = finTypeAc.getAccountReceivable();
+			accTypes = finTypeAc.getCustAccountTypes();
 		}
-		
+
 		currency = finCcy;
 		this.button.setSclass("cssBtnSearch");
 		this.button.setDisabled(false);
-		if(alwManualInput){
+		if (alwManualInput) {
 			this.textbox.setReadonly(false);
-		}else{
+		} else {
 			this.textbox.setReadonly(true);
 		}
 	}
-	
+
 	/**
 	 * Method to set Account Selection box Properties with external properties definition
+	 * 
 	 * @param accTypeList
 	 * @param accRecvbls
 	 * @param alwManualEntry
 	 */
-	public void  setAcountDetails(String accTypeList, String accRecvbls, boolean alwManualEntry) {
-		alwManualInput 		= alwManualEntry;		
-		accReceivables	 	= StringUtils.trimToEmpty(accRecvbls);
-		accTypes			= StringUtils.trimToEmpty(accTypeList);
-		if(alwManualInput){
+	public void setAcountDetails(String accTypeList, String accRecvbls, boolean alwManualEntry) {
+		alwManualInput = alwManualEntry;
+		accReceivables = StringUtils.trimToEmpty(accRecvbls);
+		accTypes = StringUtils.trimToEmpty(accTypeList);
+		if (alwManualInput) {
 			this.textbox.setReadonly(false);
 		}
 	}
-	
+
 	/**
 	 * Method to set Account Selection box Properties with external properties definition
+	 * 
 	 * @param custMnemonic
 	 * @param accTypeList
 	 * @param accRecvbls
 	 * @param alwManualEntry
 	 */
-	public void  setAccountDetails(String custMnemonic, String accTypeList, String accRecvbls, boolean alwManualEntry) {
-		custCIF 			= custMnemonic;		
-		alwManualInput 		= alwManualEntry;		
-		accReceivables	 	= StringUtils.trimToEmpty(accRecvbls);
-		accTypes			= StringUtils.trimToEmpty(accTypeList);
-		if(alwManualInput){
+	public void setAccountDetails(String custMnemonic, String accTypeList, String accRecvbls, boolean alwManualEntry) {
+		custCIF = custMnemonic;
+		alwManualInput = alwManualEntry;
+		accReceivables = StringUtils.trimToEmpty(accRecvbls);
+		accTypes = StringUtils.trimToEmpty(accTypeList);
+		if (alwManualInput) {
 			this.textbox.setReadonly(false);
 		}
 	}
-	
+
 	/**
 	 * Called when changing the value of the text box
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
-	 * @throws WrongValueException 
+	 * @throws InterruptedException
+	 * @throws WrongValueException
 	 */
-	public void onChangeTextbox(Event event) throws  InterruptedException {
+	public void onChangeTextbox(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		this.setConstraint("");
 		this.setErrorMessage("");
 		Clients.clearWrongValue(this.button);
@@ -236,8 +238,8 @@ public class AccountSelectionBox extends Hbox {
 
 		if (this.selectedAccount != null) {
 			Events.postEvent("onFulfill", this, null);
-		}else{
-			if(StringUtils.isNotEmpty(this.textbox.getValue())){
+		} else {
+			if (StringUtils.isNotEmpty(this.textbox.getValue())) {
 				MessageUtil
 						.showError(errormesage1 + PennantApplicationUtil.formatAccountNumber(this.textbox.getValue()));
 			}
@@ -245,23 +247,24 @@ public class AccountSelectionBox extends Hbox {
 		}
 		logger.debug("Leaving");
 	}
- 
+
 	/**
 	 * Called when clicking on a button
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onButtonClick(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		this.textbox.setErrorMessage("");
 		Clients.clearWrongValue(this.button);
-		if(!prepareAccountsList()){
+		if (!prepareAccountsList()) {
 			return;
 		}
-		
+
 		try {
-			
+
 			Object object = ExtendedSearchListBox.show(this, "Accounts", this.accountDetails);
 			if (object instanceof String) {
 				doClear();
@@ -276,14 +279,15 @@ public class AccountSelectionBox extends Hbox {
 			Events.postEvent("onFulfill", this, null);
 		}
 	}
-	
+
 	/**
 	 * Prepare the accounts list
+	 * 
 	 * @throws InterruptedException
 	 */
 	private boolean prepareAccountsList() throws InterruptedException {
 		accountDetails.clear();
-		if(StringUtils.isNotBlank(accReceivables)){
+		if (StringUtils.isNotBlank(accReceivables)) {
 			String[] accounts = accReceivables.split(",");
 			for (String accountId : accounts) {
 				IAccounts iAccounts = new IAccounts();
@@ -303,23 +307,24 @@ public class AccountSelectionBox extends Hbox {
 
 		try {
 			iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
-		}catch (InterfaceException e) {
+		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
 			return false;
-		}	
+		}
 
-		if(iAccountList != null && !iAccountList.isEmpty()){
+		if (iAccountList != null && !iAccountList.isEmpty()) {
 			for (IAccounts iAccounts : iAccountList) {
-				if(accReceivables == null  || !accReceivables.contains(iAccounts.getAccountId())){
+				if (accReceivables == null || !accReceivables.contains(iAccounts.getAccountId())) {
 					accountDetails.add(iAccounts);
-				}	
+				}
 			}
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Get account details of the account 
+	 * Get account details of the account
+	 * 
 	 * @param returnAccList
 	 * @return
 	 * @throws InterruptedException
@@ -327,15 +332,16 @@ public class AccountSelectionBox extends Hbox {
 	private List<IAccounts> getCoreBankAccountDetails(List<IAccounts> returnAccList) throws InterruptedException {
 		try {
 			return getAccountInterfaceService().getAccountsAvailableBalList(returnAccList);
-		} catch (InterfaceException  e) {
+		} catch (InterfaceException e) {
 			returnAccList.clear();
 			MessageUtil.showError(e);
 		}
 		return returnAccList;
 	}
-	
+
 	/**
 	 * Used to clear the values and attributes of the components
+	 * 
 	 * @param event
 	 */
 	private void doClear() {
@@ -348,40 +354,45 @@ public class AccountSelectionBox extends Hbox {
 	}
 
 	/**
-	 * Validate the value of the text entered in the textbox 
+	 * Validate the value of the text entered in the textbox
+	 * 
 	 * @param showError
-	 * @throws InterruptedException 
-	 * @throws WrongValueException 
+	 * @throws InterruptedException
+	 * @throws WrongValueException
 	 */
 	public void validateValue() throws InterruptedException {
 		//
 	}
-	
+
 	/**
 	 * Internal method to write the values to the components
-	 * @throws InterruptedException 
+	 * 
+	 * @throws InterruptedException
 	 * @throws Exception
 	 */
 	private void doWrite() throws InterruptedException {
 		logger.debug("Entering");
 
-		if(this.selectedAccount == null){
+		if (this.selectedAccount == null) {
 			return;
 		}
-		this.textbox.setValue(PennantApplicationUtil.formatAccountNumber(this.selectedAccount.getAccountId())); 
+		this.textbox.setValue(PennantApplicationUtil.formatAccountNumber(this.selectedAccount.getAccountId()));
 		this.textbox.setTooltiptext(selectedAccount.getAcShortName());
 
-		this.decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(this.selectedAccount.getAcCcy()))); 
-		this.decimalbox.setText(PennantAppUtil.amountFormate(this.selectedAccount.getAcAvailableBal(),CurrencyUtil.getFormat(this.selectedAccount.getAcCcy())));
+		this.decimalbox.setFormat(
+				PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(this.selectedAccount.getAcCcy())));
+		this.decimalbox.setText(PennantAppUtil.amountFormate(this.selectedAccount.getAcAvailableBal(),
+				CurrencyUtil.getFormat(this.selectedAccount.getAcCcy())));
 		setFormatter(CurrencyUtil.getFormat(this.selectedAccount.getAcCcy()));
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Get the value from the text box after validating it
+	 * 
 	 * @return String
-	 * @throws InterruptedException 
-	 * @throws WrongValueException 
+	 * @throws InterruptedException
+	 * @throws WrongValueException
 	 */
 	public String getValidatedValue() throws WrongValueException, InterruptedException {
 		this.textbox.getValue();//to call the constraint if any
@@ -390,10 +401,10 @@ public class AccountSelectionBox extends Hbox {
 		}
 		return this.textbox.getValue();
 	}
-	
+
 	/**
 	 * Method to Set Read only properties to Account Selection Box
-	 * */
+	 */
 	public void setReadonly(boolean isReadOnly) {
 		this.button.setDisabled(isReadOnly);
 		this.textbox.setReadonly(true);
@@ -401,50 +412,53 @@ public class AccountSelectionBox extends Hbox {
 		if (alwManualInput) {
 			this.textbox.setReadonly(isReadOnly);
 		}
-		
-		if(accReceivables == null && accTypes == null){
+
+		if (accReceivables == null && accTypes == null) {
 			this.button.setDisabled(true);
 		}
-		
+
 		if (isReadOnly) {
 			//this.space.setSclass("");
 			this.button.setSclass(null);
-		}else{
+		} else {
 			this.button.setSclass("cssBtnSearch");
-			if(isMandatory()){
+			if (isMandatory()) {
 				this.space.setSclass(PennantConstants.mandateSclass);
 			}
 		}
-		
- 		if (this.textbox.isReadonly()) {
- 			this.textbox.setTabindex(-1);			
+
+		if (this.textbox.isReadonly()) {
+			this.textbox.setTabindex(-1);
 		}
 	}
-	
+
 	public void setValue(String value) {
-		if(StringUtils.isNotBlank(value)){
+		if (StringUtils.isNotBlank(value)) {
 			this.textbox.setValue(PennantApplicationUtil.formatAccountNumber(value));
 			try {
 				validateValue();
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
-		}else{
+		} else {
 			this.textbox.setValue("");
 			this.decimalbox.setText("");
 		}
-	}	
+	}
+
 	public String getValue() {
 		return textbox.getValue();
- 	}
+	}
+
 	public String getAcCcy() {
-		if(this.selectedAccount == null){
+		if (this.selectedAccount == null) {
 			return "";
 		}
 		return this.selectedAccount.getAcCcy();
 	}
+
 	public String getAcShrtName() {
-		if(this.selectedAccount == null){
+		if (this.selectedAccount == null) {
 			return "";
 		}
 		return this.selectedAccount.getAcShortName();
@@ -455,10 +469,11 @@ public class AccountSelectionBox extends Hbox {
 			this.textbox.setWidth(width + "px");
 		}
 	}
-	
+
 	public void setConstraint(String constraint) {
 		this.textbox.setConstraint(constraint);
 	}
+
 	public void setConstraint(Constraint constraint) {
 		this.textbox.setConstraint(constraint);
 	}
@@ -466,6 +481,7 @@ public class AccountSelectionBox extends Hbox {
 	public void setErrorMessage(String errmsg) {
 		this.textbox.setErrorMessage(errmsg);
 	}
+
 	public void clearErrorMessage() {
 		this.textbox.clearErrorMessage();
 	}
@@ -486,64 +502,70 @@ public class AccountSelectionBox extends Hbox {
 	public void setButtonVisible(boolean isVisible) {
 		this.button.setDisabled(!isVisible);
 		this.button.setVisible(isVisible);
-		if(!isVisible){
+		if (!isVisible) {
 			this.button.setSclass(null);
-		}else{
+		} else {
 			this.button.setSclass("cssBtnSearch");
 		}
 	}
-	
+
 	public boolean isMandatory() {
 		return mandatory;
 	}
+
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
-	
+
 	public void setAccReceivables(String accReceivables) {
 		this.accReceivables = accReceivables;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getCustCIF() {
 		return custCIF;
 	}
+
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
-	
+
 	public String getBranchCode() {
 		return branchCode;
 	}
+
 	public void setBranchCode(String branchCode) {
 		this.branchCode = branchCode;
 	}
-	
+
 	public BigDecimal getAcBalance() {
 		return PennantApplicationUtil.unFormateAmount(this.decimalbox.getValue(), formatter);
 	}
-	
+
 	public int getFormatter() {
 		return formatter;
 	}
+
 	public void setFormatter(int formatter) {
 		this.formatter = formatter;
 		this.decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 	}
-	
+
 	public List<IAccounts> getAccountDetails() {
 		return accountDetails;
 	}
+
 	public void setAccountDetails(List<IAccounts> accountDetails) {
 		this.accountDetails = accountDetails;
 	}
-	
+
 	public IAccounts getSelectedAccount() {
 		return selectedAccount;
 	}
+
 	public void setSelectedAccount(IAccounts selectedAccount) {
 		this.selectedAccount = selectedAccount;
 	}

@@ -131,17 +131,15 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Facility/Facility/facilityDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Facility/Facility/facilityDialog.zul file.
  */
 public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private static final long serialVersionUID = -1600733082543197594L;
 	private static final Logger logger = Logger.getLogger(FacilityDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FacilityDialog;
 	protected Row row0;
@@ -213,7 +211,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	protected Space space_NextReviewDate;
 	protected Datebox nextReviewDate;
 	protected Label recordType;
-	
+
 	protected Caption limits_Caption;
 	// New
 	protected Combobox levelOfApproval;
@@ -232,51 +230,50 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	protected Checkbox customerRelated;
 	protected Datebox aIBRelation;
 	protected Textbox txb_aibRelation;
-	
+
 	protected Listbox listBoxCustomerLimit;
 	protected Listbox listBoxCustomerRating;
 	protected Listbox listBoxCustomerDirectory;
 	protected Div basicDetailTabDiv;
-	
+
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsIndexCenter;
 	protected Tab customerOverview;
-	
-	protected PTCKeditor customerBackGround;  // autowired
-	protected PTCKeditor strength;  // autowired
-	protected PTCKeditor weaknesses;  // autowired
-	protected PTCKeditor sourceOfRepayment;  // autowired
-	protected PTCKeditor adequacyOfCashFlows;  // autowired
-	protected PTCKeditor typesOfsecurities;  // autowired
-	protected PTCKeditor guaranteeDescription;  // autowired
-	protected PTCKeditor financialSummary;  // autowired
-	protected PTCKeditor mitigants;  // autowired
+
+	protected PTCKeditor customerBackGround; // autowired
+	protected PTCKeditor strength; // autowired
+	protected PTCKeditor weaknesses; // autowired
+	protected PTCKeditor sourceOfRepayment; // autowired
+	protected PTCKeditor adequacyOfCashFlows; // autowired
+	protected PTCKeditor typesOfsecurities; // autowired
+	protected PTCKeditor guaranteeDescription; // autowired
+	protected PTCKeditor financialSummary; // autowired
+	protected PTCKeditor mitigants; // autowired
 
 	protected Label label_antiMoneyLaunderClear;
 	protected Hlayout hlayout_antiMoneyLaunderClear;
 	protected Textbox antiMoneyLaunderClear;
 	protected Datebox interim;
-	
-	protected PTCKeditor purpose;  // autowired
-	protected PTCKeditor accountRelation;  // autowired
-	protected PTCKeditor limitAndAncillary;  // autowired
-	protected PTCKeditor antiMoneyLaunderSection;  // autowired
-	
+
+	protected PTCKeditor purpose; // autowired
+	protected PTCKeditor accountRelation; // autowired
+	protected PTCKeditor limitAndAncillary; // autowired
+	protected PTCKeditor antiMoneyLaunderSection; // autowired
+
 	protected Row row_antiMoneyLaunderSection;
 	protected Row row_accountRelation;
 	protected Row row_limitAndAncillary;
-	
+
 	private boolean enqModule = false;
 	// not auto wired vars
 	private Facility facility; // overhanded per param
 	private transient FacilityListCtrl facilityListCtrl; // overhanded per param
 
-	
 	// Button controller for the CRUD buttons
 	private transient final String btnCtroller_ClassPrefix = "button_FacilityDialog_";
 	protected Button btnHelp;
-	
-	private List<ValueLabel> approvalList=PennantStaticListUtil.getLevelOfApprovalList();
+
+	private List<ValueLabel> approvalList = PennantStaticListUtil.getLevelOfApprovalList();
 
 	// ServiceDAOs / Domain Classes
 	private transient FacilityService facilityService;
@@ -287,13 +284,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private FacilityCheckListReferenceDialogCtrl facilityCheckListReferenceDialogCtrl;
 	private FacilityScoringDetailDialogCtrl facilityScoringDetailDialogCtrl;
 	private FacilityDetailListCtrl facilityDetailListCtrl;
-	private FacilityAgreementDetailDialogCtrl facilityAgreementDetailDialogCtrl; 
-	
+	private FacilityAgreementDetailDialogCtrl facilityAgreementDetailDialogCtrl;
+
 	private NotificationService notificationService;
 	List<CustomerCollateral> collateralsFromEquation = null;
-	
+
 	private boolean recommendEntered = false;
-	
 
 	public List<CustomerCollateral> getCollateralsFromEquation() {
 		return collateralsFromEquation;
@@ -302,15 +298,16 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public void setCollateralsFromEquation(List<CustomerCollateral> collaterals) {
 		this.collateralsFromEquation = collaterals;
 	}
-	
+
 	Date appldate = DateUtility.getAppDate();
 
-	int ccyFormat=0;
-	private BigDecimal countryLimitEQ=BigDecimal.ZERO;
-	private BigDecimal countryExposureEQ=BigDecimal.ZERO;
-	private String  countryLimitCureency="";
+	int ccyFormat = 0;
+	private BigDecimal countryLimitEQ = BigDecimal.ZERO;
+	private BigDecimal countryExposureEQ = BigDecimal.ZERO;
+	private String countryLimitCureency = "";
 	private boolean isCreditAdminManager;
 	private boolean isCommerical;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -324,11 +321,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Facility object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Facility object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -377,12 +373,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 80 - 52 + "px");
 			// set Field Properties
 			doSetFieldProperties();
-			
+
 			if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_COMMERCIAL)) {
-				isCommerical=true;
+				isCommerical = true;
 			}
-			if(!enqModule && "CreditAdminManager".equals(getTaskTabs(getTaskId(getRole())))){
-				isCreditAdminManager=true;
+			if (!enqModule && "CreditAdminManager".equals(getTaskTabs(getTaskId(getRole())))) {
+				isCreditAdminManager = true;
 			}
 			doShowDialog(getFacility());
 		} catch (Exception e) {
@@ -473,7 +469,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(getNotes("Facility", getFacility().getCAFReference(), getFacility().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("Facility", getFacility().getCAFReference(), getFacility().getVersion()),
+					this);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -488,12 +485,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// GUI operations
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFacility
 	 * @throws InterruptedException
@@ -505,17 +501,17 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			doWriteBeanToComponents(aFacility);
 			// set ReadOnly mode accordingly if the object is new or not.
 			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aFacility.isNewRecord()));
-			
-			 doCheckOnCreateCondiitons();
-			 
+
+			doCheckOnCreateCondiitons();
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
-	private void doCheckOnCreateCondiitons(){
+
+	private void doCheckOnCreateCondiitons() {
 		logger.debug("Entering");
 		doDesignByMode();
 		doCheckCustomerType();
@@ -532,9 +528,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	// 6 WorkFlow Edit
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
-		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(), this.userAction, this.cAFReference, this.custID));
+		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
+				this.userAction, this.cAFReference, this.custID));
 		if (getFacility().isNewRecord()) {
-			setComponentAccessType("FacilityDialog_CAFReference", false, this.cAFReference, this.space_CAFReference, this.label_CAFReference, this.hlayout_CAFReference, null);
+			setComponentAccessType("FacilityDialog_CAFReference", false, this.cAFReference, this.space_CAFReference,
+					this.label_CAFReference, this.hlayout_CAFReference, null);
 		}
 		logger.debug("Leaving");
 	}
@@ -545,33 +543,38 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public void doReadOnly(boolean readOnly) {
 		logger.debug("Entering");
 		boolean tempReadOnly = readOnly;
-		if (readOnly){
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.facility.getRecordType())) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.facility.getRecordType())) {
 			tempReadOnly = true;
 		}
-		setComponentAccessType("FacilityDialog_CAFReference", true, this.cAFReference, this.space_CAFReference, this.label_CAFReference, this.hlayout_CAFReference, null);
+		setComponentAccessType("FacilityDialog_CAFReference", true, this.cAFReference, this.space_CAFReference,
+				this.label_CAFReference, this.hlayout_CAFReference, null);
 		setRowInvisible(this.row0, this.hlayout_CAFReference, this.hlayout_CustID);
-		setComponentAccessType("FacilityDialog_DeadLine", tempReadOnly, this.deadLine, null, this.label_DeadLine, this.hlayout_DeadLine, null);
+		setComponentAccessType("FacilityDialog_DeadLine", tempReadOnly, this.deadLine, null, this.label_DeadLine,
+				this.hlayout_DeadLine, null);
 		setRowInvisible(this.row2, countryOfDomicile, this.hlayout_DeadLine);
-		setComponentAccessType("FacilityDialog_EstablishedDate", tempReadOnly, this.establishedDate, this.space_EstablishedDate, this.label_EstablishedDate, this.hlayout_EstablishedDate, null);
+		setComponentAccessType("FacilityDialog_EstablishedDate", tempReadOnly, this.establishedDate,
+				this.space_EstablishedDate, this.label_EstablishedDate, this.hlayout_EstablishedDate, null);
 		setRowInvisible(this.row3, countryOfRisk, this.hlayout_EstablishedDate);
-		setComponentAccessType("FacilityDialog_RelationshipManager", tempReadOnly, this.relationshipManager, this.space_RelationshipManager, this.label_RelationshipManager, this.hlayout_RelationshipManager, null);
+		setComponentAccessType("FacilityDialog_RelationshipManager", tempReadOnly, this.relationshipManager,
+				this.space_RelationshipManager, this.label_RelationshipManager, this.hlayout_RelationshipManager, null);
 		setRowInvisible(this.row6, this.hlayout_RelationshipManager, customerGroup);
-		setComponentAccessType("FacilityDialog_NextReviewDate", tempReadOnly, this.nextReviewDate, this.space_NextReviewDate, this.label_NextReviewDate, this.hlayout_NextReviewDate, null);
+		setComponentAccessType("FacilityDialog_NextReviewDate", tempReadOnly, this.nextReviewDate,
+				this.space_NextReviewDate, this.label_NextReviewDate, this.hlayout_NextReviewDate, null);
 		setRowInvisible(this.row7, this.hlayout_NextReviewDate, null);
-		
-		readOnlyComponent(isReadOnly("FacilityDialog_ReviewCenter"),  this.reviewCenter);
-		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimitAdeq"),  this.countryLimitAdeq);
-		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimit"),  this.countryLimit);
-		readOnlyComponent(isReadOnly("FacilityDialog_CountryExposure"),  this.countryExposure);
+
+		readOnlyComponent(isReadOnly("FacilityDialog_ReviewCenter"), this.reviewCenter);
+		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimitAdeq"), this.countryLimitAdeq);
+		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimit"), this.countryLimit);
+		readOnlyComponent(isReadOnly("FacilityDialog_CountryExposure"), this.countryExposure);
 		//Seperate Rights to be created for the Customer Group Limits 
-		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimit"),  this.custGroupLimit);
-		readOnlyComponent(isReadOnly("FacilityDialog_CountryExposure"),  this.custGroupExposure);
-		
-		readOnlyComponent(isReadOnly("FacilityDialog_antiMoneyLaunderClear"),  this.antiMoneyLaunderClear);
-		readOnlyComponent(isReadOnly("FacilityDialog_interim"),  this.interim);
-		
+		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimit"), this.custGroupLimit);
+		readOnlyComponent(isReadOnly("FacilityDialog_CountryExposure"), this.custGroupExposure);
+
+		readOnlyComponent(isReadOnly("FacilityDialog_antiMoneyLaunderClear"), this.antiMoneyLaunderClear);
+		readOnlyComponent(isReadOnly("FacilityDialog_interim"), this.interim);
+
 		if (!enqModule) {
 			this.countryOfDomicile.setReadonly(isReadOnly("FacilityDialog_CountryOfDomicile"));
 			this.countryOfRisk.setReadonly(isReadOnly("FacilityDialog_CountryOfRisk"));
@@ -589,13 +592,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			this.guaranteeDescription.setReadonly(isReadOnly("FacilityDialog_GuaranteeDescription"));
 			this.financialSummary.setReadonly(isReadOnly("FacilityDialog_FinancialSummary"));
 			this.mitigants.setReadonly(isReadOnly("FacilityDialog_Mitigants"));
-			
+
 			this.purpose.setReadonly(isReadOnly("FacilityDialog_purpose"));
 			this.accountRelation.setReadonly(isReadOnly("FacilityDialog_accountRelation"));
 			this.limitAndAncillary.setReadonly(isReadOnly("FacilityDialog_limitAndAncillary"));
 			this.antiMoneyLaunderSection.setReadonly(isReadOnly("FacilityDialog_antiMoneyLaunderSection"));
-			
-		}else{
+
+		} else {
 			this.countryOfDomicile.setReadonly(enqModule);
 			this.countryOfRisk.setReadonly(enqModule);
 			this.natureOfBusiness.setReadonly(enqModule);
@@ -612,52 +615,53 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			this.guaranteeDescription.setReadonly(enqModule);
 			this.financialSummary.setReadonly(enqModule);
 			this.mitigants.setReadonly(enqModule);
-			
+
 			this.purpose.setReadonly(enqModule);
 			this.accountRelation.setReadonly(enqModule);
 			this.limitAndAncillary.setReadonly(enqModule);
 			this.antiMoneyLaunderSection.setReadonly(enqModule);
-			
-			readOnlyComponent(enqModule,  this.reviewCenter);
-			readOnlyComponent(enqModule,  this.countryLimitAdeq);
-			readOnlyComponent(enqModule,  this.countryLimit);
-			readOnlyComponent(enqModule,  this.countryExposure);
-			readOnlyComponent(enqModule,  this.custGroupLimit);
-			readOnlyComponent(enqModule,  this.custGroupExposure);
-			readOnlyComponent(enqModule,  this.antiMoneyLaunderClear);
-			readOnlyComponent(enqModule,  this.interim);
+
+			readOnlyComponent(enqModule, this.reviewCenter);
+			readOnlyComponent(enqModule, this.countryLimitAdeq);
+			readOnlyComponent(enqModule, this.countryLimit);
+			readOnlyComponent(enqModule, this.countryExposure);
+			readOnlyComponent(enqModule, this.custGroupLimit);
+			readOnlyComponent(enqModule, this.custGroupExposure);
+			readOnlyComponent(enqModule, this.antiMoneyLaunderClear);
+			readOnlyComponent(enqModule, this.interim);
 		}
 		if (isCreditAdminManager && !enqModule) {
-			readOnlyComponent(false,  this.levelOfApproval);	
-		}else{
-			readOnlyComponent(true,  this.levelOfApproval);	
+			readOnlyComponent(false, this.levelOfApproval);
+		} else {
+			readOnlyComponent(true, this.levelOfApproval);
 		}
 
 		logger.debug("Leaving");
 	}
 
 	// Helpers
-	
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FacilityDialog",getRole());
+		getUserWorkspace().allocateAuthorities("FacilityDialog", getRole());
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FacilityDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FacilityDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FacilityDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FacilityDialog_btnSave"));
-			this.button_CollateralList_NewCollateral.setVisible(getUserWorkspace().isAllowed("button_FacilityDialog_btnNew"));
+			this.button_CollateralList_NewCollateral
+					.setVisible(getUserWorkspace().isAllowed("button_FacilityDialog_btnNew"));
 		}
 		/* create the Button Controller. Disable not used buttons during working */
-		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew, this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
+				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
 		logger.debug("Leaving");
 	}
 
@@ -676,7 +680,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.countryOfDomicile.setDescColumn("CountryDesc");
 		this.countryOfDomicile.setValidateColumns(new String[] { "CountryCode" });
 		this.countryOfDomicile.setMandatoryStyle(true);
-		
+
 		this.deadLine.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.countryOfRisk.setTextBoxWidth(30);
 		this.countryOfRisk.setModuleName("Country");
@@ -684,7 +688,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.countryOfRisk.setDescColumn("CountryDesc");
 		this.countryOfRisk.setValidateColumns(new String[] { "CountryCode" });
 		this.countryOfRisk.setMandatoryStyle(true);
-		
+
 		this.establishedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.natureOfBusiness.setTextBoxWidth(100);
 		this.natureOfBusiness.setModuleName("Sector");
@@ -703,14 +707,14 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.customerRiskType.setModuleName("CustRiskType");
 		this.customerRiskType.setValueColumn("RiskCode");
 		this.customerRiskType.setDescColumn("RiskDesc");
-		this.customerRiskType.setValidateColumns(new String[] { "RiskCode"});
+		this.customerRiskType.setValidateColumns(new String[] { "RiskCode" });
 		this.countryManager.setTextBoxWidth(100);
 		this.countryManager.setModuleName("EntityCodes");
 		this.countryManager.setValueColumn("EntityCode");
 		this.countryManager.setDescColumn("EntityDesc");
 		this.countryManager.setValidateColumns(new String[] { "EntityCode" });
 		this.countryManager.setMandatoryStyle(true);
-		
+
 		this.relationshipManager.setMaxlength(50);
 		this.customerGroup.setTextBoxWidth(100);
 		this.customerGroup.setModuleName("CustomerGroup");
@@ -718,7 +722,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.customerGroup.setDescColumn("CustGrpDesc");
 		this.customerGroup.setValidateColumns(new String[] { "CustGrpCode" });
 		//this.customerGroup.setMandatoryStyle(true);
-		
+
 		this.nextReviewDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.countryExposure.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.countryExposure.setScale(ccyFormat);
@@ -728,20 +732,20 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.custGroupExposure.setScale(ccyFormat);
 		this.custGroupLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.custGroupLimit.setScale(ccyFormat);
-		
+
 		this.reviewCenter.setMaxlength(50);
 		this.countryLimitAdeq.setMaxlength(50);
 		this.levelOfApproval.setMaxlength(50);
-		
+
 		this.interim.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.antiMoneyLaunderClear.setMaxlength(200);
-		
+
 		setStatusDetails(null, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
 	}
 
 	public void onFulfill$natureOfBusiness(Event event) {
-		doSetSubSectorFilters( this.natureOfBusiness.getValidatedValue());
+		doSetSubSectorFilters(this.natureOfBusiness.getValidatedValue());
 	}
 
 	public void doSetSubSectorFilters(String sectorcode) {
@@ -749,7 +753,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			Filter filters[] = new Filter[1];
 			filters[0] = new Filter("SectorCode", sectorcode, Filter.OP_EQUAL);
 			this.sICCode.setFilters(filters);
-		} 
+		}
 		this.sICCode.setValue("", "");
 	}
 
@@ -783,7 +787,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.countryManager.setValue(aFacility.getCountryManager());
 		this.customerRiskType.setValue(aFacility.getCustomerRiskType());
 		this.relationshipManager.setValue(aFacility.getRelationshipManager());
-	
+
 		this.nextReviewDate.setValue(aFacility.getNextReviewDate());
 		this.countryOfDomicile.setDescription(StringUtils.trimToEmpty(aFacility.getCountryOfDomicileName()));
 		this.countryOfRisk.setDescription(StringUtils.trimToEmpty(aFacility.getCountryOfRiskName()));
@@ -803,36 +807,37 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		if (StringUtils.trimToEmpty(aFacility.getCustRelation()).equals(FacilityConstants.CUSTRELATION_RELATED)) {
 			this.connectedCustomer.setValue(Labels.getLabel("Related_Customer"));
 			this.customerRelated.setChecked(true);
-		} else if (StringUtils.trimToEmpty(aFacility.getCustRelation()).equals(FacilityConstants.CUSTRELATION_CONNECTED)) {
+		} else if (StringUtils.trimToEmpty(aFacility.getCustRelation())
+				.equals(FacilityConstants.CUSTRELATION_CONNECTED)) {
 			this.connectedCustomer.setValue(Labels.getLabel("Connected_Customer"));
 			this.customerConnected.setChecked(true);
-		}else {
+		} else {
 			this.connectedCustomer.setValue(Labels.getLabel("NoRelation"));
 		}
 		checkConnectedCustomer();
-		
-		if(aFacility.getCustDOB()!= null) {
+
+		if (aFacility.getCustDOB() != null) {
 			this.aIBRelation.setValue(aFacility.getCustDOB());
-		}else{
+		} else {
 			this.aIBRelation.setVisible(false);
 			this.txb_aibRelation.setVisible(true);
 			this.txb_aibRelation.setValue("NEW");
 		}
-		
+
 		this.customerGroup.setObject(String.valueOf(aFacility.getCustomerGroup()));
 		this.customerGroup.setValue(aFacility.getCustGrpCodeName());
 		this.customerGroup.setDescription(StringUtils.trimToEmpty(aFacility.getCustomerGroupName()));
-		
+
 		this.countryExposure.setValue(PennantAppUtil.formateAmount(aFacility.getCountryExposure(), ccyFormat));
 		this.countryLimit.setValue(PennantAppUtil.formateAmount(aFacility.getCountryLimit(), ccyFormat));
 		this.reviewCenter.setValue(aFacility.getReviewCenter());
 		this.countryLimitAdeq.setValue(aFacility.getCountryLimitAdeq());
 		if (!aFacility.isOverriddeCirculation()) {
-			fillComboBox(this.levelOfApproval, getFacilityService().getActualLevelAprroval(aFacility), approvalList);	
-		}else{
-			fillComboBox(this.levelOfApproval, aFacility.getLevelOfApproval(), approvalList);	
+			fillComboBox(this.levelOfApproval, getFacilityService().getActualLevelAprroval(aFacility), approvalList);
+		} else {
+			fillComboBox(this.levelOfApproval, aFacility.getLevelOfApproval(), approvalList);
 		}
-		
+
 		this.purpose.setValue(aFacility.getPurpose());
 		this.accountRelation.setValue(aFacility.getAccountRelation());
 		this.limitAndAncillary.setValue(aFacility.getLimitAndAncillary());
@@ -842,40 +847,43 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.recordStatus.setValue(aFacility.getRecordStatus());
 		logger.debug("Leaving");
 	}
-	
-	public void checkConnectedCustomer(){
+
+	public void checkConnectedCustomer() {
 		if (this.customerRelated.isChecked()) {
 			this.customerGroup.setMandatoryStyle(true);
-		}else{
+		} else {
 			this.customerGroup.setMandatoryStyle(false);
 		}
 	}
-		
-	public void setCountryLimitAdeq(List<FacilityDetail> facilityDetails){
+
+	public void setCountryLimitAdeq(List<FacilityDetail> facilityDetails) {
 		logger.debug("Entering");
 		this.countryLimitAdeq.setDisabled(true);
-		BigDecimal exposure=this.countryExposure.getValue() ==null?BigDecimal.ZERO:this.countryExposure.getValue();
-		BigDecimal countryLimit=this.countryLimit.getValue() ==null?BigDecimal.ZERO:this.countryLimit.getValue();
-		BigDecimal totfacilityUsd=BigDecimal.ZERO;
+		BigDecimal exposure = this.countryExposure.getValue() == null ? BigDecimal.ZERO
+				: this.countryExposure.getValue();
+		BigDecimal countryLimit = this.countryLimit.getValue() == null ? BigDecimal.ZERO : this.countryLimit.getValue();
+		BigDecimal totfacilityUsd = BigDecimal.ZERO;
 		if (facilityDetails != null && !facilityDetails.isEmpty()) {
 			for (FacilityDetail facilityDetail : facilityDetails) {
-				totfacilityUsd=totfacilityUsd.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
+				totfacilityUsd = totfacilityUsd.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
+						AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
 			}
-			totfacilityUsd=PennantAppUtil.formateAmount(totfacilityUsd, AccountConstants.CURRENCY_USD_FORMATTER);
+			totfacilityUsd = PennantAppUtil.formateAmount(totfacilityUsd, AccountConstants.CURRENCY_USD_FORMATTER);
 		}
 
-		if (StringUtils.isNotEmpty(countryLimitCureency) && !countryLimitCureency.equals(AccountConstants.CURRENCY_USD)) {
-			totfacilityUsd=CalculationUtil.getConvertedAmount(AccountConstants.CURRENCY_USD, countryLimitCureency, totfacilityUsd);
+		if (StringUtils.isNotEmpty(countryLimitCureency)
+				&& !countryLimitCureency.equals(AccountConstants.CURRENCY_USD)) {
+			totfacilityUsd = CalculationUtil.getConvertedAmount(AccountConstants.CURRENCY_USD, countryLimitCureency,
+					totfacilityUsd);
 		}
-		if ((exposure.add(totfacilityUsd)).compareTo(countryLimit)>0) {
+		if ((exposure.add(totfacilityUsd)).compareTo(countryLimit) > 0) {
 			this.countryLimitAdeq.setValue(Labels.getLabel("common.Yes"));
-		}else{
+		} else {
 			this.countryLimitAdeq.setValue(Labels.getLabel("common.No"));
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	private void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
 		logger.debug("Entering fillComboBox()");
 		combobox.getChildren().clear();
@@ -886,20 +894,20 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		combobox.setSelectedItem(comboitem);
 		combobox.setReadonly(true);
 		for (ValueLabel valueLabel : list) {
-			if (!isCommerical && StringUtils.trim(valueLabel.getValue()).equals(FacilityConstants.FACILITY_LOA_COMM_BANKING_CREDIT_COMMITTEE)) {
+			if (!isCommerical && StringUtils.trim(valueLabel.getValue())
+					.equals(FacilityConstants.FACILITY_LOA_COMM_BANKING_CREDIT_COMMITTEE)) {
 				continue;
 			}
-				comboitem = new Comboitem();
-				comboitem.setValue(valueLabel.getValue());
-				comboitem.setLabel(valueLabel.getLabel());
-				combobox.appendChild(comboitem);
+			comboitem = new Comboitem();
+			comboitem.setValue(valueLabel.getValue());
+			comboitem.setLabel(valueLabel.getLabel());
+			combobox.appendChild(comboitem);
 			if (StringUtils.trimToEmpty(value).equals(StringUtils.trim(valueLabel.getValue()))) {
 				combobox.setSelectedItem(comboitem);
 			}
 		}
 		logger.debug("Leaving fillComboBox()");
 	}
-
 
 	private void doFillDirectordetails(long custID) {
 		logger.debug("Entering");
@@ -909,17 +917,17 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		jdbcSearchObject.addFilterEqual("Shareholder", 1);
 		jdbcSearchObject.addFilterEqual("CustID", custID);
 		List<DirectorDetail> directorList = pagedListService.getBySearchObject(jdbcSearchObject);
-		if(directorList != null && !directorList.isEmpty()){
+		if (directorList != null && !directorList.isEmpty()) {
 			Listitem item;
 			BigDecimal totSharePerc = BigDecimal.ZERO;
 			for (DirectorDetail directorDetail : directorList) {
 				item = new Listitem();
 				String name = "";
-	            if(StringUtils.isNotBlank(directorDetail.getShortName())){
-	            	name = directorDetail.getShortName();
-	            }else{
-	            	 name = directorDetail.getFirstName() + "  " + directorDetail.getLastName();
-	            }
+				if (StringUtils.isNotBlank(directorDetail.getShortName())) {
+					name = directorDetail.getShortName();
+				} else {
+					name = directorDetail.getFirstName() + "  " + directorDetail.getLastName();
+				}
 				Listcell lc = new Listcell(name);
 				lc.setParent(item);
 				lc = new Listcell(String.valueOf(directorDetail.getDirectorId()));
@@ -944,6 +952,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -1034,15 +1043,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		// Customer Group
 		try {
 			this.customerGroup.getValidatedValue();
-			Object object=this.customerGroup.getObject();
-			if (object!=null ) {
-				if (object instanceof  CustomerGroup){
-					CustomerGroup customerGroup=(CustomerGroup) object;
+			Object object = this.customerGroup.getObject();
+			if (object != null) {
+				if (object instanceof CustomerGroup) {
+					CustomerGroup customerGroup = (CustomerGroup) object;
 					aFacility.setCustomerGroup(customerGroup.getCustGrpID());
 					aFacility.setCustGrpCodeName(customerGroup.getCustGrpCode());
-				}else if (object instanceof  String){
-					String customerGroup=(String) object;
-					aFacility.setCustomerGroup(StringUtils.isEmpty(customerGroup)?0:Long.parseLong(customerGroup));
+				} else if (object instanceof String) {
+					String customerGroup = (String) object;
+					aFacility.setCustomerGroup(StringUtils.isEmpty(customerGroup) ? 0 : Long.parseLong(customerGroup));
 				}
 			}
 			aFacility.setCustomerGroupName(this.customerGroup.getDescription());
@@ -1094,7 +1103,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		aFacility.setGuaranteeDescription(this.guaranteeDescription.getValue());
 		aFacility.setFinancialSummary(this.financialSummary.getValue());
 		aFacility.setMitigants(this.mitigants.getValue());
-		
+
 		try {
 			aFacility.setAntiMoneyLaunderClear(this.antiMoneyLaunderClear.getValue());
 		} catch (WrongValueException we) {
@@ -1105,13 +1114,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacility.setPurpose(this.purpose.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacility.setAccountRelation(this.accountRelation.getValue());
 		} catch (WrongValueException we) {
@@ -1127,8 +1136,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		aFacility.setCollaterals(getCollateralsList());
 		aFacility.setCustomerRatings(getRatingsList());
 		doRemoveValidation();
@@ -1150,64 +1158,86 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		// CAF Reference
-//		if (!this.cAFReference.isReadonly()) {
-//			this.cAFReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CAFReference.value"), PennantRegularExpressions.REGEX_NAME, true));
-//		}
+		//		if (!this.cAFReference.isReadonly()) {
+		//			this.cAFReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CAFReference.value"), PennantRegularExpressions.REGEX_NAME, true));
+		//		}
 		// Customer
 		if (!this.custID.isReadonly()) {
-			this.custID.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustID.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.custID.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustID.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		// Start Date
 		if (!this.startDate.isReadonly()) {
-			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDialog_StartDate.value"), true));
+			this.startDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDialog_StartDate.value"), true));
 		}
 		// Presenting Unit
 		if (!this.presentingUnit.isReadonly()) {
-			this.presentingUnit.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_PresentingUnit.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.presentingUnit
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_PresentingUnit.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		// Country of Domicile
 		if (!this.countryOfDomicile.isReadonly()) {
-			this.countryOfDomicile.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfDomicile.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
+			this.countryOfDomicile.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfDomicile.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, true));
 		}
 		// Dead Line
 		if (!this.deadLine.isReadonly()) {
-			this.deadLine.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDialog_DeadLine.value"), false,appldate,null,true));
+			this.deadLine.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDialog_DeadLine.value"),
+					false, appldate, null, true));
 		}
 		// Country of Risk
 		if (!this.countryOfRisk.isReadonly()) {
-			this.countryOfRisk.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfRisk.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
+			this.countryOfRisk
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfRisk.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, true));
 		}
 		// Established Date
 		if (!this.establishedDate.isReadonly()) {
-			this.establishedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDialog_EstablishedDate.value"), true));
+			this.establishedDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FacilityDialog_EstablishedDate.value"), true));
 		}
 		// Nature of Business
 		if (!this.natureOfBusiness.isReadonly()) {
-			this.natureOfBusiness.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_NatureOfBusiness.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
+			this.natureOfBusiness
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_NatureOfBusiness.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, true));
 		}
 		// SIC Code
 		if (!this.sICCode.isReadonly()) {
-			this.sICCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_SICCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
+			this.sICCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_SICCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, true));
 		}
 		// Country Manager
 		if (!this.countryManager.isReadonly()) {
-			this.countryManager.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryManager.value"), PennantRegularExpressions.REGEX_NAME, true,true));
+			this.countryManager
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryManager.value"),
+							PennantRegularExpressions.REGEX_NAME, true, true));
 		}
 		// Customer Risk Type
 		if (!this.customerRiskType.isReadonly()) {
-			this.customerRiskType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerRiskType.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
+			this.customerRiskType
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerRiskType.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, true));
 		}
 		// Relationship Manager
 		if (!this.relationshipManager.isReadonly()) {
-			this.relationshipManager.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_RelationshipManager.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.relationshipManager.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FacilityDialog_RelationshipManager.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		// Customer Group
 		if (!this.customerGroup.isReadonly() && this.customerConnected.isChecked()) {
-			this.customerGroup.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerGroup.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
+			this.customerGroup
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerGroup.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, true));
 		}
 		// Next Review Date
 		if (!this.nextReviewDate.isReadonly()) {
-			this.nextReviewDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDialog_NextReviewDate.value"), true,appldate,null,true));
+			this.nextReviewDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FacilityDialog_NextReviewDate.value"), true, appldate, null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1313,7 +1343,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		BeanUtils.copyProperties(getFacility(), aFacility);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFacility.getCAFReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aFacility.getCAFReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFacility.getRecordType())) {
 				aFacility.setVersion(aFacility.getVersion() + 1);
@@ -1375,7 +1406,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.guaranteeDescription.setValue("");
 		this.financialSummary.setValue("");
 		this.mitigants.setValue("");
-		
+
 		this.antiMoneyLaunderClear.setValue("");
 		this.interim.setText("");
 		this.purpose.setValue("");
@@ -1393,43 +1424,43 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	@SuppressWarnings("unchecked")
 	public void doSave() throws Exception {
 		logger.debug("Entering");
-		
+
 		Facility aFacility = new Facility();
 		Cloner cloner = new Cloner();
 		aFacility = cloner.deepClone(getFacility());
-		
+
 		boolean isNew = false;
 		if (isWorkFlowEnabled()) {
 			aFacility.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFacility.getNextTaskId(), aFacility);
 		}
-		
+
 		// force validation, if on, than execute by component.getValue()
 		if (!PennantConstants.RECORD_TYPE_DEL.equals(aFacility.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the Facility object with the components data
 			doWriteComponentsToBean(aFacility);
 		}
-		boolean validate=false;
-		if(!("Save".equalsIgnoreCase(userAction.getSelectedItem().getLabel()) || 
-				"Cancel".equalsIgnoreCase(userAction.getSelectedItem().getLabel()) || 
-				"Resubmit".equalsIgnoreCase(userAction.getSelectedItem().getLabel()) || 
-				"Reject".equalsIgnoreCase(userAction.getSelectedItem().getLabel())) ){
-			validate=true;
+		boolean validate = false;
+		if (!("Save".equalsIgnoreCase(userAction.getSelectedItem().getLabel())
+				|| "Cancel".equalsIgnoreCase(userAction.getSelectedItem().getLabel())
+				|| "Resubmit".equalsIgnoreCase(userAction.getSelectedItem().getLabel())
+				|| "Reject".equalsIgnoreCase(userAction.getSelectedItem().getLabel()))) {
+			validate = true;
 		}
-		
+
 		//Validation For Mandatory Recommendation
 
-		if(validate && !isRecommeandEntered()){
+		if (validate && !isRecommeandEntered()) {
 			MessageUtil.showError(Labels.getLabel("label_FacilityDialog_RecommendMand"));
 			Tab tab = null;
-			if(tabsIndexCenter.getFellowIfAny(MODULE_RECOMMENDATIONS+"Tab") != null){
-				tab = (Tab) tabsIndexCenter.getFellowIfAny(MODULE_RECOMMENDATIONS+"Tab");
+			if (tabsIndexCenter.getFellowIfAny(MODULE_RECOMMENDATIONS + "Tab") != null) {
+				tab = (Tab) tabsIndexCenter.getFellowIfAny(MODULE_RECOMMENDATIONS + "Tab");
 				tab.setSelected(true);
 			}
 			return;
 		}
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
@@ -1446,7 +1477,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					aFacility.setNewRecord(true);
 				}
 			}
-			
+
 		} else {
 			aFacility.setVersion(aFacility.getVersion() + 1);
 			if (isNew) {
@@ -1455,18 +1486,18 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		try {
-		// save it to database
-			
+			// save it to database
+
 			//Check Dedup
-			List<FacilityDetail> dedupList = getDedupList( getFacility().getCAFReference(), getFacility().getCustID());
-			if (dedupList!=null && !dedupList.isEmpty() && !getFacility().isSkipDedup()) {
-				Object dataObject =ShowDedupListBox.show(this.window_FacilityDialog, 
-						dedupList, "CAFReference,FacilityRef,FacilityType,FacilityFor,Revolving",null, 
+			List<FacilityDetail> dedupList = getDedupList(getFacility().getCAFReference(), getFacility().getCustID());
+			if (dedupList != null && !dedupList.isEmpty() && !getFacility().isSkipDedup()) {
+				Object dataObject = ShowDedupListBox.show(this.window_FacilityDialog, dedupList,
+						"CAFReference,FacilityRef,FacilityType,FacilityFor,Revolving", null,
 						getUserWorkspace().getUserDetails().getUsername());
-				ShowDedupListBox details= (ShowDedupListBox) dataObject;
-				int userAction= details.getUserAction();
+				ShowDedupListBox details = (ShowDedupListBox) dataObject;
+				int userAction = details.getUserAction();
 				if (userAction == -1) {
 					getFacility().setDedupFound(false);
 				} else {
@@ -1479,33 +1510,33 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					}
 				}
 			}
-			
-			
+
 			//Facility Details Tab
-			if (getFacilityDetailListCtrl() != null ) {
-				List<FacilityDetail> list=getFacilityDetailListCtrl().getFacilityDetailList();
-				if (list!=null && !list.isEmpty()) {
+			if (getFacilityDetailListCtrl() != null) {
+				List<FacilityDetail> list = getFacilityDetailListCtrl().getFacilityDetailList();
+				if (list != null && !list.isEmpty()) {
 					aFacility.setFacilityDetails(list);
-				}else{
+				} else {
 					if (validate) {
 						MessageUtil.showError(Labels.getLabel("LABEL_ATLEAST_ONE_FACILITY"));
 						return;
 					}
 				}
 			}
-			
-			if (validate && isCreditAdminManager && !aFacility.isOverriddeCirculation() )  {
-				String actualApprval=getFacilityService().getActualLevelAprroval(aFacility);
-				if ( !actualApprval.equals(aFacility.getLevelOfApproval())) {
-					String msg =  Labels.getLabel("Override_LevelOfApproval",new String[]{PennantStaticListUtil.getlabelDesc(actualApprval, approvalList)});
+
+			if (validate && isCreditAdminManager && !aFacility.isOverriddeCirculation()) {
+				String actualApprval = getFacilityService().getActualLevelAprroval(aFacility);
+				if (!actualApprval.equals(aFacility.getLevelOfApproval())) {
+					String msg = Labels.getLabel("Override_LevelOfApproval",
+							new String[] { PennantStaticListUtil.getlabelDesc(actualApprval, approvalList) });
 					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 						aFacility.setOverriddeCirculation(true);
-					}else{
+					} else {
 						return;
 					}
 				}
 			}
-			
+
 			//Scoring Details tab
 			if (getFacilityScoringDetailDialogCtrl() != null) {
 				getFacilityScoringDetailDialogCtrl().doSave_ScoreDetail(aFacility);
@@ -1520,13 +1551,14 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				map.put("control", this);
 				map.put("facility", aFacility);
 				map.put("userAction", this.userAction.getSelectedItem().getLabel());
-				if (tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST+"TabPanel") != null) {
-					Events.sendEvent("onChkListValidation", tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST+"TabPanel").getFirstChild(), map);
+				if (tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST + "TabPanel") != null) {
+					Events.sendEvent("onChkListValidation",
+							tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST + "TabPanel").getFirstChild(), map);
 				}
-				
+
 				Object object = map.get("Error");
 				if (object != null) {
-					ArrayList<WrongValueException> wve=(ArrayList<WrongValueException>) object;
+					ArrayList<WrongValueException> wve = (ArrayList<WrongValueException>) object;
 					if (!wve.isEmpty()) {
 						Tab tab = (Tab) tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST + "Tab");
 						tab.setSelected(true);
@@ -1537,7 +1569,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 						throw new WrongValuesException(wvea);
 					}
 				}
-				
+
 			} catch (Exception e) {
 				logger.debug(e);
 				if (e instanceof WrongValuesException) {
@@ -1554,18 +1586,19 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			if (doProcess(aFacility, tranType)) {
 				refreshList();
 				//Customer Notification for Role Identification
-				if(StringUtils.isNotBlank(aFacility.getNextTaskId())){
-					String msg = PennantApplicationUtil.getSavingStatus(aFacility.getRoleCode(),aFacility.getNextRoleCode(), 
-							aFacility.getCAFReference(), " Facility ", aFacility.getRecordStatus());
-					Clients.showNotification(msg,  "info", null, null, -1);
+				if (StringUtils.isNotBlank(aFacility.getNextTaskId())) {
+					String msg = PennantApplicationUtil.getSavingStatus(aFacility.getRoleCode(),
+							aFacility.getNextRoleCode(), aFacility.getCAFReference(), " Facility ",
+							aFacility.getRecordStatus());
+					Clients.showNotification(msg, "info", null, null, -1);
 				}
-				
+
 				//Mail Alert Notification for User
-				if(StringUtils.isNotBlank(aFacility.getNextTaskId()) && 
-						!StringUtils.trimToEmpty(aFacility.getNextRoleCode()).equals(aFacility.getRoleCode())){
+				if (StringUtils.isNotBlank(aFacility.getNextTaskId())
+						&& !StringUtils.trimToEmpty(aFacility.getNextRoleCode()).equals(aFacility.getRoleCode())) {
 					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CAF, aFacility);
 				}
-				
+
 				deAllocateChildWindowRights();
 				closeDialog();
 			}
@@ -1574,10 +1607,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	// WorkFlow Creations
 
-	private String getServiceTasks(String taskId, Facility facility,String finishedTasks) {
+	private String getServiceTasks(String taskId, Facility facility, String finishedTasks) {
 		logger.debug("Entering");
 
 		String serviceTasks = getServiceOperations(taskId, facility);
@@ -1592,6 +1625,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 		return serviceTasks;
 	}
+
 	private void setNextTaskDetails(String taskId, Facility facility) {
 		logger.debug("Entering");
 
@@ -1638,6 +1672,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1648,7 +1683,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 * 
 	 */
 	private boolean doProcess(Facility aFacility, String tranType) throws InterruptedException {
@@ -1659,14 +1694,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		aFacility.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFacility.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {
-			
+
 			String taskId = getTaskId(getRole());
 			aFacility.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			
+
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
 			String serviceTasks = getServiceTasks(taskId, aFacility, finishedTasks);
-
 
 			if (isNotesMandatory(taskId, aFacility)) {
 				if (!notesEntered) {
@@ -1688,61 +1722,59 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 						processCompleted = true;
 					}
 					auditHeader.getAuditDetail().setModelData(tFacility);
-				}else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckProspectCustomer)){
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckProspectCustomer)) {
 					//Prospect Customer Checking
 					Facility tFacility = (Facility) auditHeader.getAuditDetail().getModelData();
-					if(StringUtils.isBlank(tFacility.getCustCoreBank())){
+					if (StringUtils.isBlank(tFacility.getCustCoreBank())) {
 						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
 						return false;
 					}
-					
-				}else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_checkDDAResponse)) {
-					
-//					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-//					FinanceMain financeMain=tFinanceDetail.getFinScheduleData().getFinanceMain();
-//					
-//					if(StringUtils.equals(financeMain.getFinRepayMethod(),FinanceConstants.REPAYMTH_AUTODDA)){
-//						String ddaStatus = getDdaControllerService().checkDDAApproval(financeMain.getFinReference());
-//
-//						if(StringUtils.equals(ddaStatus, PennantConstants.DDA_ACK_APPROVED)) {
-//							processCompleted = true;
-//						} else if(StringUtils.equals(ddaStatus, PennantConstants.DDA_NAK)) {
-//							PTMessageUtils.showErrorMessage(Labels.getLabel("DDA_APPROVAL_REJECTED"));
-//							processCompleted = false;
-//						} else if(StringUtils.equals(ddaStatus, PennantConstants.DDA_PENDING)) {
-//							PTMessageUtils.showInfoMessage(Labels.getLabel("DDA_APPROVAL_PENDING"));
-//							processCompleted = false;
-//						} else {
-//							processCompleted = false;
-//						}
-//					}else{
-//						processCompleted = true;
-//					}
-					
-					
-					processCompleted = true;
-						
-				}else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_sendDDARequest)){
-					
-					//Initiate DDA Registration process
-/*						String finRepayMethod = afinanceMain.getFinRepayMethod();
-						if(StringUtils.equals(finRepayMethod,FinanceConstants.REPAYMTH_AUTODDA)){
-							this.repayAcctId.setReadonly(false);
-							this.repayAcctId.setMandatoryStyle(true);
-							getDdaControllerService().doDDARequestProcess(aFinanceDetail);
-						} else {
-							this.repayAcctId.setMandatoryStyle(false);
-*/							processCompleted = true;
-//						}
-				}else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckDeviations)){
-/*					List<FinanceDeviations> list = aFinanceDetail.getFinanceDeviations();
-					if (list!=null && !list.isEmpty()) {
-						aFinanceDetail.getFinScheduleData().getFinanceMain().setDeviationApproval(true);
-					}
-*/					
-				}else {
 
-					Facility tFacility=  (Facility) auditHeader.getAuditDetail().getModelData();
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_checkDDAResponse)) {
+
+					//					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+					//					FinanceMain financeMain=tFinanceDetail.getFinScheduleData().getFinanceMain();
+					//					
+					//					if(StringUtils.equals(financeMain.getFinRepayMethod(),FinanceConstants.REPAYMTH_AUTODDA)){
+					//						String ddaStatus = getDdaControllerService().checkDDAApproval(financeMain.getFinReference());
+					//
+					//						if(StringUtils.equals(ddaStatus, PennantConstants.DDA_ACK_APPROVED)) {
+					//							processCompleted = true;
+					//						} else if(StringUtils.equals(ddaStatus, PennantConstants.DDA_NAK)) {
+					//							PTMessageUtils.showErrorMessage(Labels.getLabel("DDA_APPROVAL_REJECTED"));
+					//							processCompleted = false;
+					//						} else if(StringUtils.equals(ddaStatus, PennantConstants.DDA_PENDING)) {
+					//							PTMessageUtils.showInfoMessage(Labels.getLabel("DDA_APPROVAL_PENDING"));
+					//							processCompleted = false;
+					//						} else {
+					//							processCompleted = false;
+					//						}
+					//					}else{
+					//						processCompleted = true;
+					//					}
+
+					processCompleted = true;
+
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_sendDDARequest)) {
+
+					//Initiate DDA Registration process
+					/*
+					 * String finRepayMethod = afinanceMain.getFinRepayMethod();
+					 * if(StringUtils.equals(finRepayMethod,FinanceConstants.REPAYMTH_AUTODDA)){
+					 * this.repayAcctId.setReadonly(false); this.repayAcctId.setMandatoryStyle(true);
+					 * getDdaControllerService().doDDARequestProcess(aFinanceDetail); } else {
+					 * this.repayAcctId.setMandatoryStyle(false);
+					 */ processCompleted = true;
+					//						}
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckDeviations)) {
+					/*
+					 * List<FinanceDeviations> list = aFinanceDetail.getFinanceDeviations(); if (list!=null &&
+					 * !list.isEmpty()) {
+					 * aFinanceDetail.getFinScheduleData().getFinanceMain().setDeviationApproval(true); }
+					 */
+				} else {
+
+					Facility tFacility = (Facility) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, tFacility);
 					auditHeader.getAuditDetail().setModelData(tFacility);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -1754,12 +1786,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				}
 
 				finishedTasks += (method + ";");
-				Facility tFacility=  (Facility) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tFacility,finishedTasks);
+				Facility tFacility = (Facility) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tFacility, finishedTasks);
 			}
-			
 
-			Facility tFacility=  (Facility) auditHeader.getAuditDetail().getModelData();
+			Facility tFacility = (Facility) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tFacility);
@@ -1767,11 +1798,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
 			}
-                                                                                         
+
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)|| "Save".equals(userAction.getSelectedItem().getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, aFacility);
 					auditHeader.getAuditDetail().setModelData(tFacility);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -1827,7 +1858,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FacilityDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1857,7 +1889,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -1865,7 +1897,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 */
 	private AuditHeader getAuditHeader(Facility aFacility, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFacility.getBefImage(), aFacility);
-		return new AuditHeader(aFacility.getCAFReference(), null, null, null, auditDetail, aFacility.getUserDetails(), getOverideMap());
+		return new AuditHeader(aFacility.getCAFReference(), null, null, null, auditDetail, aFacility.getUserDetails(),
+				getOverideMap());
 	}
 
 	// New Methods
@@ -1882,9 +1915,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				lc.setParent(item);
 				lc = new Listcell(rating.getCustRatingType());
 				lc.setParent(item);
-				lc = new Listcell(rating.getCustRating()+(StringUtils.isBlank(rating.getLovDescCustRatingName())?"": "-"+StringUtils.trimToEmpty(rating.getLovDescCustRatingName())));
+				lc = new Listcell(rating.getCustRating() + (StringUtils.isBlank(rating.getLovDescCustRatingName()) ? ""
+						: "-" + StringUtils.trimToEmpty(rating.getLovDescCustRatingName())));
 				lc.setParent(item);
-				lc = new Listcell(rating.getCustRatingCode()+(StringUtils.isBlank(rating.getLovDesccustRatingCodeDesc())?"":"-"+StringUtils.trimToEmpty(rating.getLovDesccustRatingCodeDesc())));
+				lc = new Listcell(
+						rating.getCustRatingCode() + (StringUtils.isBlank(rating.getLovDesccustRatingCodeDesc()) ? ""
+								: "-" + StringUtils.trimToEmpty(rating.getLovDesccustRatingCodeDesc())));
 				lc.setParent(item);
 				lc = new Listcell(rating.getRecordStatus());
 				lc.setParent(item);
@@ -1918,44 +1954,59 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		boolean setCaption = false;
 		if (list != null) {
 			for (CustomerLimit category : list) {
-				if(!setCaption){
-					limits_Caption.setLabel(Labels.getLabel("title_west_bottom") + "(" + category.getLimitCurrency() + ")");
+				if (!setCaption) {
+					limits_Caption
+							.setLabel(Labels.getLabel("title_west_bottom") + "(" + category.getLimitCurrency() + ")");
 					setCaption = true;
 				}
 				if ("##".equals(StringUtils.trimToEmpty(category.getLimitCountry()))) {
-					BigDecimal custGroupLimitEQ=category.getLimitAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP);
-					BigDecimal custGroupExposureEQ=category.getRiskAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP);
+					BigDecimal custGroupLimitEQ = category.getLimitAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
+					BigDecimal custGroupExposureEQ = category.getRiskAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
 					this.custGroupLimit.setValue(PennantAppUtil.formateAmount(custGroupLimitEQ, ccyFormat));
 					this.custGroupExposure.setValue(PennantAppUtil.formateAmount(custGroupExposureEQ, ccyFormat));
-					label_FacilityDialog_CustGroupExposure.setValue(label_FacilityDialog_CustGroupExposure.getValue() + "("+ category.getLimitCurrency() + ")");
-					label_FacilityDialog_CustGroupLimit.setValue(label_FacilityDialog_CustGroupLimit.getValue() + "("+ category.getLimitCurrency() + ")");
-				}else if (StringUtils.isNotBlank(category.getLimitCountry())) {
-					 countryLimitEQ=category.getLimitAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP);
-					 countryExposureEQ=category.getRiskAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP);
-					 countryLimitCureency=StringUtils.trimToEmpty(category.getLimitCurrency());
-					 label_FacilityDialog_CountryExposure.setValue(label_FacilityDialog_CountryExposure.getValue() + "("+ countryLimitCureency + ")");
-					 label_FacilityDialog_CountryLimit.setValue(label_FacilityDialog_CountryLimit.getValue() + "("+ countryLimitCureency + ")");
-					 
-				}else{
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(category.getLimitCategory());
-				lc.setParent(item);
-				lc = new Listcell(category.getLimitCategoryDesc());
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP), 0));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(category.getLimitAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP), 0));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(category.getAvailAmount().divide(new BigDecimal(Math.pow(10, formatter+category.getLimitCcyEdit())), RoundingMode.HALF_UP), 0));
-				lc.setParent(item);
-				item.setAttribute("data", category);
-			
+					label_FacilityDialog_CustGroupExposure.setValue(label_FacilityDialog_CustGroupExposure.getValue()
+							+ "(" + category.getLimitCurrency() + ")");
+					label_FacilityDialog_CustGroupLimit.setValue(
+							label_FacilityDialog_CustGroupLimit.getValue() + "(" + category.getLimitCurrency() + ")");
+				} else if (StringUtils.isNotBlank(category.getLimitCountry())) {
+					countryLimitEQ = category.getLimitAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
+					countryExposureEQ = category.getRiskAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP);
+					countryLimitCureency = StringUtils.trimToEmpty(category.getLimitCurrency());
+					label_FacilityDialog_CountryExposure.setValue(
+							label_FacilityDialog_CountryExposure.getValue() + "(" + countryLimitCureency + ")");
+					label_FacilityDialog_CountryLimit
+							.setValue(label_FacilityDialog_CountryLimit.getValue() + "(" + countryLimitCureency + ")");
+
+				} else {
+					Listitem item = new Listitem();
+					Listcell lc;
+					lc = new Listcell(category.getLimitCategory());
+					lc.setParent(item);
+					lc = new Listcell(category.getLimitCategoryDesc());
+					lc.setParent(item);
+					lc = new Listcell(PennantAppUtil.amountFormate(category.getRiskAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
+							0));
+					lc.setParent(item);
+					lc = new Listcell(PennantAppUtil.amountFormate(category.getLimitAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
+							0));
+					lc.setParent(item);
+					lc = new Listcell(PennantAppUtil.amountFormate(category.getAvailAmount().divide(
+							new BigDecimal(Math.pow(10, formatter + category.getLimitCcyEdit())), RoundingMode.HALF_UP),
+							0));
+					lc.setParent(item);
+					item.setAttribute("data", category);
+
 					item.setId(category.getLimitCategory());
 					this.listBoxCustomerLimit.appendChild(item);
 				}
 			}
-		}else{
+		} else {
 			limits_Caption.setLabel(Labels.getLabel("title_west_bottom"));
 		}
 		logger.debug("Leaving");
@@ -1971,8 +2022,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	private void doFillCustomerEquationCollateral(){
+
+	private void doFillCustomerEquationCollateral() {
 		logger.debug("Entering");
 		if (collateralsFromEquation != null && !collateralsFromEquation.isEmpty()) {
 			int formatter = 6;
@@ -1983,18 +2034,24 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollReference());
 				cell.setParent(item);
-				Date date1 = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getColllastRvwDate().toString()));
+				Date date1 = DateUtility
+						.convertDateFromAS400(new BigDecimal(customerCollateral.getColllastRvwDate().toString()));
 				cell = new Listcell(DateUtility.formatToLongDate(date1));
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollCcy());
 				cell.setParent(item);
-				cell = new Listcell(PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollValue().toString()).divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
+				cell = new Listcell(
+						PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollValue().toString())
+								.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				cell = new Listcell(PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollBankVal().toString()).divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
+				cell = new Listcell(
+						PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollBankVal().toString())
+								.divide(BigDecimal.valueOf(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				BigDecimal per = new BigDecimal(customerCollateral.getCollBankValMar().toString()).divide(BigDecimal.valueOf(Math.pow(10, 2)), RoundingMode.HALF_UP);
+				BigDecimal per = new BigDecimal(customerCollateral.getCollBankValMar().toString())
+						.divide(BigDecimal.valueOf(Math.pow(10, 2)), RoundingMode.HALF_UP);
 				cell = new Listcell(per + "%");
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
@@ -2002,7 +2059,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollComplete());
 				cell.setParent(item);
-				Date date = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getCollExpDate().toString()));
+				Date date = DateUtility
+						.convertDateFromAS400(new BigDecimal(customerCollateral.getCollExpDate().toString()));
 				cell = new Listcell(DateUtility.formatToLongDate(date));
 				cell.setParent(item);
 				item.setAttribute("data", customerCollateral);
@@ -2019,8 +2077,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	// ================== Collateral ===========================//
 	protected Listbox listBoxCollateral;
 	protected Button button_CollateralList_NewCollateral;
@@ -2057,11 +2114,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.amountFormate(collateral.getValue(), collateral.getCcyFormat()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.amountFormate(collateral.getBankvaluation(), collateral.getCcyFormat()));
+			lc = new Listcell(
+					PennantApplicationUtil.amountFormate(collateral.getBankvaluation(), collateral.getCcyFormat()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getBankmargin(),2,false));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getBankmargin(), 2, false));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getProposedCoverage(),2,false));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(collateral.getProposedCoverage(), 2, false));
 			lc.setParent(item);
 			lc = new Listcell(collateral.getRecordStatus());
 			lc.setParent(item);
@@ -2114,8 +2172,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	public void onCollateralEnquiryItemDoubleClicked(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget();
@@ -2141,8 +2198,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public List<Collateral> getCollateralsList() {
 		return collateralsList;
 	}
+
 	//Customer Rating
 	private List<CustomerRating> ratingsList = new ArrayList<CustomerRating>();
+
 	public void setRatingsList(List<CustomerRating> ratingsList) {
 		this.ratingsList = ratingsList;
 	}
@@ -2150,7 +2209,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public List<CustomerRating> getRatingsList() {
 		return ratingsList;
 	}
-	
+
 	public void onCustomerRatingItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
@@ -2168,7 +2227,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				map.put("roleCode", getRole());
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityCustomerRatingDialog.zul", window_FacilityDialog, map);
+					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityCustomerRatingDialog.zul",
+							window_FacilityDialog, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -2190,11 +2250,12 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			map.put("agreement", null);
 			map.put("userAction", this.userAction.getSelectedItem().getLabel());
 			if (tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST + "TabPanel") != null) {
-				Events.sendEvent("onChkListValidation", tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST + "TabPanel").getFirstChild(), map);
+				Events.sendEvent("onChkListValidation",
+						tabpanelsIndexCenter.getFellowIfAny(MODULE_CHECKLIST + "TabPanel").getFirstChild(), map);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
-		
+
 		}
 		if (getFacilityScoringDetailDialogCtrl() != null) {
 			getFacilityScoringDetailDialogCtrl().doSave_ScoreDetail(aFacility);
@@ -2206,15 +2267,13 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		return aFacility;
 	}
 
-	
-
-	private static final String MODULE_FACILITYDETAILS 	= "FacilityDetails";
-	private static final String MODULE_CREDITREVIEW		= "CreditReview";
-	private static final String MODULE_SCORING 			= "Scoring";
-	private static final String MODULE_AGREEMENTS 		= "Agreements";
-	private static final String MODULE_DOCUMENTS 		= "Documents";
-	private static final String MODULE_CHECKLIST 		= "CheckList";
-	private static final String MODULE_RECOMMENDATIONS 	= "Recommendations";
+	private static final String MODULE_FACILITYDETAILS = "FacilityDetails";
+	private static final String MODULE_CREDITREVIEW = "CreditReview";
+	private static final String MODULE_SCORING = "Scoring";
+	private static final String MODULE_AGREEMENTS = "Agreements";
+	private static final String MODULE_DOCUMENTS = "Documents";
+	private static final String MODULE_CHECKLIST = "CheckList";
+	private static final String MODULE_RECOMMENDATIONS = "Recommendations";
 
 	private void appendTabs(Facility aFacility) {
 		logger.debug("Entering");
@@ -2224,22 +2283,30 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		if (StringUtils.isNotBlank(getFacility().getCustCIF())) {
 			String custCtg = StringUtils.trimToEmpty(getFacility().getCustCtgCode());
 			if (custCtg.equals(PennantConstants.PFF_CUSTCTG_SME) || custCtg.equals(PennantConstants.PFF_CUSTCTG_CORP)) {
-				createTabAndTabpanel(MODULE_CREDITREVIEW, "/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul", true);
+				createTabAndTabpanel(MODULE_CREDITREVIEW,
+						"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
+						true);
 			}
 		}
 		//3
-		if( aFacility.getScoringGroupList()!=null && !aFacility.getScoringGroupList().isEmpty()){
-		createTabAndTabpanel(MODULE_SCORING, "/WEB-INF/pages/Facility/Facility/FacilityScoringDetailDialog.zul", false);
+		if (aFacility.getScoringGroupList() != null && !aFacility.getScoringGroupList().isEmpty()) {
+			createTabAndTabpanel(MODULE_SCORING, "/WEB-INF/pages/Facility/Facility/FacilityScoringDetailDialog.zul",
+					false);
 		}
 		//4
-		if (!enqModule && getFacility().getAggrementList() != null && !getFacility().getAggrementList().isEmpty() &&  isAtleastOneToShow(aFacility.getAggrementList())) {
-			createTabAndTabpanel(MODULE_AGREEMENTS, "/WEB-INF/pages/Facility/Facility/FacilityAgreementDetailDialog.zul", false);
+		if (!enqModule && getFacility().getAggrementList() != null && !getFacility().getAggrementList().isEmpty()
+				&& isAtleastOneToShow(aFacility.getAggrementList())) {
+			createTabAndTabpanel(MODULE_AGREEMENTS,
+					"/WEB-INF/pages/Facility/Facility/FacilityAgreementDetailDialog.zul", false);
 		}
 		//5
-		createTabAndTabpanel(MODULE_DOCUMENTS, "/WEB-INF/pages/Facility/Facility/FacilityDocumentDetailDialog.zul", false);
+		createTabAndTabpanel(MODULE_DOCUMENTS, "/WEB-INF/pages/Facility/Facility/FacilityDocumentDetailDialog.zul",
+				false);
 		//6
-		if (!enqModule && aFacility.getCheckList() != null && !aFacility.getCheckList().isEmpty() && isAtleastOneToShow(aFacility.getCheckList())) {
-			createTabAndTabpanel(MODULE_CHECKLIST, "/WEB-INF/pages/Facility/Facility/FacilityCheckListReferenceDialog.zul", false);
+		if (!enqModule && aFacility.getCheckList() != null && !aFacility.getCheckList().isEmpty()
+				&& isAtleastOneToShow(aFacility.getCheckList())) {
+			createTabAndTabpanel(MODULE_CHECKLIST,
+					"/WEB-INF/pages/Facility/Facility/FacilityCheckListReferenceDialog.zul", false);
 		}
 		//7
 		if (!enqModule) {
@@ -2247,12 +2314,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	private boolean isAtleastOneToShow(List<FacilityReferenceDetail> checkList) {
 		logger.debug("Entering");
 		for (FacilityReferenceDetail facilityReferenceDetail : checkList) {
-			if (isAllowedToShow(facilityReferenceDetail,getRole())) {
+			if (isAllowedToShow(facilityReferenceDetail, getRole())) {
 				logger.debug("Leaving");
 				return true;
 			}
@@ -2260,6 +2326,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 		return false;
 	}
+
 	public boolean isAllowedToShow(FacilityReferenceDetail financeReferenceDetail, String userRole) {
 		logger.debug("Entering");
 		String showinStage = StringUtils.trimToEmpty(financeReferenceDetail.getShowInStage());
@@ -2276,18 +2343,18 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		return false;
 	}
 
-	public void createTabAndTabpanel(String tabName, String zulPath,boolean loadOnDemand) {
+	public void createTabAndTabpanel(String tabName, String zulPath, boolean loadOnDemand) {
 		logger.debug("Entering");
 		try {
-			
-			Tab tab = new Tab(Labels.getLabel("Tab_"+tabName));
-			tab.setId(tabName+"Tab");
+
+			Tab tab = new Tab(Labels.getLabel("Tab_" + tabName));
+			tab.setId(tabName + "Tab");
 			tabsIndexCenter.appendChild(tab);
 			if (loadOnDemand) {
 				ComponentsCtrl.applyForward(tab, "onSelect=onSelectTab");
 			}
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setId(tabName+"TabPanel");
+			tabpanel.setId(tabName + "TabPanel");
 			tabpanel.setHeight(this.borderLayoutHeight + "px");
 			tabpanel.setStyle("overflow:auto");
 			tabpanel.setParent(tabpanelsIndexCenter);
@@ -2299,7 +2366,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
-	private void renderComponent(String zulPath,Tabpanel tabpanel){
+
+	private void renderComponent(String zulPath, Tabpanel tabpanel) {
 		logger.debug("Entering");
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -2321,18 +2389,20 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
+
 	public void onSelectTab(ForwardEvent event) {
 		logger.debug("Entering");
-		Tab tab=(Tab) event.getOrigin().getTarget();
-		if (tab.getId().equals(MODULE_CREDITREVIEW+"Tab")) {
-			Tabpanel tabpanel=(Tabpanel) tabpanelsIndexCenter.getFellowIfAny(MODULE_CREDITREVIEW+"TabPanel");
+		Tab tab = (Tab) event.getOrigin().getTarget();
+		if (tab.getId().equals(MODULE_CREDITREVIEW + "Tab")) {
+			Tabpanel tabpanel = (Tabpanel) tabpanelsIndexCenter.getFellowIfAny(MODULE_CREDITREVIEW + "TabPanel");
 			if (tabpanel.getChildren().isEmpty()) {
-				renderComponent("/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul", tabpanel);	
+				renderComponent(
+						"/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul",
+						tabpanel);
 			}
 		}
 		logger.debug("Leaving");
 	}
-	
 
 	private void doCheckCustomerType() {
 		logger.debug("Entering");
@@ -2351,22 +2421,22 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		}
 		logger.debug("Leaving");
 	}
-	private void doDesignByMode(){
+
+	private void doDesignByMode() {
 		logger.debug("Entering");
 		if (enqModule) {
 			this.button_CollateralList_NewCollateral.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
-	
-	private List<FacilityDetail> getDedupList(String cafReference,long custID){
-		JdbcSearchObject<FacilityDetail> jdbcSearchObject=new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
+
+	private List<FacilityDetail> getDedupList(String cafReference, long custID) {
+		JdbcSearchObject<FacilityDetail> jdbcSearchObject = new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
 		jdbcSearchObject.addTabelName("FacilityDetails_Temp");
 		jdbcSearchObject.addFilterNotEqual("CAFReference", cafReference);
 		jdbcSearchObject.addFilterEqual("custID", custID);
 		return getPagedListService().getBySearchObject(jdbcSearchObject);
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -2414,6 +2484,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public CustomerDataProcess getCustomerDataProcess() {
 		return customerDataProcess;
 	}
+
 	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
 		this.customerDataProcess = customerDataProcess;
 	}
@@ -2426,7 +2497,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		return facilityDocumentDetailDialogCtrl;
 	}
 
-	public void setFacilityCheckListReferenceDialogCtrl(FacilityCheckListReferenceDialogCtrl facilityCheckListReferenceDialogCtrl) {
+	public void setFacilityCheckListReferenceDialogCtrl(
+			FacilityCheckListReferenceDialogCtrl facilityCheckListReferenceDialogCtrl) {
 		this.facilityCheckListReferenceDialogCtrl = facilityCheckListReferenceDialogCtrl;
 	}
 
@@ -2449,6 +2521,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public FacilityDetailListCtrl getFacilityDetailListCtrl() {
 		return facilityDetailListCtrl;
 	}
+
 	public FacilityAgreementDetailDialogCtrl getFacilityAgreementDetailDialogCtrl() {
 		return facilityAgreementDetailDialogCtrl;
 	}
@@ -2457,8 +2530,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			FacilityAgreementDetailDialogCtrl facilityAgreementDetailDialogCtrl) {
 		this.facilityAgreementDetailDialogCtrl = facilityAgreementDetailDialogCtrl;
 	}
-	
-	public String getReference(){
+
+	public String getReference() {
 		return this.cAFReference.getValue();
 	}
 
@@ -2469,8 +2542,9 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public boolean isRecommeandEntered() {
 		return recommendEntered;
 	}
+
 	public void setRecommendEntered(Boolean recommendEntered) {
 		this.recommendEntered = recommendEntered;
 	}
-	
+
 }

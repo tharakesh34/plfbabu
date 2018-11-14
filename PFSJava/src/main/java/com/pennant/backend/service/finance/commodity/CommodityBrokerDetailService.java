@@ -47,12 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 
 public interface CommodityBrokerDetailService {
-	
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CommodityBrokerDetail getCommodityBrokerDetailById(String id);
+
 	CommodityBrokerDetail getApprovedCommodityBrokerDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

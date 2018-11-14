@@ -25,11 +25,11 @@ public class DDARequestProcess extends MQProcess {
 	private static final Logger logger = Logger.getLogger(DDARequestProcess.class);
 
 	//private String DDA_REQ_TYPE = "REGISTRATION";
-			
+
 	public DDARequestProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the DDARequest Request and send Response
 	 * 
@@ -37,7 +37,7 @@ public class DDARequestProcess extends MQProcess {
 	 * @param msgFormat
 	 * @return DDARequestReply
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	public DDARegistration sendDDARequest(DDARegistration ddsRequest, String msgFormat) throws JaxenException {
 		logger.debug("Entering");
@@ -51,17 +51,19 @@ public class DDARequestProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-/*		if(StringUtils.equals(ddsRequest.getPurpose(), DDA_REQ_TYPE)) {
-			referenceNum = ddsRequest.getReferenceNum();
-		}*/
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		/*
+		 * if(StringUtils.equals(ddsRequest.getPurpose(), DDA_REQ_TYPE)) { referenceNum = ddsRequest.getReferenceNum();
+		 * }
+		 */
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(ddsRequest, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -77,7 +79,7 @@ public class DDARequestProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private DDARegistration setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws JaxenException {
 		logger.debug("Entering");
@@ -88,7 +90,8 @@ public class DDARequestProcess extends MQProcess {
 		DDARegistration ddsReply = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/DDARegistrationReply", responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/DDARegistrationReply",
+					responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
 
@@ -102,26 +105,26 @@ public class DDARequestProcess extends MQProcess {
 			ddsReply.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 			ddsReply.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 			ddsReply.setTimeStamp(Long.parseLong(PFFXmlUtil.getStringValue(detailElement, "TimeStamp")));
-			
+
 			AXIOMXPath xpath = new AXIOMXPath("/HB_EAI_REPLY/Reply/DDARegistrationReply/Validation/Error");
 
 			StringBuilder builder = new StringBuilder();
 			@SuppressWarnings("unchecked")
 			List<OMElement> ddsReplyList = (List<OMElement>) xpath.selectNodes(detailElement);
 			for (OMElement omElement : ddsReplyList) {
-				if(!StringUtils.isBlank(builder.toString())) {
+				if (!StringUtils.isBlank(builder.toString())) {
 					builder.append(",");
 				}
 				builder.append(PFFXmlUtil.getStringValue(omElement, "ErrorCode"));
 				builder.append("-");
 				builder.append(PFFXmlUtil.getStringValue(omElement, "ErrorDescription"));
-				
+
 				ddsReply.setErrorCode(PFFXmlUtil.getStringValue(omElement, "ErrorCode"));
 				ddsReply.setErrorDesc(PFFXmlUtil.getStringValue(omElement, "ErrorDescription"));
-				}
-			
+			}
+
 			ddsReply.setValidation(builder.toString());
-			
+
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -140,10 +143,10 @@ public class DDARequestProcess extends MQProcess {
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(DDARegistration ddsRequest, String referenceNum, OMFactory factory) throws InterfaceException {
+	private OMElement getRequestElement(DDARegistration ddsRequest, String referenceNum, OMFactory factory)
+			throws InterfaceException {
 		logger.debug("Entering");
 
-		
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement detailRequest = factory.createOMElement("DDARegistrationRequest", null);
 
@@ -160,7 +163,7 @@ public class DDARequestProcess extends MQProcess {
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "AccountType", ddsRequest.getAccountType());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "IBAN", ddsRequest.getIban());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "FinanceRef", ddsRequest.getFinRefence());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CommenceOn", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CommenceOn",
 				DateUtility.formateDate(ddsRequest.getCommenceOn(), InterfaceMasterConfigUtil.XML_DATE));
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "AllowedInstances", ddsRequest.getAllowedInstances());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "MaxAmount", ddsRequest.getMaxAmount());
@@ -170,12 +173,12 @@ public class DDARequestProcess extends MQProcess {
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "DDAIssuedFor", ddsRequest.getDdaIssuedFor());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "DDAFormName", ddsRequest.getDdaRegFormName());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "DDAFormData", ddsRequest.getDdaRegFormData());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				Long.valueOf(PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME)));
-		
+
 		requestElement.addChild(detailRequest);
 		logger.debug("Leaving");
-		
+
 		return requestElement;
 	}
 }

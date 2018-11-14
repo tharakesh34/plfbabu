@@ -39,7 +39,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	private static Logger logger = Logger.getLogger(ReScheduleServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	
+
 	/**
 	 * Method for perform re-schedule action based on given instructions.
 	 * 
@@ -59,12 +59,13 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	 * @param finServiceInstruction
 	 * @return FinScheduleData
 	 */
-	private FinScheduleData recalScheduleData(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction, Date maturityDate) {
+	private FinScheduleData recalScheduleData(FinScheduleData finScheduleData,
+			FinServiceInstruction finServiceInstruction, Date maturityDate) {
 		logger.debug("Entering");
 
 		// Check Date Status Specifier
 		boolean calFromGrcPeriod = false;
-		
+
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData scheduleData = null;
 		Cloner cloner = new Cloner();
@@ -76,7 +77,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		int terms = finServiceInstruction.getTerms();
 
 		List<FinanceScheduleDetail> scheduleList = scheduleData.getFinanceScheduleDetails();
-		if (fromDate != null && financeMain.isAllowGrcPeriod() && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
+		if (fromDate != null && financeMain.isAllowGrcPeriod()
+				&& fromDate.compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 			calFromGrcPeriod = true;
 		}
 
@@ -124,11 +126,11 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (finServiceInstruction.getNextGrcRepayDate() != null) {
 				financeMain.setEventFromDate(finServiceInstruction.getNextGrcRepayDate());
 			} else {
-				
+
 				Date eventFromDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
 						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate();
-				eventFromDate = DateUtility.getDBDate(DateUtility.formatUtilDate(eventFromDate,
-						PennantConstants.DBDateFormat));
+				eventFromDate = DateUtility
+						.getDBDate(DateUtility.formatUtilDate(eventFromDate, PennantConstants.DBDateFormat));
 				financeMain.setEventFromDate(eventFromDate);
 			}
 
@@ -136,26 +138,27 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				startRepayCalDate = finServiceInstruction.getNextRepayDate();
 				recalToDate = finServiceInstruction.getNextRepayDate();
 			} else {
-				startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1,
-						finServiceInstruction.getGrcPeriodEndDate(), "A", false, 0).getNextFrequencyDate();
+				startRepayCalDate = FrequencyUtil
+						.getNextDate(frequency, 1, finServiceInstruction.getGrcPeriodEndDate(), "A", false, 0)
+						.getNextFrequencyDate();
 
-				if(DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15){
+				if (DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
 							.getNextFrequencyDate();
 				}
-				
-				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate,
-						PennantConstants.DBDateFormat));
-				
+
+				startRepayCalDate = DateUtility
+						.getDBDate(DateUtility.formatUtilDate(startRepayCalDate, PennantConstants.DBDateFormat));
+
 			}
 
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, terms, startRepayCalDate, "A", true,
-					0).getScheduleList();
+			List<Calendar> scheduleDateList = FrequencyUtil
+					.getNextDate(frequency, terms, startRepayCalDate, "A", true, 0).getScheduleList();
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				recalToDate = calendar.getTime();
-				recalToDate = DateUtility.getDBDate(DateUtility.formatUtilDate(recalToDate,
-						PennantConstants.DBDateFormat));
+				recalToDate = DateUtility
+						.getDBDate(DateUtility.formatUtilDate(recalToDate, PennantConstants.DBDateFormat));
 			}
 			scheduleDateList = null;
 
@@ -163,11 +166,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			int maxFinYears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS");
 			Date lastDateLimit = new Date();
 			lastDateLimit = DateUtility.addYears(financeMain.getFinStartDate(), maxFinYears);
-			
+
 			if (DateUtility.compare(recalToDate, lastDateLimit) > 0) {
 				// Through Error
-				finScheduleData
-				.setErrorDetail(new ErrorDetail("SCH30",
+				finScheduleData.setErrorDetail(new ErrorDetail("SCH30",
 						"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
 						new String[] { " " }));
 				return finScheduleData;
@@ -176,38 +178,39 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setMaturityDate(recalToDate);
 
 			// Schedule Dates Generation Process calculation
-			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, finServiceInstruction, fromDate, startRepayCalDate,
-					recalToDate);
+			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, finServiceInstruction, fromDate,
+					startRepayCalDate, recalToDate);
 		} else {
 			if (finServiceInstruction.getNextRepayDate() != null) {
-				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(finServiceInstruction.getNextRepayDate(),
-						PennantConstants.DBDateFormat));
+				startRepayCalDate = DateUtility.getDBDate(DateUtility
+						.formatUtilDate(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
 			} else {
-				startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
+				startRepayCalDate = FrequencyUtil
+						.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
 						.getNextFrequencyDate();
 
-				if(DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15){
+				if (DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
 							.getNextFrequencyDate();
 				}
-				
-				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate,
-						PennantConstants.DBDateFormat));
+
+				startRepayCalDate = DateUtility
+						.getDBDate(DateUtility.formatUtilDate(startRepayCalDate, PennantConstants.DBDateFormat));
 			}
-			
-			if(maturityDate != null){
+
+			if (maturityDate != null) {
 				recalToDate = maturityDate;
-			}else{
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, terms, startRepayCalDate, "A", true)
-						.getScheduleList();
+			} else {
+				List<Calendar> scheduleDateList = FrequencyUtil
+						.getNextDate(frequency, terms, startRepayCalDate, "A", true).getScheduleList();
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					recalToDate = DateUtility.getDBDate(DateUtility.formatUtilDate(calendar.getTime(),
-							PennantConstants.DBDateFormat));
+					recalToDate = DateUtility
+							.getDBDate(DateUtility.formatUtilDate(calendar.getTime(), PennantConstants.DBDateFormat));
 				}
 				scheduleDateList = null;
 			}
-			
+
 			// Set the limits based on system values table
 			int maxFinYears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS");
 			Date lastDateLimit = new Date();
@@ -215,8 +218,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 			if (DateUtility.compare(recalToDate, lastDateLimit) > 0) {
 				// Through Error
-				finScheduleData
-				.setErrorDetail(new ErrorDetail("SCH30",
+				finScheduleData.setErrorDetail(new ErrorDetail("SCH30",
 						"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
 						new String[] { " " }));
 				return finScheduleData;
@@ -226,41 +228,41 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setMaturityDate(recalToDate);
 
 			// Schedule Dates Generation Process calculation
-			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, finServiceInstruction, fromDate, startRepayCalDate,
-					recalToDate);
+			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, finServiceInstruction, fromDate,
+					startRepayCalDate, recalToDate);
 		}
-		
+
 		boolean isDisbDateFoundInSD = false;
 		int disbIndex = 0;
 		List<FinanceScheduleDetail> finSchdDetails = scheduleData.getFinanceScheduleDetails();
 		int sdSize = finSchdDetails.size();
-		
+
 		//Add Disbursement amount to existing record if found
 		List<FinanceDisbursement> finDisbDetails = scheduleData.getDisbursementDetails();
 		FinanceScheduleDetail curSchd = null;
 		Date schdDate = financeMain.getFinStartDate();
 		boolean disbMaturityCrossed = false;
 		for (int k = 0; k < finDisbDetails.size(); k++) {
-			
+
 			FinanceDisbursement curDisb = finDisbDetails.get(k);
-			if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+			if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 				continue;
 			}
 			Date curDisbDate = curDisb.getDisbDate();
 			isDisbDateFoundInSD = false;
-			if(curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(financeMain.getFinStartDate()) == 0){
+			if (curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(financeMain.getFinStartDate()) == 0) {
 				continue;
 			}
-			
+
 			// Existing Disbursement Date should be less than Newly calculated Maturity Term
-			if(curDisbDate.compareTo(financeMain.getMaturityDate()) >= 0){
+			if (curDisbDate.compareTo(financeMain.getMaturityDate()) >= 0) {
 				disbMaturityCrossed = true;
 				String[] valueParm = new String[1];
 				valueParm[0] = DateUtility.formatToLongDate(curDisbDate);
 				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30575", "", valueParm), "EN"));
 				break;
 			}
-			
+
 			for (int i = 0; i < sdSize; i++) {
 				curSchd = finSchdDetails.get(i);
 				schdDate = curSchd.getSchDate();
@@ -295,12 +297,13 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				curSchd.setDisbOnSchDate(true);
 				curSchd.setDisbAmount(curDisb.getDisbAmount());
 				curSchd.setFeeChargeAmt(curDisb.getFeeChargeAmt());
-				curSchd.setClosingBalance(prvSchd.getClosingBalance().add(curDisb.getDisbAmount()).add(curDisb.getFeeChargeAmt()));
+				curSchd.setClosingBalance(
+						prvSchd.getClosingBalance().add(curDisb.getDisbAmount()).add(curDisb.getFeeChargeAmt()));
 			}
 		}
-		
+
 		// If Existing Disbursement crossed newly calculated maturity Date
-		if(disbMaturityCrossed){
+		if (disbMaturityCrossed) {
 			return finScheduleData;
 		}
 
@@ -319,9 +322,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				continue;
 			}
 			FinanceScheduleDetail prvSchd = scheduleData.getFinanceScheduleDetails().get(i - 1);
-			
+
 			// Profit Days Basis Setting
-			if(StringUtils.isEmpty(curSchd.getPftDaysBasis())){
+			if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
 				curSchd.setPftDaysBasis(prvSchd.getPftDaysBasis());
 			}
 
@@ -364,8 +367,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			} else {
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 					if (i != 0 && curSchd.getSchDate().compareTo(fromDate) > 0) {
-						curSchd.setCalculatedRate(scheduleData.getFinanceScheduleDetails().get(i - 1)
-								.getCalculatedRate());
+						curSchd.setCalculatedRate(
+								scheduleData.getFinanceScheduleDetails().get(i - 1).getCalculatedRate());
 					}
 				} else {
 					curSchd.setCalculatedRate(repayCalRate);
@@ -394,20 +397,19 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					}
 					curSchd.setBaseRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()));
 					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getSplRate()));
-					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null ? BigDecimal.ZERO
-							: finServiceInstruction.getMargin());
+					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null
+							? BigDecimal.ZERO : finServiceInstruction.getMargin());
 					curSchd.setActRate(finServiceInstruction.getActualRate());
 
 					// Advised Rates Setting
-					if (i != 0
-							&& StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR, scheduleData.getFinanceType()
-									.getFinCategory())) {
-						if(prvSchd != null){
-							curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? prvSchd
-									.getAdvPftRate() : BigDecimal.ZERO);
+					if (i != 0 && StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR,
+							scheduleData.getFinanceType().getFinCategory())) {
+						if (prvSchd != null) {
+							curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null
+									? prvSchd.getAdvPftRate() : BigDecimal.ZERO);
 							curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
-							curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? BigDecimal.ZERO
-									: prvSchd.getAdvMargin());
+							curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null
+									? BigDecimal.ZERO : prvSchd.getAdvMargin());
 						}
 					}
 
@@ -415,11 +417,11 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 
 			// Schedule Recalculation Locking Period Applicability
-			if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
-				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
-						&& (i != scheduleData.getFinanceScheduleDetails().size() - 1) && i != 0){
+			if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+				if (DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0
+						&& (i != scheduleData.getFinanceScheduleDetails().size() - 1) && i != 0) {
 					curSchd.setRecalLock(true);
-				}else{
+				} else {
 					curSchd.setRecalLock(false);
 				}
 			}
@@ -447,30 +449,30 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setSchPftDue(schPftDue);
 			financeMain.setSchPriDue(schPriDue);
 		}
-		
+
 		//TODO: PV 19JAN17 schdMethod to be added
 		financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
-		
+
 		// Plan EMI Holidays Resetting after Rescheduling
-		if(scheduleData.getFinanceMain().isPlanEMIHAlw()){
+		if (scheduleData.getFinanceMain().isPlanEMIHAlw()) {
 			scheduleData.getFinanceMain().setEventFromDate(startRepayCalDate);
 			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getMaturityDate());
 			scheduleData.getFinanceMain().setRecalFromDate(startRepayCalDate);
 			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
 			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
-			
+
 			scheduleData.getFinanceMain().setEqualRepay(true);
 			scheduleData.getFinanceMain().setCalculateRepay(true);
 
-			if(StringUtils.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+			if (StringUtils.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(),
+					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 				scheduleData = ScheduleCalculator.getFrqEMIHoliday(scheduleData);
-			}else{
+			} else {
 				scheduleData = ScheduleCalculator.getAdhocEMIHoliday(scheduleData);
 			}
 		}
 
-		
 		BigDecimal newTotalPft = scheduleData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
 		scheduleData.setPftChg(pftDiff);
@@ -478,9 +480,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		logger.debug("Leaving");
 		return scheduleData;
 	}
-	
+
 	/**
 	 * Method for Adding Schedule term when missing while on disbursement date checking
+	 * 
 	 * @param finScheduleData
 	 * @param newSchdDate
 	 * @param prvIndex
@@ -515,9 +518,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		return finScheduleData;
 	}
-	
+
 	/**
 	 * Method for Resetting Data and Recalculate Schedule when Overdraft Maintained
+	 * 
 	 * @param finScheduleData
 	 * @param newSchdDate
 	 * @param prvIndex
@@ -526,39 +530,44 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	@Override
 	public FinScheduleData doResetOverdraftSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
-		
+
 		// Finance Service Instruction Preparation
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinServiceInstruction serviceInstruction = new FinServiceInstruction();
 		serviceInstruction.setFromDate(finMain.getEventFromDate());
 		serviceInstruction.setRepayFrq(finMain.getRepayFrq());
 		serviceInstruction.setRepayRvwFrq(finMain.getRepayRvwFrq());
-		
+
 		Date startCalFrom = finMain.getFinStartDate();
 		FinanceScheduleDetail prvSchd = null;
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-			if(DateUtility.compare(curSchd.getSchDate(), finMain.getEventFromDate()) >= 0){
-				Date brforeDate = null; 
-				if(prvSchd == null){
+			if (DateUtility.compare(curSchd.getSchDate(), finMain.getEventFromDate()) >= 0) {
+				Date brforeDate = null;
+				if (prvSchd == null) {
 					brforeDate = finMain.getFinStartDate();
-					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getFinStartDate(), "A", false).getNextFrequencyDate();
-				}else{
+					startCalFrom = FrequencyUtil
+							.getNextDate(finMain.getRepayFrq(), 1, finMain.getFinStartDate(), "A", false)
+							.getNextFrequencyDate();
+				} else {
 					brforeDate = prvSchd.getSchDate();
-					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate();
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false)
+							.getNextFrequencyDate();
 				}
-				if(DateUtility.getDaysBetween(brforeDate, startCalFrom) <= 15){
-					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate(); 
+				if (DateUtility.getDaysBetween(brforeDate, startCalFrom) <= 15) {
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false)
+							.getNextFrequencyDate();
 				}
-				if(DateUtility.compare(startCalFrom,finMain.getMaturityDate())>=0){
+				if (DateUtility.compare(startCalFrom, finMain.getMaturityDate()) >= 0) {
 					startCalFrom = finMain.getMaturityDate();
 				}
 				break;
 			}
 			prvSchd = curSchd;
 		}
-		
-		int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), startCalFrom, finMain.getMaturityDate(), true, true).getTerms();
+
+		int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), startCalFrom, finMain.getMaturityDate(), true, true)
+				.getTerms();
 		serviceInstruction.setTerms(terms);
 		serviceInstruction.setNextRepayDate(startCalFrom);
 		serviceInstruction.setPftIntact(false);
@@ -566,16 +575,17 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		serviceInstruction.setSplRate(finMain.getRepaySpecialRate());
 		serviceInstruction.setMargin(finMain.getRepayMargin());
 		serviceInstruction.setActualRate(finMain.getRepayProfitRate());
-		
+
 		// Schedule Recalculation
 		finScheduleData = recalScheduleData(finScheduleData, serviceInstruction, finMain.getMaturityDate());
-		
+
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
-	
+
 	/**
 	 * Method for Sorting schedule details
+	 * 
 	 * @param financeScheduleDetail
 	 * @return
 	 */
@@ -592,7 +602,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		return financeScheduleDetail;
 	}
-
 
 	/**
 	 * Validate Re-Schedule request object
@@ -612,60 +621,60 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		String finReference = finServiceInstruction.getFinReference();
 
 		Date fromDate = finServiceInstruction.getFromDate();
-		if(fromDate == null) {
+		if (fromDate == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FromDate";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
-		if(DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+		if (DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			valueParm[1] = "application date:" + DateUtility.formatToLongDate(DateUtility.getAppDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
-		
+
 		boolean isValidFromDate = false;
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
-		if(schedules != null) {
-			for(FinanceScheduleDetail schDetail: schedules) {
-				if(DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+		if (schedules != null) {
+			for (FinanceScheduleDetail schDetail : schedules) {
+				if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
 					isValidFromDate = true;
-					if(checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
+					if (checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
 						return auditDetail;
 					}
 				}
 			}
 
-			if(!isValidFromDate) {
+			if (!isValidFromDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
+				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 				return auditDetail;
 			}
 		}
-		if(finServiceInstruction.getNextRepayDate() == null) {
+		if (finServiceInstruction.getNextRepayDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "NextRepayDate";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 			return auditDetail;
 		}
 		// validate Next payment date with finStart date and maturity date
-		if(finServiceInstruction.getNextRepayDate().compareTo(fromDate) <= 0) {
+		if (finServiceInstruction.getNextRepayDate().compareTo(fromDate) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Next RepayDate";
-			valueParm[1] = "From Date:"+DateUtility.formatToShortDate(fromDate);
+			valueParm[1] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm), lang));
 			return auditDetail;
 		}
 
 		// FromDate should be Unpaid Date
-		FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(
-				finReference, fromDate, "", isWIF);
-		BigDecimal paidAmount = finScheduleDetail.getSchdPriPaid().add(
-				finScheduleDetail.getSchdFeePaid().add(finScheduleDetail.getSchdPftPaid()));
+		FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(finReference,
+				fromDate, "", isWIF);
+		BigDecimal paidAmount = finScheduleDetail.getSchdPriPaid()
+				.add(finScheduleDetail.getSchdFeePaid().add(finScheduleDetail.getSchdPftPaid()));
 
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 			String[] valueParm = new String[1];
@@ -692,28 +701,30 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		return auditDetail;
 	}
 
-		/**
-		 * Method for validate current schedule date is valid schedule or not
-		 * 
-		 * @param auditDetail
-		 * @param curSchd
-		 * @param label
-		 * @return
-		 */
-		private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
-			if (!((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) 
-					&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() 
-					&& !curSchd.isSchPftPaid()) || (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
-					&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
-				String[] valueParm = new String[1];
-				valueParm[0] = label;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
-				return auditDetail;
-			}
-			return null;
+	/**
+	 * Method for validate current schedule date is valid schedule or not
+	 * 
+	 * @param auditDetail
+	 * @param curSchd
+	 * @param label
+	 * @return
+	 */
+	private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
+		if (!((curSchd.isRepayOnSchDate()
+				|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
+				&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate()
+						&& !curSchd.isSchPftPaid())
+						|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
+								&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
+			String[] valueParm = new String[1];
+			valueParm[0] = label;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
+			return auditDetail;
 		}
-
-		public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-			this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-		}
+		return null;
 	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+}

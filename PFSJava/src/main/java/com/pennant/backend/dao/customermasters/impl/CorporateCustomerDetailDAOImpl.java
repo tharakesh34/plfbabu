@@ -61,105 +61,101 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>CorporateCustomerDetail model</b> class.<br>
  * 
  */
-public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDetail>  implements CorporateCustomerDetailDAO {
+public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDetail>
+		implements CorporateCustomerDetailDAO {
 
 	private static Logger logger = Logger.getLogger(CorporateCustomerDetailDAOImpl.class);
-	
 
 	public CorporateCustomerDetailDAOImpl() {
 		super();
 	}
 
-
 	/**
-	 * Fetch the Record  Corporate Detail details by key field
+	 * Fetch the Record Corporate Detail details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CorporateCustomerDetail
 	 */
 	@Override
 	public CorporateCustomerDetail getCorporateCustomerDetailById(final long id, String type) {
 		logger.debug("Entering");
-		
+
 		CorporateCustomerDetail corporateCustomerDetail = new CorporateCustomerDetail();
 		corporateCustomerDetail.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select CustId, Name, PhoneNumber, EmailId," );
-		selectSql.append(" BussCommenceDate, ServCommenceDate, BankRelationshipDate, PaidUpCapital," );
-		selectSql.append(" AuthorizedCapital, ReservesAndSurPlus, IntangibleAssets, TangibleNetWorth," );
-		selectSql.append(" LongTermLiabilities, CapitalEmployed, Investments, NonCurrentAssets," );
-		selectSql.append(" NetWorkingCapital, NetSales, OtherIncome, NetProfitAfterTax, Depreciation," );
-		selectSql.append(" CashAccurals, AnnualTurnover, ReturnOnCapitalEmp, CurrentAssets," );
-		selectSql.append(" CurrentLiabilities, CurrentBookValue, CurrentMarketValue, PromotersShare," );
+
+		StringBuilder selectSql = new StringBuilder("Select CustId, Name, PhoneNumber, EmailId,");
+		selectSql.append(" BussCommenceDate, ServCommenceDate, BankRelationshipDate, PaidUpCapital,");
+		selectSql.append(" AuthorizedCapital, ReservesAndSurPlus, IntangibleAssets, TangibleNetWorth,");
+		selectSql.append(" LongTermLiabilities, CapitalEmployed, Investments, NonCurrentAssets,");
+		selectSql.append(" NetWorkingCapital, NetSales, OtherIncome, NetProfitAfterTax, Depreciation,");
+		selectSql.append(" CashAccurals, AnnualTurnover, ReturnOnCapitalEmp, CurrentAssets,");
+		selectSql.append(" CurrentLiabilities, CurrentBookValue, CurrentMarketValue, PromotersShare,");
 		selectSql.append(" AssociatesShare, PublicShare, FinInstShare, Others, ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescCustCIF,lovDescCustShrtName,lovDescCustRecordType, ");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From CustomerCorporateDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustId =:CustId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
-		RowMapper<CorporateCustomerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CorporateCustomerDetail.class);
-		
-		try{
-			corporateCustomerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CorporateCustomerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CorporateCustomerDetail.class);
+
+		try {
+			corporateCustomerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			corporateCustomerDetail = null;
 		}
 		logger.debug("Leaving");
 		return corporateCustomerDetail;
 	}
-	
-	
-	
+
 	/**
-	 * This method Deletes the Record from the CustomerCorporateDetail or CustomerCorporateDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Corporate Detail by key CustId
+	 * This method Deletes the Record from the CustomerCorporateDetail or CustomerCorporateDetail_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Corporate Detail by key CustId
 	 * 
-	 * @param Corporate Detail (corporateCustomerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Corporate
+	 *            Detail (corporateCustomerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CorporateCustomerDetail corporateCustomerDetail,String type) {
+	public void delete(CorporateCustomerDetail corporateCustomerDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerCorporateDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustId =:CustId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into CustomerCorporateDetail or
-	 * CustomerCorporateDetail_Temp. it fetches the available Sequence form
-	 * SeqCustomerCorporateDetail by using getNextidviewDAO().getNextId()
-	 * method.
+	 * This method insert new Records into CustomerCorporateDetail or CustomerCorporateDetail_Temp. it fetches the
+	 * available Sequence form SeqCustomerCorporateDetail by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Corporate Detail
 	 * 
@@ -172,86 +168,86 @@ public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDe
 	 * 
 	 */
 	@Override
-	public long save(CorporateCustomerDetail corporateCustomerDetail,String type) {
+	public long save(CorporateCustomerDetail corporateCustomerDetail, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into CustomerCorporateDetail");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into CustomerCorporateDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustId, Name, PhoneNumber, EmailId, BussCommenceDate, ServCommenceDate," );
-		insertSql.append(" BankRelationshipDate, PaidUpCapital, AuthorizedCapital, ReservesAndSurPlus," );
-		insertSql.append(" IntangibleAssets, TangibleNetWorth, LongTermLiabilities, CapitalEmployed," );
-		insertSql.append(" Investments, NonCurrentAssets, NetWorkingCapital, NetSales, OtherIncome," );
+		insertSql.append(" (CustId, Name, PhoneNumber, EmailId, BussCommenceDate, ServCommenceDate,");
+		insertSql.append(" BankRelationshipDate, PaidUpCapital, AuthorizedCapital, ReservesAndSurPlus,");
+		insertSql.append(" IntangibleAssets, TangibleNetWorth, LongTermLiabilities, CapitalEmployed,");
+		insertSql.append(" Investments, NonCurrentAssets, NetWorkingCapital, NetSales, OtherIncome,");
 		insertSql.append(" NetProfitAfterTax, Depreciation, CashAccurals, AnnualTurnover, ReturnOnCapitalEmp,");
-		insertSql.append(" CurrentAssets, CurrentLiabilities, CurrentBookValue, CurrentMarketValue," );
+		insertSql.append(" CurrentAssets, CurrentLiabilities, CurrentBookValue, CurrentMarketValue,");
 		insertSql.append(" PromotersShare, AssociatesShare, PublicShare, FinInstShare, Others, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustId, :Name, :PhoneNumber, :EmailId, :BussCommenceDate," );
-		insertSql.append(" :ServCommenceDate, :BankRelationshipDate, :PaidUpCapital, :AuthorizedCapital," );
+		insertSql.append(" Values(:CustId, :Name, :PhoneNumber, :EmailId, :BussCommenceDate,");
+		insertSql.append(" :ServCommenceDate, :BankRelationshipDate, :PaidUpCapital, :AuthorizedCapital,");
 		insertSql.append(" :ReservesAndSurPlus, :IntangibleAssets, :TangibleNetWorth, :LongTermLiabilities,");
 		insertSql.append(" :CapitalEmployed, :Investments, :NonCurrentAssets, :NetWorkingCapital, :NetSales,");
 		insertSql.append(" :OtherIncome, :NetProfitAfterTax, :Depreciation, :CashAccurals, :AnnualTurnover,");
-		insertSql.append(" :ReturnOnCapitalEmp, :CurrentAssets, :CurrentLiabilities, :CurrentBookValue," );
-		insertSql.append(" :CurrentMarketValue, :PromotersShare, :AssociatesShare, :PublicShare," );
+		insertSql.append(" :ReturnOnCapitalEmp, :CurrentAssets, :CurrentLiabilities, :CurrentBookValue,");
+		insertSql.append(" :CurrentMarketValue, :PromotersShare, :AssociatesShare, :PublicShare,");
 		insertSql.append(" :FinInstShare, :Others, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return corporateCustomerDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record CustomerCorporateDetail or CustomerCorporateDetail_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Corporate Detail by key CustId and Version
+	 * This method updates the Record CustomerCorporateDetail or CustomerCorporateDetail_Temp. if Record not updated
+	 * then throws DataAccessException with error 41004. update Corporate Detail by key CustId and Version
 	 * 
-	 * @param Corporate Detail (corporateCustomerDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Corporate
+	 *            Detail (corporateCustomerDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CorporateCustomerDetail corporateCustomerDetail,String type) {
+	public void update(CorporateCustomerDetail corporateCustomerDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update CustomerCorporateDetail");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update CustomerCorporateDetail");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set Name = :Name, PhoneNumber = :PhoneNumber,");
-		updateSql.append(" EmailId = :EmailId, BussCommenceDate = :BussCommenceDate," );
+		updateSql.append(" EmailId = :EmailId, BussCommenceDate = :BussCommenceDate,");
 		updateSql.append(" ServCommenceDate = :ServCommenceDate, BankRelationshipDate = :BankRelationshipDate,");
-		updateSql.append(" PaidUpCapital = :PaidUpCapital, AuthorizedCapital = :AuthorizedCapital," );
+		updateSql.append(" PaidUpCapital = :PaidUpCapital, AuthorizedCapital = :AuthorizedCapital,");
 		updateSql.append(" ReservesAndSurPlus = :ReservesAndSurPlus, IntangibleAssets = :IntangibleAssets,");
-		updateSql.append(" TangibleNetWorth = :TangibleNetWorth, LongTermLiabilities = :LongTermLiabilities," );
-		updateSql.append(" CapitalEmployed = :CapitalEmployed, Investments = :Investments," );
-		updateSql.append(" NonCurrentAssets = :NonCurrentAssets, NetWorkingCapital = :NetWorkingCapital," );
+		updateSql.append(" TangibleNetWorth = :TangibleNetWorth, LongTermLiabilities = :LongTermLiabilities,");
+		updateSql.append(" CapitalEmployed = :CapitalEmployed, Investments = :Investments,");
+		updateSql.append(" NonCurrentAssets = :NonCurrentAssets, NetWorkingCapital = :NetWorkingCapital,");
 		updateSql.append(" NetSales = :NetSales, OtherIncome = :OtherIncome, NetProfitAfterTax = :NetProfitAfterTax,");
-		updateSql.append(" Depreciation = :Depreciation, CashAccurals = :CashAccurals," );
-		updateSql.append(" AnnualTurnover = :AnnualTurnover, ReturnOnCapitalEmp = :ReturnOnCapitalEmp," );
-		updateSql.append(" CurrentAssets = :CurrentAssets, CurrentLiabilities = :CurrentLiabilities," );
-		updateSql.append(" CurrentBookValue = :CurrentBookValue, CurrentMarketValue = :CurrentMarketValue," );
-		updateSql.append(" PromotersShare = :PromotersShare, AssociatesShare = :AssociatesShare," );
+		updateSql.append(" Depreciation = :Depreciation, CashAccurals = :CashAccurals,");
+		updateSql.append(" AnnualTurnover = :AnnualTurnover, ReturnOnCapitalEmp = :ReturnOnCapitalEmp,");
+		updateSql.append(" CurrentAssets = :CurrentAssets, CurrentLiabilities = :CurrentLiabilities,");
+		updateSql.append(" CurrentBookValue = :CurrentBookValue, CurrentMarketValue = :CurrentMarketValue,");
+		updateSql.append(" PromotersShare = :PromotersShare, AssociatesShare = :AssociatesShare,");
 		updateSql.append(" PublicShare = :PublicShare, FinInstShare = :FinInstShare, Others = :Others,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
 		updateSql.append(" WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustId =:CustId");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

@@ -85,6 +85,7 @@ public class Profession extends AbstractWorkflowEntity {
 	public String getId() {
 		return professionCode;
 	}
+
 	public void setId(String id) {
 		this.professionCode = id;
 	}
@@ -92,13 +93,15 @@ public class Profession extends AbstractWorkflowEntity {
 	public String getProfessionCode() {
 		return professionCode;
 	}
+
 	public void setProfessionCode(String professionCode) {
 		this.professionCode = professionCode;
 	}
-	
+
 	public String getProfessionDesc() {
 		return professionDesc;
 	}
+
 	public void setProfessionDesc(String professionDesc) {
 		this.professionDesc = professionDesc;
 	}
@@ -106,6 +109,7 @@ public class Profession extends AbstractWorkflowEntity {
 	public boolean isProfessionIsActive() {
 		return professionIsActive;
 	}
+
 	public void setProfessionIsActive(boolean professionIsActive) {
 		this.professionIsActive = professionIsActive;
 	}
@@ -113,6 +117,7 @@ public class Profession extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -120,6 +125,7 @@ public class Profession extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -127,6 +133,7 @@ public class Profession extends AbstractWorkflowEntity {
 	public Profession getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Profession beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -134,17 +141,19 @@ public class Profession extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isSelfEmployee() {
-    	return selfEmployee;
-    }
+		return selfEmployee;
+	}
 
 	public void setSelfEmployee(boolean selfEmployee) {
-    	this.selfEmployee = selfEmployee;
-    }
+		this.selfEmployee = selfEmployee;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

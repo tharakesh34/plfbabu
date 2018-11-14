@@ -14,37 +14,37 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CibilPersonalDetails implements Serializable {
 
-	private static final long	serialVersionUID	= -5242331822367560368L;
+	private static final long serialVersionUID = -5242331822367560368L;
 
 	@XmlElement(name = "FIRST_NAME")
-	private String				firstName;
+	private String firstName;
 
 	@XmlElement(name = "MIDDLE_NAME")
-	private String				middleName;
+	private String middleName;
 
 	@XmlElement(name = "LAST_NAME")
-	private String				lastName;
+	private String lastName;
 
 	@XmlElement(name = "DOB")
-	private String				dob;
+	private String dob;
 
 	@XmlElement(name = "GENDER")
-	private String				gender;
+	private String gender;
 
 	@XmlElement(name = "MOBILE")
-	private String				mobile;
+	private String mobile;
 
 	@XmlElement(name = "NOMINEE_NM")
-	private String				nomineeName;
+	private String nomineeName;
 
 	@XmlElement(name = "NOMINEE_REL")
-	private String				nomineeRelation;
+	private String nomineeRelation;
 
 	@XmlElement(name = "PAN")
-	private String				pan;
+	private String pan;
 
 	@XmlElement(name = "UID_")
-	private String				uid;
+	private String uid;
 
 	public String getFirstName() {
 		return firstName;

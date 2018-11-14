@@ -53,7 +53,6 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,24 +65,23 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, ManualAdvise manualAdvise, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getManualAdvisePropertyTypes(),
 				manualAdvise.getAdviseType()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(manualAdvise.getFinReference());
 		lc.setParent(item);
-	  	lc = new Listcell(manualAdvise.getFeeTypeDesc());
+		lc = new Listcell(manualAdvise.getFinReference());
 		lc.setParent(item);
-	  	lc = new Listcell(manualAdvise.getRecordStatus());
+		lc = new Listcell(manualAdvise.getFeeTypeDesc());
+		lc.setParent(item);
+		lc = new Listcell(manualAdvise.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(manualAdvise.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("adviseID", manualAdvise.getAdviseID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onManualAdviseItemDoubleClicked");
 	}
 }

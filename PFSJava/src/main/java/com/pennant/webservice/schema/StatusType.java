@@ -5,7 +5,6 @@
 // Generated on: 2016.05.07 at 06:25:23 PM IST 
 //
 
-
 package com.pennant.webservice.schema;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,11 +12,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for StatusType complex type.
+ * <p>
+ * Java class for StatusType complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="StatusType">
@@ -36,89 +36,76 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StatusType", propOrder = {
-    "statusCode",
-    "severity",
-    "statusDesc"
-})
+@XmlType(name = "StatusType", propOrder = { "statusCode", "severity", "statusDesc" })
 public class StatusType {
 
-    @XmlElement(required = true)
-    protected String statusCode;
-    @XmlElement(required = true)
-    protected String severity;
-    protected String statusDesc;
+	@XmlElement(required = true)
+	protected String statusCode;
+	@XmlElement(required = true)
+	protected String severity;
+	protected String statusDesc;
 
-    /**
-     * Gets the value of the statusCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getStatusCode() {
-        return statusCode;
-    }
+	/**
+	 * Gets the value of the statusCode property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getStatusCode() {
+		return statusCode;
+	}
 
-    /**
-     * Sets the value of the statusCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setStatusCode(String value) {
-        this.statusCode = value;
-    }
+	/**
+	 * Sets the value of the statusCode property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setStatusCode(String value) {
+		this.statusCode = value;
+	}
 
-    /**
-     * Gets the value of the severity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSeverity() {
-        return severity;
-    }
+	/**
+	 * Gets the value of the severity property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSeverity() {
+		return severity;
+	}
 
-    /**
-     * Sets the value of the severity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSeverity(String value) {
-        this.severity = value;
-    }
+	/**
+	 * Sets the value of the severity property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSeverity(String value) {
+		this.severity = value;
+	}
 
-    /**
-     * Gets the value of the statusDesc property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getStatusDesc() {
-        return statusDesc;
-    }
+	/**
+	 * Gets the value of the statusDesc property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getStatusDesc() {
+		return statusDesc;
+	}
 
-    /**
-     * Sets the value of the statusDesc property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setStatusDesc(String value) {
-        this.statusDesc = value;
-    }
+	/**
+	 * Sets the value of the statusDesc property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setStatusDesc(String value) {
+		this.statusDesc = value;
+	}
 
 }

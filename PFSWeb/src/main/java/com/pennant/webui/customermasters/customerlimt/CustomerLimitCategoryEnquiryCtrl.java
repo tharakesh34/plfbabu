@@ -61,29 +61,27 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiry.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiry.zul file.
  */
 public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCategoryBreakdown> {
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = Logger.getLogger(CustomerLimitCategoryEnquiryCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CustomerLimitCategoryEnquiry; 
-	
-	protected Label 		custCIF;
-	protected Label 		custShortName;
-	protected Label 		country;
-	protected Label 		groupName;
-	protected Label 		limitCategory;
-	
-	protected Listbox 		listBoxCustomerLimit;
-	protected Grid			grid_enquiryDetails;
-	
+	protected Window window_CustomerLimitCategoryEnquiry;
+
+	protected Label custCIF;
+	protected Label custShortName;
+	protected Label country;
+	protected Label groupName;
+	protected Label limitCategory;
+
+	protected Listbox listBoxCustomerLimit;
+	protected Grid grid_enquiryDetails;
+
 	private CustomerLimit customerLimit;
 
 	/**
@@ -99,9 +97,8 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected AccountingSet object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected AccountingSet object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -111,7 +108,7 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 
 		// Set the page level components.
 		setPageComponents(window_CustomerLimitCategoryEnquiry);
-		
+
 		if (arguments.containsKey("customerLimit")) {
 			setCustomerLimit((CustomerLimit) arguments.get("customerLimit"));
 		} else {
@@ -119,9 +116,9 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 		}
 
 		getBorderLayoutHeight();
-		int dialogHeight =  grid_enquiryDetails.getRows().getVisibleItemCount()* 20 + 400; 
-		int listboxHeight = borderLayoutHeight-dialogHeight;
-		listBoxCustomerLimit.setHeight(listboxHeight+"px");
+		int dialogHeight = grid_enquiryDetails.getRows().getVisibleItemCount() * 20 + 400;
+		int listboxHeight = borderLayoutHeight - dialogHeight;
+		listBoxCustomerLimit.setHeight(listboxHeight + "px");
 
 		// set Field Properties
 		doShowDialog(getCustomerLimit());
@@ -158,13 +155,13 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 	 */
 	public void doWriteBeanToComponents(CustomerLimit customerLimit) {
 		logger.debug("Entering");
-		
+
 		this.custCIF.setValue(customerLimit.getCustCIF());
 		this.custShortName.setValue(customerLimit.getCustShortName());
 		this.country.setValue("");
 		this.groupName.setValue("");
 		this.limitCategory.setValue(customerLimit.getLimitCategory());
-		
+
 		doFilllistbox(null);
 		logger.debug("Leaving");
 	}
@@ -179,11 +176,11 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 	 */
 	public void doShowDialog(CustomerLimit aCustomerLimit) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerLimit);
-			
+
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			this.window_CustomerLimitCategoryEnquiry.doModal();
@@ -215,7 +212,8 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 				lc = new Listcell(PennantAppUtil.amountFormate(breakdown.getEquivalent(), 3));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(breakdown.getEndDate()==null? "": DateUtility.formatToLongDate(breakdown.getEndDate()));
+				lc = new Listcell(
+						breakdown.getEndDate() == null ? "" : DateUtility.formatToLongDate(breakdown.getEndDate()));
 				lc.setParent(item);
 				lc = new Listcell(breakdown.getType());
 				lc.setParent(item);
@@ -223,7 +221,7 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 				lc.setParent(item);
 				this.listBoxCustomerLimit.appendChild(item);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -235,6 +233,7 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 	public CustomerLimit getCustomerLimit() {
 		return customerLimit;
 	}
+
 	public void setCustomerLimit(CustomerLimit customerLimit) {
 		this.customerLimit = customerLimit;
 	}

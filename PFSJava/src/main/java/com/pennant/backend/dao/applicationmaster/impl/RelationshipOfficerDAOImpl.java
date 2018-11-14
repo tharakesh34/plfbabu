@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,17 +67,18 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> implements RelationshipOfficerDAO {
 	private static Logger logger = Logger.getLogger(RelationshipOfficerDAOImpl.class);
-		
+
 	public RelationshipOfficerDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Relationship Officers details by key field
+	 * Fetch the Record Relationship Officers details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return RelationshipOfficer
 	 */
 	@Override
@@ -88,8 +88,9 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		relationshipOfficer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,Grade,MobileNO,DateOfJoin,GenDesignation,");
-		if(type.contains("View")){
+		selectSql.append(
+				"SELECT ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,Grade,MobileNO,DateOfJoin,GenDesignation,");
+		if (type.contains("View")) {
 			selectSql.append("lovDescROfficerDeptCodeName,Gendesgdesc,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -97,21 +98,22 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		selectSql.append(" FROM  RelationshipOfficers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ROfficerCode =:rOfficerCode");
-				
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
-		RowMapper<RelationshipOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RelationshipOfficer.class);
-		
-		try{
-			relationshipOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<RelationshipOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(RelationshipOfficer.class);
+
+		try {
+			relationshipOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			relationshipOfficer = null;
 		}
 		logger.debug("Leaving");
 		return relationshipOfficer;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String rOfficerCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -147,7 +149,7 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(RelationshipOfficer relationshipOfficer, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -155,11 +157,14 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into RelationshipOfficers");
 		sql.append(tableType.getSuffix());
-		sql.append(" (ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,Grade, MobileNO, DateOfJoin, GenDesignation,");
+		sql.append(
+				" (ROfficerCode, ROfficerDesc, ROfficerDeptCode, ROfficerIsActive,Grade, MobileNO, DateOfJoin, GenDesignation,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" Values(:ROfficerCode, :ROfficerDesc, :ROfficerDeptCode, :ROfficerIsActive, :Grade, :MobileNO, :DateOfJoin, :GenDesignation,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" Values(:ROfficerCode, :ROfficerDesc, :ROfficerDeptCode, :ROfficerIsActive, :Grade, :MobileNO, :DateOfJoin, :GenDesignation,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -174,7 +179,7 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		logger.debug(Literal.LEAVING);
 		return relationshipOfficer.getROfficerCode();
 	}
-	
+
 	@Override
 	public void update(RelationshipOfficer relationshipOfficer, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -183,9 +188,11 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		StringBuilder sql = new StringBuilder("update RelationshipOfficers");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set ROfficerDesc = :ROfficerDesc,");
-		sql.append(" ROfficerDeptCode = :ROfficerDeptCode, ROfficerIsActive = :ROfficerIsActive,Grade = :Grade,MobileNO = :MobileNO,DateOfJoin = :DateOfJoin,GenDesignation = :GenDesignation,");
+		sql.append(
+				" ROfficerDeptCode = :ROfficerDeptCode, ROfficerIsActive = :ROfficerIsActive,Grade = :Grade,MobileNO = :MobileNO,DateOfJoin = :DateOfJoin,GenDesignation = :GenDesignation,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where ROfficerCode =:ROfficerCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
@@ -199,7 +206,7 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -227,7 +234,7 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -35,7 +35,8 @@ public class PresentmentDetailExtractService {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 
-	public PresentmentDetailExtractService(PresentmentDetailDAO presentmentDetailDAO, FinExcessAmountDAO finExcessAmountDAO, ChequeDetailDAO chequeDetailDAO) {
+	public PresentmentDetailExtractService(PresentmentDetailDAO presentmentDetailDAO,
+			FinExcessAmountDAO finExcessAmountDAO, ChequeDetailDAO chequeDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
 		this.finExcessAmountDAO = finExcessAmountDAO;
 		this.chequeDetailDAO = chequeDetailDAO;
@@ -44,7 +45,7 @@ public class PresentmentDetailExtractService {
 	/*
 	 * Processing the Presentments If the payment type isPDC
 	 */
-	public String savePDCPresentments(PresentmentHeader presentmentHeader) throws Exception{
+	public String savePDCPresentments(PresentmentHeader presentmentHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isEmptyRecords = false;
@@ -131,8 +132,9 @@ public class PresentmentDetailExtractService {
 
 				// FinScheduleDetails update
 				if (RepayConstants.PEXC_EMIINCLUDE == pDetail.getExcludeReason()) {
-					presentmentDetailDAO.updateFinScheduleDetails(id, pDetail.getFinReference(), pDetail.getSchDate(), pDetail.getSchSeq());
-					updateChequeStatus(pDetail.getMandateId(),PennantConstants.CHEQUESTATUS_PRESENT);
+					presentmentDetailDAO.updateFinScheduleDetails(id, pDetail.getFinReference(), pDetail.getSchDate(),
+							pDetail.getSchSeq());
+					updateChequeStatus(pDetail.getMandateId(), PennantConstants.CHEQUESTATUS_PRESENT);
 				}
 			}
 			if (!isEmptyRecords) {
@@ -155,7 +157,7 @@ public class PresentmentDetailExtractService {
 		logger.debug(Literal.LEAVING);
 		return PennantJavaUtil.getLabel("label_PresentmentExtractedMessage");
 	}
-	
+
 	/*
 	 * Processing the Presentments If the payment type is ECS ,NACH,DD
 	 */
@@ -247,7 +249,8 @@ public class PresentmentDetailExtractService {
 
 				// FinScheduleDetails update
 				if (RepayConstants.PEXC_EMIINCLUDE == pDetail.getExcludeReason()) {
-					presentmentDetailDAO.updateFinScheduleDetails(id, pDetail.getFinReference(), pDetail.getSchDate(), pDetail.getSchSeq());
+					presentmentDetailDAO.updateFinScheduleDetails(id, pDetail.getFinReference(), pDetail.getSchDate(),
+							pDetail.getSchSeq());
 				}
 			}
 
@@ -274,10 +277,10 @@ public class PresentmentDetailExtractService {
 
 	private void doPDCCalculations(PresentmentDetail presentmentDetail, PresentmentHeader detailHeader) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BigDecimal emiInAdvanceAmt;
 		String finReference = presentmentDetail.getFinReference();
-		
+
 		// Cheque Status
 		if (!PennantConstants.CHEQUESTATUS_NEW.equals(presentmentDetail.getMandateStatus())) {
 			if (PennantConstants.CHEQUESTATUS_PRESENT.equals(presentmentDetail.getMandateStatus())) {
@@ -294,18 +297,20 @@ public class PresentmentDetailExtractService {
 			}
 			return;
 		}
-		
+
 		// EMI HOLD
 		if (DateUtility.compare(presentmentDetail.getDefSchdDate(), detailHeader.getToDate()) > 0) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIHOLD);
 			return;
 		}
-		
+
 		// EMI IN ADVANCE
-		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
+				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
 			emiInAdvanceAmt = finExcessAmount.getBalanceAmt();
-			if ((BigDecimal.ZERO.compareTo(emiInAdvanceAmt) > 0) && emiInAdvanceAmt.compareTo(presentmentDetail.getSchAmtDue()) >= 0) {
+			if ((BigDecimal.ZERO.compareTo(emiInAdvanceAmt) > 0)
+					&& emiInAdvanceAmt.compareTo(presentmentDetail.getSchAmtDue()) >= 0) {
 				presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
 				presentmentDetail.setPresentmentAmt(BigDecimal.ZERO);
 				presentmentDetail.setAdvanceAmt(presentmentDetail.getSchAmtDue());
@@ -318,13 +323,13 @@ public class PresentmentDetailExtractService {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
 			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void doCalculations(PresentmentDetail presentmentDetail, PresentmentHeader detailHeader) {
 		logger.debug(Literal.ENTERING);
-		
+
 		BigDecimal emiInAdvanceAmt;
 		String finReference = presentmentDetail.getFinReference();
 
@@ -378,13 +383,13 @@ public class PresentmentDetailExtractService {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue().subtract(emiInAdvanceAmt));
 			presentmentDetail.setAdvanceAmt(emiInAdvanceAmt);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private long savePresentmentHeaderDetails(PresentmentHeader header) {
 		logger.debug(Literal.ENTERING);
-		
+
 		long id = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
 		String reference = StringUtils.leftPad(String.valueOf(id), 15, "0");
 		header.setId(id);
@@ -398,7 +403,7 @@ public class PresentmentDetailExtractService {
 		header.setSuccessRecords(0);
 		header.setFailedRecords(0);
 		presentmentDetailDAO.savePresentmentHeader(header);
-		
+
 		logger.debug(Literal.LEAVING);
 		return id;
 
@@ -406,17 +411,16 @@ public class PresentmentDetailExtractService {
 
 	private String getPresentmentRef(ResultSet rs) throws SQLException {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append(rs.getString("BRANCHCODE"));
 		sb.append(rs.getString("LOANTYPE"));
 		sb.append(rs.getString("MANDATETYPE"));
-		
+
 		logger.debug(Literal.LEAVING);
 		return sb.toString();
 	}
 
-	
 	protected void updateChequeStatus(long chequeDetailsId, String status) {
 		chequeDetailDAO.updateChequeStatus(chequeDetailsId, status);
 	}

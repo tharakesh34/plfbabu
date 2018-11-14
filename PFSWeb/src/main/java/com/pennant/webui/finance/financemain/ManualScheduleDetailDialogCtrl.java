@@ -105,52 +105,50 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
  */
 public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> implements Serializable {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(ManualScheduleDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ScheduleDetailDialog; 	// autoWired
-	protected Listbox 		listBoxSchedule; 				// autoWired
-	protected Tab 			financeSchdDetailsTab; 			// autoWired
-	protected Borderlayout 	borderlayoutScheduleDetail; 	// autoWired
+	protected Window window_ScheduleDetailDialog; // autoWired
+	protected Listbox listBoxSchedule; // autoWired
+	protected Tab financeSchdDetailsTab; // autoWired
+	protected Borderlayout borderlayoutScheduleDetail; // autoWired
 
 	// Finance Schedule Details Tab
-	protected Grid 			grid_effRateOfReturn; 			// autoWired
+	protected Grid grid_effRateOfReturn; // autoWired
 
-	protected Label 		schdl_finType;
-	protected Label 		schdl_finReference;
-	protected Label 		schdl_finCcy;
-	protected Label 		schdl_profitDaysBasis;
-	protected Label 		schdl_noOfTerms;
-	protected Label 		schdl_grcEndDate;
-	protected Label 		schdl_startDate;
-	protected Label 		schdl_maturityDate;
-	protected Decimalbox 	schdl_purchasePrice;
-	protected Decimalbox 	schdl_otherExp;
-	protected Decimalbox 	schdl_totalCost;
-	protected Decimalbox 	schdl_totalPft;
-	protected Decimalbox 	schdl_contractPrice;
-	protected Label 		schdl_BankShare;
-	protected Label 		schdl_NonBankShare;
-	protected Label 		effectiveRateOfReturn;
-	
-	protected Row	 		row_istisna;
-	protected Row 			row_Musharak;
-	protected Row 			row_totalCost;
-	protected Row 			row_ContractPrice;
-	protected Hbox 			hbox_LinkedDownPayRef;
-	protected Decimalbox 	schdl_Repayprofit;
-	protected Decimalbox 	schdl_Graceprofit;
-	protected Label 		label_ScheduleDetailDialog_Graceprofit;
-	protected Label 		label_ScheduleDetailDialog_Repayprofit;
+	protected Label schdl_finType;
+	protected Label schdl_finReference;
+	protected Label schdl_finCcy;
+	protected Label schdl_profitDaysBasis;
+	protected Label schdl_noOfTerms;
+	protected Label schdl_grcEndDate;
+	protected Label schdl_startDate;
+	protected Label schdl_maturityDate;
+	protected Decimalbox schdl_purchasePrice;
+	protected Decimalbox schdl_otherExp;
+	protected Decimalbox schdl_totalCost;
+	protected Decimalbox schdl_totalPft;
+	protected Decimalbox schdl_contractPrice;
+	protected Label schdl_BankShare;
+	protected Label schdl_NonBankShare;
+	protected Label effectiveRateOfReturn;
+
+	protected Row row_istisna;
+	protected Row row_Musharak;
+	protected Row row_totalCost;
+	protected Row row_ContractPrice;
+	protected Hbox hbox_LinkedDownPayRef;
+	protected Decimalbox schdl_Repayprofit;
+	protected Decimalbox schdl_Graceprofit;
+	protected Label label_ScheduleDetailDialog_Graceprofit;
+	protected Label label_ScheduleDetailDialog_Repayprofit;
 
 	protected Label label_ScheduleDetailDialog_FinType;
 	protected Label label_ScheduleDetailDialog_FinReference;
@@ -190,10 +188,10 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	private Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
 	private boolean isWIF = false;
 	private boolean schRebuildReq = false;
-	
+
 	private int listItemSeq = 0;
 	private int formatter = 0;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -204,9 +202,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -237,55 +234,73 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 	/**
 	 * 
-	 * Set the Labels for the ListHeader and Basic Details based oon the Finance
-	 * Types right is only a string. <br>
+	 * Set the Labels for the ListHeader and Basic Details based oon the Finance Types right is only a string. <br>
 	 */
 	private void doSetLabels() {
 		logger.debug("Entering");
-		
+
 		String product = getFinScheduleData().getFinanceType().getFinCategory();
 
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		this.schdl_finType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());
 		this.schdl_finCcy.setValue(financeMain.getFinCcy());
-		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),PennantStaticListUtil.getProfitDaysBasis()));
+		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+				PennantStaticListUtil.getProfitDaysBasis()));
 
 		label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinType.value"));
-		label_ScheduleDetailDialog_FinReference.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinReference.value"));
+		label_ScheduleDetailDialog_FinReference
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinReference.value"));
 		label_ScheduleDetailDialog_FinCcy.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinCcy.value"));
-		label_ScheduleDetailDialog_ProfitDaysBasis.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitDaysBasis.value"));
-		label_ScheduleDetailDialog_NoOfTerms.setValue(Labels.getLabel("label_ScheduleDetailDialog_NumberOfTerms.value"));
-		label_ScheduleDetailDialog_GrcEndDate.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinGracePeriodEndDate.value"));
+		label_ScheduleDetailDialog_ProfitDaysBasis
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitDaysBasis.value"));
+		label_ScheduleDetailDialog_NoOfTerms
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_NumberOfTerms.value"));
+		label_ScheduleDetailDialog_GrcEndDate
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinGracePeriodEndDate.value"));
 		label_ScheduleDetailDialog_StartDate.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinStartDate.value"));
-		label_ScheduleDetailDialog_MaturityDate.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinMaturityDate.value"));
-		label_ScheduleDetailDialog_PurchasePrice.setValue(Labels.getLabel("label_ScheduleDetailDialog_PurchasePrice.value"));
-		label_ScheduleDetailDialog_OthExpenses.setValue(Labels.getLabel("label_ScheduleDetailDialog_OthExpenses.value"));
+		label_ScheduleDetailDialog_MaturityDate
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_FinMaturityDate.value"));
+		label_ScheduleDetailDialog_PurchasePrice
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_PurchasePrice.value"));
+		label_ScheduleDetailDialog_OthExpenses
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_OthExpenses.value"));
 		label_ScheduleDetailDialog_TotalCost.setValue(Labels.getLabel("label_ScheduleDetailDialog_TotalCost.value"));
 		label_ScheduleDetailDialog_TotalPft.setValue(Labels.getLabel("label_ScheduleDetailDialog_TotalPft.value"));
-		label_ScheduleDetailDialog_ContractPrice.setValue(Labels.getLabel("label_ScheduleDetailDialog_ContractPrice.value"));
-		label_FinanceMainDialog_EffectiveRateOfReturn.setValue(Labels.getLabel("label_ScheduleDetailDialog_EffectiveRateOfReturn.value"));
+		label_ScheduleDetailDialog_ContractPrice
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_ContractPrice.value"));
+		label_FinanceMainDialog_EffectiveRateOfReturn
+				.setValue(Labels.getLabel("label_ScheduleDetailDialog_EffectiveRateOfReturn.value"));
 
 		if (StringUtils.isNotEmpty(getFinScheduleData().getFinanceType().getProduct())) {
-			this.label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("labelFinanceMainDialog_PromotionCode.value"));
+			this.label_ScheduleDetailDialog_FinType
+					.setValue(Labels.getLabel("labelFinanceMainDialog_PromotionCode.value"));
 		}
 
 		if (product.equals(FinanceConstants.PRODUCT_ISTISNA)) {
 			this.row_istisna.setVisible(true);
-			this.label_ScheduleDetailDialog_Graceprofit.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInGrace.value"));
-			this.label_ScheduleDetailDialog_Repayprofit.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInRepay.value"));
+			this.label_ScheduleDetailDialog_Graceprofit
+					.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInGrace.value"));
+			this.label_ScheduleDetailDialog_Repayprofit
+					.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInRepay.value"));
 		}
 
 		listheader_ScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Date"));
-		listheader_ScheduleDetailDialog_ScheduleEvent.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
-		listheader_ScheduleDetailDialog_CalProfit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_CalProfit"));
-		listheader_ScheduleDetailDialog_Principal.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Principal"));
-		listheader_ScheduleDetailDialog_SchProfit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchProfit"));
-		
+		listheader_ScheduleDetailDialog_ScheduleEvent
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
+		listheader_ScheduleDetailDialog_CalProfit
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_CalProfit"));
+		listheader_ScheduleDetailDialog_Principal
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Principal"));
+		listheader_ScheduleDetailDialog_SchProfit
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchProfit"));
+
 		listheader_ScheduleDetailDialog_SchFee.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchFee"));
-		listheader_ScheduleDetailDialog_TDSAmount.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_TDSAmount"));
+		listheader_ScheduleDetailDialog_TDSAmount
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_TDSAmount"));
 		listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Total"));
-		listheader_ScheduleDetailDialog_ScheduleEndBal.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
-		
+		listheader_ScheduleDetailDialog_ScheduleEndBal
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
+
 		if (StringUtils.equals(product, FinanceConstants.PRODUCT_QARDHASSAN)) {
 			this.label_ScheduleDetailDialog_ProfitDaysBasis.setVisible(false);
 			this.schdl_profitDaysBasis.setVisible(false);
@@ -295,12 +310,11 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Opens the Dialog window model.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
@@ -308,21 +322,23 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	@SuppressWarnings("rawtypes")
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		try {
 
 			// fill the components with the data
 			doFillScheduleList(this.finScheduleData);
-			doPrepareSchdTerm(this.finScheduleData,false,null);
+			doPrepareSchdTerm(this.finScheduleData, false, null);
 			validateAndRecalSchd();
-			
+
 			// Set Manual Schedule Dialog Controller instance in base Controller
 			if (getFinanceMainDialogCtrl() != null) {
 				try {
 					Class[] paramType = { this.getClass() };
 					Object[] stringParameter = { this };
-					if (financeMainDialogCtrl.getClass().getMethod("setManualScheduleDetailDialogCtrl", paramType) != null) {
-						financeMainDialogCtrl.getClass().getMethod("setManualScheduleDetailDialogCtrl", paramType).invoke(financeMainDialogCtrl, stringParameter);
+					if (financeMainDialogCtrl.getClass().getMethod("setManualScheduleDetailDialogCtrl",
+							paramType) != null) {
+						financeMainDialogCtrl.getClass().getMethod("setManualScheduleDetailDialogCtrl", paramType)
+								.invoke(financeMainDialogCtrl, stringParameter);
 					}
 				} catch (Exception e) {
 					logger.error(e);
@@ -343,86 +359,92 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Changing Date value of Schedule term
+	 * 
 	 * @param curDate
 	 * @param isMaturityDate
 	 */
-	protected void curDateChange(Date curDate,boolean isMaturityDate){
-		
+	protected void curDateChange(Date curDate, boolean isMaturityDate) {
+
 		int i = 0;
-		if(isMaturityDate){
-			i = listBoxSchedule.getItemCount() -1 ;
+		if (isMaturityDate) {
+			i = listBoxSchedule.getItemCount() - 1;
 		}
 
 		// Setting date for Start Date or Maturity Date based on parameter : 'isMaturityDate'
 		Listitem li = (Listitem) listBoxSchedule.getItems().get(i);
 		int liSeq = Integer.parseInt(li.getId().substring(li.getId().indexOf("_") + 1));
-		if(li.getFellowIfAny("date_"+liSeq) != null){
-			Datebox curDb = (Datebox) (li.getFellowIfAny("date_"+liSeq));
-			if(curDb.getValue() != null && DateUtility.compare(curDb.getValue(), curDate) != 0){
+		if (li.getFellowIfAny("date_" + liSeq) != null) {
+			Datebox curDb = (Datebox) (li.getFellowIfAny("date_" + liSeq));
+			if (curDb.getValue() != null && DateUtility.compare(curDb.getValue(), curDate) != 0) {
 				curDb.setValue(curDate);
 			}
 		}
-		
+
 		// Recalculation of Schedule terms & set validations
 		validateAndRecalSchd();
 	}
-	
+
 	/**
 	 * Method for Resetting Finance Disbursement Amount on Start Date , if any changes on Finance Amount/Down Payment
+	 * 
 	 * @param disbAmount
 	 * @param schdMethod
 	 * @return
 	 */
-	protected boolean resetFinDisbursement(FinanceMain finMain){
+	protected boolean resetFinDisbursement(FinanceMain finMain) {
 		logger.debug("Entering");
-		
+
 		BigDecimal endBalance = BigDecimal.ZERO;
-		if(listBoxSchedule!=null && listBoxSchedule.getItemCount() >= 1){
-			
+		if (listBoxSchedule != null && listBoxSchedule.getItemCount() >= 1) {
+
 			Listitem li = (Listitem) listBoxSchedule.getItems().get(0);
 			int liSeq = Integer.parseInt(li.getId().substring(li.getId().indexOf("_") + 1));
-			
-			if(li.getFellowIfAny("endBal_"+liSeq) != null){
-				
+
+			if (li.getFellowIfAny("endBal_" + liSeq) != null) {
+
 				//Finding End Balance Component for Disbursement
-				Label endBal = (Label) li.getFellowIfAny("endBal_"+liSeq);
-				endBalance = PennantAppUtil.unFormateAmount(endBal.getValue(),formatter);
-				BigDecimal disbAmount = finMain.getFinAmount().subtract(finMain.getDownPayment()).add (finMain.getFeeChargeAmt());
-				
+				Label endBal = (Label) li.getFellowIfAny("endBal_" + liSeq);
+				endBalance = PennantAppUtil.unFormateAmount(endBal.getValue(), formatter);
+				BigDecimal disbAmount = finMain.getFinAmount().subtract(finMain.getDownPayment())
+						.add(finMain.getFeeChargeAmt());
+
 				//Checking With previous existing End Balance
-				if(disbAmount.compareTo(endBalance) != 0){
-					
+				if (disbAmount.compareTo(endBalance) != 0) {
+
 					endBal.setValue(PennantAppUtil.amountFormate(disbAmount, formatter));
-					
+
 					// Setting Total O/S Principal amount to Maturity Term.
-				/*	Listitem lik = (Listitem) listBoxSchedule.getLastChild();
-					int lstSeq = Integer.parseInt(lik.getId().substring(lik.getId().indexOf("_")+1));
-					if(lik.getFellowIfAny("pri_"+lstSeq) != null && lik.getFellowIfAny("pri_"+lstSeq) instanceof CurrencyBox){
-						CurrencyBox pri =	(CurrencyBox)lik.getFellowIfAny("pri_"+lstSeq);
-						pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
-					}*/
-					
+					/*
+					 * Listitem lik = (Listitem) listBoxSchedule.getLastChild(); int lstSeq =
+					 * Integer.parseInt(lik.getId().substring(lik.getId().indexOf("_")+1));
+					 * if(lik.getFellowIfAny("pri_"+lstSeq) != null && lik.getFellowIfAny("pri_"+lstSeq) instanceof
+					 * CurrencyBox){ CurrencyBox pri = (CurrencyBox)lik.getFellowIfAny("pri_"+lstSeq);
+					 * pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter)); }
+					 */
+
 					//Summary button addition to display Each part on O/S Principal Amount(Finance Amount & Down payment)
 					Listcell lsc = (Listcell) endBal.getParent();
-					BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt()).add(finMain.getInsuranceAmt());
-					if(li.getFellowIfAny("summary") == null && excessAmount.compareTo(BigDecimal.ZERO) > 0){
+					BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt())
+							.add(finMain.getInsuranceAmt());
+					if (li.getFellowIfAny("summary") == null && excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 						Button summary = new Button();
 						summary.setId("summary");
 						summary.setImage("/images/icons/icon.png");
 						summary.setStyle("background-color:#ffff; border-color:#ffff;");
-						summary.addForward("onMouseOver", this.window_ScheduleDetailDialog, "onPopupOutStandPriSummary");
+						summary.addForward("onMouseOver", this.window_ScheduleDetailDialog,
+								"onPopupOutStandPriSummary");
 						lsc.insertBefore(summary, endBal);
 					}
-					if(excessAmount.compareTo(BigDecimal.ZERO) <= 0 && li.getFellowIfAny("summary") !=null){
+					if (excessAmount.compareTo(BigDecimal.ZERO) <= 0 && li.getFellowIfAny("summary") != null) {
 						li.getFellowIfAny("summary").detach();
 					}
-					
+
 					// Calculate remaining Schedule terms
 					validateAndRecalSchd();
-					
+
 					logger.debug("Leaving");
 					return true;
 				}
@@ -431,172 +453,191 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		logger.debug("Leaving");
 		return false;
 	}
-	
+
 	/**
 	 * Method Event for Showing Summary detail on Pop up with all entries
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onPopupOutStandPriSummary(ForwardEvent event) throws Exception{
+	public void onPopupOutStandPriSummary(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		FinanceMain finmain = getFinanceMainData();
-		String msg = 	("First Disbursement Amount : "+PennantAppUtil.amountFormate(finmain.getFinAmount(),formatter)+"\n")+ 
-				((finmain.getDownPayment()!= null && finmain.getDownPayment().compareTo(BigDecimal.ZERO)>0) ?  "Down Payment   : "+PennantAppUtil.amountFormate(finmain.getDownPayment(),formatter):"")+"\n"+
-				((finmain.getFeeChargeAmt()!= null && finmain.getFeeChargeAmt().compareTo(BigDecimal.ZERO)>0) ?  "Fee Amount	: "+PennantAppUtil.amountFormate(finmain.getFeeChargeAmt(),formatter):"")+"\n"+
-				((finmain.getInsuranceAmt()!= null && finmain.getInsuranceAmt().compareTo(BigDecimal.ZERO)>0) ? "Insurance Amount : "+PennantAppUtil.amountFormate(finmain.getInsuranceAmt(),formatter):"");
-						
-		Clients.showNotification(msg,  "info", null,null,-1);
-		
+		String msg = ("First Disbursement Amount : " + PennantAppUtil.amountFormate(finmain.getFinAmount(), formatter)
+				+ "\n")
+				+ ((finmain.getDownPayment() != null && finmain.getDownPayment().compareTo(BigDecimal.ZERO) > 0)
+						? "Down Payment   : " + PennantAppUtil.amountFormate(finmain.getDownPayment(), formatter) : "")
+				+ "\n"
+				+ ((finmain.getFeeChargeAmt() != null && finmain.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0)
+						? "Fee Amount	: " + PennantAppUtil.amountFormate(finmain.getFeeChargeAmt(), formatter) : "")
+				+ "\n"
+				+ ((finmain.getInsuranceAmt() != null && finmain.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0)
+						? "Insurance Amount : " + PennantAppUtil.amountFormate(finmain.getInsuranceAmt(), formatter)
+						: "");
+
+		Clients.showNotification(msg, "info", null, null, -1);
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to get the Finance main Details from basic Details
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	private FinanceMain getFinanceMainData() throws Exception{
+	private FinanceMain getFinanceMainData() throws Exception {
 		logger.debug("Entering");
 		FinanceMain main = null;
 		try {
-			main = (FinanceMain) getFinanceMainDialogCtrl().getClass().
-					getMethod("getFinanceMain").invoke(financeMainDialogCtrl);
+			main = (FinanceMain) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceMain")
+					.invoke(financeMainDialogCtrl);
 		} catch (Exception e) {
 			logger.error(e);
 		}
 		logger.debug("Leaving");
 		return main;
 	}
-		
+
 	/**
-	 * Dynamic method for clicking "ADD" button for creating new Schedule Item 
+	 * Dynamic method for clicking "ADD" button for creating new Schedule Item
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClickAddBtn(ForwardEvent event)throws Exception{
+	public void onClickAddBtn(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-	
-		Listitem curListItem =  (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
+
+		Listitem curListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
 
 		// Validate the Existing structure details of entry and Recalculate based on parameters for amounts.
 		validateAndRecalSchd();
-		
+
 		// Schedule Term for "Add Button" Click action Preparation with new data
 		FinScheduleData finScheduleData = new FinScheduleData();
-		doPrepareSchdTerm(finScheduleData,true,curListItem);
+		doPrepareSchdTerm(finScheduleData, true, curListItem);
 		setSchRebuildReq(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Adjusting Previous Schedule Term Profit Balance
+	 * 
 	 * @param schdTerm
 	 * @return
 	 */
-	private BigDecimal adjustPrvItemPftBal(Listitem schdTerm){
+	private BigDecimal adjustPrvItemPftBal(Listitem schdTerm) {
 		logger.debug("Entering");
-		
-		int seqId = Integer.parseInt(schdTerm.getId().substring(schdTerm.getId().indexOf("_")+1));
-		BigDecimal calPft  = BigDecimal.ZERO;
-		BigDecimal schPft   = BigDecimal.ZERO;
-		
+
+		int seqId = Integer.parseInt(schdTerm.getId().substring(schdTerm.getId().indexOf("_") + 1));
+		BigDecimal calPft = BigDecimal.ZERO;
+		BigDecimal schPft = BigDecimal.ZERO;
+
 		// Calculated Profit
-		if(schdTerm.getFellowIfAny("calPft_"+seqId) != null){
-			calPft = PennantAppUtil.unFormateAmount(((Label) schdTerm.getFellowIfAny("calPft_"+seqId)).getValue(),formatter);
+		if (schdTerm.getFellowIfAny("calPft_" + seqId) != null) {
+			calPft = PennantAppUtil.unFormateAmount(((Label) schdTerm.getFellowIfAny("calPft_" + seqId)).getValue(),
+					formatter);
 		}
 
 		// Schedule Profit
-		if(schdTerm.getFellowIfAny("pft_"+seqId) != null){
-			if(schdTerm.getFellowIfAny("pft_"+seqId) instanceof CurrencyBox){
-				schPft = PennantAppUtil.unFormateAmount(((CurrencyBox) schdTerm.getFellowIfAny("pft_"+seqId)).getValidateValue(),formatter);
-			}else{
-				schPft = PennantAppUtil.unFormateAmount(((Label) schdTerm.getFellowIfAny("pft_"+seqId)).getValue(),formatter);
+		if (schdTerm.getFellowIfAny("pft_" + seqId) != null) {
+			if (schdTerm.getFellowIfAny("pft_" + seqId) instanceof CurrencyBox) {
+				schPft = PennantAppUtil.unFormateAmount(
+						((CurrencyBox) schdTerm.getFellowIfAny("pft_" + seqId)).getValidateValue(), formatter);
+			} else {
+				schPft = PennantAppUtil.unFormateAmount(((Label) schdTerm.getFellowIfAny("pft_" + seqId)).getValue(),
+						formatter);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return calPft.subtract(schPft);
 	}
-	
+
 	/**
 	 * Method for action Forward event for changing Schedule Term Date
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onSchDateChange(ForwardEvent event)throws Exception{
+	public void onSchDateChange(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		validateAndRecalSchd();
 		setSchRebuildReq(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Method for adjusting Principal amount 
-	 * 		a)	by changing EMI amount on EQUAL Schedule method or 
-	 * 		b)	by changing Disbursement amount (O/S amount will effect profit calculation & 
-	 * 				EMI part will have more profit than earlier and principal re-adjust)
+	 * Method for adjusting Principal amount a) by changing EMI amount on EQUAL Schedule method or b) by changing
+	 * Disbursement amount (O/S amount will effect profit calculation & EMI part will have more profit than earlier and
+	 * principal re-adjust)
+	 * 
 	 * @param curListItem
 	 */
-	private void reAdjustPrincipal(Listitem curListItem,boolean islastItem,boolean alwGrcRepay){
+	private void reAdjustPrincipal(Listitem curListItem, boolean islastItem, boolean alwGrcRepay) {
 		logger.debug("Entering");
-		
-		int curListItemSeq = Integer.parseInt(curListItem.getId().substring(curListItem.getId().indexOf("_")+1));
-		BigDecimal curPri =BigDecimal.ZERO;
-		BigDecimal curPft =BigDecimal.ZERO;
-		BigDecimal curEmi =BigDecimal.ZERO;
+
+		int curListItemSeq = Integer.parseInt(curListItem.getId().substring(curListItem.getId().indexOf("_") + 1));
+		BigDecimal curPri = BigDecimal.ZERO;
+		BigDecimal curPft = BigDecimal.ZERO;
+		BigDecimal curEmi = BigDecimal.ZERO;
 		BigDecimal curFee = BigDecimal.ZERO;
 
 		Listitem prvListItem = (Listitem) curListItem.getPreviousSibling();
-		int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_")+1));
+		int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
 
-		if(curListItem.getFellowIfAny("pft_"+curListItemSeq) != null){
-			curPft = PennantAppUtil.unFormateAmount(((Label) curListItem.getFellowIfAny("pft_"+curListItemSeq)).getValue(), formatter);
+		if (curListItem.getFellowIfAny("pft_" + curListItemSeq) != null) {
+			curPft = PennantAppUtil.unFormateAmount(
+					((Label) curListItem.getFellowIfAny("pft_" + curListItemSeq)).getValue(), formatter);
 		}
-		
-		if(curListItem.getFellowIfAny("feeSchd_"+curListItemSeq) != null){
-			curFee= PennantAppUtil.unFormateAmount(((Label) curListItem.getFellowIfAny("feeSchd_"+curListItemSeq)).getValue(), formatter);
+
+		if (curListItem.getFellowIfAny("feeSchd_" + curListItemSeq) != null) {
+			curFee = PennantAppUtil.unFormateAmount(
+					((Label) curListItem.getFellowIfAny("feeSchd_" + curListItemSeq)).getValue(), formatter);
 		}
-		
-		BigDecimal prvListItemEndBal = PennantAppUtil.unFormateAmount(((Label) prvListItem.getFellowIfAny("endBal_"+prvListItemSeq)).getValue(), formatter);
 
-		if(curListItem.getFellowIfAny("emi_"+curListItemSeq) != null){
+		BigDecimal prvListItemEndBal = PennantAppUtil.unFormateAmount(
+				((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 
-			if(curListItem.getFellowIfAny("emi_"+curListItemSeq) instanceof CurrencyBox){
+		if (curListItem.getFellowIfAny("emi_" + curListItemSeq) != null) {
 
-				CurrencyBox emi = (CurrencyBox) curListItem.getFellowIfAny("emi_"+curListItemSeq);
+			if (curListItem.getFellowIfAny("emi_" + curListItemSeq) instanceof CurrencyBox) {
+
+				CurrencyBox emi = (CurrencyBox) curListItem.getFellowIfAny("emi_" + curListItemSeq);
 				Clients.clearWrongValue(emi);
 				curEmi = PennantAppUtil.unFormateAmount(emi.getValidateValue(), formatter);
-				
-				if(islastItem){
-					
+
+				if (islastItem) {
+
 					curPri = prvListItemEndBal;
 					curEmi = curPri.add(curPft).add(curFee);
 					emi.setValue(PennantAppUtil.formateAmount(curEmi, formatter));
-					
-				} else if(curEmi.compareTo(curPft)<0 || curEmi.compareTo(curFee)<0){
-					
+
+				} else if (curEmi.compareTo(curPft) < 0 || curEmi.compareTo(curFee) < 0) {
+
 					emi.setValue(PennantAppUtil.formateAmount(curPft.add(curFee), formatter));
-					
-				} else if(curEmi.compareTo(curPft) > 0){
-					
-					curPri =curEmi.subtract(curPft).subtract(curFee);
-					if(curPri.compareTo(prvListItemEndBal)>=0){
-						throw new WrongValueException(emi,"Principal amount in Emi cannot be greater than the Ending balance");
+
+				} else if (curEmi.compareTo(curPft) > 0) {
+
+					curPri = curEmi.subtract(curPft).subtract(curFee);
+					if (curPri.compareTo(prvListItemEndBal) >= 0) {
+						throw new WrongValueException(emi,
+								"Principal amount in Emi cannot be greater than the Ending balance");
 					}
-					if(curPri.compareTo(BigDecimal.ZERO) <= 0){
+					if (curPri.compareTo(BigDecimal.ZERO) <= 0) {
 						curPri = BigDecimal.ZERO;
-					}else if(curPri.compareTo(prvListItemEndBal) >= 0){
+					} else if (curPri.compareTo(prvListItemEndBal) >= 0) {
 						curPri = prvListItemEndBal;
 						curEmi = curPri.add(curPft).add(curFee);
 						emi.setValue(PennantAppUtil.formateAmount(curEmi, formatter));
 					}
 				}
-			}else{
-				if(curListItem.getFellowIfAny("emi_"+curListItemSeq) instanceof Label){
-					if(alwGrcRepay){
-						Label emi = (Label) curListItem.getFellowIfAny("emi_"+curListItemSeq);
+			} else {
+				if (curListItem.getFellowIfAny("emi_" + curListItemSeq) instanceof Label) {
+					if (alwGrcRepay) {
+						Label emi = (Label) curListItem.getFellowIfAny("emi_" + curListItemSeq);
 						emi.setValue(PennantAppUtil.amountFormate(curPft, formatter));
 					}
 				}
@@ -604,176 +645,189 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		}
 
 		//Principal balance Adjust
-		if(curListItem.getFellowIfAny("pri_"+curListItemSeq) != null){
-			Label pri = (Label) curListItem.getFellowIfAny("pri_"+curListItemSeq);
+		if (curListItem.getFellowIfAny("pri_" + curListItemSeq) != null) {
+			Label pri = (Label) curListItem.getFellowIfAny("pri_" + curListItemSeq);
 			pri.setValue(PennantAppUtil.amountFormate(curPri, formatter));
 		}
-		
+
 		// Ending Balance readjust
 		BigDecimal curEndBal = prvListItemEndBal.subtract(curPri);
-		if(curListItem.getFellowIfAny("endBal_"+curListItemSeq) != null){
-			Label endBal = (Label) curListItem.getFellowIfAny("endBal_"+curListItemSeq);
+		if (curListItem.getFellowIfAny("endBal_" + curListItemSeq) != null) {
+			Label endBal = (Label) curListItem.getFellowIfAny("endBal_" + curListItemSeq);
 			endBal.setValue(PennantAppUtil.amountFormate(curEndBal, formatter));
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Method to calculate the interest(cal.interest) of the previous schedule date, profit rate,ending balance and current schedule date .
+	 * Method to calculate the interest(cal.interest) of the previous schedule date, profit rate,ending balance and
+	 * current schedule date .
+	 * 
 	 * @param lstitem
 	 * @param scheduleMethod
 	 * @return
 	 */
-	private BigDecimal getCalInterest(Listitem lstitem , String scheduleMethod,boolean isGrcAllowed, FinanceMain finMain){
+	private BigDecimal getCalInterest(Listitem lstitem, String scheduleMethod, boolean isGrcAllowed,
+			FinanceMain finMain) {
 		logger.debug("Entering");
 
 		BigDecimal prvEndBal = BigDecimal.ZERO;
-		BigDecimal calInt  = BigDecimal.ZERO;
+		BigDecimal calInt = BigDecimal.ZERO;
 		String pftDaysBasis = getFinanceDetail().getFinScheduleData().getFinanceMain().getProfitDaysBasis();
 
 		// Identify Current and Previous terms
 		Listitem prvListItem = (Listitem) lstitem.getPreviousSibling();
-		int prvListItemSeq =  Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
-		int curListItemSeq =  Integer.parseInt(lstitem.getId().substring(lstitem.getId().indexOf("_")+1));
+		int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
+		int curListItemSeq = Integer.parseInt(lstitem.getId().substring(lstitem.getId().indexOf("_") + 1));
 
 		//Fetching all details from Current term and previous term
-		Datebox prvDb = (Datebox) prvListItem.getFellowIfAny("date_"+prvListItemSeq);
-		Datebox curDb = (Datebox) lstitem.getFellowIfAny("date_"+curListItemSeq);
-		BigDecimal prvRate = ((Decimalbox) prvListItem.getFellowIfAny("rate_"+prvListItemSeq)).getValue();
-		
+		Datebox prvDb = (Datebox) prvListItem.getFellowIfAny("date_" + prvListItemSeq);
+		Datebox curDb = (Datebox) lstitem.getFellowIfAny("date_" + curListItemSeq);
+		BigDecimal prvRate = ((Decimalbox) prvListItem.getFellowIfAny("rate_" + prvListItemSeq)).getValue();
+
 		// Based on Rate basis Profit amount will be calculated based on Outstanding Principal or Total Outstanding Finance Amount
-		if(StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())){
+		if (StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())) {
 			prvEndBal = finMain.getFinAmount().subtract(finMain.getDownPayment()).add(finMain.getFeeChargeAmt());
-		}else if(StringUtils.equals(CalculationConstants.RATE_BASIS_R, finMain.getRepayRateBasis())){
-			prvEndBal = PennantAppUtil.unFormateAmount(((Label) prvListItem.getFellowIfAny("endBal_"+prvListItemSeq)).getValue(), formatter);
+		} else if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, finMain.getRepayRateBasis())) {
+			prvEndBal = PennantAppUtil.unFormateAmount(
+					((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 		}
-		
+
 		//Profit amount calculation based on Days basis
-		if(prvRate!=null && prvRate.compareTo(BigDecimal.ZERO)>0){
+		if (prvRate != null && prvRate.compareTo(BigDecimal.ZERO) > 0) {
 			calInt = CalculationUtil.calInterest(prvDb.getValue(), curDb.getValue(), prvEndBal, pftDaysBasis, prvRate);
 		}
-		
+
 		// Adjusting previous profit balance to current Term, based on Method
-		if(!isGrcAllowed){
-			if(StringUtils.equals(scheduleMethod,CalculationConstants.SCHMTHD_PFT) || 
-					StringUtils.equals(scheduleMethod,CalculationConstants.SCHMTHD_PRI_PFT)){
-				if(DateUtility.compare(prvDb.getValue(), finMain.getGrcPeriodEndDate())>0){
+		if (!isGrcAllowed) {
+			if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)
+					|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT)) {
+				if (DateUtility.compare(prvDb.getValue(), finMain.getGrcPeriodEndDate()) > 0) {
 					BigDecimal calPftdiff = adjustPrvItemPftBal(prvListItem);
-					calInt =calInt.add(calPftdiff);
+					calInt = calInt.add(calPftdiff);
 				}
 			}
 		}
 		logger.debug("Leaving");
 		return calInt;
 	}
-	
+
 	/**
 	 * Method for action Event of Changing Rate on Schedule term
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onSchRateChange(ForwardEvent event)throws Exception{
-		logger.debug("Entering");
-	
-		validateAndRecalSchd();
-		setSchRebuildReq(true);
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * Method for action Event of Changing Profit Amount/Schedule Profit on Schedule term
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onSchPftChange(ForwardEvent event)throws Exception{
+	public void onSchRateChange(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
 		validateAndRecalSchd();
 		setSchRebuildReq(true);
 		logger.debug("Leaving");
 	}
-	
+
+	/**
+	 * Method for action Event of Changing Profit Amount/Schedule Profit on Schedule term
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onSchPftChange(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
+
+		validateAndRecalSchd();
+		setSchRebuildReq(true);
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Method for action Event of Changing Principal Amount on Schedule term
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onSchPriChange(ForwardEvent event)throws Exception{
+	public void onSchPriChange(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		validateAndRecalSchd();
 		setSchRebuildReq(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for action Event of Changing EMI Amount on Schedule term
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onSchEMIChange(ForwardEvent event)throws Exception{
+	public void onSchEMIChange(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-	
+
 		validateAndRecalSchd();
 		setSchRebuildReq(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for action Event of Clicking Remove button to remove added Schedule term
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClickRmvBtn(ForwardEvent event)throws Exception{
+	public void onClickRmvBtn(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		Listitem curListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
 		curListItem.detach();
 		validateAndRecalSchd();
 		setSchRebuildReq(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for checking End Balance was cleared by adjusted to Schedule terms or not
+	 * 
 	 * @return
 	 * @throws InterruptedException
 	 */
-	protected boolean doCheckEndingBal() throws InterruptedException{
+	protected boolean doCheckEndingBal() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		//Finding Last List item / Maturity Term to check Ending Balance
 		int count = listBoxSchedule.getItemCount() - 1;
-		Listitem maturityListItem= listBoxSchedule.getItems().get(count);
-		int maturityListItemSeq = Integer.parseInt(maturityListItem.getId().substring(maturityListItem.getId().indexOf("_") + 1));
-		
+		Listitem maturityListItem = listBoxSchedule.getItems().get(count);
+		int maturityListItemSeq = Integer
+				.parseInt(maturityListItem.getId().substring(maturityListItem.getId().indexOf("_") + 1));
+
 		validateAndRecalSchd();
 		BigDecimal endingBal = BigDecimal.ZERO;
-		if(maturityListItem.getFellowIfAny("endBal_" + maturityListItemSeq) != null){
-			endingBal = PennantAppUtil.unFormateAmount(((Label) maturityListItem.getFellowIfAny("endBal_" + maturityListItemSeq)).getValue(), formatter);
+		if (maturityListItem.getFellowIfAny("endBal_" + maturityListItemSeq) != null) {
+			endingBal = PennantAppUtil.unFormateAmount(
+					((Label) maturityListItem.getFellowIfAny("endBal_" + maturityListItemSeq)).getValue(), formatter);
 		}
-		if(endingBal.compareTo(BigDecimal.ZERO) != 0){
+		if (endingBal.compareTo(BigDecimal.ZERO) != 0) {
 			return false;
 		}
-		
+
 		logger.debug("Leaving");
 		return true;
 	}
-	
+
 	/*
 	 * after entering the manual schedules it need to be built for that check isDatachanged method is being used
 	 */
-	public boolean isDataChanged(){
+	public boolean isDataChanged() {
 		logger.debug("Entering");
 
-		if(listBoxSchedule.getItemCount() != getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size()){
+		if (listBoxSchedule.getItemCount() != getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails()
+				.size()) {
 			return true;
 		}
-		
-		if(schRebuildReq){
+
+		if (schRebuildReq) {
 			return true;
 		}
 
@@ -781,162 +835,170 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 		return false;
 	}
-	
+
 	/**
 	 * Method for preparing Schedule Details as per user entry manual schedule terms
+	 * 
 	 * @return
 	 */
-	protected FinScheduleData doPrepareSchdData(FinScheduleData finScheduleData,boolean isBuildSchd){
+	protected FinScheduleData doPrepareSchdData(FinScheduleData finScheduleData, boolean isBuildSchd) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleList = new ArrayList<FinanceScheduleDetail>();
 		List<RepayInstruction> repayInstructionList = new ArrayList<RepayInstruction>();
-		BigDecimal prvRepayAmt = BigDecimal.ZERO; 
+		BigDecimal prvRepayAmt = BigDecimal.ZERO;
 		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		for (int i = 0; i < listBoxSchedule.getItems().size(); i++) {
-			
+
 			Listitem curListItem = listBoxSchedule.getItems().get(i);
-			int curListItemSeq = Integer.parseInt(curListItem.getId().substring(curListItem.getId().indexOf("_")+1));
+			int curListItemSeq = Integer.parseInt(curListItem.getId().substring(curListItem.getId().indexOf("_") + 1));
 			Date prvSchdDate = null;
 			financeMain.setSchdIndex(i);
-			
-			if (i > 0) {
-				Listitem prvListItem = listBoxSchedule.getItems().get(i-1);
-				int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_")+1));
 
-				if(this.listBoxSchedule.getFellowIfAny("date_"+prvListItemSeq) != null){
-					Datebox schdDate = (Datebox) listBoxSchedule.getFellowIfAny("date_"+prvListItemSeq);
+			if (i > 0) {
+				Listitem prvListItem = listBoxSchedule.getItems().get(i - 1);
+				int prvListItemSeq = Integer
+						.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
+
+				if (this.listBoxSchedule.getFellowIfAny("date_" + prvListItemSeq) != null) {
+					Datebox schdDate = (Datebox) listBoxSchedule.getFellowIfAny("date_" + prvListItemSeq);
 					prvSchdDate = schdDate.getValue();
 				}
 			}
 
 			FinanceScheduleDetail fsd = new FinanceScheduleDetail();
 			RepayInstruction repayInstruction = new RepayInstruction();
-			
+
 			// Schedule Date
-			if(this.listBoxSchedule.getFellowIfAny("date_"+curListItemSeq) != null){
-				Datebox schdDate = (Datebox) listBoxSchedule.getFellowIfAny("date_"+curListItemSeq);
+			if (this.listBoxSchedule.getFellowIfAny("date_" + curListItemSeq) != null) {
+				Datebox schdDate = (Datebox) listBoxSchedule.getFellowIfAny("date_" + curListItemSeq);
 				fsd.setSchDate(schdDate.getValue());
 				fsd.setDefSchdDate(schdDate.getValue());
-				if(prvSchdDate!=null){
+				if (prvSchdDate != null) {
 					fsd.setNoOfDays(DateUtility.getDaysBetween(prvSchdDate, schdDate.getValue()));
-				}else{
+				} else {
 					fsd.setNoOfDays(0);
 				}
 			}
-			
+
 			// Schedule Rate
-			if(this.listBoxSchedule.getFellowIfAny("rate_"+curListItemSeq) != null){
-				Decimalbox actualRate = (Decimalbox) listBoxSchedule.getFellowIfAny("rate_"+curListItemSeq);
+			if (this.listBoxSchedule.getFellowIfAny("rate_" + curListItemSeq) != null) {
+				Decimalbox actualRate = (Decimalbox) listBoxSchedule.getFellowIfAny("rate_" + curListItemSeq);
 				fsd.setActRate(actualRate.getValue());
-				if(actualRate.getValue()==null || actualRate.getValue().compareTo(BigDecimal.ZERO)<0){
+				if (actualRate.getValue() == null || actualRate.getValue().compareTo(BigDecimal.ZERO) < 0) {
 					actualRate.setValue(BigDecimal.ZERO);
 				}
 				fsd.setCalculatedRate(actualRate.getValue());
 			}
-			
+
 			// Calculated Profit Amount
-			if(this.listBoxSchedule.getFellowIfAny("calPft_"+curListItemSeq) != null){
-				BigDecimal profitcal = PennantAppUtil.unFormateAmount(((Label) listBoxSchedule.getFellowIfAny("calPft_"+curListItemSeq)).getValue(),format);
+			if (this.listBoxSchedule.getFellowIfAny("calPft_" + curListItemSeq) != null) {
+				BigDecimal profitcal = PennantAppUtil.unFormateAmount(
+						((Label) listBoxSchedule.getFellowIfAny("calPft_" + curListItemSeq)).getValue(), format);
 				fsd.setProfitCalc(profitcal);
 			}
-			
+
 			//CalFee
-			if(this.listBoxSchedule.getFellowIfAny("feeSchd_"+curListItemSeq) != null && !isBuildSchd){
-				BigDecimal feeSchd = PennantAppUtil.unFormateAmount(((Label) listBoxSchedule.getFellowIfAny("feeSchd_"+curListItemSeq)).getValue(),format);
+			if (this.listBoxSchedule.getFellowIfAny("feeSchd_" + curListItemSeq) != null && !isBuildSchd) {
+				BigDecimal feeSchd = PennantAppUtil.unFormateAmount(
+						((Label) listBoxSchedule.getFellowIfAny("feeSchd_" + curListItemSeq)).getValue(), format);
 				fsd.setFeeSchd(feeSchd);
 			}
-			
+
 			// Scheduled Profit Amount
-			if(this.listBoxSchedule.getFellowIfAny("pft_"+curListItemSeq) != null){
-				if(this.listBoxSchedule.getFellowIfAny("pft_"+curListItemSeq)instanceof CurrencyBox){
-					CurrencyBox profitSchd = (CurrencyBox) listBoxSchedule.getFellowIfAny("pft_"+curListItemSeq);
-					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValidateValue(),format));
-				}else{
-					Label profitSchd = (Label) listBoxSchedule.getFellowIfAny("pft_"+curListItemSeq);
-					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValue(),format));
+			if (this.listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq) != null) {
+				if (this.listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq) instanceof CurrencyBox) {
+					CurrencyBox profitSchd = (CurrencyBox) listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq);
+					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValidateValue(), format));
+				} else {
+					Label profitSchd = (Label) listBoxSchedule.getFellowIfAny("pft_" + curListItemSeq);
+					fsd.setProfitSchd(PennantAppUtil.unFormateAmount(profitSchd.getValue(), format));
 				}
 			}
 
 			// Scheduled Principal Amount
-			if(this.listBoxSchedule.getFellowIfAny("pri_"+curListItemSeq) != null){
-				if(this.listBoxSchedule.getFellowIfAny("pri_"+curListItemSeq) instanceof CurrencyBox){
-					CurrencyBox principalSchd = (CurrencyBox) listBoxSchedule.getFellowIfAny("pri_"+curListItemSeq);
-					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValidateValue(),format));
-				}else{
-					Label principalSchd = (Label) listBoxSchedule.getFellowIfAny("pri_"+curListItemSeq);
-					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValue(),format));
+			if (this.listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq) != null) {
+				if (this.listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq) instanceof CurrencyBox) {
+					CurrencyBox principalSchd = (CurrencyBox) listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq);
+					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValidateValue(), format));
+				} else {
+					Label principalSchd = (Label) listBoxSchedule.getFellowIfAny("pri_" + curListItemSeq);
+					fsd.setPrincipalSchd(PennantAppUtil.unFormateAmount(principalSchd.getValue(), format));
 				}
 			}
 
 			// Installment Amount
-			if(this.listBoxSchedule.getFellowIfAny("emi_"+curListItemSeq) != null){
-				if(this.listBoxSchedule.getFellowIfAny("emi_"+curListItemSeq) instanceof CurrencyBox){
-					CurrencyBox repayAmount = (CurrencyBox) listBoxSchedule.getFellowIfAny("emi_"+curListItemSeq);
-					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValidateValue(),format));
-				}else{
-					Label repayAmount = (Label) listBoxSchedule.getFellowIfAny("emi_"+curListItemSeq);
-					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValue(),format));
+			if (this.listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq) != null) {
+				if (this.listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq) instanceof CurrencyBox) {
+					CurrencyBox repayAmount = (CurrencyBox) listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq);
+					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValidateValue(), format));
+				} else {
+					Label repayAmount = (Label) listBoxSchedule.getFellowIfAny("emi_" + curListItemSeq);
+					fsd.setRepayAmount(PennantAppUtil.unFormateAmount(repayAmount.getValue(), format));
 				}
 			}
 
 			// Ending Balance
-			if(this.listBoxSchedule.getFellowIfAny("endBal_"+curListItemSeq) != null){
-				Label closingBal = (Label) listBoxSchedule.getFellowIfAny("endBal_"+curListItemSeq);
-				fsd.setClosingBalance(PennantAppUtil.unFormateAmount(closingBal.getValue(),format));
+			if (this.listBoxSchedule.getFellowIfAny("endBal_" + curListItemSeq) != null) {
+				Label closingBal = (Label) listBoxSchedule.getFellowIfAny("endBal_" + curListItemSeq);
+				fsd.setClosingBalance(PennantAppUtil.unFormateAmount(closingBal.getValue(), format));
 			}
-			
-			if(i==0){
-				
+
+			if (i == 0) {
+
 				fsd.setDisbAmount(financeMain.getFinAmount());
 				fsd.setDisbOnSchDate(true);
-				fsd.setFeeChargeAmt(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt());
-				fsd.setInsuranceAmt(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt());
+				fsd.setFeeChargeAmt(
+						financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt());
+				fsd.setInsuranceAmt(
+						financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt());
 				if (financeMain.getDownPayment() != null
 						&& financeMain.getDownPayment().compareTo(BigDecimal.ZERO) > 0) {
 					fsd.setDownPaymentAmount(financeMain.getDownPayment());
 					fsd.setDownpaymentOnSchDate(true);
 				}
 			}
-			
+
 			if (fsd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 				fsd.setCalculatedRate(financeMain.getGrcPftRate());
 				fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
 			} else {
-				if(fsd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0){
+				if (fsd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
 					fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
-				}else if(fsd.getSchDate().compareTo(financeMain.getMaturityDate()) == 0){
+				} else if (fsd.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
 					fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
-				}else {
+				} else {
 					fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 				}
 			}
-			
+
 			// Repay Instructions
-			if (i != 0 && i !=listBoxSchedule.getItems().size()-1 ) {
-				
+			if (i != 0 && i != listBoxSchedule.getItems().size() - 1) {
+
 				repayInstruction.setFinReference(financeMain.getFinReference());
 				repayInstruction.setRepayDate(fsd.getSchDate());
-				
-				if(financeMain.getGrcPeriodEndDate().compareTo(fsd.getSchDate()) >= 0){
+
+				if (financeMain.getGrcPeriodEndDate().compareTo(fsd.getSchDate()) >= 0) {
 					repayInstruction.setRepaySchdMethod(financeMain.getGrcSchdMthd());
 					repayInstruction.setRepayAmount(BigDecimal.ZERO);
-				}else{
+				} else {
 					repayInstruction.setRepaySchdMethod(financeMain.getScheduleMethod());
-					if(StringUtils.equals(financeMain.getScheduleMethod(),CalculationConstants.SCHMTHD_NOPAY) ||
-							StringUtils.equals(financeMain.getScheduleMethod(),CalculationConstants.SCHMTHD_PFT)){
+					if (StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_NOPAY)
+							|| StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
 						repayInstruction.setRepayAmount(BigDecimal.ZERO);
-					}else if (StringUtils.equals(financeMain.getScheduleMethod(),CalculationConstants.SCHMTHD_PRI) ||
-							StringUtils.equals(financeMain.getScheduleMethod(),CalculationConstants.SCHMTHD_PRI_PFT)){
+					} else if (StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+							|| StringUtils.equals(financeMain.getScheduleMethod(),
+									CalculationConstants.SCHMTHD_PRI_PFT)) {
 						repayInstruction.setRepayAmount(fsd.getPrincipalSchd());
-					}else if (StringUtils.equals(financeMain.getScheduleMethod(),CalculationConstants.SCHMTHD_EQUAL)){
+					} else if (StringUtils.equals(financeMain.getScheduleMethod(),
+							CalculationConstants.SCHMTHD_EQUAL)) {
 						repayInstruction.setRepayAmount(fsd.getRepayAmount());
 					}
 				}
-				
-				if(repayInstructionList.isEmpty() || prvRepayAmt.compareTo(repayInstruction.getRepayAmount()) != 0){
+
+				if (repayInstructionList.isEmpty() || prvRepayAmt.compareTo(repayInstruction.getRepayAmount()) != 0) {
 					repayInstructionList.add(repayInstruction);
 					prvRepayAmt = repayInstruction.getRepayAmount();
 				}
@@ -946,25 +1008,25 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			fsd.setPftOnSchDate(true);
 			fsd.setRvwOnSchDate(true);
 			fsd.setRepayOnSchDate(true);
-			
-			if(financeMain.getGrcPeriodEndDate().compareTo(fsd.getSchDate()) >= 0){
+
+			if (financeMain.getGrcPeriodEndDate().compareTo(fsd.getSchDate()) >= 0) {
 				fsd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
 				fsd.setSchdMethod(financeMain.getGrcSchdMthd());
-			}else{
+			} else {
 				fsd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 				fsd.setSchdMethod(financeMain.getScheduleMethod());
 			}
 			scheduleList.add(fsd);
-			
+
 		}
-		
+
 		finScheduleData.setFinanceScheduleDetails(scheduleList);
 		finScheduleData.setRepayInstructions(repayInstructionList);
-		
+
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
-	
+
 	/**
 	 * Method to fill the Schedule Listbox with provided generated schedule.
 	 * 
@@ -973,15 +1035,16 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 */
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		
-		if(!aFinSchData.getFinanceMain().isTDSApplicable()){
+
+		if (!aFinSchData.getFinanceMain().isTDSApplicable()) {
 			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
-		}else{
+		} else {
 			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(true);
 		}
 
-		if(aFinSchData.getFinanceMain().getGrcPeriodEndDate()!=null){
-			if (aFinSchData.getFinanceMain().getFinStartDate().compareTo(aFinSchData.getFinanceMain().getGrcPeriodEndDate()) == 0) {
+		if (aFinSchData.getFinanceMain().getGrcPeriodEndDate() != null) {
+			if (aFinSchData.getFinanceMain().getFinStartDate()
+					.compareTo(aFinSchData.getFinanceMain().getGrcPeriodEndDate()) == 0) {
 				this.label_ScheduleDetailDialog_GrcEndDate.setVisible(false);
 				this.schdl_grcEndDate.setVisible(false);
 			} else {
@@ -989,14 +1052,14 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				this.schdl_grcEndDate.setVisible(true);
 			}
 		}
-		
+
 		//Schedule Fee Column Visibility Check
 		boolean isSchdFee = false;
 		List<FeeRule> feeList = aFinSchData.getFeeRules();
 		for (int i = 0; i < feeList.size(); i++) {
 			FeeRule feeRule = feeList.get(i);
-			if(!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE) &&
-					!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			if (!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
+					&& !StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 				isSchdFee = true;
 				break;
 			}
@@ -1011,8 +1074,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		setFinScheduleData(aFinSchData);
 		FinanceMain financeMain = aFinSchData.getFinanceMain();
 		int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		BigDecimal totalCost = financeMain.getFinAmount().subtract(financeMain.getDownPaySupl()).add(
-				financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+		BigDecimal totalCost = financeMain.getFinAmount().subtract(financeMain.getDownPaySupl())
+				.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
 
 		this.schdl_purchasePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.schdl_otherExp.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1027,9 +1090,11 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
 		this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
 		this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
-		this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(totalCost.add(financeMain.getTotalProfit()), ccyFormatter));
+		this.schdl_contractPrice
+				.setValue(PennantAppUtil.formateAmount(totalCost.add(financeMain.getTotalProfit()), ccyFormatter));
 		this.schdl_totalCost.setValue(PennantAppUtil.formateAmount(totalCost, ccyFormatter));
-		this.effectiveRateOfReturn.setValue(PennantApplicationUtil.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(), PennantConstants.rateFormate)+ "%");
+		this.effectiveRateOfReturn.setValue(PennantApplicationUtil
+				.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(), PennantConstants.rateFormate) + "%");
 		financeMain.setTotalPriAmt(this.schdl_contractPrice.getValue());
 		if (financeMain.getEffectiveRateOfReturn() == null) {
 			financeMain.setEffectiveRateOfReturn(BigDecimal.ZERO);
@@ -1039,23 +1104,29 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			BigDecimal finAmount = financeMain.getFinAmount();
 			BigDecimal downPayment = financeMain.getDownPayment();
 
-			BigDecimal nonbankShare = downPayment.multiply(new BigDecimal(100)).divide(finAmount, 2, RoundingMode.HALF_DOWN);
-			BigDecimal bankShare = finAmount.subtract(downPayment).multiply(new BigDecimal(100)).divide(finAmount, 2, RoundingMode.HALF_DOWN);
+			BigDecimal nonbankShare = downPayment.multiply(new BigDecimal(100)).divide(finAmount, 2,
+					RoundingMode.HALF_DOWN);
+			BigDecimal bankShare = finAmount.subtract(downPayment).multiply(new BigDecimal(100)).divide(finAmount, 2,
+					RoundingMode.HALF_DOWN);
 
-			this.schdl_NonBankShare.setValue(PennantApplicationUtil.formatRate(nonbankShare.doubleValue(), PennantConstants.rateFormate) + "%");
-			this.schdl_BankShare.setValue(PennantApplicationUtil.formatRate(bankShare.doubleValue(), PennantConstants.rateFormate) + "%");
+			this.schdl_NonBankShare.setValue(
+					PennantApplicationUtil.formatRate(nonbankShare.doubleValue(), PennantConstants.rateFormate) + "%");
+			this.schdl_BankShare.setValue(
+					PennantApplicationUtil.formatRate(bankShare.doubleValue(), PennantConstants.rateFormate) + "%");
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Preparing dynamic schedule to enter manually by user.
+	 * 
 	 * @param finSchdData
 	 * @param isNewRecord
 	 * @throws Exception
 	 */
-	protected void doPrepareSchdTerm(FinScheduleData finSchdData,boolean isAddBtnClicked,Listitem actionListItem) throws Exception{
+	protected void doPrepareSchdTerm(FinScheduleData finSchdData, boolean isAddBtnClicked, Listitem actionListItem)
+			throws Exception {
 		logger.debug("Entering");
 
 		boolean newRecord = false;
@@ -1073,8 +1144,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		BigDecimal actRate = BigDecimal.ZERO;
 		boolean grcAllowed = false;
 
-		if(getFinanceMainDialogCtrl()!=null){
-			
+		if (getFinanceMainDialogCtrl() != null) {
+
 			try {
 
 				FinanceMain main = getFinanceMainData();
@@ -1083,102 +1154,102 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				actRate = main.getRepayProfitRate();
 				formatter = CurrencyUtil.getFormat(main.getFinCcy());
 
-				if(main.isAllowGrcPeriod()){
+				if (main.isAllowGrcPeriod()) {
 					grcAllowed = true;
 				}
 
 				//Set Non-Editable Fields
 				isRateEditable = true;
-				if(StringUtils.equals(scheduleMethod,CalculationConstants.SCHMTHD_PFT)){
+				if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)) {
 					lastTermPriEditable = false;
-				}else if(StringUtils.equals(scheduleMethod,CalculationConstants.SCHMTHD_PRI_PFT)){
+				} else if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT)) {
 					isPriEditable = true;
-				}else if(StringUtils.equals(scheduleMethod,CalculationConstants.SCHMTHD_EQUAL)){
+				} else if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_EQUAL)) {
 					isEMIEditable = true;
-				}else if(StringUtils.equals(scheduleMethod,CalculationConstants.SCHMTHD_PRI)){
+				} else if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PRI)) {
 					isPriEditable = true;
 				}
 
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException
-					| SecurityException e) {
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| NoSuchMethodException | SecurityException e) {
 				logger.error("Exception: ", e);
 			}
 		}
 
 		int dftListItemSize = finSchdData.getFinanceScheduleDetails().size();
-		if(dftListItemSize <= 0){
+		if (dftListItemSize <= 0) {
 			newRecord = true;
-			if(!isAddBtnClicked){
-				if(grcAllowed){
+			if (!isAddBtnClicked) {
+				if (grcAllowed) {
 					dftListItemSize = 3;
-				}else{
+				} else {
 					dftListItemSize = 2;
 				}
-			}else{
+			} else {
 				dftListItemSize = 1;
 			}
 		}
 
 		Listitem item;
-		for(int i = 0;i < dftListItemSize;i++){
-			
+		for (int i = 0; i < dftListItemSize; i++) {
+
 			boolean grcRenderProcess = false;
 			boolean isStartDate = false;
 			boolean isGrcEndDate = false;
 			boolean isMaturityDate = false;
 
 			FinanceScheduleDetail curSchd = null;
-			if(!newRecord){
+			if (!newRecord) {
 				curSchd = finSchdData.getFinanceScheduleDetails().get(i);
 			}
 			item = new Listitem();
-			item.setId("item_"+listItemSeq);
+			item.setId("item_" + listItemSeq);
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
-			Decimalbox curRate = null ;
-			
+			Decimalbox curRate = null;
+
 			if (actionListItem != null) {
-				
-				int refChildItemSeq = Integer.parseInt(actionListItem.getId().substring(actionListItem.getId().indexOf("_")+1));
-				curRate = ((Decimalbox) actionListItem.getFellowIfAny("rate_"+refChildItemSeq));
-				Datebox curDate = ((Datebox) actionListItem.getFellowIfAny("date_"+refChildItemSeq));
-				
+
+				int refChildItemSeq = Integer
+						.parseInt(actionListItem.getId().substring(actionListItem.getId().indexOf("_") + 1));
+				curRate = ((Decimalbox) actionListItem.getFellowIfAny("rate_" + refChildItemSeq));
+				Datebox curDate = ((Datebox) actionListItem.getFellowIfAny("date_" + refChildItemSeq));
+
 				//To check grace is allowed in actionListItem or not
-				if(DateUtility.compare(curDate.getValue(), finMain.getGrcPeriodEndDate()) < 0){
+				if (DateUtility.compare(curDate.getValue(), finMain.getGrcPeriodEndDate()) < 0) {
 					grcRenderProcess = true;
-				}else{
+				} else {
 					grcRenderProcess = false;
 				}
 
-			}else if(grcAllowed && !newRecord && 
-					DateUtility.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
-							finMain.getGrcPeriodEndDate()) <= 0){
-				
+			} else if (grcAllowed && !newRecord
+					&& DateUtility.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
+							finMain.getGrcPeriodEndDate()) <= 0) {
+
 				grcRenderProcess = true;
-				if(DateUtility.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
-						finMain.getGrcPeriodEndDate()) == 0){
+				if (DateUtility.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
+						finMain.getGrcPeriodEndDate()) == 0) {
 					isGrcEndDate = true;
 				}
-			}else{
+			} else {
 				grcRenderProcess = false;
 				isGrcEndDate = false;
 			}
-			
-			if(i == 0){
+
+			if (i == 0) {
 				isStartDate = true;
-			}else if(i == dftListItemSize-1){
+			} else if (i == dftListItemSize - 1) {
 				isMaturityDate = true;
 			}
-			
+
 			//Add Button
-			Listcell lc= new Listcell();
+			Listcell lc = new Listcell();
 			Hbox hbox = new Hbox();
 			//Add Button should not be visible for Maturity date
-			if((newRecord && isMaturityDate && !isAddBtnClicked) ||  (!newRecord && isMaturityDate)){
+			if ((newRecord && isMaturityDate && !isAddBtnClicked) || (!newRecord && isMaturityDate)) {
 				//Nothing to do
-			}else{
-				Button addBtn=new Button();
+			} else {
+				Button addBtn = new Button();
 				addBtn.setImage("/images/icons/add.png");
 				addBtn.setStyle("background-color:#ffff; border-color:#ffff;");
 				addBtn.setTooltiptext("Add");
@@ -1192,7 +1263,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 
 			//Remove Button
-			if((newRecord && isAddBtnClicked) || (!newRecord && !isStartDate && !isMaturityDate && !isGrcEndDate)){
+			if ((newRecord && isAddBtnClicked) || (!newRecord && !isStartDate && !isMaturityDate && !isGrcEndDate)) {
 				Button rmvBtn = new Button();
 				rmvBtn.setImage("/images/icons/delete.png");
 				rmvBtn.setTooltiptext("Remove");
@@ -1208,30 +1279,30 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			//Schedule Date
 			lc = new Listcell();
 			Datebox date = new Datebox();
-			date.setId("date_"+listItemSeq);
+			date.setId("date_" + listItemSeq);
 			date.addForward("onChange", this.window_ScheduleDetailDialog, "onSchDateChange");
-			if(newRecord){
-				if(!isAddBtnClicked){
+			if (newRecord) {
+				if (!isAddBtnClicked) {
 					date.setDisabled(true);
 					date.setValue(finMain.getFinStartDate());
-					
+
 					// Default set to Grace period end Date term
-					if(isGrcEndDate){
+					if (isGrcEndDate) {
 						date.setValue(finMain.getGrcPeriodEndDate());
 					}
-					
+
 					// Default Set to Maturity Terms
-					if(isMaturityDate){
+					if (isMaturityDate) {
 						date.setValue(finMain.getMaturityDate());
 					}
 				}
-			}else{
-				if(isStartDate || isGrcEndDate || isMaturityDate){
+			} else {
+				if (isStartDate || isGrcEndDate || isMaturityDate) {
 					date.setDisabled(true);
 				}
 				date.setValue(curSchd.getSchDate());
 			}
-			
+
 			date.setFormat(DateFormat.SHORT_DATE.getPattern());
 			lc.appendChild(date);
 			item.appendChild(lc);
@@ -1241,15 +1312,15 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			lc.setStyle("text-align:right; ");
 			Decimalbox rate = new Decimalbox();
 			rate.setFormat(PennantConstants.rateFormate9);
-			rate.setId("rate_"+listItemSeq);
+			rate.setId("rate_" + listItemSeq);
 			rate.addForward("onChange", this.window_ScheduleDetailDialog, "onSchRateChange");
-			if(isRateEditable && newRecord){
-				if(!isAddBtnClicked){
+			if (isRateEditable && newRecord) {
+				if (!isAddBtnClicked) {
 					rate.setValue(actRate);
-				}else{
+				} else {
 					rate.setValue(curRate.getValue());
 				}
-			}else{
+			} else {
 				rate.setValue(curSchd.getActRate());
 			}
 			lc.appendChild(rate);
@@ -1260,13 +1331,13 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			lc.setStyle("text-align:right;");
 			Label profit = new Label();
 
-			if(!newRecord){
-				if(curSchd.getProfitCalc().compareTo(BigDecimal.ZERO)>0){
+			if (!newRecord) {
+				if (curSchd.getProfitCalc().compareTo(BigDecimal.ZERO) > 0) {
 					profit.setValue(PennantAppUtil.amountFormate(curSchd.getProfitCalc(), formatter));
 				}
 			}
 
-			profit.setId("calPft_"+listItemSeq);
+			profit.setId("calPft_" + listItemSeq);
 			lc.appendChild(profit);
 			item.appendChild(lc);
 
@@ -1274,12 +1345,12 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			lc = new Listcell();
 			lc.setStyle("text-align:right; ");
 			Label fee = new Label();
-			if(!isStartDate && !grcRenderProcess && !newRecord){
-				if(curSchd.getFeeSchd().compareTo(BigDecimal.ZERO)>0){
+			if (!isStartDate && !grcRenderProcess && !newRecord) {
+				if (curSchd.getFeeSchd().compareTo(BigDecimal.ZERO) > 0) {
 					fee.setValue(PennantAppUtil.amountFormate(curSchd.getFeeSchd(), formatter));
 				}
 			}
-			fee.setId("feeSchd_"+listItemSeq);
+			fee.setId("feeSchd_" + listItemSeq);
 			lc.appendChild(fee);
 			item.appendChild(lc);
 
@@ -1287,43 +1358,43 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
 			Label tds = new Label();
-			if(!isStartDate && !grcRenderProcess && !newRecord){
-				if(curSchd.getTDSAmount().compareTo(BigDecimal.ZERO)>0){
+			if (!isStartDate && !grcRenderProcess && !newRecord) {
+				if (curSchd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
 					tds.setValue(PennantAppUtil.amountFormate(curSchd.getTDSAmount(), formatter));
 				}
 			}
-			tds.setId("tdsAmt_"+listItemSeq);
+			tds.setId("tdsAmt_" + listItemSeq);
 			lc.appendChild(tds);
 			item.appendChild(lc);
 
 			// Schedule profit
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
-			if(isPftEditable && ((newRecord && isAddBtnClicked) || (!newRecord && !isStartDate))){
-				
-				CurrencyBox pft=new CurrencyBox();
+			if (isPftEditable && ((newRecord && isAddBtnClicked) || (!newRecord && !isStartDate))) {
+
+				CurrencyBox pft = new CurrencyBox();
 				pft.setStyle("text-align:right; ");
 				pft.setBalUnvisible(true);
 				setProps(pft, false, formatter, 120);
-				pft.setId("pft_"+listItemSeq);
+				pft.setId("pft_" + listItemSeq);
 				pft.addForward("onValueChange", this.window_ScheduleDetailDialog, "onSchPftChange");
-				if(newRecord){
+				if (newRecord) {
 					if (i != 0) {
 						pft.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 					}
-				}else{
+				} else {
 					pft.setValue(PennantAppUtil.formateAmount(curSchd.getProfitSchd(), formatter));
 				}
 				lc.appendChild(pft);
-			}else{
+			} else {
 				Label pft = new Label();
-				pft.setId("pft_"+listItemSeq);
-				if(newRecord){
-					if(!isStartDate){
+				pft.setId("pft_" + listItemSeq);
+				if (newRecord) {
+					if (!isStartDate) {
 						pft.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 					}
-				}else{
-					if(curSchd.getProfitSchd().compareTo(BigDecimal.ZERO) > 0){
+				} else {
+					if (curSchd.getProfitSchd().compareTo(BigDecimal.ZERO) > 0) {
 						pft.setValue(PennantAppUtil.amountFormate(curSchd.getProfitSchd(), formatter));
 					}
 				}
@@ -1334,54 +1405,55 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			// Schedule Principal
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
-			if(grcRenderProcess){
+			if (grcRenderProcess) {
 
 				Label pri = new Label();
-				pri.setId("pri_"+listItemSeq);
+				pri.setId("pri_" + listItemSeq);
 				lc.appendChild(pri);
 
-			}else if((isPriEditable || lastTermPriEditable ) && ((newRecord && 
-					((isMaturityDate && !isAddBtnClicked) || isAddBtnClicked )) || (!newRecord && !isStartDate))){
+			} else if ((isPriEditable || lastTermPriEditable)
+					&& ((newRecord && ((isMaturityDate && !isAddBtnClicked) || isAddBtnClicked))
+							|| (!newRecord && !isStartDate))) {
 
 				CurrencyBox pri = new CurrencyBox();
 				pri.setBalUnvisible(true);
 				setProps(pri, false, formatter, 120);
-				pri.setId("pri_"+listItemSeq);
+				pri.setId("pri_" + listItemSeq);
 				pri.setReadonly(true);
 
-				if(!isAddBtnClicked && isMaturityDate && newRecord){
-					pri.setValue(PennantAppUtil.formateAmount(disbAmount,formatter));
-				}else{
+				if (!isAddBtnClicked && isMaturityDate && newRecord) {
+					pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
+				} else {
 					pri.setReadonly(false);
 					pri.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 				}
 
-				if(lastTermPriEditable ){
+				if (lastTermPriEditable) {
 					pri.setReadonly(true);
 				}
-				if(!newRecord){
-					if(lastTermPriEditable ){
-						if(isMaturityDate){
+				if (!newRecord) {
+					if (lastTermPriEditable) {
+						if (isMaturityDate) {
 							pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
-						}else{
+						} else {
 							pri.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 						}
-					}else{
-						if(isMaturityDate){
+					} else {
+						if (isMaturityDate) {
 							pri.setReadonly(true);
 						}
 						pri.setValue(PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), formatter));
 					}
 				}
-				pri.addForward("onValueChange",this.window_ScheduleDetailDialog , "onSchPriChange",scheduleMethod);
+				pri.addForward("onValueChange", this.window_ScheduleDetailDialog, "onSchPriChange", scheduleMethod);
 				lc.appendChild(pri);
 
-			}else{
-				
+			} else {
+
 				Label pri = new Label();
-				pri.setId("pri_"+listItemSeq);
-				if(!newRecord){
-					if(curSchd.getPrincipalSchd().compareTo(BigDecimal.ZERO)>0){
+				pri.setId("pri_" + listItemSeq);
+				if (!newRecord) {
+					if (curSchd.getPrincipalSchd().compareTo(BigDecimal.ZERO) > 0) {
 						pri.setValue(PennantAppUtil.amountFormate(curSchd.getPrincipalSchd(), formatter));
 					}
 				}
@@ -1392,47 +1464,48 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			// Installment EMI
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
-			
-			if(grcRenderProcess){
+
+			if (grcRenderProcess) {
 				Label emi = new Label();
-				emi.setId("emi_"+listItemSeq);
+				emi.setId("emi_" + listItemSeq);
 				lc.appendChild(emi);
-			}else if (isEMIEditable && ( (newRecord && ( (isMaturityDate && !isAddBtnClicked) || isAddBtnClicked ))  || (!newRecord && !isStartDate) )) {
+			} else if (isEMIEditable && ((newRecord && ((isMaturityDate && !isAddBtnClicked) || isAddBtnClicked))
+					|| (!newRecord && !isStartDate))) {
 
 				CurrencyBox emi = new CurrencyBox();
 				emi.setBalUnvisible(true);
 				setProps(emi, false, formatter, 120);
-				emi.setId("emi_"+listItemSeq);
-				if(newRecord){
+				emi.setId("emi_" + listItemSeq);
+				if (newRecord) {
 
-					if(i == 1 && !isAddBtnClicked){
+					if (i == 1 && !isAddBtnClicked) {
 						emi.setReadonly(true);
 						emi.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
-					}else if(!isStartDate){
+					} else if (!isStartDate) {
 						emi.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 					}
-				}else{
+				} else {
 					emi.setValue(PennantAppUtil.formateAmount(curSchd.getRepayAmount(), formatter));
 
-					if(isMaturityDate){
+					if (isMaturityDate) {
 						emi.setReadonly(true);
-						if(emi.getValidateValue().compareTo(BigDecimal.ZERO)==0){
+						if (emi.getValidateValue().compareTo(BigDecimal.ZERO) == 0) {
 							emi.setValue(PennantAppUtil.formateAmount(disbAmount, formatter));
 						}
 					}
 				}
-				emi.addForward("onValueChange",this.window_ScheduleDetailDialog , "onSchEMIChange");
+				emi.addForward("onValueChange", this.window_ScheduleDetailDialog, "onSchEMIChange");
 				lc.appendChild(emi);
 
 			} else {
 
 				Label emi = new Label();
-				emi.setId("emi_"+listItemSeq);
-				if(newRecord){
-					if(!isStartDate)
+				emi.setId("emi_" + listItemSeq);
+				if (newRecord) {
+					if (!isStartDate)
 						emi.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-				}else{
-					if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO)>0){
+				} else {
+					if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 						emi.setValue(PennantAppUtil.amountFormate(curSchd.getRepayAmount(), formatter));
 					}
 				}
@@ -1444,20 +1517,21 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			lc = new Listcell();
 			lc.setStyle("text-align:right; ");
 			Label endBal = new Label();
-			endBal.setId("endBal_"+listItemSeq);
-			if(!isAddBtnClicked){
-				if(newRecord){
-					if(isStartDate){
-						endBal.setValue(PennantAppUtil.amountFormate(disbAmount,formatter));
-					}else{
-						endBal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO,formatter));
+			endBal.setId("endBal_" + listItemSeq);
+			if (!isAddBtnClicked) {
+				if (newRecord) {
+					if (isStartDate) {
+						endBal.setValue(PennantAppUtil.amountFormate(disbAmount, formatter));
+					} else {
+						endBal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 					}
-				}else{
+				} else {
 					endBal.setValue(PennantAppUtil.amountFormate(curSchd.getClosingBalance(), formatter));
 				}
-				
-				BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt()).add(finMain.getInsuranceAmt());
-				if(excessAmount.compareTo(BigDecimal.ZERO) > 0 && isStartDate){
+
+				BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt())
+						.add(finMain.getInsuranceAmt());
+				if (excessAmount.compareTo(BigDecimal.ZERO) > 0 && isStartDate) {
 					Button summary = new Button();
 					summary.setId("summary");
 					summary.setImage("/images/icons/icon.png");
@@ -1465,8 +1539,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					summary.addForward("onMouseOver", this.window_ScheduleDetailDialog, "onPopupOutStandPriSummary");
 					lc.appendChild(summary);
 				}
-			}else{
-				if(newRecord){
+			} else {
+				if (newRecord) {
 					endBal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 				}
 			}
@@ -1475,23 +1549,24 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			item.appendChild(lc);
 
 			listBoxSchedule.appendChild(item);
-			if(actionListItem!=null){
+			if (actionListItem != null) {
 				Listitem li = (Listitem) actionListItem.getNextSibling();
 				listBoxSchedule.insertBefore(item, li);
 			}
 			listItemSeq = listItemSeq + 1;
 		}
 
-		this.schdl_noOfTerms.setValue(String.valueOf(this.listBoxSchedule.getItemCount()-1));
+		this.schdl_noOfTerms.setValue(String.valueOf(this.listBoxSchedule.getItemCount() - 1));
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Validate the Existing structure details of entry and Recalculate based on parameters for amounts.
+	 * 
 	 * @param renderListItem
 	 */
-	protected void validateAndRecalSchd(){
+	protected void validateAndRecalSchd() {
 		logger.debug("Entering");
 
 		BigDecimal calInt = BigDecimal.ZERO;
@@ -1508,14 +1583,14 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		int graceTerms = 0;
 		int finNumberofTerms = 0;
 		BigDecimal totProfit = BigDecimal.ZERO;
-		FinanceMain main = null ;
+		FinanceMain main = null;
 
 		try {
-			main  = getFinanceMainData();
+			main = getFinanceMainData();
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
@@ -1525,42 +1600,47 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			Listitem curListItem = this.listBoxSchedule.getItems().get(i);
 			int curListItemSeq = Integer.parseInt(curListItem.getId().substring(curListItem.getId().indexOf("_") + 1));
 
-			Listitem prvListItem = this.listBoxSchedule.getItems().get(i-1);
+			Listitem prvListItem = this.listBoxSchedule.getItems().get(i - 1);
 			int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
 			Datebox curDb = null;
 			Datebox prvDb = null;
 			boolean isPft = false;
 			// Date Field Validation
-			if(curListItem.getFellowIfAny("date_"+curListItemSeq) != null){
-				curDb = (Datebox) (curListItem.getFellowIfAny("date_"+curListItemSeq));
+			if (curListItem.getFellowIfAny("date_" + curListItemSeq) != null) {
+				curDb = (Datebox) (curListItem.getFellowIfAny("date_" + curListItemSeq));
 
 				Clients.clearWrongValue(curDb);
 				curDb.setErrorMessage("");
 
 				Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-				Date maturityDate= main.getMaturityDate();
-				Date grcEndDate= main.getGrcPeriodEndDate();
+				Date maturityDate = main.getMaturityDate();
+				Date grcEndDate = main.getGrcPeriodEndDate();
 
-				if(curDb.getValue() == null){
-					throw new WrongValueException(curDb,Labels.getLabel("FIELD_IS_MAND",new String[]{Labels.getLabel("label_CurDate")}));
-				}else if(maturityDate!=null && DateUtility.compare(curDb.getValue(), maturityDate)>=0 && !curDb.isDisabled()){
-					throw new WrongValueException(curDb,Labels.getLabel("DATE_ALLOWED_BEFORE", new String[]{
-							Labels.getLabel("label_CurDate"),PennantAppUtil.formateDate(maturityDate,DateFormat.SHORT_DATE.getPattern())}));
-				}else if(DateUtility.compare(curDb.getValue(), appEndDate)>0){
-					throw new WrongValueException(curDb,Labels.getLabel("DATE_NOT_AFTER", new String[]{
-							Labels.getLabel("label_CurDate"), appEndDate.toString()}));
+				if (curDb.getValue() == null) {
+					throw new WrongValueException(curDb,
+							Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CurDate") }));
+				} else if (maturityDate != null && DateUtility.compare(curDb.getValue(), maturityDate) >= 0
+						&& !curDb.isDisabled()) {
+					throw new WrongValueException(curDb,
+							Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] { Labels.getLabel("label_CurDate"),
+									PennantAppUtil.formateDate(maturityDate, DateFormat.SHORT_DATE.getPattern()) }));
+				} else if (DateUtility.compare(curDb.getValue(), appEndDate) > 0) {
+					throw new WrongValueException(curDb, Labels.getLabel("DATE_NOT_AFTER",
+							new String[] { Labels.getLabel("label_CurDate"), appEndDate.toString() }));
 				}
 
-				if(prvListItem.getFellowIfAny("date_"+prvListItemSeq) != null){
-					prvDb = (Datebox) (prvListItem.getFellowIfAny("date_"+prvListItemSeq));
-					if(DateUtility.compare(curDb.getValue(), prvDb.getValue()) <= 0 ){
-						if(!curDb.isDisabled()){
-							throw new WrongValueException(curDb,Labels.getLabel("NUMBER_MINVALUE", new String[]{
-									Labels.getLabel("label_CurDate"), "Previous Schedule Date "}));
-						}else{
-							if(main.isAllowGrcPeriod() && grcEndDate!=null && DateUtility.compare(curDb.getValue(), grcEndDate)>=0){
-								throw new WrongValueException(prvDb,Labels.getLabel("DATE_ALLOWED_BEFORE", new String[]{
-										Labels.getLabel("label_CurDate"),PennantAppUtil.formateDate(grcEndDate,DateFormat.SHORT_DATE.getPattern())}));
+				if (prvListItem.getFellowIfAny("date_" + prvListItemSeq) != null) {
+					prvDb = (Datebox) (prvListItem.getFellowIfAny("date_" + prvListItemSeq));
+					if (DateUtility.compare(curDb.getValue(), prvDb.getValue()) <= 0) {
+						if (!curDb.isDisabled()) {
+							throw new WrongValueException(curDb, Labels.getLabel("NUMBER_MINVALUE",
+									new String[] { Labels.getLabel("label_CurDate"), "Previous Schedule Date " }));
+						} else {
+							if (main.isAllowGrcPeriod() && grcEndDate != null
+									&& DateUtility.compare(curDb.getValue(), grcEndDate) >= 0) {
+								throw new WrongValueException(prvDb, Labels.getLabel("DATE_ALLOWED_BEFORE",
+										new String[] { Labels.getLabel("label_CurDate"), PennantAppUtil
+												.formateDate(grcEndDate, DateFormat.SHORT_DATE.getPattern()) }));
 							}
 						}
 					}
@@ -1568,166 +1648,174 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 
 			// Grace details Setting
-			if(main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0 && 
-					!StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())){
+			if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0
+					&& !StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())) {
 				grcAlwdWithoutPftPay = true;
-				if(StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, main.getGrcSchdMthd())){
-					grcPayEndSchddMthd =true;
+				if (StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, main.getGrcSchdMthd())) {
+					grcPayEndSchddMthd = true;
 				}
-				if(StringUtils.equals(CalculationConstants.SCHMTHD_NOPAY, main.getGrcSchdMthd())){
-					isGraceNoPay =true;
+				if (StringUtils.equals(CalculationConstants.SCHMTHD_NOPAY, main.getGrcSchdMthd())) {
+					isGraceNoPay = true;
 				}
-			}else{
+			} else {
 				grcAlwdWithoutPftPay = false;
 			}
 
-			if(main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0){
+			if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0) {
 				graceTerms = graceTerms + 1;
-			}else{
-				finNumberofTerms = finNumberofTerms + 1 ;
-				if(StringUtils.equals(CalculationConstants.SCHMTHD_PRI, main.getScheduleMethod())){
-					isPriPayOnly =true;
+			} else {
+				finNumberofTerms = finNumberofTerms + 1;
+				if (StringUtils.equals(CalculationConstants.SCHMTHD_PRI, main.getScheduleMethod())) {
+					isPriPayOnly = true;
 				}
 			}
-			
+
 			//rate Validation
-			if(curListItem.getFellowIfAny("rate_"+curListItemSeq) != null && curListItem.getFellowIfAny("rate_"+curListItemSeq) instanceof Decimalbox){
-				Decimalbox	rate = (Decimalbox) curListItem.getFellowIfAny("rate_"+curListItemSeq);
+			if (curListItem.getFellowIfAny("rate_" + curListItemSeq) != null
+					&& curListItem.getFellowIfAny("rate_" + curListItemSeq) instanceof Decimalbox) {
+				Decimalbox rate = (Decimalbox) curListItem.getFellowIfAny("rate_" + curListItemSeq);
 				Clients.clearWrongValue(rate);
-				
+
 				BigDecimal schRate = rate.getValue();
-				if(schRate == null){
+				if (schRate == null) {
 					schRate = BigDecimal.ZERO;
 				}
-				
+
 				BigDecimal minRate = BigDecimal.ZERO;
 				BigDecimal maxRate = BigDecimal.ZERO;
-				if(main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0){
+				if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0) {
 					minRate = main.getGrcMinRate();
 					maxRate = main.getGrcMaxRate();
-				}else{
+				} else {
 					minRate = main.getRpyMinRate();
 					maxRate = main.getRpyMaxRate();
 				}
 
-				if(schRate.compareTo(new BigDecimal(9999))>0){
-					throw new WrongValueException(rate,Labels.getLabel("NUMBER_MAXVALUE_EQ",new String[]{
-							Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"),String.valueOf(9999)}));
+				if (schRate.compareTo(new BigDecimal(9999)) > 0) {
+					throw new WrongValueException(rate, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
+							Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"), String.valueOf(9999) }));
 				}
 
-				if(minRate!=null && minRate.compareTo(BigDecimal.ZERO) > 0 && schRate.compareTo(minRate) < 0){
-					throw new WrongValueException(rate,Labels.getLabel("NUMBER_MINVALUE_EQ",new String[]{
-							Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"),"Minimum Interest Rate"}));
+				if (minRate != null && minRate.compareTo(BigDecimal.ZERO) > 0 && schRate.compareTo(minRate) < 0) {
+					throw new WrongValueException(rate,
+							Labels.getLabel("NUMBER_MINVALUE_EQ",
+									new String[] { Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"),
+											"Minimum Interest Rate" }));
 				}
-				
-				if(maxRate!=null && maxRate.compareTo(BigDecimal.ZERO) > 0 && schRate.compareTo(maxRate) > 0){
-					throw new WrongValueException(rate,Labels.getLabel("NUMBER_MAXVALUE_EQ",new String[]{
-							Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"),"Maximum Interest Rate"}));
+
+				if (maxRate != null && maxRate.compareTo(BigDecimal.ZERO) > 0 && schRate.compareTo(maxRate) > 0) {
+					throw new WrongValueException(rate,
+							Labels.getLabel("NUMBER_MAXVALUE_EQ",
+									new String[] { Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"),
+											"Maximum Interest Rate" }));
 				}
 			}
 
 			// Profit Amount Validation
-			if(curListItem.getFellowIfAny("pft_"+curListItemSeq) != null && curListItem.getFellowIfAny("pft_"+curListItemSeq) instanceof CurrencyBox){
-				
-				BigDecimal  profit = BigDecimal.ZERO;
+			if (curListItem.getFellowIfAny("pft_" + curListItemSeq) != null
+					&& curListItem.getFellowIfAny("pft_" + curListItemSeq) instanceof CurrencyBox) {
+
+				BigDecimal profit = BigDecimal.ZERO;
 				BigDecimal calProfit = BigDecimal.ZERO;
-				CurrencyBox	 pft = (CurrencyBox) curListItem.getFellowIfAny("pft_"+curListItemSeq);
+				CurrencyBox pft = (CurrencyBox) curListItem.getFellowIfAny("pft_" + curListItemSeq);
 
 				Clients.clearWrongValue(pft);
 				pft.setErrorMessage("");
 
-				profit = PennantAppUtil.unFormateAmount(pft.getValidateValue(),formatter);
+				profit = PennantAppUtil.unFormateAmount(pft.getValidateValue(), formatter);
 				if (profit.compareTo(BigDecimal.ZERO) < 0) {
 					pft.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, formatter));
 				}
 				if (curListItem.getFellowIfAny("calPft_" + curListItemSeq) != null) {
-					calProfit = PennantAppUtil.unFormateAmount(((Label) curListItem.getFellowIfAny("calPft_" + curListItemSeq)).getValue(), formatter);
+					calProfit = PennantAppUtil.unFormateAmount(
+							((Label) curListItem.getFellowIfAny("calPft_" + curListItemSeq)).getValue(), formatter);
 				}
 				if (profit.compareTo(calProfit) > 0) {
-					throw new WrongValueException(pft,Labels.getLabel("label_pftValidMsg"));
+					throw new WrongValueException(pft, Labels.getLabel("label_pftValidMsg"));
 				}
 			}
 
 			// Profit amount calculation
 			BigDecimal curCalPft = BigDecimal.ZERO;
-			calInt = getCalInterest(curListItem, main.getScheduleMethod(),grcAlwdWithoutPftPay, main);
+			calInt = getCalInterest(curListItem, main.getScheduleMethod(), grcAlwdWithoutPftPay, main);
 
 			totProfit = totProfit.add(calInt);
 			this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(totProfit, formatter));
-			
+
 			// Resetting Profit amount as per calculation
-			if(curListItem.getFellowIfAny("calPft_"+curListItemSeq) != null){
-				Label calPft = (Label) curListItem.getFellowIfAny("calPft_"+curListItemSeq);
-				if(calPft.getValue()!=null ){
-					curCalPft = PennantAppUtil.unFormateAmount(calPft.getValue(),formatter);
+			if (curListItem.getFellowIfAny("calPft_" + curListItemSeq) != null) {
+				Label calPft = (Label) curListItem.getFellowIfAny("calPft_" + curListItemSeq);
+				if (calPft.getValue() != null) {
+					curCalPft = PennantAppUtil.unFormateAmount(calPft.getValue(), formatter);
 				}
 				calPft.setValue(PennantAppUtil.amountFormate(calInt, formatter));
 			}
-			
+
 			//Setting the Fee amount after Build,if fees are applicable
-			if(curListItem.getFellowIfAny("feeSchd_"+curListItemSeq) != null){
-				Label feeSchd = (Label) curListItem.getFellowIfAny("feeSchd_"+curListItemSeq);
-				 
+			if (curListItem.getFellowIfAny("feeSchd_" + curListItemSeq) != null) {
+				Label feeSchd = (Label) curListItem.getFellowIfAny("feeSchd_" + curListItemSeq);
+
 				curFee = PennantAppUtil.unFormateAmount(feeSchd.getValue(), formatter);
-				
-				 if(getFinScheduleData().getFinanceScheduleDetails().size()<1 ){//TODO
+
+				if (getFinScheduleData().getFinanceScheduleDetails().size() < 1) {//TODO
 					feeSchd.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 				}
 			}
 
 			//Setting the TDSAmount after build ,if TDS is Checked
-			if(curListItem.getFellowIfAny("tdsAmt_"+curListItemSeq) != null){
-				Label tdsAmount = (Label) curListItem.getFellowIfAny("tdsAmt_"+curListItemSeq);
-				
+			if (curListItem.getFellowIfAny("tdsAmt_" + curListItemSeq) != null) {
+				Label tdsAmount = (Label) curListItem.getFellowIfAny("tdsAmt_" + curListItemSeq);
+
 				BigDecimal tdsValue = BigDecimal.ZERO;
-				if(tdsPerc.compareTo(BigDecimal.ZERO) > 0){
+				if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 					tdsValue = (calInt.multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 					tdsValue = CalculationUtil.roundAmount(tdsValue, tdsRoundMode, tdsRoundingTarget);
 				}
-				
+
 				tdsAmount.setValue(PennantAppUtil.amountFormate(tdsValue, formatter));
 			}
 
 			// Schedule Profit Amount reset
 
-			if(curListItem.getFellowIfAny("pft_"+curListItemSeq) != null){
-				if(curListItem.getFellowIfAny("pft_"+curListItemSeq) instanceof CurrencyBox){
-					CurrencyBox pft = (CurrencyBox) curListItem.getFellowIfAny("pft_"+curListItemSeq);
-					curPft = PennantAppUtil.unFormateAmount(pft.getValidateValue(),formatter);
-					if(curPft.compareTo(BigDecimal.ZERO) == 0 || curPft.compareTo(curCalPft)==0 || curPft.compareTo(calInt)>0){
+			if (curListItem.getFellowIfAny("pft_" + curListItemSeq) != null) {
+				if (curListItem.getFellowIfAny("pft_" + curListItemSeq) instanceof CurrencyBox) {
+					CurrencyBox pft = (CurrencyBox) curListItem.getFellowIfAny("pft_" + curListItemSeq);
+					curPft = PennantAppUtil.unFormateAmount(pft.getValidateValue(), formatter);
+					if (curPft.compareTo(BigDecimal.ZERO) == 0 || curPft.compareTo(curCalPft) == 0
+							|| curPft.compareTo(calInt) > 0) {
 						pft.setValue(PennantAppUtil.formateAmount(calInt, formatter));
 					}
-				}else{
+				} else {
 					// Calculating Total Grace period Profit amount based on selection Grace Schedule method 
-					if(grcAlwdWithoutPftPay){
+					if (grcAlwdWithoutPftPay) {
 						grcPftTillNow = grcPftTillNow.add(calInt);
-						if(grcPayEndSchddMthd){
+						if (grcPayEndSchddMthd) {
 							//Calculate all the interest amount and add for the Last Grace period
-							if(DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0){
-								Label pft = (Label) curListItem.getFellowIfAny("pft_"+curListItemSeq);
+							if (DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
+								Label pft = (Label) curListItem.getFellowIfAny("pft_" + curListItemSeq);
 								pft.setValue(PennantAppUtil.amountFormate(grcPftTillNow, formatter));
 								curPft = grcPftTillNow;
 								grcPftTillNow = BigDecimal.ZERO;
 							}
 						}
-					}else{
-						
+					} else {
+
 						// Grace Period Profit Balance adjustment
-						Label pft = (Label) curListItem.getFellowIfAny("pft_"+curListItemSeq);
-						if(isGraceNoPay && DateUtility.compare(curDb.getValue(),main.getGrcPeriodEndDate()) > 0){
+						Label pft = (Label) curListItem.getFellowIfAny("pft_" + curListItemSeq);
+						if (isGraceNoPay && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) > 0) {
 							curPft = grcPftTillNow.add(calInt);
 							isGraceNoPay = false;
-						}else{
+						} else {
 							curPft = calInt;
 						}
-						
+
 						// Repayment Period Details Profit capturing
-						if(isPriPayOnly){
+						if (isPriPayOnly) {
 							rpyPftTillNow = rpyPftTillNow.add(curPft);
-							if(DateUtility.compare(curDb.getValue(), main.getMaturityDate()) == 0){
+							if (DateUtility.compare(curDb.getValue(), main.getMaturityDate()) == 0) {
 								pft.setValue(PennantAppUtil.amountFormate(rpyPftTillNow, formatter));
 							}
-						}else{
+						} else {
 							pft.setValue(PennantAppUtil.amountFormate(curPft, formatter));
 						}
 					}
@@ -1736,52 +1824,55 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 			// Principal Re-adjusting on changing in EQUAL schedule method
 			boolean islastitem = false;
-			if(i == listBoxSchedule.getItemCount()-1){
+			if (i == listBoxSchedule.getItemCount() - 1) {
 				islastitem = true;
 			}
-			if(StringUtils.equals(main.getScheduleMethod(),CalculationConstants.SCHMTHD_EQUAL)){
-				
+			if (StringUtils.equals(main.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+
 				boolean alwGrcRepay = false;
 				// Allow Grace Repay if Schedule Method is Profit Payment
-				if(main.isAllowGrcPeriod() && StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())){
+				if (main.isAllowGrcPeriod()
+						&& StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())) {
 					alwGrcRepay = true;
 				}
-				
+
 				// Allow Grace Repayment at Grace End Date for Grace Pay At End Date Method
-				if(grcPayEndSchddMthd){
+				if (grcPayEndSchddMthd) {
 					//Calculate all the interest amount and add for the Last Grace period
-					if(DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0){
+					if (DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
 						alwGrcRepay = true;
 					}
 				}
-				reAdjustPrincipal(curListItem,islastitem,alwGrcRepay);
+				reAdjustPrincipal(curListItem, islastitem, alwGrcRepay);
 				continue;
 			}
 
 			// Set the fields with the calculated values
-			BigDecimal prvEndBal = PennantAppUtil.unFormateAmount(((Label) prvListItem.getFellowIfAny("endBal_"+prvListItemSeq)).getValue(), formatter);
+			BigDecimal prvEndBal = PennantAppUtil.unFormateAmount(
+					((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 
 			// Schedule Principal amount re-adjustment
-			if(curListItem.getFellowIfAny("pri_"+curListItemSeq) != null){
-				if(curListItem.getFellowIfAny("pri_"+curListItemSeq) instanceof CurrencyBox){
-					CurrencyBox pri =	(CurrencyBox)curListItem.getFellowIfAny("pri_"+curListItemSeq);
+			if (curListItem.getFellowIfAny("pri_" + curListItemSeq) != null) {
+				if (curListItem.getFellowIfAny("pri_" + curListItemSeq) instanceof CurrencyBox) {
+					CurrencyBox pri = (CurrencyBox) curListItem.getFellowIfAny("pri_" + curListItemSeq);
 
 					Clients.clearWrongValue(pri);
 
-					curPri =PennantAppUtil.unFormateAmount(pri.getValidateValue(),formatter);
-					if(curPri.compareTo(prvEndBal) >= 0 &&  !islastitem){
-						throw new WrongValueException(pri,"Prinicpal amount cannot be greater than or equal to "+PennantAppUtil.amountFormate(prvEndBal,formatter));	
+					curPri = PennantAppUtil.unFormateAmount(pri.getValidateValue(), formatter);
+					if (curPri.compareTo(prvEndBal) >= 0 && !islastitem) {
+						throw new WrongValueException(pri, "Prinicpal amount cannot be greater than or equal to "
+								+ PennantAppUtil.amountFormate(prvEndBal, formatter));
 					}
 					//set the principal amount for the maturity date
-					if(islastitem){
+					if (islastitem) {
 						curPri = prvEndBal;
-						pri.setValue(PennantAppUtil.formateAmount(curPri,formatter));
+						pri.setValue(PennantAppUtil.formateAmount(curPri, formatter));
 					}
 
-				}else{
-					Label pri = (Label)curListItem.getFellowIfAny("pri_"+curListItemSeq);
-					curPri = PennantAppUtil.unFormateAmount(pri.getValue(),formatter);
-					if(curPri.compareTo(prvEndBal) > 0){
+				} else {
+					Label pri = (Label) curListItem.getFellowIfAny("pri_" + curListItemSeq);
+					curPri = PennantAppUtil.unFormateAmount(pri.getValue(), formatter);
+					if (curPri.compareTo(prvEndBal) > 0) {
 						curPri = prvEndBal;
 						pri.setValue(PennantAppUtil.amountFormate(curPri, formatter));
 					}
@@ -1789,88 +1880,94 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 
 			// Schedule Installment amount re-adjustment
-			if(curListItem.getFellowIfAny("emi_"+curListItemSeq) != null){
+			if (curListItem.getFellowIfAny("emi_" + curListItemSeq) != null) {
 
 				BigDecimal calEmi = BigDecimal.ZERO;
-				if(isPriPayOnly){
-					if(DateUtility.compare(curDb.getValue(), main.getMaturityDate()) != 0){
+				if (isPriPayOnly) {
+					if (DateUtility.compare(curDb.getValue(), main.getMaturityDate()) != 0) {
 						calEmi = curPri;
-					}else{
+					} else {
 						calEmi = curPri.add(rpyPftTillNow);
 					}
-				}else{
+				} else {
 					calEmi = curPri.add(curPft).add(curFee);
 				}
 
-				if(curListItem.getFellowIfAny("emi_"+curListItemSeq) instanceof CurrencyBox){
-					CurrencyBox emi = (CurrencyBox) curListItem.getFellowIfAny("emi_"+curListItemSeq);
-					if(calInt.compareTo(BigDecimal.ZERO) == 0 || emi.getValidateValue().compareTo(BigDecimal.ZERO) <= 0 ){
+				if (curListItem.getFellowIfAny("emi_" + curListItemSeq) instanceof CurrencyBox) {
+					CurrencyBox emi = (CurrencyBox) curListItem.getFellowIfAny("emi_" + curListItemSeq);
+					if (calInt.compareTo(BigDecimal.ZERO) == 0
+							|| emi.getValidateValue().compareTo(BigDecimal.ZERO) <= 0) {
 						emi.setValue(PennantAppUtil.formateAmount(calEmi, formatter));
 					}
 
-					if(calEmi.compareTo(prvEndBal)>=0 &&  !islastitem){
-						throw new WrongValueException(emi,"Prinicpal amount cannot be greater than or equal to "+PennantAppUtil.amountFormate(prvEndBal,formatter));	
+					if (calEmi.compareTo(prvEndBal) >= 0 && !islastitem) {
+						throw new WrongValueException(emi, "Prinicpal amount cannot be greater than or equal to "
+								+ PennantAppUtil.amountFormate(prvEndBal, formatter));
 					}
 
-					if(PennantAppUtil.unFormateAmount(emi.getValidateValue(),formatter).compareTo(calInt) > 0 && 
-							curListItem.getFellowIfAny("pri_"+curListItemSeq) instanceof Label &&  i != listBoxSchedule.getItemCount()-1){
-						Label pri =	(Label)curListItem.getFellowIfAny("pri_"+curListItemSeq);
+					if (PennantAppUtil.unFormateAmount(emi.getValidateValue(), formatter).compareTo(calInt) > 0
+							&& curListItem.getFellowIfAny("pri_" + curListItemSeq) instanceof Label
+							&& i != listBoxSchedule.getItemCount() - 1) {
+						Label pri = (Label) curListItem.getFellowIfAny("pri_" + curListItemSeq);
 						Clients.clearWrongValue(pri);
 
-						curPri =PennantAppUtil.unFormateAmount(emi.getValidateValue(),formatter).subtract(calInt);
+						curPri = PennantAppUtil.unFormateAmount(emi.getValidateValue(), formatter).subtract(calInt);
 						pri.setValue(PennantAppUtil.amountFormate(curPri, formatter));
 
-						if(curPri.compareTo(BigDecimal.ZERO) > 0 && curPri.compareTo(prvEndBal) >= 0){
-							throw new WrongValueException(pri,"Prinicpal amount cannot be greater than or equal to "+PennantAppUtil.amountFormate(prvEndBal,formatter));
+						if (curPri.compareTo(BigDecimal.ZERO) > 0 && curPri.compareTo(prvEndBal) >= 0) {
+							throw new WrongValueException(pri, "Prinicpal amount cannot be greater than or equal to "
+									+ PennantAppUtil.amountFormate(prvEndBal, formatter));
 						}
 					}
 
-				}else{
-					Label emi = (Label) curListItem.getFellowIfAny("emi_"+curListItemSeq);
+				} else {
+					Label emi = (Label) curListItem.getFellowIfAny("emi_" + curListItemSeq);
 					emi.setValue(PennantAppUtil.amountFormate(calEmi, formatter));
 				}
 			}
 
 			// End Balance resetting
 			BigDecimal curEndBal = prvEndBal.subtract(curPri);
-			if(curListItem.getFellowIfAny("endBal_"+curListItemSeq) != null){
-				Label endBal = (Label) curListItem.getFellowIfAny("endBal_"+curListItemSeq);
-				if(curEndBal.compareTo(BigDecimal.ZERO)<0){
+			if (curListItem.getFellowIfAny("endBal_" + curListItemSeq) != null) {
+				Label endBal = (Label) curListItem.getFellowIfAny("endBal_" + curListItemSeq);
+				if (curEndBal.compareTo(BigDecimal.ZERO) < 0) {
 					curEndBal = BigDecimal.ZERO;
 				}
 				endBal.setValue(PennantAppUtil.amountFormate(curEndBal, formatter));
-				if(isPft){
+				if (isPft) {
 					endBal.setValue(PennantAppUtil.amountFormate(curPri, formatter));
 				}
 			}
 
 			logger.debug("Leaving");
 		}
-		
+
 		// Setting Terms with in grace And Number of Numbers
-		doSetTerms(finNumberofTerms,graceTerms);
+		doSetTerms(finNumberofTerms, graceTerms);
 
 	}
-	
+
 	/**
 	 * Method for Resetting Grace & Number of Terms in basic Details Tab
+	 * 
 	 * @param finTerms
 	 * @param graceTerms
 	 */
-	public void doSetTerms(Integer finTerms,Integer graceTerms){
+	public void doSetTerms(Integer finTerms, Integer graceTerms) {
 
 		@SuppressWarnings("rawtypes")
-		Class[] paramType = { Integer.class,Integer.class};
-		Object[] stringParameter = {finTerms,graceTerms};
+		Class[] paramType = { Integer.class, Integer.class };
+		Object[] stringParameter = { finTerms, graceTerms };
 		try {
-			financeMainDialogCtrl.getClass().getMethod("doSetfinTerms",paramType).invoke(financeMainDialogCtrl,stringParameter);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException
+			financeMainDialogCtrl.getClass().getMethod("doSetfinTerms", paramType).invoke(financeMainDialogCtrl,
+					stringParameter);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {
 			logger.error(e);
 		}
-		this.schdl_noOfTerms.setValue(String.valueOf(listBoxSchedule.getItemCount()-1));
+		this.schdl_noOfTerms.setValue(String.valueOf(listBoxSchedule.getItemCount() - 1));
 	}
+
 	/**
 	 * when the "btnPrintSchedule" button is clicked. <br>
 	 * 
@@ -1924,7 +2021,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			finRender = new FinScheduleListItemRenderer();
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
-			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,true);
+			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,
+					true);
 			list.add(subList);
 			// To get Parent Window i.e Finance main based on product
 			Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()
@@ -1948,7 +2046,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						true);
 
 				financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
-						+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms()+financeMain.getAdvEMITerms()) + " Payments");
+						+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms() + financeMain.getAdvEMITerms())
+						+ " Payments");
 			}
 
 			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
@@ -1981,8 +2080,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1990,6 +2088,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -1997,6 +2096,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -2004,6 +2104,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -2011,6 +2112,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public Map<Date, ArrayList<FeeRule>> getFeeChargesMap() {
 		return feeChargesMap;
 	}
+
 	public void setFeeChargesMap(Map<Date, ArrayList<FeeRule>> feeChargesMap) {
 		this.feeChargesMap = feeChargesMap;
 	}
@@ -2018,6 +2120,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
@@ -2025,8 +2128,9 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public boolean isSchRebuildReq() {
 		return schRebuildReq;
 	}
+
 	public void setSchRebuildReq(boolean schRebuildReq) {
 		this.schRebuildReq = schRebuildReq;
 	}
-	
+
 }

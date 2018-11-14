@@ -76,7 +76,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements QueueAssignmentDAO {
 	private static Logger logger = Logger.getLogger(QueueAssignmentDAOImpl.class);
 	private DataSource dataSource;
-	
+
 	public QueueAssignmentDAOImpl() {
 		super();
 	}
@@ -165,24 +165,23 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 		StringBuilder selectSql = new StringBuilder(" SELECT UserId , lovDescQAUserId FROM ");
 		selectSql.append(" (SELECT UsrId UserId, COALESCE(UserId, 0) lovDescQAUserId, ");
-		selectSql
-				.append("row_number() over (ORDER BY RcdCount, UsrId) row_num  FROM (SELECT COALESCE(AssignedCount, 0) RcdCount, T1.UsrId, T6.UserId ");
+		selectSql.append(
+				"row_number() over (ORDER BY RcdCount, UsrId) row_num  FROM (SELECT COALESCE(AssignedCount, 0) RcdCount, T1.UsrId, T6.UserId ");
 		selectSql.append("FROM SecUsers T1  INNER JOIN SecUserOperations T2 ON T1.UsrID=T2.UsrID INNER JOIN ");
-		selectSql
-				.append("SecOperations T3 ON T3.OprID = T2.OprID INNER JOIN SecOperationRoles T4 ON T4.OprID =T3.OprID INNER JOIN ");
-		selectSql
-				.append("SecRoles T5 ON T4.RoleID = T5.RoleID  LEFT OUTER JOIN  Task_Assignments T6 ON T1.UsrId =T6.UserId ");
-		selectSql
-				.append("AND T6.UserRoleCode=:RoleCode AND T6.Module=:Module  WHERE T5.RoleCd=:RoleCode AND T1.UsrId NOT IN (:UserId)");
-		selectSql
-				.append("AND T1.UsrEnabled = 1  GROUP BY  T6.AssignedCount, T1.UsrId, T6.UserId )T1)T where row_num <= 1");
+		selectSql.append(
+				"SecOperations T3 ON T3.OprID = T2.OprID INNER JOIN SecOperationRoles T4 ON T4.OprID =T3.OprID INNER JOIN ");
+		selectSql.append(
+				"SecRoles T5 ON T4.RoleID = T5.RoleID  LEFT OUTER JOIN  Task_Assignments T6 ON T1.UsrId =T6.UserId ");
+		selectSql.append(
+				"AND T6.UserRoleCode=:RoleCode AND T6.Module=:Module  WHERE T5.RoleCd=:RoleCode AND T1.UsrId NOT IN (:UserId)");
+		selectSql.append(
+				"AND T1.UsrEnabled = 1  GROUP BY  T6.AssignedCount, T1.UsrId, T6.UserId )T1)T where row_num <= 1");
 
 		RowMapper<QueueAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(QueueAssignment.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			queueAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), source,
-					typeRowMapper);
+			queueAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			e = null;
@@ -276,18 +275,18 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT Module, COALESCE(UserId, 0) UserId, COALESCE(FromUserId,0) FromUserId, UserRoleCode, T1.FinReference Reference,");
-		selectSql
-				.append(" T1.FinType lovDescFinType, T5.FinTypeDesc lovDescFinTypeDesc, T1.CustId lovDescCustCIF, T1.FinAmount lovDescFinAmount, T3.CcyEditField lovDescEditField,");
-		selectSql
-				.append(" COALESCE(T2.Version,0) Version, T2.LastMntOn, COALESCE(T2.LastMntBy,0) LastMntBy,T2.RecordStatus, T2.RoleCode, T2.NextRoleCode, ");
-		selectSql
-				.append(" T2.TaskId, T2.NextTaskId, T2.RecordType, COALESCE(T2.WorkflowId,0) WorkflowId, T4.UsrFName LovDescUserName,T6.ActualOwner lovDescActualOwner");
-		selectSql
-				.append(" FROM FinanceMain_Temp T1 INNER JOIN Task_Owners T6 ON T1.FinReference = T6.Reference AND T6.Processed=0 INNER JOIN ");
-		selectSql
-				.append(" RMTCurrencies T3 ON T1.FinCcy= T3.CcyCode INNER JOIN RMTFinanceTypes T5 ON T1.FinType = T5.FinType LEFT OUTER JOIN");
-		selectSql
-				.append(" Task_Assignments_Temp T2 ON T1.FinReference = T2.Reference AND T2.UserRoleCode=T6.RoleCode LEFT OUTER JOIN SecUsers T4 ON T2.UserId = T4.UsrId ");
+		selectSql.append(
+				" T1.FinType lovDescFinType, T5.FinTypeDesc lovDescFinTypeDesc, T1.CustId lovDescCustCIF, T1.FinAmount lovDescFinAmount, T3.CcyEditField lovDescEditField,");
+		selectSql.append(
+				" COALESCE(T2.Version,0) Version, T2.LastMntOn, COALESCE(T2.LastMntBy,0) LastMntBy,T2.RecordStatus, T2.RoleCode, T2.NextRoleCode, ");
+		selectSql.append(
+				" T2.TaskId, T2.NextTaskId, T2.RecordType, COALESCE(T2.WorkflowId,0) WorkflowId, T4.UsrFName LovDescUserName,T6.ActualOwner lovDescActualOwner");
+		selectSql.append(
+				" FROM FinanceMain_Temp T1 INNER JOIN Task_Owners T6 ON T1.FinReference = T6.Reference AND T6.Processed=0 INNER JOIN ");
+		selectSql.append(
+				" RMTCurrencies T3 ON T1.FinCcy= T3.CcyCode INNER JOIN RMTFinanceTypes T5 ON T1.FinType = T5.FinType LEFT OUTER JOIN");
+		selectSql.append(
+				" Task_Assignments_Temp T2 ON T1.FinReference = T2.Reference AND T2.UserRoleCode=T6.RoleCode LEFT OUTER JOIN SecUsers T4 ON T2.UserId = T4.UsrId ");
 		selectSql.append(" Where T6.RoleCode=:RoleCode AND ");
 		if (StringUtils.isBlank(nextUserId) || isManual) {
 			selectSql.append(" T6.CurrentOwner=0");
@@ -309,11 +308,11 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO Task_Assignments_Temp ");
 		insertSql.append(" (Module, UserId, FromUserId, UserRoleCode, Reference, ManualAssign,");
-		insertSql
-				.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values( :Module, :UserId, :FromUserId, :UserRoleCode, :Reference, :ManualAssign,");
-		insertSql
-				.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
+		insertSql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignment);
 		logger.debug("Leaving");
@@ -344,11 +343,11 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 		updateSql.append("Update Task_Assignments");
 		updateSql.append(StringUtils.trimToEmpty(tableType));
-		updateSql
-				.append(" SET Module=:Module, UserId=:UserId, FromUserId=:FromUserId, UserRoleCode=:UserRoleCode,Reference=:Reference, ManualAssign=:ManualAssign,");
+		updateSql.append(
+				" SET Module=:Module, UserId=:UserId, FromUserId=:FromUserId, UserRoleCode=:UserRoleCode,Reference=:Reference, ManualAssign=:ManualAssign,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql
-				.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append("  Where Reference =:Reference ");
 		if (!tableType.endsWith("_Temp")) {
@@ -371,8 +370,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 		StringBuilder deleteSql = new StringBuilder("Delete From Task_Assignments");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql
-				.append(" Where Module=:Module AND Reference=:Reference AND UserRoleCode=:UserRoleCode AND ManualAssign=:ManualAssign");
+		deleteSql.append(
+				" Where Module=:Module AND Reference=:Reference AND UserRoleCode=:UserRoleCode AND ManualAssign=:ManualAssign");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueDetail);
@@ -406,8 +405,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 				.newInstance(QueueAssignmentHeader.class);
 
 		try {
-			queueAssignmentHeader = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			queueAssignmentHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			return null;
@@ -421,14 +420,14 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO Task_Assignments_Header");
 		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql
-				.append("(Module, UserId, UserRoleCode, AssignedCount, LastAssignedOn, ProcessedCount, LastProcessedOn, UserActive, ManualAssign,");
-		insertSql
-				.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-				.append(" Values( :Module, :UserId, :UserRoleCode, :AssignedCount, :LastAssignedOn, :ProcessedCount, :LastProcessedOn, :UserActive, :ManualAssign,");
-		insertSql
-				.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
+		insertSql.append(
+				"(Module, UserId, UserRoleCode, AssignedCount, LastAssignedOn, ProcessedCount, LastProcessedOn, UserActive, ManualAssign,");
+		insertSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values( :Module, :UserId, :UserRoleCode, :AssignedCount, :LastAssignedOn, :ProcessedCount, :LastProcessedOn, :UserActive, :ManualAssign,");
+		insertSql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignmentHeader);
 		logger.debug("Leaving");
@@ -449,8 +448,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		updateSql.append(StringUtils.trimToEmpty(tableType));
 		updateSql.append(" SET UserId=:UserId,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql
-				.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Module =:Module AND UserRoleCode=:UserRoleCode");
 		if (!queueAssignmentHeader.isManualAssign()) {
@@ -506,7 +505,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 			userIdLongList.add(Long.valueOf(id));
 		}
 		source.addValue("UserId", userIdLongList);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select Module,UserId, UserRoleCode,");
@@ -521,7 +520,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
-	
+
 	@Override
 	public void setDataSource(DataSource dataSource) {
 		super.setDataSource(dataSource);

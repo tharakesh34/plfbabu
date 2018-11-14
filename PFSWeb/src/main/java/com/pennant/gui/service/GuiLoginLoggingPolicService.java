@@ -60,7 +60,7 @@ public interface GuiLoginLoggingPolicService {
 	 * @param clientAddress
 	 *            Remote Ip from the client.
 	 */
-	long logAuthPass(String userName,long userId, String clientAddress, String sessionId);
+	long logAuthPass(String userName, long userId, String clientAddress, String sessionId);
 
 	/**
 	 * Saves the login data for a failed login.<br>
@@ -72,7 +72,6 @@ public interface GuiLoginLoggingPolicService {
 	 * @param clientAddress
 	 *            Remote Ip from the client.
 	 */
-	long logAuthFail(String userName, String clientAddress, String sessionId,String errorMessage);
-	
+	long logAuthFail(String userName, String clientAddress, String sessionId, String errorMessage);
 
 }

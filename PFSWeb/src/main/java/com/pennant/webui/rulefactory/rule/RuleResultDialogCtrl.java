@@ -309,8 +309,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultView.zul", null,
-					map);
+			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultView.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -347,24 +346,25 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			boolean isSaveRecord = (Boolean) data[3];
 
 			String values = "";
-			String fieldValue="";
+			String fieldValue = "";
 			List<ValueLabel> fieldList = new ArrayList<>();
-			HashMap<String, String>fieldMap = new HashMap<>();
+			HashMap<String, String> fieldMap = new HashMap<>();
 			for (RBFieldDetail rbFieldDetail : objectFieldList) {
 				fieldMap.put(rbFieldDetail.getRbFldName(), rbFieldDetail.getRbFldDesc());
 			}
 
 			for (int i = 0; i < codeVariables.size(); i++) {
 				JSONObject jsonObject = (JSONObject) codeVariables.get(i);
-				if (!"Result".equals(jsonObject.get("name")) && !(jsonObject.get("name").toString()).startsWith(RuleConstants.RULEFIELD_CCY)) {
+				if (!"Result".equals(jsonObject.get("name"))
+						&& !(jsonObject.get("name").toString()).startsWith(RuleConstants.RULEFIELD_CCY)) {
 					fieldValue = (String) jsonObject.get("name");
-					if(fieldMap.containsKey(fieldValue)){
+					if (fieldMap.containsKey(fieldValue)) {
 						fieldList.add(new ValueLabel(fieldValue, fieldMap.get(fieldValue)));
-						if(StringUtils.isNotEmpty(values)){
+						if (StringUtils.isNotEmpty(values)) {
 							values = values + ",";
 						}
 						values = values + fieldValue;
-					}else{
+					} else {
 						MessageUtil.showError(Labels.getLabel("FIELD_NOT_AVAILBLE", new String[] { fieldValue }));
 						return;
 					}

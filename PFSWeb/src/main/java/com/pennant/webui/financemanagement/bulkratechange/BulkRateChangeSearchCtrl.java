@@ -65,46 +65,43 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeDialogModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>  {
+public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails> {
 
 	private static final long serialVersionUID = -4647934832219925649L;
 	private static final Logger logger = Logger.getLogger(BulkRateChangeSearchCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window window_BulkRateChangeSearch; 			
+	protected Window window_BulkRateChangeSearch;
 
-	protected Textbox finReference; 					
-	protected Textbox custCIF; 							
-	protected Textbox finBranch; 					
-	protected Textbox finCcy; 							
-	protected Decimalbox rate; 					
-	protected Listbox sortOperator_finReference; 		
-	protected Listbox sortOperator_custCIF; 			
-	protected Listbox sortOperator_FinBranch; 		
-	protected Listbox sortOperator_FinCcy; 				
-	protected Listbox sortOperator_Rate; 
+	protected Textbox finReference;
+	protected Textbox custCIF;
+	protected Textbox finBranch;
+	protected Textbox finCcy;
+	protected Decimalbox rate;
+	protected Listbox sortOperator_finReference;
+	protected Listbox sortOperator_custCIF;
+	protected Listbox sortOperator_FinBranch;
+	protected Listbox sortOperator_FinCcy;
+	protected Listbox sortOperator_Rate;
 
 	protected JdbcSearchObject<BulkRateChangeDetails> searchObj;
 	private PagedListService pagedListService;
 
-
 	// not auto wired variables
 	private transient BulkRateChangeDialogCtrl bulkRateChangeDialogCtrl; // overhanded per param
 	private transient BulkRateChangeHeader bulkRateChangeHeader;
-	
-	private boolean		isNewFinList = false;
+
+	private boolean isNewFinList = false;
 
 	/**
 	 * constructor
@@ -118,16 +115,14 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
-	 * Before binding the data and calling the Search window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceMain object in a
-	 * Map.
+	 * Before binding the data and calling the Search window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_BulkRateChangeSearch(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
 
 		if (arguments.containsKey("bulkRateChangeHeader")) {
 			setBulkRateChangeHeader((BulkRateChangeHeader) arguments.get("bulkRateChangeHeader"));
@@ -149,19 +144,24 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 
-		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_finReference
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_custCIF
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_FinBranch.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_FinBranch
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_FinBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_FinCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_FinCcy
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_FinCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_Rate.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_Rate
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_Rate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		showFinanceMainSeekDialog();
@@ -177,20 +177,24 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 	 * when the "search/filter" button is clicked.
 	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onClick$btnSearch(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		if (getBulkRateChangeDialogCtrl().tab_FinancesList.isSelected()) {
-			if(getBulkRateChangeDialogCtrl().financesList != null && !getBulkRateChangeDialogCtrl().financesList.isEmpty()) {
+			if (getBulkRateChangeDialogCtrl().financesList != null
+					&& !getBulkRateChangeDialogCtrl().financesList.isEmpty()) {
 				doSearch(getBulkRateChangeDialogCtrl().listBox_FinancesList,
-						getBulkRateChangeDialogCtrl().paging_FinancesList, getBulkRateChangeDialogCtrl().rateChangeFinList);
+						getBulkRateChangeDialogCtrl().paging_FinancesList,
+						getBulkRateChangeDialogCtrl().rateChangeFinList);
 			}
 		} else {
-			if(getBulkRateChangeDialogCtrl().rateChangeFinList != null && !getBulkRateChangeDialogCtrl().rateChangeFinList.isEmpty()) {
+			if (getBulkRateChangeDialogCtrl().rateChangeFinList != null
+					&& !getBulkRateChangeDialogCtrl().rateChangeFinList.isEmpty()) {
 				doSearch(getBulkRateChangeDialogCtrl().listBox_RateChangeFinList,
-						getBulkRateChangeDialogCtrl().paging_RateChangeFinList, getBulkRateChangeDialogCtrl().financesList);
+						getBulkRateChangeDialogCtrl().paging_RateChangeFinList,
+						getBulkRateChangeDialogCtrl().financesList);
 			}
 		}
 
@@ -198,7 +202,6 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * when the "close" button is clicked. <br>
@@ -218,7 +221,7 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 			// open the dialog in modal mode
 			this.window_BulkRateChangeSearch.doModal();
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -245,50 +248,57 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		this.searchObj.addField("CustCIF");
 		this.searchObj.addField("lovDescFinFormatter");
 
-		if(getBulkRateChangeHeader().isNewRecord() || isNewFinList) {
+		if (getBulkRateChangeHeader().isNewRecord() || isNewFinList) {
 			this.searchObj.addTabelName("BulkRateChange_View");
 		} else {
 			this.searchObj.addTabelName("BulkRateChange_SView");
-			this.searchObj.addFilter(new Filter("BulkRateChangeRef", getBulkRateChangeHeader().getBulkRateChangeRef(), Filter.OP_EQUAL));
+			this.searchObj.addFilter(
+					new Filter("BulkRateChangeRef", getBulkRateChangeHeader().getBulkRateChangeRef(), Filter.OP_EQUAL));
 			this.searchObj.addField("NewProfitRate");
 			this.searchObj.addField("NewProfit");
 		}
 
 		// FinReference
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_finReference.getSelectedItem(), this.finReference.getValue(), "FinReference");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finReference.getSelectedItem(),
+					this.finReference.getValue(), "FinReference");
 		}
 		// Customer CIF
 		if (StringUtils.isNotBlank(this.custCIF.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_custCIF.getSelectedItem(), this.custCIF.getValue(), "CustCIF");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_custCIF.getSelectedItem(), this.custCIF.getValue(),
+					"CustCIF");
 		}
 
 		// Finance Branch
 		if (StringUtils.isNotBlank(finBranch.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_FinBranch.getSelectedItem(), this.finBranch.getValue(), "FinBranch");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_FinBranch.getSelectedItem(),
+					this.finBranch.getValue(), "FinBranch");
 		}
 
 		// Finance Currency
 		if (StringUtils.isNotBlank(finCcy.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_FinCcy.getSelectedItem(), this.finCcy.getValue(), "FinCcy");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_FinCcy.getSelectedItem(), this.finCcy.getValue(),
+					"FinCcy");
 		}
 
 		// Rate
 		if (this.rate.getValue() != null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_Rate.getSelectedItem(), this.rate.getValue(), "OldProfitRate");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_Rate.getSelectedItem(), this.rate.getValue(),
+					"OldProfitRate");
 		}
 
 		//Where Clause
-		this.searchObj.addWhereClause(" FinType = '" + getBulkRateChangeHeader().getFinType() + "' AND " + "FromDate >= '" + getBulkRateChangeHeader().getFromDate() + "'");
+		this.searchObj.addWhereClause(" FinType = '" + getBulkRateChangeHeader().getFinType() + "' AND "
+				+ "FromDate >= '" + getBulkRateChangeHeader().getFromDate() + "'");
 
 		//Data Base List
 		List<BulkRateChangeDetails> filterFinList = getPagedListService().getBySearchObject(searchObj);
 		List<BulkRateChangeDetails> filterFinListCopy = new ArrayList<BulkRateChangeDetails>();
 		filterFinListCopy.addAll(filterFinList);
 
-		for(BulkRateChangeDetails finance : filterFinListCopy) {
+		for (BulkRateChangeDetails finance : filterFinListCopy) {
 			for (BulkRateChangeDetails bulkRateDetails : financesList) {
-				if(StringUtils.equals(finance.getFinReference(), bulkRateDetails.getFinReference())) {
+				if (StringUtils.equals(finance.getFinReference(), bulkRateDetails.getFinReference())) {
 					filterFinList.remove(finance);
 				}
 			}
@@ -300,7 +310,6 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		logger.debug("Leaving");
 	}
-
 
 	// Setters And Getters
 
@@ -315,6 +324,7 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 	public JdbcSearchObject<BulkRateChangeDetails> getSearchObj() {
 		return this.searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<BulkRateChangeDetails> searchObj) {
 		this.searchObj = searchObj;
 	}

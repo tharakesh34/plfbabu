@@ -75,13 +75,13 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class VASConfigurationServiceImpl extends GenericService<VASConfiguration> implements VASConfigurationService {
 	private static final Logger logger = Logger.getLogger(VASConfigurationServiceImpl.class);
-	
-	private AuditHeaderDAO				auditHeaderDAO;
-	private ExtendedFieldsValidation	extendedFieldsValidation;
-	private VASConfigurationDAO			vASConfigurationDAO;
-	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
-	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
-	private FinanceWorkFlowDAO          financeWorkFlowDAO;
+
+	private AuditHeaderDAO auditHeaderDAO;
+	private ExtendedFieldsValidation extendedFieldsValidation;
+	private VASConfigurationDAO vASConfigurationDAO;
+	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private FinanceWorkFlowDAO financeWorkFlowDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -89,21 +89,25 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the vASConfigurationDAO
 	 */
 	public VASConfigurationDAO getVASConfigurationDAO() {
 		return vASConfigurationDAO;
 	}
+
 	/**
-	 * @param vASConfigurationDAO the vASConfigurationDAO to set
+	 * @param vASConfigurationDAO
+	 *            the vASConfigurationDAO to set
 	 */
 	public void setVASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
@@ -116,6 +120,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	public VASConfiguration getVASConfiguration() {
 		return getVASConfigurationDAO().getVASConfiguration();
 	}
+
 	/**
 	 * @return the vASConfiguration for New Record
 	 */
@@ -126,15 +131,16 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 	public ExtendedFieldsValidation getExtendedFieldsValidation() {
 		if (extendedFieldsValidation == null) {
-			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO, extendedFieldHeaderDAO);
+			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO,
+					extendedFieldHeaderDAO);
 		}
 		return this.extendedFieldsValidation;
 	}
 
 	public void setExtendedFieldsValidation(ExtendedFieldsValidation extendedFieldsValidation) {
 		this.extendedFieldsValidation = extendedFieldsValidation;
-	} 
-	
+	}
+
 	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
 		return extendedFieldDetailDAO;
 	}
@@ -152,16 +158,15 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table VasStructure/VasStructure_Temp 
-	 * 			by using VASConfigurationDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using VASConfigurationDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table VasStructure/VasStructure_Temp
+	 * by using VASConfigurationDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using VASConfigurationDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -170,21 +175,20 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table VasStructure/VasStructure_Temp 
-	 * 			by using VASConfigurationDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using VASConfigurationDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
-	 * @param boolean onlineRequest
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table VasStructure/VasStructure_Temp
+	 * by using VASConfigurationDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using VASConfigurationDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
-	 
-		
+
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
 		logger.debug("Entering");
 
@@ -210,7 +214,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		}
 
 		//ExtendedFieldHeader processing
-		List<AuditDetail> headerDetail = vASConfiguration.getExtendedFieldHeader().getAuditDetailMap().get("ExtendedFieldHeader");
+		List<AuditDetail> headerDetail = vASConfiguration.getExtendedFieldHeader().getAuditDetailMap()
+				.get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
@@ -237,7 +242,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			details = getExtendedFieldsValidation().processingExtendeFieldList(details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -247,45 +252,48 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table VasStructure by using VASConfigurationDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * VasStructure by using VASConfigurationDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete",false);
+		auditHeader = businessValidation(auditHeader, "delete", false);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		VASConfiguration vASConfiguration = (VASConfiguration) auditHeader.getAuditDetail().getModelData();
-		
+
 		//ExtendedFieldHeader
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 		ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
+		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader));
 		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
 		// Table dropping in DB for Configured VAS Type Details
-		getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
-		getVASConfigurationDAO().delete(vASConfiguration,"");
-		
+		getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(),
+				extendedFieldHeader.getSubModuleName());
+		getVASConfigurationDAO().delete(vASConfiguration, "");
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new VASConfiguration(), vASConfiguration.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				vASConfiguration.getBefImage(), vASConfiguration));
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetailsList);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -309,7 +317,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME,
 					vasConfiguration.getProductCode(), "_View");
 			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
+				extFldHeader.setExtendedFieldDetails(
+						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
 			}
 			vasConfiguration.setExtendedFieldHeader(extFldHeader);
 		}
@@ -325,17 +334,18 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 *            (String)
 	 * @return VASConfiguration
 	 */
-	
+
 	public VASConfiguration getApprovedVASConfigurationByCode(String productCode) {
 		logger.debug("Entering");
-		
+
 		VASConfiguration vasConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(productCode, "_AView");
 		ExtendedFieldHeader extFldHeader = null;
 		if (vasConfiguration != null) {
 			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME,
 					vasConfiguration.getProductCode(), "_AView");
 			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
+				extFldHeader.setExtendedFieldDetails(
+						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
 			}
 			vasConfiguration.setExtendedFieldHeader(extFldHeader);
 		}
@@ -344,23 +354,24 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getVASConfigurationDAO().delete with parameters vASConfiguration,""
-	 * 		b)  NEW		Add new record in to main table by using getVASConfigurationDAO().save with parameters vASConfiguration,""
-	 * 		c)  EDIT	Update record in the main table by using getVASConfigurationDAO().update with parameters vASConfiguration,""
-	 * 3)	Delete the record from the workFlow table by using getVASConfigurationDAO().delete with parameters vASConfiguration,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getVASConfigurationDAO().delete with
+	 * parameters vASConfiguration,"" b) NEW Add new record in to main table by using getVASConfigurationDAO().save with
+	 * parameters vASConfiguration,"" c) EDIT Update record in the main table by using getVASConfigurationDAO().update
+	 * with parameters vASConfiguration,"" 3) Delete the record from the workFlow table by using
+	 * getVASConfigurationDAO().delete with parameters vASConfiguration,"_Temp" 4) Audit the record in to AuditHeader
+	 * and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
@@ -368,7 +379,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		VASConfiguration vASConfiguration = new VASConfiguration("");
 		BeanUtils.copyProperties((VASConfiguration) auditHeader.getAuditDetail().getModelData(), vASConfiguration);
 
@@ -401,7 +412,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			auditDetails.addAll(listDeletion(extendedFieldHeader, "", tranType));
 			getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "");
 			// Table dropping in DB for Configured VAS Details
-			getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
+			getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(),
+					extendedFieldHeader.getSubModuleName());
 		} else {
 			extendedFieldHeader.setRoleCode("");
 			extendedFieldHeader.setNextRoleCode("");
@@ -457,250 +469,275 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getVASConfigurationDAO().delete with parameters vASConfiguration,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getVASConfigurationDAO().delete with parameters vASConfiguration,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.debug("Entering");
-			
-			auditHeader = businessValidation(auditHeader,"doApprove",false);
-			if (!auditHeader.isNextProcess()) {
-				return auditHeader;
-			}
 
-			List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
-			VASConfiguration vASConfiguration = (VASConfiguration) auditHeader.getAuditDetail().getModelData();
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.debug("Entering");
 
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			
-			//ExtendedFieldHeader
-			ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
-			getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-			auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
-			auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
-			
-			String[] fields = PennantJavaUtil.getFieldDetails(new VASConfiguration(), vASConfiguration.getExcludeFields());
-			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-					vASConfiguration.getBefImage(), vASConfiguration));
-			
-			//VASConfiguration Deletion
-			getVASConfigurationDAO().delete(vASConfiguration,"_Temp");
-			
-			auditHeader.setAuditDetails(auditDetailsList);
-			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");
-			
+		auditHeader = businessValidation(auditHeader, "doApprove", false);
+		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
-		/**
-		 * businessValidation method do the following steps.
-		 * 1)	validate the audit detail 
-		 * 2)	if any error/Warnings  then assign the to auditHeader
-		 * 3)   identify the nextprocess
-		 *  
-		 * @param AuditHeader (auditHeader)
-		 * @param boolean onlineRequest
-		 * @return auditHeader
-		 */
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
-			logger.debug("Entering");
-			
-			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
-			auditDetails.add(auditDetail);
-			VASConfiguration  vasConfiguration = (VASConfiguration) auditDetail.getModelData();
-			String usrLanguage =  vasConfiguration.getUserDetails().getLanguage();
-			
-			//Extended field details
-			auditHeader = getAuditDetails(auditHeader, method);
-			
-			//Extended field details
-			ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
-			if(extendedFieldHeader != null){
-				List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
-				AuditDetail	detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method, usrLanguage);
-				auditDetails.add(detail);
-				
-				if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
-					List<AuditDetail> detailList = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
-					detailList = getExtendedFieldsValidation().extendedFieldsListValidation(detailList, method, usrLanguage);
-					auditDetails.addAll(detailList);
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
+		VASConfiguration vASConfiguration = (VASConfiguration) auditHeader.getAuditDetail().getModelData();
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+
+		//ExtendedFieldHeader
+		ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
+		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
+		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader));
+		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new VASConfiguration(), vASConfiguration.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				vASConfiguration.getBefImage(), vASConfiguration));
+
+		//VASConfiguration Deletion
+		getVASConfigurationDAO().delete(vASConfiguration, "_Temp");
+
+		auditHeader.setAuditDetails(auditDetailsList);
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
+	 * assign the to auditHeader 3) identify the nextprocess
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,
+				onlineRequest);
+		auditDetails.add(auditDetail);
+		VASConfiguration vasConfiguration = (VASConfiguration) auditDetail.getModelData();
+		String usrLanguage = vasConfiguration.getUserDetails().getLanguage();
+
+		//Extended field details
+		auditHeader = getAuditDetails(auditHeader, method);
+
+		//Extended field details
+		ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
+		if (extendedFieldHeader != null) {
+			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
+			AuditDetail detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method,
+					usrLanguage);
+			auditDetails.add(detail);
+
+			if (extendedFieldHeader.getExtendedFieldDetails() != null
+					&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+				List<AuditDetail> detailList = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
+				detailList = getExtendedFieldsValidation().extendedFieldsListValidation(detailList, method,
+						usrLanguage);
+				auditDetails.addAll(detailList);
+			}
+		}
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+		auditHeader = nextProcess(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getVASConfigurationDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
+	 * @return auditHeader
+	 */
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		VASConfiguration vASConfiguration = (VASConfiguration) auditDetail.getModelData();
+
+		VASConfiguration tempVASConfiguration = null;
+		if (vASConfiguration.isWorkflow()) {
+			tempVASConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(vASConfiguration.getId(),
+					"_Temp");
+		}
+		VASConfiguration befVASConfiguration = getVASConfigurationDAO()
+				.getVASConfigurationByCode(vASConfiguration.getId(), "");
+
+		VASConfiguration oldVasConfiguration = vASConfiguration.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = vASConfiguration.getId();
+		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
+
+		if (vASConfiguration.isNew()) { // for New record or new record into work flow
+
+			if (!vASConfiguration.isWorkflow()) {// With out Work flow only new records  
+				if (befVASConfiguration != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (vASConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befVASConfiguration != null || tempVASConfiguration != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befVASConfiguration == null || tempVASConfiguration != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					}
 				}
 			}
-			for (int i = 0; i < auditDetails.size(); i++) {
-				auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
-			}
-			auditHeader = nextProcess(auditHeader);
-			logger.debug("Leaving");
-			return auditHeader;
-		}
+		} else {
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!vASConfiguration.isWorkflow()) { // With out Work flow for update and delete
 
-		/**
-		 * Validation method do the following steps.
-		 * 1)	get the details from the auditHeader. 
-		 * 2)	fetch the details from the tables
-		 * 3)	Validate the Record based on the record details. 
-		 * 4) 	Validate for any business validation.
-		 * 5)	for any mismatch conditions Fetch the error details from getVASConfigurationDAO().getErrorDetail with Error ID and language as parameters.
-		 * 6)	if any error/Warnings  then assign the to auditHeader 
-		 * @param AuditHeader (auditHeader)
-		 * @param boolean onlineRequest
-		 * @return auditHeader
-		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
-			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-			VASConfiguration vASConfiguration= (VASConfiguration) auditDetail.getModelData();
-			
-			VASConfiguration tempVASConfiguration= null;
-			if (vASConfiguration.isWorkflow()){
-				tempVASConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(vASConfiguration.getId(), "_Temp");
-			}
-			VASConfiguration befVASConfiguration= getVASConfigurationDAO().getVASConfigurationByCode(vASConfiguration.getId(), "");
-			
-			VASConfiguration oldVasConfiguration= vASConfiguration.getBefImage();
-			
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=vASConfiguration.getId();
-			errParm[0]=PennantJavaUtil.getLabel("label_ProductCode")+":"+valueParm[0];
-			
-			if (vASConfiguration.isNew()){ // for New record or new record into work flow
-				
-				if (!vASConfiguration.isWorkflow()){// With out Work flow only new records  
-					if (befVASConfiguration !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-					}	
-				}else{ // with work flow
-					if (vASConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befVASConfiguration !=null || tempVASConfiguration!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+				if (befVASConfiguration == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldVasConfiguration != null
+							&& !oldVasConfiguration.getLastMntOn().equals(befVASConfiguration.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
-					}else{ // if records not exists in the Main flow table
-						if (befVASConfiguration ==null || tempVASConfiguration!=null ){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-						}
 					}
 				}
-			}else{
-				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!vASConfiguration.isWorkflow()){	// With out Work flow for update and delete
-				
-					if (befVASConfiguration ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-					}else{
-						if (oldVasConfiguration!=null && !oldVasConfiguration.getLastMntOn().equals(befVASConfiguration.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-							}else{
-								auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
-							}
-						}
-					}
-				}else{
-				
-					if (tempVASConfiguration==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-					}
-					
-					if (tempVASConfiguration!=null  && oldVasConfiguration!=null && !oldVasConfiguration.getLastMntOn().equals(tempVASConfiguration.getLastMntOn())){ 
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-					}
-				}
-			}
-			
-			// If VAS Structure Product Code is already utilized in Workflow 
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, vASConfiguration.getRecordType())){
-				boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(vASConfiguration.getProductCode(), PennantConstants.WORFLOW_MODULE_VAS);
-				if(workflowExists){
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
-				}
-			}
+			} else {
 
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			if(StringUtils.trimToEmpty(method).equals("doApprove") || !vASConfiguration.isWorkflow()){
-				auditDetail.setBefImage(befVASConfiguration);	
-			}
+				if (tempVASConfiguration == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				}
 
-			return auditDetail;
+				if (tempVASConfiguration != null && oldVasConfiguration != null
+						&& !oldVasConfiguration.getLastMntOn().equals(tempVASConfiguration.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				}
+			}
 		}
 
-		
-		/**
-		 * Common Method for Retrieving AuditDetails List
-		 * 
-		 * @param auditHeader
-		 * @param method
-		 * @return
-		 */
-		private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			
-			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-			HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		// If VAS Structure Product Code is already utilized in Workflow 
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, vASConfiguration.getRecordType())) {
+			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(vASConfiguration.getProductCode(),
+					PennantConstants.WORFLOW_MODULE_VAS);
+			if (workflowExists) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+			}
+		}
 
-			VASConfiguration vasConfiguration = (VASConfiguration) auditHeader.getAuditDetail().getModelData();
-			ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
-			String auditTranType = "";
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-			if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-				if (extendedFieldHeader.isWorkflow()) {
-					auditTranType = PennantConstants.TRAN_WF;
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !vASConfiguration.isWorkflow()) {
+			auditDetail.setBefImage(befVASConfiguration);
+		}
+
+		return auditDetail;
+	}
+
+	/**
+	 * Common Method for Retrieving AuditDetails List
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @return
+	 */
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+		VASConfiguration vasConfiguration = (VASConfiguration) auditHeader.getAuditDetail().getModelData();
+		ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
+		String auditTranType = "";
+
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (extendedFieldHeader.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		//Audit Detail Preparation for Extended Field Header
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader);
+		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
+		auditDetailHeaderList.add(auditDetail);
+		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
+
+		//Audit Detail Preparation for Extended Field Detail
+		if (extendedFieldHeader.getExtendedFieldDetails() != null
+				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation()
+					.setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
+
+		extendedFieldHeader.setAuditDetailMap(auditDetailMap);
+		vasConfiguration.setExtendedFieldHeader(extendedFieldHeader);
+		auditHeader.getAuditDetail().setModelData(vasConfiguration);
+		auditHeader.setAuditDetails(auditDetails);
+
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/*
+	 * ExtendedFieldS list deletion
+	 */
+	public List<AuditDetail> listDeletion(ExtendedFieldHeader extendedFieldHeader, String tableType,
+			String auditTranType) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+
+		if (extendedFieldHeader.getExtendedFieldDetails() != null
+				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new ExtendedFieldDetail());
+			for (int i = 0; i < extendedFieldHeader.getExtendedFieldDetails().size(); i++) {
+				ExtendedFieldDetail extendedFieldDetail = extendedFieldHeader.getExtendedFieldDetails().get(i);
+				if (StringUtils.isNotBlank(extendedFieldDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							extendedFieldDetail.getBefImage(), extendedFieldDetail));
 				}
 			}
-			
-			//Audit Detail Preparation for Extended Field Header
-			AuditDetail auditDetail =  new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader);
-			List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
-			auditDetailHeaderList.add(auditDetail);
-			auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
-
-			//Audit Detail Preparation for Extended Field Detail
-			if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
-				auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation().setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
-				auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
-			}
-			
-			extendedFieldHeader.setAuditDetailMap(auditDetailMap);
-			vasConfiguration.setExtendedFieldHeader(extendedFieldHeader);
-			auditHeader.getAuditDetail().setModelData(vasConfiguration);
-			auditHeader.setAuditDetails(auditDetails);
-			
-			logger.debug("Leaving");
-			return auditHeader;
+			getExtendedFieldDetailDAO().deleteByExtendedFields(extendedFieldHeader.getId(), tableType);
 		}
-		/*
-		 * ExtendedFieldS list deletion
-		 */
-		public List<AuditDetail> listDeletion(ExtendedFieldHeader extendedFieldHeader, String tableType, String auditTranType) {
-			logger.debug("Entering");
-			
-			List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+		logger.debug("Leaving");
+		return auditList;
+	}
 
-			if(extendedFieldHeader.getExtendedFieldDetails()!=null && extendedFieldHeader.getExtendedFieldDetails().size()>0){
-				String[] fields = PennantJavaUtil.getFieldDetails(new ExtendedFieldDetail());
-				for (int i = 0; i < extendedFieldHeader.getExtendedFieldDetails().size(); i++) {
-					ExtendedFieldDetail extendedFieldDetail = extendedFieldHeader.getExtendedFieldDetails().get(i);
-					if (StringUtils.isNotBlank(extendedFieldDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-						auditList.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], extendedFieldDetail.getBefImage(), extendedFieldDetail));
-					}
-				}
-				getExtendedFieldDetailDAO().deleteByExtendedFields(extendedFieldHeader.getId(), tableType);
-			}
-			logger.debug("Leaving");
-			return auditList;
-		}
-		
 	/*
 	 * Checking the vas type is used in vas recording or not
 	 */
@@ -719,8 +756,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 	@Override
 	public boolean isWorkflowExists(String productType) {
- 
+
 		return getFinanceWorkFlowDAO().isWorkflowExists(productType, PennantConstants.WORFLOW_MODULE_VAS);
 	}
-		
+
 }

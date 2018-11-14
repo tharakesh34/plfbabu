@@ -62,9 +62,9 @@ import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.webui.applicationmaster.bankdetail.model.BankDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul file.
@@ -132,7 +132,8 @@ public class BankDetailListCtrl extends GFCBaseListCtrl<BankDetail> {
 		registerButton(button_BankDetailList_NewBankDetail, "button_BankDetailList_NewBankDetail", true);
 		registerButton(button_BankDetailList_BankDetailSearchDialog);
 
-		registerField("bankCode", listheader_BankCode, SortOrder.ASC, bankCode, sortOperator_bankCode, Operators.STRING);
+		registerField("bankCode", listheader_BankCode, SortOrder.ASC, bankCode, sortOperator_bankCode,
+				Operators.STRING);
 		registerField("bankName", listheader_BankName, SortOrder.NONE, bankName, sortOperator_bankName,
 				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.SIMPLE);
@@ -195,7 +196,7 @@ public class BankDetailListCtrl extends GFCBaseListCtrl<BankDetail> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxBankDetail.getSelectedItem();
-		
+
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
 		BankDetail bankDetail = bankDetailService.getBankDetailById(id);

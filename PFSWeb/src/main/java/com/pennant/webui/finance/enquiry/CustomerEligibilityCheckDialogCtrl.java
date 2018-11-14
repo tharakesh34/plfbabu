@@ -97,42 +97,40 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the 
- * /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
  */
 public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerEligibilityCheck> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(CustomerEligibilityCheckDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_EligibilityCheck; 		// autoWired
+	protected Window window_EligibilityCheck; // autoWired
 
-	protected Borderlayout	borderlayoutEligibilityCheck;	// autoWired
-	protected Groupbox 		gb_BasicDetails; 				// autoWired
-	protected Groupbox 		gb_KeyDetails; 					// autoWired
+	protected Borderlayout borderlayoutEligibilityCheck; // autoWired
+	protected Groupbox gb_BasicDetails; // autoWired
+	protected Groupbox gb_KeyDetails; // autoWired
 
 	//Basic Details
-	protected ExtendedCombobox 		finType; 						// autoWired
-	protected Textbox 		custCIF; 						// autoWired
-	protected Label 		custShrtName; 					// autoWired
-	protected Rows			rows_KeyDetails;				// autoWired
+	protected ExtendedCombobox finType; // autoWired
+	protected Textbox custCIF; // autoWired
+	protected Label custShrtName; // autoWired
+	protected Rows rows_KeyDetails; // autoWired
 
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	protected FinanceType financeType;
 	protected Customer customer;
-	
+
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	private RuleService ruleService;
 	private FinanceDetailService financeDetailService;
 	private RuleExecutionUtil ruleExecutionUtil;
-	
+
 	protected List<FinanceReferenceDetail> elgRuleList;
 	protected List<String> feildList = null;
-	protected Map<String , BMTRBFldDetails> fldDetailsMap = null;
+	protected Map<String, BMTRBFldDetails> fldDetailsMap = null;
 	private boolean fldsFetched = false;
 	private List<String> resultList = null;
 
@@ -142,12 +140,12 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	private Datebox datebox;
 	private Decimalbox decimalbox;
 	private Checkbox checkbox;
-	
+
 	private int formatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 	private Textbox elgModule;
 	private long custID;
-	private String oldVar_FinType="";
-	
+	private String oldVar_FinType = "";
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -163,8 +161,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, 
-	 * if the ZUL-file is called with a parameter for a
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
@@ -177,11 +174,11 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		setPageComponents(window_EligibilityCheck);
 
 		this.custCIF.setValue("");
-		this.finType.setValue("","");
+		this.finType.setValue("", "");
 		this.finType.setTextBoxWidth(161);
 		this.custShrtName.setValue("");
 		this.custCIF.setMaxlength(6);
-		
+
 		this.rows_KeyDetails.getChildren().clear();
 		this.gb_KeyDetails.setVisible(false);
 		fldsFetched = false;
@@ -192,7 +189,6 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		this.borderlayoutEligibilityCheck.setHeight(getBorderLayoutHeight());
 		logger.debug("Leaving " + event.toString());
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -208,27 +204,29 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		this.finType.setValidateColumns(new String[] { "FinType" });
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * onChange get the customer Details
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onChange$custCIF(Event event) throws InterruptedException{
+	public void onChange$custCIF(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
-		this.custCIF.clearErrorMessage();
-		
-		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
 
-		if(customer == null) {	
+		this.custCIF.clearErrorMessage();
+
+		Customer customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
+
+		if (customer == null) {
 			this.custID = Long.valueOf(0);
 			this.custShrtName.setValue("");
-			if(this.rows_KeyDetails.getChildren() != null) {
+			if (this.rows_KeyDetails.getChildren() != null) {
 				this.rows_KeyDetails.getChildren().clear();
 				this.gb_KeyDetails.setVisible(false);
 			}
-			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
 		} else {
 			doSetCustomer(customer, null);
 		}
@@ -244,11 +242,11 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	public void onFulfill$finType(Event event) {
 		logger.debug("Entering " + event.toString());
 		Clients.clearWrongValue(this.finType);
-		
+
 		this.finType.setConstraint("");
 		this.finType.setErrorMessage("");
 		Clients.clearWrongValue(finType);
-		
+
 		Object dataObject = this.finType.getObject();
 		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
@@ -260,51 +258,54 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 				setFinanceType(details);
 			}
 		}
-		
-		if(!oldVar_FinType.equals(this.finType.getValue())){
+
+		if (!oldVar_FinType.equals(this.finType.getValue())) {
 			this.rows_KeyDetails.getChildren().clear();
 			this.gb_KeyDetails.setVisible(false);
 		}
 		oldVar_FinType = StringUtils.trimToEmpty(this.finType.getValue());
-			logger.debug("Leaving " + event.toString());
+		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	public void onClick$btnGo(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		if("FINANCE".equals(this.elgModule.getValue())){
-			if(StringUtils.isBlank(this.finType.getValue())){
-				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_EligibilityCheck_FinType.value") }));
-			}else{
+		if ("FINANCE".equals(this.elgModule.getValue())) {
+			if (StringUtils.isBlank(this.finType.getValue())) {
+				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_EligibilityCheck_FinType.value") }));
+			} else {
 				Clients.clearWrongValue(finType);
 			}
-		}else if("CUSTOMER".equals(this.elgModule.getValue())){
-			if(this.custID  == 0){
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
+		} else if ("CUSTOMER".equals(this.elgModule.getValue())) {
+			if (this.custID == 0) {
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
 			}
 		}
 
 		this.rows_KeyDetails.getChildren().clear();
 		this.gb_KeyDetails.setVisible(false);
-		
-		setElgRuleList(getFinanceReferenceDetailService().getFinRefDetByRoleAndFinType(
-				this.finType.getValue(),FinanceConstants.FINSER_EVENT_ORG, null, "_AEView"));
 
-		if(getElgRuleList() != null && getElgRuleList().size() > 0){
-			if(!fldsFetched){
-				List<BMTRBFldDetails> list = getRuleService().getFieldList(RuleConstants.MODULE_ELGRULE, RuleConstants.EVENT_ELGRULE);
+		setElgRuleList(getFinanceReferenceDetailService().getFinRefDetByRoleAndFinType(this.finType.getValue(),
+				FinanceConstants.FINSER_EVENT_ORG, null, "_AEView"));
+
+		if (getElgRuleList() != null && getElgRuleList().size() > 0) {
+			if (!fldsFetched) {
+				List<BMTRBFldDetails> list = getRuleService().getFieldList(RuleConstants.MODULE_ELGRULE,
+						RuleConstants.EVENT_ELGRULE);
 				for (BMTRBFldDetails detail : list) {
-					if(!fldDetailsMap.containsKey(detail.getRbFldName().trim())){
-						fldDetailsMap.put(detail.getRbFldName().trim(),detail );
+					if (!fldDetailsMap.containsKey(detail.getRbFldName().trim())) {
+						fldDetailsMap.put(detail.getRbFldName().trim(), detail);
 					}
 				}
 
 				feildList.addAll(fldDetailsMap.keySet());
 				fldsFetched = true;
 			}
-		}else{
+		} else {
 			String msg = Labels.getLabel("label_NOEligibility_Rules_Defined");
-			Clients.showNotification(msg,  "warning", null, null, -1);
+			Clients.showNotification(msg, "warning", null, null, -1);
 		}
 
 		resultList = new ArrayList<String>();
@@ -312,7 +313,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 
 			String[] strings = (referenceDetail.getLovDescElgRuleValue()).split("[\\s\\(\\)\\+\\>\\<\\=\\-\\/\\*\\;]");
 			for (int i = 0; i < strings.length; i++) {
-				if(feildList.contains(strings[i].trim()) && !resultList.contains(strings[i].trim())){
+				if (feildList.contains(strings[i].trim()) && !resultList.contains(strings[i].trim())) {
 					resultList.add(strings[i].trim());
 				}
 			}
@@ -324,108 +325,108 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		CustomerEligibilityCheck custElgCheck = setCustomerEligibilityData(getCustomer());
 		for (int i = 0; i < resultList.size(); i++) {
 
-			if(fldDetailsMap.containsKey(resultList.get(i)) &&
-					!resultList.get(i).startsWith("custPD")){
+			if (fldDetailsMap.containsKey(resultList.get(i)) && !resultList.get(i).startsWith("custPD")) {
 
 				String fieldValue = "";
-				BMTRBFldDetails details = (BMTRBFldDetails)fldDetailsMap.get(resultList.get(i));
+				BMTRBFldDetails details = (BMTRBFldDetails) fldDetailsMap.get(resultList.get(i));
 
-				String fieldName = String.valueOf(details.getRbFldName().charAt(0)).toUpperCase()+details.getRbFldName().substring(1);
+				String fieldName = String.valueOf(details.getRbFldName().charAt(0)).toUpperCase()
+						+ details.getRbFldName().substring(1);
 
-				if(i%2 == 0){
+				if (i % 2 == 0) {
 					row = new Row();
 				}
 				label = new Label(details.getRbFldDesc());
 				row.appendChild(label);
 
-				if("nvarchar".equalsIgnoreCase(details.getRbFldType())){
+				if ("nvarchar".equalsIgnoreCase(details.getRbFldType())) {
 					textbox = new Textbox();
 					textbox.setId(details.getRbFldName());
-					if(details.getRbFldLen() < 5){
+					if (details.getRbFldLen() < 5) {
 						textbox.setWidth("60px");
-					}else{
-						textbox.setWidth((details.getRbFldLen()*12)+"px");
+					} else {
+						textbox.setWidth((details.getRbFldLen() * 12) + "px");
 					}
 					textbox.setMaxlength(details.getRbFldLen());
 
 					try {
-						if("CustCtgType".equalsIgnoreCase(fieldName)){
+						if ("CustCtgType".equalsIgnoreCase(fieldName)) {
 							fieldValue = getCustomer().getLovDescCustCtgType();
-						}else{
-							fieldValue = getCustomer().getClass().getMethod("get"+fieldName).invoke(
-									getCustomer()).toString();
+						} else {
+							fieldValue = getCustomer().getClass().getMethod("get" + fieldName).invoke(getCustomer())
+									.toString();
 						}
 						textbox.setValue(fieldValue);
 					} catch (Exception e) {
 						textbox.setValue(fieldValue);
-					} 
+					}
 					row.appendChild(textbox);
-				}else if("bigint".equalsIgnoreCase(details.getRbFldType())){
+				} else if ("bigint".equalsIgnoreCase(details.getRbFldType())) {
 					intbox = new Intbox();
 					intbox.setId(details.getRbFldName());
-					intbox.setWidth((details.getRbFldLen()*12)+"px");
+					intbox.setWidth((details.getRbFldLen() * 12) + "px");
 					intbox.setMaxlength(details.getRbFldLen());
 
 					try {
-						fieldValue = custElgCheck.getClass().getMethod( "get"+fieldName).invoke(
-								custElgCheck).toString();
+						fieldValue = custElgCheck.getClass().getMethod("get" + fieldName).invoke(custElgCheck)
+								.toString();
 						intbox.setValue(Integer.parseInt(fieldValue));
 					} catch (Exception e) {
 
-						if("CustAge".equalsIgnoreCase(fieldName) && customer != null){
-							intbox.setValue(DateUtility.getYearsBetween(
-									customer.getCustDOB(), DateUtility.getSysDate()));
-						}else{
+						if ("CustAge".equalsIgnoreCase(fieldName) && customer != null) {
+							intbox.setValue(
+									DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.getSysDate()));
+						} else {
 							intbox.setValue(0);
-					} 
+						}
 					}
 					row.appendChild(intbox);
-				}else if("decimal".equalsIgnoreCase(details.getRbFldType())){
+				} else if ("decimal".equalsIgnoreCase(details.getRbFldType())) {
 					decimalbox = new Decimalbox();
 					decimalbox.setId(details.getRbFldName());
-					decimalbox.setWidth((details.getRbFldLen()*12)+"px");
+					decimalbox.setWidth((details.getRbFldLen() * 12) + "px");
 					decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					decimalbox.setMaxlength(details.getRbFldLen() +2);
+					decimalbox.setMaxlength(details.getRbFldLen() + 2);
 
 					try {
-						
-						fieldValue = custElgCheck.getClass().getMethod( "get"+fieldName).invoke(
-								custElgCheck).toString();
-						if(fieldName.equalsIgnoreCase("CustAge")){
+
+						fieldValue = custElgCheck.getClass().getMethod("get" + fieldName).invoke(custElgCheck)
+								.toString();
+						if (fieldName.equalsIgnoreCase("CustAge")) {
 							decimalbox.setValue(new BigDecimal(fieldValue));
-						}else{
-							decimalbox.setValue(PennantAppUtil.formateAmount(new BigDecimal(fieldValue),formatter));
+						} else {
+							decimalbox.setValue(PennantAppUtil.formateAmount(new BigDecimal(fieldValue), formatter));
 						}
 					} catch (Exception e) {
 						decimalbox.setValue(BigDecimal.ZERO);
-					} 
+					}
 					row.appendChild(decimalbox);
-				}else if("smalldatetime".equalsIgnoreCase(details.getRbFldType())){
+				} else if ("smalldatetime".equalsIgnoreCase(details.getRbFldType())) {
 					datebox = new Datebox();
 					datebox.setId(details.getRbFldName());
 					datebox.setWidth("100px");
 					datebox.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 					try {
-						fieldValue = custElgCheck.getClass().getMethod( "get"+fieldName).invoke(
-								custElgCheck).toString();
+						fieldValue = custElgCheck.getClass().getMethod("get" + fieldName).invoke(custElgCheck)
+								.toString();
 						datebox.setText(fieldValue);
 					} catch (Exception e) {
 						datebox.setText("");
-					} 
+					}
 
 					row.appendChild(datebox);
-				}else if("nchar".equalsIgnoreCase(details.getRbFldType())){
+				} else if ("nchar".equalsIgnoreCase(details.getRbFldType())) {
 					checkbox = new Checkbox();
 					checkbox.setId(details.getRbFldName());
 
 					try {
-						fieldValue = custElgCheck.getClass().getMethod( "is"+fieldName).invoke(
-								custElgCheck).toString();
+						fieldValue = custElgCheck.getClass().getMethod("is" + fieldName).invoke(custElgCheck)
+								.toString();
 						checkbox.setChecked(Boolean.parseBoolean(fieldValue));
 					} catch (Exception e) {
 						checkbox.setChecked(false);
-					} 
+					}
 					row.appendChild(checkbox);
 				}
 				row.setParent(rows_KeyDetails);
@@ -435,7 +436,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method to prepare data required for customer eligibility check
 	 * 
@@ -443,30 +444,29 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	 */
 	private CustomerEligibilityCheck setCustomerEligibilityData(Customer customer) {
 		logger.debug("Entering");
-		
+
 		//Customer Eligibility Amounts Calculation
 		String currency = "";
 		String productCode = "";
-		if("FINANCE".equals(this.elgModule.getValue()) && getFinanceType() != null){
+		if ("FINANCE".equals(this.elgModule.getValue()) && getFinanceType() != null) {
 			currency = getFinanceType().getFinCcy();
 			productCode = getFinanceType().getFinCategory();
-		}else if("CUSTOMER".equals(this.elgModule.getValue()) && customer != null){
+		} else if ("CUSTOMER".equals(this.elgModule.getValue()) && customer != null) {
 			currency = customer.getCustBaseCcy();
 		}
-		
-		CustomerEligibilityCheck custElgCheck = getFinanceDetailService().getCustEligibilityDetail(customer,productCode, 
-				null, currency, BigDecimal.ZERO, 0 ,  null, null);
-		
+
+		CustomerEligibilityCheck custElgCheck = getFinanceDetailService().getCustEligibilityDetail(customer,
+				productCode, null, currency, BigDecimal.ZERO, 0, null, null);
+
 		custElgCheck.setReqFinAmount(BigDecimal.ZERO);
-		if ("FINANCE".equals(this.elgModule.getValue()) && 
-				StringUtils.isNotBlank(this.finType.getValue())) {
+		if ("FINANCE".equals(this.elgModule.getValue()) && StringUtils.isNotBlank(this.finType.getValue())) {
 			custElgCheck.setReqProduct(getFinanceType().getFinCategory());
 		}
-		
+
 		logger.debug("Leaving");
 		return custElgCheck;
 	}
-	
+
 	/**
 	 * On click event for stimulate button
 	 */
@@ -509,8 +509,8 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 					// bindings to the engine
 					if ("reqPftRate".equals(decimalbox.getId().trim()) || "tenure".equals(decimalbox.getId().trim())
 							|| "DSCR".equals(decimalbox.getId().trim())) {
-						fieldsAndValues.put(decimalbox.getId().trim(), decimalbox.getValue() == null ? BigDecimal.ZERO
-								: decimalbox.getValue());
+						fieldsAndValues.put(decimalbox.getId().trim(),
+								decimalbox.getValue() == null ? BigDecimal.ZERO : decimalbox.getValue());
 					} else {
 						fieldsAndValues.put(decimalbox.getId().trim(), decimalbox.getValue() == null ? BigDecimal.ZERO
 								: PennantAppUtil.unFormateAmount(decimalbox.getValue(), formatter));
@@ -530,7 +530,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 				// Rule List Execution
 				if ("CUSTOMER".equals(this.elgModule.getValue()) &&
 
-				StringUtils.isBlank(this.finType.getValue())) {
+						StringUtils.isBlank(this.finType.getValue())) {
 					fieldsAndValues.put("reqFinType", detail.getFinType());
 					fieldsAndValues.put("reqFinCcy", detail.getLovDescFinCcyCode());
 					fieldsAndValues.put("reqProduct", detail.getLovDescProductCodeName());
@@ -549,10 +549,10 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 				// Currency Conversions if Courrency Constants Exists in Rule
 				String rule = detail.getLovDescElgRuleValue();
 				rule = getRuleExecutionUtil().replaceCurrencyCode(rule, null);
-				
+
 				String returnType = detail.getLovDescRuleReturnType();
 				RuleReturnType ruleReturnType = null;
-				
+
 				if (StringUtils.equals(returnType, RuleReturnType.BOOLEAN.value())) {
 					ruleReturnType = RuleReturnType.BOOLEAN;
 				} else if (StringUtils.equals(returnType, RuleReturnType.DECIMAL.value())) {
@@ -566,8 +566,8 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 				}
 
 				// Execute the engine
-				Object object = this.ruleExecutionUtil.executeRule(rule, fieldsAndValues,  null,	ruleReturnType);
-				
+				Object object = this.ruleExecutionUtil.executeRule(rule, fieldsAndValues, null, ruleReturnType);
+
 				String resultValue = null;
 				switch (ruleReturnType) {
 				case DECIMAL:
@@ -582,21 +582,21 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 					} else {
 						resultValue = "0";
 					}
-					eligibilityRule.setElgAmount(new BigDecimal(resultValue));	//FIXME	only amount field is available, logic to be verified.
+					eligibilityRule.setElgAmount(new BigDecimal(resultValue)); //FIXME	only amount field is available, logic to be verified.
 					break;
-					
-				case OBJECT:	
+
+				case OBJECT:
 					RuleResult ruleResult = (RuleResult) object;
 					Object resultval = ruleResult.getValue();
-					
+
 					eligibilityRule.setElgAmount(new BigDecimal(resultval.toString()));
 					break;
-				
+
 				default:
 					//do-nothing
 					break;
 				}
-				
+
 				eligibilityRules.add(eligibilityRule);
 			}
 
@@ -611,7 +611,6 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * When user clicks on button "customerId Search" button
@@ -636,9 +635,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
-		Executions.createComponents(
-				"/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",
-				null, map);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
@@ -648,29 +645,29 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		this.custCIF.clearErrorMessage();
-		
-		
+
 		String oldVarCustCIF = this.custCIF.getValue();
 		final Customer aCustomer = (Customer) nCustomer;
-		Customer customer = (Customer)PennantAppUtil.getCustomerObject(aCustomer.getCustCIF(), null);
+		Customer customer = (Customer) PennantAppUtil.getCustomerObject(aCustomer.getCustCIF(), null);
 		this.custCIF.setValue(customer.getCustCIF());
 		this.custID = customer.getCustID();
 		this.custShrtName.setValue(customer.getCustShrtName());
 		this.custCIFSearchObject = newSearchObject;
 		setCustomer(customer);
-		
-		if(!oldVarCustCIF.equals(this.custCIF.getValue())){
+
+		if (!oldVarCustCIF.equals(this.custCIF.getValue())) {
 			this.rows_KeyDetails.getChildren().clear();
 			this.gb_KeyDetails.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * when the "refresh" button is clicked. <br>
 	 * <br>
@@ -694,14 +691,15 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	public FinanceType getFinanceType() {
 		return financeType;
 	}
+
 	public void setFinanceType(FinanceType financeType) {
 		this.financeType = financeType;
 	}
 
-	public void setFinanceReferenceDetailService(
-			FinanceReferenceDetailService financeReferenceDetailService) {
+	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
+
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return financeReferenceDetailService;
 	}
@@ -709,6 +707,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	public List<FinanceReferenceDetail> getElgRuleList() {
 		return elgRuleList;
 	}
+
 	public void setElgRuleList(List<FinanceReferenceDetail> elgRuleList) {
 		this.elgRuleList = elgRuleList;
 	}
@@ -716,6 +715,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+
 	public RuleService getRuleService() {
 		return ruleService;
 	}
@@ -723,13 +723,15 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
-	
+
 	public Customer getCustomer() {
 		return customer;
 	}
+
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
@@ -737,6 +739,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
+
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}

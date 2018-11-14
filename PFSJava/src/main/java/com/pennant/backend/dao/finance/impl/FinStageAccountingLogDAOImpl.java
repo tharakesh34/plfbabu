@@ -58,15 +58,15 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog> implements FinStageAccountingLogDAO {
 	private static Logger logger = Logger.getLogger(FinStageAccountingLogDAOImpl.class);
-	
+
 	public FinStageAccountingLogDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-    public long getLinkedTranId(String finReference, String finEvent, String roleCode) {
+	public long getLinkedTranId(String finReference, String finEvent, String roleCode) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setFinReference(finReference);
 		stageAccountingLog.setFinEvent(finEvent);
@@ -74,11 +74,12 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 		stageAccountingLog.setProcessed(false);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT LinkedTranId FROM FinStageAccountingLog");
-		selectSql.append(" WHERE FinReference=:FinReference AND RoleCode = :RoleCode AND FinEvent= :FinEvent AND Processed =:Processed" );
+		selectSql.append(
+				" WHERE FinReference=:FinReference AND RoleCode = :RoleCode AND FinEvent= :FinEvent AND Processed =:Processed");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		
+
 		long linkedTranId = 0;
 		try {
 			linkedTranId = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
@@ -86,39 +87,40 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 			logger.info(e);
 			linkedTranId = 0;
 		}
-		
+
 		logger.debug("Leaving");
 		return linkedTranId;
-    }
-	
+	}
+
 	/**
 	 * Method for fetch List of Transactions & Id's for Finance
+	 * 
 	 * @param finReference
 	 * @return
 	 */
 	@Override
 	public List<Long> getLinkedTranIdList(String finReference, String finEvent) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setFinReference(finReference);
 		stageAccountingLog.setFinEvent(finEvent);
-		
+
 		StringBuilder selectSql = new StringBuilder(" SELECT LinkedTranId FROM FinStageAccountingLog");
-		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent= :FinEvent " );
-		
+		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent= :FinEvent ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		
+
 		List<Long> linkedTranIdList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 		logger.debug("Leaving");
 		return linkedTranIdList;
 	}
 
 	@Override
-    public void saveStageAccountingLog(FinStageAccountingLog stageAccountingLog) {
+	public void saveStageAccountingLog(FinStageAccountingLog stageAccountingLog) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into FinStageAccountingLog");
 		insertSql.append(" (FinReference, FinEvent, RoleCode, LinkedTranId,Processed, ReceiptNo) ");
@@ -128,129 +130,130 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void deleteByRefandRole(String finReference,String finEvent, String roleCode) {
+	public void deleteByRefandRole(String finReference, String finEvent, String roleCode) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setFinReference(finReference);
 		stageAccountingLog.setFinEvent(finEvent);
 		stageAccountingLog.setRoleCode(roleCode);
 		stageAccountingLog.setProcessed(false);
-		
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinStageAccountingLog");	
-		deleteSql.append(" WHERE FinReference =:FinReference AND FinEvent= :FinEvent AND RoleCode=:RoleCode AND Processed =:Processed ");
+
+		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinStageAccountingLog");
+		deleteSql.append(
+				" WHERE FinReference =:FinReference AND FinEvent= :FinEvent AND RoleCode=:RoleCode AND Processed =:Processed ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
-/*
- * (non-Javadoc)
- * @see com.pennant.backend.dao.finance.FinStageAccountingLogDAO#update(java.lang.String, java.lang.String, boolean)
- * updating processed as true in  finstageAccountingLog table
- */
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.pennant.backend.dao.finance.FinStageAccountingLogDAO#update(java.lang.String, java.lang.String, boolean)
+	 * updating processed as true in finstageAccountingLog table
+	 */
 	@Override
 	public void update(String finReference, String finEvent, boolean processed) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog finStageAccountLog = new FinStageAccountingLog();
 		finStageAccountLog.setFinReference(finReference);
 		finStageAccountLog.setFinEvent(finEvent);
 		finStageAccountLog.setProcessed(processed);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinStageAccountingLog");
-		updateSql.append(" Set Processed='"+1 +"' " );
+		updateSql.append(" Set Processed='" + 1 + "' ");
 		updateSql.append(" Where FinReference =:FinReference AND FinEvent= :FinEvent AND Processed=:Processed ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStageAccountLog);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for fetch Count of Transactions based on ReceiptNo
+	 * 
 	 * @param ReceiptNo
 	 * @return
 	 */
 	@Override
 	public int getTranCountByReceiptNo(String receiptNo) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setReceiptNo(receiptNo);
-		
+
 		StringBuilder selectSql = new StringBuilder(" SELECT Count(LinkedTranId) FROM FinStageAccountingLog ");
-		selectSql.append(" WHERE ReceiptNo=:ReceiptNo " );
-		
+		selectSql.append(" WHERE ReceiptNo=:ReceiptNo ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		
+
 		int tranCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		logger.debug("Leaving");
 		return tranCount;
 	}
-	
+
 	@Override
 	public void updateByReceiptNo(String receiptNo) {
 		FinStageAccountingLog finStageAccountLog = new FinStageAccountingLog();
 		finStageAccountLog.setReceiptNo(receiptNo);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinStageAccountingLog");
-		updateSql.append(" Set Processed='"+1 +"' " );
+		updateSql.append(" Set Processed='" + 1 + "' ");
 		updateSql.append(" Where ReceiptNo =:ReceiptNo ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStageAccountLog);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Method for fetch List of Transactions & Id's for Receipt
+	 * 
 	 * @param ReceiptNo
 	 * @return
 	 */
 	@Override
 	public List<Long> getTranIdListByReceipt(String receiptNo) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setReceiptNo(receiptNo);
-		
+
 		StringBuilder selectSql = new StringBuilder(" SELECT LinkedTranId FROM FinStageAccountingLog");
-		selectSql.append(" WHERE ReceiptNo=:ReceiptNo " );
-		
+		selectSql.append(" WHERE ReceiptNo=:ReceiptNo ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
-		
+
 		List<Long> linkedTranIdList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 		logger.debug("Leaving");
 		return linkedTranIdList;
 	}
-	
 
 	@Override
-    public void deleteByReceiptNo(String receiptNo) {
+	public void deleteByReceiptNo(String receiptNo) {
 		logger.debug("Entering");
-		
+
 		FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 		stageAccountingLog.setReceiptNo(receiptNo);
-		
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinStageAccountingLog");	
+
+		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinStageAccountingLog");
 		deleteSql.append(" WHERE ReceiptNo=:ReceiptNo ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stageAccountingLog);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 }
-
-

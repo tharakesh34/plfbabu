@@ -60,11 +60,11 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.workflow.model.WorkFlowListModelItemRenderer;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /PFSWeb/WebContent/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul file.
@@ -74,9 +74,8 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	private static final Logger logger = Logger.getLogger(WorkFlowListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_workFlowList;
 	protected Borderlayout borderLayout_workFlowList;
@@ -117,31 +116,27 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_workFlowList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_workFlowList, borderLayout_workFlowList,
-				listBoxWorkFlow, pagingWorkFlowList);
+		setPageComponents(window_workFlowList, borderLayout_workFlowList, listBoxWorkFlow, pagingWorkFlowList);
 		setItemRender(new WorkFlowListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_workFlowList_NewworkFlow,
-				"button_workFlowList_NewworkFlow", true);
+		registerButton(button_workFlowList_NewworkFlow, "button_workFlowList_NewworkFlow", true);
 		registerButton(button_workFlowList_workFlowFindDialog);
 
 		registerField("workFlowId");
-		registerField("workFlowType", listheader_workFlowType, SortOrder.ASC,
-				workFlowType, sortOperator_workFlowType, Operators.STRING);
-		registerField("workFlowSubType", listheader_workFlowSubType,
-				SortOrder.NONE, workFlowSubType, sortOperator_workFlowSubType,
+		registerField("workFlowType", listheader_workFlowType, SortOrder.ASC, workFlowType, sortOperator_workFlowType,
 				Operators.STRING);
-		registerField("workFlowDesc", listheader_workFlowDesc, SortOrder.NONE,
-				workFLowDescription, sortOperator_description, Operators.STRING);
+		registerField("workFlowSubType", listheader_workFlowSubType, SortOrder.NONE, workFlowSubType,
+				sortOperator_workFlowSubType, Operators.STRING);
+		registerField("workFlowDesc", listheader_workFlowDesc, SortOrder.NONE, workFLowDescription,
+				sortOperator_description, Operators.STRING);
 		registerField("workFlowActive", listheader_workFlowStatus);
 
 		// Render the page and display the data.
@@ -152,12 +147,11 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		this.searchObject.addFilter(new Filter("WorkFlowActive",1,Filter.OP_EQUAL));
+		this.searchObject.addFilter(new Filter("WorkFlowActive", 1, Filter.OP_EQUAL));
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -167,8 +161,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -177,7 +170,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 		doReset();
 		search();
 	}
-	
+
 	public void doReset() {
 		logger.debug("Entering");
 		super.doReset();
@@ -185,8 +178,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -206,8 +198,8 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -220,8 +212,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
-		WorkFlowDetails workFlowDetails = workFlowDetailsService
-				.getWorkFlowDetailsByID(id);
+		WorkFlowDetails workFlowDetails = workFlowDetailsService.getWorkFlowDetailsByID(id);
 
 		if (workFlowDetails == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -229,8 +220,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND WorkFlowId='"
-				+ workFlowDetails.getWorkFlowId() + "' AND version="
+		String whereCond = " AND WorkFlowId='" + workFlowDetails.getWorkFlowId() + "' AND version="
 				+ workFlowDetails.getVersion() + " ";
 
 		if (doCheckAuthority(workFlowDetails, whereCond)) {
@@ -254,16 +244,13 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	 */
 	private void doShowDialogPage(WorkFlowDetails workFlowDetails) {
 		logger.debug("Entering");
-		
+
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("workFlowDetails", workFlowDetails);
 		arg.put("workFlowListCtrl", this);
 
 		try {
-			Executions
-			.createComponents(
-					"/WEB-INF/pages/SolutionFactory/workFlow/WorkflowDesign.zul",
-					null, arg);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/workFlow/WorkflowDesign.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -273,8 +260,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -293,8 +279,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 		doShowHelp(event);
 	}
 
-	public void setWorkFlowDetailsService(
-			WorkFlowDetailsService workFlowDetailsService) {
+	public void setWorkFlowDetailsService(WorkFlowDetailsService workFlowDetailsService) {
 		this.workFlowDetailsService = workFlowDetailsService;
 	}
 }

@@ -82,7 +82,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
@@ -90,18 +89,17 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/AssignmentDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/AssignmentDialog.zul file.
  */
 public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	private static final long serialVersionUID = 4149506032336052235L;
 	private static final Logger logger = Logger.getLogger(QueueAssignmentDialogCtrl.class);
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_QueueAssignmentDialog; // autoWired
 	protected Label window_AssignmentTitle;
@@ -122,7 +120,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
 	private boolean enqModule = false;
-	
+
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	private transient boolean validationOn;
@@ -155,9 +153,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	// Components events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected QueueAssignments
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected QueueAssignments object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -227,11 +224,11 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		this.toUser.setFilters(filter);
 		this.toUser.setValidateColumns(new String[] { "UsrID" });
 
-		this.sortOperator_CustomerCIF.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+		this.sortOperator_CustomerCIF
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_CustomerCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-				.getStringOperators()));
+		this.sortOperator_finReference
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		logger.debug("Leaving");
@@ -337,9 +334,9 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	public void doReadOnly(boolean readOnly) {
 
 		boolean tempReadOnly = readOnly;
-		if (readOnly){
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.queueAssignment.getRecordType())) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.queueAssignment.getRecordType())) {
 			tempReadOnly = true;
 		}
 		setExtAccess("AssignmentDialog_FromUser", true, this.fromUser, null);
@@ -361,8 +358,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 
@@ -390,12 +386,10 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	}
 
 	/**
-	 * This method do the following 1)compare oldAssigned map and new assigned
-	 * map a)if roleId not in oldselectedMap and in new selectedMap creates new
-	 * QueueAssignment Object, sets data and add it to QueueAssignmentr
-	 * LovDescAssignedRoles b)if roleId in oldselectedMap and not in new
-	 * selectedMap gets the QueueAssignment from back end , sets RecordStatus
-	 * "DELETE" add it to SecurityUser LovDescAssignedRoles
+	 * This method do the following 1)compare oldAssigned map and new assigned map a)if roleId not in oldselectedMap and
+	 * in new selectedMap creates new QueueAssignment Object, sets data and add it to QueueAssignmentr
+	 * LovDescAssignedRoles b)if roleId in oldselectedMap and not in new selectedMap gets the QueueAssignment from back
+	 * end , sets RecordStatus "DELETE" add it to SecurityUser LovDescAssignedRoles
 	 */
 	public void doWriteComponentsToBean(QueueAssignmentHeader queueAssignmentHeader) {
 		logger.debug("Entering");
@@ -430,8 +424,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 					queueAssignmentHeader.setUserId("0");
 				}
 			} else {
-				queue.setFromUserId(Long.valueOf(queueAssignmentHeader.getUserId() == null ? "0"
-						: queueAssignmentHeader.getUserId()));
+				queue.setFromUserId(Long
+						.valueOf(queueAssignmentHeader.getUserId() == null ? "0" : queueAssignmentHeader.getUserId()));
 			}
 
 			if (queue.getUserId() != 0) {
@@ -718,8 +712,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_QueueAssignmentDialog, auditHeader);
 						return processCompleted;
 					}
@@ -788,13 +782,13 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	 */
 	private void doCancel() throws Exception {
 		/*
-		 * tempUnAsgnRoleMap.clear(); newAssignedMap.clear();
-		 * unAssignedRoleList=tempUnAssignedRoleList; doShowDialog();
+		 * tempUnAsgnRoleMap.clear(); newAssignedMap.clear(); unAssignedRoleList=tempUnAssignedRoleList; doShowDialog();
 		 */
 	}
 
 	// OnClick Events
-	public List<QueueAssignment> filterRecords(int finFilterCode, String finValue, int custFilterCode, String custValue) {
+	public List<QueueAssignment> filterRecords(int finFilterCode, String finValue, int custFilterCode,
+			String custValue) {
 		logger.debug("Entering ");
 		ArrayList<QueueAssignment> searchList = new ArrayList<QueueAssignment>();
 		List<QueueAssignment> dataList = getQueueAssignmentHeader().getQueueAssignmentsList();
@@ -860,13 +854,13 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		setValidationOn(true);
 
 		if (!this.fromUser.isReadonly()) {
-			this.fromUser.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_QueueAssignmentDialog_FromUser.value"), null, true, true));
+			this.fromUser.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_QueueAssignmentDialog_FromUser.value"), null, true, true));
 		}
 
 		if (!this.toUser.isReadonly()) {
-			this.toUser.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_QueueAssignmentDialog_ToUser.value"), null, true, true));
+			this.toUser.setConstraint(new PTStringValidator(Labels.getLabel("label_QueueAssignmentDialog_ToUser.value"),
+					null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -928,12 +922,11 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.queueAssignmentHeader);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.queueAssignmentHeader.getModule());
 	}
-
 
 	private void doFillToUsers(String toUser, String desc) {
 		logger.debug("Entering");
@@ -1053,8 +1046,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 				listCell = new Listcell(queue.getLovDescCustCIF());
 				listCell.setParent(item);
 
-				listCell = new Listcell(PennantAppUtil.amountFormate(queue.getLovDescFinAmount(),
-						queue.getLovDescEditField()));
+				listCell = new Listcell(
+						PennantAppUtil.amountFormate(queue.getLovDescFinAmount(), queue.getLovDescEditField()));
 				listCell.setStyle("text-align:right;");
 				listCell.setParent(item);
 
@@ -1111,8 +1104,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		logger.debug("Leaving");
 	}
 
-	public void onChangeToUser(ForwardEvent event) throws InterruptedException, IllegalAccessException,
-			InvocationTargetException, InterfaceException {
+	public void onChangeToUser(ForwardEvent event)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.listbox_AssignmentRecords);
 		ExtendedCombobox combo = (ExtendedCombobox) event.getOrigin().getTarget();
@@ -1170,8 +1163,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		Object dataObject = toUser.getObject();
 		if (dataObject instanceof SecurityUserOperationRoles) {
 			SecurityUserOperationRoles details = (SecurityUserOperationRoles) dataObject;
-			if (details != null
-					&& !StringUtils.equals(String.valueOf(details.getUsrID()), getQueueAssignmentHeader().getUserId())) {
+			if (details != null && !StringUtils.equals(String.valueOf(details.getUsrID()),
+					getQueueAssignmentHeader().getUserId())) {
 				if (validUser(StringUtils.join(references, ','), details.getUsrID(), details.getRoleCd())) {
 					this.toUser.setValue(String.valueOf(details.getUsrID()));
 					this.toUser.setDescription(details.getLovDescFirstName());

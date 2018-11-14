@@ -41,7 +41,6 @@
  ********************************************************************************************
 */
 
-
 package com.pennant.webui.util.searching;
 
 import java.io.Serializable;
@@ -59,23 +58,22 @@ public class SearchOperatorListModelItemRenderer implements ListitemRenderer<Sea
 
 	private static final long serialVersionUID = 1L;
 
-	
 	public SearchOperatorListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, SearchOperators searchOp, int count) throws Exception {
 
 		final Listcell lc = new Listcell(searchOp.getSearchOperatorSign());
 		lc.setParent(item);
 		item.setAttribute("data", searchOp);
-		
+
 		//Default Selecting of EQUAL Parameter List item on Selection
-		if(count == 0){
-			if(item.getParent() instanceof Listbox){
-				if(((Listbox)item.getParent()).getSelectedItem() == null){
-					((Listbox)item.getParent()).setSelectedItem(item);
+		if (count == 0) {
+			if (item.getParent() instanceof Listbox) {
+				if (((Listbox) item.getParent()).getSelectedItem() == null) {
+					((Listbox) item.getParent()).setSelectedItem(item);
 				}
 			}
 		}

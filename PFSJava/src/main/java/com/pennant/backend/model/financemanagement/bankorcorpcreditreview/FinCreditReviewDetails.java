@@ -16,7 +16,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinCreditReviewDetails extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
-	private long detailId  = Long.MIN_VALUE;
+	private long detailId = Long.MIN_VALUE;
 	private String creditRevCode;
 	private String custCtgCode;
 
@@ -24,25 +24,25 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private String auditYear;
 	private String bankName;
 	private String auditors;
-    private boolean consolidated;
-	private String location;	
-	private BigDecimal conversionRate=BigDecimal.ZERO;
+	private boolean consolidated;
+	private String location;
+	private BigDecimal conversionRate = BigDecimal.ZERO;
 	private Date auditedDate;
 	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditReviewDetails befImage;
 	private LoggedInUser userDetails;
-	private List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries =new ArrayList<FinCreditReviewSummary>();
-	private List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory =new ArrayList<FinCreditRevSubCategory>();
-	private List<CustomerDocument> customerDocumentList =new ArrayList<CustomerDocument>();
-	
+	private List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries = new ArrayList<FinCreditReviewSummary>();
+	private List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory = new ArrayList<FinCreditRevSubCategory>();
+	private List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>();
+
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String lovDescCustCIF;
 	private String lovDescCustCtgCode;
 	private String lovDescCustShrtName;
-	private long 	noOfShares;
+	private long noOfShares;
 	private BigDecimal marketPrice;
-	
+
 	private int auditPeriod;
 	private String auditType;
 	private boolean qualified;
@@ -54,8 +54,7 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private List<Notes> notesList;
 	private String description;
 	private BigDecimal item;
-	
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -81,99 +80,113 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	}
 
 	public String getLovDescCustCIF() {
-    	return lovDescCustCIF;
-    }
+		return lovDescCustCIF;
+	}
 
 	public void setLovDescCustCIF(String lovDescCustCIF) {
-    	this.lovDescCustCIF = lovDescCustCIF;
-    }
+		this.lovDescCustCIF = lovDescCustCIF;
+	}
 
 	public String getLovDescCustCtgCode() {
-    	return lovDescCustCtgCode;
-    }
+		return lovDescCustCtgCode;
+	}
 
 	public void setLovDescCustCtgCode(String lovDescCustCtgCode) {
-    	this.lovDescCustCtgCode = lovDescCustCtgCode;
-    }
+		this.lovDescCustCtgCode = lovDescCustCtgCode;
+	}
 
 	public String getLovDescCustShrtName() {
-    	return lovDescCustShrtName;
-    }
+		return lovDescCustShrtName;
+	}
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-    	this.lovDescCustShrtName = lovDescCustShrtName;
-    }
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
 
-	public FinCreditReviewDetails(){
+	public FinCreditReviewDetails() {
 		super();
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
 
 	public long getDetailId() {
-    	return detailId;
-    }
+		return detailId;
+	}
+
 	public void setDetailId(long detailId) {
-    	this.detailId = detailId;
-    }
-	
+		this.detailId = detailId;
+	}
+
 	public long getCustomerId() {
-    	return customerId;
-    }
+		return customerId;
+	}
+
 	public void setCustomerId(long customerId) {
-    	this.customerId = customerId;
-    }
+		this.customerId = customerId;
+	}
+
 	public String getAuditYear() {
-    	return auditYear;
-    }
+		return auditYear;
+	}
+
 	public void setAuditYear(String auditYear) {
-    	this.auditYear = auditYear;
-    }
+		this.auditYear = auditYear;
+	}
+
 	public String getBankName() {
-    	return bankName;
-    }
+		return bankName;
+	}
+
 	public void setBankName(String bankName) {
-    	this.bankName = bankName;
-    }
+		this.bankName = bankName;
+	}
+
 	public String getAuditors() {
-    	return auditors;
-    }
+		return auditors;
+	}
+
 	public void setAuditors(String auditors) {
-    	this.auditors = auditors;
-    }
-	
+		this.auditors = auditors;
+	}
+
 	public String getLocation() {
-    	return location;
-    }
+		return location;
+	}
+
 	public void setLocation(String location) {
-    	this.location = location;
-    }
-	
+		this.location = location;
+	}
+
 	public BigDecimal getConversionRate() {
-    	return conversionRate;
-    }
+		return conversionRate;
+	}
+
 	public void setConversionRate(BigDecimal conversionRate) {
-    	this.conversionRate = conversionRate;
-    }
+		this.conversionRate = conversionRate;
+	}
+
 	public Date getAuditedDate() {
-    	return auditedDate;
-    }
+		return auditedDate;
+	}
+
 	public String getCustCtgCode() {
 		return custCtgCode;
 	}
-	
+
 	public void setCustCtgCode(String custCtgCode) {
 		this.custCtgCode = custCtgCode;
 	}
+
 	public void setAuditedDate(Date auditedDate) {
-    	this.auditedDate = auditedDate;
-    }
-	
+		this.auditedDate = auditedDate;
+	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -181,6 +194,7 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -188,6 +202,7 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	public FinCreditReviewDetails getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(FinCreditReviewDetails beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -195,168 +210,172 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public void setCreditRevCode(String creditRevCode) {
-	    this.creditRevCode = creditRevCode;
-    }
-	public String getCreditRevCode() {
-	    return creditRevCode;
-    }
-	public void setCreditReviewSummaryEntries(List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries) {
-	    this.lovDescCreditReviewSummaryEntries = lovDescCreditReviewSummaryEntries;
-    }
-	public List<FinCreditRevSubCategory> getLovDescFinCreditRevSubCategory() {
-    	return lovDescFinCreditRevSubCategory;
-    }
+		this.creditRevCode = creditRevCode;
+	}
 
-	public void setLovDescFinCreditRevSubCategory(
-            List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory) {
-    	this.lovDescFinCreditRevSubCategory = lovDescFinCreditRevSubCategory;
-    }
+	public String getCreditRevCode() {
+		return creditRevCode;
+	}
+
+	public void setCreditReviewSummaryEntries(List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries) {
+		this.lovDescCreditReviewSummaryEntries = lovDescCreditReviewSummaryEntries;
+	}
+
+	public List<FinCreditRevSubCategory> getLovDescFinCreditRevSubCategory() {
+		return lovDescFinCreditRevSubCategory;
+	}
+
+	public void setLovDescFinCreditRevSubCategory(List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory) {
+		this.lovDescFinCreditRevSubCategory = lovDescFinCreditRevSubCategory;
+	}
 
 	public void setCustomerDocumentList(List<CustomerDocument> customerDocumentList) {
-	    this.customerDocumentList = customerDocumentList;
-    }
+		this.customerDocumentList = customerDocumentList;
+	}
 
 	public List<CustomerDocument> getCustomerDocumentList() {
-	    return customerDocumentList;
-    }
+		return customerDocumentList;
+	}
 
 	public List<FinCreditReviewSummary> getCreditReviewSummaryEntries() {
-	    return lovDescCreditReviewSummaryEntries;
-    }
+		return lovDescCreditReviewSummaryEntries;
+	}
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-	    this.auditDetailMap = auditDetailMap;
-    }
+		this.auditDetailMap = auditDetailMap;
+	}
 
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-	    return auditDetailMap;
-    }
+		return auditDetailMap;
+	}
 
 	@Override
-    public long getId() {
-	    
-	    return this.detailId;
-    }
+	public long getId() {
+
+		return this.detailId;
+	}
 
 	@Override
-    public void setId(long id) {
+	public void setId(long id) {
 		setDetailId(id);
-	    
-    }
+
+	}
 
 	public void setNoOfShares(long noOfShares) {
-	    this.noOfShares = noOfShares;
-    }
+		this.noOfShares = noOfShares;
+	}
 
 	public long getNoOfShares() {
-	    return noOfShares;
-    }
+		return noOfShares;
+	}
 
 	public void setMarketPrice(BigDecimal marketPrice) {
-	    this.marketPrice = marketPrice;
-    }
+		this.marketPrice = marketPrice;
+	}
 
 	public BigDecimal getMarketPrice() {
-	    return marketPrice;
-    }
+		return marketPrice;
+	}
 
 	public void setAuditPeriod(int auditPeriod) {
-	    this.auditPeriod = auditPeriod;
-    }
+		this.auditPeriod = auditPeriod;
+	}
 
 	public int getAuditPeriod() {
-	    return auditPeriod;
-    }
+		return auditPeriod;
+	}
 
 	public String getAuditType() {
-    	return auditType;
-    }
+		return auditType;
+	}
 
 	public void setAuditType(String auditType) {
-    	this.auditType = auditType;
-    }
+		this.auditType = auditType;
+	}
 
 	public List<Notes> getNotesList() {
-    	return notesList;
-    }
+		return notesList;
+	}
 
 	public void setNotesList(List<Notes> notesList) {
-    	this.notesList = notesList;
-    }
-	
+		this.notesList = notesList;
+	}
+
 	public boolean isConsolidated() {
-	    return consolidated;
-    }
+		return consolidated;
+	}
 
 	public void setConsolidated(boolean consolidated) {
-	    this.consolidated = consolidated;
-    }
+		this.consolidated = consolidated;
+	}
 
 	public String getCurrency() {
-	    return currency;
-    }
+		return currency;
+	}
 
 	public void setCurrency(String currency) {
-	    this.currency = currency;
-    }
+		this.currency = currency;
+	}
 
 	public boolean isQualified() {
-	    return qualified;
-    }
+		return qualified;
+	}
 
 	public List<FinCreditReviewSummary> getLovDescCreditReviewSummaryEntries() {
-    	return lovDescCreditReviewSummaryEntries;
-    }
+		return lovDescCreditReviewSummaryEntries;
+	}
 
-	public void setLovDescCreditReviewSummaryEntries(
-            List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries) {
-    	this.lovDescCreditReviewSummaryEntries = lovDescCreditReviewSummaryEntries;
-    }
+	public void setLovDescCreditReviewSummaryEntries(List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries) {
+		this.lovDescCreditReviewSummaryEntries = lovDescCreditReviewSummaryEntries;
+	}
 
 	public void setQualified(boolean qualified) {
-	    this.qualified = qualified;
-    }
+		this.qualified = qualified;
+	}
 
 	public String getLovDescMaxAuditYear() {
-    	return lovDescMaxAuditYear;
-    }
+		return lovDescMaxAuditYear;
+	}
+
 	public void setLovDescMaxAuditYear(String lovDescMaxAuditYear) {
-    	this.lovDescMaxAuditYear = lovDescMaxAuditYear;
-    }
+		this.lovDescMaxAuditYear = lovDescMaxAuditYear;
+	}
 
 	public String getLovDescMinAuditYear() {
-    	return lovDescMinAuditYear;
-    }
+		return lovDescMinAuditYear;
+	}
+
 	public void setLovDescMinAuditYear(String lovDescMinAuditYear) {
-    	this.lovDescMinAuditYear = lovDescMinAuditYear;
-    }
+		this.lovDescMinAuditYear = lovDescMinAuditYear;
+	}
 
 	public String getDivision() {
-	    return division;
-    }
+		return division;
+	}
 
 	public void setDivision(String division) {
-	    this.division = division;
-    }
+		this.division = division;
+	}
 
 	public void setConversionRate(String formatAmount) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setConsolidated(Object consolidated2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void setMapList(HashMap<String, BigDecimal> excelBSmap) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

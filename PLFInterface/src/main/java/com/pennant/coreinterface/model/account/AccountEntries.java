@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AccountEntries implements Serializable {
 
 	private static final long serialVersionUID = -8204809211257397469L;
-	
+
 	private String custCIF;
 	private String acCcy;
 	private String acType;
@@ -30,7 +30,7 @@ public class AccountEntries implements Serializable {
 	private String finReference;
 
 	public AccountEntries() {
-		
+
 	}
 
 	@XmlElement(name = "ReturnCode")

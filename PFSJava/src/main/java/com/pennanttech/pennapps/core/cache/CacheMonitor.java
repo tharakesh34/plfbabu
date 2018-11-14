@@ -50,14 +50,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CacheMonitor implements Runnable {
 	private static final Logger log = LogManager.getLogger(CacheMonitor.class);
-	
+
 	private CacheAdmin cacheAdmin;
-			
+
 	public CacheMonitor(CacheAdmin cacheAdmin) {
 		super();
 		this.cacheAdmin = cacheAdmin;
 	}
-
 
 	@Override
 	public void run() {

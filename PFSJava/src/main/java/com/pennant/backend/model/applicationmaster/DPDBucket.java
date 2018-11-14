@@ -58,24 +58,24 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DPDBucket table</b>.<br>
  *
  */
-@XmlType(propOrder = {"bucketID","bucketCode","bucketDesc","active"})
+@XmlType(propOrder = { "bucketID", "bucketCode", "bucketDesc", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DPDBucket extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class DPDBucket extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long bucketID = Long.MIN_VALUE;
 	private String bucketCode;
 	private String bucketDesc;
 	private boolean active;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private DPDBucket befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -88,47 +88,52 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return bucketID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.bucketID = id;
 	}
+
 	public long getBucketID() {
 		return bucketID;
 	}
+
 	public void setBucketID(long bucketID) {
 		this.bucketID = bucketID;
 	}
-	
+
 	public String getBucketCode() {
 		return bucketCode;
 	}
+
 	public void setBucketCode(String bucketCode) {
 		this.bucketCode = bucketCode;
 	}
-	
+
 	public String getBucketDesc() {
 		return bucketDesc;
 	}
+
 	public void setBucketDesc(String bucketDesc) {
 		this.bucketDesc = bucketDesc;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -136,7 +141,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -145,19 +150,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public DPDBucket getBefImage(){
+	public DPDBucket getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DPDBucket beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DPDBucket beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

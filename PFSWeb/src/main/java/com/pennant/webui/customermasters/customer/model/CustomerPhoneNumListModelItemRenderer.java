@@ -59,11 +59,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerPhoneNumListModelItemRenderer implements ListitemRenderer<CustomerPhoneNumber>, Serializable {
 
 	private static final long serialVersionUID = -5669186412320406064L;
-	
+
 	public CustomerPhoneNumListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) throws Exception {
 		Listcell lc;

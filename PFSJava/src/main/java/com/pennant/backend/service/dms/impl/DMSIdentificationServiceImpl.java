@@ -38,7 +38,7 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 
 public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 	private static Logger logger = Logger.getLogger(DMSIdentificationServiceImpl.class);
-	
+
 	@Autowired
 	private DMSIdentificationDAO dmsIdentificationDao;
 	@Autowired
@@ -59,14 +59,15 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 		logger.debug("Entering");
 		List<DMSDocumentDetails> dmsDocumentDetailList = new ArrayList<>();
 		List<DocumentDetails> totDocumentDetailsList = new ArrayList<>();
-		
-		try{
+
+		try {
 			if (null != auditHeader) {
 				Object modelObj = auditHeader.getAuditDetail().getModelData();
 				if (modelObj instanceof FinanceDetail) {
 					FinanceDetail financeDetail = (FinanceDetail) modelObj;
 
-					JdbcSearchObject<DocumentType> searchObject = new JdbcSearchObject<DocumentType>(DocumentType.class);
+					JdbcSearchObject<DocumentType> searchObject = new JdbcSearchObject<DocumentType>(
+							DocumentType.class);
 					searchObject.addTabelName("BMTDocumentTypes");
 
 					List<DocumentType> documentTypeList = searchProcessor.getResults(searchObject);
@@ -75,8 +76,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 						long custId = financeDetail.getFinScheduleData().getFinanceMain().getCustID();
 
 						if (null != customerDetailsService) {
-							CustomerDetails customerDetails = customerDetailsService.getCustomerAndCustomerDocsById(custId,
-									"_AView");
+							CustomerDetails customerDetails = customerDetailsService
+									.getCustomerAndCustomerDocsById(custId, "_AView");
 							if (null != customerDetails
 									&& CollectionUtils.isNotEmpty(customerDetails.getCustomerDocumentsList())) {
 								for (CustomerDocument customer : customerDetails.getCustomerDocumentsList()) {
@@ -98,7 +99,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 												financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 										if (null != financeDetail && null != financeDetail.getCustomerDetails()
 												&& null != financeDetail.getCustomerDetails().getCustomer()) {
-											details.setCustomerCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+											details.setCustomerCif(
+													financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 										}
 										dmsDocumentDetailList.add(details);
 									}
@@ -121,11 +123,12 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 									"_View");
 						}
 						List<CollateralSetup> collateralSetupList = null;
-						if (null != collateralSetupService && CollectionUtils.isNotEmpty(collateralAssignmentByFinRef)) {
+						if (null != collateralSetupService
+								&& CollectionUtils.isNotEmpty(collateralAssignmentByFinRef)) {
 							collateralSetupList = collateralAssignmentByFinRef.stream().map(colAssign -> {
 								if (null != colAssign) {
-									return collateralSetupService.getCollateralSetupByRef(colAssign.getCollateralRef(), "",
-											false);
+									return collateralSetupService.getCollateralSetupByRef(colAssign.getCollateralRef(),
+											"", false);
 								}
 								return null;
 							}).filter(details -> null != details).collect(Collectors.toList());
@@ -187,8 +190,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								if (null != documentTypeList) {
 									for (DocumentType documentType : documentTypeList) {
 										if (null != documentType && null != documentType.getDocTypeCode()
-												&& null != documentDetails.getDocCategory()
-												&& documentType.getDocTypeCode().equals(documentDetails.getDocCategory())) {
+												&& null != documentDetails.getDocCategory() && documentType
+														.getDocTypeCode().equals(documentDetails.getDocCategory())) {
 											details.setDocDesc(documentType.getDocTypeDesc());
 											break;
 										}
@@ -200,7 +203,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								details.setReferenceId(documentDetails.getReferenceId());
 								if (null != financeDetail && null != financeDetail.getCustomerDetails()
 										&& null != financeDetail.getCustomerDetails().getCustomer()) {
-									details.setCustomerCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+									details.setCustomerCif(
+											financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 								}
 								dmsDocumentDetailList.add(details);
 							}
@@ -212,21 +216,20 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 			if (CollectionUtils.isNotEmpty(dmsDocumentDetailList)) {
 				dmsIdentificationDao.saveDMSDocumentReferences(dmsDocumentDetailList);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	public List<DMSDocumentDetails> getDmsDocumentDetails(long dmsId){
+	public List<DMSDocumentDetails> getDmsDocumentDetails(long dmsId) {
 		logger.debug("Entering");
 		List<DMSDocumentDetails> dmsDocumentLogs = null;
-		try{
+		try {
 			dmsDocumentLogs = dmsIdentificationDao.retrieveDMSDocumentLogs(dmsId);
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug("Leaving");

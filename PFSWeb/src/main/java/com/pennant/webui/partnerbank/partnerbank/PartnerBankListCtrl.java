@@ -65,9 +65,9 @@ import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.webui.partnerbank.partnerbank.model.PartnerBankListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -77,33 +77,33 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(PartnerBankListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(PartnerBankListCtrl.class);
 
-	protected Window						window_PartnerBankList;
-	protected Borderlayout					borderLayout_PartnerBankList;
-	protected Paging						pagingPartnerBankList;
-	protected Listbox						listBoxPartnerBank;
+	protected Window window_PartnerBankList;
+	protected Borderlayout borderLayout_PartnerBankList;
+	protected Paging pagingPartnerBankList;
+	protected Listbox listBoxPartnerBank;
 
-	protected Listheader					listheader_PartnerBankCode;
-	protected Listheader					listheader_PartnerBankName;
-	protected Listheader					listheader_BankBranchCode;
-	protected Listheader					listheader_BankCode;
+	protected Listheader listheader_PartnerBankCode;
+	protected Listheader listheader_PartnerBankName;
+	protected Listheader listheader_BankBranchCode;
+	protected Listheader listheader_BankCode;
 
-	protected Button						button_PartnerBankList_NewPartnerBank;
-	protected Button						button_PartnerBankList_PartnerBankSearch;
+	protected Button button_PartnerBankList_NewPartnerBank;
+	protected Button button_PartnerBankList_PartnerBankSearch;
 
-	protected Textbox						partnerBankCode;
-	protected Textbox						partnerBankName;
-	protected Textbox						bankCode;
-	protected Textbox						bankBranchCode;
+	protected Textbox partnerBankCode;
+	protected Textbox partnerBankName;
+	protected Textbox bankCode;
+	protected Textbox bankBranchCode;
 
-	protected Listbox						sortOperator_PartnerBankCode;
-	protected Listbox						sortOperator_PartnerBankName;
-	protected Listbox						sortOperator_BankCode;
-	protected Listbox						sortOperator_BankBranchCode;
+	protected Listbox sortOperator_PartnerBankCode;
+	protected Listbox sortOperator_PartnerBankName;
+	protected Listbox sortOperator_BankCode;
+	protected Listbox sortOperator_BankBranchCode;
 
-	private transient PartnerBankService	partnerBankService;
+	private transient PartnerBankService partnerBankService;
 
 	/**
 	 * default constructor.<br>
@@ -140,7 +140,8 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 				sortOperator_PartnerBankCode, Operators.STRING);
 		registerField("partnerBankName", listheader_PartnerBankName, SortOrder.NONE, partnerBankName,
 				sortOperator_PartnerBankName, Operators.STRING);
-		registerField("bankCode", listheader_BankCode,SortOrder.NONE,bankCode,sortOperator_BankCode,Operators.STRING);
+		registerField("bankCode", listheader_BankCode, SortOrder.NONE, bankCode, sortOperator_BankCode,
+				Operators.STRING);
 		registerField("bankBranchCode", listheader_BankBranchCode, SortOrder.NONE, bankBranchCode,
 				sortOperator_BankBranchCode, Operators.STRING);
 		registerField("partnerBankId");
@@ -207,24 +208,24 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		Listitem selectedItem = this.listBoxPartnerBank.getSelectedItem();
 
 		// Get the selected entity.
-		long id =  (long) selectedItem.getAttribute("id");
+		long id = (long) selectedItem.getAttribute("id");
 		PartnerBank partnerBank = partnerBankService.getPartnerBankById(id);
 
 		if (partnerBank == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
+
 		// Get the disbursement modes list.
-		List<PartnerBankModes> modesList=this.partnerBankService.getPartnerBankModesId(id);
-		List<PartnerBranchModes> branchList=this.partnerBankService.getPartnerBranchModesId(id);
-		if(modesList!=null && !modesList.isEmpty()){
+		List<PartnerBankModes> modesList = this.partnerBankService.getPartnerBankModesId(id);
+		List<PartnerBranchModes> branchList = this.partnerBankService.getPartnerBranchModesId(id);
+		if (modesList != null && !modesList.isEmpty()) {
 			partnerBank.setPartnerBankModesList(modesList);
 		}
-		if(branchList!=null && !branchList.isEmpty()){
+		if (branchList != null && !branchList.isEmpty()) {
 			partnerBank.setPartnerBranchModesList(branchList);
 		}
-		
+
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND PartnerBankCode='" + partnerBank.getPartnerBankCode() + "' AND version="
 				+ partnerBank.getVersion() + " ";

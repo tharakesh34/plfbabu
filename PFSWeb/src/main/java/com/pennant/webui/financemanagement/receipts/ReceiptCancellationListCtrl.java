@@ -55,7 +55,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptCancellation/ReceiptCancellationList.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptCancellation/ReceiptCancellationList.zul
+ * file.
  */
 public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
@@ -96,12 +97,12 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listbox sortOperator_ReceiptCancellationFinType;
 	protected Listbox sortOperator_ReceiptCancellationFinBranch;
 
-	protected int   oldVar_sortOperator_custCIF; 
-	protected int   oldVar_sortOperator_finType;
-	protected int   oldVar_sortOperator_finBranch;
+	protected int oldVar_sortOperator_custCIF;
+	protected int oldVar_sortOperator_finType;
+	protected int oldVar_sortOperator_finBranch;
 
 	private transient ReceiptCancellationService receiptCancellationService;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private String module;
 
 	/**
@@ -113,24 +114,24 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 	@Override
 	protected void doSetProperties() {
-		
+
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			super.moduleCode = "ReceiptBounce";
 			super.pageRightName = "ReceiptBounceList";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+		} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			super.moduleCode = "ReceiptCancellation";
 			super.pageRightName = "ReceiptCancellationList";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+		} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "ReceiptCancellation";
 			super.pageRightName = "ReceiptCancellationList";
 		}
-	
+
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.tableName = "FinReceiptHeader_FCView";
 			super.queueTableName = "FinReceiptHeader_FCView";
 			super.enquiryTableName = "FinReceiptHeader_FCView";
-		}else{
+		} else {
 			super.tableName = "FinReceiptHeader_View";
 			super.queueTableName = "FinReceiptHeader_View";
 			super.enquiryTableName = "FinReceiptHeader_View";
@@ -145,7 +146,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	 */
 	public void onCreate$window_ReceiptCancellationList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_ReceiptCancellationList, borderLayout_ReceiptCancellationList, listBoxReceiptCancellation, pagingReceiptCancellationList);
+		setPageComponents(window_ReceiptCancellationList, borderLayout_ReceiptCancellationList,
+				listBoxReceiptCancellation, pagingReceiptCancellationList);
 		setItemRender(new ReceiptCancellationListModelItemRenderer());
 		registerButton(btnNew, "button_ReceiptCancellationList_NewReceiptCancellation", false);
 		registerButton(btnSearch);
@@ -160,85 +162,85 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		registerField("receiptPurpose", listheader_ReceiptCancellationPurpose, SortOrder.NONE, purpose,
 				sortOperator_ReceiptCancellationPurpose, Operators.STRING);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
-		registerField("receiptMode", listheader_ReceiptCancellationMode, SortOrder.NONE, receiptMode, sortOperator_ReceiptCancellationReceiptMode,
-				Operators.STRING);
+		registerField("receiptMode", listheader_ReceiptCancellationMode, SortOrder.NONE, receiptMode,
+				sortOperator_ReceiptCancellationReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_ReceiptCancellationAmount);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_ReceiptCancellationAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_ReceiptCancellationAllocationType, Operators.STRING);
 		registerField("finType", listheader_ReceiptCancellationFinType, SortOrder.NONE, finType,
 				sortOperator_ReceiptCancellationFinType, Operators.STRING);
-		registerField("finBranch", listheader_ReceiptCancellationFinBranch, SortOrder.NONE, finBranch, sortOperator_ReceiptCancellationFinBranch,
-				Operators.STRING);
+		registerField("finBranch", listheader_ReceiptCancellationFinBranch, SortOrder.NONE, finBranch,
+				sortOperator_ReceiptCancellationFinBranch, Operators.STRING);
 		registerField("receiptDate", listheader_ReceiptCancellationReceivedDate, SortOrder.NONE);
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE) ||
-				StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)
+				|| StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 
 			StringBuilder whereClause = new StringBuilder();
-			whereClause= whereClause.append(" FinIsActive = 1 ");
+			whereClause = whereClause.append(" FinIsActive = 1 ");
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
-				whereClause= whereClause.append(" AND ReceiptMode IN( '");
+				whereClause = whereClause.append(" AND ReceiptMode IN( '");
 				whereClause = whereClause.append(RepayConstants.RECEIPTMODE_CHEQUE);
 				whereClause = whereClause.append("','");
 				whereClause = whereClause.append(RepayConstants.RECEIPTMODE_DD);
 				whereClause = whereClause.append("') ");
 			}
-			
+
 			whereClause = whereClause.append(" AND  ReceiptPurpose = '");
 			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_SCHDRPY);
 			whereClause = whereClause.append("' AND (ReceiptModeStatus = '");
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_APPROVED);
 			whereClause = whereClause.append("' OR (ReceiptModeStatus = '");
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_REALIZED);
-			if (App.DATABASE == Database.ORACLE){
+			if (App.DATABASE == Database.ORACLE) {
 				whereClause = whereClause.append("' AND RecordType IS NULL ) OR ( ReceiptModeStatus = '");
-			}else{
+			} else {
 				whereClause = whereClause.append("' AND RecordType = '' ) OR ( ReceiptModeStatus = '");
 			}
-			
+
 			// Module Parameter
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 				whereClause = whereClause.append(RepayConstants.PAYSTATUS_BOUNCE);
-			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 				whereClause = whereClause.append(RepayConstants.PAYSTATUS_CANCEL);
 			}
-			
-			if (App.DATABASE == Database.ORACLE){
+
+			if (App.DATABASE == Database.ORACLE) {
 				whereClause = whereClause.append("' AND RecordType IS NOT NULL )) ");
-			}else{
+			} else {
 				whereClause = whereClause.append("' AND RecordType <> '' )) ");
 			}
 
 			this.searchObject.addWhereClause(whereClause.toString());
 
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			
+		} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+
 			StringBuilder whereClause = new StringBuilder();
-			whereClause= whereClause.append(" FinIsActive = 1 AND  ReceiptPurpose = '");
+			whereClause = whereClause.append(" FinIsActive = 1 AND  ReceiptPurpose = '");
 			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 			whereClause = whereClause.append("' AND ((ReceiptModeStatus = '");
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_FEES);
-			if (App.DATABASE == Database.ORACLE){
+			if (App.DATABASE == Database.ORACLE) {
 				whereClause = whereClause.append("' AND RecordType IS NULL ) OR ( ReceiptModeStatus = '");
-			}else{
+			} else {
 				whereClause = whereClause.append("' AND RecordType = '' ) OR ( ReceiptModeStatus = '");
 			}
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_CANCEL);
-			if (App.DATABASE == Database.ORACLE){
+			if (App.DATABASE == Database.ORACLE) {
 				whereClause = whereClause.append("' AND RecordType IS NOT NULL )) ");
-			}else{
+			} else {
 				whereClause = whereClause.append("' AND RecordType <> '' )) ");
 			}
-			
+
 			this.searchObject.addWhereClause(whereClause.toString());
 		}
 	}
@@ -267,9 +269,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		this.finBranch.setValue("");
 		this.sortOperator_ReceiptCancellationFinBranch.setSelectedIndex(0);
 		this.listBoxReceiptCancellation.getItems().clear();
-		this.oldVar_sortOperator_custCIF=0;
-		this.oldVar_sortOperator_finType=0;
-		this.oldVar_sortOperator_finBranch=0;
+		this.oldVar_sortOperator_custCIF = 0;
+		this.oldVar_sortOperator_finType = 0;
+		this.oldVar_sortOperator_finBranch = 0;
 		doReset();
 		search();
 	}
@@ -310,27 +312,29 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		// Get the selected entity.
 		FinReceiptHeader headerListItem = (FinReceiptHeader) selectedItem.getAttribute("data");
 		boolean isFeePayment = false;
-		if(StringUtils.equals(headerListItem.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)){
+		if (StringUtils.equals(headerListItem.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
 			isFeePayment = true;
 		}
-		
-		FinReceiptHeader header = receiptCancellationService.getFinReceiptHeaderById(headerListItem.getReceiptID(),isFeePayment);
+
+		FinReceiptHeader header = receiptCancellationService.getFinReceiptHeaderById(headerListItem.getReceiptID(),
+				isFeePayment);
 
 		if (header == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
+
 		// If record is in Deposit Process, not allowed to do the Process on Realization
-		if(header.isDepositProcess()){
+		if (header.isDepositProcess()) {
 
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=header.getReference();
-			errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = header.getReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"65034", errParm,valueParm)
-					, getUserWorkspace().getUserLanguage());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 			return;
 		}
@@ -366,7 +370,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		arg.put("receiptCancellationListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -384,7 +389,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -397,7 +402,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -405,7 +410,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.customer.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -418,6 +424,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * when clicks on button "SearchFinType"
 	 * 
@@ -426,15 +433,15 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if(this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptCancellationList, "FinanceType", this.finType.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptCancellationList,
+					"FinanceType", this.finType.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finType.setValue(selectedValues);
 			}
 
-		}else{
+		} else {
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptCancellationList, "FinanceType");
 			if (dataObject instanceof String) {
@@ -450,60 +457,64 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	}
 
 	/**
-	 * When user clicks on "btnSearchBranchCode" button
-	 * This method displays ExtendedSearchListBox with branch details
+	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchBranch(Event event){
-		logger.debug("Entering  "+event.toString());
+	public void onClick$btnSearchBranch(Event event) {
+		logger.debug("Entering  " + event.toString());
 
-		if(this.oldVar_sortOperator_finBranch == Filter.OP_IN || this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN){
+		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
+				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptCancellationList, "Branch", this.finBranch.getValue(), new Filter[]{});
-			if (selectedValues!= null) {
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptCancellationList,
+					"Branch", this.finBranch.getValue(), new Filter[] {});
+			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
-		}else{
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptCancellationList,"Branch");
-			if (dataObject instanceof String){
+		} else {
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptCancellationList, "Branch");
+			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
-			}else{
-				Branch details= (Branch) dataObject;
+			} else {
+				Branch details = (Branch) dataObject;
 				if (details != null) {
 					this.finBranch.setValue(details.getBranchCode());
 				}
 			}
 		}
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// On Change Events for Multi-Selection Listbox's for Search operators
 
 	public void onSelect$sortOperator_ReceiptCancellationCustomer(Event event) {
-		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_ReceiptCancellationCustomer, oldVar_sortOperator_custCIF, this.customer);
+		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_ReceiptCancellationCustomer,
+				oldVar_sortOperator_custCIF, this.customer);
 	}
 
 	public void onSelect$sortOperator_finType(Event event) {
-		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_ReceiptCancellationFinType, oldVar_sortOperator_finType, this.finType);
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_ReceiptCancellationFinType,
+				oldVar_sortOperator_finType, this.finType);
 	}
 
 	public void onSelect$sortOperator_finBranch(Event event) {
-		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_ReceiptCancellationFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
+		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_ReceiptCancellationFinBranch,
+				oldVar_sortOperator_finBranch, this.finBranch);
 	}
 
-	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
+	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
 
 		final Listitem item = listbox.getSelectedItem();
 		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
 
-		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
-			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
+		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
+			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
 				textbox.setValue("");
 			}
-		}else{
-			if(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN){
+		} else {
+			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
 				textbox.setValue("");
 			}
 		}

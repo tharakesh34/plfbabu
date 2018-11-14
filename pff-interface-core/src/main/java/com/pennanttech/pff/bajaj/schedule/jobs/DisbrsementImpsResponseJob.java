@@ -28,7 +28,8 @@ public class DisbrsementImpsResponseJob implements Job, Serializable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public static void setDisbursementIMPSResponseService(DisbursementIMPSResponseService disbursementIMPSResponseService) {
+	public static void setDisbursementIMPSResponseService(
+			DisbursementIMPSResponseService disbursementIMPSResponseService) {
 		DisbrsementImpsResponseJob.disbursementIMPSResponseService = disbursementIMPSResponseService;
 	}
 

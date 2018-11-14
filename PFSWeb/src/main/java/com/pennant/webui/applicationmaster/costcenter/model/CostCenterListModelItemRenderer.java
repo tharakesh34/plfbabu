@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,14 +65,13 @@ public class CostCenterListModelItemRenderer implements ListitemRenderer<CostCen
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, CostCenter costCenter, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(costCenter.getCostCenterCode());
+		lc = new Listcell(costCenter.getCostCenterCode());
 		lc.setParent(item);
-	  	lc = new Listcell(costCenter.getCostCenterDesc());
+		lc = new Listcell(costCenter.getCostCenterDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -81,12 +79,12 @@ public class CostCenterListModelItemRenderer implements ListitemRenderer<CostCen
 		cbActive.setChecked(costCenter.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(costCenter.getRecordStatus());
+		lc = new Listcell(costCenter.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(costCenter.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("costCenterID", costCenter.getCostCenterID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCostCenterItemDoubleClicked");
 	}
 }

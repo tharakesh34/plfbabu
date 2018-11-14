@@ -75,44 +75,42 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * WEB-INF/pages/FinanceManagement/Payments/TakafulPremiumExcludeDialog.zul
+ * This is the controller class for the WEB-INF/pages/FinanceManagement/Payments/TakafulPremiumExcludeDialog.zul
  */
 public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(TakafulPremiumExcludeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 			window_TakafulPremiumExcludeDialog;
-	protected Borderlayout		borderlayoutTakafulPremiumExclude;
+	protected Window window_TakafulPremiumExcludeDialog;
+	protected Borderlayout borderlayoutTakafulPremiumExclude;
 
 	//Summary Details
-	protected Textbox	 	finReference;
-	protected Textbox	 	finType;
-	protected Textbox	 	finBranch;
-	protected Textbox	 	finCcy;
-	protected Textbox	 	custID;
-	protected Datebox	 	finStartDate;
-	protected Datebox	 	maturityDate;
+	protected Textbox finReference;
+	protected Textbox finType;
+	protected Textbox finBranch;
+	protected Textbox finCcy;
+	protected Textbox custID;
+	protected Datebox finStartDate;
+	protected Datebox maturityDate;
 
-	protected Decimalbox	takafulFeeAmt;
-	protected Decimalbox	paidAmount;
-	protected Checkbox	    isExcludeFromReport;
+	protected Decimalbox takafulFeeAmt;
+	protected Decimalbox paidAmount;
+	protected Checkbox isExcludeFromReport;
 
-	protected Listbox 		listBoxSchedule;
+	protected Listbox listBoxSchedule;
 
 	private transient FinanceSelectCtrl financeSelectCtrl = null;
 	private FinanceMain financeMain;
 	private FeeRule feeRule;
 	private FinanceDetailService financeDetailService;
-	
+
 	private int ccyFormat = 0;
 	private String menuItemRightName = null;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -128,8 +126,8 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -140,7 +138,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Set the page level components.
 		setPageComponents(window_TakafulPremiumExcludeDialog);
 
-		try{ 
+		try {
 
 			if (arguments.containsKey("feeRule")) {
 				setFeeRule((FeeRule) arguments.get("feeRule"));
@@ -149,7 +147,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (arguments.containsKey("financeMain")) {
 				FinanceMain aFinanceMain = (FinanceMain) arguments.get("financeMain");
 				setFinanceMain(aFinanceMain);
-				
+
 				FinanceMain befImage = new FinanceMain();
 				Cloner cloner = new Cloner();
 				befImage = cloner.deepClone(aFinanceMain);
@@ -162,28 +160,28 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (arguments.containsKey("financeSelectCtrl")) {
 				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
-			} 
+			}
 
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "TakafulPremiumExclude", menuItemRightName);
-			}else{
+			} else {
 				this.south.setHeight("0px");
 			}
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			// set Field Properties
 			doSetFieldProperties();
 
 			doEdit();
 			if (!financeMain.isNewRecord()) {
 				this.btnNotes.setVisible(true);
-			}else{
-				
+			} else {
+
 			}
 
 			doWriteBeanToComponents();
@@ -201,19 +199,18 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("TakafulPremiumExclude",getRole(), menuItemRightName);
+		getUserWorkspace().allocateAuthorities("TakafulPremiumExclude", getRole(), menuItemRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_TakafulPremiumExcludeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_TakafulPremiumExcludeDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_TakafulPremiumExcludeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_TakafulPremiumExcludeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -225,11 +222,10 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Empty sent any required attributes
 
 		ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		
 
 		this.finStartDate.setFormat(DateFormat.LONG_DATE.getPattern());
-		this.maturityDate.setFormat(DateFormat.LONG_DATE.getPattern());	
-		
+		this.maturityDate.setFormat(DateFormat.LONG_DATE.getPattern());
+
 		this.takafulFeeAmt.setMaxlength(18);
 		this.takafulFeeAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.takafulFeeAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -243,28 +239,27 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnSave(Event event){
-		logger.debug("Entering "+event.toString());
+	public void onClick$btnSave(Event event) {
+		logger.debug("Entering " + event.toString());
 
 		doWriteComponentsToBean();
 		boolean isRecordUpdated = getFinanceDetailService().updateFeeChargesByFinRefAndFeeCode(getFeeRule(), "");
-		if(isRecordUpdated){
+		if (isRecordUpdated) {
 			closeDialog();
 		} else {
-			
+
 		}
 
-		logger.debug("Leaving "+event.toString());
+		logger.debug("Leaving " + event.toString());
 
 	}
-	
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -272,30 +267,34 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method to fill finance data.
 	 * 
 	 * @param isChgRpy
-	 * @throws InterruptedException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private void doWriteBeanToComponents()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		this.finReference.setValue(financeMain.getFinReference());
-		this.finType.setValue(financeMain.getFinType()+(financeMain.getLovDescFinTypeName() != null ? "-"+financeMain.getLovDescFinTypeName() : ""));
-		this.finBranch.setValue(financeMain.getFinBranch() + (financeMain.getLovDescFinBranchName() !=null ? "-"+ financeMain.getLovDescFinBranchName():""));
+		this.finType.setValue(financeMain.getFinType()
+				+ (financeMain.getLovDescFinTypeName() != null ? "-" + financeMain.getLovDescFinTypeName() : ""));
+		this.finBranch.setValue(financeMain.getFinBranch()
+				+ (financeMain.getLovDescFinBranchName() != null ? "-" + financeMain.getLovDescFinBranchName() : ""));
 		this.finCcy.setValue(financeMain.getFinCcy());
-		this.custID.setValue(financeMain.getLovDescCustCIF() + (financeMain.getLovDescCustShrtName() != null ? "-"+ financeMain.getLovDescCustShrtName() : ""));
+		this.custID.setValue(financeMain.getLovDescCustCIF()
+				+ (financeMain.getLovDescCustShrtName() != null ? "-" + financeMain.getLovDescCustShrtName() : ""));
 		this.finStartDate.setValue(financeMain.getFinStartDate());
 		this.maturityDate.setValue(financeMain.getMaturityDate());
 
 		this.takafulFeeAmt.setValue(PennantAppUtil.formateAmount(getFeeRule().getFeeAmount(), ccyFormat));
 		this.paidAmount.setValue(PennantAppUtil.formateAmount(getFeeRule().getPaidAmount(), ccyFormat));
 		this.isExcludeFromReport.setChecked(getFeeRule().isExcludeFromRpt());
-		
+
 		this.recordStatus.setValue(financeMain.getRecordStatus());
 
 		logger.debug("Leaving");
 	}
-		
+
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
@@ -304,7 +303,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		if (isDataChanged()) {
 			logger.debug("isDataChanged : true");
 
@@ -322,8 +321,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public List<FinanceScheduleDetail> sortSchdDetails(
-			List<FinanceScheduleDetail> financeScheduleDetail) {
+	public List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
 
 		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
@@ -337,13 +335,11 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return financeScheduleDetail;
 	}
 
-	
-	
-	private FeeRule doWriteComponentsToBean(){
+	private FeeRule doWriteComponentsToBean() {
 		logger.debug("Entering");
-		
+
 		FeeRule feeRule = getFeeRule();
-		
+
 		feeRule.setFeeAmount(PennantAppUtil.unFormateAmount(this.takafulFeeAmt.getValue(), ccyFormat));
 		feeRule.setPaidAmount(PennantAppUtil.unFormateAmount(this.paidAmount.getValue(), ccyFormat));
 		feeRule.setExcludeFromRpt(this.isExcludeFromReport.isChecked());
@@ -369,6 +365,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			getFinanceSelectCtrl().getListBoxFinance().getListModel();
 		}
 	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.financeMain.getFinReference());
@@ -381,6 +378,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public FinanceMain getFinanceMain() {
 		return financeMain;
 	}
+
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
 	}
@@ -388,6 +386,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public FeeRule getFeeRule() {
 		return feeRule;
 	}
+
 	public void setFeeRule(FeeRule feeRule) {
 		this.feeRule = feeRule;
 	}
@@ -395,6 +394,7 @@ public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public FinanceSelectCtrl getFinanceSelectCtrl() {
 		return financeSelectCtrl;
 	}
+
 	public void setFinanceSelectCtrl(FinanceSelectCtrl financeSelectCtrl) {
 		this.financeSelectCtrl = financeSelectCtrl;
 	}

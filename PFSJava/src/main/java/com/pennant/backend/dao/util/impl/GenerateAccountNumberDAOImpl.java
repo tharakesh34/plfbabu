@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.util.impl;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -62,47 +61,48 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> implements GenerateAccountNumberDAO {
 	private static Logger logger = Logger.getLogger(GenerateAccountNumberDAOImpl.class);
-	
+
 	public GenerateAccountNumberDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record SeqAccountNumber Details details by key field
 	 * 
-	 * @param id's (String, string, String, boolean)
+	 * @param id's
+	 *            (String, string, String, boolean)
 	 *
 	 * @return SeqAccountNumber
 	 */
 	@Override
-	public SeqAccountNumber getSeqAccountNumber(SeqAccountNumber seqAccountNumber,boolean isReadOnly) {
-		
+	public SeqAccountNumber getSeqAccountNumber(SeqAccountNumber seqAccountNumber, boolean isReadOnly) {
+
 		logger.debug("Entering");
-		StringBuilder selectQry = new StringBuilder("Select AccountBranch,AccountHeadCode,AccountCcyCode,AccountSeqNo from SeqAccountNumber" );
+		StringBuilder selectQry = new StringBuilder(
+				"Select AccountBranch,AccountHeadCode,AccountCcyCode,AccountSeqNo from SeqAccountNumber");
 		selectQry.append(" Where AccountBranch =:AccountBranch AND AccountHeadCode = :AccountHeadCode");
 		selectQry.append("  AND AccountCcyCode= :AccountCcyCode");
-		
+
 		logger.debug("selectSql: " + selectQry.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(seqAccountNumber);
-		RowMapper<SeqAccountNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SeqAccountNumber.class);
+		RowMapper<SeqAccountNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SeqAccountNumber.class);
 
 		try {
-			seqAccountNumber= this.jdbcTemplate.queryForObject(selectQry.toString(), beanParameters, typeRowMapper);
+			seqAccountNumber = this.jdbcTemplate.queryForObject(selectQry.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			seqAccountNumber=null;
+			seqAccountNumber = null;
 			logger.error("Exception: ", e);
 		}
-				
+
 		logger.debug("Leaving");
 		return seqAccountNumber;
 	}
 
 	/**
-	 * This method Deletes the Record from the SeqAccountNumber .
-	 * if Record not deleted then throws DataAccessException
-	 * with error 41003. delete SeqAccountNumber Details by keys
-	 *  AccountBranch,AccountHeadCode, AccountCcyCode
+	 * This method Deletes the Record from the SeqAccountNumber . if Record not deleted then throws DataAccessException
+	 * with error 41003. delete SeqAccountNumber Details by keys AccountBranch,AccountHeadCode, AccountCcyCode
 	 * 
 	 * @param SeqAccountNumber
 	 *            Details (seqAccountNumber)
@@ -128,22 +128,21 @@ public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> imp
 	public void save(SeqAccountNumber seqAccountNumber) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into SeqAccountNumber");
 		insertSql.append(" Values(:AccountBranch, :AccountHeadCode, :AccountCcyCode, :AccountSeqNo )");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(seqAccountNumber);
 		int count = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug(count+" for insert");
+		logger.debug(count + " for insert");
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**
-	 * This method updates the Record SeqAccountNumber. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update SeqAccountNumber Details by keys AccountBranch, AccountHeadCode, AccountCcyCode
+	 * This method updates the Record SeqAccountNumber. if Record not updated then throws DataAccessException with error
+	 * 41004. update SeqAccountNumber Details by keys AccountBranch, AccountHeadCode, AccountCcyCode
 	 * 
 	 * @param SeqAccountNumber
 	 *            Details (seqAccountNumber)
@@ -155,17 +154,17 @@ public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> imp
 	@Override
 	public void update(SeqAccountNumber seqAccountNumber) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update SeqAccountNumber");
-		updateSql.append(" Set AccountSeqNo = :AccountSeqNo " );
-		updateSql.append(" Where AccountBranch =:AccountBranch AND AccountHeadCode =:AccountHeadCode" );
-		updateSql.append(" AND AccountCcyCode =:AccountCcyCode ") ;
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+		updateSql.append(" Set AccountSeqNo = :AccountSeqNo ");
+		updateSql.append(" Where AccountBranch =:AccountBranch AND AccountHeadCode =:AccountHeadCode");
+		updateSql.append(" AND AccountCcyCode =:AccountCcyCode ");
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(seqAccountNumber);
-		int count =  this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug(count+" for update");
+		int count = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(count + " for update");
 		logger.debug("Leaving");
 	}
 

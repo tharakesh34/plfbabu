@@ -19,21 +19,22 @@ public class ScriptValidationService {
 
 	/**
 	 * Method for setting Pre Validation Script default Values to Extended field Details
+	 * 
 	 * @param script
 	 * @param paramMap
 	 * @return
 	 * @throws ScriptException
 	 */
-	public ScriptErrors setPreValidationDefaults(String script,Map<String, Object> paramMap) throws ScriptException{
+	public ScriptErrors setPreValidationDefaults(String script, Map<String, Object> paramMap) throws ScriptException {
 		logger.debug("Entering");
 
 		Bindings bindings = new SimpleBindings();
 		ScriptErrors errors = new ScriptErrors();
 		bindings.put("errors", errors);
-		if(paramMap != null){
+		if (paramMap != null) {
 			bindings.putAll(paramMap);
 		}
-		getScriptEngine().eval(script , bindings);
+		getScriptEngine().eval(script, bindings);
 
 		logger.debug("Leaving");
 		return errors;
@@ -41,17 +42,18 @@ public class ScriptValidationService {
 
 	/**
 	 * Method for Validating user Entered Field values using Post Script Details
+	 * 
 	 * @param script
 	 * @param fieldValueMap
 	 * @return
 	 */
-	public ScriptErrors getPostValidationErrors(String script ,Map<String, Object> fieldValueMap) {
+	public ScriptErrors getPostValidationErrors(String script, Map<String, Object> fieldValueMap) {
 		logger.debug("Entering");
 
 		Bindings bindings = new SimpleBindings();
 		ScriptErrors errors = new ScriptErrors();
 		bindings.put("errors", errors);
-		if(fieldValueMap != null){
+		if (fieldValueMap != null) {
 			bindings.putAll(fieldValueMap);
 		}
 		try {
@@ -67,6 +69,7 @@ public class ScriptValidationService {
 	public ScriptEngine getScriptEngine() {
 		return scriptEngine;
 	}
+
 	public void setScriptEngine(ScriptEngine scriptEngine) {
 		this.scriptEngine = scriptEngine;
 	}

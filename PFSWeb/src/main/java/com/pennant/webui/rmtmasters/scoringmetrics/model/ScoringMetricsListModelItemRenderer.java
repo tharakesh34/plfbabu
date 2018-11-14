@@ -53,25 +53,23 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
 public class ScoringMetricsListModelItemRenderer implements ListitemRenderer<ScoringMetrics>, Serializable {
 
-
 	private static final long serialVersionUID = -428249648119783107L;
-	
+
 	public ScoringMetricsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ScoringMetrics scoringMetrics, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(scoringMetrics.getLovDescScoringCode());
+		lc = new Listcell(scoringMetrics.getLovDescScoringCode());
 		lc.setParent(item);
 		lc = new Listcell(scoringMetrics.getLovDescScoringCodeDesc());
 		lc.setParent(item);

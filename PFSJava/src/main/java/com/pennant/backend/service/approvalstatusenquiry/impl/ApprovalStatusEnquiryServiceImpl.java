@@ -12,62 +12,70 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 
-public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquiryService{
+public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquiryService {
 	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryServiceImpl.class);
 
 	protected ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	protected ReasonDetailDAO reasonDetailDAO;
-	protected NotesDAO      notesDAO;
+	protected NotesDAO notesDAO;
 	private static final String MODULE_FINANCEMAIN = "financeMain";
 	private static final String MODULE_FACILITY = "facility";
-	
+
 	public ApprovalStatusEnquiryServiceImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Get approved Customer Finance Details By ID 
+	 * Get approved Customer Finance Details By ID
 	 */
-	public CustomerFinanceDetail getApprovedCustomerFinanceById(String finReference, String moduleDefiner){
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO().getCustomerFinanceMainById(finReference, "_AView",false);
-		if(customerFinanceDetail != null){
-			customerFinanceDetail.setAuditTransactionsList(getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, true,false, moduleDefiner));
-			customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
+	public CustomerFinanceDetail getApprovedCustomerFinanceById(String finReference, String moduleDefiner) {
+		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
+				.getCustomerFinanceMainById(finReference, "_AView", false);
+		if (customerFinanceDetail != null) {
+			customerFinanceDetail.setAuditTransactionsList(
+					getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, true, false, moduleDefiner));
+			customerFinanceDetail
+					.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
 		}
 		return customerFinanceDetail;
 	}
 
 	/**
-	 * Get Customer Finance Details By ID 
+	 * Get Customer Finance Details By ID
 	 */
 	public CustomerFinanceDetail getCustomerFinanceById(String finReference, String moduleDefiner) {
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO().getCustomerFinanceMainById(finReference, "_View",false);
-		if(customerFinanceDetail != null){
-			customerFinanceDetail.setAuditTransactionsList(getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, false,false, moduleDefiner));
-			customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
+		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
+				.getCustomerFinanceMainById(finReference, "_View", false);
+		if (customerFinanceDetail != null) {
+			customerFinanceDetail.setAuditTransactionsList(
+					getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, false, false, moduleDefiner));
+			customerFinanceDetail
+					.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
 		}
 		return customerFinanceDetail;
 	}
 
-	
 	@Override
-    public CustomerFinanceDetail getApprovedCustomerFacilityById(String facilityReference) {
-	
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO().getCustomerFinanceMainById(facilityReference, "_AView",true);
-		customerFinanceDetail.setAuditTransactionsList(getApprovalStatusEnquiryDAO().getFinTransactionsList(facilityReference, true,true,null));
+	public CustomerFinanceDetail getApprovedCustomerFacilityById(String facilityReference) {
+
+		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
+				.getCustomerFinanceMainById(facilityReference, "_AView", true);
+		customerFinanceDetail.setAuditTransactionsList(
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(facilityReference, true, true, null));
 		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(facilityReference, MODULE_FACILITY)));
 		return customerFinanceDetail;
-    }
- 
+	}
+
 	@Override
-    public CustomerFinanceDetail getCustomerFacilityById(String facilityReference) {
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO().getCustomerFinanceMainById(facilityReference, "_View",true);
-		customerFinanceDetail.setAuditTransactionsList(getApprovalStatusEnquiryDAO().getFinTransactionsList(facilityReference, false,true, null));
+	public CustomerFinanceDetail getCustomerFacilityById(String facilityReference) {
+		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
+				.getCustomerFinanceMainById(facilityReference, "_View", true);
+		customerFinanceDetail.setAuditTransactionsList(
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(facilityReference, false, true, null));
 		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(facilityReference, MODULE_FACILITY)));
 		return customerFinanceDetail;
-    }
-	
-	
+	}
+
 	/**
 	 * Method for retrieving Notes Details
 	 */
@@ -86,21 +94,22 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 		return this.reasonDetailDAO.getReasonDetailsLog(reference);
 
 	}
+
 	public ApprovalStatusEnquiryDAO getApprovalStatusEnquiryDAO() {
-    	return approvalStatusEnquiryDAO;
-    }
+		return approvalStatusEnquiryDAO;
+	}
 
 	public void setApprovalStatusEnquiryDAO(ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO) {
-    	this.approvalStatusEnquiryDAO = approvalStatusEnquiryDAO;
-    }
-	
+		this.approvalStatusEnquiryDAO = approvalStatusEnquiryDAO;
+	}
 
 	public NotesDAO getNotesDAO() {
-    	return notesDAO;
-    }
+		return notesDAO;
+	}
+
 	public void setNotesDAO(NotesDAO notesDAO) {
-    	this.notesDAO = notesDAO;
-    }
+		this.notesDAO = notesDAO;
+	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
@@ -109,5 +118,5 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
 	}
-	
+
 }

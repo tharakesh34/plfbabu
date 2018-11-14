@@ -66,57 +66,57 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
-
 /**
  * Service implementation for methods that depends on <b>TaxDetail</b>.<br>
  */
 public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements TaxDetailService {
 	private static final Logger logger = Logger.getLogger(TaxDetailServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private TaxDetailDAO taxDetailDAO;
-	private ProvinceDAO  provinceDAO;
-	private EntityDAO  entityDAO;
+	private ProvinceDAO provinceDAO;
+	private EntityDAO entityDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the taxDetailDAO
 	 */
 	public TaxDetailDAO getTaxDetailDAO() {
 		return taxDetailDAO;
 	}
+
 	/**
-	 * @param taxDetailDAO the taxDetailDAO to set
+	 * @param taxDetailDAO
+	 *            the taxDetailDAO to set
 	 */
 	public void setTaxDetailDAO(TaxDetailDAO taxDetailDAO) {
 		this.taxDetailDAO = taxDetailDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * TAXDETAIL/TAXDETAIL_Temp by using TAXDETAILDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using TAXDETAILDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtTAXDETAIL by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table TAXDETAIL/TAXDETAIL_Temp by
+	 * using TAXDETAILDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using TAXDETAILDAO's update method 3) Audit the record in to AuditHeader and AdtTAXDETAIL by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -124,28 +124,28 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);	
-		
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		TaxDetail taxDetail = (TaxDetail) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (taxDetail.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (taxDetail.isNew()) {
-			taxDetail.setId(Long.parseLong(getTaxDetailDAO().save(taxDetail,tableType)));
+			taxDetail.setId(Long.parseLong(getTaxDetailDAO().save(taxDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(taxDetail);
 			auditHeader.setAuditReference(String.valueOf(taxDetail.getId()));
-		}else{
-			getTaxDetailDAO().update(taxDetail,tableType);
+		} else {
+			getTaxDetailDAO().update(taxDetail, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -155,12 +155,10 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table TAXDETAIL by using TAXDETAILDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtTAXDETAIL by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * TAXDETAIL by using TAXDETAILDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtTAXDETAIL by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -169,25 +167,24 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		auditHeader = businessValidation(auditHeader,"delete");
+
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		TaxDetail taxDetail = (TaxDetail) auditHeader.getAuditDetail().getModelData();
-		getTaxDetailDAO().delete(taxDetail,TableType.MAIN_TAB);
-		
+		getTaxDetailDAO().delete(taxDetail, TableType.MAIN_TAB);
+
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * getTAXDETAIL fetch the details by using TAXDETAILDAO's getTAXDETAILById
-	 * method.
+	 * getTAXDETAIL fetch the details by using TAXDETAILDAO's getTAXDETAILById method.
 	 * 
 	 * @param id
 	 *            id of the TaxDetail.
@@ -195,37 +192,31 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 */
 	@Override
 	public TaxDetail getTaxDetail(long id) {
-		return getTaxDetailDAO().getTaxDetail(id,"_View");
+		return getTaxDetailDAO().getTaxDetail(id, "_View");
 	}
 
 	/**
-	 * getApprovedTAXDETAILById fetch the details by using TAXDETAILDAO's
-	 * getTAXDETAILById method . with parameter id and type as blank. it fetches
-	 * the approved records from the TAXDETAIL.
+	 * getApprovedTAXDETAILById fetch the details by using TAXDETAILDAO's getTAXDETAILById method . with parameter id
+	 * and type as blank. it fetches the approved records from the TAXDETAIL.
 	 * 
 	 * @param id
-	 *            id of the TaxDetail.
-	 *            (String)
+	 *            id of the TaxDetail. (String)
 	 * @return TAXDETAIL
 	 */
 	public TaxDetail getApprovedTaxDetail(long id) {
-		return getTaxDetailDAO().getTaxDetail(id,"_AView");
-	}	
-		
+		return getTaxDetailDAO().getTaxDetail(id, "_AView");
+	}
+
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getTaxDetailDAO().delete with parameters taxDetail,"" b) NEW Add new
-	 * record in to main table by using getTaxDetailDAO().save with parameters
-	 * taxDetail,"" c) EDIT Update record in the main table by using
-	 * getTaxDetailDAO().update with parameters taxDetail,"" 3) Delete the record
-	 * from the workFlow table by using getTaxDetailDAO().delete with parameters
-	 * taxDetail,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtTAXDETAIL by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtTAXDETAIL by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getTaxDetailDAO().delete with
+	 * parameters taxDetail,"" b) NEW Add new record in to main table by using getTaxDetailDAO().save with parameters
+	 * taxDetail,"" c) EDIT Update record in the main table by using getTaxDetailDAO().update with parameters
+	 * taxDetail,"" 3) Delete the record from the workFlow table by using getTaxDetailDAO().delete with parameters
+	 * taxDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtTAXDETAIL by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtTAXDETAIL by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -234,10 +225,10 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		
+
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -248,7 +239,6 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 
 		getTaxDetailDAO().delete(taxDetail, TableType.TEMP_TAB);
 
-		
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(taxDetail.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(taxDetailDAO.getTaxDetail(taxDetail.getId(), ""));
 		}
@@ -281,67 +271,62 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(taxDetail);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-		
-		}
 
-		/**
-		 * doReject method do the following steps. 1) Do the Business validation by
-		 * using businessValidation(auditHeader) method if there is any error or
-		 * warning message then return the auditHeader. 2) Delete the record from
-		 * the workFlow table by using getTaxDetailDAO().delete with parameters
-		 * taxDetail,"_Temp" 3) Audit the record in to AuditHeader and
-		 * AdtTAXDETAIL by using auditHeaderDAO.addAudit(auditHeader) for Work
-		 * flow
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		@Override
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.info(Literal.ENTERING);
-			
-			auditHeader = businessValidation(auditHeader,"doApprove");
-			if (!auditHeader.isNextProcess()) {
-				logger.info(Literal.LEAVING);
-				return auditHeader;
-			}
+	}
 
-			TaxDetail taxDetail = (TaxDetail) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getTaxDetailDAO().delete(taxDetail,TableType.TEMP_TAB);
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			
+	/**
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getTaxDetailDAO().delete with parameters taxDetail,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtTAXDETAIL by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	@Override
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		/**
-		 * businessValidation method do the following steps. 1) get the details from
-		 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-		 * Record based on the record details. 4) Validate for any business
-		 * validation.
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
-			logger.debug(Literal.ENTERING);
-			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
+		TaxDetail taxDetail = (TaxDetail) auditHeader.getAuditDetail().getModelData();
 
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-		}
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getTaxDetailDAO().delete(taxDetail, TableType.TEMP_TAB);
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.info(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = nextProcess(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
@@ -402,10 +387,10 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 
 		return auditDetail;
 	}
-		
-		/**
-		 * to validate the GST Number
-		 */	
+
+	/**
+	 * to validate the GST Number
+	 */
 	public AuditDetail gstNumbeValidation(AuditDetail auditDetail, TaxDetail taxDetail) {
 		logger.debug(Literal.ENTERING);
 
@@ -427,27 +412,27 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			}
 
 			Province province = this.provinceDAO.getProvinceById(taxDetail.getCountry(), taxDetail.getStateCode(), "");
-			
+
 			if (province != null) {
 				gstStateCode = province.getTaxStateCode();
 			}
-			
+
 			Entity entity = this.entityDAO.getEntity(entityCode, "");
-			if(entity != null) {
+			if (entity != null) {
 				panNumber = entity.getPANNumber();
 			}
 
 			if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code is not available
 				if (!StringUtils.equalsIgnoreCase(gstStateCode, taxCode.substring(0, 2))) {
-					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
+					auditDetail.setErrorDetail(
+							ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
 				}
 			}
 
 			if (StringUtils.isNotBlank(panNumber)) { // if PAN number is not available in GST Number
 				if (!StringUtils.equalsIgnoreCase(panNumber, taxCode.substring(2, 12))) {
-					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65024", null, null)));
+					auditDetail.setErrorDetail(
+							ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65024", null, null)));
 				}
 			}
 		}
@@ -457,24 +442,24 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		return auditDetail;
 	}
 
-		@Override
-		public List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type) {
-			return getTaxDetailDAO().getTaxDetailbystateCode(Statecode, type);
-		}
-		
-		public ProvinceDAO getProvinceDAO() {
-			return provinceDAO;
-		}
+	@Override
+	public List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type) {
+		return getTaxDetailDAO().getTaxDetailbystateCode(Statecode, type);
+	}
 
-		public void setProvinceDAO(ProvinceDAO provinceDAO) {
-			this.provinceDAO = provinceDAO;
-		}
+	public ProvinceDAO getProvinceDAO() {
+		return provinceDAO;
+	}
 
-		public EntityDAO getEntityDAO() {
-			return entityDAO;
-		}
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
 
-		public void setEntityDAO(EntityDAO entityDAO) {
-			this.entityDAO = entityDAO;
-		}
+	public EntityDAO getEntityDAO() {
+		return entityDAO;
+	}
+
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
+	}
 }

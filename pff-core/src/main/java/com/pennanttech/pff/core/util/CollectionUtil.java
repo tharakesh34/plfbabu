@@ -41,7 +41,7 @@ public final class CollectionUtil {
 		if (StringUtils.isBlank(delimtedString) || StringUtils.isBlank(predicate)) {
 			return false;
 		}
-		
+
 		List<String> collection = Arrays.asList(StringUtils.split(delimtedString, delimiter));
 
 		return collection.contains(predicate);

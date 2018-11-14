@@ -17,8 +17,8 @@ import com.pennant.backend.util.PennantConstants;
 
 public class FetchPoliceCaseDetails {
 	private static final Logger logger = Logger.getLogger(FetchPoliceCaseDetails.class);
-	
-	private int userAction= -1;
+
+	private int userAction = -1;
 	private static DedupParmService dedupParmService;
 	private CustomerInterfaceService customerInterfaceService;
 	private FinanceDetail financeDetail;
@@ -27,60 +27,62 @@ public class FetchPoliceCaseDetails {
 
 	String PoliceCase_List = "custCIF,custDOB,custFName,custLName,custCRCPR,custPassportNo,mobileNumber,"
 			+ "custNationality,custProduct,policeCaseRule,override,overridenby";
-	public FetchPoliceCaseDetails(){
+
+	public FetchPoliceCaseDetails() {
 		super();
 	}
 
-	public static FinanceDetail getPoliceCaseCustomer(String userRole,FinanceDetail aFinanceDetail,Component parent,String loginUser){
-		return new FetchPoliceCaseDetails(userRole,aFinanceDetail, parent,loginUser).getFinanceDetail();
+	public static FinanceDetail getPoliceCaseCustomer(String userRole, FinanceDetail aFinanceDetail, Component parent,
+			String loginUser) {
+		return new FetchPoliceCaseDetails(userRole, aFinanceDetail, parent, loginUser).getFinanceDetail();
 	}
 
 	@SuppressWarnings("unchecked")
-	private FetchPoliceCaseDetails (String userRole,FinanceDetail aFinanceDetail,Component parent,String loginUser){
+	private FetchPoliceCaseDetails(String userRole, FinanceDetail aFinanceDetail, Component parent, String loginUser) {
 		super();
 
 		setFinanceDetail(aFinanceDetail);
 		Customer customer = null;
 		String custMobileNumber = "";
-		
-		if(aFinanceDetail.getCustomerDetails().getCustomer()!=null){
+
+		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
 			customer = aFinanceDetail.getCustomerDetails().getCustomer();
-			if(aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null){
-        		for(CustomerPhoneNumber custPhone: aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
-        			if(custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)){
-        				custMobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), 
-        						custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-        			}
-        		}
-        	}
+			if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+				for (CustomerPhoneNumber custPhone : aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
+					if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+						custMobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+								custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+					}
+				}
+			}
 		}
 
 		String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
 		String curUser = loginUser;
-		 
-		PoliceCaseDetail policeCaseData = dosetCustomertoPoliceCase(new PoliceCaseDetail(),customer,
-				aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(),custMobileNumber);
 
-		setPoliceCaseDedup(getDedupParmService().fetchPoliceCaseCustomers(userRole, finType, policeCaseData,curUser));
+		PoliceCaseDetail policeCaseData = dosetCustomertoPoliceCase(new PoliceCaseDetail(), customer,
+				aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(), custMobileNumber);
+
+		setPoliceCaseDedup(getDedupParmService().fetchPoliceCaseCustomers(userRole, finType, policeCaseData, curUser));
 
 		ShowDedupPoliceBox details = null;
-		if(getPoliceCaseDedup()!=null && getPoliceCaseDedup().size() > 0) {
+		if (getPoliceCaseDedup() != null && getPoliceCaseDedup().size() > 0) {
 
-			Object dataObject = ShowDedupPoliceBox.show(parent, getPoliceCaseDedup(), 
-					PoliceCase_List, policeCaseData,curUser);
+			Object dataObject = ShowDedupPoliceBox.show(parent, getPoliceCaseDedup(), PoliceCase_List, policeCaseData,
+					curUser);
 			details = (ShowDedupPoliceBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());	
-				logger.debug("The User Action is "+details.getUserAction());
+				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
-				setPoliceCaseDedupCheck((List<PoliceCase>)details.getObject());
+				setPoliceCaseDedupCheck((List<PoliceCase>) details.getObject());
 			}
-		}else {
+		} else {
 			userAction = -1;
 		}
 		aFinanceDetail.setDedupPoliceCaseDetails(null);
-		
+
 		if (userAction == -1) {
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setPoliceCaseFound(false);
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setPoliceCaseOverride(false);
@@ -96,17 +98,18 @@ public class FetchPoliceCaseDetails {
 		setFinanceDetail(aFinanceDetail);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Preparing Police Case Object Data using Customer for Rule Executions
+	 * 
 	 * @param policeCase
 	 * @param customer
 	 * @param finReference
 	 * @return
 	 */
-	private PoliceCaseDetail dosetCustomertoPoliceCase(PoliceCaseDetail policeCase,
-			Customer customer, String finReference,String custMobileNumber) {
-		policeCase.setCustCIF(customer.getCustCIF());	
+	private PoliceCaseDetail dosetCustomertoPoliceCase(PoliceCaseDetail policeCase, Customer customer,
+			String finReference, String custMobileNumber) {
+		policeCase.setCustCIF(customer.getCustCIF());
 		policeCase.setCustFName(customer.getCustFName());
 		policeCase.setCustLName(customer.getCustLName());
 		policeCase.setCustDOB(customer.getCustDOB());
@@ -117,9 +120,9 @@ public class FetchPoliceCaseDetails {
 		policeCase.setCustCtgCode(customer.getCustCtgCode());
 		//policeCase.setCustProduct(customer.get);
 		policeCase.setFinReference(finReference);
-		
-		policeCase.setLikeCustFName(policeCase.getCustFName()!=null?"%"+policeCase.getCustFName()+"%":"");
-		policeCase.setLikeCustLName(policeCase.getCustLName()!=null?"%"+policeCase.getCustLName()+"%":"");
+
+		policeCase.setLikeCustFName(policeCase.getCustFName() != null ? "%" + policeCase.getCustFName() + "%" : "");
+		policeCase.setLikeCustLName(policeCase.getCustLName() != null ? "%" + policeCase.getCustLName() + "%" : "");
 
 		return policeCase;
 	}
@@ -127,6 +130,7 @@ public class FetchPoliceCaseDetails {
 	public int getUserAction() {
 		return userAction;
 	}
+
 	public void setUserAction(int userAction) {
 		this.userAction = userAction;
 	}
@@ -134,6 +138,7 @@ public class FetchPoliceCaseDetails {
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -149,14 +154,16 @@ public class FetchPoliceCaseDetails {
 	public List<PoliceCaseDetail> getPoliceCaseDedup() {
 		return policeCaseDedup;
 	}
+
 	public void setPoliceCaseDedup(List<PoliceCaseDetail> policeCaseDedup) {
 		this.policeCaseDedup = policeCaseDedup;
 	}
 
-	public  DedupParmService getDedupParmService() {
+	public DedupParmService getDedupParmService() {
 		return dedupParmService;
 	}
-	public  void setDedupParmService(DedupParmService dedupParmService) {
+
+	public void setDedupParmService(DedupParmService dedupParmService) {
 		FetchPoliceCaseDetails.dedupParmService = dedupParmService;
 	}
 

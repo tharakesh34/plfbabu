@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+
 @XmlType(propOrder = { "statusCode", "message", "matchSummary", "totalMatchScore", "rules", "matchSchemes" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HunterResponse implements Serializable {
@@ -15,20 +16,20 @@ public class HunterResponse implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				message;
-	private String				statusCode;
+	private String message;
+	private String statusCode;
 	@XmlElement(name = "MatchSummary")
-	private int					matchSummary;
+	private int matchSummary;
 	@XmlElement(name = "TotalMatchScore")
-	private int					totalMatchScore;
+	private int totalMatchScore;
 	@XmlElementWrapper(name = "Rules")
 	@XmlElement(name = "rule")
-	private List<Rule>			rules;
+	private List<Rule> rules;
 	@XmlElementWrapper(name = "MatchSchemes")
 	@XmlElement(name = "matchScheme")
-	private List<MatchSchemes>	matchSchemes;
+	private List<MatchSchemes> matchSchemes;
 
 	public String getMessage() {
 		return message;

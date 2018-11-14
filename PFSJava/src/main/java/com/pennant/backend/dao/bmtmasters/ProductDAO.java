@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.bmtmasters;
+
 import com.pennant.backend.model.bmtmasters.Product;
 
 /**
@@ -50,9 +51,14 @@ import com.pennant.backend.model.bmtmasters.Product;
 public interface ProductDAO {
 
 	Product getProductByID(String id, String code, String type);
+
 	void update(Product product, String type);
+
 	void delete(Product product, String type);
+
 	String save(Product product, String type);
+
 	String getProductCtgByProduct(String productCode);
+
 	Product getProductByProduct(String code);
 }

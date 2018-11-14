@@ -24,17 +24,17 @@ import com.pennanttech.pff.organization.IncomeExpenseType;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
-public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpenseDetail> implements IncomeExpenseDetailService {
+public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpenseDetail>
+		implements IncomeExpenseDetailService {
 	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailServiceImpl.class);
 
-
-    @Autowired
+	@Autowired
 	protected IncomeExpenseHeaderDAO incomeExpenseHeaderDAO;
 	@Autowired
 	protected IncomeExpenseDetailDAO incomeExpenseDetailDAO;
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
-	
+
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -61,21 +61,21 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		} else {
 			incomeExpenseHeaderDAO.update(incomeExpenseHeader, tableType);
 		}
-		
+
 		// School Core_Income Details
 		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getCoreIncomeList())) {
 			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
 			details = processingCoreIncomeDetails(details, incomeExpenseHeader, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-		
+
 		// School NonCore_Income Details
 		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getNonCoreIncomeList())) {
 			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
 			details = processingCoreIncomeDetails(details, incomeExpenseHeader, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-		
+
 		// School Expense Details
 		if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
 			List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
@@ -89,8 +89,9 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
-	
-	private List<AuditDetail> processingCoreIncomeDetails(List<AuditDetail> auditDetails, IncomeExpenseHeader incomeExpenseHeader, String type) {
+
+	private List<AuditDetail> processingCoreIncomeDetails(List<AuditDetail> auditDetails,
+			IncomeExpenseHeader incomeExpenseHeader, String type) {
 		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
@@ -181,16 +182,18 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 	public IncomeExpenseHeader getIncomeExpense(long id, String type) {
 		logger.info(Literal.ENTERING);
 		IncomeExpenseHeader incomeExpenseHeader = incomeExpenseHeaderDAO.getIncomeExpenseHeader(id, type);
-		if(incomeExpenseHeader!=null){
-			incomeExpenseHeader.setCoreIncomeList(incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.CORE_INCOME.name(), type));
-			incomeExpenseHeader.setNonCoreIncomeList(incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.NON_CORE_INCOME.name(), type));
-			incomeExpenseHeader.setExpenseList(incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.EXPENSE.name(), type));
+		if (incomeExpenseHeader != null) {
+			incomeExpenseHeader.setCoreIncomeList(
+					incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.CORE_INCOME.name(), type));
+			incomeExpenseHeader.setNonCoreIncomeList(
+					incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.NON_CORE_INCOME.name(), type));
+			incomeExpenseHeader.setExpenseList(
+					incomeExpenseDetailDAO.getIncomeExpenseList(id, IncomeExpenseType.EXPENSE.name(), type));
 		}
 		logger.info(Literal.LEAVING);
 		return incomeExpenseHeader;
 	}
 
-	
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -210,7 +213,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-	
+
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -226,9 +229,9 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		
+
 		// Core Income Details
-		int sequence =0;
+		int sequence = 0;
 		if (incomeExpenseHeader.getCoreIncomeList() != null && incomeExpenseHeader.getCoreIncomeList().size() > 0) {
 			auditDetailMap.put("CoreIncome", setCoreIncomeAuditData(incomeExpenseHeader,
 					incomeExpenseHeader.getCoreIncomeList(), sequence, auditTranType, method));
@@ -236,21 +239,21 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		}
 		// NonCore Income Details
 		sequence = incomeExpenseHeader.getCoreIncomeList().size();
-		if (incomeExpenseHeader.getNonCoreIncomeList() != null && incomeExpenseHeader.getNonCoreIncomeList().size() > 0) {
+		if (incomeExpenseHeader.getNonCoreIncomeList() != null
+				&& incomeExpenseHeader.getNonCoreIncomeList().size() > 0) {
 			auditDetailMap.put("NonCoreIncome", setCoreIncomeAuditData(incomeExpenseHeader,
 					incomeExpenseHeader.getNonCoreIncomeList(), sequence, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("NonCoreIncome"));
 		}
-		
+
 		// Expense Details
-		sequence = incomeExpenseHeader.getCoreIncomeList().size()+incomeExpenseHeader.getNonCoreIncomeList().size();
-		if (incomeExpenseHeader.getExpenseList() != null
-				&& incomeExpenseHeader.getExpenseList().size() > 0) {
+		sequence = incomeExpenseHeader.getCoreIncomeList().size() + incomeExpenseHeader.getNonCoreIncomeList().size();
+		if (incomeExpenseHeader.getExpenseList() != null && incomeExpenseHeader.getExpenseList().size() > 0) {
 			auditDetailMap.put("Expense", setCoreIncomeAuditData(incomeExpenseHeader,
 					incomeExpenseHeader.getExpenseList(), sequence, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("Expense"));
 		}
-		
+
 		incomeExpenseHeader.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(incomeExpenseHeader);
 		auditHeader.setAuditDetails(auditDetails);
@@ -360,10 +363,12 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 			return auditHeader;
 		}
 		IncomeExpenseHeader incomeExpenseHeader = new IncomeExpenseHeader();
-		BeanUtils.copyProperties((IncomeExpenseHeader) auditHeader.getAuditDetail().getModelData(), incomeExpenseHeader);
+		BeanUtils.copyProperties((IncomeExpenseHeader) auditHeader.getAuditDetail().getModelData(),
+				incomeExpenseHeader);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(incomeExpenseHeader.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(incomeExpenseHeaderDAO.getIncomeExpenseHeader(incomeExpenseHeader.getId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(incomeExpenseHeaderDAO.getIncomeExpenseHeader(incomeExpenseHeader.getId(), ""));
 		}
 		if (incomeExpenseHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -385,21 +390,21 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 				incomeExpenseHeader.setRecordType("");
 				incomeExpenseHeaderDAO.update(incomeExpenseHeader, TableType.MAIN_TAB);
 			}
-			
+
 			// Core Income Details
 			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getCoreIncomeList())) {
 				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
 				details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
 				auditDetails.addAll(details);
 			}
-			
+
 			// Non Core Income Details
 			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getNonCoreIncomeList())) {
 				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
 				details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");
 				auditDetails.addAll(details);
 			}
-			
+
 			//Expense Details
 			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
 				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
@@ -413,13 +418,14 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		auditDetailList.addAll(deleteChilds(incomeExpenseHeader, "_Temp", auditHeader.getAuditTranType()));
 		incomeExpenseHeaderDAO.delete(incomeExpenseHeader, TableType.TEMP_TAB);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new IncomeExpenseHeader(), incomeExpenseHeader.getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new IncomeExpenseHeader(),
+				incomeExpenseHeader.getExcludeFields());
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				incomeExpenseHeader.getBefImage(), incomeExpenseHeader));
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
-		
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(incomeExpenseHeader);
@@ -447,13 +453,15 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new IncomeExpenseHeader(), incomeExpenseHeader.getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new IncomeExpenseHeader(),
+				incomeExpenseHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				incomeExpenseHeader.getBefImage(), incomeExpenseHeader));
 
-		auditDetails.addAll(getListAuditDetails(deleteChilds(incomeExpenseHeader, "_Temp", auditHeader.getAuditTranType())));
+		auditDetails.addAll(
+				getListAuditDetails(deleteChilds(incomeExpenseHeader, "_Temp", auditHeader.getAuditTranType())));
 		incomeExpenseHeaderDAO.delete(incomeExpenseHeader, TableType.TEMP_TAB);
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -467,14 +475,15 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		return null;
 	}
 
-	public List<AuditDetail> deleteChilds(IncomeExpenseHeader incomeExpenseHeader, String tableType, String auditTranType) {
+	public List<AuditDetail> deleteChilds(IncomeExpenseHeader incomeExpenseHeader, String tableType,
+			String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditList = new ArrayList<>();
 
 		// Delete School Core_Income Details.
 		List<AuditDetail> coreIncomeDetails = incomeExpenseHeader.getAuditDetailMap().get("CoreIncome");
-		int sequence=0;
+		int sequence = 0;
 		if (coreIncomeDetails != null && !coreIncomeDetails.isEmpty()) {
 			IncomeExpenseDetail coreIncome = new IncomeExpenseDetail();
 			String[] fields = PennantJavaUtil.getFieldDetails(coreIncome, coreIncome.getExcludeFields());
@@ -485,7 +494,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 				incomeExpenseDetailDAO.delete(coreIncome.getId(), tableType);
 			}
 		}
-		
+
 		// Delete School NonCore_Income Details.
 		List<AuditDetail> nonCoreIncomeDetails = incomeExpenseHeader.getAuditDetailMap().get("NonCoreIncome");
 		sequence = incomeExpenseHeader.getCoreIncomeList().size();
@@ -499,10 +508,10 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 				incomeExpenseDetailDAO.delete(coreIncome.getId(), tableType);
 			}
 		}
-		
+
 		// Delete School Expense Details.
 		List<AuditDetail> expenseDetailsList = incomeExpenseHeader.getAuditDetailMap().get("Expense");
-		sequence = incomeExpenseHeader.getCoreIncomeList().size()+incomeExpenseHeader.getNonCoreIncomeList().size();
+		sequence = incomeExpenseHeader.getCoreIncomeList().size() + incomeExpenseHeader.getNonCoreIncomeList().size();
 		if (expenseDetailsList != null && !expenseDetailsList.isEmpty()) {
 			IncomeExpenseDetail coreIncome = new IncomeExpenseDetail();
 			String[] fields = PennantJavaUtil.getFieldDetails(coreIncome, coreIncome.getExcludeFields());
@@ -517,7 +526,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.debug(Literal.LEAVING);
 		return auditList;
 	}
-	
+
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
 		logger.debug("Entering");
 
@@ -560,7 +569,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
-	
+
 	@Override
 	public boolean isExist(String custCif, int financialYear) {
 		return incomeExpenseHeaderDAO.isExist(custCif, financialYear, "_view");

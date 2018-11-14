@@ -46,27 +46,27 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
-public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
+public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = Logger.getLogger(ProjectedProfitDetailsCtrl.class);
 
 	protected Window window_ProjectedProfitDetails;
-	protected Datebox   valueDate;       //autowire
-	protected Button    btnExecute;      //autowire
+	protected Datebox valueDate; //autowire
+	protected Button btnExecute; //autowire
 	protected Timer timer;
-	
+
 	ProcessExecution calc;
 	ProcessExecution posting;
-	
-	private AmortizationService amortizationService; 
+
+	private AmortizationService amortizationService;
 	AccrualProcess accrualProcess = AccrualProcess.getInstance();
-	private  ReportConfiguration reportConfiguration;
+	private ReportConfiguration reportConfiguration;
 	private transient PagedListService pagedListService;
-	private static final String EXCEL_TYPE="Excel:";
-	private boolean isExcel=false;
-	
-	public ProjectedProfitDetailsCtrl(){
+	private static final String EXCEL_TYPE = "Excel:";
+	private boolean isExcel = false;
+
+	public ProjectedProfitDetailsCtrl() {
 		super();
 	}
 
@@ -74,26 +74,25 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	int calcPercentage = 0;
 	int postingPercentage = 0;
-	
-	
+
 	public void onCreate$window_ProjectedProfitDetails(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
 		setPageComponents(window_ProjectedProfitDetails);
 
-		logger.debug("Entering : "+event);
-		
-		if("".equals(AccrualProcess.ACC_RUNNING)) {
+		logger.debug("Entering : " + event);
+
+		if ("".equals(AccrualProcess.ACC_RUNNING)) {
 			this.valueDate.setValue(DateUtility.getMonthEndDate(DateUtility.getAppDate()));
-			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ProjectedProfitDetails_valueDate.value"),true));
+			this.valueDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_ProjectedProfitDetails_valueDate.value"), true));
 		}
-		
-		
-		if(!"".equals(AccrualProcess.ACC_RUNNING)) {
+
+		if (!"".equals(AccrualProcess.ACC_RUNNING)) {
 			this.valueDate.setDisabled(true);
 			this.btnExecute.setVisible(false);
 			doFillExecutions(accrualProcess);
@@ -101,35 +100,34 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 			timer.stop();
 			this.valueDate.setDisabled(false);
 			this.btnExecute.setVisible(true);
-			
+
 		}
-		
-		if("COMPLETED".equals(AccrualProcess.ACC_RUNNING)) {
-			Clients.showNotification(Labels.getLabel("labels_ProcessCompleted.value"),  "info", null, null, -1);
+
+		if ("COMPLETED".equals(AccrualProcess.ACC_RUNNING)) {
+			Clients.showNotification(Labels.getLabel("labels_ProcessCompleted.value"), "info", null, null, -1);
 			AccrualProcess.ACC_RUNNING = "";
 		}
-		
-		if("FAILED".equals(AccrualProcess.ACC_RUNNING)) {
+
+		if ("FAILED".equals(AccrualProcess.ACC_RUNNING)) {
 			doFillExecutions(accrualProcess);
-			Clients.showNotification(Labels.getLabel("labels_ProcessFailed.value"),  "info", null, null, -1);
+			Clients.showNotification(Labels.getLabel("labels_ProcessFailed.value"), "info", null, null, -1);
 			AccrualProcess.ACC_RUNNING = "";
 			timer.stop();
 			this.valueDate.setDisabled(false);
 			this.btnExecute.setVisible(true);
 		}
-		
-		logger.debug("Leaving  : "+event);
+
+		logger.debug("Leaving  : " + event);
 	}
 
+	public void onClick$btnExecute(Event event) {
+		logger.debug("Entering : " + event);
 
-	public void onClick$btnExecute(Event event){
-		logger.debug("Entering : "+event);
-		
 		try {
-			
+
 			// To Check Last Day income Adding One Day to Value Date(Because Calculation will Follow End Of the Day process )
 			String valueDate = DateUtility.formatToShortDate(this.valueDate.getValue());
-			
+
 			accrualProcess = AccrualProcess.getInstance(getAmortizationService(), DateUtility.getDate(valueDate),
 					getUserWorkspace().getLoggedInUser().getBranchCode());
 			this.timer.start();
@@ -142,82 +140,88 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 			logger.error("Exception: ", e);
 		} finally {
 		}
-		
+
 		this.btnExecute.setDisabled(false);
 
-		logger.debug("Leaving  : "+event);
+		logger.debug("Leaving  : " + event);
 	}
-	
-	
+
 	/**
 	 * Method for Rendering Step Execution Details List
+	 * 
 	 * @param stepExecution
 	 * @throws Exception
 	 */
 	private void doFillExecutions(AccrualProcess accrualProcess) throws Exception {
 		logger.debug("Entering");
-		this.calc.setProcess(accrualProcess.getCalculation());	
+		this.calc.setProcess(accrualProcess.getCalculation());
 		this.calc.render();
-		this.posting.setProcess(accrualProcess.getPosting());	
-		
-		if(!"STARTING".equals(accrualProcess.getPosting().getStatus())) {
+		this.posting.setProcess(accrualProcess.getPosting());
+
+		if (!"STARTING".equals(accrualProcess.getPosting().getStatus())) {
 			this.posting.render();
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * When the Projected Profit Details print button is clicked.
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$button_ProjectedProfitDetails_Print(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		reportConfiguration = getReportConfiguration("ProjectedProfitDetails");
-		if(reportConfiguration == null || (reportConfiguration.isPromptRequired()&& reportConfiguration.getListReportFieldsDetails().size()==0)){
+		if (reportConfiguration == null || (reportConfiguration.isPromptRequired()
+				&& reportConfiguration.getListReportFieldsDetails().size() == 0)) {
 			MessageUtil.showError(Labels.getLabel("label_ReportNotConfigured.error"));
-		}else {
-			
+		} else {
+
 			if (reportConfiguration.getReportName().startsWith(EXCEL_TYPE)) {
 				isExcel = true;
 			} else {
 				isExcel = false;
 			}
 			//if prompt Required Render components else direct report 
-			if(!reportConfiguration.isPromptRequired()){
+			if (!reportConfiguration.isPromptRequired()) {
 				doShowReport(null, null, null);
 			}
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
-	 * This method retries the Report Detail Configuration and Filter Components  
-	 * @param   reportMenuCode
+	 * This method retries the Report Detail Configuration and Filter Components
+	 * 
+	 * @param reportMenuCode
 	 * @return aReportConfiguration(ReportConfiguration)
 	 */
 	private ReportConfiguration getReportConfiguration(String reportjaspername) throws Exception {
-		ReportConfiguration aReportConfiguration =null;
+		ReportConfiguration aReportConfiguration = null;
 		logger.debug("Entering");
-		try{
+		try {
 			// ++ create the searchObject and initialize sorting ++//
-			JdbcSearchObject<ReportConfiguration> searchObj = new JdbcSearchObject<ReportConfiguration>(ReportConfiguration.class);
+			JdbcSearchObject<ReportConfiguration> searchObj = new JdbcSearchObject<ReportConfiguration>(
+					ReportConfiguration.class);
 			searchObj.addTabelName("REPORTCONFIGURATION");
 			searchObj.addFilter(new Filter("REPORTJASPERNAME", reportjaspername, Filter.OP_EQUAL));
 
-			List<ReportConfiguration> listReportConfiguration= getPagedListService().getBySearchObject(searchObj);
+			List<ReportConfiguration> listReportConfiguration = getPagedListService().getBySearchObject(searchObj);
 
-			if(listReportConfiguration.size()>0){
-				aReportConfiguration =listReportConfiguration.get(0);
-				if(aReportConfiguration!=null){
+			if (listReportConfiguration.size() > 0) {
+				aReportConfiguration = listReportConfiguration.get(0);
+				if (aReportConfiguration != null) {
 					this.window_ProjectedProfitDetails.setTitle(aReportConfiguration.getReportHeading());
-					JdbcSearchObject<ReportFilterFields> filtersSearchObj = new JdbcSearchObject<ReportFilterFields>(ReportFilterFields.class);
+					JdbcSearchObject<ReportFilterFields> filtersSearchObj = new JdbcSearchObject<ReportFilterFields>(
+							ReportFilterFields.class);
 					filtersSearchObj.addTabelName("REPORTFILTERFIELDS");
-					filtersSearchObj.addFilter(new Filter("reportID", aReportConfiguration.getReportID(), Filter.OP_EQUAL));
+					filtersSearchObj
+							.addFilter(new Filter("reportID", aReportConfiguration.getReportID(), Filter.OP_EQUAL));
 					filtersSearchObj.addSort("SEQORDER", false);
-					List<ReportFilterFields> listReportFilterFields= getPagedListService().getBySearchObject(filtersSearchObj);
+					List<ReportFilterFields> listReportFilterFields = getPagedListService()
+							.getBySearchObject(filtersSearchObj);
 					aReportConfiguration.setListReportFieldsDetails(listReportFilterFields);
 				}
 			}
@@ -230,14 +234,15 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 	}
 
 	/**
-	 * This method  call the report control to generate the report 
+	 * This method call the report control to generate the report
+	 * 
 	 * @throws Exception
 	 */
 	public void doShowReport(String whereCond, String fromDate, String toDate) throws Exception {
-		logger.debug("Entering" );
+		logger.debug("Entering");
 
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
-		
+
 		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
 		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
@@ -245,43 +250,43 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 		reportArgumentsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
 		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 
-		if(whereCond != null){
+		if (whereCond != null) {
 			reportArgumentsMap.put("whereCondition", whereCond);
 		}
-		if(fromDate != null){
-			reportArgumentsMap.put("fromDate", "'"+DateUtility.getDBDate(fromDate).toString()+"'");
+		if (fromDate != null) {
+			reportArgumentsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
 		}
-		if(toDate != null){
-			reportArgumentsMap.put("toDate", "'"+DateUtility.getDBDate(toDate).toString()+"'");
+		if (toDate != null) {
+			reportArgumentsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
 		}
 
-		if(!reportConfiguration.isPromptRequired()){
+		if (!reportConfiguration.isPromptRequired()) {
 			reportArgumentsMap.put("whereCondition", "");
 		}
 
-		reportArgumentsMap.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
-		reportArgumentsMap.put("signimage",PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
-		reportArgumentsMap.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+		reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		reportArgumentsMap.put("searchCriteria", "");
-		String reportName=reportConfiguration.getReportJasperName();//This will come dynamically
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION)+"/"+ reportName+".jasper";
+		String reportName = reportConfiguration.getReportJasperName();//This will come dynamically
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
 
 		byte[] buf = null;
-		Connection con=null;
+		Connection con = null;
 		DataSource reportDataSourceObj = null;
 
-		try {			
-			File file = new File(reportSrc) ;
-			if(file.exists()){
+		try {
+			File file = new File(reportSrc);
+			if (file.exists()) {
 
-				logger.debug("Buffer started" );
+				logger.debug("Buffer started");
 
 				reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());//This will come dynamically
-				con= reportDataSourceObj.getConnection();
-				
+				con = reportDataSourceObj.getConnection();
+
 				if (!isExcel) {
-					
-					buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap,con);
+
+					buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
 					HashMap<String, Object> auditMap = new HashMap<String, Object>(4);
 					auditMap.put("reportBuffer", buf);
 					auditMap.put("parentWindow", this.window_ProjectedProfitDetails);
@@ -289,28 +294,30 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 
 					// call the ZUL-file with the parameters packed in a map
 					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
-				}else{	
-					
+				} else {
+
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
 					JRXlsExporter excelExporter = new JRXlsExporter();
-					
-					excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 
-					excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.TRUE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE); 
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE); 
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,Boolean.FALSE);  
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER,Boolean.FALSE);       
-					excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN,Boolean.TRUE);
+
+					excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME, printfileName);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS,
+							Boolean.TRUE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.FALSE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER, Boolean.FALSE);
+					excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
 					excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
 					excelExporter.exportReport();
-					Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+					Filedownload.save(
+							new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 				}
 
-			}else{
+			} else {
 				MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			}
 
@@ -318,17 +325,16 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 			logger.error("Error while Preparing jasper Report", e);
 			MessageUtil.showError("Error in Configuring the " + reportName + " report");
 		} finally {
-			if(con!=null){
+			if (con != null) {
 				con.close();
 			}
-			con=null;
+			con = null;
 			reportDataSourceObj = null;
 			buf = null;
 		}
-		logger.debug("Leaving" );
+		logger.debug("Leaving");
 	}
-	
-	
+
 	public void onTimer$timer(Event event) {
 		logger.debug("Entering" + event.toString());
 		Events.postEvent("onCreate", this.window_ProjectedProfitDetails, event);
@@ -346,6 +352,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

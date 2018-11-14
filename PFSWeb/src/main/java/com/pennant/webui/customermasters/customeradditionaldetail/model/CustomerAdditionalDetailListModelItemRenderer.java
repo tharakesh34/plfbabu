@@ -58,18 +58,20 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerAdditionalDetailListModelItemRenderer implements ListitemRenderer<CustomerAdditionalDetail>, Serializable {
-	
+public class CustomerAdditionalDetailListModelItemRenderer
+		implements ListitemRenderer<CustomerAdditionalDetail>, Serializable {
+
 	public CustomerAdditionalDetailListModelItemRenderer() {
-		
+
 	}
-	
+
 	private static final long serialVersionUID = -8502084612633186032L;
+
 	@Override
 	public void render(Listitem item, CustomerAdditionalDetail customerAdditionalDetail, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(customerAdditionalDetail.getLovDescCustCIF());
+		lc = new Listcell(customerAdditionalDetail.getLovDescCustCIF());
 		lc.setParent(item);
 		lc = new Listcell(customerAdditionalDetail.getCustAcademicLevel() + "-"
 				+ customerAdditionalDetail.getLovDescCustAcademicLevelName());
@@ -77,15 +79,15 @@ public class CustomerAdditionalDetailListModelItemRenderer implements ListitemRe
 		lc = new Listcell(customerAdditionalDetail.getAcademicDecipline() + "-"
 				+ customerAdditionalDetail.getLovDescAcademicDeciplineName());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateLong(customerAdditionalDetail.getCustRefCustID()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(customerAdditionalDetail.getCustRefStaffID());
+		lc = new Listcell(PennantAppUtil.formateLong(customerAdditionalDetail.getCustRefCustID()));
 		lc.setParent(item);
-	  	lc = new Listcell(customerAdditionalDetail.getRecordStatus());
+		lc = new Listcell(customerAdditionalDetail.getCustRefStaffID());
+		lc.setParent(item);
+		lc = new Listcell(customerAdditionalDetail.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(customerAdditionalDetail.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", customerAdditionalDetail.getId());
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerAdditionalDetailItemDoubleClicked");
 	}

@@ -16,20 +16,20 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
-public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustomers> implements BlacklistCustomerService {
+public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustomers>
+		implements BlacklistCustomerService {
 
 	private static Logger logger = Logger.getLogger(BlacklistCustomerServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private BlackListCustomerDAO blacklistCustomerDAO;
-	
+
 	public BlacklistCustomerServiceImpl() {
 		super();
 	}
-	
-	
+
 	@Override
-    public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 
 		logger.debug("Entering");
 
@@ -55,25 +55,23 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
-	
-    }
-	
-	@Override
-    public BlackListCustomers getBlacklistCustomerById(String id) {
-		  return getBlacklistCustomerDAO().getBlacklistCustomerById(id,"_View");
-    }
-	
+
+	}
 
 	@Override
-    public BlackListCustomers getApprovedBlacklistById(String id) {
+	public BlackListCustomers getBlacklistCustomerById(String id) {
+		return getBlacklistCustomerDAO().getBlacklistCustomerById(id, "_View");
+	}
+
+	@Override
+	public BlackListCustomers getApprovedBlacklistById(String id) {
 		return getBlacklistCustomerDAO().getBlacklistCustomerById(id, "");
-    }
-	
+	}
 
 	@Override
-    public AuditHeader delete(AuditHeader auditHeader) {
+	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -83,12 +81,12 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		getBlacklistCustomerDAO().delete(blackListCustomers, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
-    }
+	}
 
 	@Override
-    public AuditHeader doApprove(AuditHeader auditHeader) {
+	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -100,8 +98,8 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		BeanUtils.copyProperties((BlackListCustomers) auditHeader.getAuditDetail().getModelData(), blackListCustomers);
 		getBlacklistCustomerDAO().delete(blackListCustomers, TableType.TEMP_TAB);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					blacklistCustomerDAO.getBlacklistCustomerById(blackListCustomers.getId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(blacklistCustomerDAO.getBlacklistCustomerById(blackListCustomers.getId(), ""));
 		}
 		if (blackListCustomers.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -123,7 +121,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 				getBlacklistCustomerDAO().update(blackListCustomers, TableType.MAIN_TAB);
 			}
 		}
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -133,10 +131,10 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
-    }
-	
+	}
+
 	@Override
-    public AuditHeader doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
@@ -149,17 +147,17 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
-    }
+	}
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
-    }
+	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
@@ -167,21 +165,20 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		// Get the model object.
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditDetail.getModelData();
 		// Check the unique keys.
-		if (blackListCustomers.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
+		if (blackListCustomers.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
 				&& blacklistCustomerDAO.isDuplicateKey(blackListCustomers.getId(),
 						blackListCustomers.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":"+ blackListCustomers.getCustCIF();
+			parameters[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + blackListCustomers.getCustCIF();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-	
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -193,13 +190,13 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public BlackListCustomerDAO getBlacklistCustomerDAO() {
-	    return blacklistCustomerDAO;
-    }
+		return blacklistCustomerDAO;
+	}
 
 	public void setBlacklistCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
-	    this.blacklistCustomerDAO = blacklistCustomerDAO;
-    }
+		this.blacklistCustomerDAO = blacklistCustomerDAO;
+	}
 
 }

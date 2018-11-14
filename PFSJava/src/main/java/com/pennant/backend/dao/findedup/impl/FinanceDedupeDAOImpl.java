@@ -65,13 +65,13 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements FinanceDedupeDAO {
 	private static Logger logger = Logger.getLogger(FinanceDedupeDAOImpl.class);
-	
+
 	public FinanceDedupeDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-    public void saveList(List<FinanceDedup> dedups,String type) {
+	public void saveList(List<FinanceDedup> dedups, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinDedupDetail");
@@ -85,39 +85,41 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dedups.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
-    }
+	}
+
 	/*
-	 * This  updated the Finance dedup list 
+	 * This updated the Finance dedup list
 	 */
 	@Override
-    public void updateList(List<FinanceDedup> dedups) {
+	public void updateList(List<FinanceDedup> dedups) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinDedupDetail");
 		updateSql.append(" Set CustCIF = :CustCIF , CustCRCPR = :CustCRCPR , ChassisNumber = :ChassisNumber, ");
-		updateSql.append(" EngineNumber = :EngineNumber, StartDate = :StartDate , FinanceAmount = :FinanceAmount ,FinanceType = :FinanceType, ");
+		updateSql.append(
+				" EngineNumber = :EngineNumber, StartDate = :StartDate , FinanceAmount = :FinanceAmount ,FinanceType = :FinanceType, ");
 		updateSql.append("  ProfitAmount= :ProfitAmount , Stage = :Stage ,DedupeRule = :DedupeRule,  ");
 		updateSql.append(" OverrideUser = :OverrideUser,FinLimitRef = :FinLimitRef");
 		updateSql.append(" Where FinReference =:FinReference And DupReference=:DupReference ");
-		
+
 		logger.debug("insertSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils
-		        .createBatch(dedups.toArray());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dedups.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	    
-    }
+
+	}
 
 	@Override
-    public List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode) {
+	public List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode) {
 		logger.debug("Entering");
-		
+
 		FinanceDedup dedup = new FinanceDedup();
 		dedup.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(" Select D.FinReference ,D.DupReference, D.CustCIF , D.CustCRCPR , D.ChassisNumber , ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select D.FinReference ,D.DupReference, D.CustCIF , D.CustCRCPR , D.ChassisNumber , ");
 		selectSql.append(" D.EngineNumber , D.StartDate , D.FinanceAmount ,D.FinanceType , ");
 		selectSql.append(" D.ProfitAmount , D.Stage ,D.DedupeRule, D.OverrideUser, S.RoleDesc StageDesc,D.FinLimitRef");
 		selectSql.append(" From FinDedupDetail D LEFT OUTER JOIN SecRoles S ON S.RoleCd = D.Stage ");
@@ -131,10 +133,10 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
+	}
 
 	@Override
-    public void deleteList(String finReference) {
+	public void deleteList(String finReference) {
 		logger.debug("Entering");
 		FinanceDedup dedup = new FinanceDedup();
 		dedup.setFinReference(finReference);
@@ -146,34 +148,34 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void moveData(String finReference, String suffix) {
+	public void moveData(String finReference, String suffix) {
 		logger.debug(" Entering ");
 		try {
-	        if (StringUtils.isBlank(suffix)) {
-	            return;
-	        }
-	        
-	        MapSqlParameterSource map=new MapSqlParameterSource();
-	        map.addValue("FinReference", finReference);
-	        
-	        StringBuilder selectSql = new StringBuilder();
-	        selectSql.append(" SELECT * FROM FinDedupDetail");
-	        selectSql.append(" WHERE FinReference = :FinReference ");
-	        
-	        RowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDedup.class);
-	        List<FinanceDedup> list = this.jdbcTemplate.query(selectSql.toString(), map,typeRowMapper);
-	        
-	        if (list!=null && !list.isEmpty()) {
-	        	saveList(list,suffix);
-            }
-	        
-        } catch (DataAccessException e) {
-	     logger.debug(e);
-        }
-	    logger.debug(" Leaving ");
-    }
-	
+			if (StringUtils.isBlank(suffix)) {
+				return;
+			}
+
+			MapSqlParameterSource map = new MapSqlParameterSource();
+			map.addValue("FinReference", finReference);
+
+			StringBuilder selectSql = new StringBuilder();
+			selectSql.append(" SELECT * FROM FinDedupDetail");
+			selectSql.append(" WHERE FinReference = :FinReference ");
+
+			RowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDedup.class);
+			List<FinanceDedup> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+
+			if (list != null && !list.isEmpty()) {
+				saveList(list, suffix);
+			}
+
+		} catch (DataAccessException e) {
+			logger.debug(e);
+		}
+		logger.debug(" Leaving ");
+	}
+
 }

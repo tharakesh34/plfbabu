@@ -54,12 +54,12 @@ import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class DPDBucketConfigurationListModelItemRenderer implements ListitemRenderer<DPDBucketConfiguration>, Serializable {
+public class DPDBucketConfigurationListModelItemRenderer
+		implements ListitemRenderer<DPDBucketConfiguration>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,29 +67,28 @@ public class DPDBucketConfigurationListModelItemRenderer implements ListitemRend
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, DPDBucketConfiguration dPDBucketConfiguration, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(dPDBucketConfiguration.getProductCode());
+		lc = new Listcell(dPDBucketConfiguration.getProductCode());
 		lc.setParent(item);
-	  	lc = new Listcell(dPDBucketConfiguration.getBucketCode());
+		lc = new Listcell(dPDBucketConfiguration.getBucketCode());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formateInt(dPDBucketConfiguration.getDueDays()));
-	  	lc.setParent(item);
+		lc = new Listcell(PennantApplicationUtil.formateInt(dPDBucketConfiguration.getDueDays()));
+		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbSuspendProfit = new Checkbox();
 		cbSuspendProfit.setDisabled(true);
 		cbSuspendProfit.setChecked(dPDBucketConfiguration.isSuspendProfit());
 		lc.appendChild(cbSuspendProfit);
 		lc.setParent(item);
-	  	lc = new Listcell(dPDBucketConfiguration.getRecordStatus());
+		lc = new Listcell(dPDBucketConfiguration.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(dPDBucketConfiguration.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("configID", dPDBucketConfiguration.getConfigID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onDPDBucketConfigurationItemDoubleClicked");
 	}
 }

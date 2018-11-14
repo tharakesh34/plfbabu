@@ -54,18 +54,18 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
  */
 
 public class FinanceRateReview extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				finReference		= null;
-	private String				rateType			= null;
-	private String				currency			= null;
-	private Date				valueDate			= null;
-	private Date				effectiveDate		= null;
-	private Date				eventFromDate		= null;
-	private Date				eventToDate			= null;
-	private Date				recalFromdate		= null;
-	private Date				recalToDate			= null;
-	private BigDecimal			eMIAmount			= BigDecimal.ZERO;
+	private String finReference = null;
+	private String rateType = null;
+	private String currency = null;
+	private Date valueDate = null;
+	private Date effectiveDate = null;
+	private Date eventFromDate = null;
+	private Date eventToDate = null;
+	private Date recalFromdate = null;
+	private Date recalToDate = null;
+	private BigDecimal eMIAmount = BigDecimal.ZERO;
 
 	public String getFinReference() {
 		return finReference;
@@ -138,7 +138,6 @@ public class FinanceRateReview extends AbstractWorkflowEntity {
 	public void seteMIAmount(BigDecimal eMIAmount) {
 		this.eMIAmount = eMIAmount;
 	}
-
 
 	public Date getValueDate() {
 		return valueDate;

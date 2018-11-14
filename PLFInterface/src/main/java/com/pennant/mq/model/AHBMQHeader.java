@@ -20,7 +20,7 @@ public class AHBMQHeader implements Serializable {
 	private String returnText;
 	private String returnTime;
 	private String referenceNum;
-	
+
 	/**
 	 * Method for setting default header values
 	 * 
@@ -40,9 +40,9 @@ public class AHBMQHeader implements Serializable {
 		this.requestorSecurityInfo = securityInfo;
 		this.eaiReference = InterfaceMasterConfigUtil.EAIREFERENCE;
 		this.returnCode = InterfaceMasterConfigUtil.RETURNCODE;
-		
+
 	}
-	
+
 	/**
 	 * Method for setting default header values
 	 * 
@@ -158,6 +158,7 @@ public class AHBMQHeader implements Serializable {
 	}
 
 	public String getErrorMessage() {
-		return "Unable to process the request. Below is the response received from Host:\n" + this.returnCode + " - " + (this.returnText == null ? "NO ERROR MESSAGE" : this.returnText);
+		return "Unable to process the request. Below is the response received from Host:\n" + this.returnCode + " - "
+				+ (this.returnText == null ? "NO ERROR MESSAGE" : this.returnText);
 	}
 }

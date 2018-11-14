@@ -74,35 +74,32 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/TransactionCode/transactionCodeDialog.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/TransactionCode/transactionCodeDialog.zul file.
  */
 public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	private static final long serialVersionUID = -5775295643429759088L;
 	private static final Logger logger = Logger.getLogger(TransactionCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_TransactionCodeDialog; 	// autoWired
-	protected Textbox 		tranCode; 						// autoWired
-	protected Textbox 		tranDesc; 						// autoWired
- 	protected Combobox 		tranType; 						// autoWired
-	protected Checkbox 		tranIsActive; 					// autoWired
-
+	protected Window window_TransactionCodeDialog; // autoWired
+	protected Textbox tranCode; // autoWired
+	protected Textbox tranDesc; // autoWired
+	protected Combobox tranType; // autoWired
+	protected Checkbox tranIsActive; // autoWired
 
 	// not auto wired variables
 	private TransactionCode transactionCode; // overHanded per parameter
 	private transient TransactionCodeListCtrl transactionCodeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient TransactionCodeService transactionCodeService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -118,9 +115,8 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected TransactionCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected TransactionCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -136,8 +132,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 			doCheckRights();
 
 			if (arguments.containsKey("transactionCode")) {
-				this.transactionCode = (TransactionCode) arguments
-						.get("transactionCode");
+				this.transactionCode = (TransactionCode) arguments.get("transactionCode");
 				TransactionCode befImage = new TransactionCode();
 				BeanUtils.copyProperties(this.transactionCode, befImage);
 				this.transactionCode.setBefImage(befImage);
@@ -147,15 +142,13 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 				setTransactionCode(null);
 			}
 
-			doLoadWorkFlow(this.transactionCode.isWorkflow(),
-					this.transactionCode.getWorkflowId(),
+			doLoadWorkFlow(this.transactionCode.isWorkflow(), this.transactionCode.getWorkflowId(),
 					this.transactionCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"TransactionCodeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "TransactionCodeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -166,8 +159,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 			// or
 			// delete transactionCode here.
 			if (arguments.containsKey("transactionCodeListCtrl")) {
-				setTransactionCodeListCtrl((TransactionCodeListCtrl) arguments
-						.get("transactionCodeListCtrl"));
+				setTransactionCodeListCtrl((TransactionCodeListCtrl) arguments.get("transactionCodeListCtrl"));
 			} else {
 				setTransactionCodeListCtrl(null);
 			}
@@ -186,17 +178,17 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.tranCode.setMaxlength(8);
 		this.tranDesc.setMaxlength(50);
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -204,19 +196,18 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
+		logger.debug("Entering");
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_TransactionCodeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_TransactionCodeDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_TransactionCodeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_TransactionCodeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
-		logger.debug("Leaving") ;
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -294,12 +285,12 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.transactionCode.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -309,14 +300,16 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 *            TransactionCode
 	 */
 	public void doWriteBeanToComponents(TransactionCode aTransactionCode) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.tranCode.setValue(aTransactionCode.getTranCode());
 		this.tranDesc.setValue(aTransactionCode.getTranDesc());
-		fillComboBox(this.tranType,aTransactionCode.getTranType(),PennantStaticListUtil.getTranTypeBoth(),"");
+		fillComboBox(this.tranType, aTransactionCode.getTranType(), PennantStaticListUtil.getTranTypeBoth(), "");
 		this.tranIsActive.setChecked(aTransactionCode.isTranIsActive());
 		this.recordStatus.setValue(aTransactionCode.getRecordStatus());
-		
-		if(aTransactionCode.isNew() || (aTransactionCode.getRecordType() != null ? aTransactionCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aTransactionCode.isNew()
+				|| (aTransactionCode.getRecordType() != null ? aTransactionCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.tranIsActive.setChecked(true);
 			this.tranIsActive.setDisabled(true);
 		}
@@ -329,47 +322,47 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * @param aTransactionCode
 	 */
 	public void doWriteComponentsToBean(TransactionCode aTransactionCode) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
-		    aTransactionCode.setTranCode(this.tranCode.getValue());
-		}catch (WrongValueException we ) {
+			aTransactionCode.setTranCode(this.tranCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aTransactionCode.setTranDesc(this.tranDesc.getValue());
-		}catch (WrongValueException we ) {
+			aTransactionCode.setTranDesc(this.tranDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(!this.tranType.isDisabled() && this.tranType.getSelectedIndex()<0){
+			if (!this.tranType.isDisabled() && this.tranType.getSelectedIndex() < 0) {
 				throw new WrongValueException(tranType, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_TransactionCodeDialog_TranType.value")}));
+						new String[] { Labels.getLabel("label_TransactionCodeDialog_TranType.value") }));
 			}
-		    aTransactionCode.setTranType(this.tranType.getSelectedItem().getValue().toString());
-		}catch (WrongValueException we ) {
+			aTransactionCode.setTranType(this.tranType.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aTransactionCode.setTranIsActive(this.tranIsActive.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aTransactionCode.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -377,8 +370,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aTransactionCode
 	 * @throws Exception
@@ -394,12 +386,12 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 			this.tranCode.focus();
 		} else {
 			this.tranDesc.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(aTransactionCode.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -416,7 +408,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -425,19 +417,22 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
-		if (!this.tranCode.isReadonly()){
-			this.tranCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionCodeDialog_TranCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+
+		if (!this.tranCode.isReadonly()) {
+			this.tranCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionCodeDialog_TranCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.tranDesc.isReadonly()){
-			this.tranDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionCodeDialog_TranDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.tranDesc.isReadonly()) {
+			this.tranDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionCodeDialog_TranDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		if (!this.tranType.isDisabled()){
+		if (!this.tranType.isDisabled()) {
 			this.tranType.setConstraint(new StaticListValidator(PennantStaticListUtil.getTranTypeBoth(),
 					Labels.getLabel("label_TransactionCodeDialog_TranType.value")));
-		}	
-	logger.debug("Leaving");
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -451,7 +446,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		this.tranType.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set Validations for LOV Fields
 	 */
@@ -474,14 +469,14 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		this.tranDesc.setErrorMessage("");
 		this.tranType.setErrorMessage("");
 		logger.debug("Leaving");
-	}	
+	}
 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getTransactionCodeListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -491,32 +486,33 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
-		
+		logger.debug("Entering");
+
 		final TransactionCode aTransactionCode = new TransactionCode();
 		BeanUtils.copyProperties(getTransactionCode(), aTransactionCode);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_TransactionCodeDialog_TranCode.value")+" : "+aTransactionCode.getTranCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_TransactionCodeDialog_TranCode.value") + " : "
+				+ aTransactionCode.getTranCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aTransactionCode.getRecordType())){
-				aTransactionCode.setVersion(aTransactionCode.getVersion()+1);
+			if (StringUtils.isBlank(aTransactionCode.getRecordType())) {
+				aTransactionCode.setVersion(aTransactionCode.getVersion() + 1);
 				aTransactionCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aTransactionCode.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aTransactionCode,tranType)){
+				if (doProcess(aTransactionCode, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -531,10 +527,10 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getTransactionCode().isNewRecord()){
+		if (getTransactionCode().isNewRecord()) {
 			this.tranCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.tranCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
@@ -543,22 +539,22 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		this.tranType.setDisabled(isReadOnly("TransactionCodeDialog_tranType"));
 		this.tranIsActive.setDisabled(isReadOnly("TransactionCodeDialog_tranIsActive"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.transactionCode.isNewRecord()){
+			if (this.transactionCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -571,14 +567,14 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		this.tranDesc.setReadonly(true);
 		this.tranType.setDisabled(true);
 		this.tranIsActive.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -590,13 +586,13 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		
+
 		// remove validation, if there are a save before
 		this.tranCode.setValue("");
 		this.tranDesc.setValue("");
 		//this.tranType.setValue("");
 		this.tranIsActive.setChecked(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -607,11 +603,11 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final TransactionCode aTransactionCode = new TransactionCode();
 		BeanUtils.copyProperties(getTransactionCode(), aTransactionCode);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the TransactionCode object with the components data
@@ -620,42 +616,42 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
-		isNew = aTransactionCode.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aTransactionCode.getRecordType())){
-				aTransactionCode.setVersion(aTransactionCode.getVersion()+1);
-				if(isNew){
+		isNew = aTransactionCode.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aTransactionCode.getRecordType())) {
+				aTransactionCode.setVersion(aTransactionCode.getVersion() + 1);
+				if (isNew) {
 					aTransactionCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aTransactionCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aTransactionCode.setNewRecord(true);
 				}
 			}
-		}else{
-			aTransactionCode.setVersion(aTransactionCode.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aTransactionCode.setVersion(aTransactionCode.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			if(doProcess(aTransactionCode,tranType)){
+			if (doProcess(aTransactionCode, tranType)) {
 				doWriteBeanToComponents(aTransactionCode);
 				refreshList();
 				closeDialog();
 			}
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -670,17 +666,17 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * 
 	 * @return boolean
 	 */
-	private boolean doProcess(TransactionCode aTransactionCode,String tranType){
+	private boolean doProcess(TransactionCode aTransactionCode, String tranType) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
+
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
 		aTransactionCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aTransactionCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aTransactionCode.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -703,19 +699,19 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 					}
 				}
 			}
-			
+
 			if (!StringUtils.isBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
-				
-				if (nextTasks!=null && nextTasks.length>0){
+
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-						
-						if(nextRoleCode.length()>1){
+
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -724,33 +720,33 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 			aTransactionCode.setNextTaskId(nextTaskId);
 			aTransactionCode.setRoleCode(getRole());
 			aTransactionCode.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aTransactionCode, tranType);
-			
+
+			auditHeader = getAuditHeader(aTransactionCode, tranType);
+
 			String operationRefs = getServiceOperations(taskId, aTransactionCode);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aTransactionCode, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aTransactionCode, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aTransactionCode, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aTransactionCode, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
@@ -763,61 +759,56 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
-		
-		TransactionCode aTransactionCode = (TransactionCode) auditHeader.
-													getAuditDetail().getModelData();
+
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
+
+		TransactionCode aTransactionCode = (TransactionCode) auditHeader.getAuditDetail().getModelData();
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getTransactionCodeService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getTransactionCodeService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getTransactionCodeService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getTransactionCodeService().doApprove(auditHeader);
 
-						if(aTransactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aTransactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getTransactionCodeService().doReject(auditHeader);
-						if(aTransactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aTransactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_TransactionCodeDialog,
-								auditHeader);
-						return processCompleted; 
+						retValue = ErrorControl.showErrorControl(this.window_TransactionCodeDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-				
-				auditHeader =	ErrorControl.showErrorDetails(this.window_TransactionCodeDialog, 
-						auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.transactionCode),true);
+				auditHeader = ErrorControl.showErrorDetails(this.window_TransactionCodeDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.transactionCode), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -832,7 +823,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Method For Rendering List into ComboBox
 	 */
@@ -848,11 +839,10 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(TransactionCode aTransactionCode, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aTransactionCode.getBefImage(),
-				aTransactionCode);   
-		return new AuditHeader(aTransactionCode.getTranCode(),null,null,null,auditDetail,
-				aTransactionCode.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(TransactionCode aTransactionCode, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aTransactionCode.getBefImage(), aTransactionCode);
+		return new AuditHeader(aTransactionCode.getTranCode(), null, null, null, auditDetail,
+				aTransactionCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -867,8 +857,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, 
-					e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_TransactionCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -899,6 +888,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -906,6 +896,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	public TransactionCode getTransactionCode() {
 		return this.transactionCode;
 	}
+
 	public void setTransactionCode(TransactionCode transactionCode) {
 		this.transactionCode = transactionCode;
 	}
@@ -913,6 +904,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
 		this.transactionCodeService = transactionCodeService;
 	}
+
 	public TransactionCodeService getTransactionCodeService() {
 		return this.transactionCodeService;
 	}
@@ -920,6 +912,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	public void setTransactionCodeListCtrl(TransactionCodeListCtrl transactionCodeListCtrl) {
 		this.transactionCodeListCtrl = transactionCodeListCtrl;
 	}
+
 	public TransactionCodeListCtrl getTransactionCodeListCtrl() {
 		return this.transactionCodeListCtrl;
 	}
@@ -927,6 +920,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

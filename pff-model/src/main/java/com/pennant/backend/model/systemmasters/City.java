@@ -55,9 +55,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class City extends AbstractWorkflowEntity {
-		
+
 	private static final long serialVersionUID = -306657295035931426L;
-	
+
 	private String pCCountry;
 	private String lovDescPCCountryName;
 	private String pCProvince;
@@ -73,8 +73,8 @@ public class City extends AbstractWorkflowEntity {
 	private boolean cityIsActive;
 	private String pinCode;
 	private String areaName;
-	private String taxStateCode;	//Added for GSTIN
-	
+	private String taxStateCode; //Added for GSTIN
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -87,29 +87,31 @@ public class City extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("pinCode");
-			excludeFields.add("areaName");
-			excludeFields.add("taxStateCode");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("pinCode");
+		excludeFields.add("areaName");
+		excludeFields.add("taxStateCode");
+		return excludeFields;
 	}
-	
+
 	public String getId() {
 		return pCCity;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.pCCity = id;
 	}
-	
+
 	public String getPCCountry() {
 		return pCCountry;
 	}
+
 	public void setPCCountry(String pCCountry) {
 		this.pCCountry = pCCountry;
 	}
@@ -117,34 +119,39 @@ public class City extends AbstractWorkflowEntity {
 	public String getLovDescPCCountryName() {
 		return this.lovDescPCCountryName;
 	}
+
 	public void setLovDescPCCountryName(String lovDescPCCountryName) {
-		this.lovDescPCCountryName= lovDescPCCountryName;
+		this.lovDescPCCountryName = lovDescPCCountryName;
 	}
-	
+
 	public String getPCProvince() {
 		return pCProvince;
 	}
+
 	public void setPCProvince(String pCProvince) {
 		this.pCProvince = pCProvince;
-	}	
+	}
 
 	public String getLovDescPCProvinceName() {
 		return this.lovDescPCProvinceName;
 	}
+
 	public void setLovDescPCProvinceName(String lovDescPCProvinceName) {
 		this.lovDescPCProvinceName = lovDescPCProvinceName;
 	}
-	
+
 	public String getPCCity() {
 		return pCCity;
 	}
+
 	public void setPCCity(String pCCity) {
 		this.pCCity = pCCity;
 	}
-	
+
 	public String getPCCityName() {
 		return pCCityName;
 	}
+
 	public void setPCCityName(String pCCityName) {
 		this.pCCityName = pCCityName;
 	}
@@ -152,27 +159,31 @@ public class City extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public City getBefImage(){
+	public City getBefImage() {
 		return this.befImage;
-	}	
-	public void setBefImage(City beforeImage){
-		this.befImage=beforeImage;
+	}
+
+	public void setBefImage(City beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -192,6 +203,7 @@ public class City extends AbstractWorkflowEntity {
 	public void setBankRefNo(String bankRefNo) {
 		this.bankRefNo = bankRefNo;
 	}
+
 	public boolean isCityIsActive() {
 		return cityIsActive;
 	}

@@ -24,14 +24,14 @@ public class PaymentProcessImpl implements PaymentProcess {
 	private static Logger logger = Logger.getLogger(PaymentProcessImpl.class);
 
 	@Autowired
-	private FinanceMainDAO 			financeMainDAO;
+	private FinanceMainDAO financeMainDAO;
 	@Autowired
-	private BeneficiaryDAO 			beneficiaryDAO;
+	private BeneficiaryDAO beneficiaryDAO;
 	@Autowired
 	private PaymentDetailService paymentDetailService;
 	@Autowired
-	protected PostingsPreparationUtil	postingsPreparationUtil;
-	
+	protected PostingsPreparationUtil postingsPreparationUtil;
+
 	@Override
 	public void process(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
@@ -39,9 +39,10 @@ public class PaymentProcessImpl implements PaymentProcess {
 		FinanceMain financeMain = null;
 		List<ReturnDataSet> list = null;
 		try {
-			financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(), TableType.MAIN_TAB);
+			financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
+					TableType.MAIN_TAB);
 			String paymentType = paymentInstruction.getPaymentType();
-			
+
 			if (StringUtils.equals("E", paymentInstruction.getStatus())) {
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_PAID);
 			} else {
@@ -51,7 +52,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 				list = postingsPreparationUtil.postReversalsByLinkedTranID(paymentInstruction.getLinkedTranId());
 				aeEvent.setReturnDataSet(list);
 				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
-				
+
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
 
@@ -71,9 +72,10 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void addToCustomerBeneficiary(PaymentInstruction instruction, long cusID) {
-		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(instruction.getAccountNo(), instruction.getBankBranchId(), "_View");
+		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(instruction.getAccountNo(),
+				instruction.getBankBranchId(), "_View");
 		if (count == 0) {
 			Beneficiary beneficiary = new Beneficiary();
 			beneficiary.setCustID(cusID);

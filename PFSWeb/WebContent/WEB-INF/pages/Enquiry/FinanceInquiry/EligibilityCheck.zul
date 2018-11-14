@@ -2,19 +2,15 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_EligibilityCheck" border="none" width="100%"
-			height="100%" sizable="false"
+		<window id="window_EligibilityCheck" border="none" width="100%" height="100%" sizable="false"
 			apply="${eligibilityCheckDialogCtrl}">
 
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" widths="30%,50%,20%">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,50%,20%">
 
 					<toolbar align="start" sclass="toolbar-start">
 						<label value="${c:l('label_EligibilityCheck')}"
@@ -27,13 +23,9 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnRefresh"
-							label="${c:l('label_Refresh')}"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+						<button id="btnRefresh" label="${c:l('label_Refresh')}" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="btnHelp" visible="false"
-							label="${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
@@ -42,19 +34,14 @@
 			<borderlayout id="borderlayoutEligibilityCheck">
 
 				<north border="none">
-					<textbox id="elgModule" value="FINANCE"
-						visible="false" />
+					<textbox id="elgModule" value="FINANCE" visible="false" />
 				</north>
 
 				<center border="none" autoscroll="false">
 					<vlayout style="padding:4px;">
-						<groupbox id="gb_BasicDetails"
-							closable="false">
-							<caption
-								label="${c:l('EligibilityCheck_BasicDetails')}" />
-							<grid id="grid_BasicDetails"
-								sclass="GridLayoutNoBorder" fixedLayout="true"
-								style="border:0px">
+						<groupbox id="gb_BasicDetails" closable="false">
+							<caption label="${c:l('EligibilityCheck_BasicDetails')}" />
+							<grid id="grid_BasicDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="130px" />
 									<column />
@@ -62,28 +49,19 @@
 								</columns>
 								<rows>
 									<row>
-										<label
-											id="label_EligibilityCheck_FinType"
-											value="${c:l('label_EligibilityCheck_FinType.value')}" />
+										<label id="label_EligibilityCheck_FinType" value="${c:l('label_EligibilityCheck_FinType.value')}" />
 										<extendedcombobox id="finType" />
 									</row>
 									<row>
-										<label
-											id="label_EligibilityCheck_CustCIF"
-											value="${c:l('label_EligibilityCheck_CustCIF.value')}" />
+										<label id="label_EligibilityCheck_CustCIF" value="${c:l('label_EligibilityCheck_CustCIF.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<uppercasebox id="custCIF"
-												width="123px" />
-											<button
-												id="btnSearchCustCIF"
-												tooltiptext="${c:l('label_EligibilityCheck_btnSearchCustCIF.tooltiptext')}"
+											<uppercasebox id="custCIF" width="123px" />
+											<button id="btnSearchCustCIF" tooltiptext="${c:l('label_EligibilityCheck_btnSearchCustCIF.tooltiptext')}"
 												image="/images/icons/LOVSearch.png" />
-											<label id="custShrtName"
-												style="margin-left:10px;display:inline-block;padding-top:3px;" />
+											<label id="custShrtName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 										</hbox>
-										<button id="btnGo"
-											label="${c:l('label_Simulate')}" style="font-weight:bold;"
+										<button id="btnGo" label="${c:l('label_Simulate')}" style="font-weight:bold;"
 											tooltiptext="${c:l('label_EligibilityCheck_btnGo.tooltiptext')}" />
 									</row>
 								</rows>
@@ -91,30 +69,21 @@
 						</groupbox>
 
 						<groupbox id="gb_KeyDetails" visible="false">
-							<caption
-								label="${c:l('EligibilityCheck_KeyDetails')}" />
+							<caption label="${c:l('EligibilityCheck_KeyDetails')}" />
 
-							<div sclass="z-toolbar" style="padding:0px"
-								height="28px">
-								<hbox pack="stretch"
-									sclass="hboxRemoveWhiteStrips" width="100%" widths="100%">
+							<div sclass="z-toolbar" style="padding:0px" height="28px">
+								<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%">
 
 									<!-- CRUD BUTTONS -->
-									<toolbar align="end"
-										sclass="toolbar-end">
-										<button id="btnStimulate"
-											label="Eligibility Check" style="font-weight:bold;"
-											image="/images/icons/gear_16.png"
-											tooltiptext="${c:l('btnRefresh.tooltiptext')}"
-											sclass="z-toolbarbutton" />
+									<toolbar align="end" sclass="toolbar-end">
+										<button id="btnStimulate" label="Eligibility Check" style="font-weight:bold;" image="/images/icons/gear_16.png"
+											tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 									</toolbar>
 								</hbox>
 							</div>
 
 							<space height="10px" />
-							<grid id="grid_KeyDetails"
-								sclass="GridLayoutNoBorder" fixedLayout="true"
-								style="border:0px">
+							<grid id="grid_KeyDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="190px" />
 									<column />

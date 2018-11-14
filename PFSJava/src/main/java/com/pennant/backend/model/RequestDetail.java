@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * @author PENNANT TECHNOLOGIES
  * 
  */
-public class RequestDetail  implements java.io.Serializable {
+public class RequestDetail implements java.io.Serializable {
 	private static final long serialVersionUID = -9104695593398442017L;
 	private String entityCode;
 	private long id = Long.MIN_VALUE;
@@ -96,11 +96,11 @@ public class RequestDetail  implements java.io.Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public void setRequsetId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getChannelCode() {
 		return channelCode;
 	}
@@ -116,7 +116,7 @@ public class RequestDetail  implements java.io.Serializable {
 	public void setChannelId(long channelId) {
 		this.channelId = channelId;
 	}
-	
+
 	public String getRequestIP() {
 		return requestIP;
 	}
@@ -124,7 +124,7 @@ public class RequestDetail  implements java.io.Serializable {
 	public void setRequestIP(String requestIP) {
 		this.requestIP = requestIP;
 	}
-	
+
 	public long getUserId() {
 		return userId;
 	}
@@ -164,7 +164,7 @@ public class RequestDetail  implements java.io.Serializable {
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
 	}
-	
+
 	public Date getMessageSentOn() {
 		return messageSentOn;
 	}

@@ -53,11 +53,17 @@ import com.pennant.backend.model.systemmasters.Province;
 public interface ProvinceService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Province getProvinceById(String cPCountry, String cPProvince);
+
 	Province getApprovedProvinceById(String cPCountry, String cPProvince);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	boolean getBusinessAreaExist(String businessAreaValue, String type);
 
 }

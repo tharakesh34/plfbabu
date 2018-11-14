@@ -110,97 +110,96 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
 
-	protected Window 			window_CreditApplicationReviewDialog;  // autowired
-	protected Borderlayout		borderlayout_CreditApplicationReview;  // autowired
-	protected Grid 				creditApplicationReviewGrid;           // autowired
-	protected Longbox 		 	custID; 						   	   // autowired
-	protected Intbox  			toYear;                                // autowired
-	protected Textbox 	 		custCIF;							   // autowired
-	protected Label 			custShrtName;						   // autowired
-	protected Groupbox 			gb_CreditReviwDetails;                 // autowired
-	protected Tabbox 			tabBoxIndexCenter;                     // autowired
-	protected Tabs 				tabsIndexCenter;                       // autowired
-	protected Tabpanels 		tabpanelsBoxIndexCenter;               // autowired
-	protected Button 			btnSearch;                             // autowired
-	protected Button            btnPrint;                              // autowired
-	
-	// Customer Details
-	protected Textbox 			bankName;                           // autowired
-	protected Textbox 			auditors;                           // autowired
-	protected Radiogroup 		conSolOrUnConsol;                   // autowired
-	protected Radio		        conSolidated;                       // autowired
-	protected Radio 		    unConsolidated;                     // autowired
-	protected Textbox 			location;                           // autowired
-	protected Textbox 			auditedYear;                        // autowired
-	protected Datebox 			auditedDate;                        // autowired
-	protected Decimalbox 		conversionRate;                     // autowired
-	protected Longbox 	 		noOfShares;							// autowired
-	protected CurrencyBox 	 	marketPrice;						// autowired
-    protected Combobox          auditPeriod;                        // autowired
-	protected Combobox          auditType;                          // autowired
-	protected Radiogroup        qualifiedUnQualified;               // autowired
-	protected Radio             qualRadio;                          // autowired
-	protected Radio             unQualRadio;                        // autowired
-	protected Textbox           lovDescFinCcyName;                  // autowired
-	protected ExtendedCombobox  currencyType;                       // autowired
-	
-	protected Label label_CreditApplicationReviewDialog_NoOfYearsToDisplay; // autowired
-	protected Row row1;   // autowired
-	protected Row row2;   // autowired
-	protected Row row3;   // autowired
-	protected Row row4;   // autowired
-	protected Row row5;   // autowired
-	protected Row row6;   // autowired
-	protected Row row7;   // autowired
-	protected Row row8;   // autowired
-	
-    protected Label             label_CreditApplicationReviewDialog_RecordStatus;
-    protected Groupbox gb_CustDetails;  // autowired
-    protected Listbox listBoxCust;  // autowired
-  
+	protected Window window_CreditApplicationReviewDialog; // autowired
+	protected Borderlayout borderlayout_CreditApplicationReview; // autowired
+	protected Grid creditApplicationReviewGrid; // autowired
+	protected Longbox custID; // autowired
+	protected Intbox toYear; // autowired
+	protected Textbox custCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Groupbox gb_CreditReviwDetails; // autowired
+	protected Tabbox tabBoxIndexCenter; // autowired
+	protected Tabs tabsIndexCenter; // autowired
+	protected Tabpanels tabpanelsBoxIndexCenter; // autowired
+	protected Button btnSearch; // autowired
+	protected Button btnPrint; // autowired
 
-	protected Button btnSearchPRCustid; 			
-	private JdbcSearchObject<Customer> newSearchObject ;
+	// Customer Details
+	protected Textbox bankName; // autowired
+	protected Textbox auditors; // autowired
+	protected Radiogroup conSolOrUnConsol; // autowired
+	protected Radio conSolidated; // autowired
+	protected Radio unConsolidated; // autowired
+	protected Textbox location; // autowired
+	protected Textbox auditedYear; // autowired
+	protected Datebox auditedDate; // autowired
+	protected Decimalbox conversionRate; // autowired
+	protected Longbox noOfShares; // autowired
+	protected CurrencyBox marketPrice; // autowired
+	protected Combobox auditPeriod; // autowired
+	protected Combobox auditType; // autowired
+	protected Radiogroup qualifiedUnQualified; // autowired
+	protected Radio qualRadio; // autowired
+	protected Radio unQualRadio; // autowired
+	protected Textbox lovDescFinCcyName; // autowired
+	protected ExtendedCombobox currencyType; // autowired
+
+	protected Label label_CreditApplicationReviewDialog_NoOfYearsToDisplay; // autowired
+	protected Row row1; // autowired
+	protected Row row2; // autowired
+	protected Row row3; // autowired
+	protected Row row4; // autowired
+	protected Row row5; // autowired
+	protected Row row6; // autowired
+	protected Row row7; // autowired
+	protected Row row8; // autowired
+
+	protected Label label_CreditApplicationReviewDialog_RecordStatus;
+	protected Groupbox gb_CustDetails; // autowired
+	protected Listbox listBoxCust; // autowired
+
+	protected Button btnSearchPRCustid;
+	private JdbcSearchObject<Customer> newSearchObject;
 	private transient CreditApplicationReviewService creditApplicationReviewService;
 	private transient CreditReviewSummaryData creditReviewSummaryData;
 	private List<CreditReviewSubCtgDetails> creditReviewSubtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
-	private FinCreditReviewDetails            finCreditReviewDetails = null;
-	private transient WorkFlowDetails	      workFlowDetails	= null;
-	public  List<Notes>     notesList = new ArrayList<Notes>();
+	private FinCreditReviewDetails finCreditReviewDetails = null;
+	private transient WorkFlowDetails workFlowDetails = null;
+	public List<Notes> notesList = new ArrayList<Notes>();
 	private NotificationService notificationService;
 	private CreditApplicationReviewListCtrl creditApplicationReviewListCtrl = null;
 
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = new ArrayList<>();
 	private int noOfYears = SysParamUtil.getValueAsInt("NO_OF_YEARS_TOSHOW");
 	private int currFormatter;
-	private Map<String,String> dataMap = new HashMap<>();
+	private Map<String, String> dataMap = new HashMap<>();
 	private List<Filter> filterList = null;
 	private int year;
-	private boolean ratioFlag= true;
+	private boolean ratioFlag = true;
 	private String custCtgCode = null;
-	
+
 	private boolean isEnquiry = true;
-	
-	private Map<String ,FinCreditReviewDetails> creditReviewDetailsMap;
+
+	private Map<String, FinCreditReviewDetails> creditReviewDetailsMap;
 	BigDecimal totAsstValue0 = BigDecimal.ZERO;
 	BigDecimal totLibNetWorthValue0 = BigDecimal.ZERO;
 	BigDecimal totAsstValue1 = BigDecimal.ZERO;
 	BigDecimal totLibNetWorthValue1 = BigDecimal.ZERO;
 	BigDecimal totAsstValue2 = BigDecimal.ZERO;
 	BigDecimal totLibNetWorthValue2 = BigDecimal.ZERO;
-	
+
 	// create a script engine manager
 	ScriptEngineManager factory = new ScriptEngineManager();
 	// create a JavaScript engine
 	ScriptEngine engine = factory.getEngineByName("JavaScript");
-	
-	protected Div 				div_CmdBtntoolbar;
-	protected Div 				div_SearchBtntoolbar;
-	protected Div 				divDel;
-	protected Groupbox 			gb_basicDetails;
+
+	protected Div div_CmdBtntoolbar;
+	protected Div div_SearchBtntoolbar;
+	protected Div divDel;
+	protected Groupbox gb_basicDetails;
 	Date appldate = DateUtility.getAppDate();
 	Date appDftStrtDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-	String maxAuditYear=null;
+	String maxAuditYear = null;
 	boolean showCurrentYear;
 	int notesEnteredCount;
 	int noOfRecords;
@@ -208,20 +207,20 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
 	private BigDecimal repayProfitRate = BigDecimal.ZERO;
-	private int	roundingTarget = 0;
+	private int roundingTarget = 0;
 	private int numberOfTerms = 0;
 	HashMap<String, String> extendedDataMap = new HashMap<String, String>();
 	int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-	
+
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
-	
+
 	private JountAccountDetailDAO jountAccountDetailDAO;
 	private CreditApplicationReviewDAO creditApplicationReviewDAO;
 	private String finReference;
 	Set<Long> custIds = new HashSet<>();
 	private List<FinCreditReviewDetails> auditYears;
-	private List<JointAccountDetail> coAppIds =  new ArrayList<>();
+	private List<JointAccountDetail> coAppIds = new ArrayList<>();
 	CustomerBankInfo customerBankInfo = null;
 	BigDecimal sumOfEMI = BigDecimal.ZERO;
 
@@ -229,7 +228,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
 	private boolean fromLoan = false;
 	private String eligibilityMethods = "";
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -242,13 +241,13 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		super.pageRightName = "CreditApplicationReviewDialog";
 	}
 
-	private String unFormat(String amount){
+	private String unFormat(String amount) {
 		return PennantAppUtil.formateAmount(new BigDecimal(amount), finFormatter).toString();
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -259,172 +258,191 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		// Set the page level components.
 		setPageComponents(window_CreditApplicationReviewDialog);
 
-		try{
+		try {
 
-			if (arguments.containsKey("custCIF") && arguments.containsKey("custID") && arguments.containsKey("custCtgType")) {
+			if (arguments.containsKey("custCIF") && arguments.containsKey("custID")
+					&& arguments.containsKey("custCtgType")) {
 				this.custID.setValue((Long) arguments.get("custID"));
-				
+
 				showCurrentYear = true;
 				isEnquiry = false;
 				this.custCIF.setValue((String) arguments.get("custCIF"));
 				this.custCtgCode = (String) arguments.get("custCtgType");
 				this.fromLoan = (boolean) arguments.get("fromLoan");
-				
+
 				//based on loan type configuration
-				if(fromLoan){
+				if (fromLoan) {
 					List<Long> eligibilityIdsList = new ArrayList<>();
-					this.eligibilityMethods  = (String) arguments.get("eligibilityMethods");
-					if(this.eligibilityMethods != null && !this.eligibilityMethods.isEmpty()){
-						eligibilityIdsList = Arrays.asList(eligibilityMethods.split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
-						this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(this.custCtgCode, eligibilityIdsList);
-					}else{
+					this.eligibilityMethods = (String) arguments.get("eligibilityMethods");
+					if (this.eligibilityMethods != null && !this.eligibilityMethods.isEmpty()) {
+						eligibilityIdsList = Arrays.asList(eligibilityMethods.split(",")).stream()
+								.map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+						this.listOfFinCreditRevCategory = this.creditApplicationReviewService
+								.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(this.custCtgCode,
+										eligibilityIdsList);
+					} else {
 						eligibilityIdsList.add(Long.valueOf(-1));
-						this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(this.custCtgCode, eligibilityIdsList);
+						this.listOfFinCreditRevCategory = this.creditApplicationReviewService
+								.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(this.custCtgCode,
+										eligibilityIdsList);
 					}
-				}else{
-					this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
+				} else {
+					this.listOfFinCreditRevCategory = this.creditApplicationReviewService
+							.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
 				}
-				
+
 				this.finReference = (String) arguments.get("finReference");
-				this.maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
-				
+				this.maxAuditYear = getCreditApplicationReviewService()
+						.getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
+
 				//getting co-applicant id's
 				coAppIds = jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
 				custIds.add(this.custID.getValue());
-				
+
 				//Adding co-applicant id's
 				if (coAppIds != null && coAppIds.size() > 0) {
 					for (JointAccountDetail jointAccountDetail : coAppIds) {
 						custIds.add(jointAccountDetail.getCustID());
 					}
 				}
-				
+
 				//getting audit years from credit review details 
 				auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
 				customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
 				sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
 				custIds.remove(this.custID.getValue());
-				
+
 				//Fill Customer details from co-applicants 
 				doFillCustomerDetails(auditYears);
-				
+
 				this.toYear.setValue(Integer.parseInt(maxAuditYear));
 				year = this.toYear.getValue();
-				if(arguments.containsKey("facility")){
+				if (arguments.containsKey("facility")) {
 					isEnquiry = true;
 				}
-				
-				if(customerBankInfo != null){
-					extendedDataMap.put("EXT_CREDITTRANNO",unFormat(String.valueOf(customerBankInfo.getCreditTranNo())));
-					extendedDataMap.put("EXT_CREDITTRANAMT",unFormat(customerBankInfo.getCreditTranAmt().toString()));
-					extendedDataMap.put("EXT_CREDITTRANAVG",unFormat(customerBankInfo.getCreditTranAvg().toString()));
-					extendedDataMap.put("EXT_DEBITTRANNO",unFormat(String.valueOf(customerBankInfo.getDebitTranNo())));
-					extendedDataMap.put("EXT_DEBITTRANAMT",unFormat(customerBankInfo.getDebitTranAmt().toString()));
-					extendedDataMap.put("EXT_CASHDEPOSITNO",unFormat(String.valueOf(customerBankInfo.getCashDepositNo())));
-					extendedDataMap.put("EXT_CASHDEPOSITAMT",unFormat(customerBankInfo.getCashDepositAmt().toString()));
-					extendedDataMap.put("EXT_CASHWITHDRAWALNO",unFormat(String.valueOf(customerBankInfo.getCashWithdrawalNo())));
-					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",unFormat(customerBankInfo.getCashWithdrawalAmt().toString()));
-					extendedDataMap.put("EXT_CHQDEPOSITNO",unFormat(String.valueOf(customerBankInfo.getChqDepositNo())));
-					extendedDataMap.put("EXT_CHQDEPOSITAMT",unFormat(customerBankInfo.getChqDepositAmt().toString()));
-					extendedDataMap.put("EXT_CHQISSUENO",unFormat(String.valueOf(customerBankInfo.getChqIssueNo())));
-					extendedDataMap.put("EXT_CHQISSUEAMT",unFormat(customerBankInfo.getChqIssueAmt().toString()));
-					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",unFormat(String.valueOf(customerBankInfo.getInwardChqBounceNo())));
-					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",unFormat(String.valueOf(customerBankInfo.getOutwardChqBounceNo())));
-					extendedDataMap.put("EXT_EODBALAVG",unFormat(customerBankInfo.getEodBalAvg().toString()));
-					extendedDataMap.put("EXT_EODBALMAX",unFormat(customerBankInfo.getEodBalMax().toString()));
-					extendedDataMap.put("EXT_EODBALMIN",unFormat(customerBankInfo.getEodBalMin().toString()));
-					
+
+				if (customerBankInfo != null) {
+					extendedDataMap.put("EXT_CREDITTRANNO",
+							unFormat(String.valueOf(customerBankInfo.getCreditTranNo())));
+					extendedDataMap.put("EXT_CREDITTRANAMT", unFormat(customerBankInfo.getCreditTranAmt().toString()));
+					extendedDataMap.put("EXT_CREDITTRANAVG", unFormat(customerBankInfo.getCreditTranAvg().toString()));
+					extendedDataMap.put("EXT_DEBITTRANNO", unFormat(String.valueOf(customerBankInfo.getDebitTranNo())));
+					extendedDataMap.put("EXT_DEBITTRANAMT", unFormat(customerBankInfo.getDebitTranAmt().toString()));
+					extendedDataMap.put("EXT_CASHDEPOSITNO",
+							unFormat(String.valueOf(customerBankInfo.getCashDepositNo())));
+					extendedDataMap.put("EXT_CASHDEPOSITAMT",
+							unFormat(customerBankInfo.getCashDepositAmt().toString()));
+					extendedDataMap.put("EXT_CASHWITHDRAWALNO",
+							unFormat(String.valueOf(customerBankInfo.getCashWithdrawalNo())));
+					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",
+							unFormat(customerBankInfo.getCashWithdrawalAmt().toString()));
+					extendedDataMap.put("EXT_CHQDEPOSITNO",
+							unFormat(String.valueOf(customerBankInfo.getChqDepositNo())));
+					extendedDataMap.put("EXT_CHQDEPOSITAMT", unFormat(customerBankInfo.getChqDepositAmt().toString()));
+					extendedDataMap.put("EXT_CHQISSUENO", unFormat(String.valueOf(customerBankInfo.getChqIssueNo())));
+					extendedDataMap.put("EXT_CHQISSUEAMT", unFormat(customerBankInfo.getChqIssueAmt().toString()));
+					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",
+							unFormat(String.valueOf(customerBankInfo.getInwardChqBounceNo())));
+					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",
+							unFormat(String.valueOf(customerBankInfo.getOutwardChqBounceNo())));
+					extendedDataMap.put("EXT_EODBALAVG", unFormat(customerBankInfo.getEodBalAvg().toString()));
+					extendedDataMap.put("EXT_EODBALMAX", unFormat(customerBankInfo.getEodBalMax().toString()));
+					extendedDataMap.put("EXT_EODBALMIN", unFormat(customerBankInfo.getEodBalMin().toString()));
+
 				}
-				
-				extendedDataMap.put("EXT_OBLIGATION",unFormat(sumOfEMI.toString()));
-				if(arguments.containsKey("numberOfTerms")) {
-					numberOfTerms = (int)arguments.get("numberOfTerms");
-					extendedDataMap.put("EXT_NUMBEROFTERMS",String.valueOf(numberOfTerms));
+
+				extendedDataMap.put("EXT_OBLIGATION", unFormat(sumOfEMI.toString()));
+				if (arguments.containsKey("numberOfTerms")) {
+					numberOfTerms = (int) arguments.get("numberOfTerms");
+					extendedDataMap.put("EXT_NUMBEROFTERMS", String.valueOf(numberOfTerms));
 				}
-				if(arguments.containsKey("repayProfitRate")) {
-					repayProfitRate = (BigDecimal)arguments.get("repayProfitRate");
-					extendedDataMap.put("EXT_REPAYPROFITRATE",String.valueOf(repayProfitRate));
+				if (arguments.containsKey("repayProfitRate")) {
+					repayProfitRate = (BigDecimal) arguments.get("repayProfitRate");
+					extendedDataMap.put("EXT_REPAYPROFITRATE", String.valueOf(repayProfitRate));
 				}
-				if(arguments.containsKey("roundingTarget")) {
-					roundingTarget = (int)arguments.get("roundingTarget");
-					extendedDataMap.put("EXT_ROUNDINGTARGET",String.valueOf(roundingTarget));
+				if (arguments.containsKey("roundingTarget")) {
+					roundingTarget = (int) arguments.get("roundingTarget");
+					extendedDataMap.put("EXT_ROUNDINGTARGET", String.valueOf(roundingTarget));
 				}
-				if(arguments.containsKey("finAssetValue")) {
-					finAssetValue = (BigDecimal)arguments.get("finAssetValue");
-					extendedDataMap.put("EXT_FINASSETVALUE",unFormat(finAssetValue.toString()));
+				if (arguments.containsKey("finAssetValue")) {
+					finAssetValue = (BigDecimal) arguments.get("finAssetValue");
+					extendedDataMap.put("EXT_FINASSETVALUE", unFormat(finAssetValue.toString()));
 				}
-				if(arguments.containsKey("finAmount")) {
-					finAmount = (BigDecimal)arguments.get("finAmount");
-					extendedDataMap.put("EXT_FINAMOUNT",unFormat(finAmount.toString()));
+				if (arguments.containsKey("finAmount")) {
+					finAmount = (BigDecimal) arguments.get("finAmount");
+					extendedDataMap.put("EXT_FINAMOUNT", unFormat(finAmount.toString()));
 				}
-				if(arguments.containsKey("firstRepay")) {
-					firstRepay = (BigDecimal)arguments.get("firstRepay");
-					extendedDataMap.put("EXT_FIRSTREPAY",unFormat(firstRepay.toString()));
+				if (arguments.containsKey("firstRepay")) {
+					firstRepay = (BigDecimal) arguments.get("firstRepay");
+					extendedDataMap.put("EXT_FIRSTREPAY", unFormat(firstRepay.toString()));
 				}
-				
+
 				//School Funding Extended fields data setting
-				if(this.toYear.getValue() > 0 && this.custID.getValue() > 0){
+				if (this.toYear.getValue() > 0 && this.custID.getValue() > 0) {
 					schlDataMap = incomeExpenseDetailDAO.getTotal(this.custID.getValue(), this.toYear.getValue());
 				}
-				
+
 				BigDecimal coreIncome = BigDecimal.ZERO;
 				BigDecimal nonCoreIncome = BigDecimal.ZERO;
 				//BigDecimal expenses = BigDecimal.ZERO;
-				
+
 				for (Map<String, Object> map : schlDataMap) {
-					if(map.get("incomeexpensetype").equals("CORE_INCOME")){
+					if (map.get("incomeexpensetype").equals("CORE_INCOME")) {
 						coreIncome = (BigDecimal) map.get("sum");
-					} else if(map.get("incomeexpensetype").equals("NONCORE_INCOME")){
+					} else if (map.get("incomeexpensetype").equals("NONCORE_INCOME")) {
 						nonCoreIncome = (BigDecimal) map.get("sum");
-					}else{
+					} else {
 						//BigDecimal expenses = (BigDecimal) map.get("sum");
 					}
 				}
-				extendedDataMap.put("EXT_TOT_TUT_FEE",unFormat(coreIncome.toString()));
-				extendedDataMap.put("EXT_TOT_NON_COR_INC",unFormat(nonCoreIncome.toString()));
-				
+				extendedDataMap.put("EXT_TOT_TUT_FEE", unFormat(coreIncome.toString()));
+				extendedDataMap.put("EXT_TOT_NON_COR_INC", unFormat(nonCoreIncome.toString()));
+
 				setTabs(isEnquiry);
-				
+
 				this.div_CmdBtntoolbar.setVisible(false);
 				this.div_SearchBtntoolbar.setVisible(false);
 				this.gb_basicDetails.setVisible(false);
-				if(arguments.containsKey("facility")){
+				if (arguments.containsKey("facility")) {
 					this.window_CreditApplicationReviewDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 				}
 			} else {
 				setDialog(DialogType.EMBEDDED);
 				showCurrentYear = false;
 			}
-			
+
 			// For Workflow
-			if(arguments.containsKey("creditReviewDetails")) {
-				if(arguments.containsKey("creditApplicationReviewListCtrl")){
-					creditApplicationReviewListCtrl = (CreditApplicationReviewListCtrl) arguments.get("creditApplicationReviewListCtrl");
+			if (arguments.containsKey("creditReviewDetails")) {
+				if (arguments.containsKey("creditApplicationReviewListCtrl")) {
+					creditApplicationReviewListCtrl = (CreditApplicationReviewListCtrl) arguments
+							.get("creditApplicationReviewListCtrl");
 				}
 				finCreditReviewDetails = (FinCreditReviewDetails) arguments.get("creditReviewDetails");
-				
+
 				String moduleMapCode = null;
-				if(finCreditReviewDetails != null && 
-						FacilityConstants.CREDIT_DIVISION_COMMERCIAL.equals(finCreditReviewDetails.getDivision())){
+				if (finCreditReviewDetails != null
+						&& FacilityConstants.CREDIT_DIVISION_COMMERCIAL.equals(finCreditReviewDetails.getDivision())) {
 					moduleMapCode = "CommCreditAppReview";
-				} else if(finCreditReviewDetails != null && 
-						FacilityConstants.CREDIT_DIVISION_CORPORATE.equals(finCreditReviewDetails.getDivision())){
+				} else if (finCreditReviewDetails != null
+						&& FacilityConstants.CREDIT_DIVISION_CORPORATE.equals(finCreditReviewDetails.getDivision())) {
 					moduleMapCode = "CorpCreditAppReview";
 				}
-				
+
 				ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleMapCode);
 				isEnquiry = false;
-				
-				if(finCreditReviewDetails != null){
-					maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(finCreditReviewDetails.getCustomerId(), "_VIEW");
-					creditReviewDetailsMap = this.creditApplicationReviewService.getListCreditReviewDetailsByCustId(finCreditReviewDetails.getCustomerId(), 
-							                          noOfYears,Integer.parseInt(maxAuditYear));
+
+				if (finCreditReviewDetails != null) {
+					maxAuditYear = getCreditApplicationReviewService()
+							.getMaxAuditYearByCustomerId(finCreditReviewDetails.getCustomerId(), "_VIEW");
+					creditReviewDetailsMap = this.creditApplicationReviewService.getListCreditReviewDetailsByCustId(
+							finCreditReviewDetails.getCustomerId(), noOfYears, Integer.parseInt(maxAuditYear));
 					finCreditReviewDetails = creditReviewDetailsMap.get(maxAuditYear);
 					doWriteBeanToComponents(finCreditReviewDetails);
 					this.custCIF.setValue(finCreditReviewDetails.getLovDescCustCIF());
 					this.custID.setValue(finCreditReviewDetails.getCustomerId());
 					this.custCtgCode = finCreditReviewDetails.getCreditRevCode();
-					this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
+					this.listOfFinCreditRevCategory = this.creditApplicationReviewService
+							.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
 					this.toYear.setValue(Integer.parseInt(finCreditReviewDetails.getAuditYear()));
 					getSearch(isEnquiry);
 					this.creditApplicationReviewGrid.setVisible(true);
@@ -437,7 +455,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					this.userAction.setVisible(false);
 					this.div_SearchBtntoolbar.setVisible(true);
 				}
-				
+
 				readOnlyComponent(true, this.btnSearchPRCustid);
 				this.custCIF.setReadonly(true);
 				this.toYear.setReadonly(true);
@@ -451,17 +469,17 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						setWorkFlowId(workFlowDetails.getId());
 						this.finCreditReviewDetails.setWorkflowId(workFlowDetails.getId());
 					}
-				} 
+				}
 				doCheckRights();
-				doLoadWorkFlow(this.finCreditReviewDetails.isWorkflow(), 
-						this.finCreditReviewDetails.getWorkflowId(), finCreditReviewDetails.getNextTaskId());
+				doLoadWorkFlow(this.finCreditReviewDetails.isWorkflow(), this.finCreditReviewDetails.getWorkflowId(),
+						finCreditReviewDetails.getNextTaskId());
 				if (isWorkFlowEnabled()) {
 					this.userAction = setListRecordStatus(this.userAction);
 					getUserWorkspace().allocateRoleAuthorities(getRole(), "CreditApplicationReviewDialog");
 					this.btnNotes.setVisible(true);
 				}
 			}
-			
+
 			if (isEnquiry) {
 				this.toYear.setVisible(true);
 				this.auditedYear.setVisible(false);
@@ -475,7 +493,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				this.row7.setVisible(false);
 				this.row8.setVisible(false);
 			} else {
-				this.label_CreditApplicationReviewDialog_NoOfYearsToDisplay.setValue(Labels.getLabel("label_CreditApplicationReviewDialog_AuditedYear.value"));
+				this.label_CreditApplicationReviewDialog_NoOfYearsToDisplay
+						.setValue(Labels.getLabel("label_CreditApplicationReviewDialog_AuditedYear.value"));
 				this.toYear.setVisible(false);
 				this.auditedYear.setVisible(true);
 			}
@@ -485,147 +504,155 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCreditReviewDetails
 	 *            (FinCreditReviewDetails)
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	
-	
+
 	public void doWriteBeanToComponents(FinCreditReviewDetails aCreditReviewDetails) throws Exception {
 		logger.debug("Entering");
 		this.custID.setValue(aCreditReviewDetails.getCustomerId());
-		this.custCIF.setValue(aCreditReviewDetails.getLovDescCustCIF()!=null ? 	StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()):"");
-		this.custCIF.setTooltiptext(aCreditReviewDetails.getLovDescCustCIF()!=null ? 
-				StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()):"");
+		this.custCIF.setValue(aCreditReviewDetails.getLovDescCustCIF() != null
+				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()) : "");
+		this.custCIF.setTooltiptext(aCreditReviewDetails.getLovDescCustCIF() != null
+				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()) : "");
 		this.custShrtName.setValue(aCreditReviewDetails.getLovDescCustShrtName());
 		this.bankName.setValue(aCreditReviewDetails.getBankName());
 		this.auditedDate.setValue(aCreditReviewDetails.getAuditedDate());
 		this.auditedYear.setValue(aCreditReviewDetails.getAuditYear());
 		this.currencyType.setValue(aCreditReviewDetails.getCurrency());
-		
+
 		this.currFormatter = CurrencyUtil.getFormat(aCreditReviewDetails.getCurrency());
 		this.conversionRate.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
-		if(aCreditReviewDetails.getConversionRate() == null){
-			BigDecimal converstnRate = PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(this.currencyType.getValue(), AccountConstants.CURRENCY_USD,
-					                     new BigDecimal(1000)), currFormatter);
+		if (aCreditReviewDetails.getConversionRate() == null) {
+			BigDecimal converstnRate = PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(
+					this.currencyType.getValue(), AccountConstants.CURRENCY_USD, new BigDecimal(1000)), currFormatter);
 			this.conversionRate.setValue(converstnRate);
 		} else {
 			this.conversionRate.setValue(aCreditReviewDetails.getConversionRate());
 		}
-		
-		if(aCreditReviewDetails.isConsolidated()){
+
+		if (aCreditReviewDetails.isConsolidated()) {
 			this.conSolOrUnConsol.setSelectedIndex(0);
-		} else  {
+		} else {
 			this.conSolOrUnConsol.setSelectedIndex(1);
 		}
-		
+
 		this.auditors.setValue(aCreditReviewDetails.getAuditors());
-		this.location.setValue(aCreditReviewDetails.getLocation());	
+		this.location.setValue(aCreditReviewDetails.getLocation());
 		this.noOfShares.setValue(aCreditReviewDetails.getNoOfShares());
-		this.marketPrice.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(aCreditReviewDetails.getCurrency())));
+		this.marketPrice.setFormat(
+				PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(aCreditReviewDetails.getCurrency())));
 		this.marketPrice.setScale(CurrencyUtil.getFormat(aCreditReviewDetails.getCurrency()));
- 		this.marketPrice.setValue(aCreditReviewDetails.getMarketPrice() == null ? BigDecimal.ZERO : aCreditReviewDetails.getMarketPrice());
-		
-		if(aCreditReviewDetails.getAuditPeriod() != 0){
-			fillComboBox(this.auditPeriod, String.valueOf(aCreditReviewDetails.getAuditPeriod()), PennantStaticListUtil.getPeriodList(), "");
+		this.marketPrice.setValue(aCreditReviewDetails.getMarketPrice() == null ? BigDecimal.ZERO
+				: aCreditReviewDetails.getMarketPrice());
+
+		if (aCreditReviewDetails.getAuditPeriod() != 0) {
+			fillComboBox(this.auditPeriod, String.valueOf(aCreditReviewDetails.getAuditPeriod()),
+					PennantStaticListUtil.getPeriodList(), "");
 		}
-		fillComboBox(this.auditType, StringUtils.trimToEmpty(aCreditReviewDetails.getAuditType()), 
-				                       PennantStaticListUtil.getCreditReviewAuditTypesList(), "");
-		if(aCreditReviewDetails.isQualified()){
+		fillComboBox(this.auditType, StringUtils.trimToEmpty(aCreditReviewDetails.getAuditType()),
+				PennantStaticListUtil.getCreditReviewAuditTypesList(), "");
+		if (aCreditReviewDetails.isQualified()) {
 			this.qualifiedUnQualified.setSelectedIndex(0);
-		} else  {
+		} else {
 			this.qualifiedUnQualified.setSelectedIndex(1);
 		}
 		doReadOnly();
 		this.recordStatus.setValue(aCreditReviewDetails.getRecordStatus());
 		logger.debug("Leaving");
 	}
-	
-	public void doReadOnly(){
+
+	public void doReadOnly() {
 		logger.debug(" Entering ");
-		this.bankName.setReadonly(true);                        
-		this.auditors.setReadonly(true);                     
-		this.conSolidated.setDisabled(true);                     
-		this.unConsolidated.setDisabled(true);                    
-		this.location.setDisabled(true);                          
-		this.auditedYear.setReadonly(true);  
+		this.bankName.setReadonly(true);
+		this.auditors.setReadonly(true);
+		this.conSolidated.setDisabled(true);
+		this.unConsolidated.setDisabled(true);
+		this.location.setDisabled(true);
+		this.auditedYear.setReadonly(true);
 		readOnlyComponent(true, this.auditPeriod);
-		this.auditedDate.setDisabled(true);                       
-		this.conversionRate.setDisabled(true);                   
-		this.noOfShares.setReadonly(true);							
+		this.auditedDate.setDisabled(true);
+		this.conversionRate.setDisabled(true);
+		this.noOfShares.setReadonly(true);
 		readOnlyComponent(true, this.marketPrice);
-		this.auditPeriod.setReadonly(true);                       
+		this.auditPeriod.setReadonly(true);
 		readOnlyComponent(true, this.auditType);
-		this.qualRadio.setDisabled(true);            
-		this.unQualRadio.setDisabled(true);           
+		this.qualRadio.setDisabled(true);
+		this.unQualRadio.setDisabled(true);
 		//this.lovDescFinCcyName.setReadonly(true);     
-		readOnlyComponent(true, this.currencyType);    
+		readOnlyComponent(true, this.currencyType);
 		logger.debug(" Leaving ");
 	}
-	
-	public void doCheckRights(){
-		logger.debug("Entering " );
+
+	public void doCheckRights() {
+		logger.debug("Entering ");
 		getUserWorkspace().allocateAuthorities("CreditApplicationReviewDialog", getRole());
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CreditApplicationReviewDialog_btnSave"));
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void doSave() throws Exception{
+
+	public void doSave() throws Exception {
 		logger.debug("Entering ");
 		boolean isNew = false;
 		String tranType = "";
-        //int approvedRecordsCount = 0;
-        notesEnteredCount = 0;
-		Map<String ,List<FinCreditReviewSummary>> creditReviewSummaryMap;
-		creditReviewSummaryMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(this.custID.getValue(), noOfYears,year, "_View");
-		if(creditReviewDetailsMap == null){
-			creditReviewDetailsMap = this.creditApplicationReviewService.getListCreditReviewDetailsByCustId(this.custID.getValue(), noOfYears,year);
+		//int approvedRecordsCount = 0;
+		notesEnteredCount = 0;
+		Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
+		creditReviewSummaryMap = this.creditApplicationReviewService
+				.getListCreditReviewSummaryByCustId(this.custID.getValue(), noOfYears, year, "_View");
+		if (creditReviewDetailsMap == null) {
+			creditReviewDetailsMap = this.creditApplicationReviewService
+					.getListCreditReviewDetailsByCustId(this.custID.getValue(), noOfYears, year);
 		}
-         
-		List<FinCreditReviewDetails> listOfFinCreditReviewDetails = new  ArrayList<FinCreditReviewDetails>();
-		for(int i=0;i<noOfYears;i++){
-			if(!"Saved".equalsIgnoreCase(userAction.getSelectedItem().getValue().toString())){
+
+		List<FinCreditReviewDetails> listOfFinCreditReviewDetails = new ArrayList<FinCreditReviewDetails>();
+		for (int i = 0; i < noOfYears; i++) {
+			if (!"Saved".equalsIgnoreCase(userAction.getSelectedItem().getValue().toString())) {
 				int yearCount = i;
-				switch(yearCount){
-				case 2 : if(totAsstValue0.compareTo(totLibNetWorthValue0) != 0){
+				switch (yearCount) {
+				case 2:
+					if (totAsstValue0.compareTo(totLibNetWorthValue0) != 0) {
 						MessageUtil.showError(getMessage(year - 2, totAsstValue0, totLibNetWorthValue0));
-					       return;
-				         } 
-				        break;
-				case 1 : if(totAsstValue1.compareTo(totLibNetWorthValue1) != 0){
+						return;
+					}
+					break;
+				case 1:
+					if (totAsstValue1.compareTo(totLibNetWorthValue1) != 0) {
 						MessageUtil.showError(getMessage(year - 1, totAsstValue1, totLibNetWorthValue1));
-					        return;
-				           } 
-				        break;
-				case 0 : if(totAsstValue2.compareTo(totLibNetWorthValue2) != 0){
+						return;
+					}
+					break;
+				case 0:
+					if (totAsstValue2.compareTo(totLibNetWorthValue2) != 0) {
 						MessageUtil.showError(getMessage(year - 0, totAsstValue2, totLibNetWorthValue2));
-					        return;
-				         }
-				        break;
+						return;
+					}
+					break;
 				}
 			}
-			if(creditReviewDetailsMap != null && creditReviewDetailsMap.get(String.valueOf(year-i)) != null){
-				FinCreditReviewDetails aFinCreditReviewDetails = (FinCreditReviewDetails) creditReviewDetailsMap.get(String.valueOf(year-i));
-				if(creditReviewSummaryMap.get(String.valueOf(year-i)) != null){
-					aFinCreditReviewDetails.setCreditReviewSummaryEntries(creditReviewSummaryMap.get(String.valueOf(year-i)));
+			if (creditReviewDetailsMap != null && creditReviewDetailsMap.get(String.valueOf(year - i)) != null) {
+				FinCreditReviewDetails aFinCreditReviewDetails = (FinCreditReviewDetails) creditReviewDetailsMap
+						.get(String.valueOf(year - i));
+				if (creditReviewSummaryMap.get(String.valueOf(year - i)) != null) {
+					aFinCreditReviewDetails
+							.setCreditReviewSummaryEntries(creditReviewSummaryMap.get(String.valueOf(year - i)));
 					listOfFinCreditReviewDetails.add(aFinCreditReviewDetails);
 				}
 			}
@@ -635,28 +662,28 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		FinCreditReviewDetails ltstFinCreditReviewDetails = new FinCreditReviewDetails();
 		BeanUtils.copyProperties(this.finCreditReviewDetails, ltstFinCreditReviewDetails);
 		//noOfRecords = listOfFinCreditReviewDetails.size();
-		for(FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails){
-			if(!"Approved".equalsIgnoreCase(aCreditReviewDetails.getRecordStatus())){
+		for (FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails) {
+			if (!"Approved".equalsIgnoreCase(aCreditReviewDetails.getRecordStatus())) {
 				noOfRecords++;
 			}
 		}
-		
+
 		int proRecordCount = 0;
-		for(FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails){
-			
-			if(!"Approved".equalsIgnoreCase(aCreditReviewDetails.getRecordStatus())){
+		for (FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails) {
+
+			if (!"Approved".equalsIgnoreCase(aCreditReviewDetails.getRecordStatus())) {
 				// for cancellation we are processing latest credit review details only
-				if("Cancelled".equalsIgnoreCase(userAction.getSelectedItem().getValue().toString())){
-					if(!aCreditReviewDetails.getAuditYear().equals(ltstFinCreditReviewDetails.getAuditYear())){
+				if ("Cancelled".equalsIgnoreCase(userAction.getSelectedItem().getValue().toString())) {
+					if (!aCreditReviewDetails.getAuditYear().equals(ltstFinCreditReviewDetails.getAuditYear())) {
 						continue;
 					}
 				}
-				/*if(!StringUtils.trimToEmpty(aCreditReviewDetails.getRecordStatus()).equals("") 
-						&& !aCreditReviewDetails.getRecordStatus().equals(ltstYrRcdStatus)){
-					MessageUtil.showErrorMessage(aCreditReviewDetails.getAuditYear()+" Record  in "+aCreditReviewDetails.getRecordStatus()
-							+" State Please Process It To "+ltstYrRcdStatus+" State");
-					return;
-				}*/
+				/*
+				 * if(!StringUtils.trimToEmpty(aCreditReviewDetails.getRecordStatus()).equals("") &&
+				 * !aCreditReviewDetails.getRecordStatus().equals(ltstYrRcdStatus)){
+				 * MessageUtil.showErrorMessage(aCreditReviewDetails.getAuditYear()+" Record  in "+aCreditReviewDetails.
+				 * getRecordStatus() +" State Please Process It To "+ltstYrRcdStatus+" State"); return; }
+				 */
 				isNew = aCreditReviewDetails.isNew();
 				if (isWorkFlowEnabled()) {
 					tranType = PennantConstants.TRAN_WF;
@@ -669,9 +696,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 							aCreditReviewDetails.setNewRecord(true);
 						}
 					}
-					if(creditReviewSummaryMap.get(aCreditReviewDetails.getAuditYear()) != null){
-						List<FinCreditReviewSummary> finCreditReviewSummaryList = creditReviewSummaryMap.get(aCreditReviewDetails.getAuditYear());
-						for(FinCreditReviewSummary finCreditReviewSummary : finCreditReviewSummaryList){
+					if (creditReviewSummaryMap.get(aCreditReviewDetails.getAuditYear()) != null) {
+						List<FinCreditReviewSummary> finCreditReviewSummaryList = creditReviewSummaryMap
+								.get(aCreditReviewDetails.getAuditYear());
+						for (FinCreditReviewSummary finCreditReviewSummary : finCreditReviewSummaryList) {
 							finCreditReviewSummary.setRecordType(ltstFinCreditReviewDetails.getRecordType());
 							finCreditReviewSummary.setNewRecord(ltstFinCreditReviewDetails.isNew());
 							finCreditReviewSummary.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -696,40 +724,40 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						// do Close the Dialog window
 						closeDialog();
 						creditApplicationReviewListCtrl.doReset();
-					} 
+					}
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
-			} 
+			}
 		}
-		
-		if(listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
-				&& noOfRecords == proRecordCount){
+
+		if (listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
+				&& noOfRecords == proRecordCount) {
 			//Mail Alert Notification for User
 			notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT,
 					listOfFinCreditReviewDetails.get(0));
-			
+
 			FinCreditReviewDetails creditReviewDetails = listOfFinCreditReviewDetails.get(0);
-			String msg = getSavingStatus(creditReviewDetails.getRoleCode(), creditReviewDetails.getNextRoleCode(), creditReviewDetails.getCustomerId(),
-					"Credit Review", creditReviewDetails.getRecordStatus());
-			Clients.showNotification(msg,  "info", null, null, -1);
+			String msg = getSavingStatus(creditReviewDetails.getRoleCode(), creditReviewDetails.getNextRoleCode(),
+					creditReviewDetails.getCustomerId(), "Credit Review", creditReviewDetails.getRecordStatus());
+			Clients.showNotification(msg, "info", null, null, -1);
 		}
-		
-		if(proRecordCount != 0){	
-		    closeDialog();
+
+		if (proRecordCount != 0) {
+			closeDialog();
 			creditApplicationReviewListCtrl.doReset();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/*
-	 * for preparing message 
+	 * for preparing message
 	 */
-	public String getMessage(int year, BigDecimal totLaiblts, BigDecimal totNetWrth){
-		return "Total Assets and Total Liabilities & Net Worth not Matched for The Year "
-	           +year+" Difference is : "+totLaiblts.subtract(totNetWrth);   
+	public String getMessage(int year, BigDecimal totLaiblts, BigDecimal totNetWrth) {
+		return "Total Assets and Total Liabilities & Net Worth not Matched for The Year " + year + " Difference is : "
+				+ totLaiblts.subtract(totNetWrth);
 	}
-	
+
 	private boolean doProcess(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
 		logger.debug("Entering");
 
@@ -811,13 +839,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			auditHeader = getAuditHeader(aCreditReviewDetails, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		
+
 		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
@@ -836,7 +863,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		FinCreditReviewDetails aCreditReviewDetails = (FinCreditReviewDetails) auditHeader.getAuditDetail().getModelData();
+		FinCreditReviewDetails aCreditReviewDetails = (FinCreditReviewDetails) auditHeader.getAuditDetail()
+				.getModelData();
 
 		try {
 
@@ -865,9 +893,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_CreditApplicationReviewDialog, auditHeader);
+						retValue = ErrorControl.showErrorControl(this.window_CreditApplicationReviewDialog,
+								auditHeader);
 						return processCompleted;
 					}
 				}
@@ -899,11 +928,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-		@Override
-		protected String getReference() {
-			return String.valueOf(this.finCreditReviewDetails.getDetailId());
-		}
+
+	@Override
+	protected String getReference() {
+		return String.valueOf(this.finCreditReviewDetails.getDetailId());
+	}
 
 	/**
 	 * Display Message in Error Box
@@ -923,7 +952,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -932,99 +961,105 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCreditReviewDetails.getBefImage(), aCreditReviewDetails);
-		return new AuditHeader(String.valueOf(aCreditReviewDetails.getDetailId()), 
-				null, null, null, auditDetail, aCreditReviewDetails.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCreditReviewDetails.getBefImage(),
+				aCreditReviewDetails);
+		return new AuditHeader(String.valueOf(aCreditReviewDetails.getDetailId()), null, null, null, auditDetail,
+				aCreditReviewDetails.getUserDetails(), getOverideMap());
 	}
-	
 
 	/**
 	 * This method for setting the list of the tabs.<br>
+	 * 
 	 * @throws Exception
 	 */
-	public void setTabs(boolean isEnquiry) throws Exception{
+	public void setTabs(boolean isEnquiry) throws Exception {
 		logger.debug("Entering");
-		
-		if(isEnquiry){
-			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap, listOfFinCreditRevCategory);
-		} else if(maxAuditYear != null){
+
+		if (isEnquiry) {
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds,
+					this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap,
+					listOfFinCreditRevCategory);
+		} else if (maxAuditYear != null) {
 			custIds.add(custID.longValue());
-			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds, Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null, listOfFinCreditRevCategory);
+			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds,
+					Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null,
+					listOfFinCreditRevCategory);
 		}
-		if(this.dataMap.containsKey("lovDescCcyEditField")){
+		if (this.dataMap.containsKey("lovDescCcyEditField")) {
 			currFormatter = Integer.parseInt(this.dataMap.get("lovDescCcyEditField"));
 		}
-		for(FinCreditRevCategory fcrc:listOfFinCreditRevCategory){
+		for (FinCreditRevCategory fcrc : listOfFinCreditRevCategory) {
 			long categoryId = fcrc.getCategoryId();
 			String categoryDesc = fcrc.getCategoryDesc();
 			CreditReviewSubCtgDetails creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
 			creditReviewSubCtgDetails.setMainGroup("T");
 			creditReviewSubCtgDetails.setMainGroupDesc(categoryDesc);
 			creditReviewSubtgDetailsList.add(creditReviewSubCtgDetails);
-			
-			if(FacilityConstants.CREDITREVIEW_REMARKS.equals(fcrc.getRemarks())){
+
+			if (FacilityConstants.CREDITREVIEW_REMARKS.equals(fcrc.getRemarks())) {
 				this.ratioFlag = false;
-			}else{
+			} else {
 				this.ratioFlag = true;
 			}
 			Tab tab = new Tab();
-			tab.setId("tab_"+categoryId);
+			tab.setId("tab_" + categoryId);
 			tab.setLabel(categoryDesc);
 			tab.setParent(this.tabsIndexCenter);
-			Tabpanel tabPanel = new Tabpanel();	
-			tabPanel.setId("tabPanel_"+categoryId);
+			Tabpanel tabPanel = new Tabpanel();
+			tabPanel.setId("tabPanel_" + categoryId);
 			tabPanel.setParent(this.tabpanelsBoxIndexCenter);
-			render(fcrc,setListToTab("tabPanel_"+categoryId, tabPanel, fcrc));
+			render(fcrc, setListToTab("tabPanel_" + categoryId, tabPanel, fcrc));
 		}
 		logger.debug("Leaving");
 	}
- 
+
 	/**
 	 * This Method for rendering with data
+	 * 
 	 * @param categoryId
 	 * @param listbox
 	 * @throws Exception
 	 */
-	public void render(FinCreditRevCategory finCreditRevCategory,Listbox listbox) throws Exception {
+	public void render(FinCreditRevCategory finCreditRevCategory, Listbox listbox) throws Exception {
 		logger.debug("Entering");
 		long categoryId = finCreditRevCategory.getCategoryId();
 		Listitem item = null;
 		Listcell lc = null;
 		Listgroup lg = null;
 		String mainCategory = "";
-		
+
 		String totAsst = "";
 		String totLibNetWorth = "";
-		if(!isEnquiry){
+		if (!isEnquiry) {
 
-			if(PennantConstants.PFF_CUSTCTG_SME.startsWith(finCreditReviewDetails.getCreditRevCode())){
+			if (PennantConstants.PFF_CUSTCTG_SME.startsWith(finCreditReviewDetails.getCreditRevCode())) {
 				totAsst = FacilityConstants.CREDITREVIEW_BANK_TOTASST;
-				totLibNetWorth = FacilityConstants.CREDITREVIEW_BANK_TOTLIBNETWRTH; 
-			} else if(PennantConstants.PFF_CUSTCTG_CORP.startsWith(finCreditReviewDetails.getCreditRevCode())){
+				totLibNetWorth = FacilityConstants.CREDITREVIEW_BANK_TOTLIBNETWRTH;
+			} else if (PennantConstants.PFF_CUSTCTG_CORP.startsWith(finCreditReviewDetails.getCreditRevCode())) {
 				totAsst = FacilityConstants.CREDITREVIEW_CORP_TOTASST;
-				totLibNetWorth = FacilityConstants.CREDITREVIEW_CORP_TOTLIBNETWRTH; 	
-			} 
+				totLibNetWorth = FacilityConstants.CREDITREVIEW_CORP_TOTLIBNETWRTH;
+			}
 		}
-		
-		List<FinCreditRevSubCategory>  listOfFinCreditRevSubCategory= this.creditApplicationReviewService.
-		getFinCreditRevSubCategoryByCategoryId(categoryId);
-		for(int i =0 ;i<listOfFinCreditRevSubCategory.size();i++){
-			
-			FinCreditRevSubCategory finCreditRevSubCategory =listOfFinCreditRevSubCategory.get(i);
+
+		List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory = this.creditApplicationReviewService
+				.getFinCreditRevSubCategoryByCategoryId(categoryId);
+		for (int i = 0; i < listOfFinCreditRevSubCategory.size(); i++) {
+
+			FinCreditRevSubCategory finCreditRevSubCategory = listOfFinCreditRevSubCategory.get(i);
 			String subCategoryCode = finCreditRevSubCategory.getSubCategoryCode();
 			String subCategoryItemType = finCreditRevSubCategory.getSubCategoryItemType();
 			item = new Listitem();
 			item.setStyle("background: none repeat scroll 0 0 #FFFFFF; font-size: 12px;");
 
-			item.setId(String.valueOf("li"+subCategoryCode));
+			item.setId(String.valueOf("li" + subCategoryCode));
 
 			CreditReviewSubCtgDetails creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
-			
-			if(!this.ratioFlag && !mainCategory.equals(finCreditRevSubCategory.getMainSubCategoryCode())){
+
+			if (!this.ratioFlag && !mainCategory.equals(finCreditRevSubCategory.getMainSubCategoryCode())) {
 				mainCategory = finCreditRevSubCategory.getMainSubCategoryCode();
-				lg =  new Listgroup();
+				lg = new Listgroup();
 				lg.setId(mainCategory);
-				if(!listbox.hasFellow(mainCategory)){
+				if (!listbox.hasFellow(mainCategory)) {
 					lg.setLabel(mainCategory);
 					lg.setOpen(true);
 					lg.setParent(listbox);
@@ -1035,194 +1070,211 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			creditReviewSubCtgDetails.setMainGroupDesc(mainCategory);
 			lc = new Listcell();
 			lc.setStyle("border: 1px inset snow; font-size: 12px;");
-			Label label1  = new Label();
+			Label label1 = new Label();
 			label1.setStyle("font-weight:bold; font-size: 12px;");
-			if("Calc".equals(subCategoryItemType) && this.ratioFlag){
+			if ("Calc".equals(subCategoryItemType) && this.ratioFlag) {
 				creditReviewSubCtgDetails.setCalC("C");
 				label1.setStyle("font-weight:bold; color:#000000; font-size: 12px;");
 			}
 
 			label1.setValue(String.valueOf(finCreditRevSubCategory.getSubCategoryDesc()));
 			creditReviewSubCtgDetails.setSubCategoryDesc(String.valueOf(finCreditRevSubCategory.getSubCategoryDesc()));
-			if(categoryId == 4 || categoryId == 7){
+			if (categoryId == 4 || categoryId == 7) {
 				creditReviewSubCtgDetails.setRemarks(FacilityConstants.CREDITREVIEW_REMARKS);
 				finCreditRevSubCategory.setRemarks(FacilityConstants.CREDITREVIEW_REMARKS);
 			}
 			label1.setParent(lc);
 			lc.setParent(item);
 			int noOfYears = finCreditRevCategory.getNoOfyears();
-			for(int j=noOfYears;j>=1;j--){				
+			for (int j = noOfYears; j >= 1; j--) {
 				lc = new Listcell();
 				lc.setStyle("text-align:right;border: 1px inset snow; font-size: 11px;");
-				lc.setId("lcdb"+subCategoryCode+String.valueOf(year-j));
-				Label valueLabel= new Label();
+				lc.setId("lcdb" + subCategoryCode + String.valueOf(year - j));
+				Label valueLabel = new Label();
 				valueLabel.setStyle("font-size: 11px;");
-				if("Calc".equals(subCategoryItemType) && this.ratioFlag){
+				if ("Calc".equals(subCategoryItemType) && this.ratioFlag) {
 					valueLabel.setStyle("font-weight:bold; color:#000000; font-size: 11px;");
-					if(finCreditRevSubCategory.isGrand()){
+					if (finCreditRevSubCategory.isGrand()) {
 						item.setStyle("background-color: #CCFF99; font-size: 11px;");
-					} else{
+					} else {
 						item.setStyle("background-color: #ADD8E6; font-size: 11px;");
 					}
 				}
-				valueLabel.setId("db"+subCategoryCode+String.valueOf(year-j));
-				
-				int yearCount = noOfYears-j;
-				if(subCategoryCode.equals(totAsst)){
-					switch(yearCount){
-					case 0 : totAsstValue0 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
-					break;
-					case 1 : totAsstValue1 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
-					break;
-					case 2 : totAsstValue2 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
-					break;
+				valueLabel.setId("db" + subCategoryCode + String.valueOf(year - j));
+
+				int yearCount = noOfYears - j;
+				if (subCategoryCode.equals(totAsst)) {
+					switch (yearCount) {
+					case 0:
+						totAsstValue0 = new BigDecimal(dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode));
+						break;
+					case 1:
+						totAsstValue1 = new BigDecimal(dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode));
+						break;
+					case 2:
+						totAsstValue2 = new BigDecimal(dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode));
+						break;
 					}
-				} else if(subCategoryCode.equals(totLibNetWorth)){
-					switch(yearCount){
-					case 0 : totLibNetWorthValue0 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
-					break;
-					case 1 : totLibNetWorthValue1 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
-					break;
-					case 2 : totLibNetWorthValue2 = new BigDecimal(dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode));
-					break;
+				} else if (subCategoryCode.equals(totLibNetWorth)) {
+					switch (yearCount) {
+					case 0:
+						totLibNetWorthValue0 = new BigDecimal(
+								dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode));
+						break;
+					case 1:
+						totLibNetWorthValue1 = new BigDecimal(
+								dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode));
+						break;
+					case 2:
+						totLibNetWorthValue2 = new BigDecimal(
+								dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode));
+						break;
 					}
 				}
 				String value = "0";
-				if(noOfYears == 3){
-					value = this.dataMap.get("Y"+(noOfYears-j)+"_"+subCategoryCode);
-				}else{
-					value = this.dataMap.get("Y"+(2)+"_"+subCategoryCode);
+				if (noOfYears == 3) {
+					value = this.dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode);
+				} else {
+					value = this.dataMap.get("Y" + (2) + "_" + subCategoryCode);
 				}
-				
+
 				BigDecimal convrsnPrice = BigDecimal.ZERO;
 				BigDecimal tempValue = new BigDecimal(value == null ? "0" : value);
-				if(tempValue.compareTo(BigDecimal.ZERO) != 0){
-					if(this.conversionRate.getValue() != null){
-						convrsnPrice = PennantAppUtil.formateAmount(tempValue,this.currFormatter)
-								.divide(this.conversionRate.getValue(), FacilityConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
-					}else if(isEnquiry){
-						if(creditReviewDetailsMap != null && creditReviewDetailsMap.get(String.valueOf(year)) != null){
-							FinCreditReviewDetails finCreditReviewDetails = creditReviewDetailsMap.get(String.valueOf(year));
-								convrsnPrice = PennantAppUtil.formateAmount(tempValue,this.currFormatter)
-										.divide(finCreditReviewDetails.getConversionRate(), FacilityConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+				if (tempValue.compareTo(BigDecimal.ZERO) != 0) {
+					if (this.conversionRate.getValue() != null) {
+						convrsnPrice = PennantAppUtil.formateAmount(tempValue, this.currFormatter).divide(
+								this.conversionRate.getValue(), FacilityConstants.CREDIT_REVIEW_USD_SCALE,
+								RoundingMode.HALF_DOWN);
+					} else if (isEnquiry) {
+						if (creditReviewDetailsMap != null
+								&& creditReviewDetailsMap.get(String.valueOf(year)) != null) {
+							FinCreditReviewDetails finCreditReviewDetails = creditReviewDetailsMap
+									.get(String.valueOf(year));
+							convrsnPrice = PennantAppUtil.formateAmount(tempValue, this.currFormatter).divide(
+									finCreditReviewDetails.getConversionRate(),
+									FacilityConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
 						}
 					}
 				}
-				if(j==3){
-					creditReviewSubCtgDetails.setYear1USDConvstn(getUsdConVersionValue(finCreditRevSubCategory,convrsnPrice));
-				}else if(j==2) {
-					creditReviewSubCtgDetails.setYear2USDConvstn(getUsdConVersionValue(finCreditRevSubCategory,convrsnPrice));
-				}else if(j==1){
-					creditReviewSubCtgDetails.setYear3USDConvstn(getUsdConVersionValue(finCreditRevSubCategory,convrsnPrice));
+				if (j == 3) {
+					creditReviewSubCtgDetails
+							.setYear1USDConvstn(getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice));
+				} else if (j == 2) {
+					creditReviewSubCtgDetails
+							.setYear2USDConvstn(getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice));
+				} else if (j == 1) {
+					creditReviewSubCtgDetails
+							.setYear3USDConvstn(getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice));
 				}
-			try{
-            	
-				if("--".equals(value) || value == null 
-						//|| !StringUtils.isNumeric(value)
-						) {
+				try {
+
+					if ("--".equals(value) || value == null
+					//|| !StringUtils.isNumeric(value)
+					) {
+						value = "--";
+					} else if (finCreditRevSubCategory.isFormat()) {
+						value = PennantAppUtil.amountFormate(new BigDecimal(value), this.currFormatter);
+					} else if (finCreditRevSubCategory.isPercentCategory()) {
+						value = PennantAppUtil.formatAmount(new BigDecimal(value).multiply(new BigDecimal(100)), 2,
+								false);
+						value = value + " %";
+					} else {
+						value = PennantAppUtil.formatAmount(new BigDecimal(value), 2, false);
+					}
+				} catch (Exception e) {
 					value = "--";
-				}else if(finCreditRevSubCategory.isFormat()){
-					value = PennantAppUtil.amountFormate(new BigDecimal(value), this.currFormatter);
-				}else if(finCreditRevSubCategory.isPercentCategory()) {
-					value = PennantAppUtil.formatAmount(new BigDecimal(value).multiply(new BigDecimal(100)), 2,false);
-					value = value + " %";
-				}else{
-					value =  PennantAppUtil.formatAmount(new BigDecimal(value), 2,false);
 				}
-             }catch (Exception e) {
-         	     value = "--";
-             } 
-				if(value.contains("-")){
+				if (value.contains("-")) {
 					valueLabel.setStyle("font-weight:bold;color:#f71111; font-size: 11px;");
 				}
 				valueLabel.setValue(value);
-				
-				if(j==3){
+
+				if (j == 3) {
 					creditReviewSubCtgDetails.setYera1AuditValue(value);
-				} else if(j==2) {
+				} else if (j == 2) {
 					creditReviewSubCtgDetails.setYera2AuditValue(value);
-				} else if(j==1){
+				} else if (j == 1) {
 					creditReviewSubCtgDetails.setYera3AuditValue(value);
 				}
-				
+
 				valueLabel.setParent(lc);
 				lc.setParent(item);
 
 				lc = new Listcell();
 				lc.setStyle("text-align:right;border: 1px inset snow; font-size: 11px;");
-				lc.setId("lcra"+subCategoryCode+String.valueOf(year-j));
-				Label rLabel = new Label(); 
+				lc.setId("lcra" + subCategoryCode + String.valueOf(year - j));
+				Label rLabel = new Label();
 				rLabel.setStyle("font-size: 11px;");
-				if("Calc".equals(subCategoryItemType) && this.ratioFlag){
+				if ("Calc".equals(subCategoryItemType) && this.ratioFlag) {
 					creditReviewSubCtgDetails.setCalC("C");
 					rLabel.setStyle("font-weight:bold; color:#000000; font-size: 11px;");
 				}
-				rLabel.setId("rLabel"+subCategoryCode+String.valueOf(year-j));
-				if(this.ratioFlag){
-					value = this.dataMap.get("RY"+(noOfYears-j)+"_"+subCategoryCode);
-					if("--".equals(value) || value == null) {
+				rLabel.setId("rLabel" + subCategoryCode + String.valueOf(year - j));
+				if (this.ratioFlag) {
+					value = this.dataMap.get("RY" + (noOfYears - j) + "_" + subCategoryCode);
+					if ("--".equals(value) || value == null) {
 						value = "--";
-					}else {
+					} else {
 						value = PennantApplicationUtil.formatRate(Double.parseDouble(value), 2);
 						value = value + " %";
 					}
-					if(value.contains("-")){
+					if (value.contains("-")) {
 						rLabel.setStyle("font-weight:bold;color:#f71111; font-size: 11px;");
 					}
 					rLabel.setValue(value);
-					if(j==3){
+					if (j == 3) {
 						creditReviewSubCtgDetails.setYera1BreakDown(value);
-					} else if(j==2) {
+					} else if (j == 2) {
 						creditReviewSubCtgDetails.setYera2BreakDown(value);
-					} else if(j==1){
+					} else if (j == 1) {
 						creditReviewSubCtgDetails.setYera3BreakDown(value);
 					}
-				}else{
+				} else {
 					rLabel.setValue("0");
-					if(j==3){
+					if (j == 3) {
 						creditReviewSubCtgDetails.setYera1BreakDown("0");
-					} else if(j==2) {
+					} else if (j == 2) {
 						creditReviewSubCtgDetails.setYera2BreakDown("0");
-					} else if(j==1){
+					} else if (j == 1) {
 						creditReviewSubCtgDetails.setYera3BreakDown("0");
 					}
 				}
 				rLabel.setParent(lc);
 				lc.setParent(item);
 
-				if(j != noOfYears){
+				if (j != noOfYears) {
 					lc = new Listcell();
 					lc.setStyle("text-align:right;border: 1px inset snow; font-size: 11px;");
-					lc.setId("lcdiff"+subCategoryCode+String.valueOf(year-j));
-					Label diffLabel = new Label(); 
+					lc.setId("lcdiff" + subCategoryCode + String.valueOf(year - j));
+					Label diffLabel = new Label();
 					diffLabel.setStyle("font-size: 10px;");
-					if("Calc".equals(subCategoryItemType) && this.ratioFlag){
+					if ("Calc".equals(subCategoryItemType) && this.ratioFlag) {
 						creditReviewSubCtgDetails.setCalC("C");
 						diffLabel.setStyle("font-weight:bold;color:#000000; font-size: 11px;");
 					}
-					diffLabel.setId("diffLabel"+subCategoryCode+String.valueOf(year-j));
-					value = this.dataMap.get("CY"+(noOfYears-j)+"_"+subCategoryCode);
-					if("--".equals(value) || value == null) {
+					diffLabel.setId("diffLabel" + subCategoryCode + String.valueOf(year - j));
+					value = this.dataMap.get("CY" + (noOfYears - j) + "_" + subCategoryCode);
+					if ("--".equals(value) || value == null) {
 						value = "--";
-						if(j==2){
+						if (j == 2) {
 							creditReviewSubCtgDetails.setYera12PerChange(value);
-						} else if(j ==1){
+						} else if (j == 1) {
 							creditReviewSubCtgDetails.setYera23PerChange(value);
 						}
-					}else {
-						try{
-						value = PennantApplicationUtil.formatRate(Double.parseDouble(value), 2);
-						value = value + " %";
-						if(j==2){
-							creditReviewSubCtgDetails.setYera12PerChange(value);
-						} else if(j ==1){
-							creditReviewSubCtgDetails.setYera23PerChange(value);
-						}
-						} catch(Exception e){
+					} else {
+						try {
+							value = PennantApplicationUtil.formatRate(Double.parseDouble(value), 2);
+							value = value + " %";
+							if (j == 2) {
+								creditReviewSubCtgDetails.setYera12PerChange(value);
+							} else if (j == 1) {
+								creditReviewSubCtgDetails.setYera23PerChange(value);
+							}
+						} catch (Exception e) {
 							logger.error("Exception: ", e);
 						}
-					}	
-					if(value.contains("-")){
+					}
+					if (value.contains("-")) {
 						diffLabel.setStyle("font-weight:bold;color:#f71111; font-size: 11px;");
 					}
 					diffLabel.setValue(value);
@@ -1239,27 +1291,29 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Leaving");
 	}
 
-	/** Method for USD Conversion	
+	/**
+	 * Method for USD Conversion
+	 * 
 	 * @param finCreditRevSubCategory
 	 * @param convrsnPrice
 	 * @return
 	 */
-	public String getUsdConVersionValue(FinCreditRevSubCategory finCreditRevSubCategory, BigDecimal convrsnPrice){
-		if(StringUtils.trimToEmpty(finCreditRevSubCategory.getRemarks()).equals(FacilityConstants.CREDITREVIEW_REMARKS)){
+	public String getUsdConVersionValue(FinCreditRevSubCategory finCreditRevSubCategory, BigDecimal convrsnPrice) {
+		if (StringUtils.trimToEmpty(finCreditRevSubCategory.getRemarks())
+				.equals(FacilityConstants.CREDITREVIEW_REMARKS)) {
 			String subCategoryCode = StringUtils.trimToEmpty(finCreditRevSubCategory.getSubCategoryCode());
-			if(subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_WRKCAP) ||
-					subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_EBITDA4) ||
-					subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_FCF)){
-				return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,false);
+			if (subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_WRKCAP)
+					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_EBITDA4)
+					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_FCF)) {
+				return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
 			} else {
 				return "";
 			}
 		} else {
-			return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,false);
+			return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
 		}
 	}
-	
-	
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -1272,38 +1326,39 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Leaving " + event.toString());
 	}
 
-
 	/**
 	 * This method for building the listbox with dynamic headers.<br>
 	 * 
-	 */	
-	public Listbox setListToTab(String tabId,Tabpanel tabPanel,FinCreditRevCategory fcrc){
+	 */
+	public Listbox setListToTab(String tabId, Tabpanel tabPanel, FinCreditRevCategory fcrc) {
 		logger.debug("Entering");
 		long categoryId = fcrc.getCategoryId();
 		String borderLayoutHt = getBorderLayoutHeight();
 		Div div = new Div();
-		div.setId("div_"+categoryId);
-		div.setHeight(Integer.parseInt(borderLayoutHt.substring(0,borderLayoutHt.indexOf("px"))) - 100 - 40-20 + "px");
+		div.setId("div_" + categoryId);
+		div.setHeight(
+				Integer.parseInt(borderLayoutHt.substring(0, borderLayoutHt.indexOf("px"))) - 100 - 40 - 20 + "px");
 		Listbox listbox = new Listbox();
 		listbox.setSpan(true);
-		listbox.setHeight(Integer.parseInt(borderLayoutHt.substring(0,borderLayoutHt.indexOf("px"))) - 100 - 40-20 + "px");
-		listbox.setId("lb_"+categoryId);
-		
+		listbox.setHeight(
+				Integer.parseInt(borderLayoutHt.substring(0, borderLayoutHt.indexOf("px"))) - 100 - 40 - 20 + "px");
+		listbox.setId("lb_" + categoryId);
+
 		Auxhead auxHead = new Auxhead();
-		auxHead.setId("auxHead_"+categoryId);
+		auxHead.setId("auxHead_" + categoryId);
 		auxHead.setDraggable("true");
-		
+
 		Auxheader auxHeader_bankName = new Auxheader("");
 		auxHeader_bankName.setColspan(1);
 		auxHeader_bankName.setStyle("font-size: 14px");
 		auxHeader_bankName.setParent(auxHead);
 		auxHeader_bankName.setAlign("center");
-		
+
 		Listhead listHead = new Listhead();
-		listHead.setId("listHead_"+categoryId);
+		listHead.setId("listHead_" + categoryId);
 		listHead.setStyle("background:#447294;color:white;");
 		listHead.setSizable(true);
-		
+
 		Listheader listheader_bankName = new Listheader();
 		//listheader_bankName.setLabel(Labels.getLabel("listheader_bankName.value",new String[]{"Albaraka"}));
 		listheader_bankName.setStyle("font-size: 12px");
@@ -1312,47 +1367,53 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		CreditReviewSubCtgDetails creditReviewSubCtgDetailsHeader = new CreditReviewSubCtgDetails();
 		int noOfYears = fcrc.getNoOfyears();
-		for(int j=noOfYears;j>=1;j--){
-			int prevAuditPeriod =getCreditApplicationReviewService().getCreditReviewAuditPeriodByAuditYear(this.custID.longValue(), 
-					String.valueOf(year-j+1), 0, true, "_VIew");
-			String prevPeriodLabel = "-"+String.valueOf(prevAuditPeriod)+FacilityConstants.MONTH;
+		for (int j = noOfYears; j >= 1; j--) {
+			int prevAuditPeriod = getCreditApplicationReviewService().getCreditReviewAuditPeriodByAuditYear(
+					this.custID.longValue(), String.valueOf(year - j + 1), 0, true, "_VIew");
+			String prevPeriodLabel = "-" + String.valueOf(prevAuditPeriod) + FacilityConstants.MONTH;
 
 			Auxheader auxHeader_audYearAndPeriod = new Auxheader();
 			// setting colspan for AuxHead
-			if(j == noOfYears){
+			if (j == noOfYears) {
 				auxHeader_audYearAndPeriod.setColspan(2);
 			} else {
 				auxHeader_audYearAndPeriod.setColspan(3);
 			}
 
-			if(categoryId == 3 || categoryId == 4 || categoryId == 7){
-				if(j == noOfYears){
+			if (categoryId == 3 || categoryId == 4 || categoryId == 7) {
+				if (j == noOfYears) {
 					auxHeader_audYearAndPeriod.setColspan(1);
 				} else {
 					auxHeader_audYearAndPeriod.setColspan(2);
 				}
 			}
-			
+
 			auxHeader_audYearAndPeriod.setStyle("font-size: 14px");
 			auxHeader_audYearAndPeriod.setAlign("center");
 			Listheader listheader_audAmt = new Listheader();
-			switch(j){
-			    case 3 : creditReviewSubCtgDetailsHeader.setYera1AuditValueHeader(getAuditTypeLabel(String.valueOf(year-j+1) ,prevPeriodLabel, true));
-				         listheader_audAmt.setLabel(getAuditTypeLabel(String.valueOf(year-j+1) ,prevPeriodLabel, false));
-				         auxHeader_audYearAndPeriod.setLabel(String.valueOf(String.valueOf(year-j+1)+prevPeriodLabel));
-				         creditReviewSubCtgDetailsHeader.setYera1BreakDownHeader(Labels.getLabel("listheader_breakDown.value"));
-				         break;
-			    case 2: creditReviewSubCtgDetailsHeader.setYera2AuditValueHeader(getAuditTypeLabel(String.valueOf(year-j+1),prevPeriodLabel, true));
-				        listheader_audAmt.setLabel(getAuditTypeLabel(String.valueOf(year-j+1) ,prevPeriodLabel, false));
-				        auxHeader_audYearAndPeriod.setLabel(String.valueOf(String.valueOf(year-j+1)+prevPeriodLabel));
-				        creditReviewSubCtgDetailsHeader.setYera2BreakDownHeader(Labels.getLabel("listheader_breakDown.value"));
-				        break;
-			    case 1: creditReviewSubCtgDetailsHeader.setYera3AuditValueHeader(getAuditTypeLabel(String.valueOf(year-j+1),prevPeriodLabel, true));
-				        listheader_audAmt.setLabel(getAuditTypeLabel(String.valueOf(year-j+1) ,prevPeriodLabel, false));
-				        auxHeader_audYearAndPeriod.setLabel(String.valueOf(String.valueOf(year-j+1)+prevPeriodLabel));
-				        creditReviewSubCtgDetailsHeader.setYera3BreakDownHeader(Labels.getLabel("listheader_breakDown.value"));
-				        break;
-			      }
+			switch (j) {
+			case 3:
+				creditReviewSubCtgDetailsHeader.setYera1AuditValueHeader(
+						getAuditTypeLabel(String.valueOf(year - j + 1), prevPeriodLabel, true));
+				listheader_audAmt.setLabel(getAuditTypeLabel(String.valueOf(year - j + 1), prevPeriodLabel, false));
+				auxHeader_audYearAndPeriod.setLabel(String.valueOf(String.valueOf(year - j + 1) + prevPeriodLabel));
+				creditReviewSubCtgDetailsHeader.setYera1BreakDownHeader(Labels.getLabel("listheader_breakDown.value"));
+				break;
+			case 2:
+				creditReviewSubCtgDetailsHeader.setYera2AuditValueHeader(
+						getAuditTypeLabel(String.valueOf(year - j + 1), prevPeriodLabel, true));
+				listheader_audAmt.setLabel(getAuditTypeLabel(String.valueOf(year - j + 1), prevPeriodLabel, false));
+				auxHeader_audYearAndPeriod.setLabel(String.valueOf(String.valueOf(year - j + 1) + prevPeriodLabel));
+				creditReviewSubCtgDetailsHeader.setYera2BreakDownHeader(Labels.getLabel("listheader_breakDown.value"));
+				break;
+			case 1:
+				creditReviewSubCtgDetailsHeader.setYera3AuditValueHeader(
+						getAuditTypeLabel(String.valueOf(year - j + 1), prevPeriodLabel, true));
+				listheader_audAmt.setLabel(getAuditTypeLabel(String.valueOf(year - j + 1), prevPeriodLabel, false));
+				auxHeader_audYearAndPeriod.setLabel(String.valueOf(String.valueOf(year - j + 1) + prevPeriodLabel));
+				creditReviewSubCtgDetailsHeader.setYera3BreakDownHeader(Labels.getLabel("listheader_breakDown.value"));
+				break;
+			}
 
 			//FinCreditReviewDetails finCreditReviewDetails1 = this.creditApplicationReviewService.getCreditReviewDetailsById(id);
 			listheader_audAmt.setHflex("min");
@@ -1360,23 +1421,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			listheader_audAmt.setParent(listHead);
 			auxHeader_audYearAndPeriod.setParent(auxHead);
 
-			Listheader listheader_breakDown= new Listheader();
+			Listheader listheader_breakDown = new Listheader();
 			listheader_breakDown.setLabel(Labels.getLabel("listheader_breakDown.value"));
 			listheader_breakDown.setStyle("font-size: 12px");
 			listheader_breakDown.setHflex("min");
 			listheader_breakDown.setVisible(fcrc.isBrkdowndsply());
 			listheader_breakDown.setParent(listHead);
-			if(j!= noOfYears){
-				Listheader listheader_diff= new Listheader();
+			if (j != noOfYears) {
+				Listheader listheader_diff = new Listheader();
 				listheader_diff.setLabel(Labels.getLabel("listheader_diff.value"));
 				listheader_diff.setHflex("min");
 
-				if(j==2){
+				if (j == 2) {
 					creditReviewSubCtgDetailsHeader.setYera12PerChangeHeader(Labels.getLabel("listheader_diff.value",
-							new String[]{String.valueOf(year-j-1+1)+String.valueOf("/"+(year-j+1))}));
-				} else if(j ==1){
+							new String[] { String.valueOf(year - j - 1 + 1) + String.valueOf("/" + (year - j + 1)) }));
+				} else if (j == 1) {
 					creditReviewSubCtgDetailsHeader.setYera23PerChangeHeader(Labels.getLabel("listheader_diff.value",
-							new String[]{String.valueOf(year-j-1+1)+String.valueOf("/"+(year-j+1))}));
+							new String[] { String.valueOf(year - j - 1 + 1) + String.valueOf("/" + (year - j + 1)) }));
 				}
 				listheader_diff.setStyle("font-size: 12px");
 				listheader_diff.setVisible(fcrc.isChangedsply());
@@ -1384,28 +1445,36 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 			}
 		}
-		
+
 		auxHead.setParent(listbox);
 		listHead.setParent(listbox);
 		for (CreditReviewSubCtgDetails creditReviewSubCtgDetails : creditReviewSubtgDetailsList) {
 			creditReviewSubCtgDetails.setCurrencyConvertion(AccountConstants.CURRENCY_USD);
-			if("T".equals(creditReviewSubCtgDetails.getMainGroup())){
-				
-				creditReviewSubCtgDetails.setYera1AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera1AuditValueHeader());
-				creditReviewSubCtgDetails.setYera1BreakDownHeader(creditReviewSubCtgDetailsHeader.getYera1BreakDownHeader());
-				
-				creditReviewSubCtgDetails.setYera2AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera2AuditValueHeader());
-				creditReviewSubCtgDetails.setYera2BreakDownHeader(creditReviewSubCtgDetailsHeader.getYera2BreakDownHeader());
-				
-				creditReviewSubCtgDetails.setYera3AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera3AuditValueHeader());
-				creditReviewSubCtgDetails.setYera3BreakDownHeader(creditReviewSubCtgDetailsHeader.getYera3BreakDownHeader());
-				
-				creditReviewSubCtgDetails.setYera12PerChangeHeader(creditReviewSubCtgDetailsHeader.getYera12PerChangeHeader());
-				creditReviewSubCtgDetails.setYera23PerChangeHeader(creditReviewSubCtgDetailsHeader.getYera23PerChangeHeader());
-				
+			if ("T".equals(creditReviewSubCtgDetails.getMainGroup())) {
+
+				creditReviewSubCtgDetails
+						.setYera1AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera1AuditValueHeader());
+				creditReviewSubCtgDetails
+						.setYera1BreakDownHeader(creditReviewSubCtgDetailsHeader.getYera1BreakDownHeader());
+
+				creditReviewSubCtgDetails
+						.setYera2AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera2AuditValueHeader());
+				creditReviewSubCtgDetails
+						.setYera2BreakDownHeader(creditReviewSubCtgDetailsHeader.getYera2BreakDownHeader());
+
+				creditReviewSubCtgDetails
+						.setYera3AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera3AuditValueHeader());
+				creditReviewSubCtgDetails
+						.setYera3BreakDownHeader(creditReviewSubCtgDetailsHeader.getYera3BreakDownHeader());
+
+				creditReviewSubCtgDetails
+						.setYera12PerChangeHeader(creditReviewSubCtgDetailsHeader.getYera12PerChangeHeader());
+				creditReviewSubCtgDetails
+						.setYera23PerChangeHeader(creditReviewSubCtgDetailsHeader.getYera23PerChangeHeader());
+
 			}
 		}
-		
+
 		//creditReviewSubtgDetailsList.add(creditReviewSubCtgDetailsHeader);
 		//}
 		listbox.setParent(div);
@@ -1414,63 +1483,71 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		return listbox;
 
 	}
-	
-	
-	public String  getAuditTypeLabel(String auditYear, String prevAudLabel, boolean isForReport){
+
+	public String getAuditTypeLabel(String auditYear, String prevAudLabel, boolean isForReport) {
 		logger.debug("Entering");
 
-		FinCreditReviewDetails finCreditReviewDetails = this.creditApplicationReviewService.getCreditReviewDetailsByCustIdAndYear(this.custID.getValue(), auditYear, isEnquiry ? "_AVIEW" : "_VIEW");
-		
-		if(isEnquiry && finCreditReviewDetails!= null){
-			if(creditReviewDetailsMap == null){
-				creditReviewDetailsMap = new HashMap<String,FinCreditReviewDetails>();
+		FinCreditReviewDetails finCreditReviewDetails = this.creditApplicationReviewService
+				.getCreditReviewDetailsByCustIdAndYear(this.custID.getValue(), auditYear,
+						isEnquiry ? "_AVIEW" : "_VIEW");
+
+		if (isEnquiry && finCreditReviewDetails != null) {
+			if (creditReviewDetailsMap == null) {
+				creditReviewDetailsMap = new HashMap<String, FinCreditReviewDetails>();
 			}
-			if(creditReviewDetailsMap.get(StringUtils.trimToEmpty(finCreditReviewDetails.getAuditYear())) == null){
-				creditReviewDetailsMap.put(StringUtils.trimToEmpty(finCreditReviewDetails.getAuditYear()),finCreditReviewDetails);
+			if (creditReviewDetailsMap.get(StringUtils.trimToEmpty(finCreditReviewDetails.getAuditYear())) == null) {
+				creditReviewDetailsMap.put(StringUtils.trimToEmpty(finCreditReviewDetails.getAuditYear()),
+						finCreditReviewDetails);
 			}
 		}
-		
+
 		String auditTypeLabel = "";
-		if(isForReport){
-			auditTypeLabel = "AUD/Qual "+auditYear+"-0 Months";
+		if (isForReport) {
+			auditTypeLabel = "AUD/Qual " + auditYear + "-0 Months";
 			if (finCreditReviewDetails != null) {
-				String qualOrUnQual = finCreditReviewDetails.isQualified() ? FacilityConstants.CREDITREVIEW_QUALIFIED : FacilityConstants.CREDITREVIEW_UNQUALIFIED;
-				auditTypeLabel = finCreditReviewDetails.getAuditType() + "/" + qualOrUnQual + " " + auditYear + prevAudLabel;
+				String qualOrUnQual = finCreditReviewDetails.isQualified() ? FacilityConstants.CREDITREVIEW_QUALIFIED
+						: FacilityConstants.CREDITREVIEW_UNQUALIFIED;
+				auditTypeLabel = finCreditReviewDetails.getAuditType() + "/" + qualOrUnQual + " " + auditYear
+						+ prevAudLabel;
 				logger.debug("Leaving");
 			}
 		} else {
 			auditTypeLabel = "AUD/Qual ";
 			if (finCreditReviewDetails != null) {
-				String qualOrUnQual = finCreditReviewDetails.isQualified() ? FacilityConstants.CREDITREVIEW_QUALIFIED : FacilityConstants.CREDITREVIEW_UNQUALIFIED;
-				auditTypeLabel = finCreditReviewDetails.getAuditType() + "/" + qualOrUnQual ;
+				String qualOrUnQual = finCreditReviewDetails.isQualified() ? FacilityConstants.CREDITREVIEW_QUALIFIED
+						: FacilityConstants.CREDITREVIEW_UNQUALIFIED;
+				auditTypeLabel = finCreditReviewDetails.getAuditType() + "/" + qualOrUnQual;
 				logger.debug("Leaving");
 			}
 		}
 		return auditTypeLabel;
 	}
+
 	/**
 	 * onChange get the customer Details
+	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onChange$custCIF(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		this.custCIF.clearErrorMessage();
-	
-		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), getFilterList());
+
+		Customer customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), getFilterList());
 		creditReviewSubtgDetailsList.clear();
-		if(customer == null) {		
+		if (customer == null) {
 			this.custShrtName.setValue("");
 			this.custID.setValue(Long.valueOf(0));
-			if(this.tabpanelsBoxIndexCenter.getChildren() != null){
+			if (this.tabpanelsBoxIndexCenter.getChildren() != null) {
 				this.tabpanelsBoxIndexCenter.getChildren().clear();
 			}
-			if(this.tabsIndexCenter.getChildren() != null){
+			if (this.tabsIndexCenter.getChildren() != null) {
 				this.tabsIndexCenter.getChildren().clear();
 			}
 			doClearMessage();
-			if(StringUtils.isNotBlank(this.custCIF.getValue())){
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value") }));
+			if (StringUtils.isNotBlank(this.custCIF.getValue())) {
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value") }));
 			}
 		} else {
 			doSetCustomer(customer, null);
@@ -1478,14 +1555,15 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for Calling list Of existed Customers
+	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -1493,28 +1571,30 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException{
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();	
+		final HashMap<String, Object> map = new HashMap<String, Object>();
 
 		map.put("DialogCtrl", this);
-		map.put("filtertype","Extended");
+		map.put("filtertype", "Extended");
 		map.put("filtersList", getFilterList());
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null,map);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To fill Customer Details if Co-applicants is available
+	 * 
 	 * @param coAppIds
 	 */
 	public void doFillCustomerDetails(List<FinCreditReviewDetails> coAppIds) {
 		logger.debug("Entering");
-		
+
 		Map<String, List<String>> map = new LinkedHashMap<>();
 
 		//Separate Customer CIF wise audit years 
@@ -1556,22 +1636,25 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF());
-		this.custCIF.setTooltiptext(aCustomer.getCustCIF().trim() +"-"+aCustomer.getCustShrtName());
+		this.custCIF.setTooltiptext(aCustomer.getCustCIF().trim() + "-" + aCustomer.getCustShrtName());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
 		this.custCtgCode = aCustomer.getLovDescCustCtgType();
-		this.listOfFinCreditRevCategory = this.creditApplicationReviewService.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
+		this.listOfFinCreditRevCategory = this.creditApplicationReviewService
+				.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
 		logger.debug("Leaving");
 	}
 
@@ -1579,8 +1662,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		return creditApplicationReviewService;
 	}
 
-	public void setCreditApplicationReviewService(
-			CreditApplicationReviewService creditApplicationReviewService) {
+	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
 	}
 
@@ -1592,10 +1674,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		if(isEnquiry) {
+		if (isEnquiry) {
 			closeDialog();
-			final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");  
-			final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+			final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+			final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+					.getFellow("tabBoxIndexCenter");
 			tabbox.getSelectedTab().close();
 		} else {
 			closeDialog();
@@ -1606,6 +1689,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 	/**
 	 * This method for selecting customer id from lov and after that setting sheet on bases of the customer type.<BR>
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1615,60 +1699,58 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Leaving" + event.toString());
 	}
 
-
-	
-	public void getSearch(boolean isEnquiry) throws Exception{
-		ratioFlag= true;
-		if(this.tabpanelsBoxIndexCenter.getChildren().size()>0){
+	public void getSearch(boolean isEnquiry) throws Exception {
+		ratioFlag = true;
+		if (this.tabpanelsBoxIndexCenter.getChildren().size() > 0) {
 			this.tabpanelsBoxIndexCenter.getChildren().clear();
 		}
-		if(this.tabsIndexCenter.getChildren().size()>0){
+		if (this.tabsIndexCenter.getChildren().size() > 0) {
 			this.tabsIndexCenter.getChildren().clear();
-		}		
+		}
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		try{
-			if (this.toYear.getValue()==null){
-				throw new WrongValueException(this.toYear, Labels.getLabel("FIELD_IS_MAND",new String[]{
-						Labels.getLabel("label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value")}));
-			} 
-			if (this.toYear.getValue() > DateUtility.getYear(appldate)){
+		try {
+			if (this.toYear.getValue() == null) {
+				throw new WrongValueException(this.toYear, Labels.getLabel("FIELD_IS_MAND", new String[] {
+						Labels.getLabel("label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value") }));
+			}
+			if (this.toYear.getValue() > DateUtility.getYear(appldate)) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("DATE_NO_FUTURE"));
-			} 
-			if(this.toYear.getValue() < DateUtility.getYear(DateUtility.addDays(appDftStrtDate, 1))){
+			}
+			if (this.toYear.getValue() < DateUtility.getYear(DateUtility.addDays(appDftStrtDate, 1))) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("label_CreditReviewNotValidYear"));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
-		}	
-		try{
-			if (this.custID.getValue() == null || this.custID.getValue() == 0){
-				if(StringUtils.isNotBlank(this.custCIF.getValue())){
-					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value") }));
+		}
+		try {
+			if (this.custID.getValue() == null || this.custID.getValue() == 0) {
+				if (StringUtils.isNotBlank(this.custCIF.getValue())) {
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
+							new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value") }));
 				}
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_IS_MAND",new String[]{
-						Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value")}));
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value") }));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
-		}	
+		}
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			logger.debug("Leaving");
 			throw new WrongValuesException(wvea);
 		}
-		if(wve.size() == 0){
+		if (wve.size() == 0) {
 			this.btnPrint.setVisible(true);
 			this.year = this.toYear.getValue();
 			setTabs(isEnquiry);
 		}
 	}
-	
-	
+
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -1676,19 +1758,19 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		this.toYear.clearErrorMessage();
 		logger.debug("Leaving");
 	}
-	public String replaceYear(String formula,int year){
-		String formatedFormula= formula;
-		for(int i= 0;i<this.noOfYears;i++){
-			if(i==0){
-				formatedFormula = formatedFormula.replace("YN.","Y"+year);
-			}else{
-				formatedFormula = formatedFormula.replace("YN-"+i+".","Y"+(year-i));
+
+	public String replaceYear(String formula, int year) {
+		String formatedFormula = formula;
+		for (int i = 0; i < this.noOfYears; i++) {
+			if (i == 0) {
+				formatedFormula = formatedFormula.replace("YN.", "Y" + year);
+			} else {
+				formatedFormula = formatedFormula.replace("YN-" + i + ".", "Y" + (year - i));
 			}
 		}
 		return formatedFormula;
 	}
 
-	
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -1702,61 +1784,62 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/*
-	 *  OnClick event For Button Print
+	 * OnClick event For Button Print
 	 */
-	public void onClick$btnPrint(Event event) throws InterruptedException{
+	public void onClick$btnPrint(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
-		
+
 		doClearMessage();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		try{
-			if (this.toYear.getValue()==null){
-				throw new WrongValueException(this.toYear, Labels.getLabel("FIELD_IS_MAND",new String[]{
-						Labels.getLabel("label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value")}));
-			} 
-			if (this.toYear.getValue() > DateUtility.getYear(appldate)){
+		try {
+			if (this.toYear.getValue() == null) {
+				throw new WrongValueException(this.toYear, Labels.getLabel("FIELD_IS_MAND", new String[] {
+						Labels.getLabel("label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value") }));
+			}
+			if (this.toYear.getValue() > DateUtility.getYear(appldate)) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("DATE_NO_FUTURE"));
 			}
-			if(this.toYear.getValue() < DateUtility.getYear(DateUtility.addDays(appDftStrtDate, 1))){
+			if (this.toYear.getValue() < DateUtility.getYear(DateUtility.addDays(appDftStrtDate, 1))) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("label_CreditReviewNotValidYear"));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
-		}	
-		try{
-			if (this.custID.getValue() == null || this.custID.getValue() == 0){
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_IS_MAND",new String[]{
-						Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value")}));
+		}
+		try {
+			if (this.custID.getValue() == null || this.custID.getValue() == 0) {
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value") }));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
-		}	
+		}
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			logger.debug("Leaving");
 			throw new WrongValuesException(wvea);
-		   } else {
+		} else {
 			CreditReviewMainCtgDetails creditReviewMainCtgDetails = new CreditReviewMainCtgDetails();
-			creditReviewMainCtgDetails.setCustCIF(this.custCIF.getValue()+" - "+StringUtils.trimToEmpty(custShrtName.getValue()));
+			creditReviewMainCtgDetails
+					.setCustCIF(this.custCIF.getValue() + " - " + StringUtils.trimToEmpty(custShrtName.getValue()));
 			creditReviewMainCtgDetails.setToYear(String.valueOf(this.toYear.getValue()));
 
 			List<Object> list = new ArrayList<Object>();
 			list.add(creditReviewSubtgDetailsList);
-   
-			ReportGenerationUtil.generateReport("CreditApplication_Review_Enquiry", creditReviewMainCtgDetails, list, true, 1,
-					getUserWorkspace().getLoggedInUser().getUserName(),  this.window_CreditApplicationReviewDialog,true);	
+
+			ReportGenerationUtil.generateReport("CreditApplication_Review_Enquiry", creditReviewMainCtgDetails, list,
+					true, 1, getUserWorkspace().getLoggedInUser().getUserName(),
+					this.window_CreditApplicationReviewDialog, true);
 
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void setCreditReviewSummaryData(CreditReviewSummaryData creditReviewSummaryData) {
 		this.creditReviewSummaryData = creditReviewSummaryData;
 	}
@@ -1764,45 +1847,48 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	public CreditReviewSummaryData getCreditReviewSummaryData() {
 		return creditReviewSummaryData;
 	}
-	
+
 	private List<Filter> getFilterList() {
-		filterList = new ArrayList<Filter>();		
-		filterList.add(new Filter("lovDescCustCtgType", new String[]{PennantConstants.PFF_CUSTCTG_CORP,
-				PennantConstants.PFF_CUSTCTG_SME}, Filter.OP_IN));
+		filterList = new ArrayList<Filter>();
+		filterList.add(new Filter("lovDescCustCtgType",
+				new String[] { PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_SME }, Filter.OP_IN));
 		return filterList;
 	}
-	
-	public  String getSavingStatus(String roleCode,String nextRoleCode, long custId, String moduleCode, String recordStatus){
+
+	public String getSavingStatus(String roleCode, String nextRoleCode, long custId, String moduleCode,
+			String recordStatus) {
 		String roleCodeDesc = "";
-		if(StringUtils.isBlank(nextRoleCode) || roleCode.equals(nextRoleCode) || StringUtils.trimToEmpty(recordStatus).equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)){
-			return moduleCode + " with Customer ID: " + custId +" "+ recordStatus + " Successfully.";
-		}else{
+		if (StringUtils.isBlank(nextRoleCode) || roleCode.equals(nextRoleCode)
+				|| StringUtils.trimToEmpty(recordStatus).equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+			return moduleCode + " with Customer ID: " + custId + " " + recordStatus + " Successfully.";
+		} else {
 			JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
 			if (nextRoleCode.contains(",")) {
-	            String roleCodes[]=nextRoleCode.split(",");
-	        	searchObject.addFilterIn("RoleCd", (Object)roleCodes);
-            }else{
-            	searchObject.addFilterEqual("RoleCd", nextRoleCode);
-            }
+				String roleCodes[] = nextRoleCode.split(",");
+				searchObject.addFilterIn("RoleCd", (Object) roleCodes);
+			} else {
+				searchObject.addFilterEqual("RoleCd", nextRoleCode);
+			}
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
-			if (rolesList!=null && !rolesList.isEmpty()) {
+			if (rolesList != null && !rolesList.isEmpty()) {
 				for (SecurityRole securityRole : rolesList) {
 					if ("".equals(roleCodeDesc)) {
 						roleCodeDesc = securityRole.getRoleDesc();
-                    }else{
-                    	roleCodeDesc=roleCodeDesc+" And "+securityRole.getRoleDesc();
-                    }
-                }
-            }
-			return moduleCode + " with Customer ID: " + custId + " Moved to " +  (StringUtils.isBlank(roleCodeDesc) ? "" : roleCodeDesc) + " Successfully.";
+					} else {
+						roleCodeDesc = roleCodeDesc + " And " + securityRole.getRoleDesc();
+					}
+				}
+			}
+			return moduleCode + " with Customer ID: " + custId + " Moved to "
+					+ (StringUtils.isBlank(roleCodeDesc) ? "" : roleCodeDesc) + " Successfully.";
 		}
- 	}
-	
+	}
+
 	public void setFinCreditReviewDetails(FinCreditReviewDetails finCreditReviewDetails) {
 		this.finCreditReviewDetails = finCreditReviewDetails;
 	}
-	
+
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
@@ -1826,5 +1912,5 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	public void setIncomeExpenseDetailDAO(IncomeExpenseDetailDAO incomeExpenseDetailDAO) {
 		this.incomeExpenseDetailDAO = incomeExpenseDetailDAO;
 	}
-	
+
 }

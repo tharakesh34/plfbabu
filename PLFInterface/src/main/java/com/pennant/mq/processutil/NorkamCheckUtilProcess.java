@@ -23,8 +23,9 @@ public class NorkamCheckUtilProcess extends MQProcess {
 	public NorkamCheckUtilProcess() {
 		super();
 	}
-	
-	public InterfaceNorkamCheck doNorkamCheck(InterfaceNorkamCheck norkamCheck, String msgFormat) throws InterfaceException {
+
+	public InterfaceNorkamCheck doNorkamCheck(InterfaceNorkamCheck norkamCheck, String msgFormat)
+			throws InterfaceException {
 		// Set MQ Message configuration details
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
@@ -35,8 +36,9 @@ public class NorkamCheckUtilProcess extends MQProcess {
 		OMElement response = null;
 		try {
 			OMElement requestElement = getRequestElement(norkamCheck, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -45,7 +47,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 
 		return setBlackListDetails(response, header);
 	}
-	
+
 	/**
 	 * Prepare Blacklist Request Element to send Interface through MQ
 	 * 
@@ -55,7 +57,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 	 * @return OMElement
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(InterfaceNorkamCheck norkamCheck, String referenceNum, OMFactory factory) 
+	private OMElement getRequestElement(InterfaceNorkamCheck norkamCheck, String referenceNum, OMFactory factory)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -67,27 +69,28 @@ public class NorkamCheckUtilProcess extends MQProcess {
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerId", norkamCheck.getCustomerId());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerAddress", norkamCheck.getCustomerAddress());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerCountry", norkamCheck.getCustomerCountry());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerDOB",DateUtility.formateDate(
-				norkamCheck.getCustomerDOB(), InterfaceMasterConfigUtil.MQDATE));
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerDOB",
+				DateUtility.formateDate(norkamCheck.getCustomerDOB(), InterfaceMasterConfigUtil.MQDATE));
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerPOB", norkamCheck.getCustomerPOB());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerOrganization", norkamCheck.getCustomerOrganization());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerOrganization",
+				norkamCheck.getCustomerOrganization());
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 		logger.debug("Leaving");
 		requestElement.addChild(detailRequest);
 		return requestElement;
 
 	}
-	
+
 	/**
-	 * Set Details 
+	 * Set Details
 	 * 
 	 * @param responseElement
 	 * @param header
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private InterfaceNorkamCheck setBlackListDetails(OMElement responseElement, AHBMQHeader header) 
+	private InterfaceNorkamCheck setBlackListDetails(OMElement responseElement, AHBMQHeader header)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -97,7 +100,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 		InterfaceNorkamCheck interfaceNorkamCheck = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/customerBlacklistCheckReply", 
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/customerBlacklistCheckReply",
 					responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
@@ -111,10 +114,10 @@ public class NorkamCheckUtilProcess extends MQProcess {
 				break;
 			default:
 				throw new InterfaceException(header.getReturnCode(), header.getErrorMessage());
-			}	
+			}
 
 			interfaceNorkamCheck = new InterfaceNorkamCheck();
-			
+
 			interfaceNorkamCheck.setReferenceNum(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
 			interfaceNorkamCheck.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 			interfaceNorkamCheck.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
@@ -129,5 +132,5 @@ public class NorkamCheckUtilProcess extends MQProcess {
 
 		return interfaceNorkamCheck;
 	}
-	
+
 }

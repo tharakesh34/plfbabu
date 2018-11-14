@@ -75,40 +75,36 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerGroup/customerGroupDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerGroup/customerGroupDialog.zul file.
  */
 public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	private static final long serialVersionUID = 4865083782879144591L;
 	private static final Logger logger = Logger.getLogger(CustomerGroupDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window 		window_CustomerGroupDialog; // autoWired
-	protected Longbox		custGrpID; 					// autoWired
-	protected Textbox		custGrpCode; 				// autoWired
-	protected Textbox		custGrpDesc; 				// autoWired
-   	protected Textbox		custGrpRO1; 				// autoWired
-	protected Longbox		custGrpLimit; 				// autoWired
-	protected Checkbox 		custGrpIsActive; 			// autoWired
 
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_CustomerGroupDialog; // autoWired
+	protected Longbox custGrpID; // autoWired
+	protected Textbox custGrpCode; // autoWired
+	protected Textbox custGrpDesc; // autoWired
+	protected Textbox custGrpRO1; // autoWired
+	protected Longbox custGrpLimit; // autoWired
+	protected Checkbox custGrpIsActive; // autoWired
 
 	// not auto wired variables
 	private CustomerGroup customerGroup; // overHanded per parameter
 	private transient CustomerGroupListCtrl customerGroupListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
-	protected Button 	btnSearchCustGrpRO1; 	// autowire
-	protected Textbox 	lovDescCustGrpRO1Name;
-	
-	
+
+	protected Button btnSearchCustGrpRO1; // autowire
+	protected Textbox lovDescCustGrpRO1Name;
+
 	// ServiceDAOs / Domain Classes
 	private transient CustomerGroupService customerGroupService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -124,9 +120,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerGroup object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerGroup object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -140,28 +135,28 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
-		
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("customerGroup")) {
 			this.customerGroup = (CustomerGroup) arguments.get("customerGroup");
-			CustomerGroup befImage =new CustomerGroup();
+			CustomerGroup befImage = new CustomerGroup();
 			BeanUtils.copyProperties(this.customerGroup, befImage);
 			this.customerGroup.setBefImage(befImage);
-			
+
 			setCustomerGroup(this.customerGroup);
 		} else {
 			setCustomerGroup(null);
 		}
-	
-		doLoadWorkFlow(this.customerGroup.isWorkflow(),this.customerGroup.getWorkflowId(),this.customerGroup.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		doLoadWorkFlow(this.customerGroup.isWorkflow(), this.customerGroup.getWorkflowId(),
+				this.customerGroup.getNextTaskId());
+
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerGroupDialog");
-		}else{
+		} else {
 			getUserWorkspace().allocateAuthorities(super.pageRightName);
 		}
-	
+
 		// READ OVERHANDED parameters !
 		// we get the customerGroupListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -175,7 +170,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCustomerGroup());
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -187,14 +182,14 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		this.custGrpCode.setMaxlength(8);
 		this.custGrpDesc.setMaxlength(50);
 		this.custGrpRO1.setMaxlength(8);
-	  	this.custGrpLimit.setMaxlength(8);
-		
-		if (isWorkFlowEnabled()){
+		this.custGrpLimit.setMaxlength(8);
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
-		}else{
+
+		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -204,8 +199,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -224,9 +218,9 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -235,9 +229,9 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -247,9 +241,9 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CustomerGroupDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -259,9 +253,9 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -270,9 +264,9 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -311,13 +305,15 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		this.custGrpCode.setValue(aCustomerGroup.getCustGrpCode());
 		this.custGrpDesc.setValue(aCustomerGroup.getCustGrpDesc());
 		this.custGrpRO1.setValue(aCustomerGroup.getCustGrpRO1());
-		this.lovDescCustGrpRO1Name.setValue(StringUtils.isBlank(aCustomerGroup.getCustGrpRO1())?""
-				:aCustomerGroup.getCustGrpRO1()+PennantConstants.KEY_SEPERATOR+aCustomerGroup.getLovDescCustGrpRO1Name());
-	  	this.custGrpLimit.setValue(aCustomerGroup.getCustGrpLimit());
+		this.lovDescCustGrpRO1Name.setValue(StringUtils.isBlank(aCustomerGroup.getCustGrpRO1()) ? ""
+				: aCustomerGroup.getCustGrpRO1() + PennantConstants.KEY_SEPERATOR
+						+ aCustomerGroup.getLovDescCustGrpRO1Name());
+		this.custGrpLimit.setValue(aCustomerGroup.getCustGrpLimit());
 		this.custGrpIsActive.setChecked(aCustomerGroup.isCustGrpIsActive());
 		this.recordStatus.setValue(aCustomerGroup.getRecordStatus());
-		
-		if(aCustomerGroup.isNew() || StringUtils.equals(aCustomerGroup.getRecordType(),PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCustomerGroup.isNew()
+				|| StringUtils.equals(aCustomerGroup.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.custGrpIsActive.setChecked(true);
 			this.custGrpIsActive.setDisabled(true);
 		}
@@ -332,52 +328,52 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	public void doWriteComponentsToBean(CustomerGroup aCustomerGroup) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
-		    aCustomerGroup.setCustGrpID(this.custGrpID.longValue());
-		}catch (WrongValueException we ) {
+			aCustomerGroup.setCustGrpID(this.custGrpID.longValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aCustomerGroup.setCustGrpCode(this.custGrpCode.getValue());
-		}catch (WrongValueException we ) {
+			aCustomerGroup.setCustGrpCode(this.custGrpCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aCustomerGroup.setCustGrpDesc(this.custGrpDesc.getValue());
-		}catch (WrongValueException we ) {
+			aCustomerGroup.setCustGrpDesc(this.custGrpDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerGroup.setLovDescCustGrpRO1Name(this.lovDescCustGrpRO1Name.getValue());
-		    aCustomerGroup.setCustGrpRO1(this.custGrpRO1.getValue());
-		}catch (WrongValueException we ) {
+			aCustomerGroup.setCustGrpRO1(this.custGrpRO1.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerGroup.setCustGrpLimit(this.custGrpLimit.longValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerGroup.setCustGrpIsActive(this.custGrpIsActive.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aCustomerGroup.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -385,8 +381,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerGroup
 	 * @throws InterruptedException
@@ -401,13 +396,13 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 			// setFocus
 			this.custGrpCode.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.custGrpCode.focus();
 				if (StringUtils.isNotBlank(aCustomerGroup.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -431,17 +426,20 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
-		if (!this.custGrpCode.isReadonly()){
-			this.custGrpCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
-		}	
-		if (!this.custGrpDesc.isReadonly()){
-			this.custGrpDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpDesc.value"),null,true));
-		}	
-		if (!this.custGrpLimit.isReadonly()){
-			this.custGrpLimit.setConstraint(new PTNumberValidator(Labels.getLabel(
-					"label_CustomerGroupDialog_CustGrpLimit.value"), false));
-		}	
+
+		if (!this.custGrpCode.isReadonly()) {
+			this.custGrpCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
+		if (!this.custGrpDesc.isReadonly()) {
+			this.custGrpDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpDesc.value"), null, true));
+		}
+		if (!this.custGrpLimit.isReadonly()) {
+			this.custGrpLimit.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpLimit.value"), false));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -461,16 +459,17 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescCustGrpRO1Name.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpRO1.value"),null,true));
+		this.lovDescCustGrpRO1Name.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpRO1.value"), null, true));
 	}
-	
+
 	/**
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
 		this.lovDescCustGrpRO1Name.setConstraint("");
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -483,7 +482,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		this.custGrpLimit.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$btnSearchCustGrpRO1(Event event) {
 		logger.debug("Entering");
 		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerGroupDialog, "RelationshipOfficer");
@@ -494,8 +493,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 			RelationshipOfficer details = (RelationshipOfficer) dataObject;
 			if (details != null) {
 				this.custGrpRO1.setValue(details.getROfficerCode());
-				this.lovDescCustGrpRO1Name.setValue(details.getROfficerCode()
-						+ "-" + details.getROfficerDesc());
+				this.lovDescCustGrpRO1Name.setValue(details.getROfficerCode() + "-" + details.getROfficerDesc());
 			}
 		}
 		logger.debug("Leaving");
@@ -510,32 +508,32 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final CustomerGroup aCustomerGroup = new CustomerGroup();
 		BeanUtils.copyProperties(getCustomerGroup(), aCustomerGroup);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aCustomerGroup.getCustGrpCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerGroup.getCustGrpCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerGroup.getRecordType())){
-				aCustomerGroup.setVersion(aCustomerGroup.getVersion()+1);
+			if (StringUtils.isBlank(aCustomerGroup.getRecordType())) {
+				aCustomerGroup.setVersion(aCustomerGroup.getVersion() + 1);
 				aCustomerGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aCustomerGroup.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(doProcess(aCustomerGroup,tranType)){
+				if (doProcess(aCustomerGroup, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				showMessage(e);
 			}
 		}
@@ -547,39 +545,39 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
-		if (getCustomerGroup().isNewRecord()){
-		  	this.custGrpID.setReadonly(false);
+
+		if (getCustomerGroup().isNewRecord()) {
+			this.custGrpID.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.custGrpCode.setReadonly(isReadOnly("CustomerGroupDialog_custGrpCode"));
-		}else{
+		} else {
 			this.custGrpID.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.custGrpCode.setReadonly(true);
 		}
-		
-			this.custGrpDesc.setReadonly(isReadOnly("CustomerGroupDialog_custGrpDesc"));
-			this.custGrpRO1.setReadonly(isReadOnly("CustomerGroupDialog_custGrpRO1"));
-			this.btnSearchCustGrpRO1.setDisabled(isReadOnly("CustomerGroupDialog_custGrpRO1"));
-			this.custGrpLimit.setReadonly(isReadOnly("CustomerGroupDialog_custGrpLimit"));
-			this.custGrpIsActive.setDisabled(isReadOnly("CustomerGroupDialog_custGrpIsActive"));
-			
-			if (isWorkFlowEnabled()){
-				for (int i = 0; i < userAction.getItemCount(); i++) {
+
+		this.custGrpDesc.setReadonly(isReadOnly("CustomerGroupDialog_custGrpDesc"));
+		this.custGrpRO1.setReadonly(isReadOnly("CustomerGroupDialog_custGrpRO1"));
+		this.btnSearchCustGrpRO1.setDisabled(isReadOnly("CustomerGroupDialog_custGrpRO1"));
+		this.custGrpLimit.setReadonly(isReadOnly("CustomerGroupDialog_custGrpLimit"));
+		this.custGrpIsActive.setDisabled(isReadOnly("CustomerGroupDialog_custGrpIsActive"));
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
-			if (this.customerGroup.isNewRecord()){
+
+			if (this.customerGroup.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -594,14 +592,14 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		this.custGrpRO1.setReadonly(true);
 		this.custGrpLimit.setReadonly(true);
 		this.custGrpIsActive.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -629,11 +627,11 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final CustomerGroup aCustomerGroup = new CustomerGroup();
 		BeanUtils.copyProperties(getCustomerGroup(), aCustomerGroup);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the CustomerGroup object with the components data
@@ -642,34 +640,34 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		
-		isNew = aCustomerGroup.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
+		isNew = aCustomerGroup.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCustomerGroup.getRecordType())){
-				aCustomerGroup.setVersion(aCustomerGroup.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aCustomerGroup.getRecordType())) {
+				aCustomerGroup.setVersion(aCustomerGroup.getVersion() + 1);
+				if (isNew) {
 					aCustomerGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCustomerGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerGroup.setNewRecord(true);
 				}
 			}
-		}else{
-			aCustomerGroup.setVersion(aCustomerGroup.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCustomerGroup.setVersion(aCustomerGroup.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			
-			if(doProcess(aCustomerGroup,tranType)){
+
+			if (doProcess(aCustomerGroup, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -693,17 +691,17 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerGroup aCustomerGroup,String tranType){
+	private boolean doProcess(CustomerGroup aCustomerGroup, String tranType) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
+
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
 		aCustomerGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCustomerGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -726,7 +724,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 					}
 				}
 			}
-			
+
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
@@ -747,31 +745,31 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 			aCustomerGroup.setNextTaskId(nextTaskId);
 			aCustomerGroup.setRoleCode(getRole());
 			aCustomerGroup.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aCustomerGroup, tranType);
+
+			auditHeader = getAuditHeader(aCustomerGroup, tranType);
 			String operationRefs = getServiceOperations(taskId, aCustomerGroup);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCustomerGroup, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					auditHeader = getAuditHeader(aCustomerGroup, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aCustomerGroup, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCustomerGroup, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
@@ -784,67 +782,67 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		CustomerGroup aCustomerGroup = (CustomerGroup)auditHeader.getAuditDetail().getModelData();
+
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		CustomerGroup aCustomerGroup = (CustomerGroup) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-		
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCustomerGroupService().delete(auditHeader);
 						deleteNotes = true;
-					}else{
-						auditHeader = getCustomerGroupService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getCustomerGroupService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerGroupService().doApprove(auditHeader);
-						
+
 						if (aCustomerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-						
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCustomerGroupService().doReject(auditHeader);
-						
+
 						if (aCustomerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
-						
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerGroupDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
+
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerGroupDialog, auditHeader);
-				retValue=auditHeader.getProcessStatus();
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 					if (deleteNotes) {
 						deleteNotes(getNotes(this.customerGroup), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
 					auditHeader.setOverideMessage(null);
 				}
 			}
-			
+
 			setOverideMap(auditHeader.getOverideMap());
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
@@ -863,22 +861,22 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(CustomerGroup aCustomerGroup, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGroup.getBefImage(),aCustomerGroup);
-		return new AuditHeader(String.valueOf(aCustomerGroup.getId()), null,
-				null, null, auditDetail, aCustomerGroup.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGroup.getBefImage(), aCustomerGroup);
+		return new AuditHeader(String.valueOf(aCustomerGroup.getId()), null, null, null, auditDetail,
+				aCustomerGroup.getUserDetails(), getOverideMap());
 	}
-	
+
 	/**
 	 * Display Message in Error Box
 	 * 
 	 * @param e
 	 *            (Exception)
 	 */
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail("",e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail("", e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerGroupDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -905,12 +903,11 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		getCustomerGroupListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.customerGroup.getId());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -918,6 +915,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -925,6 +923,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	public CustomerGroup getCustomerGroup() {
 		return this.customerGroup;
 	}
+
 	public void setCustomerGroup(CustomerGroup customerGroup) {
 		this.customerGroup = customerGroup;
 	}
@@ -932,6 +931,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	public void setCustomerGroupService(CustomerGroupService customerGroupService) {
 		this.customerGroupService = customerGroupService;
 	}
+
 	public CustomerGroupService getCustomerGroupService() {
 		return this.customerGroupService;
 	}
@@ -939,8 +939,9 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	public void setCustomerGroupListCtrl(CustomerGroupListCtrl customerGroupListCtrl) {
 		this.customerGroupListCtrl = customerGroupListCtrl;
 	}
+
 	public CustomerGroupListCtrl getCustomerGroupListCtrl() {
 		return this.customerGroupListCtrl;
 	}
-	
+
 }

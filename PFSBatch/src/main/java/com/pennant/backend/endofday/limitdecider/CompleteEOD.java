@@ -58,13 +58,13 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class CompleteEOD implements JobExecutionDecider {
 
-	private Logger				logger	= Logger.getLogger(CompleteEOD.class);
+	private Logger logger = Logger.getLogger(CompleteEOD.class);
 
 	@SuppressWarnings("unused")
-	private DataSource			dataSource;
-	private DateService			dateService;
+	private DataSource dataSource;
+	private DateService dateService;
 
-	private CustomerQueuingDAO	customerQueuingDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 
 	public CompleteEOD() {
 
@@ -84,7 +84,6 @@ public class CompleteEOD implements JobExecutionDecider {
 		return FlowExecutionStatus.COMPLETED;
 	}
 
-
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;
 	}
@@ -96,6 +95,5 @@ public class CompleteEOD implements JobExecutionDecider {
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
-
 
 }

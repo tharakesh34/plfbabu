@@ -107,24 +107,22 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/GuarantorDetail/guarantorDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/GuarantorDetail/guarantorDetailDialog.zul file.
  */
 public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GuarantorDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_GuarantorDetailDialog;
 	protected Row row0;
@@ -190,37 +188,36 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected Groupbox gb_GurantorsPrimaryExposure;
 	protected Groupbox gb_GurantorsSecoundaryExposure;
 	protected Groupbox gb_GurantorsExposure;
-	
+
 	// Address Components
-	protected Textbox 	addrHNbr; 					// autoWired
-	protected Space 	space_addrHNbr;				// autoWired
-	protected Textbox 	flatNbr; 					// autoWired
-	protected Textbox 	addrStreet; 				// autoWired
-	protected Space 	space_addrStreet;			// autoWired
-	protected Textbox 	addrLine1; 					// autoWired
-	protected Textbox 	addrLine2; 					// autoWired
-	protected Textbox 	poBox; 						// autoWired
-	protected Space 	space_poBox;				// autoWired
-	protected ExtendedCombobox 	addrCity; 					// autoWired
-	protected ExtendedCombobox 	addrProvince; 				// autoWired
-	protected ExtendedCombobox 	addrCountry; 				// autoWired
-	protected Textbox 	addrZIP; 					// autoWired
-	protected Textbox    cityName;                 // autoWired
-	
-	protected Row 		 row7;
-	protected Space      space_GenderCode;
-	protected Combobox	 guarantorGenderCode;
+	protected Textbox addrHNbr; // autoWired
+	protected Space space_addrHNbr; // autoWired
+	protected Textbox flatNbr; // autoWired
+	protected Textbox addrStreet; // autoWired
+	protected Space space_addrStreet; // autoWired
+	protected Textbox addrLine1; // autoWired
+	protected Textbox addrLine2; // autoWired
+	protected Textbox poBox; // autoWired
+	protected Space space_poBox; // autoWired
+	protected ExtendedCombobox addrCity; // autoWired
+	protected ExtendedCombobox addrProvince; // autoWired
+	protected ExtendedCombobox addrCountry; // autoWired
+	protected Textbox addrZIP; // autoWired
+	protected Textbox cityName; // autoWired
+
+	protected Row row7;
+	protected Space space_GenderCode;
+	protected Combobox guarantorGenderCode;
 
 	private boolean enqModule = false;
-	private int index;	
+	private int index;
 	// not auto wired vars
 	private GuarantorDetail guarantorDetail; // overhanded per param
 	private transient GuarantorDetailListCtrl guarantorDetailListCtrl; // overhanded per param
 
-	
 	protected Button btnSearchGuarantorCIF;
 	protected Button btnUploadGuarantorProof;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient GuarantorDetailService guarantorDetailService;
 	private transient PagedListService pagedListService;
@@ -243,13 +240,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	long recordCount = 0;
 	String primaryCustId;
 	int ccDecimal = 0;
-	private String cif[]=null;
+	private String cif[] = null;
 	Customer customer = null;
 	private FinanceMain financeMain;
-	private  String addrCountryTemp;
-	private  String addrProvinceTemp;
-	private BigDecimal	totSharePerc;
-	
+	private String addrCountryTemp;
+	private String addrProvinceTemp;
+	private BigDecimal totSharePerc;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -263,11 +260,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected GuarantorDetail object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected GuarantorDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -279,7 +275,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		setPageComponents(window_GuarantorDetailDialog);
 
 		try {
-			
+
 			if (PennantConstants.CITY_FREETEXT) {
 				this.addrCity.setVisible(false);
 				this.cityName.setVisible(true);
@@ -292,15 +288,15 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			} else {
 				enqModule = false;
 			}
-			
+
 			if (arguments.containsKey("moduleType")) {
 				moduleType = (String) arguments.get("moduleType");
-			} 
-			
+			}
+
 			if (arguments.containsKey("totSharePerc")) {
 				this.totSharePerc = (BigDecimal) arguments.get("totSharePerc");
 			}
-			
+
 			// READ OVERHANDED params !
 			if (arguments.containsKey("guarantorDetail")) {
 				this.guarantorDetail = (GuarantorDetail) arguments.get("guarantorDetail");
@@ -340,12 +336,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (arguments.containsKey("financeMain")) {
 				setFinanceMain((FinanceMain) arguments.get("financeMain"));
 			}
-			
-			doLoadWorkFlow(this.guarantorDetail.isWorkflow(), this.guarantorDetail.getWorkflowId(), this.guarantorDetail.getNextTaskId());
+
+			doLoadWorkFlow(this.guarantorDetail.isWorkflow(), this.guarantorDetail.getWorkflowId(),
+					this.guarantorDetail.getNextTaskId());
 			if (isWorkFlowEnabled() && !enqModule && !isNewGuarantor()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "GuarantorDetailDialog");
-			} 
+			}
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -460,7 +457,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(getNotes("GuarantorDetail", String.valueOf(getGuarantorDetail().getGuarantorId()), getGuarantorDetail().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("GuarantorDetail", String.valueOf(getGuarantorDetail().getGuarantorId()),
+					getGuarantorDetail().getVersion()), this);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -501,58 +499,60 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		setCustomerDetails(customer);
 	}
-	
+
 	public void setCustomerDetails(Customer customer) {
-		if(customer !=null) {
-			getGuarantorDetail().setGuarantorCIF(customer.getCustCIF());	
+		if (customer != null) {
+			getGuarantorDetail().setGuarantorCIF(customer.getCustCIF());
 			getGuarantorDetail().setStatus(customer.getLovDescCustStsName());
 			getGuarantorDetail().setWorstStatus(getGuarantorDetailService().getWorstStaus(customer.getCustID()));
 			this.primaryList = getGuarantorDetailService().getPrimaryExposureList(getGuarantorDetail());
 			this.secoundaryList = getGuarantorDetailService().getSecondaryExposureList(getGuarantorDetail());
 			this.guarantorList = getGuarantorDetailService().getGuarantorExposureList(getGuarantorDetail());
-		
-			if(this.primaryList != null) {
+
+			if (this.primaryList != null) {
 				doFillPrimaryExposureDetails(this.primaryList);
 			}
 
-			if(this.secoundaryList != null) {
+			if (this.secoundaryList != null) {
 				doFillSecoundaryExposureDetails(this.secoundaryList);
 			}
 
-			if(this.guarantorList != null) {
+			if (this.guarantorList != null) {
 				doFillGuarantorExposureDetails(this.guarantorList);
 			}
 
 			setVisibleGrid();
-		}else{
-			this.primaryList=null;
-			this.secoundaryList=null;
-			this.guarantorList=null;
+		} else {
+			this.primaryList = null;
+			this.secoundaryList = null;
+			this.guarantorList = null;
 		}
 	}
-	
-	public void onClick$viewCustInfo(Event event){
-		if((!this.btnSearchGuarantorCIF.isDisabled()) && StringUtils.isEmpty(this.guarantorCIF.getValue())) {
+
+	public void onClick$viewCustInfo(Event event) {
+		if ((!this.btnSearchGuarantorCIF.isDisabled()) && StringUtils.isEmpty(this.guarantorCIF.getValue())) {
 			throw new WrongValueException(this.guarantorCIF, Labels.getLabel("FIELD_NO_INVALID",
-					new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value")}));
+					new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") }));
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custCIF", this.guarantorCIF.getValue());
-			
-			customer = (Customer)PennantAppUtil.getCustomerObject(this.guarantorCIF.getValue(), null);
-			map.put("custid",customer.getCustID());
+
+			customer = (Customer) PennantAppUtil.getCustomerObject(this.guarantorCIF.getValue(), null);
+			map.put("custid", customer.getCustID());
 			map.put("custShrtName", customer.getCustShrtName());
-			
-			if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
+
+			if (getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())) {
 				map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
 				map.put("finReference", getFinanceMain().getFinReference());
 			}
 			map.put("finance", true);
-			if (StringUtils.equals(customer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", this.window_GuarantorDetailDialog, map);
-			}else{
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul", this.window_GuarantorDetailDialog, map);
+			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul",
+						this.window_GuarantorDetailDialog, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul",
+						this.window_GuarantorDetailDialog, map);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: Opening window", e);
@@ -560,12 +560,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	}
 
 	// GUI operations
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGuarantorDetail
 	 * @throws InterruptedException
@@ -601,13 +600,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			// set ReadOnly mode accordingly if the object is new or not.
 			// displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aGuarantorDetail.isNewRecord()));
 			onCheck$bankCustomer(new Event("onCheck$bankCustomer"));
-			if (this.primaryList==null || this.primaryList.size()==0) {
+			if (this.primaryList == null || this.primaryList.size() == 0) {
 				this.gb_GurantorsPrimaryExposure.setVisible(false);
 			}
-			if (this.secoundaryList==null || this.secoundaryList.size()==0) {
+			if (this.secoundaryList == null || this.secoundaryList.size() == 0) {
 				this.gb_GurantorsSecoundaryExposure.setVisible(false);
 			}
-			if (this.guarantorList==null || this.guarantorList.size()==0) {
+			if (this.guarantorList == null || this.guarantorList.size() == 0) {
 				this.gb_GurantorsExposure.setVisible(false);
 			}
 			this.window_GuarantorDetailDialog.setHeight("90%");
@@ -635,13 +634,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 		} else {
 			this.btnCancel.setVisible(true);
-			if(!enqModule){
-			this.guranteePercentage.setReadonly(isReadOnly("GuarantorDetailDialog_GuranteePercentage"));
-			}else{
+			if (!enqModule) {
+				this.guranteePercentage.setReadonly(isReadOnly("GuarantorDetailDialog_GuranteePercentage"));
+			} else {
 				this.guranteePercentage.setReadonly(true);
 				this.viewCustInfo.setVisible(false);
 			}
-			
+
 		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -672,9 +671,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewGuarantor()){
+
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewGuarantor()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -729,7 +728,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.guarantorCIFName.setValue("");
 			this.remarks.setValue("");
 			this.guarantorProofName.setValue("");
-			
+
 			// Address Details
 			this.addrHNbr.setValue("");
 			this.flatNbr.setValue("");
@@ -746,14 +745,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	}
 
 	// Helpers
-	
+
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -763,7 +761,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSave"));
-			this.btnSearchGuarantorCIF.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
+			this.btnSearchGuarantorCIF
+					.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
 		}
 		/* create the Button Controller. Disable not used buttons during working */
 		logger.debug("Leaving");
@@ -788,14 +787,14 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.remarks.setMaxlength(500);
 		this.guarantorProofName.setMaxlength(500);
 		this.worstStatus.setMaxlength(100);
-		
+
 		this.addrHNbr.setMaxlength(50);
 		this.flatNbr.setMaxlength(50);
 		this.addrStreet.setMaxlength(50);
 		this.addrLine1.setMaxlength(50);
 		this.addrLine2.setMaxlength(50);
 		this.poBox.setMaxlength(8);
-		
+
 		this.addrCountry.setMaxlength(2);
 		this.addrCountry.setTextBoxWidth(121);
 		this.addrCountry.setSpacing("2px");
@@ -804,7 +803,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrCountry.setValueColumn("CountryCode");
 		this.addrCountry.setDescColumn("CountryDesc");
 		this.addrCountry.setValidateColumns(new String[] { "CountryCode" });
-		
+
 		this.addrProvince.setMaxlength(8);
 		this.addrProvince.setTextBoxWidth(121);
 		this.addrCountry.setSpacing("2px");
@@ -824,7 +823,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrCity.setValidateColumns(new String[] { "PCCity" });
 		this.cityName.setMaxlength(8);
 		this.addrZIP.setMaxlength(50);
-		
+
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
 	}
@@ -841,7 +840,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.bankCustomer.setChecked(aGuarantorDetail.isBankCustomer());
 		if (!aGuarantorDetail.isBankCustomer()) {
 			fillComboBox(this.guarantorIDType, aGuarantorDetail.getGuarantorIDType(), listGuarantorIDType, "");
-			fillComboBox(this.guarantorGenderCode,aGuarantorDetail.getGuarantorGenderCode(), PennantAppUtil.getGenderCodes(), "");
+			fillComboBox(this.guarantorGenderCode, aGuarantorDetail.getGuarantorGenderCode(),
+					PennantAppUtil.getGenderCodes(), "");
 		} else {
 			fillComboBox(this.guarantorIDType, PennantConstants.List_Select, listGuarantorIDType, "");
 		}
@@ -856,23 +856,23 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.remarks.setValue(aGuarantorDetail.getRemarks());
 		this.status.setValue(aGuarantorDetail.getStatus());
 		this.worstStatus.setValue(aGuarantorDetail.getWorstStatus());
-		
-		if(!aGuarantorDetail.isBankCustomer()){
-		this.addrHNbr.setValue(aGuarantorDetail.getAddrHNbr());
-		this.flatNbr.setValue(aGuarantorDetail.getFlatNbr());
-		this.addrStreet.setValue(aGuarantorDetail.getAddrStreet());
-		this.addrLine1.setValue(aGuarantorDetail.getAddrLine1());
-		this.addrLine2.setValue(aGuarantorDetail.getAddrLine2());
-		this.poBox.setValue(aGuarantorDetail.getPOBox());
-		this.addrCountry.setValue(aGuarantorDetail.getAddrCountry());
-		this.addrProvince.setValue(aGuarantorDetail.getAddrProvince());
-		this.addrCity.setValue(aGuarantorDetail.getAddrCity());
-		this.addrZIP.setValue(aGuarantorDetail.getAddrZIP());
-		this.addrCountry.setDescription(aGuarantorDetail.getLovDescAddrCountryName());
-		this.addrProvince.setDescription(aGuarantorDetail.getLovDescAddrProvinceName());
-		this.addrCity.setDescription(aGuarantorDetail.getLovDescAddrCityName());
-		this.cityName.setValue(aGuarantorDetail.getAddrCity());
-		}else{
+
+		if (!aGuarantorDetail.isBankCustomer()) {
+			this.addrHNbr.setValue(aGuarantorDetail.getAddrHNbr());
+			this.flatNbr.setValue(aGuarantorDetail.getFlatNbr());
+			this.addrStreet.setValue(aGuarantorDetail.getAddrStreet());
+			this.addrLine1.setValue(aGuarantorDetail.getAddrLine1());
+			this.addrLine2.setValue(aGuarantorDetail.getAddrLine2());
+			this.poBox.setValue(aGuarantorDetail.getPOBox());
+			this.addrCountry.setValue(aGuarantorDetail.getAddrCountry());
+			this.addrProvince.setValue(aGuarantorDetail.getAddrProvince());
+			this.addrCity.setValue(aGuarantorDetail.getAddrCity());
+			this.addrZIP.setValue(aGuarantorDetail.getAddrZIP());
+			this.addrCountry.setDescription(aGuarantorDetail.getLovDescAddrCountryName());
+			this.addrProvince.setDescription(aGuarantorDetail.getLovDescAddrProvinceName());
+			this.addrCity.setDescription(aGuarantorDetail.getLovDescAddrCityName());
+			this.cityName.setValue(aGuarantorDetail.getAddrCity());
+		} else {
 			dosetCustAddress(getCustData(aGuarantorDetail.getGuarantorCIF()));
 		}
 		this.recordStatus.setValue(aGuarantorDetail.getRecordStatus());
@@ -883,27 +883,28 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		Filter[] provinceFilters = new Filter[1];
 		provinceFilters[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
 		this.addrProvince.setFilters(provinceFilters);
-		
+
 		addrProvinceTemp = this.addrProvince.getValue();
 		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("PCCountry", this.addrCountry.getValue(),
-				Filter.OP_EQUAL);
+		filters[0] = new Filter("PCCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
 		filters[1] = new Filter("PCProvince", this.addrProvince.getValue(), Filter.OP_EQUAL);
 		this.addrCity.setFilters(filters);
 		logger.debug("Leaving");
 	}
+
 	String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
 	int DFT_CURR_EDIT_FIELD = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+
 	// ================Primary Exposure Details
 	public void doFillPrimaryExposureDetails(List<FinanceExposure> primaryExposureList) {
 		logger.debug("Entering");
 		this.listBoxGurantorsPrimaryExposure.getItems().clear();
 		if (primaryExposureList != null) {
-			
+
 			BigDecimal totFinaceAmout = BigDecimal.ZERO;
 			BigDecimal totCurrentExposer = BigDecimal.ZERO;
 			BigDecimal totOverDueAmount = BigDecimal.ZERO;
-			
+
 			recordCount = primaryExposureList.size();
 			for (FinanceExposure primaryExposure : primaryExposureList) {
 				Listitem listitem = new Listitem();
@@ -918,17 +919,21 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listitem.appendChild(listcell);
 				listcell = new Listcell(primaryExposure.getFinCCY());
 				listitem.appendChild(listcell);
-				totFinaceAmout=totFinaceAmout.add(primaryExposure.getFinanceAmt());
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getFinanceAmt(), primaryExposure.getCcyEditField()));
+				totFinaceAmout = totFinaceAmout.add(primaryExposure.getFinanceAmt());
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getFinanceAmt(),
+						primaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
-				BigDecimal currentExpoSure=CalculationUtil.getConvertedAmount(primaryExposure.getFinCCY(), toCcy, primaryExposure.getCurrentExpoSure());
-				totCurrentExposer=totCurrentExposer.add(currentExpoSure);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getCurrentExpoSure(),primaryExposure.getCcyEditField()));
+				BigDecimal currentExpoSure = CalculationUtil.getConvertedAmount(primaryExposure.getFinCCY(), toCcy,
+						primaryExposure.getCurrentExpoSure());
+				totCurrentExposer = totCurrentExposer.add(currentExpoSure);
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getCurrentExpoSure(),
+						primaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 				listcell = new Listcell();
-				if (primaryExposure.getOverdueAmt()!= null && primaryExposure.getOverdueAmt().compareTo(BigDecimal.ZERO)!=0) {
+				if (primaryExposure.getOverdueAmt() != null
+						&& primaryExposure.getOverdueAmt().compareTo(BigDecimal.ZERO) != 0) {
 					listcell.setLabel(PennantConstants.YES);
 				} else {
 					listcell.setLabel(PennantConstants.NO);
@@ -936,9 +941,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listitem.appendChild(listcell);
 				listcell = new Listcell(primaryExposure.getPastdueDays());
 				listitem.appendChild(listcell);
-				BigDecimal overdueAmt=CalculationUtil.getConvertedAmount(primaryExposure.getFinCCY(), toCcy, primaryExposure.getOverdueAmt());
-				totOverDueAmount=totOverDueAmount.add(overdueAmt);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getOverdueAmt(),primaryExposure.getCcyEditField()));
+				BigDecimal overdueAmt = CalculationUtil.getConvertedAmount(primaryExposure.getFinCCY(), toCcy,
+						primaryExposure.getOverdueAmt());
+				totOverDueAmount = totOverDueAmount.add(overdueAmt);
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(primaryExposure.getOverdueAmt(),
+						primaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 				listitem.setAttribute("data", primaryExposure);
@@ -973,7 +980,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer,DFT_CURR_EDIT_FIELD));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer, DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -988,7 +995,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			lc = new Listcell();
 			lc.setSclass("highlighted_List_Cell");
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount,DFT_CURR_EDIT_FIELD));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount, DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1005,7 +1012,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			BigDecimal totFinaceAmout = BigDecimal.ZERO;
 			BigDecimal totCurrentExposer = BigDecimal.ZERO;
 			BigDecimal totOverDueAmount = BigDecimal.ZERO;
-			
+
 			recordCount = secondaryExposureList.size();
 			for (FinanceExposure secondaryExposure : secondaryExposureList) {
 				Listitem listitem = new Listitem();
@@ -1026,19 +1033,23 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listcell = new Listcell(secondaryExposure.getFinCCY());
 				listitem.appendChild(listcell);
 
-				totFinaceAmout=totFinaceAmout.add(secondaryExposure.getFinanceAmt());
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getFinanceAmt(), secondaryExposure.getCcyEditField()));
+				totFinaceAmout = totFinaceAmout.add(secondaryExposure.getFinanceAmt());
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getFinanceAmt(),
+						secondaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 
-				BigDecimal currentExpoSure=CalculationUtil.getConvertedAmount(secondaryExposure.getFinCCY(), toCcy, secondaryExposure.getCurrentExpoSure());
-				totCurrentExposer=totCurrentExposer.add(currentExpoSure);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getCurrentExpoSure(),secondaryExposure.getCcyEditField()));
+				BigDecimal currentExpoSure = CalculationUtil.getConvertedAmount(secondaryExposure.getFinCCY(), toCcy,
+						secondaryExposure.getCurrentExpoSure());
+				totCurrentExposer = totCurrentExposer.add(currentExpoSure);
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getCurrentExpoSure(),
+						secondaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 
 				listcell = new Listcell();
-				if (secondaryExposure.getOverdueAmt()!= null && secondaryExposure.getOverdueAmt().compareTo(BigDecimal.ZERO)!=0) {
+				if (secondaryExposure.getOverdueAmt() != null
+						&& secondaryExposure.getOverdueAmt().compareTo(BigDecimal.ZERO) != 0) {
 					listcell.setLabel(PennantConstants.YES);
 				} else {
 					listcell.setLabel(PennantConstants.NO);
@@ -1048,9 +1059,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listcell = new Listcell(secondaryExposure.getPastdueDays());
 				listitem.appendChild(listcell);
 
-				BigDecimal overdueAmt=CalculationUtil.getConvertedAmount(secondaryExposure.getFinCCY(), toCcy, secondaryExposure.getOverdueAmt());
-				totOverDueAmount=totOverDueAmount.add(overdueAmt);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getOverdueAmt(),secondaryExposure.getCcyEditField()));
+				BigDecimal overdueAmt = CalculationUtil.getConvertedAmount(secondaryExposure.getFinCCY(), toCcy,
+						secondaryExposure.getOverdueAmt());
+				totOverDueAmount = totOverDueAmount.add(overdueAmt);
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(secondaryExposure.getOverdueAmt(),
+						secondaryExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 
@@ -1089,7 +1102,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer,DFT_CURR_EDIT_FIELD));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer, DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1102,8 +1115,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount,DFT_CURR_EDIT_FIELD));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount, DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1124,7 +1136,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			BigDecimal totFinaceAmout = BigDecimal.ZERO;
 			BigDecimal totCurrentExposer = BigDecimal.ZERO;
 			BigDecimal totOverDueAmount = BigDecimal.ZERO;
-			
+
 			recordCount = guarantorExposureList.size();
 			for (FinanceExposure guarantorExposure : guarantorExposureList) {
 				Listitem listitem = new Listitem();
@@ -1145,19 +1157,23 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listcell = new Listcell(guarantorExposure.getFinCCY());
 				listitem.appendChild(listcell);
 
-				totFinaceAmout=totFinaceAmout.add(guarantorExposure.getFinanceAmt());
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getFinanceAmt(), guarantorExposure.getCcyEditField()));
+				totFinaceAmout = totFinaceAmout.add(guarantorExposure.getFinanceAmt());
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getFinanceAmt(),
+						guarantorExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 
-				BigDecimal currentExpoSure=CalculationUtil.getConvertedAmount(guarantorExposure.getFinCCY(), toCcy, guarantorExposure.getCurrentExpoSure());
-				totCurrentExposer=totCurrentExposer.add(currentExpoSure);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getCurrentExpoSure(),guarantorExposure.getCcyEditField()));
+				BigDecimal currentExpoSure = CalculationUtil.getConvertedAmount(guarantorExposure.getFinCCY(), toCcy,
+						guarantorExposure.getCurrentExpoSure());
+				totCurrentExposer = totCurrentExposer.add(currentExpoSure);
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getCurrentExpoSure(),
+						guarantorExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 
 				listcell = new Listcell();
-				if (guarantorExposure.getOverdueAmt()!= null && guarantorExposure.getOverdueAmt().compareTo(BigDecimal.ZERO)!=0) {
+				if (guarantorExposure.getOverdueAmt() != null
+						&& guarantorExposure.getOverdueAmt().compareTo(BigDecimal.ZERO) != 0) {
 					listcell.setLabel(PennantConstants.YES);
 				} else {
 					listcell.setLabel(PennantConstants.NO);
@@ -1167,9 +1183,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listcell = new Listcell(guarantorExposure.getPastdueDays());
 				listitem.appendChild(listcell);
 
-				BigDecimal overdueAmt=CalculationUtil.getConvertedAmount(guarantorExposure.getFinCCY(), toCcy, guarantorExposure.getOverdueAmt());
-				totOverDueAmount=totOverDueAmount.add(overdueAmt);
-				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getOverdueAmt(),guarantorExposure.getCcyEditField()));
+				BigDecimal overdueAmt = CalculationUtil.getConvertedAmount(guarantorExposure.getFinCCY(), toCcy,
+						guarantorExposure.getOverdueAmt());
+				totOverDueAmount = totOverDueAmount.add(overdueAmt);
+				listcell = new Listcell(PennantApplicationUtil.amountFormate(guarantorExposure.getOverdueAmt(),
+						guarantorExposure.getCcyEditField()));
 				listcell.setStyle("text-align:right");
 				listitem.appendChild(listcell);
 
@@ -1208,7 +1226,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer,DFT_CURR_EDIT_FIELD));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totCurrentExposer, DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1221,7 +1239,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			lc.setSclass("highlighted_List_Cell");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount,DFT_CURR_EDIT_FIELD));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totOverDueAmount, DFT_CURR_EDIT_FIELD));
 			lc.setSclass("highlighted_List_Cell");
 			lc.setStyle(footerStyle1);
 			lc.setParent(item);
@@ -1281,7 +1299,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering");
 		doSetLOVValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-	
+
 		// Bank Customer
 		try {
 			aGuarantorDetail.setBankCustomer(this.bankCustomer.isChecked());
@@ -1317,8 +1335,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (!this.bankCustomer.isChecked()) {
 				aGuarantorDetail.setGuarantorIDNumber(this.guarantorIDNumber.getValue());
 			}
-			if(this.guarantorIDType.getSelectedIndex() != 0){  
-				if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
+			if (this.guarantorIDType.getSelectedIndex() != 0) {
+				if (this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
 					// ### 10-05-2018 - Development PSD  127030
 					aGuarantorDetail.setGuarantorIDNumber(this.guarantorIDNumber.getValue());
 				}
@@ -1337,29 +1355,32 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (this.guranteePercentage.getValue() != null) {
 				aGuarantorDetail.setGuranteePercentage(this.guranteePercentage.getValue());
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (!this.guranteePercentage.isReadonly() && this.guranteePercentage.getValue().compareTo(BigDecimal.ZERO) <= 0) {
+			if (!this.guranteePercentage.isReadonly()
+					&& this.guranteePercentage.getValue().compareTo(BigDecimal.ZERO) <= 0) {
 				throw new WrongValueException(this.guranteePercentage, Labels.getLabel("NUMBER_MINVALUE",
 						new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"), "0" }));
 			}
-			if (this.guranteePercentage.getValue() != null  && this.guranteePercentage.intValue() != 0) {
+			if (this.guranteePercentage.getValue() != null && this.guranteePercentage.intValue() != 0) {
 				if ((this.totSharePerc.add(this.guranteePercentage.getValue())).compareTo(new BigDecimal(100)) > 0) {
 					BigDecimal availableSharePerc = new BigDecimal(100).subtract(this.totSharePerc);
-					throw new WrongValueException(this.guranteePercentage, Labels.getLabel("Total_Percentage",
-							new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"),
-									availableSharePerc.toString() }));
+					throw new WrongValueException(this.guranteePercentage,
+							Labels.getLabel("Total_Percentage",
+									new String[] {
+											Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"),
+											availableSharePerc.toString() }));
 				}
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Mobile No
 		try {
 			aGuarantorDetail.setMobileNo(this.mobileNo.getValue());
@@ -1380,10 +1401,12 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		// Proof Name
 		try {
-			/*if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.guarantorProofName.getValue()) || this.guarantorProofContent == null)) {
-				throw new WrongValueException(this.guarantorProofName, Labels.getLabel("MUST_BE_UPLOADED",
-						new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorProof.value")}));
-			}*/
+			/*
+			 * if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.guarantorProofName.getValue()) ||
+			 * this.guarantorProofContent == null)) { throw new WrongValueException(this.guarantorProofName,
+			 * Labels.getLabel("MUST_BE_UPLOADED", new String[] {
+			 * Labels.getLabel("label_GuarantorDetailDialog_GuarantorProof.value")})); }
+			 */
 			aGuarantorDetail.setGuarantorProofName(this.guarantorProofName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1395,21 +1418,20 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			wve.add(we);
 		}
 		// city name and addrcity
-		
+
 		try {
 			if (PennantConstants.CITY_FREETEXT) {
-				aGuarantorDetail.setAddrCity(this.cityName
-						.getValue());
+				aGuarantorDetail.setAddrCity(this.cityName.getValue());
 			} else {
 				aGuarantorDetail.setLovDescAddrCityName(this.addrCity.getDescription());
 				aGuarantorDetail.setAddrCity(this.addrCity.getValidatedValue());
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Address Details
-		if(!this.bankCustomer.isChecked()){
+		if (!this.bankCustomer.isChecked()) {
 			try {
 				aGuarantorDetail.setAddrHNbr(this.addrHNbr.getValue());
 			} catch (WrongValueException we) {
@@ -1483,11 +1505,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				wve.add(we);
 			}
 		} else {
-			if(customer!=null){
-			aGuarantorDetail.setCustID(this.customer.getCustID());
+			if (customer != null) {
+				aGuarantorDetail.setCustID(this.customer.getCustID());
 			}
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!wve.isEmpty()) {
@@ -1509,94 +1531,118 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering");
 		doClearMessage();
 		if (this.bankCustomer.isChecked() && this.guarantorCIF.getValue().isEmpty()) {
-			this.guarantorCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF.value"), PennantRegularExpressions.REGEX_ALPHANUM, true, true));
+			this.guarantorCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true, true));
 		}
 		// Percentage
 		if (!this.guranteePercentage.isReadonly()) {
-			this.guranteePercentage.setConstraint(new PTDecimalValidator(Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"), 2, true, false, 100));
+			this.guranteePercentage.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_GuarantorDetailDialog_GuranteePercentage.value"), 2, true, false, 100));
 		}
 		if (!this.bankCustomer.isChecked()) {
 			// ID Type
 			if (this.guarantorIDType.isReadonly()) {
-				this.guarantorIDType.setConstraint(new StaticListValidator(listGuarantorIDType, Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value")));
+				this.guarantorIDType.setConstraint(new StaticListValidator(listGuarantorIDType,
+						Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value")));
 			}
 			if (!this.guarantorIDNumber.isReadonly()) {
-				
-				if(StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(), PennantConstants.CPRCODE)){
-					this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+
+				if (StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(),
+						PennantConstants.CPRCODE)) {
+					this.guarantorIDNumber.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
 							PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
-						
-				}else if(StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(), PennantConstants.PANNUMBER)){
-					if(this.guarantorIDNumber.getConstraint()!=null){
+
+				} else if (StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(),
+						PennantConstants.PANNUMBER)) {
+					if (this.guarantorIDNumber.getConstraint() != null) {
 						this.guarantorIDNumber.setConstraint("");
 					}
-					
-					this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+
+					this.guarantorIDNumber.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
 							PennantRegularExpressions.REGEX_PANNUMBER, true));
-				}else{
-					this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), null, true));					
+				} else {
+					this.guarantorIDNumber.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), null, true));
 				}
-				
+
 			}
 			// Name
 			if (!this.guarantorCIFName.isReadonly()) {
-				this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+				this.guarantorCIFName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"),
+								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 			// Mobile No
-			/*if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(new SimpleConstraint(PennantRegularExpressions.MOBILE_REGEX, Labels.getLabel("MAND_FIELD_PHONENUM", new String[] { Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value") })));
-			}*/
+			/*
+			 * if (!this.mobileNo.isReadonly()) { this.mobileNo.setConstraint(new
+			 * SimpleConstraint(PennantRegularExpressions.MOBILE_REGEX, Labels.getLabel("MAND_FIELD_PHONENUM", new
+			 * String[] { Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value") }))); }
+			 */
 			if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),true));
+				this.mobileNo.setConstraint(new PTMobileNumberValidator(
+						Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true));
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {
-				this.emailId.setConstraint(new PTEmailValidator( Labels.getLabel("label_GuarantorDetailDialog_EmailId.value") , true));
+				this.emailId.setConstraint(
+						new PTEmailValidator(Labels.getLabel("label_GuarantorDetailDialog_EmailId.value"), true));
 			}
-			
-			if (!this.addrHNbr.isReadonly()){
-				this.addrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrHNbr.value"),
-						PennantRegularExpressions.REGEX_ADDRESS, true));
+
+			if (!this.addrHNbr.isReadonly()) {
+				this.addrHNbr.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrHNbr.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
-			
-			if (!this.flatNbr.isReadonly()){
-				this.flatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_FlatNbr.value"),
-						PennantRegularExpressions.REGEX_ADDRESS, false));
+
+			if (!this.flatNbr.isReadonly()) {
+				this.flatNbr.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_FlatNbr.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, false));
 			}
-			
+
 			boolean addressConstraint = false;
-			if (StringUtils.isBlank(this.addrStreet.getValue())
-					&& StringUtils.isBlank(this.addrLine1.getValue())
+			if (StringUtils.isBlank(this.addrStreet.getValue()) && StringUtils.isBlank(this.addrLine1.getValue())
 					&& StringUtils.isBlank(this.addrLine2.getValue())) {
 				addressConstraint = true;
 			}
-			if (!this.addrStreet.isReadonly() && addressConstraint){
-				this.addrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
+			if (!this.addrStreet.isReadonly() && addressConstraint) {
+				this.addrStreet.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrStreet.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 
-			if (!this.addrLine1.isReadonly() && addressConstraint){
-				this.addrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrLine1.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+			if (!this.addrLine1.isReadonly() && addressConstraint) {
+				this.addrLine1.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrLine1.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, false));
 			}
-			
-			if (!this.addrLine2.isReadonly() && addressConstraint){
-				this.addrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrLine2.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+
+			if (!this.addrLine2.isReadonly() && addressConstraint) {
+				this.addrLine2.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrLine2.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, false));
 			}
-			
-			if (!this.poBox.isReadonly()){
-				this.poBox.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_POBox.value"),
-						PennantRegularExpressions.REGEX_NUMERIC, true));
+
+			if (!this.poBox.isReadonly()) {
+				this.poBox
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_POBox.value"),
+								PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
-			
-			if (!this.addrZIP.isReadonly()){
-				this.addrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, true));
+
+			if (!this.addrZIP.isReadonly()) {
+				this.addrZIP.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"),
+								PennantRegularExpressions.REGEX_ZIP, true));
 			}
-			
-		
+
 			if (PennantConstants.CITY_FREETEXT) {
-				if(!this.cityName.isReadonly()){
-					this.cityName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_CityName.value"), PennantRegularExpressions.REGEX_NAME,false));
+				if (!this.cityName.isReadonly()) {
+					this.cityName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_CityName.value"),
+									PennantRegularExpressions.REGEX_NAME, false));
 				}
 			}
 
@@ -1619,7 +1665,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.emailId.setConstraint("");
 		this.guarantorProofName.setConstraint("");
 		this.guarantorGenderCode.setConstraint("");
-		
+
 		this.addrHNbr.setConstraint("");
 		this.flatNbr.setConstraint("");
 		this.addrStreet.setConstraint("");
@@ -1637,14 +1683,18 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private void doSetLOVValidation() {
 		// Guarantor CIF
 		if (!btnSearchGuarantorCIF.isVisible()) {
-			this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"),null,true));
+			this.guarantorCIFName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"), null, true));
 		}
-		this.addrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrCountry.value"),null,true,true));
-		
-		this.addrProvince.setConstraint(new PTStringValidator( Labels.getLabel("label_GuarantorDetailDialog_AddrProvince.value"),null,true,true));
-		
-		if(!PennantConstants.CITY_FREETEXT) {
-		this.addrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrCity.value"),null,false,true));
+		this.addrCountry.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_GuarantorDetailDialog_AddrCountry.value"), null, true, true));
+
+		this.addrProvince.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_GuarantorDetailDialog_AddrProvince.value"), null, true, true));
+
+		if (!PennantConstants.CITY_FREETEXT) {
+			this.addrCity.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_GuarantorDetailDialog_AddrCity.value"), null, false, true));
 		}
 	}
 
@@ -1692,13 +1742,14 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 	public void onCheck$bankCustomer(Event event) {
 		logger.debug("Entering");
-		
+
 		doClearMessage();
 		doRemoveValidation();
 		if (this.bankCustomer.isChecked()) {
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorCIF.setReadonly(true);
-			this.btnSearchGuarantorCIF.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
+			this.btnSearchGuarantorCIF
+					.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
 			this.guarantorIDNumber.setDisabled(true);
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorCIFName.setReadonly(true);
@@ -1709,7 +1760,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.hlayout_GuarantorIDNumber.setVisible(false);
 			this.space_GuarantorCIF.setVisible(true);
 			this.space_GuranteePercentage.setVisible(true);
-			fillComboBox(this.guarantorIDType, PennantConstants.List_Select, listGuarantorIDType,"");
+			fillComboBox(this.guarantorIDType, PennantConstants.List_Select, listGuarantorIDType, "");
 			this.space_GuarantorIDType.setSclass("");
 			this.space_GuarantorIDNumber.setSclass("");
 			this.space_Name.setSclass("");
@@ -1718,11 +1769,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_GuarantorProof.setSclass("");
 			this.guarantorProofName.setValue("");
 			this.guarantorProofContent = null;
-			
- 			this.row7.setVisible(false);
- 			this.guarantorGenderCode.setDisabled(true);
-			fillComboBox(this.guarantorGenderCode, PennantConstants.List_Select,PennantAppUtil.getGenderCodes(),"");
-			
+
+			this.row7.setVisible(false);
+			this.guarantorGenderCode.setDisabled(true);
+			fillComboBox(this.guarantorGenderCode, PennantConstants.List_Select, PennantAppUtil.getGenderCodes(), "");
+
 			// Address details
 			this.addrHNbr.setReadonly(true);
 			this.space_addrHNbr.setSclass("");
@@ -1740,8 +1791,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.cityName.setReadonly(true);
 			this.space_GuarantorCIF.setSclass(PennantConstants.mandateSclass);
 			this.space_GuarantorIDNumber.setSclass(PennantConstants.mandateSclass);
-			
-			
+
 		} else {
 			this.guranteePercentage.setReadonly(isReadOnly("GuarantorDetailDialog_GuranteePercentage"));
 			this.guarantorIDType.setDisabled(isReadOnly("GuarantorDetailDialog_GuarantorIDType"));
@@ -1769,7 +1819,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_Name.setSclass(PennantConstants.mandateSclass);
 			this.space_MobileNo.setSclass(PennantConstants.mandateSclass);
 			//this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
-			
+
 			this.addrHNbr.setReadonly(isReadOnly("GuarantorDetailDialog_addrHNbr"));
 			this.flatNbr.setReadonly(isReadOnly("GuarantorDetailDialog_flatNbr"));
 			this.addrStreet.setReadonly(isReadOnly("GuarantorDetailDialog_addrStreet"));
@@ -1789,8 +1839,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrCity.setMandatoryStyle(false);
 			this.space_GuarantorCIF.setSclass("");
 			this.space_GuarantorIDNumber.setSclass("");
-			
- 			this.row7.setVisible(true);
+
+			this.row7.setVisible(true);
 			this.space_GenderCode.setSclass(PennantConstants.mandateSclass);
 			this.guarantorGenderCode.setDisabled(isReadOnly("GuarantorDetailDialog_GuarantorGenderCode"));
 		}
@@ -1806,8 +1856,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		} else {
 			readOnlyExposureFields(false);
 		}
-		
-		if(enqModule){
+
+		if (enqModule) {
 			this.btnSearchGuarantorCIF.setVisible(false);
 			this.guarantorCIFName.setReadonly(true);
 			this.mobileNo.setReadonly(true);
@@ -1834,27 +1884,32 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guarantorIDNumber.setErrorMessage("");
 		this.guarantorIDNumber.setValue("");
 		this.space_GuarantorIDNumber.setSclass(PennantConstants.mandateSclass);
-		if (!StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(), PennantConstants.NOT_AVAILABLE)) {
+		if (!StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(),
+				PennantConstants.NOT_AVAILABLE)) {
 			this.guarantorIDNumber.setConstraint("");
-		}else{
-			this.space_GuarantorIDNumber.setSclass("");	
+		} else {
+			this.space_GuarantorIDNumber.setSclass("");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void setGurantorIDNumProp(){
-		if(!this.guarantorIDType.getSelectedItem().getValue().equals( PennantConstants.List_Select)){  
-			if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
+	private void setGurantorIDNumProp() {
+		if (!this.guarantorIDType.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
+			if (this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
 				this.guarantorIDNumber.setMaxlength(20);
-				this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
-						PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
-			}else if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.PANNUMBER)){
-				this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
-						PennantRegularExpressions.REGEX_PANNUMBER, true));
-			}
-			else{
+				this.guarantorIDNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
+								PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+			} else if (this.guarantorIDType.getSelectedItem().getValue().toString()
+					.equals(PennantConstants.PANNUMBER)) {
+				this.guarantorIDNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
+								PennantRegularExpressions.REGEX_PANNUMBER, true));
+			} else {
 				this.guarantorIDNumber.setMaxlength(20);
-				this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+				this.guarantorIDNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+								PennantRegularExpressions.REGEX_ALPHANUM, true));
 			}
 		}
 	}
@@ -1870,11 +1925,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		BeanUtils.copyProperties(getGuarantorDetail(), aGuarantorDetail);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				(aGuarantorDetail.isBankCustomer() ? Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") + " : " + 
-						aGuarantorDetail.getGuarantorCIF() : Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : " + 
-						aGuarantorDetail.getGuarantorIDType());
-		
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ (aGuarantorDetail.isBankCustomer()
+						? Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") + " : "
+								+ aGuarantorDetail.getGuarantorCIF()
+						: Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : "
+								+ aGuarantorDetail.getGuarantorIDType());
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aGuarantorDetail.getRecordType())) {
 				aGuarantorDetail.setVersion(aGuarantorDetail.getVersion() + 1);
@@ -1950,7 +2007,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		final GuarantorDetail aGuarantorDetail = new GuarantorDetail();
 		BeanUtils.copyProperties(getGuarantorDetail(), aGuarantorDetail);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the DocumentDetails object with the components data
@@ -2038,42 +2095,49 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 		boolean dupicateRecord = false;
 
-		if(aGuarantorDetail.isBankCustomer()) {		
+		if (aGuarantorDetail.isBankCustomer()) {
 			valueParm[1] = aGuarantorDetail.getGuarantorCIF();
 		} else {
-			if(aGuarantorDetail.getGuarantorIDType().equals(PennantConstants.CPRCODE)){
+			if (aGuarantorDetail.getGuarantorIDType().equals(PennantConstants.CPRCODE)) {
 				valueParm[1] = PennantApplicationUtil.formatEIDNumber(aGuarantorDetail.getGuarantorIDNumber());
-			}else{
-			valueParm[1] = aGuarantorDetail.getGuarantorIDNumber();
+			} else {
+				valueParm[1] = aGuarantorDetail.getGuarantorIDNumber();
 			}
 		}
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_GuarantorCIF") + ":" + valueParm[1];
 		// Checks whether jointAccount custCIF is same as actual custCIF
-		if (StringUtils.isNotBlank(aGuarantorDetail.getGuarantorCIF()) && StringUtils.trimToEmpty(primaryCustId).equals(aGuarantorDetail.getGuarantorCIF())) {
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+		if (StringUtils.isNotBlank(aGuarantorDetail.getGuarantorCIF())
+				&& StringUtils.trimToEmpty(primaryCustId).equals(aGuarantorDetail.getGuarantorCIF())) {
+			auditHeader.setErrorDetails(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+							getUserWorkspace().getUserLanguage()));
 		}
 
 		List<GuarantorDetail> guarantorDetailList = getFinanceMainDialogCtrl().getGuarantorDetailList();
 		if (guarantorDetailList != null && !guarantorDetailList.isEmpty()) {
 			for (GuarantorDetail guarantorDetail : guarantorDetailList) {
-				if(!(aGuarantorDetail.isBankCustomer())&& guarantorDetail.isBankCustomer()){
+				if (!(aGuarantorDetail.isBankCustomer()) && guarantorDetail.isBankCustomer()) {
 					if (guarantorDetail.getGuarantorCIF().equals(aGuarantorDetail.getGuarantorIDNumber())) {
 						dupicateRecord = true;
 					}
 				} else if (aGuarantorDetail.isBankCustomer()) {
-					 if (StringUtils.trimToEmpty(guarantorDetail.getGuarantorCIF()).equals(aGuarantorDetail.getGuarantorCIF())) {
-						 dupicateRecord = true;
-					 }
-				 } else if(StringUtils.trimToEmpty(guarantorDetail.getGuarantorIDTypeName()).equals(StringUtils.trimToEmpty(aGuarantorDetail.getGuarantorIDTypeName()))){
-					 if(guarantorDetail.getGuarantorIDNumber().equals(aGuarantorDetail.getGuarantorIDNumber())) {
-						 dupicateRecord = true;
-					 }
-				 }
-				if (dupicateRecord) { 
+					if (StringUtils.trimToEmpty(guarantorDetail.getGuarantorCIF())
+							.equals(aGuarantorDetail.getGuarantorCIF())) {
+						dupicateRecord = true;
+					}
+				} else if (StringUtils.trimToEmpty(guarantorDetail.getGuarantorIDTypeName())
+						.equals(StringUtils.trimToEmpty(aGuarantorDetail.getGuarantorIDTypeName()))) {
+					if (guarantorDetail.getGuarantorIDNumber().equals(aGuarantorDetail.getGuarantorIDNumber())) {
+						dupicateRecord = true;
+					}
+				}
+				if (dupicateRecord) {
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -2111,7 +2175,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -2119,54 +2183,57 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 */
 	private AuditHeader getAuditHeader(GuarantorDetail aGuarantorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aGuarantorDetail.getBefImage(), aGuarantorDetail);
-		return new AuditHeader(String.valueOf(aGuarantorDetail.getGuarantorId()), null, null, null, auditDetail, aGuarantorDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aGuarantorDetail.getGuarantorId()), null, null, null, auditDetail,
+				aGuarantorDetail.getUserDetails(), getOverideMap());
 	}
 
 	private void setVisibleGrid() {
-		if (this.primaryList==null || this.primaryList.size()==0) {
+		if (this.primaryList == null || this.primaryList.size() == 0) {
 			this.gb_GurantorsPrimaryExposure.setVisible(false);
 		} else {
 			this.gb_GurantorsPrimaryExposure.setVisible(true);
 		}
 
-		if (this.secoundaryList==null || this.secoundaryList.size()==0) {
+		if (this.secoundaryList == null || this.secoundaryList.size() == 0) {
 			this.gb_GurantorsSecoundaryExposure.setVisible(false);
 		} else {
 			this.gb_GurantorsSecoundaryExposure.setVisible(true);
 		}
 
-		if (this.guarantorList==null || this.guarantorList.size()==0) {
+		if (this.guarantorList == null || this.guarantorList.size() == 0) {
 			this.gb_GurantorsExposure.setVisible(false);
 		} else {
 			this.gb_GurantorsExposure.setVisible(true);
 		}
 
 	}
+
 	/**
-	 *  OnChange IdNumber Calling the Method To set EIDNumber Format
+	 * OnChange IdNumber Calling the Method To set EIDNumber Format
 	 */
-	public void onChange$guarantorIDNumber(Event event){
+	public void onChange$guarantorIDNumber(Event event) {
 		logger.debug("Entering" + event.toString());
 		getguarantorIdNumber();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * Method to Set The Format For EIDNumber
 	 */
-	public void getguarantorIdNumber(){
+	public void getguarantorIdNumber() {
 		logger.debug("Entering");
-		if(this.guarantorIDType.getSelectedIndex()!=0){  
-			if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
+		if (this.guarantorIDType.getSelectedIndex() != 0) {
+			if (this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
 				// ### 10-05-2018 - Start- Development PSD  127030
 				this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());
-			}else{
+			} else {
 				this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());
 			}
-				
+
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	private String getLovDescription(String value) {
 		value = StringUtils.trimToEmpty(value);
 
@@ -2178,30 +2245,29 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 		return value;
 	}
-	
+
 	/*
 	 * Method to get the Customer Address Details when CustID is Entered
 	 */
-	
-	public CustomerAddres getCustAddress(long custID){
+
+	public CustomerAddres getCustAddress(long custID) {
 		logger.debug("Entering");
 		CustomerAddres customerAddress = null;
-		JdbcSearchObject<CustomerAddres> searchObject=new JdbcSearchObject<CustomerAddres>(CustomerAddres.class);
+		JdbcSearchObject<CustomerAddres> searchObject = new JdbcSearchObject<CustomerAddres>(CustomerAddres.class);
 		searchObject.addTabelName("CustomerAddresses_View");
 		searchObject.addFilterEqual("CustID", custID);
 		List<CustomerAddres> custAddress = pagedListService.getBySearchObject(searchObject);
-		if(custAddress!=null && !custAddress.isEmpty()){
+		if (custAddress != null && !custAddress.isEmpty()) {
 			return custAddress.get(0);
 		}
 		logger.debug("Leaving");
-		
+
 		return customerAddress;
 	}
-	
+
 	public void onFulfill$addrCountry(Event event) {
 		logger.debug("Entering" + event.toString());
-		if (!StringUtils.trimToEmpty(addrCountryTemp).equals(
-				this.addrCountry.getValue())) {
+		if (!StringUtils.trimToEmpty(addrCountryTemp).equals(this.addrCountry.getValue())) {
 			this.addrProvince.setObject("");
 			this.addrProvince.setValue("");
 			this.addrProvince.setDescription("");
@@ -2215,67 +2281,68 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.addrProvince.setFilters(provinceFilters);
 		logger.debug("Leaving" + event.toString());
 	}
-	
 
 	public void onFulfill$addrProvince(Event event) {
 		logger.debug("Entering" + event.toString());
-		if (!StringUtils.trimToEmpty(addrProvinceTemp).equals(this.addrProvince.getValue())){
+		if (!StringUtils.trimToEmpty(addrProvinceTemp).equals(this.addrProvince.getValue())) {
 			this.addrCity.setObject("");
 			this.addrCity.setValue("");
-			this.addrCity.setDescription("");   
+			this.addrCity.setDescription("");
 		}
-		addrProvinceTemp= this.addrProvince.getValue();
+		addrProvinceTemp = this.addrProvince.getValue();
 		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("PCCountry", this.addrCountry.getValue(),
-				Filter.OP_EQUAL);
+		filters[0] = new Filter("PCCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
 		filters[1] = new Filter("PCProvince", this.addrProvince.getValue(), Filter.OP_EQUAL);
 		this.addrCity.setFilters(filters);
 		logger.debug("Leaving" + event.toString());
 	}
-	
 
-	public void dosetCustAddress(long custID){
+	public void dosetCustAddress(long custID) {
 		CustomerAddres customerAddress = getCustAddress(custID);
-		if(customerAddress!=null){
+		if (customerAddress != null) {
 			this.addrHNbr.setValue(customerAddress.getCustAddrHNbr());
 			this.addrStreet.setValue(customerAddress.getCustAddrStreet());
 			this.addrCity.setValue(customerAddress.getCustAddrCity(), customerAddress.getLovDescCustAddrCityName());
-			this.addrCountry.setValue(customerAddress.getCustAddrCountry(), customerAddress.getLovDescCustAddrCountryName());
-			this.addrProvince.setValue(customerAddress.getCustAddrProvince(), customerAddress.getLovDescCustAddrProvinceName());
+			this.addrCountry.setValue(customerAddress.getCustAddrCountry(),
+					customerAddress.getLovDescCustAddrCountryName());
+			this.addrProvince.setValue(customerAddress.getCustAddrProvince(),
+					customerAddress.getLovDescCustAddrProvinceName());
 			this.addrLine1.setValue(customerAddress.getCustAddrLine1());
 			this.addrLine2.setValue(customerAddress.getCustAddrLine2());
 			this.poBox.setValue(customerAddress.getCustPOBox());
 			this.flatNbr.setValue(customerAddress.getCustFlatNbr());
 			this.addrZIP.setValue(customerAddress.getCustAddrZIP());
-			
+
 		}
 	}
-	
+
 	/*
-	 * Method to get the CustID From Customers 
+	 * Method to get the CustID From Customers
 	 */
-	
-	public long getCustData(String CustCif){
+
+	public long getCustData(String CustCif) {
 		logger.debug("Entering");
 		long custID = 0;
-		JdbcSearchObject<Customer> searchObject=new JdbcSearchObject<Customer>(Customer.class);
+		JdbcSearchObject<Customer> searchObject = new JdbcSearchObject<Customer>(Customer.class);
 		searchObject.addTabelName("Customers");
 		searchObject.addField("CustID");
 		searchObject.addFilterEqual("CustCIF", CustCif);
 		List<Customer> custData = pagedListService.getBySearchObject(searchObject);
-		if(custData!=null && !custData.isEmpty()){
+		if (custData != null && !custData.isEmpty()) {
 			return custData.get(0).getCustID();
 		}
 		logger.debug("Leaving");
-		
+
 		return custID;
 	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	public GuarantorDetail getGuarantorDetail() {
 		return this.guarantorDetail;
 	}
+
 	public void setGuarantorDetail(GuarantorDetail guarantorDetail) {
 		this.guarantorDetail = guarantorDetail;
 	}
@@ -2283,6 +2350,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void setGuarantorDetailService(GuarantorDetailService guarantorDetailService) {
 		this.guarantorDetailService = guarantorDetailService;
 	}
+
 	public GuarantorDetailService getGuarantorDetailService() {
 		return this.guarantorDetailService;
 	}
@@ -2290,6 +2358,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void setGuarantorDetailListCtrl(GuarantorDetailListCtrl guarantorDetailListCtrl) {
 		this.guarantorDetailListCtrl = guarantorDetailListCtrl;
 	}
+
 	public GuarantorDetailListCtrl getGuarantorDetailListCtrl() {
 		return this.guarantorDetailListCtrl;
 	}
@@ -2297,6 +2366,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -2304,6 +2374,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -2311,6 +2382,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public JointAccountDetailDialogCtrl getFinanceMainDialogCtrl() {
 		return finJointAccountCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(JointAccountDetailDialogCtrl finJointAccountCtrl) {
 		this.finJointAccountCtrl = finJointAccountCtrl;
 	}
@@ -2318,6 +2390,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public boolean isNewGuarantor() {
 		return newGuarantor;
 	}
+
 	public void setNewGuarantor(boolean newGuarantor) {
 		this.newGuarantor = newGuarantor;
 	}
@@ -2325,6 +2398,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public List<GuarantorDetail> getGuarantorDetailDetailList() {
 		return guarantorDetailDetailList;
 	}
+
 	public void setGuarantorDetailDetailList(List<GuarantorDetail> guarantorDetailDetailList) {
 		this.guarantorDetailDetailList = guarantorDetailDetailList;
 	}
@@ -2332,8 +2406,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public FinanceMain getFinanceMain() {
 		return financeMain;
 	}
+
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
-	}	
-	
+	}
+
 }

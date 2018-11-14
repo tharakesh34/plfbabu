@@ -13,21 +13,20 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class DepositDetailServiceImpl implements DepositDetailProcess {
 
 	private static final Logger logger = Logger.getLogger(DepositDetailServiceImpl.class);
-	
+
 	private FetchDepositsProcess fetchDepositsProcess;
 	private FetchDepositDetailProcess fetchDepositDetailProcess;
-	
 
 	public DepositDetailServiceImpl() {
-		
+
 	}
-	
+
 	/**
 	 * Method for fetch customer Deposits from T24 Interface
 	 * 
 	 * @param fetchDeposit
 	 * @return FetchDeposit
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
 	@Override
 	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
@@ -41,13 +40,14 @@ public class DepositDetailServiceImpl implements DepositDetailProcess {
 	 * 
 	 * @param fetchDepositDetail
 	 * @return FetchDepositDetail
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
 	@Override
 	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
-		return getFetchDepositDetailProcess().fetchDepositDetails(fetchDepositDetail, InterfaceMasterConfigUtil.DEPOSITS_DETAILS);
+		return getFetchDepositDetailProcess().fetchDepositDetails(fetchDepositDetail,
+				InterfaceMasterConfigUtil.DEPOSITS_DETAILS);
 	}
 
 	// ******************************************************//
@@ -66,9 +66,8 @@ public class DepositDetailServiceImpl implements DepositDetailProcess {
 		return fetchDepositDetailProcess;
 	}
 
-	public void setFetchDepositDetailProcess(
-			FetchDepositDetailProcess fetchDepositDetailProcess) {
+	public void setFetchDepositDetailProcess(FetchDepositDetailProcess fetchDepositDetailProcess) {
 		this.fetchDepositDetailProcess = fetchDepositDetailProcess;
 	}
-	
+
 }

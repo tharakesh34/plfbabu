@@ -83,40 +83,41 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/applicationmaster/InsurancePolicy/insurancePolicyDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/InsurancePolicy/insurancePolicyDialog.zul file.
+ * <br>
  */
 public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> implements Serializable {
-	private static final long					serialVersionUID		= 1L;
-	private static final Logger					logger					= Logger.getLogger(InsurancePolicyDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(InsurancePolicyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_InsurancePolicyDialog;
-	protected Uppercasebox						policyCode;
-	protected Textbox							policyDesc;
-	protected ExtendedCombobox					insuranceType;
-	protected ExtendedCombobox					insuranceProvider;
-	protected Decimalbox						policyRate;
-	protected PTCKeditor						features;
-	protected Checkbox							active;
+	protected Window window_InsurancePolicyDialog;
+	protected Uppercasebox policyCode;
+	protected Textbox policyDesc;
+	protected ExtendedCombobox insuranceType;
+	protected ExtendedCombobox insuranceProvider;
+	protected Decimalbox policyRate;
+	protected PTCKeditor features;
+	protected Checkbox active;
 
-	protected Label								recordType;
-	protected Groupbox							gb_statusDetails;
-	private boolean								enqModule				= false;
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
 
 	// not auto wired vars
-	private InsurancePolicy						insurancePolicy;																// overhanded per param
-	private transient InsurancePolicyListCtrl	insurancePolicyListCtrl;														// overhanded per param
+	private InsurancePolicy insurancePolicy; // overhanded per param
+	private transient InsurancePolicyListCtrl insurancePolicyListCtrl; // overhanded per param
 
 	// Button controller for the CRUD buttons
-	private transient final String				btnCtroller_ClassPrefix	= "button_InsurancePolicyDialog_";
-	protected Button							btnHelp;
+	private transient final String btnCtroller_ClassPrefix = "button_InsurancePolicyDialog_";
+	protected Button btnHelp;
 
 	// ServiceDAOs / Domain Classes
-	private transient InsurancePolicyService	insurancePolicyService;
-	private transient PagedListService			pagedListService;
+	private transient InsurancePolicyService insurancePolicyService;
+	private transient PagedListService pagedListService;
 
 	/**
 	 * default constructor.<br>
@@ -407,7 +408,6 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 		this.insuranceProvider.setValueColumn("TakafulCode");
 		this.insuranceProvider.setDescColumn("TakafulName");
 		this.insuranceProvider.setValidateColumns(new String[] { "TakafulCode" });
-		
 
 		this.policyRate.setMaxlength(13);
 		this.policyRate.setFormat(PennantConstants.rateFormate9);
@@ -522,30 +522,30 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 		logger.debug("Entering");
 		//Policy Code
 		if (!this.policyCode.isReadonly()) {
-			this.policyCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_InsurancePolicyDialog_PolicyCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.policyCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_InsurancePolicyDialog_PolicyCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
 		//Policy Description
 		if (!this.policyDesc.isReadonly()) {
-			this.policyDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_InsurancePolicyDialog_PolicyDesc.value"), PennantRegularExpressions.REGEX_NAME,
-					true));
+			this.policyDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_InsurancePolicyDialog_PolicyDesc.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.insuranceType.isReadonly()) {
-			this.insuranceType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinTypeInsuranceDialog_InsuranceType.value"), null, true, true));
+			this.insuranceType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinTypeInsuranceDialog_InsuranceType.value"), null, true, true));
 		}
 		//Insurance Provider
 		if (this.insuranceProvider.isButtonVisible()) {
-			this.insuranceProvider.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_InsurancePolicyDialog_InsuranceProvider.value"), null, true, true));
+			this.insuranceProvider.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_InsurancePolicyDialog_InsuranceProvider.value"), null, true, true));
 		}
 		//Policy Rate
 		if (!this.policyRate.isDisabled()) {
-			this.policyRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_InsurancePolicyDialog_PolicyRate.value"), 4, true, false, 0, 9999));
+			this.policyRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_InsurancePolicyDialog_PolicyRate.value"), 4, true, false, 0, 9999));
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -932,8 +932,8 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_InsurancePolicyDialog, auditHeader);
 						return processCompleted;
 					}

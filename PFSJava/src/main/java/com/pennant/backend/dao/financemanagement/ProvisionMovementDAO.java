@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.financemanagement;
+
 import java.util.Date;
 import java.util.List;
 
@@ -49,9 +50,13 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 
 public interface ProvisionMovementDAO {
 
-	ProvisionMovement getProvisionMovementById(String id, Date movementDate ,String type);
-	List<ProvisionMovement> getProvisionMovementListById(String id ,String type);
-	void update(ProvisionMovement provisionMovement,String type);
-	void delete(ProvisionMovement provisionMovement,String type);
-	String save(ProvisionMovement provisionMovement,String type);
+	ProvisionMovement getProvisionMovementById(String id, Date movementDate, String type);
+
+	List<ProvisionMovement> getProvisionMovementListById(String id, String type);
+
+	void update(ProvisionMovement provisionMovement, String type);
+
+	void delete(ProvisionMovement provisionMovement, String type);
+
+	String save(ProvisionMovement provisionMovement, String type);
 }

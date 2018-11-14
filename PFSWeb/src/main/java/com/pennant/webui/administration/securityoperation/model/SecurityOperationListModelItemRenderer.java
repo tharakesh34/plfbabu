@@ -51,6 +51,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.util.PennantJavaUtil;
+
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -60,8 +61,8 @@ public class SecurityOperationListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -3424682216721299542L;
 
 	@Override
-	public void render(Listitem item, SecurityOperation data,int count) throws Exception {
-	
+	public void render(Listitem item, SecurityOperation data, int count) throws Exception {
+
 		final SecurityOperation securityOperation = (SecurityOperation) data;
 		Listcell lc;
 		lc = new Listcell(securityOperation.getOprCode());
@@ -72,9 +73,9 @@ public class SecurityOperationListModelItemRenderer implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(securityOperation.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", securityOperation.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSecurityOperationItemDoubleClicked");
 
 	}

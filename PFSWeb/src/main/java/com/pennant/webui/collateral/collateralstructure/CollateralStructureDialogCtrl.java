@@ -120,8 +120,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/collateral/CollateralstructureDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/collateral/CollateralstructureDialog.zul file. <br>
  * ************************************************************<br>
  */
 public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructure> implements Serializable {
@@ -141,7 +140,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected Checkbox collateralLocReq;
 	protected Checkbox collateralValuatorReq;
 	protected Textbox remarks;
-	
+
 	protected FrequencyBox valuationFrequency;
 	protected Datebox nextValuationDate;
 	protected Checkbox valuationPending;
@@ -208,15 +207,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
-	public void onCreate$window_CollateralStructureDialog(Event event)
-			throws Exception {
+	public void onCreate$window_CollateralStructureDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -225,7 +222,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		try {
 			// Get the required arguments.
 			this.collateralStructure = (CollateralStructure) arguments.get("collateralStructure");
-			this.collateralStructureListCtrl = (CollateralStructureListCtrl) arguments.get("collateralStructureListCtrl");
+			this.collateralStructureListCtrl = (CollateralStructureListCtrl) arguments
+					.get("collateralStructureListCtrl");
 			this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
 			this.isCopyProcess = (Boolean) arguments.get("isCopyProcess");
 
@@ -235,18 +233,18 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 			// Store the before image.
 			CollateralStructure collateralStructure = new CollateralStructure();
-			BeanUtils.copyProperties(this.collateralStructure,collateralStructure);
+			BeanUtils.copyProperties(this.collateralStructure, collateralStructure);
 			this.collateralStructure.setBefImage(collateralStructure);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.collateralStructure.isWorkflow(),
-					this.collateralStructure.getWorkflowId(),this.collateralStructure.getNextTaskId());
+			doLoadWorkFlow(this.collateralStructure.isWorkflow(), this.collateralStructure.getWorkflowId(),
+					this.collateralStructure.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),this.pageRightName);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.collateralStructure);
@@ -281,11 +279,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			map.put("moduleName", CollateralConstants.MODULE_NAME);
 
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul",
-							extendedFieldTabpanel, map);
+					extendedFieldTabpanel, map);
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
+
 	/**
 	 * Method for append Technical Valuation field Details tab
 	 */
@@ -309,12 +308,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			map.put("newRecord", collateralStructure.isNew());
 			map.put("moduleName", CollateralConstants.MODULE_NAME);
 
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/TechnicalValuationDialog.zul",
+			Executions.createComponents(
+					"/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/TechnicalValuationDialog.zul",
 					techValuationTabpanel, map);
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -327,12 +328,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.ltvPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.ltvPercentage.setScale(2);
 		this.remarks.setMaxlength(1000);
-		
+
 		this.valuationFrequency.setMandatoryStyle(true);
 		this.queryId.setModuleName("DedupParm");
 		this.queryId.setValueColumn("QueryId");
 		this.queryId.setDescColumn("QueryCode");
-		this.queryId.setValidateColumns(new String[] {  "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
+		this.queryId.setValidateColumns(new String[] { "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
 
 		setStatusDetails();
 		logger.debug("Leaving");
@@ -344,9 +345,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * @param event
 	 */
 	public void onSelect$extendedDetailsTab(Event event) {
-		getExtendedFieldDialogCtrl().doSetBasicDetail(CollateralConstants.MODULE_NAME,
-				this.collateralType.getValue(), this.collateralDesc.getValue());
+		getExtendedFieldDialogCtrl().doSetBasicDetail(CollateralConstants.MODULE_NAME, this.collateralType.getValue(),
+				this.collateralDesc.getValue());
 	}
+
 	/**
 	 * Method for setting Basic Details on Selecting Technical valuation Details Tab
 	 * 
@@ -356,7 +358,6 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		getTechnicalValuationDialogCtrl().doSetBasicDetail(CollateralConstants.MODULE_NAME,
 				this.collateralType.getValue(), this.collateralDesc.getValue());
 	}
-	
 
 	/**
 	 * Method for setting Basic Details on Selecting LTV Rule Details Tab
@@ -367,54 +368,56 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.moduleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.subModuleDesc.setValue(this.collateralType.getValue());
 		if (StringUtils.isNotEmpty(this.collateralDesc.getValue())) {
-			this.subModuleDesc.setValue(this.collateralType.getValue() + " - "
-					+ this.collateralDesc.getValue());
+			this.subModuleDesc.setValue(this.collateralType.getValue() + " - " + this.collateralDesc.getValue());
 		}
 	}
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$preValidationTab(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.preModuleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.preSubModuleDesc.setValue(this.collateralType.getValue());
 		this.prevalidationListbox.getItems().clear();
 		renderScriptFields(prevalidationListbox);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for setting label details on Header in Selecting Tab
+	 * 
 	 * @param event
 	 */
 	public void onSelect$postValidationTab(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.postModuleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.postSubModuleDesc.setValue(this.collateralType.getValue());
 		this.postValidationListbox.getItems().clear();
 		renderScriptFields(postValidationListbox);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for rendering Field Details from Extended fields for Validations & Simulation
+	 * 
 	 * @param listbox
 	 */
-	private void renderScriptFields(Listbox listbox){
+	private void renderScriptFields(Listbox listbox) {
 		logger.debug("Entering");
-		
+
 		if (getExtendedFieldDialogCtrl() != null) {
-			List<ExtendedFieldDetail>  extFieldList= getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+			List<ExtendedFieldDetail> extFieldList = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
 			if (extFieldList != null && !extFieldList.isEmpty()) {
 				for (ExtendedFieldDetail details : extFieldList) {
-					if (!StringUtils.equals(details.getRecordType(),PennantConstants.RECORD_TYPE_DEL) && 
-							!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+							&& !StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 						Listitem item = new Listitem();
 						Listcell lc = new Listcell(details.getFieldName());
 						lc.setParent(item);
@@ -425,10 +428,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -438,10 +441,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	public void onUser$btnPreValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.preValidation);
-		if (validate(event , false, false)) {
+		if (validate(event, false, false)) {
 			preScriptValidated = true;
 			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.preValidation.getValue().trim())){
+			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.preValidation.getValue());
@@ -450,7 +453,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS AND CONFIRM EXECUTE
 	 * 
@@ -460,10 +463,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	public void onUser$btnPostValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.postValidation);
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			postScriptValidated = true;
 			//check if code mirror is empty or not 
-			if(StringUtils.isNotEmpty(this.postValidation.getValue().trim())){
+			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.postValidation.getValue());
@@ -472,6 +475,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -480,6 +484,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		postScriptValidated = false;
 		Clients.clearWrongValue(this.postValidation);
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -488,7 +493,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		preScriptValidated = false;
 		Clients.clearWrongValue(this.preValidation);
 	}
-	
+
 	/**
 	 * CALL THE RESULT ZUL FILE
 	 * 
@@ -500,16 +505,17 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("variables", jsonArray);
 		map.put("scriptRule", scriptRule);
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND RETURNS THE ERRORS
 	 * 
@@ -517,7 +523,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations) throws InterruptedException {
+	private boolean validate(ForwardEvent event, boolean isPostValidation, boolean bothValidations)
+			throws InterruptedException {
 		boolean noerrors = true;
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
@@ -565,36 +572,39 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	/**
 	 * Method for Checking script has Error Details information or not.
+	 * 
 	 * @param isPostValidation
 	 * @return
 	 * @throws InterruptedException
 	 */
 	private boolean validateResult(boolean isPostValidation, boolean bothValidations) throws InterruptedException {
 
-		if(!bothValidations){
-			if(isPostValidation){
+		if (!bothValidations) {
+			if (isPostValidation) {
 				if (!this.postValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
-			}else{
+			} else {
 				if (!this.preValidation.getValue().contains("errors")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}
-		}else{
-			if (StringUtils.isNotEmpty(this.preValidation.getValue()) && !this.preValidation.getValue().contains("errors")) {
+		} else {
+			if (StringUtils.isNotEmpty(this.preValidation.getValue())
+					&& !this.preValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Pre Validations.");
 				return false;
-			}else if(StringUtils.isNotEmpty(this.postValidation.getValue()) && !this.postValidation.getValue().contains("errors")){
+			} else if (StringUtils.isNotEmpty(this.postValidation.getValue())
+					&& !this.postValidation.getValue().contains("errors")) {
 				MessageUtil.showError("Error Details not found in Post Validations.");
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -603,13 +613,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 */
 	public void onUser$btnPreSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event , false , false)) {
+		if (validate(event, false, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.preValidation.getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * VALIDATES THE SCRIPT CODE AND EXECUTE
 	 * 
@@ -618,13 +628,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 */
 	public void onUser$btnPostSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if (validate(event, true , false)) {
+		if (validate(event, true, false)) {
 			// create a new window for input values
 			createSimulationWindow(variables, this.postValidation.getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -634,15 +644,16 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnNew"));
 		this.btnDelete.setVisible(false);
-		/*getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnDelete")*/
+		/* getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnDelete") */
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Checking Actual Initiated Owner of the Record
+	 * 
 	 * @return
 	 */
 	private boolean isMaintainable() {
@@ -664,42 +675,31 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		// TODO: Open Comment If, save is working on ZK scripts for validation 
-		/*boolean validationReq = true;
-		if (this.userAction.getSelectedItem() != null){
-			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-					this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
-					this.userAction.getSelectedItem().getLabel().contains("Decline")) {
-				validationReq = false;
-			}
-		}
-		
-		if(validationReq){
-			if ((StringUtils.isNotBlank(this.preValidation.getValue()) || 
-					StringUtils.isNotBlank(this.postValidation.getValue()))  && 
-					validate(event, false, true)) {
-				doSave();
-			}else if(StringUtils.isBlank(this.preValidation.getValue()) ||
-					StringUtils.isBlank(this.postValidation.getValue())){
-				doSave();
-			}
-		}else{
-			doSave();
-		}
-		*/ 
+		/*
+		 * boolean validationReq = true; if (this.userAction.getSelectedItem() != null){ if
+		 * ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Reject") ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
+		 * this.userAction.getSelectedItem().getLabel().contains("Decline")) { validationReq = false; } }
+		 * 
+		 * if(validationReq){ if ((StringUtils.isNotBlank(this.preValidation.getValue()) ||
+		 * StringUtils.isNotBlank(this.postValidation.getValue())) && validate(event, false, true)) { doSave(); }else
+		 * if(StringUtils.isBlank(this.preValidation.getValue()) ||
+		 * StringUtils.isBlank(this.postValidation.getValue())){ doSave(); } }else{ doSave(); }
+		 */
 		// Pre Validation Checking for Validated or not
-		if(this.preValidationReq.isChecked() && 
-				StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated){
+		if (this.preValidationReq.isChecked() && StringUtils.isNotEmpty(this.preValidation.getValue().trim())
+				&& !preScriptValidated) {
 			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
 					new String[] { Labels.getLabel("Tab_PreValidation") }));
 			return;
 		}
 
 		// Post Validation Checking for Validated or not
-		if(this.postValidationReq.isChecked() && 
-				StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated){
+		if (this.postValidationReq.isChecked() && StringUtils.isNotEmpty(this.postValidation.getValue().trim())
+				&& !postScriptValidated) {
 			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
 					new String[] { Labels.getLabel("Tab_PostValidation") }));
 			return;
@@ -723,12 +723,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	/**
 	 * Method for On click action on Copy button to make Duplicate record with existing Data
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeDialog();
 			Events.postEvent("onClick$button_CollateralStructureList_NewCollateralStructure",
@@ -736,7 +737,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
@@ -748,8 +749,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -759,8 +759,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -809,7 +808,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		if (this.collateralStructure.isNewRecord()) {
 			this.active.setChecked(true);
 			String dftLtvType = CollateralConstants.FIXED_LTV;
-			if(isCopyProcess){
+			if (isCopyProcess) {
 				dftLtvType = collateralStructure.getLtvType();
 			}
 			fillComboBox(this.ltvType, dftLtvType, PennantStaticListUtil.getListLtvTypes(), "");
@@ -818,11 +817,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			filter[0] = new Filter("QueryModule", FinanceConstants.DEDUP_COLLATERAL, Filter.OP_EQUAL);
 			filter[1] = new Filter("QuerySubCode", collateralStructure.getCollateralType(), Filter.OP_EQUAL);
 			this.queryId.setFilters(filter);
-			
+
 			if (collateralStructure.getQueryId() != 0) {
-				this.queryId.setValue(String.valueOf(collateralStructure.getQueryId()), collateralStructure.getQueryCode());
+				this.queryId.setValue(String.valueOf(collateralStructure.getQueryId()),
+						collateralStructure.getQueryCode());
 			}
-			
+
 			this.active.setChecked(collateralStructure.isActive());
 			fillComboBox(this.ltvType, collateralStructure.getLtvType(), PennantStaticListUtil.getListLtvTypes(), "");
 		}
@@ -846,7 +846,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.valuationFrequency.setValue(collateralStructure.getValuationFrequency());
 		this.nextValuationDate.setValue(collateralStructure.getNextValuationDate());
 		this.valuationPending.setChecked(collateralStructure.isValuationPending());
-		
+
 		// LTVRule tab
 		this.moduleDesc.setValue(CollateralConstants.MODULE_NAME);
 		this.subModuleDesc.setValue(collateralStructure.getCollateralType());
@@ -868,17 +868,17 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				this.javaScriptSqlRule.buildQuery(collateralStructure.getActualBlock());
 			}
 		}
-		
+
 		// Default Values Setting for Script Validations
 		postScriptValidated = true;
 		preScriptValidated = true;
-		
+
 		// Extended Field Details tab
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 		ExtendedFieldHeader techValuationFieldHeader = collateralStructure.getExtendedFieldHeader();
 		appendExtendedFieldsTab(extendedFieldHeader);
 		appendTechValuationTab(techValuationFieldHeader);
-		
+
 		this.recordStatus.setValue(collateralStructure.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -889,7 +889,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * @param aAcademic
 	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(CollateralStructure collateralStructure, boolean validationReq) throws Exception {
+	public void doWriteComponentsToBean(CollateralStructure collateralStructure, boolean validationReq)
+			throws Exception {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -933,63 +934,65 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 
 		// valuation Frequency && valuation Pending &&  valuation Frequency Date
-				try {
-					this.valuationFrequency.isValidComboValue();
-					collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
-					
-					if (!FrequencyUtil.isFrqDate(this.valuationFrequency.getValue(), this.nextValuationDate.getValue())) {
-						throw new WrongValueException(this.valuationFrequency, Labels.getLabel("FRQ_DATE_MISMATCH",
-										new String[] { Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
-												Labels.getLabel("label_CollateralStructureDialog_ValuationFrequency.value") }));
-					}
+		try {
+			this.valuationFrequency.isValidComboValue();
+			collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
 
-					Date appDate = DateUtility.getAppDate();
-					Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-
-					if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)
-							|| this.nextValuationDate.getValue().after(appEndDate)) {
-						throw new WrongValueException(this.nextValuationDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
+			if (!FrequencyUtil.isFrqDate(this.valuationFrequency.getValue(), this.nextValuationDate.getValue())) {
+				throw new WrongValueException(this.valuationFrequency,
+						Labels.getLabel("FRQ_DATE_MISMATCH",
+								new String[] {
 										Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
-										DateUtility.formatToShortDate(appDate), DateUtility.formatToShortDate(appEndDate) }));
-					}
-					
-					collateralStructure.setNextValuationDate(this.nextValuationDate.getValue());
-					collateralStructure.setValuationPending(this.valuationPending.isChecked());
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-				
-				try {
-					String query = this.queryId.getValue();
-					if (StringUtils.isNotBlank(query)) {
-						collateralStructure.setQueryId(Long.valueOf(query));
-					} else {
-						collateralStructure.setQueryId(0);
-					}
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-				
+										Labels.getLabel("label_CollateralStructureDialog_ValuationFrequency.value") }));
+			}
+
+			Date appDate = DateUtility.getAppDate();
+			Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
+
+			if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)
+					|| this.nextValuationDate.getValue().after(appEndDate)) {
+				throw new WrongValueException(this.nextValuationDate,
+						Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
+								Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
+								DateUtility.formatToShortDate(appDate), DateUtility.formatToShortDate(appEndDate) }));
+			}
+
+			collateralStructure.setNextValuationDate(this.nextValuationDate.getValue());
+			collateralStructure.setValuationPending(this.valuationPending.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			String query = this.queryId.getValue();
+			if (StringUtils.isNotBlank(query)) {
+				collateralStructure.setQueryId(Long.valueOf(query));
+			} else {
+				collateralStructure.setQueryId(0);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		showErrorDetails(wve, basicDetailsTab);
-		
-		ExtendedFieldHeader extendedFieldHeader=null;
+
+		ExtendedFieldHeader extendedFieldHeader = null;
 		// Extended Field Details
 		if (getExtendedFieldDialogCtrl() != null) {
-			extendedFieldHeader= getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
+			extendedFieldHeader = getExtendedFieldDialogCtrl().doSave_ExtendedFields(extendedDetailsTab);
 			extendedFieldHeader.setModuleName(CollateralConstants.MODULE_NAME);
 			extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
 			extendedFieldHeader.setTabHeading(collateralStructure.getCollateralDesc());
 			collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 		}
-		
+
 		// Technical Valuation Details
-		if (getTechnicalValuationDialogCtrl() != null && extendedFieldHeader !=null) {
-			List<ExtendedFieldDetail> techValuationDetailList = getTechnicalValuationDialogCtrl().doSave_TechnicalValuationFields(techValuationDetailsTab);
+		if (getTechnicalValuationDialogCtrl() != null && extendedFieldHeader != null) {
+			List<ExtendedFieldDetail> techValuationDetailList = getTechnicalValuationDialogCtrl()
+					.doSave_TechnicalValuationFields(techValuationDetailsTab);
 			extendedFieldHeader.setTechnicalValuationDetailList(techValuationDetailList);
 			collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 		}
-		
-		
 
 		// LTV Rules
 		if (StringUtils.equals(getComboboxValue(this.ltvType), CollateralConstants.VARIABLE_LTV)) {
@@ -999,7 +1002,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			if (!this.javaScriptSqlRule.isReadOnly()) {
 				try {
 					collateralStructure.setSQLRule(this.javaScriptSqlRule.getSqlQuery());
@@ -1017,7 +1020,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					wve.add(we);
 				}
 			}
-			
+
 		} else {
 			collateralStructure.setAllowLtvWaiver(false);
 			collateralStructure.setMaxLtvWaiver(BigDecimal.ZERO);
@@ -1114,12 +1117,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.btnDelete.setVisible(false);
 		// fill the components with the data
 		doWriteBeanToComponents(collateralStructure);
-		
-		int height = getContentAreaHeight() ;
-		this.preValidationGrid.setHeight(height-150+"px");
-		this.postValidationGrid.setHeight(height-150+"px");
-		this.preValidation.setHeight(height-160+"px");
-		this.postValidation.setHeight(height-160+"px");
+
+		int height = getContentAreaHeight();
+		this.preValidationGrid.setHeight(height - 150 + "px");
+		this.postValidationGrid.setHeight(height - 150 + "px");
+		this.preValidation.setHeight(height - 160 + "px");
+		this.postValidation.setHeight(height - 160 + "px");
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
@@ -1134,38 +1137,42 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 		// Basic Details tab
 		if (!this.collateralType.isReadonly()) {
-			this.collateralType.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralStructureDialog_CollateralType.value"),
+			this.collateralType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralStructureDialog_CollateralType.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
 		if (!this.collateralDesc.isReadonly()) {
-			this.collateralDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralStructureDialog_CollateralDesc.value"),
+			this.collateralDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralStructureDialog_CollateralDesc.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.ltvPercentage.isDisabled()) {
 			if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
-				this.ltvPercentage.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralStructureDialog_LtvPercentage.value"),
-								2, true, false, 100));
+				this.ltvPercentage.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_CollateralStructureDialog_LtvPercentage.value"), 2, true, false, 100));
 			}
 		}
 
 		// LTV Rules tab
 		if (!this.ltvType.isDisabled()) {
 			this.ltvType.setConstraint(new StaticListValidator(PennantStaticListUtil.getListLtvTypes(),
-							Labels.getLabel("label_CollateralStructureDialog_LtvType.value")));
+					Labels.getLabel("label_CollateralStructureDialog_LtvType.value")));
 		}
 
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralStructureDialog_Remarks.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.remarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralStructureDialog_Remarks.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
 		if (this.allowLtvWaiver.isChecked()) {
-			this.maxLtvWaiver.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralStructureDialog_MaxLtvWaiver.value"),
-							2, true, false, 100));
+			this.maxLtvWaiver.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CollateralStructureDialog_MaxLtvWaiver.value"), 2, true, false, 100));
 		}
 		if (!this.nextValuationDate.isReadonly()) {
-			this.nextValuationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),true));
+			this.nextValuationDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"), true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1202,8 +1209,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1246,7 +1252,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		} else if (CollateralConstants.VARIABLE_LTV.equals(ltvType)) {
 			this.ltvRuleTab.setDisabled(false);
 			this.allowLtvWaiver.setDisabled(isReadOnly("CollateralStructureDialog_AllowLtvWaiver"));
-			if(isAction){
+			if (isAction) {
 				this.maxLtvWaiver.setDisabled(true);
 				this.maxLtvWaiver.setValue(BigDecimal.ZERO);
 				this.javaScriptSqlRule.setEditable(true);
@@ -1315,11 +1321,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_AcademicDialog_AcademicLevel.value")
-				+ " : " + collateralStructure.getCollateralType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_AcademicDialog_AcademicLevel.value") + " : "
+				+ collateralStructure.getCollateralType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(collateralStructure.getRecordType())) {
 				collateralStructure.setVersion(collateralStructure.getVersion() + 1);
@@ -1391,7 +1395,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.javaScriptSqlRule.setTreeTabVisible(!isReadOnly("CollateralStructureDialog_JavaScriptSqlRule"));
 		this.preValidation.setReadonly(isReadOnly("CollateralStructureDialog_PreValidation"));
 		this.postValidation.setReadonly(isReadOnly("CollateralStructureDialog_PostValidation"));
-		
+
 		readOnlyComponent(isReadOnly("CollateralStructureDialog_CollateralDedup"), this.queryId);
 		this.valuationFrequency.setDisabled(isReadOnly("CollateralStructureDialog_ValuationFrequency"));
 		this.valuationPending.setDisabled(isReadOnly("CollateralStructureDialog_ValuationPending"));
@@ -1432,12 +1436,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.remarks.setReadonly(true);
 		this.allowLtvWaiver.setDisabled(true);
 		this.maxLtvWaiver.setDisabled(true);
-		
+
 		this.valuationFrequency.setDisabled(true);
 		this.valuationPending.setDisabled(true);
 		this.nextValuationDate.setDisabled(true);
 		readOnlyComponent(true, this.queryId);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1468,21 +1472,21 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		// force validation, if on, than execute by component.getValue()
 		// ************************************************************
 		boolean validationReq = true;
-		if (this.userAction.getSelectedItem() != null){
-			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-					this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-					this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
-					this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+		if (this.userAction.getSelectedItem() != null) {
+			if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
 				validationReq = false;
 			}
 		}
-		
+
 		// Validation Not required Cases excluding
-		if(validationReq){
+		if (validationReq) {
 			doClearMessage();
 			doSetValidation();
 		}
-		
+
 		// fill the Academic object with the components data
 		doWriteComponentsToBean(aCollateralStructure, validationReq);
 
@@ -1607,7 +1611,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				extFldHeader.setRecordType(aCollateralStructure.getRecordType());
 				extFldHeader.setNewRecord(aCollateralStructure.isNewRecord());
 			}
-		
+
 			for (ExtendedFieldDetail ext : extFldHeader.getExtendedFieldDetails()) {
 				ext.setWorkflowId(aCollateralStructure.getWorkflowId());
 				ext.setRecordStatus(aCollateralStructure.getRecordStatus());
@@ -1622,7 +1626,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					}
 				}
 			}
-			
+
 			for (ExtendedFieldDetail ext : extFldHeader.getTechnicalValuationDetailList()) {
 				ext.setWorkflowId(aCollateralStructure.getWorkflowId());
 				ext.setRecordStatus(aCollateralStructure.getRecordStatus());
@@ -1707,8 +1711,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(this.window_CollateralStructureDialog,auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CollateralStructureDialog, auditHeader);
 						return processCompleted;
 					}
 				}
@@ -1748,8 +1753,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(CollateralStructure aCollateralStructure, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,aCollateralStructure.getBefImage(), aCollateralStructure);
-		return new AuditHeader(getReference(), null, null, null, auditDetail,aCollateralStructure.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCollateralStructure.getBefImage(),
+				aCollateralStructure);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aCollateralStructure.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -1774,13 +1781,11 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		return String.valueOf(this.collateralStructure.getCollateralType());
 	}
 
-	public void setCollateralStructureService(
-			CollateralStructureService collateralStructureService) {
+	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
 	}
 
-	public void setExtendedFieldDialogCtrl(
-			ExtendedFieldDialogCtrl extendedFieldDialogCtrl) {
+	public void setExtendedFieldDialogCtrl(ExtendedFieldDialogCtrl extendedFieldDialogCtrl) {
 		this.extendedFieldDialogCtrl = extendedFieldDialogCtrl;
 	}
 
@@ -1799,8 +1804,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	public List<String> getFieldNames() {
 		return fieldNames;
 	}
+
 	public void setFieldNames(List<String> fieldNames) {
 		this.fieldNames = fieldNames;
 	}
-	
+
 }

@@ -7,25 +7,25 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
-public class RateValidator implements Constraint{
+public class RateValidator implements Constraint {
 
 	private int len;
 	private int decPos;
-	private String fieldParm="";
-	private boolean zeroAllowed=true;
-	
-	public RateValidator(int len,int decPos) {
+	private String fieldParm = "";
+	private boolean zeroAllowed = true;
+
+	public RateValidator(int len, int decPos) {
 		this.setLen(len);
 		this.setDecPos(decPos);
 	}
 
-	public RateValidator(int len,int decPos,String fieldParm) {
+	public RateValidator(int len, int decPos, String fieldParm) {
 		this.setLen(len);
 		this.setDecPos(decPos);
 		this.setFieldParm(fieldParm);
 	}
 
-	public RateValidator(int len,int decPos,String fieldParm,boolean zeroAllowed) {
+	public RateValidator(int len, int decPos, String fieldParm, boolean zeroAllowed) {
 		this.setLen(len);
 		this.setDecPos(decPos);
 		this.setFieldParm(fieldParm);
@@ -33,32 +33,33 @@ public class RateValidator implements Constraint{
 	}
 
 	public void validate(Component comp, Object value) throws WrongValueException {
-		
+
 		double rateValue = 0;
-		double maxRate = Math.pow(10, len-decPos);
-		
-		if (value!=null){
+		double maxRate = Math.pow(10, len - decPos);
+
+		if (value != null) {
 			//rateValue= (Double) value;
-			rateValue= new BigDecimal(value.toString()).doubleValue();
-			
-		}else{
-			throw new WrongValueException(comp, Labels.getLabel("RATE_NO_ZERO",new String[]{fieldParm}));
-		}
-		
-		if (rateValue<0){
-			throw new WrongValueException(comp, Labels.getLabel("RATE_NO_LESS_ZERO",new String[]{fieldParm}));
+			rateValue = new BigDecimal(value.toString()).doubleValue();
+
+		} else {
+			throw new WrongValueException(comp, Labels.getLabel("RATE_NO_ZERO", new String[] { fieldParm }));
 		}
 
-		if (!this.isZeroAllowed()){
-			if(rateValue==0){
-				throw new WrongValueException(comp, Labels.getLabel("RATE_NO_ZERO",new String[]{fieldParm}));
+		if (rateValue < 0) {
+			throw new WrongValueException(comp, Labels.getLabel("RATE_NO_LESS_ZERO", new String[] { fieldParm }));
+		}
+
+		if (!this.isZeroAllowed()) {
+			if (rateValue == 0) {
+				throw new WrongValueException(comp, Labels.getLabel("RATE_NO_ZERO", new String[] { fieldParm }));
 			}
 		}
 
-		if (rateValue>=maxRate){
-			throw new WrongValueException(comp, Labels.getLabel("RATE_RANGE",new String[] {fieldParm,String.valueOf(maxRate)}));
+		if (rateValue >= maxRate) {
+			throw new WrongValueException(comp,
+					Labels.getLabel("RATE_RANGE", new String[] { fieldParm, String.valueOf(maxRate) }));
 		}
-		
+
 	}
 
 	public void setLen(int len) {
@@ -76,6 +77,7 @@ public class RateValidator implements Constraint{
 	public int getDecPos() {
 		return decPos;
 	}
+
 	public String getFieldParm() {
 		return fieldParm;
 	}
@@ -92,6 +94,4 @@ public class RateValidator implements Constraint{
 		this.zeroAllowed = zeroAllowed;
 	}
 
-	
-	
 }

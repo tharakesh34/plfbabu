@@ -62,47 +62,44 @@ import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.webui.reports.reportconfiguration.model.ReportConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Masters/ReportConfiguration/ReportConfigurationList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Masters/ReportConfiguration/ReportConfigurationList.zul file.
  */
 public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = -7603242416503761389L;
 	private static final Logger logger = Logger.getLogger(ReportConfigurationListCtrl.class);
 
-	protected Window 		window_ReportConfigurationList; 				
-	protected Borderlayout 	borderLayout_ReportConfigurationList; 			
-	protected Paging 		pagingReportConfigurationList; 				
-	protected Listbox 		listBoxReportConfiguration;
+	protected Window window_ReportConfigurationList;
+	protected Borderlayout borderLayout_ReportConfigurationList;
+	protected Paging pagingReportConfigurationList;
+	protected Listbox listBoxReportConfiguration;
 
-	protected Listbox 		sortOperator_ReportName; 				
-	protected Listbox 		sortOperator_ReportHeading; 			
-	protected Listbox 		sortOperator_PromptRequired; 				
-	protected Listbox 		sortOperator_ReportJasperName; 
-	
+	protected Listbox sortOperator_ReportName;
+	protected Listbox sortOperator_ReportHeading;
+	protected Listbox sortOperator_PromptRequired;
+	protected Listbox sortOperator_ReportJasperName;
+
 	// List headers
-	protected Listheader 	listheader_ReportName; 				
-	protected Listheader 	listheader_ReportHeading; 				
-	protected Listheader 	listheader_PromptRequired; 				
-	protected Listheader 	listheader_ReportJasperName; 			
-	protected Listheader 	listheader_menuItemCode;				
+	protected Listheader listheader_ReportName;
+	protected Listheader listheader_ReportHeading;
+	protected Listheader listheader_PromptRequired;
+	protected Listheader listheader_ReportJasperName;
+	protected Listheader listheader_menuItemCode;
 
+	protected Textbox reportName;
+	protected Textbox reportHeading;
+	protected Checkbox promptRequired;
+	protected Textbox reportJasperName;
+	protected Textbox menuItemCode;
 
-	protected Textbox		reportName;							
-	protected Textbox		reportHeading;							
-	protected Checkbox		promptRequired;							
-	protected Textbox		reportJasperName;						
-	protected Textbox		menuItemCode;						
+	protected Button button_ReportConfigurationList_NewReportConfiguration;
+	protected Button button_ReportConfigurationList_ReportConfigurationSearch;
 
-
-	protected Button 		button_ReportConfigurationList_NewReportConfiguration; 	
-	protected Button 		button_ReportConfigurationList_ReportConfigurationSearch; 
-	
-	int 	  listRows;
+	int listRows;
 
 	private transient ReportConfigurationService reportConfigurationService;
 
@@ -129,7 +126,8 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	 */
 	public void onCreate$window_ReportConfigurationList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_ReportConfigurationList, borderLayout_ReportConfigurationList, listBoxReportConfiguration, pagingReportConfigurationList);
+		setPageComponents(window_ReportConfigurationList, borderLayout_ReportConfigurationList,
+				listBoxReportConfiguration, pagingReportConfigurationList);
 		setItemRender(new ReportConfigurationListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -137,19 +135,19 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		registerButton(button_ReportConfigurationList_ReportConfigurationSearch);
 
 		registerField("REPORTID", SortOrder.ASC);
-		registerField("reportName", listheader_ReportName, SortOrder.NONE, reportName,
-				sortOperator_ReportName, Operators.STRING);
+		registerField("reportName", listheader_ReportName, SortOrder.NONE, reportName, sortOperator_ReportName,
+				Operators.STRING);
 		registerField("reportHeading", listheader_ReportHeading, SortOrder.NONE, reportHeading,
 				sortOperator_ReportHeading, Operators.STRING);
-		registerField("promptRequired", listheader_PromptRequired, SortOrder.NONE, promptRequired, sortOperator_PromptRequired,
-				Operators.BOOLEAN);
-		registerField("reportJasperName", listheader_ReportJasperName, SortOrder.NONE, reportJasperName, sortOperator_ReportJasperName,
-				Operators.STRING);
+		registerField("promptRequired", listheader_PromptRequired, SortOrder.NONE, promptRequired,
+				sortOperator_PromptRequired, Operators.BOOLEAN);
+		registerField("reportJasperName", listheader_ReportJasperName, SortOrder.NONE, reportJasperName,
+				sortOperator_ReportJasperName, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		
+
 	}
 
 	/**
@@ -192,8 +190,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -248,7 +245,8 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		arg.put("moduleCode", super.moduleCode);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportConfiguration/ReportConfigurationDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportConfiguration/ReportConfigurationDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

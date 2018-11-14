@@ -5,12 +5,12 @@ import java.util.Date;
 
 public class MailLog implements Serializable {
 
-    private static final long serialVersionUID = -6410299021526884222L;
-    
-    public MailLog() {
-    	super();
-    }
-    
+	private static final long serialVersionUID = -6410299021526884222L;
+
+	public MailLog() {
+		super();
+	}
+
 	public long mailReference;
 	public String module;
 	public String reference;

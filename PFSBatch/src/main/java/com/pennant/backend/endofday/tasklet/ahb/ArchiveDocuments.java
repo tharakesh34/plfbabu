@@ -21,10 +21,10 @@ import com.pennant.eod.ArchivalService;
 
 public class ArchiveDocuments implements Tasklet {
 
-	private Logger		logger	= Logger.getLogger(ArchiveDocuments.class);
+	private Logger logger = Logger.getLogger(ArchiveDocuments.class);
 
 	private ArchivalService archivalService;
-	private DataSource	dataSource;
+	private DataSource dataSource;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {

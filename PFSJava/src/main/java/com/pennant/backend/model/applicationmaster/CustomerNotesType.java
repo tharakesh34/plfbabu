@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class CustomerNotesType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -4184815336367307646L;
-	
+
 	private String custNotesTypeCode;
 	private String custNotesTypeDesc;
 	private boolean custNotesTypeIsPerminent;
@@ -79,38 +79,43 @@ public class CustomerNotesType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return custNotesTypeCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.custNotesTypeCode = id;
 	}
-	
+
 	public String getCustNotesTypeCode() {
 		return custNotesTypeCode;
 	}
+
 	public void setCustNotesTypeCode(String custNotesTypeCode) {
 		this.custNotesTypeCode = custNotesTypeCode;
 	}
-	
+
 	public String getCustNotesTypeDesc() {
 		return custNotesTypeDesc;
 	}
+
 	public void setCustNotesTypeDesc(String custNotesTypeDesc) {
 		this.custNotesTypeDesc = custNotesTypeDesc;
 	}
-	
+
 	public boolean isCustNotesTypeIsPerminent() {
 		return custNotesTypeIsPerminent;
 	}
+
 	public void setCustNotesTypeIsPerminent(boolean custNotesTypeIsPerminent) {
 		this.custNotesTypeIsPerminent = custNotesTypeIsPerminent;
 	}
-	
+
 	public String getCustNotesTypeArchiveFrq() {
 		return custNotesTypeArchiveFrq;
 	}
+
 	public void setCustNotesTypeArchiveFrq(String custNotesTypeArchiveFrq) {
 		this.custNotesTypeArchiveFrq = custNotesTypeArchiveFrq;
 	}
@@ -118,41 +123,47 @@ public class CustomerNotesType extends AbstractWorkflowEntity {
 	public String getLovDescCustNotesTypeArcFrqName() {
 		return this.lovDescCustNotesTypeArcFrqName;
 	}
+
 	public void setLovDescCustNotesTypeArcFrqName(String lovDescCustNotesTypeArcFrqName) {
 		this.lovDescCustNotesTypeArcFrqName = lovDescCustNotesTypeArcFrqName;
 	}
-	
+
 	public void setCustNotesTypeIsActive(boolean custNotesTypeIsActive) {
 		this.custNotesTypeIsActive = custNotesTypeIsActive;
 	}
+
 	public boolean isCustNotesTypeIsActive() {
 		return custNotesTypeIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerNotesType getBefImage(){
+	public CustomerNotesType getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerNotesType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerNotesType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

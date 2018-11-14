@@ -66,18 +66,15 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * DAO methods implementation for the <b>FinSuspHold model</b> class.<br>
  * 
  */
-public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements FinSuspHoldDAO{
-   private static Logger logger = Logger.getLogger(FinSuspHoldDAOImpl.class);
-
-	
+public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinSuspHoldDAO {
+	private static Logger logger = Logger.getLogger(FinSuspHoldDAOImpl.class);
 
 	public FinSuspHoldDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new FinSuspHold
+	 * This method set the Work Flow id based on the module name and return the new FinSuspHold
 	 * 
 	 * @return FinSuspHold
 	 */
@@ -94,8 +91,8 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	}
 
 	/**
-	 * This method get the module from method getFinSuspHold() and
-	 * set the new record flag as true and return FinSuspHold()
+	 * This method get the module from method getFinSuspHold() and set the new record flag as true and return
+	 * FinSuspHold()
 	 * 
 	 * @return FinSuspHold
 	 */
@@ -120,20 +117,22 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	@Override
 	public FinSuspHold getFinSuspHoldById(final long id, String type) {
 		logger.debug("Entering");
-		
+
 		FinSuspHold finSuspHold = new FinSuspHold();
 		finSuspHold.setId(id);
-		StringBuilder selectSql = new StringBuilder(" SELECT SuspHoldID, Product, FinType, FinReference, CustID, Active," );
-		
-		if(type.contains("View")){
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT SuspHoldID, Product, FinType, FinReference, CustID, Active,");
+
+		if (type.contains("View")) {
 			selectSql.append(" ProductDesc, FinTypeDesc, CustCIF, CustShrtName,");
 		}
-		
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  FinSuspHold");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where SuspHoldID = :SuspHoldID") ;
-				
+		selectSql.append(" Where SuspHoldID = :SuspHoldID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
@@ -148,15 +147,12 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 		return finSuspHold;
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the FinSuspHold or
-	 * FinSuspHold_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete FinSuspHold Detail by
-	 * key SuspHoldID
+	 * This method Deletes the Record from the FinSuspHold or FinSuspHold_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete FinSuspHold Detail by key SuspHoldID
 	 * 
-	 * @param FinSuspHold (finSuspHold)
+	 * @param FinSuspHold
+	 *            (finSuspHold)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -172,8 +168,8 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 		deleteSql.append("Delete From FinSuspHold");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SuspHoldID = :SuspHoldID");
-		 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 
 		try {
@@ -189,12 +185,12 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	}
 
 	/**
-	 * This method insert new Records into FinSuspHold or
-	 * FinSuspHold_Temp.
+	 * This method insert new Records into FinSuspHold or FinSuspHold_Temp.
 	 * 
 	 * save FinSuspHold Details
 	 * 
-	 * @param FinSuspHold (finSuspHold)
+	 * @param FinSuspHold
+	 *            (finSuspHold)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -202,23 +198,25 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	 * 
 	 */
 	@Override
-	public long save(FinSuspHold finSuspHold,String type) {
+	public long save(FinSuspHold finSuspHold, String type) {
 		logger.debug("Entering");
-		
+
 		if (finSuspHold.getId() == Long.MIN_VALUE) {
 			finSuspHold.setSuspHoldID(getNextId("SeqFinSuspHold"));
 		}
-		
+
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into FinSuspHold");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (SuspHoldID, Product, FinType, FinReference, CustID, Active," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:SuspHoldID, :Product, :FinType, :FinReference, :CustID, :Active, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+		insertSql.append(" (SuspHoldID, Product, FinType, FinReference, CustID, Active,");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:SuspHoldID, :Product, :FinType, :FinReference, :CustID, :Active, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -227,12 +225,11 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	}
 
 	/**
-	 * This method updates the Record FinSuspHold or
-	 * FinSuspHold_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update FinSuspHold Details by
-	 * key SuspHoldID and Version
+	 * This method updates the Record FinSuspHold or FinSuspHold_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update FinSuspHold Details by key SuspHoldID and Version
 	 * 
-	 * @param FinSuspHold (finSuspHold)
+	 * @param FinSuspHold
+	 *            (finSuspHold)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -240,24 +237,25 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	 * 
 	 */
 	@Override
-	public void update(FinSuspHold finSuspHold,String type) {
+	public void update(FinSuspHold finSuspHold, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update FinSuspHold");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Product = :Product, FinType = :FinType, " );
-		updateSql.append(" FinReference = :FinReference , CustID = :CustID, Active = :Active," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set Product = :Product, FinType = :FinType, ");
+		updateSql.append(" FinReference = :FinReference , CustID = :CustID, Active = :Active,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SuspHoldID = :SuspHoldID ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -266,7 +264,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Fetch the Record FinSuspHold Details by key field
 	 * 
@@ -279,16 +277,19 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	@Override
 	public FinSuspHold getFinSuspHoldByDetails(FinSuspHold finSuspHold, String type) {
 		logger.debug("Entering");
-		FinSuspHold finSuspHoldTemp = null ;
-		StringBuilder selectSql = new StringBuilder(" SELECT SuspHoldID, Product, FinType, FinReference, CustID, Active," );
-		if(type.contains("View")){
+		FinSuspHold finSuspHoldTemp = null;
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT SuspHoldID, Product, FinType, FinReference, CustID, Active,");
+		if (type.contains("View")) {
 			selectSql.append(" ProductDesc, FinTypeDesc, CustCIF, CustShrtName,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  FinSuspHold");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Product = :Product and FinType = :FinType and FinReference = :FinReference and CustID = :CustID") ;
-				
+		selectSql.append(
+				" Where Product = :Product and FinType = :FinType and FinReference = :FinReference and CustID = :CustID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
@@ -302,7 +303,6 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 		logger.debug("Leaving");
 		return finSuspHoldTemp;
 	}
-	
 
 	/**
 	 * @param product
@@ -311,7 +311,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 	 * @param custID
 	 * @return
 	 */
-	public boolean holdSuspense(String product, String finType,String finReference, long custID) {
+	public boolean holdSuspense(String product, String finType, String finReference, long custID) {
 		logger.debug("Entering");
 
 		FinSuspHold finSuspHold = new FinSuspHold();
@@ -321,14 +321,16 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold>  implements Fin
 		finSuspHold.setCustID(custID);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT * FROM FinSuspHold");
-		selectSql.append(" Where Product = :Product or FinType = :FinType or FinReference = :FinReference or CustID = :CustID and Active=1");
+		selectSql.append(
+				" Where Product = :Product or FinType = :FinType or FinReference = :FinReference or CustID = :CustID and Active=1");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
 		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
-			List<FinSuspHold> finSuspHoldTemp = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			List<FinSuspHold> finSuspHoldTemp = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+					typeRowMapper);
 			if (!finSuspHoldTemp.isEmpty()) {
 				return true;
 			}

@@ -59,33 +59,34 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class BundledProductsDetailValidation {
-	
-	private static final Logger logger = Logger.getLogger(BundledProductsDetailValidation.class);	
+
+	private static final Logger logger = Logger.getLogger(BundledProductsDetailValidation.class);
 	private BundledProductsDetailDAO bundledProductsDetailDAO;
-	
+
 	public BundledProductsDetailValidation(BundledProductsDetailDAO bundledProductsDetailDAO) {
 		this.bundledProductsDetailDAO = bundledProductsDetailDAO;
 	}
-	
+
 	public BundledProductsDetailDAO getBundledProductsDetailDAO() {
 		return bundledProductsDetailDAO;
 	}
 
-	public AuditHeader bundledProductsDetailValidation(AuditHeader auditHeader, String method){
-		
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+	public AuditHeader bundledProductsDetailValidation(AuditHeader auditHeader, String method) {
+
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
-	
-	public List<AuditDetail> bundledProductsDetailListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
-		
-		if(auditDetails!=null && auditDetails.size()>0){
+
+	public List<AuditDetail> bundledProductsDetailListValidation(List<AuditDetail> auditDetails, String method,
+			String usrLanguage) {
+
+		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
-				details.add(auditDetail); 		
+				AuditDetail auditDetail = validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail);
 			}
 			return details;
 		}
@@ -99,11 +100,11 @@ public class BundledProductsDetailValidation {
 
 		BundledProductsDetail tempBundledProductsDetail = null;
 		if (bundledProductsDetail.isWorkflow()) {
-			tempBundledProductsDetail = getBundledProductsDetailDAO().getBundledProductsDetailByID(
-					bundledProductsDetail.getId(), "_Temp");
+			tempBundledProductsDetail = getBundledProductsDetailDAO()
+					.getBundledProductsDetailByID(bundledProductsDetail.getId(), "_Temp");
 		}
-		BundledProductsDetail befBundledProductsDetail = getBundledProductsDetailDAO().getBundledProductsDetailByID(
-				bundledProductsDetail.getId(), "");
+		BundledProductsDetail befBundledProductsDetail = getBundledProductsDetailDAO()
+				.getBundledProductsDetailByID(bundledProductsDetail.getId(), "");
 
 		BundledProductsDetail oldBundledProductsDetail = bundledProductsDetail.getBefImage();
 
@@ -115,28 +116,24 @@ public class BundledProductsDetailValidation {
 		if (bundledProductsDetail.isNew()) { // for New record or new record into work flow
 
 			if (!bundledProductsDetail.isWorkflow()) {// With out Work flow only new
-												// records
+				// records
 				if (befBundledProductsDetail != null) { // Record Already Exists in the
-													// table then error
+					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41001", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (bundledProductsDetail.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befBundledProductsDetail != null || tempBundledProductsDetail != null) { 
+				if (bundledProductsDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																											// is new
+					if (befBundledProductsDetail != null || tempBundledProductsDetail != null) {
 						// if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befBundledProductsDetail == null || tempBundledProductsDetail != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41005", errParm, valueParm),usrLanguage));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -144,42 +141,39 @@ public class BundledProductsDetailValidation {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!bundledProductsDetail.isWorkflow()) { // With out Work flow for update
-												// and delete
+				// and delete
 
 				if (befBundledProductsDetail == null) { // if records not exists in the
-													// main table
+					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41002", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldBundledProductsDetail != null
-							&& !oldBundledProductsDetail.getLastMntOn().equals(
-									befBundledProductsDetail.getLastMntOn())) {
+					if (oldBundledProductsDetail != null && !oldBundledProductsDetail.getLastMntOn()
+							.equals(befBundledProductsDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41003", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41004", errParm, valueParm),usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempBundledProductsDetail == null) { // if records not exists in
-													// the Work flow table
+					// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempBundledProductsDetail != null && oldBundledProductsDetail != null
-						&& !oldBundledProductsDetail.getLastMntOn().equals(
-								tempBundledProductsDetail.getLastMntOn())) {
+						&& !oldBundledProductsDetail.getLastMntOn().equals(tempBundledProductsDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,
-									"41005", errParm, valueParm), usrLanguage));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -192,5 +186,5 @@ public class BundledProductsDetailValidation {
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+
 }

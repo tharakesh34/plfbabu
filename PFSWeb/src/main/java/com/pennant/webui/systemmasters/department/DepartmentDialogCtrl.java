@@ -77,15 +77,14 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	private static final Logger logger = Logger.getLogger(DepartmentDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_DepartmentDialog;	// autoWired
+	protected Window window_DepartmentDialog; // autoWired
 
-	protected Textbox 	deptCode; 					// autoWired
-	protected Textbox 	deptDesc; 					// autoWired
-	protected Checkbox 	deptIsActive; 				// autoWired
+	protected Textbox deptCode; // autoWired
+	protected Textbox deptDesc; // autoWired
+	protected Checkbox deptIsActive; // autoWired
 
 	// not autoWired variables
 	private Department department; // over handed per parameter
@@ -93,7 +92,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	// parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient DepartmentService departmentService;
 
@@ -112,9 +111,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Department object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Department object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -141,15 +139,13 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 				setDepartment(null);
 			}
 
-			doLoadWorkFlow(this.department.isWorkflow(),
-					this.department.getWorkflowId(),
+			doLoadWorkFlow(this.department.isWorkflow(), this.department.getWorkflowId(),
 					this.department.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"DepartmentDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DepartmentDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -159,8 +155,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 			// or
 			// delete department here.
 			if (arguments.containsKey("departmentListCtrl")) {
-				setDepartmentListCtrl((DepartmentListCtrl) arguments
-						.get("departmentListCtrl"));
+				setDepartmentListCtrl((DepartmentListCtrl) arguments.get("departmentListCtrl"));
 			} else {
 				setDepartmentListCtrl(null);
 			}
@@ -198,8 +193,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -307,8 +301,9 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		this.deptDesc.setValue(aDepartment.getDeptDesc());
 		this.deptIsActive.setChecked(aDepartment.isDeptIsActive());
 		this.recordStatus.setValue(aDepartment.getRecordStatus());
-		
-		if(aDepartment.isNew() || (aDepartment.getRecordType() != null ? aDepartment.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aDepartment.isNew() || (aDepartment.getRecordType() != null ? aDepartment.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.deptIsActive.setChecked(true);
 			this.deptIsActive.setDisabled(true);
 		}
@@ -360,8 +355,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDepartment
 	 * @throws Exception
@@ -410,12 +404,13 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.deptCode.isReadonly()){
-			this.deptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DepartmentDialog_DeptCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.deptCode.isReadonly()) {
+			this.deptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DepartmentDialog_DeptCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.deptDesc.isReadonly()){
-			this.deptDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DepartmentDialog_DeptDesc.value"), 
+		if (!this.deptDesc.isReadonly()) {
+			this.deptDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DepartmentDialog_DeptDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
@@ -469,9 +464,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_DepartmentDialog_DeptCode.value")+" : "+aDepartment.getDeptCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_DepartmentDialog_DeptCode.value") + " : " + aDepartment.getDeptCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDepartment.getRecordType())) {
 				aDepartment.setVersion(aDepartment.getVersion() + 1);
@@ -490,12 +484,13 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -752,8 +747,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DepartmentDialog, auditHeader);
 						return processCompleted;
 					}
@@ -796,8 +791,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	 */
 	private AuditHeader getAuditHeader(Department aDepartment, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDepartment.getBefImage(), aDepartment);
-		return new AuditHeader(String.valueOf(aDepartment.getId()), null, null,
-				null, auditDetail, aDepartment.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aDepartment.getId()), null, null, null, auditDetail,
+				aDepartment.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -838,7 +833,6 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		getDepartmentListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.department.getDeptCode());
@@ -851,6 +845,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -858,6 +853,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	public Department getDepartment() {
 		return this.department;
 	}
+
 	public void setDepartment(Department department) {
 		this.department = department;
 	}
@@ -865,6 +861,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	public void setDepartmentService(DepartmentService departmentService) {
 		this.departmentService = departmentService;
 	}
+
 	public DepartmentService getDepartmentService() {
 		return this.departmentService;
 	}
@@ -872,6 +869,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	public void setDepartmentListCtrl(DepartmentListCtrl departmentListCtrl) {
 		this.departmentListCtrl = departmentListCtrl;
 	}
+
 	public DepartmentListCtrl getDepartmentListCtrl() {
 		return this.departmentListCtrl;
 	}

@@ -42,14 +42,15 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennanttech.pff.core.TableType;
 
-public interface DivisionDetailDAO extends BasicCrudDao<DivisionDetail>{
+public interface DivisionDetailDAO extends BasicCrudDao<DivisionDetail> {
 
-	DivisionDetail getDivisionDetailById(String id,String type);
-	
+	DivisionDetail getDivisionDetailById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -62,7 +63,7 @@ public interface DivisionDetailDAO extends BasicCrudDao<DivisionDetail>{
 	boolean isDuplicateKey(String divisionCode, TableType tableType);
 
 	boolean isEntityCodeExistsInDivisionDetails(String entityCode, String type);
-	
+
 	String getEntityCodeByDivision(String finDivision, String type);
 
 }

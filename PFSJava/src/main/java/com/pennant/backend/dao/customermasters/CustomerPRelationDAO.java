@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerPRelation;
@@ -49,11 +50,16 @@ import com.pennant.backend.model.customermasters.CustomerPRelation;
  * DAO methods declaration for the <b>CustomerPRelation model</b> class.<br>
  * 
  */
- public interface CustomerPRelationDAO {
-	 CustomerPRelation getCustomerPRelationByID(long pRCustID,int pRCustPRSNo,String type);
-	 List<CustomerPRelation> getCustomerPRelationByCustomer(final long id,String type);
-	 void update(CustomerPRelation customerPRelation,String type);
-	 void delete(CustomerPRelation customerPRelation,String type);
-	 long save(CustomerPRelation customerPRelation,String type);
-	 void deleteByCustomer(final long id,String type);
+public interface CustomerPRelationDAO {
+	CustomerPRelation getCustomerPRelationByID(long pRCustID, int pRCustPRSNo, String type);
+
+	List<CustomerPRelation> getCustomerPRelationByCustomer(final long id, String type);
+
+	void update(CustomerPRelation customerPRelation, String type);
+
+	void delete(CustomerPRelation customerPRelation, String type);
+
+	long save(CustomerPRelation customerPRelation, String type);
+
+	void deleteByCustomer(final long id, String type);
 }

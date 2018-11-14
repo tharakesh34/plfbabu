@@ -97,53 +97,52 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Authorization/AuthorizationLimit/authorizationLimitDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Authorization/AuthorizationLimit/authorizationLimitDialog.zul
+ * file. <br>
  */
-public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit>{
+public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit> {
 
 	private static final long serialVersionUID = 1L;
-	private static final  Logger logger = Logger.getLogger(AuthorizationLimitDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window window_AuthorizationLimitDialog; 
+	private static final Logger logger = Logger.getLogger(AuthorizationLimitDialogCtrl.class);
 
-	protected Row					userRow;
-	protected ExtendedCombobox 		userId;
-	protected Textbox 				userName;
-	
-	protected Row					roleRow;	
-    protected ExtendedCombobox 		roleId;
-    protected Textbox 				roleName;
-    
-	protected CurrencyBox			limitAmount; 
-	protected Space					space_StartDate;
-  	protected Datebox 				startDate; 
-	protected Space					space_ExpiryDate;
-  	protected Datebox 				expiryDate; 
-  	protected Row 					holdRow;	
-  	protected Space					space_HoldStartDate;
-  	protected Datebox 				holdStartDate; 
-	protected Space					space_HoldExpiryDate;
-  	protected Datebox 				holdExpiryDate; 
-	protected Space					space_Active;
- 	protected Checkbox 				active; 
- 	private AuthorizationLimit authorizationLimit; // overhanded per param
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_AuthorizationLimitDialog;
+
+	protected Row userRow;
+	protected ExtendedCombobox userId;
+	protected Textbox userName;
+
+	protected Row roleRow;
+	protected ExtendedCombobox roleId;
+	protected Textbox roleName;
+
+	protected CurrencyBox limitAmount;
+	protected Space space_StartDate;
+	protected Datebox startDate;
+	protected Space space_ExpiryDate;
+	protected Datebox expiryDate;
+	protected Row holdRow;
+	protected Space space_HoldStartDate;
+	protected Datebox holdStartDate;
+	protected Space space_HoldExpiryDate;
+	protected Datebox holdExpiryDate;
+	protected Space space_Active;
+	protected Checkbox active;
+	private AuthorizationLimit authorizationLimit; // overhanded per param
 
 	private transient AuthorizationLimitListCtrl authorizationLimitListCtrl; // overhanded per param
 	private transient AuthorizationLimitService authorizationLimitService;
-	
-	private String 				hold;
-	private Listbox 			listBoxCodeLimit;
-	private Button				btnAddDetails;
-	private int					listCount=0;
-	private Caption 			caption_LimitDetails;
-	List<AuthorizationLimitDetail> deletedLimitList= new ArrayList<AuthorizationLimitDetail>();
-	
+
+	private String hold;
+	private Listbox listBoxCodeLimit;
+	private Button btnAddDetails;
+	private int listCount = 0;
+	private Caption caption_LimitDetails;
+	List<AuthorizationLimitDetail> deletedLimitList = new ArrayList<AuthorizationLimitDetail>();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -164,7 +163,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -180,26 +179,24 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		  	this.userId.setValue("");
-		  	this.userId.setDescription("");
-		  	this.roleId.setValue("");
-		  	this.roleId.setDescription("");
-			this.limitAmount.setValue("");
-			this.startDate.setText("");
-			this.expiryDate.setText("");
-			this.holdStartDate.setText("");
-			this.holdExpiryDate.setText("");
-			this.active.setChecked(false);
+		this.userId.setValue("");
+		this.userId.setDescription("");
+		this.roleId.setValue("");
+		this.roleId.setDescription("");
+		this.limitAmount.setValue("");
+		this.startDate.setText("");
+		this.expiryDate.setText("");
+		this.holdStartDate.setText("");
+		this.holdExpiryDate.setText("");
+		this.active.setChecked(false);
 
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
@@ -207,11 +204,10 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Deletes a AuthorizationLimit object from database.<br>
 	 * 
@@ -219,43 +215,45 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final AuthorizationLimit aAuthorizationLimit = new AuthorizationLimit();
 		BeanUtils.copyProperties(this.authorizationLimit, aAuthorizationLimit);
-		String tranType=PennantConstants.TRAN_WF;
-		
-		String record="User ID : " + aAuthorizationLimit.getUsrLogin();
-		if(!userRow.isVisible()){
-			record="Role Code : "+ aAuthorizationLimit.getRoleCd();
+		String tranType = PennantConstants.TRAN_WF;
+
+		String record = "User ID : " + aAuthorizationLimit.getUsrLogin();
+		if (!userRow.isVisible()) {
+			record = "Role Code : " + aAuthorizationLimit.getRoleCd();
 		}
-			
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + record ;
+
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ record;
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aAuthorizationLimit.getRecordType()).equals("")){
-				aAuthorizationLimit.setVersion(aAuthorizationLimit.getVersion()+1);
+			if (StringUtils.trimToEmpty(aAuthorizationLimit.getRecordType()).equals("")) {
+				aAuthorizationLimit.setVersion(aAuthorizationLimit.getVersion() + 1);
 				aAuthorizationLimit.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aAuthorizationLimit.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aAuthorizationLimit.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAuthorizationLimit.getNextTaskId(), aAuthorizationLimit);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAuthorizationLimit.getNextTaskId(),
+							aAuthorizationLimit);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aAuthorizationLimit,tranType)){
+				if (doProcess(aAuthorizationLimit, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -264,93 +262,91 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
-		
-		if(authorizationLimit.getLimitType()==1){
+
+		if (authorizationLimit.getLimitType() == 1) {
 			userRow.setVisible(true);
 			roleRow.setVisible(false);
-		}else{
+		} else {
 			userRow.setVisible(false);
 			roleRow.setVisible(true);
 		}
 		if (this.authorizationLimit.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			if(userRow.isVisible()){
+			if (userRow.isVisible()) {
 				readOnlyComponent(false, this.userId);
 			}
-			if(roleId.isVisible()){
+			if (roleId.isVisible()) {
 				readOnlyComponent(false, this.roleId);
 			}
 		} else {
 			this.btnCancel.setVisible(true);
-			if(userRow.isVisible()){
+			if (userRow.isVisible()) {
 				readOnlyComponent(true, this.userId);
 				userId.setMandatoryStyle(false);
 			}
-			
-			if(roleRow.isVisible()){
+
+			if (roleRow.isVisible()) {
 				readOnlyComponent(false, this.roleId);
 				roleId.setMandatoryStyle(false);
 			}
 		}
-	
-			if(StringUtils.equals("Y",hold )){
+
+		if (StringUtils.equals("Y", hold)) {
+			readOnlyComponent(true, this.startDate);
+			readOnlyComponent(true, this.expiryDate);
+
+			holdRow.setVisible(true);
+			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldStartDate"), this.holdStartDate);
+			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldExpiryDate"), this.holdExpiryDate);
+
+			readOnlyComponent(true, this.active);
+			readOnlyComponent(true, this.limitAmount);
+			this.btnDelete.setVisible(false);
+		} else {
+			holdRow.setVisible(false);
+			if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, authorizationLimit.getRecordType())) {
+				readOnlyComponent(true, this.limitAmount);
 				readOnlyComponent(true, this.startDate);
 				readOnlyComponent(true, this.expiryDate);
-
-				holdRow.setVisible(true);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldStartDate"), this.holdStartDate);
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_HoldExpiryDate"), this.holdExpiryDate);
-				
 				readOnlyComponent(true, this.active);
 				readOnlyComponent(true, this.limitAmount);
-				this.btnDelete.setVisible(false);
-			}else{
-				holdRow.setVisible(false);
-				if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, authorizationLimit.getRecordType())){
-					readOnlyComponent(true, this.limitAmount);
-					readOnlyComponent(true, this.startDate);
-					readOnlyComponent(true, this.expiryDate);
-					readOnlyComponent(true, this.active);
-					readOnlyComponent(true, this.limitAmount);
-				}else{
-					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_StartDate"), this.startDate);
-					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_ExpiryDate"), this.expiryDate);
-					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_Active"), this.active);
-					readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), this.limitAmount);
-				}
-			}
-
-			if(this.startDate.isReadonly()){
-				space_StartDate.setSclass("");
-			}
-			
-			if(this.expiryDate.isReadonly()){
-				space_ExpiryDate.setSclass("");
-			}
-
-			
-			if(limitAmount.isReadonly()){
-				limitAmount.setMandatory(false);
-				this.btnAddDetails.setVisible(false);
-			}else{
-				this.btnAddDetails.setVisible(true);
-			}
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.authorizationLimit.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
-				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
 			} else {
-				this.btnCtrl.setBtnStatus_Edit();
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_StartDate"), this.startDate);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_ExpiryDate"), this.expiryDate);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_Active"), this.active);
+				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), this.limitAmount);
 			}
+		}
 
-			
+		if (this.startDate.isReadonly()) {
+			space_StartDate.setSclass("");
+		}
+
+		if (this.expiryDate.isReadonly()) {
+			space_ExpiryDate.setSclass("");
+		}
+
+		if (limitAmount.isReadonly()) {
+			limitAmount.setMandatory(false);
+			this.btnAddDetails.setVisible(false);
+		} else {
+			this.btnAddDetails.setVisible(true);
+		}
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.authorizationLimit.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -450,7 +446,6 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	public void doReadOnly() {
 		logger.debug(Literal.LEAVING);
-		
 
 		readOnlyComponent(true, this.userId);
 		readOnlyComponent(true, this.roleId);
@@ -483,8 +478,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -493,7 +487,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.userId.setConstraint("");
 		this.roleId.setConstraint("");
 		this.limitAmount.setConstraint("");
@@ -501,8 +495,8 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		this.expiryDate.setConstraint("");
 		this.holdStartDate.setConstraint("");
 		this.holdExpiryDate.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -570,13 +564,12 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuthorizationLimit aAuthorizationLimit = (AuthorizationLimit) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-		boolean limitHold=false;
-		
-		if(StringUtils.equals("Y",hold )){
-			limitHold=true;
+		boolean limitHold = false;
+
+		if (StringUtils.equals("Y", hold)) {
+			limitHold = true;
 		}
 
-		
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
@@ -586,12 +579,12 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 						auditHeader = authorizationLimitService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = authorizationLimitService.saveOrUpdate(auditHeader,limitHold);
+						auditHeader = authorizationLimitService.saveOrUpdate(auditHeader, limitHold);
 					}
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = authorizationLimitService.doApprove(auditHeader,limitHold);
+						auditHeader = authorizationLimitService.doApprove(auditHeader, limitHold);
 
 						if (aAuthorizationLimit.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
@@ -604,8 +597,8 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AuthorizationLimitDialog, auditHeader);
 						return processCompleted;
 					}
@@ -643,40 +636,39 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			if(authorizationLimit.getLimitType()==1){
-				this.userId.setMandatoryStyle(true);
-				this.userId.setModuleName("SecurityUsers");
-				this.userId.setValueColumn("UsrLogin");
-				this.userId.setDescColumn("UsrFName");
-				this.userId.setValidateColumns(new String[] {"usrLogin"});
-			}else{
-				this.roleId.setMandatoryStyle(true);
-				this.roleId.setModuleName("SecurityRole");
-				this.roleId.setValueColumn("RoleCd");
-				this.roleId.setDescColumn("RoleDesc");
-				this.roleId.setValidateColumns(new String[] {"RoleCd"});
-			}
-			
-		/*	if(StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())){
-				limitCode.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_Product.value"));
-			}else{
-				limitCode.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_ColType.value"));
-			}
-			*/
-	  		this.limitAmount.setProperties(true,CurrencyUtil.getFormat(""));
-		  	this.startDate.setFormat(PennantConstants.dateFormat);
-		  	this.expiryDate.setFormat(PennantConstants.dateFormat);
-		  	this.holdStartDate.setFormat(PennantConstants.dateFormat);
-		  	this.holdExpiryDate.setFormat(PennantConstants.dateFormat);
-		
-		  	if(StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())){
-		  		caption_LimitDetails.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_Product.value"));
-		  	}else{
-		  		caption_LimitDetails.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_ColType.value"));
-		  	}
+
+		if (authorizationLimit.getLimitType() == 1) {
+			this.userId.setMandatoryStyle(true);
+			this.userId.setModuleName("SecurityUsers");
+			this.userId.setValueColumn("UsrLogin");
+			this.userId.setDescColumn("UsrFName");
+			this.userId.setValidateColumns(new String[] { "usrLogin" });
+		} else {
+			this.roleId.setMandatoryStyle(true);
+			this.roleId.setModuleName("SecurityRole");
+			this.roleId.setValueColumn("RoleCd");
+			this.roleId.setDescColumn("RoleDesc");
+			this.roleId.setValidateColumns(new String[] { "RoleCd" });
+		}
+
+		/*
+		 * if(StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())){
+		 * limitCode.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_Product.value")); }else{
+		 * limitCode.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_ColType.value")); }
+		 */
+		this.limitAmount.setProperties(true, CurrencyUtil.getFormat(""));
+		this.startDate.setFormat(PennantConstants.dateFormat);
+		this.expiryDate.setFormat(PennantConstants.dateFormat);
+		this.holdStartDate.setFormat(PennantConstants.dateFormat);
+		this.holdExpiryDate.setFormat(PennantConstants.dateFormat);
+
+		if (StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())) {
+			caption_LimitDetails.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_Product.value"));
+		} else {
+			caption_LimitDetails.setLabel(Labels.getLabel("label_AuthorizationLimitDialog_ColType.value"));
+		}
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -686,70 +678,74 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
 
-      @Override
+	@Override
 	protected void doSetProperties() {
-		
+
 		super.pageRightName = "AuthorizationLimitDialog";
-	}	
+	}
 
-
-      /**
+	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-/*		if (!this.userId.isReadonly()){
-			this.userId.setConstraint(new PTStringValidator(Labels.getLabel("label_AuthorizationLimitDialog_UserID.value"),PennantRegularExpressions.REGEX_NAME,true));
-		}
-*/		
+		/*
+		 * if (!this.userId.isReadonly()){ this.userId.setConstraint(new
+		 * PTStringValidator(Labels.getLabel("label_AuthorizationLimitDialog_UserID.value"),PennantRegularExpressions.
+		 * REGEX_NAME,true)); }
+		 */
 		if (!this.userId.isReadonly() && userRow.isVisible()) {
-			this.userId.setConstraint(new PTStringValidator(Labels.getLabel("label_AuthorizationLimitDialog_UserId.value"), null, true,true));
+			this.userId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AuthorizationLimitDialog_UserId.value"), null, true, true));
 		}
 
 		if (!this.roleId.isReadonly() && roleRow.isVisible()) {
-			this.roleId.setConstraint(new PTStringValidator(Labels.getLabel("label_AuthorizationLimitDialog_RoleId.value"), null, true,true));
+			this.roleId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AuthorizationLimitDialog_RoleId.value"), null, true, true));
 		}
 
-		if (!this.limitAmount.isReadonly()){
-			this.limitAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_AuthorizationLimitDialog_LimitAmount.value"),0,true,false,0));
+		if (!this.limitAmount.isReadonly()) {
+			this.limitAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_AuthorizationLimitDialog_LimitAmount.value"), 0, true, false, 0));
 		}
 
-		if (!this.expiryDate.isReadonly()){
-			
-			Date date= DateUtil.getDatePart(DateUtil.getSysDate());
-			if(startDate.getValue()==null || startDate.getValue().before(date)){
-				date=DateUtil.getDatePart(DateUtil.getSysDate());
-			}else{
-				date=startDate.getValue();
+		if (!this.expiryDate.isReadonly()) {
+
+			Date date = DateUtil.getDatePart(DateUtil.getSysDate());
+			if (startDate.getValue() == null || startDate.getValue().before(date)) {
+				date = DateUtil.getDatePart(DateUtil.getSysDate());
+			} else {
+				date = startDate.getValue();
 			}
-			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_ExpiryDate.value"),true,date,null,false));
+			this.expiryDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_AuthorizationLimitDialog_ExpiryDate.value"), true, date, null, false));
 		}
 
-		if (!this.startDate.isReadonly()){
-			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"),true,DateUtil.getDatePart(DateUtil.getSysDate()),null,true));
+		if (!this.startDate.isReadonly()) {
+			this.startDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"), true,
+							DateUtil.getDatePart(DateUtil.getSysDate()), null, true));
 		}
 
-		if(holdRow.isVisible()){
-			if (this.holdStartDate.isVisible() &&  !this.holdStartDate.isReadonly()){
+		if (holdRow.isVisible()) {
+			if (this.holdStartDate.isVisible() && !this.holdStartDate.isReadonly()) {
 				//this.holdStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_HoldStartDate.value"),true,false));
 			}
-			if (this.holdExpiryDate.isVisible() && !this.holdExpiryDate.isReadonly()){
-				this.holdExpiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_HoldExpiryDate.value"),true,holdStartDate.getValue(),expiryDate.getValue(),true));
+			if (this.holdExpiryDate.isVisible() && !this.holdExpiryDate.isReadonly()) {
+				this.holdExpiryDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_HoldExpiryDate.value"),
+								true, holdStartDate.getValue(), expiryDate.getValue(), true));
 			}
 		}
 		logger.debug(Literal.LEAVING);
-	}	
+	}
 
-
-
-      /**
+	/**
 	 * Displays the dialog page.
 	 * 
 	 * @param authorizationLimit
@@ -786,8 +782,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
-	}	
-
+	}
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -797,41 +792,43 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	public void doWriteBeanToComponents(AuthorizationLimit aAuthorizationLimit) {
 		logger.debug(Literal.ENTERING);
-	
-		if (aAuthorizationLimit.isNewRecord()){
-			   this.userId.setDescription("");
-			   this.roleId.setDescription("");
-		}else{
+
+		if (aAuthorizationLimit.isNewRecord()) {
+			this.userId.setDescription("");
+			this.roleId.setDescription("");
+		} else {
 			this.userId.setValue(aAuthorizationLimit.getUsrLogin());
 			this.userId.setDescription(aAuthorizationLimit.getUsrLogin());
-			userName.setValue(PennantApplicationUtil.getFullName(aAuthorizationLimit.getUsrFName(),aAuthorizationLimit.getUsrMName(),aAuthorizationLimit.getUsrLName()));
-			
-		   	this.roleId.setValue(aAuthorizationLimit.getRoleCd());
+			userName.setValue(PennantApplicationUtil.getFullName(aAuthorizationLimit.getUsrFName(),
+					aAuthorizationLimit.getUsrMName(), aAuthorizationLimit.getUsrLName()));
+
+			this.roleId.setValue(aAuthorizationLimit.getRoleCd());
 			this.roleId.setDescription(aAuthorizationLimit.getRoleName());
 			this.roleName.setValue(aAuthorizationLimit.getRoleName());
 		}
-		   	
-	  		this.limitAmount.setValue(PennantApplicationUtil.formateAmount(aAuthorizationLimit.getLimitAmount(),CurrencyUtil.getFormat("")));
-			
-	  		this.startDate.setValue(aAuthorizationLimit.getStartDate());
-	  		if(startDate.getValue()!=null && !this.startDate.isReadonly()){
-	  			if(startDate.getValue().before(DateUtil.getDatePart(DateUtil.getSysDate()))){
-	  				readOnlyComponent(true, this.startDate);
-	  				space_StartDate.setSclass("");
-	  			}
-	  		}
-			
-			this.expiryDate.setValue(aAuthorizationLimit.getExpiryDate());
-			this.holdStartDate.setValue(aAuthorizationLimit.getHoldStartDate());
-			this.holdExpiryDate.setValue(aAuthorizationLimit.getHoldExpiryDate());
-			this.active.setChecked(aAuthorizationLimit.isActive());
-			refreshListBox(aAuthorizationLimit.getAuthorizationLimitDetails());
-			
-			this.recordStatus.setValue(aAuthorizationLimit.getRecordStatus());
-			
+
+		this.limitAmount.setValue(
+				PennantApplicationUtil.formateAmount(aAuthorizationLimit.getLimitAmount(), CurrencyUtil.getFormat("")));
+
+		this.startDate.setValue(aAuthorizationLimit.getStartDate());
+		if (startDate.getValue() != null && !this.startDate.isReadonly()) {
+			if (startDate.getValue().before(DateUtil.getDatePart(DateUtil.getSysDate()))) {
+				readOnlyComponent(true, this.startDate);
+				space_StartDate.setSclass("");
+			}
+		}
+
+		this.expiryDate.setValue(aAuthorizationLimit.getExpiryDate());
+		this.holdStartDate.setValue(aAuthorizationLimit.getHoldStartDate());
+		this.holdExpiryDate.setValue(aAuthorizationLimit.getHoldExpiryDate());
+		this.active.setChecked(aAuthorizationLimit.isActive());
+		refreshListBox(aAuthorizationLimit.getAuthorizationLimitDetails());
+
+		this.recordStatus.setValue(aAuthorizationLimit.getRecordStatus());
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -839,156 +836,160 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 */
 	public void doWriteComponentsToBean(AuthorizationLimit aAuthorizationLimit) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		boolean validAmount=false;
-		if(aAuthorizationLimit.getLimitType()==1){
+		boolean validAmount = false;
+		if (aAuthorizationLimit.getLimitType() == 1) {
 			//User I D
 			try {
 				this.userId.getValue();
 				SecurityUser user = (SecurityUser) this.userId.getObject();
-				
+
 				if (user != null) {
 					aAuthorizationLimit.setUserID(user.getUsrID());
 					aAuthorizationLimit.setUsrLogin(user.getUsrLogin());
 				}
-			}catch (WrongValueException we ) {
+			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
-		}else{
+
+		} else {
 			//Role Id
 			try {
 				this.roleId.getValidatedValue();
-	   	  		SecurityRole role = (SecurityRole) this.roleId.getObject();
+				SecurityRole role = (SecurityRole) this.roleId.getObject();
 				if (role != null) {
 					this.roleName.setValue(role.getRoleDesc());
 					aAuthorizationLimit.setRoleId(role.getRoleID());
 					aAuthorizationLimit.setRoleCd(role.getRoleCd());
 				}
-			}catch (WrongValueException we ) {
+			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
 		//Limit Amount
 		try {
-		 	aAuthorizationLimit.setLimitAmount(PennantApplicationUtil.unFormateAmount(this.limitAmount.getValidateValue(),CurrencyUtil.getFormat("")));
-		 	validAmount=true;
-		}catch (WrongValueException we ) {
+			aAuthorizationLimit.setLimitAmount(PennantApplicationUtil
+					.unFormateAmount(this.limitAmount.getValidateValue(), CurrencyUtil.getFormat("")));
+			validAmount = true;
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Start Date
 		try {
-		    aAuthorizationLimit.setStartDate(this.startDate.getValue());
-		}catch (WrongValueException we ) {
+			aAuthorizationLimit.setStartDate(this.startDate.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Expiry Date
 		try {
-		    aAuthorizationLimit.setExpiryDate(this.expiryDate.getValue());
-		}catch (WrongValueException we ) {
+			aAuthorizationLimit.setExpiryDate(this.expiryDate.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Hold Start Date
 		try {
-		    aAuthorizationLimit.setHoldStartDate(this.holdStartDate.getValue());
-		}catch (WrongValueException we ) {
+			aAuthorizationLimit.setHoldStartDate(this.holdStartDate.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Hold Expiry Date
 		try {
-		    aAuthorizationLimit.setHoldExpiryDate(this.holdExpiryDate.getValue());
-		}catch (WrongValueException we ) {
+			aAuthorizationLimit.setHoldExpiryDate(this.holdExpiryDate.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
 		try {
 			aAuthorizationLimit.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		// List Data Preparation.
 
 		List<Component> components = listBoxCodeLimit.getChildren();
-		
+
 		if (components.size() >= 1) {
-			List<AuthorizationLimitDetail> limitDetails= new ArrayList<AuthorizationLimitDetail>();
-			
+			List<AuthorizationLimitDetail> limitDetails = new ArrayList<AuthorizationLimitDetail>();
+
 			for (Component component : components) {
-				boolean valid =true;
-				if(component instanceof Listitem){
+				boolean valid = true;
+				if (component instanceof Listitem) {
 					Listitem listitem = (Listitem) component;
 					// Validation 
 
-					ExtendedCombobox combobox= (ExtendedCombobox) listitem.getFirstChild().getFirstChild();
-					CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getFirstChild();
+					ExtendedCombobox combobox = (ExtendedCombobox) listitem.getFirstChild().getFirstChild();
+					CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling()
+							.getFirstChild();
 					AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
-					
+
 					try {
-						if(StringUtils.trimToNull(combobox.getValue())==null){
-							throw new WrongValueException(combobox,Labels.getLabel("FIELD_IS_MAND",  new String[] {Labels.getLabel("listheader_AuthLimitCode")}));	
+						if (StringUtils.trimToNull(combobox.getValue()) == null) {
+							throw new WrongValueException(combobox, Labels.getLabel("FIELD_IS_MAND",
+									new String[] { Labels.getLabel("listheader_AuthLimitCode") }));
 						}
 						detail.setCode(combobox.getValue());
-						
-					}catch (WrongValueException we ) {
+
+					} catch (WrongValueException we) {
 						wve.add(we);
-						valid =false;
+						valid = false;
 					}
 
 					try {
 						String[] parameters = new String[3];
-						parameters[0]= Labels.getLabel("listheader_AuthLimitAmount");
-						parameters[1]="0";
+						parameters[0] = Labels.getLabel("listheader_AuthLimitAmount");
+						parameters[1] = "0";
 
-						BigDecimal amount = PennantApplicationUtil.unFormateAmount(codeLimitAmount.getValidateValue(),CurrencyUtil.getFormat(""));
-						
-						if(amount.compareTo(BigDecimal.ZERO)<=0){
-							throw new WrongValueException(codeLimitAmount,Labels.getLabel("NUMBER_MINVALUE", parameters));	
+						BigDecimal amount = PennantApplicationUtil.unFormateAmount(codeLimitAmount.getValidateValue(),
+								CurrencyUtil.getFormat(""));
+
+						if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+							throw new WrongValueException(codeLimitAmount,
+									Labels.getLabel("NUMBER_MINVALUE", parameters));
 
 						}
-							
-						if(validAmount){
-							if(aAuthorizationLimit.getLimitAmount().compareTo(amount)<0){
-								parameters[1]=PennantApplicationUtil.formatAmount(this.limitAmount.getActualValue(), CurrencyUtil.getFormat(""), false);
-								throw new WrongValueException(codeLimitAmount,Labels.getLabel("NUMBER_MAXVALUE_EQ", parameters));	
+
+						if (validAmount) {
+							if (aAuthorizationLimit.getLimitAmount().compareTo(amount) < 0) {
+								parameters[1] = PennantApplicationUtil.formatAmount(this.limitAmount.getActualValue(),
+										CurrencyUtil.getFormat(""), false);
+								throw new WrongValueException(codeLimitAmount,
+										Labels.getLabel("NUMBER_MAXVALUE_EQ", parameters));
 							}
 						}
 						detail.setLimitAmount(amount);
-						
-						
-					}catch (WrongValueException we ) {
+
+					} catch (WrongValueException we) {
 						wve.add(we);
-						valid =false;
+						valid = false;
 					}
 
-					if(valid){
+					if (valid) {
 						limitDetails.add(detail);
 					}
 				}
 			}
-			
+
 			aAuthorizationLimit.setAuthorizationLimitDetails(limitDetails);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
 
-		
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -1003,20 +1004,18 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.authorizationLimit.getId()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.authorizationLimit.getId()));
 		return referenceBuffer.toString();
 	}
 
 	public void onAuthorizationLimitDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// New
-		
+
 		logger.debug(Literal.LEAVING);
 
 	}
-	
-
 
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
@@ -1029,7 +1028,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		doCancel();
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -1041,14 +1040,14 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		doClose(this.btnSave.isVisible());
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -1076,399 +1075,393 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, super.window);
 		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * The framework calls this event handler when user clicks the notes button.
-		 * 
-		 * @param event
-		 *            An event sent to the event handler of the component.
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the notes button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnNotes(Event event) {
+		logger.debug(Literal.ENTERING);
+		doShowNotes(this.authorizationLimit);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * The framework calls this event handler when user clicks the save button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnSave(Event event) {
+		logger.debug(Literal.ENTERING);
+		doSave();
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * 
+	 * The framework calls this event handler when an application requests that the window to be created.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 * @throws Exception
+	 */
+	public void onCreate$window_AuthorizationLimitDialog(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		// Set the page level components.
+		setPageComponents(window_AuthorizationLimitDialog);
+
+		try {
+			// Get the required arguments.
+			this.authorizationLimit = (AuthorizationLimit) arguments.get("authorizationLimit");
+			this.authorizationLimitListCtrl = (AuthorizationLimitListCtrl) arguments.get("authorizationLimitListCtrl");
+
+			if (this.authorizationLimit == null) {
+				throw new Exception(Labels.getLabel("error.unhandled"));
+			}
+			this.hold = (String) arguments.get("hold");
+
+			// Store the before image.
+			AuthorizationLimit authorizationLimit = new AuthorizationLimit();
+			BeanUtils.copyProperties(this.authorizationLimit, authorizationLimit);
+			this.authorizationLimit.setBefImage(authorizationLimit);
+
+			// Render the page and display the data.
+			doLoadWorkFlow(this.authorizationLimit.isWorkflow(), this.authorizationLimit.getWorkflowId(),
+					this.authorizationLimit.getNextTaskId());
+
+			if (isWorkFlowEnabled()) {
+				if (!enqiryModule) {
+					this.userAction = setListRecordStatus(this.userAction);
+				}
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
+			}
+
+			doSetFieldProperties();
+			doCheckRights();
+			doShowDialog(this.authorizationLimit);
+		} catch (Exception e) {
+			closeDialog();
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$limitAmount(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$roleId(Event event) {
+		logger.debug(Literal.ENTERING);
+		SecurityRole role = (SecurityRole) this.roleId.getObject();
+		if (role != null) {
+			this.roleName.setValue(role.getRoleDesc());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$userId(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser user = (SecurityUser) this.userId.getObject();
+		if (user != null) {
+			this.userName.setValue(
+					PennantApplicationUtil.getFullName(user.getUsrFName(), user.getUsrMName(), user.getUsrLName()));
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Refresh the list page with the filters that are applied in list page.
+	 */
+	private void refreshList() {
+		logger.debug(Literal.ENTERING);
+		authorizationLimitListCtrl.search();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void refreshListBox(List<AuthorizationLimitDetail> limitDetails) {
+
+		if (CollectionUtils.isEmpty(limitDetails)) {
+			return;
+		}
+
+		for (AuthorizationLimitDetail detail : limitDetails) {
+
+			AuthorizationLimitDetail limitDetail = new AuthorizationLimitDetail();
+			BeanUtils.copyProperties(detail, limitDetail);
+			detail.setBefImage(limitDetail);
+			addListIteam(limitDetail);
+		}
+	}
+
+	public void onClick$btnAddDetails(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		AuthorizationLimitDetail detail = new AuthorizationLimitDetail();
+		detail.setNewRecord(true);
+		detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		addListIteam(detail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void addListIteam(AuthorizationLimitDetail detail) {
+		Listitem item = new Listitem();
+		Listcell lc = new Listcell();
+		ExtendedCombobox combobox = new ExtendedCombobox();
+		combobox.setId("code" + listCount);
+		if (detail.isNew()) {
+			combobox.setMandatoryStyle(true);
+			combobox.setReadonly(false);
+		} else {
+			combobox.setMandatoryStyle(false);
+			combobox.setReadonly(true);
+		}
+
+		combobox.addForward("onFulfill", self, "onChangeCode");
+
+		combobox.setValue(detail.getCode());
+		combobox.setDescription(detail.getCodeName());
+
+		if (StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())) {
+			combobox.setModuleName("Product");
+			combobox.setValueColumn("ProductCode");
+			combobox.setDescColumn("ProductDesc");
+			combobox.setValidateColumns(new String[] { "ProductCode" });
+		} else {
+			combobox.setModuleName("CollateralStructure");
+			combobox.setValueColumn("CollateralType");
+			combobox.setDescColumn("CollateralDesc");
+			combobox.setValidateColumns(new String[] { "CollateralType" });
+		}
+
+		lc.appendChild(combobox);
+		item.appendChild(lc);
+
+		/*
+		 * Listcell lc1 = new Listcell(); Label label= new Label(detail.getCodeName()); lc1.appendChild(label);
+		 * item.appendChild(lc1);
 		 */
-		public void onClick$btnNotes(Event event) {
-			logger.debug(Literal.ENTERING);
-			doShowNotes(this.authorizationLimit);
-			logger.debug(Literal.LEAVING);
+		Listcell lc2 = new Listcell();
+		CurrencyBox codeLimitAmount = new CurrencyBox();
+		codeLimitAmount.setId("code" + listCount);
+		codeLimitAmount.setProperties(true, CurrencyUtil.getFormat(""));
+
+		codeLimitAmount
+				.setValue(PennantApplicationUtil.formateAmount(detail.getLimitAmount(), CurrencyUtil.getFormat("")));
+
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())
+				|| StringUtils.equals("Y", hold)) {
+			readOnlyComponent(true, codeLimitAmount);
+		} else {
+			readOnlyComponent(limitAmount.isReadonly(), codeLimitAmount);
 		}
 
-		
-		/**
-		 * The framework calls this event handler when user clicks the save button.
-		 * 
-		 * @param event
-		 *            An event sent to the event handler of the component.
-		 */
-		public void onClick$btnSave(Event event) {
-			logger.debug(Literal.ENTERING);
-			doSave();
-			logger.debug(Literal.LEAVING);
-			
+		if (codeLimitAmount.isReadonly()) {
+			codeLimitAmount.setMandatory(false);
+		}
+		codeLimitAmount.addForward("onFulfill", self, "onChangeLimitAmount");
+
+		lc2.appendChild(codeLimitAmount);
+		item.appendChild(lc2);
+
+		Listcell lc3 = new Listcell();
+		Label operationLabel = new Label(detail.getRecordType());
+		lc3.appendChild(operationLabel);
+		item.appendChild(lc3);
+
+		Listcell lc4 = new Listcell();
+		Button delete = new Button();
+
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())) {
+			delete.setLabel(Labels.getLabel("btnCancel.label"));
+		} else {
+			delete.setLabel(Labels.getLabel("btnDelete.label"));
 		}
 
-		/**
-		 * 
-		 * The framework calls this event handler when an application requests that the window to be created.
-		 * 
-		 * @param event
-		 *            An event sent to the event handler of the component.
-		 * @throws Exception
-		 */
-		public void onCreate$window_AuthorizationLimitDialog(Event event) throws Exception {
-			logger.debug(Literal.ENTERING);
-			
-			// Set the page level components.
-			setPageComponents(window_AuthorizationLimitDialog);
+		lc4.appendChild(delete);
+		delete.addForward("onClick", self, "onClick_Delete");
+		item.appendChild(lc4);
+		delete.setVisible(true);
+		delete.setDisabled(codeLimitAmount.isReadonly());
 
-			
-			try {
-				// Get the required arguments.
-				this.authorizationLimit = (AuthorizationLimit) arguments.get("authorizationLimit");
-				this.authorizationLimitListCtrl = (AuthorizationLimitListCtrl) arguments.get("authorizationLimitListCtrl");
+		item.setAttribute("data", detail);
 
-				if (this.authorizationLimit == null) {
-					throw new Exception(Labels.getLabel("error.unhandled"));
-				}
-				this.hold = (String) arguments.get("hold");
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onAuthorizationLimitDetailItemDoubleClicked");
 
-				// Store the before image.
-				AuthorizationLimit authorizationLimit = new AuthorizationLimit();
-				BeanUtils.copyProperties(this.authorizationLimit, authorizationLimit);
-				this.authorizationLimit.setBefImage(authorizationLimit);
-				
-				// Render the page and display the data.
-				doLoadWorkFlow(this.authorizationLimit.isWorkflow(), this.authorizationLimit.getWorkflowId(),
-						this.authorizationLimit.getNextTaskId());
+		listBoxCodeLimit.appendChild(item);
+		setKeyPhaseFilters();
+		this.listCount++;
 
-				if (isWorkFlowEnabled()) {
-					if(!enqiryModule){
-						this.userAction = setListRecordStatus(this.userAction);
-					}
-					getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-				}else{
-					getUserWorkspace().allocateAuthorities(this.pageRightName,null);
-				}
+	}
 
-				doSetFieldProperties();
-				doCheckRights();
-				doShowDialog(this.authorizationLimit);
-			} catch (Exception e) {
-				closeDialog();
-				MessageUtil.showError(e);
-			}
-			
-			logger.debug(Literal.LEAVING);
-		}
+	public void onChangeCode(ForwardEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
 
-		public void onFulfill$limitAmount(Event event){
-			  logger.debug(Literal.ENTERING);
-			  
-			
-			logger.debug(Literal.LEAVING);
-		}
+		ExtendedCombobox combobox = (ExtendedCombobox) event.getOrigin().getTarget();
+		Listitem listitem = (Listitem) combobox.getParent().getParent();
 
-		public void onFulfill$roleId(Event event){
-		  logger.debug(Literal.ENTERING);
-		  		SecurityRole role = (SecurityRole) this.roleId.getObject();
-				if (role != null) {
-					this.roleName.setValue(role.getRoleDesc());
-				}
-			
-				logger.debug(Literal.LEAVING);
-		}
-		
-		
-		public void onFulfill$userId(Event event){
-			  logger.debug(Literal.ENTERING);
-			  
-			  SecurityUser user = (SecurityUser) this.userId.getObject();
-				if (user != null) {
-					this.userName.setValue(PennantApplicationUtil.getFullName(user.getUsrFName(),user.getUsrMName(),user.getUsrLName()));
-				}
-				
-			logger.debug(Literal.LEAVING);
-		}
-		
-		/**
-		 * Refresh the list page with the filters that are applied in list page.
-		 */
-		private void refreshList() {
-			logger.debug(Literal.ENTERING);
-			authorizationLimitListCtrl.search();
-			logger.debug(Literal.LEAVING);
-		}
+		AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
+		combobox.getValidatedValue();
+		detail.setCode(combobox.getValue());
+		listitem.setAttribute("data", detail);
+		setKeyPhaseFilters();
 
-		private void refreshListBox(List<AuthorizationLimitDetail> limitDetails ){
+		logger.debug(Literal.LEAVING);
+	}
 
-			if(CollectionUtils.isEmpty(limitDetails)){
-				return;
-			}
-			
-			for (AuthorizationLimitDetail detail : limitDetails) {
-				
-				AuthorizationLimitDetail  limitDetail= new AuthorizationLimitDetail();
-				BeanUtils.copyProperties(detail, limitDetail);
-				detail.setBefImage(limitDetail);
-				addListIteam(limitDetail);
-			}
-		}
+	private void setKeyPhaseFilters() {
 
-		public void onClick$btnAddDetails(Event event) throws Exception {
-			logger.debug(Literal.ENTERING);
-			
-			AuthorizationLimitDetail detail= new AuthorizationLimitDetail();
-			detail.setNewRecord(true);
-			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			addListIteam(detail);
-			
-			logger.debug(Literal.LEAVING);
-		}
+		List<Component> components = listBoxCodeLimit.getChildren();
+		List<String> valueList = new ArrayList<String>();
 
-		public void addListIteam(AuthorizationLimitDetail detail){
-			Listitem item = new Listitem(); 
-			Listcell lc = new Listcell();
-			ExtendedCombobox combobox= new ExtendedCombobox();
-			combobox.setId("code"+listCount);
-			if(detail.isNew()){
-				combobox.setMandatoryStyle(true);
-				combobox.setReadonly(false);		
-			}else{
-				combobox.setMandatoryStyle(false);
-				combobox.setReadonly(true);
-			}
-			
-			combobox.addForward("onFulfill", self, "onChangeCode");
-			 
-			combobox.setValue(detail.getCode());
-			combobox.setDescription(detail.getCodeName());
-			
-			if(StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())){
-				combobox.setModuleName("Product");
-				combobox.setValueColumn("ProductCode");
-				combobox.setDescColumn("ProductDesc");
-				combobox.setValidateColumns(new String[] {"ProductCode"});
-			}else{
-				combobox.setModuleName("CollateralStructure");
-				combobox.setValueColumn("CollateralType");
-				combobox.setDescColumn("CollateralDesc");
-				combobox.setValidateColumns(new String[] {"CollateralType"});
-			}
-			
-			lc.appendChild(combobox);
-			item.appendChild(lc);
-			
-	/*		Listcell lc1 = new Listcell();
-			Label label= new Label(detail.getCodeName());
-			lc1.appendChild(label);
-			item.appendChild(lc1);
-*/			
-			Listcell lc2 = new Listcell();
-			CurrencyBox codeLimitAmount = new CurrencyBox();
-			codeLimitAmount.setId("code"+listCount);
-			codeLimitAmount.setProperties(true,CurrencyUtil.getFormat(""));
-			
-			
-			codeLimitAmount.setValue(PennantApplicationUtil.formateAmount(detail.getLimitAmount(), CurrencyUtil.getFormat("")));
-			
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType()) || StringUtils.equals("Y",hold )){
-				readOnlyComponent(true, codeLimitAmount);
-			}else{
-				readOnlyComponent(limitAmount.isReadonly(), codeLimitAmount);
-			}
-			
-			if(codeLimitAmount.isReadonly()){
-				codeLimitAmount.setMandatory(false);
-			}
-			codeLimitAmount.addForward("onFulfill", self, "onChangeLimitAmount");
-			
-			lc2.appendChild(codeLimitAmount);
-			item.appendChild(lc2);
-			
-			Listcell lc3 = new Listcell();
-			Label operationLabel= new Label(detail.getRecordType());
-			lc3.appendChild(operationLabel);
-			item.appendChild(lc3);
-
-			Listcell lc4 = new Listcell();
-			Button delete = new Button();
-			
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
-				delete.setLabel(Labels.getLabel("btnCancel.label"));
-			}else{
-				delete.setLabel(Labels.getLabel("btnDelete.label"));	
-			}
-			
-			lc4.appendChild(delete);
-			delete.addForward("onClick", self, "onClick_Delete");
-			item.appendChild(lc4);
-			delete.setVisible(true);
-			delete.setDisabled(codeLimitAmount.isReadonly());
-
-			item.setAttribute("data", detail);
-			
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onAuthorizationLimitDetailItemDoubleClicked");
-
-			listBoxCodeLimit.appendChild(item);
-			setKeyPhaseFilters();
-			this.listCount++;
-			
-		}
-		
-		public void onChangeCode(ForwardEvent event) throws Exception {
-			logger.debug(Literal.ENTERING);
-			
-			ExtendedCombobox combobox =  (ExtendedCombobox) event.getOrigin().getTarget();
-			Listitem listitem = (Listitem) combobox.getParent().getParent();
-			
-			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
-			combobox.getValidatedValue();
-			detail.setCode(combobox.getValue());
-			listitem.setAttribute("data", detail);
-			setKeyPhaseFilters();
-			
-			logger.debug(Literal.LEAVING);
-		}
-		
-		private void setKeyPhaseFilters() {
-			
-			List<Component> components = listBoxCodeLimit.getChildren();
-			List<String> valueList= new ArrayList<String>();
-
-			
-			if (components.size() >= 1) {
-				for (Component component1 : components) {
-					if(component1 instanceof Listitem){
-						ExtendedCombobox combobox= (ExtendedCombobox) component1.getFirstChild().getFirstChild();
-						if(StringUtils.trimToNull(combobox.getValue())!=null){
-							valueList.add(combobox.getValue());
-						}
-					}
-				}
-			}
-			
-			if(CollectionUtils.isEmpty(valueList)){
-				return;
-			}
-			List<String> finalList= new ArrayList<String>();
-			
+		if (components.size() >= 1) {
 			for (Component component1 : components) {
-				if(component1 instanceof Listitem){
-					ExtendedCombobox combobox= (ExtendedCombobox) component1.getFirstChild().getFirstChild();
-					
-					for (String string : valueList) {
-						if(!StringUtils.equals(string, combobox.getValue())){
-							finalList.add(string);
-						}
+				if (component1 instanceof Listitem) {
+					ExtendedCombobox combobox = (ExtendedCombobox) component1.getFirstChild().getFirstChild();
+					if (StringUtils.trimToNull(combobox.getValue()) != null) {
+						valueList.add(combobox.getValue());
 					}
+				}
+			}
+		}
 
-					if(!CollectionUtils.isEmpty(finalList)){
-						Filter[] filters=new Filter[1];
-						if(StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())){
+		if (CollectionUtils.isEmpty(valueList)) {
+			return;
+		}
+		List<String> finalList = new ArrayList<String>();
+
+		for (Component component1 : components) {
+			if (component1 instanceof Listitem) {
+				ExtendedCombobox combobox = (ExtendedCombobox) component1.getFirstChild().getFirstChild();
+
+				for (String string : valueList) {
+					if (!StringUtils.equals(string, combobox.getValue())) {
+						finalList.add(string);
+					}
+				}
+
+				if (!CollectionUtils.isEmpty(finalList)) {
+					Filter[] filters = new Filter[1];
+					if (StringUtils.equalsIgnoreCase("FIN", authorizationLimit.getModule())) {
 						filters[0] = new Filter("ProductCode", finalList, Filter.OP_NOT_IN);
-						}else{
-							filters[0] = new Filter("CollateralType", finalList, Filter.OP_NOT_IN);
-						}
-						combobox.setFilters(filters);
+					} else {
+						filters[0] = new Filter("CollateralType", finalList, Filter.OP_NOT_IN);
 					}
-
-					finalList= new ArrayList<String>();
+					combobox.setFilters(filters);
 				}
+
+				finalList = new ArrayList<String>();
 			}
 		}
+	}
 
-		public void onChnageCollateralType(ForwardEvent event) throws Exception {
-			logger.debug(Literal.ENTERING);
-			
-			logger.debug(Literal.LEAVING);
+	public void onChnageCollateralType(ForwardEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChangeLimitAmount(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+
+		CurrencyBox currencyBox = (CurrencyBox) event.getOrigin().getTarget();
+		Listitem listitem = (Listitem) currencyBox.getParent().getParent();
+
+		AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
+
+		if (StringUtils.isBlank(detail.getRecordType())) {
+			detail.setVersion(detail.getVersion() + 1);
+			detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			detail.setNewRecord(true);
 		}
-		
-		public void onChangeLimitAmount(ForwardEvent event){
-			logger.debug(Literal.ENTERING);
-			
-			CurrencyBox currencyBox =  (CurrencyBox) event.getOrigin().getTarget();
-			Listitem listitem = (Listitem) currencyBox.getParent().getParent();
-			
-			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
-			
-			if (StringUtils.isBlank(detail.getRecordType())) {
-				detail.setVersion(detail.getVersion() + 1);
-				detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				detail.setNewRecord(true);
-			}
 
-			detail.setLimitAmount(PennantApplicationUtil.unFormateAmount(currencyBox.getValidateValue(), CurrencyUtil.getFormat("")));
-			// Update the Record Type for any value change
+		detail.setLimitAmount(
+				PennantApplicationUtil.unFormateAmount(currencyBox.getValidateValue(), CurrencyUtil.getFormat("")));
+		// Update the Record Type for any value change
 
-			listitem.setAttribute("data", detail);
-			logger.debug(Literal.LEAVING);
-		}
-		
-		public void onClick_Delete(ForwardEvent event){
-			logger.debug(Literal.ENTERING);
-			
-			Listitem listitem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
-			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
-			if (StringUtils.trimToEmpty(detail.getRecordType()).equals("")){
-				detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				detail.setVersion(detail.getVersion() + 1);
-				detail.setNewRecord(true);
-			}else{
-			
-				if(detail.isNew()){
-					if(StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, detail.getRecordType())){
-						listBoxCodeLimit.removeChild(listitem);
-						logger.debug(Literal.LEAVING);
-						return;
-					}else if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
-						detail.setRecordType(null);
-					}else{
-						detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
-					
-				}else{
-					detail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+		listitem.setAttribute("data", detail);
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick_Delete(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+
+		Listitem listitem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
+		AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
+		if (StringUtils.trimToEmpty(detail.getRecordType()).equals("")) {
+			detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			detail.setVersion(detail.getVersion() + 1);
+			detail.setNewRecord(true);
+		} else {
+
+			if (detail.isNew()) {
+				if (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, detail.getRecordType())) {
+					listBoxCodeLimit.removeChild(listitem);
+					logger.debug(Literal.LEAVING);
+					return;
+				} else if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())) {
+					detail.setRecordType(null);
+				} else {
+					detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				}
-			}
-			
-			refreshListIteam(listitem);
-			listitem.setAttribute("data", detail);
 
-			logger.debug(Literal.LEAVING);
+			} else {
+				detail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+			}
 		}
-		
-		
-		public void refreshListIteam(Listitem listitem){
-			AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
-			CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getFirstChild();
 
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
-				readOnlyComponent(true, codeLimitAmount);
-			}else{
-				readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), codeLimitAmount);
-			}
-			
-			if(codeLimitAmount.isReadonly()){
-				codeLimitAmount.setMandatory(false);
-			}else{
-				codeLimitAmount.setMandatory(true);
-			}
+		refreshListIteam(listitem);
+		listitem.setAttribute("data", detail);
 
-			Button delete= (Button) codeLimitAmount.getParent().getNextSibling().getNextSibling().getFirstChild();
+		logger.debug(Literal.LEAVING);
+	}
 
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())){
-				delete.setLabel(Labels.getLabel("btnCancel.label"));
-			}else{
-				delete.setLabel(Labels.getLabel("btnDelete.label"));	
-			}
-			
-			Label operationLabel= (Label) codeLimitAmount.getParent().getNextSibling().getFirstChild();
-			operationLabel.setValue(detail.getRecordType());
-		} 
-		
-		//label_Cancel
-		
-		
-		public void setAuthorizationLimitService(AuthorizationLimitService authorizationLimitService) {
-			this.authorizationLimitService = authorizationLimitService;
+	public void refreshListIteam(Listitem listitem) {
+		AuthorizationLimitDetail detail = (AuthorizationLimitDetail) listitem.getAttribute("data");
+		CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling().getFirstChild();
+
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())) {
+			readOnlyComponent(true, codeLimitAmount);
+		} else {
+			readOnlyComponent(isReadOnly("AuthorizationLimitDialog_LimitAmount"), codeLimitAmount);
 		}
-			
-		
+
+		if (codeLimitAmount.isReadonly()) {
+			codeLimitAmount.setMandatory(false);
+		} else {
+			codeLimitAmount.setMandatory(true);
+		}
+
+		Button delete = (Button) codeLimitAmount.getParent().getNextSibling().getNextSibling().getFirstChild();
+
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, detail.getRecordType())) {
+			delete.setLabel(Labels.getLabel("btnCancel.label"));
+		} else {
+			delete.setLabel(Labels.getLabel("btnDelete.label"));
+		}
+
+		Label operationLabel = (Label) codeLimitAmount.getParent().getNextSibling().getFirstChild();
+		operationLabel.setValue(detail.getRecordType());
+	}
+
+	//label_Cancel
+
+	public void setAuthorizationLimitService(AuthorizationLimitService authorizationLimitService) {
+		this.authorizationLimitService = authorizationLimitService;
+	}
+
 }

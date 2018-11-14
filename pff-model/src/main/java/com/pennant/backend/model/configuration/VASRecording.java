@@ -76,15 +76,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>VASRecording table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "cif","finReference","collateralRef","productCode", "postingAgainst", "primaryLinkRef", "vasReference", "fee",
-		"feePaymentMode", "valueDate", "accrualTillDate", "recurringDate", "dsaId", "dmaId", "fulfilOfficerId",
-		"referralId","renewalFee","vasStatus","extendedDetails", "documents","waivedAmt","returnStatus" })
+@XmlType(propOrder = { "cif", "finReference", "collateralRef", "productCode", "postingAgainst", "primaryLinkRef",
+		"vasReference", "fee", "feePaymentMode", "valueDate", "accrualTillDate", "recurringDate", "dsaId", "dmaId",
+		"fulfilOfficerId", "referralId", "renewalFee", "vasStatus", "extendedDetails", "documents", "waivedAmt",
+		"returnStatus" })
 @XmlRootElement(name = "vasDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class VASRecording extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name="product")
+	@XmlElement(name = "product")
 	private String productCode;
 	private String productDesc;
 	@XmlElement
@@ -121,13 +122,13 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private String productType;
 	private String productTypeDesc;
 	private String productCtg;
-	private String productCtgDesc; 
-	private String manufacturerDesc; 
+	private String productCtgDesc;
+	private String manufacturerDesc;
 	@XmlElement
 	private String vasStatus;
 	private boolean financeProcess;
 	private long feeAccounting = 0;
-	
+
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -136,36 +137,36 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private VASRecording befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
-	private ExtendedFieldRender					extendedFieldRender	= new ExtendedFieldRender();
-	private VASConfiguration					vasConfiguration	= null;
-	private List<FinanceReferenceDetail>		aggrements			= null;
-	private List<FinanceCheckListReference>		vasCheckLists		= null;
-	private Map<Long, Long>						selAnsCountMap		= new HashMap<Long, Long>(1);
-	@XmlElementWrapper(name="documents")
-	@XmlElement(name="document")
-	private List<DocumentDetails>				documents			= null;
-	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
-	private List<FinanceReferenceDetail>		checkLists			= null;
-	private VasCustomer							vasCustomer			= null;
-	private List<ReturnDataSet> 				returnDataSetList 	= new ArrayList<ReturnDataSet>(1);
-	private List<FinFeeDetail>					finFeeDetailsList	= new ArrayList<FinFeeDetail>();
-	@XmlElementWrapper(name="extendedDetails")
-	@XmlElement(name="extendedDetail")
+
+	private ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+	private VASConfiguration vasConfiguration = null;
+	private List<FinanceReferenceDetail> aggrements = null;
+	private List<FinanceCheckListReference> vasCheckLists = null;
+	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
+	@XmlElementWrapper(name = "documents")
+	@XmlElement(name = "document")
+	private List<DocumentDetails> documents = null;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private List<FinanceReferenceDetail> checkLists = null;
+	private VasCustomer vasCustomer = null;
+	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
+	private List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
+	@XmlElementWrapper(name = "extendedDetails")
+	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 	//API Specific
 	@XmlElement
-    private String cif;
-    @XmlElement
+	private String cif;
+	@XmlElement
 	private String finReference;
-    @XmlElement
-    private String collateralRef;
+	@XmlElement
+	private String collateralRef;
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private BigDecimal paidAmt = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -258,7 +259,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public void setVasReference(String vasReference) {
 		this.vasReference = vasReference;
 	}
-	
+
 	public BigDecimal getFee() {
 		return fee;
 	}
@@ -367,7 +368,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-		public String getProductDesc() {
+	public String getProductDesc() {
 		return productDesc;
 	}
 
@@ -410,6 +411,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public VASConfiguration getVasConfiguration() {
 		return vasConfiguration;
 	}
+
 	public void setVasConfiguration(VASConfiguration vasConfiguration) {
 		this.vasConfiguration = vasConfiguration;
 	}
@@ -417,6 +419,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public List<FinanceReferenceDetail> getAggrements() {
 		return aggrements;
 	}
+
 	public void setAggrements(List<FinanceReferenceDetail> aggrements) {
 		this.aggrements = aggrements;
 	}
@@ -424,6 +427,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public List<FinanceCheckListReference> getVasCheckLists() {
 		return vasCheckLists;
 	}
+
 	public void setVasCheckLists(List<FinanceCheckListReference> vasCheckLists) {
 		this.vasCheckLists = vasCheckLists;
 	}
@@ -431,6 +435,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public Map<Long, Long> getSelAnsCountMap() {
 		return selAnsCountMap;
 	}
+
 	public void setSelAnsCountMap(Map<Long, Long> selAnsCountMap) {
 		this.selAnsCountMap = selAnsCountMap;
 	}
@@ -438,6 +443,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public List<DocumentDetails> getDocuments() {
 		return documents;
 	}
+
 	public void setDocuments(List<DocumentDetails> documents) {
 		this.documents = documents;
 	}
@@ -445,6 +451,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public ExtendedFieldRender getExtendedFieldRender() {
 		return extendedFieldRender;
 	}
+
 	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
 		this.extendedFieldRender = extendedFieldRender;
 	}
@@ -452,6 +459,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
@@ -459,6 +467,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public BigDecimal getRenewalFee() {
 		return renewalFee;
 	}
+
 	public void setRenewalFee(BigDecimal renewalFee) {
 		this.renewalFee = renewalFee;
 	}
@@ -466,6 +475,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public List<FinanceReferenceDetail> getCheckLists() {
 		return checkLists;
 	}
+
 	public void setCheckLists(List<FinanceReferenceDetail> checkLists) {
 		this.checkLists = checkLists;
 	}
@@ -473,6 +483,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public String getSourceId() {
 		return sourceId;
 	}
+
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
@@ -480,6 +491,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public VasCustomer getVasCustomer() {
 		return vasCustomer;
 	}
+
 	public void setVasCustomer(VasCustomer vasCustomer) {
 		this.vasCustomer = vasCustomer;
 	}
@@ -487,6 +499,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public String getProductType() {
 		return productType;
 	}
+
 	public void setProductType(String productType) {
 		this.productType = productType;
 	}
@@ -494,6 +507,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public String getProductTypeDesc() {
 		return productTypeDesc;
 	}
+
 	public void setProductTypeDesc(String productTypeDesc) {
 		this.productTypeDesc = productTypeDesc;
 	}
@@ -501,6 +515,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public String getProductCtg() {
 		return productCtg;
 	}
+
 	public void setProductCtg(String productCtg) {
 		this.productCtg = productCtg;
 	}
@@ -508,6 +523,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public String getProductCtgDesc() {
 		return productCtgDesc;
 	}
+
 	public void setProductCtgDesc(String productCtgDesc) {
 		this.productCtgDesc = productCtgDesc;
 	}
@@ -515,6 +531,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public String getManufacturerDesc() {
 		return manufacturerDesc;
 	}
+
 	public void setManufacturerDesc(String manufacturerDesc) {
 		this.manufacturerDesc = manufacturerDesc;
 	}
@@ -522,10 +539,11 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public List<ReturnDataSet> getReturnDataSetList() {
 		return returnDataSetList;
 	}
+
 	public void setReturnDataSetList(List<ReturnDataSet> returnDataSetList) {
 		this.returnDataSetList = returnDataSetList;
 	}
-	
+
 	public String getVasStatus() {
 		return vasStatus;
 	}
@@ -543,8 +561,8 @@ public class VASRecording extends AbstractWorkflowEntity {
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> vasRecordingMap = new HashMap<String, Object>();	
-		
+		HashMap<String, Object> vasRecordingMap = new HashMap<String, Object>();
+
 		return getDeclaredFieldValues(vasRecordingMap);
 	}
 
@@ -552,14 +570,15 @@ public class VASRecording extends AbstractWorkflowEntity {
 		//feeMap.put(String.valueOf(fee), getFee());
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				vasRecordingMap.put("vr_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				vasRecordingMap.put("vr_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
 		return vasRecordingMap;
 	}
-	
+
 	public List<FinFeeDetail> getFinFeeDetailsList() {
 		return finFeeDetailsList;
 	}
@@ -567,6 +586,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public void setFinFeeDetailsList(List<FinFeeDetail> finFeeDetailsList) {
 		this.finFeeDetailsList = finFeeDetailsList;
 	}
+
 	public List<ExtendedField> getExtendedDetails() {
 		return extendedDetails;
 	}

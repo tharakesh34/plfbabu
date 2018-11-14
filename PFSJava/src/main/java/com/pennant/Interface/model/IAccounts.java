@@ -29,10 +29,10 @@ public class IAccounts implements java.io.Serializable {
 	//For Temporary Purpose in Core banking
 	private String tranAc;
 
-	public IAccounts(){
-		
+	public IAccounts() {
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -132,7 +132,7 @@ public class IAccounts implements java.io.Serializable {
 	public void setFlagPostStatus(String flagPostStatus) {
 		this.flagPostStatus = flagPostStatus;
 	}
-	
+
 	public void setTransOrder(String transOrder) {
 		this.transOrder = transOrder;
 	}
@@ -140,6 +140,7 @@ public class IAccounts implements java.io.Serializable {
 	public String getTransOrder() {
 		return transOrder;
 	}
+
 	public String getErrorCode() {
 		return errorCode;
 	}
@@ -173,29 +174,29 @@ public class IAccounts implements java.io.Serializable {
 	}
 
 	public void setLovValue(String lovValue) {
-	    this.lovValue = lovValue;
-    }
+		this.lovValue = lovValue;
+	}
 
 	public String getLovValue() {
-	    return lovValue;
-    }
+		return lovValue;
+	}
 
 	public String getDivision() {
-    	return division;
-    }
+		return division;
+	}
 
 	public void setDivision(String division) {
-    	this.division = division;
-    }
+		this.division = division;
+	}
 
 	public String getTranAc() {
-    	return tranAc;
-    }
+		return tranAc;
+	}
 
 	public void setTranAc(String tranAc) {
-    	this.tranAc = tranAc;
-    }
-	
+		this.tranAc = tranAc;
+	}
+
 	public String getIban() {
 		return iban;
 	}

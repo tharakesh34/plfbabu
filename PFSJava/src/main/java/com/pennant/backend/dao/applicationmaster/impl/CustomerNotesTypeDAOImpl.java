@@ -63,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implements CustomerNotesTypeDAO {
 	private static Logger logger = Logger.getLogger(CustomerNotesTypeDAOImpl.class);
-	
+
 	public CustomerNotesTypeDAOImpl() {
 		super();
 	}
@@ -85,19 +85,22 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 		customerNotesType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT CustNotesTypeCode, CustNotesTypeIsActive, CustNotesTypeArchiveFrq, CustNotesTypeIsPerminent,");
+		selectSql.append(
+				"SELECT CustNotesTypeCode, CustNotesTypeIsActive, CustNotesTypeArchiveFrq, CustNotesTypeIsPerminent,");
 		selectSql.append(" CustNotesTypeDesc,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCustNotesTypeArcFrqName,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTCustNotesTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustNotesTypeCode =:custNotesTypeCode") ;
+		selectSql.append(" Where CustNotesTypeCode =:custNotesTypeCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerNotesType);
-		RowMapper<CustomerNotesType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerNotesType.class);
+		RowMapper<CustomerNotesType> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerNotesType.class);
 
 		try {
 			customerNotesType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -110,10 +113,8 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTCustNotesTypes or
-	 * BMTCustNotesTypes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Customer Notes Type by key
-	 * CustNotesTypeCode
+	 * This method Deletes the Record from the BMTCustNotesTypes or BMTCustNotesTypes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Customer Notes Type by key CustNotesTypeCode
 	 * 
 	 * @param Customer
 	 *            Notes Type (customerNotesType)
@@ -131,12 +132,12 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 		deleteSql.append("Delete From BMTCustNotesTypes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustNotesTypeCode =:CustNotesTypeCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerNotesType);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -148,8 +149,7 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 	}
 
 	/**
-	 * This method insert new Records into BMTCustNotesTypes or
-	 * BMTCustNotesTypes_Temp.
+	 * This method insert new Records into BMTCustNotesTypes or BMTCustNotesTypes_Temp.
 	 * 
 	 * save Customer Notes Type
 	 * 
@@ -168,16 +168,18 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 
 		insertSql.append("Insert Into BMTCustNotesTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustNotesTypeCode, CustNotesTypeDesc, CustNotesTypeIsPerminent, CustNotesTypeArchiveFrq," );
+		insertSql.append(" (CustNotesTypeCode, CustNotesTypeDesc, CustNotesTypeIsPerminent, CustNotesTypeArchiveFrq,");
 		insertSql.append(" CustNotesTypeIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustNotesTypeCode, :CustNotesTypeDesc, :CustNotesTypeIsPerminent,:CustNotesTypeArchiveFrq,");
+		insertSql.append(
+				" Values(:CustNotesTypeCode, :CustNotesTypeDesc, :CustNotesTypeIsPerminent,:CustNotesTypeArchiveFrq,");
 		insertSql.append(" :CustNotesTypeIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerNotesType);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -186,10 +188,8 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 	}
 
 	/**
-	 * This method updates the Record BMTCustNotesTypes or
-	 * BMTCustNotesTypes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Customer Notes Type by key
-	 * CustNotesTypeCode and Version
+	 * This method updates the Record BMTCustNotesTypes or BMTCustNotesTypes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Notes Type by key CustNotesTypeCode and Version
 	 * 
 	 * @param Customer
 	 *            Notes Type (customerNotesType)
@@ -204,21 +204,23 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTCustNotesTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CustNotesTypeDesc = :CustNotesTypeDesc,");
-		updateSql.append(" CustNotesTypeIsPerminent = :CustNotesTypeIsPerminent, CustNotesTypeArchiveFrq = :CustNotesTypeArchiveFrq,");
-		updateSql.append(" CustNotesTypeIsActive= :CustNotesTypeIsActive ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(
+				" CustNotesTypeIsPerminent = :CustNotesTypeIsPerminent, CustNotesTypeArchiveFrq = :CustNotesTypeArchiveFrq,");
+		updateSql.append(" CustNotesTypeIsActive= :CustNotesTypeIsActive ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustNotesTypeCode =:CustNotesTypeCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerNotesType);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

@@ -53,10 +53,15 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface CustomerNotesTypeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerNotesType getCustomerNotesTypeById(String id);
+
 	CustomerNotesType getApprovedCustomerNotesTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

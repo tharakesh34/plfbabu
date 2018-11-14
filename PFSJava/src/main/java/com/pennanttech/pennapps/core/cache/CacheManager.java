@@ -29,17 +29,17 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CacheManager {
 	private static final Logger log = LogManager.getLogger(CacheNodeListener.class);
-	
+
 	private static Map<String, String> caches = new HashMap<String, String>();
 	private static DefaultCacheManager cacheManager = null;
-	
+
 	private static boolean activated = false;
 	private static boolean enabled = false;
 	private static int nodes = 0;
 	private static long sleepTime;
-	
+
 	private CacheAdmin cacheAdmin;
-		
+
 	@Value("${cache.enable}")
 	private boolean cacheEnable;
 
@@ -48,17 +48,16 @@ public class CacheManager {
 		this.cacheAdmin = cacheAdmin;
 	}
 
-	
 	public void start() {
 		log.debug(Literal.ENTERING);
-		
+
 		if (!cacheEnable) {
 			log.warn("Cache not enabled, if you want to enable the cache please set the prperty cache.enable to true.");
 			return;
 		}
-		
+
 		new Thread(new CacheNodeListener(cacheAdmin)).start();
-		
+
 		String configPathName = App.getResourcePath(App.CONFIG, "cache", "cache-config.xml");
 		if ("WEB".equals(App.TYPE.name())) {
 			configPathName = App.getResourcePath(App.CONFIG, "cache", "cache-web-config.xml");
@@ -68,11 +67,12 @@ public class CacheManager {
 			log.debug("Application Type should be either API or WEB to start the cache services");
 			return;
 		}
-		
+
 		File file = new File(configPathName);
-		
+
 		if (!file.exists()) {
-			log.warn(String.format("Cache configuration file %s is not avaliable % s location", file.getName(), file.getParent()));
+			log.warn(String.format("Cache configuration file %s is not avaliable % s location", file.getName(),
+					file.getParent()));
 			return;
 		}
 
@@ -89,7 +89,7 @@ public class CacheManager {
 		}
 		log.debug(Literal.LEAVING);
 	}
-	
+
 	public void stop() {
 		log.debug(Literal.ENTERING);
 		if (enabled) {
@@ -100,11 +100,11 @@ public class CacheManager {
 		}
 		log.debug(Literal.LEAVING);
 	}
-	
+
 	public static boolean isActivated() {
 		return activated;
 	}
-	
+
 	public static boolean isEnabled() {
 		return enabled;
 	}
@@ -161,13 +161,13 @@ public class CacheManager {
 			stats.setClusterIp(cacheManager.getPhysicalAddresses());
 			stats.setClusterSize(cacheManager.getClusterSize());
 			stats.setClusterMembers(cacheManager.getClusterMembers());
-			
+
 			for (String cacheName : cacheManager.getCacheNames()) {
 				if (!"DefaultCache".equals(cacheName)) {
 					stats.setCacheNames(cacheName);
 				}
 			}
-			
+
 			stats.setCacheNamesDet(String.join(",", stats.getCacheNames()));
 			stats.setCacheCount(stats.getCacheNames().size());
 			stats.setManagerCacheStatus(cacheManager.getCacheManagerStatus());
@@ -176,14 +176,13 @@ public class CacheManager {
 			stats.setNodeCount(nodes);
 			stats.setLastMntBy(1000);
 			stats.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			
+
 			log.debug(stats.toString());
 		} else {
 			stats.setManagerCacheStatus("STOPPED");
 		}
 		return stats;
 	}
-
 
 	public static int getNodes() {
 		return nodes;
@@ -204,6 +203,5 @@ public class CacheManager {
 	public void setEnabled(boolean enabled) {
 		CacheManager.enabled = enabled;
 	}
-	
 
 }

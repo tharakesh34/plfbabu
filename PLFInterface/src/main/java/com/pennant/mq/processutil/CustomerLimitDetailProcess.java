@@ -23,7 +23,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	public CustomerLimitDetailProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the CustomerLimitDetail Request and send Response
 	 * 
@@ -32,7 +32,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	 * @return CustomerLimitDetailReply
 	 * @throws InterfaceException
 	 */
-	public CustomerLimitDetail getCustomerLimitDetails(CustomerLimitDetail limitDetail, String msgFormat) 
+	public CustomerLimitDetail getCustomerLimitDetails(CustomerLimitDetail limitDetail, String msgFormat)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -45,14 +45,15 @@ public class CustomerLimitDetailProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(limitDetail, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -70,7 +71,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private CustomerLimitDetail setLimitDetailsResponse(OMElement responseElement, AHBMQHeader header) 
+	private CustomerLimitDetail setLimitDetailsResponse(OMElement responseElement, AHBMQHeader header)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -95,8 +96,8 @@ public class CustomerLimitDetailProcess extends MQProcess {
 			custLimitDetail.setLimitRef(PFFXmlUtil.getStringValue(detailElement, "LimitRef"));
 			custLimitDetail.setLimitDesc(PFFXmlUtil.getStringValue(detailElement, "LimitDesc"));
 			custLimitDetail.setRevolvingType(PFFXmlUtil.getStringValue(detailElement, "Rev_Nrev"));
-			custLimitDetail.setLimitExpiryDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(detailElement, "LimitExpiryDate"), 
-					InterfaceMasterConfigUtil.SHORT_DATE));
+			custLimitDetail.setLimitExpiryDate(DateUtility.convertDateFromMQ(
+					PFFXmlUtil.getStringValue(detailElement, "LimitExpiryDate"), InterfaceMasterConfigUtil.SHORT_DATE));
 			custLimitDetail.setLimitCcy(PFFXmlUtil.getStringValue(detailElement, "Currency"));
 			custLimitDetail.setApprovedLimitCcy(PFFXmlUtil.getStringValue(detailElement, "ApprovedLimitCurrency"));
 			custLimitDetail.setApprovedLimit(PFFXmlUtil.getBigDecimalValue(detailElement, "ApprovedLimit"));
@@ -112,7 +113,8 @@ public class CustomerLimitDetailProcess extends MQProcess {
 			custLimitDetail.setTenorUnit(PFFXmlUtil.getStringValue(detailElement, "TenorUnit"));
 			custLimitDetail.setRepricingFrequency(PFFXmlUtil.getStringValue(detailElement, "RepricingFrequency"));
 			custLimitDetail.setRepaymentTerm(PFFXmlUtil.getStringValue(detailElement, "RepaymentTerm"));
-			custLimitDetail.setLimitAvailabilityPeriod(PFFXmlUtil.getStringValue(detailElement, "LimitAvailibilityPeriod"));
+			custLimitDetail
+					.setLimitAvailabilityPeriod(PFFXmlUtil.getStringValue(detailElement, "LimitAvailibilityPeriod"));
 			custLimitDetail.setPricingIndex(PFFXmlUtil.getStringValue(detailElement, "PricingIndex"));
 			custLimitDetail.setSpread(PFFXmlUtil.getBigDecimalValue(detailElement, "Spread"));
 			custLimitDetail.setMinimumPrice(PFFXmlUtil.getBigDecimalValue(detailElement, "MinimumPrice"));
@@ -129,7 +131,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 			custLimitDetail.setCovenant(PFFXmlUtil.getStringValue(detailElement, "Covenant"));
 			custLimitDetail.setTermsConditions(PFFXmlUtil.getStringValue(detailElement, "TermsConditions"));
 			custLimitDetail.setNotes(PFFXmlUtil.getStringValue(detailElement, "Note"));
-						
+
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -148,17 +150,17 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(CustomerLimitDetail limitDetail, String referenceNum, 
-			OMFactory factory) throws InterfaceException {
+	private OMElement getRequestElement(CustomerLimitDetail limitDetail, String referenceNum, OMFactory factory)
+			throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement limitDetailRequest = factory.createOMElement("LimitDetailsRequest", null);
 
 		PFFXmlUtil.setOMChildElement(factory, limitDetailRequest, "ReferenceNum", referenceNum);
 		PFFXmlUtil.setOMChildElement(factory, limitDetailRequest, "LimitRef", limitDetail.getLimitRef());
 		PFFXmlUtil.setOMChildElement(factory, limitDetailRequest, "BranchCode", limitDetail.getBranchCode());
-		PFFXmlUtil.setOMChildElement(factory, limitDetailRequest, "TimeStamp",	
+		PFFXmlUtil.setOMChildElement(factory, limitDetailRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 
 		requestElement.addChild(limitDetailRequest);

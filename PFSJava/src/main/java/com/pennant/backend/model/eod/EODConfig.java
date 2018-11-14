@@ -56,18 +56,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class EODConfig extends AbstractWorkflowEntity implements Entity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				eodConfigId			= Long.MIN_VALUE;
-	private boolean				extMnthRequired;
-	private Date				mnthExtTo;
-	private boolean				active;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private EODConfig			befImage;
-	private LoggedInUser		userDetails;
-	private boolean				inExtMnth;
-	private Date				prvExtMnth;
+	private long eodConfigId = Long.MIN_VALUE;
+	private boolean extMnthRequired;
+	private Date mnthExtTo;
+	private boolean active;
+	private boolean newRecord = false;
+	private String lovValue;
+	private EODConfig befImage;
+	private LoggedInUser userDetails;
+	private boolean inExtMnth;
+	private Date prvExtMnth;
 
 	public boolean isNew() {
 		return isNewRecord();

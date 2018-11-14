@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-@XmlAccessorType(XmlAccessType.NONE)	
+@XmlAccessorType(XmlAccessType.NONE)
 public class CustDGDetail {
 	@XmlElement(name = "Customer_ID__c")
 	private String customerId;

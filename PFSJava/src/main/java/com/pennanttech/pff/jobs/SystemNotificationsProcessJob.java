@@ -9,7 +9,6 @@ import org.quartz.JobExecutionException;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.notifications.service.ProcessSystemNotifications;
 
-
 public class SystemNotificationsProcessJob implements Job {
 	private static final Logger logger = LogManager.getLogger(SystemNotificationsInvokeJob.class);
 

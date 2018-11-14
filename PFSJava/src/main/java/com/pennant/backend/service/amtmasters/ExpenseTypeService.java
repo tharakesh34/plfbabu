@@ -58,6 +58,6 @@ public interface ExpenseTypeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	long getFinExpenseIdByExpType(String expTypeCode, String type);
 }

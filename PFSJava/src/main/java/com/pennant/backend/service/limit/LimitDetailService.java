@@ -70,7 +70,7 @@ public interface LimitDetailService {
 
 	int validationCheck(String lmtGrp, String type);
 
-	int limitItemCheck(String lmtItem, String limitCategory,String type );
+	int limitItemCheck(String lmtItem, String limitCategory, String type);
 
 	LimitHeader getLimitHeader();
 
@@ -78,18 +78,18 @@ public interface LimitDetailService {
 
 	int limitStructureCheck(String structureCode, String type);
 
-	List<LimitTransactionDetail> getLimitTranDetails(String code, String ref,long headerId);
+	List<LimitTransactionDetail> getLimitTranDetails(String code, String ref, long headerId);
 
 	LimitHeader procExternalFinance(InputStream streamData, LoggedInUser user);
-	
+
 	LimitHeader getLimitHeaderByCustomer(long custId);
-	
+
 	LimitHeader getLimitHeaderByCustomerGroupCode(long custGrpId);
-	
+
 	LimitHeader getLimitHeaderById(long headerId);
 
 	AuditDetail doValidations(AuditHeader auditHeader);
-	
+
 	int limitLineUtilizationCheck(String lmtGrp);
 
 	int getLimitHeaderCountById(long headerId);
@@ -97,8 +97,9 @@ public interface LimitDetailService {
 	List<String> getLinesForGroup(String groupCode);
 
 	LimitHeader getCustomerLimitsById(long headerId);
-	
+
 	// Limit Rebuild Process
 	List<Object> processCustomerRebuild(long custId);
+
 	List<Object> processCustomerGroupRebuild(long groupId);
 }

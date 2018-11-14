@@ -67,26 +67,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>SnapShotColumn</code> with set of CRUD operations.
  */
 public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements SnapShotColumnDAO {
-	private static Logger				logger	= Logger.getLogger(SnapShotColumnDAOImpl.class);
+	private static Logger logger = Logger.getLogger(SnapShotColumnDAOImpl.class);
 
-	
 	public SnapShotColumnDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public SnapShotColumn getSnapShotColumn(long id, String columnName,String type) {
+	public SnapShotColumn getSnapShotColumn(long id, String columnName, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, columnName, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From EODSnapShotColumns");
 		sql.append(type);
 		sql.append(" Where id = :id AND columnName = :columnName");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -106,21 +106,23 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 
 		logger.debug(Literal.LEAVING);
 		return snapShotColumn;
-	}		
-	
+	}
+
 	@Override
-	public String save(SnapShotColumn snapShotColumn,TableType tableType) {
+	public String save(SnapShotColumn snapShotColumn, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into EODSnapShotColumns");
+		StringBuilder sql = new StringBuilder(" insert into EODSnapShotColumns");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, columnName, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :columnName, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotColumn);
@@ -133,14 +135,14 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(snapShotColumn.getId());
-	}	
+	}
 
 	@Override
-	public void update(SnapShotColumn snapShotColumn,TableType tableType) {
+	public void update(SnapShotColumn snapShotColumn, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EODSnapShotColumns" );
+		StringBuilder sql = new StringBuilder("update EODSnapShotColumns");
 		sql.append(tableType.getSuffix());
 		sql.append("  set active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -148,10 +150,10 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id AND columnName = :columnName ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotColumn);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -159,7 +161,7 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -194,22 +196,22 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 
 	@Override
 	public List<SnapShotColumn> getActiveTableColumns(long id) {
-		List<SnapShotColumn> columns= new ArrayList<SnapShotColumn>();
+		List<SnapShotColumn> columns = new ArrayList<SnapShotColumn>();
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append("columnName");
 		sql.append(" From EODSnapShotColumns");
 		sql.append(" Where id = :id AND active = :active");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		SnapShotColumn snapShotColumn = new SnapShotColumn();
 		snapShotColumn.setId(id);
 		snapShotColumn.setActive(true);
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotColumn);
 		RowMapper<SnapShotColumn> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotColumn.class);
 
@@ -218,12 +220,9 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return columns;
 	}
-	
-		
-	
-	
-}	
+
+}

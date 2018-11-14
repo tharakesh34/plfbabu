@@ -12,18 +12,16 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class DatesUpdate implements Tasklet {
-	private Logger					logger	= Logger.getLogger(DatesUpdate.class);
+	private Logger logger = Logger.getLogger(DatesUpdate.class);
 
 	@SuppressWarnings("unused")
-	private DataSource			dataSource;
-	private DateService			dateService;
+	private DataSource dataSource;
+	private DateService dateService;
 
-	private CustomerQueuingDAO	customerQueuingDAO;
-
+	private CustomerQueuingDAO customerQueuingDAO;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -55,6 +53,5 @@ public class DatesUpdate implements Tasklet {
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
-
 
 }

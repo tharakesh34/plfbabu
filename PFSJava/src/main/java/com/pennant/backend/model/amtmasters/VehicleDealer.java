@@ -81,15 +81,15 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String accountNumber;
 	private long accountingSetId;
 	private String accountingSetCode;
-	private String  accountingSetDesc;
-	private String  calRuleDesc;
-	private String 	emiratesDescription;
-    private boolean newRecord;
+	private String accountingSetDesc;
+	private String calRuleDesc;
+	private String emiratesDescription;
+	private boolean newRecord;
 	private String lovValue;
 	private VehicleDealer befImage;
 	private LoggedInUser userDetails;
 	private boolean active;
-	private String  zipCode;
+	private String zipCode;
 	private String code;
 
 	public VehicleDealer() {
@@ -116,132 +116,134 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public long getId() {
 		return dealerId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.dealerId = id;
 	}
-	
+
 	public long getDealerId() {
 		return dealerId;
 	}
+
 	public void setDealerId(long dealerId) {
 		this.dealerId = dealerId;
 	}
-	
+
 	public String getDealerType() {
-    	return dealerType;
-    }
+		return dealerType;
+	}
 
 	public void setDealerType(String dealerType) {
-    	this.dealerType = dealerType;
-    }
+		this.dealerType = dealerType;
+	}
 
 	public String getDealerName() {
 		return dealerName;
 	}
+
 	public void setDealerName(String dealerName) {
 		this.dealerName = dealerName;
 	}
-	
+
 	public String getDealerTelephone() {
-    	return dealerTelephone;
-    }
+		return dealerTelephone;
+	}
 
 	public void setDealerTelephone(String dealerTelephone) {
-    	this.dealerTelephone = dealerTelephone;
-    }
+		this.dealerTelephone = dealerTelephone;
+	}
 
 	public String getDealerFax() {
-    	return dealerFax;
-    }
+		return dealerFax;
+	}
 
 	public void setDealerFax(String dealerFax) {
-    	this.dealerFax = dealerFax;
-    }
+		this.dealerFax = dealerFax;
+	}
 
 	public String getDealerAddress1() {
-    	return dealerAddress1;
-    }
+		return dealerAddress1;
+	}
 
 	public void setDealerAddress1(String dealerAddress1) {
-    	this.dealerAddress1 = dealerAddress1;
-    }
+		this.dealerAddress1 = dealerAddress1;
+	}
 
 	public String getDealerAddress2() {
-    	return dealerAddress2;
-    }
+		return dealerAddress2;
+	}
 
 	public void setDealerAddress2(String dealerAddress2) {
-    	this.dealerAddress2 = dealerAddress2;
-    }
-	
+		this.dealerAddress2 = dealerAddress2;
+	}
+
 	public String getDealerAddress3() {
-    	return dealerAddress3;
-    }
+		return dealerAddress3;
+	}
 
 	public void setDealerAddress3(String dealerAddress3) {
-    	this.dealerAddress3 = dealerAddress3;
-    }
+		this.dealerAddress3 = dealerAddress3;
+	}
 
 	public String getDealerAddress4() {
-    	return dealerAddress4;
-    }
+		return dealerAddress4;
+	}
 
 	public void setDealerAddress4(String dealerAddress4) {
-    	this.dealerAddress4 = dealerAddress4;
-    }
+		this.dealerAddress4 = dealerAddress4;
+	}
 
 	public String getDealerCountry() {
-    	return dealerCountry;
-    }
+		return dealerCountry;
+	}
 
 	public void setDealerCountry(String dealerCountry) {
-    	this.dealerCountry = dealerCountry;
-    }
+		this.dealerCountry = dealerCountry;
+	}
 
 	public String getDealerCity() {
-    	return dealerCity;
-    }
+		return dealerCity;
+	}
 
 	public void setDealerCity(String dealerCity) {
-    	this.dealerCity = dealerCity;
-    }
+		this.dealerCity = dealerCity;
+	}
 
 	public String getDealerProvince() {
-    	return dealerProvince;
-    }
+		return dealerProvince;
+	}
 
 	public void setDealerProvince(String dealerProvince) {
-    	this.dealerProvince = dealerProvince;
-    }
+		this.dealerProvince = dealerProvince;
+	}
 
 	public String getLovDescCountry() {
-    	return lovDescCountry;
-    }
+		return lovDescCountry;
+	}
 
 	public void setLovDescCountry(String lovDescCountry) {
-    	this.lovDescCountry = lovDescCountry;
-    }
+		this.lovDescCountry = lovDescCountry;
+	}
 
 	public String getLovDescCity() {
-    	return lovDescCity;
-    }
+		return lovDescCity;
+	}
 
 	public void setLovDescCity(String lovDescCity) {
-    	this.lovDescCity = lovDescCity;
-    }
+		this.lovDescCity = lovDescCity;
+	}
 
 	public String getLovDescProvince() {
-    	return lovDescProvince;
-    }
+		return lovDescProvince;
+	}
 
 	public void setLovDescProvince(String lovDescProvince) {
-    	this.lovDescProvince = lovDescProvince;
-    }
+		this.lovDescProvince = lovDescProvince;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -250,7 +252,7 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -259,12 +261,12 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public VehicleDealer getBefImage(){
+	public VehicleDealer getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(VehicleDealer beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(VehicleDealer beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -283,7 +285,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.email = email;
 	}
 
-	
 	public String getEmirates() {
 		return emirates;
 	}
@@ -324,7 +325,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.accountNumber = accountNumber;
 	}
 
-
 	public String getAccountingSetCode() {
 		return accountingSetCode;
 	}
@@ -350,36 +350,36 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public long getAccountingSetId() {
-	    return accountingSetId;
-    }
+		return accountingSetId;
+	}
 
 	public void setAccountingSetId(long accountingSetId) {
-	    this.accountingSetId = accountingSetId;
-    }
+		this.accountingSetId = accountingSetId;
+	}
 
 	public String getPOBox() {
-	    return pOBox;
-    }
+		return pOBox;
+	}
 
 	public void setPOBox(String pOBox) {
-	    this.pOBox = pOBox;
-    }
+		this.pOBox = pOBox;
+	}
 
 	public String getEmiratesDescription() {
-	    return emiratesDescription;
-    }
+		return emiratesDescription;
+	}
 
 	public void setEmiratesDescription(String emiratesDescription) {
-	    this.emiratesDescription = emiratesDescription;
-    }
+		this.emiratesDescription = emiratesDescription;
+	}
 
 	public String getSellerType() {
-	    return sellerType;
-    }
+		return sellerType;
+	}
 
 	public void setSellerType(String sellerType) {
-	    this.sellerType = sellerType;
-    }
+		this.sellerType = sellerType;
+	}
 
 	public boolean isActive() {
 		return active;
@@ -404,9 +404,10 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	public void setCode(String code) {
 		this.code = code;
 	}
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerMap = new HashMap<String, Object>();
-		
+
 		return getDeclaredFieldValues(customerMap);
 	}
 
@@ -422,6 +423,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 			}
 		}
 		return customerMap;
-	}	
-	
+	}
+
 }

@@ -2,29 +2,26 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
-	xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<style>
-      .CodeMirror-line-numbers {
-        width: 2.2em;
-        color: #aaa;
-        background-color: #eee;
-        text-align: right;
-        padding-right: .3em;   
-        font-size: 10pt;
-        font-family: monospace;
-        padding-top: .4em;
-        line-height: normal;
-      }
-    </style>
+		.CodeMirror-line-numbers {
+		width: 2.2em;
+		color: #aaa;
+		background-color: #eee;
+		text-align: right;
+		padding-right: .3em;
+		font-size: 10pt;
+		font-family: monospace;
+		padding-top: .4em;
+		line-height: normal;
+		}
+	</style>
 
-	 
-	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
- 	<script type="text/javascript">
+
+	<script type="text/javascript" src="/ptjs/fulljslint.js" />
+	<script type="text/javascript">
 	<![CDATA[     
 	function addPreValidationContent(strContent) {				
  			zk.Widget.$(jq('$preValidation'))._editor.replaceSelection(strContent);
@@ -112,65 +109,49 @@
 	</script>
 
 	<window>
-		<window id="window_CollateralStructureDialog" border="normal"
-			apply="${collateralStructureDialogCtrl}" width="100%" height="100%"
-			sizable="false">
+		<window id="window_CollateralStructureDialog" border="normal" apply="${collateralStructureDialogCtrl}" width="100%"
+			height="100%" sizable="false">
 			<borderlayout id="borderlayoutCollateralStructure">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
 							<!-- COMMON BUTTONS -->
-							<toolbar align="start"
-								style="float:left; border-style: none;">
-								<button id="btnNew"
-									tooltiptext="${c:l('btnNew.tooltiptext')}"
+							<toolbar align="start" style="float:left; border-style: none;">
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnEdit"
-									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnDelete"
-									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnSave"
-									tooltiptext="${c:l('btnSave.tooltiptext')}"
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnCancel"
-									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnNotes" visible="false"
-									tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnCopyTo"
-									label="${c:l('label_Copy')}"
+								<button id="btnCopyTo" label="${c:l('label_Copy')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
-									tooltiptext="${c:l('btnCopyTo.tooltiptext')}" visible="true"
-									sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnCopyTo.tooltiptext')}" visible="true" sclass="z-toolbarbutton" />
 							</toolbar>
 
 							<!-- SEARCH AREA -->
-							<toolbar align="center"
-								style="toolbar-center">
-								<label
-									value="${c:l('window_CollateralStructureDialog.title')}"
-									sclass="label-heading" />
+							<toolbar align="center" style="toolbar-center">
+								<label value="${c:l('window_CollateralStructureDialog.title')}" sclass="label-heading" />
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->
-							<toolbar align="end"
-								style="float:right; border-style: none;">
-								<button id="btnHelp" visible="false"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							<toolbar align="end" style="float:right; border-style: none;">
+								<button id="btnHelp" visible="false" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
-								<button id="btnClose"
-									tooltiptext="${c:l('btnClose.tooltiptext')}"
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 									sclass="z-toolbarbutton" />
 							</toolbar>
@@ -179,30 +160,20 @@
 					</div>
 				</north>
 				<center border="none" autoscroll="false">
-					<tabbox id="tabBoxIndexCenter" width="99%"
-						height="100%">
+					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
 						<tabs id="tabsIndexCenter">
-							<tab id="basicDetailsTab"
-								label="${c:l('Tab_CollateralStructureBasicDetails')}" />
-							<tab id="extendedDetailsTab"
-								label="${c:l('Tab_CollateralStructureExtendedFieldDetails')}" />
-							<tab id="techValuationDetailsTab"
-								label="${c:l('Tab_CollateralStructureTechnicalValuationDetails')}" />
-							<tab id="ltvRuleTab"
-								label="${c:l('Tab_CollateralStructureLTVDetails')}" />
-							<tab id="preValidationTab"
-								label="${c:l('Tab_PreValidation')}" />
-							<tab id="postValidationTab"
-								label="${c:l('Tab_PostValidation')}" />
+							<tab id="basicDetailsTab" label="${c:l('Tab_CollateralStructureBasicDetails')}" />
+							<tab id="extendedDetailsTab" label="${c:l('Tab_CollateralStructureExtendedFieldDetails')}" />
+							<tab id="techValuationDetailsTab" label="${c:l('Tab_CollateralStructureTechnicalValuationDetails')}" />
+							<tab id="ltvRuleTab" label="${c:l('Tab_CollateralStructureLTVDetails')}" />
+							<tab id="preValidationTab" label="${c:l('Tab_PreValidation')}" />
+							<tab id="postValidationTab" label="${c:l('Tab_PostValidation')}" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto">
 								<div id="basicDetailTabDiv">
-									<groupbox id="gb_basicDetails"
-										sclass="gb-dialog">
-										<grid
-											sclass="GridLayoutNoBorder" fixedLayout="true"
-											style="border:0px">
+									<groupbox id="gb_basicDetails" sclass="gb-dialog">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="15%" />
 												<column width="35%" />
@@ -211,128 +182,90 @@
 											</columns>
 											<rows>
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
 													<hbox>
-														<space
-															id="space_CollateralType" spacing="2px"
-															sclass="mandatory" />
-														<uppercasebox id="collateralType" width="110px"  />
+														<space id="space_CollateralType" spacing="2px" sclass="mandatory" />
+														<uppercasebox id="collateralType" width="110px" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
 													<hbox>
-														<space
-															id="space_CollateralDesc" spacing="2px"
-															sclass="mandatory" />
-														<textbox
-															id="collateralDesc" width="300px" />
+														<space id="space_CollateralDesc" spacing="2px" sclass="mandatory" />
+														<textbox id="collateralDesc" width="300px" />
 													</hbox>
 												</row>
 
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_LtvType.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_LtvType.value')}" />
 													<hbox>
-														<space
-															id="space_LtvType" spacing="2px" sclass="mandatory" />
-														<combobox
-															id="ltvType" width="110px" />
+														<space id="space_LtvType" spacing="2px" sclass="mandatory" />
+														<combobox id="ltvType" width="110px" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_LtvPercentage.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_LtvPercentage.value')}" />
 													<hbox>
-														<space
-															id="space_LtvPercentage" spacing="2px" />
-														<decimalbox
-															id="ltvPercentage" maxlength="10" width="90px" />
+														<space id="space_LtvPercentage" spacing="2px" />
+														<decimalbox id="ltvPercentage" maxlength="10" width="90px" />
 													</hbox>
 												</row>
 
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_MarketableSecurities.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_MarketableSecurities.value')}" />
 													<hbox>
-														<space
-															id="space_MarketableSecurities" spacing="2px" />
-														<checkbox
-															id="marketableSecurities" checked="false" />
+														<space id="space_MarketableSecurities" spacing="2px" />
+														<checkbox id="marketableSecurities" checked="false" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_Active.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_Active.value')}" />
 													<hbox>
-														<space
-															id="space_Active" spacing="2px" />
-														<checkbox
-															id="active" />
+														<space id="space_Active" spacing="2px" />
+														<checkbox id="active" />
 													</hbox>
 												</row>
 
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_PreValidationReq.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_PreValidationReq.value')}" />
 													<hbox>
-														<space
-															id="space_PreValidationReq" spacing="2px" />
-														<checkbox
-															id="preValidationReq" checked="false" />
+														<space id="space_PreValidationReq" spacing="2px" />
+														<checkbox id="preValidationReq" checked="false" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_PostValidationReq.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_PostValidationReq.value')}" />
 													<hbox>
-														<space
-															id="space_PostValidationReq" spacing="2px" />
-														<checkbox
-															id="postValidationReq" checked="false" />
+														<space id="space_PostValidationReq" spacing="2px" />
+														<checkbox id="postValidationReq" checked="false" />
 													</hbox>
 												</row>
 
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_CollateralLocReq.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_CollateralLocReq.value')}" />
 													<hbox>
-														<space
-															id="space_CollateralLocReq" spacing="2px" />
-														<checkbox
-															id="collateralLocReq" checked="false" />
+														<space id="space_CollateralLocReq" spacing="2px" />
+														<checkbox id="collateralLocReq" checked="false" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_CollateralValuatorReq.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_CollateralValuatorReq.value')}" />
 													<hbox>
-														<space
-															id="space_CollateralValuatorReq" spacing="2px" />
-														<checkbox
-															id="collateralValuatorReq" checked="false" />
+														<space id="space_CollateralValuatorReq" spacing="2px" />
+														<checkbox id="collateralValuatorReq" checked="false" />
 													</hbox>
 												</row>
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_ValuationFrequency.value')}" />
-													<frequencybox id="valuationFrequency"/>
-													
-													<label
-														value="${c:l('label_CollateralStructureDialog_NextValuationDate.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_ValuationFrequency.value')}" />
+													<frequencybox id="valuationFrequency" />
+
+													<label value="${c:l('label_CollateralStructureDialog_NextValuationDate.value')}" />
 													<hbox>
-														<space
-															id="space_NextValuationDate" spacing="2px" sclass="mandatory"/>
+														<space id="space_NextValuationDate" spacing="2px" sclass="mandatory" />
 														<datebox id="nextValuationDate" />
 													</hbox>
 												</row>
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_ValuationPending.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_ValuationPending.value')}" />
 													<checkbox id="valuationPending" />
 													<label value="${c:l('label_CollateralStructureDialog_Rule.value')}" />
 													<extendedcombobox id="queryId" />
 												</row>
 												<row spans="1,3">
-													<label
-														value="${c:l('label_CollateralStructureDialog_Remarks.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_Remarks.value')}" />
 													<hbox>
-														<space
-															id="space_Remarks" spacing="2px" />
-														<textbox
-															id="remarks" multiline="true" rows="2" width="1020px" />
+														<space id="space_Remarks" spacing="2px" />
+														<textbox id="remarks" multiline="true" rows="2" width="1020px" />
 													</hbox>
 												</row>
 											</rows>
@@ -340,17 +273,12 @@
 									</groupbox>
 								</div>
 							</tabpanel>
-							<tabpanel id="extendedFieldTabpanel"
-								style="overflow:auto" />
-							<tabpanel id="techValuationTabpanel"
-								style="overflow:auto" />	
+							<tabpanel id="extendedFieldTabpanel" style="overflow:auto" />
+							<tabpanel id="techValuationTabpanel" style="overflow:auto" />
 							<tabpanel style="overflow:auto">
 								<div id="ltvRuleTabDiv">
-									<groupbox id="gb_ltvDetails"
-										sclass="gb-dialog">
-										<grid
-											sclass="GridLayoutNoBorder" fixedLayout="true"
-											style="border:0px">
+									<groupbox id="gb_ltvDetails" sclass="gb-dialog">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="15%" />
 												<column width="35%" />
@@ -359,57 +287,41 @@
 											</columns>
 											<rows>
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
-														<label
-															id="moduleDesc" style="font-weight:bold" />
+														<space spacing="2px" />
+														<label id="moduleDesc" style="font-weight:bold" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
 													<hbox>
-														<space
-															spacing="2px" />
-														<label
-															id="subModuleDesc" style="font-weight:bold" />
+														<space spacing="2px" />
+														<label id="subModuleDesc" style="font-weight:bold" />
 													</hbox>
 												</row>
 												<row>
-													<label
-														value="${c:l('label_CollateralStructureDialog_AllowLtvWaiver.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_AllowLtvWaiver.value')}" />
 													<hbox>
-														<space
-															id="space_AllowLtvWaiver" spacing="2px" />
-														<checkbox
-															id="allowLtvWaiver" checked="false" />
+														<space id="space_AllowLtvWaiver" spacing="2px" />
+														<checkbox id="allowLtvWaiver" checked="false" />
 													</hbox>
-													<label
-														value="${c:l('label_CollateralStructureDialog_MaxLtvWaiver.value')}" />
+													<label value="${c:l('label_CollateralStructureDialog_MaxLtvWaiver.value')}" />
 													<hbox>
-														<space
-															id="space_MaxLtvWaiver" spacing="2px" />
-														<decimalbox
-															id="maxLtvWaiver" />
+														<space id="space_MaxLtvWaiver" spacing="2px" />
+														<decimalbox id="maxLtvWaiver" />
 													</hbox>
 												</row>
 											</rows>
 										</grid>
 									</groupbox>
 									<groupbox>
-										<caption
-											label="${c:l('label_RuleDialog_RuleDesign')}" />
-										<javaScriptBuilder
-											id="javaScriptSqlRule" />
+										<caption label="${c:l('label_RuleDialog_RuleDesign')}" />
+										<javaScriptBuilder id="javaScriptSqlRule" />
 									</groupbox>
 								</div>
 							</tabpanel>
 							<tabpanel style="overflow:auto;">
-								<groupbox id="gb_preValidation"
-									sclass="gb-dialog">
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
+								<groupbox id="gb_preValidation" sclass="gb-dialog">
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
 											<column width="15%" />
 											<column width="35%" />
@@ -418,71 +330,47 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
+												<label value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<label
-														id="preModuleDesc" style="font-weight:bold" />
+													<space spacing="2px" />
+													<label id="preModuleDesc" style="font-weight:bold" />
 												</hbox>
-												<label
-													value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
+												<label value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<label
-														id="preSubModuleDesc" style="font-weight:bold" />
+													<space spacing="2px" />
+													<label id="preSubModuleDesc" style="font-weight:bold" />
 												</hbox>
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox width="100%" visible="true"
-									height="100%" closable="false">
-									<grid id="preValidationGrid"
-										sclass="GridLayoutNoBorder" fixedLayout="true"
-										style="border:0px" width="100%">
+								<groupbox width="100%" visible="true" height="100%" closable="false">
+									<grid id="preValidationGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 										<columns>
-											<column width="30%"
-												align="left" valign="top" id="column_PreValidationGP" />
-											<column width="70%"
-												align="center" valign="top" id="column_PreVlidationMirror" />
+											<column width="30%" align="left" valign="top" id="column_PreValidationGP" />
+											<column width="70%" align="center" valign="top" id="column_PreVlidationMirror" />
 										</columns>
 										<rows>
 											<row>
-												<tabbox
-													id="tb_PreExtended">
+												<tabbox id="tb_PreExtended">
 													<tabs width="50%">
-														<tab
-															label="${c:l('tb_FieldDetails')}" />
+														<tab label="${c:l('tb_FieldDetails')}" />
 													</tabs>
-													<toolbar width="50%"
-														align="end" sclass="toolbar-end">
-														<button
-															id="btnPreValidate" label="${c:l('label_Validate')}"
-															w:onClick="validateJs('1');"
+													<toolbar width="50%" align="end" sclass="toolbar-end">
+														<button id="btnPreValidate" label="${c:l('label_Validate')}" w:onClick="validateJs('1');"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 															tooltiptext="${c:l('button_Validation.tooltiptext')}" />
-														<button
-															id="btnPreSimulate" label="${c:l('label_Simulate')}"
-															w:onClick="validateJs('2');"
+														<button id="btnPreSimulate" label="${c:l('label_Simulate')}" w:onClick="validateJs('2');"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 															tooltiptext="${c:l('button_Simulation.tooltiptext')}" />
 													</toolbar>
 													<tabpanels>
-														<tabpanel
-															style="padding:0px;overflow:auto;">
-															<listbox
-																height="100%" id="prevalidationListbox"
-																style="text-align:left;border:none;" mold="default"
-																width="100%" sizedByContent="true" span="true"
-																w:onDoubleClick="addPreValidationContent(this.getSelectedItem().getLabel())">
+														<tabpanel style="padding:0px;overflow:auto;">
+															<listbox height="100%" id="prevalidationListbox" style="text-align:left;border:none;" mold="default"
+																width="100%" sizedByContent="true" span="true" w:onDoubleClick="addPreValidationContent(this.getSelectedItem().getLabel())">
 																<listhead>
-																	<listheader
-																		label="${c:l('label_FieldName')}" hflex="min" />
-																	<listheader
-																		label="${c:l('label_FieldLabel')}" hflex="min" />
+																	<listheader label="${c:l('label_FieldName')}" hflex="min" />
+																	<listheader label="${c:l('label_FieldLabel')}" hflex="min" />
 																</listhead>
 															</listbox>
 														</tabpanel>
@@ -490,19 +378,15 @@
 												</tabbox>
 
 												<!-- code mirrior -->
-												<codemirror
-													id="preValidation" syntax="js" config="lineNumbers:true"
-													height="100%" />
+												<codemirror id="preValidation" syntax="js" config="lineNumbers:true" height="100%" />
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
 							</tabpanel>
 							<tabpanel style="overflow:auto;">
-								<groupbox id="gb_postValidation"
-									sclass="gb-dialog">
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
+								<groupbox id="gb_postValidation" sclass="gb-dialog">
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
 											<column width="15%" />
 											<column width="35%" />
@@ -511,73 +395,47 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
+												<label value="${c:l('label_CollateralStructureDialog_CollateralType.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<label
-														id="postModuleDesc" style="font-weight:bold" />
+													<space spacing="2px" />
+													<label id="postModuleDesc" style="font-weight:bold" />
 												</hbox>
-												<label
-													value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
+												<label value="${c:l('label_CollateralStructureDialog_CollateralDesc.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<label
-														id="postSubModuleDesc" style="font-weight:bold" />
+													<space spacing="2px" />
+													<label id="postSubModuleDesc" style="font-weight:bold" />
 												</hbox>
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox width="100%" visible="true"
-									height="100%" closable="false">
-									<grid id="postValidationGrid"
-										sclass="GridLayoutNoBorder" fixedLayout="true"
-										style="border:0px" width="100%">
+								<groupbox width="100%" visible="true" height="100%" closable="false">
+									<grid id="postValidationGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 										<columns>
-											<column width="30%"
-												align="left" valign="top" id="column_PostValidationGP" />
-											<column width="70%"
-												align="center" valign="top"
-												id="column_PostValidationMirror" />
+											<column width="30%" align="left" valign="top" id="column_PostValidationGP" />
+											<column width="70%" align="center" valign="top" id="column_PostValidationMirror" />
 										</columns>
 										<rows>
 											<row>
 												<tabbox>
 													<tabs>
-														<tab
-															label="${c:l('tb_FieldDetails')}" />
+														<tab label="${c:l('tb_FieldDetails')}" />
 													</tabs>
-													<toolbar width="50%"
-														align="end" sclass="toolbar-end">
-														<button
-															height="22px" id="btnPostValidate"
-															label="${c:l('label_Validate')}"
-															w:onClick="validateJs('4');"
+													<toolbar width="50%" align="end" sclass="toolbar-end">
+														<button height="22px" id="btnPostValidate" label="${c:l('label_Validate')}" w:onClick="validateJs('4');"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 															tooltiptext="${c:l('button_Validation.tooltiptext')}" />
-														<button
-															height="22px" id="btnPostSimulate"
-															label="${c:l('label_Simulate')}"
-															w:onClick="validateJs('5');"
+														<button height="22px" id="btnPostSimulate" label="${c:l('label_Simulate')}" w:onClick="validateJs('5');"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPreValidate,btnPreSimulate,btnPostValidate,btnPostSimulate,btnCopyTo"
 															tooltiptext="${c:l('button_Simulation.tooltiptext')}" />
 													</toolbar>
 													<tabpanels>
-														<tabpanel
-															style="padding:0px;overflow:auto;">
-															<listbox
-																height="100%" id="postValidationListbox"
-																style="text-align:left;border:none;" mold="default"
-																width="100%" sizedByContent="true" span="true"
-																w:onDoubleClick="addPostValidationContent(this.getSelectedItem().getLabel())">
+														<tabpanel style="padding:0px;overflow:auto;">
+															<listbox height="100%" id="postValidationListbox" style="text-align:left;border:none;" mold="default"
+																width="100%" sizedByContent="true" span="true" w:onDoubleClick="addPostValidationContent(this.getSelectedItem().getLabel())">
 																<listhead>
-																	<listheader
-																		label="${c:l('label_FieldName')}" hflex="min" />
-																	<listheader
-																		label="${c:l('label_FieldLabel')}" hflex="min" />
+																	<listheader label="${c:l('label_FieldName')}" hflex="min" />
+																	<listheader label="${c:l('label_FieldLabel')}" hflex="min" />
 																</listhead>
 															</listbox>
 														</tabpanel>
@@ -586,9 +444,7 @@
 												</tabbox>
 
 												<!-- code mirrior -->
-												<codemirror
-													id="postValidation" syntax="js" config="lineNumbers:true"
-													height="100%" />
+												<codemirror id="postValidation" syntax="js" config="lineNumbers:true" height="100%" />
 											</row>
 										</rows>
 									</grid>
@@ -601,9 +457,7 @@
 					<groupbox id="groupboxWf" width="99%">
 						<caption label="${c:l('Action')}" />
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</groupbox>
 				</south>

@@ -66,18 +66,18 @@ import com.pennant.util.PennantAppUtil;
 public class TransactionEntryListModelItemRenderer implements ListitemRenderer<TransactionEntry>, Serializable {
 
 	private static final long serialVersionUID = 6906998807263283546L;
-	
+
 	public TransactionEntryListModelItemRenderer() {
-		
+
 	}
 
 	@Override
 	public void render(Listitem item, TransactionEntry transactionEntry, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(PennantAppUtil.formateInt(transactionEntry.getTransOrder()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getTransDesc());
+		lc = new Listcell(PennantAppUtil.formateInt(transactionEntry.getTransOrder()));
+		lc.setParent(item);
+		lc = new Listcell(transactionEntry.getTransDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		Checkbox checkbox = new Checkbox();
@@ -85,20 +85,23 @@ public class TransactionEntryListModelItemRenderer implements ListitemRenderer<T
 		checkbox.setChecked(transactionEntry.isEntryByInvestment());
 		lc.appendChild(checkbox);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionEntry.getDebitcredit(),PennantStaticListUtil.getTranType()));
-	  	lc.setParent(item);
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(transactionEntry.getDebitcredit(), PennantStaticListUtil.getTranType()));
+		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionEntry.getAccount(),
 				PennantStaticListUtil.getTransactionalAccount(ImplementationConstants.ALLOW_RIA)));
 		lc.setParent(item);
-		lc = new Listcell(StringUtils.trimToEmpty(transactionEntry.getPostToSys()).equals(AccountConstants.POSTTOSYS_CORE)? "T24" : "ERP");
+		lc = new Listcell(
+				StringUtils.trimToEmpty(transactionEntry.getPostToSys()).equals(AccountConstants.POSTTOSYS_CORE) ? "T24"
+						: "ERP");
 		lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getTranscationCode());
+		lc = new Listcell(transactionEntry.getTranscationCode());
 		lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getRecordStatus());
+		lc = new Listcell(transactionEntry.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(transactionEntry.getRecordType()));
 		lc.setParent(item);
-		if(transactionEntry.getDerivedTranOrder() == 0){
+		if (transactionEntry.getDerivedTranOrder() == 0) {
 			item.setAttribute("data", transactionEntry);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onTransactionEntryItemDoubleClicked");
 		}

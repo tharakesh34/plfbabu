@@ -70,32 +70,30 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/Profession/professionDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/Profession/professionDialog.zul file.
  */
 public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	private static final long serialVersionUID = -5160841359166113408L;
 	private static final Logger logger = Logger.getLogger(ProfessionDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ProfessionDialog; 		
+	protected Window window_ProfessionDialog;
 
-	protected Textbox 		professionCode; 				
-	protected Textbox 		professionDesc; 				
-	protected Checkbox 		professionIsActive; 			
-	protected Checkbox      professionSelfEmployee;         
-	
+	protected Textbox professionCode;
+	protected Textbox professionDesc;
+	protected Checkbox professionIsActive;
+	protected Checkbox professionSelfEmployee;
+
 	// not autoWired variables
 	private Profession profession; // over handed per parameter
 	private transient ProfessionListCtrl professionListCtrl; // over handed per
 	// parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient ProfessionService professionService;
 
@@ -114,9 +112,8 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Profession object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Profession object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -143,14 +140,12 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 				setProfession(null);
 			}
 
-			doLoadWorkFlow(this.profession.isWorkflow(),
-					this.profession.getWorkflowId(),
+			doLoadWorkFlow(this.profession.isWorkflow(), this.profession.getWorkflowId(),
 					this.profession.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ProfessionDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ProfessionDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -159,8 +154,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 			// or
 			// delete profession here.
 			if (arguments.containsKey("professionListCtrl")) {
-				setProfessionListCtrl((ProfessionListCtrl) arguments
-						.get("professionListCtrl"));
+				setProfessionListCtrl((ProfessionListCtrl) arguments.get("professionListCtrl"));
 			} else {
 				setProfessionListCtrl(null);
 			}
@@ -192,8 +186,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -303,11 +296,12 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		this.professionIsActive.setChecked(aProfession.isProfessionIsActive());
 		this.professionSelfEmployee.setChecked(aProfession.isSelfEmployee());
 		this.recordStatus.setValue(aProfession.getRecordStatus());
-		
-		if(aProfession.isNew() || (aProfession.getRecordType() != null ? aProfession.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aProfession.isNew() || (aProfession.getRecordType() != null ? aProfession.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.professionIsActive.setChecked(true);
 			this.professionIsActive.setDisabled(true);
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -362,8 +356,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProfession
 	 * @throws Exception
@@ -412,13 +405,16 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		logger.debug("Entering");
 
 		setValidationOn(true);
-		if (!this.professionCode.isReadonly()){
-			this.professionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfessionDialog_ProfessionCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.professionCode.isReadonly()) {
+			this.professionCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfessionDialog_ProfessionCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.professionDesc.isReadonly()){
-			this.professionDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfessionDialog_ProfessionDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.professionDesc.isReadonly()) {
+			this.professionDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfessionDialog_ProfessionDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -473,9 +469,9 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-		Labels.getLabel("label_ProfessionDialog_ProfessionCode.value")+" : "+aProfession.getProfessionCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ProfessionDialog_ProfessionCode.value") + " : "
+				+ aProfession.getProfessionCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aProfession.getRecordType())) {
 				aProfession.setVersion(aProfession.getVersion() + 1);
@@ -742,8 +738,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		Profession aProfession = (Profession) auditHeader.getAuditDetail()
-		.getModelData();
+		Profession aProfession = (Profession) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -771,8 +766,8 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ProfessionDialog, auditHeader);
 						return processCompleted;
 					}
@@ -805,7 +800,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	}
 
 	// WorkFlow Details
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -816,10 +811,9 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Profession aProfession, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aProfession.getBefImage(), aProfession);
-		return new AuditHeader(String.valueOf(aProfession.getId()), null, null,
-				null, auditDetail, aProfession.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProfession.getBefImage(), aProfession);
+		return new AuditHeader(String.valueOf(aProfession.getId()), null, null, null, auditDetail,
+				aProfession.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -860,7 +854,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	private void refreshList() {
 		getProfessionListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.profession.getProfessionCode());
@@ -872,6 +866,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -879,6 +874,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	public Profession getProfession() {
 		return this.profession;
 	}
+
 	public void setProfession(Profession profession) {
 		this.profession = profession;
 	}
@@ -886,6 +882,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	public void setProfessionService(ProfessionService professionService) {
 		this.professionService = professionService;
 	}
+
 	public ProfessionService getProfessionService() {
 		return this.professionService;
 	}
@@ -893,6 +890,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	public void setProfessionListCtrl(ProfessionListCtrl professionListCtrl) {
 		this.professionListCtrl = professionListCtrl;
 	}
+
 	public ProfessionListCtrl getProfessionListCtrl() {
 		return this.professionListCtrl;
 	}

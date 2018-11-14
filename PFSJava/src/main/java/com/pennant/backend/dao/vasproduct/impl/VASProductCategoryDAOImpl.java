@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.vasproduct.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -66,7 +65,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> implements VASProductCategoryDAO {
 	private static Logger logger = Logger.getLogger(VASProductCategoryDAOImpl.class);
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new VASProductCategory
 	 * 
@@ -112,7 +111,8 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 		VASProductCategory vASProductCategory = getVASProductCategory();
 		vASProductCategory.setId(id);
 		StringBuilder selectSql = new StringBuilder("Select ProductCtg, ProductCtgDesc, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
@@ -126,8 +126,7 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 				.newInstance(VASProductCategory.class);
 
 		try {
-			vASProductCategory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			vASProductCategory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vASProductCategory = null;
@@ -192,9 +191,11 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 		StringBuilder insertSql = new StringBuilder("Insert Into VasProductCategory");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ProductCtg, ProductCtgDesc, Active");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ProductCtg, :ProductCtgDesc, :Active");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -224,7 +225,8 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 		StringBuilder updateSql = new StringBuilder("Update VasProductCategory");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ProductCtgDesc = :ProductCtgDesc, Active = :Active");
-		updateSql.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ProductCtg =:ProductCtg");
 
 		if (!type.endsWith("_Temp")) {
@@ -242,7 +244,6 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 		logger.debug("Leaving");
 	}
 
-
 	@Override
 	public int getVASProductCategoryByActive(String productCtg, String type) {
 
@@ -259,8 +260,8 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductType);
 
 		try {
-			 count= this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
 		}

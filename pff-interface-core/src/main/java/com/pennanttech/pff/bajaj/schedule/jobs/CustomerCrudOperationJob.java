@@ -13,9 +13,9 @@ import com.pennanttech.bajaj.process.CustomerCurdOperationProcess;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerCrudOperationJob implements Job, Serializable {
-	private static final Logger				logger				= Logger.getLogger(CustomerCrudOperationJob.class);
+	private static final Logger logger = Logger.getLogger(CustomerCrudOperationJob.class);
 
-	private static final long				serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	public CustomerCrudOperationJob() {
 		super();
@@ -24,16 +24,16 @@ public class CustomerCrudOperationJob implements Job, Serializable {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-		DataSource dataSource =  (DataSource)context.getJobDetail().getJobDataMap().get("dataSource");
-		DataSource finOneDataSource =  (DataSource)context.getJobDetail().getJobDataMap().get("finOneDataSource");
-		
+		DataSource dataSource = (DataSource) context.getJobDetail().getJobDataMap().get("dataSource");
+		DataSource finOneDataSource = (DataSource) context.getJobDetail().getJobDataMap().get("finOneDataSource");
+
 		CustomerCurdOperationProcess service = new CustomerCurdOperationProcess(dataSource, finOneDataSource);
 		try {
 			service.process();
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 }

@@ -51,8 +51,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6021576460912988391L;
-	
-	private long custID=Long.MIN_VALUE;
+
+	private long custID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	private String custAcademicLevel;
 	private String lovDescCustAcademicLevelName;
@@ -60,7 +60,7 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	private String lovDescAcademicDeciplineName;
 	private long custRefCustID;
 	private String custRefStaffID;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerAdditionalDetail befImage;
 	private LoggedInUser userDetails;
@@ -83,17 +83,19 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return custID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.custID = id;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
@@ -101,6 +103,7 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
+
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
@@ -108,6 +111,7 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	public String getCustAcademicLevel() {
 		return custAcademicLevel;
 	}
+
 	public void setCustAcademicLevel(String custAcademicLevel) {
 		this.custAcademicLevel = custAcademicLevel;
 	}
@@ -115,13 +119,15 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	public String getLovDescCustAcademicLevelName() {
 		return this.lovDescCustAcademicLevelName;
 	}
+
 	public void setLovDescCustAcademicLevelName(String lovDescCustAcademicLevelName) {
 		this.lovDescCustAcademicLevelName = lovDescCustAcademicLevelName;
 	}
-	
+
 	public String getAcademicDecipline() {
 		return academicDecipline;
 	}
+
 	public void setAcademicDecipline(String academicDecipline) {
 		this.academicDecipline = academicDecipline;
 	}
@@ -129,48 +135,55 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	public String getLovDescAcademicDeciplineName() {
 		return this.lovDescAcademicDeciplineName;
 	}
+
 	public void setLovDescAcademicDeciplineName(String lovDescAcademicDeciplineName) {
 		this.lovDescAcademicDeciplineName = lovDescAcademicDeciplineName;
 	}
-	
+
 	public long getCustRefCustID() {
 		return custRefCustID;
 	}
+
 	public void setCustRefCustID(long custRefCustID) {
 		this.custRefCustID = custRefCustID;
 	}
-	
+
 	public String getCustRefStaffID() {
 		return custRefStaffID;
 	}
+
 	public void setCustRefStaffID(String custRefStaffID) {
 		this.custRefStaffID = custRefStaffID;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerAdditionalDetail getBefImage(){
+	public CustomerAdditionalDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerAdditionalDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerAdditionalDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -178,6 +191,7 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
+
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
@@ -185,6 +199,7 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
+
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}

@@ -78,24 +78,21 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMasters/Authorization/authorizationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/AMTMasters/Authorization/authorizationDialog.zul file.
  */
 public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger
-			.getLogger(AuthorizationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AuthorizationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AuthorizationDialog;
 	protected Row row0;
@@ -155,15 +152,13 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Authorization object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Authorization object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_AuthorizationDialog(Event event)
-			throws Exception {
+	public void onCreate$window_AuthorizationDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -180,8 +175,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			}
 			// READ OVERHANDED params !
 			if (arguments.containsKey("authorization")) {
-				this.authorization = (Authorization) arguments
-						.get("authorization");
+				this.authorization = (Authorization) arguments.get("authorization");
 				Authorization befImage = new Authorization();
 				BeanUtils.copyProperties(this.authorization, befImage);
 				this.authorization.setBefImage(befImage);
@@ -189,13 +183,11 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			} else {
 				setAuthorization(null);
 			}
-			doLoadWorkFlow(this.authorization.isWorkflow(),
-					this.authorization.getWorkflowId(),
+			doLoadWorkFlow(this.authorization.isWorkflow(), this.authorization.getWorkflowId(),
 					this.authorization.getNextTaskId());
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"AuthorizationDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "AuthorizationDialog");
 			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
@@ -207,8 +199,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			// or
 			// delete authorization here.
 			if (arguments.containsKey("authorizationListCtrl")) {
-				setAuthorizationListCtrl((AuthorizationListCtrl) arguments
-						.get("authorizationListCtrl"));
+				setAuthorizationListCtrl((AuthorizationListCtrl) arguments.get("authorizationListCtrl"));
 			} else {
 				setAuthorizationListCtrl(null);
 			}
@@ -302,10 +293,8 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(
-					getNotes("Authorization",
-							String.valueOf(getAuthorization().getAuthUserId()),
-							getAuthorization().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("Authorization", String.valueOf(getAuthorization().getAuthUserId()),
+					getAuthorization().getVersion()), this);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -313,8 +302,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	}
 
 	public void onClick$btnSearchauthUserId(Event event) {
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_AuthorizationDialog, "SecurityUsers");
+		Object dataObject = ExtendedSearchListBox.show(this.window_AuthorizationDialog, "SecurityUsers");
 		if (dataObject instanceof String) {
 			this.authUserIdName.setValue("");
 			this.authName.setValue("");
@@ -322,10 +310,8 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			SecurityUser details = (SecurityUser) dataObject;
 			if (details != null) {
 				this.authUserId.setValue(details.getUsrID());
-				this.authUserIdName.setValue(details.getUsrID() + "-"
-						+ details.getUsrLogin());
-				this.authName.setValue(details.getUsrFName() + " "
-						+ details.getUsrLName());
+				this.authUserIdName.setValue(details.getUsrID() + "-" + details.getUsrLogin());
+				this.authName.setValue(details.getUsrFName() + " " + details.getUsrLName());
 			}
 		}
 	}
@@ -335,8 +321,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAuthorization
 	 * @throws Exception
@@ -347,8 +332,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			// fill the components with the data
 			doWriteBeanToComponents(aAuthorization);
 			// set ReadOnly mode accordingly if the object is new or not.
-			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(),
-					aAuthorization.isNewRecord()));
+			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aAuthorization.isNewRecord()));
 			if (!aAuthorization.isNewRecord()) {
 				this.authType.setDisabled(true);
 				this.btnSearchauthUserId.setDisabled(true);
@@ -374,9 +358,8 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
 		System.out.println();
-		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes,
-				isWorkFlowEnabled(), isFirstTask(), this.userAction,
-				this.authType, this.authUserId));
+		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
+				this.userAction, this.authType, this.authUserId));
 		if (!getAuthorization().isNewRecord()) {
 			btnSearchauthUserId.setVisible(false);
 		}
@@ -394,26 +377,20 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		} else if (PennantConstants.RECORD_TYPE_DEL.equals(authorization.getRecordType())) {
 			tempReadOnly = true;
 		}
-		setLovAccess("AuthorizationDialog_AuthUserId", tempReadOnly,
-				this.btnSearchauthUserId, this.space_AuthUserId,
+		setLovAccess("AuthorizationDialog_AuthUserId", tempReadOnly, this.btnSearchauthUserId, this.space_AuthUserId,
 				this.label_AuthUserId, this.hlayout_AuthUserId, null);
-		setComponentAccessType("AuthorizationDialog_AuthType", tempReadOnly,
-				this.authType, this.space_AuthType, this.label_AuthType,
-				this.hlayout_AuthType, null);
-		setRowInvisible(this.row0, this.hlayout_AuthUserId,
-				this.hlayout_AuthType);
-		setComponentAccessType("AuthorizationDialog_AuthName", true,
-				this.authName, this.space_AuthName, this.label_AuthName,
-				this.hlayout_AuthName, null);
+		setComponentAccessType("AuthorizationDialog_AuthType", tempReadOnly, this.authType, this.space_AuthType,
+				this.label_AuthType, this.hlayout_AuthType, null);
+		setRowInvisible(this.row0, this.hlayout_AuthUserId, this.hlayout_AuthType);
+		setComponentAccessType("AuthorizationDialog_AuthName", true, this.authName, this.space_AuthName,
+				this.label_AuthName, this.hlayout_AuthName, null);
 
 		this.authDepartment.setReadonly(isReadOnly("AuthorizationDialog_AuthDept"));
 		this.authDesignation.setReadonly(isReadOnly("AuthorizationDialog_AuthDesig"));
 		setRowInvisible(this.row1, this.hlayout_AuthName, this.hlayout_AuthDept);
-		setComponentAccessType("AuthorizationDialog_AuthSignature",
-				tempReadOnly, this.authSignature, this.space_AuthSignature,
-				this.label_AuthSignature, this.hlayout_AuthSignature, null);
-		setRowInvisible(this.row2, this.hlayout_AuthDesig,
-				this.hlayout_AuthSignature);
+		setComponentAccessType("AuthorizationDialog_AuthSignature", tempReadOnly, this.authSignature,
+				this.space_AuthSignature, this.label_AuthSignature, this.hlayout_AuthSignature, null);
+		setRowInvisible(this.row2, this.hlayout_AuthDesig, this.hlayout_AuthSignature);
 		logger.debug("Leaving");
 	}
 
@@ -424,21 +401,16 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		if (!enqModule) {
-			this.btnNew.setVisible(getUserWorkspace().isAllowed(
-					"button_AuthorizationDialog_btnNew"));
-			this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-					"button_AuthorizationDialog_btnEdit"));
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-					"button_AuthorizationDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed(
-					"button_AuthorizationDialog_btnSave"));
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AuthorizationDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AuthorizationDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AuthorizationDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AuthorizationDialog_btnSave"));
 		}
 		logger.debug("Leaving");
 	}
@@ -480,8 +452,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		logger.debug("Entering");
 		this.authUserId.setValue(aAuthorization.getAuthUserId());
 		this.authUserIdName.setValue(aAuthorization.getAuthUserIdName());
-		fillComboBox(this.authType, aAuthorization.getAuthType(),
-				PennantStaticListUtil.getAuthTypes(), "");
+		fillComboBox(this.authType, aAuthorization.getAuthType(), PennantStaticListUtil.getAuthTypes(), "");
 		this.authName.setValue(aAuthorization.getAuthName());
 		this.authDepartment.setValue(aAuthorization.getAuthDept());
 		this.authDesignation.setValue(aAuthorization.getAuthDesig());
@@ -490,14 +461,13 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			this.authDepartment.setDescription("");
 			this.authDesignation.setDescription("");
 		} else {
-			this.authDepartment
-					.setDescription(aAuthorization.getAuthDeptName());
-			this.authDesignation.setDescription(aAuthorization
-					.getAuthDesigName());
+			this.authDepartment.setDescription(aAuthorization.getAuthDeptName());
+			this.authDesignation.setDescription(aAuthorization.getAuthDesigName());
 		}
 		this.recordStatus.setValue(aAuthorization.getRecordStatus());
-		/*this.recordType.setValue(PennantJavaUtil.getLabel(aAuthorization
-				.getRecordType()));*/
+		/*
+		 * this.recordType.setValue(PennantJavaUtil.getLabel(aAuthorization .getRecordType()));
+		 */
 		logger.debug("Leaving");
 	}
 
@@ -521,11 +491,9 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		try {
 			String strAuthType = null;
 			if (this.authType.getSelectedItem() != null) {
-				strAuthType = this.authType.getSelectedItem().getValue()
-						.toString();
+				strAuthType = this.authType.getSelectedItem().getValue().toString();
 			}
-			if (strAuthType != null
-					&& !PennantConstants.List_Select.equals(strAuthType)) {
+			if (strAuthType != null && !PennantConstants.List_Select.equals(strAuthType)) {
 				aAuthorization.setAuthType(strAuthType);
 			} else {
 				aAuthorization.setAuthType(null);
@@ -541,18 +509,15 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		}
 		// Auth Dept
 		try {
-			aAuthorization
-					.setAuthDeptName(this.authDepartment.getDescription());
+			aAuthorization.setAuthDeptName(this.authDepartment.getDescription());
 			aAuthorization.setAuthDept(this.authDepartment.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Auth Desig
 		try {
-			aAuthorization.setAuthDesigName(this.authDesignation
-					.getDescription());
-			aAuthorization.setAuthDesig(this.authDesignation
-					.getValidatedValue());
+			aAuthorization.setAuthDesigName(this.authDesignation.getDescription());
+			aAuthorization.setAuthDesig(this.authDesignation.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -581,27 +546,24 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		logger.debug("Entering");
 		// Auth Type
 		if (!this.authType.isDisabled()) {
-			this.authType
-					.setConstraint(new StaticListValidator(
-							PennantStaticListUtil.getAuthTypes(),
-							Labels.getLabel("label_AuthorizationDialog_AuthType.value")));
+			this.authType.setConstraint(new StaticListValidator(PennantStaticListUtil.getAuthTypes(),
+					Labels.getLabel("label_AuthorizationDialog_AuthType.value")));
 		}
 		// Auth Name
 		if (!this.authName.isReadonly()) {
-			this.authName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AuthorizationDialog_AuthName.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+			this.authName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_AuthorizationDialog_AuthName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		// Auth Signature
 		if (!this.authSignature.isReadonly()) {
-			this.authSignature.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AuthorizationDialog_AuthSignature.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+			this.authSignature.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AuthorizationDialog_AuthSignature.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.authUserIdName.isDisabled()) {
-			this.authUserIdName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AuthorizationDialog_AuthUserId.value"),
-					null, true));
+			this.authUserIdName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AuthorizationDialog_AuthUserId.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -625,18 +587,15 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	private void doSetLOVValidation() {
 		// Auth UserId
 		if (!btnSearchauthUserId.isVisible()) {
-			this.authUserIdName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AuthorizationDialog_AuthUserId.value"),
-					null, true));
+			this.authUserIdName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AuthorizationDialog_AuthUserId.value"), null, true));
 		}
 		// Auth Dept
-		this.authDepartment.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_AuthorizationDialog_AuthDept.value"), null,
-				true, true));
+		this.authDepartment.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_AuthorizationDialog_AuthDept.value"), null, true, true));
 		// Auth Desig
-		this.authDesignation.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_AuthorizationDialog_AuthDesig.value"), null,
-				true, true));
+		this.authDesignation.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_AuthorizationDialog_AuthDesig.value"), null, true, true));
 
 	}
 
@@ -681,26 +640,20 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		BeanUtils.copyProperties(getAuthorization(), aAuthorization);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_AuthorizationDialog_AuthUserId.value")
-				+ " : "
-				+ aAuthorization.getAuthUserIdName()
-				+ ","
-				+ Labels.getLabel("label_AuthorizationDialog_AuthType.value")
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_AuthorizationDialog_AuthUserId.value") + " : "
+				+ aAuthorization.getAuthUserIdName() + "," + Labels.getLabel("label_AuthorizationDialog_AuthType.value")
 				+ " : " + this.authType.getSelectedItem().getLabel();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aAuthorization.getRecordType())) {
 				aAuthorization.setVersion(aAuthorization.getVersion() + 1);
 				aAuthorization.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				if (isWorkFlowEnabled()) {
-					aAuthorization.setRecordStatus(userAction.getSelectedItem()
-							.getValue().toString());
+					aAuthorization.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aAuthorization.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-							aAuthorization.getNextTaskId(), aAuthorization);
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAuthorization.getNextTaskId(),
+							aAuthorization);
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
@@ -744,15 +697,12 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		BeanUtils.copyProperties(getAuthorization(), aAuthorization);
 		boolean isNew = false;
 		if (isWorkFlowEnabled()) {
-			aAuthorization.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-					aAuthorization.getNextTaskId(), aAuthorization);
+			aAuthorization.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAuthorization.getNextTaskId(), aAuthorization);
 		}
 
 		// force validation, if on, than execute by component.getValue()
-		if (!PennantConstants.RECORD_TYPE_DEL.equals(aAuthorization
-				.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aAuthorization.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the Authorization object with the components data
 			doWriteComponentsToBean(aAuthorization);
@@ -767,11 +717,9 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			if (StringUtils.isBlank(aAuthorization.getRecordType())) {
 				aAuthorization.setVersion(aAuthorization.getVersion() + 1);
 				if (isNew) {
-					aAuthorization
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aAuthorization.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aAuthorization
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aAuthorization.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aAuthorization.setNewRecord(true);
 				}
 			}
@@ -810,8 +758,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	private boolean doProcess(Authorization aAuthorization, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aAuthorization.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aAuthorization.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAuthorization.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aAuthorization.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {
@@ -828,12 +775,10 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			aAuthorization.setRoleCode(getRole());
 			aAuthorization.setNextRoleCode(getNextRoleCode());
 			if (StringUtils.isBlank(getOperationRefs())) {
-				processCompleted = doSaveProcess(
-						getAuditHeader(aAuthorization, tranType), null);
+				processCompleted = doSaveProcess(getAuditHeader(aAuthorization, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				AuditHeader auditHeader = getAuditHeader(aAuthorization,
-						PennantConstants.TRAN_WF);
+				AuditHeader auditHeader = getAuditHeader(aAuthorization, PennantConstants.TRAN_WF);
 				for (int i = 0; i < list.length; i++) {
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
@@ -842,8 +787,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 				}
 			}
 		} else {
-			processCompleted = doSaveProcess(
-					getAuditHeader(aAuthorization, tranType), null);
+			processCompleted = doSaveProcess(getAuditHeader(aAuthorization, tranType), null);
 		}
 		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
@@ -865,58 +809,41 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
-		Authorization aAuthorization = (Authorization) auditHeader
-				.getAuditDetail().getModelData();
+		Authorization aAuthorization = (Authorization) auditHeader.getAuditDetail().getModelData();
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader
-							.getAuditTranType())) {
-						auditHeader = getAuthorizationService().delete(
-								auditHeader);
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+						auditHeader = getAuthorizationService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getAuthorizationService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getAuthorizationService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (PennantConstants.method_doApprove
-							.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getAuthorizationService().doApprove(
-								auditHeader);
-						if (PennantConstants.RECORD_TYPE_DEL
-								.equals(aAuthorization.getRecordType())) {
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+						auditHeader = getAuthorizationService().doApprove(auditHeader);
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aAuthorization.getRecordType())) {
 							deleteNotes = true;
 						}
-					} else if (PennantConstants.method_doReject
-							.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getAuthorizationService().doReject(
-								auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW
-								.equals(aAuthorization.getRecordType())) {
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+						auditHeader = getAuthorizationService().doReject(auditHeader);
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aAuthorization.getRecordType())) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_AuthorizationDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_AuthorizationDialog, auditHeader);
 						return processCompleted;
 					}
 				}
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_AuthorizationDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_AuthorizationDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
 					if (deleteNotes) {
-						deleteNotes(
-								getNotes("Authorization",
-										String.valueOf(aAuthorization
-												.getAuthUserId()),
-										aAuthorization.getVersion()), true);
+						deleteNotes(getNotes("Authorization", String.valueOf(aAuthorization.getAuthUserId()),
+								aAuthorization.getVersion()), true);
 					}
 				}
 				if (retValue == PennantConstants.porcessOVERIDE) {
@@ -942,13 +869,10 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(Authorization aAuthorization,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aAuthorization.getBefImage(), aAuthorization);
-		return new AuditHeader(String.valueOf(aAuthorization.getAuthUserId()),
-				null, null, null, auditDetail, aAuthorization.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(Authorization aAuthorization, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAuthorization.getBefImage(), aAuthorization);
+		return new AuditHeader(String.valueOf(aAuthorization.getAuthUserId()), null, null, null, auditDetail,
+				aAuthorization.getUserDetails(), getOverideMap());
 	}
 
 	// ******************************************************//
@@ -962,8 +886,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		this.authorization = authorization;
 	}
 
-	public void setAuthorizationService(
-			AuthorizationService authorizationService) {
+	public void setAuthorizationService(AuthorizationService authorizationService) {
 		this.authorizationService = authorizationService;
 	}
 
@@ -971,8 +894,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		return this.authorizationService;
 	}
 
-	public void setAuthorizationListCtrl(
-			AuthorizationListCtrl authorizationListCtrl) {
+	public void setAuthorizationListCtrl(AuthorizationListCtrl authorizationListCtrl) {
 		this.authorizationListCtrl = authorizationListCtrl;
 	}
 

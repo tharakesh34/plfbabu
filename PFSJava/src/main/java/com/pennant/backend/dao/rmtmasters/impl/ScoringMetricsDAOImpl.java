@@ -43,9 +43,7 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
-
 import java.util.List;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -69,17 +67,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements ScoringMetricsDAO {
 	private static Logger logger = Logger.getLogger(ScoringMetricsDAOImpl.class);
-	
+
 	public ScoringMetricsDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Scoring Metrics Details details by key fields
+	 * Fetch the Record Scoring Metrics Details details by key fields
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ScoringMetrics
 	 */
 	@Override
@@ -89,7 +88,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		scoringMetrics.setId(0);
 
 		StringBuilder selectSql = new StringBuilder("Select ScoreGroupId, ScoringId, CategoryType, ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescScoringCode,lovDescScoringCodeDesc,lovDescScoreMetricSeq, lovDescSQLRule, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
@@ -102,26 +101,27 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
 		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
-		try{
-			scoringMetrics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			scoringMetrics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			scoringMetrics = null;
 		}
 		logger.debug("Leaving");
 		return scoringMetrics;
 	}
+
 	/**
-	 * This method returns the  List<ScoringMetrics>  by key field
+	 * This method returns the List<ScoringMetrics> by key field
 	 */
-	public List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId,String categoryType, String type) {
+	public List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId, String categoryType, String type) {
 		logger.debug("Entering");
 		ScoringMetrics scoringMetrics = new ScoringMetrics();
 		scoringMetrics.setScoreGroupId(scoreGrpId);
 		scoringMetrics.setCategoryType(categoryType);
 
 		StringBuilder selectSql = new StringBuilder("Select ScoreGroupId, ScoringId, CategoryType, ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescScoringCode,lovDescScoringCodeDesc,lovDescScoreMetricSeq, lovDescSQLRule, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
@@ -132,25 +132,25 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
 		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTScoringMetrics or RMTScoringMetrics_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Scoring Metrics Details by key ScoreGroupId and ScoringId
+	 * This method Deletes the Record from the RMTScoringMetrics or RMTScoringMetrics_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Scoring Metrics Details by key ScoreGroupId and ScoringId
 	 * 
-	 * @param Scoring Metrics Details (scoringMetrics)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Scoring
+	 *            Metrics Details (scoringMetrics)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(ScoringMetrics scoringMetrics,String type) {
+	public void delete(ScoringMetrics scoringMetrics, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -160,57 +160,60 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * This method delete the record by scoreGroupId
 	 */
-	public void delete(long  scoreGroupId,String type) {
+	public void delete(long scoreGroupId, String type) {
 		logger.debug("Entering");
-		ScoringMetrics scoringMetrics=new ScoringMetrics();
+		ScoringMetrics scoringMetrics = new ScoringMetrics();
 		scoringMetrics.setScoreGroupId(scoreGroupId);
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTScoringMetrics");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ScoreGroupId =:ScoreGroupId");
-		
+
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * This method insert new Records into RMTScoringMetrics or RMTScoringMetrics_Temp.
 	 *
-	 * save Scoring Metrics Details 
+	 * save Scoring Metrics Details
 	 * 
-	 * @param Scoring Metrics Details (scoringMetrics)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Scoring
+	 *            Metrics Details (scoringMetrics)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(ScoringMetrics scoringMetrics,String type) {
+	public String save(ScoringMetrics scoringMetrics, String type) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql =new StringBuilder("Insert Into RMTScoringMetrics");
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTScoringMetrics");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ScoreGroupId, ScoringId, CategoryType, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode , " );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode , ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ScoreGroupId, :ScoringId, :CategoryType, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -222,30 +225,31 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 	}
 
 	/**
-	 * This method updates the Record RMTScoringMetrics or RMTScoringMetrics_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Scoring Metrics Details by key ScoreGroupId and Version
+	 * This method updates the Record RMTScoringMetrics or RMTScoringMetrics_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Scoring Metrics Details by key ScoreGroupId and Version
 	 * 
-	 * @param Scoring Metrics Details (scoringMetrics)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Scoring
+	 *            Metrics Details (scoringMetrics)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(ScoringMetrics scoringMetrics,String type) {
+	public void update(ScoringMetrics scoringMetrics, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update RMTScoringMetrics");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CategoryType =:CategoryType, " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update RMTScoringMetrics");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set CategoryType =:CategoryType, ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ScoreGroupId =:ScoreGroupId AND  ScoringId = :ScoringId");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
@@ -259,7 +263,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public int getScoringMetricsByRuleCode(long ruleId, String type) {
 		logger.debug("Entering");
@@ -277,5 +281,5 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
 }

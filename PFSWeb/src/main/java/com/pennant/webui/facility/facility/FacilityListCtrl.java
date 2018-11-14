@@ -62,10 +62,10 @@ import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.service.facility.FacilityService;
 import com.pennant.webui.facility.facility.model.FacilityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Facility/Facility/FacilityList.zul file.
@@ -166,7 +166,7 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 			}
 		}
 	}
-	
+
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -283,8 +283,8 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 		} else {
 			aFacility.setUserRole(getRole());
 			aFacility = getFacilityService().setFacilityScoringDetails(aFacility);
-			aFacility.setCustomerEligibilityCheck(getFacilityService().getCustomerEligibility(null,
-					aFacility.getCustID()));
+			aFacility.setCustomerEligibilityCheck(
+					getFacilityService().getCustomerEligibility(null, aFacility.getCustID()));
 		}
 
 		// Check whether the user has authority to change/view the record.
@@ -364,13 +364,12 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 		logger.debug("Leaving");
 	}
 
-	
 	public void onClick$button_FacilityList_PrintList(Event event) throws InterruptedException {
-		logger.debug("Entering "+event.toString());
+		logger.debug("Entering " + event.toString());
 		doPrintResults();
-		logger.debug("Leaving "+event.toString());
+		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	public void setFacilityService(FacilityService facilityService) {
 		this.facilityService = facilityService;
 	}

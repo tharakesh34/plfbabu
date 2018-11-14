@@ -20,14 +20,14 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
-	private static final Logger	logger				= Logger.getLogger(MasterDataExtractionCtrl.class);
-	private static final long	serialVersionUID	= 1297405999029019920L;
+	private static final Logger logger = Logger.getLogger(MasterDataExtractionCtrl.class);
+	private static final long serialVersionUID = 1297405999029019920L;
 
-	protected Window			window_MasterDataExtractCtrl;
-	protected Button			btnDownload;
+	protected Window window_MasterDataExtractCtrl;
+	protected Button btnDownload;
 
-	protected Combobox			masterConfiguration;
-	protected DataEngineConfig	dataEngineConfig;
+	protected Combobox masterConfiguration;
+	protected DataEngineConfig dataEngineConfig;
 
 	/**
 	 * default constructor.<br>
@@ -88,7 +88,8 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 		String config = masterConfiguration.getSelectedItem().getValue();
 		DataEngineStatus status = new DataEngineStatus(config);
-		DataEngineExport export = new DataEngineExport(dataEngineConfig.getDataSource(), 1000, App.DATABASE.toString(),true, null,status);
+		DataEngineExport export = new DataEngineExport(dataEngineConfig.getDataSource(), 1000, App.DATABASE.toString(),
+				true, null, status);
 
 		export.exportData(config);
 

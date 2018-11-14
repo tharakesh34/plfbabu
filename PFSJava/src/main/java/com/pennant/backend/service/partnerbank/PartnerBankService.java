@@ -63,7 +63,7 @@ public interface PartnerBankService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	List<PartnerBankModes> getPartnerBankModesId(long id);
 
 	boolean getPartnerCodeExist(String partnerBankCodeValue, String partnerBankCode);

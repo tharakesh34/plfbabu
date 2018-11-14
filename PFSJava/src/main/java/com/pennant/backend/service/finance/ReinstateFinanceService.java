@@ -55,13 +55,22 @@ import com.pennant.backend.model.finance.ReinstateFinance;
 public interface ReinstateFinanceService {
 
 	ReinstateFinance getReinstateFinance();
+
 	ReinstateFinance getNewReinstateFinance();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ReinstateFinance getReinstateFinanceById(String finReference);
+
 	ReinstateFinance getApprovedReinstateFinanceById(String finReference);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	ReinstateFinance getFinanceDetailsById(String finReference);
+
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
 }

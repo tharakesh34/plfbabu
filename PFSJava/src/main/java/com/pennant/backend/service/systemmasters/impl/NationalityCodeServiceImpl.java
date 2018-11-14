@@ -73,7 +73,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	public NationalityCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -95,15 +95,12 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTNationalityCodes/BMTNationalityCodes_Temp by using
-	 * NationalityCodeDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using
-	 * NationalityCodeDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTNationalityCodes/BMTNationalityCodes_Temp by using NationalityCodeDAO's save method b) Update the Record in
+	 * the table. based on the module workFlow Configuration. by using NationalityCodeDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -140,12 +137,10 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTNationalityCodes by using NationalityCodeDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTNationalityCodes by using NationalityCodeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -168,8 +163,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * getNationalityCodeById fetch the details by using NationalityCodeDAO's
-	 * getNationalityCodeById method.
+	 * getNationalityCodeById fetch the details by using NationalityCodeDAO's getNationalityCodeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -183,10 +177,8 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * getApprovedNationalityCodeById fetch the details by using
-	 * NationalityCodeDAO's getNationalityCodeById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * BMTNationalityCodes.
+	 * getApprovedNationalityCodeById fetch the details by using NationalityCodeDAO's getNationalityCodeById method .
+	 * with parameter id and type as blank. it fetches the approved records from the BMTNationalityCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,21 +189,16 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getNationalityCodeDAO().delete with parameters nationalityCode,""
-	 * b) NEW Add new record in to main table by using
-	 * getNationalityCodeDAO().save with parameters nationalityCode,"" c) EDIT
-	 * Update record in the main table by using getNationalityCodeDAO().update
-	 * with parameters nationalityCode,"" 3) Delete the record from the
-	 * workFlow table by using getNationalityCodeDAO().delete with parameters
-	 * nationalityCode,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getNationalityCodeDAO().delete with
+	 * parameters nationalityCode,"" b) NEW Add new record in to main table by using getNationalityCodeDAO().save with
+	 * parameters nationalityCode,"" c) EDIT Update record in the main table by using getNationalityCodeDAO().update
+	 * with parameters nationalityCode,"" 3) Delete the record from the workFlow table by using
+	 * getNationalityCodeDAO().delete with parameters nationalityCode,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
+	 * Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -230,11 +217,12 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 		BeanUtils.copyProperties((NationalityCode) auditHeader.getAuditDetail().getModelData(), nationalityCode);
 
 		getNationalityCodeDAO().delete(nationalityCode, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(nationalityCodeDAO.getNationalityCodeById(nationalityCode.getNationalityCode(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(nationalityCodeDAO.getNationalityCodeById(nationalityCode.getNationalityCode(), ""));
 		}
-		
+
 		if (nationalityCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
@@ -270,13 +258,10 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getNationalityCodeDAO().delete with
-	 * parameters nationalityCode,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getNationalityCodeDAO().delete with parameters nationalityCode,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTNationalityCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -301,19 +286,16 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -322,10 +304,9 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getNationalityCodeDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getNationalityCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -339,10 +320,9 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 		String code = nationalityCode.getNationalityCode();
 
 		// Check the unique keys.
-		if (nationalityCode.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())
-				&& nationalityCodeDAO.isDuplicateKey(code, nationalityCode.isWorkflow() ? TableType.BOTH_TAB
-						: TableType.MAIN_TAB)) {
+		if (nationalityCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())
+				&& nationalityCodeDAO.isDuplicateKey(code,
+						nationalityCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_NationalityCode") + ": " + code;
 

@@ -79,9 +79,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalApplicantDetail/legalApplicantDetailDialog.zul
- * file. <br>
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalApplicantDetail/legalApplicantDetailDialog.zul file.
+ * <br>
  */
 public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDetail> {
 
@@ -132,8 +131,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -154,20 +152,20 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 
 			this.setLegalDetailDialogCtrl((LegalDetailDialogCtrl) arguments.get("legalDetailDialogCtrl"));
 			setNewApplicantDetails(true);
-			
+
 			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
 			} else {
 				setNewRecord(false);
 			}
-			
+
 			if (this.legalApplicantDetail.isDefault()) {
 				setNewRecord(true);
 			}
-			
+
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
-			}  
+			}
 			this.legalApplicantDetail.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
@@ -276,8 +274,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -289,8 +286,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -365,7 +361,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		this.title.setDescription(aLegalApplicantDetail.getTitleName());
 		this.propertyOwnersName.setValue(aLegalApplicantDetail.getPropertyOwnersName());
 		this.age.setValue(aLegalApplicantDetail.getAge());
-		
+
 		this.relationshipType.setValue(aLegalApplicantDetail.getRelationshipType());
 		this.iDType.setValue(aLegalApplicantDetail.getIDType());
 		this.iDType.setDescription(aLegalApplicantDetail.getIDTypeName());
@@ -380,7 +376,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		this.label_dob.setVisible(false);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -588,8 +584,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -726,7 +721,6 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		readOnlyComponent(true, this.iDNo);
 		readOnlyComponent(true, this.remarks);
 
-		 
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -847,11 +841,11 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 
 		if (oldLegalApplicantDetailsList != null && !oldLegalApplicantDetailsList.isEmpty()) {
 			for (LegalApplicantDetail oldDetails : oldLegalApplicantDetailsList) {
-				
+
 				if (oldDetails.getSeqNum() == aLegalApplicantDetail.getSeqNum()) {
 					duplicateRecord = true;
 				}
-				
+
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalApplicantDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
@@ -878,7 +872,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 				duplicateRecord = false;
 			}
 		}
-		
+
 		aLegalApplicantDetail.setDefault(false);
 		aLegalApplicantDetail.setCustomerId(this.legalApplicantDetail.getCustomer() == null ? Long.MIN_VALUE
 				: this.legalApplicantDetail.getCustomer().getCustID());

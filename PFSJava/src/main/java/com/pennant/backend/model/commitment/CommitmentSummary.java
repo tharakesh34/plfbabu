@@ -32,55 +32,64 @@ import java.math.BigDecimal;
  * 
  */
 public class CommitmentSummary implements java.io.Serializable {
-    private static final long serialVersionUID = 6216226596047147804L;
+	private static final long serialVersionUID = 6216226596047147804L;
 	private long custID;
 	private String cmtCcy;
 	private BigDecimal totCommitments;
 	private BigDecimal totComtAmount;
 	private BigDecimal totUtilizedAmoun;
 	private int ccyEditField;
-	
-	public CommitmentSummary() {
-		
-	}
-	
-	public long getCustID() {
-    	return custID;
-    }
-	public void setCustID(long custID) {
-    	this.custID = custID;
-    }
-	public String getCmtCcy() {
-    	return cmtCcy;
-    }
-	public void setCmtCcy(String cmtCcy) {
-    	this.cmtCcy = cmtCcy;
-    }
-	public BigDecimal getTotCommitments() {
-    	return totCommitments;
-    }
-	public void setTotCommitments(BigDecimal totCommitments) {
-    	this.totCommitments = totCommitments;
-    }
-	public BigDecimal getTotComtAmount() {
-    	return totComtAmount;
-    }
-	public void setTotComtAmount(BigDecimal totComtAmount) {
-    	this.totComtAmount = totComtAmount;
-    }
-	public BigDecimal getTotUtilizedAmoun() {
-    	return totUtilizedAmoun;
-    }
-	public void setTotUtilizedAmoun(BigDecimal totUtilizedAmoun) {
-    	this.totUtilizedAmoun = totUtilizedAmoun;
-    }
-	public int getCcyEditField() {
-    	return ccyEditField;
-    }
-	public void setCcyEditField(int ccyEditField) {
-    	this.ccyEditField = ccyEditField;
-    }
-	
 
+	public CommitmentSummary() {
+
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+
+	public String getCmtCcy() {
+		return cmtCcy;
+	}
+
+	public void setCmtCcy(String cmtCcy) {
+		this.cmtCcy = cmtCcy;
+	}
+
+	public BigDecimal getTotCommitments() {
+		return totCommitments;
+	}
+
+	public void setTotCommitments(BigDecimal totCommitments) {
+		this.totCommitments = totCommitments;
+	}
+
+	public BigDecimal getTotComtAmount() {
+		return totComtAmount;
+	}
+
+	public void setTotComtAmount(BigDecimal totComtAmount) {
+		this.totComtAmount = totComtAmount;
+	}
+
+	public BigDecimal getTotUtilizedAmoun() {
+		return totUtilizedAmoun;
+	}
+
+	public void setTotUtilizedAmoun(BigDecimal totUtilizedAmoun) {
+		this.totUtilizedAmoun = totUtilizedAmoun;
+	}
+
+	public int getCcyEditField() {
+		return ccyEditField;
+	}
+
+	public void setCcyEditField(int ccyEditField) {
+		this.ccyEditField = ccyEditField;
+	}
 
 }

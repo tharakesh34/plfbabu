@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class RelationshipOfficer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -6954546690866975110L;
-	
+
 	private String rOfficerCode;
 	private String rOfficerDesc;
 	private String rOfficerDeptCode;
@@ -64,7 +64,7 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	private boolean rOfficerIsActive;
 	private String grade;
 	private String mobileNO;
-	private Date   dateOfJoin;
+	private Date dateOfJoin;
 	private String genDesignation;
 	private String gendesgdesc;
 	private boolean newRecord;
@@ -94,32 +94,35 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return rOfficerCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.rOfficerCode = id;
 	}
-	
+
 	public String getROfficerCode() {
 		return rOfficerCode;
 	}
+
 	public void setROfficerCode(String rOfficerCode) {
 		this.rOfficerCode = rOfficerCode;
 	}
-	
+
 	public String getROfficerDesc() {
 		return rOfficerDesc;
 	}
+
 	public void setROfficerDesc(String rOfficerDesc) {
 		this.rOfficerDesc = rOfficerDesc;
 	}
-		
+
 	public String getROfficerDeptCode() {
 		return rOfficerDeptCode;
 	}
+
 	public void setROfficerDeptCode(String rOfficerDeptCode) {
 		this.rOfficerDeptCode = rOfficerDeptCode;
 	}
@@ -127,13 +130,15 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	public String getLovDescROfficerDeptCodeName() {
 		return this.lovDescROfficerDeptCodeName;
 	}
-	public void setLovDescROfficerDeptCodeName (String lovDescROfficerDeptCodeName) {
+
+	public void setLovDescROfficerDeptCodeName(String lovDescROfficerDeptCodeName) {
 		this.lovDescROfficerDeptCodeName = lovDescROfficerDeptCodeName;
 	}
-	
+
 	public boolean isROfficerIsActive() {
 		return rOfficerIsActive;
 	}
+
 	public void setROfficerIsActive(boolean rOfficerIsActive) {
 		this.rOfficerIsActive = rOfficerIsActive;
 	}
@@ -177,31 +182,35 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	public void setGendesgdesc(String gendesgdesc) {
 		this.gendesgdesc = gendesgdesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public RelationshipOfficer getBefImage(){
+	public RelationshipOfficer getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(RelationshipOfficer beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(RelationshipOfficer beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

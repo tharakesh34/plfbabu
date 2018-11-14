@@ -46,8 +46,8 @@ import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ShowDedupPoliceBox extends Window implements Serializable {
 	private static final long serialVersionUID = -2854517425413800019L;
@@ -74,6 +74,7 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 	private Rows rows;
 	private String curAccessedUser;
 	public PoliceCaseDetail curCustomer;
+
 	public ShowDedupPoliceBox() {
 		super();
 	}
@@ -85,18 +86,18 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	public static Object show(Component parent, List<PoliceCaseDetail> dedupList, String dedupFields,PoliceCaseDetail policeCase,String curUser) {
-		return new ShowDedupPoliceBox(parent, dedupList, dedupFields,policeCase,curUser);
+	public static Object show(Component parent, List<PoliceCaseDetail> dedupList, String dedupFields,
+			PoliceCaseDetail policeCase, String curUser) {
+		return new ShowDedupPoliceBox(parent, dedupList, dedupFields, policeCase, curUser);
 	}
 
-
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ShowDedupPoliceBox(Component parent, List<PoliceCaseDetail> listCode, String dedupFields,PoliceCaseDetail policeCase,String curUser) {
+	private ShowDedupPoliceBox(Component parent, List<PoliceCaseDetail> listCode, String dedupFields,
+			PoliceCaseDetail policeCase, String curUser) {
 		super();
 		this.dedupListSize = (List<PoliceCaseDetail>) listCode;
 		this.fieldString = dedupFields.split(",");
@@ -112,12 +113,11 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 		setCurCustomer(policeCase);
 		int borderLayoutHeight = GFCBaseCtrl.getDesktopHeight();
 		int borderLayoutWidth = GFCBaseCtrl.getDesktopWidth();
-		this.setWidth((borderLayoutWidth -100) + "px");
-		this.setHeight((borderLayoutHeight -150) + "px");
-
+		this.setWidth((borderLayoutWidth - 100) + "px");
+		this.setHeight((borderLayoutHeight - 150) + "px");
 
 		// Window
-		int listRows = Math.round((borderLayoutHeight-300) / 25) - 3;
+		int listRows = Math.round((borderLayoutHeight - 300) / 25) - 3;
 		setPageSize(listRows);
 		this.setVisible(true);
 		this.setClosable(true);
@@ -231,33 +231,36 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 		columns.appendChild(column1);
 		columns.appendChild(column2);
 		columns.appendChild(column3);
-		columns.appendChild(column4); 
+		columns.appendChild(column4);
 
 		grid.appendChild(columns);
 
 		// Rows Preparation
 		rows = new Rows();
 		rows.setParent(grid);
-		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_PoliceCaseListDialog_CustCIF.value"), 
-				policeCase.getCustCIF(), Labels.getLabel("label_PoliceCaseListDialog_CustDOB.value"), 
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_PoliceCaseListDialog_CustCIF.value"),
+				policeCase.getCustCIF(), Labels.getLabel("label_PoliceCaseListDialog_CustDOB.value"),
 				DateUtility.formatToLongDate(policeCase.getCustDOB())));
-		rows.appendChild(prepareRow(new Row(),  Labels.getLabel("label_PoliceCaseListDialog_CustFName.value"),
-				policeCase.getCustFName(),  Labels.getLabel("label_PoliceCaseListDialog_CustLName.value"), policeCase.getCustLName()));
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_PoliceCaseListDialog_CustFName.value"),
+				policeCase.getCustFName(), Labels.getLabel("label_PoliceCaseListDialog_CustLName.value"),
+				policeCase.getCustLName()));
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_PoliceCaseListDialog_CustEIDNumber.value"),
-				PennantApplicationUtil.formatEIDNumber(policeCase.getCustCRCPR()), Labels.getLabel("label_PoliceCaseListDialog_CustPassport.value"),policeCase.getCustPassportNo()));
+				PennantApplicationUtil.formatEIDNumber(policeCase.getCustCRCPR()),
+				Labels.getLabel("label_PoliceCaseListDialog_CustPassport.value"), policeCase.getCustPassportNo()));
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_PoliceCaseListDialog_CustMobileNumber.value"),
-				policeCase.getMobileNumber(), Labels.getLabel("label_PoliceCaseListDialog_CustNationality.value"), policeCase.getCustNationality()));
+				policeCase.getMobileNumber(), Labels.getLabel("label_PoliceCaseListDialog_CustNationality.value"),
+				policeCase.getCustNationality()));
 
 		// ListBox
 		this.listbox = new Listbox();
 		listbox.setStyle("border: none;");
-		this.listbox.setHeight((borderLayoutHeight-310 ) + "px");
+		this.listbox.setHeight((borderLayoutHeight - 310) + "px");
 		this.listbox.setVisible(true);
 		this.listbox.setSizedByContent(true);
 		this.listbox.setSpan("true");
 		this.listbox.setParent(grpBoxForListbox);
 
-		setListModelList(new ListModelList<PoliceCaseDetail>((List<PoliceCaseDetail>)dedupListSize));
+		setListModelList(new ListModelList<PoliceCaseDetail>((List<PoliceCaseDetail>) dedupListSize));
 		this.listbox.setModel(getListModelList());
 		this.listbox.setItemRenderer(new PoliceCaseDedupItemRenderer());
 
@@ -270,7 +273,7 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 			listheader.setLabel(getLabel(this.listHeaders[i]));
 			listheader.setHflex("min");
 			listheader.setParent(listhead);
-			if("Product".equals(this.listHeaders[i])){
+			if ("Product".equals(this.listHeaders[i])) {
 				listheader.setVisible(false);
 			}
 		}
@@ -288,43 +291,42 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 	 * Inner OnProceedListener class.<br>
 	 */
 	final class OnProceedListener implements EventListener<Event> {
-		
+
 		public OnProceedListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(1);
 			List<PoliceCase> policeCaseList = new ArrayList<PoliceCase>();
-			
+
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
-				List<Component> componentList = ((Listcell) listitem.getLastChild().getPreviousSibling())
-						.getChildren();
-				if(componentList != null && componentList.size() > 0){
+				List<Component> componentList = ((Listcell) listitem.getLastChild().getPreviousSibling()).getChildren();
+				if (componentList != null && componentList.size() > 0) {
 					Component component = componentList.get(0);
 					if (component instanceof Checkbox) {
 						if (!((Checkbox) component).isChecked()) {
 							setUserAction(-1);
-						}else{
+						} else {
 							PoliceCaseDetail policeCase = (PoliceCaseDetail) listitem.getAttribute("data");
-							
-								if(policeCase.isNewPolicecaseRecord()){
+
+							if (policeCase.isNewPolicecaseRecord()) {
 								policeCase.setOverrideUser(curAccessedUser);
-								}
-								PoliceCase policeCheck = dosetGrouping(policeCase);
-								policeCaseList.add(policeCheck);
 							}
-						
+							PoliceCase policeCheck = dosetGrouping(policeCase);
+							policeCaseList.add(policeCheck);
+						}
+
 					}
 				}
 
 			}
-			
-			if(getUserAction() == -1){
+
+			if (getUserAction() == -1) {
 				MessageUtil.showError(Labels.getLabel("label_OverrideMessage"));
-			}else{
+			} else {
 				setObject(policeCaseList);
 				onClose();
 			}
@@ -349,7 +351,7 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 			policeCheck.setNewPolicecaseRecord(policeCase.isNewPolicecaseRecord());
 			logger.debug("Leaving");
 			return policeCheck;
-			
+
 		}
 	}
 
@@ -357,11 +359,11 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 	 * Inner Cancel class.<br>
 	 */
 	final class OnCancelListener implements EventListener<Event> {
-		
+
 		public OnCancelListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(0);
@@ -369,88 +371,87 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 			onClose();
 		}
 	}
+
 	/**
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class PoliceCaseDedupItemRenderer implements ListitemRenderer<Object> {
-		
+
 		public PoliceCaseDedupItemRenderer() {
-			
+
 		}
-		
+
 		@Override
-		public void render(Listitem item, Object data, int count)
-				throws Exception {
+		public void render(Listitem item, Object data, int count) throws Exception {
 			String fieldValue = "";
 			Date dateFieldValue = new Date();
 			String currentFieldValue = "";
-			PoliceCaseDetail policeCaselst = (PoliceCaseDetail)data;
-			String ruleFields[] = {""};
-			if(policeCaselst.getPoliceCaseRule()!=null){
-			 ruleFields = StringUtils.trimToEmpty(policeCaselst.getRules())
-					.split(",");
+			PoliceCaseDetail policeCaselst = (PoliceCaseDetail) data;
+			String ruleFields[] = { "" };
+			if (policeCaselst.getPoliceCaseRule() != null) {
+				ruleFields = StringUtils.trimToEmpty(policeCaselst.getRules()).split(",");
 			}
 			for (int j = 0; j < fieldString.length; j++) {
 				final Listcell lc;
 				String fieldMethod = null;
-				if("boolean".equals(data.getClass().getDeclaredField(fieldString[j]).getType().toString())){
-					fieldMethod = "is"
-							+ fieldString[j].substring(0, 1).toUpperCase()
-							+ fieldString[j].substring(1);
+				if ("boolean".equals(data.getClass().getDeclaredField(fieldString[j]).getType().toString())) {
+					fieldMethod = "is" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
 				} else {
-					fieldMethod = "get"
-							+ fieldString[j].substring(0, 1).toUpperCase()
-							+ fieldString[j].substring(1);
+					fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
 				}
 				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
-					currentFieldValue = (String) getCurCustomer().getClass().getMethod(fieldMethod).invoke(getCurCustomer());
-					if(fieldMethod.equals("get"+ Labels.getLabel("label_FinanceDeDupListCustCRCPR"))){
-						if(fieldValue != null && currentFieldValue != null){
-							fieldValue =PennantApplicationUtil.formatEIDNumber(fieldValue);
-							currentFieldValue=PennantApplicationUtil.formatEIDNumber(currentFieldValue);
+					currentFieldValue = (String) getCurCustomer().getClass().getMethod(fieldMethod)
+							.invoke(getCurCustomer());
+					if (fieldMethod.equals("get" + Labels.getLabel("label_FinanceDeDupListCustCRCPR"))) {
+						if (fieldValue != null && currentFieldValue != null) {
+							fieldValue = PennantApplicationUtil.formatEIDNumber(fieldValue);
+							currentFieldValue = PennantApplicationUtil.formatEIDNumber(currentFieldValue);
 						}
 					}
 					lc = new Listcell(fieldValue);
-					for(int k= 0;k<ruleFields.length;k++){
-						if(fieldMethod.equals("get"+ruleFields[k])){
-							if(StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(fieldValue), StringUtils.trimToEmpty(currentFieldValue))){
+					for (int k = 0; k < ruleFields.length; k++) {
+						if (fieldMethod.equals("get" + ruleFields[k])) {
+							if (StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(fieldValue),
+									StringUtils.trimToEmpty(currentFieldValue))) {
 								lc.setStyle("font-weight:bold;color:#F20C0C;");
 							}
 						}
 					}
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
-					Date curdateFieldValue = (Date) getCurCustomer().getClass().getMethod(fieldMethod).invoke(getCurCustomer());
+					Date curdateFieldValue = (Date) getCurCustomer().getClass().getMethod(fieldMethod)
+							.invoke(getCurCustomer());
 					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
-					
-					if(dateFieldValue != null && curdateFieldValue != null) {
-						for (int k = 0; k< ruleFields.length; k++) {
-							if(fieldMethod.equals("get"+ruleFields[k])) {
+
+					if (dateFieldValue != null && curdateFieldValue != null) {
+						for (int k = 0; k < ruleFields.length; k++) {
+							if (fieldMethod.equals("get" + ruleFields[k])) {
 								if (dateFieldValue.compareTo(curdateFieldValue) == 0) {
 									lc.setStyle("font-weight:bold;color:#F20C0C;");
 								}
 							}
 						}
 					}
-				}else if("boolean".equals(data.getClass().getMethod(fieldMethod).getReturnType().toString())) {
+				} else if ("boolean".equals(data.getClass().getMethod(fieldMethod).getReturnType().toString())) {
 					Checkbox chk = new Checkbox();
 					boolean newRule = (Boolean) data.getClass().getMethod("isNewRule").invoke(data);
 					boolean newRecord = (Boolean) data.getClass().getMethod("isNewPolicecaseRecord").invoke(data);
 					String overrideUser = (String) data.getClass().getMethod("getOverrideUser").invoke(data);
-					if (newRule	&& !newRecord && (Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
+					if (newRule && !newRecord && (Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(false);
 						chk.setChecked(false);
-					} else if (newRule && !newRecord &&  !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
+					} else if (newRule && !newRecord
+							&& !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
 						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
-					} else if (newRule	&& !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
+					} else if (newRule && !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(false);
 						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
-					}else if(overrideUser !=null && overrideUser.contains(curAccessedUser)){
+					} else if (overrideUser != null && overrideUser.contains(curAccessedUser)) {
 						chk.setDisabled(true);
-						chk.setChecked((Boolean)data.getClass().getMethod(fieldMethod).invoke(data));
-					}else if(!(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)){
+						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
+					} else if (!(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
 					}
 					lc = new Listcell();
@@ -466,7 +467,6 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 		}
 	}
 
-
 	private String getLabel(String value) {
 		String label = Labels.getLabel(value + "_label");
 		if (StringUtils.isBlank(label)) {
@@ -475,8 +475,7 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 		return label;
 	}
 
-	private Row prepareRow(Row row, String label1, String value1,
-			String label2, String value2) {
+	private Row prepareRow(Row row, String label1, String value1, String label2, String value2) {
 
 		Label label = new Label();
 		label.setValue(label1);
@@ -501,13 +500,12 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 		return row;
 	}
 
-
 	public final class OnPagingEventListener implements EventListener<Event> {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			final PagingEvent pe = (PagingEvent) event;
@@ -517,6 +515,7 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 			refreshModel(searchText, start);
 		}
 	}
+
 	void refreshModel(String searchText, int start) {
 		logger.debug("Entering");
 		// clear old data
@@ -685,8 +684,5 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 	public void setCurCustomer(PoliceCaseDetail curCustomer) {
 		this.curCustomer = curCustomer;
 	}
-
-
-
 
 }

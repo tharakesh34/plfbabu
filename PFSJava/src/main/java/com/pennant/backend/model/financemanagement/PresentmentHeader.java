@@ -80,8 +80,8 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date toDate;
 	private int status;
-	private String   bankCode;
-	private String   bankName;
+	private String bankCode;
+	private String bankName;
 	private String mandateType;
 	private String mandateTypeName;
 	private String loanType;
@@ -374,5 +374,4 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.entityCode = entityCode;
 	}
 
-	
 }

@@ -81,8 +81,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new Mandate
+	 * This method set the Work Flow id based on the module name and return the new Mandate
 	 * 
 	 * @return Mandate
 	 */
@@ -100,8 +99,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	/**
-	 * This method get the module from method getMandate() and set the new
-	 * record flag as true and return Mandate()
+	 * This method get the module from method getMandate() and set the new record flag as true and return Mandate()
 	 * 
 	 * @return Mandate
 	 */
@@ -244,9 +242,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the Mandates or Mandates_Temp. if
-	 * Record not deleted then throws DataAccessException with error 41003.
-	 * delete Mandate by key MandateID
+	 * This method Deletes the Record from the Mandates or Mandates_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Mandate by key MandateID
 	 * 
 	 * @param Mandate
 	 *            (mandate)
@@ -279,9 +276,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	/**
-	 * This method insert new Records into Mandates or Mandates_Temp. it fetches
-	 * the available Sequence form SeqMandates by using
-	 * getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into Mandates or Mandates_Temp. it fetches the available Sequence form SeqMandates
+	 * by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Mandate
 	 * 
@@ -328,9 +324,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	/**
-	 * This method updates the Record Mandates or Mandates_Temp. if Record not
-	 * updated then throws DataAccessException with error 41004. update Mandate
-	 * by key MandateID and Version
+	 * This method updates the Record Mandates or Mandates_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Mandate by key MandateID and Version
 	 * 
 	 * @param Mandate
 	 *            (mandate)
@@ -379,9 +374,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	/**
-	 * This method updates the Record Mandates or Mandates_Temp. if Record not
-	 * updated then throws DataAccessException with error 41004. update Mandate
-	 * by key MandateID and Version
+	 * This method updates the Record Mandates or Mandates_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Mandate by key MandateID and Version
 	 * 
 	 * @param Mandate
 	 *            (mandate)

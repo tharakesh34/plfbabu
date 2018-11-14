@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface SukukBondService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SukukBond getSukukBondById(String id);
+
 	SukukBond getApprovedSukukBondById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

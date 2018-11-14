@@ -47,19 +47,19 @@ public class GSTInvoiceTxnDetails {
 	private long id = Long.MIN_VALUE;
 	private long invoiceId = 0;
 	private String invoiceNo;
-	
+
 	private String feeCode;
 	private String feeDescription;
 	private BigDecimal feeAmount = BigDecimal.ZERO;
 	private BigDecimal CGST_RATE = BigDecimal.ZERO;
 	private BigDecimal CGST_AMT = BigDecimal.ZERO;
 	private BigDecimal IGST_RATE = BigDecimal.ZERO;
-	private BigDecimal IGST_AMT = BigDecimal.ZERO;	
+	private BigDecimal IGST_AMT = BigDecimal.ZERO;
 	private BigDecimal UGST_RATE = BigDecimal.ZERO;
-	private BigDecimal UGST_AMT = BigDecimal.ZERO;	
+	private BigDecimal UGST_AMT = BigDecimal.ZERO;
 	private BigDecimal SGST_RATE = BigDecimal.ZERO;
 	private BigDecimal SGST_AMT = BigDecimal.ZERO;
-	
+
 	public GSTInvoiceTxnDetails() {
 		super();
 	}
@@ -71,7 +71,6 @@ public class GSTInvoiceTxnDetails {
 	public void setInvoiceNo(String invoiceNo) {
 		this.invoiceNo = invoiceNo;
 	}
-
 
 	public String getFeeCode() {
 		return feeCode;

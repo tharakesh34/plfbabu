@@ -15,10 +15,10 @@ import org.zkoss.calendar.impl.SimpleCalendarModel;
  * Item renderer for listitems in the listbox.
  */
 public class HolidayCalendarModelRenderer extends SimpleCalendarModel implements Serializable {
-	private static final long	serialVersionUID	= -2365559110743187158L;
-	private static final Logger	logger				= Logger.getLogger(HolidayCalendarModelRenderer.class);
+	private static final long serialVersionUID = -2365559110743187158L;
+	private static final Logger logger = Logger.getLogger(HolidayCalendarModelRenderer.class);
 
-	private String				filterText			= "";
+	private String filterText = "";
 
 	public HolidayCalendarModelRenderer(List<CalendarEvent> calendarEvents) {
 		super(calendarEvents);

@@ -5,11 +5,9 @@ import com.pennant.backend.dao.dda.EODFailPostingDAO;
 import com.pennant.backend.model.finance.DDAFTransactionLog;
 
 public class EODFailPostingServiceImpl implements EODFailPostingService {
-		
 
-	private EODFailPostingDAO  eodFailPostingDAO;
-	
-	
+	private EODFailPostingDAO eodFailPostingDAO;
+
 	public EODFailPostingServiceImpl() {
 		super();
 	}
@@ -21,16 +19,14 @@ public class EODFailPostingServiceImpl implements EODFailPostingService {
 
 	@Override
 	public long saveFailPostings(DDAFTransactionLog ddafTransactionLog) {
-	     return getEodFailPostingDAO().saveFailPostings(ddafTransactionLog);
+		return getEodFailPostingDAO().saveFailPostings(ddafTransactionLog);
 	}
 
 	@Override
 	public void updateFailPostings(DDAFTransactionLog ddafTransactionLog) {
 		getEodFailPostingDAO().updateFailPostings(ddafTransactionLog);
 	}
-	
-	
-	
+
 	public EODFailPostingDAO getEodFailPostingDAO() {
 		return eodFailPostingDAO;
 	}
@@ -39,8 +35,4 @@ public class EODFailPostingServiceImpl implements EODFailPostingService {
 		this.eodFailPostingDAO = eodFailPostingDAO;
 	}
 
-	
-
 }
-
-

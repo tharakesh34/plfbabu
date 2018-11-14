@@ -154,7 +154,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			Filter[] filters) {
 		super();
 		this.selectedValuesMap = selectedValuesMap;
-		if(selectedValuesMap.containsKey("SELECTALL")){
+		if (selectedValuesMap.containsKey("SELECTALL")) {
 			selectedValuesMap.clear();
 			selectAll = true;
 		}
@@ -379,7 +379,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			}
 			if (item.isSelected()) {
 				selectedValuesMap.put(fieldValue, obj);
-			}else{
+			} else {
 				selectAll = false;
 			}
 		}
@@ -430,15 +430,15 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 	public void onClick$ok(Event event) {
 		setSelectedItems();
-		if(selectAll){
+		if (selectAll) {
 			selectedValuesMap.clear();
 			selectedValuesMap.put("SELECTALL", "Select All");
 		}
 		doClose();
 	}
-	
-	private void doClose(){
-		if(selectAll){
+
+	private void doClose() {
+		if (selectAll) {
 			selectedValuesMap.clear();
 			selectedValuesMap.put("SELECTALL", "Select All");
 		}

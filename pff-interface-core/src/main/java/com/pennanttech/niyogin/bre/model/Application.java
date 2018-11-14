@@ -15,19 +15,19 @@ import javax.xml.bind.annotation.XmlType;
 public class Application {
 
 	@XmlElement(name = "DATEOFAPPLICATION")
-	private String			dateOfApplication;
+	private String dateOfApplication;
 
 	@XmlElement(name = "APPLICATIONID")
-	private String			applicationId;
+	private String applicationId;
 
 	@XmlElement(name = "BUREAU")
-	private Bureau			bureau;
+	private Bureau bureau;
 
 	@XmlElement(name = "SOCIALSC")
-	private List<SOCIALSC>	socialsc;
+	private List<SOCIALSC> socialsc;
 
 	@XmlElement(name = "APPLIEDLOANAMOUNT")
-	private BigDecimal		appliedLoanAmount	= BigDecimal.ZERO;
+	private BigDecimal appliedLoanAmount = BigDecimal.ZERO;
 
 	public String getDateOfApplication() {
 		return dateOfApplication;

@@ -47,14 +47,20 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commodity.CommodityInventory;
 
 public interface CommodityInventoryService {
-	
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CommodityInventory getCommodityInventoryById(long id);
+
 	CommodityInventory getApprovedCommodityInventoryById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	int getCommodityFinances(String brokerCode, String holdCertificateNo, String status);
+
 	CommodityInventory getCommodityDetails(String holdCertificateNo, String brokerCode);
 }

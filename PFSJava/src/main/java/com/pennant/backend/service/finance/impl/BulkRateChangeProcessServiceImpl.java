@@ -86,7 +86,8 @@ import com.rits.cloning.Cloner;
  * Service implementation for methods that depends on <b>BulkRateChangeHeader</b>.<br>
  * 
  */
-public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailService implements BulkRateChangeProcessService {
+public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailService
+		implements BulkRateChangeProcessService {
 
 	private static Logger logger = Logger.getLogger(BulkRateChangeProcessServiceImpl.class);
 
@@ -98,11 +99,9 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	private FinanceDetailService financeDetailService;
 	private LoggedInUser loggedInUser;
 
-
 	public BulkRateChangeProcessServiceImpl() {
 		super();
 	}
-
 
 	public BulkRateChangeHeader getBulkRateChangeHeader() {
 		return getBulkRateChangeProcessDAO().getBulkRateChangeHeader();
@@ -113,8 +112,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	}
 
 	/**
-	 * getAcademicById fetch the details by using BulkRateChangeProcessDAO's
-	 * method.
+	 * getAcademicById fetch the details by using BulkRateChangeProcessDAO's method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -125,26 +123,29 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	@Override
 	public BulkRateChangeHeader getBulkRateChangeHeaderByRef(String bulkRateChangeRef) {
 
-		BulkRateChangeHeader bulkRateChangeHeader = getBulkRateChangeProcessDAO().getBulkRateChangeHeaderByRef(bulkRateChangeRef, "_View");
+		BulkRateChangeHeader bulkRateChangeHeader = getBulkRateChangeProcessDAO()
+				.getBulkRateChangeHeaderByRef(bulkRateChangeRef, "_View");
 		if (bulkRateChangeHeader != null) {
-			bulkRateChangeHeader.setBulkRateChangeDetailsList(getBulkRateChangeProcessDetailsDAO().getBulkRateChangeDetailsListByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "_View"));
+			bulkRateChangeHeader.setBulkRateChangeDetailsList(getBulkRateChangeProcessDetailsDAO()
+					.getBulkRateChangeDetailsListByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "_View"));
 		}
 		return bulkRateChangeHeader;
 	}
 
 	/**
-	 * This method is used  for fetch the details by using BulkRateChangeProcessDAO's
-	 * getAcademicById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BulkRateChangeHeader.
+	 * This method is used for fetch the details by using BulkRateChangeProcessDAO's getAcademicById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BulkRateChangeHeader.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return BulkRateChangeHeader
 	 */
 	public BulkRateChangeHeader getApprovedBulkRateChangeHeaderByRef(String bulkRateChangeRef) {
-		BulkRateChangeHeader bulkRateChangeHeader = getBulkRateChangeProcessDAO().getBulkRateChangeHeaderByRef(bulkRateChangeRef, "_AView");
+		BulkRateChangeHeader bulkRateChangeHeader = getBulkRateChangeProcessDAO()
+				.getBulkRateChangeHeaderByRef(bulkRateChangeRef, "_AView");
 		if (bulkRateChangeHeader != null) {
-			bulkRateChangeHeader.setBulkRateChangeDetailsList(getBulkRateChangeProcessDetailsDAO().getBulkRateChangeDetailsListByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "_AView"));
+			bulkRateChangeHeader.setBulkRateChangeDetailsList(getBulkRateChangeProcessDetailsDAO()
+					.getBulkRateChangeDetailsListByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "_AView"));
 		}
 		return bulkRateChangeHeader;
 	}
@@ -156,19 +157,16 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 	@Override
 	public String getBulkRateChangeReference() {
-		return getBulkRateChangeProcessDAO().getBulkRateChangeReference();	
+		return getBulkRateChangeProcessDAO().getBulkRateChangeReference();
 	}
 
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BulkRateChangeHeader/BulkRateChangeHeader_Temp by using BulkRateChangeProcessDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using BulkRateChangeProcessDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBulkRateChangeHeader by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BulkRateChangeHeader/BulkRateChangeHeader_Temp by using BulkRateChangeProcessDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using BulkRateChangeProcessDAO's update
+	 * method 3) Audit the record in to AuditHeader and AdtBulkRateChangeHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -187,18 +185,19 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		String tableType = "";
 		BulkRateChangeHeader bulkRateChangeHeader = (BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData();
 
-		if(bulkRateChangeHeader != null && bulkRateChangeHeader.getUserDetails() != null){
+		if (bulkRateChangeHeader != null && bulkRateChangeHeader.getUserDetails() != null) {
 			setLoggedInUser(bulkRateChangeHeader.getUserDetails());
 		}
 
-		/*if (bulkRateChangeHeader.isWorkflow()) {
-			tableType = "_TEMP";
-		}*/
+		/*
+		 * if (bulkRateChangeHeader.isWorkflow()) { tableType = "_TEMP"; }
+		 */
 
 		bulkRateChangeHeader.setStatus("Rate Change Process Started");
 
 		if (bulkRateChangeHeader.isNew()) {
-			bulkRateChangeHeader.setBulkRateChangeRef(getBulkRateChangeProcessDAO().save(bulkRateChangeHeader, tableType));
+			bulkRateChangeHeader
+					.setBulkRateChangeRef(getBulkRateChangeProcessDAO().save(bulkRateChangeHeader, tableType));
 			auditHeader.getAuditDetail().setModelData(bulkRateChangeHeader);
 			auditHeader.setAuditReference(bulkRateChangeHeader.getBulkRateChangeRef());
 		} else {
@@ -206,29 +205,36 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 			//getBulkRateChangeProcessDetailsDAO().updateList(bulkRateChangeHeader.getBulkRateChangeDetailsList(), tableType);
 		}
 
-		/*if (bulkRateChangeHeader.isNew() || bulkRateChangeHeader.isLovDescIsOlddataChanged()) { //TODO
-			getBulkRateChangeProcessDetailsDAO().deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
-			getBulkRateChangeProcessDetailsDAO().saveList(bulkRateChangeHeader.getBulkRateChangeDetailsList(), tableType);
-		} else {
-			getBulkRateChangeProcessDetailsDAO().updateList(bulkRateChangeHeader.getBulkRateChangeDetailsList(), tableType);
-		}*/
+		/*
+		 * if (bulkRateChangeHeader.isNew() || bulkRateChangeHeader.isLovDescIsOlddataChanged()) { //TODO
+		 * getBulkRateChangeProcessDetailsDAO().deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.
+		 * getBulkRateChangeRef(), tableType);
+		 * getBulkRateChangeProcessDetailsDAO().saveList(bulkRateChangeHeader.getBulkRateChangeDetailsList(),
+		 * tableType); } else {
+		 * getBulkRateChangeProcessDetailsDAO().updateList(bulkRateChangeHeader.getBulkRateChangeDetailsList(),
+		 * tableType); }
+		 */
 
-		if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null && bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) { //TODO Total if part
+		if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null
+				&& bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) { //TODO Total if part
 
-			getBulkRateChangeProcessDetailsDAO().deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
+			getBulkRateChangeProcessDetailsDAO()
+					.deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
 
 			//Set Header Properties to the Child details
 			setHeaderPropertiesToDetailsList(bulkRateChangeHeader);
-			getBulkRateChangeProcessDetailsDAO().saveList(bulkRateChangeHeader.getBulkRateChangeDetailsList(), tableType);
+			getBulkRateChangeProcessDetailsDAO().saveList(bulkRateChangeHeader.getBulkRateChangeDetailsList(),
+					tableType);
 
 			//Restrict Finance for other servicing activity
 			for (BulkRateChangeDetails bulkRateChangeDetail : bulkRateChangeHeader.getBulkRateChangeDetailsList()) {
-				FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(bulkRateChangeDetail.getFinReference(), "", false);
-				
-				if(!bulkRateChangeHeader.isNewRecord()){
+				FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(bulkRateChangeDetail.getFinReference(),
+						"", false);
+
+				if (!bulkRateChangeHeader.isNewRecord()) {
 					getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
 				}
-				
+
 				financeMain.setRcdMaintainSts(FinanceConstants.BULK_RATE_CHG);
 				financeMain.setEffectiveRateOfReturn(bulkRateChangeDetail.getNewProfitRate());
 				financeMain.setTotalProfit(bulkRateChangeDetail.getNewProfit());
@@ -250,9 +256,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		logger.debug("Entering");
 
 		for (BulkRateChangeDetails rateChangeDetails : bulkRateChangeHeader.getBulkRateChangeDetailsList()) {
-			/*if (bulkRateChangeHeader.isNew() || bulkRateChangeHeader.isLovDescIsOlddataChanged()) { //TODO Delete and Save
-				rateChangeDetails.setBulkRateChangeRef(bulkRateChangeHeader.getBulkRateChangeRef());
-			}*/
+			/*
+			 * if (bulkRateChangeHeader.isNew() || bulkRateChangeHeader.isLovDescIsOlddataChanged()) { //TODO Delete and
+			 * Save rateChangeDetails.setBulkRateChangeRef(bulkRateChangeHeader.getBulkRateChangeRef()); }
+			 */
 			rateChangeDetails.setBulkRateChangeRef(bulkRateChangeHeader.getBulkRateChangeRef());
 			rateChangeDetails.setStatus("P");//Pending
 			rateChangeDetails.setVersion(bulkRateChangeHeader.getVersion());
@@ -270,12 +277,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BulkRateChangeHeader by using BulkRateChangeProcessDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBulkRateChangeHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BulkRateChangeHeader by using BulkRateChangeProcessDAO's delete method with type as Blank 3) Audit the record in
+	 * to AuditHeader and AdtBulkRateChangeHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -305,7 +310,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
 		logger.debug("Entering");
@@ -319,19 +324,21 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 *            (bulkRateChangeHeader)
 	 * @param success
 	 * @param failure
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void doApproveBulkRateChangeHeader(BulkRateChangeHeader bulkRateChangeHeader, long success, long failure) {
 		logger.debug("Entering");
 
 		String tranType = PennantConstants.TRAN_WF;
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, bulkRateChangeHeader.getBefImage(), bulkRateChangeHeader);   
-		AuditHeader auditHeader = new AuditHeader(bulkRateChangeHeader.getBulkRateChangeRef(), null, null, null, auditDetail, bulkRateChangeHeader.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, bulkRateChangeHeader.getBefImage(),
+				bulkRateChangeHeader);
+		AuditHeader auditHeader = new AuditHeader(bulkRateChangeHeader.getBulkRateChangeRef(), null, null, null,
+				auditDetail, bulkRateChangeHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 		BulkRateChangeHeader aBulkRateChangeHeader = new BulkRateChangeHeader();
-		BeanUtils.copyProperties((BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData(), aBulkRateChangeHeader);
+		BeanUtils.copyProperties((BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData(),
+				aBulkRateChangeHeader);
 
 		if (failure == 0) {
 			aBulkRateChangeHeader.setRoleCode("");
@@ -342,7 +349,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			aBulkRateChangeHeader.setRecordType("");
 
-			aBulkRateChangeHeader.setStatus("Rate Change Process Completed Successfully. Total Finances : " + (failure + success));
+			aBulkRateChangeHeader
+					.setStatus("Rate Change Process Completed Successfully. Total Finances : " + (failure + success));
 			getBulkRateChangeProcessDAO().update(aBulkRateChangeHeader, "");
 
 			auditHeader.setAuditTranType(tranType);
@@ -355,7 +363,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			getAuditHeaderDAO().addAudit(auditHeader);
 		} else {
-			aBulkRateChangeHeader.setStatus("Rate Change Process Completed With Errors. Success : " + success + " , Failed : " + failure);
+			aBulkRateChangeHeader.setStatus(
+					"Rate Change Process Completed With Errors. Success : " + success + " , Failed : " + failure);
 			getBulkRateChangeProcessDAO().update(aBulkRateChangeHeader, "");
 
 			auditHeader.setAuditTranType(tranType);
@@ -368,13 +377,11 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getBulkRateChangeProcessDAO().delete with parameters
-	 * bulkRateChangeHeader,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBulkRateChangeHeader by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getBulkRateChangeProcessDAO().delete with parameters bulkRateChangeHeader,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtBulkRateChangeHeader by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -393,7 +400,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getBulkRateChangeProcessDAO().delete(bulkRateChangeHeader, "");
-		getBulkRateChangeProcessDetailsDAO().deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "");
+		getBulkRateChangeProcessDetailsDAO()
+				.deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -402,10 +410,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -424,10 +430,9 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getBulkRateChangeProcessDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getBulkRateChangeProcessDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -442,10 +447,12 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		BulkRateChangeHeader tempBulkRateChangeHeader = null;
 		if (bulkRateChangeHeader.isWorkflow()) {
-			tempBulkRateChangeHeader = getBulkRateChangeProcessDAO().getBulkRateChangeHeaderByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "");
+			tempBulkRateChangeHeader = getBulkRateChangeProcessDAO()
+					.getBulkRateChangeHeaderByRef(bulkRateChangeHeader.getBulkRateChangeRef(), "");
 		}
 
-		BulkRateChangeHeader befBulkRateChangeHeader = getBulkRateChangeProcessDAO().getBulkRateChangeHeaderByRef(bulkRateChangeHeader.getBulkRateChangeRef(), " ");
+		BulkRateChangeHeader befBulkRateChangeHeader = getBulkRateChangeProcessDAO()
+				.getBulkRateChangeHeaderByRef(bulkRateChangeHeader.getBulkRateChangeRef(), " ");
 		BulkRateChangeHeader oldBulkRateChangeHeader = bulkRateChangeHeader.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -453,28 +460,30 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		valueParm[0] = bulkRateChangeHeader.getBulkRateChangeRef();
 
-		/*errParm[0] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_fromDate.value") + ":"+ valueParm[0]; //TODO
-		errParm[1] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_toDate.value") + ":"+valueParm[1];*/
+		/*
+		 * errParm[0] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_fromDate.value") + ":"+ valueParm[0];
+		 * //TODO errParm[1] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_toDate.value") + ":"+valueParm[1];
+		 */
 
-		errParm[0] = PennantJavaUtil.getLabel("label_BulkRateChangeRef") + " : "+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_BulkRateChangeRef") + " : " + valueParm[0];
 
 		if (bulkRateChangeHeader.isNew()) { // for New record or new record into work flow
 
 			if (!bulkRateChangeHeader.isWorkflow()) {// With out Work flow only new records
 				if (befBulkRateChangeHeader != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (bulkRateChangeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befBulkRateChangeHeader != null || tempBulkRateChangeHeader != null) { // if records already exists in
 						// the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befBulkRateChangeHeader == null || tempBulkRateChangeHeader != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -485,35 +494,34 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 				// delete
 				if (befBulkRateChangeHeader == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldBulkRateChangeHeader != null
-							&& !oldBulkRateChangeHeader.getLastMntOn().equals(
-									befBulkRateChangeHeader.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldBulkRateChangeHeader.getLastMntOn().equals(befBulkRateChangeHeader.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempBulkRateChangeHeader == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if ( tempBulkRateChangeHeader != null &&  oldBulkRateChangeHeader != null
-						&& !oldBulkRateChangeHeader.getLastMntOn().equals(
-								tempBulkRateChangeHeader.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+				if (tempBulkRateChangeHeader != null && oldBulkRateChangeHeader != null
+						&& !oldBulkRateChangeHeader.getLastMntOn().equals(tempBulkRateChangeHeader.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if (StringUtils.trimToEmpty(method).equals("doApprove")	|| !bulkRateChangeHeader.isWorkflow()) {
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !bulkRateChangeHeader.isWorkflow()) {
 			auditDetail.setBefImage(befBulkRateChangeHeader);
 		}
 
@@ -529,7 +537,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @throws Exception
 	 */
 	@Override
-	public boolean processBulkRateChangeDetail(BulkRateChangeHeader bulkRateChangeHeader, BulkRateChangeDetails bulkRateChangeDetail) throws Exception {
+	public boolean processBulkRateChangeDetail(BulkRateChangeHeader bulkRateChangeHeader,
+			BulkRateChangeDetails bulkRateChangeDetail) throws Exception {
 		logger.debug("Entering");
 
 		boolean success = false;
@@ -575,11 +584,13 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @param bulkRateChangeHeader
 	 * @param bulkRateChangeDetail
 	 */
-	public boolean processRateChange(BulkRateChangeHeader bulkRateChangeHeader, BulkRateChangeDetails bulkRateChangeDetail) {
+	public boolean processRateChange(BulkRateChangeHeader bulkRateChangeHeader,
+			BulkRateChangeDetails bulkRateChangeDetail) {
 		logger.debug("Entering");
 
 		//Get Total Finance Details to particular Finance
-		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(bulkRateChangeDetail.getFinReference(), "_AView", false);
+		FinanceDetail financeDetail = getFinanceDetailService()
+				.getFinSchdDetailById(bulkRateChangeDetail.getFinReference(), "_AView", false);
 		financeDetail.setUserDetails(bulkRateChangeHeader.getUserDetails());
 
 		//Reset Before Image for Auditing
@@ -601,19 +612,21 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		}
 
 		BigDecimal newProfitRate = financeMain.getEffectiveRateOfReturn().add(bulkRateChangeHeader.getRateChange());
-		
+
 		//Schedule Re-calculation based on Applied parameters
-		financeDetail.setFinScheduleData(ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), financeMain.getRepayBaseRate(), "", BigDecimal.ZERO,
-				newProfitRate == null ? BigDecimal.ZERO : newProfitRate, true));
+		financeDetail.setFinScheduleData(
+				ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), financeMain.getRepayBaseRate(), "",
+						BigDecimal.ZERO, newProfitRate == null ? BigDecimal.ZERO : newProfitRate, true));
 
 		bulkRateChangeDetail.setNewProfitRate(financeMain.getEffectiveRateOfReturn());
 		bulkRateChangeDetail.setNewProfit(financeMain.getTotalProfit());
 
 		//Record proceed through WorkFlow defined Process
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), "");
-		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1], financeDetail.getBefImage(), financeDetail);
-		AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1],
+				financeDetail.getBefImage(), financeDetail);
+		AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null,
+				null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 		//Changed Finance Save in Database
 		saveOrUpdate(auditHeader, false);
@@ -656,12 +669,14 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		//=======================================
 		if (!financeDetail.isNewRecord()) {
 
-			if(!isWIF && tableType.equals("") && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+			if (!isWIF && tableType.equals("")
+					&& financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				//Fetch Existing data before Modification
 
 				FinScheduleData old_finSchdData = null;
-				if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
-					old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "", -1);
+				if (financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()) {
+					old_finSchdData = getFinSchDataByFinRef(financeDetail.getFinScheduleData().getFinReference(), "",
+							-1);
 					old_finSchdData.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 				}
 
@@ -675,32 +690,34 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 				long logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
 				//Save Schedule Details For Future Modifications
-				if(financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()){
+				if (financeDetail.getFinScheduleData().getFinanceMain().isScheduleRegenerated()) {
 					listSave(old_finSchdData, "_Log", false, logKey);
 				}
 			}
-			
+
 			listDeletion(financeDetail.getFinScheduleData(), tableType, isWIF);
 			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
-	//		saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
+			//		saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
 		} else {
 			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
-		//	saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
+			//	saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
 		}
 
 		// Save asset details
 		//=======================================
-		if(!isWIF){
+		if (!isWIF) {
 			getFinanceDetailService().doSaveAddlFieldDetails(financeDetail, tableType);
 		}
 
-		if(!isWIF){
+		if (!isWIF) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), "");
-			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+					financeMain.getBefImage(), financeMain));
 
-			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1], financeMain.getBefImage(), financeMain);
-			auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-					financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1],
+					financeMain.getBefImage(), financeMain);
+			auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null,
+					auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
@@ -708,9 +725,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-
-
-
 
 	/**
 	 * @param AuditHeader
@@ -770,7 +784,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		valueParm[0] = financeMain.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-
 		// for work flow process records or (Record to update or Delete with
 		// out work flow)
 		if (!financeMain.isWorkflow()) { // With out Work flow for update
@@ -778,18 +791,17 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			if (befFinanceMain == null) { // if records not exists in the
 				// main table
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-						PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 			} else {
-				if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn()
-						.equals(befFinanceMain.getLastMntOn())) {
+				if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 					} else {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -797,14 +809,14 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 			if (tempFinanceMain == null) { // if records not exists in the
 				// Work flow table
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-						PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 			}
 
 			if (tempFinanceMain != null && oldFinanceMain != null
 					&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-						PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 			}
 		}
 
@@ -829,10 +841,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-		BulkRateChangeHeader bulkRateChangeHeader =null;
+		BulkRateChangeHeader bulkRateChangeHeader = null;
 		FinanceDetail financeDetail = null;
 		FinanceMain financeMain = null;
-		if(auditHeader.getAuditDetail().getModelData() instanceof BulkRateChangeHeader){
+		if (auditHeader.getAuditDetail().getModelData() instanceof BulkRateChangeHeader) {
 			bulkRateChangeHeader = (BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData();
 			setLoggedInUser(bulkRateChangeHeader.getUserDetails());
 		} else {
@@ -850,8 +862,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 				}
 			}
 
-			if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null    && bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) {
-				auditDetailMap.put("BulkRateChangeDetail",  setBulkRateChangeDetailsData(bulkRateChangeHeader, auditTranType, method));
+			if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null
+					&& bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) {
+				auditDetailMap.put("BulkRateChangeDetail",
+						setBulkRateChangeDetailsData(bulkRateChangeHeader, auditTranType, method));
 				auditDetails.addAll(auditDetailMap.get("BulkRateChangeDetail"));
 			}
 
@@ -876,7 +890,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 	}
 
-
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -885,7 +898,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setBulkRateChangeDetailsData(BulkRateChangeHeader bulkRateChangeHeader, 
+	private List<AuditDetail> setBulkRateChangeDetailsData(BulkRateChangeHeader bulkRateChangeHeader,
 			String auditTranType, String method) { //TODO
 		logger.debug("Entering");
 
@@ -934,7 +947,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 			rateChangeDetails.setUserDetails(bulkRateChangeHeader.getUserDetails());
 			rateChangeDetails.setLastMntOn(bulkRateChangeHeader.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], 
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 					rateChangeDetails.getBefImage(), rateChangeDetails));
 
 		}
@@ -949,18 +962,22 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @param tableType
 	 * 
 	 */
-	public List<AuditDetail> bulkRateChangeDetailsListDeletion(BulkRateChangeHeader bulkRateChangeHeader, String tableType, String auditTranType) {
+	public List<AuditDetail> bulkRateChangeDetailsListDeletion(BulkRateChangeHeader bulkRateChangeHeader,
+			String tableType, String auditTranType) {
 		logger.debug("Entering");
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null && bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) {
+		if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null
+				&& bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new BulkRateChangeDetails());
 			for (int i = 0; i < bulkRateChangeHeader.getBulkRateChangeDetailsList().size(); i++) {
 				BulkRateChangeDetails bulkRateChangeDetail = bulkRateChangeHeader.getBulkRateChangeDetailsList().get(i);
 				if (!StringUtils.trimToEmpty(bulkRateChangeDetail.getRecordType()).equals("") || tableType.equals("")) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], bulkRateChangeDetail.getBefImage(), bulkRateChangeDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							bulkRateChangeDetail.getBefImage(), bulkRateChangeDetail));
 				}
 			}
-			getBulkRateChangeProcessDetailsDAO().deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
+			getBulkRateChangeProcessDetailsDAO()
+					.deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
 		}
 
 		logger.debug("Leaving");
@@ -973,32 +990,37 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @param bulkRateChangeHeader
 	 * @param tableType
 	 */
-	public List<AuditDetail> listDeletion(BulkRateChangeHeader bulkRateChangeHeader, String tableType, String auditTranType) {
+	public List<AuditDetail> listDeletion(BulkRateChangeHeader bulkRateChangeHeader, String tableType,
+			String auditTranType) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null && bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) {
+		if (bulkRateChangeHeader.getBulkRateChangeDetailsList() != null
+				&& bulkRateChangeHeader.getBulkRateChangeDetailsList().size() > 0) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new BulkRateChangeDetails());
 			for (int i = 0; i < bulkRateChangeHeader.getBulkRateChangeDetailsList().size(); i++) {
 				BulkRateChangeDetails bulkRateChangeDetail = bulkRateChangeHeader.getBulkRateChangeDetailsList().get(i);
 				if (!bulkRateChangeDetail.getRecordType().equals("") || tableType.equals("")) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], bulkRateChangeDetail.getBefImage(), bulkRateChangeDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							bulkRateChangeDetail.getBefImage(), bulkRateChangeDetail));
 				}
 			}
-			getBulkRateChangeProcessDetailsDAO().deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
+			getBulkRateChangeProcessDetailsDAO()
+					.deleteBulkRateChangeDetailsByRef(bulkRateChangeHeader.getBulkRateChangeRef(), tableType);
 		}
 
 		logger.debug("Leaving");
 		return auditList;
 	}
 
-	public List<AuditDetail> bulkRateChangeDetailsListValidation(List<AuditDetail> auditDetails, String method,String  usrLanguage){
+	public List<AuditDetail> bulkRateChangeDetailsListValidation(List<AuditDetail> auditDetails, String method,
+			String usrLanguage) {
 		logger.debug("Entering");
-		if(auditDetails!=null && auditDetails.size()>0){
+		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   bulkRateChangeDetailsValidation(auditDetails.get(i), method, usrLanguage);
-				details.add(auditDetail); 		
+				AuditDetail auditDetail = bulkRateChangeDetailsValidation(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail);
 			}
 			return details;
 		}
@@ -1006,74 +1028,89 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		return new ArrayList<AuditDetail>();
 	}
 
-	private AuditDetail bulkRateChangeDetailsValidation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail bulkRateChangeDetailsValidation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		BulkRateChangeDetails bulkRateChangeDetail= (BulkRateChangeDetails) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		BulkRateChangeDetails bulkRateChangeDetail = (BulkRateChangeDetails) auditDetail.getModelData();
 
-		BulkRateChangeDetails tempBulkRateChangeDetails= null;
-		if (bulkRateChangeDetail.isWorkflow()){
-			tempBulkRateChangeDetails = getBulkRateChangeProcessDetailsDAO().getDetailsByRateChangeRefAndFinRef(bulkRateChangeDetail.getBulkRateChangeRef(), bulkRateChangeDetail.getFinReference(), "");
+		BulkRateChangeDetails tempBulkRateChangeDetails = null;
+		if (bulkRateChangeDetail.isWorkflow()) {
+			tempBulkRateChangeDetails = getBulkRateChangeProcessDetailsDAO().getDetailsByRateChangeRefAndFinRef(
+					bulkRateChangeDetail.getBulkRateChangeRef(), bulkRateChangeDetail.getFinReference(), "");
 
 		}
-		BulkRateChangeDetails befBulkRateChangeDetails= getBulkRateChangeProcessDetailsDAO().getDetailsByRateChangeRefAndFinRef(bulkRateChangeDetail.getBulkRateChangeRef(), bulkRateChangeDetail.getFinReference(), "");
+		BulkRateChangeDetails befBulkRateChangeDetails = getBulkRateChangeProcessDetailsDAO()
+				.getDetailsByRateChangeRefAndFinRef(bulkRateChangeDetail.getBulkRateChangeRef(),
+						bulkRateChangeDetail.getFinReference(), "");
 
-		BulkRateChangeDetails oldBulkRateChangeDetails= bulkRateChangeDetail.getBefImage();
+		BulkRateChangeDetails oldBulkRateChangeDetails = bulkRateChangeDetail.getBefImage();
 
-
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(bulkRateChangeDetail.getId());
-		errParm[0]=PennantJavaUtil.getLabel("label_SubCategoryCode")+":"+valueParm[0];
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = String.valueOf(bulkRateChangeDetail.getId());
+		errParm[0] = PennantJavaUtil.getLabel("label_SubCategoryCode") + ":" + valueParm[0];
 		//bulkRateChangeDetail.setWorkflowId(0);
-		if (bulkRateChangeDetail.isNew()){ // for New record or new record into work flow
+		if (bulkRateChangeDetail.isNew()) { // for New record or new record into work flow
 
-			if (!bulkRateChangeDetail.isWorkflow()){// With out Work flow only new records  
-				if (befBulkRateChangeDetails !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (bulkRateChangeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befBulkRateChangeDetails !=null || tempBulkRateChangeDetails!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+			if (!bulkRateChangeDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befBulkRateChangeDetails != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (bulkRateChangeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befBulkRateChangeDetails != null || tempBulkRateChangeDetails != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befBulkRateChangeDetails ==null || tempBulkRateChangeDetails!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befBulkRateChangeDetails == null || tempBulkRateChangeDetails != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!bulkRateChangeDetail.isWorkflow()){	// With out Work flow for update and delete
+			if (!bulkRateChangeDetail.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befBulkRateChangeDetails ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldBulkRateChangeDetails!=null && !oldBulkRateChangeDetails.getLastMntOn().equals(befBulkRateChangeDetails.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+				if (befBulkRateChangeDetails == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldBulkRateChangeDetails != null && !oldBulkRateChangeDetails.getLastMntOn()
+							.equals(befBulkRateChangeDetails.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempBulkRateChangeDetails==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempBulkRateChangeDetails == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (oldBulkRateChangeDetails!=null && !oldBulkRateChangeDetails.getLastMntOn().equals(tempBulkRateChangeDetails.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (oldBulkRateChangeDetails != null
+						&& !oldBulkRateChangeDetails.getLastMntOn().equals(tempBulkRateChangeDetails.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if(StringUtils.trimToEmpty(method).equals("doApprove") || !bulkRateChangeDetail.isWorkflow()){
-			bulkRateChangeDetail.setBefImage(befBulkRateChangeDetails);	
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !bulkRateChangeDetail.isWorkflow()) {
+			bulkRateChangeDetail.setBefImage(befBulkRateChangeDetails);
 		}
 
 		logger.debug("Leaving");
@@ -1083,7 +1120,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	/**
 	 * Method to save what if inquiry lists
 	 */
-	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF , long logKey) {
+	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF, long logKey) {
 		logger.debug("Entering ");
 		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
@@ -1105,19 +1142,17 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		getFinanceScheduleDetailDAO().saveList(finDetail.getFinanceScheduleDetails(), tableType, isWIF);
 
-		/*//Finance Deferment Header Details
-		for (int i = 0; i < finDetail.getDefermentHeaders().size(); i++) {
-			finDetail.getDefermentHeaders().get(i).setFinReference(finDetail.getFinReference());
-			finDetail.getDefermentHeaders().get(i).setLogKey(logKey);
-		}
-		getDefermentHeaderDAO().saveList(finDetail.getDefermentHeaders(), tableType, isWIF);
-
-		//Finance Deferment Details
-		for (int i = 0; i < finDetail.getDefermentDetails().size(); i++) {
-			finDetail.getDefermentDetails().get(i).setFinReference(finDetail.getFinReference());
-			finDetail.getDefermentDetails().get(i).setLogKey(logKey);
-		}
-		getDefermentDetailDAO().saveList(finDetail.getDefermentDetails(), tableType, isWIF);*/
+		/*
+		 * //Finance Deferment Header Details for (int i = 0; i < finDetail.getDefermentHeaders().size(); i++) {
+		 * finDetail.getDefermentHeaders().get(i).setFinReference(finDetail.getFinReference());
+		 * finDetail.getDefermentHeaders().get(i).setLogKey(logKey); }
+		 * getDefermentHeaderDAO().saveList(finDetail.getDefermentHeaders(), tableType, isWIF);
+		 * 
+		 * //Finance Deferment Details for (int i = 0; i < finDetail.getDefermentDetails().size(); i++) {
+		 * finDetail.getDefermentDetails().get(i).setFinReference(finDetail.getFinReference());
+		 * finDetail.getDefermentDetails().get(i).setLogKey(logKey); }
+		 * getDefermentDetailDAO().saveList(finDetail.getDefermentDetails(), tableType, isWIF);
+		 */
 
 		//Finance Repay Instruction Details
 		for (int i = 0; i < finDetail.getRepayInstructions().size(); i++) {
@@ -1127,8 +1162,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		getRepayInstructionDAO().saveList(finDetail.getRepayInstructions(), tableType, isWIF);
 
 		FinanceMain aFinanceMain = finDetail.getFinanceMain();
-		aFinanceMain.setAvailedDefRpyChange(aFinanceMain.getAvailedDefRpyChange()+1);
-		aFinanceMain.setVersion(aFinanceMain.getVersion()+1);
+		aFinanceMain.setAvailedDefRpyChange(aFinanceMain.getAvailedDefRpyChange() + 1);
+		aFinanceMain.setVersion(aFinanceMain.getVersion() + 1);
 		getFinanceMainDAO().update(aFinanceMain, TableType.MAIN_TAB, false);
 
 		logger.debug("Leaving ");
@@ -1145,8 +1180,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		logger.debug("Entering ");
 
 		getFinanceScheduleDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
-		/*getDefermentHeaderDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
-		getDefermentDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);*/
+		/*
+		 * getDefermentHeaderDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
+		 * getDefermentDetailDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
+		 */
 		getRepayInstructionDAO().deleteByFinReference(finDetail.getFinReference(), tableType, isWIF, 0);
 
 		logger.debug("Leaving ");
@@ -1159,22 +1196,27 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 *            (String)
 	 * @param isWIF
 	 *            (boolean)
-	 * **/
+	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
-		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
-		if(logKey != 0){
-			finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails( finReference, type, false));
+		finSchData.setFinanceScheduleDetails(
+				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		if (logKey != 0) {
+			finSchData.setDisbursementDetails(
+					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 		}
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
-		/*finSchData.setDefermentHeaders(getDefermentHeaderDAO().getDefermentHeaders(finReference, type, false));
-		finSchData.setDefermentDetails(getDefermentDetailDAO().getDefermentDetails(finReference, type, false));*/
+		/*
+		 * finSchData.setDefermentHeaders(getDefermentHeaderDAO().getDefermentHeaders(finReference, type, false));
+		 * finSchData.setDefermentDetails(getDefermentDetailDAO().getDefermentDetails(finReference, type, false));
+		 */
 
-		if(logKey == 0){
-			finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(finSchData.getFinanceMain().getFinType(), type));
+		if (logKey == 0) {
+			finSchData.setFinanceType(
+					getFinanceTypeDAO().getFinanceTypeByID(finSchData.getFinanceMain().getFinType(), type));
 			//finSchData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, false, ""));
 			finSchData = getFinMaintainenceDetails(finSchData);
 			finSchData.setAccrueValue(getAccrueAmount(finReference));
@@ -1185,16 +1227,17 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 	/**
 	 * Method for Get the Accrue Details
+	 * 
 	 * @param finReference
 	 * @return
 	 */
 	@Override
-	public BigDecimal getAccrueAmount(String finReference){
+	public BigDecimal getAccrueAmount(String finReference) {
 		return getProfitDetailsDAO().getAccrueAmount(finReference);
 	}
 
 	@Override
-	public FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData){
+	public FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData) {
 		logger.debug("Entering");
 		String finReference = finSchData.getFinanceMain().getFinReference();
 		finSchData.setRepayDetails(getFinanceRepaymentsByFinRef(finReference, false));
@@ -1214,7 +1257,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		return getRecoveryDAO().getFinancePenaltysByFinRef(id, "");
 	}
 
-
 	/**
 	 * Method to get FinanceRepayments By FinReference
 	 * 
@@ -1226,9 +1268,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		return getFinanceRepaymentsDAO().getFinRepayListByFinRef(id, isRpyCancelProc, "");
 	}
 
-
-
-
 	/**
 	 * Method For Preparing List of AuditDetails for Customer Ratings
 	 * 
@@ -1237,106 +1276,68 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 * @param custId
 	 * @return
 	 */
-	/*private List<AuditDetail> processBulkRateChangeDetails(List<AuditDetail> auditDetails, long detailId, String type) {
-		logger.debug("Entering");
-
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			BulkRateChangeDetails bulkRateChangeDetail = (BulkRateChangeDetails) auditDetails.get(i).getModelData();
-			bulkRateChangeDetail.setBulkProcessId(detailId);
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (type.equals("")) {
-				approveRec = true;
-				bulkRateChangeDetail.setRoleCode("");
-				bulkRateChangeDetail.setNextRoleCode("");
-				bulkRateChangeDetail.setTaskId("");
-				bulkRateChangeDetail.setNextTaskId("");
-			}
-
-			if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (bulkRateChangeDetail.isNewRecord()) {
-				saveRecord = true;
-				if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					bulkRateChangeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					bulkRateChangeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					bulkRateChangeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-			} else if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-					updateRecord = true;
-			} else if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (bulkRateChangeDetail.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-
-			if (approveRec) {
-				rcdType = bulkRateChangeDetail.getRecordType();
-				recordStatus = bulkRateChangeDetail.getRecordStatus();
-				bulkRateChangeDetail.setRecordType("");
-				bulkRateChangeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-
-			if (saveRecord) {
-				getBulkRateChangeProcessDetailsDAO().save(bulkRateChangeDetail, type);
-			}
-
-			if (updateRecord) {
-				getBulkRateChangeProcessDetailsDAO().update(bulkRateChangeDetail, type);
-			}
-
-			if (deleteRecord) {
-				getBulkRateChangeProcessDetailsDAO().delete(bulkRateChangeDetail, type);
-			}
-
-			if (approveRec) {
-				bulkRateChangeDetail.setRecordType(rcdType);
-				bulkRateChangeDetail.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(bulkRateChangeDetail);
-		}
-
-		return auditDetails;
-
-	}*/
+	/*
+	 * private List<AuditDetail> processBulkRateChangeDetails(List<AuditDetail> auditDetails, long detailId, String
+	 * type) { logger.debug("Entering");
+	 * 
+	 * boolean saveRecord = false; boolean updateRecord = false; boolean deleteRecord = false; boolean approveRec =
+	 * false;
+	 * 
+	 * for (int i = 0; i < auditDetails.size(); i++) {
+	 * 
+	 * BulkRateChangeDetails bulkRateChangeDetail = (BulkRateChangeDetails) auditDetails.get(i).getModelData();
+	 * bulkRateChangeDetail.setBulkProcessId(detailId); saveRecord = false; updateRecord = false; deleteRecord = false;
+	 * approveRec = false; String rcdType = ""; String recordStatus = ""; if (type.equals("")) { approveRec = true;
+	 * bulkRateChangeDetail.setRoleCode(""); bulkRateChangeDetail.setNextRoleCode("");
+	 * bulkRateChangeDetail.setTaskId(""); bulkRateChangeDetail.setNextTaskId(""); }
+	 * 
+	 * if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) { deleteRecord =
+	 * true; } else if (bulkRateChangeDetail.isNewRecord()) { saveRecord = true; if
+	 * (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+	 * bulkRateChangeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW); } else if
+	 * (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+	 * bulkRateChangeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL); } else if
+	 * (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+	 * bulkRateChangeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD); } } else if
+	 * (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) { if (approveRec) {
+	 * saveRecord = true; } else { updateRecord = true; } } else if
+	 * (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) { updateRecord = true;
+	 * } else if (bulkRateChangeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) { if
+	 * (approveRec) { deleteRecord = true; } else if (bulkRateChangeDetail.isNew()) { saveRecord = true; } else {
+	 * updateRecord = true; } }
+	 * 
+	 * if (approveRec) { rcdType = bulkRateChangeDetail.getRecordType(); recordStatus =
+	 * bulkRateChangeDetail.getRecordStatus(); bulkRateChangeDetail.setRecordType("");
+	 * bulkRateChangeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED); }
+	 * 
+	 * if (saveRecord) { getBulkRateChangeProcessDetailsDAO().save(bulkRateChangeDetail, type); }
+	 * 
+	 * if (updateRecord) { getBulkRateChangeProcessDetailsDAO().update(bulkRateChangeDetail, type); }
+	 * 
+	 * if (deleteRecord) { getBulkRateChangeProcessDetailsDAO().delete(bulkRateChangeDetail, type); }
+	 * 
+	 * if (approveRec) { bulkRateChangeDetail.setRecordType(rcdType);
+	 * bulkRateChangeDetail.setRecordStatus(recordStatus); } auditDetails.get(i).setModelData(bulkRateChangeDetail); }
+	 * 
+	 * return auditDetails;
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Method for Processing Bulk Finance for Deferment Process
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Override
-	public List<ScheduleMapDetails> getDeferedDates(
-			List<BulkRateChangeDetails> defermentChangeFinances, String cbRecalType,
-			Date reCalFromDate, Date reCalToDate) {
+	public List<ScheduleMapDetails> getDeferedDates(List<BulkRateChangeDetails> defermentChangeFinances,
+			String cbRecalType, Date reCalFromDate, Date reCalToDate) {
 		logger.debug("Entering");
 
 		Map<String, String> referencesMap = new HashMap<String, String>();
 		for (BulkRateChangeDetails bulkProcessDetail : defermentChangeFinances) {
 			if (!referencesMap.containsKey(bulkProcessDetail.getFinReference())) {
-				referencesMap.put(bulkProcessDetail.getFinReference(),
-						bulkProcessDetail.getFinReference());
+				referencesMap.put(bulkProcessDetail.getFinReference(), bulkProcessDetail.getFinReference());
 			}
 		}
 
@@ -1345,9 +1346,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		logger.debug("Leaving");
 		return getFinSchdDetailTermByDates(referencesList, reCalFromDate, reCalToDate);
-	}	
+	}
 
-	public List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> referencesList, Date reCalFromDate, Date reCalToDate){
+	public List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> referencesList, Date reCalFromDate,
+			Date reCalToDate) {
 		logger.debug("Entering");
 
 		List<String> subRefList = null;
@@ -1364,7 +1366,8 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		scheDetails = new ArrayList<ScheduleMapDetails>();
 		while (referencesListSize > 0) {
 			subRefList = referencesList.subList(startIndex, endIndex);
-			scheDetails.addAll(getFinanceScheduleDetailDAO().getFinSchdDetailTermByDates(subRefList, reCalFromDate, reCalToDate));
+			scheDetails.addAll(
+					getFinanceScheduleDetailDAO().getFinSchdDetailTermByDates(subRefList, reCalFromDate, reCalToDate));
 			referencesListSize = referencesListSize - subRefList.size();
 
 			startIndex = endIndex;
@@ -1410,7 +1413,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		return loggedInUser;
 	}
 
-
 	public void setLoggedInUser(LoggedInUser loggedInUser) {
 		this.loggedInUser = loggedInUser;
 	}
@@ -1419,12 +1421,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		return financeDetailService;
 	}
 
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
 
 	//******************************************* Bulk Rate Change *******************************
-
 
 }

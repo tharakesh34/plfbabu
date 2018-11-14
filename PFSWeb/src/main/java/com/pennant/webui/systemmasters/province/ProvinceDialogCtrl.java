@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.systemmasters.province;
 
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,47 +98,47 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Province/provinceDialog.zul file.
  */
 public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
-	private static final long			serialVersionUID		= 8900134469414443671L;
-	private static final Logger			logger					= Logger.getLogger(ProvinceDialogCtrl.class);
+	private static final long serialVersionUID = 8900134469414443671L;
+	private static final Logger logger = Logger.getLogger(ProvinceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_ProvinceDialog;
-	protected ExtendedCombobox			cPCountry;
-	protected Uppercasebox				cPProvince;
-	protected Textbox					cPProvinceName;
-	protected Checkbox					systemDefault;
-	protected Textbox					bankRefNo;
-	protected Checkbox					cPIsActive;																// autoWired
-	protected Checkbox					taxExempted;															// autoWired
-	protected Checkbox					unionTerritory;															// autoWired
-	protected Textbox					taxStateCode;															// autoWired
-	protected Checkbox					taxAvailable;															// autoWired
-	protected Textbox					businessArea;															// autoWired
-	protected Tab						tab_gstdetails;															// autoWired
-	protected Tab						tab_basicDetails;														// autoWired
-	protected Groupbox					gb_basicDetails;														// autoWired
-	protected Listbox					listBoxTaxDetails;														// autoWired
-	private List<TaxDetail>				taxMappingDetailList	= null;
-	private String						old_BusineesArea		= "";
+	protected Window window_ProvinceDialog;
+	protected ExtendedCombobox cPCountry;
+	protected Uppercasebox cPProvince;
+	protected Textbox cPProvinceName;
+	protected Checkbox systemDefault;
+	protected Textbox bankRefNo;
+	protected Checkbox cPIsActive; // autoWired
+	protected Checkbox taxExempted; // autoWired
+	protected Checkbox unionTerritory; // autoWired
+	protected Textbox taxStateCode; // autoWired
+	protected Checkbox taxAvailable; // autoWired
+	protected Textbox businessArea; // autoWired
+	protected Tab tab_gstdetails; // autoWired
+	protected Tab tab_basicDetails; // autoWired
+	protected Groupbox gb_basicDetails; // autoWired
+	protected Listbox listBoxTaxDetails; // autoWired
+	private List<TaxDetail> taxMappingDetailList = null;
+	private String old_BusineesArea = "";
 
 	// not auto wired variables
-	private Province					province;																// overHanded per parameter
-	private transient ProvinceListCtrl	provinceListCtrl;														// overHanded per parameter
-	private List<TaxDetail>				taxDetailList			= new ArrayList<TaxDetail>();
+	private Province province; // overHanded per parameter
+	private transient ProvinceListCtrl provinceListCtrl; // overHanded per parameter
+	private List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
 
-	private transient boolean			validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient ProvinceService	provinceService;
-	private Country						sysDefaultCountry;
-	protected Button					btnNew_gstDetails;
-	protected Row						row_taxAvailable;
+	private transient ProvinceService provinceService;
+	private Country sysDefaultCountry;
+	protected Button btnNew_gstDetails;
+	protected Row row_taxAvailable;
 	//protected Space						space_taxStateCode;
 	//protected Space						space_businessArea;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -231,7 +230,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPCountry.setValueColumn("CountryCode");
 		this.cPCountry.setDescColumn("CountryDesc");
 		this.cPCountry.setValidateColumns(new String[] { "CountryCode" });
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -250,7 +249,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnSave"));
 		this.btnNew_gstDetails.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnNew_gstDetails"));
-		
+
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -360,10 +359,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.businessArea.setValue(aProvince.getBusinessArea());
 
 		old_BusineesArea = aProvince.getBusinessArea();
-		
+
 		//Reneder GSTIN Mapping
 		doFillGSTINMappingDetails(aProvince.getTaxDetailList());
-		
+
 		if (aProvince.isNewRecord()) {
 			this.cPCountry.setDescription("");
 			this.tab_gstdetails.setVisible(false);
@@ -377,9 +376,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.cPIsActive.setChecked(true);
 			this.cPIsActive.setDisabled(true);
 		}
-		
+
 		checkTaxAvailable();
-		
+
 		this.recordStatus.setValue(aProvince.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -389,10 +388,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	//Reneder the list
 	public void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
 		logger.debug("Entering");
-		
+
 		this.listBoxTaxDetails.getItems().clear();
 		setTaxDetailList(taxMappingDetailList);
-		
+
 		if (taxMappingDetailList != null && !taxMappingDetailList.isEmpty()) {
 			for (TaxDetail taxMappingDetail : taxMappingDetailList) {
 				Listitem item = new Listitem();
@@ -420,10 +419,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 				this.listBoxTaxDetails.appendChild(item);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	//Double click GSTIN Mapping Details list
 	public void onTaxDetailItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -431,11 +430,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		final Listitem item = this.listBoxTaxDetails.getSelectedItem();
 		if (item != null) {
 			final TaxDetail taxDetail = (TaxDetail) item.getAttribute("data");
-			
+
 			if (!StringUtils.trimToEmpty(taxDetail.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 				taxDetail.setNewRecord(false);
 			}
-			
+
 			if (StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
 					|| StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
@@ -541,7 +540,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
@@ -569,7 +567,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		taxdetail.setCountryName(this.cPCountry.getDescription());
 		taxdetail.setStateCode(this.cPProvince.getValue());
 		taxdetail.setProvinceName(this.cPProvinceName.getValue());
-		
+
 		// Display the dialog page.
 		doShowDialogPage(taxdetail);
 
@@ -711,14 +709,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Enterring");
-		
+
 		this.cPProvince.setErrorMessage("");
 		this.cPProvinceName.setErrorMessage("");
 		this.cPCountry.setErrorMessage("");
 		this.bankRefNo.setErrorMessage("");
 		this.taxStateCode.setErrorMessage("");
 		this.businessArea.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -776,7 +774,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
+
 		if (getProvince().isNewRecord()) {
 			this.cPCountry.setReadonly(false);
 			this.btnCancel.setVisible(false);
@@ -798,13 +796,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxExempted.setDisabled(isReadOnly("ProvinceDialog_taxExempted"));
 		this.unionTerritory.setDisabled(isReadOnly("ProvinceDialog_unionTerritory"));
 		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
-		
+
 		if (StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())) {
 			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
 		} else {
 			this.taxAvailable.setDisabled(true);
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -827,7 +825,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		
+
 		this.cPCountry.setReadonly(true);
 		this.cPProvince.setReadonly(true);
 		this.cPProvinceName.setReadonly(true);
@@ -839,7 +837,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxStateCode.setDisabled(true);
 		this.businessArea.setDisabled(true);
 		this.taxAvailable.setDisabled(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -850,7 +848,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -896,9 +894,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		// fill the Province object with the components data
 		doWriteComponentsToBean(aProvince);
 
-		if (this.userAction.getSelectedItem() != null && ("save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-				|| this.userAction.getSelectedItem().getLabel().contains("Submit"))) {
-			
+		if (this.userAction.getSelectedItem() != null
+				&& ("save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						|| this.userAction.getSelectedItem().getLabel().contains("Submit"))) {
+
 			if (!StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_CANCELLED)
 					&& !StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_REJECTED)
 					&& !StringUtils.equals(aProvince.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
@@ -909,12 +908,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			} else if (this.taxAvailable.isChecked() && getTaxDetailList() != null) {
 				int count = 0;
 				for (TaxDetail taxDet : getTaxDetailList()) {
-					if(!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_CAN) && 
-							!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-						count ++;
+					if (!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
+							&& !StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+						count++;
 					}
 				}
-				if (!aProvince.isNewRecord() && StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())) {
+				if (!aProvince.isNewRecord()
+						&& StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())) {
 					if (count == 0) {
 						MessageUtil.showError(Labels.getLabel("label_GstinMap"));
 						return;
@@ -922,10 +922,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 						MessageUtil.showError(Labels.getLabel("label_Max_GstinMap"));
 						return;
 					}
-				} 
+				}
 			}
 		}
-		
+
 		// Write the additional validations as per below example get the selected branch object from the listbox Do data
 		// level validations here
 
@@ -1205,8 +1205,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
-	
-
 	public void onChange$businessArea(Event event) {
 		logger.debug("Entering");
 
@@ -1223,10 +1221,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 		logger.debug("Leaving");
 	}
-	
-	public void onCheck$taxAvailable(Event event){
+
+	public void onCheck$taxAvailable(Event event) {
 		logger.debug("Enteing");
-		
+
 		if (this.taxAvailable.isChecked()) {
 			if (!this.province.isNewRecord()) {
 				this.tab_gstdetails.setVisible(true);
@@ -1245,26 +1243,26 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 					}
 				}
 			}
-			
+
 			doFillGSTINMappingDetails(taxDetailList);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	private void checkTaxAvailable() {
 		logger.debug("Enteing");
-		
+
 		this.tab_gstdetails.setVisible(false);
 		if (this.taxAvailable.isChecked()) {
 			if (!this.province.isNewRecord()) {
 				this.tab_gstdetails.setVisible(true);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	public void doCheckSystemDefault() {
 		logger.debug("Entering");
 		if (StringUtils.isNotBlank(this.cPCountry.getValue())) {
@@ -1280,7 +1278,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 		logger.debug("Entering");
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

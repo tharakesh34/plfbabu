@@ -49,9 +49,14 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 
 public interface FinInsuranceService {
-	List<FinInsurances> getFinInsuranceByRef(String ref,String type);
+	List<FinInsurances> getFinInsuranceByRef(String ref, String type);
+
 	List<AuditDetail> saveOrUpdate(List<FinInsurances> finInsurance, String tableType, String auditTranType);
+
 	List<AuditDetail> doApprove(List<FinInsurances> finInsurance, String tableType, String auditTranType);
+
 	List<AuditDetail> delete(List<FinInsurances> finInsurance, String tableType, String auditTranType);
-	List<AuditDetail> validate(List<FinInsurances> finInsurance, long workflowId, String method, String auditTranType, String  usrLanguage);
+
+	List<AuditDetail> validate(List<FinInsurances> finInsurance, long workflowId, String method, String auditTranType,
+			String usrLanguage);
 }

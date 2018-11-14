@@ -17,10 +17,10 @@ public interface CustomerLimitProcess {
 
 	CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws InterfaceException;
 
-	List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit)	throws InterfaceException;
+	List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws InterfaceException;
 
 	CustomerLimitDetail getLimitDetails(String limitRef, String branchCode) throws InterfaceException;
-	
+
 	CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
 	CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization limitUtilReq) throws InterfaceException;

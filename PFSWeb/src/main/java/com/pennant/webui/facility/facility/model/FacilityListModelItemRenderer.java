@@ -54,7 +54,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -64,26 +63,26 @@ public class FacilityListModelItemRenderer implements ListitemRenderer<Facility>
 	private static final long serialVersionUID = 1L;
 
 	public FacilityListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Facility facility, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(facility.getCAFReference());
+		lc = new Listcell(facility.getCAFReference());
 		lc.setParent(item);
-	  	lc = new Listcell(facility.getCustCIF());
+		lc = new Listcell(facility.getCustCIF());
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatToLongDate(facility.getStartDate()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatToLongDate(facility.getNextReviewDate()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(facility.getPresentingUnit());
+		lc = new Listcell(DateUtility.formatToLongDate(facility.getStartDate()));
 		lc.setParent(item);
-	  	lc = new Listcell(facility.getCountryOfDomicile());
+		lc = new Listcell(DateUtility.formatToLongDate(facility.getNextReviewDate()));
 		lc.setParent(item);
-	  	lc = new Listcell(facility.getRecordStatus());
+		lc = new Listcell(facility.getPresentingUnit());
+		lc.setParent(item);
+		lc = new Listcell(facility.getCountryOfDomicile());
+		lc.setParent(item);
+		lc = new Listcell(facility.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(facility.getRecordType()));
 		lc.setParent(item);

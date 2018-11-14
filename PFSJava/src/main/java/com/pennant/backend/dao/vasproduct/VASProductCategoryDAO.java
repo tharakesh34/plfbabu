@@ -57,6 +57,6 @@ public interface VASProductCategoryDAO {
 	void delete(VASProductCategory vASProductCategory, String type);
 
 	String save(VASProductCategory vASProductCategory, String type);
-	
+
 	int getVASProductCategoryByActive(String id, String string);
 }

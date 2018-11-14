@@ -73,11 +73,10 @@ import com.pennanttech.pff.core.util.QueryUtil;
 public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implements DepositDetailsDAO {
 	private static Logger logger = Logger.getLogger(DepositDetailsDAOImpl.class);
 
-	
 	public DepositDetailsDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -99,13 +98,14 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		if (type.contains("View")) {
 			selectSql.append(" BranchDesc,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DepositId = :DepositId");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositDetails);
 		RowMapper<DepositDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositDetails.class);
 
@@ -119,7 +119,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.debug(Literal.LEAVING);
 		return depositDetails;
 	}
-	
+
 	@Override
 	public DepositDetails getDepositDetails(String depositType, String branchCode, String type) {
 		logger.debug(Literal.ENTERING);
@@ -133,13 +133,14 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		if (type.contains("View")) {
 			selectSql.append(" BranchDesc,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DepositType = :DepositType And BranchCode = :BranchCode");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositDetails);
 		RowMapper<DepositDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositDetails.class);
 
@@ -153,7 +154,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.debug(Literal.LEAVING);
 		return depositDetails;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(long depositId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -189,34 +190,36 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public long save(DepositDetails depositDetails, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert into DepositDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (DepositId, DepositType, BranchCode, ActualAmount, ReservedAmount,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values (:DepositId, :DepositType, :BranchCode, :ActualAmount, :ReservedAmount,");
-		sql.append("  :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				"  :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the identity sequence number.
 		if (depositDetails.getDepositId() <= 0) {
 			depositDetails.setDepositId(getNextValue("SeqDepositDetails"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositDetails);
-		
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return depositDetails.getDepositId();
 	}
@@ -228,15 +231,17 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update DepositDetails");
 		sql.append(tableType.getSuffix());
-		
+
 		sql.append(" set DepositType = :DepositType, BranchCode = :BranchCode,");
 		if ("_Temp".equalsIgnoreCase(tableType.getSuffix())) {
 			sql.append(" ActualAmount = :ActualAmount, ReservedAmount = :ReservedAmount,");
 		} else {
 			sql.append(" ActualAmount = ActualAmount - :ReservedAmount, ReservedAmount = 0,");
 		}
-		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(
+				" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(
+				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where DepositId = :DepositId");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -252,7 +257,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void updateActualAmount(long depositId, BigDecimal actualAmount, boolean increese, String type) {
 		logger.debug(Literal.ENTERING);
@@ -304,7 +309,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -317,35 +322,39 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 	@Override
 	public DepositMovements getDepositMovementsById(long movementId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DepositMovements depositMovements = new DepositMovements();
 		depositMovements.setMovementId(movementId);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
+
+		selectSql.append(
+				" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
 		if (type.contains("View")) {
 			selectSql.append(" PartnerBankCode, PartnerBankName, BranchCode, BranchDesc,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where MovementId = :MovementId");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
-		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositMovements.class);
-		
+		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DepositMovements.class);
+
 		try {
 			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info("Information: ", e);
 			depositMovements = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return depositMovements;
 	}
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -358,32 +367,35 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 	@Override
 	public DepositMovements getDepositMovementsByReceiptId(long receiptId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DepositMovements depositMovements = new DepositMovements();
 		depositMovements.setReceiptId(receiptId);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
+
+		selectSql.append(
+				" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
 		if (type.contains("View")) {
 			selectSql.append(" PartnerBankCode, PartnerBankName, BranchCode, BranchDesc,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ReceiptId = :ReceiptId");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
-		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositMovements.class);
-		
+		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DepositMovements.class);
+
 		try {
 			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info("Information: ", e);
 			depositMovements = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return depositMovements;
 	}
@@ -395,10 +407,14 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert into DepositMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values (:MovementId, :DepositId, :TransactionType, :ReservedAmount, :PartnerBankId, :DepositSlipNumber, :TransactionDate, :ReceiptId, :LinkedTranId,");
-		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" (MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
+		sql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" values (:MovementId, :DepositId, :TransactionType, :ReservedAmount, :PartnerBankId, :DepositSlipNumber, :TransactionDate, :ReceiptId, :LinkedTranId,");
+		sql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (depositMovements.getMovementId() <= 0) {
@@ -418,34 +434,38 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.debug(Literal.LEAVING);
 		return depositMovements.getMovementId();
 	}
-	
+
 	@Override
 	public void updateDepositMovements(DepositMovements depositMovements, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update DepositMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set TransactionType = :TransactionType, ReservedAmount = :ReservedAmount, PartnerBankId = :PartnerBankId,");
-		sql.append(" DepositSlipNumber = :DepositSlipNumber, TransactionDate = :TransactionDate, LinkedTranId = :LinkedTranId,");
-		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(
+				" set TransactionType = :TransactionType, ReservedAmount = :ReservedAmount, PartnerBankId = :PartnerBankId,");
+		sql.append(
+				" DepositSlipNumber = :DepositSlipNumber, TransactionDate = :TransactionDate, LinkedTranId = :LinkedTranId,");
+		sql.append(
+				" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(
+				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where MovementId = :MovementId And DepositId = :DepositId");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(depositMovements);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		
+
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void updateLinkedTranIdByMovementId(long movementId, long likedTranId, String type) {
 		logger.debug(Literal.ENTERING);
@@ -464,7 +484,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void deleteDepositMovements(DepositMovements depositMovements, String type) {
 		logger.debug(Literal.ENTERING);
@@ -493,13 +513,13 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void deleteMovementsByDepositId(long depositId, String type) {
 		logger.debug(Literal.ENTERING);
-		DepositMovements depositMovements= new DepositMovements();
+		DepositMovements depositMovements = new DepositMovements();
 		depositMovements.setDepositId(depositId);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from DepositMovements");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -518,42 +538,46 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public DepositMovements getDepositMovementsByDepositId(long depositId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		DepositMovements depositMovements = new DepositMovements();
 		depositMovements.setDepositId(depositId);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
+
+		selectSql.append(
+				" Select MovementId, DepositId, TransactionType, ReservedAmount, PartnerBankId, DepositSlipNumber, TransactionDate, ReceiptId, LinkedTranId,");
 		if (type.contains("View")) {
 			selectSql.append(" PartnerBankCode, PartnerBankName, BranchCode, BranchDesc,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM DepositMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DepositId = :DepositId And MovementId = (Select Max(MovementId) from DepositMovements");
+		selectSql
+				.append(" Where DepositId = :DepositId And MovementId = (Select Max(MovementId) from DepositMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DepositId = :DepositId)");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
-		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositMovements.class);
-		
+		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DepositMovements.class);
+
 		try {
 			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			depositMovements = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return depositMovements;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String depositSlipNumber, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -589,11 +613,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public void reverseMovementTranType(long movementId) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TransactionType", CashManagementConstants.DEPOSIT_MOVEMENT_REVERSE);
 		source.addValue("MovementId", movementId);
@@ -604,7 +628,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.trace(Literal.SQL + updateSql.toString());
 
 		this.jdbcTemplate.update(updateSql.toString(), source);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 }

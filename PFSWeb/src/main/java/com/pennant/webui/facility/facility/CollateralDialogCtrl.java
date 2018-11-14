@@ -77,43 +77,42 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Collateral/Collateral/collateralDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Collateral/Collateral/collateralDialog.zul file.
  */
 public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CollateralDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CollateralDialog; 
-	protected Textbox cAFReference; 
-	protected Textbox reference; 
-	protected Textbox lastReview; 
-	protected ExtendedCombobox currency; 
-	protected CurrencyBox value; 
-	protected CurrencyBox bankvaluation; 
-	protected Decimalbox bankmargin; 
-	protected Decimalbox actualCoverage; 
-	protected Decimalbox proposedCoverage; 
-	protected Textbox description; 
+	protected Window window_CollateralDialog;
+	protected Textbox cAFReference;
+	protected Textbox reference;
+	protected Textbox lastReview;
+	protected ExtendedCombobox currency;
+	protected CurrencyBox value;
+	protected CurrencyBox bankvaluation;
+	protected Decimalbox bankmargin;
+	protected Decimalbox actualCoverage;
+	protected Decimalbox proposedCoverage;
+	protected Textbox description;
 	// not auto wired vars
 	private Collateral collateral; // overhanded per param
 	private Collateral prvCollateral; // overhanded per param
 	private transient FacilityDialogCtrl facilityDialogCtrl; // overhanded per
 																// param
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private List<Collateral> collateralsList;
 
 	private int ccyFormat = 2; //Need to set from bean
-	private String userRole="";
+	private String userRole = "";
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -127,11 +126,10 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Collateral object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Collateral object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -149,18 +147,19 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 				BeanUtils.copyProperties(this.collateral, befImage);
 				this.collateral.setBefImage(befImage);
 				setCollateral(this.collateral);
-				ccyFormat=getCollateral().getCcyFormat();
+				ccyFormat = getCollateral().getCcyFormat();
 			} else {
 				setCollateral(null);
 			}
 			this.collateral.setWorkflowId(0);
-			doLoadWorkFlow(this.collateral.isWorkflow(), this.collateral.getWorkflowId(), this.collateral.getNextTaskId());
+			doLoadWorkFlow(this.collateral.isWorkflow(), this.collateral.getWorkflowId(),
+					this.collateral.getNextTaskId());
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),super.pageRightName);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
 			}
 			if (arguments.containsKey("role")) {
-				userRole=arguments.get("role").toString();
+				userRole = arguments.get("role").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, super.pageRightName);
 			}
 			doCheckRights();
@@ -194,7 +193,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		this.reference.setMaxlength(50);
 		this.lastReview.setMaxlength(50);
 		this.currency.setMaxlength(3);
-        this.currency.setMandatoryStyle(true);
+		this.currency.setMandatoryStyle(true);
 		this.currency.setModuleName("Currency");
 		this.currency.setValueColumn("CcyCode");
 		this.currency.setDescColumn("CcyDesc");
@@ -205,7 +204,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		this.bankvaluation.setMandatory(false);
 		this.bankvaluation.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.bankvaluation.setScale(ccyFormat);
-		
+
 		this.bankmargin.setMaxlength(6);
 		this.bankmargin.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.bankmargin.setScale(2);
@@ -229,12 +228,11 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("CollateralDialog",userRole);
+		getUserWorkspace().allocateAuthorities("CollateralDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CollateralDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CollateralDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CollateralDialog_btnDelete"));
@@ -277,7 +275,6 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		MessageUtil.showHelpWindow(event, window_CollateralDialog);
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * when the "delete" button is clicked. <br>
@@ -362,7 +359,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		this.currency.setValue(aCollateral.getCurrency());
 		this.value.setValue(PennantAppUtil.formateAmount(aCollateral.getValue(), ccyFormat));
 		this.bankvaluation.setValue(PennantAppUtil.formateAmount(aCollateral.getBankvaluation(), ccyFormat));
-		
+
 		this.bankmargin.setValue(aCollateral.getBankmargin());
 		this.actualCoverage.setValue(aCollateral.getActualCoverage());
 		this.proposedCoverage.setValue(aCollateral.getProposedCoverage());
@@ -413,7 +410,8 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 			wve.add(we);
 		}
 		try {
-			aCollateral.setBankvaluation(PennantApplicationUtil.unFormateAmount(this.bankvaluation.getValidateValue(), ccyFormat));
+			aCollateral.setBankvaluation(
+					PennantApplicationUtil.unFormateAmount(this.bankvaluation.getValidateValue(), ccyFormat));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -459,8 +457,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCollateral
 	 * @throws InterruptedException
@@ -482,7 +479,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCollateral);
-			
+
 			this.window_CollateralDialog.doModal();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -497,30 +494,34 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.reference.isReadonly()) {
-			this.reference.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralDialog_Reference.value"),null,true));
+			this.reference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralDialog_Reference.value"), null, true));
 		}
 		if (!this.lastReview.isReadonly()) {
-			this.lastReview.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralDialog_LastReview.value"),null,true));
+			this.lastReview.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralDialog_LastReview.value"), null, true));
 		}
 		if (!this.value.isReadonly()) {
-			this.value.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_Value.value"), ccyFormat, false, false));
+			this.value.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_Value.value"),
+					ccyFormat, false, false));
 		}
 		if (!this.bankvaluation.isReadonly()) {
-			this.bankvaluation.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_Bankvaluation.value"), ccyFormat, false, false));
+			this.bankvaluation.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CollateralDialog_Bankvaluation.value"), ccyFormat, false, false));
 		}
 		if (!this.bankmargin.isReadonly()) {
-			this.bankmargin.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_Bankmargin.value"),
-					2, false, false, 0, 100));
+			this.bankmargin.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CollateralDialog_Bankmargin.value"), 2, false, false, 0, 100));
 		}
 		if (!this.actualCoverage.isReadonly()) {
-			this.actualCoverage.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_ActualCoverage.value"),
-				2, false, false, 0, 100));
+			this.actualCoverage.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CollateralDialog_ActualCoverage.value"), 2, false, false, 0, 100));
 		}
 		if (!this.proposedCoverage.isReadonly()) {
-			this.proposedCoverage.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_ProposedCoverage.value"),
-					2, false, false, 0, 100));
+			this.proposedCoverage.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CollateralDialog_ProposedCoverage.value"), 2, false, false, 0, 100));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -543,7 +544,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a Collateral object from database.<br>
 	 * 
@@ -555,7 +556,8 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		BeanUtils.copyProperties(getCollateral(), aCollateral);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aCollateral.getCAFReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCollateral.getCAFReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCollateral.getRecordType())) {
 				aCollateral.setVersion(aCollateral.getVersion() + 1);
@@ -602,7 +604,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		//readOnlyComponent(isReadOnly("CollateralDialog_reference"), this.reference);
 		readOnlyComponent(isReadOnly("CollateralDialog_lastReview"), this.lastReview);
 		readOnlyComponent(isReadOnly("CollateralDialog_currency"), this.currency);
-		readOnlyComponent(isReadOnly("CollateralDialog_value"), this.value);	
+		readOnlyComponent(isReadOnly("CollateralDialog_value"), this.value);
 		readOnlyComponent(isReadOnly("CollateralDialog_bankvaluation"), this.bankvaluation);
 		readOnlyComponent(isReadOnly("CollateralDialog_bankmargin"), this.bankmargin);
 		readOnlyComponent(isReadOnly("CollateralDialog_actualCoverage"), this.actualCoverage);
@@ -623,9 +625,11 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		}
 		logger.debug("Leaving");
 	}
-	public boolean isReadOnly(String componentName){
+
+	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -683,7 +687,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		final Collateral aCollateral = new Collateral();
 		BeanUtils.copyProperties(getCollateral(), aCollateral);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the Collateral object with the components data
@@ -754,7 +758,9 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 				if (collateral.getReference().equals(aCollateral.getReference())) {
 					// Both Current and Existing list rating same
 					if (aCollateral.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -797,7 +803,6 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		return auditHeader;
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -835,7 +840,8 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 
 	private AuditHeader getAuditHeader(Collateral aCollateral, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCollateral.getBefImage(), aCollateral);
-		return new AuditHeader(aCollateral.getCAFReference(), null, null, null, auditDetail, aCollateral.getUserDetails(), getOverideMap());
+		return new AuditHeader(aCollateral.getCAFReference(), null, null, null, auditDetail,
+				aCollateral.getUserDetails(), getOverideMap());
 	}
 
 	private void showMessage(Exception e) {
@@ -853,19 +859,20 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	}
 
 	private void doSetLOVValidation() {
-		if(this.currency.isButtonVisible()){
-			this.currency.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralDialog_Currency.value"),null,true,true));
+		if (this.currency.isButtonVisible()) {
+			this.currency.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralDialog_Currency.value"), null, true, true));
 		}
 	}
+
 	private void doRemoveLOVValidation() {
 		this.currency.setConstraint("");
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.collateral.getCAFReference());
 	}
-
 
 	@Override
 	protected void doClearMessage() {

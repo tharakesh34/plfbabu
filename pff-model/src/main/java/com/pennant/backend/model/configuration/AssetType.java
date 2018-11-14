@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class AssetType extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private String assetType;
 	private String assetDesc;
@@ -63,12 +63,12 @@ private static final long serialVersionUID = 1L;
 	private String preValidation;
 	private String postValidation;
 	private boolean active;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private AssetType befImage;
 	private LoggedInUser userDetails;
-	private ExtendedFieldHeader	extendedFieldHeader	= new ExtendedFieldHeader();
-	
+	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -81,48 +81,53 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("extendedFieldHeader");
-	return excludeFields;
+		return excludeFields;
 	}
 
 	public String getId() {
 		return assetType;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.assetType = id;
 	}
+
 	public String getAssetType() {
 		return assetType;
 	}
+
 	public void setAssetType(String assetType) {
 		this.assetType = assetType;
 	}
-	
+
 	public String getAssetDesc() {
 		return assetDesc;
 	}
+
 	public void setAssetDesc(String assetDesc) {
 		this.assetDesc = assetDesc;
 	}
-	
+
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -130,7 +135,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -139,12 +144,12 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public AssetType getBefImage(){
+	public AssetType getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(AssetType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AssetType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -178,5 +183,5 @@ private static final long serialVersionUID = 1L;
 	public void setPostValidation(String postValidation) {
 		this.postValidation = postValidation;
 	}
-	
+
 }

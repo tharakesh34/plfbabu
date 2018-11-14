@@ -43,13 +43,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class FinanceDataDefaulting {
 
-	private CustomerDAO			customerDAO;
-	private FinanceTypeDAO		financeTypeDAO;
-	private BranchDAO			branchDAO;
-	private PromotionService	promotionService;
-	private CurrencyDAO			currencyDAO;
-	private FinanceMainDAO		financeMainDAO;
-
+	private CustomerDAO customerDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private BranchDAO branchDAO;
+	private PromotionService promotionService;
+	private CurrencyDAO currencyDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public FinanceDataDefaulting() {
 		super();
@@ -60,14 +59,14 @@ public class FinanceDataDefaulting {
 
 		//Validate Fields data (Excluding Base & Special rates Validations)
 		validateMasterData(vldGroup, finScheduleData);
-		
+
 		if (!finScheduleData.getErrorDetails().isEmpty()) {
 			return finScheduleData;
 		}
 
 		// Date formats
 		setDefaultDateFormats(finScheduleData.getFinanceMain());
-		
+
 		// Basic Details Defaulting
 		basicDefaulting(vldGroup, finScheduleData);
 
@@ -78,8 +77,8 @@ public class FinanceDataDefaulting {
 		repayDefaulting(vldGroup, finScheduleData);
 
 		// Overdue penalty rates defaulting
-		if(StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)){
-		overdueDefaulting(vldGroup, finScheduleData);
+		if (StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)) {
+			overdueDefaulting(vldGroup, finScheduleData);
 		}
 		return finScheduleData;
 
@@ -92,54 +91,54 @@ public class FinanceDataDefaulting {
 	 */
 
 	private void setDefaultDateFormats(FinanceMain financeMain) {
-		if(financeMain.getFinStartDate() != null) {
-			financeMain.setFinStartDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getFinStartDate() != null) {
+			financeMain.setFinStartDate(DateUtility
+					.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(), PennantConstants.DBDateFormat)));
 		}
-		
-		if(financeMain.getGrcPeriodEndDate() != null){
-			financeMain.setGrcPeriodEndDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getGrcPeriodEndDate(),
-					PennantConstants.DBDateFormat)));
+
+		if (financeMain.getGrcPeriodEndDate() != null) {
+			financeMain.setGrcPeriodEndDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextGrcPftDate() != null){
-			financeMain.setNextGrcPftDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextGrcPftDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextGrcPftDate() != null) {
+			financeMain.setNextGrcPftDate(DateUtility
+					.getDBDate(DateUtility.formatDate(financeMain.getNextGrcPftDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextGrcPftRvwDate() != null){
-			financeMain.setNextGrcPftRvwDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextGrcPftRvwDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextGrcPftRvwDate() != null) {
+			financeMain.setNextGrcPftRvwDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getNextGrcPftRvwDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextGrcCpzDate()!= null){
-			financeMain.setNextGrcCpzDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextGrcCpzDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextGrcCpzDate() != null) {
+			financeMain.setNextGrcCpzDate(DateUtility
+					.getDBDate(DateUtility.formatDate(financeMain.getNextGrcCpzDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextRepayDate()!= null){
-			financeMain.setNextRepayDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextRepayDate() != null) {
+			financeMain.setNextRepayDate(DateUtility
+					.getDBDate(DateUtility.formatDate(financeMain.getNextRepayDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextRepayPftDate()!= null){
-			financeMain.setNextRepayPftDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayPftDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextRepayPftDate() != null) {
+			financeMain.setNextRepayPftDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getNextRepayPftDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextRepayRvwDate()!= null){
-			financeMain.setNextRepayRvwDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayRvwDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextRepayRvwDate() != null) {
+			financeMain.setNextRepayRvwDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getNextRepayRvwDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextRepayCpzDate()!= null){
-			financeMain.setNextRepayCpzDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayCpzDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextRepayCpzDate() != null) {
+			financeMain.setNextRepayCpzDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getNextRepayCpzDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getFirstDroplineDate()!= null){
-			financeMain.setFirstDroplineDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFirstDroplineDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getFirstDroplineDate() != null) {
+			financeMain.setFirstDroplineDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getFirstDroplineDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getMaturityDate()!= null){
-			financeMain.setMaturityDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getMaturityDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getMaturityDate() != null) {
+			financeMain.setMaturityDate(DateUtility
+					.getDBDate(DateUtility.formatDate(financeMain.getMaturityDate(), PennantConstants.DBDateFormat)));
 		}
-		if(financeMain.getNextRolloverDate()!= null){
-			financeMain.setNextRolloverDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRolloverDate(),
-					PennantConstants.DBDateFormat)));
+		if (financeMain.getNextRolloverDate() != null) {
+			financeMain.setNextRolloverDate(DateUtility.getDBDate(
+					DateUtility.formatDate(financeMain.getNextRolloverDate(), PennantConstants.DBDateFormat)));
 		}
 	}
 
@@ -184,8 +183,6 @@ public class FinanceDataDefaulting {
 				String ccy = SysParamUtil.getAppCurrency();
 				finMain.setFinCcy(ccy);
 			}
-			
-			
 
 			// validate finance branch
 			if (StringUtils.isNotBlank(finMain.getFinBranch())) {
@@ -196,7 +193,6 @@ public class FinanceDataDefaulting {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
 				}
 			}
-			
 
 			//Validate Interest Days basis
 			if (StringUtils.isNotBlank(finMain.getProfitDaysBasis()) && !isValidateIDB(finMain.getProfitDaysBasis())) {
@@ -270,8 +266,8 @@ public class FinanceDataDefaulting {
 			}
 
 			//Grace Rate Type/Rate Basis
-			if (StringUtils.isNotBlank(finMain.getGrcRateBasis()) && 
-					!StringUtils.equals(finMain.getGrcRateBasis(), PennantConstants.List_Select)) {
+			if (StringUtils.isNotBlank(finMain.getGrcRateBasis())
+					&& !StringUtils.equals(finMain.getGrcRateBasis(), PennantConstants.List_Select)) {
 				if (!StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_F)
 						&& !StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_R)) {
 					String[] valueParm = new String[1];
@@ -436,10 +432,10 @@ public class FinanceDataDefaulting {
 		}
 
 		// Finance amount 
-		if(finMain.getFinAmount() == null) {
+		if (finMain.getFinAmount() == null) {
 			finMain.setFinAmount(BigDecimal.ZERO);
 		}
-		
+
 		//Set Product Category
 		finMain.setProductCategory(financeType.getProductCategory());
 		finMain.setFinCategory(financeType.getFinCategory());
@@ -469,12 +465,12 @@ public class FinanceDataDefaulting {
 		if (branch != null) {
 			finMain.setSwiftBranchCode(branch.getBranchSwiftBrnCde());
 		}
-		
+
 		//Default Interest Days Basis
 		if (StringUtils.isBlank(finMain.getProfitDaysBasis())) {
 			finMain.setProfitDaysBasis(financeType.getFinDaysCalType());
 		}
-		
+
 		// Review rate applied for
 		finMain.setRvwRateApplFor(financeType.getFinRvwRateApplFor());
 		finMain.setFinCategory(financeType.getFinCategory());
@@ -548,7 +544,7 @@ public class FinanceDataDefaulting {
 			finMain.setGrcRateBasis(PennantConstants.List_Select);
 			return;
 		}
-		
+
 		// set default values from financeType
 		finMain.setAllowGrcPftRvw(financeType.isFinGrcIsRvwAlw());
 		finMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
@@ -559,13 +555,14 @@ public class FinanceDataDefaulting {
 		}
 
 		// Grace schedule method
-		if(StringUtils.isBlank(finMain.getGrcSchdMthd())) {
+		if (StringUtils.isBlank(finMain.getGrcSchdMthd())) {
 			finMain.setGrcSchdMthd("");
 		}
-		
+
 		//Grace Rate
 		if (StringUtils.isBlank(finMain.getGraceBaseRate()) && finMain.getGrcPftRate().compareTo(zeroValue) == 0
-				&& StringUtils.isBlank(finMain.getGraceSpecialRate()) && finMain.getGrcMargin().compareTo(zeroValue) == 0) {
+				&& StringUtils.isBlank(finMain.getGraceSpecialRate())
+				&& finMain.getGrcMargin().compareTo(zeroValue) == 0) {
 			if (StringUtils.isNotBlank(financeType.getFinGrcBaseRate())) {
 				finMain.setGraceBaseRate(financeType.getFinGrcBaseRate());
 				finMain.setGraceSpecialRate(financeType.getFinGrcSplRate());
@@ -631,10 +628,10 @@ public class FinanceDataDefaulting {
 
 			//Review Date
 			if (isValidOtherFrq && finMain.getNextGrcPftRvwDate() == null) {
-				Date rvwDate = FrequencyUtil.getNextDate(finMain.getGrcPftRvwFrq(), 1,
-						finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+				Date rvwDate = FrequencyUtil.getNextDate(finMain.getGrcPftRvwFrq(), 1, finMain.getFinStartDate(),
+						HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 				rvwDate = DateUtility.getDBDate(DateUtility.formatDate(rvwDate, PennantConstants.DBDateFormat));
-				
+
 				if (finMain.getCalGrcEndDate() != null && rvwDate != null) {
 					if (finMain.getCalGrcEndDate().compareTo(rvwDate) < 0) {
 						rvwDate = finMain.getCalGrcEndDate();
@@ -662,8 +659,8 @@ public class FinanceDataDefaulting {
 
 			//Capitalize Date
 			if (isValidOtherFrq && finMain.getNextGrcCpzDate() == null) {
-				Date cpzDate = FrequencyUtil.getNextDate(finMain.getGrcCpzFrq(), 1, 
-						finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+				Date cpzDate = FrequencyUtil.getNextDate(finMain.getGrcCpzFrq(), 1, finMain.getFinStartDate(),
+						HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 				cpzDate = DateUtility.getDBDate(DateUtility.formatDate(cpzDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalGrcEndDate() != null && cpzDate != null) {
@@ -697,20 +694,22 @@ public class FinanceDataDefaulting {
 		// set default values from financeType
 		finMain.setAllowRepayRvw(financeType.isFinIsRvwAlw());
 		finMain.setAllowRepayCpz(financeType.isFinIsIntCpz());
-		
+
 		// return in case of CalGrcEndDate is null for allow grace finance
-		if(finMain.isAllowGrcPeriod() && finMain.getCalGrcEndDate() == null) {
+		if (finMain.isAllowGrcPeriod() && finMain.getCalGrcEndDate() == null) {
 			return;
 		}
-		
+
 		//Repay Rate Type
 		if (StringUtils.isBlank(finMain.getRepayRateBasis())) {
 			finMain.setRepayRateBasis(financeType.getFinRateType());
 		}
 
 		//Repay Rate
-		if (StringUtils.isBlank(finMain.getRepayBaseRate()) && finMain.getRepayProfitRate().compareTo(BigDecimal.ZERO) == 0
-				&& StringUtils.isBlank(finMain.getRepaySpecialRate()) && finMain.getRepayMargin().compareTo(BigDecimal.ZERO) == 0) {
+		if (StringUtils.isBlank(finMain.getRepayBaseRate())
+				&& finMain.getRepayProfitRate().compareTo(BigDecimal.ZERO) == 0
+				&& StringUtils.isBlank(finMain.getRepaySpecialRate())
+				&& finMain.getRepayMargin().compareTo(BigDecimal.ZERO) == 0) {
 			if (StringUtils.isNotBlank(financeType.getFinBaseRate())) {
 				finMain.setRepayBaseRate(financeType.getFinBaseRate());
 				finMain.setRepaySpecialRate(financeType.getFinSplRate());
@@ -760,7 +759,7 @@ public class FinanceDataDefaulting {
 
 		//Set Default Next Repayment Date
 		if (isValidRpyFrq && finMain.getNextRepayDate() == null) {
-		//	Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
+			//	Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
 			Date nextDate = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(),
 					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 			nextDate = DateUtility.getDBDate(DateUtility.formatDate(nextDate, PennantConstants.DBDateFormat));
@@ -786,7 +785,8 @@ public class FinanceDataDefaulting {
 		if (isValidOtherFrq && finMain.getNextRepayPftDate() == null) {
 			Date nextRpyPftDate = FrequencyUtil.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(),
 					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
-			nextRpyPftDate = DateUtility.getDBDate(DateUtility.formatDate(nextRpyPftDate, PennantConstants.DBDateFormat));
+			nextRpyPftDate = DateUtility
+					.getDBDate(DateUtility.formatDate(nextRpyPftDate, PennantConstants.DBDateFormat));
 
 			if (finMain.getCalMaturity() != null && nextRpyPftDate != null) {
 				if (finMain.getCalMaturity().compareTo(nextRpyPftDate) < 0) {
@@ -813,9 +813,12 @@ public class FinanceDataDefaulting {
 
 			//Next Profit Review Date
 			if (isValidOtherFrq && finMain.getNextRepayRvwDate() == null) {
-				Date nextRpyRvwDate = FrequencyUtil.getNextDate(finMain.getRepayRvwFrq(), 1, 
-						finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
-				nextRpyRvwDate = DateUtility.getDBDate(DateUtility.formatDate(nextRpyRvwDate, PennantConstants.DBDateFormat));
+				Date nextRpyRvwDate = FrequencyUtil
+						.getNextDate(finMain.getRepayRvwFrq(), 1, finMain.getCalGrcEndDate(),
+								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+						.getNextFrequencyDate();
+				nextRpyRvwDate = DateUtility
+						.getDBDate(DateUtility.formatDate(nextRpyRvwDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalMaturity() != null && nextRpyRvwDate != null) {
 					if (finMain.getCalMaturity().compareTo(nextRpyRvwDate) < 0) {
@@ -842,10 +845,12 @@ public class FinanceDataDefaulting {
 			}
 			//Next Capitalize Date
 			if (isValidOtherFrq && finMain.getNextRepayCpzDate() == null) {
-				Date cpzDate = FrequencyUtil.getNextDate(finMain.getRepayCpzFrq(), 1,
-						finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+				Date cpzDate = FrequencyUtil
+						.getNextDate(finMain.getRepayCpzFrq(), 1, finMain.getCalGrcEndDate(),
+								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+						.getNextFrequencyDate();
 				cpzDate = DateUtility.getDBDate(DateUtility.formatDate(cpzDate, PennantConstants.DBDateFormat));
-				
+
 				if (finMain.getCalMaturity() != null && cpzDate != null) {
 					if (finMain.getCalMaturity().compareTo(cpzDate) < 0) {
 						cpzDate = finMain.getCalMaturity();
@@ -864,9 +869,9 @@ public class FinanceDataDefaulting {
 		} else {
 			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 		}
-		
-		finMain.setFixedRateTenor(financeType.getFixedRateTenor());		
-		
+
+		finMain.setFixedRateTenor(financeType.getFixedRateTenor());
+
 	}
 
 	private void overdueDefaulting(String vldGroup, FinScheduleData finScheduleData) {
@@ -885,14 +890,16 @@ public class FinanceDataDefaulting {
 		} else if (finScheduleData.getFinODPenaltyRate() != null && !financeType.isApplyODPenalty()) {
 			FinODPenaltyRate finODPenaltyRate = finScheduleData.getFinODPenaltyRate();
 			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
-					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+							FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+							FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
 				BigDecimal totPerc = PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
 				finODPenaltyRate.setODChargeAmtOrPerc(totPerc);
 			}
 		}
 	}
-	
+
 	/*
 	 * _______________________________________________________________________________________________________________
 	 * DEFAULT STEP DETAILS
@@ -924,15 +931,15 @@ public class FinanceDataDefaulting {
 	 */
 	private String getDftFrequency(String frq, String alwdFrqDays) {
 
-		if(StringUtils.isNotBlank(frq)) {
+		if (StringUtils.isNotBlank(frq)) {
 			// Making into List
 			List<String> alwdDays = Arrays.asList(alwdFrqDays.split(","));
-			
+
 			//Sorting available list
 			Collections.sort(alwdDays);
 			return frq.substring(0, 3).concat(StringUtils.leftPad(alwdDays.get(0), 2, "0"));
 		}
-		
+
 		return frq;
 	}
 
@@ -943,7 +950,7 @@ public class FinanceDataDefaulting {
 	 */
 	private String getDftFrequency(String frq, Date frqDate) {
 
-		if(StringUtils.isNotBlank(frq)) {
+		if (StringUtils.isNotBlank(frq)) {
 			String frqDay = String.valueOf(DateUtility.getDay(frqDate));
 			frqDay = StringUtils.leftPad(frqDay, 2, "0");
 			frq = new StringBuilder(5).append(frq.substring(0, 3)).append(frqDay).toString();
@@ -997,15 +1004,18 @@ public class FinanceDataDefaulting {
 		if (finMain.getGraceTerms() > 0) {
 			finMain.setCalGrcTerms(finMain.getGraceTerms());
 			if (StringUtils.isNotBlank(finMain.getGrcPftFrq()) && finMain.getGrcPeriodEndDate() == null) {
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getGrcPftFrq(), finMain.getGraceTerms(),
-						finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getScheduleList();
+				List<Calendar> scheduleDateList = FrequencyUtil
+						.getNextDate(finMain.getGrcPftFrq(), finMain.getGraceTerms(), finMain.getFinStartDate(),
+								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+						.getScheduleList();
 
 				Date geDate = null;
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					geDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+					geDate = DateUtility
+							.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
 				}
-				
+
 				finMain.setCalGrcEndDate(geDate);
 			}
 			return;
@@ -1048,44 +1058,50 @@ public class FinanceDataDefaulting {
 
 		//Default Calculated Maturity Date using terms
 		if (finMain.getNumberOfTerms() > 0) {
-			if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
-				finMain.setCalTerms(finMain.getNumberOfTerms());	
+			if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+				finMain.setCalTerms(finMain.getNumberOfTerms());
 				if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
-					List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
-							finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
-		
+					List<Calendar> scheduleDateList = FrequencyUtil
+							.getNextDate(finMain.getRepayFrq(), finMain.getNumberOfTerms(), finMain.getNextRepayDate(),
+									HolidayHandlerTypes.MOVE_NONE, true, 0)
+							.getScheduleList();
+
 					if (scheduleDateList != null) {
 						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-						Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+						Date matDate = DateUtility
+								.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
 						finMain.setCalMaturity(matDate);
 					}
 				}
-			}else{
+			} else {
 				if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
-					List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
-							finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
-		
+					List<Calendar> scheduleDateList = FrequencyUtil
+							.getNextDate(finMain.getRepayFrq(), finMain.getNumberOfTerms(), finMain.getFinStartDate(),
+									HolidayHandlerTypes.MOVE_NONE, false, 0)
+							.getScheduleList();
+
 					if (scheduleDateList != null) {
 						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-						Date matDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+						Date matDate = DateUtility
+								.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
 						finMain.setCalMaturity(matDate);
 					}
 				}
-				
+
 			}
-			
+
 			return;
 		}
-			
+
 		//Default Calculated Terms based on Maturity Date
 		finMain.setCalMaturity(finMain.getMaturityDate());
 		if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
-			if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 				int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), finMain.getNextRepayDate(),
 						finMain.getMaturityDate(), true, true).getTerms();
-				finMain.setCalTerms(terms);	
+				finMain.setCalTerms(terms);
 			}
-			
+
 		}
 
 		return;
@@ -1097,26 +1113,27 @@ public class FinanceDataDefaulting {
 	 * @param financeDetail
 	 */
 	public void doFinanceDetailDefaulting(FinanceDetail financeDetail) {
-		if(financeDetail != null) {
+		if (financeDetail != null) {
 			String finReference = financeDetail.getFinReference();
 			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finReference, "_Temp", false);
-			if(financeDetail.getAdvancePaymentsList() != null) {
-				for(FinAdvancePayments payment:financeDetail.getAdvancePaymentsList()) {
-					payment.setLLDate(payment.getLlDate() == null ? finMain.getFinStartDate(): payment.getLlDate());
+			if (financeDetail.getAdvancePaymentsList() != null) {
+				for (FinAdvancePayments payment : financeDetail.getAdvancePaymentsList()) {
+					payment.setLLDate(payment.getLlDate() == null ? finMain.getFinStartDate() : payment.getLlDate());
 				}
 			}
-			
-			if(financeDetail.getMandate() != null) {
+
+			if (financeDetail.getMandate() != null) {
 				Mandate mandate = financeDetail.getMandate();
-				mandate.setStartDate(mandate.getStartDate() == null ? finMain.getFinStartDate(): mandate.getStartDate());
-				if(!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
+				mandate.setStartDate(
+						mandate.getStartDate() == null ? finMain.getFinStartDate() : mandate.getStartDate());
+				if (!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
 					mandate.setExpiryDate(DateUtility.addDays(finMain.getMaturityDate(), 1));
 				}
-				
+
 			}
 		}
 	}
-	
+
 	/*
 	 * ################################################################################################################
 	 * DEFAULT SETTER GETTER METHODS
@@ -1134,6 +1151,7 @@ public class FinanceDataDefaulting {
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
 	}
+
 	public PromotionService getPromotionService() {
 		return promotionService;
 	}
@@ -1149,7 +1167,7 @@ public class FinanceDataDefaulting {
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		this.currencyDAO = currencyDAO;
 	}
-	
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}

@@ -69,9 +69,9 @@ import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.solutionfactory.extendedfielddetail.model.ExtendedFieldDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMasters/ExtendedFieldDetail/ExtendedFieldDetailList.zul
@@ -159,12 +159,12 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 		doRenderPage();
 		search();
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		
-		if(modulesList != null && !modulesList.isEmpty()){
+
+		if (modulesList != null && !modulesList.isEmpty()) {
 			List<String> moduleFiletrs = new ArrayList<>();
 			for (ValueLabel filter : modulesList) {
 				moduleFiletrs.add(filter.getValue());
@@ -276,8 +276,8 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	private void fillsubModule(Combobox combobox, String moduleName, String value) {
 		if (this.moduleName.getSelectedItem() != null) {
-			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null ? new HashMap<String, String>()
-					: PennantStaticListUtil.getModuleName().get(moduleName);
+			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null
+					? new HashMap<String, String>() : PennantStaticListUtil.getModuleName().get(moduleName);
 			ArrayList<String> arrayList = new ArrayList<String>(hashMap.keySet());
 			subModuleName.getItems().clear();
 			Comboitem comboitem = new Comboitem();

@@ -75,8 +75,8 @@ public class HolidayMasterListModelItemRenderer implements ListitemRenderer<Holi
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(holidayMaster.getHolidayYear()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(holidayMaster.getHolidayType(),
-				PennantStaticListUtil.getHolidayType()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(holidayMaster.getHolidayType(), PennantStaticListUtil.getHolidayType()));
 		lc.setParent(item);
 		lc = new Listcell(holidayMaster.getRecordStatus());
 		lc.setParent(item);

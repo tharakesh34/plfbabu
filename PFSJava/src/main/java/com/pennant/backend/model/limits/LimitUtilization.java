@@ -53,7 +53,7 @@ public class LimitUtilization implements Serializable {
 	private String returnText;
 
 	private boolean newRecord = true;
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -377,7 +377,7 @@ public class LimitUtilization implements Serializable {
 	public void setReturnText(String returnText) {
 		this.returnText = returnText;
 	}
-	
+
 	public String getRequestType() {
 		return requestType;
 	}

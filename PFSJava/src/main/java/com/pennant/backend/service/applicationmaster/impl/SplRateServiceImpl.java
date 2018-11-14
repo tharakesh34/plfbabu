@@ -76,7 +76,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	public SplRateServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -84,6 +84,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -91,20 +92,18 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	public SplRateDAO getSplRateDAO() {
 		return splRateDAO;
 	}
+
 	public void setSplRateDAO(SplRateDAO splRateDAO) {
 		this.splRateDAO = splRateDAO;
 	}
 
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTSplRates/RMTSplRates_Temp by using SplRateDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using SplRateDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtRMTSplRates by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table RMTSplRates/RMTSplRates_Temp by
+	 * using SplRateDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using SplRateDAO's update method 3) Audit the record in to AuditHeader and AdtRMTSplRates by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -116,7 +115,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -131,7 +130,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 		if (splRate.isNew()) {
 			getSplRateDAO().save(splRate, tableType);
 			auditHeader.getAuditDetail().setModelData(splRate);
-			auditHeader.setAuditReference(splRate.getSRType()+PennantConstants.KEY_SEPERATOR
+			auditHeader.setAuditReference(splRate.getSRType() + PennantConstants.KEY_SEPERATOR
 					+ DateUtility.formatDate(splRate.getSREffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getSplRateDAO().update(splRate, tableType);
@@ -144,12 +143,10 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTSplRates by using SplRateDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtRMTSplRates by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTSplRates by using SplRateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtRMTSplRates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -161,7 +158,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "delete");
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -175,8 +172,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	}
 
 	/**
-	 * getSplRateById fetch the details by using SplRateDAO's getSplRateById
-	 * method.
+	 * getSplRateById fetch the details by using SplRateDAO's getSplRateById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -185,26 +181,24 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	 * @return SplRate
 	 */
 	@Override
-	public SplRate getSplRateById(String id,Date date) {
-		return getSplRateDAO().getSplRateById(id,date, "_View");
+	public SplRate getSplRateById(String id, Date date) {
+		return getSplRateDAO().getSplRateById(id, date, "_View");
 	}
 
 	/**
-	 * getApprovedSplRateById fetch the details by using SplRateDAO's
-	 * getSplRateById method . with parameter id and type as blank. it fetches
-	 * the approved records from the RMTSplRates.
+	 * getApprovedSplRateById fetch the details by using SplRateDAO's getSplRateById method . with parameter id and type
+	 * as blank. it fetches the approved records from the RMTSplRates.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return SplRate
 	 */
-	public SplRate getApprovedSplRateById(String id,Date date) {
-		return getSplRateDAO().getSplRateById(id,date, "_AView");
+	public SplRate getApprovedSplRateById(String id, Date date) {
+		return getSplRateDAO().getSplRateById(id, date, "_AView");
 	}
-	
+
 	/**
-	 * getSplRateByType fetch the details by using SplRateDAO's getSplRateById
-	 * method.
+	 * getSplRateByType fetch the details by using SplRateDAO's getSplRateById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -214,23 +208,19 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	 */
 	@Override
 	public boolean getSplRateListById(String sRType, Date sREffDate) {
-		return getSplRateDAO().getSplRateListById(sRType,sREffDate,"");
+		return getSplRateDAO().getSplRateListById(sRType, sREffDate, "");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getSplRateDAO().delete with parameters splRate,"" b) NEW Add new
-	 * record in to main table by using getSplRateDAO().save with parameters
-	 * splRate,"" c) EDIT Update record in the main table by using
-	 * getSplRateDAO().update with parameters splRate,"" 3) Delete the record
-	 * from the workFlow table by using getSplRateDAO().delete with parameters
-	 * splRate,"_Temp" 4) Audit the record in to AuditHeader and AdtRMTSplRates
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtRMTSplRates by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getSplRateDAO().delete with parameters
+	 * splRate,"" b) NEW Add new record in to main table by using getSplRateDAO().save with parameters splRate,"" c)
+	 * EDIT Update record in the main table by using getSplRateDAO().update with parameters splRate,"" 3) Delete the
+	 * record from the workFlow table by using getSplRateDAO().delete with parameters splRate,"_Temp" 4) Audit the
+	 * record in to AuditHeader and AdtRMTSplRates by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtRMTSplRates by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -242,14 +232,13 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		SplRate splRate = new SplRate();
-		BeanUtils.copyProperties((SplRate) auditHeader.getAuditDetail()
-				.getModelData(), splRate);
+		BeanUtils.copyProperties((SplRate) auditHeader.getAuditDetail().getModelData(), splRate);
 
 		if (splRate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -261,8 +250,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 			splRate.setNextTaskId("");
 			splRate.setWorkflowId(0);
 
-			if (splRate.getRecordType()
-					.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (splRate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				splRate.setRecordType("");
 				getSplRateDAO().save(splRate, "");
@@ -273,9 +261,9 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 			}
 		}
 
-		if(splRate.isDelExistingRates()){
-			getSplRateDAO().deleteByEffDate(splRate,"_Temp");
-			getSplRateDAO().deleteByEffDate(splRate,"");
+		if (splRate.isDelExistingRates()) {
+			getSplRateDAO().deleteByEffDate(splRate, "_Temp");
+			getSplRateDAO().deleteByEffDate(splRate, "");
 		}
 		getSplRateDAO().delete(splRate, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -290,12 +278,10 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getSplRateDAO().delete with parameters
-	 * splRate,"_Temp" 3) Audit the record in to AuditHeader and AdtRMTSplRates
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getSplRateDAO().delete with parameters splRate,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtRMTSplRates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -305,7 +291,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -320,78 +306,70 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getSplRateDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getSplRateDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		SplRate splRate = (SplRate) auditDetail.getModelData();
 		SplRate tempSplRate = null;
 		if (splRate.isWorkflow()) {
-			tempSplRate = getSplRateDAO().getSplRateById(splRate.getId(),splRate.getSREffDate(),"_Temp");
+			tempSplRate = getSplRateDAO().getSplRateById(splRate.getId(), splRate.getSREffDate(), "_Temp");
 		}
-		SplRate befSplRate = getSplRateDAO()
-				.getSplRateById(splRate.getId(),splRate.getSREffDate(), "");
+		SplRate befSplRate = getSplRateDAO().getSplRateById(splRate.getId(), splRate.getSREffDate(), "");
 		SplRate oldSplRate = splRate.getBefImage();
 
 		String[] valueParm = new String[2];
-		String[] errParm= new String[2];
+		String[] errParm = new String[2];
 
 		valueParm[0] = splRate.getSRType();
 		valueParm[1] = splRate.getSREffDate().toString();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_SRType") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_SREffDate") + ":"+valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_SRType") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_SREffDate") + ":" + valueParm[1];
 
 		if (splRate.isNew()) { // for New record or new record into work flow
 
 			if (!splRate.isWorkflow()) {// With out Work flow only new records
 				if (befSplRate != null) { // Record Already Exists in the table
-											// then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+												// then error
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				
-				if (splRate.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+
+				if (splRate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befSplRate != null || tempSplRate != null) { // if records already exists in
-												// the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						// the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSplRate == null || tempSplRate != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -399,41 +377,39 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!splRate.isWorkflow()) { // With out Work flow for update and
-											// delete
+												// delete
 
 				if (befSplRate == null) { // if records not exists in the main
-											// table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
+												// table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
+				} else {
 
-					if (oldSplRate != null
-							&& !oldSplRate.getLastMntOn().equals(
-									befSplRate.getLastMntOn())) {
+					if (oldSplRate != null && !oldSplRate.getLastMntOn().equals(befSplRate.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempSplRate == null) { // if records not exists in the Work
-											// flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+												// flow table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempSplRate != null && oldSplRate != null
-						&& !oldSplRate.getLastMntOn().equals(
-								tempSplRate.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						&& !oldSplRate.getLastMntOn().equals(tempSplRate.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !splRate.isWorkflow()) {
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !splRate.isWorkflow()) {
 			auditDetail.setBefImage(befSplRate);
 		}
 		logger.debug("Leaving");

@@ -14,26 +14,29 @@ import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
 import com.pennanttech.pennapps.core.InterfaceException;
 
-public class FinanceCancellationProcessImpl extends GenericProcess implements FinanceCancellationProcess{
+public class FinanceCancellationProcessImpl extends GenericProcess implements FinanceCancellationProcess {
 
-	private static Logger	logger	= Logger.getLogger(FinanceCancellationProcessImpl.class);
+	private static Logger logger = Logger.getLogger(FinanceCancellationProcessImpl.class);
 
-	private HostConnection	hostConnection;
+	private HostConnection hostConnection;
 
 	public FinanceCancellationProcessImpl() {
 		super();
 	}
-	
+
 	/**
 	 * 
-	 *  <br> IN FinanceCancellationProcess.java
+	 * <br>
+	 * IN FinanceCancellationProcess.java
+	 * 
 	 * @param transid
 	 * @param postDate
-	 * @return List<FinanceCancellation> 
-	 * @throws Exception  
+	 * @return List<FinanceCancellation>
+	 * @throws Exception
 	 */
 	@Override
-	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws InterfaceException{
+	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -46,23 +49,23 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 		FinanceCancellation item = null;
 
 		try {
-			
+
 			as400 = this.hostConnection.getConnection();
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqFinRef", finReference); // Finance reference
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqLnkTID", linkedTranId); // Linked Trans Id
 			pcmlDoc.setValue(pcml + ".@ERCOD", "0000");
 			pcmlDoc.setValue(pcml + ".@ERPRM", "");
-			
+
 			logger.debug(" Before PCML Call");
 			getHostConnection().callAPI(pcmlDoc, pcml);
 			logger.debug(" After PCML Call");
-			
+
 			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
-				String dsRspCount=pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspCount").toString();
-				String dsRspFinRef=pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspFinRef", indices).toString();
-				String dsRspErr=pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspErr", indices).toString();
-				String dsRspErrD=pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspErrD", indices).toString();
+				String dsRspCount = pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspCount").toString();
+				String dsRspFinRef = pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspFinRef", indices).toString();
+				String dsRspErr = pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspErr", indices).toString();
+				String dsRspErrD = pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspErrD", indices).toString();
 				itemCount = Integer.parseInt(dsRspCount);
 				for (indices[0] = 0; indices[0] < itemCount; indices[0]++) {
 					item = new FinanceCancellation();
@@ -70,7 +73,8 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 					item.setDsRspFinRef(dsRspFinRef);
 					item.setDsRspErr(dsRspErr);
 					item.setDsRspErrD(dsRspErrD);
-					item.setDsRspFinEvent(pcmlDoc.getValue(pcml + ".@RSPDTA.DSArrRsp.dsRspFinEvent", indices).toString());
+					item.setDsRspFinEvent(
+							pcmlDoc.getValue(pcml + ".@RSPDTA.DSArrRsp.dsRspFinEvent", indices).toString());
 					item.setDsRspLnkTID(pcmlDoc.getValue(pcml + ".@RSPDTA.DSArrRsp.dsRspLnkTID", indices).toString());
 					item.setDsRspPOD(pcmlDoc.getValue(pcml + ".@RSPDTA.DSArrRsp.dsRspPOD", indices).toString());
 					item.setDsRspAB(pcmlDoc.getValue(pcml + ".@RSPDTA.DSArrRsp.dsRspAB", indices).toString());
@@ -82,17 +86,18 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 					list.add(item);
 				}
 			} else {
-				throw new InterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERCOD").toString() + " : "+pcmlDoc.getValue(pcml + ".@ERPRM").toString());
-			} 
-		}catch (ConnectionPoolException e){
+				throw new InterfaceException("9999", pcmlDoc.getValue(pcml + ".@ERCOD").toString() + " : "
+						+ pcmlDoc.getValue(pcml + ".@ERPRM").toString());
+			}
+		} catch (ConnectionPoolException e) {
 			logger.error("Exception: ", e);
-			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
-		}  catch (InterfaceException e) {
+			throw new InterfaceException("9999", "Host Connection Failed.. Please contact administrator ");
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new InterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}

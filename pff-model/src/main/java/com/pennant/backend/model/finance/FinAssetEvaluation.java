@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class FinAssetEvaluation extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
@@ -91,8 +91,8 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	private boolean nocReqDevMunicipality;
 	private String reuDecision;
 	private BigDecimal unitVillaSize;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinAssetEvaluation befImage;
 	private LoggedInUser userDetails;
@@ -109,7 +109,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("vendorValuerDesc");
@@ -119,24 +119,27 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String finReference) {
+
+	public void setId(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getTypeofValuation() {
 		return typeofValuation;
 	}
+
 	public void setTypeofValuation(String typeofValuation) {
 		this.typeofValuation = typeofValuation;
 	}
@@ -144,6 +147,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isCustAwareVisit() {
 		return custAwareVisit;
 	}
+
 	public void setCustAwareVisit(boolean custAwareVisit) {
 		this.custAwareVisit = custAwareVisit;
 	}
@@ -151,6 +155,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getCustRepreName() {
 		return custRepreName;
 	}
+
 	public void setCustRepreName(String custRepreName) {
 		this.custRepreName = custRepreName;
 	}
@@ -158,6 +163,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isLeased() {
 		return leased;
 	}
+
 	public void setLeased(boolean leased) {
 		this.leased = leased;
 	}
@@ -165,6 +171,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getTotalRevenue() {
 		return totalRevenue;
 	}
+
 	public void setTotalRevenue(BigDecimal totalRevenue) {
 		this.totalRevenue = totalRevenue;
 	}
@@ -172,6 +179,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getTenantContactNum() {
 		return tenantContactNum;
 	}
+
 	public void setTenantContactNum(String tenantContactNum) {
 		this.tenantContactNum = tenantContactNum;
 	}
@@ -179,6 +187,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isTenantAwareVisit() {
 		return tenantAwareVisit;
 	}
+
 	public void setTenantAwareVisit(boolean tenantAwareVisit) {
 		this.tenantAwareVisit = tenantAwareVisit;
 	}
@@ -186,6 +195,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -193,6 +203,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getPanelFirm() {
 		return panelFirm;
 	}
+
 	public void setPanelFirm(String panelFirm) {
 		this.panelFirm = panelFirm;
 	}
@@ -200,6 +211,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getReuReference() {
 		return reuReference;
 	}
+
 	public void setReuReference(String reuReference) {
 		this.reuReference = reuReference;
 	}
@@ -207,6 +219,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getPropertyDesc() {
 		return propertyDesc;
 	}
+
 	public void setPropertyDesc(String propertyDesc) {
 		this.propertyDesc = propertyDesc;
 	}
@@ -214,6 +227,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public Date getVendorInstructedDate() {
 		return vendorInstructedDate;
 	}
+
 	public void setVendorInstructedDate(Date vendorInstructedDate) {
 		this.vendorInstructedDate = vendorInstructedDate;
 	}
@@ -221,6 +235,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public Date getReportDeliveredDate() {
 		return reportDeliveredDate;
 	}
+
 	public void setReportDeliveredDate(Date reportDeliveredDate) {
 		this.reportDeliveredDate = reportDeliveredDate;
 	}
@@ -228,6 +243,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public Date getInspectionDate() {
 		return inspectionDate;
 	}
+
 	public void setInspectionDate(Date inspectionDate) {
 		this.inspectionDate = inspectionDate;
 	}
@@ -235,6 +251,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public Date getFinalReportDate() {
 		return finalReportDate;
 	}
+
 	public void setFinalReportDate(Date finalReportDate) {
 		this.finalReportDate = finalReportDate;
 	}
@@ -242,6 +259,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getMarketValueAED() {
 		return marketValueAED;
 	}
+
 	public void setMarketValueAED(BigDecimal marketValueAED) {
 		this.marketValueAED = marketValueAED;
 	}
@@ -249,6 +267,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public Date getValuationDate() {
 		return valuationDate;
 	}
+
 	public void setValuationDate(Date valuationDate) {
 		this.valuationDate = valuationDate;
 	}
@@ -256,13 +275,15 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public long getVendorValuer() {
 		return vendorValuer;
 	}
+
 	public void setVendorValuer(long vendorValuer) {
 		this.vendorValuer = vendorValuer;
 	}
@@ -270,6 +291,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getVendorValuerDesc() {
 		return vendorValuerDesc;
 	}
+
 	public void setVendorValuerDesc(String vendorValuerDesc) {
 		this.vendorValuerDesc = vendorValuerDesc;
 	}
@@ -277,6 +299,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getValuerFee() {
 		return valuerFee;
 	}
+
 	public void setValuerFee(BigDecimal valuerFee) {
 		this.valuerFee = valuerFee;
 	}
@@ -284,6 +307,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getCustomerFee() {
 		return customerFee;
 	}
+
 	public void setCustomerFee(BigDecimal customerFee) {
 		this.customerFee = customerFee;
 	}
@@ -291,6 +315,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getValuationComments() {
 		return valuationComments;
 	}
+
 	public void setValuationComments(String valuationComments) {
 		this.valuationComments = valuationComments;
 	}
@@ -298,6 +323,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getExpRentalIncome() {
 		return expRentalIncome;
 	}
+
 	public void setExpRentalIncome(BigDecimal expRentalIncome) {
 		this.expRentalIncome = expRentalIncome;
 	}
@@ -305,6 +331,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isPropIsRented() {
 		return propIsRented;
 	}
+
 	public void setPropIsRented(boolean propIsRented) {
 		this.propIsRented = propIsRented;
 	}
@@ -312,6 +339,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getPropertyStatus() {
 		return propertyStatus;
 	}
+
 	public void setPropertyStatus(String propertyStatus) {
 		this.propertyStatus = propertyStatus;
 	}
@@ -319,6 +347,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getPercWorkCompletion() {
 		return percWorkCompletion;
 	}
+
 	public void setPercWorkCompletion(BigDecimal percWorkCompletion) {
 		this.percWorkCompletion = percWorkCompletion;
 	}
@@ -326,6 +355,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isIllegalDivAlteration() {
 		return illegalDivAlteration;
 	}
+
 	public void setIllegalDivAlteration(boolean illegalDivAlteration) {
 		this.illegalDivAlteration = illegalDivAlteration;
 	}
@@ -333,6 +363,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isNocReqDevMunicipality() {
 		return nocReqDevMunicipality;
 	}
+
 	public void setNocReqDevMunicipality(boolean nocReqDevMunicipality) {
 		this.nocReqDevMunicipality = nocReqDevMunicipality;
 	}
@@ -340,6 +371,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public String getReuDecision() {
 		return reuDecision;
 	}
+
 	public void setReuDecision(String reuDecision) {
 		this.reuDecision = reuDecision;
 	}
@@ -347,6 +379,7 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public BigDecimal getUnitVillaSize() {
 		return unitVillaSize;
 	}
+
 	public void setUnitVillaSize(BigDecimal unitVillaSize) {
 		this.unitVillaSize = unitVillaSize;
 	}
@@ -354,27 +387,31 @@ public class FinAssetEvaluation extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinAssetEvaluation getBefImage(){
+	public FinAssetEvaluation getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinAssetEvaluation beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinAssetEvaluation beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

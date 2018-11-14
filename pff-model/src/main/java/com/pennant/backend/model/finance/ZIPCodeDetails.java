@@ -55,7 +55,6 @@ public class ZIPCodeDetails extends AbstractWorkflowEntity implements Entity {
 		this.state = state;
 	}
 
-
 	@Override
 	public long getId() {
 		return pinCodeId;

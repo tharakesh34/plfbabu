@@ -58,29 +58,29 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class AccountMapping extends AbstractWorkflowEntity {
-	private static final long					serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String								account;
-	private String								hostAccount;
-	private String								finType;
-	private boolean								newRecord			= false;
-	private String								lovValue;
-	private AccountMapping						befImage;
-	private LoggedInUser						userDetails;
+	private String account;
+	private String hostAccount;
+	private String finType;
+	private boolean newRecord = false;
+	private String lovValue;
+	private AccountMapping befImage;
+	private LoggedInUser userDetails;
 
-	private long								profitCenterID;
-	private long								costCenterID;
-	private String								profitCenterDesc;
-	private String								costCenterDesc;
-	private String								costCenterCode;
-	private String								profitCenterCode;
-	private String								accountType;
-	private String								accountTypeDesc;
-	private String								finTypeDesc;
+	private long profitCenterID;
+	private long costCenterID;
+	private String profitCenterDesc;
+	private String costCenterDesc;
+	private String costCenterCode;
+	private String profitCenterCode;
+	private String accountType;
+	private String accountTypeDesc;
+	private String finTypeDesc;
 
-	private List<AccountMapping>				accountMappingList	= new ArrayList<AccountMapping>();
-	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
-	private String								tranType			= "";
+	private List<AccountMapping> accountMappingList = new ArrayList<AccountMapping>();
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private String tranType = "";
 
 	public boolean isNew() {
 		return isNewRecord();

@@ -55,7 +55,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -63,23 +62,23 @@ import com.pennant.util.PennantAppUtil;
 public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<ProvisionMovement>, Serializable {
 
 	private static final long serialVersionUID = -4343497695244309847L;
-	
+
 	public ProvisionMovementListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ProvisionMovement provisionMovement, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getProvMovementDate()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.formateInt(provisionMovement.getProvMovementSeq()));
-	  	lc.setStyle("text-align:right;");
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getNonFormulaProv(),3));
+		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getProvMovementDate()));
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.formateInt(provisionMovement.getProvMovementSeq()));
 		lc.setStyle("text-align:right;");
-	  	lc.setParent(item);
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getNonFormulaProv(), 3));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbUseNFProv = new Checkbox();
 		cbUseNFProv.setDisabled(true);
@@ -92,16 +91,16 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 		cbAutoReleaseNFP.setChecked(provisionMovement.isAutoReleaseNFP());
 		lc.appendChild(cbAutoReleaseNFP);
 		lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getPrincipalDue(),3));
-	  	lc.setStyle("text-align:right;");
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getProfitDue(),3));
-	  	lc.setStyle("text-align:right;");
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getDueFromDate()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getLastFullyPaidDate()));
-	  	lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getPrincipalDue(), 3));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(provisionMovement.getProfitDue(), 3));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getDueFromDate()));
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getLastFullyPaidDate()));
+		lc.setParent(item);
 		item.setAttribute("data", provisionMovement);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onProvisionMovementItemDoubleClicked");
 	}

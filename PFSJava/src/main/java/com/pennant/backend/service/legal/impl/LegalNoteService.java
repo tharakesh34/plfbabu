@@ -94,11 +94,10 @@ public class LegalNoteService extends GenericService<LegalNote> {
 		LegalNote templegalNote = null;
 
 		if (legalNote.isWorkflow()) {
-			templegalNote = getLegalNoteDAO()
-					.getLegalNote(legalNote.getLegalNoteId(), TableType.TEMP_TAB.getSuffix());
+			templegalNote = getLegalNoteDAO().getLegalNote(legalNote.getLegalNoteId(), TableType.TEMP_TAB.getSuffix());
 		}
-		LegalNote befLegalNote = getLegalNoteDAO()
-				.getLegalNote(legalNote.getLegalNoteId(), TableType.MAIN_TAB.getSuffix());
+		LegalNote befLegalNote = getLegalNoteDAO().getLegalNote(legalNote.getLegalNoteId(),
+				TableType.MAIN_TAB.getSuffix());
 		LegalNote oldLegalNote = legalNote.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -132,8 +131,7 @@ public class LegalNoteService extends GenericService<LegalNote> {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (oldLegalNote != null
-							&& !oldLegalNote.getLastMntOn().equals(befLegalNote.getLastMntOn())) {
+					if (oldLegalNote != null && !oldLegalNote.getLastMntOn().equals(befLegalNote.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(
@@ -163,8 +161,7 @@ public class LegalNoteService extends GenericService<LegalNote> {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new LegalNote(),
-				new LegalNote().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalNote(), new LegalNote().getExcludeFields());
 		List<LegalNote> detailList = legalDetail.getLegalNotesList();
 
 		for (int i = 0; i < detailList.size(); i++) {
@@ -296,13 +293,12 @@ public class LegalNoteService extends GenericService<LegalNote> {
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
 		LegalNote legalNote = null;
-		String[] fields = PennantJavaUtil.getFieldDetails(new LegalNote(),
-				new LegalNote().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalNote(), new LegalNote().getExcludeFields());
 		for (int i = 0; i < legalNotes.size(); i++) {
 			legalNote = (LegalNote) legalNotes.get(i).getModelData();
 			legalNote.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-			auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], legalNote.getBefImage(),
-					legalNote));
+			auditList.add(
+					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], legalNote.getBefImage(), legalNote));
 		}
 		getLegalNoteDAO().deleteList(legalNote, tableType);
 		return auditList;

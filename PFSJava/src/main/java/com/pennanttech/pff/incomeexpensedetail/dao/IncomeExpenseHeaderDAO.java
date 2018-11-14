@@ -5,13 +5,13 @@ import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public interface IncomeExpenseHeaderDAO {
 
-    IncomeExpenseHeader getIncomeExpenseHeader(long id, String type);
-	
+	IncomeExpenseHeader getIncomeExpenseHeader(long id, String type);
+
 	long save(IncomeExpenseHeader incomeExpenseHeader, TableType tableType);
-	
+
 	void update(IncomeExpenseHeader incomeExpenseHeader, TableType tableType);
-	
-	void delete(IncomeExpenseHeader incomeExpenseHeader	, TableType tableType);
-	
-	boolean isExist(String  custCif, int financialYear, String type);
+
+	void delete(IncomeExpenseHeader incomeExpenseHeader, TableType tableType);
+
+	boolean isExist(String custCif, int financialYear, String type);
 }

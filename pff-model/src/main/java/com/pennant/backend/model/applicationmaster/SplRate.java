@@ -86,13 +86,15 @@ public class SplRate extends AbstractWorkflowEntity {
 	public String getId() {
 		return sRType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.sRType = id;
 	}
 
 	public String getSRType() {
 		return sRType;
 	}
+
 	public void setSRType(String sRType) {
 		this.sRType = sRType;
 	}
@@ -100,13 +102,15 @@ public class SplRate extends AbstractWorkflowEntity {
 	public String getLovDescSRTypeName() {
 		return this.lovDescSRTypeName;
 	}
-	public void setLovDescSRTypeName (String lovDescSRTypeName) {
+
+	public void setLovDescSRTypeName(String lovDescSRTypeName) {
 		this.lovDescSRTypeName = lovDescSRTypeName;
 	}
 
 	public Date getSREffDate() {
 		return sREffDate;
 	}
+
 	public void setSREffDate(Date sREffDate) {
 		this.sREffDate = sREffDate;
 	}
@@ -114,20 +118,23 @@ public class SplRate extends AbstractWorkflowEntity {
 	public BigDecimal getSRRate() {
 		return sRRate;
 	}
+
 	public void setSRRate(BigDecimal sRRate) {
 		this.sRRate = sRRate;
 	}
-	
+
 	public boolean isDelExistingRates() {
-    	return delExistingRates;
-    }
+		return delExistingRates;
+	}
+
 	public void setDelExistingRates(boolean delExistingRates) {
-    	this.delExistingRates = delExistingRates;
-    }
+		this.delExistingRates = delExistingRates;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -135,29 +142,32 @@ public class SplRate extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public SplRate getBefImage(){
+	public SplRate getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(SplRate beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SplRate beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Date getLastMdfDate() {
-    	return lastMdfDate;
-    }
+		return lastMdfDate;
+	}
 
 	public void setLastMdfDate(Date lastMdfDate) {
-    	this.lastMdfDate = lastMdfDate;
-    }
+		this.lastMdfDate = lastMdfDate;
+	}
 }

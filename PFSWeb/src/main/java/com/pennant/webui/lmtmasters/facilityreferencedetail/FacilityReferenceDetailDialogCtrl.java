@@ -86,8 +86,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/FacilityReferenceDetail
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/FacilityReferenceDetail
  * /facilityReferenceDetailDialog.zul file.
  */
 public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityReferenceDetail> {
@@ -95,9 +94,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FacilityReferenceDetailDialog; // auto wired
 	protected Textbox finType; // auto wired
@@ -108,13 +106,12 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	protected Textbox mandInputInStage; // auto wired
 	protected Textbox allowInputInStage; // auto wired
 
-
 	// not auto wired variables
 	private FacilityReferenceDetail facilityReferenceDetail; // over handed per parameters
 	private transient FacilityReferenceDetailListCtrl facilityReferenceDetailListCtrl; // over handed per parameters
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient FacilityReferenceDetailService facilityReferenceDetailService;
 	private transient PagedListService pagedListService;
@@ -139,7 +136,6 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	protected Listbox listBoxTemplates;
 	protected Button btnNew_FinanceMailTemplate;
 
-	
 	private String roles;
 	int listRows;
 
@@ -158,9 +154,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FacilityReferenceDetail
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FacilityReferenceDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -196,7 +191,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 			setFacilityReference(null);
 		}
 
-		doLoadWorkFlow(this.facilityReferenceDetail.isWorkflow(), this.facilityReferenceDetail.getWorkflowId(), this.facilityReferenceDetail.getNextTaskId());
+		doLoadWorkFlow(this.facilityReferenceDetail.isWorkflow(), this.facilityReferenceDetail.getWorkflowId(),
+				this.facilityReferenceDetail.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
@@ -209,23 +205,24 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete facilityReferenceDetail here.
 		if (arguments.containsKey("facilityReferenceDetailListCtrl")) {
-			setFacilityReferenceDetailListCtrl((FacilityReferenceDetailListCtrl) arguments.get("facilityReferenceDetailListCtrl"));
+			setFacilityReferenceDetailListCtrl(
+					(FacilityReferenceDetailListCtrl) arguments.get("facilityReferenceDetailListCtrl"));
 		} else {
 			setFacilityReferenceDetailListCtrl(null);
 		}
-		
+
 		getBorderLayoutHeight();
 		grid_Basicdetails.getRows().getVisibleItemCount();
-		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 100 +25; 
-		int listboxHeight = borderLayoutHeight-dialogHeight;
-		
-		this.listboxFinanceAgreementLink.setHeight(listboxHeight+"px");
-		this.listBoxEligibilityRules.setHeight(listboxHeight+"px");
-		this.listBoxFinanceCheckList.setHeight(listboxHeight+"px");
-		this.listBoxScoringGroup.setHeight(listboxHeight+"px");
-		this.listBoxCorpScoringGroup.setHeight(listboxHeight+"px");
-		this.listBoxAccounts.setHeight(listboxHeight+"px");
-		this.listBoxTemplates.setHeight(listboxHeight+"px");
+		int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100 + 25;
+		int listboxHeight = borderLayoutHeight - dialogHeight;
+
+		this.listboxFinanceAgreementLink.setHeight(listboxHeight + "px");
+		this.listBoxEligibilityRules.setHeight(listboxHeight + "px");
+		this.listBoxFinanceCheckList.setHeight(listboxHeight + "px");
+		this.listBoxScoringGroup.setHeight(listboxHeight + "px");
+		this.listBoxCorpScoringGroup.setHeight(listboxHeight + "px");
+		this.listBoxAccounts.setHeight(listboxHeight + "px");
+		this.listBoxTemplates.setHeight(listboxHeight + "px");
 
 		// set Field Properties
 		doSetFieldProperties();
@@ -257,8 +254,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -374,21 +370,22 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		// this.mandInputInStage.setValue(aFacilityReferenceDetail.getMandInputInStage());
 		// this.allowInputInStage.setValue(aFacilityReferenceDetail.getAllowInputInStage());
 		// this.recordStatus.setValue(aFacilityReferenceDetail.getRecordStatus());
-		
+
 		this.lovDescFinTypeDescName.setValue(aFacilityReference.getLovDescFinTypeDescName());
 		dofillListbox(aFacilityReference.getCheckList(), this.listBoxFinanceCheckList);
-		
+
 		dofillListbox(aFacilityReference.getAggrementList(), this.listboxFinanceAgreementLink);
-				
+
 		dofillListbox(aFacilityReference.getScoringGroupList(), this.listBoxScoringGroup);
-		
+
 		dofillListbox(aFacilityReference.getCorpScoringGroupList(), this.listBoxCorpScoringGroup);
-		if(aFacilityReference.getCorpScoringGroupList()!=null && aFacilityReference.getCorpScoringGroupList().size() == 1){
+		if (aFacilityReference.getCorpScoringGroupList() != null
+				&& aFacilityReference.getCorpScoringGroupList().size() == 1) {
 			this.btnNew_FinCorpScoringGroup.setVisible(false);
 		}
-		
+
 		dofillListbox(aFacilityReference.getMailTemplateList(), this.listBoxTemplates);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -457,8 +454,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFacilityReferenceDetail
 	 * @throws InterruptedException
@@ -478,7 +474,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 				doReadOnly();
 				btnCancel.setVisible(false);
 				btnSave.setVisible(true);
-	
+
 			}
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
@@ -495,22 +491,28 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		setValidationOn(true);
 
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinType.value"),null,true));
+			this.finType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_FinType.value"), null, true));
 		}
 		if (!this.finRefType.isReadonly()) {
-			this.finRefType.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefType.value"), true));
+			this.finRefType.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefType.value"), true));
 		}
 		if (!this.finRefId.isReadonly()) {
-			this.finRefId.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefId.value"), true));
+			this.finRefId.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_FinRefId.value"), true));
 		}
 		if (!this.showInStage.isReadonly()) {
-			this.showInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_ShowInStage.value"),null,true));
+			this.showInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_ShowInStage.value"), null, true));
 		}
 		if (!this.mandInputInStage.isReadonly()) {
-			this.mandInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_MandInputInStage.value"),null,true));
+			this.mandInputInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_MandInputInStage.value"), null, true));
 		}
 		if (!this.allowInputInStage.isReadonly()) {
-			this.allowInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityReferenceDetailDialog_AllowInputInStage.value"),null,true));
+			this.allowInputInStage.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityReferenceDetailDialog_AllowInputInStage.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -544,7 +546,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFacilityReferenceDetail.getFinRefDetailId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aFacilityReferenceDetail.getFinRefDetailId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFacilityReferenceDetail.getRecordType())) {
 				aFacilityReferenceDetail.setVersion(aFacilityReferenceDetail.getVersion() + 1);
@@ -640,17 +643,17 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		this.mandInputInStage.setReadonly(true);
 		this.allowInputInStage.setReadonly(true);
 
-/*		this.btnNew_FinanceCheckList.setDisabled(true);
-		this.btnNew_FinanceAgreementLink.setDisabled(true);
-		this.btnNew_FinanceEligibilityLink.setDisabled(true);
-		this.btnNew_FinanceScoringGroup.setDisabled(true);
-		this.btnNew_FinCorpScoringGroup.setDisabled(true);
-
-		enableOrDisablelistitems(this.listBoxFinanceCheckList, true);
-		enableOrDisablelistitems(this.listboxFinanceAgreementLink, true);
-		enableOrDisablelistitems(this.listBoxEligibilityRules, true);
-		enableOrDisablelistitems(this.listBoxScoringGroup, true);
-		enableOrDisablelistitems(this.listBoxCorpScoringGroup, true);*/
+		/*
+		 * this.btnNew_FinanceCheckList.setDisabled(true); this.btnNew_FinanceAgreementLink.setDisabled(true);
+		 * this.btnNew_FinanceEligibilityLink.setDisabled(true); this.btnNew_FinanceScoringGroup.setDisabled(true);
+		 * this.btnNew_FinCorpScoringGroup.setDisabled(true);
+		 * 
+		 * enableOrDisablelistitems(this.listBoxFinanceCheckList, true);
+		 * enableOrDisablelistitems(this.listboxFinanceAgreementLink, true);
+		 * enableOrDisablelistitems(this.listBoxEligibilityRules, true);
+		 * enableOrDisablelistitems(this.listBoxScoringGroup, true);
+		 * enableOrDisablelistitems(this.listBoxCorpScoringGroup, true);
+		 */
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -700,9 +703,10 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		//items.addAll(this.listBoxEligibilityRules.getItems());
 		//items.addAll(this.listBoxAccounts.getItems());
 		items.addAll(this.listBoxTemplates.getItems());
-		
+
 		for (int i = 0; i < items.size(); i++) {
-			FacilityReferenceDetail lsFacilityReferenceDetail = (FacilityReferenceDetail) items.get(i).getAttribute("data");
+			FacilityReferenceDetail lsFacilityReferenceDetail = (FacilityReferenceDetail) items.get(i)
+					.getAttribute("data");
 			setFacilityReferenceDetail(lsFacilityReferenceDetail);
 			BeanUtils.copyProperties(getFacilityReferenceDetail(), aFacilityReferenceDetail);
 			boolean isNew = false;
@@ -729,7 +733,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 			}
 
 		}
-		
+
 		try {
 			items.clear();
 			items = null;
@@ -830,7 +834,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		FacilityReferenceDetail aFacilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail().getModelData();
+		FacilityReferenceDetail aFacilityReferenceDetail = (FacilityReferenceDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		try {
 
@@ -859,8 +864,10 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_FacilityReferenceDetailDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_FacilityReferenceDetailDialog,
+								auditHeader);
 						return processCompleted;
 					}
 				}
@@ -938,9 +945,10 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	}
 
 	private AuditHeader getAuditHeader(FacilityReferenceDetail aFacilityReferenceDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFacilityReferenceDetail.getBefImage(), aFacilityReferenceDetail);
-		return new AuditHeader(String.valueOf(aFacilityReferenceDetail.getFinRefDetailId()), null, null, null, auditDetail, aFacilityReferenceDetail.getUserDetails(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFacilityReferenceDetail.getBefImage(),
+				aFacilityReferenceDetail);
+		return new AuditHeader(String.valueOf(aFacilityReferenceDetail.getFinRefDetailId()), null, null, null,
+				auditDetail, aFacilityReferenceDetail.getUserDetails(), getOverideMap());
 	}
 
 	private void showMessage(Exception e) {
@@ -962,7 +970,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.facilityReferenceDetail.getFinRefDetailId());
@@ -1055,15 +1063,15 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	public void onClick$btnNew_FinanceScoringGroup(Event event) throws InterruptedException {
 		callLinakgeZul(facilityReferenceDetail, FinanceConstants.PROCEDT_RTLSCORE);
 	}
-	
+
 	public void onClick$btnNew_FinCorpScoringGroup(Event event) throws InterruptedException {
 		callLinakgeZul(facilityReferenceDetail, FinanceConstants.PROCEDT_CORPSCORE);
 	}
-	
+
 	public void onClick$btnNew_FinanceAdvanceAccounting(Event event) throws InterruptedException {
 		callLinakgeZul(facilityReferenceDetail, FinanceConstants.PROCEDT_STAGEACC);
 	}
-	
+
 	public void onClick$btnNew_FinanceMailTemplate(Event event) throws InterruptedException {
 		callLinakgeZul(facilityReferenceDetail, FinanceConstants.PROCEDT_TEMPLATE);
 	}
@@ -1072,14 +1080,16 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		logger.debug("Entering" + event.toString());
 		// Get the event target
 		Listitem item = (Listitem) event.getOrigin().getTarget();
-		
+
 		FacilityReferenceDetail itemdata = (FacilityReferenceDetail) item.getAttribute("data");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCodeList", roles);
 		map.put("facilityReferenceDetail", itemdata);
 		map.put("facilityReferenceDetailDialogCtrl", this);
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialogLink.zul", null, map);
+			Executions.createComponents(
+					"/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialogLink.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -1089,7 +1099,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 
 	private void callLinakgeZul(FacilityReferenceDetail facilityReferenceDetail, int type) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		facilityReferenceDetail.setFinType(this.finType.getValue());
 		facilityReferenceDetail.setFinRefType(type);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -1099,7 +1109,9 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialogLink.zul", null, map);
+			Executions.createComponents(
+					"/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialogLink.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
-
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
@@ -55,12 +54,19 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 public interface FinTypeAccountDAO {
 
 	FinTypeAccount getFinTypeAccount();
+
 	FinTypeAccount getNewFinTypeAccount();
-	FinTypeAccount getFinTypeAccountByID(FinTypeAccount finTypeAccount, String type); 
-	List<FinTypeAccount> getFinTypeAccountListByID(final String id, String type); 
+
+	FinTypeAccount getFinTypeAccountByID(FinTypeAccount finTypeAccount, String type);
+
+	List<FinTypeAccount> getFinTypeAccountListByID(final String id, String type);
+
 	void update(FinTypeAccount finTypeAccount, String type);
+
 	String save(FinTypeAccount finTypeAccount, String type);
+
 	void delete(FinTypeAccount finTypeAccount, String type);
+
 	void deleteByFinType(String finType, String type);
 
 }

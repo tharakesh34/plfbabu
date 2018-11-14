@@ -11,28 +11,28 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.QueueAssignmentHeader;
 
-public class QueueAssignmentListModelItemRenderer  implements ListitemRenderer<QueueAssignmentHeader>, Serializable {
+public class QueueAssignmentListModelItemRenderer implements ListitemRenderer<QueueAssignmentHeader>, Serializable {
 
 	private static final long serialVersionUID = -800292670064839471L;
 
 	public QueueAssignmentListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, QueueAssignmentHeader queueAssignment, int count) throws Exception {
 
 		Listcell cel = new Listcell("");
-		item.appendChild(cel); 
-		if (item instanceof Listgroup) { 
-			Listcell lc = new Listcell(queueAssignment.getUserId()+" - "+queueAssignment.getLovDescUserName());
+		item.appendChild(cel);
+		if (item instanceof Listgroup) {
+			Listcell lc = new Listcell(queueAssignment.getUserId() + " - " + queueAssignment.getLovDescUserName());
 			lc.setStyle("font-weight:bold;");
-			item.appendChild(lc); 
-		} else if (item instanceof Listgroupfoot) { 
+			item.appendChild(lc);
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(2);
-			item.appendChild(cell); 
-		} else { 
+			item.appendChild(cell);
+		} else {
 			Listcell lc;
 			lc = new Listcell(queueAssignment.getRoleDesc());
 			lc.setParent(item);

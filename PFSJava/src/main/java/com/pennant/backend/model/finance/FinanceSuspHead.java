@@ -41,7 +41,6 @@
  ********************************************************************************************
 */
 
-
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
@@ -55,40 +54,39 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-
 /**
  * Model class for the <b>FinSuspHead table</b>.<br>
  *
  */
 public class FinanceSuspHead extends AbstractWorkflowEntity {
 
-    private static final long serialVersionUID = -7731584953589841445L;
-    
+	private static final long serialVersionUID = -7731584953589841445L;
+
 	private String finReference;
 	private String finBranch;
 	private String finType;
 	private long custId = Long.MIN_VALUE;
 	private int finSuspSeq;
-	private boolean finIsInSusp=false;
-	private boolean manualSusp=false;
+	private boolean finIsInSusp = false;
+	private boolean manualSusp = false;
 	private Date finSuspDate;
 	private Date finSuspTrfDate;
 	private BigDecimal finSuspAmt = BigDecimal.ZERO;
 	private BigDecimal finCurSuspAmt = BigDecimal.ZERO;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceSuspHead befImage;
 	private LoggedInUser userDetails;
-	
+
 	private String finCcy;
 	private String lovDescCustCIFName;
 	private String lovDescCustShrtName;
 	private String lovDescFinDivision;
-	
+
 	private List<FinanceSuspDetails> suspDetailsList = new ArrayList<FinanceSuspDetails>();
 	private List<ReturnDataSet> suspPostingsList = new ArrayList<ReturnDataSet>();
 	private FinanceDetail financeDetail;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -101,6 +99,7 @@ public class FinanceSuspHead extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("financeDetail");
@@ -109,87 +108,99 @@ public class FinanceSuspHead extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinBranch() {
 		return finBranch;
 	}
+
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public long getCustId() {
 		return custId;
 	}
+
 	public void setCustId(long custId) {
 		this.custId = custId;
 	}
-	
+
 	public int getFinSuspSeq() {
 		return finSuspSeq;
 	}
+
 	public void setFinSuspSeq(int finSuspSeq) {
 		this.finSuspSeq = finSuspSeq;
 	}
-	
+
 	public boolean isFinIsInSusp() {
 		return finIsInSusp;
 	}
+
 	public void setFinIsInSusp(boolean finIsInSusp) {
 		this.finIsInSusp = finIsInSusp;
 	}
-	
+
 	public boolean isManualSusp() {
-    	return manualSusp;
-    }
+		return manualSusp;
+	}
+
 	public void setManualSusp(boolean manualSusp) {
-    	this.manualSusp = manualSusp;
-    }
-	
+		this.manualSusp = manualSusp;
+	}
+
 	public Date getFinSuspDate() {
 		return finSuspDate;
 	}
+
 	public void setFinSuspDate(Date finSuspDate) {
 		this.finSuspDate = finSuspDate;
 	}
-	
+
 	public Date getFinSuspTrfDate() {
-	    return finSuspTrfDate;
-    }
+		return finSuspTrfDate;
+	}
+
 	public void setFinSuspTrfDate(Date finSuspTrfDate) {
-	    this.finSuspTrfDate = finSuspTrfDate;
-    }
-	
+		this.finSuspTrfDate = finSuspTrfDate;
+	}
+
 	public BigDecimal getFinSuspAmt() {
 		return finSuspAmt;
 	}
+
 	public void setFinSuspAmt(BigDecimal finSuspAmt) {
 		this.finSuspAmt = finSuspAmt;
 	}
-	
+
 	public BigDecimal getFinCurSuspAmt() {
 		return finCurSuspAmt;
 	}
+
 	public void setFinCurSuspAmt(BigDecimal finCurSuspAmt) {
 		this.finCurSuspAmt = finCurSuspAmt;
 	}
@@ -197,61 +208,71 @@ public class FinanceSuspHead extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinanceSuspHead getBefImage(){
+	public FinanceSuspHead getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinanceSuspHead beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinanceSuspHead beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public void setLovDescCustCIFName(String lovDescCustCIFName) {
-	    this.lovDescCustCIFName = lovDescCustCIFName;
-    }
+		this.lovDescCustCIFName = lovDescCustCIFName;
+	}
+
 	public String getLovDescCustCIFName() {
-	    return lovDescCustCIFName;
-    }
+		return lovDescCustCIFName;
+	}
+
 	public void setSuspDetailsList(List<FinanceSuspDetails> suspDetailsList) {
-	    this.suspDetailsList = suspDetailsList;
-    }
+		this.suspDetailsList = suspDetailsList;
+	}
+
 	public List<FinanceSuspDetails> getSuspDetailsList() {
-	    return suspDetailsList;
-    }
-	
+		return suspDetailsList;
+	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-	    this.lovDescCustShrtName = lovDescCustShrtName;
-    }
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
+
 	public String getLovDescCustShrtName() {
-	    return lovDescCustShrtName;
-    }
-	
+		return lovDescCustShrtName;
+	}
+
 	public void setSuspPostingsList(List<ReturnDataSet> suspPostingsList) {
-	    this.suspPostingsList = suspPostingsList;
-    }
+		this.suspPostingsList = suspPostingsList;
+	}
+
 	public List<ReturnDataSet> getSuspPostingsList() {
-	    return suspPostingsList;
-    }
+		return suspPostingsList;
+	}
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}

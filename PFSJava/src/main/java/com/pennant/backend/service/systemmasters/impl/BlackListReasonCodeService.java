@@ -47,17 +47,21 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BlackListReasonCode;
 
 /**
- * Service declaration for methods that depends on
- * <b>BlackListReasonCode</b>.<br>
+ * Service declaration for methods that depends on <b>BlackListReasonCode</b>.<br>
  * 
  */
 public interface BlackListReasonCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BlackListReasonCode getBlackListReasonCodeById(String id);
+
 	BlackListReasonCode getApprovedBlackListReasonCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

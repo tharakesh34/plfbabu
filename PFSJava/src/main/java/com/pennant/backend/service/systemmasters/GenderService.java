@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.Gender;
  * 
  */
 public interface GenderService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Gender getGenderById(String id);
+
 	Gender getApprovedGenderById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

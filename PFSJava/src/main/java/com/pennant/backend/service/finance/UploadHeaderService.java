@@ -57,57 +57,55 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 
 public interface UploadHeaderService {
-	
+
 	UploadHeader getUploadHeader(long uploadId);
-	
+
 	boolean isFileNameExist(String fileName);
-	
+
 	long save(UploadHeader uploadHeader);
-	
+
 	void saveUploadFinExpenses(List<UploadFinExpenses> uploadDetailsList);
-	
+
 	long saveFinExpenseDetails(FinExpenseDetails finFeeAmz);
-	
+
 	long saveFinExpenseMovements(FinExpenseMovements finFeeAmzMovement);
-	
-	List<FinanceMain> getFinancesByExpenseType (String finType, Date finApprovalStartDate, Date finApprovalEndDate);
-	
+
+	List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate);
+
 	long getFinExpenseIdByExpType(String expTypeCode);
-	
+
 	FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId);
 
 	FinanceMain getFinancesByFinReference(String finReference);
 
 	int getFinTypeCount(String finType);
-	
+
 	int getFinanceCountById(String finReference);
 
 	void update(FinExpenseDetails finFeeAmz);
 
 	void updateRecordCounts(UploadHeader uploadHeader);
 
-	List<FinExpenseMovements> getFinExpenseMovementById(String reference,long finExpenseID);
+	List<FinExpenseMovements> getFinExpenseMovementById(String reference, long finExpenseID);
 
 	List<FinExpenseDetails> getFinExpenseDetailById(String reference);
-	
+
 	FinTypeExpense getFinExpensesByFinType(String finType, long expenseTypeId);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
-	
+
 	long getFinFeeTypeIdByFeeType(String feeTypeCode);
-	
+
 	void saveFeeUploadDetails(List<UploadTaxPercent> uploadDetailsList);
-	
+
 	void saveExpenseUploadDetails(List<UploadFinTypeExpense> uploadDetailsList);
-	
+
 	List<UploadTaxPercent> getSuccesFailedCountForFactor(long uploadId);
 
 	List<UploadFinTypeExpense> getSuccesFailedCountExpense(long uploadId);
-	
+
 	void updateTaxPercent(UploadTaxPercent taxPercent);
-	
+
 	void updateRecord(UploadHeader uploadHeader);
-	
-	
-	
+
 }

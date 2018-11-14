@@ -4,7 +4,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public interface IncomeExpenseDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	IncomeExpenseHeader getIncomeExpense(long id, String type);
@@ -16,7 +16,7 @@ public interface IncomeExpenseDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	boolean isExist(String custCif, int financialYear);
 
 }

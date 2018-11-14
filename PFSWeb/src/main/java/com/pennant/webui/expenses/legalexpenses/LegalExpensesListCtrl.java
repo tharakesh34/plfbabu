@@ -64,9 +64,9 @@ import com.pennant.backend.service.expenses.LegalExpensesService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.expenses.legalexpenses.model.LegalExpensesListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -142,7 +142,7 @@ public class LegalExpensesListCtrl extends GFCBaseListCtrl<LegalExpenses> {
 				Operators.STRING);
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
-		fillComboBox(this.transactionType,"",PennantStaticListUtil.getTransactionTypes(),"");
+		fillComboBox(this.transactionType, "", PennantStaticListUtil.getTransactionTypes(), "");
 		registerField("transactionType", listheader_TransactionType, SortOrder.NONE, transactionType,
 				sortOperator_TransactionType, Operators.STRING);
 		registerField("expReference", listheader_Expreference, SortOrder.NONE, expReference, sortOperator_ExpReference,

@@ -18,7 +18,7 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
-	private long depositId = Long.MIN_VALUE;	// Auto Generated Sequence
+	private long depositId = Long.MIN_VALUE; // Auto Generated Sequence
 	private String depositType;
 	private String branchCode;
 	private String branchDesc;
@@ -28,7 +28,7 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 	private DepositDetails befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	private DepositMovements depositMovements = null;
 	private List<DepositMovements> depositMovementsList = new ArrayList<DepositMovements>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();

@@ -317,9 +317,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						finFeeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(finFeeDetail, isWIF, tableType) + 1);
 					}
 
-					
-					if ((finFeeDetail.isAlwPreIncomization())&& (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO)>0) ){
-						FinFeeDetail finFeeDtl=getFinFeeDetailDAO().getFeeDetailByExtReference(finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
+					if ((finFeeDetail.isAlwPreIncomization())
+							&& (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
+						FinFeeDetail finFeeDtl = getFinFeeDetailDAO().getFeeDetailByExtReference(
+								finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
 						if (finFeeDtl != null) {
 							finFeeDetail.setFeeID(finFeeDtl.getFeeID());
 							finFeeDetail.setFeeSeq(finFeeDtl.getFeeSeq());
@@ -913,7 +914,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			//auditDetails.addAll(finFeeAuditDetails);
 			BigDecimal totalFee = BigDecimal.ZERO;
 			boolean error = false;
-			
+
 			if (!financeDetail.isActionSave() && financeDetail.isUpFrentFee()) {
 				for (int i = 0; i < finScheduleData.getFinFeeDetailActualList().size(); i++) {
 					FinFeeDetail finFeeDetail = finScheduleData.getFinFeeDetailActualList().get(i);
@@ -969,10 +970,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					}
 				}
 			}
-			
+
 			if (!financeDetail.isActionSave() && financeDetail.isUpFrentFee() && !error) {
-				BigDecimal totalPaidAmt = getFinReceiptDetailDAO().getFinReceiptDetailsByFinRef(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-				if(totalPaidAmt.compareTo(totalFee) != 0){
+				BigDecimal totalPaidAmt = getFinReceiptDetailDAO().getFinReceiptDetailsByFinRef(
+						financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+				if (totalPaidAmt.compareTo(totalFee) != 0) {
 					detail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "FUF001", null, null), usrLanguage));
 					auditDetails.add(detail);

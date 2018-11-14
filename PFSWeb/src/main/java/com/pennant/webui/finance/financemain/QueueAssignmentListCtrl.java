@@ -29,20 +29,18 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHeader> {
 	private static final long serialVersionUID = -727353070679277569L;
-	private static final Logger logger = Logger
-			.getLogger(QueueAssignmentListCtrl.class);
+	private static final Logger logger = Logger.getLogger(QueueAssignmentListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_QueueAssignmentList; // autoWired
 	protected Borderlayout borderLayout_QueueAssignmentList; // autoWired
 	protected Paging pagingQueueAssignmentList; // autoWired
 	protected Listbox listBoxQueueAssignment; // autoWired
 	protected Textbox assignmentType;
-	
+
 	// List headers
 	protected Listheader listheader_UserLevel; // autoWired
 	protected Listheader listheader_RecordCount; // autoWired
@@ -55,7 +53,7 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<QueueAssignmentHeader> searchObj;
-	
+
 	private transient QueueAssignmentService queueAssignmentService;
 	private transient boolean isManual = false;
 
@@ -72,29 +70,28 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected QueueAssingment object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected QueueAssingment object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_QueueAssignmentList(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		this.borderLayout_QueueAssignmentList.setHeight(getBorderLayoutHeight());
 		this.listBoxQueueAssignment.setHeight(getListBoxHeight(0));
 
 		// set the paging parameters
 		this.pagingQueueAssignmentList.setPageSize(getListRows());
 		this.pagingQueueAssignmentList.setDetailed(true);
-		
-		if(StringUtils.trimToEmpty(assignmentType.getValue()).equals(PennantConstants.MANUAL_ASSIGNMENT)){
+
+		if (StringUtils.trimToEmpty(assignmentType.getValue()).equals(PennantConstants.MANUAL_ASSIGNMENT)) {
 			isManual = true;
 		}
-		
+
 		doSetFieldProperties();
-		
+
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<QueueAssignmentHeader>(QueueAssignmentHeader.class, getListRows());
 		this.searchObj.addSort("UserRoleCode", false);
@@ -102,9 +99,9 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 		this.searchObj.addField("UserRoleCode");
 		this.searchObj.addField("AssignedCount");
 		this.searchObj.addField("RoleDesc");
-		if(isManual){
-			this.searchObj.addTabelName("Task_Assignments_MView");	
-		}else {
+		if (isManual) {
+			this.searchObj.addTabelName("Task_Assignments_MView");
+		} else {
 			this.searchObj.addField("UserId");
 			this.searchObj.addField("LovDescUserName");
 			this.searchObj.addTabelName("Task_Assignments_View");
@@ -117,33 +114,32 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 		this.listBoxQueueAssignment.setItemRenderer(new QueueAssignmentListModelItemRenderer());
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Internal Method for Grouping List items
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void findSearchObject(){
+	public void findSearchObject() {
 		logger.debug("Entering");
-		final SearchResult<QueueAssignmentHeader> searchResult = getPagedListService().getSRBySearchObject(
-				this.searchObj);
-		if(isManual){
-			getPagedListWrapper().init(this.searchObj, this.listBoxQueueAssignment,this.pagingQueueAssignmentList);
-		}else {
-			this.listBoxQueueAssignment.setModel(new GroupsModelArray(
-					searchResult.getResult().toArray(),new QueueAssignmentListComparator()));
+		final SearchResult<QueueAssignmentHeader> searchResult = getPagedListService()
+				.getSRBySearchObject(this.searchObj);
+		if (isManual) {
+			getPagedListWrapper().init(this.searchObj, this.listBoxQueueAssignment, this.pagingQueueAssignmentList);
+		} else {
+			this.listBoxQueueAssignment.setModel(
+					new GroupsModelArray(searchResult.getResult().toArray(), new QueueAssignmentListComparator()));
 		}
 		logger.debug("Leaving");
 	}
-	
-	private void doSetFieldProperties(){
+
+	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
-	 * see: com.pennant.webui.finance.financemain.model.
-	 * AssignmentListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.finance.financemain.model. AssignmentListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -158,34 +154,33 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 			QueueAssignmentHeader aQueueAssignmentHeader = (QueueAssignmentHeader) item.getAttribute("data");
 			aQueueAssignmentHeader.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
 			aQueueAssignmentHeader.setManualAssign(isManual);
-			
+
 			aQueueAssignmentHeader = getQueueAssignmentService().getFinances(aQueueAssignmentHeader);
-			if(aQueueAssignmentHeader.isNewRecord()){
+			if (aQueueAssignmentHeader.isNewRecord()) {
 				aQueueAssignmentHeader.setWorkflowId(getWorkFlowId());
 				aQueueAssignmentHeader.setNextTaskId("");
 			}
-			
+
 			Map<String, Object> map = getDefaultArguments();
 			map.put("aQueueAssignmentHeader", aQueueAssignmentHeader);
 			/*
-			 * we can additionally handed over the listBox or the controller self,
-			 * so we have in the dialog access to the listBox ListModel. This is
-			 * fine for synchronizing the data in the QueueAssignmentListbox from the
+			 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to
+			 * the listBox ListModel. This is fine for synchronizing the data in the QueueAssignmentListbox from the
 			 * dialog when we do a delete, edit or insert a QueueAssignment.
 			 */
 			map.put("assignmentListCtrl", this);
 
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents(
-						"/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentDialog.zul", null, map);
+				Executions.createComponents("/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentDialog.zul", null,
+						map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
-			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "refresh" button is clicked. <br>
 	 * <br>
@@ -199,17 +194,19 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 		findSearchObject();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public JdbcSearchObject<QueueAssignmentHeader> getSearchObj() {
 		return searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<QueueAssignmentHeader> searchObj) {
 		this.searchObj = searchObj;
 	}
-	
+
 	public Listbox getListBoxAssignment() {
 		return listBoxQueueAssignment;
 	}
+
 	public void setListBoxAssignment(Listbox listBoxAssignment) {
 		this.listBoxQueueAssignment = listBoxAssignment;
 	}
@@ -218,8 +215,7 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 		return queueAssignmentService;
 	}
 
-	public void setQueueAssignmentService(
-			QueueAssignmentService queueAssignmentService) {
+	public void setQueueAssignmentService(QueueAssignmentService queueAssignmentService) {
 		this.queueAssignmentService = queueAssignmentService;
 	}
 
@@ -230,5 +226,5 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
-	
+
 }

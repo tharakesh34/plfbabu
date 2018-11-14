@@ -30,16 +30,16 @@ public class PostLimitUtilization implements Tasklet {
 
 	private Date appDate = null;
 
-	private DataSource 				dataSource;
+	private DataSource dataSource;
 
-	public static final String	TXT_QUA  		= "'";
+	public static final String TXT_QUA = "'";
 
 	public PostLimitUtilization() {
 		super();
 	}
 
 	@Override
-	public RepeatStatus execute(StepContribution arg, ChunkContext context)throws Exception {
+	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
 		appDate = DateUtility.getAppDate();
 
 		logger.debug("START: Limit Utilization for Value Date: " + appDate);
@@ -59,8 +59,8 @@ public class PostLimitUtilization implements Tasklet {
 			sqlStatement.setString(4, PennantConstants.MQ_SUCCESS_CODE);
 
 			resultSet = sqlStatement.executeQuery();
-			resultSet.next();	
-			BatchUtil.setExecution(context,  "TOTAL", String.valueOf(resultSet.getInt(1)));
+			resultSet.next();
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(resultSet.getInt(1)));
 			resultSet.close();
 			sqlStatement.close();
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
@@ -81,7 +81,7 @@ public class PostLimitUtilization implements Tasklet {
 
 				BatchFileUtil.writeline(filewriter, writeDetails(resultSet));
 
-				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(resultSet.getRow()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
 
 			}
 
@@ -89,13 +89,13 @@ public class PostLimitUtilization implements Tasklet {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			if(resultSet != null) {
+			if (resultSet != null) {
 				resultSet.close();
 			}
-			if(sqlStatement != null) {
+			if (sqlStatement != null) {
 				sqlStatement.close();
 			}
-			if(filewriter != null) {
+			if (filewriter != null) {
 				filewriter.close();
 			}
 		}
@@ -107,14 +107,14 @@ public class PostLimitUtilization implements Tasklet {
 	/**
 	 * @param resultSet
 	 * @return
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	private String writeDetails(ResultSet resultSet) throws SQLException {
 		logger.debug(" Entering ");
 
 		StringBuilder builder = new StringBuilder();
 
-		if(resultSet != null) {
+		if (resultSet != null) {
 			appendLine(builder, resultSet.getString("FinReference"));
 			appendLine(builder, resultSet.getString("CustCIF"));
 			appendLine(builder, resultSet.getString("FinLimitRef"));
@@ -228,7 +228,8 @@ public class PostLimitUtilization implements Tasklet {
 		StringBuilder selectQuery = new StringBuilder();
 
 		selectQuery.append(" SELECT FPD.FinReference, C.CustCIF, FM.FinLimitRef, FPD.FinAmount, FPD.FinCcy, ");
-		selectQuery.append(" FPD.MaturityDate, FPD.TotalPriBal, FPD.ODPrincipal, FPD.FirstODDate, FPD.FinStartDate FROM ");
+		selectQuery
+				.append(" FPD.MaturityDate, FPD.TotalPriBal, FPD.ODPrincipal, FPD.FirstODDate, FPD.FinStartDate FROM ");
 		selectQuery.append(" (SELECT FinReference FROM FinanceLimitProcess  WHERE (RequestType=? AND ResStatus=?)");
 		selectQuery.append(" AND(RequestType !=? AND ResStatus=?)) LT ");
 		selectQuery.append(" INNER JOIN FinPftDetails FPD ON LT.FinReference = FPD.FinReference ");

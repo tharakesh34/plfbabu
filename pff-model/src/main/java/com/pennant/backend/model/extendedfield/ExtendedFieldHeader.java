@@ -208,7 +208,7 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	public void setExtendedFieldDetails(List<ExtendedFieldDetail> extendedFieldDetails) {
 		this.extendedFieldDetailList = extendedFieldDetails;
 	}
-	
+
 	public List<ExtendedFieldDetail> getTechnicalValuationDetailList() {
 		return technicalValuationDetailList;
 	}
@@ -272,5 +272,5 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	public void setEvent(String event) {
 		this.event = event;
 	}
-	
+
 }

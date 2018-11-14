@@ -66,7 +66,7 @@ public interface CollateralSetupDAO {
 	CollateralSetup getCollateralSetup(String collateralRef, long depositorId, String tableType);
 
 	List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String tableType);
-	
+
 	int getCountByCollateralRef(String collateralRef);
 
 	List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String tableType);

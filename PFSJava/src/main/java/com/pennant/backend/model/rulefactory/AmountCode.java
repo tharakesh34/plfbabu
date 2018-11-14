@@ -43,7 +43,6 @@
 
 package com.pennant.backend.model.rulefactory;
 
-
 /**
  * Model class for the <b>AmountCode table</b>.<br>
  *
@@ -56,14 +55,15 @@ public class AmountCode implements java.io.Serializable {
 	private String amountCodeDesc;
 
 	public AmountCode() {
-		
+
 	}
 
 	//Getter and Setter methods
-	
+
 	public String getAllowedEvent() {
 		return allowedEvent;
 	}
+
 	public void setAllowedEvent(String allowedEvent) {
 		this.allowedEvent = allowedEvent;
 	}
@@ -71,6 +71,7 @@ public class AmountCode implements java.io.Serializable {
 	public void setAllowedRIA(boolean allowedRIA) {
 		this.allowedRIA = allowedRIA;
 	}
+
 	public boolean isAllowedRIA() {
 		return allowedRIA;
 	}
@@ -78,15 +79,17 @@ public class AmountCode implements java.io.Serializable {
 	public String getAmountCode() {
 		return amountCode;
 	}
+
 	public void setAmountCode(String amountCode) {
 		this.amountCode = amountCode;
 	}
-	
+
 	public String getAmountCodeDesc() {
 		return amountCodeDesc;
 	}
+
 	public void setAmountCodeDesc(String amountCodeDesc) {
 		this.amountCodeDesc = amountCodeDesc;
 	}
-	
+
 }

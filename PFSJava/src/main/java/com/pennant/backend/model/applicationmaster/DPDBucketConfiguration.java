@@ -54,8 +54,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DPDBucketConfiguration table</b>.<br>
  *
  */
-public class DPDBucketConfiguration extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class DPDBucketConfiguration extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long configID = Long.MIN_VALUE;
 	private String productCode;
@@ -65,11 +65,11 @@ private static final long serialVersionUID = 1L;
 	private String bucketCode;
 	private int dueDays;
 	private boolean suspendProfit;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private DPDBucketConfiguration befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -82,71 +82,79 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("productCodeName");
-			excludeFields.add("bucketIDName");
-			excludeFields.add("bucketCode");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("productCodeName");
+		excludeFields.add("bucketIDName");
+		excludeFields.add("bucketCode");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return configID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.configID = id;
 	}
+
 	public long getConfigID() {
 		return configID;
 	}
+
 	public void setConfigID(long configID) {
 		this.configID = configID;
 	}
-	
+
 	public String getProductCode() {
 		return productCode;
 	}
+
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
 	}
+
 	public String getProductCodeName() {
 		return this.productCodeName;
 	}
 
-	public void setProductCodeName (String productCodeName) {
+	public void setProductCodeName(String productCodeName) {
 		this.productCodeName = productCodeName;
 	}
-	
+
 	public long getBucketID() {
 		return bucketID;
 	}
+
 	public void setBucketID(long bucketID) {
 		this.bucketID = bucketID;
 	}
+
 	public String getBucketIDName() {
 		return this.bucketIDName;
 	}
 
-	public void setBucketIDName (String bucketIDName) {
+	public void setBucketIDName(String bucketIDName) {
 		this.bucketIDName = bucketIDName;
 	}
-	
+
 	public int getDueDays() {
 		return dueDays;
 	}
+
 	public void setDueDays(int dueDays) {
 		this.dueDays = dueDays;
 	}
-	
+
 	public boolean isSuspendProfit() {
 		return suspendProfit;
 	}
+
 	public void setSuspendProfit(boolean suspendProfit) {
 		this.suspendProfit = suspendProfit;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -154,7 +162,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -163,22 +171,22 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public DPDBucketConfiguration getBefImage(){
+	public DPDBucketConfiguration getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DPDBucketConfiguration beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DPDBucketConfiguration beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

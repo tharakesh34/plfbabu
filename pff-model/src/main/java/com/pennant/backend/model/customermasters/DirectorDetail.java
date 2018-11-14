@@ -59,7 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -7532246118876551387L;
-	
+
 	private long directorId = Long.MIN_VALUE;
 	private long custID;
 	private String firstName;
@@ -99,14 +99,14 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustDocCategoryName;
 	private Date dob;
 	private boolean idReferenceMand = false;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private DirectorDetail befImage;
 	private LoggedInUser userDetails;
 
 	private BigDecimal sharePerc;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -120,67 +120,75 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("idReferenceMand");
 		return excludeFields;
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return directorId;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.directorId = id;
 	}
-	
+
 	public long getDirectorId() {
 		return directorId;
 	}
+
 	public void setDirectorId(long directorId) {
 		this.directorId = directorId;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	
+
 	public String getMiddleName() {
 		return middleName;
 	}
+
 	public void setMiddleName(String middleName) {
 		this.middleName = middleName;
 	}
-	
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
+
 	public String getShortName() {
 		return shortName;
 	}
+
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
-	
+
 	public String getCustGenderCode() {
 		return custGenderCode;
 	}
+
 	public void setCustGenderCode(String custGenderCode) {
 		this.custGenderCode = custGenderCode;
 	}
@@ -188,13 +196,15 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustGenderCodeName() {
 		return this.lovDescCustGenderCodeName;
 	}
-	public void setLovDescCustGenderCodeName (String lovDescCustGenderCodeName) {
+
+	public void setLovDescCustGenderCodeName(String lovDescCustGenderCodeName) {
 		this.lovDescCustGenderCodeName = lovDescCustGenderCodeName;
 	}
 
 	public String getCustSalutationCode() {
 		return custSalutationCode;
 	}
+
 	public void setCustSalutationCode(String custSalutationCode) {
 		this.custSalutationCode = custSalutationCode;
 	}
@@ -202,55 +212,63 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustSalutationCodeName() {
 		return this.lovDescCustSalutationCodeName;
 	}
-	public void setLovDescCustSalutationCodeName (String lovDescCustSalutationCodeName) {
+
+	public void setLovDescCustSalutationCodeName(String lovDescCustSalutationCodeName) {
 		this.lovDescCustSalutationCodeName = lovDescCustSalutationCodeName;
 	}
-	
+
 	public String getCustAddrHNbr() {
 		return custAddrHNbr;
 	}
+
 	public void setCustAddrHNbr(String custAddrHNbr) {
 		this.custAddrHNbr = custAddrHNbr;
 	}
-	
+
 	public String getCustFlatNbr() {
 		return custFlatNbr;
 	}
+
 	public void setCustFlatNbr(String custFlatNbr) {
 		this.custFlatNbr = custFlatNbr;
 	}
-	
+
 	public String getCustAddrStreet() {
 		return custAddrStreet;
 	}
+
 	public void setCustAddrStreet(String custAddrStreet) {
 		this.custAddrStreet = custAddrStreet;
 	}
-	
+
 	public String getCustAddrLine1() {
 		return custAddrLine1;
 	}
+
 	public void setCustAddrLine1(String custAddrLine1) {
 		this.custAddrLine1 = custAddrLine1;
 	}
-	
+
 	public String getCustAddrLine2() {
 		return custAddrLine2;
 	}
+
 	public void setCustAddrLine2(String custAddrLine2) {
 		this.custAddrLine2 = custAddrLine2;
 	}
-	
+
 	public String getCustPOBox() {
 		return custPOBox;
 	}
+
 	public void setCustPOBox(String custPOBox) {
 		this.custPOBox = custPOBox;
 	}
-	
+
 	public String getCustAddrCity() {
 		return custAddrCity;
 	}
+
 	public void setCustAddrCity(String custAddrCity) {
 		this.custAddrCity = custAddrCity;
 	}
@@ -258,13 +276,15 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustAddrCityName() {
 		return this.lovDescCustAddrCityName;
 	}
-	public void setLovDescCustAddrCityName (String lovDescCustAddrCityName) {
+
+	public void setLovDescCustAddrCityName(String lovDescCustAddrCityName) {
 		this.lovDescCustAddrCityName = lovDescCustAddrCityName;
 	}
-	
+
 	public String getCustAddrProvince() {
 		return custAddrProvince;
 	}
+
 	public void setCustAddrProvince(String custAddrProvince) {
 		this.custAddrProvince = custAddrProvince;
 	}
@@ -272,13 +292,15 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustAddrProvinceName() {
 		return this.lovDescCustAddrProvinceName;
 	}
-	public void setLovDescCustAddrProvinceName (String lovDescCustAddrProvinceName) {
+
+	public void setLovDescCustAddrProvinceName(String lovDescCustAddrProvinceName) {
 		this.lovDescCustAddrProvinceName = lovDescCustAddrProvinceName;
 	}
-	
+
 	public String getCustAddrCountry() {
 		return custAddrCountry;
 	}
+
 	public void setCustAddrCountry(String custAddrCountry) {
 		this.custAddrCountry = custAddrCountry;
 	}
@@ -286,34 +308,39 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustAddrCountryName() {
 		return this.lovDescCustAddrCountryName;
 	}
-	public void setLovDescCustAddrCountryName (String lovDescCustAddrCountryName) {
+
+	public void setLovDescCustAddrCountryName(String lovDescCustAddrCountryName) {
 		this.lovDescCustAddrCountryName = lovDescCustAddrCountryName;
 	}
-	
+
 	public String getCustAddrZIP() {
 		return custAddrZIP;
 	}
+
 	public void setCustAddrZIP(String custAddrZIP) {
 		this.custAddrZIP = custAddrZIP;
 	}
-	
+
 	public String getCustAddrPhone() {
 		return custAddrPhone;
 	}
+
 	public void setCustAddrPhone(String custAddrPhone) {
 		this.custAddrPhone = custAddrPhone;
 	}
-	
+
 	public Date getCustAddrFrom() {
 		return custAddrFrom;
 	}
+
 	public void setCustAddrFrom(Date custAddrFrom) {
 		this.custAddrFrom = custAddrFrom;
 	}
-	
+
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -321,6 +348,7 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -328,6 +356,7 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -335,131 +364,135 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public DirectorDetail getBefImage(){
+	public DirectorDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(DirectorDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DirectorDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-	
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
-		
+		this.userDetails = userDetails;
+
 	}
 
 	public BigDecimal getSharePerc() {
-    	return sharePerc;
-    }
+		return sharePerc;
+	}
 
 	public void setSharePerc(BigDecimal sharePerc) {
-    	this.sharePerc = sharePerc;
-    }
+		this.sharePerc = sharePerc;
+	}
 
 	public boolean isShareholder() {
-	    return shareholder;
-    }
+		return shareholder;
+	}
 
 	public void setShareholder(boolean shareholder) {
-	    this.shareholder = shareholder;
-    }
+		this.shareholder = shareholder;
+	}
 
 	public boolean isDirector() {
-	    return director;
-    }
+		return director;
+	}
 
 	public void setDirector(boolean director) {
-	    this.director = director;
-    }
+		this.director = director;
+	}
 
 	public String getDesignation() {
-	    return designation;
-    }
+		return designation;
+	}
 
 	public void setDesignation(String designation) {
-	    this.designation = designation;
-    }
+		this.designation = designation;
+	}
 
 	public String getLovDescDesignationName() {
-	    return lovDescDesignationName;
-    }
+		return lovDescDesignationName;
+	}
 
 	public void setLovDescDesignationName(String lovDescDesignationName) {
-	    this.lovDescDesignationName = lovDescDesignationName;
-    }
+		this.lovDescDesignationName = lovDescDesignationName;
+	}
 
 	public String getIdType() {
-	    return idType;
-    }
+		return idType;
+	}
 
 	public void setIdType(String idType) {
-	    this.idType = idType;
-    }
+		this.idType = idType;
+	}
 
 	public String getIdReference() {
-	    return idReference;
-    }
+		return idReference;
+	}
 
 	public void setIdReference(String idReference) {
-	    this.idReference = idReference;
-    }
+		this.idReference = idReference;
+	}
 
 	public String getNationality() {
-	    return nationality;
-    }
+		return nationality;
+	}
 
 	public void setNationality(String nationality) {
-	    this.nationality = nationality;
-    }
+		this.nationality = nationality;
+	}
 
 	public String getLovDescNationalityName() {
-	    return lovDescNationalityName;
-    }
+		return lovDescNationalityName;
+	}
 
 	public void setLovDescNationalityName(String lovDescNationalityName) {
-	    this.lovDescNationalityName = lovDescNationalityName;
-    }
+		this.lovDescNationalityName = lovDescNationalityName;
+	}
 
 	public String getLovDescCustDocCategoryName() {
-    	return lovDescCustDocCategoryName;
-    }
+		return lovDescCustDocCategoryName;
+	}
 
 	public void setLovDescCustDocCategoryName(String lovDescCustDocCategoryName) {
-    	this.lovDescCustDocCategoryName = lovDescCustDocCategoryName;
-    }
+		this.lovDescCustDocCategoryName = lovDescCustDocCategoryName;
+	}
 
 	public Date getDob() {
-	    return dob;
-    }
+		return dob;
+	}
 
 	public void setDob(Date dob) {
-	    this.dob = dob;
-    }
+		this.dob = dob;
+	}
 
 	public boolean isIdReferenceMand() {
 		return idReferenceMand;
 	}
+
 	public void setIdReferenceMand(boolean idReferenceMand) {
 		this.idReferenceMand = idReferenceMand;
 	}
-	
+
 }

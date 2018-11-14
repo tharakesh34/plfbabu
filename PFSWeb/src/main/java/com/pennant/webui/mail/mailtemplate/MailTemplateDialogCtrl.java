@@ -98,10 +98,10 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -161,7 +161,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private transient MailTemplateListCtrl mailTemplateListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSimulate;
 
 	// ServiceDAOs / Domain Classes
@@ -230,19 +230,19 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 			doLoadWorkFlow(this.mailTemplate.isWorkflow(), this.mailTemplate.getWorkflowId(),
 					this.mailTemplate.getNextTaskId());
-			
+
 			if (isWorkFlowEnabled()) {
 				if (!enqModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "MailTemplateDialog");
 			}
-			
+
 			getBorderLayoutHeight();
 			this.htmlArtifact.setHeight(borderLayoutHeight - 270 + "px");
 			// this.emailSubject.setHeight(borderLayoutHeight-270+"px");
 			this.templateData.setHeight(borderLayoutHeight - 230 + "px");
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -435,8 +435,9 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		aMailTemplate.setEmailFormat("H");
 		fillComboBox(this.emailFormat, aMailTemplate.getEmailFormat(), listEmailFormat, "");
 		fillComboBox(this.templateFor, StringUtils.trimToEmpty(aMailTemplate.getTemplateFor()), listTemplateFor, "");
-		fillComboBox(this.templateModule, aMailTemplate.getModule() == null ? NotificationConstants.MAIL_MODULE_FIN
-				: aMailTemplate.getModule(), mailTeplateModulesList, "");
+		fillComboBox(this.templateModule,
+				aMailTemplate.getModule() == null ? NotificationConstants.MAIL_MODULE_FIN : aMailTemplate.getModule(),
+				mailTeplateModulesList, "");
 
 		if (aMailTemplate.isEmailTemplate()) {
 			this.emailDetailsTab.setDisabled(false);
@@ -452,14 +453,17 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			if (type != null && aMailTemplate.getEmailContent() != null) {
 				try {
 					if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(type)) {
-						this.htmlArtifact.setValue(new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
-						this.divHtmlArtifact.appendChild(new Html(new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET)));
+						this.htmlArtifact.setValue(
+								new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
+						this.divHtmlArtifact.appendChild(new Html(
+								new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET)));
 						doFillTemplateFields(aMailTemplate.getModule(), this.templateData);
 						doFillTemplateFields(aMailTemplate.getModule(), this.templateData1);
 					} else if (NotificationConstants.TEMPLATE_FORMAT_PLAIN.equals(type)) {
-						this.plainText.setValue(new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
+						this.plainText.setValue(
+								new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					logger.error("Exception:", e);
 				}
 			} else if (aMailTemplate.getModule() == null) {
@@ -467,7 +471,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				doFillTemplateFields(AccountConstants.TRANACC_FIN, this.templateData1);
 			}
 		}
-		
+
 		this.active.setChecked(aMailTemplate.isActive());
 		if (aMailTemplate.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aMailTemplate.getRecordType())) {
 			this.active.setChecked(true);
@@ -559,10 +563,10 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		}
 		try {
 			if (!this.templateForSMS.isChecked() && !this.templateForEmail.isChecked()) {
-				throw new WrongValueException(this.templateForSMS, Labels.getLabel(
-						"EITHER_OR",
-						new String[] { Labels.getLabel("label_MailTemplateDialog_TemplateForSMS.value"),
-								Labels.getLabel("label_MailTemplateDialog_TemplateForEmail.value") }));
+				throw new WrongValueException(this.templateForSMS,
+						Labels.getLabel("EITHER_OR",
+								new String[] { Labels.getLabel("label_MailTemplateDialog_TemplateForSMS.value"),
+										Labels.getLabel("label_MailTemplateDialog_TemplateForEmail.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -640,16 +644,16 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 						throw new WrongValueException(this.Space_htmlArtifact, Labels.getLabel("FIELD_NO_EMPTY",
 								new String[] { Labels.getLabel("label_MailTemplateDialog_EMailContent.value") }));
 					} else {
-						aMailTemplate.setEmailContent(this.htmlArtifact.getValue().getBytes(
-								NotificationConstants.DEFAULT_CHARSET));
+						aMailTemplate.setEmailContent(
+								this.htmlArtifact.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 					}
 				} else if (NotificationConstants.TEMPLATE_FORMAT_PLAIN.equals(aMailTemplate.getEmailFormat())) {
 					if (StringUtils.isBlank(this.plainText.getValue())) {
 						throw new WrongValueException(this.plainText, Labels.getLabel("FIELD_NO_EMPTY",
 								new String[] { Labels.getLabel("label_MailTemplateDialog_EMailContent.value") }));
 					} else {
-						aMailTemplate.setEmailContent(this.plainText.getValue().getBytes(
-								NotificationConstants.DEFAULT_CHARSET));
+						aMailTemplate.setEmailContent(
+								this.plainText.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 					}
 				}
 			} catch (WrongValueException we) {
@@ -746,20 +750,20 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		setValidationOn(true);
 
 		if (!this.templateCode.isReadonly()) {
-			this.templateCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MailTemplateDialog_TemplateCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
+			this.templateCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MailTemplateDialog_TemplateCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}
 		if (!this.templateDesc.isReadonly()) {
-			this.templateDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MailTemplateDialog_TemplateDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.templateDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MailTemplateDialog_TemplateDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		// TAT
 		if (this.row_turnAroundTime.isVisible()) {
-			this.turnAroundTime.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_MailTemplateDialog_turnAroundTime.value"), true));
+			this.turnAroundTime.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_MailTemplateDialog_turnAroundTime.value"), true));
 		}
 
 		// Email Subject
@@ -905,11 +909,11 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 */
 	public void doReadOnly(boolean readOnly) {
 		logger.debug("Entering");
-		
+
 		if (PennantConstants.RECORD_TYPE_DEL.equals(this.mailTemplate.getRecordType())) {
 			readOnly = true;
 		}
-		 
+
 		if (!getMailTemplate().isNewRecord()) {
 			this.templateCode.setReadonly(true);
 		}
@@ -1155,8 +1159,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_MailTemplateDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1193,12 +1197,12 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	public void onChange$templateModule(Event event) {
 		logger.debug("Entering " + event);
 
-		if (this.templateModule.getSelectedItem().getValue() != null
-				&& (this.templateModule.getSelectedItem().getValue().toString()
-						.equals(NotificationConstants.MAIL_MODULE_CAF)
-						|| this.templateModule.getSelectedItem().getValue().toString()
-								.equals(NotificationConstants.MAIL_MODULE_FIN) || this.templateModule.getSelectedItem()
-						.getValue().toString().equals(NotificationConstants.MAIL_MODULE_CREDIT))) {
+		if (this.templateModule.getSelectedItem().getValue() != null && (this.templateModule.getSelectedItem()
+				.getValue().toString().equals(NotificationConstants.MAIL_MODULE_CAF)
+				|| this.templateModule.getSelectedItem().getValue().toString()
+						.equals(NotificationConstants.MAIL_MODULE_FIN)
+				|| this.templateModule.getSelectedItem().getValue().toString()
+						.equals(NotificationConstants.MAIL_MODULE_CREDIT))) {
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData);
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1);
 		}
@@ -1399,8 +1403,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 			Listcell lc = new Listcell(lcLabel);
 			filedValues.put(lcLabel, templateFieldsList.get(i).getField().trim());
-			filedDesc.put(templateFieldsList.get(i).getField().trim(), templateFieldsList.get(i).getFieldDesc() + ":"
-					+ templateFieldsList.get(i).getFieldFormat());
+			filedDesc.put(templateFieldsList.get(i).getField().trim(),
+					templateFieldsList.get(i).getFieldDesc() + ":" + templateFieldsList.get(i).getFieldFormat());
 			lc.setParent(item);
 			lc.setVisible(false);
 			lc = new Listcell(templateFieldsList.get(i).getFieldDesc());

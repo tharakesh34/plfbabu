@@ -53,18 +53,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>NPABucket table</b>.<br>
  *
  */
-public class NPABucket extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class NPABucket extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long bucketID = Long.MIN_VALUE;
 	private String bucketCode;
 	private String bucketDesc;
 	private boolean active;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private NPABucket befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -77,47 +77,52 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return bucketID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.bucketID = id;
 	}
+
 	public long getBucketID() {
 		return bucketID;
 	}
+
 	public void setBucketID(long bucketID) {
 		this.bucketID = bucketID;
 	}
-	
+
 	public String getBucketCode() {
 		return bucketCode;
 	}
+
 	public void setBucketCode(String bucketCode) {
 		this.bucketCode = bucketCode;
 	}
-	
+
 	public String getBucketDesc() {
 		return bucketDesc;
 	}
+
 	public void setBucketDesc(String bucketDesc) {
 		this.bucketDesc = bucketDesc;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -125,7 +130,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -134,19 +139,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public NPABucket getBefImage(){
+	public NPABucket getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(NPABucket beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(NPABucket beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

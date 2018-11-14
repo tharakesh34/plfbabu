@@ -82,9 +82,9 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcess;
 
 public abstract class AbstractMandateProcess extends AbstractInterface implements MandateProcess {
-	protected final Logger	logger	= Logger.getLogger(getClass());
+	protected final Logger logger = Logger.getLogger(getClass());
 
-	public AbstractMandateProcess () {
+	public AbstractMandateProcess() {
 		super();
 	}
 
@@ -99,9 +99,9 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		String userName = (String) object[4];
 		String selectedBranchs = (String) object[5];
 		String entity = (String) object[6];
-		
+
 		Long[] mandateIds = new Long[mandateIdList.size()];
-				
+
 		int i = 0;
 		for (Long mandateId : mandateIdList) {
 			mandateIds[i++] = mandateId;
@@ -116,7 +116,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		Map<String, Object> filterMap = new HashMap<>();
 		Map<String, Object> parameterMap = new HashMap<>();
 		filterMap.put("ID", mandates);
-		filterMap.put("MandateId",Arrays.asList(mandateIds));
+		filterMap.put("MandateId", Arrays.asList(mandateIds));
 		filterMap.put("FROMDATE", fromDate);
 		filterMap.put("TODATE", toDate);
 
@@ -126,12 +126,12 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 
 		parameterMap.put("USER_NAME", userName);
 		parameterMap.put("ENTITY_CODE", entity);
-				
+
 		addCustomParameter(parameterMap);
-		
+
 		DataEngineExport dataEngine = null;
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
-		
+
 		genetare(dataEngine, userName, filterMap, parameterMap);
 	}
 
@@ -142,20 +142,19 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 	 * @param parameterMap
 	 * @throws Exception
 	 */
-	protected DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Map<String, Object> filterMap, Map<String, Object> parameterMap)
-			throws Exception {
+	protected DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Map<String, Object> filterMap,
+			Map<String, Object> parameterMap) throws Exception {
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setUserName(userName);
 		dataEngine.setValueDate(getValueDate());
 		return dataEngine.exportData("MANDATES_EXPORT");
 	}
-	
+
 	@Override
 	public void processResponseFile(long userId, File file, Media media) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-			
 		String configName = MANDATES_IMPORT.getName();
 
 		String name = "";
@@ -171,24 +170,24 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		MANDATES_IMPORT.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), MANDATES_IMPORT);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				MANDATES_IMPORT);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());
 		dataEngine.importData(configName);
-		
+
 		do {
 			if ("S".equals(MANDATES_IMPORT.getStatus()) || "F".equals(MANDATES_IMPORT.getStatus())) {
 				receiveResponse(MANDATES_IMPORT.getId());
 				break;
 			}
 		} while ("S".equals(MANDATES_IMPORT.getStatus()) || "F".equals(MANDATES_IMPORT.getStatus()));
-		
-		
+
 		logger.debug(Literal.LEAVING);
-	
+
 	}
-	
+
 	@Override
 	public void receiveResponse(long respBatchId) throws Exception {
 		MapSqlParameterSource paramMap = null;
@@ -221,7 +220,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			for (Mandate respMandate : mandates) {
 				boolean matched = true;
 				boolean reject = false;
-				
+
 				Mandate mandate = getMandateById(respMandate.getMandateID());
 
 				StringBuilder remarks = new StringBuilder();
@@ -246,7 +245,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 						try {
 							txnStatus = transManager.getTransaction(transDef);
 							updateMandates(respMandate);
-							
+
 							try {
 								if ("N".equals(respMandate.getStatus())) {
 									processSecondaryMandate(mandate);
@@ -346,18 +345,18 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					String bankCode = null;
-					
+
 					if (rowMap.get("BANK_CODE") != null) {
-						bankCode =  rowMap.get("BANK_CODE").toString();
+						bankCode = rowMap.get("BANK_CODE").toString();
 					}
-					
+
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("BANK_SEQ", getSequence(bankCode, bankCodeSeq));
 					rowMap.put("EXTRACTION_DATE", getAppDate());
 
 					String appId = null;
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
-				
+
 					if (finReference != null) {
 						appId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
 						appId = StringUtils.trim(appId);
@@ -389,15 +388,15 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 							rowMap.put("EMI", CUST_EMI);
 							rowMap.put("DEBIT_AMOUNT", CUST_EMI);
 						}
-						
+
 						Date startDate = (Date) rowMap.get("START_DATE");
 						Date firstDueDate = (Date) rowMap.get("FIRSTDUEDATE");
 						Date endDate = DateUtil.addMonths(startDate, 240);
-						
+
 						rowMap.put("EFFECTIVE_DATE", startDate);
 						rowMap.put("EMI_ENDDATE", endDate);
-						
-						if(firstDueDate == null) {
+
+						if (firstDueDate == null) {
 							rowMap.put("EFFECTIVE_DATE", startDate);
 						}
 					}
@@ -405,12 +404,12 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 					rowMap.remove("CCYMINORCCYUNITS");
 					rowMap.remove("CUST_EMI");
 					rowMap.remove("FIRSTDUEDATE");
-					
+
 					long id = insertData(rowMap);
-					Object obj= rowMap.get("mandateid");
-					String mandateId=null;
-					if(obj!=null) {
-						mandateId=obj.toString();
+					Object obj = rowMap.get("mandateid");
+					String mandateId = null;
+					if (obj != null) {
+						mandateId = obj.toString();
 					}
 					logMandateHistory(new Long(mandateId), id);
 					rowMap = null;
@@ -419,7 +418,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
+		}
 
 		logger.debug(Literal.ENTERING);
 		return null;
@@ -480,7 +479,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		}
 		return bankCodeMap;
 	}
-	
+
 	private void logMandateHistory(Long mandateId, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -499,16 +498,15 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
-	
+
 	protected Mandate getMandateById(final long id) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
+		sql.append(
+				" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
@@ -519,13 +517,12 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			return this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
-		
+		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
-		
+
 	private void updateMandateResponse(Mandate respmandate) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -547,7 +544,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void logMandate(long respBatchId, Mandate respMandate) {
 		SqlParameterSource beanParameters = null;
 		DataEngineLog log = new DataEngineLog();
@@ -576,7 +573,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			logger.error("Exception:", e);
 		}
 	}
-	
+
 	protected void validateMandate(Mandate respMandate, Mandate mandate, StringBuilder remarks) {
 		if (!StringUtils.equals(mandate.getCustCIF(), respMandate.getCustCIF())) {
 			if (remarks.length() > 0) {
@@ -584,7 +581,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			}
 			remarks.append("Customer Code");
 		}
-		
+
 		if (!StringUtils.equals(mandate.getFinReference(), respMandate.getFinReference())) {
 			if (remarks.length() > 0) {
 				remarks.append(", ");
@@ -598,7 +595,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			}
 			remarks.append("Account No.");
 		}
-		
+
 		if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
 			if (remarks.length() > 0) {
 				remarks.append(", ");
@@ -606,7 +603,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			remarks.append("MICR Code");
 		}
 	}
-	
+
 	protected void updateMandates(Mandate respmandate) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -630,24 +627,24 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			paramMap.addValue("AC", "AC");
 			paramMap.addValue("FINREFERENCE", respmandate.getFinReference());
 		}
-		
+
 		paramMap.addValue("REASON", respmandate.getReason());
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	protected void logMandateHistory(Mandate respmandate, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		
-		StringBuilder sql =new StringBuilder("Insert Into MandatesStatus");
+
+		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus");
 		sql.append(" (mandateID, status, reason, changeDate, fileID)");
 		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
-		
+
 		paramMap.addValue("mandateID", respmandate.getMandateID());
-		
+
 		if ("Y".equals(respmandate.getStatus())) {
 			paramMap.addValue("STATUS", "REJECTED");
 		} else {
@@ -656,11 +653,11 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		paramMap.addValue("REASON", respmandate.getReason());
 		paramMap.addValue("changeDate", getAppDate());
 		paramMap.addValue("fileID", requestId);
-		
+
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void updateMandateRequest(Mandate respmandate, long id) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -680,7 +677,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void updateRemarks(long respBatchId, long approved, long rejected, long notMatched) {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
@@ -708,8 +705,8 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
-	protected  void processSecondaryMandate(Mandate respMandate){
+
+	protected void processSecondaryMandate(Mandate respMandate) {
 
 	}
 
@@ -732,6 +729,5 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 	public void processMandateResponse() throws Exception {
 
 	}
-	
 
 }

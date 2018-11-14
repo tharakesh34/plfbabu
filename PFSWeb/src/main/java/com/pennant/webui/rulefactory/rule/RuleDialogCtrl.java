@@ -130,8 +130,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	protected Label label_seqOrder;
 	protected Label label_DeviationType;
 	protected Label notesValue;
-	
-	protected Hbox	hbox_DeviationType;
+
+	protected Hbox hbox_DeviationType;
 
 	protected Row row_FeeType;
 	protected Row row_SeqOrder;
@@ -191,12 +191,12 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 			// READ OVERHANDED params !
 			if (this.arguments.containsKey("rule")) {
-				
+
 				this.rule = (Rule) arguments.get("rule");
-				
+
 				Rule befImage = new Rule();
 				BeanUtils.copyProperties(this.rule, befImage);
-				
+
 				this.rule.setBefImage(befImage);
 				setRule(this.rule);
 			} else {
@@ -434,9 +434,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		this.ruleCode.setMaxlength(8);
 		this.ruleCodeDesc.setMaxlength(50);
 		this.seqOrder.setMaxlength(4);
-		
-		String notes = Labels.getLabel("label_RuleDialog_" + this.ruleModuleName +  "_NotesValue.value");
-		
+
+		String notes = Labels.getLabel("label_RuleDialog_" + this.ruleModuleName + "_NotesValue.value");
+
 		if (StringUtils.isBlank(notes)) {
 			this.row_Notes.setVisible(false);
 		} else {
@@ -444,7 +444,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		}
 
 		switch (module) {
-		
+
 		case RuleConstants.MODULE_AGRRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
 			break;
@@ -503,23 +503,23 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.label_RuleDialog_ruleCodeDesc.setValue(Labels.getLabel("label_LimitLineDialog_Desc.value"));
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
 
-			/*if (StringUtils.equals(LimitConstants.LIMIT_CATEGORY_CUST, event)) {
-				this.row_Revolving.setVisible(true);
-			}*/
+			/*
+			 * if (StringUtils.equals(LimitConstants.LIMIT_CATEGORY_CUST, event)) { this.row_Revolving.setVisible(true);
+			 * }
+			 */
 			break;
-			
+
 		case RuleConstants.MODULE_BOUNCE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 
-			
 		case RuleConstants.MODULE_GSTRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
-		
+
 		case RuleConstants.MODULE_AMORTIZATIONMETHOD:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
 			break;
-		
+
 		case RuleConstants.MODULE_STGACRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
 			break;
@@ -527,9 +527,11 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		// Window Title
 		if (StringUtils.equals(RuleConstants.EVENT_BANK, event)) {
-			this.label_RuleTitle.setValue("Institutional " + Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
+			this.label_RuleTitle
+					.setValue("Institutional " + Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
 		} else if (StringUtils.equals(RuleConstants.EVENT_CUSTOMER, event)) {
-			this.label_RuleTitle.setValue("Customer " + Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
+			this.label_RuleTitle
+					.setValue("Customer " + Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
 		} else {
 			this.label_RuleTitle.setValue(Labels.getLabel("window_RuleDialog_" + ruleModuleName + ".title"));
 		}
@@ -618,7 +620,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aRule);
-			
+
 			if (RuleConstants.MODULE_GSTRULE.equals(this.rule.getRuleModule())) {
 				this.btnDelete.setVisible(false);
 			}
@@ -655,7 +657,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		String excludeFields = "";
 
 		if (StringUtils.equals(module, RuleConstants.MODULE_ELGRULE)) {
-			excludeFields = "," + RuleConstants.RETURNTYPE_STRING + "," + RuleConstants. RETURNTYPE_CALCSTRING + ",";
+			excludeFields = "," + RuleConstants.RETURNTYPE_STRING + "," + RuleConstants.RETURNTYPE_CALCSTRING + ",";
 		} else if (StringUtils.equals(module, RuleConstants.MODULE_SUBHEAD)) {
 			excludeFields = "," + RuleConstants.RETURNTYPE_DECIMAL + "," + RuleConstants.RETURNTYPE_BOOLEAN + ","
 					+ RuleConstants.RETURNTYPE_INTEGER + "," + RuleConstants.RETURNTYPE_OBJECT + ",";
@@ -671,7 +673,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.ruleEvent.setValue(event);
 			this.feeType.setValue(aRule.getFeeTypeCode());
 			this.feeType.setDescription(aRule.getFeeTypeDesc());
-			
+
 			if (aRule.getFeeTypeID() != null) {
 				this.feeType.setObject(new FeeType(aRule.getFeeTypeID()));
 			}
@@ -723,8 +725,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 					Map<String, Rule> ruleCodesMap = PennantAppUtil.getLimitLineCodes(RuleConstants.MODULE_LMTLINE,
 							false, "_View");
 					if (ruleCodesMap.containsKey(ruleCode.getValue())) {
-						wve.add(new WrongValueException(ruleCode, Labels.getLabel("LIMILINE_DATA_ALREADY_EXISTS",
-								new String[] { ruleCode.getValue() })));
+						wve.add(new WrongValueException(ruleCode,
+								Labels.getLabel("LIMILINE_DATA_ALREADY_EXISTS", new String[] { ruleCode.getValue() })));
 					}
 				}
 			}
@@ -776,7 +778,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 				wve.add(we);
 			}
 
-		try {			
+			try {
 				FeeType feeTypeObj = (FeeType) feeType.getObject();
 				aRule.setFeeTypeID(feeTypeObj.getFeeTypeID());
 			} catch (WrongValueException we) {
@@ -885,13 +887,11 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.ruleCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel(ruleDescLabel),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		if (this.row_FeeType.isVisible()) {
-			this.feeType.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_RuleDialog_FeeType.value"),
+			this.feeType.setConstraint(new PTStringValidator(Labels.getLabel("label_RuleDialog_FeeType.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
-			this.ruleEvent.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_RuleDialog_ruleEvent.value"),
+			this.ruleEvent.setConstraint(new PTStringValidator(Labels.getLabel("label_RuleDialog_ruleEvent.value"),
 					PennantRegularExpressions.REGEX_NAME, true));
 		}
 
@@ -974,7 +974,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 						jsRuleReturnType.setListOfData(valueLabelList);
 
 						jsRuleReturnType.setResultLabel("result.value = ");
-						
+
 						jsRuleReturnTypeList.add(jsRuleReturnType);
 
 						String deviationType_Label = this.deviationType.getSelectedItem().getLabel();
@@ -984,7 +984,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 							jsRuleReturnType.setListOfData(valueLabelList);
 							deviationType_Label = RuleConstants.COMPONENTTYPE_COMBOBOX;
 						}
-						
+
 						jsRuleReturnType.setResultLabel(" result.deviation = ");
 						jsRuleReturnType.setComponentType(deviationType_Label);
 
@@ -998,32 +998,32 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		this.javaScriptSqlRule.setRuleType(ruleReturnType);
 
 		if (this.rule.isNewRecord()) {
-			
+
 			if (StringUtils.equals(returnType, PennantConstants.List_Select)) {
 				this.javaScriptSqlRule.setTreeTabVisible(false);
 			} else {
-				
+
 				this.javaScriptSqlRule.setTreeTabVisible(true);
-				
+
 				if (StringUtils.equalsIgnoreCase(this.rule.getRuleModule(), RuleConstants.MODULE_FEES)) {
 					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
 				} else {
 					this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 				}
-				
+
 				this.javaScriptSqlRule.setSelectedTab(RuleConstants.TAB_DESIGN);
 				this.javaScriptSqlRule.setActualBlock("");
 				this.javaScriptSqlRule.setEditable(true);
 			}
-		
+
 		} else {
-			
+
 			this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 			this.javaScriptSqlRule.setFields(this.rule.getFields());
 			this.javaScriptSqlRule.setSqlQuery(this.rule.getSQLRule());
 			this.javaScriptSqlRule.setActualBlock(this.rule.getActualBlock());
 			this.javaScriptSqlRule.buildQuery(this.rule.getActualBlock());
-			
+
 		}
 	}
 
@@ -1092,7 +1092,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.returnType.setDisabled(true);
 			this.deviationType.setDisabled(true);
 			this.btnCancel.setVisible(true);
-			
+
 			if (enqiryModule) {
 				this.btnReadValues.setVisible(false);
 				this.javaScriptSqlRule.setTreeTabVisible(false);
@@ -1107,9 +1107,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 				this.javaScriptSqlRule.setTreeTabVisible(false);
 				this.btnReadValues.setVisible(false);
 			}
-			
+
 			this.active.setDisabled(enqiryModule || isReadOnly("RuleDialog_active"));
-			
+
 			if (StringUtils.equals(RuleConstants.MODULE_LMTLINE, this.rule.getRuleModule())) {
 				this.active.setDisabled(isReadOnly("RuleDialog_active")
 						|| !this.ruleService.validationCheck(this.rule.getRuleCode(), this.rule.getRuleEvent()));
@@ -1118,7 +1118,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		readOnlyComponent(enqiryModule || isReadOnly("RuleDialog_ruleCodeDesc"), this.ruleCodeDesc);
 		readOnlyComponent(enqiryModule || isReadOnly("RuleDialog_revolving"), this.revolving);
-		
+
 		this.seqOrder.setReadonly(isReadOnly("RuleDialog_seqOrder"));
 		this.allowDeviation.setDisabled(isReadOnly("RuleDialog_allowDeviation"));
 
@@ -1394,8 +1394,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_RuleDialog, auditHeader);
 						return processCompleted;
 					}

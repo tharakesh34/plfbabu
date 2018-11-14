@@ -64,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDAO {
 	private static Logger logger = Logger.getLogger(FrequencyDAOImpl.class);
-	
+
 	public FrequencyDAOImpl() {
 		super();
 	}
@@ -85,15 +85,16 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 		frequency.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT FrqCode, FrqDesc, FrqIsActive," );
-		/*if(type.contains("View")){
-			selectSql.append("");
-		}*/
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT FrqCode, FrqDesc, FrqIsActive,");
+		/*
+		 * if(type.contains("View")){ selectSql.append(""); }
+		 */
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTFrequencies");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FrqCode =:FrqCode") ;
-				
+		selectSql.append(" Where FrqCode =:FrqCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
 		RowMapper<Frequency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Frequency.class);
@@ -109,8 +110,7 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTFrequencies or
-	 * BMTFrequencies_Temp. if Record not deleted then throws
+	 * This method Deletes the Record from the BMTFrequencies or BMTFrequencies_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Frequencies by key FrqCode
 	 * 
 	 * @param Frequencies
@@ -130,8 +130,8 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 		deleteSql.append("Delete From BMTFrequencies");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FrqCode =:FrqCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
 
 		try {
@@ -147,8 +147,7 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 	}
 
 	/**
-	 * This method insert new Records into BMTFrequencies or
-	 * BMTFrequencies_Temp.
+	 * This method insert new Records into BMTFrequencies or BMTFrequencies_Temp.
 	 * 
 	 * save Frequencies
 	 * 
@@ -167,14 +166,15 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 
 		insertSql.append("Insert Into BMTFrequencies");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FrqCode, FrqDesc, FrqIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (FrqCode, FrqDesc, FrqIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:FrqCode, :FrqDesc, :FrqIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:FrqCode, :FrqDesc, :FrqIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -183,9 +183,8 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 	}
 
 	/**
-	 * This method updates the Record BMTFrequencies or BMTFrequencies_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Frequencies by key FrqCode and Version
+	 * This method updates the Record BMTFrequencies or BMTFrequencies_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Frequencies by key FrqCode and Version
 	 * 
 	 * @param Frequencies
 	 *            (frequency)
@@ -204,23 +203,24 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 
 		updateSql.append("Update BMTFrequencies");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FrqDesc = :FrqDesc, FrqIsActive = :FrqIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set FrqDesc = :FrqDesc, FrqIsActive = :FrqIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FrqCode =:FrqCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

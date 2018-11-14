@@ -63,15 +63,15 @@ public class InventorySettlement extends AbstractWorkflowEntity implements Entit
 	private long id = Long.MIN_VALUE;
 	private String brokerCode;
 	private String brokerCodeName;
-	private Date   settlementDate;
+	private Date settlementDate;
 	private boolean newRecord = false;
 	private String lovValue;
 	private InventorySettlement befImage;
 	private LoggedInUser userDetails;
-	
+
 	//settlement fields
 	private long brokerCustID;
-	private String accountNumber;	
+	private String accountNumber;
 	private BigDecimal unSoldFee;
 	private BigDecimal settleAmt;
 
@@ -173,8 +173,7 @@ public class InventorySettlement extends AbstractWorkflowEntity implements Entit
 		return inventSettleDetList;
 	}
 
-	public void setInventSettleDetList(
-			List<InventorySettlementDetails> inventSettleDetList) {
+	public void setInventSettleDetList(List<InventorySettlementDetails> inventSettleDetList) {
 		this.inventSettleDetList = inventSettleDetList;
 	}
 

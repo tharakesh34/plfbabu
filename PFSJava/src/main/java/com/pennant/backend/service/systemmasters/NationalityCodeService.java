@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.NationalityCode;
  * 
  */
 public interface NationalityCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	NationalityCode getNationalityCodeById(String id);
+
 	NationalityCode getApprovedNationalityCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

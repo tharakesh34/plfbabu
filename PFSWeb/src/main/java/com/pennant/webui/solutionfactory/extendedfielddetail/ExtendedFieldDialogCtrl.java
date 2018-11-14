@@ -95,37 +95,36 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
-	private static final long						serialVersionUID			= -3249715883200188080L;
-	private static final Logger						logger						= Logger
-			.getLogger(ExtendedFieldDialogCtrl.class);
+	private static final long serialVersionUID = -3249715883200188080L;
+	private static final Logger logger = Logger.getLogger(ExtendedFieldDialogCtrl.class);
 
-	protected Window								window_ExtendedFieldDialog;
-	protected Label									moduleDesc;
-	protected Label									subModuleDesc;
-	protected Longbox								moduleId;
-	protected Textbox								tabHeading;
-	protected Radiogroup							numberOfColumns;
-	protected Radio									radio_column1;
-	protected Radio									radio_column2;
-	protected Grid									grid_basicDetails;
+	protected Window window_ExtendedFieldDialog;
+	protected Label moduleDesc;
+	protected Label subModuleDesc;
+	protected Longbox moduleId;
+	protected Textbox tabHeading;
+	protected Radiogroup numberOfColumns;
+	protected Radio radio_column1;
+	protected Radio radio_column2;
+	protected Grid grid_basicDetails;
 
-	private transient boolean						validationOn;
+	private transient boolean validationOn;
 
-	private ExtendedFieldDetail						extendedFieldDetail;
-	private ExtendedFieldHeader						extendedFieldHeader;
-	private boolean									newRecord					= false;
+	private ExtendedFieldDetail extendedFieldDetail;
+	private ExtendedFieldHeader extendedFieldHeader;
+	private boolean newRecord = false;
 
-	protected Button								btnNew_FieldDet;
-	protected Paging								pagingFieldDetList;
-	protected Listbox								listBoxFieldDet;
-	protected Component								parentTabPanel				= null;
-	protected Div									toolbar						= null;
-	protected Object								dialogCtrl					= null;
-	protected boolean								firstTaskRole				= false;
-	protected int									maxSeqNo					= 0;
+	protected Button btnNew_FieldDet;
+	protected Paging pagingFieldDetList;
+	protected Listbox listBoxFieldDet;
+	protected Component parentTabPanel = null;
+	protected Div toolbar = null;
+	protected Object dialogCtrl = null;
+	protected boolean firstTaskRole = false;
+	protected int maxSeqNo = 0;
 
-	private List<ExtendedFieldDetail>				extendedFieldDetailsList	= new ArrayList<ExtendedFieldDetail>();
-	private PagedListWrapper<ExtendedFieldDetail>	extendedFieldPagedListWrapper;
+	private List<ExtendedFieldDetail> extendedFieldDetailsList = new ArrayList<ExtendedFieldDetail>();
+	private PagedListWrapper<ExtendedFieldDetail> extendedFieldPagedListWrapper;
 
 	public ExtendedFieldDialogCtrl() {
 		super();
@@ -225,7 +224,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
@@ -513,8 +512,10 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 		this.tabHeading.setReadonly(isReadOnly("ExtendedFieldDialog_tabHeading"));
 		//TODO
-		/*this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
-		this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));*/
+		/*
+		 * this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
+		 * this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
+		 */
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -653,8 +654,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			map.put("subModuleDesc", getExtendedFieldHeader().getSubModuleName());
 			//### 08-05-2018 End Development Iteam 81
 			// call the zul-file with the parameters packed in a map
-			
-			if(!extendedFieldDetail.isVisible()){
+
+			if (!extendedFieldDetail.isVisible()) {
 				MessageUtil.showMessage(Labels.getLabel("info.ExtendedDetail_not_editable"));
 				return;
 			}
@@ -735,12 +736,12 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 			String tableName = getExtendedFieldHeader().getModuleName();
 			tableName = tableName.concat("_").concat(getExtendedFieldHeader().getSubModuleName());
-			
+
 			if (getExtendedFieldHeader().getEvent() != null) {
 				tableName = tableName.concat("_")
 						.concat(PennantStaticListUtil.getFinEventCode(getExtendedFieldHeader().getEvent()));
 			}
-			tableName=tableName.concat("_ED");
+			tableName = tableName.concat("_ED");
 			efd.setLovDescTableName(tableName);//PennantStaticListUtil.getModuleName(efd)
 		}
 	}

@@ -163,7 +163,7 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 	private BundledProductsDetail bundledProductsDetail; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient BundledProductsDetailService bundledProductsDetailService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
@@ -231,8 +231,8 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 		if (arguments.containsKey("financeDetail")) {
 			setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
 			if (getFinancedetail() != null) {
-				getFinancedetail().setBundledProductsDetail(
-						getBundledProductsDetailService().getBundledProductsDetailById(
+				getFinancedetail()
+						.setBundledProductsDetail(getBundledProductsDetailService().getBundledProductsDetailById(
 								getFinancedetail().getFinScheduleData().getFinanceMain().getFinReference(), "_TView"));
 				setBundledProductsDetail(getFinancedetail().getBundledProductsDetail());
 			}
@@ -597,10 +597,10 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 		this.bankName.setValue(aBundledProductsDetail.getBankName());
 		this.chequeNo.setValue(aBundledProductsDetail.getChequeNo());
 		this.chequeAmt.setValue(PennantAppUtil.formateAmount(aBundledProductsDetail.getChequeAmt(), ccyFormatter));
-		this.limitRecommended.setValue(PennantAppUtil.formateAmount(aBundledProductsDetail.getLimitRecommended(),
-				ccyFormatter));
-		this.limitApproved.setValue(PennantAppUtil.formateAmount(aBundledProductsDetail.getLimitApproved(),
-				ccyFormatter));
+		this.limitRecommended
+				.setValue(PennantAppUtil.formateAmount(aBundledProductsDetail.getLimitRecommended(), ccyFormatter));
+		this.limitApproved
+				.setValue(PennantAppUtil.formateAmount(aBundledProductsDetail.getLimitApproved(), ccyFormatter));
 		this.profitRate.setValue(aBundledProductsDetail.getProfitRate());
 		this.crossSellCard.setChecked(aBundledProductsDetail.isCrossSellCard());
 		this.urgentIssuance.setChecked(aBundledProductsDetail.isUrgentIssuance());
@@ -672,15 +672,15 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setMinRepay(this.minRepay.intValue() == 0 ? BigDecimal.ZERO : new BigDecimal(
-					PennantApplicationUtil.formatRate(this.minRepay.getValue().doubleValue(), 2)));
+			aBundledProductsDetail.setMinRepay(this.minRepay.intValue() == 0 ? BigDecimal.ZERO
+					: new BigDecimal(PennantApplicationUtil.formatRate(this.minRepay.getValue().doubleValue(), 2)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			this.billingAcc.validateValue();
-			aBundledProductsDetail.setBillingAcc(PennantApplicationUtil.unFormatAccountNumber(this.billingAcc
-					.getValue()));
+			aBundledProductsDetail
+					.setBillingAcc(PennantApplicationUtil.unFormatAccountNumber(this.billingAcc.getValue()));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -701,9 +701,9 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setContactNumber(PennantApplicationUtil.formatPhoneNumber(
-					this.contactNumCountryCode.getValue(), this.contactNumAreaCode.getValue(),
-					this.contactPhoneNumber.getValue()));
+			aBundledProductsDetail
+					.setContactNumber(PennantApplicationUtil.formatPhoneNumber(this.contactNumCountryCode.getValue(),
+							this.contactNumAreaCode.getValue(), this.contactPhoneNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -718,26 +718,26 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setChequeAmt(PennantAppUtil.unFormateAmount(this.chequeAmt.getValidateValue(),
-					ccyFormatter));
+			aBundledProductsDetail
+					.setChequeAmt(PennantAppUtil.unFormateAmount(this.chequeAmt.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setLimitRecommended(PennantAppUtil.unFormateAmount(
-					this.limitRecommended.getValidateValue(), ccyFormatter));
+			aBundledProductsDetail.setLimitRecommended(
+					PennantAppUtil.unFormateAmount(this.limitRecommended.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setLimitApproved(PennantAppUtil.unFormateAmount(
-					this.limitApproved.getValidateValue(), ccyFormatter));
+			aBundledProductsDetail.setLimitApproved(
+					PennantAppUtil.unFormateAmount(this.limitApproved.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setProfitRate(this.profitRate.getValue() == null ? BigDecimal.ZERO : this.profitRate
-					.getValue());
+			aBundledProductsDetail
+					.setProfitRate(this.profitRate.getValue() == null ? BigDecimal.ZERO : this.profitRate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -757,9 +757,9 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setRef1PhoneNum(PennantApplicationUtil.formatPhoneNumber(
-					this.ref1PhoneCountryCode.getValue(), this.ref1PhoneAreaCode.getValue(),
-					this.ref1PhoneNumber.getValue()));
+			aBundledProductsDetail
+					.setRef1PhoneNum(PennantApplicationUtil.formatPhoneNumber(this.ref1PhoneCountryCode.getValue(),
+							this.ref1PhoneAreaCode.getValue(), this.ref1PhoneNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -774,9 +774,9 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			wve.add(we);
 		}
 		try {
-			aBundledProductsDetail.setRef2PhoneNum(PennantApplicationUtil.formatPhoneNumber(
-					this.ref2PhoneCountryCode.getValue(), this.ref2PhoneAreaCode.getValue(),
-					this.ref2PhoneNumber.getValue()));
+			aBundledProductsDetail
+					.setRef2PhoneNum(PennantApplicationUtil.formatPhoneNumber(this.ref2PhoneCountryCode.getValue(),
+							this.ref2PhoneAreaCode.getValue(), this.ref2PhoneNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -838,7 +838,7 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 			aBundledProductsDetail = new BundledProductsDetail();
 			aBundledProductsDetail.setNewRecord(true);
 			setBundledProductsDetail(aBundledProductsDetail);
-		} 
+		}
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aBundledProductsDetail.isNew()) {
@@ -890,127 +890,128 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 		setValidationOn(true);
 
 		if (!this.cardProduct.isReadonly()) {
-			this.cardProduct.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_CardProduct.value"), null, isMandatory));
+			this.cardProduct.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_CardProduct.value"), null, isMandatory));
 		}
 		if (!this.statusOfCust.isDisabled()) {
-			this.statusOfCust.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_StatusOfCust.value"), null, isMandatory));
+			this.statusOfCust.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_StatusOfCust.value"), null, isMandatory));
 		}
 		if (!this.cardType.isDisabled()) {
-			this.cardType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_CardType.value"), null, isMandatory));
+			this.cardType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_CardType.value"), null, isMandatory));
 		}
 		if (!this.classType.isDisabled()) {
-			this.classType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_ClassType.value"), null, isMandatory));
+			this.classType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_ClassType.value"), null, isMandatory));
 		}
 		if (!this.salesStaff.isReadonly()) {
-			this.salesStaff.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_SalesStaff.value"), null, isMandatory));
+			this.salesStaff.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_SalesStaff.value"), null, isMandatory));
 		}
 		if (!this.embossingName.isReadonly()) {
-			this.embossingName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_EmbossingName.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, false));
+			this.embossingName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BundledProductsDetailDialog_EmbossingName.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		if (!this.billingAcc.isReadonly()) {
-			this.billingAcc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_BillingAcc.value"), null, isMandatory));
+			this.billingAcc.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_BillingAcc.value"), null, isMandatory));
 		}
 		if (!this.stmtAddress.isReadonly()) {
-			this.stmtAddress.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_StmtAddress.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, isMandatory));
+			this.stmtAddress.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BundledProductsDetailDialog_StmtAddress.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, isMandatory));
 		}
 		if (!this.physicalAddress.isReadonly()) {
-			this.physicalAddress.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_PhysicalAddress.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, isMandatory));
+			this.physicalAddress.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BundledProductsDetailDialog_PhysicalAddress.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, isMandatory));
 		}
 		if (!this.stmtEmail.isReadonly()) {
-			this.stmtEmail.setConstraint(new PTEmailValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_StmtEmail.value"), isMandatory));
+			this.stmtEmail.setConstraint(new PTEmailValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_StmtEmail.value"), isMandatory));
 		}
 		if (!this.contactNumCountryCode.isReadonly()) {
-			this.contactNumCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_ContactNumCountryCode.value"), isMandatory, 1));
+			this.contactNumCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_ContactNumCountryCode.value"), isMandatory, 1));
 		}
 		if (!this.contactNumAreaCode.isReadonly()) {
-			this.contactNumAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_ContactNumAreaCode.value"), isMandatory, 2));
+			this.contactNumAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_ContactNumAreaCode.value"), isMandatory, 2));
 		}
 		if (!this.contactPhoneNumber.isReadonly()) {
-			this.contactPhoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_ContactPhoneNumber.value"), isMandatory, 3));
+			this.contactPhoneNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_ContactPhoneNumber.value"), isMandatory, 3));
 		}
 		if (!this.ref1Name.isReadonly()) {
-			this.ref1Name.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref1Name.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, isMandatory));
+			this.ref1Name.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BundledProductsDetailDialog_Ref1Name.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, isMandatory));
 		}
 		if (!this.ref1PhoneCountryCode.isReadonly()) {
-			this.ref1PhoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref1PhCountryCode.value"), isMandatory, 1));
+			this.ref1PhoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref1PhCountryCode.value"), isMandatory, 1));
 		}
 		if (!this.ref1PhoneAreaCode.isReadonly()) {
-			this.ref1PhoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref1PhAreaCode.value"), isMandatory, 2));
+			this.ref1PhoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref1PhAreaCode.value"), isMandatory, 2));
 		}
 		if (!this.ref1PhoneNumber.isReadonly()) {
-			this.ref1PhoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref1PhoneNumber.value"), isMandatory, 3));
+			this.ref1PhoneNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref1PhoneNumber.value"), isMandatory, 3));
 		}
 		if (!this.ref1Email.isReadonly()) {
-			this.ref1Email.setConstraint(new PTEmailValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref1Email.value"), isMandatory));
+			this.ref1Email.setConstraint(new PTEmailValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref1Email.value"), isMandatory));
 		}
 		if (!this.ref2Name.isReadonly()) {
-			this.ref2Name.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref2Name.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, isMandatory));
+			this.ref2Name.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BundledProductsDetailDialog_Ref2Name.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, isMandatory));
 		}
 		if (!this.ref2PhoneCountryCode.isReadonly()) {
-			this.ref2PhoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref2PhCountryCode.value"), isMandatory, 1));
+			this.ref2PhoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref2PhCountryCode.value"), isMandatory, 1));
 		}
 		if (!this.ref2PhoneAreaCode.isReadonly()) {
-			this.ref2PhoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref2PhAreaCode.value"), isMandatory, 2));
+			this.ref2PhoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref2PhAreaCode.value"), isMandatory, 2));
 		}
 		if (!this.ref2PhoneNumber.isReadonly()) {
-			this.ref2PhoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref2PhoneNumber.value"), isMandatory, 3));
+			this.ref2PhoneNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref2PhoneNumber.value"), isMandatory, 3));
 		}
 		if (!this.ref2Email.isReadonly()) {
-			this.ref2Email.setConstraint(new PTEmailValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_Ref2Email.value"), isMandatory));
+			this.ref2Email.setConstraint(new PTEmailValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_Ref2Email.value"), isMandatory));
 		}
 		if (!this.bankName.isReadonly()) {
-			this.bankName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_BankName.value"), null, isMandatory));
+			this.bankName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_BankName.value"), null, isMandatory));
 		}
 		if (!this.chequeNo.isReadonly()) {
-			this.chequeNo.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_ChequeNo.value"), null, isMandatory));
+			this.chequeNo.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BundledProductsDetailDialog_ChequeNo.value"), null, isMandatory));
 		}
 		if (!this.chequeAmt.isReadonly()) {
-			this.chequeAmt.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_ChequeAmt.value"), ccyFormatter, isMandatory, false));
+			this.chequeAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_BundledProductsDetailDialog_ChequeAmt.value"),
+							ccyFormatter, isMandatory, false));
 		}
 		if (!this.limitRecommended.isReadonly()) {
-			this.limitRecommended.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_LimitRecommended.value"), ccyFormatter, isMandatory,
-					false));
+			this.limitRecommended.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_BundledProductsDetailDialog_LimitRecommended.value"),
+							ccyFormatter, isMandatory, false));
 		}
 		if (!this.limitApproved.isReadonly()) {
-			this.limitApproved.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_BundledProductsDetailDialog_LimitApproved.value"), ccyFormatter, isMandatory,
-					false));
+			this.limitApproved.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_BundledProductsDetailDialog_LimitApproved.value"),
+							ccyFormatter, isMandatory, false));
 		}
 		if (!this.profitRate.isReadonly()) {
-			this.profitRate.setConstraint(new RateValidator(13, 9, Labels
-					.getLabel("label_BundledProductsDetailDialog_ProfitRate.value")));
+			this.profitRate.setConstraint(
+					new RateValidator(13, 9, Labels.getLabel("label_BundledProductsDetailDialog_ProfitRate.value")));
 		}
 		logger.debug("Leaving");
 	}
@@ -1511,8 +1512,8 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BundledProductsDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1590,13 +1591,11 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.bundledProductsDetail);
 	}
-	
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.bundledProductsDetail.getId());
 	}
-
 
 	/**
 	 * This method is for append finance basic details to respective parent tabs

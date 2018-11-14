@@ -74,7 +74,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public BaseRate() {
 		super();
 	}
-	
+
 	public BaseRate(String id) {
 		super();
 		this.setId(id);
@@ -84,13 +84,11 @@ public class BaseRate extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
 	}
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -98,6 +96,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public String getId() {
 		return bRType;
 	}
+
 	public void setId(String id) {
 		this.bRType = id;
 	}
@@ -105,6 +104,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public String getBRType() {
 		return bRType;
 	}
+
 	public void setBRType(String bRType) {
 		this.bRType = bRType;
 	}
@@ -112,6 +112,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public String getLovDescBRTypeName() {
 		return this.lovDescBRTypeName;
 	}
+
 	public void setLovDescBRTypeName(String lovDescBRTypeName) {
 		this.lovDescBRTypeName = lovDescBRTypeName;
 	}
@@ -119,13 +120,15 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public String getCurrency() {
 		return currency;
 	}
+
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
- 
+
 	public Date getBREffDate() {
 		return bREffDate;
 	}
+
 	public void setBREffDate(Date bREffDate) {
 		this.bREffDate = bREffDate;
 	}
@@ -133,20 +136,23 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public BigDecimal getBRRate() {
 		return bRRate;
 	}
+
 	public void setBRRate(BigDecimal bRRate) {
 		this.bRRate = bRRate;
 	}
 
 	public boolean isDelExistingRates() {
-    	return delExistingRates;
-    }
+		return delExistingRates;
+	}
+
 	public void setDelExistingRates(boolean delExistingRates) {
-    	this.delExistingRates = delExistingRates;
-    }
+		this.delExistingRates = delExistingRates;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -154,6 +160,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -161,6 +168,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public BaseRate getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(BaseRate beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -168,18 +176,19 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Date getLastMdfDate() {
-    	return lastMdfDate;
-    }
+		return lastMdfDate;
+	}
 
 	public void setLastMdfDate(Date lastMdfDate) {
-    	this.lastMdfDate = lastMdfDate;
-    }
-	
+		this.lastMdfDate = lastMdfDate;
+	}
+
 	public boolean isbRTypeIsActive() {
 		return bRTypeIsActive;
 	}

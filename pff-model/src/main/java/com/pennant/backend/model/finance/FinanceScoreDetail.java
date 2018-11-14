@@ -23,11 +23,11 @@ public class FinanceScoreDetail implements Serializable {
 	private String recordStatus;
 	private String recordType = "NEW";//FIXME:How to use constant-PennantConstants.RECORD_TYPE_NEW;
 	private FinanceScoreDetail befImage;
-	
+
 	public FinanceScoreDetail() {
-		
+
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("subGrpCodeDesc");
@@ -40,94 +40,107 @@ public class FinanceScoreDetail implements Serializable {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getHeaderId() {
-    	return headerId;
-    }
+		return headerId;
+	}
+
 	public void setHeaderId(long headerId) {
-    	this.headerId = headerId;
-    }
-	
+		this.headerId = headerId;
+	}
+
 	public long getSubGroupId() {
-    	return subGroupId;
-    }
+		return subGroupId;
+	}
+
 	public void setSubGroupId(long subGroupId) {
-    	this.subGroupId = subGroupId;
-    }
-	
+		this.subGroupId = subGroupId;
+	}
+
 	public String getSubGrpCodeDesc() {
-    	return subGrpCodeDesc;
-    }
+		return subGrpCodeDesc;
+	}
+
 	public void setSubGrpCodeDesc(String subGrpCodeDesc) {
-    	this.subGrpCodeDesc = subGrpCodeDesc;
-    }
-	
+		this.subGrpCodeDesc = subGrpCodeDesc;
+	}
+
 	public long getRuleId() {
-    	return ruleId;
-    }
+		return ruleId;
+	}
+
 	public void setRuleId(long ruleId) {
-    	this.ruleId = ruleId;
-    }
-	
+		this.ruleId = ruleId;
+	}
+
 	public String getRuleCode() {
-    	return ruleCode;
-    }
+		return ruleCode;
+	}
+
 	public void setRuleCode(String ruleCode) {
-    	this.ruleCode = ruleCode;
-    }
-	
+		this.ruleCode = ruleCode;
+	}
+
 	public String getRuleCodeDesc() {
-    	return ruleCodeDesc;
-    }
+		return ruleCodeDesc;
+	}
+
 	public void setRuleCodeDesc(String ruleCodeDesc) {
-    	this.ruleCodeDesc = ruleCodeDesc;
-    }
-	
+		this.ruleCodeDesc = ruleCodeDesc;
+	}
+
 	public BigDecimal getMaxScore() {
-    	return maxScore;
-    }
+		return maxScore;
+	}
+
 	public void setMaxScore(BigDecimal maxScore) {
-    	this.maxScore = maxScore;
-    }
-	
+		this.maxScore = maxScore;
+	}
+
 	public BigDecimal getExecScore() {
-    	return execScore;
-    }
+		return execScore;
+	}
+
 	public void setExecScore(BigDecimal execScore) {
-    	this.execScore = execScore;
-    }
-	
+		this.execScore = execScore;
+	}
+
 	public void setCategoryType(String categoryType) {
-	    this.categoryType = categoryType;
-    }
+		this.categoryType = categoryType;
+	}
+
 	public String getCategoryType() {
-	    return categoryType;
-    }
-	
+		return categoryType;
+	}
+
 	public long getLastMntBy() {
-	    return lastMntBy;
-    }
+		return lastMntBy;
+	}
+
 	public void setLastMntBy(long lastMntBy) {
-	    this.lastMntBy = lastMntBy;
-    }
-	
+		this.lastMntBy = lastMntBy;
+	}
+
 	public String getRecordStatus() {
-	    return recordStatus;
-    }
+		return recordStatus;
+	}
+
 	public void setRecordStatus(String recordStatus) {
-	    this.recordStatus = recordStatus;
-    }
+		this.recordStatus = recordStatus;
+	}
 
 	public String getRoleCode() {
-	    return roleCode;
-    }
+		return roleCode;
+	}
+
 	public void setRoleCode(String roleCode) {
-	    this.roleCode = roleCode;
-    }
+		this.roleCode = roleCode;
+	}
 
 	public String getRecordType() {
 		return recordType;
 	}
+
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
@@ -139,6 +152,5 @@ public class FinanceScoreDetail implements Serializable {
 	public void setBefImage(FinanceScoreDetail befImage) {
 		this.befImage = befImage;
 	}
-	
 
 }

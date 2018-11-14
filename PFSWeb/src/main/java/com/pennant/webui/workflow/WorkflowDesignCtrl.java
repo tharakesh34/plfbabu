@@ -60,11 +60,10 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	private static Logger logger = Logger.getLogger(WorkflowDesignCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_workflowDesign; 
+	protected Window window_workflowDesign;
 	// not auto wired vars
 	private WorkFlowDetails workFlowDetails; // overhanded per param
 	private transient WorkFlowListCtrl workFlowListCtrl; // overhanded per param
@@ -72,7 +71,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 
 	private transient WorkFlowDetailsService workFlowDetailsService;
 	protected JdbcSearchObject<WorkFlowDetails> searchObj;
-	private String								designerUrl;
+	private String designerUrl;
 
 	public WorkflowDesignCtrl() {
 		super();
@@ -84,9 +83,8 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected WorkFlow object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected WorkFlow object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -98,9 +96,8 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		setPageComponents(window_workflowDesign);
 
 		try {
-			    if (arguments.containsKey("workFlowDetails")) {
-				this.workFlowDetails = (WorkFlowDetails) arguments
-						.get("workFlowDetails");
+			if (arguments.containsKey("workFlowDetails")) {
+				this.workFlowDetails = (WorkFlowDetails) arguments.get("workFlowDetails");
 				WorkFlowDetails flowDetails = new WorkFlowDetails();
 				BeanUtils.copyProperties(this.workFlowDetails, flowDetails);
 				this.workFlowDetails.setBefImage(flowDetails);
@@ -110,8 +107,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			}
 
 			if (arguments.containsKey("workFlowListCtrl")) {
-				setWorkFlowListCtrl((WorkFlowListCtrl) arguments
-						.get("workFlowListCtrl"));
+				setWorkFlowListCtrl((WorkFlowListCtrl) arguments.get("workFlowListCtrl"));
 			} else {
 				setWorkFlowListCtrl(null);
 			}
@@ -123,8 +119,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -134,13 +129,13 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 */
 	public void doWriteBeanToComponents(WorkFlowDetails aWorkFlowDetails) {
 		logger.debug("Entering ");
-		
+
 		if (aWorkFlowDetails.isNew()) {
 			this.iframe.setSrc(designerUrl + "editor/#/processes");
 		} else {
 			this.iframe.setSrc(designerUrl + "editor/#/editor/" + aWorkFlowDetails.getId());
 		}
-		
+
 		this.iframe.setAttribute("MYNAME", "SAI");
 
 		logger.debug("Leaving ");
@@ -149,8 +144,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aWorkFlowDetails
 	 * @throws Exception
@@ -161,7 +155,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			doWriteBeanToComponents(aWorkFlowDetails);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_workflowDesign.onClose();
 		} catch (Exception e) {
@@ -169,8 +163,6 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		}
 		logger.debug("Leaving ");
 	}
-
-	
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
@@ -200,8 +192,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		return workFlowDetailsService;
 	}
 
-	public void setWorkFlowDetailsService(
-			WorkFlowDetailsService workFlowDetailsService) {
+	public void setWorkFlowDetailsService(WorkFlowDetailsService workFlowDetailsService) {
 		this.workFlowDetailsService = workFlowDetailsService;
 	}
 

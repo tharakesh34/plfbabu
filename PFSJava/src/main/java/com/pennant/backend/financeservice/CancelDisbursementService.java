@@ -6,7 +6,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface CancelDisbursementService {
-	
+
 	FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData);
+
 	AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction);
 }

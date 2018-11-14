@@ -61,13 +61,12 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>CorpRelationCode model</b> class.<br>
  * 
  */
-public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implements CorpRelationCodeDAO {
+public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode> implements CorpRelationCodeDAO {
 	private static Logger logger = Logger.getLogger(CorpRelationCodeDAOImpl.class);
-		
+
 	public CorpRelationCodeDAOImpl() {
 		super();
 	}
-
 
 	/**
 	 * Fetch the Record Corporate Relations details by key field
@@ -85,15 +84,17 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 		corpRelationCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT CorpRelationCode, CorpRelationDesc, CorpRelationIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT CorpRelationCode, CorpRelationDesc, CorpRelationIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTCorpRelationCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CorpRelationCode =:CorpRelationCode") ;
+		selectSql.append(" Where CorpRelationCode =:CorpRelationCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
-		RowMapper<CorpRelationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CorpRelationCode.class);
+		RowMapper<CorpRelationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CorpRelationCode.class);
 
 		try {
 			corpRelationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -104,12 +105,10 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 		logger.debug("Leaving");
 		return corpRelationCode;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the BMTCorpRelationCodes or
-	 * BMTCorpRelationCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Corporate Relations by key
-	 * CorpRelationCode
+	 * This method Deletes the Record from the BMTCorpRelationCodes or BMTCorpRelationCodes_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Corporate Relations by key CorpRelationCode
 	 * 
 	 * @param Corporate
 	 *            Relations (corpRelationCode)
@@ -128,7 +127,7 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CorpRelationCode =:CorpRelationCode");
 
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
 
 		try {
@@ -144,8 +143,7 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 	}
 
 	/**
-	 * This method insert new Records into BMTCorpRelationCodes or
-	 * BMTCorpRelationCodes_Temp.
+	 * This method insert new Records into BMTCorpRelationCodes or BMTCorpRelationCodes_Temp.
 	 * 
 	 * save Corporate Relations
 	 * 
@@ -164,14 +162,15 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 
 		insertSql.append("Insert Into BMTCorpRelationCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CorpRelationCode, CorpRelationDesc, CorpRelationIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" (CorpRelationCode, CorpRelationDesc, CorpRelationIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:CorpRelationCode, :CorpRelationDesc, :CorpRelationIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:CorpRelationCode, :CorpRelationDesc, :CorpRelationIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -180,10 +179,8 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 	}
 
 	/**
-	 * This method updates the Record BMTCorpRelationCodes or
-	 * BMTCorpRelationCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Corporate Relations by key
-	 * CorpRelationCode and Version
+	 * This method updates the Record BMTCorpRelationCodes or BMTCorpRelationCodes_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Corporate Relations by key CorpRelationCode and Version
 	 * 
 	 * @param Corporate
 	 *            Relations (corpRelationCode)
@@ -201,19 +198,20 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode>	implemen
 
 		updateSql.append("Update BMTCorpRelationCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CorpRelationDesc = :CorpRelationDesc," );
-		updateSql.append(" CorpRelationIsActive = :CorpRelationIsActive ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set CorpRelationDesc = :CorpRelationDesc,");
+		updateSql.append(" CorpRelationIsActive = :CorpRelationIsActive ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CorpRelationCode =:CorpRelationCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

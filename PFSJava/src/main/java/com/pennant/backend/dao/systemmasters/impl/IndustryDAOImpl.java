@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 	private static Logger logger = Logger.getLogger(IndustryDAOImpl.class);
-	
+
 	public IndustryDAOImpl() {
 		super();
 	}
@@ -90,9 +89,9 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 		Industry industry = new Industry();
 		industry.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select IndustryCode, SubSectorCode, IndustryDesc, IndustryIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("lovDescSubSectorCodeName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -111,11 +110,11 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 			logger.warn("Exception: ", e);
 			industry = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return industry;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String industryCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -163,7 +162,8 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 		sql.append("  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:IndustryCode, :SubSectorCode, :IndustryDesc, :IndustryIsActive,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -179,7 +179,7 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 		logger.debug(Literal.LEAVING);
 		return industry.getId();
 	}
-	
+
 	@Override
 	public void update(Industry industry, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -189,7 +189,8 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 		sql.append(tableType.getSuffix());
 		sql.append(" set SubSectorCode = :SubSectorCode, IndustryDesc = :IndustryDesc,");
 		sql.append(" IndustryIsActive = :IndustryIsActive,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		sql.append(" where IndustryCode =:IndustryCode");

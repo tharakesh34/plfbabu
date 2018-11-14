@@ -61,9 +61,9 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.webui.customermasters.customerphonenumber.model.CustomerPhoneNumberListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPhoneNumber /CustomerPhoneNumberList.zul
@@ -180,7 +180,7 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_CustomerPhoneNumberList_NewCustomerPhoneNumber(Event event)  {
+	public void onClick$button_CustomerPhoneNumberList_NewCustomerPhoneNumber(Event event) {
 		logger.debug("Entering");
 		// create a new CustomerPhoneNumber object, We GET it from the backEnd.
 		final CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();

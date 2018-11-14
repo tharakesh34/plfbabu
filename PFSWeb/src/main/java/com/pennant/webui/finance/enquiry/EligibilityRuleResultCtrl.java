@@ -60,22 +60,20 @@ import com.pennant.webui.finance.enquiry.model.EligibilityCheckListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 
 /**
- * This is the controller class for the 
- * /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityRuleResult.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityRuleResult.zul file.
  */
 public class EligibilityRuleResultCtrl extends GFCBaseListCtrl<EligibilityRule> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(EligibilityRuleResultCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ElgRuleResult; 		
+	protected Window window_ElgRuleResult;
 
-	protected Borderlayout	borderlayoutElgRuleResult;	
-	protected Listbox		listBoxElgRule;
+	protected Borderlayout borderlayoutElgRuleResult;
+	protected Listbox listBoxElgRule;
 
 	// not auto wired variables
 	private int formatter = 3;
@@ -90,8 +88,7 @@ public class EligibilityRuleResultCtrl extends GFCBaseListCtrl<EligibilityRule> 
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, 
-	 * if the ZUL-file is called with a parameter for a
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
@@ -100,26 +97,25 @@ public class EligibilityRuleResultCtrl extends GFCBaseListCtrl<EligibilityRule> 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onCreate$window_ElgRuleResult(ForwardEvent event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		
+
 		if (arguments.containsKey("formatter")) {
 			this.formatter = (Integer) arguments.get("formatter");
 		}
-		
+
 		List<EligibilityRule> elgRuleList = new ArrayList<EligibilityRule>();
 		if (arguments.containsKey("elgRuleList")) {
 			elgRuleList = (List<EligibilityRule>) arguments.get("elgRuleList");
 		}
-		
+
 		getBorderLayoutHeight();
-		this.listBoxElgRule.setHeight(borderLayoutHeight - 249+"px");
-		
-		this.listBoxElgRule.setModel(new GroupsModelArray(
-				elgRuleList.toArray(),new EligibilityCheckComparator()));
+		this.listBoxElgRule.setHeight(borderLayoutHeight - 249 + "px");
+
+		this.listBoxElgRule.setModel(new GroupsModelArray(elgRuleList.toArray(), new EligibilityCheckComparator()));
 		this.listBoxElgRule.setItemRenderer(new EligibilityCheckListItemRenderer(formatter));
 		this.window_ElgRuleResult.doModal();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 

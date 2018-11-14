@@ -51,7 +51,7 @@ public class JdbcSearchObject<E> extends Search {
 	public JdbcSearchObject(Class<E> entityClass) {
 		super(entityClass);
 	}
-	
+
 	//TODO to be discussed with Vasu  Start 
 	public JdbcSearchObject() {
 		super();

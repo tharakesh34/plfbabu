@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 @XmlType(propOrder = { "address", "city", "state", "country", "pin" })
 @XmlRootElement(name = "address")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -13,11 +14,11 @@ public class Address implements Serializable {
 
 	private static final long serialVersionUID = 6131492561646131754L;
 
-	private String				address;
-	private String				city;
-	private String				state;
-	private String				country;
-	private String				pin;
+	private String address;
+	private String city;
+	private String state;
+	private String country;
+	private String pin;
 
 	public String getAddress() {
 		return address;

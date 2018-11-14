@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface CourseService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Course getCourseById(String id);
+
 	Course getApprovedCourseById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

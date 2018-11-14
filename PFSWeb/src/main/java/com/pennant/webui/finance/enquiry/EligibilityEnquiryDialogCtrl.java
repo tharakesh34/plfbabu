@@ -79,19 +79,18 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 	private static final Logger logger = Logger.getLogger(EligibilityEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_EligibilityEnquiryDialog; 		
-	protected Listbox 		listBoxEligibility; 					
-	protected Borderlayout  borderlayoutEligibilityEnquiry;		
-	private Tabpanel 		tabPanel_dialogWindow;
+	protected Window window_EligibilityEnquiryDialog;
+	protected Listbox listBoxEligibility;
+	protected Borderlayout borderlayoutEligibilityEnquiry;
+	private Tabpanel tabPanel_dialogWindow;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinanceEligibilityDetail> eligibilityList = null;
 	private int formatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -107,9 +106,8 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -121,21 +119,22 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 		// Set the page level components.
 		setPageComponents(window_EligibilityEnquiryDialog);
 
-		if(event.getTarget().getParent().getParent() != null){
+		if (event.getTarget().getParent().getParent() != null) {
 			tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 		}
 
 		if (arguments.containsKey("eligibilityList")) {
 			this.eligibilityList = (List<FinanceEligibilityDetail>) arguments.get("eligibilityList");
 		}
-		
+
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("finAmountformatter")) {
 			this.formatter = Integer.parseInt(arguments.get("finAmountformatter").toString());
 		}
-		
+
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
 		doShowDialog();
@@ -154,28 +153,28 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			String finreference="";
-			if (eligibilityList!=null && !eligibilityList.isEmpty()) {
-				finreference=eligibilityList.get(0).getFinReference();
+			String finreference = "";
+			if (eligibilityList != null && !eligibilityList.isEmpty()) {
+				finreference = eligibilityList.get(0).getFinReference();
 			}
-			
-			List<FinanceDeviations>	deviations=getFinanceDevaitions(finreference);
-			
-			if (deviations!=null && !deviations.isEmpty()) {
+
+			List<FinanceDeviations> deviations = getFinanceDevaitions(finreference);
+
+			if (deviations != null && !deviations.isEmpty()) {
 				for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityList) {
-					setStatusByDevaition(financeEligibilityDetail,deviations);
+					setStatusByDevaition(financeEligibilityDetail, deviations);
 				}
 			}
-		
+
 			// fill the components with the data
 			doFillEligibilityList(this.eligibilityList);
-			
-			if(tabPanel_dialogWindow != null){
-				
+
+			if (tabPanel_dialogWindow != null) {
+
 				getBorderLayoutHeight();
-				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				this.listBoxEligibility.setHeight(this.borderLayoutHeight-rowsHeight-200+"px");
-				this.window_EligibilityEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-30+"px");
+				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+				this.listBoxEligibility.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
+				this.window_EligibilityEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 				tabPanel_dialogWindow.appendChild(this.window_EligibilityEnquiryDialog);
 
 			}
@@ -184,9 +183,10 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to fill the Finance Eligibility Details List
+	 * 
 	 * @param eligibilityDetails
 	 */
 	public void doFillEligibilityList(List<FinanceEligibilityDetail> eligibilityDetails) {
@@ -251,16 +251,16 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 						StyleCode = "font-weight:bold;color:red;";
 					}
 
-					if(RuleConstants.RETURNTYPE_DECIMAL.equals(detail.getRuleResultType())){
-						if(RuleConstants.ELGRULE_DSRCAL.equals(detail.getLovDescElgRuleCode()) || 
-								RuleConstants.ELGRULE_PDDSRCAL.equals(detail.getLovDescElgRuleCode())){
+					if (RuleConstants.RETURNTYPE_DECIMAL.equals(detail.getRuleResultType())) {
+						if (RuleConstants.ELGRULE_DSRCAL.equals(detail.getLovDescElgRuleCode())
+								|| RuleConstants.ELGRULE_PDDSRCAL.equals(detail.getLovDescElgRuleCode())) {
 							BigDecimal val = new BigDecimal(detail.getRuleResult());
-							val=val.setScale(2,RoundingMode.HALF_DOWN);
-							labelCode = String.valueOf(val)+"%";
-						}else{
-							labelCode =	PennantAppUtil.amountFormate(new BigDecimal(detail.getRuleResult()),formatter);
+							val = val.setScale(2, RoundingMode.HALF_DOWN);
+							labelCode = String.valueOf(val) + "%";
+						} else {
+							labelCode = PennantAppUtil.amountFormate(new BigDecimal(detail.getRuleResult()), formatter);
 						}
-						
+
 						StyleCode = "text-align:right;";
 					}
 
@@ -282,13 +282,13 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 		logger.debug("Leaving");
 	}
 
-
-	private void setStatusByDevaition(FinanceEligibilityDetail finElgDet,List<FinanceDeviations> deviations) {
+	private void setStatusByDevaition(FinanceEligibilityDetail finElgDet, List<FinanceDeviations> deviations) {
 
 		FinanceDeviations deviation = null;
 
 		for (FinanceDeviations financeDeviations : deviations) {
-			if (PennantConstants.RCD_STATUS_REJECTED.equals(StringUtils.trimToEmpty(financeDeviations.getApprovalStatus()))) {
+			if (PennantConstants.RCD_STATUS_REJECTED
+					.equals(StringUtils.trimToEmpty(financeDeviations.getApprovalStatus()))) {
 				continue;
 			}
 			if (financeDeviations.getDeviationCode().equals(String.valueOf(finElgDet.getElgRuleCode()))) {
@@ -296,20 +296,20 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 				break;
 			}
 		}
-	
+
 		if (deviation != null) {
 			finElgDet.setEligibleWithDevaition(true);
-		} 
+		}
 	}
-	
-	
-	public List<FinanceDeviations> getFinanceDevaitions(String finReference){
-		JdbcSearchObject<FinanceDeviations> jdbcSearchObject=new JdbcSearchObject<FinanceDeviations>(FinanceDeviations.class);
+
+	public List<FinanceDeviations> getFinanceDevaitions(String finReference) {
+		JdbcSearchObject<FinanceDeviations> jdbcSearchObject = new JdbcSearchObject<FinanceDeviations>(
+				FinanceDeviations.class);
 		jdbcSearchObject.addTabelName("FinanceDeviations");
 		jdbcSearchObject.addFilterEqual("FinReference", finReference);
 		jdbcSearchObject.addFilterEqual("Module", DeviationConstants.TY_ELIGIBILITY);
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		return pagedListService.getBySearchObject(jdbcSearchObject);
 	}
-	
+
 }

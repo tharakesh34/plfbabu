@@ -77,43 +77,40 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the 
- * WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
+ * This is the controller class for the WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
  */
 public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(IjarahBulkRateChangeCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	 
-		protected Window window_IjaraBulkRateChange; 		// autowired
-		protected Borderlayout borderlayout_BulkRate;
-		protected Listbox listBoxIjarahFinance;				// autowired
-		protected Grid grid_BulkRateChange;					// autowired
-		
-		protected Decimalbox rateChange; 					// autowired
-		protected Datebox fromDate;  						// autowired
-		protected Datebox toDate;  							// autowired
-		protected Datebox tillDate; 	 					// autowired
-		protected Combobox cbReCalType; 					// autowired
-		protected Label label_IjaraBulkRateChange_TillDate; // autowired
-		protected Hbox hbox_TillDate;						// autowired
-		
-		protected Button btnPreview;
-		protected Button btnProceed;
-		
-		private FinanceDetailService financeDetailService;
-		private List<BulkProcessDetails> rateChangeFinances;
-		
-	
+
+	protected Window window_IjaraBulkRateChange; // autowired
+	protected Borderlayout borderlayout_BulkRate;
+	protected Listbox listBoxIjarahFinance; // autowired
+	protected Grid grid_BulkRateChange; // autowired
+
+	protected Decimalbox rateChange; // autowired
+	protected Datebox fromDate; // autowired
+	protected Datebox toDate; // autowired
+	protected Datebox tillDate; // autowired
+	protected Combobox cbReCalType; // autowired
+	protected Label label_IjaraBulkRateChange_TillDate; // autowired
+	protected Hbox hbox_TillDate; // autowired
+
+	protected Button btnPreview;
+	protected Button btnProceed;
+
+	private FinanceDetailService financeDetailService;
+	private List<BulkProcessDetails> rateChangeFinances;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -124,28 +121,28 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_IjaraBulkRateChange(Event event) throws Exception {
-		logger.debug("Entering"+event.toString());	
-		
+		logger.debug("Entering" + event.toString());
+
 		this.borderlayout_BulkRate.setHeight(getBorderLayoutHeight());
 		this.listBoxIjarahFinance.setHeight(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()));
-		
+
 		doRemoveValidation();
 		doClearMessage();
-		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,");
-		
+		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),
+				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,");
+
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);
 		this.cbReCalType.setSelectedIndex(0);
-		this.rateChange.setText("");		
-		
+		this.rateChange.setText("");
+
 		this.fromDate.setDisabled(false);
 		this.toDate.setDisabled(false);
 		this.rateChange.setDisabled(false);
@@ -156,10 +153,10 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		this.listBoxIjarahFinance.getItems().clear();
 		this.btnPreview.setDisabled(false);
 		this.btnProceed.setDisabled(true);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -176,7 +173,6 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -184,9 +180,9 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_IjaraBulkRateChange);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -206,72 +202,75 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 
 	/**
 	 * Method for List Preview for Condition List
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnPreview(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
-		throwValidation();		
-		
-		Date fromDate = DateUtility.getDBDate(DateUtility.formatDate(
-				this.fromDate.getValue(), PennantConstants.DBDateFormat));
-		
-		Date toDate = DateUtility.getDBDate(DateUtility.formatDate(
-				this.toDate.getValue(), PennantConstants.DBDateFormat));
-		
+		logger.debug("Entering" + event.toString());
+		throwValidation();
+
+		Date fromDate = DateUtility
+				.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat));
+
+		Date toDate = DateUtility
+				.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat));
+
 		setRateChangeFinances(getFinanceDetailService().getIjaraBulkRateFinList(fromDate, toDate));
 		getPagedListWrapper().initList(getRateChangeFinances(), this.listBoxIjarahFinance, new Paging());
 		this.listBoxIjarahFinance.setItemRenderer(new BulkRateChangeListModelItemRenderer());
-		
+
 		doReadOnly();
 		this.btnPreview.setDisabled(true);
 		this.btnProceed.setDisabled(false);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void throwValidation(){
+
+	public void throwValidation() {
 		logger.debug("Entering");
-		
+
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			this.fromDate.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			this.toDate.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			this.rateChange.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		try{
+
+		try {
 			isValidComboValue(this.cbReCalType, Labels.getLabel("label_IjaraBulkRateChange_RecalType.value"));
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		if(this.hbox_TillDate.isVisible()){
+
+		if (this.hbox_TillDate.isVisible()) {
 			try {
-				if(this.tillDate.getValue().before(this.fromDate.getValue()) || this.tillDate.getValue().after(this.toDate.getValue())){
-					throw new WrongValueException(this.tillDate, Labels.getLabel("DATE_ALLOWED_RANGE", new String[]{
-						Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),
-						DateUtility.formatToLongDate(this.fromDate.getValue()), 
-						DateUtility.formatToLongDate(this.toDate.getValue()) }));
+				if (this.tillDate.getValue().before(this.fromDate.getValue())
+						|| this.tillDate.getValue().after(this.toDate.getValue())) {
+					throw new WrongValueException(this.tillDate,
+							Labels.getLabel("DATE_ALLOWED_RANGE",
+									new String[] { Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),
+											DateUtility.formatToLongDate(this.fromDate.getValue()),
+											DateUtility.formatToLongDate(this.toDate.getValue()) }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
-		
+
 		if (wve.size() > 0) {
 			doRemoveValidation();
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -280,62 +279,68 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		//Clear Error Messages
 		doClearMessage();
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for List Preview for Condition List
+	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws AccountNotFoundException 
-	 * @throws WrongValueException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws AccountNotFoundException
+	 * @throws WrongValueException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering" +event.toString());
-		throwValidation();		
-		
+	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, InterfaceException,
+			IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering" + event.toString());
+		throwValidation();
+
 		this.btnProceed.setDisabled(true);
-		
+
 		//Processing Fetch Finance Details for IJARAH Bulk Rate Changes
 		boolean success = getFinanceDetailService().bulkRateChangeFinances(getRateChangeFinances(),
 				this.cbReCalType.getSelectedItem().getValue().toString(), this.rateChange.getValue());
-		
+
 		//Need to check Process failure case
-		if(success){
+		if (success) {
 			MessageUtil.showMessage(
 					"Bulk Rate Application Process Succeed for Finance Count " + getRateChangeFinances().size());
 		}
-		
-		logger.debug("Leaving" +event.toString());
+
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
 
-		if(!this.fromDate.isDisabled()){
-			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"),true));
+		if (!this.fromDate.isDisabled()) {
+			this.fromDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"), true));
 		}
 
-		if(!this.toDate.isDisabled()){
-			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"),true));
+		if (!this.toDate.isDisabled()) {
+			this.toDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"), true));
 		}
 
-		if(!this.rateChange.isDisabled()){
-			this.rateChange.setConstraint(new PTStringValidator(Labels.getLabel("label_IjaraBulkRateChange_Rate.value"),null,true));
+		if (!this.rateChange.isDisabled()) {
+			this.rateChange.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_IjaraBulkRateChange_Rate.value"), null, true));
 		}
 
-		if(this.hbox_TillDate.isVisible()){
-			if(!this.tillDate.isDisabled()){
-				this.tillDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),true));
+		if (this.hbox_TillDate.isVisible()) {
+			if (!this.tillDate.isDisabled()) {
+				this.tillDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"), true));
 			}
 		}
 		logger.debug("Leaving");
@@ -353,11 +358,11 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		this.toDate.setDisabled(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to remove constraints
 	 * 
-	 * */
+	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		this.rateChange.setConstraint("");
@@ -367,10 +372,11 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		this.cbReCalType.setConstraint("");
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Method to clear error messages
 	 * 
-	 * */
+	 */
 	private void doClearMessage() {
 		logger.debug("Entering");
 		this.rateChange.clearErrorMessage();
@@ -386,6 +392,7 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -393,6 +400,7 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	public void setRateChangeFinances(List<BulkProcessDetails> rateChangeFinances) {
 		this.rateChangeFinances = rateChangeFinances;
 	}
+
 	public List<BulkProcessDetails> getRateChangeFinances() {
 		return rateChangeFinances;
 	}

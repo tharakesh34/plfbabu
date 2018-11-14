@@ -99,64 +99,63 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final Logger logger = Logger.getLogger(AccountsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window      window_AccountsDialog;          // autoWired
-	protected Textbox     accountId;                      // autoWired
-	protected Textbox     acCcy;                          // autoWired
-	protected Textbox     acType;                         // autoWired
-	protected Textbox     acBranch;                       // autoWired
-	protected Textbox     lovDescAcTypeDesc;              // autoWired
-	protected Longbox     acCustId;                       // autoWired
-	protected Textbox     lovDescAcCustCIF;               // autoWired
-	protected Textbox     acFullName;                     // autoWired
-	protected Textbox     acShortName;                    // autoWired
-	protected Textbox     acPurpose;                      // autoWired
-	protected Checkbox    internalAc;                     // autoWired
-	protected Checkbox    custSysAc;                      // autoWired
-	protected Decimalbox  acPrvDayBal;                    // autoWired
-	protected Decimalbox  acTodayDr;                      // autoWired
-	protected Decimalbox  acTodayCr;                      // autoWired
-	protected Decimalbox  acTodayNet;                     // autoWired
-	protected Decimalbox  acAccrualBal;                   // autoWired
-	protected Decimalbox  acTodayBal;                     // autoWired
-	protected Datebox     acOpenDate;                     // autoWired
-	protected Datebox     acLastCustTrnDate;              // autoWired
-	protected Datebox     acLastSysTrnDate;               // autoWired
-	protected Checkbox    acActive;                       // autoWired
-	protected Checkbox    acBlocked;                      // autoWired
-	protected Checkbox    acClosed;                       // autoWired
-	protected Textbox     hostAcNumber;                   // autoWired
-	protected Textbox     lovDescAcCcy;                   // autoWired
-	protected Textbox     lovDescAcBranch;                // autoWired
-	protected Space       spc_acOpenDate;                 // autoWired
-	protected Label       label_acOpenDate;               // autoWired
-	protected Label       label_accTypeDesc;              // autoWired
-	protected Textbox     lovDescAcPurpose;               // autoWired
-	protected Space       space_AccountId;                // autoWired
+	protected Window window_AccountsDialog; // autoWired
+	protected Textbox accountId; // autoWired
+	protected Textbox acCcy; // autoWired
+	protected Textbox acType; // autoWired
+	protected Textbox acBranch; // autoWired
+	protected Textbox lovDescAcTypeDesc; // autoWired
+	protected Longbox acCustId; // autoWired
+	protected Textbox lovDescAcCustCIF; // autoWired
+	protected Textbox acFullName; // autoWired
+	protected Textbox acShortName; // autoWired
+	protected Textbox acPurpose; // autoWired
+	protected Checkbox internalAc; // autoWired
+	protected Checkbox custSysAc; // autoWired
+	protected Decimalbox acPrvDayBal; // autoWired
+	protected Decimalbox acTodayDr; // autoWired
+	protected Decimalbox acTodayCr; // autoWired
+	protected Decimalbox acTodayNet; // autoWired
+	protected Decimalbox acAccrualBal; // autoWired
+	protected Decimalbox acTodayBal; // autoWired
+	protected Datebox acOpenDate; // autoWired
+	protected Datebox acLastCustTrnDate; // autoWired
+	protected Datebox acLastSysTrnDate; // autoWired
+	protected Checkbox acActive; // autoWired
+	protected Checkbox acBlocked; // autoWired
+	protected Checkbox acClosed; // autoWired
+	protected Textbox hostAcNumber; // autoWired
+	protected Textbox lovDescAcCcy; // autoWired
+	protected Textbox lovDescAcBranch; // autoWired
+	protected Space spc_acOpenDate; // autoWired
+	protected Label label_acOpenDate; // autoWired
+	protected Label label_accTypeDesc; // autoWired
+	protected Textbox lovDescAcPurpose; // autoWired
+	protected Space space_AccountId; // autoWired
 
-	protected Row         row_cust_Names;                 // autoWired
-	protected Row         row_custId;                     // autoWired
-	protected Row         row_Active_AcOpenDate;          // autoWired
-	protected Row         row_Blocked_Closed;             // autoWired
-	protected Hbox        hbox_accountId_IntAc;           // autoWired
-	protected Textbox     branchCode;                     // autoWired
-	protected Textbox     acHead;                         // autoWired
-	protected Textbox     acSeqNumber;                    // autoWired
-	protected Textbox     ccyNumber;                      // autoWired
+	protected Row row_cust_Names; // autoWired
+	protected Row row_custId; // autoWired
+	protected Row row_Active_AcOpenDate; // autoWired
+	protected Row row_Blocked_Closed; // autoWired
+	protected Hbox hbox_accountId_IntAc; // autoWired
+	protected Textbox branchCode; // autoWired
+	protected Textbox acHead; // autoWired
+	protected Textbox acSeqNumber; // autoWired
+	protected Textbox ccyNumber; // autoWired
 
 	// not auto wired variables
 	private Accounts accounts; // over handed per parameters
 	private transient AccountsListCtrl acountsListCtrl; // over handed per parameters
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient AccountsService accountsService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -171,11 +170,10 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Accounts object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Accounts object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -199,14 +197,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			} else {
 				setAcounts(null);
 			}
-			doLoadWorkFlow(this.accounts.isWorkflow(),
-					this.accounts.getWorkflowId(),
-					this.accounts.getNextTaskId());
+			doLoadWorkFlow(this.accounts.isWorkflow(), this.accounts.getWorkflowId(), this.accounts.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"AccountsDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "AccountsDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -215,8 +210,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			// or
 			// delete accounts here.
 			if (arguments.containsKey("acountsListCtrl")) {
-				setAcountsListCtrl((AccountsListCtrl) arguments
-						.get("acountsListCtrl"));
+				setAcountsListCtrl((AccountsListCtrl) arguments.get("acountsListCtrl"));
 			} else {
 				setAcountsListCtrl(null);
 			}
@@ -235,22 +229,22 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
-		if(!this.accounts.isInternalAc()){
-			this.acSeqNumber.setMaxlength(LengthConstants.LEN_ACCOUNT-
-					(LengthConstants.LEN_BRANCH+LengthConstants.LEN_ACHEADCODE));
+		if (!this.accounts.isInternalAc()) {
+			this.acSeqNumber.setMaxlength(
+					LengthConstants.LEN_ACCOUNT - (LengthConstants.LEN_BRANCH + LengthConstants.LEN_ACHEADCODE));
 			this.acSeqNumber.setWidth("60px");
 			this.space_AccountId.setStyle("background-color:white;");
-		}else{
+		} else {
 			this.space_AccountId.setStyle("background-color:red;");
-			this.acSeqNumber.setMaxlength(LengthConstants.LEN_ACCOUNT-
-					(LengthConstants.LEN_BRANCH+LengthConstants.LEN_ACHEADCODE+LengthConstants.LEN_CURRENCY));
+			this.acSeqNumber.setMaxlength(LengthConstants.LEN_ACCOUNT
+					- (LengthConstants.LEN_BRANCH + LengthConstants.LEN_ACHEADCODE + LengthConstants.LEN_CURRENCY));
 			this.acSeqNumber.setWidth("40px");
 		}
-		if(this.accounts.isNew()){
+		if (this.accounts.isNew()) {
 			this.hbox_accountId_IntAc.setVisible(true);
-			if(this.accounts.isInternalAc()){
+			if (this.accounts.isInternalAc()) {
 				this.ccyNumber.setVisible(true);
 			}
 		}
@@ -263,9 +257,9 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acType.setReadonly(true);
 		this.acPurpose.setReadonly(true);
 		this.acBranch.setMaxlength(LengthConstants.LEN_BRANCH);
-		if(this.accounts.isInternalAc()){
+		if (this.accounts.isInternalAc()) {
 			this.row_cust_Names.setVisible(false);
-			this.row_custId.setVisible(false);	
+			this.row_custId.setVisible(false);
 		}
 		this.acFullName.setMaxlength(50);
 		this.acFullName.setReadonly(true);
@@ -297,16 +291,17 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acTodayBal.setScale(0);
 		this.acOpenDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.acOpenDate.setDisabled(true);
-		if(this.accounts.getRecordType()!=null){
+		if (this.accounts.getRecordType() != null) {
 			if (!this.accounts.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				if (this.accounts.isNewRecord() || StringUtils.isNotEmpty(this.accounts.getRecordType())) {
-					if(!(this.accounts.isNew() && this.accounts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW))){
+					if (!(this.accounts.isNew()
+							&& this.accounts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW))) {
 						this.row_Active_AcOpenDate.setVisible(false);
 						this.row_Blocked_Closed.setVisible(false);
 					}
 				}
 			}
-		}else if(this.accounts.isNewRecord()){
+		} else if (this.accounts.isNewRecord()) {
 			this.row_Active_AcOpenDate.setVisible(false);
 			this.row_Blocked_Closed.setVisible(false);
 		}
@@ -314,25 +309,23 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acLastSysTrnDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.hostAcNumber.setMaxlength(35);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
-	}		
-
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -342,7 +335,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AccountsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -407,7 +400,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *			  An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -420,11 +413,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.accounts.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -434,46 +427,47 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 *            Accounts
 	 */
 	public void doWriteBeanToComponents(Accounts aAccounts) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.accountId.setValue(aAccounts.getAccountId());
-		if(aAccounts.isNew()){
+		if (aAccounts.isNew()) {
 			this.branchCode.setValue(aAccounts.getAcBranch());
 			this.ccyNumber.setValue(aAccounts.getLovDescCcyNumber());
 			this.acHead.setValue(aAccounts.getLovDescAcHeadCode());
 		}
 		this.acCcy.setValue(aAccounts.getAcCcy());
-		this.lovDescAcCcy.setValue(aAccounts.getAcCcy()+"-"+aAccounts.getLovDescCurrency());
+		this.lovDescAcCcy.setValue(aAccounts.getAcCcy() + "-" + aAccounts.getLovDescCurrency());
 		this.acType.setValue(aAccounts.getAcType());
-		this.lovDescAcTypeDesc.setValue(aAccounts.getAcType()+"-"+aAccounts.getLovDescAccTypeDesc());
+		this.lovDescAcTypeDesc.setValue(aAccounts.getAcType() + "-" + aAccounts.getLovDescAccTypeDesc());
 		this.acBranch.setValue(aAccounts.getAcBranch());
-		this.lovDescAcBranch.setValue(aAccounts.getAcBranch()+"-"+aAccounts.getLovDescBranchCodeName());
+		this.lovDescAcBranch.setValue(aAccounts.getAcBranch() + "-" + aAccounts.getLovDescBranchCodeName());
 		this.acCustId.setValue(aAccounts.getAcCustId());
 		this.lovDescAcCustCIF.setValue(aAccounts.getLovDescCustCIF());
 		this.acFullName.setValue(aAccounts.getAcFullName());
 		this.acShortName.setValue(aAccounts.getAcShortName());
 		this.acPurpose.setValue(aAccounts.getAcPurpose());
-		this.lovDescAcPurpose.setValue(PennantAppUtil.getlabelDesc(aAccounts.getAcPurpose()
-				,PennantStaticListUtil.getAccountPurpose()));
+		this.lovDescAcPurpose.setValue(
+				PennantAppUtil.getlabelDesc(aAccounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
 		this.internalAc.setChecked(aAccounts.isInternalAc());
 		this.custSysAc.setChecked(aAccounts.isCustSysAc());
-		if(this.custSysAc.isChecked()){
+		if (this.custSysAc.isChecked()) {
 			label_accTypeDesc.setValue(Labels.getLabel("label_CustSysAc"));
-		}else if(this.internalAc.isChecked()){
-			label_accTypeDesc.setValue(Labels.getLabel("label_InternalAc"));	
-		}else if(!this.internalAc.isChecked() && !this.custSysAc.isChecked()){
-			label_accTypeDesc.setValue(Labels.getLabel("label_CustAc"));	
+		} else if (this.internalAc.isChecked()) {
+			label_accTypeDesc.setValue(Labels.getLabel("label_InternalAc"));
+		} else if (!this.internalAc.isChecked() && !this.custSysAc.isChecked()) {
+			label_accTypeDesc.setValue(Labels.getLabel("label_CustAc"));
 		}
-		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getShadowBal(),0));
-		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcBalance(),0));
-		
+		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getShadowBal(), 0));
+		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcBalance(), 0));
+
 		//FIXME: PV: 07MAY17: To be fixed when screen used
-/*		this.acPrvDayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcPrvDayBal(),0));
-		this.acTodayDr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayDr(),0));
-		this.acTodayCr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayCr(),0));
-		this.acTodayNet.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayNet(),0));
-		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcAccrualBal(),0));
-		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayBal(),0));
-*/		this.acOpenDate.setValue(aAccounts.getAcOpenDate());
+		/*
+		 * this.acPrvDayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcPrvDayBal(),0));
+		 * this.acTodayDr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayDr(),0));
+		 * this.acTodayCr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayCr(),0));
+		 * this.acTodayNet.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayNet(),0));
+		 * this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcAccrualBal(),0));
+		 * this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayBal(),0));
+		 */ this.acOpenDate.setValue(aAccounts.getAcOpenDate());
 		this.acLastCustTrnDate.setValue(aAccounts.getAcLastCustTrnDate());
 		this.acLastSysTrnDate.setValue(aAccounts.getAcLastSysTrnDate());
 		this.acActive.setChecked(aAccounts.isAcActive());
@@ -491,137 +485,136 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * @param aAccounts
 	 */
 	public void doWriteComponentsToBean(Accounts aAccounts) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if(!this.accounts.isInternalAc() && this.accounts.isNew()){
-				if(StringUtils.isBlank(this.acSeqNumber.getValue())){
-					aAccounts.setAccountId(AccountNumberGeneration.genNewAcountNumber(aAccounts.getAcType()
-							,aAccounts.getAcCcy(),aAccounts.getAcBranch()));
-				}else{
-					/*Here account sequence number length is 16-(branch length(5)+acHead(4) =7*/
-					aAccounts.setAccountId(this.branchCode.getValue()+this.acHead.getValue()
-							+StringUtils.leftPad(this.acSeqNumber.getValue().trim()
-									,LengthConstants.LEN_ACCOUNT 
-									-(LengthConstants.LEN_BRANCH+LengthConstants.LEN_ACHEADCODE),'0'));	
+			if (!this.accounts.isInternalAc() && this.accounts.isNew()) {
+				if (StringUtils.isBlank(this.acSeqNumber.getValue())) {
+					aAccounts.setAccountId(AccountNumberGeneration.genNewAcountNumber(aAccounts.getAcType(),
+							aAccounts.getAcCcy(), aAccounts.getAcBranch()));
+				} else {
+					/* Here account sequence number length is 16-(branch length(5)+acHead(4) =7 */
+					aAccounts
+							.setAccountId(this.branchCode.getValue() + this.acHead.getValue()
+									+ StringUtils.leftPad(this.acSeqNumber.getValue().trim(),
+											LengthConstants.LEN_ACCOUNT
+													- (LengthConstants.LEN_BRANCH + LengthConstants.LEN_ACHEADCODE),
+											'0'));
 				}
-			}else if(this.accounts.isInternalAc() && this.accounts.isNew()){
-				/*Here account sequence number length is 16-(branch length(5)+acHead(4)+ccyNumber(3) =4*/
-				aAccounts.setAccountId(this.branchCode.getValue()+this.acHead.getValue()
-						+StringUtils.leftPad(this.acSeqNumber.getValue().trim()
-								,LengthConstants.LEN_ACCOUNT 
-								- (LengthConstants.LEN_BRANCH+LengthConstants.LEN_ACHEADCODE
-										+LengthConstants.LEN_CURRENCY),'0')+this.ccyNumber.getValue());
+			} else if (this.accounts.isInternalAc() && this.accounts.isNew()) {
+				/* Here account sequence number length is 16-(branch length(5)+acHead(4)+ccyNumber(3) =4 */
+				aAccounts.setAccountId(this.branchCode.getValue() + this.acHead.getValue()
+						+ StringUtils.leftPad(this.acSeqNumber.getValue().trim(),
+								LengthConstants.LEN_ACCOUNT - (LengthConstants.LEN_BRANCH
+										+ LengthConstants.LEN_ACHEADCODE + LengthConstants.LEN_CURRENCY),
+								'0')
+						+ this.ccyNumber.getValue());
 
-
-			}else{
-				aAccounts.setAccountId(this.accountId.getValue().trim());		
+			} else {
+				aAccounts.setAccountId(this.accountId.getValue().trim());
 			}
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcCcy(this.acCcy.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcType(this.acType.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcBranch(this.acBranch.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			aAccounts.setAcFullName(this.acFullName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcShortName(this.acShortName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcPurpose(this.acPurpose.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setInternalAc(this.internalAc.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setCustSysAc(this.custSysAc.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if(!aAccounts.isInternalAc()){
+			if (!aAccounts.isInternalAc()) {
 				aAccounts.setAcCustId(this.acCustId.getValue());
-			}else{
+			} else {
 				aAccounts.setAcCustId(0);
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
- 		
+
 		//FIXME: PV: 07MAY17: To be fixed when screen used
-/*		try {
-			if(this.acPrvDayBal.getValue()!=null){
-				aAccounts.setAcPrvDayBal(PennantAppUtil.unFormateAmount(this.acPrvDayBal.getValue(), 0));
-			}
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-*/		try {
-			if(this.acOpenDate.getValue()!=null){
+		/*
+		 * try { if(this.acPrvDayBal.getValue()!=null){
+		 * aAccounts.setAcPrvDayBal(PennantAppUtil.unFormateAmount(this.acPrvDayBal.getValue(), 0)); } }catch
+		 * (WrongValueException we ) { wve.add(we); }
+		 */ try {
+			if (this.acOpenDate.getValue() != null) {
 				aAccounts.setAcOpenDate(new Timestamp(this.acOpenDate.getValue().getTime()));
-			}	
-		}catch (WrongValueException we ) {
+			}
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if(aAccounts.isNew()){
+			if (aAccounts.isNew()) {
 				aAccounts.setAcActive(true);
-			}else{
+			} else {
 				aAccounts.setAcActive(this.acActive.isChecked());
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcBlocked(this.acBlocked.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setAcClosed(this.acClosed.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aAccounts.setHostAcNumber(this.hostAcNumber.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -635,8 +628,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccounts
 	 * @throws Exception
@@ -652,10 +644,10 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			this.accountId.focus();
 		} else {
 			this.acFullName.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -672,7 +664,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -682,72 +674,83 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-
-		if (!this.accounts.isInternalAc() && this.accounts.isNew()){	
-			if(!StringUtils.isBlank(this.acSeqNumber.getValue())){
-				this.acSeqNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
-						PennantRegularExpressions.REGEX_NUMERIC, true));
+		if (!this.accounts.isInternalAc() && this.accounts.isNew()) {
+			if (!StringUtils.isBlank(this.acSeqNumber.getValue())) {
+				this.acSeqNumber
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
+								PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
-		}else if(this.accounts.isInternalAc() && this.accounts.isNew()){
+		} else if (this.accounts.isInternalAc() && this.accounts.isNew()) {
 
 			this.acSeqNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
-		if (!this.acCcy.isReadonly()){
-			this.acCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcCcy.value"),null,true));
-		}	
-		if (!this.acType.isReadonly()){
-			this.acType.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcType.value"),null,true));
-		}	
-		if (!this.acBranch.isReadonly()){
-			this.acBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcBranch.value"),null,true));
-		}	
-		if(!this.accounts.isInternalAc()){
-			if (!this.acCustId.isReadonly()){
-				this.acCustId.setConstraint(new PTNumberValidator(Labels.getLabel("label_AcountsDialog_AcCustId.value"), true));
-			}
-			if (!this.acFullName.isReadonly()){
-				this.acFullName.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcFullName.value"),null,true));
-			}	
-			if (!this.acShortName.isReadonly()){
-				this.acShortName.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcShortName.value"),null,true));
-			}	
+		if (!this.acCcy.isReadonly()) {
+			this.acCcy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcCcy.value"), null, true));
 		}
-		if (!this.acPrvDayBal.isReadonly()){
+		if (!this.acType.isReadonly()) {
+			this.acType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcType.value"), null, true));
+		}
+		if (!this.acBranch.isReadonly()) {
+			this.acBranch.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcBranch.value"), null, true));
+		}
+		if (!this.accounts.isInternalAc()) {
+			if (!this.acCustId.isReadonly()) {
+				this.acCustId.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_AcountsDialog_AcCustId.value"), true));
+			}
+			if (!this.acFullName.isReadonly()) {
+				this.acFullName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcFullName.value"), null, true));
+			}
+			if (!this.acShortName.isReadonly()) {
+				this.acShortName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcShortName.value"), null, true));
+			}
+		}
+		if (!this.acPrvDayBal.isReadonly()) {
 			this.acPrvDayBal.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_AcountsDialog_AcPrvDayBal.value"), 0, true));
-		}	
-		if (!this.acTodayDr.isReadonly()){
+		}
+		if (!this.acTodayDr.isReadonly()) {
 			this.acTodayDr.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_AcountsDialog_AcTodayDr.value"), 0, true));
-		}	
-		if (!this.acTodayCr.isReadonly()){
+		}
+		if (!this.acTodayCr.isReadonly()) {
 			this.acTodayCr.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_AcountsDialog_AcTodayCr.value"), 0, true));
-		}	
-		if (!this.acTodayNet.isReadonly()){
+		}
+		if (!this.acTodayNet.isReadonly()) {
 			this.acTodayNet.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_AcountsDialog_AcTodayNet.value"), 0, true));
-		}	
-		if (!this.acAccrualBal.isReadonly()){
+		}
+		if (!this.acAccrualBal.isReadonly()) {
 			this.acAccrualBal.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_AcountsDialog_AcAccrualBal.value"), 0, true));
-		}	
-		if (!this.acTodayBal.isReadonly()){
+		}
+		if (!this.acTodayBal.isReadonly()) {
 			this.acTodayBal.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_AcountsDialog_AcTodayBal.value"), 0, true));
-		}	
-		if (!this.acOpenDate.isDisabled()){
-			this.acOpenDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcOpenDate.value"),true));
 		}
-		if (!this.acLastCustTrnDate.isDisabled()){
-			this.acLastCustTrnDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcLastCustTrnDate.value"),true));
+		if (!this.acOpenDate.isDisabled()) {
+			this.acOpenDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcOpenDate.value"), true));
 		}
-		if (!this.acLastSysTrnDate.isDisabled()){
-			this.acLastSysTrnDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcLastSysTrnDate.value"),true));
+		if (!this.acLastCustTrnDate.isDisabled()) {
+			this.acLastCustTrnDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcLastCustTrnDate.value"), true));
 		}
-		if (!this.hostAcNumber.isReadonly()){
-			this.hostAcNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_HostAcNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, false));
+		if (!this.acLastSysTrnDate.isDisabled()) {
+			this.acLastSysTrnDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcLastSysTrnDate.value"), true));
+		}
+		if (!this.hostAcNumber.isReadonly()) {
+			this.hostAcNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_HostAcNumber.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -778,7 +781,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.hostAcNumber.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -808,13 +811,13 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acClosed.setDisabled(true);
 		this.hostAcNumber.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -853,6 +856,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.hostAcNumber.setValue("");
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * 
 	 */
@@ -883,17 +887,16 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	/**
 	 * 
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		logger.debug("Entering ");
 		final JdbcSearchObject<Accounts> soAcounts = getAcountsListCtrl().getSearchObj();
 		getAcountsListCtrl().pagingAcountsList.setActivePage(0);
 		getAcountsListCtrl().getPagedListWrapper().setSearchObject(soAcounts);
-		if(getAcountsListCtrl().listBoxAcounts!=null){
+		if (getAcountsListCtrl().listBoxAcounts != null) {
 			getAcountsListCtrl().listBoxAcounts.getListModel();
 		}
 		logger.debug("Leaving ");
-	} 
-
+	}
 
 	// CRUD operations
 
@@ -903,32 +906,32 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final Accounts aAccounts = new Accounts();
 		BeanUtils.copyProperties(getAcounts(), aAccounts);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") 
-		+ "\n\n --> " + aAccounts.getAccountId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aAccounts.getAccountId();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aAccounts.getRecordType())){
-				aAccounts.setVersion(aAccounts.getVersion()+1);
+			if (StringUtils.isBlank(aAccounts.getRecordType())) {
+				aAccounts.setVersion(aAccounts.getVersion() + 1);
 				aAccounts.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aAccounts.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aAccounts,tranType)){
+				if (doProcess(aAccounts, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
 			} catch (DataAccessException e) {
@@ -945,11 +948,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getAcounts().isNewRecord()){
+		if (getAcounts().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.accountId.setVisible(false);
 
-		}else{
+		} else {
 			this.accountId.setVisible(true);
 			this.accountId.setReadonly(true);
 			this.btnCancel.setVisible(true);
@@ -970,24 +973,23 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acClosed.setDisabled(isReadOnly("AccountsDialog_acClosed"));
 		this.hostAcNumber.setReadonly(isReadOnly("AccountsDialog_hostAcNumber"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.accounts.isNewRecord()){
+			if (this.accounts.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Saves the components to table. <br>
@@ -1010,36 +1012,36 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		// Do data level validations here
 
 		isNew = aAccounts.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aAccounts.getRecordType())){
-				aAccounts.setVersion(aAccounts.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aAccounts.getRecordType())) {
+				aAccounts.setVersion(aAccounts.getVersion() + 1);
+				if (isNew) {
 					aAccounts.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aAccounts.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aAccounts.setNewRecord(true);
 				}
 			}
-		}else{
-			aAccounts.setVersion(aAccounts.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aAccounts.setVersion(aAccounts.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
-			if(accounts.isAcClosed()){
+			if (accounts.isAcClosed()) {
 				accounts.setAcCloseDate(new Date(System.currentTimeMillis()));
-			}else if(isNew){
+			} else if (isNew) {
 				accounts.setAcOpenDate(new Date(System.currentTimeMillis()));
 			}
 		}
 		// save it to database
 		try {
 
-			if(doProcess(aAccounts,tranType)){
+			if (doProcess(aAccounts, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -1049,17 +1051,18 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * 
 	 * @param aAccounts
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(Accounts aAccounts,String tranType){
+	private boolean doProcess(Accounts aAccounts, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aAccounts.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aAccounts.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1088,19 +1091,18 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 				}
 			}
 
-
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
-							nextRoleCode =nextRoleCode.concat(",");
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -1110,29 +1112,29 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			aAccounts.setRoleCode(getRole());
 			aAccounts.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aAccounts, tranType);
+			auditHeader = getAuditHeader(aAccounts, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aAccounts);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aAccounts, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aAccounts, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 
-			auditHeader =  getAuditHeader(aAccounts, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+			auditHeader = getAuditHeader(aAccounts, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
@@ -1143,60 +1145,60 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
 		Accounts aAccounts = (Accounts) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getAccountsService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getAccountsService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getAccountsService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getAccountsService().doApprove(auditHeader);
 
-						if(aAccounts.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aAccounts.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getAccountsService().doReject(auditHeader);
-						if(aAccounts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aAccounts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999
-								, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AccountsDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_AccountsDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_AccountsDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.accounts),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.accounts), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -1212,13 +1214,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.accounts.getAccountId());
 	}
-
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1264,10 +1264,10 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.pagedListService = pagedListService;
 	}
 
-
-	private AuditHeader getAuditHeader(Accounts aAccounts, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAccounts.getBefImage(), aAccounts);   
-		return new AuditHeader(aAccounts.getAccountId(),String.valueOf(aAccounts.getAcCustId()),aAccounts.getAccountId(),null,auditDetail,aAccounts.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(Accounts aAccounts, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAccounts.getBefImage(), aAccounts);
+		return new AuditHeader(aAccounts.getAccountId(), String.valueOf(aAccounts.getAcCustId()),
+				aAccounts.getAccountId(), null, auditDetail, aAccounts.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1279,12 +1279,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		doShowNotes(this.accounts);
 	}
 
-
 	private void doSetLOVValidation() {
 	}
+
 	private void doRemoveLOVValidation() {
 	}
-
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
@@ -1294,5 +1293,4 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		return overideMap;
 	}
 
-	
 }

@@ -36,68 +36,67 @@ import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(LimitUtilizationDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(LimitUtilizationDialogCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
+	 * GenericForwardComposer. ************************************************************************
 	 */
 
-	protected Window						window_LimitUtilizationDialog;
+	protected Window window_LimitUtilizationDialog;
 
-	protected Listbox						listBoxLimitDetail;
-	protected Row							row1;
+	protected Listbox listBoxLimitDetail;
+	protected Row row1;
 
-	protected Label							customerGroup;
-	protected Label							customerGroupName;
-	protected Label							label_CustomerId;
+	protected Label customerGroup;
+	protected Label customerGroupName;
+	protected Label label_CustomerId;
 
-	protected Label							customerId;
-	protected Label							custCoreBank;
+	protected Label customerId;
+	protected Label custCoreBank;
 
-	protected Label							custFullName;
-	protected Label							custSalutationCode;
-	protected Label							limiDialogRule;
+	protected Label custFullName;
+	protected Label custSalutationCode;
+	protected Label limiDialogRule;
 
-	protected Label							custDftBranchCode;
-	protected Label							custDftBranchName;
-	protected Label							label_date;
-	protected Label							label_ccyDesc;
-	protected Label							label_currency;
-	private Label							limiDialogRuleValue;
+	protected Label custDftBranchCode;
+	protected Label custDftBranchName;
+	protected Label label_date;
+	protected Label label_ccyDesc;
+	protected Label label_currency;
+	private Label limiDialogRuleValue;
 
-	protected Div							gb_CustomerDetails;
-	protected Div							gb_GroupDetails;
-	protected Div							gb_RuleBased;
-	protected Div							amountInDiv;
-	protected Label							amountInLabel;
+	protected Div gb_CustomerDetails;
+	protected Div gb_GroupDetails;
+	protected Div gb_RuleBased;
+	protected Div amountInDiv;
+	protected Label amountInLabel;
 
 	// not auto wired vars
-	private LimitHeader						limitHeader;
-	private transient LimitDetailListCtrl	limitDetailListCtrl;
+	private LimitHeader limitHeader;
+	private transient LimitDetailListCtrl limitDetailListCtrl;
 	// old value vars for edit mode. that we can check if something
 	// on the values are edited since the last init.
 
 	// ServiceDAOs / Domain Classes
-	private transient LimitRuleManagement	limitRuleManagementService;
-	private transient LimitManagement		limitManagement;
-	private transient LimitDetailService	limitDetailService;
-	private transient PagedListService		pagedListService;
+	private transient LimitRuleManagement limitRuleManagementService;
+	private transient LimitManagement limitManagement;
+	private transient LimitDetailService limitDetailService;
+	private transient PagedListService pagedListService;
 
-	private BigDecimal						THOUSANDS			= new BigDecimal(1000);
-	private BigDecimal						LAKHS				= new BigDecimal(100000);
-	private BigDecimal						MILLIONS			= new BigDecimal(1000000);
-	private BigDecimal						CRORES				= new BigDecimal(10000000);
-	private BigDecimal						BILLIONS			= new BigDecimal(1000000000);
-	private int								ccyFormat			= 0;
+	private BigDecimal THOUSANDS = new BigDecimal(1000);
+	private BigDecimal LAKHS = new BigDecimal(100000);
+	private BigDecimal MILLIONS = new BigDecimal(1000000);
+	private BigDecimal CRORES = new BigDecimal(10000000);
+	private BigDecimal BILLIONS = new BigDecimal(1000000000);
+	private int ccyFormat = 0;
 
 	/**
 	 * default constructor.<br>
@@ -220,9 +219,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 		logger.debug("Entering" + event.toString());
 		try {
 
-			ScreenCTL.displayNotes(
-					getNotes("LimitHeader", String.valueOf(getLimitHeader().getHeaderId()), getLimitHeader()
-							.getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("LimitHeader", String.valueOf(getLimitHeader().getHeaderId()),
+					getLimitHeader().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -241,8 +239,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("limitDetails", details);
 				map.put("limitReference", limitReferences);
-				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitCustomerReferencesDialog.zul",
-						null, map);
+				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitCustomerReferencesDialog.zul", null,
+						map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -311,7 +309,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 
 			if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetails.getLimitChkMethod())) {
 				avialable = sactioned.subtract(utilisied).subtract(reserved);
-			}else if (StringUtils.equals(LimitConstants.LIMIT_CHECK_ACTUAL, limitDetails.getLimitChkMethod())) {
+			} else if (StringUtils.equals(LimitConstants.LIMIT_CHECK_ACTUAL, limitDetails.getLimitChkMethod())) {
 				avialable = sactioned.subtract(utilisied);
 			}
 
@@ -453,7 +451,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 		} else {
 			amountInDiv.setVisible(false);
 		}
-		ccyFormat=CurrencyUtil.getFormat(aLimitHeader.getLimitCcy());
+		ccyFormat = CurrencyUtil.getFormat(aLimitHeader.getLimitCcy());
 		render(aLimitHeader.getCustomerLimitDetailsList());
 		logger.debug("Leaving");
 	}

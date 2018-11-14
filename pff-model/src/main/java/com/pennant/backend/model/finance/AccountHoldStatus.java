@@ -6,71 +6,78 @@ import java.util.Date;
 
 public class AccountHoldStatus implements Serializable {
 
-    private static final long serialVersionUID = -5722811453434523809L;
-	
+	private static final long serialVersionUID = -5722811453434523809L;
+
 	private String account;
 	private BigDecimal curODAmount;
 	private String holdType;
 	private Date valueDate;
 	private Date futureDate;
-	private String holdStatus ="";
-	private String statusDesc ="";
-	
+	private String holdStatus = "";
+	private String statusDesc = "";
+
 	public AccountHoldStatus() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getAccount() {
-    	return account;
-    }
+		return account;
+	}
+
 	public void setAccount(String account) {
-    	this.account = account;
-    }
-	
+		this.account = account;
+	}
+
 	public BigDecimal getCurODAmount() {
-    	return curODAmount;
-    }
+		return curODAmount;
+	}
+
 	public void setCurODAmount(BigDecimal curODAmount) {
-    	this.curODAmount = curODAmount;
-    }
-	
+		this.curODAmount = curODAmount;
+	}
+
 	public Date getValueDate() {
-    	return valueDate;
-    }
+		return valueDate;
+	}
+
 	public void setValueDate(Date valueDate) {
-    	this.valueDate = valueDate;
-    }
-	
+		this.valueDate = valueDate;
+	}
+
 	public Date getFutureDate() {
-	    return futureDate;
-    }
+		return futureDate;
+	}
+
 	public void setFutureDate(Date futureDate) {
-	    this.futureDate = futureDate;
-    }
-	
+		this.futureDate = futureDate;
+	}
+
 	public String getHoldType() {
-	    return holdType;
-    }
+		return holdType;
+	}
+
 	public void setHoldType(String holdType) {
-	    this.holdType = holdType;
-    }
-	
+		this.holdType = holdType;
+	}
+
 	public String getHoldStatus() {
-    	return holdStatus;
-    }
+		return holdStatus;
+	}
+
 	public void setHoldStatus(String holdStatus) {
-    	this.holdStatus = holdStatus;
-    }
+		this.holdStatus = holdStatus;
+	}
 
 	public String getStatusDesc() {
-    	return statusDesc;
-    }
+		return statusDesc;
+	}
+
 	public void setStatusDesc(String statusDesc) {
-    	this.statusDesc = statusDesc;
-    }
-	
+		this.statusDesc = statusDesc;
+	}
+
 }

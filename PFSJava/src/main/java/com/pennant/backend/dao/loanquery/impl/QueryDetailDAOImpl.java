@@ -66,8 +66,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>QueryDetail</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>QueryDetail</code> with set of CRUD operations.
  */
 public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements QueryDetailDAO {
 	private static Logger logger = Logger.getLogger(QueryDetailDAOImpl.class);

@@ -64,30 +64,25 @@ import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.service.applicationmaster.InsuranceTypeService;
 import com.pennant.webui.applicationmaster.InsuranceType.model.InsuranceTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/applicationmasters/InsuranceType/InsuranceTypeList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/applicationmasters/InsuranceType/InsuranceTypeList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
-		implements Serializable {
+public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger
-			.getLogger(InsuranceTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(InsuranceTypeListCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window window_InsuranceTypeList; // autowired
 	protected Borderlayout borderLayout_InsuranceTypeList; // autowired
@@ -131,20 +126,17 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 
 	public void onCreate$window_InsuranceTypeList(Event event) throws Exception {
 		// Set the page level components.
-		setPageComponents(window_InsuranceTypeList,
-				borderLayout_InsuranceTypeList, listBoxInsuranceType,
+		setPageComponents(window_InsuranceTypeList, borderLayout_InsuranceTypeList, listBoxInsuranceType,
 				pagingInsuranceTypeList);
 		setItemRender(new InsuranceTypeListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_InsuranceTypeList_NewInsuranceType,
-				"button_InsuranceTypeList_NewInsuranceType", true);
+		registerButton(button_InsuranceTypeList_NewInsuranceType, "button_InsuranceTypeList_NewInsuranceType", true);
 		registerButton(button_InsuranceTypeList_InsuranceTypeSearch);
 
-		registerField("insuranceType", listheader_InsuranceType, SortOrder.ASC,
-				insuranceType, sortOperator_InsuranceType, Operators.STRING);
-		registerField("insuranceTypeDesc", listheader_InsuranceTypeDesc,
-				SortOrder.ASC, insuranceTypeDesc,
+		registerField("insuranceType", listheader_InsuranceType, SortOrder.ASC, insuranceType,
+				sortOperator_InsuranceType, Operators.STRING);
+		registerField("insuranceTypeDesc", listheader_InsuranceTypeDesc, SortOrder.ASC, insuranceTypeDesc,
 				sortOperator_InsuranceTypeDesc, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
@@ -152,8 +144,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -163,8 +154,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -175,8 +165,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -197,8 +186,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 
 	/**
 	 * This method is forwarded from the listboxes item renderer. <br>
-	 * see: com.pennant.webui.applicationmasters.insurancetype.model.
-	 * InsuranceTypeListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.applicationmasters.insurancetype.model. InsuranceTypeListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -214,7 +202,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 		// Get the selected entity.
 		String id = (String) selectedItem.getAttribute("id");
 		String tableType = StringUtils.isEmpty((String) selectedItem.getAttribute("recordType")) ? "_View" : "_TView";
-		InsuranceType insuranceType = insuranceTypeService.getInsuranceTypeById(id,tableType);
+		InsuranceType insuranceType = insuranceTypeService.getInsuranceTypeById(id, tableType);
 
 		if (insuranceType == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -222,8 +210,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND InsuranceType='"
-				+ insuranceType.getInsuranceType() + "' AND version="
+		String whereCond = " AND InsuranceType='" + insuranceType.getInsuranceType() + "' AND version="
 				+ insuranceType.getVersion() + " ";
 
 		if (doCheckAuthority(insuranceType, whereCond)) {
@@ -254,9 +241,8 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 		arg.put("insuranceTypeListCtrl", this);
 
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeDialog.zul",
-					null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -265,8 +251,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -303,8 +288,7 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 		search();
 	}
 
-	public void setInsuranceTypeService(
-			InsuranceTypeService insuranceTypeService) {
+	public void setInsuranceTypeService(InsuranceTypeService insuranceTypeService) {
 		this.insuranceTypeService = insuranceTypeService;
 	}
 

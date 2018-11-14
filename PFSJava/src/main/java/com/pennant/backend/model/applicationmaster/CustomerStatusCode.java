@@ -82,6 +82,7 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return custStsCode;
 	}
+
 	public void setId(String id) {
 		this.custStsCode = id;
 	}
@@ -89,6 +90,7 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public String getCustStsCode() {
 		return custStsCode;
 	}
+
 	public void setCustStsCode(String custStsCode) {
 		this.custStsCode = custStsCode;
 	}
@@ -96,6 +98,7 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public String getCustStsDescription() {
 		return custStsDescription;
 	}
+
 	public void setCustStsDescription(String custStsDescription) {
 		this.custStsDescription = custStsDescription;
 	}
@@ -103,27 +106,31 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public boolean isCustStsIsActive() {
 		return custStsIsActive;
 	}
+
 	public void setCustStsIsActive(boolean custStsIsActive) {
 		this.custStsIsActive = custStsIsActive;
 	}
-	
+
 	public int getDueDays() {
-    	return dueDays;
-    }
+		return dueDays;
+	}
+
 	public void setDueDays(int dueDays) {
-    	this.dueDays = dueDays;
-    }
+		this.dueDays = dueDays;
+	}
 
 	public boolean isSuspendProfit() {
-    	return suspendProfit;
-    }
+		return suspendProfit;
+	}
+
 	public void setSuspendProfit(boolean suspendProfit) {
-    	this.suspendProfit = suspendProfit;
-    }
+		this.suspendProfit = suspendProfit;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -131,6 +138,7 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -138,6 +146,7 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public CustomerStatusCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CustomerStatusCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -145,6 +154,7 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

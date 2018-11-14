@@ -51,29 +51,28 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class UploadHeader extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4601315178356280082L;
-	
-	private long 	uploadId 		= Long.MIN_VALUE;
-	private String 	fileLocation 	= null;
-	private String 	fileName 		= null;
-	private Date	transactionDate = null;
-	private int 	totalRecords 	= 0;
-	private int 	successCount 	= 0;
-	private int 	failedCount 	= 0;
-	private String 	module			= null;
-	
+
+	private long uploadId = Long.MIN_VALUE;
+	private String fileLocation = null;
+	private String fileName = null;
+	private Date transactionDate = null;
+	private int totalRecords = 0;
+	private int successCount = 0;
+	private int failedCount = 0;
+	private String module = null;
+
 	private UploadHeader befImage;
-	
+
 	public UploadHeader() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
-		
+
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
-
 
 	public long getUploadId() {
 		return uploadId;

@@ -59,37 +59,37 @@ import com.pennant.backend.model.WorkFlowDetails;
 public class WorkFlowListModelItemRenderer implements ListitemRenderer<WorkFlowDetails>, Serializable {
 
 	private static final long serialVersionUID = 2925499383404057064L;
-	
+
 	public WorkFlowListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, WorkFlowDetails data, int count) throws Exception {
-		
+
 		String status = null;
-		final WorkFlowDetails workFlowDetails= (WorkFlowDetails) data;
+		final WorkFlowDetails workFlowDetails = (WorkFlowDetails) data;
 
 		Listcell lc = new Listcell(workFlowDetails.getWorkFlowType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(workFlowDetails.getWorkFlowSubType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(workFlowDetails.getWorkFlowDesc());
 		lc.setParent(item);
 
-		if(workFlowDetails.isWorkFlowActive()){
+		if (workFlowDetails.isWorkFlowActive()) {
 			status = "Active";
-		}else{
+		} else {
 			status = "InActive";
 		}
 		lc = new Listcell(status);
 		lc.setParent(item);
 
 		item.setAttribute("id", data.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onWorkFlowItemDoubleClicked");
-       }
-	
+	}
+
 }

@@ -46,7 +46,9 @@ package com.pennant.backend.model;
  * 
  */
 public interface Entity {
-	 boolean isNew();
-	 long getId();
-	 void setId(long id);
+	boolean isNew();
+
+	long getId();
+
+	void setId(long id);
 }

@@ -69,9 +69,9 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class PromotionDAOImpl extends SequenceDao<Promotion> implements PromotionDAO {
-   private static Logger logger = Logger.getLogger(PromotionDAOImpl.class);
+	private static Logger logger = Logger.getLogger(PromotionDAOImpl.class);
 
-   public PromotionDAOImpl() {
+	public PromotionDAOImpl() {
 		super();
 	}
 
@@ -101,7 +101,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 			sql.append(" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc, ");
 		}
 
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Promotions");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where PromotionCode =:PromotionCode");
@@ -116,9 +117,9 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		} catch (EmptyResultDataAccessException e) {
 			promotion = null;
 		}
-	
+
 		logger.debug("Leaving");
-		
+
 		return promotion;
 	}
 
@@ -137,7 +138,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	@Override
 	public void delete(Promotion promotion, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder deletSql = new StringBuilder();
 		int recordCount = 0;
 
@@ -157,7 +158,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 			logger.error("Exception", e);
 			throw new DependencyFoundException(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -179,33 +180,36 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder();
-		
+
 		if (promotion.getPromotionId() == Long.MIN_VALUE) {
 			promotion.setPromotionId(getNextId("SeqPromotions"));
 			logger.debug("get NextID:" + promotion.getPromotionId());
 		}
-		
+
 		sql.append("Insert Into Promotions");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(PromotionId, promotionCode, promotionDesc, finType, startDate, endDate, finIsDwPayRequired,");
 		sql.append(" downPayRule, actualInterestRate, finBaseRate, finSplRate, finMargin, applyRpyPricing,");
 		sql.append(" rpyPricingMethod, finMinTerm, finMaxTerm, finMinAmount, finMaxAmount, finMinRate,");
 		sql.append(" finMaxRate, active,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
-		sql.append(" :PromotionId, :promotionCode, :promotionDesc, :finType, :startDate, :endDate, :finIsDwPayRequired,");
+		sql.append(
+				" :PromotionId, :promotionCode, :promotionDesc, :finType, :startDate, :endDate, :finIsDwPayRequired,");
 		sql.append(" :downPayRule, :actualInterestRate, :finBaseRate, :finSplRate, :finMargin, :applyRpyPricing,");
 		sql.append(" :rpyPricingMethod, :finMinTerm, :finMaxTerm, :finMinAmount, :finMaxAmount, :finMinRate,");
 		sql.append(" :finMaxRate, :active,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
-		
+
 		return promotion.getPromotionCode();
 	}
 
@@ -230,15 +234,18 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		updateSql.append("Update Promotions");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set PromotionId = :PromotionId, promotionCode=:promotionCode, promotionDesc=:promotionDesc, finType=:finType,");
+		updateSql.append(
+				"  Set PromotionId = :PromotionId, promotionCode=:promotionCode, promotionDesc=:promotionDesc, finType=:finType,");
 		updateSql.append(" startDate=:startDate, endDate=:endDate, finIsDwPayRequired=:finIsDwPayRequired,");
-		updateSql.append(" downPayRule=:downPayRule, actualInterestRate=:actualInterestRate, finBaseRate=:finBaseRate,");
+		updateSql
+				.append(" downPayRule=:downPayRule, actualInterestRate=:actualInterestRate, finBaseRate=:finBaseRate,");
 		updateSql.append(" finSplRate=:finSplRate, finMargin=:finMargin, applyRpyPricing=:applyRpyPricing,");
 		updateSql.append(" rpyPricingMethod=:rpyPricingMethod, finMinTerm=:finMinTerm, finMaxTerm=:finMaxTerm,");
 		updateSql.append(" finMinAmount=:finMinAmount, finMaxAmount=:finMaxAmount, finMinRate=:finMinRate,");
 		updateSql.append(" finMaxRate=:finMaxRate, active=:active,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PromotionCode =:PromotionCode and PromotionId = :PromotionId");
 
@@ -284,7 +291,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		return count;
 	}
 
-
 	/**
 	 * Fetch record count of product
 	 * 
@@ -306,7 +312,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
 		try {
-			financeTypeCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+			financeTypeCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
 			financeTypeCount = 0;
@@ -346,7 +352,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug("Leaving");
 		return PromotionList;
 	}
-	
+
 	@Override
 	public int getPromotionByRuleCode(long ruleId, String type) {
 		logger.debug("Entering");

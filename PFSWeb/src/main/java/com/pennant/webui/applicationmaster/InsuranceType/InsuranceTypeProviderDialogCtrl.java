@@ -28,19 +28,19 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypeProvider> {
-	private static final long			serialVersionUID	= -6945930303723518608L;
-	private static final Logger			logger				= Logger.getLogger(InsuranceTypeProviderDialogCtrl.class);
+	private static final long serialVersionUID = -6945930303723518608L;
+	private static final Logger logger = Logger.getLogger(InsuranceTypeProviderDialogCtrl.class);
 
-	protected Window					window_InsuranceTypeProviderDialog;
-	protected ExtendedCombobox			provider;
-	protected Decimalbox				insRate;
-	private InsuranceTypeProvider		insuranceTypeProvider;
+	protected Window window_InsuranceTypeProviderDialog;
+	protected ExtendedCombobox provider;
+	protected Decimalbox insRate;
+	private InsuranceTypeProvider insuranceTypeProvider;
 
-	private InsuranceTypeDialogCtrl		insuranceTypeDialogCtrl;
-	private String						userRole;
-	private List<InsuranceTypeProvider>	insuranceTypeProviderList;
-	private Textbox                     insuranceType;
-	private Textbox                     insuranceTypeDesc;
+	private InsuranceTypeDialogCtrl insuranceTypeDialogCtrl;
+	private String userRole;
+	private List<InsuranceTypeProvider> insuranceTypeProviderList;
+	private Textbox insuranceType;
+	private Textbox insuranceTypeDesc;
 
 	/**
 	 * default constructor.<br>
@@ -117,7 +117,7 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 		this.provider.setDescColumn("TakafulName");
 		this.provider.setValidateColumns(new String[] { "TakafulCode" });
 		this.provider.setTextBoxWidth(143);
-		
+
 		this.insRate.setReadonly(true);
 		this.insRate.setFormat(PennantConstants.rateFormate9);
 
@@ -136,7 +136,7 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 			this.insRate.setText("");
 		} else {
 			TakafulProvider details = (TakafulProvider) dataObject;
-			if(details!=null){				
+			if (details != null) {
 				this.insRate.setValue(details.getTakafulRate());
 			}
 		}
@@ -199,7 +199,7 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 		logger.debug("Leaving");
 
 	}
-	
+
 	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}
@@ -210,7 +210,6 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 		this.provider.setValue(insuranceTypeProvider.getProviderCode());
 		this.provider.setDescription(insuranceTypeProvider.getProviderName());
 		this.insRate.setValue(insuranceTypeProvider.getInsuranceRate());
-		
 
 	}
 
@@ -335,9 +334,9 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 						&& insuranceTypeProvider.getInsuranceType().equals(aInsuranceTypeProvider.getInsuranceType())) {
 					// Both Current and Existing list rating same
 					if (aInsuranceTypeProvider.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						this.provider.setValue("");
 						this.provider.setDescription("");
 						return auditHeader;
@@ -394,17 +393,18 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 
 	private void doSetValidation() {
 		if (this.provider.isButtonVisible()) {
-			this.provider.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_InsuranceTypeProviderDialog_Provider.value"), null, true, true));
+			this.provider.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_InsuranceTypeProviderDialog_Provider.value"), null, true, true));
 		}
 
 	}
 
 	@Override
-	protected void doClearMessage(){
+	protected void doClearMessage() {
 		this.provider.setConstraint("");
 		this.provider.setErrorMessage("");
 	}
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -426,7 +426,7 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 		this.btnCancel.setVisible(false);
 
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -438,7 +438,7 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 		doDelete();
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Deletes a FinTypeAccount object from database.<br>
 	 * 
@@ -450,9 +450,10 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 		BeanUtils.copyProperties(getInsuranceTypeProvider(), aInsTyeProvider);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value")+" : "+aInsTyeProvider.getInsuranceType()+","+
-				Labels.getLabel("label_FinTypeAccountDialog_Event.value")+" : "+ aInsTyeProvider.getProviderCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value") + " : "
+				+ aInsTyeProvider.getInsuranceType() + "," + Labels.getLabel("label_FinTypeAccountDialog_Event.value")
+				+ " : " + aInsTyeProvider.getProviderCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aInsTyeProvider.getRecordType())) {
 				aInsTyeProvider.setVersion(aInsTyeProvider.getVersion() + 1);

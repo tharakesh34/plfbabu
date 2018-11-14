@@ -93,63 +93,63 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/Branch/branchDialog.zul file.
  */
 public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
-	private static final long			serialVersionUID	= -4832204841676720745L;
-	private static final Logger			logger				= Logger.getLogger(BranchDialogCtrl.class);
+	private static final long serialVersionUID = -4832204841676720745L;
+	private static final Logger logger = Logger.getLogger(BranchDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_BranchDialog;
+	protected Window window_BranchDialog;
 
-	protected Textbox					branchCode;
-	protected Textbox					branchDesc;
-	protected Textbox					branchAddrLine1;
-	protected Textbox					branchAddrLine2;
-	protected Textbox					branchPOBox;
-	protected ExtendedCombobox			branchCity;
-	protected ExtendedCombobox			branchProvince;
-	protected ExtendedCombobox			branchCountry;
-	protected Textbox					branchFax;
-	protected Textbox					faxCountryCode;
-	protected Textbox					faxAreaCode;
-	protected Textbox					branchTel;
-	protected Textbox					phoneCountryCode;
-	protected Textbox					phoneAreaCode;
-	protected Textbox					branchSwiftBankCode;
-	protected ExtendedCombobox			branchSwiftCountry;
-	protected Textbox					branchSwiftLocCode;
-	protected Textbox					branchSwiftBrnCde;
-	protected Textbox					branchSortCode;
-	protected Checkbox					branchIsActive;
-	protected Textbox					cityName;
-	protected Row						row_NewBranch;
-	protected ExtendedCombobox			newBranchCode;
-	protected Checkbox					miniBranch;
-	protected Combobox					branchType;
-	protected ExtendedCombobox			parentBranch;
-	protected Combobox					region;
-	protected Textbox					bankRefNo;
-	protected Textbox					branchAddrHNbr;
-	protected Textbox					branchFlatNbr;
-	protected Textbox					branchAddrStreet;
-	protected ExtendedCombobox			pinCode;
+	protected Textbox branchCode;
+	protected Textbox branchDesc;
+	protected Textbox branchAddrLine1;
+	protected Textbox branchAddrLine2;
+	protected Textbox branchPOBox;
+	protected ExtendedCombobox branchCity;
+	protected ExtendedCombobox branchProvince;
+	protected ExtendedCombobox branchCountry;
+	protected Textbox branchFax;
+	protected Textbox faxCountryCode;
+	protected Textbox faxAreaCode;
+	protected Textbox branchTel;
+	protected Textbox phoneCountryCode;
+	protected Textbox phoneAreaCode;
+	protected Textbox branchSwiftBankCode;
+	protected ExtendedCombobox branchSwiftCountry;
+	protected Textbox branchSwiftLocCode;
+	protected Textbox branchSwiftBrnCde;
+	protected Textbox branchSortCode;
+	protected Checkbox branchIsActive;
+	protected Textbox cityName;
+	protected Row row_NewBranch;
+	protected ExtendedCombobox newBranchCode;
+	protected Checkbox miniBranch;
+	protected Combobox branchType;
+	protected ExtendedCombobox parentBranch;
+	protected Combobox region;
+	protected Textbox bankRefNo;
+	protected Textbox branchAddrHNbr;
+	protected Textbox branchFlatNbr;
+	protected Textbox branchAddrStreet;
+	protected ExtendedCombobox pinCode;
 
 	// not autoWired Var's
-	private Branch						branch;															// overHanded per parameter
-	private transient BranchListCtrl	branchListCtrl;													// overHanded per parameter
+	private Branch branch; // overHanded per parameter
+	private transient BranchListCtrl branchListCtrl; // overHanded per parameter
 
-	private transient boolean			validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient BranchService		branchService;
-	private transient String			sBranchCountry;
-	private transient String			sBranchProvince;
-	private transient String			sBranchCity;
-	private transient String			sPinCode;
+	private transient BranchService branchService;
+	private transient String sBranchCountry;
+	private transient String sBranchProvince;
+	private transient String sBranchCity;
+	private transient String sPinCode;
 
-	private final List<ValueLabel>		branchTypeList		= PennantStaticListUtil.getBranchTypeList();
-	private final List<ValueLabel>		regionList			= PennantStaticListUtil.getRegionList();
+	private final List<ValueLabel> branchTypeList = PennantStaticListUtil.getBranchTypeList();
+	private final List<ValueLabel> regionList = PennantStaticListUtil.getRegionList();
 
 	/**
 	 * default constructor.<br>
@@ -491,7 +491,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		sBranchProvince = this.branchProvince.getValue();
 		sBranchCity = this.branchCity.getValue();
 		sPinCode = this.pinCode.getValue();
-		
+
 		if (!aBranch.isNew()) {
 			Filter[] filterProvince = new Filter[1];
 			filterProvince[0] = new Filter("CPCountry", sBranchCountry, Filter.OP_EQUAL);
@@ -691,7 +691,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 
 		aBranch.setRecordStatus(this.recordStatus.getValue());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1485,7 +1485,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		this.branchProvince.setFilters(filters1);
 	}
-	
+
 	public void onFulfill$branchProvince(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -1524,7 +1524,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		fillCitydetails(pcProvince);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void fillCitydetails(String state) {
 		logger.debug("Entering");
 
@@ -1597,7 +1597,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		this.pinCode.setFilters(filters1);
 	}
-	
+
 	public void onFulfill$pinCode(Event event) {
 		logger.debug("Entering");
 
@@ -1632,8 +1632,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.pinCode.setFilters(filters1);
 
 		logger.debug("Leaving");
-		}
-
+	}
 
 	public void onCheck$miniBranch(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -1650,8 +1649,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
-	
 	public void onFulfill$parentBranch(Event event) {
 		logger.debug("Entering");
 

@@ -75,7 +75,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	public RatingTypeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,17 +96,13 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 		this.ratingTypeDAO = ratingTypeDAO;
 	}
 
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTRatingTypes/BMTRatingTypes_Temp by using RatingTypeDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using RatingTypeDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTRatingTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTRatingTypes/BMTRatingTypes_Temp by using RatingTypeDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using RatingTypeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -140,12 +136,10 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTRatingTypes by using RatingTypeDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTRatingTypes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTRatingTypes by using RatingTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -167,8 +161,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * getRatingTypeById fetch the details by using RatingTypeDAO's
-	 * getRatingTypeById method.
+	 * getRatingTypeById fetch the details by using RatingTypeDAO's getRatingTypeById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -182,9 +175,8 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * getApprovedRatingTypeById fetch the details by using RatingTypeDAO's
-	 * getRatingTypeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTRatingTypes.
+	 * getApprovedRatingTypeById fetch the details by using RatingTypeDAO's getRatingTypeById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTRatingTypes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -195,19 +187,15 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getRatingTypeDAO().delete with parameters ratingType,"" b) NEW Add
-	 * new record in to main table by using getRatingTypeDAO().save with
-	 * parameters ratingType,"" c) EDIT Update record in the main table by using
-	 * getRatingTypeDAO().update with parameters ratingType,"" 3) Delete the
-	 * record from the workFlow table by using getRatingTypeDAO().delete with
-	 * parameters ratingType,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTRatingTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getRatingTypeDAO().delete with
+	 * parameters ratingType,"" b) NEW Add new record in to main table by using getRatingTypeDAO().save with parameters
+	 * ratingType,"" c) EDIT Update record in the main table by using getRatingTypeDAO().update with parameters
+	 * ratingType,"" 3) Delete the record from the workFlow table by using getRatingTypeDAO().delete with parameters
+	 * ratingType,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTRatingTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTRatingTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -257,13 +245,10 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getRatingTypeDAO().delete with parameters
-	 * ratingType,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getRatingTypeDAO().delete with parameters ratingType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -286,19 +271,16 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -307,18 +289,16 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -336,23 +316,22 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 		String[] errParm = new String[2];
 
 		valueParm[0] = ratingType.getRatingType();
-		errParm[0] = PennantJavaUtil.getLabel("label_RatingType") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_RatingType") + ":" + valueParm[0];
 
 		if (ratingType.isNew()) { // for New record or new record into work flow
 
 			if (!ratingType.isWorkflow()) {// With out Work flow only new records
 				if (befRatingType != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (ratingType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befRatingType != null || tempRatingType != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befRatingType == null || tempRatingType != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -361,36 +340,33 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 			if (!ratingType.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befRatingType == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
-					if (oldRatingType != null
-							&& !oldRatingType.getLastMntOn().equals(befRatingType.getLastMntOn())) {
+					if (oldRatingType != null && !oldRatingType.getLastMntOn().equals(befRatingType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempRatingType == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempRatingType != null
-						&& oldRatingType != null
+				if (tempRatingType != null && oldRatingType != null
 						&& !oldRatingType.getLastMntOn().equals(tempRatingType.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !ratingType.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !ratingType.isWorkflow()) {
 			auditDetail.setBefImage(befRatingType);
 		}
 		logger.debug("Leaving");

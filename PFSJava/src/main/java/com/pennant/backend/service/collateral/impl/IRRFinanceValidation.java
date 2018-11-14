@@ -14,9 +14,9 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class IRRFinanceValidation {
-	
-	private IRRFinanceTypeDAO 	irrFinanceTypeDAO;
-	
+
+	private IRRFinanceTypeDAO irrFinanceTypeDAO;
+
 	public IRRFinanceTypeDAO getIRRFinanceTypeDAO() {
 		return irrFinanceTypeDAO;
 	}
@@ -25,11 +25,7 @@ public class IRRFinanceValidation {
 		this.irrFinanceTypeDAO = irrFinanceTypeDAO;
 	}
 
-	
-
-	
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -47,20 +43,20 @@ public class IRRFinanceValidation {
 		IRRFinanceType irrFinanceType = (IRRFinanceType) auditDetail.getModelData();
 		IRRFinanceType tempirrFinanceTypeDetail = null;
 		if (irrFinanceType.isWorkflow()) {
-			tempirrFinanceTypeDetail = getIRRFinanceTypeDAO().getIRRFinanceType(
-					irrFinanceType.getIRRID(),irrFinanceType.getFinType(), "_Temp");
+			tempirrFinanceTypeDetail = getIRRFinanceTypeDAO().getIRRFinanceType(irrFinanceType.getIRRID(),
+					irrFinanceType.getFinType(), "_Temp");
 		}
 
-		IRRFinanceType befirrFinanceTypeDetail =getIRRFinanceTypeDAO().getIRRFinanceType(
-				irrFinanceType.getIRRID(),irrFinanceType.getFinType(), "");
+		IRRFinanceType befirrFinanceTypeDetail = getIRRFinanceTypeDAO().getIRRFinanceType(irrFinanceType.getIRRID(),
+				irrFinanceType.getFinType(), "");
 		IRRFinanceType oldirrFinanceTypeDetail = irrFinanceType.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
 		valueParm[0] = String.valueOf(irrFinanceType.getIRRID());
 		valueParm[1] = irrFinanceType.getFinType();
-			errParm[0] = PennantJavaUtil.getLabel("label_IRRID") + ":" + valueParm[0];
-			errParm[1] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ":" + valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_IRRID") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ":" + valueParm[1];
 
 		if (irrFinanceType.isNew()) { // for New record or new record into work flow
 
@@ -72,13 +68,11 @@ public class IRRFinanceValidation {
 
 				if (irrFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befirrFinanceTypeDetail != null || tempirrFinanceTypeDetail != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befirrFinanceTypeDetail == null || tempirrFinanceTypeDetail != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -92,13 +86,13 @@ public class IRRFinanceValidation {
 
 					if (oldirrFinanceTypeDetail != null
 							&& !oldirrFinanceTypeDetail.getLastMntOn().equals(befirrFinanceTypeDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -122,6 +116,5 @@ public class IRRFinanceValidation {
 		}
 		return auditDetail;
 	}
-
 
 }

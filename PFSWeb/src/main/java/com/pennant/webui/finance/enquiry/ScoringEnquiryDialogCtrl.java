@@ -43,36 +43,34 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private static final Logger logger = Logger.getLogger(ScoringEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window        window_ScoringEnquiryDialog;               
-	protected Listbox       listBoxFinancialScoRef;                    
-	protected Listbox       listBoxNonFinancialScoRef;                 
+	protected Window window_ScoringEnquiryDialog;
+	protected Listbox listBoxFinancialScoRef;
+	protected Listbox listBoxNonFinancialScoRef;
 
-	protected Borderlayout   borderlayoutScoringEnquiry;		       
-	protected Tab 			 finScoreMetricTab;
-	protected Tab 			 nonFinScoreMetricTab;
-	protected Grid			 grid_FinScoreDetail;
-	
-	protected Decimalbox 	maxFinTotScore;							
-	protected Decimalbox 	maxNonFinTotScore;						
-	protected Intbox 		minScore;								
-	protected Decimalbox 	calTotScore;							
-	protected Checkbox 		isOverride;								
-	protected Intbox 		overrideScore;							
-	protected Row 			row_finScoreOverride;					
-	protected Label 		label_ScoreSummary;					
-	protected Label 		label_ScoreSummaryVal;					
-	protected Label 		label_DeviationValue;					
+	protected Borderlayout borderlayoutScoringEnquiry;
+	protected Tab finScoreMetricTab;
+	protected Tab nonFinScoreMetricTab;
+	protected Grid grid_FinScoreDetail;
 
-	private Tabpanel 		 tabPanel_dialogWindow;
+	protected Decimalbox maxFinTotScore;
+	protected Decimalbox maxNonFinTotScore;
+	protected Intbox minScore;
+	protected Decimalbox calTotScore;
+	protected Checkbox isOverride;
+	protected Intbox overrideScore;
+	protected Row row_finScoreOverride;
+	protected Label label_ScoreSummary;
+	protected Label label_ScoreSummaryVal;
+	protected Label label_DeviationValue;
+
+	private Tabpanel tabPanel_dialogWindow;
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinanceScoreHeader> finScoreHeaderList = null;
 	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
 	private String custCtgType = "";
-
 
 	/**
 	 * default constructor.<br>
@@ -89,9 +87,8 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -103,30 +100,30 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		// Set the page level components.
 		setPageComponents(window_ScoringEnquiryDialog);
 
-		if(event.getTarget().getParent().getParent() != null){
+		if (event.getTarget().getParent().getParent() != null) {
 			tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 		}
 
 		if (arguments.containsKey("scoringList")) {
-			List<Object> scoreObjectList= (List<Object>) arguments.get("scoringList");
-			if(scoreObjectList != null){
+			List<Object> scoreObjectList = (List<Object>) arguments.get("scoringList");
+			if (scoreObjectList != null) {
 				finScoreHeaderList = (List<FinanceScoreHeader>) scoreObjectList.get(0);
 				scoreDetailListMap = (HashMap<Long, List<FinanceScoreDetail>>) scoreObjectList.get(1);
 			}
 		}
 
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
 		}
-		if(arguments.containsKey("custTypeCtg")){
+		if (arguments.containsKey("custTypeCtg")) {
 			this.custCtgType = (String) arguments.get("custTypeCtg");
-		  }
+		}
 
 		doShowDialog();
 
 		logger.debug("Leaving " + event.toString());
 	}
-
 
 	/**
 	 * Opens the Dialog window modal.
@@ -141,24 +138,25 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		try {
 
 			doFillExecutedScoreDetails();
-			
-			if(tabPanel_dialogWindow != null){
-				
+
+			if (tabPanel_dialogWindow != null) {
+
 				this.window_ScoringEnquiryDialog.setBorder("none");
 				this.window_ScoringEnquiryDialog.setTitle("");
 
 				getBorderLayoutHeight();
-				int headerRowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
+				int headerRowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()
+						* 20;
 				int rowsHeight = 0;
-				if(this.grid_FinScoreDetail.isVisible()){
-					rowsHeight = headerRowsHeight + grid_FinScoreDetail.getRows().getVisibleItemCount()*20;
-				}else{
+				if (this.grid_FinScoreDetail.isVisible()) {
+					rowsHeight = headerRowsHeight + grid_FinScoreDetail.getRows().getVisibleItemCount() * 20;
+				} else {
 					rowsHeight = headerRowsHeight;
 				}
-				this.listBoxFinancialScoRef.setHeight(this.borderLayoutHeight-rowsHeight-100+"px");
-				this.listBoxNonFinancialScoRef.setHeight(this.borderLayoutHeight-rowsHeight-100+"px");
+				this.listBoxFinancialScoRef.setHeight(this.borderLayoutHeight - rowsHeight - 100 + "px");
+				this.listBoxNonFinancialScoRef.setHeight(this.borderLayoutHeight - rowsHeight - 100 + "px");
 
-				this.window_ScoringEnquiryDialog.setHeight(this.borderLayoutHeight-headerRowsHeight+"px");
+				this.window_ScoringEnquiryDialog.setHeight(this.borderLayoutHeight - headerRowsHeight + "px");
 				tabPanel_dialogWindow.appendChild(this.window_ScoringEnquiryDialog);
 			}
 
@@ -171,15 +169,15 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	/**
 	 * Method for Filling Scoring Details
 	 */
-	private void doFillExecutedScoreDetails(){
+	private void doFillExecutedScoreDetails() {
 		logger.debug("Entering");
-		
+
 		this.finScoreMetricTab.setVisible(true);
 		this.nonFinScoreMetricTab.setVisible(true);
 
-		if(getFinScoreHeaderList() != null && getFinScoreHeaderList().size() > 0){
+		if (getFinScoreHeaderList() != null && getFinScoreHeaderList().size() > 0) {
 
-			if(StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, custCtgType)){
+			if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, custCtgType)) {
 
 				this.finScoreMetricTab.setLabel("Retail Scoring Metric Details");
 				this.nonFinScoreMetricTab.setVisible(false);
@@ -190,7 +188,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 					addListGroup("", this.listBoxFinancialScoRef, PennantConstants.PFF_CUSTCTG_INDIV, header);
 					BigDecimal totalGrpMaxScore = BigDecimal.ZERO;
 					BigDecimal totalGrpExecScore = BigDecimal.ZERO;
-					if(getScoreDetailListMap().containsKey(header.getHeaderId())){
+					if (getScoreDetailListMap().containsKey(header.getHeaderId())) {
 						List<FinanceScoreDetail> scoreDetailList = getScoreDetailListMap().get(header.getHeaderId());
 						for (FinanceScoreDetail retailScoreDetail : scoreDetailList) {
 							addExecutedListItem(retailScoreDetail, this.listBoxFinancialScoRef);
@@ -198,19 +196,20 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 							totalGrpExecScore = totalGrpExecScore.add(retailScoreDetail.getExecScore());
 						}
 					}
-					addListFooter(totalGrpMaxScore,totalGrpExecScore, this.listBoxFinancialScoRef,"I",header.getCreditWorth());
+					addListFooter(totalGrpMaxScore, totalGrpExecScore, this.listBoxFinancialScoRef, "I",
+							header.getCreditWorth());
 				}
 
-			}else if(StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType)){
+			} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, custCtgType)) {
 
 				FinanceScoreHeader header = getFinScoreHeaderList().get(0);
-				
+
 				this.minScore.setValue(header.getMinScore());
 				this.isOverride.setChecked(header.isOverride());
 				this.isOverride.setDisabled(true);
 				this.overrideScore.setValue(header.getOverrideScore());
 
-				if(getScoreDetailListMap().containsKey(header.getHeaderId())){
+				if (getScoreDetailListMap().containsKey(header.getHeaderId())) {
 					List<FinanceScoreDetail> scoreDetailList = getScoreDetailListMap().get(header.getHeaderId());
 
 					long prvGrpId = 0;
@@ -220,27 +219,27 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 					BigDecimal nonFinTotalScore = BigDecimal.ZERO;
 					BigDecimal calTotalScore = BigDecimal.ZERO;
 
-					for (int i = 0; i < scoreDetailList.size() ; i++) {
+					for (int i = 0; i < scoreDetailList.size(); i++) {
 						FinanceScoreDetail curScoreDetail = scoreDetailList.get(i);
 
 						//Adding List Group 
-						if((prvGrpId == 0) || (prvGrpId != curScoreDetail.getSubGroupId())){
-							totalgrpExecScore = BigDecimal.ZERO; 
+						if ((prvGrpId == 0) || (prvGrpId != curScoreDetail.getSubGroupId())) {
+							totalgrpExecScore = BigDecimal.ZERO;
 							totalgrpMaxScore = BigDecimal.ZERO;
-							if("F".equals(curScoreDetail.getCategoryType())){
+							if ("F".equals(curScoreDetail.getCategoryType())) {
 								addListGroup(curScoreDetail.getSubGrpCodeDesc(), this.listBoxFinancialScoRef,
 										curScoreDetail.getCategoryType(), null);
-							}else if("N".equals(curScoreDetail.getCategoryType())){
-								addListGroup(curScoreDetail.getSubGrpCodeDesc(), this.listBoxNonFinancialScoRef, 
+							} else if ("N".equals(curScoreDetail.getCategoryType())) {
+								addListGroup(curScoreDetail.getSubGrpCodeDesc(), this.listBoxNonFinancialScoRef,
 										curScoreDetail.getCategoryType(), null);
 							}
 						}
 
 						//Adding List Item
-						if("F".equals(curScoreDetail.getCategoryType())){
+						if ("F".equals(curScoreDetail.getCategoryType())) {
 							addExecutedListItem(curScoreDetail, this.listBoxFinancialScoRef);
 							finTotalScore = finTotalScore.add(curScoreDetail.getMaxScore());
-						}else if("N".equals(curScoreDetail.getCategoryType())){
+						} else if ("N".equals(curScoreDetail.getCategoryType())) {
 							addExecutedListItem(curScoreDetail, this.listBoxNonFinancialScoRef);
 							nonFinTotalScore = nonFinTotalScore.add(curScoreDetail.getMaxScore());
 						}
@@ -248,73 +247,73 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 						totalgrpMaxScore = totalgrpMaxScore.add(curScoreDetail.getMaxScore());
 						calTotalScore = calTotalScore.add(curScoreDetail.getExecScore());
 
-
 						//Adding List Group Footer
-						if((i == scoreDetailList.size()-1) || 
-								(curScoreDetail.getSubGroupId() != scoreDetailList.get(i+1).getSubGroupId())){
-							if("F".equals(curScoreDetail.getCategoryType())){
-								addListFooter(totalgrpMaxScore,totalgrpExecScore, this.listBoxFinancialScoRef,"F",header.getCreditWorth());
-							}else if("N".equals(curScoreDetail.getCategoryType())){
-								addListFooter(totalgrpMaxScore,totalgrpExecScore, this.listBoxNonFinancialScoRef,"N",header.getCreditWorth());
+						if ((i == scoreDetailList.size() - 1)
+								|| (curScoreDetail.getSubGroupId() != scoreDetailList.get(i + 1).getSubGroupId())) {
+							if ("F".equals(curScoreDetail.getCategoryType())) {
+								addListFooter(totalgrpMaxScore, totalgrpExecScore, this.listBoxFinancialScoRef, "F",
+										header.getCreditWorth());
+							} else if ("N".equals(curScoreDetail.getCategoryType())) {
+								addListFooter(totalgrpMaxScore, totalgrpExecScore, this.listBoxNonFinancialScoRef, "N",
+										header.getCreditWorth());
 							}
 						}
 						prvGrpId = curScoreDetail.getSubGroupId();
 					}
-					
+
 					this.maxFinTotScore.setValue(finTotalScore);
 					this.maxNonFinTotScore.setValue(nonFinTotalScore);
 					this.calTotScore.setValue(calTotalScore);
 
-
 				}
 			}
 		}
-		
-		setScoreSummaryStyle(getFinScoreHeaderList(),getScoreDetailListMap());
-		
+
+		setScoreSummaryStyle(getFinScoreHeaderList(), getScoreDetailListMap());
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * @param financeScoreHeaders
 	 * @param scoreMapsco
-	 * @return 
+	 * @return
 	 */
-	private void setScoreSummaryStyle(List<FinanceScoreHeader>  financeScoreHeaders, HashMap<Long, List<FinanceScoreDetail>> scoreMap ) {
-		boolean deviationSuff=false;
-		String deviationVal="";
-		
-		if (financeScoreHeaders!=null && !financeScoreHeaders.isEmpty()) {
+	private void setScoreSummaryStyle(List<FinanceScoreHeader> financeScoreHeaders,
+			HashMap<Long, List<FinanceScoreDetail>> scoreMap) {
+		boolean deviationSuff = false;
+		String deviationVal = "";
+
+		if (financeScoreHeaders != null && !financeScoreHeaders.isEmpty()) {
 			List<FinanceDeviations> list = getFinanceDevaitions(financeScoreHeaders.get(0).getFinReference());
-			
+
 			for (FinanceScoreHeader financeScoreHeader : financeScoreHeaders) {
-				
-				FinanceDeviations dev = isDevaitionApproved(list,financeScoreHeader);
-				if (dev!=null) {
-					deviationVal=dev.getDeviationValue();
-					deviationSuff=true;
+
+				FinanceDeviations dev = isDevaitionApproved(list, financeScoreHeader);
+				if (dev != null) {
+					deviationVal = dev.getDeviationValue();
+					deviationSuff = true;
 				}
-			
+
 				if (deviationSuff) {
 					break;
 				}
 			}
-			
+
 		}
-		
+
 		this.label_ScoreSummaryVal.setStyle("font-weight:bold;font-size:11px;color:green;");
-		
+
 		if (deviationSuff) {
 			this.label_ScoreSummaryVal.setValue(Labels.getLabel("label_SuffScr_Deviation.label"));
-			this.label_DeviationValue.setValue(Labels.getLabel("label_Deviation_Value",new String[]{deviationVal}));
+			this.label_DeviationValue.setValue(Labels.getLabel("label_Deviation_Value", new String[] { deviationVal }));
 			this.label_DeviationValue.setVisible(true);
-		}else{
+		} else {
 			this.label_ScoreSummaryVal.setValue(Labels.getLabel("label_SuffScr.label"));
 		}
-		
+
 	}
 
-	
 	/**
 	 * @param list
 	 * @param financeScoreHeader
@@ -322,7 +321,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 */
 	private FinanceDeviations isDevaitionApproved(List<FinanceDeviations> list, FinanceScoreHeader financeScoreHeader) {
 		logger.debug(" Entering ");
-		if (list==null || list.isEmpty()) {
+		if (list == null || list.isEmpty()) {
 			return null;
 		}
 		for (FinanceDeviations financeDeviations : list) {
@@ -335,46 +334,48 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		return null;
 	}
 
-	public List<FinanceDeviations> getFinanceDevaitions(String finReference){
-		JdbcSearchObject<FinanceDeviations> jdbcSearchObject=new JdbcSearchObject<FinanceDeviations>(FinanceDeviations.class);
+	public List<FinanceDeviations> getFinanceDevaitions(String finReference) {
+		JdbcSearchObject<FinanceDeviations> jdbcSearchObject = new JdbcSearchObject<FinanceDeviations>(
+				FinanceDeviations.class);
 		jdbcSearchObject.addTabelName("FinanceDeviations");
 		jdbcSearchObject.addFilterEqual("FinReference", finReference);
 		jdbcSearchObject.addFilterEqual("Module", DeviationConstants.TY_SCORE);
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		return pagedListService.getBySearchObject(jdbcSearchObject);
 	}
-	
+
 	/**
 	 * Method for Adding List Group to listBox in Corporation
+	 * 
 	 * @param scoringMetric
 	 * @param listbox
 	 */
-	private void addListGroup(String groupCodeDesc, Listbox listbox, String ctgType, Object object){
+	private void addListGroup(String groupCodeDesc, Listbox listbox, String ctgType, Object object) {
 		logger.debug("Entering");
 		Listgroup listgroup = new Listgroup();
 
-		if(PennantConstants.PFF_CUSTCTG_INDIV.equals(ctgType)){
+		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(ctgType)) {
 
 			FinanceScoreHeader header = null;
 			Label label = null;
 			Space space = null;
 			Listcell lc = null;
-			
-			if(object instanceof FinanceScoreHeader){
+
+			if (object instanceof FinanceScoreHeader) {
 				header = (FinanceScoreHeader) object;
 
 				lc = new Listcell(PennantJavaUtil.concat(header.getGroupCode(), " - ", header.getGroupCodeDesc()));
 				lc.setParent(listgroup);
 
 				lc = new Listcell();
-				lc.setSpan(3);	
-				label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :", String.valueOf(header.getMinScore())));
+				lc.setSpan(3);
+				label = new Label(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :",
+						String.valueOf(header.getMinScore())));
 
-				lc.appendChild(label);				
+				lc.appendChild(label);
 				space = new Space();
-				space.setWidth("100px");				
-				lc.appendChild(space);				
-				
+				space.setWidth("100px");
+				lc.appendChild(space);
 
 				lc.setParent(listgroup);
 			}
@@ -397,7 +398,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 
 				lc.setParent(listgroup);
 			}
-		}else{
+		} else {
 			listgroup.setLabel(groupCodeDesc);
 		}
 
@@ -406,13 +407,13 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Method for Filling Listbox Using Executed Score Details for Retail/Corporate
+	 * 
 	 * @param scoreDetail
 	 * @param listbox
 	 */
-	private void addExecutedListItem(FinanceScoreDetail scoreDetail, Listbox listbox){
+	private void addExecutedListItem(FinanceScoreDetail scoreDetail, Listbox listbox) {
 		logger.debug("Entering");
 
 		Listitem item = new Listitem();
@@ -434,17 +435,19 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 
 	/**
 	 * Method for Adding List Group to listBox in Corporation
+	 * 
 	 * @param scoringMetric
 	 * @param listbox
 	 */
-	private void addListFooter(BigDecimal totalMaxGrpScore, BigDecimal totalExecGrpScore, Listbox listbox, String ctgType, String creditWorth){
+	private void addListFooter(BigDecimal totalMaxGrpScore, BigDecimal totalExecGrpScore, Listbox listbox,
+			String ctgType, String creditWorth) {
 		logger.debug("Entering");
 
 		Listgroupfoot listgroupfoot = new Listgroupfoot();
 
 		Listcell cell = null;
 
-		if("I".equals(ctgType)){
+		if ("I".equals(ctgType)) {
 			cell = new Listcell("Credit-Worth");
 			cell.setStyle("text-align:right;font-weight:normal;");
 			listgroupfoot.appendChild(cell);
@@ -458,21 +461,20 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			label.setStyle("float:right;");
 			cell.appendChild(label);
 			listgroupfoot.appendChild(cell);
-		}else if("F".equals(ctgType) || "N".equals(ctgType)){
+		} else if ("F".equals(ctgType) || "N".equals(ctgType)) {
 			cell = new Listcell("Sub Group Total");
 			cell.setSpan(2);
 			cell.setStyle("font-weight:bold;text-align:right;");
 			listgroupfoot.appendChild(cell);
 		}
 
-
 		cell = new Listcell(String.valueOf(totalMaxGrpScore));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
 
-		if("N".equals(ctgType)){
+		if ("N".equals(ctgType)) {
 			cell = new Listcell("");
-		}else{
+		} else {
 			cell = new Listcell();
 			Label label = new Label(String.valueOf(totalExecGrpScore));
 			label.setStyle("font-weight:bold;float:right;");
@@ -491,6 +493,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	public void setFinScoreHeaderList(List<FinanceScoreHeader> finScoreHeaderList) {
 		this.finScoreHeaderList = finScoreHeaderList;
 	}
+
 	public List<FinanceScoreHeader> getFinScoreHeaderList() {
 		return finScoreHeaderList;
 	}
@@ -498,8 +501,9 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	public void setScoreDetailListMap(HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
 		this.scoreDetailListMap = scoreDetailListMap;
 	}
+
 	public HashMap<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
 		return scoreDetailListMap;
 	}
-	
+
 }

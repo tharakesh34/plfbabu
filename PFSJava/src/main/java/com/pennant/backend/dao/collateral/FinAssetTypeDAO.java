@@ -15,7 +15,7 @@ public interface FinAssetTypeDAO {
 	FinAssetTypes getFinAssetTypesbyID(FinAssetTypes finAssetTypes, String type);
 
 	void delete(FinAssetTypes finAssetTypes, String type);
-	
+
 	void deleteByReference(String reference, String type);
 
 }

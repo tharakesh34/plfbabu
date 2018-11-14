@@ -221,7 +221,7 @@ public interface FinanceMainDAO {
 
 	int getFinanceCountById(String finReference, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateID,String repayMethod);
+	int loanMandateSwapping(String finReference, long newMandateID, String repayMethod);
 
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
 
@@ -254,21 +254,20 @@ public interface FinanceMainDAO {
 	 */
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
 
-	void updateBucketStatus(String finReference, String status, int bucket,
-			String statusReason);
-	
+	void updateBucketStatus(String finReference, String status, int bucket, String statusReason);
+
 	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
+
 	FinanceMain getFinMainsForEODByFinRef(String finReference, boolean isActive);
 
 	int getFinanceMainByBank(String bankCode, String type);
-
 
 	void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw);
 
 	void updatePaymentInEOD(FinanceMain financeMain);
 
 	List<FinanceMain> getBYCustIdForLimitRebuild(long id, boolean orgination);
-	
+
 	FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF);
 
 	int getFinCountByCustId(long custID);
@@ -276,10 +275,10 @@ public interface FinanceMainDAO {
 	void updateFinMandateId(long mandateId, String finReference, String type);
 
 	long getMandateIdByRef(String finReference, String type);
-	
+
 	int getFinanceCountById(String finReference);
 
-	boolean  isAppNoExists(String applicationNo,TableType type);
+	boolean isAppNoExists(String applicationNo, TableType type);
 
 	String getApplicationNoById(String finReference, String type);
 
@@ -288,7 +287,7 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate);
 
 	boolean isFinTypeExistsInFinanceMain(String finType, String string);
-	
+
 	boolean isLoanPurposeExits(String purposeCode, String string);
 
 	String getEarlyPayMethodsByFinRefernce(String finReference);

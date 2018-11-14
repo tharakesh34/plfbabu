@@ -103,9 +103,8 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -140,8 +139,7 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
@@ -177,14 +175,14 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 
 		String eventName = this.eventName.getSelectedItem().getValue().toString();
 		onChangeEvent(eventName);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void onChangeEvent(String eventName) {
 
 		this.listBox_ExtendedFields.getItems().clear();
-		
+
 		this.detailsTab.setLabel(this.eventName.getSelectedItem().getLabel());
 		ExtendedFieldCtrl extendedFieldCtrl = new ExtendedFieldCtrl();
 		String subModule = getFinanceEnquiry().getLovDescProductCodeName();
@@ -205,7 +203,7 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 		try {
 			List<ExtendedFieldRender> extendedFieldRenderList = extendedFieldCtrl
 					.getExtendedFieldRenderList(getFinanceEnquiry().getFinReference(), sb.toString(), "_View");
-			
+
 			doFillExtendedDetails(extendedFieldRenderList, extendedFieldHeader);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -280,8 +278,7 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
-	 
+
 	private void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();

@@ -70,23 +70,22 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFieldsDAO {
 	private static Logger logger = Logger.getLogger(DedupFieldsDAOImpl.class);
-		
+
 	public DedupFieldsDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new DedupFields
+	 * This method set the Work Flow id based on the module name and return the new DedupFields
 	 * 
 	 * @return DedupFields
 	 */
 	@Override
 	public DedupFields getDedupFields() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("DedupFields");
-		DedupFields dedupFields= new DedupFields();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("DedupFields");
+		DedupFields dedupFields = new DedupFields();
+		if (workFlowDetails != null) {
 			dedupFields.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -94,8 +93,8 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	}
 
 	/**
-	 * This method get the module from method getDedupFields() and set the new
-	 * record flag as true and return DedupFields()
+	 * This method get the module from method getDedupFields() and set the new record flag as true and return
+	 * DedupFields()
 	 * 
 	 * @return DedupFields
 	 */
@@ -122,23 +121,21 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 		logger.debug("Entering");
 		DedupFields dedupFields = new DedupFields();
 		dedupFields.setId(id);
-		
+
 		StringBuilder selectListSql = new StringBuilder("Select FieldName, FieldControl,RefType , ");
 		selectListSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectListSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From DedupFields");
 		selectListSql.append(StringUtils.trimToEmpty(type));
 		selectListSql.append(" Where FieldName = :FieldName ");
-		
+
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
-		RowMapper<DedupFields> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DedupFields.class);
-		
-		try{
-			dedupFields = this.jdbcTemplate.queryForObject(
-					selectListSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<DedupFields> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupFields.class);
+
+		try {
+			dedupFields = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			dedupFields = null;
 		}
@@ -147,9 +144,8 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	}
 
 	/**
-	 * This method Deletes the Record from the DedupFields or DedupFields_Temp.
-	 * if Record not deleted then throws DataAccessException with error 41003.
-	 * delete Dedup Fields by key FieldName
+	 * This method Deletes the Record from the DedupFields or DedupFields_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Dedup Fields by key FieldName
 	 * 
 	 * @param Dedup
 	 *            Fields (dedupFields)
@@ -159,28 +155,28 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void delete(DedupFields dedupFields,String type) {
+	public void delete(DedupFields dedupFields, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From DedupFields");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FieldName =:FieldName");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into DedupFields or DedupFields_Temp.
 	 * 
@@ -195,10 +191,10 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	 * 
 	 */
 	@Override
-	public String save(DedupFields dedupFields,String type) {
+	public String save(DedupFields dedupFields, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into DedupFields");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into DedupFields");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FieldName, FieldControl,RefType , ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
@@ -213,11 +209,10 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 		logger.debug("Leaving");
 		return dedupFields.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record DedupFields or DedupFields_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Dedup Fields by key FieldName and Version
+	 * This method updates the Record DedupFields or DedupFields_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Dedup Fields by key FieldName and Version
 	 * 
 	 * @param Dedup
 	 *            Fields (dedupFields)
@@ -228,32 +223,33 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	 * 
 	 */
 	@Override
-	public void update(DedupFields dedupFields,String type) {
+	public void update(DedupFields dedupFields, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder("Update DedupFields");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+
+		StringBuilder updateSql = new StringBuilder("Update DedupFields");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set FieldControl = :FieldControl,RefType=:RefType , ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append("TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				"TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FieldName =:FieldName");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method return the columns of the DedupFields table *
 	 * 
@@ -263,19 +259,17 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	 * 
 	 */
 	public List<BuilderTable> getFieldList(String queryModule) {
-		logger.debug("Entering");		
-		
-		List<BuilderTable> fieldList = new ArrayList<BuilderTable>();
-		
-		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"+queryModule+"'";
-		RowMapper<BuilderTable> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BuilderTable.class);
-		logger.debug("selectSql: "+ selectListSql.toString());
+		logger.debug("Entering");
 
+		List<BuilderTable> fieldList = new ArrayList<BuilderTable>();
+
+		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"
+				+ queryModule + "'";
+		RowMapper<BuilderTable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderTable.class);
+		logger.debug("selectSql: " + selectListSql.toString());
 
 		try {
-			fieldList = this.jdbcTemplate.getJdbcOperations()
-					.query(selectListSql, typeRowMapper);
+			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectListSql, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			fieldList = null;
@@ -284,6 +278,5 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 		logger.debug("Leaving");
 		return fieldList;
 	}
-	
-	
+
 }

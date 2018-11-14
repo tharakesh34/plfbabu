@@ -106,7 +106,7 @@ public class FacilityAgreementDetail {
 	private String adtYear3 = "";
 
 	public FacilityAgreementDetail() {
-		
+
 	}
 
 	public String getAmendment() {
@@ -204,10 +204,11 @@ public class FacilityAgreementDetail {
 	public void setNatureOfBusiness(String natureOfBusiness) {
 		this.natureOfBusiness = natureOfBusiness;
 	}
+
 	public String getNatureOfBusinessCode() {
 		return StringUtils.trimToEmpty(natureOfBusinessCode);
 	}
-	
+
 	public void setNatureOfBusinessCode(String natureOfBusinessCode) {
 		this.natureOfBusinessCode = natureOfBusinessCode;
 	}
@@ -235,14 +236,14 @@ public class FacilityAgreementDetail {
 	public void setConnectedCustomer(String connectedCustomer) {
 		this.connectedCustomer = connectedCustomer;
 	}
-	
+
 	public String getRelatedCustomer() {
-    	return StringUtils.trimToEmpty(relatedCustomer);
-    }
+		return StringUtils.trimToEmpty(relatedCustomer);
+	}
 
 	public void setRelatedCustomer(String relatedCustomer) {
-    	this.relatedCustomer = relatedCustomer;
-    }
+		this.relatedCustomer = relatedCustomer;
+	}
 
 	public String getDeadline() {
 		return StringUtils.trimToEmpty(deadline);
@@ -411,14 +412,14 @@ public class FacilityAgreementDetail {
 	public void setAntiMoneyLaunderSection(String antiMoneyLaunderSection) {
 		this.antiMoneyLaunderSection = antiMoneyLaunderSection;
 	}
-	
+
 	public String getCustomerType() {
-    	return StringUtils.trimToEmpty(customerType);
-    }
+		return StringUtils.trimToEmpty(customerType);
+	}
 
 	public void setCustomerType(String customerType) {
-    	this.customerType = customerType;
-    }
+		this.customerType = customerType;
+	}
 
 	public void setCustomerBackGround(String htmlCustomerBackGround) {
 		this.customerBackGround = htmlCustomerBackGround;
@@ -595,14 +596,14 @@ public class FacilityAgreementDetail {
 	public void setAdtYear3(String adtYear3) {
 		this.adtYear3 = adtYear3;
 	}
-	
+
 	public String getTotalScoring() {
-    	return StringUtils.trimToEmpty(totalScoring);
-    }
+		return StringUtils.trimToEmpty(totalScoring);
+	}
 
 	public void setTotalScoring(String totalScoring) {
-    	this.totalScoring = totalScoring;
-    }
+		this.totalScoring = totalScoring;
+	}
 
 	public String getProposedGrade() {
 		return StringUtils.trimToEmpty(proposedGrade);
@@ -763,10 +764,8 @@ public class FacilityAgreementDetail {
 	public void setTotCover(String totCover) {
 		this.totCover = totCover;
 	}
-	
 
 	// Html Fileds
-
 
 	public String getHtmlCustomerBackGround() {
 		return StringUtils.trimToEmpty(customerBackGround);
@@ -932,9 +931,9 @@ public class FacilityAgreementDetail {
 		private List<CheckListAnsDetails> listquestionAns;
 
 		public CheckListDetails() {
-			
+
 		}
-		
+
 		public String getQuestion() {
 			return StringUtils.trimToEmpty(question);
 		}
@@ -967,9 +966,9 @@ public class FacilityAgreementDetail {
 		private String questionRem;
 
 		public CheckListAnsDetails() {
-			
+
 		}
-		
+
 		public void setQuestionId(long questionId) {
 			this.questionId = questionId;
 		}
@@ -1003,9 +1002,9 @@ public class FacilityAgreementDetail {
 		private String outstandingBalance;
 
 		public CustomerFinance() {
-			
+
 		}
-		
+
 		public String getDealDate() {
 			return StringUtils.trimToEmpty(dealDate);
 		}
@@ -1052,9 +1051,9 @@ public class FacilityAgreementDetail {
 		private List<CustomerCreditReviewDetails> customerCreditReviewDetails = new ArrayList<CustomerCreditReviewDetails>();
 
 		public CustomerCreditReview() {
-			
+
 		}
-		
+
 		public String getCategoryName() {
 			return StringUtils.trimToEmpty(categoryName);
 		}
@@ -1067,8 +1066,7 @@ public class FacilityAgreementDetail {
 			return customerCreditReviewDetails;
 		}
 
-		public void setCustomerCreditReviewDetails(
-		        List<CustomerCreditReviewDetails> customerCreditReviewDetails) {
+		public void setCustomerCreditReviewDetails(List<CustomerCreditReviewDetails> customerCreditReviewDetails) {
 			this.customerCreditReviewDetails = customerCreditReviewDetails;
 		}
 	}
@@ -1080,9 +1078,9 @@ public class FacilityAgreementDetail {
 		private String year3;
 
 		public CustomerCreditReviewDetails() {
-			
+
 		}
-		
+
 		public String getSubCategoryName() {
 			return StringUtils.trimToEmpty(subCategoryName);
 		}
@@ -1125,9 +1123,9 @@ public class FacilityAgreementDetail {
 		private List<ScoringDetails> scoringDetails = new ArrayList<ScoringDetails>();
 
 		public ScoringHeader() {
-			
+
 		}
-		
+
 		public String getScoringGroup() {
 			return StringUtils.trimToEmpty(scoringGroup);
 		}
@@ -1153,9 +1151,9 @@ public class FacilityAgreementDetail {
 		private String calcScore;
 
 		public ScoringDetails() {
-			
+
 		}
-		
+
 		public String getScoringMetric() {
 			return StringUtils.trimToEmpty(scoringMetric);
 		}
@@ -1195,9 +1193,9 @@ public class FacilityAgreementDetail {
 		private List<Recommendation> recommendations;
 
 		public GroupRecommendation() {
-			
+
 		}
-		
+
 		public void setUserRole(String userRole) {
 			this.userRole = userRole;
 		}
@@ -1223,9 +1221,9 @@ public class FacilityAgreementDetail {
 		private String noteDesc;
 
 		public Recommendation() {
-			
+
 		}
-		
+
 		public String getUserName() {
 			return StringUtils.trimToEmpty(userName);
 		}
@@ -1253,6 +1251,7 @@ public class FacilityAgreementDetail {
 		public String getNoteDesc() {
 			return StringUtils.trimToEmpty(noteDesc);
 		}
+
 		public String getHtmlNoteDesc() {
 			return StringUtils.trimToEmpty(noteDesc);
 		}
@@ -1276,9 +1275,9 @@ public class FacilityAgreementDetail {
 		private String exceptionDesc;
 
 		public ExceptionList() {
-			
+
 		}
-		
+
 		public String getExceptionItem() {
 			return StringUtils.trimToEmpty(exceptionItem);
 		}
@@ -1319,20 +1318,19 @@ public class FacilityAgreementDetail {
 		private String revolving;
 		private String transactionType;
 		private String agentBank;
-		
-		
+
 		private String totalFacilityCcy;
 		private String underWritingCcy;
 		private String propFinalTakeCcy;
-		
+
 		private String totalFacilityAmount;
 		private String underWritingAmount;
 		private String propFinalTakeAmount;
-		
+
 		private String totalFacilityAmountUSD;
 		private String underWritingAmountUSD;
 		private String propFinalTakeAmountUSD;
-		
+
 		//NONC
 		private String date;
 		private String cafRef;
@@ -1345,9 +1343,9 @@ public class FacilityAgreementDetail {
 		private String totalScoring;
 		private String nextReviewDate;
 		private String countryOfRisk;
-		
+
 		public ProposedFacility() {
-			
+
 		}
 
 		public String getHtmlFacilityDesc() {
@@ -1510,111 +1508,112 @@ public class FacilityAgreementDetail {
 			return StringUtils.trimToEmpty(documentsRequired);
 
 		}
+
 		public void setDocumentsRequired(String documentsRequired) {
 			this.documentsRequired = documentsRequired;
 		}
 
 		public void setRevolving(String revolving) {
-	        this.revolving = revolving;
-        }
+			this.revolving = revolving;
+		}
 
 		public String getRevolving() {
-	        return StringUtils.trimToEmpty(revolving);
-        }
+			return StringUtils.trimToEmpty(revolving);
+		}
 
 		public void setTransactionType(String transactionType) {
-	        this.transactionType = transactionType;
-        }
+			this.transactionType = transactionType;
+		}
 
 		public String getTransactionType() {
-	        return StringUtils.trimToEmpty(transactionType);
-        }
+			return StringUtils.trimToEmpty(transactionType);
+		}
 
 		public void setAgentBank(String agentBank) {
-	        this.agentBank = agentBank;
-        }
+			this.agentBank = agentBank;
+		}
 
 		public String getAgentBank() {
-	        return StringUtils.trimToEmpty(agentBank);
-        }
+			return StringUtils.trimToEmpty(agentBank);
+		}
 
 		public String getTotalFacilityCcy() {
-        	return StringUtils.trimToEmpty(totalFacilityCcy);
-        }
+			return StringUtils.trimToEmpty(totalFacilityCcy);
+		}
 
 		public void setTotalFacilityCcy(String totalFacilityCcy) {
-        	this.totalFacilityCcy = totalFacilityCcy;
-        }
+			this.totalFacilityCcy = totalFacilityCcy;
+		}
 
 		public String getUnderWritingCcy() {
-        	return StringUtils.trimToEmpty(underWritingCcy);
-        }
+			return StringUtils.trimToEmpty(underWritingCcy);
+		}
 
 		public void setUnderWritingCcy(String underWritingCcy) {
-        	this.underWritingCcy = underWritingCcy;
-        }
+			this.underWritingCcy = underWritingCcy;
+		}
 
 		public String getPropFinalTakeCcy() {
-        	return StringUtils.trimToEmpty(propFinalTakeCcy);
-        }
+			return StringUtils.trimToEmpty(propFinalTakeCcy);
+		}
 
 		public void setPropFinalTakeCcy(String propFinalTakeCcy) {
-        	this.propFinalTakeCcy = propFinalTakeCcy;
-        }
+			this.propFinalTakeCcy = propFinalTakeCcy;
+		}
 
 		public String getTotalFacilityAmount() {
-        	return StringUtils.trimToEmpty(totalFacilityAmount);
-        }
+			return StringUtils.trimToEmpty(totalFacilityAmount);
+		}
 
 		public void setTotalFacilityAmount(String totalFacilityAmount) {
-        	this.totalFacilityAmount = totalFacilityAmount;
-        }
+			this.totalFacilityAmount = totalFacilityAmount;
+		}
 
 		public String getUnderWritingAmount() {
-        	return StringUtils.trimToEmpty(underWritingAmount);
-        }
+			return StringUtils.trimToEmpty(underWritingAmount);
+		}
 
 		public void setUnderWritingAmount(String underWritingAmount) {
-        	this.underWritingAmount = underWritingAmount;
-        }
+			this.underWritingAmount = underWritingAmount;
+		}
 
 		public String getPropFinalTakeAmount() {
-        	return StringUtils.trimToEmpty(propFinalTakeAmount);
-        }
+			return StringUtils.trimToEmpty(propFinalTakeAmount);
+		}
 
 		public void setPropFinalTakeAmount(String propFinalTakeAmount) {
-        	this.propFinalTakeAmount = propFinalTakeAmount;
-        }
+			this.propFinalTakeAmount = propFinalTakeAmount;
+		}
 
 		public String getTotalFacilityAmountUSD() {
-        	return StringUtils.trimToEmpty(totalFacilityAmountUSD);
-        }
+			return StringUtils.trimToEmpty(totalFacilityAmountUSD);
+		}
 
 		public void setTotalFacilityAmountUSD(String totalFacilityAmountUSD) {
-        	this.totalFacilityAmountUSD = totalFacilityAmountUSD;
-        }
+			this.totalFacilityAmountUSD = totalFacilityAmountUSD;
+		}
 
 		public String getUnderWritingAmountUSD() {
-        	return StringUtils.trimToEmpty(underWritingAmountUSD);
-        }
+			return StringUtils.trimToEmpty(underWritingAmountUSD);
+		}
 
 		public void setUnderWritingAmountUSD(String underWritingAmountUSD) {
-        	this.underWritingAmountUSD = underWritingAmountUSD;
-        }
+			this.underWritingAmountUSD = underWritingAmountUSD;
+		}
 
 		public String getPropFinalTakeAmountUSD() {
-        	return StringUtils.trimToEmpty(propFinalTakeAmountUSD);
-        }
+			return StringUtils.trimToEmpty(propFinalTakeAmountUSD);
+		}
 
 		public void setPropFinalTakeAmountUSD(String propFinalTakeAmountUSD) {
-        	this.propFinalTakeAmountUSD = propFinalTakeAmountUSD;
-        }
+			this.propFinalTakeAmountUSD = propFinalTakeAmountUSD;
+		}
 
 		//NONC
 		public String getDate() {
 			return StringUtils.trimToEmpty(date);
 		}
-		
+
 		public void setDate(String date) {
 			this.date = date;
 		}
@@ -1698,7 +1697,7 @@ public class FacilityAgreementDetail {
 		public void setCountryOfRisk(String countryOfRisk) {
 			this.countryOfRisk = countryOfRisk;
 		}
-		
+
 	}
 
 	public class Shareholder {
@@ -1706,9 +1705,9 @@ public class FacilityAgreementDetail {
 		private String shareholderPercentage;
 
 		public Shareholder() {
-			
+
 		}
-		
+
 		public String getShareholderName() {
 			return StringUtils.trimToEmpty(shareholderName);
 		}
@@ -1735,9 +1734,9 @@ public class FacilityAgreementDetail {
 		private String cover;
 
 		public FacilityCollateral() {
-			
+
 		}
-		
+
 		public String getSecurityType() {
 			return StringUtils.trimToEmpty(securityType);
 		}

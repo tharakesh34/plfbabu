@@ -68,8 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements BeneficiaryDAO {
 	private static Logger logger = Logger.getLogger(BeneficiaryDAOImpl.class);
 
-	
-	public BeneficiaryDAOImpl(){
+	public BeneficiaryDAOImpl() {
 		super();
 	}
 
@@ -90,8 +89,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
-		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BranchCode,BranchDesc,BankName,City,BankCode,IFSC");
 		}
@@ -104,8 +103,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		RowMapper<Beneficiary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Beneficiary.class);
 
 		try {
-			beneficiary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			beneficiary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			beneficiary = null;
@@ -129,7 +127,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Beneficiary");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where  AccNumber = :AccNumber AND CustID = :CustID AND BankBranchID = :BankBranchID" );
+		selectSql.append(" Where  AccNumber = :AccNumber AND CustID = :CustID AND BankBranchID = :BankBranchID");
 		selectSql.append(" And BeneficiaryId != :BeneficiaryId");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -168,8 +166,6 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-
-	
 
 	/**
 	 * This method Deletes the Record from the Beneficiary or Beneficiary_Temp. if Record not deleted then throws
@@ -224,7 +220,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	@Override
 	public long save(Beneficiary beneficiary, String type) {
 		logger.debug("Entering");
-		
+
 		if (beneficiary.getId() == Long.MIN_VALUE) {
 			beneficiary.setId(getNextId("SeqBeneficiary"));
 			logger.debug("get NextID:" + beneficiary.getId());
@@ -232,14 +228,14 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		StringBuilder insertSql = new StringBuilder("Insert Into Beneficiary");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-				.append(" (BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
-		insertSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary)");
-		insertSql
-				.append(" Values(:BeneficiaryId, :CustID, :BankBranchID, :AccNumber, :AccHolderName, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Email");
-		insertSql
-				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:BeneficiaryActive,:DefaultBeneficiary)");
+		insertSql.append(
+				" (BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary)");
+		insertSql.append(
+				" Values(:BeneficiaryId, :CustID, :BankBranchID, :AccNumber, :AccHolderName, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Email");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:BeneficiaryActive,:DefaultBeneficiary)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -267,11 +263,12 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update Beneficiary");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set CustID = :CustID, BankBranchID = :BankBranchID, AccNumber = :AccNumber, AccHolderName = :AccHolderName, PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneNumber = :PhoneNumber, Email = :Email");
-		updateSql
-				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,BeneficiaryActive=:BeneficiaryActive,DefaultBeneficiary=:DefaultBeneficiary");
+		updateSql.append(
+				" Set CustID = :CustID, BankBranchID = :BankBranchID, AccNumber = :AccNumber, AccHolderName = :AccHolderName, PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneNumber = :PhoneNumber, Email = :Email");
+		updateSql.append(
+				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,BeneficiaryActive=:BeneficiaryActive,DefaultBeneficiary=:DefaultBeneficiary");
 		updateSql.append(" Where BeneficiaryId =:BeneficiaryId");
 
 		if (!type.endsWith("_Temp")) {
@@ -289,7 +286,6 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Fetch the Beneficiary Details
 	 * 
@@ -305,8 +301,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select BeneficiaryId, CustID, BankBranchID, AccNumber, AccHolderName, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Email");
-		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,BeneficiaryActive,DefaultBeneficiary");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BranchCode,BranchDesc,BankName,City,BankCode,IFSC");
 		}
@@ -320,8 +316,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		List<Beneficiary> beneficiaryList = new ArrayList<>();
 		try {
-			beneficiaryList = this.jdbcTemplate
-					.query(selectSql.toString(), beanParameters, typeRowMapper);
+			beneficiaryList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			return Collections.emptyList();
@@ -330,7 +325,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		logger.debug("Leaving");
 		return beneficiaryList;
 	}
-	
+
 	@Override
 	public int getBranch(long bankBranchID, String type) {
 		Beneficiary beneficiary = new Beneficiary();
@@ -359,7 +354,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From Beneficiary");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :CustID AND BeneficiaryActive = 1 AND DefaultBeneficiary = 1" );
+		selectSql.append(" Where CustID = :CustID AND BeneficiaryActive = 1 AND DefaultBeneficiary = 1");
 		selectSql.append(" AND BeneficiaryId != :BeneficiaryId");
 
 		logger.debug("selectSql: " + selectSql.toString());

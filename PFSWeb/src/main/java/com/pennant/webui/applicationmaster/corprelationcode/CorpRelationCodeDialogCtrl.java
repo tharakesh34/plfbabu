@@ -71,8 +71,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/CorpRelationCode/corpRelationCodeDialog.zul
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CorpRelationCode/corpRelationCodeDialog.zul
  * file.
  */
 public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
@@ -80,22 +79,21 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	private static final Logger logger = Logger.getLogger(CorpRelationCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CorpRelationCodeDialog; // autoWired
 
-	protected Textbox 		corpRelationCode; 		// autoWired
-	protected Textbox 		corpRelationDesc; 		// autoWired
-	protected Checkbox 		corpRelationIsActive; 	// autoWired
+	protected Textbox corpRelationCode; // autoWired
+	protected Textbox corpRelationDesc; // autoWired
+	protected Checkbox corpRelationIsActive; // autoWired
 
 	// not autoWired variables
-	private CorpRelationCode mCorpRelationCode; 	// over handed per parameters
+	private CorpRelationCode mCorpRelationCode; // over handed per parameters
 	private transient CorpRelationCodeListCtrl corpRelationCodeListCtrl; // overHanded per parameters
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CorpRelationCodeService corpRelationCodeService;
 
@@ -114,9 +112,8 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CorpRelationCode
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CorpRelationCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -143,14 +140,12 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 				setMCorpRelationCode(null);
 			}
 
-			doLoadWorkFlow(this.mCorpRelationCode.isWorkflow(),
-					this.mCorpRelationCode.getWorkflowId(),
+			doLoadWorkFlow(this.mCorpRelationCode.isWorkflow(), this.mCorpRelationCode.getWorkflowId(),
 					this.mCorpRelationCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CorpRelationCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CorpRelationCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -187,10 +182,10 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
+
 		} else {
 			this.groupboxWf.setVisible(false);
-		
+
 		}
 		logger.debug("Leaving");
 	}
@@ -200,8 +195,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -311,8 +305,10 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 		this.corpRelationDesc.setValue(aCorpRelationCode.getCorpRelationDesc());
 		this.corpRelationIsActive.setChecked(aCorpRelationCode.isCorpRelationIsActive());
 		this.recordStatus.setValue(aCorpRelationCode.getRecordStatus());
-		
-		if(aCorpRelationCode.isNew() || (aCorpRelationCode.getRecordType() != null ? aCorpRelationCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCorpRelationCode.isNew()
+				|| (aCorpRelationCode.getRecordType() != null ? aCorpRelationCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.corpRelationIsActive.setChecked(true);
 			this.corpRelationIsActive.setDisabled(true);
 		}
@@ -364,8 +360,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCorpRelationCode
 	 * @throws Exception
@@ -414,13 +409,16 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.corpRelationCode.isReadonly()){
-			this.corpRelationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.corpRelationCode.isReadonly()) {
+			this.corpRelationCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.corpRelationDesc.isReadonly()){
-			this.corpRelationDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.corpRelationDesc.isReadonly()) {
+			this.corpRelationDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -476,9 +474,9 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-		Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationCode.value")+" : "+aCorpRelationCode.getCorpRelationCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CorpRelationCodeDialog_CorpRelationCode.value") + " : "
+				+ aCorpRelationCode.getCorpRelationCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCorpRelationCode.getRecordType())) {
 				aCorpRelationCode.setVersion(aCorpRelationCode.getVersion() + 1);
@@ -702,7 +700,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aCorpRelationCode,	PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aCorpRelationCode, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -764,8 +762,8 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CorpRelationCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -808,8 +806,8 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	 */
 	private AuditHeader getAuditHeader(CorpRelationCode aCorpRelationCode, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCorpRelationCode.getBefImage(), aCorpRelationCode);
-		return new AuditHeader(String.valueOf(aCorpRelationCode.getId()), null,
-				null, null, auditDetail, aCorpRelationCode.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aCorpRelationCode.getId()), null, null, null, auditDetail,
+				aCorpRelationCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -849,13 +847,11 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	private void refreshList() {
 		getCorpRelationCodeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.mCorpRelationCode.getCorpRelationCode());
 	}
-
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -864,6 +860,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -871,6 +868,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	public CorpRelationCode getMCorpRelationCode() {
 		return this.mCorpRelationCode;
 	}
+
 	public void setMCorpRelationCode(CorpRelationCode mCorpRelationCode) {
 		this.mCorpRelationCode = mCorpRelationCode;
 	}
@@ -878,6 +876,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	public void setCorpRelationCodeService(CorpRelationCodeService corpRelationCodeService) {
 		this.corpRelationCodeService = corpRelationCodeService;
 	}
+
 	public CorpRelationCodeService getCorpRelationCodeService() {
 		return this.corpRelationCodeService;
 	}
@@ -885,6 +884,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	public void setCorpRelationCodeListCtrl(CorpRelationCodeListCtrl corpRelationCodeListCtrl) {
 		this.corpRelationCodeListCtrl = corpRelationCodeListCtrl;
 	}
+
 	public CorpRelationCodeListCtrl getCorpRelationCodeListCtrl() {
 		return this.corpRelationCodeListCtrl;
 	}

@@ -26,9 +26,8 @@ public class FlagDetailValidation {
 	public FlagDetailValidation(FinFlagDetailsDAO finFlagDetailsDAO) {
 		this.finFlagDetailsDAO = finFlagDetailsDAO;
 	}
-	
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -46,12 +45,12 @@ public class FlagDetailValidation {
 		FinFlagsDetail finFlagsDetail = (FinFlagsDetail) auditDetail.getModelData();
 		FinFlagsDetail tempfinFlagsDetail = null;
 		if (finFlagsDetail.isWorkflow()) {
-			tempfinFlagsDetail = getFinFlagDetailsDAO().getFinFlagsByRef(
-					finFlagsDetail.getReference(), finFlagsDetail.getFlagCode(),finFlagsDetail.getModuleName(), "_Temp");
+			tempfinFlagsDetail = getFinFlagDetailsDAO().getFinFlagsByRef(finFlagsDetail.getReference(),
+					finFlagsDetail.getFlagCode(), finFlagsDetail.getModuleName(), "_Temp");
 		}
 
-		FinFlagsDetail beffinFlagsDetail = getFinFlagDetailsDAO().getFinFlagsByRef(
-				finFlagsDetail.getReference(), finFlagsDetail.getFlagCode(),finFlagsDetail.getModuleName(), "");
+		FinFlagsDetail beffinFlagsDetail = getFinFlagDetailsDAO().getFinFlagsByRef(finFlagsDetail.getReference(),
+				finFlagsDetail.getFlagCode(), finFlagsDetail.getModuleName(), "");
 		FinFlagsDetail oldfinFlagsDetail = finFlagsDetail.getBefImage();
 
 		String[] errParm = new String[2];
@@ -60,9 +59,9 @@ public class FlagDetailValidation {
 		valueParm[1] = finFlagsDetail.getFlagCode();
 		if (StringUtils.equals(finFlagsDetail.getModuleName(), CollateralConstants.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_CollateralReference") + ":" + valueParm[0];
-		} else if (StringUtils.equals(finFlagsDetail.getModuleName(),  FinanceConstants.MODULE_NAME)) {
+		} else if (StringUtils.equals(finFlagsDetail.getModuleName(), FinanceConstants.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_FinanceReference") + ":" + valueParm[0];
-		} else if (StringUtils.equals(finFlagsDetail.getModuleName(),  CommitmentConstants.MODULE_NAME)) {
+		} else if (StringUtils.equals(finFlagsDetail.getModuleName(), CommitmentConstants.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_CmtReference") + ":" + valueParm[0];
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_FinanceFlagCode") + ":" + valueParm[1];
@@ -77,13 +76,11 @@ public class FlagDetailValidation {
 
 				if (finFlagsDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (beffinFlagsDetail != null || tempfinFlagsDetail != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (beffinFlagsDetail == null || tempfinFlagsDetail != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -97,13 +94,13 @@ public class FlagDetailValidation {
 
 					if (oldfinFlagsDetail != null
 							&& !oldfinFlagsDetail.getLastMntOn().equals(beffinFlagsDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}

@@ -20,6 +20,7 @@ import com.pennant.backend.model.collection.Collection;
  * 
  */
 public interface CollectionService {
-	 List<Collection> getCollectionTablesList();
-	 int getCollectionExecutionSts();
+	List<Collection> getCollectionTablesList();
+
+	int getCollectionExecutionSts();
 }

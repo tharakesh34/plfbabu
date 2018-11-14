@@ -74,6 +74,6 @@ public interface FinTypeExpenseService {
 
 	List<AuditDetail> delete(List<FinTypeExpense> finTypeExpenseList, String tableType, String auditTranType,
 			String finType);
-	
+
 	FinTypeExpense getFinExpensesByFinType(String finType, long expenseTypeId);
 }

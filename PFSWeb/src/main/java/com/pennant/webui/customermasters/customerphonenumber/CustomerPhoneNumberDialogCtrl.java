@@ -99,9 +99,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private static final Logger logger = Logger.getLogger(CustomerPhoneNumberDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerPhoneNumberDialog; // autowired
 
@@ -120,10 +119,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private transient CustomerPhoneNumberListCtrl customerPhoneNumberListCtrl; // overhanded
 																				// per
 	private transient boolean validationOn;
-	
-	protected Button btnSearchPRCustid; // autowire
 
-	
+	protected Button btnSearchPRCustid; // autowire
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerPhoneNumberService customerPhoneNumberService;
@@ -140,8 +137,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private boolean isFinanceProcess = false;
 	private boolean workflow = false;
 	protected Row row_phoneNumber;
-	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
-			.getCustomerEmailPriority();
+	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil.getCustomerEmailPriority();
 	private String regex;
 
 	/**
@@ -159,9 +155,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerPhoneNumber
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerPhoneNumber object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -227,11 +222,11 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
-			
-			if (getCustomerDialogCtrl() != null && !isFinanceProcess ) {
+
+			if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
-			
+
 			doLoadWorkFlow(this.customerPhoneNumber.isWorkflow(), this.customerPhoneNumber.getWorkflowId(),
 					this.customerPhoneNumber.getNextTaskId());
 			/* set components visible dependent of the users rights */
@@ -249,7 +244,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			// or
 			// delete customerPhoneNumber here.
 			if (arguments.containsKey("customerPhoneNumberListCtrl")) {
-				setCustomerPhoneNumberListCtrl((CustomerPhoneNumberListCtrl) arguments.get("customerPhoneNumberListCtrl"));
+				setCustomerPhoneNumberListCtrl(
+						(CustomerPhoneNumberListCtrl) arguments.get("customerPhoneNumberListCtrl"));
 			} else {
 				setCustomerPhoneNumberListCtrl(null);
 			}
@@ -284,7 +280,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.phoneTypeCode.setValidateColumns(new String[] { "PhoneTypeCode" });
 
 		this.phoneNumber.setMaxlength(13);
-		
+
 		this.mobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 
 		if (isWorkFlowEnabled()) {
@@ -301,8 +297,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -458,10 +453,10 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		}
 
 		try {
-			if(this.row_phoneNumber.isVisible()){
-			aCustomerPhoneNumber.setPhoneNumber(this.phoneNumber.getValue());
-			}else{
-			aCustomerPhoneNumber.setPhoneNumber(this.mobileNumber.getValue());
+			if (this.row_phoneNumber.isVisible()) {
+				aCustomerPhoneNumber.setPhoneNumber(this.phoneNumber.getValue());
+			} else {
+				aCustomerPhoneNumber.setPhoneNumber(this.mobileNumber.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -472,8 +467,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				throw new WrongValueException(this.custPhonePriority, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_CustomerPhoneNumberDialog_CustPhonePriority.value") }));
 			} else {
-				aCustomerPhoneNumber.setPhoneTypePriority(Integer.parseInt(this.custPhonePriority.getSelectedItem()
-						.getValue().toString()));
+				aCustomerPhoneNumber.setPhoneTypePriority(
+						Integer.parseInt(this.custPhonePriority.getSelectedItem().getValue().toString()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -497,8 +492,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerPhoneNumber
 	 * @throws Exception
@@ -569,17 +563,18 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		doClearMessage();
 
 		if (!this.phoneCustID.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneCustID.value"), null, true));
+			this.custCIF.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneCustID.value"), null, true));
 		}
 		if (this.row_phoneNumber.isVisible() && !this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true,regex,this.phoneNumber.getMaxlength()));
+			this.phoneNumber.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
+							true, regex, this.phoneNumber.getMaxlength()));
 		}
-		
+
 		if (!this.custPhonePriority.isDisabled()) {
-			this.custPhonePriority.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_CustPhonePriority.value"), null, true));
+			this.custPhonePriority.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_CustPhonePriority.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -602,8 +597,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.phoneTypeCode.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value"), null, true, true));
+		this.phoneTypeCode.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value"), null, true, true));
 		logger.debug("Leaving");
 	}
 
@@ -670,8 +665,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if(StringUtils.equals(aCustomerPhoneNumber.getRecordType(), PennantConstants.RCD_UPD)){
-				aCustomerPhoneNumber.setNewRecord(true);	
+			} else if (StringUtils.equals(aCustomerPhoneNumber.getRecordType(), PennantConstants.RCD_UPD)) {
+				aCustomerPhoneNumber.setNewRecord(true);
 			}
 
 			try {
@@ -922,27 +917,32 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 						.get(i);
 
 				if (!PennantConstants.TRAN_DEL.equals(tranType)) {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType()) &&
-							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) &&
-							!StringUtils.equals(customerPhoneNumber.getPhoneTypeCode(), aCustomerPhoneNumber.getPhoneTypeCode())&&
-							aCustomerPhoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH) && 
-							customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
-						
-						valueParm[1]=this.custPhonePriority.getSelectedItem().getLabel();
-						errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypePriority") + ":"+valueParm[1];
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "90287", errParm, valueParm), getUserWorkspace().getUserLanguage()));
-						
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType())
+							&& !StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
+									customerPhoneNumber.getRecordType())
+							&& !StringUtils.equals(customerPhoneNumber.getPhoneTypeCode(),
+									aCustomerPhoneNumber.getPhoneTypeCode())
+							&& aCustomerPhoneNumber.getPhoneTypePriority() == Integer
+									.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)
+							&& customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber
+									.getPhoneTypePriority()) {
+
+						valueParm[1] = this.custPhonePriority.getSelectedItem().getLabel();
+						errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypePriority") + ":" + valueParm[1];
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "90287", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
+
 						return auditHeader;
 					}
 				}
 
-				if (customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) { 
+				if (customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) {
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -963,9 +963,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 									.size(); j++) {
 								CustomerPhoneNumber phoneNumber = getCustomerDialogCtrl().getCustomerDetails()
 										.getCustomerPhoneNumList().get(j);
-								if (phoneNumber.getPhoneCustID() == aCustomerPhoneNumber.getPhoneCustID()
-										&& phoneNumber.getPhoneTypeCode().equals(
-												aCustomerPhoneNumber.getPhoneTypeCode())) {
+								if (phoneNumber.getPhoneCustID() == aCustomerPhoneNumber.getPhoneCustID() && phoneNumber
+										.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) {
 									customerPhoneNumbers.add(phoneNumber);
 								}
 							}
@@ -1118,8 +1117,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerPhoneNumberDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1175,9 +1174,9 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 	private void dosetFieldLength(String regex) {
 		logger.debug("Entering");
-		if(StringUtils.isNotBlank(regex)){			
-			String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
-			int mobilelength=Integer.parseInt(length);
+		if (StringUtils.isNotBlank(regex)) {
+			String length = regex.substring(regex.lastIndexOf("}") - 2, regex.lastIndexOf("}"));
+			int mobilelength = Integer.parseInt(length);
 			this.phoneNumber.setMaxlength(mobilelength);
 		}
 	}
@@ -1207,7 +1206,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	}
 
 	// To set the customer id from Customer filter
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
 		this.phoneCustID.setValue(aCustomer.getCustID());
@@ -1227,7 +1227,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(CustomerPhoneNumber aCustomerPhoneNumber, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerPhoneNumber.getBefImage(), aCustomerPhoneNumber);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerPhoneNumber.getBefImage(),
+				aCustomerPhoneNumber);
 
 		return new AuditHeader(getReference(), String.valueOf(aCustomerPhoneNumber.getPhoneCustID()), null, null,
 				auditDetail, aCustomerPhoneNumber.getUserDetails(), getOverideMap());

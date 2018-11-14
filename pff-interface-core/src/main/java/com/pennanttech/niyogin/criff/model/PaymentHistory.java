@@ -2,10 +2,10 @@ package com.pennanttech.niyogin.criff.model;
 
 import java.util.Date;
 
-public class PaymentHistory {	
-	private Date	paymentDate;
-	private String	type;
-	private String	dpd;
+public class PaymentHistory {
+	private Date paymentDate;
+	private String type;
+	private String dpd;
 
 	public Date getPaymentDate() {
 		return paymentDate;

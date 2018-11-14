@@ -8,9 +8,9 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 
 	public HostStatusEnquiryProcessImpl() {
-		
+
 	}
-	
+
 	@Override
 	public HostEnquiry getHostStatus() throws InterfaceException {
 

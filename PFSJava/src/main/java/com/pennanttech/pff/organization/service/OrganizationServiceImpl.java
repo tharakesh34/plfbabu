@@ -300,7 +300,8 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		Organization organization = (Organization) auditDetail.getModelData();
 		long organizationId = organization.getId();
 		String[] parameters = new String[3];
-		parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ": " + organizationId;
+		parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ": "
+				+ organizationId;
 
 		// Check the unique keys.
 		if (organization.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(organization.getRecordType())
@@ -315,13 +316,15 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		}
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(organization.getRecordType())) {
-			parameters[2] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ": " + organizationId;
-			boolean organizationExistForIncomeExpense = organizationDAO.organizationExistForIncomeExpense(organizationId, "_View");
+			parameters[2] = PennantJavaUtil.getLabel("label_OrganizationDialog_OrganizationId.value") + ": "
+					+ organizationId;
+			boolean organizationExistForIncomeExpense = organizationDAO
+					.organizationExistForIncomeExpense(organizationId, "_View");
 			if (organizationExistForIncomeExpense) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

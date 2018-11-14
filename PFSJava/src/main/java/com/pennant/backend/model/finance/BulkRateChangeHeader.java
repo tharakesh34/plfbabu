@@ -17,10 +17,10 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String bulkRateChangeRef;
-	private String finType; 
+	private String finType;
 	private Date fromDate;
 	private Date toDate;
- 	private BigDecimal rateChange = BigDecimal.ZERO;
+	private BigDecimal rateChange = BigDecimal.ZERO;
 	private String reCalType;
 	private String ruleType;
 	private String lovDescReCalType = "";
@@ -33,26 +33,25 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 
 	//Common Fields
 	private boolean newRecord = false;
- 	private BulkRateChangeHeader befImage;
+	private BulkRateChangeHeader befImage;
 	private LoggedInUser userDetails;
 	private String status;
-	
+
 	private List<BulkRateChangeDetails> bulkRateChangeDetailsList;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
 
 	public BulkRateChangeHeader() {
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("BulkRateChangeHeader"));
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("oldFinDataChanged");
 		excludeFields.add("oldRateChangeDataChanged");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -66,7 +65,7 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 		return bulkRateChangeRef;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.bulkRateChangeRef = id;
 	}
 
@@ -74,36 +73,29 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 		return bulkRateChangeRef;
 	}
 
-
 	public void setBulkRateChangeRef(String bulkRateChangeRef) {
 		this.bulkRateChangeRef = bulkRateChangeRef;
 	}
-
 
 	public String getFinType() {
 		return finType;
 	}
 
-
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-
 
 	public Date getFromDate() {
 		return fromDate;
 	}
 
-
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
 
-
 	public Date getToDate() {
 		return toDate;
 	}
-
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
@@ -116,46 +108,38 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 	public void setRateChange(BigDecimal rateChange) {
 		this.rateChange = rateChange;
 	}
-	
+
 	public String getReCalType() {
 		return reCalType;
 	}
-
 
 	public void setReCalType(String reCalType) {
 		this.reCalType = reCalType;
 	}
 
-
 	public String getRuleType() {
 		return ruleType;
 	}
-
 
 	public void setRuleType(String ruleType) {
 		this.ruleType = ruleType;
 	}
 
-
 	public String getLovDescReCalType() {
 		return lovDescReCalType;
 	}
-
 
 	public void setLovDescReCalType(String lovDescReCalType) {
 		this.lovDescReCalType = lovDescReCalType;
 	}
 
-
 	public String getLovDescSqlQuery() {
 		return lovDescSqlQuery;
 	}
 
-
 	public void setLovDescSqlQuery(String lovDescSqlQuery) {
 		this.lovDescSqlQuery = lovDescSqlQuery;
 	}
-
 
 	public String getLovDescFinTypeDesc() {
 		return lovDescFinTypeDesc;
@@ -169,7 +153,6 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 		return newRecord;
 	}
 
-
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -178,16 +161,13 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 		return befImage;
 	}
 
-
 	public void setBefImage(BulkRateChangeHeader befImage) {
 		this.befImage = befImage;
 	}
 
-
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
-
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
@@ -197,7 +177,6 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 		return auditDetailMap;
 	}
 
-
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
@@ -206,8 +185,7 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 		return bulkRateChangeDetailsList;
 	}
 
-	public void setBulkRateChangeDetailsList(
-			List<BulkRateChangeDetails> bulkRateChangeDetailsList) {
+	public void setBulkRateChangeDetailsList(List<BulkRateChangeDetails> bulkRateChangeDetailsList) {
 		this.bulkRateChangeDetailsList = bulkRateChangeDetailsList;
 	}
 
@@ -250,6 +228,5 @@ public class BulkRateChangeHeader extends AbstractWorkflowEntity {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	
+
 }

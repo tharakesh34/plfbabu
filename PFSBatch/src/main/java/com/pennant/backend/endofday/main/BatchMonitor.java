@@ -69,24 +69,24 @@ import com.pennanttech.pennapps.core.App.Database;
 public class BatchMonitor {
 	private static final Logger logger = Logger.getLogger(BatchMonitor.class);
 	private static BatchMonitor instance = null;
-	
-	private static ClassPathXmlApplicationContext jobMonitorContext;	
+
+	private static ClassPathXmlApplicationContext jobMonitorContext;
 	private static SimpleJobExplorer jobMonitorExplorer;
-	
-	private static  DataSource  	dataSource;	
+
+	private static DataSource dataSource;
 	private static List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
-	
+
 	public static long jobExecutionId = 0;
 	public static long avgTime = 0;
 	private static String processingTime = "00:00:00";
 	private static Date jobStartTime = null;
 	private static Date jobEndTime = null;
 	private static Calendar calendar = Calendar.getInstance();
-	
+
 	private BatchMonitor() {
-		jobMonitorContext 	= new ClassPathXmlApplicationContext("launch-context.xml");
+		jobMonitorContext = new ClassPathXmlApplicationContext("launch-context.xml");
 		jobMonitorExplorer = (SimpleJobExplorer) jobMonitorContext.getBean("jobExplorer");
-		dataSource 			= (DataSource)jobMonitorContext.getBean("dataSource");
+		dataSource = (DataSource) jobMonitorContext.getBean("dataSource");
 	}
 
 	public static BatchMonitor getInstance() {
@@ -95,15 +95,15 @@ public class BatchMonitor {
 		}
 		return instance;
 	}
-	
+
 	public static synchronized JobExecution getJobExecution() {
 		return jobMonitorExplorer.getJobExecution(getJobExecutionId());
 	}
-	
+
 	/**
 	 * 
-	 * This Method will return all the StepExecutions of latest jobInstance and
-	 * prepare the Time taken for (completed/failed/running) Job
+	 * This Method will return all the StepExecutions of latest jobInstance and prepare the Time taken for
+	 * (completed/failed/running) Job
 	 * 
 	 * @param JobInstance
 	 *            (jobInstance)
@@ -116,14 +116,14 @@ public class BatchMonitor {
 
 		if (jobExecutions != null) {
 			stepExecutions.clear();
-			long timeTaken1 = 0, h = 0, m = 0, s =0, timeTaken2 = 0;
+			long timeTaken1 = 0, h = 0, m = 0, s = 0, timeTaken2 = 0;
 			Collections.reverse(jobExecutions);
 			for (JobExecution jobExecution : jobExecutions) {
 
 				jobStartTime = jobExecution.getStartTime();
 				jobEndTime = jobExecution.getEndTime();
 
-				if(jobExecution.isRunning()) {
+				if (jobExecution.isRunning()) {
 					jobEndTime = new Date(System.currentTimeMillis());
 				}
 
@@ -134,7 +134,7 @@ public class BatchMonitor {
 
 				h = h + timeTaken1 / (60 * 60 * 1000) % 24;
 				m = m + timeTaken1 / (60 * 1000) % 60;
-				s = s + timeTaken1 / 1000 % 60;			
+				s = s + timeTaken1 / 1000 % 60;
 				stepExecutions.addAll(jobExecution.getStepExecutions());
 			}
 			builder = new StringBuilder();
@@ -144,15 +144,14 @@ public class BatchMonitor {
 
 			processingTime = builder.toString();
 
-			if(timeTaken2 > 0) {
+			if (timeTaken2 > 0) {
 				calendar.setTimeInMillis(timeTaken2);
 			}
 		}
 
 		return stepExecutions;
 	}
-	
-	
+
 	/**
 	 * This method check's whether if the job is running or not.
 	 * 
@@ -173,11 +172,9 @@ public class BatchMonitor {
 		}
 	}
 
-
 	/**
-	 * This method returns latest JobExecutionId, If the jobExecutionId is
-	 * 0.</br> While START/RESTRT The Job make sure that JobExecutionId reset
-	 * to 0</br>
+	 * This method returns latest JobExecutionId, If the jobExecutionId is 0.</br>
+	 * While START/RESTRT The Job make sure that JobExecutionId reset to 0</br>
 	 * 
 	 * @return long(jobExecutionId)
 	 */
@@ -190,7 +187,8 @@ public class BatchMonitor {
 			try {
 				connection = DataSourceUtils.doGetConnection(dataSource);
 				statement = connection.createStatement();
-				resultSet = statement.executeQuery("SELECT COALESCE(MAX(JOB_EXECUTION_ID), 0) JOBID FROM BATCH_JOB_EXECUTION");
+				resultSet = statement
+						.executeQuery("SELECT COALESCE(MAX(JOB_EXECUTION_ID), 0) JOBID FROM BATCH_JOB_EXECUTION");
 				if (resultSet.next()) {
 					jobExecutionId = resultSet.getLong(1);
 				}
@@ -215,10 +213,9 @@ public class BatchMonitor {
 		}
 		return jobExecutionId;
 	}
-	
+
 	/**
-	 * This method returns average time of last 30 success full jobs, the job
-	 * which is not restarted.
+	 * This method returns average time of last 30 success full jobs, the job which is not restarted.
 	 * 
 	 * @return
 	 */
@@ -226,21 +223,23 @@ public class BatchMonitor {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
-		
-		if(avgTime == 0) {
+
+		if (avgTime == 0) {
 			try {
 				connection = DataSourceUtils.doGetConnection(dataSource);
 				statement = connection.createStatement();
-				StringBuilder query = new StringBuilder();	
+				StringBuilder query = new StringBuilder();
 
 				if (App.DATABASE == Database.ORACLE) {
 					query.append("  SELECT CEIL(AVG((END_TIME-START_TIME)*24*60*60*1000))  avg FROM");
-					query.append("  (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
+					query.append(
+							"  (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
 					query.append("  FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");
 
 				} else {
 					query.append(" SELECT AVG(DATE_PART ('millisecond', START_TIME::timestamp - END_TIME::timestamp))");
-					query.append("avg FROM (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID ");
+					query.append(
+							"avg FROM (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID ");
 					query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED')))  T");
 				}
 				resultSet = statement.executeQuery(query.toString());
@@ -265,10 +264,10 @@ public class BatchMonitor {
 				}
 			}
 		}
-	
+
 		return avgTime;
 	}
-	
+
 	/**
 	 * This method return Processing Time
 	 * 
@@ -277,7 +276,7 @@ public class BatchMonitor {
 	public static String getProcessingTime() {
 		return processingTime;
 	}
-	
+
 	/**
 	 * This method return Estimated Completion Time
 	 * 
@@ -286,10 +285,8 @@ public class BatchMonitor {
 	public static String getEstimateTime() {
 		if (getAvgTime() > 0) {
 			return DateUtility.timeBetween(new Date(avgTime), calendar.getTime());
-		} 
+		}
 		return "00:00:00";
 	}
-	
-	
 
 }

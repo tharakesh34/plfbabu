@@ -66,11 +66,10 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>AccountEngineEvent</b>.<br>
  * 
  */
-public class AccountEngineEventServiceImpl extends
-		GenericService<AccountEngineEvent> implements AccountEngineEventService {
+public class AccountEngineEventServiceImpl extends GenericService<AccountEngineEvent>
+		implements AccountEngineEventService {
 
-	private static Logger logger = Logger
-			.getLogger(AccountEngineEventDAOImpl.class);
+	private static Logger logger = Logger.getLogger(AccountEngineEventDAOImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountEngineEventDAO accountEngineEventDAO;
@@ -78,7 +77,7 @@ public class AccountEngineEventServiceImpl extends
 	public AccountEngineEventServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -95,8 +94,7 @@ public class AccountEngineEventServiceImpl extends
 		return accountEngineEventDAO;
 	}
 
-	public void setAccountEngineEventDAO(
-			AccountEngineEventDAO accountEngineEventDAO) {
+	public void setAccountEngineEventDAO(AccountEngineEventDAO accountEngineEventDAO) {
 		this.accountEngineEventDAO = accountEngineEventDAO;
 	}
 
@@ -109,15 +107,12 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTAEEvents/BMTAEEvents_Temp by using AccountEngineEventDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using AccountEngineEventDAO's update method 3) Audit
-	 * the record in to AuditHeader and AdtBMTAEEvents by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTAEEvents/BMTAEEvents_Temp by
+	 * using AccountEngineEventDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using AccountEngineEventDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -133,16 +128,14 @@ public class AccountEngineEventServiceImpl extends
 			return auditHeader;
 		}
 		String tableType = "";
-		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditHeader
-				.getAuditDetail().getModelData();
+		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditHeader.getAuditDetail().getModelData();
 
 		if (accountEngineEvent.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (accountEngineEvent.isNew()) {
-			accountEngineEvent.setId(getAccountEngineEventDAO().save(
-					accountEngineEvent, tableType));
+			accountEngineEvent.setId(getAccountEngineEventDAO().save(accountEngineEvent, tableType));
 			auditHeader.getAuditDetail().setModelData(accountEngineEvent);
 			auditHeader.setAuditReference(accountEngineEvent.getAEEventCode());
 		} else {
@@ -156,12 +149,10 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTAEEvents by using AccountEngineEventDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and AdtBMTAEEvents by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTAEEvents by using AccountEngineEventDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -177,8 +168,7 @@ public class AccountEngineEventServiceImpl extends
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditHeader
-				.getAuditDetail().getModelData();
+		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditHeader.getAuditDetail().getModelData();
 		getAccountEngineEventDAO().delete(accountEngineEvent, "");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -186,8 +176,7 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * getAccountEngineEventById fetch the details by using
-	 * AccountEngineEventDAO's getAccountEngineEventById method.
+	 * getAccountEngineEventById fetch the details by using AccountEngineEventDAO's getAccountEngineEventById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,15 +186,12 @@ public class AccountEngineEventServiceImpl extends
 	 */
 	@Override
 	public AccountEngineEvent getAccountEngineEventById(String id) {
-		return getAccountEngineEventDAO()
-				.getAccountEngineEventById(id, "_View");
+		return getAccountEngineEventDAO().getAccountEngineEventById(id, "_View");
 	}
 
 	/**
-	 * getApprovedAccountEngineEventById fetch the details by using
-	 * AccountEngineEventDAO's getAccountEngineEventById method . with parameter
-	 * id and type as blank. it fetches the approved records from the
-	 * BMTAEEvents.
+	 * getApprovedAccountEngineEventById fetch the details by using AccountEngineEventDAO's getAccountEngineEventById
+	 * method . with parameter id and type as blank. it fetches the approved records from the BMTAEEvents.
 	 * 
 	 * @param id
 	 *            (String)
@@ -216,21 +202,16 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getAccountEngineEventDAO().delete with parameters
-	 * accountEngineEvent,"" b) NEW Add new record in to main table by using
-	 * getAccountEngineEventDAO().save with parameters accountEngineEvent,"" c)
-	 * EDIT Update record in the main table by using
-	 * getAccountEngineEventDAO().update with parameters accountEngineEvent,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getAccountEngineEventDAO().delete with parameters
-	 * accountEngineEvent,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTAEEvents by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getAccountEngineEventDAO().delete with
+	 * parameters accountEngineEvent,"" b) NEW Add new record in to main table by using getAccountEngineEventDAO().save
+	 * with parameters accountEngineEvent,"" c) EDIT Update record in the main table by using
+	 * getAccountEngineEventDAO().update with parameters accountEngineEvent,"" 3) Delete the record from the workFlow
+	 * table by using getAccountEngineEventDAO().delete with parameters accountEngineEvent,"_Temp" 4) Audit the record
+	 * in to AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -247,11 +228,9 @@ public class AccountEngineEventServiceImpl extends
 		}
 
 		AccountEngineEvent accountEngineEvent = new AccountEngineEvent();
-		BeanUtils.copyProperties((AccountEngineEvent) auditHeader
-				.getAuditDetail().getModelData(), accountEngineEvent);
+		BeanUtils.copyProperties((AccountEngineEvent) auditHeader.getAuditDetail().getModelData(), accountEngineEvent);
 
-		if (accountEngineEvent.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (accountEngineEvent.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getAccountEngineEventDAO().delete(accountEngineEvent, "");
 		} else {
@@ -261,8 +240,7 @@ public class AccountEngineEventServiceImpl extends
 			accountEngineEvent.setNextTaskId("");
 			accountEngineEvent.setWorkflowId(0);
 
-			if (accountEngineEvent.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (accountEngineEvent.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				accountEngineEvent.setRecordType("");
 				getAccountEngineEventDAO().save(accountEngineEvent, "");
@@ -286,13 +264,10 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getAccountEngineEventDAO().delete with
-	 * parameters accountEngineEvent,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtBMTAEEvents by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getAccountEngineEventDAO().delete with parameters accountEngineEvent,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -307,8 +282,7 @@ public class AccountEngineEventServiceImpl extends
 			return auditHeader;
 		}
 
-		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditHeader
-				.getAuditDetail().getModelData();
+		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAccountEngineEventDAO().delete(accountEngineEvent, "_Temp");
@@ -320,21 +294,17 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -343,74 +313,58 @@ public class AccountEngineEventServiceImpl extends
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAccountEngineEventDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAccountEngineEventDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditDetail
-				.getModelData();
+		AccountEngineEvent accountEngineEvent = (AccountEngineEvent) auditDetail.getModelData();
 		AccountEngineEvent tempAccountEngineEvent = null;
 
 		if (accountEngineEvent.isWorkflow()) {
-			tempAccountEngineEvent = getAccountEngineEventDAO()
-					.getAccountEngineEventById(accountEngineEvent.getId(),
-							"_Temp");
+			tempAccountEngineEvent = getAccountEngineEventDAO().getAccountEngineEventById(accountEngineEvent.getId(),
+					"_Temp");
 		}
 
 		AccountEngineEvent befAccountEngineEvent = getAccountEngineEventDAO()
 				.getAccountEngineEventById(accountEngineEvent.getId(), "");
-		AccountEngineEvent oldAccountEngineEvent = accountEngineEvent
-				.getBefImage();
+		AccountEngineEvent oldAccountEngineEvent = accountEngineEvent.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = accountEngineEvent.getAEEventCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_AEEventCode") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_AEEventCode") + ":" + valueParm[0];
 
 		if (accountEngineEvent.isNew()) { // for New record or new record into
-											// work flow
+												// work flow
 
 			if (!accountEngineEvent.isWorkflow()) {// With out Work flow only
-													// new records
+														// new records
 				if (befAccountEngineEvent != null) { // Record Already Exists in
-														// the table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+															// the table then error
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (accountEngineEvent.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befAccountEngineEvent != null
-							|| tempAccountEngineEvent != null) { // if records already
-																	// exists in the
-																	// the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+				if (accountEngineEvent.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befAccountEngineEvent != null || tempAccountEngineEvent != null) { // if records already
+																								// exists in the
+																							// the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befAccountEngineEvent == null
-							|| tempAccountEngineEvent != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+					if (befAccountEngineEvent == null || tempAccountEngineEvent != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 
@@ -419,59 +373,42 @@ public class AccountEngineEventServiceImpl extends
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!accountEngineEvent.isWorkflow()) { // With out Work flow for
-													// update and delete
+														// update and delete
 
 				if (befAccountEngineEvent == null) { // if records not exists in
-														// the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+															// the main table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
 					if (oldAccountEngineEvent != null
-							&& !oldAccountEngineEvent.getLastMntOn().equals(
-									befAccountEngineEvent.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldAccountEngineEvent.getLastMntOn().equals(befAccountEngineEvent.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempAccountEngineEvent == null) { // if records not exists
-														// in the Work flow
+															// in the Work flow
 														// table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempAccountEngineEvent != null
-						&& oldAccountEngineEvent != null
-						&& !oldAccountEngineEvent.getLastMntOn().equals(
-								tempAccountEngineEvent.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempAccountEngineEvent != null && oldAccountEngineEvent != null
+						&& !oldAccountEngineEvent.getLastMntOn().equals(tempAccountEngineEvent.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}
 		}
-		
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !accountEngineEvent.isWorkflow()) {
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !accountEngineEvent.isWorkflow()) {
 			auditDetail.setBefImage(befAccountEngineEvent);
 		}
 

@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.limit.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,10 +66,10 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGroupDAO {
 	private static Logger logger = Logger.getLogger(LimitGroupDAOImpl.class);
-	
-		
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new LimitGroup 
+	 * This method set the Work Flow id based on the module name and return the new LimitGroup
+	 * 
 	 * @return LimitGroup
 	 */
 	@Override
@@ -86,9 +84,10 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 		return limitGroup;
 	}
 
-
 	/**
-	 * This method get the module from method getLimitGroup() and set the new record flag as true and return LimitGroup()   
+	 * This method get the module from method getLimitGroup() and set the new record flag as true and return
+	 * LimitGroup()
+	 * 
 	 * @return LimitGroup
 	 */
 	@Override
@@ -101,35 +100,37 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	}
 
 	/**
-	 * Fetch the Record  Limit Group details by key field
+	 * Fetch the Record Limit Group details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitGroup
 	 */
 	@Override
 	public LimitGroup getLimitGroupById(final String id, String type) {
 		logger.debug("Entering");
 		LimitGroup limitGroup = getLimitGroup();
-		
+
 		limitGroup.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select LimitCategory,GroupCode, GroupName,Active,GroupOf");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From LimitGroup");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GroupCode =:GroupCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
 		RowMapper<LimitGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroup.class);
-		
+
 		try {
-			limitGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			limitGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			limitGroup = null;
@@ -137,24 +138,24 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 		logger.debug("Leaving");
 		return limitGroup;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the LimitGroup or LimitGroup_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Limit Group by key GroupCode
+	 * This method Deletes the Record from the LimitGroup or LimitGroup_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Limit Group by key GroupCode
 	 * 
-	 * @param Limit Group (limitGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Group (limitGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(LimitGroup limitGroup,String type) {
+	public void delete(LimitGroup limitGroup, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LimitGroup");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where GroupCode =:GroupCode");
@@ -171,73 +172,78 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into LimitGroup or LimitGroup_Temp.
 	 *
-	 * save Limit Group 
+	 * save Limit Group
 	 * 
-	 * @param Limit Group (limitGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Group (limitGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(LimitGroup limitGroup,String type) {
+	public String save(LimitGroup limitGroup, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitGroup");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (LimitCategory,GroupCode, GroupName,Active,GroupOf");
-		insertSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:LimitCategory,:GroupCode, :GroupName,:Active,:GroupOf");
-		insertSql.append(", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitGroup.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record LimitGroup or LimitGroup_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Limit Group by key GroupCode and Version
+	 * This method updates the Record LimitGroup or LimitGroup_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Limit Group by key GroupCode and Version
 	 * 
-	 * @param Limit Group (limitGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Group (limitGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(LimitGroup limitGroup,String type) {
+	public void update(LimitGroup limitGroup, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql = new StringBuilder("Update LimitGroup");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LimitCategory =:LimitCategory, GroupName = :GroupName,Active =:Active, GroupOf =:GroupOf");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update LimitGroup");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set LimitCategory =:LimitCategory, GroupName = :GroupName,Active =:Active, GroupOf =:GroupOf");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where GroupCode =:GroupCode");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

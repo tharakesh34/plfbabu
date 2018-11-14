@@ -54,18 +54,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class LoanPurpose extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= -3761541301075338850L;
+	private static final long serialVersionUID = -3761541301075338850L;
 
-	private String				loanPurposeCode;
-	private String				loanPurposeDesc;
-	private boolean				loanPurposeIsActive;
-	private boolean				newRecord;
-	private String				lovValue;
-	private LoanPurpose			befImage;
-	private LoggedInUser		userDetails;
-	private BigDecimal  eligibleAmount 	=BigDecimal.ZERO;
-			
-	
+	private String loanPurposeCode;
+	private String loanPurposeDesc;
+	private boolean loanPurposeIsActive;
+	private boolean newRecord;
+	private String lovValue;
+	private LoanPurpose befImage;
+	private LoggedInUser userDetails;
+	private BigDecimal eligibleAmount = BigDecimal.ZERO;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

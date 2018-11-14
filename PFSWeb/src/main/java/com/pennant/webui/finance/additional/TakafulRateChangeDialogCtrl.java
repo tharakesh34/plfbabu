@@ -82,21 +82,20 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final Logger logger = Logger.getLogger(TakafulRateChangeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_TakafulRateChangeDialog; 				
-	protected Decimalbox 	rateChange; 									
-	protected Combobox 		insurances;  										
-	protected Combobox 		fromDate;  										
-	protected Combobox 		toDate;  										
-	protected Button 		btnAddTakafulRate;
-	protected Uppercasebox  serviceReqNo;
-	protected Textbox		remarks;
+	protected Window window_TakafulRateChangeDialog;
+	protected Decimalbox rateChange;
+	protected Combobox insurances;
+	protected Combobox fromDate;
+	protected Combobox toDate;
+	protected Button btnAddTakafulRate;
+	protected Uppercasebox serviceReqNo;
+	protected Textbox remarks;
 	// not auto wired vars
-	private FinScheduleData finScheduleData; 					// overhanded per param
-	private FinanceScheduleDetail financeScheduleDetail; 		// overhanded per param
+	private FinScheduleData finScheduleData; // overhanded per param
+	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl financeMainDialogCtrl;
 
 	private transient boolean validationOn;
@@ -117,9 +116,8 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceMain object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -168,8 +166,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
 	 * @throws Exception
@@ -181,7 +178,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doWriteBeanToComponents(aFinScheduleData);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_TakafulRateChangeDialog.onClose();
 		} catch (Exception e) {
@@ -215,8 +212,8 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
 		fillSchInsurances(this.insurances, aFinSchData.getFinInsuranceList());
-		fillSchFromDates(this.fromDate,	aFinSchData.getFinanceScheduleDetails());
-		fillSchToDates(this.toDate,aFinSchData.getFinanceScheduleDetails(), aFinanceMain.getFinStartDate());
+		fillSchFromDates(this.fromDate, aFinSchData.getFinanceScheduleDetails());
+		fillSchToDates(this.toDate, aFinSchData.getFinanceScheduleDetails(), aFinanceMain.getFinStartDate());
 		logger.debug("Leaving");
 	}
 
@@ -245,8 +242,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	/** To fill schedule dates */
-	private void fillSchFromDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
+	private void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
 
 		this.fromDate.getItems().clear();
@@ -262,13 +258,13 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				// ALlow only Repayment Schedule Dates
-				if (!curSchd.isRepayOnSchDate() || 
-						curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0){
+				if (!curSchd.isRepayOnSchDate() || curSchd.getSchDate()
+						.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
 					continue;
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 			}
@@ -277,8 +273,8 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	/** To fill schedule dates in todate combo */
-	private void fillSchToDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails, Date fillAfter) {
+	private void fillSchToDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
+			Date fillAfter) {
 		logger.debug("Entering");
 		this.toDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -293,17 +289,17 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				// ALlow only Repayment Schedule Dates
-				if (!curSchd.isRepayOnSchDate() || 
-						curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0){
+				if (!curSchd.isRepayOnSchDate() || curSchd.getSchDate()
+						.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
 					continue;
 				}
 
-				if(curSchd.getSchDate().compareTo(fillAfter) < 0) {
+				if (curSchd.getSchDate().compareTo(fillAfter) < 0) {
 					continue;
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 			}
@@ -315,7 +311,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	private void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
@@ -328,27 +324,25 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		try {
-			if (isValidComboValue(
-					this.fromDate,
-					Labels.getLabel("label_TakafulRateChangeDialog_FromDate.value"))) {
-				getFinScheduleData().getFinanceMain().setEventFromDate((Date)this.fromDate.getSelectedItem().getValue());
+			if (isValidComboValue(this.fromDate, Labels.getLabel("label_TakafulRateChangeDialog_FromDate.value"))) {
+				getFinScheduleData().getFinanceMain()
+						.setEventFromDate((Date) this.fromDate.getSelectedItem().getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (isValidComboValue(this.toDate,
-					Labels.getLabel("label_TakafulRateChangeDialog_ToDate.value"))
+			if (isValidComboValue(this.toDate, Labels.getLabel("label_TakafulRateChangeDialog_ToDate.value"))
 					&& this.fromDate.getSelectedIndex() != 0) {
 				if (((Date) this.toDate.getSelectedItem().getValue())
 						.compareTo((Date) this.fromDate.getSelectedItem().getValue()) < 0) {
-					throw new WrongValueException(
-							this.toDate,
-							Labels.getLabel("DATE_ALLOWED_AFTER",new String[]{
-									Labels.getLabel("label_TakafulRateChangeDialog_ToDate.value"),
-									Labels.getLabel("label_TakafulRateChangeDialog_FromDate.value")}));
+					throw new WrongValueException(this.toDate,
+							Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[] { Labels.getLabel("label_TakafulRateChangeDialog_ToDate.value"),
+											Labels.getLabel("label_TakafulRateChangeDialog_FromDate.value") }));
 				} else {
-					getFinScheduleData().getFinanceMain().setEventToDate((Date)this.toDate.getSelectedItem().getValue());
+					getFinScheduleData().getFinanceMain()
+							.setEventToDate((Date) this.toDate.getSelectedItem().getValue());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -363,7 +357,8 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 		for (int i = 0; i < getFinScheduleData().getInsuranceList().size(); i++) {
-			List<FinSchFrqInsurance> schdList = getFinScheduleData().getFinInsuranceList().get(i).getFinSchFrqInsurances();
+			List<FinSchFrqInsurance> schdList = getFinScheduleData().getFinInsuranceList().get(i)
+					.getFinSchFrqInsurances();
 			if (schdList != null && !schdList.isEmpty()) {
 				FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 				for (FinSchFrqInsurance curSchd : schdList) {
@@ -385,19 +380,19 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		//Schedule Calculation Process
-		if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_INSCHANGE)){
+		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_INSCHANGE)) {
 			setFinScheduleData(ScheduleCalculator.recalInsuranceSchedule(getFinScheduleData()));
 		}
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		//Show Error Details in Schedule Maintenance
-		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
-		}else{
+		} else {
 			getFinScheduleData().setSchduleGenerated(true);
 
-			if(getFinanceMainDialogCtrl() != null){
-					getFinanceMainDialogCtrl().doFillSchInsDetails(getFinScheduleData().getFinInsuranceList());
+			if (getFinanceMainDialogCtrl() != null) {
+				getFinanceMainDialogCtrl().doFillSchInsDetails(getFinScheduleData().getFinInsuranceList());
 			}
 			this.window_TakafulRateChangeDialog.onClose();
 		}
@@ -411,8 +406,8 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.rateChange.isVisible()) {
-			this.rateChange.setConstraint(new PTDecimalValidator(Labels.getLabel("label_TakafulRateChangeDialog_Rate.value"), 
-					9, true, false, 0, 9999));
+			this.rateChange.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_TakafulRateChangeDialog_Rate.value"), 9, true, false, 0, 9999));
 		}
 		logger.debug("Leaving");
 	}
@@ -420,7 +415,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Method to clear error messages
 	 * 
-	 * */
+	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -440,13 +435,13 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void onClick$btnAddTakafulRate(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if(getFinanceScheduleDetail()!=null){
-			if(isDataChanged()){
+		if (getFinanceScheduleDetail() != null) {
+			if (isDataChanged()) {
 				doSave();
-			}else{
+			} else {
 				MessageUtil.showError("No Data has been changed.");
 			}
-		}else{
+		} else {
 			doSave();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -456,7 +451,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *			  An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -467,11 +462,10 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
-
 
 	/**
 	 * Saves the components to table. <br>
@@ -492,6 +486,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -499,6 +494,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinanceScheduleDetail getFinanceScheduleDetail() {
 		return financeScheduleDetail;
 	}
+
 	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
 		this.financeScheduleDetail = financeScheduleDetail;
 	}
@@ -506,6 +502,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -513,6 +510,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public ScheduleDetailDialogCtrl getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(ScheduleDetailDialogCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}

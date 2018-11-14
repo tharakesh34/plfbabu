@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.service.rmtmasters.impl;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,23 +67,21 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>FinTypeAccounting</b>.<br>
  * 
  */
-public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounting> implements FinTypeAccountingService {
+public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounting>
+		implements FinTypeAccountingService {
 	private static final Logger logger = Logger.getLogger(FinTypeAccountingServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
-	
+
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinTypeAccountings/FinTypeAccountings_Temp by using FinTypeAccountingsDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinTypeAccountingsDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtFinTypeAccountings by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinTypeAccountings/FinTypeAccountings_Temp by using FinTypeAccountingsDAO's save method b) Update the Record in
+	 * the table. based on the module workFlow Configuration. by using FinTypeAccountingsDAO's update method 3) Audit
+	 * the record in to AuditHeader and AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -90,14 +89,14 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-	
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		String tableType = "";
 		FinTypeAccounting finTypeAccounting = (FinTypeAccounting) auditHeader.getAuditDetail().getModelData();
 
@@ -114,19 +113,19 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		}
 
 		if (StringUtils.isEmpty(tableType)) {
-			AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+			AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(),
+					finTypeAccounting.getModuleId());
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 
 	}
 
 	/**
-	 * getFinTypeAccountingsById fetch the details by using FinTypeAccountingsDAO's getFinTypeAccountingsById
-	 * method.
+	 * getFinTypeAccountingsById fetch the details by using FinTypeAccountingsDAO's getFinTypeAccountingsById method.
 	 * 
 	 * @param finType
 	 *            (String)
@@ -140,9 +139,8 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	}
 
 	/**
-	 * getApprovedFinTypeAccountingsById fetch the details by using FinTypeAccountingsDAO's
-	 * getFinTypeAccountingsById method . with parameter id and type as blank. it fetches
-	 * the approved records from the FinTypeAccountings.
+	 * getApprovedFinTypeAccountingsById fetch the details by using FinTypeAccountingsDAO's getFinTypeAccountingsById
+	 * method . with parameter id and type as blank. it fetches the approved records from the FinTypeAccountings.
 	 * 
 	 * @param id
 	 *            (String)
@@ -151,22 +149,18 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	@Override
 	public List<FinTypeAccounting> getApprovedFinTypeAccountingListByID(String finType, int moduleId) {
 		return getFinTypeAccountingDAO().getFinTypeAccountingListByID(finType, moduleId, "_AView");
-	}	
-		
+	}
+
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinTypeAccountingDAO().delete with parameters promotionFee,"" b) NEW Add new
-	 * record in to main table by using getFinTypeAccountingDAO().save with parameters
-	 * promotionFee,"" c) EDIT Update record in the main table by using
-	 * getFinTypeAccountingDAO().update with parameters promotionFee,"" 3) Delete the record
-	 * from the workFlow table by using getFinTypeAccountingDAO().delete with parameters
-	 * promotionFee,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtFinTypeAccountings by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinTypeAccountingDAO().delete with
+	 * parameters promotionFee,"" b) NEW Add new record in to main table by using getFinTypeAccountingDAO().save with
+	 * parameters promotionFee,"" c) EDIT Update record in the main table by using getFinTypeAccountingDAO().update with
+	 * parameters promotionFee,"" 3) Delete the record from the workFlow table by using getFinTypeAccountingDAO().delete
+	 * with parameters promotionFee,"_Temp" 4) Audit the record in to AuditHeader and AdtFinTypeAccountings by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -175,7 +169,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-	
+
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 
@@ -206,7 +200,8 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				getFinTypeAccountingDAO().update(finTypeAccounting, "");
 			}
 		}
-		AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+		AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(),
+				finTypeAccounting.getModuleId());
 		getFinTypeAccountingDAO().delete(finTypeAccounting, "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -221,23 +216,20 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		return auditHeader;
 	}
 
-		/**
-		 * doReject method do the following steps. 1) Do the Business validation by
-		 * using businessValidation(auditHeader) method if there is any error or
-		 * warning message then return the auditHeader. 2) Delete the record from
-		 * the workFlow table by using getFinTypeAccountingDAO().delete with parameters
-		 * promotionFee,"_Temp" 3) Audit the record in to AuditHeader and
-		 * AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader) for Work
-		 * flow
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
+	/**
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinTypeAccountingDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -249,39 +241,37 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		getFinTypeAccountingDAO().delete(finTypeAccounting, "_TEMP");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
-		/**
-		 * businessValidation method do the following steps. 1) get the details from
-		 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-		 * Record based on the record details. 4) Validate for any business
-		 * validation.
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
+	/**
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditHeader;
 	}
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinTypeAccountingDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
+	 * from getFinTypeAccountingDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -291,85 +281,98 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	@Override
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		FinTypeAccounting finTypeAccounting= (FinTypeAccounting) auditDetail.getModelData();
 
-		FinTypeAccounting tempFinTypeAccounting= null;
-		if (finTypeAccounting.isWorkflow()){
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinTypeAccounting finTypeAccounting = (FinTypeAccounting) auditDetail.getModelData();
+
+		FinTypeAccounting tempFinTypeAccounting = null;
+		if (finTypeAccounting.isWorkflow()) {
 			tempFinTypeAccounting = getFinTypeAccountingDAO().getFinTypeAccountingByID(finTypeAccounting, "_Temp");
 		}
-		FinTypeAccounting befFinTypeAccounting= getFinTypeAccountingDAO().getFinTypeAccountingByID( finTypeAccounting, "");
+		FinTypeAccounting befFinTypeAccounting = getFinTypeAccountingDAO().getFinTypeAccountingByID(finTypeAccounting,
+				"");
 
-		FinTypeAccounting oldFinTypeAccounting= finTypeAccounting.getBefImage();
+		FinTypeAccounting oldFinTypeAccounting = finTypeAccounting.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[2];
+		valueParm[0] = finTypeAccounting.getEvent();
+		valueParm[1] = finTypeAccounting.getLovDescEventAccountingName();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value") + ":" + valueParm[0] + ","
+				+ PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value") + ":" + valueParm[1];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[2];
-		valueParm[0]=finTypeAccounting.getEvent();
-		valueParm[1]=finTypeAccounting.getLovDescEventAccountingName();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value")+":"+valueParm[0]+","+
-				PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value")+":"+valueParm[1];
+		if (finTypeAccounting.isNew()) { // for New record or new record into work flow
 
-		if (finTypeAccounting.isNew()){ // for New record or new record into work flow
-
-			if (!finTypeAccounting.isWorkflow()){// With out Work flow only new records  
-				if (befFinTypeAccounting !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFinTypeAccounting !=null || tempFinTypeAccounting!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records  
+				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinTypeAccounting != null || tempFinTypeAccounting != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befFinTypeAccounting ==null || tempFinTypeAccounting!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befFinTypeAccounting == null || tempFinTypeAccounting != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypeAccounting.isWorkflow()){	// With out Work flow for update and delete
+			if (!finTypeAccounting.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befFinTypeAccounting ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFinTypeAccounting!=null && !oldFinTypeAccounting.getLastMntOn().equals(befFinTypeAccounting.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+				if (befFinTypeAccounting == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldFinTypeAccounting != null
+							&& !oldFinTypeAccounting.getLastMntOn().equals(befFinTypeAccounting.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempFinTypeAccounting==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				if (tempFinTypeAccounting == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (tempFinTypeAccounting!=null && oldFinTypeAccounting!=null && !oldFinTypeAccounting.getLastMntOn().equals(tempFinTypeAccounting.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				if (tempFinTypeAccounting != null && oldFinTypeAccounting != null
+						&& !oldFinTypeAccounting.getLastMntOn().equals(tempFinTypeAccounting.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeAccounting.isWorkflow()){
-			auditDetail.setBefImage(befFinTypeAccounting);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeAccounting.isWorkflow()) {
+			auditDetail.setBefImage(befFinTypeAccounting);
 		}
 
 		return auditDetail;
 	}
-	
+
 	@Override
-	public List<AuditDetail> setFinTypeAccountingAuditData(List<FinTypeAccounting> finTypeAccountingList, String auditTranType, String method) {
+	public List<AuditDetail> setFinTypeAccountingAuditData(List<FinTypeAccounting> finTypeAccountingList,
+			String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccounting(), new FinTypeAccounting().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccounting(),
+				new FinTypeAccounting().getExcludeFields());
 		for (int i = 0; i < finTypeAccountingList.size(); i++) {
 			FinTypeAccounting finTypeAccounting = finTypeAccountingList.get(i);
 
@@ -389,7 +392,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				finTypeAccounting.setNewRecord(true);
 			}
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
@@ -406,17 +409,18 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 			//finTypeAccounting.setUserDetails(financeType.getUserDetails());
 			//finTypeAccounting.setLastMntOn(financeType.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],finTypeAccounting.getBefImage(), finTypeAccounting));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					finTypeAccounting.getBefImage(), finTypeAccounting));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	@Override
 	public List<AuditDetail> processFinTypeAccountingDetails(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
-		
+
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
@@ -487,7 +491,8 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				finTypeAccounting.setRecordStatus(recordStatus);
 			}
 			if (StringUtils.isEmpty(type)) {
-				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(),
+						finTypeAccounting.getModuleId());
 			}
 
 			auditDetails.get(i).setModelData(finTypeAccounting);
@@ -499,20 +504,24 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	}
 
 	@Override
-	public List<AuditDetail> delete(List<FinTypeAccounting> finTypeAccountingList, String tableType, String auditTranType, String finType, int moduleId) {
+	public List<AuditDetail> delete(List<FinTypeAccounting> finTypeAccountingList, String tableType,
+			String auditTranType, String finType, int moduleId) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (finTypeAccountingList != null && !finTypeAccountingList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccounting(), new FinTypeAccounting().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccounting(),
+					new FinTypeAccounting().getExcludeFields());
 			for (int i = 0; i < finTypeAccountingList.size(); i++) {
 				FinTypeAccounting finTypeAccounting = finTypeAccountingList.get(i);
 				if (StringUtils.isNotEmpty(finTypeAccounting.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeAccounting.getBefImage(), finTypeAccounting));
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							finTypeAccounting.getBefImage(), finTypeAccounting));
 				}
 				if (StringUtils.isEmpty(tableType)) {
-					AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+					AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(),
+							finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 				}
 			}
 			getFinTypeAccountingDAO().deleteByFinType(finType, moduleId, tableType);
@@ -522,22 +531,21 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 
 		return auditDetails;
 	}
-	
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -550,6 +558,5 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
-
 
 }

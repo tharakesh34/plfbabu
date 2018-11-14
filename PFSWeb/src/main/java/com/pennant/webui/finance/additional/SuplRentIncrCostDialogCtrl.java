@@ -78,22 +78,21 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final Logger logger = Logger.getLogger(SuplRentIncrCostDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_SuplRentIncrCostDialog; 			
-	protected Combobox fromDate;  					
-	protected Combobox toDate;  					
-	protected Decimalbox suplRent; 								
-	protected Decimalbox incrCost; 								
+	protected Window window_SuplRentIncrCostDialog;
+	protected Combobox fromDate;
+	protected Combobox toDate;
+	protected Decimalbox suplRent;
+	protected Decimalbox incrCost;
 
 	// not auto wired vars
-	private FinScheduleData finScheduleData; 					// overhanded per param
-	private FinanceScheduleDetail financeScheduleDetail; 		// overhanded per param
+	private FinScheduleData finScheduleData; // overhanded per param
+	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl financeMainDialogCtrl;
-	
-	Calendar calender=Calendar.getInstance();
+
+	Calendar calender = Calendar.getInstance();
 	private transient boolean validationOn;
 
 	/**
@@ -111,9 +110,8 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceMain object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -157,8 +155,7 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
 	 * @throws Exception
@@ -170,7 +167,7 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doWriteBeanToComponents(aFinScheduleData);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_SuplRentIncrCostDialog.onClose();
 		} catch (Exception e) {
@@ -213,28 +210,28 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param aFinanceMain
 	 *            FinanceMain
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) throws InterruptedException {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
-		
+
 		this.suplRent.setVisible(true);
 		this.incrCost.setVisible(true);
 		fillSchFromDates(this.fromDate, aFinSchData.getFinanceScheduleDetails());
 		this.toDate.setVisible(true);
-		if(getFinanceScheduleDetail() != null ) {
-			fillSchToDates(this.toDate,	aFinSchData.getFinanceScheduleDetails(), getFinanceScheduleDetail().getSchDate() );
-		}else {
-			fillSchToDates(this.toDate, aFinSchData.getFinanceScheduleDetails(), aFinanceMain.getFinStartDate() );
+		if (getFinanceScheduleDetail() != null) {
+			fillSchToDates(this.toDate, aFinSchData.getFinanceScheduleDetails(),
+					getFinanceScheduleDetail().getSchDate());
+		} else {
+			fillSchToDates(this.toDate, aFinSchData.getFinanceScheduleDetails(), aFinanceMain.getFinStartDate());
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	/** To fill schedule dates */
-	public void fillSchFromDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
+	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
 		this.fromDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -242,16 +239,17 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
-		
-		boolean includedPrvSchTerm  = false;
-		
+
+		boolean includedPrvSchTerm = false;
+
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.fromDate.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -266,40 +264,41 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayDate())) {
 					continue;
 				}
-				
+
 				//Schedule Date Passed last repay date
 				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate())) {
 					continue;
 				}
-				
-				if((i-1 > 0) && !includedPrvSchTerm){
-					
-					FinanceScheduleDetail prvSchd = financeScheduleDetails.get(i-1);
-					
+
+				if ((i - 1 > 0) && !includedPrvSchTerm) {
+
+					FinanceScheduleDetail prvSchd = financeScheduleDetails.get(i - 1);
+
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate())+" "+prvSchd.getSpecifier());
+					comboitem.setLabel(
+							DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 					comboitem.setValue(prvSchd.getSchDate());
-					comboitem.setAttribute("fromSpecifier",prvSchd.getSpecifier());
+					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
 					dateCombobox.appendChild(comboitem);
-					
+
 					includedPrvSchTerm = true;
 				}
-				
-				if(i==0){
+
+				if (i == 0) {
 					includedPrvSchTerm = true;
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
-				comboitem.setAttribute("fromSpecifier",curSchd.getSpecifier());
+				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 
 				if (getFinanceScheduleDetail() != null) {
 					dateCombobox.appendChild(comboitem);
-					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+					if (curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
 						dateCombobox.setSelectedItem(comboitem);
 					}
-				} else { 
+				} else {
 					dateCombobox.appendChild(comboitem);
 				}
 			}
@@ -308,8 +307,8 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	/** To fill schedule dates in todate combo */
-	public void fillSchToDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails, Date fillAfter) {
+	public void fillSchToDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
+			Date fillAfter) {
 		logger.debug("Entering");
 		this.toDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -339,15 +338,16 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
-				comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
-				if (getFinanceScheduleDetail() != null &&  curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) >= 0) {
+				comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
+				if (getFinanceScheduleDetail() != null
+						&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) >= 0) {
 					dateCombobox.appendChild(comboitem);
-					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+					if (curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
 						dateCombobox.setSelectedItem(comboitem);
 					}
-				} else if(curSchd.getSchDate().compareTo(fillAfter) > 0) {
+				} else if (curSchd.getSchDate().compareTo(fillAfter) > 0) {
 					dateCombobox.appendChild(comboitem);
 				}
 			}
@@ -359,31 +359,32 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		int format=CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
+		int format = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 
 		try {
 			this.incrCost.getValue();
-			getFinScheduleData().getFinanceMain().setCurIncrCost(PennantAppUtil.unFormateAmount(this.incrCost.getValue(), 
-					format));
+			getFinScheduleData().getFinanceMain()
+					.setCurIncrCost(PennantAppUtil.unFormateAmount(this.incrCost.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			this.suplRent.getValue();
-			getFinScheduleData().getFinanceMain().setCurSuplRent(PennantAppUtil.unFormateAmount(this.suplRent.getValue(), 
-					format));
+			getFinScheduleData().getFinanceMain()
+					.setCurSuplRent(PennantAppUtil.unFormateAmount(this.suplRent.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if (isValidComboValue( this.fromDate, Labels.getLabel("label_SuplRentIncrCostDialog_FromDate.value"))) {
-				getFinScheduleData().getFinanceMain().setEventFromDate((Date)this.fromDate.getSelectedItem().getValue());
+			if (isValidComboValue(this.fromDate, Labels.getLabel("label_SuplRentIncrCostDialog_FromDate.value"))) {
+				getFinScheduleData().getFinanceMain()
+						.setEventFromDate((Date) this.fromDate.getSelectedItem().getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -393,18 +394,19 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					&& this.fromDate.getSelectedIndex() != 0) {
 				if (((Date) this.toDate.getSelectedItem().getValue())
 						.compareTo((Date) this.fromDate.getSelectedItem().getValue()) < 0) {
-					throw new WrongValueException(
-							this.toDate, Labels.getLabel("DATE_ALLOWED_AFTER",new String[]{
-											Labels.getLabel("label_SuplRentIncrCostDialog_ToDate.value"),
-											Labels.getLabel("label_SuplRentIncrCostDialog_FromDate.value")}));
+					throw new WrongValueException(this.toDate,
+							Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[] { Labels.getLabel("label_SuplRentIncrCostDialog_ToDate.value"),
+											Labels.getLabel("label_SuplRentIncrCostDialog_FromDate.value") }));
 				} else {
-					getFinScheduleData().getFinanceMain().setEventToDate((Date)this.toDate.getSelectedItem().getValue());
+					getFinScheduleData().getFinanceMain()
+							.setEventToDate((Date) this.toDate.getSelectedItem().getValue());
 				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		if (wve.size() > 0) {
 			doClearMessage();
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -417,13 +419,13 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		setFinScheduleData(ScheduleCalculator.calSuplRentIncrCost(getFinScheduleData()));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		//Show Error Details in Schedule Maintainance
-		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
-		}else{
+		} else {
 			getFinScheduleData().setSchduleGenerated(true);
 
-			if(getFinanceMainDialogCtrl()!=null){
+			if (getFinanceMainDialogCtrl() != null) {
 				getFinanceMainDialogCtrl().doFillScheduleList(getFinScheduleData());
 			}
 			this.window_SuplRentIncrCostDialog.onClose();
@@ -438,20 +440,20 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.suplRent.isVisible()) {
-			this.suplRent.setConstraint(new PTDecimalValidator(Labels.getLabel("label_SuplRentIncrCostDialog_SuplRent.value"), 
-					9, false, false, 0, 9999));
+			this.suplRent.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_SuplRentIncrCostDialog_SuplRent.value"), 9, false, false, 0, 9999));
 		}
 		if (this.incrCost.isVisible()) {
-			this.incrCost.setConstraint(new PTDecimalValidator(Labels.getLabel("label_SuplRentIncrCostDialog_IncrCost.value"), 
-					9, false, false, 0, 9999));
+			this.incrCost.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_SuplRentIncrCostDialog_IncrCost.value"), 9, false, false, 0, 9999));
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to clear error messages
 	 * 
-	 * */
+	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -470,13 +472,13 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void onClick$btnSuplRentIncrCost(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if(getFinanceScheduleDetail()!=null){
-			if(isDataChanged()){
+		if (getFinanceScheduleDetail() != null) {
+			if (isDataChanged()) {
 				doSave();
-			}else{
+			} else {
 				MessageUtil.showError("No Data has been changed.");
 			}
-		}else{
+		} else {
 			doSave();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -486,22 +488,21 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *			  An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close event is occurred.
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
-	
 
 	/**
 	 * Saves the components to table. <br>
@@ -514,38 +515,39 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doWriteComponentsToBean();
 		logger.debug("Leaving");
 	}
-	
-	/** To fill todates based on selected from date*/
+
+	/** To fill todates based on selected from date */
 	public void onChange$fromDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.suplRent.setText("");
 		this.incrCost.setText("");
-		
-		if (isValidComboValue(this.fromDate,Labels.getLabel("label_SuplRentIncrCostDialog_FromDate.value"))) {
+
+		if (isValidComboValue(this.fromDate, Labels.getLabel("label_SuplRentIncrCostDialog_FromDate.value"))) {
 			this.toDate.getItems().clear();
 			String frSpecifier = this.fromDate.getSelectedItem().getAttribute("fromSpecifier").toString();
 			fillSchToDates(this.toDate, getFinScheduleData().getFinanceScheduleDetails(),
 					(Date) this.fromDate.getSelectedItem().getValue());
-			if((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY)) ||
-					(frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
-				if(getFinScheduleData().getFinanceMain().getRpyAdvBaseRate()!=null) {
+			if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY))
+					|| (frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
+				if (getFinScheduleData().getFinanceMain().getRpyAdvBaseRate() != null) {
 					this.suplRent.setValue(getFinScheduleData().getFinanceMain().getSupplementRent());
 					this.incrCost.setValue(getFinScheduleData().getFinanceMain().getIncreasedCost());
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -553,6 +555,7 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinanceScheduleDetail getFinanceScheduleDetail() {
 		return financeScheduleDetail;
 	}
+
 	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
 		this.financeScheduleDetail = financeScheduleDetail;
 	}
@@ -560,6 +563,7 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -567,8 +571,9 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public ScheduleDetailDialogCtrl getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(ScheduleDetailDialogCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
-	
+
 }

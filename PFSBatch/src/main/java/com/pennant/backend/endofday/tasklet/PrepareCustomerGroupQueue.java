@@ -14,17 +14,17 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 
 public class PrepareCustomerGroupQueue implements Tasklet {
-	private Logger					logger	= Logger.getLogger(PrepareCustomerGroupQueue.class);
+	private Logger logger = Logger.getLogger(PrepareCustomerGroupQueue.class);
 
 	@SuppressWarnings("unused")
-	private DataSource			dataSource;
-	private CustomerGroupQueuingDAO	customerGroupQueuingDAO;
+	private DataSource dataSource;
+	private CustomerGroupQueuingDAO customerGroupQueuingDAO;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Prepare Customer Groups On : " + valueDate);
-		
+
 		// delete the CustomerGroupQueuing data
 		this.customerGroupQueuingDAO.delete();
 

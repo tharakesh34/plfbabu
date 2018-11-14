@@ -62,9 +62,9 @@ import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.webui.applicationmaster.agreementdefinition.model.AgreementDefinitionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/AgreementDefinition

@@ -96,80 +96,79 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Collateral/FacilityDetail/facilityDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Collateral/FacilityDetail/facilityDetailDialog.zul file.
  */
 public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FacilityDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_FacilityDetailDialog; 
-	protected Textbox cAFReference;   
-	protected Textbox facilityRef;    
-	protected Textbox facilityFor;    
-	protected ExtendedCombobox facilityType; 
-	protected ExtendedCombobox facilityCCY; 
-	protected Decimalbox exposure; 
-	protected Decimalbox existingLimit; 
-	protected CurrencyBox newLimit; 
-	protected Decimalbox financeAmount; 
-	protected Textbox pricing; 
-	protected Textbox repayments; 
-	protected Textbox rateType; 
-	protected Textbox lCPeriod; 
-	protected Textbox usancePeriod; 
-	protected Checkbox securityClean; 
-	protected PTCKeditor securityDesc; 
-	protected Textbox utilization; 
-	protected PTCKeditor commission; 
-	protected PTCKeditor purpose; 
-	protected PTCKeditor guarantee; 
-	protected PTCKeditor covenants; 
-	protected PTCKeditor documentsRequired; 
-	protected Datebox startDate; 
-	protected Datebox maturityDate; 
-	
-	protected Intbox tenorYear; 
-	protected Intbox tenorMonth; 
-	protected Textbox tenorDesc; 
-	
-	protected Combobox          transactionType;   
-	protected Textbox           agentBank;         
-	protected Textbox           otherDetails;      
-	protected CurrencyBox       totalFacility;     
-	protected ExtendedCombobox  totalFacilityCcy;  
-	protected CurrencyBox       underWriting;      
-	protected ExtendedCombobox  underWritingCcy;   
-	protected CurrencyBox       propFinalTake;     
-	protected ExtendedCombobox  propFinalTakeCcy;  
-	protected Row               row_totalFacility; 
-	protected Row               row_underWriting;  
-	protected Row               row_propFinalTake; 
-	
+	protected Window window_FacilityDetailDialog;
+	protected Textbox cAFReference;
+	protected Textbox facilityRef;
+	protected Textbox facilityFor;
+	protected ExtendedCombobox facilityType;
+	protected ExtendedCombobox facilityCCY;
+	protected Decimalbox exposure;
+	protected Decimalbox existingLimit;
+	protected CurrencyBox newLimit;
+	protected Decimalbox financeAmount;
+	protected Textbox pricing;
+	protected Textbox repayments;
+	protected Textbox rateType;
+	protected Textbox lCPeriod;
+	protected Textbox usancePeriod;
+	protected Checkbox securityClean;
+	protected PTCKeditor securityDesc;
+	protected Textbox utilization;
+	protected PTCKeditor commission;
+	protected PTCKeditor purpose;
+	protected PTCKeditor guarantee;
+	protected PTCKeditor covenants;
+	protected PTCKeditor documentsRequired;
+	protected Datebox startDate;
+	protected Datebox maturityDate;
+
+	protected Intbox tenorYear;
+	protected Intbox tenorMonth;
+	protected Textbox tenorDesc;
+
+	protected Combobox transactionType;
+	protected Textbox agentBank;
+	protected Textbox otherDetails;
+	protected CurrencyBox totalFacility;
+	protected ExtendedCombobox totalFacilityCcy;
+	protected CurrencyBox underWriting;
+	protected ExtendedCombobox underWritingCcy;
+	protected CurrencyBox propFinalTake;
+	protected ExtendedCombobox propFinalTakeCcy;
+	protected Row row_totalFacility;
+	protected Row row_underWriting;
+	protected Row row_propFinalTake;
+
 	//protected Space space_AgentBank;
 	//protected Space space_OtherDetails;
-	
+
 	// not auto wired vars
 	private FacilityDetail facilityDetail; // overhanded per param
 	private FacilityDetail prvFacilityDetail; // overhanded per param
 	private transient FacilityDetailListCtrl facilityDetailListCtrl; // overhanded
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
-	
+
 	private List<FacilityDetail> facilityDetailsList;
-	private int ccyFormat=0;
-	Commitment commitment=null;
-	String userRole="";
+	private int ccyFormat = 0;
+	Commitment commitment = null;
+	String userRole = "";
 	Date appldate = DateUtility.getAppDate();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -183,11 +182,10 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FacilityDetail object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FacilityDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -205,23 +203,24 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 				BeanUtils.copyProperties(this.facilityDetail, befImage);
 				this.facilityDetail.setBefImage(befImage);
 				setFacilityDetail(this.facilityDetail);
-				
-				ccyFormat= CurrencyUtil.getFormat(getFacilityDetail().getFacilityCCY());
+
+				ccyFormat = CurrencyUtil.getFormat(getFacilityDetail().getFacilityCCY());
 			} else {
 				setFacilityDetail(null);
 			}
 			this.facilityDetail.setWorkflowId(0);
-			doLoadWorkFlow(this.facilityDetail.isWorkflow(), this.facilityDetail.getWorkflowId(), this.facilityDetail.getNextTaskId());
+			doLoadWorkFlow(this.facilityDetail.isWorkflow(), this.facilityDetail.getWorkflowId(),
+					this.facilityDetail.getNextTaskId());
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FacilityDetailDialog");
 			}
 			if (arguments.containsKey("role")) {
-				userRole=arguments.get("role").toString();
+				userRole = arguments.get("role").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "FacilityDetailDialog");
 			}
 			if (arguments.containsKey("commitment")) {
-				commitment=(Commitment) arguments.get("commitment");
+				commitment = (Commitment) arguments.get("commitment");
 			}
 			doCheckRights();
 			// READ OVERHANDED params !
@@ -254,8 +253,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.facilityRef.setMaxlength(20);
 		this.facilityFor.setMaxlength(50);
 		this.facilityType.setMaxlength(8);
-        this.facilityType.setMandatoryStyle(true);
-        this.facilityType.setModuleName("FacilityType");
+		this.facilityType.setMandatoryStyle(true);
+		this.facilityType.setModuleName("FacilityType");
 		this.facilityType.setValueColumn("FacilityType");
 		this.facilityType.setDescColumn("FacilityDesc");
 		this.facilityType.setValidateColumns(new String[] { "FacilityType" });
@@ -286,14 +285,14 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.tenorYear.setMaxlength(4);
 		this.tenorMonth.setMaxlength(2);
 		this.tenorDesc.setMaxlength(200);
-		
+
 		this.agentBank.setMaxlength(200);
 		this.otherDetails.setMaxlength(200);
-		
+
 		int facilityFormatter = CurrencyUtil.getFormat(getFacilityDetail().getFacilityCCY());
 		int writingFormatter = CurrencyUtil.getFormat(getFacilityDetail().getUnderWritingCcy());
 		int takeFormatter = CurrencyUtil.getFormat(getFacilityDetail().getFacilityCCY());
-		
+
 		this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(facilityFormatter));
 		this.totalFacility.setScale(facilityFormatter);
 		this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(writingFormatter));
@@ -306,27 +305,27 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.totalFacilityCcy.setValueColumn("CcyCode");
 		this.totalFacilityCcy.setDescColumn("CcyDesc");
 		this.totalFacilityCcy.setValidateColumns(new String[] { "CcyCode" });
-		
+
 		this.underWritingCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.underWritingCcy.setMandatoryStyle(true);
 		this.underWritingCcy.setModuleName("Currency");
 		this.underWritingCcy.setValueColumn("CcyCode");
 		this.underWritingCcy.setDescColumn("CcyDesc");
 		this.underWritingCcy.setValidateColumns(new String[] { "CcyCode" });
-		
+
 		this.propFinalTakeCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.propFinalTakeCcy.setMandatoryStyle(true);
 		this.propFinalTakeCcy.setModuleName("Currency");
 		this.propFinalTakeCcy.setValueColumn("CcyCode");
 		this.propFinalTakeCcy.setDescColumn("CcyDesc");
 		this.propFinalTakeCcy.setValidateColumns(new String[] { "CcyCode" });
-		
-//		this.securityDesc.setMaxlength(2000);
-//		this.commission.setMaxlength(2000);
-//		this.purpose.setMaxlength(2000);
-//		this.guarantee.setMaxlength(2000);
-//		this.covenants.setMaxlength(2000);
-		
+
+		//		this.securityDesc.setMaxlength(2000);
+		//		this.commission.setMaxlength(2000);
+		//		this.purpose.setMaxlength(2000);
+		//		this.guarantee.setMaxlength(2000);
+		//		this.covenants.setMaxlength(2000);
+
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.maturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		if (isWorkFlowEnabled()) {
@@ -342,12 +341,11 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FacilityDetailDialog",userRole);
+		getUserWorkspace().allocateAuthorities("FacilityDetailDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FacilityDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FacilityDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FacilityDetailDialog_btnDelete"));
@@ -446,18 +444,22 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	 */
 	public void doWriteBeanToComponents(FacilityDetail aFacilityDetail) {
 		logger.debug("Entering");
-		if (commitment ==null && !aFacilityDetail.isNewRecord() && !getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_NEW)) {
-			commitment=getCommitmentRef(aFacilityDetail.getFacilityRef());
+		if (commitment == null && !aFacilityDetail.isNewRecord()
+				&& !getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_NEW)) {
+			commitment = getCommitmentRef(aFacilityDetail.getFacilityRef());
 		}
 		this.cAFReference.setValue(aFacilityDetail.getCAFReference());
 		this.facilityRef.setValue(aFacilityDetail.getFacilityRef());
-		this.facilityFor.setValue(PennantStaticListUtil.getlabelDesc(aFacilityDetail.getFacilityFor(), PennantStaticListUtil.getFacilityApprovalFor()));
-		this.facilityType.setValue(aFacilityDetail.getFacilityType(),StringUtils.trimToEmpty(aFacilityDetail.getFacilityTypeDesc()));
-		this.facilityCCY.setValue(aFacilityDetail.getFacilityCCY(),CurrencyUtil.getCcyDesc(aFacilityDetail.getFacilityCCY()));
-		if (commitment!=null) {
+		this.facilityFor.setValue(PennantStaticListUtil.getlabelDesc(aFacilityDetail.getFacilityFor(),
+				PennantStaticListUtil.getFacilityApprovalFor()));
+		this.facilityType.setValue(aFacilityDetail.getFacilityType(),
+				StringUtils.trimToEmpty(aFacilityDetail.getFacilityTypeDesc()));
+		this.facilityCCY.setValue(aFacilityDetail.getFacilityCCY(),
+				CurrencyUtil.getCcyDesc(aFacilityDetail.getFacilityCCY()));
+		if (commitment != null) {
 			this.existingLimit.setValue(PennantAppUtil.formateAmount(commitment.getCmtAmount(), ccyFormat));
 			this.exposure.setValue(PennantAppUtil.formateAmount(commitment.getCmtAvailable(), ccyFormat));
-		}else{
+		} else {
 			this.existingLimit.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, ccyFormat));
 			this.exposure.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, ccyFormat));
 		}
@@ -480,21 +482,27 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.tenorYear.setValue(aFacilityDetail.getTenorYear());
 		this.tenorMonth.setValue(aFacilityDetail.getTenorMonth());
 		this.tenorDesc.setValue(aFacilityDetail.getTenorDesc());
-		
-		fillComboBox(this.transactionType, aFacilityDetail.getTransactionType(), PennantStaticListUtil.getTransactionTypesList(), "");
+
+		fillComboBox(this.transactionType, aFacilityDetail.getTransactionType(),
+				PennantStaticListUtil.getTransactionTypesList(), "");
 		this.agentBank.setValue(aFacilityDetail.getAgentBank());
 		this.otherDetails.setValue(aFacilityDetail.getOtherDetails());
-		this.totalFacility.setValue(PennantApplicationUtil.formateAmount(aFacilityDetail.getTotalFacility(), CurrencyUtil.getFormat(aFacilityDetail.getTotalFacilityCcy())));
-		this.totalFacilityCcy.setValue(aFacilityDetail.getTotalFacilityCcy(), CurrencyUtil.getCcyDesc(aFacilityDetail.getTotalFacilityCcy()));
-		this.underWriting.setValue(PennantApplicationUtil.formateAmount(aFacilityDetail.getUnderWriting(),CurrencyUtil.getFormat(aFacilityDetail.getUnderWritingCcy())));
-		this.underWritingCcy.setValue(aFacilityDetail.getUnderWritingCcy(), CurrencyUtil.getCcyDesc(aFacilityDetail.getUnderWritingCcy()));
-		this.propFinalTake.setValue(PennantApplicationUtil.formateAmount(aFacilityDetail.getPropFinalTake(), CurrencyUtil.getFormat(aFacilityDetail.getPropFinalTakeCcy())));
-		this.propFinalTakeCcy.setValue(aFacilityDetail.getPropFinalTakeCcy(),CurrencyUtil.getCcyDesc(aFacilityDetail.getPropFinalTakeCcy()));
-		
+		this.totalFacility.setValue(PennantApplicationUtil.formateAmount(aFacilityDetail.getTotalFacility(),
+				CurrencyUtil.getFormat(aFacilityDetail.getTotalFacilityCcy())));
+		this.totalFacilityCcy.setValue(aFacilityDetail.getTotalFacilityCcy(),
+				CurrencyUtil.getCcyDesc(aFacilityDetail.getTotalFacilityCcy()));
+		this.underWriting.setValue(PennantApplicationUtil.formateAmount(aFacilityDetail.getUnderWriting(),
+				CurrencyUtil.getFormat(aFacilityDetail.getUnderWritingCcy())));
+		this.underWritingCcy.setValue(aFacilityDetail.getUnderWritingCcy(),
+				CurrencyUtil.getCcyDesc(aFacilityDetail.getUnderWritingCcy()));
+		this.propFinalTake.setValue(PennantApplicationUtil.formateAmount(aFacilityDetail.getPropFinalTake(),
+				CurrencyUtil.getFormat(aFacilityDetail.getPropFinalTakeCcy())));
+		this.propFinalTakeCcy.setValue(aFacilityDetail.getPropFinalTakeCcy(),
+				CurrencyUtil.getCcyDesc(aFacilityDetail.getPropFinalTakeCcy()));
+
 		this.maturityDate.setValue(aFacilityDetail.getMaturityDate());
 		this.recordStatus.setValue(aFacilityDetail.getRecordStatus());
-		
-		
+
 		onCheckSecurity();
 		doDesignByMode();
 		doCheckTransactionType();
@@ -528,9 +536,9 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		try {
 			aFacilityDetail.setFacilityType(this.facilityType.getValue());
 			aFacilityDetail.setFacilityTypeDesc(this.facilityType.getDescription());
-			Object object=this.facilityType.getObject();
-			if (object!=null) {
-				FacilityType facilityType=(FacilityType) object;
+			Object object = this.facilityType.getObject();
+			if (object != null) {
+				FacilityType facilityType = (FacilityType) object;
 				aFacilityDetail.setRevolving(facilityType.getRevolving());
 			}
 		} catch (WrongValueException we) {
@@ -543,27 +551,32 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		}
 		try {
 			if (this.exposure.getValue() != null) {
-				aFacilityDetail.setExposure(PennantApplicationUtil.unFormateAmount(this.exposure.getValue(), ccyFormat));
-				
+				aFacilityDetail
+						.setExposure(PennantApplicationUtil.unFormateAmount(this.exposure.getValue(), ccyFormat));
+
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			if (this.existingLimit.getValue() != null) {
-				aFacilityDetail.setExistingLimit(PennantApplicationUtil.unFormateAmount(this.existingLimit.getValue(), ccyFormat));
-				
+				aFacilityDetail.setExistingLimit(
+						PennantApplicationUtil.unFormateAmount(this.existingLimit.getValue(), ccyFormat));
+
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFacilityDetail.setNewLimit(PennantApplicationUtil.unFormateAmount(this.newLimit.getValidateValue(), ccyFormat));
+			aFacilityDetail
+					.setNewLimit(PennantApplicationUtil.unFormateAmount(this.newLimit.getValidateValue(), ccyFormat));
 			//New Commitment amount cannot be less than Utilized Amount
-			if (commitment!=null) {
+			if (commitment != null) {
 				if (aFacilityDetail.getNewLimit().compareTo(commitment.getCmtUtilizedAmount()) < 0) {
-					throw new WrongValueException(this.newLimit, Labels.getLabel("AMOUNT_NO_LESS", new String[] { Labels.getLabel("label_CommitmentDialog_CmtAmount.value"),
-					        Labels.getLabel("label_CommitmentDialog_CmtUtilizedAmount.value") }));
+					throw new WrongValueException(this.newLimit,
+							Labels.getLabel("AMOUNT_NO_LESS",
+									new String[] { Labels.getLabel("label_CommitmentDialog_CmtAmount.value"),
+											Labels.getLabel("label_CommitmentDialog_CmtUtilizedAmount.value") }));
 				}
 			}
 
@@ -572,7 +585,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		}
 		try {
 			if (this.financeAmount.getValue() != null) {
-				aFacilityDetail.setFinanceAmount(PennantApplicationUtil.unFormateAmount(this.financeAmount.getValue(), ccyFormat));
+				aFacilityDetail.setFinanceAmount(
+						PennantApplicationUtil.unFormateAmount(this.financeAmount.getValue(), ccyFormat));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -643,15 +657,16 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 			wve.add(we);
 		}
 		try {
-			if (this.tenorMonth.intValue()==0 && this.tenorYear.intValue()==0) {
-				this.tenorYear.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityDetailDialog_TenorYear.value"),  true, false));
+			if (this.tenorMonth.intValue() == 0 && this.tenorYear.intValue() == 0) {
+				this.tenorYear.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_FacilityDetailDialog_TenorYear.value"), true, false));
 			}
 			aFacilityDetail.setTenorYear(this.tenorYear.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		
+
 			aFacilityDetail.setTenorMonth(this.tenorMonth.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -661,73 +676,78 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacilityDetail.setStartDate(this.startDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (this.startDate.getValue()!=null && this.maturityDate.getValue()!=null) {
-				this.maturityDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDetailDialog_MaturityDate.value"), false, this.startDate.getValue(), null, true));
+			if (this.startDate.getValue() != null && this.maturityDate.getValue() != null) {
+				this.maturityDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_FacilityDetailDialog_MaturityDate.value"), false,
+								this.startDate.getValue(), null, true));
 			}
 			aFacilityDetail.setMaturityDate(this.maturityDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (this.transactionType.getSelectedItem() == null || "#".equals(this.transactionType.getSelectedItem().getValue().toString())) {
-				throw new WrongValueException( this.transactionType, Labels.getLabel( "CHECK_NO_EMPTY",
-						new String[] {Labels.getLabel("label_FacilityDetailDialog_transactionType.value")}));			
-				} else {
-					aFacilityDetail.setTransactionType(this.transactionType.getSelectedItem().getValue().toString());
+			if (this.transactionType.getSelectedItem() == null
+					|| "#".equals(this.transactionType.getSelectedItem().getValue().toString())) {
+				throw new WrongValueException(this.transactionType, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_FacilityDetailDialog_transactionType.value") }));
+			} else {
+				aFacilityDetail.setTransactionType(this.transactionType.getSelectedItem().getValue().toString());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacilityDetail.setAgentBank(StringUtils.trimToEmpty(this.agentBank.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacilityDetail.setOtherDetails(StringUtils.trimToEmpty(this.otherDetails.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			aFacilityDetail.setTotalFacility(PennantApplicationUtil.unFormateAmount(this.totalFacility.getValidateValue(), 
-					CurrencyUtil.getFormat(aFacilityDetail.getTotalFacilityCcy())));
+			aFacilityDetail
+					.setTotalFacility(PennantApplicationUtil.unFormateAmount(this.totalFacility.getValidateValue(),
+							CurrencyUtil.getFormat(aFacilityDetail.getTotalFacilityCcy())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacilityDetail.setTotalFacilityCcy(this.totalFacilityCcy.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			aFacilityDetail.setUnderWriting(PennantApplicationUtil.unFormateAmount(this.underWriting.getValidateValue(), 
+			aFacilityDetail.setUnderWriting(PennantApplicationUtil.unFormateAmount(this.underWriting.getValidateValue(),
 					CurrencyUtil.getFormat(aFacilityDetail.getUnderWritingCcy())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFacilityDetail.setUnderWritingCcy(this.underWritingCcy.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			aFacilityDetail.setPropFinalTake(PennantApplicationUtil.unFormateAmount(this.propFinalTake.getValidateValue(), 
-					CurrencyUtil.getFormat(aFacilityDetail.getPropFinalTakeCcy())));
+			aFacilityDetail
+					.setPropFinalTake(PennantApplicationUtil.unFormateAmount(this.propFinalTake.getValidateValue(),
+							CurrencyUtil.getFormat(aFacilityDetail.getPropFinalTakeCcy())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -736,7 +756,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (wve.size() > 0) {
@@ -753,8 +773,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFacilityDetail
 	 * @throws InterruptedException
@@ -790,18 +809,22 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		boolean isTranTypeSyndication = this.transactionType.getSelectedItem().getValue().equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
-//		if (!this.cAFReference.isReadonly()) {
-//			this.cAFReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_CAFReference.value"),null,true));
-//		}
+		boolean isTranTypeSyndication = this.transactionType.getSelectedItem().getValue()
+				.equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
+		//		if (!this.cAFReference.isReadonly()) {
+		//			this.cAFReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_CAFReference.value"),null,true));
+		//		}
 		if (!this.facilityFor.isReadonly()) {
-			this.facilityFor.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_FacilityFor.value"),null,true));
+			this.facilityFor.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_FacilityFor.value"), null, true));
 		}
 		if (!this.facilityType.isReadonly()) {
-			this.facilityType.setConstraint(new PTStringValidator ( Labels.getLabel("label_FacilityDetailDialog_FacilityType.value"),null,true,true));
+			this.facilityType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityDetailDialog_FacilityType.value"), null, true, true));
 		}
 		if (!this.facilityCCY.isReadonly()) {
-			this.facilityCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_FacilityCCY.value"),null,true,true));
+			this.facilityCCY.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FacilityDetailDialog_FacilityCCY.value"), null, true, true));
 		}
 		if (!this.exposure.isReadonly()) {
 			// FIXIT
@@ -810,85 +833,89 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 			// FIXIT
 		}
 		if (!this.newLimit.isReadonly()) {
-			this.newLimit.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_NewLimit.value"), ccyFormat, true, false));
+			this.newLimit.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FacilityDetailDialog_NewLimit.value"), ccyFormat, true, false));
 		}
 		if (!this.financeAmount.isReadonly()) {
 			// FIXIT
 		}
-		
+
 		if (!this.tenorMonth.isReadonly()) {
-			this.tenorMonth.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityDetailDialog_TenorMonth.value"),  false, false,0,11));
+			this.tenorMonth.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FacilityDetailDialog_TenorMonth.value"), false, false, 0, 11));
 		}
-//		if (!this.tenorDesc.isReadonly()) {
-//			this.tenorDesc.setConstraint(new PTStringValidator( Labels.getLabel("label_FacilityDetailDialog_TenorDesc.value"),null,true));
-//		}
-		
+		//		if (!this.tenorDesc.isReadonly()) {
+		//			this.tenorDesc.setConstraint(new PTStringValidator( Labels.getLabel("label_FacilityDetailDialog_TenorDesc.value"),null,true));
+		//		}
+
 		if (!this.startDate.isReadonly() && !this.startDate.isDisabled()) {
-			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDetailDialog_StartDate.value"), false, appldate,null, true));
+			this.startDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FacilityDetailDialog_StartDate.value"), false, appldate, null, true));
 		}
 		if (!this.maturityDate.isReadonly() && !this.maturityDate.isDisabled()) {
-			this.maturityDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDetailDialog_MaturityDate.value"), false, appldate,null, true));
+			this.maturityDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FacilityDetailDialog_MaturityDate.value"), false, appldate, null, true));
 		}
-//		if (!this.pricing.isReadonly()) {
-//			this.pricing.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Pricing.value"),null,true));
-//		}
-//		if (!this.repayments.isReadonly()) {
-//			this.repayments.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Repayments.value"),null,true));
-//		}
-//		if (!this.rateType.isReadonly()) {
-//			this.rateType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_RateType.value"),null,true));
-//		}
-//		if (!this.lCPeriod.isReadonly()) {
-//			this.lCPeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_LCPeriod.value"),null,true));
-//		}
-//		if (!this.usancePeriod.isReadonly()) {
-//			this.usancePeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_UsancePeriod.value"),null,true));
-//		}
-//		if (!this.securityDesc.isReadonly()) {
-//			this.securityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_SecurityDesc.value"),null,true));
-//		}
-//		if (!this.utilization.isReadonly()) {
-//			this.utilization.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Utilization.value"),null,true));
-//		}
-//		if (!this.commission.isReadonly()) {
-//			this.commission.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Commission.value"),null,true));
-//		}
-//		if (!this.purpose.isReadonly()) {
-//			this.purpose.setConstraint(new PTStringValidator( Labels.getLabel("label_FacilityDetailDialog_Purpose.value"),null,true));
-//		}
-		
-//			if (!this.agentBank.isReadonly()) {
-//				this.agentBank.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_agentBank.value"),null,true));
-//			}
-//
-//			if (!this.otherDetails.isReadonly()) {
-//				this.otherDetails.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_otherDetails.value"),null,true));
-//			}
-		if(isTranTypeSyndication){
-			/*if (!this.totalFacility.isReadonly()) {
-				this.totalFacility.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_totalFacility.value"), 
-						getFacilityDetail().getTotalFacilityFormatter(), isTranTypeSyndication, false));
+		//		if (!this.pricing.isReadonly()) {
+		//			this.pricing.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Pricing.value"),null,true));
+		//		}
+		//		if (!this.repayments.isReadonly()) {
+		//			this.repayments.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Repayments.value"),null,true));
+		//		}
+		//		if (!this.rateType.isReadonly()) {
+		//			this.rateType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_RateType.value"),null,true));
+		//		}
+		//		if (!this.lCPeriod.isReadonly()) {
+		//			this.lCPeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_LCPeriod.value"),null,true));
+		//		}
+		//		if (!this.usancePeriod.isReadonly()) {
+		//			this.usancePeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_UsancePeriod.value"),null,true));
+		//		}
+		//		if (!this.securityDesc.isReadonly()) {
+		//			this.securityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_SecurityDesc.value"),null,true));
+		//		}
+		//		if (!this.utilization.isReadonly()) {
+		//			this.utilization.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Utilization.value"),null,true));
+		//		}
+		//		if (!this.commission.isReadonly()) {
+		//			this.commission.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Commission.value"),null,true));
+		//		}
+		//		if (!this.purpose.isReadonly()) {
+		//			this.purpose.setConstraint(new PTStringValidator( Labels.getLabel("label_FacilityDetailDialog_Purpose.value"),null,true));
+		//		}
+
+		//			if (!this.agentBank.isReadonly()) {
+		//				this.agentBank.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_agentBank.value"),null,true));
+		//			}
+		//
+		//			if (!this.otherDetails.isReadonly()) {
+		//				this.otherDetails.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_otherDetails.value"),null,true));
+		//			}
+		if (isTranTypeSyndication) {
+			/*
+			 * if (!this.totalFacility.isReadonly()) { this.totalFacility.setConstraint(new
+			 * PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_totalFacility.value"),
+			 * getFacilityDetail().getTotalFacilityFormatter(), isTranTypeSyndication, false)); }
+			 * 
+			 * if (!this.underWriting.isReadonly()) { this.underWriting.setConstraint(new
+			 * PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_underWriting.value"),
+			 * getFacilityDetail().getUnderWritingFormatter(), isTranTypeSyndication, false)); }
+			 * 
+			 * if (!this.propFinalTake.isReadonly()) { this.propFinalTake.setConstraint(new
+			 * PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_propFinalTake.value"),
+			 * getFacilityDetail().getPropFinalTakeFormatter(), isTranTypeSyndication, false)); }
+			 * 
+			 * if(!this.totalFacilityCcy.isReadonly()){ this.totalFacilityCcy.setConstraint(new
+			 * PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_totalFacilityCcy.value"),null,true)); }
+			 */
+			if (!this.underWritingCcy.isReadonly()) {
+				this.underWritingCcy.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FacilityDetailDialog_underWritingCcy.value"), null, true, true));
 			}
 
-			if (!this.underWriting.isReadonly()) {
-				this.underWriting.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_underWriting.value"), 
-						getFacilityDetail().getUnderWritingFormatter(), isTranTypeSyndication, false));
-			}
-
-			if (!this.propFinalTake.isReadonly()) {
-				this.propFinalTake.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FacilityDetailDialog_propFinalTake.value"), 
-						getFacilityDetail().getPropFinalTakeFormatter(), isTranTypeSyndication, false));
-			}
-
-			if(!this.totalFacilityCcy.isReadonly()){ 
-				this.totalFacilityCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_totalFacilityCcy.value"),null,true));
-			}*/
-			if(!this.underWritingCcy.isReadonly()){ 
-				this.underWritingCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_underWritingCcy.value"),null,true,true));
-			}
-
-			if(!this.propFinalTakeCcy.isReadonly()){ 
-				this.propFinalTakeCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_propFinalTakeCcy.value"),null,true,true));
+			if (!this.propFinalTakeCcy.isReadonly()) {
+				this.propFinalTakeCcy.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FacilityDetailDialog_propFinalTakeCcy.value"), null, true, true));
 			}
 		}
 		logger.debug("Leaving");
@@ -915,17 +942,17 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.lCPeriod.setConstraint("");
 		this.usancePeriod.setConstraint("");
 		this.utilization.setConstraint("");
-//		this.securityDesc.setConstraint("");
-//		this.commission.setConstraint("");
-//		this.purpose.setConstraint("");
-//		this.guarantee.setConstraint("");
-//		this.covenants.setConstraint("");
+		//		this.securityDesc.setConstraint("");
+		//		this.commission.setConstraint("");
+		//		this.purpose.setConstraint("");
+		//		this.guarantee.setConstraint("");
+		//		this.covenants.setConstraint("");
 		this.startDate.setConstraint("");
 		this.maturityDate.setConstraint("");
 		this.tenorYear.setConstraint("");
 		this.tenorMonth.setConstraint("");
 		this.tenorDesc.setConstraint("");
-		
+
 		this.agentBank.setConstraint("");
 		this.otherDetails.setConstraint("");
 		this.totalFacility.setConstraint("");
@@ -934,12 +961,12 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.underWritingCcy.setConstraint("");
 		this.propFinalTake.setConstraint("");
 		this.propFinalTakeCcy.setConstraint("");
-		
+
 		logger.debug("Leaving");
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a FacilityDetail object from database.<br>
 	 * 
@@ -951,7 +978,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		BeanUtils.copyProperties(getFacilityDetail(), aFacilityDetail);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFacilityDetail.getCAFReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aFacilityDetail.getCAFReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFacilityDetail.getRecordType())) {
 				aFacilityDetail.setVersion(aFacilityDetail.getVersion() + 1);
@@ -962,23 +990,23 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if (StringUtils.trimToEmpty(aFacilityDetail.getRecordType()).equals(PennantConstants.RCD_UPD)) {
+			} else if (StringUtils.trimToEmpty(aFacilityDetail.getRecordType()).equals(PennantConstants.RCD_UPD)) {
 				aFacilityDetail.setVersion(aFacilityDetail.getVersion() + 1);
 				aFacilityDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
-			
+
 			try {
 				tranType = PennantConstants.TRAN_DEL;
 				AuditHeader auditHeader = processFacilityDetails(aFacilityDetail, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_FacilityDetailDialog, auditHeader);
-				
+
 				int retValue = auditHeader.getProcessStatus();
-			
+
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getFacilityDetailListCtrl().doFillFacilityDetail(this.facilityDetailsList);
 					closeDialog();
 				}
-			
+
 			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
@@ -1006,7 +1034,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.facilityType.setReadonly(isReadOnly("FacilityDetailDialog_facilityType"));
 		if (getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_NEW)) {
 			this.facilityCCY.setReadonly(isReadOnly("FacilityDetailDialog_facilityCCY"));
-		}else{
+		} else {
 			this.facilityCCY.setReadonly(true);
 		}
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_exposure"), this.exposure);
@@ -1032,7 +1060,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_tenorYear"), this.tenorYear);
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_tenorMonth"), this.tenorMonth);
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_tenorDesc"), this.tenorDesc);
-		
+
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_transactionType"), this.transactionType);
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_agentBank"), this.agentBank);
 		readOnlyComponent(isReadOnly("FacilityDetailDialog_otherDetails"), this.otherDetails);
@@ -1058,11 +1086,10 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-			return getUserWorkspace().isReadOnly(componentName);
+	public boolean isReadOnly(String componentName) {
+		return getUserWorkspace().isReadOnly(componentName);
 	}
-	
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -1093,17 +1120,17 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.tenorYear.setReadonly(true);
 		this.tenorYear.setReadonly(true);
 		this.tenorDesc.setReadonly(true);
-		
+
 		this.transactionType.setReadonly(true);
 		this.agentBank.setReadonly(true);
 		this.otherDetails.setReadonly(true);
 		this.totalFacility.setReadonly(true);
-	    this.totalFacilityCcy.setReadonly(true);
+		this.totalFacilityCcy.setReadonly(true);
 		this.underWriting.setReadonly(true);
 		this.underWritingCcy.setReadonly(true);
 		this.propFinalTake.setReadonly(true);
 		this.propFinalTakeCcy.setReadonly(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1160,7 +1187,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		final FacilityDetail aFacilityDetail = new FacilityDetail();
 		BeanUtils.copyProperties(getFacilityDetail(), aFacilityDetail);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the FacilityDetail object with the components data
@@ -1207,17 +1234,17 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 					return;
 				}
 			}
-			
+
 			AuditHeader auditHeader = processFacilityDetails(aFacilityDetail, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_FacilityDetailDialog, auditHeader);
-			
+
 			int retValue = auditHeader.getProcessStatus();
-			
+
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getFacilityDetailListCtrl().doFillFacilityDetail(this.facilityDetailsList);
 				closeDialog();
 			}
-	
+
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showMessage(e);
@@ -1243,7 +1270,9 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 				if (facilityDetail.getFacilityRef().equals(aFacilityDetail.getFacilityRef())) {
 					// Both Current and Existing list rating same
 					if (aFacilityDetail.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -1259,7 +1288,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 							facilityDetailsList.add(aFacilityDetail);
 						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aFacilityDetail.getRecordType())) {
 							recordAdded = true;
-							List<FacilityDetail> savedList = getFacilityDetailListCtrl().getFacility().getFacilityDetails();
+							List<FacilityDetail> savedList = getFacilityDetailListCtrl().getFacility()
+									.getFacilityDetails();
 							for (int j = 0; j < savedList.size(); j++) {
 								FacilityDetail fee = savedList.get(j);
 								if (fee.getFacilityRef().equals(aFacilityDetail.getFacilityRef())) {
@@ -1285,74 +1315,75 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	public void onCheck$securityClean(Event event){
+
+	public void onCheck$securityClean(Event event) {
 		onCheckSecurity();
 	}
-	private void onCheckSecurity(){
+
+	private void onCheckSecurity() {
 		logger.debug("Entering");
-		if(this.securityClean.isChecked()){
+		if (this.securityClean.isChecked()) {
 			this.securityDesc.setReadonly(true);
 			this.securityDesc.setValue("");
-		}else{
+		} else {
 			this.securityDesc.setReadonly(isReadOnly("FacilityDetailDialog_securityDesc"));
 		}
 		logger.debug("Leaving");
 	}
-	
-	public void onChange$transactionType(Event event){
+
+	public void onChange$transactionType(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCheckTransactionType();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	 public void onFulfill$totalFacilityCcy(Event event) {
-			logger.debug("Entering " + event.toString());
-			Object dataObject = totalFacilityCcy.getObject();
-			if (dataObject instanceof String) {
-				this.totalFacilityCcy.setValue(dataObject.toString());
-				this.totalFacilityCcy.setDescription("");
-			} else {
-				Currency details = (Currency) dataObject;
-				if (details != null) {
-					// To Format Amount based on the currency
-					this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
-				}
+
+	public void onFulfill$totalFacilityCcy(Event event) {
+		logger.debug("Entering " + event.toString());
+		Object dataObject = totalFacilityCcy.getObject();
+		if (dataObject instanceof String) {
+			this.totalFacilityCcy.setValue(dataObject.toString());
+			this.totalFacilityCcy.setDescription("");
+		} else {
+			Currency details = (Currency) dataObject;
+			if (details != null) {
+				// To Format Amount based on the currency
+				this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 			}
-			logger.debug("Leaving " + event.toString());
 		}
-		
-		public void onFulfill$underWritingCcy(Event event) {
-			logger.debug("Entering " + event.toString());
-			Object dataObject = underWritingCcy.getObject();
-			if (dataObject instanceof String) {
-				this.underWritingCcy.setValue(dataObject.toString());
-				this.underWritingCcy.setDescription("");
-			} else {
-				Currency details = (Currency) dataObject;
-				if (details != null) {
-					// To Format Amount based on the currency
-					this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
-				}
+		logger.debug("Leaving " + event.toString());
+	}
+
+	public void onFulfill$underWritingCcy(Event event) {
+		logger.debug("Entering " + event.toString());
+		Object dataObject = underWritingCcy.getObject();
+		if (dataObject instanceof String) {
+			this.underWritingCcy.setValue(dataObject.toString());
+			this.underWritingCcy.setDescription("");
+		} else {
+			Currency details = (Currency) dataObject;
+			if (details != null) {
+				// To Format Amount based on the currency
+				this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 			}
-			logger.debug("Leaving " + event.toString());
 		}
-		
-		public void onFulfill$propFinalTakeCcy(Event event) {
-			logger.debug("Entering " + event.toString());
-			Object dataObject = propFinalTakeCcy.getObject();
-			if (dataObject instanceof String) {
-				this.propFinalTakeCcy.setValue(dataObject.toString());
-				this.propFinalTakeCcy.setDescription("");
-			} else {
-				Currency details = (Currency) dataObject;
-				if (details != null) {
-					// To Format Amount based on the currency
-					this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
-				}
+		logger.debug("Leaving " + event.toString());
+	}
+
+	public void onFulfill$propFinalTakeCcy(Event event) {
+		logger.debug("Entering " + event.toString());
+		Object dataObject = propFinalTakeCcy.getObject();
+		if (dataObject instanceof String) {
+			this.propFinalTakeCcy.setValue(dataObject.toString());
+			this.propFinalTakeCcy.setDescription("");
+		} else {
+			Currency details = (Currency) dataObject;
+			if (details != null) {
+				// To Format Amount based on the currency
+				this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 			}
-			logger.debug("Leaving " + event.toString());
 		}
+		logger.debug("Leaving " + event.toString());
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1391,7 +1422,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 
 	private AuditHeader getAuditHeader(FacilityDetail aFacilityDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFacilityDetail.getBefImage(), aFacilityDetail);
-		return new AuditHeader(aFacilityDetail.getCAFReference(), null, null, null, auditDetail, aFacilityDetail.getUserDetails(), getOverideMap());
+		return new AuditHeader(aFacilityDetail.getCAFReference(), null, null, null, auditDetail,
+				aFacilityDetail.getUserDetails(), getOverideMap());
 	}
 
 	private void showMessage(Exception e) {
@@ -1414,13 +1446,10 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	private void doRemoveLOVValidation() {
 	}
 
-
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.facilityDetail.getCAFReference());
 	}
-
 
 	@Override
 	protected void doClearMessage() {
@@ -1440,17 +1469,17 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.lCPeriod.setErrorMessage("");
 		this.usancePeriod.setErrorMessage("");
 		this.utilization.setErrorMessage("");
-//		this.securityDesc.setErrorMessage("");
-//		this.commission.setErrorMessage("");
-//		this.purpose.setErrorMessage("");
-//		this.guarantee.setErrorMessage("");
-//		this.covenants.setErrorMessage("");
+		//		this.securityDesc.setErrorMessage("");
+		//		this.commission.setErrorMessage("");
+		//		this.purpose.setErrorMessage("");
+		//		this.guarantee.setErrorMessage("");
+		//		this.covenants.setErrorMessage("");
 		this.startDate.setErrorMessage("");
 		this.maturityDate.setErrorMessage("");
 		this.tenorYear.setErrorMessage("");
 		this.tenorMonth.setErrorMessage("");
 		this.tenorDesc.setErrorMessage("");
-		
+
 		this.transactionType.setErrorMessage("");
 		this.agentBank.setErrorMessage("");
 		this.otherDetails.setErrorMessage("");
@@ -1460,7 +1489,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.underWritingCcy.setErrorMessage("");
 		this.propFinalTake.setErrorMessage("");
 		this.propFinalTakeCcy.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1483,6 +1512,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	public List<FacilityDetail> getFacilityDetailsList() {
 		return facilityDetailsList;
 	}
+
 	public void onFulfill$facilityCCY(Event event) {
 		logger.debug("Entering");
 		Object object = this.facilityCCY.getObject();
@@ -1500,59 +1530,62 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		this.financeAmount.setScale(ccyFormat);
 		this.newLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.newLimit.setScale(ccyFormat);
-		boolean isTranTypeSyndiation = this.transactionType.getSelectedItem().getValue().equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
-		if(isTranTypeSyndiation){
+		boolean isTranTypeSyndiation = this.transactionType.getSelectedItem().getValue()
+				.equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
+		if (isTranTypeSyndiation) {
 			defaultSyndicationValueByCcy();
 		}
 		logger.debug("Leaving");
 	}
-	
-	private Commitment getCommitmentRef(String ref){
+
+	private Commitment getCommitmentRef(String ref) {
 		logger.debug("Entering");
-		JdbcSearchObject<Commitment> jdbcSearchObject=new JdbcSearchObject<Commitment>(Commitment.class);
+		JdbcSearchObject<Commitment> jdbcSearchObject = new JdbcSearchObject<Commitment>(Commitment.class);
 		jdbcSearchObject.addTabelName("Commitments_Aview");
 		jdbcSearchObject.addFilterEqual("CmtReference", ref);
 		List<Commitment> list = getPagedListService().getBySearchObject(jdbcSearchObject);
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
 		logger.debug("Leaving");
 		return null;
 	}
-	private FacilityDetail getFacilityDetailByRef(String ref){
+
+	private FacilityDetail getFacilityDetailByRef(String ref) {
 		logger.debug("Entering");
-		JdbcSearchObject<FacilityDetail> jdbcSearchObject=new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
+		JdbcSearchObject<FacilityDetail> jdbcSearchObject = new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
 		jdbcSearchObject.addTabelName("FacilityDetails_view");
 		jdbcSearchObject.addFilterEqual("FacilityRef", ref);
 		List<FacilityDetail> list = getPagedListService().getBySearchObject(jdbcSearchObject);
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
 		logger.debug("Leaving");
 		return null;
 	}
-	
-	private void doDesignByMode(){
+
+	private void doDesignByMode() {
 		logger.debug("Entering");
 		if (StringUtils.isNotBlank(getFacilityDetail().getTermSheetRef())) {
 			this.startDate.setDisabled(true);
 			this.maturityDate.setDisabled(true);
 			this.facilityCCY.setReadonly(true);
-			this.facilityType.setReadonly(true);			
+			this.facilityType.setReadonly(true);
 		}
 		logger.debug("Leaving");
 	}
-	
-	public void doCheckTransactionType(){
+
+	public void doCheckTransactionType() {
 		logger.debug("Entering");
 		doClearMessage();
-		boolean isTranTypeSyndiation = this.transactionType.getSelectedItem().getValue().equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
-		if(isTranTypeSyndiation){
+		boolean isTranTypeSyndiation = this.transactionType.getSelectedItem().getValue()
+				.equals(FacilityConstants.FACILITY_TRAN_SYNDIACTION);
+		if (isTranTypeSyndiation) {
 			this.row_totalFacility.setVisible(true);
 			this.row_underWriting.setVisible(true);
 			this.row_propFinalTake.setVisible(true);
 			defaultSyndicationValueByCcy();
-		}else{
+		} else {
 			this.row_totalFacility.setVisible(false);
 			this.row_underWriting.setVisible(false);
 			this.row_propFinalTake.setVisible(false);
@@ -1571,28 +1604,28 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	private void defaultSyndicationValueByCcy(){
+
+	private void defaultSyndicationValueByCcy() {
 		logger.debug("Entering");
-		if(StringUtils.isNotBlank(this.facilityCCY.getValidatedValue())){
-			Currency currency=(Currency)this.facilityCCY.getObject();
-			if (currency!=null) {
-				if(StringUtils.isBlank(totalFacilityCcy.getValue())){
-					this.totalFacilityCcy.setValue(currency.getCcyCode(),currency.getCcyDesc());
+		if (StringUtils.isNotBlank(this.facilityCCY.getValidatedValue())) {
+			Currency currency = (Currency) this.facilityCCY.getObject();
+			if (currency != null) {
+				if (StringUtils.isBlank(totalFacilityCcy.getValue())) {
+					this.totalFacilityCcy.setValue(currency.getCcyCode(), currency.getCcyDesc());
 					this.totalFacility.setFormat(PennantApplicationUtil.getAmountFormate(currency.getCcyEditField()));
 				}
-				if(StringUtils.isBlank(underWritingCcy.getValue())){
-					this.underWritingCcy.setValue(currency.getCcyCode(),currency.getCcyDesc());
+				if (StringUtils.isBlank(underWritingCcy.getValue())) {
+					this.underWritingCcy.setValue(currency.getCcyCode(), currency.getCcyDesc());
 					this.underWriting.setFormat(PennantApplicationUtil.getAmountFormate(currency.getCcyEditField()));
 				}
-				if(StringUtils.isBlank(propFinalTakeCcy.getValue())){
-					this.propFinalTakeCcy.setValue(currency.getCcyCode(),currency.getCcyDesc());
+				if (StringUtils.isBlank(propFinalTakeCcy.getValue())) {
+					this.propFinalTakeCcy.setValue(currency.getCcyCode(), currency.getCcyDesc());
 					this.propFinalTake.setFormat(PennantApplicationUtil.getAmountFormate(currency.getCcyEditField()));
 				}
 			}
-	
+
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

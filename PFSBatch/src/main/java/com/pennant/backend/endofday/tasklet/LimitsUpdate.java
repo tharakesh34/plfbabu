@@ -16,36 +16,36 @@ import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class LimitsUpdate implements Tasklet {
-	private Logger					logger	= Logger.getLogger(LimitsUpdate.class);
+	private Logger logger = Logger.getLogger(LimitsUpdate.class);
 
 	@SuppressWarnings("unused")
-	private DataSource			dataSource;
+	private DataSource dataSource;
 	private LimitStructureDAO limitStructureDAO;
-	private CustomerQueuingDAO	customerQueuingDAO;
-	private CustomerGroupQueuingDAO	customerGroupQueuingDAO;
-	
+	private CustomerQueuingDAO customerQueuingDAO;
+	private CustomerGroupQueuingDAO customerGroupQueuingDAO;
+
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Update Limits On : " + valueDate);
-		
+
 		//update the Rebuild flag as true in LimitStructure
 		this.limitStructureDAO.updateReBuildField("", "", false, "");
-		
+
 		//insert the CustomerQueuing table data into CustomerQueuing_Log table 
 		this.customerQueuingDAO.logCustomerQueuing();
-		
+
 		//delete the CustomerQueuing Data
 		this.customerQueuingDAO.delete();
-		
+
 		// move the CustomerGroupQueing to log
 		this.customerGroupQueuingDAO.logCustomerGroupQueuing();
 
 		// delete the CustomerGroupQueuing data
 		this.customerGroupQueuingDAO.delete();
-		
+
 		logger.debug("COMPLETE:  Update Limits On :" + valueDate);
-		
+
 		return RepeatStatus.FINISHED;
 	}
 
@@ -60,7 +60,7 @@ public class LimitsUpdate implements Tasklet {
 	public void setLimitStructureDAO(LimitStructureDAO limitStructureDAO) {
 		this.limitStructureDAO = limitStructureDAO;
 	}
-	
+
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}

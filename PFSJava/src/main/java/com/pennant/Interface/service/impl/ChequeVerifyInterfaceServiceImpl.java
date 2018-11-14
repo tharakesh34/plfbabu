@@ -10,11 +10,11 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class ChequeVerifyInterfaceServiceImpl implements ChequeVerifyInterfaceService {
 
 	private static final Logger logger = Logger.getLogger(ChequeVerifyInterfaceServiceImpl.class);
-	
+
 	public ChequeVerifyInterfaceServiceImpl() {
-		
+
 	}
-	
+
 	private ChequeVerificationProcess chequeVerificationProcess;
 
 	/**
@@ -23,7 +23,7 @@ public class ChequeVerifyInterfaceServiceImpl implements ChequeVerifyInterfaceSe
 	 * @param chequeVerification
 	 * 
 	 * @return ChequeVerification
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
 	 */
 	@Override
 	public ChequeVerification verifySecurityCheque(ChequeVerification chequeVerification) throws InterfaceException {
@@ -31,17 +31,16 @@ public class ChequeVerifyInterfaceServiceImpl implements ChequeVerifyInterfaceSe
 		logger.debug("Leaving");
 		return getChequeVerificationProcess().sendChequeVerificationReq(chequeVerification);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public ChequeVerificationProcess getChequeVerificationProcess() {
 		return chequeVerificationProcess;
 	}
 
-	public void setChequeVerificationProcess(
-			ChequeVerificationProcess chequeVerificationProcess) {
+	public void setChequeVerificationProcess(ChequeVerificationProcess chequeVerificationProcess) {
 		this.chequeVerificationProcess = chequeVerificationProcess;
 	}
 

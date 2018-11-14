@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface AuthorizationService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Authorization getAuthorizationById(long id);
+
 	Authorization getApprovedAuthorizationById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

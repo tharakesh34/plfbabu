@@ -59,11 +59,11 @@ import com.pennant.backend.util.PennantConstants;
  * Service implementation for methods that depends on <b>CustomerBalanceSheet</b>.<br>
  * 
  */
-public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBalanceSheet> 
-				implements CustomerBalanceSheetService {
-	
+public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBalanceSheet>
+		implements CustomerBalanceSheetService {
+
 	private static final Logger logger = Logger.getLogger(CustomerBalanceSheetServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerBalanceSheetDAO customerBalanceSheetDAO;
 	private CustomerBalanceSheetValidation balanceSheetValidation;
@@ -71,68 +71,66 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	public CustomerBalanceSheetServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public CustomerBalanceSheetDAO getCustomerBalanceSheetDAO() {
 		return customerBalanceSheetDAO;
 	}
+
 	public void setCustomerBalanceSheetDAO(CustomerBalanceSheetDAO customerBalanceSheetDAO) {
 		this.customerBalanceSheetDAO = customerBalanceSheetDAO;
 	}
 
-	public CustomerBalanceSheetValidation getBalanceSheetValidation(){
-		
-		if(balanceSheetValidation==null){
+	public CustomerBalanceSheetValidation getBalanceSheetValidation() {
+
+		if (balanceSheetValidation == null) {
 			this.balanceSheetValidation = new CustomerBalanceSheetValidation(customerBalanceSheetDAO);
 		}
 		return this.balanceSheetValidation;
 	}
 
-	
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table 
-	 * 			CustomerBalanceSheet/CustomerBalanceSheet_Temp 
-	 * 			by using CustomerBalanceSheetDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using CustomerBalanceSheetDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * CustomerBalanceSheet/CustomerBalanceSheet_Temp by using CustomerBalanceSheetDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using CustomerBalanceSheetDAO's update method
+	 * 3) Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		CustomerBalanceSheet customerBalanceSheet = (CustomerBalanceSheet) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (customerBalanceSheet.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (customerBalanceSheet.isNew()) {
-			customerBalanceSheet.setId(getCustomerBalanceSheetDAO().save(customerBalanceSheet,tableType));
+			customerBalanceSheet.setId(getCustomerBalanceSheetDAO().save(customerBalanceSheet, tableType));
 			auditHeader.getAuditDetail().setModelData(customerBalanceSheet);
-		}else{
-			getCustomerBalanceSheetDAO().update(customerBalanceSheet,tableType);
+		} else {
+			getCustomerBalanceSheetDAO().update(customerBalanceSheet, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -141,85 +139,80 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table CustomerBalanceSheet by using 
-	 * 		CustomerBalanceSheetDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using 
-	 * 		auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * CustomerBalanceSheet by using CustomerBalanceSheetDAO's delete method with type as Blank 3) Audit the record in
+	 * to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
-		CustomerBalanceSheet customerBalanceSheet = (CustomerBalanceSheet) 
-								auditHeader.getAuditDetail().getModelData();
-		getCustomerBalanceSheetDAO().delete(customerBalanceSheet,"");
-		
+
+		CustomerBalanceSheet customerBalanceSheet = (CustomerBalanceSheet) auditHeader.getAuditDetail().getModelData();
+		getCustomerBalanceSheetDAO().delete(customerBalanceSheet, "");
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * getCustomerBalanceSheetById fetch the details by using CustomerBalanceSheetDAO's 
-	 * 		getCustomerBalanceSheetById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * getCustomerBalanceSheetById fetch the details by using CustomerBalanceSheetDAO's getCustomerBalanceSheetById
+	 * method.
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerBalanceSheet
 	 */
-	public CustomerBalanceSheet getCustomerBalanceSheetById(String id,long custId) {
-		return getCustomerBalanceSheetDAO().getCustomerBalanceSheetById(id,custId,"_View");
+	public CustomerBalanceSheet getCustomerBalanceSheetById(String id, long custId) {
+		return getCustomerBalanceSheetDAO().getCustomerBalanceSheetById(id, custId, "_View");
 	}
 
 	/**
-	 * getApprovedCustomerBalanceSheetById fetch the details by using
-	 * CustomerBalanceSheetDAO's getCustomerBalanceSheetById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * CustomerBalanceSheet.
+	 * getApprovedCustomerBalanceSheetById fetch the details by using CustomerBalanceSheetDAO's
+	 * getCustomerBalanceSheetById method . with parameter id and type as blank. it fetches the approved records from
+	 * the CustomerBalanceSheet.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return CustomerBalanceSheet
 	 */
-	public CustomerBalanceSheet getApprovedCustomerBalanceSheetById(String id,long custId) {
-		return getCustomerBalanceSheetDAO().getCustomerBalanceSheetById(id,custId,"_AView");
+	public CustomerBalanceSheet getApprovedCustomerBalanceSheetById(String id, long custId) {
+		return getCustomerBalanceSheetDAO().getCustomerBalanceSheetById(id, custId, "_AView");
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using 
-	 * 			getCustomerBalanceSheetDAO().delete with parameters customerBalanceSheet,""
-	 * 		b)  NEW		Add new record in to main table by using 
-	 * 			getCustomerBalanceSheetDAO().save with parameters customerBalanceSheet,""
-	 * 		c)  EDIT	Update record in the main table by using 
-	 * 			getCustomerBalanceSheetDAO().update with parameters customerBalanceSheet,""
-	 * 3)	Delete the record from the workFlow table by using 
-	 * 			getCustomerBalanceSheetDAO().delete with parameters customerBalanceSheet,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using 
-	 * 		auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerBalanceSheetDAO().delete
+	 * with parameters customerBalanceSheet,"" b) NEW Add new record in to main table by using
+	 * getCustomerBalanceSheetDAO().save with parameters customerBalanceSheet,"" c) EDIT Update record in the main table
+	 * by using getCustomerBalanceSheetDAO().update with parameters customerBalanceSheet,"" 3) Delete the record from
+	 * the workFlow table by using getCustomerBalanceSheetDAO().delete with parameters customerBalanceSheet,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow 5) Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -230,9 +223,9 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 				customerBalanceSheet);
 
 		if (customerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getCustomerBalanceSheetDAO().delete(customerBalanceSheet,"");
+			getCustomerBalanceSheetDAO().delete(customerBalanceSheet, "");
 
 		} else {
 			customerBalanceSheet.setRoleCode("");
@@ -241,18 +234,18 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 			customerBalanceSheet.setNextTaskId("");
 			customerBalanceSheet.setWorkflowId(0);
 
-			if (customerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
-				tranType=PennantConstants.TRAN_ADD;
+			if (customerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				customerBalanceSheet.setRecordType("");
-				getCustomerBalanceSheetDAO().save(customerBalanceSheet,"");
+				getCustomerBalanceSheetDAO().save(customerBalanceSheet, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				customerBalanceSheet.setRecordType("");
-				getCustomerBalanceSheetDAO().update(customerBalanceSheet,"");
+				getCustomerBalanceSheetDAO().update(customerBalanceSheet, "");
 			}
 		}
 
-		getCustomerBalanceSheetDAO().delete(customerBalanceSheet,"_Temp");
+		getCustomerBalanceSheetDAO().delete(customerBalanceSheet, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -261,34 +254,33 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 		auditHeader.getAuditDetail().setModelData(customerBalanceSheet);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using 
-	 * 			getCustomerBalanceSheetDAO().delete with parameters customerBalanceSheet,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerBalanceSheetDAO().delete with parameters customerBalanceSheet,"_Temp" 3) Audit
+	 * the record in to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		CustomerBalanceSheet customerBalanceSheet = (CustomerBalanceSheet) auditHeader.
-								getAuditDetail().getModelData();
+		CustomerBalanceSheet customerBalanceSheet = (CustomerBalanceSheet) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCustomerBalanceSheetDAO().delete(customerBalanceSheet,"_Temp");
+		getCustomerBalanceSheetDAO().delete(customerBalanceSheet, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -296,21 +288,19 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from 
-	 * 		getCustomerBalanceSheetDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getCustomerBalanceSheetDAO().getErrorDetail with Error
+	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
-	 */		
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		auditHeader = getBalanceSheetValidation().balanceSheetValidation(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}

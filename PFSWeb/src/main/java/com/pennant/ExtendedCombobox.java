@@ -69,39 +69,39 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class ExtendedCombobox extends Hbox {
-	private static final long			serialVersionUID	= -4246285143621221275L;
-	private static final Logger			logger				= Logger.getLogger(ExtendedCombobox.class);
+	private static final long serialVersionUID = -4246285143621221275L;
+	private static final Logger logger = Logger.getLogger(ExtendedCombobox.class);
 
-	private Space						space;
-	private Textbox						textbox;
-	private Button						button;
-	private Label						label;
-	private Hbox						hbox;
+	private Space space;
+	private Textbox textbox;
+	private Button button;
+	private Label label;
+	private Hbox hbox;
 
-	private Filter[]					filters;
-	private Object						object				= null;
-	private String						selctedValue		= null;
+	private Filter[] filters;
+	private Object object = null;
+	private String selctedValue = null;
 
 	/*** Mandatory Properties **/
-	private String						moduleName;														//mandatory
-	private int							displayStyle		= 1;										//mandatory 	
-	private String						valueColumn;													//mandatory
+	private String moduleName; //mandatory
+	private int displayStyle = 1; //mandatory 	
+	private String valueColumn; //mandatory
 	private DataType valueType = DataType.STRING;
-	private boolean						isdisplayError		= true;										//mandatory
-	private boolean						inputAllowed		= true;										//mandatory
-	private boolean						isWindowOpened		= false;									//mandatory
-	private boolean						mandatory			= false;									//mandatory
+	private boolean isdisplayError = true; //mandatory
+	private boolean inputAllowed = true; //mandatory
+	private boolean isWindowOpened = false; //mandatory
+	private boolean mandatory = false; //mandatory
 
 	/*** Optional Properties **/
-	private String						descColumn;														//Optional
-	private String[]					validateColumns;												//Optional
+	private String descColumn; //Optional
+	private String[] validateColumns; //Optional
 
 	@SuppressWarnings("rawtypes")
-	private JdbcSearchObject			jdbcSearchObject;
-	private transient PagedListService	pagedListService;
-	private String						whereClause			= null;
-	private String						rateModule			= "";
-	private List<?>						list				= null;
+	private JdbcSearchObject jdbcSearchObject;
+	private transient PagedListService pagedListService;
+	private String whereClause = null;
+	private String rateModule = "";
+	private List<?> list = null;
 
 	public List<?> getList() {
 		return list;
@@ -268,8 +268,8 @@ public class ExtendedCombobox extends Hbox {
 						if (StringUtils.equals(this.whereClause, "")) {
 							object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue());
 						} else {
-							object = ExtendedSearchListBox.show(this, moduleName, textbox.getValue(), null,
-									whereClause, valueColumn, valueType);
+							object = ExtendedSearchListBox.show(this, moduleName, textbox.getValue(), null, whereClause,
+									valueColumn, valueType);
 						}
 					}
 				} else {
@@ -402,7 +402,8 @@ public class ExtendedCombobox extends Hbox {
 			Filter filter1;
 
 			for (int i = 0; i < lovFilters.length; i++) {
-				filter1 = new Filter((String)lovFilters[i][0], lovFilters[i][2], Integer.parseInt((String)lovFilters[i][1]));
+				filter1 = new Filter((String) lovFilters[i][0], lovFilters[i][2],
+						Integer.parseInt((String) lovFilters[i][1]));
 				this.jdbcSearchObject.addFilter(filter1);
 
 			}

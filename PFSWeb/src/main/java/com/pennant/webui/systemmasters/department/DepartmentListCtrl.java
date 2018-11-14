@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.webui.systemmasters.department.model.DepartmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Department/DepartmentList.zul file.
@@ -132,7 +132,8 @@ public class DepartmentListCtrl extends GFCBaseListCtrl<Department> {
 		registerButton(button_DepartmentList_NewDepartment, "button_DepartmentList_NewDepartment", true);
 		registerButton(button_DepartmentList_DepartmentSearchDialog);
 
-		registerField("deptCode", listheader_DeptCode, SortOrder.ASC, deptCode, sortOperator_deptCode, Operators.STRING);
+		registerField("deptCode", listheader_DeptCode, SortOrder.ASC, deptCode, sortOperator_deptCode,
+				Operators.STRING);
 		registerField("deptDesc", listheader_DeptDesc, SortOrder.NONE, deptDesc, sortOperator_deptDesc,
 				Operators.STRING);
 		registerField("deptIsActive", listheader_DeptIsActive, SortOrder.NONE, deptIsActive, sortOperator_deptIsActive,

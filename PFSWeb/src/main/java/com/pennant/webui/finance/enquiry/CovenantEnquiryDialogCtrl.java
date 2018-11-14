@@ -77,21 +77,20 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final Logger logger = Logger.getLogger(CovenantEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CovenantEnquiryDialog; 		
-	protected Listbox 		listBoxFinCovenantType; 					
-	protected Borderlayout  borderlayoutDocumentEnquiry;		
-	private Tabpanel 		tabPanel_dialogWindow;
+	protected Window window_CovenantEnquiryDialog;
+	protected Listbox listBoxFinCovenantType;
+	protected Borderlayout borderlayoutDocumentEnquiry;
+	private Tabpanel tabPanel_dialogWindow;
 	private SecurityRoleService securityRoleService;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinCovenantType> finCovenants;
-	
+
 	private FinanceDetailService financeDetailService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -107,9 +106,8 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -121,18 +119,19 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		// Set the page level components.
 		setPageComponents(window_CovenantEnquiryDialog);
 
-		if(event.getTarget().getParent().getParent() != null){
+		if (event.getTarget().getParent().getParent() != null) {
 			tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 		}
 
 		if (arguments.containsKey("finCovenants")) {
 			this.finCovenants = (List<FinCovenantType>) arguments.get("finCovenants");
-		}else{
+		} else {
 			this.finCovenants = null;
 		}
-		
+
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
 		doShowDialog();
@@ -151,16 +150,16 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			
+
 			// fill the components with the data
 			doFillCovenantList(this.finCovenants);
-			
-			if(tabPanel_dialogWindow != null){
-				
+
+			if (tabPanel_dialogWindow != null) {
+
 				getBorderLayoutHeight();
-				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				this.listBoxFinCovenantType.setHeight(this.borderLayoutHeight-rowsHeight-200+"px");
-				this.window_CovenantEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-30+"px");
+				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+				this.listBoxFinCovenantType.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
+				this.window_CovenantEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 				tabPanel_dialogWindow.appendChild(this.window_CovenantEnquiryDialog);
 
 			}
@@ -172,6 +171,7 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	/**
 	 * Method to fill the Finance Document Details List
+	 * 
 	 * @param docDetails
 	 */
 	public void doFillCovenantList(List<FinCovenantType> finCovenantTypeDetails) {
@@ -198,17 +198,19 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
-				
+
 				cb = new Checkbox();
 				cb.setDisabled(true);
 				cb.setChecked(detail.isAlwOtc());
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
-				
-				lc = new Listcell(DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
+
+				lc = new Listcell(
+						DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatDate(detail.getDocReceivedDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(
+						DateUtility.formatDate(detail.getDocReceivedDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
 				lc = new Listcell(detail.getRecordStatus());
 				lc.setParent(item);
@@ -221,7 +223,7 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFinCovenantTypeItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -248,10 +250,11 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
@@ -260,5 +263,4 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		this.securityRoleService = securityRoleService;
 	}
 
-	
 }

@@ -111,6 +111,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	private transient CustomerDetailsService customerDetailsService;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
 	private String module = null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -125,7 +126,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		super.tableName = "Customers_AView";
 		super.queueTableName = "Customers_LView";
 		super.enquiryTableName = "Customers_TView";
-		
+
 		this.module = getArgument("enqiryModule");
 	}
 
@@ -146,12 +147,13 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		if (enqiryModule || StringUtils.equals("360", module)) {
 			button_CustomerList_NewCustomer.setVisible(false);
 		} else {
-			registerButton(button_CustomerList_NewCustomer,"button_CustomerList_NewCustomer",true);
+			registerButton(button_CustomerList_NewCustomer, "button_CustomerList_NewCustomer", true);
 		}
 		registerButton(button_CustomerList_CustomerSearchDialog);
 
 		registerField("custId");
-		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF, Operators.SIMPLESTRING);
+		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF,
+				Operators.SIMPLESTRING);
 		registerField("custCoreBank", listheader_CustCoreBank, SortOrder.NONE, custCoreBank, sortOperator_custCoreBank,
 				Operators.STRING);
 		registerField("custShrtName", listheader_CustShrtName, SortOrder.NONE, custShrtName, sortOperator_custShrtName,
@@ -167,7 +169,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		registerField("lovDescCustTypeCodeName", listheader_CustTypeCode, SortOrder.NONE, custTypeCode,
 				sortOperator_custTypeCode, Operators.STRING);
 		registerField("LovDescRequestStage", listheader_RequestStage);
-		
+
 		// Render the page and display no data when the page loaded for the first time.
 		doRenderPage();
 	}
@@ -265,11 +267,11 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		try {
 			if (enqiryModule) {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
-			} else if(StringUtils.equals("360", module)){
+			} else if (StringUtils.equals("360", module)) {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
-			}else{
+			} else {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
-				
+
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -286,16 +288,14 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	public void buildDialogWindow(CustomerDetails customerDetails, boolean newRecord) throws Exception {
 		logger.debug("Entering");
 		if (customerDetails != null) {
-			if (isWorkFlowEnabled()
-					&& customerDetails.getCustomer().getWorkflowId() == 0) {
+			if (isWorkFlowEnabled() && customerDetails.getCustomer().getWorkflowId() == 0) {
 				customerDetails.getCustomer().setWorkflowId(getWorkFlowId());
 			}
 			if (newRecord) {
 				// create a new Customer object, We GET it from the backEnd.
 				// CustomerDetails aCustomerDetails =
 				// getCustomerDetailsService().getNewCustomer(false);
-				Customer customerlov = customerDetailsService
-						.fetchCustomerDetails(customerDetails.getCustomer());
+				Customer customerlov = customerDetailsService.fetchCustomerDetails(customerDetails.getCustomer());
 				customerDetails.setCustomer(customerlov);
 				customerDetailsService.setCustomerDetails(customerDetails);
 			}
@@ -326,7 +326,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

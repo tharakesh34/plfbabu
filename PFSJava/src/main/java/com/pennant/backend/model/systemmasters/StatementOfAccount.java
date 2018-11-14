@@ -66,7 +66,7 @@ public class StatementOfAccount {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////		Loan Basic Details		////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	private BigDecimal loanAmount = BigDecimal.ZERO;
 	private String plrRate;
 	private BigDecimal variance = BigDecimal.ZERO;
@@ -101,26 +101,25 @@ public class StatementOfAccount {
 	private Date latestRpyDate;
 	private BigDecimal ccyMinorCcyUnits;
 	private int ccyEditField;
-	private Date                currentDate;
-	private Date				maturityDate;
-	private int					noPaidInst			= 0;
-	private int					noOfOutStandInst	= 0;
-	private BigDecimal			totalPriPaid		= BigDecimal.ZERO;
-	private BigDecimal			totalPriBal			= BigDecimal.ZERO;
-	private BigDecimal			totalPftPaid		= BigDecimal.ZERO;
-	private BigDecimal			totalPftBal			= BigDecimal.ZERO;
-	private BigDecimal 			paidTotal			= BigDecimal.ZERO;;
-	private BigDecimal 			totalOutStanding 	= BigDecimal.ZERO;
-	private BigDecimal          finCurrAssetValue 	= BigDecimal.ZERO;
-	private BigDecimal          nextRpyPri 			= BigDecimal.ZERO;
-	private BigDecimal          nextRpyPft 			= BigDecimal.ZERO;
-	private Date		        nextRpyDate;
-	
-	
+	private Date currentDate;
+	private Date maturityDate;
+	private int noPaidInst = 0;
+	private int noOfOutStandInst = 0;
+	private BigDecimal totalPriPaid = BigDecimal.ZERO;
+	private BigDecimal totalPriBal = BigDecimal.ZERO;
+	private BigDecimal totalPftPaid = BigDecimal.ZERO;
+	private BigDecimal totalPftBal = BigDecimal.ZERO;
+	private BigDecimal paidTotal = BigDecimal.ZERO;;
+	private BigDecimal totalOutStanding = BigDecimal.ZERO;
+	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
+	private BigDecimal nextRpyPri = BigDecimal.ZERO;
+	private BigDecimal nextRpyPft = BigDecimal.ZERO;
+	private Date nextRpyDate;
+
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////		Customer Details		////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	// Finance Profit Details
 	private String finPurpose;
 	private Date finStartDate;
@@ -128,22 +127,22 @@ public class StatementOfAccount {
 	private BigDecimal closedlinkedFinRef = BigDecimal.ZERO;
 	private int activeCnt;
 	private int closeCnt;
-	private int tot;	
-	
+	private int tot;
+
 	//Product 
-	private String finType;	//productdesc
+	private String finType; //productdesc
 	//Branch
-	private String finBranch;	//branchdesc
-	
+	private String finBranch; //branchdesc
+
 	private String interestType = "";
 	private String propertyAddress = "";
-	private String propertyDetails = "";	
-	
+	private String propertyDetails = "";
+
 	//Customers
 	private String custShrtName;
 	private long custID;
 	private String custCIF;
-	
+
 	//Customer Address
 	private String custAddrHNbr;
 	private String custFlatNbr;
@@ -155,54 +154,54 @@ public class StatementOfAccount {
 	private String custAddrLine1;
 	private String custAddrLine2;
 	private String custAddrZIP;
-	
+
 	//Customer Phone Number
 	private String phoneCountryCode;
 	private String phoneAreaCode;
 	private String phoneNumber;
-	
+
 	//Customer E-mails
 	private String custEMail;
-	
+
 	private String loanPurpose;
-	
+
 	@SuppressWarnings("unused")
 	private BigDecimal emiReceived = BigDecimal.ZERO;
-	
+
 	@SuppressWarnings("unused")
 	private BigDecimal prvInstAmount = BigDecimal.ZERO;
-	
+
 	@SuppressWarnings("unused")
 	private BigDecimal futureInstAmount = BigDecimal.ZERO;
-	
+
 	@SuppressWarnings("unused")
 	private BigDecimal futurePrincipalComponent = BigDecimal.ZERO;
-	
+
 	@SuppressWarnings("unused")
 	private BigDecimal futureInterestComponent = BigDecimal.ZERO;
-	
+
 	@SuppressWarnings("unused")
 	private BigDecimal intPaidByMfgrOrDealerUpfront = BigDecimal.ZERO;
-	
+
 	//Summary Reports List
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
-	
+
 	//Transaction Reports List
 	private List<SOATransactionReport> transactionReports = new ArrayList<SOATransactionReport>();
-	
+
 	//Next Installment Amount 
 	@SuppressWarnings("unused")
 	private BigDecimal nextInstAmount = BigDecimal.ZERO;
-	
+
 	//Other Finance Details
 	private List<OtherFinanceDetail> otherFinanceDetails = new ArrayList<OtherFinanceDetail>();
-	
+
 	//Co-Applicant And Borrower Details
 	private List<ApplicantDetail> applicantDetails = new ArrayList<ApplicantDetail>();
 
 	//Co-Applicant And Borrower Details
 	private List<InterestRateDetail> interestRateDetails = new ArrayList<InterestRateDetail>();
-	
+
 	//API Purpose
 	private WSReturnStatus returnStatus;
 
@@ -242,11 +241,11 @@ public class StatementOfAccount {
 	}
 
 	public void setLoanAmount(BigDecimal loanAmount) {
-		
+
 		if (loanAmount == null) {
 			loanAmount = BigDecimal.ZERO;
 		}
-		
+
 		this.loanAmount = loanAmount;
 	}
 
@@ -263,11 +262,11 @@ public class StatementOfAccount {
 	}
 
 	public void setVariance(BigDecimal variance) {
-		
+
 		if (variance == null) {
 			variance = BigDecimal.ZERO;
 		}
-		
+
 		this.variance = variance;
 	}
 
@@ -276,11 +275,11 @@ public class StatementOfAccount {
 	}
 
 	public void setIrr(BigDecimal irr) {
-		
+
 		if (irr == null) {
 			irr = BigDecimal.ZERO;
 		}
-		
+
 		this.irr = irr;
 	}
 
@@ -293,7 +292,7 @@ public class StatementOfAccount {
 		if (roi == null) {
 			roi = BigDecimal.ZERO;
 		}
-		
+
 		this.roi = roi;
 	}
 
@@ -314,7 +313,7 @@ public class StatementOfAccount {
 		if (emiReceivedPri == null) {
 			emiReceivedPri = BigDecimal.ZERO;
 		}
-		
+
 		this.emiReceivedPri = emiReceivedPri;
 	}
 
@@ -327,7 +326,7 @@ public class StatementOfAccount {
 		if (emiReceivedPft == null) {
 			emiReceivedPft = BigDecimal.ZERO;
 		}
-		
+
 		this.emiReceivedPft = emiReceivedPft;
 	}
 
@@ -340,7 +339,7 @@ public class StatementOfAccount {
 		if (preferredCardLimit == null) {
 			preferredCardLimit = BigDecimal.ZERO;
 		}
-		
+
 		this.preferredCardLimit = preferredCardLimit;
 	}
 
@@ -353,7 +352,7 @@ public class StatementOfAccount {
 		if (prevInstAmtPri == null) {
 			prevInstAmtPri = BigDecimal.ZERO;
 		}
-		
+
 		this.prevInstAmtPri = prevInstAmtPri;
 	}
 
@@ -366,7 +365,7 @@ public class StatementOfAccount {
 		if (prevInstAmtPft == null) {
 			prevInstAmtPft = BigDecimal.ZERO;
 		}
-		
+
 		this.prevInstAmtPft = prevInstAmtPft;
 	}
 
@@ -439,11 +438,11 @@ public class StatementOfAccount {
 	}
 
 	public void setFuturePri1(BigDecimal futurePri1) {
-		
+
 		if (futurePri1 == null) {
 			futurePri1 = BigDecimal.ZERO;
 		}
-		
+
 		this.futurePri1 = futurePri1;
 	}
 
@@ -456,7 +455,7 @@ public class StatementOfAccount {
 		if (futurePri2 == null) {
 			futurePri2 = BigDecimal.ZERO;
 		}
-		
+
 		this.futurePri2 = futurePri2;
 	}
 
@@ -465,11 +464,11 @@ public class StatementOfAccount {
 	}
 
 	public void setFutureRpyPft1(BigDecimal futureRpyPft1) {
-		
+
 		if (futureRpyPft1 == null) {
 			futureRpyPft1 = BigDecimal.ZERO;
 		}
-		
+
 		this.futureRpyPft1 = futureRpyPft1;
 	}
 
@@ -482,7 +481,7 @@ public class StatementOfAccount {
 		if (futureRpyPft2 == null) {
 			futureRpyPft2 = BigDecimal.ZERO;
 		}
-		
+
 		this.futureRpyPft2 = futureRpyPft2;
 	}
 
@@ -495,7 +494,7 @@ public class StatementOfAccount {
 		if (chargeCollCust == null) {
 			chargeCollCust = BigDecimal.ZERO;
 		}
-		
+
 		this.chargeCollCust = chargeCollCust;
 	}
 
@@ -508,10 +507,10 @@ public class StatementOfAccount {
 		if (upfrontIntCust == null) {
 			upfrontIntCust = BigDecimal.ZERO;
 		}
-		
+
 		this.upfrontIntCust = upfrontIntCust;
 	}
-	
+
 	public int getIntPaidDealerUpfront() {
 		return intPaidDealerUpfront;
 	}
@@ -531,7 +530,7 @@ public class StatementOfAccount {
 	public String getRepoStatus() {
 		return repoStatus;
 	}
-	
+
 	public void setRepoStatus(String repoStatus) {
 		this.repoStatus = repoStatus;
 	}
@@ -539,7 +538,7 @@ public class StatementOfAccount {
 	public String getRepoDate() {
 		return repoDate;
 	}
-	
+
 	public void setRepoDate(String repoDate) {
 		this.repoDate = repoDate;
 	}
@@ -547,7 +546,7 @@ public class StatementOfAccount {
 	public String getSaleDate() {
 		return saleDate;
 	}
-	
+
 	public void setSaleDate(String saleDate) {
 		this.saleDate = saleDate;
 	}
@@ -555,7 +554,7 @@ public class StatementOfAccount {
 	public String getReleaseDate() {
 		return releaseDate;
 	}
-	
+
 	public void setReleaseDate(String releaseDate) {
 		this.releaseDate = releaseDate;
 	}
@@ -577,7 +576,7 @@ public class StatementOfAccount {
 		if (ccyMinorCcyUnits == null) {
 			ccyMinorCcyUnits = BigDecimal.ZERO;
 		}
-		
+
 		this.ccyMinorCcyUnits = ccyMinorCcyUnits;
 	}
 
@@ -614,7 +613,7 @@ public class StatementOfAccount {
 		if (linkedFinRef == null) {
 			linkedFinRef = BigDecimal.ZERO;
 		}
-		
+
 		this.linkedFinRef = linkedFinRef;
 	}
 
@@ -627,7 +626,7 @@ public class StatementOfAccount {
 		if (closedlinkedFinRef == null) {
 			closedlinkedFinRef = BigDecimal.ZERO;
 		}
-		
+
 		this.closedlinkedFinRef = closedlinkedFinRef;
 	}
 
@@ -814,7 +813,7 @@ public class StatementOfAccount {
 	public BigDecimal getPrvInstAmount() {
 		return this.prevInstAmtPri.add(this.prevInstAmtPft);
 	}
-	
+
 	public String getStatus() {
 		String status = "";
 
@@ -838,24 +837,24 @@ public class StatementOfAccount {
 	public BigDecimal getFuturePrincipalComponent() {
 		return this.futurePri1.subtract(this.futurePri2);
 	}
-	
+
 	public BigDecimal getFutureInterestComponent() {
 		return this.futureRpyPft1.subtract(this.futureRpyPft2);
 	}
-	
+
 	public BigDecimal getIntPaidByMfgrOrDealerUpfront() {
 		return this.intPaidDealerUpfront != 0 ? new BigDecimal(this.intPaidDealerUpfront) : BigDecimal.ZERO;
 	}
-	
+
 	public Date getClosureDate() {
 		Date closureDate = null;
-		
+
 		if (this.finIsActive) {
 			closureDate = this.endInstallmentDate;
 		} else {
 			closureDate = this.latestRpyDate;
 		}
-		
+
 		return closureDate;
 	}
 
@@ -890,7 +889,7 @@ public class StatementOfAccount {
 	public void setLoanPurpose(String loanPurpose) {
 		this.loanPurpose = loanPurpose;
 	}
-	
+
 	public List<SOASummaryReport> getSoaSummaryReports() {
 		return soaSummaryReports;
 	}
@@ -898,7 +897,7 @@ public class StatementOfAccount {
 	public void setSoaSummaryReports(List<SOASummaryReport> soaSummaryReports) {
 		this.soaSummaryReports = soaSummaryReports;
 	}
-	
+
 	public List<SOATransactionReport> getTransactionReports() {
 		return transactionReports;
 	}
@@ -1008,7 +1007,7 @@ public class StatementOfAccount {
 	}
 
 	public void setNextRpyPri(BigDecimal nextRpyPri) {
-	
+
 		if (nextRpyPri == null) {
 			nextRpyPri = BigDecimal.ZERO;
 		}
@@ -1061,5 +1060,5 @@ public class StatementOfAccount {
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
-	
+
 }

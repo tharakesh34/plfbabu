@@ -63,8 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>Department</b>.<br>
  * 
  */
-public class DepartmentServiceImpl extends GenericService<Department> implements
-		DepartmentService {
+public class DepartmentServiceImpl extends GenericService<Department> implements DepartmentService {
 
 	private static Logger logger = Logger.getLogger(DepartmentServiceImpl.class);
 
@@ -74,7 +73,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	public DepartmentServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,15 +95,12 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTDepartments/BMTDepartments_Temp by using DepartmentDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using DepartmentDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTDepartments by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTDepartments/BMTDepartments_Temp by using DepartmentDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using DepartmentDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTDepartments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -119,11 +115,10 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		Department department = (Department) auditHeader.getAuditDetail()
-				.getModelData();
+		Department department = (Department) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
 		if (department.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (department.isNew()) {
@@ -140,12 +135,10 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTDepartments by using DepartmentDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTDepartments by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTDepartments by using DepartmentDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTDepartments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -160,8 +153,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		Department department = (Department) auditHeader.getAuditDetail()
-				.getModelData();
+		Department department = (Department) auditHeader.getAuditDetail().getModelData();
 		getDepartmentDAO().delete(department, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -170,8 +162,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * getDepartmentById fetch the details by using DepartmentDAO's
-	 * getDepartmentById method.
+	 * getDepartmentById fetch the details by using DepartmentDAO's getDepartmentById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -185,9 +176,8 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * getApprovedDepartmentById fetch the details by using DepartmentDAO's
-	 * getDepartmentById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTDepartments.
+	 * getApprovedDepartmentById fetch the details by using DepartmentDAO's getDepartmentById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTDepartments.
 	 * 
 	 * @param id
 	 *            (String)
@@ -198,19 +188,15 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDepartmentDAO().delete with parameters department,"" b) NEW Add
-	 * new record in to main table by using getDepartmentDAO().save with
-	 * parameters department,"" c) EDIT Update record in the main table by using
-	 * getDepartmentDAO().update with parameters department,"" 3) Delete the
-	 * record from the workFlow table by using getDepartmentDAO().delete with
-	 * parameters department,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTDepartments by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTDepartments by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDepartmentDAO().delete with
+	 * parameters department,"" b) NEW Add new record in to main table by using getDepartmentDAO().save with parameters
+	 * department,"" c) EDIT Update record in the main table by using getDepartmentDAO().update with parameters
+	 * department,"" 3) Delete the record from the workFlow table by using getDepartmentDAO().delete with parameters
+	 * department,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTDepartments by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTDepartments by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -227,10 +213,9 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			return auditHeader;
 		}
 		Department department = new Department();
-		
-		BeanUtils.copyProperties((Department) auditHeader.getAuditDetail()
-				.getModelData(), department);
-		
+
+		BeanUtils.copyProperties((Department) auditHeader.getAuditDetail().getModelData(), department);
+
 		getDepartmentDAO().delete(department, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())) {
@@ -249,8 +234,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			department.setNextTaskId("");
 			department.setWorkflowId(0);
 
-			if (department.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (department.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				department.setRecordType("");
 				getDepartmentDAO().save(department, TableType.MAIN_TAB);
@@ -260,7 +244,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 				getDepartmentDAO().update(department, TableType.MAIN_TAB);
 			}
 		}
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -273,13 +257,10 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getDepartmentDAO().delete with parameters
-	 * department,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTDepartments by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getDepartmentDAO().delete with parameters department,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTDepartments by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -293,8 +274,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		Department department = (Department) auditHeader.getAuditDetail()
-				.getModelData();
+		Department department = (Department) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getDepartmentDAO().delete(department, TableType.TEMP_TAB);
@@ -305,10 +285,8 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -316,8 +294,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -326,10 +303,9 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getDepartmentDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getDepartmentDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -343,13 +319,12 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 		Department department = (Department) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (department.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())
+		if (department.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())
 				&& departmentDAO.isDuplicateKey(department.getDeptCode(),
 						department.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			parameters[0]=PennantJavaUtil.getLabel("label_DeptCode")+":"+department.getDeptCode();
-			
+			parameters[0] = PennantJavaUtil.getLabel("label_DeptCode") + ":" + department.getDeptCode();
+
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 

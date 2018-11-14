@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class CustomerEligibilityCheck implements Serializable {
 
-    private static final long serialVersionUID = -2098118727197998806L;
-    
+	private static final long serialVersionUID = -2098118727197998806L;
+
 	private BigDecimal custAge = BigDecimal.ZERO;
 	private Date custDOB;
 	private String custEmpDesg = "";
@@ -19,7 +19,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private boolean custIsBlackListed = false;
 	private boolean salariedCustomer = false;
 	private boolean custIsMinor = false;
-	private String custMaritalSts ="";
+	private String custMaritalSts = "";
 	private int noOfDependents = 0;
 	private String custNationality = "";
 	private String reqProduct = "";
@@ -29,7 +29,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String custIndustry;
 	private String custOtherIncome;
 	private BigDecimal custOtherIncomeAmt = BigDecimal.ZERO;
-	
+
 	private String sellerType;
 	private String vehicleCtg;
 	private String emiratesReg;
@@ -41,16 +41,16 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String assetPurpose;
 	private boolean approvedDealerExists;
 	private boolean nonApprovedDealerExists;
-	
+
 	private int noOfTerms;
 	private String finRepayMethod;
 	private boolean stepFinance;
 	private boolean alwDPSP;
 	private boolean alwPlannedDefer;
-	
+
 	private BigDecimal tenure = BigDecimal.ZERO;
 	private int blackListExpPeriod = 0;
-	
+
 	private BigDecimal reqFinAmount = BigDecimal.ZERO;
 	private BigDecimal downpayBank = BigDecimal.ZERO;
 	private BigDecimal downpaySupl = BigDecimal.ZERO;
@@ -66,14 +66,14 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal finProfitRate = BigDecimal.ZERO;
 	private BigDecimal DSCR = BigDecimal.ZERO;
 	private BigDecimal finValueRatio = BigDecimal.ZERO;
-	private String 	   reqFinCcy;
-	private String 	   custEmpName = "";
-	
+	private String reqFinCcy;
+	private String custEmpName = "";
+
 	private BigDecimal coAppRepayBank = BigDecimal.ZERO;
 	private BigDecimal coAppIncome = BigDecimal.ZERO;
 	private BigDecimal coAppExpense = BigDecimal.ZERO;
 	private BigDecimal coAppCurFinEMI = BigDecimal.ZERO;
-	
+
 	private BigDecimal custYearOfExp = BigDecimal.ZERO;
 	private boolean lpoReissue;
 	private String reqFinPurpose;
@@ -84,7 +84,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private int graceTenure = 0;
 	private String custSector = "";
 	private String custEmpAloc = "";
-	
+
 	private String buildSts;
 	private String ConstructStage;
 	private String usage;
@@ -93,405 +93,431 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String reqFinType;
 
 	private boolean ddaModifiedCheck;
-	private BigDecimal refundAmount; 
+	private BigDecimal refundAmount;
 	private String custEmpType;
-	private BigDecimal currentAssetValue = BigDecimal.ZERO; 
+	private BigDecimal currentAssetValue = BigDecimal.ZERO;
 	private BigDecimal installmentAmount = BigDecimal.ZERO;
 	private BigDecimal foir = BigDecimal.ZERO;
 	private BigDecimal ltv = BigDecimal.ZERO;
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 	private String eligibilityMethod;
 	private boolean disbOnGrace = false;
-	
-	/*private String custCIF;	
-	private String custSubSector = "";
-	private String custCOB = "";
-	private String custDftBranch;
-	private long custGroupID = 0;
-	private String custGroupSts;
-	private boolean custIsBlocked = false;
-	private boolean custIsActive = false;
-	private boolean custIsClosed = false;
-	private boolean custIsDecease = false;
-	private boolean custIsDormant = false;
-	private boolean custIsDelinquent = false;
-	private boolean custIsTradeFinCust = false;
-	private boolean custIsStaff = false;
-	private String custProfession;
-	private boolean custIsRejected = false;
-	private String custParentCountry;
-	private String custResdCountry;
-	private String custRiskCountry;
 
-	private String reqFinType;
-	private Date reqFinStartDate;
-	private Date reqMaturity;
-	
-	private String reqCampaign;
-	private int reqTerms = 0;
-	private int custLiveFinCount = 0;
-	private int custReqFtpCount = 0;
-	private BigDecimal reqFinAmount = BigDecimal.ZERO;
-	private BigDecimal reqFinRepay = BigDecimal.ZERO;
-	private BigDecimal custPastDueCount = BigDecimal.ZERO;
-	private BigDecimal custReqFtpAmount = BigDecimal.ZERO;
-	private BigDecimal reqFinAssetVal = BigDecimal.ZERO;
-	private BigDecimal reqPftRate = BigDecimal.ZERO;
-	
-	private BigDecimal  custPDHist30D = BigDecimal.ZERO;
-	private BigDecimal  custPDHist60D = BigDecimal.ZERO;
-	private BigDecimal  custPDHist90D = BigDecimal.ZERO;
-	private BigDecimal  custPDHist120D = BigDecimal.ZERO;
-	private BigDecimal  custPDHist180D = BigDecimal.ZERO;
-	private BigDecimal  custPDHist180DP = BigDecimal.ZERO;
-	private BigDecimal  custPDLive30D = BigDecimal.ZERO;
-	private BigDecimal  custPDLive60D = BigDecimal.ZERO;
-	private BigDecimal  custPDLive90D = BigDecimal.ZERO;
-	private BigDecimal  custPDLive120D = BigDecimal.ZERO;
-	private BigDecimal  custPDLive180D = BigDecimal.ZERO;
-	private BigDecimal  custPDLive180DP = BigDecimal.ZERO;*/
+	/*
+	 * private String custCIF; private String custSubSector = ""; private String custCOB = ""; private String
+	 * custDftBranch; private long custGroupID = 0; private String custGroupSts; private boolean custIsBlocked = false;
+	 * private boolean custIsActive = false; private boolean custIsClosed = false; private boolean custIsDecease =
+	 * false; private boolean custIsDormant = false; private boolean custIsDelinquent = false; private boolean
+	 * custIsTradeFinCust = false; private boolean custIsStaff = false; private String custProfession; private boolean
+	 * custIsRejected = false; private String custParentCountry; private String custResdCountry; private String
+	 * custRiskCountry;
+	 * 
+	 * private String reqFinType; private Date reqFinStartDate; private Date reqMaturity;
+	 * 
+	 * private String reqCampaign; private int reqTerms = 0; private int custLiveFinCount = 0; private int
+	 * custReqFtpCount = 0; private BigDecimal reqFinAmount = BigDecimal.ZERO; private BigDecimal reqFinRepay =
+	 * BigDecimal.ZERO; private BigDecimal custPastDueCount = BigDecimal.ZERO; private BigDecimal custReqFtpAmount =
+	 * BigDecimal.ZERO; private BigDecimal reqFinAssetVal = BigDecimal.ZERO; private BigDecimal reqPftRate =
+	 * BigDecimal.ZERO;
+	 * 
+	 * private BigDecimal custPDHist30D = BigDecimal.ZERO; private BigDecimal custPDHist60D = BigDecimal.ZERO; private
+	 * BigDecimal custPDHist90D = BigDecimal.ZERO; private BigDecimal custPDHist120D = BigDecimal.ZERO; private
+	 * BigDecimal custPDHist180D = BigDecimal.ZERO; private BigDecimal custPDHist180DP = BigDecimal.ZERO; private
+	 * BigDecimal custPDLive30D = BigDecimal.ZERO; private BigDecimal custPDLive60D = BigDecimal.ZERO; private
+	 * BigDecimal custPDLive90D = BigDecimal.ZERO; private BigDecimal custPDLive120D = BigDecimal.ZERO; private
+	 * BigDecimal custPDLive180D = BigDecimal.ZERO; private BigDecimal custPDLive180DP = BigDecimal.ZERO;
+	 */
 
 	Map<String, Object> extendedFields = new HashMap<>();
-	
+
 	public CustomerEligibilityCheck() {
-		
+
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public BigDecimal getCustAge() {
-    	return custAge;
-    }
+		return custAge;
+	}
+
 	public void setCustAge(BigDecimal custAge) {
-    	this.custAge = custAge;
-    }
+		this.custAge = custAge;
+	}
 
 	public Date getCustDOB() {
-    	return custDOB;
-    }
+		return custDOB;
+	}
+
 	public void setCustDOB(Date custDOB) {
-    	this.custDOB = custDOB;
-    }
+		this.custDOB = custDOB;
+	}
 
 	public String getCustEmpDesg() {
-    	return custEmpDesg;
-    }
+		return custEmpDesg;
+	}
+
 	public void setCustEmpDesg(String custEmpDesg) {
-    	this.custEmpDesg = custEmpDesg;
-    }
-	
+		this.custEmpDesg = custEmpDesg;
+	}
+
 	public String getCustEmpSts() {
-    	return custEmpSts;
-    }
+		return custEmpSts;
+	}
+
 	public void setCustEmpSts(String custEmpSts) {
-    	this.custEmpSts = custEmpSts;
-    }
+		this.custEmpSts = custEmpSts;
+	}
 
 	public BigDecimal getCustRepayOther() {
-    	return custRepayOther;
-    }
+		return custRepayOther;
+	}
+
 	public void setCustRepayOther(BigDecimal custRepayOther) {
-    	this.custRepayOther = custRepayOther;
-    }
+		this.custRepayOther = custRepayOther;
+	}
 
 	public BigDecimal getCustRepayBank() {
-    	return custRepayBank;
-    }
+		return custRepayBank;
+	}
+
 	public void setCustRepayBank(BigDecimal custRepayBank) {
-    	this.custRepayBank = custRepayBank;
-    }
+		this.custRepayBank = custRepayBank;
+	}
 
 	public BigDecimal getCustTotalExpense() {
-    	return custTotalExpense;
-    }
+		return custTotalExpense;
+	}
+
 	public void setCustTotalExpense(BigDecimal custTotalExpense) {
-    	this.custTotalExpense = custTotalExpense;
-    }
-	
+		this.custTotalExpense = custTotalExpense;
+	}
+
 	public String getCustGenderCode() {
-    	return custGenderCode;
-    }
+		return custGenderCode;
+	}
+
 	public void setCustGenderCode(String custGenderCode) {
-    	this.custGenderCode = custGenderCode;
-    }
+		this.custGenderCode = custGenderCode;
+	}
 
 	public boolean isCustIsBlackListed() {
-    	return custIsBlackListed;
-    }
+		return custIsBlackListed;
+	}
+
 	public void setCustIsBlackListed(boolean custIsBlackListed) {
-    	this.custIsBlackListed = custIsBlackListed;
-    }
+		this.custIsBlackListed = custIsBlackListed;
+	}
 
 	public boolean isCustIsMinor() {
-    	return custIsMinor;
-    }
+		return custIsMinor;
+	}
+
 	public void setCustIsMinor(boolean custIsMinor) {
-    	this.custIsMinor = custIsMinor;
-    }
+		this.custIsMinor = custIsMinor;
+	}
 
 	public BigDecimal getCustLiveFinAmount() {
-    	return custLiveFinAmount;
-    }
+		return custLiveFinAmount;
+	}
+
 	public void setCustLiveFinAmount(BigDecimal custLiveFinAmount) {
-    	this.custLiveFinAmount = custLiveFinAmount;
-    }
+		this.custLiveFinAmount = custLiveFinAmount;
+	}
 
 	public String getCustMaritalSts() {
-    	return custMaritalSts;
-    }
+		return custMaritalSts;
+	}
+
 	public void setCustMaritalSts(String custMaritalSts) {
-    	this.custMaritalSts = custMaritalSts;
-    }
+		this.custMaritalSts = custMaritalSts;
+	}
 
 	public int getNoOfDependents() {
-    	return noOfDependents;
-    }
+		return noOfDependents;
+	}
+
 	public void setNoOfDependents(int noOfDependents) {
-    	this.noOfDependents = noOfDependents;
-    }
-	
+		this.noOfDependents = noOfDependents;
+	}
+
 	public String getCustNationality() {
-    	return custNationality;
-    }
+		return custNationality;
+	}
+
 	public void setCustNationality(String custNationality) {
-    	this.custNationality = custNationality;
-    }
+		this.custNationality = custNationality;
+	}
 
 	public BigDecimal getCustPastDueAmt() {
-    	return custPastDueAmt;
-    }
+		return custPastDueAmt;
+	}
+
 	public void setCustPastDueAmt(BigDecimal custPastDueAmt) {
-    	this.custPastDueAmt = custPastDueAmt;
-    }
+		this.custPastDueAmt = custPastDueAmt;
+	}
 
 	public BigDecimal getCustTotalIncome() {
-    	return custTotalIncome;
-    }
+		return custTotalIncome;
+	}
+
 	public void setCustTotalIncome(BigDecimal custTotalIncome) {
-    	this.custTotalIncome = custTotalIncome;
-    }
+		this.custTotalIncome = custTotalIncome;
+	}
 
 	public BigDecimal getCustMonthlyIncome() {
 		return custMonthlyIncome;
 	}
+
 	public void setCustMonthlyIncome(BigDecimal custMonthlyIncome) {
 		this.custMonthlyIncome = custMonthlyIncome;
 	}
 
 	public String getReqProduct() {
-    	return reqProduct;
-    }
+		return reqProduct;
+	}
+
 	public void setReqProduct(String reqProduct) {
-    	this.reqProduct = reqProduct;
-    }
+		this.reqProduct = reqProduct;
+	}
 
 	public String getCustWorstSts() {
-    	return custWorstSts;
-    }
+		return custWorstSts;
+	}
+
 	public void setCustWorstSts(String custWorstSts) {
-    	this.custWorstSts = custWorstSts;
-    }
+		this.custWorstSts = custWorstSts;
+	}
 
 	public BigDecimal getCurFinRepayAmt() {
-    	return curFinRepayAmt;
-    }
+		return curFinRepayAmt;
+	}
+
 	public void setCurFinRepayAmt(BigDecimal curFinRepayAmt) {
-    	this.curFinRepayAmt = curFinRepayAmt;
-    }
-	
+		this.curFinRepayAmt = curFinRepayAmt;
+	}
+
 	public BigDecimal getDSCR() {
-    	return DSCR;
-    }
+		return DSCR;
+	}
+
 	public void setDSCR(BigDecimal dSCR) {
-    	DSCR = dSCR;
-    }
-	
+		DSCR = dSCR;
+	}
+
 	public BigDecimal getFinValueRatio() {
 		return finValueRatio;
 	}
+
 	public void setFinValueRatio(BigDecimal finValueRatio) {
 		this.finValueRatio = finValueRatio;
 	}
 
 	public BigDecimal getReqFinAmount() {
-    	return reqFinAmount;
-    }
+		return reqFinAmount;
+	}
+
 	public void setReqFinAmount(BigDecimal reqFinAmount) {
-    	this.reqFinAmount = reqFinAmount;
-    }
-	
+		this.reqFinAmount = reqFinAmount;
+	}
+
 	public BigDecimal getTenure() {
-    	return tenure;
-    }
+		return tenure;
+	}
+
 	public void setTenure(BigDecimal tenure) {
-    	this.tenure = tenure;
-    }
-	
+		this.tenure = tenure;
+	}
+
 	public int getBlackListExpPeriod() {
-    	return blackListExpPeriod;
-    }
+		return blackListExpPeriod;
+	}
+
 	public void setBlackListExpPeriod(int blackListExpPeriod) {
-    	this.blackListExpPeriod = blackListExpPeriod;
-    }
-	
+		this.blackListExpPeriod = blackListExpPeriod;
+	}
+
 	public void setCustTypeCode(String custTypeCode) {
-	    this.custTypeCode = custTypeCode;
-    }
+		this.custTypeCode = custTypeCode;
+	}
+
 	public String getCustTypeCode() {
-	    return custTypeCode;
-    }
-	
+		return custTypeCode;
+	}
+
 	public String getCustCtgCode() {
-	    return custCtgCode;
-    }
+		return custCtgCode;
+	}
+
 	public void setCustCtgCode(String custCtgCode) {
-	    this.custCtgCode = custCtgCode;
-    }
-	
+		this.custCtgCode = custCtgCode;
+	}
+
 	public String getSellerType() {
-	    return sellerType;
-    }
+		return sellerType;
+	}
+
 	public void setSellerType(String sellerType) {
-	    this.sellerType = sellerType;
-    }
-	
+		this.sellerType = sellerType;
+	}
+
 	public boolean isThirdPartyReg() {
-	    return thirdPartyReg;
-    }
+		return thirdPartyReg;
+	}
+
 	public void setThirdPartyReg(boolean thirdPartyReg) {
-	    this.thirdPartyReg = thirdPartyReg;
-    }
-	
+		this.thirdPartyReg = thirdPartyReg;
+	}
+
 	public BigDecimal getFinProfitRate() {
-	    return finProfitRate;
-    }
+		return finProfitRate;
+	}
+
 	public void setFinProfitRate(BigDecimal finProfitRate) {
-	    this.finProfitRate = finProfitRate;
-    }
-	
+		this.finProfitRate = finProfitRate;
+	}
+
 	public boolean isStepFinance() {
 		return stepFinance;
 	}
+
 	public void setStepFinance(boolean stepFinance) {
 		this.stepFinance = stepFinance;
 	}
-	
+
 	public boolean isAlwDPSP() {
 		return alwDPSP;
 	}
+
 	public void setAlwDPSP(boolean alwDPSP) {
 		this.alwDPSP = alwDPSP;
 	}
-	
+
 	public boolean isAlwPlannedDefer() {
 		return alwPlannedDefer;
 	}
+
 	public void setAlwPlannedDefer(boolean alwPlannedDefer) {
 		this.alwPlannedDefer = alwPlannedDefer;
 	}
-	
+
 	public int getNoOfTerms() {
-	    return noOfTerms;
-    }
+		return noOfTerms;
+	}
+
 	public void setNoOfTerms(int noOfTerms) {
-	    this.noOfTerms = noOfTerms;
-    }
-	
+		this.noOfTerms = noOfTerms;
+	}
+
 	public String getCustEmpSector() {
-	    return custEmpSector;
-    }
+		return custEmpSector;
+	}
+
 	public void setCustEmpSector(String custEmpSector) {
-	    this.custEmpSector = custEmpSector;
-    }
-	
+		this.custEmpSector = custEmpSector;
+	}
+
 	public String getFinRepayMethod() {
-	    return finRepayMethod;
-    }
+		return finRepayMethod;
+	}
+
 	public void setFinRepayMethod(String finRepayMethod) {
-	    this.finRepayMethod = finRepayMethod;
-    }
-	
+		this.finRepayMethod = finRepayMethod;
+	}
+
 	public BigDecimal getDownpayBank() {
-	    return downpayBank;
-    }
+		return downpayBank;
+	}
+
 	public void setDownpayBank(BigDecimal downpayBank) {
-	    this.downpayBank = downpayBank;
-    }
-	
+		this.downpayBank = downpayBank;
+	}
+
 	public BigDecimal getDownpaySupl() {
-	    return downpaySupl;
-    }
+		return downpaySupl;
+	}
+
 	public void setDownpaySupl(BigDecimal downpaySupl) {
-	    this.downpaySupl = downpaySupl;
-    }
-	
+		this.downpaySupl = downpaySupl;
+	}
+
 	public String getVehicleCtg() {
-	    return vehicleCtg;
-    }
+		return vehicleCtg;
+	}
+
 	public void setVehicleCtg(String vehicleCtg) {
-	    this.vehicleCtg = vehicleCtg;
-    }
+		this.vehicleCtg = vehicleCtg;
+	}
 
 	public String getEmiratesReg() {
-	    return emiratesReg;
-    }
+		return emiratesReg;
+	}
+
 	public void setEmiratesReg(String emiratesReg) {
-	    this.emiratesReg = emiratesReg;
-    }
-	
+		this.emiratesReg = emiratesReg;
+	}
+
 	public BigDecimal getCustYearOfExp() {
 		return custYearOfExp;
 	}
+
 	public void setCustYearOfExp(BigDecimal custYearOfExp) {
 		this.custYearOfExp = custYearOfExp;
 	}
 
 	public boolean isSalariedCustomer() {
-	    return salariedCustomer;
-    }
+		return salariedCustomer;
+	}
+
 	public void setSalariedCustomer(boolean salariedCustomer) {
-	    this.salariedCustomer = salariedCustomer;
-    }
+		this.salariedCustomer = salariedCustomer;
+	}
+
 	public String getReqFinCcy() {
-	    return reqFinCcy;
-    }
+		return reqFinCcy;
+	}
+
 	public void setReqFinCcy(String reqFinCcy) {
-	    this.reqFinCcy = reqFinCcy;
-    }
-	
+		this.reqFinCcy = reqFinCcy;
+	}
+
 	public String getCustEmpName() {
 		return custEmpName;
 	}
+
 	public void setCustEmpName(String custEmpName) {
 		this.custEmpName = custEmpName;
 	}
 
 	public String getCustOtherIncome() {
-	    return custOtherIncome;
-    }
+		return custOtherIncome;
+	}
+
 	public void setCustOtherIncome(String custOtherIncome) {
-	    this.custOtherIncome = custOtherIncome;
-    }
-	
+		this.custOtherIncome = custOtherIncome;
+	}
+
 	public boolean isLpoReissue() {
-	    return lpoReissue;
-    }
+		return lpoReissue;
+	}
+
 	public void setLpoReissue(boolean lpoReissue) {
-	    this.lpoReissue = lpoReissue;
-    }
+		this.lpoReissue = lpoReissue;
+	}
+
 	public String getReqFinPurpose() {
-	    return reqFinPurpose;
-    }
+		return reqFinPurpose;
+	}
+
 	public void setReqFinPurpose(String reqFinPurpose) {
-	    this.reqFinPurpose = reqFinPurpose;
-    }
-	
+		this.reqFinPurpose = reqFinPurpose;
+	}
+
 	public String getPropertyType() {
 		return propertyType;
 	}
+
 	public void setPropertyType(String propertyType) {
 		this.propertyType = propertyType;
 	}
@@ -499,6 +525,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getPropertyDetail() {
 		return propertyDetail;
 	}
+
 	public void setPropertyDetail(String propertyDetail) {
 		this.propertyDetail = propertyDetail;
 	}
@@ -506,6 +533,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getFinancingType() {
 		return financingType;
 	}
+
 	public void setFinancingType(String financingType) {
 		this.financingType = financingType;
 	}
@@ -513,6 +541,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getProductType() {
 		return productType;
 	}
+
 	public void setProductType(String productType) {
 		this.productType = productType;
 	}
@@ -520,6 +549,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public int getGraceTenure() {
 		return graceTenure;
 	}
+
 	public void setGraceTenure(int graceTenure) {
 		this.graceTenure = graceTenure;
 	}
@@ -527,26 +557,29 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getCustSector() {
 		return custSector;
 	}
+
 	public void setCustSector(String custSector) {
 		this.custSector = custSector;
 	}
 
 	public String getCustEmpAloc() {
-	    return custEmpAloc;
-    }
+		return custEmpAloc;
+	}
+
 	public void setCustEmpAloc(String custEmpAloc) {
-	    this.custEmpAloc = custEmpAloc;
-    }
-	
+		this.custEmpAloc = custEmpAloc;
+	}
+
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerEligibityMap = new HashMap<String, Object>();
-		
+
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				if("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())){
+				if ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
 					customerEligibityMap.putAll(extendedFields);
-				}else if(!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())){
-					customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));	
+				} else if (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())) {
+					customerEligibityMap.put(this.getClass().getDeclaredFields()[i].getName(),
+							this.getClass().getDeclaredFields()[i].get(this));
 				}
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -556,14 +589,13 @@ public class CustomerEligibilityCheck implements Serializable {
 	}
 
 	public String getBuildSts() {
-	    return buildSts;
-    }
+		return buildSts;
+	}
 
 	public void setBuildSts(String buildSts) {
-	    this.buildSts = buildSts;
-    }
+		this.buildSts = buildSts;
+	}
 
-	
 	public String getUsage() {
 		return usage;
 	}
@@ -573,35 +605,36 @@ public class CustomerEligibilityCheck implements Serializable {
 	}
 
 	public String getMortgageSts() {
-	    return mortgageSts;
-    }
+		return mortgageSts;
+	}
 
 	public void setMortgageSts(String mortgageSts) {
-	    this.mortgageSts = mortgageSts;
-    }
+		this.mortgageSts = mortgageSts;
+	}
 
 	public String getMainCollateralType() {
 		return mainCollateralType;
 	}
+
 	public void setMainCollateralType(String mainCollateralType) {
 		this.mainCollateralType = mainCollateralType;
 	}
 
 	public String getConstructStage() {
-	    return ConstructStage;
-    }
+		return ConstructStage;
+	}
 
 	public void setConstructStage(String constructStage) {
-	    ConstructStage = constructStage;
-    }
+		ConstructStage = constructStage;
+	}
 
 	public String getVehicleFinFor() {
-	    return vehicleFinFor;
-    }
+		return vehicleFinFor;
+	}
 
 	public void setVehicleFinFor(String vehicleFinFor) {
-	    this.vehicleFinFor = vehicleFinFor;
-    }
+		this.vehicleFinFor = vehicleFinFor;
+	}
 
 	public String getAgreeName() {
 		return agreeName;
@@ -622,6 +655,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getPropertyCategory() {
 		return propertyCategory;
 	}
+
 	public void setPropertyCategory(String propertyCategory) {
 		this.propertyCategory = propertyCategory;
 	}
@@ -629,6 +663,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public boolean isDdaModifiedCheck() {
 		return ddaModifiedCheck;
 	}
+
 	public void setDdaModifiedCheck(boolean ddaModifiedCheck) {
 		this.ddaModifiedCheck = ddaModifiedCheck;
 	}
@@ -636,6 +671,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getRefundAmount() {
 		return refundAmount;
 	}
+
 	public void setRefundAmount(BigDecimal refundAmount) {
 		this.refundAmount = refundAmount;
 	}
@@ -643,6 +679,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getAssetProduct() {
 		return assetProduct;
 	}
+
 	public void setAssetProduct(String assetProduct) {
 		this.assetProduct = assetProduct;
 	}
@@ -650,6 +687,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getAssetPurpose() {
 		return assetPurpose;
 	}
+
 	public void setAssetPurpose(String assetPurpose) {
 		this.assetPurpose = assetPurpose;
 	}
@@ -657,6 +695,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public boolean isApprovedDealerExists() {
 		return approvedDealerExists;
 	}
+
 	public void setApprovedDealerExists(boolean approvedDealerExists) {
 		this.approvedDealerExists = approvedDealerExists;
 	}
@@ -664,6 +703,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public boolean isNonApprovedDealerExists() {
 		return nonApprovedDealerExists;
 	}
+
 	public void setNonApprovedDealerExists(boolean nonApprovedDealerExists) {
 		this.nonApprovedDealerExists = nonApprovedDealerExists;
 	}
@@ -671,6 +711,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCoAppRepayBank() {
 		return coAppRepayBank;
 	}
+
 	public void setCoAppRepayBank(BigDecimal coAppRepayBank) {
 		this.coAppRepayBank = coAppRepayBank;
 	}
@@ -678,6 +719,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCoAppIncome() {
 		return coAppIncome;
 	}
+
 	public void setCoAppIncome(BigDecimal coAppIncome) {
 		this.coAppIncome = coAppIncome;
 	}
@@ -685,6 +727,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCoAppExpense() {
 		return coAppExpense;
 	}
+
 	public void setCoAppExpense(BigDecimal coAppExpense) {
 		this.coAppExpense = coAppExpense;
 	}
@@ -692,6 +735,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCoAppCurFinEMI() {
 		return coAppCurFinEMI;
 	}
+
 	public void setCoAppCurFinEMI(BigDecimal coAppCurFinEMI) {
 		this.coAppCurFinEMI = coAppCurFinEMI;
 	}
@@ -699,6 +743,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCustProcRepayBank() {
 		return custProcRepayBank;
 	}
+
 	public void setCustProcRepayBank(BigDecimal custProcRepayBank) {
 		this.custProcRepayBank = custProcRepayBank;
 	}
@@ -706,6 +751,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCustOtherIncomeAmt() {
 		return custOtherIncomeAmt;
 	}
+
 	public void setCustOtherIncomeAmt(BigDecimal custOtherIncomeAmt) {
 		this.custOtherIncomeAmt = custOtherIncomeAmt;
 	}
@@ -713,6 +759,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public String getCustEmpType() {
 		return custEmpType;
 	}
+
 	public void setCustEmpType(String custEmpType) {
 		this.custEmpType = custEmpType;
 	}
@@ -720,6 +767,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getCurrentAssetValue() {
 		return currentAssetValue;
 	}
+
 	public void setCurrentAssetValue(BigDecimal currentAssetValue) {
 		this.currentAssetValue = currentAssetValue;
 	}
@@ -727,6 +775,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getInstallmentAmount() {
 		return installmentAmount;
 	}
+
 	public void setInstallmentAmount(BigDecimal installmentAmount) {
 		this.installmentAmount = installmentAmount;
 	}
@@ -734,6 +783,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getFoir() {
 		return foir;
 	}
+
 	public void setFoir(BigDecimal foir) {
 		this.foir = foir;
 	}
@@ -741,6 +791,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public BigDecimal getLtv() {
 		return ltv;
 	}
+
 	public void setLtv(BigDecimal ltv) {
 		this.ltv = ltv;
 	}
@@ -769,7 +820,6 @@ public class CustomerEligibilityCheck implements Serializable {
 		this.eligibilityMethod = eligibilityMethod;
 	}
 
-
 	public void addExtendedField(String fieldName, Object value) {
 		this.extendedFields.put(fieldName, value);
 	}
@@ -786,9 +836,8 @@ public class CustomerEligibilityCheck implements Serializable {
 		return disbOnGrace;
 	}
 
-
 	public void setDisbOnGrace(boolean disbOnGrace) {
 		this.disbOnGrace = disbOnGrace;
 	}
-	
+
 }

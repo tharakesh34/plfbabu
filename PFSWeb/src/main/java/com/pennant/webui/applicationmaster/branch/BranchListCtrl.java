@@ -62,9 +62,9 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.webui.applicationmaster.branch.model.BranchListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/Branch/BranchList.zul file.
@@ -163,8 +163,8 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 				sortOperator_branchCountry, Operators.STRING);
 		registerField("branchSwiftBrnCde", listheader_BranchSwiftBankCde, SortOrder.NONE, branchSwiftBrnCde,
 				sortOperator_branchSwiftBankCde, Operators.STRING);
-		registerField("pinAreaDesc", listheader_BranchArea, SortOrder.NONE, branchArea,
-				sortOperator_branchArea, Operators.STRING);
+		registerField("pinAreaDesc", listheader_BranchArea, SortOrder.NONE, branchArea, sortOperator_branchArea,
+				Operators.STRING);
 		registerField("branchIsActive", listheader_BranchIsActive, SortOrder.NONE, branchIsActive,
 				sortOperator_branchIsActive, Operators.SIMPLE);
 

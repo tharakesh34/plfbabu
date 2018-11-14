@@ -77,39 +77,37 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RMTMasters/CheckListDetail/checkListDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RMTMasters/CheckListDetail/checkListDetailDialog.zul file.
  */
 public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	private static final long serialVersionUID = 2164774289694537365L;
 	private static final Logger logger = Logger.getLogger(CheckListDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_CheckListDetailDialog; 	// autoWired
-	protected Longbox 	ansSeqNo; 						// autoWired
-	protected Textbox 	ansDesc; 						// autoWired
-	protected Textbox 	ansCond; 						// autoWired
-	protected Checkbox 	remarkAllow; 					// autoWired
-	protected Checkbox  docRequired;                    // autoWired
-	protected ExtendedCombobox  docType;                    	// autoWired
-	protected Row		row_DocType;					// autoWired
-	protected Checkbox 	remarkMand; 					// autoWired
-	
+	protected Window window_CheckListDetailDialog; // autoWired
+	protected Longbox ansSeqNo; // autoWired
+	protected Textbox ansDesc; // autoWired
+	protected Textbox ansCond; // autoWired
+	protected Checkbox remarkAllow; // autoWired
+	protected Checkbox docRequired; // autoWired
+	protected ExtendedCombobox docType; // autoWired
+	protected Row row_DocType; // autoWired
+	protected Checkbox remarkMand; // autoWired
+
 	// not auto wired variables
 	private CheckListDetail checkListDetail; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
-	private  boolean isEditable=false;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+
+	private boolean isEditable = false;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private CheckListDialogCtrl checkListDialogCtrl = null;
 	private CheckList checkList;
-	private boolean isNewRecord=false;
-	private boolean newRecord=false;
+	private boolean isNewRecord = false;
+	private boolean newRecord = false;
 	private List<CheckListDetail> chkListDetailList;
 
 	/**
@@ -127,9 +125,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CheckListDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CheckListDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -143,8 +140,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		try {
 
 			if (arguments.containsKey("checkListDetail")) {
-				this.checkListDetail = (CheckListDetail) arguments
-						.get("checkListDetail");
+				this.checkListDetail = (CheckListDetail) arguments.get("checkListDetail");
 				CheckListDetail befImage = new CheckListDetail();
 				BeanUtils.copyProperties(this.checkListDetail, befImage);
 				this.checkListDetail.setBefImage(befImage);
@@ -161,18 +157,16 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 			}
 
 			if (arguments.containsKey("checkListDialogCtrl")) {
-				this.checkListDialogCtrl = (CheckListDialogCtrl) arguments
-						.get("checkListDialogCtrl");
+				this.checkListDialogCtrl = (CheckListDialogCtrl) arguments.get("checkListDialogCtrl");
 				setCheckListDialogCtrl(this.checkListDialogCtrl);
 				this.checkListDetail.setWorkflowId(0);
 			}
-			
+
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
 			}
 
-			doLoadWorkFlow(this.checkListDetail.isWorkflow(),
-					this.checkListDetail.getWorkflowId(),
+			doLoadWorkFlow(this.checkListDetail.isWorkflow(), this.checkListDetail.getWorkflowId(),
 					this.checkListDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
@@ -193,12 +187,12 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 
 			// set Field Properties
 
-			if(isWorkFlowEnabled()){
-				getUserWorkspace().allocateAuthorities("CheckListDetailDialog",getRole());
-			}else{
+			if (isWorkFlowEnabled()) {
+				getUserWorkspace().allocateAuthorities("CheckListDetailDialog", getRole());
+			} else {
 				getUserWorkspace().allocateAuthorities("CheckListDetailDialog");
 			}
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -208,22 +202,22 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 			MessageUtil.showError(e);
 			this.window_CheckListDetailDialog.onClose();
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.ansDesc.setMaxlength(100);
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
+
 		this.docType.setTextBoxWidth(150);
 		this.docType.setMandatoryStyle(true);
 		this.docType.setModuleName("DocumentType");
@@ -231,7 +225,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		this.docType.setDescColumn("DocTypeDesc");
 		this.docType.setValidateColumns(new String[] { "DocTypeCode" });
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -239,18 +233,17 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -260,9 +253,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -271,9 +264,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -283,9 +276,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CheckListDetailDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -295,9 +288,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -306,9 +299,9 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -329,14 +322,15 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 */
 	public void onCheck$remarkAllow(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		if(!this.remarkAllow.isChecked()){
+		if (!this.remarkAllow.isChecked()) {
 			this.remarkMand.setChecked(false);
 			this.remarkMand.setDisabled(true);
-		}else{
+		} else {
 			this.remarkMand.setDisabled(false);
-		}	
+		}
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * when the "checks" Doc Required checkBox. <br>
 	 * 
@@ -348,11 +342,11 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		onCheckDocRequire();
 		logger.debug("Leaving " + event.toString());
 	}
-	
-	private void onCheckDocRequire(){
-		if(this.docRequired.isChecked()){
+
+	private void onCheckDocRequire() {
+		if (this.docRequired.isChecked()) {
 			this.row_DocType.setVisible(true);
-		}else{
+		} else {
 			this.row_DocType.setVisible(false);
 		}
 	}
@@ -364,12 +358,12 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.checkListDetail.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -379,7 +373,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 *            CheckListDetail
 	 */
 	public void doWriteBeanToComponents(CheckListDetail aCheckListDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.ansSeqNo.setValue(aCheckListDetail.getAnsSeqNo());
 		this.ansDesc.setValue(aCheckListDetail.getAnsDesc());
 		this.ansCond.setValue(aCheckListDetail.getAnsCond());
@@ -400,36 +394,36 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @param aCheckListDetail
 	 */
 	public void doWriteComponentsToBean(CheckListDetail aCheckListDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aCheckListDetail.setAnsSeqNo(this.ansSeqNo.longValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCheckListDetail.setAnsDesc(this.ansDesc.getValue());
 			aCheckListDetail.setLovDescCheckListDesc(this.checkList.getCheckListDesc());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCheckListDetail.setAnsCond("Condition");
 			//aCheckListDetail.setAnsCond(this.ansCond.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCheckListDetail.setRemarksAllow(this.remarkAllow.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCheckListDetail.setDocRequired(this.docRequired.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -440,15 +434,15 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		}
 		try {
 			aCheckListDetail.setRemarksMand(this.remarkMand.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -462,8 +456,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCheckListDetail
 	 * @throws Exception
@@ -479,10 +472,10 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 			this.ansDesc.focus();
 		} else {
 			this.ansDesc.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnEdit.setVisible(false);
 				btnCancel.setVisible(false);
 			}
@@ -499,7 +492,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -508,15 +501,15 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
-		if (!this.ansDesc.isReadonly()){
-			this.ansDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDetailDialog_AnsDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));	
+
+		if (!this.ansDesc.isReadonly()) {
+			this.ansDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDetailDialog_AnsDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.ansCond.isReadonly()) {
-			this.ansCond.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CheckListDetailDialog_AnsRemarks.value"),
-					null, true));
+			this.ansCond.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CheckListDetailDialog_AnsRemarks.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -540,11 +533,12 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		
-		if(!this.docType.isReadonly() && this.docRequired.isChecked()){
-			this.docType.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDetailDialog_DocType.value"), null, true,true));
+
+		if (!this.docType.isReadonly() && this.docRequired.isChecked()) {
+			this.docType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CheckListDetailDialog_DocType.value"), null, true, true));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -575,36 +569,36 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final CheckListDetail checkListDetail = new CheckListDetail();
 		BeanUtils.copyProperties(getCheckListDetail(), checkListDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + checkListDetail.getAnsDesc();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ checkListDetail.getAnsDesc();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(checkListDetail.getRecordType())){
-				checkListDetail.setVersion(checkListDetail.getVersion()+1);
+			if (StringUtils.isBlank(checkListDetail.getRecordType())) {
+				checkListDetail.setVersion(checkListDetail.getVersion() + 1);
 				checkListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					checkListDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if (StringUtils.trimToEmpty(checkListDetail.getRecordType()).equals(PennantConstants.RCD_UPD)) {
+			} else if (StringUtils.trimToEmpty(checkListDetail.getRecordType()).equals(PennantConstants.RCD_UPD)) {
 				checkListDetail.setVersion(checkListDetail.getVersion() + 1);
 				checkListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
 			try {
-				tranType=PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader =  newChkListDetailProcess(checkListDetail,tranType);
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newChkListDetailProcess(checkListDetail, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CheckListDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getCheckListDialogCtrl().doFillCheckListDetailsList(this.chkListDetailList);
 
 					this.window_CheckListDetailDialog.onClose();
@@ -623,11 +617,11 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getCheckListDetail().isNewRecord()){
+		if (getCheckListDetail().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.remarkMand.setDisabled(true);
 			this.ansDesc.setReadonly(isReadOnly("CheckListDetailDialog_ansDesc"));
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.ansDesc.setReadonly(true);
 		}
@@ -635,10 +629,10 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		this.ansSeqNo.setReadonly(isReadOnly("CheckListDetailDialog_ansSeqNo"));
 		this.ansCond.setReadonly(isReadOnly("CheckListDetailDialog_ansCond"));
 		this.remarkAllow.setDisabled(isReadOnly("CheckListDetailDialog_remarksAllow"));
-		if (getCheckListDetail() !=null && getCheckListDetail().isDocRequired()) {
+		if (getCheckListDetail() != null && getCheckListDetail().isDocRequired()) {
 			this.docRequired.setDisabled(true);
 			this.docRequired.setChecked(true);
-		}else{
+		} else {
 			this.docRequired.setChecked(isReadOnly("CheckListDetailDialog_docRequired"));
 		}
 		this.docType.setReadonly(isReadOnly("CheckListDetailDialog_docType"));
@@ -657,18 +651,18 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 			if (this.checkListDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
-			if(getCheckListDetail().isNewRecord()){
+		} else {
+			if (getCheckListDetail().isNewRecord()) {
 				this.btnCtrl.setBtnStatus_New();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -685,13 +679,13 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		this.docType.setReadonly(true);
 		this.remarkMand.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -734,46 +728,46 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-   		isNew = aCheckListDetail.isNew();
-		String tranType="";
+		isNew = aCheckListDetail.isNew();
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCheckListDetail.getRecordType())){
-				aCheckListDetail.setVersion(aCheckListDetail.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCheckListDetail.getRecordType())) {
+				aCheckListDetail.setVersion(aCheckListDetail.getVersion() + 1);
+				if (isNew) {
 					aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCheckListDetail.setNewRecord(true);
 				}
 			}
-		}else{
-			/*set the tranType according to RecordType*/
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
+		} else {
+			/* set the tranType according to RecordType */
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
 				aCheckListDetail.setVersion(1);
 				aCheckListDetail.setRecordType(PennantConstants.RCD_ADD);
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 
-			if(StringUtils.isBlank(aCheckListDetail.getRecordType())){
-				tranType =PennantConstants.TRAN_UPD;
+			if (StringUtils.isBlank(aCheckListDetail.getRecordType())) {
+				tranType = PennantConstants.TRAN_UPD;
 				aCheckListDetail.setRecordType(PennantConstants.RCD_UPD);
 			}
-			if(aCheckListDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			} else if(aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-				tranType =PennantConstants.TRAN_UPD;
-			} 
+			if (aCheckListDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_UPD;
+			}
 		}
 
 		try {
-			AuditHeader auditHeader =  newChkListDetailProcess(aCheckListDetail,tranType);
+			AuditHeader auditHeader = newChkListDetailProcess(aCheckListDetail, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_CheckListDetailDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
-			if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getCheckListDialogCtrl().doFillCheckListDetailsList(this.chkListDetailList);
 
 				this.window_CheckListDetailDialog.onClose();
@@ -786,39 +780,42 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	}
 
 	/**
-	 * This method added the CheckListdetail object into chkListDetailList
-	 *  by setting RecordType according to tranType
-	 *  <p>eg: 	if(tranType==PennantConstants.TRAN_DEL){
-	 *  	aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-	 *  }</p>
-	 * @param  aCheckListDetail (CheckListDetail)
-	 * @param  tranType (String)
+	 * This method added the CheckListdetail object into chkListDetailList by setting RecordType according to tranType
+	 * <p>
+	 * eg: if(tranType==PennantConstants.TRAN_DEL){ aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL); }
+	 * </p>
+	 * 
+	 * @param aCheckListDetail
+	 *            (CheckListDetail)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader (AuditHeader)
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	private AuditHeader newChkListDetailProcess(CheckListDetail aCheckListDetail,String tranType) throws InterruptedException{
+	private AuditHeader newChkListDetailProcess(CheckListDetail aCheckListDetail, String tranType)
+			throws InterruptedException {
 		logger.debug("Entering ");
-		boolean recordAdded=false;
+		boolean recordAdded = false;
 
-		AuditHeader auditHeader= getAuditHeader(aCheckListDetail, tranType);
-		chkListDetailList= new ArrayList<CheckListDetail>();
+		AuditHeader auditHeader = getAuditHeader(aCheckListDetail, tranType);
+		chkListDetailList = new ArrayList<CheckListDetail>();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = String.valueOf(aCheckListDetail.getAnsDesc());
-		errParm[0] = PennantJavaUtil.getLabel("label_AnsDesc") + ":"+valueParm[0];
-		
-		if(getCheckListDetail().isNew()){
+		errParm[0] = PennantJavaUtil.getLabel("label_AnsDesc") + ":" + valueParm[0];
+
+		if (getCheckListDetail().isNew()) {
 			long newSeqNo = 0;
 			for (CheckListDetail aCheckList : getCheckListDialogCtrl().getChekListDetailsList()) {
-				if(newSeqNo <= aCheckList.getAnsSeqNo()){
+				if (newSeqNo <= aCheckList.getAnsSeqNo()) {
 					newSeqNo = aCheckList.getAnsSeqNo();
 				}
-				if(aCheckListDetail.getAnsDesc().equals(aCheckList.getAnsDesc())){
+				if (aCheckListDetail.getAnsDesc().equals(aCheckList.getAnsDesc())) {
 					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm)
-							, getUserWorkspace().getUserLanguage()));
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+							getUserWorkspace().getUserLanguage()));
 					return auditHeader;
 				}
 
@@ -827,33 +824,34 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 			aCheckListDetail.setAnsSeqNo(newSeqNo);
 		}
 
-		if(getCheckListDialogCtrl().getChekListDetailsList()!=null 
-				&& !getCheckListDialogCtrl().getChekListDetailsList().isEmpty()){
+		if (getCheckListDialogCtrl().getChekListDetailsList() != null
+				&& !getCheckListDialogCtrl().getChekListDetailsList().isEmpty()) {
 			for (int i = 0; i < getCheckListDialogCtrl().getChekListDetailsList().size(); i++) {
 				CheckListDetail checkListDetail = getCheckListDialogCtrl().getChekListDetailsList().get(i);
-				if(aCheckListDetail.getAnsSeqNo()==(checkListDetail.getAnsSeqNo()) ){ 
+				if (aCheckListDetail.getAnsSeqNo() == (checkListDetail.getAnsSeqNo())) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						if (aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 							aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							chkListDetailList.add(aCheckListDetail);
-						}else if(aCheckListDetail.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+						} else if (aCheckListDetail.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							chkListDetailList.add(aCheckListDetail);
-						}else if(aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
+						} else if (aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
 							for (int j = 0; j < getCheckListDialogCtrl().getChekListDetailsList().size(); j++) {
-								CheckListDetail chkDetail =  getCheckListDialogCtrl().getChekListDetailsList().get(j);
-								if(aCheckListDetail.getAnsDesc().trim().equalsIgnoreCase(checkListDetail.getAnsDesc().trim())){
+								CheckListDetail chkDetail = getCheckListDialogCtrl().getChekListDetailsList().get(j);
+								if (aCheckListDetail.getAnsDesc().trim()
+										.equalsIgnoreCase(checkListDetail.getAnsDesc().trim())) {
 									chkListDetailList.add(chkDetail);
 								}
 							}
-						}else if(aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							if(this.checkList != null && this.checkList.isWorkflow()){
-							aCheckListDetail.setNewRecord(true);
+						} else if (aCheckListDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							if (this.checkList != null && this.checkList.isWorkflow()) {
+								aCheckListDetail.setNewRecord(true);
 							}
 						}
 					} else {
@@ -861,16 +859,16 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 							chkListDetailList.add(checkListDetail);
 						}
 					}
-				}else{
+				} else {
 					chkListDetailList.add(checkListDetail);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			chkListDetailList.add(aCheckListDetail);
 		}
 		return auditHeader;
-	} 
+	}
 
 	// WorkFlow Components
 
@@ -879,10 +877,10 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(CheckListDetail aCheckListDetail, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCheckListDetail.getBefImage(), aCheckListDetail);   
-		return new AuditHeader(String.valueOf(aCheckListDetail.getCheckListId())
-				,null,null,null,auditDetail,aCheckListDetail.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CheckListDetail aCheckListDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCheckListDetail.getBefImage(), aCheckListDetail);
+		return new AuditHeader(String.valueOf(aCheckListDetail.getCheckListId()), null, null, null, auditDetail,
+				aCheckListDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -892,10 +890,10 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CheckListDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -909,11 +907,11 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 *            (Event)
 	 * 
 	 * @throws Exception
-	 */	
+	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.checkList);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.checkList.getCheckListId());
@@ -926,6 +924,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -933,6 +932,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public CheckListDetail getCheckListDetail() {
 		return this.checkListDetail;
 	}
+
 	public void setCheckListDetail(CheckListDetail checkListDetail) {
 		this.checkListDetail = checkListDetail;
 	}
@@ -940,6 +940,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -947,6 +948,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public CheckListDialogCtrl getCheckListDialogCtrl() {
 		return checkListDialogCtrl;
 	}
+
 	public void setCheckListDialogCtrl(CheckListDialogCtrl checkListDialogCtrl) {
 		this.checkListDialogCtrl = checkListDialogCtrl;
 	}
@@ -954,6 +956,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public CheckList getCheckList() {
 		return checkList;
 	}
+
 	public void setCheckList(CheckList checkList) {
 		this.checkList = checkList;
 	}
@@ -961,6 +964,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public boolean isNewRecord() {
 		return isNewRecord;
 	}
+
 	public void setNewRecord(boolean isNewRecord) {
 		this.isNewRecord = isNewRecord;
 	}
@@ -968,6 +972,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	public void setChkListDetailList(List<CheckListDetail> chkListDetailList) {
 		this.chkListDetailList = chkListDetailList;
 	}
+
 	public List<CheckListDetail> getChkListDetailList() {
 		return chkListDetailList;
 	}

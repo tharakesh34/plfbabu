@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.IRRCode;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,14 +65,13 @@ public class IRRCodeListModelItemRenderer implements ListitemRenderer<IRRCode>, 
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, IRRCode iRRCode, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(iRRCode.getIRRCode());
+		lc = new Listcell(iRRCode.getIRRCode());
 		lc.setParent(item);
-	  	lc = new Listcell(iRRCode.getIRRCodeDesc());
+		lc = new Listcell(iRRCode.getIRRCodeDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -81,12 +79,12 @@ public class IRRCodeListModelItemRenderer implements ListitemRenderer<IRRCode>, 
 		cbActive.setChecked(iRRCode.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(iRRCode.getRecordStatus());
+		lc = new Listcell(iRRCode.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(iRRCode.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("iRRID", iRRCode.getIRRID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onIRRCodeItemDoubleClicked");
 	}
 }

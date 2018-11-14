@@ -21,8 +21,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-public class FinCollateralServiceImpl extends GenericService<FinanceDetail> implements
-        FinCollateralService {
+public class FinCollateralServiceImpl extends GenericService<FinanceDetail> implements FinCollateralService {
 
 	private static final Logger logger = Logger.getLogger(FinCollateralServiceImpl.class);
 
@@ -33,7 +32,6 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		super();
 	}
 
-
 	@Override
 	public FinCollaterals getFinCollateralsById(String finReference, long id) {
 		return getFinCollateralsDAO().getFinCollateralsById(finReference, id, "_View");
@@ -43,15 +41,15 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 	public List<FinCollaterals> getFinCollateralsByRef(String financeReference, String type) {
 		return getFinCollateralsDAO().getFinCollateralsByFinRef(financeReference, type);
 	}
-	
+
 	@Override
-	public FinCollaterals getApprovedFinCollateralsById(String finReference,long id) {
+	public FinCollaterals getApprovedFinCollateralsById(String finReference, long id) {
 		return getFinCollateralsDAO().getFinCollateralsById(finReference, id, "_AView");
 	}
 
 	@Override
 	public List<AuditDetail> saveOrUpdate(List<FinCollaterals> finCollateralList, String tableType,
-	        String auditTranType) {
+			String auditTranType) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -63,10 +61,9 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			} else {
 				getFinCollateralsDAO().update(collateralDetail, tableType);
 			}
-			String[] fields = PennantJavaUtil.getFieldDetails(collateralDetail,
-			        collateralDetail.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0],
-			        fields[1], collateralDetail.getBefImage(), collateralDetail));
+			String[] fields = PennantJavaUtil.getFieldDetails(collateralDetail, collateralDetail.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
+					collateralDetail.getBefImage(), collateralDetail));
 		}
 
 		logger.debug("Leaving");
@@ -89,19 +86,20 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	@Override
 	public List<AuditDetail> delete(List<FinCollaterals> finCollateralList, String tableType, String auditTranType) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = null;	
+		String[] fields = null;
 
-		if(finCollateralList != null && !finCollateralList.isEmpty()) {
+		if (finCollateralList != null && !finCollateralList.isEmpty()) {
 			int auditSeq = 1;
 			for (FinCollaterals finCollateral : finCollateralList) {
 				getFinCollateralsDAO().delete(finCollateral, tableType);
-				fields = PennantJavaUtil.getFieldDetails(finCollateral, finCollateral.getExcludeFields());	
-				auditDetails.add(new AuditDetail(auditTranType,auditSeq, fields[0], fields[1], finCollateral.getBefImage(), finCollateral));
+				fields = PennantJavaUtil.getFieldDetails(finCollateral, finCollateral.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
+						finCollateral.getBefImage(), finCollateral));
 				auditSeq++;
 			}
 		}
@@ -121,7 +119,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 		FinCollaterals financeDisbursement = new FinCollaterals();
 		BeanUtils.copyProperties((FinanceDisbursement) auditHeader.getAuditDetail().getModelData(),
-		        financeDisbursement);
+				financeDisbursement);
 
 		if (financeDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -167,8 +165,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			return auditHeader;
 		}
 
-		FinCollaterals finCollaterals = (FinCollaterals) auditHeader.getAuditDetail()
-		        .getModelData();
+		FinCollaterals finCollaterals = (FinCollaterals) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFinCollateralsDAO().delete(finCollaterals, "_Temp");
@@ -178,9 +175,9 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 		return auditHeader;
 	}
-	
+
 	@Override
-	public List<AuditDetail> doApprove(List<FinCollaterals> finCollateralList, String tableType, String auditTranType, 
+	public List<AuditDetail> doApprove(List<FinCollaterals> finCollateralList, String tableType, String auditTranType,
 			String finSourceId) {
 		logger.debug("Entering");
 
@@ -189,7 +186,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		for (FinCollaterals finCollateral : finCollateralList) {
 			FinCollaterals detail = new FinCollaterals();
 			BeanUtils.copyProperties(finCollateral, detail);
-			
+
 			finCollateral.setRoleCode("");
 			finCollateral.setNextRoleCode("");
 			finCollateral.setTaskId("");
@@ -197,23 +194,26 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			finCollateral.setWorkflowId(0);
 			finCollateral.setRecordType("");
 			getFinCollateralsDAO().save(finCollateral, tableType);
-			
-			if(!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API)) {
+
+			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API)) {
 				getFinCollateralsDAO().delete(finCollateral, "_Temp");
 			}
-			
+
 			String[] fields = PennantJavaUtil.getFieldDetails(finCollateral, finCollateral.getExcludeFields());
-			
-			auditDetails.add(new  AuditDetail(PennantConstants.TRAN_WF, auditDetails.size()+1, fields[0], fields[1], detail.getBefImage(), detail));
-			auditDetails.add(new  AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], finCollateral.getBefImage(), finCollateral));
+
+			auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, auditDetails.size() + 1, fields[0], fields[1],
+					detail.getBefImage(), detail));
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
+					finCollateral.getBefImage(), finCollateral));
 		}
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	@Override
-	public List<AuditDetail> validate(List<FinCollaterals> finCollateralList, long workflowId, String method, String auditTranType, String  usrLanguage){
+	public List<AuditDetail> validate(List<FinCollaterals> finCollateralList, long workflowId, String method,
+			String auditTranType, String usrLanguage) {
 		return doValidation(finCollateralList, workflowId, method, auditTranType, usrLanguage);
 	}
 
@@ -230,16 +230,16 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(),
-		        auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	public List<AuditDetail> doValidation(List<FinCollaterals> finCollateralList, long workflowId, String method, String auditTranType, String usrLanguage) {
+
+	public List<AuditDetail> doValidation(List<FinCollaterals> finCollateralList, long workflowId, String method,
+			String auditTranType, String usrLanguage) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = getAuditDetail(finCollateralList, auditTranType, method, workflowId);
@@ -251,8 +251,9 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
-	private List<AuditDetail> getAuditDetail(List<FinCollaterals> finCollateralsList, String auditTranType, String method, long workflowId) {
+
+	private List<AuditDetail> getAuditDetail(List<FinCollaterals> finCollateralsList, String auditTranType,
+			String method, long workflowId) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -268,45 +269,39 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			if (finCollateral.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				finCollateral.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (finCollateral.getRecordType()
-					.equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			} else if (finCollateral.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				finCollateral.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				isRcdType = true;
-			} else if (finCollateral.getRecordType()
-					.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			} else if (finCollateral.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				finCollateral.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				isRcdType = true;
 			}
 
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				finCollateral.setNewRecord(true);
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finCollateral.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				if (finCollateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finCollateral.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_DEL)
-						|| finCollateral.getRecordType().equalsIgnoreCase(
-								PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (finCollateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| finCollateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
-
 			if (StringUtils.isNotEmpty(finCollateral.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCollateral.getBefImage(), finCollateral));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						finCollateral.getBefImage(), finCollateral));
 			}
 		}
-
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
@@ -315,10 +310,10 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		FinCollaterals tempFinCollaterals = null;
 		if (finCollaterals.isWorkflow()) {
 			tempFinCollaterals = getFinCollateralsDAO().getFinCollateralsById(finCollaterals.getFinReference(),
-			        finCollaterals.getId(), "_Temp");
+					finCollaterals.getId(), "_Temp");
 		}
-		FinCollaterals befFinCollaterals = getFinCollateralsDAO().getFinCollateralsById(finCollaterals.getFinReference(),
-		        finCollaterals.getId(), "");
+		FinCollaterals befFinCollaterals = getFinCollateralsDAO()
+				.getFinCollateralsById(finCollaterals.getFinReference(), finCollaterals.getId(), "");
 
 		FinCollaterals oldFinCollaterals = finCollaterals.getBefImage();
 
@@ -330,75 +325,69 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		if (finCollaterals.isNew()) { // for New record or new record into work flow
 
 			if (!finCollaterals.isWorkflow()) {// With out Work flow only new records  
-				if (befFinCollaterals != null) {	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				if (befFinCollaterals != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finCollaterals.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinCollaterals != null || tempFinCollaterals != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-						        usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinCollaterals == null || tempFinCollaterals != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						        usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finCollaterals.isWorkflow()) {	// With out Work flow for update and delete
+			if (!finCollaterals.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befFinCollaterals == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinCollaterals != null
-					        && !oldFinCollaterals.getLastMntOn().equals(
-					                befFinCollaterals.getLastMntOn())) {
+							&& !oldFinCollaterals.getLastMntOn().equals(befFinCollaterals.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
-							        usrLanguage));
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
-							        usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempFinCollaterals == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinCollaterals != null && oldFinCollaterals != null
-				        && !oldFinCollaterals.getLastMntOn().equals(
-				                tempFinCollaterals.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						&& !oldFinCollaterals.getLastMntOn().equals(tempFinCollaterals.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
-		        usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-		        || !finCollaterals.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finCollaterals.isWorkflow()) {
 			finCollaterals.setBefImage(befFinCollaterals);
 		}
 
 		return auditDetail;
 	}
-	
+
 	public FinCollateralsDAO getFinCollateralsDAO() {
 		return finCollateralsDAO;
 	}

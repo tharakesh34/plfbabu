@@ -16,7 +16,7 @@ public class ChequeVerificationProcessImpl implements ChequeVerificationProcess 
 	public ChequeVerificationProcessImpl() {
 		super();
 	}
-	
+
 	private ChequeVerificationDetailProcess chequeVerifyProcess;
 
 	/**
@@ -24,13 +24,13 @@ public class ChequeVerificationProcessImpl implements ChequeVerificationProcess 
 	 * 
 	 */
 	@Override
-	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification) 
+	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification)
 			throws InterfaceException {
 		logger.debug("Entering");
 
 		ChequeVerification chqVerifyRes = null;
 		try {
-			chqVerifyRes = getChequeVerifyProcess().sendChequeVerificationReq(chequeVerification, 
+			chqVerifyRes = getChequeVerifyProcess().sendChequeVerificationReq(chequeVerification,
 					InterfaceMasterConfigUtil.CHEQUE_VERIFICATION);
 		} catch (JaxenException jax) {
 			logger.error("Exception: ", jax);
@@ -49,8 +49,7 @@ public class ChequeVerificationProcessImpl implements ChequeVerificationProcess 
 		return chequeVerifyProcess;
 	}
 
-	public void setChequeVerifyProcess(
-			ChequeVerificationDetailProcess chequeVerifyProcess) {
+	public void setChequeVerifyProcess(ChequeVerificationDetailProcess chequeVerifyProcess) {
 		this.chequeVerifyProcess = chequeVerifyProcess;
 	}
 }

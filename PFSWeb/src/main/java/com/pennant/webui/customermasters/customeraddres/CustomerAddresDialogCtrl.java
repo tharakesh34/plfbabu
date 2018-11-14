@@ -93,71 +93,67 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerAddres/customerAddresDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerAddres/customerAddresDialog.zul file.
  */
 public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private static final long serialVersionUID = -221443986307588127L;
 	private static final Logger logger = Logger.getLogger(CustomerAddresDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_CustomerAddresDialog; 	// autoWired
+	protected Window window_CustomerAddresDialog; // autoWired
 
-	protected Longbox 	custID; 						// autoWired
-	protected ExtendedCombobox 	custAddrType; 					// autoWired
-	protected Textbox 	custAddrHNbr; 					// autoWired
-	protected Textbox 	custFlatNbr; 					// autoWired
-	protected Textbox 	custAddrStreet; 				// autoWired
-	protected Textbox 	custAddrLine1; 					// autoWired
-	protected Textbox 	custAddrLine2; 					// autoWired
-	protected Textbox 	custPOBox; 						// autoWired
-	protected ExtendedCombobox 	custAddrCountry; 				// autoWired
-	protected ExtendedCombobox 	custAddrProvince; 				// autoWired
-	protected ExtendedCombobox 	custAddrCity; 					// autoWired
-	protected ExtendedCombobox 	custAddrZIP; 					// autoWired
-	protected Textbox 	custAddrPhone; 					// autoWired
-	protected Textbox 	custCIF;						// autoWired
-	protected Label 	custShrtName;					// autoWired
+	protected Longbox custID; // autoWired
+	protected ExtendedCombobox custAddrType; // autoWired
+	protected Textbox custAddrHNbr; // autoWired
+	protected Textbox custFlatNbr; // autoWired
+	protected Textbox custAddrStreet; // autoWired
+	protected Textbox custAddrLine1; // autoWired
+	protected Textbox custAddrLine2; // autoWired
+	protected Textbox custPOBox; // autoWired
+	protected ExtendedCombobox custAddrCountry; // autoWired
+	protected ExtendedCombobox custAddrProvince; // autoWired
+	protected ExtendedCombobox custAddrCity; // autoWired
+	protected ExtendedCombobox custAddrZIP; // autoWired
+	protected Textbox custAddrPhone; // autoWired
+	protected Textbox custCIF; // autoWired
+	protected Label custShrtName; // autoWired
 	protected Combobox custAddrPriority; // autoWired
-	protected Textbox 	custCareOfAddr;						// autoWired
-	protected Textbox 	custSubDist;						// autoWired
-	protected Textbox 	custDistrict;						// autoWired
-	
+	protected Textbox custCareOfAddr; // autoWired
+	protected Textbox custSubDist; // autoWired
+	protected Textbox custDistrict; // autoWired
 
-
-	protected Label 		CustomerSname;				// autoWired	
-	protected Textbox       cityName;                  //autowired
+	protected Label CustomerSname; // autoWired	
+	protected Textbox cityName; //autowired
 
 	// not autoWired variables
 	private CustomerAddres customerAddres; // overHanded per parameter
 	private transient CustomerAddresListCtrl customerAddresListCtrl; // overHanded
 
 	private transient boolean validationOn;
-	
-	protected Button btnSearchPRCustid; 	// autoWired
+
+	protected Button btnSearchPRCustid; // autoWired
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerAddresService customerAddresService;
 	protected JdbcSearchObject<Customer> searchObj;
 	private transient CustomerSelectCtrl customerSelectCtrl;
-	
-	private boolean newRecord=false;
-	private boolean newCustomer=false;
+
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
 	private List<CustomerAddres> customerAddress;
 	private CustomerDialogCtrl customerDialogCtrl;
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject;
-	private String moduleType="";
-    private String userRole="";
-    private boolean isFinanceProcess = false;
-    private boolean workflow = false;
-    
-    private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
-			.getCustomerEmailPriority();
+	private String moduleType = "";
+	private String userRole = "";
+	private boolean isFinanceProcess = false;
+	private boolean workflow = false;
+
+	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil.getCustomerEmailPriority();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -173,9 +169,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerAddres object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerAddres object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -203,27 +198,27 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		} else {
 			setCustomerAddres(null);
 		}
-		
+
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
 
-		if(getCustomerAddres().isNewRecord()){
+		if (getCustomerAddres().isNewRecord()) {
 			setNewRecord(true);
 		}
-		
-		if(arguments.containsKey("customerDialogCtrl")){
+
+		if (arguments.containsKey("customerDialogCtrl")) {
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
 			setNewCustomer(true);
-			
-			if(arguments.containsKey("newRecord")){
+
+			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
-			}else{
+			} else {
 				setNewRecord(false);
 			}
 
 			this.customerAddres.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
+			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerAddresDialog");
 			}
@@ -247,19 +242,19 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		if (arguments.containsKey("isFinanceProcess")) {
 			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
-		
+
 		if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		
-		doLoadWorkFlow(this.customerAddres.isWorkflow(),
-				this.customerAddres.getWorkflowId(),this.customerAddres.getNextTaskId());
+
+		doLoadWorkFlow(this.customerAddres.isWorkflow(), this.customerAddres.getWorkflowId(),
+				this.customerAddres.getNextTaskId());
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
-			getUserWorkspace().allocateRoleAuthorities(getRole(),"CustomerAddresDialog");
+			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerAddresDialog");
 		}
 
 		// READ OVERHANDED parameters !
@@ -275,12 +270,12 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCustomerAddres());
-		
+
 		//Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onLoad();
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -288,7 +283,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		// Empty sent any required attributes
 		this.custAddrType.setMaxlength(8);
 		this.custAddrType.setTextBoxWidth(121);
@@ -297,7 +292,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrType.setValueColumn("AddrTypeCode");
 		this.custAddrType.setDescColumn("AddrTypeDesc");
 		this.custAddrType.setValidateColumns(new String[] { "AddrTypeCode" });
-		
+
 		this.custAddrHNbr.setMaxlength(50);
 		this.custFlatNbr.setMaxlength(50);
 		this.custAddrStreet.setMaxlength(50);
@@ -307,7 +302,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custCareOfAddr.setMaxlength(50);
 		this.custSubDist.setMaxlength(50);
 		this.custDistrict.setMaxlength(50);
-		
+
 		this.custAddrCountry.setMaxlength(2);
 		this.custAddrCountry.setTextBoxWidth(121);
 		this.custAddrCountry.setMandatoryStyle(true);
@@ -315,7 +310,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCountry.setValueColumn("CountryCode");
 		this.custAddrCountry.setDescColumn("CountryDesc");
 		this.custAddrCountry.setValidateColumns(new String[] { "CountryCode" });
-		
+
 		this.custAddrProvince.setMaxlength(8);
 		this.custAddrProvince.setTextBoxWidth(121);
 		this.custAddrProvince.setMandatoryStyle(true);
@@ -331,7 +326,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCity.setValueColumn("PCCity");
 		this.custAddrCity.setDescColumn("PCCityName");
 		this.custAddrCity.setValidateColumns(new String[] { "PCCity" });
-		
+
 		this.custAddrZIP.setMaxlength(50);
 		this.custAddrZIP.setTextBoxWidth(121);
 		this.custAddrZIP.setMandatoryStyle(true);
@@ -339,7 +334,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setValueColumn("PinCode");
 		this.custAddrZIP.setDescColumn("AreaName");
 		this.custAddrZIP.setValidateColumns(new String[] { "PinCode" });
-		
+
 		this.custAddrPhone.setMaxlength(50);
 		this.cityName.setMaxlength(50);
 
@@ -357,12 +352,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("CustomerAddresDialog",userRole);
+		getUserWorkspace().allocateAuthorities("CustomerAddresDialog", userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerAddresDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerAddresDialog_btnEdit"));
@@ -379,9 +373,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -390,9 +384,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -402,9 +396,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CustomerAddresDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -414,9 +408,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -425,9 +419,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -439,7 +433,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -462,11 +456,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	public void doWriteBeanToComponents(CustomerAddres aCustomerAddres) {
 		logger.debug("Entering");
-		
-		if(aCustomerAddres.getCustID()!=Long.MIN_VALUE){
-			this.custID.setValue(aCustomerAddres.getCustID());	
+
+		if (aCustomerAddres.getCustID() != Long.MIN_VALUE) {
+			this.custID.setValue(aCustomerAddres.getCustID());
 		}
-		
+
 		this.custAddrType.setValue(aCustomerAddres.getCustAddrType());
 		this.custAddrHNbr.setValue(aCustomerAddres.getCustAddrHNbr());
 		this.custFlatNbr.setValue(aCustomerAddres.getCustFlatNbr());
@@ -480,10 +474,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setValue(aCustomerAddres.getCustAddrZIP());
 		this.custAddrPhone.setValue(aCustomerAddres.getCustAddrPhone());
 		this.cityName.setValue(aCustomerAddres.getCustAddrCity());
-		this.custCIF.setValue(aCustomerAddres.getLovDescCustCIF()==null?"":
-			aCustomerAddres.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerAddres.getLovDescCustShrtName()==null?"":
-			aCustomerAddres.getLovDescCustShrtName().trim());
+		this.custCIF.setValue(
+				aCustomerAddres.getLovDescCustCIF() == null ? "" : aCustomerAddres.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerAddres.getLovDescCustShrtName() == null ? ""
+				: aCustomerAddres.getLovDescCustShrtName().trim());
 		this.custCareOfAddr.setValue(aCustomerAddres.getCustAddrLine3());
 		this.custSubDist.setValue(aCustomerAddres.getCustAddrLine4());
 		this.custDistrict.setValue(aCustomerAddres.getCustDistrict());
@@ -502,10 +496,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.custAddrZIP.setDescription(aCustomerAddres.getLovDescCustAddrZip());
 			this.custAddrType.setReadonly(true);
 		}
-		
-		fillComboBox(this.custAddrPriority,
-				String.valueOf(aCustomerAddres.getCustAddrPriority()),
-				CustomerPriorityList, "");
+
+		fillComboBox(this.custAddrPriority, String.valueOf(aCustomerAddres.getCustAddrPriority()), CustomerPriorityList,
+				"");
 		this.recordStatus.setValue(aCustomerAddres.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -523,7 +516,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		try {
 			aCustomerAddres.setCustID(this.custID.longValue());
-			 aCustomerAddres.setLovDescCustCIF(this.custCIF.getValue());
+			aCustomerAddres.setLovDescCustCIF(this.custCIF.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -577,13 +570,12 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		try {
 			if (PennantConstants.CITY_FREETEXT) {
-				aCustomerAddres.setCustAddrCity(StringUtils.trimToNull(this.cityName
-						.getValue()));
+				aCustomerAddres.setCustAddrCity(StringUtils.trimToNull(this.cityName.getValue()));
 			} else {
 				aCustomerAddres.setLovDescCustAddrCityName(StringUtils.trimToNull(this.custAddrCity.getDescription()));
 				aCustomerAddres.setCustAddrCity(StringUtils.trimToNull(this.custAddrCity.getValidatedValue()));
 			}
-		}	catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -596,25 +588,23 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.custAddrPriority.getSelectedItem() != null
-					&& !StringUtils.trimToEmpty(
-							this.custAddrPriority.getSelectedItem().getValue()
-									.toString()).equals(
-							PennantConstants.List_Select)) {
-				aCustomerAddres.setCustAddrPriority(Integer
-						.parseInt(this.custAddrPriority.getSelectedItem()
-								.getValue().toString()));
+					&& !StringUtils.trimToEmpty(this.custAddrPriority.getSelectedItem().getValue().toString())
+							.equals(PennantConstants.List_Select)) {
+				aCustomerAddres.setCustAddrPriority(
+						Integer.parseInt(this.custAddrPriority.getSelectedItem().getValue().toString()));
 			} else {
 				aCustomerAddres.setCustAddrPriority(0);
 			}
-			
+
 			if ("#".equals(getComboboxValue(this.custAddrPriority))) {
 				throw new WrongValueException(this.custAddrPriority, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_CustomerAddresDialog_CustAddrPriority.value") }));
 			} else {
-				aCustomerAddres.setCustAddrPriority(Integer.parseInt(this.custAddrPriority.getSelectedItem().getValue().toString()));
+				aCustomerAddres.setCustAddrPriority(
+						Integer.parseInt(this.custAddrPriority.getSelectedItem().getValue().toString()));
 			}
 
 		} catch (WrongValueException we) {
@@ -636,7 +626,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -656,15 +646,14 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerAddres
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(CustomerAddres aCustomerAddres) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (isNewRecord()) {
 			this.btnCtrl.setInitNew();
@@ -673,12 +662,12 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.custAddrType.getButton().focus();
 		} else {
 			this.custAddrPriority.focus();
-			if (isNewCustomer()){
+			if (isNewCustomer()) {
 				doEdit();
-			}else  if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -690,17 +679,17 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			doWriteBeanToComponents(aCustomerAddres);
 
 			doCheckEnquiry();
-			if(isNewCustomer()){
+			if (isNewCustomer()) {
 				this.window_CustomerAddresDialog.setHeight("70%");
 				this.window_CustomerAddresDialog.setWidth("60%");
 				this.groupboxWf.setVisible(false);
-				this.window_CustomerAddresDialog.doModal() ;
-			}else{
+				this.window_CustomerAddresDialog.doModal();
+			} else {
 				this.window_CustomerAddresDialog.setWidth("80%");
 				this.window_CustomerAddresDialog.setHeight("80%");
 				setDialog(DialogType.EMBEDDED);
 			}
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -708,7 +697,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	}
 
 	private void doCheckEnquiry() {
-		if(PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)){
+		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.btnDelete.setVisible(false);
 			this.btnSave.setVisible(false);
 			this.custAddrType.setReadonly(true);
@@ -731,7 +720,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.btnSearchPRCustid.setVisible(false);
 
 		}
-		
+
 	}
 
 	/**
@@ -742,64 +731,83 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		setValidationOn(true);
 		doClearMessage();
 
-		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCIF.value"),null,true));
+		if (!this.custID.isReadonly()) {
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCIF.value"), null, true));
 		}
-		
-		if (!this.custAddrHNbr.isReadonly()){
-			this.custAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrHNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, true));
+
+		if (!this.custAddrHNbr.isReadonly()) {
+			this.custAddrHNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrHNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
-		
-		if (!this.custFlatNbr.isReadonly()){
-			this.custFlatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustFlatNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+
+		if (!this.custFlatNbr.isReadonly()) {
+			this.custFlatNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustFlatNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		
+
 		boolean addressConstraint = false;
-		if (StringUtils.isBlank(this.custAddrStreet.getValue())
-				&& StringUtils.isBlank(this.custAddrLine1.getValue())
+		if (StringUtils.isBlank(this.custAddrStreet.getValue()) && StringUtils.isBlank(this.custAddrLine1.getValue())
 				&& StringUtils.isBlank(this.custAddrLine2.getValue())) {
 			addressConstraint = true;
 		}
-		if (!this.custAddrStreet.isReadonly() && addressConstraint){
-			this.custAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
+		if (!this.custAddrStreet.isReadonly() && addressConstraint) {
+			this.custAddrStreet.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
 
-		if (!this.custAddrLine1.isReadonly() && addressConstraint){
-			this.custAddrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrLine1.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		if (!this.custAddrLine1.isReadonly() && addressConstraint) {
+			this.custAddrLine1.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		
-		if (!this.custAddrLine2.isReadonly() && addressConstraint){
-			this.custAddrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrLine2.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+
+		if (!this.custAddrLine2.isReadonly() && addressConstraint) {
+			this.custAddrLine2.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrLine2.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		
-		if (!this.custPOBox.isReadonly()){
-			this.custPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustPOBox.value"),PennantRegularExpressions.REGEX_NUMERIC, false));
+
+		if (!this.custPOBox.isReadonly()) {
+			this.custPOBox
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustPOBox.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
-		
-		if (!this.custAddrZIP.isReadonly()){
-			this.custAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"),null,true,true));
+
+		if (!this.custAddrZIP.isReadonly()) {
+			this.custAddrZIP.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"), null, true, true));
 		}
-		
+
 		if (!this.custAddrPriority.isDisabled()) {
-			this.custAddrPriority.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerAddresDialog_CustAddrPriority.value"), null, true));
+			this.custAddrPriority.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrPriority.value"), null, true));
 		}
-		
-		if (PennantConstants.CITY_FREETEXT){
-			if(!this.cityName.isReadonly()) {
-				this.cityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CityName.value"),PennantRegularExpressions.REGEX_NAME, false));
+
+		if (PennantConstants.CITY_FREETEXT) {
+			if (!this.cityName.isReadonly()) {
+				this.cityName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CityName.value"),
+								PennantRegularExpressions.REGEX_NAME, false));
 			}
 		}
-		if (!this.custCareOfAddr.isReadonly() && addressConstraint){
-			this.custCareOfAddr.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustCareOfAddr.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		if (!this.custCareOfAddr.isReadonly() && addressConstraint) {
+			this.custCareOfAddr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustCareOfAddr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		if (!this.custSubDist.isReadonly() && addressConstraint){
-			this.custSubDist.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustSubDist.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		if (!this.custSubDist.isReadonly() && addressConstraint) {
+			this.custSubDist.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustSubDist.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		if (!this.custDistrict.isReadonly() && addressConstraint){
-			this.custDistrict.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustDistrict.value"),PennantRegularExpressions.REGEX_ADDRESS, false));
+		if (!this.custDistrict.isReadonly() && addressConstraint) {
+			this.custDistrict.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustDistrict.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -832,17 +840,21 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		
-		this.custAddrType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrType.value"),null,true,true));
-		
-		this.custAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"),null,true,true));
-		
-		this.custAddrProvince.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"),null,true,true));
-		
-		if(!PennantConstants.CITY_FREETEXT) {
-		this.custAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value"),null,true,true));
+
+		this.custAddrType.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerAddresDialog_CustAddrType.value"), null, true, true));
+
+		this.custAddrCountry.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"), null, true, true));
+
+		this.custAddrProvince.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"), null, true, true));
+
+		if (!PennantConstants.CITY_FREETEXT) {
+			this.custAddrCity.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value"), null, true, true));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -884,7 +896,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custSubDist.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
@@ -901,7 +913,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final CustomerAddres aCustomerAddres = new CustomerAddres();
 		BeanUtils.copyProperties(getCustomerAddres(), aCustomerAddres);
 		String tranType = PennantConstants.TRAN_WF;
@@ -913,9 +925,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			if (StringUtils.isBlank(aCustomerAddres.getRecordType())) {
 				aCustomerAddres.setVersion(aCustomerAddres.getVersion() + 1);
 				aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if(!isFinanceProcess && getCustomerDialogCtrl() != null 
-						&&  getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
-					aCustomerAddres.setNewRecord(true);	
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
+						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+					aCustomerAddres.setNewRecord(true);
 				}
 				if (isWorkFlowEnabled()) {
 					aCustomerAddres.setNewRecord(true);
@@ -923,22 +935,21 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if(StringUtils.equals(aCustomerAddres.getRecordType(), PennantConstants.RCD_UPD)){
-				  aCustomerAddres.setNewRecord(true);	
+			} else if (StringUtils.equals(aCustomerAddres.getRecordType(), PennantConstants.RCD_UPD)) {
+				aCustomerAddres.setNewRecord(true);
 			}
-		
+
 			try {
-				if(isNewCustomer()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerAddres,tranType);
+				if (isNewCustomer()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerAddres, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || 
-							retValue==PennantConstants.porcessOVERIDE){
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						getCustomerDialogCtrl().doFillCustomerAddressDetails(this.customerAddress);
 						closeDialog();
-					}	
-				}else if (doProcess(aCustomerAddres, tranType)) {
+					}
+				} else if (doProcess(aCustomerAddres, tranType)) {
 					refreshList();
 					closeDialog();
 				}
@@ -949,29 +960,29 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
-		if (isNewRecord()){
-			if(isNewCustomer()){
-				this.btnCancel.setVisible(false);	
+
+		if (isNewRecord()) {
+			if (isNewCustomer()) {
+				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-			}else{
+			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
 			this.custAddrType.setReadonly(isReadOnly("CustomerAddresDialog_custAddrType"));
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.custAddrType.setReadonly(true);
 		}
-		
+
 		this.custCIF.setReadonly(true);
-		
+
 		this.custAddrHNbr.setReadonly(isReadOnly("CustomerAddresDialog_custAddrHNbr"));
 		this.custFlatNbr.setReadonly(isReadOnly("CustomerAddresDialog_custFlatNbr"));
 		this.custAddrStreet.setReadonly(isReadOnly("CustomerAddresDialog_custAddrStreet"));
@@ -1001,36 +1012,36 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			if(newCustomer){
-				if("ENQ".equals(this.moduleType)){
+			if (newCustomer) {
+				if ("ENQ".equals(this.moduleType)) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
-				}else if (isNewRecord()){
+				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
 				}
-			}else{
-			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
-		  }
+			} else {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(true);
+			}
 		}
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
+	public boolean isReadOnly(String componentName) {
 		boolean isCustomerWorkflow = false;
-		if(getCustomerDialogCtrl() != null){
+		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow){
+		if (isWorkFlowEnabled() || isCustomerWorkflow) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -1072,7 +1083,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		
+
 		// remove validation, if there are a save before
 		this.custCIF.setText("");
 		this.custAddrType.setValue("");
@@ -1110,18 +1121,18 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		final CustomerAddres aCustomerAddres = new CustomerAddres();
 		BeanUtils.copyProperties(getCustomerAddres(), aCustomerAddres);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the CustomerAddres object with the components data
 		doWriteComponentsToBean(aCustomerAddres);
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
 		// Do data level validations here
 		isNew = aCustomerAddres.isNew();
 		String tranType = "";
-		
+
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aCustomerAddres.getRecordType())) {
@@ -1134,29 +1145,29 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				}
 			}
 		} else {
-			
-			if(isNewCustomer()){
-				if(isNewRecord()){
+
+			if (isNewCustomer()) {
+				if (isNewRecord()) {
 					aCustomerAddres.setVersion(1);
 					aCustomerAddres.setRecordType(PennantConstants.RCD_ADD);
-				}else{
+				} else {
 					tranType = PennantConstants.TRAN_UPD;
 					if (workflow && !isFinanceProcess && StringUtils.isBlank(aCustomerAddres.getRecordType())) {
 						aCustomerAddres.setNewRecord(true);
 					}
 				}
 
-				if(StringUtils.isBlank(aCustomerAddres.getRecordType())){
-					aCustomerAddres.setVersion(aCustomerAddres.getVersion()+1);
+				if (StringUtils.isBlank(aCustomerAddres.getRecordType())) {
+					aCustomerAddres.setVersion(aCustomerAddres.getVersion() + 1);
 					aCustomerAddres.setRecordType(PennantConstants.RCD_UPD);
 				}
-				
-				if(aCustomerAddres.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+
+				if (aCustomerAddres.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
-			}else{
+			} else {
 				aCustomerAddres.setVersion(aCustomerAddres.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
@@ -1167,87 +1178,92 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		// save it to database
 		try {
-			if(isNewCustomer()){
-				AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerAddres,tranType);
+			if (isNewCustomer()) {
+				AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerAddres, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getCustomerDialogCtrl().doFillCustomerAddressDetails(this.customerAddress);
 					// send the data back to customer
 					closeDialog();
 				}
-			}else if (doProcess(aCustomerAddres, tranType)) {
+			} else if (doProcess(aCustomerAddres, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
 			}
-		
+
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showMessage(e);
 		}
 		logger.debug("Leaving");
 	}
-	
-	
-	private AuditHeader newFinanceCustomerProcess(CustomerAddres aCustomerAddres,String tranType){
-		boolean recordAdded=false;
-		
-		AuditHeader auditHeader= getAuditHeader(aCustomerAddres, tranType);
+
+	private AuditHeader newFinanceCustomerProcess(CustomerAddres aCustomerAddres, String tranType) {
+		boolean recordAdded = false;
+
+		AuditHeader auditHeader = getAuditHeader(aCustomerAddres, tranType);
 		customerAddress = new ArrayList<CustomerAddres>();
-		
+
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = aCustomerAddres.getLovDescCustCIF();
 		valueParm[1] = aCustomerAddres.getCustAddrType();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + ":"+valueParm[1];
-		
-		if(getCustomerDialogCtrl().getCustomerAddressDetailList() !=null && getCustomerDialogCtrl().getCustomerAddressDetailList().size()>0){
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + ":" + valueParm[1];
+
+		if (getCustomerDialogCtrl().getCustomerAddressDetailList() != null
+				&& getCustomerDialogCtrl().getCustomerAddressDetailList().size() > 0) {
 			for (int i = 0; i < getCustomerDialogCtrl().getCustomerAddressDetailList().size(); i++) {
 				CustomerAddres customerAddres = getCustomerDialogCtrl().getCustomerAddressDetailList().get(i);
 
 				if (!PennantConstants.TRAN_DEL.equals(tranType)) {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType()) &&
-						!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerAddres.getRecordType()) && 
-						!StringUtils.equals(customerAddres.getCustAddrType(), aCustomerAddres.getCustAddrType())&& 
-						aCustomerAddres.getCustAddrPriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH) &&
-						customerAddres.getCustAddrPriority() == aCustomerAddres.getCustAddrPriority()) {
-						valueParm[1]=this.custAddrPriority.getSelectedItem().getLabel();
-						errParm[1] = PennantJavaUtil.getLabel("label_CustAddrPriority") + ":"+valueParm[1];
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType())
+							&& !StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerAddres.getRecordType())
+							&& !StringUtils.equals(customerAddres.getCustAddrType(), aCustomerAddres.getCustAddrType())
+							&& aCustomerAddres.getCustAddrPriority() == Integer
+									.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)
+							&& customerAddres.getCustAddrPriority() == aCustomerAddres.getCustAddrPriority()) {
+						valueParm[1] = this.custAddrPriority.getSelectedItem().getLabel();
+						errParm[1] = PennantJavaUtil.getLabel("label_CustAddrPriority") + ":" + valueParm[1];
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "30702", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
-				} 
-				
-				if(aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())){ // Both Current and Existing list addresses same
-					
-					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+				}
+
+				if (aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())) { // Both Current and Existing list addresses same
+
+					if (isNewRecord()) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
-					
-					
+
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aCustomerAddres.getRecordType().equals(PennantConstants.RCD_UPD)){
+						if (aCustomerAddres.getRecordType().equals(PennantConstants.RCD_UPD)) {
 							aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							customerAddress.add(aCustomerAddres);
-						}else if(aCustomerAddres.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+						} else if (aCustomerAddres.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							customerAddress.add(aCustomerAddres);
-						}else if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
-							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getAddressList().size(); j++) {
-								CustomerAddres address =  getCustomerDialogCtrl().getCustomerDetails().getAddressList().get(j);
-								if(address.getCustID() == aCustomerAddres.getCustID() && address.getCustAddrType().equals(aCustomerAddres.getCustAddrType())){
+						} else if (aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
+							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getAddressList()
+									.size(); j++) {
+								CustomerAddres address = getCustomerDialogCtrl().getCustomerDetails().getAddressList()
+										.get(j);
+								if (address.getCustID() == aCustomerAddres.getCustID()
+										&& address.getCustAddrType().equals(aCustomerAddres.getCustAddrType())) {
 									customerAddress.add(address);
 								}
 							}
@@ -1262,14 +1278,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				}
 			}
 		}
-		
-		if(!recordAdded){
+
+		if (!recordAdded) {
 			customerAddress.add(aCustomerAddres);
 		}
 		return auditHeader;
-	} 
-	
-	
+	}
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1284,7 +1299,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	private boolean doProcess(CustomerAddres aCustomerAddres, String tranType) {
 		logger.debug("Entering");
-		
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1349,7 +1364,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aCustomerAddres,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aCustomerAddres, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -1378,7 +1393,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		CustomerAddres aCustomerAddres = (CustomerAddres) auditHeader.getAuditDetail().getModelData();
@@ -1389,8 +1404,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCustomerAddresService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
@@ -1398,26 +1412,22 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerAddresService().doApprove(auditHeader);
-						
-						if (aCustomerAddres.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+
+						if (aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getCustomerAddresService().doReject(
-								auditHeader);
-						
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getCustomerAddresService().doReject(auditHeader);
+
 						if (aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
-						
+
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerAddresDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1428,7 +1438,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
-					
+
 					if (deleteNotes) {
 						deleteNotes(getNotes(this.customerAddres), true);
 					}
@@ -1450,7 +1460,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	}
 
 	// Search Button Component Events
-	
+
 	public void onFulfill$custAddrType(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -1467,8 +1477,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * on fulfill custAddrProvince
+	 * 
 	 * @param event
 	 */
 
@@ -1498,15 +1510,15 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrZIP.setValue("");
 		this.custAddrZIP.setDescription("");
 		fillCitydetails(pcProvince);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
-
-    /**
-     * based on state param ,city will be filtered
-     * @param state
-     */
+	/**
+	 * based on state param ,city will be filtered
+	 * 
+	 * @param state
+	 */
 	private void fillCitydetails(String state) {
 		logger.debug("Entering");
 
@@ -1515,20 +1527,19 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.custAddrCity.setDescColumn("PCCityName");
 		this.custAddrCity.setValidateColumns(new String[] { "PCCity" });
 		Filter[] filters = new Filter[2];
-		
+
 		if (state == null) {
 			filters[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
 		} else {
 			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
 		}
-		
+
 		filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
 		this.custAddrCity.setFilters(filters);
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * onFulfill custAddrCity
 	 * 
@@ -1550,15 +1561,15 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			if (city != null) {
 				this.custAddrCity.setErrorMessage("");
 				this.custAddrProvince.setErrorMessage("");
-				
+
 				this.custAddrProvince.setValue(city.getPCProvince());
 				this.custAddrProvince.setDescription(city.getLovDescPCProvinceName());
 				cityValue = this.custAddrCity.getValue();
 			}
 		}
-		
+
 		fillPindetails(cityValue, this.custAddrProvince.getValue());
-		
+
 		this.custAddrZIP.setObject("");
 		this.custAddrZIP.setValue("");
 		this.custAddrZIP.setDescription("");
@@ -1568,18 +1579,18 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			filters = new Filter[2];
 			filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
 			filters[0] = new Filter("PCProvince", custAddrProvince.getValue(), Filter.OP_EQUAL);
-		}else{
+		} else {
 			filters = new Filter[1];
 			filters[0] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
 		}
-		
+
 		this.custAddrCity.setFilters(filters);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * based on param values,custaddrzip is filtered 
+	 * based on param values,custaddrzip is filtered
 	 * 
 	 * @param cityValue
 	 * @param provice
@@ -1587,25 +1598,24 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 	private void fillPindetails(String cityValue, String provice) {
 		logger.debug("Entering");
-		
+
 		this.custAddrZIP.setModuleName("PinCode");
 		this.custAddrZIP.setValueColumn("PinCode");
 		this.custAddrZIP.setDescColumn("AreaName");
 		this.custAddrZIP.setValidateColumns(new String[] { "PinCode" });
 		Filter[] filters = new Filter[2];
-		
+
 		if (cityValue != null) {
 			filters[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
-		} else if(provice != null && !provice.isEmpty()) {
+		} else if (provice != null && !provice.isEmpty()) {
 			filters[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
 		} else {
 			filters[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
-		
 
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.custAddrZIP.setFilters(filters);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1631,24 +1641,24 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				this.custAddrProvince.setDescription(pinCode.getLovDescPCProvinceName());
 				this.custAddrCountry.setValue(pinCode.getpCCountry());
 				this.custAddrCountry.setDescription(pinCode.getLovDescPCCountryName());
-				
+
 				this.custAddrCity.setErrorMessage("");
 				this.custAddrProvince.setErrorMessage("");
 				this.custAddrZIP.setErrorMessage("");
-			} 
+			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	  * Method for Calling list Of existed Customers
-	  * @param event
-	  * @throws SuspendNotAllowedException
-	  * @throws InterruptedException
-	  */
-	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException,
-						InterruptedException {
+	 * Method for Calling list Of existed Customers
+	 * 
+	 * @param event
+	 * @throws SuspendNotAllowedException
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onLoad();
 		logger.debug("Leaving" + event.toString());
@@ -1656,48 +1666,48 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onLoad() throws SuspendNotAllowedException,
-			InterruptedException {
+	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents(
-				"/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
 		logger.debug("Leaving");
 	}
-	
+
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aCustomerAddres
 	 * @param tranType
 	 * @return
 	 */
 	private AuditHeader getAuditHeader(CustomerAddres aCustomerAddres, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerAddres.getBefImage(), aCustomerAddres);
-		return new AuditHeader(getReference(), String.valueOf(aCustomerAddres.getCustID()),
-				null, null, auditDetail, aCustomerAddres.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAddres.getBefImage(), aCustomerAddres);
+		return new AuditHeader(getReference(), String.valueOf(aCustomerAddres.getCustID()), null, null, auditDetail,
+				aCustomerAddres.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1710,7 +1720,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail( PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerAddresDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1729,15 +1739,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.customerAddres);
 	}
-	
 
-	/** 
+	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getCustomerAddres().getCustID() + PennantConstants.KEY_SEPERATOR
-		+ getCustomerAddres().getCustAddrType();
+		return getCustomerAddres().getCustID() + PennantConstants.KEY_SEPERATOR + getCustomerAddres().getCustAddrType();
 	}
 
 	// ******************************************************//
@@ -1747,6 +1755,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1754,22 +1763,23 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public CustomerAddres getCustomerAddres() {
 		return this.customerAddres;
 	}
+
 	public void setCustomerAddres(CustomerAddres customerAddres) {
 		this.customerAddres = customerAddres;
 	}
 
-	public void setCustomerAddresService(
-			CustomerAddresService customerAddresService) {
+	public void setCustomerAddresService(CustomerAddresService customerAddresService) {
 		this.customerAddresService = customerAddresService;
 	}
+
 	public CustomerAddresService getCustomerAddresService() {
 		return this.customerAddresService;
 	}
 
-	public void setCustomerAddresListCtrl(
-			CustomerAddresListCtrl customerAddresListCtrl) {
+	public void setCustomerAddresListCtrl(CustomerAddresListCtrl customerAddresListCtrl) {
 		this.customerAddresListCtrl = customerAddresListCtrl;
 	}
+
 	public CustomerAddresListCtrl getCustomerAddresListCtrl() {
 		return this.customerAddresListCtrl;
 	}
@@ -1777,6 +1787,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void setCustomerSelectCtrl(CustomerSelectCtrl customerSelectctrl) {
 		this.customerSelectCtrl = customerSelectctrl;
 	}
+
 	public CustomerSelectCtrl getCustomerSelectCtrl() {
 		return customerSelectCtrl;
 	}
@@ -1784,6 +1795,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -1791,6 +1803,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
+
 	public boolean isNewCustomer() {
 		return newCustomer;
 	}
@@ -1798,6 +1811,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void setCustomerAddress(List<CustomerAddres> customerAddress) {
 		this.customerAddress = customerAddress;
 	}
+
 	public List<CustomerAddres> getCustomerAddress() {
 		return customerAddress;
 	}
@@ -1805,10 +1819,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
-	
+
 	private String getLovDescription(String value) {
 		value = StringUtils.trimToEmpty(value);
 

@@ -21,9 +21,9 @@ import com.pennant.backend.service.collection.CollectionService;
  * Service declaration for methods that depends on <b>CollectionService</b>.<br>
  * 
  */
-public class CollectionServiceImpl implements CollectionService{
-	
-	private CollectionDAO collectionDAO; 
+public class CollectionServiceImpl implements CollectionService {
+
+	private CollectionDAO collectionDAO;
 
 	public CollectionServiceImpl() {
 		super();
@@ -33,20 +33,20 @@ public class CollectionServiceImpl implements CollectionService{
 	public List<Collection> getCollectionTablesList() {
 		return collectionDAO.getCollectionTablesList();
 	}
-	
+
 	@Override
-	public int getCollectionExecutionSts(){
+	public int getCollectionExecutionSts() {
 		return collectionDAO.getCollectionExecutionSts();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public CollectionDAO getCollectionDAO() {
 		return collectionDAO;
 	}
-	
+
 	public void setCollectionDAO(CollectionDAO collectionDAO) {
 		this.collectionDAO = collectionDAO;
 	}

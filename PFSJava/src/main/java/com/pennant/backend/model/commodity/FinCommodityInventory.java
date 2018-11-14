@@ -6,7 +6,7 @@ import java.util.Date;
 
 import com.pennant.backend.model.Entity;
 
-public class FinCommodityInventory implements Serializable,Entity {
+public class FinCommodityInventory implements Serializable, Entity {
 
 	private static final long serialVersionUID = -8617777212368059076L;
 
@@ -14,7 +14,7 @@ public class FinCommodityInventory implements Serializable,Entity {
 	private String finreference;
 	private String brokerCode;
 	private String holdCertificateNo;
-	private long quantity ;
+	private long quantity;
 	private long saleQuantity;
 	private BigDecimal salePrice = BigDecimal.ZERO;
 	private BigDecimal unitSalePrice = BigDecimal.ZERO;
@@ -40,10 +40,10 @@ public class FinCommodityInventory implements Serializable,Entity {
 	}
 
 	@Override
-    public void setId(long id) {
+	public void setId(long id) {
 		this.finInventoryID = id;
-    }
-	
+	}
+
 	public long getFinInventoryID() {
 		return finInventoryID;
 	}
@@ -69,12 +69,13 @@ public class FinCommodityInventory implements Serializable,Entity {
 	}
 
 	public String getHoldCertificateNo() {
-	    return holdCertificateNo;
-    }
+		return holdCertificateNo;
+	}
+
 	public void setHoldCertificateNo(String holdCertificateNo) {
-	    this.holdCertificateNo = holdCertificateNo;
-    }
-	
+		this.holdCertificateNo = holdCertificateNo;
+	}
+
 	public BigDecimal getSalePrice() {
 		return salePrice;
 	}
@@ -148,23 +149,23 @@ public class FinCommodityInventory implements Serializable,Entity {
 	}
 
 	@Override
-    public boolean isNew() {
-	    return false;
-    }
+	public boolean isNew() {
+		return false;
+	}
 
 	public long getQuantity() {
-	    return quantity;
-    }
+		return quantity;
+	}
 
 	public void setQuantity(long quantity) {
-	    this.quantity = quantity;
-    }
+		this.quantity = quantity;
+	}
 
 	public long getSaleQuantity() {
-	    return saleQuantity;
-    }
+		return saleQuantity;
+	}
 
 	public void setSaleQuantity(long saleQuantity) {
-	    this.saleQuantity = saleQuantity;
-    }
+		this.saleQuantity = saleQuantity;
+	}
 }

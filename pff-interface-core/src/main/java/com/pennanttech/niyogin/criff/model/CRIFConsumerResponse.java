@@ -16,10 +16,10 @@ public class CRIFConsumerResponse implements Serializable {
 
 	private static final long serialVersionUID = 7694950473382895161L;
 
-	private String				statusCode;
-	private String				message;
+	private String statusCode;
+	private String message;
 	@XmlElement(name = "data")
-	private List<LoanDetailsData>	loanDetailsData;
+	private List<LoanDetailsData> loanDetailsData;
 
 	public String getStatusCode() {
 		return statusCode;
@@ -49,5 +49,5 @@ public class CRIFConsumerResponse implements Serializable {
 	public String toString() {
 		return "CRIFConsumerResponse [statusCode=" + statusCode + ", message=" + message + "]";
 	}
-	
+
 }

@@ -80,6 +80,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return finAppType;
 	}
+
 	public void setId(String id) {
 		this.finAppType = id;
 	}
@@ -87,6 +88,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public String getFinAppType() {
 		return finAppType;
 	}
+
 	public void setFinAppType(String finAppType) {
 		this.finAppType = finAppType;
 	}
@@ -94,6 +96,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public String getFinAppDesc() {
 		return finAppDesc;
 	}
+
 	public void setFinAppDesc(String finAppDesc) {
 		this.finAppDesc = finAppDesc;
 	}
@@ -101,6 +104,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public boolean isFinAppIsActive() {
 		return finAppIsActive;
 	}
+
 	public void setFinAppIsActive(boolean finAppIsActive) {
 		this.finAppIsActive = finAppIsActive;
 	}
@@ -108,6 +112,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -115,6 +120,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -122,6 +128,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public FinanceApplicationCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(FinanceApplicationCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -129,6 +136,7 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

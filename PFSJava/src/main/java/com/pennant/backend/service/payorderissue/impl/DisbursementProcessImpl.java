@@ -20,32 +20,33 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 
 public class DisbursementProcessImpl implements DisbursementProcess {
-	private static Logger				logger	= Logger.getLogger(DisbursementProcessImpl.class);
+	private static Logger logger = Logger.getLogger(DisbursementProcessImpl.class);
 	@Autowired
-	private BeneficiaryDAO				beneficiaryDAO;
+	private BeneficiaryDAO beneficiaryDAO;
 	@Autowired
-	private FinanceMainDAO				financeMainDAO;
+	private FinanceMainDAO financeMainDAO;
 	@Autowired
-	private AccountEngineExecution		engineExecution;
+	private AccountEngineExecution engineExecution;
 	@Autowired
-	protected PostingsPreparationUtil	postingsPreparationUtil;
+	protected PostingsPreparationUtil postingsPreparationUtil;
 	@Autowired
-	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 
 	private static String PAID_STATUS = "E";
+
 	@Override
 	public void process(FinAdvancePayments disbursement) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceMain financeMain = null;
 		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
 		if (StringUtils.isNotBlank(disbStatus)) {
-			PAID_STATUS =disbStatus;
+			PAID_STATUS = disbStatus;
 		}
-		
+
 		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.MAIN_TAB);
 		String paymentType = disbursement.getPaymentType();
-		
+
 		try {
 			if (StringUtils.equals(PAID_STATUS, disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
@@ -57,24 +58,24 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				 * aeEvent = new AEEvent(); aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
 				 * aeEvent.setReturnDataSet(list); aeEvent = postingsPreparationUtil.processPostings(aeEvent);
 				 */
-				
+
 				disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
-			
+
 			if (DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
 				addToCustomerBeneficiary(disbursement, financeMain.getCustID());
 			}
-			
+
 			//update paid or rejected
 			finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
-			
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

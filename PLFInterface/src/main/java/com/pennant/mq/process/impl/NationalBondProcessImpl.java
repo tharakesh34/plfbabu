@@ -31,21 +31,22 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @throws InterfaceException
 	 */
 	@Override
-	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws InterfaceException {
+	public NationalBondDetail doBondPurchase(String refNumConsumer, BigDecimal amount) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
 		detail.setRefNumConsumer(refNumConsumer);
 		detail.setAmount(amount);
-		
-		NationalBondDetail bondDetail = new NationalBondDetail() ;
+
+		NationalBondDetail bondDetail = new NationalBondDetail();
 		try {
-			bondDetail = getBondDetailProcess().doNationalBondProcess(detail, InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT);
+			bondDetail = getBondDetailProcess().doNationalBondProcess(detail,
+					InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
 			throw new InterfaceException("PTI9009", e.getMessage());
 		}
-		
+
 		logger.debug("Leaving");
 		return bondDetail;
 	}
@@ -62,13 +63,13 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @throws InterfaceException
 	 */
 	@Override
-	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail)	throws InterfaceException {
+	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail response;
 		try {
 			String transType = InterfaceMasterConfigUtil.BOND_TRANSFER_MAKER;
-			if(StringUtils.equals(nationalBondDetail.getTransferLevel(), "TRANS_CHECKER")) {
+			if (StringUtils.equals(nationalBondDetail.getTransferLevel(), "TRANS_CHECKER")) {
 				transType = InterfaceMasterConfigUtil.BOND_TRANSFER_CHECKER;
 			}
 			response = getBondDetailProcess().doNationalBondProcess(nationalBondDetail, transType);
@@ -90,7 +91,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @throws InterfaceException
 	 */
 	@Override
-	public NationalBondDetail cancelBondTransfer(String refNumProvider,	String refNumConsumer) 
+	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -99,7 +100,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 		detail.setRefNumConsumer(refNumConsumer);
 		NationalBondDetail response;
 		try {
-			response = getBondDetailProcess().doNationalBondProcess(detail, 
+			response = getBondDetailProcess().doNationalBondProcess(detail,
 					InterfaceMasterConfigUtil.BOND_CANCEL_TRANSFER);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
@@ -119,7 +120,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @throws InterfaceException
 	 */
 	@Override
-	public NationalBondDetail cancelBondPurchase(String refNumProvider,	String refNumConsumer) 
+	public NationalBondDetail cancelBondPurchase(String refNumProvider, String refNumConsumer)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -128,7 +129,8 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 		detail.setRefNumConsumer(refNumConsumer);
 		NationalBondDetail response = null;
 		try {
-			response = getBondDetailProcess().doNationalBondProcess(detail, InterfaceMasterConfigUtil.BOND_CANCEL_PURCHASE);
+			response = getBondDetailProcess().doNationalBondProcess(detail,
+					InterfaceMasterConfigUtil.BOND_CANCEL_PURCHASE);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
 			throw new InterfaceException("PTI9009", e.getMessage());

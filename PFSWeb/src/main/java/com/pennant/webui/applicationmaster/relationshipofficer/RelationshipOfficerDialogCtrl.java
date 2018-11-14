@@ -75,8 +75,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/RelationshipOfficer
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/RelationshipOfficer
  * /relationshipOfficerDialog.zul file.
  */
 public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOfficer> {
@@ -84,25 +83,24 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	private static final Logger logger = Logger.getLogger(RelationshipOfficerDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_RelationshipOfficerDialog; 	// autoWired
-	protected Textbox rOfficerCode; 					// autoWired
-	protected Textbox rOfficerDesc; 					// autoWired
-	protected ExtendedCombobox rOfficerDeptCode; 				// autoWired
-	protected Checkbox rOfficerIsActive; 				// autoWired
+	protected Window window_RelationshipOfficerDialog; // autoWired
+	protected Textbox rOfficerCode; // autoWired
+	protected Textbox rOfficerDesc; // autoWired
+	protected ExtendedCombobox rOfficerDeptCode; // autoWired
+	protected Checkbox rOfficerIsActive; // autoWired
 	protected Textbox grade; // autoWired
 	protected Textbox mobileNO; // autoWired
 	protected ExtendedCombobox genDesignation;
 	protected Datebox dateOfJoin;
 	// not auto wired variables
-	private RelationshipOfficer relationshipOfficer; 						   // overHanded per parameter
+	private RelationshipOfficer relationshipOfficer; // overHanded per parameter
 	private transient RelationshipOfficerListCtrl relationshipOfficerListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient RelationshipOfficerService relationshipOfficerService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
@@ -122,9 +120,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected RelationshipOfficer
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected RelationshipOfficer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -141,8 +138,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("relationshipOfficer")) {
-				this.relationshipOfficer = (RelationshipOfficer) arguments
-						.get("relationshipOfficer");
+				this.relationshipOfficer = (RelationshipOfficer) arguments.get("relationshipOfficer");
 				RelationshipOfficer befImage = new RelationshipOfficer();
 				BeanUtils.copyProperties(this.relationshipOfficer, befImage);
 				this.relationshipOfficer.setBefImage(befImage);
@@ -151,16 +147,14 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 			} else {
 				setRelationshipOfficer(null);
 			}
-			
-			doLoadWorkFlow(this.relationshipOfficer.isWorkflow(),
-					this.relationshipOfficer.getWorkflowId(),
+
+			doLoadWorkFlow(this.relationshipOfficer.isWorkflow(), this.relationshipOfficer.getWorkflowId(),
 					this.relationshipOfficer.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"RelationshipOfficerDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "RelationshipOfficerDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -171,8 +165,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 			// or
 			// delete relationshipOfficer here.
 			if (arguments.containsKey("relationshipOfficerListCtrl")) {
-				setRelationshipOfficerListCtrl((RelationshipOfficerListCtrl) arguments
-						.get("relationshipOfficerListCtrl"));
+				setRelationshipOfficerListCtrl(
+						(RelationshipOfficerListCtrl) arguments.get("relationshipOfficerListCtrl"));
 			} else {
 				setRelationshipOfficerListCtrl(null);
 			}
@@ -203,11 +197,11 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.rOfficerDeptCode.setModuleName("GeneralDepartment");
 		this.rOfficerDeptCode.setValueColumn("GenDepartment");
 		this.rOfficerDeptCode.setDescColumn("GenDeptDesc");
-		this.rOfficerDeptCode.setValidateColumns(new String[]{"GenDepartment"});
+		this.rOfficerDeptCode.setValidateColumns(new String[] { "GenDepartment" });
 		this.genDesignation.setModuleName("GeneralDesignation");
 		this.genDesignation.setValueColumn("GenDesignation");
 		this.genDesignation.setDescColumn("GenDesgDesc");
-		this.genDesignation.setValidateColumns(new String[] {"GenDesignation"});
+		this.genDesignation.setValidateColumns(new String[] { "GenDesignation" });
 		this.dateOfJoin.setFormat(DateFormat.SHORT_DATE.getPattern());
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -223,8 +217,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -338,7 +331,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.mobileNO.setValue(aRelationshipOfficer.getMobileNO());
 		this.genDesignation.setValue(aRelationshipOfficer.getGenDesignation());
 
-
 		if (aRelationshipOfficer.isNewRecord()) {
 			this.rOfficerDeptCode.setDescription("");
 		} else {
@@ -347,8 +339,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 
 		}
 		this.recordStatus.setValue(aRelationshipOfficer.getRecordStatus());
-		
-		if(aRelationshipOfficer.isNew() || (aRelationshipOfficer.getRecordType() != null ? aRelationshipOfficer.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aRelationshipOfficer.isNew()
+				|| (aRelationshipOfficer.getRecordType() != null ? aRelationshipOfficer.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.rOfficerIsActive.setChecked(true);
 			this.rOfficerIsActive.setDisabled(true);
 		}
@@ -423,8 +417,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRelationshipOfficer
 	 * @throws Exception
@@ -457,7 +450,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 			doWriteBeanToComponents(aRelationshipOfficer);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_RelationshipOfficerDialog.onClose();
 		} catch (Exception e) {
@@ -473,24 +466,30 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		logger.debug("Enterring");
 		setValidationOn(true);
 
-		if (!this.rOfficerCode.isReadonly()){
-			this.rOfficerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.rOfficerCode.isReadonly()) {
+			this.rOfficerCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.rOfficerDesc.isReadonly()){
-			this.rOfficerDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.rOfficerDesc.isReadonly()) {
+			this.rOfficerDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.rOfficerDeptCode.isReadonly()) {
-			this.rOfficerDeptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true,true));
+			this.rOfficerDeptCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true, true));
 		}
 		if (!this.grade.isReadonly()) {
-			this.grade.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_RelationshipOfficerDialog_Grade.value"), PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
+			this.grade
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_Grade.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, false));
 		}
 		if (!this.mobileNO.isReadonly()) {
-			this.mobileNO.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_RelationshipOfficerDialog_MobileNO.value"), PennantRegularExpressions.REGEX_NUMERIC, false));
+			this.mobileNO.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_MobileNO.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		if (!this.dateOfJoin.isReadonly()) {
 			this.dateOfJoin.setConstraint(
@@ -547,9 +546,9 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_RelationshipOfficerDialog_ROfficerCode.value")+" : "+aRelationshipOfficer.getROfficerCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_RelationshipOfficerDialog_ROfficerCode.value") + " : "
+				+ aRelationshipOfficer.getROfficerCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aRelationshipOfficer.getRecordType())) {
 				aRelationshipOfficer.setVersion(aRelationshipOfficer.getVersion() + 1);
@@ -710,10 +709,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 				closeDialog();
 			}
 
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -729,8 +728,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(RelationshipOfficer aRelationshipOfficer,
-			String tranType) {
+	private boolean doProcess(RelationshipOfficer aRelationshipOfficer, String tranType) {
 		logger.debug("Enterring");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -855,9 +853,9 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_RelationshipOfficerDialog,	auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_RelationshipOfficerDialog, auditHeader);
 						return processCompleted;
 					}
 				}
@@ -890,7 +888,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		return processCompleted;
 	}
 
-
 	// WorkFlow Components
 
 	/**
@@ -901,9 +898,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(RelationshipOfficer aRelationshipOfficer, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aRelationshipOfficer.getBefImage(), aRelationshipOfficer);
-		return new AuditHeader(aRelationshipOfficer.getROfficerCode(), null,
-				null, null, auditDetail, aRelationshipOfficer.getUserDetails(),	getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aRelationshipOfficer.getBefImage(),
+				aRelationshipOfficer);
+		return new AuditHeader(aRelationshipOfficer.getROfficerCode(), null, null, null, auditDetail,
+				aRelationshipOfficer.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -932,7 +930,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-     doShowNotes(this.relationshipOfficer);
+		doShowNotes(this.relationshipOfficer);
 	}
 
 	/**
@@ -942,12 +940,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		getRelationshipOfficerListCtrl().search();
 	}
 
-
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.relationshipOfficer.getROfficerCode());
-	}	
-	
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -956,6 +952,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -963,14 +960,15 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	public RelationshipOfficer getRelationshipOfficer() {
 		return this.relationshipOfficer;
 	}
+
 	public void setRelationshipOfficer(RelationshipOfficer relationshipOfficer) {
 		this.relationshipOfficer = relationshipOfficer;
 	}
 
-	public void setRelationshipOfficerService(
-			RelationshipOfficerService relationshipOfficerService) {
+	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
+
 	public RelationshipOfficerService getRelationshipOfficerService() {
 		return this.relationshipOfficerService;
 	}
@@ -978,6 +976,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	public void setRelationshipOfficerListCtrl(RelationshipOfficerListCtrl relationshipOfficerListCtrl) {
 		this.relationshipOfficerListCtrl = relationshipOfficerListCtrl;
 	}
+
 	public RelationshipOfficerListCtrl getRelationshipOfficerListCtrl() {
 		return this.relationshipOfficerListCtrl;
 	}
@@ -985,6 +984,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

@@ -73,7 +73,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "custCIF", "custCoreBank", "custCtgCode", "custDftBranch", "custBaseCcy",
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
-		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","extendedDetails","returnStatus","customerDedupList" })
+		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "returnStatus",
+		"customerDedupList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -107,13 +108,13 @@ public class CustomerDetails implements java.io.Serializable {
 
 	private CustEmployeeDetail custEmployeeDetail;
 	private CustomerDocument customerDocument;
-	
-	@XmlElement(name="extendedDetail")
-	private ExtendedFieldHeader	extendedFieldHeader;
+
+	@XmlElement(name = "extendedDetail")
+	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
-	
-	@XmlElementWrapper(name="extendedDetails")
-	@XmlElement(name="extendedDetail")
+
+	@XmlElementWrapper(name = "extendedDetails")
+	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 
 	private List<CustomerRating> ratingsList;
@@ -163,21 +164,21 @@ public class CustomerDetails implements java.io.Serializable {
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private CustomerDedup custDedup;
 	private String coreReferenceNum; // used while performing ReleaseCIF service
-	
+
 	private List<FinanceEnquiry> customerFinances;
 	private FinanceEnquiry customerFinance;
 	private List<FinanceMain> financeMainList;
 	private List<VASRecording> vasRecordingList;
 	private List<CollateralSetup> collateraldetailList;
-	
+
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 	@XmlElement
 	private boolean dedupReq;
 
-	private boolean  cibilExecuted=false;
-	private boolean  cibilALreadyRun=false;
-	
+	private boolean cibilExecuted = false;
+	private boolean cibilALreadyRun = false;
+
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
@@ -360,8 +361,8 @@ public class CustomerDetails implements java.io.Serializable {
 			custDedup.setCustCoreBank(this.customer.getCustCoreBank() != null ? this.customer.getCustCoreBank() : "");
 			custDedup.setCustDOB(this.customer.getCustDOB());
 			custDedup.setCustShrtName(this.customer.getCustShrtName());
-			custDedup.setCustNationality(this.customer.getCustNationality() != null ? this.customer
-					.getCustNationality() : "");
+			custDedup.setCustNationality(
+					this.customer.getCustNationality() != null ? this.customer.getCustNationality() : "");
 			custDedup.setCustCtgCode(StringUtils.trimToEmpty(this.customer.getCustCtgCode()));
 			custDedup.setCustDftBranch(StringUtils.trimToEmpty(this.customer.getCustDftBranch()));
 			custDedup.setCustSector(StringUtils.trimToEmpty(this.customer.getCustSector()));
@@ -480,7 +481,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
-	
+
 	public List<FinanceEnquiry> getCustomerFinances() {
 		return customerFinances;
 	}
@@ -497,7 +498,8 @@ public class CustomerDetails implements java.io.Serializable {
 	}
 
 	/**
-	 * @param customerFinance the customerFinance to set
+	 * @param customerFinance
+	 *            the customerFinance to set
 	 */
 	public void setCustomerFinance(FinanceEnquiry customerFinance) {
 		this.customerFinance = customerFinance;
@@ -510,7 +512,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setDedupReq(boolean dedupReq) {
 		this.dedupReq = dedupReq;
 	}
-	
+
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return extendedFieldHeader;
 	}
@@ -527,7 +529,8 @@ public class CustomerDetails implements java.io.Serializable {
 	}
 
 	/**
-	 * @param extendedFieldRender the extendedFieldRender to set
+	 * @param extendedFieldRender
+	 *            the extendedFieldRender to set
 	 */
 	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
 		this.extendedFieldRender = extendedFieldRender;
@@ -540,6 +543,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
 		this.extendedDetails = extendedDetails;
 	}
+
 	public List<FinanceMain> getFinanceMainList() {
 		return financeMainList;
 	}

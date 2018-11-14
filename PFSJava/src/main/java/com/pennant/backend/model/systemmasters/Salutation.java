@@ -156,12 +156,13 @@ public class Salutation extends AbstractWorkflowEntity {
 	}
 
 	public boolean isSystemDefault() {
-	    return systemDefault;
-    }
+		return systemDefault;
+	}
 
 	public void setSystemDefault(boolean systemDefault) {
-	    this.systemDefault = systemDefault;
-    }
+		this.systemDefault = systemDefault;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -12,8 +12,7 @@ import com.pennant.backend.service.applicationmaster.ReturnedChequeService;
 
 public class FetchReturnedCheques {
 
-	private static final Logger logger = Logger
-			.getLogger(FetchReturnedCheques.class);
+	private static final Logger logger = Logger.getLogger(FetchReturnedCheques.class);
 
 	private int userAction = -1;
 	private static ReturnedChequeService returnedChequeService;
@@ -26,29 +25,25 @@ public class FetchReturnedCheques {
 		super();
 	}
 
-	public static FinanceDetail getReturnedChequeCustomer(
-			FinanceDetail aFinanceDetail, Component parent) {
-		return new FetchReturnedCheques(aFinanceDetail, parent)
-		.getFinanceDetail();
+	public static FinanceDetail getReturnedChequeCustomer(FinanceDetail aFinanceDetail, Component parent) {
+		return new FetchReturnedCheques(aFinanceDetail, parent).getFinanceDetail();
 	}
 
 	@SuppressWarnings("unchecked")
 	public FetchReturnedCheques(FinanceDetail aFinanceDetail, Component parent) {
 		super();
 		setFinanceDetail(aFinanceDetail);
-		ReturnedCheques returnedCheques = doSetReturnChequeDedup(aFinanceDetail
-				.getCustomerDetails().getCustomer());
+		ReturnedCheques returnedCheques = doSetReturnChequeDedup(aFinanceDetail.getCustomerDetails().getCustomer());
 		setReturnedCheques(getReturnedChequeService().fetchReturnedCheques(returnedCheques));
 		ShowReturnedCheques details = null;
 		if (getReturnedCheques() != null && getReturnedCheques().size() > 0) {
 
-			Object dataObject = ShowReturnedCheques.show(parent,
-					getReturnedCheques(), ReturnedCheque_List, returnedCheques);
+			Object dataObject = ShowReturnedCheques.show(parent, getReturnedCheques(), ReturnedCheque_List,
+					returnedCheques);
 			details = (ShowReturnedCheques) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::"
-						+ details.getUserAction());
+				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
 				setReturnedCheques((List<ReturnedCheques>) details.getObject());
@@ -60,7 +55,7 @@ public class FetchReturnedCheques {
 		if (userAction == -1) {
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setChequeFound(false);
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setChequeOverride(false);
-		} else{
+		} else {
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setChequeFound(true);
 			if (userAction == 1) {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setChequeOverride(true);
@@ -104,12 +99,11 @@ public class FetchReturnedCheques {
 		this.returnedCheques = returnedCheques;
 	}
 
-
-	public  ReturnedChequeService getReturnedChequeService() {
+	public ReturnedChequeService getReturnedChequeService() {
 		return returnedChequeService;
 	}
 
-	public  void setReturnedChequeService(ReturnedChequeService returnedChequeService) {
+	public void setReturnedChequeService(ReturnedChequeService returnedChequeService) {
 		FetchReturnedCheques.returnedChequeService = returnedChequeService;
 	}
 }

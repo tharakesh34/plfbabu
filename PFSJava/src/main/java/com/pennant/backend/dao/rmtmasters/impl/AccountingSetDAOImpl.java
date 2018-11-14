@@ -45,14 +45,13 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 /**
  * DAO methods implementation for the <b>AccountingSet model</b> class.<br>
  */
-public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements  AccountingSetDAO {
- private static Logger logger = Logger.getLogger(AccountingSetDAOImpl.class);
+public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements AccountingSetDAO {
+	private static Logger logger = Logger.getLogger(AccountingSetDAOImpl.class);
 
-	
 	public AccountingSetDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Accounting Set details by key field
 	 * 
@@ -69,8 +68,7 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 
 		accountingSet.setId(id);
 
-		StringBuilder selectSql = new StringBuilder(
-		        "Select AccountSetid, EventCode, AccountSetCode, ");
+		StringBuilder selectSql = new StringBuilder("Select AccountSetid, EventCode, AccountSetCode, ");
 		selectSql.append(" AccountSetCodeName,SystemDefault, EntryByInvestment, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -84,12 +82,10 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
-		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(AccountingSet.class);
+		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountingSet.class);
 
 		try {
-			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accountingSet = null;
@@ -98,7 +94,6 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		return accountingSet;
 	}
 
-	
 	/**
 	 * This method Deletes the Record from the RMTAccountingSet or RMTAccountingSet_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Accounting Set by key AccountSetid
@@ -123,8 +118,7 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -159,15 +153,11 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTAccountingSet");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-		        .append(" (AccountSetid, EventCode, AccountSetCode, AccountSetCodeName,EntryByInvestment ");
-		insertSql
-		        .append(",SystemDefault, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		insertSql.append(" (AccountSetid, EventCode, AccountSetCode, AccountSetCodeName,EntryByInvestment ");
+		insertSql.append(",SystemDefault, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-		        .append(" Values(:AccountSetid, :EventCode, :AccountSetCode, :AccountSetCodeName, :EntryByInvestment");
-		insertSql
-		        .append(",:SystemDefault, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
+		insertSql.append(" Values(:AccountSetid, :EventCode, :AccountSetCode, :AccountSetCodeName, :EntryByInvestment");
+		insertSql.append(",:SystemDefault, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -196,15 +186,13 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountingSet");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-		        .append(" Set EventCode = :EventCode, AccountSetCode = :AccountSetCode, ");
-		updateSql
-		        .append(" AccountSetCodeName = :AccountSetCodeName ,SystemDefault=:SystemDefault,EntryByInvestment=:EntryByInvestment,  ");
+		updateSql.append(" Set EventCode = :EventCode, AccountSetCode = :AccountSetCode, ");
+		updateSql.append(
+				" AccountSetCodeName = :AccountSetCodeName ,SystemDefault=:SystemDefault,EntryByInvestment=:EntryByInvestment,  ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql
-		        .append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
-		updateSql
-		        .append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where AccountSetid =:AccountSetid");
 
 		if (!type.endsWith("_Temp")) {
@@ -225,15 +213,17 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 	@Override
 	public List<AccountingSet> getListAERuleBySysDflt(boolean isAllowedRIA, String type) {
 		logger.debug("Entering");
-		
+
 		AccountingSet accountingSet = new AccountingSet();
 		accountingSet.setEntryByInvestment(isAllowedRIA);
 		accountingSet.setSystemDefault(true);
-		
-		StringBuilder selectSql = new StringBuilder("Select AccountSetid, EventCode, AccountSetCode,  AccountSetCodeName  ");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select AccountSetid, EventCode, AccountSetCode,  AccountSetCodeName  ");
 		selectSql.append(" From RMTAccountingSet");
 		selectSql.append(StringUtils.trim(type));
-		selectSql.append(" Where EventCode IN ('ADDDBSP','ADDDBSF','ADDDBSN','AMZ','AMZSUSP','AMZPD','CMTDISB','EMIDAY','REAGING',");
+		selectSql.append(
+				" Where EventCode IN ('ADDDBSP','ADDDBSF','ADDDBSN','AMZ','AMZSUSP','AMZPD','CMTDISB','EMIDAY','REAGING',");
 		selectSql.append(" 'NORM_PIS','PIS_NORM','RATCHG','REPAY', 'EARLYPAY','EARLYSTL','LATEPAY',");
 		selectSql.append(" 'WRITEOFF','WRITEBK','GRACEEND','DEFFRQ','DEFRPY','PROVSN','SCDCHG','COMPOUND','DPRCIATE')");
 		selectSql.append("  AND SystemDefault= :SystemDefault AND EntryByInvestment=:EntryByInvestment ");
@@ -243,13 +233,14 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	/**Method for Fetching Accounting Set ID by Using EventCode and AccSetCode
+
+	/**
+	 * Method for Fetching Accounting Set ID by Using EventCode and AccSetCode
 	 * 
 	 * @param eventCode
 	 * @param accSetCode
 	 * @param type
-	 * @return  Long
+	 * @return Long
 	 */
 	@Override
 	public Long getAccountingSetId(final String eventCode, final String accSetCode) {
@@ -265,12 +256,11 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
-		
+
 		long accSetId = 0;
-		
+
 		try {
-			accSetId =  this.jdbcTemplate.queryForObject(selectSql.toString(),
-		        beanParameters, Long.class);
+			accSetId = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			accSetId = 0;
@@ -287,9 +277,8 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		accountingSet.setAccountSetCode(setCode);
 
 		StringBuilder selectSql = new StringBuilder(
-		        "Select AccountSetid, EventCode, AccountSetCode, AccountSetCodeName,EntryByInvestment");
-		selectSql
-		        .append(",SystemDefault, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+				"Select AccountSetid, EventCode, AccountSetCode, AccountSetCodeName,EntryByInvestment");
+		selectSql.append(",SystemDefault, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTAccountingSet");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -297,12 +286,10 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
-		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(AccountingSet.class);
+		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountingSet.class);
 
 		try {
-			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(),
-			        beanParameters, typeRowMapper);
+			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			accountingSet = null;
 		}
@@ -311,25 +298,27 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 	}
 
 	@Override
-    public AccountingSet getAccountingSetbyEventCode(AccountingSet accountingset, String type) {
+	public AccountingSet getAccountingSetbyEventCode(AccountingSet accountingset, String type) {
 		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder("Select AccountSetid, EventCode, AccountSetCode,AccountSetCodeName ");
+		StringBuilder selectSql = new StringBuilder(
+				"Select AccountSetid, EventCode, AccountSetCode,AccountSetCodeName ");
 		selectSql.append(" From RMTAccountingSet");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where  AccountSetid != :AccountSetid AND EventCode = :EventCode AND AccountSetCode = :AccountSetCode");
-		
+		selectSql.append(
+				" Where  AccountSetid != :AccountSetid AND EventCode = :EventCode AND AccountSetCode = :AccountSetCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingset);
 		RowMapper<AccountingSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountingSet.class);
-		
-		try{
-			accountingset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			accountingset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accountingset = null;
 		}
 		logger.debug("Leaving");
 		return accountingset;
-    }
+	}
 
 }

@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.collateral;
+
 import java.util.List;
 
 import com.pennant.backend.model.collateral.Collateral;
@@ -48,11 +49,18 @@ import com.pennant.backend.model.collateral.Collateral;
 public interface CollateralDAO {
 
 	Collateral getCollateral();
+
 	Collateral getNewCollateral();
-	Collateral getCollateralById(String caf,String ref,String type);
-	void update(Collateral collateral,String type);
-	void delete(Collateral collateral,String type);
-	long save(Collateral collateral,String type);
+
+	Collateral getCollateralById(String caf, String ref, String type);
+
+	void update(Collateral collateral, String type);
+
+	void delete(Collateral collateral, String type);
+
+	long save(Collateral collateral, String type);
+
 	List<Collateral> getCollateralsByCAF(String cafReference, String type);
+
 	void deleteByCAF(String cafReference, String type);
 }

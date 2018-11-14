@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.lmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -49,15 +50,25 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 public interface FinanceWorkFlowDAO {
 
 	FinanceWorkFlow getFinanceWorkFlowById(String finType, String finEvent, String moduleName, String type);
-	void update(FinanceWorkFlow financeWorkFlow,String type);
-	void delete(FinanceWorkFlow financeWorkFlow,String type);
-	String save(FinanceWorkFlow financeWorkFlow,String type);
-	List<FinanceWorkFlow> getFinanceWorkFlowListById(String finType,String moduleName, String type);
+
+	void update(FinanceWorkFlow financeWorkFlow, String type);
+
+	void delete(FinanceWorkFlow financeWorkFlow, String type);
+
+	String save(FinanceWorkFlow financeWorkFlow, String type);
+
+	List<FinanceWorkFlow> getFinanceWorkFlowListById(String finType, String moduleName, String type);
+
 	void saveList(List<FinanceWorkFlow> financeWorkFlowList, String type);
-	String getFinanceWorkFlowType(String finType, String finEvent,	String moduleName, String type);
-	List<String> getFinanceWorkFlowRoles(String module,String finEvent);
+
+	String getFinanceWorkFlowType(String finType, String finEvent, String moduleName, String type);
+
+	List<String> getFinanceWorkFlowRoles(String module, String finEvent);
+
 	boolean isWorkflowExists(String finType, String moduleName);
+
 	int getVASProductCode(String finType, String type);
+
 	FinanceWorkFlow getFinanceWorkFlow(String finType, String finserEventOrg, String worflowModuleFinance, String type);
-	
+
 }

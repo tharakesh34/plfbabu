@@ -43,8 +43,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "bankCustomer", "guarantorCIF", "guranteePercentage", "name", "mobileNo", "emailId",
-		"guarantorIDType", "guarantorIDNumber","guarantorProof", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2", "POBox",
-		"addrCountry", "addrProvince", "addrCity", "addrZIP" })
+		"guarantorIDType", "guarantorIDNumber", "guarantorProof", "addrHNbr", "flatNbr", "addrStreet", "addrLine1",
+		"addrLine2", "POBox", "addrCountry", "addrProvince", "addrCity", "addrZIP" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -72,7 +72,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String emailId;
 	private String guarantorGenderCode;
-	
+
 	@XmlElement(name = "idDocContent")
 	private byte[] guarantorProof = new byte[Byte.valueOf("0")];
 	private String guarantorProofName;
@@ -532,7 +532,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
 	}
-	
+
 	public String getGuarantorGenderCode() {
 		return guarantorGenderCode;
 	}

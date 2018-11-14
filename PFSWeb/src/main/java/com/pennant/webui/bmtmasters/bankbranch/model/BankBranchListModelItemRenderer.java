@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,23 +65,23 @@ public class BankBranchListModelItemRenderer implements ListitemRenderer<BankBra
 	public void render(Listitem item, BankBranch bankBranch, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(bankBranch.getBankCode());
+		lc = new Listcell(bankBranch.getBankCode());
 		lc.setParent(item);
-	  	lc = new Listcell(bankBranch.getBranchCode());
+		lc = new Listcell(bankBranch.getBranchCode());
 		lc.setParent(item);
-	  	lc = new Listcell(bankBranch.getCity());
+		lc = new Listcell(bankBranch.getCity());
 		lc.setParent(item);
-	  	lc = new Listcell(bankBranch.getMICR());
+		lc = new Listcell(bankBranch.getMICR());
 		lc.setParent(item);
-	  	lc = new Listcell(bankBranch.getIFSC());
+		lc = new Listcell(bankBranch.getIFSC());
 		lc.setParent(item);
-	  	lc = new Listcell(bankBranch.getRecordStatus());
+		lc = new Listcell(bankBranch.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(bankBranch.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", bankBranch.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBankBranchItemDoubleClicked");
 	}
 }

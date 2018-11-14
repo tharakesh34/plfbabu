@@ -54,15 +54,23 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
  * 
  */
 public interface FinTypeFeesService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	List<FinTypeFees> getFinTypeFeesById(String finType, int moduleId);
+
 	List<FinTypeFees> getApprovedFinTypeFeesById(String id, int moduleId);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<AuditDetail> setFinTypeFeesAuditData(List<FinTypeFees> finTypeFeesList, String auditTranType, String method);
+
 	List<AuditDetail> processFinTypeFeesDetails(List<AuditDetail> auditDetails, String type);
+
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
-	
-	List<AuditDetail> delete(List<FinTypeFees> finTypeFeesList,  String tableType, String auditTranType, String finType, int moduleId);
+
+	List<AuditDetail> delete(List<FinTypeFees> finTypeFeesList, String tableType, String auditTranType, String finType,
+			int moduleId);
 }

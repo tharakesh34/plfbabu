@@ -9,6 +9,6 @@ public interface DDARepresentmentDAO {
 	void save(DDAPayments ddaPaymentInitiation);
 
 	void logRepresentmentData(DDAPayments ddaRepresentments);
-	
+
 	void represent(List<DdaPresentment> list);
 }

@@ -4,46 +4,50 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class AvailPastDue {
-	
+
 	private long custID = Long.MIN_VALUE;
 	private BigDecimal pastDueAmount = BigDecimal.ZERO;
 	private Date pastDueFrom;
 	private int dueDays = 0;
-	
+
 	public AvailPastDue() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getCustID() {
-    	return custID;
-    }
+		return custID;
+	}
+
 	public void setCustID(long custID) {
-    	this.custID = custID;
-    }
-	
+		this.custID = custID;
+	}
+
 	public BigDecimal getPastDueAmount() {
-    	return pastDueAmount;
-    }
+		return pastDueAmount;
+	}
+
 	public void setPastDueAmount(BigDecimal pastDueAmount) {
-    	this.pastDueAmount = pastDueAmount;
-    }
-	
+		this.pastDueAmount = pastDueAmount;
+	}
+
 	public Date getPastDueFrom() {
-    	return pastDueFrom;
-    }
+		return pastDueFrom;
+	}
+
 	public void setPastDueFrom(Date pastDueFrom) {
-    	this.pastDueFrom = pastDueFrom;
-    }
-	
+		this.pastDueFrom = pastDueFrom;
+	}
+
 	public int getDueDays() {
-    	return dueDays;
-    }
+		return dueDays;
+	}
+
 	public void setDueDays(int dueDays) {
-    	this.dueDays = dueDays;
-    }	
-	
+		this.dueDays = dueDays;
+	}
+
 }

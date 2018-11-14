@@ -74,15 +74,16 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>CollateralStructure</b>.<br>
  * 
  */
-public class CollateralStructureServiceImpl extends GenericService<CollateralStructure> implements CollateralStructureService {
-	private static final Logger			logger	= Logger.getLogger(CollateralStructureServiceImpl.class);
+public class CollateralStructureServiceImpl extends GenericService<CollateralStructure>
+		implements CollateralStructureService {
+	private static final Logger logger = Logger.getLogger(CollateralStructureServiceImpl.class);
 
-	private AuditHeaderDAO				auditHeaderDAO;
-	private CollateralStructureDAO		collateralStructureDAO;
-	private ExtendedFieldsValidation	extendedFieldsValidation;
-	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
-	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
-	private FinanceWorkFlowDAO          financeWorkFlowDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private CollateralStructureDAO collateralStructureDAO;
+	private ExtendedFieldsValidation extendedFieldsValidation;
+	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private FinanceWorkFlowDAO financeWorkFlowDAO;
 
 	public CollateralStructureServiceImpl() {
 		super();
@@ -95,6 +96,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -102,13 +104,15 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public CollateralStructureDAO getCollateralStructureDAO() {
 		return collateralStructureDAO;
 	}
+
 	public void setCollateralStructureDAO(CollateralStructureDAO collateralStructureDAO) {
 		this.collateralStructureDAO = collateralStructureDAO;
 	}
-	
+
 	public ExtendedFieldsValidation getExtendedFieldsValidation() {
 		if (extendedFieldsValidation == null) {
-			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO, extendedFieldHeaderDAO);
+			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO,
+					extendedFieldHeaderDAO);
 		}
 		return this.extendedFieldsValidation;
 	}
@@ -116,6 +120,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {
 		return extendedFieldDetailDAO;
 	}
+
 	public void setExtendedFieldDetailDAO(ExtendedFieldDetailDAO extendedFieldDetailDAO) {
 		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
 	}
@@ -123,6 +128,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
 		return extendedFieldHeaderDAO;
 	}
+
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
@@ -149,21 +155,22 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		String tableType = "";
 		CollateralStructure collateralStructure = (CollateralStructure) auditHeader.getAuditDetail().getModelData();
 		if (collateralStructure.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		
+
 		if (collateralStructure.isNew()) {
 			getCollateralStructureDAO().save(collateralStructure, tableType);
 		} else {
 			getCollateralStructureDAO().update(collateralStructure, tableType);
 		}
-		
+
 		//ExtendedFieldHeader processing
-		List<AuditDetail> headerDetail = collateralStructure.getExtendedFieldHeader().getAuditDetailMap().get("ExtendedFieldHeader");
+		List<AuditDetail> headerDetail = collateralStructure.getExtendedFieldHeader().getAuditDetailMap()
+				.get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
@@ -186,22 +193,23 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		} else {
 			getExtendedFieldHeaderDAO().update(extFieldHeader, tableType);
 		}
-		
+
 		// Extended Field Header Audit
 		auditDetails.add(headerDetail.get(0));
-		
+
 		// Processing Extended Field Details List
 		if (extFieldHeader.getExtendedFieldDetails() != null && extFieldHeader.getExtendedFieldDetails().size() > 0) {
 			List<AuditDetail> details = extFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = getExtendedFieldsValidation().processingExtendeFieldList(details, tableType);
 			auditDetails.addAll(details);
 		}
-		if (extFieldHeader.getTechnicalValuationDetailList() != null && extFieldHeader.getTechnicalValuationDetailList().size() > 0) {
+		if (extFieldHeader.getTechnicalValuationDetailList() != null
+				&& extFieldHeader.getTechnicalValuationDetailList().size() > 0) {
 			List<AuditDetail> details = extFieldHeader.getAuditDetailMap().get("TechValuationFieldDetails");
 			details = getExtendedFieldsValidation().processingTechValuationFieldsList(details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -227,29 +235,32 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		CollateralStructure collateralStructure = (CollateralStructure) auditHeader.getAuditDetail().getModelData();
-		
+
 		//ExtendedFieldHeader
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
+		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader));
 		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
 		// Table dropping in DB for Configured Collateral Type Details
-		getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
-		
+		getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(),
+				extendedFieldHeader.getSubModuleName());
+
 		getCollateralStructureDAO().delete(collateralStructure, "");
-		
-		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(), collateralStructure.getExcludeFields());
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(),
+				collateralStructure.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				collateralStructure.getBefImage(), collateralStructure));
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetailsList);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -266,20 +277,23 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	@Override
 	public CollateralStructure getCollateralStructureByType(String collateralType) {
 		logger.debug("Entering");
-		
-		CollateralStructure collaStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralType, "_View");
-	
+
+		CollateralStructure collaStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralType,
+				"_View");
+
 		ExtendedFieldHeader extFldHeader = null;
 		if (collaStructure != null) {
 			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
 					CollateralConstants.MODULE_NAME, collaStructure.getCollateralType(), "_View");
 			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_View"));
-				extFldHeader.setTechnicalValuationDetailList(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION ,"_View"));
+				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
+						extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_View"));
+				extFldHeader.setTechnicalValuationDetailList(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
+						extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION, "_View"));
 			}
 			collaStructure.setExtendedFieldHeader(extFldHeader);
 		}
-		
+
 		logger.debug("Leaving");
 		return collaStructure;
 	}
@@ -296,21 +310,22 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public CollateralStructure getApprovedCollateralStructureByType(String collateralType) {
 		logger.debug("Entering");
 
-		CollateralStructure collaStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralType, "_AView");
+		CollateralStructure collaStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralType,
+				"_AView");
 		ExtendedFieldHeader extFldHeader = null;
 		if (collaStructure != null) {
 			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
 					CollateralConstants.MODULE_NAME, collaStructure.getCollateralType(), "_AView");
 			if (extFldHeader != null) {
 				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(
-						extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD,"_AView"));
+						extFldHeader.getModuleId(), ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD, "_AView"));
 			}
 			collaStructure.setExtendedFieldHeader(extFldHeader);
 		}
-		
+
 		logger.debug("Leaving");
 		return collaStructure;
-		
+
 	}
 
 	/**
@@ -332,7 +347,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -341,19 +356,21 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			return auditHeader;
 		}
 		CollateralStructure collateralStructure = new CollateralStructure("");
-		BeanUtils.copyProperties((CollateralStructure) auditHeader.getAuditDetail().getModelData(), collateralStructure);
+		BeanUtils.copyProperties((CollateralStructure) auditHeader.getAuditDetail().getModelData(),
+				collateralStructure);
 
 		// Extended field Details
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 
 		if (collateralStructure.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			
+
 			// Table dropping in DB for Configured Asset Details
-			getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
+			getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(),
+					extendedFieldHeader.getSubModuleName());
 			auditDetails.addAll(listDeletion(extendedFieldHeader, "", auditHeader.getAuditTranType()));
 			getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "");
-			
+
 			getCollateralStructureDAO().delete(collateralStructure, "");
 		} else {
 			collateralStructure.setRoleCode("");
@@ -371,7 +388,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 				collateralStructure.setRecordType("");
 				getCollateralStructureDAO().update(collateralStructure, "");
 			}
-			
+
 			extendedFieldHeader.setRoleCode("");
 			extendedFieldHeader.setNextRoleCode("");
 			extendedFieldHeader.setTaskId("");
@@ -381,24 +398,26 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 				tranType = PennantConstants.TRAN_ADD;
 				extendedFieldHeader.setRecordType("");
 				getExtendedFieldHeaderDAO().save(extendedFieldHeader, "");
-				
+
 				// Table creation in DB for Newly created Configuration Type Details
 				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(),
 						extendedFieldHeader.getSubModuleName(), extendedFieldHeader.getEvent());
-				
+
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				extendedFieldHeader.setRecordType("");
 				getExtendedFieldHeaderDAO().update(extendedFieldHeader, "");
 			}
-			auditDetails.add(new AuditDetail(tranType, 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
-			
-			if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			auditDetails.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
+
+			if (extendedFieldHeader.getExtendedFieldDetails() != null
+					&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 				List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
 				details = getExtendedFieldsValidation().processingExtendeFieldList(details, "");
 				auditDetails.addAll(details);
 			}
-			if (extendedFieldHeader.getTechnicalValuationDetailList() != null && extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
+			if (extendedFieldHeader.getTechnicalValuationDetailList() != null
+					&& extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
 				List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("TechValuationFieldDetails");
 				details = getExtendedFieldsValidation().processingTechValuationFieldsList(details, "");
 				auditDetails.addAll(details);
@@ -406,20 +425,22 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		}
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
-		
+
 		//Extended filed header
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-		auditDetailList.add(new AuditDetail(tranType, 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
-		
+		auditDetailList.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
+
 		//Extended Field Detail List
 		auditDetailList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
-		
+
 		//Collateral Detail
 		getCollateralStructureDAO().delete(collateralStructure, "_Temp");
-				
-		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(), collateralStructure.getExcludeFields());
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(),
+				collateralStructure.getExcludeFields());
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],collateralStructure.getBefImage(), collateralStructure));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				collateralStructure.getBefImage(), collateralStructure));
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -428,18 +449,21 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		getAuditHeaderDAO().addAudit(auditHeader);
 		return auditHeader;
 	}
-	
-	public List<AuditDetail> listDeletion(ExtendedFieldHeader extendedFieldHeader, String tableType, String auditTranType) {
+
+	public List<AuditDetail> listDeletion(ExtendedFieldHeader extendedFieldHeader, String tableType,
+			String auditTranType) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		if(extendedFieldHeader.getExtendedFieldDetails()!=null && extendedFieldHeader.getExtendedFieldDetails().size()>0){
+		if (extendedFieldHeader.getExtendedFieldDetails() != null
+				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new ExtendedFieldDetail());
 			for (int i = 0; i < extendedFieldHeader.getExtendedFieldDetails().size(); i++) {
 				ExtendedFieldDetail extendedFieldDetail = extendedFieldHeader.getExtendedFieldDetails().get(i);
 				if (StringUtils.isNotBlank(extendedFieldDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i+1, fields[0], fields[1], extendedFieldDetail.getBefImage(), extendedFieldDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							extendedFieldDetail.getBefImage(), extendedFieldDetail));
 				}
 			}
 			getExtendedFieldDetailDAO().deleteByExtendedFields(extendedFieldHeader.getId(), tableType);
@@ -447,7 +471,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		logger.debug("Leaving");
 		return auditList;
 	}
-	
+
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
@@ -471,20 +495,22 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		CollateralStructure collateralStructure = (CollateralStructure) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		
+
 		//ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
+		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader));
 		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
-		
-		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(), collateralStructure.getExcludeFields());
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(),
+				collateralStructure.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				collateralStructure.getBefImage(), collateralStructure));
-		
+
 		//Collateral Structure Deletion
 		getCollateralStructureDAO().delete(collateralStructure, "_Temp");
-		
+
 		auditHeader.setAuditDetails(auditDetailsList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -511,24 +537,27 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		//Extended field details
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		//Extended field details
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
-		if(extendedFieldHeader != null){
+		if (extendedFieldHeader != null) {
 			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
-			AuditDetail	detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method, usrLanguage);
+			AuditDetail detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method,
+					usrLanguage);
 			auditDetails.add(detail);
-			
-			if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+
+			if (extendedFieldHeader.getExtendedFieldDetails() != null
+					&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 				List<AuditDetail> detailList = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
-				detailList = getExtendedFieldsValidation().extendedFieldsListValidation(detailList, method, usrLanguage);
+				detailList = getExtendedFieldsValidation().extendedFieldsListValidation(detailList, method,
+						usrLanguage);
 				auditDetails.addAll(detailList);
 			}
 		}
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -537,7 +566,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
@@ -547,7 +576,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -560,37 +589,42 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		
+
 		//Audit Detail Preparation for Extended Field Header
-		AuditDetail auditDetail =  new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader);
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader);
 		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
 		auditDetailHeaderList.add(auditDetail);
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
 		//Audit Detail Preparation for Extended Field Detail
-		
-		 int count=0;
-		if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
-			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation().setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
+
+		int count = 0;
+		if (extendedFieldHeader.getExtendedFieldDetails() != null
+				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation()
+					.setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
-			count=extendedFieldHeader.getExtendedFieldDetails().size();
+			count = extendedFieldHeader.getExtendedFieldDetails().size();
 		}
-		
+
 		//Audit Detail Preparation for Extended Field Detail
-		if (extendedFieldHeader.getTechnicalValuationDetailList() != null && extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
-					auditDetailMap.put("TechValuationFieldDetails", getExtendedFieldsValidation().setTechValuationFieldsAuditData(extendedFieldHeader,auditTranType, method,count+1));
-					auditDetails.addAll(auditDetailMap.get("TechValuationFieldDetails"));
-			}
-		
+		if (extendedFieldHeader.getTechnicalValuationDetailList() != null
+				&& extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
+			auditDetailMap.put("TechValuationFieldDetails", getExtendedFieldsValidation()
+					.setTechValuationFieldsAuditData(extendedFieldHeader, auditTranType, method, count + 1));
+			auditDetails.addAll(auditDetailMap.get("TechValuationFieldDetails"));
+		}
+
 		extendedFieldHeader.setAuditDetailMap(auditDetailMap);
 		collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 		auditHeader.getAuditDetail().setModelData(collateralStructure);
 		auditHeader.setAuditDetails(auditDetails);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
 	 * from getCollateralStructureDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
@@ -603,15 +637,17 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		CollateralStructure collateralStructure = (CollateralStructure) auditDetail.getModelData();
 
 		CollateralStructure tempCollateralStructure = null;
 		if (collateralStructure.isWorkflow()) {
-			tempCollateralStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralStructure.getCollateralType(), "_Temp");
+			tempCollateralStructure = getCollateralStructureDAO()
+					.getCollateralStructureByType(collateralStructure.getCollateralType(), "_Temp");
 		}
-		CollateralStructure befCollateralStructure = getCollateralStructureDAO().getCollateralStructureByType(collateralStructure.getCollateralType(), "");
+		CollateralStructure befCollateralStructure = getCollateralStructureDAO()
+				.getCollateralStructureByType(collateralStructure.getCollateralType(), "");
 
 		CollateralStructure oldCollateralStructure = collateralStructure.getBefImage();
 
@@ -630,13 +666,13 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			} else { // with work flow
 				if (collateralStructure.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCollateralStructure != null || tempCollateralStructure != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCollateralStructure == null || tempCollateralStructure != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -650,13 +686,13 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 				} else {
 					if (oldCollateralStructure != null
 							&& !oldCollateralStructure.getLastMntOn().equals(befCollateralStructure.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
@@ -667,7 +703,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (oldCollateralStructure != null && tempCollateralStructure!=null 
+				if (oldCollateralStructure != null && tempCollateralStructure != null
 						&& !oldCollateralStructure.getLastMntOn().equals(tempCollateralStructure.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
@@ -676,9 +712,10 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		}
 
 		// If Collateral Structure Product Code is already utilized in Workflow 
-		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, collateralStructure.getRecordType())){
-			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(collateralStructure.getCollateralType(), PennantConstants.WORFLOW_MODULE_COLLATERAL);
-			if(workflowExists){
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, collateralStructure.getRecordType())) {
+			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(collateralStructure.getCollateralType(),
+					PennantConstants.WORFLOW_MODULE_COLLATERAL);
+			if (workflowExists) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
 			}
 		}
@@ -697,7 +734,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public List<String> getCollateralValuatorRequiredCodes() {
 		return collateralStructureDAO.getCollateralValuatorRequiredCodes();
 	}
-	
+
 	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
 		return financeWorkFlowDAO;
 	}
@@ -705,5 +742,5 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
-	
+
 }

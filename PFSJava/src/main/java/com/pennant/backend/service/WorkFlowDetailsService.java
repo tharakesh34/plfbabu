@@ -52,10 +52,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public interface WorkFlowDetailsService {
 
 	/*
-	 * WorkFlowDetails getWorkFlowDetails (); 
-	 * WorkFlowDetails getNewWorkFlowDetails ();
+	 * WorkFlowDetails getWorkFlowDetails (); WorkFlowDetails getNewWorkFlowDetails ();
 	 */
-	
+
 	WorkFlowDetails getWorkFlowDetailsByID(long id);
 
 	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);

@@ -71,30 +71,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/SubSector/subSectorDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/SubSector/subSectorDialog.zul file.
  */
 public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	private static final long serialVersionUID = 6126940774535492694L;
 	private static final Logger logger = Logger.getLogger(SubSectorDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_SubSectorDialog; 	
-	protected ExtendedCombobox 	sectorCode; 				
-	protected Textbox 	subSectorCode; 				
-	protected Textbox 	subSectorDesc; 				
-	protected Checkbox 	subSectorIsActive; 			
+	protected Window window_SubSectorDialog;
+	protected ExtendedCombobox sectorCode;
+	protected Textbox subSectorCode;
+	protected Textbox subSectorDesc;
+	protected Checkbox subSectorIsActive;
 
 	// not auto wired variables
-	private SubSector subSector; 							// overHanded per parameter
-	private transient SubSectorListCtrl subSectorListCtrl;  // overHanded per parameter
+	private SubSector subSector; // overHanded per parameter
+	private transient SubSectorListCtrl subSectorListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient SubSectorService subSectorService;
 
@@ -113,9 +111,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SubSector object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SubSector object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -141,15 +138,12 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 				setSubSector(null);
 			}
 
-			doLoadWorkFlow(this.subSector.isWorkflow(),
-					this.subSector.getWorkflowId(),
-					this.subSector.getNextTaskId());
+			doLoadWorkFlow(this.subSector.isWorkflow(), this.subSector.getWorkflowId(), this.subSector.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SubSectorDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SubSectorDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -159,8 +153,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 			// or
 			// delete subSector here.
 			if (arguments.containsKey("subSectorListCtrl")) {
-				setSubSectorListCtrl((SubSectorListCtrl) arguments
-						.get("subSectorListCtrl"));
+				setSubSectorListCtrl((SubSectorListCtrl) arguments.get("subSectorListCtrl"));
 			} else {
 				setSubSectorListCtrl(null);
 			}
@@ -188,8 +181,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 		this.sectorCode.setModuleName("Sector");
 		this.sectorCode.setValueColumn("SectorCode");
 		this.sectorCode.setDescColumn("SectorDesc");
-		this.sectorCode.setValidateColumns(new String[]{"SectorCode"});
-		
+		this.sectorCode.setValidateColumns(new String[] { "SectorCode" });
+
 		logger.debug("Leaving");
 	}
 
@@ -198,8 +191,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -316,8 +308,9 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 			this.sectorCode.setDescription(aSubSector.getLovDescSectorCodeName());
 		}
 		this.recordStatus.setValue(aSubSector.getRecordStatus());
-		
-		if(aSubSector.isNew() || (aSubSector.getRecordType() != null ? aSubSector.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aSubSector.isNew() || (aSubSector.getRecordType() != null ? aSubSector.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.subSectorIsActive.setChecked(true);
 			this.subSectorIsActive.setDisabled(true);
 		}
@@ -376,8 +369,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSubSector
 	 * @throws Exception
@@ -428,16 +420,20 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 		setValidationOn(true);
 
 		if (!this.sectorCode.isReadonly()) {
-			this.sectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SectorCode.value"), null, true,true));
+			this.sectorCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SectorCode.value"), null, true, true));
 		}
-		
-		if (!this.subSectorCode.isReadonly()){
-			this.subSectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}	
 
-		if (!this.subSectorDesc.isReadonly()){
-			this.subSectorDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.subSectorCode.isReadonly()) {
+			this.subSectorCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}
+
+		if (!this.subSectorDesc.isReadonly()) {
+			this.subSectorDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -454,8 +450,6 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 		this.sectorCode.setConstraint("");
 		logger.debug("Leaving");
 	}
-
-	
 
 	/**
 	 * Remove Error Messages for Fields
@@ -482,10 +476,9 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_SubSectorDialog_SectorCode.value")+" : "+aSubSector.getSectorCode() +","+
-				Labels.getLabel("label_SubSectorDialog_SubSectorCode.value")+" : "+aSubSector.getSubSectorCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SubSectorDialog_SectorCode.value") + " : " + aSubSector.getSectorCode() + ","
+				+ Labels.getLabel("label_SubSectorDialog_SubSectorCode.value") + " : " + aSubSector.getSubSectorCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSubSector.getRecordType())) {
 				aSubSector.setVersion(aSubSector.getVersion() + 1);
@@ -509,7 +502,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 				MessageUtil.showError(e);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -645,7 +638,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -786,8 +779,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SubSectorDialog, auditHeader);
 						return processCompleted;
 					}
@@ -820,7 +813,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	}
 
 	// WorkFlow Details
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -832,8 +825,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	 */
 	private AuditHeader getAuditHeader(SubSector aSubSector, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSubSector.getBefImage(), aSubSector);
-		return new AuditHeader(getReference(), null, null,
-				null, auditDetail, aSubSector.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aSubSector.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -879,10 +872,9 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	 */
 	@Override
 	protected String getReference() {
-		return getSubSector().getSubSectorCode()+PennantConstants.KEY_SEPERATOR +
-					getSubSector().getSectorCode();
+		return getSubSector().getSubSectorCode() + PennantConstants.KEY_SEPERATOR + getSubSector().getSectorCode();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -890,6 +882,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -897,6 +890,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	public SubSector getSubSector() {
 		return this.subSector;
 	}
+
 	public void setSubSector(SubSector subSector) {
 		this.subSector = subSector;
 	}
@@ -904,6 +898,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	public void setSubSectorService(SubSectorService subSectorService) {
 		this.subSectorService = subSectorService;
 	}
+
 	public SubSectorService getSubSectorService() {
 		return this.subSectorService;
 	}
@@ -911,6 +906,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	public void setSubSectorListCtrl(SubSectorListCtrl subSectorListCtrl) {
 		this.subSectorListCtrl = subSectorListCtrl;
 	}
+
 	public SubSectorListCtrl getSubSectorListCtrl() {
 		return this.subSectorListCtrl;
 	}

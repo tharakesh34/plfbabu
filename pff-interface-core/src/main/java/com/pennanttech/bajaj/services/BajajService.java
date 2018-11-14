@@ -19,18 +19,18 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public abstract class BajajService {
 	private static final Logger logger = Logger.getLogger(BajajService.class);
-	
+
 	protected DataSource dataSource;
 	protected JdbcTemplate jdbcTemplate;
 	protected NamedParameterJdbcTemplate namedJdbcTemplate;
-	
+
 	protected DataSourceTransactionManager transManager;
 	protected DefaultTransactionDefinition transDef;
-	
+
 	public BajajService() {
 		super();
 	}
-	
+
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -75,7 +75,7 @@ public abstract class BajajService {
 			throw new Exception("Unable to update the " + sysParmCode + ".");
 		}
 	}
-	
+
 	protected Date getValueDate() {
 		String appDate;
 		try {
@@ -86,7 +86,7 @@ public abstract class BajajService {
 		}
 		return null;
 	}
-	
+
 	protected Date getAppDate() {
 		String appDate;
 		try {
@@ -97,7 +97,7 @@ public abstract class BajajService {
 		}
 		return null;
 	}
-	
+
 	public static MapSqlParameterSource getMapSqlParameterSource(Map<String, Object> map) {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 
@@ -107,7 +107,7 @@ public abstract class BajajService {
 
 		return parmMap;
 	}
-	
+
 	private void setTransManager(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -118,7 +118,7 @@ public abstract class BajajService {
 		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		this.transDef.setTimeout(120);
 	}
-	
+
 	protected long getSeq(String seqName) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
@@ -142,5 +142,4 @@ public abstract class BajajService {
 		return 0;
 	}
 
-	
 }

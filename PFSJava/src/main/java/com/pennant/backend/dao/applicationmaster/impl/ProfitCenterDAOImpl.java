@@ -65,26 +65,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ProfitCenter</code> with set of CRUD operations.
  */
 public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements ProfitCenterDAO {
-	private static Logger	logger	= Logger.getLogger(ProfitCenterDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(ProfitCenterDAOImpl.class);
 
 	public ProfitCenterDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public ProfitCenter getProfitCenter(long profitCenterID,String type) {
+	public ProfitCenter getProfitCenter(long profitCenterID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" profitCenterID, profitCenterCode, profitCenterDesc, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ProfitCenters");
 		sql.append(type);
 		sql.append(" Where profitCenterID = :profitCenterID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -103,10 +103,10 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 
 		logger.debug(Literal.LEAVING);
 		return profitCenter;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long profitCenterID,String profitCenterCode, TableType tableType) {
+	public boolean isDuplicateKey(long profitCenterID, String profitCenterCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -130,7 +130,7 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("profitCenterID", profitCenterID);
 		paramSource.addValue("profitCenterCode", profitCenterCode);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -141,20 +141,22 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(ProfitCenter profitCenter,TableType tableType) {
+	public String save(ProfitCenter profitCenter, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into ProfitCenters");
+		StringBuilder sql = new StringBuilder(" insert into ProfitCenters");
 		sql.append(tableType.getSuffix());
 		sql.append(" (profitCenterID, profitCenterCode, profitCenterDesc, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :profitCenterID, :profitCenterCode, :profitCenterDesc, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		if (profitCenter.getProfitCenterID() <= 0) {
 			profitCenter.setProfitCenterID(getNextId("SeqProfitCenters"));
 		}
@@ -170,25 +172,26 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(profitCenter.getProfitCenterID());
-	}	
+	}
 
 	@Override
-	public void update(ProfitCenter profitCenter,TableType tableType) {
+	public void update(ProfitCenter profitCenter, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update ProfitCenters" );
+		StringBuilder sql = new StringBuilder("update ProfitCenters");
 		sql.append(tableType.getSuffix());
-		sql.append("  set profitCenterCode = :profitCenterCode, profitCenterDesc = :profitCenterDesc, active = :active, ");
+		sql.append(
+				"  set profitCenterCode = :profitCenterCode, profitCenterDesc = :profitCenterDesc, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where profitCenterID = :profitCenterID ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(profitCenter);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -196,7 +199,7 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -229,6 +232,4 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 		logger.debug(Literal.LEAVING);
 	}
 
-
-	
-}	
+}

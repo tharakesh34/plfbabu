@@ -72,7 +72,6 @@ import com.pennanttech.pff.core.util.QueryUtil;
 public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements PaymentHeaderDAO {
 	private static Logger logger = Logger.getLogger(PaymentHeaderDAOImpl.class);
 
-	
 	public PaymentHeaderDAOImpl() {
 		super();
 	}
@@ -87,7 +86,8 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		if (type.contains("View")) {
 			sql.append("paymentType,status,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PaymentHeader");
 		sql.append(type);
 		sql.append(" Where paymentId = :paymentId");
@@ -119,11 +119,15 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into PaymentHeader");
 		sql.append(tableType.getSuffix());
-		sql.append("(paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finReference, linkedTranId,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				"(paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finReference, linkedTranId,");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :paymentId, :paymentType, :paymentAmount, :createdOn, :approvedOn, :status, :finReference, :linkedTranId,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :paymentId, :paymentType, :paymentAmount, :createdOn, :approvedOn, :status, :finReference, :linkedTranId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		// Get the sequence number.
 		if (paymentHeader.getPaymentId() <= 0) {
 			paymentHeader.setPaymentId(getNextId("SeqPaymentHeader"));
@@ -195,7 +199,6 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	@Override
 	public boolean isDuplicateKey(long paymentId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -239,8 +242,10 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
-		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FT.FinDivision FinPurpose, FM.CalRoundingMode, FM.RoundingTarget,");
-		sql.append("  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName, CURR.CCYCODE finCcy, ");
+		sql.append(
+				"  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FT.FinDivision FinPurpose, FM.CalRoundingMode, FM.RoundingTarget,");
+		sql.append(
+				"  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName, CURR.CCYCODE finCcy, ");
 		sql.append("  FM.FINSTARTDATE, FM.MATURITYDATE,DIV.EntityCode LOVDESCENTITYCODE  FROM FINANCEMAIN FM");
 		sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
@@ -301,8 +306,10 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
-		sql.append("ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
+		sql.append(
+				" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
+		sql.append(
+				"ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
 		sql.append("Where FinReference = :FinReference AND MA.AdviseType = :AdviseType order by MA.VALUEDATE  ");
 		logger.trace(Literal.SQL + sql.toString());
 

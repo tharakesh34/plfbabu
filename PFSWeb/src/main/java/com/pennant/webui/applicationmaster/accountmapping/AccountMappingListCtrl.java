@@ -63,10 +63,10 @@ import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.webui.applicationmaster.accountmapping.model.AccountMappingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -74,34 +74,34 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(AccountMappingListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(AccountMappingListCtrl.class);
 
-	protected Window						window_AccountMappingList;
-	protected Borderlayout					borderLayout_AccountMappingList;
-	protected Paging						pagingAccountMappingList;
-	protected Listbox						listBoxAccountMapping;
+	protected Window window_AccountMappingList;
+	protected Borderlayout borderLayout_AccountMappingList;
+	protected Paging pagingAccountMappingList;
+	protected Listbox listBoxAccountMapping;
 
 	// List headers
-	protected Listheader					listheader_AccountType;
-	protected Listheader					listheader_Account;
-	protected Listheader					listheader_HostAccount;
+	protected Listheader listheader_AccountType;
+	protected Listheader listheader_Account;
+	protected Listheader listheader_HostAccount;
 	// checkRights
-	protected Button						button_AccountMappingList_NewAccountMapping;
-	protected Button						button_AccountMappingList_AccountMappingSearch;
+	protected Button button_AccountMappingList_NewAccountMapping;
+	protected Button button_AccountMappingList_AccountMappingSearch;
 
 	// Search Fields
-	protected Textbox						accountType;
-	protected Textbox						account;
-	protected Textbox						hostAccount;
-	protected Radio							loanTypeAc;
-	protected Radio							normalAc;
+	protected Textbox accountType;
+	protected Textbox account;
+	protected Textbox hostAccount;
+	protected Radio loanTypeAc;
+	protected Radio normalAc;
 
-	protected Listbox						sortOperator_accountType;
-	protected Listbox						sortOperator_account;
-	protected Listbox						sortOperator_hostAccount;
+	protected Listbox sortOperator_accountType;
+	protected Listbox sortOperator_account;
+	protected Listbox sortOperator_hostAccount;
 
-	private transient AccountMappingService	accountMappingService;
+	private transient AccountMappingService accountMappingService;
 
 	/**
 	 * default constructor.<br>

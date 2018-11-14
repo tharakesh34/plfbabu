@@ -75,8 +75,8 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 		lc.setParent(item);
 		lc = new Listcell(scoringGroup.getScoreGroupName());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(scoringGroup.getCategoryType(),
-				PennantAppUtil.getcustCtgCodeList()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(scoringGroup.getCategoryType(), PennantAppUtil.getcustCtgCodeList()));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateInt(scoringGroup.getMinScore()));
 		lc.setStyle("text-align:right;");

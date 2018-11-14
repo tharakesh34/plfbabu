@@ -133,9 +133,7 @@ public class DdaPresentment implements java.io.Serializable {
 		}
 
 		try {
-			return DateUtility.format(
-					DateUtility.parse(request[4], "dd-MM-yyyy"),
-					DateFormat.SHORT_DATE);
+			return DateUtility.format(DateUtility.parse(request[4], "dd-MM-yyyy"), DateFormat.SHORT_DATE);
 		} catch (ParseException e) {
 			logger.warn("Exception: ", e);
 			return "";
@@ -151,7 +149,6 @@ public class DdaPresentment implements java.io.Serializable {
 	}
 
 	public String getDDARefNo() {
-		return ddaReference + "-"
-				+ DateUtility.format(DateUtility.getAppDate(), "yyyyMMdd");
+		return ddaReference + "-" + DateUtility.format(DateUtility.getAppDate(), "yyyyMMdd");
 	}
 }

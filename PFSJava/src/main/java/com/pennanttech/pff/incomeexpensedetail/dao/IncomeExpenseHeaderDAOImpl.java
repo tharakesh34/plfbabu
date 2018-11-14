@@ -26,7 +26,8 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from org_income_expense_header").append(type).append(" where id=:id");
 
-		RowMapper<IncomeExpenseHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IncomeExpenseHeader.class);
+		RowMapper<IncomeExpenseHeader> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(IncomeExpenseHeader.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 
@@ -67,7 +68,7 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 
 		logger.debug(Literal.LEAVING);
 		return incomeExpenseHeader.getId();
-	
+
 	}
 
 	@Override
@@ -79,8 +80,10 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 		query.append(" update org_income_expense_header");
 		query.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		query.append(" set createdby =:createdBy, createdon = :createdOn,");
-		query.append(" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
-		query.append(" nextrolecode = :nextRoleCode, taskid = :taskId, nexttaskid = :nextTaskId, recordtype = :recordType, workflowid = :WorkflowId");
+		query.append(
+				" version = :version, lastmntby = :lastMntBy, lastmnton = :lastMntOn, recordstatus = :recordStatus, rolecode = :roleCode,");
+		query.append(
+				" nextrolecode = :nextRoleCode, taskid = :taskId, nexttaskid = :nextTaskId, recordtype = :recordType, workflowid = :WorkflowId");
 		query.append(" where id = :Id ");
 
 		logger.trace(Literal.SQL + query.toString());
@@ -119,7 +122,7 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 		sql.append("select count(*) from org_income_expense_header");
 		sql.append(type);
 		sql.append(" where custcif = :custCif and financialyear = :financialYear");
-		
+
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("custCif", custCif);
@@ -127,7 +130,7 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 
 		Integer count = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
 		boolean exists = false;
-		
+
 		if (count > 0) {
 			exists = true;
 		}

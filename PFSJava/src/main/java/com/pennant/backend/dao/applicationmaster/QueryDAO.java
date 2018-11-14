@@ -41,11 +41,15 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.Query;
 
 public interface QueryDAO {
-	Query getQueryById(String queryCode, String queryModule,String type);
-	void update(Query query,String type);
-	void delete(Query query,String type);
-	String save(Query query,String type);
+	Query getQueryById(String queryCode, String queryModule, String type);
+
+	void update(Query query, String type);
+
+	void delete(Query query, String type);
+
+	String save(Query query, String type);
 }

@@ -59,10 +59,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BuilderCompany table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","name","segmentation","groupId"})
+@XmlType(propOrder = { "id", "name", "segmentation", "groupId" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BuilderCompany extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class BuilderCompany extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String name;
@@ -72,14 +72,14 @@ private static final long serialVersionUID = 1L;
 	private String groupIdName;
 	private String fieldCode;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private BuilderCompany befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -92,43 +92,47 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("segmentationName");
-			excludeFields.add("groupIdName");
-			excludeFields.add("fieldCode");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("segmentationName");
+		excludeFields.add("groupIdName");
+		excludeFields.add("fieldCode");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getSegmentation() {
 		return segmentation;
 	}
+
 	public void setSegmentation(String segmentation) {
 		this.segmentation = segmentation;
 	}
-	
+
 	public long getGroupId() {
 		return groupId;
 	}
+
 	public void setGroupId(long groupId) {
 		this.groupId = groupId;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -136,7 +140,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -145,19 +149,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public BuilderCompany getBefImage(){
+	public BuilderCompany getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(BuilderCompany beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BuilderCompany beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

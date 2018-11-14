@@ -14,7 +14,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CoOwnerDetailsValidation {
-	private CoOwnerDetailDAO	coOwnerDetailDAO;
+	private CoOwnerDetailDAO coOwnerDetailDAO;
 
 	public CoOwnerDetailDAO getCoOwnerDetailDAO() {
 		return coOwnerDetailDAO;
@@ -42,10 +42,12 @@ public class CoOwnerDetailsValidation {
 		CoOwnerDetail coOwnerDetail = (CoOwnerDetail) auditDetail.getModelData();
 		CoOwnerDetail tempCoOwnerDetail = null;
 		if (coOwnerDetail.isWorkflow()) {
-			tempCoOwnerDetail = getCoOwnerDetailDAO().getCoOwnerDetailByRef(coOwnerDetail.getCollateralRef(), coOwnerDetail.getCoOwnerId(), "_Temp");
+			tempCoOwnerDetail = getCoOwnerDetailDAO().getCoOwnerDetailByRef(coOwnerDetail.getCollateralRef(),
+					coOwnerDetail.getCoOwnerId(), "_Temp");
 		}
 
-		CoOwnerDetail befCoOwnerDetail = getCoOwnerDetailDAO().getCoOwnerDetailByRef(coOwnerDetail.getCollateralRef(), coOwnerDetail.getCoOwnerId(), "");
+		CoOwnerDetail befCoOwnerDetail = getCoOwnerDetailDAO().getCoOwnerDetailByRef(coOwnerDetail.getCollateralRef(),
+				coOwnerDetail.getCoOwnerId(), "");
 		CoOwnerDetail oldCoOwnerDetail = coOwnerDetail.getBefImage();
 
 		String[] valueParm = new String[2];
@@ -67,13 +69,11 @@ public class CoOwnerDetailsValidation {
 
 				if (coOwnerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCoOwnerDetail != null || tempCoOwnerDetail != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCoOwnerDetail == null || tempCoOwnerDetail != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -87,13 +87,13 @@ public class CoOwnerDetailsValidation {
 
 					if (oldCoOwnerDetail != null
 							&& !oldCoOwnerDetail.getLastMntOn().equals(befCoOwnerDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}

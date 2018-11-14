@@ -14,7 +14,7 @@ import com.pennant.util.PennantAppUtil;
 
 public class CustomerAccountListModelItemRender implements ListitemRenderer<Accounts>, Serializable {
 
-	private static final long	serialVersionUID	= -6954091801433341494L;
+	private static final long serialVersionUID = -6954091801433341494L;
 
 	public CustomerAccountListModelItemRender() {
 
@@ -34,8 +34,8 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 		lc.setParent(item);
 		lc = new Listcell(accounts.getAcCcy());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(accounts.getAcPurpose(),
-				PennantStaticListUtil.getAccountPurpose()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(accounts.getAcPurpose(), PennantStaticListUtil.getAccountPurpose()));
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbIsInternalAc = new Checkbox();
@@ -51,13 +51,11 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 		lc.setStyle("text-align:center");
 		lc.appendChild(cbIsCustSysAc);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getAcBalance(), 
-				accounts.getLovDescFinFormatter()));
- 
+		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getAcBalance(), accounts.getLovDescFinFormatter()));
+
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				accounts.getShadowBal(), accounts.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getShadowBal(), accounts.getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 	}

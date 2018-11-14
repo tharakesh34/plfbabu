@@ -82,9 +82,9 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	private String lovDescPromotionCode;
 	private String lovDescPromotionName;
 	private String FinAssetType;
-	
+
 	private String productCategory;
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("FinAssetType");
@@ -95,8 +95,7 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 		excludeFields.add("typeCode");
 		return excludeFields;
 	}
-	
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -104,6 +103,7 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	public FinanceWorkFlow() {
 		super();
 	}
+
 	public FinanceWorkFlow(String id) {
 		super();
 		this.setId(id);
@@ -112,31 +112,35 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finType = id;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public String getLovDescFinTypeName() {
 		return this.lovDescFinTypeName;
 	}
-	public void setLovDescFinTypeName (String lovDescFinTypeName) {
+
+	public void setLovDescFinTypeName(String lovDescFinTypeName) {
 		this.lovDescFinTypeName = lovDescFinTypeName;
 	}
-	
+
 	public String getCollateralDesc() {
 		return collateralDesc;
 	}
+
 	public void setCollateralDesc(String collateralDesc) {
 		this.collateralDesc = collateralDesc;
 	}
@@ -144,6 +148,7 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	public String getVasProductDesc() {
 		return vasProductDesc;
 	}
+
 	public void setVasProductDesc(String vasProductDesc) {
 		this.vasProductDesc = vasProductDesc;
 	}
@@ -151,156 +156,174 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	public String getCommitmentTypeDesc() {
 		return commitmentTypeDesc;
 	}
+
 	public void setCommitmentTypeDesc(String commitmentTypeDesc) {
 		this.commitmentTypeDesc = commitmentTypeDesc;
 	}
 
 	public void setLovDescProductCodeName(String lovDescProductCodeName) {
-	    this.lovDescProductCodeName = lovDescProductCodeName;
-    }
+		this.lovDescProductCodeName = lovDescProductCodeName;
+	}
+
 	public String getLovDescProductCodeName() {
-	    return lovDescProductCodeName;
-    }
+		return lovDescProductCodeName;
+	}
 
 	public String getScreenCode() {
 		return screenCode;
 	}
+
 	public void setScreenCode(String screenCode) {
 		this.screenCode = screenCode;
 	}
-	
+
 	public String getWorkFlowType() {
 		return workFlowType;
 	}
+
 	public void setWorkFlowType(String workFlowType) {
 		this.workFlowType = workFlowType;
 	}
 
 	public String getModuleName() {
-    	return moduleName;
-    }
+		return moduleName;
+	}
 
 	public void setModuleName(String moduleName) {
-    	this.moduleName = moduleName;
-    }
+		this.moduleName = moduleName;
+	}
 
 	public String getLovDescWorkFlowTypeName() {
 		return this.lovDescWorkFlowTypeName;
 	}
-	public void setLovDescWorkFlowTypeName (String lovDescWorkFlowTypeName) {
+
+	public void setLovDescWorkFlowTypeName(String lovDescWorkFlowTypeName) {
 		this.lovDescWorkFlowTypeName = lovDescWorkFlowTypeName;
 	}
-	
+
 	public String getLovDescWorkFlowRolesName() {
 		return lovDescWorkFlowRolesName;
 	}
+
 	public void setLovDescWorkFlowRolesName(String lovDescWorkFlowRolesName) {
 		this.lovDescWorkFlowRolesName = lovDescWorkFlowRolesName;
 	}
 
 	public String getLovDescFirstTaskOwner() {
-    	return lovDescFirstTaskOwner;
-    }
+		return lovDescFirstTaskOwner;
+	}
+
 	public void setLovDescFirstTaskOwner(String lovDescFirstTaskOwner) {
-    	this.lovDescFirstTaskOwner = lovDescFirstTaskOwner;
-    }
+		this.lovDescFirstTaskOwner = lovDescFirstTaskOwner;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinanceWorkFlow getBefImage(){
+	public FinanceWorkFlow getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinanceWorkFlow beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinanceWorkFlow beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getLovDescFacilityTypeName() {
-    	return lovDescFacilityTypeName;
-    }
+		return lovDescFacilityTypeName;
+	}
+
 	public void setLovDescFacilityTypeName(String lovDescFacilityTypeName) {
-    	this.lovDescFacilityTypeName = lovDescFacilityTypeName;
-    }
-	
+		this.lovDescFacilityTypeName = lovDescFacilityTypeName;
+	}
+
 	public void setLovDescFinDivisionName(String lovDescFinDivisionName) {
-	    this.lovDescFinDivisionName = lovDescFinDivisionName;
-    }
+		this.lovDescFinDivisionName = lovDescFinDivisionName;
+	}
+
 	public String getLovDescFinDivisionName() {
-	    return lovDescFinDivisionName;
-    }
+		return lovDescFinDivisionName;
+	}
 
 	public String getLovDescProductName() {
-	    return lovDescProductName;
-    }
+		return lovDescProductName;
+	}
+
 	public void setLovDescProductName(String lovDescProductName) {
-	    this.lovDescProductName = lovDescProductName;
-    }
+		this.lovDescProductName = lovDescProductName;
+	}
 
 	public String getLovDescPromoFinTypeDesc() {
-	    return lovDescPromoFinTypeDesc;
-    }
+		return lovDescPromoFinTypeDesc;
+	}
+
 	public void setLovDescPromoFinTypeDesc(String lovDescPromoFinTypeDesc) {
-	    this.lovDescPromoFinTypeDesc = lovDescPromoFinTypeDesc;
-    }
+		this.lovDescPromoFinTypeDesc = lovDescPromoFinTypeDesc;
+	}
 
 	public String getLovDescPromotionName() {
-	    return lovDescPromotionName;
-    }
+		return lovDescPromotionName;
+	}
+
 	public void setLovDescPromotionName(String lovDescPromotionName) {
-	    this.lovDescPromotionName = lovDescPromotionName;
-    }
+		this.lovDescPromotionName = lovDescPromotionName;
+	}
 
 	public String getLovDescPromotionCode() {
-	    return lovDescPromotionCode;
-    }
+		return lovDescPromotionCode;
+	}
+
 	public void setLovDescPromotionCode(String lovDescPromotionCode) {
-	    this.lovDescPromotionCode = lovDescPromotionCode;
-    }
+		this.lovDescPromotionCode = lovDescPromotionCode;
+	}
 
 	public String getFinAssetType() {
-	    return FinAssetType;
-    }
+		return FinAssetType;
+	}
+
 	public void setFinAssetType(String finAssetType) {
-	    FinAssetType = finAssetType;
-    }
+		FinAssetType = finAssetType;
+	}
 
 	public String getFinEvent() {
-	    return finEvent;
-    }
+		return finEvent;
+	}
+
 	public void setFinEvent(String finEvent) {
-	    this.finEvent = finEvent;
-    }
+		this.finEvent = finEvent;
+	}
 
 	public String getProductCategory() {
 		return productCategory;
 	}
+
 	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
 	}
 
-
 	public String getTypeCode() {
 		return typeCode;
 	}
-
 
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;

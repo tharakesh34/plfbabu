@@ -12,7 +12,7 @@ public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement
 	private static final long serialVersionUID = 2164774289694537365L;
 	private static final Logger logger = Logger.getLogger(CommitmentMovementDialogCtrl.class);
 	private CommitmentMovement commitmentMovement; // overHanded per parameter
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -28,9 +28,8 @@ public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CheckListDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CheckListDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -45,7 +44,7 @@ public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement
 
 		if (arguments.containsKey("CommitmentMovement")) {
 			this.commitmentMovement = (CommitmentMovement) arguments.get("CommitmentMovement");
-			CommitmentMovement befImage =new CommitmentMovement();
+			CommitmentMovement befImage = new CommitmentMovement();
 			BeanUtils.copyProperties(this.commitmentMovement, befImage);
 			this.commitmentMovement.setBefImage(befImage);
 
@@ -54,13 +53,14 @@ public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement
 			setCommitmentMovement(null);
 		}
 
-		doLoadWorkFlow(this.commitmentMovement.isWorkflow(),this.commitmentMovement.getWorkflowId(),this.commitmentMovement.getNextTaskId());
+		doLoadWorkFlow(this.commitmentMovement.isWorkflow(), this.commitmentMovement.getWorkflowId(),
+				this.commitmentMovement.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
 		}
-		
-}
+
+	}
 
 	public CommitmentMovement getCommitmentMovement() {
 		return commitmentMovement;
@@ -70,6 +70,3 @@ public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement
 		this.commitmentMovement = commitmentMovement;
 	}
 }
-
-	
-

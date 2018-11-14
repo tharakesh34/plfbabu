@@ -51,8 +51,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEODMonitor implements Tasklet {
 
-
-	private CustomerQueuingDAO	customerQueuingDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 
 	public MicroEODMonitor() {
 
@@ -63,9 +62,9 @@ public class MicroEODMonitor implements Tasklet {
 
 		//long running = customerQueuingDAO.getCountByProgress(DateUtility.getValueDate(), EodConstants.PROGRESS_START);
 
-//		if (running != 0) {
-//			return RepeatStatus.CONTINUABLE;
-//		}
+		//		if (running != 0) {
+		//			return RepeatStatus.CONTINUABLE;
+		//		}
 
 		return RepeatStatus.FINISHED;
 

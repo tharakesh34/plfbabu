@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 public class PartyAddress {
 
 	@XmlElement(name = "street_address")
-	private String	street;
+	private String street;
 
-	private String	locality;
+	private String locality;
 
-	private String	city;
+	private String city;
 
-	private String	state;
+	private String state;
 
-	private String	pincode;
+	private String pincode;
 
-	private String	country;
+	private String country;
 
 	public String getStreet() {
 		return street;

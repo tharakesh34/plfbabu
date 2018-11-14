@@ -50,39 +50,37 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
 public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
-	private static final long						serialVersionUID			= -3249715883200188080L;
-	private static final Logger						logger						= Logger
-			.getLogger(TechnicalValuationDialogCtrl.class);
+	private static final long serialVersionUID = -3249715883200188080L;
+	private static final Logger logger = Logger.getLogger(TechnicalValuationDialogCtrl.class);
 
-	protected Window 								window_TechValuationFieldDialog;
-	protected Label									moduleDesc;
-	protected Label									subModuleDesc;
-	protected Longbox								moduleId;
-	protected Textbox								tabHeading;
-	protected Radiogroup							numberOfColumns;
-	protected Radio									radio_column1;
-	protected Radio									radio_column2;
-	protected Grid									grid_basicDetails;
+	protected Window window_TechValuationFieldDialog;
+	protected Label moduleDesc;
+	protected Label subModuleDesc;
+	protected Longbox moduleId;
+	protected Textbox tabHeading;
+	protected Radiogroup numberOfColumns;
+	protected Radio radio_column1;
+	protected Radio radio_column2;
+	protected Grid grid_basicDetails;
 
-	private transient boolean						validationOn;
+	private transient boolean validationOn;
 
-	private ExtendedFieldDetail						extendedFieldDetail;
-	private ExtendedFieldHeader						extendedFieldHeader;
-	private boolean									newRecord					= false;
+	private ExtendedFieldDetail extendedFieldDetail;
+	private ExtendedFieldHeader extendedFieldHeader;
+	private boolean newRecord = false;
 
-	protected Button								btnNew_FieldDet;
-	protected Paging								pagingFieldDetList;
-	protected Listbox								listBoxFieldDet;
-	protected Component								parentTabPanel				= null;
-	protected Div									toolbar						= null;
-	protected Object								dialogCtrl					= null;
-	protected boolean								firstTaskRole				= false;
-	protected int									maxSeqNo					= 0;
+	protected Button btnNew_FieldDet;
+	protected Paging pagingFieldDetList;
+	protected Listbox listBoxFieldDet;
+	protected Component parentTabPanel = null;
+	protected Div toolbar = null;
+	protected Object dialogCtrl = null;
+	protected boolean firstTaskRole = false;
+	protected int maxSeqNo = 0;
 
-	private List<ExtendedFieldDetail>				techValuationFieldDetailsList	= new ArrayList<ExtendedFieldDetail>();
-	private PagedListWrapper<ExtendedFieldDetail>	extendedFieldPagedListWrapper;
+	private List<ExtendedFieldDetail> techValuationFieldDetailsList = new ArrayList<ExtendedFieldDetail>();
+	private PagedListWrapper<ExtendedFieldDetail> extendedFieldPagedListWrapper;
 
 	public TechnicalValuationDialogCtrl() {
 		super();
@@ -135,7 +133,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 				this.dialogCtrl = (Object) arguments.get("dialogCtrl");
 				dialogCtrl.getClass().getMethod("setTechnicalValuationDialogCtrl", this.getClass()).invoke(dialogCtrl,
 						this);
-				
+
 				//this.extendedFieldHeader.setWorkflowId(0);
 				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);
@@ -178,7 +176,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
@@ -430,8 +428,10 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 
 		this.tabHeading.setReadonly(isReadOnly("ExtendedFieldDialog_tabHeading"));
 		//TODO
-		/*this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
-		this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));*/
+		/*
+		 * this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
+		 * this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
+		 */
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -590,12 +590,13 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		} else {
 			this.techValuationFieldDetailsList = techValuationFieldDetailsList;
 		}
-		 
+
 		this.pagingFieldDetList.setDetailed(true);
 		this.pagingFieldDetList.setActivePage(0);
 		setTechValuationFieldDetailsList(this.techValuationFieldDetailsList);
 		setTableName(this.techValuationFieldDetailsList);
-		getExtendedFieldPagedListWrapper().initList(getTechValuationFieldDetailsList(), listBoxFieldDet, pagingFieldDetList);
+		getExtendedFieldPagedListWrapper().initList(getTechValuationFieldDetailsList(), listBoxFieldDet,
+				pagingFieldDetList);
 		this.listBoxFieldDet.setItemRenderer(new ExtendedFieldListItemRenderer());
 
 		// Details of Fields for Pre & Post validations
@@ -657,7 +658,6 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		this.validationOn = validationOn;
 	}
 
-	 
 	@SuppressWarnings("unchecked")
 	public void setExtendedFieldPagedListWrapper() {
 		if (this.extendedFieldPagedListWrapper == null) {
@@ -769,6 +769,5 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	public void setTechValuationFieldDetailsList(List<ExtendedFieldDetail> techValuationFieldDetailsList) {
 		this.techValuationFieldDetailsList = techValuationFieldDetailsList;
 	}
-	
-	
+
 }

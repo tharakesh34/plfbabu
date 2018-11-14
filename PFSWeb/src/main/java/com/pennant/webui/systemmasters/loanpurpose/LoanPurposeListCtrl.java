@@ -70,36 +70,36 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/SystemMaster/LoanPurpose/LoanPurposeList.zul file.
  */
 public class LoanPurposeListCtrl extends GFCBaseListCtrl<LoanPurpose> {
-	private static final long				serialVersionUID	= 1817958653208633892L;
-	private static final Logger				logger				= Logger.getLogger(LoanPurposeListCtrl.class);
+	private static final long serialVersionUID = 1817958653208633892L;
+	private static final Logger logger = Logger.getLogger(LoanPurposeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_LoanPurposeList;
-	protected Borderlayout					borderLayout_LoanPurposeList;
-	protected Paging						pagingLoanPurposeList;
-	protected Listbox						listBoxLoanPurpose;
+	protected Window window_LoanPurposeList;
+	protected Borderlayout borderLayout_LoanPurposeList;
+	protected Paging pagingLoanPurposeList;
+	protected Listbox listBoxLoanPurpose;
 
-	protected Textbox						loanPurposeCode;
-	protected Textbox						loanPurposeDesc;
-	protected Checkbox						loanPurposeIsActive;
+	protected Textbox loanPurposeCode;
+	protected Textbox loanPurposeDesc;
+	protected Checkbox loanPurposeIsActive;
 
-	protected Listbox						sortOperator_loanPurposeCode;
-	protected Listbox						sortOperator_loanPurposeDesc;
-	protected Listbox						sortOperator_loanPurposeIsActive;
+	protected Listbox sortOperator_loanPurposeCode;
+	protected Listbox sortOperator_loanPurposeDesc;
+	protected Listbox sortOperator_loanPurposeIsActive;
 
 	// List headers
-	protected Listheader					listheader_LoanPurposeCode;
-	protected Listheader					listheader_LoanPurposeDesc;
-	protected Listheader					listheader_LoanPurposeIsActive;
+	protected Listheader listheader_LoanPurposeCode;
+	protected Listheader listheader_LoanPurposeDesc;
+	protected Listheader listheader_LoanPurposeIsActive;
 
 	// checkRights
-	protected Button						button_LoanPurposeList_NewLoanPurpose;
-	protected Button						button_LoanPurposeList_LoanPurposeSearchDialog;
+	protected Button button_LoanPurposeList_NewLoanPurpose;
+	protected Button button_LoanPurposeList_LoanPurposeSearchDialog;
 
-	private transient LoanPurposeService	loanPurposeService;
+	private transient LoanPurposeService loanPurposeService;
 
 	/**
 	 * default constructor.<br>
@@ -132,13 +132,12 @@ public class LoanPurposeListCtrl extends GFCBaseListCtrl<LoanPurpose> {
 		registerButton(button_LoanPurposeList_NewLoanPurpose, "button_LoanPurposeList_NewLoanPurpose", true);
 		registerButton(button_LoanPurposeList_LoanPurposeSearchDialog);
 
-		registerField("loanPurposeCode", listheader_LoanPurposeCode, SortOrder.ASC, loanPurposeCode, sortOperator_loanPurposeCode,
-				Operators.STRING);
-		registerField("loanPurposeDesc", listheader_LoanPurposeDesc, SortOrder.NONE, loanPurposeDesc, sortOperator_loanPurposeDesc,
-				Operators.STRING);
+		registerField("loanPurposeCode", listheader_LoanPurposeCode, SortOrder.ASC, loanPurposeCode,
+				sortOperator_loanPurposeCode, Operators.STRING);
+		registerField("loanPurposeDesc", listheader_LoanPurposeDesc, SortOrder.NONE, loanPurposeDesc,
+				sortOperator_loanPurposeDesc, Operators.STRING);
 		registerField("loanPurposeIsActive", listheader_LoanPurposeIsActive, SortOrder.NONE, loanPurposeIsActive,
 				sortOperator_loanPurposeIsActive, Operators.BOOLEAN);
-		
 
 		// Render the page and display the data.
 		doRenderPage();

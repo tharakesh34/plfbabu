@@ -43,7 +43,6 @@ package com.pennant.backend.model.finance;
  ********************************************************************************************
 */
 
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -74,7 +73,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	private boolean exist = true;
 	private FinFeeReceipt befImage;
 	private LoggedInUser userDetails;
-	
+
 	private String vasReference;
 
 	public FinFeeReceipt() {
@@ -87,7 +86,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		excludeFields.add("receiptReference");
 		excludeFields.add("transactionRef");
 		excludeFields.add("favourNumber");
@@ -100,7 +99,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("remainingFee");
 		excludeFields.add("exist");
 		excludeFields.add("vasReference");
-		
+
 		return excludeFields;
 	}
 
@@ -262,4 +261,3 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		this.feeTypeDesc = feeTypeDesc;
 	}
 }
-

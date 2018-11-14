@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EmploymentType;
 import com.pennanttech.pff.core.TableType;
@@ -52,8 +53,8 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface EmploymentTypeDAO extends BasicCrudDao<EmploymentType> {
 
-	EmploymentType getEmploymentTypeById(String id,String type);
-	
+	EmploymentType getEmploymentTypeById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -64,5 +65,5 @@ public interface EmploymentTypeDAO extends BasicCrudDao<EmploymentType> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String empType, TableType tableType);
-	
+
 }

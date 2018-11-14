@@ -49,7 +49,7 @@ public class BusinessCalendarTest {
 			testGetBusinessDateV0_1();
 		}
 	}
-	
+
 	private void testGetBusinessDateV0_1() {
 		HolidayMasterDAOImpl mockedHolidayMasterDAOImpl = Mockito.mock(HolidayMasterDAOImpl.class);
 		Mockito.when(mockedHolidayMasterDAOImpl.getHolidayMasterCode("DEFAULT")).thenReturn(holidayMasters);

@@ -23,14 +23,13 @@ import com.pennant.webui.util.searchdialogs.ExtendedStaticListBox;
 public class MyIdgenerator implements IdGenerator {
 
 	public MyIdgenerator() {
-		
+
 	}
-	
-	public String nextComponentUuid(Desktop desktop, Component comp,
-			ComponentInfo compInfo) {
+
+	public String nextComponentUuid(Desktop desktop, Component comp, ComponentInfo compInfo) {
 
 		String inputComponent = "textbox|button|text|uppercasebox|listbox|checkbox|radiogroup|radio|decimalbox"
-				                 +"|extendedcombobox|accountSelectionBox|currencyBox";
+				+ "|extendedcombobox|accountSelectionBox|currencyBox";
 		String pageName;
 		int i = Integer.parseInt(desktop.getAttribute("Id_Num").toString());
 		i++;// Start from 1
@@ -55,15 +54,11 @@ public class MyIdgenerator implements IdGenerator {
 			return "zkcomp_" + i;
 		} else {
 
-			if (compInfo != null && compInfo.getTag() != null
-					&& inputComponent.indexOf(compInfo.getTag()) >= 0) {
-				pageName = compInfo.getParent().getPageDefinition()
-						.getRequestPath();
+			if (compInfo != null && compInfo.getTag() != null && inputComponent.indexOf(compInfo.getTag()) >= 0) {
+				pageName = compInfo.getParent().getPageDefinition().getRequestPath();
 				pageName = pageName.substring(
-						compInfo.getParent().getPageDefinition()
-								.getRequestPath().lastIndexOf("/") + 1,
-						compInfo.getParent().getPageDefinition()
-								.getRequestPath().lastIndexOf("zul") - 1);
+						compInfo.getParent().getPageDefinition().getRequestPath().lastIndexOf("/") + 1,
+						compInfo.getParent().getPageDefinition().getRequestPath().lastIndexOf("zul") - 1);
 				return pageName + "_" + uuid.append(i).toString();
 			} else {
 				return uuid.append(i).toString();
@@ -76,24 +71,19 @@ public class MyIdgenerator implements IdGenerator {
 		Component p = comp.getParent();
 
 		if (p != null && p.getUuid() != null) {
-			if (p instanceof ExtendedCombobox
-					|| p instanceof ExtendedSearchListBox
-					|| p instanceof ExtendedStaticListBox
-					|| p instanceof AccountSelectionBox
+			if (p instanceof ExtendedCombobox || p instanceof ExtendedSearchListBox
+					|| p instanceof ExtendedStaticListBox || p instanceof AccountSelectionBox
 					|| p instanceof CurrencyBox) {
 				result = comp.getClass().getSimpleName() + "_" + p.getUuid();
-			} else if (comp instanceof Textbox || comp instanceof Button
-					|| comp instanceof Decimalbox || comp instanceof Listitem || comp instanceof Listcell) {
+			} else if (comp instanceof Textbox || comp instanceof Button || comp instanceof Decimalbox
+					|| comp instanceof Listitem || comp instanceof Listcell) {
 				Component g = p.getParent();
 
 				if (g != null && g.getUuid() != null) {
-					if (g instanceof ExtendedCombobox
-							|| g instanceof ExtendedSearchListBox
-							|| g instanceof ExtendedStaticListBox
-							|| g instanceof AccountSelectionBox
+					if (g instanceof ExtendedCombobox || g instanceof ExtendedSearchListBox
+							|| g instanceof ExtendedStaticListBox || g instanceof AccountSelectionBox
 							|| g instanceof CurrencyBox) {
-						result = comp.getClass().getSimpleName() + "_"
-								+ p.getUuid();
+						result = comp.getClass().getSimpleName() + "_" + p.getUuid();
 					}
 				}
 			} else {

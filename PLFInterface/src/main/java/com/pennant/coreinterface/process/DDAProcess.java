@@ -7,7 +7,7 @@ import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface DDAProcess {
-	
+
 	DDARegistration sendDDARequest(DDARegistration ddsRequest) throws InterfaceException;
 
 	DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq) throws InterfaceException;

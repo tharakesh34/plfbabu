@@ -89,13 +89,14 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 		EmpStsCode empStsCode = new EmpStsCode();
 		empStsCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("SELECT EmpStsCode, EmpStsDesc, EmpStsIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append("SELECT EmpStsCode, EmpStsDesc, EmpStsIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTEmpStsCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where EmpStsCode =:EmpStsCode") ;
-				
+		selectSql.append(" Where EmpStsCode =:EmpStsCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
 		RowMapper<EmpStsCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmpStsCode.class);
@@ -111,10 +112,8 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTEmpStsCodes or
-	 * BMTEmpStsCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Employee Status Codes by key
-	 * EmpStsCode
+	 * This method Deletes the Record from the BMTEmpStsCodes or BMTEmpStsCodes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Employee Status Codes by key EmpStsCode
 	 * 
 	 * @param Employee
 	 *            Status Codes (empStsCode)
@@ -128,17 +127,17 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTEmpStsCodes");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where EmpStsCode =:EmpStsCode");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),	beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -151,8 +150,7 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 	}
 
 	/**
-	 * This method insert new Records into BMTEmpStsCodes or
-	 * BMTEmpStsCodes_Temp.
+	 * This method insert new Records into BMTEmpStsCodes or BMTEmpStsCodes_Temp.
 	 * 
 	 * save Employee Status Codes
 	 * 
@@ -168,20 +166,21 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 	public String save(EmpStsCode empStsCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTEmpStsCodes");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (EmpStsCode, EmpStsDesc, EmpStsIsActive," );
+		insertSql.append(" (EmpStsCode, EmpStsDesc, EmpStsIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:EmpStsCode, :EmpStsDesc, :EmpStsIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(" Values(:EmpStsCode, :EmpStsDesc, :EmpStsIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.trace(Literal.SQL +  insertSql.toString());
+
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -190,9 +189,8 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 	}
 
 	/**
-	 * This method updates the Record BMTEmpStsCodes or BMTEmpStsCodes_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Employee Status Codes by key EmpStsCode and Version
+	 * This method updates the Record BMTEmpStsCodes or BMTEmpStsCodes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Employee Status Codes by key EmpStsCode and Version
 	 * 
 	 * @param Employee
 	 *            Status Codes (empStsCode)
@@ -205,22 +203,23 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 	@Override
 	public void update(EmpStsCode empStsCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTEmpStsCodes");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set EmpStsDesc = :EmpStsDesc, EmpStsIsActive = :EmpStsIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set EmpStsDesc = :EmpStsDesc, EmpStsIsActive = :EmpStsIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where EmpStsCode =:EmpStsCode ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();

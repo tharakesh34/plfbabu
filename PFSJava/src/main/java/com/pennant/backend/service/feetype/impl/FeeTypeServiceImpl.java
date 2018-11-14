@@ -64,10 +64,10 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTypeService {
-	private static final Logger	logger	= Logger.getLogger(FeeTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FeeTypeServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
-	private FeeTypeDAO			feeTypeDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	public FeeTypeServiceImpl() {
 		super();
@@ -128,10 +128,10 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		
+
 		if (feeType.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
@@ -163,7 +163,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
@@ -232,19 +232,18 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 
 		FeeType feeType = new FeeType();
 		BeanUtils.copyProperties((FeeType) auditHeader.getAuditDetail().getModelData(), feeType);
-		
-		
+
 		getFeeTypeDAO().delete(feeType, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(feeType.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(feeTypeDAO.getFeeTypeById(feeType.getFeeTypeID(), ""));
 		}
 
 		if (feeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			
-			getFeeTypeDAO().delete(feeType,TableType.MAIN_TAB);
-			
+
+			getFeeTypeDAO().delete(feeType, TableType.MAIN_TAB);
+
 		} else {
 			feeType.setRoleCode("");
 			feeType.setNextRoleCode("");
@@ -332,32 +331,31 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	 * @param method
 	 * @return
 	 */
-	
-	 private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug("Entering");
 
-			// Get the model object.
-			FeeType feeType = (FeeType) auditDetail.getModelData();
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
 
-			// Check the unique keys.
-			if (feeType.isNew()
-					&& feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(),feeType.getFeeTypeCode(), feeType.isWorkflow() ? TableType.BOTH_TAB
-							: TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-				parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();
+		// Get the model object.
+		FeeType feeType = (FeeType) auditDetail.getModelData();
 
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-			}
+		// Check the unique keys.
+		if (feeType.isNew() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeType.getFeeTypeCode(),
+				feeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();
 
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-			logger.debug("Leaving");
-			return auditDetail;
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
 
 	@Override
 	public long getFinFeeTypeIdByFeeType(String feeTypeCode) {
-		
+
 		return feeTypeDAO.getFinFeeTypeIdByFeeType(feeTypeCode, "_View");
 	}
 

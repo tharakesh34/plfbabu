@@ -82,17 +82,15 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Collateral/FacilityDetail/FacilityDetailList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Collateral/FacilityDetail/FacilityDetailList.zul file.
  */
 public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FacilityDetailListCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FacilityDetailList; // autowired
 	protected Borderlayout borderLayout_FacilityDetailList; // autowired
@@ -107,8 +105,9 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	private FacilityService facilityService;
 	private boolean enqModule = false;
 	private String userRole;
-	
+
 	Date appldate = DateUtility.getAppDate();
+
 	// NEEDED for the ReUse in the SearchWindow
 	/**
 	 * default constructor.<br>
@@ -116,10 +115,10 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	public FacilityDetailListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
-		
+
 	}
 
 	public void onCreate$window_FacilityDetailList(ForwardEvent event) throws Exception {
@@ -142,7 +141,8 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			}
 			doCheckRights();
 			try {
-				getCtrlObject().getClass().getMethod("setFacilityDetailListCtrl", this.getClass()).invoke(getCtrlObject(), this);
+				getCtrlObject().getClass().getMethod("setFacilityDetailListCtrl", this.getClass())
+						.invoke(getCtrlObject(), this);
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
@@ -166,14 +166,14 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FacilityDetailDialog", userRole);
-		this.button_FacilityDetailList_NewFacilityDetail.setVisible(getUserWorkspace().isAllowed("button_FacilityDetailDialog_btnNew"));
+		this.button_FacilityDetailList_NewFacilityDetail
+				.setVisible(getUserWorkspace().isAllowed("button_FacilityDetailDialog_btnNew"));
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * This method is forwarded from the listboxes item renderer. <br>
-	 * see: com.pennant.webui.collateral.facilitydetail.model.
-	 * FacilityDetailListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.collateral.facilitydetail.model. FacilityDetailListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -243,7 +243,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			getFacilityDetailList().clear();
 			setFacilityDetailList(facilityDetails);
 			fillFacilityDetails(facilityDetails);
-			if ( getFacilityDialogCtrl()!=null ) {
+			if (getFacilityDialogCtrl() != null) {
 				getFacilityDialogCtrl().setCountryLimitAdeq(facilityDetails);
 			}
 		}
@@ -257,7 +257,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			Listitem item = new Listitem();
 			item.setStyle("vertical-align: text-top;");
 			Listcell lc;
-			lc = new Listcell( getBookingUnit());
+			lc = new Listcell(getBookingUnit());
 			lc.setParent(item);
 			lc = new Listcell();
 			StringBuilder content = new StringBuilder();
@@ -288,15 +288,18 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			lc.setParent(item);
 			lc = new Listcell(facilityDetail.getRevolving());
 			lc.setParent(item);
-			lc = new Listcell(getTenorDesc(facilityDetail.getTenorYear(),facilityDetail.getTenorMonth()));
+			lc = new Listcell(getTenorDesc(facilityDetail.getTenorYear(), facilityDetail.getTenorMonth()));
 			lc.setParent(item);
 			lc = new Listcell(facilityDetail.getPricing());
 			lc.setParent(item);
-			lc = new Listcell(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getExposure()));
+			lc = new Listcell(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(),
+					AccountConstants.CURRENCY_USD, facilityDetail.getExposure()));
 			lc.setParent(item);
-			lc = new Listcell(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getExistingLimit()));
+			lc = new Listcell(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(),
+					AccountConstants.CURRENCY_USD, facilityDetail.getExistingLimit()));
 			lc.setParent(item);
-			lc = new Listcell(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
+			lc = new Listcell(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(),
+					AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
 			lc.setParent(item);
 			lc = new Listcell(facilityDetail.getRecordStatus());
 			lc.setParent(item);
@@ -322,7 +325,8 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		JdbcSearchObject<FinanceSummary> jdbcSearchObject = new JdbcSearchObject<FinanceSummary>(FinanceSummary.class);
 		jdbcSearchObject.addTabelName("FacilityCommitmentDetail_View");
 		jdbcSearchObject.addFilterEqual("CustID", custID);
-		List<FinanceSummary> existFinances = getPagedListWrapper().getPagedListService().getBySearchObject(jdbcSearchObject);
+		List<FinanceSummary> existFinances = getPagedListWrapper().getPagedListService()
+				.getBySearchObject(jdbcSearchObject);
 		if (existFinances != null && !existFinances.isEmpty()) {
 			prepareRenderer(existFinances);
 		}
@@ -331,7 +335,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 
 	private void prepareRenderer(List<FinanceSummary> existFinances) {
 		logger.debug("Entering");
-	
+
 		this.listBoxFinances.getItems().clear();
 		this.listBoxFinances.setSizedByContent(true);
 		List<FinanceSummary> nonCommitmentList = new ArrayList<FinanceSummary>();
@@ -342,20 +346,20 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		BigDecimal totUnUsed = BigDecimal.ZERO;
 		BigDecimal cmtTotOutstanding = BigDecimal.ZERO;
 		BigDecimal unCmtTotOutstanding = BigDecimal.ZERO;
-		
+
 		// Summary Calculation
 		for (FinanceSummary financeSummary : existFinances) {
 			//Check Commitment Exists. 
 			if (StringUtils.isNotBlank(financeSummary.getFinCommitmentRef())) {
 				//Check Commitment Expired.
-				if (financeSummary.getCmtExpiryDate()!=null && financeSummary.getCmtExpiryDate().before(appldate)){
+				if (financeSummary.getCmtExpiryDate() != null && financeSummary.getCmtExpiryDate().before(appldate)) {
 					//Check Finance Matured.
 					if (financeSummary.getMaturityDate().before(appldate)) {
 						continue;
 					}
 				}
 			}
-			
+
 			if (financeSummary.getFinStartDate().before(oldestDate)) {
 				oldestDate = financeSummary.getFinStartDate();
 			}
@@ -364,10 +368,12 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			}
 			// List and map segregation for rendering
 			if (StringUtils.isNotBlank(financeSummary.getFinCommitmentRef())) {
-				totCmtAmount = totCmtAmount.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),AccountConstants.CURRENCY_USD,financeSummary.getCmtAmount()));
-				totUnUsed = totUnUsed.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),AccountConstants.CURRENCY_USD,financeSummary.getCmtAvailable()));
+				totCmtAmount = totCmtAmount.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),
+						AccountConstants.CURRENCY_USD, financeSummary.getCmtAmount()));
+				totUnUsed = totUnUsed.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),
+						AccountConstants.CURRENCY_USD, financeSummary.getCmtAvailable()));
 				cmtTotOutstanding = cmtTotOutstanding.add(financeSummary.getTotalOutStanding());
-				
+
 				if (commitmentMap.containsKey(financeSummary.getFinCommitmentRef())) {
 					commitmentMap.get(financeSummary.getFinCommitmentRef()).add(financeSummary);
 				} else {
@@ -376,11 +382,13 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 					commitmentMap.put(financeSummary.getFinCommitmentRef(), list);
 				}
 			} else {
-				unCmtTotOutstanding = unCmtTotOutstanding.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
+				unCmtTotOutstanding = unCmtTotOutstanding
+						.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),
+								AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
 				nonCommitmentList.add(financeSummary);
 			}
 		}
-		
+
 		// List box rendering
 		Listitem item;
 		Listcell cell;
@@ -403,7 +411,8 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		cell = new Listcell(formatdAmount(totUnUsed, AccountConstants.CURRENCY_USD_FORMATTER));
 		cell.setStyle("text-align:right;");
 		cell.setParent(item);
-		cell = new Listcell(formatdAmount(cmtTotOutstanding.add(unCmtTotOutstanding), AccountConstants.CURRENCY_USD_FORMATTER));
+		cell = new Listcell(
+				formatdAmount(cmtTotOutstanding.add(unCmtTotOutstanding), AccountConstants.CURRENCY_USD_FORMATTER));
 		cell.setStyle("text-align:right;");
 		cell.setParent(item);
 		cell = new Listcell();
@@ -418,20 +427,21 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		logger.debug("Leaving");
 	}
 
-	private void doFillCommitmentGroups(Listitem item,Listcell cell,Listgroup group,HashMap<String, List<FinanceSummary>> commitmentMap ){
+	private void doFillCommitmentGroups(Listitem item, Listcell cell, Listgroup group,
+			HashMap<String, List<FinanceSummary>> commitmentMap) {
 		for (String key : commitmentMap.keySet()) {
 
 			List<FinanceSummary> list = commitmentMap.get(key);
 			if (list != null && !list.isEmpty()) {
 				FinanceSummary finsum = list.get(0);
-				
+
 				String keyOldStartDt = finsum.getFinCommitmentRef() + "cmtOldestStartDt";
 				String keyCmtTotOutStd = finsum.getFinCommitmentRef() + "cmtTotOutStanding";
 				String keyOutStdPerc = finsum.getFinCommitmentRef() + "cmtOutStdPerc";
-				
+
 				BigDecimal cmtTotOutStanding = BigDecimal.ZERO;
 				Date cmtOldestStartDt = finsum.getFinStartDate();
-				
+
 				group = new Listgroup();
 				cell = new Listcell(finsum.getFinCommitmentRef());
 				cell.setParent(group);
@@ -442,10 +452,12 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 				cell.setParent(group);
 				cell = new Listcell(formatdDate(finsum.getCmtExpiryDate()));
 				cell.setParent(group);
-				cell = new Listcell(CalculationUtil.getConvertedAmountASString(finsum.getFinCcy(), AccountConstants.CURRENCY_USD, finsum.getCmtAmount()));
+				cell = new Listcell(CalculationUtil.getConvertedAmountASString(finsum.getFinCcy(),
+						AccountConstants.CURRENCY_USD, finsum.getCmtAmount()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(group);
-				cell = new Listcell(CalculationUtil.getConvertedAmountASString(finsum.getFinCcy(), AccountConstants.CURRENCY_USD, finsum.getCmtAvailable()));
+				cell = new Listcell(CalculationUtil.getConvertedAmountASString(finsum.getFinCcy(),
+						AccountConstants.CURRENCY_USD, finsum.getCmtAvailable()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(group);
 				cell = new Listcell();
@@ -469,13 +481,16 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 					cell.setParent(item);
 					cell = new Listcell(formatdDate(financeSummary.getMaturityDate()));
 					cell.setParent(item);
-					cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalOriginal()));
+					cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(),
+							AccountConstants.CURRENCY_USD, financeSummary.getTotalOriginal()));
 					cell.setStyle("text-align:right;");
 					cell.setParent(item);
-					cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalPaid()));
+					cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(),
+							AccountConstants.CURRENCY_USD, financeSummary.getTotalPaid()));
 					cell.setStyle("text-align:right;");
 					cell.setParent(item);
-					cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
+					cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(),
+							AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
 					cell.setStyle("text-align:right;");
 					cell.setParent(item);
 					cell = new Listcell();
@@ -483,9 +498,11 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 					cell = new Listcell(financeSummary.getFinStatus());
 					cell.setParent(item);
 					this.listBoxFinances.appendChild(item);
-					
-					cmtTotOutStanding = cmtTotOutStanding.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),AccountConstants.CURRENCY_USD,financeSummary.getTotalOutStanding()));
-					
+
+					cmtTotOutStanding = cmtTotOutStanding
+							.add(CalculationUtil.getConvertedAmount(financeSummary.getFinCcy(),
+									AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
+
 					if (financeSummary.getFinStartDate().before(cmtOldestStartDt)) {
 						cmtOldestStartDt = financeSummary.getFinStartDate();
 					}
@@ -494,20 +511,24 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 				lcCmtOldestStartDt.setLabel(formatdDate(cmtOldestStartDt));
 				Listcell lccmtTotOutStanding = (Listcell) this.listBoxFinances.getFellowIfAny(keyCmtTotOutStd);
 				lccmtTotOutStanding.setLabel(formatdAmount(cmtTotOutStanding, AccountConstants.CURRENCY_USD_FORMATTER));
-			
+
 				BigDecimal outStandPerc = BigDecimal.ZERO;
-				if (cmtTotOutStanding.compareTo(new BigDecimal(0)) !=0 && finsum.getCmtAmount().compareTo(new BigDecimal(0))  != 0) {
-					outStandPerc = cmtTotOutStanding.divide(finsum.getCmtAmount(), 2, RoundingMode.HALF_DOWN).multiply(new BigDecimal(100));
+				if (cmtTotOutStanding.compareTo(new BigDecimal(0)) != 0
+						&& finsum.getCmtAmount().compareTo(new BigDecimal(0)) != 0) {
+					outStandPerc = cmtTotOutStanding.divide(finsum.getCmtAmount(), 2, RoundingMode.HALF_DOWN)
+							.multiply(new BigDecimal(100));
 				}
 				Listcell lcCmtOutStdPerc = (Listcell) this.listBoxFinances.getFellowIfAny(keyOutStdPerc);
 				lcCmtOutStdPerc.setLabel(String.valueOf(outStandPerc));
 			}
-		
+
 		}
-		
+
 	}
-	private void doFillUnCommitedGroup(Listitem item,Listcell cell,Listgroup group,List<FinanceSummary> nonCommitmentList,BigDecimal unCmtTotOutstanding){
-	
+
+	private void doFillUnCommitedGroup(Listitem item, Listcell cell, Listgroup group,
+			List<FinanceSummary> nonCommitmentList, BigDecimal unCmtTotOutstanding) {
+
 		if (!nonCommitmentList.isEmpty()) {
 			Date unCmtfinalDate = nonCommitmentList.get(0).getMaturityDate();
 			group = new Listgroup();
@@ -544,13 +565,16 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 				cell.setParent(item);
 				cell = new Listcell(formatdDate(financeSummary.getMaturityDate()));
 				cell.setParent(item);
-				cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalOriginal()));
+				cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(),
+						AccountConstants.CURRENCY_USD, financeSummary.getTotalOriginal()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalPaid()));
+				cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(),
+						AccountConstants.CURRENCY_USD, financeSummary.getTotalPaid()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(), AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
+				cell = new Listcell(CalculationUtil.getConvertedAmountASString(financeSummary.getFinCcy(),
+						AccountConstants.CURRENCY_USD, financeSummary.getTotalOutStanding()));
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
 				cell = new Listcell();
@@ -568,15 +592,14 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			listcell.setLabel(formatdDate(unCmtfinalDate));
 		}
 	}
-	
-	
-	
+
 	private String[] getFacilityNewFilters() {
 		logger.debug("Entering");
 		JdbcSearchObject<FacilityDetail> jdbcSearchObject = new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
 		jdbcSearchObject.addTabelName("FacilityDetails_View");
 		jdbcSearchObject.addFilterEqual("CustID", getFacility().getCustID());
-		List<FacilityDetail> facilities = getPagedListWrapper().getPagedListService().getBySearchObject(jdbcSearchObject);
+		List<FacilityDetail> facilities = getPagedListWrapper().getPagedListService()
+				.getBySearchObject(jdbcSearchObject);
 		List<String> strings = new ArrayList<String>();
 		if (facilities != null && !facilities.isEmpty()) {
 			for (FacilityDetail facilityDetail : facilities) {
@@ -587,7 +610,8 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		}
 		if (getFacilityDetailList() != null && !getFacilityDetailList().isEmpty()) {
 			for (FacilityDetail facilityDetail : getFacilityDetailList()) {
-				if (StringUtils.isNotBlank(facilityDetail.getTermSheetRef()) && !strings.contains(facilityDetail.getTermSheetRef())) {
+				if (StringUtils.isNotBlank(facilityDetail.getTermSheetRef())
+						&& !strings.contains(facilityDetail.getTermSheetRef())) {
 					strings.add(facilityDetail.getTermSheetRef());
 				}
 			}
@@ -635,7 +659,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	public FacilityService getFacilityService() {
 		return facilityService;
 	}
-	
+
 	public FacilityDialogCtrl getFacilityDialogCtrl() {
 		if (this.ctrlObject instanceof FacilityDialogCtrl) {
 			return (FacilityDialogCtrl) ctrlObject;
@@ -644,44 +668,41 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	}
 
 	public void setFacilityDialogCtrl(FacilityDialogCtrl facilityDialogCtrl) {
-		
+
 	}
 
-	private String getBookingUnit(){
+	private String getBookingUnit() {
 		if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_COMMERCIAL)) {
 			return FacilityConstants.FACILITY_BOOKING_COMM_UNIT;
-		}else if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_CORPORATE)) {
+		} else if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_CORPORATE)) {
 			return FacilityConstants.FACILITY_BOOKING_CORP_UNIT;
 		}
 		return "";
 	}
-	
+
 	@SuppressWarnings("unused")
-	private String getTenor(Date startDate,Date maturityDate){
-		int months = DateUtility.getMonthsBetween(startDate,maturityDate );
+	private String getTenor(Date startDate, Date maturityDate) {
+		int months = DateUtility.getMonthsBetween(startDate, maturityDate);
 		int years = months / 12;
-		int remaining=months % 12;
-		return getTenorDesc(years,remaining);
+		int remaining = months % 12;
+		return getTenorDesc(years, remaining);
 	}
-	
-	private String  getTenorDesc(int years,int months){
-		String tenor="";
+
+	private String getTenorDesc(int years, int months) {
+		String tenor = "";
 		if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_COMMERCIAL)) {
-			tenor=String.valueOf(new BigDecimal(years+"."+months));
-		} else	if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_CORPORATE)) {
-			if (years >0 && months > 0 ) {
-				tenor=years+" Years "+months+" Months";
-			}else if (years > 0 ) {
-				tenor=years+" Years";
-			}else if (months > 0 ) {
-				tenor=months+" Months";
+			tenor = String.valueOf(new BigDecimal(years + "." + months));
+		} else if (getFacility().getFacilityType().equals(FacilityConstants.FACILITY_CORPORATE)) {
+			if (years > 0 && months > 0) {
+				tenor = years + " Years " + months + " Months";
+			} else if (years > 0) {
+				tenor = years + " Years";
+			} else if (months > 0) {
+				tenor = months + " Months";
 			}
 
 		}
 		return tenor;
 	}
-	
-	
-	
-	
+
 }

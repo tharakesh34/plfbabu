@@ -24,14 +24,14 @@ import com.pennanttech.pff.external.ALMProcess;
 
 public class ALM implements Tasklet {
 	private Logger logger = Logger.getLogger(ALM.class);
-	
+
 	private Date valueDate;
 	private Date appDate;
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
-	
+
 	public EODConfig getEodConfig() {
 		try {
 			List<EODConfig> list = eodConfigDAO.getEODConfig();
@@ -51,15 +51,17 @@ public class ALM implements Tasklet {
 		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
 
 		try {
-						
-			logger.debug("START: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
+			logger.debug(
+					"START: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			DataEngineStatus status = ALMExtarct.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ALMProcessThread(1000)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
-			logger.debug("COMPLETED: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+			logger.debug("COMPLETED: ALM Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -79,10 +81,10 @@ public class ALM implements Tasklet {
 	public DataSource getDataSource() {
 		return dataSource;
 	}
-	
+
 	public class ALMProcessThread implements Runnable {
 		private long userId;
-		
+
 		public ALMProcessThread(long userId) {
 			this.userId = userId;
 		}
@@ -97,6 +99,5 @@ public class ALM implements Tasklet {
 			}
 		}
 	}
-
 
 }

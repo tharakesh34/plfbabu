@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.masters.impl;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -64,11 +63,13 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 	}
 
 	/**
-	 * Fetch the Record  MasterDef details by key field
+	 * Fetch the Record MasterDef details by key field
 	 * 
-	 * @param masterType (String)
-	 * @param  keyType (String)
-	 * 			 
+	 * @param masterType
+	 *            (String)
+	 * @param keyType
+	 *            (String)
+	 * 
 	 * @return KeyCode (String)
 	 */
 	@Override
@@ -81,7 +82,7 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 
 		StringBuilder selectSql = new StringBuilder("Select Key_Code ");
 		selectSql.append(" From Master_Def");
-		selectSql.append(" Where Master_Type =:MasterType and Key_type=:KeyType " );
+		selectSql.append(" Where Master_Type =:MasterType and Key_type=:KeyType ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
@@ -89,13 +90,15 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 	}
-	
+
 	/**
-	 * Fetch the Record  MasterDef details by key field
+	 * Fetch the Record MasterDef details by key field
 	 * 
-	 * @param masterType (String)
-	 * @param  KeyCode (String)
-	 * 			 
+	 * @param masterType
+	 *            (String)
+	 * @param KeyCode
+	 *            (String)
+	 * 
 	 * @return keyType (String)
 	 */
 	@Override
@@ -108,7 +111,7 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 
 		StringBuilder selectSql = new StringBuilder("Select Key_type ");
 		selectSql.append(" From Master_Def");
-		selectSql.append(" Where Master_Type =:MasterType and Key_Code=:keyCode " );
+		selectSql.append(" Where Master_Type =:MasterType and Key_Code=:keyCode ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);

@@ -47,15 +47,14 @@ import java.io.Serializable;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 
 public class AccountNumberUtil implements Serializable {
-    private static final long serialVersionUID = -1200799666995440280L;
+	private static final long serialVersionUID = -1200799666995440280L;
 
 	private RuleDAO ruleDAO;
-	private  RuleExecutionUtil ruleExecutionUtil;
+	private RuleExecutionUtil ruleExecutionUtil;
 
-	
 	public AccountNumberUtil() {
-	    super();
-    }
+		super();
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -63,6 +62,7 @@ public class AccountNumberUtil implements Serializable {
 	public RuleDAO getRuleDAO() {
 		return ruleDAO;
 	}
+
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
@@ -70,8 +70,9 @@ public class AccountNumberUtil implements Serializable {
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}
+
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
-	
+
 }

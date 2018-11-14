@@ -53,37 +53,38 @@ import org.zkoss.zkplus.spring.SpringUtil;
 import com.pennanttech.framework.security.core.User;
 
 public class SessionUtil {
-	private static Map<String,Boolean> activeDeskTopsMap = new HashMap<String, Boolean>();
+	private static Map<String, Boolean> activeDeskTopsMap = new HashMap<String, Boolean>();
 	private static Map<String, Object> currentLoginUsersMap = new HashMap<String, Object>();
-	
-	private SessionUtil(){
+
+	private SessionUtil() {
 		super();
 	}
-	
-	public static Map<String,Object> getCurrentLoginUsers(){
+
+	public static Map<String, Object> getCurrentLoginUsers() {
 		currentLoginUsersMap.clear();
-		
+
 		User userImpl = null;
-		for(int i=0; i<getSessionRegistry().getAllPrincipals().size(); i++){
-			userImpl =(User) getSessionRegistry().getAllPrincipals().get(i);
-			currentLoginUsersMap.put(String.valueOf(userImpl.getSecurityUser().getUsrLogin()) ,getSessionRegistry().getAllPrincipals().get(i));
+		for (int i = 0; i < getSessionRegistry().getAllPrincipals().size(); i++) {
+			userImpl = (User) getSessionRegistry().getAllPrincipals().get(i);
+			currentLoginUsersMap.put(String.valueOf(userImpl.getSecurityUser().getUsrLogin()),
+					getSessionRegistry().getAllPrincipals().get(i));
 		}
-		
+
 		return currentLoginUsersMap;
 	}
-	
+
 	public static SessionRegistryImpl getSessionRegistry() {
-		return (SessionRegistryImpl)SpringUtil.getBean("sessionRegistry");
+		return (SessionRegistryImpl) SpringUtil.getBean("sessionRegistry");
 	}
 
 	public static Map<String, Boolean> getActiveDeskTopsMap() {
 		return activeDeskTopsMap;
 	}
-	
+
 	public static List<User> getLoggedInUsers() {
 		List<User> loggedInUsers = new ArrayList<User>();
 		Map<String, Object> loginUsersMap = getCurrentLoginUsers();
-		
+
 		for (String userID : loginUsersMap.keySet()) {
 			if (SessionUtil.getActiveDeskTopsMap().containsKey(userID)) {
 				if (!SessionUtil.getActiveDeskTopsMap().get(userID).booleanValue()) {

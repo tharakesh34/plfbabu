@@ -63,12 +63,12 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 	private String module;
 	private String moduleCode;
 	private String valueType;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private DeviationHeader befImage;
 	private LoggedInUser userDetails;
-	
-	private List<DeviationDetail> deviationDetails=new ArrayList<DeviationDetail>();
+
+	private List<DeviationDetail> deviationDetails = new ArrayList<DeviationDetail>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -83,10 +83,10 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("deviationDetails");
-	return excludeFields;
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -96,58 +96,51 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 	public long getId() {
 		return deviationID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.deviationID = id;
 	}
-	
+
 	public long getDeviationID() {
 		return deviationID;
 	}
+
 	public void setDeviationID(long deviationID) {
 		this.deviationID = deviationID;
 	}
-	
-	
-		
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
-	
-		
-	
+
 	public String getModule() {
 		return module;
 	}
+
 	public void setModule(String module) {
 		this.module = module;
 	}
-	
-	
-		
-	
+
 	public String getModuleCode() {
 		return moduleCode;
 	}
+
 	public void setModuleCode(String moduleCode) {
 		this.moduleCode = moduleCode;
 	}
-	
-	
-		
-	
+
 	public String getValueType() {
 		return valueType;
 	}
+
 	public void setValueType(String valueType) {
 		this.valueType = valueType;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -155,7 +148,7 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -164,12 +157,12 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public DeviationHeader getBefImage(){
+	public DeviationHeader getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DeviationHeader beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DeviationHeader beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -181,10 +174,10 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public List<DeviationDetail> getDeviationDetails() {
-	    return deviationDetails;
-    }
+		return deviationDetails;
+	}
 
 	public void setDeviationDetails(List<DeviationDetail> deviationDetails) {
-	    this.deviationDetails = deviationDetails;
-    }
+		this.deviationDetails = deviationDetails;
+	}
 }

@@ -57,24 +57,24 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>AuthorizationLimit table</b>.<br>
  *
  */
-public class AuthorizationLimit extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class AuthorizationLimit extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private int limitType;
-	private long userID= 0;
-	private long roleId= 0;
+	private long userID = 0;
+	private long roleId = 0;
 	private String module;
-	private BigDecimal limitAmount= BigDecimal.ZERO;
+	private BigDecimal limitAmount = BigDecimal.ZERO;
 	private Date startDate;
 	private Date expiryDate;
 	private Date holdStartDate;
 	private Date holdExpiryDate;
-	private boolean active= false;
-	private boolean newRecord=false;
+	private boolean active = false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private AuthorizationLimit befImage;
-	private  LoggedInUser userDetails;
+	private LoggedInUser userDetails;
 	private List<AuthorizationLimitDetail> authorizationLimitDetails;
 	private String usrLogin;
 	private String UsrFName;
@@ -82,7 +82,7 @@ private static final long serialVersionUID = 1L;
 	private String UsrLName;
 	private String roleCd;
 	private String roleName;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -95,9 +95,9 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("authorizationLimitDetails");
 		excludeFields.add("usrLogin");
 		excludeFields.add("UsrFName");
@@ -105,87 +105,97 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("UsrLName");
 		excludeFields.add("roleCd");
 		excludeFields.add("roleName");
-	return excludeFields;
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public int getLimitType() {
 		return limitType;
 	}
+
 	public void setLimitType(int limitType) {
 		this.limitType = limitType;
 	}
-	
+
 	public long getUserID() {
 		return userID;
 	}
+
 	public void setUserID(long userID) {
 		this.userID = userID;
 	}
-	
+
 	public long getRoleId() {
 		return roleId;
 	}
+
 	public void setRoleId(long roleId) {
 		this.roleId = roleId;
 	}
-	
+
 	public String getModule() {
 		return module;
 	}
+
 	public void setModule(String module) {
 		this.module = module;
 	}
-	
+
 	public BigDecimal getLimitAmount() {
 		return limitAmount;
 	}
+
 	public void setLimitAmount(BigDecimal limitAmount) {
 		this.limitAmount = limitAmount;
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	
+
 	public Date getExpiryDate() {
 		return expiryDate;
 	}
+
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
 	}
-	
+
 	public Date getHoldStartDate() {
 		return holdStartDate;
 	}
+
 	public void setHoldStartDate(Date holdStartDate) {
 		this.holdStartDate = holdStartDate;
 	}
-	
+
 	public Date getHoldExpiryDate() {
 		return holdExpiryDate;
 	}
+
 	public void setHoldExpiryDate(Date holdExpiryDate) {
 		this.holdExpiryDate = holdExpiryDate;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -193,7 +203,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -202,19 +212,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public AuthorizationLimit getBefImage(){
+	public AuthorizationLimit getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(AuthorizationLimit beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AuthorizationLimit beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

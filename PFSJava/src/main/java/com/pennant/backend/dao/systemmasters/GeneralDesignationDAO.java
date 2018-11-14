@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.GeneralDesignation;
 import com.pennanttech.pff.core.TableType;
@@ -52,17 +53,17 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface GeneralDesignationDAO extends BasicCrudDao<GeneralDesignation> {
 
-	GeneralDesignation getGeneralDesignationById(String id,String type);
-	
+	GeneralDesignation getGeneralDesignationById(String id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param genDesignation
-	 *           genDesignation of the generalDesignation.
+	 *            genDesignation of the generalDesignation.
 	 * @param tableType
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String genDesignation, TableType tableType);
-	
+
 }

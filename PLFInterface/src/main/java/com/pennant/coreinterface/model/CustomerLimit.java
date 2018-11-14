@@ -5,13 +5,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class CustomerLimit implements Serializable {
-	
+
 	private static final long serialVersionUID = 6854633859577732726L;
 
-    public CustomerLimit() {
-    	super();
-    }
-    
+	public CustomerLimit() {
+		super();
+	}
+
 	private String custMnemonic;
 	private String custName;
 	private String custLocation;
@@ -22,8 +22,8 @@ public class CustomerLimit implements Serializable {
 	private String limitCountry;
 	private String limitCategory;
 	private String limitCategoryDesc;
-	private String limitCurrency; 
-	private int    limitCcyEdit; 
+	private String limitCurrency;
+	private int limitCcyEdit;
 
 	private Date limitExpiry;
 	private BigDecimal limitAmount;
@@ -231,7 +231,5 @@ public class CustomerLimit implements Serializable {
 	public void setCustCountryDesc(String custCountryDesc) {
 		this.custCountryDesc = custCountryDesc;
 	}
-
-
 
 }

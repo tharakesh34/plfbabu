@@ -76,7 +76,6 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 				executionID = logExecutionHeader(execution);
 				execution.setId(executionID);
 
-
 				if (StringUtils.isNotEmpty(systemNotification.getTriggerQuery()) && count > 0) {
 					executeCriteriaQuery(systemNotification, executionID, attributes);
 				} else if (StringUtils.isEmpty(systemNotification.getTriggerQuery())) {
@@ -223,7 +222,8 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								} else if ("AMOUNT".equals(attr.getType())) {
 									if (rs.getBigDecimal(columnName) != null) {
 										java.math.BigDecimal amount = rs.getBigDecimal(columnName);
-										java.math.BigDecimal formattedamount = PennantApplicationUtil .formateAmount(amount, 2);
+										java.math.BigDecimal formattedamount = PennantApplicationUtil
+												.formateAmount(amount, 2);
 										map.put(columnName, formattedamount.toString());
 									}
 								} else {

@@ -7,7 +7,7 @@ import com.pennant.backend.util.PennantConstants;
 
 public class ExecutionStatus implements Serializable {
 	private static final long serialVersionUID = 4636563297252539705L;
-	
+
 	private String executionName = "";
 	private int actualCount;
 	private int processedCount;
@@ -151,15 +151,19 @@ public class ExecutionStatus implements Serializable {
 		remarks = "";
 		status = PennantConstants.FILESTATUS_STARTING;
 	}
+
 	public int getCustomerCount() {
 		return customerCount;
 	}
+
 	public void setCustomerCount(int customerCount) {
 		this.customerCount = customerCount;
 	}
+
 	public int getCompleted() {
 		return completed;
 	}
+
 	public void setCompleted(int completed) {
 		this.completed = completed;
 	}

@@ -42,12 +42,16 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 
 public interface ScoringGroupDAO {
 
-	 ScoringGroup getScoringGroupById(long id,String type);
-	 void update(ScoringGroup scoringGroup,String type);
-	 void delete(ScoringGroup scoringGroup,String type);
-	 long save(ScoringGroup scoringGroup,String type);
+	ScoringGroup getScoringGroupById(long id, String type);
+
+	void update(ScoringGroup scoringGroup, String type);
+
+	void delete(ScoringGroup scoringGroup, String type);
+
+	long save(ScoringGroup scoringGroup, String type);
 }

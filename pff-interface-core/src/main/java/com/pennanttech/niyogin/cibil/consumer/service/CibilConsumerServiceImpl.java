@@ -31,34 +31,34 @@ import com.pennanttech.pff.external.CibilConsumerService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CibilConsumerServiceImpl extends NiyoginService implements CibilConsumerService {
-	private static final Logger	logger				= Logger.getLogger(CibilConsumerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CibilConsumerServiceImpl.class);
 
-	private final String		extConfigFileName	= "cibilConsumer.properties";
-	private String				serviceUrl;
+	private final String extConfigFileName = "cibilConsumer.properties";
+	private String serviceUrl;
 
 	//CIBIL APPLICANT
-	public static final String	REQ_SEND			= "REQSENDCIBIL";
-	public static final String	STATUSCODE			= "STATUSCIBIL";
-	public static final String	RSN_CODE			= "REASONCIBIL";
-	public static final String	REMARKS				= "REMARKSCIBIL";
-	public static final String	CBTOTENQ			= "CBTOTENQ";
-	public static final String	CBLAST30DAYS		= "CBLAST30DAYS";
-	public static final String	CBLAST6MONTHS		= "CBLAST6MONTHS";
-	public static final String	CBLAST12MONTHS		= "CBLAST12MONTHS";
-	public static final String	CBLAST24MONTHS		= "CBLAST24MONTHS";
-	public static final String	RECENTDATE			= "RECENTDATE";
+	public static final String REQ_SEND = "REQSENDCIBIL";
+	public static final String STATUSCODE = "STATUSCIBIL";
+	public static final String RSN_CODE = "REASONCIBIL";
+	public static final String REMARKS = "REMARKSCIBIL";
+	public static final String CBTOTENQ = "CBTOTENQ";
+	public static final String CBLAST30DAYS = "CBLAST30DAYS";
+	public static final String CBLAST6MONTHS = "CBLAST6MONTHS";
+	public static final String CBLAST12MONTHS = "CBLAST12MONTHS";
+	public static final String CBLAST24MONTHS = "CBLAST24MONTHS";
+	public static final String RECENTDATE = "RECENTDATE";
 
 	//CIBIL CO_APPLICANT
-	public  final String	COAPP_REQ_SEND			= "COAPPREQSENDCIBIL";
-	public  final String	COAPP_STATUSCODE		= "COAPPSTATUSCIBIL";
-	public  final String	COAPP_RSN_CODE			= "COAPPREASONCIBIL";
-	public  final String	COAPP_REMARKS			= "COAPPREMARKSCIBIL";
-	public  final String	COAPP_CBTOTENQ			= "COAPPCBTOTENQ";
-	public  final String	COAPP_CBLAST30DAYS		= "COAPPCBLAST30DAYS";
-	public  final String	COAPP_CBLAST6MONTHS		= "COAPPCBLAST6MONTHS";
-	public  final String	COAPP_CBLAST12MONTHS	= "COAPPCBLAST12MONTHS";
-	public  final String	COAPP_CBLAST24MONTHS	= "COAPPCBLAST24MONTHS";
-	public  final String	COAPP_RECENTDATE		= "COAPPRECENTDATE";
+	public final String COAPP_REQ_SEND = "COAPPREQSENDCIBIL";
+	public final String COAPP_STATUSCODE = "COAPPSTATUSCIBIL";
+	public final String COAPP_RSN_CODE = "COAPPREASONCIBIL";
+	public final String COAPP_REMARKS = "COAPPREMARKSCIBIL";
+	public final String COAPP_CBTOTENQ = "COAPPCBTOTENQ";
+	public final String COAPP_CBLAST30DAYS = "COAPPCBLAST30DAYS";
+	public final String COAPP_CBLAST6MONTHS = "COAPPCBLAST6MONTHS";
+	public final String COAPP_CBLAST12MONTHS = "COAPPCBLAST12MONTHS";
+	public final String COAPP_CBLAST24MONTHS = "COAPPCBLAST24MONTHS";
+	public final String COAPP_RECENTDATE = "COAPPRECENTDATE";
 
 	/**
 	 * Method for get the CibilConsumer details of the Customer and set these details to ExtendedFieldDetails.
@@ -74,7 +74,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
@@ -202,14 +202,13 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 				doExceptioLogging(reference, reuestString, jsonResponse, errorDesc, reqSentOn);
 			}
 			//prepare the coApp Data
-			prepareCoAppResponse(appplicationdata, coApplicantsData);	
+			prepareCoAppResponse(appplicationdata, coApplicantsData);
 		}
-		
+
 		Map<String, Object> mapvalidData = validateExtendedMapValues(coApplicantsData);
 		prepareResponseObj(mapvalidData, financeDetail);
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * method for prepare the CibilConsumerRequest request object.
@@ -218,7 +217,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	 * @param finReference
 	 * @return cibilConsumerRequest
 	 */
-	private CibilConsumerRequest prepareRequestObj(CustomerDetails customerDetails,String finReference) {
+	private CibilConsumerRequest prepareRequestObj(CustomerDetails customerDetails, String finReference) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		CibilConsumerRequest cibilConsumerRequest = new CibilConsumerRequest();
@@ -314,7 +313,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 		return address;
 
 	}
-	
+
 	/**
 	 * Method for prepare the CoApplicants data as a String value by seperating each CoApplicant data with delimeter.
 	 * 
@@ -363,7 +362,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
-	 * @param reqSentOn 
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
 			String errorDesc, Timestamp reqSentOn) {
@@ -396,7 +395,7 @@ public class CibilConsumerServiceImpl extends NiyoginService implements CibilCon
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
-	 * @param reqSentOn 
+	 * @param reqSentOn
 	 */
 	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
 			Timestamp reqSentOn) {

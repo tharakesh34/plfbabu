@@ -67,13 +67,13 @@ public class CollateralStructureListModelItemRenderer implements ListitemRendere
 
 		lc = new Listcell(cs.getCollateralType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(cs.getCollateralDesc());
 		lc.setParent(item);
 
 		lc = new Listcell(PennantAppUtil.getlabelDesc(cs.getLtvType(), PennantStaticListUtil.getListLtvTypes()));
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox cbMarketableSecurities = new Checkbox();
 		cbMarketableSecurities.setDisabled(true);

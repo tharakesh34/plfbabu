@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.vasproducttype.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -67,7 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements VASProductTypeDAO {
 	private static Logger logger = Logger.getLogger(VASProductTypeDAOImpl.class);
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new VASProductType
 	 * 
@@ -112,7 +111,8 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 		VASProductType vASProductType = getVASProductType();
 		vASProductType.setId(id);
 		StringBuilder selectSql = new StringBuilder("Select ProductType, ProductTypeDesc, ProductCtg, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",ProductCtgDesc");
 		}
@@ -125,8 +125,7 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 		RowMapper<VASProductType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASProductType.class);
 
 		try {
-			vASProductType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			vASProductType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vASProductType = null;
@@ -190,11 +189,11 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 		StringBuilder insertSql = new StringBuilder("Insert Into VasProductType");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ProductType, ProductTypeDesc, ProductCtg, Active");
-		insertSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ProductType, :ProductTypeDesc, :ProductCtg, :Active");
-		insertSql
-				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -222,10 +221,9 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update VasProductType");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set ProductTypeDesc = :ProductTypeDesc, ProductCtg = :ProductCtg, Active = :Active");
-		updateSql
-				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Set ProductTypeDesc = :ProductTypeDesc, ProductCtg = :ProductCtg, Active = :Active");
+		updateSql.append(
+				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ProductType =:ProductType");
 
 		if (!type.endsWith("_Temp")) {
@@ -243,7 +241,6 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 		logger.debug("Leaving");
 	}
 
-	
 	@Override
 	public int getVASProductTypeByActive(String productType, String type) {
 
@@ -259,8 +256,8 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
 
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			return 0;
 		}

@@ -281,7 +281,7 @@ public class MandateController {
 		WSReturnStatus response = null;
 		try {
 			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
-					mandateDetail.getNewMandateId(),null);
+					mandateDetail.getNewMandateId(), null);
 			if (count > 0) {
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {
@@ -327,7 +327,8 @@ public class MandateController {
 				response = (Mandate) auditHeader.getAuditDetail().getModelData();
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				if (mandate.isSwapIsActive()) {
-					financeMainService.loanMandateSwapping(response.getOrgReference(), response.getMandateID(),mandate.getMandateType());
+					financeMainService.loanMandateSwapping(response.getOrgReference(), response.getMandateID(),
+							mandate.getMandateType());
 				}
 				doEmptyResponseObject(response);
 			}
@@ -341,7 +342,6 @@ public class MandateController {
 
 		return response;
 	}
-	
 
 	/**
 	 * do mandate doSetMandateDefault(for create and approve mandate)

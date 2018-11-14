@@ -43,8 +43,7 @@ public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements Z
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(zIPCodeDetails);
-		RowMapper<ZIPCodeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ZIPCodeDetails.class);
+		RowMapper<ZIPCodeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ZIPCodeDetails.class);
 
 		try {
 			zIPCodeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -47,9 +47,11 @@ import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennanttech.pff.core.TableType;
 
 public interface BuilderCompanyDAO extends BasicCrudDao<BuilderCompany> {
-	
-	BuilderCompany getBuilderCompany(long id,String type);
+
+	BuilderCompany getBuilderCompany(long id, String type);
+
 	boolean isDuplicateKey(long id, String name, TableType tableType);
-	boolean isIdExists(long id);	
-	
+
+	boolean isIdExists(long id);
+
 }

@@ -56,29 +56,29 @@ import com.pennanttech.pff.external.BreService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class BreServiceImpl extends NiyoginService implements BreService {
-	private static final Logger	logger						= Logger.getLogger(BreServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BreServiceImpl.class);
 
-	private final String		extConfigFileName			= "bre.properties";
-	private String				serviceUrl;
-	private Map<String, Object>	extendedMap					= null;
+	private final String extConfigFileName = "bre.properties";
+	private String serviceUrl;
+	private Map<String, Object> extendedMap = null;
 
 	//BRE
-	public static final String	REQ_SEND					= "REQSENDEXPBRE";
-	public static final String	STATUSCODE					= "STATUSEXPBRE";
-	public static final String	RSN_CODE					= "REASONEXPBRE";
-	public static final String	REMARKS						= "REMARKSEXPBRE";
+	public static final String REQ_SEND = "REQSENDEXPBRE";
+	public static final String STATUSCODE = "STATUSEXPBRE";
+	public static final String RSN_CODE = "REASONEXPBRE";
+	public static final String REMARKS = "REMARKSEXPBRE";
 	//BRE LIST FIELDS
-	public static final String	LOOKALIKEVALUE				= "LOOKALIKEVALUE";
-	public static final String	LOOKALIKEELEMENT			= "LOOKALIKEELE";
-	public static final String	EXPERTSCOREVALUES			= "EXPERTSCOREVALUES";
-	public static final String	EXPERTSCOREELEMENTS			= "EXPERTSCOREELEMENT";
-	public static final String	POLICYREASONCODE			= "POLICYREASONCODE";
+	public static final String LOOKALIKEVALUE = "LOOKALIKEVALUE";
+	public static final String LOOKALIKEELEMENT = "LOOKALIKEELE";
+	public static final String EXPERTSCOREVALUES = "EXPERTSCOREVALUES";
+	public static final String EXPERTSCOREELEMENTS = "EXPERTSCOREELEMENT";
+	public static final String POLICYREASONCODE = "POLICYREASONCODE";
 
-	private String				PATH_LOOKALIKESCOREVALUES	= "$.data.OUTAPPLICATION.CALL2.LOOKALIKESCOREVALUES.item[*]";
-	private String				PATH_LOOKALIKESCOREELEMENTS	= "$.data.OUTAPPLICATION.CALL2.LOOKALIKESCOREELEMENTS.item[*]";
-	private String				PATH_EXPERTSCOREVALUES		= "$.data.OUTAPPLICATION.CALL2.EXPERTSCOREVALUES.item[*]";
-	private String				PATH_EXPERTSCOREELEMENTS	= "$.data.OUTAPPLICATION.CALL2.EXPERTSCOREELEMENTS.item[*]";
-	private String				PATH_POLICYREASONCODE		= "$.data.OUTAPPLICATION.CALL2.POLICYSORTEDREASONCODETABLE1.item[*]";
+	private String PATH_LOOKALIKESCOREVALUES = "$.data.OUTAPPLICATION.CALL2.LOOKALIKESCOREVALUES.item[*]";
+	private String PATH_LOOKALIKESCOREELEMENTS = "$.data.OUTAPPLICATION.CALL2.LOOKALIKESCOREELEMENTS.item[*]";
+	private String PATH_EXPERTSCOREVALUES = "$.data.OUTAPPLICATION.CALL2.EXPERTSCOREVALUES.item[*]";
+	private String PATH_EXPERTSCOREELEMENTS = "$.data.OUTAPPLICATION.CALL2.EXPERTSCOREELEMENTS.item[*]";
+	private String PATH_POLICYREASONCODE = "$.data.OUTAPPLICATION.CALL2.POLICYSORTEDREASONCODETABLE1.item[*]";
 
 	/***
 	 * Method for get the BRE details of the Customer and set these details to ExtendedFieldDetails.
@@ -89,12 +89,12 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	@Override
 	public AuditHeader executeBRE(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(serviceUrl)) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		extendedMap = getExtendedMapValues(financeDetail);
@@ -198,22 +198,34 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		if (extendedMap != null) {
 			//getting data from CRIFF
 			bureau.setNoOfBusLoansOpenedL6M(getIntValue(CrifBureauServiceImpl.NUMB_OF_BUS_LOANS_OPENED_IN_L6M));
-			bureau.setClsTotDisbAmtL12M(getBigDecimalValue(CrifBureauServiceImpl.SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS));
-			bureau.setMinPctPaidUnSecL1M(getBigDecimalValue(CrifBureauServiceImpl.MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS));
-			bureau.setPctTotOvdhicrL1M(getBigDecimalValue(CrifBureauServiceImpl.RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS));
-			bureau.setAlMaxPctPaidSecL1M(getBigDecimalValue(CrifBureauServiceImpl.MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS));
+			bureau.setClsTotDisbAmtL12M(
+					getBigDecimalValue(CrifBureauServiceImpl.SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS));
+			bureau.setMinPctPaidUnSecL1M(
+					getBigDecimalValue(CrifBureauServiceImpl.MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS));
+			bureau.setPctTotOvdhicrL1M(
+					getBigDecimalValue(CrifBureauServiceImpl.RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS));
+			bureau.setAlMaxPctPaidSecL1M(
+					getBigDecimalValue(CrifBureauServiceImpl.MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS));
 			bureau.setMonSinceL30pOvralL12M(getIntValue(CrifBureauServiceImpl.MONTHS_SINCE_30_PLUS_DPD_IN_L12M));
 			bureau.setClsTotDisbAmt(getBigDecimalValue(CrifBureauServiceImpl.SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS));
-			bureau.setNoPrvsLoansAsOfAppDate(getBooleanValue(CrifBureauServiceImpl.NO_PREVS_LOANS_AS_OF_APP_DT) ? "1" : "0");
-			bureau.setIsApplicant90PlusDpdinL6M(getBooleanValue(CrifBureauServiceImpl.IS_APP_90PLUS_DPD_IN_L6M) ? "1" : "0");
-			bureau.setIsApplicantSubStandardinL6M(getBooleanValue(CrifBureauServiceImpl.IS_APP_SUBSTANDARD_IN_L6M) ? "1" : "0");
-			bureau.setIsApplicantReportedAsLossinL6M(getBooleanValue(CrifBureauServiceImpl.IS_APP_REPORTED_AS_LOSS_IN_L6M) ? "1" : "0");
-			bureau.setIsApplicantDoubtfulinL6M(getBooleanValue(CrifBureauServiceImpl.IS_APP_DOUBTFUL_IN_L6M) ? "1" : "0");
-			bureau.setIsApplicantMentionedAsSMA(getBooleanValue(CrifBureauServiceImpl.IS_APP_MENTIONED_AS_SMA) ? "1" : "0");
-			String lstUpdDate = NiyoginUtility.formatDate(getDateValue(CrifBureauServiceImpl.LAST_UPDATE_DT_IN_BUREAU),"yyyy-MM-dd");
+			bureau.setNoPrvsLoansAsOfAppDate(
+					getBooleanValue(CrifBureauServiceImpl.NO_PREVS_LOANS_AS_OF_APP_DT) ? "1" : "0");
+			bureau.setIsApplicant90PlusDpdinL6M(
+					getBooleanValue(CrifBureauServiceImpl.IS_APP_90PLUS_DPD_IN_L6M) ? "1" : "0");
+			bureau.setIsApplicantSubStandardinL6M(
+					getBooleanValue(CrifBureauServiceImpl.IS_APP_SUBSTANDARD_IN_L6M) ? "1" : "0");
+			bureau.setIsApplicantReportedAsLossinL6M(
+					getBooleanValue(CrifBureauServiceImpl.IS_APP_REPORTED_AS_LOSS_IN_L6M) ? "1" : "0");
+			bureau.setIsApplicantDoubtfulinL6M(
+					getBooleanValue(CrifBureauServiceImpl.IS_APP_DOUBTFUL_IN_L6M) ? "1" : "0");
+			bureau.setIsApplicantMentionedAsSMA(
+					getBooleanValue(CrifBureauServiceImpl.IS_APP_MENTIONED_AS_SMA) ? "1" : "0");
+			String lstUpdDate = NiyoginUtility.formatDate(getDateValue(CrifBureauServiceImpl.LAST_UPDATE_DT_IN_BUREAU),
+					"yyyy-MM-dd");
 			bureau.setLastUpdateDtInBureau(lstUpdDate);
 			bureau.setNotenoughInfo(getBooleanValue(CrifBureauServiceImpl.NOT_ENOUGH_INFO) ? "1" : "0");
-			bureau.setMaxUnSecDisbAmtL12M(getBigDecimalValue(CrifBureauServiceImpl.MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M));
+			bureau.setMaxUnSecDisbAmtL12M(
+					getBigDecimalValue(CrifBureauServiceImpl.MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M));
 
 			//getting data from EXPERIAN BUREAU
 			bureau.setTotalEnquiries(getIntValue(ExperianBureauServiceImpl.NO_OF_ENQUIRES));
@@ -354,7 +366,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		logger.debug(Literal.ENTERING);
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
-		
+
 		DeMogs deMogs = new DeMogs();
 		deMogs.setTypeOfIndustry(StringUtils.trimToNull(customer.getLovDescCustSectorName()));
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
@@ -365,35 +377,37 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 			deMogs.setOperationalOffcPincode(StringUtils.trimToNull(address.getCustAddrZIP()));
 			deMogs.setZipCode(StringUtils.trimToNull(address.getCustAddrZIP()));
 		}
-				
+
 		deMogs.setCategoryOfApplicant(StringUtils.trimToNull(customer.getCustTypeCode()));
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		deMogs.setPanNumber(StringUtils.trimToNull(getPanNumber(documentList)));
 		if (extendedMap != null) {
 			//getting data from web or mobile
-			deMogs.setResidenceTypeOfMDorPROPTRYorMNGNGPARTNER(getStringValue(ExtFieldMapConstants.BUSINESS_PREMISES_CUSTOMER));
+			deMogs.setResidenceTypeOfMDorPROPTRYorMNGNGPARTNER(
+					getStringValue(ExtFieldMapConstants.BUSINESS_PREMISES_CUSTOMER));
 			deMogs.setYrsAtCurResidencePROPorMPorMDetc(getIntValue(ExtFieldMapConstants.YR_CURRENT_RESIDENCE_CUSTOMER));
 		}
-		
-		String phoneNumber = NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),InterfaceConstants.PHONE_TYPE_OFF);
+
+		String phoneNumber = NiyoginUtility.getPhoneNumber(customerDetails.getCustomerPhoneNumList(),
+				InterfaceConstants.PHONE_TYPE_OFF);
 		deMogs.setMobileNumber(StringUtils.trimToNull(phoneNumber));
-		
+
 		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 		deMogs.setEmail(StringUtils.trimToNull(NiyoginUtility.getEmail(emailList)));
-		
+
 		//TODO:
 		deMogs.setDateOfInc(NiyoginUtility.formatDate(customer.getCustDOB(), "yyyy-MM-dd"));
 		deMogs.setGstin(null);
 		deMogs.setApplicantAdhaar(StringUtils.trimToNull(getPanNumber(documentList)));//FIXME
 		deMogs.setUdyogadhaar(null);
-		
+
 		logger.debug(Literal.LEAVING);
 		return deMogs;
 	}
 
 	private Financials prepareFinancials(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Financials financials = new Financials();
 		//getting data from pdfExtraction
 		financials.setExpenseYr1(getBigDecimalValue(ExtFieldMapConstants.EXPENSE_YR1));
@@ -403,7 +417,8 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		financials.setInterestOnCapitalToPartners(getBigDecimalValue(ExtFieldMapConstants.INTERST_CAPTIAL_PATNER_YR1));
 		financials.setIncomeTax(getBigDecimalValue(ExtFieldMapConstants.INCOME_TAX_YR1));
 		financials.setEquityAndPreferrenceShareCapital(getBigDecimalValue(ExtFieldMapConstants.EQUITYSHARECAPTIAL_YR1));
-		financials.setQuasiEquityDirectorsFriendsAndRelatives(getBigDecimalValue(ExtFieldMapConstants.QUASI_EQUITY_YR1));
+		financials
+				.setQuasiEquityDirectorsFriendsAndRelatives(getBigDecimalValue(ExtFieldMapConstants.QUASI_EQUITY_YR1));
 		financials.setFixedassetYr1(getBigDecimalValue(ExtFieldMapConstants.FIXED_ASSEST_YR1));
 		financials.setFixedassetYr2(getBigDecimalValue(ExtFieldMapConstants.FIXED_ASSEST_YR2));
 		financials.setSundryDebtorsLessThan6M(getBigDecimalValue(ExtFieldMapConstants.SUNDRY_DBTRS_LESSTHAN_6M_YR1));
@@ -427,30 +442,32 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		BigDecimal longTermBorwngYr1 = getBigDecimalValue(ExtFieldMapConstants.LONG_TERM_BORWNG_YR1);
 		BigDecimal shortTermBorwngYr1 = getBigDecimalValue(ExtFieldMapConstants.SHORT_TERM_BORWNG_YR1);
 		financials.setTotalLoans(longTermBorwngYr1.add(shortTermBorwngYr1));
-		financials.setSundryCreditorsForTradeAndExpensesBillsPayable(getBigDecimalValue(ExtFieldMapConstants.SUNDRY_CREDITORS_YR1));
+		financials.setSundryCreditorsForTradeAndExpensesBillsPayable(
+				getBigDecimalValue(ExtFieldMapConstants.SUNDRY_CREDITORS_YR1));
 		financials.setCash(getBigDecimalValue(ExtFieldMapConstants.CASH_AND_BANK_YR1));
-		
+
 		//getting data from web or mobile
 		financials.setSumOfEmiAllLoans(getBigDecimalValue(ExtFieldMapConstants.SUM_EMI_ALL_LOANS));
 		financials.setExistingLoanObligation(getBigDecimalValue(ExtFieldMapConstants.EXISTING_LOAN_OBLIGATION));
-		
+
 		//getting data from BRE
 		financials.setPostFundingDSCR(getBigDecimalValue(ExtFieldMapConstants.POST_FUNDING_DSCR));
 		financials.setCurrentRatio(getBigDecimalValue(ExtFieldMapConstants.CURRENT_RATIO));
 		financials.setWorkingCapitalGap(getBigDecimalValue(ExtFieldMapConstants.WRKNG_CAPITAL_CYCLE_GAP));
 		financials.setNetworth(getBigDecimalValue(ExtFieldMapConstants.NET_WORTH));
-		
+
 		//getting data from PREFIOUS
 		financials.setUtilizationLimitOnODorCC(getBigDecimalValue(ExtFieldMapConstants.CC_OR_OD_UTILIZATION));
-		
+
 		//getting data from CRIFF
-		String oldDisDate = NiyoginUtility.formatDate(getDateValue(CrifBureauServiceImpl.OLDEST_LOANDISBURSED_DT),"yyyy-MM-dd");
+		String oldDisDate = NiyoginUtility.formatDate(getDateValue(CrifBureauServiceImpl.OLDEST_LOANDISBURSED_DT),
+				"yyyy-MM-dd");
 		financials.setOldestLoanDisbursedDate(oldDisDate);
-		
+
 		financials.setCurrentAssets(prepareCurrentAssests(financeDetail));
 		financials.setCurrentLiabilittes(prepareCurrentLiabilities(financeDetail));
 		financials.setVatServiceTaxForm26as(prepareVatServiceTaxForms(financeDetail));
-		
+
 		//TODO:
 		//fields already used in financial Turnover YR1,YR2
 		financials.setSalesYr1(getBigDecimalValue(ExtFieldMapConstants.TURN_OVER_YR1));
@@ -540,20 +557,20 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 
 	private Perfios preparePerfios(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Perfios perfios = new Perfios();
 		//getting data from PREFIOUS
 		perfios.setAvgBankBalance(getBigDecimalValue(ExtFieldMapConstants.AVERAGE_BANK_BALANCE));
 		perfios.setInwardChequeReturns(getIntValue(ExtFieldMapConstants.NO_OF_INWARD_CHEQUE_BOUNCES));
 		perfios.setOdccLimit(getBigDecimalValue(ExtFieldMapConstants.OD_OR_CC_LIMIT));
 		perfios.setNoOfEmiBounce(getIntValue(ExtFieldMapConstants.EMI_BOUNCES_L6M));
-		
+
 		perfios.setNoOfCreditTransactions(prepareNoOfCreditTransactions(financeDetail));
 		perfios.setAmtOfCreditTransactions(prepareAmtOfCreditTransactions(financeDetail));
 		perfios.setAmtOfDebtTransactions(prepareAmtOfDebtTransactions());
 		perfios.setNoOfCashDeposits(prepareNoOfCashDeposits());
 		perfios.setAmtOfCashDeposit(prepareAmtOfCashDeposit());
-		
+
 		//TODO:
 		perfios.setCreditConcentrationInBankStatement(BigDecimal.ZERO);
 		perfios.setMinBalChargesReported(BigDecimal.ZERO);
@@ -665,14 +682,14 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private CodeMogs prepareCodeMogs(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
-		
+
 		CodeMogs codeMogs = new CodeMogs();
 		codeMogs.setDob(NiyoginUtility.formatDate(customer.getCustDOB(), "yyyy-MM-dd"));
-		
+
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (addressList != null && !addressList.isEmpty()) {
-			CustomerAddres curAddress=null;
-			CustomerAddres perAddress=null;
+			CustomerAddres curAddress = null;
+			CustomerAddres perAddress = null;
 			curAddress = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_CURRES);
 			perAddress = NiyoginUtility.getCustomerAddress(addressList, InterfaceConstants.ADDR_TYPE_PERNMENT);
 			codeMogs.setCurrentResidencePincode(StringUtils.trimToNull(curAddress.getCustAddrZIP()));
@@ -682,7 +699,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		List<CustomerDocument> documentList = customerDetails.getCustomerDocumentsList();
 		codeMogs.setCoAppPanNumber(StringUtils.trimToNull(getPanNumber(documentList)));
 		codeMogs.setSalToPartnerOrDirector(getBigDecimalValue(ExtFieldMapConstants.PARTNERS_DIRECTORS_REMUN_YR1));
-		
+
 		//TODO:
 		codeMogs.setMinAge(0);
 		codeMogs.setMaxAge(0);
@@ -726,7 +743,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
-	 * @param reqSentOn 
+	 * @param reqSentOn
 	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
 			String errorDesc, Timestamp reqSentOn) {
@@ -750,7 +767,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		logInterfaceDetails(iLogDetail);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for the prepare the BRE response extended map
 	 * 
@@ -794,7 +811,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 							builder.append(value.replaceAll(LIST_DELIMETER, ""));
 						}
 						builder.append(LIST_DELIMETER);
-					
+
 					}
 				}
 			} catch (Exception e) {
@@ -804,7 +821,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 		logger.debug(Literal.LEAVING);
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Method for failure logging.
 	 * 
@@ -813,7 +830,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	 * @param response
 	 * @param errorCode
 	 * @param errorDesc
-	 * @param reqSentOn 
+	 * @param reqSentOn
 	 */
 	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
 			Timestamp reqSentOn) {
@@ -838,7 +855,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 
 	private String getStringValue(String key) {
 		String stringValue = null;
-		if(extendedMap != null) {
+		if (extendedMap != null) {
 			stringValue = Objects.toString(extendedMap.get(key), null);
 		}
 		return stringValue;
@@ -847,7 +864,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private int getIntValue(String key) {
 		int intValue = 0;
 		try {
-			if(extendedMap != null) {
+			if (extendedMap != null) {
 				intValue = Integer.parseInt(Objects.toString(extendedMap.get(key)));
 			}
 		} catch (NumberFormatException e) {
@@ -859,7 +876,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private boolean getBooleanValue(String key) {
 		boolean booleanValue = false;
 		try {
-			if(extendedMap != null) {
+			if (extendedMap != null) {
 				booleanValue = (Boolean) extendedMap.get(key);
 			}
 		} catch (Exception e) {
@@ -872,7 +889,7 @@ public class BreServiceImpl extends NiyoginService implements BreService {
 	private BigDecimal getBigDecimalValue(String key) {
 		BigDecimal bigDecimalValue = BigDecimal.ZERO;
 		try {
-			if(extendedMap != null) {
+			if (extendedMap != null) {
 				bigDecimalValue = (BigDecimal) extendedMap.get(key);
 			}
 		} catch (Exception e) {

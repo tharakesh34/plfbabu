@@ -23,7 +23,7 @@ public class ExtendedField implements Serializable {
 
 	}
 
-	@XmlElementWrapper(name="extendedFields")
+	@XmlElementWrapper(name = "extendedFields")
 	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldData> extendedFieldDataList;
 

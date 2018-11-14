@@ -27,14 +27,13 @@ import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class CustomerAccountService extends ServiceHelper {
-	private static final long	serialVersionUID	= 1442146139821584760L;
-	private Logger				logger				= Logger.getLogger(CustomerAccountService.class);
+	private static final long serialVersionUID = 1442146139821584760L;
+	private Logger logger = Logger.getLogger(CustomerAccountService.class);
 
-	private AccountsDAO			accountsDAO;
-	private AccountsHistoryDAO	accountsHistoryDAO;
-	private AccountTypeDAO		accountTypeDAO;
-	private DataSource			dataSource;
-
+	private AccountsDAO accountsDAO;
+	private AccountsHistoryDAO accountsHistoryDAO;
+	private AccountTypeDAO accountTypeDAO;
+	private DataSource dataSource;
 
 	/**
 	 * @param custId
@@ -51,9 +50,9 @@ public class CustomerAccountService extends ServiceHelper {
 		StringBuilder sb = new StringBuilder();
 		sb.append(" SELECT T1.PostDate, T1.ValueDate, T1.AppDate, T1.AppValueDate, T1.CustAppDate, ");
 		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T1.PostBranch, T1.AccountType ");
-		sb.append(" FROM Postings T1 "); 
+		sb.append(" FROM Postings T1 ");
 		sb.append(" WHERE postCategory=? AND PostStatus = ?");
-		
+
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
@@ -71,7 +70,7 @@ public class CustomerAccountService extends ServiceHelper {
 				if (posting.getPostAmount().compareTo(BigDecimal.ZERO) == 0) {
 					continue;
 				}
-				
+
 				String acTypeKey = posting.getAccountType();
 				AccountType accountType = new AccountType();
 
@@ -81,7 +80,7 @@ public class CustomerAccountService extends ServiceHelper {
 				} else {
 					accountType = accountTypeMap.get(acTypeKey);
 				}
-				
+
 				prepareAccounts(accountMap, posting, accountType);
 				PrepareAccountsHist(accountHistMap, posting);
 			}
@@ -95,7 +94,7 @@ public class CustomerAccountService extends ServiceHelper {
 			for (Entry<String, AccountsHistory> accountHist : accountHistMap.entrySet()) {
 				accountsHistoryDAO.saveOrUpdate(accountHist.getValue());
 			}
-			
+
 			resultSet.close();
 			sqlStatement.close();
 
@@ -251,7 +250,7 @@ public class CustomerAccountService extends ServiceHelper {
 	public void setAccountsHistoryDAO(AccountsHistoryDAO accountsHistoryDAO) {
 		this.accountsHistoryDAO = accountsHistoryDAO;
 	}
-	
+
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}

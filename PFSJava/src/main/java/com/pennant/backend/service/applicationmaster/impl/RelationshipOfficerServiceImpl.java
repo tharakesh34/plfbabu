@@ -60,12 +60,11 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>RelationshipOfficer</b>.<br>
+ * Service implementation for methods that depends on <b>RelationshipOfficer</b>.<br>
  * 
  */
-public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipOfficer> implements
-										RelationshipOfficerService {
+public class RelationshipOfficerServiceImpl extends GenericService<RelationshipOfficer>
+		implements RelationshipOfficerService {
 	private static final Logger logger = Logger.getLogger(RelationshipOfficerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -74,7 +73,7 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 	public RelationshipOfficerServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -91,22 +90,17 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 		return relationshipOfficerDAO;
 	}
 
-	public void setRelationshipOfficerDAO(
-			RelationshipOfficerDAO relationshipOfficerDAO) {
+	public void setRelationshipOfficerDAO(RelationshipOfficerDAO relationshipOfficerDAO) {
 		this.relationshipOfficerDAO = relationshipOfficerDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RelationshipOfficers/RelationshipOfficers_Temp by using
-	 * RelationshipOfficerDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using
-	 * RelationshipOfficerDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtRelationshipOfficers by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * RelationshipOfficers/RelationshipOfficers_Temp by using RelationshipOfficerDAO's save method b) Update the Record
+	 * in the table. based on the module workFlow Configuration. by using RelationshipOfficerDAO's update method 3)
+	 * Audit the record in to AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -120,10 +114,9 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
-		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditHeader
-				.getAuditDetail().getModelData();
- 
+
+		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditHeader.getAuditDetail().getModelData();
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (relationshipOfficer.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -142,12 +135,10 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RelationshipOfficers by using RelationshipOfficerDAO's delete
-	 * method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RelationshipOfficers by using RelationshipOfficerDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -163,8 +154,7 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 			return auditHeader;
 		}
 
-		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditHeader
-				.getAuditDetail().getModelData();
+		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditHeader.getAuditDetail().getModelData();
 		getRelationshipOfficerDAO().delete(relationshipOfficer, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -173,8 +163,7 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 	}
 
 	/**
-	 * getRelationshipOfficerById fetch the details by using
-	 * RelationshipOfficerDAO's getRelationshipOfficerById method.
+	 * getRelationshipOfficerById fetch the details by using RelationshipOfficerDAO's getRelationshipOfficerById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -185,15 +174,12 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 
 	@Override
 	public RelationshipOfficer getRelationshipOfficerById(String id) {
-		return getRelationshipOfficerDAO().getRelationshipOfficerById(id,
-				"_View");
+		return getRelationshipOfficerDAO().getRelationshipOfficerById(id, "_View");
 	}
 
 	/**
-	 * getApprovedRelationshipOfficerById fetch the details by using
-	 * RelationshipOfficerDAO's getRelationshipOfficerById method . with
-	 * parameter id and type as blank. it fetches the approved records from the
-	 * RelationshipOfficers.
+	 * getApprovedRelationshipOfficerById fetch the details by using RelationshipOfficerDAO's getRelationshipOfficerById
+	 * method . with parameter id and type as blank. it fetches the approved records from the RelationshipOfficers.
 	 * 
 	 * @param id
 	 *            (String)
@@ -205,22 +191,16 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getRelationshipOfficerDAO().delete with parameters
-	 * relationshipOfficer,"" b) NEW Add new record in to main table by using
-	 * getRelationshipOfficerDAO().save with parameters relationshipOfficer,""
-	 * c) EDIT Update record in the main table by using
-	 * getRelationshipOfficerDAO().update with parameters relationshipOfficer,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getRelationshipOfficerDAO().delete with parameters
-	 * relationshipOfficer,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and
-	 * AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader)
-	 * based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getRelationshipOfficerDAO().delete
+	 * with parameters relationshipOfficer,"" b) NEW Add new record in to main table by using
+	 * getRelationshipOfficerDAO().save with parameters relationshipOfficer,"" c) EDIT Update record in the main table
+	 * by using getRelationshipOfficerDAO().update with parameters relationshipOfficer,"" 3) Delete the record from the
+	 * workFlow table by using getRelationshipOfficerDAO().delete with parameters relationshipOfficer,"_Temp" 4) Audit
+	 * the record in to AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and AdtRelationshipOfficers by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -237,13 +217,14 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 		}
 
 		RelationshipOfficer relationshipOfficer = new RelationshipOfficer();
-		BeanUtils.copyProperties((RelationshipOfficer) auditHeader
-				.getAuditDetail().getModelData(), relationshipOfficer);
-		
+		BeanUtils.copyProperties((RelationshipOfficer) auditHeader.getAuditDetail().getModelData(),
+				relationshipOfficer);
+
 		getRelationshipOfficerDAO().delete(relationshipOfficer, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(relationshipOfficerDAO.getRelationshipOfficerById(relationshipOfficer.getROfficerCode(), ""));
+			auditHeader.getAuditDetail().setBefImage(
+					relationshipOfficerDAO.getRelationshipOfficerById(relationshipOfficer.getROfficerCode(), ""));
 		}
 
 		if (relationshipOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -256,8 +237,7 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 			relationshipOfficer.setNextTaskId("");
 			relationshipOfficer.setWorkflowId(0);
 
-			if (relationshipOfficer.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (relationshipOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				relationshipOfficer.setRecordType("");
 				getRelationshipOfficerDAO().save(relationshipOfficer, TableType.MAIN_TAB);
@@ -282,13 +262,11 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getRelationshipOfficerDAO().delete with
-	 * parameters relationshipOfficer,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtRelationshipOfficers by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getRelationshipOfficerDAO().delete with parameters relationshipOfficer,"_Temp" 3) Audit
+	 * the record in to AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -303,8 +281,7 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 			return auditHeader;
 		}
 
-		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditHeader
-				.getAuditDetail().getModelData();
+		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getRelationshipOfficerDAO().delete(relationshipOfficer, TableType.TEMP_TAB);
@@ -315,22 +292,18 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getRelationshipOfficerDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getRelationshipOfficerDAO().getErrorDetail with Error ID
+	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader
-		) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -351,18 +324,17 @@ public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipO
 		logger.debug("Entering");
 
 		// Get the model object.
-		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditDetail
-				.getModelData();
+		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (relationshipOfficer.isNew() 
-				&& PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType()) 
+		if (relationshipOfficer.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())
 				&& relationshipOfficerDAO.isDuplicateKey(relationshipOfficer.getROfficerCode(),
-				 relationshipOfficer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+						relationshipOfficer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 
-			parameters[0] = PennantJavaUtil.getLabel("label_ROfficerCode") + ": " + relationshipOfficer.getROfficerCode();
-			
+			parameters[0] = PennantJavaUtil.getLabel("label_ROfficerCode") + ": "
+					+ relationshipOfficer.getROfficerCode();
+
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 

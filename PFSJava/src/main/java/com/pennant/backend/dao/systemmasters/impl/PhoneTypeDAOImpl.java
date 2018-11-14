@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -70,11 +69,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDAO {
 	private static Logger logger = Logger.getLogger(PhoneTypeDAOImpl.class);
-	
+
 	public PhoneTypeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Phone Types details by key field
 	 * 
@@ -113,9 +112,8 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTPhoneTypes or
-	 * BMTPhoneTypes_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Phone Types by key PhoneTypeCode
+	 * This method Deletes the Record from the BMTPhoneTypes or BMTPhoneTypes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Phone Types by key PhoneTypeCode
 	 * 
 	 * @param Phone
 	 *            Types (phoneType)
@@ -129,12 +127,12 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append(" Delete From BMTPhoneTypes");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where PhoneTypeCode =:PhoneTypeCode");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
 
@@ -172,16 +170,18 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 		insertSql.append("Insert Into BMTPhoneTypes");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (PhoneTypeCode, PhoneTypeDesc, PhoneTypeRegex, PhoneTypePriority, PhoneTypeIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:PhoneTypeCode, :PhoneTypeDesc, :PhoneTypeRegex,:PhoneTypePriority, :PhoneTypeIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" Values(:PhoneTypeCode, :PhoneTypeDesc, :PhoneTypeRegex,:PhoneTypePriority, :PhoneTypeIsActive,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
+
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -190,9 +190,8 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 	}
 
 	/**
-	 * This method updates the Record BMTPhoneTypes or BMTPhoneTypes_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Phone Types by key PhoneTypeCode and Version
+	 * This method updates the Record BMTPhoneTypes or BMTPhoneTypes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Phone Types by key PhoneTypeCode and Version
 	 * 
 	 * @param Phone
 	 *            Types (phoneType)
@@ -211,16 +210,18 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 		updateSql.append("Update BMTPhoneTypes");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set PhoneTypeDesc = :PhoneTypeDesc,");
-		updateSql.append(" PhoneTypeRegex =:PhoneTypeRegex,PhoneTypePriority = :PhoneTypePriority, PhoneTypeIsActive = :PhoneTypeIsActive,");
+		updateSql.append(
+				" PhoneTypeRegex =:PhoneTypeRegex,PhoneTypePriority = :PhoneTypePriority, PhoneTypeIsActive = :PhoneTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PhoneTypeCode =:PhoneTypeCode");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.trace(Literal.SQL +  updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}

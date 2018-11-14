@@ -80,22 +80,21 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmasters.sukukbroker.SukukBrokerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Application
- * Masters/SukukBrokerBonds/sukukBrokerBondsDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Application Masters/SukukBrokerBonds/sukukBrokerBondsDialog.zul
+ * file.
  */
 public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
-	private static final long			serialVersionUID		= 1L;
-	private static final Logger			logger					= Logger.getLogger(SukukBrokerBondsDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(SukukBrokerBondsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_SukukBrokerBondsDialog;
 	protected Row row0;
@@ -129,13 +128,10 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	// not auto wired vars
 	private SukukBrokerBonds sukukBrokerBonds; // overhanded
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient PagedListService pagedListService;
-	private List<ValueLabel> listPaymentMode = PennantStaticListUtil
-			.getPaymentModes();
-	private List<ValueLabel> listCommissionType = PennantStaticListUtil
-			.getCommissionType();
+	private List<ValueLabel> listPaymentMode = PennantStaticListUtil.getPaymentModes();
+	private List<ValueLabel> listCommissionType = PennantStaticListUtil.getCommissionType();
 
 	public transient int ccyFormatter = 0;
 	public transient int percnetageFormatter = 2;
@@ -165,9 +161,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected SukukBrokerBonds
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected SukukBrokerBonds object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -200,7 +195,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 
 			this.sukukBrokerBonds.setWorkflowId(0);
 
-			doLoadWorkFlow(this.sukukBrokerBonds.isWorkflow(), this.sukukBrokerBonds.getWorkflowId(), this.sukukBrokerBonds.getNextTaskId());
+			doLoadWorkFlow(this.sukukBrokerBonds.isWorkflow(), this.sukukBrokerBonds.getWorkflowId(),
+					this.sukukBrokerBonds.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -321,7 +317,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		logger.debug("Entering" + event.toString());
 		try {
 
-			ScreenCTL.displayNotes(getNotes("SukukBrokerBonds", getSukukBrokerBonds().getBrokerCode(), getSukukBrokerBonds().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("SukukBrokerBonds", getSukukBrokerBonds().getBrokerCode(),
+					getSukukBrokerBonds().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -335,8 +332,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSukukBrokerBonds
 	 * @throws InterruptedException
@@ -353,7 +349,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aSukukBrokerBonds.isNewRecord()));
 
 			setDialog(DialogType.EMBEDDED);
-			this.window_SukukBrokerBondsDialog.doModal() ;
+			this.window_SukukBrokerBondsDialog.doModal();
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -371,7 +367,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
 
-		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(), this.userAction, this.bondCode, this.bondCode));
+		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
+				this.userAction, this.bondCode, this.bondCode));
 
 		if (getSukukBrokerBonds().isNewRecord()) {
 			readOnlyComponent(false, this.bondCode);
@@ -388,16 +385,20 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	public void doReadOnly(boolean readOnly) {
 		logger.debug("Entering");
 		boolean tempReadOnly = readOnly;
-		if (readOnly){
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.sukukBrokerBonds.getRecordType())) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.sukukBrokerBonds.getRecordType())) {
 			tempReadOnly = true;
 		}
-		setComponentAccessType("SukukBrokerBondsDialog_PaymentMode", tempReadOnly, this.paymentMode, this.space_PaymentMode, this.label_PaymentMode, this.hlayout_PaymentMode, null);
-		setComponentAccessType("SukukBrokerBondsDialog_IssuerAccount", tempReadOnly, this.issuerAccount, this.space_IssuerAccount, this.label_IssuerAccount, this.hlayout_IssuerAccount, null);
-		setComponentAccessType("SukukBrokerBondsDialog_CommissionType", tempReadOnly, this.commissionType, this.space_Commission, this.label_Commission, this.hlayout_Commission, null);
+		setComponentAccessType("SukukBrokerBondsDialog_PaymentMode", tempReadOnly, this.paymentMode,
+				this.space_PaymentMode, this.label_PaymentMode, this.hlayout_PaymentMode, null);
+		setComponentAccessType("SukukBrokerBondsDialog_IssuerAccount", tempReadOnly, this.issuerAccount,
+				this.space_IssuerAccount, this.label_IssuerAccount, this.hlayout_IssuerAccount, null);
+		setComponentAccessType("SukukBrokerBondsDialog_CommissionType", tempReadOnly, this.commissionType,
+				this.space_Commission, this.label_Commission, this.hlayout_Commission, null);
 		setRowInvisible(this.row1, this.hlayout_IssuerAccount, null);
-		setComponentAccessType("SukukBrokerBondsDialog_Commission", tempReadOnly, this.commission, null, this.label_Commission, this.hlayout_Commission, null);
+		setComponentAccessType("SukukBrokerBondsDialog_Commission", tempReadOnly, this.commission, null,
+				this.label_Commission, this.hlayout_Commission, null);
 		logger.debug("Leaving");
 	}
 
@@ -408,12 +409,11 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("SukukBrokerBondsDialog",arguments.get("role").toString());
+		getUserWorkspace().allocateAuthorities("SukukBrokerBondsDialog", arguments.get("role").toString());
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SukukBrokerBondsDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SukukBrokerBondsDialog_btnEdit"));
@@ -453,16 +453,19 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	 */
 	public void doWriteBeanToComponents(SukukBrokerBonds aSukukBrokerBonds) {
 		logger.debug("Entering");
-		this.bondCode.setValue(aSukukBrokerBonds.getBondCode(),aSukukBrokerBonds.getBondDesc());
+		this.bondCode.setValue(aSukukBrokerBonds.getBondCode(), aSukukBrokerBonds.getBondDesc());
 		this.brokerCode.setValue(aSukukBrokerBonds.getBrokerCode());
 		fillComboBox(this.paymentMode, aSukukBrokerBonds.getPaymentMode(), listPaymentMode);
 		this.issuerAccount.setValue(aSukukBrokerBonds.getIssuerAccount());
 		fillComboBox(this.commissionType, aSukukBrokerBonds.getCommissionType(), listCommissionType);
 
-		if (StringUtils.trimToEmpty(aSukukBrokerBonds.getCommissionType()).equals(PennantConstants.COMMISSION_TYPE_FLAT)) {
+		if (StringUtils.trimToEmpty(aSukukBrokerBonds.getCommissionType())
+				.equals(PennantConstants.COMMISSION_TYPE_FLAT)) {
 			this.commission.setValue(PennantAppUtil.formateAmount(aSukukBrokerBonds.getCommission(), ccyFormatter));
-		} else if (StringUtils.trimToEmpty(aSukukBrokerBonds.getCommissionType()).equals(PennantConstants.COMMISSION_TYPE_PERCENTAGE)) {
-			this.commission.setValue(PennantAppUtil.formateAmount(aSukukBrokerBonds.getCommission(), percnetageFormatter));
+		} else if (StringUtils.trimToEmpty(aSukukBrokerBonds.getCommissionType())
+				.equals(PennantConstants.COMMISSION_TYPE_PERCENTAGE)) {
+			this.commission
+					.setValue(PennantAppUtil.formateAmount(aSukukBrokerBonds.getCommission(), percnetageFormatter));
 		}
 		doSetCommissionproperties();
 		this.recordStatus.setValue(aSukukBrokerBonds.getRecordStatus());
@@ -546,28 +549,35 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 			this.commission.setConstraint("");
 
 			if (this.commission.getValue() == null) {
-				throw new WrongValueException(this.commission, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_BrokerBondsDialog_Commission.value") }));
+				throw new WrongValueException(this.commission, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_BrokerBondsDialog_Commission.value") }));
 			}
 
 			if (this.commission.getValue().compareTo(BigDecimal.ZERO) != 0) {
 
-				if (PennantConstants.COMMISSION_TYPE_FLAT.equals(this.commissionType.getSelectedItem().getValue().toString())) {
+				if (PennantConstants.COMMISSION_TYPE_FLAT
+						.equals(this.commissionType.getSelectedItem().getValue().toString())) {
 
-					this.commission.setConstraint(new PTDecimalValidator(Labels.getLabel("label_BrokerBondsDialog_Commission.value"), ccyFormatter, true, false));
+					this.commission.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_BrokerBondsDialog_Commission.value"), ccyFormatter, true, false));
 
-					aSukukBrokerBonds.setCommission(PennantAppUtil.unFormateAmount(this.commission.getValue(), ccyFormatter));
+					aSukukBrokerBonds
+							.setCommission(PennantAppUtil.unFormateAmount(this.commission.getValue(), ccyFormatter));
 
-				} else if (PennantConstants.COMMISSION_TYPE_PERCENTAGE.equals(this.commissionType.getSelectedItem().getValue().toString())) {
+				} else if (PennantConstants.COMMISSION_TYPE_PERCENTAGE
+						.equals(this.commissionType.getSelectedItem().getValue().toString())) {
 
-					this.commission.setConstraint(new PTDecimalValidator(Labels.getLabel("label_BrokerBondsDialog_Commission.value"), percnetageFormatter, true, false, 0, 100D));
+					this.commission.setConstraint(
+							new PTDecimalValidator(Labels.getLabel("label_BrokerBondsDialog_Commission.value"),
+									percnetageFormatter, true, false, 0, 100D));
 
-					aSukukBrokerBonds.setCommission(PennantAppUtil.unFormateAmount(this.commission.getValue(), percnetageFormatter));
+					aSukukBrokerBonds.setCommission(
+							PennantAppUtil.unFormateAmount(this.commission.getValue(), percnetageFormatter));
 				}
 			} else {
 				aSukukBrokerBonds.setCommission(BigDecimal.ZERO);
 			}
-			
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -593,7 +603,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		logger.debug("Entering");
 		// Bond Code
 		if (!this.bondCode.isReadonly()) {
-			this.bondCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BrokerBondsDialog_BondCode.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.bondCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BrokerBondsDialog_BondCode.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		// Payment Mode
 		// if (!this.paymentMode.isReadonly()){
@@ -602,7 +613,9 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		// }
 		// Issuer Account
 		if (!this.issuerAccount.isReadonly()) {
-			this.issuerAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_BrokerBondsDialog_IssuerAccount.value"), PennantRegularExpressions.REGEX_NUMERIC, true));
+			this.issuerAccount
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BrokerBondsDialog_IssuerAccount.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 		// Commission Type
 		// if (!this.commissionType.isReadonly()){
@@ -611,7 +624,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		// }
 		// Commission
 		if (!this.commission.isReadonly()) {
-			this.commission.setConstraint(new PTDecimalValidator(Labels.getLabel("label_BrokerBondsDialog_Commission.value"), 0, true, false, 0));
+			this.commission.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_BrokerBondsDialog_Commission.value"), 0, true, false, 0));
 		}
 		logger.debug("Leaving");
 	}
@@ -670,8 +684,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_BrokerBondsDialog_BondCode.value")+" : "+aSukukBrokerBonds.getBondCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BrokerBondsDialog_BondCode.value") + " : " + aSukukBrokerBonds.getBondCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSukukBrokerBonds.getRecordType())) {
 				aSukukBrokerBonds.setVersion(aSukukBrokerBonds.getVersion() + 1);
@@ -691,7 +705,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 			try {
 				tranType = PennantConstants.TRAN_DEL;
 				List<SukukBrokerBonds> list = processbrokerbond(aSukukBrokerBonds, tranType);
-				if (list!=null) {
+				if (list != null) {
 					getSukukBrokerDialogCtrl().doFilllistbox(list);
 					window_SukukBrokerBondsDialog.onClose();
 					getSukukBrokerDialogCtrl().window_SukukBrokerDialog.setVisible(true);
@@ -732,7 +746,8 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 
 		if (isWorkFlowEnabled()) {
 			aSukukBrokerBonds.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aSukukBrokerBonds.getNextTaskId(), aSukukBrokerBonds);
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aSukukBrokerBonds.getNextTaskId(),
+					aSukukBrokerBonds);
 		}
 
 		// force validation, if on, than execute by component.getValue()
@@ -783,7 +798,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		// save it to database
 		try {
 			List<SukukBrokerBonds> list = processbrokerbond(aSukukBrokerBonds, tranType);
-			if (list!=null) {
+			if (list != null) {
 				getSukukBrokerDialogCtrl().doFilllistbox(list);
 				window_SukukBrokerBondsDialog.onClose();
 				getSukukBrokerDialogCtrl().window_SukukBrokerDialog.setVisible(true);
@@ -795,25 +810,28 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 		logger.debug("Leaving");
 	}
 
-	private List<SukukBrokerBonds> processbrokerbond(SukukBrokerBonds aSukukBrokerBonds, String tranType) throws InterruptedException {
+	private List<SukukBrokerBonds> processbrokerbond(SukukBrokerBonds aSukukBrokerBonds, String tranType)
+			throws InterruptedException {
 
 		boolean recordAdded = false;
-		List<SukukBrokerBonds>	sukukBrokerBondsList = new ArrayList<SukukBrokerBonds>();
+		List<SukukBrokerBonds> sukukBrokerBondsList = new ArrayList<SukukBrokerBonds>();
 
 		String[] errParm = new String[1];
 		errParm[0] = PennantJavaUtil.getLabel("label_BondCode") + ":" + aSukukBrokerBonds.getBondCode();
-		
+
 		List<SukukBrokerBonds> list = getSukukBrokerDialogCtrl().getSukukBrokerBondsList();
-		
+
 		for (SukukBrokerBonds sukukBrokerBonds : list) {
 
-			String recordType=aSukukBrokerBonds.getRecordType();
-			
-			if (sukukBrokerBonds.getBondCode().equals(aSukukBrokerBonds.getBondCode()) && 
-					sukukBrokerBonds.getBrokerCode().equals(aSukukBrokerBonds.getBrokerCode())) {
+			String recordType = aSukukBrokerBonds.getRecordType();
+
+			if (sukukBrokerBonds.getBondCode().equals(aSukukBrokerBonds.getBondCode())
+					&& sukukBrokerBonds.getBrokerCode().equals(aSukukBrokerBonds.getBrokerCode())) {
 				// Both Current and Existing list rating same
 				if (aSukukBrokerBonds.isNew()) {
-					ErrorDetail details=ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, null), getUserWorkspace().getUserLanguage());
+					ErrorDetail details = ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, null),
+							getUserWorkspace().getUserLanguage());
 					MessageUtil.showError(details.getError());
 					return null;
 				}
@@ -831,11 +849,12 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 						sukukBrokerBondsList.add(aSukukBrokerBonds);
 					} else if (recordType.equals(PennantConstants.RECORD_TYPE_CAN)) {
 						recordAdded = true;
-						
-						List<SukukBrokerBonds> prvList = getSukukBrokerDialogCtrl().getSukukBroker().getSukukBrokerBonds();
+
+						List<SukukBrokerBonds> prvList = getSukukBrokerDialogCtrl().getSukukBroker()
+								.getSukukBrokerBonds();
 						for (SukukBrokerBonds sbb : prvList) {
-							if (sbb.getBondCode() == aSukukBrokerBonds.getBondCode() && 
-									sbb.getBrokerCode().equals(aSukukBrokerBonds.getBrokerCode())) {
+							if (sbb.getBondCode() == aSukukBrokerBonds.getBondCode()
+									&& sbb.getBrokerCode().equals(aSukukBrokerBonds.getBrokerCode())) {
 								sukukBrokerBondsList.add(sbb);
 							}
 						}
@@ -850,9 +869,9 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 			} else {
 				sukukBrokerBondsList.add(sukukBrokerBonds);
 			}
-		
+
 		}
-		
+
 		if (!recordAdded) {
 			sukukBrokerBondsList.add(aSukukBrokerBonds);
 		}

@@ -67,30 +67,32 @@ public class ChangePasswordModel {
 	private static SecurityUserPasswordsDAO securityUserPasswordsDAO;
 
 	/**
-	 *This method checking whether EncriptedPassword and raw password are same or not by calling PasswordEncoderImpl's
-	 *isPasswordValid() method 
-	 * @param oldPassword       //encrypted Old password  
-	 * @param password         //newPassword or oldPassword  depend on method call          
+	 * This method checking whether EncriptedPassword and raw password are same or not by calling PasswordEncoderImpl's
+	 * isPasswordValid() method
+	 * 
+	 * @param oldPassword
+	 *            //encrypted Old password
+	 * @param password
+	 *            //newPassword or oldPassword depend on method call
 	 * @return boolean
 	 */
 
 	public boolean isPaswordsSame(String encriptedPassword, String password) {
 		logger.debug(Literal.ENTERING);
-		
+
 		PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
 		if (!pwdEncoder.matches(password, encriptedPassword)) {
-			return false; 
+			return false;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return true;
 
 	}
 
 	/**
-	 * This method validates password with conditions
-	 *     1)Whether it is following Defined pattern or not
-	 *     2)It checks whether password contains any three sequence letters in userName 
+	 * This method validates password with conditions 1)Whether it is following Defined pattern or not 2)It checks
+	 * whether password contains any three sequence letters in userName
 	 * 
 	 * @param username
 	 * @param password
@@ -99,28 +101,30 @@ public class ChangePasswordModel {
 	public boolean checkPasswordCriteria(String username, String password) {
 		logger.debug(Literal.ENTERING);
 		boolean inValid = false;
-		String pattern="";
+		String pattern = "";
 		int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
 		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
-		pattern = PennantRegularExpressions.PASSWORD_PATTERN+".{"+String.valueOf(pwdMinLenght)+","+String.valueOf(pwdMaxLenght)+"})";
+		pattern = PennantRegularExpressions.PASSWORD_PATTERN + ".{" + String.valueOf(pwdMinLenght) + ","
+				+ String.valueOf(pwdMaxLenght) + "})";
 		Pattern p = Pattern.compile(pattern);
 		Matcher matcher = p.matcher(password);
-		if (!matcher.matches()){
+		if (!matcher.matches()) {
 			return true;
-		} 
+		}
 		if (matcher.matches()) {
 			for (String part : getSubstrings(username, 3)) {
 				if (StringUtils.containsIgnoreCase(password, part)) {
 					return true;
 				}
 			}
-		}      	
+		}
 		logger.debug(Literal.LEAVING);
 		return inValid;
 	}
 
 	/**
 	 * This method partition the given user name with length of given partitionSize and returns partition Strings list
+	 * 
 	 * @param string
 	 * @param partitionSize
 	 * @return List< String > partsList
@@ -138,34 +142,39 @@ public class ChangePasswordModel {
 		logger.debug(Literal.LEAVING);
 		return partsList;
 	}
+
 	/**
-	 * This method do the following.
-	 * <br>1)Selects list of records from SecUserPasswords table as <code>List< SecurityUser > </code>
-	 * by calling SecurityUserDAO's getUserRecentPasswords(SecurityUser aSecurityUser)
-	 * <br>2)Compare the newPassword with each  SecurityUser Object's UsrPwd property by calling<code> IsPaswordsSame()</code>
-	 * <br>3)if Password matches <code>@returns true
+	 * This method do the following. <br>
+	 * 1)Selects list of records from SecUserPasswords table as <code>List< SecurityUser > </code> by calling
+	 * SecurityUserDAO's getUserRecentPasswords(SecurityUser aSecurityUser) <br>
+	 * 2)Compare the newPassword with each SecurityUser Object's UsrPwd property by
+	 * calling<code> IsPaswordsSame()</code> <br>
+	 * 3)if Password matches <code>@returns true
 	 *       <br>  else<br> @return false</Code>
-	 * @param aSecurityUser (SecurityUser )
-	 * @param  newPassword  (String)
-	 * @return boolean 
+	 * 
+	 * @param aSecurityUser
+	 *            (SecurityUser )
+	 * @param newPassword
+	 *            (String)
+	 * @return boolean
 	 */
-	public boolean checkWithPreviousPasswords(SecurityUser aSecurityUser,String newPassword){
+	public boolean checkWithPreviousPasswords(SecurityUser aSecurityUser, String newPassword) {
 		logger.debug(Literal.ENTERING);
-		/*select all previous  passwords for user*/
-		List<SecurityUser> secUserList=getSecurityUserPasswordsDAO().getUserPreviousPasswords(aSecurityUser);
-		/*maxPasswordsCheck is number that new passwords should not match with how many previous passwords */
+		/* select all previous passwords for user */
+		List<SecurityUser> secUserList = getSecurityUserPasswordsDAO().getUserPreviousPasswords(aSecurityUser);
+		/* maxPasswordsCheck is number that new passwords should not match with how many previous passwords */
 		int maxPasswordsCheck = SysParamUtil.getValueAsInt("USR_MAX_PRE_PWDS_CHECK");
 		SecurityUser securityUser;
-		/*check only when previous passwords contains for user */
-		if(secUserList.size()>0){
-			/*if previous passwords are less then "maxPasswordsCheck", compare with only available passwords */
-			if(secUserList.size()<maxPasswordsCheck){
-				maxPasswordsCheck=secUserList.size();
+		/* check only when previous passwords contains for user */
+		if (secUserList.size() > 0) {
+			/* if previous passwords are less then "maxPasswordsCheck", compare with only available passwords */
+			if (secUserList.size() < maxPasswordsCheck) {
+				maxPasswordsCheck = secUserList.size();
 			}
-			for(int i=0;i<maxPasswordsCheck;i++){
+			for (int i = 0; i < maxPasswordsCheck; i++) {
 
-				securityUser=secUserList.get(i);
-				if(isPaswordsSame(securityUser.getUsrPwd(), newPassword)){
+				securityUser = secUserList.get(i);
+				if (isPaswordsSame(securityUser.getUsrPwd(), newPassword)) {
 					return true;
 				}
 			}
@@ -175,21 +184,22 @@ public class ChangePasswordModel {
 
 	}
 
-	public  void setSecurityUserPasswordsDAO(
-			SecurityUserPasswordsDAO securityUserPasswordsDAO) {
+	public void setSecurityUserPasswordsDAO(SecurityUserPasswordsDAO securityUserPasswordsDAO) {
 		ChangePasswordModel.securityUserPasswordsDAO = securityUserPasswordsDAO;
 	}
 
 	public static SecurityUserPasswordsDAO getSecurityUserPasswordsDAO() {
 		return securityUserPasswordsDAO;
 	}
-	
+
 	/**
 	 * This method displays passwordStatusMeter and label_PwdStatus
-	 * @param pwdstatusCode (int)
+	 * 
+	 * @param pwdstatusCode
+	 *            (int)
 	 */
 	public static void showPasswordStatusMeter(Div divPwdStatusMeter, Label labelPwdStatus, int pwdstatusCode) {
-		switch(pwdstatusCode){	
+		switch (pwdstatusCode) {
 		case 0:
 			divPwdStatusMeter.setStyle("background-color:white");
 			labelPwdStatus.setValue("");
@@ -200,13 +210,13 @@ public class ChangePasswordModel {
 			labelPwdStatus.setStyle("color:red");
 			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_Wrong.value"));
 			break;
-		case 2: 
+		case 2:
 			divPwdStatusMeter.setStyle("background-color:tan");
 			divPwdStatusMeter.setWidth("100px");
 			labelPwdStatus.setStyle("color:tan");
 			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_Week.value"));
 			break;
-		case 3	:
+		case 3:
 			divPwdStatusMeter.setStyle("background-color:yellow");
 			divPwdStatusMeter.setWidth("150px");
 			labelPwdStatus.setStyle("color:yellow");

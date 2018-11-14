@@ -24,21 +24,21 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
-	private static final long				serialVersionUID	= -546886879998950467L;
-	private static final Logger				logger				= Logger.getLogger(VASConfigurationResultCtrl.class);
+	private static final long serialVersionUID = -546886879998950467L;
+	private static final Logger logger = Logger.getLogger(VASConfigurationResultCtrl.class);
 
-	protected Window						window_VASConfigurationResult;
+	protected Window window_VASConfigurationResult;
 
-	protected Codemirror					condition;
-	protected Grid							fields;
-	protected Rows							rows_Fields;
-	protected Button						btn_Stimulate;
-	protected Row							rowResult;
-	protected Label							result;
-	protected Decimalbox					textbox;
+	protected Codemirror condition;
+	protected Grid fields;
+	protected Rows rows_Fields;
+	protected Button btn_Stimulate;
+	protected Row rowResult;
+	protected Label result;
+	protected Decimalbox textbox;
 
-	JSONArray								variables			= new JSONArray();
-	protected VASConfigurationDialogCtrl	vasConfigurationDialogCtrl;
+	JSONArray variables = new JSONArray();
+	protected VASConfigurationDialogCtrl vasConfigurationDialogCtrl;
 
 	public VASConfigurationResultCtrl() {
 		super();
@@ -53,7 +53,7 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 
 	/**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected VASConfigurationResult  object in a Map.
+	 * selected VASConfigurationResult object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -116,7 +116,8 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 				}
 			}
 			// Execute the engine
-			String rule = "function Eligibility(){" + vasConfigurationDialogCtrl.preValidation.getValue() + "}Eligibility();";
+			String rule = "function Eligibility(){" + vasConfigurationDialogCtrl.preValidation.getValue()
+					+ "}Eligibility();";
 			engine.eval(rule);
 
 			Object result = engine.get("Result");

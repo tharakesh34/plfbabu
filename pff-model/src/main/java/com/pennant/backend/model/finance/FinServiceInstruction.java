@@ -17,13 +17,14 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinServiceInstruction  extends AbstractWorkflowEntity implements Entity {
+public class FinServiceInstruction extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2803331023129230226L;
 
 	public FinServiceInstruction() {
 		super();
 	}
-	private long  serviceSeqId =  Long.MIN_VALUE;
+
+	private long serviceSeqId = Long.MIN_VALUE;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -33,7 +34,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private String module;
 	@XmlElement
 	private Date valueDate;
-	
+
 	@XmlElement
 	private Date fromDate;
 	@XmlElement
@@ -48,13 +49,13 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private String splRate;
 	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
-	@XmlElement(name="reCalType")
+	@XmlElement(name = "reCalType")
 	private String recalType;
-	@XmlElement(name="reCalFromDate")
+	@XmlElement(name = "reCalFromDate")
 	private Date recalFromDate;
-	@XmlElement(name="reCalToDate")
+	@XmlElement(name = "reCalToDate")
 	private Date recalToDate;
-	@XmlElement(name="stpProcess")
+	@XmlElement(name = "stpProcess")
 	private boolean nonStp;
 	@XmlElement
 	private String processStage;
@@ -69,9 +70,9 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private int terms = 0;
 	@XmlElement
-	private String 	serviceReqNo;
+	private String serviceReqNo;
 	@XmlElement
-	private String	remarks;
+	private String remarks;
 	@XmlElement
 	private String repayFrq;
 	private String repayPftFrq;
@@ -87,7 +88,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private Date nextRepayDate;
 	private BigDecimal pftChg = BigDecimal.ZERO;
-	
+
 	@XmlElement
 	private int tenor = 0;
 	@XmlElement
@@ -98,8 +99,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private Date droplineDate;
 	@XmlElement
 	private String rateReviewFrq;
-	
-	
+
 	@XmlElement
 	private List<WSReturnStatus> returnStatus = null;
 	@XmlElement
@@ -123,13 +123,13 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private String excessAdjustTo;
 	@XmlElement
 	private FinReceiptDetail receiptDetail;
-	@XmlElementWrapper(name="disbursements")
-	@XmlElement(name="disbursement")
+	@XmlElementWrapper(name = "disbursements")
+	@XmlElement(name = "disbursement")
 	private List<FinAdvancePayments> disbursementDetails;
-	@XmlElementWrapper(name="fees")
-	@XmlElement(name="fee")
+	@XmlElementWrapper(name = "fees")
+	@XmlElement(name = "fee")
 	private List<FinFeeDetail> finFeeDetails;
-	@XmlElement(name="overdue")
+	@XmlElement(name = "overdue")
 	private FinODPenaltyRate finODPenaltyRate;
 	private String moduleDefiner;
 	private boolean newRecord;
@@ -139,28 +139,26 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	// Bean validation purpose
 	@SuppressWarnings("unused")
 	private FinServiceInstruction validateAddRateChange = this;
-	
+
 	@SuppressWarnings("unused")
 	private FinServiceInstruction validateChangeRepayment = this;
-	
-	
+
 	@XmlElement
 	private String finType;
 	@XmlElement
 	private String currency;
-	private List<FinTypeFees> finTypeFeeList=new ArrayList<>(1);
-	
+	private List<FinTypeFees> finTypeFeeList = new ArrayList<>(1);
+
 	private long receiptId;
-	
+
 	@XmlElement
 	private String fromBranch;
 	@XmlElement
 	private String toBranch;
-	
+
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -349,7 +347,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setRepayFrq(String repayFrq) {
 		this.repayFrq = repayFrq;
 	}
-	
+
 	public List<FinAdvancePayments> getDisbursementDetails() {
 		return disbursementDetails;
 	}
@@ -357,7 +355,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setDisbursementDetails(List<FinAdvancePayments> disbursementDetails) {
 		this.disbursementDetails = disbursementDetails;
 	}
-	
+
 	public List<FinFeeDetail> getFinFeeDetails() {
 		return finFeeDetails;
 	}
@@ -385,7 +383,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -393,7 +391,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	@Override
 	public long getId() {
 		return serviceSeqId;
@@ -403,7 +401,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setId(long id) {
 		this.serviceSeqId = id;
 	}
-	
+
 	public boolean isWif() {
 		return wif;
 	}
@@ -467,14 +465,15 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setReferralId(String referralId) {
 		this.referralId = referralId;
 	}
-	
+
 	public FinODPenaltyRate getFinODPenaltyRate() {
 		return finODPenaltyRate;
 	}
+
 	public void setFinODPenaltyRate(FinODPenaltyRate finODPenaltyRate) {
 		this.finODPenaltyRate = finODPenaltyRate;
 	}
-	
+
 	public String getModuleDefiner() {
 		return moduleDefiner;
 	}
@@ -506,7 +505,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setAdjRpyTerms(int adjRpyTerms) {
 		this.adjRpyTerms = adjRpyTerms;
 	}
-	
+
 	public String getPaymentMode() {
 		return paymentMode;
 	}
@@ -534,6 +533,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public String getRepayPftFrq() {
 		return repayPftFrq;
 	}
+
 	public void setRepayPftFrq(String repayPftFrq) {
 		this.repayPftFrq = repayPftFrq;
 	}
@@ -541,6 +541,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public String getRepayRvwFrq() {
 		return repayRvwFrq;
 	}
+
 	public void setRepayRvwFrq(String repayRvwFrq) {
 		this.repayRvwFrq = repayRvwFrq;
 	}
@@ -548,6 +549,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public String getRepayCpzFrq() {
 		return repayCpzFrq;
 	}
+
 	public void setRepayCpzFrq(String repayCpzFrq) {
 		this.repayCpzFrq = repayCpzFrq;
 	}
@@ -555,6 +557,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public String getGrcPftFrq() {
 		return grcPftFrq;
 	}
+
 	public void setGrcPftFrq(String grcPftFrq) {
 		this.grcPftFrq = grcPftFrq;
 	}
@@ -562,6 +565,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public String getGrcRvwFrq() {
 		return grcRvwFrq;
 	}
+
 	public void setGrcRvwFrq(String grcRvwFrq) {
 		this.grcRvwFrq = grcRvwFrq;
 	}
@@ -569,6 +573,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public String getGrcCpzFrq() {
 		return grcCpzFrq;
 	}
+
 	public void setGrcCpzFrq(String grcCpzFrq) {
 		this.grcCpzFrq = grcCpzFrq;
 	}
@@ -709,8 +714,4 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 		this.extendedDetails = extendedDetails;
 	}
 
-	
-	
-	
-	
 }

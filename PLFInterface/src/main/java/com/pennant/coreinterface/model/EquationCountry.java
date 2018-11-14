@@ -52,56 +52,62 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
  */
 public class EquationCountry extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6235890705769120104L;
-	
+
 	private String countryCode;
 	private String countryDesc;
 	private BigDecimal countryParentLimit;
 	private BigDecimal countryResidenceLimit;
 	private BigDecimal countryRiskLimit;
 	private boolean countryIsActive;
-	
+
 	public EquationCountry() {
 		super();
 	}
-	
+
 	public String getCountryCode() {
 		return countryCode;
 	}
+
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
 	}
-	
+
 	public String getCountryDesc() {
 		return countryDesc;
 	}
+
 	public void setCountryDesc(String countryDesc) {
 		this.countryDesc = countryDesc;
 	}
-	
+
 	public BigDecimal getCountryParentLimit() {
 		return countryParentLimit;
 	}
+
 	public void setCountryParentLimit(BigDecimal countryParentLimit) {
 		this.countryParentLimit = countryParentLimit;
 	}
-	
+
 	public BigDecimal getCountryResidenceLimit() {
 		return countryResidenceLimit;
 	}
+
 	public void setCountryResidenceLimit(BigDecimal countryResidenceLimit) {
 		this.countryResidenceLimit = countryResidenceLimit;
 	}
-	
+
 	public BigDecimal getCountryRiskLimit() {
 		return countryRiskLimit;
 	}
+
 	public void setCountryRiskLimit(BigDecimal countryRiskLimit) {
 		this.countryRiskLimit = countryRiskLimit;
 	}
-	
+
 	public boolean isCountryIsActive() {
 		return countryIsActive;
 	}
+
 	public void setCountryIsActive(boolean countryIsActive) {
 		this.countryIsActive = countryIsActive;
 	}

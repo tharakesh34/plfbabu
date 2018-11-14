@@ -52,7 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 103295340132704280L;
-	
+
 	private long vehicleVersionId = Long.MIN_VALUE;
 	private long vehicleModelId;
 	private String lovDescVehicleModelIdName;
@@ -84,24 +84,27 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return vehicleVersionId;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.vehicleVersionId = id;
 	}
-	
+
 	public long getVehicleVersionId() {
 		return vehicleVersionId;
 	}
+
 	public void setVehicleVersionId(long vehicleVersionId) {
 		this.vehicleVersionId = vehicleVersionId;
 	}
-	
+
 	public long getVehicleModelId() {
 		return vehicleModelId;
 	}
+
 	public void setVehicleModelId(long vehicleModelId) {
 		this.vehicleModelId = vehicleModelId;
 	}
@@ -109,20 +112,23 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescVehicleModelIdName() {
 		return this.lovDescVehicleModelIdName;
 	}
-	public void setLovDescVehicleModelIdName (String lovDescVehicleModelIdName) {
+
+	public void setLovDescVehicleModelIdName(String lovDescVehicleModelIdName) {
 		this.lovDescVehicleModelIdName = lovDescVehicleModelIdName;
 	}
-	
+
 	public String getVehicleVersionCode() {
 		return vehicleVersionCode;
 	}
+
 	public void setVehicleVersionCode(String vehicleVersionCode) {
 		this.vehicleVersionCode = vehicleVersionCode;
 	}
-	
+
 	public String getVehicleCategory() {
 		return vehicleCategory;
 	}
+
 	public void setVehicleCategory(String vehicleCategory) {
 		this.vehicleCategory = vehicleCategory;
 	}
@@ -134,7 +140,7 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -143,17 +149,18 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public VehicleVersion getBefImage(){
+	public VehicleVersion getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(VehicleVersion beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(VehicleVersion beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -161,6 +168,7 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public long getLovDescmanufacturerId() {
 		return lovDescmanufacturerId;
 	}
+
 	public void setLovDescmanufacturerId(long lovDescmanufacturerId) {
 		this.lovDescmanufacturerId = lovDescmanufacturerId;
 	}
@@ -168,6 +176,7 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescmanufacturerName() {
 		return lovDescmanufacturerName;
 	}
+
 	public void setLovDescmanufacturerName(String lovDescmanufacturerName) {
 		this.lovDescmanufacturerName = lovDescmanufacturerName;
 	}
@@ -175,6 +184,7 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public String getLovDescVehicleModelDesc() {
 		return lovDescVehicleModelDesc;
 	}
+
 	public void setLovDescVehicleModelDesc(String lovDescVehicleModelDesc) {
 		this.lovDescVehicleModelDesc = lovDescVehicleModelDesc;
 	}
@@ -182,6 +192,7 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public int getVehicleCc() {
 		return vehicleCc;
 	}
+
 	public void setVehicleCc(int vehicleCc) {
 		this.vehicleCc = vehicleCc;
 	}
@@ -189,6 +200,7 @@ public class VehicleVersion extends AbstractWorkflowEntity implements Entity {
 	public int getVehicleDoors() {
 		return vehicleDoors;
 	}
+
 	public void setVehicleDoors(int vehicleDoors) {
 		this.vehicleDoors = vehicleDoors;
 	}

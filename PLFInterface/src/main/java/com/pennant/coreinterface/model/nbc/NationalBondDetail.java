@@ -163,8 +163,7 @@ public class NationalBondDetail implements Serializable {
 		return purchaseDetailList;
 	}
 
-	public void setPurchaseDetailList(
-			List<BondPurchaseDetail> purchaseDetailList) {
+	public void setPurchaseDetailList(List<BondPurchaseDetail> purchaseDetailList) {
 		this.purchaseDetailList = purchaseDetailList;
 	}
 
@@ -172,8 +171,7 @@ public class NationalBondDetail implements Serializable {
 		return transferDetailList;
 	}
 
-	public void setTransferDetailList(
-			List<BondTransferDetail> transferDetailList) {
+	public void setTransferDetailList(List<BondTransferDetail> transferDetailList) {
 		this.transferDetailList = transferDetailList;
 	}
 

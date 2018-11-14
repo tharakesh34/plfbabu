@@ -77,23 +77,22 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	private static final Logger logger = Logger.getLogger(MaritalStatusCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_MaritalStatusCodeDialog; 
+	protected Window window_MaritalStatusCodeDialog;
 
-	protected Textbox 		maritalStsCode; 				
-	protected Textbox 		maritalStsDesc; 				
-	protected Checkbox 		maritalStsIsActive; 			
-	protected Checkbox 		systemDefault; 			
+	protected Textbox maritalStsCode;
+	protected Textbox maritalStsDesc;
+	protected Checkbox maritalStsIsActive;
+	protected Checkbox systemDefault;
 
 	// not autoWired variables
 	private MaritalStatusCode maritalStatusCode; // over handed per parameter
 	private transient MaritalStatusCodeListCtrl maritalStatusCodeListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient MaritalStatusCodeService maritalStatusCodeService;
 
@@ -112,9 +111,8 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected MaritalStatusCode
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected MaritalStatusCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -131,8 +129,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 			doCheckRights();
 
 			if (arguments.containsKey("maritalStatusCode")) {
-				this.maritalStatusCode = (MaritalStatusCode) arguments
-						.get("maritalStatusCode");
+				this.maritalStatusCode = (MaritalStatusCode) arguments.get("maritalStatusCode");
 				MaritalStatusCode befImage = new MaritalStatusCode();
 				BeanUtils.copyProperties(this.maritalStatusCode, befImage);
 				this.maritalStatusCode.setBefImage(befImage);
@@ -142,15 +139,13 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 				setMaritalStatusCode(null);
 			}
 
-			doLoadWorkFlow(this.maritalStatusCode.isWorkflow(),
-					this.maritalStatusCode.getWorkflowId(),
+			doLoadWorkFlow(this.maritalStatusCode.isWorkflow(), this.maritalStatusCode.getWorkflowId(),
 					this.maritalStatusCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"MaritalStatusCodeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "MaritalStatusCodeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -161,8 +156,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 			// or
 			// delete maritalStatusCode here.
 			if (arguments.containsKey("maritalStatusCodeListCtrl")) {
-				setMaritalStatusCodeListCtrl((MaritalStatusCodeListCtrl) arguments
-						.get("maritalStatusCodeListCtrl"));
+				setMaritalStatusCodeListCtrl((MaritalStatusCodeListCtrl) arguments.get("maritalStatusCodeListCtrl"));
 			} else {
 				setMaritalStatusCodeListCtrl(null);
 			}
@@ -186,7 +180,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		// Empty sent any required attributes
 		this.maritalStsCode.setMaxlength(8);
 		this.maritalStsDesc.setMaxlength(50);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -195,8 +189,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -305,8 +298,10 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		this.maritalStsIsActive.setChecked(aMaritalStatusCode.isMaritalStsIsActive());
 		this.systemDefault.setChecked(aMaritalStatusCode.isSystemDefault());
 		this.recordStatus.setValue(aMaritalStatusCode.getRecordStatus());
-		
-		if(aMaritalStatusCode.isNew() || (aMaritalStatusCode.getRecordType() != null ? aMaritalStatusCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aMaritalStatusCode.isNew()
+				|| (aMaritalStatusCode.getRecordType() != null ? aMaritalStatusCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.maritalStsIsActive.setChecked(true);
 			this.maritalStsIsActive.setDisabled(true);
 		}
@@ -363,8 +358,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aMaritalStatusCode
 	 * @throws Exception
@@ -396,7 +390,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 			doWriteBeanToComponents(aMaritalStatusCode);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_MaritalStatusCodeDialog.onClose();
 		} catch (Exception e) {
@@ -413,13 +407,16 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 
 		setValidationOn(true);
 
-		if (!this.maritalStsCode.isReadonly()){
-			this.maritalStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.maritalStsCode.isReadonly()) {
+			this.maritalStsCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.maritalStsDesc.isReadonly()){
-			this.maritalStsDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.maritalStsDesc.isReadonly()) {
+			this.maritalStsDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -474,9 +471,9 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsCode.value")+" : "+aMaritalStatusCode.getMaritalStsCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_MaritalStatusCodeDialog_MaritalStsCode.value") + " : "
+				+ aMaritalStatusCode.getMaritalStsCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aMaritalStatusCode.getRecordType())) {
 				aMaritalStatusCode.setVersion(aMaritalStatusCode.getVersion() + 1);
@@ -495,7 +492,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -643,7 +640,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(MaritalStatusCode aMaritalStatusCode,	String tranType) {
+	private boolean doProcess(MaritalStatusCode aMaritalStatusCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -770,8 +767,8 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_MaritalStatusCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -814,11 +811,10 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(MaritalStatusCode aMaritalStatusCode,String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aMaritalStatusCode.getBefImage(), aMaritalStatusCode);
-		return new AuditHeader(String.valueOf(aMaritalStatusCode.getId()),
-				null, null, null, auditDetail, aMaritalStatusCode.getUserDetails(), getOverideMap());
+	private AuditHeader getAuditHeader(MaritalStatusCode aMaritalStatusCode, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMaritalStatusCode.getBefImage(), aMaritalStatusCode);
+		return new AuditHeader(String.valueOf(aMaritalStatusCode.getId()), null, null, null, auditDetail,
+				aMaritalStatusCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -859,7 +855,6 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		getMaritalStatusCodeListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.maritalStatusCode.getMaritalStsCode());
@@ -872,6 +867,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -879,6 +875,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	public MaritalStatusCode getMaritalStatusCode() {
 		return this.maritalStatusCode;
 	}
+
 	public void setMaritalStatusCode(MaritalStatusCode maritalStatusCode) {
 		this.maritalStatusCode = maritalStatusCode;
 	}
@@ -886,6 +883,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	public void setMaritalStatusCodeService(MaritalStatusCodeService maritalStatusCodeService) {
 		this.maritalStatusCodeService = maritalStatusCodeService;
 	}
+
 	public MaritalStatusCodeService getMaritalStatusCodeService() {
 		return this.maritalStatusCodeService;
 	}
@@ -893,6 +891,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	public void setMaritalStatusCodeListCtrl(MaritalStatusCodeListCtrl maritalStatusCodeListCtrl) {
 		this.maritalStatusCodeListCtrl = maritalStatusCodeListCtrl;
 	}
+
 	public MaritalStatusCodeListCtrl getMaritalStatusCodeListCtrl() {
 		return this.maritalStatusCodeListCtrl;
 	}

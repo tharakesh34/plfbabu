@@ -74,26 +74,26 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	private static final long serialVersionUID = -5898229156972529248L;
-	private static final Logger					logger				= Logger.getLogger(SelectFinTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectFinTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_SelectFinTypeDialog;											
-	protected Uppercasebox						finType;																
-	protected ExtendedCombobox					finCcy;																
-	protected Button							btnProceed;
-	
-	private FinanceTypeListCtrl					financeTypeListCtrl;
-	private FinanceType							financeType;
-	private FinanceTypeService					financeTypeService;
-	
-	private boolean 							isCopyProcess;
-	private boolean 							isPromotion;
-	private boolean 							alwCopyOption;
-	private boolean 							isOverdraft;
-	protected ExtendedCombobox					finDivision;
+	protected Window window_SelectFinTypeDialog;
+	protected Uppercasebox finType;
+	protected ExtendedCombobox finCcy;
+	protected Button btnProceed;
+
+	private FinanceTypeListCtrl financeTypeListCtrl;
+	private FinanceType financeType;
+	private FinanceTypeService financeTypeService;
+
+	private boolean isCopyProcess;
+	private boolean isPromotion;
+	private boolean alwCopyOption;
+	private boolean isOverdraft;
+	protected ExtendedCombobox finDivision;
 
 	/**
 	 * default constructor.<br>
@@ -106,7 +106,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected void doSetProperties() {
 		super.pageRightName = "FinanceTypeDialog";
 	}
-	
+
 	/**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected FinanceMain object in a Map.
@@ -122,81 +122,82 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("financeTypeListCtrl")) {
-			this.financeTypeListCtrl =   (FinanceTypeListCtrl) arguments.get("financeTypeListCtrl");
+			this.financeTypeListCtrl = (FinanceTypeListCtrl) arguments.get("financeTypeListCtrl");
 		}
 
 		if (arguments.containsKey("financeType")) {
-			this.financeType =  (FinanceType) arguments.get("financeType");
+			this.financeType = (FinanceType) arguments.get("financeType");
 		}
 
 		if (arguments.containsKey("isCopyProcess")) {
-			this.isCopyProcess =  (boolean) arguments.get("isCopyProcess");
+			this.isCopyProcess = (boolean) arguments.get("isCopyProcess");
 		}
-		
+
 		if (arguments.containsKey("isPromotion")) {
-			this.isPromotion =  (boolean) arguments.get("isPromotion");
+			this.isPromotion = (boolean) arguments.get("isPromotion");
 		}
-		
+
 		if (arguments.containsKey("alwCopyOption")) {
-			this.alwCopyOption =  (boolean) arguments.get("alwCopyOption");
+			this.alwCopyOption = (boolean) arguments.get("alwCopyOption");
 		}
-		
+
 		if (arguments.containsKey("isOverdraft")) {
-			this.isOverdraft =  (boolean) arguments.get("isOverdraft");
+			this.isOverdraft = (boolean) arguments.get("isOverdraft");
 		}
-		
-		doLoadWorkFlow(this.financeType.isWorkflow(),this.financeType.getWorkflowId(),this.financeType.getNextTaskId());
-		
+
+		doLoadWorkFlow(this.financeType.isWorkflow(), this.financeType.getWorkflowId(),
+				this.financeType.getNextTaskId());
+
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-		} 
+		}
 
 		doSetFieldProperties();
-		doCheckRights();		
-		
+		doCheckRights();
+
 		this.window_SelectFinTypeDialog.doModal();
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
-		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-		
-		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnSave"));	
+		logger.debug("Entering");
 
-		logger.debug("Leaving") ;
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+
+		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_FinanceTypeDialog_btnSave"));
+
+		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.finType.setMaxlength(8);
-		
+
 		this.finCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.finCcy.setMandatoryStyle(true);
 		this.finCcy.setModuleName("Currency");
 		this.finCcy.setValueColumn("CcyCode");
 		this.finCcy.setDescColumn("CcyDesc");
 		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
-		
+
 		if (isPromotion) {
-		this.finDivision.setMaxlength(8);
-		this.finDivision.setMandatoryStyle(true);
-		this.finDivision.setModuleName("DivisionDetail");
-		this.finDivision.setValueColumn("DivisionCode");
-		this.finDivision.setDescColumn("DivisionCodeDesc");
-		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
-		Filter[] finDivisionFilters = new Filter[1];
-		finDivisionFilters[0] = new Filter("AlwPromotion", 1, Filter.OP_EQUAL);
-		this.finDivision.setFilters(finDivisionFilters);
+			this.finDivision.setMaxlength(8);
+			this.finDivision.setMandatoryStyle(true);
+			this.finDivision.setModuleName("DivisionDetail");
+			this.finDivision.setValueColumn("DivisionCode");
+			this.finDivision.setDescColumn("DivisionCodeDesc");
+			this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+			Filter[] finDivisionFilters = new Filter[1];
+			finDivisionFilters[0] = new Filter("AlwPromotion", 1, Filter.OP_EQUAL);
+			this.finDivision.setFilters(finDivisionFilters);
 		}
 		this.finDivision.setMaxlength(8);
 		this.finDivision.setMandatoryStyle(true);
@@ -204,14 +205,14 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDivision.setValueColumn("DivisionCode");
 		this.finDivision.setDescColumn("DivisionCodeDesc");
 		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
-		
+
 		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
 		this.finCcy.setValue(parameter.getSysParmValue().trim());
 		this.finCcy.setDescription(parameter.getSysParmDescription());
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * When user clicks on button "btnProceed" button
 	 * 
@@ -221,13 +222,13 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-		doSetValidation();		
+		doSetValidation();
 		doWriteComponentsToBean(this.financeType);
 		doShowDialogPage(this.financeType);
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -251,9 +252,11 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			if (isOverdraft) {
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeDialog.zul", null, aruments);
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeDialog.zul",
+						null, aruments);
 			} else {
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null, aruments);
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null,
+						aruments);
 			}
 			this.window_SelectFinTypeDialog.onClose();
 		} catch (Exception e) {
@@ -262,31 +265,33 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		String label = "label_FinanceTypeDialog_FinType.value";
-		
+
 		if (isPromotion) {
 			label = "label_FinanceTypeDialog_PromoCode.value";
 		}
-		
+
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(new PTStringValidator(Labels.getLabel(label), PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.finType.setConstraint(
+					new PTStringValidator(Labels.getLabel(label), PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		
-		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinCcy.value"), null, true, true));
-		
-		this.finDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDivision.value"), null, true, true));
-		
+
+		this.finCcy.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinCcy.value"), null, true, true));
+
+		this.finDivision.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDivision.value"), null, true, true));
+
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
@@ -299,7 +304,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -328,7 +333,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		//Fin Division
 		try {
 			aFinanceType.setLovDescFinDivisionName(this.finDivision.getDescription());
@@ -349,7 +354,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

@@ -143,10 +143,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private String primaryIdLabel;
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
-	@Autowired(required = false)	
-	private CustomerInterfaceService			customerExternalInterfaceService;
 	@Autowired(required = false)
-	private CustomerDedupCheckService			customerDedupService;
+	private CustomerInterfaceService customerExternalInterfaceService;
+	@Autowired(required = false)
+	private CustomerDedupCheckService customerDedupService;
 
 	/**
 	 * default constructor.<br>
@@ -204,11 +204,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// ### 01-05-2018 - Start - TuleApp ID : #360
 
 		Map<String, String> attributes = PennantApplicationUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
-		
+
 		primaryIdLabel = attributes.get("LABEL");
 		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
 		primaryIdRegex = attributes.get("REGEX");
-		int maxLength = Integer.valueOf(attributes.get("LENGTH")); 
+		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
 		label_CoreCustomerDialog_PrimaryID.setValue(Labels.getLabel(primaryIdLabel));
 		space_PrimaryID.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
@@ -314,7 +314,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (customer != null) {
 					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
 				}
-				
+
 				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
 						&& customerExternalInterfaceService != null) {
 					newRecord = true;
@@ -327,10 +327,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					if (customerDetails == null) {
 						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 					}
-					
-					proceedAsNewCustomer(customerDetails, customerDetails.getCustomer().getCustCtgCode(),  customerDetails.getCustomer().getCustCRCPR(), true);
+
+					proceedAsNewCustomer(customerDetails, customerDetails.getCustomer().getCustCtgCode(),
+							customerDetails.getCustomer().getCustCRCPR(), true);
 				}
-				
+
 				if (customer == null) {
 					newRecord = true;
 					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
@@ -338,9 +339,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
 					}
 				}
-				
-				
-				
+
 			} else if (prospect.isChecked()) {
 				newRecord = true;
 				String ctgType = custCtgType.getSelectedItem().getValue().toString();
@@ -418,11 +417,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						}
 					}
 				}
-				
+
 				if (customer != null) {
 					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
 				}
-				
+
 				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
 						&& customerDedupService != null) {
 					newRecord = true;
@@ -435,11 +434,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						isDedupFound = true;
 					}
 				}
-				
-				if(customer== null) {
+
+				if (customer == null) {
 					customerDetails = proceedAsNewCustomer(customerDetails, ctgType, primaryIdNumber, true);
 				}
-			} 
+			}
 
 			if (customerDetails != null && customerDetails.getCustomer() != null
 					&& StringUtils.isNotEmpty(customerDetails.getCustomer().getNextRoleCode())) {
@@ -463,7 +462,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber) throws Exception {
+	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber)
+			throws Exception {
 		customerDetails = new CustomerDetails();
 		customerDetails.getCustomer().setCustCtgCode(custCtgType.getSelectedItem().getValue().toString());
 		CustomerDedup custDedup = new CustomerDedup();
@@ -499,12 +499,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		return customerDetails;
 	}
-	
-	
-	
+
 	private void showDetailViewforDedUp(CustomerDetails customerDetails) {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			map.put("parentWindow", window_CoreCustomer);
@@ -518,9 +516,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 	}
 
-	public CustomerDetails proceedAsNewCustomer(CustomerDetails customerDetails, String ctgType, String primaryIdNumber, boolean newRecord) {
-		if(newRecord) {
-		customerDetails = getCustomerDetailsService().getNewCustomer(true, customerDetails);
+	public CustomerDetails proceedAsNewCustomer(CustomerDetails customerDetails, String ctgType, String primaryIdNumber,
+			boolean newRecord) {
+		if (newRecord) {
+			customerDetails = getCustomerDetailsService().getNewCustomer(true, customerDetails);
 		}
 		if (customerDetails.getCustomer().getLovDescCustCtgType() == null
 				&& customerDetails.getCustomer().getCustCtgCode() == null
@@ -531,13 +530,13 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		customerDetails.getCustomer().setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
 		customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
-		
+
 		if (customerDetails.getCustomer().getCustNationality() == null) {
 			customerDetails.getCustomer().setCustNationality(custNationality.getValue());
 		}
-		
-		if(customerDetails.getCustomer().getLovDescCustNationalityName()==null) {
-		customerDetails.getCustomer().setLovDescCustNationalityName(custNationality.getDescription());
+
+		if (customerDetails.getCustomer().getLovDescCustNationalityName() == null) {
+			customerDetails.getCustomer().setLovDescCustNationalityName(custNationality.getDescription());
 		}
 
 		//Setting Primary Relation Ship Officer
@@ -549,8 +548,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		//Setting User Branch to Customer Branch
-		Branch branch = getBranchService().getApprovedBranchById(
-				getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
+		Branch branch = getBranchService()
+				.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 		if (branch != null && customerDetails.getCustomer().getCustDftBranch() == null) {
 			customerDetails.getCustomer().setCustDftBranch(branch.getBranchCode());
 			customerDetails.getCustomer().setLovDescCustDftBranchName(branch.getBranchDesc());
@@ -632,7 +631,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			if (StringUtils.isBlank(customerDetails.getCustomer().getCustSts())) {
 				CustomerStatusCode customerStatusCode = getCustomerDetailsService().getCustStatusByMinDueDays();
-				if (customerStatusCode != null  && customerDetails.getCustomer().getCustSts() == null) {
+				if (customerStatusCode != null && customerDetails.getCustomer().getCustSts() == null) {
 					customerDetails.getCustomer().setCustSts(customerStatusCode.getCustStsCode());
 					customerDetails.getCustomer().setLovDescCustStsName(customerStatusCode.getCustStsDescription());
 				}
@@ -674,7 +673,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.customerIncomeService = customerIncomeService;
 	}
 
-
 	public RelationshipOfficerService getRelationshipOfficerService() {
 		return relationshipOfficerService;
 	}
@@ -703,7 +701,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return customerInterfaceService;
 	}
 
-	public void setCustomerInterfaceService(com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
+	public void setCustomerInterfaceService(
+			com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
 		this.customerInterfaceService = customerInterfaceService;
 	}
 }

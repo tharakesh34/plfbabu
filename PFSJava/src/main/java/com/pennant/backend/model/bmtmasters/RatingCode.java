@@ -82,6 +82,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return ratingType;
 	}
+
 	public void setId(String id) {
 		this.ratingType = id;
 	}
@@ -89,6 +90,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public String getRatingType() {
 		return ratingType;
 	}
+
 	public void setRatingType(String ratingType) {
 		this.ratingType = ratingType;
 	}
@@ -96,6 +98,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public String getLovDescRatingTypeName() {
 		return this.lovDescRatingTypeName;
 	}
+
 	public void setLovDescRatingTypeName(String lovDescRatingTypeName) {
 		this.lovDescRatingTypeName = lovDescRatingTypeName;
 	}
@@ -103,6 +106,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public String getRatingCode() {
 		return ratingCode;
 	}
+
 	public void setRatingCode(String ratingCode) {
 		this.ratingCode = ratingCode;
 	}
@@ -110,6 +114,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public String getRatingCodeDesc() {
 		return ratingCodeDesc;
 	}
+
 	public void setRatingCodeDesc(String ratingCodeDesc) {
 		this.ratingCodeDesc = ratingCodeDesc;
 	}
@@ -117,6 +122,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public boolean isRatingIsActive() {
 		return ratingIsActive;
 	}
+
 	public void setRatingIsActive(boolean ratingIsActive) {
 		this.ratingIsActive = ratingIsActive;
 	}
@@ -124,6 +130,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -131,6 +138,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -138,6 +146,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public RatingCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(RatingCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -145,6 +154,7 @@ public class RatingCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

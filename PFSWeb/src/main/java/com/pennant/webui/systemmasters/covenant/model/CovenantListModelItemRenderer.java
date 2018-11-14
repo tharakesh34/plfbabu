@@ -13,20 +13,19 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class CovenantListModelItemRenderer implements ListitemRenderer<FinCovenantType>, Serializable {
 
-	
 	private static final long serialVersionUID = -7313678083684001775L;
 
 	public CovenantListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinCovenantType finCovenantType, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(finCovenantType.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(finCovenantType.getCovenantType()+"-"+finCovenantType.getCovenantTypeDesc());
+		lc = new Listcell(finCovenantType.getCovenantType() + "-" + finCovenantType.getCovenantTypeDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox alwWaiver = new Checkbox();

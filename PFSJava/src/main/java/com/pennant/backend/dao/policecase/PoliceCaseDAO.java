@@ -10,11 +10,17 @@ import com.pennanttech.pff.core.TableType;
 public interface PoliceCaseDAO extends BasicCrudDao<PoliceCaseDetail> {
 
 	void saveList(List<PoliceCase> policeCase, String type);
+
 	List<PoliceCase> fetchPoliceCase(String finReference, String queryCode);
+
 	List<PoliceCaseDetail> fetchCorePolice(PoliceCaseDetail policecase, String sqlQuery);
+
 	void updatePoliceCaseList(List<PoliceCase> policeCase);
+
 	List<PoliceCase> fetchFinPoliceCase(String finReference);
+
 	void deleteList(String finReference);
+
 	PoliceCaseDetail getPoliceCaseDetailById(String id, String type);
 
 	/**
@@ -27,6 +33,7 @@ public interface PoliceCaseDAO extends BasicCrudDao<PoliceCaseDetail> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String custCIF, TableType tableType);
+
 	void moveData(String finReference, String type);
 
 }

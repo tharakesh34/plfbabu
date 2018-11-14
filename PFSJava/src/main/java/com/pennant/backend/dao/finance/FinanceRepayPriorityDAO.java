@@ -42,15 +42,21 @@
 */
 
 package com.pennant.backend.dao.finance;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceRepayPriority;
 
 public interface FinanceRepayPriorityDAO {
-	FinanceRepayPriority getFinanceRepayPriorityById(String id,String type);
-	void update(FinanceRepayPriority financeRepayPriority,String type);
-	void delete(FinanceRepayPriority financeRepayPriority,String type);
-	String save(FinanceRepayPriority financeRepayPriority,String type);
+	FinanceRepayPriority getFinanceRepayPriorityById(String id, String type);
+
+	void update(FinanceRepayPriority financeRepayPriority, String type);
+
+	void delete(FinanceRepayPriority financeRepayPriority, String type);
+
+	String save(FinanceRepayPriority financeRepayPriority, String type);
+
 	List<FinanceRepayPriority> getFinanceRepayPriorities();
+
 	List<String> getFinanceRpyPriorByPriority(String finType, int priority, String type);
 }

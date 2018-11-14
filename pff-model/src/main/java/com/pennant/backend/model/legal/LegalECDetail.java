@@ -181,6 +181,4 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 		this.strECDate = strECDate;
 	}
 
-	 
-
 }

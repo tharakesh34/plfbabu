@@ -612,12 +612,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	}
 
 	/**
-	 * Method for approve temp_finance details 
+	 * Method for approve temp_finance details
 	 * 
 	 * @param financeDetail
 	 * @return WSReturnStatus
 	 */
-	
+
 	@Override
 	public WSReturnStatus approveLoan(FinanceDetail financeDetail) throws ServiceException {
 		logger.debug("Enetring");

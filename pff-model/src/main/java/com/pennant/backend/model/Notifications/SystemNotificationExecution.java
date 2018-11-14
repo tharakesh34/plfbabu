@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class SystemNotificationExecution implements Serializable {
 	private static final long serialVersionUID = -1472467289111692722L;
-	
+
 	private long id;
 	private long notificationId;
 	private long instanceId;

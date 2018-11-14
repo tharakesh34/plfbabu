@@ -51,7 +51,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  * @param <T>
  */
-public interface RejectDetailDAO extends BasicCrudDao<RejectDetail>{
+public interface RejectDetailDAO extends BasicCrudDao<RejectDetail> {
 	RejectDetail getRejectDetailById(String id, String type);
 
 	/**

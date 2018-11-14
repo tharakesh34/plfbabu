@@ -96,51 +96,50 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_EtihadCreditBureauDetailDialog;// autowired
-	protected Groupbox 		gb_basicDetails; 			// autowired
-	protected Textbox 		finReference; 				// autowired
+	protected Window window_EtihadCreditBureauDetailDialog;// autowired
+	protected Groupbox gb_basicDetails; // autowired
+	protected Textbox finReference; // autowired
 
-	protected Textbox 		worstCurrPayDelay; 		    // autowired
-	protected Textbox 		worstPayDelay; 			    // autowired
-	protected Textbox 		worstStatus; 			    // autowired
-	protected Intbox 		bureauScore; 				// autowired
-	protected Intbox 		defaultContracts; 			// autowired
-	protected CurrencyBox 	totOutstandingAmt; 			// autowired
-	protected CurrencyBox 	totOverdueAmt; 			    // autowired
-	protected CurrencyBox 	totMonthlyInst; 			// autowired
-	protected Textbox    	otherBankFinType; 		    // autowired
-	protected Datebox    	oldConStartDate; 		    // autowired
-	protected Datebox    	newConStartDate; 		    // autowired
-	protected Intbox 		noOfInquiry; 			    // autowired
-	protected Intbox 		noOfContractsInst; 			// autowired
-	protected Intbox 		noOfContractsNonInst; 	    // autowired
-	protected Intbox 		noOfContractsCredit; 	    // autowired
+	protected Textbox worstCurrPayDelay; // autowired
+	protected Textbox worstPayDelay; // autowired
+	protected Textbox worstStatus; // autowired
+	protected Intbox bureauScore; // autowired
+	protected Intbox defaultContracts; // autowired
+	protected CurrencyBox totOutstandingAmt; // autowired
+	protected CurrencyBox totOverdueAmt; // autowired
+	protected CurrencyBox totMonthlyInst; // autowired
+	protected Textbox otherBankFinType; // autowired
+	protected Datebox oldConStartDate; // autowired
+	protected Datebox newConStartDate; // autowired
+	protected Intbox noOfInquiry; // autowired
+	protected Intbox noOfContractsInst; // autowired
+	protected Intbox noOfContractsNonInst; // autowired
+	protected Intbox noOfContractsCredit; // autowired
 
-	protected Space         space_bureauScore;		     // autowired
-	protected Space         space_defaultContracts;		 // autowired
-	protected Space         space_worstCurrPayDelay;	 // autowired
-	protected Space         space_worstPayDelay;		 // autowired
-	protected Space         space_worstStatus;		     // autowired
-	protected Space         space_oldConStartDate;		 // autowired
-	protected Space         space_newConStartDate;		 // autowired
-	protected Space         space_otherBankFinType;		 // autowired
-	protected Space         space_noOfInquiry;		     // autowired
-	protected Space         space_noOfContractsInst;	 // autowired
-	protected Space         space_noOfContractsNonInst;	 // autowired
-	protected Space         space_noOfContractsCredit;	 // autowired
+	protected Space space_bureauScore; // autowired
+	protected Space space_defaultContracts; // autowired
+	protected Space space_worstCurrPayDelay; // autowired
+	protected Space space_worstPayDelay; // autowired
+	protected Space space_worstStatus; // autowired
+	protected Space space_oldConStartDate; // autowired
+	protected Space space_newConStartDate; // autowired
+	protected Space space_otherBankFinType; // autowired
+	protected Space space_noOfInquiry; // autowired
+	protected Space space_noOfContractsInst; // autowired
+	protected Space space_noOfContractsNonInst; // autowired
+	protected Space space_noOfContractsCredit; // autowired
 
 	// not auto wired vars
-	private EtihadCreditBureauDetail etihadCreditBureauDetail; 							 // overhanded per param
+	private EtihadCreditBureauDetail etihadCreditBureauDetail; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient EtihadCreditBureauDetailService etihadCreditBureauDetailService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
@@ -151,10 +150,10 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	private Grid grid_basicDetails;
 
 	private transient boolean recSave = false;
-	private transient boolean   newFinance;
-	public transient int   ccyFormatter = 0;
+	private transient boolean newFinance;
+	public transient int ccyFormatter = 0;
 	protected Groupbox finBasicdetails;
-	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -171,9 +170,8 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected EtihadCreditBureauDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected EtihadCreditBureauDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -184,7 +182,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		// Set the page level components.
 		setPageComponents(window_EtihadCreditBureauDetailDialog);
 
-		if(event.getTarget().getParent() != null){
+		if (event.getTarget().getParent() != null) {
 			parent = event.getTarget().getParent();
 		}
 
@@ -201,15 +199,16 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 
 		if (arguments.containsKey("financeDetail")) {
 			setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
-			if (getFinancedetail()!=null) {
+			if (getFinancedetail() != null) {
 				setEtihadCreditBureauDetail(getFinancedetail().getEtihadCreditBureauDetail());
 			}
 		}
-		
-		if(arguments.containsKey("financeMainDialogCtrl")){
+
+		if (arguments.containsKey("financeMainDialogCtrl")) {
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 			try {
-					financeMainDialogCtrl.getClass().getMethod("setEtihadCreditBureauDetailDialogCtrl", this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
+				financeMainDialogCtrl.getClass().getMethod("setEtihadCreditBureauDetailDialogCtrl", this.getClass())
+						.invoke(getFinanceMainDialogCtrl(), this);
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
@@ -217,24 +216,24 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 			this.window_EtihadCreditBureauDetailDialog.setTitle("");
 		}
 
-		if(arguments.containsKey("roleCode")){
+		if (arguments.containsKey("roleCode")) {
 			setRole((String) arguments.get("roleCode"));
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "EtihadCreditBureauDetailDialog");
 		}
 
-		if(arguments.containsKey("ccyFormatter")){
-			this.ccyFormatter = (Integer)arguments.get("ccyFormatter");
-		}		
-		
+		if (arguments.containsKey("ccyFormatter")) {
+			this.ccyFormatter = (Integer) arguments.get("ccyFormatter");
+		}
+
 		if (arguments.containsKey("parentTab")) {
 			parentTab = (Tab) arguments.get("parentTab");
 		}
-		
+
 		if (isWorkFlowEnabled() && !isNewFinance()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "EtihadCreditBureauDetailDialog");
 		}
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
@@ -265,7 +264,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		this.noOfContractsInst.setWidth("171px");
 		this.noOfContractsNonInst.setWidth("171px");
 		this.noOfContractsCredit.setWidth("171px");
-		
+
 		this.bureauScore.setMaxlength(8);
 		this.defaultContracts.setMaxlength(8);
 		this.worstCurrPayDelay.setMaxlength(200);
@@ -276,24 +275,24 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		this.noOfContractsInst.setMaxlength(8);
 		this.noOfContractsNonInst.setMaxlength(8);
 		this.noOfContractsCredit.setMaxlength(8);
-	
+
 		this.totOutstandingAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.totOutstandingAmt.setScale(ccyFormatter);
 		this.totOutstandingAmt.setTextBoxWidth(171);
-	
+
 		this.totOverdueAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.totOverdueAmt.setScale(ccyFormatter);
 		this.totOverdueAmt.setTextBoxWidth(171);
-		
+
 		this.totMonthlyInst.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.totMonthlyInst.setScale(ccyFormatter);
 		this.totMonthlyInst.setTextBoxWidth(171);
-		
+
 		this.otherBankFinType.setMaxlength(8);
-		
+
 		this.oldConStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.newConStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -307,8 +306,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -324,16 +322,15 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		logger.debug("Leaving");
 	}
 
-
-	public void doSave_EtihadCreditBureauDetail(FinanceDetail financeDetail,Tab etihadTab,boolean recSave){
+	public void doSave_EtihadCreditBureauDetail(FinanceDetail financeDetail, Tab etihadTab, boolean recSave) {
 		logger.debug("Entering");
 
 		doClearMessage();
-		doSetValidation(recSave);	
+		doSetValidation(recSave);
 		doSetLOVValidation();
 		EtihadCreditBureauDetail etihadCreditBureauDetail = getEtihadCreditBureauDetail();
-		doWriteComponentsToBean(etihadCreditBureauDetail,etihadTab);
-		if(StringUtils.isBlank(getEtihadCreditBureauDetail().getRecordType())){
+		doWriteComponentsToBean(etihadCreditBureauDetail, etihadTab);
+		if (StringUtils.isBlank(getEtihadCreditBureauDetail().getRecordType())) {
 			etihadCreditBureauDetail.setVersion(getEtihadCreditBureauDetail().getVersion() + 1);
 			etihadCreditBureauDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			etihadCreditBureauDetail.setNewRecord(true);
@@ -346,22 +343,20 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		logger.debug("Leaving");
 	}
 
-	
-
-	private boolean allowValidation(){
+	private boolean allowValidation() {
 		return !isReadOnly("EtihadCreditBureauDetailDialog_allowValidation");
 	}
-	
-	private void setMandatoryStyle(){
+
+	private void setMandatoryStyle() {
 		logger.debug("Entering");
-		
+
 		String sclass = "";
 		boolean mandate = false;
-		if(allowValidation()){
+		if (allowValidation()) {
 			sclass = "mandatory";
 			mandate = true;
 		}
-		
+
 		this.space_bureauScore.setSclass(sclass);
 		this.space_defaultContracts.setSclass(sclass);
 		this.space_newConStartDate.setSclass(sclass);
@@ -379,7 +374,6 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		this.totMonthlyInst.setMandatory(mandate);
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * when the "save" button is clicked. <br>
@@ -475,30 +469,33 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		this.finReference.setValue(aEtihadCreditBureauDetail.getFinReference());
 		this.bureauScore.setValue(aEtihadCreditBureauDetail.getBureauScore());
 		this.worstCurrPayDelay.setValue(aEtihadCreditBureauDetail.getWorstCurrPayDelay());
-		this.totOutstandingAmt.setValue(PennantAppUtil.formateAmount(aEtihadCreditBureauDetail.getTotOutstandingAmt(), ccyFormatter));
-		this.totOverdueAmt.setValue(PennantAppUtil.formateAmount(aEtihadCreditBureauDetail.getTotOverdueAmt(), ccyFormatter));
-		this.totMonthlyInst.setValue(PennantAppUtil.formateAmount(aEtihadCreditBureauDetail.getTotMonthlyInst(), ccyFormatter));
+		this.totOutstandingAmt
+				.setValue(PennantAppUtil.formateAmount(aEtihadCreditBureauDetail.getTotOutstandingAmt(), ccyFormatter));
+		this.totOverdueAmt
+				.setValue(PennantAppUtil.formateAmount(aEtihadCreditBureauDetail.getTotOverdueAmt(), ccyFormatter));
+		this.totMonthlyInst
+				.setValue(PennantAppUtil.formateAmount(aEtihadCreditBureauDetail.getTotMonthlyInst(), ccyFormatter));
 		this.worstPayDelay.setValue(aEtihadCreditBureauDetail.getWorstPayDelay());
 		this.worstStatus.setValue(aEtihadCreditBureauDetail.getWorstStatus());
 		this.defaultContracts.setValue(aEtihadCreditBureauDetail.getDefaultContracts());
 		this.otherBankFinType.setValue(aEtihadCreditBureauDetail.getOtherBankFinType());
-		if(this.oldConStartDate.getValue()!=null){
+		if (this.oldConStartDate.getValue() != null) {
 			this.oldConStartDate.setValue(aEtihadCreditBureauDetail.getOldConStartDate());
-		}else{
+		} else {
 			this.oldConStartDate.setValue(DateUtility.addYears(dateValueDate, 5));
 		}
-		if(this.newConStartDate.getValue()!=null){
+		if (this.newConStartDate.getValue() != null) {
 			this.newConStartDate.setValue(aEtihadCreditBureauDetail.getNewConStartDate());
-		}else{
+		} else {
 			this.newConStartDate.setValue(DateUtility.addYears(dateValueDate, 5));
-			
+
 		}
 		this.otherBankFinType.setValue(aEtihadCreditBureauDetail.getOtherBankFinType());
 		this.noOfInquiry.setValue(aEtihadCreditBureauDetail.getNoOfInquiry());
 		this.noOfContractsInst.setValue(aEtihadCreditBureauDetail.getNoOfContractsInst());
 		this.noOfContractsNonInst.setValue(aEtihadCreditBureauDetail.getNoOfContractsNonInst());
 		this.noOfContractsCredit.setValue(aEtihadCreditBureauDetail.getNoOfContractsCredit());
-      
+
 		this.recordStatus.setValue(aEtihadCreditBureauDetail.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -508,7 +505,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	 * 
 	 * @param aEtihadCreditBureauDetail
 	 */
-	public void doWriteComponentsToBean(EtihadCreditBureauDetail aEtihadCreditBureauDetail,Tab etihadTab) {
+	public void doWriteComponentsToBean(EtihadCreditBureauDetail aEtihadCreditBureauDetail, Tab etihadTab) {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -518,13 +515,13 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aEtihadCreditBureauDetail.setWorstCurrPayDelay(this.worstCurrPayDelay.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aEtihadCreditBureauDetail.setWorstPayDelay(this.worstPayDelay.getValue());
 		} catch (WrongValueException we) {
@@ -546,17 +543,21 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 			wve.add(we);
 		}
 		try {
-			aEtihadCreditBureauDetail.setTotOutstandingAmt(PennantAppUtil.unFormateAmount(this.totOutstandingAmt.isReadonly() ? this.totOutstandingAmt.getActualValue() : this.totOutstandingAmt.getValidateValue(), ccyFormatter));			
+			aEtihadCreditBureauDetail.setTotOutstandingAmt(PennantAppUtil
+					.unFormateAmount(this.totOutstandingAmt.isReadonly() ? this.totOutstandingAmt.getActualValue()
+							: this.totOutstandingAmt.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aEtihadCreditBureauDetail.setTotOverdueAmt(PennantAppUtil.unFormateAmount(this.totOverdueAmt.isReadonly() ? this.totOverdueAmt.getActualValue() : this.totOverdueAmt.getValidateValue(), ccyFormatter));
+			aEtihadCreditBureauDetail.setTotOverdueAmt(PennantAppUtil.unFormateAmount(this.totOverdueAmt.isReadonly()
+					? this.totOverdueAmt.getActualValue() : this.totOverdueAmt.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aEtihadCreditBureauDetail.setTotMonthlyInst(PennantAppUtil.unFormateAmount(this.totMonthlyInst.isReadonly() ? this.totMonthlyInst.getActualValue() : this.totMonthlyInst.getValidateValue(), ccyFormatter));			
+			aEtihadCreditBureauDetail.setTotMonthlyInst(PennantAppUtil.unFormateAmount(this.totMonthlyInst.isReadonly()
+					? this.totMonthlyInst.getActualValue() : this.totMonthlyInst.getValidateValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -595,7 +596,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		showErrorDetails(wve, etihadTab);
 		aEtihadCreditBureauDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
@@ -609,13 +610,13 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		logger.debug("Entering");
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		if(!recSave){
+		if (!recSave) {
 			if (wve.size() > 0) {
 				logger.debug("Throwing occured Errors By using WrongValueException");
-				if(parentTab != null){
+				if (parentTab != null) {
 					parentTab.setSelected(true);
 				}
-				if(etihadTab != null){
+				if (etihadTab != null) {
 					etihadTab.setSelected(true);
 				}
 				WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -627,13 +628,11 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEtihadCreditBureauDetail
 	 * @throws InterruptedException
@@ -656,18 +655,17 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 			setEtihadCreditBureauDetail(aEtihadCreditBureauDetail);
 		}
 
-		
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aEtihadCreditBureauDetail.isNew()) {
 			this.btnCtrl.setInitNew();
-			doEdit(); 
+			doEdit();
 			// setFocus
 			this.worstCurrPayDelay.focus();
 		} else {
 			this.worstCurrPayDelay.focus();
-			if(isNewFinance()){
-				doEdit(); 
-			}else if (isWorkFlowEnabled()) {
+			if (isNewFinance()) {
+				doEdit();
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
 			} else {
@@ -682,13 +680,14 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 			// fill the components with the data
 			doWriteBeanToComponents(aEtihadCreditBureauDetail);
 
-			if(parent != null){
+			if (parent != null) {
 				this.toolbar.setVisible(false);
 				this.groupboxWf.setVisible(false);
 				this.gb_basicDetails.setHeight("100%");
-				this.window_EtihadCreditBureauDetailDialog.setHeight(grid_basicDetails.getRows().getVisibleItemCount()*22+250+"px");
+				this.window_EtihadCreditBureauDetailDialog
+						.setHeight(grid_basicDetails.getRows().getVisibleItemCount() * 22 + 250 + "px");
 				parent.appendChild(this.window_EtihadCreditBureauDetailDialog);
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
@@ -703,60 +702,72 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	private void doSetValidation(boolean isSaveRecord) {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
+
 		boolean mandate = (!isSaveRecord && allowValidation());
 
 		if (!this.bureauScore.isReadonly()) {
-			this.bureauScore.setConstraint(new PTNumberValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_BureauScore.value"), mandate, false));
+			this.bureauScore.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_BureauScore.value"), mandate, false));
 		}
 		if (!this.totOutstandingAmt.isReadonly()) {
-			this.totOutstandingAmt.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_EtihadCreditBureauDetailDialog_TotOutstandingAmt.value"), ccyFormatter, mandate, false));
+			this.totOutstandingAmt.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_TotOutstandingAmt.value"), ccyFormatter,
+					mandate, false));
 		}
 		if (!this.totOverdueAmt.isReadonly()) {
-			this.totOverdueAmt.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_EtihadCreditBureauDetailDialog_TotOverdueAmt.value"), ccyFormatter, mandate, false));
+			this.totOverdueAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_TotOverdueAmt.value"),
+							ccyFormatter, mandate, false));
 		}
 		if (!this.totMonthlyInst.isReadonly()) {
-			this.totMonthlyInst.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_EtihadCreditBureauDetailDialog_TotMonthlyInst.value"), ccyFormatter, mandate, false));
+			this.totMonthlyInst.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_TotMonthlyInst.value"),
+							ccyFormatter, mandate, false));
 		}
 		if (!this.defaultContracts.isReadonly()) {
-			this.defaultContracts.setConstraint(new PTNumberValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_DefaultContracts.value"), mandate, false));
+			this.defaultContracts.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_DefaultContracts.value"), mandate, false));
 		}
 		if (!this.worstCurrPayDelay.isReadonly()) {
-			this.worstCurrPayDelay.setConstraint(new PTStringValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_WorstCurrPayDelay.value"), 
-					null, mandate));
+			this.worstCurrPayDelay.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_WorstCurrPayDelay.value"), null, mandate));
 		}
 		if (!this.worstPayDelay.isReadonly()) {
-			this.worstPayDelay.setConstraint(new PTStringValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_WorstPayDelay.value"), 
-					null, mandate));
+			this.worstPayDelay.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_WorstPayDelay.value"), null, mandate));
 		}
 		if (!this.worstStatus.isReadonly()) {
-			this.worstStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_WorstStatus.value"), 
-					null, mandate));
+			this.worstStatus.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_WorstStatus.value"), null, mandate));
 		}
 		if (!this.oldConStartDate.isDisabled()) {
-			this.oldConStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_OldConStartDate.value"),mandate));
+			this.oldConStartDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_OldConStartDate.value"), mandate));
 		}
 		if (!this.newConStartDate.isDisabled()) {
-			this.newConStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_NewConStartDate.value"),mandate));
+			this.newConStartDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_NewConStartDate.value"), mandate));
 		}
 		if (!this.otherBankFinType.isReadonly()) {
-			this.otherBankFinType.setConstraint(new PTStringValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_OtherBankFinType.value"), 
-					null, mandate));
+			this.otherBankFinType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_OtherBankFinType.value"), null, mandate));
 		}
 		if (!this.noOfInquiry.isReadonly()) {
-			this.noOfInquiry.setConstraint(new PTNumberValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfInquiry.value"), mandate, false));
+			this.noOfInquiry.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfInquiry.value"), mandate, false));
 		}
 		if (!this.noOfContractsInst.isReadonly()) {
-			this.noOfContractsInst.setConstraint(new PTNumberValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfContractsInst.value"), mandate, false));
+			this.noOfContractsInst.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfContractsInst.value"), mandate, false));
 		}
 		if (!this.noOfContractsNonInst.isReadonly()) {
-			this.noOfContractsNonInst.setConstraint(new PTNumberValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfContractsNonInst.value"), mandate, false));
+			this.noOfContractsNonInst.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfContractsNonInst.value"), mandate,
+					false));
 		}
 		if (!this.noOfContractsCredit.isReadonly()) {
-			this.noOfContractsCredit.setConstraint(new PTNumberValidator(Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfContractsCredit.value"), mandate, false));
+			this.noOfContractsCredit.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_EtihadCreditBureauDetailDialog_NoOfContractsCredit.value"), mandate, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -792,7 +803,6 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-
 		logger.debug("Leaving");
 	}
 
@@ -805,7 +815,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	}
 
 	/**
-	 * Method for clear the error Messages 
+	 * Method for clear the error Messages
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -831,10 +841,10 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 
 	private void refreshList() {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	// CRUD operations
 
 	/**
@@ -849,8 +859,8 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-		+ "\n\n --> " + aEtihadCreditBureauDetail.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aEtihadCreditBureauDetail.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aEtihadCreditBureauDetail.getRecordType())) {
 				aEtihadCreditBureauDetail.setVersion(aEtihadCreditBureauDetail.getVersion() + 1);
@@ -924,8 +934,8 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewFinance()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewFinance()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1004,7 +1014,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		doSetValidation(true);
 		doSetLOVValidation();
 		// fill the EtihadCreditBureauDetail object with the components data
-		doWriteComponentsToBean(aEtihadCreditBureauDetail,null);
+		doWriteComponentsToBean(aEtihadCreditBureauDetail, null);
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
@@ -1049,8 +1059,10 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aEtihadCreditBureauDetail (EtihadCreditBureauDetail)
-	 * @param tranType (String)
+	 * @param aEtihadCreditBureauDetail
+	 *            (EtihadCreditBureauDetail)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 */
@@ -1139,8 +1151,10 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
-	 * @param method (String)
+	 * @param auditHeader
+	 *            (AuditHeader)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 */
@@ -1150,7 +1164,8 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		EtihadCreditBureauDetail aEtihadCreditBureauDetail = (EtihadCreditBureauDetail) auditHeader.getAuditDetail().getModelData();
+		EtihadCreditBureauDetail aEtihadCreditBureauDetail = (EtihadCreditBureauDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
@@ -1163,34 +1178,29 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getEtihadCreditBureauDetailService().doApprove(auditHeader);
 
-						if (aEtihadCreditBureauDetail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aEtihadCreditBureauDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getEtihadCreditBureauDetailService().doReject(auditHeader);
-						if (aEtihadCreditBureauDetail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aEtihadCreditBureauDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_EtihadCreditBureauDetailDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_EtihadCreditBureauDetailDialog,
+								auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_EtihadCreditBureauDetailDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_EtihadCreditBureauDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -1217,7 +1227,6 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		return processCompleted;
 	}
 
-
 	// WorkFlow Components
 
 	/**
@@ -1227,26 +1236,24 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(EtihadCreditBureauDetail aEtihadCreditBureauDetail,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aEtihadCreditBureauDetail.getBefImage(), aEtihadCreditBureauDetail);
-		return new AuditHeader(String.valueOf(aEtihadCreditBureauDetail.getId()),
-				null, null, null, auditDetail,
+	private AuditHeader getAuditHeader(EtihadCreditBureauDetail aEtihadCreditBureauDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aEtihadCreditBureauDetail.getBefImage(),
+				aEtihadCreditBureauDetail);
+		return new AuditHeader(String.valueOf(aEtihadCreditBureauDetail.getId()), null, null, null, auditDetail,
 				aEtihadCreditBureauDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_EtihadCreditBureauDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1266,31 +1273,29 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 		doShowNotes(this.etihadCreditBureauDetail);
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.etihadCreditBureauDetail.getId());
 	}
 
-	
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails() {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("parentCtrl", this );
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			map.put("parentCtrl", this);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1299,6 +1304,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1306,35 +1312,39 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	public EtihadCreditBureauDetail getEtihadCreditBureauDetail() {
 		return this.etihadCreditBureauDetail;
 	}
+
 	public void setEtihadCreditBureauDetail(EtihadCreditBureauDetail etihadCreditBureauDetail) {
 		this.etihadCreditBureauDetail = etihadCreditBureauDetail;
 	}
 
-	public void setEtihadCreditBureauDetailService(
-			EtihadCreditBureauDetailService etihadCreditBureauDetailService) {
+	public void setEtihadCreditBureauDetailService(EtihadCreditBureauDetailService etihadCreditBureauDetailService) {
 		this.etihadCreditBureauDetailService = etihadCreditBureauDetailService;
 	}
+
 	public EtihadCreditBureauDetailService getEtihadCreditBureauDetailService() {
 		return this.etihadCreditBureauDetailService;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
+
 	public boolean isNewFinance() {
 		return newFinance;
 	}
+
 	public void setNewFinance(boolean newFinance) {
 		this.newFinance = newFinance;
 	}
-	
+
 	public FinanceDetail getFinancedetail() {
 		return financedetail;
 	}
+
 	public void setFinancedetail(FinanceDetail financedetail) {
 		this.financedetail = financedetail;
 	}
@@ -1342,6 +1352,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -1349,6 +1360,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
+
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}

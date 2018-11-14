@@ -63,49 +63,46 @@ import com.pennant.backend.service.administration.SecurityGroupService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Administration/SecurityUsers/SecurityGroupSearchDialog.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Administration/SecurityUsers/SecurityGroupSearchDialog.zul file.
  */
-public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
+public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 
 	private static final long serialVersionUID = -1495995793043106184L;
 	private static final Logger logger = Logger.getLogger(SecurityGroupSearchCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window   window_SecurityGroupSearch;                              // autoWired
-	protected Intbox   grpID;                                                   // autoWired
-	protected Listbox  sortOperator_grpID;                                      // autoWired
-	protected Textbox  grpCode;                                                 // autoWired
-	protected Listbox  sortOperator_grpCode;                                    // autoWired
-	protected Textbox  grpDesc;                                                 // autoWired
-	protected Listbox  sortOperator_grpDesc;                                    // autoWired
-	protected Textbox  recordStatus;                                            // autoWired
-	protected Listbox  recordType;                                             	// autoWired
-	protected Listbox  sortOperator_recordStatus;                               // autoWired
-	protected Listbox  sortOperator_recordType;                                 // autoWired
-	protected Label    label_SecurityGroupSearch_RecordStatus;                  // autoWired
-	protected Label    label_SecurityGroupSearch_RecordType;                    // autoWired
-	protected Label    label_SecurityGroupSearchResult;                         // autoWired
-	
+	protected Window window_SecurityGroupSearch; // autoWired
+	protected Intbox grpID; // autoWired
+	protected Listbox sortOperator_grpID; // autoWired
+	protected Textbox grpCode; // autoWired
+	protected Listbox sortOperator_grpCode; // autoWired
+	protected Textbox grpDesc; // autoWired
+	protected Listbox sortOperator_grpDesc; // autoWired
+	protected Textbox recordStatus; // autoWired
+	protected Listbox recordType; // autoWired
+	protected Listbox sortOperator_recordStatus; // autoWired
+	protected Listbox sortOperator_recordType; // autoWired
+	protected Label label_SecurityGroupSearch_RecordStatus; // autoWired
+	protected Label label_SecurityGroupSearch_RecordType; // autoWired
+	protected Label label_SecurityGroupSearchResult; // autoWired
+
 	// not auto wired variables
 	private transient SecurityGroupService securityGroupService;
-	private transient WorkFlowDetails       workFlowDetails=WorkFlowUtil.getWorkFlowDetails("SecurityGroup");
-	private transient Object                object;
-	private transient Listbox               listBox;
-	private transient Paging                paging;
-	
+	private transient WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("SecurityGroup");
+	private transient Object object;
+	private transient Listbox listBox;
+	private transient Paging paging;
+
 	/**
 	 * constructor
 	 */
@@ -119,11 +116,10 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the Search window we check, if the
-	 * ZUL-file is called with a parameter for a selected SecurityGroup object in
-	 * a Map.
+	 * Before binding the data and calling the Search window we check, if the ZUL-file is called with a parameter for a
+	 * selected SecurityGroup object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -135,40 +131,47 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 		// Set the page level components.
 		setPageComponents(window_SecurityGroupSearch);
 
-		if (workFlowDetails==null){
+		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
-		}else{
+		} else {
 			setWorkFlowEnabled(true);
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
 
-		/*Here object is over handed parameter .object can be instance of securityGroupListCtrl
-		 * or securityGroupRightsListCtrl*/
+		/*
+		 * Here object is over handed parameter .object can be instance of securityGroupListCtrl or
+		 * securityGroupRightsListCtrl
+		 */
 		if (arguments.containsKey("securityGroupCtrl")) {
-			object =(Object)arguments.get("securityGroupCtrl");
-		    listBox=(Listbox)arguments.get("listBoxSecurityGroup");
-		    paging=(Paging)arguments.get("pagingSecurityGroupList");
+			object = (Object) arguments.get("securityGroupCtrl");
+			listBox = (Listbox) arguments.get("listBoxSecurityGroup");
+			paging = (Paging) arguments.get("pagingSecurityGroupList");
 		}
 
 		// DropDown ListBox
 
-		this.sortOperator_grpID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpID
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_grpID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_grpCode.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpCode
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_grpCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_grpDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_grpDesc
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_grpDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=setRecordType(this.recordType);	
-		}else{
+			this.recordType = setRecordType(this.recordType);
+		} else {
 			this.recordStatus.setVisible(false);
 			this.recordType.setVisible(false);
 			this.sortOperator_recordStatus.setVisible(false);
@@ -181,7 +184,7 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 		// if exists a searchObject than show formerly inputs of filter values
 		if (arguments.containsKey("searchObject")) {
 			final JdbcSearchObject<SecurityGroup> searchObj = (JdbcSearchObject<SecurityGroup>) arguments
-			.get("searchObject");
+					.get("searchObject");
 
 			// get the filters from the searchObject
 			final List<Filter> ft = searchObj.getFilters();
@@ -204,7 +207,7 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 				} else if ("recordType".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_recordType, filter);
 					for (int i = 0; i < this.recordType.getItemCount(); i++) {
-						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())){
+						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())) {
 							this.recordType.setSelectedIndex(i);
 						}
 					}
@@ -221,7 +224,7 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 	 * when the "search/filter" button is clicked.
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSearch(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -233,7 +236,7 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *			  An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -260,19 +263,20 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 	 * 2. Checks which operator is selected. <br>
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
-	 * @throws Exception 
-	 */ 
+	 * 
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	public void doSearch() throws Exception {
 		logger.debug("Entering ");
 		final JdbcSearchObject<SecurityGroup> so = new JdbcSearchObject<SecurityGroup>(SecurityGroup.class);
 		so.addTabelName("SecGroups_View");
 
-		if (isWorkFlowEnabled()){
-			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
+		if (isWorkFlowEnabled()) {
+			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		}
 
-		if (this.grpID.getValue()!=null) {
+		if (this.grpID.getValue() != null) {
 
 			// get the search operator
 			final Listitem itemGrpID = this.sortOperator_grpID.getSelectedItem();
@@ -324,11 +328,11 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 			// get the search operator
 			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (itemRecordStatus != null) {
-				final int searchOpId = ((SearchOperators) itemRecordStatus
-						  .getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -337,15 +341,15 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 			}
 		}
 
-		String selectedValue="";
-		if (this.recordType.getSelectedItem()!=null){
-			selectedValue =this.recordType.getSelectedItem().getValue().toString();
+		String selectedValue = "";
+		if (this.recordType.getSelectedItem() != null) {
+			selectedValue = this.recordType.getSelectedItem().getValue().toString();
 		}
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
 			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
-			if (itemRecordType!= null) {
+			if (itemRecordType != null) {
 				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
@@ -360,23 +364,24 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 		// Default Sort on the table
 		so.addSort("GrpID", false);
 
-		/*Here object is over handed parameter .object can be instance of securityGroupListCtrl
-		 * or securityGroupRightsListCtrl*/
+		/*
+		 * Here object is over handed parameter .object can be instance of securityGroupListCtrl or
+		 * securityGroupRightsListCtrl
+		 */
 		// store the searchObject for reReading
-		object.getClass().getMethod("setSearchObj"
-				,Class.forName( "com.pennant.backend.util.JdbcSearchObject" )).invoke(object, so);
+		object.getClass().getMethod("setSearchObj", Class.forName("com.pennant.backend.util.JdbcSearchObject"))
+				.invoke(object, so);
 		// set the model to the listBox with the initial result set get by the DAO method.
 		((PagedListWrapper<SecurityGroup>) listBox.getModel()).init(so, listBox, paging);
 		// store the searchObject for reReading
-		object.getClass().getMethod("setSearchObj"
-				,Class.forName( "com.pennant.backend.util.JdbcSearchObject" )).invoke(object, so);
+		object.getClass().getMethod("setSearchObj", Class.forName("com.pennant.backend.util.JdbcSearchObject"))
+				.invoke(object, so);
 		this.label_SecurityGroupSearchResult.setValue(
-				Labels.getLabel("label_SecurityGroupSearchResult.value") 
-				+ " "+ String.valueOf(paging.getTotalSize()));
+				Labels.getLabel("label_SecurityGroupSearchResult.value") + " " + String.valueOf(paging.getTotalSize()));
 
 		logger.debug("Leaving ");
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

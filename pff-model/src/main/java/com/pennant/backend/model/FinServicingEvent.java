@@ -50,7 +50,7 @@ public class FinServicingEvent {
 	public FinServicingEvent() {
 		super();
 	}
-	
+
 	public FinServicingEvent(String value, String label, String code) {
 		setValue(value);
 		setLabel(label);

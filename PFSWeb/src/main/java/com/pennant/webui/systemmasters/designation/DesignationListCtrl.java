@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.systemmasters.DesignationService;
 import com.pennant.webui.systemmasters.designation.model.DesignationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Designation/DesignationList.zul file.
@@ -132,7 +132,8 @@ public class DesignationListCtrl extends GFCBaseListCtrl<Designation> {
 		registerButton(button_DesignationList_NewDesignation, "button_DesignationList_NewDesignation", true);
 		registerButton(button_DesignationList_DesignationSearchDialog);
 
-		registerField("desgCode", listheader_DesgCode, SortOrder.ASC, desgCode, sortOperator_desgCode, Operators.STRING);
+		registerField("desgCode", listheader_DesgCode, SortOrder.ASC, desgCode, sortOperator_desgCode,
+				Operators.STRING);
 		registerField("desgDesc", listheader_DesgDesc, SortOrder.NONE, desgDesc, sortOperator_desgDesc,
 				Operators.STRING);
 		registerField("desgIsActive", listheader_DesgIsActive, SortOrder.NONE, desgIsActive, sortOperator_desgIsActive,

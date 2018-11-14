@@ -16,53 +16,51 @@ import com.pennant.mq.util.PFFXmlUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
-	
+
 	private static Logger logger = Logger.getLogger(CustomerDataProcessImpl.class);
 	private InterfaceDAO interfaceDAO;
-	
-	public CustomerDataProcessImpl()  {
+
+	public CustomerDataProcessImpl() {
 		super();
 	}
-	
+
 	@Override
-	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF,String custLoc) throws InterfaceException {
+	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF, String custLoc) throws InterfaceException {
 		logger.debug("Entering");
 		InterfaceCustomerDetail interfaceData = getInterfaceDAO().getCustDetails(custCIF, custLoc);
 		logger.debug("Leaving");
 		return interfaceData;
 	}
-	
+
 	@Override
-	public List<CustomerCollateral> getCustomerCollateral(String custCIF)
-			throws InterfaceException {
+	public List<CustomerCollateral> getCustomerCollateral(String custCIF) throws InterfaceException {
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
 		return new ArrayList<CustomerCollateral>();
 	}
-	
+
 	/**
-	 * This method fetches the Customer information for the given CustomerID(CIF) 
-	 * by calling Equation Program PTPFF14R.
+	 * This method fetches the Customer information for the given CustomerID(CIF) by calling Equation Program PTPFF14R.
 	 * 
 	 * @Param Customer
 	 * @Return Customer-- unused
 	 */
 	@Override
-	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws InterfaceException{	
+	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return coreCust;
 	}
-	
+
 	@Override
-	public CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust)
-			throws InterfaceException {
-		
-		InterfaceCustomerDetail interfaceData = getInterfaceDAO().getCustDetails(coreCust.getCustomerMnemonic(), coreCust.getCustomerLocation());
-		if(interfaceData == null){
-			throw new InterfaceException("9999","Customer Details Not found. Invalid Core Banking Customer."); 
+	public CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws InterfaceException {
+
+		InterfaceCustomerDetail interfaceData = getInterfaceDAO().getCustDetails(coreCust.getCustomerMnemonic(),
+				coreCust.getCustomerLocation());
+		if (interfaceData == null) {
+			throw new InterfaceException("9999", "Customer Details Not found. Invalid Core Banking Customer.");
 		}
 		return coreCust;
 	}
@@ -71,7 +69,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	public FinanceCustomerDetails fetchFinCustDetails(FinanceCustomerDetails financeCustomerDetails)
 			throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		FinanceCustomerDetails finCustDetail = new FinanceCustomerDetails();
 		finCustDetail.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		finCustDetail.setReturnCode("0000");
@@ -79,10 +77,10 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 		finCustDetail.setTimeStamp(System.currentTimeMillis());
 
 		logger.debug("Leaving");
-		
+
 		return finCustDetail;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -90,6 +88,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
+
 	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}

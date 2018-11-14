@@ -6,7 +6,7 @@ public interface EODFailPostingDAO {
 	long saveFailPostings(DDAFTransactionLog dDAFTransactionLog);
 
 	void updateFailPostings(DDAFTransactionLog dDAFTransactionLog);
-	
+
 	DDAFTransactionLog getDDAFTranDetailsById(String finReference);
 
 }

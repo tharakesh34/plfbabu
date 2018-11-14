@@ -81,8 +81,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalPropertyDetail/legalPropertyDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalPropertyDetail/legalPropertyDetailDialog.zul file.
  * <br>
  */
 public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDetail> {
@@ -102,17 +101,17 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	protected Textbox registrationOffice;
 	protected Textbox registrationDistrict;
 	protected Combobox propertyOwner;
-	private LegalPropertyDetail legalPropertyDetail;  
+	private LegalPropertyDetail legalPropertyDetail;
 
 	private List<ValueLabel> listScheduleType = PennantStaticListUtil.getScheduleTypes();
 	private List<ValueLabel> listPropertyType = PennantStaticListUtil.getLegalPropertyTypes();
 	private List<ValueLabel> listPropertyOwners;
-	
+
 	private boolean enquiry = false;
 	private boolean newRecord = false;
 	private boolean newLegalPropertyDetails = false;
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
-	
+
 	private List<LegalPropertyDetail> legalPropertyDetailList;
 
 	/**
@@ -136,8 +135,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -169,19 +167,20 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
-			} 
-			
+			}
+
 			// Store the before image.
 			LegalPropertyDetail legalPropertyDetail = new LegalPropertyDetail();
 			BeanUtils.copyProperties(this.legalPropertyDetail, legalPropertyDetail);
 			this.legalPropertyDetail.setBefImage(legalPropertyDetail);
 
 			// Render the page and display the data.
-			doLoadWorkFlow(this.legalPropertyDetail.isWorkflow(), this.legalPropertyDetail.getWorkflowId(), this.legalPropertyDetail.getNextTaskId());
-		 
+			doLoadWorkFlow(this.legalPropertyDetail.isWorkflow(), this.legalPropertyDetail.getWorkflowId(),
+					this.legalPropertyDetail.getNextTaskId());
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.legalPropertyDetail);
@@ -203,12 +202,12 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.southBy.setMaxlength(100);
 		this.eastBy.setMaxlength(100);
 		this.westBy.setMaxlength(100);
-		
+
 		this.measurement.setMaxlength(18);
 		this.measurement.setFormat(PennantConstants.rateFormate3);
 		this.measurement.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.measurement.setScale(3);
-		
+
 		this.registrationOffice.setMaxlength(200);
 		this.registrationDistrict.setMaxlength(100);
 		this.propertyOwner.setMaxlength(1000);
@@ -271,8 +270,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -284,8 +282,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -344,7 +341,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		logger.debug(Literal.ENTERING);
 
 		listPropertyOwners = prepareOwnersNamesList(aLegalPropertyDetail);
-		
+
 		fillComboBox(this.scheduleType, aLegalPropertyDetail.getScheduleType(), listScheduleType, "");
 		this.propertySchedule.setValue(aLegalPropertyDetail.getPropertySchedule());
 		fillComboBox(this.propertyType, aLegalPropertyDetail.getPropertyType(), listPropertyType, "");
@@ -352,7 +349,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.southBy.setValue(aLegalPropertyDetail.getSouthBy());
 		this.eastBy.setValue(aLegalPropertyDetail.getEastBy());
 		this.westBy.setValue(aLegalPropertyDetail.getWestBy());
-		
+
 		this.measurement.setValue(aLegalPropertyDetail.getMeasurement());
 		this.registrationOffice.setValue(aLegalPropertyDetail.getRegistrationOffice());
 		this.registrationDistrict.setValue(aLegalPropertyDetail.getRegistrationDistrict());
@@ -364,7 +361,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	private List<ValueLabel> prepareOwnersNamesList(LegalPropertyDetail aLegalPropertyDetail) {
 		List<ValueLabel> valueLableList = new ArrayList<>();
 		List<LegalApplicantDetail> applicantsList = getLegalDetailDialogCtrl().getApplicantDetailList();
-		
+
 		boolean added = false;
 		if (CollectionUtils.isNotEmpty(applicantsList)) {
 			for (LegalApplicantDetail detail : applicantsList) {
@@ -376,11 +373,12 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 
 		if (StringUtils.trimToNull(aLegalPropertyDetail.getPropertyOwner()) != null && !added) {
-			valueLableList.add(new ValueLabel(aLegalPropertyDetail.getPropertyOwner(), aLegalPropertyDetail.getPropertyOwner()));
+			valueLableList.add(
+					new ValueLabel(aLegalPropertyDetail.getPropertyOwner(), aLegalPropertyDetail.getPropertyOwner()));
 		}
 		return valueLableList;
 	}
-	
+
 	/**
 	 * Method to fill the Editable combo box with given list of values
 	 * 
@@ -390,7 +388,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	 */
 	public void fillEditableComboBox(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
 		logger.debug(Literal.ENTERING);
-		
+
 		combobox.getChildren().clear();
 		Comboitem comboitem = null;
 		for (ValueLabel valueLabel : list) {
@@ -404,7 +402,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 				combobox.setSelectedItem(comboitem);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -420,14 +418,13 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		 
 		// Schedule Type
 		try {
 			aLegalPropertyDetail.setScheduleType(this.scheduleType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Property Schedule
 		try {
 			aLegalPropertyDetail.setPropertySchedule(this.propertySchedule.getValue());
@@ -473,7 +470,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Registration Office
 		try {
 			aLegalPropertyDetail.setRegistrationOffice(this.registrationOffice.getValue());
@@ -492,7 +489,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -554,7 +551,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
- 
+
 		if (!this.scheduleType.isReadonly()) {
 			this.scheduleType.setConstraint(new StaticListValidator(listScheduleType,
 					Labels.getLabel("label_LegalPropertyDetailDialog_ScheduleType.value")));
@@ -602,7 +599,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_RegistrationDistrict.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -648,8 +645,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -725,8 +721,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -758,7 +753,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 				if (oldDeatils.getSeqNum() == aLegalPropertyDetail.getSeqNum()) {
 					duplicateRecord = true;
 				}
-				
+
 				if (duplicateRecord) {
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (aLegalPropertyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
@@ -794,7 +789,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -817,7 +812,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_RegistrationOffice"), this.registrationOffice);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_RegistrationDistrict"), this.registrationDistrict);
 		readOnlyPropertyOwnerComponent(isReadOnly("LegalPropertyDetailDialog_PropertyOwner"), this.propertyOwner);
-	
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -851,7 +846,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -1005,7 +1000,6 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 				getOverideMap());
 	}
 
-	
 	public LegalPropertyDetail getLegalPropertyDetail() {
 		return legalPropertyDetail;
 	}
@@ -1046,6 +1040,4 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.enquiry = enquiry;
 	}
 
-	
-	
 }

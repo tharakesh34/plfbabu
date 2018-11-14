@@ -49,18 +49,18 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
-public class PTNumberValidator implements Constraint{
+public class PTNumberValidator implements Constraint {
 	private static final Logger logger = Logger.getLogger(PTNumberValidator.class);
 
 	private String fieldParm;
-	private boolean mandatory=false;
-	private boolean negative=false;
+	private boolean mandatory = false;
+	private boolean negative = false;
 	private int maxValue;
 	private int minValue;
-	private boolean minValid=false;
-	private boolean maxValid=false;
+	private boolean minValid = false;
+	private boolean maxValid = false;
 
-	public PTNumberValidator(String fieldParm, boolean mandatory,boolean negative,int maxValue) {
+	public PTNumberValidator(String fieldParm, boolean mandatory, boolean negative, int maxValue) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
 		setNegative(negative);
@@ -68,22 +68,22 @@ public class PTNumberValidator implements Constraint{
 		setMinValue(0);
 	}
 
-	public PTNumberValidator(String fieldParm, boolean mandatory,boolean negative,int minValue,int maxValue) {
+	public PTNumberValidator(String fieldParm, boolean mandatory, boolean negative, int minValue, int maxValue) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
 		setNegative(negative);
 		setMaxValue(maxValue);
 		setMinValue(minValue);
-		
+
 	}
 
-	public PTNumberValidator(String fieldParm, boolean mandatory,boolean negative) {
+	public PTNumberValidator(String fieldParm, boolean mandatory, boolean negative) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
 		setNegative(negative);
 		setMaxValue(0);
 		setMinValue(0);
-		
+
 	}
 
 	public PTNumberValidator(String fieldParm, boolean mandatory) {
@@ -100,80 +100,76 @@ public class PTNumberValidator implements Constraint{
 	}
 
 	public void validate(Component comp, Object value) throws WrongValueException {
-		
-		String errorMessage=getErrorMessage(value);
-		if(StringUtils.isNotBlank(errorMessage)){
+
+		String errorMessage = getErrorMessage(value);
+		if (StringUtils.isNotBlank(errorMessage)) {
 			throw new WrongValueException(comp, errorMessage);
 		}
 	}
 
-	
-	private String getErrorMessage(Object value){
+	private String getErrorMessage(Object value) {
 
 		int rateValue = 0;
-		
-		if(value!=null && StringUtils.isNotBlank(value.toString()) ){
-			if(Integer.class.isInstance(value)){
-				rateValue=(Integer) value;
-			}else{
+
+		if (value != null && StringUtils.isNotBlank(value.toString())) {
+			if (Integer.class.isInstance(value)) {
+				rateValue = (Integer) value;
+			} else {
 
 				try {
 					rateValue = Integer.parseInt(value.toString());
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
-					return Labels.getLabel("NUMBER_INVALID", new String[] {fieldParm});
+					return Labels.getLabel("NUMBER_INVALID", new String[] { fieldParm });
 				}
 			}
 		}
-		
+
 		//Mandatory Validation with Empty Value
 		if (mandatory && value == null) {
-			return Labels.getLabel("FIELD_IS_MAND", new String[] {fieldParm});		
+			return Labels.getLabel("FIELD_IS_MAND", new String[] { fieldParm });
 		}
 
 		//Mandatory Validation
 		if (mandatory && rateValue == 0) {
-			if(minValid){
-				return Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {fieldParm, String.valueOf(minValue)});	
-			}else{
-				return Labels.getLabel("NUMBER_MINVALUE", new String[] {fieldParm, "0"});		
+			if (minValid) {
+				return Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] { fieldParm, String.valueOf(minValue) });
+			} else {
+				return Labels.getLabel("NUMBER_MINVALUE", new String[] { fieldParm, "0" });
 			}
 		}
 
 		// Negative Validation
-		if(rateValue < 0 && !negative){
-			return Labels.getLabel("NUMBER_NOT_NEGATIVE", new String[] {fieldParm});
+		if (rateValue < 0 && !negative) {
+			return Labels.getLabel("NUMBER_NOT_NEGATIVE", new String[] { fieldParm });
 		}
 
-		
 		if (minValid && maxValid) {
-			if(rateValue <minValue || rateValue >maxValue ){
-				return Labels.getLabel("NUMBER_RANGE_EQ", new String[] {fieldParm,String.valueOf(minValue),String.valueOf(maxValue)});
+			if (rateValue < minValue || rateValue > maxValue) {
+				return Labels.getLabel("NUMBER_RANGE_EQ",
+						new String[] { fieldParm, String.valueOf(minValue), String.valueOf(maxValue) });
 			}
-			return null;	
+			return null;
 		}
 
-		
-		if(maxValid){
-			if(rateValue > maxValue){
-				return Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {fieldParm,String.valueOf(maxValue)});
-			}else{
+		if (maxValid) {
+			if (rateValue > maxValue) {
+				return Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] { fieldParm, String.valueOf(maxValue) });
+			} else {
 				return null;
 			}
 		}
 
-		if(minValid){
-			if(rateValue < minValue){
-				return Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {fieldParm,String.valueOf(maxValue)});
-			}else{
+		if (minValid) {
+			if (rateValue < minValue) {
+				return Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] { fieldParm, String.valueOf(maxValue) });
+			} else {
 				return null;
 			}
 		}
 
 		return null;
 	}
-
-
 
 	void setFieldParm(String fieldParm) {
 		this.fieldParm = fieldParm;
@@ -192,11 +188,11 @@ public class PTNumberValidator implements Constraint{
 	}
 
 	void setMaxValue(int maxValue) {
-		if(maxValue!=0){
-			maxValid=true;
+		if (maxValue != 0) {
+			maxValid = true;
 		}
 		this.maxValue = maxValue;
-		
+
 	}
 
 	int getMinValue() {
@@ -204,8 +200,8 @@ public class PTNumberValidator implements Constraint{
 	}
 
 	void setMinValue(int minValue) {
-		if(minValue!=0){
-			minValid=true;
+		if (minValue != 0) {
+			minValid = true;
 		}
 		this.minValue = minValue;
 	}

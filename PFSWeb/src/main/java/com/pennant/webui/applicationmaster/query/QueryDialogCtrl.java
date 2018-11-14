@@ -80,9 +80,9 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/Query/queryDialog.zul file.
@@ -96,10 +96,10 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_QueryDialog;
-	
+
 	protected Button btnValidate;
 	protected Button btnSimulate;
-	
+
 	protected Row row0;
 	protected Label label_QueryCode;
 	protected Hlayout hlayout_QueryCode;
@@ -154,7 +154,6 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	private int subquery;
 	private transient QueryListCtrl queryListCtrl; // overhanded per param
 
-	
 	protected Space space;
 	protected Comboitem comboitem;
 
@@ -335,10 +334,10 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		doWriteBeanToComponents(this.query.getBefImage());
 		displayComponents(ScreenCTL.SCRN_GNINT);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -405,7 +404,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 			// set ReadOnly mode accordingly if the object is new or not.
 
 			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aQuery.isNewRecord()));
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -446,9 +445,9 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 
 		boolean tempReadOnly = readOnly;
 
-		if (readOnly){
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.query.getRecordType())) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.query.getRecordType())) {
 			tempReadOnly = true;
 		}
 		// setQueryAccess("QueryDialog_QueryCode", true, this.Sql_Query, null); // FIX ME <<Access right to >>
@@ -977,8 +976,8 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_QueryDialog, auditHeader);
 						return processCompleted;
 					}

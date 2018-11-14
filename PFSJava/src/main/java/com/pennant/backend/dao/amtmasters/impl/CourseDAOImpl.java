@@ -63,18 +63,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	private static Logger logger = Logger.getLogger(CourseDAOImpl.class);
-		
+
 	public CourseDAOImpl() {
 		super();
 	}
-	
 
 	/**
-	 * Fetch the Record  Course Detail details by key field
+	 * Fetch the Record Course Detail details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Course
 	 */
 	@Override
@@ -85,8 +85,8 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select CourseName,CourseDesc, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId  " );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId  ");
 		selectSql.append(" From AMTCourse");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CourseName =:CourseName ");
@@ -95,10 +95,9 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(course);
 		RowMapper<Course> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Course.class);
 
-		try{
-			course = this.jdbcTemplate.queryForObject(selectSql.toString(), 
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			course = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			course = null;
 		}
@@ -107,13 +106,13 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the AMTCourse or AMTCourse_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Course Detail by key CourseName
+	 * This method Deletes the Record from the AMTCourse or AMTCourse_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Course Detail by key CourseName
 	 * 
-	 * @param Course Detail (course)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Course
+	 *            Detail (course)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -121,12 +120,12 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	public void delete(Course course, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		StringBuilder deleteSql = 	new StringBuilder();
+		StringBuilder deleteSql = new StringBuilder();
 
 		deleteSql.append("Delete From AMTCourse");
-		deleteSql.append(StringUtils.trimToEmpty(type)); 
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CourseName =:CourseName");
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(course);
 		try {
@@ -143,30 +142,31 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	/**
 	 * This method insert new Records into AMTCourse or AMTCourse_Temp.
 	 *
-	 * save Course Detail 
+	 * save Course Detail
 	 * 
-	 * @param Course Detail (course)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Course
+	 *            Detail (course)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public String save(Course course,String type) {
+	public String save(Course course, String type) {
 		logger.debug("Entering");
-		StringBuilder insertSql = 	new StringBuilder();
+		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append(" Insert Into AMTCourse");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CourseName , CourseDesc, " );
+		insertSql.append(" (CourseName , CourseDesc, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:CourseName , :CourseDesc, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,"); 
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CourseName , :CourseDesc, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		logger.debug("selectSql: " + insertSql.toString());     
+		logger.debug("selectSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(course);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -176,13 +176,13 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	}
 
 	/**
-	 * This method updates the Record AMTCourse or AMTCourse_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Course Detail by key CourseName and Version
+	 * This method updates the Record AMTCourse or AMTCourse_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Course Detail by key CourseName and Version
 	 * 
-	 * @param Course Detail (course)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Course
+	 *            Detail (course)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -191,17 +191,17 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	public void update(Course course, String type) {
 		int recordCount = 0;
 		logger.debug("Entering Update Method");
-		StringBuilder  updateSql = 	new StringBuilder();
+		StringBuilder updateSql = new StringBuilder();
 
 		updateSql.append("Update AMTCourse");
-		updateSql.append(StringUtils.trimToEmpty(type));  
-		updateSql.append(" Set CourseDesc = :CourseDesc,"); 
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, " );
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set CourseDesc = :CourseDesc,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, ");
 		updateSql.append(" WorkflowId = :WorkflowId");
 		updateSql.append(" Where CourseName =:CourseName");
-		logger.debug("updateSql: " + updateSql.toString());    
+		logger.debug("updateSql: " + updateSql.toString());
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");

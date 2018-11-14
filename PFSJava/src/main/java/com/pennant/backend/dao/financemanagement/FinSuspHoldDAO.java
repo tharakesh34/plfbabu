@@ -52,12 +52,19 @@ import com.pennant.backend.model.financemanagement.FinSuspHold;
 public interface FinSuspHoldDAO {
 
 	FinSuspHold getFinSuspHold();
+
 	FinSuspHold getNewFinSuspHold();
+
 	FinSuspHold getFinSuspHoldById(long id, String type);
+
 	void update(FinSuspHold finSuspHold, String type);
+
 	void delete(FinSuspHold finSuspHold, String type);
+
 	long save(FinSuspHold finSuspHold, String type);
+
 	FinSuspHold getFinSuspHoldByDetails(FinSuspHold finSuspHold, String type);
+
 	boolean holdSuspense(String product, String finType, String finReference, long custID);
-	
+
 }

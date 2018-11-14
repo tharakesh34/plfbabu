@@ -160,100 +160,99 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  * This is the controller class for the /WEB-INF/pages/collateral/CollateralSetup/collateralSetupDialog.zul file. <br>
  */
 public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
-	private static final long								serialVersionUID			= 1L;
-	private static final Logger								logger						= Logger.getLogger(CollateralSetupDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(CollateralSetupDialogCtrl.class);
 
-	protected Window										window_CollateralSetupDialog;
+	protected Window window_CollateralSetupDialog;
 
-	protected Uppercasebox									collateralRef;
-	protected Textbox										depositorCif;
-	protected Label											depositerName;
-	protected Longbox										depositorId;
-	protected Textbox										collateralType;
-	protected Label											collateralTypeName;
-	protected ExtendedCombobox								collateralCcy;
-	protected Intbox										numberOfUnits;
-	protected CurrencyBox									unitPrice;
-	protected CurrencyBox									collateralValue;
-	protected CurrencyBox									maxCollateralValue;
-	protected Decimalbox									bankLtv;
-	protected Decimalbox									specialLTV;
-	protected CurrencyBox									bankValuation;
-	protected Textbox										collateralLoc;
-	protected Textbox										valuator;
-	protected Datebox										expiryDate;
-	protected FrequencyBox									reviewFrequency;
-	protected Datebox										nextReviewDate;
-	protected Checkbox										multiLoanAssignment;
-	protected Checkbox										thirdPartyAssignment;
-	protected Intbox										assignedLoansCount;
-	protected CurrencyBox									assignedCollateralValue;
-	protected Decimalbox									assignedPercToCollateralValue;
-	protected Decimalbox									assignedPercToBankValuation;
-	protected Textbox										remarks;
-	protected Tabbox										tabBoxIndexCenter;
-	protected Tabs											tabsIndexCenter;
-	protected Tabpanels										tabpanelsBoxIndexCenter;
-	protected Tab											basicDetailsTab;
-	protected Tab											extendedDetailsTab;
-	protected Tabpanel										extendedFieldTabpanel;
-	protected Tab											assignmentDetailTab;
-	protected Tab											movementsTab;
-	protected Listbox										listBoxCoownerDetail;
-	protected Button										btnAddCoownerDetails;
-	protected Button										btnAddThirdPartyDetail;
-	protected Listbox										listBoxAssignmentDetail;
-	protected Listbox										listBoxMovements;
-	protected Listbox										listBoxThirdParty;
-	protected Component										checkListChildWindow;
-	protected Button										viewInfo;
-	protected Groupbox										gb_ThirdPartyAssignDetails;
-	protected Button 										btnFlagDetails;
-	protected Uppercasebox 									flagDetails;
+	protected Uppercasebox collateralRef;
+	protected Textbox depositorCif;
+	protected Label depositerName;
+	protected Longbox depositorId;
+	protected Textbox collateralType;
+	protected Label collateralTypeName;
+	protected ExtendedCombobox collateralCcy;
+	protected Intbox numberOfUnits;
+	protected CurrencyBox unitPrice;
+	protected CurrencyBox collateralValue;
+	protected CurrencyBox maxCollateralValue;
+	protected Decimalbox bankLtv;
+	protected Decimalbox specialLTV;
+	protected CurrencyBox bankValuation;
+	protected Textbox collateralLoc;
+	protected Textbox valuator;
+	protected Datebox expiryDate;
+	protected FrequencyBox reviewFrequency;
+	protected Datebox nextReviewDate;
+	protected Checkbox multiLoanAssignment;
+	protected Checkbox thirdPartyAssignment;
+	protected Intbox assignedLoansCount;
+	protected CurrencyBox assignedCollateralValue;
+	protected Decimalbox assignedPercToCollateralValue;
+	protected Decimalbox assignedPercToBankValuation;
+	protected Textbox remarks;
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab basicDetailsTab;
+	protected Tab extendedDetailsTab;
+	protected Tabpanel extendedFieldTabpanel;
+	protected Tab assignmentDetailTab;
+	protected Tab movementsTab;
+	protected Listbox listBoxCoownerDetail;
+	protected Button btnAddCoownerDetails;
+	protected Button btnAddThirdPartyDetail;
+	protected Listbox listBoxAssignmentDetail;
+	protected Listbox listBoxMovements;
+	protected Listbox listBoxThirdParty;
+	protected Component checkListChildWindow;
+	protected Button viewInfo;
+	protected Groupbox gb_ThirdPartyAssignDetails;
+	protected Button btnFlagDetails;
+	protected Uppercasebox flagDetails;
 
-	protected Label 										label_DepositorCif;
-	protected Label 										label_CollateralRef;
-	protected Label 										label_DepositorName;
-	protected Label 										label_Currency;
-	protected Label 										label_CollateralType;
-	protected Label 										label_CollateralLoc;
-	protected Decimalbox 									label_assignedBankValuation;
-	protected Decimalbox 									label_assignedColllValue;
-	protected Decimalbox 									label_assignedPercBankValuation;
-	protected Decimalbox 									label_availableForAssignment;
-	
-	protected Label 										label_Movement_DepositorCif;
-	protected Label 										label_Movement_CollateralRef;
-	protected Label 										label_Movement_DepositorName;
-	protected Label 										label_Movement_Currency;
-	protected Label 										label_Movement_CollateralType;
-	protected Label 										label_Movement_CollateralLoc;
+	protected Label label_DepositorCif;
+	protected Label label_CollateralRef;
+	protected Label label_DepositorName;
+	protected Label label_Currency;
+	protected Label label_CollateralType;
+	protected Label label_CollateralLoc;
+	protected Decimalbox label_assignedBankValuation;
+	protected Decimalbox label_assignedColllValue;
+	protected Decimalbox label_assignedPercBankValuation;
+	protected Decimalbox label_availableForAssignment;
 
-	protected Space											space_SpecialLTV;
-	protected Space											space_CollateralLoc;
-	protected Space											space_CollateralValuator;
+	protected Label label_Movement_DepositorCif;
+	protected Label label_Movement_CollateralRef;
+	protected Label label_Movement_DepositorName;
+	protected Label label_Movement_Currency;
+	protected Label label_Movement_CollateralType;
+	protected Label label_Movement_CollateralLoc;
 
-	private CollateralSetup									collateralSetup;
-	private transient CollateralSetupListCtrl				collateralSetupListCtrl;
-	private transient CollateralSetupService				collateralSetupService;
-	private transient RuleExecutionUtil						ruleExecutionUtil;
-	private EventManager 									eventManager;
+	protected Space space_SpecialLTV;
+	protected Space space_CollateralLoc;
+	protected Space space_CollateralValuator;
+
+	private CollateralSetup collateralSetup;
+	private transient CollateralSetupListCtrl collateralSetupListCtrl;
+	private transient CollateralSetupService collateralSetupService;
+	private transient RuleExecutionUtil ruleExecutionUtil;
+	private EventManager eventManager;
 	private NotificationService notificationService;
-	private FinanceReferenceDetailService					financeReferenceDetailService;					
+	private FinanceReferenceDetailService financeReferenceDetailService;
 
-	private transient CustomerDialogCtrl					customerDialogCtrl;
-	private transient ExtendedFieldRenderDialogCtrl			extendedFieldRenderDialogCtrl;
-	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl;
-	private transient AgreementDetailDialogCtrl				agreementDetailDialogCtrl;
-	private transient FinanceCheckListReferenceDialogCtrl	financeCheckListReferenceDialogCtrl;
-	private List<CoOwnerDetail>								coOwnerDetailList			= null;
-	private List<CollateralThirdParty>						collateralThirdPartyList	= null;
-	private List<FinFlagsDetail> 							finFlagsDetailList 			= null;
+	private transient CustomerDialogCtrl customerDialogCtrl;
+	private transient ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl;
+	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
+	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl;
+	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
+	private List<CoOwnerDetail> coOwnerDetailList = null;
+	private List<CollateralThirdParty> collateralThirdPartyList = null;
+	private List<FinFlagsDetail> finFlagsDetailList = null;
 
-	protected String										selectMethodName			= "onSelectTab";
-	private String											moduleType					= "";
-	private String											module						= "";
-
+	protected String selectMethodName = "onSelectTab";
+	private String moduleType = "";
+	private String module = "";
 
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private List<FinanceCheckListReference> collateralChecklists = null;
@@ -264,7 +263,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private transient FinanceDetail financeDetail;
 	private boolean fromLoan = false;
 	private boolean newRecord = false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -298,7 +297,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		try {
 			// Get the required arguments.
 			this.collateralSetup = (CollateralSetup) arguments.get("collateralSetup");
-		
+
 			if (this.collateralSetup == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -306,7 +305,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (arguments.containsKey("module")) {
 				this.module = (String) arguments.get("module");
 			}
-			
+
 			if (arguments.containsKey("moduleType")) {
 				this.moduleType = (String) arguments.get("moduleType");
 			}
@@ -325,7 +324,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					this.newRecord = (boolean) arguments.get("newRecord");
 				}
 			}
-			
+
 			if (fromLoan) {
 				setCollateralAssignmentDialogCtrl((CollateralAssignmentDialogCtrl) arguments.get("dialogCtrl"));
 			} else {
@@ -339,28 +338,29 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			if (!"E".equals(module)) {
 				// Render the page and display the data.
-				doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(), this.collateralSetup.getNextTaskId());
+				doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(),
+						this.collateralSetup.getNextTaskId());
 			}
-			
+
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				if (!fromLoan) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			//Set Listbox heights...
 			this.listBoxAssignmentDetail.setHeight(borderLayoutHeight - 210 + "px");
 			this.listBoxMovements.setHeight(borderLayoutHeight - 210 + "px");
-			
+
 			if ("E".equals(module)) {
 				moduleType = PennantConstants.MODULETYPE_ENQ;
 				enqiryModule = true;
 			}
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.collateralSetup);
@@ -381,19 +381,18 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		if (!enqiryModule) {
 			getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnNew"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnSave"));
-			
-			this.btnAddCoownerDetails.setVisible(getUserWorkspace().isAllowed(
-					"button_CollateralSetupDialog_btnAddCoownerDetails"));
-			this.btnAddThirdPartyDetail.setVisible(getUserWorkspace().isAllowed(
-					"button_CollateralSetupDialog_btnAddThirdPartyDetail"));
-			this.btnFlagDetails.setVisible(getUserWorkspace().isAllowed(
-					"button_CollateralSetupDialog_btnFlagDetails"));
+
+			this.btnAddCoownerDetails
+					.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnAddCoownerDetails"));
+			this.btnAddThirdPartyDetail
+					.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnAddThirdPartyDetail"));
+			this.btnFlagDetails.setVisible(getUserWorkspace().isAllowed("button_CollateralSetupDialog_btnFlagDetails"));
 		}
 
 		logger.debug("Leaving");
@@ -401,49 +400,51 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Method for Adding Flags into Multi Selection Extended box
+	 * 
 	 * @param event
 	 */
 	@SuppressWarnings("unchecked")
 	public void onClick$btnFlagDetails(Event event) {
 		logger.debug("Entering  " + event.toString());
-		
+
 		String[] flagCodes = this.flagDetails.getValue().split(",");
 		for (int i = 0; i < flagCodes.length; i++) {
 			this.flagTypeDataMap.put(flagCodes[i], null);
 		}
-		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_CollateralSetupDialog, "Flag", this.flagTypeDataMap);
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_CollateralSetupDialog, "Flag",
+				this.flagTypeDataMap);
+		if (dataObject instanceof String) {
 			this.flagDetails.setValue(dataObject.toString());
 			this.flagDetails.setTooltiptext("");
-		}else{
-			HashMap<String,Object> details= (HashMap<String,Object>) dataObject;
+		} else {
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = details.keySet().toString();
-				tempflagcode = tempflagcode.replace("["," ").replace("]","").replace(" ", "");
-				if(tempflagcode.startsWith(",")){
+				tempflagcode = tempflagcode.replace("[", " ").replace("]", "").replace(" ", "");
+				if (tempflagcode.startsWith(",")) {
 					tempflagcode = tempflagcode.substring(1);
 				}
-				if(tempflagcode.endsWith(",")){
-					tempflagcode = tempflagcode.substring(0, tempflagcode.length()-1);
+				if (tempflagcode.endsWith(",")) {
+					tempflagcode = tempflagcode.substring(0, tempflagcode.length() - 1);
 				}
 				this.flagDetails.setValue(tempflagcode);
 			}
 
 			//Setting tooltip with Descriptions
-			String toolTipDesc="";
-			for (String  key : details.keySet()) {
-				Object obj = (Object)details.get(key);
-				if(obj instanceof String){
+			String toolTipDesc = "";
+			for (String key : details.keySet()) {
+				Object obj = (Object) details.get(key);
+				if (obj instanceof String) {
 					//	Do Nothing
-				}else{
-					Flag flagType = (Flag)obj;
-					if(flagType != null){
-						toolTipDesc = toolTipDesc.concat(flagType.getFlagDesc()+" , ");
+				} else {
+					Flag flagType = (Flag) obj;
+					if (flagType != null) {
+						toolTipDesc = toolTipDesc.concat(flagType.getFlagDesc() + " , ");
 					}
 				}
 			}
-			if(StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")){
-				toolTipDesc = toolTipDesc.substring(0,toolTipDesc.length()-2);
+			if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
+				toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
 			}
 			this.flagDetails.setTooltiptext(toolTipDesc);
 		}
@@ -456,7 +457,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		if (fromLoan) {
@@ -582,12 +583,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			this.window_CollateralSetupDialog.setWidth("90%");
 			this.groupboxWf.setVisible(false);
 			this.window_CollateralSetupDialog.doModal();
-		}else if("E".equals(module)){
+		} else if ("E".equals(module)) {
 			this.window_CollateralSetupDialog.setWidth("100%");
 			this.window_CollateralSetupDialog.setHeight("100%");
 			this.groupboxWf.setVisible(false);
 			setDialog(DialogType.EMBEDDED);
-		}else {
+		} else {
 			this.window_CollateralSetupDialog.setWidth("100%");
 			this.window_CollateralSetupDialog.setHeight("100%");
 			setDialog(DialogType.EMBEDDED);
@@ -596,21 +597,20 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components finance flags
-	 * list
+	 * Method Used for set list of values been class to components finance flags list
 	 * 
 	 * @param Collateral
 	 */
 	private void doFillFinFlagsList(List<FinFlagsDetail> finFlagsDetailList) {
 		logger.debug("Entering");
 		setFinFlagsDetailList(finFlagsDetailList);
-		if(finFlagsDetailList == null || finFlagsDetailList.isEmpty()){
+		if (finFlagsDetailList == null || finFlagsDetailList.isEmpty()) {
 			return;
 		}
-		
+
 		String tempflagcode = "";
 		for (FinFlagsDetail finFlagsDetail : finFlagsDetailList) {
-			if(!StringUtils.equals(finFlagsDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)){
+			if (!StringUtils.equals(finFlagsDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				if (StringUtils.isEmpty(tempflagcode)) {
 					tempflagcode = finFlagsDetail.getFlagCode();
 				} else {
@@ -623,7 +623,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	/**
-	 * Method for Used for render the Data from List 
+	 * Method for Used for render the Data from List
 	 * 
 	 * @param finFlagsDetailList
 	 */
@@ -632,7 +632,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		List<String> finFlagList = Arrays.asList(this.flagDetails.getValue().split(","));
 
-		if(this.finFlagsDetailList == null){
+		if (this.finFlagsDetailList == null) {
 			this.finFlagsDetailList = new ArrayList<>();
 		}
 
@@ -643,26 +643,26 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 
 		for (String flagCode : finFlagList) {
-			
-			if(StringUtils.isEmpty(flagCode)){
+
+			if (StringUtils.isEmpty(flagCode)) {
 				continue;
 			}
 
 			// Check object is already exists in saved list or not
-			if(flagMap.containsKey(flagCode)){
+			if (flagMap.containsKey(flagCode)) {
 				//Removing from map to identify existing modifications
 				boolean isDelete = false;
-				if (this.userAction.getSelectedItem() != null){
-					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-							this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-							this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+				if (this.userAction.getSelectedItem() != null) {
+					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+							|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
 						isDelete = true;
 					}
 				}
-				if(!isDelete){
+				if (!isDelete) {
 					flagMap.remove(flagCode);
 				}
-			}else{
+			} else {
 				FinFlagsDetail afinFlagsDetail = new FinFlagsDetail();
 				afinFlagsDetail.setFlagCode(flagCode);
 				afinFlagsDetail.setModuleName(CollateralConstants.MODULE_NAME);
@@ -675,17 +675,17 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 
 		//Removing unavailable records from DB by using Workflow details
-		if(flagMap.size() > 0){
+		if (flagMap.size() > 0) {
 			for (int i = 0; i < finFlagsDetailList.size(); i++) {
 				FinFlagsDetail finFlagsDetail = finFlagsDetailList.get(i);
-				if(flagMap.containsKey(finFlagsDetail.getFlagCode())){
+				if (flagMap.containsKey(finFlagsDetail.getFlagCode())) {
 
-					if(StringUtils.isBlank(finFlagsDetail.getRecordType())){
+					if (StringUtils.isBlank(finFlagsDetail.getRecordType())) {
 						finFlagsDetail.setNewRecord(true);
 						finFlagsDetail.setVersion(finFlagsDetail.getVersion() + 1);
 						finFlagsDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}else{
-						if(!StringUtils.equals(finFlagsDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)){
+					} else {
+						if (!StringUtils.equals(finFlagsDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 							finFlagsDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 						}
 					}
@@ -713,11 +713,15 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.collateralType.setValue(aCollateralSetup.getCollateralType());
 		this.collateralTypeName.setValue(aCollateralSetup.getCollateralTypeName());
 		this.collateralCcy.setValue(aCollateralSetup.getCollateralCcy());
-		this.collateralCcy.setDescription(CurrencyUtil.getCurrencyObject(aCollateralSetup.getCollateralCcy()).getCcyDesc());
+		this.collateralCcy
+				.setDescription(CurrencyUtil.getCurrencyObject(aCollateralSetup.getCollateralCcy()).getCcyDesc());
 		this.specialLTV.setValue(aCollateralSetup.getSpecialLTV());
-		this.collateralValue.setValue(PennantApplicationUtil.formateAmount(aCollateralSetup.getCollateralValue(), getCcyFormat()));
-		this.maxCollateralValue.setValue(PennantApplicationUtil.formateAmount(aCollateralSetup.getMaxCollateralValue(), getCcyFormat()));
-		this.bankValuation.setValue(PennantApplicationUtil.formateAmount(aCollateralSetup.getBankValuation(), getCcyFormat()));
+		this.collateralValue
+				.setValue(PennantApplicationUtil.formateAmount(aCollateralSetup.getCollateralValue(), getCcyFormat()));
+		this.maxCollateralValue.setValue(
+				PennantApplicationUtil.formateAmount(aCollateralSetup.getMaxCollateralValue(), getCcyFormat()));
+		this.bankValuation
+				.setValue(PennantApplicationUtil.formateAmount(aCollateralSetup.getBankValuation(), getCcyFormat()));
 		this.collateralLoc.setValue(aCollateralSetup.getCollateralLoc());
 		this.valuator.setValue(aCollateralSetup.getValuator());
 		this.expiryDate.setValue(aCollateralSetup.getExpiryDate());
@@ -727,14 +731,14 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.remarks.setValue(aCollateralSetup.getRemarks());
 		this.thirdPartyAssignment.setChecked(aCollateralSetup.isThirdPartyAssignment());
 
-		if(aCollateralSetup.isNewRecord()){
+		if (aCollateralSetup.isNewRecord()) {
 			CollateralStructure structure = aCollateralSetup.getCollateralStructure();
-			if(StringUtils.equals(structure.getLtvType(), CollateralConstants.FIXED_LTV)){
+			if (StringUtils.equals(structure.getLtvType(), CollateralConstants.FIXED_LTV)) {
 				this.bankLtv.setValue(structure.getLtvPercentage());
-			}else if(StringUtils.equals(structure.getLtvType(), CollateralConstants.VARIABLE_LTV)){
+			} else if (StringUtils.equals(structure.getLtvType(), CollateralConstants.VARIABLE_LTV)) {
 				setBankLTV();
 			}
-		}else{
+		} else {
 			this.bankLtv.setValue(aCollateralSetup.getBankLTV());
 		}
 
@@ -746,21 +750,21 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		//Collateral third party details list
 		doFillCollateralThirdPartyDetails(aCollateralSetup.getCollateralThirdPartyList());
-			
+
 		// fill the components with the Finance Flags Data and Display
 		doFillFinFlagsList(aCollateralSetup.getFinFlagsDetailsList());
-		
+
 		//Extended Field Details
 		appendExtendedFieldDetails();
-		
+
 		// Assignment Details
 		renderAssignmentDetails();
-		
+
 		// Movement Details
 		renderMovementDetails();
-		
+
 		if (!enqiryModule) {
-			
+
 			// Customer Details
 			if (!fromLoan) {
 				appendCustomerDetailTab(true);
@@ -782,37 +786,41 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.recordStatus.setValue(aCollateralSetup.getRecordStatus());
 		logger.debug("Leaving");
 	}
-	
-	private void setBankLTV(){
-		
+
+	private void setBankLTV() {
+
 		Object ruleResult = null;
 		CollateralSetup aCollateralSetup = getCollateralSetup();
 		CollateralStructure structure = aCollateralSetup.getCollateralStructure();
 		HashMap<String, Object> declaredMap = new HashMap<>();
-		if(aCollateralSetup.getCustomerDetails() != null) {
+		if (aCollateralSetup.getCustomerDetails() != null) {
 			declaredMap = aCollateralSetup.getCustomerDetails().getCustomer().getDeclaredFieldValues();
 		}
 		declaredMap.put("ct_collateralType", aCollateralSetup.getCollateralType());
 		declaredMap.put("ct_collateralCcy", aCollateralSetup.getCollateralCcy());
-		if(this.extendedFieldRenderList != null && this.extendedFieldRenderList.size() > 0){
-			
+		if (this.extendedFieldRenderList != null && this.extendedFieldRenderList.size() > 0) {
+
 			ExtendedFieldRender fieldValueDetail = extendedFieldRenderList.get(0);
 			Map<String, Object> detail = fieldValueDetail.getMapValues();
 			String fieldValue = "";
-			if(detail.containsKey("PROPERTYTYPE")){
+			if (detail.containsKey("PROPERTYTYPE")) {
 				fieldValue = (String) detail.get("PROPERTYTYPE");
 			}
 			declaredMap.put("ct_propertyType", fieldValue);
 			// ### 16-05-2018 - Development Item 82
-			declaredMap.putAll(prepareExtendedData(detail, getCollateralSetup().getCollateralStructure().getExtendedFieldHeader(),aCollateralSetup.getCollateralCcy()));
-		}else{
+			declaredMap.putAll(
+					prepareExtendedData(detail, getCollateralSetup().getCollateralStructure().getExtendedFieldHeader(),
+							aCollateralSetup.getCollateralCcy()));
+		} else {
 			declaredMap.put("ct_propertyType", "");
 			// ### 16-05-2018 - Development Item 82
-			declaredMap.putAll(prepareExtendedData(new HashMap<>() , getCollateralSetup().getCollateralStructure().getExtendedFieldHeader(),aCollateralSetup.getCollateralCcy()));
+			declaredMap.putAll(prepareExtendedData(new HashMap<>(),
+					getCollateralSetup().getCollateralStructure().getExtendedFieldHeader(),
+					aCollateralSetup.getCollateralCcy()));
 		}
-		
+
 		try {
-			ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap, 
+			ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap,
 					aCollateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -822,21 +830,24 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	// ### 16-05-2018 - Start- Development Item 82
-	private HashMap<String, Object> prepareExtendedData(Map<String, Object> detail,ExtendedFieldHeader header,String ccy ){
-		
+	private HashMap<String, Object> prepareExtendedData(Map<String, Object> detail, ExtendedFieldHeader header,
+			String ccy) {
+
 		HashMap<String, Object> declaredMap = new HashMap<>();
 		//declaredMap.put("COLLATERAL_GLAP_PROPTYPE", detail.get("PROPTYPE"));
 		for (ExtendedFieldDetail fieldDetail : header.getExtendedFieldDetails()) {
-			if(fieldDetail.isAllowInRule()){
+			if (fieldDetail.isAllowInRule()) {
 				Object value = detail.get(fieldDetail.getFieldName());
-				if(StringUtils.equals("CURRENCY",fieldDetail.getFieldType())){
-					value  = PennantAppUtil.formateAmount((BigDecimal) value,CurrencyUtil.getFormat(ccy));
+				if (StringUtils.equals("CURRENCY", fieldDetail.getFieldType())) {
+					value = PennantAppUtil.formateAmount((BigDecimal) value, CurrencyUtil.getFormat(ccy));
 				}
-				declaredMap.put(fieldDetail.getLovDescModuleName()+"_"+fieldDetail.getLovDescSubModuleName()+"_"+fieldDetail.getFieldName(), value);
+				declaredMap.put(fieldDetail.getLovDescModuleName() + "_" + fieldDetail.getLovDescSubModuleName() + "_"
+						+ fieldDetail.getFieldName(), value);
 			}
-		}	
+		}
 		return declaredMap;
 	}
+
 	// ### 16-05-2018 - End- Development Item 82
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the border layout.
@@ -851,7 +862,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			} else {
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("customerDetails", getCollateralSetup().getCustomerDetails());
-				map.put("moduleType",moduleType);
+				map.put("moduleType", moduleType);
 
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
@@ -898,18 +909,18 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 */
 	private void appendCheckListDetailTab(CollateralSetup collateralSetup) {
 		logger.debug("Entering");
-		
+
 		boolean createTab = false;
 		if (collateralSetup.getCheckLists() != null && !collateralSetup.getCheckLists().isEmpty()) {
 			if (getTab(AssetConstants.UNIQUE_ID_CHECKLIST) == null) {
 				createTab = true;
 			}
-		} 
-		
+		}
+
 		if (createTab) {
 			createTab(AssetConstants.UNIQUE_ID_CHECKLIST, false);
 		}
-		
+
 		if (collateralSetup.getCheckLists() != null && !collateralSetup.getCheckLists().isEmpty()) {
 			boolean createcheckLsitTab = false;
 			for (FinanceReferenceDetail chkList : collateralSetup.getCheckLists()) {
@@ -955,7 +966,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		} else {
 			map.put("enqModule", isReadOnly("CollateralSetupDialog_DocumentDetails"));
 		}
-		
+
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
 		logger.debug("Leaving");
@@ -986,7 +997,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method is for append extended field details
 	 */
@@ -995,7 +1006,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		try {
 
 			//Set Tab Name
-			this.extendedDetailsTab.setLabel(getCollateralSetup().getCollateralStructure().getExtendedFieldHeader().getTabHeading());
+			this.extendedDetailsTab
+					.setLabel(getCollateralSetup().getCollateralStructure().getExtendedFieldHeader().getTabHeading());
 
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("dialogCtrl", this);
@@ -1005,7 +1017,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("preValidationScript", getCollateralSetup().getCollateralStructure().getPreValidation());
 			map.put("postValidationScript", getCollateralSetup().getCollateralStructure().getPostValidation());
 			map.put("roleCode", getRole());
-			map.put("moduleType",moduleType);
+			map.put("moduleType", moduleType);
 			map.put("queryId", getCollateralSetup().getCollateralStructure().getQueryId());
 			map.put("querySubCode", getCollateralSetup().getCollateralStructure().getQuerySubCode());
 			map.put("queryCode", getCollateralSetup().getCollateralStructure().getQueryCode());
@@ -1027,7 +1039,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aCollateralSetup
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void doWriteComponentsToBean(CollateralSetup aCollateralSetup) throws Exception {
 		logger.debug("Entering");
@@ -1069,21 +1081,23 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		// Collateral Value
 		try {
-			aCollateralSetup.setCollateralValue(PennantApplicationUtil.unFormateAmount(this.collateralValue.getActualValue(), getCcyFormat()));
+			aCollateralSetup.setCollateralValue(
+					PennantApplicationUtil.unFormateAmount(this.collateralValue.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Max Collateral value
 		try {
-			aCollateralSetup.setMaxCollateralValue(PennantApplicationUtil.unFormateAmount(this.maxCollateralValue.getActualValue(), getCcyFormat()));
+			aCollateralSetup.setMaxCollateralValue(
+					PennantApplicationUtil.unFormateAmount(this.maxCollateralValue.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		//Bank LTV
 		try {
-			if(this.bankLtv.getValue() == null){
+			if (this.bankLtv.getValue() == null) {
 				this.bankLtv.setValue(BigDecimal.ZERO);
 			}
 			aCollateralSetup.setBankLTV(this.bankLtv.getValue());
@@ -1093,19 +1107,22 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		//Special LTV
 		try {
 			aCollateralSetup.setSpecialLTV(this.specialLTV.getValue());
-			BigDecimal maxTtvWaiver = getCollateralSetup().getCollateralStructure().getMaxLtvWaiver() == null ? BigDecimal.ZERO :
-				getCollateralSetup().getCollateralStructure().getMaxLtvWaiver();
+			BigDecimal maxTtvWaiver = getCollateralSetup().getCollateralStructure().getMaxLtvWaiver() == null
+					? BigDecimal.ZERO : getCollateralSetup().getCollateralStructure().getMaxLtvWaiver();
 			BigDecimal maxLTV = this.bankLtv.getValue().add(maxTtvWaiver);
-			if(this.specialLTV.getValue() != null && this.specialLTV.getValue().compareTo(maxLTV) > 0){
-				new WrongValueException(this.specialLTV, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[] { 
-						Labels.getLabel("label_CollateralSetupDialog_SpecialLTV.value"),PennantApplicationUtil.formatRate(maxLTV.doubleValue(), 2) }));
+			if (this.specialLTV.getValue() != null && this.specialLTV.getValue().compareTo(maxLTV) > 0) {
+				new WrongValueException(this.specialLTV,
+						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+								new String[] { Labels.getLabel("label_CollateralSetupDialog_SpecialLTV.value"),
+										PennantApplicationUtil.formatRate(maxLTV.doubleValue(), 2) }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Bank valuation
 		try {
-			aCollateralSetup.setBankValuation(PennantApplicationUtil.unFormateAmount(this.bankValuation.getActualValue(), getCcyFormat()));
+			aCollateralSetup.setBankValuation(
+					PennantApplicationUtil.unFormateAmount(this.bankValuation.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1146,11 +1163,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 							DateUtility.getAppDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 					this.nextReviewDate.setValue(nextRDate);
 				} else {
-					if (DateUtility.compare(this.expiryDate.getValue(), this.nextReviewDate.getValue()) != 0 && 
-							!FrequencyUtil.isFrqDate(this.reviewFrequency.getValue(), this.nextReviewDate.getValue())) {
+					if (DateUtility.compare(this.expiryDate.getValue(), this.nextReviewDate.getValue()) != 0
+							&& !FrequencyUtil.isFrqDate(this.reviewFrequency.getValue(),
+									this.nextReviewDate.getValue())) {
 						throw new WrongValueException(this.nextReviewDate, Labels.getLabel("FRQ_DATE_MISMATCH",
 								new String[] { Labels.getLabel("label_CollateralSetupDialog_NextReviewDate.value"),
-								Labels.getLabel("label_CollateralSetupDialog_ReviewFrequency.value") }));
+										Labels.getLabel("label_CollateralSetupDialog_ReviewFrequency.value") }));
 					}
 
 				}
@@ -1200,9 +1218,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private boolean doSave_CheckList(CollateralSetup aCollateralSetup,boolean isForAgreementGen) throws Exception {
+	private boolean doSave_CheckList(CollateralSetup aCollateralSetup, boolean isForAgreementGen) throws Exception {
 		logger.debug("Entering ");
 
 		boolean validationSuccess = true;
@@ -1214,7 +1232,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("userAction", this.userAction.getSelectedItem().getLabel());
 		}
 		map.put("moduleName", CollateralConstants.MODULE_NAME);
-		if(isForAgreementGen){
+		if (isForAgreementGen) {
 			map.put("agreement", isForAgreementGen);
 		}
 		try {
@@ -1255,9 +1273,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
-				if(i == 0){
+				if (i == 0) {
 					Component comp = wvea[i].getComponent();
-					if(comp instanceof HtmlBasedComponent){
+					if (comp instanceof HtmlBasedComponent) {
 						Clients.scrollIntoView(comp);
 					}
 				}
@@ -1275,17 +1293,19 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Entering");
 
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-		
+
 		//Collateral Ref reg
 		if (!this.collateralRef.isReadonly()) {
-			this.collateralRef.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralRef.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, false));
+			this.collateralRef.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralRef.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 
 		//Collateral Ccy
 		if (!this.collateralCcy.isReadonly()) {
-			this.collateralCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralCcy.value"), 
-					PennantRegularExpressions.REGEX_NAME, true, true));
+			this.collateralCcy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralCcy.value"),
+							PennantRegularExpressions.REGEX_NAME, true, true));
 		}
 		//Max Collateral Value reg
 		if (!this.maxCollateralValue.isReadonly()) {
@@ -1298,31 +1318,35 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					Labels.getLabel("label_CollateralSetupDialog_SpecialLTV.value"), 2, true, false, 100));
 		}
 		//Collateral Loc
-		/*if (!this.collateralLoc.isReadonly()) {
-			this.collateralLoc.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralLoc.value"), 
-					PennantRegularExpressions.REGEX_NAME, true));
-		}*/
+		/*
+		 * if (!this.collateralLoc.isReadonly()) { this.collateralLoc.setConstraint(new
+		 * PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralLoc.value"),
+		 * PennantRegularExpressions.REGEX_NAME, true)); }
+		 */
 		//Valuator
 		if (!this.valuator.isReadonly()) {
-			this.valuator.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Valuator.value"), 
-					PennantRegularExpressions.REGEX_NAME, true));
+			this.valuator
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Valuator.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		//Expiry Date
 		if (!this.expiryDate.isDisabled()) {
-			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralSetupDialog_ExpiryDate.value"),
-					false, true, appEndDate, false));
+			this.expiryDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CollateralSetupDialog_ExpiryDate.value"), false, true, appEndDate, false));
 		}
 
 		//Next Review Date
 		if (!this.nextReviewDate.isDisabled()) {
-			this.nextReviewDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralSetupDialog_NextReviewDate.value"),
-					false, true, appEndDate, false));
+			this.nextReviewDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_CollateralSetupDialog_NextReviewDate.value"), false,
+							true, appEndDate, false));
 		}
 		//Remarks
-		/*if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Remarks.value"),
-					PennantRegularExpressions.REGEX_NAME, false));
-		}*/
+		/*
+		 * if (!this.remarks.isReadonly()) { this.remarks.setConstraint(new
+		 * PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Remarks.value"),
+		 * PennantRegularExpressions.REGEX_NAME, false)); }
+		 */
 
 		/* Display fields validation */
 
@@ -1392,41 +1416,45 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Calculation bank Valuation based on Special LTV Change
+	 * 
 	 * @param event
 	 */
-	public void onChange$specialLTV(Event event){
+	public void onChange$specialLTV(Event event) {
 		logger.debug("Entering");
 		calBankValuation();
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Calculation bank Valuation based on Max Collateral value Change
+	 * 
 	 * @param event
 	 */
-	public void onFulfill$maxCollateralValue(Event event){
+	public void onFulfill$maxCollateralValue(Event event) {
 		logger.debug("Entering");
 		calBankValuation();
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Calculating Bank Valuation based on LTV & Max Collateral value
 	 */
-	private void calBankValuation(){
+	private void calBankValuation() {
 		BigDecimal ltvValue = this.bankLtv.getValue() == null ? BigDecimal.ZERO : this.bankLtv.getValue();
-		if(this.specialLTV.getValue() != null && this.specialLTV.getValue().compareTo(BigDecimal.ZERO) > 0){
+		if (this.specialLTV.getValue() != null && this.specialLTV.getValue().compareTo(BigDecimal.ZERO) > 0) {
 			ltvValue = this.specialLTV.getValue();
 		}
-		
-		BigDecimal colValue = this.collateralValue.getActualValue().multiply(ltvValue).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-		if(this.maxCollateralValue.getActualValue().compareTo(BigDecimal.ZERO) > 0 && colValue.compareTo(this.maxCollateralValue.getActualValue()) > 0){
+
+		BigDecimal colValue = this.collateralValue.getActualValue().multiply(ltvValue).divide(new BigDecimal(100), 0,
+				RoundingMode.HALF_DOWN);
+		if (this.maxCollateralValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
+				&& colValue.compareTo(this.maxCollateralValue.getActualValue()) > 0) {
 			colValue = this.maxCollateralValue.getActualValue();
 		}
-		
+
 		this.bankValuation.setValue(colValue);
 	}
 
@@ -1519,7 +1547,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.thirdPartyAssignment.setDisabled(true);
 		this.flagDetails.setReadonly(true);
 		this.remarks.setReadonly(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1573,7 +1601,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Setting the amount formats based on currency
 	 * 
@@ -1596,7 +1623,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				this.assignedCollateralValue.setProperties(false, details.getCcyEditField());
 			}
 		}
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -1671,7 +1698,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			getFinanceCheckListReferenceDialogCtrl().closeDialog();
 		}
 	}
-	
+
 	/**
 	 * Clears the components values. <br>
 	 */
@@ -1798,7 +1825,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.isEmpty(this.depositorCif.getValue())) {
-			throw new WrongValueException(this.depositorCif, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CollateralSetupList_DepositorCif.value") }));
+			throw new WrongValueException(this.depositorCif, Labels.getLabel("FIELD_NO_INVALID",
+					new String[] { Labels.getLabel("label_CollateralSetupList_DepositorCif.value") }));
 		}
 
 		CoOwnerDetail coOwnerDetail = new CoOwnerDetail();
@@ -1858,7 +1886,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		this.listBoxThirdParty.getItems().clear();
 		setCollateralThirdPartyList(list);
-		if(!enqiryModule){
+		if (!enqiryModule) {
 			this.thirdPartyAssignment.setDisabled(isReadOnly("CollateralSetupDialog_ThirdPartyAssignment"));
 		}
 		if (list != null && !list.isEmpty()) {
@@ -1916,7 +1944,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				}
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralThirdPartyDialog.zul",
+					Executions.createComponents(
+							"/WEB-INF/pages/Collateral/CollateralSetup/CollateralThirdPartyDialog.zul",
 							window_CollateralSetupDialog, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
@@ -1958,7 +1987,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Saves the components to table. from financemain <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -2027,7 +2057,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				aCollateralSetup.setDocuments(getCollateralSetup().getDocuments());
 			}
 		}
-		
+
 		boolean isNew = aCollateralSetup.isNew();
 		String tranType = "";
 		if (this.newRecord) {
@@ -2055,8 +2085,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-	
-		
+
 		aCollateralSetup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCollateralSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCollateralSetup.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -2080,7 +2109,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		logger.debug("Leaving");
 	}
-	 
+
 	private AuditHeader newCollateralProcess(CollateralSetup aCollateralSetup, String tranType) {
 		AuditHeader auditHeader = getAuditHeader(aCollateralSetup, tranType);
 		String[] valueParm = new String[1];
@@ -2089,7 +2118,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		valueParm[0] = aCollateralSetup.getCollateralType();
 		errParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":" + valueParm[0];
 
-		List<CollateralSetup> collaterals =  getFinanceDetail().getCollaterals();
+		List<CollateralSetup> collaterals = getFinanceDetail().getCollaterals();
 		if (CollectionUtils.isNotEmpty(collaterals)) {
 			for (int i = 0; i < collaterals.size(); i++) {
 				CollateralSetup collateralSetup = collaterals.get(i);
@@ -2127,23 +2156,24 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 * 
 	 * @throws InterruptedException
 	 */
 	private void doSave() throws Exception {
 		logger.debug("Entering");
-		
+
 		final CollateralSetup aCollateralSetup = new CollateralSetup();
 		BeanUtils.copyProperties(getCollateralSetup(), aCollateralSetup);
 		boolean isNew = false;
-		
+
 		if (isWorkFlowEnabled()) {
 			aCollateralSetup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCollateralSetup.getNextTaskId(),
 					aCollateralSetup);
 		}
-		
+
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2152,12 +2182,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			doSetValidation();
 			// fill the CollateralSetup object with the components data
 			doWriteComponentsToBean(aCollateralSetup);
-			
+
 			//Add third party details list
 			if (this.thirdPartyAssignment.isChecked()) {
-				
+
 				//Add the Extended Field Detail list
-				if(getCollateralThirdPartyList() == null || getCollateralThirdPartyList().isEmpty()){
+				if (getCollateralThirdPartyList() == null || getCollateralThirdPartyList().isEmpty()) {
 					this.basicDetailsTab.setSelected(true);
 					MessageUtil.showError(Labels.getLabel("label_Colateral_ThirdParty_Validation"));
 					return;
@@ -2166,10 +2196,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			} else {
 				aCollateralSetup.setCollateralThirdPartyList(getCollateralThirdPartyList());
 			}
-			
+
 			// Co-Owner Detail list
 			aCollateralSetup.setCoOwnerDetailList(getCoOwnerDetailList());
-			
+
 			// Collateral Flags
 			fetchFlagDetals();
 			if (getFinFlagsDetailList() != null && !getFinFlagsDetailList().isEmpty()) {
@@ -2177,7 +2207,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			} else {
 				aCollateralSetup.setFinFlagsDetailsList(getCollateralSetup().getFinFlagsDetailsList());
 			}
-			
+
 			//Add the Extended Field Detail list
 			if (getExtendedFieldRenderList() == null || getExtendedFieldRenderList().isEmpty()) {
 				this.extendedDetailsTab.setSelected(true);
@@ -2185,32 +2215,32 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				return;
 			}
 			aCollateralSetup.setExtendedFieldRenderList(getExtendedFieldRenderList());
-			
+
 			//Finance CheckList Details Saving
 			if (checkListChildWindow != null) {
-				boolean validationSuccess = doSave_CheckList(aCollateralSetup,false);
-				if(!validationSuccess){
+				boolean validationSuccess = doSave_CheckList(aCollateralSetup, false);
+				if (!validationSuccess) {
 					return;
 				}
 			} else {
 				aCollateralSetup.setCheckLists(getCollateralSetup().getCheckLists());
 			}
-			
+
 			//Document Details Saving
 			if (documentDetailDialogCtrl != null) {
 				aCollateralSetup.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
-			}else{
+			} else {
 				aCollateralSetup.setDocuments(getCollateralSetup().getDocuments());
 			}
 		}
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
+
 		isNew = aCollateralSetup.isNew();
 		String tranType = "";
-		
+
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.trimToEmpty(aCollateralSetup.getRecordType()).equals("")) {
@@ -2255,37 +2285,40 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				}
 
 				// User Notifications Message/Alert
-				try{
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) &&
-							!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) &&
-							!this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+				try {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 
 						// Send message Notification to Users
 						String reference = aCollateralSetup.getCollateralRef();
 						String nextRoleCodes = aCollateralSetup.getNextRoleCode();
-						if(StringUtils.isNotEmpty(nextRoleCodes)){
+						if (StringUtils.isNotEmpty(nextRoleCodes)) {
 							Notify notify = Notify.valueOf("ROLE");
-							String[] to=nextRoleCodes.split(",");					
-							if(StringUtils.isNotEmpty(reference)){
-								if(!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aCollateralSetup.getRecordStatus())){
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE")+" with Reference"+":"+reference, notify,to);
+							String[] to = nextRoleCodes.split(",");
+							if (StringUtils.isNotEmpty(reference)) {
+								if (!PennantConstants.RCD_STATUS_CANCELLED
+										.equalsIgnoreCase(aCollateralSetup.getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, notify, to);
 								}
 							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify,to);
-							} 
+								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+							}
 						}
 					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-				
+
 				// List Detail Refreshment
 				refreshList();
-				
+
 				// Confirmation message
-				String msg = PennantApplicationUtil.getSavingStatus(aCollateralSetup.getRoleCode(),aCollateralSetup.getNextRoleCode(), 
-						aCollateralSetup.getCollateralRef(), " Collateral ", aCollateralSetup.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+				String msg = PennantApplicationUtil.getSavingStatus(aCollateralSetup.getRoleCode(),
+						aCollateralSetup.getNextRoleCode(), aCollateralSetup.getCollateralRef(), " Collateral ",
+						aCollateralSetup.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
@@ -2359,7 +2392,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			aCollateralSetup.setNextTaskId(nextTaskId);
 			aCollateralSetup.setRoleCode(getRole());
 			aCollateralSetup.setNextRoleCode(nextRoleCode);
-			
+
 			//Coowner details
 			if (aCollateralSetup.getCoOwnerDetailList() != null && !aCollateralSetup.getCoOwnerDetailList().isEmpty()) {
 				for (CoOwnerDetail details : aCollateralSetup.getCoOwnerDetailList()) {
@@ -2381,7 +2414,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					}
 				}
 			}
-			
+
 			//Third Party details
 			if (aCollateralSetup.getCollateralThirdPartyList() != null
 					&& !aCollateralSetup.getCollateralThirdPartyList().isEmpty()) {
@@ -2404,10 +2437,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					}
 				}
 			}
-			
+
 			//Extended Field details
-			if(extendedFieldRenderList !=null && ! extendedFieldRenderList.isEmpty() ){
-				for(ExtendedFieldRender details :extendedFieldRenderList ){
+			if (extendedFieldRenderList != null && !extendedFieldRenderList.isEmpty()) {
+				for (ExtendedFieldRender details : extendedFieldRenderList) {
 					details.setReference(aCollateralSetup.getCollateralRef());
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -2429,9 +2462,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			}
 
 			//FinFlags Details
-			if (aCollateralSetup.getFinFlagsDetailsList() != null && !aCollateralSetup.getFinFlagsDetailsList().isEmpty()) {
+			if (aCollateralSetup.getFinFlagsDetailsList() != null
+					&& !aCollateralSetup.getFinFlagsDetailsList().isEmpty()) {
 				for (FinFlagsDetail details : aCollateralSetup.getFinFlagsDetailsList()) {
-					if(StringUtils.isNotBlank(details.getRecordType())){
+					if (StringUtils.isNotBlank(details.getRecordType())) {
 						details.setReference(aCollateralSetup.getCollateralRef());
 						details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 						details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -2450,11 +2484,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					}
 				}
 			}
-			
+
 			//Document Details
 			if (aCollateralSetup.getDocuments() != null && !aCollateralSetup.getDocuments().isEmpty()) {
 				for (DocumentDetails details : aCollateralSetup.getDocuments()) {
-					
+
 					if (StringUtils.isEmpty(StringUtils.trimToEmpty(details.getRecordType()))) {
 						continue;
 					}
@@ -2476,7 +2510,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					}
 				}
 			}
-			
+
 			//CheckList details
 			if (aCollateralSetup.getCollateralCheckLists() != null
 					&& !aCollateralSetup.getCollateralCheckLists().isEmpty()) {
@@ -2563,8 +2597,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CollateralSetupDialog, auditHeader);
 						return processCompleted;
 					}
@@ -2602,9 +2636,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private void renderAssignmentDetails() {
 		logger.debug("Entering");
 
-		if(!getCollateralSetup().isNewRecord() && 
-				!StringUtils.equals(getCollateralSetup().getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
-			
+		if (!getCollateralSetup().isNewRecord()
+				&& !StringUtils.equals(getCollateralSetup().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+
 			this.label_DepositorCif.setValue(this.depositorCif.getValue());
 			this.label_CollateralRef.setValue(this.collateralRef.getValue());
 			this.label_DepositorName.setValue(this.depositerName.getValue());
@@ -2618,13 +2652,13 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 			// Only once is enough for rendering details in Maintenance
 			doFillAssignmentDetails(getCollateralSetup().getAssignmentDetails());
-		}else{
+		} else {
 			this.assignmentDetailTab.setVisible(false);
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Basic Details on Selecting Movement Details Tab and render the Movement details.
 	 * 
@@ -2633,10 +2667,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private void renderMovementDetails() {
 		logger.debug("Entering");
 
-		if(!getCollateralSetup().isNewRecord() && 
-				!StringUtils.equals(getCollateralSetup().getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+		if (!getCollateralSetup().isNewRecord()
+				&& !StringUtils.equals(getCollateralSetup().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.movementsTab.setVisible(true);
-		}else{
+		} else {
 			this.movementsTab.setVisible(false);
 		}
 
@@ -2645,21 +2679,22 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Method for Rendering Collateral Assignments from loan or Commitment
+	 * 
 	 * @param assignmentDetailList
 	 */
 	private void doFillAssignmentDetails(List<AssignmentDetails> assignmentDetailList) {
 		logger.debug("Entering");
-		
+
 		this.listBoxAssignmentDetail.getItems().clear();
 		BigDecimal totalAssignColValue = BigDecimal.ZERO;
-		
+
 		int assignedCount = 0;
-		if(getCollateralSetup().getAssignmentDetails() != null && !getCollateralSetup().getAssignmentDetails().isEmpty()){
+		if (getCollateralSetup().getAssignmentDetails() != null
+				&& !getCollateralSetup().getAssignmentDetails().isEmpty()) {
 			for (AssignmentDetails assignmentDetail : assignmentDetailList) {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				
 				String moduleName = assignmentDetail.getModule();
 				if (FinanceConstants.MODULE_NAME.equals(moduleName)
 						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
@@ -2674,12 +2709,14 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc = new Listcell(assignmentDetail.getCurrency());
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantApplicationUtil.formatRate(assignmentDetail.getAssignedPerc().doubleValue(),2));
+				lc = new Listcell(
+						PennantApplicationUtil.formatRate(assignmentDetail.getAssignedPerc().doubleValue(), 2));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
-				BigDecimal assignedvalue = (assignmentDetail.getCollateralValue().multiply(assignmentDetail.getAssignedPerc())).divide(
-						new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+				BigDecimal assignedvalue = (assignmentDetail.getCollateralValue()
+						.multiply(assignmentDetail.getAssignedPerc())).divide(new BigDecimal(100), 0,
+								RoundingMode.HALF_DOWN);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(assignedvalue, getCcyFormat()));
 				totalAssignColValue = totalAssignColValue.add(assignedvalue);
@@ -2687,40 +2724,42 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				item.appendChild(lc);
 
 				BigDecimal utilizedAmt = BigDecimal.ZERO;
-				if(assignmentDetail.getTotalUtilized() != null && assignmentDetail.getTotalUtilized().compareTo(BigDecimal.ZERO) > 0){
-					
-					if(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(assignmentDetail.getFinLTVCheck())){
-						
-						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinAssetValue()).divide(
-								assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
-					}else{
-						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinCurrAssetValue()).divide(
-								assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+				if (assignmentDetail.getTotalUtilized() != null
+						&& assignmentDetail.getTotalUtilized().compareTo(BigDecimal.ZERO) > 0) {
+
+					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(assignmentDetail.getFinLTVCheck())) {
+
+						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinAssetValue())
+								.divide(assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+					} else {
+						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinCurrAssetValue())
+								.divide(assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
 					}
 				}
-				lc = new Listcell(PennantApplicationUtil.amountFormate(utilizedAmt,  getCcyFormat()));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(utilizedAmt, getCcyFormat()));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
 				BigDecimal avalUtiAmt = assignedvalue.subtract(utilizedAmt);
 				boolean expired = false;
-				if(StringUtils.equals(assignmentDetail.getModule(), FinanceConstants.MODULE_NAME) && !assignmentDetail.isFinIsActive()){
+				if (StringUtils.equals(assignmentDetail.getModule(), FinanceConstants.MODULE_NAME)
+						&& !assignmentDetail.isFinIsActive()) {
 					avalUtiAmt = assignedvalue;
 					expired = true;
-				}else if(StringUtils.equals(assignmentDetail.getModule(), CommitmentConstants.MODULE_NAME) && 
-						DateUtility.compare(assignmentDetail.getCmtExpDate(), DateUtility.getAppDate()) < 0){
+				} else if (StringUtils.equals(assignmentDetail.getModule(), CommitmentConstants.MODULE_NAME)
+						&& DateUtility.compare(assignmentDetail.getCmtExpDate(), DateUtility.getAppDate()) < 0) {
 					avalUtiAmt = assignedvalue;
 					expired = true;
 				}
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(avalUtiAmt,  getCcyFormat()));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(avalUtiAmt, getCcyFormat()));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
 				lc = new Listcell(expired ? "True" : "False");
-				if(expired) {
+				if (expired) {
 					lc.setStyle("color:red;");
-				}else{
+				} else {
 					assignedCount = assignedCount + 1;
 				}
 				item.appendChild(lc);
@@ -2728,50 +2767,58 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				this.listBoxAssignmentDetail.appendChild(item);
 			}
 		}
-		
+
 		// Assignment Details Resetting
 		this.label_assignedBankValuation.setValue(this.bankValuation.getActualValue());
-		this.label_assignedColllValue.setValue(PennantApplicationUtil.formateAmount(totalAssignColValue,  getCcyFormat()));
-		
+		this.label_assignedColllValue
+				.setValue(PennantApplicationUtil.formateAmount(totalAssignColValue, getCcyFormat()));
+
 		BigDecimal bankValPerc = BigDecimal.ZERO;
 		BigDecimal bankVal = BigDecimal.ZERO;
-		if(this.bankValuation.getActualValue().compareTo(BigDecimal.ZERO) > 0){
+		if (this.bankValuation.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 			bankVal = PennantApplicationUtil.unFormateAmount(this.bankValuation.getActualValue(), getCcyFormat());
-			if(bankVal.compareTo(BigDecimal.ZERO) > 0){
-				bankValPerc = totalAssignColValue.multiply(new BigDecimal(100)).divide(bankVal, 0,RoundingMode.HALF_DOWN);
+			if (bankVal.compareTo(BigDecimal.ZERO) > 0) {
+				bankValPerc = totalAssignColValue.multiply(new BigDecimal(100)).divide(bankVal, 0,
+						RoundingMode.HALF_DOWN);
 			}
 		}
-		
-		this.label_assignedPercBankValuation.setValue(PennantApplicationUtil.formatRate(bankValPerc.doubleValue(),2));
-		this.label_availableForAssignment.setValue(PennantApplicationUtil.formateAmount(bankVal.subtract(totalAssignColValue),  getCcyFormat()));
-		
+
+		this.label_assignedPercBankValuation.setValue(PennantApplicationUtil.formatRate(bankValPerc.doubleValue(), 2));
+		this.label_availableForAssignment
+				.setValue(PennantApplicationUtil.formateAmount(bankVal.subtract(totalAssignColValue), getCcyFormat()));
+
 		// Basic Details populations for assignments
 		this.assignedLoansCount.setValue(assignedCount);
-		this.assignedCollateralValue.setValue(PennantApplicationUtil.formateAmount(totalAssignColValue,  getCcyFormat()));
+		this.assignedCollateralValue
+				.setValue(PennantApplicationUtil.formateAmount(totalAssignColValue, getCcyFormat()));
 		BigDecimal assignPercToColValue = BigDecimal.ZERO;
 		if (this.collateralValue.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal colValue = PennantApplicationUtil.unFormateAmount(this.collateralValue.getActualValue(), getCcyFormat());
-			assignPercToColValue = totalAssignColValue.multiply(new BigDecimal(100)).divide(colValue, 0,RoundingMode.HALF_DOWN);
+			BigDecimal colValue = PennantApplicationUtil.unFormateAmount(this.collateralValue.getActualValue(),
+					getCcyFormat());
+			assignPercToColValue = totalAssignColValue.multiply(new BigDecimal(100)).divide(colValue, 0,
+					RoundingMode.HALF_DOWN);
 		}
-		this.assignedPercToCollateralValue.setValue(PennantApplicationUtil.formatRate(assignPercToColValue.doubleValue(), 2));
+		this.assignedPercToCollateralValue
+				.setValue(PennantApplicationUtil.formatRate(assignPercToColValue.doubleValue(), 2));
 		this.assignedPercToBankValuation.setValue(PennantApplicationUtil.formatRate(bankValPerc.doubleValue(), 2));
-		 
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Collateral Assignments from loan or Commitment
+	 * 
 	 * @param movementList
 	 */
 	private void doFillMovementDetails(List<CollateralMovement> movementList) {
 		logger.debug("Entering");
-		
+
 		this.listBoxMovements.getItems().clear();
-		if(movementList != null && !movementList.isEmpty()){
+		if (movementList != null && !movementList.isEmpty()) {
 			for (CollateralMovement movement : movementList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				
+
 				String moduleName = movement.getModule();
 				if (FinanceConstants.MODULE_NAME.equals(moduleName)
 						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
@@ -2783,39 +2830,42 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc = new Listcell(movement.getReference());
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getAssignPerc().doubleValue(),2));
+				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getAssignPerc().doubleValue(), 2));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
-				lc = new Listcell(DateUtility.formatDate(movement.getValueDate(),DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtility.formatDate(movement.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 				this.listBoxMovements.appendChild(item);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method for resetting Default header details
+	 * 
 	 * @param event
 	 */
 	public void onSelect$extendedDetailsTab(Event event) {
-		if(getExtendedFieldRenderDialogCtrl() != null){
+		if (getExtendedFieldRenderDialogCtrl() != null) {
 			getExtendedFieldRenderDialogCtrl().doSetLabels(getHeaderBasicDetails());
 		}
 	}
-	
+
 	/**
 	 * Method for resetting Default header details
+	 * 
 	 * @param event
 	 */
 	public void onSelect$assignmentDetailTab(Event event) {
 		doFillAssignmentDetails(getCollateralSetup().getAssignmentDetails());
 	}
-	
+
 	/**
 	 * Method for resetting Default header details
+	 * 
 	 * @param event
 	 */
 	public void onSelect$movementsTab(Event event) {
@@ -2826,10 +2876,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.label_Movement_Currency.setValue(this.collateralCcy.getValue());
 		this.label_Movement_CollateralType.setValue(this.collateralType.getValue());
 		this.label_Movement_CollateralLoc.setValue(this.collateralLoc.getValue());
-		
-		List<CollateralMovement> movementList = getCollateralSetupService().getCollateralMovements(this.collateralRef.getValue());
+
+		List<CollateralMovement> movementList = getCollateralSetupService()
+				.getCollateralMovements(this.collateralRef.getValue());
 		doFillMovementDetails(movementList);
-		
+
 		movementsTab.removeForward(Events.ON_SELECT, this.window, "onSelect$movementsTab");
 		logger.debug("Leaving");
 	}
@@ -2965,13 +3016,14 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			this.doWriteComponentsToBean(getCollateralSetup());
 			if (financeCheckListReferenceDialogCtrl != null) {
 				financeCheckListReferenceDialogCtrl.doSetLabels(getHeaderBasicDetails());
-				financeCheckListReferenceDialogCtrl.doWriteBeanToComponents(getCollateralSetup().getCheckLists(), getCollateralSetup().getCollateralCheckLists(), false);
+				financeCheckListReferenceDialogCtrl.doWriteBeanToComponents(getCollateralSetup().getCheckLists(),
+						getCollateralSetup().getCollateralCheckLists(), false);
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_DOCUMENTDETAIL:
 			if (documentDetailDialogCtrl != null) {
 				documentDetailDialogCtrl.doSetLabels(getHeaderBasicDetails());
-			} 
+			}
 			break;
 		case AssetConstants.UNIQUE_ID_RECOMMENDATIONS:
 			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
@@ -3002,45 +3054,50 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Method for Setting default values based on Extended field List entries
+	 * 
 	 * @param noOfUnits
 	 * @param collateralValue
 	 */
-	public void setDeafultValues(int noOfUnits, BigDecimal collateralValue){
+	public void setDeafultValues(int noOfUnits, BigDecimal collateralValue) {
 
 		int ccyFormat = CurrencyUtil.getFormat(this.collateralCcy.getValue());
 
 		this.numberOfUnits.setValue(noOfUnits);
 		this.collateralValue.setValue(PennantApplicationUtil.formateAmount(collateralValue, ccyFormat));
 		calBankValuation();
-		if(noOfUnits > 0){
-			this.unitPrice.setValue(PennantApplicationUtil.formateAmount(collateralValue.divide(
-					new BigDecimal(noOfUnits), ccyFormat, RoundingMode.HALF_DOWN), ccyFormat));
+		if (noOfUnits > 0) {
+			this.unitPrice.setValue(PennantApplicationUtil.formateAmount(
+					collateralValue.divide(new BigDecimal(noOfUnits), ccyFormat, RoundingMode.HALF_DOWN), ccyFormat));
 		}
-		
-		if(StringUtils.equals(getCollateralSetup().getCollateralStructure().getLtvType(), CollateralConstants.VARIABLE_LTV)){
+
+		if (StringUtils.equals(getCollateralSetup().getCollateralStructure().getLtvType(),
+				CollateralConstants.VARIABLE_LTV)) {
 			setBankLTV();
 		}
 	}
 
 	/**
 	 * Method for Fetching Document Details for Checklist processing
+	 * 
 	 * @return
 	 */
-	public List<DocumentDetails> getDocumentDetails(){
-		if(documentDetailDialogCtrl != null){
+	public List<DocumentDetails> getDocumentDetails() {
+		if (documentDetailDialogCtrl != null) {
 			return documentDetailDialogCtrl.getDocumentDetailsList();
 		}
 		return new ArrayList<DocumentDetails>();
 	}
-	
+
 	/**
 	 * Method for fetching Customer Basic Details for Document Details processing
+	 * 
 	 * @return
 	 */
-	public List<Object> getCustomerBasicDetails(){
-		
+	public List<Object> getCustomerBasicDetails() {
+
 		List<Object> custBasicDetails = null;
-		if(collateralSetup.getCustomerDetails() != null && collateralSetup.getCustomerDetails().getCustomer() != null){
+		if (collateralSetup.getCustomerDetails() != null
+				&& collateralSetup.getCustomerDetails().getCustomer() != null) {
 			custBasicDetails = new ArrayList<>();
 			custBasicDetails.add(collateralSetup.getCustomerDetails().getCustomer().getCustID());
 			custBasicDetails.add(collateralSetup.getCustomerDetails().getCustomer().getCustCIF());
@@ -3051,15 +3108,17 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Method for fetching Customer Id number for Document Details processing
+	 * 
 	 * @return
 	 */
 	public long getCustomerIDNumber() {
-		if (collateralSetup.getCustomerDetails() != null && collateralSetup.getCustomerDetails().getCustomer() != null) {
+		if (collateralSetup.getCustomerDetails() != null
+				&& collateralSetup.getCustomerDetails().getCustomer() != null) {
 			return collateralSetup.getCustomerDetails().getCustomer().getCustID();
 		}
 		return 0;
 	}
-	
+
 	public boolean isReadOnly(String componentName) {
 		boolean collateralAssignmentWorkFlow = false;
 		if (getCollateralAssignmentDialogCtrl() != null && getFinanceDetail() != null) {
@@ -3071,7 +3130,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		return false;
 	}
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -3079,6 +3138,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public CollateralSetup getCollateralSetup() {
 		return this.collateralSetup;
 	}
+
 	public void setCollateralSetup(CollateralSetup collateralSetup) {
 		this.collateralSetup = collateralSetup;
 	}
@@ -3086,6 +3146,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
+
 	public CollateralSetupService getCollateralSetupService() {
 		return this.collateralSetupService;
 	}
@@ -3093,6 +3154,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public void setCollateralSetupListCtrl(CollateralSetupListCtrl collateralSetupListCtrl) {
 		this.collateralSetupListCtrl = collateralSetupListCtrl;
 	}
+
 	public CollateralSetupListCtrl getCollateralSetupListCtrl() {
 		return this.collateralSetupListCtrl;
 	}
@@ -3100,6 +3162,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public List<CoOwnerDetail> getCoOwnerDetailList() {
 		return coOwnerDetailList;
 	}
+
 	public void setCoOwnerDetailList(List<CoOwnerDetail> coOwnerDetailList) {
 		this.coOwnerDetailList = coOwnerDetailList;
 	}
@@ -3107,6 +3170,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public List<CollateralThirdParty> getCollateralThirdPartyList() {
 		return collateralThirdPartyList;
 	}
+
 	public void setCollateralThirdPartyList(List<CollateralThirdParty> collateralThirdPartyList) {
 		this.collateralThirdPartyList = collateralThirdPartyList;
 	}
@@ -3114,6 +3178,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
 		return documentDetailDialogCtrl;
 	}
+
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
@@ -3121,6 +3186,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
+
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
@@ -3128,6 +3194,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public AgreementDetailDialogCtrl getAgreementDetailDialogCtrl() {
 		return agreementDetailDialogCtrl;
 	}
+
 	public void setAgreementDetailDialogCtrl(AgreementDetailDialogCtrl agreementDetailDialogCtrl) {
 		this.agreementDetailDialogCtrl = agreementDetailDialogCtrl;
 	}
@@ -3135,6 +3202,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public FinanceCheckListReferenceDialogCtrl getFinanceCheckListReferenceDialogCtrl() {
 		return financeCheckListReferenceDialogCtrl;
 	}
+
 	public void setFinanceCheckListReferenceDialogCtrl(
 			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
 		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
@@ -3143,6 +3211,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public List<ExtendedFieldRender> getExtendedFieldRenderList() {
 		return extendedFieldRenderList;
 	}
+
 	public void setExtendedFieldRenderList(List<ExtendedFieldRender> extendedFieldRenderList) {
 		this.extendedFieldRenderList = extendedFieldRenderList;
 	}
@@ -3150,6 +3219,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public List<FinanceCheckListReference> getCollateralChecklists() {
 		return collateralChecklists;
 	}
+
 	public void setCollateralChecklists(List<FinanceCheckListReference> collateralChecklists) {
 		this.collateralChecklists = collateralChecklists;
 	}
@@ -3157,6 +3227,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public HashMap<Long, Long> getSelectedAnsCountMap() {
 		return selectedAnsCountMap;
 	}
+
 	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
 	}
@@ -3164,9 +3235,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}
+
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
+
 	public List<FinFlagsDetail> getFinFlagsDetailList() {
 		return finFlagsDetailList;
 	}
@@ -3178,14 +3251,15 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public ExtendedFieldRenderDialogCtrl getExtendedFieldRenderDialogCtrl() {
 		return extendedFieldRenderDialogCtrl;
 	}
-	public void setExtendedFieldRenderDialogCtrl(
-			ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl) {
+
+	public void setExtendedFieldRenderDialogCtrl(ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl) {
 		this.extendedFieldRenderDialogCtrl = extendedFieldRenderDialogCtrl;
 	}
 
 	public EventManager getEventManager() {
 		return eventManager;
 	}
+
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}
@@ -3197,11 +3271,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return financeReferenceDetailService;
 	}
-	public void setFinanceReferenceDetailService(
-			FinanceReferenceDetailService financeReferenceDetailService) {
+
+	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
-	
+
 	public Map<String, Object> getFlagTypeDataMap() {
 		return flagTypeDataMap;
 	}

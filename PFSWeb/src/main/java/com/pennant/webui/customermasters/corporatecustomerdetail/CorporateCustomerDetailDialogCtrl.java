@@ -98,60 +98,59 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	 window_CorporateCustomerDetailDialog;  
+	protected Window window_CorporateCustomerDetailDialog;
 
-	protected Longbox 	 custId; 								
-	protected Textbox 	 name; 									
-	protected Textbox 	 phoneNumber; 							
-	protected Textbox 	 phoneNumber1;							
-	protected Textbox 	 emailId; 								
-	protected Datebox 	 bussCommenceDate; 						
-	protected Datebox 	 servCommenceDate; 						
-	protected Datebox 	 bankRelationshipDate; 					
-	protected Decimalbox paidUpCapital; 						
-	protected Decimalbox authorizedCapital; 					
-	protected Decimalbox reservesAndSurPlus; 					
-	protected Decimalbox intangibleAssets; 						
-	protected Decimalbox tangibleNetWorth; 						
-	protected Decimalbox longTermLiabilities; 					
-	protected Decimalbox capitalEmployed; 						
-	protected Decimalbox investments; 							
-	protected Decimalbox nonCurrentAssets; 						
-	protected Decimalbox netWorkingCapital;	 					
-	protected Decimalbox netSales; 								
-	protected Decimalbox otherIncome; 							
-	protected Decimalbox netProfitAfterTax; 					
-	protected Decimalbox depreciation; 							
-	protected Decimalbox cashAccurals; 							
-	protected Decimalbox annualTurnover; 						
-	protected Decimalbox returnOnCapitalEmp; 					
-	protected Decimalbox currentAssets; 						
-	protected Decimalbox currentLiabilities; 					
-	protected Decimalbox currentBookValue; 						
-	protected Decimalbox currentMarketValue; 					
-	protected Decimalbox promotersShare; 						
-	protected Decimalbox associatesShare; 						
-	protected Decimalbox publicShare; 							
-	protected Decimalbox finInstShare; 							
-	protected Decimalbox others; 								
-	protected Textbox 	 custCIF;								
-	protected Label 	 custShrtName;							
-	
+	protected Longbox custId;
+	protected Textbox name;
+	protected Textbox phoneNumber;
+	protected Textbox phoneNumber1;
+	protected Textbox emailId;
+	protected Datebox bussCommenceDate;
+	protected Datebox servCommenceDate;
+	protected Datebox bankRelationshipDate;
+	protected Decimalbox paidUpCapital;
+	protected Decimalbox authorizedCapital;
+	protected Decimalbox reservesAndSurPlus;
+	protected Decimalbox intangibleAssets;
+	protected Decimalbox tangibleNetWorth;
+	protected Decimalbox longTermLiabilities;
+	protected Decimalbox capitalEmployed;
+	protected Decimalbox investments;
+	protected Decimalbox nonCurrentAssets;
+	protected Decimalbox netWorkingCapital;
+	protected Decimalbox netSales;
+	protected Decimalbox otherIncome;
+	protected Decimalbox netProfitAfterTax;
+	protected Decimalbox depreciation;
+	protected Decimalbox cashAccurals;
+	protected Decimalbox annualTurnover;
+	protected Decimalbox returnOnCapitalEmp;
+	protected Decimalbox currentAssets;
+	protected Decimalbox currentLiabilities;
+	protected Decimalbox currentBookValue;
+	protected Decimalbox currentMarketValue;
+	protected Decimalbox promotersShare;
+	protected Decimalbox associatesShare;
+	protected Decimalbox publicShare;
+	protected Decimalbox finInstShare;
+	protected Decimalbox others;
+	protected Textbox custCIF;
+	protected Label custShrtName;
 
 	// not auto wired vars
 	private CorporateCustomerDetail corporateCustomerDetail; // overhanded per param
 	private transient CorporateCustomerDetailListCtrl corporateCustomerDetailListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CorporateCustomerDetailService corporateCustomerDetailService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	protected JdbcSearchObject<Customer> newSearchObject ;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	protected JdbcSearchObject<Customer> newSearchObject;
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	Date appStartDate = DateUtility.getAppDate();
-    
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -167,9 +166,8 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CorporateCustomerDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CorporateCustomerDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -184,7 +182,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		doCheckRights();
 		if (arguments.containsKey("corporateCustomerDetail")) {
 			this.corporateCustomerDetail = (CorporateCustomerDetail) arguments.get("corporateCustomerDetail");
-			CorporateCustomerDetail befImage =new CorporateCustomerDetail();
+			CorporateCustomerDetail befImage = new CorporateCustomerDetail();
 			BeanUtils.copyProperties(this.corporateCustomerDetail, befImage);
 			this.corporateCustomerDetail.setBefImage(befImage);
 			setCorporateCustomerDetail(this.corporateCustomerDetail);
@@ -192,11 +190,11 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 			setCorporateCustomerDetail(null);
 		}
 
-		doLoadWorkFlow(this.corporateCustomerDetail.isWorkflow(),
-				this.corporateCustomerDetail.getWorkflowId(),this.corporateCustomerDetail.getNextTaskId());
+		doLoadWorkFlow(this.corporateCustomerDetail.isWorkflow(), this.corporateCustomerDetail.getWorkflowId(),
+				this.corporateCustomerDetail.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CorporateCustomerDetailDialog");
 		}
 
@@ -205,8 +203,8 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete corporateCustomerDetail here.
 		if (arguments.containsKey("corporateCustomerDetailListCtrl")) {
-			setCorporateCustomerDetailListCtrl((CorporateCustomerDetailListCtrl) arguments.get(
-			"corporateCustomerDetailListCtrl"));
+			setCorporateCustomerDetailListCtrl(
+					(CorporateCustomerDetailListCtrl) arguments.get("corporateCustomerDetailListCtrl"));
 		} else {
 			setCorporateCustomerDetailListCtrl(null);
 		}
@@ -221,7 +219,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		//Empty sent any required attributes
 		this.name.setMaxlength(20);
@@ -310,15 +308,15 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		this.others.setFormat(PennantConstants.rateFormate2);
 		this.others.setScale(2);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
-		}else{
+
+		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -326,24 +324,20 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnDelete.setVisible(false);
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-		"button_CorporateCustomerDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-		"button_CorporateCustomerDetailDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-		"button_CorporateCustomerDetailDialog_btnSave"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CorporateCustomerDetailDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CorporateCustomerDetailDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CorporateCustomerDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -421,11 +415,11 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.corporateCustomerDetail.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -435,10 +429,10 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 *            CorporateCustomerDetail
 	 */
 	public void doWriteBeanToComponents(CorporateCustomerDetail aCorporateCustomerDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
-		if(aCorporateCustomerDetail.getCustId()!=Long.MIN_VALUE){
-			this.custId.setValue(aCorporateCustomerDetail.getCustId());	
+		if (aCorporateCustomerDetail.getCustId() != Long.MIN_VALUE) {
+			this.custId.setValue(aCorporateCustomerDetail.getCustId());
 		}
 		this.name.setValue(aCorporateCustomerDetail.getName());
 		this.phoneNumber.setValue(aCorporateCustomerDetail.getPhoneNumber());
@@ -447,55 +441,44 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		this.bussCommenceDate.setValue(aCorporateCustomerDetail.getBussCommenceDate());
 		this.servCommenceDate.setValue(aCorporateCustomerDetail.getServCommenceDate());
 		this.bankRelationshipDate.setValue(aCorporateCustomerDetail.getBankRelationshipDate());
-		this.paidUpCapital.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getPaidUpCapital(),0));
-		this.authorizedCapital.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getAuthorizedCapital(),0));
-		this.reservesAndSurPlus.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getReservesAndSurPlus(),0));
-		this.intangibleAssets.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getIntangibleAssets(),0));
-		this.tangibleNetWorth.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getTangibleNetWorth(),0));
-		this.longTermLiabilities.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getLongTermLiabilities(),0));
-		this.capitalEmployed.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getCapitalEmployed(),0));
-		this.investments.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getInvestments(),0));
-		this.nonCurrentAssets.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getNonCurrentAssets(),0));
-		this.netWorkingCapital.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getNetWorkingCapital(),0));
-		this.netSales.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getNetSales(),0));
-		this.otherIncome.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getOtherIncome(),0));
-		this.netProfitAfterTax.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getNetProfitAfterTax(),0));
-		this.depreciation.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getDepreciation(),0));
-		this.cashAccurals.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getCashAccurals(),0));
-		this.annualTurnover.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getAnnualTurnover(),0));
-		this.returnOnCapitalEmp.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getReturnOnCapitalEmp(),0));
-		this.currentAssets.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getCurrentAssets(),0));
-		this.currentLiabilities.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getCurrentLiabilities(),0));
-		this.currentBookValue.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getCurrentBookValue(),0));
-		this.currentMarketValue.setValue(PennantAppUtil.formateAmount(
-				aCorporateCustomerDetail.getCurrentMarketValue(),0));
+		this.paidUpCapital.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getPaidUpCapital(), 0));
+		this.authorizedCapital
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getAuthorizedCapital(), 0));
+		this.reservesAndSurPlus
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getReservesAndSurPlus(), 0));
+		this.intangibleAssets.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getIntangibleAssets(), 0));
+		this.tangibleNetWorth.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getTangibleNetWorth(), 0));
+		this.longTermLiabilities
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getLongTermLiabilities(), 0));
+		this.capitalEmployed.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getCapitalEmployed(), 0));
+		this.investments.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getInvestments(), 0));
+		this.nonCurrentAssets.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getNonCurrentAssets(), 0));
+		this.netWorkingCapital
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getNetWorkingCapital(), 0));
+		this.netSales.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getNetSales(), 0));
+		this.otherIncome.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getOtherIncome(), 0));
+		this.netProfitAfterTax
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getNetProfitAfterTax(), 0));
+		this.depreciation.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getDepreciation(), 0));
+		this.cashAccurals.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getCashAccurals(), 0));
+		this.annualTurnover.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getAnnualTurnover(), 0));
+		this.returnOnCapitalEmp
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getReturnOnCapitalEmp(), 0));
+		this.currentAssets.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getCurrentAssets(), 0));
+		this.currentLiabilities
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getCurrentLiabilities(), 0));
+		this.currentBookValue.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getCurrentBookValue(), 0));
+		this.currentMarketValue
+				.setValue(PennantAppUtil.formateAmount(aCorporateCustomerDetail.getCurrentMarketValue(), 0));
 		this.promotersShare.setValue(aCorporateCustomerDetail.getPromotersShare());
 		this.associatesShare.setValue(aCorporateCustomerDetail.getAssociatesShare());
 		this.publicShare.setValue(aCorporateCustomerDetail.getPublicShare());
 		this.finInstShare.setValue(aCorporateCustomerDetail.getFinInstShare());
 		this.others.setValue(aCorporateCustomerDetail.getOthers());
-		this.custCIF.setValue(aCorporateCustomerDetail.getLovDescCustCIF()==null?"":
-			aCorporateCustomerDetail.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCorporateCustomerDetail.getLovDescCustShrtName()==null?"":
-			aCorporateCustomerDetail.getLovDescCustShrtName().trim());
+		this.custCIF.setValue(aCorporateCustomerDetail.getLovDescCustCIF() == null ? ""
+				: aCorporateCustomerDetail.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCorporateCustomerDetail.getLovDescCustShrtName() == null ? ""
+				: aCorporateCustomerDetail.getLovDescCustShrtName().trim());
 
 		this.recordStatus.setValue(aCorporateCustomerDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -507,7 +490,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * @param aCorporateCustomerDetail
 	 */
 	public void doWriteComponentsToBean(CorporateCustomerDetail aCorporateCustomerDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -515,237 +498,233 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		try {
 			aCorporateCustomerDetail.setLovDescCustCIF(this.custCIF.getValue());
 			aCorporateCustomerDetail.setCustId(this.custId.longValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail.setName(this.name.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail.setPhoneNumber(this.phoneNumber.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail.setPhoneNumber1(this.phoneNumber1.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCorporateCustomerDetail.setEmailId(this.emailId.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setBussCommenceDate(new Timestamp(
-					this.bussCommenceDate.getValue().getTime()));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setBussCommenceDate(new Timestamp(this.bussCommenceDate.getValue().getTime()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setServCommenceDate(new Timestamp(
-					this.servCommenceDate.getValue().getTime()));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setServCommenceDate(new Timestamp(this.servCommenceDate.getValue().getTime()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.bankRelationshipDate.getValue() != null){
-				aCorporateCustomerDetail.setBankRelationshipDate(new Timestamp(
-						this.bankRelationshipDate.getValue().getTime()));
+			if (this.bankRelationshipDate.getValue() != null) {
+				aCorporateCustomerDetail
+						.setBankRelationshipDate(new Timestamp(this.bankRelationshipDate.getValue().getTime()));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setPaidUpCapital(PennantAppUtil.unFormateAmount(
-					this.paidUpCapital.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setPaidUpCapital(PennantAppUtil.unFormateAmount(this.paidUpCapital.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setAuthorizedCapital(PennantAppUtil.unFormateAmount(
-					this.authorizedCapital.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setAuthorizedCapital(PennantAppUtil.unFormateAmount(this.authorizedCapital.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setReservesAndSurPlus(PennantAppUtil.unFormateAmount(
-					this.reservesAndSurPlus.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setReservesAndSurPlus(PennantAppUtil.unFormateAmount(this.reservesAndSurPlus.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setIntangibleAssets(PennantAppUtil.unFormateAmount(
-					this.intangibleAssets.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setIntangibleAssets(PennantAppUtil.unFormateAmount(this.intangibleAssets.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setTangibleNetWorth(PennantAppUtil.unFormateAmount(
-					this.tangibleNetWorth.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setTangibleNetWorth(PennantAppUtil.unFormateAmount(this.tangibleNetWorth.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setLongTermLiabilities(PennantAppUtil.unFormateAmount(
-					this.longTermLiabilities.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setLongTermLiabilities(PennantAppUtil.unFormateAmount(this.longTermLiabilities.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setCapitalEmployed(PennantAppUtil.unFormateAmount(
-					this.capitalEmployed.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setCapitalEmployed(PennantAppUtil.unFormateAmount(this.capitalEmployed.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setInvestments(PennantAppUtil.unFormateAmount(
-					this.investments.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setInvestments(PennantAppUtil.unFormateAmount(this.investments.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setNonCurrentAssets(PennantAppUtil.unFormateAmount(
-					this.nonCurrentAssets.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setNonCurrentAssets(PennantAppUtil.unFormateAmount(this.nonCurrentAssets.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setNetWorkingCapital(PennantAppUtil.unFormateAmount(
-					this.netWorkingCapital.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setNetWorkingCapital(PennantAppUtil.unFormateAmount(this.netWorkingCapital.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setNetSales(PennantAppUtil.unFormateAmount(
-					this.netSales.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setNetSales(PennantAppUtil.unFormateAmount(this.netSales.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setOtherIncome(PennantAppUtil.unFormateAmount(
-					this.otherIncome.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setOtherIncome(PennantAppUtil.unFormateAmount(this.otherIncome.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setNetProfitAfterTax(PennantAppUtil.unFormateAmount(
-					this.netProfitAfterTax.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setNetProfitAfterTax(PennantAppUtil.unFormateAmount(this.netProfitAfterTax.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setDepreciation(PennantAppUtil.unFormateAmount(
-					this.depreciation.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setDepreciation(PennantAppUtil.unFormateAmount(this.depreciation.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setCashAccurals(PennantAppUtil.unFormateAmount(
-					this.cashAccurals.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setCashAccurals(PennantAppUtil.unFormateAmount(this.cashAccurals.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setAnnualTurnover(PennantAppUtil.unFormateAmount(
-					this.annualTurnover.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setAnnualTurnover(PennantAppUtil.unFormateAmount(this.annualTurnover.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setReturnOnCapitalEmp(PennantAppUtil.unFormateAmount(
-					this.returnOnCapitalEmp.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setReturnOnCapitalEmp(PennantAppUtil.unFormateAmount(this.returnOnCapitalEmp.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setCurrentAssets(PennantAppUtil.unFormateAmount(
-					this.currentAssets.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail.setCurrentAssets(PennantAppUtil.unFormateAmount(this.currentAssets.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setCurrentLiabilities(PennantAppUtil.unFormateAmount(
-					this.currentLiabilities.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setCurrentLiabilities(PennantAppUtil.unFormateAmount(this.currentLiabilities.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setCurrentBookValue(PennantAppUtil.unFormateAmount(
-					this.currentBookValue.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setCurrentBookValue(PennantAppUtil.unFormateAmount(this.currentBookValue.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCorporateCustomerDetail.setCurrentMarketValue(PennantAppUtil.unFormateAmount(
-					this.currentMarketValue.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCorporateCustomerDetail
+					.setCurrentMarketValue(PennantAppUtil.unFormateAmount(this.currentMarketValue.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		BigDecimal totalSharePercent = BigDecimal.ZERO;
 		boolean percentageCheck = false;
-		totalSharePercent = new BigDecimal(this.promotersShare.getValue()==null?"0":this.promotersShare.getValue().toString());
-		totalSharePercent = totalSharePercent.add(new BigDecimal(this.associatesShare.getValue()==null?"0":this.associatesShare.getValue().toString()));
-		totalSharePercent = totalSharePercent.add(new BigDecimal(this.publicShare.getValue()==null?"0":this.publicShare.getValue().toString()));
-		totalSharePercent = totalSharePercent.add(new BigDecimal(this.finInstShare.getValue()==null?"0":this.finInstShare.getValue().toString()));
-		totalSharePercent = totalSharePercent.add(new BigDecimal(this.others.getValue()==null?"0":this.others.getValue().toString()));
+		totalSharePercent = new BigDecimal(
+				this.promotersShare.getValue() == null ? "0" : this.promotersShare.getValue().toString());
+		totalSharePercent = totalSharePercent.add(new BigDecimal(
+				this.associatesShare.getValue() == null ? "0" : this.associatesShare.getValue().toString()));
+		totalSharePercent = totalSharePercent.add(
+				new BigDecimal(this.publicShare.getValue() == null ? "0" : this.publicShare.getValue().toString()));
+		totalSharePercent = totalSharePercent.add(
+				new BigDecimal(this.finInstShare.getValue() == null ? "0" : this.finInstShare.getValue().toString()));
+		totalSharePercent = totalSharePercent
+				.add(new BigDecimal(this.others.getValue() == null ? "0" : this.others.getValue().toString()));
 		if (totalSharePercent.doubleValue() != 100d) {
 			percentageCheck = true;
 		}
 
 		try {
-			if(percentageCheck){
-				throw new WrongValueException(promotersShare, 
+			if (percentageCheck) {
+				throw new WrongValueException(promotersShare,
 						Labels.getLabel("label_CorporateCustomerDetailDialog_TotalShare.value"));
-			}	
+			}
 			aCorporateCustomerDetail.setPromotersShare(this.promotersShare.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(percentageCheck){
-				throw new WrongValueException(associatesShare, 
+			if (percentageCheck) {
+				throw new WrongValueException(associatesShare,
 						Labels.getLabel("label_CorporateCustomerDetailDialog_TotalShare.value"));
-			}	
+			}
 			aCorporateCustomerDetail.setAssociatesShare(this.associatesShare.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(percentageCheck){
-				throw new WrongValueException(publicShare, 
+			if (percentageCheck) {
+				throw new WrongValueException(publicShare,
 						Labels.getLabel("label_CorporateCustomerDetailDialog_TotalShare.value"));
 			}
 			aCorporateCustomerDetail.setPublicShare(this.publicShare.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(percentageCheck){
-				throw new WrongValueException(finInstShare, 
+			if (percentageCheck) {
+				throw new WrongValueException(finInstShare,
 						Labels.getLabel("label_CorporateCustomerDetailDialog_TotalShare.value"));
 			}
 			aCorporateCustomerDetail.setFinInstShare(this.finInstShare.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(percentageCheck){
-				throw new WrongValueException(others, 
+			if (percentageCheck) {
+				throw new WrongValueException(others,
 						Labels.getLabel("label_CorporateCustomerDetailDialog_TotalShare.value"));
 			}
 			aCorporateCustomerDetail.setOthers(this.others.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -759,14 +738,13 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCorporateCustomerDetail
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(CorporateCustomerDetail aCorporateCustomerDetail) throws InterruptedException {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (getCorporateCustomerDetail().isNewRecord()) {
@@ -776,10 +754,10 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 			this.custCIF.focus();
 		} else {
 			this.name.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -789,12 +767,12 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCorporateCustomerDetail);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -804,119 +782,89 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.custId.isReadonly()){
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_CustId.value"),null,true));
+		if (!this.custId.isReadonly()) {
+			this.custCIF.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CorporateCustomerDetailDialog_CustId.value"), null, true));
 		}
-		if (!this.name.isReadonly()){
-			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_Name.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
-		}	
-		if (!this.phoneNumber.isReadonly()){
-			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber.value"),true));
-		}	
-		if (this.phoneNumber1.isReadonly()){
-			if(!StringUtils.isNotBlank(this.phoneNumber1.getValue())){
-				this.phoneNumber1.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber1.value"),true));
-			}
-		}	
-		if (!this.emailId.isReadonly()){
-			this.emailId.setConstraint(new PTEmailValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_EmailId.value"),true));
-		}	
-		if (!this.bussCommenceDate.isDisabled()){
-			this.bussCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BussCommenceDate.value"),true,startDate,appStartDate,false));
+		if (!this.name.isReadonly()) {
+			this.name.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_Name.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		if (!this.servCommenceDate.isDisabled()){
-			this.servCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_ServCommenceDate.value"),true, startDate,appStartDate,false));
+		if (!this.phoneNumber.isReadonly()) {
+			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber.value"), true));
 		}
-		if (!this.bankRelationshipDate.isDisabled()){
-			if(this.bankRelationshipDate.getValue() != null){
-				this.bankRelationshipDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BankRelationshipDate.value"),true,startDate,appStartDate,false));
+		if (this.phoneNumber1.isReadonly()) {
+			if (!StringUtils.isNotBlank(this.phoneNumber1.getValue())) {
+				this.phoneNumber1.setConstraint(new PTPhoneNumberValidator(
+						Labels.getLabel("label_CorporateCustomerDetailDialog_PhoneNumber1.value"), true));
 			}
 		}
-		/*if (!this.paidUpCapital.isReadonly()){
-			this.paidUpCapital.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_PaidUpCapital.value")));
-		}	
-		if (!this.authorizedCapital.isReadonly()){
-			this.authorizedCapital.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_AuthorizedCapital.value")));
-		}	
-		if (!this.reservesAndSurPlus.isReadonly()){
-			this.reservesAndSurPlus.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_ReservesAndSurPlus.value")));
-		}	
-		if (!this.intangibleAssets.isReadonly()){
-			this.intangibleAssets.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_IntangibleAssets.value")));
-		}	
-		if (!this.tangibleNetWorth.isReadonly()){
-			this.tangibleNetWorth.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_TangibleNetWorth.value")));
-		}	
-		if (!this.longTermLiabilities.isReadonly()){
-			this.longTermLiabilities.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_LongTermLiabilities.value")));
-		}	
-		if (!this.capitalEmployed.isReadonly()){
-			this.capitalEmployed.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_CapitalEmployed.value")));
-		}	
-		if (!this.investments.isReadonly()){
-			this.investments.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_Investments.value")));
-		}	
-		if (!this.nonCurrentAssets.isReadonly()){
-			this.nonCurrentAssets.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_NonCurrentAssets.value")));
-		}	
-		if (!this.netWorkingCapital.isReadonly()){
-			this.netWorkingCapital.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_NetWorkingCapital.value")));
-		}	
-		if (!this.netSales.isReadonly()){
-			this.netSales.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_NetSales.value")));
-		}	
-		if (!this.otherIncome.isReadonly()){
-			this.otherIncome.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_OtherIncome.value")));
-		}	
-		if (!this.netProfitAfterTax.isReadonly()){
-			this.netProfitAfterTax.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_NetProfitAfterTax.value")));
-		}	
-		if (!this.depreciation.isReadonly()){
-			this.depreciation.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_Depreciation.value")));
-		}	
-		if (!this.cashAccurals.isReadonly()){
-			this.cashAccurals.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_CashAccurals.value")));
-		}	
-		if (!this.annualTurnover.isReadonly()){
-			this.annualTurnover.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_AnnualTurnover.value")));
-		}	
-		if (!this.returnOnCapitalEmp.isReadonly()){
-			this.returnOnCapitalEmp.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_ReturnOnCapitalEmp.value")));
-		}	
-		if (!this.currentAssets.isReadonly()){
-			this.currentAssets.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentAssets.value")));
-		}	
-		if (!this.currentLiabilities.isReadonly()){
-			this.currentLiabilities.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentLiabilities.value")));
-		}	
-		if (!this.currentBookValue.isReadonly()){
-			this.currentBookValue.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentBookValue.value")));
-		}	
-		if (!this.currentMarketValue.isReadonly()){
-			this.currentMarketValue.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentMarketValue.value")));
-		}	
+		if (!this.emailId.isReadonly()) {
+			this.emailId.setConstraint(
+					new PTEmailValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_EmailId.value"), true));
+		}
+		if (!this.bussCommenceDate.isDisabled()) {
+			this.bussCommenceDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BussCommenceDate.value"),
+							true, startDate, appStartDate, false));
+		}
+		if (!this.servCommenceDate.isDisabled()) {
+			this.servCommenceDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_ServCommenceDate.value"),
+							true, startDate, appStartDate, false));
+		}
+		if (!this.bankRelationshipDate.isDisabled()) {
+			if (this.bankRelationshipDate.getValue() != null) {
+				this.bankRelationshipDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_CorporateCustomerDetailDialog_BankRelationshipDate.value"), true,
+						startDate, appStartDate, false));
+			}
+		}
+		/*
+		 * if (!this.paidUpCapital.isReadonly()){ this.paidUpCapital.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_PaidUpCapital.value"))); } if
+		 * (!this.authorizedCapital.isReadonly()){ this.authorizedCapital.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_AuthorizedCapital.value"))); } if
+		 * (!this.reservesAndSurPlus.isReadonly()){ this.reservesAndSurPlus.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_ReservesAndSurPlus.value"))); } if
+		 * (!this.intangibleAssets.isReadonly()){ this.intangibleAssets.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_IntangibleAssets.value"))); } if
+		 * (!this.tangibleNetWorth.isReadonly()){ this.tangibleNetWorth.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_TangibleNetWorth.value"))); } if
+		 * (!this.longTermLiabilities.isReadonly()){ this.longTermLiabilities.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_LongTermLiabilities.value"))); } if
+		 * (!this.capitalEmployed.isReadonly()){ this.capitalEmployed.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_CapitalEmployed.value"))); } if
+		 * (!this.investments.isReadonly()){ this.investments.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_Investments.value"))); } if
+		 * (!this.nonCurrentAssets.isReadonly()){ this.nonCurrentAssets.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_NonCurrentAssets.value"))); } if
+		 * (!this.netWorkingCapital.isReadonly()){ this.netWorkingCapital.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_NetWorkingCapital.value"))); } if
+		 * (!this.netSales.isReadonly()){ this.netSales.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_NetSales.value"))); } if
+		 * (!this.otherIncome.isReadonly()){ this.otherIncome.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_OtherIncome.value"))); } if
+		 * (!this.netProfitAfterTax.isReadonly()){ this.netProfitAfterTax.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_NetProfitAfterTax.value"))); } if
+		 * (!this.depreciation.isReadonly()){ this.depreciation.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_Depreciation.value"))); } if
+		 * (!this.cashAccurals.isReadonly()){ this.cashAccurals.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_CashAccurals.value"))); } if
+		 * (!this.annualTurnover.isReadonly()){ this.annualTurnover.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_AnnualTurnover.value"))); } if
+		 * (!this.returnOnCapitalEmp.isReadonly()){ this.returnOnCapitalEmp.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_ReturnOnCapitalEmp.value"))); } if
+		 * (!this.currentAssets.isReadonly()){ this.currentAssets.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentAssets.value"))); } if
+		 * (!this.currentLiabilities.isReadonly()){ this.currentLiabilities.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentLiabilities.value"))); } if
+		 * (!this.currentBookValue.isReadonly()){ this.currentBookValue.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentBookValue.value"))); } if
+		 * (!this.currentMarketValue.isReadonly()){ this.currentMarketValue.setConstraint(new AmountValidator(18,0,
+		 * Labels.getLabel("label_CorporateCustomerDetailDialog_CurrentMarketValue.value"))); }
 		 */
 		logger.debug("Leaving");
 	}
@@ -1027,34 +975,34 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final CorporateCustomerDetail aCorporateCustomerDetail = new CorporateCustomerDetail();
 		BeanUtils.copyProperties(getCorporateCustomerDetail(), aCorporateCustomerDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") +
-		"\n\n --> " + aCorporateCustomerDetail.getLovDescCustCIF();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCorporateCustomerDetail.getLovDescCustCIF();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCorporateCustomerDetail.getRecordType())){
-				aCorporateCustomerDetail.setVersion(aCorporateCustomerDetail.getVersion()+1);
+			if (StringUtils.isBlank(aCorporateCustomerDetail.getRecordType())) {
+				aCorporateCustomerDetail.setVersion(aCorporateCustomerDetail.getVersion() + 1);
 				aCorporateCustomerDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCorporateCustomerDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aCorporateCustomerDetail,tranType)){
+				if (doProcess(aCorporateCustomerDetail, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -1069,9 +1017,9 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getCorporateCustomerDetail().isNewRecord()){
-			this.btnCancel.setVisible(false);	
-		}else{
+		if (getCorporateCustomerDetail().isNewRecord()) {
+			this.btnCancel.setVisible(false);
+		} else {
 			this.btnCancel.setVisible(true);
 		}
 
@@ -1110,18 +1058,18 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		this.finInstShare.setReadonly(isReadOnly("CorporateCustomerDetailDialog_finInstShare"));
 		this.others.setReadonly(isReadOnly("CorporateCustomerDetailDialog_others"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.corporateCustomerDetail.isNewRecord()){
+			if (this.corporateCustomerDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
@@ -1169,13 +1117,13 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		this.finInstShare.setReadonly(true);
 		this.others.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -1247,31 +1195,31 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		// Do data level validations here
 
 		isNew = aCorporateCustomerDetail.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCorporateCustomerDetail.getRecordType())){
-				aCorporateCustomerDetail.setVersion(aCorporateCustomerDetail.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCorporateCustomerDetail.getRecordType())) {
+				aCorporateCustomerDetail.setVersion(aCorporateCustomerDetail.getVersion() + 1);
+				if (isNew) {
 					aCorporateCustomerDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCorporateCustomerDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCorporateCustomerDetail.setNewRecord(true);
 				}
 			}
-		}else{
-			aCorporateCustomerDetail.setVersion(aCorporateCustomerDetail.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCorporateCustomerDetail.setVersion(aCorporateCustomerDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
-			if(doProcess(aCorporateCustomerDetail,tranType)){
+			if (doProcess(aCorporateCustomerDetail, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -1295,11 +1243,11 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CorporateCustomerDetail aCorporateCustomerDetail,String tranType){
+	private boolean doProcess(CorporateCustomerDetail aCorporateCustomerDetail, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCorporateCustomerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCorporateCustomerDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1329,19 +1277,19 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 			}
 
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -1351,28 +1299,28 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 			aCorporateCustomerDetail.setRoleCode(getRole());
 			aCorporateCustomerDetail.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCorporateCustomerDetail, tranType);
+			auditHeader = getAuditHeader(aCorporateCustomerDetail, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCorporateCustomerDetail);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCorporateCustomerDetail, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aCorporateCustomerDetail, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aCorporateCustomerDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCorporateCustomerDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
@@ -1389,59 +1337,56 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
-		CorporateCustomerDetail aCorporateCustomerDetail = (CorporateCustomerDetail) 
-		auditHeader.getAuditDetail().getModelData();
+		CorporateCustomerDetail aCorporateCustomerDetail = (CorporateCustomerDetail) auditHeader.getAuditDetail()
+				.getModelData();
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCorporateCustomerDetailService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getCorporateCustomerDetailService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getCorporateCustomerDetailService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCorporateCustomerDetailService().doApprove(auditHeader);
-						if(aCorporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aCorporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCorporateCustomerDetailService().doReject(auditHeader);
-						if(aCorporateCustomerDetail.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCorporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CorporateCustomerDetailDialog, auditHeader);
-						return processCompleted; 
+						retValue = ErrorControl.showErrorControl(this.window_CorporateCustomerDetailDialog,
+								auditHeader);
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_CorporateCustomerDetailDialog,
-						auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CorporateCustomerDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					if(deleteNotes){
-						deleteNotes(getNotes(this.corporateCustomerDetail),true);
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.corporateCustomerDetail), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -1466,12 +1411,12 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CorporateCustomerDetail aCorporateCustomerDetail, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCorporateCustomerDetail.getBefImage(), 
-				aCorporateCustomerDetail);   
-		return new AuditHeader(String.valueOf(aCorporateCustomerDetail.getCustId())
-				,String.valueOf(aCorporateCustomerDetail.getCustId()),null,
-				null,auditDetail,aCorporateCustomerDetail.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CorporateCustomerDetail aCorporateCustomerDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCorporateCustomerDetail.getBefImage(),
+				aCorporateCustomerDetail);
+		return new AuditHeader(String.valueOf(aCorporateCustomerDetail.getCustId()),
+				String.valueOf(aCorporateCustomerDetail.getCustId()), null, null, auditDetail,
+				aCorporateCustomerDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1521,6 +1466,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1528,22 +1474,23 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	public CorporateCustomerDetail getCorporateCustomerDetail() {
 		return this.corporateCustomerDetail;
 	}
+
 	public void setCorporateCustomerDetail(CorporateCustomerDetail corporateCustomerDetail) {
 		this.corporateCustomerDetail = corporateCustomerDetail;
 	}
 
-	public void setCorporateCustomerDetailService(
-			CorporateCustomerDetailService corporateCustomerDetailService) {
+	public void setCorporateCustomerDetailService(CorporateCustomerDetailService corporateCustomerDetailService) {
 		this.corporateCustomerDetailService = corporateCustomerDetailService;
 	}
+
 	public CorporateCustomerDetailService getCorporateCustomerDetailService() {
 		return this.corporateCustomerDetailService;
 	}
 
-	public void setCorporateCustomerDetailListCtrl(
-			CorporateCustomerDetailListCtrl corporateCustomerDetailListCtrl) {
+	public void setCorporateCustomerDetailListCtrl(CorporateCustomerDetailListCtrl corporateCustomerDetailListCtrl) {
 		this.corporateCustomerDetailListCtrl = corporateCustomerDetailListCtrl;
 	}
+
 	public CorporateCustomerDetailListCtrl getCorporateCustomerDetailListCtrl() {
 		return this.corporateCustomerDetailListCtrl;
 	}
@@ -1551,6 +1498,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1558,6 +1506,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}

@@ -18,31 +18,32 @@ public class BackupDatabase {
 	private DataSource dataSource;
 
 	public BackupDatabase() {
-		
+
 	}
-	
+
 	/**
 	 * Backup Database to database server
+	 * 
 	 * @throws Exception
 	 */
 	public String backupDatabase(boolean isBeforeEod) throws Exception {
 		logger.info("Database backup started");
-		String dbBackUpStatus ="";
+		String dbBackUpStatus = "";
 		try {
-				Map<String, Object> inputParamMap = new LinkedHashMap<String, Object>();
-				Map<String, Object> outputParamMap = new LinkedHashMap<String, Object>();
-				inputParamMap.put("@START_BEFORE_EOD", Types.NVARCHAR);
+			Map<String, Object> inputParamMap = new LinkedHashMap<String, Object>();
+			Map<String, Object> outputParamMap = new LinkedHashMap<String, Object>();
+			inputParamMap.put("@START_BEFORE_EOD", Types.NVARCHAR);
 
-				Map<String, Object> inputs = new HashMap<String, Object>();
-				if (isBeforeEod) {
-					inputs.put("@START_BEFORE_EOD", 1);
-				} else {
-					inputs.put("@START_BEFORE_EOD", 0);
-				}
-				new StoredProcedureUtil(this.dataSource, "SP_EOD_BACKUP", inputParamMap, outputParamMap).execute(inputs);
+			Map<String, Object> inputs = new HashMap<String, Object>();
+			if (isBeforeEod) {
+				inputs.put("@START_BEFORE_EOD", 1);
+			} else {
+				inputs.put("@START_BEFORE_EOD", 0);
+			}
+			new StoredProcedureUtil(this.dataSource, "SP_EOD_BACKUP", inputParamMap, outputParamMap).execute(inputs);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			dbBackUpStatus = "Error While Taking Backup "+", "+(e.toString().split(":")[2]);
+			dbBackUpStatus = "Error While Taking Backup " + ", " + (e.toString().split(":")[2]);
 			logger.info("Database backup failed");
 		} finally {
 

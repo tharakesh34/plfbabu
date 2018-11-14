@@ -58,11 +58,11 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class AbstractListController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 6332080471910971732L;
 	private final Logger logger = Logger.getLogger(getClass());
-	
+
 	private static final int SEARCH_ROW_SIZE = 27;
 	private static final int LIST_ROW_SIZE = 26;
 	private static final int PAGGING_SIZE = 27;
-	
+
 	protected Borderlayout contentArea;
 	protected Grid searchGrid;
 	protected Listbox listbox;
@@ -89,15 +89,13 @@ public class AbstractListController<T> extends AbstractController<T> {
 	protected JdbcSearchObject<T> searchObject;
 	private ListitemRenderer<T> listitemRenderer;
 	private Comparator<Object> comparator;
-	
-	
 
 	protected List<SearchFilterControl> searchControls = new ArrayList<>();
 	protected transient PagedListService pagedListService;
 
 	protected AbstractListController() {
 		super();
-		
+
 	}
 
 	protected AbstractListController(Window window) {
@@ -111,7 +109,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 		this.listbox = listbox;
 		this.paging = paging;
 	}
-	
+
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
@@ -135,7 +133,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 		// Register default components
 		registerButton(print);
 		registerButton(help);
-		
+
 		// FIXME the below components should be removed in all the child classes.
 		if (listheader_RecordStatus != null && listheader_RecordType != null) {
 			if (recordStatus == null && recordType == null) {
@@ -152,7 +150,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 
 	protected final void doRenderPage() {
 		logger.debug("Entering");
-		
+
 		if (recordType != null) {
 			this.recordType = setRecordType(this.recordType);
 		}
@@ -182,11 +180,11 @@ public class AbstractListController<T> extends AbstractController<T> {
 
 		// Set the heights based on the client's desktop.
 		contentArea.setHeight(getContentAreaHeight() + "px");
-		
-		if (listbox!=null) {
+
+		if (listbox != null) {
 			listbox.setHeight((getListSize(false) - 32) + "px");
 		}
-		
+
 		if (paging != null) {
 			paging.setPageSize(getPageSize());
 			paging.setDetailed(true);
@@ -501,13 +499,14 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * @throws IllegalArgumentException
 	 *             If the specified <code>searchField</code> is null.
 	 */
-	protected void registerField(String fieldName, Listheader listheader, SortOrder defaultOrder,
-			Component searchField, Listbox searchOperator, Operators operators) {
+	protected void registerField(String fieldName, Listheader listheader, SortOrder defaultOrder, Component searchField,
+			Listbox searchOperator, Operators operators) {
 		registerField(fieldName, listheader, defaultOrder);
 		addSearchControll(fieldName, searchField, searchOperator, operators);
 	}
 
-	protected void registerField(String fieldName, Component searchField, SortOrder defaultOrder, Listbox searchOperator, Operators operators) {
+	protected void registerField(String fieldName, Component searchField, SortOrder defaultOrder,
+			Listbox searchOperator, Operators operators) {
 		registerField(fieldName);
 		addSearchControll(fieldName, searchField, searchOperator, operators);
 	}
@@ -519,13 +518,14 @@ public class AbstractListController<T> extends AbstractController<T> {
 		}
 	}
 
-	private void addSearchControll(String fieldName, Component searchField, Listbox searchOperator, Operators operators) {
+	private void addSearchControll(String fieldName, Component searchField, Listbox searchOperator,
+			Operators operators) {
 		if (fieldName == null || searchField == null || searchOperator == null || operators == null) {
 			throw new IllegalArgumentException();
 		}
 		searchControls.add(new SearchFilterControl(fieldName, searchField, searchOperator, operators));
 	}
-	
+
 	private int getListSize(boolean hasPaging) {
 		int gridRowCount = 0;
 
@@ -548,17 +548,15 @@ public class AbstractListController<T> extends AbstractController<T> {
 		int height = getContentAreaHeight() - (gridRowCount * SEARCH_ROW_SIZE) - (LIST_ROW_SIZE) - (PAGGING_SIZE);
 		return height / LIST_ROW_SIZE;
 	}
-	
+
 	protected Map<String, Object> getDefaultArguments() {
 		HashMap<String, Object> aruments = new HashMap<>();
-		
+
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
-		
+
 		return aruments;
 	}
-	
-	
 
 	public void setItemRender(ListitemRenderer<T> listitemRenderer) {
 		this.listitemRenderer = listitemRenderer;
@@ -575,7 +573,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	public JdbcSearchObject<T> getSearchObject() {
 		return searchObject;
 	}
-	
+
 	public String getModuleCode() {
 		return moduleCode;
 	}

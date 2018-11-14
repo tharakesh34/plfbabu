@@ -69,10 +69,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.financemanagement.finsusphold.model.FinSuspHoldListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FinSuspHold/FinSuspHoldList.zul file.
@@ -223,8 +223,9 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 		if (finSuspHold == null) {
 			String[] errorParm = { getValidationMsg(finSuspHold) };
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
-					errorParm, null), getUserWorkspace().getUserLanguage());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errorParm, null),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 		}
 
@@ -260,8 +261,8 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 		arg.put("moduleCode", super.moduleCode);
 
 		try {
-			Executions
-					.createComponents("/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -289,7 +290,8 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 		doShowHelp(event);
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;

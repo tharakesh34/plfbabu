@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.SubSector;
  * 
  */
 public interface SubSectorService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	SubSector getSubSectorById(String id, String subSectorCode);
-	SubSector getApprovedSubSectorById(String id,String subSectorCode);
+
+	SubSector getApprovedSubSectorById(String id, String subSectorCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

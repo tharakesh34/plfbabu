@@ -97,17 +97,18 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Button button_ManualAdviseList_ManualAdviseSearch;
 
 	// Search Fields
-    protected Combobox adviseType; // autowired
+	protected Combobox adviseType; // autowired
 	protected Textbox finReference; // autowired
 	protected Textbox feeTypeID; // autowired
-	
+
 	protected Listbox sortOperator_AdviseType;
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_FeeTypeID;
-	
+
 	private transient ManualAdviseService manualAdviseService;
 	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdvisePropertyTypes();
-	private FinanceMain financeMain =null;
+	private FinanceMain financeMain = null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -123,12 +124,12 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		super.queueTableName = "ManualAdvise_TView";
 		super.enquiryTableName = "MANUALADVISE_LVIEW";
 	}
-	
+
 	@Override
-	protected  void doAddFilters() {
+	protected void doAddFilters() {
 		super.doAddFilters();
-		if(!enqiryModule){
-		this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
+		if (!enqiryModule) {
+			this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
 		}
 	}
 
@@ -150,10 +151,13 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerButton(button_ManualAdviseList_NewManualAdvise, "button_ManualAdviseList_NewManualAdvise", true);
 
 		registerField("adviseID");
-		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType, Operators.SIMPLE_NUMARIC);
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
-		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID, Operators.STRING);
- 	
+		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType,
+				Operators.SIMPLE_NUMARIC);
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
+				Operators.STRING);
+		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID,
+				Operators.STRING);
+
 		//comboBox list
 		fillList(adviseType, listAdviseType, null);
 		// Render the page and display the data.
@@ -201,7 +205,6 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -212,7 +215,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 
 	public void onManualAdviseItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxManualAdvise.getSelectedItem();
 		final long adviseID = (long) selectedItem.getAttribute("adviseID");
@@ -222,15 +225,15 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
+
 		financeMain = manualAdviseService.getFinanceDetails(StringUtils.trimToEmpty(manualadvise.getFinReference()));
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  AdviseID = ");
-		whereCond.append( manualadvise.getAdviseID());
+		whereCond.append(manualadvise.getAdviseID());
 		whereCond.append(" AND  version=");
 		whereCond.append(manualadvise.getVersion());
-	
+
 		if (doCheckAuthority(manualadvise, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && manualadvise.getWorkflowId() == 0) {
@@ -240,10 +243,10 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -256,14 +259,17 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("manualAdvise", manualadvise);
 		arg.put("manualAdviseListCtrl", this);
-		
+
 		try {
-			
-			if(manualadvise.isNewRecord()){
-				Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/SelectManualAdviseFinReferenceDialog.zul", null, arg);
-			}else {
+
+			if (manualadvise.isNewRecord()) {
+				Executions.createComponents(
+						"/WEB-INF/pages/FinanceManagement/ManualAdvise/SelectManualAdviseFinReferenceDialog.zul", null,
+						arg);
+			} else {
 				arg.put("financeMain", financeMain);
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null, arg);
+				Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul",
+						null, arg);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -291,7 +297,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

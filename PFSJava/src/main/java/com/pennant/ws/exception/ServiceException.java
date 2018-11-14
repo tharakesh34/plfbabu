@@ -6,7 +6,7 @@ package com.pennant.ws.exception;
  */
 public class ServiceException extends RuntimeException {
 	private static final long serialVersionUID = 8847524135826237203L;
-	
+
 	private final ServiceExceptionDetails[] faultDetails;
 
 	public ServiceException(ServiceExceptionDetails[] faultDetails) {

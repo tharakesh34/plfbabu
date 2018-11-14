@@ -34,7 +34,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class CacheAdmin  {
+public class CacheAdmin {
 	private static final Logger log = LogManager.getLogger(Cache.class);
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
@@ -51,7 +51,8 @@ public class CacheAdmin  {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		sql.append(" select cluster_name, current_node, cluster_ip, cluster_size, cluster_members,");
-		sql.append(" cache_count, cache_names, manager_cache_status, enabled, active,node_count, last_mnt_on, last_mnt_by");
+		sql.append(
+				" cache_count, cache_names, manager_cache_status, enabled, active,node_count, last_mnt_on, last_mnt_by");
 		sql.append(" from cache_stats");
 
 		RowMapper<CacheStats> romapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
@@ -67,16 +68,15 @@ public class CacheAdmin  {
 		return null;
 	}
 
-	
 	public void delete(String clusterName, String IP, String currentNode) {
 		log.debug(Literal.ENTERING);
 		int recordCount = 0;
-		
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();		
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("ClusterName", clusterName);
 		paramMap.addValue("ClusterIp", "%" + IP + "%");
-		paramMap.addValue("CurrentNode", "%" + StringUtils.substringBefore(currentNode, "-")+ "%");
-		
+		paramMap.addValue("CurrentNode", "%" + StringUtils.substringBefore(currentNode, "-") + "%");
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("delete from cache_stats");
 		sql.append(" where cluster_name =:ClusterName");
@@ -97,7 +97,6 @@ public class CacheAdmin  {
 		log.trace(Literal.LEAVING);
 	}
 
-
 	public int getNodeCount() {
 		log.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
@@ -108,7 +107,6 @@ public class CacheAdmin  {
 
 	}
 
-
 	public void insert(CacheStats cacheStats) {
 		log.debug(Literal.ENTERING);
 
@@ -116,7 +114,8 @@ public class CacheAdmin  {
 		sql.append("insert into cache_stats");
 		sql.append("(cluster_name, current_node, cluster_ip, cluster_size, cluster_members, cache_count, cache_names,");
 		sql.append(" manager_cache_status, enabled, active, node_count, last_mnt_by, last_mnt_on)");
-		sql.append(" values(:ClusterName, :ClusterNode, :ClusterIp, :ClusterSize, :ClusterMembers, :CacheCount, :CacheNamesDet,");
+		sql.append(
+				" values(:ClusterName, :ClusterNode, :ClusterIp, :ClusterSize, :ClusterMembers, :CacheCount, :CacheNamesDet,");
 		sql.append(" :ManagerCacheStatus, :Enabled, :Active, :NodeCount, :LastMntBy, :LastMntOn)");
 
 		log.trace(Literal.SQL + sql.toString());
@@ -135,7 +134,6 @@ public class CacheAdmin  {
 		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	
 	public CacheStats getCacheStats(String clusterName, String currentNode) {
 		log.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -161,16 +159,16 @@ public class CacheAdmin  {
 		return null;
 	}
 
-	
 	public void update(CacheStats cacheStats) {
 		log.debug(Literal.ENTERING);
 
 		int recordCount = 0;
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" update cache_stats ");
 		sql.append(" set cluster_ip  =:ClusterIp, cluster_size  =:ClusterSize, cluster_members =:ClusterMembers,");
-		sql.append(" cache_count =:CacheCount, cache_names =:CacheNamesDet, manager_cache_status =:ManagerCacheStatus,");
+		sql.append(
+				" cache_count =:CacheCount, cache_names =:CacheNamesDet, manager_cache_status =:ManagerCacheStatus,");
 		sql.append(" enabled =:Enabled, active =:Active,  node_count  =:NodeCount,");
 		sql.append(" last_mnt_by =:LastMntBy, last_mnt_on=:LastMntOn");
 		sql.append(" where cluster_name =:ClusterName and current_node =:ClusterNode ");
@@ -203,15 +201,15 @@ public class CacheAdmin  {
 		log.debug(Literal.LEAVING);
 		return map;
 	}
-	
-	public void updateParameters(CacheStats cacheStats){
+
+	public void updateParameters(CacheStats cacheStats) {
 		log.debug(Literal.ENTERING);
 
 		int recordCount = 0;
 		StringBuilder sql = new StringBuilder("update cache_parameters ");
-		sql.append(" Set NODE_COUNT  =:NodeCount, CACHE_VERIFY_SLEEP  =:VerifySleepTime, CACHE_UPDATE_SLEEP =:UpdateSleepTime,");
+		sql.append(
+				" Set NODE_COUNT  =:NodeCount, CACHE_VERIFY_SLEEP  =:VerifySleepTime, CACHE_UPDATE_SLEEP =:UpdateSleepTime,");
 		sql.append(" Last_Mnt_By =:LastMntBy, Last_Mnt_On =:LastMntOn ");
-		
 
 		log.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);

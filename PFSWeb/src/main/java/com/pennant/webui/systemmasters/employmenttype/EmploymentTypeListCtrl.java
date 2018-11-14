@@ -61,9 +61,9 @@ import com.pennant.backend.model.systemmasters.EmploymentType;
 import com.pennant.backend.service.systemmasters.EmploymentTypeService;
 import com.pennant.webui.systemmasters.employmenttype.model.EmploymentTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/EmploymentType/EmploymentTypeList.zul file.
@@ -125,7 +125,8 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType> {
 		setItemRender(new EmploymentTypeListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_EmploymentTypeList_NewEmploymentType, "button_EmploymentTypeList_NewEmploymentType", true);
+		registerButton(button_EmploymentTypeList_NewEmploymentType, "button_EmploymentTypeList_NewEmploymentType",
+				true);
 		registerButton(button_EmploymentTypeList_EmploymentTypeSearchDialog);
 
 		registerField("empType", listheader_EmpType, SortOrder.ASC, empType, sortOperator_empType, Operators.STRING);

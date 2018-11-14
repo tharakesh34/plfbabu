@@ -44,50 +44,48 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Administration/SecurityGroupRights
- * /SecurityGroupRightsDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Administration/SecurityGroupRights /SecurityGroupRightsDialog.zul
+ * file.
  */
 public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	private static final long serialVersionUID = -7625144242180775016L;
 	private static final Logger logger = Logger.getLogger(SecurityGroupRightsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window       win_SecGroupRightsDialog;                                   // autoWired
-	protected Borderlayout borderLayout_SecurityGroupRights;                           // autoWired
-	protected Button       btnSelectRights;                                            // autoWired
-	protected Button       btnUnSelectRights;                                          // autoWired
-	protected Button       btnUnSelectAllRights;                                       // autoWired
-	protected Button       btnSearchRights;                                            // autoWired
-	protected Listbox      listbox_UnAssignedRights;                                   // autoWired
-	protected Listbox      listbox_AssignedRights;                                     // autoWired
-	protected Label        label_GroupCode;                                            // autoWired
-	protected Label        label_GroupDesc;                                            // autoWired
-	protected Listhead     listheader_SelectRight;                                     // autoWired
-	protected Listhead     listheader_RightDesc;                                       // autoWired
+	protected Window win_SecGroupRightsDialog; // autoWired
+	protected Borderlayout borderLayout_SecurityGroupRights; // autoWired
+	protected Button btnSelectRights; // autoWired
+	protected Button btnUnSelectRights; // autoWired
+	protected Button btnUnSelectAllRights; // autoWired
+	protected Button btnSearchRights; // autoWired
+	protected Listbox listbox_UnAssignedRights; // autoWired
+	protected Listbox listbox_AssignedRights; // autoWired
+	protected Label label_GroupCode; // autoWired
+	protected Label label_GroupDesc; // autoWired
+	protected Listhead listheader_SelectRight; // autoWired
+	protected Listhead listheader_RightDesc; // autoWired
 
+	private SecurityGroupRights secGroupRights;
+	private List<SecurityRight> secRightsList = new ArrayList<SecurityRight>();
+	private SecurityGroup securityGroup;
+	private transient SecurityGroupRightsService securityGroupRightsService;
+	private List<SecurityRight> assignedRights = new ArrayList<SecurityRight>();
+	private List<SecurityRight> unAssignedRights = new ArrayList<SecurityRight>();
+	private List<SecurityRight> tempUnAssignedRights = new ArrayList<SecurityRight>();
+	private Map<Long, SecurityRight> newAssignedMap = new HashMap<Long, SecurityRight>();
+	private Map<Long, SecurityRight> oldAssignedMap = new HashMap<Long, SecurityRight>();
+	private Map<Long, SecurityGroupRights> selectedMap;
+	private Map<Long, SecurityGroupRights> deletedMap;
+	private Map<String, SecurityRight> tempUnAsgnRightsMap = new HashMap<String, SecurityRight>();
+	private Object[] filters = new Object[2];
 
-	private   SecurityGroupRights          secGroupRights;
-	private   List<SecurityRight>               secRightsList = new ArrayList<SecurityRight>();
-	private   SecurityGroup               securityGroup;
-	private   transient SecurityGroupRightsService securityGroupRightsService;
-	private   List<SecurityRight>                 assignedRights = new ArrayList<SecurityRight>();
-	private   List<SecurityRight>                 unAssignedRights=new ArrayList<SecurityRight>();
-	private List<SecurityRight>               tempUnAssignedRights=new ArrayList<SecurityRight>(); 
-	private   Map<Long, SecurityRight> 		      newAssignedMap = new HashMap<Long, SecurityRight>();
-	private   Map<Long, SecurityRight> 		      oldAssignedMap = new HashMap<Long, SecurityRight>();
-	private   Map<Long, SecurityGroupRights>      selectedMap ;
-	private   Map<Long, SecurityGroupRights>      deletedMap  ;
-	private   Map<String, SecurityRight> 	     tempUnAsgnRightsMap  =new HashMap<String, SecurityRight>();
-	private   Object[] filters=new Object[2];
-	/**onClick$btnSelectRights
-	 * default constructor.<br>
+	/**
+	 * onClick$btnSelectRights default constructor.<br>
 	 */
-	public SecurityGroupRightsDialogCtrl(){
+	public SecurityGroupRightsDialogCtrl() {
 		super();
 	}
 
@@ -95,13 +93,12 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	protected void doSetProperties() {
 		super.pageRightName = "SecurityGroupRightsDialog";
 	}
-	
+
 	// Components events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SecurityGroup object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SecurityGroup object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -117,7 +114,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 			logger.debug("Entering " + event.toString());
 			/* set components visible dependent of the users rights */
 			doCheckRights();
-			
+
 			if (arguments.containsKey("securityGroup")) {
 				setSecurityGroup((SecurityGroup) arguments.get("securityGroup"));
 
@@ -125,18 +122,14 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 				setSecurityGroup(null);
 			}
 
-			this.borderLayout_SecurityGroupRights
-					.setHeight(getBorderLayoutHeight());
+			this.borderLayout_SecurityGroupRights.setHeight(getBorderLayoutHeight());
 			this.label_GroupCode.setValue(getSecurityGroup().getGrpCode());
 			this.label_GroupDesc.setValue(getSecurityGroup().getGrpDesc());
-			this.listbox_UnAssignedRights
-					.setItemRenderer(new SecurityGroupRightModelItemRenderer());
+			this.listbox_UnAssignedRights.setItemRenderer(new SecurityGroupRightModelItemRenderer());
 			/* get all assigned rights */
-			assignedRights = getSecurityGroupRightsService()
-					.getRightsByGroupId(getSecurityGroup().getGrpID(), true);
+			assignedRights = getSecurityGroupRightsService().getRightsByGroupId(getSecurityGroup().getGrpID(), true);
 			/* get all unassigned rights */
-			unAssignedRights = getSecurityGroupRightsService()
-					.getRightsByGroupId(getSecurityGroup().getGrpID(), false);
+			unAssignedRights = getSecurityGroupRightsService().getRightsByGroupId(getSecurityGroup().getGrpID(), false);
 			tempUnAssignedRights = unAssignedRights;
 			doShowDialog();
 			setDialog(DialogType.EMBEDDED);
@@ -147,20 +140,23 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * When user clicks on "cancel" button
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$btnCancel(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());	
+		logger.debug("Entering " + event.toString());
 		doCancel();
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * When user clicks on "save" button
 	 */
-	public void onClick$btnSave(Event event) throws Exception{
+	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving " + event.toString());
@@ -170,8 +166,8 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	/**
 	 * When clicks on "Close" button
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception{
-		logger.debug("Entering " + event.toString());	
+	public void onClick$btnRefresh(Event event) throws Exception {
+		logger.debug("Entering " + event.toString());
 		doShowUnAssignedRightsList();
 		logger.debug("Leaving " + event.toString());
 	}
@@ -188,122 +184,130 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 	/**
 	 * when clicks on "btnSearchRights"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 
-	public  void onClick$btnSearchRights(Event event) throws Exception {
+	public void onClick$btnSearchRights(Event event) throws Exception {
 
 		logger.debug("Entering " + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("dialogCtrl", this);
-		map.put("dataMap",tempUnAsgnRightsMap);
+		map.put("dataMap", tempUnAsgnRightsMap);
 		map.put("prevFilters", filters);
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Administration/SecuritySearchDialog.zul",null,map);
+			Executions.createComponents("/WEB-INF/pages/Administration/SecuritySearchDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 
 	}
+
 	/**
 	 * when clicks on "btnSelectRights"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public  void onClick$btnSelectRights(Event event) throws Exception {	
-		logger.debug("Entering" +event.toString());
+	public void onClick$btnSelectRights(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
 
-		if(this.listbox_UnAssignedRights.getSelectedCount()!=0){	
+		if (this.listbox_UnAssignedRights.getSelectedCount() != 0) {
 
-			Listitem li=new Listitem();                          //To read List Item
-			Set seletedSet= new HashSet();                       //To get Selected Items
-			seletedSet=this.listbox_UnAssignedRights.getSelectedItems();
-			List list=new ArrayList(seletedSet);	//Converting Set to ArrayList to Make Concurrent operations	
-			Iterator iterator=list.iterator();
-			while(iterator.hasNext()){
-				li=(Listitem) iterator.next();
-				final SecurityRight aSecRight= (SecurityRight)li.getAttribute("data");
-				Listcell slecteditem=new Listcell();
-				List selectedRowValues=new ArrayList();         //TO get each row Details
-				selectedRowValues=li.getChildren();
-				slecteditem=(Listcell)selectedRowValues.get(0);
+			Listitem li = new Listitem(); //To read List Item
+			Set seletedSet = new HashSet(); //To get Selected Items
+			seletedSet = this.listbox_UnAssignedRights.getSelectedItems();
+			List list = new ArrayList(seletedSet); //Converting Set to ArrayList to Make Concurrent operations	
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				li = (Listitem) iterator.next();
+				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
+				Listcell slecteditem = new Listcell();
+				List selectedRowValues = new ArrayList(); //TO get each row Details
+				selectedRowValues = li.getChildren();
+				slecteditem = (Listcell) selectedRowValues.get(0);
 				tempUnAsgnRightsMap.remove(String.valueOf(aSecRight.getRightID()));
-				getNewAssignedMap().put(Long.valueOf(aSecRight.getRightID()),aSecRight);
-				doFillListbox(this.listbox_AssignedRights,slecteditem.getLabel(),aSecRight);
+				getNewAssignedMap().put(Long.valueOf(aSecRight.getRightID()), aSecRight);
+				doFillListbox(this.listbox_AssignedRights, slecteditem.getLabel(), aSecRight);
 				this.listbox_UnAssignedRights.removeItemAt(li.getIndex());
-				
+
 			}
-		}							
+		}
 	}
+
 	/**
 	 * when clicks on "btnUnSelectRights"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public  void onClick$btnUnSelectRights(Event event) throws Exception {			
-		logger.debug(event.toString());	
+	public void onClick$btnUnSelectRights(Event event) throws Exception {
+		logger.debug(event.toString());
 
-		if(this.listbox_AssignedRights.getSelectedCount()!=0){	
+		if (this.listbox_AssignedRights.getSelectedCount() != 0) {
 			// To Remove Selected item from the List Box 
-			Listitem li=new Listitem();        //To read List Item
-			Set seletedSet= new HashSet();          //To get Selected Items
-			seletedSet=this.listbox_AssignedRights.getSelectedItems();
-			List list=new ArrayList(seletedSet);	  //Converting Set to ArrayList to Make Concurrent operations	
-			Iterator iterator=list.iterator();
-			while(iterator.hasNext()){				
-				li=(Listitem)iterator.next();
-				final SecurityRight aSecRight= (SecurityRight)li.getAttribute("data");
-				Listcell slecteditem=new Listcell();
-				List selectedRowValues=new ArrayList();        //TO get each row Details
-				selectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)selectedRowValues.get(0);	
+			Listitem li = new Listitem(); //To read List Item
+			Set seletedSet = new HashSet(); //To get Selected Items
+			seletedSet = this.listbox_AssignedRights.getSelectedItems();
+			List list = new ArrayList(seletedSet); //Converting Set to ArrayList to Make Concurrent operations	
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				li = (Listitem) iterator.next();
+				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
+				Listcell slecteditem = new Listcell();
+				List selectedRowValues = new ArrayList(); //TO get each row Details
+				selectedRowValues = li.getChildren();
+				slecteditem = (Listcell) selectedRowValues.get(0);
 				tempUnAsgnRightsMap.put(String.valueOf(aSecRight.getRightID()), aSecRight);
 				getNewAssignedMap().remove(Long.valueOf(aSecRight.getRightID()));
-				doFillListbox(this.listbox_UnAssignedRights,slecteditem.getLabel(),aSecRight);	
-				if(true){
+				doFillListbox(this.listbox_UnAssignedRights, slecteditem.getLabel(), aSecRight);
+				if (true) {
 					this.listbox_AssignedRights.removeItemAt(li.getIndex());
 				}
 			}
 		}
 	}
+
 	/**
 	 * when clicks on "btnUnSelectAllRights"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public  void onClick$btnUnSelectAllRights(Event event) throws Exception {			
-		logger.debug(event.toString());	
+	public void onClick$btnUnSelectAllRights(Event event) throws Exception {
+		logger.debug(event.toString());
 		this.listbox_AssignedRights.selectAll();
-		if(this.listbox_AssignedRights.getSelectedCount()!=0){	
+		if (this.listbox_AssignedRights.getSelectedCount() != 0) {
 			//////// To Remove Selected item from the List Box 
-			Listitem li=new Listitem();//To read List Item
-			Set seletedSet= new HashSet();//To get Selected Items
-			seletedSet=this.listbox_AssignedRights.getSelectedItems();
-			List list=new ArrayList(seletedSet);	//Converting Set to ArrayList to Make Concurrent operations	
-			java.util.Iterator it=list.iterator();
-			while(it.hasNext()){				
-				li=(Listitem)it.next();
-				final SecurityRight aSecRight= (SecurityRight)li.getAttribute("data");
+			Listitem li = new Listitem();//To read List Item
+			Set seletedSet = new HashSet();//To get Selected Items
+			seletedSet = this.listbox_AssignedRights.getSelectedItems();
+			List list = new ArrayList(seletedSet); //Converting Set to ArrayList to Make Concurrent operations	
+			java.util.Iterator it = list.iterator();
+			while (it.hasNext()) {
+				li = (Listitem) it.next();
+				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
 				System.out.println(li.getLabel());
-				Listcell slecteditem=new Listcell();
-				List selectedRowValues=new ArrayList();//TO get each row Details
-				selectedRowValues=li.getChildren();			
-				slecteditem=(Listcell)selectedRowValues.get(0);		
+				Listcell slecteditem = new Listcell();
+				List selectedRowValues = new ArrayList();//TO get each row Details
+				selectedRowValues = li.getChildren();
+				slecteditem = (Listcell) selectedRowValues.get(0);
 				tempUnAsgnRightsMap.put(String.valueOf(aSecRight.getRightID()), aSecRight);
 				getNewAssignedMap().remove(Long.valueOf(aSecRight.getRightID()));
-				doFillListbox(this.listbox_UnAssignedRights,slecteditem.getLabel(),aSecRight);
+				doFillListbox(this.listbox_UnAssignedRights, slecteditem.getLabel(), aSecRight);
 				this.listbox_AssignedRights.removeItemAt(li.getIndex());
-				
+
 			}
 		}
 	}
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -315,7 +319,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 		MessageUtil.showHelpWindow(event, this.win_SecGroupRightsDialog);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// GUI operations
 
 	/**
@@ -323,32 +327,33 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnSave"));
 		this.btnCancel.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnCancel"));
-		this.btnSelectRights.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnSelectRights"));
-		this.btnUnSelectRights.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnUnSelectRights"));
-		this.btnUnSelectAllRights.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnUnSelectAllRights"));
+		this.btnSelectRights
+				.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnSelectRights"));
+		this.btnUnSelectRights
+				.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnUnSelectRights"));
+		this.btnUnSelectAllRights
+				.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupRightsDialog_btnUnSelectAllRights"));
 		logger.debug("Leaving ");
 	}
 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
-	public void  doShowDialog()throws Exception {
+	public void doShowDialog() throws Exception {
 		logger.debug("Entering ");
-		
+
 		for (SecurityRight secRight : unAssignedRights) {
-			tempUnAsgnRightsMap.put(String.valueOf(secRight.getRightID()),
-					secRight);
+			tempUnAsgnRightsMap.put(String.valueOf(secRight.getRightID()), secRight);
 		}
 		try {
 			doShowUnAssignedRightsList();
@@ -363,397 +368,403 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	}
 
 	/**
-	 * This method do the following 
-	 *  1) Gets assigned rights list by calling SecurityGroupRightsService's getRightsByGroupId()method
-	 *  2) render all the list by calling doFillListbox()
-	 */	
-	 public void doShowAssignedRightsList(){
+	 * This method do the following 1) Gets assigned rights list by calling SecurityGroupRightsService's
+	 * getRightsByGroupId()method 2) render all the list by calling doFillListbox()
+	 */
+	public void doShowAssignedRightsList() {
 
-		 logger.debug("Entering");
-		 this.listbox_AssignedRights.getItems().clear();
-		 SecurityRight secRight = new SecurityRight();
-		 Comparator<SecurityRight> comp = new BeanComparator<SecurityRight>("rightName");
-		 Collections.sort(assignedRights, comp);
-		 for(int i=0;i<assignedRights.size();i++){
-			 secRight=(SecurityRight)assignedRights.get(i);
-			 oldAssignedMap.put(Long.valueOf(secRight.getRightID()),secRight);
-			 doFillListbox(this.listbox_AssignedRights, secRight.getRightName(),secRight);
-		 }
-		 setOldAssignedMap(oldAssignedMap);
-		 getNewAssignedMap().putAll(oldAssignedMap);
-	 }
-	 /**
-	  * This method do the following 
-	  *  1) Gets unassigned rights list by calling SecurityGroupRightsService's getRightsByGroupId()method
-	  *  2) render all the list by calling doFillListbox()
-	  */
-	 public void doShowUnAssignedRightsList(){
+		logger.debug("Entering");
+		this.listbox_AssignedRights.getItems().clear();
+		SecurityRight secRight = new SecurityRight();
+		Comparator<SecurityRight> comp = new BeanComparator<SecurityRight>("rightName");
+		Collections.sort(assignedRights, comp);
+		for (int i = 0; i < assignedRights.size(); i++) {
+			secRight = (SecurityRight) assignedRights.get(i);
+			oldAssignedMap.put(Long.valueOf(secRight.getRightID()), secRight);
+			doFillListbox(this.listbox_AssignedRights, secRight.getRightName(), secRight);
+		}
+		setOldAssignedMap(oldAssignedMap);
+		getNewAssignedMap().putAll(oldAssignedMap);
+	}
 
-		 logger.debug("Entering ");
-		 this.listbox_UnAssignedRights.getItems().clear();
+	/**
+	 * This method do the following 1) Gets unassigned rights list by calling SecurityGroupRightsService's
+	 * getRightsByGroupId()method 2) render all the list by calling doFillListbox()
+	 */
+	public void doShowUnAssignedRightsList() {
 
-		 unAssignedRights=new ArrayList<SecurityRight>(tempUnAsgnRightsMap.values());
+		logger.debug("Entering ");
+		this.listbox_UnAssignedRights.getItems().clear();
 
+		unAssignedRights = new ArrayList<SecurityRight>(tempUnAsgnRightsMap.values());
 
-		 SecurityRight secRight=new SecurityRight();
-		 Comparator<SecurityRight> comp = new BeanComparator<SecurityRight>("rightName");
-		 Collections.sort(unAssignedRights, comp);
-		 for(int i=0;i<unAssignedRights.size();i++){
-			 secRight=(SecurityRight)unAssignedRights.get(i);
-			 doFillListbox(this.listbox_UnAssignedRights, secRight.getRightName(),secRight);	
+		SecurityRight secRight = new SecurityRight();
+		Comparator<SecurityRight> comp = new BeanComparator<SecurityRight>("rightName");
+		Collections.sort(unAssignedRights, comp);
+		for (int i = 0; i < unAssignedRights.size(); i++) {
+			secRight = (SecurityRight) unAssignedRights.get(i);
+			doFillListbox(this.listbox_UnAssignedRights, secRight.getRightName(), secRight);
 
-		 }
+		}
 
-		 logger.debug("Leaving ");
-	 }
+		logger.debug("Leaving ");
+	}
 
-	 /**
-	  * This method do the following 
-	  * 1)compare oldAssigned map and newAssigned map
-	  *    a)if rightId not in oldselectedMap and in new selectedMap creates new SecurityGroupRights
-	  *     Object, sets data and add it to SecurityGroup LovDescAssignedRights
-	  *    b)if rightId  in oldselectedMap and not in new selectedMap gets the SecurityGroupRights
-	  *       from back end , sets RecordStatus DELETE and add it to SecurityGroup LovDescAssignedRights
-	  */
+	/**
+	 * This method do the following 1)compare oldAssigned map and newAssigned map a)if rightId not in oldselectedMap and
+	 * in new selectedMap creates new SecurityGroupRights Object, sets data and add it to SecurityGroup
+	 * LovDescAssignedRights b)if rightId in oldselectedMap and not in new selectedMap gets the SecurityGroupRights from
+	 * back end , sets RecordStatus DELETE and add it to SecurityGroup LovDescAssignedRights
+	 */
 
-	 public void doWriteComponentsToBean() throws InterruptedException {
-		 logger.debug("Entering");
+	public void doWriteComponentsToBean() throws InterruptedException {
+		logger.debug("Entering");
 
-		 selectedMap = new HashMap<Long, SecurityGroupRights>();
-		 deletedMap  = new HashMap<Long, SecurityGroupRights>();
-		 //for insert
-		 for (Object rightId : getNewAssignedMap().keySet()) {
-			 if (!getOldAssignedMap().containsKey(rightId)) {
+		selectedMap = new HashMap<Long, SecurityGroupRights>();
+		deletedMap = new HashMap<Long, SecurityGroupRights>();
+		//for insert
+		for (Object rightId : getNewAssignedMap().keySet()) {
+			if (!getOldAssignedMap().containsKey(rightId)) {
 
-				 SecurityGroupRights aSecGroupRights=getSecurityGroupRightsService().getSecurityGroupRights(); 
-				 aSecGroupRights.setGrpID(getSecurityGroup().getGrpID());
-				 aSecGroupRights.setLovDescGrpCode(getSecurityGroup().getGrpCode());
-				 aSecGroupRights.setRightID(getNewAssignedMap().get(rightId).getRightID());
-				 aSecGroupRights.setLovDescRightName(getNewAssignedMap().get(rightId).getRightName());
-				 aSecGroupRights.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				 aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-				 aSecGroupRights.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				 aSecGroupRights.setNextRoleCode("");
-				 aSecGroupRights.setNextTaskId("");
-				 aSecGroupRights.setTaskId("");
-				 aSecGroupRights.setRoleCode("");
-				 aSecGroupRights.setRecordStatus("");
-				 selectedMap.put(Long.valueOf(getNewAssignedMap().get(rightId).getRightID()),aSecGroupRights);
-			 }			
-		 }
-		 //for Delete
-		 for (Object rightId : getOldAssignedMap().keySet()) {
-			 if (!getNewAssignedMap().containsKey(rightId)) {
+				SecurityGroupRights aSecGroupRights = getSecurityGroupRightsService().getSecurityGroupRights();
+				aSecGroupRights.setGrpID(getSecurityGroup().getGrpID());
+				aSecGroupRights.setLovDescGrpCode(getSecurityGroup().getGrpCode());
+				aSecGroupRights.setRightID(getNewAssignedMap().get(rightId).getRightID());
+				aSecGroupRights.setLovDescRightName(getNewAssignedMap().get(rightId).getRightName());
+				aSecGroupRights.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				aSecGroupRights.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				aSecGroupRights.setNextRoleCode("");
+				aSecGroupRights.setNextTaskId("");
+				aSecGroupRights.setTaskId("");
+				aSecGroupRights.setRoleCode("");
+				aSecGroupRights.setRecordStatus("");
+				selectedMap.put(Long.valueOf(getNewAssignedMap().get(rightId).getRightID()), aSecGroupRights);
+			}
+		}
+		//for Delete
+		for (Object rightId : getOldAssignedMap().keySet()) {
+			if (!getNewAssignedMap().containsKey(rightId)) {
 
-				 SecurityGroupRights aSecGroupRights=getSecurityGroupRightsService().getSecurityGroupRights(); 
-				 aSecGroupRights.setGrpID(getSecurityGroup().getGrpID());
-				 aSecGroupRights.setRightID(getOldAssignedMap().get(rightId).getRightID());	
-				 aSecGroupRights.setLovDescGrpCode(getSecurityGroup().getGrpCode());
-				 aSecGroupRights.setLovDescRightName(getOldAssignedMap().get(rightId).getRightName());
-				 aSecGroupRights.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				 aSecGroupRights.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				 aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-				 aSecGroupRights.setNextRoleCode("");
-				 aSecGroupRights.setNextTaskId("");
-				 aSecGroupRights.setTaskId("");
-				 aSecGroupRights.setRoleCode("");
-				 aSecGroupRights.setRecordStatus("");
-				 deletedMap.put(aSecGroupRights.getRightID(),aSecGroupRights);	
-			 }
-		 }	
-		 logger.debug("Leaving");
-	 }
+				SecurityGroupRights aSecGroupRights = getSecurityGroupRightsService().getSecurityGroupRights();
+				aSecGroupRights.setGrpID(getSecurityGroup().getGrpID());
+				aSecGroupRights.setRightID(getOldAssignedMap().get(rightId).getRightID());
+				aSecGroupRights.setLovDescGrpCode(getSecurityGroup().getGrpCode());
+				aSecGroupRights.setLovDescRightName(getOldAssignedMap().get(rightId).getRightName());
+				aSecGroupRights.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				aSecGroupRights.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				aSecGroupRights.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				aSecGroupRights.setNextRoleCode("");
+				aSecGroupRights.setNextTaskId("");
+				aSecGroupRights.setTaskId("");
+				aSecGroupRights.setRoleCode("");
+				aSecGroupRights.setRecordStatus("");
+				deletedMap.put(aSecGroupRights.getRightID(), aSecGroupRights);
+			}
+		}
+		logger.debug("Leaving");
+	}
 
-	 // CRUD operations
-	 
-	 /**
-	  * This method inserts or deletes SecurityGroupRights records to database by calling 
-	  * SecurityGroupRightsService's saveOrDelete() method
-	  * @throws InterruptedException 
-	  */
-	 public void doSave() throws InterruptedException{
-		 logger.debug("Entering ");
-		 doWriteComponentsToBean();
-		 try{
-			 AuditHeader auditHeader=getAuditHeader(getSecurityGroup(), "");
-			 auditHeader.setAuditDetails(getAuditDetails());
-			 if(doSaveProcess(auditHeader)){
-				 closeDialog();	
-			 }	
+	// CRUD operations
 
-		 }catch(DataAccessException error){
-			 showMessage(error);
-		 }
-		 logger.debug("Leaving ");
-	 }
-	 /**	
-	  * Get the result after processing DataBase Operations 
-	  * 
-	  * @param auditHeader (AuditHeader)
-	  * 
-	  * @param method (String)
-	  * 
-	  * @return boolean
-	  * 
-	  */
-	 private boolean doSaveProcess(AuditHeader auditHeader) throws InterruptedException{
-		 boolean processCompleted=false;
-		 int retValue=PennantConstants.porcessOVERIDE;
+	/**
+	 * This method inserts or deletes SecurityGroupRights records to database by calling SecurityGroupRightsService's
+	 * saveOrDelete() method
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void doSave() throws InterruptedException {
+		logger.debug("Entering ");
+		doWriteComponentsToBean();
+		try {
+			AuditHeader auditHeader = getAuditHeader(getSecurityGroup(), "");
+			auditHeader.setAuditDetails(getAuditDetails());
+			if (doSaveProcess(auditHeader)) {
+				closeDialog();
+			}
 
-		 try{
-			 while(retValue==PennantConstants.porcessOVERIDE){
-				 auditHeader=getSecurityGroupRightsService().save(auditHeader);
-				 retValue = ErrorControl.showErrorControl(this.win_SecGroupRightsDialog,auditHeader);
+		} catch (DataAccessException error) {
+			showMessage(error);
+		}
+		logger.debug("Leaving ");
+	}
 
-				 if (retValue==PennantConstants.porcessCONTINUE){
-					 processCompleted=true;
-				 }
-				 if (retValue==PennantConstants.porcessOVERIDE){
-					 auditHeader.setOveride(true);
-					 auditHeader.setErrorMessage(null);
-					 auditHeader.setInfoMessage(null);
-					 auditHeader.setOverideMessage(null);
-				 }	
-				 setOverideMap(auditHeader.getOverideMap());
-			 }
-		 }catch (InterruptedException e) {
-			 logger.error("Exception: ", e);
-		 }
-		 return processCompleted;
-	 }
-	 
-	 // Helpers
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param auditHeader
+	 *            (AuditHeader)
+	 * 
+	 * @param method
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doSaveProcess(AuditHeader auditHeader) throws InterruptedException {
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 
-	 private void doCancel() throws Exception{
-		 tempUnAsgnRightsMap.clear();
-		 newAssignedMap.clear();
-		 unAssignedRights=tempUnAssignedRights;
-		 doShowDialog();
-	 }
+		try {
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader = getSecurityGroupRightsService().save(auditHeader);
+				retValue = ErrorControl.showErrorControl(this.win_SecGroupRightsDialog, auditHeader);
 
-	 /**
-	  * This method shows message box with error message
-	  * @param e
-	  */
-	 private void showMessage(Exception e){
-		 logger.debug("Entering ");
-		 AuditHeader auditHeader= new AuditHeader();
-		 try {
-			 auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
-			 ErrorControl.showErrorControl(this.win_SecGroupRightsDialog, auditHeader);
-		 } catch (Exception exp) {
-			 logger.error("Exception: ", exp);
-		 }
-		 logger.debug("Leaving ");
-	 }
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+				}
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+				setOverideMap(auditHeader.getOverideMap());
+			}
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
+		}
+		return processCompleted;
+	}
 
-	 /**
-	  * This method  creates and returns AuditHeader Object
-	  * @param SecurityGroup
-	  * @param tranType
-	  * @return
-	  */
-	 private AuditHeader getAuditHeader(SecurityGroup aSecurityGroup, String tranType) {
+	// Helpers
 
-		 logger.debug("Entering ");
-		 AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityGroup.getBefImage()
-				 ,aSecurityGroup);   
-		 return new AuditHeader(String.valueOf(aSecurityGroup.getId()),null,null,null
-				 ,auditDetail,getUserWorkspace().getLoggedInUser(),getOverideMap());
-	 }
-	 /**
-	  * This method works as item renderer
-	  * @param listbox
-	  * @param value1
-	  * @param securityRight
-	  */
-	 private void doFillListbox(Listbox listbox,String value1,SecurityRight securityRight){
-		 Listitem item=new Listitem(); //To Create List item
-		 Listcell lc;
-		 lc=new Listcell();	
-		 lc.setLabel(value1);
-		 lc.setParent(item);
-		 item.setAttribute("data", securityRight);
-		 listbox.appendChild(item);
-	 } 
+	private void doCancel() throws Exception {
+		tempUnAsgnRightsMap.clear();
+		newAssignedMap.clear();
+		unAssignedRights = tempUnAssignedRights;
+		doShowDialog();
+	}
 
-	 /**
-	  * This method displays the filtered data in unAssigned Groups panel .
-	  * 
-	  * @param searchResult
-	  */
-	 public int doShowSearchResult(Object[] searchResult) {
+	/**
+	 * This method shows message box with error message
+	 * 
+	 * @param e
+	 */
+	private void showMessage(Exception e) {
+		logger.debug("Entering ");
+		AuditHeader auditHeader = new AuditHeader();
+		try {
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.win_SecGroupRightsDialog, auditHeader);
+		} catch (Exception exp) {
+			logger.error("Exception: ", exp);
+		}
+		logger.debug("Leaving ");
+	}
 
-		 logger.debug("Entering");
+	/**
+	 * This method creates and returns AuditHeader Object
+	 * 
+	 * @param SecurityGroup
+	 * @param tranType
+	 * @return
+	 */
+	private AuditHeader getAuditHeader(SecurityGroup aSecurityGroup, String tranType) {
 
-		 int searchOperator = -1;
-		 String searchValue = "";
-		 if (searchResult != null && searchResult.length > 0) {
-			 searchOperator = (Integer) searchResult[0];
-			 searchValue = (String) searchResult[1];
-		 }
-		 filterRights(searchOperator, searchValue);
+		logger.debug("Entering ");
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityGroup.getBefImage(), aSecurityGroup);
+		return new AuditHeader(String.valueOf(aSecurityGroup.getId()), null, null, null, auditDetail,
+				getUserWorkspace().getLoggedInUser(), getOverideMap());
+	}
 
-		 logger.debug("Leaving");
-		 return listbox_UnAssignedRights.getItemCount();
+	/**
+	 * This method works as item renderer
+	 * 
+	 * @param listbox
+	 * @param value1
+	 * @param securityRight
+	 */
+	private void doFillListbox(Listbox listbox, String value1, SecurityRight securityRight) {
+		Listitem item = new Listitem(); //To Create List item
+		Listcell lc;
+		lc = new Listcell();
+		lc.setLabel(value1);
+		lc.setParent(item);
+		item.setAttribute("data", securityRight);
+		listbox.appendChild(item);
+	}
 
-	 }
+	/**
+	 * This method displays the filtered data in unAssigned Groups panel .
+	 * 
+	 * @param searchResult
+	 */
+	public int doShowSearchResult(Object[] searchResult) {
 
-	 /**
-	  * This method used when search button is clicked
-	  */
-	 public void filterRights(int filterCode, String filterValue) {
+		logger.debug("Entering");
 
-		 filterValue = StringUtils.trimToEmpty(filterValue).toUpperCase();
+		int searchOperator = -1;
+		String searchValue = "";
+		if (searchResult != null && searchResult.length > 0) {
+			searchOperator = (Integer) searchResult[0];
+			searchValue = (String) searchResult[1];
+		}
+		filterRights(searchOperator, searchValue);
 
-		 List<SecurityRight> unassignedList = new ArrayList<SecurityRight>();
+		logger.debug("Leaving");
+		return listbox_UnAssignedRights.getItemCount();
 
-		 for (SecurityRight right : tempUnAsgnRightsMap.values()) {
+	}
 
-			 switch (filterCode) {
-			 case Filter.OP_EQUAL:
-				 if (right.getRightName().toUpperCase().equals(filterValue)) {
-					 unassignedList.add(right);
-				 }
-				 break;
-			 case Filter.OP_NOT_EQUAL:
-				 if (!right.getRightName().toUpperCase().equals(filterValue)) {
-					 unassignedList.add(right);
-				 }
-				 break;
-			 case Filter.OP_LIKE:
+	/**
+	 * This method used when search button is clicked
+	 */
+	public void filterRights(int filterCode, String filterValue) {
 
-				 if (right.getRightName().toUpperCase().contains(filterValue)) {
-					 unassignedList.add(right);
-				 }
-				 break;
-			 default:
+		filterValue = StringUtils.trimToEmpty(filterValue).toUpperCase();
 
-			 }
-		 }
+		List<SecurityRight> unassignedList = new ArrayList<SecurityRight>();
 
-		 if (unassignedList.size() == 0) {
-			 this.listbox_UnAssignedRights.getItems().clear();
-		 } else {
-			 this.listbox_UnAssignedRights.getItems().clear();
-			 for (int i = 0; i < unassignedList.size(); i++) {
-				 SecurityRight securityRight = unassignedList.get(i);
-				 doFillListbox(listbox_UnAssignedRights, securityRight.getRightName(), securityRight);
-			 }
-		 }
-	 }
+		for (SecurityRight right : tempUnAsgnRightsMap.values()) {
 
-	 /**
-	  * This method prepares the audit details list and sets different auditSequence for 
-	  * newly inserted records and deleted records
-	  * 
-	  * @return
-	  */
-	 private List<AuditDetail> getAuditDetails(){
-		 logger.debug("Entering ");
-		 List<AuditDetail> auditDetails=new ArrayList<AuditDetail>();
+			switch (filterCode) {
+			case Filter.OP_EQUAL:
+				if (right.getRightName().toUpperCase().equals(filterValue)) {
+					unassignedList.add(right);
+				}
+				break;
+			case Filter.OP_NOT_EQUAL:
+				if (!right.getRightName().toUpperCase().equals(filterValue)) {
+					unassignedList.add(right);
+				}
+				break;
+			case Filter.OP_LIKE:
 
-		 int count = 1;
-		 String[] fields = PennantJavaUtil.getFieldDetails(new SecurityGroupRights());
+				if (right.getRightName().toUpperCase().contains(filterValue)) {
+					unassignedList.add(right);
+				}
+				break;
+			default:
 
-		 if(selectedMap!=null && selectedMap.size()>0){
-			 Collection<SecurityGroupRights> collection =  selectedMap.values();
+			}
+		}
 
-			 for (final  SecurityGroupRights securityGroupRights : collection) {
-				 AuditDetail auditDetail =getAuditDetail(securityGroupRights,count,fields);
-				 if(auditDetail!=null){
-					 auditDetails.add(auditDetail);
-					 count++;
-				 }
-			 }
-		 }
+		if (unassignedList.size() == 0) {
+			this.listbox_UnAssignedRights.getItems().clear();
+		} else {
+			this.listbox_UnAssignedRights.getItems().clear();
+			for (int i = 0; i < unassignedList.size(); i++) {
+				SecurityRight securityRight = unassignedList.get(i);
+				doFillListbox(listbox_UnAssignedRights, securityRight.getRightName(), securityRight);
+			}
+		}
+	}
 
-		 if(deletedMap!=null && deletedMap.size()>0){
-			 count=1;
-			 Collection<SecurityGroupRights> collection =  deletedMap.values();
-			 for (final  SecurityGroupRights securityGroupRights : collection) {
-				 AuditDetail auditDetail =getAuditDetail(securityGroupRights,count,fields);
-				 if(auditDetail!=null){
-					 auditDetails.add(auditDetail);
-					 count++;
-				 }
-			 }	
-		 }
-		 logger.debug("Leaving ");
-		 return auditDetails;
-	 }
-	 /**
-	  * 
-	  * @param securityGroupRights
-	  * @param auditSeq
-	  * @param fields
-	  * @return AuditDetail
-	  */
-	 private AuditDetail getAuditDetail(SecurityGroupRights securityGroupRights,int auditSeq,String[] fields){
-		 logger.debug("Entering ");
+	/**
+	 * This method prepares the audit details list and sets different auditSequence for newly inserted records and
+	 * deleted records
+	 * 
+	 * @return
+	 */
+	private List<AuditDetail> getAuditDetails() {
+		logger.debug("Entering ");
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		 if(securityGroupRights==null ){
-			 return null;	
-		 }
-		 String auditImage = "";
-		 Object befImage=null;
-		 if(securityGroupRights.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-			 auditImage=PennantConstants.TRAN_ADD;
-		 }
-		 if(securityGroupRights.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-			 auditImage=PennantConstants.TRAN_DEL;
-			 befImage=securityGroupRights;
-		 }
-		 logger.debug("Leaving ");
-		 return new AuditDetail(auditImage, auditSeq, fields[0], fields[1], befImage, securityGroupRights);
-	 }
+		int count = 1;
+		String[] fields = PennantJavaUtil.getFieldDetails(new SecurityGroupRights());
+
+		if (selectedMap != null && selectedMap.size() > 0) {
+			Collection<SecurityGroupRights> collection = selectedMap.values();
+
+			for (final SecurityGroupRights securityGroupRights : collection) {
+				AuditDetail auditDetail = getAuditDetail(securityGroupRights, count, fields);
+				if (auditDetail != null) {
+					auditDetails.add(auditDetail);
+					count++;
+				}
+			}
+		}
+
+		if (deletedMap != null && deletedMap.size() > 0) {
+			count = 1;
+			Collection<SecurityGroupRights> collection = deletedMap.values();
+			for (final SecurityGroupRights securityGroupRights : collection) {
+				AuditDetail auditDetail = getAuditDetail(securityGroupRights, count, fields);
+				if (auditDetail != null) {
+					auditDetails.add(auditDetail);
+					count++;
+				}
+			}
+		}
+		logger.debug("Leaving ");
+		return auditDetails;
+	}
+
+	/**
+	 * 
+	 * @param securityGroupRights
+	 * @param auditSeq
+	 * @param fields
+	 * @return AuditDetail
+	 */
+	private AuditDetail getAuditDetail(SecurityGroupRights securityGroupRights, int auditSeq, String[] fields) {
+		logger.debug("Entering ");
+
+		if (securityGroupRights == null) {
+			return null;
+		}
+		String auditImage = "";
+		Object befImage = null;
+		if (securityGroupRights.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			auditImage = PennantConstants.TRAN_ADD;
+		}
+		if (securityGroupRights.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			auditImage = PennantConstants.TRAN_DEL;
+			befImage = securityGroupRights;
+		}
+		logger.debug("Leaving ");
+		return new AuditDetail(auditImage, auditSeq, fields[0], fields[1], befImage, securityGroupRights);
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	 public SecurityGroup getSecurityGroup() {
-		 return securityGroup;
-	 }
+	public SecurityGroup getSecurityGroup() {
+		return securityGroup;
+	}
 
-	 public void setSecurityGroup(SecurityGroup securityGroup) {
-		 this.securityGroup = securityGroup;
-	 }
+	public void setSecurityGroup(SecurityGroup securityGroup) {
+		this.securityGroup = securityGroup;
+	}
 
-	 public SecurityGroupRights getSecGroupRights() {
-		 return secGroupRights;
-	 }
-	 public void setSecGroupRights(SecurityGroupRights secGroupRights) {
-		 this.secGroupRights = secGroupRights;
-	 }
+	public SecurityGroupRights getSecGroupRights() {
+		return secGroupRights;
+	}
 
-	 public List<SecurityRight> getSecgroupsList() {
-		 return secRightsList;
-	 }
-	 public void setSecgroupsList(List<SecurityRight> secRightsList) {
-		 this.secRightsList = secRightsList;
-	 }
-	 public SecurityGroupRightsService getSecurityGroupRightsService() {
-		 return securityGroupRightsService;
-	 }
+	public void setSecGroupRights(SecurityGroupRights secGroupRights) {
+		this.secGroupRights = secGroupRights;
+	}
 
-	 public void setSecurityGroupRightsService(
-			 SecurityGroupRightsService securityGroupRightsService) {
-		 this.securityGroupRightsService = securityGroupRightsService;
-	 }
+	public List<SecurityRight> getSecgroupsList() {
+		return secRightsList;
+	}
 
-	 public Map<Long, SecurityRight> getNewAssignedMap() {
-		 return newAssignedMap;
-	 }
+	public void setSecgroupsList(List<SecurityRight> secRightsList) {
+		this.secRightsList = secRightsList;
+	}
 
-	 public void setNewAssignedMap(Map<Long, SecurityRight> newAssignedMap) {
-		 this.newAssignedMap = newAssignedMap;
-	 }
+	public SecurityGroupRightsService getSecurityGroupRightsService() {
+		return securityGroupRightsService;
+	}
 
-	 public Map<Long, SecurityRight> getOldAssignedMap() {
-		 return oldAssignedMap;
-	 }
+	public void setSecurityGroupRightsService(SecurityGroupRightsService securityGroupRightsService) {
+		this.securityGroupRightsService = securityGroupRightsService;
+	}
 
-	 public void setOldAssignedMap(Map<Long, SecurityRight> oldAssignedMap) {
-		 this.oldAssignedMap = oldAssignedMap;
-	 }
+	public Map<Long, SecurityRight> getNewAssignedMap() {
+		return newAssignedMap;
+	}
+
+	public void setNewAssignedMap(Map<Long, SecurityRight> newAssignedMap) {
+		this.newAssignedMap = newAssignedMap;
+	}
+
+	public Map<Long, SecurityRight> getOldAssignedMap() {
+		return oldAssignedMap;
+	}
+
+	public void setOldAssignedMap(Map<Long, SecurityRight> oldAssignedMap) {
+		this.oldAssignedMap = oldAssignedMap;
+	}
 }

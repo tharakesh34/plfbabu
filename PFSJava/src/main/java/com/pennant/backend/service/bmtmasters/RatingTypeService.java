@@ -52,10 +52,15 @@ import com.pennant.backend.model.bmtmasters.RatingType;
  */
 public interface RatingTypeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	RatingType getRatingTypeById(String id);
+
 	RatingType getApprovedRatingTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

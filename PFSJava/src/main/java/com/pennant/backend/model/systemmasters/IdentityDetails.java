@@ -81,6 +81,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public String getId() {
 		return identityType;
 	}
+
 	public void setId(String id) {
 		this.identityType = id;
 	}
@@ -88,6 +89,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public String getIdentityType() {
 		return identityType;
 	}
+
 	public void setIdentityType(String identityType) {
 		this.identityType = identityType;
 	}
@@ -95,6 +97,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public String getIdentityDesc() {
 		return identityDesc;
 	}
+
 	public void setIdentityDesc(String identityDesc) {
 		this.identityDesc = identityDesc;
 	}
@@ -102,6 +105,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -109,6 +113,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -116,6 +121,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public IdentityDetails getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(IdentityDetails beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -123,6 +129,7 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

@@ -144,8 +144,8 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 		setItemRender(new DedupParmListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_DedupParmList_NewDedupParm, "button_DedupParmList_New" + this.queryModule.getValue()
-				+ "Dedup", true);
+		registerButton(button_DedupParmList_NewDedupParm,
+				"button_DedupParmList_New" + this.queryModule.getValue() + "Dedup", true);
 		registerButton(button_DedupParmList_DedupParmSearchDialog);
 
 		registerField("queryId");

@@ -27,7 +27,7 @@ public class TrailBalance implements Tasklet {
 	private Date valueDate;
 	private Date appDate;
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
@@ -50,13 +50,14 @@ public class TrailBalance implements Tasklet {
 		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
 
 		try {
-			
-			logger.debug(String.format("START: Trial-Balance Process for the value date: %s", DateUtil.format(valueDate, DateFormat.LONG_DATE)));
-			
+
+			logger.debug(String.format("START: Trial-Balance Process for the value date: %s",
+					DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new TrailBalanceProcessThread(new Long(1000))).start();
-			BatchUtil.setExecutionStatus(context, status);		
+			BatchUtil.setExecutionStatus(context, status);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;

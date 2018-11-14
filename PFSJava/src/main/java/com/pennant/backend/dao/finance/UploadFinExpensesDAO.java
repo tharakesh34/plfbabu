@@ -47,7 +47,7 @@ import java.util.List;
 import com.pennant.backend.model.expenses.UploadFinExpenses;
 
 public interface UploadFinExpensesDAO {
-	
+
 	void saveUploadFinExpenses(List<UploadFinExpenses> uploadDetailsList);
-	
+
 }

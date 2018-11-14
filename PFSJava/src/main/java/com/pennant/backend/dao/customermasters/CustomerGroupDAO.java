@@ -41,12 +41,17 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import com.pennant.backend.model.customermasters.CustomerGroup;
 
 public interface CustomerGroupDAO {
-	 CustomerGroup getCustomerGroupByID(long id,String type);
-	 void update(CustomerGroup customerGroup,String type);
-	 void delete(CustomerGroup customerGroup,String type);
-	 long save(CustomerGroup customerGroup,String type);
-	 CustomerGroup getCustomerGroupByCode(String id, String type);
+	CustomerGroup getCustomerGroupByID(long id, String type);
+
+	void update(CustomerGroup customerGroup, String type);
+
+	void delete(CustomerGroup customerGroup, String type);
+
+	long save(CustomerGroup customerGroup, String type);
+
+	CustomerGroup getCustomerGroupByCode(String id, String type);
 }

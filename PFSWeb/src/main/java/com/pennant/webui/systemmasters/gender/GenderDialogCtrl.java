@@ -70,31 +70,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Gender/genderDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Gender/genderDialog.zul file.
  */
 public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	private static final long serialVersionUID = -4484270347916527133L;
 	private static final Logger logger = Logger.getLogger(GenderDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_GenderDialog;	
+	protected Window window_GenderDialog;
 
-	protected Textbox 	genderCode; 			
-	protected Textbox 	genderDesc; 			
-	protected Checkbox 	genderIsActive; 		
-	protected Checkbox 	systemDefault; 		
+	protected Textbox genderCode;
+	protected Textbox genderDesc;
+	protected Checkbox genderIsActive;
+	protected Checkbox systemDefault;
 
 	// not autoWired variables
-	private Gender gender; 			// over handed per parameter
-	private transient GenderListCtrl genderListCtrl; 	// over handed per parameter
+	private Gender gender; // over handed per parameter
+	private transient GenderListCtrl genderListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient GenderService genderService;
 
@@ -113,9 +111,8 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Gender object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Gender object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -140,14 +137,12 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 				setGender(null);
 			}
 
-			doLoadWorkFlow(this.gender.isWorkflow(),
-					this.gender.getWorkflowId(), this.gender.getNextTaskId());
+			doLoadWorkFlow(this.gender.isWorkflow(), this.gender.getWorkflowId(), this.gender.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"GenderDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "GenderDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -190,8 +185,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -300,8 +294,9 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 		this.genderIsActive.setChecked(aGender.isGenderIsActive());
 		this.systemDefault.setChecked(aGender.isSystemDefault());
 		this.recordStatus.setValue(aGender.getRecordStatus());
-		
-		if(aGender.isNew() || (aGender.getRecordType() != null ? aGender.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aGender.isNew() || (aGender.getRecordType() != null ? aGender.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.genderIsActive.setChecked(true);
 			this.genderIsActive.setDisabled(true);
 		}
@@ -359,8 +354,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGender
 	 * @throws Exception
@@ -393,7 +387,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 			doWriteBeanToComponents(aGender);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_GenderDialog.onClose();
 		} catch (Exception e) {
@@ -410,12 +404,13 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 
 		setValidationOn(true);
 
-		if (!this.genderCode.isReadonly()){
-			this.genderCode.setConstraint(new PTStringValidator(Labels.getLabel("label_GenderDialog_GenderCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.genderCode.isReadonly()) {
+			this.genderCode.setConstraint(new PTStringValidator(Labels.getLabel("label_GenderDialog_GenderCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.genderDesc.isReadonly()){
-			this.genderDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_GenderDialog_GenderDesc.value"), 
+		if (!this.genderDesc.isReadonly()) {
+			this.genderDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_GenderDialog_GenderDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
@@ -471,9 +466,8 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-		Labels.getLabel("label_GenderDialog_GenderCode.value")+" : "+aGender.getGenderCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_GenderDialog_GenderCode.value") + " : " + aGender.getGenderCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aGender.getRecordType())) {
 				aGender.setVersion(aGender.getVersion() + 1);
@@ -493,7 +487,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 					closeDialog();
 				}
 
-			}  catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -623,7 +617,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 				closeDialog();
 			}
 
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -770,8 +764,8 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_GenderDialog, auditHeader);
 						return processCompleted;
 					}
@@ -815,10 +809,9 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Gender aGender, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aGender.getBefImage(), aGender);
-		return new AuditHeader(String.valueOf(aGender.getId()), null, null,
-				null, auditDetail, aGender.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aGender.getBefImage(), aGender);
+		return new AuditHeader(String.valueOf(aGender.getId()), null, null, null, auditDetail, aGender.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -859,7 +852,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	private void refreshList() {
 		getGenderListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.gender.getGenderCode());
@@ -871,6 +864,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -878,6 +872,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	public Gender getGender() {
 		return this.gender;
 	}
+
 	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
@@ -885,6 +880,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	public void setGenderService(GenderService genderService) {
 		this.genderService = genderService;
 	}
+
 	public GenderService getGenderService() {
 		return this.genderService;
 	}
@@ -892,6 +888,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	public void setGenderListCtrl(GenderListCtrl genderListCtrl) {
 		this.genderListCtrl = genderListCtrl;
 	}
+
 	public GenderListCtrl getGenderListCtrl() {
 		return this.genderListCtrl;
 	}

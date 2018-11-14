@@ -50,7 +50,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
  */
 public class EquationAccountType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -6862602123712610264L;
-	
+
 	//RMTAccountTypes Table Fields
 	private String acType;
 	private String acTypeDesc;
@@ -60,7 +60,7 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	private boolean custSysAc;
 	private String acLmtCategory;
 	private boolean acTypeIsActive;
-	
+
 	//AccountTypeNatures Table Fields
 	private String acTypeNature1;
 	private String acTypeNature2;
@@ -72,14 +72,15 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	private String acTypeNature8;
 	private String acTypeNature9;
 	private String acTypeNature10;
-	
+
 	public EquationAccountType() {
-    	super();
-    }
+		super();
+	}
 
 	public String getId() {
 		return acType;
 	}
+
 	public void setId(String id) {
 		this.acType = id;
 	}
@@ -87,6 +88,7 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	public String getAcType() {
 		return acType;
 	}
+
 	public void setAcType(String acType) {
 		this.acType = acType;
 	}
@@ -94,6 +96,7 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	public String getAcTypeDesc() {
 		return acTypeDesc;
 	}
+
 	public void setAcTypeDesc(String acTypeDesc) {
 		this.acTypeDesc = acTypeDesc;
 	}
@@ -101,6 +104,7 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	public String getAcPurpose() {
 		return acPurpose;
 	}
+
 	public void setAcPurpose(String acPurpose) {
 		this.acPurpose = acPurpose;
 	}
@@ -108,6 +112,7 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	public String getAcHeadCode() {
 		return acHeadCode;
 	}
+
 	public void setAcHeadCode(String acHeadCode) {
 		this.acHeadCode = acHeadCode;
 	}
@@ -127,18 +132,19 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	public void setCustSysAc(boolean custSysAc) {
 		this.custSysAc = custSysAc;
 	}
-	
+
 	public String getAcLmtCategory() {
-    	return acLmtCategory;
-    }
+		return acLmtCategory;
+	}
 
 	public void setAcLmtCategory(String acLmtCategory) {
-    	this.acLmtCategory = acLmtCategory;
-    }
+		this.acLmtCategory = acLmtCategory;
+	}
 
 	public boolean isAcTypeIsActive() {
 		return acTypeIsActive;
 	}
+
 	public void setAcTypeIsActive(boolean acTypeIsActive) {
 		this.acTypeIsActive = acTypeIsActive;
 	}
@@ -146,69 +152,79 @@ public class EquationAccountType extends AbstractWorkflowEntity {
 	public String getAcTypeNature1() {
 		return acTypeNature1;
 	}
+
 	public void setAcTypeNature1(String acTypeNature1) {
 		this.acTypeNature1 = acTypeNature1;
 	}
-	
+
 	public String getAcTypeNature2() {
 		return acTypeNature2;
 	}
+
 	public void setAcTypeNature2(String acTypeNature2) {
 		this.acTypeNature2 = acTypeNature2;
 	}
-	
+
 	public String getAcTypeNature3() {
 		return acTypeNature3;
 	}
+
 	public void setAcTypeNature3(String acTypeNature3) {
 		this.acTypeNature3 = acTypeNature3;
 	}
-	
+
 	public String getAcTypeNature4() {
 		return acTypeNature4;
 	}
+
 	public void setAcTypeNature4(String acTypeNature4) {
 		this.acTypeNature4 = acTypeNature4;
 	}
-	
+
 	public String getAcTypeNature5() {
 		return acTypeNature5;
 	}
+
 	public void setAcTypeNature5(String acTypeNature5) {
 		this.acTypeNature5 = acTypeNature5;
 	}
-	
+
 	public String getAcTypeNature6() {
 		return acTypeNature6;
 	}
+
 	public void setAcTypeNature6(String acTypeNature6) {
 		this.acTypeNature6 = acTypeNature6;
 	}
-	
+
 	public String getAcTypeNature7() {
 		return acTypeNature7;
 	}
+
 	public void setAcTypeNature7(String acTypeNature7) {
 		this.acTypeNature7 = acTypeNature7;
 	}
-	
+
 	public String getAcTypeNature8() {
 		return acTypeNature8;
 	}
+
 	public void setAcTypeNature8(String acTypeNature8) {
 		this.acTypeNature8 = acTypeNature8;
 	}
-	
+
 	public String getAcTypeNature9() {
 		return acTypeNature9;
 	}
+
 	public void setAcTypeNature9(String acTypeNature9) {
 		this.acTypeNature9 = acTypeNature9;
 	}
-	
+
 	public String getAcTypeNature10() {
 		return acTypeNature10;
 	}
+
 	public void setAcTypeNature10(String acTypeNature10) {
 		this.acTypeNature10 = acTypeNature10;
 	}

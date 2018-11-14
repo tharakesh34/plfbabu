@@ -81,65 +81,65 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PTWebValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/TakafulProvider/takafulProviderDialog.zul file.
  */
 public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(TakafulProviderDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(TakafulProviderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_TakafulProviderDialog;
+	protected Window window_TakafulProviderDialog;
 
-	protected Uppercasebox						takafulCode;
-	protected Textbox							takafulName;
-	protected Combobox							takafulType;
-	protected AccountSelectionBox				accountNumber;
-	protected Decimalbox						takafulRate;
-	protected Datebox							establishedDate;
-	protected Textbox							street;
-	protected Textbox							houseNumber;
-	protected Textbox							addrLine1;
-	protected Textbox							addrLine2;
-	protected ExtendedCombobox					country;
-	protected ExtendedCombobox					province;
-	protected ExtendedCombobox					city;
-	protected Textbox							phone;
-	protected Textbox							phoneCountryCode;
-	protected Textbox							phoneAreaCode;
-	protected Textbox							fax;
-	protected Textbox							faxCountryCode;
-	protected Textbox							faxAreaCode;
-	protected Textbox							zipCode;
-	protected Textbox							emailId;
-	protected Textbox							webSite;
-	protected Textbox							contactPerson;
-	protected Textbox							contactPersonNo;
-	protected Textbox							cpPhoneCountryCode;
-	protected Textbox							cpPhoneAreaCode;
-	protected Datebox							expiryDate;
-	protected Combobox							providerType;
-	protected Textbox							cityName;
+	protected Uppercasebox takafulCode;
+	protected Textbox takafulName;
+	protected Combobox takafulType;
+	protected AccountSelectionBox accountNumber;
+	protected Decimalbox takafulRate;
+	protected Datebox establishedDate;
+	protected Textbox street;
+	protected Textbox houseNumber;
+	protected Textbox addrLine1;
+	protected Textbox addrLine2;
+	protected ExtendedCombobox country;
+	protected ExtendedCombobox province;
+	protected ExtendedCombobox city;
+	protected Textbox phone;
+	protected Textbox phoneCountryCode;
+	protected Textbox phoneAreaCode;
+	protected Textbox fax;
+	protected Textbox faxCountryCode;
+	protected Textbox faxAreaCode;
+	protected Textbox zipCode;
+	protected Textbox emailId;
+	protected Textbox webSite;
+	protected Textbox contactPerson;
+	protected Textbox contactPersonNo;
+	protected Textbox cpPhoneCountryCode;
+	protected Textbox cpPhoneAreaCode;
+	protected Datebox expiryDate;
+	protected Combobox providerType;
+	protected Textbox cityName;
 
-	private boolean								enqModule			= false;
+	private boolean enqModule = false;
 
 	// not auto wired vars
-	private TakafulProvider						takafulProvider;															// overhanded per param
-	private transient TakafulProviderListCtrl	takafulProviderListCtrl;													// overhanded per param
+	private TakafulProvider takafulProvider; // overhanded per param
+	private transient TakafulProviderListCtrl takafulProviderListCtrl; // overhanded per param
 
-	private transient String					sCountry;
-	private transient String					sProvince;
+	private transient String sCountry;
+	private transient String sProvince;
 	// ServiceDAOs / Domain Classes
-	private transient TakafulProviderService	takafulProviderService;
+	private transient TakafulProviderService takafulProviderService;
 
 	/**
 	 * default constructor.<br>
@@ -307,9 +307,8 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(
-					getNotes("TakafulProvider", String.valueOf(getTakafulProvider().getTakafulCode()),
-							getTakafulProvider().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("TakafulProvider", String.valueOf(getTakafulProvider().getTakafulCode()),
+					getTakafulProvider().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -526,7 +525,8 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 		logger.debug("Entering");
 		this.takafulCode.setValue(aTakafulProvider.getTakafulCode());
 		this.takafulName.setValue(aTakafulProvider.getTakafulName());
-		fillComboBox(this.takafulType, aTakafulProvider.getTakafulType(), PennantStaticListUtil.getInsuranceTypes(), "");
+		fillComboBox(this.takafulType, aTakafulProvider.getTakafulType(), PennantStaticListUtil.getInsuranceTypes(),
+				"");
 		this.takafulRate.setValue(aTakafulProvider.getTakafulRate());
 		this.accountNumber.setValue(aTakafulProvider.getAccountNumber());
 		this.establishedDate.setValue(aTakafulProvider.getEstablishedDate());
@@ -611,8 +611,8 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 
 		try {
 			this.accountNumber.validateValue();
-			aTakafulProvider.setAccountNumber(PennantApplicationUtil.unFormatAccountNumber(this.accountNumber
-					.getValue()));
+			aTakafulProvider
+					.setAccountNumber(PennantApplicationUtil.unFormatAccountNumber(this.accountNumber.getValue()));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -621,9 +621,10 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 		try {
 			if (this.establishedDate.getValue() != null) {
 				if (this.establishedDate.getValue().after(DateUtility.getAppDate())) {
-					throw new WrongValueException(this.establishedDate, Labels.getLabel("DATE_EMPTY_FUTURE",
-							new String[] { Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value"),
-									DateUtility.getAppDate(DateFormat.LONG_DATE) }));
+					throw new WrongValueException(this.establishedDate,
+							Labels.getLabel("DATE_EMPTY_FUTURE",
+									new String[] { Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value"),
+											DateUtility.getAppDate(DateFormat.LONG_DATE) }));
 				}
 				aTakafulProvider.setEstablishedDate(new Timestamp(this.establishedDate.getValue().getTime()));
 			}
@@ -713,9 +714,9 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 			wve.add(we);
 		}
 		try {
-			aTakafulProvider.setContactPersonNo(PennantApplicationUtil.formatPhoneNumber(
-					this.cpPhoneCountryCode.getValue(), this.cpPhoneAreaCode.getValue(),
-					this.contactPersonNo.getValue()));
+			aTakafulProvider
+					.setContactPersonNo(PennantApplicationUtil.formatPhoneNumber(this.cpPhoneCountryCode.getValue(),
+							this.cpPhoneAreaCode.getValue(), this.contactPersonNo.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -725,14 +726,14 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		 
+
 		try {
-			if (this.expiryDate.getValue() != null && this.establishedDate.getValue()!=null) {
+			if (this.expiryDate.getValue() != null && this.establishedDate.getValue() != null) {
 				if (!this.expiryDate.getValue().after(this.establishedDate.getValue())) {
-					throw new WrongValueException(this.expiryDate, Labels.getLabel(
-							"DATE_ALLOWED_AFTER",
-							new String[] { Labels.getLabel("label_TakafulProviderDialog_ExpiryDate.value"),
-									Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value") }));
+					throw new WrongValueException(this.expiryDate,
+							Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[] { Labels.getLabel("label_TakafulProviderDialog_ExpiryDate.value"),
+											Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value") }));
 				}
 				aTakafulProvider.setExpiryDate(new Timestamp(this.expiryDate.getValue().getTime()));
 			}
@@ -760,100 +761,102 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		if (!this.takafulCode.isReadonly()) {
-			this.takafulCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_TakafulCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.takafulCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_TakafulCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		if (!this.takafulName.isReadonly()) {
-			this.takafulName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_TakafulName.value"), PennantRegularExpressions.REGEX_NAME,
-					true));
+			this.takafulName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_TakafulName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		/*if (!this.takafulRate.isDisabled()) {
-			this.takafulRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_TakafulProviderDialog_TakafulRate.value"), 4, true, false, 0, 9999));
-		}*/
+		/*
+		 * if (!this.takafulRate.isDisabled()) { this.takafulRate.setConstraint(new PTDecimalValidator(Labels
+		 * .getLabel("label_TakafulProviderDialog_TakafulRate.value"), 4, true, false, 0, 9999)); }
+		 */
 		if (!this.accountNumber.isReadonly()) {
-			this.accountNumber.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_AccountNumber.value"), null, false));
+			this.accountNumber.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_TakafulProviderDialog_AccountNumber.value"), null, false));
 		}
 		if (!this.establishedDate.isDisabled()) {
-			this.establishedDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_TakafulProviderDialog_EstablishedDate.value"), false, null, DateUtility.getAppDate(), false));
+			this.establishedDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value"), false,
+							null, DateUtility.getAppDate(), false));
 		}
 		if (!this.addrLine1.isReadonly()) {
-			this.addrLine1.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_AddrLine1.value"), PennantRegularExpressions.REGEX_ADDRESS,
-					false));
+			this.addrLine1
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_AddrLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.addrLine2.isReadonly()) {
-			this.addrLine2.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_AddrLine2.value"), PennantRegularExpressions.REGEX_ADDRESS,
-					false));
+			this.addrLine2
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_AddrLine2.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		if (!this.zipCode.isReadonly()) {
-			this.zipCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_ZipCode.value"), PennantRegularExpressions.REGEX_ZIP, false));
+			this.zipCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_ZipCode.value"),
+							PennantRegularExpressions.REGEX_ZIP, false));
 		}
 		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_phoneCountryCode.value"), false, 1));
+			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_phoneCountryCode.value"), false, 1));
 		}
 		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_phoneAreaCode.value"), false, 2));
+			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_phoneAreaCode.value"), false, 2));
 		}
 		if (!this.phone.isReadonly()) {
-			this.phone.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_Phone.value"), false, 3));
+			this.phone.setConstraint(
+					new PTPhoneNumberValidator(Labels.getLabel("label_TakafulProviderDialog_Phone.value"), false, 3));
 		}
 		if (!this.faxCountryCode.isReadonly()) {
-			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_faxCountryCode.value"), false, 1));
+			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_faxCountryCode.value"), false, 1));
 		}
 		if (!this.faxAreaCode.isReadonly()) {
-			this.faxAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_faxAreaCode.value"), false, 2));
+			this.faxAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_faxAreaCode.value"), false, 2));
 		}
 		if (!this.fax.isReadonly()) {
-			this.fax.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_TakafulProviderDialog_Fax.value"),
-					false, 3));
+			this.fax.setConstraint(
+					new PTPhoneNumberValidator(Labels.getLabel("label_TakafulProviderDialog_Fax.value"), false, 3));
 		}
 		if (!this.emailId.isReadonly()) {
-			this.emailId.setConstraint(new PTEmailValidator(Labels
-					.getLabel("label_TakafulProviderDialog_emailId.value"), false));
+			this.emailId.setConstraint(
+					new PTEmailValidator(Labels.getLabel("label_TakafulProviderDialog_emailId.value"), false));
 		}
 		if (!this.webSite.isReadonly()) {
-			this.webSite.setConstraint(new PTWebValidator(Labels.getLabel("label_TakafulProviderDialog_WebSite.value"),
-					false));
+			this.webSite.setConstraint(
+					new PTWebValidator(Labels.getLabel("label_TakafulProviderDialog_WebSite.value"), false));
 		}
 		if (!this.contactPerson.isReadonly()) {
-			this.contactPerson.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_TakafulProviderDialog_ContactPerson.value"), PennantRegularExpressions.REGEX_NAME,
-					false));
+			this.contactPerson.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_ContactPerson.value"),
+							PennantRegularExpressions.REGEX_NAME, false));
 		}
 		if (!cpPhoneCountryCode.isReadonly()) {
-			this.cpPhoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_phoneNoCountryCode.value"), false, 1));
+			this.cpPhoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_phoneNoCountryCode.value"), false, 1));
 		}
 		if (!cpPhoneAreaCode.isReadonly()) {
-			this.cpPhoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_phoneNoAreaCode.value"), false, 2));
+			this.cpPhoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_phoneNoAreaCode.value"), false, 2));
 		}
 		if (!this.contactPersonNo.isReadonly()) {
-			this.contactPersonNo.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_TakafulProviderDialog_ContactPersonNo.value"), false, 3));
+			this.contactPersonNo.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_TakafulProviderDialog_ContactPersonNo.value"), false, 3));
 		}
 		if (!this.expiryDate.isDisabled()) {
-			this.expiryDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_TakafulProviderDialog_ExpiryDate.value"), false, null, null, false));
+			this.expiryDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_TakafulProviderDialog_ExpiryDate.value"), false, null, null, false));
 		}
 
 		if (PennantConstants.CITY_FREETEXT) {
 			if (!this.cityName.isReadonly()) {
-				this.cityName.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_TakafulProviderDialog_CityName.value"), PennantRegularExpressions.REGEX_NAME,
-						false));
+				this.cityName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_CityName.value"),
+								PennantRegularExpressions.REGEX_NAME, false));
 			}
 		}
 		logger.debug("Leaving");
@@ -1323,8 +1326,8 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_TakafulProviderDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1337,9 +1340,8 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(
-								getNotes("TakafulProvider", aTakafulProvider.getTakafulCode(),
-										aTakafulProvider.getVersion()), true);
+						deleteNotes(getNotes("TakafulProvider", aTakafulProvider.getTakafulCode(),
+								aTakafulProvider.getVersion()), true);
 					}
 				}
 
@@ -1372,7 +1374,6 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 		return new AuditHeader(String.valueOf(aTakafulProvider.getTakafulCode()), null, null, null, auditDetail,
 				aTakafulProvider.getUserDetails(), getOverideMap());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -47,49 +47,50 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 public class FeePostings extends AbstractWorkflowEntity implements Entity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				postId =Long.MIN_VALUE;
-	private String				postAgainst;
-	private String				reference;
-	@XmlElement(name= "feeCode")
-	private String				feeTyeCode;
+	private long postId = Long.MIN_VALUE;
+	private String postAgainst;
+	private String reference;
+	@XmlElement(name = "feeCode")
+	private String feeTyeCode;
 	@XmlElement(name = "amount")
-	private BigDecimal			postingAmount;
-	private Date				postDate;
+	private BigDecimal postingAmount;
+	private Date postDate;
 	@XmlElement
-	private Date				valueDate;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private FeePostings			befImage;
-	private LoggedInUser		userDetails;
-	@XmlElement(name="ccy")
-	private String				currency;
+	private Date valueDate;
+	private boolean newRecord = false;
+	private String lovValue;
+	private FeePostings befImage;
+	private LoggedInUser userDetails;
+	@XmlElement(name = "ccy")
+	private String currency;
 	@XmlElement
-	private String				remarks;
+	private String remarks;
 	@XmlElement
-	private long 				partnerBankId;
-	private String                 accountSetId;
-	private List<ReturnDataSet> 				returnDataSetList 	= new ArrayList<ReturnDataSet>(1);
-	private String				partnerBankName;
-	private String				partnerBankAc;
-    private String 			    partnerBankAcType;
-    private String				postingDivision;
-    private String				divisionCodeDesc;
-    
-    //API Specific
-    @XmlElement
-    private String cif;
-    @XmlElement
+	private long partnerBankId;
+	private String accountSetId;
+	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
+	private String partnerBankName;
+	private String partnerBankAc;
+	private String partnerBankAcType;
+	private String postingDivision;
+	private String divisionCodeDesc;
+
+	//API Specific
+	@XmlElement
+	private String cif;
+	@XmlElement
 	private long limitId = Long.MIN_VALUE;
-    @XmlElement
+	@XmlElement
 	private String finReference;
-    @XmlElement
-    private String collateralRef;
-    private String sourceId;
+	@XmlElement
+	private String collateralRef;
+	private String sourceId;
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FeePostings validateFeePostings = this;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -123,18 +124,19 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	
 	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> feePostingMap) {
-		
+
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				feePostingMap.put("fp_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				feePostingMap.put("fp_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				
+
 			}
 		}
 		return feePostingMap;
 	}
+
 	public long getId() {
 		return postId;
 	}
@@ -255,7 +257,6 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	public void setPartnerBankId(long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}
-
 
 	public String getAccountSetId() {
 		return accountSetId;

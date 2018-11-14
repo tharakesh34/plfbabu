@@ -24,13 +24,13 @@ public class CollateralMark implements Serializable {
 	private List<DepositDetail> depositDetail;
 
 	public CollateralMark() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	@XmlElement(name = "ReferenceNum")
 	public String getReferenceNum() {
 		return referenceNum;
@@ -66,7 +66,7 @@ public class CollateralMark implements Serializable {
 	public void setReturnText(String returnText) {
 		this.returnText = returnText;
 	}
-	
+
 	public String getStatus() {
 		return status;
 	}
@@ -74,7 +74,7 @@ public class CollateralMark implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

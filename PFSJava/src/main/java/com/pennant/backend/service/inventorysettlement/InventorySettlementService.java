@@ -51,14 +51,22 @@ import com.pennant.backend.model.inventorysettlement.InventorySettlement;
 import com.pennant.backend.model.inventorysettlement.InventorySettlementDetails;
 
 public interface InventorySettlementService {
-	
+
 	InventorySettlement getInventorySettlement();
+
 	InventorySettlement getNewInventorySettlement();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	InventorySettlement getInventorySettlementById(long id);
+
 	InventorySettlement getApprovedInventorySettlementById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<InventorySettlementDetails> getUnsoldCommodities(String brokerCode,Date settlementDate);
+
+	List<InventorySettlementDetails> getUnsoldCommodities(String brokerCode, Date settlementDate);
 }

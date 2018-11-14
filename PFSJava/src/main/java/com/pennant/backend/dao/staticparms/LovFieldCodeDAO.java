@@ -42,12 +42,16 @@
 */
 
 package com.pennant.backend.dao.staticparms;
+
 import com.pennant.backend.model.staticparms.LovFieldCode;
 
 public interface LovFieldCodeDAO {
 
-	LovFieldCode getLovFieldCodeById(String id,String type);
-	void update(LovFieldCode lovFieldCode,String type);
-	void delete(LovFieldCode lovFieldCode,String type);
-	String save(LovFieldCode lovFieldCode,String type);
+	LovFieldCode getLovFieldCodeById(String id, String type);
+
+	void update(LovFieldCode lovFieldCode, String type);
+
+	void delete(LovFieldCode lovFieldCode, String type);
+
+	String save(LovFieldCode lovFieldCode, String type);
 }

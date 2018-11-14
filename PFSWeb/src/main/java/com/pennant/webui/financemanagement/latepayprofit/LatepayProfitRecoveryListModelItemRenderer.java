@@ -61,10 +61,10 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listitems in the listbox.
  * 
  */
-public class LatepayProfitRecoveryListModelItemRenderer implements ListitemRenderer<OverdueChargeRecovery>,
-		Serializable {
+public class LatepayProfitRecoveryListModelItemRenderer
+		implements ListitemRenderer<OverdueChargeRecovery>, Serializable {
 
-	private static final long	serialVersionUID	= 3995133144435008423L;
+	private static final long serialVersionUID = 3995133144435008423L;
 
 	public LatepayProfitRecoveryListModelItemRenderer() {
 
@@ -74,8 +74,8 @@ public class LatepayProfitRecoveryListModelItemRenderer implements ListitemRende
 	public void render(Listitem item, OverdueChargeRecovery overdueChargeRecovery, int count) throws Exception {
 
 		if (item instanceof Listgroup) {
-			item.appendChild(new Listcell("Overdue Term : "
-					+ DateUtility.formatToLongDate(overdueChargeRecovery.getFinODSchdDate())));
+			item.appendChild(new Listcell(
+					"Overdue Term : " + DateUtility.formatToLongDate(overdueChargeRecovery.getFinODSchdDate())));
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(10);
@@ -102,11 +102,11 @@ public class LatepayProfitRecoveryListModelItemRenderer implements ListitemRende
 			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getFinCurODAmt(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-		
-			lc = new Listcell(PennantAppUtil.formatAmount(overdueChargeRecovery.getPenaltyAmtPerc(), 2,false));
+
+			lc = new Listcell(PennantAppUtil.formatAmount(overdueChargeRecovery.getPenaltyAmtPerc(), 2, false));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			
+
 			lc = new Listcell(PennantAppUtil.amountFormate(overdueChargeRecovery.getPenalty(), format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);

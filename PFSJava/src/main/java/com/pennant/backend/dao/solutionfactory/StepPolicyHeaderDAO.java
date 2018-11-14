@@ -43,9 +43,7 @@
 
 package com.pennant.backend.dao.solutionfactory;
 
-
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-
 
 /**
  * DAO methods declaration for the <b>StepPolicyHeader model</b> class.<br>
@@ -54,7 +52,10 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 public interface StepPolicyHeaderDAO {
 
 	StepPolicyHeader getStepPolicyHeaderByID(String id, String type);
+
 	void update(StepPolicyHeader stepPolicyHeader, String type);
+
 	void delete(StepPolicyHeader stepPolicyHeader, String type);
+
 	String save(StepPolicyHeader stepPolicyHeader, String type);
 }

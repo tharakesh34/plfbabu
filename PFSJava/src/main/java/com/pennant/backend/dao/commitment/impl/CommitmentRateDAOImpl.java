@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.commitment.impl;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +63,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+
 /**
  * DAO methods implementation for the <b>CommitmentRate model</b> class.<br>
  * 
@@ -77,7 +77,8 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new CommitmentRate 
+	 * This method set the Work Flow id based on the module name and return the new CommitmentRate
+	 * 
 	 * @return CommitmentRate
 	 */
 	@Override
@@ -85,7 +86,7 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 		logger.debug("Entering");
 
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("CommitmentRate");
-		CommitmentRate commitmentRate= new CommitmentRate();
+		CommitmentRate commitmentRate = new CommitmentRate();
 		if (workFlowDetails != null) {
 			commitmentRate.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
@@ -95,8 +96,8 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 	}
 
 	/**
-	 * This method get the module from method getCommitmentRate() and set the
-	 * new record flag as true and return CommitmentRate()
+	 * This method get the module from method getCommitmentRate() and set the new record flag as true and return
+	 * CommitmentRate()
 	 * 
 	 * @return CommitmentRate
 	 */
@@ -112,11 +113,12 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 	}
 
 	/**
-	 * Fetch the Record  CommitmentRate details by key field
+	 * Fetch the Record CommitmentRate details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CommitmentRate
 	 */
 	@Override
@@ -128,12 +130,14 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 		commitmentRate.setId(id);
 
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" CmtReference, CmtRvwFrq, CmtBaseRate, CmtMargin, CmtSpecialRate, CmtActualRate,CmtCalculatedRate, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" CmtReference, CmtRvwFrq, CmtBaseRate, CmtMargin, CmtSpecialRate, CmtActualRate,CmtCalculatedRate, ");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append(", CmtBaseRateName");
-		}	
+		}
 		sql.append(" From CommitmentRates");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CmtReference = :CmtReference AND CmtRvwFrq = :CmtRvwFrq");
@@ -142,9 +146,9 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentRate);
 		RowMapper<CommitmentRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentRate.class);
 
-		try{
-			commitmentRate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			commitmentRate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			commitmentRate = null;
 		}
@@ -154,11 +158,12 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 	}
 
 	/**
-	 * Fetch the Record  CommitmentRate details by key field
+	 * Fetch the Record CommitmentRate details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CommitmentRate
 	 */
 	@Override
@@ -166,12 +171,14 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" CmtReference, CmtRvwFrq, CmtBaseRate, CmtMargin, CmtSpecialRate, CmtActualRate,CmtCalculatedRate, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" CmtReference, CmtRvwFrq, CmtBaseRate, CmtMargin, CmtSpecialRate, CmtActualRate,CmtCalculatedRate, ");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append(", CmtBaseRateName");
-		}	
+		}
 		sql.append(" From CommitmentRates");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CmtReference = :CmtReference");
@@ -184,17 +191,17 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 		RowMapper<CommitmentRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommitmentRate.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(sql.toString(),parameterMap, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), parameterMap, typeRowMapper);
 	}
 
 	/**
-	 * This method Deletes the Record from the CommitmentRates or CommitmentRates_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete CommitmentRate by key CmtRvwFrq
+	 * This method Deletes the Record from the CommitmentRates or CommitmentRates_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete CommitmentRate by key CmtRvwFrq
 	 * 
-	 * @param CommitmentRate (commitmentRate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param CommitmentRate
+	 *            (commitmentRate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -211,12 +218,12 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentRate);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
@@ -226,26 +233,31 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 	/**
 	 * This method insert new Records into CommitmentRates or CommitmentRates_Temp.
 	 *
-	 * save CommitmentRate 
+	 * save CommitmentRate
 	 * 
-	 * @param CommitmentRate (commitmentRate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param CommitmentRate
+	 *            (commitmentRate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public String save(CommitmentRate commitmentRate,String type) {
+	public String save(CommitmentRate commitmentRate, String type) {
 		logger.debug("Entering");
 
-		StringBuilder sql =new StringBuilder("Insert Into CommitmentRates");
+		StringBuilder sql = new StringBuilder("Insert Into CommitmentRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (CmtReference, CmtRvwFrq, CmtBaseRate, CmtMargin, CmtSpecialRate, CmtActualRate,CmtCalculatedRate,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) ");
-		sql.append(" Values(:CmtReference,:CmtRvwFrq,:CmtBaseRate,:CmtMargin, :CmtSpecialRate, :CmtActualRate,:CmtCalculatedRate,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
+		sql.append(
+				" (CmtReference, CmtRvwFrq, CmtBaseRate, CmtMargin, CmtSpecialRate, CmtActualRate,CmtCalculatedRate,");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) ");
+		sql.append(
+				" Values(:CmtReference,:CmtRvwFrq,:CmtBaseRate,:CmtMargin, :CmtSpecialRate, :CmtActualRate,:CmtCalculatedRate,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
 
 		logger.debug("sql: " + sql.toString());
 
@@ -257,32 +269,33 @@ public class CommitmentRateDAOImpl extends BasicDao<CommitmentRate> implements C
 	}
 
 	/**
-	 * This method updates the Record CommitmentRates or CommitmentRates_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update CommitmentRate by key CmtRvwFrq and Version
+	 * This method updates the Record CommitmentRates or CommitmentRates_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update CommitmentRate by key CmtRvwFrq and Version
 	 * 
-	 * @param CommitmentRate (commitmentRate)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param CommitmentRate
+	 *            (commitmentRate)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CommitmentRate commitmentRate,String type) {
+	public void update(CommitmentRate commitmentRate, String type) {
 		logger.debug("Entering");
 
 		int recordCount = 0;
-		StringBuilder	sql =new StringBuilder("Update CommitmentRates");
+		StringBuilder sql = new StringBuilder("Update CommitmentRates");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set CmtBaseRate=:CmtBaseRate,");
-		sql.append(" CmtMargin=:CmtMargin, CmtSpecialRate = :CmtSpecialRate, CmtActualRate=:CmtActualRate, CmtCalculatedRate=:CmtCalculatedRate,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
+		sql.append(
+				" CmtMargin=:CmtMargin, CmtSpecialRate = :CmtSpecialRate, CmtActualRate=:CmtActualRate, CmtCalculatedRate=:CmtCalculatedRate,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where CmtReference = :CmtReference AND CmtRvwFrq = :CmtRvwFrq");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			sql.append("  AND Version= :Version-1");
 		}
 

@@ -12,8 +12,7 @@ import com.pennant.backend.model.finance.DdaPresentment;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class DDARepresentmentDAOImpl extends SequenceDao<DDAPayments> implements DDARepresentmentDAO {
-private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
 
 	public DDARepresentmentDAOImpl() {
 		super();
@@ -27,13 +26,11 @@ private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
 	public void save(DDAPayments ddaRepresentment) {
 		logger.debug("Entering");
 
-		if (ddaRepresentment.getId() == 0
-				|| ddaRepresentment.getId() == Long.MIN_VALUE) {
+		if (ddaRepresentment.getId() == 0 || ddaRepresentment.getId() == Long.MIN_VALUE) {
 			ddaRepresentment.setDdaSeqId(getNextId("SeqDDS_PFF_DD500_SETTLED"));
 		}
 
-		ddaRepresentment.setDirectDebitRefNo(ddaRepresentment
-				.getdDAReferenceNo() + ddaRepresentment.getDdaSeqId());
+		ddaRepresentment.setDirectDebitRefNo(ddaRepresentment.getdDAReferenceNo() + ddaRepresentment.getDdaSeqId());
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DDS_PFF_DD500_SETTLED");
 		insertSql.append(" (DDARefNo, DirectDebitRefNo, PFFData)");
@@ -42,8 +39,7 @@ private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ddaRepresentment);
-		this.jdbcTemplate.update(insertSql.toString(),
-				beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -55,20 +51,16 @@ private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
 	public void logRepresentmentData(DDAPayments ddaRepresentment) {
 		logger.debug("Entering");
 
-		ddaRepresentment.setDirectDebitRefNo(ddaRepresentment
-				.getdDAReferenceNo() + ddaRepresentment.getDdaSeqId());
+		ddaRepresentment.setDirectDebitRefNo(ddaRepresentment.getdDAReferenceNo() + ddaRepresentment.getDdaSeqId());
 
-		StringBuilder insertSql = new StringBuilder(
-				"Insert Into DDS_PFF_DD500_SETTLED_LOG");
+		StringBuilder insertSql = new StringBuilder("Insert Into DDS_PFF_DD500_SETTLED_LOG");
 		insertSql.append(" (DDARefNo, DirectDebitRefNo, PFFData)");
 		insertSql.append(" Values(:DDARefNo, :DirectDebitRefNo, :PFFData)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				ddaRepresentment);
-		this.jdbcTemplate.update(insertSql.toString(),
-				beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ddaRepresentment);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -81,13 +73,11 @@ private static Logger logger = Logger.getLogger(DDARepresentmentDAOImpl.class);
 		sql.append("where DirectDebitRefNo = :HostReference");
 
 		for (DdaPresentment presentment : list) {
-			SqlParameterSource source = new BeanPropertySqlParameterSource(
-					presentment);
+			SqlParameterSource source = new BeanPropertySqlParameterSource(presentment);
 			this.jdbcTemplate.update(sql.toString(), source);
 		}
 
 		logger.debug("Leaving");
 	}
 
-	
 }

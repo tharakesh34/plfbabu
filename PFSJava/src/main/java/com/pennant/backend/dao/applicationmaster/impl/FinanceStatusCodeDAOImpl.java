@@ -65,8 +65,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>FinanceStatusCode</code> with set of CRUD operations.
  */
 public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> implements FinanceStatusCodeDAO {
-	private static Logger logger	= Logger.getLogger(FinanceStatusCodeDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(FinanceStatusCodeDAOImpl.class);
 
 	public FinanceStatusCodeDAOImpl() {
 		super();
@@ -82,7 +81,8 @@ public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> imp
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" statusId, statusCode, statusDesc, ");
 
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FINANCESTATUSCODES");
 		sql.append(type);
 		sql.append(" Where statusId = :statusId");
@@ -121,8 +121,8 @@ public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> imp
 			sql = QueryUtil.getCountQuery("FINANCESTATUSCODES_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil
-					.getCountQuery(new String[] { "FINANCESTATUSCODES_Temp", "FINANCESTATUSCODES" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "FINANCESTATUSCODES_Temp", "FINANCESTATUSCODES" },
+					whereClause);
 			break;
 		}
 
@@ -151,10 +151,12 @@ public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> imp
 		StringBuilder sql = new StringBuilder(" insert into FINANCESTATUSCODES");
 		sql.append(tableType.getSuffix());
 		sql.append(" (statusId, statusCode, statusDesc,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :statusId, :statusCode, :statusDesc,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (financeStatusCode.getStatusId() <= 0) {
@@ -231,7 +233,5 @@ public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> imp
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	
 
 }

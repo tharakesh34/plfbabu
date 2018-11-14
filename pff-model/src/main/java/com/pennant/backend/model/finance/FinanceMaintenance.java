@@ -50,9 +50,9 @@ import java.util.Date;
  * Model class for the <b>FinanceMain_GLView </b>.<br>
  *
  */
-public class FinanceMaintenance implements Serializable{
+public class FinanceMaintenance implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String finReference;
 	private String finType;
 	private String finBranch;
@@ -92,7 +92,7 @@ public class FinanceMaintenance implements Serializable{
 	private String cashUserBranch;
 	private String entityCode;
 	private String lovDescFinDivision;
-	private Date   receivedDate;	
+	private Date receivedDate;
 
 	public String getFinReference() {
 		return finReference;

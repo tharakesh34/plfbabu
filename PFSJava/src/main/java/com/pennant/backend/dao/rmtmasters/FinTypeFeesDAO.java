@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
-
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -55,18 +54,32 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 public interface FinTypeFeesDAO {
 
 	FinTypeFees getFinTypeFees();
+
 	FinTypeFees getNewFinTypeFees();
-	FinTypeFees getFinTypeFeesByID(FinTypeFees finTypeFees, String type); 
-	List<FinTypeFees> getFinTypeFeesListByID(final String id, int moduleId, String type); 
-	List<FinTypeFees> getFinTypeFeesList(String finType, String finEvent, String type, boolean origination, int moduleId);
+
+	FinTypeFees getFinTypeFeesByID(FinTypeFees finTypeFees, String type);
+
+	List<FinTypeFees> getFinTypeFeesListByID(final String id, int moduleId, String type);
+
+	List<FinTypeFees> getFinTypeFeesList(String finType, String finEvent, String type, boolean origination,
+			int moduleId);
+
 	List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId);
-	List<FinTypeFees> getFinTypeFeeCodes(String finType, int moduleId); 
+
+	List<FinTypeFees> getFinTypeFeeCodes(String finType, int moduleId);
+
 	void update(FinTypeFees finTypeFees, String type);
+
 	String save(FinTypeFees finTypeFees, String type);
+
 	void delete(FinTypeFees finTypeFees, String type);
-	void deleteByFinType(String finType, String type, int moduleId); 
+
+	void deleteByFinType(String finType, String type, int moduleId);
+
 	void refresh(FinTypeFees entity);
-	List<FinTypeFees> getFinTypeFeesList(String finEvent,List<String> finTypes, int moduleId);
+
+	List<FinTypeFees> getFinTypeFeesList(String finEvent, List<String> finTypes, int moduleId);
+
 	int getFinTypeFeesByRuleCode(String ruleCode, String type);
 
 }

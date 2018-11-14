@@ -98,16 +98,15 @@ import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance.Commodity/CommodityBrokerDetail
+ * This is the controller class for the /WEB-INF/pages/Finance.Commodity/CommodityBrokerDetail
  * /CommodityBrokerDetailDialog.zul file.
  */
 public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBrokerDetail> {
@@ -115,63 +114,62 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	private static final Logger logger = Logger.getLogger(CommodityBrokerDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected  Window  window_CommodityBrokerDetailDialog; // autoWired
-	protected  Textbox brokerCode;                         // autoWired
-	protected  Longbox brokerCustID;                       // autoWired
-	protected  Textbox brokerAddrHNbr;                     // autoWired
-	protected  Textbox brokerAddrFlatNbr;                  // autoWired
-	protected  Textbox brokerAddrStreet;                   // autoWired
-	protected  Textbox brokerAddrLane1;                    // autoWired
-	protected  Textbox brokerAddrLane2;                    // autoWired
-	protected  Textbox brokerAddrPOBox;                    // autoWired
-	protected  ExtendedCombobox brokerAddrCountry;                  // autoWired
-	protected  ExtendedCombobox brokerAddrProvince;                 // autoWired
-	protected  ExtendedCombobox brokerAddrCity;                     // autoWired
-	protected  Textbox brokerAddrZIP;                      // autoWired
-	protected  Space  space_brokerAddrZIP;                 // autoWired
-	protected  Textbox	phoneCountryCode; 				   // autoWired						
-	protected  Textbox	phoneAreaCode;					   // autoWired	
-	protected  Textbox brokerAddrPhone;                    // autoWired
-	protected Textbox       faxCountryCode;		// autoWired
-	protected Textbox		faxAreaCode;		// autoWired
-	protected  Textbox brokerAddrFax;                      // autoWired
-	protected  Textbox brokerEmail;                        // autoWired
-	protected  Textbox agreementRef;                       // autoWired
-	protected CurrencyBox feeOnUnsold;                     // autoWired
-	protected AccountSelectionBox accountNumber;           // autoWired
-	protected Textbox   commodityDetail;				   // autoWired
-	protected Button	btnSearchCommodityDetail;		   // autoWired
-	protected Listbox	listbox_commodity;		           // autoWired
-	protected Decimalbox commissionRate;		           // autoWired
-    protected Textbox     cityName;                        // autoWired
-	
-	protected  Datebox brokerFrom;                         // autoWired
+	protected Window window_CommodityBrokerDetailDialog; // autoWired
+	protected Textbox brokerCode; // autoWired
+	protected Longbox brokerCustID; // autoWired
+	protected Textbox brokerAddrHNbr; // autoWired
+	protected Textbox brokerAddrFlatNbr; // autoWired
+	protected Textbox brokerAddrStreet; // autoWired
+	protected Textbox brokerAddrLane1; // autoWired
+	protected Textbox brokerAddrLane2; // autoWired
+	protected Textbox brokerAddrPOBox; // autoWired
+	protected ExtendedCombobox brokerAddrCountry; // autoWired
+	protected ExtendedCombobox brokerAddrProvince; // autoWired
+	protected ExtendedCombobox brokerAddrCity; // autoWired
+	protected Textbox brokerAddrZIP; // autoWired
+	protected Space space_brokerAddrZIP; // autoWired
+	protected Textbox phoneCountryCode; // autoWired						
+	protected Textbox phoneAreaCode; // autoWired	
+	protected Textbox brokerAddrPhone; // autoWired
+	protected Textbox faxCountryCode; // autoWired
+	protected Textbox faxAreaCode; // autoWired
+	protected Textbox brokerAddrFax; // autoWired
+	protected Textbox brokerEmail; // autoWired
+	protected Textbox agreementRef; // autoWired
+	protected CurrencyBox feeOnUnsold; // autoWired
+	protected AccountSelectionBox accountNumber; // autoWired
+	protected Textbox commodityDetail; // autoWired
+	protected Button btnSearchCommodityDetail; // autoWired
+	protected Listbox listbox_commodity; // autoWired
+	protected Decimalbox commissionRate; // autoWired
+	protected Textbox cityName; // autoWired
 
-	protected  Textbox lovDescBrokerCIF;                   // autoWired
+	protected Datebox brokerFrom; // autoWired
 
-	protected  Textbox   brokerShtName;                      // autoWired
+	protected Textbox lovDescBrokerCIF; // autoWired
+
+	protected Textbox brokerShtName; // autoWired
 	//buttons 
-	protected Button    btnSearchBrokerCustID;             // autoWired
-	protected Button    btnSearchAddress;                  // autoWired
-
+	protected Button btnSearchBrokerCustID; // autoWired
+	protected Button btnSearchAddress; // autoWired
 
 	// not auto wired variables
-	private CommodityBrokerDetail commodityBrokerDetail;                           // overHanded per parameters
+	private CommodityBrokerDetail commodityBrokerDetail; // overHanded per parameters
 	private transient CommodityBrokerDetailListCtrl commodityBrokerDetailListCtrl; // overHanded per parameters
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CommodityBrokerDetailService commodityBrokerDetailService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	protected JdbcSearchObject<Customer> newSearchObject;
 	private String sBrokerAddrCountry;
 	private String sBrokerAddrProvince;
-	private int	 defaultCCYDecPos = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+	private int defaultCCYDecPos = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -187,9 +185,8 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CommodityBrokerDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CommodityBrokerDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -213,8 +210,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			doCheckRights();
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("commodityBrokerDetail")) {
-				this.commodityBrokerDetail = (CommodityBrokerDetail) arguments
-						.get("commodityBrokerDetail");
+				this.commodityBrokerDetail = (CommodityBrokerDetail) arguments.get("commodityBrokerDetail");
 				CommodityBrokerDetail befImage = new CommodityBrokerDetail();
 				BeanUtils.copyProperties(this.commodityBrokerDetail, befImage);
 				this.commodityBrokerDetail.setBefImage(befImage);
@@ -224,14 +220,12 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 				setCommodityBrokerDetail(null);
 			}
 
-			doLoadWorkFlow(this.commodityBrokerDetail.isWorkflow(),
-					this.commodityBrokerDetail.getWorkflowId(),
+			doLoadWorkFlow(this.commodityBrokerDetail.isWorkflow(), this.commodityBrokerDetail.getWorkflowId(),
 					this.commodityBrokerDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CommodityBrokerDetailDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CommodityBrokerDetailDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -241,8 +235,8 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			// or
 			// delete commodityBrokerDetail here.
 			if (arguments.containsKey("commodityBrokerDetailListCtrl")) {
-				setCommodityBrokerDetailListCtrl((CommodityBrokerDetailListCtrl) arguments
-						.get("commodityBrokerDetailListCtrl"));
+				setCommodityBrokerDetailListCtrl(
+						(CommodityBrokerDetailListCtrl) arguments.get("commodityBrokerDetailListCtrl"));
 			} else {
 				setCommodityBrokerDetailListCtrl(null);
 			}
@@ -324,54 +318,56 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchBrokerCustID(Event event) throws 
-	SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchBrokerCustID(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 		onLoad();
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onLoad() throws SuspendNotAllowedException,
-	InterruptedException {
+	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents(
-				"/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",
-				null, map);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) 
-	throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.brokerCustID.setValue(aCustomer.getCustID());
 		this.brokerShtName.setValue(aCustomer.getCustShrtName());
 		this.lovDescBrokerCIF.setValue(String.valueOf(aCustomer.getCustCIF()));
 		this.accountNumber.setCustCIF(String.valueOf(aCustomer.getCustCIF()));
 		this.accountNumber.setValue("");
-		this.newSearchObject=newSearchObject;
+		this.newSearchObject = newSearchObject;
 
 	}
+
 	/**
-	 * When user Clicks on "Notes" button 
+	 * When user Clicks on "Notes" button
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -381,26 +377,27 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 
 	/**
 	 * When user clicks on button "customerId Search" button
+	 * 
 	 * @param event
 	 */
-	public void onClick$btnSearchAddress(Event event) throws 
-	SuspendNotAllowedException, InterruptedException {
+	public void onClick$btnSearchAddress(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("CustID",this.brokerCustID.getValue(), Filter.OP_EQUAL);
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CustID", this.brokerCustID.getValue(), Filter.OP_EQUAL);
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CommodityBrokerDetailDialog,"CustomerAddres",filters);
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_CommodityBrokerDetailDialog, "CustomerAddres",
+				filters);
+		if (dataObject instanceof String) {
 			doClear();
-		}else{
-			CustomerAddres details= (CustomerAddres) dataObject;
+		} else {
+			CustomerAddres details = (CustomerAddres) dataObject;
 			if (details != null) {
 				this.brokerAddrHNbr.setValue(details.getCustAddrHNbr());
 				this.brokerAddrFlatNbr.setValue(details.getCustFlatNbr());
 				this.brokerAddrStreet.setValue(details.getCustAddrStreet());
 				this.brokerAddrLane1.setValue(details.getCustAddrLine1());
-				this.brokerAddrLane2.setValue(details.getCustAddrLine2());	
+				this.brokerAddrLane2.setValue(details.getCustAddrLine2());
 				this.brokerAddrPOBox.setValue(details.getCustPOBox());
 				this.brokerAddrCountry.setValue(details.getCustAddrCountry());
 				this.brokerAddrCountry.setDescription(details.getLovDescCustAddrCountryName());
@@ -409,11 +406,11 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 				this.brokerAddrCity.setValue(details.getCustAddrCity());
 				this.brokerAddrCity.setDescription(details.getLovDescCustAddrCityName());
 				this.brokerAddrZIP.setValue(details.getCustAddrZIP());
-				this.brokerAddrPhone.setValue(details.getCustAddrPhone());	
+				this.brokerAddrPhone.setValue(details.getCustAddrPhone());
 			}
 		}
-		if(StringUtils.isEmpty(this.brokerAddrHNbr.getValue().trim())){
-			if(getCommodityBrokerDetail().isNew()){
+		if (StringUtils.isEmpty(this.brokerAddrHNbr.getValue().trim())) {
+			if (getCommodityBrokerDetail().isNew()) {
 				doClear();
 			}
 		}
@@ -422,21 +419,21 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 
 	/**
 	 * when "btnSearchMortgAddrCountry" is clicked
+	 * 
 	 * @param event
 	 */
-	public void onFulfill$brokerAddrCountry(Event event){
+	public void onFulfill$brokerAddrCountry(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		if (!StringUtils.trimToEmpty(sBrokerAddrCountry).equals(
-				this.brokerAddrCountry.getValue())) {
+		if (!StringUtils.trimToEmpty(sBrokerAddrCountry).equals(this.brokerAddrCountry.getValue())) {
 			this.brokerAddrProvince.setValue("");
 			this.brokerAddrCity.setValue("");
 			this.brokerAddrProvince.setDescription("");
 			this.brokerAddrCity.setDescription("");
 			this.brokerAddrCity.setReadonly(true);
 		}
-		
-		if(StringUtils.isNotEmpty(this.brokerAddrCountry.getValue())){
+
+		if (StringUtils.isNotEmpty(this.brokerAddrCountry.getValue())) {
 			this.brokerAddrProvince.setReadonly(false);
 			this.brokerAddrProvince.setMandatoryStyle(true);
 		} else {
@@ -447,25 +444,24 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		}
 		sBrokerAddrCountry = this.brokerAddrCountry.getValue();
 		Filter[] filtersProvince = new Filter[1];
-		filtersProvince[0] = new Filter("CPCountry", this.brokerAddrCountry.getValue(),
-				Filter.OP_EQUAL);
+		filtersProvince[0] = new Filter("CPCountry", this.brokerAddrCountry.getValue(), Filter.OP_EQUAL);
 		this.brokerAddrProvince.setFilters(filtersProvince);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
-	 * when "btnSearchMortgAddrProvince" is clicked 
+	 * when "btnSearchMortgAddrProvince" is clicked
+	 * 
 	 * @param event
 	 */
-	public void onFulfill$brokerAddrProvince(Event event){
+	public void onFulfill$brokerAddrProvince(Event event) {
 		logger.debug("Entering" + event.toString());
-		if (!StringUtils.trimToEmpty(sBrokerAddrProvince).equals(
-				this.brokerAddrProvince.getValue())) {
+		if (!StringUtils.trimToEmpty(sBrokerAddrProvince).equals(this.brokerAddrProvince.getValue())) {
 			this.brokerAddrCity.setValue("");
 			this.brokerAddrCity.setDescription("");
 			this.brokerAddrCity.setReadonly(true);
 		}
-		if(StringUtils.isNotEmpty(this.brokerAddrProvince.getValue())){
+		if (StringUtils.isNotEmpty(this.brokerAddrProvince.getValue())) {
 			this.brokerAddrCity.setReadonly(false);
 			this.brokerAddrCity.setMandatoryStyle(false);
 		} else {
@@ -473,39 +469,39 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		}
 		sBrokerAddrProvince = this.brokerAddrProvince.getValue();
 		Filter[] filtersCity = new Filter[2];
-		filtersCity[0] = new Filter("PCCountry", this.brokerAddrCountry.getValue(),Filter.OP_EQUAL);
-		filtersCity[1] = new Filter("PCProvince", this.brokerAddrProvince.getValue(),Filter.OP_EQUAL);
+		filtersCity[0] = new Filter("PCCountry", this.brokerAddrCountry.getValue(), Filter.OP_EQUAL);
+		filtersCity[1] = new Filter("PCProvince", this.brokerAddrProvince.getValue(), Filter.OP_EQUAL);
 		this.brokerAddrCity.setFilters(filtersCity);
 		logger.debug("Leaving" + event.toString());
 	}
 
-
-	public void onClick$btnSearchCommodityDetail(Event event) throws Exception{
-		logger.debug("Entering  "+event.toString());
+	public void onClick$btnSearchCommodityDetail(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
 		this.commodityDetail.setErrorMessage("");
 		Clients.clearWrongValue(listbox_commodity);
-		
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_CommodityBrokerDetailDialog,"CommodityDetail",String.valueOf(this.commodityDetail.getValue()),null);
-		
-		if (dataObject !=null) {
+
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_CommodityBrokerDetailDialog, "CommodityDetail",
+				String.valueOf(this.commodityDetail.getValue()), null);
+
+		if (dataObject != null) {
 			String details = (String) dataObject;
 			this.commodityDetail.setValue(details);
 		}
 		doFillCommodityDetails(this.commodityDetail.getValue());
-	    logger.debug("Leaving  "+event.toString());
-	    
+		logger.debug("Leaving  " + event.toString());
+
 	}
-	
-	public void doFillCommodityDetails(String commodityDetails){
+
+	public void doFillCommodityDetails(String commodityDetails) {
 		this.listbox_commodity.getItems().clear();
-		if(StringUtils.isNotBlank(commodityDetails)){
-			List<String>  commodityDetailList = new ArrayList<String>();
-			if(commodityDetails.contains(",")){
+		if (StringUtils.isNotBlank(commodityDetails)) {
+			List<String> commodityDetailList = new ArrayList<String>();
+			if (commodityDetails.contains(",")) {
 				String[] details = commodityDetails.split(",");
 				for (String commodity : details) {
 					commodityDetailList.add(commodity);
 				}
-			}else{
+			} else {
 				commodityDetailList.add(commodityDetails);
 			}
 			List<ValueLabel> commodityList = PennantAppUtil.getCommodityValues();
@@ -526,12 +522,12 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.commodityBrokerDetail.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -541,7 +537,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 *            CommodityBrokerDetail
 	 */
 	public void doWriteBeanToComponents(CommodityBrokerDetail aCommodityBrokerDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.brokerCode.setValue(aCommodityBrokerDetail.getBrokerCode());
 		this.brokerCustID.setValue(aCommodityBrokerDetail.getBrokerCustID());
 		this.brokerFrom.setValue(aCommodityBrokerDetail.getBrokerFrom());
@@ -554,11 +550,11 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.brokerAddrCountry.setValue(aCommodityBrokerDetail.getBrokerAddrCountry());
 		this.cityName.setValue(aCommodityBrokerDetail.getBrokerAddrCity());
 		this.brokerAddrProvince.setValue(aCommodityBrokerDetail.getBrokerAddrProvince());
-		if(!PennantConstants.CITY_FREETEXT){
+		if (!PennantConstants.CITY_FREETEXT) {
 			this.brokerAddrCity.setValue(aCommodityBrokerDetail.getBrokerAddrCity());
 		}
 		this.brokerAddrZIP.setValue(StringUtils.trimToEmpty(aCommodityBrokerDetail.getBrokerAddrZIP()));
-		String[]mobile = PennantApplicationUtil.unFormatPhoneNumber(aCommodityBrokerDetail.getBrokerAddrPhone());
+		String[] mobile = PennantApplicationUtil.unFormatPhoneNumber(aCommodityBrokerDetail.getBrokerAddrPhone());
 		this.phoneCountryCode.setValue(mobile[0]);
 		this.phoneAreaCode.setValue(mobile[1]);
 		this.brokerAddrPhone.setValue(mobile[2]);
@@ -572,19 +568,21 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.brokerAddrProvince.setDescription(aCommodityBrokerDetail.getLovDescBrokerAddrProvinceName());
 		this.brokerAddrCity.setDescription(aCommodityBrokerDetail.getLovDescBrokerAddrCityName());
 		this.brokerShtName.setValue(aCommodityBrokerDetail.getLovDescBrokerShortName());
-		this.feeOnUnsold.setValue(PennantApplicationUtil.formateAmount(aCommodityBrokerDetail.getFeeOnUnsold(), defaultCCYDecPos));
+		this.feeOnUnsold.setValue(
+				PennantApplicationUtil.formateAmount(aCommodityBrokerDetail.getFeeOnUnsold(), defaultCCYDecPos));
 		this.accountNumber.setValue(aCommodityBrokerDetail.getAccountNumber());
-		if (aCommodityBrokerDetail.isNewRecord()){
+		if (aCommodityBrokerDetail.isNewRecord()) {
 			this.lovDescBrokerCIF.setValue("");
-		}else{
+		} else {
 			this.lovDescBrokerCIF.setValue(aCommodityBrokerDetail.getLovDescBrokerCIF());
 			this.accountNumber.setCustCIF(aCommodityBrokerDetail.getLovDescBrokerCIF());
 		}
-		
-		aCommodityBrokerDetail.setLovDescCommodityDetail(processCommodityList(aCommodityBrokerDetail.getBrokerCommodityList()));
+
+		aCommodityBrokerDetail
+				.setLovDescCommodityDetail(processCommodityList(aCommodityBrokerDetail.getBrokerCommodityList()));
 		this.commodityDetail.setValue(aCommodityBrokerDetail.getLovDescCommodityDetail());
 		doFillCommodityDetails(aCommodityBrokerDetail.getLovDescCommodityDetail());
-		
+
 		this.commissionRate.setValue(aCommodityBrokerDetail.getCommissionRate());
 		this.recordStatus.setValue(aCommodityBrokerDetail.getRecordStatus());
 		logger.debug("Leaving");
@@ -594,154 +592,159 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aCommodityBrokerDetail
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteComponentsToBean(CommodityBrokerDetail aCommodityBrokerDetail) throws InterruptedException {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aCommodityBrokerDetail.setBrokerCode(this.brokerCode.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setLovDescBrokerCIF(this.lovDescBrokerCIF.getValue());
-			aCommodityBrokerDetail.setBrokerCustID(this.brokerCustID.getValue());	
-		}catch (WrongValueException we ) {
+			aCommodityBrokerDetail.setBrokerCustID(this.brokerCustID.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerFrom(this.brokerFrom.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerAddrHNbr(this.brokerAddrHNbr.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerAddrFlatNbr(this.brokerAddrFlatNbr.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerAddrStreet(this.brokerAddrStreet.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerAddrLane1(this.brokerAddrLane1.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerAddrLane2(this.brokerAddrLane2.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerAddrPOBox(this.brokerAddrPOBox.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setLovDescBrokerAddrCountryName(this.brokerAddrCountry.getDescription());
 			aCommodityBrokerDetail.setBrokerAddrCountry(this.brokerAddrCountry.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setLovDescBrokerAddrProvinceName(this.brokerAddrProvince.getDescription());
 			aCommodityBrokerDetail.setBrokerAddrProvince(this.brokerAddrProvince.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		aCommodityBrokerDetail.setLovDescBrokerAddrCityName(StringUtils.trimToNull(this.brokerAddrCity.getDescription()));
-		aCommodityBrokerDetail.setBrokerAddrCity(StringUtils.trimToNull(this.brokerAddrCity.getValue()));
-	}catch (WrongValueException we ) {
-		wve.add(we);
-	}
-		
+			aCommodityBrokerDetail
+					.setLovDescBrokerAddrCityName(StringUtils.trimToNull(this.brokerAddrCity.getDescription()));
+			aCommodityBrokerDetail.setBrokerAddrCity(StringUtils.trimToNull(this.brokerAddrCity.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		try {
 			aCommodityBrokerDetail.setBrokerAddrZIP(StringUtils.trimToNull(this.brokerAddrZIP.getValue()));
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCommodityBrokerDetail.setBrokerAddrPhone(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(), this.phoneAreaCode.getValue(), this.brokerAddrPhone.getValue()));
-		}catch (WrongValueException we ) {
+			aCommodityBrokerDetail.setBrokerAddrPhone(PennantApplicationUtil.formatPhoneNumber(
+					this.phoneCountryCode.getValue(), this.phoneAreaCode.getValue(), this.brokerAddrPhone.getValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCommodityBrokerDetail.setBrokerAddrFax(PennantApplicationUtil.formatPhoneNumber(this.faxCountryCode.getValue(),this.faxAreaCode.getValue(),this.brokerAddrFax.getValue()));
-		}catch (WrongValueException we ) {
+			aCommodityBrokerDetail.setBrokerAddrFax(PennantApplicationUtil.formatPhoneNumber(
+					this.faxCountryCode.getValue(), this.faxAreaCode.getValue(), this.brokerAddrFax.getValue()));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setBrokerEmail(this.brokerEmail.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCommodityBrokerDetail.setAgreementRef(this.agreementRef.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCommodityBrokerDetail.setFeeOnUnsold(PennantApplicationUtil.unFormateAmount(this.feeOnUnsold.getValidateValue(), defaultCCYDecPos));
-		}catch (WrongValueException we ) {
+			aCommodityBrokerDetail.setFeeOnUnsold(
+					PennantApplicationUtil.unFormateAmount(this.feeOnUnsold.getValidateValue(), defaultCCYDecPos));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			this.accountNumber.validateValue();
-			aCommodityBrokerDetail.setAccountNumber(PennantApplicationUtil.unFormatAccountNumber(this.accountNumber.getValue()));
+			aCommodityBrokerDetail
+					.setAccountNumber(PennantApplicationUtil.unFormatAccountNumber(this.accountNumber.getValue()));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			this.brokerCode.setConstraint("");
 			aCommodityBrokerDetail.setLovDescCommodityDetail(this.commodityDetail.getValue());
-			aCommodityBrokerDetail.setBrokerCommodityList(fetchCommodityList(this.brokerCode.getValue(),this.commodityDetail.getValue()));
+			aCommodityBrokerDetail.setBrokerCommodityList(
+					fetchCommodityList(this.brokerCode.getValue(), this.commodityDetail.getValue()));
 
 		} catch (WrongValueException we) {
 			wve.add(new WrongValueException(this.listbox_commodity, we.getMessage()));
 		}
-		
+
 		try {
 			aCommodityBrokerDetail.setCommissionRate(this.commissionRate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
-			
+
 		}
-		
+
 		try {
 			if (PennantConstants.CITY_FREETEXT) {
-				aCommodityBrokerDetail.setBrokerAddrCity(StringUtils.trimToNull(this.cityName
-						.getValue()));
+				aCommodityBrokerDetail.setBrokerAddrCity(StringUtils.trimToNull(this.cityName.getValue()));
 			} else {
-				aCommodityBrokerDetail.setLovDescBrokerAddrCityName(StringUtils
-						.trimToNull(this.brokerAddrCity.getDescription()));
-				aCommodityBrokerDetail.setBrokerAddrCity(StringUtils.trimToNull(this.brokerAddrCity
-						.getValidatedValue()));
+				aCommodityBrokerDetail
+						.setLovDescBrokerAddrCityName(StringUtils.trimToNull(this.brokerAddrCity.getDescription()));
+				aCommodityBrokerDetail
+						.setBrokerAddrCity(StringUtils.trimToNull(this.brokerAddrCity.getValidatedValue()));
 			}
-	
-		} catch(WrongValueException we) {
+
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -752,24 +755,25 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		logger.debug("Leaving");
 	}
 
-	private String processCommodityList(List<BrokerCommodityDetail> detailList){
+	private String processCommodityList(List<BrokerCommodityDetail> detailList) {
 		String commodityDetail = "";
-		if(detailList != null && !detailList.isEmpty()){
+		if (detailList != null && !detailList.isEmpty()) {
 			for (BrokerCommodityDetail brokerCommodityDetail : detailList) {
-				if(StringUtils.isEmpty(commodityDetail)){
+				if (StringUtils.isEmpty(commodityDetail)) {
 					commodityDetail = brokerCommodityDetail.getCommodityCode();
-				}else{
-					commodityDetail = commodityDetail + ","+brokerCommodityDetail.getCommodityCode();
+				} else {
+					commodityDetail = commodityDetail + "," + brokerCommodityDetail.getCommodityCode();
 				}
 			}
 		}
 		return commodityDetail;
 	}
-	private List<BrokerCommodityDetail> fetchCommodityList(String brokerCode,String commodityDetail){
+
+	private List<BrokerCommodityDetail> fetchCommodityList(String brokerCode, String commodityDetail) {
 		List<BrokerCommodityDetail> detailList = new ArrayList<BrokerCommodityDetail>();
-		if(StringUtils.isNotBlank(commodityDetail)){
+		if (StringUtils.isNotBlank(commodityDetail)) {
 			BrokerCommodityDetail detail = null;
-			if(commodityDetail.contains(",")){
+			if (commodityDetail.contains(",")) {
 				String[] details = commodityDetail.split(",");
 				for (String commodity : details) {
 					detail = new BrokerCommodityDetail();
@@ -777,7 +781,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 					detail.setCommodityCode(commodity);
 					detailList.add(detail);
 				}
-			}else{
+			} else {
 				detail = new BrokerCommodityDetail();
 				detail.setBrokerCode(brokerCode);
 				detail.setCommodityCode(commodityDetail);
@@ -786,12 +790,11 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		}
 		return detailList;
 	}
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCommodityBrokerDetail
 	 * @throws Exception
@@ -807,10 +810,10 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			this.brokerCode.focus();
 		} else {
 			this.brokerCustID.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -828,7 +831,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -838,23 +841,23 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CommodityBrokerDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 	}
-	
+
 	// Helpers
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.brokerCode.setMaxlength(8);
 		this.brokerCustID.setMaxlength(19);
@@ -870,15 +873,15 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.brokerAddrCountry.setModuleName("Country");
 		this.brokerAddrCountry.setValueColumn("CountryCode");
 		this.brokerAddrCountry.setDescColumn("CountryDesc");
-		this.brokerAddrCountry.setValidateColumns(new String[] {"CountryCode"});
+		this.brokerAddrCountry.setValidateColumns(new String[] { "CountryCode" });
 		this.brokerAddrProvince.setMaxlength(8);
-        this.brokerAddrProvince.setMandatoryStyle(true);
+		this.brokerAddrProvince.setMandatoryStyle(true);
 		this.brokerAddrProvince.setModuleName("Province");
 		this.brokerAddrProvince.setValueColumn("CPProvince");
 		this.brokerAddrProvince.setDescColumn("CPProvinceName");
 		this.brokerAddrProvince.setValidateColumns(new String[] { "CPProvince" });
 		this.brokerAddrCity.setMaxlength(8);
-        this.brokerAddrCity.setMandatoryStyle(false);
+		this.brokerAddrCity.setMandatoryStyle(false);
 		this.brokerAddrCity.setModuleName("City");
 		this.brokerAddrCity.setValueColumn("PCCity");
 		this.brokerAddrCity.setDescColumn("PCCityName");
@@ -896,25 +899,24 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.feeOnUnsold.setMandatory(true);
 		this.feeOnUnsold.setFormat(PennantApplicationUtil.getAmountFormate(defaultCCYDecPos));
 		this.feeOnUnsold.setScale(defaultCCYDecPos);
-		
-		this.accountNumber.setAcountDetails(AccountConstants.ACTYPES_COMMODITYBROKER, "",  true);
+
+		this.accountNumber.setAcountDetails(AccountConstants.ACTYPES_COMMODITYBROKER, "", true);
 		this.accountNumber.setFormatter(defaultCCYDecPos);
 		this.accountNumber.setMandatoryStyle(true);
 		this.accountNumber.setTextBoxWidth(165);
-		
+
 		this.commissionRate.setMaxlength(6);
 		this.commissionRate.setFormat(PennantConstants.rateFormate9);
 		this.commissionRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.commissionRate.setScale(2);
-		
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -922,11 +924,10 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -936,11 +937,11 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CommodityBrokerDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
-	 *  Remove Error Messages for Fields
+	 * Remove Error Messages for Fields
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -973,7 +974,6 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -983,88 +983,115 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		Date appStartDate = DateUtility.getAppDate();
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
-		if (!this.brokerCode.isReadonly()){
-			this.brokerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCode.value"),PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
-		}	
-		if (!this.brokerFrom.isReadonly()){
-			this.brokerFrom.setConstraint(new PTDateValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerFrom.value"), true, startDate, appStartDate, false));
-		}	
-		if (!this.brokerAddrHNbr.isReadonly()){
-			this.brokerAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrHNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, true));
-
-		}	
-		if (!this.brokerAddrFlatNbr.isReadonly()){
-			this.brokerAddrFlatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrFlatNbr.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, true));
-
-		}	
-		if (!this.brokerAddrStreet.isReadonly()){
-			this.brokerAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
-
-		}	
-		if (!this.brokerAddrPOBox.isReadonly()){
-			this.brokerAddrPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrPOBox.value"),
-					PennantRegularExpressions.REGEX_NUMERIC, true));
-
-		}	
-		if (!this.brokerAddrCountry.isReadonly()){
-			this.brokerAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value"),null,true));
-		}	
-		if (!this.brokerAddrProvince.isReadonly()){
-			this.brokerAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value"),null,true));
-		}	
-		
-		if (!this.brokerAddrZIP.isReadonly()){
-			this.brokerAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrZIP.value"), 
-					PennantRegularExpressions.REGEX_ZIP,StringUtils.isBlank(this.space_brokerAddrZIP.getSclass())?false:true));
-		}		
-		if(!this.phoneCountryCode.isReadonly()){
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_mobileCountryCode.value"),true,1));
+		if (!this.brokerCode.isReadonly()) {
+			this.brokerCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCode.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
-		if(!this.phoneAreaCode.isReadonly()){
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_mobileAreaCode.value"),true,2));
+		if (!this.brokerFrom.isReadonly()) {
+			this.brokerFrom.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerFrom.value"), true,
+							startDate, appStartDate, false));
 		}
-		if (!this.brokerAddrPhone.isReadonly()){
-			this.brokerAddrPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrPhone.value"),true,3));
-		}	
+		if (!this.brokerAddrHNbr.isReadonly()) {
+			this.brokerAddrHNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrHNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
+
+		}
+		if (!this.brokerAddrFlatNbr.isReadonly()) {
+			this.brokerAddrFlatNbr.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrFlatNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
+
+		}
+		if (!this.brokerAddrStreet.isReadonly()) {
+			this.brokerAddrStreet.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrStreet.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
+
+		}
+		if (!this.brokerAddrPOBox.isReadonly()) {
+			this.brokerAddrPOBox.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrPOBox.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, true));
+
+		}
+		if (!this.brokerAddrCountry.isReadonly()) {
+			this.brokerAddrCountry.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value"), null, true));
+		}
+		if (!this.brokerAddrProvince.isReadonly()) {
+			this.brokerAddrProvince.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value"), null, true));
+		}
+
+		if (!this.brokerAddrZIP.isReadonly()) {
+			this.brokerAddrZIP.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrZIP.value"),
+							PennantRegularExpressions.REGEX_ZIP,
+							StringUtils.isBlank(this.space_brokerAddrZIP.getSclass()) ? false : true));
+		}
+		if (!this.phoneCountryCode.isReadonly()) {
+			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_mobileCountryCode.value"), true, 1));
+		}
+		if (!this.phoneAreaCode.isReadonly()) {
+			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_mobileAreaCode.value"), true, 2));
+		}
+		if (!this.brokerAddrPhone.isReadonly()) {
+			this.brokerAddrPhone.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrPhone.value"), true, 3));
+		}
 		if (!this.faxCountryCode.isReadonly()) {
-			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_FaxCountryCode.value"),false,1));
+			this.faxCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_FaxCountryCode.value"), false, 1));
 		}
 		if (!this.faxAreaCode.isReadonly() && StringUtils.isNotEmpty(this.faxCountryCode.getValue())) {
-			this.faxAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_FaxAreaCode.value"),true,2));
+			this.faxAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_FaxAreaCode.value"), true, 2));
 		}
-		if (!this.brokerAddrFax.isReadonly() && StringUtils.isNotEmpty(this.faxAreaCode.getValue())){
-			this.brokerAddrFax.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrFax.value"),true,3));
+		if (!this.brokerAddrFax.isReadonly() && StringUtils.isNotEmpty(this.faxAreaCode.getValue())) {
+			this.brokerAddrFax.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrFax.value"), true, 3));
 		}
-		
-		if (!this.brokerEmail.isReadonly()){
-			this.brokerEmail.setConstraint(new PTEmailValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerEmail.value"),true));
 
-		}	
-		if (!this.agreementRef.isReadonly()){
-			this.agreementRef.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_AgreementRef.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.brokerEmail.isReadonly()) {
+			this.brokerEmail.setConstraint(
+					new PTEmailValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerEmail.value"), true));
+
+		}
+		if (!this.agreementRef.isReadonly()) {
+			this.agreementRef.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_AgreementRef.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 
 		}
 		if (!this.feeOnUnsold.isReadonly()) {
-			this.feeOnUnsold.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_FeeOnUnsold.value"), 0, true, false));
+			this.feeOnUnsold.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_FeeOnUnsold.value"), 0, true, false));
 		}
 		if (!this.accountNumber.isReadonly()) {
-			this.accountNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_AccountNumber.value"),null,true));
+			this.accountNumber.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_AccountNumber.value"), null, true));
 		}
 		if (!this.btnSearchCommodityDetail.isDisabled()) {
-			this.commodityDetail.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_CommodityDetail.value"),null,true));
+			this.commodityDetail.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_CommodityDetail.value"), null, true));
 		}
 
 		if (!this.commissionRate.isDisabled()) {
-			this.commissionRate.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_CommissionRate.value"),2,true,false,100));
+			this.commissionRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_CommissionRate.value"), 2, true, false, 100));
 		}
-		
+
 		if (PennantConstants.CITY_FREETEXT) {
-			if(!this.cityName.isReadonly()){
-				this.cityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_CityName.value"),PennantRegularExpressions.REGEX_NAME, false));
-			} 
+			if (!this.cityName.isReadonly()) {
+				this.cityName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_CityName.value"),
+								PennantRegularExpressions.REGEX_NAME, false));
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -1102,18 +1129,23 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	}
 
 	/**
-	 *Sets the Validation by setting the accordingly constraints to the LOVFields.
+	 * Sets the Validation by setting the accordingly constraints to the LOVFields.
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescBrokerCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCustCIF.value"),null,true));
-		this.brokerAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value"),null,true,true));
-		this.brokerAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value"),null,true,true));
-		if(!PennantConstants.CITY_FREETEXT) {
-			this.brokerAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCity.value"),null,false,true));
+		this.lovDescBrokerCIF.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCustCIF.value"), null, true));
+		this.brokerAddrCountry.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value"), null, true, true));
+		this.brokerAddrProvince.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value"), null, true, true));
+		if (!PennantConstants.CITY_FREETEXT) {
+			this.brokerAddrCity.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCity.value"), null, false, true));
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Disables the Validation by setting empty constraints to the LovFields.
 	 */
@@ -1126,7 +1158,6 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		logger.debug("Leaving ");
 
 	}
-
 
 	/**
 	 * Set the components to ReadOnly. <br>
@@ -1160,13 +1191,13 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.accountNumber.setReadonly(true);
 		this.commissionRate.setReadonly(true);
 		this.btnSearchCommodityDetail.setDisabled(true);
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -1220,16 +1251,17 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CommodityBrokerDetail aCommodityBrokerDetail, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCommodityBrokerDetail.getBefImage(), aCommodityBrokerDetail);   
-		return new AuditHeader(aCommodityBrokerDetail.getBrokerCode(),null,null,null,auditDetail,aCommodityBrokerDetail.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CommodityBrokerDetail aCommodityBrokerDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCommodityBrokerDetail.getBefImage(),
+				aCommodityBrokerDetail);
+		return new AuditHeader(aCommodityBrokerDetail.getBrokerCode(), null, null, null, auditDetail,
+				aCommodityBrokerDetail.getUserDetails(), getOverideMap());
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.commodityBrokerDetail.getBrokerCode());
 	}
-
 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
@@ -1237,7 +1269,6 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	private void refreshList() {
 		getCommodityBrokerDetailListCtrl().search();
 	}
-
 
 	// CRUD operations
 
@@ -1247,34 +1278,35 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final CommodityBrokerDetail aCommodityBrokerDetail = new CommodityBrokerDetail();
 		BeanUtils.copyProperties(getCommodityBrokerDetail(), aCommodityBrokerDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCode.value")+" : "+aCommodityBrokerDetail.getBrokerCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCode.value") + " : "
+				+ aCommodityBrokerDetail.getBrokerCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCommodityBrokerDetail.getRecordType())){
-				aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion()+1);
+			if (StringUtils.isBlank(aCommodityBrokerDetail.getRecordType())) {
+				aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion() + 1);
 				aCommodityBrokerDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCommodityBrokerDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aCommodityBrokerDetail,tranType)){
+				if (doProcess(aCommodityBrokerDetail, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 
@@ -1288,13 +1320,13 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getCommodityBrokerDetail().isNewRecord()){
+		if (getCommodityBrokerDetail().isNewRecord()) {
 			this.brokerCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.btnSearchBrokerCustID.setVisible(true);
 			this.brokerAddrProvince.setReadonly(true);
 			this.brokerAddrCity.setReadonly(true);
-		}else{
+		} else {
 			this.brokerCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.brokerAddrProvince.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrProvince"));
@@ -1302,7 +1334,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			this.brokerAddrCountry.setMandatoryStyle(true);
 			this.brokerAddrProvince.setMandatoryStyle(true);
 		}
-		
+
 		this.brokerCustID.setDisabled(isReadOnly("CommodityBrokerDetailDialog_brokerCustID"));
 		this.btnSearchBrokerCustID.setDisabled(isReadOnly("CommodityBrokerDetailDialog_brokerCustID"));
 		this.brokerFrom.setDisabled(isReadOnly("CommodityBrokerDetailDialog_brokerFrom"));
@@ -1319,7 +1351,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.phoneCountryCode.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrPhone"));
 		this.brokerAddrFax.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrFax"));
 		this.faxAreaCode.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrFax"));
-	  	this.faxCountryCode.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrFax"));
+		this.faxCountryCode.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrFax"));
 		this.brokerEmail.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerEmail"));
 		this.agreementRef.setReadonly(isReadOnly("CommodityBrokerDetailDialog_agreementRef"));
 		this.feeOnUnsold.setDisabled(isReadOnly("CommodityBrokerDetailDialog_feeOnUnsold"));
@@ -1327,19 +1359,19 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		this.accountNumber.setReadonly(isReadOnly("CommodityBrokerDetailDialog_accountNumber"));
 		this.commissionRate.setReadonly(isReadOnly("COMMODITYBROKERDETAILDIALOG_COMMISSIONRATE"));
 		this.cityName.setReadonly(isReadOnly("CommodityBrokerDetailDialog_brokerAddrCity"));
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.commodityBrokerDetail.isNewRecord()){
+			if (this.commodityBrokerDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			//btnCancel.setVisible(true);
 		}
@@ -1367,32 +1399,32 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		// Do data level validations here
 
 		isNew = aCommodityBrokerDetail.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCommodityBrokerDetail.getRecordType())){
-				aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCommodityBrokerDetail.getRecordType())) {
+				aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion() + 1);
+				if (isNew) {
 					aCommodityBrokerDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCommodityBrokerDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCommodityBrokerDetail.setNewRecord(true);
 				}
 			}
-		}else{
-			aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aCommodityBrokerDetail,tranType)){
+			if (doProcess(aCommodityBrokerDetail, tranType)) {
 				doWriteBeanToComponents(aCommodityBrokerDetail);
 				refreshList();
 				closeDialog();
@@ -1403,17 +1435,19 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Set the workFlow Details List to Object
+	 * 
 	 * @param aCommodityBrokerDetail
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(CommodityBrokerDetail aCommodityBrokerDetail,String tranType){
+	private boolean doProcess(CommodityBrokerDetail aCommodityBrokerDetail, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCommodityBrokerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommodityBrokerDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1442,21 +1476,20 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 				}
 			}
 
-
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -1466,93 +1499,95 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			aCommodityBrokerDetail.setRoleCode(getRole());
 			aCommodityBrokerDetail.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCommodityBrokerDetail, tranType);
+			auditHeader = getAuditHeader(aCommodityBrokerDetail, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCommodityBrokerDetail);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCommodityBrokerDetail, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aCommodityBrokerDetail, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 
-			auditHeader =  getAuditHeader(aCommodityBrokerDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+			auditHeader = getAuditHeader(aCommodityBrokerDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
 	/**
 	 * Get the result after processing DataBase Operations
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
-		CommodityBrokerDetail aCommodityBrokerDetail = (CommodityBrokerDetail) auditHeader.getAuditDetail().getModelData();
+		CommodityBrokerDetail aCommodityBrokerDetail = (CommodityBrokerDetail) auditHeader.getAuditDetail()
+				.getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCommodityBrokerDetailService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getCommodityBrokerDetailService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getCommodityBrokerDetailService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCommodityBrokerDetailService().doApprove(auditHeader);
 
-						if(aCommodityBrokerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aCommodityBrokerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCommodityBrokerDetailService().doReject(auditHeader);
-						if(aCommodityBrokerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCommodityBrokerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999
-								, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CommodityBrokerDetailDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_CommodityBrokerDetailDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CommodityBrokerDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.commodityBrokerDetail),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.commodityBrokerDetail), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);

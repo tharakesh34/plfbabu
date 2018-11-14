@@ -48,12 +48,17 @@ import com.pennant.backend.model.finance.CashDenomination;
 import com.pennanttech.pff.core.TableType;
 
 public interface CashDenominationDAO {
-	
+
 	List<CashDenomination> getCashDenominationList(long id, String type);
+
 	boolean isDuplicateKey(long processId, TableType tableType);
+
 	void update(CashDenomination cashDenomination, String type);
+
 	String save(CashDenomination cashDenomination, String type);
+
 	void delete(CashDenomination cashDenomination, String type);
+
 	void deleteByMovementId(long movementId, String tableType);
-	
+
 }

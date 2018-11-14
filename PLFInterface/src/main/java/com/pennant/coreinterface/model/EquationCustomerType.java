@@ -54,7 +54,7 @@ public class EquationCustomerType extends AbstractWorkflowEntity {
 	public EquationCustomerType() {
 		super();
 	}
-	
+
 	private String custTypeCode = null;
 	private String custTypeCtg = null;
 	private String custTypeDesc;
@@ -63,6 +63,7 @@ public class EquationCustomerType extends AbstractWorkflowEntity {
 	public String getCustTypeCode() {
 		return custTypeCode;
 	}
+
 	public void setCustTypeCode(String custTypeCode) {
 		this.custTypeCode = custTypeCode;
 	}
@@ -78,6 +79,7 @@ public class EquationCustomerType extends AbstractWorkflowEntity {
 	public String getCustTypeDesc() {
 		return custTypeDesc;
 	}
+
 	public void setCustTypeDesc(String custTypeDesc) {
 		this.custTypeDesc = custTypeDesc;
 	}
@@ -85,6 +87,7 @@ public class EquationCustomerType extends AbstractWorkflowEntity {
 	public boolean isCustTypeIsActive() {
 		return custTypeIsActive;
 	}
+
 	public void setCustTypeIsActive(boolean custTypeIsActive) {
 		this.custTypeIsActive = custTypeIsActive;
 	}

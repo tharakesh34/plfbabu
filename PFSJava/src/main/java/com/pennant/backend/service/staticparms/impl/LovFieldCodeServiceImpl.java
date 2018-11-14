@@ -67,20 +67,21 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implements LovFieldCodeService {
 	private static final Logger logger = Logger.getLogger(LovFieldCodeServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private LovFieldCodeDAO lovFieldCodeDAO;
 
 	public LovFieldCodeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
-	}	
+	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -88,43 +89,43 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	public LovFieldCodeDAO getLovFieldCodeDAO() {
 		return lovFieldCodeDAO;
 	}
+
 	public void setLovFieldCodeDAO(LovFieldCodeDAO lovFieldCodeDAO) {
 		this.lovFieldCodeDAO = lovFieldCodeDAO;
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table BMTLovFieldCode/BMTLovFieldCode_Temp 
-	 * 			by using LovFieldCodeDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using LovFieldCodeDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTLovFieldCode/BMTLovFieldCode_Temp by using LovFieldCodeDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using LovFieldCodeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		LovFieldCode lovFieldCode = (LovFieldCode) auditHeader.getAuditDetail().getModelData();
 
 		if (lovFieldCode.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (lovFieldCode.isNew()) {
-			getLovFieldCodeDAO().save(lovFieldCode,tableType);
-		}else{
-			getLovFieldCodeDAO().update(lovFieldCode,tableType);
+			getLovFieldCodeDAO().save(lovFieldCode, tableType);
+		} else {
+			getLovFieldCodeDAO().update(lovFieldCode, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -134,26 +135,27 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table BMTLovFieldCode by using LovFieldCodeDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTLovFieldCode by using LovFieldCodeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		LovFieldCode lovFieldCode = (LovFieldCode) auditHeader.getAuditDetail().getModelData();
-		getLovFieldCodeDAO().delete(lovFieldCode,"");
+		getLovFieldCodeDAO().delete(lovFieldCode, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -162,25 +164,30 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 
 	/**
 	 * getLovFieldCodeById fetch the details by using LovFieldCodeDAO's getLovFieldCodeById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LovFieldCode
 	 */
 
 	@Override
 	public LovFieldCode getLovFieldCodeById(String id) {
-		return getLovFieldCodeDAO().getLovFieldCodeById(id,"_View");
+		return getLovFieldCodeDAO().getLovFieldCodeById(id, "_View");
 	}
+
 	/**
-	 * getApprovedLovFieldCodeById fetch the details by using LovFieldCodeDAO's getLovFieldCodeById method .
-	 * with parameter id and type as blank. it fetches the approved records from the BMTLovFieldCode.
-	 * @param id (String)
+	 * getApprovedLovFieldCodeById fetch the details by using LovFieldCodeDAO's getLovFieldCodeById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BMTLovFieldCode.
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return LovFieldCode
 	 */
 
 	public LovFieldCode getApprovedLovFieldCodeById(String id) {
-		return getLovFieldCodeDAO().getLovFieldCodeById(id,"_AView");
+		return getLovFieldCodeDAO().getLovFieldCodeById(id, "_AView");
 	}
 
 	/**
@@ -200,8 +207,8 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -210,9 +217,9 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 		BeanUtils.copyProperties((LovFieldCode) auditHeader.getAuditDetail().getModelData(), lovFieldCode);
 
 		if (lovFieldCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getLovFieldCodeDAO().delete(lovFieldCode,"");
+			getLovFieldCodeDAO().delete(lovFieldCode, "");
 
 		} else {
 			lovFieldCode.setRoleCode("");
@@ -222,17 +229,17 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 			lovFieldCode.setWorkflowId(0);
 
 			if (lovFieldCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				lovFieldCode.setRecordType("");
-				getLovFieldCodeDAO().save(lovFieldCode,"");
+				getLovFieldCodeDAO().save(lovFieldCode, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				lovFieldCode.setRecordType("");
-				getLovFieldCodeDAO().update(lovFieldCode,"");
+				getLovFieldCodeDAO().update(lovFieldCode, "");
 			}
 		}
 
-		getLovFieldCodeDAO().delete(lovFieldCode,"_Temp");
+		getLovFieldCodeDAO().delete(lovFieldCode, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -241,24 +248,25 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 		auditHeader.getAuditDetail().setModelData(lovFieldCode);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getLovFieldCodeDAO().delete with parameters lovFieldCode,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getLovFieldCodeDAO().delete with parameters lovFieldCode,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -267,7 +275,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 		LovFieldCode lovFieldCode = (LovFieldCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getLovFieldCodeDAO().delete(lovFieldCode,"_Temp");
+		getLovFieldCodeDAO().delete(lovFieldCode, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -276,95 +284,105 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getLovFieldCodeDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getLovFieldCodeDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		LovFieldCode lovFieldCode= (LovFieldCode) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		LovFieldCode lovFieldCode = (LovFieldCode) auditDetail.getModelData();
 
-		LovFieldCode tempLovFieldCode= null;
-		if (lovFieldCode.isWorkflow()){
+		LovFieldCode tempLovFieldCode = null;
+		if (lovFieldCode.isWorkflow()) {
 			tempLovFieldCode = getLovFieldCodeDAO().getLovFieldCodeById(lovFieldCode.getId(), "_Temp");
 		}
-		LovFieldCode befLovFieldCode= getLovFieldCodeDAO().getLovFieldCodeById(lovFieldCode.getId(), "");
+		LovFieldCode befLovFieldCode = getLovFieldCodeDAO().getLovFieldCodeById(lovFieldCode.getId(), "");
 
-		LovFieldCode oldLovFieldCode= lovFieldCode.getBefImage();
+		LovFieldCode oldLovFieldCode = lovFieldCode.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = lovFieldCode.getId();
+		errParm[0] = PennantJavaUtil.getLabel("label_FieldCode") + ":" + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=lovFieldCode.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_FieldCode")+":"+valueParm[0];
+		if (lovFieldCode.isNew()) { // for New record or new record into work flow
 
-		if (lovFieldCode.isNew()){ // for New record or new record into work flow
-
-			if (!lovFieldCode.isWorkflow()){// With out Work flow only new records  
-				if (befLovFieldCode !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (lovFieldCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befLovFieldCode !=null || tempLovFieldCode!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+			if (!lovFieldCode.isWorkflow()) {// With out Work flow only new records  
+				if (befLovFieldCode != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (lovFieldCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befLovFieldCode != null || tempLovFieldCode != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befLovFieldCode ==null || tempLovFieldCode!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befLovFieldCode == null || tempLovFieldCode != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!lovFieldCode.isWorkflow()){	// With out Work flow for update and delete
+			if (!lovFieldCode.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befLovFieldCode ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldLovFieldCode!=null && !oldLovFieldCode.getLastMntOn().equals(befLovFieldCode.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+				if (befLovFieldCode == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldLovFieldCode != null
+							&& !oldLovFieldCode.getLastMntOn().equals(befLovFieldCode.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempLovFieldCode==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempLovFieldCode == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempLovFieldCode!=null && oldLovFieldCode!=null && !oldLovFieldCode.getLastMntOn().equals(tempLovFieldCode.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempLovFieldCode != null && oldLovFieldCode != null
+						&& !oldLovFieldCode.getLastMntOn().equals(tempLovFieldCode.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !lovFieldCode.isWorkflow()){
-			lovFieldCode.setBefImage(befLovFieldCode);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !lovFieldCode.isWorkflow()) {
+			lovFieldCode.setBefImage(befLovFieldCode);
 		}
 
 		return auditDetail;

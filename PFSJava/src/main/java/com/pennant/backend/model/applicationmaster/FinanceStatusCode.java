@@ -62,19 +62,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "statusID", "statusCode", "statusDesc" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceStatusCode extends AbstractWorkflowEntity implements Entity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				statusId			= Long.MIN_VALUE;
-	private String				statusCode;
-	private String				statusDesc;
+	private long statusId = Long.MIN_VALUE;
+	private String statusCode;
+	private String statusDesc;
 	@XmlTransient
-	private boolean				newRecord;
+	private boolean newRecord;
 	@XmlTransient
-	private String				lovValue;
+	private String lovValue;
 	@XmlTransient
-	private FinanceStatusCode	befImage;
+	private FinanceStatusCode befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();

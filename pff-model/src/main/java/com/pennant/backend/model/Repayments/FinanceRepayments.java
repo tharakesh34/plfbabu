@@ -27,13 +27,13 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private BigDecimal finFee = BigDecimal.ZERO;
 	private BigDecimal finWaiver = BigDecimal.ZERO;
 	private BigDecimal finRefund = BigDecimal.ZERO;
-	
+
 	//Fee Details
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostPaid = BigDecimal.ZERO;
-	
+
 	// not in database
 	private BigDecimal lovDescSchdPriPaid = BigDecimal.ZERO;
 	private BigDecimal lovDescSchdPftPaid = BigDecimal.ZERO;
@@ -45,9 +45,9 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private BigDecimal RepayRefund = BigDecimal.ZERO;
 
 	public FinanceRepayments() {
-		
+
 	}
-	 
+
 	@Override
 	public boolean isNew() {
 		return false;
@@ -71,6 +71,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -78,6 +79,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public Date getFinPostDate() {
 		return finPostDate;
 	}
+
 	public void setFinPostDate(Date finPostDate) {
 		this.finPostDate = finPostDate;
 	}
@@ -85,6 +87,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public String getFinRpyFor() {
 		return finRpyFor;
 	}
+
 	public void setFinRpyFor(String finRpyFor) {
 		this.finRpyFor = finRpyFor;
 	}
@@ -92,6 +95,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public long getFinPaySeq() {
 		return finPaySeq;
 	}
+
 	public void setFinPaySeq(long finPaySeq) {
 		this.finPaySeq = finPaySeq;
 	}
@@ -99,6 +103,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public long getLinkedTranId() {
 		return linkedTranId;
 	}
+
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
 	}
@@ -106,6 +111,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getFinRpyAmount() {
 		return finRpyAmount;
 	}
+
 	public void setFinRpyAmount(BigDecimal finRpyAmount) {
 		this.finRpyAmount = finRpyAmount;
 	}
@@ -113,6 +119,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public Date getFinSchdDate() {
 		return finSchdDate;
 	}
+
 	public void setFinSchdDate(Date finSchdDate) {
 		this.finSchdDate = finSchdDate;
 	}
@@ -120,6 +127,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public Date getFinValueDate() {
 		return finValueDate;
 	}
+
 	public void setFinValueDate(Date finValueDate) {
 		this.finValueDate = finValueDate;
 	}
@@ -131,30 +139,35 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public long getFinCustID() {
 		return finCustID;
 	}
+
 	public void setFinCustID(long finCustID) {
 		this.finCustID = finCustID;
 	}
-	
+
 	public BigDecimal getFinSchdPriPaid() {
 		return finSchdPriPaid;
 	}
+
 	public void setFinSchdPriPaid(BigDecimal finSchdPriPaid) {
 		this.finSchdPriPaid = finSchdPriPaid;
 	}
-	
+
 	public BigDecimal getFinSchdPftPaid() {
 		return finSchdPftPaid;
 	}
+
 	public void setFinSchdPftPaid(BigDecimal finSchdPftPaid) {
 		this.finSchdPftPaid = finSchdPftPaid;
 	}
@@ -162,6 +175,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getFinTotSchdPaid() {
 		return finTotSchdPaid;
 	}
+
 	public void setFinTotSchdPaid(BigDecimal finTotSchdPaid) {
 		this.finTotSchdPaid = finTotSchdPaid;
 	}
@@ -169,6 +183,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getFinFee() {
 		return finFee;
 	}
+
 	public void setFinFee(BigDecimal finFee) {
 		this.finFee = finFee;
 	}
@@ -176,6 +191,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getFinWaiver() {
 		return finWaiver;
 	}
+
 	public void setFinWaiver(BigDecimal finWaiver) {
 		this.finWaiver = finWaiver;
 	}
@@ -183,6 +199,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getFinRefund() {
 		return finRefund;
 	}
+
 	public void setFinRefund(BigDecimal finRefund) {
 		this.finRefund = finRefund;
 	}
@@ -190,6 +207,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getLovDescSchdPriPaid() {
 		return lovDescSchdPriPaid;
 	}
+
 	public void setLovDescSchdPriPaid(BigDecimal lovDescSchdPriPaid) {
 		this.lovDescSchdPriPaid = lovDescSchdPriPaid;
 	}
@@ -197,6 +215,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getLovDescSchdPftPaid() {
 		return lovDescSchdPftPaid;
 	}
+
 	public void setLovDescSchdPftPaid(BigDecimal lovDescSchdPftPaid) {
 		this.lovDescSchdPftPaid = lovDescSchdPftPaid;
 	}
@@ -204,6 +223,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getRepayBal() {
 		return RepayBal;
 	}
+
 	public void setRepayBal(BigDecimal repayBal) {
 		RepayBal = repayBal;
 	}
@@ -211,6 +231,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getRepaypri() {
 		return Repaypri;
 	}
+
 	public void setRepaypri(BigDecimal repaypri) {
 		Repaypri = repaypri;
 	}
@@ -218,6 +239,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getRepayPft() {
 		return RepayPft;
 	}
+
 	public void setRepayPft(BigDecimal repayPft) {
 		RepayPft = repayPft;
 	}
@@ -225,6 +247,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getRepayPenal() {
 		return RepayPenal;
 	}
+
 	public void setRepayPenal(BigDecimal repayPenal) {
 		RepayPenal = repayPenal;
 	}
@@ -232,6 +255,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getRepayWaiver() {
 		return RepayWaiver;
 	}
+
 	public void setRepayWaiver(BigDecimal repayWaiver) {
 		RepayWaiver = repayWaiver;
 	}
@@ -239,20 +263,23 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getRepayRefund() {
 		return RepayRefund;
 	}
+
 	public void setRepayRefund(BigDecimal repayRefund) {
 		RepayRefund = repayRefund;
 	}
 
 	public BigDecimal getSchdFeePaid() {
-	    return schdFeePaid;
-    }
+		return schdFeePaid;
+	}
+
 	public void setSchdFeePaid(BigDecimal schdFeePaid) {
-	    this.schdFeePaid = schdFeePaid;
-    }
+		this.schdFeePaid = schdFeePaid;
+	}
 
 	public BigDecimal getSchdInsPaid() {
 		return schdInsPaid;
 	}
+
 	public void setSchdInsPaid(BigDecimal schdInsPaid) {
 		this.schdInsPaid = schdInsPaid;
 	}
@@ -260,6 +287,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getSchdSuplRentPaid() {
 		return schdSuplRentPaid;
 	}
+
 	public void setSchdSuplRentPaid(BigDecimal schdSuplRentPaid) {
 		this.schdSuplRentPaid = schdSuplRentPaid;
 	}
@@ -267,6 +295,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public BigDecimal getSchdIncrCostPaid() {
 		return schdIncrCostPaid;
 	}
+
 	public void setSchdIncrCostPaid(BigDecimal schdIncrCostPaid) {
 		this.schdIncrCostPaid = schdIncrCostPaid;
 	}
@@ -278,5 +307,5 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	public void setFinSchdTdsPaid(BigDecimal finSchdTdsPaid) {
 		this.finSchdTdsPaid = finSchdTdsPaid;
 	}
-	
+
 }

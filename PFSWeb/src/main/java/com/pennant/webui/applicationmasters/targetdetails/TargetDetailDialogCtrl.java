@@ -32,28 +32,24 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	private static final Logger logger = Logger.getLogger(TargetDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_TargetDetailDialog; 			// autoWired
-	protected Textbox 		targetCode; 						// autoWired
-	protected Textbox 		targetDesc; 						// autoWired
-	protected Checkbox 		targetIsActive; 					// autoWired
-
+	protected Window window_TargetDetailDialog; // autoWired
+	protected Textbox targetCode; // autoWired
+	protected Textbox targetDesc; // autoWired
+	protected Checkbox targetIsActive; // autoWired
 
 	// not auto wired variables
-	private TargetDetail 	targetDetail; // overHanded per parameter
+	private TargetDetail targetDetail; // overHanded per parameter
 
-
-
-	private transient 		TargetDetailListCtrl targetDetailListCtrl; // overHanded per parameter
+	private transient TargetDetailListCtrl targetDetailListCtrl; // overHanded per parameter
 
 	// Button controller for the CRUD buttons
-	private transient boolean 			validationOn;
-	
+	private transient boolean validationOn;
+
 	// ServiceDAOs / Domain Classes
-	private transient TargetDetailService 	targetDetailService;
+	private transient TargetDetailService targetDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -69,7 +65,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 
 	// Component Events
 
-	public void onCreate$window_TargetDetailDialog(Event event)throws Exception {
+	public void onCreate$window_TargetDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -90,14 +86,12 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 				setTargetDetail(null);
 			}
 
-			doLoadWorkFlow(this.targetDetail.isWorkflow(),
-					this.targetDetail.getWorkflowId(),
+			doLoadWorkFlow(this.targetDetail.isWorkflow(), this.targetDetail.getWorkflowId(),
 					this.targetDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"TargetDetailDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "TargetDetailDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -106,8 +100,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 			// or
 			// delete targetDetail here.
 			if (arguments.containsKey("targetDetailListCtrl")) {
-				setTargetDetailListCtrl((TargetDetailListCtrl) arguments
-						.get("targetDetailListCtrl"));
+				setTargetDetailListCtrl((TargetDetailListCtrl) arguments.get("targetDetailListCtrl"));
 			} else {
 				setTargetDetailListCtrl(null);
 			}
@@ -143,7 +136,6 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * when the "help" button is clicked. <br>
@@ -203,14 +195,13 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aTargetDetail
 	 * @throws Exception
 	 */
 
-	public void doShowDialog(TargetDetail aTargetDetail)throws Exception {
+	public void doShowDialog(TargetDetail aTargetDetail) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -245,7 +236,6 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Leaving");
 	}
 
-
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
@@ -256,7 +246,6 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
-
 
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
@@ -279,7 +268,8 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		this.targetIsActive.setChecked(aTargetDetail.isActive());
 		this.recordStatus.setValue(aTargetDetail.getRecordStatus());
 
-		if(aTargetDetail.isNew() || (aTargetDetail.getRecordType() != null ? aTargetDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aTargetDetail.isNew() || (aTargetDetail.getRecordType() != null ? aTargetDetail.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.targetIsActive.setChecked(true);
 			this.targetIsActive.setDisabled(true);
 		}
@@ -291,7 +281,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	 * 
 	 * @param aTargetDetail
 	 */
-	
+
 	public void doWriteComponentsToBean(TargetDetail aTargetDetail) {
 		logger.debug("Entering");
 
@@ -380,7 +370,6 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Clears the components values. <br>
 	 */
@@ -406,9 +395,8 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_TargetDetailDialog_TargetCode.value")+" : "+aTargetDetail.getTargetCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_TargetDetailDialog_TargetCode.value") + " : " + aTargetDetail.getTargetCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aTargetDetail.getRecordType())) {
 				aTargetDetail.setVersion(aTargetDetail.getVersion() + 1);
@@ -485,7 +473,6 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Leaving");
 	}
 
-
 	private boolean doProcess(TargetDetail aTargetDetail, String tranType) {
 		logger.debug("Entering");
 
@@ -548,7 +535,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 			} else {
 				String[] list = operationRefs.split(";");
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aTargetDetail,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aTargetDetail, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
@@ -593,8 +580,8 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_TargetDetailDialog, auditHeader);
 						return processCompleted;
 					}
@@ -634,29 +621,32 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Leaving");
 	}
 
-	private void doSetValidation(){
+	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		if(!this.targetCode.isReadonly()){
-			this.targetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TargetDetailDialog_TargetCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
+		if (!this.targetCode.isReadonly()) {
+			this.targetCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TargetDetailDialog_TargetCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.targetDesc.isReadonly()){
-			this.targetDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_TargetDetailDialog_TargetDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.targetDesc.isReadonly()) {
+			this.targetDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TargetDetailDialog_TargetDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
 
-	private void doRemoveValidation(){
+	private void doRemoveValidation() {
 		logger.debug("Entering");
 		setValidation(false);
 		this.targetCode.setConstraint("");
 		this.targetDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	protected void doClearMessage(){
+	protected void doClearMessage() {
 		logger.debug("entering");
 		this.targetCode.setErrorMessage("");
 		this.targetDesc.setErrorMessage("");
@@ -681,21 +671,17 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		getTargetDetailListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.targetDetail.getTargetCode());
 	}
 
-	private AuditHeader getAuditHeader(TargetDetail aTargetDetail,String tranType) {
+	private AuditHeader getAuditHeader(TargetDetail aTargetDetail, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aTargetDetail.getBefImage(), aTargetDetail);
-		return new AuditHeader(String.valueOf(aTargetDetail.getId()), null,
-				null, null, auditDetail, aTargetDetail.getUserDetails(),
-				getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aTargetDetail.getBefImage(), aTargetDetail);
+		return new AuditHeader(String.valueOf(aTargetDetail.getId()), null, null, null, auditDetail,
+				aTargetDetail.getUserDetails(), getOverideMap());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -704,6 +690,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	public TargetDetail getTargetDetail() {
 		return targetDetail;
 	}
+
 	public void setTargetDetail(TargetDetail targetDetail) {
 		this.targetDetail = targetDetail;
 	}
@@ -711,6 +698,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	public TargetDetailListCtrl getTargetDetailListCtrl() {
 		return targetDetailListCtrl;
 	}
+
 	public void setTargetDetailListCtrl(TargetDetailListCtrl targetDetailListCtrl) {
 		this.targetDetailListCtrl = targetDetailListCtrl;
 	}
@@ -718,6 +706,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	public TargetDetailService getTargetDetailService() {
 		return targetDetailService;
 	}
+
 	public void setTargetDetailService(TargetDetailService targetDetailService) {
 		this.targetDetailService = targetDetailService;
 	}
@@ -725,6 +714,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}

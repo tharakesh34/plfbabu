@@ -11,7 +11,7 @@ public class DDAProcessServiceImpl implements DDAProcessService {
 
 	/**
 	 * save the DDA request details i.e <br>
-	 *  'VALIDATE' AND 'REGISTRATION'
+	 * 'VALIDATE' AND 'REGISTRATION'
 	 * 
 	 * @param ddaProcessData
 	 * 
@@ -39,15 +39,15 @@ public class DDAProcessServiceImpl implements DDAProcessService {
 	 * @return {@link DDAProcessData}
 	 */
 	@Override
-    public DDAProcessData getDDADetailsById(String finReference, String reqTypeValidate) {
-	    return getDdaProcessDAO().getDDADetailsById(finReference, reqTypeValidate);
-    }
+	public DDAProcessData getDDADetailsById(String finReference, String reqTypeValidate) {
+		return getDdaProcessDAO().getDDADetailsById(finReference, reqTypeValidate);
+	}
 
 	@Override
-    public FinanceType getFinTypeDetails(String finType) {
+	public FinanceType getFinTypeDetails(String finType) {
 		return getDdaProcessDAO().getFinTypeDetails(finType);
-    }
-	
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -61,9 +61,8 @@ public class DDAProcessServiceImpl implements DDAProcessService {
 	}
 
 	@Override
-	public DDAProcessData getDDADetailsByReference(String finReference,
-			String reqTypeValidate) {
-		return getDdaProcessDAO().getDDADetailsByReference(finReference,reqTypeValidate);
+	public DDAProcessData getDDADetailsByReference(String finReference, String reqTypeValidate) {
+		return getDdaProcessDAO().getDDADetailsByReference(finReference, reqTypeValidate);
 	}
 
 }

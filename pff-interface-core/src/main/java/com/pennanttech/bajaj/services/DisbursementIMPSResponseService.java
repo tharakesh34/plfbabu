@@ -25,16 +25,17 @@ public class DisbursementIMPSResponseService extends BajajService {
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-		
-		DisbursemenIMPSResponseProcess disbRespProcess  = null;
-		
+
+		DisbursemenIMPSResponseProcess disbRespProcess = null;
+
 		List<Long> disbursements = getDisbursements();
 		if (disbursements == null || disbursements.isEmpty()) {
 			return;
 		}
 
 		try {
-			disbRespProcess = new DisbursemenIMPSResponseProcess(dataSource, new Long(1000), getValueDate(), disbursements);
+			disbRespProcess = new DisbursemenIMPSResponseProcess(dataSource, new Long(1000), getValueDate(),
+					disbursements);
 			disbRespProcess.process("DISB_IMPS_RESPONSE");
 			DataEngineStatus status = disbRespProcess.getDataEngineStatus();
 			disbursementResponse.receiveResponse(status.getId());

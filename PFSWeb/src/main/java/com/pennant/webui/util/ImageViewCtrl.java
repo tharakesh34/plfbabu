@@ -20,11 +20,11 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = -624134530458308782L;
-	protected Window			window_ImageView;
-	protected Iframe			document;
-	protected Label				label_RefId;
+	protected Window window_ImageView;
+	protected Iframe document;
+	protected Label label_RefId;
 
-	private static final Logger	logger				= Logger.getLogger(ImageViewCtrl.class);
+	private static final Logger logger = Logger.getLogger(ImageViewCtrl.class);
 
 	public ImageViewCtrl() {
 		super();
@@ -34,7 +34,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	public void onCreate$window_ImageView(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -42,49 +42,54 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 		setPageComponents(window_ImageView);
 
 		try {
-			
+
 			AMedia amedia = null;
 			if (arguments.containsKey("FinGurantorProofDetail")) {
 				this.window_ImageView.setWidth("90%");
 				this.window_ImageView.setHeight("80%");
 				this.document.setVisible(true);
-				
+
 				GuarantorDetail guarantorDetail = (GuarantorDetail) arguments.get("FinGurantorProofDetail");
 				if (guarantorDetail != null && guarantorDetail.getGuarantorProof() != null) {
-					
-					String docType = guarantorDetail.getGuarantorProofName().substring(guarantorDetail.getGuarantorProofName().indexOf('.')+1);
-					
+
+					String docType = guarantorDetail.getGuarantorProofName()
+							.substring(guarantorDetail.getGuarantorProofName().indexOf('.') + 1);
+
 					final InputStream data = new ByteArrayInputStream(guarantorDetail.getGuarantorProof());
-					if (StringUtils.equalsIgnoreCase(docType,"pdf")) {
+					if (StringUtils.equalsIgnoreCase(docType, "pdf")) {
 						amedia = new AMedia(guarantorDetail.getGuarantorProofName(), "pdf", "application/pdf", data);
-					} else if(StringUtils.equalsIgnoreCase(docType,"doc") || StringUtils.equalsIgnoreCase(docType,"docx")){
-			    		amedia = new AMedia(guarantorDetail.getGuarantorProofName(), "msword", "application/msword", data);
-			    	} else if (StringUtils.equalsIgnoreCase(docType,"jpg") || StringUtils.equalsIgnoreCase(docType,"jpeg") ||
-			    			StringUtils.equalsIgnoreCase(docType,"png")) {
+					} else if (StringUtils.equalsIgnoreCase(docType, "doc")
+							|| StringUtils.equalsIgnoreCase(docType, "docx")) {
+						amedia = new AMedia(guarantorDetail.getGuarantorProofName(), "msword", "application/msword",
+								data);
+					} else if (StringUtils.equalsIgnoreCase(docType, "jpg")
+							|| StringUtils.equalsIgnoreCase(docType, "jpeg")
+							|| StringUtils.equalsIgnoreCase(docType, "png")) {
 						amedia = new AMedia(guarantorDetail.getGuarantorProofName(), "jpeg", "image/jpeg", data);
-					}else if (StringUtils.equalsIgnoreCase(docType,"msg")) {
-						amedia = new AMedia(guarantorDetail.getGuarantorProofName(), "msg", "application/octet-stream", data);
+					} else if (StringUtils.equalsIgnoreCase(docType, "msg")) {
+						amedia = new AMedia(guarantorDetail.getGuarantorProofName(), "msg", "application/octet-stream",
+								data);
 					}
 					document.setContent(amedia);
 				}
-				
+
 			}
-			
+
 			if (arguments.containsKey("FinDocumentDetail")) {
 				this.window_ImageView.setWidth("90%");
 				this.window_ImageView.setHeight("80%");
 				this.document.setVisible(true);
-				
+
 				DocumentDetails docDetail = (DocumentDetails) arguments.get("FinDocumentDetail");
 				if (docDetail != null && docDetail.getDocImage() != null) {
 					final InputStream data = new ByteArrayInputStream(docDetail.getDocImage());
 					if (PennantConstants.DOC_TYPE_PDF.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "pdf", "application/pdf", data);
-					} else if(PennantConstants.DOC_TYPE_WORD.equals(docDetail.getDoctype())){
-			    		amedia = new AMedia(docDetail.getDocName(), "msword", "application/msword", data);
-					} else if(PennantConstants.DOC_TYPE_MSG.equals(docDetail.getDoctype())){
+					} else if (PennantConstants.DOC_TYPE_WORD.equals(docDetail.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "msword", "application/msword", data);
+					} else if (PennantConstants.DOC_TYPE_MSG.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "msg", "application/octet-stream", data);
-			    	} else if (PennantConstants.DOC_TYPE_IMAGE.equals(docDetail.getDoctype())) {
+					} else if (PennantConstants.DOC_TYPE_IMAGE.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "jpeg", "image/jpeg", data);
 					}
 					document.setContent(amedia);
@@ -95,7 +100,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				this.window_ImageView.setWidth("90%");
 				this.window_ImageView.setHeight("80%");
 				this.label_RefId.setVisible(true);
-				
+
 				DocumentDetails docDetail = (DocumentDetails) arguments.get("documentRef");
 				if (docDetail != null && docDetail.getDocUri() != null) {
 					label_RefId.setVisible(true);
@@ -112,9 +117,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				String docType = StringUtils.trimToEmpty(mandate.getDocumentName()).toLowerCase();
 				if (docType.endsWith(".pdf")) {
 					amedia = new AMedia(mandate.getDocumentName(), "pdf", "application/pdf", mandate.getDocImage());
-				} else if (docType.endsWith(".jpg")
-						|| docType.endsWith(".jpeg")
-						|| docType.endsWith(".png")) {
+				} else if (docType.endsWith(".jpg") || docType.endsWith(".jpeg") || docType.endsWith(".png")) {
 					amedia = new AMedia(mandate.getDocumentName(), "jpeg", "image/jpeg", mandate.getDocImage());
 				}
 

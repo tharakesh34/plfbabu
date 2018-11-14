@@ -68,45 +68,43 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.PTListReportUtils;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customer/CustomerDetailsList.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerDetailsList.zul file.
  */
 public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 9086034736503097868L;
 	private static final Logger logger = Logger.getLogger(CustomerDetailsListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUl-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CustomerBasicDetailsList; 	// autoWired
-	protected Borderlayout 	borderLayout_CustomerDetailsList; 	// autoWired
-	protected Paging		pagingCustomerDetailsList; 			// autoWired
-	protected Listbox 		listBoxCustomerDetails; 			// autoWired
-	protected Textbox		maintModule; 						// autoWired
+	protected Window window_CustomerBasicDetailsList; // autoWired
+	protected Borderlayout borderLayout_CustomerDetailsList; // autoWired
+	protected Paging pagingCustomerDetailsList; // autoWired
+	protected Listbox listBoxCustomerDetails; // autoWired
+	protected Textbox maintModule; // autoWired
 
 	// List headers
-	protected Listheader listheader_CustCIF; 		// autoWired
-	protected Listheader listheader_CustCoreBank; 	// autoWired
-	protected Listheader listheader_CustShrtName; 	// autoWired
-	protected Listheader listheader_CustDftBranch; 	// autoWired
-	protected Listheader listheader_CustCtgCode; 	// autoWired
-	protected Listheader listheader_CustTypeCode; 	// autoWired
-	protected Listheader listheader_RecordStatus; 	// autoWired
+	protected Listheader listheader_CustCIF; // autoWired
+	protected Listheader listheader_CustCoreBank; // autoWired
+	protected Listheader listheader_CustShrtName; // autoWired
+	protected Listheader listheader_CustDftBranch; // autoWired
+	protected Listheader listheader_CustCtgCode; // autoWired
+	protected Listheader listheader_CustTypeCode; // autoWired
+	protected Listheader listheader_RecordStatus; // autoWired
 	protected Listheader listheader_RecordType;
 
 	// checkRights
-	protected Button btnHelp;	 										// autoWired
-	protected Button button_CustomerDetailsList_NewCustomer; 			// autoWired
-	protected Button button_CustomerDetailsList_CustomerSearchDialog; 	// autoWired
-	protected Button button_CustomerDetailsList_PrintList; 				// autoWired
+	protected Button btnHelp; // autoWired
+	protected Button button_CustomerDetailsList_NewCustomer; // autoWired
+	protected Button button_CustomerDetailsList_CustomerSearchDialog; // autoWired
+	protected Button button_CustomerDetailsList_PrintList; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Customer> searchObj;
@@ -125,9 +123,8 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -144,7 +141,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 		this.pagingCustomerDetailsList.setPageSize(getListRows());
 		this.pagingCustomerDetailsList.setDetailed(true);
 
-		this.listheader_CustCIF.setSortAscending(new FieldComparator("custCIF",true));
+		this.listheader_CustCIF.setSortAscending(new FieldComparator("custCIF", true));
 		this.listheader_CustCIF.setSortDescending(new FieldComparator("custCIF", false));
 		this.listheader_CustCoreBank.setSortAscending(new FieldComparator("custCoreBank", true));
 		this.listheader_CustCoreBank.setSortDescending(new FieldComparator("custCoreBank", false));
@@ -172,7 +169,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 		this.searchObj.addSort("CustID", false);
 		this.searchObj.addTabelName("Customers_View");
 		button_CustomerDetailsList_NewCustomer.setVisible(false);
-		this.searchObj.addFilter(new Filter("recordType", "NEW ",Filter.OP_NOT_EQUAL));
+		this.searchObj.addFilter(new Filter("recordType", "NEW ", Filter.OP_NOT_EQUAL));
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -205,8 +202,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
-	 * see: com.pennant.webui.customermasters.customer.model.
-	 * CustomerMaintenaceListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.customermasters.customer.model. CustomerMaintenaceListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -233,17 +229,18 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 				errParm[1] = PennantJavaUtil.getLabel("label_CustCtgCode") + ":" + valueParm[1];
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005",
-								errParm, valueParm), getUserWorkspace().getUserLanguage());
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 
 			} else {
-				String whereCond = " AND CustID='" + aCustomer.getCustID()
-						+ "' AND version=" + aCustomer.getVersion() + " ";
+				String whereCond = " AND CustID='" + aCustomer.getCustID() + "' AND version=" + aCustomer.getVersion()
+						+ " ";
 
 				if (isWorkFlowEnabled()) {
-					boolean userAcces = validateUserAccess(aCustomer.getWorkflowId(), getUserWorkspace().getLoggedInUser()
-							.getUserId(),"Customer", whereCond, aCustomer.getTaskId(),aCustomer.getNextTaskId());
+					boolean userAcces = validateUserAccess(aCustomer.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "Customer", whereCond,
+							aCustomer.getTaskId(), aCustomer.getNextTaskId());
 					if (userAcces) {
 						showDetailView(aCustomer);
 					} else {
@@ -268,9 +265,8 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	private void showDetailView(Customer aCustomer) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 		//Customer aCustomer = aCustomerDetails.getCustomer();
 		if (aCustomer.getWorkflowId() == 0 && isWorkFlowEnabled()) {
@@ -280,22 +276,22 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 		Map<String, Object> map = getDefaultArguments();
 		map.put("customer", aCustomer);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listBox ListModel. This is
-		 * fine for synchronizing the data in the CustomerMaintenaceListbox from
-		 * the dialog when we do a delete, edit or insert a Customer.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listBox ListModel. This is fine for synchronizing the data in the CustomerMaintenaceListbox from the dialog
+		 * when we do a delete, edit or insert a Customer.
 		 */
 		map.put("customerDetailsListCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerBasicDetail/CustomerMaintenanceDialog.zul",null,map);
-			/*if (condition) {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerQDEDialog.zul",null, map);
-			} else {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",null, map);
-			}*/
+					"/WEB-INF/pages/CustomerMasters/CustomerBasicDetail/CustomerMaintenanceDialog.zul", null, map);
+			/*
+			 * if (condition) {
+			 * Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerQDEDialog.zul",null, map); }
+			 * else { Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",null,
+			 * map); }
+			 */
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -339,10 +335,9 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	public void onClick$button_CustomerDetailsList_CustomerSearchDialog(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		/*
-		 * we can call our CustomerDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected CustomerDetails. For handed
-		 * over these parameter only a Map is accepted. So we put the
-		 * CustomerDetails object in a HashMap.
+		 * we can call our CustomerDialog ZUL-file with parameters. So we can call them with a object of the selected
+		 * CustomerDetails. For handed over these parameter only a Map is accepted. So we put the CustomerDetails object
+		 * in a HashMap.
 		 */
 		Map<String, Object> map = getDefaultArguments();
 		map.put("customerCtrl", this);
@@ -350,8 +345,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -366,7 +360,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	 */
 	public void onClick$button_CustomerDetailsList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		new PTListReportUtils("Customer", getSearchObj(),this.pagingCustomerDetailsList.getTotalSize()+1);
+		new PTListReportUtils("Customer", getSearchObj(), this.pagingCustomerDetailsList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -378,8 +372,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 		return customerDetailsService;
 	}
 
-	public void setCustomerDetailsService(
-			CustomerDetailsService customerDetailsService) {
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
 

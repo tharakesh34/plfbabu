@@ -105,23 +105,21 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.model.CustomerCollateral;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.AgreementEngine;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FacilityAgreementDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementDetailDialog; // autoWired
 	// Agreements Details Tab
@@ -193,11 +191,10 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -228,22 +225,23 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		this.listBox_Agreements.setHeight(this.borderLayoutHeight - 80 - 35 + "px");// 210px
 		this.window_AgreementDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 		try {
-			getCtrlObject().getClass().getMethod("setFacilityAgreementDetailDialogCtrl", this.getClass()).invoke(getCtrlObject(), this);
+			getCtrlObject().getClass().getMethod("setFacilityAgreementDetailDialogCtrl", this.getClass())
+					.invoke(getCtrlObject(), this);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		
-		
+
 		logger.debug("Leaving");
 	}
 
-	public void doFillListbox(List<FacilityReferenceDetail> aggrementList){
+	public void doFillListbox(List<FacilityReferenceDetail> aggrementList) {
 		logger.debug("Entering");
 		this.listBox_Agreements.getItems().clear();
 		if (aggrementList != null && !aggrementList.isEmpty()) {
 			for (FacilityReferenceDetail financeReferenceDetail : aggrementList) {
-				if (isAllowedToShow(financeReferenceDetail,userRole)) {
-					if (AGGREEMENT_CODE_BANKCAF.equals(financeReferenceDetail.getLovDescCodelov()) && !getFacility().getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_SME)) {
+				if (isAllowedToShow(financeReferenceDetail, userRole)) {
+					if (AGGREEMENT_CODE_BANKCAF.equals(financeReferenceDetail.getLovDescCodelov())
+							&& !getFacility().getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_SME)) {
 						continue;
 					}
 					doFillAgreementsList(this.listBox_Agreements, financeReferenceDetail);
@@ -268,8 +266,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		logger.debug("Leaving");
 		return false;
 	}
-	
-	
+
 	/**
 	 * Method to fill Agreements tab.
 	 * 
@@ -287,16 +284,17 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		listCell.setParent(item);
 		listCell = new Listcell();
 		Html ageementLink = new Html();
-		ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + financeReferenceDetail.getLovDescAggReportName() + "</a> ");
+		ageementLink.setContent(
+				"<a href='' style = 'font-weight:bold'>" + financeReferenceDetail.getLovDescAggReportName() + "</a> ");
 		listCell.appendChild(ageementLink);
 		listCell.setParent(item);
 		listbox.appendChild(item);
 		item.setAttribute("data", financeReferenceDetail);
-		ageementLink.addForward("onClick", window_AgreementDetailDialog, "onGenerateReportClicked", financeReferenceDetail);
+		ageementLink.addForward("onClick", window_AgreementDetailDialog, "onGenerateReportClicked",
+				financeReferenceDetail);
 
 		logger.debug("Leaving ");
 	}
-	
 
 	/**
 	 * Method for Generating Template replaced to Finance Details
@@ -321,18 +319,20 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			if (getFacility() != null) {
 				custid = getFacility().getCustID();
 				String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
-				
+
 				AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
 				engine.setTemplate(data.getLovDescAggReportName());
 				engine.loadTemplate();
-				String aggName=StringUtils.trimToEmpty(data.getLovDescNamelov());
-				String reportName="";
+				String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
+				String reportName = "";
 				engine.mergeFields(getAggrementData(getFacility(), data.getLovDescAggImage()));
-				if(StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)){
-					reportName= (getFacility().getCAFReference().replace("/", "")) + "_" +aggName+PennantConstants.DOC_TYPE_PDF_EXT;
+				if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
+					reportName = (getFacility().getCAFReference().replace("/", "")) + "_" + aggName
+							+ PennantConstants.DOC_TYPE_PDF_EXT;
 					engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
-				}else{
-					reportName=(getFacility().getCAFReference().replace("/", "")) + "_" + "_" +aggName+PennantConstants.DOC_TYPE_WORD_EXT;
+				} else {
+					reportName = (getFacility().getCAFReference().replace("/", "")) + "_" + "_" + aggName
+							+ PennantConstants.DOC_TYPE_WORD_EXT;
 					engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
 				}
 				engine.close();
@@ -343,7 +343,6 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -412,7 +411,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				}
 				// -----------------Scoring Detail
 				if (aggModuleDetails.contains(PennantConstants.AGG_SCOREDE)) {
-					if (custCtg.equals(PennantConstants.PFF_CUSTCTG_CORP) || custCtg.equals(PennantConstants.PFF_CUSTCTG_SME)) {
+					if (custCtg.equals(PennantConstants.PFF_CUSTCTG_CORP)
+							|| custCtg.equals(PennantConstants.PFF_CUSTCTG_SME)) {
 						agreement = setScoringDetails(agreement, detail);
 					}
 				}
@@ -457,17 +457,21 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 					String rating = StringUtils.trimToEmpty(customerRating.getCustRatingType());
 					if (RISKRATING_AIB.equals(rating)) {
 						agreement.setAIBCountry(customerRating.getCustRatingCode());
-						agreement.setAIBCountryDesc(StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
+						agreement.setAIBCountryDesc(
+								StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
 						agreement.setAIBObligator(customerRating.getCustRating());
-						agreement.setAIBObligatorDesc(StringUtils.trimToEmpty(customerRating.getLovDescCustRatingName()));
+						agreement.setAIBObligatorDesc(
+								StringUtils.trimToEmpty(customerRating.getLovDescCustRatingName()));
 					} else if (RISKRATING_CI.equals(rating)) {
 						agreement.setCICountry(StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
 						agreement.setCIObligator(StringUtils.trimToEmpty(customerRating.getLovDescCustRatingName()));
 					} else if (RISKRATING_FITCH.equals(rating)) {
-						agreement.setFITCHCountry(StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
+						agreement.setFITCHCountry(
+								StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
 						agreement.setFITCHObligator(StringUtils.trimToEmpty(customerRating.getLovDescCustRatingName()));
 					} else if (RISKRATING_MOODY.equals(rating)) {
-						agreement.setMOODYCountry(StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
+						agreement.setMOODYCountry(
+								StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
 						agreement.setMOODYObligator(StringUtils.trimToEmpty(customerRating.getLovDescCustRatingName()));
 					} else if (RISKRATING_SNP.equals(rating)) {
 						agreement.setSNPCountry(StringUtils.trimToEmpty(customerRating.getLovDesccustRatingCodeDesc()));
@@ -484,7 +488,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	private FacilityAgreementDetail setShareHolderDetails(FacilityAgreementDetail agreement, Facility detail) {
 		try {
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-			JdbcSearchObject<DirectorDetail> jdbcSearchObject = new JdbcSearchObject<DirectorDetail>(DirectorDetail.class);
+			JdbcSearchObject<DirectorDetail> jdbcSearchObject = new JdbcSearchObject<DirectorDetail>(
+					DirectorDetail.class);
 			jdbcSearchObject.addTabelName("CustomerDirectorDetail_AView");
 			jdbcSearchObject.addFilterEqual("CustID", detail.getCustID());
 			List<DirectorDetail> directorList = pagedListService.getBySearchObject(jdbcSearchObject);
@@ -494,11 +499,11 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				for (DirectorDetail directorDetail : directorList) {
 					Shareholder shareholder = agreement.new Shareholder();
 					String name = "";
-		            if(StringUtils.isNotBlank(directorDetail.getShortName())){
-		            	name = directorDetail.getShortName();
-		            }else{
-		            	 name = directorDetail.getFirstName() + "  " + directorDetail.getLastName();
-		            }
+					if (StringUtils.isNotBlank(directorDetail.getShortName())) {
+						name = directorDetail.getShortName();
+					} else {
+						name = directorDetail.getFirstName() + "  " + directorDetail.getLastName();
+					}
 					shareholder.setShareholderName(name);
 					shareholder.setShareholderPercentage(String.valueOf(directorDetail.getSharePerc()));
 					totSharePerc = totSharePerc.add(directorDetail.getSharePerc());
@@ -520,7 +525,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		agreement.setCollaterals(new ArrayList<FacilityAgreementDetail.FacilityCollateral>());
 		try {
 			BigDecimal totValue = BigDecimal.ZERO;
-			BigDecimal totCover = BigDecimal.ZERO;	
+			BigDecimal totCover = BigDecimal.ZERO;
 			try {
 				List<CustomerCollateral> collateralsFromEquation = null;
 				Object object = getCtrlObject().getClass().getMethod("getCollateralsFromEquation").invoke(ctrlObject);
@@ -531,9 +536,11 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 					for (CustomerCollateral collateral : collateralsFromEquation) {
 						FacilityCollateral coll = agreement.new FacilityCollateral();
 						coll.setSecurityType(collateral.getCollTypeDesc());
-						coll.setMarketValue(PennantApplicationUtil.amountFormate(new BigDecimal(collateral.getCollValue().toString()),
+						coll.setMarketValue(PennantApplicationUtil.amountFormate(
+								new BigDecimal(collateral.getCollValue().toString()),
 								SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
-						coll.setBankValue(PennantApplicationUtil.amountFormate(new BigDecimal(collateral.getCollBankVal().toString()), 
+						coll.setBankValue(PennantApplicationUtil.amountFormate(
+								new BigDecimal(collateral.getCollBankVal().toString()),
 								SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 						coll.setMargin(String.valueOf(collateral.getCollBankValMar()));
 						coll.setCover(String.valueOf(collateral.getCollBankValMar()));
@@ -548,13 +555,13 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				for (Collateral collateral : detail.getCollaterals()) {
 					FacilityCollateral coll = agreement.new FacilityCollateral();
 					coll.setSecurityType(collateral.getDescription());
-					BigDecimal marketValue = CalculationUtil.getConvertedAmount(collateral.getCurrency(), 
+					BigDecimal marketValue = CalculationUtil.getConvertedAmount(collateral.getCurrency(),
 							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), collateral.getValue());
-					BigDecimal bankValue = CalculationUtil.getConvertedAmount(collateral.getCurrency(), 
+					BigDecimal bankValue = CalculationUtil.getConvertedAmount(collateral.getCurrency(),
 							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), collateral.getBankvaluation());
-					coll.setMarketValue(PennantApplicationUtil.amountFormate(marketValue, 
+					coll.setMarketValue(PennantApplicationUtil.amountFormate(marketValue,
 							SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
-					coll.setBankValue(PennantApplicationUtil.amountFormate(bankValue, 
+					coll.setBankValue(PennantApplicationUtil.amountFormate(bankValue,
 							SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 					coll.setMargin(String.valueOf(collateral.getBankmargin()));
 					coll.setCover(String.valueOf(collateral.getActualCoverage()));
@@ -583,29 +590,32 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			BigDecimal amountUSD = BigDecimal.ZERO;
 			BigDecimal totExposure = BigDecimal.ZERO;
 			BigDecimal totExsisting = BigDecimal.ZERO;
-			
+
 			agreement.setProposedFacilities(new ArrayList<FacilityAgreementDetail.ProposedFacility>());
-			
+
 			for (FacilityDetail facilityDetail : detail.getFacilityDetails()) {
-			
+
 				ProposedFacility proposedFacility = agreement.new ProposedFacility();
-				
+
 				proposedFacility = setFacilityDetailsData(proposedFacility, facilityDetail, detail);
-				
-				amountBD = amountBD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), 
+
+				amountBD = amountBD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
 						SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), facilityDetail.getNewLimit()));
-				amountUSD = amountUSD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
-				totExposure = totExposure.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getExposure()));
-				totExsisting = totExsisting.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getExistingLimit()));
-				
+				amountUSD = amountUSD.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
+						AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
+				totExposure = totExposure.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
+						AccountConstants.CURRENCY_USD, facilityDetail.getExposure()));
+				totExsisting = totExsisting.add(CalculationUtil.getConvertedAmount(facilityDetail.getFacilityCCY(),
+						AccountConstants.CURRENCY_USD, facilityDetail.getExistingLimit()));
+
 				int years = facilityDetail.getTenorYear();
 				int months = facilityDetail.getTenorMonth();
-				
+
 				if (new BigDecimal(years + "." + months).compareTo(maturity) > 0) {
 					maturity = new BigDecimal(years + "." + months);
 				}
 				agreement.getProposedFacilities().add(proposedFacility);
-				
+
 				if (finalMaturity == null) {
 					finalMaturity = facilityDetail.getMaturityDate();
 				}
@@ -632,8 +642,10 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		}
 		return agreement;
 	}
-	public ProposedFacility setFacilityDetailsData(ProposedFacility proposedFacility,FacilityDetail facilityDetail,Facility  detail){
-		
+
+	public ProposedFacility setFacilityDetailsData(ProposedFacility proposedFacility, FacilityDetail facilityDetail,
+			Facility detail) {
+
 		//== NONC
 		proposedFacility.setDate(DateUtility.formatToLongDate(detail.getStartDate()));
 		proposedFacility.setCafRef(detail.getCAFReference());
@@ -651,19 +663,20 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		proposedFacility.setNextReviewDate(DateUtility.formatToLongDate(detail.getNextReviewDate()));
 		proposedFacility.setCountryOfRisk(detail.getCountryOfRiskName());
 		BigDecimal totScore = BigDecimal.ZERO;
-		try{
-		if (detail.getScoreDetailListMap().containsKey(detail.getFinScoreHeaderList().get(0).getHeaderId())) {
-			List<FinanceScoreDetail> scoreDetailList = detail.getScoreDetailListMap().get(detail.getFinScoreHeaderList().get(0).getHeaderId());
-			for (FinanceScoreDetail curScoreDetail : scoreDetailList) {
-				totScore = totScore.add(curScoreDetail.getExecScore());
+		try {
+			if (detail.getScoreDetailListMap().containsKey(detail.getFinScoreHeaderList().get(0).getHeaderId())) {
+				List<FinanceScoreDetail> scoreDetailList = detail.getScoreDetailListMap()
+						.get(detail.getFinScoreHeaderList().get(0).getHeaderId());
+				for (FinanceScoreDetail curScoreDetail : scoreDetailList) {
+					totScore = totScore.add(curScoreDetail.getExecScore());
+				}
 			}
-		}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.debug(e);
 		}
 		proposedFacility.setTotalScoring(String.valueOf(totScore));
 		//== NONC
-		
+
 		proposedFacility.setBookingUnit(getBookingUnit(detail));
 		StringBuilder content = new StringBuilder();
 		content.append("Type:");
@@ -688,13 +701,13 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		content.append("Security:");
 		content.append(facilityDetail.getSecurityDesc());
 		proposedFacility.setFacilityDesc(content.toString());
-		
+
 		proposedFacility.setFacilityPurpose(facilityDetail.getPurpose());
 		proposedFacility.setFacilityType(facilityDetail.getFacilityTypeDesc());
 		proposedFacility.setProfitRate(facilityDetail.getPricing());
 		proposedFacility.setRepaymentSchedule(facilityDetail.getRepayments());
 		proposedFacility.setDocumentsRequired(facilityDetail.getDocumentsRequired());
-		
+
 		if (facilityDetail.isSecurityClean()) {
 			proposedFacility.setSecurityDescription("Clean");
 		} else {
@@ -706,39 +719,55 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		proposedFacility.setPricing(facilityDetail.getPricing());
 		if (StringUtils.trimToEmpty(facilityDetail.getRevolving()).equalsIgnoreCase(PennantConstants.YES)) {
 			proposedFacility.setRevolving("Yes");
-		}else if (StringUtils.trimToEmpty(facilityDetail.getRevolving()).equalsIgnoreCase(PennantConstants.NO)) {
+		} else if (StringUtils.trimToEmpty(facilityDetail.getRevolving()).equalsIgnoreCase(PennantConstants.NO)) {
 			proposedFacility.setRevolving("No");
 		}
-		
-		proposedFacility.setTransactionType(PennantStaticListUtil.getlabelDesc(facilityDetail.getTransactionType(), PennantStaticListUtil.getTransactionTypesList()));
+
+		proposedFacility.setTransactionType(PennantStaticListUtil.getlabelDesc(facilityDetail.getTransactionType(),
+				PennantStaticListUtil.getTransactionTypesList()));
 		proposedFacility.setAgentBank(facilityDetail.getAgentBank());
-		
+
 		proposedFacility.setTotalFacilityCcy(facilityDetail.getTotalFacilityCcy());
 		proposedFacility.setUnderWritingCcy(facilityDetail.getUnderWritingCcy());
 		proposedFacility.setPropFinalTakeCcy(facilityDetail.getPropFinalTakeCcy());
 
-		if (facilityDetail.getTotalFacility()!=null && facilityDetail.getTotalFacility().compareTo(BigDecimal.ZERO)!=0) {
-			proposedFacility.setTotalFacilityAmount(PennantAppUtil.amountFormate(facilityDetail.getTotalFacility(),CurrencyUtil.getFormat(facilityDetail.getTotalFacilityCcy())));
-			proposedFacility.setTotalFacilityAmountUSD (CalculationUtil.getConvertedAmountASString(facilityDetail.getTotalFacilityCcy(), AccountConstants.CURRENCY_USD,facilityDetail.getTotalFacility()));
+		if (facilityDetail.getTotalFacility() != null
+				&& facilityDetail.getTotalFacility().compareTo(BigDecimal.ZERO) != 0) {
+			proposedFacility.setTotalFacilityAmount(PennantAppUtil.amountFormate(facilityDetail.getTotalFacility(),
+					CurrencyUtil.getFormat(facilityDetail.getTotalFacilityCcy())));
+			proposedFacility.setTotalFacilityAmountUSD(
+					CalculationUtil.getConvertedAmountASString(facilityDetail.getTotalFacilityCcy(),
+							AccountConstants.CURRENCY_USD, facilityDetail.getTotalFacility()));
 		}
-		
-		if (facilityDetail.getUnderWriting()!=null && facilityDetail.getUnderWriting().compareTo(BigDecimal.ZERO)!=0) {
-			proposedFacility.setUnderWritingAmount(PennantAppUtil.amountFormate(facilityDetail.getUnderWriting(),CurrencyUtil.getFormat(facilityDetail.getUnderWritingCcy())));
-			proposedFacility.setUnderWritingAmountUSD (CalculationUtil.getConvertedAmountASString(facilityDetail.getUnderWritingCcy(), AccountConstants.CURRENCY_USD,facilityDetail.getUnderWriting()));
+
+		if (facilityDetail.getUnderWriting() != null
+				&& facilityDetail.getUnderWriting().compareTo(BigDecimal.ZERO) != 0) {
+			proposedFacility.setUnderWritingAmount(PennantAppUtil.amountFormate(facilityDetail.getUnderWriting(),
+					CurrencyUtil.getFormat(facilityDetail.getUnderWritingCcy())));
+			proposedFacility.setUnderWritingAmountUSD(
+					CalculationUtil.getConvertedAmountASString(facilityDetail.getUnderWritingCcy(),
+							AccountConstants.CURRENCY_USD, facilityDetail.getUnderWriting()));
 		}
-		
-		if (facilityDetail.getPropFinalTake()!=null && facilityDetail.getPropFinalTake().compareTo(BigDecimal.ZERO)!=0) {
-			proposedFacility.setPropFinalTakeAmount(PennantAppUtil.amountFormate(facilityDetail.getPropFinalTake(),CurrencyUtil.getFormat(facilityDetail.getPropFinalTakeCcy())));
-			proposedFacility.setPropFinalTakeAmountUSD(CalculationUtil.getConvertedAmountASString(facilityDetail.getPropFinalTakeCcy(), AccountConstants.CURRENCY_USD,facilityDetail.getPropFinalTake()));
+
+		if (facilityDetail.getPropFinalTake() != null
+				&& facilityDetail.getPropFinalTake().compareTo(BigDecimal.ZERO) != 0) {
+			proposedFacility.setPropFinalTakeAmount(PennantAppUtil.amountFormate(facilityDetail.getPropFinalTake(),
+					CurrencyUtil.getFormat(facilityDetail.getPropFinalTakeCcy())));
+			proposedFacility.setPropFinalTakeAmountUSD(
+					CalculationUtil.getConvertedAmountASString(facilityDetail.getPropFinalTakeCcy(),
+							AccountConstants.CURRENCY_USD, facilityDetail.getPropFinalTake()));
 		}
-		
-		proposedFacility.setExposure(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getExposure()));
-		proposedFacility.setLimitExisting(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getExistingLimit()));
-		proposedFacility.setLimitNew(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(), AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
-		
+
+		proposedFacility.setExposure(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(),
+				AccountConstants.CURRENCY_USD, facilityDetail.getExposure()));
+		proposedFacility.setLimitExisting(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(),
+				AccountConstants.CURRENCY_USD, facilityDetail.getExistingLimit()));
+		proposedFacility.setLimitNew(CalculationUtil.getConvertedAmountASString(facilityDetail.getFacilityCCY(),
+				AccountConstants.CURRENCY_USD, facilityDetail.getNewLimit()));
+
 		int years = facilityDetail.getTenorYear();
 		int months = facilityDetail.getTenorMonth();
-		
+
 		if (detail.getFacilityType().equals(FacilityConstants.FACILITY_COMMERCIAL)) {
 			proposedFacility.setTenor(String.valueOf(new BigDecimal(years + "." + months)));
 		} else if (detail.getFacilityType().equals(FacilityConstants.FACILITY_CORPORATE)) {
@@ -752,9 +781,6 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		}
 		return proposedFacility;
 	}
-	
-	
-	
 
 	private void setFacilityFor(FacilityAgreementDetail agreement, FacilityDetail facilityDetail) {
 		String facilityfor = facilityDetail.getFacilityFor();
@@ -797,22 +823,23 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			agreement.setNextReviewDate(DateUtility.formatToLongDate(detail.getNextReviewDate()));
 			agreement.setRelationshipManager(detail.getRelationshipManager());
 			agreement.setCountryManager(detail.getCountryManagerName());
-			agreement.setLevelofApprovalRequired(PennantStaticListUtil.getlabelDesc(detail.getLevelOfApproval(), PennantStaticListUtil.getLevelOfApprovalList()));
+			agreement.setLevelofApprovalRequired(PennantStaticListUtil.getlabelDesc(detail.getLevelOfApproval(),
+					PennantStaticListUtil.getLevelOfApprovalList()));
 			agreement.setCountryLimitsAdequacy(detail.getCountryLimitAdeq());
 			agreement.setReviewCenter(detail.getReviewCenter());
 			agreement.setCustGroupCode(detail.getCustGrpCodeName());
 			agreement.setCustGroupName(detail.getCustomerGroupName());
 			agreement.setRiskLimit(PennantAppUtil.amountFormate(detail.getCountryLimit(), 0));
 			agreement.setRiskExposure(PennantAppUtil.amountFormate(detail.getCountryExposure(), 0));
-			
+
 			if (StringUtils.trimToEmpty(detail.getCustRelation()).equals(FacilityConstants.CUSTRELATION_CONNECTED)) {
 				agreement.setConnectedCustomer("Yes");
-			}else{
+			} else {
 				agreement.setConnectedCustomer("No");
 			}
 			if (StringUtils.trimToEmpty(detail.getCustRelation()).equals(FacilityConstants.CUSTRELATION_RELATED)) {
 				agreement.setRelatedCustomer("Yes");
-			} else{
+			} else {
 				agreement.setRelatedCustomer("No");
 			}
 			if (detail.getCustDOB() != null) {
@@ -861,7 +888,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				ScoringHeader header = null;
 				long prvGrpId = 0;
 				if (detail.getScoreDetailListMap().containsKey(detail.getFinScoreHeaderList().get(0).getHeaderId())) {
-					List<FinanceScoreDetail> scoreDetailList = detail.getScoreDetailListMap().get(detail.getFinScoreHeaderList().get(0).getHeaderId());
+					List<FinanceScoreDetail> scoreDetailList = detail.getScoreDetailListMap()
+							.get(detail.getFinScoreHeaderList().get(0).getHeaderId());
 					for (FinanceScoreDetail curScoreDetail : scoreDetailList) {
 						// Adding List Group
 						if ((prvGrpId == 0) || (prvGrpId != curScoreDetail.getSubGroupId())) {
@@ -939,7 +967,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 						ansDetails.setQuestionAns(checkListDetail.getAnsDesc());
 						if (detail.getFinanceCheckList() != null && !detail.getFinanceCheckList().isEmpty()) {
 							for (FinanceCheckListReference financeCheckList : detail.getFinanceCheckList()) {
-								if (financeCheckList.getQuestionId() == checkListReference.getFinRefId() && financeCheckList.getAnswer() == checkListDetail.getAnsSeqNo()) {
+								if (financeCheckList.getQuestionId() == checkListReference.getFinRefId()
+										&& financeCheckList.getAnswer() == checkListDetail.getAnsSeqNo()) {
 									ansDetails.setQuestionRem("YES");
 									break;
 								} else {
@@ -1010,7 +1039,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 						}
 						recommendation.setNoteType(noteType);
 						recommendation.setNoteDesc(notes.getRemarks());
-						recommendation.setCommentedDate(DateUtility.formatUtilDate(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+						recommendation.setCommentedDate(
+								DateUtility.formatUtilDate(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 						recommendation.setUserName(notes.getUsrLogin());
 						recommendation.setUserRole(notes.getRoleDesc());
 						groupRecommendation.getRecommendations().add(recommendation);
@@ -1045,7 +1075,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			if (detail != null) {
 				List<FinanceScoreHeader> finscoreheader = detail.getFinScoreHeaderList();
 				if (finscoreheader != null && !finscoreheader.isEmpty()) {
-					agreement.setExceptionLists(new ArrayList<FacilityAgreementDetail.ExceptionList>(finscoreheader.size()));
+					agreement.setExceptionLists(
+							new ArrayList<FacilityAgreementDetail.ExceptionList>(finscoreheader.size()));
 					for (FinanceScoreHeader financeScoreHeader : finscoreheader) {
 						if (financeScoreHeader.isOverride()) {
 							ExceptionList exceptionList = agreement.new ExceptionList();
@@ -1083,7 +1114,9 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			// 2 Income Statement
 			// 3 Cash Flow Information
 			int noOfYears = 3;
-			Map<String, List<FinCreditReviewSummary>> detailedMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId2(custid, noOfYears, DateUtility.getYear(DateUtility.getSysDate()), category, "");
+			Map<String, List<FinCreditReviewSummary>> detailedMap = this.creditApplicationReviewService
+					.getListCreditReviewSummaryByCustId2(custid, noOfYears,
+							DateUtility.getYear(DateUtility.getSysDate()), category, "");
 			if (detailedMap.size() > 0) {
 				agreement.setAdtYear1(null);
 				agreement.setAdtYear2(null);
@@ -1119,14 +1152,17 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 							}
 						}
 						CustomerCreditReviewDetails customerCreditReviewDetails = agreement.new CustomerCreditReviewDetails();
-						customerCreditReviewDetails.setSubCategoryName(finCreditReviewSummary.getLovDescSubCategoryDesc());
+						customerCreditReviewDetails
+								.setSubCategoryName(finCreditReviewSummary.getLovDescSubCategoryDesc());
 						customerCreditReviewDetails.setYear1(formatdAmount(finCreditReviewSummary.getItemValue()));
-						
+
 						if (listCreditReviewSummaries2 != null) {
-							customerCreditReviewDetails.setYear2(formatdAmount(listCreditReviewSummaries2.get(i).getItemValue()));
+							customerCreditReviewDetails
+									.setYear2(formatdAmount(listCreditReviewSummaries2.get(i).getItemValue()));
 						}
 						if (listCreditReviewSummaries3 != null) {
-							customerCreditReviewDetails.setYear3(formatdAmount(listCreditReviewSummaries3.get(i).getItemValue()));
+							customerCreditReviewDetails
+									.setYear3(formatdAmount(listCreditReviewSummaries3.get(i).getItemValue()));
 						}
 						crediReview.getCustomerCreditReviewDetails().add(customerCreditReviewDetails);
 					}
@@ -1136,7 +1172,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			if (agreement.getCreditReviewsBalance() == null || agreement.getCreditReviewsBalance().isEmpty()) {
 				agreement.setCreditReviewsBalance(new ArrayList<FacilityAgreementDetail.CustomerCreditReview>());
 				CustomerCreditReview creditReview = agreement.new CustomerCreditReview();
-				creditReview.setCustomerCreditReviewDetails(new ArrayList<FacilityAgreementDetail.CustomerCreditReviewDetails>());
+				creditReview.setCustomerCreditReviewDetails(
+						new ArrayList<FacilityAgreementDetail.CustomerCreditReviewDetails>());
 				creditReview.getCustomerCreditReviewDetails().add(agreement.new CustomerCreditReviewDetails());
 				agreement.getCreditReviewsBalance().add(creditReview);
 			}
@@ -1146,8 +1183,6 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		logger.debug("Leaving");
 		return agreement;
 	}
-
-	
 
 	private String formatdAmount(BigDecimal amount) {
 		// in credit review Value Taken As BHD

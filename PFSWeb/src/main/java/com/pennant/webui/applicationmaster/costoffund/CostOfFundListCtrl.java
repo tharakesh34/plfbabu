@@ -249,7 +249,8 @@ public class CostOfFundListCtrl extends GFCBaseListCtrl<CostOfFund> {
 		arg.put("costOfFundListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CostOfFundRate/CostOfFundDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CostOfFundRate/CostOfFundDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface ProfitCenterService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	ProfitCenter getProfitCenter(long profitCenterID);
+
 	ProfitCenter getApprovedProfitCenter(long profitCenterID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

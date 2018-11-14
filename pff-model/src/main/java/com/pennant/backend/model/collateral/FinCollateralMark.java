@@ -32,15 +32,15 @@ public class FinCollateralMark implements Serializable, Entity {
 	// ******************************************************//
 
 	@Override
-    public long getId() {
-	    return FinCollateralId;
-    }
+	public long getId() {
+		return FinCollateralId;
+	}
 
 	@Override
-    public void setId(long id) {
-	    this.FinCollateralId = id;
-    }
-	
+	public void setId(long id) {
+		this.FinCollateralId = id;
+	}
+
 	public long getFinCollateralId() {
 		return FinCollateralId;
 	}
@@ -48,7 +48,7 @@ public class FinCollateralMark implements Serializable, Entity {
 	public void setFinCollateralId(long finCollateralId) {
 		FinCollateralId = finCollateralId;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -138,8 +138,8 @@ public class FinCollateralMark implements Serializable, Entity {
 	}
 
 	@Override
-    public boolean isNew() {
-	    return false;
-    }
+	public boolean isNew() {
+		return false;
+	}
 
 }

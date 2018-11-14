@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.configuration.AssetType;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,9 +66,9 @@ public class AssetTypeListModelItemRenderer implements ListitemRenderer<AssetTyp
 	public void render(Listitem item, AssetType assetType, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(assetType.getAssetType());
+		lc = new Listcell(assetType.getAssetType());
 		lc.setParent(item);
-	  	lc = new Listcell(assetType.getAssetDesc());
+		lc = new Listcell(assetType.getAssetDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox active = new Checkbox();
@@ -77,7 +76,7 @@ public class AssetTypeListModelItemRenderer implements ListitemRenderer<AssetTyp
 		active.setChecked(assetType.isActive());
 		lc.appendChild(active);
 		lc.setParent(item);
-	  	lc = new Listcell(assetType.getRecordStatus());
+		lc = new Listcell(assetType.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(assetType.getRecordType()));
 		lc.setParent(item);

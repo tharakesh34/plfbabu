@@ -62,56 +62,56 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
-	private static final long			serialVersionUID	= 2290501784830847866L;
-	private static final Logger			logger				= Logger.getLogger(CreditApprovalDialogCtrl.class);
+	private static final long serialVersionUID = 2290501784830847866L;
+	private static final Logger logger = Logger.getLogger(CreditApprovalDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_CreditApprovalDialog;											// autoWired
-	protected Borderlayout				borderlayoutDeviationDetail;												// autoWired
-	protected Div						divFianncedetails;
-	private int							ccyFormatter		= 0;
+	protected Window window_CreditApprovalDialog; // autoWired
+	protected Borderlayout borderlayoutDeviationDetail; // autoWired
+	protected Div divFianncedetails;
+	private int ccyFormatter = 0;
 	// Tab 1
-	protected Textbox					finCustSysref;
-	protected Textbox					finCustBranch;
-	protected Textbox					custCIF;
-	protected Label						custName;
-	protected Textbox					finCustNationality;
-	protected Textbox					finCustEducation;
-	protected Textbox					finCustPrvEmployer;
-	protected Textbox					finCustPrvYOE;
-	protected Textbox					finCustFDOB;
-	protected Textbox					finCustFAge;
-	protected Textbox					finCustSDOB;
-	protected Textbox					finCustSAge;
-	protected Textbox					finCustSector;
-	protected Textbox					finCustSubSector;
-	protected Textbox					finCustPhone;
-	protected Textbox					finCustFax;
-	protected Textbox					finCustMail;
+	protected Textbox finCustSysref;
+	protected Textbox finCustBranch;
+	protected Textbox custCIF;
+	protected Label custName;
+	protected Textbox finCustNationality;
+	protected Textbox finCustEducation;
+	protected Textbox finCustPrvEmployer;
+	protected Textbox finCustPrvYOE;
+	protected Textbox finCustFDOB;
+	protected Textbox finCustFAge;
+	protected Textbox finCustSDOB;
+	protected Textbox finCustSAge;
+	protected Textbox finCustSector;
+	protected Textbox finCustSubSector;
+	protected Textbox finCustPhone;
+	protected Textbox finCustFax;
+	protected Textbox finCustMail;
 	// Finance Details
-	protected Textbox					finType;
-	protected Textbox					finCcy;
-	protected Label						finCcyDesc;
-	protected Textbox					finDivison;
-	protected Decimalbox				finAmount;
-	protected Decimalbox				finDownPayBank;
-	protected Decimalbox				finDownPaySupp;
-	protected Decimalbox				finProfitRate;
-	protected Intbox					numberOfterms;
-	protected Textbox					finPurpose;
+	protected Textbox finType;
+	protected Textbox finCcy;
+	protected Label finCcyDesc;
+	protected Textbox finDivison;
+	protected Decimalbox finAmount;
+	protected Decimalbox finDownPayBank;
+	protected Decimalbox finDownPaySupp;
+	protected Decimalbox finProfitRate;
+	protected Intbox numberOfterms;
+	protected Textbox finPurpose;
 
-	protected Listbox					listBoxCustomerFinExposure;
-	protected Listbox					listBoxFinElgRef;
-	protected Listbox					listBoxRetailScoRef;
-	protected Listbox					listBox_CheckList;
+	protected Listbox listBoxCustomerFinExposure;
+	protected Listbox listBoxFinElgRef;
+	protected Listbox listBoxRetailScoRef;
+	protected Listbox listBox_CheckList;
 
-	private static final String			bold				= " font-weight: bold;";
+	private static final String bold = " font-weight: bold;";
 
-	private FinanceDetail				financeDetail		= null;
-	List<DeviationParam>				eligibilitiesList	= PennantAppUtil.getDeviationParams();
+	private FinanceDetail financeDetail = null;
+	List<DeviationParam> eligibilitiesList = PennantAppUtil.getDeviationParams();
 
 	/**
 	 * default constructor.<br>
@@ -119,7 +119,6 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public CreditApprovalDialogCtrl() {
 		super();
 	}
-
 
 	/**
 	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
@@ -208,9 +207,9 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if (phoneList != null && !phoneList.isEmpty()) {
 			CustomerPhoneNumber customerPhoneNumber = phoneList.get(0);
-			this.finCustPhone.setValue(PennantApplicationUtil.formatPhoneNumber(
-					customerPhoneNumber.getPhoneCountryCode(), customerPhoneNumber.getPhoneAreaCode(),
-					customerPhoneNumber.getPhoneNumber()));
+			this.finCustPhone
+					.setValue(PennantApplicationUtil.formatPhoneNumber(customerPhoneNumber.getPhoneCountryCode(),
+							customerPhoneNumber.getPhoneAreaCode(), customerPhoneNumber.getPhoneNumber()));
 
 		}
 		this.finCustEducation.setValue("");
@@ -237,9 +236,8 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doFillCheckListdetails(financeDetail);
 
 		doFillScoringdetails(financeDetail.getFinScoreHeaderList(), financeDetail.getScoreDetailListMap());
-		
+
 		createDashboards();
-		
 
 		logger.debug(" Entering ");
 	}
@@ -261,17 +259,17 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
-				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment().add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt())));
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt,
-						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment()
+						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt())));
+				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				BigDecimal instAmt = BigDecimal.ZERO;
-				if(finEnquiry.getNumberOfTerms() > 0){
-					instAmt = totAmt.divide(
-							new BigDecimal(finEnquiry.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
+				if (finEnquiry.getNumberOfTerms() > 0) {
+					instAmt = totAmt.divide(new BigDecimal(finEnquiry.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
 				}
-				lc = new Listcell(PennantApplicationUtil.amountFormate(instAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(instAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
@@ -544,7 +542,8 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			listcell = new Listcell();
 			listcell.setParent(listfoot);
 
-			listcell = new Listcell(Labels.getLabel("label_Credit_Worth") + " : " + financeScoreHeader.getCreditWorth());
+			listcell = new Listcell(
+					Labels.getLabel("label_Credit_Worth") + " : " + financeScoreHeader.getCreditWorth());
 			listcell.setStyle(bold);
 			listcell.setParent(listfoot);
 
@@ -597,7 +596,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	}
 
-	public DashboardCreate	dashboardCreate;
+	public DashboardCreate dashboardCreate;
 	public Cell col_html;
 
 	/**
@@ -607,11 +606,12 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * @param info
 	 */
 	public void createDashboards() {
-		JdbcSearchObject<DashboardConfiguration> jdbcSearchObject = new JdbcSearchObject<DashboardConfiguration>(DashboardConfiguration.class);
-		PagedListService pagedListService=(PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<DashboardConfiguration> jdbcSearchObject = new JdbcSearchObject<DashboardConfiguration>(
+				DashboardConfiguration.class);
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		jdbcSearchObject.addFilterEqual("DashboardCode", "CCBYFINAMT");
 		List<DashboardConfiguration> list = pagedListService.getBySearchObject(jdbcSearchObject);
-		if (list!=null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			jdbcSearchObject.addFilterEqual("DashboardCode", list.get(0));
 			ChartDetail chartDetail = dashboardCreate.getChartDetail(list.get(0));
 			chartDetail.setChartId(list.get(0).getDashboardCode());
@@ -620,7 +620,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			chartDetail.setiFrameHeight("100%");
 			chartDetail.setiFrameWidth("100%");
 			dashboardCreate.setChartDetail(chartDetail);
-			
+
 			//new code to display chart by skipping jsps
 			String strXML = chartDetail.getStrXML();
 			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
@@ -631,6 +631,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
 	}
+
 	public DashboardCreate getDashboardCreate() {
 		return dashboardCreate;
 	}

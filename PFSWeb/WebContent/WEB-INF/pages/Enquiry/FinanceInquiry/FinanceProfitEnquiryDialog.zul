@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_FinProfitEnquiryDialog" border="none" apply="${finProfitEnquiryDialogCtrl}" width="100%" height="100%" sizable="false">
+		<window id="window_FinProfitEnquiryDialog" border="none" apply="${finProfitEnquiryDialogCtrl}" width="100%"
+			height="100%" sizable="false">
 			<div id="div_toolbar" sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,50%,20%">
 					<toolbar align="start" sclass="toolbar-start">
 						<hbox height="15px">
-							<button id="btnPrint"  image="/images/icons/print.png"  sclass="z-toolbarbutton"/>
+							<button id="btnPrint" image="/images/icons/print.png" sclass="z-toolbarbutton" />
 						</hbox>
 					</toolbar>
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnHelp" visible="false"  image="/images/icons/help.png" tooltiptext="${c:l('btnHelp.tooltiptext')}"  sclass="z-toolbarbutton" />
-						<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" sclass="z-toolbarbutton" />
+						<button id="btnHelp" visible="false" image="/images/icons/help.png" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif"
+							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -111,55 +115,67 @@
 										</columns>
 										<rows>
 											<row>
-												<label id="label_FinProfitEnqDialog_FinAmount_Type" value="${c:l('label_FinProfitEnqDialog_FinAmount_Type.value')}" style="font-weight:bold;" />
-												<label id="label_FinProfitEnqDialog_Principal" value="${c:l('label_FinProfitEnqDialog_Principal.value')}" style="font-weight:bold;" />
-												<label id="label_FinProfitEnqDialog_Profit" value="${c:l('label_FinProfitEnqDialog_Profit.value')}" style="font-weight:bold;" />
-												<label id="label_FinProfitEnqDialog_Total" value="${c:l('label_FinProfitEnqDialog_Total.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_FinAmount_Type" value="${c:l('label_FinProfitEnqDialog_FinAmount_Type.value')}"
+													style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_Principal" value="${c:l('label_FinProfitEnqDialog_Principal.value')}"
+													style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_Profit" value="${c:l('label_FinProfitEnqDialog_Profit.value')}"
+													style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_Total" value="${c:l('label_FinProfitEnqDialog_Total.value')}"
+													style="font-weight:bold;" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_OrigPriAmount" value="${c:l('label_FinProfitEnqDialog_Original.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_OrigPriAmount" value="${c:l('label_FinProfitEnqDialog_Original.value')}"
+													style="font-weight:bold;" />
 												<label id="totalPriSchd" />
 												<label id="totalPftSchd" />
 												<label id="totalOriginal" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_OutStandPriAmount" value="${c:l('label_FinProfitEnqDialog_OutStandPriAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_OutStandPriAmount" value="${c:l('label_FinProfitEnqDialog_OutStandPriAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="outStandPrincipal" style="text-align:right" />
 												<label id="outStandProfit" style="text-align:right" />
 												<label id="totalOutStanding" style="text-align:right" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_PaidAmount" value="${c:l('label_FinProfitEnqDialog_PaidAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_PaidAmount" value="${c:l('label_FinProfitEnqDialog_PaidAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="schdPriPaid" style="text-align:right" />
 												<label id="schdPftPaid" style="text-align:right" />
 												<label id="totalPaid" style="text-align:right" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_UnPaidAmount" value="${c:l('label_FinProfitEnqDialog_UnPaidAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_UnPaidAmount" value="${c:l('label_FinProfitEnqDialog_UnPaidAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="unPaidPrincipal" style="text-align:right" />
 												<label id="unPaidProfit" style="text-align:right" />
 												<label id="totalUnPaid" style="text-align:right" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_OverDueAmount" value="${c:l('label_FinProfitEnqDialog_OverDueAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_OverDueAmount" value="${c:l('label_FinProfitEnqDialog_OverDueAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="overDuePrincipal" style="text-align:right" />
 												<label id="overDueProfit" style="text-align:right" />
 												<label id="totalOverDue" style="text-align:right" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_EarnedAmount" value="${c:l('label_FinProfitEnqDialog_EarnedAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_EarnedAmount" value="${c:l('label_FinProfitEnqDialog_EarnedAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="earnedPrincipal" style="text-align:right" visible="false" />
 												<label id="earnedProfit" style="text-align:right" />
 												<label id="totalEarned" style="text-align:right" visible="false" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_UnEarnedAmount" value="${c:l('label_FinProfitEnqDialog_UnEarnedAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_UnEarnedAmount" value="${c:l('label_FinProfitEnqDialog_UnEarnedAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="unEarnedPrincipal" style="text-align:right" visible="false" />
 												<label id="unEarnedProfit" style="text-align:right" />
 												<label id="totalUnEarned" style="text-align:right" visible="false" />
 											</row>
 											<row>
-												<label id="label_FinProfitEnqDialog_PayOffAmount" value="${c:l('label_FinProfitEnqDialog_PayOffAmount.value')}" style="font-weight:bold;" />
+												<label id="label_FinProfitEnqDialog_PayOffAmount" value="${c:l('label_FinProfitEnqDialog_PayOffAmount.value')}"
+													style="font-weight:bold;" />
 												<label id="payOffPrincipal" style="text-align:right" />
 												<label id="payOffProfit" style="text-align:right" />
 												<label id="totalPayOff" style="text-align:right" />
@@ -179,9 +195,12 @@
 										<rows>
 											<row>
 												<label value="${c:l('label_FinProfitEnqDialog_InstFinAmount_Type.value')}" style="font-weight:bold;" />
-												<label id="label_FinProfitEnqDialog_NoOfInstallments" value="${c:l('label_FinProfitEnqDialog_NoOfInstallments.value')}" style="font-weight:bold;text-align:left;" />
-												<label id="label_FinProfitEnqDialog_InstTotAmount" value="${c:l('label_FinProfitEnqDialog_InstTotAmount.value')}" style="font-weight:bold;text-align:left;" />
-												<label id="label_FinProfitEnqDialog_InstallmentRate" value="${c:l('label_FinProfitEnqDialog_InstallmentRate.value')}" style="font-weight:bold;text-align:left;" />
+												<label id="label_FinProfitEnqDialog_NoOfInstallments" value="${c:l('label_FinProfitEnqDialog_NoOfInstallments.value')}"
+													style="font-weight:bold;text-align:left;" />
+												<label id="label_FinProfitEnqDialog_InstTotAmount" value="${c:l('label_FinProfitEnqDialog_InstTotAmount.value')}"
+													style="font-weight:bold;text-align:left;" />
+												<label id="label_FinProfitEnqDialog_InstallmentRate" value="${c:l('label_FinProfitEnqDialog_InstallmentRate.value')}"
+													style="font-weight:bold;text-align:left;" />
 											</row>
 											<row>
 												<label value="${c:l('label_FinProfitEnqDialog_InstOverDueAmount.value')}" style="font-weight:bold;" />

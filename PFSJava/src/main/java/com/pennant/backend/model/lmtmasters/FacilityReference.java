@@ -8,7 +8,7 @@ public class FacilityReference {
 
 	private String finType;
 	private String lovDescFinTypeDescName;
-	
+
 	private List<FacilityReferenceDetail> checkList;
 	private List<FacilityReferenceDetail> aggrementList;
 	private List<FacilityReferenceDetail> eligibilityRuleList;
@@ -16,7 +16,7 @@ public class FacilityReference {
 	private List<FacilityReferenceDetail> corpScoringGroupList;
 	private List<FacilityReferenceDetail> accountingList;
 	private List<FacilityReferenceDetail> mailTemplateList;
-	
+
 	private String workFlowType;
 	private String lovDescWorkFlowTypeName;
 	private String lovDescWorkFlowRolesName;
@@ -31,6 +31,7 @@ public class FacilityReference {
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -38,6 +39,7 @@ public class FacilityReference {
 	public String getLovDescFinTypeDescName() {
 		return lovDescFinTypeDescName;
 	}
+
 	public void setLovDescFinTypeDescName(String lovDescFinTypeDescName) {
 		this.lovDescFinTypeDescName = lovDescFinTypeDescName;
 	}
@@ -45,6 +47,7 @@ public class FacilityReference {
 	public List<FacilityReferenceDetail> getCheckList() {
 		return checkList;
 	}
+
 	public void setCheckList(List<FacilityReferenceDetail> checkList) {
 		this.checkList = checkList;
 	}
@@ -52,6 +55,7 @@ public class FacilityReference {
 	public List<FacilityReferenceDetail> getAggrementList() {
 		return aggrementList;
 	}
+
 	public void setAggrementList(List<FacilityReferenceDetail> aggrementList) {
 		this.aggrementList = aggrementList;
 	}
@@ -59,6 +63,7 @@ public class FacilityReference {
 	public List<FacilityReferenceDetail> getEligibilityRuleList() {
 		return eligibilityRuleList;
 	}
+
 	public void setEligibilityRuleList(List<FacilityReferenceDetail> eligibilityRuleList) {
 		this.eligibilityRuleList = eligibilityRuleList;
 	}
@@ -66,30 +71,34 @@ public class FacilityReference {
 	public List<FacilityReferenceDetail> getScoringGroupList() {
 		return scoringGroupList;
 	}
+
 	public void setScoringGroupList(List<FacilityReferenceDetail> scoringGroup) {
 		this.scoringGroupList = scoringGroup;
 	}
-	
+
 	public List<FacilityReferenceDetail> getCorpScoringGroupList() {
-    	return corpScoringGroupList;
-    }
+		return corpScoringGroupList;
+	}
+
 	public void setCorpScoringGroupList(List<FacilityReferenceDetail> corpScoringGroupList) {
-    	this.corpScoringGroupList = corpScoringGroupList;
-    }
+		this.corpScoringGroupList = corpScoringGroupList;
+	}
 
 	public void setAccountingList(List<FacilityReferenceDetail> accountingList) {
-	    this.accountingList = accountingList;
-    }
+		this.accountingList = accountingList;
+	}
+
 	public List<FacilityReferenceDetail> getAccountingList() {
-	    return accountingList;
-    }
-	
+		return accountingList;
+	}
+
 	public void setMailTemplateList(List<FacilityReferenceDetail> mailTemplateList) {
-	    this.mailTemplateList = mailTemplateList;
-    }
+		this.mailTemplateList = mailTemplateList;
+	}
+
 	public List<FacilityReferenceDetail> getMailTemplateList() {
-	    return mailTemplateList;
-    }
+		return mailTemplateList;
+	}
 
 	public String getWorkFlowType() {
 		return workFlowType;

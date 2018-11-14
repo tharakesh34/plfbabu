@@ -64,37 +64,35 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the 
- * WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
+ * This is the controller class for the WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
  */
 public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(SchdlRepaymentDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_SchdlRepaymentDialog; 		// autowired
+	protected Window window_SchdlRepaymentDialog; // autowired
 
-	protected Textbox 		finReference; 				// autowired
-	protected Datebox 		schdlDate;					// autowired
-	protected Decimalbox 	schdlAmount;				// autowired
-	protected Decimalbox 	schdlBalAmount;				// autowired
-	protected Tabbox 		tabbox;
-	
+	protected Textbox finReference; // autowired
+	protected Datebox schdlDate; // autowired
+	protected Decimalbox schdlAmount; // autowired
+	protected Decimalbox schdlBalAmount; // autowired
+	protected Tabbox tabbox;
+
 	protected Button btnPay; // autowire
 	protected Button btnHelp;
 	protected Button btnSearchFinReference;
-	
+
 	private transient PagedListService pagedListService;
-	private int finformetter=2;
+	private int finformetter = 2;
 
 	/**
 	 * default constructor.<br>
@@ -111,9 +109,8 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -124,7 +121,7 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		// Set the page level components.
 		setPageComponents(window_SchdlRepaymentDialog);
 
-		tabbox = (Tabbox)event.getTarget().getParent().getParent().getParent();
+		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent();
 		// set Field Properties
 		doSetFieldProperties();
 		this.window_SchdlRepaymentDialog.doModal();
@@ -135,7 +132,7 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");		
+		logger.debug("Entering");
 		this.schdlAmount.setMaxlength(18);
 		this.schdlAmount.setMaxlength(18);
 		logger.debug("Leaving");
@@ -148,19 +145,19 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_SchdlRepaymentDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 
 		try {
 			this.window_SchdlRepaymentDialog.onClose();
@@ -172,31 +169,30 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void onClick$btnSearchFinReference(Event event){
+
+	public void onClick$btnSearchFinReference(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("finIsActive", 1, Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_SchdlRepaymentDialog,"FinanceMain",filters);
-		if (dataObject instanceof String){
+
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("finIsActive", 1, Filter.OP_EQUAL);
+		Object dataObject = ExtendedSearchListBox.show(this.window_SchdlRepaymentDialog, "FinanceMain", filters);
+		if (dataObject instanceof String) {
 			this.finReference.setValue(dataObject.toString());
-		}else{
-			FinanceMain details= (FinanceMain) dataObject;
-			
+		} else {
+			FinanceMain details = (FinanceMain) dataObject;
+
 			if (details != null) {
-				
-				finformetter=CurrencyUtil.getFormat(details.getFinCcy());
+
+				finformetter = CurrencyUtil.getFormat(details.getFinCcy());
 				this.finReference.setValue(details.getFinReference());
 			}
 		}
-		
+
 		this.schdlDate.setText("");
 		this.schdlAmount.setText("");
 		this.schdlBalAmount.setText("");
 
-		if(!(this.finReference.getValue() == null || StringUtils.isEmpty(this.finReference.getValue()))){
+		if (!(this.finReference.getValue() == null || StringUtils.isEmpty(this.finReference.getValue()))) {
 			JdbcSearchObject<FinanceScheduleDetail> so = new JdbcSearchObject<FinanceScheduleDetail>(
 					FinanceScheduleDetail.class);
 			so.addTabelName("FinScheduleDetails_View");
@@ -207,22 +203,26 @@ public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			so.addSort("schDate", false);
 
 			List<FinanceScheduleDetail> schdlList = getPagedListService().getBySearchObject(so);
-			if(schdlList.size() >0){
-				FinanceScheduleDetail financeScheduleDetail =  schdlList.get(0);
+			if (schdlList.size() > 0) {
+				FinanceScheduleDetail financeScheduleDetail = schdlList.get(0);
 				this.schdlDate.setValue(financeScheduleDetail.getSchDate());
-				this.schdlAmount.setValue(PennantAppUtil.formateAmount(financeScheduleDetail.getRepayAmount(),finformetter));
-				BigDecimal temp = financeScheduleDetail.getRepayAmount().subtract(financeScheduleDetail.getSchdPftPaid()).subtract(financeScheduleDetail.getSchdPriPaid());		
-				this.schdlBalAmount.setValue(PennantAppUtil.formateAmount(temp,finformetter ));
+				this.schdlAmount
+						.setValue(PennantAppUtil.formateAmount(financeScheduleDetail.getRepayAmount(), finformetter));
+				BigDecimal temp = financeScheduleDetail.getRepayAmount()
+						.subtract(financeScheduleDetail.getSchdPftPaid())
+						.subtract(financeScheduleDetail.getSchdPriPaid());
+				this.schdlBalAmount.setValue(PennantAppUtil.formateAmount(temp, finformetter));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
 	// WorkFlow Components
-	
+
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

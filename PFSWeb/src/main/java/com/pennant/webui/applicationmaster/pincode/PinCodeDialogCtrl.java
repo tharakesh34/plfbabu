@@ -68,33 +68,33 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/master/PinCode/pinCodeDialog.zul file. <br>
  */
 public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(PinCodeDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(PinCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_PinCodeDialog;
-	protected Textbox					pinCodes;
-	protected ExtendedCombobox			city;
-	protected Checkbox					active;
-	private PinCode						pinCode;														// overhanded per param
-	private Textbox						areaName;
-	private Longbox						groupId;
-	protected Checkbox					isServiceable;
+	protected Window window_PinCodeDialog;
+	protected Textbox pinCodes;
+	protected ExtendedCombobox city;
+	protected Checkbox active;
+	private PinCode pinCode; // overhanded per param
+	private Textbox areaName;
+	private Longbox groupId;
+	protected Checkbox isServiceable;
 
-	private transient PinCodeListCtrl	pinCodeListCtrl;												// overhanded per param
-	private transient PinCodeService	pinCodeService;
+	private transient PinCodeListCtrl pinCodeListCtrl; // overhanded per param
+	private transient PinCodeService pinCodeService;
 
 	/**
 	 * default constructor.<br>
@@ -327,7 +327,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		} else {
 			this.city.setDescription(aPinCode.getPCCityName());
 		}
-		if(aPinCode.isNew() || (aPinCode.getRecordType() != null ? aPinCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aPinCode.isNew() || (aPinCode.getRecordType() != null ? aPinCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -447,7 +448,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 		if (!this.pinCodes.isReadonly()) {
 			this.pinCodes.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_PinCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true,6,10));
+					PennantRegularExpressions.REGEX_ALPHANUM, true, 6, 10));
 		}
 		if (!this.city.isReadonly()) {
 			this.city.setConstraint(
@@ -455,7 +456,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		}
 		if (!this.areaName.isReadonly()) {
 			this.areaName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value"), null,true,3,100));
+					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value"), null, true, 3, 100));
 		}
 
 		logger.debug(Literal.LEAVING);

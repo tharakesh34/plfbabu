@@ -25,11 +25,10 @@ import com.aspose.words.RelativeHorizontalPosition;
 import com.aspose.words.RelativeVerticalPosition;
 import com.aspose.words.WrapType;
 
-public class PDFConversion implements IFieldMergingCallback{
+public class PDFConversion implements IFieldMergingCallback {
 	private static final Logger logger = Logger.getLogger(PDFConversion.class);
-	
-	public static void generatePDFFromWord(byte[] inputByteData,
-			String destinationPDFDocPath) throws Exception {
+
+	public static void generatePDFFromWord(byte[] inputByteData, String destinationPDFDocPath) throws Exception {
 
 		License wordlic = new License();
 
@@ -45,14 +44,12 @@ public class PDFConversion implements IFieldMergingCallback{
 		doc.save(destinationPDFDocPath);
 	}
 
-	public static void generatePDFFromImage(byte[] inputByteData,
-			String outputFileName) throws Exception {
-	
+	public static void generatePDFFromImage(byte[] inputByteData, String outputFileName) throws Exception {
+
 		Document doc = new Document();
 		DocumentBuilder builder = new DocumentBuilder(doc);
-		
-		ImageInputStream iis = ImageIO
-				.createImageInputStream(new ByteArrayInputStream(inputByteData));
+
+		ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(inputByteData));
 		ImageReader reader = ImageIO.getImageReaders(iis).next();
 		reader.setInput(iis, false);
 
@@ -62,20 +59,19 @@ public class PDFConversion implements IFieldMergingCallback{
 
 			// Loop through all frames.
 			for (int frameIdx = 0; frameIdx < framesCount; frameIdx++) {
-				
+
 				if (frameIdx != 0)
 					builder.insertBreak(BreakType.SECTION_BREAK_NEW_PAGE);
-				
+
 				BufferedImage image = reader.read(frameIdx);
-				
+
 				PageSetup ps = builder.getPageSetup();
 
 				ps.setPageWidth(ConvertUtil.pixelToPoint(image.getWidth()));
 				ps.setPageHeight(ConvertUtil.pixelToPoint(image.getHeight()));
-				
-				builder.insertImage(image, RelativeHorizontalPosition.PAGE, 0,
-						RelativeVerticalPosition.PAGE, 0, ps.getPageWidth(),
-						ps.getPageHeight(), WrapType.NONE);
+
+				builder.insertImage(image, RelativeHorizontalPosition.PAGE, 0, RelativeVerticalPosition.PAGE, 0,
+						ps.getPageWidth(), ps.getPageHeight(), WrapType.NONE);
 			}
 		}
 
@@ -86,38 +82,36 @@ public class PDFConversion implements IFieldMergingCallback{
 
 		doc.save(outputFileName);
 	}
-	
-	
-	public static void generatePdfFromPdf(byte[] inputByteData,
-			String destinationPDFDocPath)  {
+
+	public static void generatePdfFromPdf(byte[] inputByteData, String destinationPDFDocPath) {
 
 		try {
 			//Document doc = new Document(new ByteArrayInputStream(inputByteData));
-			
+
 			OutputStream out = new FileOutputStream(destinationPDFDocPath);
 			out.write(inputByteData);
 			out.close();
-			
+
 			//doc.save(destinationPDFDocPath);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 	}
-	
+
 	@Override
 	public void fieldMerging(FieldMergingArgs e) throws Exception {
 		if (e.getFieldValue() == null) {
-            DocumentBuilder builder = new DocumentBuilder(e.getDocument());
-            builder.moveToMergeField(e.getDocumentFieldName());
-            builder.write("");
+			DocumentBuilder builder = new DocumentBuilder(e.getDocument());
+			builder.moveToMergeField(e.getDocumentFieldName());
+			builder.write("");
 		} else {
 			if (StringUtils.isEmpty(e.getFieldValue().toString())) {
-	            DocumentBuilder builder = new DocumentBuilder(e.getDocument());
-	            builder.moveToMergeField(e.getDocumentFieldName());
-	            builder.write("Default Value");
-	        }
-		}	
-		
+				DocumentBuilder builder = new DocumentBuilder(e.getDocument());
+				builder.moveToMergeField(e.getDocumentFieldName());
+				builder.write("Default Value");
+			}
+		}
+
 	}
 
 	@Override

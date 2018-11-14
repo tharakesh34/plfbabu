@@ -51,9 +51,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class DispatchMode extends AbstractWorkflowEntity {
-	
+
 	private static final long serialVersionUID = 6902263645594946336L;
-	
+
 	private String dispatchModeCode;
 	private String dispatchModeDesc;
 	private boolean dispatchModeIsActive;
@@ -78,31 +78,35 @@ public class DispatchMode extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return dispatchModeCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.dispatchModeCode = id;
 	}
-	
+
 	public String getDispatchModeCode() {
 		return dispatchModeCode;
 	}
+
 	public void setDispatchModeCode(String dispatchModeCode) {
 		this.dispatchModeCode = dispatchModeCode;
 	}
-	
+
 	public String getDispatchModeDesc() {
 		return dispatchModeDesc;
 	}
+
 	public void setDispatchModeDesc(String dispatchModeDesc) {
 		this.dispatchModeDesc = dispatchModeDesc;
 	}
-	
+
 	public boolean isDispatchModeIsActive() {
 		return dispatchModeIsActive;
 	}
+
 	public void setDispatchModeIsActive(boolean dispatchModeIsActive) {
 		this.dispatchModeIsActive = dispatchModeIsActive;
 	}
@@ -110,27 +114,31 @@ public class DispatchMode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public DispatchMode getBefImage(){
+	public DispatchMode getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(DispatchMode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DispatchMode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

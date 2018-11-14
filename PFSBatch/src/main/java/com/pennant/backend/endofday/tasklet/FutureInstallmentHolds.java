@@ -62,41 +62,44 @@ import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.util.PennantConstants;
 
 public class FutureInstallmentHolds implements Tasklet {
-	
+
 	private Logger logger = Logger.getLogger(FutureInstallmentHolds.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private AccountInterfaceService accountInterfaceService;
-	
+
 	private Date dateValueDate = null;
 	private Date dateNextBusinessDate = null;
-	
+
 	public FutureInstallmentHolds() {
-		
+
 	}
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getAppValueDate();
 		dateNextBusinessDate = SysParamUtil.getValueAsDate("APP_NEXT_BUS_DATE");
-		
-		logger.debug("START: Future installments Account Holds for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
-		
-		try {
-			
-			// If NBD is holiday then loop continues, else end process.
-			if (dateValueDate.compareTo(dateNextBusinessDate) == 0) {	
-				Date futureDate = DateUtility.addDays(
-						BusinessCalendar.getWorkingBussinessDate(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY),
-								"N", dateNextBusinessDate).getTime(), -1);
-				
-				//Adding Holdings To Accounts After Repayments Process
-				List<AccountHoldStatus> accountsList = getFinanceScheduleDetailDAO().getFutureInstAmtByRepayAc(DateUtility.addDays(dateValueDate,-1), futureDate);
-				List<AccountHoldStatus> returnAcList = null;
-				if(!accountsList.isEmpty()){
 
-					logger.debug("START: Adding Future Account Holds for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
+		logger.debug(
+				"START: Future installments Account Holds for Value Date: " + DateUtility.addDays(dateValueDate, -1));
+
+		try {
+
+			// If NBD is holiday then loop continues, else end process.
+			if (dateValueDate.compareTo(dateNextBusinessDate) == 0) {
+				Date futureDate = DateUtility.addDays(BusinessCalendar.getWorkingBussinessDate(
+						SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), "N", dateNextBusinessDate).getTime(),
+						-1);
+
+				//Adding Holdings To Accounts After Repayments Process
+				List<AccountHoldStatus> accountsList = getFinanceScheduleDetailDAO()
+						.getFutureInstAmtByRepayAc(DateUtility.addDays(dateValueDate, -1), futureDate);
+				List<AccountHoldStatus> returnAcList = null;
+				if (!accountsList.isEmpty()) {
+
+					logger.debug("START: Adding Future Account Holds for Value Date: "
+							+ DateUtility.addDays(dateValueDate, -1));
 
 					returnAcList = new ArrayList<AccountHoldStatus>();
 
@@ -104,16 +107,17 @@ public class FutureInstallmentHolds implements Tasklet {
 					while (!accountsList.isEmpty()) {
 
 						List<AccountHoldStatus> subAcList = null;
-						if(accountsList.size() > 2000){
+						if (accountsList.size() > 2000) {
 							subAcList = accountsList.subList(0, 2000);
-						}else{
+						} else {
 							subAcList = accountsList;
 						}
-						returnAcList.addAll(getAccountInterfaceService().addAccountHolds(subAcList,DateUtility.addDays(dateValueDate,-1),PennantConstants.HOLDTYPE_FUTURE));
+						returnAcList.addAll(getAccountInterfaceService().addAccountHolds(subAcList,
+								DateUtility.addDays(dateValueDate, -1), PennantConstants.HOLDTYPE_FUTURE));
 
-						if(accountsList.size() > 2000){
+						if (accountsList.size() > 2000) {
 							accountsList.subList(0, 2000).clear();
-						}else{
+						} else {
 							accountsList.clear();
 						}
 					}
@@ -121,42 +125,47 @@ public class FutureInstallmentHolds implements Tasklet {
 					//Save Returned Account List For Report Purpose
 					getFinODDetailsDAO().saveHoldAccountStatus(returnAcList);
 
-					logger.debug("END: Adding Future Account Holds for Value Date: "+ DateUtility.addDays(dateValueDate,-1));
+					logger.debug("END: Adding Future Account Holds for Value Date: "
+							+ DateUtility.addDays(dateValueDate, -1));
 				}
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
-		}  finally {
-			
+		} finally {
+
 		}
 
-		logger.debug("END: Future installments Account Holds for Value Date: " + DateUtility.addDays(dateValueDate,-1));
+		logger.debug(
+				"END: Future installments Account Holds for Value Date: " + DateUtility.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
 		return financeScheduleDetailDAO;
 	}
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-	
+
 	public FinODDetailsDAO getFinODDetailsDAO() {
 		return finODDetailsDAO;
 	}
+
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
-	
+
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
+
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}

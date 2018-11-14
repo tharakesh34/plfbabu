@@ -89,64 +89,64 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul file.
  */
 public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
-	private static final long					serialVersionUID	= -5901195042041627750L;
-	private static final Logger					logger				= Logger.getLogger(FinanceDeviationsListCtrl.class);
+	private static final long serialVersionUID = -5901195042041627750L;
+	private static final Logger logger = Logger.getLogger(FinanceDeviationsListCtrl.class);
 
-	protected Window							window_FinanceDeviationsList;
-	protected Borderlayout						borderLayout_FinanceMainList;
-	protected Paging							pagingFinanceMainList;
-	protected Listbox							listBoxFinanceMain;
+	protected Window window_FinanceDeviationsList;
+	protected Borderlayout borderLayout_FinanceMainList;
+	protected Paging pagingFinanceMainList;
+	protected Listbox listBoxFinanceMain;
 
-	protected Textbox							finReference;
-	protected Listbox							sortOperator_finReference;
-	protected Textbox							finType;
-	protected Listbox							sortOperator_finType;
-	protected Textbox							custCIF;
-	protected Listbox							sortOperator_custID;
-	protected Longbox							custID;
-	protected Textbox							fincustName;
-	protected Listbox							sortOperator_custName;
-	protected Textbox							finMobileNumber;
-	protected Listbox							sortOperator_mobileNumber;
-	protected Textbox							finEIDNumber;
-	protected Listbox							sortOperator_eidNumber;
-	protected Textbox							finPassPort;
-	protected Listbox							sortOperator_passPort;
-	protected Datebox							finDateofBirth;
-	protected Listbox							sortOperator_finDateofBirth;
-	protected Datebox							finRequestDate;
-	protected Listbox							sortOperator_finRequestDate;
-	protected Listbox							sortOperator_finPromotion;
-	protected Textbox							finPromotion;
-	protected Listbox							sortOperator_finRequestStage;
-	protected Combobox							finRequestStage;
-	protected Listbox							sortOperator_finQueuePriority;
-	protected Combobox							finQueuePriority;
-	protected Datebox							initiateDate;
-	protected Listbox							sortOperator_InitiateDate;
+	protected Textbox finReference;
+	protected Listbox sortOperator_finReference;
+	protected Textbox finType;
+	protected Listbox sortOperator_finType;
+	protected Textbox custCIF;
+	protected Listbox sortOperator_custID;
+	protected Longbox custID;
+	protected Textbox fincustName;
+	protected Listbox sortOperator_custName;
+	protected Textbox finMobileNumber;
+	protected Listbox sortOperator_mobileNumber;
+	protected Textbox finEIDNumber;
+	protected Listbox sortOperator_eidNumber;
+	protected Textbox finPassPort;
+	protected Listbox sortOperator_passPort;
+	protected Datebox finDateofBirth;
+	protected Listbox sortOperator_finDateofBirth;
+	protected Datebox finRequestDate;
+	protected Listbox sortOperator_finRequestDate;
+	protected Listbox sortOperator_finPromotion;
+	protected Textbox finPromotion;
+	protected Listbox sortOperator_finRequestStage;
+	protected Combobox finRequestStage;
+	protected Listbox sortOperator_finQueuePriority;
+	protected Combobox finQueuePriority;
+	protected Datebox initiateDate;
+	protected Listbox sortOperator_InitiateDate;
 
-	protected Listheader						listheader_CustomerCIF;
-	protected Listheader						listheader_CustomerName;
-	protected Listheader						listheader_FinReference;
-	protected Listheader						listheader_FinType;
-	protected Listheader						listheader_FinCcy;
-	protected Listheader						listheader_FinAmount;
-	protected Listheader						listheader_FinancingAmount;
-	protected Listheader						listheader_Promotion;
-	protected Listheader						listheader_InitiateDate;
-	protected Listheader						listheader_Terms;
-	protected Listheader						listheader_RequestStage;
-	protected Listheader						listheader_Priority;
+	protected Listheader listheader_CustomerCIF;
+	protected Listheader listheader_CustomerName;
+	protected Listheader listheader_FinReference;
+	protected Listheader listheader_FinType;
+	protected Listheader listheader_FinCcy;
+	protected Listheader listheader_FinAmount;
+	protected Listheader listheader_FinancingAmount;
+	protected Listheader listheader_Promotion;
+	protected Listheader listheader_InitiateDate;
+	protected Listheader listheader_Terms;
+	protected Listheader listheader_RequestStage;
+	protected Listheader listheader_Priority;
 
-	protected Button							button_FinanceMainList_FinanceMainSearchDialog;
-	protected Button							btnRefresh;
+	protected Button button_FinanceMainList_FinanceMainSearchDialog;
+	protected Button btnRefresh;
 
-	private transient FinanceDeviationsService	deviationDetailsService;
-	protected int								oldVar_sortOperator_finType;
+	private transient FinanceDeviationsService deviationDetailsService;
+	protected int oldVar_sortOperator_finType;
 
-	private Textbox								loanType;																// Field for Maintain Different Finance Product Types
-	private String								menuItemRightName	= null;
-	protected JdbcSearchObject<Customer>		custCIFSearchObject;
+	private Textbox loanType; // Field for Maintain Different Finance Product Types
+	private String menuItemRightName = null;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	/**
 	 * default constructor.<br>

@@ -93,8 +93,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private PaymentTaxDetailDAO paymentTaxDetailDAO;
 	//GST Invoice Report changes
-	private GSTInvoiceTxnService	gstInvoiceTxnService;
-	private FinanceDetailService	financeDetailService;
+	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private FinanceDetailService financeDetailService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -135,10 +135,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	public PaymentInstructionDAO getPaymentInstructionDAO() {
 		return paymentInstructionDAO;
 	}
+
 	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
 		this.paymentInstructionDAO = paymentInstructionDAO;
 	}
-	
+
 	public GSTInvoiceTxnService getGstInvoiceTxnService() {
 		return gstInvoiceTxnService;
 	}
@@ -287,8 +288,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		getPaymentDetailDAO().delete(paymentDetail, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentDetail.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					paymentDetailDAO.getPaymentDetail(paymentDetail.getPaymentDetailId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(paymentDetailDAO.getPaymentDetail(paymentDetail.getPaymentDetailId(), ""));
 		}
 
 		if (paymentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -437,16 +438,17 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	}
 
 	@Override
-	public List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName, long linkedTranId, String finReference) {
+	public List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName,
+			long linkedTranId, String finReference) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
-		
+
 		List<ManualAdviseMovements> adviseMovements = new ArrayList<ManualAdviseMovements>();
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			PaymentDetail paymentDetail = (PaymentDetail) auditDetails.get(i).getModelData();
 			saveRecord = false;
@@ -512,9 +514,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				} else {
 					saveOrUpdate(paymentDetail);
 				}
-				
+
 				// Gst Details Saving
-				if(paymentDetail.getPaymentTaxDetail() != null){
+				if (paymentDetail.getPaymentTaxDetail() != null) {
 					paymentDetail.getPaymentTaxDetail().setPaymentID(paymentDetail.getPaymentId());
 					paymentDetail.getPaymentTaxDetail().setPaymentDetailID(paymentDetail.getPaymentDetailId());
 					getPaymentTaxDetailDAO().save(paymentDetail.getPaymentTaxDetail(), tableType);
@@ -523,9 +525,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			if (updateRecord) {
 				getPaymentDetailDAO().update(paymentDetail, tableType);
 				saveOrUpdate(paymentDetail);
-				
+
 				// Gst Details Saving
-				if(paymentDetail.getPaymentTaxDetail() != null){
+				if (paymentDetail.getPaymentTaxDetail() != null) {
 					paymentDetail.getPaymentTaxDetail().setPaymentID(paymentDetail.getPaymentId());
 					paymentDetail.getPaymentTaxDetail().setPaymentDetailID(paymentDetail.getPaymentDetailId());
 					getPaymentTaxDetailDAO().save(paymentDetail.getPaymentTaxDetail(), tableType);
@@ -548,31 +550,36 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			auditDetails.get(i).setModelData(paymentDetail);
 		}
-		
+
 		//GST Invoice preparation for Receivable Advises
 		if (CollectionUtils.isNotEmpty(adviseMovements)) {
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false); 
-			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, adviseMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
+			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, adviseMovements,
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
 
 	@Override
-	public List<AuditDetail> delete(List<PaymentDetail> paymentDetailList, TableType tableType, String auditTranType, long paymentId) {
+	public List<AuditDetail> delete(List<PaymentDetail> paymentDetailList, TableType tableType, String auditTranType,
+			long paymentId) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		PaymentDetail paymentDetail = null;
 		if (paymentDetailList != null && !paymentDetailList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentDetail(), 	new PaymentDetail().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentDetail(),
+					new PaymentDetail().getExcludeFields());
 			for (int i = 0; i < paymentDetailList.size(); i++) {
 				paymentDetail = paymentDetailList.get(i);
-				if (StringUtils.isNotEmpty(paymentDetail.getRecordType()) || StringUtils.isEmpty(tableType.toString())) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], paymentDetail .getBefImage(), paymentDetail));
+				if (StringUtils.isNotEmpty(paymentDetail.getRecordType())
+						|| StringUtils.isEmpty(tableType.toString())) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							paymentDetail.getBefImage(), paymentDetail));
 				}
 			}
 			getPaymentDetailDAO().deleteList(paymentDetail, tableType);
-			
+
 			for (PaymentDetail detail : paymentDetailList) {
 				doReject(detail);
 			}
@@ -591,8 +598,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Excess Amount Reserve
 		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
-			FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(
-					paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			FinExcessAmountReserve exReserve = getFinExcessAmountDAO()
+					.getExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
 			if (exReserve == null) {
 
 				// Update Excess Amount in Reserve
@@ -600,7 +607,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 				// Save Excess Reserve Log Amount
 				getFinExcessAmountDAO().saveExcessReserveLog(paymentDetail.getPaymentDetailId(),
-						paymentDetail.getReferenceId(), paymentDetail.getAmount(), RepayConstants.RECEIPTTYPE_PAYABLE); 
+						paymentDetail.getReferenceId(), paymentDetail.getAmount(), RepayConstants.RECEIPTTYPE_PAYABLE);
 			} else {
 				if (paymentDetail.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
 					BigDecimal diffInReserve = paymentDetail.getAmount().subtract(exReserve.getReservedAmt());
@@ -615,12 +622,13 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 		} else {
 			// Payable Amount make utilization
-			ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(
-					paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
-			
+			ManualAdviseReserve payableReserve = getManualAdviseDAO()
+					.getPayableReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+
 			BigDecimal amount = paymentDetail.getAmount();
-			if(paymentDetail.getPaymentTaxDetail() != null && 
-					StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+			if (paymentDetail.getPaymentTaxDetail() != null
+					&& StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(),
+							FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 				amount = amount.subtract(paymentDetail.getPaymentTaxDetail().getTotalGST());
 			}
 			if (payableReserve == null) {
@@ -652,8 +660,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Excess Amount Reserve
 		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
-			FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(
-					paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			FinExcessAmountReserve exReserve = getFinExcessAmountDAO()
+					.getExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
 			if (exReserve != null) {
 				// Update Reserve Amount in FinExcessAmount
 				getFinExcessAmountDAO().updateExcessReserve(paymentDetail.getReferenceId(),
@@ -665,8 +673,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 		} else { // Payable Amount Reserve
 			// Payable Amount make utilization
-			ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(
-					paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			ManualAdviseReserve payableReserve = getManualAdviseDAO()
+					.getPayableReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
 			if (payableReserve != null) {
 				// Update Reserve Amount in ManualAdvise
 				getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(),
@@ -701,28 +709,29 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 			movement.setAmount(paymentDetail.getAmount());
 			getFinExcessAmountDAO().saveExcessMovement(movement);
-			
+
 		} else {
-			
+
 			ManualAdvise advise = new ManualAdvise();
 			advise.setAdviseID(paymentDetail.getReferenceId());
-			
+
 			BigDecimal amount = paymentDetail.getAmount();
-			if(paymentDetail.getPaymentTaxDetail() != null && 
-					StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+			if (paymentDetail.getPaymentTaxDetail() != null
+					&& StringUtils.equals(paymentDetail.getPaymentTaxDetail().getTaxComponent(),
+							FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 				amount = amount.subtract(paymentDetail.getPaymentTaxDetail().getTotalGST());
 			}
-			
+
 			advise.setPaidAmount(amount);
 			advise.setReservedAmt(amount.negate());
-			if(paymentDetail.getPaymentTaxDetail() != null){
+			if (paymentDetail.getPaymentTaxDetail() != null) {
 				advise.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
 				advise.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
 				advise.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
 				advise.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
 			}
 			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
-			
+
 			// Delete Reserved Log against Advise and Receipt Seq ID
 			getManualAdviseDAO().deletePayableReserve(paymentDetail.getPaymentDetailId(),
 					paymentDetail.getReferenceId());
@@ -735,40 +744,42 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			manualMovement.setMovementDate(DateUtility.getAppDate());
 			manualMovement.setMovementAmount(amount);
 			manualMovement.setPaidAmount(amount);
-			
+
 			// GST Details
-			if(paymentDetail.getPaymentTaxDetail() != null){
+			if (paymentDetail.getPaymentTaxDetail() != null) {
 				manualMovement.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
 				manualMovement.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
 				manualMovement.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
 				manualMovement.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
 			}
 			getManualAdviseDAO().saveMovement(manualMovement, TableType.MAIN_TAB.getSuffix());
-			
-			ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(paymentDetail.getReferenceId(), "_AView");
-			
+
+			ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(paymentDetail.getReferenceId(),
+					"_AView");
+
 			manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 			manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
 			manualMovement.setTaxApplicable(manualAdvise.isTaxApplicable());
 			manualMovement.setTaxComponent(manualAdvise.getTaxComponent());
-			
+
 			logger.debug("Leaving");
 		}
 		return manualMovement;
 	}
 
-
 	@Override
 	public void paymentReversal(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
-		
-		List<PaymentDetail> detailsList = getPaymentDetailDAO().getPaymentDetailList(paymentInstruction.getPaymentId(), TableType.MAIN_TAB.getSuffix());
+
+		List<PaymentDetail> detailsList = getPaymentDetailDAO().getPaymentDetailList(paymentInstruction.getPaymentId(),
+				TableType.MAIN_TAB.getSuffix());
 		if (detailsList != null && !detailsList.isEmpty()) {
 			for (PaymentDetail paymentDetail : detailsList) {
 				if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
-					getFinExcessAmountDAO().updateExcessAmount(paymentDetail.getReferenceId(), "U", paymentDetail.getAmount().negate());
+					getFinExcessAmountDAO().updateExcessAmount(paymentDetail.getReferenceId(), "U",
+							paymentDetail.getAmount().negate());
 				} else {
-					getManualAdviseDAO().reverseUtilise(paymentDetail.getReferenceId(),  paymentDetail.getAmount());
+					getManualAdviseDAO().reverseUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
 				}
 			}
 		}

@@ -82,7 +82,7 @@ public interface SecurityUserService {
 	SecurityUser getApprovedSecurityUserOperationsById(long id);
 
 	void validateLicensedUsers() throws LicenseException;
-	
+
 	SecurityUser getSecurityUserByLogin(String userLogin);
 
 }

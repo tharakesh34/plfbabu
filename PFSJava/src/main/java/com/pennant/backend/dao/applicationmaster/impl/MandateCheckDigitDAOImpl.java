@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implements MandateCheckDigitDAO {
 	private static Logger logger = Logger.getLogger(MandateCheckDigitDAOImpl.class);
-	
+
 	public MandateCheckDigitDAOImpl() {
 		super();
 	}
@@ -89,7 +88,7 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 		if (!StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append("And Active = 1");
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -211,7 +210,8 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 			sql = QueryUtil.getCountQuery("MandateCheckDigits_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "MandateCheckDigits_Temp", "MandateCheckDigits" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "MandateCheckDigits_Temp", "MandateCheckDigits" },
+					whereClause);
 			break;
 		}
 
@@ -230,10 +230,11 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
 	@Override
 	public int getCheckDigit(int checkDigitValue, String lookUpValue, String type) {
 		logger.debug("Entering");
-		
+
 		MandateCheckDigit mandateCheckDigit = new MandateCheckDigit();
 		mandateCheckDigit.setCheckDigitValue(checkDigitValue);
 		mandateCheckDigit.setLookUpValue(lookUpValue);
@@ -241,7 +242,7 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From MandateCheckDigits");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where  CheckDigitValue != :CheckDigitValue AND LookUpValue = :LookUpValue " );
+		selectSql.append(" Where  CheckDigitValue != :CheckDigitValue AND LookUpValue = :LookUpValue ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateCheckDigit);
@@ -250,6 +251,5 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-
 
 }

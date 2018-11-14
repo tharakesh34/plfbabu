@@ -51,11 +51,16 @@ import com.pennant.backend.model.systemmasters.Salutation;
  * 
  */
 public interface SalutationService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Salutation getSalutationById(String id);
+
 	Salutation getApprovedSalutationById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

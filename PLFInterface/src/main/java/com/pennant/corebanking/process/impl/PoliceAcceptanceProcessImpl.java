@@ -9,13 +9,14 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class PoliceAcceptanceProcessImpl implements PoliceAcceptanceProcess {
 
 	public PoliceAcceptanceProcessImpl() {
-		
+
 	}
 
 	@Override
-	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws InterfaceException {
+	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail)
+			throws InterfaceException {
 		InterfaceMortgageDetail mortDetail = new InterfaceMortgageDetail();
-		if(StringUtils.equals("7894588855", mortgageDetail.getChassisNo())) {
+		if (StringUtils.equals("7894588855", mortgageDetail.getChassisNo())) {
 			throw new InterfaceException("PTI3001", "Failed");
 		}
 		mortDetail.setTransactionId("998877");
@@ -24,9 +25,9 @@ public class PoliceAcceptanceProcessImpl implements PoliceAcceptanceProcess {
 
 	@Override
 	public InterfaceMortgageDetail cancelMortage(String transactionId) throws InterfaceException {
-		
+
 		InterfaceMortgageDetail mortDetail = new InterfaceMortgageDetail();
-		if(StringUtils.isBlank(transactionId)) {
+		if (StringUtils.isBlank(transactionId)) {
 			throw new InterfaceException("PTI3001", "Mortgage Cancellation Failed.");
 		}
 		mortDetail.setReturncode("0000");

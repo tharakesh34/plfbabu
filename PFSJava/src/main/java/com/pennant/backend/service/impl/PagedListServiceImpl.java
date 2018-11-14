@@ -51,10 +51,10 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class PagedListServiceImpl implements PagedListService, Serializable {
-	private static final long	serialVersionUID	= 317035964609683048L;
+	private static final long serialVersionUID = 317035964609683048L;
 
 	private SearchProcessor searchProcessor;
-	
+
 	public PagedListServiceImpl() {
 		super();
 	}

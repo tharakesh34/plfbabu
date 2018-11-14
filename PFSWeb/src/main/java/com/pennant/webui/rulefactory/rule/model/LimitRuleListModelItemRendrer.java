@@ -69,16 +69,16 @@ public class LimitRuleListModelItemRendrer implements ListitemRenderer<LimitFilt
 
 		Listcell lc;
 		lc = new Listcell(dedupParm.getQueryCode());
-		lc.setParent(item);	
+		lc.setParent(item);
 		lc = new Listcell(dedupParm.getQueryDesc());
 		lc.setParent(item);
 		lc = new Listcell();
-		Checkbox ckActive= new Checkbox();
+		Checkbox ckActive = new Checkbox();
 		ckActive.setChecked(dedupParm.isActive());
 		ckActive.setDisabled(true);
 		ckActive.setParent(lc);
 		lc.setParent(item);
-		
+
 		lc = new Listcell(dedupParm.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(dedupParm.getRecordType()));

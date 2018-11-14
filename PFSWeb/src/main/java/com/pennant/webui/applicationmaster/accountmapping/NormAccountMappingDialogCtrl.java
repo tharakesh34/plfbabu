@@ -30,23 +30,22 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
-	private static final long					serialVersionUID	= -6945930303723518608L;
-	private static final Logger					logger				= Logger
-			.getLogger(NormAccountMappingDialogCtrl.class);
+	private static final long serialVersionUID = -6945930303723518608L;
+	private static final Logger logger = Logger.getLogger(NormAccountMappingDialogCtrl.class);
 
-	protected Window							window_NormAccountMappingDialog;
-	protected Uppercasebox						account;
-	protected Textbox							hostAccount;
-	protected ExtendedCombobox					accountType;
-	protected ExtendedCombobox					profitCenter;
-	protected ExtendedCombobox					costCenter;
+	protected Window window_NormAccountMappingDialog;
+	protected Uppercasebox account;
+	protected Textbox hostAccount;
+	protected ExtendedCombobox accountType;
+	protected ExtendedCombobox profitCenter;
+	protected ExtendedCombobox costCenter;
 
-	private AccountMapping						accountMapping;
-	private transient AccountMappingListCtrl	accountMappingListCtrl;
+	private AccountMapping accountMapping;
+	private transient AccountMappingListCtrl accountMappingListCtrl;
 
-	private transient boolean					validationOn;
+	private transient boolean validationOn;
 
-	private transient AccountMappingService		accountMappingService;
+	private transient AccountMappingService accountMappingService;
 
 	/**
 	 * default constructor.<br>

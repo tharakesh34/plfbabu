@@ -46,7 +46,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface ErrorDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	ErrorDetail getErrorDetailById(String id);

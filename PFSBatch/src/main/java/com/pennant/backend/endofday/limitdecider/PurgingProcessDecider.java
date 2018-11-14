@@ -42,9 +42,6 @@
  */
 package com.pennant.backend.endofday.limitdecider;
 
-
-
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
@@ -54,27 +51,27 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import com.pennant.app.util.SysParamUtil;
 
 public class PurgingProcessDecider implements JobExecutionDecider {
-	
+
 	private Logger logger = Logger.getLogger(PurgingProcessDecider.class);
 
 	public PurgingProcessDecider() {
 
 	}
-	
+
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug("Entering");
-		try{
-			if("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("PURGING_PROCESS"))){
+		try {
+			if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("PURGING_PROCESS"))) {
 				return new FlowExecutionStatus("YES");
-			}else{
+			} else {
 				return new FlowExecutionStatus("NO");
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 		return new FlowExecutionStatus("NO");
 
-	} 
-	
+	}
+
 }

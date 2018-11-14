@@ -96,67 +96,67 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssueHeader/PayOrderIssueDialog.zul file.
  */
 public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
-	private static final long							serialVersionUID		= -8421583705358772016L;
-	private static final Logger							logger					= Logger.getLogger(PayOrderIssueDialogCtrl.class);
+	private static final long serialVersionUID = -8421583705358772016L;
+	private static final Logger logger = Logger.getLogger(PayOrderIssueDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window									window_PayOrderIssueDialog;
+	protected Window window_PayOrderIssueDialog;
 
-	protected Textbox									finReference;
-	protected Grid										grid_Basicdetails;
+	protected Textbox finReference;
+	protected Grid grid_Basicdetails;
 
 	// not auto wired variables
-	private PayOrderIssueHeader							payOrderIssueHeader;
-	private transient PayOrderIssueListCtrl				payOrderIssueListCtrl;
+	private PayOrderIssueHeader payOrderIssueHeader;
+	private transient PayOrderIssueListCtrl payOrderIssueListCtrl;
 
-	private transient boolean							validationOn;
+	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private transient PayOrderIssueService				payOrderIssueService;
-	private HashMap<String, ArrayList<ErrorDetail>>	overideMap				= new HashMap<String, ArrayList<ErrorDetail>>();
+	private transient PayOrderIssueService payOrderIssueService;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	// NEEDED for the ReUse in the SearchWindow
 
-	int													listRows;
+	int listRows;
 
-	protected Grid										grid_payOrderIssue;
-	protected Label										payOrderIssue_finReference;
-	protected Label										payOrderIssue_finType;
-	protected Label										payOrderIssue_custCIF;
-	protected Checkbox									payOrderIssue_quickDisb;
-	protected Label										payOrderIssue_finCcy;
-	protected Label										payOrderIssue_startDate;
-	protected Label										payOrderIssue_maturityDate;
+	protected Grid grid_payOrderIssue;
+	protected Label payOrderIssue_finReference;
+	protected Label payOrderIssue_finType;
+	protected Label payOrderIssue_custCIF;
+	protected Checkbox payOrderIssue_quickDisb;
+	protected Label payOrderIssue_finCcy;
+	protected Label payOrderIssue_startDate;
+	protected Label payOrderIssue_maturityDate;
 
-	protected Label										label_PayOrderIssueDialog_FinReference;
-	protected Button									button_PayOrderIssueDialog_NewDisbursement;
+	protected Label label_PayOrderIssueDialog_FinReference;
+	protected Button button_PayOrderIssueDialog_NewDisbursement;
 
-	protected Listbox									listboxPayOrderIssue;
-	protected Label										label_AdvancePayments_Title;
+	protected Listbox listboxPayOrderIssue;
+	protected Label label_AdvancePayments_Title;
 
-	private List<FinAdvancePayments>					finAdvancePaymentsList	= new ArrayList<FinAdvancePayments>();
-	private String										ModuleType_POISSUE		= "POISSUE";
-	private DisbursementInstCtrl						disbursementInstCtrl;
-	private FinanceMain									financeMain;
-	private int											ccyformat;
+	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<FinAdvancePayments>();
+	private String ModuleType_POISSUE = "POISSUE";
+	private DisbursementInstCtrl disbursementInstCtrl;
+	private FinanceMain financeMain;
+	private int ccyformat;
 
-	protected Tab										tabPosting;
-	protected Listbox									listBoxFinAccountings;
-	private PostingsPreparationUtil						postingsPreparationUtil;
-	protected Decimalbox								payOrderIssue_FinAssetValue;
-	protected Decimalbox								payOrderIssue_FinCurrAssetValue;
-	private DisbursementPostings						disbursementPostings;
+	protected Tab tabPosting;
+	protected Listbox listBoxFinAccountings;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	protected Decimalbox payOrderIssue_FinAssetValue;
+	protected Decimalbox payOrderIssue_FinCurrAssetValue;
+	private DisbursementPostings disbursementPostings;
 
 	/**
 	 * default constructor.<br>
@@ -186,7 +186,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		setPageComponents(window_PayOrderIssueDialog);
 
 		try {
-			
+
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("payOrderIssueHeader")) {
 				this.payOrderIssueHeader = (PayOrderIssueHeader) arguments.get("payOrderIssueHeader");
@@ -202,7 +202,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 			doLoadWorkFlow(this.payOrderIssueHeader.isWorkflow(), this.payOrderIssueHeader.getWorkflowId(),
 					this.payOrderIssueHeader.getNextTaskId());
-			
+
 			if (!enqiryModule) {
 				/* set components visible dependent of the users rights */
 				doCheckRights();
@@ -273,8 +273,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		if (!enqiryModule) {
 			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
-			this.button_PayOrderIssueDialog_NewDisbursement.setVisible(getUserWorkspace().isAllowed(
-					"button_PayOrderIssueDialog_btnNew"));
+			this.button_PayOrderIssueDialog_NewDisbursement
+					.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnNew"));
 			this.btnNew.setVisible(false);
 			this.btnEdit.setVisible(false);
 			this.btnDelete.setVisible(false);
@@ -377,8 +377,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering");
 
 		this.payOrderIssue_finType.setValue(payIHeader.getFinType() + " - " + payIHeader.getFinTypeDesc());
-		this.payOrderIssue_finCcy.setValue(payIHeader.getFinCcy() + " - "
-				+ CurrencyUtil.getCcyDesc(payIHeader.getFinCcy()));
+		this.payOrderIssue_finCcy
+				.setValue(payIHeader.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(payIHeader.getFinCcy()));
 
 		this.payOrderIssue_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		this.payOrderIssue_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
@@ -487,8 +487,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		}
 
 		try {
-			disbursementInstCtrl.init(this.listboxPayOrderIssue, financeMain.getFinCcy(),
-					header.isAlwMultiPartyDisb(), getRole());
+			disbursementInstCtrl.init(this.listboxPayOrderIssue, financeMain.getFinCcy(), header.isAlwMultiPartyDisb(),
+					getRole());
 			disbursementInstCtrl.setFinanceDisbursement(header.getFinanceDisbursements());
 			disbursementInstCtrl.setFinanceMain(financeMain);
 			// fill the components with the data
@@ -514,8 +514,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.finReference.isReadonly()) {
-			this.finReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PayOrderIssueDialog_PayOrderIssueHeaderCode.value"), null, true));
+			this.finReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_PayOrderIssueDialog_PayOrderIssueHeaderCode.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -808,7 +808,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)  throws InterfaceException{
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -840,8 +840,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_PayOrderIssueDialog, auditHeader);
 						return processCompleted;
 
@@ -939,7 +939,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPayOrderIssueHeader.getBefImage(), aPayOrderIssueHeader);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPayOrderIssueHeader.getBefImage(),
+				aPayOrderIssueHeader);
 		return new AuditHeader(String.valueOf(aPayOrderIssueHeader.getFinReference()), null, null, null, auditDetail,
 				aPayOrderIssueHeader.getUserDetails(), getOverideMap());
 	}
@@ -1002,76 +1003,76 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 				Listitem item = new Listitem();
 				Listcell lc;
-			 if (accountingSetEntries.get(i) instanceof ReturnDataSet) {
+				if (accountingSetEntries.get(i) instanceof ReturnDataSet) {
 					ReturnDataSet entry = (ReturnDataSet) accountingSetEntries.get(i);
-					
-					if(entry.getPostAmount().compareTo(BigDecimal.ZERO)!=0){
 
-					//Highlighting Failed Posting Details 
-					String sClassStyle = "";
-					if (StringUtils.isNotBlank(entry.getErrorId())
-							&& !"0000".equals(StringUtils.trimToEmpty(entry.getErrorId()))) {
-						sClassStyle = "color:#FF0000;";
+					if (entry.getPostAmount().compareTo(BigDecimal.ZERO) != 0) {
+
+						//Highlighting Failed Posting Details 
+						String sClassStyle = "";
+						if (StringUtils.isNotBlank(entry.getErrorId())
+								&& !"0000".equals(StringUtils.trimToEmpty(entry.getErrorId()))) {
+							sClassStyle = "color:#FF0000;";
+						}
+
+						Hbox hbox = new Hbox();
+						Label label = new Label(
+								PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
+						label.setStyle(sClassStyle);
+						hbox.appendChild(label);
+						if (StringUtils.isNotBlank(entry.getPostStatus())) {
+							Label la = new Label("*");
+							la.setStyle("color:red;");
+							hbox.appendChild(la);
+						}
+						lc = new Listcell();
+						lc.setStyle(sClassStyle);
+						lc.appendChild(hbox);
+						lc.setParent(item);
+						lc = new Listcell(entry.getTranDesc());
+						lc.setStyle(sClassStyle);
+						lc.setParent(item);
+						if (entry.isShadowPosting()) {
+							lc = new Listcell("Shadow");
+							lc.setStyle(sClassStyle);
+							lc.setParent(item);
+							lc = new Listcell("Shadow");
+							lc.setStyle(sClassStyle);
+							lc.setParent(item);
+						} else {
+							lc = new Listcell(entry.getTranCode());
+							lc.setStyle(sClassStyle);
+							lc.setParent(item);
+							lc = new Listcell(entry.getRevTranCode());
+							lc.setStyle(sClassStyle);
+							lc.setParent(item);
+						}
+						lc = new Listcell(entry.getAccountType());
+						lc.setStyle(sClassStyle);
+						lc.setParent(item);
+						lc = new Listcell(PennantApplicationUtil.formatAccountNumber(entry.getAccount()));
+						lc.setStyle("font-weight:bold;");
+						lc.setStyle(sClassStyle);
+						lc.setParent(item);
+
+						lc = new Listcell(entry.getAcCcy());
+						lc.setParent(item);
+
+						BigDecimal amt = entry.getPostAmount() != null ? entry.getPostAmount() : BigDecimal.ZERO;
+						lc = new Listcell(PennantApplicationUtil.amountFormate(amt, formatter));
+
+						lc.setStyle("font-weight:bold;text-align:right;");
+						lc.setStyle(sClassStyle + "font-weight:bold;text-align:right;");
+						lc.setParent(item);
+						lc = new Listcell("0000".equals(StringUtils.trimToEmpty(entry.getErrorId())) ? ""
+								: StringUtils.trimToEmpty(entry.getErrorId()));
+						lc.setStyle("font-weight:bold;color:red;");
+						lc.setTooltiptext(entry.getErrorMsg());
+						lc.setParent(item);
+
 					}
 
-					Hbox hbox = new Hbox();
-					Label label = new Label(PennantAppUtil.getlabelDesc(entry.getDrOrCr(),
-							PennantStaticListUtil.getTranType()));
-					label.setStyle(sClassStyle);
-					hbox.appendChild(label);
-					if (StringUtils.isNotBlank(entry.getPostStatus())) {
-						Label la = new Label("*");
-						la.setStyle("color:red;");
-						hbox.appendChild(la);
-					}
-					lc = new Listcell();
-					lc.setStyle(sClassStyle);
-					lc.appendChild(hbox);
-					lc.setParent(item);
-					lc = new Listcell(entry.getTranDesc());
-					lc.setStyle(sClassStyle);
-					lc.setParent(item);
-					if (entry.isShadowPosting()) {
-						lc = new Listcell("Shadow");
-						lc.setStyle(sClassStyle);
-						lc.setParent(item);
-						lc = new Listcell("Shadow");
-						lc.setStyle(sClassStyle);
-						lc.setParent(item);
-					} else {
-						lc = new Listcell(entry.getTranCode());
-						lc.setStyle(sClassStyle);
-						lc.setParent(item);
-						lc = new Listcell(entry.getRevTranCode());
-						lc.setStyle(sClassStyle);
-						lc.setParent(item);
-					}
-					lc = new Listcell(entry.getAccountType());
-					lc.setStyle(sClassStyle);
-					lc.setParent(item);
-					lc = new Listcell(PennantApplicationUtil.formatAccountNumber(entry.getAccount()));
-					lc.setStyle("font-weight:bold;");
-					lc.setStyle(sClassStyle);
-					lc.setParent(item);
-
-					lc = new Listcell(entry.getAcCcy());
-					lc.setParent(item);
-
-					BigDecimal amt = entry.getPostAmount() != null ? entry.getPostAmount() : BigDecimal.ZERO;
-					lc = new Listcell(PennantApplicationUtil.amountFormate(amt, formatter));
-
-					lc.setStyle("font-weight:bold;text-align:right;");
-					lc.setStyle(sClassStyle + "font-weight:bold;text-align:right;");
-					lc.setParent(item);
-					lc = new Listcell("0000".equals(StringUtils.trimToEmpty(entry.getErrorId())) ? ""
-							: StringUtils.trimToEmpty(entry.getErrorId()));
-					lc.setStyle("font-weight:bold;color:red;");
-					lc.setTooltiptext(entry.getErrorMsg());
-					lc.setParent(item);
-				
-			  }
-			 
-			 }
+				}
 				this.listBoxFinAccountings.appendChild(item);
 			}
 
@@ -1085,7 +1086,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				List<ReturnDataSet> returnDataSetList = getPostings(issueHeader);
 				doFillAccounting(returnDataSetList);
 			} else {
-				List<ReturnDataSet> datasetList = getDisbursementPostings().getDisbPosting(issueHeader.getFinAdvancePaymentsList(), financeMain);
+				List<ReturnDataSet> datasetList = getDisbursementPostings()
+						.getDisbPosting(issueHeader.getFinAdvancePaymentsList(), financeMain);
 				doFillAccounting(datasetList);
 			}
 
@@ -1178,7 +1180,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
 	}
-	
+
 	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
 		this.disbursementInstCtrl = disbursementInstCtrl;
 	}

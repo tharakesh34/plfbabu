@@ -53,12 +53,19 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface BankDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BankDetail getBankDetailById(String id);
+
 	BankDetail getApprovedBankDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	int getAccNoLengthByCode(String bankCode);
+
 	String getBankCodeByName(String bankName);
 
 	BankDetail getBankDetailsByIfsc(String ifsc);

@@ -53,28 +53,35 @@ public class BatchUploadConfig {
 	private String url;
 	private boolean isActive;
 	private String extraHeader;
-	
+
 	public String getLabel() {
 		return label;
 	}
+
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
 	public String getUrl() {
 		return url;
 	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
 	public boolean isActive() {
 		return isActive;
 	}
+
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+
 	public String getExtraHeader() {
 		return extraHeader;
 	}
+
 	public void setExtraHeader(String extraHeader) {
 		this.extraHeader = extraHeader;
 	}

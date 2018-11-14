@@ -54,7 +54,7 @@ public interface FinAdvancePaymentsDAO {
 	FinAdvancePayments getNewFinAdvancePayments();
 
 	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
-	
+
 	int getAdvancePaymentsCountByPartnerBank(long partnerBankID, String type);
 
 	void update(FinAdvancePayments finAdvancePaymentsDAO, String type);
@@ -70,20 +70,20 @@ public interface FinAdvancePaymentsDAO {
 	void updateStatus(FinAdvancePayments finAdvancePayments, String type);
 
 	int getBranch(long bankBranchID, String type);
-	
+
 	void update(long paymentId, long linkedTranId);
-	
+
 	void updateDisbursmentStatus(FinAdvancePayments finAdvancePayments);
 
 	int getBankCode(String bankCode, String type);
 
 	int getMaxPaymentSeq(String finReference);
-	
+
 	int getFinAdvCountByRef(String finReference, String type);
-	
+
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
-	
+
 	int getCountByFinReference(String finReference);
-	
-	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate,String type);
+
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate, String type);
 }

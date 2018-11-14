@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -64,15 +63,16 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail> implements BundledProductsDetailDAO {
 	private static Logger logger = Logger.getLogger(BundledProductsDetailDAOImpl.class);
-	
+
 	public BundledProductsDetailDAOImpl() {
 		super();
 	}
-		
+
 	/**
 	 * Fetch the Record Equipment Loan Details details by key field
 	 * 
-	 * @param id (String)
+	 * @param id
+	 *            (String)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return BundledProductsDetail
@@ -82,13 +82,16 @@ public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail
 		logger.debug("Entering");
 		BundledProductsDetail bundledProductsDetail = new BundledProductsDetail();
 		bundledProductsDetail.setId(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference, CardProduct, SalesStaff, EmbossingName, StatusOfCust, MinRepay, BillingAcc, StmtAddress, ");
-		selectSql.append(" StmtEmail, PhysicalAddress, ContactNumber, Ref1Name, Ref1PhoneNum, Ref1Email, Ref2Name, Ref2PhoneNum, Ref2Email, ");
-		selectSql.append(" BankName, ChequeNo, ChequeAmt, CardType, ClassType, LimitRecommended, LimitApproved, ProfitRate, CrossSellCard, UrgentIssuance, ");
-		
-		if(type.contains("View")){
+		selectSql.append(
+				"Select FinReference, CardProduct, SalesStaff, EmbossingName, StatusOfCust, MinRepay, BillingAcc, StmtAddress, ");
+		selectSql.append(
+				" StmtEmail, PhysicalAddress, ContactNumber, Ref1Name, Ref1PhoneNum, Ref1Email, Ref2Name, Ref2PhoneNum, Ref2Email, ");
+		selectSql.append(
+				" BankName, ChequeNo, ChequeAmt, CardType, ClassType, LimitRecommended, LimitApproved, ProfitRate, CrossSellCard, UrgentIssuance, ");
+
+		if (type.contains("View")) {
 			selectSql.append(" ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
@@ -96,28 +99,26 @@ public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail
 		selectSql.append(" From BundledProductsDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
 		RowMapper<BundledProductsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(BundledProductsDetail.class);
-		
-		try{
-			bundledProductsDetail = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			bundledProductsDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			bundledProductsDetail = null;
 		}
 		logger.debug("Leaving");
 		return bundledProductsDetail;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the BundledProductsDetail or
-	 * BundledProductsDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Equipment Loan Details by key
-	 * EquipmentLoanId
+	 * This method Deletes the Record from the BundledProductsDetail or BundledProductsDetail_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Equipment Loan Details by key EquipmentLoanId
 	 * 
 	 * @param Equipment
 	 *            Loan Details (bundledProductsDetail)
@@ -128,7 +129,7 @@ public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail
 	 * 
 	 */
 	@Override
-	public void delete(BundledProductsDetail bundledProductsDetail,String type) {
+	public void delete(BundledProductsDetail bundledProductsDetail, String type) {
 		logger.debug("Entering");
 
 		StringBuilder deleteSql = new StringBuilder();
@@ -138,18 +139,17 @@ public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into BundledProductsDetail or
-	 * BundledProductsDetail_Temp. it fetches the available Sequence form
-	 * SeqBundledProductsDetail by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into BundledProductsDetail or BundledProductsDetail_Temp. it fetches the available
+	 * Sequence form SeqBundledProductsDetail by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Equipment Loan Details
 	 * 
@@ -161,36 +161,40 @@ public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail
 	 * @throws DataAccessException
 	 * 
 	 */
-	public String save(BundledProductsDetail bundledProductsDetail,String type) {
+	public String save(BundledProductsDetail bundledProductsDetail, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder();
+
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into BundledProductsDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" ( FinReference, CardProduct, SalesStaff, EmbossingName, StatusOfCust, MinRepay, BillingAcc, StmtAddress, StmtEmail, " );
-		insertSql.append(" PhysicalAddress, ContactNumber, Ref1Name, Ref1PhoneNum, Ref1Email, Ref2Name, Ref2PhoneNum, Ref2Email, BankName, ");
-		insertSql.append(" ChequeNo, ChequeAmt, CardType, ClassType, LimitRecommended, LimitApproved, ProfitRate, CrossSellCard, UrgentIssuance,");
+		insertSql.append(
+				" ( FinReference, CardProduct, SalesStaff, EmbossingName, StatusOfCust, MinRepay, BillingAcc, StmtAddress, StmtEmail, ");
+		insertSql.append(
+				" PhysicalAddress, ContactNumber, Ref1Name, Ref1PhoneNum, Ref1Email, Ref2Name, Ref2PhoneNum, Ref2Email, BankName, ");
+		insertSql.append(
+				" ChequeNo, ChequeAmt, CardType, ClassType, LimitRecommended, LimitApproved, ProfitRate, CrossSellCard, UrgentIssuance,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :CardProduct, :SalesStaff, :EmbossingName, :StatusOfCust, :MinRepay, :BillingAcc, :StmtAddress, :StmtEmail, ");
-		insertSql.append(" :PhysicalAddress, :ContactNumber, :Ref1Name, :Ref1PhoneNum, :Ref1Email, :Ref2Name, :Ref2PhoneNum, :Ref2Email, :BankName, ");
-		insertSql.append(" :ChequeNo, :ChequeAmt, :CardType, :ClassType, :LimitRecommended, :LimitApproved, :ProfitRate, :CrossSellCard, :UrgentIssuance,");
+		insertSql.append(
+				" Values( :FinReference, :CardProduct, :SalesStaff, :EmbossingName, :StatusOfCust, :MinRepay, :BillingAcc, :StmtAddress, :StmtEmail, ");
+		insertSql.append(
+				" :PhysicalAddress, :ContactNumber, :Ref1Name, :Ref1PhoneNum, :Ref1Email, :Ref2Name, :Ref2PhoneNum, :Ref2Email, :BankName, ");
+		insertSql.append(
+				" :ChequeNo, :ChequeAmt, :CardType, :ClassType, :LimitRecommended, :LimitApproved, :ProfitRate, :CrossSellCard, :UrgentIssuance,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return bundledProductsDetail.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record BundledProductsDetail or
-	 * BundledProductsDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Equipment Loan Details by key
-	 * EquipmentLoanId and Version
+	 * This method updates the Record BundledProductsDetail or BundledProductsDetail_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Equipment Loan Details by key EquipmentLoanId and Version
 	 * 
 	 * @param Equipment
 	 *            Loan Details (bundledProductsDetail)
@@ -201,32 +205,37 @@ public class BundledProductsDetailDAOImpl extends BasicDao<BundledProductsDetail
 	 * 
 	 */
 	@Override
-	public void update(BundledProductsDetail bundledProductsDetail,String type) {
+	public void update(BundledProductsDetail bundledProductsDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder();
+
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update BundledProductsDetail");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CardProduct = :CardProduct, SalesStaff = :SalesStaff, EmbossingName = :EmbossingName," );
-		updateSql.append(" StatusOfCust = :StatusOfCust, MinRepay = :MinRepay, BillingAcc = :BillingAcc, StmtAddress = :StmtAddress, StmtEmail = :StmtEmail, " );
-		updateSql.append(" PhysicalAddress = :PhysicalAddress, ContactNumber = :ContactNumber, Ref1Name = :Ref1Name, Ref1PhoneNum = :Ref1PhoneNum, " );
-		updateSql.append(" Ref1Email = :Ref1Email,  Ref2Name = :Ref2Name, Ref2PhoneNum = :Ref2PhoneNum, Ref2Email = :Ref2Email, BankName = :BankName," );
-		updateSql.append(" ChequeNo = :ChequeNo,  ChequeAmt = :ChequeAmt, CardType = :CardType, ClassType = :ClassType, LimitRecommended = :LimitRecommended," );
-		updateSql.append(" LimitApproved = :LimitApproved,  ProfitRate = :ProfitRate, CrossSellCard = :CrossSellCard, UrgentIssuance = :UrgentIssuance, " );
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set CardProduct = :CardProduct, SalesStaff = :SalesStaff, EmbossingName = :EmbossingName,");
+		updateSql.append(
+				" StatusOfCust = :StatusOfCust, MinRepay = :MinRepay, BillingAcc = :BillingAcc, StmtAddress = :StmtAddress, StmtEmail = :StmtEmail, ");
+		updateSql.append(
+				" PhysicalAddress = :PhysicalAddress, ContactNumber = :ContactNumber, Ref1Name = :Ref1Name, Ref1PhoneNum = :Ref1PhoneNum, ");
+		updateSql.append(
+				" Ref1Email = :Ref1Email,  Ref2Name = :Ref2Name, Ref2PhoneNum = :Ref2PhoneNum, Ref2Email = :Ref2Email, BankName = :BankName,");
+		updateSql.append(
+				" ChequeNo = :ChequeNo,  ChequeAmt = :ChequeAmt, CardType = :CardType, ClassType = :ClassType, LimitRecommended = :LimitRecommended,");
+		updateSql.append(
+				" LimitApproved = :LimitApproved,  ProfitRate = :ProfitRate, CrossSellCard = :CrossSellCard, UrgentIssuance = :UrgentIssuance, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bundledProductsDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

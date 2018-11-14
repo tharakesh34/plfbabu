@@ -73,7 +73,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	public RejectDetailServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -95,15 +95,12 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTRejectCodes/BMTRejectCodes_Temp by using RejectDetailDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using RejectDetailDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTRejectCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTRejectCodes/BMTRejectCodes_Temp by using RejectDetailDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using RejectDetailDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTRejectCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -114,14 +111,14 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		RejectDetail rejectDetail = (RejectDetail) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (rejectDetail.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -134,19 +131,17 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		} else {
 			getRejectDetailDAO().update(rejectDetail, tableType);
 		}
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTRejectCodes by using RejectDetailDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtBMTRejectCodes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTRejectCodes by using RejectDetailDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTRejectCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -168,8 +163,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	}
 
 	/**
-	 * getRejectDetailById fetch the details by using RejectDetailDAO's
-	 * getRejectDetailById method.
+	 * getRejectDetailById fetch the details by using RejectDetailDAO's getRejectDetailById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -177,16 +171,15 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 *            (String) ""/_Temp/_View
 	 * @return RejectDetail
 	 */
-	
+
 	@Override
 	public RejectDetail getRejectDetailById(String id) {
 		return getRejectDetailDAO().getRejectDetailById(id, "_View");
 	}
 
 	/**
-	 * getApprovedRejectDetailById fetch the details by using RejectDetailDAO's
-	 * getRejectDetailById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTRejectCodes.
+	 * getApprovedRejectDetailById fetch the details by using RejectDetailDAO's getRejectDetailById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BMTRejectCodes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,20 +190,15 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getRejectDetailDAO().delete with parameters rejectDetail,"" b) NEW
-	 * Add new record in to main table by using getRejectDetailDAO().save with
-	 * parameters rejectDetail,"" c) EDIT Update record in the main table by
-	 * using getRejectDetailDAO().update with parameters rejectDetail,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getRejectDetailDAO().delete with parameters rejectDetail,"_Temp" 4) Audit
-	 * the record in to AuditHeader and AdtBMTRejectCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtBMTRejectCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getRejectDetailDAO().delete with
+	 * parameters rejectDetail,"" b) NEW Add new record in to main table by using getRejectDetailDAO().save with
+	 * parameters rejectDetail,"" c) EDIT Update record in the main table by using getRejectDetailDAO().update with
+	 * parameters rejectDetail,"" 3) Delete the record from the workFlow table by using getRejectDetailDAO().delete with
+	 * parameters rejectDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTRejectCodes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTRejectCodes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -218,24 +206,25 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		RejectDetail rejectDetail = new RejectDetail();
 		BeanUtils.copyProperties((RejectDetail) auditHeader.getAuditDetail().getModelData(), rejectDetail);
-		
+
 		getRejectDetailDAO().delete(rejectDetail, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(rejectDetailDAO.getRejectDetailById(rejectDetail.getRejectCode(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(rejectDetailDAO.getRejectDetailById(rejectDetail.getRejectCode(), ""));
 		}
-		
+
 		if (rejectDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getRejectDetailDAO().delete(rejectDetail, TableType.MAIN_TAB);
@@ -268,13 +257,10 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getRejectDetailDAO().delete with parameters
-	 * rejectDetail,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTRejectCodes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getRejectDetailDAO().delete with parameters rejectDetail,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtBMTRejectCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -282,9 +268,9 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader);
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -292,17 +278,15 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		RejectDetail rejectDetail = (RejectDetail) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getRejectDetailDAO().delete(rejectDetail, TableType.TEMP_TAB);
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -310,7 +294,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -320,8 +304,8 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getRejectDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
+	 * from getRejectDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -334,8 +318,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		RejectDetail rejectDetail = (RejectDetail) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (rejectDetail.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())
+		if (rejectDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())
 				&& rejectDetailDAO.isDuplicateKey(rejectDetail.getRejectCode(),
 						rejectDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

@@ -14,27 +14,27 @@ import javax.xml.bind.annotation.XmlType;
 public class PersonalDetails implements Serializable {
 
 	private static final long serialVersionUID = -6544421138043452874L;
-	
+
 	@XmlElement(name = "FIRST_NAME")
-	private String	firstName;
- 
+	private String firstName;
+
 	@XmlElement(name = "LAST_NAME")
-	private String	lastName;
-	
+	private String lastName;
+
 	@XmlElement(name = "DOB")
-	private String	dob;
-	
+	private String dob;
+
 	@XmlElement(name = "GENDER")
-	private String	gender;
-	
+	private String gender;
+
 	@XmlElement(name = "MOBILE")
-	private String	mobile;
-	
+	private String mobile;
+
 	@XmlElement(name = "PAN")
-	private String	pan;
-	
+	private String pan;
+
 	@XmlElement(name = "UID_")
-	private String	uid_;
+	private String uid_;
 
 	public String getFirstName() {
 		return firstName;

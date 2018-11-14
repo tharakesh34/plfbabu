@@ -125,17 +125,15 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import freemarker.template.Configuration;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/LoanQuery/QueryDetail/queryDetailDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/LoanQuery/QueryDetail/queryDetailDialog.zul file. <br>
  */
 public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(QueryDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Tabs tabsIndexCenter;
 	protected Tab queryDetails;
@@ -232,8 +230,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -274,7 +271,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.module.setValue(legalModuleName);
 				}
 			}
-			
+
 			if (arguments.containsKey("roleCode")) {
 				this.roleCode = (String) arguments.get("roleCode");
 			}
@@ -285,7 +282,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
-			} 
+			}
 			doLoadWorkFlow(this.queryDetail.isWorkflow(), this.queryDetail.getWorkflowId(),
 					this.queryDetail.getNextTaskId());
 			// Store the before image.
@@ -327,7 +324,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		this.qryCategory.setValueColumn("Code");
 		this.qryCategory.setDescColumn("Description");
 		this.qryCategory.setValidateColumns(new String[] { "Code" });
-		
+
 		this.custDocType.setProperties("CustDocumentType", "DocTypeCode", "DocTypeDesc", false, 25);
 		this.custDocType.setValidateColumns(new String[] { "DocTypeCode" });
 		this.custDocType.setMaxlength(50);
@@ -361,8 +358,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// this.btnSave.setVisible(getUserWorkspace().isAllowed("button_QueryDetailDialog_btnSave"));
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
-		
-		if(isEnquiry()){
+
+		if (isEnquiry()) {
 			this.btnSave.setVisible(false);
 		}
 		logger.debug(Literal.LEAVING);
@@ -424,8 +421,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the upload
-	 * button.
+	 * The framework calls this event handler when user clicks the upload button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -530,7 +526,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		logger.debug(Literal.ENTERING);
 
 		DocumentDetails documentDetails = (DocumentDetails) event.getData();
-		
+
 		// Set Image data to bean
 		if (documentDetails != null && documentDetails.getDocImage() == null
 				&& documentDetails.getDocRefId() != Long.MIN_VALUE) {
@@ -542,14 +538,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		String docName = documentDetails.getDocName().toLowerCase();
 		if (docName.endsWith(".doc") || docName.endsWith(".docx")) {
-			Filedownload.save(new AMedia(docName, "msword", "application/msword",
-					documentDetails.getDocImage()));
+			Filedownload.save(new AMedia(docName, "msword", "application/msword", documentDetails.getDocImage()));
 		} else if (docName.endsWith(".xls") || docName.endsWith(".xlsx")) {
-			Filedownload.save(new AMedia(docName, "xls", "application/vnd.ms-excel",
-					documentDetails.getDocImage()));
-		} else if (docName.endsWith(".png")
-				|| docName.endsWith(".jpeg")
-				|| docName.endsWith(".pdf") || docName.endsWith(".jpg")) {
+			Filedownload.save(new AMedia(docName, "xls", "application/vnd.ms-excel", documentDetails.getDocImage()));
+		} else if (docName.endsWith(".png") || docName.endsWith(".jpeg") || docName.endsWith(".pdf")
+				|| docName.endsWith(".jpg")) {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("documentDetails", documentDetails);
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDocumentView.zul", null, map);
@@ -558,8 +551,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	/**
-	 * Filling the QueryModuleDocumentMap details based on checked and unchecked
-	 * events of onClick_CheckBox.
+	 * Filling the QueryModuleDocumentMap details based on checked and unchecked events of onClick_CheckBox.
 	 */
 	public void onClick_CheckBox(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -664,8 +656,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -677,8 +668,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -902,8 +892,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components Product
-	 * Deviation list
+	 * Method Used for set list of values been class to components Product Deviation list
 	 * 
 	 * @param Product
 	 */
@@ -949,7 +938,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		//  Reference
 		try {
 			aQueryDetail.setReference(this.reference.getValue());
@@ -1420,8 +1409,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1490,43 +1478,27 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 
 		/*
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
-		 * this.qryCategory);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_QryNotes"),
-		 * this.qryNotes);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_AssignedRole"),
-		 * this.assignedRole);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_RaisedBy"),
-		 * this.raisedBy);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_RaisedOn"),
-		 * this.raisedOn);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_ResponsNotes"),
-		 * this.responsNotes);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_ResponseBy"),
-		 * this.responseBy);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_ResponseOn"),
-		 * this.responseOn);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CloserNotes"),
-		 * this.closerNotes);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CloserBy"),
-		 * this.closerBy);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CloserOn"),
-		 * this.closerOn);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
-		 * this.custDocType);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
-		 * this.docRemarks);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
-		 * this.btnUploadDoc);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
-		 * this.btnUploadDocs);
-		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"),
-		 * this.btnNotifyTo);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"), this.qryCategory);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_QryNotes"), this.qryNotes);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_AssignedRole"), this.assignedRole);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_RaisedBy"), this.raisedBy);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_RaisedOn"), this.raisedOn);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_ResponsNotes"), this.responsNotes);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_ResponseBy"), this.responseBy);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_ResponseOn"), this.responseOn);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CloserNotes"), this.closerNotes);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CloserBy"), this.closerBy);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CloserOn"), this.closerOn);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"), this.custDocType);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"), this.docRemarks);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"), this.btnUploadDoc);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"), this.btnUploadDocs);
+		 * readOnlyComponent(isReadOnly("QueryDetailDialog_CategoryId"), this.btnNotifyTo);
 		 */
 		if (this.financeMain == null && this.sampling == null) {
 			readOnlyComponent(false, this.finReference);
 		}
-		
+
 		if (PennantConstants.QUERY_LEGAL_VERIFICATION.equals(this.module.getValue())) {
 			readOnlyComponent(true, this.finReference);
 		}

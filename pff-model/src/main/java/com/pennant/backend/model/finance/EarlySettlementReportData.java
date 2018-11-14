@@ -25,15 +25,14 @@
 
 package com.pennant.backend.model.finance;
 
-
 /**
  * Model class for the <b>EarlySettlement Report Generation</b>.<br>
  * 
  */
 public class EarlySettlementReportData implements java.io.Serializable {
 
-    private static final long serialVersionUID = -3026443763391506067L;
-    
+	private static final long serialVersionUID = -3026443763391506067L;
+
 	private String finReference;
 	private String finType;
 	private String finTypeDesc;
@@ -56,151 +55,189 @@ public class EarlySettlementReportData implements java.io.Serializable {
 	private String periodCoverageAmt;
 	private String returnInsAmount;
 	private String totCustPaidAmount;
-	
-	
+
 	public EarlySettlementReportData() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
-	
+		this.finReference = finReference;
+	}
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
+
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
-	
+		this.finType = finType;
+	}
+
 	public String getFinTypeDesc() {
-    	return finTypeDesc;
-    }
+		return finTypeDesc;
+	}
+
 	public void setFinTypeDesc(String finTypeDesc) {
-    	this.finTypeDesc = finTypeDesc;
-    }
-	
+		this.finTypeDesc = finTypeDesc;
+	}
+
 	public String getCustCIF() {
-    	return custCIF;
-    }
+		return custCIF;
+	}
+
 	public void setCustCIF(String custCIF) {
-    	this.custCIF = custCIF;
-    }
-	
+		this.custCIF = custCIF;
+	}
+
 	public String getCustShrtName() {
-    	return custShrtName;
-    }
+		return custShrtName;
+	}
+
 	public void setCustShrtName(String custShrtName) {
-    	this.custShrtName = custShrtName;
-    }
+		this.custShrtName = custShrtName;
+	}
+
 	public String getAppDate() {
-    	return appDate;
-    }
+		return appDate;
+	}
+
 	public void setAppDate(String appDate) {
-    	this.appDate = appDate;
-    }
+		this.appDate = appDate;
+	}
+
 	public String getEarlySettlementDate() {
-    	return earlySettlementDate;
-    }
+		return earlySettlementDate;
+	}
+
 	public void setEarlySettlementDate(String earlySettlementDate) {
-    	this.earlySettlementDate = earlySettlementDate;
-    }
+		this.earlySettlementDate = earlySettlementDate;
+	}
+
 	public String getFinStartDate() {
-    	return finStartDate;
-    }
+		return finStartDate;
+	}
+
 	public void setFinStartDate(String finStartDate) {
-    	this.finStartDate = finStartDate;
-    }
+		this.finStartDate = finStartDate;
+	}
+
 	public String getTotalTerms() {
-    	return totalTerms;
-    }
+		return totalTerms;
+	}
+
 	public void setTotalTerms(String totalTerms) {
-    	this.totalTerms = totalTerms;
-    }
+		this.totalTerms = totalTerms;
+	}
+
 	public String getTotalPaidTerms() {
-    	return totalPaidTerms;
-    }
+		return totalPaidTerms;
+	}
+
 	public void setTotalPaidTerms(String totalPaidTerms) {
-    	this.totalPaidTerms = totalPaidTerms;
-    }
+		this.totalPaidTerms = totalPaidTerms;
+	}
+
 	public String getTotalUnpaidTerms() {
-    	return totalUnpaidTerms;
-    }
+		return totalUnpaidTerms;
+	}
+
 	public void setTotalUnpaidTerms(String totalUnpaidTerms) {
-    	this.totalUnpaidTerms = totalUnpaidTerms;
-    }
+		this.totalUnpaidTerms = totalUnpaidTerms;
+	}
+
 	public String getTotalPaidAmount() {
-    	return totalPaidAmount;
-    }
+		return totalPaidAmount;
+	}
+
 	public void setTotalPaidAmount(String totalPaidAmount) {
-    	this.totalPaidAmount = totalPaidAmount;
-    }
+		this.totalPaidAmount = totalPaidAmount;
+	}
+
 	public String getOutStandingTotal() {
-    	return outStandingTotal;
-    }
+		return outStandingTotal;
+	}
+
 	public void setOutStandingTotal(String outStandingTotal) {
-    	this.outStandingTotal = outStandingTotal;
-    }
+		this.outStandingTotal = outStandingTotal;
+	}
+
 	public String getOutStandingPft() {
-    	return outStandingPft;
-    }
+		return outStandingPft;
+	}
+
 	public void setOutStandingPft(String outStandingPft) {
-    	this.outStandingPft = outStandingPft;
-    }
+		this.outStandingPft = outStandingPft;
+	}
+
 	public String getDiscountPerc() {
-    	return discountPerc;
-    }
+		return discountPerc;
+	}
+
 	public void setDiscountPerc(String discountPerc) {
-    	this.discountPerc = discountPerc;
-    }
+		this.discountPerc = discountPerc;
+	}
+
 	public String getDiscountAmount() {
-    	return discountAmount;
-    }
+		return discountAmount;
+	}
+
 	public void setDiscountAmount(String discountAmount) {
-    	this.discountAmount = discountAmount;
-    }
+		this.discountAmount = discountAmount;
+	}
+
 	public String getInsuranceFee() {
-    	return insuranceFee;
-    }
+		return insuranceFee;
+	}
+
 	public void setInsuranceFee(String insuranceFee) {
-    	this.insuranceFee = insuranceFee;
-    }
+		this.insuranceFee = insuranceFee;
+	}
+
 	public String getPeriodCoverage() {
-    	return periodCoverage;
-    }
+		return periodCoverage;
+	}
+
 	public void setPeriodCoverage(String periodCoverage) {
-    	this.periodCoverage = periodCoverage;
-    }
+		this.periodCoverage = periodCoverage;
+	}
+
 	public String getPeriodCoverageAmt() {
-    	return periodCoverageAmt;
-    }
+		return periodCoverageAmt;
+	}
+
 	public void setPeriodCoverageAmt(String periodCoverageAmt) {
-    	this.periodCoverageAmt = periodCoverageAmt;
-    }
+		this.periodCoverageAmt = periodCoverageAmt;
+	}
+
 	public String getReturnInsAmount() {
-    	return returnInsAmount;
-    }
+		return returnInsAmount;
+	}
+
 	public void setReturnInsAmount(String returnInsAmount) {
-    	this.returnInsAmount = returnInsAmount;
-    }
+		this.returnInsAmount = returnInsAmount;
+	}
+
 	public String getTotCustPaidAmount() {
-    	return totCustPaidAmount;
-    }
+		return totCustPaidAmount;
+	}
+
 	public void setTotCustPaidAmount(String totCustPaidAmount) {
-    	this.totCustPaidAmount = totCustPaidAmount;
-    }
+		this.totCustPaidAmount = totCustPaidAmount;
+	}
+
 	public String getDeptFrom() {
-	    return deptFrom;
-    }
+		return deptFrom;
+	}
+
 	public void setDeptFrom(String deptFrom) {
-	    this.deptFrom = deptFrom;
-    }
-	
+		this.deptFrom = deptFrom;
+	}
+
 }

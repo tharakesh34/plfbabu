@@ -43,7 +43,6 @@ package com.pennant.backend.model.rmtmasters;
  ********************************************************************************************
 */
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,16 +63,16 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	private long accountSetID = Long.MIN_VALUE;
 	private String lovDescAccountingName;
 	private String lovDescEventAccountingName;
-	private boolean mandatory=false;
-	private boolean newRecord=false;
+	private boolean mandatory = false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinTypeAccounting befImage;
-	
+
 	private int moduleId;
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -86,6 +85,7 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("eventDesc");
@@ -95,31 +95,35 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return finType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finType = id;
 	}
-	
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
+
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
+		this.finType = finType;
+	}
 
 	public String getEvent() {
-    	return event;
-    }
+		return event;
+	}
+
 	public void setEvent(String event) {
-    	this.event = event;
-    }
+		this.event = event;
+	}
 
 	public String getEventDesc() {
 		return eventDesc;
 	}
+
 	public void setEventDesc(String eventDesc) {
 		this.eventDesc = eventDesc;
 	}
@@ -127,6 +131,7 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	public long getAccountSetID() {
 		return accountSetID;
 	}
+
 	public void setAccountSetID(long accountSetID) {
 		this.accountSetID = accountSetID;
 	}
@@ -134,6 +139,7 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	public String getLovDescAccountingName() {
 		return lovDescAccountingName;
 	}
+
 	public void setLovDescAccountingName(String lovDescAccountingName) {
 		this.lovDescAccountingName = lovDescAccountingName;
 	}
@@ -141,6 +147,7 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	public String getLovDescEventAccountingName() {
 		return lovDescEventAccountingName;
 	}
+
 	public void setLovDescEventAccountingName(String lovDescEventAccountingName) {
 		this.lovDescEventAccountingName = lovDescEventAccountingName;
 	}
@@ -148,6 +155,7 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	public boolean isMandatory() {
 		return mandatory;
 	}
+
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
@@ -155,27 +163,31 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinTypeAccounting getBefImage(){
+	public FinTypeAccounting getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinTypeAccounting beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinTypeAccounting beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -189,4 +201,3 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	}
 
 }
-

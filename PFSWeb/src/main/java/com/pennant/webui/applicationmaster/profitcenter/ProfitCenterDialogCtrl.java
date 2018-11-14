@@ -66,33 +66,30 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/applicationmaster/ProfitCenter/profitCenterDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/ProfitCenter/profitCenterDialog.zul file. <br>
  */
-public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
+public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ProfitCenterDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ProfitCenterDialog; 
-	protected Textbox 		profitCenterCode; 
-	protected Textbox 		profitCenterDesc; 
-  protected Checkbox 		active; 
+	protected Window window_ProfitCenterDialog;
+	protected Textbox profitCenterCode;
+	protected Textbox profitCenterDesc;
+	protected Checkbox active;
 	private ProfitCenter profitCenter; // overhanded per param
 
 	private transient ProfitCenterListCtrl profitCenterListCtrl; // overhanded per param
 	private transient ProfitCenterService profitCenterService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -105,14 +102,13 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	protected void doSetProperties() {
 		super.pageRightName = "ProfitCenterDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.profitCenter.getProfitCenterID()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.profitCenter.getProfitCenterID()));
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -123,11 +119,10 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	 */
 	public void onCreate$window_ProfitCenterDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_ProfitCenterDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.profitCenter = (ProfitCenter) arguments.get("profitCenter");
@@ -141,16 +136,16 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 			ProfitCenter profitCenter = new ProfitCenter();
 			BeanUtils.copyProperties(this.profitCenter, profitCenter);
 			this.profitCenter.setBefImage(profitCenter);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.profitCenter.isWorkflow(), this.profitCenter.getWorkflowId(),
 					this.profitCenter.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -160,25 +155,24 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			this.profitCenterCode.setMaxlength(15);
-			this.profitCenterDesc.setMaxlength(50);
-		
+
+		this.profitCenterCode.setMaxlength(15);
+		this.profitCenterDesc.setMaxlength(50);
+
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -204,7 +198,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -237,7 +231,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -301,12 +295,6 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-
-
-
-
-
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -316,20 +304,19 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	 */
 	public void doWriteBeanToComponents(ProfitCenter aProfitCenter) {
 		logger.debug(Literal.ENTERING);
-	
-			this.profitCenterCode.setValue(aProfitCenter.getProfitCenterCode());
-			this.profitCenterDesc.setValue(aProfitCenter.getProfitCenterDesc());
-			this.active.setChecked(aProfitCenter.isActive());
-			if(aProfitCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aProfitCenter
-					.getRecordType())){
-				this.active.setChecked(true);
-				this.active.setDisabled(true);
-			}
-			this.recordStatus.setValue(aProfitCenter.getRecordStatus());
-		
+
+		this.profitCenterCode.setValue(aProfitCenter.getProfitCenterCode());
+		this.profitCenterDesc.setValue(aProfitCenter.getProfitCenterDesc());
+		this.active.setChecked(aProfitCenter.isActive());
+		if (aProfitCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aProfitCenter.getRecordType())) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
+		this.recordStatus.setValue(aProfitCenter.getRecordStatus());
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -337,41 +324,41 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	 */
 	public void doWriteComponentsToBean(ProfitCenter aProfitCenter) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Profit Center Code
 		try {
-		    aProfitCenter.setProfitCenterCode(this.profitCenterCode.getValue());
-		}catch (WrongValueException we ) {
+			aProfitCenter.setProfitCenterCode(this.profitCenterCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Profit Center Description
 		try {
-		    aProfitCenter.setProfitCenterDesc(this.profitCenterDesc.getValue());
-		}catch (WrongValueException we ) {
+			aProfitCenter.setProfitCenterDesc(this.profitCenterDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
 		try {
 			aProfitCenter.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -422,28 +409,31 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.profitCenterCode.isReadonly()){
-			this.profitCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE,true));
+		if (!this.profitCenterCode.isReadonly()) {
+			this.profitCenterCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, true));
 		}
-		if (!this.profitCenterDesc.isReadonly()){
-			this.profitCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.profitCenterDesc.isReadonly()) {
+			this.profitCenterDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.profitCenterCode.setConstraint("");
 		this.profitCenterDesc.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
-	}
 
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Set Validations for LOV Fields
@@ -451,35 +441,33 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		//Profit Center ID
 		//Profit Center Code
 		//Profit Center Description
 		//Active
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -489,149 +477,28 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final ProfitCenter aProfitCenter = new ProfitCenter();
 		BeanUtils.copyProperties(this.profitCenter, aProfitCenter);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value") + " : "
 				+ aProfitCenter.getProfitCenterCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aProfitCenter.getRecordType()).equals("")){
-				aProfitCenter.setVersion(aProfitCenter.getVersion()+1);
+			if (StringUtils.trimToEmpty(aProfitCenter.getRecordType()).equals("")) {
+				aProfitCenter.setVersion(aProfitCenter.getVersion() + 1);
 				aProfitCenter.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aProfitCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aProfitCenter.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aProfitCenter.getNextTaskId(), aProfitCenter);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aProfitCenter,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				MessageUtil.showError(e);
-			}
-			
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.profitCenter.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.profitCenterCode);
-		} else {
-			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.profitCenterCode);
-			
-		}
-	
-			readOnlyComponent(isReadOnly("ProfitCenterDialog_ProfitCenterDesc"), this.profitCenterDesc);
-			readOnlyComponent(isReadOnly("ProfitCenterDialog_Active"), this.active);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.profitCenter.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aProfitCenter.getNextTaskId(),
+							aProfitCenter);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.profitCenterCode);
-			readOnlyComponent(true, this.profitCenterDesc);
-			readOnlyComponent(true, this.active);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.profitCenterCode.setValue("");
-				this.profitCenterDesc.setValue("");
-				this.active.setChecked(false);
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final ProfitCenter aProfitCenter = new ProfitCenter();
-			BeanUtils.copyProperties(this.profitCenter, aProfitCenter);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aProfitCenter);
-
-			isNew = aProfitCenter.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aProfitCenter.getRecordType())) {
-					aProfitCenter.setVersion(aProfitCenter.getVersion() + 1);
-					if (isNew) {
-						aProfitCenter.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aProfitCenter.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aProfitCenter.setNewRecord(true);
-					}
-				}
-			} else {
-				aProfitCenter.setVersion(aProfitCenter.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -641,196 +508,315 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			logger.debug("Leaving");
+
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(ProfitCenter aProfitCenter, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aProfitCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aProfitCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aProfitCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aProfitCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.profitCenter.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+			readOnlyComponent(false, this.profitCenterCode);
+		} else {
+			this.btnCancel.setVisible(true);
+			readOnlyComponent(true, this.profitCenterCode);
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aProfitCenter.getNextTaskId());
+		}
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aProfitCenter);
-					}
+		readOnlyComponent(isReadOnly("ProfitCenterDialog_ProfitCenterDesc"), this.profitCenterDesc);
+		readOnlyComponent(isReadOnly("ProfitCenterDialog_Active"), this.active);
 
-					if (isNotesMandatory(taskId, aProfitCenter)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aProfitCenter.setTaskId(taskId);
-				aProfitCenter.setNextTaskId(nextTaskId);
-				aProfitCenter.setRoleCode(getRole());
-				aProfitCenter.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aProfitCenter, tranType);
-				String operationRefs = getServiceOperations(taskId, aProfitCenter);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aProfitCenter, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.profitCenter.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aProfitCenter, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			ProfitCenter aProfitCenter = (ProfitCenter) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		readOnlyComponent(true, this.profitCenterCode);
+		readOnlyComponent(true, this.profitCenterDesc);
+		readOnlyComponent(true, this.active);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = profitCenterService.delete(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.profitCenterCode.setValue("");
+		this.profitCenterDesc.setValue("");
+		this.active.setChecked(false);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final ProfitCenter aProfitCenter = new ProfitCenter();
+		BeanUtils.copyProperties(this.profitCenter, aProfitCenter);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aProfitCenter);
+
+		isNew = aProfitCenter.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aProfitCenter.getRecordType())) {
+				aProfitCenter.setVersion(aProfitCenter.getVersion() + 1);
+				if (isNew) {
+					aProfitCenter.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aProfitCenter.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aProfitCenter.setNewRecord(true);
+				}
+			}
+		} else {
+			aProfitCenter.setVersion(aProfitCenter.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aProfitCenter, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(ProfitCenter aProfitCenter, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aProfitCenter.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aProfitCenter.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aProfitCenter.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aProfitCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aProfitCenter.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aProfitCenter);
+				}
+
+				if (isNotesMandatory(taskId, aProfitCenter)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aProfitCenter.setTaskId(taskId);
+			aProfitCenter.setNextTaskId(nextTaskId);
+			aProfitCenter.setRoleCode(getRole());
+			aProfitCenter.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aProfitCenter, tranType);
+			String operationRefs = getServiceOperations(taskId, aProfitCenter);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aProfitCenter, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aProfitCenter, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		ProfitCenter aProfitCenter = (ProfitCenter) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = profitCenterService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = profitCenterService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = profitCenterService.doApprove(auditHeader);
+
+						if (aProfitCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = profitCenterService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = profitCenterService.doReject(auditHeader);
+						if (aProfitCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = profitCenterService.doApprove(auditHeader);
-
-							if (aProfitCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = profitCenterService.doReject(auditHeader);
-							if (aProfitCenter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_ProfitCenterDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_ProfitCenterDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.profitCenter), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ProfitCenterDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_ProfitCenterDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.profitCenter), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(ProfitCenter aProfitCenter, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aProfitCenter.getBefImage(), aProfitCenter);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aProfitCenter.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setProfitCenterService(ProfitCenterService profitCenterService) {
-			this.profitCenterService = profitCenterService;
-		}
-			
+	private AuditHeader getAuditHeader(ProfitCenter aProfitCenter, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProfitCenter.getBefImage(), aProfitCenter);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aProfitCenter.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setProfitCenterService(ProfitCenterService profitCenterService) {
+		this.profitCenterService = profitCenterService;
+	}
+
 }

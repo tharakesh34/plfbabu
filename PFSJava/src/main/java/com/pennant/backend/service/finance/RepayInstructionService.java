@@ -47,12 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.RepayInstruction;
 
 public interface RepayInstructionService {
-	
-	
-	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF);
-	RepayInstruction getRepayInstructionById(String id,boolean isWIF);
-	RepayInstruction getApprovedRepayInstructionById(String id,boolean isWIF);
-	AuditHeader delete(AuditHeader auditHeader,boolean isWIF);
-	AuditHeader doApprove(AuditHeader auditHeader,boolean isWIF);
-	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF);
+
+	AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean isWIF);
+
+	RepayInstruction getRepayInstructionById(String id, boolean isWIF);
+
+	RepayInstruction getApprovedRepayInstructionById(String id, boolean isWIF);
+
+	AuditHeader delete(AuditHeader auditHeader, boolean isWIF);
+
+	AuditHeader doApprove(AuditHeader auditHeader, boolean isWIF);
+
+	AuditHeader doReject(AuditHeader auditHeader, boolean isWIF);
 }

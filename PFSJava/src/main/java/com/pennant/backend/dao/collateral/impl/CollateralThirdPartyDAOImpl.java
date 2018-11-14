@@ -66,7 +66,8 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		sql.append(" (CollateralRef, CustomerId,");
 		sql.append("  Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		sql.append("  NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) ");
-		sql.append("  Values (:CollateralRef, :CustomerId, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
+		sql.append(
+				"  Values (:CollateralRef, :CustomerId, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId) ");
 		logger.debug("insertSql: " + sql.toString());
 
@@ -96,7 +97,8 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		sql.append("Update CollateralThirdParty");
 		sql.append(StringUtils.trimToEmpty(tableType));
 		sql.append(" Set Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append(" RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(
+				" RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where CollateralRef = :CollateralRef AND CustomerId = :CustomerId");
 		logger.debug("updateSql: " + sql.toString());
@@ -111,8 +113,9 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 	}
 
 	/**
-	 * This method Deletes the Record  from the CollateralThirdParty or CollateralThirdParty_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete CollateralThirdParty Details by key reference and CustomerId
+	 * This method Deletes the Record from the CollateralThirdParty or CollateralThirdParty_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete CollateralThirdParty Details by key reference and
+	 * CustomerId
 	 * 
 	 * @param CollateralThirdParty
 	 *            Details (collateralThirdParty)
@@ -158,7 +161,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 
 		RowMapper<CollateralThirdParty> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CollateralThirdParty.class);
-		
+
 		List<CollateralThirdParty> list = null;
 		try {
 			list = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -198,8 +201,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Get version of co-Owner details
 	 * 
@@ -233,7 +235,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 			recordCount = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return recordCount > 0 ? true : false;
 	}
 }

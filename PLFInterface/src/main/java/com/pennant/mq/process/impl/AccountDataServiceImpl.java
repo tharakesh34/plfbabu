@@ -25,8 +25,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	public AccountDataServiceImpl() {
 
 	}
-	
-	
+
 	/**
 	 * Remove the Hold from Customer Account<br>
 	 * 
@@ -39,10 +38,12 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	@Override
 	public int removeAccountHolds() throws InterfaceException {
 		logger.debug("Enering");
-		/*RemoveHoldReply removeAccHold = removeHoldProcess.sendRemoveHoldRequest(removeHold, 
-				InterfaceMasterConfigUtil.REMOVE_HOLD);
-
-		return removeAccHold;*/
+		/*
+		 * RemoveHoldReply removeAccHold = removeHoldProcess.sendRemoveHoldRequest(removeHold,
+		 * InterfaceMasterConfigUtil.REMOVE_HOLD);
+		 * 
+		 * return removeAccHold;
+		 */
 		logger.debug("Leaving");
 		return 0;
 	}
@@ -61,10 +62,12 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 			throws InterfaceException {
 		logger.debug("Enering");
 
-		/*AddHoldReply accHoldStatus = addHoldProcess.sendAddHoldRequest(holdStatus,
-				InterfaceMasterConfigUtil.ADD_HOLD);
-
-		return accHoldStatus;*/
+		/*
+		 * AddHoldReply accHoldStatus = addHoldProcess.sendAddHoldRequest(holdStatus,
+		 * InterfaceMasterConfigUtil.ADD_HOLD);
+		 * 
+		 * return accHoldStatus;
+		 */
 		logger.debug("Leaving");
 		return null;
 	}
@@ -82,7 +85,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws InterfaceException {
 		logger.debug("Entering");
 
-		InterfaceAccount interfaceAccount = getCreateAccountProcess().createAccount(accountdetail, 
+		InterfaceAccount interfaceAccount = getCreateAccountProcess().createAccount(accountdetail,
 				InterfaceMasterConfigUtil.CREATE_ACCOUNT);
 
 		logger.debug("Leaving");
@@ -104,7 +107,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	public CollateralMark collateralMarking(CollateralMark collateralMarking) throws InterfaceException {
 		logger.debug("Entering");
 
-		CollateralMark coolateralMarkReply = getCollateralMarkProcess().markCollateral(collateralMarking, 
+		CollateralMark coolateralMarkReply = getCollateralMarkProcess().markCollateral(collateralMarking,
 				InterfaceMasterConfigUtil.COLLATERAL_MARKING);
 
 		logger.debug("Leaving");
@@ -122,18 +125,17 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	 * 
 	 */
 	@Override
-	public CollateralMark collateralDeMarking(CollateralMark collateralDeMarking)	
-			throws InterfaceException {
+	public CollateralMark collateralDeMarking(CollateralMark collateralDeMarking) throws InterfaceException {
 		logger.debug("Entering");
 
-		CollateralMark collateralDeMarkReply = getCollateralMarkProcess().markCollateral(collateralDeMarking, 
+		CollateralMark collateralDeMarkReply = getCollateralMarkProcess().markCollateral(collateralDeMarking,
 				InterfaceMasterConfigUtil.COLLATERAL_DEMARKING);
 
 		logger.debug("Leaving");
 
 		return collateralDeMarkReply;
 	}
-	
+
 	public AddOrRemoveHoldProcess getAddOrRemoveHoldProcess() {
 		return addOrRemoveHoldProcess;
 	}
@@ -149,9 +151,11 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
 		this.collateralMarkProcess = collateralMarkProcess;
 	}
+
 	public CreateAccountProcess getCreateAccountProcess() {
 		return createAccountProcess;
 	}
+
 	public void setCreateAccountProcess(CreateAccountProcess createAccountProcess) {
 		this.createAccountProcess = createAccountProcess;
 	}

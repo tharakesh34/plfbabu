@@ -53,10 +53,15 @@ import com.pennant.backend.model.staticparms.Frequency;
 public interface FrequencyService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Frequency getFrequencyById(String id);
+
 	Frequency getApprovedFrequencyById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

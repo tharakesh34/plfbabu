@@ -89,7 +89,7 @@ public class DDAPayments implements Serializable, Entity {
 	public void setDirectDebitRefNo(String directDebitRefNo) {
 		this.directDebitRefNo = directDebitRefNo;
 	}
-	
+
 	public String getRepayAccountId() {
 		return repayAccountId;
 	}

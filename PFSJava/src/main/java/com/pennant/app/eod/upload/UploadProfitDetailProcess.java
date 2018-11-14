@@ -55,29 +55,29 @@ public class UploadProfitDetailProcess extends Thread {
 	private static final Logger logger = Logger.getLogger(UploadProfitDetailProcess.class);
 
 	private static UploadProfitDetailProcess me = null;
-	private  ExecutionStatus status = new ExecutionStatus();
-	
+	private ExecutionStatus status = new ExecutionStatus();
+
 	public static String RUNNING = "";
 
 	private UploadFinPftDetailService uploadFinPftDetailService;
 
-	private UploadProfitDetailProcess(){
+	private UploadProfitDetailProcess() {
 
 	}
 
-	private UploadProfitDetailProcess(UploadFinPftDetailService uploadFinPftDetailService){
+	private UploadProfitDetailProcess(UploadFinPftDetailService uploadFinPftDetailService) {
 		this.uploadFinPftDetailService = uploadFinPftDetailService;
 	}
 
 	public static UploadProfitDetailProcess getInstance(UploadFinPftDetailService uploadFinPftDetailService) {
-		if(StringUtils.isEmpty(RUNNING) || me == null) {
+		if (StringUtils.isEmpty(RUNNING) || me == null) {
 			me = new UploadProfitDetailProcess(uploadFinPftDetailService);
 		}
 		return me;
 	}
-	
+
 	public static UploadProfitDetailProcess getInstance() {
-		if(me == null) {
+		if (me == null) {
 			me = new UploadProfitDetailProcess();
 		}
 		return me;
@@ -87,21 +87,21 @@ public class UploadProfitDetailProcess extends Thread {
 		try {
 			RUNNING = "STARTED";
 			status.setExecutionName(PennantConstants.EOD_PFT_DTL_UPLOAD);
-			
+
 			status.setStartTime(new Date(System.currentTimeMillis()));
 			this.status.setStatus("EXECUTING");
-			try{
+			try {
 				uploadFinPftDetailService.doUploadPftDetails(status);
 				status.setEndTime(new Date(System.currentTimeMillis()));
 				this.status.setStatus("COMPLETED");
-			}catch (Exception e) {
+			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				this.status.setStatus("FAILED");
 				RUNNING = "FAILED";
 				return;
 			} finally {
 				status.setEndTime(new Date(System.currentTimeMillis()));
-			}			
+			}
 			RUNNING = "COMPLETED";
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -112,10 +112,10 @@ public class UploadProfitDetailProcess extends Thread {
 	}
 
 	public ExecutionStatus getStatus() {
-    	return status;
-    }
+		return status;
+	}
 
 	public void setStatus(ExecutionStatus status) {
-    	this.status = status;
-    }	
+		this.status = status;
+	}
 }

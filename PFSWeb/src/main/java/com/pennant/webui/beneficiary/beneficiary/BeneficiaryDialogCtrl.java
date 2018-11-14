@@ -95,16 +95,16 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	protected Textbox bank;
 	protected Textbox city;
 	protected Textbox branch;
-	protected int	accNoLength;
+	protected int accNoLength;
 	private Beneficiary beneficiary;
 
 	private transient BeneficiaryListCtrl beneficiaryListCtrl;
 	private transient BeneficiaryService beneficiaryService;
-	private transient BankDetailService	bankDetailService;
+	private transient BankDetailService bankDetailService;
 
 	private Checkbox beneficiaryActive;
 	private Checkbox defaultBeneficiary;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -149,14 +149,14 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			Beneficiary beneficiary = new Beneficiary();
 			BeanUtils.copyProperties(this.beneficiary, beneficiary);
 			this.beneficiary.setBefImage(beneficiary);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.beneficiary.isWorkflow(), this.beneficiary.getWorkflowId(),
 					this.beneficiary.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),this.pageRightName);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 
 			doSetFieldProperties();
@@ -193,16 +193,16 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
 		this.email.setMaxlength(50);
-		
-		if(StringUtils.isNotBlank(this.beneficiary.getBankCode())){
+
+		if (StringUtils.isNotBlank(this.beneficiary.getBankCode())) {
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.beneficiary.getBankCode());
 		}
-		if (accNoLength!=0) {
+		if (accNoLength != 0) {
 			this.accNumber.setMaxlength(accNoLength);
-		}else{
+		} else {
 			this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
-	
+
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -334,15 +334,15 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				this.city.setValue(details.getCity());
 				this.branch.setValue(details.getBranchDesc());
 				this.bankBranchID.setValue(details.getIFSC());
-				if(StringUtils.isNotBlank(details.getBankCode())){
+				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength!=0) {
+				if (accNoLength != 0) {
 					this.accNumber.setMaxlength(accNoLength);
-				}else{
-					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);	
+				} else {
+					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				
+
 			}
 		}
 
@@ -392,10 +392,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.phoneNumber.setValue(beneficiary.getPhoneNumber());
 		this.email.setValue(beneficiary.getEmail());
 		this.recordStatus.setValue(beneficiary.getRecordStatus());
-	
+
 		this.beneficiaryActive.setChecked(beneficiary.isBeneficiaryActive());
 		this.defaultBeneficiary.setChecked(beneficiary.isDefaultBeneficiary());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -423,7 +423,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		try {
 			this.bankBranchID.getValidatedValue();
 			Object obj = this.bankBranchID.getAttribute("bankBranchID");
-			
+
 			aBeneficiary.setiFSC(this.bankBranchID.getValue());
 			if (obj != null) {
 				aBeneficiary.setBankBranchID(Long.valueOf(String.valueOf(obj)));
@@ -532,35 +532,36 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		logger.debug("Entering");
 		// Cust ID
 		if (!this.custID.isReadonly()) {
-			this.custID.setConstraint(new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_CustID.value"),
-					null, true));
+			this.custID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_CustID.value"), null, true));
 		}
 		// Bank Branch ID
 		if (!this.bankBranchID.isReadonly()) {
-			this.bankBranchID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BeneficiaryDialog_BankBranchID.value"), null, true));
+			this.bankBranchID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_BankBranchID.value"), null, true));
 		}
 		// Acc Number
 		if (!this.accNumber.isReadonly()) {
-			this.accNumber.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BeneficiaryDialog_AccNumber.value"), PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
-					true));
+			this.accNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_AccNumber.value"),
+							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {
-			this.accHolderName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BeneficiaryDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,
-					true));
+			this.accHolderName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BeneficiaryDialog_AccHolderName.value"),
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		// Phone Number
 		if (!this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_BeneficiaryDialog_PhoneNumber.value"), false));
+			this.phoneNumber.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_BeneficiaryDialog_PhoneNumber.value"), false));
 		}
 		// Email
 		if (!this.email.isReadonly()) {
-			this.email.setConstraint(new PTEmailValidator(Labels.getLabel("label_BeneficiaryDialog_Email.value"), false));
+			this.email
+					.setConstraint(new PTEmailValidator(Labels.getLabel("label_BeneficiaryDialog_Email.value"), false));
 		}
 		logger.debug("Leaving");
 	}
@@ -671,7 +672,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Email"), this.email);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Active"), this.beneficiaryActive);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_DefaultBeneficiary"), this.defaultBeneficiary);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -909,8 +910,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BeneficiaryDialog, auditHeader);
 						return processCompleted;
 					}

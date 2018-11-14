@@ -33,7 +33,8 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 
 	/**
 	 * Method for Calendar holiday List updation by getting list of data From CoreBanking system
-	 * @throws EquationInterfaceException 
+	 * 
+	 * @throws EquationInterfaceException
 	 */
 	public boolean calendarUpdate() throws InterfaceException {
 		logger.debug("Entering");
@@ -50,8 +51,8 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 			for (int i = 0; i < yearList.size(); i++) {
 
 				if (weekendMaster == null) {
-					weekendMaster = getWeekendMasterDAO().getWeekendMasterByCode(
-							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+					weekendMaster = getWeekendMasterDAO()
+							.getWeekendMasterByCode(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
 					if (weekendMaster == null) {
 						weekendMaster = new WeekendMaster();
 						weekendMaster.setWeekend("6,7");
@@ -68,13 +69,13 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 					char[] dayStatus = calendarDays.toCharArray();
 
 					for (int j = 0; j < dayStatus.length; j++) {
-						
+
 						if ("N".equals(String.valueOf(dayStatus[j]))) {
 
 							// if Days are equal to WeekendDays add to Normal Days else add to Perminent days
 							if (j < getYearEnd(Integer.parseInt(yearList.get(i))).get(Calendar.DAY_OF_YEAR)) {
 								if (StringUtils.contains(weekendMaster.getWeekend(),
-								        String.valueOf(calendar.get(Calendar.DAY_OF_WEEK)))) {
+										String.valueOf(calendar.get(Calendar.DAY_OF_WEEK)))) {
 									normalHolidays = normalHolidays + (j + 1) + ",";
 								} else {
 									perminentHoliDays = perminentHoliDays + (j + 1) + ",";
@@ -84,7 +85,7 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 						calendar.add(Calendar.DATE, 1);
 					}
 					if (normalHolidays.endsWith(",")) {
-						normalHolidays = normalHolidays.substring(0,normalHolidays.length() - 1);
+						normalHolidays = normalHolidays.substring(0, normalHolidays.length() - 1);
 					}
 					if (perminentHoliDays.endsWith(",")) {
 						perminentHoliDays = perminentHoliDays.substring(0, perminentHoliDays.length() - 1);
@@ -97,8 +98,8 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 				if (holidayMaster != null) {
 					holidayMaster.setHolidays(normalHolidays);
 					getHolidayMasterDAO().update(holidayMaster, "");
-				}else{
-					if(!("").equals(normalHolidays)){
+				} else {
+					if (!("").equals(normalHolidays)) {
 						holidayMaster = new HolidayMaster();
 						holidayMaster.setHolidayYear(new BigDecimal(yearList.get(i)));
 						holidayMaster.setHolidayType(HolidayHandlerTypes.HOLIDAYTYPE_NORMAL);
@@ -117,8 +118,8 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 				if (holidayMaster != null) {
 					holidayMaster.setHolidays(perminentHoliDays);
 					getHolidayMasterDAO().update(holidayMaster, "");
-				}else{
-					if(!("").equals(perminentHoliDays)){
+				} else {
+					if (!("").equals(perminentHoliDays)) {
 						holidayMaster = new HolidayMaster();
 						holidayMaster.setHolidayYear(new BigDecimal(yearList.get(i)));
 						holidayMaster.setHolidayType(HolidayHandlerTypes.HOLIDAYTYPE_PERMINENT);
@@ -150,6 +151,7 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 	public WeekendMasterDAO getWeekendMasterDAO() {
 		return weekendMasterDAO;
 	}
+
 	public void setWeekendMasterDAO(WeekendMasterDAO weekendMasterDAO) {
 		this.weekendMasterDAO = weekendMasterDAO;
 	}
@@ -157,16 +159,17 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 	public HolidayMasterDAO getHolidayMasterDAO() {
 		return holidayMasterDAO;
 	}
+
 	public void setHolidayMasterDAO(HolidayMasterDAO holidayMasterDAO) {
 		this.holidayMasterDAO = holidayMasterDAO;
 	}
 
 	public DateRollOverProcess getDateRollOverProcess() {
-    	return dateRollOverProcess;
-    }
+		return dateRollOverProcess;
+	}
+
 	public void setDateRollOverProcess(DateRollOverProcess dateRollOverProcess) {
-    	this.dateRollOverProcess = dateRollOverProcess;
-    }
-	
-	
+		this.dateRollOverProcess = dateRollOverProcess;
+	}
+
 }

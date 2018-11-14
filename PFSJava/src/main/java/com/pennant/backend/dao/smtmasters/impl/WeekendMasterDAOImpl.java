@@ -45,7 +45,6 @@ package com.pennant.backend.dao.smtmasters.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -91,8 +90,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		weekendMaster.setId(id);
 
 		StringBuilder selectListSql = new StringBuilder("Select WeekendCode, WeekendDesc, Weekend, ");
-		selectListSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectListSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From SMTWeekendMaster");
 		selectListSql.append(StringUtils.trimToEmpty(type));
 		selectListSql.append(" Where WeekendCode = :WeekendCode ");
@@ -102,8 +101,7 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		RowMapper<WeekendMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
 		try {
-			weekendMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters,
-					typeRowMapper);
+			weekendMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			weekendMaster = null;
@@ -119,8 +117,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		weekendMaster.setWeekendCode(weekendCode);
 
 		StringBuilder selectListSql = new StringBuilder("Select WeekendCode, WeekendDesc, Weekend, ");
-		selectListSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectListSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From SMTWeekendMaster");
 		selectListSql.append(" Where WeekendCode in ('GEN',:WeekendCode) ");
 
@@ -129,8 +127,7 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
 		RowMapper<WeekendMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
-		List<WeekendMaster> list = this.jdbcTemplate.query(selectListSql.toString(), beanParameters,
-				typeRowMapper);
+		List<WeekendMaster> list = this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
 		if (list == null || list.isEmpty()) {
 			weekendMaster = null;
 		} else {
@@ -160,10 +157,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	}
 
 	/**
-	 * This method Deletes the Record from the SMTWeekendMaster or
-	 * SMTWeekendMaster_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Weekend Details by key
-	 * WeekendCode
+	 * This method Deletes the Record from the SMTWeekendMaster or SMTWeekendMaster_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Weekend Details by key WeekendCode
 	 * 
 	 * @param Weekend
 	 *            Details (weekendMaster)
@@ -200,8 +195,7 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	}
 
 	/**
-	 * This method insert new Records into SMTWeekendMaster or
-	 * SMTWeekendMaster_Temp.
+	 * This method insert new Records into SMTWeekendMaster or SMTWeekendMaster_Temp.
 	 * 
 	 * save Weekend Details
 	 * 
@@ -220,11 +214,11 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		StringBuilder insertSql = new StringBuilder("Insert Into SMTWeekendMaster");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (WeekendCode, WeekendDesc, Weekend, ");
-		insertSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:WeekendCode, :WeekendDesc, :Weekend,");
-		insertSql
-				.append(" :Version , :LastMntBy, :LastMntOn,:RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,:RecordType, :WorkflowId )");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn,:RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,:RecordType, :WorkflowId )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -236,9 +230,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	}
 
 	/**
-	 * This method updates the Record SMTWeekendMaster or SMTWeekendMaster_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Weekend Details by key WeekendCode and Version
+	 * This method updates the Record SMTWeekendMaster or SMTWeekendMaster_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Weekend Details by key WeekendCode and Version
 	 * 
 	 * @param Weekend
 	 *            Details (weekendMaster)
@@ -257,8 +250,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set WeekendDesc = :WeekendDesc, Weekend = :Weekend, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql
-				.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where WeekendCode =:WeekendCode");
 
@@ -274,4 +267,4 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		logger.debug("Leaving");
 	}
 
-	}
+}

@@ -71,31 +71,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/Segment/segmentDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/Segment/segmentDialog.zul file.
  */
 public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	private static final long serialVersionUID = 555392639366041343L;
 	private static final Logger logger = Logger.getLogger(SegmentDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_SegmentDialog; 		
-	protected Textbox 		segmentCode; 				
-	protected Textbox 		segmentDesc; 				
-	protected Checkbox  	segmentIsActive; 			
-	
+	protected Window window_SegmentDialog;
+	protected Textbox segmentCode;
+	protected Textbox segmentDesc;
+	protected Checkbox segmentIsActive;
+
 	// not auto wired variables
-	private Segment 		segment; 					// overHanded per parameter
-	private transient 		SegmentListCtrl segmentListCtrl; // overHanded per parameter
+	private Segment segment; // overHanded per parameter
+	private transient SegmentListCtrl segmentListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
-	private transient SegmentService   segmentService;
+	private transient SegmentService segmentService;
 
 	/**
 	 * default constructor.<br>
@@ -112,9 +110,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Segment object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Segment object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -125,8 +122,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		// Set the page level components.
 		setPageComponents(window_SegmentDialog);
 
-		try{
-			
+		try {
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -141,13 +138,11 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 				setSegment(null);
 			}
 
-			doLoadWorkFlow(this.segment.isWorkflow(),
-					this.segment.getWorkflowId(), this.segment.getNextTaskId());
+			doLoadWorkFlow(this.segment.isWorkflow(), this.segment.getWorkflowId(), this.segment.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SegmentDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SegmentDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -156,8 +151,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 			// or
 			// delete segment here.
 			if (arguments.containsKey("segmentListCtrl")) {
-				setSegmentListCtrl((SegmentListCtrl) arguments
-						.get("segmentListCtrl"));
+				setSegmentListCtrl((SegmentListCtrl) arguments.get("segmentListCtrl"));
 			} else {
 				setSegmentListCtrl(null);
 			}
@@ -177,7 +171,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.segmentCode.setMaxlength(8);
 		this.segmentDesc.setMaxlength(50);
 
@@ -189,8 +183,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -300,8 +293,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		this.segmentDesc.setValue(aSegment.getSegmentDesc());
 		this.segmentIsActive.setChecked(aSegment.isSegmentIsActive());
 		this.recordStatus.setValue(aSegment.getRecordStatus());
-		
-		if(aSegment.isNew() || StringUtils.equals(aSegment.getRecordType(),PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aSegment.isNew() || StringUtils.equals(aSegment.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.segmentIsActive.setChecked(true);
 			this.segmentIsActive.setDisabled(true);
 		}
@@ -352,8 +345,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSegment
 	 * @throws Exception
@@ -386,7 +378,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 			doWriteBeanToComponents(aSegment);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_SegmentDialog.onClose();
 		} catch (Exception e) {
@@ -402,13 +394,16 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.segmentCode.isReadonly()){
-			this.segmentCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SegmentDialog_SegmentCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.segmentCode.isReadonly()) {
+			this.segmentCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SegmentDialog_SegmentCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.segmentDesc.isReadonly()){
-			this.segmentDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SegmentDialog_SegmentDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.segmentDesc.isReadonly()) {
+			this.segmentDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SegmentDialog_SegmentDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -463,8 +458,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aSegment.getSegmentCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aSegment.getSegmentCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSegment.getRecordType())) {
 				aSegment.setVersion(aSegment.getVersion() + 1);
@@ -662,7 +657,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				nextRoleCode = getFirstTaskOwner();
-				
+
 				String[] nextTasks = nextTaskId.split(";");
 
 				if (nextTasks != null && nextTasks.length > 0) {
@@ -753,8 +748,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SegmentDialog, auditHeader);
 						return processCompleted;
 					}
@@ -788,7 +783,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	}
 
 	// WorkFlow Details
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -799,10 +794,9 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Segment aSegment, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSegment.getBefImage(), aSegment);
-		return new AuditHeader(String.valueOf(aSegment.getId()), null, null,
-				null, auditDetail, aSegment.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSegment.getBefImage(), aSegment);
+		return new AuditHeader(String.valueOf(aSegment.getId()), null, null, null, auditDetail,
+				aSegment.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -815,8 +809,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_SegmentDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -854,6 +847,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -861,6 +855,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	public Segment getSegment() {
 		return this.segment;
 	}
+
 	public void setSegment(Segment segment) {
 		this.segment = segment;
 	}
@@ -868,6 +863,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	public void setSegmentService(SegmentService segmentService) {
 		this.segmentService = segmentService;
 	}
+
 	public SegmentService getSegmentService() {
 		return this.segmentService;
 	}
@@ -875,6 +871,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	public void setSegmentListCtrl(SegmentListCtrl segmentListCtrl) {
 		this.segmentListCtrl = segmentListCtrl;
 	}
+
 	public SegmentListCtrl getSegmentListCtrl() {
 		return this.segmentListCtrl;
 	}

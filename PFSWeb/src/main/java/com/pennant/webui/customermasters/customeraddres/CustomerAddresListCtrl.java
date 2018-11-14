@@ -62,9 +62,9 @@ import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.customermasters.customeraddres.model.CustomerAddresListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresList.zul file.
@@ -135,7 +135,8 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres> {
 		setItemRender(new CustomerAddresListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_CustomerAddresList_NewCustomerAddres, "button_CustomerAddresList_NewCustomerAddres", true);
+		registerButton(button_CustomerAddresList_NewCustomerAddres, "button_CustomerAddresList_NewCustomerAddres",
+				true);
 		registerButton(button_CustomerAddresList_CustomerAddresSearchDialog);
 
 		registerField("custId");
@@ -222,8 +223,8 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustId='" + customerAddres.getCustID() + "' AND version="
-				+ customerAddres.getVersion() + " ";
+		String whereCond = " AND CustId='" + customerAddres.getCustID() + "' AND version=" + customerAddres.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(customerAddres, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

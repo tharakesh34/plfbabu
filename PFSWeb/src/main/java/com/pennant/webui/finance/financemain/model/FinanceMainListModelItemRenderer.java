@@ -60,7 +60,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
@@ -68,80 +67,87 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class FinanceMainListModelItemRenderer implements ListitemRenderer<FinanceMain>, Serializable {
 
 	private static final long serialVersionUID = -4562142056572229437L;
-	
+
 	public FinanceMainListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceMain financeMain, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell();
-		
+
 		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		
-		String custCIF =financeMain.getLovDescCustCIF();
-		if(financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE &&
-				StringUtils.isBlank(financeMain.getLovDescCustCIF())){
+
+		String custCIF = financeMain.getLovDescCustCIF();
+		if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE
+				&& StringUtils.isBlank(financeMain.getLovDescCustCIF())) {
 			custCIF = "In Process";
 			lc.setStyle("font-weight:bold;color:green;");
 		}
 		lc.setLabel(custCIF);
-		lc.setParent(item);		
+		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescCustShrtName());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getFinReference());
+		lc = new Listcell(financeMain.getFinReference());
 		lc.setParent(item);
-		
-		if(StringUtils.isBlank(financeMain.getLovDescFinProduct())){
+
+		if (StringUtils.isBlank(financeMain.getLovDescFinProduct())) {
 			lc = new Listcell(financeMain.getLovDescFinTypeName());
 			lc.setParent(item);
 			lc = new Listcell("");
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell(financeMain.getLovDescFinProduct());
 			lc.setParent(item);
 			lc = new Listcell(financeMain.getLovDescFinTypeName());
 			lc.setParent(item);
 		}
-	  	
+
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(financeMain.getGraceTerms() + financeMain.getCalTerms()+financeMain.getAdvEMITerms()));
+		lc = new Listcell(
+				String.valueOf(financeMain.getGraceTerms() + financeMain.getCalTerms() + financeMain.getAdvEMITerms()));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
 		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
-		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
-		if(financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) == 0){
+		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
+				.add(financeMain.getInsuranceAmt());
+		if (financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) == 0) {
 			lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAssetValue(), format));
 			lc.setParent(item);
 		}
 		lc.setStyle("text-align:right;");
-		lc = new Listcell(DateUtility.formatDate(financeMain.getInitiateDate(),DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtility.formatDate(financeMain.getInitiateDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescRequestStage());
 		lc.setParent(item);
-		
-		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(financeMain.getPriority()), PennantStaticListUtil.getQueuePriority()));
+
+		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(financeMain.getPriority()),
+				PennantStaticListUtil.getQueuePriority()));
 		switch (financeMain.getPriority()) {
-        case 0:  lc.setStyle("font-weight:bold;color:#00F566;");
-                 break;
-        case 1:  lc.setStyle("font-weight:bold;color:#00ABF5;");
-                 break;
-        case 2:  lc.setStyle("font-weight:bold;color:#E37114;");
-                 break;
-        case 3: lc.setStyle("font-weight:bold;color:#F20C0C;");
-                 break;
+		case 0:
+			lc.setStyle("font-weight:bold;color:#00F566;");
+			break;
+		case 1:
+			lc.setStyle("font-weight:bold;color:#00ABF5;");
+			break;
+		case 2:
+			lc.setStyle("font-weight:bold;color:#E37114;");
+			break;
+		case 3:
+			lc.setStyle("font-weight:bold;color:#F20C0C;");
+			break;
 		}
 		lc.setParent(item);
-		
-	  	lc = new Listcell(financeMain.getRecordStatus());
+
+		lc = new Listcell(financeMain.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(financeMain.getRecordType()));
 		lc.setParent(item);

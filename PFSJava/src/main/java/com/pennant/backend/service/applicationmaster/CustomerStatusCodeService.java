@@ -53,10 +53,15 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface CustomerStatusCodeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerStatusCode getCustomerStatusCodeById(String id);
+
 	CustomerStatusCode getApprovedCustomerStatusCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

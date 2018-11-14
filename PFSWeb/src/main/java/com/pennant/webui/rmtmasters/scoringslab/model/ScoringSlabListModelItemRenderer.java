@@ -53,20 +53,18 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for list items in the list box.
  * 
  */
 public class ScoringSlabListModelItemRenderer implements ListitemRenderer<ScoringSlab>, Serializable {
 
-
 	private static final long serialVersionUID = 4953613230892783520L;
-	
+
 	public ScoringSlabListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ScoringSlab scoringSlab, int count) throws Exception {
 

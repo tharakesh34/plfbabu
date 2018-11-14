@@ -66,26 +66,27 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -4384335745555359611L;
 
 	public CustomerPRelationListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerPRelation customerPRelation, int count) throws Exception {
 
-		if (item instanceof Listgroup) { 
-			item.appendChild(new Listcell(String.valueOf(customerPRelation.getPRCustID()))); 
-		}else if (item instanceof Listgroupfoot) { 
+		if (item instanceof Listgroup) {
+			item.appendChild(new Listcell(String.valueOf(customerPRelation.getPRCustID())));
+		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(8);
-			item.appendChild(cell); 
-		} else { 
+			item.appendChild(cell);
+		} else {
 
 			Listcell lc;
 			lc = new Listcell(String.valueOf(customerPRelation.getPRCustID()));
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.formateInt(customerPRelation.getPRCustPRSNo()));
 			lc.setParent(item);
-			lc = new Listcell(customerPRelation.getPRRelationCode()+"-"+customerPRelation.getLovDescPRRelationCodeName());
+			lc = new Listcell(
+					customerPRelation.getPRRelationCode() + "-" + customerPRelation.getLovDescPRRelationCodeName());
 			lc.setParent(item);
 			lc = new Listcell(customerPRelation.getPRRelationCustID());
 			lc.setParent(item);
@@ -101,10 +102,10 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(customerPRelation.getRecordType()));
 			lc.setParent(item);
-			
+
 			item.setAttribute("id", customerPRelation.getPRCustID());
 			item.setAttribute("PRCustPRSNo", customerPRelation.getPRCustPRSNo());
-			
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPRelationItemDoubleClicked");
 		}
 	}

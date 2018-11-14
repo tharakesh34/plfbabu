@@ -66,18 +66,16 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BounceReason</code> with set of CRUD operations.
  */
 public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements BounceReasonDAO {
-	private static Logger logger	= Logger.getLogger(BounceReasonDAOImpl.class);
-
-	
+	private static Logger logger = Logger.getLogger(BounceReasonDAOImpl.class);
 
 	public BounceReasonDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public BounceReason getBounceReason(long bounceID,String type) {
+	public BounceReason getBounceReason(long bounceID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
@@ -85,11 +83,12 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		if (type.contains("View")) {
 			sql.append(" ruleCode, ruleCodeDesc,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From BounceReasons");
 		sql.append(type);
 		sql.append(" Where bounceID = :bounceID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -108,8 +107,8 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 		logger.debug(Literal.LEAVING);
 		return bounceReason;
-	}		
-	
+	}
+
 	@Override
 	public boolean isDuplicateKey(long bounceID, String bounceCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -147,26 +146,28 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 		return exists;
 	}
-	
+
 	@Override
-	public String save(BounceReason bounceReason,TableType tableType) {
+	public String save(BounceReason bounceReason, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into BounceReasons");
+		StringBuilder sql = new StringBuilder(" insert into BounceReasons");
 		sql.append(tableType.getSuffix());
 		sql.append("(bounceID, bounceCode, reasonType, category, reason, action, ");
 		sql.append(" ruleID, returnCode, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :bounceID, :bounceCode, :reasonType, :category, :reason, :action, ");
 		sql.append(" :ruleID, :returnCode, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		if (bounceReason.getBounceID() <= 0) {
 			bounceReason.setBounceID(getNextId("SeqBounceReasons"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
@@ -179,14 +180,14 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(bounceReason.getBounceID());
-	}	
+	}
 
 	@Override
-	public void update(BounceReason bounceReason,TableType tableType) {
+	public void update(BounceReason bounceReason, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update BounceReasons" );
+		StringBuilder sql = new StringBuilder("update BounceReasons");
 		sql.append(tableType.getSuffix());
 		sql.append("  set bounceCode = :bounceCode, reasonType = :reasonType, category = :category, ");
 		sql.append(" reason = :reason, action = :action, ruleID = :ruleID, ");
@@ -196,10 +197,10 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where bounceID = :bounceID ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -207,7 +208,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -239,7 +240,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public BounceReason getBounceReasonByReturnCode(String returnCode, String type) {
 		logger.debug(Literal.ENTERING);
@@ -273,7 +274,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
-	}	
+	}
 
 	@Override
 	public int getBounceReasonByRuleCode(long ruleId, String type) {
@@ -330,4 +331,4 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 		return exists;
 	}
-}	
+}

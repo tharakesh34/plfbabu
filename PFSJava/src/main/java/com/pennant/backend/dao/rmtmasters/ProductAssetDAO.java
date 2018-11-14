@@ -41,7 +41,6 @@
  ********************************************************************************************
  */
 
-
 package com.pennant.backend.dao.rmtmasters;
 
 import java.util.ArrayList;
@@ -55,13 +54,21 @@ import com.pennant.backend.model.rmtmasters.ProductAsset;
  */
 public interface ProductAssetDAO {
 
-	 ProductAsset getProductAsset();
-	 ProductAsset getNewProductAsset();
-	 ProductAsset getProductAssetById(long id,String type);
-	 void update(ProductAsset productAsset,String type);
-	 void delete(ProductAsset productAsset,String type);
-	 void deleteByProduct(ProductAsset productAsset,String type);
-	 long save(ProductAsset productAsset,String type);
-	 List<ProductAsset> getProductAssetByProdCode(final String prodCode,String type);
-	 List<ProductAsset>  getFinPurposeByAssetId(ArrayList<String> list,String type);
+	ProductAsset getProductAsset();
+
+	ProductAsset getNewProductAsset();
+
+	ProductAsset getProductAssetById(long id, String type);
+
+	void update(ProductAsset productAsset, String type);
+
+	void delete(ProductAsset productAsset, String type);
+
+	void deleteByProduct(ProductAsset productAsset, String type);
+
+	long save(ProductAsset productAsset, String type);
+
+	List<ProductAsset> getProductAssetByProdCode(final String prodCode, String type);
+
+	List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> list, String type);
 }

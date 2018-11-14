@@ -2,28 +2,25 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
-	xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-<style>
-      .CodeMirror-line-numbers {
-        width: 2.2em;
-        color: #aaa;
-        background-color: #eee;
-        text-align: right;
-        padding-right: .3em;   
-        font-size: 10pt;
-        font-family: monospace;
-        padding-top: .4em;
-        line-height: normal;
-      }
-    </style>
-    
-	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
- 	<script type="text/javascript">
+	<style>
+		.CodeMirror-line-numbers {
+		width: 2.2em;
+		color: #aaa;
+		background-color: #eee;
+		text-align: right;
+		padding-right: .3em;
+		font-size: 10pt;
+		font-family: monospace;
+		padding-top: .4em;
+		line-height: normal;
+		}
+	</style>
+
+	<script type="text/javascript" src="/ptjs/fulljslint.js" />
+	<script type="text/javascript">
 	<![CDATA[     
 	function addStringContent(strContent) {				
  			zk.Widget.$(jq('$amountRule'))._editor.replaceSelection(strContent);
@@ -90,69 +87,48 @@
 	}
 	]]>
 	</script>
-			  
-	<window>		  
-		<window id="window_TransactionEntryDialog" border="normal"
-			apply="${transactionEntryDialogCtrl}" width="100%" height="100%"
-			sizable="false">
-			
+
+	<window>
+		<window id="window_TransactionEntryDialog" border="normal" apply="${transactionEntryDialogCtrl}" width="100%"
+			height="100%" sizable="false">
+
 			<borderlayout id="borderlayoutTransactionEntry">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
-						<hbox pack="stretch"
-							sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
 							<!-- COMMON BUTTONS -->
-							<toolbar align="start"
-								sclass="toolbar-start">
-								<button id="btnNew" 
-									tooltiptext="${c:l('btnNew.tooltiptext')}"
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnEdit" 
-									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnDelete" 
-									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnSave" 
-									tooltiptext="${c:l('btnSave.tooltiptext')}"
-									w:onClick="validateJs('3');"
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" w:onClick="validateJs('3');"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnCancel" 
-									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
-								<button id="btnNotes" 
-									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnValidate"
-									tooltiptext="validate" label="${c:l('label_Validate')}"
-									w:onClick="validateJs('1');" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnSimulate"
-									tooltiptext="simulate" label="${c:l('label_Simulate')}"
-									w:onClick="validateJs('2');" 
+								<button id="btnValidate" tooltiptext="validate" label="${c:l('label_Validate')}" w:onClick="validateJs('1');"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnValidateSave"
-									tooltiptext="simulate" label="${c:l('label_ValidateSave')}"
-									visible="false" 
+								<button id="btnSimulate" tooltiptext="simulate" label="${c:l('label_Simulate')}" w:onClick="validateJs('2');"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
+								<button id="btnValidateSave" tooltiptext="simulate" label="${c:l('label_ValidateSave')}" visible="false"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
 							</toolbar>
 
 							<!-- SEARCH AREA -->
-							<toolbar align="center"
-								sclass="toolbar-center">
-								<label
-									value="${c:l('window_TransactionEntryDialog.title')}"
-									sclass="label-heading">
+							<toolbar align="center" sclass="toolbar-center">
+								<label value="${c:l('window_TransactionEntryDialog.title')}" sclass="label-heading">
 								</label>
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false" 
-									label="${c:l('label_Help')}"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-								<button id="btnClose" 
-									tooltiptext="${c:l('btnClose.tooltiptext')}"
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
 							</toolbar>
 						</hbox>
@@ -161,11 +137,8 @@
 				</north>
 				<center border="none" autoscroll="false">
 					<div>
-						<groupbox id="gb_basicDetails" mold="3d"
-							width="100%">
-							<grid id="grid_Basicdetails"
-								sclass="GridLayoutNoBorder" fixedLayout="true"
-								style="border:0px">
+						<groupbox id="gb_basicDetails" mold="3d" width="100%">
+							<grid id="grid_Basicdetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<columns>
 									<column width="200px" />
 									<column />
@@ -174,223 +147,131 @@
 								</columns>
 								<rows>
 									<row>
-										<label
-											id="label_AccountingSetDialog_EventCode"
-											value="${c:l('label_AccountingSetDialog_EventCode.value')}" />
+										<label id="label_AccountingSetDialog_EventCode" value="${c:l('label_AccountingSetDialog_EventCode.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="eventCode"
-												width="150px" readonly="true" />
+											<textbox id="eventCode" width="150px" readonly="true" />
 										</hbox>
-										<label
-											id="label_AccountingSetDialog_EventCodeDesc"
-											value="${c:l('label_AccountingSetDialog_EventCodeDesc.value')}" />
+										<label id="label_AccountingSetDialog_EventCodeDesc" value="${c:l('label_AccountingSetDialog_EventCodeDesc.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox
-												id="lovDescEventCodeName" width="350px" readonly="true" />
+											<textbox id="lovDescEventCodeName" width="350px" readonly="true" />
 										</hbox>
 									</row>
 									<row>
-										<label
-											id="label_AccountingSetDialog_AccountSetCode"
-											value="${c:l('label_AccountingSetDialog_AccountSetCode.value')}" />
+										<label id="label_AccountingSetDialog_AccountSetCode" value="${c:l('label_AccountingSetDialog_AccountSetCode.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="accountSetCode"
-												maxlength="8" width="150px" readonly="true" />
+											<textbox id="accountSetCode" maxlength="8" width="150px" readonly="true" />
 										</hbox>
-										<label
-											id="label_AccountingSetDialog_AccountSetCodeName"
-											value="${c:l('label_AccountingSetDialog_AccountSetCodeName.value')}" />
+										<label id="label_AccountingSetDialog_AccountSetCodeName" value="${c:l('label_AccountingSetDialog_AccountSetCodeName.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox
-												id="accountSetCodeName" maxlength="50" width="350px"
-												readonly="true" />
+											<textbox id="accountSetCodeName" maxlength="50" width="350px" readonly="true" />
 										</hbox>
 									</row>
 									<row>
-										<label
-											id="label_TransactionEntryDialog_TransOrder"
-											value="${c:l('label_TransactionEntryDialog_TransOrder.value')}" />
+										<label id="label_TransactionEntryDialog_TransOrder" value="${c:l('label_TransactionEntryDialog_TransOrder.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<intbox id="transOrder"
-												width="90px" maxlength="14" />
+											<space spacing="2px" sclass="mandatory" />
+											<intbox id="transOrder" width="90px" maxlength="14" />
 										</hbox>
-										<label
-											id="label_TransactionEntryDialog_TransDesc"
-											value="${c:l('label_TransactionEntryDialog_TransDesc.value')}" />
+										<label id="label_TransactionEntryDialog_TransDesc" value="${c:l('label_TransactionEntryDialog_TransDesc.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox id="transDesc"
-												maxlength="50" width="350px" />
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="transDesc" maxlength="50" width="350px" />
 										</hbox>
 									</row>
 									<row>
-										<label
-											id="label_TransactionEntryDialog_Debitcredit"
-											value="${c:l('label_TransactionEntryDialog_Debitcredit.value')}" />
+										<label id="label_TransactionEntryDialog_Debitcredit" value="${c:l('label_TransactionEntryDialog_Debitcredit.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="debitcredit"
-												width="100px" readonly="true" />
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="debitcredit" width="100px" readonly="true" />
 										</hbox>
-										<label
-											id="label_TransactionEntryDialog_AccountBranch"
-											value="${c:l('label_TransactionEntryDialog_AccountBranch.value')}" />
+										<label id="label_TransactionEntryDialog_AccountBranch" value="${c:l('label_TransactionEntryDialog_AccountBranch.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="accountBranch"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescAccountBranchName" width="250px" readonly="true" />
-											<button label=""
-												id="btnSearchAccountBranch"
-												image="/images/icons/LOVSearch.png"  />
+											<textbox id="accountBranch" width="72px" visible="false" />
+											<textbox id="lovDescAccountBranchName" width="250px" readonly="true" />
+											<button label="" id="btnSearchAccountBranch" image="/images/icons/LOVSearch.png" />
 										</hbox>
 									</row>
-									
-									
+
+
 									<row id="row_Account">
-										<label
-											id="label_TransactionEntryDialog_Account"
-											value="${c:l('label_TransactionEntryDialog_Account.value')}" />
+										<label id="label_TransactionEntryDialog_Account" value="${c:l('label_TransactionEntryDialog_Account.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="account"
-												width="225px" readonly="true" />
+											<space spacing="2px" sclass="mandatory" />
+											<combobox id="account" width="225px" readonly="true" />
 										</hbox>
-										<label
-											id="label_TransactionEntryDialog_PostToCore"
-											value="${c:l('label_TransactionEntryDialog_CoreOrERP.value')}" />
+										<label id="label_TransactionEntryDialog_PostToCore" value="${c:l('label_TransactionEntryDialog_CoreOrERP.value')}" />
 										<hbox id="hbox_PostToCore">
 											<space spacing="2px" />
 											<radiogroup>
-												<radio id="postToCore" checked="true"
-													label="${c:l('label_TransactionEntryDialog_PostToCore.value')}"
+												<radio id="postToCore" checked="true" label="${c:l('label_TransactionEntryDialog_PostToCore.value')}"
 													style="padding-right:15px;" />
-												<radio id="postToERP" checked="false"
-													label="${c:l('label_TransactionEntryDialog_PostToERP.value')}" />
+												<radio id="postToERP" checked="false" label="${c:l('label_TransactionEntryDialog_PostToERP.value')}" />
 											</radiogroup>
 										</hbox>
 									</row>
-									
+
 									<row>
-										<label
-											id="label_TransactionEntryDialog_AccountType"
-											value="${c:l('label_TransactionEntryDialog_AccountType.value')}" />
+										<label id="label_TransactionEntryDialog_AccountType" value="${c:l('label_TransactionEntryDialog_AccountType.value')}" />
 										<hbox>
-											<space spacing="2px"
-												id="spAccountType" />
-											<textbox id="accountType"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescAccountTypeName" width="250px" readonly="true" />
-											<button label=""
-												id="btnSearchAccountType"
-												image="/images/icons/LOVSearch.png"  />
-											<button label=""
-												id="btnSearchSystemIntAccount"
-												image="/images/icons/LOVSearch.png" 
-												visible="false" />
+											<space spacing="2px" id="spAccountType" />
+											<textbox id="accountType" width="72px" visible="false" />
+											<textbox id="lovDescAccountTypeName" width="250px" readonly="true" />
+											<button label="" id="btnSearchAccountType" image="/images/icons/LOVSearch.png" />
+											<button label="" id="btnSearchSystemIntAccount" image="/images/icons/LOVSearch.png" visible="false" />
 										</hbox>
-										<label
-											id="label_TransactionEntryDialog_AccountSubHeadRule"
-											value="${c:l('label_TransactionEntryDialog_AccountSubHeadRule.value')}" />
+										<label id="label_TransactionEntryDialog_AccountSubHeadRule" value="${c:l('label_TransactionEntryDialog_AccountSubHeadRule.value')}" />
 										<hbox>
-											<space spacing="2px"
-												id="spSubHead" sclass="mandatory" />
-											<textbox
-												id="accountSubHeadRule" width="72px" visible="false" />
-											<textbox
-												id="lovDescAccountSubHeadRuleName" width="250px"
-												readonly="true" />
-											<button label=""
-												id="btnSearchAccountSubHeadRule"
-												image="/images/icons/LOVSearch.png"  />
+											<space spacing="2px" id="spSubHead" sclass="mandatory" />
+											<textbox id="accountSubHeadRule" width="72px" visible="false" />
+											<textbox id="lovDescAccountSubHeadRuleName" width="250px" readonly="true" />
+											<button label="" id="btnSearchAccountSubHeadRule" image="/images/icons/LOVSearch.png" />
 										</hbox>
 									</row>
-									
+
 									<row>
-										<label
-											id="label_TransactionEntryDialog_TranscationCode"
-											value="${c:l('label_TransactionEntryDialog_TranscationCode.value')}" />
+										<label id="label_TransactionEntryDialog_TranscationCode" value="${c:l('label_TransactionEntryDialog_TranscationCode.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox
-												id="transcationCode" width="72px" visible="false" />
-											<textbox
-												id="lovDescTranscationCodeName" width="250px"
-												readonly="true" />
-											<button label=""
-												id="btnSearchTranscationCode"
-												image="/images/icons/LOVSearch.png"  />
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="transcationCode" width="72px" visible="false" />
+											<textbox id="lovDescTranscationCodeName" width="250px" readonly="true" />
+											<button label="" id="btnSearchTranscationCode" image="/images/icons/LOVSearch.png" />
 										</hbox>
-										<label
-											id="label_TransactionEntryDialog_RvsTransactionCode"
-											value="${c:l('label_TransactionEntryDialog_RvsTransactionCode.value')}" />
+										<label id="label_TransactionEntryDialog_RvsTransactionCode" value="${c:l('label_TransactionEntryDialog_RvsTransactionCode.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox
-												id="rvsTransactionCode" width="72px" visible="false" />
-											<textbox
-												id="lovDescRvsTransactionCodeName" width="250px"
-												readonly="true" />
-											<button label=""
-												id="btnSearchRvsTransactionCode"
-												image="/images/icons/LOVSearch.png"  />
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="rvsTransactionCode" width="72px" visible="false" />
+											<textbox id="lovDescRvsTransactionCodeName" width="250px" readonly="true" />
+											<button label="" id="btnSearchRvsTransactionCode" image="/images/icons/LOVSearch.png" />
 										</hbox>
 									</row>
 									<row visible="false">
-										<label
-											id="label_TransactionEntryDialog_ShadowPosting"
-											value="${c:l('label_TransactionEntryDialog_ShadowPosting.value')}" />
+										<label id="label_TransactionEntryDialog_ShadowPosting" value="${c:l('label_TransactionEntryDialog_ShadowPosting.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<checkbox
-												id="shadowPosting" />
+											<checkbox id="shadowPosting" />
 										</hbox>
 									</row>
-									<!-- <row>
-										<label
-											id="label_TransactionEntryDialog_RuleDecider"
-											value="${c:l('label_TransactionEntryDialog_RuleDecider.value')}" />
-										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="ruleDecider"
-												readonly="true" />
-										</hbox>
-									</row> -->
+									<!-- <row> <label id="label_TransactionEntryDialog_RuleDecider" value="${c:l('label_TransactionEntryDialog_RuleDecider.value')}" 
+										/> <hbox> <space spacing="2px" sclass="mandatory" /> <combobox id="ruleDecider" readonly="true" /> </hbox> </row> -->
 									<row>
-										<label
-											id="label_TransactionEntryDialog_EntryByInvestment"
-											value="${c:l('label_TransactionEntryDialog_EntryByInvestment.value')}" />
-										<hbox
-											id="hbox_entryByInvestment">
+										<label id="label_TransactionEntryDialog_EntryByInvestment" value="${c:l('label_TransactionEntryDialog_EntryByInvestment.value')}" />
+										<hbox id="hbox_entryByInvestment">
 											<space spacing="2px" />
-											<checkbox
-												id="entryByInvestment" />
+											<checkbox id="entryByInvestment" />
 										</hbox>
-										<label
-											id="label_TransactionEntryDialog_ChargeType"
-											value="${c:l('label_TransactionEntryDialog_ChargeType.value')}" visible="false"/>
+										<label id="label_TransactionEntryDialog_ChargeType" value="${c:l('label_TransactionEntryDialog_ChargeType.value')}"
+											visible="false" />
 										<hbox visible="false">
 											<radiogroup id="chargeType" />
 										</hbox>
 									</row>
 									<row id="row_OpenNewFinAc">
-										<label
-											id="label_TransactionEntryDialog_OpenNewFinAc"
-											value="${c:l('label_TransactionEntryDialog_OpenNewFinAc.value')}" />
+										<label id="label_TransactionEntryDialog_OpenNewFinAc" value="${c:l('label_TransactionEntryDialog_OpenNewFinAc.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<checkbox id="openNewFinAc" />
@@ -399,18 +280,13 @@
 								</rows>
 							</grid>
 						</groupbox>
-						<groupbox id="gb_RuleCode" mold="3d"
-							width="100%">
+						<groupbox id="gb_RuleCode" mold="3d" width="100%">
 							<!-- customer details -->
-							<grid sclass="GridLayoutNoBorder"
-								fixedLayout="true" style="border:0px" width="100%">
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 								<columns>
-									<column width="30%" align="left"
-										valign="top" id="column_CustomerData" />
-									<column width="50%" align="center"
-										valign="top" id="column_RULE" />
-									<column width="20%" align="left"
-										valign="top" id="column_Operators" />
+									<column width="30%" align="left" valign="top" id="column_CustomerData" />
+									<column width="50%" align="center" valign="top" id="column_RULE" />
+									<column width="20%" align="left" valign="top" id="column_Operators" />
 								</columns>
 								<rows>
 									<row>
@@ -420,62 +296,44 @@
 												<tab id="tab_Fee" label="Fee Codes" />
 											</tabs>
 											<tabpanels>
-												<tabpanel
-													style="padding:0px;">
-													<listbox
-														id="amountCodeListbox" style="text-align:left;border:none;"
-														mold="default" width="100%" sizedByContent="true" span="true"
-														w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
+												<tabpanel style="padding:0px;">
+													<listbox id="amountCodeListbox" style="text-align:left;border:none;" mold="default" width="100%"
+														sizedByContent="true" span="true" w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
 														<listhead>
-															<listheader
-																label="Code" hflex="min" />
-															<listheader
-																label="Description" hflex="min" />
+															<listheader label="Code" hflex="min" />
+															<listheader label="Description" hflex="min" />
 														</listhead>
 
 													</listbox>
 												</tabpanel>
-												<tabpanel
-													style="padding:0px;">
-													<listbox
-														id="feeCodeListbox" style="text-align:left;border:none;"
-														mold="default" width="100%" sizedByContent="true"
-														span="true"
-														w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
+												<tabpanel style="padding:0px;">
+													<listbox id="feeCodeListbox" style="text-align:left;border:none;" mold="default" width="100%"
+														sizedByContent="true" span="true" w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
 														<listhead>
-															<listheader
-																label="Code" hflex="min" />
-															<listheader
-																label="Description" hflex="min" />
+															<listheader label="Code" hflex="min" />
+															<listheader label="Description" hflex="min" />
 														</listhead>
 
 													</listbox>
 												</tabpanel>
 											</tabpanels>
 										</tabbox>
-										
-										<!-- code mirrior -->
-										<codemirror id="amountRule"
-											syntax="js" config="lineNumbers:true" />
 
-										<!--operators-->
+										<!-- code mirrior -->
+										<codemirror id="amountRule" syntax="js" config="lineNumbers:true" />
+
+										<!--operators -->
 										<tabbox id="tb_Operators">
 											<tabs>
 												<tab label="Operators" />
 											</tabs>
 											<tabpanels>
-												<tabpanel
-													style="padding:0px;">
-													<listbox
-														id="operator" style="border:none;" mold="default"
-														width="100%" sizedByContent="true" span="true"
+												<tabpanel style="padding:0px;">
+													<listbox id="operator" style="border:none;" mold="default" width="100%" sizedByContent="true" span="true"
 														w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
-														<listhead
-															sizable="true">
-															<listheader
-																id="listheader_Operator" sort="auto" hflex="min" />
-															<listheader
-																id="listheader_Description" sort="auto" hflex="min" />
+														<listhead sizable="true">
+															<listheader id="listheader_Operator" sort="auto" hflex="min" />
+															<listheader id="listheader_Description" sort="auto" hflex="min" />
 
 														</listhead>
 													</listbox>
@@ -492,17 +350,16 @@
 					</div>
 				</center>
 				<south sclass="south-dialog">
-				<groupbox id="groupboxWf" width="99%">
-					<caption label="${c:l('Action')}" />
-					<hbox width="75%">
-						<radiogroup id="userAction" name="action" />
-						<label id="label_TransactionEntryDialog_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
-						<label id="recordStatus" />
-					</hbox>
-				</groupbox>
-			</south>
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_TransactionEntryDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
 			</borderlayout>
 		</window>
 	</window>

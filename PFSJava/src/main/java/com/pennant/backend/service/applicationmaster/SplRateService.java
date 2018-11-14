@@ -54,11 +54,17 @@ import com.pennant.backend.model.audit.AuditHeader;
  */
 public interface SplRateService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	SplRate getSplRateById(String id,Date date);
-	SplRate getApprovedSplRateById(String id,Date date);
+
+	SplRate getSplRateById(String id, Date date);
+
+	SplRate getApprovedSplRateById(String id, Date date);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	boolean getSplRateListById(String sRType, Date sREffDate);
 
 }

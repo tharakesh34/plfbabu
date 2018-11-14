@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -101,8 +100,7 @@ public class DesignationDAOImpl extends BasicDao<Designation> implements Designa
 		RowMapper<Designation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Designation.class);
 
 		try {
-			designation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			designation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			designation = null;

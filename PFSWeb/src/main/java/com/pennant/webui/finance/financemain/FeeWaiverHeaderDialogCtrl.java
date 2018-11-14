@@ -97,11 +97,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
-
-
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FeeWaiverHeaderDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FeeWaiverHeaderDialog.zul file.
  */
 public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
@@ -143,6 +140,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	private Row row_remarks;
 
 	protected Listbox listFeeWaiverEnqDetails;
+
 	/**
 	 * listheader_Select default constructor.<br>
 	 */
@@ -157,8 +155,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -177,7 +174,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
 				this.financeMainDialogCtrl = (Object) arguments.get("financeSelectCtrl");
 			}
-			
+
 			if (arguments.containsKey("feeWaiverEnquiryListCtrl")) {
 				setFeeWaiverEnquiryListCtrl((FeeWaiverEnquiryListCtrl) arguments.get("feeWaiverEnquiryListCtrl"));
 				this.financeMainDialogCtrl = (Object) arguments.get("feeWaiverEnquiryListCtrl");
@@ -231,9 +228,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			}
 			this.listFeeWaiverDetails.setHeight(borderLayoutHeight - 210 + "px");
 			ccyFormatter = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
-			
-			if(isEnquiry){
-				this.listFeeWaiverEnqDetails.setHeight(borderLayoutHeight - 210 + "px");	
+
+			if (isEnquiry) {
+				this.listFeeWaiverEnqDetails.setHeight(borderLayoutHeight - 210 + "px");
 			}
 
 			doSetFieldProperties();
@@ -308,8 +305,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -392,7 +388,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				FeeWaiverDetail waiver = aFeeWaiverHeader.getFeeWaiverDetails().get(i);
 				if (waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_ODC)
 						|| waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_LPFT)
-						|| waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_BOUNCE)) {					
+						|| waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_BOUNCE)) {
 					waiver.setAdviseId(i);
 				}
 			}
@@ -428,9 +424,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		if (aFeeWaiverHeader.isNewRecord()) {
 			for (FeeWaiverDetail detail : getFeeWaiverDetails()) {
 				/*
-				 * if (detail.getCurrWaiverAmount() != null &&
-				 * (BigDecimal.ZERO.compareTo(detail.getCurrWaiverAmount()) ==
-				 * 0)) { continue; }
+				 * if (detail.getCurrWaiverAmount() != null && (BigDecimal.ZERO.compareTo(detail.getCurrWaiverAmount())
+				 * == 0)) { continue; }
 				 */
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -871,7 +866,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		this.listFeeWaiverDetails.getItems().clear();
 		boolean isReadOnly = true;
-			
+
 		if (!isEnquiry && getWorkFlow().firstTaskOwner().equals(getRole())) {
 			isReadOnly = false;
 		}
@@ -941,7 +936,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				
+
 				this.listFeeWaiverDetails.appendChild(item);
 			}
 
@@ -982,8 +977,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Fill Fee Waiver Details To list
 	 * 
@@ -1001,18 +995,18 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		this.listFeeWaiverEnqDetails.setVisible(true);
 		if (feeWaiverDetails != null && !feeWaiverDetails.isEmpty()) {
 			for (FeeWaiverDetail detail : feeWaiverDetails) {
-				
-				if(detail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO)==0){
+
+				if (detail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) == 0) {
 					continue;
 				}
 				Listitem item = null;
 				Listcell lc;
 				item = new Listitem();
-				
+
 				lc = new Listcell(detail.getFeeTypeDesc());
 				lc.setParent(item);
 				lc.setStyle("font-weight:bold;color:##FF4500;");
-				
+
 				lc = new Listcell(DateUtility.formatDate(detail.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1055,8 +1049,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				
-				netBalanceAmt=detail.getBalanceAmount().subtract(detail.getCurrWaiverAmount()).add(netBalanceAmt);
+
+				netBalanceAmt = detail.getBalanceAmount().subtract(detail.getCurrWaiverAmount()).add(netBalanceAmt);
 				lc = new Listcell(detail.getWaivedBy());
 				lc.setParent(item);
 				lc.setStyle("text-align:right;");
@@ -1073,7 +1067,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			lc = new Listcell("--");
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
-			
+
 			lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivableAmt, ccyFormatter));
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
@@ -1095,7 +1089,6 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			lc = new Listcell(PennantApplicationUtil.amountFormate(netBalanceAmt, ccyFormatter));
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
-
 
 			this.listFeeWaiverEnqDetails.appendChild(item);
 		}
@@ -1293,5 +1286,5 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	public void setFeeWaiverEnquiryListCtrl(FeeWaiverEnquiryListCtrl feeWaiverEnquiryListCtrl) {
 		this.feeWaiverEnquiryListCtrl = feeWaiverEnquiryListCtrl;
 	}
-	
+
 }

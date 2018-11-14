@@ -13,9 +13,9 @@ public class FinExcessAmount implements Entity {
 	private BigDecimal utilisedAmt = BigDecimal.ZERO;
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
-	
+
 	public FinExcessAmount() {
-		
+
 	}
 
 	// ******************************************************//
@@ -36,9 +36,11 @@ public class FinExcessAmount implements Entity {
 	public void setId(long id) {
 		this.excessID = id;
 	}
+
 	public long getExcessID() {
 		return excessID;
 	}
+
 	public void setExcessID(long excessID) {
 		this.excessID = excessID;
 	}
@@ -46,6 +48,7 @@ public class FinExcessAmount implements Entity {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -53,6 +56,7 @@ public class FinExcessAmount implements Entity {
 	public String getAmountType() {
 		return amountType;
 	}
+
 	public void setAmountType(String amountType) {
 		this.amountType = amountType;
 	}
@@ -60,6 +64,7 @@ public class FinExcessAmount implements Entity {
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
@@ -67,6 +72,7 @@ public class FinExcessAmount implements Entity {
 	public BigDecimal getUtilisedAmt() {
 		return utilisedAmt;
 	}
+
 	public void setUtilisedAmt(BigDecimal utilisedAmt) {
 		this.utilisedAmt = utilisedAmt;
 	}
@@ -74,6 +80,7 @@ public class FinExcessAmount implements Entity {
 	public BigDecimal getReservedAmt() {
 		return reservedAmt;
 	}
+
 	public void setReservedAmt(BigDecimal reservedAmt) {
 		this.reservedAmt = reservedAmt;
 	}
@@ -81,8 +88,9 @@ public class FinExcessAmount implements Entity {
 	public BigDecimal getBalanceAmt() {
 		return balanceAmt;
 	}
+
 	public void setBalanceAmt(BigDecimal balanceAmt) {
 		this.balanceAmt = balanceAmt;
 	}
-	
+
 }

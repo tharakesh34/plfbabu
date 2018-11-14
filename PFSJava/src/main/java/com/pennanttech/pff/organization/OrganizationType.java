@@ -40,5 +40,5 @@ public enum OrganizationType {
 		}
 		return list;
 	}
-	
+
 }

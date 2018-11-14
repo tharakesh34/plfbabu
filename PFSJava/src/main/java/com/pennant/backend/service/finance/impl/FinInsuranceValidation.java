@@ -15,7 +15,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinInsuranceValidation {
 	private FinInsurancesDAO finInsurancesDAO;
-	
+
 	public FinInsurancesDAO getFinInsurancesDAO() {
 		return finInsurancesDAO;
 	}
@@ -24,8 +24,7 @@ public class FinInsuranceValidation {
 		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -43,10 +42,10 @@ public class FinInsuranceValidation {
 		FinInsurances finInsurance = (FinInsurances) auditDetail.getModelData();
 		FinInsurances tempFininsurance = null;
 		if (finInsurance.isWorkflow()) {
-			tempFininsurance = getFinInsurancesDAO().getFinInsuranceByID(finInsurance,"_Temp",false);
+			tempFininsurance = getFinInsurancesDAO().getFinInsuranceByID(finInsurance, "_Temp", false);
 		}
 
-		FinInsurances befFinInsurance = getFinInsurancesDAO().getFinInsuranceByID(finInsurance,"",false);
+		FinInsurances befFinInsurance = getFinInsurancesDAO().getFinInsuranceByID(finInsurance, "", false);
 		FinInsurances oldFinInsurance = finInsurance.getBefImage();
 
 		String[] errParm = new String[2];
@@ -67,13 +66,11 @@ public class FinInsuranceValidation {
 
 				if (finInsurance.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinInsurance != null || tempFininsurance != null) { // if records already exists in the main table
-						auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinInsurance == null || tempFininsurance != null) {
-						auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -87,13 +84,13 @@ public class FinInsuranceValidation {
 
 					if (oldFinInsurance != null
 							&& !oldFinInsurance.getLastMntOn().equals(befFinInsurance.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}

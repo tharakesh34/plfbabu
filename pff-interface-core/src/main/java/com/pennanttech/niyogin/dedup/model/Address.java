@@ -7,25 +7,25 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "addressLine1", "addressLine2", "addressLine3","landmark" ,"city", "pin", "state", "country",
+@XmlType(propOrder = { "addressLine1", "addressLine2", "addressLine3", "landmark", "city", "pin", "state", "country",
 		"addressType" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Address implements Serializable {
-	private static final long	serialVersionUID	= 8647313455611629682L;
+	private static final long serialVersionUID = 8647313455611629682L;
 
 	@XmlElement(name = "address_line1")
-	private String				addressLine1;
+	private String addressLine1;
 	@XmlElement(name = "address_line2")
-	private String				addressLine2;
+	private String addressLine2;
 	@XmlElement(name = "address_line3")
-	private String				addressLine3;
-	private String				landmark;
-	private String				city;
-	private String				pin;
-	private String				state;
-	private String				country;
+	private String addressLine3;
+	private String landmark;
+	private String city;
+	private String pin;
+	private String state;
+	private String country;
 	@XmlElement(name = "address_type")
-	private String				addressType;
+	private String addressType;
 
 	public Address() {
 		super();

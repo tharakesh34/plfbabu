@@ -91,13 +91,13 @@ import com.rits.cloning.Cloner;
 
 public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService implements FinanceWriteoffService {
 
-	private static final Logger			logger	= Logger.getLogger(FinanceWriteoffServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceWriteoffServiceImpl.class);
 
-	private FinanceWriteoffDAO			financeWriteoffDAO;
-	private ProvisionDAO				provisionDAO;
-	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
-	private FinFeeDetailService			finFeeDetailService;
-	private FinTypeFeesDAO				finTypeFeesDAO;
+	private FinanceWriteoffDAO financeWriteoffDAO;
+	private ProvisionDAO provisionDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private FinFeeDetailService finFeeDetailService;
+	private FinTypeFeesDAO finTypeFeesDAO;
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -127,10 +127,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (scheduleData.getFinanceMain() != null) {
 
 			//Finance Schedule Details
-			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
-					type, false));
-			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
-					"", false));
+			scheduleData.setFinanceScheduleDetails(
+					getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+			scheduleData.setDisbursementDetails(
+					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "", false));
 
 			scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
 					FinanceConstants.FINSER_EVENT_WRITEOFF, false, ""));
@@ -148,25 +148,25 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, false, ""));
 			scheduleData.setPenaltyDetails(getRecoveryDAO().getFinancePenaltysByFinRef(finReference, ""));
 
-			scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(
-					scheduleData.getFinanceMain().getFinType(), "_AView"));
+			scheduleData.setFinanceType(
+					getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
 
 			//Finance Customer Details			
 			if (scheduleData.getFinanceMain().getCustID() != 0
 					&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
-						scheduleData.getFinanceMain().getCustID(), true, "_View"));
+				financeDetail.setCustomerDetails(getCustomerDetailsService()
+						.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 			}
 
 			// Finance Fee Details
-			scheduleData.setFinFeeDetailList(getFinFeeDetailService()
-					.getFinFeeDetailById(finReference, false, "_TView"));
+			scheduleData
+					.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 
 			//Finance Agreement Details	
 			//=======================================
 			String finType = scheduleData.getFinanceType().getFinType();
-			financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent,
-					userRole));
+			financeDetail.setAggrementList(
+					getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
 			// Finance Check List Details 
 			//=======================================
@@ -175,8 +175,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			//Finance Fee Charge Details
 			//=======================================
 			List<Long> accSetIdList = new ArrayList<Long>();
-			accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null,
-					"_ACView"));
+			accSetIdList.addAll(
+					getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
 			if (!accSetIdList.isEmpty()) {
 				financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
 						AccountEventConstants.ACCEVENT_WRITEOFF, "_AView", 0));
@@ -239,8 +239,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -370,8 +370,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType.getSuffix(), header.getFinanceDetail()
-					.getFinScheduleData().getFinanceMain(), header.getFinanceDetail().getModuleDefiner());
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),
+					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					header.getFinanceDetail().getModuleDefiner());
 			auditDetails.addAll(details);
 		}
 
@@ -379,13 +380,13 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//=======================================
 		if (header.getFinanceDetail().getFinanceCheckList() != null
 				&& !header.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(),
-					tableType.getSuffix()));
+			auditDetails
+					.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(), tableType.getSuffix()));
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
-				.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("FinanceDetail");
@@ -421,11 +422,12 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -452,8 +454,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", header.getFinanceDetail().getFinScheduleData()
-					.getFinanceMain(), header.getFinanceDetail().getModuleDefiner());
+			details = processingDocumentDetailsList(details, "_Temp",
+					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					header.getFinanceDetail().getModuleDefiner());
 			auditHeader.setAuditDetails(details);
 		}
 
@@ -463,8 +466,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Checklist Details delete
 		//=======================================
-		auditHeader.getAuditDetails().addAll(
-				getCheckListDetailService().delete(header.getFinanceDetail(), "_Temp", tranType));
+		auditHeader.getAuditDetails()
+				.addAll(getCheckListDetailService().delete(header.getFinanceDetail(), "_Temp", tranType));
 
 		// ScheduleDetails deletion
 		listDeletion(financeMain.getFinReference(), "_Temp");
@@ -472,8 +475,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
-				.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -503,8 +506,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -546,49 +549,42 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Finance Write off Posting Process Execution
 		//=====================================
-		
+
 		executeAccountingProcess(aAuditHeader);
-		
-/*
-		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
-		profitDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
-				profitDetail, curBDay);
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,
-				financeMain.getMaturityDate());
-
-		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
-		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
-		//For New Records Profit Details will be set inside the AEAmounts 
-		if (profitDetail == null) {
-			profitDetail = new FinanceProfitDetail();
-		} else {
-			totalPftSchdOld = profitDetail.getTotalPftSchd();
-			totalPftCpzOld = profitDetail.getTotalPftCpz();
-		}
-
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-		BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd();
-		BigDecimal totalPftCpzNew = profitDetail.getTotalPftCpz();
-
-		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
-		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
-		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_WRITEOFF);
-		amountCodes.setDisburse(financeMain.getFinCurrAssetValue());
-		amountCodes.getDeclaredFieldValues(dataMap);
-		header.getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
-		financeMain.getDeclaredFieldValues(dataMap);
-
-		prepareFeeRulesMap(amountCodes, dataMap, header.getFinanceDetail());
-
- 		aeEvent.setDataMap(dataMap);
-		
-		getPostingsPreparationUtil().postAccounting(aeEvent);
-	//	linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay,
-	//			aeEvent);
-*/		
+		/*
+		 * FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference); profitDetail
+		 * = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), profitDetail,
+		 * curBDay);
+		 * 
+		 * AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,
+		 * financeMain.getMaturityDate());
+		 * 
+		 * BigDecimal totalPftSchdOld = BigDecimal.ZERO; BigDecimal totalPftCpzOld = BigDecimal.ZERO; //For New Records
+		 * Profit Details will be set inside the AEAmounts if (profitDetail == null) { profitDetail = new
+		 * FinanceProfitDetail(); } else { totalPftSchdOld = profitDetail.getTotalPftSchd(); totalPftCpzOld =
+		 * profitDetail.getTotalPftCpz(); }
+		 * 
+		 * AEAmountCodes amountCodes = aeEvent.getAeAmountCodes(); HashMap<String, Object> dataMap =
+		 * amountCodes.getDeclaredFieldValues();
+		 * 
+		 * BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd(); BigDecimal totalPftCpzNew =
+		 * profitDetail.getTotalPftCpz();
+		 * 
+		 * amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		 * amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
+		 * aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_WRITEOFF);
+		 * amountCodes.setDisburse(financeMain.getFinCurrAssetValue()); amountCodes.getDeclaredFieldValues(dataMap);
+		 * header.getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
+		 * financeMain.getDeclaredFieldValues(dataMap);
+		 * 
+		 * prepareFeeRulesMap(amountCodes, dataMap, header.getFinanceDetail());
+		 * 
+		 * aeEvent.setDataMap(dataMap);
+		 * 
+		 * getPostingsPreparationUtil().postAccounting(aeEvent); // linkedTranId = getAccountingResults(auditHeader,
+		 * header.getFinanceDetail(), accountingSetEntries, curBDay, // aeEvent);
+		 */
 
 		//Update the financemain
 		tranType = PennantConstants.TRAN_UPD;
@@ -599,7 +595,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Save Finance WriteOff Details
 		FinanceWriteoff financeWriteoff = header.getFinanceWriteoff();
-	//	financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
+		//	financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceWriteoffDAO().save(financeWriteoff, "");
 
 		/*
@@ -631,8 +627,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", header.getFinanceDetail().getFinScheduleData()
-					.getFinanceMain(), header.getFinanceDetail().getModuleDefiner());
+			details = processingDocumentDetailsList(details, "",
+					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					header.getFinanceDetail().getModuleDefiner());
 			auditDetails.addAll(details);
 			listDocDeletion(header.getFinanceDetail(), "_Temp");
 		}
@@ -645,7 +642,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		//Update Profit Details 
-	//	getProfitDetailsDAO().update(profitDetail, false);
+		//	getProfitDetailsDAO().update(profitDetail, false);
 
 		// Schedule Details delete
 		//=======================================
@@ -675,8 +672,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Adding audit as Insert/Update/deleted into main table
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
-				.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -693,8 +690,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-		
-	
+
 	/**
 	 * Method for Execute posting Details on Core Banking Side
 	 * 
@@ -706,12 +702,13 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader)  throws InterfaceException{
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
-		FinanceWriteoffHeader financeWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
+		FinanceWriteoffHeader financeWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail()
+				.getModelData();
 		FinanceWriteoff financeWriteoff = financeWriteoffHeader.getFinanceWriteoff();
 		FinanceDetail financeDetail = financeWriteoffHeader.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -731,7 +728,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		financeWriteoff.getDeclaredFieldValues(dataMap);
@@ -740,7 +737,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 		financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
- 
+
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
 
 			// save Postings
@@ -766,10 +763,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	
+
 	/**
-	 * Preparing Accounting Data 
+	 * Preparing Accounting Data
+	 * 
 	 * @param financeDetail
 	 * @param executingMap
 	 * @return
@@ -777,9 +774,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private AEEvent prepareAccountingData(
-			FinanceDetail financeDetail, AEEvent aeEvent, FinanceProfitDetail profitDetail) throws InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	private AEEvent prepareAccountingData(FinanceDetail financeDetail, AEEvent aeEvent,
+			FinanceProfitDetail profitDetail)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		Date curBDay = DateUtility.getAppDate();
 		String eventCode = financeDetail.getAccountingEventCode();
@@ -791,7 +788,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (StringUtils.isBlank(eventCode)) {
 			eventCode = PennantApplicationUtil.getEventCode(finMain.getFinStartDate());
 		}
-		
+
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
@@ -800,12 +797,14 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			totalPftSchdOld = profitDetail.getTotalPftSchd();
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
 		}
-		
+
 		aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
+					FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
+					FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -813,7 +812,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
 		}
-		
+
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
@@ -828,7 +827,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 		return aeEvent;
 	}
-	
+
 	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
 		logger.debug("Entering ");
 		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
@@ -941,21 +940,21 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				// records
 				if (befFinanceMain != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
 					// records type is new
 					if (befFinanceMain != null || tempFinanceMain != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceMain == null || tempFinanceMain != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -967,17 +966,20 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 				if (befFinanceMain == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+					if (oldFinanceMain != null
+							&& !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
@@ -985,14 +987,14 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 				if (tempFinanceMain == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinanceMain != null && oldFinanceMain != null
 						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -1002,8 +1004,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 		if (eodProgressCount > 0) {
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60203",
-					errParm, valueParm), usrLanguage));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

@@ -298,7 +298,7 @@ public class ReferenceUtil implements Serializable {
 
 			refUpdated = getvASRecordingDAO().updateVasReference(befSeqNumber, generatedSeqNo);
 		}
-		
+
 		logger.debug(String.format("VAS Reference %s", referenceNumber));
 		logger.debug(Literal.LEAVING);
 		return referenceNumber;

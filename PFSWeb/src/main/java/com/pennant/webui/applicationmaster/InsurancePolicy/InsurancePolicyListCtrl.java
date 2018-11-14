@@ -65,55 +65,54 @@ import com.pennant.backend.service.applicationmaster.InsurancePolicyService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.applicationmaster.InsurancePolicy.model.InsurancePolicyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/applicationmaster/InsurancePolicy/InsurancePolicyList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/applicationmaster/InsurancePolicy/InsurancePolicyList.zul
+ * file.<br>
  * 
  */
 public class InsurancePolicyListCtrl extends GFCBaseListCtrl<InsurancePolicy> implements Serializable {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(InsurancePolicyListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(InsurancePolicyListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_InsurancePolicyList;											// autowired
-	protected Borderlayout						borderLayout_InsurancePolicyList;										// autowired
-	protected Paging							pagingInsurancePolicyList;												// autowired
-	protected Listbox							listBoxInsurancePolicy;												// autowired
+	protected Window window_InsurancePolicyList; // autowired
+	protected Borderlayout borderLayout_InsurancePolicyList; // autowired
+	protected Paging pagingInsurancePolicyList; // autowired
+	protected Listbox listBoxInsurancePolicy; // autowired
 
 	// List headers
-	protected Listheader						listheader_PolicyCode;													// autowired
-	protected Listheader						listheader_InsuranceType;												// autowired
-	protected Listheader						listheader_InsuranceProvider;											// autowired
-	protected Listheader						listheader_Active;														// autowired
+	protected Listheader listheader_PolicyCode; // autowired
+	protected Listheader listheader_InsuranceType; // autowired
+	protected Listheader listheader_InsuranceProvider; // autowired
+	protected Listheader listheader_Active; // autowired
 
 	// checkRights
-	protected Button							button_InsurancePolicyList_NewInsurancePolicy;							// autowired
-	protected Button							button_InsurancePolicyList_InsurancePolicySearch;						// autowired
+	protected Button button_InsurancePolicyList_NewInsurancePolicy; // autowired
+	protected Button button_InsurancePolicyList_InsurancePolicySearch; // autowired
 
 	// NEEDED for the ReUse in the SearchWindow
-	protected JdbcSearchObject<InsurancePolicy>	searchObj;
+	protected JdbcSearchObject<InsurancePolicy> searchObj;
 
-	private transient InsurancePolicyService	insurancePolicyService;
-	protected Textbox							policyCode;															// autowired
-	protected Listbox							sortOperator_PolicyCode;												// autowired
+	private transient InsurancePolicyService insurancePolicyService;
+	protected Textbox policyCode; // autowired
+	protected Listbox sortOperator_PolicyCode; // autowired
 
-	protected Textbox							insuranceType;															// autowired
-	protected Listbox							sortOperator_InsuranceType;											// autowired
+	protected Textbox insuranceType; // autowired
+	protected Listbox sortOperator_InsuranceType; // autowired
 
-	protected Textbox							insuranceProvider;														// autowired
-	protected Listbox							sortOperator_InsuranceProvider;										// autowired
+	protected Textbox insuranceProvider; // autowired
+	protected Listbox sortOperator_InsuranceProvider; // autowired
 
-	protected Checkbox							active;																// autowired
-	protected Listbox							sortOperator_Active;													// autowired
-
-
+	protected Checkbox active; // autowired
+	protected Listbox sortOperator_Active; // autowired
 
 	/**
 	 * default constructor.<br>

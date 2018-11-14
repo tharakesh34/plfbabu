@@ -21,15 +21,15 @@ public class LimitGroupLines extends AbstractWorkflowEntity {
 	private String limitLine;
 	private String limitLineDesc;
 	private String limitLines;
-	private int    itemSeq;
-	
+	private int itemSeq;
+
 	private long createdBy;
 	private Timestamp createdOn;
 	private boolean newRecord = false;
 	private String lovValue;
 	private LimitGroup befImage;
 	private LoggedInUser userDetails;
-	
+
 	private int key;
 
 	public boolean isNew() {
@@ -122,8 +122,7 @@ public class LimitGroupLines extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public XMLGregorianCalendar getCreatedDate()
-			throws DatatypeConfigurationException {
+	public XMLGregorianCalendar getCreatedDate() throws DatatypeConfigurationException {
 
 		if (createdOn == null) {
 			return null;
@@ -162,7 +161,6 @@ public class LimitGroupLines extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-
 
 	public String getLimitGroupCode() {
 		return limitGroupCode;

@@ -82,13 +82,15 @@ public class PhoneType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return phoneTypeCode;
 	}
+
 	public void setId(String id) {
 		this.phoneTypeCode = id;
 	}
+
 	public String getPhoneTypeCode() {
 		return phoneTypeCode;
 	}
@@ -96,6 +98,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public void setPhoneTypeCode(String phoneTypeCode) {
 		this.phoneTypeCode = phoneTypeCode;
 	}
+
 	public String getPhoneTypeDesc() {
 		return phoneTypeDesc;
 	}
@@ -107,6 +110,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public int getPhoneTypePriority() {
 		return phoneTypePriority;
 	}
+
 	public void setPhoneTypePriority(int phoneTypePriority) {
 		this.phoneTypePriority = phoneTypePriority;
 	}
@@ -114,6 +118,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public boolean isPhoneTypeIsActive() {
 		return phoneTypeIsActive;
 	}
+
 	public void setPhoneTypeIsActive(boolean phoneTypeIsActive) {
 		this.phoneTypeIsActive = phoneTypeIsActive;
 	}
@@ -121,6 +126,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -128,6 +134,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -135,6 +142,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public PhoneType getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(PhoneType beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -142,10 +150,11 @@ public class PhoneType extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

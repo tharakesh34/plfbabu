@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.EmpStsCode;
 public interface EmpStsCodeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	EmpStsCode getEmpStsCodeById(String id);
+
 	EmpStsCode getApprovedEmpStsCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

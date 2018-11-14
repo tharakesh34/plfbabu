@@ -22,9 +22,9 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class DocumentDetailValidation {
 
-	private DocumentDetailsDAO	documentDetailsDAO;
-	private DocumentManagerDAO	documentManagerDAO;
-	private CustomerDocumentDAO	customerDocumentDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private DocumentManagerDAO documentManagerDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
 
 	public DocumentDetailsDAO getDocumentDetailsDAO() {
 		return documentDetailsDAO;
@@ -37,9 +37,9 @@ public class DocumentDetailValidation {
 	public CustomerDocumentDAO getCustomerDocumentDAO() {
 		return customerDocumentDAO;
 	}
-	
-	public DocumentDetailValidation(DocumentDetailsDAO	documentDetailsDAO, 
-			DocumentManagerDAO	documentManagerDAO,CustomerDocumentDAO	customerDocumentDAO) {
+
+	public DocumentDetailValidation(DocumentDetailsDAO documentDetailsDAO, DocumentManagerDAO documentManagerDAO,
+			CustomerDocumentDAO customerDocumentDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 		this.documentManagerDAO = documentManagerDAO;
 		this.customerDocumentDAO = customerDocumentDAO;
@@ -51,7 +51,7 @@ public class DocumentDetailValidation {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
 				AuditDetail auditDetail = validate(auditDetails.get(i), method, usrLanguage);
-				if(auditDetail != null){
+				if (auditDetail != null) {
 					details.add(auditDetail);
 				}
 			}
@@ -63,9 +63,9 @@ public class DocumentDetailValidation {
 	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
 
 		DocumentDetails documentDetails = (DocumentDetails) auditDetail.getModelData();
-		
+
 		// Validate Customer  Document seperatly.
-		if(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())){
+		if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 			return null;
 		}
 		DocumentDetails tempDocument = null;
@@ -73,19 +73,20 @@ public class DocumentDetailValidation {
 			tempDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "_Temp", true);
 		}
 
-		DocumentDetails befDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(),"", true);
+		DocumentDetails befDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "",
+				true);
 		DocumentDetails oldDocument = documentDetails.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
 		valueParm[0] = documentDetails.getReferenceId();
 		valueParm[1] = documentDetails.getDocCategory();
-		
+
 		if (StringUtils.equals(documentDetails.getDocModule(), CollateralConstants.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_CollateralReference") + ":" + valueParm[0];
-		} else if (StringUtils.equals(documentDetails.getDocModule(),  FinanceConstants.MODULE_NAME)) {
+		} else if (StringUtils.equals(documentDetails.getDocModule(), FinanceConstants.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_FinanceReference") + ":" + valueParm[0];
-		} else if (StringUtils.equals(documentDetails.getDocModule(),  CommitmentConstants.MODULE_NAME)) {
+		} else if (StringUtils.equals(documentDetails.getDocModule(), CommitmentConstants.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_CmtReference") + ":" + valueParm[0];
 		} else if (StringUtils.equals(documentDetails.getDocModule(), VASConsatnts.MODULE_NAME)) {
 			errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":" + valueParm[0];
@@ -102,13 +103,11 @@ public class DocumentDetailValidation {
 
 				if (documentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befDocument != null || tempDocument != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDocument == null || tempDocument != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -120,15 +119,14 @@ public class DocumentDetailValidation {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (oldDocument != null
-							&& !oldDocument.getLastMntOn().equals(befDocument.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+					if (oldDocument != null && !oldDocument.getLastMntOn().equals(befDocument.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}

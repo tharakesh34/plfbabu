@@ -67,10 +67,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>NPABucketConfiguration</code> with set of CRUD operations.
  */
-public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfiguration> implements NPABucketConfigurationDAO {
-	private static Logger	logger	= Logger.getLogger(NPABucketConfigurationDAOImpl.class);
-
-	
+public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfiguration>
+		implements NPABucketConfigurationDAO {
+	private static Logger logger = Logger.getLogger(NPABucketConfigurationDAOImpl.class);
 
 	public NPABucketConfigurationDAOImpl() {
 		super();
@@ -86,7 +85,8 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		if (type.contains("View")) {
 			sql.append(" ProductCodeName, BucketIDName, BucketCode,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From NPABUCKETSCONFIG");
 		sql.append(type);
 		sql.append(" Where configID = :configID");
@@ -158,10 +158,12 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		StringBuilder sql = new StringBuilder(" insert into NPABUCKETSCONFIG");
 		sql.append(tableType.getSuffix());
 		sql.append(" (configID, productCode, bucketID, dueDays, suspendProfit, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :configID, :productCode, :bucketID, :dueDays, :suspendProfit, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (nPABucketConfiguration.getConfigID() <= 0) {
 			nPABucketConfiguration.setConfigID(getNextId("SeqNPABUCKETSCONFIG"));
@@ -237,7 +239,6 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	@Override
 	public int getByProductCode(String producCode, int dueDys, long configID, String type) {

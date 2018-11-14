@@ -77,36 +77,36 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
-	private static final long				serialVersionUID	= 2623911832045017662L;
-	private static final Logger				logger				= Logger.getLogger(AddRmvTermsDialogCtrl.class);
+	private static final long serialVersionUID = 2623911832045017662L;
+	private static final Logger logger = Logger.getLogger(AddRmvTermsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_AddRmvTermsDialog;
-	protected Intbox						terms;
-	protected Button						btnAddRmvTerms;
-	protected Combobox						cbFromDate;
-	protected Combobox						cbReCalType;
-	protected Combobox						cbRecalFromDate;
-	protected Row							recalFromDateRow;
-	protected Row							numOfTermsRow;
-	protected Row							recalTypeRow;
-	protected Row							fromDateRow;
-	protected Uppercasebox					serviceReqNo;
-	protected Textbox						remarks;
+	protected Window window_AddRmvTermsDialog;
+	protected Intbox terms;
+	protected Button btnAddRmvTerms;
+	protected Combobox cbFromDate;
+	protected Combobox cbReCalType;
+	protected Combobox cbRecalFromDate;
+	protected Row recalFromDateRow;
+	protected Row numOfTermsRow;
+	protected Row recalTypeRow;
+	protected Row fromDateRow;
+	protected Uppercasebox serviceReqNo;
+	protected Textbox remarks;
 
 	// not auto wired vars
-	private FinScheduleData					finScheduleData;														// overhanded per param
-	private FinanceScheduleDetail			financeScheduleDetail;													// overhanded per param
-	private ScheduleDetailDialogCtrl		scheduleDetailDialogCtrl;
+	private FinScheduleData finScheduleData; // overhanded per param
+	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 
-	private transient boolean				validationOn;
-	private boolean							addTerms;
+	private transient boolean validationOn;
+	private boolean addTerms;
 
-	private transient AddTermsService		addTermsService;
-	private transient RemoveTermsService	rmvTermsService;
+	private transient AddTermsService addTermsService;
+	private transient RemoveTermsService rmvTermsService;
 	private boolean appDateValidationReq = false;
 
 	/**
@@ -150,7 +150,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else {
 				setFinanceScheduleDetail(null);
 			}
-			
+
 			if (arguments.containsKey("appDateValidationReq")) {
 				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
 			}
@@ -248,29 +248,29 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			String excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 					PennantStaticListUtil.getSchCalCodes(), excldValues);
-			
+
 			changeRecalType();
 			fillSchRecalFromDates(cbRecalFromDate, aFinSchData.getFinanceScheduleDetails(), null);
 		}
-		
+
 		logger.debug("Entering");
 	}
-	
-	public void fillSchRecalFromDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails, Date fillBefore) {
+
+	public void fillSchRecalFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
+			Date fillBefore) {
 		logger.debug("Entering");
-		
+
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
-		
+
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				
+
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				
+
 				// Presentment Exists
 				if (curSchd.getPresentmentId() > 0) {
 					dateCombobox.getItems().clear();
@@ -281,28 +281,30 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
-				
-				if (curSchd.isRepayOnSchDate()  
-						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && 
-						curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
-								(curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 && 
-								curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
-					
+
+				if (curSchd.isRepayOnSchDate() && ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0
+						&& curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid())
+						|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
+								&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
+
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
-					comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+					comboitem.setLabel(
+							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+					comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
-					if(fillBefore != null && curSchd.getSchDate().compareTo(fillBefore) < 0) {
-						if(i != financeScheduleDetails.size()-1){
+					if (fillBefore != null && curSchd.getSchDate().compareTo(fillBefore) < 0) {
+						if (i != financeScheduleDetails.size() - 1) {
 							dateCombobox.appendChild(comboitem);
-							if(getFinanceScheduleDetail() != null && curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+							if (getFinanceScheduleDetail() != null
+									&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
 								dateCombobox.setSelectedItem(comboitem);
 							}
 						}
-					} else{
-						if(i != financeScheduleDetails.size()-1 && fillBefore == null){
+					} else {
+						if (i != financeScheduleDetails.size() - 1 && fillBefore == null) {
 							dateCombobox.appendChild(comboitem);
-							if(getFinanceScheduleDetail() != null && curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+							if (getFinanceScheduleDetail() != null
+									&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
 								dateCombobox.setSelectedItem(comboitem);
 							}
 						}
@@ -312,13 +314,13 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onChange$cbFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		if(this.cbFromDate.getSelectedIndex() > 0){
+		if (this.cbFromDate.getSelectedIndex() > 0) {
 			this.cbRecalFromDate.getItems().clear();
-			fillSchRecalFromDates(cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(), 
-					(Date)this.cbFromDate.getSelectedItem().getValue());	
+			fillSchRecalFromDates(cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+					(Date) this.cbFromDate.getSelectedItem().getValue());
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -346,17 +348,18 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			if (this.fromDateRow.isVisible()) {
 				if (isValidComboValue(this.cbFromDate, Labels.getLabel("label_AddRmvTermsDialog_FromDate.value"))) {
-					getFinScheduleData().getFinanceMain().setEventFromDate(
-							(Date) this.cbFromDate.getSelectedItem().getValue());
+					getFinScheduleData().getFinanceMain()
+							.setEventFromDate((Date) this.cbFromDate.getSelectedItem().getValue());
 					List<FinanceScheduleDetail> sd = getFinScheduleData().getFinanceScheduleDetails();
 
 					for (int i = 0; i < sd.size(); i++) {
-						if (getFinScheduleData().getFinanceMain().getEventFromDate().compareTo(sd.get(i).getSchDate()) == 0) {
+						if (getFinScheduleData().getFinanceMain().getEventFromDate()
+								.compareTo(sd.get(i).getSchDate()) == 0) {
 							count = count + (sd.size() - 1) - i;
 						}
 					}
 				}
-				Date fromDate= (Date) this.cbFromDate.getSelectedItem().getValue();
+				Date fromDate = (Date) this.cbFromDate.getSelectedItem().getValue();
 				finServiceInstruction.setFromDate(fromDate);
 				getFinScheduleData().getFinanceMain().setRecalFromDate(fromDate);
 			}
@@ -367,8 +370,8 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (this.recalTypeRow.isVisible()) {
 				if (isValidComboValue(this.cbReCalType, Labels.getLabel("label_AddRmvTermsDialog_RecalType.value"))
 						&& this.cbReCalType.getSelectedIndex() != 0) {
-					getFinScheduleData().getFinanceMain().setRecalType(
-							this.cbReCalType.getSelectedItem().getValue().toString());
+					getFinScheduleData().getFinanceMain()
+							.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
 
 				}
 
@@ -384,8 +387,8 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						&& this.cbRecalFromDate.getSelectedIndex() != 0) {
 					this.cbRecalFromDate.getSelectedItem().getValue().toString();
 				}
-				
-				Date recalFromDate= (Date) this.cbRecalFromDate.getSelectedItem().getValue();
+
+				Date recalFromDate = (Date) this.cbRecalFromDate.getSelectedItem().getValue();
 				getFinScheduleData().getFinanceMain().setRecalFromDate(recalFromDate);
 			}
 		} catch (WrongValueException we) {
@@ -401,21 +404,21 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
-		if(isAddTerms()){
+		if (isAddTerms()) {
 			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDTERM);
-		}else{
+		} else {
 			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RMVTERM);
 		}
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 
 		getFinScheduleData().getErrorDetails().clear();
-		
+
 		// call change frequency method to calculate new schedules(Service details calling for Schedule calculation)
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		if (isAddTerms()) {
-			getFinScheduleData().getFinanceMain().setEventFromDate(
-					getFinScheduleData().getFinanceMain().getFinStartDate());
+			getFinScheduleData().getFinanceMain()
+					.setEventFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
 			setFinScheduleData(addTermsService.getAddTermsDetails(getFinScheduleData(), finServiceInstruction));
 		} else {
 			setFinScheduleData(rmvTermsService.getRmvTermsDetails(getFinScheduleData()));
@@ -423,7 +426,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
-		
+
 		//Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
@@ -435,7 +438,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -446,13 +449,12 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.terms.isVisible()) {
-			this.terms.setConstraint(new PTNumberValidator(Labels.getLabel("label_AddRmvTermsDialog_Terms.value"),
-					true, false));
+			this.terms.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_AddRmvTermsDialog_Terms.value"), true, false));
 		}
 		if (this.fromDateRow.isVisible()) {
-			this.cbFromDate.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY",
-							new String[] { Labels.getLabel("label_AddRmvTermsDialog_FromDate.value") }));
+			this.cbFromDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_AddRmvTermsDialog_FromDate.value") }));
 		}
 		logger.debug("Leaving");
 	}
@@ -491,7 +493,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -537,9 +539,9 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				
+
 				//In Remove Terms the Disbursement Dates Need to be shown
-				if(curSchd.isDisbOnSchDate() && !isAddTerms()){
+				if (curSchd.isDisbOnSchDate() && !isAddTerms()) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -548,24 +550,25 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
-			
+
 				if (DateUtility.compare(curSchd.getSchDate(), grcEndDate) <= 0) {
 					continue;
 				}
-				
+
 				// Not allow Before Current Business Date
-				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+				if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
 				}
 
 				//Not Allowed for Repayment
-				if (!(curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(
-						BigDecimal.ZERO) > 0))) {
+				if (!(curSchd.isRepayOnSchDate()
+						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 					continue;
 				}
 
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -574,7 +577,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
-				
+
 				// Presentment Exists
 				if (curSchd.getPresentmentId() > 0) {
 					dateCombobox.getItems().clear();
@@ -597,7 +600,8 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				if (addToCombo) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+					comboitem.setLabel(
+							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 					if (getFinanceScheduleDetail() != null
@@ -616,12 +620,12 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		changeRecalType();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void changeRecalType(){
+
+	private void changeRecalType() {
 		if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			this.recalFromDateRow.setVisible(true);
 		} else {
-			if(this.cbRecalFromDate.getItems() != null && this.cbRecalFromDate.getItems().size() > 0){
+			if (this.cbRecalFromDate.getItems() != null && this.cbRecalFromDate.getItems().size() > 0) {
 				this.cbRecalFromDate.setSelectedIndex(0);
 			}
 			this.recalFromDateRow.setVisible(false);

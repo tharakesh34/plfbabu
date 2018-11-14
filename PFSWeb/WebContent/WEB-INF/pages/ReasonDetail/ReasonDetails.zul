@@ -2,9 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ReasonDetailsDialog" border="normal" apply="${reasonDetailsCtrl}" width="580px" sizable="false">
@@ -43,7 +41,7 @@
 								<space spacing="2px" />
 							</hbox>
 						</row>
-						
+
 						<row>
 							<label value="${c:l('label_ReasonDetailsDialog_ReasonCategory.value')}" />
 							<hbox>
@@ -51,13 +49,13 @@
 							</hbox>
 						</row>
 						<row>
-								<label value="${c:l('label_ReasonDetailsDialog_Reasons.value')}" />
-								<hlayout spacing="2px">
-									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="reasons" width="160px" />
-									<button id="btnReasons" image="/images/icons/search.png" />
-								</hlayout>
-							</row>
+							<label value="${c:l('label_ReasonDetailsDialog_Reasons.value')}" />
+							<hlayout spacing="2px">
+								<space spacing="2px" sclass="mandatory" />
+								<uppercasebox id="reasons" width="160px" />
+								<button id="btnReasons" image="/images/icons/search.png" />
+							</hlayout>
+						</row>
 						<row>
 							<label />
 							<hbox>

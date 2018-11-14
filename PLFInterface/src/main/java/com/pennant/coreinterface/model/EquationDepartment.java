@@ -54,7 +54,7 @@ public class EquationDepartment extends AbstractWorkflowEntity {
 	public EquationDepartment() {
 		super();
 	}
-	
+
 	private String deptCode = null;
 	private String deptDesc;
 	private boolean deptIsActive;
@@ -62,20 +62,23 @@ public class EquationDepartment extends AbstractWorkflowEntity {
 	public String getDeptCode() {
 		return deptCode;
 	}
+
 	public void setDeptCode(String deptCode) {
 		this.deptCode = deptCode;
 	}
-	
+
 	public String getDeptDesc() {
 		return deptDesc;
 	}
+
 	public void setDeptDesc(String deptDesc) {
 		this.deptDesc = deptDesc;
 	}
-	
+
 	public boolean isDeptIsActive() {
 		return deptIsActive;
 	}
+
 	public void setDeptIsActive(boolean deptIsActive) {
 		this.deptIsActive = deptIsActive;
 	}

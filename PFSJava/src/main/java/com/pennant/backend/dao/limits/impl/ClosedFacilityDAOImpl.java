@@ -40,9 +40,9 @@ public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(closedFacilityDetail);
 
-		try{
-			list = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, ClosedFacilityDetail.class);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			list = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, ClosedFacilityDetail.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			list = null;
 		}
@@ -54,16 +54,16 @@ public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implem
 	public void updateClosedFacilityStatus(List<ClosedFacilityDetail> proClFacilityList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update INTER.PFF_CLOSED_LIMITS" );
+		StringBuilder updateSql = new StringBuilder("Update INTER.PFF_CLOSED_LIMITS");
 		updateSql.append(" Set Processed = :Processed, ProcessedDate =:ProcessedDate");
 		updateSql.append(" Where LimitReference =:LimitReference ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(proClFacilityList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}

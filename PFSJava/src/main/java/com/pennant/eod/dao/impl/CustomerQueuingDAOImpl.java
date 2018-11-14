@@ -24,20 +24,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
 
-	private static final String			UPDATE_SQL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+	private static final String UPDATE_SQL = "UPDATE CustomerQueuing set ThreadId=:ThreadId "
 			+ "Where ThreadId = :AcThreadId";
-	
-	private static final String			UPDATE_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ThreadId = :AcThreadId";
-	
-	private static final String			UPDATE_ORCL_RC	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
-	
 
-	private static final String			START_CID_RC	= "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
+	private static final String UPDATE_SQL_RC = "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ThreadId = :AcThreadId";
+
+	private static final String UPDATE_ORCL_RC = "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
+
+	private static final String START_CID_RC = "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
 			+ "Where CustID = :CustID AND Progress=:ProgressWait";
 
-	
 	public CustomerQueuingDAOImpl() {
 		super();
 	}
@@ -54,54 +52,56 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		customerQueuing.setLoanExist(true);
 		customerQueuing.setLimitRebuild(false);
 		customerQueuing.setEodProcess(true);
-		
+
 		StringBuilder insertSql = new StringBuilder(
 				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
+		insertSql.append(" SELECT  DISTINCT CustID, ");
+
+		if (App.DATABASE.name() == Database.POSTGRES.name()) {
+			insertSql.append(" to_timestamp(:EodDate, '");
+			insertSql.append(PennantConstants.DBDateFormat);
+			insertSql.append("'),   ");
+		} else {
+			insertSql.append(":EodDate,   ");
+		}
+
 		insertSql.append(
-				" SELECT  DISTINCT CustID, ");
-				
-				if (App.DATABASE.name() == Database.POSTGRES.name()) {
-					insertSql.append(" to_timestamp(:EodDate, '");
-					insertSql.append(PennantConstants.DBDateFormat);
-					insertSql.append("'),   ");
-				}else{
-					insertSql.append(":EodDate,   ");
-				}
-				
-				insertSql.append(":ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess FROM FinanceMain where FinIsActive = :Active");
+				":ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess FROM FinanceMain where FinIsActive = :Active");
 
 		logger.debug("updateSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
 		int financeRecords = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		customerQueuing.setLoanExist(false);
-		
-		insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
+
+		insertSql = new StringBuilder(
+				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
 		insertSql.append(" select DISTINCT CustomerID,");
 		if (App.DATABASE.name() == Database.POSTGRES.name()) {
 			insertSql.append(" to_timestamp(:EodDate, '");
 			insertSql.append(PennantConstants.DBDateFormat);
 			insertSql.append("'),   ");
-		}else{
+		} else {
 			insertSql.append(":EodDate,   ");
 		}
 		insertSql.append(" :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess from LimitHeader T1 ");
 		insertSql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
-		insertSql.append(" Where T2.Rebuild = '1' and CustomerID Not IN (Select Distinct CustId from CustomerQueuing) and CustomerID <> 0");
-		
+		insertSql.append(
+				" Where T2.Rebuild = '1' and CustomerID Not IN (Select Distinct CustId from CustomerQueuing) and CustomerID <> 0");
+
 		logger.debug("updateSql: " + insertSql.toString());
-		
+
 		beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		
+
 		int nonFinacerecords = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
 		return financeRecords + nonFinacerecords;
 	}
-	
+
 	@Override
 	public long getCountByProgress() {
 		logger.debug("Entering");
@@ -112,8 +112,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 				"SELECT COUNT(CustID) from CustomerQueuing where Progress = :Progress");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		long progressCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-				Long.class);
+		long progressCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 
 		logger.debug("Leaving");
 		return progressCount;
@@ -133,8 +132,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		int records = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-				Integer.class);
+		int records = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		logger.debug("Leaving");
 
 		return records;
@@ -251,7 +249,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void updateFailed(CustomerQueuing customerQueuing) {
 		logger.debug("Entering");
@@ -341,11 +339,10 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custQueue);
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 
-		List<Customer> customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		List<Customer> customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		return customers;
 	}
-	
+
 	@Override
 	public int insertCustomerQueueing(long groupId, boolean eodProcess) {
 		logger.debug("Entering");
@@ -362,24 +359,27 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		source.addValue("CustGroupId", groupId);
 		source.addValue("EodProcess", eodProcess);
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, Progress, LoanExist, StartTime, EndTime, LimitRebuild, EodProcess)");
-		insertSql.append(" SELECT Distinct CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :StartTime, :EndTime, :LimitRebuild, :EodProcess FROM Customers Where CustGroupId = :CustGroupId");
+		StringBuilder insertSql = new StringBuilder(
+				"INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, Progress, LoanExist, StartTime, EndTime, LimitRebuild, EodProcess)");
+		insertSql.append(
+				" SELECT Distinct CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :StartTime, :EndTime, :LimitRebuild, :EodProcess FROM Customers Where CustGroupId = :CustGroupId");
 		insertSql.append(" And CustId NOT IN (Select Distinct CustId from CUSTOMERQUEUING)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		this.jdbcTemplate.update(insertSql.toString(), source);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing Set Progress = :Progress ");
-		updateSql.append(" Where CustId IN (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
-		
+		updateSql.append(
+				" Where CustId IN (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
+
 		logger.debug("updateSql: " + updateSql.toString());
 		int count = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 		return count;
 	}
-	
+
 	@Override
 	public void updateCustomerQueuingStatus(long custGroupId, int progress) {
 		logger.debug("Entering");
@@ -390,15 +390,16 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		source.addValue("CustGroupId", custGroupId);
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
-		updateSql.append(" EndTime = :EndTime, Progress = :Progress" );
-		updateSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		updateSql.append(" EndTime = :EndTime, Progress = :Progress");
+		updateSql.append(
+				" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		this.jdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * update the Rebuild flag as true if the structure has been changed.
 	 */
@@ -410,7 +411,8 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set LimitRebuild = '1'");
 		updateSql.append(" Where CUSTID in (Select  T1.CUSTOMERID from LimitHeader T1");
-		updateSql.append(" Inner Join LimitStructure T2 on T2.STRUCTURECODE = T1.LIMITSTRUCTURECODE and T2.REBUILD = '1')");
+		updateSql.append(
+				" Inner Join LimitStructure T2 on T2.STRUCTURECODE = T1.LIMITSTRUCTURECODE and T2.REBUILD = '1')");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -425,8 +427,10 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	public void insertCustQueueForRebuild(CustomerQueuing customerQueuing) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, StartTime, Progress, LoanExist, LimitRebuild, EodProcess)");
-		insertSql.append(" values (:CustID, :EodDate, :ThreadId, :StartTime, :Progress, :LoanExist, :LimitRebuild, :EodProcess)");
+		StringBuilder insertSql = new StringBuilder(
+				"INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, StartTime, Progress, LoanExist, LimitRebuild, EodProcess)");
+		insertSql.append(
+				" values (:CustID, :EodDate, :ThreadId, :StartTime, :Progress, :LoanExist, :LimitRebuild, :EodProcess)");
 
 		logger.debug("updateSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
@@ -503,7 +507,8 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
 		insertSql.append(" SELECT * FROM CustomerQueuing ");
-		insertSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		insertSql.append(
+				" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		this.jdbcTemplate.update(insertSql.toString(), source);
@@ -521,7 +526,8 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		source.addValue("CustGroupId", groupId);
 
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerQueuing");
-		deleteSql.append(" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		deleteSql.append(
+				" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		this.jdbcTemplate.update(deleteSql.toString(), source);

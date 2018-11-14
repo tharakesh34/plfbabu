@@ -21,16 +21,16 @@ import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
 import com.pennanttech.pennapps.core.InterfaceException;
 
-public class CustomerDedupProcess extends MQProcess  {
+public class CustomerDedupProcess extends MQProcess {
 
 	private static final Logger logger = Logger.getLogger(CustomerDedupProcess.class);
 
 	public CustomerDedupProcess() {
 		super();
 	}
-	
+
 	private String CUST_CTG_CODE = null;
-	
+
 	public List<CoreCustomerDedup> customerDedupCheck(CoreCustomerDedup dedupCustomer, String msgFormat)
 			throws JaxenException {
 		logger.debug("Entering");
@@ -40,20 +40,22 @@ public class CustomerDedupProcess extends MQProcess  {
 		}
 
 		CUST_CTG_CODE = dedupCustomer.getCustCtgCode();
-		 
+
 		//set MQ Message configuration details 
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 
 		OMElement response = null;
 
 		try {
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,getRequestElement(dedupCustomer, referenceNum, factory));
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory,
+					getRequestElement(dedupCustomer, referenceNum, factory));
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -70,7 +72,7 @@ public class CustomerDedupProcess extends MQProcess  {
 	 * @param header
 	 * @return
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private List<CoreCustomerDedup> setCustomerDedupResponse(OMElement responseElement, AHBMQHeader header)
 			throws JaxenException {
@@ -79,23 +81,23 @@ public class CustomerDedupProcess extends MQProcess  {
 		if (responseElement == null) {
 			return null;
 		}
-		
+
 		String path = "/HB_EAI_REPLY/Reply/customerDuplicateCheckReply";
-		
-		if(StringUtils.equals(CUST_CTG_CODE, "SME")) {
+
+		if (StringUtils.equals(CUST_CTG_CODE, "SME")) {
 			path = "/HB_EAI_REPLY/Reply/customerSMEDuplicateCheckReply";
 		}
 
 		OMElement detailElement = PFFXmlUtil.getOMElement(path, responseElement);
 		header = PFFXmlUtil.parseHeader(responseElement, header);
 		header = getReturnStatus(detailElement, header, responseElement);
-		
+
 		logger.debug("Leaving");
 
-		if(StringUtils.equals(PFFXmlUtil.DEDUP_NOTFOUND, header.getReturnCode())) {
+		if (StringUtils.equals(PFFXmlUtil.DEDUP_NOTFOUND, header.getReturnCode())) {
 			return null;
-		} else if(StringUtils.equals(PFFXmlUtil.DEDUP_FOUND, header.getReturnCode())){
-			return getCustDedupRecords(detailElement, path+"/DuplicateCustomer");
+		} else if (StringUtils.equals(PFFXmlUtil.DEDUP_FOUND, header.getReturnCode())) {
+			return getCustDedupRecords(detailElement, path + "/DuplicateCustomer");
 		} else {
 			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
@@ -114,12 +116,13 @@ public class CustomerDedupProcess extends MQProcess  {
 		@SuppressWarnings("unchecked")
 		List<OMElement> custDedupList = (List<OMElement>) xpath.selectNodes(detailElement);
 		for (OMElement omElement : custDedupList) {
-			
-			if(StringUtils.equals(CUST_CTG_CODE, "SME")) {
+
+			if (StringUtils.equals(CUST_CTG_CODE, "SME")) {
 				CoreCustomerDedup custDedup = new CoreCustomerDedup();
 				custDedup.setCustCIF(PFFXmlUtil.getStringValue(omElement, "DuplicateCIF"));
-				custDedup.setCustDOB(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "DateOfincorporation"), 
-						InterfaceMasterConfigUtil.SHORT_DATE));
+				custDedup.setCustDOB(
+						DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "DateOfincorporation"),
+								InterfaceMasterConfigUtil.SHORT_DATE));
 				custDedup.setCustFName(PFFXmlUtil.getStringValue(omElement, "Name"));
 				custDedup.setCustCRCPR(PFFXmlUtil.getStringValue(omElement, "TradeLicenseNumber"));
 				custDedup.setCustPassportNo(PFFXmlUtil.getStringValue(omElement, "CommercialRegistrationNumber"));
@@ -129,7 +132,7 @@ public class CustomerDedupProcess extends MQProcess  {
 			} else {
 				CoreCustomerDedup custDedup = new CoreCustomerDedup();
 				custDedup.setCustCIF(PFFXmlUtil.getStringValue(omElement, "DuplicateCIF"));
-				custDedup.setCustDOB(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "DateOfBirth"), 
+				custDedup.setCustDOB(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "DateOfBirth"),
 						InterfaceMasterConfigUtil.SHORT_DATE));
 				custDedup.setCustFName(PFFXmlUtil.getStringValue(omElement, "FirstName"));
 				custDedup.setCustLName(PFFXmlUtil.getStringValue(omElement, "LastName"));
@@ -154,37 +157,42 @@ public class CustomerDedupProcess extends MQProcess  {
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(CoreCustomerDedup dedupCustomer,String referenceNum,OMFactory factory){
+	private OMElement getRequestElement(CoreCustomerDedup dedupCustomer, String referenceNum, OMFactory factory) {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement custDedupCheckReq = null;
-		
-		if(StringUtils.equals(CUST_CTG_CODE, "SME")) {
+
+		if (StringUtils.equals(CUST_CTG_CODE, "SME")) {
 			custDedupCheckReq = factory.createOMElement("customerSMEDuplicateCheckRequest", null);
-			
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "ReferenceNum",referenceNum);
+
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "ReferenceNum", referenceNum);
 			//PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CIF", dedupCustomer.getCustCIF());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CustomerName",dedupCustomer.getCustFName());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "TradeLicenseNumber",dedupCustomer.getCustCRCPR());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CommercialRegistrationNumber",dedupCustomer.getCustCRCPR());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "ChamberMemberNumber",dedupCustomer.getCustCRCPR());
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CustomerName", dedupCustomer.getCustFName());
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "TradeLicenseNumber",
+					dedupCustomer.getCustCRCPR());
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CommercialRegistrationNumber",
+					dedupCustomer.getCustCRCPR());
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "ChamberMemberNumber",
+					dedupCustomer.getCustCRCPR());
 			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "TimeStamp",
 					PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 		} else {
 			custDedupCheckReq = factory.createOMElement("customerDuplicateCheckRequest", null);
-			
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "ReferenceNum",referenceNum);
+
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "ReferenceNum", referenceNum);
 			//PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CIF", dedupCustomer.getCustCIF());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "DateOfBirth",DateUtility.formateDate(
-					dedupCustomer.getCustDOB(), InterfaceMasterConfigUtil.MQDATE));
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "PassportNumber",dedupCustomer.getCustPassportNo());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "MohterMaidenName",dedupCustomer.getCustMotherMaiden());
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "DateOfBirth",
+					DateUtility.formateDate(dedupCustomer.getCustDOB(), InterfaceMasterConfigUtil.MQDATE));
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "PassportNumber",
+					dedupCustomer.getCustPassportNo());
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "MohterMaidenName",
+					dedupCustomer.getCustMotherMaiden());
 			//PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "UAEID",dedupCustomer.getCustCRCPR());
 			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CustomerMobileNumber",
 					PFFXmlUtil.unFormatPhoneNumber(dedupCustomer.getMobileNumber()));
 			//PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "CustomerName",dedupCustomer.getCustFName());
-			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "TimeStamp",PFFXmlUtil.getTodayDateTime(null));
+			PFFXmlUtil.setOMChildElement(factory, custDedupCheckReq, "TimeStamp", PFFXmlUtil.getTodayDateTime(null));
 		}
 
 		requestElement.addChild(custDedupCheckReq);

@@ -25,7 +25,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,24 +51,28 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 	public IndicativeTermDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Fetching Indicative Term Sheet Details By Finance Reference Key
 	 */
 	@Override
-    public IndicativeTermDetail getIndicateTermByRef(String finReference, String type, boolean isWIF) {
+	public IndicativeTermDetail getIndicateTermByRef(String finReference, String type, boolean isWIF) {
 		logger.debug("Entering");
-		
+
 		IndicativeTermDetail detail = new IndicativeTermDetail();
 		detail.setId(finReference);
-		
-		StringBuilder selectSql = new StringBuilder("Select FinReference, RpsnName, RpsnDesg, CustId, FacilityType, Pricing, " );
-		selectSql.append(" Repayments, LCPeriod, UsancePeriod, SecurityClean, SecurityName, Utilization, Commission, Purpose, Guarantee, Covenants, DocumentsRequired, TenorYear, TenorMonth, TenorDesc, " );
-		selectSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCCY, UnderWriting, UnderWritingCCY, PropFinalTake, PropFinalTakeCCY," );
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinReference, RpsnName, RpsnDesg, CustId, FacilityType, Pricing, ");
+		selectSql.append(
+				" Repayments, LCPeriod, UsancePeriod, SecurityClean, SecurityName, Utilization, Commission, Purpose, Guarantee, Covenants, DocumentsRequired, TenorYear, TenorMonth, TenorDesc, ");
+		selectSql.append(
+				" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCCY, UnderWriting, UnderWritingCCY, PropFinalTake, PropFinalTakeCCY,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,lovDescCustCIF,lovDescCustShrtName, lovDescRpsnDesgName, lovDescFacilityType ,lovDescFinStartDate,lovDescMaturityDate " );
+			selectSql.append(
+					" ,lovDescCustCIF,lovDescCustShrtName, lovDescRpsnDesgName, lovDescFacilityType ,lovDescFinStartDate,lovDescMaturityDate ");
 		}
 		if (isWIF) {
 			selectSql.append(" FROM WIFIndicativeTermDetail");
@@ -78,11 +81,12 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<IndicativeTermDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IndicativeTermDetail.class);
-		
+		RowMapper<IndicativeTermDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(IndicativeTermDetail.class);
+
 		try {
 			detail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -91,10 +95,10 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 		}
 		logger.debug("Leaving");
 		return detail;
-    }
+	}
 
 	@Override
-    public void save(IndicativeTermDetail detail, String type, boolean isWIF) {
+	public void save(IndicativeTermDetail detail, String type, boolean isWIF) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ");
@@ -105,13 +109,17 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, RpsnName, RpsnDesg, CustId, FacilityType, Pricing, ");
-		insertSql.append(" Repayments, LCPeriod, UsancePeriod, SecurityClean, SecurityName, Utilization, Commission, Purpose, Guarantee, Covenants,DocumentsRequired, TenorYear, TenorMonth, TenorDesc, ");
-		insertSql.append(" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCCY, UnderWriting, UnderWritingCCY, PropFinalTake, PropFinalTakeCCY," );
+		insertSql.append(
+				" Repayments, LCPeriod, UsancePeriod, SecurityClean, SecurityName, Utilization, Commission, Purpose, Guarantee, Covenants,DocumentsRequired, TenorYear, TenorMonth, TenorDesc, ");
+		insertSql.append(
+				" TransactionType, AgentBank, OtherDetails, TotalFacility, TotalFacilityCCY, UnderWriting, UnderWritingCCY, PropFinalTake, PropFinalTakeCCY,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:FinReference, :RpsnName, :RpsnDesg, :CustId, :FacilityType, :Pricing, ");
-		insertSql.append(" :Repayments, :LCPeriod, :UsancePeriod, :SecurityClean, :SecurityName, :Utilization, :Commission, :Purpose, :Guarantee,  :Covenants, :DocumentsRequired,:TenorYear,:TenorMonth,:TenorDesc, ");
-		insertSql.append(" :TransactionType, :AgentBank, :OtherDetails, :TotalFacility, :TotalFacilityCCY, :UnderWriting, :UnderWritingCCY, :PropFinalTake, :PropFinalTakeCCY," );
+		insertSql.append(
+				" :Repayments, :LCPeriod, :UsancePeriod, :SecurityClean, :SecurityName, :Utilization, :Commission, :Purpose, :Guarantee,  :Covenants, :DocumentsRequired,:TenorYear,:TenorMonth,:TenorDesc, ");
+		insertSql.append(
+				" :TransactionType, :AgentBank, :OtherDetails, :TotalFacility, :TotalFacilityCCY, :UnderWriting, :UnderWritingCCY, :PropFinalTake, :PropFinalTakeCCY,");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -119,11 +127,11 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void update(IndicativeTermDetail detail, String type, boolean isWIF) {
-		
+	public void update(IndicativeTermDetail detail, String type, boolean isWIF) {
+
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update ");
@@ -133,17 +141,20 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 			updateSql.append(" IndicativeTermDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RpsnName=:RpsnName, RpsnDesg=:RpsnDesg, CustId=:CustId, " );
-		updateSql.append(" FacilityType=:FacilityType, Pricing=:Pricing, Repayments=:Repayments, LCPeriod=:LCPeriod, " );
-		updateSql.append(" UsancePeriod=:UsancePeriod, SecurityClean=:SecurityClean, SecurityName=:SecurityName, " );
-		updateSql.append(" Utilization=:Utilization, Commission=:Commission, Purpose=:Purpose, Guarantee=:Guarantee, " );
-		updateSql.append(" Covenants=:Covenants, DocumentsRequired=:DocumentsRequired,TenorYear = :TenorYear," );
+		updateSql.append(" Set RpsnName=:RpsnName, RpsnDesg=:RpsnDesg, CustId=:CustId, ");
+		updateSql.append(" FacilityType=:FacilityType, Pricing=:Pricing, Repayments=:Repayments, LCPeriod=:LCPeriod, ");
+		updateSql.append(" UsancePeriod=:UsancePeriod, SecurityClean=:SecurityClean, SecurityName=:SecurityName, ");
+		updateSql.append(" Utilization=:Utilization, Commission=:Commission, Purpose=:Purpose, Guarantee=:Guarantee, ");
+		updateSql.append(" Covenants=:Covenants, DocumentsRequired=:DocumentsRequired,TenorYear = :TenorYear,");
 		updateSql.append(" TenorMonth = :TenorMonth, TenorDesc = :TenorDesc,TransactionType=:TransactionType,");
-		updateSql.append(" AgentBank=:AgentBank, OtherDetails=:OtherDetails, TotalFacility=:TotalFacility, TotalFacilityCCY=:TotalFacilityCCY," );
-		updateSql.append(" UnderWriting=:UnderWriting, UnderWritingCCY=:UnderWritingCCY, PropFinalTake=:PropFinalTake, PropFinalTakeCCY=:PropFinalTakeCCY," );
+		updateSql.append(
+				" AgentBank=:AgentBank, OtherDetails=:OtherDetails, TotalFacility=:TotalFacility, TotalFacilityCCY=:TotalFacilityCCY,");
+		updateSql.append(
+				" UnderWriting=:UnderWriting, UnderWritingCCY=:UnderWritingCCY, PropFinalTake=:PropFinalTake, PropFinalTakeCCY=:PropFinalTakeCCY,");
 		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		if (!type.endsWith("_Temp") && !isWIF) {
 			updateSql.append("  AND Version= :Version-1");
@@ -156,11 +167,11 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving"); 
-    }
+		logger.debug("Leaving");
+	}
 
 	@Override
-    public void delete(IndicativeTermDetail detail, String type, boolean isWIF) {
+	public void delete(IndicativeTermDetail detail, String type, boolean isWIF) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -176,7 +187,7 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),  beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -184,6 +195,6 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
-    }
+	}
 
 }

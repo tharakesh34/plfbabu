@@ -61,10 +61,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ManualAdvise table</b>.<br>
  *
  */
-@XmlType(propOrder = {"adviseID","adviseType","finReference","feeTypeID","sequence","adviseAmount","paidAmount","waivedAmount","remarks"})
+@XmlType(propOrder = { "adviseID", "adviseType", "finReference", "feeTypeID", "sequence", "adviseAmount", "paidAmount",
+		"waivedAmount", "remarks" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ManualAdvise extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long adviseID = Long.MIN_VALUE;
 	private int adviseType;
@@ -86,27 +87,27 @@ private static final long serialVersionUID = 1L;
 	private BigDecimal paidSGST = BigDecimal.ZERO;
 	private BigDecimal paidUGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
-	
+
 	private String remarks;
-	private Date   valueDate;
-	private Date   postDate;
+	private Date valueDate;
+	private Date postDate;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ManualAdvise befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
+	private LoggedInUser userDetails;
 	private long bounceID = 0;
 	private String bounceCode;
 	private String bounceCodeDesc;
 	private long receiptID = 0;
-	
+
 	//GST fields
 	private boolean taxApplicable;
-	private String	taxComponent;
-	
+	private String taxComponent;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -119,10 +120,10 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-		
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+
 		excludeFields.add("adviseTypeName");
 		excludeFields.add("finReferenceName");
 		excludeFields.add("feeTypeDesc");
@@ -132,87 +133,98 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("taxPercent");
 		excludeFields.add("taxApplicable");
 		excludeFields.add("taxComponent");
-		
+
 		return excludeFields;
 	}
 
 	public long getId() {
 		return adviseID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.adviseID = id;
 	}
+
 	public long getAdviseID() {
 		return adviseID;
 	}
+
 	public void setAdviseID(long adviseID) {
 		this.adviseID = adviseID;
 	}
-	
+
 	public int getAdviseType() {
 		return adviseType;
 	}
+
 	public void setAdviseType(int adviseType) {
 		this.adviseType = adviseType;
 	}
+
 	public String getAdviseTypeName() {
 		return this.adviseTypeName;
 	}
 
-	public void setAdviseTypeName (String adviseTypeName) {
+	public void setAdviseTypeName(String adviseTypeName) {
 		this.adviseTypeName = adviseTypeName;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public long getFeeTypeID() {
 		return feeTypeID;
 	}
+
 	public void setFeeTypeID(long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
- 
+
 	public int getSequence() {
 		return sequence;
 	}
+
 	public void setSequence(int sequence) {
 		this.sequence = sequence;
 	}
-	
+
 	public BigDecimal getAdviseAmount() {
 		return adviseAmount;
 	}
+
 	public void setAdviseAmount(BigDecimal adviseAmount) {
 		this.adviseAmount = adviseAmount;
 	}
-	
+
 	public BigDecimal getPaidAmount() {
 		return paidAmount;
 	}
+
 	public void setPaidAmount(BigDecimal paidAmount) {
 		this.paidAmount = paidAmount;
 	}
-	
+
 	public BigDecimal getWaivedAmount() {
 		return waivedAmount;
 	}
+
 	public void setWaivedAmount(BigDecimal waivedAmount) {
 		this.waivedAmount = waivedAmount;
 	}
-	
+
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -220,7 +232,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -229,19 +241,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public ManualAdvise getBefImage(){
+	public ManualAdvise getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ManualAdvise beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ManualAdvise beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -260,7 +272,7 @@ private static final long serialVersionUID = 1L;
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
@@ -328,7 +340,7 @@ private static final long serialVersionUID = 1L;
 	public void setBounceCodeDesc(String bounceCodeDesc) {
 		this.bounceCodeDesc = bounceCodeDesc;
 	}
-	
+
 	public BigDecimal getTaxPercent() {
 		return taxPercent;
 	}
@@ -384,5 +396,5 @@ private static final long serialVersionUID = 1L;
 	public void setPaidIGST(BigDecimal paidIGST) {
 		this.paidIGST = paidIGST;
 	}
-	
+
 }

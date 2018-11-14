@@ -57,7 +57,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,12 +66,12 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public ProvisionListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Provision provision, int count) throws Exception {
-		
+
 		int format = CurrencyUtil.getFormat(provision.getFinCcy());
 
 		Listcell lc;

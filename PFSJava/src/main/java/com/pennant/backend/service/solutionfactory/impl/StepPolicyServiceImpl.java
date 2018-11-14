@@ -75,11 +75,11 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	private StepPolicyHeaderDAO stepPolicyHeaderDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private StepPolicyDetailDAO stepPolicyDetailDAO;
-	
+
 	public StepPolicyServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -87,6 +87,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -94,20 +95,23 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	public StepPolicyHeaderDAO getStepPolicyHeaderDAO() {
 		return stepPolicyHeaderDAO;
 	}
+
 	public void setStepPolicyHeaderDAO(StepPolicyHeaderDAO stepPolicyHeaderDAO) {
 		this.stepPolicyHeaderDAO = stepPolicyHeaderDAO;
 	}
-	
+
 	public StepPolicyDetailDAO getStepPolicyDetailDAO() {
-    	return stepPolicyDetailDAO;
-    }
+		return stepPolicyDetailDAO;
+	}
+
 	public void setStepPolicyDetailDAO(StepPolicyDetailDAO stepPolicyDetailDAO) {
-    	this.stepPolicyDetailDAO = stepPolicyDetailDAO;
-    }
-	
+		this.stepPolicyDetailDAO = stepPolicyDetailDAO;
+	}
+
 	public FinanceTypeDAO getFinanceTypeDAO() {
 		return financeTypeDAO;
 	}
+
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
@@ -123,15 +127,12 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * StepPolicyHeaders/StepPolicyHeaders_Temp by using StepPolicyHeaderDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using StepPolicyHeaderDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtRMTStepPolicyHeaders by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * StepPolicyHeaders/StepPolicyHeaders_Temp by using StepPolicyHeaderDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using StepPolicyHeaderDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -158,9 +159,9 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		} else {
 			getStepPolicyHeaderDAO().update(stepPolicyHeader, tableType);
 		}
-		
+
 		//StepPolicyDetail
-		if (stepPolicyHeader.getStepPolicyDetails() != null  && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
+		if (stepPolicyHeader.getStepPolicyDetails() != null && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
 			List<AuditDetail> details = stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
 			details = processStepPolicyDetailDetails(stepPolicyHeader, details, tableType);
 			auditDetails.addAll(details);
@@ -174,12 +175,10 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTStepPolicyHeaders by using StepPolicyHeaderDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtRMTStepPolicyHeaders by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTStepPolicyHeaders by using StepPolicyHeaderDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -196,17 +195,17 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		}
 		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
 		getStepPolicyHeaderDAO().delete(stepPolicyHeader, "");
-		
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(stepPolicyHeader, "", auditHeader.getAuditTranType())));
+
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(stepPolicyHeader, "", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's
-	 * getStepPolicyHeaderById method.
+	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's getStepPolicyHeaderById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -217,15 +216,14 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	@Override
 	public StepPolicyHeader getStepPolicyHeaderById(String id) {
 		StepPolicyHeader stepPolicyHeader = getStepPolicyHeaderDAO().getStepPolicyHeaderByID(id, "_View");
-		if(stepPolicyHeader != null) {
+		if (stepPolicyHeader != null) {
 			stepPolicyHeader.setStepPolicyDetails(getStepPolicyDetailDAO().getStepPolicyDetailListByID(id, "_View"));
 		}
 		return stepPolicyHeader;
 	}
-	
+
 	/**
-	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's
-	 * getStepPolicyHeaderById method.
+	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's getStepPolicyHeaderById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -238,11 +236,9 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		return getStepPolicyDetailDAO().getStepPolicyDetailListByID(id, "_AView");
 	}
 
-	
 	/**
-	 * getApprovedStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's
-	 * getStepPolicyHeaderById method . with parameter id and type as blank. it
-	 * fetches the approved records from the RMTStepPolicyHeaders.
+	 * getApprovedStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's getStepPolicyHeaderById method .
+	 * with parameter id and type as blank. it fetches the approved records from the RMTStepPolicyHeaders.
 	 * 
 	 * @param id
 	 *            (String)
@@ -253,19 +249,16 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getStepPolicyHeaderDAO().delete with parameters stepPolicyHeader,"" b) NEW
-	 * Add new record in to main table by using getStepPolicyHeaderDAO().save with
-	 * parameters stepPolicyHeader,"" c) EDIT Update record in the main table by
-	 * using getStepPolicyHeaderDAO().update with parameters stepPolicyHeader,"" 3) Delete
-	 * the record from the workFlow table by using getStepPolicyHeaderDAO().delete
-	 * with parameters stepPolicyHeader,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtRMTStepPolicyHeaders by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getStepPolicyHeaderDAO().delete with
+	 * parameters stepPolicyHeader,"" b) NEW Add new record in to main table by using getStepPolicyHeaderDAO().save with
+	 * parameters stepPolicyHeader,"" c) EDIT Update record in the main table by using getStepPolicyHeaderDAO().update
+	 * with parameters stepPolicyHeader,"" 3) Delete the record from the workFlow table by using
+	 * getStepPolicyHeaderDAO().delete with parameters stepPolicyHeader,"_Temp" 4) Audit the record in to AuditHeader
+	 * and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
+	 * Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -287,7 +280,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		if (stepPolicyHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			//List
-			auditDetails.addAll(deleteChilds(stepPolicyHeader, "",tranType));
+			auditDetails.addAll(deleteChilds(stepPolicyHeader, "", tranType));
 			getStepPolicyHeaderDAO().delete(stepPolicyHeader, "");
 
 		} else {
@@ -307,8 +300,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 				getStepPolicyHeaderDAO().update(stepPolicyHeader, "");
 			}
 			if (stepPolicyHeader.getStepPolicyDetails() != null && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
-				List<AuditDetail> details = stepPolicyHeader.getAuditDetailMap().get( "StepPolicyDetail");
-				details = processStepPolicyDetailDetails(stepPolicyHeader,details, "");
+				List<AuditDetail> details = stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
+				details = processStepPolicyDetailDetails(stepPolicyHeader, details, "");
 				auditDetails.addAll(details);
 			}
 		}
@@ -317,14 +310,15 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		//List
 		auditHeader.setAuditDetails(deleteChilds(stepPolicyHeader, "_Temp", auditHeader.getAuditTranType()));
-		String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyHeader(),stepPolicyHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], stepPolicyHeader.getBefImage(), stepPolicyHeader));
+		String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyHeader(), stepPolicyHeader.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				stepPolicyHeader.getBefImage(), stepPolicyHeader));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(stepPolicyHeader);
-		
+
 		//List
 		auditHeader.setAuditDetails(processChildsAudit(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -334,13 +328,10 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getStepPolicyHeaderDAO().delete with parameters
-	 * stepPolicyHeader,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getStepPolicyHeaderDAO().delete with parameters stepPolicyHeader,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -357,20 +348,18 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getStepPolicyHeaderDAO().delete(stepPolicyHeader, "_Temp");
-		
+
 		//List
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds( stepPolicyHeader, "_Temp", 
-				auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(stepPolicyHeader, "_Temp", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -382,19 +371,18 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		
+
 		//List
-		auditHeader.setErrorList(validateChilds(auditHeader,auditHeader.getUsrLanguage(),method));
+		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -403,7 +391,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
 		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditDetail.getModelData();
@@ -411,7 +399,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		if (stepPolicyHeader.isWorkflow()) {
 			tempStepPolicyHeader = getStepPolicyHeaderDAO().getStepPolicyHeaderByID(stepPolicyHeader.getId(), "_Temp");
 		}
-		StepPolicyHeader befStepPolicyHeader = getStepPolicyHeaderDAO().getStepPolicyHeaderByID(stepPolicyHeader.getId(), "");
+		StepPolicyHeader befStepPolicyHeader = getStepPolicyHeaderDAO()
+				.getStepPolicyHeaderByID(stepPolicyHeader.getId(), "");
 
 		StepPolicyHeader oldStepPolicyHeader = stepPolicyHeader.getBefImage();
 
@@ -434,22 +423,20 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			} else { // with work flow
 
 				if (stepPolicyHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
-																							// type
+					// records
+					// type
 					// is new
 					if (befStepPolicyHeader != null || tempStepPolicyHeader != null) { // if
-																				// records
-																				// already
-																				// exists
+						// records
+						// already
+						// exists
 						// in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 
 					}
 				} else { // if records not exists in the Main flow table
 					if (befStepPolicyHeader == null || tempStepPolicyHeader != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 
 					}
 				}
@@ -469,13 +456,13 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 					if (oldStepPolicyHeader != null
 							&& !oldStepPolicyHeader.getLastMntOn().equals(befStepPolicyHeader.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 
 					}
@@ -492,17 +479,17 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 				}
 			}
 		}
-		
+
 		// If Step already utilizing , Not allowed to Delete
-		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, stepPolicyHeader.getRecordType())){
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, stepPolicyHeader.getRecordType())) {
 			boolean isStepUsed = getFinanceTypeDAO().isStepPolicyExists(stepPolicyHeader.getPolicyCode());
-			if(isStepUsed){
+			if (isStepUsed) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))	|| !stepPolicyHeader.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !stepPolicyHeader.isWorkflow()) {
 			auditDetail.setBefImage(befStepPolicyHeader);
 		}
 		logger.debug("Leaving");
@@ -540,7 +527,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		}
 
 		if (stepPolicyHeader.getStepPolicyDetails() != null && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
-			auditDetailMap.put("StepPolicyDetail", setStepPolicyDetailAuditData(stepPolicyHeader, auditTranType, method));
+			auditDetailMap.put("StepPolicyDetail",
+					setStepPolicyDetailAuditData(stepPolicyHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("StepPolicyDetail"));
 		}
 
@@ -551,9 +539,9 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	//=================================== List maintain
-		
+
 	private List<AuditDetail> processChildsAudit(List<AuditDetail> list) {
 		logger.debug("Entering");
 
@@ -579,8 +567,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 					transType = PennantConstants.TRAN_UPD;
 				}
 				if (StringUtils.isNotEmpty(transType)) {
-					auditDetailsList.add(new AuditDetail(transType, auditDetail.getAuditSeq(), auditDetail
-							.getBefImage(), object));
+					auditDetailsList.add(
+							new AuditDetail(transType, auditDetail.getAuditSeq(), auditDetail.getBefImage(), object));
 				}
 
 			}
@@ -589,107 +577,113 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
-		
-		public List<AuditDetail> deleteChilds(StepPolicyHeader stepPolicyHeader, String tableType,String auditTranType) {
-			List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-			
-			if (stepPolicyHeader.getStepPolicyDetails() != null && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
-				String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyDetail(), new StepPolicyDetail().getExcludeFields());
-				
-				for (int i = 0; i < stepPolicyHeader.getStepPolicyDetails().size(); i++) {
-					StepPolicyDetail stepPolicyDetail = stepPolicyHeader.getStepPolicyDetails().get(i);
-					
-					if (StringUtils.isNotEmpty(stepPolicyDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-						auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],stepPolicyDetail.getBefImage(), stepPolicyDetail));
-					}
-				}
-				
-				getStepPolicyDetailDAO().deleteByPolicyCode(stepPolicyHeader.getPolicyCode(), tableType);
-			}    
-			
-			return auditList;
-		}
-		
-		private List<ErrorDetail> validateChilds(AuditHeader auditHeader,String usrLanguage,String method){
-			List<ErrorDetail> errorDetails=new ArrayList<ErrorDetail>();
-			StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
-			List<AuditDetail> auditDetails=null;
-			//StepPolicyDetail
-			if (stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail")!=null) {
-				auditDetails= stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
-				for (AuditDetail auditDetail : auditDetails) {
-					List<ErrorDetail> details=validationStepPolicyDetail(auditDetail, usrLanguage, method).getErrorDetails();
-					if (details!=null) {
-						errorDetails.addAll(details);
-					}
-				}
-			}
-			return errorDetails;
-		}
-	
-		/**
-		 * Methods for Creating List of Audit Details with detailed fields
-		 * 
-		 * @param customerDetails
-		 * @param auditTranType
-		 * @param method
-		 * @return
-		 */
-		private List<AuditDetail> setStepPolicyDetailAuditData(StepPolicyHeader stepPolicyHeader, String auditTranType, String method) {
-			logger.debug("Entering");
 
-			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-			String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyDetail());
+	public List<AuditDetail> deleteChilds(StepPolicyHeader stepPolicyHeader, String tableType, String auditTranType) {
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+
+		if (stepPolicyHeader.getStepPolicyDetails() != null && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyDetail(),
+					new StepPolicyDetail().getExcludeFields());
 
 			for (int i = 0; i < stepPolicyHeader.getStepPolicyDetails().size(); i++) {
 				StepPolicyDetail stepPolicyDetail = stepPolicyHeader.getStepPolicyDetails().get(i);
-				
-				if (StringUtils.isEmpty(stepPolicyDetail.getRecordType())) {
-					continue;
+
+				if (StringUtils.isNotEmpty(stepPolicyDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							stepPolicyDetail.getBefImage(), stepPolicyDetail));
 				}
-				
-				stepPolicyDetail.setWorkflowId(stepPolicyHeader.getWorkflowId());
-				stepPolicyDetail.setPolicyCode(stepPolicyHeader.getPolicyCode());
-
-				boolean isRcdType = false;
-
-				if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					stepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					isRcdType = true;
-				} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					stepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					isRcdType = true;
-				} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					stepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				}
-
-				if ("saveOrUpdate".equals(method) && isRcdType ) {
-					stepPolicyDetail.setNewRecord(true);
-				}
-
-				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-					if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-						auditTranType = PennantConstants.TRAN_ADD;
-					} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-							|| stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-						auditTranType = PennantConstants.TRAN_DEL;
-					} else {
-						auditTranType = PennantConstants.TRAN_UPD;
-					}
-				}
-
-				stepPolicyDetail.setRecordStatus(stepPolicyHeader.getRecordStatus());
-				stepPolicyDetail.setUserDetails(stepPolicyHeader.getUserDetails());
-				stepPolicyDetail.setLastMntOn(stepPolicyHeader.getLastMntOn());
-
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], stepPolicyDetail.getBefImage(), stepPolicyDetail));
 			}
-			
-			logger.debug("Leaving");
-			return auditDetails;
+
+			getStepPolicyDetailDAO().deleteByPolicyCode(stepPolicyHeader.getPolicyCode(), tableType);
 		}
-		
-	private List<AuditDetail> processStepPolicyDetailDetails(StepPolicyHeader stepPolicyHeader,List<AuditDetail> auditDetails, String type) {
+
+		return auditList;
+	}
+
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
+		List<AuditDetail> auditDetails = null;
+		//StepPolicyDetail
+		if (stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail") != null) {
+			auditDetails = stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetail> details = validationStepPolicyDetail(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+		return errorDetails;
+	}
+
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setStepPolicyDetailAuditData(StepPolicyHeader stepPolicyHeader, String auditTranType,
+			String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyDetail());
+
+		for (int i = 0; i < stepPolicyHeader.getStepPolicyDetails().size(); i++) {
+			StepPolicyDetail stepPolicyDetail = stepPolicyHeader.getStepPolicyDetails().get(i);
+
+			if (StringUtils.isEmpty(stepPolicyDetail.getRecordType())) {
+				continue;
+			}
+
+			stepPolicyDetail.setWorkflowId(stepPolicyHeader.getWorkflowId());
+			stepPolicyDetail.setPolicyCode(stepPolicyHeader.getPolicyCode());
+
+			boolean isRcdType = false;
+
+			if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				stepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				stepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				stepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && isRcdType) {
+				stepPolicyDetail.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			stepPolicyDetail.setRecordStatus(stepPolicyHeader.getRecordStatus());
+			stepPolicyDetail.setUserDetails(stepPolicyHeader.getUserDetails());
+			stepPolicyDetail.setLastMntOn(stepPolicyHeader.getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], stepPolicyDetail.getBefImage(),
+					stepPolicyDetail));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	private List<AuditDetail> processStepPolicyDetailDetails(StepPolicyHeader stepPolicyHeader,
+			List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -767,92 +761,102 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		return auditDetails;
 
 	}
-	
+
 	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
-	
-	private AuditDetail validationStepPolicyDetail(AuditDetail auditDetail,String usrLanguage,String method){
+
+	private AuditDetail validationStepPolicyDetail(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		StepPolicyDetail stepPolicyDetail= (StepPolicyDetail) auditDetail.getModelData();
-		
-		StepPolicyDetail tempStepPolicyDetail= null;
-		if (stepPolicyDetail.isWorkflow()){
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		StepPolicyDetail stepPolicyDetail = (StepPolicyDetail) auditDetail.getModelData();
+
+		StepPolicyDetail tempStepPolicyDetail = null;
+		if (stepPolicyDetail.isWorkflow()) {
 			tempStepPolicyDetail = getStepPolicyDetailDAO().getStepPolicyDetailByID(stepPolicyDetail, "_Temp");
 		}
-		StepPolicyDetail befStepPolicyDetail= getStepPolicyDetailDAO().getStepPolicyDetailByID( stepPolicyDetail, "");
-		
-		StepPolicyDetail oldStepPolicyDetailReference= stepPolicyDetail.getBefImage();
-		
-		
-		String[] errParm= new String[1];
-		String[] valueParm= new String[2];
-		valueParm[0]=stepPolicyDetail.getPolicyCode();
-		valueParm[1]=String.valueOf(stepPolicyDetail.getStepNumber());
-		errParm[0]=PennantJavaUtil.getLabel("label_PolicyCode")+":"+valueParm[0]+","+
-				   PennantJavaUtil.getLabel("label_StepNumber")+":"+valueParm[1];
-		
-		if (stepPolicyDetail.isNew()){ // for New record or new record into work flow
-			
-			if (!stepPolicyDetail.isWorkflow()){// With out Work flow only new records  
-				if (befStepPolicyDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (stepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befStepPolicyDetail !=null || tempStepPolicyDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+		StepPolicyDetail befStepPolicyDetail = getStepPolicyDetailDAO().getStepPolicyDetailByID(stepPolicyDetail, "");
+
+		StepPolicyDetail oldStepPolicyDetailReference = stepPolicyDetail.getBefImage();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[2];
+		valueParm[0] = stepPolicyDetail.getPolicyCode();
+		valueParm[1] = String.valueOf(stepPolicyDetail.getStepNumber());
+		errParm[0] = PennantJavaUtil.getLabel("label_PolicyCode") + ":" + valueParm[0] + ","
+				+ PennantJavaUtil.getLabel("label_StepNumber") + ":" + valueParm[1];
+
+		if (stepPolicyDetail.isNew()) { // for New record or new record into work flow
+
+			if (!stepPolicyDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befStepPolicyDetail != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (stepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befStepPolicyDetail != null || tempStepPolicyDetail != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befStepPolicyDetail ==null || tempStepPolicyDetail!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befStepPolicyDetail == null || tempStepPolicyDetail != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!stepPolicyDetail.isWorkflow()){	// With out Work flow for update and delete
-			
-				if (befStepPolicyDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldStepPolicyDetailReference!=null && !oldStepPolicyDetailReference.getLastMntOn().equals(befStepPolicyDetail.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+			if (!stepPolicyDetail.isWorkflow()) { // With out Work flow for update and delete
+
+				if (befStepPolicyDetail == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldStepPolicyDetailReference != null && !oldStepPolicyDetailReference.getLastMntOn()
+							.equals(befStepPolicyDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
-			
-				if (tempStepPolicyDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+			} else {
+
+				if (tempStepPolicyDetail == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				
-				if (tempStepPolicyDetail!=null && oldStepPolicyDetailReference!=null && !oldStepPolicyDetailReference.getLastMntOn().equals(tempStepPolicyDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+
+				if (tempStepPolicyDetail != null && oldStepPolicyDetailReference != null
+						&& !oldStepPolicyDetailReference.getLastMntOn().equals(tempStepPolicyDetail.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !stepPolicyDetail.isWorkflow()){
-			auditDetail.setBefImage(befStepPolicyDetail);	
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !stepPolicyDetail.isWorkflow()) {
+			auditDetail.setBefImage(befStepPolicyDetail);
 		}
 
 		return auditDetail;
 	}
-	
+
 }

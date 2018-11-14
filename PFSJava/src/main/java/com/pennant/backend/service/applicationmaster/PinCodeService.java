@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface PinCodeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	PinCode getPinCode(long pinCodeId);
+
 	PinCode getApprovedPinCode(long pinCodeId);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

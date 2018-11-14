@@ -19,79 +19,79 @@ import javax.xml.bind.annotation.XmlType;
 public class Perfios {
 
 	@XmlElement(name = "AVERAGEBANKBALANCE")
-	private BigDecimal				avgBankBalance						= BigDecimal.ZERO;
+	private BigDecimal avgBankBalance = BigDecimal.ZERO;
 
 	@XmlElement(name = "INWARDCHEQUERETURNS")
-	private int						inwardChequeReturns;
+	private int inwardChequeReturns;
 
 	@XmlElement(name = "CREDITCONCENTRATIONINBANKSTATEMENT")
-	private BigDecimal				creditConcentrationInBankStatement	= BigDecimal.ZERO;
+	private BigDecimal creditConcentrationInBankStatement = BigDecimal.ZERO;
 
 	@XmlElement(name = "MINIMUMBALANCECHARGESREPORTED")
-	private BigDecimal				minBalChargesReported				= BigDecimal.ZERO;
+	private BigDecimal minBalChargesReported = BigDecimal.ZERO;
 
 	@XmlElement(name = "ODCCLIMIT")
-	private BigDecimal				odccLimit							= BigDecimal.ZERO;
+	private BigDecimal odccLimit = BigDecimal.ZERO;
 
 	//TODO:
 	@XmlElement(name = "NOOFCREDITTRANSACTIONS")
-	private NoOfCreditTransactions	noOfCreditTransactions;
+	private NoOfCreditTransactions noOfCreditTransactions;
 
 	//TODO:
 	@XmlElement(name = "AMOUNTOFCREDITTRANSACTIONS")
-	private AmtOfCreditTransactions	amtOfCreditTransactions;
+	private AmtOfCreditTransactions amtOfCreditTransactions;
 
 	@XmlElement(name = "NOOFDEBITTRANSACTIONS")
-	private int						noOfDebitTransactions;
+	private int noOfDebitTransactions;
 
 	//TODO:
 	@XmlElement(name = "AMOUNTOFDEBITTRANSACTIONS")
-	private AmtOfDebtTransactions	amtOfDebtTransactions;
+	private AmtOfDebtTransactions amtOfDebtTransactions;
 
 	@XmlElement(name = "NOOFCASHDEPOSITS")
-	private NoOfCashDeposits		noOfCashDeposits;
+	private NoOfCashDeposits noOfCashDeposits;
 
 	@XmlElement(name = "AMOUNTOFCASHDEPOSIT")
-	private AmtOfCashDeposit		amtOfCashDeposit;
+	private AmtOfCashDeposit amtOfCashDeposit;
 
 	@XmlElement(name = "INTODCC")
-	private int						intOdCc;
+	private int intOdCc;
 
 	@XmlElement(name = "NOOFEMIBOUNCE")
-	private int						noOfEmiBounce;
+	private int noOfEmiBounce;
 
 	@XmlElement(name = "NOOFCASHWITHDRAWLS")
-	private int						noOfCashWithdrawls;
+	private int noOfCashWithdrawls;
 
 	@XmlElement(name = "AMOUNTOFCASHWITHDRAWLS")
-	private BigDecimal				amtOfCashWithdrawls					= BigDecimal.ZERO;
+	private BigDecimal amtOfCashWithdrawls = BigDecimal.ZERO;
 
 	@XmlElement(name = "NOOFCHEQUEDEPOSITS")
-	private int						noOfChequeDeposits;
+	private int noOfChequeDeposits;
 
 	@XmlElement(name = "AMOUNTOFCHEQUEDEPOSITS")
-	private BigDecimal				amtOfChequeDeposits					= BigDecimal.ZERO;
+	private BigDecimal amtOfChequeDeposits = BigDecimal.ZERO;
 
 	@XmlElement(name = "TOTALNOOFCHEQUEISSUES")
-	private int						totNoOfChequeIssues;
+	private int totNoOfChequeIssues;
 
 	@XmlElement(name = "TOTALAMOUNTOFCHEQUEISSUES")
-	private BigDecimal				totAmtOfChequeIssues				= BigDecimal.ZERO;
+	private BigDecimal totAmtOfChequeIssues = BigDecimal.ZERO;
 
 	@XmlElement(name = "TOTALNOOFOUTWARDCHEQUEBOUNCES")
-	private int						totalnoOfoutwardchequebounces;
+	private int totalnoOfoutwardchequebounces;
 
 	@XmlElement(name = "MINEODBALANCE")
-	private BigDecimal				minOdBalance						= BigDecimal.ZERO;
+	private BigDecimal minOdBalance = BigDecimal.ZERO;
 
 	@XmlElement(name = "MAXEODBALANCE")
-	private BigDecimal				maxOdBalance						= BigDecimal.ZERO;
+	private BigDecimal maxOdBalance = BigDecimal.ZERO;
 
 	@XmlElement(name = "ISSUEDATEFORGSTNDOCUMENT")
-	private String					issueDateForGstnDoc;
+	private String issueDateForGstnDoc;
 
 	@XmlElement(name = "TOTALCREDIT")
-	private BigDecimal				totCredit							= BigDecimal.ZERO;
+	private BigDecimal totCredit = BigDecimal.ZERO;
 
 	public BigDecimal getAvgBankBalance() {
 		return avgBankBalance;

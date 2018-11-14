@@ -15,8 +15,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.cache.CacheAdmin;
-import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {

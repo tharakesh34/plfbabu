@@ -53,10 +53,10 @@ public interface MasterMappingDAO {
 	void update(MasterMapping masterMapping, String type);
 
 	void delete(MasterMapping masterMapping, String type);
-	
+
 	void delete(long masterMappingId, String type);
 
 	long save(MasterMapping masterMapping, String type);
-	
+
 	List<String> getMappings(String tableName, String value);
 }

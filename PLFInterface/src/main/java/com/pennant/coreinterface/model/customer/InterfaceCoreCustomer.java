@@ -110,7 +110,7 @@ public class InterfaceCoreCustomer implements Serializable {
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -253,7 +253,7 @@ public class InterfaceCoreCustomer implements Serializable {
 
 	public void setMonthlyOutageVolume(String monthlyOutageVolume) {
 		this.monthlyOutageVolume = monthlyOutageVolume;
-	}	
+	}
 
 	public String getMonthlyIncomeVolume() {
 		return monthlyIncomeVolume;
@@ -726,7 +726,7 @@ public class InterfaceCoreCustomer implements Serializable {
 	public void setNameOfBusiness(String nameOfBusiness) {
 		this.nameOfBusiness = nameOfBusiness;
 	}
-	
+
 	public int getTotalNoOfPartners() {
 		return totalNoOfPartners;
 	}

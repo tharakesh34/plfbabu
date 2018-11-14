@@ -73,32 +73,31 @@ public class VehicleManufacturer extends AbstractWorkflowEntity implements Entit
 	}
 
 	//Getter and Setter methods
-	
+
 	public long getId() {
 		return manufacturerId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.manufacturerId = id;
 	}
-	
+
 	public long getManufacturerId() {
 		return manufacturerId;
 	}
+
 	public void setManufacturerId(long manufacturerId) {
 		this.manufacturerId = manufacturerId;
 	}
-	
-	
-		
-	
+
 	public String getManufacturerName() {
 		return manufacturerName;
 	}
+
 	public void setManufacturerName(String manufacturerName) {
 		this.manufacturerName = manufacturerName;
-	}	
-	
+	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -106,7 +105,7 @@ public class VehicleManufacturer extends AbstractWorkflowEntity implements Entit
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -115,12 +114,12 @@ public class VehicleManufacturer extends AbstractWorkflowEntity implements Entit
 		this.lovValue = lovValue;
 	}
 
-	public VehicleManufacturer getBefImage(){
+	public VehicleManufacturer getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(VehicleManufacturer beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(VehicleManufacturer beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

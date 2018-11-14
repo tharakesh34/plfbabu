@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class BaseRateCode extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1288421928415683359L;
-	
+
 	private String bRType;
 	private String bRTypeDesc;
 	private boolean newRecord;
@@ -78,52 +78,59 @@ public class BaseRateCode extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return bRType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.bRType = id;
 	}
-	
+
 	public String getBRType() {
 		return bRType;
 	}
+
 	public void setBRType(String bRType) {
 		this.bRType = bRType;
 	}
-	
+
 	public String getBRTypeDesc() {
 		return bRTypeDesc;
 	}
+
 	public void setBRTypeDesc(String bRTypeDesc) {
 		this.bRTypeDesc = bRTypeDesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public BaseRateCode getBefImage(){
+	public BaseRateCode getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(BaseRateCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BaseRateCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -131,12 +138,13 @@ public class BaseRateCode extends AbstractWorkflowEntity {
 	public boolean isbRTypeIsActive() {
 		return bRTypeIsActive;
 	}
+
 	public void setbRTypeIsActive(boolean bRTypeIsActive) {
 		this.bRTypeIsActive = bRTypeIsActive;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-	
+
 }

@@ -77,23 +77,21 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
  */
 public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FacilityDocumentDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_documentDetailDialog; 
-	protected Borderlayout borderlayoutDocumentDetail; 
+	protected Window window_documentDetailDialog;
+	protected Borderlayout borderlayoutDocumentDetail;
 	// Finance Document Details Tab
-	protected Button btnNew_DocumentDetails; 
-	protected Listbox listBoxDocumentDetails; 
+	protected Button btnNew_DocumentDetails;
+	protected Listbox listBoxDocumentDetails;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
 	private transient FinanceDetailService financeDetailService = null;
@@ -116,11 +114,10 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -158,8 +155,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws Exception
@@ -172,18 +168,18 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			if (getDocumentDetailsList() != null && getDocumentDetailsList().size() > 0) {
 				doFillDocumentDetails(getDocumentDetailsList());
 			}
-			
+
 			try {
-				getCtrlObject().getClass().getMethod("setFacilityDocumentDetailDialogCtrl", this.getClass()).invoke(getCtrlObject(), this);
+				getCtrlObject().getClass().getMethod("setFacilityDocumentDetailDialogCtrl", this.getClass())
+						.invoke(getCtrlObject(), this);
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
-			
+
 			if (enqModule) {
 				this.btnNew_DocumentDetails.setVisible(false);
 			}
-			
-			
+
 			getBorderLayoutHeight();
 			this.listBoxDocumentDetails.setHeight(this.borderLayoutHeight - 150 + "px");
 			this.window_documentDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
@@ -197,9 +193,10 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	}
 
 	// New Button & Double Click Events for Finance Contributor List
-	
+
 	// Finance Document Details Tab
-	public void onClick$btnNew_DocumentDetails(Event event) throws InterruptedException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnNew_DocumentDetails(Event event) throws InterruptedException, SecurityException,
+			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", getCtrlObject());
@@ -211,10 +208,12 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		FacilityCheckListReferenceDialogCtrl dialogCtrl = null;
 		try {
 			if (getCtrlObject().getClass().getMethod("getFacilityCheckListReferenceDialogCtrl") != null) {
-				dialogCtrl = (FacilityCheckListReferenceDialogCtrl) getCtrlObject().getClass().getMethod("getFacilityCheckListReferenceDialogCtrl").invoke(getCtrlObject());
+				dialogCtrl = (FacilityCheckListReferenceDialogCtrl) getCtrlObject().getClass()
+						.getMethod("getFacilityCheckListReferenceDialogCtrl").invoke(getCtrlObject());
 				if (dialogCtrl != null) {
 					@SuppressWarnings("unchecked")
-					Map<String, List<Listitem>> checkListDocTypeMap = (Map<String, List<Listitem>>) dialogCtrl.getClass().getMethod("getCheckListDocTypeMap").invoke(dialogCtrl);
+					Map<String, List<Listitem>> checkListDocTypeMap = (Map<String, List<Listitem>>) dialogCtrl
+							.getClass().getMethod("getCheckListDocTypeMap").invoke(dialogCtrl);
 					map.put("checkListDocTypeMap", checkListDocTypeMap);
 				}
 			}
@@ -223,22 +222,26 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		}
 		map.put("isFacility", true);
 		map.put("window", window_documentDetailDialog);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/DocumentTypeSelectDialog.zul", window_documentDetailDialog, map);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/DocumentTypeSelectDialog.zul",
+				window_documentDetailDialog, map);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	@SuppressWarnings("unchecked")
-	public void createNewDocument(CheckListDetail checkListDetail, boolean isCheckList, Facility financeMain ) throws InterruptedException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public void createNewDocument(CheckListDetail checkListDetail, boolean isCheckList, Facility financeMain)
+			throws InterruptedException, SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DocumentDetailDialogCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
-		map.put("isCheckList",isCheckList);
+		map.put("isCheckList", isCheckList);
 		if (enqModule) {
 			map.put("enqModule", enqModule);
 		}
-		if(checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))){
+		if (checkListDetail != null
+				&& (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))) {
 			CustomerDocument customerDocument = new CustomerDocument();
 			customerDocument.setNewRecord(true);
 			customerDocument.setCustDocCategory(checkListDetail.getDocType());
@@ -247,21 +250,21 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			customerDocument.setCustID(financeMain.getCustID());
 			customerDocument.setLovDescCustCIF(financeMain.getCustCIF());
 			customerDocument.setLovDescCustShrtName(financeMain.getCustShrtName());
-			
-			Filter[] countrysystemDefault=new Filter[1];
-			countrysystemDefault[0]=new Filter("SystemDefault", 1 ,Filter.OP_EQUAL);
-			Object countryObj=	PennantAppUtil.getSystemDefault("Country","", countrysystemDefault);
-			
-			if (countryObj!=null) {
-				Country country=(Country) countryObj;
+
+			Filter[] countrysystemDefault = new Filter[1];
+			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
+			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
+
+			if (countryObj != null) {
+				Country country = (Country) countryObj;
 				customerDocument.setCustDocIssuedCountry(country.getCountryCode());
 				customerDocument.setLovDescCustDocIssuedCountry(country.getCountryDesc());
 			}
-			
+
 			map.put("customerDocument", customerDocument);
-		}else{
+		} else {
 			DocumentDetails documentDetails = new DocumentDetails();
-			if (checkListDetail!=null) {
+			if (checkListDetail != null) {
 				documentDetails.setDocCategory(checkListDetail.getDocType());
 			}
 			documentDetails.setNewRecord(true);
@@ -272,9 +275,11 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		FacilityCheckListReferenceDialogCtrl dialogCtrl = null;
 		try {
 			if (getCtrlObject().getClass().getMethod("getFacilityCheckListReferenceDialogCtrl") != null) {
-				dialogCtrl = (FacilityCheckListReferenceDialogCtrl) getCtrlObject().getClass().getMethod("getFacilityCheckListReferenceDialogCtrl").invoke(getCtrlObject());
+				dialogCtrl = (FacilityCheckListReferenceDialogCtrl) getCtrlObject().getClass()
+						.getMethod("getFacilityCheckListReferenceDialogCtrl").invoke(getCtrlObject());
 				if (dialogCtrl != null) {
-					Map<String, List<Listitem>> checkListDocTypeMap = (Map<String, List<Listitem>>) dialogCtrl.getClass().getMethod("getCheckListDocTypeMap").invoke(dialogCtrl);
+					Map<String, List<Listitem>> checkListDocTypeMap = (Map<String, List<Listitem>>) dialogCtrl
+							.getClass().getMethod("getCheckListDocTypeMap").invoke(dialogCtrl);
 					map.put("checkListDocTypeMap", checkListDocTypeMap);
 				}
 				if (isCheckList) {
@@ -285,10 +290,13 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			logger.debug(e);
 		}
 		try {
-			if(checkListDetail!= null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))){
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
-			}else{
-				Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul", component, map);
+			if (checkListDetail != null
+					&& (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))) {
+				Executions.createComponents(
+						"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul", component,
+						map);
 			}
 
 		} catch (Exception e) {
@@ -305,7 +313,8 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		for (DocumentDetails documentDetail : documentDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
-			listcell = new Listcell(PennantAppUtil.getlabelDesc(documentDetail.getDocCategory(), PennantAppUtil.getDocumentTypes()));
+			listcell = new Listcell(
+					PennantAppUtil.getlabelDesc(documentDetail.getDocCategory(), PennantAppUtil.getDocumentTypes()));
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
@@ -325,12 +334,14 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		final Listitem item = this.listBoxDocumentDetails.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			 DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
-			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
+			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				boolean viewProcess = false;
-				if (!StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				if (!StringUtils.trimToEmpty(finDocumentDetail.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					viewProcess = true;
 				}
 				updateExistingDocument(finDocumentDetail, false, viewProcess);
@@ -340,7 +351,8 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	}
 
 	@SuppressWarnings("unchecked")
-	public void updateExistingDocument(DocumentDetails finDocumentDetail, boolean isCheckList, boolean viewProcess) throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void updateExistingDocument(DocumentDetails finDocumentDetail, boolean isCheckList, boolean viewProcess)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finDocumentDetail", finDocumentDetail);
@@ -348,7 +360,8 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		map.put("roleCode", getRole());
 		map.put("moduleType", "");
 		map.put("viewProcess", viewProcess);
-		map.put("isCheckList",(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))?true:isCheckList);
+		map.put("isCheckList", (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) ? true
+				: isCheckList);
 		map.put("customerDialogCtrl", this);
 		//map.put("newRecord", "true");
 		map.put("roleCode", getRole());
@@ -356,22 +369,24 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			map.put("enqModule", enqModule);
 		}
 		Facility financeMain = updateFinanceMain();
-		if(finDocumentDetail.getDocImage() == null){
-			if(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())){
-				finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(financeMain.getCustID(), finDocumentDetail.getDocCategory());
-			}else{
+		if (finDocumentDetail.getDocImage() == null) {
+			if (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) {
+				finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(financeMain.getCustID(),
+						finDocumentDetail.getDocCategory());
+			} else {
 				getFinanceDetailService().getFinDocDetailByDocId(finDocumentDetail.getDocId());
 			}
 		}
 		CustomerDocument customerDocument = null;
-		if(customerDocument == null && (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))){
-			customerDocument = 	new CustomerDocument();
- 
-			if(financeMain != null){
+		if (customerDocument == null
+				&& (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode()))) {
+			customerDocument = new CustomerDocument();
+
+			if (financeMain != null) {
 				customerDocument.setCustID(financeMain.getCustID());
 				customerDocument.setLovDescCustCIF(financeMain.getCustCIF());
 				customerDocument.setLovDescCustShrtName(financeMain.getCustShrtName());
-			}			
+			}
 			customerDocument.setCustDocImage(finDocumentDetail.getDocImage());
 			customerDocument.setCustDocImage(finDocumentDetail.getDocImage());
 			customerDocument.setCustDocType(finDocumentDetail.getDoctype());
@@ -397,12 +412,14 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		try {
 			Component component = window_documentDetailDialog;
 			FacilityCheckListReferenceDialogCtrl dialogCtrl = null;
-			
+
 			try {
 				if (getCtrlObject().getClass().getMethod("getFacilityCheckListReferenceDialogCtrl") != null) {
-					dialogCtrl = (FacilityCheckListReferenceDialogCtrl) getCtrlObject().getClass().getMethod("getFacilityCheckListReferenceDialogCtrl").invoke(getCtrlObject());
+					dialogCtrl = (FacilityCheckListReferenceDialogCtrl) getCtrlObject().getClass()
+							.getMethod("getFacilityCheckListReferenceDialogCtrl").invoke(getCtrlObject());
 					if (dialogCtrl != null) {
-						Map<String, List<Listitem>> checkListDocTypeMap = (Map<String, List<Listitem>>) dialogCtrl.getClass().getMethod("getCheckListDocTypeMap").invoke(dialogCtrl);
+						Map<String, List<Listitem>> checkListDocTypeMap = (Map<String, List<Listitem>>) dialogCtrl
+								.getClass().getMethod("getCheckListDocTypeMap").invoke(dialogCtrl);
 						map.put("checkListDocTypeMap", checkListDocTypeMap);
 					}
 					if (isCheckList) {
@@ -412,11 +429,13 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			} catch (Exception e) {
 				logger.debug(e);
 			}
-			if(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())){
+			if (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) {
 				map.put("customerDocument", customerDocument);
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
-			}else{
-				Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul", component, map);
+				Executions.createComponents(
+						"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDocDetailDialog.zul", component,
+						map);
 			}
 
 		} catch (Exception e) {
@@ -425,12 +444,12 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		logger.debug("Leaving");
 	}
 
-	
 	/**
-	 * Update Finance Main Details from the Finance Main Ctrl 
+	 * Update Finance Main Details from the Finance Main Ctrl
+	 * 
 	 * @return
 	 */
-	private Facility updateFinanceMain(){
+	private Facility updateFinanceMain() {
 		Facility main = null;
 		try {
 			Object object = getCtrlObject().getClass().getMethod("getFacility").invoke(getCtrlObject());
@@ -443,6 +462,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		}
 		return null;
 	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -461,7 +481,6 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	public void setFacility(Facility facility) {
 		this.facility = facility;
 	}
-
 
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
 		this.documentDetailsList = documentDetailsList;
@@ -491,8 +510,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 		return customerDocumentService;
 	}
 
-	public void setCustomerDocumentService(
-			CustomerDocumentService customerDocumentService) {
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
 }

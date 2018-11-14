@@ -93,9 +93,11 @@ public interface FinanceScheduleDetailDAO {
 
 	Date getFirstRepayDate(String finReference);
 
-	List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate, Date schdTodate);
-	
-	List<ScheduleMapDetails> getRecalCulateFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate, Date schdTodate);
+	List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate,
+			Date schdTodate);
+
+	List<ScheduleMapDetails> getRecalCulateFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate,
+			Date schdTodate);
 
 	List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate);
 

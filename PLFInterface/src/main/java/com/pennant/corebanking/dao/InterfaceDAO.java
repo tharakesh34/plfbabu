@@ -21,7 +21,7 @@ public interface InterfaceDAO {
 	List<CoreBankAccountDetail> updateAccountDetailsIds(List<CoreBankAccountDetail> list);
 
 	List<CoreBankAccountDetail> fetchAccountForFin(List<CoreBankAccountDetail> list);
-	
+
 	List<CoreBankAccountPosting> fetchAccountPostingForFin(List<CoreBankAccountPosting> list);
 
 	List<AccountPostingTemp> executeAccPosting(List<AccountPostingTemp> accPostingTempList) throws Exception;
@@ -33,7 +33,7 @@ public interface InterfaceDAO {
 	CoreBankAccountDetail fetchAccount(CoreBankAccountDetail accountDetail);
 
 	List<CoreBankAccountDetail> fetchAccountBalance(String accountNumber);
-	
+
 	List<CoreBankAccountDetail> fetchAccountBalance(List<String> accountNumberList);
 
 	List<CoreBankAccountPosting> validateAccount(List<CoreBankAccountPosting> accountPostings);
@@ -43,11 +43,11 @@ public interface InterfaceDAO {
 	String executeAccountForFin(int reqRefId, String createNow);
 
 	InterfaceCustomerDetail getCustDetails(String custCIF, String custLoc) throws InterfaceException;
-	
+
 	List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup);
-	
-	CustomerLimitDetail getLimitDetails(String limitRef,String branchCode);
-	
+
+	CustomerLimitDetail getLimitDetails(String limitRef, String branchCode);
+
 	List<CoreDocumentDetails> getDocumentDetailsByRef(String ref);
 
 }

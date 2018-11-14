@@ -59,44 +59,44 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class Provision extends AbstractWorkflowEntity {
-	private static final long		serialVersionUID		= 1L;
-	private String					finReference			= null;
-	private String					finBranch;
-	private String					finType;
-	private long					custID;
-	private Date					provisionCalDate;
-	private BigDecimal				provisionedAmt			= BigDecimal.ZERO;
-	private BigDecimal				provisionAmtCal			= BigDecimal.ZERO;
-	private BigDecimal				provisionDue			= BigDecimal.ZERO;
-	private BigDecimal				nonFormulaProv			= BigDecimal.ZERO;
-	private boolean					useNFProv;
-	private boolean					autoReleaseNFP;
-	private BigDecimal				principalDue			= BigDecimal.ZERO;
-	private BigDecimal				profitDue				= BigDecimal.ZERO;
-	private Date					dueFromDate;
-	private Date					lastFullyPaidDate;
-	private boolean					newRecord				= false;
-	private String					lovValue;
-	private Provision				befImage;
-	private LoggedInUser			userDetails;
-	private Date					prevProvisionCalDate;
-	private BigDecimal				prevProvisionedAmt;
-	private String					transRef;
+	private static final long serialVersionUID = 1L;
+	private String finReference = null;
+	private String finBranch;
+	private String finType;
+	private long custID;
+	private Date provisionCalDate;
+	private BigDecimal provisionedAmt = BigDecimal.ZERO;
+	private BigDecimal provisionAmtCal = BigDecimal.ZERO;
+	private BigDecimal provisionDue = BigDecimal.ZERO;
+	private BigDecimal nonFormulaProv = BigDecimal.ZERO;
+	private boolean useNFProv;
+	private boolean autoReleaseNFP;
+	private BigDecimal principalDue = BigDecimal.ZERO;
+	private BigDecimal profitDue = BigDecimal.ZERO;
+	private Date dueFromDate;
+	private Date lastFullyPaidDate;
+	private boolean newRecord = false;
+	private String lovValue;
+	private Provision befImage;
+	private LoggedInUser userDetails;
+	private Date prevProvisionCalDate;
+	private BigDecimal prevProvisionedAmt;
+	private String transRef;
 
-	private String					finCcy;
-	private String					lovDescCustCIF;
-	private String					lovDescCustShrtName;
-	private String					lovDescFinDivision;
-	private int						duedays;
-	private long					dpdBucketID;
-	private long					npaBucketID;
-	private BigDecimal				pftBal;
-	private BigDecimal				priBal;
-	private BigDecimal				prvovisionRate;
+	private String finCcy;
+	private String lovDescCustCIF;
+	private String lovDescCustShrtName;
+	private String lovDescFinDivision;
+	private int duedays;
+	private long dpdBucketID;
+	private long npaBucketID;
+	private BigDecimal pftBal;
+	private BigDecimal priBal;
+	private BigDecimal prvovisionRate;
 
-	private FinanceDetail			financeDetail;
+	private FinanceDetail financeDetail;
 
-	private List<ProvisionMovement>	provisionMovementList	= new ArrayList<ProvisionMovement>();
+	private List<ProvisionMovement> provisionMovementList = new ArrayList<ProvisionMovement>();
 	private String rcdAction = "";
 
 	public boolean isNew() {

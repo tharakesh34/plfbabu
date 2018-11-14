@@ -40,14 +40,14 @@ public class SpringUtil {
 		if (exec == null) {
 			throw new UiException("SpringUtil can be called only under ZK environment!");
 		}
-		
-		return WebApplicationContextUtils.getRequiredWebApplicationContext(
-				(ServletContext)exec.getDesktop().getWebApp().getServletContext());
+
+		return WebApplicationContextUtils
+				.getRequiredWebApplicationContext((ServletContext) exec.getDesktop().getWebApp().getServletContext());
 	}
-	
+
 	/**
 	 * Get the spring bean by the specified name.
-	 */		
+	 */
 	public static Object getBean(String name) {
 		Object o = null;
 		try {
@@ -60,7 +60,7 @@ public class SpringUtil {
 
 	/**
 	 * Get the spring bean by the specified name and class.
-	 */		
+	 */
 	public static Object getBean(String name, Class<?> cls) {
 		Object o = null;
 		try {

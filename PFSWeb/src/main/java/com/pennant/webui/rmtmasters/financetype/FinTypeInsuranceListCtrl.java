@@ -70,21 +70,21 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
-	
+public class FinTypeInsuranceListCtrl extends GFCBaseCtrl<FinTypeInsurances> {
+
 	private static final long serialVersionUID = 4521079241535245640L;
 
 	private static final Logger logger = Logger.getLogger(FinTypeInsuranceListCtrl.class);
 
 	protected Window window_FinTypeInsuranceList;
-	
+
 	private Component parent = null;
 	//private Tab parentTab = null;
-	
-	protected Button						btnNew_insuranceType;
-	private List<FinTypeInsurances>			finTypeInsuranceList	= new ArrayList<FinTypeInsurances>();
-	private Listbox							listBoxInsuranceDetails;
-	
+
+	protected Button btnNew_insuranceType;
+	private List<FinTypeInsurances> finTypeInsuranceList = new ArrayList<FinTypeInsurances>();
+	private Listbox listBoxInsuranceDetails;
+
 	private String roleCode = "";
 	private String finCcy = "";
 	private String finType = "";
@@ -92,10 +92,9 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 	protected boolean isOverdraft = false;
 	protected int moduleId;
 	private boolean isCompReadonly = false;
-	
-	
+
 	private Object mainController;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -107,7 +106,7 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 	protected void doSetProperties() {
 		super.pageRightName = "FinTypeInsuranceList";
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinTypeInsuranceList(Event event) throws Exception {
 		logger.debug("Entering");
@@ -157,7 +156,7 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 				this.finTypeInsuranceList = (List<FinTypeInsurances>) arguments.get("finTypeInsuranceList");
 			}
 			if (arguments.containsKey("isOverdraft")) {
-				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+				this.isOverdraft = (Boolean) arguments.get("isOverdraft");
 			}
 			doEdit();
 			doCheckRights();
@@ -170,46 +169,48 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	private void doEdit() {
-		
+
 	}
 
 	private void doSetFieldProperties() {
-		
+
 	}
 
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		//getUserWorkspace().allocateAuthorities(super.pageRightName, roleCode);
 		this.btnNew_insuranceType.setVisible(!isCompReadonly);
-		
+
 		logger.debug("leaving");
 	}
 
-	private void doShowDialog() throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+	private void doShowDialog()
+			throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
-		
+
 		doFillFinInsuranceTypes(this.finTypeInsuranceList);
-		
+
 		if (parent != null) {
-			this.window_FinTypeInsuranceList.setHeight(borderLayoutHeight-75+"px");
+			this.window_FinTypeInsuranceList.setHeight(borderLayoutHeight - 75 + "px");
 			parent.appendChild(this.window_FinTypeInsuranceList);
 		}
-		
+
 		try {
-			getMainController().getClass().getMethod("setFinTypeInsuranceListCtrl", this.getClass()).invoke(mainController, this);
+			getMainController().getClass().getMethod("setFinTypeInsuranceListCtrl", this.getClass())
+					.invoke(mainController, this);
 		} catch (InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		logger.debug("leaving");
 	}
-	
+
 	public void doFillFinInsuranceTypes(List<FinTypeInsurances> finTypeInsuranceList) {
 		logger.debug("Entering");
-		
+
 		try {
 			if (finTypeInsuranceList != null) {
 				setFinTypeInsuranceList(finTypeInsuranceList);
@@ -218,33 +219,37 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	private void fillFinTypeInsuranecs(List<FinTypeInsurances> finTypeInsuranceList) {
 		this.listBoxInsuranceDetails.getItems().clear();
-		
-		List<ValueLabel>  insurancePaymentTypeList = PennantStaticListUtil.getInsurancePaymentType();
-		List<ValueLabel>  insuranceCalTypeList = PennantStaticListUtil.getInsuranceCalType();
-		
+
+		List<ValueLabel> insurancePaymentTypeList = PennantStaticListUtil.getInsurancePaymentType();
+		List<ValueLabel> insuranceCalTypeList = PennantStaticListUtil.getInsuranceCalType();
+
 		for (FinTypeInsurances finTypeInsurance : finTypeInsuranceList) {
 			Listitem item = new Listitem();
 			Listcell lc;
 
-			/*lc = new Listcell(finTypeInsurance.getPolicyType() + "-" + finTypeInsurance.getPolicyDesc());
-			lc.setParent(item);*/
+			/*
+			 * lc = new Listcell(finTypeInsurance.getPolicyType() + "-" + finTypeInsurance.getPolicyDesc());
+			 * lc.setParent(item);
+			 */
 
 			lc = new Listcell(finTypeInsurance.getInsuranceType());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(finTypeInsurance.getInsuranceTypeDesc());
 			lc.setParent(item);
-			
-			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getDftPayType()), insurancePaymentTypeList));
+
+			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getDftPayType()),
+					insurancePaymentTypeList));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getCalType()), insuranceCalTypeList));
+			lc = new Listcell(
+					PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getCalType()), insuranceCalTypeList));
 			lc.setParent(item);
 
 			lc = new Listcell();
@@ -261,16 +266,16 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 			lc.setParent(item);
 
 			item.setAttribute("data", finTypeInsurance);
-			
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeInsuranceItemDoubleClicked");
-			
+
 			this.listBoxInsuranceDetails.appendChild(item);
 		}
 	}
 
 	public void onClick$btnNew_insuranceType(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		FinTypeInsurances finTypeInsurances = new FinTypeInsurances();
 		finTypeInsurances.setNewRecord(true);
 		finTypeInsurances.setFinType(this.finType);
@@ -285,35 +290,36 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 
 	public void onFinTypeInsuranceItemDoubleClicked(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		FinTypeInsurances finTypeInsurances = (FinTypeInsurances) item.getAttribute("data");
-		
+
 		if (!StringUtils.equals(finTypeInsurances.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 			finTypeInsurances.setNewRecord(false);
-			finTypeInsurances.setFinTypeDesc(this.finTypeDesc);			
+			finTypeInsurances.setFinTypeDesc(this.finTypeDesc);
 			doshowInsuranceDialog(finTypeInsurances);
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void doshowInsuranceDialog(FinTypeInsurances finTypeInsurances) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finTypeInsurances", finTypeInsurances);
 		map.put("finTypeInsuranceListCtrl", this);
 		map.put("role", roleCode);
 		map.put("amountFormatter", CurrencyUtil.getFormat(this.finCcy));
-		
+
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -324,7 +330,7 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 	public void setFinTypeInsuranceList(List<FinTypeInsurances> finTypeInsuranceList) {
 		this.finTypeInsuranceList = finTypeInsuranceList;
 	}
-	
+
 	public Object getMainController() {
 		return mainController;
 	}

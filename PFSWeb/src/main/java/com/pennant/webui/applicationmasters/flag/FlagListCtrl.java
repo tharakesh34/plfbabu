@@ -62,9 +62,9 @@ import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.service.applicationmaster.FlagService;
 import com.pennant.webui.applicationmasters.flag.model.FlagListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMasters/Flag/FlagList.zul file.
@@ -126,10 +126,11 @@ public class FlagListCtrl extends GFCBaseListCtrl<Flag> {
 		registerButton(button_FlagList_NewFlag, "button_FlagsList_NewFlagsList", true);
 		registerButton(button_FlagList_FlagSearch);
 
-		registerField("flagCode", listheader_FlagCode, SortOrder.ASC, flagCode, sortOperator_FlagCode, Operators.STRING);
+		registerField("flagCode", listheader_FlagCode, SortOrder.ASC, flagCode, sortOperator_FlagCode,
+				Operators.STRING);
 		registerField("flagDesc", listheader_FlagDesc, SortOrder.NONE, flagDesc, sortOperator_FlagDesc,
 				Operators.STRING);
-		registerField("active", listheader_Active, SortOrder.NONE,active,sortOperator_Active,Operators.BOOLEAN);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();

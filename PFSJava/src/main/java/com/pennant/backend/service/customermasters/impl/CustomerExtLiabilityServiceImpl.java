@@ -18,14 +18,14 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
-public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityService{
+public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityService {
 	private static Logger logger = Logger.getLogger(CustomerExtLiabilityServiceImpl.class);
-		
+
 	@Autowired
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	@Autowired
 	private ExternalLiabilityDAO externalLiabilityDAO;
-	
+
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
 
@@ -81,7 +81,7 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 
 	@Override
 	public CustomerExtLiability getLiability(CustomerExtLiability liability) {
-		return customerExtLiabilityDAO.getLiability(liability, "_aview",liability.getInputSource());
+		return customerExtLiabilityDAO.getLiability(liability, "_aview", liability.getInputSource());
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 	public BigDecimal getExternalLiabilitySum(long custId) {
 		return customerExtLiabilityDAO.getExternalLiabilitySum(custId);
 	}
-	
+
 	@Override
 	public BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId) {
 		return getCustomerExtLiabilityDAO().getSumAmtCustomerExtLiabilityById(custId);

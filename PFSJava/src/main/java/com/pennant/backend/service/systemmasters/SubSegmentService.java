@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.SubSegment;
  * 
  */
 public interface SubSegmentService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	SubSegment getSubSegmentById(String id,String subSegmentCode);
-	SubSegment getApprovedSubSegmentById(String id,String subSegmentCode);
+
+	SubSegment getSubSegmentById(String id, String subSegmentCode);
+
+	SubSegment getApprovedSubSegmentById(String id, String subSegmentCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

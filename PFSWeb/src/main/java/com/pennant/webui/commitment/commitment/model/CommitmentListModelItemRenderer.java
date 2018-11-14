@@ -72,9 +72,9 @@ public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitm
 	@Override
 	public void render(Listitem item, Commitment commitment, int count) throws Exception {
 		Listcell lc;
-		
+
 		int formatter = CurrencyUtil.getFormat(commitment.getCmtCcy());
-		
+
 		lc = new Listcell(StringUtils.trimToEmpty(commitment.getCustCIF()));
 		lc.setParent(item);
 		lc = new Listcell(commitment.getCmtReference());
@@ -89,7 +89,7 @@ public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitm
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(commitment.getCmtRvwDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(),formatter));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(), formatter));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtUtilizedAmount(), formatter));
 		lc.setParent(item);

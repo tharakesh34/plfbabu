@@ -67,8 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>DPDBucket</code> with set of CRUD operations.
  */
 public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucketDAO {
-	private static Logger	logger	= Logger.getLogger(DPDBucketDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(DPDBucketDAOImpl.class);
 
 	public DPDBucketDAOImpl() {
 		super();
@@ -82,7 +81,8 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID, bucketCode, bucketDesc, active, ");
 
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From DPDBUCKETS");
 		sql.append(type);
 		sql.append(" Where bucketID = :bucketID");
@@ -106,47 +106,47 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		logger.debug(Literal.LEAVING);
 		return dPDBucket;
 	}
-	
+
 	@Override
 	public DPDBucket getDPDBucket(String bucketCode, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID ");
 		sql.append(" From DPDBUCKETS");
 		sql.append(type);
 		sql.append(" Where BucketCode = :BucketCode");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		DPDBucket dPDBucket = new DPDBucket();
 		dPDBucket.setBucketCode(bucketCode);
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucket);
 		RowMapper<DPDBucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DPDBucket.class);
-		
+
 		try {
 			dPDBucket = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			dPDBucket = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return dPDBucket;
 	}
-	
+
 	@Override
 	public List<DPDBucket> getDPDBuckets() {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID, bucketCode");
 		sql.append(" From DPDBUCKETS");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -155,7 +155,7 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		logger.debug(Literal.LEAVING);
 		return dPDBucket;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -201,10 +201,12 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		StringBuilder sql = new StringBuilder("insert into DPDBUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append(" (bucketID, bucketCode, bucketDesc, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :bucketID, :bucketCode, :bucketDesc, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (dPDBucket.getBucketID() <= 0) {
@@ -281,5 +283,4 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 }

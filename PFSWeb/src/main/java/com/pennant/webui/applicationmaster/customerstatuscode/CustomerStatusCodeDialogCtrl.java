@@ -75,32 +75,31 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeDialog.zul
+ * file.
  */
 public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode> {
 	private static final long serialVersionUID = -7665708224082701621L;
 	private static final Logger logger = Logger.getLogger(CustomerStatusCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_CustomerStatusCodeDialog;	// autoWired
+	protected Window window_CustomerStatusCodeDialog; // autoWired
 
-	protected Textbox 	custStsCode; 					// autoWired
-	protected Textbox 	custStsDescription; 			// autoWired
-	protected Intbox 	dueDays; 						// autoWired
-	protected Checkbox 	suspendProfit; 					// autoWired
-	protected Checkbox 	custStsIsActive; 				// autoWired
+	protected Textbox custStsCode; // autoWired
+	protected Textbox custStsDescription; // autoWired
+	protected Intbox dueDays; // autoWired
+	protected Checkbox suspendProfit; // autoWired
+	protected Checkbox custStsIsActive; // autoWired
 
 	// not autoWired variables
-	private CustomerStatusCode customerStatusCode; 					// overHanded per parameter
+	private CustomerStatusCode customerStatusCode; // overHanded per parameter
 	private transient CustomerStatusCodeListCtrl customerStatusCodeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CustomerStatusCodeService customerStatusCodeService;
 
@@ -119,9 +118,8 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerStatusCode object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerStatusCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -132,40 +130,41 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 		// Set the page level components.
 		setPageComponents(window_CustomerStatusCodeDialog);
 
-		try{
-		/* set components visible dependent of the users rights */
-		doCheckRights();
+		try {
+			/* set components visible dependent of the users rights */
+			doCheckRights();
 
-		if (arguments.containsKey("customerStatusCode")) {
-			this.customerStatusCode = (CustomerStatusCode) arguments.get("customerStatusCode");
-			CustomerStatusCode befImage = new CustomerStatusCode();
-			BeanUtils.copyProperties(this.customerStatusCode, befImage);
-			this.customerStatusCode.setBefImage(befImage);
-			setCustomerStatusCode(this.customerStatusCode);
-		} else {
-			setCustomerStatusCode(null);
-		}
+			if (arguments.containsKey("customerStatusCode")) {
+				this.customerStatusCode = (CustomerStatusCode) arguments.get("customerStatusCode");
+				CustomerStatusCode befImage = new CustomerStatusCode();
+				BeanUtils.copyProperties(this.customerStatusCode, befImage);
+				this.customerStatusCode.setBefImage(befImage);
+				setCustomerStatusCode(this.customerStatusCode);
+			} else {
+				setCustomerStatusCode(null);
+			}
 
-		doLoadWorkFlow(this.customerStatusCode.isWorkflow(), this.customerStatusCode.getWorkflowId(), this.customerStatusCode.getNextTaskId());
+			doLoadWorkFlow(this.customerStatusCode.isWorkflow(), this.customerStatusCode.getWorkflowId(),
+					this.customerStatusCode.getNextTaskId());
 
-		if (isWorkFlowEnabled()) {
-			this.userAction = setListRecordStatus(this.userAction);
-			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerStatusCodeDialog");
-		}
+			if (isWorkFlowEnabled()) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerStatusCodeDialog");
+			}
 
-		// READ OVERHANDED parameters !
-		// we get the customerStatusCodeListWindow controller. So we have access
-		// to it and can synchronize the shown data when we do insert, edit or
-		// delete customerStatusCode here.
-		if (arguments.containsKey("customerStatusCodeListCtrl")) {
-			setCustomerStatusCodeListCtrl((CustomerStatusCodeListCtrl) arguments.get("customerStatusCodeListCtrl"));
-		} else {
-			setCustomerStatusCodeListCtrl(null);
-		}
+			// READ OVERHANDED parameters !
+			// we get the customerStatusCodeListWindow controller. So we have access
+			// to it and can synchronize the shown data when we do insert, edit or
+			// delete customerStatusCode here.
+			if (arguments.containsKey("customerStatusCodeListCtrl")) {
+				setCustomerStatusCodeListCtrl((CustomerStatusCodeListCtrl) arguments.get("customerStatusCodeListCtrl"));
+			} else {
+				setCustomerStatusCodeListCtrl(null);
+			}
 
-		// set Field Properties
-		doSetFieldProperties();
-		doShowDialog(getCustomerStatusCode());
+			// set Field Properties
+			doSetFieldProperties();
+			doShowDialog(getCustomerStatusCode());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_CustomerStatusCodeDialog.onClose();
@@ -186,9 +185,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			} else {
+		} else {
 			this.groupboxWf.setVisible(false);
-			}
+		}
 		logger.debug("Leaving");
 	}
 
@@ -197,8 +196,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -310,8 +308,10 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 		this.suspendProfit.setChecked(aCustomerStatusCode.isSuspendProfit());
 		this.custStsIsActive.setChecked(aCustomerStatusCode.isCustStsIsActive());
 		this.recordStatus.setValue(aCustomerStatusCode.getRecordStatus());
-		
-		if(aCustomerStatusCode.isNew() || (aCustomerStatusCode.getRecordType() != null ? aCustomerStatusCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCustomerStatusCode.isNew()
+				|| (aCustomerStatusCode.getRecordType() != null ? aCustomerStatusCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.custStsIsActive.setChecked(true);
 			this.custStsIsActive.setDisabled(true);
 		}
@@ -374,8 +374,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerStatusCode
 	 * @throws Exception
@@ -425,17 +424,21 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 
 		setValidationOn(true);
 
-		if (!this.custStsCode.isReadonly()){
-			this.custStsCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerStatusCodeDialog_CustStsCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+		if (!this.custStsCode.isReadonly()) {
+			this.custStsCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerStatusCodeDialog_CustStsCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		if (!this.custStsDescription.isReadonly()){
-			this.custStsDescription.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerStatusCodeDialog_CustStsDescription.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.custStsDescription.isReadonly()) {
+			this.custStsDescription.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerStatusCodeDialog_CustStsDescription.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.dueDays.isReadonly()) {
-			this.dueDays.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerStatusCodeDialog_DueDays.value"), true));
+			this.dueDays.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_CustomerStatusCodeDialog_DueDays.value"), true));
 		}
 
 		logger.debug("Leaving");
@@ -492,8 +495,8 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aCustomerStatusCode.getCustStsCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerStatusCode.getCustStsCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerStatusCode.getRecordType())) {
 				aCustomerStatusCode.setVersion(aCustomerStatusCode.getVersion() + 1);
@@ -608,13 +611,13 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-		/*String statusCode = getCustomerStatusCodeService().getCurDueDaysStatus(this.dueDays.intValue(),"_View");
-		if(!StringUtils.trimToEmpty(statusCode).equals("")) {	
-			MessageUtil.showErrorMessage(Labels.getLabel("CUST_STS_CODE_WITH_DUEDAYS_ALREADY_EXISTS",
-					new String[]{statusCode, String.valueOf(this.dueDays.getValue()) }));
-			return;
-		}*/
-		
+		/*
+		 * String statusCode = getCustomerStatusCodeService().getCurDueDaysStatus(this.dueDays.intValue(),"_View");
+		 * if(!StringUtils.trimToEmpty(statusCode).equals("")) {
+		 * MessageUtil.showErrorMessage(Labels.getLabel("CUST_STS_CODE_WITH_DUEDAYS_ALREADY_EXISTS", new
+		 * String[]{statusCode, String.valueOf(this.dueDays.getValue()) })); return; }
+		 */
+
 		// fill the CustomerStatusCode object with the components data
 		doWriteComponentsToBean(aCustomerStatusCode);
 
@@ -799,8 +802,8 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerStatusCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -844,9 +847,9 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(CustomerStatusCode aCustomerStatusCode, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,aCustomerStatusCode.getBefImage(), aCustomerStatusCode);
-		return new AuditHeader(String.valueOf(aCustomerStatusCode.getId()), null,
-				null, null, auditDetail, aCustomerStatusCode.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerStatusCode.getBefImage(), aCustomerStatusCode);
+		return new AuditHeader(String.valueOf(aCustomerStatusCode.getId()), null, null, null, auditDetail,
+				aCustomerStatusCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -866,7 +869,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,	map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -879,13 +882,11 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	private void refreshList() {
 		getCustomerStatusCodeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.customerStatusCode.getCustStsCode());
 	}
-	
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -894,6 +895,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -901,19 +903,19 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	public CustomerStatusCode getCustomerStatusCode() {
 		return this.customerStatusCode;
 	}
+
 	public void setCustomerStatusCode(CustomerStatusCode customerStatusCode) {
 		this.customerStatusCode = customerStatusCode;
 	}
-	/*public CustomerStatusCode getCustomerDueDays() {
-		return this.dueDays;
-	}
-	public void setCustomerDueDays(CustomerStatusCode dueDays) {
-		this.dueDays = dueDays;
-	}*/
+	/*
+	 * public CustomerStatusCode getCustomerDueDays() { return this.dueDays; } public void
+	 * setCustomerDueDays(CustomerStatusCode dueDays) { this.dueDays = dueDays; }
+	 */
 
 	public void setCustomerStatusCodeService(CustomerStatusCodeService customerStatusCodeService) {
 		this.customerStatusCodeService = customerStatusCodeService;
 	}
+
 	public CustomerStatusCodeService getCustomerStatusCodeService() {
 		return this.customerStatusCodeService;
 	}
@@ -921,6 +923,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	public void setCustomerStatusCodeListCtrl(CustomerStatusCodeListCtrl customerStatusCodeListCtrl) {
 		this.customerStatusCodeListCtrl = customerStatusCodeListCtrl;
 	}
+
 	public CustomerStatusCodeListCtrl getCustomerStatusCodeListCtrl() {
 		return this.customerStatusCodeListCtrl;
 	}

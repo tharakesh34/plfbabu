@@ -88,11 +88,12 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 		addressType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("SELECT AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeFIRequired, AddrTypeIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append("SELECT AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeFIRequired, AddrTypeIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTAddressTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AddrTypeCode =:AddrTypeCode") ;
+		selectSql.append(" Where AddrTypeCode =:AddrTypeCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(addressType);
@@ -107,7 +108,7 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 		logger.debug("Leaving");
 		return addressType;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String addressTypeCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -147,17 +148,18 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 	@Override
 	public String save(AddressType addressType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTAddressTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeFIRequired, AddrTypeIsActive," );
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		sql.append(" (AddrTypeCode, AddrTypeDesc, AddrTypePriority, AddrTypeFIRequired, AddrTypeIsActive,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
-		sql.append(" values(:AddrTypeCode, :AddrTypeDesc, :AddrTypePriority, :AddrTypeFIRequired, :AddrTypeIsActive, " );
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(" values(:AddrTypeCode, :AddrTypeDesc, :AddrTypePriority, :AddrTypeFIRequired, :AddrTypeIsActive, ");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		sql.append(" :RecordType, :WorkflowId)");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
@@ -170,26 +172,28 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 		logger.debug(Literal.LEAVING);
 		return addressType.getId();
 	}
-	
+
 	@Override
 	public void update(AddressType addressType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update BMTAddressTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" set AddrTypeDesc = :AddrTypeDesc," );
-		sql.append(" AddrTypePriority = :AddrTypePriority, AddrTypeFIRequired = :AddrTypeFIRequired, AddrTypeIsActive = :AddrTypeIsActive ," );
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		sql.append(" set AddrTypeDesc = :AddrTypeDesc,");
+		sql.append(
+				" AddrTypePriority = :AddrTypePriority, AddrTypeFIRequired = :AddrTypeFIRequired, AddrTypeIsActive = :AddrTypeIsActive ,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where AddrTypeCode =:AddrTypeCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
-		int recordCount  = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -199,25 +203,24 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	@Override
 	public void delete(AddressType addressType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append("delete from BMTAddressTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" where AddrTypeCode = :AddrTypeCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +  sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(addressType);
 		int recordCount = 0;
-		
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(),paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -229,5 +232,5 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 }

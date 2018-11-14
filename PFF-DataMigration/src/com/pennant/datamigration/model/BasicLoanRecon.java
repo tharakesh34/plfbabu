@@ -2,9 +2,6 @@ package com.pennant.datamigration.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
-
-import com.aspose.pdf.Operator.BI;
 
 public class BasicLoanRecon implements Serializable {
 
@@ -15,11 +12,11 @@ public class BasicLoanRecon implements Serializable {
 	private long custID = 0;
 	private boolean graceExist = false;
 	private boolean bpiExist = false;
-	
+
 	private BigDecimal srcSanctionedAmount = BigDecimal.ZERO;
 	private BigDecimal srcDisbursedAmount = BigDecimal.ZERO;
 	private BigDecimal srcUnDisbursedAmount = BigDecimal.ZERO;
-	
+
 	private BigDecimal sanctionedAmount = BigDecimal.ZERO;
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 	private BigDecimal unDisbursedAmount = BigDecimal.ZERO;

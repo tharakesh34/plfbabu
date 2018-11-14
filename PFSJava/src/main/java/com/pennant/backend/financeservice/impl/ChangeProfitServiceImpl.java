@@ -35,23 +35,23 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
-		
+
 		// Schedule Recalculation Locking Period Applicability
-		if(ImplementationConstants.ALW_SCH_RECAL_LOCK){
+		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if(DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0 
-						&& (i != sdSize - 1) && i != 0){
+				if (DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0
+						&& (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
-				}else{
+				} else {
 					curSchd.setRecalLock(false);
 				}
 			}
 		}
-		
+
 		finSchdData = ScheduleCalculator.changeProfit(finScheduleData, amount);
 
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);
@@ -71,7 +71,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
-		
+
 		// validate Instruction details
 		boolean isWIF = finServiceInstruction.isWif();
 		String finReference = finServiceInstruction.getFinReference();
@@ -80,15 +80,15 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
-		
+
 		// It should be valid schedule date
 		boolean isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, fromDate, isWIF);
-		if(!isFromDateExists) {
+		if (!isFromDateExists) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
-		
+
 		// It shouldn't be greater than or equals to maturity date
 		if (isFromDateExists && fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[1];
@@ -97,23 +97,23 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		// It shouldn't be past date when compare to appdate
-		if(isFromDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+		if (isFromDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
-		
+
 		// validate To date
 		Date toDate = finServiceInstruction.getToDate();
-		
+
 		// ToDate should be valid schedule date
 		boolean isToDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, toDate, isWIF);
-		if(!isToDateExists) {
+		if (!isToDateExists) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
-		
+
 		// ToDate shouldn't be greater than maturity date
 		if (isToDateExists && fromDate.compareTo(financeMain.getMaturityDate()) > 0) {
 			String[] valueParm = new String[1];
@@ -122,12 +122,12 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		// ToDate shouldn't be past date when compare to appdate
-		if(isToDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+		if (isToDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}

@@ -47,9 +47,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			// fetch all existing currencies
 			List<Currency> existingCcyList = getReferenceDataDAO().fetchCurrecnyDetails();
 
-			if(currencyList != null && !currencyList.isEmpty()) {
-				for(ReferenceData masterData: currencyList) {
-					if(checkCurrecnyExist(masterData, existingCcyList)) {
+			if (currencyList != null && !currencyList.isEmpty()) {
+				for (ReferenceData masterData : currencyList) {
+					if (checkCurrecnyExist(masterData, existingCcyList)) {
 						Currency currency = new Currency();
 						currency.setCcyCode(masterData.getT24Code());
 						currency.setCcyDesc(masterData.getDesc());
@@ -87,15 +87,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveMasterList.isEmpty()) {
+					if (!saveMasterList.isEmpty()) {
 						getReferenceDataDAO().saveCurrencyMaster(saveMasterList);
-					} 
-					if(!updateMasterList.isEmpty()) {
+					}
+					if (!updateMasterList.isEmpty()) {
 						getReferenceDataDAO().updateCurrencyMaster(updateMasterList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -112,9 +112,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Industry Details
 			List<Industry> existingIndustryCodes = getReferenceDataDAO().fetchIndustryDetails();
 
-			if(industryList != null && !industryList.isEmpty()) {
-				for(ReferenceData masterData: industryList) {
-					if(checkIndustryExist(masterData, existingIndustryCodes)) {
+			if (industryList != null && !industryList.isEmpty()) {
+				for (ReferenceData masterData : industryList) {
+					if (checkIndustryExist(masterData, existingIndustryCodes)) {
 						Industry industry = new Industry();
 						industry.setIndustryCode(masterData.getT24Code());
 						industry.setIndustryDesc(masterData.getDesc());
@@ -141,20 +141,19 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveMasterList.isEmpty()) {
+					if (!saveMasterList.isEmpty()) {
 						getReferenceDataDAO().saveIndustryMaster(saveMasterList);
-					} 
-					if(!updateMasterList.isEmpty()) {
+					}
+					if (!updateMasterList.isEmpty()) {
 						getReferenceDataDAO().updateIndustryMaster(updateMasterList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
-
 
 	@Override
 	public void processCustomerTypeDetails(String pffTableName, List<ReferenceData> custTypeList) {
@@ -167,9 +166,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Industry Details
 			List<CustomerType> existingCustTypeCodes = getReferenceDataDAO().fetchCustTypeDetails();
 
-			if(custTypeList != null && !custTypeList.isEmpty()) {
-				for(ReferenceData masterData: custTypeList) {
-					if(checkCustTypeExist(masterData, existingCustTypeCodes)) {
+			if (custTypeList != null && !custTypeList.isEmpty()) {
+				for (ReferenceData masterData : custTypeList) {
+					if (checkCustTypeExist(masterData, existingCustTypeCodes)) {
 						CustomerType custType = new CustomerType();
 						custType.setCustTypeCode(masterData.getT24Code());
 						custType.setCustTypeDesc(masterData.getDesc());
@@ -196,15 +195,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveMasterList.isEmpty()) {
+					if (!saveMasterList.isEmpty()) {
 						getReferenceDataDAO().saveCustTypeDetails(saveMasterList);
-					} 
-					if(!updateMasterList.isEmpty()) {
+					}
+					if (!updateMasterList.isEmpty()) {
 						getReferenceDataDAO().updateCustTypeDetails(updateMasterList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -221,9 +220,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Sector Details
 			List<Sector> existingSectorCodes = getReferenceDataDAO().fetchSectorDetails();
 
-			if(sectorRefList != null && !sectorRefList.isEmpty()) {
-				for(ReferenceData masterData: sectorRefList) {
-					if(checkSectorExist(masterData, existingSectorCodes)) {
+			if (sectorRefList != null && !sectorRefList.isEmpty()) {
+				for (ReferenceData masterData : sectorRefList) {
+					if (checkSectorExist(masterData, existingSectorCodes)) {
 						Sector sector = new Sector();
 						sector.setSectorCode(masterData.getT24Code());
 						sector.setSectorDesc(masterData.getDesc());
@@ -250,15 +249,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveSectorList.isEmpty()) {
+					if (!saveSectorList.isEmpty()) {
 						getReferenceDataDAO().saveSectorDetails(saveSectorList);
-					} 
-					if(!updateSectorList.isEmpty()) {
+					}
+					if (!updateSectorList.isEmpty()) {
 						getReferenceDataDAO().updateSectorDetails(updateSectorList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -275,9 +274,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<Country> existingCountryCodes = getReferenceDataDAO().fetchCountryDetails();
 
-			if(countryRefList != null && !countryRefList.isEmpty()) {
-				for(ReferenceData masterData: countryRefList) {
-					if(checkCountryExist(masterData, existingCountryCodes)) {
+			if (countryRefList != null && !countryRefList.isEmpty()) {
+				for (ReferenceData masterData : countryRefList) {
+					if (checkCountryExist(masterData, existingCountryCodes)) {
 						Country country = new Country();
 						country.setCountryCode(masterData.getT24Code());
 						country.setCountryDesc(masterData.getDesc());
@@ -307,15 +306,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveCountryList.isEmpty()) {
+					if (!saveCountryList.isEmpty()) {
 						getReferenceDataDAO().saveCountryDetails(saveCountryList);
-					} 
-					if(!updateCountryList.isEmpty()) {
+					}
+					if (!updateCountryList.isEmpty()) {
 						getReferenceDataDAO().updateCountryDetails(updateCountryList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -332,9 +331,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<MaritalStatusCode> existingMaritalStsCodes = getReferenceDataDAO().fetchMaritalStsDetails();
 
-			if(maritalStsRefList != null && !maritalStsRefList.isEmpty()) {
-				for(ReferenceData masterData: maritalStsRefList) {
-					if(checkMaritalStsExist(masterData, existingMaritalStsCodes)) {
+			if (maritalStsRefList != null && !maritalStsRefList.isEmpty()) {
+				for (ReferenceData masterData : maritalStsRefList) {
+					if (checkMaritalStsExist(masterData, existingMaritalStsCodes)) {
 						MaritalStatusCode maritalStsCode = new MaritalStatusCode();
 						maritalStsCode.setMaritalStsCode(masterData.getT24Code());
 						maritalStsCode.setMaritalStsDesc(masterData.getDesc());
@@ -361,20 +360,19 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveMaritalStsList.isEmpty()) {
+					if (!saveMaritalStsList.isEmpty()) {
 						getReferenceDataDAO().saveMaritalStsDetails(saveMaritalStsList);
-					} 
-					if(!updateMaritalStsList.isEmpty()) {
+					}
+					if (!updateMaritalStsList.isEmpty()) {
 						getReferenceDataDAO().updateMaritalStsDetails(updateMaritalStsList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
-
 
 	@Override
 	public void processBranchesDetails(String pffTableName, List<ReferenceData> branchesList) {
@@ -387,9 +385,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<Branch> existingBranchCodes = getReferenceDataDAO().fetchBranchDetails();
 
-			if(branchesList != null && !branchesList.isEmpty()) {
-				for(ReferenceData masterData: branchesList) {
-					if(checkBranchExist(masterData, existingBranchCodes)) {
+			if (branchesList != null && !branchesList.isEmpty()) {
+				for (ReferenceData masterData : branchesList) {
+					if (checkBranchExist(masterData, existingBranchCodes)) {
 						Branch branch = new Branch();
 						branch.setBranchCode(masterData.getT24Code());
 						branch.setBranchDesc(masterData.getDesc());
@@ -416,15 +414,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveBranchList.isEmpty()) {
+					if (!saveBranchList.isEmpty()) {
 						getReferenceDataDAO().saveBranchDetails(saveBranchList);
-					} 
-					if(	!updateBranchList.isEmpty()) {
+					}
+					if (!updateBranchList.isEmpty()) {
 						getReferenceDataDAO().updateBranchDetails(updateBranchList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -441,9 +439,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<Salutation> existingSalutationCodes = getReferenceDataDAO().fetchSalutationDetails();
 
-			if(salutationList != null && !salutationList.isEmpty()) {
-				for(ReferenceData masterData: salutationList) {
-					if(checkSalutationExist(masterData, existingSalutationCodes)) {
+			if (salutationList != null && !salutationList.isEmpty()) {
+				for (ReferenceData masterData : salutationList) {
+					if (checkSalutationExist(masterData, existingSalutationCodes)) {
 						Salutation salutation = new Salutation();
 						salutation.setSalutationCode(masterData.getT24Code());
 						salutation.setSaluationDesc(masterData.getDesc());
@@ -470,22 +468,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveSalutationList.isEmpty()) {
+					if (!saveSalutationList.isEmpty()) {
 						getReferenceDataDAO().saveSalutationDetails(saveSalutationList);
-					} 
-					if(!updateSalutationList.isEmpty()) {
+					}
+					if (!updateSalutationList.isEmpty()) {
 						getReferenceDataDAO().updateSalutationDetails(updateSalutationList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-    public void processLanguageDetails(String pffTableName, List<ReferenceData> languageList) {
+	public void processLanguageDetails(String pffTableName, List<ReferenceData> languageList) {
 		logger.debug("Entering");
 
 		try {
@@ -495,9 +493,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<Language> existingLanguageCodes = getReferenceDataDAO().fetchLanguageDetails();
 
-			if(languageList != null && !languageList.isEmpty()) {
-				for(ReferenceData masterData: languageList) {
-					if(checkLanguageExist(masterData, existingLanguageCodes)) {
+			if (languageList != null && !languageList.isEmpty()) {
+				for (ReferenceData masterData : languageList) {
+					if (checkLanguageExist(masterData, existingLanguageCodes)) {
 						Language language = new Language();
 						language.setLngCode(masterData.getT24Code());
 						language.setLngDesc(masterData.getDesc());
@@ -523,22 +521,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveLanguageList.isEmpty()) {
+					if (!saveLanguageList.isEmpty()) {
 						getReferenceDataDAO().saveLanguageDetails(saveLanguageList);
-					} 
-					if(!updateLanguageList.isEmpty()) {
+					}
+					if (!updateLanguageList.isEmpty()) {
 						getReferenceDataDAO().updateLanguageDetails(updateLanguageList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-    public void processSegmentDetails(String pffTableName, List<ReferenceData> segmentList) {
+	public void processSegmentDetails(String pffTableName, List<ReferenceData> segmentList) {
 		logger.debug("Entering");
 
 		try {
@@ -548,9 +546,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<Segment> existingSegmentCodes = getReferenceDataDAO().fetchSegmentDetails();
 
-			if(segmentList != null && !segmentList.isEmpty()) {
-				for(ReferenceData masterData: segmentList) {
-					if(checkSegmentExist(masterData, existingSegmentCodes)) {
+			if (segmentList != null && !segmentList.isEmpty()) {
+				for (ReferenceData masterData : segmentList) {
+					if (checkSegmentExist(masterData, existingSegmentCodes)) {
 						Segment segment = new Segment();
 						segment.setSegmentCode(masterData.getT24Code());
 						segment.setSegmentDesc(masterData.getDesc());
@@ -577,22 +575,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveSegmentList.isEmpty()) {
+					if (!saveSegmentList.isEmpty()) {
 						getReferenceDataDAO().saveSegmentDetails(saveSegmentList);
-					} 
-					if(!updateSegmentList.isEmpty()) {
+					}
+					if (!updateSegmentList.isEmpty()) {
 						getReferenceDataDAO().updateSegmentDetails(updateSegmentList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-    public void processGenDepartmentDetails(String pffTableName, List<ReferenceData> genDepartmentList) {
+	public void processGenDepartmentDetails(String pffTableName, List<ReferenceData> genDepartmentList) {
 		logger.debug("Entering");
 
 		try {
@@ -602,9 +600,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<GeneralDepartment> existingGenDepartmentCodes = getReferenceDataDAO().fetchgenDepartmentDetails();
 
-			if(genDepartmentList != null && !genDepartmentList.isEmpty()) {
-				for(ReferenceData masterData: genDepartmentList) {
-					if(checkgenDepartmentExist(masterData, existingGenDepartmentCodes)) {
+			if (genDepartmentList != null && !genDepartmentList.isEmpty()) {
+				for (ReferenceData masterData : genDepartmentList) {
+					if (checkgenDepartmentExist(masterData, existingGenDepartmentCodes)) {
 						GeneralDepartment genDepartment = new GeneralDepartment();
 						genDepartment.setGenDepartment(masterData.getT24Code());
 						genDepartment.setGenDeptDesc(masterData.getDesc());
@@ -630,22 +628,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveDepartmentList.isEmpty()) {
+					if (!saveDepartmentList.isEmpty()) {
 						getReferenceDataDAO().saveDepartmentDetails(saveDepartmentList);
-					} 
-					if(!updateDepartmentList.isEmpty()) {
+					}
+					if (!updateDepartmentList.isEmpty()) {
 						getReferenceDataDAO().updateDepartmentDetails(updateDepartmentList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-    public void processIncomeTypeDetails(String pffTableName, List<ReferenceData> incomeTypeList) {
+	public void processIncomeTypeDetails(String pffTableName, List<ReferenceData> incomeTypeList) {
 		logger.debug("Entering");
 
 		try {
@@ -655,9 +653,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<IncomeType> existingIncomeTypeCodes = getReferenceDataDAO().fetchIncomeTypeDetails();
 
-			if(incomeTypeList != null && !incomeTypeList.isEmpty()) {
-				for(ReferenceData masterData: incomeTypeList) {
-					if(checkIncomeTypeExist(masterData, existingIncomeTypeCodes)) {
+			if (incomeTypeList != null && !incomeTypeList.isEmpty()) {
+				for (ReferenceData masterData : incomeTypeList) {
+					if (checkIncomeTypeExist(masterData, existingIncomeTypeCodes)) {
 						IncomeType incomeType = new IncomeType();
 						incomeType.setIncomeTypeCode(masterData.getT24Code());
 						incomeType.setIncomeTypeDesc(masterData.getDesc());
@@ -686,22 +684,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveIncomeTypeList.isEmpty()) {
+					if (!saveIncomeTypeList.isEmpty()) {
 						getReferenceDataDAO().saveIncomeTypeDetails(saveIncomeTypeList);
-					} 
-					if(!updateIncomeTypeList.isEmpty()) {
+					}
+					if (!updateIncomeTypeList.isEmpty()) {
 						getReferenceDataDAO().updateIncomeTypeDetails(updateIncomeTypeList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-    public void processTargetDetails(String pffTableName, List<ReferenceData> targetList) {
+	public void processTargetDetails(String pffTableName, List<ReferenceData> targetList) {
 		logger.debug("Entering");
 
 		try {
@@ -711,9 +709,9 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 			//Fetch Existing Country Details
 			List<TargetDetail> existingTargetCodes = getReferenceDataDAO().fetchTargetDetails();
 
-			if(targetList != null && !targetList.isEmpty()) {
-				for(ReferenceData masterData: targetList) {
-					if(checkTargetExist(masterData, existingTargetCodes)) {
+			if (targetList != null && !targetList.isEmpty()) {
+				for (ReferenceData masterData : targetList) {
+					if (checkTargetExist(masterData, existingTargetCodes)) {
 						TargetDetail targetDetail = new TargetDetail();
 						targetDetail.setTargetCode(masterData.getT24Code());
 						targetDetail.setTargetDesc(masterData.getDesc());
@@ -740,15 +738,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 					}
 
 					// save or update the masters data
-					if(!saveTargetDetailList.isEmpty()) {
+					if (!saveTargetDetailList.isEmpty()) {
 						getReferenceDataDAO().saveTargetDetails(saveTargetDetailList);
-					} 
-					if(!updateTargetDetailList.isEmpty()) {
+					}
+					if (!updateTargetDetailList.isEmpty()) {
 						getReferenceDataDAO().updateTargetDetails(updateTargetDetailList);
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -763,7 +761,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkIndustryExist(ReferenceData masterData, List<Industry> existingIndustries){
+	private boolean checkIndustryExist(ReferenceData masterData, List<Industry> existingIndustries) {
 		for (Industry industry : existingIndustries) {
 			if (StringUtils.equals(masterData.getT24Code(), industry.getIndustryCode())) {
 				return true;
@@ -772,7 +770,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkCustTypeExist(ReferenceData masterData, List<CustomerType> existingCustTypeList){
+	private boolean checkCustTypeExist(ReferenceData masterData, List<CustomerType> existingCustTypeList) {
 		for (CustomerType customerType : existingCustTypeList) {
 			if (StringUtils.equals(masterData.getT24Code(), customerType.getCustTypeCode())) {
 				return true;
@@ -781,7 +779,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkSectorExist(ReferenceData masterData, List<Sector> existingSectorList){
+	private boolean checkSectorExist(ReferenceData masterData, List<Sector> existingSectorList) {
 		for (Sector sector : existingSectorList) {
 			if (StringUtils.equals(masterData.getT24Code(), sector.getSectorCode())) {
 				return true;
@@ -790,7 +788,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkCountryExist(ReferenceData masterData, List<Country> existingCountryList){
+	private boolean checkCountryExist(ReferenceData masterData, List<Country> existingCountryList) {
 		for (Country country : existingCountryList) {
 			if (StringUtils.equals(masterData.getT24Code(), country.getCountryCode())) {
 				return true;
@@ -799,7 +797,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkMaritalStsExist(ReferenceData masterData, List<MaritalStatusCode> existingMaritalStsList){
+	private boolean checkMaritalStsExist(ReferenceData masterData, List<MaritalStatusCode> existingMaritalStsList) {
 		for (MaritalStatusCode maritalStatusCode : existingMaritalStsList) {
 			if (StringUtils.equals(masterData.getT24Code(), maritalStatusCode.getMaritalStsCode())) {
 				return true;
@@ -808,7 +806,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkBranchExist(ReferenceData masterData, List<Branch> existingBranchList){
+	private boolean checkBranchExist(ReferenceData masterData, List<Branch> existingBranchList) {
 		for (Branch branch : existingBranchList) {
 			if (StringUtils.equals(masterData.getT24Code(), branch.getBranchCode())) {
 				return true;
@@ -817,7 +815,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		return false;
 	}
 
-	private boolean checkSalutationExist(ReferenceData masterData, List<Salutation> existingSalutationList){
+	private boolean checkSalutationExist(ReferenceData masterData, List<Salutation> existingSalutationList) {
 		for (Salutation salutation : existingSalutationList) {
 			if (StringUtils.equals(masterData.getT24Code(), salutation.getSalutationCode())) {
 				return true;
@@ -825,8 +823,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		}
 		return false;
 	}
-	
-	private boolean checkLanguageExist(ReferenceData masterData, List<Language> existingLanguageList){
+
+	private boolean checkLanguageExist(ReferenceData masterData, List<Language> existingLanguageList) {
 		for (Language language : existingLanguageList) {
 			if (StringUtils.equals(masterData.getT24Code(), language.getLngCode())) {
 				return true;
@@ -834,8 +832,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		}
 		return false;
 	}
-	
-	private boolean checkSegmentExist(ReferenceData masterData, List<Segment> existingSegmentList){
+
+	private boolean checkSegmentExist(ReferenceData masterData, List<Segment> existingSegmentList) {
 		for (Segment segment : existingSegmentList) {
 			if (StringUtils.equals(masterData.getT24Code(), segment.getSegmentCode())) {
 				return true;
@@ -843,8 +841,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		}
 		return false;
 	}
-	
-	private boolean checkgenDepartmentExist(ReferenceData masterData, List<GeneralDepartment> existingDepartmentList){
+
+	private boolean checkgenDepartmentExist(ReferenceData masterData, List<GeneralDepartment> existingDepartmentList) {
 		for (GeneralDepartment genDepartment : existingDepartmentList) {
 			if (StringUtils.equals(masterData.getT24Code(), genDepartment.getGenDepartment())) {
 				return true;
@@ -852,8 +850,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		}
 		return false;
 	}
-	
-	private boolean checkIncomeTypeExist(ReferenceData masterData, List<IncomeType> existingIncomeTypeList){
+
+	private boolean checkIncomeTypeExist(ReferenceData masterData, List<IncomeType> existingIncomeTypeList) {
 		for (IncomeType incomeType : existingIncomeTypeList) {
 			if (StringUtils.equals(masterData.getT24Code(), incomeType.getIncomeTypeCode())) {
 				return true;
@@ -861,8 +859,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		}
 		return false;
 	}
-	
-	private boolean checkTargetExist(ReferenceData masterData, List<TargetDetail> existingTargetList){
+
+	private boolean checkTargetExist(ReferenceData masterData, List<TargetDetail> existingTargetList) {
 		for (TargetDetail targetDetail : existingTargetList) {
 			if (StringUtils.equals(masterData.getT24Code(), targetDetail.getTargetCode())) {
 				return true;
@@ -899,19 +897,19 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 		// fetch all existing MDM codes
 		List<ReferenceData> existingMDMCodes = getReferenceDataDAO().fetchMDMCodes(tableName);
 
-		if(referenceDataList != null && !referenceDataList.isEmpty()) {
-			for(ReferenceData masterData: referenceDataList) {
-				if(checkMDMExists(masterData, existingMDMCodes)) {
+		if (referenceDataList != null && !referenceDataList.isEmpty()) {
+			for (ReferenceData masterData : referenceDataList) {
+				if (checkMDMExists(masterData, existingMDMCodes)) {
 					updateMCMList.add(masterData);
 				} else {
 					saveMCMList.add(masterData);
 				}
 
 				// save or update the masters data
-				if(!saveMCMList.isEmpty()) {
+				if (!saveMCMList.isEmpty()) {
 					getReferenceDataDAO().saveMCMMasters(saveMCMList, tableName);
-				} 
-				if(!updateMCMList.isEmpty()) {
+				}
+				if (!updateMCMList.isEmpty()) {
 					getReferenceDataDAO().updateMCMMasters(updateMCMList, tableName);
 				}
 			}

@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.bmtmasters;
+
 import com.pennant.backend.model.bmtmasters.RatingType;
 
 /**
@@ -48,8 +49,11 @@ import com.pennant.backend.model.bmtmasters.RatingType;
  * 
  */
 public interface RatingTypeDAO {
-	RatingType getRatingTypeById(String id,String type);
-	void update(RatingType ratingType,String type);
-	void delete(RatingType ratingType,String type);
-	String save(RatingType ratingType,String type);
+	RatingType getRatingTypeById(String id, String type);
+
+	void update(RatingType ratingType, String type);
+
+	void delete(RatingType ratingType, String type);
+
+	String save(RatingType ratingType, String type);
 }

@@ -70,8 +70,8 @@ public class AuthorizationListModelItemRenderer implements ListitemRenderer<Auth
 	public void render(Listitem item, Authorization authorization, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(authorization.getAuthType(),
-				PennantStaticListUtil.getAuthTypes()));
+		lc = new Listcell(
+				PennantStaticListUtil.getlabelDesc(authorization.getAuthType(), PennantStaticListUtil.getAuthTypes()));
 		lc.setParent(item);
 		lc = new Listcell(authorization.getAuthName());
 		lc.setParent(item);

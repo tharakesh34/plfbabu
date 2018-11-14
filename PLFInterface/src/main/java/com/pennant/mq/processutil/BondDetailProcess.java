@@ -53,14 +53,15 @@ public class BondDetailProcess extends MQProcess {
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(nationalBondDetail, factory, msgFormat);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -77,7 +78,7 @@ public class BondDetailProcess extends MQProcess {
 	 * @param header
 	 * @return
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private NationalBondDetail processBondDetailResponse(OMElement responseElement, AHBMQHeader header,
 			String msgFormat) throws JaxenException {
@@ -103,11 +104,11 @@ public class BondDetailProcess extends MQProcess {
 		default:
 			break;
 		}
-		
+
 		NationalBondDetail nationalBondDetail = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/"+responseType, responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/" + responseType, responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
 
@@ -117,24 +118,23 @@ public class BondDetailProcess extends MQProcess {
 			}
 
 			nationalBondDetail = new NationalBondDetail();
-			
+
 			nationalBondDetail.setReferenceNum(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
 			nationalBondDetail.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 			nationalBondDetail.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 			nationalBondDetail.setTimeStamp(Long.parseLong(PFFXmlUtil.getStringValue(detailElement, "TimeStamp")));
-			
-			if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT)) {
-				String path = "/HB_EAI_REPLY/Reply/"+responseType+"/PurchaseDetails";
+
+			if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT)) {
+				String path = "/HB_EAI_REPLY/Reply/" + responseType + "/PurchaseDetails";
 				List<BondPurchaseDetail> list = getBondPurchaseDetails(detailElement, path);
 				nationalBondDetail.setPurchaseDetailList(list);
-				
-				
-			} else if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_MAKER)
+
+			} else if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_MAKER)
 					|| StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_CHECKER)) {
-				String path = "/HB_EAI_REPLY/Reply/"+responseType+"/TransferDetails";
+				String path = "/HB_EAI_REPLY/Reply/" + responseType + "/TransferDetails";
 				List<BondTransferDetail> list = getBondTransferDetails(detailElement, path);
 				nationalBondDetail.setTransferDetailList(list);
-				
+
 			}
 
 		} catch (InterfaceException e) {
@@ -147,7 +147,8 @@ public class BondDetailProcess extends MQProcess {
 		return nationalBondDetail;
 	}
 
-	private List<BondTransferDetail> getBondTransferDetails(OMElement detailElement, String path) throws JaxenException {
+	private List<BondTransferDetail> getBondTransferDetails(OMElement detailElement, String path)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (detailElement == null) {
@@ -159,18 +160,18 @@ public class BondDetailProcess extends MQProcess {
 		@SuppressWarnings("unchecked")
 		List<OMElement> elementList = (List<OMElement>) xpath.selectNodes(detailElement);
 		for (OMElement omElement : elementList) {
-			
+
 			BondTransferDetail detail = new BondTransferDetail();
 			detail.setUnitStart(PFFXmlUtil.getStringValue(omElement, "UnitStart"));
 			detail.setUnitEnd(PFFXmlUtil.getStringValue(omElement, "UnitEnd"));
 			detail.setSukukNo(Long.parseLong(PFFXmlUtil.getStringValue(omElement, "SukukNo")));
 			detail.setPurchaseReceiptNo(PFFXmlUtil.getStringValue(omElement, "PurchaseReceiptNo"));
 			detail.setPurchaseRemainBal(PFFXmlUtil.getBigDecimalValue(omElement, "PurchaseRemainingBalance"));
-			detail.setSukukExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "SukukExpDate"), 
-						InterfaceMasterConfigUtil.SHORT_DATE));
+			detail.setSukukExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "SukukExpDate"),
+					InterfaceMasterConfigUtil.SHORT_DATE));
 			detail.setTitleCertificate(PFFXmlUtil.getStringValue(omElement, "Certificate").getBytes());
 			detail.setInvoiceCertificate(PFFXmlUtil.getStringValue(omElement, "InvoiceCertificate").getBytes());
-			
+
 			transferDetailList.add(detail);
 		}
 		logger.debug("Leaving");
@@ -178,7 +179,8 @@ public class BondDetailProcess extends MQProcess {
 		return transferDetailList;
 	}
 
-	private List<BondPurchaseDetail> getBondPurchaseDetails(OMElement detailElement, String path) throws JaxenException {
+	private List<BondPurchaseDetail> getBondPurchaseDetails(OMElement detailElement, String path)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (detailElement == null) {
@@ -190,21 +192,21 @@ public class BondDetailProcess extends MQProcess {
 		@SuppressWarnings("unchecked")
 		List<OMElement> elementList = (List<OMElement>) xpath.selectNodes(detailElement);
 		for (OMElement omElement : elementList) {
-			
+
 			BondPurchaseDetail detail = new BondPurchaseDetail();
 			detail.setRefNumProvider(PFFXmlUtil.getStringValue(omElement, "ReferenceNumProvider"));
 			detail.setProductName(PFFXmlUtil.getStringValue(omElement, "ProductName"));
 			detail.setUnitStart(PFFXmlUtil.getStringValue(omElement, "UnitStart"));
 			detail.setUnitEnd(PFFXmlUtil.getStringValue(omElement, "UnitEnd"));
 			detail.setSukukNo(Long.parseLong(PFFXmlUtil.getStringValue(omElement, "SukukNo")));
-			detail.setSukukExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "SukukExpDate"), 
-						InterfaceMasterConfigUtil.SHORT_DATE));
+			detail.setSukukExpDate(DateUtility.convertDateFromMQ(PFFXmlUtil.getStringValue(omElement, "SukukExpDate"),
+					InterfaceMasterConfigUtil.SHORT_DATE));
 			detail.setBankInvoiceNo(Long.parseLong(PFFXmlUtil.getStringValue(omElement, "BankInvoiceNo")));
 			detail.setPurchaseReceiptNo(PFFXmlUtil.getStringValue(omElement, "PurchaseReceiptNo"));
 			detail.setBankInvCertificate(PFFXmlUtil.getStringValue(omElement, "BankInvoiceCertificate").getBytes());
 			detail.setBankReceiptCertifcate(PFFXmlUtil.getStringValue(omElement, "BankReceiptCertifcate").getBytes());
 			detail.setBankTitleCertifcate(PFFXmlUtil.getStringValue(omElement, "BankTitleCertifcate").getBytes());
-			
+
 			purchaseDetailList.add(detail);
 		}
 		logger.debug("Leaving");
@@ -214,11 +216,9 @@ public class BondDetailProcess extends MQProcess {
 
 	/**
 	 * The below method do the following actions<br>
-	 *  Prepare the following request element based on message format
-	 *  1. BondPurchase request
-	 *  2. BondTransfer (checker/maker) request
-	 *  4. BondCancel (transfer/purchase) request
-	 *  
+	 * Prepare the following request element based on message format 1. BondPurchase request 2. BondTransfer
+	 * (checker/maker) request 4. BondCancel (transfer/purchase) request
+	 * 
 	 * @param nationalBondDetail
 	 * @param factory
 	 * @return OMElement
@@ -228,7 +228,7 @@ public class BondDetailProcess extends MQProcess {
 		logger.debug("Entering");
 
 		String requestType = "";
-		
+
 		switch (msgFormat) {
 		case InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT:
 			requestType = "BondPurchaseRequest";
@@ -248,36 +248,42 @@ public class BondDetailProcess extends MQProcess {
 		default:
 			break;
 		}
-		
+
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement detailRequest = factory.createOMElement(requestType, null);
 
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNum", PFFXmlUtil.getReferenceNumber());
 
-		if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT)) {
-			
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumConsumer", nationalBondDetail.getRefNumConsumer());
+		if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT)) {
+
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumConsumer",
+					nationalBondDetail.getRefNumConsumer());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "Amount", nationalBondDetail.getAmount());
-			
-		} else if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_MAKER) ||
-				StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_CHECKER)) {
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransferLevel", nationalBondDetail.getTransferLevel());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumProvider", nationalBondDetail.getRefNumProvider());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumConsumer", nationalBondDetail.getRefNumConsumer());
+
+		} else if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_MAKER)
+				|| StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.BOND_TRANSFER_CHECKER)) {
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TransferLevel",
+					nationalBondDetail.getTransferLevel());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumProvider",
+					nationalBondDetail.getRefNumProvider());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumConsumer",
+					nationalBondDetail.getRefNumConsumer());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "AccountTitle", nationalBondDetail.getAccountTitle());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "AccountNumber", nationalBondDetail.getCustIBAN());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "Amount", nationalBondDetail.getAmount());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerName", nationalBondDetail.getCustomerName());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "CustomerType", nationalBondDetail.getCustomerType());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "MobileNumber", 
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "MobileNumber",
 					PFFXmlUtil.unFormatPhoneNumber(nationalBondDetail.getMobileNumber()));
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "EmailAddr", nationalBondDetail.getEmailAddr());
 			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ProductName", nationalBondDetail.getProductName());
 		} else {
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumProvider", nationalBondDetail.getRefNumProvider());
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumConsumer", nationalBondDetail.getRefNumConsumer());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumProvider",
+					nationalBondDetail.getRefNumProvider());
+			PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNumConsumer",
+					nationalBondDetail.getRefNumConsumer());
 		}
-			PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				Long.valueOf(PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME)));
 
 		requestElement.addChild(detailRequest);

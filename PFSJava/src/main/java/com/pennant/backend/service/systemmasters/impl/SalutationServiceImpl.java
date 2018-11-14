@@ -74,7 +74,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	public SalutationServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,15 +96,12 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTSalutations/BMTSalutations_Temp by using SalutationDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using SalutationDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTSalutations by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTSalutations/BMTSalutations_Temp by using SalutationDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using SalutationDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -118,15 +115,15 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		Salutation salutation = (Salutation) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
 		if (salutation.isWorkflow()) {
-			tableType =  TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (salutation.isNew()) {
-			salutation.setSalutationCode(getSalutationDAO().save(salutation,tableType));
+			salutation.setSalutationCode(getSalutationDAO().save(salutation, tableType));
 			auditHeader.getAuditDetail().setModelData(salutation);
 			auditHeader.setAuditReference(salutation.getSalutationCode());
 		} else {
@@ -139,12 +136,10 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTSalutations by using SalutationDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTSalutations by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTSalutations by using SalutationDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -166,8 +161,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * getSalutationById fetch the details by using SalutationDAO's
-	 * getSalutationById method.
+	 * getSalutationById fetch the details by using SalutationDAO's getSalutationById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -181,9 +175,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * getApprovedSalutationById fetch the details by using SalutationDAO's
-	 * getSalutationById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTSalutations.
+	 * getApprovedSalutationById fetch the details by using SalutationDAO's getSalutationById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTSalutations.
 	 * 
 	 * @param id
 	 *            (String)
@@ -194,19 +187,15 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getSalutationDAO().delete with parameters salutation,"" b) NEW Add
-	 * new record in to main table by using getSalutationDAO().save with
-	 * parameters salutation,"" c) EDIT Update record in the main table by using
-	 * getSalutationDAO().update with parameters salutation,"" 3) Delete the
-	 * record from the workFlow table by using getSalutationDAO().delete with
-	 * parameters salutation,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTSalutations by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getSalutationDAO().delete with
+	 * parameters salutation,"" b) NEW Add new record in to main table by using getSalutationDAO().save with parameters
+	 * salutation,"" c) EDIT Update record in the main table by using getSalutationDAO().update with parameters
+	 * salutation,"" 3) Delete the record from the workFlow table by using getSalutationDAO().delete with parameters
+	 * salutation,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTSalutations by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTSalutations by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -222,13 +211,14 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		}
 		Salutation salutation = new Salutation();
 		BeanUtils.copyProperties((Salutation) auditHeader.getAuditDetail().getModelData(), salutation);
-		
+
 		getSalutationDAO().delete(salutation, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(salutationDAO.getSalutationById(salutation.getSalutationCode(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(salutationDAO.getSalutationById(salutation.getSalutationCode(), ""));
 		}
-		
+
 		if (salutation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
@@ -264,13 +254,10 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getSalutationDAO().delete with parameters
-	 * salutation,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getSalutationDAO().delete with parameters salutation,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -291,10 +278,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -302,7 +287,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -327,10 +312,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		String code = salutation.getSalutationCode();
 
 		// Check the unique keys.
-		if (salutation.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType())
-				&& salutationDAO
-						.isDuplicateKey(code, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (salutation.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType()) && salutationDAO
+				.isDuplicateKey(code, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ": " + code;
 
@@ -340,8 +323,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		if (salutation.isSystemDefault()) {
 			String dftSalutationCode = getSalutationDAO().getSystemDefaultCount(salutation.getSalutationCode());
 			if (StringUtils.isNotEmpty(dftSalutationCode)) {
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501", new String[] {
-						dftSalutationCode, PennantJavaUtil.getLabel("Salutation") }, null));
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60501",
+						new String[] { dftSalutationCode, PennantJavaUtil.getLabel("Salutation") }, null));
 			}
 		}
 

@@ -38,44 +38,49 @@ public class AECommitment {
 	private boolean custIsStaff;
 
 	public AECommitment() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setCMTAMT(BigDecimal cMTAMT) {
-	    CMTAMT = cMTAMT;
-    }
+		CMTAMT = cMTAMT;
+	}
+
 	public BigDecimal getCMTAMT() {
-	    return CMTAMT;
-    }
-	
+		return CMTAMT;
+	}
+
 	public BigDecimal getCHGAMT() {
-    	return CHGAMT;
-    }
+		return CHGAMT;
+	}
+
 	public void setCHGAMT(BigDecimal cHGAMT) {
-    	CHGAMT = cHGAMT;
-    }
-	
+		CHGAMT = cHGAMT;
+	}
+
 	public void setDISBURSE(BigDecimal dISBURSE) {
-	    DISBURSE = dISBURSE;
-    }
+		DISBURSE = dISBURSE;
+	}
+
 	public BigDecimal getDISBURSE() {
-	    return DISBURSE;
-    }
+		return DISBURSE;
+	}
 
 	public void setRPPRI(BigDecimal rPPRI) {
-	    RPPRI = rPPRI;
-    }
+		RPPRI = rPPRI;
+	}
+
 	public BigDecimal getRPPRI() {
-	    return RPPRI;
-    }
+		return RPPRI;
+	}
 
 	public BigDecimal getCmtAmount() {
 		return cmtAmount;
 	}
+
 	public void setCmtAmount(BigDecimal cmtAmount) {
 		this.cmtAmount = cmtAmount;
 	}
@@ -83,6 +88,7 @@ public class AECommitment {
 	public BigDecimal getCmtAmountOther() {
 		return cmtAmountOther;
 	}
+
 	public void setCmtAmountOther(BigDecimal cmtAmountOther) {
 		this.cmtAmountOther = cmtAmountOther;
 	}
@@ -90,6 +96,7 @@ public class AECommitment {
 	public BigDecimal getCmtUtilized() {
 		return cmtUtilized;
 	}
+
 	public void setCmtUtilized(BigDecimal cmtUtilized) {
 		this.cmtUtilized = cmtUtilized;
 	}
@@ -97,6 +104,7 @@ public class AECommitment {
 	public BigDecimal getCmtUtilizedOther() {
 		return cmtUtilizedOther;
 	}
+
 	public void setCmtUtilizedOther(BigDecimal cmtUtilizedOther) {
 		this.cmtUtilizedOther = cmtUtilizedOther;
 	}
@@ -104,6 +112,7 @@ public class AECommitment {
 	public boolean isCmtMultiBrach() {
 		return cmtMultiBrach;
 	}
+
 	public void setCmtMultiBrach(boolean cmtMultiBrach) {
 		this.cmtMultiBrach = cmtMultiBrach;
 	}
@@ -111,6 +120,7 @@ public class AECommitment {
 	public boolean isCmtRevolving() {
 		return cmtRevolving;
 	}
+
 	public void setCmtRevolving(boolean cmtRevolving) {
 		this.cmtRevolving = cmtRevolving;
 	}
@@ -118,6 +128,7 @@ public class AECommitment {
 	public boolean isCmtShared() {
 		return cmtShared;
 	}
+
 	public void setCmtShared(boolean cmtShared) {
 		this.cmtShared = cmtShared;
 	}
@@ -125,6 +136,7 @@ public class AECommitment {
 	public boolean isCmtUsedEarlier() {
 		return cmtUsedEarlier;
 	}
+
 	public void setCmtUsedEarlier(boolean cmtUsedEarlier) {
 		this.cmtUsedEarlier = cmtUsedEarlier;
 	}
@@ -132,6 +144,7 @@ public class AECommitment {
 	public boolean isCustIsStaff() {
 		return custIsStaff;
 	}
+
 	public void setCustIsStaff(boolean custIsStaff) {
 		this.custIsStaff = custIsStaff;
 	}
@@ -139,6 +152,7 @@ public class AECommitment {
 	public String getCustCIF() {
 		return custCIF;
 	}
+
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
@@ -146,6 +160,7 @@ public class AECommitment {
 	public String getCustCOB() {
 		return custCOB;
 	}
+
 	public void setCustCOB(String custCOB) {
 		this.custCOB = custCOB;
 	}
@@ -153,6 +168,7 @@ public class AECommitment {
 	public String getCustCtgCode() {
 		return custCtgCode;
 	}
+
 	public void setCustCtgCode(String custCtgCode) {
 		this.custCtgCode = custCtgCode;
 	}
@@ -160,6 +176,7 @@ public class AECommitment {
 	public String getCustIndustry() {
 		return custIndustry;
 	}
+
 	public void setCustIndustry(String custIndustry) {
 		this.custIndustry = custIndustry;
 	}
@@ -167,6 +184,7 @@ public class AECommitment {
 	public String getCustNationality() {
 		return custNationality;
 	}
+
 	public void setCustNationality(String custNationality) {
 		this.custNationality = custNationality;
 	}
@@ -174,6 +192,7 @@ public class AECommitment {
 	public String getCustParentCountry() {
 		return custParentCountry;
 	}
+
 	public void setCustParentCountry(String custParentCountry) {
 		this.custParentCountry = custParentCountry;
 	}
@@ -181,6 +200,7 @@ public class AECommitment {
 	public String getCustResdCountry() {
 		return custResdCountry;
 	}
+
 	public void setCustResdCountry(String custResdCountry) {
 		this.custResdCountry = custResdCountry;
 	}
@@ -188,6 +208,7 @@ public class AECommitment {
 	public String getCustRiskCountry() {
 		return custRiskCountry;
 	}
+
 	public void setCustRiskCountry(String custRiskCountry) {
 		this.custRiskCountry = custRiskCountry;
 	}
@@ -195,6 +216,7 @@ public class AECommitment {
 	public String getCustSector() {
 		return custSector;
 	}
+
 	public void setCustSector(String custSector) {
 		this.custSector = custSector;
 	}
@@ -202,6 +224,7 @@ public class AECommitment {
 	public String getCustSegment() {
 		return custSegment;
 	}
+
 	public void setCustSegment(String custSegment) {
 		this.custSegment = custSegment;
 	}
@@ -209,6 +232,7 @@ public class AECommitment {
 	public String getCustSubSector() {
 		return custSubSector;
 	}
+
 	public void setCustSubSector(String custSubSector) {
 		this.custSubSector = custSubSector;
 	}
@@ -216,6 +240,7 @@ public class AECommitment {
 	public String getCustSubSegment() {
 		return custSubSegment;
 	}
+
 	public void setCustSubSegment(String custSubSegment) {
 		this.custSubSegment = custSubSegment;
 	}
@@ -223,18 +248,21 @@ public class AECommitment {
 	public String getCustTypeCode() {
 		return custTypeCode;
 	}
+
 	public void setCustTypeCode(String custTypeCode) {
 		this.custTypeCode = custTypeCode;
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();	
+		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();
 		return getDeclaredFieldValues(aeCommitmentMap);
 	}
+
 	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> aeCommitmentMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				aeCommitmentMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				aeCommitmentMap.put(this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}

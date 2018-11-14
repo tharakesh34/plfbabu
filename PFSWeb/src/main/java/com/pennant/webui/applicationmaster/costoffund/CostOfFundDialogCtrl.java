@@ -80,18 +80,15 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/CostOfFund/costOfFundDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/CostOfFund/costOfFundDialog.zul file.
  */
 public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	private static final long serialVersionUID = -5990530952612454146L;
-	private static final Logger logger = Logger
-			.getLogger(CostOfFundDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CostOfFundDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CostOfFundDialog;
 
@@ -101,11 +98,11 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	protected Decimalbox cofRate;
 	protected Checkbox deleteRate;
 	protected Checkbox active;
-	
+
 	// not autoWired Var's
 	private CostOfFund costOfFund; // overHanded per parameter
 	private transient CostOfFundListCtrl costOfFundListCtrl; // overHanded per
-															// parameter
+																// parameter
 
 	private transient boolean validationOn;
 
@@ -127,9 +124,8 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CostOfFund object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CostOfFund object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -154,15 +150,13 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 				setCostOfFund(null);
 			}
 
-			doLoadWorkFlow(this.costOfFund.isWorkflow(),
-					this.costOfFund.getWorkflowId(),
+			doLoadWorkFlow(this.costOfFund.isWorkflow(), this.costOfFund.getWorkflowId(),
 					this.costOfFund.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						super.pageRightName);
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -172,12 +166,11 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 			// or
 			// delete costOfFund here.
 			if (arguments.containsKey("costOfFundListCtrl")) {
-				setCostOfFundListCtrl((CostOfFundListCtrl) arguments
-						.get("costOfFundListCtrl"));
+				setCostOfFundListCtrl((CostOfFundListCtrl) arguments.get("costOfFundListCtrl"));
 			} else {
 				setCostOfFundListCtrl(null);
 			}
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -230,20 +223,15 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_CostOfFundsDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_CostOfFundsDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_CostOfFundsDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_CostOfFundsDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CostOfFundsDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CostOfFundsDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CostOfFundsDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CostOfFundsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -342,12 +330,14 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		this.cofCode.setValue(aCostOfFund.getCofCode());
 		this.currency.setValue(aCostOfFund.getCurrency());
 		this.cofEffDate.setValue(aCostOfFund.getCofEffDate());
-		this.cofRate.setValue(PennantAppUtil.formateAmount(aCostOfFund.getCofRate() == null ? BigDecimal.ZERO
-				: aCostOfFund.getCofRate(),PennantConstants.defaultCCYDecPos));
+		this.cofRate.setValue(PennantAppUtil.formateAmount(
+				aCostOfFund.getCofRate() == null ? BigDecimal.ZERO : aCostOfFund.getCofRate(),
+				PennantConstants.defaultCCYDecPos));
 		this.deleteRate.setChecked(aCostOfFund.isDelExistingRates());
 		this.active.setChecked(aCostOfFund.isActive());
-		
-		if(aCostOfFund.isNew() || (aCostOfFund.getRecordType() != null ? aCostOfFund.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aCostOfFund.isNew() || (aCostOfFund.getRecordType() != null ? aCostOfFund.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -431,8 +421,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCostOfFund
 	 * @throws Exception
@@ -461,11 +450,9 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 
 			// Checking condition for deletion of Object or not
 			/*
-			 * if(costOfFund.getRecordStatus().equals(Labels.getLabel("Approved")))
-			 * { final boolean costOfFundDel=
-			 * getCostOfFundService().getCostOfFundListById(
-			 * costOfFund.getBRType(),costOfFund.getBREffDate()); if(costOfFundDel){
-			 * this.btnDelete.setVisible(false); } }
+			 * if(costOfFund.getRecordStatus().equals(Labels.getLabel("Approved"))) { final boolean costOfFundDel=
+			 * getCostOfFundService().getCostOfFundListById( costOfFund.getBRType(),costOfFund.getBREffDate());
+			 * if(costOfFundDel){ this.btnDelete.setVisible(false); } }
 			 */
 		}
 
@@ -508,7 +495,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 			this.cofRate.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CostOfFundDialog_CofRate.value"),
 					PennantConstants.defaultCCYDecPos, true, false, 100));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -551,20 +538,15 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	public void dateValidation() {
 		Date curBussniessDate = DateUtility.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
-		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward
-				* -1);
+		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
 
 		int daysForward = SysParamUtil.getValueAsInt("FVRC");
 		Date dateForward = DateUtility.addDays(curBussniessDate, daysForward);
 
-		if (this.cofEffDate.getValue().before(dateBackward)
-				|| this.cofEffDate.getValue().after(dateForward)) {
-			throw new WrongValueException(
-					cofEffDate,
-					Labels.getLabel(
-							"DATE_ALLOWED_RANGE",
-							new String[] {
-									Labels.getLabel("label_CostOfFundDialog_CofEffDate.value"),
+		if (this.cofEffDate.getValue().before(dateBackward) || this.cofEffDate.getValue().after(dateForward)) {
+			throw new WrongValueException(cofEffDate,
+					Labels.getLabel("DATE_ALLOWED_RANGE",
+							new String[] { Labels.getLabel("label_CostOfFundDialog_CofEffDate.value"),
 									DateUtility.formatToShortDate(dateBackward),
 									DateUtility.formatToShortDate(dateForward) }));
 		}
@@ -584,12 +566,8 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_CostOfFundDialog_CofCode.value")
-				+ " : "
-				+ aCostOfFund.getCofCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CostOfFundDialog_CofCode.value") + " : " + aCostOfFund.getCofCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCostOfFund.getRecordType())) {
 				aCostOfFund.setVersion(aCostOfFund.getVersion() + 1);
@@ -611,7 +589,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 
 			} catch (Exception e) {
 				MessageUtil.showError(e);
-			}		
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -621,7 +599,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
+
 		if (getCostOfFund().isNewRecord()) {
 			this.cofCode.setReadonly(false);
 			this.currency.setReadonly(false);
@@ -637,7 +615,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		this.cofRate.setReadonly(isReadOnly("CostOfFundsDialog_cofRate"));
 		this.deleteRate.setDisabled(isReadOnly("CostOfFundsDialog_delExistingRates"));
 		this.active.setDisabled(isReadOnly("CostOfFundsDialog_active"));
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -702,7 +680,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final CostOfFund aCostOfFund = new CostOfFund();
 		BeanUtils.copyProperties(getCostOfFund(), aCostOfFund);
 
@@ -750,7 +728,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
-		}		
+		}
 		logger.debug("Leaving");
 	}
 
@@ -779,8 +757,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aCostOfFund.setRecordStatus(userAction.getSelectedItem().getValue()
-					.toString());
+			aCostOfFund.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
@@ -831,8 +808,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aCostOfFund,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aCostOfFund, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -863,55 +839,42 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		CostOfFund aCostOfFund = (CostOfFund) auditHeader.getAuditDetail()
-				.getModelData();
+		CostOfFund aCostOfFund = (CostOfFund) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCostOfFundService().delete(auditHeader);
 
 						deleteNotes = true;
 					} else {
-						auditHeader = getCostOfFundService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getCostOfFundService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getCostOfFundService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getCostOfFundService().doApprove(auditHeader);
 
-						if (aCostOfFund.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aCostOfFund.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getCostOfFundService()
-								.doReject(auditHeader);
-						if (aCostOfFund.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getCostOfFundService().doReject(auditHeader);
+						if (aCostOfFund.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CostOfFundDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CostOfFundDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_CostOfFundDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_CostOfFundDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -946,10 +909,9 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(CostOfFund aCostOfFund, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCostOfFund.getBefImage(), aCostOfFund);
-		return new AuditHeader(getReference(), null, null, null, auditDetail,
-				aCostOfFund.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCostOfFund.getBefImage(), aCostOfFund);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aCostOfFund.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -963,10 +925,8 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CostOfFundDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_CostOfFundDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -990,10 +950,8 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	 */
 	@Override
 	protected String getReference() {
-		return getCostOfFund().getCofCode()
-				+ PennantConstants.KEY_SEPERATOR
-				+ DateUtility.formatDate(getCostOfFund().getCofEffDate(),
-						PennantConstants.DBDateFormat);
+		return getCostOfFund().getCofCode() + PennantConstants.KEY_SEPERATOR
+				+ DateUtility.formatDate(getCostOfFund().getCofEffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

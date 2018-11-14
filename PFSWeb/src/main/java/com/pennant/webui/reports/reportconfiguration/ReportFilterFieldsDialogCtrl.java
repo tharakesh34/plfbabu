@@ -92,9 +92,9 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/ReportFilterFields/reportFilterFieldsDialog.zul
@@ -234,7 +234,24 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	private Map<String, String> filterMap = new HashMap<>();
 
 	public enum FIELDTYPE {
-		TXT, DATE, TIME, DATETIME, STATICLIST, DYNAMICLIST, LOVSEARCH, DECIMAL, INTRANGE, DECIMALRANGE, NUMBER, CHECKBOX, MULTISELANDLIST, MULTISELINLIST, DATERANGE, DATETIMERANGE, TIMERANGE, STATICVALUE
+		TXT,
+		DATE,
+		TIME,
+		DATETIME,
+		STATICLIST,
+		DYNAMICLIST,
+		LOVSEARCH,
+		DECIMAL,
+		INTRANGE,
+		DECIMALRANGE,
+		NUMBER,
+		CHECKBOX,
+		MULTISELANDLIST,
+		MULTISELINLIST,
+		DATERANGE,
+		DATETIMERANGE,
+		TIMERANGE,
+		STATICVALUE
 	};
 
 	/**
@@ -690,14 +707,14 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 		}
 		try {
 			if (this.seqOrder.getValue() == null) {
-				throw new WrongValueException(this.seqOrder,
-						Labels.getLabel("FIELD_IS_MAND", new String[] {
-								Labels.getLabel("label_ReportFilterFieldsDialog_SeqOrder.value") }));
-			}if (this.seqOrder.getValue() == 0) {
-					throw new WrongValueException(this.seqOrder, Labels.getLabel("FIELD_NO_NEGATIVE",
-							new String[] { Labels.getLabel("label_ReportFilterFieldsDialog_SeqOrder.value") }));
-				}
-			
+				throw new WrongValueException(this.seqOrder, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_ReportFilterFieldsDialog_SeqOrder.value") }));
+			}
+			if (this.seqOrder.getValue() == 0) {
+				throw new WrongValueException(this.seqOrder, Labels.getLabel("FIELD_NO_NEGATIVE",
+						new String[] { Labels.getLabel("label_ReportFilterFieldsDialog_SeqOrder.value") }));
+			}
+
 			aReportFilterFields.setSeqOrder(this.seqOrder.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1304,6 +1321,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	/**
 	 * When user clicks on "appUtilMethodName"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1317,6 +1335,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	/**
 	 * When user checks on "filterRequired"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1440,6 +1459,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	/**
 	 * When user clicks on "appUtilMethodName"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1460,6 +1480,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	/**
 	 * When user clicks on "moduleName"
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -1548,11 +1569,11 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	public void getAllMethods(String className, Combobox component) throws Exception {
 		List<ValueLabel> methodsList = new ArrayList<ValueLabel>();
 		Class value = ModuleUtil.getModuleClass(className);
-		
+
 		// Get the methods
 		Method[] methods = value.getDeclaredMethods();
 		sortMethodDetails(Arrays.asList(methods));
-		
+
 		// Loop through the methods and add to list
 		for (Method method : methods) {
 			if (method.getName().startsWith("get")) {
@@ -1576,6 +1597,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	/**
 	 * Get Audit Header Details
+	 * 
 	 * @param aReportFilterFields
 	 * @param tranType
 	 * @return AuditHeader
@@ -1588,7 +1610,9 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 	/**
 	 * Display Message in Error Box
-	 * @param e (Exception)
+	 * 
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1780,8 +1804,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 				if (textBoxComponent instanceof Textbox) {
 					Textbox textbox = (Textbox) textBoxComponent;
-					if(((Checkbox) component.getFirstChild().getFirstChild()).isChecked()){
-					textbox.setReadonly(false);
+					if (((Checkbox) component.getFirstChild().getFirstChild()).isChecked()) {
+						textbox.setReadonly(false);
 					}
 				}
 			}
@@ -1848,8 +1872,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
-	
-	
+
 	private String getInstructions(String component) {
 		StringBuilder builder = new StringBuilder();
 
@@ -1860,24 +1883,30 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 			return builder.toString();
 		} else if ("STATICLIST".equals(component)) {
 			builder.append("* This StaticList Type renders a ComboBox with value labels.<br/>");
-			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod,java method name which returns value,Labels to render ComboBox.");
+			builder.append(
+					"* 'AppUtil Method Name' is PennantAppUtilMethod,java method name which returns value,Labels to render ComboBox.");
 			return builder.toString();
 		} else if ("DYNAMICLIST".equals(component)) {
 			builder.append("* This DynamicList Type renders a ComboBox with value labels witch comes from table.<br/>");
-			builder.append("* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
+			builder.append(
+					"* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
 			builder.append("* 'Value Get Method' is getMethod for ComboBox Value.<br/>");
 			builder.append("* 'Value Label Method' is getMethod for ComboBox Label.");
 			return builder.toString();
 		} else if ("LOVSEARCH".equals(component)) {
-			builder.append("* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
+			builder.append(
+					"* 'Module Name'  is PennaJavaUtil Class module names from which table we have to show List of values.<br/>");
 			builder.append("* 'Value Get Method' is getMethod for hidden TextBox value.<br/>");
 			builder.append("* 'Value Label Method' is getMethod for Label TextBox value.");
 			return builder.toString();
 		} else if ("MULTISELANDLIST".equals(component)) {
 			builder.append("* This is useful in use single component for different status.<br/>");
-			builder.append("* This Multi Select(With And Condition) Type renders a BandBox with multi select check boxes values.<br/>");
-			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns dbFieldName,value,Labels to render BandBox.<br/>");
-			builder.append("Eg :To Select differnt User Status from one component.PennantAppUtil Method must follw below.<br/>");
+			builder.append(
+					"* This Multi Select(With And Condition) Type renders a BandBox with multi select check boxes values.<br/>");
+			builder.append(
+					"* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns dbFieldName,value,Labels to render BandBox.<br/>");
+			builder.append(
+					"Eg :To Select differnt User Status from one component.PennantAppUtil Method must follw below.<br/>");
 			builder.append("public static ArrayList<ValueLabel> getUserStatusList() { <br/>");
 			builder.append("reportNames.add(new ValueLabel(\"usrEnabled\",\"1\",\"User Enabled\" <br/>");
 			builder.append("reportNames.add(new ValueLabel(\"usrAcExp\",\"1\",\"User Expired\" <br/>");
@@ -1888,12 +1917,16 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 			return builder.toString();
 		} else if ("MULTISELINLIST".equals(component)) {
-			builder.append("* This Multi Select(With In Condition) Type renders a BandBox with multi select check boxes values .<br/>");
-			builder.append("* This will form a In condition for all Selected values. Eg . RecordType in ('NEW','Edit','Delete')<br/>");
-			builder.append("* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns value,Labels to render BandBox.");
+			builder.append(
+					"* This Multi Select(With In Condition) Type renders a BandBox with multi select check boxes values .<br/>");
+			builder.append(
+					"* This will form a In condition for all Selected values. Eg . RecordType in ('NEW','Edit','Delete')<br/>");
+			builder.append(
+					"* 'AppUtil Method Name' is PennantAppUtilMethod.java method name which returns value,Labels to render BandBox.");
 			return builder.toString();
 		} else if ("STATICVALUE".equals(component)) {
-			builder.append("* This is for hidden values with no filter to display .like our report always select Active records only.<br/>");
+			builder.append(
+					"* This is for hidden values with no filter to display .like our report always select Active records only.<br/>");
 			builder.append("* As it appends in query must follow sql rules");
 			return builder.toString();
 		}

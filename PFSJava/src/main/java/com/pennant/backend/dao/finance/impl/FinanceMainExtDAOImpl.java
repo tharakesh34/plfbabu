@@ -14,7 +14,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements FinanceMainExtDAO {
 	private static Logger logger = Logger.getLogger(FinanceMainExtDAOImpl.class);
-	
+
 	public FinanceMainExtDAOImpl() {
 		super();
 	}
@@ -52,7 +52,8 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 		FinanceMainExt financeMainExt = new FinanceMainExt();
 		financeMainExt.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, RepayIBAN, ProcessFlag, NstlAccNum, IfscCode " );
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT FinReference, RepayIBAN, ProcessFlag, NstlAccNum, IfscCode ");
 		selectSql.append(" From FinanceMainExt");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -79,7 +80,7 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 	@Override
 	public void update(FinanceMainExt financeMainExt) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update ");
 
 		updateSql.append(" FinanceMainExt");
@@ -91,7 +92,7 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExt);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -100,13 +101,12 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 	 * 
 	 */
 	@Override
-    public String getRepayIBAN(String finReference) {
+	public String getRepayIBAN(String finReference) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT RepayIBAN");
 		selectSql.append(" From FinanceMainExt");
 		selectSql.append(" Where FinReference =:FinReference");
@@ -121,11 +121,12 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 			return null;
 		}
 	}
-	
+
 	/**
 	 * The below method is used to fetch the NSTL customer information<br>
 	 * 
-	 * 1. The ProcessFlag having 1 and NstlAccNum flags are having values(NOT NULL) when customer is created from PFF.<br>
+	 * 1. The ProcessFlag having 1 and NstlAccNum flags are having values(NOT NULL) when customer is created from
+	 * PFF.<br>
 	 * 2. The ProcessFlag having 0 and NstlAccNum flags are having NULL values when customer is created from T24.<br>
 	 * 
 	 * @param finReference
@@ -134,14 +135,14 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 	 *
 	 */
 	@Override
-    public FinanceMainExt getNstlAccNumber(String finReference, boolean processFlag) {
+	public FinanceMainExt getNstlAccNumber(String finReference, boolean processFlag) {
 		logger.debug("Entering");
 
 		FinanceMainExt financeMainExt = new FinanceMainExt();
 		financeMainExt.setFinReference(finReference);
 		financeMainExt.setProcessFlag(processFlag);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, RepayIBAN, ProcessFlag, NstlAccNum" );
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference, RepayIBAN, ProcessFlag, NstlAccNum");
 		selectSql.append(" From FinanceMainExt");
 		selectSql.append(" Where FinReference =:FinReference AND ProcessFlag = :ProcessFlag");
 

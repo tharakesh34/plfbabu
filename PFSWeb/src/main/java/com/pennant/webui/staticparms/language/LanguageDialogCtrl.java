@@ -73,31 +73,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/StaticParms/Language/languageDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/StaticParms/Language/languageDialog.zul file.
  */
 public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	private static final long serialVersionUID = -1342725619715502773L;
 	private static final Logger logger = Logger.getLogger(LanguageDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_LanguageDialog; 	// autoWired
+	protected Window window_LanguageDialog; // autoWired
 
-	protected Uppercasebox 	lngCode; 				// autoWired
-	protected Textbox 		lngDesc; 				// autoWired
-	protected Intbox 		lngNumber; 				// autoWired
-	
+	protected Uppercasebox lngCode; // autoWired
+	protected Textbox lngDesc; // autoWired
+	protected Intbox lngNumber; // autoWired
 
 	// not autoWired variables
-	private Language language; 								// over handed per parameter
-	private transient LanguageListCtrl languageListCtrl; 	// over handed per parameter
+	private Language language; // over handed per parameter
+	private transient LanguageListCtrl languageListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient LanguageService languageService;
 
@@ -116,9 +113,8 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Language object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Language object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -145,14 +141,11 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 				setLanguage(null);
 			}
 
-			doLoadWorkFlow(this.language.isWorkflow(),
-					this.language.getWorkflowId(),
-					this.language.getNextTaskId());
+			doLoadWorkFlow(this.language.isWorkflow(), this.language.getWorkflowId(), this.language.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"LanguageDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "LanguageDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -161,8 +154,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 			// or
 			// delete language here.
 			if (arguments.containsKey("languageListCtrl")) {
-				setLanguageListCtrl((LanguageListCtrl) arguments
-						.get("languageListCtrl"));
+				setLanguageListCtrl((LanguageListCtrl) arguments.get("languageListCtrl"));
 			} else {
 				setLanguageListCtrl(null);
 			}
@@ -190,10 +182,10 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
+
 		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -203,8 +195,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -253,7 +244,6 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		MessageUtil.showHelpWindow(event, window_LanguageDialog);
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * when the "delete" button is clicked. <br>
@@ -363,8 +353,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLanguage
 	 * @throws Exception
@@ -389,7 +378,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 				btnCancel.setVisible(false);
 			}
 		}
-		
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aLanguage);
@@ -412,19 +401,19 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 
 		setValidationOn(true);
 
-		if (!this.lngCode.isReadonly()){
+		if (!this.lngCode.isReadonly()) {
 			this.lngCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LanguageDialog_LngCode.value"),
 					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.lngDesc.isReadonly()){
-			this.lngDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LanguageDialog_LngDesc.value"), 
+		if (!this.lngDesc.isReadonly()) {
+			this.lngDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LanguageDialog_LngDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.lngNumber.isReadonly()) {
-			this.lngNumber.setConstraint(new PTNumberValidator(Labels.getLabel(
-			"label_LanguageDialog_LngNumber.value"), true));
+			this.lngNumber.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_LanguageDialog_LngNumber.value"), true));
 		}
 		logger.debug("Leaving");
 	}
@@ -480,8 +469,8 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_LanguageDialog_LngCode.value")+" : "+aLanguage.getLngCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_LanguageDialog_LngCode.value") + " : " + aLanguage.getLngCode();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aLanguage.getRecordType())) {
@@ -778,8 +767,8 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_LanguageDialog, auditHeader);
 						return processCompleted;
 					}
@@ -824,10 +813,9 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Language aLanguage, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aLanguage.getBefImage(), aLanguage);
-		return new AuditHeader(String.valueOf(aLanguage.getId()), null, null,
-				null, auditDetail, aLanguage.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLanguage.getBefImage(), aLanguage);
+		return new AuditHeader(String.valueOf(aLanguage.getId()), null, null, null, auditDetail,
+				aLanguage.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -868,6 +856,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	private void refreshList() {
 		getLanguageListCtrl().search();
 	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.language.getLngCode());
@@ -880,6 +869,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -887,6 +877,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	public Language getLanguage() {
 		return this.language;
 	}
+
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
@@ -894,6 +885,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	public void setLanguageService(LanguageService languageService) {
 		this.languageService = languageService;
 	}
+
 	public LanguageService getLanguageService() {
 		return this.languageService;
 	}
@@ -901,6 +893,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	public void setLanguageListCtrl(LanguageListCtrl languageListCtrl) {
 		this.languageListCtrl = languageListCtrl;
 	}
+
 	public LanguageListCtrl getLanguageListCtrl() {
 		return this.languageListCtrl;
 	}

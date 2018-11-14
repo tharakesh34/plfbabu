@@ -726,7 +726,7 @@ public class CoreCustomer implements Serializable {
 	public void setNameOfBusiness(String nameOfBusiness) {
 		this.nameOfBusiness = nameOfBusiness;
 	}
-	
+
 	public int getTotalNoOfPartners() {
 		return totalNoOfPartners;
 	}

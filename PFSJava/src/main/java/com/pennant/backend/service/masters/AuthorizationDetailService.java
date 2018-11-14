@@ -48,7 +48,6 @@ import java.util.List;
 import com.pennant.backend.model.masters.AuthorizationDetail;
 
 public interface AuthorizationDetailService {
-	
 
-	List<AuthorizationDetail> getAuthorizationDetails(String channelCode,String channelIP);
+	List<AuthorizationDetail> getAuthorizationDetails(String channelCode, String channelIP);
 }

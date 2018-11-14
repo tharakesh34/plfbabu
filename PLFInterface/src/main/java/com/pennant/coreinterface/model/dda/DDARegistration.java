@@ -316,10 +316,8 @@ public class DDARegistration implements Serializable {
 		this.ddaIssuedFor = ddaIssuedFor;
 	}
 
-
 	private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
-		private final SimpleDateFormat dateFormat = new SimpleDateFormat(
-				InterfaceMasterConfigUtil.SHORT_DATE);
+		private final SimpleDateFormat dateFormat = new SimpleDateFormat(InterfaceMasterConfigUtil.SHORT_DATE);
 
 		@Override
 		public Date unmarshal(final String v) throws Exception {

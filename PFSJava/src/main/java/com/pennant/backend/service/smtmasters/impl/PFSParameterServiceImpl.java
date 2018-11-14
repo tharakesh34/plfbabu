@@ -75,7 +75,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	public PFSParameterServiceImpl() {
 		super(true);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -83,6 +83,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -90,20 +91,18 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	public PFSParameterDAO getPFSParameterDAO() {
 		return pFSParameterDAO;
 	}
+
 	public void setPFSParameterDAO(PFSParameterDAO pFSParameterDAO) {
 		this.pFSParameterDAO = pFSParameterDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * SMTparameters/SMTparameters_Temp by using PFSParameterDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using PFSParameterDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtSMTparameters by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table SMTparameters/SMTparameters_Temp
+	 * by using PFSParameterDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using PFSParameterDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtSMTparameters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -119,20 +118,19 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 			return auditHeader;
 		}
 		String tableType = "";
-		PFSParameter pFSParameter = (PFSParameter) auditHeader.getAuditDetail()
-				.getModelData();
+		PFSParameter pFSParameter = (PFSParameter) auditHeader.getAuditDetail().getModelData();
 		if (pFSParameter.isWorkflow()) {
 			tableType = "_Temp";
 		}
 		if (pFSParameter.isNew()) {
-			pFSParameter.setSysParmCode(getPFSParameterDAO().save(pFSParameter,tableType));
+			pFSParameter.setSysParmCode(getPFSParameterDAO().save(pFSParameter, tableType));
 			auditHeader.getAuditDetail().setModelData(pFSParameter);
 			auditHeader.setAuditReference(pFSParameter.getSysParmCode());
 
 		} else {
 			getPFSParameterDAO().update(pFSParameter, tableType);
 		}
-		
+
 		if (!pFSParameter.isWorkflow()) {
 			invalidateEntity(pFSParameter.getId());
 		}
@@ -144,12 +142,10 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table SMTparameters by using PFSParameterDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtSMTparameters by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * SMTparameters by using PFSParameterDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtSMTparameters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,21 +160,19 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		PFSParameter pFSParameter = (PFSParameter) auditHeader.getAuditDetail()
-				.getModelData();
+		PFSParameter pFSParameter = (PFSParameter) auditHeader.getAuditDetail().getModelData();
 		getPFSParameterDAO().delete(pFSParameter, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		invalidateEntity(pFSParameter.getId());
-		
+
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
 	/**
-	 * getPFSParameterById fetch the details by using PFSParameterDAO's
-	 * getPFSParameterById method.
+	 * getPFSParameterById fetch the details by using PFSParameterDAO's getPFSParameterById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -192,9 +186,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	}
 
 	/**
-	 * getApprovedPFSParameterById fetch the details by using PFSParameterDAO's
-	 * getPFSParameterById method . with parameter id and type as blank. it
-	 * fetches the approved records from the SMTparameters.
+	 * getApprovedPFSParameterById fetch the details by using PFSParameterDAO's getPFSParameterById method . with
+	 * parameter id and type as blank. it fetches the approved records from the SMTparameters.
 	 * 
 	 * @param id
 	 *            (String)
@@ -205,20 +198,15 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getPFSParameterDAO().delete with parameters pFSParameter,"" b) NEW
-	 * Add new record in to main table by using getPFSParameterDAO().save with
-	 * parameters pFSParameter,"" c) EDIT Update record in the main table by
-	 * using getPFSParameterDAO().update with parameters pFSParameter,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getPFSParameterDAO().delete with parameters pFSParameter,"_Temp" 4) Audit
-	 * the record in to AuditHeader and AdtSMTparameters by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtSMTparameters by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getPFSParameterDAO().delete with
+	 * parameters pFSParameter,"" b) NEW Add new record in to main table by using getPFSParameterDAO().save with
+	 * parameters pFSParameter,"" c) EDIT Update record in the main table by using getPFSParameterDAO().update with
+	 * parameters pFSParameter,"" 3) Delete the record from the workFlow table by using getPFSParameterDAO().delete with
+	 * parameters pFSParameter,"_Temp" 4) Audit the record in to AuditHeader and AdtSMTparameters by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSMTparameters by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -227,8 +215,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		PFSParameter pFSParameter = new PFSParameter();
-		BeanUtils.copyProperties((PFSParameter) auditHeader.getAuditDetail()
-				.getModelData(), pFSParameter);
+		BeanUtils.copyProperties((PFSParameter) auditHeader.getAuditDetail().getModelData(), pFSParameter);
 
 		String tranType = "";
 
@@ -239,20 +226,19 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		}
 
 		if (pFSParameter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			
+
 			tranType = PennantConstants.TRAN_DEL;
 			getPFSParameterDAO().delete(pFSParameter, "");
 
 		} else {
-			
+
 			pFSParameter.setRoleCode("");
 			pFSParameter.setNextRoleCode("");
 			pFSParameter.setTaskId("");
 			pFSParameter.setNextTaskId("");
 			pFSParameter.setWorkflowId(0);
 
-			if (pFSParameter.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (pFSParameter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				pFSParameter.setRecordType("");
 				getPFSParameterDAO().save(pFSParameter, "");
@@ -261,9 +247,9 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 				pFSParameter.setRecordType("");
 				getPFSParameterDAO().update(pFSParameter, "");
 			}
-			
+
 		}
-		
+
 		invalidateEntity(pFSParameter.getId());
 		getPFSParameterDAO().delete(pFSParameter, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -271,19 +257,16 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 
 		auditHeader.setAuditTranType(tranType);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getPFSParameterDAO().delete with parameters
-	 * pFSParameter,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtSMTparameters by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getPFSParameterDAO().delete with parameters pFSParameter,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtSMTparameters by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -308,10 +291,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -319,8 +300,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -329,17 +309,16 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		PFSParameter pFSParameter = (PFSParameter) auditDetail.getModelData();
@@ -355,37 +334,32 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		String[] errParm = new String[1];
 
 		valueParm[0] = pFSParameter.getSysParmCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmCode.value")+ ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmCode.value") + ":" + valueParm[0];
 
 		if (pFSParameter.isNew()) { // for New record or new record into work
-									// flow
+										// flow
 
 			if (!pFSParameter.isWorkflow()) {// With out Work flow only new
-												// records
+													// records
 				if (befPFSParameter != null) { // Record Already Exists in the
-												// table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-					        "41001", errParm, null));
+													// table then error
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (tempPFSParameter != null) { // if records already exists in
-												// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001",errParm, null));
+													// the Work flow table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 
-				if (pFSParameter.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
+				if (pFSParameter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
 					if (befPFSParameter != null) { // if records already exists
-													// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, 
-								"41001", errParm, null));
+														// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befPFSParameter == null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, 
-								"41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -393,50 +367,41 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!pFSParameter.isWorkflow()) { // With out Work flow for update
-												// and delete
+													// and delete
 
 				if (befPFSParameter == null) { // if records not exists in the
-												// main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, null));
+													// main table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
 				if (befPFSParameter != null && oldPFSParameter != null
-						&& !oldPFSParameter.getLastMntOn().equals(
-								befPFSParameter.getLastMntOn())) {
+						&& !oldPFSParameter.getLastMntOn().equals(befPFSParameter.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41003", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 					} else {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41004", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 					}
 				}
 
 			} else {
 
 				if (tempPFSParameter == null) { // if records not exists in the
-												// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005", errParm, null));
+													// Work flow table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 				if (tempPFSParameter != null && oldPFSParameter != null
-						&& !oldPFSParameter.getLastMntOn().equals(
-								tempPFSParameter.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005", errParm, null));
+						&& !oldPFSParameter.getLastMntOn().equals(tempPFSParameter.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !pFSParameter.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !pFSParameter.isWorkflow()) {
 			pFSParameter.setBefImage(befPFSParameter);
 		}
 		logger.debug("Leaving ");
@@ -458,10 +423,10 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	public List<GlobalVariable> getGlobaVariables() {
 		return pFSParameterDAO.getGlobaVariables();
 	}
-	
+
 	@Override
 	protected PFSParameter getEntity(String code) {
-		return pFSParameterDAO.getPFSParameterById(code,"_AView");
+		return pFSParameterDAO.getPFSParameterById(code, "_AView");
 	}
 
 }

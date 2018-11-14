@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennanttech.pff.core.TableType;
@@ -52,8 +53,9 @@ import com.pennanttech.pff.core.TableType;
 public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 
 	BankDetail getBankDetailById(String id, String type);
-	
+
 	BankDetail getBankDetailByIfsc(String ifsc);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -64,6 +66,7 @@ public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String bankCode, TableType tableType);
+
 	int getAccNoLengthByCode(String bankCode, String type);
 
 	String getBankCodeByName(String bankName);

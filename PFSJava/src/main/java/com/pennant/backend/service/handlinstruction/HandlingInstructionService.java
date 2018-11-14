@@ -15,10 +15,9 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class HandlingInstructionService {
 
 	private static final Logger logger = Logger.getLogger(HandlingInstructionService.class);
-	
-	private FinanceMaintenanceProcess 		financeMaintenanceProcess;
-	private FinanceReferenceDetailDAO 		financeReferenceDetailDAO;
-	
+
+	private FinanceMaintenanceProcess financeMaintenanceProcess;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 
 	/**
 	 * Method for send Handling Instruction to ICCS interface and save the request and response details
@@ -28,22 +27,23 @@ public class HandlingInstructionService {
 	 */
 	public void sendFinanceMaintenanceRequest(HandlingInstruction handlingInstruction) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		// Validate Security cheque is taken as collateral or not
 		String finReference = handlingInstruction.getFinanceRef();
 		String collateralType = PennantConstants.SECURITY_CHEQUE;
-		
-		FinCollaterals finCollaterals = getFinanceReferenceDetailDAO().getFinCollaterals(finReference, collateralType);
-		
-		if(finCollaterals != null) {
-			
-			// Send Handling instruction request to ICCS interface
-			HandlingInstruction handlInstResponse = getFinanceMaintenanceProcess().sendHandlingInstruction(handlingInstruction);
 
-			if(handlInstResponse == null) {
+		FinCollaterals finCollaterals = getFinanceReferenceDetailDAO().getFinCollaterals(finReference, collateralType);
+
+		if (finCollaterals != null) {
+
+			// Send Handling instruction request to ICCS interface
+			HandlingInstruction handlInstResponse = getFinanceMaintenanceProcess()
+					.sendHandlingInstruction(handlingInstruction);
+
+			if (handlInstResponse == null) {
 				throw new InterfaceException("PTI7001", Labels.getLabel("FAILED_HANDLINST"));
 			}
-			if(StringUtils.equals(handlInstResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+			if (StringUtils.equals(handlInstResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 
 				handlingInstruction.setReferenceNum(handlInstResponse.getReferenceNum());
 				handlingInstruction.setReturnCode(handlInstResponse.getReturnCode());
@@ -67,16 +67,16 @@ public class HandlingInstructionService {
 	 */
 	private void saveHandlingInstructionLogDetails(HandlingInstruction handlingInstruction) {
 		logger.debug("Entering");
-		
+
 		getFinanceReferenceDetailDAO().saveHandlInstructionDetails(handlingInstruction);
-		
+
 		logger.debug("Leaving");
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public FinanceMaintenanceProcess getFinanceMaintenanceProcess() {
 		return financeMaintenanceProcess;
 	}
@@ -86,10 +86,10 @@ public class HandlingInstructionService {
 	}
 
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-    	return financeReferenceDetailDAO;
-    }
-	
+		return financeReferenceDetailDAO;
+	}
+
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-    	this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-    }
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
 }

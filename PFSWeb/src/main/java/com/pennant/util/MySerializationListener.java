@@ -51,8 +51,8 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.ComponentSerializationListener;
 import org.zkoss.zk.ui.util.EventInterceptor;
 
-public class MySerializationListener implements EventListener<Event>, EventInterceptor, java.io.Serializable,
-		ComponentSerializationListener {
+public class MySerializationListener
+		implements EventListener<Event>, EventInterceptor, java.io.Serializable, ComponentSerializationListener {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(MySerializationListener.class);

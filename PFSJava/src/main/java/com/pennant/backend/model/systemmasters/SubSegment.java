@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class SubSegment extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 6223049038200160209L;
-	
+
 	private String segmentCode;
 	private String lovDescSegmentCodeName;
 	private String subSegmentCode;
@@ -80,17 +80,19 @@ public class SubSegment extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return segmentCode;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.segmentCode = id;
 	}
-	
+
 	public String getSegmentCode() {
 		return segmentCode;
 	}
+
 	public void setSegmentCode(String segmentCode) {
 		this.segmentCode = segmentCode;
 	}
@@ -98,27 +100,31 @@ public class SubSegment extends AbstractWorkflowEntity {
 	public String getLovDescSegmentCodeName() {
 		return lovDescSegmentCodeName;
 	}
+
 	public void setLovDescSegmentCodeName(String lovDescSegmentCodeName) {
 		this.lovDescSegmentCodeName = lovDescSegmentCodeName;
 	}
 
 	public String getSubSegmentCode() {
 		return subSegmentCode;
-	}	
+	}
+
 	public void setSubSegmentCode(String subSegmentCode) {
 		this.subSegmentCode = subSegmentCode;
 	}
-	
+
 	public String getSubSegmentDesc() {
 		return subSegmentDesc;
 	}
+
 	public void setSubSegmentDesc(String subSegmentDesc) {
 		this.subSegmentDesc = subSegmentDesc;
 	}
-	
+
 	public boolean isSubSegmentIsActive() {
 		return subSegmentIsActive;
 	}
+
 	public void setSubSegmentIsActive(boolean subSegmentIsActive) {
 		this.subSegmentIsActive = subSegmentIsActive;
 	}
@@ -126,27 +132,31 @@ public class SubSegment extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public SubSegment getBefImage(){
+	public SubSegment getBefImage() {
 		return this.befImage;
-	}	
-	public void setBefImage(SubSegment beforeImage){
-		this.befImage=beforeImage;
+	}
+
+	public void setBefImage(SubSegment beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

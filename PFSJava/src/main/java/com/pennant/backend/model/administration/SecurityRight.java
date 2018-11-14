@@ -48,32 +48,31 @@ import java.util.Set;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class SecurityRight extends AbstractWorkflowEntity  {
+public class SecurityRight extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1574628715506591010L;
 
-	private long           	rightID = Long.MIN_VALUE;
-	private Integer        	rightType;
-	private String         	rightName;
-	private String         	page;
-	private int            	accessType;
-	private long 			loginAppId;
-	private String         	loginAppCode;
-	private long           	loginUsrId;
-	private String         	loginGrpCode;
-	private String         	loginRoleCd;
-	private boolean        	newRecord = false;
-	private String         	lovValue;
-	private SecurityRight  	befImage;
-	private LoggedInUser 	userDetails;
-	private String         	menuRight;
-	
+	private long rightID = Long.MIN_VALUE;
+	private Integer rightType;
+	private String rightName;
+	private String page;
+	private int accessType;
+	private long loginAppId;
+	private String loginAppCode;
+	private long loginUsrId;
+	private String loginGrpCode;
+	private String loginRoleCd;
+	private boolean newRecord = false;
+	private String lovValue;
+	private SecurityRight befImage;
+	private LoggedInUser userDetails;
+	private String menuRight;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("loginAppId");
 		excludeFields.add("menuRight");
 		return excludeFields;
 	}
-
 
 	public boolean isNew() {
 		return getId() == Long.MIN_VALUE;
@@ -83,11 +82,11 @@ public class SecurityRight extends AbstractWorkflowEntity  {
 		super();
 	}
 
-	public SecurityRight(long rightId){
+	public SecurityRight(long rightId) {
 		super();
-		this.rightID=rightId;
+		this.rightID = rightId;
 	}
-	
+
 	public SecurityRight(long rightID, String rightName) {
 		super();
 		this.setId(rightID);
@@ -136,6 +135,7 @@ public class SecurityRight extends AbstractWorkflowEntity  {
 	public String getPage() {
 		return page;
 	}
+
 	public void setPage(String page) {
 		this.page = page;
 	}
@@ -244,11 +244,9 @@ public class SecurityRight extends AbstractWorkflowEntity  {
 		return accessType;
 	}
 
-
 	public String getMenuRight() {
 		return menuRight;
 	}
-
 
 	public void setMenuRight(String menuRight) {
 		this.menuRight = menuRight;

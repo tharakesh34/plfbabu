@@ -28,15 +28,11 @@ import org.apache.commons.net.time.TimeUDPClient;
 
 import com.pennanttech.pff.InterfaceConstants;
 
-
 /***
- * The TimeTCPClient class is a TCP implementation of a client for the Time
- * protocol described in RFC 868. To use the class, merely establish a
- * connection with {@link org.apache.commons.net.SocketClient#connect connect }
- * and call either {@link #getTime getTime() } or {@link #getDate getDate() } to
- * retrieve the time, then call
- * {@link org.apache.commons.net.SocketClient#disconnect disconnect } to close
- * the connection properly.
+ * The TimeTCPClient class is a TCP implementation of a client for the Time protocol described in RFC 868. To use the
+ * class, merely establish a connection with {@link org.apache.commons.net.SocketClient#connect connect } and call
+ * either {@link #getTime getTime() } or {@link #getDate getDate() } to retrieve the time, then call
+ * {@link org.apache.commons.net.SocketClient#disconnect disconnect } to close the connection properly.
  * <p>
  * <p>
  * 
@@ -47,8 +43,7 @@ import com.pennanttech.pff.InterfaceConstants;
 public final class CibilClient extends SocketClient {
 	/*** The default time port. It is set to 37 according to RFC 868. ***/
 	/***
-	 * The default TimeTCPClient constructor. It merely sets the default port to
-	 * <code> DEFAULT_PORT </code>.
+	 * The default TimeTCPClient constructor. It merely sets the default port to <code> DEFAULT_PORT </code>.
 	 ***/
 	public CibilClient() {
 		setDefaultPort(InterfaceConstants.DEFAULT_PORT);

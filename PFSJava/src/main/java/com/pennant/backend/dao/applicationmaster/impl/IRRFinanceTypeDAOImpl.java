@@ -73,23 +73,24 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 	public IRRFinanceTypeDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public IRRFinanceType getIRRFinanceType(long iRRID,String finType,String type) {
+	public IRRFinanceType getIRRFinanceType(long iRRID, String finType, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" iRRID, finType, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("iRRID, finType, iRRID,finType,");
-		}	
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From IRRFinanceTypes");
 		sql.append(type);
 		sql.append(" Where iRRID = :iRRID AND finType = :finType");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -109,21 +110,23 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 
 		logger.debug(Literal.LEAVING);
 		return iRRFinanceType;
-	}		
-	
+	}
+
 	@Override
-	public String save(IRRFinanceType iRRFinanceType,TableType tableType) {
+	public String save(IRRFinanceType iRRFinanceType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into IRRFinanceTypes");
+		StringBuilder sql = new StringBuilder(" insert into IRRFinanceTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" (iRRID, finType, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iRRID, :finType, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFinanceType);
@@ -136,15 +139,15 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(iRRFinanceType.getIRRID());
-	}	
+	}
 
 	@Override
-	public void update(IRRFinanceType iRRFinanceType,TableType tableType) {
+	public void update(IRRFinanceType iRRFinanceType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		// 23-07-2018 bugs #492 Unable to save & submit Loan Types due to updating the primary key in the update statement.
-		StringBuilder	sql =new StringBuilder("update IRRFinanceTypes" );
+		StringBuilder sql = new StringBuilder("update IRRFinanceTypes");
 		sql.append(tableType.getSuffix());
 		sql.append("  set");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -152,10 +155,10 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where iRRID = :iRRID and finType = :finType ");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFinanceType);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -163,7 +166,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -203,7 +206,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		StringBuilder sql = new StringBuilder("select FinType, IRRID, IRRCode , IRRCodeDesc FROM IRRFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinType = :FinType");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource param = new MapSqlParameterSource();
@@ -212,48 +215,46 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		RowMapper<IRRFinanceType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFinanceType.class);
 		logger.debug(Literal.LEAVING);
 		List<IRRFinanceType> resultList = null;
-		try{
+		try {
 			resultList = jdbcTemplate.query(sql.toString(), param, rowMapper);
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return resultList;
 	}
-	
-	
-	
+
 	@Override
-	public List<IRRFinanceType> getIRRFinanceTypeList(String finType,String type) {
+	public List<IRRFinanceType> getIRRFinanceTypeList(String finType, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		IRRFinanceType iRRFinanceType = new IRRFinanceType();
 		iRRFinanceType.setFinType(finType);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" iRRID, finType, ");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			sql.append("iRRID, finType, iRRID,finType,");
-		}	
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From IRRFinanceTypes");
 		sql.append(type);
 		sql.append(" Where finType = :finType ");
-		
+
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(iRRFinanceType);
-		RowMapper<IRRFinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				IRRFinanceType.class);
+		RowMapper<IRRFinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFinanceType.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(sql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
-	}	
-	
+	}
+
 	@Override
 	public void deleteList(String finType, String type) {
 		logger.debug("Entering");
-		FinTypeVASProducts finTypeVASProducts=new FinTypeVASProducts();
+		FinTypeVASProducts finTypeVASProducts = new FinTypeVASProducts();
 		finTypeVASProducts.setFinType(finType);
 		StringBuilder deleteSql = new StringBuilder("Delete From ");
 		deleteSql.append(" IRRFinanceTypes");
@@ -264,5 +265,5 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}	
-}	
+	}
+}

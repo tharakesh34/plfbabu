@@ -61,9 +61,9 @@ public interface FinMandateService {
 	void doApprove(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
 
 	List<Mandate> getMnadateByCustID(long custID, long mandateID);
-	
-	void validateMandate(AuditDetail auditDetail,FinanceDetail financeDetail );
-	
-	void promptMandate(AuditDetail auditDetail,FinanceDetail financeDetail );
+
+	void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail);
+
+	void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail);
 
 }

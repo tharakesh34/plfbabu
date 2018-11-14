@@ -47,7 +47,7 @@ import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennanttech.pff.core.TableType;
 
 public interface QueryCategoryDAO extends BasicCrudDao<QueryCategory> {
-	
+
 	/**
 	 * Fetch the Record QueryCategory by key field
 	 * 
@@ -57,7 +57,8 @@ public interface QueryCategoryDAO extends BasicCrudDao<QueryCategory> {
 	 *            The type of the table.
 	 * @return QueryCategory
 	 */
-	QueryCategory getQueryCategory(long id,String type);
+	QueryCategory getQueryCategory(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -69,6 +70,6 @@ public interface QueryCategoryDAO extends BasicCrudDao<QueryCategory> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String code, TableType tableType);	
-	
+	boolean isDuplicateKey(long id, String code, TableType tableType);
+
 }

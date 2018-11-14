@@ -58,15 +58,16 @@ import com.pennant.util.PennantAppUtil;
  * 
  */
 public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<FinanceSuspDetails>, Serializable {
-	
+
 	private int formatter;
-	
+
 	public SuspenseDetailListModelItemRenderer(int formatter) {
 		super();
 		this.formatter = formatter;
 	}
 
 	private static final long serialVersionUID = -4554647022945989420L;
+
 	@Override
 	public void render(Listitem item, FinanceSuspDetails suspDetails, int count) throws Exception {
 
@@ -74,7 +75,7 @@ public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<Fin
 		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinTrfDate()));
 		lc.setParent(item);
 		String movement = "Suspense";
-		if("R".equals(suspDetails.getFinTrfMvt())){
+		if ("R".equals(suspDetails.getFinTrfMvt())) {
 			movement = "Release";
 		}
 		lc = new Listcell(movement);
@@ -87,6 +88,6 @@ public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinTrfFromDate()));
 		lc.setParent(item);
-		
+
 	}
 }

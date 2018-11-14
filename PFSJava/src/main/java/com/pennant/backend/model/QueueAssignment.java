@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class QueueAssignment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String module;
 	private long fromUserId = Long.MIN_VALUE;
 	private long userId = Long.MIN_VALUE;
@@ -73,20 +73,20 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 	private BigDecimal lovDescFinAmount;
 	private int lovDescEditField;
 	private String lovDescCustCIF;
-	
-	private int assignedCount=0;
+
+	private int assignedCount = 0;
 	private Timestamp lastAssignedOn = new Timestamp(System.currentTimeMillis());
 	private int processedCount = 0;
 	private Timestamp lastProcessedOn = null;
 	private boolean userActive = true;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private QueueAssignment befImage;
 	private LoggedInUser userDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private boolean recordProcessed;
 	private boolean manualAssign;
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("assignedCount");
@@ -103,210 +103,241 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("recordProcessed");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public QueueAssignment() {
 		super();
 	}
-	
+
 	public String getModule() {
 		return module;
 	}
+
 	public void setModule(String module) {
 		this.module = module;
 	}
-	
+
 	public long getUserId() {
 		return userId;
 	}
+
 	public void setUserId(long userId) {
 		this.userId = userId;
 	}
-	
+
 	public Timestamp getLastAssignedOn() {
 		return lastAssignedOn;
 	}
+
 	public void setLastAssignedOn(Timestamp lastAssignedOn) {
 		this.lastAssignedOn = lastAssignedOn;
 	}
-	
+
 	public Timestamp getLastProcessedOn() {
 		return lastProcessedOn;
 	}
+
 	public void setLastProcessedOn(Timestamp lastProcessedOn) {
 		this.lastProcessedOn = lastProcessedOn;
 	}
-	
+
 	public boolean isUserActive() {
 		return userActive;
 	}
+
 	public void setUserActive(boolean userActive) {
 		this.userActive = userActive;
 	}
-	
+
 	public long getLovDescQAUserId() {
-	    return lovDescQAUserId;
-    }
+		return lovDescQAUserId;
+	}
+
 	public void setLovDescQAUserId(long lovDescQAUserId) {
-	    this.lovDescQAUserId = lovDescQAUserId;
-    }
-	
+		this.lovDescQAUserId = lovDescQAUserId;
+	}
+
 	public String getUserRoleCode() {
-	    return userRoleCode;
-    }
+		return userRoleCode;
+	}
+
 	public void setUserRoleCode(String userRoleCode) {
-	    this.userRoleCode = userRoleCode;
-    }
-	
+		this.userRoleCode = userRoleCode;
+	}
+
 	public int getAssignedCount() {
 		return assignedCount;
 	}
+
 	public void setAssignedCount(int assignedCount) {
 		this.assignedCount = assignedCount;
 	}
-	
+
 	public int getProcessedCount() {
 		return processedCount;
 	}
+
 	public void setProcessedCount(int processedCount) {
 		this.processedCount = processedCount;
 	}
-	
+
 	public List<TaskOwners> getTaskOwnersList() {
-	    return taskOwnersList;
-    }
+		return taskOwnersList;
+	}
+
 	public void setTaskOwnersList(List<TaskOwners> taskOwnersList) {
-	    this.taskOwnersList = taskOwnersList;
-    }
-	
+		this.taskOwnersList = taskOwnersList;
+	}
+
 	public List<String> getFinReferenceList() {
-	    return finReferenceList;
-    }
+		return finReferenceList;
+	}
+
 	public void setFinReferenceList(List<String> finReferenceList) {
-	    this.finReferenceList = finReferenceList;
-    }
+		this.finReferenceList = finReferenceList;
+	}
+
 	public String getLovDescUserAction() {
-	    return lovDescUserAction;
-    }
+		return lovDescUserAction;
+	}
+
 	public void setLovDescUserAction(String lovDescUserAction) {
-	    this.lovDescUserAction = lovDescUserAction;
-    }
+		this.lovDescUserAction = lovDescUserAction;
+	}
+
 	public String getReference() {
 		return reference;
 	}
+
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
+
 	public QueueAssignment getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(QueueAssignment befImage) {
 		this.befImage = befImage;
 	}
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public BigDecimal getLovDescFinAmount() {
 		return lovDescFinAmount;
 	}
+
 	public void setLovDescFinAmount(BigDecimal lovDescFinAmount) {
 		this.lovDescFinAmount = lovDescFinAmount;
 	}
+
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
+
 	public int getLovDescEditField() {
-	    return lovDescEditField;
-    }
+		return lovDescEditField;
+	}
+
 	public void setLovDescEditField(int lovDescEditField) {
-	    this.lovDescEditField = lovDescEditField;
-    }
+		this.lovDescEditField = lovDescEditField;
+	}
 
 	public long getFromUserId() {
-	    return fromUserId;
-    }
+		return fromUserId;
+	}
+
 	public void setFromUserId(long fromUserId) {
-	    this.fromUserId = fromUserId;
-    }
+		this.fromUserId = fromUserId;
+	}
 
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
-	    return auditDetailMap;
-    }
+		return auditDetailMap;
+	}
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
-	    this.auditDetailMap = auditDetailMap;
-    }
+		this.auditDetailMap = auditDetailMap;
+	}
+
 	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
 		this.userDetails = userDetails;
 	}
 
 	public String getLovDescUserName() {
-	    return lovDescUserName;
-    }
+		return lovDescUserName;
+	}
+
 	public void setLovDescUserName(String lovDescUserName) {
-	    this.lovDescUserName = lovDescUserName;
-    }
+		this.lovDescUserName = lovDescUserName;
+	}
 
 	public String getLovDescFinType() {
-	    return lovDescFinType;
-    }
+		return lovDescFinType;
+	}
 
 	public void setLovDescFinType(String lovDescFinType) {
-	    this.lovDescFinType = lovDescFinType;
-    }
+		this.lovDescFinType = lovDescFinType;
+	}
 
 	public String getLovDescFinTypeDesc() {
-	    return lovDescFinTypeDesc;
-    }
+		return lovDescFinTypeDesc;
+	}
 
 	public void setLovDescFinTypeDesc(String lovDescFinTypeDesc) {
-	    this.lovDescFinTypeDesc = lovDescFinTypeDesc;
-    }
+		this.lovDescFinTypeDesc = lovDescFinTypeDesc;
+	}
 
 	public String getLovDescActualOwner() {
-	    return lovDescActualOwner;
-    }
+		return lovDescActualOwner;
+	}
 
 	public void setLovDescActualOwner(String lovDescActualOwner) {
-	    this.lovDescActualOwner = lovDescActualOwner;
-    }
+		this.lovDescActualOwner = lovDescActualOwner;
+	}
 
 	public boolean isRecordProcessed() {
-	    return recordProcessed;
-    }
+		return recordProcessed;
+	}
 
 	public void setRecordProcessed(boolean recordProcessed) {
-	    this.recordProcessed = recordProcessed;
-    }
+		this.recordProcessed = recordProcessed;
+	}
 
 	public boolean isManualAssign() {
-	    return manualAssign;
-    }
+		return manualAssign;
+	}
 
 	public void setManualAssign(boolean manualAssign) {
-	    this.manualAssign = manualAssign;
-    }
+		this.manualAssign = manualAssign;
+	}
 }

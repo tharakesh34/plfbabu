@@ -63,5 +63,5 @@ public interface InterfaceMappingService {
 	List<String> getTableNameColumnsList(String tableName);
 
 	List<String> getMappings(String tableName, String columnName);
-	
+
 }

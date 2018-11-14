@@ -81,21 +81,22 @@ import com.pennanttech.pff.core.TableType;
 public class BranchServiceImpl extends GenericService<Branch> implements BranchService {
 	private static Logger logger = Logger.getLogger(BranchDAOImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private BranchDAO branchDAO;
 	private PostingsDAO postingsDAO;
 
 	public BranchServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
-	}	
+	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -103,6 +104,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public BranchDAO getBranchDAO() {
 		return branchDAO;
 	}
+
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
 	}
@@ -110,20 +112,18 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
+
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
 
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTBranches/RMTBranches_Temp by using BranchDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using BranchDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table RMTBranches/RMTBranches_Temp by
+	 * using BranchDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using BranchDAO's update method 3) Audit the record in to AuditHeader and AdtRMTBranches by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -134,43 +134,45 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Branch branch = (Branch) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		
+
 		if (branch.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (branch.isNew()) {
-			branch.setBranchCode(getBranchDAO().save(branch,tableType));
+			branch.setBranchCode(getBranchDAO().save(branch, tableType));
 			auditHeader.getAuditDetail().setModelData(branch);
 			auditHeader.setAuditReference(branch.getBranchCode());
-		}else{
-			getBranchDAO().update(branch,tableType);
+		} else {
+			getBranchDAO().update(branch, tableType);
 		}
-		
-		if(branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()){
+
+		if (branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()) {
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
 
 			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
 
-			if(existingPostings != null && !existingPostings.isEmpty()){
+			if (existingPostings != null && !existingPostings.isEmpty()) {
 				long linkedTranId = getPostingsDAO().getLinkedTransId();
 				List<ReturnDataSet> executePostings = new ArrayList<ReturnDataSet>();
-				List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings,branch,linkedTranId,0,true);
-				if(revPostings != null){
+				List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
+						0, true);
+				if (revPostings != null) {
 					executePostings.addAll(revPostings);
 				}
-				List<ReturnDataSet> newPostings = preparePostingsForBranchChange(existingPostings,branch,linkedTranId,revPostings==null?0:revPostings.size(),false);
-				if(newPostings != null){
+				List<ReturnDataSet> newPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
+						revPostings == null ? 0 : revPostings.size(), false);
+				if (newPostings != null) {
 					executePostings.addAll(newPostings);
 				}
-				if(!executePostings.isEmpty()){
+				if (!executePostings.isEmpty()) {
 					getPostingsDAO().saveBatch(executePostings);
 				}
 			}
@@ -179,7 +181,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			getBranchDAO().updateFinanceBranch(branch, "");
 
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
 		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -187,86 +189,90 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 
 	}
 
-	
-	/**This method will prepare reversal postings for Finances under old finBranch
+	/**
+	 * This method will prepare reversal postings for Finances under old finBranch
+	 * 
 	 * @param existingPostings
 	 * @return
 	 */
-	private List<ReturnDataSet> preparePostingsForBranchChange(List<ReturnDataSet> existingPostings,Branch branch,long linkedTranId,int seqNo,boolean isReversal){
+	private List<ReturnDataSet> preparePostingsForBranchChange(List<ReturnDataSet> existingPostings, Branch branch,
+			long linkedTranId, int seqNo, boolean isReversal) {
 		logger.debug("Entering");
 		List<ReturnDataSet> finalPostings = null;
-		if(existingPostings != null && !existingPostings.isEmpty()){
+		if (existingPostings != null && !existingPostings.isEmpty()) {
 			String currAccount = "";
 			String finReference = "";
 			String tranCode = "";
 			ReturnDataSet revDataSet = null;
-			for (int i=0 ; i < existingPostings.size() ; i++) {
-				ReturnDataSet returnDataSet =  existingPostings.get(i);
-				if(StringUtils.equals(currAccount, returnDataSet.getAccount()) && 
-						StringUtils.equals(finReference, returnDataSet.getFinReference()) && 
-						StringUtils.equals(tranCode, returnDataSet.getTranCode())){
-					if(revDataSet != null){
+			for (int i = 0; i < existingPostings.size(); i++) {
+				ReturnDataSet returnDataSet = existingPostings.get(i);
+				if (StringUtils.equals(currAccount, returnDataSet.getAccount())
+						&& StringUtils.equals(finReference, returnDataSet.getFinReference())
+						&& StringUtils.equals(tranCode, returnDataSet.getTranCode())) {
+					if (revDataSet != null) {
 						revDataSet.setPostAmount(revDataSet.getPostAmount().add(returnDataSet.getPostAmount()));
 					}
-				}else{
+				} else {
 					revDataSet = new ReturnDataSet();
 					revDataSet.setAccount(returnDataSet.getAccount());
 					revDataSet.setFinReference(returnDataSet.getFinReference());
 					revDataSet.setFinEvent(AccountEventConstants.ACCEVENT_BRANCH_CLOSE);
 					revDataSet.setPostAmount(returnDataSet.getPostAmount());
 					revDataSet.setAcCcy(returnDataSet.getAcCcy());
-					if(isReversal){
+					if (isReversal) {
 						revDataSet.setPostBranch(branch.getBranchCode());
-						if(StringUtils.equals(AccountConstants.TRANCODE_CREDIT, returnDataSet.getTranCode())){
+						if (StringUtils.equals(AccountConstants.TRANCODE_CREDIT, returnDataSet.getTranCode())) {
 							revDataSet.setTranCode(AccountConstants.TRANCODE_DEBIT);
 							revDataSet.setRevTranCode(AccountConstants.TRANCODE_CREDIT);
 							revDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-						}else{
+						} else {
 							revDataSet.setTranCode(AccountConstants.TRANCODE_CREDIT);
 							revDataSet.setRevTranCode(AccountConstants.TRANCODE_DEBIT);
 							revDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
 						}
-					}else{
+					} else {
 						revDataSet.setPostBranch(branch.getNewBranchCode());
 						revDataSet.setTranCode(returnDataSet.getTranCode());
 						revDataSet.setRevTranCode(returnDataSet.getRevTranCode());
 						revDataSet.setDrOrCr(returnDataSet.getDrOrCr());
 					}
 				}
-				returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(), SysParamUtil.getAppCurrency(), revDataSet.getPostAmount()));
+				returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
+						SysParamUtil.getAppCurrency(), revDataSet.getPostAmount()));
 				currAccount = returnDataSet.getAccount();
 				finReference = returnDataSet.getFinReference();
 				tranCode = returnDataSet.getTranCode();
-				if(revDataSet.getPostAmount().compareTo(BigDecimal.ZERO) != 0 && (i == existingPostings.size()-1 || 
-					 !StringUtils.equals(currAccount, existingPostings.get(i+1).getAccount()) ||
-								!StringUtils.equals(finReference, existingPostings.get(i+1).getFinReference()) ||
-								!StringUtils.equals(tranCode, existingPostings.get(i+1).getTranCode()))){
-					if(finalPostings == null){
+				if (revDataSet.getPostAmount().compareTo(BigDecimal.ZERO) != 0 && (i == existingPostings.size() - 1
+						|| !StringUtils.equals(currAccount, existingPostings.get(i + 1).getAccount())
+						|| !StringUtils.equals(finReference, existingPostings.get(i + 1).getFinReference())
+						|| !StringUtils.equals(tranCode, existingPostings.get(i + 1).getTranCode()))) {
+					if (finalPostings == null) {
 						finalPostings = new ArrayList<ReturnDataSet>();
 					}
 					finalPostings.add(revDataSet);
 				}
 			}
 		}
-		if(finalPostings != null && !finalPostings.isEmpty()){
+		if (finalPostings != null && !finalPostings.isEmpty()) {
 			Date dateAppDate = DateUtility.getAppDate();
 			Date dateValueDate = DateUtility.getAppValueDate();
 			for (ReturnDataSet retDataSet : finalPostings) {
-				seqNo = seqNo+1;
+				seqNo = seqNo + 1;
 				if (retDataSet.getLinkedTranId() == Long.MIN_VALUE) {
 					retDataSet.setLinkedTranId(linkedTranId);
 				}
-				retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId()+"-"+seqNo));
-				retDataSet.setPostingId(retDataSet.getFinReference()+DateUtility.formatDate(new Date(), "yyyyMMddHHmmss")+
-						StringUtils.leftPad(String.valueOf((long)((new Random()).nextDouble()*10000L)).trim(), 4,"0"));
+				retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId() + "-" + seqNo));
+				retDataSet.setPostingId(retDataSet.getFinReference()
+						+ DateUtility.formatDate(new Date(), "yyyyMMddHHmmss") + StringUtils
+								.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
 				retDataSet.setShadowPosting(false);
 				retDataSet.setPostDate(dateAppDate);
 				retDataSet.setValueDate(dateValueDate);
 				retDataSet.setAmountType(AccountConstants.TRANSENTRY_AMOUNTTYPE);
 				retDataSet.setTranOrderId("1-1");
-				if(isReversal){
+				if (isReversal) {
 					retDataSet.setTranDesc("Finance Branch Change Reversal Transactions");
-				}else{
+				} else {
 					retDataSet.setTranDesc("Finance Branch Change New Transactions");
 				}
 			}
@@ -274,15 +280,12 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		logger.debug("Leaving");
 		return finalPostings;
 	}
-	
-	
+
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTBranches by using BranchDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtRMTBranches by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTBranches by using BranchDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -293,7 +296,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -308,40 +311,39 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 
 	/**
 	 * getBranchById fetch the details by using BranchDAO's getBranchById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Branch
 	 */
 	@Override
 	public Branch getBranchById(String id) {
-		return getBranchDAO().getBranchById(id,"_View");
+		return getBranchDAO().getBranchById(id, "_View");
 	}
 
 	/**
-	 * getApprovedBranchById fetch the details by using BranchDAO's getBranchById method .
-	 * with parameter id and type as blank. it fetches the approved records from the RMTBranches.
-	 * @param id (String)
+	 * getApprovedBranchById fetch the details by using BranchDAO's getBranchById method . with parameter id and type as
+	 * blank. it fetches the approved records from the RMTBranches.
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return Branch
 	 */
 	public Branch getApprovedBranchById(String id) {
-		return getBranchDAO().getBranchById(id,"_AView");
+		return getBranchDAO().getBranchById(id, "_AView");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getBranchDAO().delete with parameters branch,"" b) NEW Add new
-	 * record in to main table by using getBranchDAO().save with parameters
-	 * branch,"" c) EDIT Update record in the main table by using
-	 * getBranchDAO().update with parameters branch,"" 3) Delete the record from
-	 * the workFlow table by using getBranchDAO().delete with parameters
-	 * branch,"_Temp" 4) Audit the record in to AuditHeader and AdtRMTBranches
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtRMTBranches by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getBranchDAO().delete with parameters
+	 * branch,"" b) NEW Add new record in to main table by using getBranchDAO().save with parameters branch,"" c) EDIT
+	 * Update record in the main table by using getBranchDAO().update with parameters branch,"" 3) Delete the record
+	 * from the workFlow table by using getBranchDAO().delete with parameters branch,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
+	 * to AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -350,9 +352,9 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		String tranType="";
+		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -360,13 +362,13 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		Branch branch = new Branch();
 		BeanUtils.copyProperties((Branch) auditHeader.getAuditDetail().getModelData(), branch);
 		getBranchDAO().delete(branch, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(branchDAO.getBranchById(branch.getBranchCode(), ""));
 		}
 
 		if (branch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
 			getBranchDAO().delete(branch, TableType.MAIN_TAB);
 
@@ -378,11 +380,11 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			branch.setWorkflowId(0);
 
 			if (branch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				branch.setRecordType("");
 				getBranchDAO().save(branch, TableType.MAIN_TAB);
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				branch.setRecordType("");
 				getBranchDAO().update(branch, TableType.MAIN_TAB);
 			}
@@ -394,25 +396,27 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(branch);
-		
-		if(branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()){
+
+		if (branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()) {
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "N");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
 
 			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
 
-			if(existingPostings != null && !existingPostings.isEmpty()){
+			if (existingPostings != null && !existingPostings.isEmpty()) {
 				long linkedTranId = getPostingsDAO().getLinkedTransId();
 				List<ReturnDataSet> executePostings = new ArrayList<ReturnDataSet>();
-				List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings,branch,linkedTranId,0,true);
-				if(revPostings != null){
+				List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
+						0, true);
+				if (revPostings != null) {
 					executePostings.addAll(revPostings);
 				}
-				List<ReturnDataSet> newPostings = preparePostingsForBranchChange(existingPostings,branch,linkedTranId,revPostings==null?0:revPostings.size(),false);
-				if(newPostings != null){
+				List<ReturnDataSet> newPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
+						revPostings == null ? 0 : revPostings.size(), false);
+				if (newPostings != null) {
 					executePostings.addAll(newPostings);
 				}
-				if(!executePostings.isEmpty()){
+				if (!executePostings.isEmpty()) {
 					getPostingsDAO().saveBatch(executePostings);
 				}
 			}
@@ -421,36 +425,34 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			getBranchDAO().updateFinanceBranch(branch, "");
 
 			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP,  "Y");
+			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
 		}
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getBranchDAO().delete with parameters
-	 * branch,"_Temp" 3) Audit the record in to AuditHeader and AdtRMTBranches
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getBranchDAO().delete with parameters branch,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Branch branch= (Branch) auditHeader.getAuditDetail().getModelData();
+		Branch branch = (Branch) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getBranchDAO().delete(branch, TableType.TEMP_TAB);
 
@@ -460,10 +462,8 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -471,26 +471,24 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getBranchDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getBranchDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
@@ -498,31 +496,29 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		String code = branch.getBranchCode();
 
 		// Check the unique keys.
-		if (branch.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())
-				&& branchDAO
-						.isDuplicateKey(code, branch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (branch.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())
+				&& branchDAO.isDuplicateKey(code, branch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + code;
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	@Override
-	public List<Branch> getBrachDetailsByBranchCode (List<String> finBranches) {
-	
+	public List<Branch> getBrachDetailsByBranchCode(List<String> finBranches) {
+
 		return this.branchDAO.getBrachDetailsByBranchCode(finBranches);
 	}
 
 	@Override
-	public boolean getUnionTerrotory (String cpProvince) {
-	
+	public boolean getUnionTerrotory(String cpProvince) {
+
 		return this.branchDAO.getUnionTerrotory(cpProvince);
 	}
 }

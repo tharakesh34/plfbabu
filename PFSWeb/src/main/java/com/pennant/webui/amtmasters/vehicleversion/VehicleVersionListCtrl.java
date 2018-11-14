@@ -61,9 +61,9 @@ import com.pennant.backend.model.amtmasters.VehicleVersion;
 import com.pennant.backend.service.amtmasters.VehicleVersionService;
 import com.pennant.webui.amtmasters.vehicleversion.model.VehicleVersionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/AMTMasters/VehicleVersion/VehicleVersionList.zul file.
@@ -119,7 +119,8 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> {
 		setItemRender(new VehicleVersionListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_VehicleVersionList_NewVehicleVersion, "button_VehicleVersionList_NewVehicleVersion", true);
+		registerButton(button_VehicleVersionList_NewVehicleVersion, "button_VehicleVersionList_NewVehicleVersion",
+				true);
 		registerButton(button_VehicleVersionList_VehicleVersionSearchDialog);
 
 		registerField("vehicleVersionId");

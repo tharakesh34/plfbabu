@@ -48,7 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.legal.LegalNote;
 
 public interface LegalNoteDAO extends BasicCrudDao<LegalNote> {
-	
+
 	/**
 	 * Fetch the Record LegalNote by key field
 	 * 
@@ -58,10 +58,10 @@ public interface LegalNoteDAO extends BasicCrudDao<LegalNote> {
 	 *            The type of the table.
 	 * @return LegalNote
 	 */
-	LegalNote getLegalNote(long legalNoteId,String type);
+	LegalNote getLegalNote(long legalNoteId, String type);
 
 	void deleteList(LegalNote legalNote, String tableType);
 
 	List<LegalNote> getLegalNoteList(long legalId, String type);
-	
+
 }

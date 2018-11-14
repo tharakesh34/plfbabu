@@ -18,9 +18,9 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
-	private final Logger	logger	= Logger.getLogger(getClass());
+	private final Logger logger = Logger.getLogger(getClass());
 
-	private List<Long>			disbursments;
+	private List<Long> disbursments;
 
 	public DisbursemenIMPSRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
@@ -37,7 +37,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("STATUS", "APPROVED");
 
 		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
-			MapSqlParameterSource	map			= null;
+			MapSqlParameterSource map = null;
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -86,7 +86,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		map.addValue("REMARKS", StringUtils.substring(rs.getString("REMARKS"), 0, 9));
 		map.addValue("CHANNELPARTNERREFNO", rs.getString("ID"));
 		map.addValue("PICKUPFLAG", "N");
-		
+
 		String appId = null;
 		String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
 		if (finReference != null) {
@@ -106,7 +106,8 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		try {
 			//IF Status is P then we will update customer payments tables..
 			if ("P".equals(channel)) {
-				sql.append("UPDATE PAYMENTINSTRUCTIONS  SET STATUS  =  :STATUS WHERE  PAYMENTINSTRUCTIONID = :PAYMENTID");
+				sql.append(
+						"UPDATE PAYMENTINSTRUCTIONS  SET STATUS  =  :STATUS WHERE  PAYMENTINSTRUCTIONID = :PAYMENTID");
 			} else {
 				sql.append("UPDATE FINADVANCEPAYMENTS  SET STATUS  =  :STATUS WHERE  PAYMENTID = :PAYMENTID");
 			}

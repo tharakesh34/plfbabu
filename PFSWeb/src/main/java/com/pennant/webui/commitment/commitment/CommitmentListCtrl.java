@@ -81,75 +81,75 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.commitment.commitment.model.CommitmentListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Commitment/Commitment/CommitmentList.zul file.
  */
 public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(CommitmentListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(CommitmentListCtrl.class);
 
-	protected Window							window_CommitmentList;
-	protected Borderlayout						borderLayout_CommitmentList;
-	protected Paging							pagingCommitmentList;
-	protected Listbox							listBoxCommitment;
+	protected Window window_CommitmentList;
+	protected Borderlayout borderLayout_CommitmentList;
+	protected Paging pagingCommitmentList;
+	protected Listbox listBoxCommitment;
 
-	protected Listheader						listheader_CustCIF;
-	protected Listheader						listheader_CmtReference;
-	protected Listheader						listheader_CmtBranch;
-	protected Listheader						listheader_CmtCcy;
-	protected Listheader						listheader_CustName;
-	protected Listheader						listheader_CmtExpDate;
-	protected Listheader						listheader_CmtRvwDate;
-	protected Listheader						listheader_CmtRevolving;
-	protected Listheader						listheader_CmtAmount;
-	protected Listheader						listheader_CmtUtilized;
-	protected Listheader						listheader_CmtAvailable;
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_CmtReference;
+	protected Listheader listheader_CmtBranch;
+	protected Listheader listheader_CmtCcy;
+	protected Listheader listheader_CustName;
+	protected Listheader listheader_CmtExpDate;
+	protected Listheader listheader_CmtRvwDate;
+	protected Listheader listheader_CmtRevolving;
+	protected Listheader listheader_CmtAmount;
+	protected Listheader listheader_CmtUtilized;
+	protected Listheader listheader_CmtAvailable;
 
-	protected Button							btnRefresh;
-	protected Button							button_CommitmentList_NewCommitment;
-	protected Button							button_CommitmentList_CommitmentSearch;
+	protected Button btnRefresh;
+	protected Button button_CommitmentList_NewCommitment;
+	protected Button button_CommitmentList_CommitmentSearch;
 
-	protected Textbox							custCIF;
-	protected Textbox							cmtReference;
-	protected Textbox							cmtBranch;
-	protected Textbox							cmtCcy;
-	protected Datebox							cmtExpDate_one;
-	protected Datebox							cmtExpDate_two;
-	protected Datebox							cmtRvwDate_one;
-	protected Datebox							cmtRvwDate_two;
-	protected Textbox							custName;
-	protected Checkbox							revolving;
-	protected Decimalbox						cmtAmount;
-	protected Decimalbox						cmtAvailable;
-	protected Decimalbox						cmtUtilizedAmount;
-	protected Checkbox							nonPerforming;
-	protected int 								CcyEditField;
+	protected Textbox custCIF;
+	protected Textbox cmtReference;
+	protected Textbox cmtBranch;
+	protected Textbox cmtCcy;
+	protected Datebox cmtExpDate_one;
+	protected Datebox cmtExpDate_two;
+	protected Datebox cmtRvwDate_one;
+	protected Datebox cmtRvwDate_two;
+	protected Textbox custName;
+	protected Checkbox revolving;
+	protected Decimalbox cmtAmount;
+	protected Decimalbox cmtAvailable;
+	protected Decimalbox cmtUtilizedAmount;
+	protected Checkbox nonPerforming;
+	protected int CcyEditField;
 
-	protected Listbox							sortOperator_CustCIF;
-	protected Listbox							sortOperator_CmtReference;
-	protected Listbox							sortOperator_CmtBranch;
-	protected Listbox							sortOperator_CmtCcy;
-	protected Listbox							sortOperator_CustName;
-	protected Listbox							sortOperator_CmtExpDate;
-	protected Listbox							sortOperator_CmtRvwDate;
-	protected Listbox							sortOperator_Revolving;
-	protected Listbox							sortOperator_CmtAmount;
-	protected Listbox							sortOperator_CmtUtilizedAmount;
-	protected Listbox							sortOperator_CmtAvailable;
-	protected Listbox							sortOperator_NonPerforming;
+	protected Listbox sortOperator_CustCIF;
+	protected Listbox sortOperator_CmtReference;
+	protected Listbox sortOperator_CmtBranch;
+	protected Listbox sortOperator_CmtCcy;
+	protected Listbox sortOperator_CustName;
+	protected Listbox sortOperator_CmtExpDate;
+	protected Listbox sortOperator_CmtRvwDate;
+	protected Listbox sortOperator_Revolving;
+	protected Listbox sortOperator_CmtAmount;
+	protected Listbox sortOperator_CmtUtilizedAmount;
+	protected Listbox sortOperator_CmtAvailable;
+	protected Listbox sortOperator_NonPerforming;
 
-	private CommitmentService					commitmentService;
-	private FinanceWorkFlowService				financeWorkFlowService;
-	protected JdbcSearchObject<Customer> 		custCIFSearchObject;
-	
-	private transient WorkFlowDetails 			workFlowDetails  =  null;
+	private CommitmentService commitmentService;
+	private FinanceWorkFlowService financeWorkFlowService;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
+	private transient WorkFlowDetails workFlowDetails = null;
 
 	/**
 	 * default constructor.<br>
@@ -177,22 +177,25 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 			// get the search operator
 			final Listitem itemCmtExpDate = this.sortOperator_CmtExpDate.getSelectedItem();
 			if (itemCmtExpDate != null) {
-				final int searchOpId =	Integer.parseInt(((ValueLabel)  itemCmtExpDate.getAttribute("data")).getValue());
+				final int searchOpId = Integer.parseInt(((ValueLabel) itemCmtExpDate.getAttribute("data")).getValue());
 
 				if (searchOpId == -1) {
 					// do nothing
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.cmtExpDate_one.getValue() != null) {
-						this.searchObject.addFilter(new Filter("CmtExpDate", DateUtility.formatUtilDate(
-								this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
+						this.searchObject.addFilter(
+								new Filter("CmtExpDate", DateUtility.formatUtilDate(this.cmtExpDate_one.getValue(),
+										PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.cmtExpDate_two.getValue() != null) {
-						this.searchObject.addFilter(new Filter("CmtExpDate", DateUtility.formatUtilDate(
-								this.cmtExpDate_two.getValue(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
+						this.searchObject.addFilter(
+								new Filter("CmtExpDate", DateUtility.formatUtilDate(this.cmtExpDate_two.getValue(),
+										PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
-					this.searchObject.addFilter(new Filter("CmtExpDate", DateUtility.formatUtilDate(
-							this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat), searchOpId));
+					this.searchObject.addFilter(new Filter("CmtExpDate",
+							DateUtility.formatUtilDate(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
+							searchOpId));
 				}
 			}
 		}
@@ -203,22 +206,25 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 			// get the search operator
 			final Listitem itemCmtRvwDate = this.sortOperator_CmtRvwDate.getSelectedItem();
 			if (itemCmtRvwDate != null) {
-				final int searchOpId =	Integer.parseInt(((ValueLabel)  itemCmtRvwDate.getAttribute("data")).getValue());
+				final int searchOpId = Integer.parseInt(((ValueLabel) itemCmtRvwDate.getAttribute("data")).getValue());
 
 				if (searchOpId == -1) {
 					// do nothing
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.cmtRvwDate_one.getValue() != null) {
-						this.searchObject.addFilter(new Filter("CmtRvwDate", DateUtility.formatUtilDate(
-								this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
+						this.searchObject.addFilter(
+								new Filter("CmtRvwDate", DateUtility.formatUtilDate(this.cmtRvwDate_one.getValue(),
+										PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.cmtRvwDate_two.getValue() != null) {
-						this.searchObject.addFilter(new Filter("CmtRvwDate", DateUtility.formatUtilDate(
-								this.cmtRvwDate_two.getValue(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
+						this.searchObject.addFilter(
+								new Filter("CmtRvwDate", DateUtility.formatUtilDate(this.cmtRvwDate_two.getValue(),
+										PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
-					this.searchObject.addFilter(new Filter("CmtRvwDate", DateUtility.formatUtilDate(
-							this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat), searchOpId));
+					this.searchObject.addFilter(new Filter("CmtRvwDate",
+							DateUtility.formatUtilDate(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
+							searchOpId));
 				}
 			}
 		}
@@ -248,7 +254,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	private void onChangeDateOperator(Listbox sortOperator, Component component) {
 
 		final Listitem item = sortOperator.getSelectedItem();
-		final int searchOpId =	Integer.parseInt(((ValueLabel)  item.getAttribute("data")).getValue());
+		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
 
 		if (component instanceof Datebox) {
 			((Datebox) component).setText("");
@@ -260,7 +266,6 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 
 		}
 	}
-
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -279,12 +284,15 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		registerButton(button_CommitmentList_CommitmentSearch);
 
 		registerField("custCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_CustCIF, Operators.STRING);
-		registerField("CmtBranch", listheader_CmtBranch, SortOrder.NONE, cmtBranch, sortOperator_CmtBranch, Operators.STRING);
+		registerField("CmtBranch", listheader_CmtBranch, SortOrder.NONE, cmtBranch, sortOperator_CmtBranch,
+				Operators.STRING);
 
 		registerField("CmtCcy", listheader_CmtCcy, SortOrder.NONE, cmtCcy, sortOperator_CmtCcy, Operators.STRING);
-		registerField("CmtReference", listheader_CmtReference, SortOrder.ASC, cmtReference, sortOperator_CmtReference, Operators.STRING);
+		registerField("CmtReference", listheader_CmtReference, SortOrder.ASC, cmtReference, sortOperator_CmtReference,
+				Operators.STRING);
 
-		registerField("CustShrtName", listheader_CustName, SortOrder.NONE, custName, sortOperator_CustName, Operators.STRING);
+		registerField("CustShrtName", listheader_CustName, SortOrder.NONE, custName, sortOperator_CustName,
+				Operators.STRING);
 		registerField("Revolving", revolving, SortOrder.NONE, sortOperator_Revolving, Operators.BOOLEAN);
 
 		registerField("CmtExpDate", listheader_CmtExpDate);
@@ -296,8 +304,9 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		registerField("CmtAmount", listheader_CmtAmount);
 		registerField("CmtUtilizedAmount", listheader_CmtUtilized);
 
-		registerField("CmtAvailable", listheader_CmtAvailable, SortOrder.NONE, cmtAvailable, sortOperator_CmtAvailable, Operators.STRING);
-		registerField("NonPerforming", nonPerforming, SortOrder.NONE, sortOperator_NonPerforming, Operators.BOOLEAN); 
+		registerField("CmtAvailable", listheader_CmtAvailable, SortOrder.NONE, cmtAvailable, sortOperator_CmtAvailable,
+				Operators.STRING);
+		registerField("NonPerforming", nonPerforming, SortOrder.NONE, sortOperator_NonPerforming, Operators.BOOLEAN);
 
 		registerField("CcyEditField");
 		registerField("nextRoleCode");
@@ -355,12 +364,13 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 
 	/**
 	 * Method for Fetching Dynamic Workflow Details
+	 * 
 	 * @param commitmentType
 	 */
-	private void setWorkflowDetails(String commitmentType){
+	private void setWorkflowDetails(String commitmentType) {
 
 		// Setting Workflow Details
-		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(commitmentType, 
+		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(commitmentType,
 				FinanceConstants.FINSER_EVENT_ORG, CommitmentConstants.MODULE_NAME);
 
 		// Workflow Details Setup
@@ -369,7 +379,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		}
 		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
- 		} else {
+		} else {
 			setWorkFlowEnabled(true);
 
 			if (workFlowDetails.getFirstTaskOwner().contains(PennantConstants.DELIMITER_COMMA)) {
@@ -393,7 +403,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onCommitmentItemDoubleClicked(Event event) throws InterruptedException {
 		logger.debug("Entering");
@@ -417,7 +427,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 			}
 		}
 
-		Commitment aCommitment = commitmentService.getCommitmentByCmtRef(commitment.getCmtReference(), userRole, enqiryModule);
+		Commitment aCommitment = commitmentService.getCommitmentByCmtRef(commitment.getCmtReference(), userRole,
+				enqiryModule);
 
 		if (aCommitment == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -426,14 +437,15 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 
 		//Role Code State Checking
 		String nextroleCode = aCommitment.getNextRoleCode();
-		if(StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)){
+		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
 			valueParm[0] = aCommitment.getCmtReference();
-			errParm[0] = PennantJavaUtil.getLabel("label_CmtReference")+":"+valueParm[0];
+			errParm[0] = PennantJavaUtil.getLabel("label_CmtReference") + ":" + valueParm[0];
 
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(
-					PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
 
 			Events.sendEvent(Events.ON_CLICK, this.btnRefresh, null);
@@ -445,7 +457,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		aCommitment.setWorkflowId(getWorkFlowId());
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustID = '" + aCommitment.getCustID() + "' AND version = " + aCommitment.getVersion() + " ";
+		String whereCond = " AND CustID = '" + aCommitment.getCustID() + "' AND version = " + aCommitment.getVersion()
+				+ " ";
 
 		if (doCheckAuthority(aCommitment, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -483,23 +496,22 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
 	 * 
 	 * @param event
-	 * @throws InterruptedException 
-	 * @throws SuspendNotAllowedException 
+	 * @throws InterruptedException
+	 * @throws SuspendNotAllowedException
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws InterruptedException {
 		logger.debug("Entering  " + event.toString());
-
 
 		doSearchCustomerCIF();
 		//setSearchValue(sortOperator_CustCIF, this.custCIF, "Customer");
 
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * 
 	 * @throws InterruptedException
@@ -522,7 +534,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 
 		this.custCIF.clearErrorMessage();
@@ -563,7 +576,6 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
@@ -610,8 +622,8 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
-	public void setFinanceWorkFlowService(
-			FinanceWorkFlowService financeWorkFlowService) {
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 }

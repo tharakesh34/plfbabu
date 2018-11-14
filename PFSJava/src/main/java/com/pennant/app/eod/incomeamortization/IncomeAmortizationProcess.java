@@ -78,7 +78,8 @@ public class IncomeAmortizationProcess {
 		finEODEvent.setProjectedAccrualList(projAccrualList);
 
 		// Income / Expense amortization calculations and save
-		List<ProjectedAmortization> projIncomeAMZList = projectedAmortizationService.calculateMonthEndIncomeAmortizations(finEODEvent);
+		List<ProjectedAmortization> projIncomeAMZList = projectedAmortizationService
+				.calculateMonthEndIncomeAmortizations(finEODEvent);
 		projectedAmortizationDAO.saveBatchProjIncomeAMZ(projIncomeAMZList);
 
 		// set amount values and update

@@ -47,21 +47,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class EndOfDaySimulator {
 	private static final Logger logger = Logger.getLogger(EndOfDaySimulator.class);
-	
+
 	public static void main(String[] args) throws Exception {
 
 		try {
-			  
+
 			@SuppressWarnings({ "resource" })
-			ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"launch-context.xml","eod-batch-config-db.xml","eod-batch-config-beans.xml",
-					"eod-batch-config-service.xml","log4j.xml"});
-/*			 EodTrigger eodTrigger =(EodTrigger) context.getBean("eodTrigger");
-			 eodTrigger.run();*/
-			
-//			Eod eod = (Eod) context.getBean("eod");
-//			// Post EOD service
-//			eod.getPostEodService().doProcess();
-		
+			ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+					new String[] { "launch-context.xml", "eod-batch-config-db.xml", "eod-batch-config-beans.xml",
+							"eod-batch-config-service.xml", "log4j.xml" });
+			/*
+			 * EodTrigger eodTrigger =(EodTrigger) context.getBean("eodTrigger"); eodTrigger.run();
+			 */
+
+			//			Eod eod = (Eod) context.getBean("eod");
+			//			// Post EOD service
+			//			eod.getPostEodService().doProcess();
 
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);

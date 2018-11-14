@@ -56,7 +56,6 @@ import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -64,19 +63,19 @@ import com.pennant.util.PennantAppUtil;
 public class TreasuaryFinHeaderListModelItemRenderer implements ListitemRenderer<InvestmentFinHeader>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public TreasuaryFinHeaderListModelItemRenderer() {
-		
+
 	}
-	
-   @Override
+
+	@Override
 	public void render(Listitem item, InvestmentFinHeader data, int count) throws Exception {
 
 		final InvestmentFinHeader treasuaryFinance = (InvestmentFinHeader) data;
 		Listcell lc;
 		lc = new Listcell(treasuaryFinance.getInvestmentRef());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(treasuaryFinance.getTotPrincipalAmt(), 
+		lc = new Listcell(PennantAppUtil.amountFormate(treasuaryFinance.getTotPrincipalAmt(),
 				CurrencyUtil.getFormat(treasuaryFinance.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
@@ -93,6 +92,5 @@ public class TreasuaryFinHeaderListModelItemRenderer implements ListitemRenderer
 		item.setAttribute("data", data);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onTreasuaryFinanceItemDoubleClicked");
 	}
-
 
 }

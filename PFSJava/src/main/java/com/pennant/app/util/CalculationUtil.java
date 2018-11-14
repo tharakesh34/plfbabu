@@ -60,9 +60,9 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class CalculationUtil implements Serializable {
-	private static final long	serialVersionUID	= -7140560124513312794L;
+	private static final long serialVersionUID = -7140560124513312794L;
 
-	private static CurrencyDAO	currencyDAO;
+	private static CurrencyDAO currencyDAO;
 
 	public static BigDecimal getInterestDays(Date startDate, Date endDate, String strDaysBasis) {
 
@@ -136,8 +136,8 @@ public class CalculationUtil implements Serializable {
 			dayOfStart = 30;
 		}
 
-		return BigDecimal
-				.valueOf((360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
+		return BigDecimal.valueOf(
+				(360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
 	}
 
 	private static BigDecimal getIDB_30E360(Calendar startCalendar, Calendar endCalendar) {
@@ -157,8 +157,8 @@ public class CalculationUtil implements Serializable {
 			dayOfStart = 30;
 		}
 
-		return BigDecimal
-				.valueOf((360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
+		return BigDecimal.valueOf(
+				(360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
 	}
 
 	private static BigDecimal getIDB_30E360I(Calendar startCalendar, Calendar endCalendar) {
@@ -186,8 +186,8 @@ public class CalculationUtil implements Serializable {
 			dayOfStart = 30;
 		}
 
-		return BigDecimal
-				.valueOf((360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
+		return BigDecimal.valueOf(
+				(360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
 	}
 
 	private static BigDecimal getIDB_30EP360(Calendar startCalendar, Calendar endCalendar) {
@@ -208,8 +208,8 @@ public class CalculationUtil implements Serializable {
 			dayOfEnd = 1;
 		}
 
-		return BigDecimal
-				.valueOf((360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
+		return BigDecimal.valueOf(
+				(360 * (yearOfEnd - yearOfStart) + 30 * (monthOfEnd - monthOfStart) + (dayOfEnd - dayOfStart)) / 360d);
 	}
 
 	private static BigDecimal getIDB_ACT_ISDA(Calendar startCalendar, Calendar endCalendar) {
@@ -284,7 +284,7 @@ public class CalculationUtil implements Serializable {
 				.divide(BigDecimal.valueOf(100));
 		return interest;
 	}
-	
+
 	public static BigDecimal calInterestWithDaysFactor(BigDecimal daysFactor, BigDecimal principalAmount,
 			BigDecimal rate) {
 		/*
@@ -333,8 +333,8 @@ public class CalculationUtil implements Serializable {
 			sellRate = toCurrency.getCcySpotRate();
 		}
 
-		actualAmount = (actualAmount.multiply(sellRate).multiply(toCurrency.getCcyMinorCcyUnits())).divide(
-				buyRate.multiply(fromCurrency.getCcyMinorCcyUnits()), 0, RoundingMode.HALF_DOWN);
+		actualAmount = (actualAmount.multiply(sellRate).multiply(toCurrency.getCcyMinorCcyUnits()))
+				.divide(buyRate.multiply(fromCurrency.getCcyMinorCcyUnits()), 0, RoundingMode.HALF_DOWN);
 		actualAmount = actualAmount.setScale(0, BigDecimal.ROUND_HALF_DOWN);
 
 		return actualAmount;
@@ -467,11 +467,16 @@ public class CalculationUtil implements Serializable {
 	/**
 	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt )]
 	 * 
-	 * @param (Date) startDate
-	 * @param (Date) maturityDate
-	 * @param (String) profitDaysBasis
-	 * @param (BigDecimal) principalAmt
-	 * @param (BigDecimal) maturityAmount
+	 * @param (Date)
+	 *            startDate
+	 * @param (Date)
+	 *            maturityDate
+	 * @param (String)
+	 *            profitDaysBasis
+	 * @param (BigDecimal)
+	 *            principalAmt
+	 * @param (BigDecimal)
+	 *            maturityAmount
 	 * @return(BigDecimal) avgProfitRate
 	 */
 	public static BigDecimal calcAvgProfitRate(Date startDate, Date maturityDate, String profitDaysBasis,
@@ -560,20 +565,20 @@ public class CalculationUtil implements Serializable {
 	 *            Total Profit Amount
 	 * @return The anualizedPercRate value for the above parameters
 	 */
-	public static BigDecimal calulateAunalizedPercRate(BigDecimal finAmount, BigDecimal downPayment,
-			String repayPftFrq, int numberOfTerms, BigDecimal totalProfit) {
+	public static BigDecimal calulateAunalizedPercRate(BigDecimal finAmount, BigDecimal downPayment, String repayPftFrq,
+			int numberOfTerms, BigDecimal totalProfit) {
 
 		BigDecimal anualizedPercRate = BigDecimal.ZERO;
 		if (finAmount.compareTo(BigDecimal.ZERO) == 0) {
 			return anualizedPercRate;
 		}
-		anualizedPercRate = new BigDecimal(getTermsPerYear(repayPftFrq)).multiply(
-				(new BigDecimal("95").multiply(new BigDecimal(numberOfTerms)).add(new BigDecimal("9"))).multiply(
-						totalProfit).multiply(new BigDecimal(100))).divide(
-				(new BigDecimal("12").multiply(new BigDecimal(numberOfTerms)).multiply(new BigDecimal(numberOfTerms)
-						.add(new BigDecimal("1")))).multiply(new BigDecimal("4").multiply(
-						finAmount.subtract(downPayment) // downPayment is subtracted (### 28-11-2016 - PSD Ticket ID 124367)
-						).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
+		anualizedPercRate = new BigDecimal(getTermsPerYear(repayPftFrq))
+				.multiply((new BigDecimal("95").multiply(new BigDecimal(numberOfTerms)).add(new BigDecimal("9")))
+						.multiply(totalProfit).multiply(new BigDecimal(100)))
+				.divide((new BigDecimal("12").multiply(new BigDecimal(numberOfTerms))
+						.multiply(new BigDecimal(numberOfTerms).add(new BigDecimal("1"))))
+								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is subtracted (### 28-11-2016 - PSD Ticket ID 124367)
+		).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
 		return anualizedPercRate;
 	}
 
@@ -629,7 +634,7 @@ public class CalculationUtil implements Serializable {
 			amount = amount.setScale(0, RoundingMode.HALF_DOWN);
 			return amount;
 		}
-		
+
 		BigDecimal bdRoundTarget = BigDecimal.valueOf(roundingTarget);
 		//BigDecimal number2 = BigDecimal.valueOf(2);
 		//amount = amount.add(bdRoundTarget.divide(number2)).divide(bdRoundTarget);

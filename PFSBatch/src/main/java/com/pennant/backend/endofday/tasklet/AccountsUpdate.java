@@ -12,9 +12,9 @@ import com.pennant.app.core.CustomerAccountService;
 import com.pennant.app.util.DateUtility;
 
 public class AccountsUpdate implements Tasklet {
-	private Logger					logger	= Logger.getLogger(AccountsUpdate.class);
+	private Logger logger = Logger.getLogger(AccountsUpdate.class);
 
-	private CustomerAccountService	customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -29,9 +29,8 @@ public class AccountsUpdate implements Tasklet {
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-
 	public void setCustomerAccountService(CustomerAccountService customerAccountService) {
 		this.customerAccountService = customerAccountService;
 	}
-	
+
 }

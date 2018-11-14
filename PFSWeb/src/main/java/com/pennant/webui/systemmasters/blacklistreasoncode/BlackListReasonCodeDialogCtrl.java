@@ -71,8 +71,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeDialog.zul
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeDialog.zul
  * file.
  */
 public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCode> {
@@ -80,24 +79,22 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	private static final Logger logger = Logger.getLogger(BlackListReasonCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BlackListReasonCodeDialog; // autoWired
 
-	protected Textbox 		bLRsnCode; 					// autoWired
-	protected Textbox 		bLRsnDesc; 					// autoWired
-	protected Checkbox 		bLIsActive; 				// autoWired
-
+	protected Textbox bLRsnCode; // autoWired
+	protected Textbox bLRsnDesc; // autoWired
+	protected Checkbox bLIsActive; // autoWired
 
 	// not autoWired variables
-	private BlackListReasonCode blackListReasonCode; 			// overHanded per parameter
+	private BlackListReasonCode blackListReasonCode; // overHanded per parameter
 	private transient BlackListReasonCodeListCtrl blackListReasonCodeListCtrl; // overHanded
 	// per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient BlackListReasonCodeService blackListReasonCodeService;
 
@@ -116,9 +113,8 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected BlackListReasonCode
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected BlackListReasonCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -134,8 +130,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 			doCheckRights();
 
 			if (arguments.containsKey("blackListReasonCode")) {
-				this.blackListReasonCode = (BlackListReasonCode) arguments
-						.get("blackListReasonCode");
+				this.blackListReasonCode = (BlackListReasonCode) arguments.get("blackListReasonCode");
 				BlackListReasonCode befImage = new BlackListReasonCode();
 				BeanUtils.copyProperties(this.blackListReasonCode, befImage);
 				this.blackListReasonCode.setBefImage(befImage);
@@ -145,14 +140,12 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 				setBlackListReasonCode(null);
 			}
 
-			doLoadWorkFlow(this.blackListReasonCode.isWorkflow(),
-					this.blackListReasonCode.getWorkflowId(),
+			doLoadWorkFlow(this.blackListReasonCode.isWorkflow(), this.blackListReasonCode.getWorkflowId(),
 					this.blackListReasonCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"BlackListReasonCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "BlackListReasonCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -162,8 +155,8 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 			// or
 			// delete blackListReasonCode here.
 			if (arguments.containsKey("blackListReasonCodeListCtrl")) {
-				setBlackListReasonCodeListCtrl((BlackListReasonCodeListCtrl) arguments
-						.get("blackListReasonCodeListCtrl"));
+				setBlackListReasonCodeListCtrl(
+						(BlackListReasonCodeListCtrl) arguments.get("blackListReasonCodeListCtrl"));
 			} else {
 				setBlackListReasonCodeListCtrl(null);
 			}
@@ -200,8 +193,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -310,8 +302,10 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		this.bLRsnDesc.setValue(aBlackListReasonCode.getBLRsnDesc());
 		this.bLIsActive.setChecked(aBlackListReasonCode.isBLIsActive());
 		this.recordStatus.setValue(aBlackListReasonCode.getRecordStatus());
-		
-		if(aBlackListReasonCode.isNew() || (aBlackListReasonCode.getRecordType() != null ? aBlackListReasonCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aBlackListReasonCode.isNew()
+				|| (aBlackListReasonCode.getRecordType() != null ? aBlackListReasonCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.bLIsActive.setChecked(true);
 			this.bLIsActive.setDisabled(true);
 		}
@@ -363,8 +357,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBlackListReasonCode
 	 * @throws Exception
@@ -400,7 +393,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_BlackListReasonCodeDialog.onClose();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 		logger.debug("Leaving");
@@ -414,13 +407,16 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 
 		setValidationOn(true);
 
-		if (!this.bLRsnCode.isReadonly()){
-			this.bLRsnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.bLRsnCode.isReadonly()) {
+			this.bLRsnCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.bLRsnDesc.isReadonly()){
-			this.bLRsnDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.bLRsnDesc.isReadonly()) {
+			this.bLRsnDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -471,13 +467,13 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		logger.debug("Entering");
 
 		final BlackListReasonCode aBlackListReasonCode = new BlackListReasonCode();
-		BeanUtils.copyProperties(getBlackListReasonCode(),	aBlackListReasonCode);
+		BeanUtils.copyProperties(getBlackListReasonCode(), aBlackListReasonCode);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnCode.value")+ " : "+aBlackListReasonCode.getBLRsnCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BlackListReasonCodeDialog_BLRsnCode.value") + " : "
+				+ aBlackListReasonCode.getBLRsnCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aBlackListReasonCode.getRecordType())) {
 				aBlackListReasonCode.setVersion(aBlackListReasonCode.getVersion() + 1);
@@ -642,7 +638,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BlackListReasonCode aBlackListReasonCode,	String tranType) {
+	private boolean doProcess(BlackListReasonCode aBlackListReasonCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -769,8 +765,8 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel(
-						"InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BlackListReasonCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -815,10 +811,10 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(BlackListReasonCode aBlackListReasonCode, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aBlackListReasonCode.getBefImage(), aBlackListReasonCode);
-		return new AuditHeader(String.valueOf(aBlackListReasonCode.getId()),
-				null, null, null, auditDetail, aBlackListReasonCode.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBlackListReasonCode.getBefImage(),
+				aBlackListReasonCode);
+		return new AuditHeader(String.valueOf(aBlackListReasonCode.getId()), null, null, null, auditDetail,
+				aBlackListReasonCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -859,7 +855,6 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		getBlackListReasonCodeListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.blackListReasonCode.getBLRsnCode());
@@ -872,6 +867,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -879,6 +875,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	public BlackListReasonCode getBlackListReasonCode() {
 		return this.blackListReasonCode;
 	}
+
 	public void setBlackListReasonCode(BlackListReasonCode blackListReasonCode) {
 		this.blackListReasonCode = blackListReasonCode;
 	}
@@ -886,6 +883,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	public void setBlackListReasonCodeService(BlackListReasonCodeService blackListReasonCodeService) {
 		this.blackListReasonCodeService = blackListReasonCodeService;
 	}
+
 	public BlackListReasonCodeService getBlackListReasonCodeService() {
 		return this.blackListReasonCodeService;
 	}
@@ -893,6 +891,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	public void setBlackListReasonCodeListCtrl(BlackListReasonCodeListCtrl blackListReasonCodeListCtrl) {
 		this.blackListReasonCodeListCtrl = blackListReasonCodeListCtrl;
 	}
+
 	public BlackListReasonCodeListCtrl getBlackListReasonCodeListCtrl() {
 		return this.blackListReasonCodeListCtrl;
 	}

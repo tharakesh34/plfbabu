@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,9 +66,9 @@ public class VASProductCategoryListModelItemRenderer implements ListitemRenderer
 	public void render(Listitem item, VASProductCategory vASProductCategory, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(vASProductCategory.getProductCtg());
+		lc = new Listcell(vASProductCategory.getProductCtg());
 		lc.setParent(item);
-	  	lc = new Listcell(vASProductCategory.getProductCtgDesc());
+		lc = new Listcell(vASProductCategory.getProductCtgDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox active = new Checkbox();
@@ -77,11 +76,11 @@ public class VASProductCategoryListModelItemRenderer implements ListitemRenderer
 		active.setChecked(vASProductCategory.isActive());
 		lc.appendChild(active);
 		lc.setParent(item);
-	  	lc = new Listcell(vASProductCategory.getRecordStatus());
+		lc = new Listcell(vASProductCategory.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(vASProductCategory.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", vASProductCategory.getId());
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onVASProductCategoryItemDoubleClicked");
 	}

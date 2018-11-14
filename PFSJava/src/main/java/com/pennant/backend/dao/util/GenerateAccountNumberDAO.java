@@ -45,14 +45,15 @@ package com.pennant.backend.dao.util;
 
 import com.pennant.app.model.SeqAccountNumber;
 
-
 /**
  * DAO methods declaration for the <b>SeqAccountNumber model</b> class.<br>
  * 
  */
 public interface GenerateAccountNumberDAO {
 
-	SeqAccountNumber getSeqAccountNumber(SeqAccountNumber seqAccountNumber,boolean isReadOnly);
+	SeqAccountNumber getSeqAccountNumber(SeqAccountNumber seqAccountNumber, boolean isReadOnly);
+
 	void update(SeqAccountNumber seqAccountNumber);
+
 	void save(SeqAccountNumber seqAccountNumber);
 }

@@ -87,8 +87,10 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into FinODAmzTaxDetail");
-		insertSql.append(" (TaxSeqId , FinReference, ValueDate , TaxFor, Amount, TaxType , CGST , SGST , UGST , IGST , TotalGST)");
-		insertSql.append(" Values( :TaxSeqId , :FinReference, :ValueDate , :TaxFor, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :TotalGST)");
+		insertSql.append(
+				" (TaxSeqId , FinReference, ValueDate , TaxFor, Amount, TaxType , CGST , SGST , UGST , IGST , TotalGST)");
+		insertSql.append(
+				" Values( :TaxSeqId , :FinReference, :ValueDate , :TaxFor, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :TotalGST)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);

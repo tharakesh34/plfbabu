@@ -73,10 +73,11 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	public DedupFieldsServiceImpl() {
 		super();
 	}
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -84,10 +85,10 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	public DedupFieldsDAO getDedupFieldsDAO() {
 		return dedupFieldsDAO;
 	}
+
 	public void setDedupFieldsDAO(DedupFieldsDAO dedupFieldsDAO) {
 		this.dedupFieldsDAO = dedupFieldsDAO;
 	}
-
 
 	@Override
 	public DedupFields getDedupFields() {
@@ -99,16 +100,12 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 		return getDedupFieldsDAO().getNewDedupFields();
 	}
 
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * DedupFields/DedupFields_Temp by using DedupFieldsDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using DedupFieldsDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtDedupFields by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table DedupFields/DedupFields_Temp by
+	 * using DedupFieldsDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using DedupFieldsDAO's update method 3) Audit the record in to AuditHeader and AdtDedupFields by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -117,24 +114,24 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		if (!nextProcess(auditHeader)){
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		if (!nextProcess(auditHeader)) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		DedupFields dedupFields = (DedupFields) auditHeader.getAuditDetail().getModelData();
 
 		if (dedupFields.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (dedupFields.isNew()) {
-			getDedupFieldsDAO().save(dedupFields,tableType);
-		}else{
-			getDedupFieldsDAO().update(dedupFields,tableType);
+			getDedupFieldsDAO().save(dedupFields, tableType);
+		} else {
+			getDedupFieldsDAO().update(dedupFields, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -144,12 +141,10 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table DedupFields by using DedupFieldsDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtDedupFields by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * DedupFields by using DedupFieldsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtDedupFields by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -159,14 +154,14 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"delete");
-		if (!nextProcess(auditHeader)){
+		auditHeader = businessValidation(auditHeader, "delete");
+		if (!nextProcess(auditHeader)) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		DedupFields dedupFields = (DedupFields) auditHeader.getAuditDetail().getModelData();
-		getDedupFieldsDAO().delete(dedupFields,"");
+		getDedupFieldsDAO().delete(dedupFields, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -174,8 +169,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	}
 
 	/**
-	 * getDedupFieldsById fetch the details by using DedupFieldsDAO's
-	 * getDedupFieldsById method.
+	 * getDedupFieldsById fetch the details by using DedupFieldsDAO's getDedupFieldsById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -185,36 +179,31 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 */
 	@Override
 	public DedupFields getDedupFieldsById(String id) {
-		return getDedupFieldsDAO().getDedupFieldsByID(id,"_View");
+		return getDedupFieldsDAO().getDedupFieldsByID(id, "_View");
 	}
 
 	/**
-	 * getApprovedDedupFieldsById fetch the details by using DedupFieldsDAO's
-	 * getDedupFieldsById method . with parameter id and type as blank. it
-	 * fetches the approved records from the DedupFields.
+	 * getApprovedDedupFieldsById fetch the details by using DedupFieldsDAO's getDedupFieldsById method . with parameter
+	 * id and type as blank. it fetches the approved records from the DedupFields.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return DedupFields
 	 */
 	public DedupFields getApprovedDedupFieldsById(String id) {
-		return getDedupFieldsDAO().getDedupFieldsByID(id,"");
+		return getDedupFieldsDAO().getDedupFieldsByID(id, "");
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDedupFieldsDAO().delete with parameters dedupFields,"" b) NEW
-	 * Add new record in to main table by using getDedupFieldsDAO().save with
-	 * parameters dedupFields,"" c) EDIT Update record in the main table by
-	 * using getDedupFieldsDAO().update with parameters dedupFields,"" 3) Delete
-	 * the record from the workFlow table by using getDedupFieldsDAO().delete
-	 * with parameters dedupFields,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtDedupFields by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtDedupFields by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDedupFieldsDAO().delete with
+	 * parameters dedupFields,"" b) NEW Add new record in to main table by using getDedupFieldsDAO().save with
+	 * parameters dedupFields,"" c) EDIT Update record in the main table by using getDedupFieldsDAO().update with
+	 * parameters dedupFields,"" 3) Delete the record from the workFlow table by using getDedupFieldsDAO().delete with
+	 * parameters dedupFields,"_Temp" 4) Audit the record in to AuditHeader and AdtDedupFields by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDedupFields by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -223,9 +212,9 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		if (!nextProcess(auditHeader)){
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!nextProcess(auditHeader)) {
 			return auditHeader;
 		}
 
@@ -233,9 +222,9 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 		BeanUtils.copyProperties((DedupFields) auditHeader.getAuditDetail().getModelData(), dedupFields);
 
 		if (dedupFields.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getDedupFieldsDAO().delete(dedupFields,"");
+			getDedupFieldsDAO().delete(dedupFields, "");
 
 		} else {
 			dedupFields.setRoleCode("");
@@ -245,17 +234,17 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			dedupFields.setWorkflowId(0);
 
 			if (dedupFields.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType=PennantConstants.TRAN_ADD;
+				tranType = PennantConstants.TRAN_ADD;
 				dedupFields.setRecordType("");
-				getDedupFieldsDAO().save(dedupFields,"");
+				getDedupFieldsDAO().save(dedupFields, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				dedupFields.setRecordType("");
-				getDedupFieldsDAO().update(dedupFields,"");
+				getDedupFieldsDAO().update(dedupFields, "");
 			}
 		}
 
-		getDedupFieldsDAO().delete(dedupFields,"_Temp");
+		getDedupFieldsDAO().delete(dedupFields, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -264,29 +253,26 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 		auditHeader.getAuditDetail().setModelData(dedupFields);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getDedupFieldsDAO().delete with parameters
-	 * dedupFields,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtDedupFields by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getDedupFieldsDAO().delete with parameters dedupFields,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtDedupFields by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
-		if (!nextProcess(auditHeader)){
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!nextProcess(auditHeader)) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
@@ -294,7 +280,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 		DedupFields dedupFields = (DedupFields) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getDedupFieldsDAO().delete(dedupFields,"_Temp");
+		getDedupFieldsDAO().delete(dedupFields, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -303,18 +289,16 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getDedupFieldsDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getDedupFieldsDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
@@ -324,28 +308,25 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getDedupFieldsDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getDedupFieldsDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
-		DedupFields dedupFields= (DedupFields) auditDetail.getModelData();
+		DedupFields dedupFields = (DedupFields) auditDetail.getModelData();
 
-		DedupFields tempDedupFields= null;
+		DedupFields tempDedupFields = null;
 		if (dedupFields.isWorkflow()) {
-			tempDedupFields = getDedupFieldsDAO().getDedupFieldsByID(
-					dedupFields.getId(), "_Temp");
+			tempDedupFields = getDedupFieldsDAO().getDedupFieldsByID(dedupFields.getId(), "_Temp");
 		}
-		DedupFields befDedupFields = getDedupFieldsDAO().getDedupFieldsByID(
-				dedupFields.getId(), "");
+		DedupFields befDedupFields = getDedupFieldsDAO().getDedupFieldsByID(dedupFields.getId(), "");
 
 		DedupFields oldDedupFields = dedupFields.getBefImage();
 
@@ -357,25 +338,24 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 
 			if (!dedupFields.isWorkflow()) {// With out Work flow only new records
 				if (befDedupFields != null) { // Record Already Exists in the
-												// table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
-					
+													// table then error
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+
 				}
 			} else { // with work flow
-				if (dedupFields.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+				if (dedupFields.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befDedupFields != null) { // if records already exists
-													// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+														// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDedupFields == null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 				if (tempDedupFields != null) { // if records already exists in
-												// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+													// the Work flow table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		} else {
@@ -384,18 +364,18 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			if (!dedupFields.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befDedupFields == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 
 				} else {
 					if (oldDedupFields != null
-							&& !oldDedupFields.getLastMntOn().equals(
-									befDedupFields.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldDedupFields.getLastMntOn().equals(befDedupFields.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 
 						}
 					}
@@ -403,54 +383,50 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			} else {
 
 				if (tempDedupFields == null) { // if records not exists in the
-												// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+													// Work flow table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 
 				}
 
 				if (tempDedupFields != null && oldDedupFields != null
-						&& !oldDedupFields.getLastMntOn().equals(
-								tempDedupFields.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						&& !oldDedupFields.getLastMntOn().equals(tempDedupFields.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 
 				}
 			}
 		}
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !dedupFields.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !dedupFields.isWorkflow()) {
 			dedupFields.setBefImage(befDedupFields);
 		}
 
 		return auditDetail;
 	}
 
-
 	/**
-	 * nextProcess method do the following steps. if errorMessage List or
-	 * OverideMessage size is more than 0 then return False else return true.
+	 * nextProcess method do the following steps. if errorMessage List or OverideMessage size is more than 0 then return
+	 * False else return true.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return boolean
 	 */
 
-	private boolean nextProcess(AuditHeader auditHeader){
+	private boolean nextProcess(AuditHeader auditHeader) {
 
-		if (auditHeader.getErrorMessage()!=null  && auditHeader.getErrorMessage().size()>0){
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return false;
 		}
-		if (auditHeader.getOverideMessage()!=null && auditHeader.getOverideMessage().size()>0 && !auditHeader.isOveride()){
+		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0
+				&& !auditHeader.isOveride()) {
 			return false;
 		}
-		return true; 
+		return true;
 	}
 
-	
 	@Override
 	public List<BuilderTable> getFieldList(String queryModule) {
 		return dedupFieldsDAO.getFieldList(queryModule);
 	}
-
 
 }

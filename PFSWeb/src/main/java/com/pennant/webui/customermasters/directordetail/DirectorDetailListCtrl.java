@@ -63,46 +63,45 @@ import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.directordetail.model.DirectorDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailList.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailList.zul file.
  */
 public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 	private static final long serialVersionUID = -5634641691791820344L;
 	private static final Logger logger = Logger.getLogger(DirectorDetailListCtrl.class);
 
-	protected Window window_DirectorDetailList; 
-	protected Borderlayout borderLayout_DirectorDetailList; 
-	protected Paging pagingDirectorDetailList; 
-	protected Listbox listBoxDirectorDetail; 
+	protected Window window_DirectorDetailList;
+	protected Borderlayout borderLayout_DirectorDetailList;
+	protected Paging pagingDirectorDetailList;
+	protected Listbox listBoxDirectorDetail;
 
-	protected Listheader listheader_CustCIF; 
-	protected Listheader listheader_FirstName; 
-	protected Listheader listheader_ShortName; 
-	protected Listheader listheader_CustGenderCode; 
-	protected Listheader listheader_CustSalutationCode; 
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_FirstName;
+	protected Listheader listheader_ShortName;
+	protected Listheader listheader_CustGenderCode;
+	protected Listheader listheader_CustSalutationCode;
 
-	protected Textbox custCIF; 
-	protected Listbox sortOperator_custCIF; 
-	protected Textbox firstName; 
-	protected Listbox sortOperator_firstName; 
-	protected Textbox shortName; 
-	protected Listbox sortOperator_shortName; 
-	protected Textbox custGenderCode; 
-	protected Listbox sortOperator_custGenderCode; 
-	protected Textbox custSalutationCode; 
-	protected Listbox sortOperator_custSalutationCode; 
+	protected Textbox custCIF;
+	protected Listbox sortOperator_custCIF;
+	protected Textbox firstName;
+	protected Listbox sortOperator_firstName;
+	protected Textbox shortName;
+	protected Listbox sortOperator_shortName;
+	protected Textbox custGenderCode;
+	protected Listbox sortOperator_custGenderCode;
+	protected Textbox custSalutationCode;
+	protected Listbox sortOperator_custSalutationCode;
 
-	protected Label label_DirectorDetailSearch_RecordStatus; 
-	protected Label label_DirectorDetailSearch_RecordType; 
-	protected Label label_DirectorDetailSearchResult; 
+	protected Label label_DirectorDetailSearch_RecordStatus;
+	protected Label label_DirectorDetailSearch_RecordType;
+	protected Label label_DirectorDetailSearchResult;
 
-	protected Button button_DirectorDetailList_NewDirectorDetail; 
-	protected Button button_DirectorDetailList_DirectorDetailSearchDialog; 
+	protected Button button_DirectorDetailList_NewDirectorDetail;
+	protected Button button_DirectorDetailList_DirectorDetailSearchDialog;
 
 	private transient DirectorDetailService directorDetailService;
 
@@ -135,7 +134,8 @@ public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 				PennantAppUtil.getCustomerCountryTypesList()));
 
 		// Register buttons and fields.
-		registerButton(button_DirectorDetailList_NewDirectorDetail, "button_DirectorDetailList_NewDirectorDetail", true);
+		registerButton(button_DirectorDetailList_NewDirectorDetail, "button_DirectorDetailList_NewDirectorDetail",
+				true);
 		registerButton(button_DirectorDetailList_DirectorDetailSearchDialog);
 
 		registerField("directorId");
@@ -187,7 +187,7 @@ public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_DirectorDetailList_NewDirectorDetail(Event event){
+	public void onClick$button_DirectorDetailList_NewDirectorDetail(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new DirectorDetail object, We GET it from the backEnd.
 		final DirectorDetail directorDetail = new DirectorDetail();

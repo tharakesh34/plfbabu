@@ -20,35 +20,35 @@ import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.service.applicationmaster.AccountTypeGroupService;
 import com.pennant.webui.applicationmaster.accounttypegroup.model.AccountTypeGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AccountTypeGroupListCtrl extends GFCBaseListCtrl<AccountTypeGroup> {
-	private static final long					serialVersionUID	= 5327118548986437717L;
-	private static final Logger					logger				= Logger.getLogger(AccountTypeGroupListCtrl.class);
+	private static final long serialVersionUID = 5327118548986437717L;
+	private static final Logger logger = Logger.getLogger(AccountTypeGroupListCtrl.class);
 
-	protected Window							window_AccountTypeGroupList;
-	protected Borderlayout						borderLayout_AccountTypeGroupList;
-	protected Listbox							listBoxAccountTypeGroup;
-	protected Paging							pagingAccountTypeGroupList;
+	protected Window window_AccountTypeGroupList;
+	protected Borderlayout borderLayout_AccountTypeGroupList;
+	protected Listbox listBoxAccountTypeGroup;
+	protected Paging pagingAccountTypeGroupList;
 
-	protected Listheader						listheader_AcctTypeLevel;
-	protected Listheader						listheader_GroupCode;
-	protected Listheader						listheader_ParentGroup;
+	protected Listheader listheader_AcctTypeLevel;
+	protected Listheader listheader_GroupCode;
+	protected Listheader listheader_ParentGroup;
 
-	protected Button							button_AccountTypeGroupList_NewAccountTypeGroup;
-	protected Button							button_AccountTypeGroupList_AccountTypeGroupSearchDialog;
+	protected Button button_AccountTypeGroupList_NewAccountTypeGroup;
+	protected Button button_AccountTypeGroupList_AccountTypeGroupSearchDialog;
 
-	protected Intbox							acctTypeLevel;
-	protected Textbox							groupCode;
-	protected Textbox							parentGroup;
+	protected Intbox acctTypeLevel;
+	protected Textbox groupCode;
+	protected Textbox parentGroup;
 
-	protected Listbox							sortOperator_AcctTypeLevel;
-	protected Listbox							sortOperator_GroupCode;
-	protected Listbox							sortOperator_ParentGroup;
+	protected Listbox sortOperator_AcctTypeLevel;
+	protected Listbox sortOperator_GroupCode;
+	protected Listbox sortOperator_ParentGroup;
 
-	private transient AccountTypeGroupService	accountTypeGroupService;
+	private transient AccountTypeGroupService accountTypeGroupService;
 
 	/**
 	 * The default constructor.
@@ -81,11 +81,12 @@ public class AccountTypeGroupListCtrl extends GFCBaseListCtrl<AccountTypeGroup> 
 		registerButton(button_AccountTypeGroupList_NewAccountTypeGroup,
 				"button_AccountTypeGroupList_NewAccountTypeGroup", true);
 		registerButton(button_AccountTypeGroupList_AccountTypeGroupSearchDialog);
-		
+
 		registerField("groupId");
 		registerField("acctTypeLevel", listheader_AcctTypeLevel, SortOrder.ASC, acctTypeLevel,
 				sortOperator_AcctTypeLevel, Operators.NUMERIC);
-		registerField("groupCode", listheader_GroupCode, SortOrder.NONE, groupCode, sortOperator_GroupCode, Operators.STRING);
+		registerField("groupCode", listheader_GroupCode, SortOrder.NONE, groupCode, sortOperator_GroupCode,
+				Operators.STRING);
 		registerField("parentGroup", listheader_ParentGroup, SortOrder.NONE, parentGroup, sortOperator_ParentGroup,
 				Operators.STRING);
 

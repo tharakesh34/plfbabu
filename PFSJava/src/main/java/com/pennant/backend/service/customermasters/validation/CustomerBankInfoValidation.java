@@ -29,38 +29,39 @@ public class CustomerBankInfoValidation {
 		return customerBankInfoDAO;
 	}
 
-	public AuditHeader bankInfoValidation(AuditHeader auditHeader, String method){
+	public AuditHeader bankInfoValidation(AuditHeader auditHeader, String method) {
 
-		AuditDetail auditDetail =   validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
 
-	public List<AuditDetail> bankInfoListValidation(List<AuditDetail> auditDetails, String method, String  usrLanguage){
+	public List<AuditDetail> bankInfoListValidation(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
-		if(auditDetails!=null && auditDetails.size()>0){
+		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < auditDetails.size(); i++) {
-				AuditDetail auditDetail =   validate(auditDetails.get(i), method, usrLanguage);
-				details.add(auditDetail); 		
+				AuditDetail auditDetail = validate(auditDetails.get(i), method, usrLanguage);
+				details.add(auditDetail);
 			}
 			return details;
 		}
 		return new ArrayList<AuditDetail>();
 	}
 
-	private AuditDetail validate(AuditDetail auditDetail, String method,String  usrLanguage){
+	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
 
-		CustomerBankInfo customerBankInfo= (CustomerBankInfo) auditDetail.getModelData();
-		CustomerBankInfo tempCustomerBankInfo= null;
-		if (customerBankInfo.isWorkflow()){
-			tempCustomerBankInfo = getCustomerBankInfoDAO().getCustomerBankInfoByCustId(customerBankInfo,"_Temp");
+		CustomerBankInfo customerBankInfo = (CustomerBankInfo) auditDetail.getModelData();
+		CustomerBankInfo tempCustomerBankInfo = null;
+		if (customerBankInfo.isWorkflow()) {
+			tempCustomerBankInfo = getCustomerBankInfoDAO().getCustomerBankInfoByCustId(customerBankInfo, "_Temp");
 		}
 
-		CustomerBankInfo befCustomerBankInfo= getCustomerBankInfoDAO().getCustomerBankInfoByCustId(customerBankInfo,"");
-		
-		CustomerBankInfo oldCustomerBankInfo= customerBankInfo.getBefImage();
+		CustomerBankInfo befCustomerBankInfo = getCustomerBankInfoDAO().getCustomerBankInfoByCustId(customerBankInfo,
+				"");
+
+		CustomerBankInfo oldCustomerBankInfo = customerBankInfo.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -68,70 +69,73 @@ public class CustomerBankInfoValidation {
 		valueParm[0] = StringUtils.trimToEmpty(customerBankInfo.getLovDescCustCIF());
 		valueParm[1] = customerBankInfo.getBankName();
 
-        errParm[0] = PennantJavaUtil.getLabel("CustomerBankInfo") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
-        errParm[1] = PennantJavaUtil.getLabel("label_CustBank") + "-" + valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("CustomerBankInfo") + " , " + PennantJavaUtil.getLabel("label_CustCIF")
+				+ ":" + valueParm[0] + " and ";
+		errParm[1] = PennantJavaUtil.getLabel("label_CustBank") + "-" + valueParm[1];
 
-		if (customerBankInfo.isNew()){ // for New record or new record into work flow
+		if (customerBankInfo.isNew()) { // for New record or new record into work flow
 
-			if (!customerBankInfo.isWorkflow()){// With out Work flow only new records  
-				if (befCustomerBankInfo !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
-							errParm,null));
-				}	
-			}else{ // with work flow
+			if (!customerBankInfo.isWorkflow()) {// With out Work flow only new records  
+				if (befCustomerBankInfo != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+				}
+			} else { // with work flow
 
-				if (customerBankInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befCustomerBankInfo !=null || tempCustomerBankInfo!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+				if (customerBankInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befCustomerBankInfo != null || tempCustomerBankInfo != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befCustomerBankInfo ==null || tempCustomerBankInfo!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+				} else { // if records not exists in the Main flow table
+					if (befCustomerBankInfo == null || tempCustomerBankInfo != null) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!customerBankInfo.isWorkflow()){	// With out Work flow for update and delete
+			if (!customerBankInfo.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befCustomerBankInfo ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
+				if (befCustomerBankInfo == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
+				} else {
 
-					if (oldCustomerBankInfo!=null && !oldCustomerBankInfo.getLastMntOn().equals(
-							befCustomerBankInfo.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",
-									errParm,null));	
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",
-									errParm,null));
+					if (oldCustomerBankInfo != null
+							&& !oldCustomerBankInfo.getLastMntOn().equals(befCustomerBankInfo.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempCustomerBankInfo==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+				if (tempCustomerBankInfo == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomerBankInfo!=null  && oldCustomerBankInfo!=null && !oldCustomerBankInfo.getLastMntOn().equals(tempCustomerBankInfo.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+				if (tempCustomerBankInfo != null && oldCustomerBankInfo != null
+						&& !oldCustomerBankInfo.getLastMntOn().equals(tempCustomerBankInfo.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}
 		}
-		int count = getCustomerBankInfoDAO().getCustomerBankInfoByCustBankName(customerBankInfo.getCustID(),customerBankInfo.getBankName(),customerBankInfo.getAccountNumber(),customerBankInfo.getBankId(), "_View");
-		if(count != 0 ){
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+		int count = getCustomerBankInfoDAO().getCustomerBankInfoByCustBankName(customerBankInfo.getCustID(),
+				customerBankInfo.getBankName(), customerBankInfo.getAccountNumber(), customerBankInfo.getBankId(),
+				"_View");
+		if (count != 0) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 		}
 		auditDetail.setErrorDetail(screenValidations(customerBankInfo));
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerBankInfo.isWorkflow()){
-			customerBankInfo.setBefImage(befCustomerBankInfo);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerBankInfo.isWorkflow()) {
+			customerBankInfo.setBefImage(befCustomerBankInfo);
 		}
 
 		return auditDetail;
@@ -144,8 +148,8 @@ public class CustomerBankInfoValidation {
 	 * @param usrLanguage
 	 * @return
 	 */
-	public ErrorDetail  screenValidations(CustomerBankInfo customerBankInfo){
+	public ErrorDetail screenValidations(CustomerBankInfo customerBankInfo) {
 
 		return null;
-	}	
+	}
 }

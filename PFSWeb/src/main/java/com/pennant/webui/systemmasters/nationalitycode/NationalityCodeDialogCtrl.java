@@ -70,30 +70,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/NationalityCode/nationalityCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/NationalityCode/nationalityCodeDialog.zul file.
  */
 public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	private static final long serialVersionUID = 2856434917203365995L;
 	private static final Logger logger = Logger.getLogger(NationalityCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_NationalityCodeDialog; 	
+	protected Window window_NationalityCodeDialog;
 
-	protected Textbox 		txtNationalityCode; 			
-	protected Textbox 		nationalityDesc; 				
-	protected Checkbox 		nationalityIsActive; 			
+	protected Textbox txtNationalityCode;
+	protected Textbox nationalityDesc;
+	protected Checkbox nationalityIsActive;
 
 	// not auto wired variables
-	private NationalityCode nationalityCode; 						   // over handed per parameter
+	private NationalityCode nationalityCode; // over handed per parameter
 	private transient NationalityCodeListCtrl nationalityCodeListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient NationalityCodeService nationalityCodeService;
 
@@ -112,27 +110,25 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected NationalityCode
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected NationalityCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_NationalityCodeDialog(Event event)	throws Exception {
+	public void onCreate$window_NationalityCodeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
 		setPageComponents(window_NationalityCodeDialog);
 
 		try {
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
 			if (arguments.containsKey("nationalityCode")) {
-				this.nationalityCode = (NationalityCode) arguments
-						.get("nationalityCode");
+				this.nationalityCode = (NationalityCode) arguments.get("nationalityCode");
 				NationalityCode befImage = new NationalityCode();
 				BeanUtils.copyProperties(this.nationalityCode, befImage);
 				this.nationalityCode.setBefImage(befImage);
@@ -142,15 +138,13 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 				setNationalityCode(null);
 			}
 
-			doLoadWorkFlow(this.nationalityCode.isWorkflow(),
-					this.nationalityCode.getWorkflowId(),
+			doLoadWorkFlow(this.nationalityCode.isWorkflow(), this.nationalityCode.getWorkflowId(),
 					this.nationalityCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"NationalityCodeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "NationalityCodeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -161,8 +155,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 			// or
 			// delete nationalityCode here.
 			if (arguments.containsKey("nationalityCodeListCtrl")) {
-				setNationalityCodeListCtrl((NationalityCodeListCtrl) arguments
-						.get("nationalityCodeListCtrl"));
+				setNationalityCodeListCtrl((NationalityCodeListCtrl) arguments.get("nationalityCodeListCtrl"));
 			} else {
 				setNationalityCodeListCtrl(null);
 			}
@@ -196,8 +189,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -306,8 +298,10 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		this.nationalityDesc.setValue(aNationalityCode.getNationalityDesc());
 		this.nationalityIsActive.setChecked(aNationalityCode.isNationalityIsActive());
 		this.recordStatus.setValue(aNationalityCode.getRecordStatus());
-		
-		if(aNationalityCode.isNew() || (aNationalityCode.getRecordType() != null ? aNationalityCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aNationalityCode.isNew()
+				|| (aNationalityCode.getRecordType() != null ? aNationalityCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.nationalityIsActive.setChecked(true);
 			this.nationalityIsActive.setDisabled(true);
 		}
@@ -360,8 +354,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aNationalityCode
 	 * @throws Exception
@@ -394,7 +387,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 			doWriteBeanToComponents(aNationalityCode);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_NationalityCodeDialog.onClose();
 		} catch (Exception e) {
@@ -411,13 +404,16 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 
 		setValidationOn(true);
 
-		if (!this.txtNationalityCode.isReadonly()){
-			this.txtNationalityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_NationalityCodeDialog_NationalityCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.txtNationalityCode.isReadonly()) {
+			this.txtNationalityCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_NationalityCodeDialog_NationalityCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.nationalityDesc.isReadonly()){
-			this.nationalityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_NationalityCodeDialog_NationalityDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.nationalityDesc.isReadonly()) {
+			this.nationalityDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_NationalityCodeDialog_NationalityDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -472,9 +468,9 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_NationalityCodeDialog_NationalityCode.value")+" : "+aNationalityCode.getNationalityCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_NationalityCodeDialog_NationalityCode.value") + " : "
+				+ aNationalityCode.getNationalityCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aNationalityCode.getRecordType())) {
 				aNationalityCode.setVersion(aNationalityCode.getVersion() + 1);
@@ -669,7 +665,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 			}
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				nextRoleCode = getFirstTaskOwner();
-				
+
 				String[] nextTasks = nextTaskId.split(";");
 
 				if (nextTasks != null && nextTasks.length > 0) {
@@ -763,8 +759,8 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_NationalityCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -805,10 +801,9 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(NationalityCode aNationalityCode, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aNationalityCode.getBefImage(), aNationalityCode);
-		return new AuditHeader(String.valueOf(aNationalityCode.getId()), null,
-				null, null, auditDetail, aNationalityCode.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aNationalityCode.getBefImage(), aNationalityCode);
+		return new AuditHeader(String.valueOf(aNationalityCode.getId()), null, null, null, auditDetail,
+				aNationalityCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -849,7 +844,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	private void refreshList() {
 		getNationalityCodeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.nationalityCode.getNationalityCode());
@@ -862,6 +857,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -869,6 +865,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	public NationalityCode getNationalityCode() {
 		return this.nationalityCode;
 	}
+
 	public void setNationalityCode(NationalityCode nationalityCode) {
 		this.nationalityCode = nationalityCode;
 	}
@@ -876,6 +873,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	public void setNationalityCodeService(NationalityCodeService nationalityCodeService) {
 		this.nationalityCodeService = nationalityCodeService;
 	}
+
 	public NationalityCodeService getNationalityCodeService() {
 		return this.nationalityCodeService;
 	}
@@ -883,6 +881,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	public void setNationalityCodeListCtrl(NationalityCodeListCtrl nationalityCodeListCtrl) {
 		this.nationalityCodeListCtrl = nationalityCodeListCtrl;
 	}
+
 	public NationalityCodeListCtrl getNationalityCodeListCtrl() {
 		return this.nationalityCodeListCtrl;
 	}

@@ -48,9 +48,14 @@ import com.pennant.backend.model.finance.FinanceRepayPriority;
 
 public interface FinanceRepayPriorityService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceRepayPriority getFinanceRepayPriorityById(String id);
+
 	FinanceRepayPriority getApprovedFinanceRepayPriorityById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -55,7 +55,6 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -68,20 +67,20 @@ public class CollateralSetupListModelItemRenderer implements ListitemRenderer<Co
 	public void render(Listitem item, CollateralSetup collateralSetup, int count) throws Exception {
 
 		Listcell lc;
-	  	
-	  	lc = new Listcell(collateralSetup.getDepositorCif());
+
+		lc = new Listcell(collateralSetup.getDepositorCif());
 		lc.setParent(item);
 		lc = new Listcell(collateralSetup.getCollateralRef());
 		lc.setParent(item);
 		lc = new Listcell(collateralSetup.getCollateralCcy());
 		lc.setParent(item);
-	  	lc = new Listcell(collateralSetup.getCollateralType());
+		lc = new Listcell(collateralSetup.getCollateralType());
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formateDate(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formateDate(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(collateralSetup.getRecordStatus());
+		lc = new Listcell(DateUtility.formateDate(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.formateDate(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(collateralSetup.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(collateralSetup.getRecordType()));
 		lc.setParent(item);

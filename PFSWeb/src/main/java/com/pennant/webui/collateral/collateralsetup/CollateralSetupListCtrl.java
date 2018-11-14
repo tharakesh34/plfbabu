@@ -91,51 +91,51 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 	private static final long serialVersionUID = -6298187334342045748L;
-	private static final Logger					logger				= Logger.getLogger(CollateralSetupListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CollateralSetupListCtrl.class);
 
-	protected Window							window_CollateralSetupList;
-	protected Borderlayout						borderLayout_CollateralSetupList;
-	protected Paging							pagingCollateralSetupList;
-	protected Listbox							listBoxCollateralSetup;
+	protected Window window_CollateralSetupList;
+	protected Borderlayout borderLayout_CollateralSetupList;
+	protected Paging pagingCollateralSetupList;
+	protected Listbox listBoxCollateralSetup;
 
 	// List headers
-	protected Listheader						listheader_CollateralRef;
-	protected Listheader						listheader_DepositorCif;
-	protected Listheader						listheader_CollateralType;
-	protected Listheader						listheader_CollateralCcy;
-	protected Listheader						listheader_MaxCollateralValue;
-	protected Listheader						listheader_SpecialLTV;
-	protected Listheader						listheader_ExpiryDate;
-	protected Listheader						listheader_ReviewFrequency;
-	protected Listheader						listheader_NextReviewDate;
+	protected Listheader listheader_CollateralRef;
+	protected Listheader listheader_DepositorCif;
+	protected Listheader listheader_CollateralType;
+	protected Listheader listheader_CollateralCcy;
+	protected Listheader listheader_MaxCollateralValue;
+	protected Listheader listheader_SpecialLTV;
+	protected Listheader listheader_ExpiryDate;
+	protected Listheader listheader_ReviewFrequency;
+	protected Listheader listheader_NextReviewDate;
 
 	// checkRights
-	protected Button							button_CollateralSetupList_NewCollateralSetup;
-	protected Button							button_CollateralSetupList_CollateralSetupSearch;
-	protected Button							btnRefresh;
+	protected Button button_CollateralSetupList_NewCollateralSetup;
+	protected Button button_CollateralSetupList_CollateralSetupSearch;
+	protected Button btnRefresh;
 
-	protected Textbox							collateralRef;
-	protected Textbox							collateralType;
-	protected Textbox							collateralCcy;
-	protected Datebox							expiryDate;
-	protected Datebox							nextReviewDate;
-	protected Textbox							depositorCif;
+	protected Textbox collateralRef;
+	protected Textbox collateralType;
+	protected Textbox collateralCcy;
+	protected Datebox expiryDate;
+	protected Datebox nextReviewDate;
+	protected Textbox depositorCif;
 
-	protected Listbox							sortOperator_CollateralRef;
-	protected Listbox							sortOperator_DepositorCif;
-	protected Listbox							sortOperator_CollateralType;
-	protected Listbox							sortOperator_CollateralCcy;
-	protected Listbox							sortOperator_ExpiryDate;
-	protected Listbox							sortOperator_NextReviewDate;
+	protected Listbox sortOperator_CollateralRef;
+	protected Listbox sortOperator_DepositorCif;
+	protected Listbox sortOperator_CollateralType;
+	protected Listbox sortOperator_CollateralCcy;
+	protected Listbox sortOperator_ExpiryDate;
+	protected Listbox sortOperator_NextReviewDate;
 
-	private transient CollateralSetupService	collateralSetupService;
-	private transient FinanceDetailService 		financeDetailService;
-	private transient FinanceWorkFlowService 	financeWorkFlowService;
-	private transient WorkFlowDetails workFlowDetails  =  null;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
-	
+	private transient CollateralSetupService collateralSetupService;
+	private transient FinanceDetailService financeDetailService;
+	private transient FinanceWorkFlowService financeWorkFlowService;
+	private transient WorkFlowDetails workFlowDetails = null;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
 	private String module = null;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -158,32 +158,33 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		this.searchObject.addFilterNull("finReference");
 		this.searchObject.addFilterNull("status");
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	public void onCreate$window_CollateralSetupList(Event event) throws Exception {
-		
+
 		//Getting moduleName from mainmenu.xml
 		module = getArgument("module");
-		
+
 		// Set the page level components.
 		setPageComponents(window_CollateralSetupList, borderLayout_CollateralSetupList, listBoxCollateralSetup,
 				pagingCollateralSetupList);
 		setItemRender(new CollateralSetupListModelItemRenderer());
 
-		
 		//SetFormats 
 		this.expiryDate.setFormat(PennantConstants.dateFormat);
 		this.nextReviewDate.setFormat(PennantConstants.dateFormat);
-		
+
 		// Register buttons and fields.
-		boolean accessToCreateNewColl = getFinanceDetailService().checkFirstTaskOwnerAccess(getUserWorkspace().getUserRoleSet(),
-				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_COLLATERAL);
+		boolean accessToCreateNewColl = getFinanceDetailService().checkFirstTaskOwnerAccess(
+				getUserWorkspace().getUserRoleSet(), FinanceConstants.FINSER_EVENT_ORG,
+				PennantConstants.WORFLOW_MODULE_COLLATERAL);
 		setFirstTask(accessToCreateNewColl);
-		
-		registerButton(button_CollateralSetupList_NewCollateralSetup, "button_CollateralSetupList_NewCollateralSetup",true);
+
+		registerButton(button_CollateralSetupList_NewCollateralSetup, "button_CollateralSetupList_NewCollateralSetup",
+				true);
 		registerButton(button_CollateralSetupList_CollateralSetupSearch);
 		registerField("depositorCif", listheader_DepositorCif, SortOrder.ASC, depositorCif, sortOperator_DepositorCif,
 				Operators.STRING);
@@ -195,17 +196,16 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 				sortOperator_CollateralCcy, Operators.STRING);
 		registerField("expiryDate", listheader_ExpiryDate, SortOrder.ASC, expiryDate, sortOperator_ExpiryDate,
 				Operators.DATE);
-		registerField("nextReviewDate", listheader_NextReviewDate, SortOrder.ASC, nextReviewDate, sortOperator_NextReviewDate,
-				Operators.DATE);
+		registerField("nextReviewDate", listheader_NextReviewDate, SortOrder.ASC, nextReviewDate,
+				sortOperator_NextReviewDate, Operators.DATE);
 		registerField("nextRoleCode");
 		registerField("finReference");
 		registerField("status");
 
-		
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		
+
 		if ("E".equals(module)) {
 			this.button_CollateralSetupList_NewCollateralSetup.setVisible(false);
 		}
@@ -252,7 +252,8 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		arg.put("role", getUserWorkspace().getUserRoles());
 		arg.put("window", window_CollateralSetupList);
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/SelectCollateralTypeDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/SelectCollateralTypeDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -332,15 +333,16 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Fetching Dynamic Workflow Details
+	 * 
 	 * @param collateralType
 	 */
-	private void setWorkflowDetails(String collateralType){
+	private void setWorkflowDetails(String collateralType) {
 
 		// Setting Workflow Details
-		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(collateralType, 
+		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(collateralType,
 				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_COLLATERAL);
 
 		// Workflow Details Setup
@@ -384,14 +386,15 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 			arg.put("module", "E");
 		}
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
@@ -429,7 +432,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-	
+
 	/**
 	 * When user clicks on button "customerId Search" button
 	 * 
@@ -440,7 +443,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		doSearchCustomerCIF();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
@@ -453,7 +456,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -461,7 +464,8 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.depositorCif.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -478,6 +482,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	public CollateralSetupService getCollateralSetupService() {
 		return collateralSetupService;
 	}
+
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
@@ -485,6 +490,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -492,8 +498,8 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
-	public void setFinanceWorkFlowService(
-			FinanceWorkFlowService financeWorkFlowService) {
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 

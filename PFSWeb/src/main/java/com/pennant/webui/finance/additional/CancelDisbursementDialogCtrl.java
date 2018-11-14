@@ -83,19 +83,17 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
-	private static final Logger logger = Logger
-			.getLogger(CancelDisbursementDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CancelDisbursementDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CancelDisbursementDialog;
 	protected CurrencyBox disbAmount;
 	protected Combobox fromDate;
-	protected Uppercasebox 	serviceReqNo;
-	protected Textbox		remarks;
+	protected Uppercasebox serviceReqNo;
+	protected Textbox remarks;
 
 	//private Date lastPaidDate = null;
 
@@ -123,15 +121,13 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_CancelDisbursementDialog(Event event)
-			throws Exception {
+	public void onCreate$window_CancelDisbursementDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -198,11 +194,11 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.disbAmount.setDisabled(true);
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
 	 * @throws Exception
@@ -234,7 +230,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 		if (aFinSchData.getDisbursementDetails() != null && !aFinSchData.getDisbursementDetails().isEmpty()) {
-			fillSchFromDates(this.fromDate,aFinSchData);
+			fillSchFromDates(this.fromDate, aFinSchData);
 		}
 
 		logger.debug("Leaving");
@@ -255,40 +251,44 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		List<FinanceScheduleDetail> finScheduleDetails = finScheduleDetailsList;
 		for (int i = 0; i < finScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
-			if(curSchd.isDisbOnSchDate()){
+			if (curSchd.isDisbOnSchDate()) {
 
 				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0) {
 
-					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 ||
-							curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0  ||curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0  ||
-							curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0  ||curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
 						continue;
 
 					}
 
 					//Don't Allow Start date Disbursement cancellation
-					if(curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
+					if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 						//continue;
 					}
-					
+
 					// Adding through Disbursement details
 					List<FinanceDisbursement> disbList = scheduleData.getDisbursementDetails();
-					if(!disbList.isEmpty()){
-						
+					if (!disbList.isEmpty()) {
+
 						for (int j = 0; j < disbList.size(); j++) {
 							FinanceDisbursement curDisb = disbList.get(j);
-							if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+							if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 								continue;
 							}
-							if(DateUtility.compare(curDisb.getDisbDate(), curSchd.getSchDate()) >= 0){
+							if (DateUtility.compare(curDisb.getDisbDate(), curSchd.getSchDate()) >= 0) {
 								comboitem = new Comboitem();
-								comboitem.setLabel(DateUtility.formatDate(curDisb.getDisbDate(),DateFormat.SHORT_DATE.getPattern()) +" , "+curDisb.getDisbSeq());
+								comboitem.setLabel(DateUtility.formatDate(curDisb.getDisbDate(),
+										DateFormat.SHORT_DATE.getPattern()) + " , " + curDisb.getDisbSeq());
 								comboitem.setValue(curDisb.getDisbDate());
 								comboitem.setAttribute("Seq", curDisb.getDisbSeq());
 								dateCombobox.appendChild(comboitem);
 							}
 						}
-						
+
 						// After Disbursements Completion Close the loop
 						break;
 					}
@@ -308,8 +308,8 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @throws InterruptedException
 	 * @throws WrongValueException
 	 */
-	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData) throws WrongValueException,
-	InterruptedException, IllegalAccessException, InvocationTargetException {
+	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData)
+			throws WrongValueException, InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
 
@@ -321,8 +321,8 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		try {
 			this.disbAmount.getValidateValue();
-			finServiceInstruction.setAmount(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),
-					formatter));
+			finServiceInstruction
+					.setAmount(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -332,17 +332,17 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				throw new WrongValueException(this.fromDate, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_CancelDisbursementDialog_FromDate.value") }));
 			}
-			finServiceInstruction.setFromDate((Date)this.fromDate.getSelectedItem().getValue());
+			finServiceInstruction.setFromDate((Date) this.fromDate.getSelectedItem().getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
+
 		try {
 			finServiceInstruction.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
@@ -372,26 +372,26 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				break;
 			}
 		}
-		
+
 		// Schedule Data disbursement Amount Correction
 		getFinScheduleData().setDisbursementDetails(list);
 		Date eventFromDate = null;
-		for (int i = 0; i <  getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
+		for (int i = 0; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
 			if (curSchd.getSchDate().compareTo(finServiceInstruction.getFromDate()) == 0) {
-				if(curSchd.isDisbOnSchDate()){
+				if (curSchd.isDisbOnSchDate()) {
 					curSchd.setDisbAmount(curSchd.getDisbAmount().subtract(finServiceInstruction.getAmount()));
-					if(curSchd.getDisbAmount().compareTo(BigDecimal.ZERO) == 0){
+					if (curSchd.getDisbAmount().compareTo(BigDecimal.ZERO) == 0) {
 						curSchd.setDisbOnSchDate(false);
-					}else{
+					} else {
 						curSchd.setDisbOnSchDate(true);
 					}
 					eventFromDate = getFinScheduleData().getFinanceScheduleDetails().get(i).getSchDate();
 				}
-				
+
 				if (!curSchd.isDisbOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()
 						&& !curSchd.isRvwOnSchDate() && !curSchd.isCpzOnSchDate()) {
-					eventFromDate = getFinScheduleData().getFinanceScheduleDetails().get(i+1).getSchDate();
+					eventFromDate = getFinScheduleData().getFinanceScheduleDetails().get(i + 1).getSchDate();
 					getFinScheduleData().getFinanceScheduleDetails().remove(i);
 					i--;
 				}
@@ -405,11 +405,11 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finMain.setRecalToDate(finMain.getMaturityDate());
 
 		// Service details calling for Schedule calculation
-		setFinScheduleData(cancelDisbursementService.getCancelDisbDetails(getFinScheduleData()));		
+		setFinScheduleData(cancelDisbursementService.getCancelDisbDetails(getFinScheduleData()));
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
-		
+
 		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
@@ -442,8 +442,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @throws WrongValueException
 	 */
 	public void onClick$btnCancelDisbursement(Event event)
-			throws InterruptedException, WrongValueException,
-			IllegalAccessException, InvocationTargetException {
+			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceScheduleDetail() != null) {
 			if (isDataChanged()) {
@@ -472,7 +471,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -485,8 +484,8 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @throws IllegalAccessException
 	 * @throws WrongValueException
 	 */
-	private void doSave() throws InterruptedException, WrongValueException,
-	IllegalAccessException, InvocationTargetException {
+	private void doSave()
+			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		final FinScheduleData aFinScheduleData = new FinScheduleData();
 		doSetValidation();
@@ -527,9 +526,10 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$fromDate(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		if(getFinScheduleData().getDisbursementDetails()!=null && getFinScheduleData().getDisbursementDetails().size()>0){
-			for(FinanceDisbursement finDisbursement:getFinScheduleData().getDisbursementDetails()){
-				if(finDisbursement.getDisbDate().compareTo((Date)this.fromDate.getSelectedItem().getValue())==0){
+		if (getFinScheduleData().getDisbursementDetails() != null
+				&& getFinScheduleData().getDisbursementDetails().size() > 0) {
+			for (FinanceDisbursement finDisbursement : getFinScheduleData().getDisbursementDetails()) {
+				if (finDisbursement.getDisbDate().compareTo((Date) this.fromDate.getSelectedItem().getValue()) == 0) {
 					this.disbAmount.setValue(PennantAppUtil.formateAmount(finDisbursement.getDisbAmount(),
 							CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 					break;
@@ -547,6 +547,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -554,22 +555,23 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinanceScheduleDetail getFinanceScheduleDetail() {
 		return financeScheduleDetail;
 	}
-	public void setFinanceScheduleDetail(
-			FinanceScheduleDetail financeScheduleDetail) {
+
+	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
 		this.financeScheduleDetail = financeScheduleDetail;
 	}
 
 	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
 		return scheduleDetailDialogCtrl;
 	}
-	public void setScheduleDetailDialogCtrl(
-			ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
+
+	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
 		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
 	}
 
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -577,14 +579,15 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
-	public void setAccountInterfaceService(
-			AccountInterfaceService accountInterfaceService) {
+
+	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public AccountsService getAccountsService() {
 		return accountsService;
 	}
+
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
 	}

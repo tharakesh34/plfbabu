@@ -447,7 +447,8 @@ public class ExtendedFieldsValidation {
 				//if it is an input element added column in ED table.
 				if (extendedFieldDetail.isInputElement()) {
 					if (!deleteRecord) {
-						if (!StringUtils.equals(PennantConstants.RECORD_TYPE_UPD , extendedFieldDetail.getRecordType())) {
+						if (!StringUtils.equals(PennantConstants.RECORD_TYPE_UPD,
+								extendedFieldDetail.getRecordType())) {
 							extendedFieldDetailDAO.alter(extendedFieldDetail, "_Temp", false, true, false);
 							extendedFieldDetailDAO.alter(extendedFieldDetail, "", false, true, false);
 							if (StringUtils.equals(extendedFieldDetail.getLovDescModuleName(),

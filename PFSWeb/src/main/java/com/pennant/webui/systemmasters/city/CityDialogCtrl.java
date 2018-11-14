@@ -77,17 +77,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/City/cityDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/City/cityDialog.zul file.
  */
 public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	private static final long serialVersionUID = -210929672381582779L;
 	private static final Logger logger = Logger.getLogger(CityDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CityDialog;
 
@@ -98,18 +96,18 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	private transient String cityCountryTemp;
 	protected Combobox pCCityClass;
 	protected Textbox bankRefNo;
-	protected Checkbox cityIsActive;		// autoWired
+	protected Checkbox cityIsActive; // autoWired
 
 	// not autoWired Var's
 	private City city; // overHanded per parameter
 	private transient CityListCtrl cityListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient CityService cityService;
-	
-	private final List<ValueLabel>	cityClassList	=	PennantAppUtil.getFieldCodeList("CITYCLSS");
+
+	private final List<ValueLabel> cityClassList = PennantAppUtil.getFieldCodeList("CITYCLSS");
 
 	/**
 	 * default constructor.<br>
@@ -126,9 +124,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected City object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected City object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -154,14 +151,12 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 				setCity(null);
 			}
 
-			doLoadWorkFlow(this.city.isWorkflow(), this.city.getWorkflowId(),
-					this.city.getNextTaskId());
+			doLoadWorkFlow(this.city.isWorkflow(), this.city.getWorkflowId(), this.city.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CityDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CityDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -201,17 +196,17 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCountry.setModuleName("Country");
 		this.pCCountry.setValueColumn("CountryCode");
 		this.pCCountry.setDescColumn("CountryDesc");
-		this.pCCountry.setValidateColumns(new String[]{"CountryCode"});
-		
+		this.pCCountry.setValidateColumns(new String[] { "CountryCode" });
+
 		this.pCProvince.setMandatoryStyle(true);
 		this.pCProvince.setModuleName("Province");
 		this.pCProvince.setValueColumn("CPProvince");
 		this.pCProvince.setDescColumn("CPProvinceName");
-		this.pCProvince.setValidateColumns(new String[]{"CPProvince"});
-		
-		if (isWorkFlowEnabled()){
+		this.pCProvince.setValidateColumns(new String[] { "CPProvince" });
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving ");
@@ -222,12 +217,11 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-	
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnDelete"));
@@ -306,21 +300,22 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 
 	// Search Button Component Events
 
-	public void onFulfill$pCCountry(Event event){
+	public void onFulfill$pCCountry(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSetProvProp();
 		logger.debug("Leaving" + event.toString());
 
 	}
-	private void doSetProvProp(){
-		if (!StringUtils.trimToEmpty(cityCountryTemp).equals(this.pCCountry.getValue())){
+
+	private void doSetProvProp() {
+		if (!StringUtils.trimToEmpty(cityCountryTemp).equals(this.pCCountry.getValue())) {
 			this.pCProvince.setObject("");
 			this.pCProvince.setValue("");
 			this.pCProvince.setDescription("");
 		}
 		cityCountryTemp = this.pCCountry.getValue();
-		Filter[] filtersProvince = new Filter[1] ;
-		filtersProvince[0]= new Filter("CPCountry", this.pCCountry.getValue(), Filter.OP_EQUAL);
+		Filter[] filtersProvince = new Filter[1];
+		filtersProvince[0] = new Filter("CPCountry", this.pCCountry.getValue(), Filter.OP_EQUAL);
 		this.pCProvince.setFilters(filtersProvince);
 	}
 
@@ -343,7 +338,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCity
-	 *            
+	 * 
 	 */
 	public void doWriteBeanToComponents(City aCity) {
 		logger.debug("Entering ");
@@ -352,18 +347,19 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCity.setValue(aCity.getPCCity());
 		this.pCCityName.setValue(aCity.getPCCityName());
 		this.bankRefNo.setValue(aCity.getBankRefNo());
-		fillComboBox(this.pCCityClass,aCity.getpCCityClassification(),cityClassList,"");
+		fillComboBox(this.pCCityClass, aCity.getpCCityClassification(), cityClassList, "");
 		this.recordStatus.setValue(aCity.getRecordStatus());
 		this.cityIsActive.setChecked(aCity.isCityIsActive());
 
-		if(aCity.isNewRecord()){
+		if (aCity.isNewRecord()) {
 			this.pCCountry.setDescription("");
 			this.pCProvince.setDescription("");
-		}else{
+		} else {
 			this.pCCountry.setDescription(aCity.getLovDescPCCountryName());
 			this.pCProvince.setDescription(aCity.getLovDescPCProvinceName());
 		}
-		if(aCity.isNew() || (aCity.getRecordType() != null ? aCity.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aCity.isNew() || (aCity.getRecordType() != null ? aCity.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.cityIsActive.setChecked(true);
 			this.cityIsActive.setDisabled(true);
 		}
@@ -385,25 +381,25 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		try {
 			aCity.setLovDescPCCountryName(this.pCCountry.getDescription());
 			aCity.setPCCountry(this.pCCountry.getValidatedValue().toUpperCase());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			aCity.setLovDescPCProvinceName(this.pCProvince.getDescription());
 			aCity.setPCProvince(this.pCProvince.getValidatedValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			aCity.setPCCity(this.pCCity.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCity.setPCCityName(this.pCCityName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -413,7 +409,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		}
 		try {
 			aCity.setBankRefNo(this.bankRefNo.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -423,8 +419,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		}
 		doRemoveValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -439,8 +435,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCity
 	 * 
@@ -448,7 +443,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 */
 	public void doShowDialog(City aCity) throws Exception {
 		logger.debug("Entering");
-		
+
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aCity.isNew()) {
 			this.pCCountry.setVisible(true);
@@ -461,12 +456,12 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			this.pCCountry.setReadonly(true);
 			this.pCProvince.setReadonly(true);
 			this.pCCityName.focus();
-			if (isWorkFlowEnabled()){
-				if (StringUtils.isNotBlank(aCity.getRecordType())){
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(aCity.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -478,7 +473,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			doWriteBeanToComponents(aCity);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_CityDialog.onClose();
 		} catch (Exception e) {
@@ -494,23 +489,29 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		logger.debug("Entering ");
 		setValidationOn(true);
 
-		if (!this.pCCity.isReadonly()){
-			this.pCCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCity.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
-		}	
-		if (!this.pCCityName.isReadonly()){
-			this.pCCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityName.value"),PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+		if (!this.pCCity.isReadonly()) {
+			this.pCCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCity.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+		}
+		if (!this.pCCityName.isReadonly()) {
+			this.pCCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityName.value"),
+					PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 		if (!this.pCCountry.isReadonly()) {
-			this.pCCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCountry.value"), null, true,true));
+			this.pCCountry.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CityDialog_PCCountry.value"), null, true, true));
 		}
 		if (!this.pCProvince.isReadonly()) {
-			this.pCProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCProvince.value"), null, true,true));
+			this.pCProvince.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CityDialog_PCProvince.value"), null, true, true));
 		}
 		if (!this.pCCityClass.isReadonly()) {
-			this.pCCityClass.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityClass.value"), null, false,true));
+			this.pCCityClass.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityClass.value"), null, false, true));
 		}
-		if (!this.bankRefNo.isReadonly()){
-			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_BankRefNo.value"),PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
+		if (!this.bankRefNo.isReadonly()) {
+			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_BankRefNo.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
 		}
 		logger.debug("Leaving ");
 	}
@@ -550,7 +551,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 */
 	private void refreshList() {
 		getCityListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -563,25 +564,24 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		logger.debug("Entering ");
 		final City aCity = new City();
 		BeanUtils.copyProperties(getCity(), aCity);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "+
-				Labels.getLabel("label_CityDialog_PCCountry.value")+" : "+aCity.getPCCountry()+","+
-				Labels.getLabel("label_CityDialog_PCProvince.value")+" : "+aCity.getPCProvince()+","+
-				Labels.getLabel("label_CityDialog_PCCity.value")+" : "+aCity.getPCCity();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CityDialog_PCCountry.value") + " : " + aCity.getPCCountry() + ","
+				+ Labels.getLabel("label_CityDialog_PCProvince.value") + " : " + aCity.getPCProvince() + ","
+				+ Labels.getLabel("label_CityDialog_PCCity.value") + " : " + aCity.getPCCity();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCity.getRecordType())){
-				aCity.setVersion(aCity.getVersion()+1);
+			if (StringUtils.isBlank(aCity.getRecordType())) {
+				aCity.setVersion(aCity.getVersion() + 1);
 				aCity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCity.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -590,7 +590,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 					refreshList();
 					closeDialog();
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -602,11 +602,11 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
-		
-		if (getCity().isNewRecord()){			
+
+		if (getCity().isNewRecord()) {
 			this.pCCity.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.pCCity.setReadonly(true);
 			this.pCCountry.setReadonly(true);
 			this.pCProvince.setReadonly(true);
@@ -616,20 +616,20 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCityClass.setDisabled(isReadOnly("CityDialog_pCCitylassification"));
 		this.bankRefNo.setDisabled(isReadOnly("CityDialog_BankRefNo"));
 		this.cityIsActive.setDisabled(isReadOnly("CityDialog_CityIsActive"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.city.isNewRecord()){
+			if (this.city.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			//btnCancel.setVisible(true);
 		}
@@ -646,13 +646,13 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCityClass.setReadonly(true);
 		this.bankRefNo.setReadonly(true);
 		this.cityIsActive.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
-		}		
-		if(isWorkFlowEnabled()){
+		}
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -696,32 +696,32 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		// Do data level validations here
 
 		isNew = aCity.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCity.getRecordType())){
-				aCity.setVersion(aCity.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCity.getRecordType())) {
+				aCity.setVersion(aCity.getVersion() + 1);
+				if (isNew) {
 					aCity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCity.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCity.setNewRecord(true);
 				}
 			}
-		}else{
-			aCity.setVersion(aCity.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCity.setVersion(aCity.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
 
-			if(doProcess(aCity,tranType)){
+			if (doProcess(aCity, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -733,21 +733,23 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCity (City)
+	 * @param aCity
+	 *            (City)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(City aCity,String tranType){
+	private boolean doProcess(City aCity, String tranType) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCity.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -774,20 +776,20 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 						return false;
 					}
 				}
-			}			
+			}
 
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -797,91 +799,91 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			aCity.setRoleCode(getRole());
 			aCity.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCity, tranType);
+			auditHeader = getAuditHeader(aCity, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCity);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCity, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					auditHeader = getAuditHeader(aCity, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
 				}
 			}
-		}else{			
-			auditHeader =  getAuditHeader(aCity, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCity, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving ");
 		return processCompleted;
 	}
 
-	/**	
-	 * Get the result after processing DataBase Operations 
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		City aCity = (City) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
+		boolean deleteNotes = false;
 
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCityService().delete(auditHeader);
 
-						deleteNotes=true;	
-					}else{
-						auditHeader = getCityService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getCityService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCityService().doApprove(auditHeader);
 
-						if(aCity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aCity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCityService().doReject(auditHeader);
-						if(aCity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_CityDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CityDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
 				retValue = ErrorControl.showErrorControl(this.window_CityDialog, auditHeader);
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.city),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.city), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -900,27 +902,28 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 
 	/**
 	 * Get Audit Header Details
-	 * @param aCity 
+	 * 
+	 * @param aCity
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(City aCity, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCity.getBefImage(), aCity);   
-		return new AuditHeader(getReference(),null,null,null,
-				auditDetail,aCity.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(City aCity, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCity.getBefImage(), aCity);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aCity.getUserDetails(), getOverideMap());
 	}
-	
+
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering ");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CityDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -929,11 +932,13 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	}
 
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
-	 */ 
+	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.city);
 	}
@@ -943,10 +948,10 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 */
 	@Override
 	protected String getReference() {
-		return getCity().getPCCountry()+PennantConstants.KEY_SEPERATOR+
-		 			getCity().getPCProvince()+PennantConstants.KEY_SEPERATOR+getCity().getPCCity();
+		return getCity().getPCCountry() + PennantConstants.KEY_SEPERATOR + getCity().getPCProvince()
+				+ PennantConstants.KEY_SEPERATOR + getCity().getPCCity();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -954,6 +959,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -961,6 +967,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	public City getCity() {
 		return this.city;
 	}
+
 	public void setCity(City city) {
 		this.city = city;
 	}
@@ -968,6 +975,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	public void setCityService(CityService cityService) {
 		this.cityService = cityService;
 	}
+
 	public CityService getCityService() {
 		return this.cityService;
 	}
@@ -975,6 +983,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	public void setCityListCtrl(CityListCtrl cityListCtrl) {
 		this.cityListCtrl = cityListCtrl;
 	}
+
 	public CityListCtrl getCityListCtrl() {
 		return this.cityListCtrl;
 	}

@@ -50,10 +50,16 @@ import com.pennant.backend.model.eod.EODConfig;
 public interface EODConfigService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	EODConfig getEODConfig(long eodConfigId);
+
 	EODConfig getApprovedEODConfig(long eodConfigId);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<EODConfig> getEODConfig();
 }

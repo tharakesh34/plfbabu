@@ -52,9 +52,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>AddressType table</b>.<br>
  *
  */
-public class AddressType extends AbstractWorkflowEntity {	
+public class AddressType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3761541301075338850L;
-	
+
 	private String addrTypeCode;
 	private String addrTypeDesc;
 	private int addrTypePriority;
@@ -81,35 +81,39 @@ public class AddressType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return addrTypeCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.addrTypeCode = id;
 	}
-	
+
 	public String getAddrTypeCode() {
 		return addrTypeCode;
 	}
+
 	public void setAddrTypeCode(String addrTypeCode) {
 		this.addrTypeCode = addrTypeCode;
 	}
-	
+
 	public String getAddrTypeDesc() {
 		return addrTypeDesc;
 	}
+
 	public void setAddrTypeDesc(String addrTypeDesc) {
 		this.addrTypeDesc = addrTypeDesc;
 	}
-	
+
 	public int getAddrTypePriority() {
 		return addrTypePriority;
 	}
+
 	public void setAddrTypePriority(int addrTypePriority) {
 		this.addrTypePriority = addrTypePriority;
 	}
-	
+
 	public boolean isAddrTypeFIRequired() {
 		return addrTypeFIRequired;
 	}
@@ -121,6 +125,7 @@ public class AddressType extends AbstractWorkflowEntity {
 	public boolean isAddrTypeIsActive() {
 		return addrTypeIsActive;
 	}
+
 	public void setAddrTypeIsActive(boolean addrTypeIsActive) {
 		this.addrTypeIsActive = addrTypeIsActive;
 	}
@@ -128,31 +133,35 @@ public class AddressType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public AddressType getBefImage(){
+	public AddressType getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(AddressType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AddressType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -64,9 +64,9 @@ import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.systemmasters.employerdetail.model.EmployerDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailList.zul file.
@@ -144,16 +144,18 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> {
 		fillComboBox(this.empAlocationType, "", PennantStaticListUtil.getEmpAlocList(), "");
 
 		// Register buttons and fields.
-		registerButton(button_EmployerDetailList_NewEmployerDetail, "button_EmployerDetailList_NewEmployerDetail", true);
+		registerButton(button_EmployerDetailList_NewEmployerDetail, "button_EmployerDetailList_NewEmployerDetail",
+				true);
 		registerButton(button_EmployerDetailList_EmployerDetailSearch);
 
 		registerField("EmployerId", listheader_EmployerId, SortOrder.ASC, empID, sortOperator_EmpID, Operators.NUMERIC);
 		registerField("empName", listheader_EmpName, SortOrder.NONE, empName, sortOperator_EmpName, Operators.STRING);
-		registerField("lovDescIndustryDesc", listheader_EmpIndustry, SortOrder.NONE, empIndustry, sortOperator_EmpIndustry,
-				Operators.STRING);
+		registerField("lovDescIndustryDesc", listheader_EmpIndustry, SortOrder.NONE, empIndustry,
+				sortOperator_EmpIndustry, Operators.STRING);
 		registerField("empPOBox", listheader_EmpPOBox, SortOrder.NONE, empPOBox, sortOperator_EmpPOBox,
 				Operators.STRING);
-		registerField("lovDescCityName", listheader_EmpCity, SortOrder.NONE, empCity, sortOperator_EmpCity, Operators.STRING);
+		registerField("lovDescCityName", listheader_EmpCity, SortOrder.NONE, empCity, sortOperator_EmpCity,
+				Operators.STRING);
 		registerField("empAlocationType", empAlocationType, SortOrder.NONE, sortOperator_EmpAlocationType,
 				Operators.SIMPLE_NUMARIC);
 		registerField("establishDate", listheader_EstablishDate, SortOrder.NONE);

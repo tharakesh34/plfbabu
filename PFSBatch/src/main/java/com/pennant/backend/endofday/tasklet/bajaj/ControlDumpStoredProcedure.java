@@ -27,8 +27,8 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 	private Logger logger = Logger.getLogger(ControlDumpStoredProcedure.class);
 
 	protected NamedParameterJdbcTemplate jdbcTemplate;
-	
-	Map<String,Date> inputParameters = new HashMap<String, Date>();
+
+	Map<String, Date> inputParameters = new HashMap<String, Date>();
 
 	/**
 	 * Constructor for stored procedure Tasklet
@@ -39,9 +39,8 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 		super(dataSource, spName);
 		super.setDataSource(dataSource);
 
-		
 		declareParameter(new SqlParameter("APP_DATE", Types.DATE));
-		
+
 		declareParameter(new SqlOutParameter("ERROR_CODE", Types.BIGINT));
 		declareParameter(new SqlOutParameter("ERROR_DESC", Types.VARCHAR));
 		declareParameter(new SqlOutParameter("ERRORSTEP", Types.VARCHAR));
@@ -54,12 +53,13 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 	 * @param dataSource
 	 */
 	public RepeatStatus execute(StepContribution arg0, ChunkContext arg1) throws Exception {
-		Date valueDate =(Date) arg1.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
+		Date valueDate = (Date) arg1.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
 		Date appDate = (Date) arg1.getStepContext().getJobExecutionContext().get("APP_DATE");
-		
+
 		inputParameters.put("APP_DATE", appDate);
-		
-		logger.debug("START: Control-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
+		logger.debug("START: Control-Dump Process for the value date: "
+				.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 
 		deleteData(appDate);
 		copyDataFromMainToLogTable(appDate);
@@ -75,7 +75,8 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 			throw new Exception(results.get("ERROR_DESC").toString());
 		}
 		deleteOldData(appDate);
-		logger.debug("COMPLETED: Control-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+		logger.debug("COMPLETED: Control-Dump Process for the value date: "
+				.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		return RepeatStatus.FINISHED;
 	}
 
@@ -134,7 +135,7 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void deleteOldData(Date appDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -145,6 +146,7 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * @param dataSource
 	 *            the dataSource to set

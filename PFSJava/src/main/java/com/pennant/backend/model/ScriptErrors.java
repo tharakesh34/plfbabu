@@ -6,7 +6,7 @@ import java.util.List;
 public class ScriptErrors {
 	private List<ScriptError> errors = new ArrayList<>();
 
-	public void add(String property,String value) {
+	public void add(String property, String value) {
 		errors.add(new ScriptError(property, value));
 	}
 
@@ -21,7 +21,7 @@ public class ScriptErrors {
 	public ScriptError get(int index) {
 		return errors.get(index);
 	}
-	
+
 	public List<ScriptError> getAll() {
 		return errors;
 	}

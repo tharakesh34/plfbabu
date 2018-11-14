@@ -54,7 +54,7 @@ public class ScoringType extends AbstractWorkflowEntity {
 
 	private String scoType = null;
 	private String scoDesc;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private ScoringType befImage;
 	private LoggedInUser userDetails;
@@ -75,52 +75,59 @@ public class ScoringType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return scoType;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.scoType = id;
 	}
-	
+
 	public String getScoType() {
 		return scoType;
 	}
+
 	public void setScoType(String scoType) {
 		this.scoType = scoType;
 	}
-	
+
 	public String getScoDesc() {
 		return scoDesc;
 	}
+
 	public void setScoDesc(String scoDesc) {
 		this.scoDesc = scoDesc;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public ScoringType getBefImage(){
+	public ScoringType getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(ScoringType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ScoringType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

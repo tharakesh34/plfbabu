@@ -78,41 +78,38 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RMTMasters/ProductAsset/productAssetDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RMTMasters/ProductAsset/productAssetDialog.zul file.
  */
 public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private static final long serialVersionUID = -1251394215522173737L;
 	private static final Logger logger = Logger.getLogger(ProductAssetDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 
-	protected Window 	window_ProductAssetDialog; 		// autoWired
-	private Textbox 	productCode;					// autoWired
-	private ExtendedCombobox 	assetCode;				// autoWired
-	private Textbox 	assetDesc;						// autoWired
-	private Checkbox 	assetIsActive;					// autoWired
+	protected Window window_ProductAssetDialog; // autoWired
+	private Textbox productCode; // autoWired
+	private ExtendedCombobox assetCode; // autoWired
+	private Textbox assetDesc; // autoWired
+	private Checkbox assetIsActive; // autoWired
 
-	protected Row 			statusRow;
+	protected Row statusRow;
 
 	// not autoWired variables
-	private ProductAsset productAsset; 						// overHanded per parameter
+	private ProductAsset productAsset; // overHanded per parameter
 	private transient ProductDialogCtrl productDialogCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient ProductService productService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	private boolean newRecord = false;
 	private boolean newProduct = false;
 	private List<ProductAsset> productAssets;
-
 
 	/**
 	 * default constructor.<br>
@@ -129,9 +126,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ProductAsset object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ProductAsset object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -169,8 +165,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 			if (arguments.containsKey("productDialogCtrl")) {
 
-				setProductDialogCtrl((ProductDialogCtrl) arguments
-						.get("productDialogCtrl"));
+				setProductDialogCtrl((ProductDialogCtrl) arguments.get("productDialogCtrl"));
 				setNewProduct(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -181,19 +176,17 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 				this.productAsset.setWorkflowId(0);
 				if (arguments.containsKey("roleCode")) {
-					getUserWorkspace().allocateRoleAuthorities(
-									(String) arguments.get("roleCode"),"ProductAssetDialog");
+					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"),
+							"ProductAssetDialog");
 				}
 			}
 
-			doLoadWorkFlow(this.productAsset.isWorkflow(),
-					this.productAsset.getWorkflowId(),
+			doLoadWorkFlow(this.productAsset.isWorkflow(), this.productAsset.getWorkflowId(),
 					this.productAsset.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ProductAssetDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ProductAssetDialog");
 			}
 
 			// set Field Properties
@@ -210,10 +203,10 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.productCode.setMaxlength(8);
-		
+
 		this.assetCode.setMaxlength(8);
 		this.assetCode.setMandatoryStyle(true);
 		this.assetCode.setModuleName("LovFieldDetail");
@@ -221,20 +214,20 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.assetCode.setDescColumn("FieldCodeValue");
 		this.assetCode.setValidateColumns(new String[] { "FieldCodeValue" });
 		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("FieldCode","FINASSTYP", Filter.OP_EQUAL);
+		filters[0] = new Filter("FieldCode", "FINASSTYP", Filter.OP_EQUAL);
 		this.assetCode.setFilters(filters);
-		
+
 		this.assetDesc.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			this.statusRow.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 			this.statusRow.setVisible(false);
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -242,11 +235,10 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -256,7 +248,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ProductAssetDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -334,12 +326,12 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.productAsset.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -349,14 +341,14 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 *            ProductAsset
 	 */
 	public void doWriteBeanToComponents(ProductAsset aProductAsset) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
-		this.productCode.setValue(aProductAsset.getProductCode());	
+		this.productCode.setValue(aProductAsset.getProductCode());
 		this.assetCode.setValue(aProductAsset.getAssetCode());
 		this.assetDesc.setValue(aProductAsset.getAssetDesc());
 		this.assetIsActive.setChecked(aProductAsset.isAssetIsActive());
 
-		if(aProductAsset.isNew() || aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aProductAsset.isNew() || aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.assetIsActive.setChecked(true);
 			this.assetIsActive.setDisabled(true);
 		}
@@ -370,24 +362,24 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * @param aProductAsset
 	 */
 	public void doWriteComponentsToBean(ProductAsset aProductAsset) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aProductAsset.setProductCode(this.productCode.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aProductAsset.setAssetCode(this.assetCode.getValidatedValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aProductAsset.setAssetDesc(this.assetDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -399,8 +391,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -414,8 +406,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProductAsset
 	 * @throws Exception
@@ -431,17 +422,17 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			this.assetCode.focus();
 		} else {
 			this.assetDesc.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-				if(getProductAsset().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+				if (getProductAsset().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					this.btnEdit.setVisible(false);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
-				if(getProductAsset().getRecordType().equals(PennantConstants.RCD_ADD)){
+				if (getProductAsset().getRecordType().equals(PennantConstants.RCD_ADD)) {
 					this.btnEdit.setVisible(false);
 				}
 			}
@@ -450,15 +441,15 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aProductAsset);
-			
-			this.window_ProductAssetDialog.doModal() ;
+
+			this.window_ProductAssetDialog.doModal();
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ProductAssetDialog.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -468,13 +459,15 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.productCode.isReadonly()){
-			this.productCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductAssetDialog_ProductCode.value"),null,true));
+		if (!this.productCode.isReadonly()) {
+			this.productCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProductAssetDialog_ProductCode.value"), null, true));
 		}
-		
-		if (!this.assetCode.isReadonly()){
-			this.assetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductAssetDialog_AssetCode.value"),null,true,true));
-		}	
+
+		if (!this.assetCode.isReadonly()) {
+			this.assetCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ProductAssetDialog_AssetCode.value"), null, true, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -522,40 +515,40 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 
 		final ProductAsset aProductAsset = new ProductAsset();
 		BeanUtils.copyProperties(getProductAsset(), aProductAsset);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_ProductAssetDialog_AssetCode.value")+" : "+aProductAsset.getAssetCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ProductAssetDialog_AssetCode.value") + " : " + aProductAsset.getAssetCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aProductAsset.getRecordType())){
-				aProductAsset.setVersion(aProductAsset.getVersion()+1);
+			if (StringUtils.isBlank(aProductAsset.getRecordType())) {
+				aProductAsset.setVersion(aProductAsset.getVersion() + 1);
 				aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aProductAsset.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if (StringUtils.trimToEmpty(aProductAsset.getRecordType()).equals(PennantConstants.RCD_UPD)) {
+			} else if (StringUtils.trimToEmpty(aProductAsset.getRecordType()).equals(PennantConstants.RCD_UPD)) {
 				aProductAsset.setVersion(aProductAsset.getVersion() + 1);
 				aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
 			try {
-				tranType=PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader =  newProductProcess(aProductAsset,tranType);
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newProductProcess(aProductAsset, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_ProductAssetDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getProductDialogCtrl().doFillProductAsset(this.productAssets);
 					closeDialog();
-				}	
+				}
 			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
@@ -570,49 +563,50 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getProductAsset().isNewRecord()){
+		if (getProductAsset().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.assetCode.setReadonly(false);
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 		}
 		this.productCode.setReadonly(true);
 		this.assetDesc.setReadonly(true);
 		this.assetIsActive.setDisabled(isReadOnly("ProductAssetDialog_assetIsActive"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.productAsset.isNewRecord()){
+			if (this.productAsset.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-			
-			if(getProductAsset().isNew() || getProductAsset().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+
+			if (getProductAsset().isNew()
+					|| getProductAsset().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				this.assetIsActive.setDisabled(true);
 			}
-			
-		}else{
-			if (getProductAsset().isNewRecord()){
+
+		} else {
+			if (getProductAsset().isNewRecord()) {
 				this.btnCtrl.setBtnStatus_New();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 			}
-			
-			if(getProductAsset().isNew() || getProductAsset().getRecordType().equals(PennantConstants.RCD_ADD)){
+
+			if (getProductAsset().isNew() || getProductAsset().getRecordType().equals(PennantConstants.RCD_ADD)) {
 				this.assetIsActive.setDisabled(true);
 			}
 		}
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewProduct()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewProduct()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -629,13 +623,13 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.assetDesc.setReadonly(true);
 		this.assetIsActive.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -677,44 +671,44 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		// Do data level validations here
 
 		isNew = aProductAsset.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aProductAsset.getRecordType())){
-				aProductAsset.setVersion(aProductAsset.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aProductAsset.getRecordType())) {
+				aProductAsset.setVersion(aProductAsset.getVersion() + 1);
+				if (isNew) {
 					aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aProductAsset.setNewRecord(true);
 				}
 			}
-		}else{
+		} else {
 			aProductAsset.setVersion(aProductAsset.getVersion() + 1);
 
-			if(isNew){
+			if (isNew) {
 				aProductAsset.setVersion(1);
 				aProductAsset.setRecordType(PennantConstants.RCD_ADD);
-			}else{
+			} else {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 
-			if(StringUtils.isBlank(aProductAsset.getRecordType())){
-				aProductAsset.setVersion(aProductAsset.getVersion()+1);
+			if (StringUtils.isBlank(aProductAsset.getRecordType())) {
+				aProductAsset.setVersion(aProductAsset.getVersion() + 1);
 				aProductAsset.setRecordType(PennantConstants.RCD_UPD);
 			}
 
-			if(aProductAsset.getRecordType().equals(PennantConstants.RCD_ADD) && isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			} else if(aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-				tranType =PennantConstants.TRAN_UPD;
+			if (aProductAsset.getRecordType().equals(PennantConstants.RCD_ADD) && isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
-			AuditHeader auditHeader =  newProductProcess(aProductAsset,tranType);
+			AuditHeader auditHeader = newProductProcess(aProductAsset, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_ProductAssetDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -729,15 +723,16 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	/**
 	 * Method for Creating List of ProductAsset Details
+	 * 
 	 * @param aProductAsset
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader newProductProcess(ProductAsset aProductAsset,String tranType){
+	private AuditHeader newProductProcess(ProductAsset aProductAsset, String tranType) {
 		logger.debug("Entering");
 
-		boolean recordAdded=false;
-		AuditHeader auditHeader= getAuditHeader(aProductAsset, tranType);
+		boolean recordAdded = false;
+		AuditHeader auditHeader = getAuditHeader(aProductAsset, tranType);
 		productAssets = new ArrayList<ProductAsset>();
 
 		String[] valueParm = new String[2];
@@ -746,73 +741,74 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		valueParm[0] = aProductAsset.getProductCode();
 		valueParm[1] = aProductAsset.getAssetCode();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_AssetCode") + ":"+ valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_AssetCode") + ":" + valueParm[1];
 
-		if(getProductDialogCtrl().getProductAssetList()!=null && getProductDialogCtrl().getProductAssetList().size()>0){
+		if (getProductDialogCtrl().getProductAssetList() != null
+				&& getProductDialogCtrl().getProductAssetList().size() > 0) {
 			for (int i = 0; i < getProductDialogCtrl().getProductAssetList().size(); i++) {
 				ProductAsset productAsset = getProductDialogCtrl().getProductAssetList().get(i);
 
-				if(aProductAsset.getAssetCode().equals(productAsset.getAssetCode()) && 
-						aProductAsset.getProductCode().equals(productAsset.getProductCode())){ // Both Current and Existing list addresses same
+				if (aProductAsset.getAssetCode().equals(productAsset.getAssetCode())
+						&& aProductAsset.getProductCode().equals(productAsset.getProductCode())) { // Both Current and Existing list addresses same
 
-					if(aProductAsset.isNew()){
+					if (aProductAsset.isNew()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
-
-					if(PennantConstants.TRAN_DEL.equals(tranType)){
-						if(PennantConstants.RECORD_TYPE_UPD.equals(aProductAsset.getRecordType())){
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aProductAsset.getRecordType())) {
 							aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							productAssets.add(aProductAsset);
-						}else if(PennantConstants.RCD_ADD.equals(aProductAsset.getRecordType())){
-							recordAdded=true;
-						}else if(PennantConstants.RECORD_TYPE_NEW.equals(aProductAsset.getRecordType())){
+						} else if (PennantConstants.RCD_ADD.equals(aProductAsset.getRecordType())) {
+							recordAdded = true;
+						} else if (PennantConstants.RECORD_TYPE_NEW.equals(aProductAsset.getRecordType())) {
 							aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							productAssets.add(aProductAsset);
-						}else if(PennantConstants.RECORD_TYPE_CAN.equals(aProductAsset.getRecordType())){
-							recordAdded=true;
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aProductAsset.getRecordType())) {
+							recordAdded = true;
 							for (int j = 0; j < getProductDialogCtrl().getProductAssetList().size(); j++) {
-								ProductAsset prodctAsset =  getProductDialogCtrl().getProductAssetList().get(j);
-								if(prodctAsset.getProductCode() == prodctAsset.getProductCode() 
-										&& prodctAsset.getAssetCode().equals(prodctAsset.getAssetCode())){
+								ProductAsset prodctAsset = getProductDialogCtrl().getProductAssetList().get(j);
+								if (prodctAsset.getProductCode() == prodctAsset.getProductCode()
+										&& prodctAsset.getAssetCode().equals(prodctAsset.getAssetCode())) {
 									productAssets.add(prodctAsset);
 								}
 							}
-						}else if(PennantConstants.RECORD_TYPE_DEL.equals(aProductAsset.getRecordType())){
+						} else if (PennantConstants.RECORD_TYPE_DEL.equals(aProductAsset.getRecordType())) {
 							aProductAsset.setNewRecord(true);
 						}
-					}else{
-						if(!PennantConstants.TRAN_UPD.equals(tranType)){
+					} else {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							productAssets.add(productAsset);
 						}
 					}
-				}else{
+				} else {
 					productAssets.add(productAsset);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			productAssets.add(aProductAsset);
 		}
 		return auditHeader;
-	} 
+	}
 
 	// Search Button Component Events
-	
-	public void onFulfill$assetCode(Event event){
-		logger.debug("Entering");	   
+
+	public void onFulfill$assetCode(Event event) {
+		logger.debug("Entering");
 		Object dataObject = assetCode.getObject();
-		if (dataObject instanceof String){
+		if (dataObject instanceof String) {
 			this.assetCode.setValue(dataObject.toString());
 			this.assetCode.setDescription("");
 			this.assetDesc.setValue("");
-		}else{
-			LovFieldDetail details= (LovFieldDetail) dataObject;
+		} else {
+			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.assetCode.setValue(details.getFieldCodeValue());
 				this.assetCode.setDescription("");
@@ -821,18 +817,18 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	// WorkFlow Components
 
 	/**
 	 * @param aProductAsset
 	 * @param tranType
 	 * @return
-	 */	
-	private AuditHeader getAuditHeader(ProductAsset aProductAsset, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProductAsset.getBefImage(), aProductAsset);   
-		return new AuditHeader(aProductAsset.getProductCode(),
-				null,null,null,auditDetail,aProductAsset.getUserDetails(),getOverideMap());
+	 */
+	private AuditHeader getAuditHeader(ProductAsset aProductAsset, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProductAsset.getBefImage(), aProductAsset);
+		return new AuditHeader(aProductAsset.getProductCode(), null, null, null, auditDetail,
+				aProductAsset.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -842,10 +838,10 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_ProductAssetDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -859,11 +855,11 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 *            (Event)
 	 * 
 	 * @throws Exception
-	 */	
+	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.productAsset);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.productAsset.getProductCode());
@@ -876,6 +872,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -883,6 +880,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public ProductAsset getProductAsset() {
 		return productAsset;
 	}
+
 	public void setProductAsset(ProductAsset productAsset) {
 		this.productAsset = productAsset;
 	}
@@ -890,6 +888,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -897,6 +896,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public ProductService getProductService() {
 		return productService;
 	}
+
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
 	}
@@ -904,6 +904,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public ProductDialogCtrl getProductDialogCtrl() {
 		return productDialogCtrl;
 	}
+
 	public void setProductDialogCtrl(ProductDialogCtrl productDialogCtrl) {
 		this.productDialogCtrl = productDialogCtrl;
 	}
@@ -911,6 +912,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -918,6 +920,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	public boolean isNewProduct() {
 		return newProduct;
 	}
+
 	public void setNewProduct(boolean newProduct) {
 		this.newProduct = newProduct;
 	}

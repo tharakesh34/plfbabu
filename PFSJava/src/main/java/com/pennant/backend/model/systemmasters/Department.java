@@ -80,31 +80,35 @@ public class Department extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return deptCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.deptCode = id;
 	}
-	
+
 	public String getDeptCode() {
 		return deptCode;
 	}
+
 	public void setDeptCode(String deptCode) {
 		this.deptCode = deptCode;
 	}
-	
+
 	public String getDeptDesc() {
 		return deptDesc;
 	}
+
 	public void setDeptDesc(String deptDesc) {
 		this.deptDesc = deptDesc;
 	}
-	
+
 	public boolean isDeptIsActive() {
 		return deptIsActive;
 	}
+
 	public void setDeptIsActive(boolean deptIsActive) {
 		this.deptIsActive = deptIsActive;
 	}
@@ -112,31 +116,35 @@ public class Department extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Department getBefImage(){
+	public Department getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Department beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Department beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -51,16 +51,16 @@ import com.pennant.backend.model.finance.FinPlanEmiHoliday;
  * DAO methods declaration for the <b>BundledProductsDetail model</b> class.<br>
  */
 public interface FinPlanEmiHolidayDAO {
-	
+
 	List<Integer> getPlanEMIHMonthsByRef(String finReference, String type);
-	
+
 	List<Date> getPlanEMIHDatesByRef(String finReference, String type);
 
 	void deletePlanEMIHMonths(String finReference, String type);
 
 	void savePlanEMIHMonths(List<FinPlanEmiHoliday> planEMIHMonths, String type);
-	
+
 	void deletePlanEMIHDates(String finReference, String type);
-	
+
 	void savePlanEMIHDates(List<FinPlanEmiHoliday> planEMIHDates, String type);
 }

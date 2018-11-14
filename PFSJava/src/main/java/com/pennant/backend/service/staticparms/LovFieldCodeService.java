@@ -49,9 +49,14 @@ import com.pennant.backend.model.staticparms.LovFieldCode;
 public interface LovFieldCodeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	LovFieldCode getLovFieldCodeById(String id);
+
 	LovFieldCode getApprovedLovFieldCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

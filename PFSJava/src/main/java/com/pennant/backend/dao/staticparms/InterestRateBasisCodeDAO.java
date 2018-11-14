@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.staticparms;
+
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 
 /**
@@ -50,8 +51,11 @@ import com.pennant.backend.model.staticparms.InterestRateBasisCode;
  */
 public interface InterestRateBasisCodeDAO {
 
-	InterestRateBasisCode getInterestRateBasisCodeById(String id,String type);
-	void update(InterestRateBasisCode interestRateBasisCode,String type);
-	void delete(InterestRateBasisCode interestRateBasisCode,String type);
-	String save(InterestRateBasisCode interestRateBasisCode,String type);
+	InterestRateBasisCode getInterestRateBasisCodeById(String id, String type);
+
+	void update(InterestRateBasisCode interestRateBasisCode, String type);
+
+	void delete(InterestRateBasisCode interestRateBasisCode, String type);
+
+	String save(InterestRateBasisCode interestRateBasisCode, String type);
 }

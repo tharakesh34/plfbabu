@@ -121,10 +121,10 @@ public class ImplementationConstants {
 	public static final boolean ENTITY_REQ_TRAIL_BAL = false;
 	// BPI on Deduct from disbursement is Incomized or Receivable
 	public static final boolean BPI_INCOMIZED_ON_ORG = true;
-	
+
 	// Allow Schedule Recalculation lock period Changes
 	public static final boolean ALW_SCH_RECAL_LOCK = false;
-	
+
 	// Capitalizing on Lock Period of Schedule Profit Balance
 	// 1. TRUE : Default Capitalize Balance amount when Applicable Capitalization
 	// 2. FALSE : Check Schedule is on Lock Period or not, if not Capitalize amount will reset

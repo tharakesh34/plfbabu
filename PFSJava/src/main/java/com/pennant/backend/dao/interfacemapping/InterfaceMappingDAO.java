@@ -59,6 +59,6 @@ public interface InterfaceMappingDAO {
 
 	List<String> getTableNameColumnsList(String tableName);
 
-	boolean isDuplicateKey(InterfaceMapping  interfaceMapping, TableType tableType);
+	boolean isDuplicateKey(InterfaceMapping interfaceMapping, TableType tableType);
 
 }

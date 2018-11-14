@@ -60,8 +60,7 @@ public interface IRRCodeDAO extends BasicCrudDao<IRRCode> {
 	IRRCode getIRRCode(long iRRID, String type);
 
 	/**
-	 * Checks whether another record exists with the key attributes in the
-	 * specified table type.
+	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param iRRID
 	 *            iRRID of the IRRCode.

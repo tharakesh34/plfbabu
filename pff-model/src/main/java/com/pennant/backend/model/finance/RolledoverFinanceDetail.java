@@ -50,36 +50,37 @@ import java.util.Date;
  * Model class for the <b>Academic table</b>.<br>
  *
  */
-public class RolledoverFinanceDetail implements java.io.Serializable  {
+public class RolledoverFinanceDetail implements java.io.Serializable {
 
 	private static final long serialVersionUID = -1472467289111692722L;
-	
+
 	private String finReference;
 	private String newFinReference;
 	private BigDecimal rolloverAmount = BigDecimal.ZERO;
 	private BigDecimal custPayment = BigDecimal.ZERO;
 	private Date rolloverDate;
-	
+
 	//External Fields for display purpose
 	private Date startDate;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal totalProfit = BigDecimal.ZERO;
 	private BigDecimal profitRate = BigDecimal.ZERO;
-	private BigDecimal  TotalPftBal = BigDecimal.ZERO;
+	private BigDecimal TotalPftBal = BigDecimal.ZERO;
 	private BigDecimal TotalPriBal = BigDecimal.ZERO;
 	private String finPurpose = "";
 
 	public RolledoverFinanceDetail() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-		
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -87,6 +88,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public String getNewFinReference() {
 		return newFinReference;
 	}
+
 	public void setNewFinReference(String newFinReference) {
 		this.newFinReference = newFinReference;
 	}
@@ -94,6 +96,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public BigDecimal getRolloverAmount() {
 		return rolloverAmount;
 	}
+
 	public void setRolloverAmount(BigDecimal rolloverAmount) {
 		this.rolloverAmount = rolloverAmount;
 	}
@@ -101,6 +104,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public BigDecimal getCustPayment() {
 		return custPayment;
 	}
+
 	public void setCustPayment(BigDecimal custPayment) {
 		this.custPayment = custPayment;
 	}
@@ -108,6 +112,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public Date getRolloverDate() {
 		return rolloverDate;
 	}
+
 	public void setRolloverDate(Date rolloverDate) {
 		this.rolloverDate = rolloverDate;
 	}
@@ -115,6 +120,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -122,6 +128,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public BigDecimal getFinAmount() {
 		return finAmount;
 	}
+
 	public void setFinAmount(BigDecimal finAmount) {
 		this.finAmount = finAmount;
 	}
@@ -129,6 +136,7 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public BigDecimal getTotalProfit() {
 		return totalProfit;
 	}
+
 	public void setTotalProfit(BigDecimal totalProfit) {
 		this.totalProfit = totalProfit;
 	}
@@ -136,32 +144,33 @@ public class RolledoverFinanceDetail implements java.io.Serializable  {
 	public BigDecimal getProfitRate() {
 		return profitRate;
 	}
+
 	public void setProfitRate(BigDecimal profitRate) {
 		this.profitRate = profitRate;
 	}
 
 	public BigDecimal getTotalPftBal() {
-	    return TotalPftBal;
-    }
+		return TotalPftBal;
+	}
 
 	public void setTotalPftBal(BigDecimal totalPftBal) {
-	    TotalPftBal = totalPftBal;
-    }
+		TotalPftBal = totalPftBal;
+	}
 
 	public BigDecimal getTotalPriBal() {
-	    return TotalPriBal;
-    }
+		return TotalPriBal;
+	}
 
 	public void setTotalPriBal(BigDecimal totalPriBal) {
-	    TotalPriBal = totalPriBal;
-    }
+		TotalPriBal = totalPriBal;
+	}
 
 	public String getFinPurpose() {
-	    return finPurpose;
-    }
+		return finPurpose;
+	}
 
 	public void setFinPurpose(String finPurpose) {
-	    this.finPurpose = finPurpose;
-    }
+		this.finPurpose = finPurpose;
+	}
 
 }

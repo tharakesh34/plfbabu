@@ -63,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail> implements AuthorizationDetailDAO {
 	private static Logger logger = Logger.getLogger(AuthorizationDetailDAOImpl.class);
-	
+
 	@Override
 	public AuthorizationDetail getAuthorizationDetail() {
 		logger.debug("Entering");
@@ -74,7 +74,6 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 		return authorizationDetail;
 	}
 
-	
 	@Override
 	public long save(AuthorizationDetail authorizationDetail, String type) {
 		logger.debug("Entering");
@@ -86,19 +85,16 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 		StringBuilder insertSql = new StringBuilder("Insert Into AuthDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (UPPAuthId, AuthChannelId, AuthChannelIP, Status");
-		insertSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-				.append(" Values(:UPPAuthId, :AuthChannelId, :AuthChannelIP, :Status");
-		insertSql
-				.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:UPPAuthId, :AuthChannelId, :AuthChannelIP, :Status");
+		insertSql.append(
+				", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				authorizationDetail);
-		this.jdbcTemplate.update(insertSql.toString(),
-				beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorizationDetail);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return authorizationDetail.getId();
 	}
@@ -109,10 +105,9 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update AuthDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set AuthChannelId = :AuthChannelId, AuthChannelIP = :AuthChannelIP, Status = :Status");
-		updateSql
-				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Set AuthChannelId = :AuthChannelId, AuthChannelIP = :AuthChannelIP, Status = :Status");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where UPPAuthId =:UPPAuthId ");
 
 		if (!type.endsWith("_Temp")) {
@@ -121,10 +116,8 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 
 		logger.debug("updateSql: " + updateSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				authorizationDetail);
-		recordCount = this.jdbcTemplate.update(
-				updateSql.toString(), beanParameters);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorizationDetail);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -141,20 +134,17 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select UPPAuthId, AuthChannelId,ChannelName,ChannelCode, AuthChannelIP, Status");
-		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From AuthDetails_AView");
-		selectSql
-				.append(" Where ChannelCode =:ChannelCode AND AuthChannelIP=:AuthChannelIP");
+		selectSql.append(" Where ChannelCode =:ChannelCode AND AuthChannelIP=:AuthChannelIP");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				authorizationDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorizationDetail);
 		RowMapper<AuthorizationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(AuthorizationDetail.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 }

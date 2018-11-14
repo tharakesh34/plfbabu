@@ -45,14 +45,16 @@ package com.pennant.backend.dao.finance;
 
 import com.pennant.backend.model.finance.BundledProductsDetail;
 
-
 /**
  * DAO methods declaration for the <b>BundledProductsDetail model</b> class.<br>
  */
 public interface BundledProductsDetailDAO {
 
-	BundledProductsDetail getBundledProductsDetailByID(String id,String type);
-	void update(BundledProductsDetail bundledProductsDetail,String type);
-	void delete(BundledProductsDetail bundledProductsDetail,String type);
-	String save(BundledProductsDetail bundledProductsDetail,String type);
+	BundledProductsDetail getBundledProductsDetailByID(String id, String type);
+
+	void update(BundledProductsDetail bundledProductsDetail, String type);
+
+	void delete(BundledProductsDetail bundledProductsDetail, String type);
+
+	String save(BundledProductsDetail bundledProductsDetail, String type);
 }

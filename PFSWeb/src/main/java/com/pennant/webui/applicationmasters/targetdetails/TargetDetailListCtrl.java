@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.applicationmasters.targetdetails;
 
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -64,10 +63,10 @@ import com.pennant.backend.service.applicationmaster.TargetDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.applicationmasters.targetdetails.model.TargetdetailListModelItemRender;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMasters/TargetDetails/TargetDetailsList.zul file.
@@ -112,11 +111,11 @@ public class TargetDetailListCtrl extends GFCBaseListCtrl<TargetDetail> {
 		super.tableName = "TargetDetails_AView";
 		super.queueTableName = "TargetDetails_View";
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		super.searchObject.addFilter(new Filter("targetCode",PennantConstants.NONE, Filter.OP_NOT_EQUAL));
+		super.searchObject.addFilter(new Filter("targetCode", PennantConstants.NONE, Filter.OP_NOT_EQUAL));
 	}
 
 	/**
@@ -132,7 +131,8 @@ public class TargetDetailListCtrl extends GFCBaseListCtrl<TargetDetail> {
 		setItemRender(new TargetdetailListModelItemRender());
 
 		// Register buttons and fields.
-		registerButton(button_TargetDetailList_NewTargetDetailList, "button_TargetDetailList_NewTargetDetailList", true);
+		registerButton(button_TargetDetailList_NewTargetDetailList, "button_TargetDetailList_NewTargetDetailList",
+				true);
 		registerButton(button_TargetDetailList_TargetDetailsSearchDialog);
 
 		registerField("targetCode", listheader_TargetCode, SortOrder.ASC, targetCode, sortOperator_targetCode,

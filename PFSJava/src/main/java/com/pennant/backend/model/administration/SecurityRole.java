@@ -58,28 +58,28 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-@XmlType(propOrder = {"roleCd","roleDesc"})
+@XmlType(propOrder = { "roleCd", "roleDesc" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class SecurityRole extends AbstractWorkflowEntity  {
+public class SecurityRole extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
-	private long        roleID = Long.MIN_VALUE;
-	private long        roleApp;
-	
+
+	private long roleID = Long.MIN_VALUE;
+	private long roleApp;
+
 	@XmlElement
-	private String       roleCd;
+	private String roleCd;
 	@XmlElement
-	private String       roleDesc;
-	private String       roleCategory;
-	private long         loginUsrId;
-	private boolean      newRecord;
-	private String       lovValue;
-	private SecurityRole      befImage;
+	private String roleDesc;
+	private String roleCategory;
+	private long loginUsrId;
+	private boolean newRecord;
+	private String lovValue;
+	private SecurityRole befImage;
 	private LoggedInUser userDetails;
-	private String       loginAppCode;
-	private String       lovDescRoleAppName;
-	private List<SecurityGroup> lovDescAllGroups=new ArrayList<SecurityGroup>();
-	private List<SecurityRoleGroups> lovDescAssignedGroups=new ArrayList<SecurityRoleGroups>();
+	private String loginAppCode;
+	private String lovDescRoleAppName;
+	private List<SecurityGroup> lovDescAllGroups = new ArrayList<SecurityGroup>();
+	private List<SecurityRoleGroups> lovDescAssignedGroups = new ArrayList<SecurityRoleGroups>();
 
 	public SecurityRole() {
 		super();
@@ -87,15 +87,14 @@ public class SecurityRole extends AbstractWorkflowEntity  {
 
 	public SecurityRole(long roleId) {
 		super();
-		this.roleID=roleId;
+		this.roleID = roleId;
 	}
 
 	public List<SecurityRoleGroups> getLovDescAssignedGroups() {
 		return lovDescAssignedGroups;
 	}
 
-	public void setLovDescAssignedGroups(
-			List<SecurityRoleGroups> lovDescAssignedGroups) {
+	public void setLovDescAssignedGroups(List<SecurityRoleGroups> lovDescAssignedGroups) {
 		this.lovDescAssignedGroups = lovDescAssignedGroups;
 	}
 
@@ -152,7 +151,6 @@ public class SecurityRole extends AbstractWorkflowEntity  {
 		return isNewRecord();
 	}
 
-	
 	public void setId(long id) {
 		this.roleID = id;
 	}
@@ -168,7 +166,6 @@ public class SecurityRole extends AbstractWorkflowEntity  {
 	public void setRoleID(long roleID) {
 		this.roleID = roleID;
 	}
-
 
 	public String getRoleCd() {
 		return roleCd;
@@ -197,14 +194,15 @@ public class SecurityRole extends AbstractWorkflowEntity  {
 	public long getLoginUsrId() {
 		return loginUsrId;
 	}
-		public long getLoginUsrID() {
+
+	public long getLoginUsrID() {
 		return loginUsrId;
 	}
 
-	public void setLoginUsrId(long loginUsrId ) {
+	public void setLoginUsrId(long loginUsrId) {
 		this.loginUsrId = loginUsrId;
 	}
-	
+
 	public void setLoginUsrID(long loginUsrId) {
 		this.loginUsrId = loginUsrId;
 	}

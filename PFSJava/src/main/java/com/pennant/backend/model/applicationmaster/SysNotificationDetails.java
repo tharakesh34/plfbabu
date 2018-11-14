@@ -96,18 +96,23 @@ public class SysNotificationDetails extends AbstractWorkflowEntity implements En
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public SysNotificationDetails getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(SysNotificationDetails befImage) {
 		this.befImage = befImage;
 	}
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -116,11 +121,9 @@ public class SysNotificationDetails extends AbstractWorkflowEntity implements En
 		return sysNotificationId;
 	}
 
-
 	public void setSysNotificationId(long sysNotificationId) {
 		this.sysNotificationId = sysNotificationId;
 	}
-
 
 	public String getFinReference() {
 		return finReference;
@@ -185,6 +188,7 @@ public class SysNotificationDetails extends AbstractWorkflowEntity implements En
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
+
 	public String getFinCurODAmtInStr() {
 		return finCurODAmtInStr;
 	}

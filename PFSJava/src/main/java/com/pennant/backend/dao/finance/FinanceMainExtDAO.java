@@ -9,7 +9,7 @@ public interface FinanceMainExtDAO {
 	void save(FinanceMainExt financeMainExt);
 
 	void update(FinanceMainExt financeMainExt);
-	
+
 	String getRepayIBAN(String finReference);
 
 	FinanceMainExt getNstlAccNumber(String finReference, boolean processFlag);

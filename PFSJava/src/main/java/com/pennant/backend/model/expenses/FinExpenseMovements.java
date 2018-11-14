@@ -50,25 +50,24 @@ import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 
-public class FinExpenseMovements implements Entity{
-	
-	private long 		finExpenseMovemntId = Long.MIN_VALUE;
-	private long 		finExpenseId = 0;
-	private String 		finReference = null;
-	private String 		modeType = null;
-	private long 		uploadId = 0;
-	private BigDecimal 	transactionAmount = BigDecimal.ZERO;
-	private String 		transactionType = null;
-	private Timestamp 	lastMntOn;
-	private Date		transactionDate;
-	private String      fileName;
-	private long        lastMntBy;
-	
-	
+public class FinExpenseMovements implements Entity {
+
+	private long finExpenseMovemntId = Long.MIN_VALUE;
+	private long finExpenseId = 0;
+	private String finReference = null;
+	private String modeType = null;
+	private long uploadId = 0;
+	private BigDecimal transactionAmount = BigDecimal.ZERO;
+	private String transactionType = null;
+	private Timestamp lastMntOn;
+	private Date transactionDate;
+	private String fileName;
+	private long lastMntBy;
+
 	public FinExpenseMovements() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
 
 		Set<String> excludeFields = new HashSet<String>();

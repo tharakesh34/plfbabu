@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -54,17 +55,26 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface BlackListCustomerDAO extends BasicCrudDao<BlackListCustomers> {
 
-	void saveList(List<FinBlacklistCustomer> finBlackList,String type);
+	void saveList(List<FinBlacklistCustomer> finBlackList, String type);
+
 	List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode);
+
 	List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule);
+
 	void updateList(List<FinBlacklistCustomer> finBlackList);
+
 	void deleteList(String finReference);
+
 	List<FinBlacklistCustomer> fetchFinBlackList(String finReference);
+
 	BlackListCustomers getBlackListCustomers();
+
 	BlackListCustomers getNewBlacklistCustomer();
+
 	BlackListCustomers getBlacklistCustomerById(String id, String type);
+
 	void moveData(String finReference, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 

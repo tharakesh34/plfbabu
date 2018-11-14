@@ -66,11 +66,11 @@ public interface PFSParameterService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-		
+
 	void update(String sysParmCode, String sysParmValue, String type);
-	
+
 	PFSParameter getParameterByCode(String code);
-	
+
 	List<GlobalVariable> getGlobaVariables();
 
 }

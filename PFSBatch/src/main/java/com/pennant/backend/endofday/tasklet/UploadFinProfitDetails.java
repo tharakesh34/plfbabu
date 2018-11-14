@@ -14,34 +14,34 @@ import com.pennant.app.util.DateUtility;
 
 public class UploadFinProfitDetails implements Tasklet {
 	private Logger logger = Logger.getLogger(UploadFinProfitDetails.class);
-	
+
 	private UploadFinPftDetailService uploadFinPftDetailService;
-	
+
 	private Date dateValueDate = null;
-	
+
 	private ExecutionContext stepExecutionContext;
 
 	public UploadFinProfitDetails() {
-		
+
 	}
-	
+
 	@Override
-	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
+	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getAppValueDate();
 
-		logger.debug("START: Upload Profit Details for Value Date: "+ dateValueDate);		
+		logger.debug("START: Upload Profit Details for Value Date: " + dateValueDate);
 
-		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();	
+		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		try {
 			getUploadFinPftDetailService().doUploadPftDetails(context);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 
-		logger.debug("COMPLETE: Upload Profit Details for Value Date: "+ dateValueDate);
+		logger.debug("COMPLETE: Upload Profit Details for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
 	}
 
@@ -52,6 +52,7 @@ public class UploadFinProfitDetails implements Tasklet {
 	public UploadFinPftDetailService getUploadFinPftDetailService() {
 		return uploadFinPftDetailService;
 	}
+
 	public void setUploadFinPftDetailService(UploadFinPftDetailService uploadFinPftDetailService) {
 		this.uploadFinPftDetailService = uploadFinPftDetailService;
 	}

@@ -42,18 +42,26 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 
 public interface ScoringSlabDAO {
 
-	 ScoringSlab getScoringSlab();
-	 ScoringSlab getNewScoringSlab();
-	 ScoringSlab getScoringSlabById(long id,String type);
-	 void update(ScoringSlab scoringSlab,String type);
-	 void delete(ScoringSlab scoringSlab,String type);
-	 void delete(long scoreGroupId,String type);
-	 long save(ScoringSlab scoringSlab,String type);
-	 List<ScoringSlab> getScoringSlabsByScoreGrpId(final long scoreGrpId, String type);
+	ScoringSlab getScoringSlab();
+
+	ScoringSlab getNewScoringSlab();
+
+	ScoringSlab getScoringSlabById(long id, String type);
+
+	void update(ScoringSlab scoringSlab, String type);
+
+	void delete(ScoringSlab scoringSlab, String type);
+
+	void delete(long scoreGroupId, String type);
+
+	long save(ScoringSlab scoringSlab, String type);
+
+	List<ScoringSlab> getScoringSlabsByScoreGrpId(final long scoreGrpId, String type);
 }

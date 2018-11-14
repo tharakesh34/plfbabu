@@ -73,32 +73,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RMTMasters/ScoringSlab/scoringSlabDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/RMTMasters/ScoringSlab/scoringSlabDialog.zul file.
  */
 public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	private static final long serialVersionUID = 3743543079732961048L;
 	private static final Logger logger = Logger.getLogger(ScoringSlabDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL -file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL -file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  		window_ScoringSlabDialog;          // autoWired
-	protected Longbox 		aScoringSlab;                      // autoWired
-	protected Textbox 		creditWorthness;                   // autoWired
-	
+	protected Window window_ScoringSlabDialog; // autoWired
+	protected Longbox aScoringSlab; // autoWired
+	protected Textbox creditWorthness; // autoWired
 
 	// not auto wired variables 
-	private ScoringSlab scoringSlab;       // over handed per parameters
+	private ScoringSlab scoringSlab; // over handed per parameters
 
 	private transient boolean validationOn;
-	
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	private transient ScoringGroup scoringGroup =null;
+
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private transient ScoringGroup scoringGroup = null;
 	private ScoringGroupDialogCtrl scoringGroupDialogCtrl;
-	private List<ScoringSlab>   scoringSlabList;
+	private List<ScoringSlab> scoringSlabList;
 
 	/**
 	 * default constructor.<br>
@@ -115,9 +112,8 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ScoringSlab object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ScoringSlab object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -133,32 +129,32 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 
 		if (arguments.containsKey("scroingSlab")) {
 			this.scoringSlab = (ScoringSlab) arguments.get("scroingSlab");
-			ScoringSlab befImage =new ScoringSlab();
+			ScoringSlab befImage = new ScoringSlab();
 			BeanUtils.copyProperties(this.scoringSlab, befImage);
 			this.scoringSlab.setBefImage(befImage);
 			setScoringSlab(this.scoringSlab);
 		} else {
 			setScoringSlab(null);
 		}
-		
+
 		if (arguments.containsKey("scoringGroup")) {
 			this.scoringGroup = (ScoringGroup) arguments.get("scoringGroup");
 			setScoringGroup(this.scoringGroup);
 		}
-		
+
 		if (arguments.containsKey("scoringGroupDialogCtrl")) {
-			this.scoringGroupDialogCtrl =(ScoringGroupDialogCtrl)arguments.get("scoringGroupDialogCtrl");
-			setScoringGroupDialogCtrl(this.scoringGroupDialogCtrl );
+			this.scoringGroupDialogCtrl = (ScoringGroupDialogCtrl) arguments.get("scoringGroupDialogCtrl");
+			setScoringGroupDialogCtrl(this.scoringGroupDialogCtrl);
 		} else {
 			setScoringGroupDialogCtrl(null);
 		}
-		
-		if(arguments.containsKey("roleCode")){
+
+		if (arguments.containsKey("roleCode")) {
 			getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "ScoringSlabDialog");
 		}
-		
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "ScoringSlabDialog");
 		}
 
@@ -177,17 +173,17 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.aScoringSlab.setMaxlength(4);
 		this.creditWorthness.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -195,11 +191,10 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -208,7 +203,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ScoringSlabDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ScoringSlabDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -286,12 +281,12 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.scoringSlab.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -301,7 +296,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 *            ScoringSlab
 	 */
 	public void doWriteBeanToComponents(ScoringSlab aScoringSlab) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.aScoringSlab.setValue(aScoringSlab.getScoringSlab());
 		this.creditWorthness.setValue(aScoringSlab.getCreditWorthness());
 		this.recordStatus.setValue(aScoringSlab.getRecordStatus());
@@ -314,27 +309,27 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * @param aScoringSlab
 	 */
 	public void doWriteComponentsToBean(ScoringSlab aScoringSlab) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			aScoringSlab.setScoringSlab(this.aScoringSlab.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aScoringSlab.setCreditWorthness(this.creditWorthness.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -348,8 +343,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScoringSlab
 	 * @throws InterruptedException
@@ -377,7 +371,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -387,12 +381,14 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.aScoringSlab.isReadonly()){
-			this.aScoringSlab.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value"),null,true));
-		}	
-		if (!this.creditWorthness.isReadonly()){
-			this.creditWorthness.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringSlabDialog_CreditWorthness.value"),null,true));
-		}	
+		if (!this.aScoringSlab.isReadonly()) {
+			this.aScoringSlab.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value"), null, true));
+		}
+		if (!this.creditWorthness.isReadonly()) {
+			this.creditWorthness.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ScoringSlabDialog_CreditWorthness.value"), null, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -406,9 +402,10 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		this.creditWorthness.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	private void doSetLOVValidation() {
 	}
+
 	private void doRemoveLOVValidation() {
 	}
 
@@ -431,39 +428,39 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
-		
+		logger.debug("Entering");
+
 		final ScoringSlab aScoringSlab = new ScoringSlab();
 		BeanUtils.copyProperties(getScoringSlab(), aScoringSlab);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-							+Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value")+":" + aScoringSlab.getScoringSlab();
+				+ Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value") + ":" + aScoringSlab.getScoringSlab();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aScoringSlab.getRecordType())){
-				aScoringSlab.setVersion(aScoringSlab.getVersion()+1);
+			if (StringUtils.isBlank(aScoringSlab.getRecordType())) {
+				aScoringSlab.setVersion(aScoringSlab.getVersion() + 1);
 				aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aScoringSlab.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
-			}else if (PennantConstants.RCD_UPD.equals(StringUtils.trimToEmpty(aScoringSlab.getRecordType()))) {
+			} else if (PennantConstants.RCD_UPD.equals(StringUtils.trimToEmpty(aScoringSlab.getRecordType()))) {
 				aScoringSlab.setVersion(aScoringSlab.getVersion() + 1);
 				aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 			try {
-				tranType=PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader =  newScoringSlabDetailProcess(aScoringSlab,tranType);
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newScoringSlabDetailProcess(aScoringSlab, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_ScoringSlabDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getScoringGroupDialogCtrl().doFillScoringSlab(this.scoringSlabList);
 					this.window_ScoringSlabDialog.onClose();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -477,31 +474,31 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getScoringSlab().isNewRecord()){
+		if (getScoringSlab().isNewRecord()) {
 			this.aScoringSlab.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.aScoringSlab.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 
 		this.creditWorthness.setReadonly(isReadOnly("ScoringSlabDialog_creditWorthness"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.scoringSlab.isNewRecord()){
+			if (this.scoringSlab.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
-			if (this.scoringSlab.isNewRecord()){
+		} else {
+			if (this.scoringSlab.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_New();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 			}
 		}
@@ -515,13 +512,13 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		logger.debug("Entering");
 		this.aScoringSlab.setReadonly(true);
 		this.creditWorthness.setReadonly(true);
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -546,7 +543,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final ScoringSlab aScoringSlab = new ScoringSlab();
 		BeanUtils.copyProperties(getScoringSlab(), aScoringSlab);
 		boolean isNew = false;
@@ -561,44 +558,44 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		// Do data level validations here
 
 		isNew = aScoringSlab.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aScoringSlab.getRecordType())){
-				aScoringSlab.setVersion(aScoringSlab.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aScoringSlab.getRecordType())) {
+				aScoringSlab.setVersion(aScoringSlab.getVersion() + 1);
+				if (isNew) {
 					aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aScoringSlab.setNewRecord(true);
 				}
 			}
-		}else{
-			/*set the tranType according to RecordType*/
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
+		} else {
+			/* set the tranType according to RecordType */
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
 				aScoringSlab.setVersion(1);
 				aScoringSlab.setRecordType(PennantConstants.RCD_ADD);
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 
-			if(StringUtils.isBlank(aScoringSlab.getRecordType())){
-				tranType =PennantConstants.TRAN_UPD;
+			if (StringUtils.isBlank(aScoringSlab.getRecordType())) {
+				tranType = PennantConstants.TRAN_UPD;
 				aScoringSlab.setRecordType(PennantConstants.RCD_UPD);
 			}
-			if(PennantConstants.RCD_ADD.equals(aScoringSlab.getRecordType()) && isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			} else if(PennantConstants.RECORD_TYPE_NEW.equals(aScoringSlab.getRecordType())){
-				tranType =PennantConstants.TRAN_UPD;
-			} 
+			if (PennantConstants.RCD_ADD.equals(aScoringSlab.getRecordType()) && isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (PennantConstants.RECORD_TYPE_NEW.equals(aScoringSlab.getRecordType())) {
+				tranType = PennantConstants.TRAN_UPD;
+			}
 		}
 		try {
-			AuditHeader auditHeader =  newScoringSlabDetailProcess(aScoringSlab,tranType);
+			AuditHeader auditHeader = newScoringSlabDetailProcess(aScoringSlab, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_ScoringSlabDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
-			if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getScoringGroupDialogCtrl().doFillScoringSlab(this.scoringSlabList);
 				this.window_ScoringSlabDialog.onClose();
 			}
@@ -610,79 +607,83 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	}
 
 	/**
-	 * This method added the ScoringSlabDetail object into scoringSlabList
-	 *  by setting RecordType according to tranType
-	 *  <p>eg: 	if(tranType==PennantConstants.TRAN_DEL){
-	 *  	aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-	 *  }</p>
-	 * @param  aScoringSlab (EducationalExpense)
-	 * @param  tranType (String)
+	 * This method added the ScoringSlabDetail object into scoringSlabList by setting RecordType according to tranType
+	 * <p>
+	 * eg: if(tranType==PennantConstants.TRAN_DEL){ aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL); }
+	 * </p>
+	 * 
+	 * @param aScoringSlab
+	 *            (EducationalExpense)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader (AuditHeader)
 	 */
-	private AuditHeader newScoringSlabDetailProcess(ScoringSlab aScoringSlab,String tranType){
+	private AuditHeader newScoringSlabDetailProcess(ScoringSlab aScoringSlab, String tranType) {
 		logger.debug("Entering ");
-		boolean recordAdded=false;
+		boolean recordAdded = false;
 
-		AuditHeader auditHeader= getAuditHeader(aScoringSlab, tranType);
-		scoringSlabList= new ArrayList<ScoringSlab>();
+		AuditHeader auditHeader = getAuditHeader(aScoringSlab, tranType);
+		scoringSlabList = new ArrayList<ScoringSlab>();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = String.valueOf(aScoringSlab.getScoringSlab());
-		errParm[0] = PennantJavaUtil.getLabel("label_ScoringSlabDialog_ScoringSlab.value") + ":"+valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_ScoringSlabDialog_ScoringSlab.value") + ":" + valueParm[0];
 
-		if(getScoringGroupDialogCtrl().getScoringSlabList()!=null && getScoringGroupDialogCtrl().getScoringSlabList().size()>0){
+		if (getScoringGroupDialogCtrl().getScoringSlabList() != null
+				&& getScoringGroupDialogCtrl().getScoringSlabList().size() > 0) {
 			for (int i = 0; i < getScoringGroupDialogCtrl().getScoringSlabList().size(); i++) {
 				ScoringSlab scoringSlab = getScoringGroupDialogCtrl().getScoringSlabList().get(i);
 
-				if( aScoringSlab.getScoringSlab()==scoringSlab.getScoringSlab()){ // Both Current and Existing list slab same
-					/*if same ScoringSlab added twice set error detail*/
-					if(getScoringSlab().isNew()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+				if (aScoringSlab.getScoringSlab() == scoringSlab.getScoringSlab()) { // Both Current and Existing list slab same
+					/* if same ScoringSlab added twice set error detail */
+					if (getScoringSlab().isNew()) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
-					if(PennantConstants.TRAN_DEL.equals(tranType)){
-						if(PennantConstants.RECORD_TYPE_UPD.equals(aScoringSlab.getRecordType())){
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aScoringSlab.getRecordType())) {
 							aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							scoringSlabList.add(aScoringSlab);
-						}else if(PennantConstants.RCD_ADD.equals(aScoringSlab.getRecordType())){
-							recordAdded=true;
-						}else if(PennantConstants.RECORD_TYPE_NEW.equals(aScoringSlab.getRecordType())){
+						} else if (PennantConstants.RCD_ADD.equals(aScoringSlab.getRecordType())) {
+							recordAdded = true;
+						} else if (PennantConstants.RECORD_TYPE_NEW.equals(aScoringSlab.getRecordType())) {
 							aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							scoringSlabList.add(aScoringSlab);
-						}else if(PennantConstants.RECORD_TYPE_CAN.equals(aScoringSlab.getRecordType())){
-							recordAdded=true;
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aScoringSlab.getRecordType())) {
+							recordAdded = true;
 							for (int j = 0; j < getScoringGroupDialogCtrl().getScoringSlabList().size(); j++) {
 								ScoringSlab scorslab = getScoringGroupDialogCtrl().getScoringSlabList().get(j);
-								if( aScoringSlab.getScoringSlab()== scorslab.getScoringSlab()){
+								if (aScoringSlab.getScoringSlab() == scorslab.getScoringSlab()) {
 									scoringSlabList.add(scorslab);
 								}
 							}
-						}else if(PennantConstants.RECORD_TYPE_DEL.equals(aScoringSlab.getRecordType())){
+						} else if (PennantConstants.RECORD_TYPE_DEL.equals(aScoringSlab.getRecordType())) {
 							aScoringSlab.setNewRecord(true);
 						}
-					}else{
-						if(!PennantConstants.TRAN_UPD.equals(tranType)){
+					} else {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							scoringSlabList.add(scoringSlab);
 						}
 					}
-				}else{
+				} else {
 					scoringSlabList.add(scoringSlab);
 				}
 			}
 		}
-		if(!recordAdded){
+		if (!recordAdded) {
 			scoringSlabList.add(aScoringSlab);
 		}
 		logger.debug("Leaving");
 		return auditHeader;
-	} 
-	
+	}
+
 	// WorkFlow Components
 
 	/**
@@ -692,27 +693,29 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(ScoringSlab aScoringSlab, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aScoringSlab.getBefImage(), aScoringSlab);   
-		return new AuditHeader(String.valueOf(aScoringSlab.getScoreGroupId()),null,null,null,
-				auditDetail,aScoringSlab.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(ScoringSlab aScoringSlab, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aScoringSlab.getBefImage(), aScoringSlab);
+		return new AuditHeader(String.valueOf(aScoringSlab.getScoreGroupId()), null, null, null, auditDetail,
+				aScoringSlab.getUserDetails(), getOverideMap());
 	}
 
 	/**
-	 * This method  shows error message
+	 * This method shows error message
+	 * 
 	 * @param e
 	 */
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_ScoringSlabDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -722,10 +725,10 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-       doShowNotes(this.scoringSlab);
-		
-	 }
-	
+		doShowNotes(this.scoringSlab);
+
+	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.scoringSlab.getScoreGroupId());
@@ -737,6 +740,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -744,6 +748,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	public ScoringSlab getScoringSlab() {
 		return this.scoringSlab;
 	}
+
 	public void setScoringSlab(ScoringSlab scoringSlab) {
 		this.scoringSlab = scoringSlab;
 	}
@@ -751,6 +756,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -758,14 +764,15 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	public ScoringGroupDialogCtrl getScoringGroupDialogCtrl() {
 		return scoringGroupDialogCtrl;
 	}
-	public void setScoringGroupDialogCtrl(
-			ScoringGroupDialogCtrl scoringGroupDialogCtrl) {
+
+	public void setScoringGroupDialogCtrl(ScoringGroupDialogCtrl scoringGroupDialogCtrl) {
 		this.scoringGroupDialogCtrl = scoringGroupDialogCtrl;
 	}
 
 	public void setScoringGroup(ScoringGroup scoringGroup) {
 		this.scoringGroup = scoringGroup;
 	}
+
 	public ScoringGroup getScoringGroup() {
 		return scoringGroup;
 	}

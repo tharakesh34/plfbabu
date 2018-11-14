@@ -11,13 +11,15 @@ import org.apache.log4j.Logger;
 public class EncryptionModule {
 	private static final Logger logger = Logger.getLogger(EncryptionModule.class);
 
-	public EncryptionModule(){
+	public EncryptionModule() {
 		super();
 	}
 
 	private static final String algorithm = "AES/CBC/PKCS5Padding";
-	private static final byte[] keyValue = DigestUtils.md5("NTBjMjNlMGU4YWZkYjEzOTcxNGQ5M2NhYTBjNzA3ZTM5MmY3YmE3YWI3MGRkZjc4ZjBjZmZhZGQ2YzljY2EwYg==");
-	private static final byte[] ivValue = DigestUtils.md5("NTBjMjNlMGU4YWZkYjEzOTcxNGQ5M2NhYTBjNzA3ZTM5MmY3YmE3YWI3MGRkZjc4ZjBjZmZhZGQ2YzljY2EwYg==");
+	private static final byte[] keyValue = DigestUtils
+			.md5("NTBjMjNlMGU4YWZkYjEzOTcxNGQ5M2NhYTBjNzA3ZTM5MmY3YmE3YWI3MGRkZjc4ZjBjZmZhZGQ2YzljY2EwYg==");
+	private static final byte[] ivValue = DigestUtils
+			.md5("NTBjMjNlMGU4YWZkYjEzOTcxNGQ5M2NhYTBjNzA3ZTM5MmY3YmE3YWI3MGRkZjc4ZjBjZmZhZGQ2YzljY2EwYg==");
 	private static final IvParameterSpec ivspec = new IvParameterSpec(ivValue);
 	private static final SecretKeySpec keyspec = new SecretKeySpec(keyValue, "AES");
 
@@ -29,7 +31,7 @@ public class EncryptionModule {
 
 			byte[] encVal = c.doFinal(plainText.getBytes());
 			cipherText = Base64.encodeBase64String(encVal);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 

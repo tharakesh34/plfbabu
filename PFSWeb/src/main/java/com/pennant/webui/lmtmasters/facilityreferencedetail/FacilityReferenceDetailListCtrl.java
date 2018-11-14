@@ -71,11 +71,11 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.lmtmasters.financereferencedetail.model.FacilityReferenceDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -86,35 +86,34 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting auto wired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_FacilityReferenceDetailList; 			// auto wired
-	protected Borderlayout 	borderLayout_FacilityReferenceDetailList; 	// auto wired
-	public Paging 		pagingFacilityReferenceDetailList; 			// auto wired
-	public Listbox 		listBoxFacilityReferenceDetail; 				// auto wired
+	protected Window window_FacilityReferenceDetailList; // auto wired
+	protected Borderlayout borderLayout_FacilityReferenceDetailList; // auto wired
+	public Paging pagingFacilityReferenceDetailList; // auto wired
+	public Listbox listBoxFacilityReferenceDetail; // auto wired
 
-	protected Textbox  facilityType;
-	protected Listbox  sortOperator_facilityType;
-	protected Textbox  facilityTypeDesc;
-	protected Listbox  sortOperator_facilityTypeDesc;
-	
+	protected Textbox facilityType;
+	protected Listbox sortOperator_facilityType;
+	protected Textbox facilityTypeDesc;
+	protected Listbox sortOperator_facilityTypeDesc;
+
 	// List headers
-	protected Listheader listheader_FacilityType; 		// auto wired
-	protected Listheader listheader_FacilityTypeDesc; 	// auto wired
+	protected Listheader listheader_FacilityType; // auto wired
+	protected Listheader listheader_FacilityTypeDesc; // auto wired
 
 	// checkRights
-	protected Button btnHelp; 																// auto wired
-	protected Button button_FacilityReferenceDetailList_NewFacilityReferenceDetail; 			// auto wired
-	protected Button button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog; 	// auto wired
-	protected Button button_FacilityReferenceDetailList_PrintList; 							// auto wired
+	protected Button btnHelp; // auto wired
+	protected Button button_FacilityReferenceDetailList_NewFacilityReferenceDetail; // auto wired
+	protected Button button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog; // auto wired
+	protected Button button_FacilityReferenceDetailList_PrintList; // auto wired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<CAFFacilityType> searchObj;
 	private transient FacilityReferenceDetailService facilityReferenceDetailService;
 	private PagedListService pagedListService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -128,27 +127,27 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceCheckList object in
-	 * a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceCheckList object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_FacilityReferenceDetailList(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		// DropDown ListBox
-		this.sortOperator_facilityType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_facilityType
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_facilityType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_facilityTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_facilityTypeDesc
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_facilityTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
-				
-			
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_FacilityReferenceDetailList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
@@ -159,11 +158,11 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 		this.listheader_FacilityType.setSortDescending(new FieldComparator("FacilityType", false));
 		this.listheader_FacilityTypeDesc.setSortAscending(new FieldComparator("FacilityDesc", true));
 		this.listheader_FacilityTypeDesc.setSortDescending(new FieldComparator("FacilityDesc", false));
-		
+
 		doSearch();
 		// set the itemRenderer
 		this.listBoxFacilityReferenceDetail.setItemRenderer(new FacilityReferenceDetailListModelItemRenderer());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -174,8 +173,10 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FacilityReferenceDetailList");
 
-		/*this.button_FacilityReferenceDetailList_NewFacilityReferenceDetail.setVisible(
-				getUserWorkspace().isAllowed("button_FacilityReferenceDetailList_NewFacilityReferenceDetail"));*/
+		/*
+		 * this.button_FacilityReferenceDetailList_NewFacilityReferenceDetail.setVisible(
+		 * getUserWorkspace().isAllowed("button_FacilityReferenceDetailList_NewFacilityReferenceDetail"));
+		 */
 		this.button_FacilityReferenceDetailList_NewFacilityReferenceDetail.setVisible(false);
 		this.button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog.setVisible(
 				getUserWorkspace().isAllowed("button_FacilityReferenceDetailList_FacilityReferenceDetailFindDialog"));
@@ -185,8 +186,8 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
-	 * see: com.pennant.webui.lmtmasters.financereferencedetail.model.
-	 * FacilityReferenceDetailListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.lmtmasters.financereferencedetail.model. FacilityReferenceDetailListModelItemRenderer.java
+	 * <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -202,22 +203,25 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 			FacilityReference aFacilityReference = new FacilityReference();
 			final CAFFacilityType aFacilityType = (CAFFacilityType) item.getAttribute("data");
 
-			final FacilityReference facilityReference = getFacilityReferenceDetailService().getFacilityReference(
-					aFacilityType.getFacilityType());
-			if(facilityReference ==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=String.valueOf(aFacilityReference.getFinType());
-				errParm[0]=PennantJavaUtil.getLabel("label_FinType")+":"+valueParm[0];
+			final FacilityReference facilityReference = getFacilityReferenceDetailService()
+					.getFacilityReference(aFacilityType.getFacilityType());
+			if (facilityReference == null) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(aFacilityReference.getFinType());
+				errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			}
-			if(facilityReference.getLovDescWorkFlowRolesName()==null || StringUtils.isEmpty(facilityReference.getLovDescWorkFlowRolesName())){
+			if (facilityReference.getLovDescWorkFlowRolesName() == null
+					|| StringUtils.isEmpty(facilityReference.getLovDescWorkFlowRolesName())) {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
-			}else{
+			} else {
 				facilityReference.setLovDescFinTypeDescName(aFacilityType.getFacilityDesc());
-			showDetailView(facilityReference);
+				showDetailView(facilityReference);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -238,26 +242,26 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	 * Opens the detail view. <br>
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
-	 * @param FacilityReferenceDetail (aFacilityReferenceDetail)
+	 * @param FacilityReferenceDetail
+	 *            (aFacilityReferenceDetail)
 	 * @throws Exception
 	 */
 	private void showDetailView(FacilityReference aFacilityReference) throws Exception {
 		logger.debug("Entering");
 		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
-		FacilityReferenceDetail facilityReferenceDetail = getFacilityReferenceDetailService().getNewFacilityReferenceDetail();
+
+		FacilityReferenceDetail facilityReferenceDetail = getFacilityReferenceDetailService()
+				.getNewFacilityReferenceDetail();
 		facilityReferenceDetail.setWorkflowId(0);
 		Map<String, Object> map = getDefaultArguments();
 		map.put("facilityReference", aFacilityReference);
 		map.put("facilityReferenceDetail", facilityReferenceDetail);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listBox ListModel. This is
-		 * fine for synchronizing the data in the FacilityReferenceDetailListbox from the
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listBox ListModel. This is fine for synchronizing the data in the FacilityReferenceDetailListbox from the
 		 * dialog when we do a delete, edit or insert a FacilityReferenceDetail.
 		 */
 		map.put("facilityReferenceDetailListCtrl", this);
@@ -265,7 +269,8 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialog.zul",null,map);
+					"/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialog.zul", null,
+					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -307,23 +312,24 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 
 	/**
 	 * Method for Call the FacilityReferenceDetail dialog
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog(Event event) throws Exception {
+	public void onClick$button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog(Event event)
+			throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving");
 	}
 
-	
-	public void doSearch(){
+	public void doSearch() {
 		logger.debug("Entering");
 		// ++ create the searchObject and initialize sorting ++//
-		this.searchObj = new JdbcSearchObject<CAFFacilityType>(CAFFacilityType.class,getListRows());
+		this.searchObj = new JdbcSearchObject<CAFFacilityType>(CAFFacilityType.class, getListRows());
 		this.searchObj.addSort("FacilityType", false);
 		this.searchObj.addSort("FacilityDesc", false);
-		
+
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("CAFFacilityTypes");//TODO RMTFacilityTypes_View
@@ -333,27 +339,29 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 				button_FacilityReferenceDetailList_NewFacilityReferenceDetail.setVisible(false);
 			}
 
-			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-		}else{
+			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		} else {
 			this.searchObj.addTabelName("CAFFacilityTypes");//TODO RMTFacilityTypes_AView
 		}
 
 		// Facility Type  
 		if (StringUtils.isNotBlank(this.facilityType.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_facilityType.getSelectedItem(), this.facilityType.getValue(), "facilityType");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_facilityType.getSelectedItem(),
+					this.facilityType.getValue(), "facilityType");
 		}
-		
+
 		// Facility Type Desc
 		if (StringUtils.isNotBlank(this.facilityTypeDesc.getValue())) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_facilityTypeDesc.getSelectedItem(), this.facilityTypeDesc.getValue(), "facilityDesc");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_facilityTypeDesc.getSelectedItem(),
+					this.facilityTypeDesc.getValue(), "facilityDesc");
 		}
 
 		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj,this.listBoxFacilityReferenceDetail,this.pagingFacilityReferenceDetailList);
-		logger.debug("Leaving" );
-}
-	
-	
+		getPagedListWrapper().init(this.searchObj, this.listBoxFacilityReferenceDetail,
+				this.pagingFacilityReferenceDetailList);
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * When the facilityReferenceDetail print button is clicked.
 	 * 
@@ -362,17 +370,19 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	 */
 	public void onClick$button_FacilityReferenceDetailList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		new PTListReportUtils("FacilityReferenceDetail", getSearchObj(),this.pagingFacilityReferenceDetailList.getTotalSize()+1);
+		new PTListReportUtils("FacilityReferenceDetail", getSearchObj(),
+				this.pagingFacilityReferenceDetailList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setFacilityReferenceDetailService(FacilityReferenceDetailService facilityReferenceDetailService) {
 		this.facilityReferenceDetailService = facilityReferenceDetailService;
 	}
+
 	public FacilityReferenceDetailService getFacilityReferenceDetailService() {
 		return this.facilityReferenceDetailService;
 	}
@@ -380,13 +390,15 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	public JdbcSearchObject<CAFFacilityType> getSearchObj() {
 		return this.searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<CAFFacilityType> searchObj) {
 		this.searchObj = searchObj;
 	}
-	
+
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

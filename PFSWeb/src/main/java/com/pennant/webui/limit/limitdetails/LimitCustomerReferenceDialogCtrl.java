@@ -31,25 +31,24 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> {
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(LimitCustomerReferenceDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(LimitCustomerReferenceDialogCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
+	 * GenericForwardComposer. ************************************************************************
 	 */
-	protected Window						window_LimitCustomerReferenceDialog;
+	protected Window window_LimitCustomerReferenceDialog;
 
-	protected Listbox						listBoxLimitCustRef;
-	protected Listbox						listBoxTransactionDetails;
-	protected Groupbox						gb_transactiondetails;
+	protected Listbox listBoxLimitCustRef;
+	protected Listbox listBoxTransactionDetails;
+	protected Groupbox gb_transactiondetails;
 
-	private transient LimitDetailService	limitDetailService;
-	private transient PagedListService		pagedListService;
+	private transient LimitDetailService limitDetailService;
+	private transient PagedListService pagedListService;
 
-	public static ArrayList<ValueLabel>		list				= LimitConstants.getTransactionTypeList();
+	public static ArrayList<ValueLabel> list = LimitConstants.getTransactionTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -164,7 +163,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 
 		LimitReferenceMapping lmtRefMap = (LimitReferenceMapping) event.getData();
 		List<LimitTransactionDetail> transactionDetails = getLimitDetailService().getLimitTranDetails(
-				lmtRefMap.getReferenceCode(), lmtRefMap.getReferenceNumber(),lmtRefMap.getHeaderId());
+				lmtRefMap.getReferenceCode(), lmtRefMap.getReferenceNumber(), lmtRefMap.getHeaderId());
 
 		if (transactionDetails != null && !transactionDetails.isEmpty()) {
 			this.gb_transactiondetails.setVisible(true);
@@ -207,8 +206,8 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 
 			lc = new Listcell(PennantStaticListUtil.getlabelDesc(trandetail.getTransactionType(), list));
 			lc.setParent(item);
-			
-			lc = new Listcell(DateUtility.format(trandetail.getTransactionDate(),DateFormat.LONG_DATE_TIME));
+
+			lc = new Listcell(DateUtility.format(trandetail.getTransactionDate(), DateFormat.LONG_DATE_TIME));
 			lc.setParent(item);
 			this.listBoxTransactionDetails.appendChild(item);
 		}

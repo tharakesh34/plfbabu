@@ -91,36 +91,34 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/PFSParameter/pFSParameterDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/PFSParameter/pFSParameterDialog.zul file.
  */
 public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	private static final long serialVersionUID = 5922960172101690001L;
 	private static final Logger logger = Logger.getLogger(PFSParameterDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_PFSParameterDialog; // autowired
 
-	protected Textbox  sysParmCode;  	  	// autowired
-	protected Textbox  sysParmDesc; 	  	// autowired
-	protected Textbox  sysParmValue; 	  	// autowired
-	protected Textbox  txtParmValue; 	  	// autowired
-	protected Combobox comboParmValue; 	  	// autowired
-	protected Textbox  sysParmDescription; 	// autowired
-	
-	protected Space paramValueSpace;		// autowired
-	protected Space paramDescSpace;			// autowired
-	protected Space paramShortDescSpace;	// autowired
-	protected Space paramCodeSpace;			// autowired
+	protected Textbox sysParmCode; // autowired
+	protected Textbox sysParmDesc; // autowired
+	protected Textbox sysParmValue; // autowired
+	protected Textbox txtParmValue; // autowired
+	protected Combobox comboParmValue; // autowired
+	protected Textbox sysParmDescription; // autowired
+
+	protected Space paramValueSpace; // autowired
+	protected Space paramDescSpace; // autowired
+	protected Space paramShortDescSpace; // autowired
+	protected Space paramCodeSpace; // autowired
 
 	// Language variables
 	protected Textbox txtLanguageParmValue; // autowired
 	protected Textbox lovDescLanguageName;
-	protected Button  btnSearchLanguage; 	// autowire
+	protected Button btnSearchLanguage; // autowire
 
 	// Decimal variables
 	protected Decimalbox doubleParamValue; // autowired
@@ -134,14 +132,14 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	private PFSParameter pFSParameter; // overhanded per param
 	private transient PFSParameterListCtrl pFSParameterListCtrl; // overhanded per param
 
-	private transient String  sysParmType;
-	private transient int 	  sysParmLength;
-	private transient int 	  sysParmDec;
-	private transient String  sysParmList;
-	private transient int 	  parmType = 0;
+	private transient String sysParmType;
+	private transient int sysParmLength;
+	private transient int sysParmDec;
+	private transient String sysParmList;
+	private transient int parmType = 0;
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient PFSParameterService systemParameterService;
 	private List<ValueLabel> listSysParmType = null; // autowired
@@ -161,9 +159,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected PFSParameter object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected PFSParameter object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -212,7 +209,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getPFSParameter());
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_PFSParameterDialog.onClose();
@@ -251,20 +248,19 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		
+
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_PFSParameterDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_PFSParameterDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_PFSParameterDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PFSParameterDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving ");
 	}
 
@@ -284,7 +280,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * when the "edit" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	public void onClick$btnEdit(Event event) throws ParseException {
 		logger.debug("Entering" + event.toString());
@@ -320,7 +316,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	public void onClick$btnCancel(Event event) throws ParseException {
 		logger.debug("Entering" + event.toString());
@@ -342,7 +338,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * Cancel the actual operation. <br>
 	 * <br>
 	 * Resets to the original status.<br>
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 * 
 	 */
 	private void doCancel() throws ParseException {
@@ -359,7 +356,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * 
 	 * @param aPFSParameter
 	 *            PFSParameter
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	public void doWriteBeanToComponents(PFSParameter aPFSParameter) throws ParseException {
 		logger.debug("Entering ");
@@ -372,7 +369,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		this.sysParmList = aPFSParameter.getSysParmList();
 		this.sysParmLength = aPFSParameter.getSysParmLength();
 		this.sysParmDec = aPFSParameter.getSysParmDec();
-		
+
 		// Default txtParmValue
 		if ("String".equalsIgnoreCase(StringUtils.trimToEmpty(this.sysParmType))
 				&& StringUtils.isNotBlank(aPFSParameter.getSysParmList())
@@ -398,7 +395,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			parmType = 5; // Datebox
 
 		}
-		 
+
 		switch (this.parmType) {
 		case 1:
 
@@ -518,7 +515,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 
 		try {
 			if (StringUtils.isBlank(this.sysParmCode.getValue())) {
-				throw new WrongValueException(this.sysParmCode,Labels.getLabel("FIELD_NO_EMPTY",
+				throw new WrongValueException(this.sysParmCode, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmCode.value") }));
 			}
 			aPFSParameter.setSysParmCode(this.sysParmCode.getValue());
@@ -527,7 +524,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		}
 		try {
 			if (StringUtils.isBlank(this.sysParmDesc.getValue())) {
-				throw new WrongValueException(this.sysParmDesc,Labels.getLabel("FIELD_NO_EMPTY",
+				throw new WrongValueException(this.sysParmDesc, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmDesc.value") }));
 			}
 			aPFSParameter.setSysParmDesc(this.sysParmDesc.getValue());
@@ -535,49 +532,45 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			wve.add(we);
 		}
 		try {
-			if (!this.txtParmValue.isReadonly() && 
-					StringUtils.isNotBlank(this.txtParmValue.getValue())) {
-				
+			if (!this.txtParmValue.isReadonly() && StringUtils.isNotBlank(this.txtParmValue.getValue())) {
+
 				this.sysParmValue.setValue(this.txtParmValue.getValue());
-				
-			} else if (!this.comboParmValue.isDisabled()
-					&& this.comboParmValue.getChildren().size() > 0) {
-				if (!StringUtils.isBlank(
-						this.comboParmValue.getSelectedItem().getValue().toString())) {
-					
+
+			} else if (!this.comboParmValue.isDisabled() && this.comboParmValue.getChildren().size() > 0) {
+				if (!StringUtils.isBlank(this.comboParmValue.getSelectedItem().getValue().toString())) {
+
 					this.sysParmValue.setValue(this.comboParmValue.getSelectedItem().getValue().toString());
-					
+
 				}
-			} else if (!this.lovDescLanguageName.isDisabled() && 
-					!StringUtils.isBlank(this.lovDescLanguageName.getValue())) {
-				
+			} else if (!this.lovDescLanguageName.isDisabled()
+					&& !StringUtils.isBlank(this.lovDescLanguageName.getValue())) {
+
 				this.sysParmValue.setValue(this.txtLanguageParmValue.getValue());
-				
-			} else if (!this.doubleParamValue.isDisabled()
-					&& this.doubleParamValue.getValue() != null) {
-				
+
+			} else if (!this.doubleParamValue.isDisabled() && this.doubleParamValue.getValue() != null) {
+
 				this.sysParmValue.setValue(this.doubleParamValue.getValue().toString());
-				
+
 				if ("CID_RETAIN_PRD".equals(this.sysParmCode.getValue())
 						|| "CIF_LENGTH".equals(this.sysParmCode.getValue())
 						|| "LOAN_RETAIL_PRD".equals(this.sysParmCode.getValue())) {
-					
+
 					if (Integer.parseInt(this.sysParmValue.getValue()) <= 0) {
-						
-						throw new WrongValueException(this.doubleParamValue,
-								Labels.getLabel("const_const_NO_NEGATIVE_ZERO",
+
+						throw new WrongValueException(this.doubleParamValue, Labels.getLabel(
+								"const_const_NO_NEGATIVE_ZERO",
 								new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
-						
+
 					}
 				}
 			} else if (this.dateParamValue.getValue() != null) {
 				this.sysParmValue.setValue(dateformat.format(this.dateParamValue.getValue()));
 			}
 			if (StringUtils.isBlank(this.sysParmValue.getValue())) {
-				
-				throw new WrongValueException(this.sysParmValue,Labels.getLabel("FIELD_NO_EMPTY",
+
+				throw new WrongValueException(this.sysParmValue, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
-				
+
 			}
 			aPFSParameter.setSysParmValue(this.sysParmValue.getValue());
 		} catch (WrongValueException we) {
@@ -585,10 +578,10 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		}
 		try {
 			if (StringUtils.isBlank(this.sysParmDescription.getValue())) {
-				
-				throw new WrongValueException(this.sysParmDescription,Labels.getLabel("FIELD_NO_EMPTY",
+
+				throw new WrongValueException(this.sysParmDescription, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmDescription.value") }));
-				
+
 			}
 			aPFSParameter.setSysParmDescription(this.sysParmDescription.getValue());
 		} catch (WrongValueException we) {
@@ -613,8 +606,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPFSParameter
 	 * @throws Exception
@@ -663,29 +655,37 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		setValidationOn(true);
 
 		if (!this.sysParmCode.isReadonly()) {
-			this.sysParmCode.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmCode.value"),PennantRegularExpressions.REGEX_ALPHA_CODE,true));
+			this.sysParmCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmCode.value"),
+							PennantRegularExpressions.REGEX_ALPHA_CODE, true));
 		}
 		if (!this.sysParmDesc.isReadonly()) {
-			this.sysParmDesc.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmDesc.value"),null,true));
+			this.sysParmDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmDesc.value"), null, true));
 		}
 		if (!this.sysParmValue.isReadonly()) {
-			this.sysParmValue.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),null,true ));
+			this.sysParmValue.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"), null, true));
 		}
 		if (!this.comboParmValue.isDisabled()) {
 			this.comboParmValue.setConstraint(new StaticListValidator(listSysParmType,
 					Labels.getLabel("label_PFSParameterDialog_SysParmValue.value")));
 		}
 		if (!this.txtParmValue.isDisabled()) {
-			this.txtParmValue.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),null,true ));
+			this.txtParmValue.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"), null, true));
 		}
 		if (!this.doubleParamValue.isDisabled()) {
-			this.doubleParamValue.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),null,true ));
+			this.doubleParamValue.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"), null, true));
 		}
 		if (!this.dateParamValue.isReadonly()) {
-			this.dateParamValue.setConstraint(new PTDateValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),true));
+			this.dateParamValue.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"), true));
 		}
 		if (!this.sysParmDescription.isReadonly()) {
-			this.sysParmDescription.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmDescription.value"),null,true));
+			this.sysParmDescription.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_PFSParameterDialog_SysParmDescription.value"), null, true));
 		}
 		logger.debug("Leaving ");
 	}
@@ -715,14 +715,15 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering ");
-		
+
 		final PFSParameter aPFSParameter = new PFSParameter();
 		BeanUtils.copyProperties(getPFSParameter(), aPFSParameter);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_PFSParameterDialog_SysParmCode.value")+" : "+aPFSParameter.getSysParmCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_PFSParameterDialog_SysParmCode.value") + " : "
+				+ aPFSParameter.getSysParmCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aPFSParameter.getRecordType())) {
 				aPFSParameter.setVersion(aPFSParameter.getVersion() + 1);
@@ -752,7 +753,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 
 	/**
 	 * Set the components for edit mode. <br>
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 */
 	private void doEdit() throws ParseException {
 		logger.debug("Entering ");
@@ -770,7 +772,6 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			this.btnCancel.setVisible(true);
 		}
 
-		
 		this.sysParmValue.setVisible(false);
 		this.sysParmValue.setReadonly(isReadOnly("PFSParameterDialog_sysParmValue"));
 		this.txtParmValue.setReadonly(isReadOnly("PFSParameterDialog_sysParmValue"));
@@ -852,7 +853,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering ");
-		
+
 		final PFSParameter aPFSParameter = new PFSParameter();
 		BeanUtils.copyProperties(getPFSParameter(), aPFSParameter);
 		boolean isNew = false;
@@ -892,7 +893,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		try {
 
 			if (doProcess(aPFSParameter, tranType)) {
-				
+
 				//Parameter Updation in Map Details
 				SysParamUtil.setParmDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
 				refreshList();
@@ -936,8 +937,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aPFSParameter
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aPFSParameter.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -1012,7 +1012,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
-		
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		PFSParameter aPFSParameter = (PFSParameter) auditHeader.getAuditDetail().getModelData();
@@ -1035,24 +1035,20 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 						if (aPFSParameter.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = systemParameterService.doReject(auditHeader);
-						if (aPFSParameter.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aPFSParameter.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_PFSParameterDialog, auditHeader);
+						retValue = ErrorControl.showErrorControl(this.window_PFSParameterDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_PFSParameterDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_PFSParameterDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -1086,13 +1082,10 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(PFSParameter aPFSParameter,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aPFSParameter.getBefImage(), aPFSParameter);
-		return new AuditHeader(String.valueOf(aPFSParameter.getId()), null,
-				null, null, auditDetail, aPFSParameter.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(PFSParameter aPFSParameter, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPFSParameter.getBefImage(), aPFSParameter);
+		return new AuditHeader(String.valueOf(aPFSParameter.getId()), null, null, null, auditDetail,
+				aPFSParameter.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1106,10 +1099,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_PFSParameterDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_PFSParameterDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1125,27 +1116,25 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-	  doShowNotes(this.pFSParameter);
+		doShowNotes(this.pFSParameter);
 	}
 
 	private void doSetLOVValidation() {
-		this.lovDescLanguageName.setConstraint(new PTStringValidator(Labels.getLabel(
-				"label_PFSParameterDialog_SysParmValue.value"),null,true));
+		this.lovDescLanguageName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"), null, true));
 	}
 
 	private void doRemoveLOVValidation() {
 		this.lovDescLanguageName.setConstraint("");
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.pFSParameter.getSysParmCode());
 	}
 
 	/*
-	 * Method to populate the parameter values in combo box based on the
-	 * parameter list type.
+	 * Method to populate the parameter values in combo box based on the parameter list type.
 	 */
 	private void setListSysParmType() {
 		logger.debug("Entering");
@@ -1177,8 +1166,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 */
 	public void onClick$btnSearchLanguage(Event event) {
 		logger.debug("Entering ");
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_PFSParameterDialog, "Language");
+		Object dataObject = ExtendedSearchListBox.show(this.window_PFSParameterDialog, "Language");
 		if (dataObject instanceof String) {
 			this.txtLanguageParmValue.setValue(dataObject.toString());
 			this.lovDescLanguageName.setValue("");
@@ -1192,13 +1180,13 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getPFSParameterListCtrl().search();
-		
+
 	}
 
 	// ******************************************************//
@@ -1208,6 +1196,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1215,14 +1204,15 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	public PFSParameter getPFSParameter() {
 		return this.pFSParameter;
 	}
+
 	public void setPFSParameter(PFSParameter pFSParameter) {
 		this.pFSParameter = pFSParameter;
 	}
-	
-	public void setPFSParameterListCtrl(
-			PFSParameterListCtrl pFSParameterListCtrl) {
+
+	public void setPFSParameterListCtrl(PFSParameterListCtrl pFSParameterListCtrl) {
 		this.pFSParameterListCtrl = pFSParameterListCtrl;
 	}
+
 	public PFSParameterListCtrl getPFSParameterListCtrl() {
 		return this.pFSParameterListCtrl;
 	}

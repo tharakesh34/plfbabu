@@ -26,8 +26,8 @@ public class PostODDetails implements Tasklet {
 
 	private Logger logger = Logger.getLogger(PostODDetails.class);
 
-	private DataSource 		dataSource;
-	private ExtTablesDAO 	extTablesDAO;
+	private DataSource dataSource;
+	private ExtTablesDAO extTablesDAO;
 
 	private int count = 0;
 
@@ -57,9 +57,9 @@ public class PostODDetails implements Tasklet {
 			sqlStatement = connection.prepareStatement(getCountQuery());
 
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
@@ -97,9 +97,8 @@ public class PostODDetails implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-
 	/**
-	 * Method for process OD Account details and save 
+	 * Method for process OD Account details and save
 	 * 
 	 * @param finReference
 	 * @param finOdSchDate
@@ -108,8 +107,8 @@ public class PostODDetails implements Tasklet {
 	private void processODAccDetails(List<String> odAccList, String accountNum) {
 		logger.debug("Entering");
 
-		if(!StringUtils.isBlank(accountNum)) {
-			if(!odAccList.contains(accountNum)) {
+		if (!StringUtils.isBlank(accountNum)) {
+			if (!odAccList.contains(accountNum)) {
 				odAccList.add(accountNum);
 
 				getExtTablesDAO().saveODAccDetails(count, accountNum);
@@ -126,8 +125,10 @@ public class PostODDetails implements Tasklet {
 	 */
 	private String prepareSelectQuery() {
 		StringBuilder selectQuery = new StringBuilder();
-		selectQuery.append(" SELECT FM.RepayAccountId, SA.AccountNumber FROM FinODDetails FOD INNER JOIN  FinanceMain FM ");
-		selectQuery.append(" ON FOD.FinReference=FM.FinReference LEFT JOIN SecondaryAccounts SA ON SA.FinReference = FOD.FinReference");
+		selectQuery.append(
+				" SELECT FM.RepayAccountId, SA.AccountNumber FROM FinODDetails FOD INNER JOIN  FinanceMain FM ");
+		selectQuery.append(
+				" ON FOD.FinReference=FM.FinReference LEFT JOIN SecondaryAccounts SA ON SA.FinReference = FOD.FinReference");
 		selectQuery.append(" WHERE FinCurODAmt != 0 GROUP BY FM.RepayAccountId, SA.AccountNumber");
 		return selectQuery.toString();
 	}
@@ -139,8 +140,10 @@ public class PostODDetails implements Tasklet {
 	 */
 	private String getCountQuery() {
 		StringBuilder selectQuery = new StringBuilder();
-		selectQuery.append(" SELECT count(*) from (SELECT FM.RepayAccountId, SA.AccountNumber FROM FinODDetails FOD INNER JOIN  FinanceMain FM");
-		selectQuery.append(" ON FOD.FinReference=FM.FinReference Left Join SecondaryAccounts SA ON SA.FinReference = FOD.FinReference");
+		selectQuery.append(
+				" SELECT count(*) from (SELECT FM.RepayAccountId, SA.AccountNumber FROM FinODDetails FOD INNER JOIN  FinanceMain FM");
+		selectQuery.append(
+				" ON FOD.FinReference=FM.FinReference Left Join SecondaryAccounts SA ON SA.FinReference = FOD.FinReference");
 		selectQuery.append(" WHERE FinCurODAmt != 0 GROUP BY FM.RepayAccountId, SA.AccountNumber) temp");
 		return selectQuery.toString();
 	}

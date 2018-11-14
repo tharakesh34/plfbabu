@@ -61,8 +61,8 @@ import com.pennant.backend.service.customermasters.CorporateCustomerDetailServic
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.customermasters.corporatecustomerdetail.model.CorporateCustomerDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CorporateCustomerDetail
@@ -72,18 +72,18 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 	private static final long serialVersionUID = 3149018047814219584L;
 	private static final Logger logger = Logger.getLogger(CorporateCustomerDetailListCtrl.class);
 
-	protected Window window_CorporateCustomerDetailList; 
-	protected Borderlayout borderLayout_CorporateCustomerDetailList; 
-	protected Paging pagingCorporateCustomerDetailList; 
-	protected Listbox listBoxCorporateCustomerDetail; 
+	protected Window window_CorporateCustomerDetailList;
+	protected Borderlayout borderLayout_CorporateCustomerDetailList;
+	protected Paging pagingCorporateCustomerDetailList;
+	protected Listbox listBoxCorporateCustomerDetail;
 
-	protected Listheader listheader_CustId; 
-	protected Listheader listheader_Name; 
-	protected Listheader listheader_PhoneNumber; 
-	protected Listheader listheader_EmailId; 
+	protected Listheader listheader_CustId;
+	protected Listheader listheader_Name;
+	protected Listheader listheader_PhoneNumber;
+	protected Listheader listheader_EmailId;
 
-	protected Button button_CorporateCustomerDetailList_NewCorporateCustomerDetail; 
-	protected Button button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog; 
+	protected Button button_CorporateCustomerDetailList_NewCorporateCustomerDetail;
+	protected Button button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog;
 
 	//protected JdbcSearchObject<CorporateCustomerDetail> searchObj;
 	private transient CorporateCustomerDetailService corporateCustomerDetailService;
@@ -102,7 +102,7 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 		super.tableName = "CustomerCorporateDetail_AView";
 		super.queueTableName = "CustomerCorporateDetail_View";
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
@@ -125,8 +125,7 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 
 		// Register buttons and fields.
 		registerButton(button_CorporateCustomerDetailList_NewCorporateCustomerDetail, null, true);
-		registerButton(button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog,
-				null);
+		registerButton(button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog, null);
 		registerField("CustId", SortOrder.ASC);
 
 		// Render the page and display the data.
@@ -142,14 +141,13 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 	 * @param event
 	 * @throws Exception
 	 */
-	/*public void onClick$button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog(Event event)
-			throws Exception {
-		search();
-	}*/
+	/*
+	 * public void onClick$button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog(Event event) throws
+	 * Exception { search(); }
+	 */
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -226,8 +224,6 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 		logger.debug("Leaving");
 	}
 
-	
-
 	/**
 	 * Method for calling the CorporateCustomerDetail dialog
 	 * 
@@ -235,13 +231,12 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 	 * @throws Exception
 	 */
 	public void onClick$button_CorporateCustomerDetailList_CorporateCustomerDetailSearchDialog(Event event)
-										throws Exception {
+			throws Exception {
 		logger.debug("Entering" + event.toString());
 		/*
-		 * we can call our CorporateCustomerDetailDialog ZUL-file with parameters. So we can
-		 * call them with a object of the selected CorporateCustomerDetail. For handed over
-		 * these parameter only a Map is accepted. So we put the CorporateCustomerDetail object
-		 * in a HashMap.
+		 * we can call our CorporateCustomerDetailDialog ZUL-file with parameters. So we can call them with a object of
+		 * the selected CorporateCustomerDetail. For handed over these parameter only a Map is accepted. So we put the
+		 * CorporateCustomerDetail object in a HashMap.
 		 */
 		Map<String, Object> map = getDefaultArguments();
 		map.put("corporateCustomerDetailCtrl", this);
@@ -251,15 +246,15 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/CorporateCustomerDetail/CorporateCustomerDetailSearchDialog.zul",
-							null,map);
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -277,7 +272,7 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	public void setCorporateCustomerDetailService(CorporateCustomerDetailService corporateCustomerDetailService) {
 		this.corporateCustomerDetailService = corporateCustomerDetailService;
 	}

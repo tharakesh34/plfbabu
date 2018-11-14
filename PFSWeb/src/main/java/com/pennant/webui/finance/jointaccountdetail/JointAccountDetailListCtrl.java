@@ -80,7 +80,6 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 	protected Button button_JountAccountDetailList_NewJountAccountDetail;
 	protected Button button_JountAccountDetailList_JountAccountDetailSearch;
 
-
 	private transient JointAccountDetailService jointAccountDetailService;
 
 	/**
@@ -101,8 +100,8 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 
 	public void onCreate$window_JointAccountDetailList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_JointAccountDetailList, borderLayout_JointAccountDetailList,
-				listBoxJointAccountDetail, pagingJointAccountDetailList);
+		setPageComponents(window_JointAccountDetailList, borderLayout_JointAccountDetailList, listBoxJointAccountDetail,
+				pagingJointAccountDetailList);
 		setItemRender(new JountAccountDetailListModelItemRenderer());
 
 		// Register buttons and fields.

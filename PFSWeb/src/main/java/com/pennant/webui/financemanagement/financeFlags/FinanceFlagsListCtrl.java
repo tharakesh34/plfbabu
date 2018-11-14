@@ -66,12 +66,12 @@ import com.pennant.backend.service.finance.FinanceFlagsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.financemanagement.financeFlags.model.FinFlagsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 	private static final long serialVersionUID = -5081318673331825306L;

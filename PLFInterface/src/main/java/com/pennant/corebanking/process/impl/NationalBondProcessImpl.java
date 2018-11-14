@@ -17,37 +17,37 @@ import com.pennant.coreinterface.process.NationalBondProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
-	
+
 	private static final Logger logger = Logger.getLogger(NationalBondProcessImpl.class);
 
 	private InterfaceDAO interfaceDAO;
-	
+
 	public NationalBondProcessImpl() {
 		super();
 	}
-	
+
 	@Override
-	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws InterfaceException {
+	public NationalBondDetail doBondPurchase(String refNumConsumer, BigDecimal amount) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
-		
+
 		BondPurchaseDetail purchaseDetail = new BondPurchaseDetail();
 		purchaseDetail.setPurchaseReceiptNo("966201248");
 		purchaseDetail.setUnitStart("12345");
 		purchaseDetail.setUnitEnd("65412");
-		
+
 		// fetch Bank Title Certificate from database
 		List<CoreDocumentDetails> docDetailList = getInterfaceDAO().getDocumentDetailsByRef("FINPUR1");
-		for(CoreDocumentDetails docDetail:docDetailList) {
+		for (CoreDocumentDetails docDetail : docDetailList) {
 			Base64 base64 = new Base64();
 			byte[] enCodedData = base64.encode(docDetail.getDocImage());
 			purchaseDetail.setBankTitleCertifcate(enCodedData);
 		}
-		
+
 		List<BondPurchaseDetail> detailList = new ArrayList<BondPurchaseDetail>();
 		detailList.add(purchaseDetail);
-		
+
 		detail.setPurchaseDetailList(detailList);
 		detail.setReturnCode("0000");
 		detail.setReturnText("SUCCESS");
@@ -65,22 +65,22 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 		BondTransferDetail transDetail = new BondTransferDetail();
 		transDetail.setUnitStart("12345");
 		transDetail.setUnitEnd("65412");
-		if(StringUtils.equals(nationalBondDetail.getTransferLevel(), "TRANS_MAKER")) {
-			if(!StringUtils.equals("966201248", nationalBondDetail.getRefNumProvider())) {
+		if (StringUtils.equals(nationalBondDetail.getTransferLevel(), "TRANS_MAKER")) {
+			if (!StringUtils.equals("966201248", nationalBondDetail.getRefNumProvider())) {
 				throw new InterfaceException("PTI9001", "Inavlid Provider Reference number");
 			}
 			transDetail.setSukukNo(96662012);
 			transDetail.setPurchaseReceiptNo("8125780");
 		} else {
-			if(!StringUtils.equals("8125780", nationalBondDetail.getRefNumProvider())) {
+			if (!StringUtils.equals("8125780", nationalBondDetail.getRefNumProvider())) {
 				throw new InterfaceException("PTI9002", "Inavlid Provider Reference number");
 			}
 			transDetail.setSukukNo(8985957);
 			transDetail.setPurchaseReceiptNo("8985957");
-			
+
 			// fetch Bank Title Certificate from database
 			List<CoreDocumentDetails> docDetailList = getInterfaceDAO().getDocumentDetailsByRef("FINTRANS1");
-			for(CoreDocumentDetails docDetail:docDetailList) {
+			for (CoreDocumentDetails docDetail : docDetailList) {
 				Base64 base64 = new Base64();
 				byte[] enCodedData = base64.encode(docDetail.getDocImage());
 				transDetail.setTitleCertificate(enCodedData);
@@ -95,11 +95,11 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 		bondDetail.setReturnText("SUCCESS");
 
 		logger.debug("Leaving");
-		return bondDetail;	
+		return bondDetail;
 	}
 
 	@Override
-	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer) 
+	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -112,7 +112,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 
 	@Override
-	public NationalBondDetail cancelBondPurchase(String refNumProvider,	String refNumConsumer)
+	public NationalBondDetail cancelBondPurchase(String refNumProvider, String refNumConsumer)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -123,10 +123,11 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 		logger.debug("Leaving");
 		return detail;
 	}
-	
+
 	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
+
 	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}

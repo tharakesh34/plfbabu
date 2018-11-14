@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.reports.ReportList;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -61,24 +60,24 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class ReportListListModelItemRenderer implements ListitemRenderer<ReportList>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public ReportListListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ReportList reportList, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(reportList.getModule());
+		lc = new Listcell(reportList.getModule());
 		lc.setParent(item);
 		lc = new Listcell(reportList.getReportFileName());
 		lc.setParent(item);
 		lc = new Listcell(reportList.getReportHeading());
-	  	lc.setParent(item);
-	  	lc = new Listcell(reportList.getModuleType());
 		lc.setParent(item);
-	  	lc = new Listcell(reportList.getRecordStatus());
+		lc = new Listcell(reportList.getModuleType());
+		lc.setParent(item);
+		lc = new Listcell(reportList.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(reportList.getRecordType()));
 		lc.setParent(item);

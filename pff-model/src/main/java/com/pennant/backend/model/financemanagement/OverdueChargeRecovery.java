@@ -57,51 +57,51 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
-	private static final long		serialVersionUID			= 128728346836978541L;
+	private static final long serialVersionUID = 128728346836978541L;
 
-	private String					finReference;
-	private Date					finODSchdDate;
-	private String					finODFor;
-	private Date					movementDate;
-	private int						seqNo						= 0;
-	private int						oDDays						= 0;
-	private BigDecimal				finCurODAmt					= BigDecimal.ZERO;
-	private BigDecimal				finCurODPri					= BigDecimal.ZERO;
-	private BigDecimal				finCurODPft					= BigDecimal.ZERO;
-	private String					penaltyType;
-	private String					penaltyCalOn;
-	private BigDecimal				penaltyAmtPerc				= BigDecimal.ZERO;
-	private BigDecimal				penalty						= BigDecimal.ZERO;
-	private BigDecimal				maxWaiver					= BigDecimal.ZERO;		//FIXME TO be deleted
-	private BigDecimal				waivedAmt					= BigDecimal.ZERO;		//FIXME TO be deleted
-	private BigDecimal				penaltyPaid					= BigDecimal.ZERO;		//FIXME TO be deleted
-	private BigDecimal				penaltyBal					= BigDecimal.ZERO;		//FIXME TO be deleted
+	private String finReference;
+	private Date finODSchdDate;
+	private String finODFor;
+	private Date movementDate;
+	private int seqNo = 0;
+	private int oDDays = 0;
+	private BigDecimal finCurODAmt = BigDecimal.ZERO;
+	private BigDecimal finCurODPri = BigDecimal.ZERO;
+	private BigDecimal finCurODPft = BigDecimal.ZERO;
+	private String penaltyType;
+	private String penaltyCalOn;
+	private BigDecimal penaltyAmtPerc = BigDecimal.ZERO;
+	private BigDecimal penalty = BigDecimal.ZERO;
+	private BigDecimal maxWaiver = BigDecimal.ZERO; //FIXME TO be deleted
+	private BigDecimal waivedAmt = BigDecimal.ZERO; //FIXME TO be deleted
+	private BigDecimal penaltyPaid = BigDecimal.ZERO; //FIXME TO be deleted
+	private BigDecimal penaltyBal = BigDecimal.ZERO; //FIXME TO be deleted
 
-	private boolean					rcdCanDel					= false;
+	private boolean rcdCanDel = false;
 
 	//Screen Level Maintenance
-	private boolean					newRecord					= false;
-	private String					lovValue;
-	private OverdueChargeRecovery	befImage;
+	private boolean newRecord = false;
+	private String lovValue;
+	private OverdueChargeRecovery befImage;
 
 	@XmlTransient
-	private LoggedInUser			userDetails;
+	private LoggedInUser userDetails;
 
-	private String					finCcy;
-	private String					lovDescCustCIF;
-	private String					lovDescCustShrtName;
-	private Date					lovDescFinStartDate;
-	private Date					lovDescMaturityDate;
-	private BigDecimal				lovDescFinAmount			= BigDecimal.ZERO;
-	private BigDecimal				lovDescCurFinAmt			= BigDecimal.ZERO;
-	private BigDecimal				lovDescCurSchPriDue			= BigDecimal.ZERO;
-	private BigDecimal				lovDescCurSchPftDue			= BigDecimal.ZERO;
-	private BigDecimal				lovDescTotOvrDueChrg		= BigDecimal.ZERO;
-	private BigDecimal				lovDescTotOvrDueChrgWaived	= BigDecimal.ZERO;
-	private BigDecimal				lovDescTotOvrDueChrgPaid	= BigDecimal.ZERO;
-	private BigDecimal				lovDescTotOvrDueChrgBal		= BigDecimal.ZERO;
-	private BigDecimal				pendingODC					= BigDecimal.ZERO;
-	private BigDecimal				totWaived					= BigDecimal.ZERO;
+	private String finCcy;
+	private String lovDescCustCIF;
+	private String lovDescCustShrtName;
+	private Date lovDescFinStartDate;
+	private Date lovDescMaturityDate;
+	private BigDecimal lovDescFinAmount = BigDecimal.ZERO;
+	private BigDecimal lovDescCurFinAmt = BigDecimal.ZERO;
+	private BigDecimal lovDescCurSchPriDue = BigDecimal.ZERO;
+	private BigDecimal lovDescCurSchPftDue = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrg = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrgWaived = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrgPaid = BigDecimal.ZERO;
+	private BigDecimal lovDescTotOvrDueChrgBal = BigDecimal.ZERO;
+	private BigDecimal pendingODC = BigDecimal.ZERO;
+	private BigDecimal totWaived = BigDecimal.ZERO;
 
 	public boolean isNew() {
 		return isNewRecord();

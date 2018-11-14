@@ -21,7 +21,7 @@ import java.io.Serializable;
 public class InterfaceCustomerPhoneNumber implements Serializable {
 
 	private static final long serialVersionUID = 446666398394441656L;
-	
+
 	private long phoneCustID = Long.MIN_VALUE;
 	private String phoneTypeCode;
 	private String phoneCountryCode;

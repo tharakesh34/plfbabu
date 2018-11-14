@@ -47,7 +47,7 @@ import com.pennant.backend.model.authorization.AuthorizationLimit;
 import com.pennanttech.pff.core.TableType;
 
 public interface AuthorizationLimitDAO extends BasicCrudDao<AuthorizationLimit> {
-	
+
 	/**
 	 * Fetch the Record AuthorizationLimit by key field
 	 * 
@@ -57,7 +57,8 @@ public interface AuthorizationLimitDAO extends BasicCrudDao<AuthorizationLimit> 
 	 *            The type of the table.
 	 * @return AuthorizationLimit
 	 */
-	AuthorizationLimit getAuthorizationLimit(long id,String type);
+	AuthorizationLimit getAuthorizationLimit(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -76,7 +77,10 @@ public interface AuthorizationLimitDAO extends BasicCrudDao<AuthorizationLimit> 
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long id, int limitType, long userID, long roleId, String module, TableType tableType);
-	void updateHold(AuthorizationLimit authorizationLimit, TableType tableType);	
+
+	void updateHold(AuthorizationLimit authorizationLimit, TableType tableType);
+
 	void saveHold(AuthorizationLimit authorizationLimit);
+
 	AuthorizationLimit getLimitForFinanceAuth(long id, String type, boolean active);
 }

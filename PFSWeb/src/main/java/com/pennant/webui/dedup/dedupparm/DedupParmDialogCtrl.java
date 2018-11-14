@@ -96,41 +96,39 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupfields.BuilderUtilListbox;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/DedupParm/dedupParmDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/DedupParm/dedupParmDialog.zul file.
  */
 public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	private static final long serialVersionUID = -3541636402188022162L;
 	private static final Logger logger = Logger.getLogger(DedupParmDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_DedupParmDialog; // autoWired
-	protected Label 	label_WindowTitle; 		// autoWired
+	protected Window window_DedupParmDialog; // autoWired
+	protected Label label_WindowTitle; // autoWired
 
-	protected Textbox 	queryCode; 				// autoWired
-	protected Textbox 	queryDesc; 				// autoWired
-	protected Textbox 	queryModule;			// autoWired
-	protected Combobox 	custCtgCode; 			// autoWired
-	protected Codemirror sQLQuery; 				// autoWired
-	protected Combobox 	combo;
-	protected Combobox 	collateralType;
-	protected Row 		rowCustCtgCode;
-	protected Row 		row_Collateral;
-	protected Tabpanel 	tabPanel_tree;
-	protected Tabpanel 	tabPanel_QueryResult;
-	protected Tab 		tab_queryDesign;
-	protected Tab		tab_textQuery;
-	
+	protected Textbox queryCode; // autoWired
+	protected Textbox queryDesc; // autoWired
+	protected Textbox queryModule; // autoWired
+	protected Combobox custCtgCode; // autoWired
+	protected Codemirror sQLQuery; // autoWired
+	protected Combobox combo;
+	protected Combobox collateralType;
+	protected Row rowCustCtgCode;
+	protected Row row_Collateral;
+	protected Tabpanel tabPanel_tree;
+	protected Tabpanel tabPanel_QueryResult;
+	protected Tab tab_queryDesign;
+	protected Tab tab_textQuery;
+
 	// Tree Buttons
 	protected Button removeButton;
 	protected Button addButton;
@@ -166,7 +164,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 	private transient boolean validationOn;
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient DedupParmService dedupParmService;
 	private transient DedupFieldsService dedupFieldsService;
@@ -180,7 +177,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	private String moduleName = "";
 	List<ValueLabel> custCategoryList = PennantAppUtil.getcustCtgCodeList();
 	List<ValueLabel> collateralTypesList = PennantAppUtil.getCollateralTypesList();
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -196,9 +193,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DedupParm object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DedupParm object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -226,16 +222,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				setDedupParm(null);
 			}
 
-			doLoadWorkFlow(this.dedupParm.isWorkflow(),
-					this.dedupParm.getWorkflowId(),
-					this.dedupParm.getNextTaskId());
+			doLoadWorkFlow(this.dedupParm.isWorkflow(), this.dedupParm.getWorkflowId(), this.dedupParm.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"DedupParmDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DedupParmDialog");
 			}
-			
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -254,7 +247,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			if (arguments.containsKey("dedupParmListCtrl")) {
 				if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)
 						|| moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-						|| moduleName.equals(FinanceConstants.DEDUP_POLICE) 
+						|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 						|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 					this.rowCustCtgCode.setVisible(true);
 					this.row_Collateral.setVisible(false);
@@ -263,14 +256,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					this.rowCustCtgCode.setVisible(false);
 					this.row_Collateral.setVisible(false);
 				}
-				
+
 				if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
 					this.rowCustCtgCode.setVisible(false);
 					this.row_Collateral.setVisible(true);
 				}
-				
-				setDedupParmListCtrl((DedupParmListCtrl) arguments
-						.get("dedupParmListCtrl"));
+
+				setDedupParmListCtrl((DedupParmListCtrl) arguments.get("dedupParmListCtrl"));
 
 			} else {
 				setDedupParmListCtrl(null);
@@ -279,7 +271,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getDedupParm());
-			
+
 			//BFLW2 only for Bajaj Demo button is visible false, should be implement this.
 			if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
 				this.btnValidation.setVisible(false);
@@ -315,18 +307,18 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"New"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Edit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Delete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Save"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "New"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Edit"));
+		this.btnDelete
+				.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Delete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Save"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
@@ -336,7 +328,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering");
@@ -423,13 +415,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 */
 	public void doWriteBeanToComponents(DedupParm aDedupParm) {
 		logger.debug("Entering");
-		if(moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-				|| moduleName.equals(FinanceConstants.DEDUP_POLICE) ){			
-			fillComboBox(this.custCtgCode,aDedupParm.getQuerySubCode(),this.custCategoryList,"");		
-		}else if(moduleName.equals(FinanceConstants.DEDUP_LIMITS)){
-			custCategoryList=PennantStaticListUtil.getLimitCategories();			
-			fillComboBox(this.custCtgCode,aDedupParm.getQuerySubCode(),this.custCategoryList,"");		
-		}else if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
+		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)) {
+			fillComboBox(this.custCtgCode, aDedupParm.getQuerySubCode(), this.custCategoryList, "");
+		} else if (moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
+			custCategoryList = PennantStaticListUtil.getLimitCategories();
+			fillComboBox(this.custCtgCode, aDedupParm.getQuerySubCode(), this.custCategoryList, "");
+		} else if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
 			fillComboBox(this.custCtgCode, aDedupParm.getQuerySubCode(), this.custCategoryList, "");
 			fillComboBox(this.collateralType, aDedupParm.getQuerySubCode(), this.collateralTypesList, "");
 		}
@@ -446,7 +438,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aDedupParm
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(DedupParm aDedupParm) throws Exception {
 		logger.debug("Entering");
@@ -459,23 +451,25 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			wve.add(we);
 		}
 		try {
-			if(moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-					|| moduleName.equals(FinanceConstants.DEDUP_POLICE) || moduleName.equals(FinanceConstants.DEDUP_LIMITS)){
-				if(!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex()<1){
+			if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)
+					|| moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+					|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
+					|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
+				if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
 					this.sQLQuery.setValue("");
 					this.tab_queryDesign.setSelected(true);
 					throw new WrongValueException(custCtgCode, Labels.getLabel("STATIC_INVALID",
-							new String[]{Labels.getLabel("label_DedupParmDialog_CustCtgCode.value")}));
+							new String[] { Labels.getLabel("label_DedupParmDialog_CustCtgCode.value") }));
 				}
 				aDedupParm.setQuerySubCode(this.custCtgCode.getSelectedItem().getValue().toString());
-			}else if(moduleName.equals(FinanceConstants.DEDUP_FINANCE)){
+			} else if (moduleName.equals(FinanceConstants.DEDUP_FINANCE)) {
 				aDedupParm.setQuerySubCode("L");
-			}else if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
-				if(!this.collateralType.isDisabled() && this.collateralType.getSelectedIndex()<1){
+			} else if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
+				if (!this.collateralType.isDisabled() && this.collateralType.getSelectedIndex() < 1) {
 					this.sQLQuery.setValue("");
 					this.tab_queryDesign.setSelected(true);
 					throw new WrongValueException(collateralType, Labels.getLabel("STATIC_INVALID",
-							new String[]{Labels.getLabel("label_DedupParmDialog_CustCtgCode.value")}));
+							new String[] { Labels.getLabel("label_DedupParmDialog_CustCtgCode.value") }));
 				}
 				aDedupParm.setQuerySubCode(this.collateralType.getSelectedItem().getValue().toString());
 			}
@@ -493,12 +487,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			wve.add(we);
 		}
 		try {
-			if(tab_queryDesign.isVisible()){
+			if (tab_queryDesign.isVisible()) {
 				readButtonClicked();
 			}
-			/*if (StringUtils.trimToEmpty(this.sQLQuery.getValue()).equals("")){
-				throw new WrongValueException(sQLQuery, Labels.getLabel("label_DedupParmDialog_SQLQuery.value"));
-			}*/
+			/*
+			 * if (StringUtils.trimToEmpty(this.sQLQuery.getValue()).equals("")){ throw new
+			 * WrongValueException(sQLQuery, Labels.getLabel("label_DedupParmDialog_SQLQuery.value")); }
+			 */
 			aDedupParm.setSQLQuery(this.sQLQuery.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -526,8 +521,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDedupParm
 	 * @throws Exception
@@ -570,31 +564,35 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 			// Fetches the List of DedupFields
 			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_FINANCE)) {
-				objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(FinanceConstants.DEDUP_FINANCE);
+				objectFieldList = (List<BuilderTable>) getDedupFieldsService()
+						.getFieldList(FinanceConstants.DEDUP_FINANCE);
 				// Method for Building tree with /Without existing params
 				buildingTree(sqlQueryValueList, aDedupParm);
 			}
-			
+
 			// Fetches the List of DedupFields
 			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_COLLATERAL)) {
 				if (!aDedupParm.isNewRecord()) {
-					objectFieldList = PennantAppUtil.getDynamicColumnsList("COLLATERAL_" + aDedupParm.getQuerySubCode() + "_ED");
+					objectFieldList = PennantAppUtil
+							.getDynamicColumnsList("COLLATERAL_" + aDedupParm.getQuerySubCode() + "_ED");
 					// Method for Building tree with /Without existing params
 					buildingTree(sqlQueryValueList, aDedupParm);
 				}
 			}
-			
-			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_CUSTOMER) || StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)
+
+			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_CUSTOMER)
+					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)
 					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_POLICE)) {
-				if(!aDedupParm.isNewRecord()){
-					objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(this.custCtgCode.getSelectedItem().getValue().toString()
-							+aDedupParm.getQueryModule());
+				if (!aDedupParm.isNewRecord()) {
+					objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
+							this.custCtgCode.getSelectedItem().getValue().toString() + aDedupParm.getQueryModule());
 					// Method for Building tree with /Without existing params
 					buildingTree(sqlQueryValueList, aDedupParm);
 				}
 			}
 			isItemSibling = false;
-			this.label_WindowTitle.setValue(Labels.getLabel("window_"+aDedupParm.getQueryModule()+"_DedupParmDialog.title"));
+			this.label_WindowTitle
+					.setValue(Labels.getLabel("window_" + aDedupParm.getQueryModule() + "_DedupParmDialog.title"));
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -604,100 +602,103 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This Method/Event for setting the rule modules and it clears tree if we
-	 * select another module and it also prompt the message
+	 * This Method/Event for setting the rule modules and it clears tree if we select another module and it also prompt
+	 * the message
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onChange$collateralType(Event event) throws Exception {		
-		logger.debug("Entering" +event.toString());	
-		
-		if(collateralType.getSelectedIndex() == 0){
+	public void onChange$collateralType(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		if (collateralType.getSelectedIndex() == 0) {
 			this.sQLQuery.setValue("");
 			tree.getChildren().clear();
-		}else{
-			
+		} else {
+
 			this.sQLQuery.setValue("");
 			this.tab_queryDesign.setSelected(true);
-			if(treechildren != null){
-				Component comp=(Component)combo.getParent().getFirstChild().getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNextSibling();
-				Combobox cb =new Combobox();
+			if (treechildren != null) {
+				Component comp = (Component) combo.getParent().getFirstChild().getNextSibling().getNextSibling()
+						.getNextSibling().getNextSibling().getNextSibling();
+				Combobox cb = new Combobox();
 				Textbox tb = new Textbox();
-				if(comp instanceof Combobox){
-					cb= (Combobox)comp;
-				}else if(comp instanceof Textbox){
-					tb= (Textbox)comp;
+				if (comp instanceof Combobox) {
+					cb = (Combobox) comp;
+				} else if (comp instanceof Textbox) {
+					tb = (Textbox) comp;
 				}
-				if(StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())){
+				if (StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())) {
 					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
-					
+
 					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 						clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
 						this.sQLQuery.setValue("");
 					}
-				}else{
-					clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString()); 
+				} else {
+					clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
 				}
-			}else{
+			} else {
 				clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
 			}
 		}
-		
-		logger.debug("Leaving" +event.toString());
+
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
-	 * This Method/Event for setting the rule modules and it clears tree if we
-	 * select another module and it also prompt the message
+	 * This Method/Event for setting the rule modules and it clears tree if we select another module and it also prompt
+	 * the message
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onChange$custCtgCode(Event event) throws Exception {		
-		logger.debug("Entering" +event.toString());	
+	public void onChange$custCtgCode(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
 
-		if(custCtgCode.getSelectedIndex() == 0){
+		if (custCtgCode.getSelectedIndex() == 0) {
 			this.sQLQuery.setValue("");
 			tree.getChildren().clear();
-		}else{
-			
+		} else {
+
 			this.sQLQuery.setValue("");
 			this.tab_queryDesign.setSelected(true);
-			if(treechildren != null){
-				Component comp=(Component)combo.getParent().getFirstChild().getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNextSibling();
-				Combobox cb =new Combobox();
+			if (treechildren != null) {
+				Component comp = (Component) combo.getParent().getFirstChild().getNextSibling().getNextSibling()
+						.getNextSibling().getNextSibling().getNextSibling();
+				Combobox cb = new Combobox();
 				Textbox tb = new Textbox();
-				if(comp instanceof Combobox){
-					cb= (Combobox)comp;
-				}else if(comp instanceof Textbox){
-					tb= (Textbox)comp;
+				if (comp instanceof Combobox) {
+					cb = (Combobox) comp;
+				} else if (comp instanceof Textbox) {
+					tb = (Textbox) comp;
 				}
-				if(StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())){
+				if (StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())) {
 					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
 
 					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 						clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
 						this.sQLQuery.setValue("");
 					}
-				}else{
-					clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString()); 
+				} else {
+					clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
 				}
-			}else{
+			} else {
 				clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
 			}
 		}
 
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * This method for clearing tree children and build a new tree
+	 * 
 	 * @throws Exception
 	 */
-	public void clearAndBuildTree(String ctgCode) throws Exception{
+	public void clearAndBuildTree(String ctgCode) throws Exception {
 		logger.debug("Entering");
 		itemCount = 1;
 		tree.getChildren().clear();
@@ -707,7 +708,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			objectFieldList = PennantAppUtil.getDynamicColumnsList(ctgCode);
 		} else {
 			objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
-					this.custCtgCode.getSelectedItem().getValue().toString()+getDedupParm().getQueryModule());
+					this.custCtgCode.getSelectedItem().getValue().toString() + getDedupParm().getQueryModule());
 		}
 		// Method for Building tree with /Without existing params
 		buildingTree(sqlQueryValueList, new DedupParm());
@@ -754,12 +755,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	private void doSetValidation() {
 		logger.debug("Enterring");
 		setValidationOn(true);
-		
+
 		if (!this.queryCode.isReadonly()) {
-			this.queryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DedupParmDialog_QueryCode.value"),PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+			this.queryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DedupParmDialog_QueryCode.value"),
+					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		if (!this.queryDesc.isReadonly()) {
-			this.queryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DedupParmDialog_QueryDesc.value"), 
+			this.queryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DedupParmDialog_QueryDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
@@ -782,8 +784,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 */
 	private void doSetLOVValidation() {
 		if (!this.custCtgCode.isReadonly()) {
-			this.custCtgCode.setConstraint(new PTStringValidator(Labels.getLabel(
-					"label_CustomerCategoryDialog_CustCtgCode.value"), null, true));
+			this.custCtgCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerCategoryDialog_CustCtgCode.value"), null, true));
 		}
 	}
 
@@ -853,18 +855,21 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 		if (fldComboSelAtmpts > 1) {
 			if (this.selectedField) {
-				selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+				selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling()
+						.getPreviousSibling();
 				posCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling();
 				if (selectCmp instanceof Space) {
 					selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling();
 					posCmp = component.getParent().getLastChild().getPreviousSibling();
 					if (selectCmp instanceof Button) {
-						selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+						selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling()
+								.getPreviousSibling();
 						posCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling();
 					}
 				}
 			} else {
-				selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling().getPreviousSibling();
+				selectCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling()
+						.getPreviousSibling();
 				posCmp = component.getParent().getLastChild().getPreviousSibling().getPreviousSibling();
 			}
 			component.getParent().removeChild(selectCmp);
@@ -1051,7 +1056,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					}
 					// TODO Here 3 is hard coded to Restrict the No of Conditions
 					// which has to be Parameterized
-				}else if (child.size() == 3) {
+				} else if (child.size() == 3) {
 					MessageUtil.showMessage(msg);
 					childReq = true;
 				}
@@ -1334,44 +1339,47 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	}
 
 	/**
-	 * Method for Validating Builded Query and show result in
-	 * 'SqlViewResult.zul'
+	 * Method for Validating Builded Query and show result in 'SqlViewResult.zul'
 	 */
 	public void onClick$btnValidation(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		this.tab_queryDesign.setSelected(true);
-		if(this.custCtgCode.getSelectedIndex() ==0){
+		if (this.custCtgCode.getSelectedIndex() == 0) {
 			this.sQLQuery.setValue("");
-		}else{
+		} else {
 			readButtonClicked();// calling read button method for generating query
 		}
 		String resultQuery = "";
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-				 || moduleName.equals(FinanceConstants.DEDUP_POLICE) || moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
-			resultQuery = "select "+ PennantConstants.CUST_DEDUP_LIST_FIELDS+" from CustomersDedup_View";	
-			if(!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex()<1){
+				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
+				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
+			resultQuery = "select " + PennantConstants.CUST_DEDUP_LIST_FIELDS + " from CustomersDedup_View";
+			if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
 				throw new WrongValueException(custCtgCode, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_DedupParmDialog_CustCtgCode.value")}));
+						new String[] { Labels.getLabel("label_DedupParmDialog_CustCtgCode.value") }));
 			}
-		}else if(moduleName.equals(FinanceConstants.DEDUP_FINANCE)){
-			resultQuery = "select * from FinanceDedup_View ";	
+		} else if (moduleName.equals(FinanceConstants.DEDUP_FINANCE)) {
+			resultQuery = "select * from FinanceDedup_View ";
 		}
-		
+
 		resultQuery = resultQuery + "\n" + sQLQuery.getValue();
 		//List Checking
-		String toReplace="("+PennantConstants.CUST_DEDUP_LISTFILED2+" = :"+PennantConstants.CUST_DEDUP_LISTFILED2+" and "
-		+PennantConstants.CUST_DEDUP_LISTFILED3+"=:"+PennantConstants.CUST_DEDUP_LISTFILED3+")";
+		String toReplace = "(" + PennantConstants.CUST_DEDUP_LISTFILED2 + " = :"
+				+ PennantConstants.CUST_DEDUP_LISTFILED2 + " and " + PennantConstants.CUST_DEDUP_LISTFILED3 + "=:"
+				+ PennantConstants.CUST_DEDUP_LISTFILED3 + ")";
 		if (resultQuery.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL)) {
-			resultQuery=resultQuery.replace(PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL,toReplace );
-		}else if (resultQuery.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE)) {
-			resultQuery=resultQuery.replace(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE,toReplace );
+			resultQuery = resultQuery.replace(PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL, toReplace);
+		} else if (resultQuery.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE)) {
+			resultQuery = resultQuery.replace(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE, toReplace);
 		}
-		
+
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
-				 || moduleName.equals(FinanceConstants.DEDUP_POLICE) || moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
-			resultQuery=resultQuery+" and lovDescCustCtgType='"+this.custCtgCode.getSelectedItem().getValue().toString()+"'";
+				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
+				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
+			resultQuery = resultQuery + " and lovDescCustCtgType='"
+					+ this.custCtgCode.getSelectedItem().getValue().toString() + "'";
 		}
-		
+
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultQuery", resultQuery);
 		map.put("fields", queryFieldMap);
@@ -1435,19 +1443,18 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					}
 					if (!validate) {
 						this.tab_queryDesign.setSelected(true);
-						throw new WrongValueException(combo, Labels.getLabel("STATIC_INVALID", new String[]{""}));
+						throw new WrongValueException(combo, Labels.getLabel("STATIC_INVALID", new String[] { "" }));
 					}
 					String comboValue = ((Combobox) combo).getSelectedItem().getValue().toString();
 					// retrieve values from comboBox(s)
-					if ("AND".equalsIgnoreCase(comboValue)
-							|| "OR".equalsIgnoreCase(comboValue)) {
+					if ("AND".equalsIgnoreCase(comboValue) || "OR".equalsIgnoreCase(comboValue)) {
 
 						strSqlQuery = strSqlQuery + "\n" + comboValue + "\n" + "(";
 
 						actualBlob = actualBlob + comboValue + "," + "(" + ",";
 					} else if (comboCount == 2) {
 						strSqlQuery = strSqlQuery + comboValue;
-						if("LIKE".equalsIgnoreCase(comboValue.trim())){
+						if ("LIKE".equalsIgnoreCase(comboValue.trim())) {
 							likeCondition = true;
 						}
 						actualBlob = actualBlob + comboValue + ",";
@@ -1460,7 +1467,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 								BuilderTable builderTables = objectFieldList.get(j);
 								if (builderTables.getFieldName().equals(element)) {
 									setFieldType(builderTables.getFieldControl());// To Get the Type of selectingField
-									if (("Where(\n(").equals(strSqlQuery) || (strSqlQuery.endsWith("AND\n(") || strSqlQuery.endsWith("OR\n("))) {
+									if (("Where(\n(").equals(strSqlQuery)
+											|| (strSqlQuery.endsWith("AND\n(") || strSqlQuery.endsWith("OR\n("))) {
 										strSqlQuery = strSqlQuery + element;
 									}
 									actualBlob = actualBlob + comboValue + ",";
@@ -1471,20 +1479,21 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 						comboCount++;
 					}
 				} else if (comboCount == 3) {
-					if(likeCondition){
-						strSqlQuery = strSqlQuery + ":"+ element;
+					if (likeCondition) {
+						strSqlQuery = strSqlQuery + ":" + element;
 						likeCondition = false;
-					}else{
-						strSqlQuery = strSqlQuery + ":" + element ;
-						if(StringUtils.contains(getFieldType(),"varchar")){
-							if(App.DATABASE == Database.SQL_SERVER){
-								strSqlQuery = strSqlQuery + " AND ("+element +" IS NOT NULL AND "+element +" != '') ";
-							}else{
-								strSqlQuery = strSqlQuery + " AND "+element +" IS NOT NULL ";
+					} else {
+						strSqlQuery = strSqlQuery + ":" + element;
+						if (StringUtils.contains(getFieldType(), "varchar")) {
+							if (App.DATABASE == Database.SQL_SERVER) {
+								strSqlQuery = strSqlQuery + " AND (" + element + " IS NOT NULL AND " + element
+										+ " != '') ";
+							} else {
+								strSqlQuery = strSqlQuery + " AND " + element + " IS NOT NULL ";
 							}
 						}
 					}
-					
+
 					if (!queryFieldMap.containsKey(element)) {
 						String[] array = new String[2];
 						array[0] = getFieldType();
@@ -1521,8 +1530,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_DedupParmDialog_QueryCode.value")+" : "+aDedupParm.getQueryCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_DedupParmDialog_QueryCode.value") + " : " + aDedupParm.getQueryCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDedupParm.getRecordType())) {
 				aDedupParm.setVersion(aDedupParm.getVersion() + 1);
@@ -1562,39 +1571,38 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			this.queryCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.custCtgCode.setDisabled(true);
-			
-			if(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Maintain") &&
-					getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Save")){
+
+			if (getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Maintain")
+					&& getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Save")) {
 				this.btnReadValues.setVisible(true);
 				this.btnValidation.setVisible(true);
 				this.tab_queryDesign.setVisible(true);
-			}else{
+			} else {
 				this.btnReadValues.setVisible(false);
 				this.btnValidation.setVisible(false);
 				this.tab_queryDesign.setVisible(false);
 			}
-			
-			if(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Deletion") && 
-					getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Delete")){
+
+			if (getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Deletion")
+					&& getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Delete")) {
 				this.btnDelete.setVisible(true);
-			}else{
+			} else {
 				this.btnDelete.setVisible(false);
 			}
-			
-			if (PennantConstants.RECORD_TYPE_DEL.equals(getDedupParm()
-					.getRecordType())) {
+
+			if (PennantConstants.RECORD_TYPE_DEL.equals(getDedupParm().getRecordType())) {
 				this.tab_queryDesign.setVisible(false);
 				this.btnReadValues.setVisible(false);
 				this.btnValidation.setVisible(false);
-				if(!getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Maintain")){
+				if (!getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Maintain")) {
 					this.btnSave.setVisible(true);
-					if(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Deletion")){
+					if (getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Deletion")) {
 						this.btnDelete.setVisible(false);
 					}
-				}else{
+				} else {
 					this.btnSave.setVisible(false);
 					this.btnDelete.setVisible(false);
-					if(getUserWorkspace().isAllowed("button_DedupParmDialog_btn"+this.moduleName+"Deletion")){
+					if (getUserWorkspace().isAllowed("button_DedupParmDialog_btn" + this.moduleName + "Deletion")) {
 						this.btnSave.setVisible(true);
 					}
 				}
@@ -1603,13 +1611,13 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		this.sQLQuery.setReadonly(true);
 		this.queryDesc.setReadonly(isReadOnly("DedupParmDialog_queryDesc"));
 		readOnlyComponent(isReadOnly("DedupParmDialog_CollateralType"), this.collateralType);
-		
-		if(this.tab_queryDesign.isVisible()){
+
+		if (this.tab_queryDesign.isVisible()) {
 			this.tab_queryDesign.setSelected(true);
-		}else{
+		} else {
 			this.tab_textQuery.setSelected(true);
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1681,7 +1689,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		doSetValidation();
 		// fill the DedupParm object with the components data
 		doWriteComponentsToBean(aDedupParm);
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
@@ -1801,7 +1809,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				for (int i = 0; i < list.length; i++) {
 					auditHeader = getAuditHeader(aDedupParm, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					if (!processCompleted) {
 						break;
 					}
 				}
@@ -1859,7 +1867,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DedupParmDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1903,7 +1912,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 */
 	private AuditHeader getAuditHeader(DedupParm aDedupParm, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDedupParm.getBefImage(), aDedupParm);
-		return new AuditHeader(aDedupParm.getQueryCode(), null, null, null, auditDetail, aDedupParm.getUserDetails(), getOverideMap());
+		return new AuditHeader(aDedupParm.getQueryCode(), null, null, null, auditDetail, aDedupParm.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -1936,7 +1946,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.dedupParm);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.dedupParm.getQueryCode());
@@ -1989,6 +1999,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	public String getFieldType() {
 		return fieldType;
 	}
+
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
 	}

@@ -55,19 +55,17 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(MurabahaFinanceMainDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_MurabahaFinanceMainDialog; 					// autoWired
+	protected Window window_MurabahaFinanceMainDialog; // autoWired
 
 	/**
 	 * default constructor.<br>
@@ -84,9 +82,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -113,11 +110,11 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		// delete financeMain here.
 		if (arguments.containsKey("financeMainListCtrl")) {
 			setFinanceMainListCtrl((FinanceMainListCtrl) arguments.get("financeMainListCtrl"));
-		} 
-		
+		}
+
 		if (arguments.containsKey("financeSelectCtrl")) {
 			setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
-		} 
+		}
 
 		if (arguments.containsKey("tabbox")) {
 			listWindowTab = (Tab) arguments.get("tabbox");
@@ -130,7 +127,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		if (arguments.containsKey("eventCode")) {
 			eventCode = (String) arguments.get("eventCode");
 		}
-		
+
 		if (arguments.containsKey("menuItemRightName")) {
 			menuItemRightName = (String) arguments.get("menuItemRightName");
 		}
@@ -141,17 +138,17 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
-		}else{
+		} else {
 			this.south.setHeight("0px");
 		}
 
 		setMainWindow(window_MurabahaFinanceMainDialog);
 		setProductCode("Murabaha");
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
-		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52+ "px");
+		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");
 
 		// set Field Properties
 		doSetFieldProperties();
@@ -159,7 +156,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		Events.echoEvent("onPostWinCreation", this.self, null);
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * If we close the dialog window. <br>
 	 * 
@@ -176,14 +173,13 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		processSave();
 		logger.debug("Leaving " + event.toString());
 	}
-
 
 	/**
 	 * when the "help" button is clicked. <br>
@@ -201,7 +197,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -220,5 +216,5 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		super.onCheckmanualSchedule();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 }

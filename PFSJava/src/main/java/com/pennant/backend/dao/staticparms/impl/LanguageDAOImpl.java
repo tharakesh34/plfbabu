@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -85,12 +84,13 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 		Language language = new Language();
 		language.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select LngCode, LngDesc, LngNumber,");
-		/*if(type.contains("View")){
-			selectSql.append("");
-		}*/
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		/*
+		 * if(type.contains("View")){ selectSql.append(""); }
+		 */
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTLanguage");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LngCode =:LngCode");
@@ -110,9 +110,8 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTLanguage or BMTLanguage_Temp.
-	 * if Record not deleted then throws DataAccessException with error 41003.
-	 * delete Language Details by key LngCode
+	 * This method Deletes the Record from the BMTLanguage or BMTLanguage_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Language Details by key LngCode
 	 * 
 	 * @param Language
 	 *            Details (language)
@@ -127,16 +126,16 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTLanguage");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where LngCode =:LngCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(language);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -164,16 +163,17 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	public String save(Language language, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTLanguage");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (LngCode, LngDesc, LngNumber, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:LngCode, :LngDesc, :LngNumber, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
 		insertSql.append(" :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());	
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(language);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -182,9 +182,8 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	}
 
 	/**
-	 * This method updates the Record BMTLanguage or BMTLanguage_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Language Details by key LngCode and Version
+	 * This method updates the Record BMTLanguage or BMTLanguage_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Language Details by key LngCode and Version
 	 * 
 	 * @param Language
 	 *            Details (language)
@@ -199,21 +198,23 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTLanguage");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set LngDesc = :LngDesc, LngNumber = :LngNumber,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,  RecordStatus= :RecordStatus, ");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,  RecordStatus= :RecordStatus, ");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where LngCode =:LngCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(language);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

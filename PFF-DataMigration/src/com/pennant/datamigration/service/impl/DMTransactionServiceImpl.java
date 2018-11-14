@@ -138,12 +138,11 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		MigrationData dMD = new MigrationData();
 		dMD.setSourceReport(basicLoanReconDAO.getSourceReportDetails(sMD.getFinanceMain().getFinReference()));
 
-		/*if (StringUtils.equals(sMD.getFinanceMain().getFinReference(), "ELPNADNM0002736")
-				|| StringUtils.equals(sMD.getFinanceMain().getFinReference(), "SEPNMLE0117650")) {
-			dMD.setWorkOnEMI(true);
-		} else {
-			dMD.setWorkOnEMI(false);
-		}*/
+		/*
+		 * if (StringUtils.equals(sMD.getFinanceMain().getFinReference(), "ELPNADNM0002736") ||
+		 * StringUtils.equals(sMD.getFinanceMain().getFinReference(), "SEPNMLE0117650")) { dMD.setWorkOnEMI(true); }
+		 * else { dMD.setWorkOnEMI(false); }
+		 */
 
 		// Reset Fee Received
 		List<FeeTypeVsGLMapping> feeGLList = rid.getFeeVsGLList();
@@ -167,7 +166,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dMD = setBasicLoanRecon(sMD, dMD, rid);
 		dMD = addFutureManualAdvises(sMD, dMD, rid);
 		dMD = addPostingEntries(dMD, rid);
-		
+
 		dMD = setFinanceStatus(dMD);
 
 		logger.debug("Leaving");
@@ -197,7 +196,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dFM.setFinCategory(sFM.getFinCategory());
 		dFM.setProductCategory(FinanceConstants.PRODUCT_CONVENTIONAL);//Overwritten
 		dFM.setLovDescEntityCode(sFM.getLovDescEntityCode());
-		
+
 		dFM.setAccountsOfficer(sFM.getAccountsOfficer());
 		dFM.setDsaCode(sFM.getDsaCode());
 		dFM.setApplicationNo(sFM.getApplicationNo());
@@ -247,7 +246,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dFM.setNextRepayRvwDate(dFM.getFinStartDate());
 		dFM.setSchCalOnRvw(CalculationConstants.RPYCHG_TILLMDT);
 		dFM.setRateChgAnyDay(sMD.getFinType().isRateChgAnyDay());
-		
+
 		// Set same as Repay Frequency
 		dFM.setAllowRepayCpz(sFM.isAllowRepayCpz());
 		if (dFM.isAllowRepayCpz()) {
@@ -265,7 +264,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dFM.setMandateID(sFM.getMandateID());
 		dFM.setTDSApplicable(sFM.istDSApplicable());
 		dFM.setProfitDaysBasis(MigrationConstants.RPY_PFT_DAYS_BASIS);//Overwritten
-		
+
 		dFM.setNextDepDate(dFM.getFinStartDate());
 		dFM.setNextRolloverDate(dFM.getFinStartDate());
 		dFM.setLastDepDate(dFM.getFinStartDate());
@@ -274,16 +273,16 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dFM.setLastRepayRvwDate(dFM.getFinStartDate());
 		dFM.setLastRepayCpzDate(dFM.getFinStartDate());
 		dFM.setLastDisbDate(dFM.getFinStartDate());
-		
+
 		// BPI Details
 		//-----------------------------------
 		dFM.setAlwBPI(sFM.isAlwBPI());
-		if(dFM.isAlwBPI()){
+		if (dFM.isAlwBPI()) {
 			dFM.setBpiTreatment(sFM.getBpiTreatment());
 			dFM.setBpiPftDaysBasis(MigrationConstants.BPI_PFT_DAYS_BASIS);//Overwritten
 			dFM.setBpiAmount(sFM.getBpiAmount());
 		}
-		
+
 		dFM.setPlanEMIHAlw(false);
 		dFM.setPlanEMIHMethod(null);
 		dFM.setPlanEMIHMaxPerYear(0);
@@ -353,7 +352,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 	// ---------------------------------------------------------------------------
 	public MigrationData setDisbursements(MigrationData sMD, MigrationData dMD, ReferenceID rid) {
 		logger.debug("Entering");
-		
+
 		List<FinanceDisbursement> sFddList = sMD.getFinDisbursements();
 		List<FinanceDisbursement> dFddList = dMD.getFinDisbursements();
 		FinanceMain dFM = dMD.getFinanceMain();
@@ -374,7 +373,8 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			FinanceDisbursement sFdd = sFddList.get(i);
 
 			// Do not take cancelled disbursements
-			if (!sFdd.isDisbDisbursed() || StringUtils.equals(DisbursementConstants.STATUS_CANCEL, sFdd.getDisbStatus())) {
+			if (!sFdd.isDisbDisbursed()
+					|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, sFdd.getDisbStatus())) {
 				continue;
 			}
 
@@ -392,7 +392,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			// Finance Amount
 			if (DateUtility.compare(sFdd.getDisbDate(), dFM.getFinStartDate()) == 0) {
 				dFM.setFinAmount(dFM.getFinAmount().add(sFdd.getDisbAmount()));
-			}else{
+			} else {
 				dFM.setScheduleMaintained(true);
 			}
 
@@ -459,10 +459,10 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				ffd.setActualAmountOriginal(ffd.getActualAmount());
 				ffd.setPaidAmount(BigDecimal.ZERO);
 				ffd.setPaidAmountOriginal(BigDecimal.ZERO);
-				
+
 				dFM.setDeductFeeDisb(dFM.getDeductFeeDisb().add(ffd.getNetAmount()));
 			}
-			
+
 			// FIXME: Check when GST is Available
 			if (StringUtils.equals(ffd.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 				ffd.setNetAmount(ffd.getActualAmount().subtract(ffd.getWaivedAmount()));
@@ -470,10 +470,10 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				ffd.setActualAmountOriginal(ffd.getActualAmount());
 				ffd.setPaidAmountOriginal(ffd.getPaidAmount());
 			}
-			
+
 			// Calculating Percentage of Fee calculation in Reverse Order
-			if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,ffd.getCalculationType())) {
-				
+			if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE, ffd.getCalculationType())) {
+
 				BigDecimal calculatedAmt = BigDecimal.ZERO;
 				switch (ffd.getCalculateOn()) {
 				case PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE:
@@ -485,12 +485,13 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				default:
 					break;
 				}
-				
-				if(calculatedAmt.compareTo(BigDecimal.ZERO) > 0){
-					BigDecimal perc = (ffd.getNetAmount().divide(calculatedAmt, 2, RoundingMode.HALF_DOWN)).multiply(BigDecimal.valueOf(100));
+
+				if (calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal perc = (ffd.getNetAmount().divide(calculatedAmt, 2, RoundingMode.HALF_DOWN))
+							.multiply(BigDecimal.valueOf(100));
 					ffd.setPercentage(perc);
 				}
-					
+
 			}
 
 			// Add Fee and Charges to Disbursement Detail
@@ -523,7 +524,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				}
 			}
 		}
-		
+
 		// Reset Dates for Start Date
 		dFM.setNextRepayDate(dFM.getFinStartDate());
 		dFM.setNextRepayPftDate(dFM.getFinStartDate());
@@ -538,19 +539,19 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dFM.setLastRepayCpzDate(dFM.getFinStartDate());
 		dFM.setLastDisbDate(dFM.getFinStartDate());
 		dFM.setFinApprovedDate(dFM.getFinStartDate());
-		if (sMD.getFinanceMain().getInitiateDate() == null || 
-				DateUtility.compare(dFM.getInitiateDate(), dFM.getFinStartDate()) > 0) {
+		if (sMD.getFinanceMain().getInitiateDate() == null
+				|| DateUtility.compare(dFM.getInitiateDate(), dFM.getFinStartDate()) > 0) {
 			dFM.setInitiateDate(dFM.getFinStartDate());
 		}
-		
+
 		dMD.setFinDisbursements(dFddList);
 		dMD.setFinFeeDetails(dFfdList);
 		dMD.setFinanceMain(dFM);
 		logger.debug("Leaving");
 		return dMD;
 	}
-	
-	private List<FinanceDisbursement> sortDisbDetails(List<FinanceDisbursement> disbursements){
+
+	private List<FinanceDisbursement> sortDisbDetails(List<FinanceDisbursement> disbursements) {
 
 		if (disbursements != null && disbursements.size() > 1) {
 			Collections.sort(disbursements, new Comparator<FinanceDisbursement>() {
@@ -558,9 +559,9 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				public int compare(FinanceDisbursement detail1, FinanceDisbursement detail2) {
 					if (detail1.getDisbSeq() > detail2.getDisbSeq()) {
 						return 1;
-					} else if(detail1.getDisbSeq() < detail2.getDisbSeq()) {
+					} else if (detail1.getDisbSeq() < detail2.getDisbSeq()) {
 						return -1;
-					} 
+					}
 					return 0;
 				}
 			});
@@ -670,9 +671,9 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				fsd.setProfitSchd(fsd.getProfitSchd().add(sFsd.getProfitSchd()));
 				fsd.setPrincipalSchd(fsd.getPrincipalSchd().add(sFsd.getPrincipalSchd()));
 				fsd.setRepayAmount(fsd.getRepayAmount().add(sFsd.getRepayAmount()));
-				
+
 			}
-			
+
 			if (fsd.getSchDate().compareTo(dFM.getFinStartDate()) == 0) {
 				fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_SELECT);
 
@@ -704,11 +705,12 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_SELECT);
 				fsd.setSchdMethod(sFsd.getSchdMethod());
 			}
-			
-			if(fsd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0 && !StringUtils.equals(fsd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
+
+			if (fsd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0
+					&& !StringUtils.equals(fsd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				fsd.setInstNumber(instNo);
 				instNo = instNo + 1;
-			}else{
+			} else {
 				fsd.setInstNumber(0);
 			}
 		}
@@ -765,20 +767,20 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			fsd.setActRate(actRate);
 			fsd.setCalculatedRate(actRate);
 			fsd.setDisbAmount(fdd.getDisbAmount());
-			
-			if(DateUtility.compare(fdd.getDisbDate(), fm.getGrcPeriodEndDate()) < 0){
+
+			if (DateUtility.compare(fdd.getDisbDate(), fm.getGrcPeriodEndDate()) < 0) {
 				fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
 				fsd.setPftDaysBasis(fm.getGrcProfitDaysBasis());
 				fsd.setSchdMethod(fm.getGrcSchdMthd());
-			}else if(DateUtility.compare(fdd.getDisbDate(), fm.getGrcPeriodEndDate()) == 0){
+			} else if (DateUtility.compare(fdd.getDisbDate(), fm.getGrcPeriodEndDate()) == 0) {
 				fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 				fsd.setPftDaysBasis(fm.getProfitDaysBasis());
-				if(fm.isAllowGrcPeriod()){
+				if (fm.isAllowGrcPeriod()) {
 					fsd.setSchdMethod(fm.getGrcSchdMthd());
-				}else{
+				} else {
 					fsd.setSchdMethod(fm.getScheduleMethod());
 				}
-			}else{
+			} else {
 				fsd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 				fsd.setPftDaysBasis(fm.getProfitDaysBasis());
 				fsd.setSchdMethod(fm.getScheduleMethod());
@@ -838,7 +840,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		} else {
 			if (fsd.getSchDate().compareTo(dFM.getGrcPeriodEndDate()) < 0) {
 				fsd.setPftDaysBasis(dFM.getGrcProfitDaysBasis());
-			}else{
+			} else {
 				fsd.setPftDaysBasis(dFM.getProfitDaysBasis());
 			}
 			fsd.setBpiOrHoliday("");
@@ -893,7 +895,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dFsdList.get(0).setClosingBalance(dFsdList.get(0).getDisbAmount());
 		dFsdList.get(0).setActRate(dFsdList.get(1).getActRate());
 		dFsdList.get(0).setCalculatedRate(dFsdList.get(1).getCalculatedRate());
-		
+
 		dFM.setFinRepaymentAmount(BigDecimal.ZERO);
 		dFM.setTotalRepayAmt(BigDecimal.ZERO);
 		dFM.setTotalGracePft(BigDecimal.ZERO);
@@ -1077,7 +1079,6 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 						dFM.setTotalGracePft(dFM.getTotalGracePft().add(curSchd.getProfitSchd()));
 					}
 
-
 					if (!isNextGrcDateSet) {
 						if (isGracePeriod) {
 							dFM.setNextGrcPftDate(curSchDate);
@@ -1106,7 +1107,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				}
 
 				dFM.setCalMaturity(curSchDate);
-				if(!isGracePeriod){
+				if (!isGracePeriod) {
 					dFM.setTotalProfit(dFM.getTotalProfit().add(curSchd.getProfitSchd()));
 				}
 
@@ -1118,7 +1119,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 					}
 				}
 			}
-			
+
 		}
 
 		// Summaries
@@ -1444,7 +1445,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		for (int i = 0; i < dMD.getRepayDetails().size(); i++) {
 			getFinanceRepaymentsDAO().save(dMD.getRepayDetails().get(i), "");
 		}
-		
+
 		// Repayment Details
 		for (int i = 0; i < dMD.getFinODDetails().size(); i++) {
 			getFinODDetailsDAO().save(dMD.getFinODDetails().get(i));
@@ -1519,13 +1520,10 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 
 		// Clean Receipt Header Status
 		/*
-		 * for (int i = 0; i < sRchList.size(); i++) { if
-		 * (StringUtils.isBlank(sRchList.get(i).getReceiptModeStatus())) { for
-		 * (int j = 0; j < sRcdList.size(); j++) { if
-		 * (sRcdList.get(j).getReceiptID()!=sRchList.get(i).getReceiptID()) {
-		 * continue; }
-		 * sRchList.get(i).setReceiptModeStatus(sRcdList.get(j).getStatus());
-		 * break; } } }
+		 * for (int i = 0; i < sRchList.size(); i++) { if (StringUtils.isBlank(sRchList.get(i).getReceiptModeStatus()))
+		 * { for (int j = 0; j < sRcdList.size(); j++) { if
+		 * (sRcdList.get(j).getReceiptID()!=sRchList.get(i).getReceiptID()) { continue; }
+		 * sRchList.get(i).setReceiptModeStatus(sRcdList.get(j).getStatus()); break; } } }
 		 */
 		boolean isSkip = false;
 
@@ -1682,9 +1680,8 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			FinReceiptDetail dRcd = sRcdList.get(i);
 
 			/*
-			 * if (StringUtils.isBlank(sRch.getReceiptModeStatus())) {
-			 * dRch.setReceiptModeStatus(dRcd.getStatus()); } else {
-			 * dRcd.setStatus(dRch.getReceiptModeStatus()); }
+			 * if (StringUtils.isBlank(sRch.getReceiptModeStatus())) { dRch.setReceiptModeStatus(dRcd.getStatus()); }
+			 * else { dRcd.setStatus(dRch.getReceiptModeStatus()); }
 			 */
 
 			dRcd.setPaymentType(dRch.getReceiptMode());
@@ -1723,19 +1720,19 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			}
 
 			ReceiptAllocationDetail dRad = sRadList.get(i);
-			dRad.setReceiptAllocationid(rid.getReceiptAlocID()+1);
-			rid.setReceiptAlocID(rid.getReceiptAlocID()+1);
-			dRad.setAllocationID(alocID+1);
-			alocID = alocID+1;
-			
+			dRad.setReceiptAllocationid(rid.getReceiptAlocID() + 1);
+			rid.setReceiptAlocID(rid.getReceiptAlocID() + 1);
+			dRad.setAllocationID(alocID + 1);
+			alocID = alocID + 1;
+
 			BigDecimal prvDupAmt = BigDecimal.ZERO;
 			for (ReceiptAllocationDetail aloc : dMD.getReceiptAllocationDetails()) {
 				if (dRch.getReceiptID() != aloc.getReceiptID()) {
 					continue;
 				}
-				
-				if(StringUtils.equals(aloc.getAllocationType(), dRad.getAllocationType()) && 
-						dRad.getAllocationTo() == aloc.getAllocationTo()){
+
+				if (StringUtils.equals(aloc.getAllocationType(), dRad.getAllocationType())
+						&& dRad.getAllocationTo() == aloc.getAllocationTo()) {
 					dRad.setPaidAmount(dRad.getPaidAmount().add(aloc.getPaidAmount()));
 					prvDupAmt = aloc.getPaidAmount();
 					dMD.getReceiptAllocationDetails().remove(aloc);
@@ -1743,7 +1740,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 					break;
 				}
 			}
-			
+
 			dMD.getReceiptAllocationDetails().add(dRad);
 
 			if (StringUtils.equals(dRad.getAllocationType(), RepayConstants.ALLOCATION_PRI)
@@ -1781,11 +1778,12 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 								|| StringUtils.equals(dRad.getAllocationType(), "Bounce")) {
 							dRad.setAllocationType(RepayConstants.ALLOCATION_BOUNCE);
 							dRad.setAllocationTo(0);
-							rid.setBounceReceived(rid.getBounceReceived().add(dRad.getPaidAmount()).subtract(prvDupAmt));
+							rid.setBounceReceived(
+									rid.getBounceReceived().add(dRad.getPaidAmount()).subtract(prvDupAmt));
 						}
 
 					}
-				}else{
+				} else {
 					if (StringUtils.equals(dRad.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)
 							|| StringUtils.equals(dRad.getAllocationType(), "Bounce")) {
 						dRad.setAllocationType(RepayConstants.ALLOCATION_BOUNCE);
@@ -1847,11 +1845,11 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			if (!(StringUtils.equals(dRad.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)
 					|| StringUtils.equals(dRad.getAllocationType(), "Bounce"))) {
 				dRad.setAllocationType(RepayConstants.ALLOCATION_MANADV);
-			}else{
+			} else {
 				dMa.setFeeTypeID(0);
 				dMa.setBounceID(25);
 			}
-			
+
 			dMa.setAdviseAmount(dRad.getPaidAmount());
 			dMa.setPaidAmount(dRad.getPaidAmount());
 
@@ -2056,22 +2054,28 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 
 		}
 
-		if (dMD.getRpyExcessAmount().compareTo(BigDecimal.ZERO) > 0 ||
-				(dMD.getRpyInt().add(dMD.getRpyPri()).compareTo(BigDecimal.ZERO) > 0 && !dMD.isWorkOnEMI() &&
-						!StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)
-						&& !StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE))) {
+		if (dMD.getRpyExcessAmount().compareTo(BigDecimal.ZERO) > 0
+				|| (dMD.getRpyInt().add(dMD.getRpyPri()).compareTo(BigDecimal.ZERO) > 0 && !dMD.isWorkOnEMI()
+						&& !StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(),
+								RepayConstants.PAYSTATUS_CANCEL)
+						&& !StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(),
+								RepayConstants.PAYSTATUS_BOUNCE))) {
 			totRepay = dMD.getRpyExcessAmount();
-			if(totRepay.compareTo(BigDecimal.ZERO) == 0 && !dMD.isWorkOnEMI()  &&
-					!StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)
-					&& !StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
+			if (totRepay.compareTo(BigDecimal.ZERO) == 0 && !dMD.isWorkOnEMI()
+					&& !StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(),
+							RepayConstants.PAYSTATUS_CANCEL)
+					&& !StringUtils.equals(dMD.getFinReceiptHeaders().get(iRch).getReceiptModeStatus(),
+							RepayConstants.PAYSTATUS_BOUNCE)) {
 				totRepay = dMD.getRpyInt().add(dMD.getRpyPri());
 				int iRph = dMD.getFinRepayHeaders().size() - 1;
-				dMD.getFinRepayHeaders().get(iRph).setPriAmount(dMD.getFinRepayHeaders().get(iRph).getPriAmount().subtract(dMD.getRpyPri()));
-				dMD.getFinRepayHeaders().get(iRph).setPftAmount(dMD.getFinRepayHeaders().get(iRph).getPftAmount().subtract(dMD.getRpyInt()));
-				
+				dMD.getFinRepayHeaders().get(iRph)
+						.setPriAmount(dMD.getFinRepayHeaders().get(iRph).getPriAmount().subtract(dMD.getRpyPri()));
+				dMD.getFinRepayHeaders().get(iRph)
+						.setPftAmount(dMD.getFinRepayHeaders().get(iRph).getPftAmount().subtract(dMD.getRpyInt()));
+
 				// Excess Amount
 				if (totRepay.compareTo(BigDecimal.ZERO) > 0) {
-					dMD = addExcessAmount(dMD, rid, totRepay, dMD.getFinRepayHeaders().get(iRph).getValueDate(), 
+					dMD = addExcessAmount(dMD, rid, totRepay, dMD.getFinRepayHeaders().get(iRph).getValueDate(),
 							dMD.getFinReceiptHeaders().get(iRch).getReceiptID());
 					dMD.setRpyExcessAmount(totRepay);
 				}
@@ -2232,42 +2236,42 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		dMD.setRepaySchID(dMD.getRepaySchID() + 1);
 		rsd.setRepaySchID(dMD.getRepaySchID());
 		rsd.setRepayID(rid.getRepayID());
-		
-		if(dMD.isWorkOnEMI()){
+
+		if (dMD.isWorkOnEMI()) {
 			// Update RepayHeader
 			dMD.getFinRepayHeaders().get(iRph).setPriAmount(dMD.getRpyPri());
 			dMD.getFinRepayHeaders().get(iRph).setPftAmount(dMD.getRpyInt());
 
 			// Update Receipt Allocation Detail
 			List<ReceiptAllocationDetail> alocList = dMD.getReceiptAllocationDetails();
-			if(alocList != null && !alocList.isEmpty()){
+			if (alocList != null && !alocList.isEmpty()) {
 				int maxAlocID = 0;
 				ReceiptAllocationDetail pftAloc = null;
 				for (ReceiptAllocationDetail aloc : alocList) {
 					if (dMD.getFinReceiptHeaders().get(iRch).getReceiptID() != aloc.getReceiptID()) {
 						continue;
 					}
-					
-					if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PRI)){
+
+					if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
 						aloc.setPaidAmount(dMD.getRpyPri());
-						if(maxAlocID < aloc.getAllocationID()){
+						if (maxAlocID < aloc.getAllocationID()) {
 							maxAlocID = aloc.getAllocationID();
 						}
 					}
-					
-					if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PFT)){
+
+					if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
 						pftAloc = aloc;
 					}
 				}
-				
-				if(pftAloc == null){
+
+				if (pftAloc == null) {
 					pftAloc = new ReceiptAllocationDetail();
 					dMD.getReceiptAllocationDetails().add(pftAloc);
-					pftAloc.setAllocationID(maxAlocID+1);
-					
-					pftAloc.setReceiptAllocationid(rid.getReceiptAlocID()+1);
-					rid.setReceiptAlocID(rid.getReceiptAlocID()+1);
-					
+					pftAloc.setAllocationID(maxAlocID + 1);
+
+					pftAloc.setReceiptAllocationid(rid.getReceiptAlocID() + 1);
+					rid.setReceiptAlocID(rid.getReceiptAlocID() + 1);
+
 					pftAloc.setReceiptID(dMD.getFinReceiptHeaders().get(iRch).getReceiptID());
 					pftAloc.setAllocationType(RepayConstants.ALLOCATION_PFT);
 					pftAloc.setAllocationTo(0);
@@ -2285,18 +2289,18 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		rpd.setFinReference(rsd.getFinReference());
 		rpd.setFinSchdDate(rsd.getSchDate());
 		rpd.setFinRpyFor(rsd.getSchdFor());
-		
+
 		// If For Same Schedule date payment already exists then Payment sequence ID should increase
 		for (FinanceRepayments rpy : dMD.getRepayDetails()) {
-			if(DateUtility.compare(rpy.getFinSchdDate(), rsd.getSchDate()) != 0){
+			if (DateUtility.compare(rpy.getFinSchdDate(), rsd.getSchDate()) != 0) {
 				continue;
 			}
-			if(rpy.getFinPaySeq() > paySeq){
+			if (rpy.getFinPaySeq() > paySeq) {
 				paySeq = rpy.getFinPaySeq();
 			}
 		}
-		
-		rpd.setFinPaySeq(paySeq+1);
+
+		rpd.setFinPaySeq(paySeq + 1);
 		rpd.setFinRpyAmount(dMD.getFinReceiptHeaders().get(iRch).getReceiptAmount());
 		rpd.setFinPostDate(dMD.getFinReceiptHeaders().get(iRch).getReceiptDate());
 		rpd.setFinValueDate(dMD.getFinReceiptDetails().get(iRcd).getValueDate());
@@ -2713,7 +2717,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			pftDetail.setPftAmzNormal(pftDetail.getPftAmzNormal().add(pftAmzNormal));
 			pftDetail.setPftAmzPD(pftDetail.getPftAmzPD().add(pftAmzPD));
 			pftDetail.setPftAccrued(pftDetail.getPftAccrued().add(acrNormal));
-			
+
 			// Set Total Repayment Amount on FinanceMain Object
 			finMain.setFinRepaymentAmount(finMain.getFinRepaymentAmount().add(curSchd.getSchdPriPaid()));
 		}
@@ -3130,22 +3134,22 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		List<FinanceScheduleDetail> finSchdDetails = migrationData.getFinScheduleDetails();
 		FinODPenaltyRate penaltyRate = migrationData.getPenaltyrate();
 
-		if(migrationData.getFinODDetails() == null){
+		if (migrationData.getFinODDetails() == null) {
 			migrationData.setFinODDetails(new ArrayList<FinODDetails>());
 		}
-		
+
 		List<FinanceRepayments> repayments = sortRepayDetails(migrationData.getRepayDetails());
-		
+
 		Date latestRpyDate = null;
 		BigDecimal latestRpyPri = BigDecimal.ZERO;
 		BigDecimal latestRpyPft = BigDecimal.ZERO;
 
 		for (int i = 1; i < finSchdDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
-			
+
 			// Not considering Past Fully Paid Schedule Dates
-			if(curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0 &&
-					curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0){
+			if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
+					&& curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
 				continue;
 			}
 
@@ -3160,15 +3164,16 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				}
 			}
 
-			FinODDetails fod = getLatePayMarkingService().createODDetails(curSchd, finMain, penaltyRate, rid.getAppDate());
-			
+			FinODDetails fod = getLatePayMarkingService().createODDetails(curSchd, finMain, penaltyRate,
+					rid.getAppDate());
+
 			//Load Overdue Charge Recovery from Repayments Movements
 			BigDecimal priBalMaxOD = curSchd.getPrincipalSchd();
 			BigDecimal pftBalMaxOD = curSchd.getProfitSchd();
 			for (int j = 0; j < repayments.size(); j++) {
 				FinanceRepayments repayment = repayments.get(j);
-				
-				if(latestRpyDate == null || latestRpyDate.compareTo(repayment.getFinPostDate()) < 0){
+
+				if (latestRpyDate == null || latestRpyDate.compareTo(repayment.getFinPostDate()) < 0) {
 					latestRpyDate = repayment.getFinPostDate();
 					latestRpyPri = repayment.getFinSchdPriPaid();
 					latestRpyPft = repayment.getFinSchdPftPaid();
@@ -3181,20 +3186,20 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 
 				//MAx OD amounts is same as repayments balance amounts
 				if (fod.getFinODSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
-					if(repayment.getFinSchdPftPaid().compareTo(curSchd.getProfitSchd()) == 0 &&
-							repayment.getFinSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) == 0){
-					}else{
+					if (repayment.getFinSchdPftPaid().compareTo(curSchd.getProfitSchd()) == 0
+							&& repayment.getFinSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) == 0) {
+					} else {
 						priBalMaxOD = priBalMaxOD.subtract(repayment.getFinSchdPriPaid());
 						pftBalMaxOD = pftBalMaxOD.subtract(repayment.getFinSchdPftPaid());
 					}
 				}
 			}
-			
+
 			// Schedule Fully Paid On Time
-			if(priBalMaxOD.compareTo(BigDecimal.ZERO) == 0 && pftBalMaxOD.compareTo(BigDecimal.ZERO) == 0){
+			if (priBalMaxOD.compareTo(BigDecimal.ZERO) == 0 && pftBalMaxOD.compareTo(BigDecimal.ZERO) == 0) {
 				continue;
 			}
-				
+
 			fod.setFinMaxODPri(priBalMaxOD);
 			fod.setFinMaxODPft(pftBalMaxOD);
 			fod.setFinMaxODAmt(priBalMaxOD.add(pftBalMaxOD));
@@ -3205,43 +3210,43 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 				penaltyCalDate = DateUtility.addDays(rid.getAppDate(), 1);
 			}
 
-			getLatePayMarkingService().latePayMarking(finMain, fod,  
-					finSchdDetails, repayments, curSchd, rid.getAppDate(),penaltyCalDate, false);
-			
-			if(fod.getTotPenaltyAmt().compareTo(BigDecimal.ZERO) > 0 || 
-					fod.getLPIAmt().compareTo(BigDecimal.ZERO) > 0){
+			getLatePayMarkingService().latePayMarking(finMain, fod, finSchdDetails, repayments, curSchd,
+					rid.getAppDate(), penaltyCalDate, false);
+
+			if (fod.getTotPenaltyAmt().compareTo(BigDecimal.ZERO) > 0
+					|| fod.getLPIAmt().compareTo(BigDecimal.ZERO) > 0) {
 				migrationData.getFinODDetails().add(fod);
 			}
 		}
-		
+
 		// Setting Latest Repayment Details in Profit Details
 		FinanceProfitDetail profitDetail = migrationData.getFinProfitDetails();
 		profitDetail.setLatestRpyDate(latestRpyDate);
 		profitDetail.setLatestRpyPri(latestRpyPri);
 		profitDetail.setLatestRpyPft(latestRpyPft);
 
-		if(migrationData.getFinODDetails() != null && !migrationData.getFinODDetails().isEmpty()){
+		if (migrationData.getFinODDetails() != null && !migrationData.getFinODDetails().isEmpty()) {
 			getLatePayMarkingService().updateFinPftDetails(migrationData.getFinProfitDetails(),
 					migrationData.getFinODDetails(), rid.getAppDate());
 		}
 		return migrationData;
 	}
-	
-	private List<FinanceRepayments> sortRepayDetails(List<FinanceRepayments> repayments){
+
+	private List<FinanceRepayments> sortRepayDetails(List<FinanceRepayments> repayments) {
 
 		if (repayments != null && repayments.size() > 1) {
 			Collections.sort(repayments, new Comparator<FinanceRepayments>() {
 				@Override
 				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
 					int returnValue = DateUtility.compare(detail1.getFinSchdDate(), detail2.getFinSchdDate());
-					if(returnValue != 0){
+					if (returnValue != 0) {
 						return returnValue;
-					}else{
+					} else {
 						if (detail1.getFinPaySeq() > detail2.getFinPaySeq()) {
 							return 1;
-						} else if(detail1.getFinPaySeq() < detail2.getFinPaySeq()) {
+						} else if (detail1.getFinPaySeq() < detail2.getFinPaySeq()) {
 							return -1;
-						} 
+						}
 						return 0;
 					}
 				}
@@ -3249,7 +3254,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		}
 		return repayments;
 	}
-	
+
 	/**
 	 * Method for Checking Schedule is Fully Paid or not
 	 * 
@@ -3305,21 +3310,22 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		if (fullyPaid) {
 			List<ManualAdvise> advList = dMD.getManualAdvises();
 			for (ManualAdvise adv : advList) {
-				BigDecimal adviseBal = adv.getAdviseAmount().subtract(adv.getPaidAmount()).subtract(adv.getWaivedAmount());
-				if (adviseBal!=null && adviseBal.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal adviseBal = adv.getAdviseAmount().subtract(adv.getPaidAmount())
+						.subtract(adv.getWaivedAmount());
+				if (adviseBal != null && adviseBal.compareTo(BigDecimal.ZERO) > 0) {
 					fullyPaid = false;
 					break;
 				}
 			}
 		}
-		
+
 		if (fullyPaid) {
 			dMD.getFinanceMain().setFinIsActive(false);
 			dMD.getFinanceMain().setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End
 			dMD.getFinProfitDetails().setPrvMthAmz(dMD.getFinProfitDetails().getTotalPftSchd());
 			dMD.getFinProfitDetails().setAmzTillLBD(dMD.getFinProfitDetails().getTotalPftSchd());
-			
+
 		} else {
 			dMD.getFinanceMain().setFinIsActive(true);
 			dMD.getFinanceMain().setClosingStatus(null);
@@ -3330,7 +3336,6 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 
 		return dMD;
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

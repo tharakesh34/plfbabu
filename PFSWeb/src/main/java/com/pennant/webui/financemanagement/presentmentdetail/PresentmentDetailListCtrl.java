@@ -79,7 +79,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentDetailList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentDetailList.zul file.
  * 
  */
 public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader> {
@@ -106,16 +107,16 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Button button_PresentmentHeaderList_PresentmentHeaderSearch;
 
 	// Search Fields
-	protected Textbox reference; 
-	protected ExtendedCombobox partnerBank; 
-  	protected Combobox status; 
-    protected Combobox mandateType; 
-	protected Datebox schdate; 
+	protected Textbox reference;
+	protected ExtendedCombobox partnerBank;
+	protected Combobox status;
+	protected Combobox mandateType;
+	protected Datebox schdate;
 	protected Datebox presentmentDate;
 	protected Textbox bankCode;
 	protected Label label_PresentmentHeaderList_BankCode;
 	protected ExtendedCombobox entityCode;
-	
+
 	protected Listbox sortOperator_Reference;
 	protected Listbox sortOperator_PresentmentDate;
 	protected Listbox sortOperator_PartnerBankId;
@@ -124,7 +125,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox sortOperator_Schdate;
 	protected Listbox sortOperator_BankCode;
 	protected Listbox sortOperator_Entity;
-	
+
 	private transient PresentmentDetailService presentmentDetailService;
 
 	/**
@@ -142,8 +143,9 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		super.queueTableName = "PresentmentHeader_View";
 		super.enquiryTableName = "PresentmentHeader_View";
 	}
+
 	String moduleType;
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
@@ -156,6 +158,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		}
 
 	}
+
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -165,22 +168,29 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	public void onCreate$window_PresentmentHeaderList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_PresentmentHeaderList, borderLayout_PresentmentHeaderList, listBoxPresentmentHeader, pagingPresentmentHeaderList);
+		setPageComponents(window_PresentmentHeaderList, borderLayout_PresentmentHeaderList, listBoxPresentmentHeader,
+				pagingPresentmentHeaderList);
 		setItemRender(new PresentmentHeaderListModelItemRenderer());
-		
+
 		moduleType = (String) arguments.get("ModuleType");
-		
+
 		// Register buttons and fields.
 		doSetFieldProperties();
 		registerButton(button_PresentmentHeaderList_PresentmentHeaderSearch);
-		registerField("reference", listheader_Reference, SortOrder.NONE, reference, sortOperator_Reference, Operators.STRING);
-		registerField("entityCode", listheader_Entity, SortOrder.NONE, entityCode, sortOperator_Entity,Operators.STRING);
-		registerField("presentmentDate", listheader_PresentmentDate, SortOrder.NONE, presentmentDate, sortOperator_PresentmentDate, Operators.DATE);
-		registerField("bankCode",bankCode,SortOrder.NONE,sortOperator_BankCode,Operators.STRING);
+		registerField("reference", listheader_Reference, SortOrder.NONE, reference, sortOperator_Reference,
+				Operators.STRING);
+		registerField("entityCode", listheader_Entity, SortOrder.NONE, entityCode, sortOperator_Entity,
+				Operators.STRING);
+		registerField("presentmentDate", listheader_PresentmentDate, SortOrder.NONE, presentmentDate,
+				sortOperator_PresentmentDate, Operators.DATE);
+		registerField("bankCode", bankCode, SortOrder.NONE, sortOperator_BankCode, Operators.STRING);
 		registerField("bankName", listheader_BankCode, SortOrder.NONE);
-		registerField("partnerBankId", listheader_PartnerBankId, SortOrder.NONE, partnerBank, sortOperator_PartnerBankId, Operators.SIMPLE_NUMARIC);
-		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.SIMPLE_NUMARIC);
-		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
+		registerField("partnerBankId", listheader_PartnerBankId, SortOrder.NONE, partnerBank,
+				sortOperator_PartnerBankId, Operators.SIMPLE_NUMARIC);
+		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status,
+				Operators.SIMPLE_NUMARIC);
+		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType,
+				Operators.STRING);
 		registerField("schdate", listheader_Schdate, SortOrder.NONE, schdate, sortOperator_Schdate, Operators.DATE);
 		registerField("id");
 		registerField("partnerBankCode");
@@ -197,36 +207,36 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		if (moduleMapping.getWorkflowType() != null) {
 			setFirstTask(true);
 		}
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setValueType(DataType.LONG);
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
-		
+
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setMandatoryStyle(false);
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-		
-		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(),null);
+
+		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(), null);
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -270,7 +280,6 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -281,7 +290,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 	public void onPresentmentHeaderItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPresentmentHeader.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -291,13 +300,13 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( presentmentheader.getId());
+		whereCond.append(presentmentheader.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(presentmentheader.getVersion());
-	
+
 		if (doCheckAuthority(presentmentheader, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && presentmentheader.getWorkflowId() == 0) {
@@ -307,10 +316,10 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -324,9 +333,10 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		arg.put("presentmentHeader", presentmentheader);
 		arg.put("presentmentDetailListCtrl", this);
 		arg.put("moduleType", this.moduleType);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailDialog.zul", null, arg);
+			Executions.createComponents(
+					"/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -353,7 +363,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

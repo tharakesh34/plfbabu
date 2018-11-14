@@ -51,21 +51,37 @@ import com.pennant.backend.model.limit.LimitGroupLines;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 
 public interface LimitGroupService {
-	
+
 	LimitGroup getLimitGroup();
+
 	LimitGroup getNewLimitGroup();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	LimitGroup getLimitGroupById(String id);
+
 	LimitGroup getApprovedLimitGroupById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	boolean validationCheck(String lmtGrp);
-	int limitItemCheck(String lmtItem,String limitCategory, String type);
-	boolean limitLineActiveCheck( String limitCategory, String ruleCode);
+
+	int limitItemCheck(String lmtItem, String limitCategory, String type);
+
+	boolean limitLineActiveCheck(String limitCategory, String ruleCode);
+
 	String getLimitLines(String groupCode);
+
 	String getGroupcodes(String code, boolean line);
+
 	List<LimitGroupLines> getGroupCodesByLimitGroup(String result, boolean b);
-	List<LimitStructureDetail> getStructuredetailsByLimitGroup(String category, String limitgroup, boolean isLine,String type);
+
+	List<LimitStructureDetail> getStructuredetailsByLimitGroup(String category, String limitgroup, boolean isLine,
+			String type);
+
 	boolean isLineUsingInUtilization(String lmtline);
 }

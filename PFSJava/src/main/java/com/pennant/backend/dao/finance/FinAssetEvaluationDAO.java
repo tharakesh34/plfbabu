@@ -45,13 +45,15 @@ package com.pennant.backend.dao.finance;
 
 import com.pennant.backend.model.finance.FinAssetEvaluation;
 
-
 /**
  * DAO methods declaration for the <b>FinAssetEvaluation model</b> class.<br>
  */
 public interface FinAssetEvaluationDAO {
-	FinAssetEvaluation getFinAssetEvaluationByID(String id,String type);
-	void update(FinAssetEvaluation finAssetEvaluation,String type);
-	void delete(FinAssetEvaluation finAssetEvaluation,String type);
-	String save(FinAssetEvaluation finAssetEvaluation,String type);
+	FinAssetEvaluation getFinAssetEvaluationByID(String id, String type);
+
+	void update(FinAssetEvaluation finAssetEvaluation, String type);
+
+	void delete(FinAssetEvaluation finAssetEvaluation, String type);
+
+	String save(FinAssetEvaluation finAssetEvaluation, String type);
 }

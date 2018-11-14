@@ -30,23 +30,23 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SamplingExtFieldCaptureDialogCtrl.class);
-	
+
 	protected Window window_SamplingExtendedFieldDialog;
-	
+
 	private Sampling sampling;
 	private transient SamplingDialogCtrl samplingDialogCtrl;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	protected Tab samplingExtFields;
 	protected Tabpanel samplingExtFieldsTabPanel;
-	private Map<String,ExtendedFieldRender> extFieldRenderList = new LinkedHashMap<>();	
+	private Map<String, ExtendedFieldRender> extFieldRenderList = new LinkedHashMap<>();
 	@Autowired
 	private transient SamplingService samplingService;
 	protected String sLinkId;
-	
+
 	public SamplingExtFieldCaptureDialogCtrl() {
 		super();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SamplingExtendedFieldDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -60,8 +60,8 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 			if (this.sampling == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
-			
-			if(arguments.containsKey("extFieldRenderList") && arguments.get("extFieldRenderList")!=null){
+
+			if (arguments.containsKey("extFieldRenderList") && arguments.get("extFieldRenderList") != null) {
 				this.extFieldRenderList.putAll((Map<String, ExtendedFieldRender>) arguments.get("extFieldRenderList"));
 			}
 
@@ -69,12 +69,12 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 			if (arguments.get("enqiryModule") != null) {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
-			
+
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				//this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			doCheckRights();
 			doShowDialog(sampling);
 
@@ -85,8 +85,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	public void doShowDialog(Sampling sampling) {
 		logger.debug(Literal.ENTERING);
 
@@ -97,7 +96,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -109,13 +108,13 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	private void renderExtendedFieldDetails(Sampling sampling) {
 		logger.debug(Literal.ENTERING);
 		try {
 			extendedFieldCtrl = new ExtendedFieldCtrl();
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
-					CollateralConstants.MODULE_NAME, sampling.getCollateral().getCollateralType(), ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
+					CollateralConstants.MODULE_NAME, sampling.getCollateral().getCollateralType(),
+					ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
 
 			if (extendedFieldHeader == null) {
 				return;
@@ -136,32 +135,33 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 					fieldSize = fieldSize + 1;
 				}
 			}
-			
+
 			for (ExtendedFieldDetail extendedFieldDetail : detailsList) {
-				if(extendedFieldDetail.isAllowInRule()){
+				if (extendedFieldDetail.isAllowInRule()) {
 					sampling.getCollateralFieldsForRule().add(extendedFieldDetail.getFieldName());
 				}
 			}
-			
-			ExtendedFieldRender extendedFieldRender  =null;
-			
+
+			ExtendedFieldRender extendedFieldRender = null;
+
 			String CollateralRef = sampling.getCollateral().getCollateralRef();
 			int seqNo = sampling.getCollateral().getSeqNo();
 			long linkId = samplingService.getCollateralLinkId(sampling.getId(), CollateralRef);
 			sLinkId = "S".concat(String.valueOf(linkId));
-			
+
 			if (extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))) {
 				extendedFieldRender = extFieldRenderList.get(sLinkId.concat("-").concat(String.valueOf(seqNo)));
-					extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
+				extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
 			} else if (extFieldRenderList.containsKey(CollateralRef)) {
 				extendedFieldRender = extFieldRenderList.get(CollateralRef);
 				if (extendedFieldRender.getSeqNo() == seqNo) {
 					extendedFieldCtrl.setExtendedFieldRender(extendedFieldRender);
 				}
 			} else {
-				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(sLinkId.concat("-").concat(String.valueOf(seqNo)), table.toString().toLowerCase(), "_view");
+				extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(
+						sLinkId.concat("-").concat(String.valueOf(seqNo)), table.toString().toLowerCase(), "_view");
 			}
-			
+
 			extendedFieldCtrl.setTabpanel(samplingExtFieldsTabPanel);
 			extendedFieldCtrl.setTab(this.samplingExtFields);
 			sampling.setExtendedFieldHeader(extendedFieldHeader);
@@ -184,45 +184,44 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	public void onClick$btnSave(){
+
+	public void onClick$btnSave() {
 		doSave();
 	}
-	
-	
+
 	private void doSave() {
 		logger.debug(Literal.ENTERING);
-		
+
 		final Sampling sampling = new Sampling();
 		BeanUtils.copyProperties(this.sampling, sampling);
 		doWriteComponentsToBean(sampling);
 		closeDialog();
 		samplingDialogCtrl.doFillExtendedFileds(extFieldRenderList);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	private void doWriteComponentsToBean(Sampling sampling) {
 		logger.debug(Literal.ENTERING);
 		if (sampling.getExtendedFieldHeader() != null) {
 			try {
-				ExtendedFieldRender fields =  extendedFieldCtrl.save(true);
+				ExtendedFieldRender fields = extendedFieldCtrl.save(true);
 				fields.setSeqNo(sampling.getCollateral().getSeqNo());
 				sampling.setExtendedFieldRender(fields);
 			} catch (ParseException e) {
 				logger.debug(Literal.EXCEPTION);
 			}
 		}
-		int seqNo=sampling.getCollateral().getSeqNo();
+		int seqNo = sampling.getCollateral().getSeqNo();
 		if (!extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))) {
-			this.extFieldRenderList.put(sLinkId.concat("-").concat(String.valueOf(seqNo)), sampling.getExtendedFieldRender());
-		} else if(extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))){
-			extFieldRenderList.replace(sLinkId.concat("-").concat(String.valueOf(seqNo)), sampling.getExtendedFieldRender());
+			this.extFieldRenderList.put(sLinkId.concat("-").concat(String.valueOf(seqNo)),
+					sampling.getExtendedFieldRender());
+		} else if (extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))) {
+			extFieldRenderList.replace(sLinkId.concat("-").concat(String.valueOf(seqNo)),
+					sampling.getExtendedFieldRender());
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

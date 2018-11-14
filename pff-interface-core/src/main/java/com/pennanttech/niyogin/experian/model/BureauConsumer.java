@@ -17,7 +17,7 @@ public class BureauConsumer implements Serializable {
 	@XmlElement(name = "APPLICATION_ID")
 	private long applicationId;
 	@XmlElement(name = "STG_UNQ_REF_ID")
-    private long StgUnqRefId;
+	private long StgUnqRefId;
 	@XmlElement(name = "CIF")
 	private String custCIF;
 	private String finReference;

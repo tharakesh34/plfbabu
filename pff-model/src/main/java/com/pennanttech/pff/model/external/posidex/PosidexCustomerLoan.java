@@ -2,7 +2,7 @@ package com.pennanttech.pff.model.external.posidex;
 
 import java.io.Serializable;
 
-public class PosidexCustomerLoan  extends Posidex implements Serializable {
+public class PosidexCustomerLoan extends Posidex implements Serializable {
 	static final long serialVersionUID = 1L;
 
 	private String dealID;
@@ -10,7 +10,7 @@ public class PosidexCustomerLoan  extends Posidex implements Serializable {
 	private String customerType;
 	private String applnNo;
 	private String productCode;
-	private long   psxID;
+	private long psxID;
 
 	public PosidexCustomerLoan() {
 

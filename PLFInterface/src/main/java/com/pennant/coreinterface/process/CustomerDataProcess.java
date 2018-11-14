@@ -12,13 +12,13 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public interface CustomerDataProcess {
 
 	InterfaceCustomerDetail getCustomerFullDetails(String custCIF, String custLoc) throws InterfaceException;
-	
+
 	List<CustomerCollateral> getCustomerCollateral(String custCIF) throws InterfaceException;
-	
+
 	CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws InterfaceException;
 
 	CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws InterfaceException;
 
 	FinanceCustomerDetails fetchFinCustDetails(FinanceCustomerDetails financeCustomerDetails) throws InterfaceException;
-	
+
 }

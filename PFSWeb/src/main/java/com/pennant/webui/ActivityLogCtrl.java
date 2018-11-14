@@ -300,7 +300,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 			activities = filterActivities(activities, ActivityLogConstants.DISPLAY_PURGED_ACTIVITY,
 					ActivityLogConstants.DISPLAY_LATEST_VERSION_ONLY);
 		}
- 
+
 		int j = 0;
 		boolean addHeader = true;
 		Date prvAuditDate = null;

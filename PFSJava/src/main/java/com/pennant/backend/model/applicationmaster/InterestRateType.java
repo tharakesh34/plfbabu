@@ -76,59 +76,67 @@ public class InterestRateType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return intRateTypeCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.intRateTypeCode = id;
 	}
-	
+
 	public String getIntRateTypeCode() {
 		return intRateTypeCode;
 	}
+
 	public void setIntRateTypeCode(String intRateTypeCode) {
 		this.intRateTypeCode = intRateTypeCode;
 	}
-	
+
 	public String getIntRateTypeDesc() {
 		return intRateTypeDesc;
 	}
+
 	public void setIntRateTypeDesc(String intRateTypeDesc) {
 		this.intRateTypeDesc = intRateTypeDesc;
 	}
-	
+
 	public boolean isIntRateTypeIsActive() {
 		return intRateTypeIsActive;
 	}
+
 	public void setIntRateTypeIsActive(boolean intRateTypeIsActive) {
 		this.intRateTypeIsActive = intRateTypeIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public InterestRateType getBefImage(){
+	public InterestRateType getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(InterestRateType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(InterestRateType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

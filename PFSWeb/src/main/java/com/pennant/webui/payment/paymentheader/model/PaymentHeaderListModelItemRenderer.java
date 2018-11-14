@@ -64,7 +64,6 @@ public class PaymentHeaderListModelItemRenderer implements ListitemRenderer<Paym
 
 	private static final long serialVersionUID = 1L;
 
-	
 	public PaymentHeaderListModelItemRenderer() {
 		super();
 	}
@@ -75,16 +74,17 @@ public class PaymentHeaderListModelItemRenderer implements ListitemRenderer<Paym
 		Listcell lc;
 		lc = new Listcell(paymentHeader.getFinReference());
 		lc.setParent(item);
-		
-		lc = new Listcell(PennantAppUtil.getlabelDesc(paymentHeader.getPaymentInstrType(), PennantStaticListUtil.getPaymentTypes(false)));
+
+		lc = new Listcell(PennantAppUtil.getlabelDesc(paymentHeader.getPaymentInstrType(),
+				PennantStaticListUtil.getPaymentTypes(false)));
 		lc.setParent(item);
-		
+
 		lc = new Listcell(DateUtil.format(paymentHeader.getApprovedOn(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		
+
 		lc = new Listcell(paymentHeader.getRecordStatus());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantJavaUtil.getLabel(paymentHeader.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("paymentId", paymentHeader.getPaymentId());

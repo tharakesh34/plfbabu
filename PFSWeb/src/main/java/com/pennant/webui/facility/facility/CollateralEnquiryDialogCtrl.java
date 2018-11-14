@@ -55,32 +55,30 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Collateral/Collateral/collateralDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Collateral/Collateral/collateralDialog.zul file.
  */
 public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CollateralDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CollateralEnquiryDialog; 
-	protected Textbox custCIF; 
-	protected Textbox collReference; 
-	protected Textbox collType; 
-	protected Textbox collTypeDesc; 
-	protected Textbox collComplete; 
-	protected Textbox currency; 
-	protected Textbox collExpDate; 
-	protected Textbox colllastRvwDate; 
-	protected Decimalbox collValue; 
-	protected Decimalbox collBankVal; 
-	protected Decimalbox collBankValMar; 
-	protected Textbox colllocation; 
-	protected Textbox colllocationDesc; 
+	protected Window window_CollateralEnquiryDialog;
+	protected Textbox custCIF;
+	protected Textbox collReference;
+	protected Textbox collType;
+	protected Textbox collTypeDesc;
+	protected Textbox collComplete;
+	protected Textbox currency;
+	protected Textbox collExpDate;
+	protected Textbox colllastRvwDate;
+	protected Decimalbox collValue;
+	protected Decimalbox collBankVal;
+	protected Decimalbox collBankValMar;
+	protected Textbox colllocation;
+	protected Textbox colllocationDesc;
 
 	// not auto wired vars
 	private CustomerCollateral customerCollateral; // overhanded per param
@@ -98,11 +96,10 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Collateral object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Collateral object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -117,8 +114,7 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 			/* set components visible dependent of the users rights */
 
 			/*
-			 * create the Button Controller. Disable not used buttons during
-			 * working
+			 * create the Button Controller. Disable not used buttons during working
 			 */
 			if (arguments.containsKey("eqtnCollateral")) {
 				this.setCustomerCollateral((CustomerCollateral) arguments.get("eqtnCollateral"));
@@ -193,8 +189,7 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerCollateral
 	 * @throws InterruptedException

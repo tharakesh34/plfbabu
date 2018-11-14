@@ -48,7 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.eodsnapshot.SnapShotColumn;
 
 public interface SnapShotColumnDAO extends BasicCrudDao<SnapShotColumn> {
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -60,8 +60,8 @@ public interface SnapShotColumnDAO extends BasicCrudDao<SnapShotColumn> {
 	 *            The type of the table.
 	 * @return SnapShotColumn
 	 */
-	SnapShotColumn getSnapShotColumn(long id,String columnName,String type);
+	SnapShotColumn getSnapShotColumn(long id, String columnName, String type);
 
 	List<SnapShotColumn> getActiveTableColumns(long id);
-	
+
 }

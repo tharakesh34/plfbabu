@@ -58,9 +58,9 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class PartitioningMaster implements Partitioner {
 
-	private Logger				logger	= Logger.getLogger(Partitioner.class);
+	private Logger logger = Logger.getLogger(Partitioner.class);
 
-	private CustomerQueuingDAO	customerQueuingDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
@@ -78,7 +78,7 @@ public class PartitioningMaster implements Partitioner {
 		if (custIdCount != 0) {
 
 			long noOfRows = Math.round((new Double(custIdCount) / new Double(threadCount)));
-			
+
 			if (custIdCount < threadCount) {
 				recordsLessThanThread = true;
 				noOfRows = 1;
@@ -110,7 +110,8 @@ public class PartitioningMaster implements Partitioner {
 		return partitionData;
 	}
 
-	private ExecutionContext addExecution(int threadID, Map<String, ExecutionContext> partitionData, int customerCount) {
+	private ExecutionContext addExecution(int threadID, Map<String, ExecutionContext> partitionData,
+			int customerCount) {
 		ExecutionContext execution = new ExecutionContext();
 		execution.put(EodConstants.THREAD, threadID);
 		execution.put(EodConstants.DATA_CUSTOMERCOUNT, customerCount);

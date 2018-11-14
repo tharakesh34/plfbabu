@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
@@ -50,10 +51,15 @@ import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
  * 
  */
 public interface CustomerBalanceSheetDAO {
-	 CustomerBalanceSheet getCustomerBalanceSheetById(String financialYear, long custId,String type);
-	 void update(CustomerBalanceSheet customerBalanceSheet,String type);
-	 void delete(CustomerBalanceSheet customerBalanceSheet,String type);
-	 String save(CustomerBalanceSheet customerBalanceSheet,String type);
-	 List<CustomerBalanceSheet> getBalanceSheetsByCustomer(long id, String type);
-	 void deleteByCustomer(long custID, String tableType);
+	CustomerBalanceSheet getCustomerBalanceSheetById(String financialYear, long custId, String type);
+
+	void update(CustomerBalanceSheet customerBalanceSheet, String type);
+
+	void delete(CustomerBalanceSheet customerBalanceSheet, String type);
+
+	String save(CustomerBalanceSheet customerBalanceSheet, String type);
+
+	List<CustomerBalanceSheet> getBalanceSheetsByCustomer(long id, String type);
+
+	void deleteByCustomer(long custID, String tableType);
 }

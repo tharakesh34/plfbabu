@@ -84,7 +84,7 @@ public class CustomerRatingListModelItemRenderer implements ListitemRenderer<Cus
 
 		item.setAttribute("id", customerRating.getId());
 		item.setAttribute("custRatingType", customerRating.getCustRatingType());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerRatingItemDoubleClicked");
 
 	}

@@ -14,22 +14,22 @@ import com.pennant.backend.dao.lmtmasters.FinCommodityInventoryDAO;
 import com.pennant.backend.model.commodity.FinCommodityInventory;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInventory>   implements FinCommodityInventoryDAO {
-   private static Logger logger = Logger.getLogger(FinCommodityInventoryDAOImpl.class);
+public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInventory>
+		implements FinCommodityInventoryDAO {
+	private static Logger logger = Logger.getLogger(FinCommodityInventoryDAOImpl.class);
 
 	public FinCommodityInventoryDAOImpl() {
 		super();
 	}
 
-	
 	@Override
-	public long save(FinCommodityInventory finCommodityInventory,String type) {
+	public long save(FinCommodityInventory finCommodityInventory, String type) {
 		logger.debug("Entering");
-		
-		if(finCommodityInventory.getId()== 0 || finCommodityInventory.getId()==Long.MIN_VALUE){
-			finCommodityInventory.setFinInventoryID(getNextId("SeqFinCommodityInventory"));	
+
+		if (finCommodityInventory.getId() == 0 || finCommodityInventory.getId() == Long.MIN_VALUE) {
+			finCommodityInventory.setFinInventoryID(getNextId("SeqFinCommodityInventory"));
 		}
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into FinCommodityInventory");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinInventoryID, Finreference, BrokerCode, HoldCertificateNo, ");
@@ -46,16 +46,18 @@ public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInvent
 		logger.debug("Leaving");
 		return finCommodityInventory.getFinInventoryID();
 	}
-	
+
 	@Override
-	public void update(FinCommodityInventory finCommodityInventory,String type) {
+	public void update(FinCommodityInventory finCommodityInventory, String type) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql =new StringBuilder("Update FinCommodityInventory");
+		StringBuilder updateSql = new StringBuilder("Update FinCommodityInventory");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append("  Set BrokerCode =:BrokerCode, HoldCertificateNo =:HoldCertificateNo,  ");
-		updateSql.append("  Quantity =:Quantity, SaleQuantity =:SaleQuantity, SalePrice =:SalePrice, UnitSalePrice =:UnitSalePrice, CommodityStatus =:CommodityStatus, ");
-		updateSql.append("  DateOfAllocation =:DateOfAllocation, DateOfSelling =:DateOfSelling, DateCancelled =:DateCancelled, FeeCalculated =:FeeCalculated, ");
+		updateSql.append(
+				"  Quantity =:Quantity, SaleQuantity =:SaleQuantity, SalePrice =:SalePrice, UnitSalePrice =:UnitSalePrice, CommodityStatus =:CommodityStatus, ");
+		updateSql.append(
+				"  DateOfAllocation =:DateOfAllocation, DateOfSelling =:DateOfSelling, DateCancelled =:DateCancelled, FeeCalculated =:FeeCalculated, ");
 		updateSql.append("  FeePayableDate =:FeePayableDate, FeeBalance =:FeeBalance ");
 		updateSql.append("  Where Finreference =:Finreference");
 
@@ -74,33 +76,36 @@ public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInvent
 	 * @return FinCommodityInventory
 	 */
 	@Override
-    public FinCommodityInventory getFinCommodityInventoryById(String loanRefNumber,String type) {
+	public FinCommodityInventory getFinCommodityInventoryById(String loanRefNumber, String type) {
 		logger.debug("Entering");
-		
+
 		FinCommodityInventory finCommodityInventory = new FinCommodityInventory();
 		finCommodityInventory.setFinreference(loanRefNumber);
-		
-		StringBuilder selectSql = new StringBuilder("SELECT  FinInventoryID, Finreference, BrokerCode, HoldCertificateNo,");
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT  FinInventoryID, Finreference, BrokerCode, HoldCertificateNo,");
 		selectSql.append("  Quantity, SaleQuantity, SalePrice, UnitSalePrice, CommodityStatus, DateOfAllocation,");
 		selectSql.append("  DateOfSelling, DateCancelled, FeeCalculated, FeePayableDate, FeeBalance ");
 		selectSql.append("  FROM  FinCommodityInventory");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append("  Where Finreference =:Finreference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommodityInventory);
-		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCommodityInventory.class);
-		
-		try{
-			finCommodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCommodityInventory.class);
+
+		try {
+			finCommodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finCommodityInventory = null;
 		}
 		logger.debug("Leaving");
 		return finCommodityInventory;
-    }
+	}
 
 	/**
 	 * Method for return total count of Bulk purchase commodities
@@ -109,22 +114,22 @@ public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInvent
 	 * @return Integer
 	 */
 	@Override
-    public int getBulkCommodities(FinCommodityInventory finCommInventory) {
+	public int getBulkCommodities(FinCommodityInventory finCommInventory) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT  Count(*) ");
 		selectSql.append("  FROM  FinCommodityInventory");
 		selectSql.append("  Where BrokerCode =:BrokerCode AND HoldCertificateNo =:HoldCertificateNo");
 		selectSql.append("  AND Finreference !=:Finreference AND CommodityStatus !=:CommodityStatus");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommInventory);
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
-    }
-	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
 	/**
 	 * Method for return total count of Bulk purchase commodities
 	 * 
@@ -144,14 +149,13 @@ public class FinCommodityInventoryDAOImpl extends SequenceDao<FinCommodityInvent
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommInventory);
 
-		BigDecimal totQuantity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		if(totQuantity == null){
+		BigDecimal totQuantity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+				BigDecimal.class);
+		if (totQuantity == null) {
 			totQuantity = BigDecimal.ZERO;
 		}
 		logger.debug("Leaving");
 		return totQuantity;
 	}
-	
-	
 
 }

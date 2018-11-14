@@ -34,7 +34,7 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	 * @param msgType
 	 * @return CustomerLimitUtilReply
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	public CustomerLimitUtilization getLimitUtilizationDetails(CustomerLimitUtilization limitUtilization,
 			String msgType) throws JaxenException {
@@ -56,8 +56,9 @@ public class CustomerLimitUtilProcess extends MQProcess {
 
 		try {
 			OMElement requestElement = getRequestElement(limitUtilization, referenceNum, factory, msgType);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,	requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -68,15 +69,14 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	}
 
 	/**
-	 * Prepare CustomerLimitUtilizationReply Object by Processing Response
-	 * element
+	 * Prepare CustomerLimitUtilizationReply Object by Processing Response element
 	 * 
 	 * @param responseElement
 	 * @param header
 	 * @param msgType
 	 * @return
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	private CustomerLimitUtilization setLimitUtilDetailsResponse(OMElement responseElement, AHBMQHeader header,
 			String msgType) throws JaxenException {
@@ -87,23 +87,24 @@ public class CustomerLimitUtilProcess extends MQProcess {
 		}
 		CustomerLimitUtilization custLimitUtil = null;
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/DealOnlineInquiryReply", responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/DealOnlineInquiryReply",
+					responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
-			header = getReturnStatus(detailElement, header,responseElement);
+			header = getReturnStatus(detailElement, header, responseElement);
 
 			custLimitUtil = new CustomerLimitUtilization();
-			
-			if (StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode()) || 
-					StringUtils.equals(PFFXmlUtil.NOGO, header.getReturnCode())) {
-				
+
+			if (StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())
+					|| StringUtils.equals(PFFXmlUtil.NOGO, header.getReturnCode())) {
+
 				logger.info("ReturnStatus is Success");
-				
+
 				custLimitUtil.setReferenceNum(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
 				custLimitUtil.setDealID(PFFXmlUtil.getStringValue(detailElement, "DealID"));
 				custLimitUtil.setCustomerReference(PFFXmlUtil.getStringValue(detailElement, "CustomerReference"));
 				custLimitUtil.setLimitRef(PFFXmlUtil.getStringValue(detailElement, "LimitRef"));
-				
-				if(StringUtils.equals(PFFXmlUtil.NOGO, header.getReturnText())) {
+
+				if (StringUtils.equals(PFFXmlUtil.NOGO, header.getReturnText())) {
 					setOverrides(detailElement, custLimitUtil);
 				} else {
 					custLimitUtil.setResponse(PFFXmlUtil.getStringValue(detailElement, "Response"));
@@ -111,16 +112,16 @@ public class CustomerLimitUtilProcess extends MQProcess {
 				}
 				custLimitUtil.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 				custLimitUtil.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
-				
+
 				custLimitUtil.setRequestType(msgType);
-				
-			} else if(!StringUtils.isBlank(header.getReturnCode())){
+
+			} else if (!StringUtils.isBlank(header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				
+
 				custLimitUtil.setReferenceNum(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
 				custLimitUtil.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 				custLimitUtil.setReturnText(header.getErrorMessage());
-				
+
 				custLimitUtil.setRequestType(msgType);
 			} else {
 				throw new InterfaceException("PTI3002", header.getErrorMessage());
@@ -151,8 +152,7 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	}
 
 	/**
-	 * Prepare CustomerLimitUtilization Request Element to send Interface
-	 * through MQ
+	 * Prepare CustomerLimitUtilization Request Element to send Interface through MQ
 	 * 
 	 * @param custLimitUtilReq
 	 * @param referenceNum
@@ -164,22 +164,23 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	private OMElement getRequestElement(CustomerLimitUtilization limitUtilization, String referenceNum,
 			OMFactory factory, String msgType) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		OMElement rootElement = null;
-		
+
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 
 		rootElement = factory.createOMElement(new QName("DealOnlineInquiryRequest"));
-				
+
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "ReferenceNum", referenceNum);
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "DealID", limitUtilization.getDealID());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "DealType", limitUtilization.getDealType());
-		PFFXmlUtil.setOMChildElement(factory, rootElement, "CustomerReference", limitUtilization.getCustomerReference());
+		PFFXmlUtil.setOMChildElement(factory, rootElement, "CustomerReference",
+				limitUtilization.getCustomerReference());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "LimitRef", limitUtilization.getLimitRef());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "UserID", limitUtilization.getUserID());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "DealAmount", limitUtilization.getDealAmount());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "DealCcy", limitUtilization.getDealCcy());
-		PFFXmlUtil.setOMChildElement(factory, rootElement, "DealExpiry", 
+		PFFXmlUtil.setOMChildElement(factory, rootElement, "DealExpiry",
 				PFFXmlUtil.getTodayDate(InterfaceMasterConfigUtil.MQDATE));
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "MTM", limitUtilization.getMtm());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "Tenor", limitUtilization.getTenor());
@@ -190,10 +191,10 @@ public class CustomerLimitUtilProcess extends MQProcess {
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "AmSell", limitUtilization.getAmountSell());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "MarketPrice", limitUtilization.getMarketPrice());
 		PFFXmlUtil.setOMChildElement(factory, rootElement, "BranchCode", limitUtilization.getBranchCode());
-		PFFXmlUtil.setOMChildElement(factory, rootElement, "TimeStamp",	
+		PFFXmlUtil.setOMChildElement(factory, rootElement, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 		requestElement.addChild(rootElement);
-			
+
 		logger.debug("Leaving");
 
 		return requestElement;

@@ -46,7 +46,7 @@ package com.pennant.backend.dao.fees;
 import com.pennant.backend.model.fees.FeePostings;
 
 public interface FeePostingsDAO {
-	
+
 	FeePostings getFeePostings();
 
 	FeePostings getNewFeePostings();
@@ -57,8 +57,8 @@ public interface FeePostingsDAO {
 
 	void delete(FeePostings feePostings, String type);
 
-	 void save(FeePostings feePostings, String type);
-	 
-	 int getAssignedPartnerBankCount(long partnerBankId, String type);
-	
+	void save(FeePostings feePostings, String type);
+
+	int getAssignedPartnerBankCount(long partnerBankId, String type);
+
 }

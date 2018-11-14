@@ -55,7 +55,6 @@ import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -63,29 +62,31 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPosting>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public JVPostingListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, JVPosting jVPosting, int count) throws Exception {
 		Listcell lc;
 		lc = new Listcell(String.valueOf(jVPosting.getBatchReference()));
 		lc.setParent(item);
-	  	lc = new Listcell(jVPosting.getReference());
+		lc = new Listcell(jVPosting.getReference());
 		lc.setParent(item);
-	  	lc = new Listcell(jVPosting.getBatch());
+		lc = new Listcell(jVPosting.getBatch());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formateInt(jVPosting.getDebitCount()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formateInt(jVPosting.getCreditsCount()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotDebitsByBatchCcy(),CurrencyUtil.getFormat(jVPosting.getCurrency())));
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotCreditsByBatchCcy(),CurrencyUtil.getFormat(jVPosting.getCurrency())));
-	  	lc.setParent(item);
-	  	lc = new Listcell(jVPosting.getRecordStatus());
+		lc = new Listcell(PennantApplicationUtil.formateInt(jVPosting.getDebitCount()));
+		lc.setParent(item);
+		lc = new Listcell(PennantApplicationUtil.formateInt(jVPosting.getCreditsCount()));
+		lc.setParent(item);
+		lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotDebitsByBatchCcy(),
+				CurrencyUtil.getFormat(jVPosting.getCurrency())));
+		lc.setParent(item);
+		lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotCreditsByBatchCcy(),
+				CurrencyUtil.getFormat(jVPosting.getCurrency())));
+		lc.setParent(item);
+		lc = new Listcell(jVPosting.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(jVPosting.getRecordType()));
 		lc.setParent(item);

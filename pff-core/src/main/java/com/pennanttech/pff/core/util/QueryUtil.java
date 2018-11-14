@@ -22,7 +22,7 @@ import com.pennanttech.pff.core.TableType;
  * A suite of utilities for building the SQL queries.
  * </p>
  */
-public final class QueryUtil {	
+public final class QueryUtil {
 	private QueryUtil() {
 		super();
 	}
@@ -80,7 +80,7 @@ public final class QueryUtil {
 			return " and Version = :Version - 1";
 		}
 	}
-	
+
 	public static String getInsertQuery(Set<String> columnSet, String tableName) {
 		StringBuilder columns = new StringBuilder();
 		StringBuilder values = new StringBuilder();
@@ -102,11 +102,11 @@ public final class QueryUtil {
 
 		return sql.toString();
 	}
-	
+
 	public static String getQueryConcat() {
 		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 			return "||";
-		} 
+		}
 
 		return "+";
 	}

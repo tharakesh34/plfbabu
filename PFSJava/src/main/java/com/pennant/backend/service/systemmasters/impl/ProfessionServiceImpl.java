@@ -73,7 +73,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	public ProfessionServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -95,15 +95,12 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTProfessions/BMTProfessions_Temp by using ProfessionDAO's save method
-	 * b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ProfessionDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTProfessions by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTProfessions/BMTProfessions_Temp by using ProfessionDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using ProfessionDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTProfessions by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -118,17 +115,18 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		Profession profession = (Profession) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (profession.isWorkflow()) {
-			tableType = TableType.TEMP_TAB;;
+			tableType = TableType.TEMP_TAB;
+			;
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
 		if (profession.isNew()) {
-			profession.setProfessionCode(getProfessionDAO().save(profession,tableType));
+			profession.setProfessionCode(getProfessionDAO().save(profession, tableType));
 			auditHeader.getAuditDetail().setModelData(profession);
 			auditHeader.setAuditReference(profession.getProfessionCode());
 		} else {
@@ -142,12 +140,10 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTProfessions by using ProfessionDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTProfessions by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTProfessions by using ProfessionDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtBMTProfessions by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -169,8 +165,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * getProfessionById fetch the details by using ProfessionDAO's
-	 * getProfessionById method.
+	 * getProfessionById fetch the details by using ProfessionDAO's getProfessionById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -184,9 +179,8 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * getApprovedProfessionById fetch the details by using ProfessionDAO's
-	 * getProfessionById method . with parameter id and type as blank. it
-	 * fetches the approved records from the BMTProfessions.
+	 * getApprovedProfessionById fetch the details by using ProfessionDAO's getProfessionById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTProfessions.
 	 * 
 	 * @param id
 	 *            (String)
@@ -197,19 +191,15 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getProfessionDAO().delete with parameters profession,"" b) NEW Add
-	 * new record in to main table by using getProfessionDAO().save with
-	 * parameters profession,"" c) EDIT Update record in the main table by using
-	 * getProfessionDAO().update with parameters profession,"" 3) Delete the
-	 * record from the workFlow table by using getProfessionDAO().delete with
-	 * parameters profession,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTProfessions by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTProfessions by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getProfessionDAO().delete with
+	 * parameters profession,"" b) NEW Add new record in to main table by using getProfessionDAO().save with parameters
+	 * profession,"" c) EDIT Update record in the main table by using getProfessionDAO().update with parameters
+	 * profession,"" 3) Delete the record from the workFlow table by using getProfessionDAO().delete with parameters
+	 * profession,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTProfessions by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTProfessions by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -226,13 +216,14 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 		}
 		Profession profession = new Profession();
 		BeanUtils.copyProperties((Profession) auditHeader.getAuditDetail().getModelData(), profession);
-		
+
 		getProfessionDAO().delete(profession, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(professionDAO.getProfessionById(profession.getProfessionCode(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(professionDAO.getProfessionById(profession.getProfessionCode(), ""));
 		}
-		
+
 		if (profession.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
@@ -245,8 +236,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 			profession.setNextTaskId("");
 			profession.setWorkflowId(0);
 
-			if (profession.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (profession.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				profession.setRecordType("");
 				getProfessionDAO().save(profession, TableType.MAIN_TAB);
@@ -270,13 +260,10 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getProfessionDAO().delete with parameters
-	 * profession,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTProfessions by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getProfessionDAO().delete with parameters profession,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTProfessions by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -298,18 +285,16 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -318,10 +303,9 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -335,10 +319,8 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 		String code = profession.getProfessionCode();
 
 		// Check the unique keys.
-		if (profession.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType())
-				&& professionDAO.isDuplicateKey(code, profession.isWorkflow() ? TableType.BOTH_TAB
-						: TableType.MAIN_TAB)) {
+		if (profession.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType()) && professionDAO
+				.isDuplicateKey(code, profession.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_ProfessionCode") + ": " + code;
 

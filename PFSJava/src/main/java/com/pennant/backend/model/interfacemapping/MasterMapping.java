@@ -54,17 +54,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class MasterMapping extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				masterMappingId		= Long.MIN_VALUE;
-	private long				interfaceMappingId	= 0;
-	private String				plfValue;
-	private String				interfaceValue;
-	private String				interfaceSequence;
-	private boolean				newRecord;
-	private String				lovValue;
-	private MasterMapping	    befImage;
-	private LoggedInUser		userDetails;
+	private long masterMappingId = Long.MIN_VALUE;
+	private long interfaceMappingId = 0;
+	private String plfValue;
+	private String interfaceValue;
+	private String interfaceSequence;
+	private boolean newRecord;
+	private String lovValue;
+	private MasterMapping befImage;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -73,16 +73,17 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	public MasterMapping() {
 		super();
 	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -90,10 +91,11 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public long getMasterMappingId() {
 		return masterMappingId;
 	}
-	
+
 	public void setMasterMappingId(long masterMappingId) {
 		this.masterMappingId = masterMappingId;
 	}
@@ -132,8 +134,8 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	}
 
 	public void setId(long id) {
-		this.masterMappingId=id;
-		
+		this.masterMappingId = id;
+
 	}
 
 	public String getPlfValue() {
@@ -167,5 +169,5 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	public void setInterfaceSequence(String interfaceSequence) {
 		this.interfaceSequence = interfaceSequence;
 	}
- 
+
 }

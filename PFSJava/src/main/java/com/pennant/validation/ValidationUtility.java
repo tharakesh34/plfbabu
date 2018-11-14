@@ -22,18 +22,17 @@ import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
- * This is generic Validation utility for validating the Bean objects.
- * This utility will  load all the bean validation details and for the bean 
- * returns the violations if the bean data is not validated.
+ * This is generic Validation utility for validating the Bean objects. This utility will load all the bean validation
+ * details and for the bean returns the violations if the bean data is not validated.
  */
 @Component
 public class ValidationUtility {
 	private static Logger logger = Logger.getLogger(ValidationUtility.class);
-	
+
 	private Validator validator;
 	@Autowired
 	private ErrorDetailService errorDetailService;
-	
+
 	private final int MAX_FAULT_MESSAGES = 10;
 
 	/**
@@ -48,9 +47,9 @@ public class ValidationUtility {
 		try {
 			resources = loader.getResources("classpath:/validations/*.xml");
 			for (Resource resource : resources) {
-			  config.addMapping(resource.getInputStream());
+				config.addMapping(resource.getInputStream());
 			}
-			
+
 			ValidatorFactory validatorFactory = config.buildValidatorFactory();
 			validator = validatorFactory.getValidator();
 		} catch (Exception e) {
@@ -62,10 +61,10 @@ public class ValidationUtility {
 	public Object validate(Object object, Class groupName) {
 
 		Set<ConstraintViolation<Object>> violations = null;
-		
+
 		// validate request object using hibernate validator
 		violations = validator.validate(object, groupName);
-		
+
 		int violationsSize = violations.size();
 		int issueCount = 0;
 		if (violationsSize != 0) {
@@ -84,7 +83,7 @@ public class ValidationUtility {
 				}
 				serviceExceptionDetailsArray[issueCount] = serviceExceptionDetails;
 				issueCount++;
-				if(issueCount == MAX_FAULT_MESSAGES) {
+				if (issueCount == MAX_FAULT_MESSAGES) {
 					break;
 				}
 			}
@@ -97,10 +96,10 @@ public class ValidationUtility {
 		WSReturnStatus status = new WSReturnStatus();
 		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(params[0]);
 		status.setReturnCode(params[0]);
-		if(errorDetail != null) {
+		if (errorDetail != null) {
 			status.setReturnText(errorDetail.getMessage());
 			String errorMessage = "";
-			if(params.length > 1) {
+			if (params.length > 1) {
 				errorMessage = getErrorMessage(errorDetail.getMessage(), params[1]);
 				status.setReturnText(errorMessage);
 			}
@@ -115,8 +114,8 @@ public class ValidationUtility {
 		String error = StringUtils.trimToEmpty(errorMessage);
 
 		if (errorParameters != null) {
-				String parameter = StringUtils.trimToEmpty(errorParameters);
-				error = error.replace("{" + (0) + "}", parameter);
+			String parameter = StringUtils.trimToEmpty(errorParameters);
+			error = error.replace("{" + (0) + "}", parameter);
 		}
 
 		for (int i = 0; i < 5; i++) {
@@ -125,7 +124,7 @@ public class ValidationUtility {
 
 		return error;
 	}
-	
+
 	/**
 	 * handling field level validations
 	 * 

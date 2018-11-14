@@ -47,17 +47,21 @@ import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.audit.AuditHeader;
 
 /**
- * Service declaration for methods that depends on
- * <b>FinanceApplicationCode</b>.<br>
+ * Service declaration for methods that depends on <b>FinanceApplicationCode</b>.<br>
  * 
  */
 public interface FinanceApplicationCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceApplicationCode getFinanceApplicationCodeById(String id);
+
 	FinanceApplicationCode getApprovedFinanceApplicationCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

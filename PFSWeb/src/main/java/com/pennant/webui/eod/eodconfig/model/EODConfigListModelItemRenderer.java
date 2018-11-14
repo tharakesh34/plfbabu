@@ -54,7 +54,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,7 +66,6 @@ public class EODConfigListModelItemRenderer implements ListitemRenderer<EODConfi
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, EODConfig eODConfig, int count) throws Exception {
 
@@ -78,14 +76,14 @@ public class EODConfigListModelItemRenderer implements ListitemRenderer<EODConfi
 		cbExtMnthRequired.setChecked(eODConfig.isExtMnthRequired());
 		lc.appendChild(cbExtMnthRequired);
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatToLongDate(eODConfig.getMnthExtTo()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(eODConfig.getRecordStatus());
+		lc = new Listcell(DateUtility.formatToLongDate(eODConfig.getMnthExtTo()));
+		lc.setParent(item);
+		lc = new Listcell(eODConfig.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(eODConfig.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("eodConfigId", eODConfig.getEodConfigId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onEODConfigItemDoubleClicked");
 	}
 }

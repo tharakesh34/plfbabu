@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -64,16 +63,16 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> implements FinAssetEvaluationDAO {
 	private static Logger logger = Logger.getLogger(FinAssetEvaluationDAOImpl.class);
-	
+
 	public FinAssetEvaluationDAOImpl() {
 		super();
 	}
-	
-	
+
 	/**
 	 * Fetch the Record Equipment Loan Details details by key field
 	 * 
-	 * @param id (String)
+	 * @param id
+	 *            (String)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return FinAssetEvaluation
@@ -83,14 +82,18 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 		logger.debug("Entering");
 		FinAssetEvaluation finAssetEvaluation = new FinAssetEvaluation();
 		finAssetEvaluation.setId(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference, TypeofValuation, CustAwareVisit, CustRepreName, Leased, TotalRevenue, TenantContactNum,");
-		selectSql.append(" TenantAwareVisit, Remarks, PanelFirm, ReuReference, PropertyDesc, VendorInstructedDate, ReportDeliveredDate,");
-		selectSql.append(" InspectionDate, FinalReportDate, MarketValueAED, ValuationDate, Status, VendorValuer, ValuerFee, CustomerFee, ");
-		selectSql.append(" ValuationComments, ExpRentalIncome, PropIsRented, PropertyStatus, PercWorkCompletion, IllegalDivAlteration,");
+		selectSql.append(
+				"Select FinReference, TypeofValuation, CustAwareVisit, CustRepreName, Leased, TotalRevenue, TenantContactNum,");
+		selectSql.append(
+				" TenantAwareVisit, Remarks, PanelFirm, ReuReference, PropertyDesc, VendorInstructedDate, ReportDeliveredDate,");
+		selectSql.append(
+				" InspectionDate, FinalReportDate, MarketValueAED, ValuationDate, Status, VendorValuer, ValuerFee, CustomerFee, ");
+		selectSql.append(
+				" ValuationComments, ExpRentalIncome, PropIsRented, PropertyStatus, PercWorkCompletion, IllegalDivAlteration,");
 		selectSql.append(" NocReqDevMunicipality, ReuDecision, UnitVillaSize,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" VendorValuerDesc, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
@@ -98,28 +101,25 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 		selectSql.append(" From FinAssetEvaluation");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
 		RowMapper<FinAssetEvaluation> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinAssetEvaluation.class);
-		
-		try{
-			finAssetEvaluation = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			finAssetEvaluation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finAssetEvaluation = null;
 		}
 		logger.debug("Leaving");
 		return finAssetEvaluation;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the FinAssetEvaluation or
-	 * FinAssetEvaluation_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Equipment Loan Details by key
-	 * EquipmentLoanId
+	 * This method Deletes the Record from the FinAssetEvaluation or FinAssetEvaluation_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Equipment Loan Details by key EquipmentLoanId
 	 * 
 	 * @param Equipment
 	 *            Loan Details (finAssetEvaluation)
@@ -130,7 +130,7 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 	 * 
 	 */
 	@Override
-	public void delete(FinAssetEvaluation finAssetEvaluation,String type) {
+	public void delete(FinAssetEvaluation finAssetEvaluation, String type) {
 		logger.debug("Entering");
 
 		StringBuilder deleteSql = new StringBuilder();
@@ -140,19 +140,18 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into FinAssetEvaluation or
-	 * FinAssetEvaluation_Temp. it fetches the available Sequence form
-	 * SeqFinAssetEvaluation by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into FinAssetEvaluation or FinAssetEvaluation_Temp. it fetches the available
+	 * Sequence form SeqFinAssetEvaluation by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Equipment Loan Details
 	 * 
@@ -164,38 +163,44 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	public String save(FinAssetEvaluation finAssetEvaluation,String type) {
+	public String save(FinAssetEvaluation finAssetEvaluation, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder();
+
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into FinAssetEvaluation");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" ( FinReference, TypeofValuation, CustAwareVisit, CustRepreName, Leased, TotalRevenue, TenantContactNum, " );
-		insertSql.append(" TenantAwareVisit, Remarks, PanelFirm, ReuReference, PropertyDesc, VendorInstructedDate, ReportDeliveredDate, ");
-		insertSql.append(" InspectionDate, FinalReportDate, MarketValueAED, ValuationDate, Status, VendorValuer, ValuerFee, CustomerFee,");
-		insertSql.append(" ValuationComments, ExpRentalIncome, PropIsRented, PropertyStatus, PercWorkCompletion, IllegalDivAlteration, NocReqDevMunicipality, ReuDecision, UnitVillaSize,");
+		insertSql.append(
+				" ( FinReference, TypeofValuation, CustAwareVisit, CustRepreName, Leased, TotalRevenue, TenantContactNum, ");
+		insertSql.append(
+				" TenantAwareVisit, Remarks, PanelFirm, ReuReference, PropertyDesc, VendorInstructedDate, ReportDeliveredDate, ");
+		insertSql.append(
+				" InspectionDate, FinalReportDate, MarketValueAED, ValuationDate, Status, VendorValuer, ValuerFee, CustomerFee,");
+		insertSql.append(
+				" ValuationComments, ExpRentalIncome, PropIsRented, PropertyStatus, PercWorkCompletion, IllegalDivAlteration, NocReqDevMunicipality, ReuDecision, UnitVillaSize,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values( :FinReference, :TypeofValuation, :CustAwareVisit, :CustRepreName, :Leased, :TotalRevenue, :TenantContactNum, ");
-		insertSql.append(" :TenantAwareVisit, :Remarks, :PanelFirm, :ReuReference, :PropertyDesc, :VendorInstructedDate, :ReportDeliveredDate, ");
-		insertSql.append(" :InspectionDate, :FinalReportDate, :MarketValueAED, :ValuationDate, :Status, :VendorValuer, :ValuerFee, :CustomerFee,");
-		insertSql.append(" :ValuationComments, :ExpRentalIncome, :PropIsRented, :PropertyStatus, :PercWorkCompletion, :IllegalDivAlteration, :NocReqDevMunicipality, :ReuDecision, :UnitVillaSize,");
+		insertSql.append(
+				" Values( :FinReference, :TypeofValuation, :CustAwareVisit, :CustRepreName, :Leased, :TotalRevenue, :TenantContactNum, ");
+		insertSql.append(
+				" :TenantAwareVisit, :Remarks, :PanelFirm, :ReuReference, :PropertyDesc, :VendorInstructedDate, :ReportDeliveredDate, ");
+		insertSql.append(
+				" :InspectionDate, :FinalReportDate, :MarketValueAED, :ValuationDate, :Status, :VendorValuer, :ValuerFee, :CustomerFee,");
+		insertSql.append(
+				" :ValuationComments, :ExpRentalIncome, :PropIsRented, :PropertyStatus, :PercWorkCompletion, :IllegalDivAlteration, :NocReqDevMunicipality, :ReuDecision, :UnitVillaSize,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return finAssetEvaluation.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record FinAssetEvaluation or
-	 * FinAssetEvaluation_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Equipment Loan Details by key
-	 * EquipmentLoanId and Version
+	 * This method updates the Record FinAssetEvaluation or FinAssetEvaluation_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Equipment Loan Details by key EquipmentLoanId and Version
 	 * 
 	 * @param Equipment
 	 *            Loan Details (finAssetEvaluation)
@@ -206,36 +211,44 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 	 * 
 	 */
 	@Override
-	public void update(FinAssetEvaluation finAssetEvaluation,String type) {
+	public void update(FinAssetEvaluation finAssetEvaluation, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder();
+
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update FinAssetEvaluation");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set TypeofValuation = :TypeofValuation, CustAwareVisit = :CustAwareVisit, CustRepreName = :CustRepreName," );
-		updateSql.append(" Leased = :Leased, TotalRevenue = :TotalRevenue, TenantContactNum = :TenantContactNum, TenantAwareVisit = :TenantAwareVisit, Remarks = :Remarks, " );
-		updateSql.append(" PanelFirm = :PanelFirm, ReuReference = :ReuReference, PropertyDesc = :PropertyDesc, VendorInstructedDate = :VendorInstructedDate, " );
-		updateSql.append(" ReportDeliveredDate = :ReportDeliveredDate,  InspectionDate = :InspectionDate, FinalReportDate = :FinalReportDate, MarketValueAED = :MarketValueAED, " );
-		updateSql.append(" ValuationDate = :ValuationDate, Status = :Status,  VendorValuer = :VendorValuer, ValuerFee = :ValuerFee, CustomerFee = :CustomerFee, ValuationComments = :ValuationComments," );
-		updateSql.append(" ExpRentalIncome = :ExpRentalIncome,  PropIsRented = :PropIsRented, PropertyStatus = :PropertyStatus, PercWorkCompletion = :PercWorkCompletion, " );
-		updateSql.append(" IllegalDivAlteration = :IllegalDivAlteration,  NocReqDevMunicipality = :NocReqDevMunicipality, ReuDecision = :ReuDecision, UnitVillaSize = :UnitVillaSize," );
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set TypeofValuation = :TypeofValuation, CustAwareVisit = :CustAwareVisit, CustRepreName = :CustRepreName,");
+		updateSql.append(
+				" Leased = :Leased, TotalRevenue = :TotalRevenue, TenantContactNum = :TenantContactNum, TenantAwareVisit = :TenantAwareVisit, Remarks = :Remarks, ");
+		updateSql.append(
+				" PanelFirm = :PanelFirm, ReuReference = :ReuReference, PropertyDesc = :PropertyDesc, VendorInstructedDate = :VendorInstructedDate, ");
+		updateSql.append(
+				" ReportDeliveredDate = :ReportDeliveredDate,  InspectionDate = :InspectionDate, FinalReportDate = :FinalReportDate, MarketValueAED = :MarketValueAED, ");
+		updateSql.append(
+				" ValuationDate = :ValuationDate, Status = :Status,  VendorValuer = :VendorValuer, ValuerFee = :ValuerFee, CustomerFee = :CustomerFee, ValuationComments = :ValuationComments,");
+		updateSql.append(
+				" ExpRentalIncome = :ExpRentalIncome,  PropIsRented = :PropIsRented, PropertyStatus = :PropertyStatus, PercWorkCompletion = :PercWorkCompletion, ");
+		updateSql.append(
+				" IllegalDivAlteration = :IllegalDivAlteration,  NocReqDevMunicipality = :NocReqDevMunicipality, ReuDecision = :ReuDecision, UnitVillaSize = :UnitVillaSize,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

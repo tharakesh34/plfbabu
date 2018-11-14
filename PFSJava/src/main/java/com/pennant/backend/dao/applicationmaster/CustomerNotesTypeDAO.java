@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 
 /**
@@ -49,7 +50,10 @@ import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 public interface CustomerNotesTypeDAO {
 
 	CustomerNotesType getCustomerNotesTypeById(String id, String type);
+
 	void update(CustomerNotesType customerNotesType, String type);
+
 	void delete(CustomerNotesType customerNotesType, String type);
+
 	String save(CustomerNotesType customerNotesType, String type);
 }

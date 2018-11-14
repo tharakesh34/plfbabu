@@ -52,10 +52,15 @@ import com.pennant.backend.model.customermasters.CustomerIdentity;
  */
 public interface CustomerIdentityService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerIdentity getCustomerIdentityById(long id,String idType);
-	CustomerIdentity getApprovedCustomerIdentityById(long id,String idType);
+
+	CustomerIdentity getCustomerIdentityById(long id, String idType);
+
+	CustomerIdentity getApprovedCustomerIdentityById(long id, String idType);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

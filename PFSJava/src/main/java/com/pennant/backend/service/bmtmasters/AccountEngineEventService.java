@@ -53,12 +53,19 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 public interface AccountEngineEventService {
 
 	AccountEngineEvent getAccountEngineEvent();
+
 	AccountEngineEvent getNewAccountEngineEvent();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	AccountEngineEvent getAccountEngineEventById(String id);
+
 	AccountEngineEvent getApprovedAccountEngineEventById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

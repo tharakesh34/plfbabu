@@ -45,41 +45,41 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
-	private static final long			serialVersionUID	= -6945930303723518608L;
-	private static final Logger			logger				= Logger.getLogger(FinTypeInsuranceDialogCtrl.class);
+	private static final long serialVersionUID = -6945930303723518608L;
+	private static final Logger logger = Logger.getLogger(FinTypeInsuranceDialogCtrl.class);
 
-	protected Window					window_FinTypeInsurnaceDialog;
-	protected Textbox					financeType;
-	protected ExtendedCombobox			insuranceType;
-	protected ExtendedCombobox			policyType;
-	protected Combobox					paymentType;
-	protected Combobox					calcType;
-	protected Checkbox					mandatory;
-	protected Checkbox					alwChange;
-	protected Label						label_FinTypeInsuranceDialog_AmountRule;
+	protected Window window_FinTypeInsurnaceDialog;
+	protected Textbox financeType;
+	protected ExtendedCombobox insuranceType;
+	protected ExtendedCombobox policyType;
+	protected Combobox paymentType;
+	protected Combobox calcType;
+	protected Checkbox mandatory;
+	protected Checkbox alwChange;
+	protected Label label_FinTypeInsuranceDialog_AmountRule;
 
-	private FinTypeInsurances			finTypeInsurance;
+	private FinTypeInsurances finTypeInsurance;
 
 	//private FinanceTypeDialogCtrl		financeTypeDialogCtrl;
-	private FinTypeInsuranceListCtrl	finTypeInsuranceListCtrl;
-	private transient PagedListService	pagedListService;
-	private List<FinTypeInsurances>		finTypeInsuranceList;
+	private FinTypeInsuranceListCtrl finTypeInsuranceListCtrl;
+	private transient PagedListService pagedListService;
+	private List<FinTypeInsurances> finTypeInsuranceList;
 
-	private ExtendedCombobox			amountRule;
-	private CurrencyBox					constAmount;
-	private Decimalbox					percentage;
-    private Combobox					calculateOn;
-	private int							amountFormatter;
-	private String						userRole			= "";
-	private Label						label_finTypeDesc;
+	private ExtendedCombobox amountRule;
+	private CurrencyBox constAmount;
+	private Decimalbox percentage;
+	private Combobox calculateOn;
+	private int amountFormatter;
+	private String userRole = "";
+	private Label label_finTypeDesc;
 
-	private Row							row_Rule;
-	private Row							row_ConstAmount;
-	private Row							row_Percentage;
-	private Row							row_CalculaedOn;
-	private Row							row_AlwRateChange;
-	
-	private Label						 label_FinTypeInsuranceDialog_AllowRateChange;
+	private Row row_Rule;
+	private Row row_ConstAmount;
+	private Row row_Percentage;
+	private Row row_CalculaedOn;
+	private Row row_AlwRateChange;
+
+	private Label label_FinTypeInsuranceDialog_AllowRateChange;
 
 	/**
 	 * default constructor.<br>
@@ -116,28 +116,29 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		} else {
 			setFinTypeInsurance(null);
 		}
-		
+
 		if (arguments.containsKey("finTypeInsuranceListCtrl")) {
-			setFinTypeInsuranceListCtrl( (FinTypeInsuranceListCtrl) arguments.get("finTypeInsuranceListCtrl"));
+			setFinTypeInsuranceListCtrl((FinTypeInsuranceListCtrl) arguments.get("finTypeInsuranceListCtrl"));
 		} else {
 			setFinTypeInsuranceListCtrl(null);
 		}
-		
+
 		if (arguments.containsKey("amountFormatter")) {
-			amountFormatter =  (Integer) arguments.get("amountFormatter");
+			amountFormatter = (Integer) arguments.get("amountFormatter");
 		}
-		
-		/*if (arguments.containsKey("moduleId")) {
-			moduleId = (int) arguments.get("moduleId");
-		}*/
-		
+
+		/*
+		 * if (arguments.containsKey("moduleId")) { moduleId = (int) arguments.get("moduleId"); }
+		 */
+
 		if (arguments.containsKey("role")) {
 			userRole = arguments.get("role").toString();
 			getUserWorkspace().allocateRoleAuthorities(arguments.get("role").toString(), "FinTypeInsuranceDialog");
 		}
-		
+
 		this.finTypeInsurance.setWorkflowId(0);
-		doLoadWorkFlow(this.finTypeInsurance.isWorkflow(), this.finTypeInsurance.getWorkflowId(), this.finTypeInsurance.getNextTaskId());
+		doLoadWorkFlow(this.finTypeInsurance.isWorkflow(), this.finTypeInsurance.getWorkflowId(),
+				this.finTypeInsurance.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
@@ -167,7 +168,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		this.policyType.setDescColumn("PolicyDesc");
 		this.policyType.setTextBoxWidth(145);
 		this.policyType.setValidateColumns(new String[] { "PolicyCode" });
-		
+
 		this.percentage.setMaxlength(6);
 
 		this.constAmount.setMandatory(true);
@@ -184,7 +185,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		Filter[] calRuleFilters = new Filter[1];
 		calRuleFilters[0] = new Filter("RuleModule", "INSRULE", Filter.OP_EQUAL);
 		this.amountRule.setFilters(calRuleFilters);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -203,14 +204,14 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities("FinTypeInsuranceDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinTypeInsuranceDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinTypeInsuranceDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinTypeInsuranceDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeInsuranceDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -230,7 +231,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 			btnCancel.setVisible(false);
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinTypeInsuranceDialog_btnDelete"));
 		}
-		
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinTypeInsurance);
@@ -238,13 +239,13 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	private void doEdit() {
 		logger.debug("Entering");
-	
+
 		if (getFinTypeInsurance().isNewRecord()) {
 			this.insuranceType.setReadonly(isReadOnly("FinTypeInsuranceDialog_InsuranceType"));
 			this.policyType.setReadonly(isReadOnly("FinTypeInsuranceDialog_InsuranceType"));
@@ -287,23 +288,26 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 
 	private void doWriteBeanToComponents(FinTypeInsurances aFinTypeInsurance) {
 		logger.debug("Entering");
-		
+
 		this.financeType.setValue(this.finTypeInsurance.getFinType());
 		this.label_finTypeDesc.setValue(this.finTypeInsurance.getFinTypeDesc());
 		this.insuranceType.setValue(aFinTypeInsurance.getInsuranceType());
 		this.insuranceType.setDescription(aFinTypeInsurance.getInsuranceTypeDesc());
 		this.policyType.setValue(aFinTypeInsurance.getPolicyType());
 		this.policyType.setDescription(aFinTypeInsurance.getPolicyDesc());
-		fillComboBox(this.paymentType, aFinTypeInsurance.getDftPayType(), PennantStaticListUtil.getInsurancePaymentType(), "");
-		
+		fillComboBox(this.paymentType, aFinTypeInsurance.getDftPayType(),
+				PennantStaticListUtil.getInsurancePaymentType(), "");
+
 		if (this.paymentType.getSelectedItem().getValue().equals(InsuranceConstants.PAYTYPE_SCH_FRQ)) {
-			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(),
-					PennantStaticListUtil.getInsuranceCalType(), "," + InsuranceConstants.CALTYPE_RULE + ",");
+			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(),
+					"," + InsuranceConstants.CALTYPE_RULE + ",");
 		} else {
-			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(), "");
+			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(),
+					"");
 		}
-		
-		fillComboBox(this.calculateOn, aFinTypeInsurance.getCalculateOn(), PennantStaticListUtil.getInsuranceCalculatedOn(), "");
+
+		fillComboBox(this.calculateOn, aFinTypeInsurance.getCalculateOn(),
+				PennantStaticListUtil.getInsuranceCalculatedOn(), "");
 
 		if (StringUtils.equals(aFinTypeInsurance.getCalType(), InsuranceConstants.CALTYPE_RULE)) {
 			this.row_Rule.setVisible(true);
@@ -314,23 +318,26 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 			this.row_ConstAmount.setVisible(true);
 			this.constAmount.setValue(PennantAppUtil.formateAmount(aFinTypeInsurance.getConstAmt(), amountFormatter));
 			this.row_AlwRateChange.setVisible(true);
-			this.label_FinTypeInsuranceDialog_AllowRateChange.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowAmontChange.value"));
+			this.label_FinTypeInsuranceDialog_AllowRateChange
+					.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowAmontChange.value"));
 		} else if (StringUtils.equals(aFinTypeInsurance.getCalType(), InsuranceConstants.CALTYPE_PERCENTAGE)) {
 			this.row_Percentage.setVisible(true);
 			this.row_CalculaedOn.setVisible(true);
 			this.percentage.setValue(aFinTypeInsurance.getPercentage());
 			this.row_AlwRateChange.setVisible(true);
-			this.label_FinTypeInsuranceDialog_AllowRateChange.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowPerChange.value"));
+			this.label_FinTypeInsuranceDialog_AllowRateChange
+					.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowPerChange.value"));
 		} else if (StringUtils.equals(aFinTypeInsurance.getCalType(), InsuranceConstants.CALTYPE_PROVIDERRATE)) {
 			this.row_CalculaedOn.setVisible(true);
 			this.row_AlwRateChange.setVisible(true);
 			this.row_AlwRateChange.setVisible(true);
-			this.label_FinTypeInsuranceDialog_AllowRateChange.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowRateChange.value"));
+			this.label_FinTypeInsuranceDialog_AllowRateChange
+					.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowRateChange.value"));
 		}
-		
+
 		this.mandatory.setChecked(aFinTypeInsurance.isMandatory());
 		this.alwChange.setChecked(aFinTypeInsurance.isAlwRateChange());
-		
+
 		this.recordStatus.setValue(aFinTypeInsurance.getRecordStatus());
 
 		logger.debug("Leaving");
@@ -338,9 +345,9 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 
 	private void doWriteComponentsToBean(FinTypeInsurances aFinTypeInsurance) {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			aFinTypeInsurance.setFinType(this.financeType.getValue());
 		} catch (WrongValueException we) {
@@ -396,13 +403,13 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinTypeInsurance.setAlwRateChange(this.alwChange.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinTypeInsurance.setAmountRule(null);
 			if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_RULE)) {
@@ -411,63 +418,66 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
-				if (isValidComboValue(this.calculateOn, Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
+				if (isValidComboValue(this.calculateOn,
+						Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
 					aFinTypeInsurance.setCalculateOn(getComboboxValue(this.calculateOn));
 				}
 			} else if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
-				if (isValidComboValue(this.calculateOn, Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
+				if (isValidComboValue(this.calculateOn,
+						Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
 					aFinTypeInsurance.setCalculateOn(getComboboxValue(this.calculateOn));
 				}
-			}else{
+			} else {
 				aFinTypeInsurance.setCalculateOn(PennantConstants.List_Select);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_RULE)) {
 				aFinTypeInsurance.setAmountRule(this.amountRule.getValue());
 			} else if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
-				if (isValidComboValue(this.calculateOn, Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
+				if (isValidComboValue(this.calculateOn,
+						Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
 					aFinTypeInsurance.setCalculateOn(getComboboxValue(this.calculateOn));
 				}
 			} else if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
-				if (isValidComboValue(this.calculateOn, Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
+				if (isValidComboValue(this.calculateOn,
+						Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value"))) {
 					aFinTypeInsurance.setCalculateOn(getComboboxValue(this.calculateOn));
 				}
-			}else{
+			} else {
 				aFinTypeInsurance.setCalculateOn(PennantConstants.List_Select);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinTypeInsurance.setConstAmt(BigDecimal.ZERO);
 			if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_CON_AMT)) {
-				aFinTypeInsurance.setConstAmt(PennantAppUtil.unFormateAmount(
-						this.constAmount.isReadonly() ? this.constAmount.getActualValue() : this.constAmount
-								.getValidateValue(), amountFormatter));
-			} 
+				aFinTypeInsurance.setConstAmt(PennantAppUtil.unFormateAmount(this.constAmount.isReadonly()
+						? this.constAmount.getActualValue() : this.constAmount.getValidateValue(), amountFormatter));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinTypeInsurance.setPercentage(BigDecimal.ZERO);
 			if (calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
 				aFinTypeInsurance.setPercentage(this.percentage.getValue());
-			} 
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
-		
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -483,7 +493,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 
 	public void onChange$calcType(Event event) {
 		logger.debug("Entering");
-		
+
 		clearValues();
 		if (calcType.getSelectedItem().getValue().toString().equals(InsuranceConstants.CALTYPE_RULE)) {
 			this.row_Rule.setVisible(true);
@@ -498,8 +508,8 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 			this.row_Percentage.setVisible(false);
 			this.row_CalculaedOn.setVisible(false);
 			this.row_AlwRateChange.setVisible(true);
-			this.label_FinTypeInsuranceDialog_AllowRateChange.setValue(Labels
-					.getLabel("label_FinTypeInsuranceDialog_AllowAmontChange.value"));
+			this.label_FinTypeInsuranceDialog_AllowRateChange
+					.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowAmontChange.value"));
 
 		} else if (calcType.getSelectedItem().getValue().toString().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
 			this.row_Rule.setVisible(false);
@@ -508,8 +518,8 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 			this.row_Percentage.setVisible(true);
 			this.row_CalculaedOn.setVisible(true);
 			this.row_AlwRateChange.setVisible(true);
-			this.label_FinTypeInsuranceDialog_AllowRateChange.setValue(Labels
-					.getLabel("label_FinTypeInsuranceDialog_AllowPerChange.value"));
+			this.label_FinTypeInsuranceDialog_AllowRateChange
+					.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowPerChange.value"));
 
 		} else if (calcType.getSelectedItem().getValue().toString().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
 			this.row_Rule.setVisible(false);
@@ -517,28 +527,28 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 			this.row_Percentage.setVisible(false);
 			this.row_CalculaedOn.setVisible(true);
 			this.row_AlwRateChange.setVisible(true);
-			this.label_FinTypeInsuranceDialog_AllowRateChange.setValue(Labels
-					.getLabel("label_FinTypeInsuranceDialog_AllowRateChange.value"));
+			this.label_FinTypeInsuranceDialog_AllowRateChange
+					.setValue(Labels.getLabel("label_FinTypeInsuranceDialog_AllowRateChange.value"));
 
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onChange$paymentType(Event event) {
 		logger.debug("Entering");
-		
-		if(this.paymentType.getSelectedItem().getValue().equals(InsuranceConstants.PAYTYPE_SCH_FRQ)){
-			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(), ","+InsuranceConstants.CALTYPE_RULE+",");
-		}else{
-			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(),"");
+
+		if (this.paymentType.getSelectedItem().getValue().equals(InsuranceConstants.PAYTYPE_SCH_FRQ)) {
+			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(),
+					"," + InsuranceConstants.CALTYPE_RULE + ",");
+		} else {
+			fillComboBox(this.calcType, getFinTypeInsurance().getCalType(), PennantStaticListUtil.getInsuranceCalType(),
+					"");
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
-	
+
 	public void onFulfill$insuranceType(Event event) throws InterruptedException {
 		logger.debug("Entering");
 
@@ -562,7 +572,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 				this.policyType.setFilters(filter);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -570,7 +580,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		logger.debug("Entering");
 
 		Object dataObject = policyType.getObject();
-		
+
 		if (dataObject == null || dataObject instanceof String) {
 			if (dataObject != null) {
 				this.policyType.setValue(dataObject.toString());
@@ -589,13 +599,13 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 				this.insuranceType.setValue(detail.getInsuranceType());
 				this.insuranceType.setDescription(detail.getInsuranceTypeDesc());
 			}
-			/*Filter filter[] = new Filter[1];
-			if (this.policyType.getValue() != null) {
-				filter[0] = new Filter("policyCode", this.policyType.getValue(), Filter.OP_EQUAL);
-				this.insuranceType.setFilters(filter);
-			}*/
+			/*
+			 * Filter filter[] = new Filter[1]; if (this.policyType.getValue() != null) { filter[0] = new
+			 * Filter("policyCode", this.policyType.getValue(), Filter.OP_EQUAL); this.insuranceType.setFilters(filter);
+			 * }
+			 */
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -614,9 +624,9 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	 */
 	public void onUser$btnValidateSave(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		doSave();
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -628,9 +638,9 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		
+
 		doSave();
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -704,7 +714,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 			logger.error("Exception: ", e);
 			showMessage(e);
 		}
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -742,9 +752,9 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 						&& finTypeInsurance.getPolicyType().equals(aFinTypeInsurance.getPolicyType())) {
 					// Both Current and Existing list rating same
 					if (aFinTypeInsurance.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -784,7 +794,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		if (!recordAdded) {
 			finTypeInsuranceList.add(aFinTypeInsurance);
 		}
-		
+
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -792,46 +802,45 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		if (!this.insuranceType.isReadonly()) {
-			this.insuranceType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinTypeInsuranceDialog_InsuranceType.value"), null, true, true));
+			this.insuranceType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinTypeInsuranceDialog_InsuranceType.value"), null, true, true));
 		}
 
 		if (!this.policyType.isReadonly()) {
-			this.policyType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinTypeInsuranceDialog_PolicyType.value"), null, true, true));
+			this.policyType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinTypeInsuranceDialog_PolicyType.value"), null, true, true));
 		}
 
 		if (!this.paymentType.isDisabled()) {
-			this.paymentType.setConstraint(new StaticListValidator(PennantStaticListUtil.getInsurancePaymentType(), Labels
-					.getLabel("label_FinTypeInsuranceDialog_PaymentType.value")));
+			this.paymentType.setConstraint(new StaticListValidator(PennantStaticListUtil.getInsurancePaymentType(),
+					Labels.getLabel("label_FinTypeInsuranceDialog_PaymentType.value")));
 		}
-		
+
 		if (!this.calcType.isDisabled()) {
-			this.calcType.setConstraint(new StaticListValidator(PennantStaticListUtil.getInsuranceCalType(), Labels
-					.getLabel("label_FinTypeInsuranceDialog_CalcType.value")));
+			this.calcType.setConstraint(new StaticListValidator(PennantStaticListUtil.getInsuranceCalType(),
+					Labels.getLabel("label_FinTypeInsuranceDialog_CalcType.value")));
 		}
-		
+
 		if (this.row_Rule.isVisible() && !this.amountRule.isButtonDisabled()) {
-			this.amountRule.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinTypeInsuranceDialog_AmountRule.value"), null,
-					true, true));
+			this.amountRule.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinTypeInsuranceDialog_AmountRule.value"), null, true, true));
 		}
-		
+
 		if (this.row_ConstAmount.isVisible() && !this.constAmount.isReadonly()) {
-			this.constAmount.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinTypeInsuranceDialog_ConstAmount.value"), amountFormatter, false, false));
+			this.constAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinTypeInsuranceDialog_ConstAmount.value"), amountFormatter, false, false));
 		}
 
 		if (this.row_Percentage.isVisible() && !this.percentage.isReadonly()) {
-			this.percentage.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinTypeInsuranceDialog_Percentage.value"), 2, true, false, 100));
+			this.percentage.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinTypeInsuranceDialog_Percentage.value"), 2, true, false, 100));
 
 		}
 		if (this.row_CalculaedOn.isVisible() && !this.calculateOn.isDisabled()) {
-			this.calculateOn.setConstraint(new StaticListValidator(PennantStaticListUtil.getInsuranceCalculatedOn(), Labels
-					.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value")));
+			this.calculateOn.setConstraint(new StaticListValidator(PennantStaticListUtil.getInsuranceCalculatedOn(),
+					Labels.getLabel("label_FinTypeInsuranceDialog_CalculateOn.value")));
 		}
 
 		logger.debug("Leaving");
@@ -842,7 +851,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
-		
+
 		this.insuranceType.setConstraint("");
 		this.policyType.setConstraint("");
 		this.paymentType.setConstraint("");
@@ -851,7 +860,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		this.percentage.setConstraint("");
 		this.amountRule.setConstraint("");
 		this.constAmount.setConstraint("");
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -863,7 +872,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
-		
+
 		this.amountRule.setErrorMessage("");
 		this.percentage.setErrorMessage("");
 		this.constAmount.setErrorMessage("");
@@ -872,7 +881,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		this.paymentType.setErrorMessage("");
 		this.calcType.setErrorMessage("");
 		this.calculateOn.setErrorMessage("");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -894,9 +903,9 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(event.toString());
-		
+
 		doDelete();
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -909,7 +918,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final FinTypeInsurances finTypeInsurance = new FinTypeInsurances();
 		BeanUtils.copyProperties(getFinTypeInsurance(), finTypeInsurance);
 		String tranType = PennantConstants.TRAN_WF;
@@ -948,7 +957,7 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 				showMessage(e);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -960,13 +969,12 @@ public class FinTypeInsuranceDialogCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 		this.finTypeInsurance = finTypeInsurance;
 	}
 
-	/*public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() {
-		return financeTypeDialogCtrl;
-	}
-
-	public void setFinanceTypeDialogCtrl(FinanceTypeDialogCtrl financeTypeDialogCtrl) {
-		this.financeTypeDialogCtrl = financeTypeDialogCtrl;
-	}*/
+	/*
+	 * public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() { return financeTypeDialogCtrl; }
+	 * 
+	 * public void setFinanceTypeDialogCtrl(FinanceTypeDialogCtrl financeTypeDialogCtrl) { this.financeTypeDialogCtrl =
+	 * financeTypeDialogCtrl; }
+	 */
 
 	public PagedListService getPagedListService() {
 		return pagedListService;

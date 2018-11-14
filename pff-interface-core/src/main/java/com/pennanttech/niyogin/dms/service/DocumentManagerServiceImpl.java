@@ -17,13 +17,13 @@ import com.pennanttech.pff.external.DocumentManagementService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
 public class DocumentManagerServiceImpl extends NiyoginService implements DocumentManagementService {
-	private static final Logger	logger				= Logger.getLogger(DocumentManagerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DocumentManagerServiceImpl.class);
 
-	private final String		extConfigFileName	= "dms.properties";
-	private String				serviceUrl;
+	private final String extConfigFileName = "dms.properties";
+	private String serviceUrl;
 
-	private String				ERRORCODE			= "$.data.error.errorCode";
-	private String				ERRORMESSAGE		= "$.data.error.message";
+	private String ERRORCODE = "$.data.error.errorCode";
+	private String ERRORMESSAGE = "$.data.error.message";
 
 	/**
 	 * Method for Fetch online documents from DMS interface using Reference
@@ -117,7 +117,8 @@ public class DocumentManagerServiceImpl extends NiyoginService implements Docume
 	 * @param errorCode
 	 * @param errorDesc
 	 */
-	private void doExceptioLogging(String reference, String requets, String response, String errorDesc, Timestamp reqSentOn) {
+	private void doExceptioLogging(String reference, String requets, String response, String errorDesc,
+			Timestamp reqSentOn) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
 		iLogDetail.setReference(reference);

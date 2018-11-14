@@ -87,47 +87,46 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerChequeInfo/customerChequeInfoDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerChequeInfo/customerChequeInfoDialog.zul
+ * file.
  */
 public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo> {
 	private static final long serialVersionUID = -7522534300621535097L;
 	private static final Logger logger = Logger.getLogger(CustomerChequeInfoDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_CustomerChequeInfoDialog; 		
+	protected Window window_CustomerChequeInfoDialog;
 
-	protected Longbox 	custID; 						
-	protected Textbox 	custCIF;						
-	protected Label   	custShrtName;					
-	protected Datebox 	monthYear; 					    
-	protected CurrencyBox 	totChequePayment; 		    
-	protected CurrencyBox 	salary; 		            
-	protected CurrencyBox 	debits; 		            
-	protected CurrencyBox 	returnChequeAmt; 		    
-	protected Intbox 	returnChequeCount; 		        
-	protected Intbox chequeSeq;          		        
-	protected Textbox remarks;                          
-	
+	protected Longbox custID;
+	protected Textbox custCIF;
+	protected Label custShrtName;
+	protected Datebox monthYear;
+	protected CurrencyBox totChequePayment;
+	protected CurrencyBox salary;
+	protected CurrencyBox debits;
+	protected CurrencyBox returnChequeAmt;
+	protected Intbox returnChequeCount;
+	protected Intbox chequeSeq;
+	protected Textbox remarks;
+
 	// not auto wired variables
 	private CustomerChequeInfo customerChequeInfo; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
-	protected Button btnSearchPRCustid; 
 
-	private boolean newRecord=false;
-	private boolean newCustomer=false;
+	protected Button btnSearchPRCustid;
+
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
 	private List<CustomerChequeInfo> CustomerChequeInfoList;
 	private CustomerDialogCtrl customerDialogCtrl;
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject ;
-	private String moduleType="";
-	private String userRole="";
+	protected JdbcSearchObject<Customer> newSearchObject;
+	private String moduleType = "";
+	private String userRole = "";
 	private int finFormatter;
 	private boolean isFinanceProcess = false;
 
@@ -146,14 +145,13 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerChequeInfo object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerChequeInfo object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerChequeInfoDialog(Event event)throws Exception {
+	public void onCreate$window_CustomerChequeInfoDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -161,8 +159,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 
 		try {
 			if (arguments.containsKey("customerChequeInfo")) {
-				this.customerChequeInfo = (CustomerChequeInfo) arguments
-						.get("customerChequeInfo");
+				this.customerChequeInfo = (CustomerChequeInfo) arguments.get("customerChequeInfo");
 				CustomerChequeInfo befImage = new CustomerChequeInfo();
 				BeanUtils.copyProperties(this.customerChequeInfo, befImage);
 				this.customerChequeInfo.setBefImage(befImage);
@@ -184,8 +181,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			}
 
 			if (arguments.containsKey("customerDialogCtrl")) {
-				setCustomerDialogCtrl((CustomerDialogCtrl) arguments
-						.get("customerDialogCtrl"));
+				setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
 				setNewCustomer(true);
 
 				if (arguments.containsKey("newRecord")) {
@@ -196,8 +192,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 				this.customerChequeInfo.setWorkflowId(0);
 				if (arguments.containsKey("roleCode")) {
 					userRole = arguments.get("roleCode").toString();
-					getUserWorkspace().allocateRoleAuthorities(userRole,
-							"CustomerChequeInfoDialog");
+					getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerChequeInfoDialog");
 				}
 			}
 
@@ -220,16 +215,14 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
-			doLoadWorkFlow(this.customerChequeInfo.isWorkflow(),
-					this.customerChequeInfo.getWorkflowId(),
+			doLoadWorkFlow(this.customerChequeInfo.isWorkflow(), this.customerChequeInfo.getWorkflowId(),
 					this.customerChequeInfo.getNextTaskId());
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CustomerChequeInfoDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerChequeInfoDialog");
 			}
 
 			// set Field Properties
@@ -247,28 +240,28 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.monthYear.setFormat(PennantConstants.monthYearFormat);
-		
+
 		this.totChequePayment.setMandatory(true);
 		this.totChequePayment.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.totChequePayment.setScale(finFormatter);
-		
+
 		this.salary.setMandatory(true);
 		this.salary.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.salary.setScale(finFormatter);
-		
+
 		this.debits.setMandatory(true);
 		this.debits.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.debits.setScale(finFormatter);
-		
+
 		this.returnChequeAmt.setMandatory(true);
 		this.returnChequeAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.returnChequeAmt.setScale(finFormatter);
-		
+
 		this.returnChequeCount.setMaxlength(4);
 		this.remarks.setMaxlength(500);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -283,12 +276,11 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("CustomerChequeInfoDialog",userRole);
+		getUserWorkspace().allocateAuthorities("CustomerChequeInfoDialog", userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerChequeInfoDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerChequeInfoDialog_btnEdit"));
@@ -333,7 +325,6 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -390,22 +381,23 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public void doWriteBeanToComponents(CustomerChequeInfo aCustomerChequeInfo) {
 		logger.debug("Entering");
 
-		if(aCustomerChequeInfo.getCustID()!=Long.MIN_VALUE){
+		if (aCustomerChequeInfo.getCustID() != Long.MIN_VALUE) {
 			this.custID.setValue(aCustomerChequeInfo.getCustID());
 		}
 		this.chequeSeq.setValue(aCustomerChequeInfo.getChequeSeq());
 		this.monthYear.setValue(aCustomerChequeInfo.getMonthYear());
-		this.totChequePayment.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getTotChequePayment(),finFormatter));
-		this.salary.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getSalary(),finFormatter));
-		this.debits.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getDebits(),finFormatter));
-		this.returnChequeAmt.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getReturnChequeAmt(),finFormatter));
+		this.totChequePayment
+				.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getTotChequePayment(), finFormatter));
+		this.salary.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getSalary(), finFormatter));
+		this.debits.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getDebits(), finFormatter));
+		this.returnChequeAmt
+				.setValue(PennantAppUtil.formateAmount(aCustomerChequeInfo.getReturnChequeAmt(), finFormatter));
 		this.returnChequeCount.setValue(aCustomerChequeInfo.getReturnChequeCount());
 		this.remarks.setValue(aCustomerChequeInfo.getRemarks());
 
 		this.custCIF.setValue(StringUtils.trimToEmpty(aCustomerChequeInfo.getLovDescCustCIF()));
 		this.custShrtName.setValue(StringUtils.trimToEmpty(aCustomerChequeInfo.getLovDescCustShrtName()));
 
-		
 		this.recordStatus.setValue(aCustomerChequeInfo.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -427,13 +419,13 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
+
 		try {
 			aCustomerChequeInfo.setChequeSeq(this.chequeSeq.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aCustomerChequeInfo.setMonthYear(this.monthYear.getValue());
 		} catch (WrongValueException we) {
@@ -441,59 +433,63 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		}
 
 		try {
-			if (this.totChequePayment.getActualValue().compareTo(BigDecimal.ZERO)==0) {
+			if (this.totChequePayment.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 				aCustomerChequeInfo.setTotChequePayment(BigDecimal.ZERO);
-			}else{
-				aCustomerChequeInfo.setTotChequePayment(PennantAppUtil.unFormateAmount(this.totChequePayment.getValidateValue(),finFormatter));
+			} else {
+				aCustomerChequeInfo.setTotChequePayment(
+						PennantAppUtil.unFormateAmount(this.totChequePayment.getValidateValue(), finFormatter));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if (this.salary.getActualValue().compareTo(BigDecimal.ZERO)==0) {
+			if (this.salary.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 				aCustomerChequeInfo.setSalary(BigDecimal.ZERO);
-			}else{
-				aCustomerChequeInfo.setSalary(PennantAppUtil.unFormateAmount(this.salary.getValidateValue(),finFormatter));
+			} else {
+				aCustomerChequeInfo
+						.setSalary(PennantAppUtil.unFormateAmount(this.salary.getValidateValue(), finFormatter));
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (this.debits.getActualValue().compareTo(BigDecimal.ZERO)==0) {
+			if (this.debits.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 				aCustomerChequeInfo.setDebits(BigDecimal.ZERO);
-			}else{
-				aCustomerChequeInfo.setDebits(PennantAppUtil.unFormateAmount(this.debits.getValidateValue(),finFormatter));
+			} else {
+				aCustomerChequeInfo
+						.setDebits(PennantAppUtil.unFormateAmount(this.debits.getValidateValue(), finFormatter));
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (this.returnChequeAmt.getActualValue().compareTo(BigDecimal.ZERO)==0) {
-				aCustomerChequeInfo.setReturnChequeAmt(BigDecimal.ZERO);	
-			}else{
-				aCustomerChequeInfo.setReturnChequeAmt(PennantAppUtil.unFormateAmount(this.returnChequeAmt.getValidateValue(),finFormatter));
+			if (this.returnChequeAmt.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
+				aCustomerChequeInfo.setReturnChequeAmt(BigDecimal.ZERO);
+			} else {
+				aCustomerChequeInfo.setReturnChequeAmt(
+						PennantAppUtil.unFormateAmount(this.returnChequeAmt.getValidateValue(), finFormatter));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aCustomerChequeInfo.setReturnChequeCount(this.returnChequeCount.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aCustomerChequeInfo.setRemarks(this.remarks.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -513,8 +509,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerChequeInfo
 	 * @throws Exception
@@ -529,12 +524,12 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			this.custID.focus();
 		} else {
 			this.monthYear.focus();
-			if (isNewCustomer()){
+			if (isNewCustomer()) {
 				doEdit();
-			}else  if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -545,13 +540,13 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerChequeInfo);
 
-            doCheckEnquiry();
-			if(isNewCustomer()){
+			doCheckEnquiry();
+			if (isNewCustomer()) {
 				this.window_CustomerChequeInfoDialog.setHeight("50%");
 				this.window_CustomerChequeInfoDialog.setWidth("60%");
 				this.groupboxWf.setVisible(false);
-				this.window_CustomerChequeInfoDialog.doModal() ;
-			}else{
+				this.window_CustomerChequeInfoDialog.doModal();
+			} else {
 				this.window_CustomerChequeInfoDialog.setWidth("100%");
 				this.window_CustomerChequeInfoDialog.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
@@ -566,7 +561,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	}
 
 	private void doCheckEnquiry() {
-		if(PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)){
+		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.totChequePayment.setReadonly(true);
 			this.salary.setReadonly(true);
 			this.debits.setReadonly(true);
@@ -587,26 +582,35 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		setValidationOn(true);
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 		if (!this.monthYear.isDisabled()) {
-			this.monthYear.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerChequeInfoDialog_MonthYear.value"),true, startDate, true, true));
+			this.monthYear.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_CustomerChequeInfoDialog_MonthYear.value"), true, startDate, true, true));
 		}
 		if (!this.totChequePayment.isDisabled()) {
-			this.totChequePayment.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerChequeInfoDialog_TotChequePayment.value"), finFormatter, true, false));
+			this.totChequePayment.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_CustomerChequeInfoDialog_TotChequePayment.value"),
+							finFormatter, true, false));
 		}
 		if (!this.salary.isDisabled()) {
-			this.salary.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerChequeInfoDialog_Salary.value"), finFormatter, true, false));
+			this.salary.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerChequeInfoDialog_Salary.value"), finFormatter, true, false));
 		}
 		if (!this.debits.isDisabled()) {
-			this.debits.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerChequeInfoDialog_Debits.value"), finFormatter, true, false));
+			this.debits.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerChequeInfoDialog_Debits.value"), finFormatter, true, false));
 		}
 		if (!this.returnChequeAmt.isDisabled()) {
-			this.returnChequeAmt.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CustomerChequeInfoDialog_ReturnChequeAmt.value"), finFormatter, true, false));
+			this.returnChequeAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_CustomerChequeInfoDialog_ReturnChequeAmt.value"),
+							finFormatter, true, false));
 		}
 		if (!this.returnChequeCount.isDisabled()) {
-			this.returnChequeCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_CustomerChequeInfoDialog_ReturnChequeCount.value"), true, false));
+			this.returnChequeCount.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_CustomerChequeInfoDialog_ReturnChequeCount.value"), true, false));
 		}
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerChequeInfoDialog_Remarks.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.remarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerChequeInfoDialog_Remarks.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -674,16 +678,17 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_CustomerChequeInfoDialog_ChequeSeq.value")+" : "+aCustomerChequeInfo.getChequeSeq(); 
-		
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CustomerChequeInfoDialog_ChequeSeq.value") + " : "
+				+ aCustomerChequeInfo.getChequeSeq();
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerChequeInfo.getRecordType())) {
 				aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion() + 1);
 				aCustomerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if(!isFinanceProcess && getCustomerDialogCtrl() != null &&  
-						getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()){
-					aCustomerChequeInfo.setNewRecord(true);	
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
+						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+					aCustomerChequeInfo.setNewRecord(true);
 				}
 				if (isWorkFlowEnabled()) {
 					aCustomerChequeInfo.setNewRecord(true);
@@ -694,11 +699,11 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 			}
 
 			try {
-				tranType=PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerChequeInfo, tranType);
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerChequeInfo, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerChequeInfoDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getCustomerDialogCtrl().doFillCustomerChequeInfoDetails(this.CustomerChequeInfoList);
 					closeDialog();
 				}
@@ -709,22 +714,21 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (isNewRecord()){
-			if(isNewCustomer()){
-				this.btnCancel.setVisible(false);	
+		if (isNewRecord()) {
+			if (isNewCustomer()) {
+				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-			}else{
+			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
 			this.monthYear.setDisabled(isReadOnly("CustomerChequeInfoDialog_monthYear"));
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.monthYear.setDisabled(true);
@@ -739,7 +743,6 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		this.returnChequeCount.setReadonly(isReadOnly("CustomerChequeInfoDialog_returnChequeCount"));
 		this.remarks.setReadonly(isReadOnly("CustomerChequeInfoDialog_remarks"));
 
-
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -752,18 +755,18 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			if(newCustomer){
-				if(PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)){
+			if (newCustomer) {
+				if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
-				}else if (isNewRecord()){
+				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
@@ -771,12 +774,12 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		logger.debug("Leaving");
 	}
 
-	public boolean isReadOnly(String componentName){
+	public boolean isReadOnly(String componentName) {
 		boolean isCustomerWorkflow = false;
-		if(getCustomerDialogCtrl() != null){
+		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow){
+		if (isWorkFlowEnabled() || isCustomerWorkflow) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -851,113 +854,115 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		isNew = aCustomerChequeInfo.isNew();
 		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCustomerChequeInfo.getRecordType())){
-				aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aCustomerChequeInfo.getRecordType())) {
+				aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion() + 1);
+				if (isNew) {
 					aCustomerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCustomerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerChequeInfo.setNewRecord(true);
 				}
 			}
-		}else{
+		} else {
 
-			if(isNewCustomer()){
-				if(isNewRecord()){
+			if (isNewCustomer()) {
+				if (isNewRecord()) {
 					aCustomerChequeInfo.setVersion(1);
-					aCustomerChequeInfo.setRecordType(PennantConstants.RCD_ADD);					
-				}else{
+					aCustomerChequeInfo.setRecordType(PennantConstants.RCD_ADD);
+				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aCustomerChequeInfo.getRecordType())){
-					aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion()+1);
+				if (StringUtils.isBlank(aCustomerChequeInfo.getRecordType())) {
+					aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion() + 1);
 					aCustomerChequeInfo.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aCustomerChequeInfo.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
-				aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion()+1);
-				if(isNew){
-					tranType =PennantConstants.TRAN_ADD;
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+			} else {
+				aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
 		}
 
 		// save it to database
 		try {
-			AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerChequeInfo, tranType);
+			AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerChequeInfo, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerChequeInfoDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
-			
-			if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getCustomerDialogCtrl().doFillCustomerChequeInfoDetails(this.CustomerChequeInfoList);
 				closeDialog();
 			}
-		
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
 
-	
-	private AuditHeader newFinanceCustomerProcess(CustomerChequeInfo aCustomerChequeInfo,String tranType){
+	private AuditHeader newFinanceCustomerProcess(CustomerChequeInfo aCustomerChequeInfo, String tranType) {
 		logger.debug("Entering");
-		boolean recordAdded=false;
-		
-		AuditHeader auditHeader= getAuditHeader(aCustomerChequeInfo, tranType);
+		boolean recordAdded = false;
+
+		AuditHeader auditHeader = getAuditHeader(aCustomerChequeInfo, tranType);
 		CustomerChequeInfoList = new ArrayList<CustomerChequeInfo>();
-		
+
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
-		
+
 		valueParm[0] = String.valueOf(aCustomerChequeInfo.getId());
 		valueParm[1] = String.valueOf(aCustomerChequeInfo.getChequeSeq());
-		
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_ChequeSeq")+ ":" + valueParm[1];
-		
-		if(getCustomerDialogCtrl().getCustomerChequeInfoDetailList()!=null && getCustomerDialogCtrl().getCustomerChequeInfoDetailList().size()>0){
+
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_ChequeSeq") + ":" + valueParm[1];
+
+		if (getCustomerDialogCtrl().getCustomerChequeInfoDetailList() != null
+				&& getCustomerDialogCtrl().getCustomerChequeInfoDetailList().size() > 0) {
 			for (int i = 0; i < getCustomerDialogCtrl().getCustomerChequeInfoDetailList().size(); i++) {
-				CustomerChequeInfo customerChequeInfo = getCustomerDialogCtrl().getCustomerChequeInfoDetailList().get(i);
-				
-				
-				if(aCustomerChequeInfo.getChequeSeq()==customerChequeInfo.getChequeSeq()){ // Both Current and Existing list rating same
-					
+				CustomerChequeInfo customerChequeInfo = getCustomerDialogCtrl().getCustomerChequeInfoDetailList()
+						.get(i);
+
+				if (aCustomerChequeInfo.getChequeSeq() == customerChequeInfo.getChequeSeq()) { // Both Current and Existing list rating same
+
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,"41001",
-										errParm,valueParm), getUserWorkspace().getUserLanguage()));
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
-					
+
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 							aCustomerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							CustomerChequeInfoList.add(aCustomerChequeInfo);
-						}else if(aCustomerChequeInfo.getRecordType().equals(PennantConstants.RCD_ADD)){
-							recordAdded=true;
-						}else if(aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+						} else if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RCD_ADD)) {
+							recordAdded = true;
+						} else if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							aCustomerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							CustomerChequeInfoList.add(aCustomerChequeInfo);
-						}else if(aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
-							recordAdded=true;
-							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerChequeInfoList().size(); j++) {
-								CustomerChequeInfo email =  getCustomerDialogCtrl().getCustomerDetails().getCustomerChequeInfoList().get(j);
-								if(email.getCustID() == aCustomerChequeInfo.getCustID() && 
-										email.getChequeSeq() == aCustomerChequeInfo.getChequeSeq()){
+						} else if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+							recordAdded = true;
+							for (int j = 0; j < getCustomerDialogCtrl().getCustomerDetails().getCustomerChequeInfoList()
+									.size(); j++) {
+								CustomerChequeInfo email = getCustomerDialogCtrl().getCustomerDetails()
+										.getCustomerChequeInfoList().get(j);
+								if (email.getCustID() == aCustomerChequeInfo.getCustID()
+										&& email.getChequeSeq() == aCustomerChequeInfo.getChequeSeq()) {
 									CustomerChequeInfoList.add(email);
 								}
 							}
@@ -972,26 +977,26 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 				}
 			}
 		}
-		
+
 		if (!recordAdded) {
 			CustomerChequeInfoList.add(aCustomerChequeInfo);
 		}
 		logger.debug("Leaving");
 		return auditHeader;
-	} 
-
+	}
 
 	// Search Button Component Events
 
-	
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.newSearchObject = newSearchObject;
 		logger.debug("Leaving");
@@ -1008,15 +1013,16 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 */
 	private AuditHeader getAuditHeader(CustomerChequeInfo aCustomerChequeInfo, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,aCustomerChequeInfo.getBefImage(), aCustomerChequeInfo);
-		return new AuditHeader(getReference(), String.valueOf(aCustomerChequeInfo.getCustID()), null, null, 
-				auditDetail, aCustomerChequeInfo.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerChequeInfo.getBefImage(), aCustomerChequeInfo);
+		return new AuditHeader(getReference(), String.valueOf(aCustomerChequeInfo.getCustID()), null, null, auditDetail,
+				aCustomerChequeInfo.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1034,7 +1040,8 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event (Event)
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1047,8 +1054,8 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 */
 	@Override
 	protected String getReference() {
-		return getCustomerChequeInfo().getCustID()+ PennantConstants.KEY_SEPERATOR
-		+ getCustomerChequeInfo().getChequeSeq();
+		return getCustomerChequeInfo().getCustID() + PennantConstants.KEY_SEPERATOR
+				+ getCustomerChequeInfo().getChequeSeq();
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1057,6 +1064,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1064,6 +1072,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public CustomerChequeInfo getCustomerChequeInfo() {
 		return this.customerChequeInfo;
 	}
+
 	public void setCustomerChequeInfo(CustomerChequeInfo customerChequeInfo) {
 		this.customerChequeInfo = customerChequeInfo;
 	}
@@ -1071,6 +1080,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public void setCustomerEmails(List<CustomerChequeInfo> customerEmails) {
 		this.CustomerChequeInfoList = customerEmails;
 	}
+
 	public List<CustomerChequeInfo> getCustomerEmails() {
 		return CustomerChequeInfoList;
 	}
@@ -1078,6 +1088,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -1085,6 +1096,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public boolean isNewCustomer() {
 		return newCustomer;
 	}
+
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
@@ -1092,6 +1104,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
@@ -1103,5 +1116,5 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
-	
+
 }

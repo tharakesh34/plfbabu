@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import java.text.ParseException;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
@@ -52,9 +53,10 @@ import com.pennant.backend.model.agreement.InterestCertificate;
  */
 public interface InterestCertificateDAO {
 
-	InterestCertificate getInterestCertificateDetails(String finReference ) throws ParseException;
+	InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException;
 
-	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, String startDate, String endDate) throws ParseException;
+	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, String startDate, String endDate)
+			throws ParseException;
 
 	String getCollateralRef(String finReference);
 
@@ -62,7 +64,6 @@ public interface InterestCertificateDAO {
 
 	String getCollateralTypeField(String interfaceType, String table, String field);
 
-	String getCollateralTypeValue(String table, String columnField,String reference);
-
+	String getCollateralTypeValue(String table, String columnField, String reference);
 
 }

@@ -15,14 +15,14 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class FetchBlackListDetails {
-	
+
 	private static final Logger logger = Logger.getLogger(FetchBlackListDetails.class);
 	private static DedupParmService dedupParmService;
 	private List<BlackListCustomers> blackListCustomers;
 	private List<FinBlacklistCustomer> finBlacklistCustomer;
 	private FinanceDetail financeDetail;
-	private int userAction= -1;
-	
+	private int userAction = -1;
+
 	String BLACKLIST_FIELDS = "custCIF,custDOB,custFName,custLName,custCRCPR,"
 			+ "custPassportNo,mobileNumber,custNationality,employer,watchListRule,override,overridenby";
 
@@ -30,10 +30,11 @@ public class FetchBlackListDetails {
 		super();
 	}
 
-	public static FinanceDetail getBlackListCustomers(String userRole,FinanceDetail tFinanceDetail, Window parent, String curLoginUser) {
-		return new FetchBlackListDetails(userRole,tFinanceDetail, parent, curLoginUser).getFinanceDetail();
+	public static FinanceDetail getBlackListCustomers(String userRole, FinanceDetail tFinanceDetail, Window parent,
+			String curLoginUser) {
+		return new FetchBlackListDetails(userRole, tFinanceDetail, parent, curLoginUser).getFinanceDetail();
 	}
-	
+
 	/**
 	 * 
 	 * @param role
@@ -41,43 +42,44 @@ public class FetchBlackListDetails {
 	 * @param parent
 	 */
 	@SuppressWarnings("unchecked")
-	private FetchBlackListDetails(String userRole,FinanceDetail aFinanceDetail, Window parent, String curLoginUser) {
+	private FetchBlackListDetails(String userRole, FinanceDetail aFinanceDetail, Window parent, String curLoginUser) {
 		super();
-        logger.debug("Entering");
-        
-        Customer customer = null;
-        String mobileNumber = "";
-        if(aFinanceDetail.getCustomerDetails().getCustomer() != null) {
-        	customer = aFinanceDetail.getCustomerDetails().getCustomer();
-        	if(aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null){
-        		for(CustomerPhoneNumber custPhone: aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
-        			if(custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)){
-        				mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), 
-        						custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-        				break;
-        			}
-        		}
-        	}
+		logger.debug("Entering");
+
+		Customer customer = null;
+		String mobileNumber = "";
+		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
+			customer = aFinanceDetail.getCustomerDetails().getCustomer();
+			if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+				for (CustomerPhoneNumber custPhone : aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
+					if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+						mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+								custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+						break;
+					}
+				}
+			}
 		}
 
-        String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
-        String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
-        
-        BlackListCustomers blackListCustData = doSetCustDataToBlackList(customer, finReference , mobileNumber);
-        setBlackListCustomers(getDedupParmService().fetchBlackListCustomers(userRole, finType, blackListCustData, curLoginUser));
-		
-        ShowBlackListDetailBox details = null;
-		if(getBlackListCustomers()!= null && getBlackListCustomers().size() > 0) {
-			
-			Object dataObject = ShowBlackListDetailBox.show(parent, getBlackListCustomers(), 
-					BLACKLIST_FIELDS, blackListCustData, curLoginUser);
+		String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
+		String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
+
+		BlackListCustomers blackListCustData = doSetCustDataToBlackList(customer, finReference, mobileNumber);
+		setBlackListCustomers(
+				getDedupParmService().fetchBlackListCustomers(userRole, finType, blackListCustData, curLoginUser));
+
+		ShowBlackListDetailBox details = null;
+		if (getBlackListCustomers() != null && getBlackListCustomers().size() > 0) {
+
+			Object dataObject = ShowBlackListDetailBox.show(parent, getBlackListCustomers(), BLACKLIST_FIELDS,
+					blackListCustData, curLoginUser);
 			details = (ShowBlackListDetailBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());	
-				logger.debug("The User Action is "+details.getUserAction());
+				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
-				setFinBlacklistCustomer((List<FinBlacklistCustomer>)details.getObject());
+				setFinBlacklistCustomer((List<FinBlacklistCustomer>) details.getObject());
 			}
 		} else {
 			userAction = -1;
@@ -86,11 +88,9 @@ public class FetchBlackListDetails {
 		aFinanceDetail.setFinBlacklistCustomer(null);
 
 		/**
-         * userAction represents Clean or Blacklisted actions
-         * if user click on Clean button userAction = 1
-         * if user click on Blacklisted button userAction = 0
-         * if no customer found as a blacklist customer then userAction = -1
-         */
+		 * userAction represents Clean or Blacklisted actions if user click on Clean button userAction = 1 if user click
+		 * on Blacklisted button userAction = 0 if no customer found as a blacklist customer then userAction = -1
+		 */
 		if (userAction == -1) {
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(false);
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(false);
@@ -107,9 +107,10 @@ public class FetchBlackListDetails {
 		setFinanceDetail(aFinanceDetail);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Prepare Black List Customer Object Data
+	 * 
 	 * @param blackListCustomer
 	 * @param customer
 	 * @return
@@ -119,7 +120,7 @@ public class FetchBlackListDetails {
 
 		if (customer != null) {
 			BlackListCustomers blackListCustomer = new BlackListCustomers();
-			
+
 			blackListCustomer.setCustCIF(customer.getCustCIF());
 			blackListCustomer.setCustShrtName(customer.getCustShrtName());
 			blackListCustomer.setCustFName(customer.getCustFName());
@@ -131,9 +132,11 @@ public class FetchBlackListDetails {
 			blackListCustomer.setCustDOB(customer.getCustDOB());
 			blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
 			blackListCustomer.setFinReference(finReference);
-			
-			blackListCustomer.setLikeCustFName(blackListCustomer.getCustFName()!=null?"%"+blackListCustomer.getCustFName()+"%":"");
-			blackListCustomer.setLikeCustLName(blackListCustomer.getCustLName()!=null?"%"+blackListCustomer.getCustLName()+"%":"");
+
+			blackListCustomer.setLikeCustFName(
+					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
+			blackListCustomer.setLikeCustLName(
+					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
 
 			logger.debug("Leaving");
 
@@ -141,13 +144,13 @@ public class FetchBlackListDetails {
 		} else {
 			return null;
 		}
-    }
+	}
 
-	public  DedupParmService getDedupParmService() {
+	public DedupParmService getDedupParmService() {
 		return dedupParmService;
 	}
 
-	public  void setDedupParmService(DedupParmService dedupParmService) {
+	public void setDedupParmService(DedupParmService dedupParmService) {
 		FetchBlackListDetails.dedupParmService = dedupParmService;
 	}
 
@@ -166,7 +169,7 @@ public class FetchBlackListDetails {
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
-	
+
 	public List<FinBlacklistCustomer> getFinBlacklistCustomer() {
 		return finBlacklistCustomer;
 	}
@@ -174,5 +177,5 @@ public class FetchBlackListDetails {
 	public void setFinBlacklistCustomer(List<FinBlacklistCustomer> finBlacklistCustomer) {
 		this.finBlacklistCustomer = finBlacklistCustomer;
 	}
-	
+
 }

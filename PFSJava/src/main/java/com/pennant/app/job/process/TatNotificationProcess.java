@@ -55,7 +55,7 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("Entering");
-		
+
 		//Getting alert count from smt parameters.
 		final int alertCount = SysParamUtil.getValueAsInt(NotificationConstants.TAT_ALT_CNT);
 		//Fetching all the TAT records which are not submitted
@@ -95,8 +95,8 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 			if (refList != null && refList.size() > 0) {
 				for (FinanceReferenceDetail financeReferenceDetail : refList) {
 					//Getting the notification mechanism and time 
-					TATNotificationCode notificationCode = getTatDetailDAO().getNotificationdetail(
-							financeReferenceDetail.getLovDescNamelov());
+					TATNotificationCode notificationCode = getTatDetailDAO()
+							.getNotificationdetail(financeReferenceDetail.getLovDescNamelov());
 					long waitTime = Long.parseLong(notificationCode.getTime()) * 60000;
 					// Calculating the time difference
 					long difftime = calculateTime(tatDetail.gettATStartTime(), tatDetail);
@@ -104,24 +104,21 @@ public class TatNotificationProcess extends QuartzJobBean implements StatefulJob
 					if (difftime > waitTime) {
 						tatDetail.setTriggerTime(new Timestamp(System.currentTimeMillis()));
 						getTatDetailDAO().update(tatDetail);
-						FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(
-						        tatDetail.getReference(), "_Temp",false);
-
+						FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(tatDetail.getReference(),
+								"_Temp", false);
 
 						if ("Internal".equals(financeReferenceDetail.getAlertType())) {
 							//Internal Alert
 							if (financeMain.getNextUserId() != null) {
-								SecurityUser user = getSecurityUserDAO().getSecurityUserById(
-										Long.parseLong(financeMain.getNextUserId()), "");
+								SecurityUser user = getSecurityUserDAO()
+										.getSecurityUserById(Long.parseLong(financeMain.getNextUserId()), "");
 								Notify notify = Notify.valueOf("USER");
 								String[] to = user.getUsrLogin().split(",");
 								if (StringUtils.isNotEmpty(financeMain.getFinReference())) {
 
 									String reference = financeMain.getFinReference();
-									getEventManager()
-											.publish(
-													Labels.getLabel("Internal_TAT_Msg") 
-															+ reference, notify, to);
+									getEventManager().publish(Labels.getLabel("Internal_TAT_Msg") + reference, notify,
+											to);
 								} else {
 									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
 								}

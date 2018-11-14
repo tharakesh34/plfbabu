@@ -58,10 +58,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * system.
  */
 public class CurrencyUtil {
-	private static final Logger					logger		= Logger.getLogger(CurrencyUtil.class);
+	private static final Logger logger = Logger.getLogger(CurrencyUtil.class);
 
-	private static CurrencyDAO					currencyDAO;
-	private static HashMap<String, Currency>	currencies	= new HashMap<>();
+	private static CurrencyDAO currencyDAO;
+	private static HashMap<String, Currency> currencies = new HashMap<>();
 
 	/**
 	 * Initialize the currency map with the list of currencies that are available in the system.
@@ -167,7 +167,7 @@ public class CurrencyUtil {
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		CurrencyUtil.currencyDAO = currencyDAO;
 	}
-	
+
 	public static Currency getCurrency(String ccy) {
 		if (StringUtils.isEmpty(ccy)) {
 			ccy = SysParamUtil.getAppCurrency();

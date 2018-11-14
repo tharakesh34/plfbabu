@@ -58,8 +58,8 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Item renderer for list items in the list box.
  * 
  */
-public class FinanceApplicationCodeListModelItemRenderer implements ListitemRenderer<FinanceApplicationCode>,
-		Serializable {
+public class FinanceApplicationCodeListModelItemRenderer
+		implements ListitemRenderer<FinanceApplicationCode>, Serializable {
 
 	private static final long serialVersionUID = -6336194516320385692L;
 

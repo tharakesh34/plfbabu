@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class ChequePurpose extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String code;
 	private String description;
 	private boolean active;
@@ -63,7 +63,7 @@ public class ChequePurpose extends AbstractWorkflowEntity {
 	private String lovValue;
 	private ChequePurpose befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -78,46 +78,43 @@ public class ChequePurpose extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public String getId() {
 		return code;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.code = id;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
-	
-		
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
-		
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -125,7 +122,7 @@ public class ChequePurpose extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -134,12 +131,12 @@ public class ChequePurpose extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public ChequePurpose getBefImage(){
+	public ChequePurpose getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ChequePurpose beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ChequePurpose beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

@@ -52,10 +52,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DedupParm table</b>.<br>
  *
  */
-public class LimitRule implements java.io.Serializable ,Entity{
+public class LimitRule implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = -5474091857496782851L;
-	
+
 	private long queryId = Long.MIN_VALUE;
 	private String queryCode = null;
 	private String queryDesc;
@@ -67,16 +67,16 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private LimitRule befImage;
 	private LoggedInUser userDetails;
 
 	private String recordStatus;
-	private String roleCode="";
-	private String nextRoleCode= "";
-	private String taskId="";
-	private String nextTaskId= "";
+	private String roleCode = "";
+	private String nextRoleCode = "";
+	private String taskId = "";
+	private String nextTaskId = "";
 	private String recordType;
 	private String userAction = "Save";
 	private long workflowId = 0;
@@ -86,7 +86,7 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	}
 
 	public LimitRule() {
-		
+
 	}
 
 	public LimitRule(long id) {
@@ -97,28 +97,31 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return queryId;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.queryId = id;
 	}
-	
+
 	public long getQueryId() {
-	    return queryId;
-    }
+		return queryId;
+	}
+
 	public void setQueryId(long queryId) {
-	    this.queryId = queryId;
-    }
+		this.queryId = queryId;
+	}
 
 	public String getQueryCode() {
 		return queryCode;
 	}
+
 	public void setQueryCode(String queryCode) {
 		this.queryCode = queryCode;
 	}
-	
+
 	public String getQueryDesc() {
 		return queryDesc;
 	}
@@ -130,41 +133,47 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public String getQueryModule() {
 		return queryModule;
 	}
+
 	public void setQueryModule(String queryModule) {
 		this.queryModule = queryModule;
 	}
-	
+
 	public void setQuerySubCode(String querySubCode) {
 		this.querySubCode = querySubCode;
 	}
+
 	public String getQuerySubCode() {
 		return querySubCode;
 	}
-	
+
 	public String getSQLQuery() {
 		return sQLQuery;
 	}
+
 	public void setSQLQuery(String sQLQuery) {
 		this.sQLQuery = sQLQuery;
 	}
-	
+
 	public String getActualBlock() {
 		return actualBlock;
 	}
+
 	public void setActualBlock(String actualBlock) {
 		this.actualBlock = actualBlock;
 	}
-	
+
 	public int getVersion() {
 		return version;
 	}
+
 	public void setVersion(int version) {
 		this.version = version;
 	}
-	
+
 	public long getLastMntBy() {
 		return lastMntBy;
 	}
+
 	public void setLastMntBy(long lastMntBy) {
 		this.lastMntBy = lastMntBy;
 	}
@@ -172,6 +181,7 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public Timestamp getLastMntOn() {
 		return lastMntOn;
 	}
+
 	public void setLastMntOn(Timestamp lastMntON) {
 		this.lastMntOn = lastMntON;
 	}
@@ -179,27 +189,31 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public LimitRule getBefImage(){
+	public LimitRule getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(LimitRule beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(LimitRule beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -207,27 +221,31 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public String getRecordStatus() {
 		return recordStatus;
 	}
+
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
-	
+
 	public String getRoleCode() {
 		return roleCode;
 	}
+
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
-	
+
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
+
 	public void setNextRoleCode(String nextRoleCode) {
 		this.nextRoleCode = nextRoleCode;
 	}
-	
+
 	public String getTaskId() {
 		return taskId;
 	}
+
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
@@ -235,13 +253,15 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public String getNextTaskId() {
 		return nextTaskId;
 	}
+
 	public void setNextTaskId(String nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
-	
+
 	public String getRecordType() {
 		return recordType;
 	}
+
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
@@ -249,12 +269,13 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public String getUserAction() {
 		return userAction;
 	}
+
 	public void setUserAction(String userAction) {
 		this.userAction = userAction;
 	}
 
 	public boolean isWorkflow() {
-		if (this.workflowId==0){
+		if (this.workflowId == 0) {
 			return false;
 		}
 		return true;
@@ -263,6 +284,7 @@ public class LimitRule implements java.io.Serializable ,Entity{
 	public long getWorkflowId() {
 		return workflowId;
 	}
+
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
@@ -275,5 +297,4 @@ public class LimitRule implements java.io.Serializable ,Entity{
 		this.active = active;
 	}
 
-	
 }

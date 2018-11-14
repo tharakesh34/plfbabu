@@ -65,8 +65,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>Frequency</b>.<br>
  * 
  */
-public class FrequencyServiceImpl extends GenericService<Frequency> implements
-		FrequencyService {
+public class FrequencyServiceImpl extends GenericService<Frequency> implements FrequencyService {
 
 	private static Logger logger = Logger.getLogger(FrequencyServiceImpl.class);
 
@@ -76,7 +75,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	public FrequencyServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -98,15 +97,12 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTFrequencies/BMTFrequencies_Temp by using FrequencyDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FrequencyDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTFrequencies by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTFrequencies/BMTFrequencies_Temp by using FrequencyDAO's save method b) Update the Record in the table. based
+	 * on the module workFlow Configuration. by using FrequencyDAO's update method 3) Audit the record in to AuditHeader
+	 * and AdtBMTFrequencies by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -122,8 +118,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 			return auditHeader;
 		}
 		String tableType = "";
-		Frequency frequency = (Frequency) auditHeader.getAuditDetail()
-				.getModelData();
+		Frequency frequency = (Frequency) auditHeader.getAuditDetail().getModelData();
 
 		if (frequency.isWorkflow()) {
 			tableType = "_Temp";
@@ -144,12 +139,10 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTFrequencies by using FrequencyDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTFrequencies by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTFrequencies by using FrequencyDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTFrequencies by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,8 +157,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		Frequency frequency = (Frequency) auditHeader.getAuditDetail()
-				.getModelData();
+		Frequency frequency = (Frequency) auditHeader.getAuditDetail().getModelData();
 
 		getFrequencyDAO().delete(frequency, "");
 
@@ -175,8 +167,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * getFrequencyById fetch the details by using FrequencyDAO's
-	 * getFrequencyById method.
+	 * getFrequencyById fetch the details by using FrequencyDAO's getFrequencyById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -190,9 +181,8 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * getApprovedFrequencyById fetch the details by using FrequencyDAO's
-	 * getFrequencyById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTFrequencies.
+	 * getApprovedFrequencyById fetch the details by using FrequencyDAO's getFrequencyById method . with parameter id
+	 * and type as blank. it fetches the approved records from the BMTFrequencies.
 	 * 
 	 * @param id
 	 *            (String)
@@ -203,19 +193,15 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFrequencyDAO().delete with parameters frequency,"" b) NEW Add
-	 * new record in to main table by using getFrequencyDAO().save with
-	 * parameters frequency,"" c) EDIT Update record in the main table by using
-	 * getFrequencyDAO().update with parameters frequency,"" 3) Delete the
-	 * record from the workFlow table by using getFrequencyDAO().delete with
-	 * parameters frequency,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTFrequencies by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTFrequencies by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFrequencyDAO().delete with
+	 * parameters frequency,"" b) NEW Add new record in to main table by using getFrequencyDAO().save with parameters
+	 * frequency,"" c) EDIT Update record in the main table by using getFrequencyDAO().update with parameters
+	 * frequency,"" 3) Delete the record from the workFlow table by using getFrequencyDAO().delete with parameters
+	 * frequency,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTFrequencies by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTFrequencies by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -231,8 +217,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 			return auditHeader;
 		}
 		Frequency frequency = new Frequency();
-		BeanUtils.copyProperties((Frequency) auditHeader.getAuditDetail()
-				.getModelData(), frequency);
+		BeanUtils.copyProperties((Frequency) auditHeader.getAuditDetail().getModelData(), frequency);
 
 		if (frequency.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -246,8 +231,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 			frequency.setNextTaskId("");
 			frequency.setWorkflowId(0);
 
-			if (frequency.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (frequency.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				frequency.setRecordType("");
 				getFrequencyDAO().save(frequency, "");
@@ -271,13 +255,10 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFrequencyDAO().delete with parameters
-	 * frequency,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTFrequencies by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFrequencyDAO().delete with parameters frequency,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTFrequencies by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -291,8 +272,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		Frequency frequency = (Frequency) auditHeader.getAuditDetail()
-				.getModelData();
+		Frequency frequency = (Frequency) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFrequencyDAO().delete(frequency, "_Temp");
@@ -303,20 +283,16 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -325,18 +301,16 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFrequencyDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFrequencyDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -344,48 +318,37 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 		Frequency tempFrequency = null;
 
 		if (frequency.isWorkflow()) {
-			tempFrequency = getFrequencyDAO().getFrequencyById(
-					frequency.getId(), "_Temp");
+			tempFrequency = getFrequencyDAO().getFrequencyById(frequency.getId(), "_Temp");
 		}
 
-		Frequency befFrequency = getFrequencyDAO().getFrequencyById(
-				frequency.getId(), "");
+		Frequency befFrequency = getFrequencyDAO().getFrequencyById(frequency.getId(), "");
 		Frequency oldFrequency = frequency.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = frequency.getFrqCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_Frq_Code") + ":"
-				+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_Frq_Code") + ":" + valueParm[0];
 
 		if (frequency.isNew()) { // for New record or new record into work flow
 
 			if (!frequency.isWorkflow()) {// With out Work flow only new records
 				if (befFrequency != null) { // Record Already Exists in the
 					// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (frequency.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (frequency.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befFrequency != null || tempFrequency != null) { // if
-						  							// records already exists
-													// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
+						// records already exists
+						// in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFrequency == null || tempFrequency != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -397,51 +360,33 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements
 
 				if (befFrequency == null) { // if records not exists in the main
 					// table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
-					if (oldFrequency != null
-							&& !oldFrequency.getLastMntOn().equals(
-									befFrequency.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+					if (oldFrequency != null && !oldFrequency.getLastMntOn().equals(befFrequency.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempFrequency == null) { // if records not exists in the
 					// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				if (tempFrequency != null
-						&& oldFrequency != null
-						&& !oldFrequency.getLastMntOn().equals(
-								tempFrequency.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
+				if (tempFrequency != null && oldFrequency != null
+						&& !oldFrequency.getLastMntOn().equals(tempFrequency.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !frequency.isWorkflow()) {
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !frequency.isWorkflow()) {
 			auditDetail.setBefImage(befFrequency);
 		}
 		logger.debug("Leaving");

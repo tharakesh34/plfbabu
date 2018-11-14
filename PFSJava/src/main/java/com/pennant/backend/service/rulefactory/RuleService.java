@@ -58,24 +58,40 @@ import com.pennant.backend.model.rulefactory.RuleModule;
 public interface RuleService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	Rule getRuleById(String code,String module,String event);
-	Rule getApprovedRuleById(String code,String module,String event);
+
+	Rule getRuleById(String code, String module, String event);
+
+	Rule getApprovedRuleById(String code, String module, String event);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<BMTRBFldDetails> getFieldList(String module,String event);
+
+	List<BMTRBFldDetails> getFieldList(String module, String event);
+
 	List<BMTRBFldCriterias> getOperatorsList();
+
 	List<RuleModule> getRuleModules(String module);
-	
+
 	List<Rule> getRulesByGroupId(long groupId, String ruleModule, String ruleEvent);
+
 	List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId);
+
 	String getAmountRule(String id, String module, String event);
+
 	List<Rule> getRuleDetails(List<String> ruleCodes, String module);
-	boolean validationCheck(String ruleEvent,String ruleCode);
+
+	boolean validationCheck(String ruleEvent, String ruleCode);
+
 	List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent);
+
 	List<String> getAEAmountCodesList(String event);
+
 	Rule getRuleById(long ruleID, String type);
+
 	Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent);
-	
+
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
 }

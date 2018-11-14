@@ -25,16 +25,15 @@ import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
 
 public class PaymentRecoveryService {
 
-	private static Logger				logger	= Logger.getLogger(PaymentRecoveryService.class);
+	private static Logger logger = Logger.getLogger(PaymentRecoveryService.class);
 
-	private DataSource					dataSource;
-	private PaymentRecoveryHeaderDAO	paymentRecoveryHeaderDAO;
-	private PaymentRecoveryDetailDAO	paymentRecoveryDetailDAO;
-	
+	private DataSource dataSource;
+	private PaymentRecoveryHeaderDAO paymentRecoveryHeaderDAO;
+	private PaymentRecoveryDetailDAO paymentRecoveryDetailDAO;
+
 	public PaymentRecoveryService() {
 		super();
 	}
-	
 
 	public void save(List<ReturnDataSet> listoftransactions, FinRepayQueue finRepayQueue, PaymentRecoveryHeader header,
 			boolean negateCounter) {

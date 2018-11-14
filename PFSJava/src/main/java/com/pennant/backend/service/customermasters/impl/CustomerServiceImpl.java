@@ -88,8 +88,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>Customer</b>.<br>
  * 
  */
-public class CustomerServiceImpl extends GenericService<Customer> implements
-		CustomerService {
+public class CustomerServiceImpl extends GenericService<Customer> implements CustomerService {
 
 	private static final Logger logger = Logger.getLogger(CustomerServiceImpl.class);
 
@@ -99,14 +98,14 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
-	private BranchDAO	branchDAO;
+	private BranchDAO branchDAO;
 	private ProvinceDAO provinceDAO;
-	private CityDAO		cityDAO;
+	private CityDAO cityDAO;
 
 	public CustomerServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -114,6 +113,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -121,33 +121,39 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
+
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
-	
+
 	public void setIncomeTypeDAO(IncomeTypeDAO incomeTypeDAO) {
-	    this.incomeTypeDAO = incomeTypeDAO;
-    }
+		this.incomeTypeDAO = incomeTypeDAO;
+	}
+
 	public IncomeTypeDAO getIncomeTypeDAO() {
-	    return incomeTypeDAO;
-    }
+		return incomeTypeDAO;
+	}
+
 	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
 		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
 	}
+
 	public Customer getCustomer(Customer customer) {
 		return getCustomerDAO().getCustomer(false, customer);
 	}
+
 	public Customer getNewCustomer(Customer customer) {
 		return getCustomerDAO().getNewCustomer(true, customer);
 	}
-	
+
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
+
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
-	
+
 	public BranchDAO getBranchDAO() {
 		return branchDAO;
 	}
@@ -171,15 +177,14 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
 	}
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * Customers/Customers_Temp by using CustomerDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using
-	 * CustomerDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Customers/Customers_Temp by
+	 * using CustomerDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using CustomerDAO's update method 3) Audit the record in to AuditHeader and AdtCustomers by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -209,10 +214,11 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		} else {
 			getCustomerDAO().update(customer, tableType);
 		}
-		
-		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(),customer.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
-		
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), customer.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				customer.getBefImage(), customer));
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -220,12 +226,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table Customers by using CustomerDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtCustomers by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * Customers by using CustomerDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -244,17 +248,17 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		Customer customer = (Customer) auditHeader.getAuditDetail().getModelData();
 		getCustomerDAO().delete(customer, "");
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(),"proceedToDedup,dedupFound,skipDedup");
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
-		
+		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), "proceedToDedup,dedupFound,skipDedup");
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				customer.getBefImage(), customer));
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById
-	 * method.
+	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -268,9 +272,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	}
 
 	/**
-	 * getApprovedCustomerById fetch the details by using CustomerDAO's
-	 * getCustomerById method . with parameter id and type as blank. it fetches
-	 * the approved records from the Customers.
+	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and
+	 * type as blank. it fetches the approved records from the Customers.
 	 * 
 	 * @param id
 	 *            (String)
@@ -282,19 +285,15 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCustomerDAO().delete with parameters customer,"" b) NEW Add new
-	 * record in to main table by using getCustomerDAO().save with parameters
-	 * customer,"" c) EDIT Update record in the main table by using
-	 * getCustomerDAO().update with parameters customer,"" 3) Delete the record
-	 * from the workFlow table by using getCustomerDAO().delete with parameters
-	 * customer,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomers
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtCustomers by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerDAO().delete with
+	 * parameters customer,"" b) NEW Add new record in to main table by using getCustomerDAO().save with parameters
+	 * customer,"" c) EDIT Update record in the main table by using getCustomerDAO().update with parameters customer,""
+	 * 3) Delete the record from the workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 5) Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -311,8 +310,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		}
 
 		Customer customer = (Customer) auditHeader.getAuditDetail().getModelData();
-		/*BeanUtils.copyProperties((Customer) auditHeader.getAuditDetail()
-				.getModelData(), customer);*/
+		/*
+		 * BeanUtils.copyProperties((Customer) auditHeader.getAuditDetail() .getModelData(), customer);
+		 */
 
 		if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -340,10 +340,12 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
-		/*auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(),"proceedToDedup,dedupFound,skipDedup");
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
-		getAuditHeaderDAO().addAudit(auditHeader);*/
+		/*
+		 * auditHeader.setAuditTranType(PennantConstants.TRAN_WF); String[] fields = PennantJavaUtil.getFieldDetails(new
+		 * Customer(),"proceedToDedup,dedupFound,skipDedup"); auditHeader.setAuditDetail(new
+		 * AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
+		 * getAuditHeaderDAO().addAudit(auditHeader);
+		 */
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -356,12 +358,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCustomerDAO().delete with parameters
-	 * customer,"_Temp" 3) Audit the record in to AuditHeader and AdtCustomers
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -379,29 +379,26 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getCustomerDAO().delete(customer, "_Temp");
-		
-		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(),"proceedToDedup,dedupFound,skipDedup");
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), "proceedToDedup,dedupFound,skipDedup");
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				customer.getBefImage(), customer));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -410,18 +407,16 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
@@ -429,11 +424,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		Customer customer = (Customer) auditDetail.getModelData();
 		Customer tempCustomer = null;
 		if (customer.isWorkflow()) {
-			tempCustomer = getCustomerDAO().getCustomerByID(customer.getId(),
-					"_Temp");
+			tempCustomer = getCustomerDAO().getCustomerByID(customer.getId(), "_Temp");
 		}
-		Customer befCustomer = getCustomerDAO().getCustomerByID(
-				customer.getId(), "");
+		Customer befCustomer = getCustomerDAO().getCustomerByID(customer.getId(), "");
 
 		Customer oldCustomer = customer.getBefImage();
 
@@ -450,23 +443,19 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 			if (!customer.isWorkflow()) {// With out Work flow only new records
 				if (befCustomer != null) { // Record Already Exists in the table
-											// then error
-					auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41001",errParm, null));
+												// then error
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (customer.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befCustomer != null  || tempCustomer != null) { // if records already exists in
-												// the main table
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm,null));
+				if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																								// is new
+					if (befCustomer != null || tempCustomer != null) { // if records already exists in
+						// the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befCustomer == null || tempCustomer == null) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -475,36 +464,30 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			// out work flow)
 			if (!customer.isWorkflow()) { // With out Work flow for update and delete
 				if (befCustomer == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41002",errParm, null));
-				}else{
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
+				} else {
 
-				if (oldCustomer != null
-						&& !oldCustomer.getLastMntOn().equals(befCustomer.getLastMntOn())) {
-					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41003", errParm,null));
-					} else {
-						auditDetail.setErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41004", errParm,null));
+					if (oldCustomer != null && !oldCustomer.getLastMntOn().equals(befCustomer.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
+						}
 					}
-				}
 				}
 
 			} else {
 
 				if (tempCustomer == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomer != null
-						&& oldCustomer != null
-						&& !oldCustomer.getLastMntOn().equals(
-								tempCustomer.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41005",errParm, null));
+				if (tempCustomer != null && oldCustomer != null
+						&& !oldCustomer.getLastMntOn().equals(tempCustomer.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
@@ -516,53 +499,56 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
 	@Override
-    public boolean isJointCustExist(long custID) {
+	public boolean isJointCustExist(long custID) {
 		logger.debug("Entering");
 		boolean jointCustExist = getCustomerDAO().isJointCustExist(custID);
 		logger.debug("Leaving");
-	    return jointCustExist;
-    }
-	
-	@Override
-    public WIFCustomer getWIFCustomerByID(long custId, String custCRCPR) {
-	    return getCustomerDAO().getWIFCustomerByID(custId, custCRCPR, "_AView");
-    }
-	@Override
-    public Date getCustBlackListedDate(String custCRCPR) {
-	    return getCustomerDAO().getCustBlackListedDate(custCRCPR, "_View");
-    }
-	@Override
-    public String getCustomerByCRCPR(String custCRCPR, String type) {
-	    return getCustomerDAO().getCustomerByCRCPR(custCRCPR,type);
-    }
+		return jointCustExist;
+	}
 
 	@Override
-    public void updateCustSuspenseDetails(Customer aCustomer, String tableType) {
+	public WIFCustomer getWIFCustomerByID(long custId, String custCRCPR) {
+		return getCustomerDAO().getWIFCustomerByID(custId, custCRCPR, "_AView");
+	}
+
+	@Override
+	public Date getCustBlackListedDate(String custCRCPR) {
+		return getCustomerDAO().getCustBlackListedDate(custCRCPR, "_View");
+	}
+
+	@Override
+	public String getCustomerByCRCPR(String custCRCPR, String type) {
+		return getCustomerDAO().getCustomerByCRCPR(custCRCPR, type);
+	}
+
+	@Override
+	public void updateCustSuspenseDetails(Customer aCustomer, String tableType) {
 		logger.debug("Entering");
 		getCustomerDAO().updateCustSuspenseDetails(aCustomer, tableType);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public void saveCustSuspMovements(Customer aCustomer) {
+	public void saveCustSuspMovements(Customer aCustomer) {
 		logger.debug("Entering");
 		getCustomerDAO().saveCustSuspMovements(aCustomer);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
-    public String getCustSuspRemarks(long custID) {
-	    return 	getCustomerDAO().getCustSuspRemarks(custID);
-    }
+	public String getCustSuspRemarks(long custID) {
+		return getCustomerDAO().getCustSuspRemarks(custID);
+	}
 
 	@Override
-    public Customer getSuspendCustomer(Long custID) {
-		return 	getCustomerDAO().getSuspendCustomer(custID);
-    }
+	public Customer getSuspendCustomer(Long custID) {
+		return getCustomerDAO().getSuspendCustomer(custID);
+	}
 
 	/**
-	 * Validate Customer details 
+	 * Validate Customer details
 	 * 
 	 * @return AuditDetail
 	 */
@@ -574,20 +560,20 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		// validate basic details
 		if (StringUtils.isNotBlank(customerDetails.getCustCtgCode())) {
-			auditDetail.setErrorDetail(validateMasterCode("BMTCustCategories", "CustCtgCode",
-					customerDetails.getCustCtgCode()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTCustCategories", "CustCtgCode", customerDetails.getCustCtgCode()));
 		}
 		if (StringUtils.isNotBlank(customerDetails.getCustDftBranch())) {
-			auditDetail.setErrorDetail(validateMasterCode("RMTBranches", "BranchCode",
-					customerDetails.getCustDftBranch()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("RMTBranches", "BranchCode", customerDetails.getCustDftBranch()));
 		}
 		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
 			auditDetail
-			.setErrorDetail(validateMasterCode("RMTCurrencies", "CcyCode", customerDetails.getCustBaseCcy()));
+					.setErrorDetail(validateMasterCode("RMTCurrencies", "CcyCode", customerDetails.getCustBaseCcy()));
 		}
 		if (customerDetails.getPrimaryRelationOfficer() != 0) {
-			auditDetail.setErrorDetail(validateMasterCode("AMTVehicleDealer", "DealerId",
-					customerDetails.getPrimaryRelationOfficer()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("AMTVehicleDealer", "DealerId", customerDetails.getPrimaryRelationOfficer()));
 		}
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -651,18 +637,19 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
 
-			auditDetail.setErrorDetail(validateMasterCode("BMTSalutations", "SalutationCode",
-					customer.getCustSalutationCode()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTSalutations", "SalutationCode", customer.getCustSalutationCode()));
 			auditDetail.setErrorDetail(validateMasterCode("BMTGenders", "GenderCode", customer.getCustGenderCode()));
-			auditDetail.setErrorDetail(validateMasterCode("BMTMaritalStatusCodes", "MaritalStsCode",
-					customer.getCustMaritalSts()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTMaritalStatusCodes", "MaritalStsCode", customer.getCustMaritalSts()));
 		}
-		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP) ||StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)){
+		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)
+				|| StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)) {
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "shortName";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
-			}	
+			}
 		}
 		auditDetail.setErrorDetail(validateMasterCode("BMTSectors", "SectorCode", customer.getCustSector()));
 		auditDetail.setErrorDetail(validateMasterCode("BMTIndustries", "IndustryCode", customer.getCustIndustry()));
@@ -676,40 +663,40 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		if (StringUtils.isNotBlank(customer.getCustNationality()))
 			auditDetail
-			.setErrorDetail(validateMasterCode("BMTCountries", "CountryCode", customer.getCustNationality()));
+					.setErrorDetail(validateMasterCode("BMTCountries", "CountryCode", customer.getCustNationality()));
 
 		if (StringUtils.isNotBlank(customer.getCustSubSector()))
 			auditDetail
-			.setErrorDetail(validateMasterCode("BMTSubSectors", "SubSectorCode", customer.getCustSubSector()));
+					.setErrorDetail(validateMasterCode("BMTSubSectors", "SubSectorCode", customer.getCustSubSector()));
 
 		if (StringUtils.isNotBlank(customer.getCustSegment()))
 			auditDetail.setErrorDetail(validateMasterCode("BMTSegments", "SegmentCode", customer.getCustSegment()));
 
 		if (StringUtils.isNotBlank(customer.getCustSubSegment()))
-			auditDetail.setErrorDetail(validateMasterCode("BMTSubSegments", "SubSegmentCode",
-					customer.getCustSubSegment()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTSubSegments", "SubSegmentCode", customer.getCustSubSegment()));
 
-		if (StringUtils.isNotBlank(customer.getCustParentCountry() ))
-			auditDetail.setErrorDetail(validateMasterCode("BMTCountries", "CountryCode",
-					customer.getCustParentCountry()));
+		if (StringUtils.isNotBlank(customer.getCustParentCountry()))
+			auditDetail
+					.setErrorDetail(validateMasterCode("BMTCountries", "CountryCode", customer.getCustParentCountry()));
 
 		if (StringUtils.isNotBlank(customer.getCustRiskCountry()))
 			auditDetail
-			.setErrorDetail(validateMasterCode("BMTCountries", "CountryCode", customer.getCustRiskCountry()));
+					.setErrorDetail(validateMasterCode("BMTCountries", "CountryCode", customer.getCustRiskCountry()));
 
 		if (StringUtils.isNotBlank(customer.getCustEmpSts()))
 			auditDetail.setErrorDetail(validateMasterCode("BMTEmpStsCodes", "EmpStsCode", customer.getCustEmpSts()));
-		
-		if (StringUtils.isNotBlank(customer.getCustDSADept())){
+
+		if (StringUtils.isNotBlank(customer.getCustDSADept())) {
 			auditDetail.setErrorDetail(validateMasterCode("Department", customer.getCustDSADept()));
 		}
-		if (customer.getCustGroupID()>0){
-			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup",customer.getCustGroupID()));
+		if (customer.getCustGroupID() > 0) {
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", customer.getCustGroupID()));
 		}
-		
-		if (StringUtils.isNotBlank(customer.getCustDSA())){
-			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
-					PennantRegularExpressions.REGEX_ALPHANUM));
+
+		if (StringUtils.isNotBlank(customer.getCustDSA())) {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustDSA());
 			if (matcher.matches() == false) {
 				String[] valueParm = new String[1];
@@ -717,9 +704,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90347", "", valueParm), "EN"));
 			}
 		}
-		if (StringUtils.isNotBlank(customer.getCustStaffID())){
-			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
-					PennantRegularExpressions.REGEX_ALPHANUM));
+		if (StringUtils.isNotBlank(customer.getCustStaffID())) {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustStaffID());
 			if (matcher.matches() == false) {
 				String[] valueParm = new String[1];
@@ -728,7 +715,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			}
 		}
 
-		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
+		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0
+				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
 			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
@@ -737,8 +725,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
-		List<CustomerEmploymentDetail> customerEmploymentDetailList = customerEmploymentDetailDAO.
-										getCustomerEmploymentDetailsByID(customer.getCustID(), "");
+		List<CustomerEmploymentDetail> customerEmploymentDetailList = customerEmploymentDetailDAO
+				.getCustomerEmploymentDetailsByID(customer.getCustID(), "");
 		if (customerEmploymentDetailList != null) {
 			for (CustomerEmploymentDetail custEmpDetails : customerEmploymentDetailList) {
 				if (custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
@@ -752,19 +740,20 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 				}
 			}
 		}
-		List<CustomerDocument> customerDocumentList = customerDocumentDAO.getCustomerDocumentByCustomerId(customer.getCustID());
+		List<CustomerDocument> customerDocumentList = customerDocumentDAO
+				.getCustomerDocumentByCustomerId(customer.getCustID());
 		if (customerDocumentList != null) {
 			for (CustomerDocument custDocDetails : customerDocumentList) {
-				if (custDocDetails.getCustDocIssuedOn() != null){
-				if (custDocDetails.getCustDocIssuedOn().before(customer.getCustDOB())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "CustDocIssuedOn:" + DateUtility.formatDate(custDocDetails.getCustDocIssuedOn(),
-							PennantConstants.XMLDateFormat);
-					valueParm[1] = "Cust DOB:"
-							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
+				if (custDocDetails.getCustDocIssuedOn() != null) {
+					if (custDocDetails.getCustDocIssuedOn().before(customer.getCustDOB())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CustDocIssuedOn:" + DateUtility.formatDate(custDocDetails.getCustDocIssuedOn(),
+								PennantConstants.XMLDateFormat);
+						valueParm[1] = "Cust DOB:"
+								+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
 				}
 			}
 		}
@@ -781,30 +770,31 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 * 
 	 * @return WSReturnStatus
 	 */
-	private ErrorDetail validateMasterCode(String moduleName,Object fieldValue) {
+	private ErrorDetail validateMasterCode(String moduleName, Object fieldValue) {
 		logger.debug("Entering");
 
 		ErrorDetail errorDetail = new ErrorDetail();
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
-		if(moduleMapping != null) {
+		if (moduleMapping != null) {
 			String[] lovFields = moduleMapping.getLovFields();
 			Object[][] filters = moduleMapping.getLovFilters();
-			int count=0;
-			if(filters !=null){
-			 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], 
-					 (String)filters[0][0], fieldValue);
-			} 
-			if(count <= 0) {
+			int count = 0;
+			if (filters != null) {
+				count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
+						(String) filters[0][0], fieldValue);
+			}
+			if (count <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = lovFields[0];
-				valueParm[1] = Objects.toString(fieldValue,"");
-				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm));
+				valueParm[1] = Objects.toString(fieldValue, "");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm));
 			}
 		}
 
 		logger.debug("Leaving");
 		return errorDetail;
 	}
+
 	/**
 	 * Validate code or Id value with available masters in system.
 	 * 
@@ -824,14 +814,15 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		if (count <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
-			valueParm[1] = Objects.toString(value,"");;
+			valueParm[1] = Objects.toString(value, "");
+			;
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 		}
 
 		logger.debug("Leaving");
 		return errorDetail;
 	}
-	
+
 	/**
 	 * prepare the GCD Customer related data
 	 */
@@ -852,5 +843,5 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

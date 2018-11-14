@@ -67,6 +67,6 @@ public interface SecurityGroupRightsDAO {
 	SecurityGroupRights getSecurityGroupRights();
 
 	List<SecurityGroupRights> getSecurityGroupRightsByGrpId(long grpId);
-	
+
 	long getNextValue();
 }

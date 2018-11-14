@@ -63,12 +63,14 @@ public interface PaymentInstructionService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	List<AuditDetail> setPaymentInstructionDetailsAuditData(PaymentInstruction paymentInstruction, String auditTranType, String method);
+	List<AuditDetail> setPaymentInstructionDetailsAuditData(PaymentInstruction paymentInstruction, String auditTranType,
+			String method);
 
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
 
-	List<AuditDetail> delete(PaymentInstruction paymentInstruction, TableType tableType, String auditTranType, long paymentId);
-	
+	List<AuditDetail> delete(PaymentInstruction paymentInstruction, TableType tableType, String auditTranType,
+			long paymentId);
+
 	PaymentInstruction getPaymentInstructionDetails(long paymentId, String type);
 
 	List<AuditDetail> processPaymentInstrDetails(List<AuditDetail> auditDetails, TableType type, String methodName);

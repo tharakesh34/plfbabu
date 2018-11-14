@@ -136,18 +136,18 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		basicLoanReconDAO.cleanDestination();
 	}
 
-	public List <FinanceType> getFinTypeList(String type) {
-		List <FinanceType> finTypeList = getBasicLoanReconDAO().getDMFinTypes(type);
-		
+	public List<FinanceType> getFinTypeList(String type) {
+		List<FinanceType> finTypeList = getBasicLoanReconDAO().getDMFinTypes(type);
+
 		return finTypeList;
 	}
-	
-	public List <FeeTypeVsGLMapping> getFeeVsGLList() {
-		List <FeeTypeVsGLMapping> feeVsGLList = getBasicLoanReconDAO().getFeeTypeVsGLMappings();
-		
+
+	public List<FeeTypeVsGLMapping> getFeeVsGLList() {
+		List<FeeTypeVsGLMapping> feeVsGLList = getBasicLoanReconDAO().getFeeTypeVsGLMappings();
+
 		return feeVsGLList;
 	}
-	
+
 	public MigrationData getFinanceDetailsFromSource(String finReference, ReferenceID rid, String type) {
 		logger.debug("Entering");
 
@@ -171,7 +171,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 				break;
 			}
 		}
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for FinanceType in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -180,7 +180,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinDisbursements
 		sysDateI1 = new Date();
 		sMD.setFinDisbursements(getFinanceDisbursementDAO().getDMFinanceDisbursementDetails(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for FinDisbursements in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -189,7 +189,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinAdvancePayments
 		sysDateI1 = new Date();
 		sMD.setFinAdvancePayments(getFinAdvancePaymentsDAO().getFinAdvancePaymentsByFinRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out
@@ -199,7 +199,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinScheduleDetails
 		sysDateI1 = new Date();
 		sMD.setFinScheduleDetails(getFinanceScheduleDetailDAO().getDMFinScheduleDetails(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out
@@ -209,7 +209,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinServiceInstructions
 		sysDateI1 = new Date();
 		sMD.setFinServiceInstructions(getFinServiceInstructionDAO().getFinServiceInstructions(finReference, type, ""));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println(
@@ -219,7 +219,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinReceiptHeader
 		sysDateI1 = new Date();
 		sMD.setFinReceiptHeaders(getFinReceiptHeaderDAO().getReceiptHeadersByRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for FinReceiptHeader in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -228,7 +228,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinReceiptDetail
 		sysDateI1 = new Date();
 		sMD.setFinReceiptDetails(getFinReceiptDetailDAO().getDMFinReceiptDetailByFinRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for FinReceiptDetail in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -236,8 +236,9 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 
 		// AllocationDetails
 		sysDateI1 = new Date();
-		sMD.setReceiptAllocationDetails(getReceiptAllocationDetailDAO().getDMAllocationsByReference(finReference, type));
-		
+		sMD.setReceiptAllocationDetails(
+				getReceiptAllocationDetailDAO().getDMAllocationsByReference(finReference, type));
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out
@@ -247,7 +248,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// RepayHeader
 		sysDateI1 = new Date();
 		sMD.setFinRepayHeaders(getFinanceRepaymentsDAO().getFinRepayHeadersByRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for RepayHeader in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -256,7 +257,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// PresentmentDetail
 		sysDateI1 = new Date();
 		sMD.setPresentmentDetails(getPresentmentDetailDAO().getDMPresentmentDetailsByRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out
@@ -274,7 +275,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FionODDetails
 		sysDateI1 = new Date();
 		sMD.setFinODDetails(getFinODDetailsDAO().getFinODDetailsByFinRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for FionODDetails in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -283,7 +284,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// ODPenaltyRates
 		sysDateI1 = new Date();
 		sMD.setPenaltyrate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for ODPenaltyRates in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -292,7 +293,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// Provisions
 		sysDateI1 = new Date();
 		sMD.setProvision(getProvisionDAO().getProvisionById(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for Provisions in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -301,7 +302,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// FinFeeDetails
 		sysDateI1 = new Date();
 		sMD.setFinFeeDetails(getFinFeeDetailDAO().getDMFinFeeDetailByFinRef(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println("Time for FinFeeDetails in MSeconds: " + (sysDateI2.getTime() - sysDateI1.getTime()));
@@ -310,7 +311,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		logger.debug("Leaving");
 		return sMD;
 	}
-	
+
 	//This code never executed. only kept for back up purpose. In case data to be fetched then move the code to above method
 	public MigrationData getFinanceDetailsFromSource2(String finReference, ReferenceID rid, String type) {
 		logger.debug("Entering");
@@ -323,7 +324,7 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		// RepayScheduleDetail
 		sysDateI1 = new Date();
 		sMD.setRepayScheduleDetails(getFinanceRepaymentsDAO().getDMRpySchdList(finReference, type));
-		
+
 		if (printTime) {
 			sysDateI2 = new Date();
 			System.out.println(

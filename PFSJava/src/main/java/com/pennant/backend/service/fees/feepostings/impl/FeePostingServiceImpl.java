@@ -92,20 +92,20 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.rits.cloning.Cloner;
 
 public class FeePostingServiceImpl extends GenericService<FeePostings> implements FeePostingService {
-	private static final Logger		logger	= Logger.getLogger(FeePostingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FeePostingServiceImpl.class);
 
-	private AuditHeaderDAO			auditHeaderDAO;
-	private FeePostingsDAO			feePostingsDAO;
-	private AccountEngineExecution	engineExecution;
-	private PostingsDAO				postingsDAO;
-	private FinanceMainDAO 		   	financeMainDAO;
-	private AccountingSetDAO        accountingSetDAO;
-	private CustomerDAO				customerDAO;
-	private CollateralSetupDAO		collateralSetupDAO;
-	private PartnerBankDAO			partnerBankDAO;
-	private FeeTypeDAO				feeTypeDAO;
-	private LimitHeaderDAO 			limitHeaderDAO;  
-	private PostingsPreparationUtil			postingsPreparationUtil;
+	private AuditHeaderDAO auditHeaderDAO;
+	private FeePostingsDAO feePostingsDAO;
+	private AccountEngineExecution engineExecution;
+	private PostingsDAO postingsDAO;
+	private FinanceMainDAO financeMainDAO;
+	private AccountingSetDAO accountingSetDAO;
+	private CustomerDAO customerDAO;
+	private CollateralSetupDAO collateralSetupDAO;
+	private PartnerBankDAO partnerBankDAO;
+	private FeeTypeDAO feeTypeDAO;
+	private LimitHeaderDAO limitHeaderDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
 	@Override
 	public FeePostings getFeePostings() {
@@ -160,8 +160,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-	
-	
+
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
 	 * from getFinTypePartnerBankDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
@@ -304,7 +303,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		if (StringUtils.equals(feePostings.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
-		
+
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -336,7 +335,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		if(!StringUtils.equals(feePostings.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!StringUtils.equals(feePostings.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 			getFeePostingsDAO().delete(feePostings, "_Temp");
 
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -344,7 +343,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			auditHeader.setAuditDetails(auditDetailList);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
-
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -359,15 +357,15 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	/**
 	 * Method for Execute posting Details on Core Banking Side
+	 * 
 	 * @param auditHeader
 	 * @param curBDay
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay)  {
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
 		logger.debug("Entering");
-		
-		
+
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
 		FeePostings feePostings = new FeePostings("");
@@ -380,37 +378,40 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-				
+
 				if (amountCodes == null) {
 					amountCodes = new AEAmountCodes();
 				}
 
 				// If Fee postings Created Against Finance Reference
 				if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, feePostings.getPostAgainst())) {
-					FinanceMain financeMain=financeMainDAO.getFinanceMainForBatch(feePostings.getReference());
+					FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(feePostings.getReference());
 					amountCodes.setFinType(financeMain.getFinType());
 					amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
 					aeEvent.setBranch(financeMain.getFinBranch());
 					aeEvent.setCustID(financeMain.getCustID());
 					aeEvent.setCcy(financeMain.getFinCcy());
-				}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, feePostings.getPostAgainst())) {
+				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, feePostings.getPostAgainst())) {
 					Customer customer = customerDAO.getCustomerByCIF(feePostings.getReference(), "");
 					aeEvent.setBranch(customer.getCustDftBranch());
 					aeEvent.setCustID(customer.getCustID());
 					aeEvent.setCcy(customer.getCustBaseCcy());
-				}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, feePostings.getPostAgainst())) {
-					CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getReference(),"");
+				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL,
+						feePostings.getPostAgainst())) {
+					CollateralSetup collateralSetup = collateralSetupDAO
+							.getCollateralSetupByRef(feePostings.getReference(), "");
 					Customer customer = customerDAO.getCustomerByID(collateralSetup.getDepositorId(), "");
 					aeEvent.setCustID(collateralSetup.getDepositorId());
 					aeEvent.setBranch(customer.getCustDftBranch());
 					aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, feePostings.getPostAgainst())) {
-					LimitHeader header = limitHeaderDAO.getLimitHeaderById(Long.valueOf(feePostings.getReference()),"_View");
+					LimitHeader header = limitHeaderDAO.getLimitHeaderById(Long.valueOf(feePostings.getReference()),
+							"_View");
 					aeEvent.setBranch(header.getCustDftBranch());
 					aeEvent.setCustID(header.getCustomerId());
 					aeEvent.setCcy(header.getLimitCcy());
 				}
-				
+
 				amountCodes.setPartnerBankAc(feePostings.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(feePostings.getPartnerBankAcType());
 				aeEvent.setFinReference(String.valueOf(feePostings.getPostId()));
@@ -420,9 +421,9 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				feePostings.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
 				getPostingsPreparationUtil().postAccounting(aeEvent);
-				
+
 				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
-				
+
 				validateCreditandDebitAmounts(aeEvent);
 			}
 
@@ -444,7 +445,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public AuditHeader doReject(AuditHeader auditHeader) {
 
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -455,7 +456,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FeePostings(), feePostings.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], feePostings.getBefImage(), feePostings));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				feePostings.getBefImage(), feePostings));
 
 		getFeePostingsDAO().delete(feePostings, "_Temp");
 
@@ -463,15 +465,15 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		logger.debug("Leaving");
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 
-
 	}
-	
+
 	/**
 	 * Validate FeePostings.
+	 * 
 	 * @param feePostings
 	 * 
 	 * @return AuditDetail
@@ -480,20 +482,20 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public AuditDetail doValidations(FeePostings feePostings) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
-		if(StringUtils.isBlank(feePostings.getCif()) && StringUtils.isBlank(feePostings.getFinReference())
+		if (StringUtils.isBlank(feePostings.getCif()) && StringUtils.isBlank(feePostings.getFinReference())
 				&& StringUtils.isBlank(feePostings.getCollateralRef()) && feePostings.getLimitId() <= 0) {
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90292", "", null));
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		} else {
 			boolean isMultiValues = getPostingAgainst(feePostings);
-			if(isMultiValues) {
+			if (isMultiValues) {
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90293", "", null));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 		}
-		
+
 		switch (feePostings.getPostAgainst()) {
 		case FinanceConstants.POSTING_AGAINST_CUST:
 			Customer customer = customerDAO.getCustomerByCIF(feePostings.getCif(), "");
@@ -501,10 +503,10 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				feePostings.setReference(feePostings.getCif());
 				// validate currency
 				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
-					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(),  customer.getCustBaseCcy())) {
+					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), customer.getCustBaseCcy())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
-						valueParm[1] = "Customer: "+customer.getCustBaseCcy();
+						valueParm[1] = "Customer: " + customer.getCustBaseCcy();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 					} else {
 						feePostings.setCurrency(customer.getCustBaseCcy());
@@ -527,7 +529,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), financeMain.getFinCcy())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
-						valueParm[1] = "Loan: "+financeMain.getFinCcy();
+						valueParm[1] = "Loan: " + financeMain.getFinCcy();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 						return auditDetail;
 					} else {
@@ -544,14 +546,14 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			break;
 		case FinanceConstants.POSTING_AGAINST_LIMIT:
 			LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderById(feePostings.getLimitId(), "");
-			if(limitHeader != null ) {
+			if (limitHeader != null) {
 				feePostings.setReference(String.valueOf(feePostings.getLimitId()));
 				// validate currency
 				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
 					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), limitHeader.getLimitCcy())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
-						valueParm[1] = "Limit: "+limitHeader.getLimitCcy();
+						valueParm[1] = "Limit: " + limitHeader.getLimitCcy();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 					} else {
 						feePostings.setCurrency(limitHeader.getLimitCcy());
@@ -565,7 +567,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			}
 			break;
 		case FinanceConstants.POSTING_AGAINST_COLLATERAL:
-			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getCollateralRef(),"");
+			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getCollateralRef(),
+					"");
 			if (collateralSetup != null) {
 				feePostings.setReference(feePostings.getCollateralRef());
 				// validate currency
@@ -573,7 +576,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), collateralSetup.getCollateralCcy())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
-						valueParm[1] = "Collateral: "+collateralSetup.getCollateralCcy();
+						valueParm[1] = "Collateral: " + collateralSetup.getCollateralCcy();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 					} else {
 						feePostings.setCurrency(collateralSetup.getCollateralCcy());
@@ -589,12 +592,12 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			break;
 
 		default:
-			
+
 			break;
 		}
 		//ValueDate
-		if(feePostings.getValueDate() == null) {
-		feePostings.setValueDate(DateUtility.getAppDate());
+		if (feePostings.getValueDate() == null) {
+			feePostings.setValueDate(DateUtility.getAppDate());
 		} else {
 			Date minReqPostingDate = DateUtility.addDays(DateUtility.getAppDate(),
 					-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
@@ -607,7 +610,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}
-		
+
 		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(feePostings.getPartnerBankId(), "");
 		if (partnerBank == null || !partnerBank.isActive()) {
 			String[] valueParm = new String[2];
@@ -638,10 +641,10 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		return auditDetail;
 	}
-	
+
 	private boolean getPostingAgainst(FeePostings feePostings) {
 		boolean isMutiValues = false;
-		
+
 		// Posting against customer
 		if (StringUtils.isNotBlank(feePostings.getCif())) {
 			if (StringUtils.isNotBlank(feePostings.getFinReference())
@@ -652,33 +655,33 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_CUST);
 			}
 		}
-		
+
 		// Posting against Finance
 		if (StringUtils.isNotBlank(feePostings.getFinReference())) {
-			if (StringUtils.isNotBlank(feePostings.getCif())
-					|| StringUtils.isNotBlank(feePostings.getCollateralRef()) || feePostings.getLimitId() > 0) {
+			if (StringUtils.isNotBlank(feePostings.getCif()) || StringUtils.isNotBlank(feePostings.getCollateralRef())
+					|| feePostings.getLimitId() > 0) {
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
 				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
 			}
 		}
-		
+
 		// Posting against collateral
 		if (StringUtils.isNotBlank(feePostings.getCollateralRef())) {
-			if (StringUtils.isNotBlank(feePostings.getCif())
-					|| StringUtils.isNotBlank(feePostings.getFinReference()) || feePostings.getLimitId() > 0) {
+			if (StringUtils.isNotBlank(feePostings.getCif()) || StringUtils.isNotBlank(feePostings.getFinReference())
+					|| feePostings.getLimitId() > 0) {
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
 				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_COLLATERAL);
 			}
 		}
-		
+
 		// Posting against limit
 		if (feePostings.getLimitId() > 0) {
-			if (StringUtils.isNotBlank(feePostings.getCif())
-					|| StringUtils.isNotBlank(feePostings.getFinReference()) || StringUtils.isNotBlank(feePostings.getCollateralRef())) {
+			if (StringUtils.isNotBlank(feePostings.getCif()) || StringUtils.isNotBlank(feePostings.getFinReference())
+					|| StringUtils.isNotBlank(feePostings.getCollateralRef())) {
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
@@ -687,8 +690,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 		return isMutiValues;
 	}
-	
-	
+
 	public void validateCreditandDebitAmounts(AEEvent aeEvent) {
 
 		BigDecimal creditAmt = BigDecimal.ZERO;
@@ -780,6 +782,5 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
-	
+
 }

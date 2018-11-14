@@ -69,11 +69,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> implements CollateralStructureDAO {
 	private static Logger logger = Logger.getLogger(CollateralStructureDAOImpl.class);
-	
+
 	public CollateralStructureDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record CollateralStructure details by key field
 	 * 
@@ -90,13 +90,16 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT  CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq,");
-		sql.append(" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver,PostValidation,PreValidation, Active,");
+		sql.append(
+				" SELECT  CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq,");
+		sql.append(
+				" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver,PostValidation,PreValidation, Active,");
 		sql.append(" Fields, ActualBlock, SQLRule, ");
 		if (type.contains("View")) {
 			sql.append("QueryCode, QuerySubCode, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", ValuationFrequency, nextValuationDate, valuationPending, QueryId ");
 		sql.append(" From CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -106,7 +109,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralType", collateralType);
 
-		RowMapper<CollateralStructure> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralStructure.class);
+		RowMapper<CollateralStructure> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CollateralStructure.class);
 		CollateralStructure collateralStructure = null;
 		try {
 			collateralStructure = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
@@ -119,10 +123,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	}
 
 	/**
-	 * This method Deletes the Record from the CollateralStructure or
-	 * CollateralStructure_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete CollateralStructure by key
-	 * CollateralType
+	 * This method Deletes the Record from the CollateralStructure or CollateralStructure_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete CollateralStructure by key CollateralType
 	 * 
 	 * @param CollateralStructure
 	 *            (collateralStructure)
@@ -154,8 +156,7 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	}
 
 	/**
-	 * This method insert new Records into CollateralStructure or
-	 * CollateralStructure_Temp.
+	 * This method insert new Records into CollateralStructure or CollateralStructure_Temp.
 	 * 
 	 * save CollateralStructure
 	 * 
@@ -176,15 +177,20 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		sql.append("Insert Into CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq,");
-		sql.append(" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver, PostValidation, PreValidation, Active,");
+		sql.append(
+				" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver, PostValidation, PreValidation, Active,");
 		sql.append(" Fields, ActualBlock, SQLRule, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", ValuationFrequency, NextValuationDate, ValuationPending, QueryId)");
 		sql.append(" Values(");
-		sql.append(" :CollateralType, :CollateralDesc, :LtvType, :LtvPercentage, :MarketableSecurities, :PreValidationReq,");
-		sql.append(" :PostValidationReq, :CollateralLocReq, :CollateralValuatorReq, :Remarks, :AllowLtvWaiver, :MaxLtvWaiver, :PostValidation, :PreValidation, :Active,");
+		sql.append(
+				" :CollateralType, :CollateralDesc, :LtvType, :LtvPercentage, :MarketableSecurities, :PreValidationReq,");
+		sql.append(
+				" :PostValidationReq, :CollateralLocReq, :CollateralValuatorReq, :Remarks, :AllowLtvWaiver, :MaxLtvWaiver, :PostValidation, :PreValidation, :Active,");
 		sql.append(" :Fields, :ActualBlock, :SQLRule, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
 		sql.append(", :ValuationFrequency, :NextValuationDate, :ValuationPending, :QueryId)");
 
 		logger.debug("InsertSql: " + sql.toString());
@@ -196,10 +202,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	}
 
 	/**
-	 * This method updates the Record CollateralStructure or
-	 * CollateralStructure_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update CollateralStructure by key
-	 * CollateralType and Version
+	 * This method updates the Record CollateralStructure or CollateralStructure_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update CollateralStructure by key CollateralType and Version
 	 * 
 	 * @param CollateralStructure
 	 *            (collateralStructure)
@@ -213,17 +217,23 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	public void update(CollateralStructure collateralStructure, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder sql = new StringBuilder("Update CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set collateralDesc = :collateralDesc, ltvType = :ltvType,");
-		sql.append(" ltvPercentage = :ltvPercentage, marketableSecurities = :marketableSecurities, preValidationReq = :preValidationReq,");
-		sql.append(" postValidationReq = :postValidationReq, collateralLocReq = :collateralLocReq, collateralValuatorReq = :collateralValuatorReq,");
-		sql.append(" remarks = :remarks, allowLtvWaiver = :allowLtvWaiver, maxLtvWaiver = :maxLtvWaiver,PostValidation = :PostValidation,PreValidation = :PreValidation, Active = :Active, ");
+		sql.append(
+				" ltvPercentage = :ltvPercentage, marketableSecurities = :marketableSecurities, preValidationReq = :preValidationReq,");
+		sql.append(
+				" postValidationReq = :postValidationReq, collateralLocReq = :collateralLocReq, collateralValuatorReq = :collateralValuatorReq,");
+		sql.append(
+				" remarks = :remarks, allowLtvWaiver = :allowLtvWaiver, maxLtvWaiver = :maxLtvWaiver,PostValidation = :PostValidation,PreValidation = :PreValidation, Active = :Active, ");
 		sql.append(" Fields = :Fields, ActualBlock = :ActualBlock, SQLRule = :SQLRule, ");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" , ValuationFrequency = :ValuationFrequency, NextValuationDate = :NextValuationDate, ValuationPending = :ValuationPending, QueryId = :QueryId ");
+		sql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(
+				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(
+				" , ValuationFrequency = :ValuationFrequency, NextValuationDate = :NextValuationDate, ValuationPending = :ValuationPending, QueryId = :QueryId ");
 		sql.append(" Where CollateralType = :CollateralType");
 
 		logger.debug("Sql: " + sql.toString());
@@ -236,7 +246,7 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public List<String> getCollateralValuatorRequiredCodes() {
 		List<String> codes;
@@ -252,5 +262,5 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		}
 
 		return codes;
-	}	
+	}
 }

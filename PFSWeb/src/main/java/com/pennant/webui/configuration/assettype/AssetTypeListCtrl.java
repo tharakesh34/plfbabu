@@ -76,14 +76,13 @@ import com.pennant.backend.service.configuration.AssetTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.configuration.assettype.model.AssetTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-	
+import com.pennanttech.pennapps.web.util.MessageUtil;
+
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/configuration/AssetType/AssetTypeList.zul
- * file.<br>
+ * This is the controller class for the /WEB-INF/pages/configuration/AssetType/AssetTypeList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -92,33 +91,33 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(AssetTypeListCtrl.class);
 
-	protected Window 		window_AssetTypeList; 
-	protected Borderlayout 	borderLayout_AssetTypeList; 
-	protected Paging 		pagingAssetTypeList; 
-	protected Listbox 		listBoxAssetType; 
+	protected Window window_AssetTypeList;
+	protected Borderlayout borderLayout_AssetTypeList;
+	protected Paging pagingAssetTypeList;
+	protected Listbox listBoxAssetType;
 
 	// List headers
-	protected Listheader 	listheader_AssetType; 
-	protected Listheader 	listheader_AssetDescription;
-	protected Listheader	listheader_AssetActive;
-	
-	// checkRights
-	protected Button 		btnHelp; 
-	protected Button 		button_AssetTypeList_NewAssetType; 
-	protected Button 		button_AssetTypeList_AssetTypeSearch; 
-	
-	protected Textbox 		assetType; 
-	protected Listbox 		sortOperator_AssetType; 
+	protected Listheader listheader_AssetType;
+	protected Listheader listheader_AssetDescription;
+	protected Listheader listheader_AssetActive;
 
-	protected Textbox 		assetDesc; 
-	protected Listbox 		sortOperator_AssetDescription; 
-	
-	protected Checkbox      active;
-	protected Listbox       sortOperator_Active;
-						
-	protected Textbox 		moduleType; 
-	
-	private transient AssetTypeService 	assetTypeService;
+	// checkRights
+	protected Button btnHelp;
+	protected Button button_AssetTypeList_NewAssetType;
+	protected Button button_AssetTypeList_AssetTypeSearch;
+
+	protected Textbox assetType;
+	protected Listbox sortOperator_AssetType;
+
+	protected Textbox assetDesc;
+	protected Listbox sortOperator_AssetDescription;
+
+	protected Checkbox active;
+	protected Listbox sortOperator_Active;
+
+	protected Textbox moduleType;
+
+	private transient AssetTypeService assetTypeService;
 
 	/**
 	 * default constructor.<br>
@@ -126,7 +125,7 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 	public AssetTypeListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "AssetType";
@@ -135,7 +134,6 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 		super.queueTableName = "AssetTypes_View";
 	}
 
-	
 	public void onCreate$window_AssetTypeList(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -150,15 +148,14 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 				Operators.STRING);
 		registerField("assetDesc", listheader_AssetDescription, SortOrder.NONE, assetDesc,
 				sortOperator_AssetDescription, Operators.STRING);
-		registerField("active", listheader_AssetActive, SortOrder.NONE, active,
-				sortOperator_Active, Operators.BOOLEAN);
+		registerField("active", listheader_AssetActive, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -179,16 +176,17 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 		doReset();
 		search();
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$button_AssetTypeList_NewAssetType(Event event) throws IllegalAccessException, InvocationTargetException {
+	public void onClick$button_AssetTypeList_NewAssetType(Event event)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		// Create a new entity.
@@ -197,7 +195,7 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 		assetType.setWorkflowId(getWorkFlowId());
 		assetType.getExtendedFieldHeader().setNewRecord(true);
 		assetType.getExtendedFieldHeader().setWorkflowId(getWorkFlowId());
-		
+
 		// Copy Button Process
 		boolean isCopyProcess = false;
 		if (event.getData() != null) {
@@ -243,13 +241,12 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 			}
 		}
 
-
 		// Display the dialog page.
 		doShowDialogPage(assetType, isCopyProcess);
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -283,13 +280,14 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 			if (isWorkFlowEnabled() && assetType.getWorkflowId() == 0) {
 				assetType.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(assetType , false);
+			doShowDialogPage(assetType, false);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -333,7 +331,7 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	public void setAssetTypeService(AssetTypeService assetTypeService) {
 		this.assetTypeService = assetTypeService;
 	}

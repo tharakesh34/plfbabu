@@ -99,7 +99,8 @@ public class StorageDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("whenAquiredName");
 		excludeFields.add("dmaCodeDesc");
 		excludeFields.add("branchCode");
-		excludeFields.add("oldPacketNumber");;
+		excludeFields.add("oldPacketNumber");
+		;
 		excludeFields.add("oldRackNumber");
 		excludeFields.add("rcdMaintainSts");
 		return excludeFields;
@@ -276,7 +277,6 @@ public class StorageDetail extends AbstractWorkflowEntity implements Entity {
 	public void setOldRackNumber(String oldRackNumber) {
 		this.oldRackNumber = oldRackNumber;
 	}
-
 
 	public String getRcdMaintainSts() {
 		return rcdMaintainSts;

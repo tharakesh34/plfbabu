@@ -63,27 +63,29 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements FinFeeScheduleDetailDAO {
 	private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.class);
-		
+
 	public FinFeeScheduleDetailDAOImpl() {
 		super();
 	}
-		
+
 	/**
 	 * Method for saving Fee schedule Details list
 	 */
 	@Override
 	public void saveFeeScheduleBatch(List<FinFeeScheduleDetail> feeScheduleList, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			insertSql.append(" INSERT INTO WIFFinFeeScheduleDetail");
-		}else{
+		} else {
 			insertSql.append(" INSERT INTO FinFeeScheduleDetail");
 		}
 		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql.append(" (FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST) ");
-		insertSql.append(" VALUES (:FeeID, :SchDate, :SchAmount, :PaidAmount, :OsAmount, :WaiverAmount, :WriteoffAmount, :CGST, :SGST, :UGST, :IGST) ");
+		insertSql.append(
+				" (FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST) ");
+		insertSql.append(
+				" VALUES (:FeeID, :SchDate, :SchAmount, :PaidAmount, :OsAmount, :WaiverAmount, :WriteoffAmount, :CGST, :SGST, :UGST, :IGST) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(feeScheduleList.toArray());
@@ -97,7 +99,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 	@Override
 	public void deleteFeeScheduleBatch(long feeId, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFeeID(feeId);
 
@@ -116,7 +118,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for saving Fee schedule Details list
 	 */
@@ -130,10 +132,12 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 		try {
 			if (isWIF) {
 				selectSql.append("Delete from WIFFINFEESCHEDULEDETAIL" + StringUtils.trimToEmpty(tableType));
-				selectSql.append(" Where FeeId IN (Select FeeID from WIFFinFeeDetail" + StringUtils.trimToEmpty(tableType));
+				selectSql.append(
+						" Where FeeId IN (Select FeeID from WIFFinFeeDetail" + StringUtils.trimToEmpty(tableType));
 			} else {
 				selectSql.append("Delete from FINFEESCHEDULEDETAIL" + StringUtils.trimToEmpty(tableType));
-				selectSql.append(" Where FeeId IN (Select FeeID from FinFeeDetail" + StringUtils.trimToEmpty(tableType));
+				selectSql
+						.append(" Where FeeId IN (Select FeeID from FinFeeDetail" + StringUtils.trimToEmpty(tableType));
 			}
 			selectSql.append(" Where FinReference = :FinReference)");
 
@@ -151,56 +155,60 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 			logger.debug("Leaving");
 		}
 	}
-	
+
 	/**
 	 * Method for Fetching Fee schedule Details list based upon Reference
 	 */
 	@Override
-    public List<FinFeeScheduleDetail> getFeeScheduleByFeeID(long feeID, boolean isWIF, String tableType) {
+	public List<FinFeeScheduleDetail> getFeeScheduleByFeeID(long feeID, boolean isWIF, String tableType) {
 		logger.debug("Entering");
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFeeID(feeID);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST " );
-		if(isWIF){
+		selectSql.append(
+				" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST ");
+		if (isWIF) {
 			selectSql.append(" FROM WIFFinFeeScheduleDetail");
-		}else{
+		} else {
 			selectSql.append(" FROM FinFeeScheduleDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" WHERE  FeeID = :FeeID ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeScheduleDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    }
-	
+	}
+
 	/**
 	 * Method for Fetching Fee schedule Details list based upon Reference
 	 */
 	@Override
 	public List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeID, boolean isWIF, String tableType) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST " );
-		if(isWIF){
+		selectSql.append(
+				" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST ");
+		if (isWIF) {
 			selectSql.append(" FROM WIFFinFeeScheduleDetail");
-		}else{
+		} else {
 			selectSql.append(" FROM FinFeeScheduleDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(tableType));
-		
+
 		selectSql.append(" WHERE  FeeID IN(:FeeID) ");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FeeID", feeID);
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeScheduleDetail.class);
 		List<FinFeeScheduleDetail> feeSchdList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return feeSchdList;
@@ -209,9 +217,10 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 	@Override
 	public void updateFeeSchdPaids(List<FinFeeScheduleDetail> updateFeeList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail");
-		updateSql.append(" Set PaidAmount = PaidAmount + :PaidAmount, OsAmount = OsAmount - :PaidAmount, CGST = :CGST, SGST = :SGST, UGST= :UGST, IGST = :IGST ");
+		updateSql.append(
+				" Set PaidAmount = PaidAmount + :PaidAmount, OsAmount = OsAmount - :PaidAmount, CGST = :CGST, SGST = :SGST, UGST= :UGST, IGST = :IGST ");
 		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -226,76 +235,84 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 		FinFeeScheduleDetail feeSchd = new FinFeeScheduleDetail();
 		feeSchd.setFinReference(finReference);
 		feeSchd.setSchDate(schDate);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FeeID, SchDate, PaidAmount, CGST, SGST, UGST, IGST " );
+		selectSql.append(" SELECT FeeID, SchDate, PaidAmount, CGST, SGST, UGST, IGST ");
 		selectSql.append(" FROM FinFeeScheduleDetail_View ");
 		selectSql.append(" WHERE FinReference=:FinReference AND SchDate=:SchDate ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeScheduleDetail.class);
+		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return feeList;
 	}
-	
+
 	@Override
 	public List<FinFeeScheduleDetail> getFeeSchedules(String finReference, Date schDate) {
 		logger.debug("Entering");
 		FinFeeScheduleDetail feeSchd = new FinFeeScheduleDetail();
 		feeSchd.setFinReference(finReference);
 		feeSchd.setSchDate(schDate);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FFSD.FeeID, FFSD.SchDate,FFSD.SchAmount,FFSD.PaidAmount,FFSD.WaiverAmount,FFSD.OsAmount,FFSD.WriteoffAmount, FFSD.CGST, FFSD.SGST, FFSD.UGST, FFSD.IGST " );
+		selectSql.append(
+				" SELECT FFSD.FeeID, FFSD.SchDate,FFSD.SchAmount,FFSD.PaidAmount,FFSD.WaiverAmount,FFSD.OsAmount,FFSD.WriteoffAmount, FFSD.CGST, FFSD.SGST, FFSD.UGST, FFSD.IGST ");
 		selectSql.append(" FROM FinFeeScheduleDetail FFSD INNER JOIN FINFEEDETAIL FFD ON FFSD.FEEID = FFD.FEEID ");
 		selectSql.append(" WHERE FFD.FinReference=:FinReference AND FFSD.SchDate=:SchDate ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeScheduleDetail.class);
+		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return feeList;
 	}
-	
+
 	@Override
 	public List<FinFeeScheduleDetail> getFeeSchdTPost(String finReference, Date schDate) {
 		logger.debug("Entering");
 		FinFeeScheduleDetail feeSchd = new FinFeeScheduleDetail();
 		feeSchd.setFinReference(finReference);
 		feeSchd.setSchDate(schDate);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT, FESD.CGST, FESD.SGST, FESD.UGST, FESD.IGST " );
+		selectSql.append(
+				" SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT, FESD.CGST, FESD.SGST, FESD.UGST, FESD.IGST ");
 		selectSql.append(" ,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT ");
 		selectSql.append(" FROM FINFEESCHEDULEDETAIL FESD inner join FINFEEDETAIL FED ON ");
 		selectSql.append(" FESD.FEEID=FED.FEEID INNER JOIN FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID ");
 		selectSql.append(" WHERE FED.FinReference=:FinReference AND FESD.SchDate=:SchDate ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinFeeScheduleDetail.class);
+		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
 		logger.debug("Leaving");
 		return feeList;
 	}
-	
-		@Override
+
+	@Override
 	public void updateFeePaids(List<FinFeeScheduleDetail> updateFeeList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail ");
-		updateSql.append(" Set PaidAmount = :PaidAmount, WaiverAmount = :WaiverAmount, OsAmount = :OsAmount, CGST = :CGST, SGST = :SGST, UGST= :UGST, IGST = :IGST ");
+		updateSql.append(
+				" Set PaidAmount = :PaidAmount, WaiverAmount = :WaiverAmount, OsAmount = :OsAmount, CGST = :CGST, SGST = :SGST, UGST= :UGST, IGST = :IGST ");
 		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateFeeList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	
+
 }

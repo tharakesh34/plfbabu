@@ -15,27 +15,27 @@ import com.pennant.mq.util.PFFXmlUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DepositDetailProcessImpl implements DepositDetailProcess {
-	
+
 	private static final Logger logger = Logger.getLogger(DepositDetailProcessImpl.class);
-	
+
 	public DepositDetailProcessImpl() {
 		super();
 	}
-	
+
 	@Override
 	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		FetchDeposit deposits = new FetchDeposit();
 		deposits.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		deposits.setReturnCode("0000");
 		deposits.setReturnText("SUCESS");
 		deposits.setTimeStamp(System.currentTimeMillis());
 		deposits.setCustomerNo(fetchDeposit.getCustomerNo());
-		
+
 		// add InvestmentContract List to FetchDeposit
 		List<InvestmentContract> invstList = new ArrayList<InvestmentContract>();
-		
+
 		InvestmentContract invstmentContract = new InvestmentContract();
 		invstmentContract.setInvstContractNo("123456789");
 		invstmentContract.setInvstHolderName("Abdul Rajak");
@@ -47,7 +47,7 @@ public class DepositDetailProcessImpl implements DepositDetailProcess {
 		invstmentContract.setMaturityDate(new Date());
 		invstmentContract.setDepositTenor(BigDecimal.TEN);
 		invstmentContract.setCategoryID("5555");
-		
+
 		invstList.add(invstmentContract);
 
 		//second object
@@ -62,26 +62,26 @@ public class DepositDetailProcessImpl implements DepositDetailProcess {
 		invstmentContract2.setMaturityDate(new Date());
 		invstmentContract2.setDepositTenor(BigDecimal.TEN);
 		invstmentContract2.setCategoryID("4444");
-		
+
 		invstList.add(invstmentContract2);
-		
+
 		deposits.setInvstMentContactList(invstList);
-		
+
 		logger.debug("Leaving");
-		
+
 		return deposits;
 	}
 
 	@Override
 	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		FetchDepositDetail depositDetail = new FetchDepositDetail();
 		depositDetail.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		depositDetail.setReturnCode("0000");
 		depositDetail.setReturnText("SUCESS");
 		depositDetail.setTimeStamp(System.currentTimeMillis());
-		
+
 		depositDetail.setCustCIF("PC1234");
 		depositDetail.setInvstContractNo(fetchDepositDetail.getInvstContractNo());
 		depositDetail.setBranchCode("1001");
@@ -101,9 +101,9 @@ public class DepositDetailProcessImpl implements DepositDetailProcess {
 		depositDetail.setLienBalance(new BigDecimal(1000));
 		depositDetail.setLienDesc("Insufficient Balance");
 		depositDetail.setStatus("ACT");
-		
+
 		logger.debug("Leaving");
-		
+
 		return depositDetail;
 	}
 

@@ -71,45 +71,47 @@ public class PTListReportUtils implements Serializable {
 
 	private static final long serialVersionUID = 8400638894656139790L;
 	private static final Logger logger = Logger.getLogger(PTListReportUtils.class);
-	
+
 	private static ReportListService reportListService;
 
-	public PTListReportUtils (){
+	public PTListReportUtils() {
 		super();
 	}
 
-	public PTListReportUtils (String code, JdbcSearchObject<?> searchObj,int size) throws InterruptedException{
+	public PTListReportUtils(String code, JdbcSearchObject<?> searchObj, int size) throws InterruptedException {
 		super();
-		
+
 		logger.debug("Entering");
 		ReportListHeader header = new ReportListHeader();
-		JdbcSearchObject<ReportListDetail> searchObject = new JdbcSearchObject<ReportListDetail>(ReportListDetail.class);
-		setReportListService() ;
+		JdbcSearchObject<ReportListDetail> searchObject = new JdbcSearchObject<ReportListDetail>(
+				ReportListDetail.class);
+		setReportListService();
 
 		searchObject.setSorts(searchObj.getSorts());
 		searchObject.setFilters(searchObj.getFilters());
 		searchObject.addTabelName(searchObj.getTabelName());
-		if(StringUtils.trimToNull(searchObj.getWhereClause()) != null){
+		if (StringUtils.trimToNull(searchObj.getWhereClause()) != null) {
 			searchObject.addWhereClause(searchObj.getWhereClause());
 		}
-		
+
 		//Report List Details Fetching
 		ReportList reportList = getReportListService().getApprovedReportListById(code);
 		searchObject.setMaxResults(size + 1);
 
-		if(reportList !=null){
-			
+		if (reportList != null) {
+
 			String[] fields = reportList.getValues();
 			String[] types = reportList.getType();
-			
-			if(reportList.isFormatReq()){
+
+			if (reportList.isFormatReq()) {
 				searchObject.addField("ReportFormat");
 			}
 
 			for (int i = 0; i < fields.length; i++) {
-				searchObject.addField(fields[i]+" AS field"+ types[i].substring(0, 1).toUpperCase()+ types[i].substring(1).trim()+StringUtils.leftPad(String.valueOf(i+1), 2,'0'));
-			}	
-			
+				searchObject.addField(fields[i] + " AS field" + types[i].substring(0, 1).toUpperCase()
+						+ types[i].substring(1).trim() + StringUtils.leftPad(String.valueOf(i + 1), 2, '0'));
+			}
+
 			fields = null;
 			types = null;
 
@@ -117,17 +119,18 @@ public class PTListReportUtils implements Serializable {
 			@SuppressWarnings("static-access")
 			Map<String, Object> parameters = header.getReportListHeader(header);
 			parameters = reportList.getMainHeaderDetails(parameters);
-			
+
 			//Set Report Images to parameter Fields
-			parameters.put("organizationLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 			parameters.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
-			parameters.put("productLogo",PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+			parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			if ("DDARep".equals(code)) {//FIXME
 				pagedListService = (PagedListService) SpringUtil.getBean("extPagedListService");
 			}
-			JRBeanCollectionDataSource listDetailsDS = new JRBeanCollectionDataSource( pagedListService.getBySearchObject(searchObject));
+			JRBeanCollectionDataSource listDetailsDS = new JRBeanCollectionDataSource(
+					pagedListService.getBySearchObject(searchObject));
 
 			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_LIST);
 			if (code.equals(Labels.getLabel("label_CheckList.value"))) {
@@ -135,50 +138,50 @@ public class PTListReportUtils implements Serializable {
 			} else {
 				reportSrc = reportSrc + "/" + reportList.getReportFileName() + ".jasper";
 			}
-			
+
 			File file = null;
 			try {
-				file = new File(reportSrc) ;
-				if(file.exists()){
+				file = new File(reportSrc);
+				if (file.exists()) {
 					byte[] buf = null;
-					buf=JasperRunManager.runReportToPdf(reportSrc,parameters,listDetailsDS);
+					buf = JasperRunManager.runReportToPdf(reportSrc, parameters, listDetailsDS);
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("reportBuffer", buf);
 					map.put("reportName", reportList.getReportHeading());
 
 					// call the ZUL-file with the parameters packed in a map
-					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul",null,map);
-				}else{
+					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, map);
+				} else {
 					MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
 				}
 			} catch (JRException e) {
 				MessageUtil.showError(e);
-			}finally{
-				
+			} finally {
+
 				fields = null;
-				types= null;
+				types = null;
 				file = null;
-				reportSrc= null;
+				reportSrc = null;
 				reportList = null;
-				parameters= null;
+				parameters = null;
 				pagedListService = null;
 				searchObject = null;
 				header = null;
 				listDetailsDS = null;
 			}
-		}else{
+		} else {
 			// Display Error for Configuration
 			MessageUtil.showError(Labels.getLabel("message.error.reportNotFound"));
 		}
 		logger.debug("Leaving");
 	}
 
-
 	public static ReportListService getReportListService() {
 		return reportListService;
 	}
+
 	public void setReportListService() {
-		if(reportListService == null){
+		if (reportListService == null) {
 			PTListReportUtils.reportListService = (ReportListService) SpringUtil.getBean("reportListService");
 		}
 	}

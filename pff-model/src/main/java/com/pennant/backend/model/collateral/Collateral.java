@@ -38,7 +38,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class Collateral extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String cAFReference = null;
 	private String reference;
 	private String lastReview;
@@ -131,10 +131,10 @@ public class Collateral extends AbstractWorkflowEntity implements Entity {
 
 	public BigDecimal getValue() {
 		if (value != null) {
-	        return value;
-        }
-        return BigDecimal.ZERO;
-		
+			return value;
+		}
+		return BigDecimal.ZERO;
+
 	}
 
 	public void setValue(BigDecimal value) {
@@ -154,9 +154,9 @@ public class Collateral extends AbstractWorkflowEntity implements Entity {
 
 	public BigDecimal getBankmargin() {
 		if (bankmargin != null) {
-	        return bankmargin;
-        }
-        return BigDecimal.ZERO;
+			return bankmargin;
+		}
+		return BigDecimal.ZERO;
 	}
 
 	public void setBankmargin(BigDecimal bankmargin) {
@@ -165,9 +165,9 @@ public class Collateral extends AbstractWorkflowEntity implements Entity {
 
 	public BigDecimal getActualCoverage() {
 		if (actualCoverage != null) {
-	        return actualCoverage;
-        }
-        return BigDecimal.ZERO;
+			return actualCoverage;
+		}
+		return BigDecimal.ZERO;
 	}
 
 	public void setActualCoverage(BigDecimal actualCoverage) {
@@ -176,9 +176,9 @@ public class Collateral extends AbstractWorkflowEntity implements Entity {
 
 	public BigDecimal getProposedCoverage() {
 		if (proposedCoverage != null) {
-	        return proposedCoverage;
-        }
-        return BigDecimal.ZERO;
+			return proposedCoverage;
+		}
+		return BigDecimal.ZERO;
 	}
 
 	public void setProposedCoverage(BigDecimal proposedCoverage) {

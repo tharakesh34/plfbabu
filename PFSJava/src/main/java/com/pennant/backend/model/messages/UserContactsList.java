@@ -9,9 +9,9 @@ public class UserContactsList implements java.io.Serializable {
 	private String contactsList;
 
 	public UserContactsList() {
-		
+
 	}
-	
+
 	public String getUsrID() {
 		return usrID;
 	}

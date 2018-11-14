@@ -14,9 +14,9 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.BatchUtil;
 
 public class Notification implements Tasklet {
-	private Logger		logger	= Logger.getLogger(Notification.class);
+	private Logger logger = Logger.getLogger(Notification.class);
 
-	private DataSource	dataSource;
+	private DataSource dataSource;
 
 	public Notification() {
 		super();
@@ -36,7 +36,7 @@ public class Notification implements Tasklet {
 			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(0));
 
 		} finally {
-		
+
 		}
 
 		logger.debug("COMPLETE:Notification for Value Date: " + dateValueDate);

@@ -7,39 +7,38 @@ public class APIHeader {
 
 	// Private Variables
 	private String serviceName;
-    private String serviceVersion;
-    private String entityId;
-    private String ipAddress;
-    private String channelId;
-    private String userId;
-    private String language;
-    private String securityInfo;
-    private String messageId;
-    private Date requestTime;
-    private Map<String, String> additionalInfo;
-    private String returnCode;
-    private String returnDesc;
-    private Date responseTime;
-    
-    // Public Constants
-	public static final String	API_HEADER_KEY		= "HEADERKEY";
-	public static final String	API_AUTHORIZATION	= "AUTHORIZATION";
-	public static final String	API_SERVICENAME		= "SERVICENAME";
-	public static final String	API_SERVICEVERSION	= "SERVICEVERSION";
-	public static final String	API_ENTITYID		= "ENTITYID";
-	public static final String	API_MESSAGEID		= "MESSAGEID";
-	public static final String	API_LANGUAGE		= "LANGUAGE";
-	public static final String	API_REQ_TIME		= "REQUESTTIME";
-	public static final String	API_RES_TIME		= "RESPONSETIME";
+	private String serviceVersion;
+	private String entityId;
+	private String ipAddress;
+	private String channelId;
+	private String userId;
+	private String language;
+	private String securityInfo;
+	private String messageId;
+	private Date requestTime;
+	private Map<String, String> additionalInfo;
+	private String returnCode;
+	private String returnDesc;
+	private Date responseTime;
+
+	// Public Constants
+	public static final String API_HEADER_KEY = "HEADERKEY";
+	public static final String API_AUTHORIZATION = "AUTHORIZATION";
+	public static final String API_SERVICENAME = "SERVICENAME";
+	public static final String API_SERVICEVERSION = "SERVICEVERSION";
+	public static final String API_ENTITYID = "ENTITYID";
+	public static final String API_MESSAGEID = "MESSAGEID";
+	public static final String API_LANGUAGE = "LANGUAGE";
+	public static final String API_REQ_TIME = "REQUESTTIME";
+	public static final String API_RES_TIME = "RESPONSETIME";
 
 	public static final String API_RETURNCODE = "ReturnCode";
 	public static final String API_RETURNDESC = "ReturnText";
 	public static final String API_LOG_KEY = "LogDetails";
 	public static final String API_EXCEPTION_KEY = "Exception";
 
-
 	/***** Setters / Getters ******/
-	
+
 	public String getServiceName() {
 		return serviceName;
 	}
@@ -64,7 +63,6 @@ public class APIHeader {
 		this.entityId = entityId;
 	}
 
-	
 	public String getChannelId() {
 		return channelId;
 	}
@@ -155,11 +153,11 @@ public class APIHeader {
 
 	@Override
 	public String toString() {
-		return "APIHeader [serviceName=" + serviceName + ", serviceVersion=" + serviceVersion + ", entityId="
-				+ entityId + ", ipAddress=" + ipAddress + ", channelId=" + channelId + ", userId=" + userId
-				+ ", language=" + language + ", securityInfo=" + securityInfo + ", messageId=" + messageId
-				+ ", requestTime=" + requestTime + ", additionalInfo=" + additionalInfo + ", returnCode=" + returnCode
-				+ ", returnDesc=" + returnDesc + ", responseTime=" + responseTime + "]";
+		return "APIHeader [serviceName=" + serviceName + ", serviceVersion=" + serviceVersion + ", entityId=" + entityId
+				+ ", ipAddress=" + ipAddress + ", channelId=" + channelId + ", userId=" + userId + ", language="
+				+ language + ", securityInfo=" + securityInfo + ", messageId=" + messageId + ", requestTime="
+				+ requestTime + ", additionalInfo=" + additionalInfo + ", returnCode=" + returnCode + ", returnDesc="
+				+ returnDesc + ", responseTime=" + responseTime + "]";
 	}
-	
+
 }

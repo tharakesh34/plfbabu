@@ -51,13 +51,20 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
  * 
  */
 public interface DirectorDetailService {
-	
+
 	DirectorDetail getDirectorDetail();
+
 	DirectorDetail getNewDirectorDetail();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	DirectorDetail getDirectorDetailById(long id,long custID);
-	DirectorDetail getApprovedDirectorDetailById(long id,long custID);
+
+	DirectorDetail getDirectorDetailById(long id, long custID);
+
+	DirectorDetail getApprovedDirectorDetailById(long id, long custID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

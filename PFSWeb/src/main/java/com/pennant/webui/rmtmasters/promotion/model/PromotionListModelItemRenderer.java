@@ -55,16 +55,15 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listItems in the listBox.
  */
 public class PromotionListModelItemRenderer implements ListitemRenderer<Promotion>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public PromotionListModelItemRenderer() {
-		
+
 	}
 
 	@Override
@@ -77,19 +76,19 @@ public class PromotionListModelItemRenderer implements ListitemRenderer<Promotio
 		lc.setParent(item);
 		lc = new Listcell(promotion.getFinType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantAppUtil.formateDate(promotion.getStartDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.formateDate(promotion.getEndDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		
+
 		lc = new Listcell(promotion.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(promotion.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("promotionCode", promotion.getPromotionCode());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPromotionItemDoubleClicked");
 	}
 }

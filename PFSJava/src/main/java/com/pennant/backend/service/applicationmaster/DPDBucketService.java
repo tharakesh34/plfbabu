@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface DPDBucketService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	DPDBucket getDPDBucket(long bucketID);
+
 	DPDBucket getApprovedDPDBucket(long bucketID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

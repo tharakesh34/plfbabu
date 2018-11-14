@@ -42,35 +42,35 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdParty> implements Serializable {
-	private static final long				serialVersionUID		= 1L;
-	private static final Logger				logger					= Logger.getLogger(CollateralThirdPartyDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(CollateralThirdPartyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_CollateralThirdPartyDialog;
+	protected Window window_CollateralThirdPartyDialog;
 
-	protected Groupbox						gb_statusDetails;
-	protected Textbox						collateralReference;
-	protected Textbox						customerCif;
-	protected Button						btnSearchSelection;
-	protected Button						viewInfo;
-	protected Longbox						customerId;
+	protected Groupbox gb_statusDetails;
+	protected Textbox collateralReference;
+	protected Textbox customerCif;
+	protected Button btnSearchSelection;
+	protected Button viewInfo;
+	protected Longbox customerId;
 
-	private boolean							enqModule = false;
-	private CollateralSetupDialogCtrl		collateralSetupDialogCtrl;
-	private CollateralThirdParty			collateralThirdParty;
-	private int								index;
-	private String[]						cifFilters;
-	private boolean							newRecord;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
-	private List<CollateralThirdParty>		collateralThirdPartyList;
-	private String							primaryCustCif;
-	private boolean							newThirdParty	= false;
-	
-	private CustomerDetailsService 			customerDetailsService;
-	private CollateralSetupService			collateralSetupService;
+	private boolean enqModule = false;
+	private CollateralSetupDialogCtrl collateralSetupDialogCtrl;
+	private CollateralThirdParty collateralThirdParty;
+	private int index;
+	private String[] cifFilters;
+	private boolean newRecord;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private List<CollateralThirdParty> collateralThirdPartyList;
+	private String primaryCustCif;
+	private boolean newThirdParty = false;
+
+	private CustomerDetailsService customerDetailsService;
+	private CollateralSetupService collateralSetupService;
 
 	public CollateralThirdPartyDialogCtrl() {
 		super();
@@ -100,7 +100,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 			}
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
-			} 
+			}
 
 			if (arguments.containsKey("primaryCustCif")) {
 				primaryCustCif = (String) arguments.get("primaryCustCif");
@@ -222,9 +222,9 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(
-					getNotes("CollateralThirdParty", String.valueOf(getCollateralThirdParty().getCustomerId()),
-							getCollateralThirdParty().getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("CollateralThirdParty",
+					String.valueOf(getCollateralThirdParty().getCustomerId()), getCollateralThirdParty().getVersion()),
+					this);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -252,19 +252,20 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		for (int i = 0; i < cifFilters.length; i++) {
 			filterList.add(new Filter("CustCIF", cifFilters[i], Filter.OP_NOT_EQUAL));
 		}
-		
+
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtersList", filterList);
 		map.put("searchObject", this.custCIFSearchObject);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		
+
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		this.customerCif.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
@@ -286,16 +287,16 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 
 	public void onClick$viewInfo(Event event) {
 		logger.debug("Entering");
-		
+
 		if ((!this.btnSearchSelection.isDisabled()) && StringUtils.isEmpty(this.customerCif.getValue())) {
 			throw new WrongValueException(this.customerCif, Labels.getLabel("FIELD_NO_INVALID",
 					new String[] { Labels.getLabel("listheader_ThirdPartyAssignmentDetails_CustomerCIF.label") }));
 		}
-		
+
 		// Customer Cross check against DB
-		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
+		if (StringUtils.isNotEmpty(this.customerCif.getValue())) {
 			Customer customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
-			if(customer == null){
+			if (customer == null) {
 				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 				return;
 			}
@@ -393,7 +394,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				btnCancel.setVisible(true);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -519,9 +520,11 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		doClearMessage();
-		this.customerCif.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralThirdPartyDialog_CustomerCif.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+		this.customerCif.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_CollateralThirdPartyDialog_CustomerCif.value"),
+						PennantRegularExpressions.REGEX_ALPHANUM, true));
 
 		logger.debug("Leaving");
 	}
@@ -566,19 +569,19 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				+ (collateralThirdParty.getCustCIF());
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			
+
 			if (StringUtils.isBlank(collateralThirdParty.getRecordType())) {
-				
+
 				if (collateralThirdParty.getCustomerId() > 0) {
-					boolean exist = this.collateralSetupService.isThirdPartyUsed(collateralThirdParty.getCollateralRef(),
-							collateralThirdParty.getCustomerId());
+					boolean exist = this.collateralSetupService.isThirdPartyUsed(
+							collateralThirdParty.getCollateralRef(), collateralThirdParty.getCustomerId());
 
 					if (exist) {
 						MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("90338", null)));
 						return;
 					}
 				}
-				
+
 				collateralThirdParty.setVersion(collateralThirdParty.getVersion() + 1);
 				collateralThirdParty.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				collateralThirdParty.setNewRecord(true);
@@ -597,8 +600,8 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						if (getCollateralSetupDialogCtrl() != null) {
-							getCollateralSetupDialogCtrl().doFillCollateralThirdPartyDetails(
-									this.collateralThirdPartyList);
+							getCollateralSetupDialogCtrl()
+									.doFillCollateralThirdPartyDetails(this.collateralThirdPartyList);
 						}
 						closeDialog();
 					}
@@ -643,17 +646,17 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		
+
 		// Customer Cross check against DB
 		Customer customer = null;
-		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
-			 customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
-				if (customer == null) {
+		if (StringUtils.isNotEmpty(this.customerCif.getValue())) {
+			customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
+			if (customer == null) {
 				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
-					return;
-				}
+				return;
+			}
 		}
-		
+
 		if (this.customerId.longValue() == 0) {
 			getCollateralThirdParty().setCustomerId(customer.getCustID());
 			getCollateralThirdParty().setCustCIF(customer.getCustCIF());
@@ -664,7 +667,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 			getCollateralThirdParty().setCustNationality(customer.getCustNationality());
 			this.customerCif.setValue(customer.getCustCIF());
 			this.customerId.setValue(customer.getCustID());
-		} 
+		}
 
 		isNew = acollateralThirdParty.isNew();
 		String tranType = "";
@@ -753,8 +756,9 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 
 		// Checks whether custCIF is same as actual custCIF
 		if (StringUtils.trimToNull(primaryCustCif).equals(acollateralThirdParty.getCustCIF())) {
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",
-					errParm, valueParm), getUserWorkspace().getUserLanguage()));
+			auditHeader.setErrorDetails(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+							getUserWorkspace().getUserLanguage()));
 		}
 
 		List<CollateralThirdParty> collaThirdPartyList = null;
@@ -768,9 +772,9 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				}
 				if (duplicateRecord) {
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -796,7 +800,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				duplicateRecord = false;
 			}
 		}
-		if (PennantConstants.TRAN_UPD.equals(tranType )) {
+		if (PennantConstants.TRAN_UPD.equals(tranType)) {
 			this.collateralThirdPartyList.remove(index);
 			this.collateralThirdPartyList.add(acollateralThirdParty);
 			recordAdded = true;
@@ -827,6 +831,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -834,6 +839,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public CollateralSetupDialogCtrl getCollateralSetupDialogCtrl() {
 		return collateralSetupDialogCtrl;
 	}
+
 	public void setCollateralSetupDialogCtrl(CollateralSetupDialogCtrl collateralSetupDialogCtrl) {
 		this.collateralSetupDialogCtrl = collateralSetupDialogCtrl;
 	}
@@ -841,6 +847,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public CollateralThirdParty getCollateralThirdParty() {
 		return collateralThirdParty;
 	}
+
 	public void setCollateralThirdParty(CollateralThirdParty collateralThirdParty) {
 		this.collateralThirdParty = collateralThirdParty;
 	}
@@ -848,6 +855,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public List<CollateralThirdParty> getCollateralThirdPartyList() {
 		return collateralThirdPartyList;
 	}
+
 	public void setCollateralThirdPartyList(List<CollateralThirdParty> collateralThirdPartyList) {
 		this.collateralThirdPartyList = collateralThirdPartyList;
 	}
@@ -855,6 +863,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public boolean isNewThirdParty() {
 		return newThirdParty;
 	}
+
 	public void setNewThirdParty(boolean newThirdParty) {
 		this.newThirdParty = newThirdParty;
 	}
@@ -862,10 +871,10 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
+
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
-	
 
 	public CollateralSetupService getCollateralSetupService() {
 		return collateralSetupService;

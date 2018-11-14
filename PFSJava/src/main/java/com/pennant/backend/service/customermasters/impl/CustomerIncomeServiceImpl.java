@@ -77,10 +77,10 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 	private static Logger logger = Logger.getLogger(CustomerIncomeServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;	
+	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerIncomeDAO customerIncomeDAO;
 	@Autowired
-	private IncomeDetailDAO incomeDetailDAO;	
+	private IncomeDetailDAO incomeDetailDAO;
 	private CustomerIncomeValidation customerIncomeValidation;
 	private CustomerDAO customerDAO;
 	private IncomeTypeDAO incomeTypeDAO;
@@ -88,7 +88,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	public CustomerIncomeServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,6 +96,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -103,83 +104,81 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	public CustomerIncomeDAO getCustomerIncomeDAO() {
 		return customerIncomeDAO;
 	}
+
 	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
 	}
 
 	public CustomerIncomeValidation getCustomerIncomeValidation() {
 
-		if(customerIncomeValidation==null){
+		if (customerIncomeValidation == null) {
 			this.customerIncomeValidation = new CustomerIncomeValidation(customerIncomeDAO);
 		}
 		return this.customerIncomeValidation;
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table CustomerIncomes/CustomerIncomes_Temp 
-	 * 			by using CustomerIncomeDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using CustomerIncomeDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerIncomes by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * CustomerIncomes/CustomerIncomes_Temp by using CustomerIncomeDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using CustomerIncomeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtCustomerIncomes by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		logger.debug("Leaving");
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
-		String tableType="";
+		String tableType = "";
 		CustomerIncome customerIncome = (CustomerIncome) auditHeader.getAuditDetail().getModelData();
-		
+
 		if (customerIncome.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
-		
+
 		if (customerIncome.isNew()) {
 			customerIncomeDAO.setLinkId(customerIncome);
 			incomeDetailDAO.save(customerIncome, tableType);
 			auditHeader.getAuditDetail().setModelData(customerIncome);
-		}else{
+		} else {
 			incomeDetailDAO.update(customerIncome, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);	
+		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table CustomerIncomes by using 
-	 * 			CustomerIncomeDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerIncomes by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * CustomerIncomes by using CustomerIncomeDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtCustomerIncomes by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "delete");
+		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
 		CustomerIncome customerIncome = (CustomerIncome) auditHeader.getAuditDetail().getModelData();
-		incomeDetailDAO.delete(customerIncome.getId(),"");		
+		incomeDetailDAO.delete(customerIncome.getId(), "");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -187,70 +186,66 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 	/**
 	 * getCustomerIncomeById fetch the details by using CustomerIncomeDAO's getCustomerIncomeById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerIncome
 	 */
 	@Override
-	public CustomerIncome 	getCustomerIncomeById(CustomerIncome customerIncome){
-		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_View", "customer");
+	public CustomerIncome getCustomerIncomeById(CustomerIncome customerIncome) {
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome, "_View", "customer");
 	}
-	
-/*	@Override
-	public BigDecimal getTotalIncomeByCustomer(long custId) {
-		return getCustomerIncomeDAO().getTotalIncomeByCustomer(custId);
-	}*/
+
+	/*
+	 * @Override public BigDecimal getTotalIncomeByCustomer(long custId) { return
+	 * getCustomerIncomeDAO().getTotalIncomeByCustomer(custId); }
+	 */
 
 	/**
-	 * getApprovedCustomerIncomeById fetch the details by using
-	 * CustomerIncomeDAO's getCustomerIncomeById method . with parameter id and
-	 * type as blank. it fetches the approved records from the CustomerIncomes.
+	 * getApprovedCustomerIncomeById fetch the details by using CustomerIncomeDAO's getCustomerIncomeById method . with
+	 * parameter id and type as blank. it fetches the approved records from the CustomerIncomes.
 	 * 
 	 * @param id
 	 *            (String)
 	 * @return CustomerIncome
 	 */
 	public CustomerIncome getApprovedCustomerIncomeById(CustomerIncome customerIncome) {
-		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome,"_AView", "customer");
+		return getCustomerIncomeDAO().getCustomerIncomeById(customerIncome, "_AView", "customer");
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using 
-	 * 				getCustomerIncomeDAO().delete with parameters customerIncome,""
-	 * 		b)  NEW		Add new record in to main table by using 
-	 * 				getCustomerIncomeDAO().save with parameters customerIncome,""
-	 * 		c)  EDIT	Update record in the main table by using 
-	 * 				getCustomerIncomeDAO().update with parameters customerIncome,""
-	 * 3)	Delete the record from the workFlow table by using 
-	 * 			getCustomerIncomeDAO().delete with parameters customerIncome,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtCustomerIncomes by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtCustomerIncomes by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerIncomeDAO().delete with
+	 * parameters customerIncome,"" b) NEW Add new record in to main table by using getCustomerIncomeDAO().save with
+	 * parameters customerIncome,"" c) EDIT Update record in the main table by using getCustomerIncomeDAO().update with
+	 * parameters customerIncome,"" 3) Delete the record from the workFlow table by using getCustomerIncomeDAO().delete
+	 * with parameters customerIncome,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomerIncomes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCustomerIncomes
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		if (!auditHeader.isNextProcess()){
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		CustomerIncome customerIncome = new CustomerIncome();
-		BeanUtils.copyProperties((CustomerIncome) auditHeader.getAuditDetail().getModelData(), customerIncome);		
+		BeanUtils.copyProperties((CustomerIncome) auditHeader.getAuditDetail().getModelData(), customerIncome);
 
 		if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
-			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(),"");				
+			tranType = PennantConstants.TRAN_DEL;
+			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(), "");
 		} else {
 			customerIncome.setRoleCode("");
 			customerIncome.setNextRoleCode("");
@@ -258,20 +253,20 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 			customerIncome.setNextTaskId("");
 			customerIncome.setWorkflowId(0);
 
-			if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
-				tranType=PennantConstants.TRAN_ADD;
+			if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				customerIncome.setRecordType("");
 				customerIncomeDAO.setLinkId(customerIncome);
-				incomeDetailDAO.save(customerIncome,"");
+				incomeDetailDAO.save(customerIncome, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				customerIncome.setRecordType("");
-				incomeDetailDAO.update(customerIncome,"");
+				incomeDetailDAO.update(customerIncome, "");
 			}
 		}
 
-		if(!StringUtils.equals(customerIncome.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(),"_Temp");
+		if (!StringUtils.equals(customerIncome.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(), "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
@@ -285,28 +280,27 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using
-	 * 			getCustomerIncomeDAO().delete with parameters customerIncome,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtCustomerIncomes by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerIncomeDAO().delete with parameters customerIncome,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtCustomerIncomes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		CustomerIncome customerIncome= (CustomerIncome) auditHeader.getAuditDetail().getModelData();			
+		CustomerIncome customerIncome = (CustomerIncome) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(),"_Temp");
+		incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(), "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -314,64 +308,62 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		auditHeader= getCustomerIncomeValidation().incomeValidation(auditHeader, method);
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = getCustomerIncomeValidation().incomeValidation(auditHeader, method);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	@Override
-    public Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF) {
-	    List<CustomerIncome> list = incomeDetailDAO.getIncomesByCustomer(custID, "_AView");
-	    Map<String, BigDecimal> map = null;
-	    if(list != null && list.size() > 0){
-	    	map = new HashMap<String, BigDecimal>(list.size());
-	    	for (CustomerIncome customerIncome : list) {
-	    		 String key = "I_";
-	    		if(PennantConstants.EXPENSE.equals(customerIncome.getIncomeExpense())){
-	    			key = "E_";
-	    		}
-	    		key = key+customerIncome.getCategory()+"_"+customerIncome.getIncomeType();
 
-	    		if(customerIncome.isJointCust()){
-	    			key = key+"_S";
-	    		}else{
-	    			key = key+"_P";
-	    		}
-	    		map.put(key, customerIncome.getIncome());
-            }
-	    }
-		return map;
-    }
-	
 	@Override
-    public List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF) {
-	    return incomeDetailDAO.getIncomesByCustomer(custID, "_AView");
-    }
+	public Map<String, BigDecimal> getCustomerIncomeByCustomer(long custID, boolean isWIF) {
+		List<CustomerIncome> list = incomeDetailDAO.getIncomesByCustomer(custID, "_AView");
+		Map<String, BigDecimal> map = null;
+		if (list != null && list.size() > 0) {
+			map = new HashMap<String, BigDecimal>(list.size());
+			for (CustomerIncome customerIncome : list) {
+				String key = "I_";
+				if (PennantConstants.EXPENSE.equals(customerIncome.getIncomeExpense())) {
+					key = "E_";
+				}
+				key = key + customerIncome.getCategory() + "_" + customerIncome.getIncomeType();
+
+				if (customerIncome.isJointCust()) {
+					key = key + "_S";
+				} else {
+					key = key + "_P";
+				}
+				map.put(key, customerIncome.getIncome());
+			}
+		}
+		return map;
+	}
+
+	@Override
+	public List<CustomerIncome> getCustomerIncomes(long custID, boolean isWIF) {
+		return incomeDetailDAO.getIncomesByCustomer(custID, "_AView");
+	}
 
 	@Override
 	public AuditDetail doValidations(CustomerIncome customerIncome) {
 		AuditDetail auditDetail = new AuditDetail();
 
 		if (customerIncome != null) {
-			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeTypes", "IncomeExpense",
-					customerIncome.getIncomeExpense()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTIncomeTypes", "IncomeExpense", customerIncome.getIncomeExpense()));
 			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeTypes", "Category", customerIncome.getCategory()));
-			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeTypes", "IncomeTypeCode",
-					customerIncome.getIncomeType()));
-			auditDetail.setErrorDetail(validateMasterCode("BMTIncomeCategory", "IncomeCategory",
-					customerIncome.getCategory()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTIncomeTypes", "IncomeTypeCode", customerIncome.getIncomeType()));
+			auditDetail.setErrorDetail(
+					validateMasterCode("BMTIncomeCategory", "IncomeCategory", customerIncome.getCategory()));
 			IncomeType incomeType = getIncomeTypeDAO().getIncomeTypeById(customerIncome.getIncomeType(),
 					customerIncome.getIncomeExpense(), customerIncome.getCategory(), "_AView");
 			if (incomeType == null) {
@@ -411,11 +403,12 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 		logger.debug("Leaving");
 		return errorDetail;
 	}
+
 	@Override
 	public int getVersion(CustomerIncome customerIncome) {
 		return getCustomerIncomeDAO().getVersion(customerIncome);
 	}
-	
+
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
@@ -431,5 +424,5 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 	public void setIncomeTypeDAO(IncomeTypeDAO incomeTypeDAO) {
 		this.incomeTypeDAO = incomeTypeDAO;
 	}
-	
+
 }

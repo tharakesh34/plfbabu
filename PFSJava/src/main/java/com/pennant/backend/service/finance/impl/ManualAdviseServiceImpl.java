@@ -60,7 +60,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
-
 /**
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
  */
@@ -69,7 +68,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -83,43 +81,44 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the manualAdviseDAO
 	 */
 	public ManualAdviseDAO getManualAdviseDAO() {
 		return manualAdviseDAO;
 	}
+
 	/**
-	 * @param manualAdviseDAO the manualAdviseDAO to set
+	 * @param manualAdviseDAO
+	 *            the manualAdviseDAO to set
 	 */
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * ManualAdvise/ManualAdvise_Temp by using ManualAdviseDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ManualAdviseDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table ManualAdvise/ManualAdvise_Temp
+	 * by using ManualAdviseDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using ManualAdviseDAO's update method 3) Audit the record in to AuditHeader and AdtManualAdvise
+	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);	
+		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
@@ -134,11 +133,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		if (manualAdvise.isNew()) {
-			manualAdvise.setId(Long.parseLong(getManualAdviseDAO().save(manualAdvise,tableType)));
+			manualAdvise.setId(Long.parseLong(getManualAdviseDAO().save(manualAdvise, tableType)));
 			auditHeader.getAuditDetail().setModelData(manualAdvise);
 			auditHeader.setAuditReference(String.valueOf(manualAdvise.getAdviseID()));
-		}else{
-			getManualAdviseDAO().update(manualAdvise,tableType);
+		} else {
+			getManualAdviseDAO().update(manualAdvise, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -148,12 +147,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table ManualAdvise by using ManualAdviseDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * ManualAdvise by using ManualAdviseDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -163,14 +160,14 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
-		getManualAdviseDAO().delete(manualAdvise,TableType.MAIN_TAB);
+		getManualAdviseDAO().delete(manualAdvise, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -179,8 +176,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * getManualAdvise fetch the details by using ManualAdviseDAO's getManualAdviseById
-	 * method.
+	 * getManualAdvise fetch the details by using ManualAdviseDAO's getManualAdviseById method.
 	 * 
 	 * @param adviseID
 	 *            adviseID of the ManualAdvise.
@@ -188,42 +184,36 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 */
 	@Override
 	public ManualAdvise getManualAdviseById(long adviseID) {
-		return getManualAdviseDAO().getManualAdviseById(adviseID,"_View");
+		return getManualAdviseDAO().getManualAdviseById(adviseID, "_View");
 	}
 
 	/**
-	 * getApprovedManualAdviseById fetch the details by using ManualAdviseDAO's
-	 * getManualAdviseById method . with parameter id and type as blank. it fetches
-	 * the approved records from the ManualAdvise.
+	 * getApprovedManualAdviseById fetch the details by using ManualAdviseDAO's getManualAdviseById method . with
+	 * parameter id and type as blank. it fetches the approved records from the ManualAdvise.
 	 * 
 	 * @param adviseID
-	 *            adviseID of the ManualAdvise.
-	 *            (String)
+	 *            adviseID of the ManualAdvise. (String)
 	 * @return ManualAdvise
 	 */
 	public ManualAdvise getApprovedManualAdvise(long adviseID) {
-		return getManualAdviseDAO().getManualAdviseById(adviseID,"_AView");
-	}	
+		return getManualAdviseDAO().getManualAdviseById(adviseID, "_AView");
+	}
 
 	@Override
 	public String getTaxComponent(Long adviseID, String type) {
 		return getManualAdviseDAO().getTaxComponent(adviseID, type);
 	}
-	
+
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getManualAdviseDAO().delete with parameters manualAdvise,"" b) NEW Add new
-	 * record in to main table by using getManualAdviseDAO().save with parameters
-	 * manualAdvise,"" c) EDIT Update record in the main table by using
-	 * getManualAdviseDAO().update with parameters manualAdvise,"" 3) Delete the record
-	 * from the workFlow table by using getManualAdviseDAO().delete with parameters
-	 * manualAdvise,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getManualAdviseDAO().delete with
+	 * parameters manualAdvise,"" b) NEW Add new record in to main table by using getManualAdviseDAO().save with
+	 * parameters manualAdvise,"" c) EDIT Update record in the main table by using getManualAdviseDAO().update with
+	 * parameters manualAdvise,"" 3) Delete the record from the workFlow table by using getManualAdviseDAO().delete with
+	 * parameters manualAdvise,"_Temp" 4) Audit the record in to AuditHeader and AdtManualAdvise by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtManualAdvise by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -233,8 +223,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
@@ -246,9 +236,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
 
-
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(manualAdvise.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(manualAdviseDAO.getManualAdviseById(manualAdvise.getAdviseID(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(manualAdviseDAO.getManualAdviseById(manualAdvise.getAdviseID(), ""));
 		}
 
 		if (manualAdvise.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -261,8 +251,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			manualAdvise.setNextTaskId("");
 			manualAdvise.setWorkflowId(0);
 
-			if (manualAdvise.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (manualAdvise.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				manualAdvise.setRecordType("");
 				getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
@@ -287,23 +276,20 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getManualAdviseDAO().delete with parameters
-	 * manualAdvise,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getManualAdviseDAO().delete with parameters manualAdvise,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -312,7 +298,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getManualAdviseDAO().delete(manualAdvise,TableType.TEMP_TAB);
+		getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -321,22 +307,20 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -344,8 +328,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
+	 * from getManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -357,7 +341,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		// Write the required validation over hear.
 
-
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
@@ -366,6 +349,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public List<ManualAdviseMovements> getAdivseMovements(long id) {
 		return getManualAdviseDAO().getAdviseMovements(id);
 	}
+
 	@Override
 	public FinanceMain getFinanceDetails(String finReference) {
 		return manualAdviseDAO.getFinanceDetails(finReference);

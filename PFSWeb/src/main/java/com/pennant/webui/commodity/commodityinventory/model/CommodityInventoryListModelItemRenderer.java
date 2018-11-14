@@ -83,7 +83,8 @@ public class CommodityInventoryListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(commodityInventory.getFinalSettlementDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantApplicationUtil.amountFormate(commodityInventory.getPurchaseAmount(),CurrencyUtil.getFormat(commodityInventory.getCommodityCcy())));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(commodityInventory.getPurchaseAmount(),
+				CurrencyUtil.getFormat(commodityInventory.getCommodityCcy())));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(commodityInventory.getQuantity()));
 		lc.setParent(item);

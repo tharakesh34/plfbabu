@@ -16,17 +16,17 @@ public class GSTInvoiceGeneratorJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		GSTInvoiceGeneratorService invoiceGenerator = null;
-		
+
 		try {
 			invoiceGenerator = (GSTInvoiceGeneratorService) SpringBeanUtil.getBean("gstInvoiceGenerator");
 		} catch (Exception e) {
 			//do nothing
 		}
-		
+
 		if (invoiceGenerator == null) {
 			invoiceGenerator = (GSTInvoiceGeneratorService) SpringBeanUtil.getBean("defaultGstInvoiceGenerator");
 		}
-		
+
 		if (invoiceGenerator != null) {
 			invoiceGenerator.generateInvoice();
 		}

@@ -95,36 +95,35 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;
-	
+
 	private PaymentDetailService paymentDetailService;
 	private PaymentInstructionService paymentInstructionService;
 	private AccountingSetService accountingSetService;
 	private PostingsDAO postingsDAO;
-	private AccountEngineExecution	engineExecution;
-	private transient PostingsPreparationUtil		postingsPreparationUtil;
+	private AccountEngineExecution engineExecution;
+	private transient PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentTaxDetailDAO paymentTaxDetailDAO;
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
- 
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
- 
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
- 
+
 	public PaymentHeaderDAO getPaymentHeaderDAO() {
 		return paymentHeaderDAO;
 	}
- 
+
 	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
 		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
-	
+
 	public void setPaymentDetailService(PaymentDetailService paymentDetailService) {
 		this.paymentDetailService = paymentDetailService;
 	}
@@ -140,6 +139,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
+
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
@@ -180,7 +180,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			auditHeader.setAuditReference(String.valueOf(paymentHeader.getPaymentId()));
 		} else {
 			getPaymentHeaderDAO().update(paymentHeader, tableType);
-			
+
 			// Payment Tax Details for Payables
 			getPaymentTaxDetailDAO().deleteByPaymentID(paymentHeader.getPaymentId(), tableType);
 		}
@@ -188,19 +188,21 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		// PaymentHeader
 		if (paymentHeader.getPaymentDetailList() != null && paymentHeader.getPaymentDetailList().size() > 0) {
 			List<AuditDetail> payAuditDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
-			payAuditDetails = this.paymentDetailService.processPaymentDetails(payAuditDetails, tableType, "", 0, paymentHeader.getFinReference());
+			payAuditDetails = this.paymentDetailService.processPaymentDetails(payAuditDetails, tableType, "", 0,
+					paymentHeader.getFinReference());
 			auditDetails.addAll(payAuditDetails);
 		}
-		
+
 		// PaymentInstructions
 		if (paymentHeader.getPaymentInstruction() != null) {
 			List<AuditDetail> paymentInstrAuditDetails = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
-			paymentInstrAuditDetails = this.paymentInstructionService.processPaymentInstrDetails(paymentInstrAuditDetails, tableType, "");
+			paymentInstrAuditDetails = this.paymentInstructionService
+					.processPaymentInstrDetails(paymentInstrAuditDetails, tableType, "");
 			auditDetails.addAll(paymentInstrAuditDetails);
 		}
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -238,7 +240,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		getPaymentHeaderDAO().delete(paymentHeader, TableType.MAIN_TAB);
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(paymentHeader,TableType.MAIN_TAB, auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(paymentHeader, TableType.MAIN_TAB, auditHeader.getAuditTranType())));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -256,16 +259,19 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public PaymentHeader getPaymentHeader(long paymentId) {
 		PaymentHeader paymentHeader = getPaymentHeaderDAO().getPaymentHeader(paymentId, "_View");
-		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentHeader.getPaymentId(), "_View");
-		
+		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentHeader.getPaymentId(),
+				"_View");
+
 		if (list != null) {
 			paymentHeader.setPaymentDetailList(list);
 			for (PaymentDetail paymentDetail : list) {
-				paymentDetail.setPaymentTaxDetail(getPaymentTaxDetailDAO().getTaxDetailByID(paymentDetail.getPaymentDetailId(), "_Temp"));
+				paymentDetail.setPaymentTaxDetail(
+						getPaymentTaxDetailDAO().getTaxDetailByID(paymentDetail.getPaymentDetailId(), "_Temp"));
 			}
 		}
-		
-		PaymentInstruction paymentInstruction = this.paymentInstructionService.getPaymentInstructionDetails(paymentHeader.getPaymentId(), "_View");
+
+		PaymentInstruction paymentInstruction = this.paymentInstructionService
+				.getPaymentInstructionDetails(paymentHeader.getPaymentId(), "_View");
 		if (paymentInstruction != null) {
 			paymentHeader.setPaymentInstruction(paymentInstruction);
 		}
@@ -284,12 +290,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return getPaymentHeaderDAO().getPaymentHeader(paymentId, "_AView");
 	}
 
-	
 	@Override
 	public FinanceMain getFinanceDetails(String finReference) {
 		return getPaymentHeaderDAO().getFinanceDetails(finReference);
 	}
-	
+
 	@Override
 	public List<FinExcessAmount> getfinExcessAmount(String finReference) {
 		return getPaymentHeaderDAO().getfinExcessAmount(finReference);
@@ -330,16 +335,17 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		PaymentHeader paymentHeader = new PaymentHeader();
 		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
-		
+
 		// Processing Accounting Details
 		if (StringUtils.equals(paymentHeader.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
-		
+
 		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentHeader.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(paymentHeaderDAO.getPaymentHeader(paymentHeader.getPaymentId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(paymentHeaderDAO.getPaymentHeader(paymentHeader.getPaymentId(), ""));
 		}
 
 		if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -362,12 +368,13 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				paymentHeader.setRecordType("");
 				getPaymentHeaderDAO().update(paymentHeader, TableType.MAIN_TAB);
 			}
-			
+
 			// PaymentDetails
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				List<AuditDetail> paymentDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
 				if (paymentDetails != null && !paymentDetails.isEmpty()) {
-					paymentDetails = this.paymentDetailService.processPaymentDetails(paymentDetails, TableType.MAIN_TAB, "doApprove", paymentHeader.getLinkedTranId(), paymentHeader.getFinReference());
+					paymentDetails = this.paymentDetailService.processPaymentDetails(paymentDetails, TableType.MAIN_TAB,
+							"doApprove", paymentHeader.getLinkedTranId(), paymentHeader.getFinReference());
 					auditDetails.addAll(paymentDetails);
 				}
 			}
@@ -376,17 +383,19 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				List<AuditDetail> paymentinstructions = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
 
 				if (paymentinstructions != null && !paymentinstructions.isEmpty()) {
-					paymentinstructions = this.paymentInstructionService.processPaymentInstrDetails(paymentinstructions, TableType.MAIN_TAB, "doApprove");
+					paymentinstructions = this.paymentInstructionService.processPaymentInstrDetails(paymentinstructions,
+							TableType.MAIN_TAB, "doApprove");
 					auditDetails.addAll(paymentinstructions);
 				}
 			}
 		}
-		
+
 		auditHeader.setAuditDetails(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 		String[] fields = PennantJavaUtil.getFieldDetails(new PaymentHeader(), paymentHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], paymentHeader.getBefImage(), paymentHeader));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				paymentHeader.getBefImage(), paymentHeader));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		getPaymentHeaderDAO().delete(paymentHeader, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -395,7 +404,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(paymentHeader);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -423,7 +432,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(
+				processChildsAudit(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
 		getPaymentHeaderDAO().delete(paymentHeader, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -445,7 +455,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		auditHeader = prepareChildsAudit(auditHeader, method);
@@ -479,7 +489,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	// =================================== List maintaince
 	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
@@ -501,7 +511,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				detail.setPaymentId(paymentHeader.getPaymentId());
 				detail.setWorkflowId(paymentHeader.getWorkflowId());
 			}
-			auditDetailMap.put("PaymentDetails", this.paymentDetailService.setPaymentDetailAuditData(paymentHeader.getPaymentDetailList(), auditTranType, method));
+			auditDetailMap.put("PaymentDetails", this.paymentDetailService
+					.setPaymentDetailAuditData(paymentHeader.getPaymentDetailList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("PaymentDetails"));
 		}
 
@@ -520,10 +531,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			detail.setTaskId(paymentHeader.getTaskId());
 			detail.setNextTaskId(paymentHeader.getNextTaskId());
 
-			auditDetailMap.put("PaymentInstructions", this.paymentInstructionService.setPaymentInstructionDetailsAuditData(paymentHeader.getPaymentInstruction(), auditTranType, method));
+			auditDetailMap.put("PaymentInstructions",
+					this.paymentInstructionService.setPaymentInstructionDetailsAuditData(
+							paymentHeader.getPaymentInstruction(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("PaymentInstructions"));
 		}
- 
+
 		paymentHeader.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(paymentHeader);
 		auditHeader.setAuditDetails(auditDetails);
@@ -531,19 +544,20 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		return auditHeader;
 	}
-	
+
 	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
-	
+
 		// PaymentDetails
 		if (paymentHeader.getAuditDetailMap().get("PaymentDetails") != null) {
 			auditDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = this.paymentDetailService.validation(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details = this.paymentDetailService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -554,7 +568,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (paymentHeader.getAuditDetailMap().get("PaymentInstruction") != null) {
 			auditDetails = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = this.paymentInstructionService.validation(auditDetail, usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details = this.paymentInstructionService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -563,32 +578,34 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug("Leaving");
 		return errorDetails;
 	}
-	
+
 	public List<AuditDetail> deleteChilds(PaymentHeader paymentHeader, TableType tableType, String auditTranType) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		// Payment Tax Details for Payables
 		getPaymentTaxDetailDAO().deleteByPaymentID(paymentHeader.getPaymentId(), tableType);
-		
+
 		// PaymentDetails
 		if (paymentHeader.getPaymentDetailList() != null && !paymentHeader.getPaymentDetailList().isEmpty()) {
-			auditDetails.addAll(this.paymentDetailService.delete(paymentHeader.getPaymentDetailList(), tableType, auditTranType, paymentHeader.getPaymentId()));
+			auditDetails.addAll(this.paymentDetailService.delete(paymentHeader.getPaymentDetailList(), tableType,
+					auditTranType, paymentHeader.getPaymentId()));
 		}
 		// PaymentInstructions
 		if (paymentHeader.getPaymentInstruction() != null) {
-			auditDetails.addAll(this.paymentInstructionService.delete(paymentHeader.getPaymentInstruction(), tableType, auditTranType, paymentHeader.getPaymentId()));
+			auditDetails.addAll(this.paymentInstructionService.delete(paymentHeader.getPaymentInstruction(), tableType,
+					auditTranType, paymentHeader.getPaymentId()));
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-	
+
 	private List<AuditDetail> processChildsAudit(List<AuditDetail> list) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		if (list == null || list.isEmpty()) {
 			return auditDetails;
 		}
@@ -601,11 +618,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				rcdType = ((PaymentDetail) object).getRecordType();
 			} else if (object instanceof PaymentInstruction) {
 				rcdType = ((PaymentInstruction) object).getRecordType();
-			} 
+			}
 
 			if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
 				transType = PennantConstants.TRAN_ADD;
-			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType) || PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
+			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType)
+					|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
 				transType = PennantConstants.TRAN_DEL;
 			} else {
 				transType = PennantConstants.TRAN_UPD;
@@ -613,11 +631,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			auditDetails.add(new AuditDetail(transType, detail.getAuditSeq(), detail.getBefImage(), object));
 		}
 		logger.debug("Leaving");
-		
+
 		return auditDetails;
 	}
-	
-	
+
 	/**
 	 * Method for Execute posting Details on Core Banking Side
 	 * 
@@ -632,93 +649,92 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		AEEvent aeEvent = new AEEvent();
 		PaymentHeader paymentHeader = new PaymentHeader();
 		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
-		
-			if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
-				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-				if (amountCodes == null) {
-					amountCodes = new AEAmountCodes();
-				}
-				FinanceMain financeMain = getPaymentHeaderDAO().getFinanceDetails(paymentHeader.getFinReference());
-				amountCodes.setFinType(financeMain.getFinType());
-				aeEvent.setBranch(financeMain.getFinBranch());
-				aeEvent.setCustID(financeMain.getCustID());
-				
-				
 
-				PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
-				if (paymentInstruction != null) {
-					amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
-					amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
-					aeEvent.setValueDate(paymentInstruction.getPostDate());
-				}
-				
-				aeEvent.setCcy(financeMain.getFinCcy());
-				aeEvent.setFinReference(financeMain.getFinReference());
-				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-
-				BigDecimal excessAmount = BigDecimal.ZERO;
-				BigDecimal emiInAdavance = BigDecimal.ZERO;
-				HashMap<String, Object> eventMapping=aeEvent.getDataMap();
-				for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
-					if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
-						BigDecimal payableAmount = BigDecimal.ZERO;
-						if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_P")){
-							payableAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_P");
-						}
-						eventMapping.put(paymentDetail.getFeeTypeCode()+"_P",payableAmount.add(paymentDetail.getAmount()));
-						
-						if(paymentDetail.getPaymentTaxDetail() != null){
-							
-							PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
-							
-							//CGST
-							BigDecimal gstAmount = BigDecimal.ZERO;
-							if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_CGST_P")){
-								gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_CGST_P");
-							}
-							eventMapping.put(paymentDetail.getFeeTypeCode()+"_CGST_P",gstAmount.add(tax.getPaidCGST()));
-							
-							//SGST
-							gstAmount = BigDecimal.ZERO;
-							if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_SGST_P")){
-								gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_SGST_P");
-							}
-							eventMapping.put(paymentDetail.getFeeTypeCode()+"_SGST_P",gstAmount.add(tax.getPaidSGST()));
-							
-							//UGST
-							gstAmount = BigDecimal.ZERO;
-							if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_UGST_P")){
-								gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_UGST_P");
-							}
-							eventMapping.put(paymentDetail.getFeeTypeCode()+"_UGST_P",gstAmount.add(tax.getPaidUGST()));
-							
-							//IGST
-							gstAmount = BigDecimal.ZERO;
-							if(eventMapping.containsKey(paymentDetail.getFeeTypeCode()+"_IGST_P")){
-								gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode()+"_IGST_P");
-							}
-							eventMapping.put(paymentDetail.getFeeTypeCode()+"_IGST_P",gstAmount.add(tax.getPaidIGST()));
-
-						}
-					} else if ("E".equals(paymentDetail.getAmountType())) {
-						excessAmount = excessAmount.add(paymentDetail.getAmount());
-					} else if ("A".equals(paymentDetail.getAmountType())) {
-						emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
-					}
-				}
-				eventMapping.put("pi_excessAmount", excessAmount);
-				eventMapping.put("pi_emiInAdvance", emiInAdavance);
-				eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
-				aeEvent.setDataMap(eventMapping);
-				
-				long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-						AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
-				
-				aeEvent.getAcSetIDList().add(accountsetId);
-
-				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+		if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			if (amountCodes == null) {
+				amountCodes = new AEAmountCodes();
 			}
+			FinanceMain financeMain = getPaymentHeaderDAO().getFinanceDetails(paymentHeader.getFinReference());
+			amountCodes.setFinType(financeMain.getFinType());
+			aeEvent.setBranch(financeMain.getFinBranch());
+			aeEvent.setCustID(financeMain.getCustID());
+
+			PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
+			if (paymentInstruction != null) {
+				amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
+				aeEvent.setValueDate(paymentInstruction.getPostDate());
+			}
+
+			aeEvent.setCcy(financeMain.getFinCcy());
+			aeEvent.setFinReference(financeMain.getFinReference());
+			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+			BigDecimal excessAmount = BigDecimal.ZERO;
+			BigDecimal emiInAdavance = BigDecimal.ZERO;
+			HashMap<String, Object> eventMapping = aeEvent.getDataMap();
+			for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
+				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+					BigDecimal payableAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_P")) {
+						payableAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_P");
+					}
+					eventMapping.put(paymentDetail.getFeeTypeCode() + "_P",
+							payableAmount.add(paymentDetail.getAmount()));
+
+					if (paymentDetail.getPaymentTaxDetail() != null) {
+
+						PaymentTaxDetail tax = paymentDetail.getPaymentTaxDetail();
+
+						//CGST
+						BigDecimal gstAmount = BigDecimal.ZERO;
+						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_CGST_P")) {
+							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_CGST_P");
+						}
+						eventMapping.put(paymentDetail.getFeeTypeCode() + "_CGST_P", gstAmount.add(tax.getPaidCGST()));
+
+						//SGST
+						gstAmount = BigDecimal.ZERO;
+						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_SGST_P")) {
+							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_SGST_P");
+						}
+						eventMapping.put(paymentDetail.getFeeTypeCode() + "_SGST_P", gstAmount.add(tax.getPaidSGST()));
+
+						//UGST
+						gstAmount = BigDecimal.ZERO;
+						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_UGST_P")) {
+							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_UGST_P");
+						}
+						eventMapping.put(paymentDetail.getFeeTypeCode() + "_UGST_P", gstAmount.add(tax.getPaidUGST()));
+
+						//IGST
+						gstAmount = BigDecimal.ZERO;
+						if (eventMapping.containsKey(paymentDetail.getFeeTypeCode() + "_IGST_P")) {
+							gstAmount = (BigDecimal) eventMapping.get(paymentDetail.getFeeTypeCode() + "_IGST_P");
+						}
+						eventMapping.put(paymentDetail.getFeeTypeCode() + "_IGST_P", gstAmount.add(tax.getPaidIGST()));
+
+					}
+				} else if ("E".equals(paymentDetail.getAmountType())) {
+					excessAmount = excessAmount.add(paymentDetail.getAmount());
+				} else if ("A".equals(paymentDetail.getAmountType())) {
+					emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
+				}
+			}
+			eventMapping.put("pi_excessAmount", excessAmount);
+			eventMapping.put("pi_emiInAdvance", emiInAdavance);
+			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+			aeEvent.setDataMap(eventMapping);
+
+			long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+
+			aeEvent.getAcSetIDList().add(accountsetId);
+
+			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+		}
 		paymentHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 		auditHeader.getAuditDetail().setModelData(paymentHeader);
 		logger.debug("Leaving");

@@ -50,15 +50,23 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.dedup.DedupFields;
 
 public interface DedupFieldsService {
-	
+
 	DedupFields getDedupFields();
+
 	DedupFields getNewDedupFields();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	DedupFields getDedupFieldsById(String id);
+
 	DedupFields getApprovedDedupFieldsById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<BuilderTable> getFieldList(String queryModule);
-	
+
 }

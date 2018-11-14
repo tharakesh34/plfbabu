@@ -65,9 +65,9 @@ import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.service.systemmasters.EMailTypeService;
 import com.pennant.webui.systemmasters.emailtype.model.EMailTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/EMailType/EMailTypeList.zul file.
@@ -95,7 +95,7 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 	protected Textbox emailTypeDesc;
 	protected Intbox emailTypePriority;
 	protected Checkbox emailTypeIsActive;
-	protected Row	   row_EmailTypePriority;
+	protected Row row_EmailTypePriority;
 
 	protected Listbox sortOperator_emailTypeCode;
 	protected Listbox sortOperator_emailTypeDesc;
@@ -146,7 +146,7 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 				sortOperator_emailTypePriority, Operators.NUMERIC);
 		registerField("emailTypeIsActive", listheader_EmailTypeIsActive, SortOrder.NONE, emailTypeIsActive,
 				sortOperator_emailTypeIsActive, Operators.BOOLEAN);
-		
+
 		if (ImplementationConstants.ALLOW_EMIALTYPE_PRIORITY) {
 			this.row_EmailTypePriority.setVisible(true);
 			this.listheader_EmailTypePriority.setVisible(true);

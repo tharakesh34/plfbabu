@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.solutionfactory.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -66,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implements StepPolicyHeaderDAO {
 	private static Logger logger = Logger.getLogger(StepPolicyHeaderDAOImpl.class);
-	
+
 	public StepPolicyHeaderDAOImpl() {
 		super();
 	}
@@ -75,9 +73,9 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 	 * Fetch the Record Step Policy Header details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return StepPolicyHeader
 	 */
 	@Override
@@ -95,7 +93,8 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyHeader);
-		RowMapper<StepPolicyHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StepPolicyHeader.class);
+		RowMapper<StepPolicyHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(StepPolicyHeader.class);
 
 		try {
 			stepPolicyHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -108,13 +107,13 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTStepPolicyHeaders or RMTStepPolicyHeaders_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the RMTStepPolicyHeaders or RMTStepPolicyHeaders_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param Finance
-	 *         Types (stepPolicyHeader)
+	 *            Types (stepPolicyHeader)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -123,11 +122,11 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 	public void delete(StepPolicyHeader stepPolicyHeader, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From StepPolicyHeader");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PolicyCode =:PolicyCode");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyHeader);
 
 		try {
@@ -148,9 +147,9 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 	 * save Finance Types
 	 * 
 	 * @param Finance
-	 *         Types (stepPolicyHeader)
+	 *            Types (stepPolicyHeader)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -160,11 +159,12 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder("Insert Into StepPolicyHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(PolicyCode, PolicyDesc,StepType,Version , LastMntBy, LastMntOn, RecordStatus,"); 
+		insertSql.append("(PolicyCode, PolicyDesc,StepType,Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId,RecordType, WorkflowId)");
-		insertSql.append(" Values(:PolicyCode, :PolicyDesc, :StepType, :Version , :LastMntBy, :LastMntOn, :RecordStatus, ");
+		insertSql.append(
+				" Values(:PolicyCode, :PolicyDesc, :StepType, :Version , :LastMntBy, :LastMntOn, :RecordStatus, ");
 		insertSql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyHeader);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -173,14 +173,13 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 	}
 
 	/**
-	 * This method updates the Record RMTStepPolicyHeaders or RMTStepPolicyHeaders_Temp. if Record not updated
-	 * then throws DataAccessException with error 41004. update Finance Types by key FinType and
-	 * Version
+	 * This method updates the Record RMTStepPolicyHeaders or RMTStepPolicyHeaders_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
 	 * @param Finance
-	 *         Types (stepPolicyHeader)
+	 *            Types (stepPolicyHeader)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -192,9 +191,10 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 		StringBuilder updateSql = new StringBuilder("Update StepPolicyHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set PolicyDesc = :PolicyDesc, StepType = :StepType,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PolicyCode =:PolicyCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
@@ -208,5 +208,5 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

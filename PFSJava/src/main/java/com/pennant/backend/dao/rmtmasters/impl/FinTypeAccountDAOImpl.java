@@ -66,11 +66,11 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements FinTypeAccountDAO {
 	private static Logger logger = Logger.getLogger(FinTypeAccountDAOImpl.class);
-	
+
 	public FinTypeAccountDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method set the Work Flow id based on the module name and return the new FinanceType
 	 * 
@@ -85,8 +85,8 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 	}
 
 	/**
-	 * This method get the module from method getFinanceType() and set the new record flag as true and
-	 * return FinanceType()
+	 * This method get the module from method getFinanceType() and set the new record flag as true and return
+	 * FinanceType()
 	 * 
 	 * @return FinanceType
 	 */
@@ -99,15 +99,13 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 		return finTypeAccount;
 	}
 
-
-
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -128,19 +126,18 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccount);
 		RowMapper<FinTypeAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccount.class);
-		
+
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	
+
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
 	 * @param id
-	 *         (String)
+	 *            (String)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -150,7 +147,7 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 		StringBuilder selectSql = new StringBuilder("SELECT FinType,FinCcy, Event, AlwManualEntry, ");
 		selectSql.append(" AlwCustomerAccount, AccountReceivable, CustAccountTypes, DefaultAccNum,");
 		if (type.contains("View")) {
-		selectSql.append(" FinCcyName,FinFormatter,");
+			selectSql.append(" FinCcyName,FinFormatter,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -179,9 +176,9 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 	 * save Finance Types
 	 * 
 	 * @param Finance
-	 *         Types (financeType)
+	 *            Types (financeType)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,19 +187,19 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 	@Override
 	public String save(FinTypeAccount finTypeAccount, String type) {
 		logger.debug("Entering ");
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into FinTypeAccount" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (FinType, FinCcy, Event, AlwManualEntry," );
-		insertSql.append(" AlwCustomerAccount, AccountReceivable, CustAccountTypes, DefaultAccNum," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:FinType, :FinCcy, :Event, :AlwManualEntry," );
-		insertSql.append(" :AlwCustomerAccount, :AccountReceivable, :CustAccountTypes, :DefaultAccNum," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinTypeAccount");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (FinType, FinCcy, Event, AlwManualEntry,");
+		insertSql.append(" AlwCustomerAccount, AccountReceivable, CustAccountTypes, DefaultAccNum,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FinType, :FinCcy, :Event, :AlwManualEntry,");
+		insertSql.append(" :AlwCustomerAccount, :AccountReceivable, :CustAccountTypes, :DefaultAccNum,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccount);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving ");
@@ -210,14 +207,13 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 	}
 
 	/**
-	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not updated
-	 * then throws DataAccessException with error 41004. update Finance Types by key FinType and
-	 * Version
+	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
 	 * @param Finance
-	 *         Types (financeType)
+	 *            Types (financeType)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -227,74 +223,73 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 	public void update(FinTypeAccount finTypeAccount, String type) {
 		int recordCount = 0;
 		logger.debug("Entering ");
-		
-		StringBuilder updateSql = new StringBuilder("Update FinTypeAccount" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
+
+		StringBuilder updateSql = new StringBuilder("Update FinTypeAccount");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set AlwManualEntry = :AlwManualEntry,AlwCustomerAccount = :AlwCustomerAccount,");
 		updateSql.append(" AccountReceivable = :AccountReceivable,CustAccountTypes = :CustAccountTypes,");
-		updateSql.append(" DefaultAccNum = :DefaultAccNum, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(
+				" DefaultAccNum = :DefaultAccNum, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinType =:FinType and FinCcy=:FinCcy and Event=:Event ");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccount);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
-	
-	
+
 	/**
-	 * This method Deletes the Record from the RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param Finance
-	 *         Types (financeType)
+	 *            Types (financeType)
 	 * @param type
-	 *         (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinTypeAccount finTypeAccount,String type) {
+	public void delete(FinTypeAccount finTypeAccount, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeAccount");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append("  Where FinType =:FinType And FinCcy =:FinCcy And Event =:Event");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccount);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * This method initialize the Record.
 	 * 
 	 * @param FinanceType
-	 *         (financeType)
+	 *            (financeType)
 	 * @return FinanceType
 	 */
-	
+
 	@Override
 	public void deleteByFinType(String finType, String type) {
 		logger.debug("Entering");
@@ -314,5 +309,5 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

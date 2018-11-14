@@ -52,24 +52,24 @@ import com.pennanttech.pff.external.dao.NiyoginDAOImpl;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public abstract class NiyoginService {
-	private static final Logger	logger				= Logger.getLogger(NiyoginService.class);
+	private static final Logger logger = Logger.getLogger(NiyoginService.class);
 
-	private InterfaceLoggingDAO	interfaceLoggingDAO;
-	private NiyoginDAOImpl		niyoginDAOImpl;
-	protected JSONClient		client;
-	public static final int		LENGTH_ACCOUNT		= 50;
-	public static final int		LENGTH_FREQUENCY	= 5;
-	public static final String	APIDateFormatter	= "yyyy-MM-dd'T'HH:mm:ss";
-	public static final String	DELIMITER_COMMA		= ",";
-	public static final String	LIST_DELIMETER		= "||";
+	private InterfaceLoggingDAO interfaceLoggingDAO;
+	private NiyoginDAOImpl niyoginDAOImpl;
+	protected JSONClient client;
+	public static final int LENGTH_ACCOUNT = 50;
+	public static final int LENGTH_FREQUENCY = 5;
+	public static final String APIDateFormatter = "yyyy-MM-dd'T'HH:mm:ss";
+	public static final String DELIMITER_COMMA = ",";
+	public static final String LIST_DELIMETER = "||";
 
-	private String				ERRORCODE			= "$.errorCode";
-	private String				ERRORMESSAGE		= "$.message";
-	private String				STATUSCODE			= "$.statusCode";
+	private String ERRORCODE = "$.errorCode";
+	private String ERRORMESSAGE = "$.message";
+	private String STATUSCODE = "$.statusCode";
 
-	public String				reference;
-	private final String		wrongValueMSG		= App.getLabel("WRONG_VALUE_EXT");
-	private final String		wrongLengthMSG		= App.getLabel("WRONG_LENGTH_EXT");
+	public String reference;
+	private final String wrongValueMSG = App.getLabel("WRONG_VALUE_EXT");
+	private final String wrongLengthMSG = App.getLabel("WRONG_LENGTH_EXT");
 
 	public NiyoginService() {
 		super();
@@ -484,7 +484,7 @@ public abstract class NiyoginService {
 			for (Entry<String, Object> entry : validatedMap.entrySet()) {
 				extendedMapObject.put(entry.getKey(), entry.getValue());
 			}
-			if(financeDetail.getExtendedFieldRender() == null) {
+			if (financeDetail.getExtendedFieldRender() == null) {
 				financeDetail.setExtendedFieldRender(new ExtendedFieldRender());
 			}
 			financeDetail.getExtendedFieldRender().setMapValues(extendedMapObject);

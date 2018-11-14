@@ -67,29 +67,29 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalApplicantDetail</code> with set of CRUD operations.
  */
 public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetail> implements LegalApplicantDetailDAO {
-	private static Logger	logger	= Logger.getLogger(LegalApplicantDetailDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(LegalApplicantDetailDAOImpl.class);
 
 	public LegalApplicantDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public LegalApplicantDetail getLegalApplicantDetail(long legalId, long legalApplicantId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
 		sql.append(" iDType, iDNo, remarks, customerId, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
 			sql.append(" ,titleName,iDTypeName ");
 		}
 		sql.append(" From LEGALAPPLICANTDETAILS");
 		sql.append(type);
 		sql.append(" Where legalApplicantId = :legalApplicantId And legalId =:legalId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -98,7 +98,8 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		legalApplicantDetail.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalApplicantDetail);
-		RowMapper<LegalApplicantDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalApplicantDetail.class);
+		RowMapper<LegalApplicantDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LegalApplicantDetail.class);
 
 		try {
 			legalApplicantDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -107,17 +108,18 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		}
 		logger.debug(Literal.LEAVING);
 		return legalApplicantDetail;
-	}		
-	
+	}
+
 	@Override
-	public List<LegalApplicantDetail> getApplicantDetailsList(long legalId,  String type) {
+	public List<LegalApplicantDetail> getApplicantDetailsList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
 		sql.append(" iDType, iDNo, remarks, customerId,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
 			sql.append(" ,titleName,iDTypeName ");
 		}
@@ -130,7 +132,8 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("legalId", legalId);
 
-		RowMapper<LegalApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalApplicantDetail.class);
+		RowMapper<LegalApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LegalApplicantDetail.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
@@ -141,21 +144,23 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String save(LegalApplicantDetail legalApplicantDetail,TableType tableType) {
+	public String save(LegalApplicantDetail legalApplicantDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into LEGALAPPLICANTDETAILS");
+		StringBuilder sql = new StringBuilder(" insert into LEGALAPPLICANTDETAILS");
 		sql.append(tableType.getSuffix());
 		sql.append("(legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
 		sql.append(" iDType, iDNo, remarks, customerId,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalApplicantId, :legalId, :title, :propertyOwnersName, :age, :relationshipType, ");
 		sql.append(" :iDType, :iDNo, :remarks, :customerId,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalApplicantDetail.getLegalApplicantId() == Long.MIN_VALUE) {
 			legalApplicantDetail.setLegalApplicantId(getNextId("SeqLEGALAPPLICANTDETAILS"));
@@ -171,14 +176,14 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		}
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(legalApplicantDetail.getLegalApplicantId());
-	}	
+	}
 
 	@Override
-	public void update(LegalApplicantDetail legalApplicantDetail,TableType tableType) {
+	public void update(LegalApplicantDetail legalApplicantDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update LEGALAPPLICANTDETAILS" );
+		StringBuilder sql = new StringBuilder("update LEGALAPPLICANTDETAILS");
 		sql.append(tableType.getSuffix());
 		sql.append(" set title = :title, propertyOwnersName = :propertyOwnersName, ");
 		sql.append(" age = :age, relationshipType = :relationshipType, iDType = :iDType, ");
@@ -187,10 +192,10 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where legalApplicantId = :legalApplicantId AND legalId = :legalId");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalApplicantDetail);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		// Check for the concurrency failure.
@@ -227,7 +232,7 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 
 	@Override
 	public void deleteList(LegalApplicantDetail applicantDetail, String tableType) {
-	
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LEGALAPPLICANTDETAILS");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where legalId = :legalId");
@@ -236,7 +241,5 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(applicantDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-	
-	
-	
-}	
+
+}

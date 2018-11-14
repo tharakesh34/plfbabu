@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.reports.ReportConfiguration;
 
-
 /**
  * Item renderer for listItems in the listBox.
  * 
@@ -61,21 +60,21 @@ import com.pennant.backend.model.reports.ReportConfiguration;
 public class ReportConfigurationListModelItemRenderer implements ListitemRenderer<ReportConfiguration>, Serializable {
 
 	private static final long serialVersionUID = 9199981912283581234L;
-	
+
 	public ReportConfigurationListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ReportConfiguration reportConfiguration, int count) throws Exception {
 		Listcell lc;
-	  	lc = new Listcell(reportConfiguration.getReportName());
+		lc = new Listcell(reportConfiguration.getReportName());
 		lc.setParent(item);
-	  	lc = new Listcell(reportConfiguration.getReportHeading());
+		lc = new Listcell(reportConfiguration.getReportHeading());
 		lc.setParent(item);
 		lc = new Listcell(reportConfiguration.getReportJasperName());
 		lc.setParent(item);
-	  	lc = new Listcell(reportConfiguration.getMenuItemCode());
+		lc = new Listcell(reportConfiguration.getMenuItemCode());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbPromptRequired = new Checkbox();

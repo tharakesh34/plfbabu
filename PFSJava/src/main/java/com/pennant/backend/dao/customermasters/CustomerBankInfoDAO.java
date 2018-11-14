@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import java.util.List;
 import java.util.Set;
 
@@ -52,18 +53,30 @@ import com.pennant.backend.model.customermasters.CustomerBankInfo;
  */
 public interface CustomerBankInfoDAO {
 
-	/* CustomerBankInfo getCustomerBankInfoById(long id,String typeCode,String type);*/
-	 CustomerBankInfo getCustomerBankInfoById(long id,String type);
-	 List<CustomerBankInfo> getBankInfoByCustomer(final long id,String type);
-	 void update(CustomerBankInfo customerBankInfo,String type);
-	 void delete(CustomerBankInfo customerBankInfo,String type);
-	 void deleteByCustomer(long custID,String type);
-	 long save(CustomerBankInfo customerBankInfo,String type);
-	 int getBankCodeCount(String bankCode);
-	 int getAccTypeCount(String accType);
-	 int getVersion(long id);
-	 int getCustomerBankInfoByCustBankName(long custId,String bankName,String accountNumber,long bankId,String type);
-	 CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo customerBankInfo,String type);
+	/* CustomerBankInfo getCustomerBankInfoById(long id,String typeCode,String type); */
+	CustomerBankInfo getCustomerBankInfoById(long id, String type);
+
+	List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type);
+
+	void update(CustomerBankInfo customerBankInfo, String type);
+
+	void delete(CustomerBankInfo customerBankInfo, String type);
+
+	void deleteByCustomer(long custID, String type);
+
+	long save(CustomerBankInfo customerBankInfo, String type);
+
+	int getBankCodeCount(String bankCode);
+
+	int getAccTypeCount(String accType);
+
+	int getVersion(long id);
+
+	int getCustomerBankInfoByCustBankName(long custId, String bankName, String accountNumber, long bankId, String type);
+
+	CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo customerBankInfo, String type);
+
 	int getCustomerBankInfoByBank(String bankCode, String type);
+
 	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId);
 }

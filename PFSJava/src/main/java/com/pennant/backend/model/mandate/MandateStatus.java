@@ -55,19 +55,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>MandateStatus table</b>.<br>
  *
  */
-public class MandateStatus extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class MandateStatus extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long mandateID = Long.MIN_VALUE;
 	private String status;
 	private String reason;
 	private Date changeDate;
 	private long fileID;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private MandateStatus befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -80,47 +80,52 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return mandateID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.mandateID = id;
 	}
+
 	public long getMandateID() {
 		return mandateID;
 	}
+
 	public void setMandateID(long mandateID) {
 		this.mandateID = mandateID;
 	}
-	
+
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public String getReason() {
 		return reason;
 	}
+
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
 	public Date getChangeDate() {
 		return changeDate;
 	}
+
 	public void setChangeDate(Date changeDate) {
 		this.changeDate = changeDate;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -128,7 +133,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -137,12 +142,12 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public MandateStatus getBefImage(){
+	public MandateStatus getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(MandateStatus beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(MandateStatus beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -160,5 +165,5 @@ private static final long serialVersionUID = 1L;
 	public void setFileID(long fileID) {
 		this.fileID = fileID;
 	}
-	
+
 }

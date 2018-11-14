@@ -59,7 +59,7 @@ public class IncomeCategory extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getIncomeCategory() {
 		return incomeCategory;
 	}

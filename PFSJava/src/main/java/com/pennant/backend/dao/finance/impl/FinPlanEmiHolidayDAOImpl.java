@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -60,31 +59,31 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 /**
  * DAO methods implementation for the <b>AgreementFieldDetails model</b> class.<br>
  */
-public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> implements FinPlanEmiHolidayDAO {
+public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implements FinPlanEmiHolidayDAO {
 	private static Logger logger = Logger.getLogger(FinPlanEmiHolidayDAOImpl.class);
-	
+
 	public FinPlanEmiHolidayDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Fetching List of Planned EMI Holiday Months
 	 */
 	@Override
 	public List<Integer> getPlanEMIHMonthsByRef(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT PlanEMIHMonth FROM FinPlanEMIHMonths");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
 		List<Integer> planEMIHMonths = this.jdbcTemplate.queryForList(selectSql.toString(), source, Integer.class);
-		
+
 		logger.debug("Leaving");
 		return planEMIHMonths;
 	}
@@ -95,18 +94,18 @@ public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> imple
 	@Override
 	public List<Date> getPlanEMIHDatesByRef(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT PlanEMIHDate FROM FinPlanEMIHDates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
 		List<Date> planEMIHDates = this.jdbcTemplate.queryForList(selectSql.toString(), source, Date.class);
-		
+
 		logger.debug("Leaving");
 		return planEMIHDates;
 	}
@@ -117,18 +116,18 @@ public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> imple
 	@Override
 	public void deletePlanEMIHMonths(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From FinPlanEMIHMonths");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
 		logger.debug("deleteSql: " + deleteSql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
 		this.jdbcTemplate.update(deleteSql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -138,7 +137,7 @@ public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> imple
 	@Override
 	public void savePlanEMIHMonths(List<FinPlanEmiHoliday> planEMIHMonths, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into FinPlanEMIHMonths");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -149,11 +148,11 @@ public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> imple
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(planEMIHMonths.toArray());
 		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			throw e;
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -163,18 +162,18 @@ public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> imple
 	@Override
 	public void deletePlanEMIHDates(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append("Delete From FinPlanEMIHDates");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("deleteSql: " + deleteSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
 		this.jdbcTemplate.update(deleteSql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -184,22 +183,22 @@ public class FinPlanEmiHolidayDAOImpl  extends BasicDao<FinPlanEmiHoliday> imple
 	@Override
 	public void savePlanEMIHDates(List<FinPlanEmiHoliday> planEMIHDates, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into FinPlanEMIHDates");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, PlanEMIHDate)");
 		insertSql.append(" Values(:FinReference, :PlanEMIHDate)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(planEMIHDates.toArray());
 		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			throw e;
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

@@ -77,46 +77,43 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Reports/ReportList/fieldsListSelect.zul file.
+ * This is the controller class for the /WEB-INF/pages/Reports/ReportList/fieldsListSelect.zul file.
  */
 public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	private static final long serialVersionUID = 7403304686538288944L;
 	private static final Logger logger = Logger.getLogger(FieldsListSelectCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_FieldsListSelect;	// autoWired
-	protected Listbox 	listBoxFields; 				// autoWired
+	protected Window window_FieldsListSelect; // autoWired
+	protected Listbox listBoxFields; // autoWired
 
-	protected Combobox 	cbOrder; 					// autoWired
-	protected Combobox 	cdType; 					// autoWired
+	protected Combobox cbOrder; // autoWired
+	protected Combobox cdType; // autoWired
 
 	// List headers
-	protected Listheader listheader_Select; 		// autoWired
-	protected Listheader listheader_Fields; 		// autoWired
-	protected Listheader listheader_Type;		 	// autoWired
-
+	protected Listheader listheader_Select; // autoWired
+	protected Listheader listheader_Fields; // autoWired
+	protected Listheader listheader_Type; // autoWired
 
 	// not auto wired variables
 	private ReportList reportList; // overHanded per parameter                        
 	private transient PagedListService pagedListService;
-	private transient ReportListDialogCtrl reportListDialogCtrl; 
+	private transient ReportListDialogCtrl reportListDialogCtrl;
 	protected JdbcSearchObject<ReportList> searchObj;
 
 	List<ValueLabel> sequenceList = null;
 
-	private String[] fields=new String[15];
-	private String[] type=new String[15];
-	private String[] labels=new String[15];
-	
+	private String[] fields = new String[15];
+	private String[] type = new String[15];
+	private String[] labels = new String[15];
+
 	public String moduleName;
 	public String fileName;
 	public String configureMode;
@@ -136,9 +133,8 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ReportList object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ReportList object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -152,8 +148,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		try {
 
 			if (arguments.containsKey("reportListDialogCtrl")) {
-				this.setReportListDialogCtrl((ReportListDialogCtrl) arguments
-						.get("reportListDialogCtrl"));
+				this.setReportListDialogCtrl((ReportListDialogCtrl) arguments.get("reportListDialogCtrl"));
 			} else {
 				this.setReportListDialogCtrl(null);
 			}
@@ -180,7 +175,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			MessageUtil.showError(e);
 			this.window_FieldsListSelect.onClose();
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -200,9 +195,9 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -212,19 +207,19 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	 *            ReportList
 	 */
 	public void doWriteBeanToComponents(ReportList aReportList) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
-		if(!aReportList.isNewRecord()){
+		if (!aReportList.isNewRecord()) {
 			this.fields = StringUtils.trimToEmpty(aReportList.getFieldValues()).split(",");
 			this.type = StringUtils.trimToEmpty(aReportList.getFieldType()).split(",");
-			this.labels= StringUtils.trimToEmpty(aReportList.getFieldLabels()).split(",");
+			this.labels = StringUtils.trimToEmpty(aReportList.getFieldLabels()).split(",");
 		}
-		
+
 		sequenceList = new ArrayList<ValueLabel>();
 		int noColmns = PennantAppUtil.getReportListColumns(this.fileName);
 
 		for (int i = 0; i < noColmns; i++) {
-			sequenceList.add(new ValueLabel(String.valueOf(i+1), String.valueOf(i+1)));
+			sequenceList.add(new ValueLabel(String.valueOf(i + 1), String.valueOf(i + 1)));
 		}
 		logger.debug("Leaving");
 	}
@@ -232,32 +227,31 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReportList
 	 * @throws Exception
 	 */
 	public void doShowDialog(ReportList aReportList) throws Exception {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
-		ModuleMapping mapping =  PennantJavaUtil.getModuleMap(this.moduleName);
-		
-		List<Field> fields=null;
-		if(mapping !=null){
-			fields =getFieldList(mapping.getModuleClass()); 
+		ModuleMapping mapping = PennantJavaUtil.getModuleMap(this.moduleName);
+
+		List<Field> fields = null;
+		if (mapping != null) {
+			fields = getFieldList(mapping.getModuleClass());
 		}
-		if(fields != null){
+		if (fields != null) {
 			// fill the components with the data
 			doWriteBeanToComponents(aReportList);
-			loadFieldsList(fields,aReportList);
+			loadFieldsList(fields, aReportList);
 
-			if(configureMode.equals(Labels.getLabel("label_ReportListDialog_btnConfiguration.value"))){
-				for(int i=0;i<this.listBoxFields.getItems().size();i++){
+			if (configureMode.equals(Labels.getLabel("label_ReportListDialog_btnConfiguration.value"))) {
+				for (int i = 0; i < this.listBoxFields.getItems().size(); i++) {
 					this.listBoxFields.getItemAtIndex(i).setDisabled(true);
 				}
 				this.btnSave.setVisible(false);
-			} 
+			}
 		}
 		try {
 
@@ -272,7 +266,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			logger.error("Exception: ", e);
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	// CRUD operations
@@ -282,78 +276,78 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void doSave()throws InterruptedException {
+	private void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		
-		boolean error=false;
-		int selectedCount=0;
-		this.fields = new String[15];
-		this.type= new String[15];
-		this.labels= new String[15];
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>(); 
+		boolean error = false;
+		int selectedCount = 0;
+		this.fields = new String[15];
+		this.type = new String[15];
+		this.labels = new String[15];
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		List<Listitem> list = listBoxFields.getItems();
-		int seqMaxValue = 0; 
+		int seqMaxValue = 0;
 		int reportColCount = PennantAppUtil.getReportListColumns(this.fileName);
 
 		for (int i = 0; i < list.size(); i++) {
 			List<Component> listcells = list.get(i).getChildren();
 			Checkbox checkbox = (Checkbox) listcells.get(0).getLastChild();
 
-			if(checkbox.isChecked()){
+			if (checkbox.isChecked()) {
 
 				Combobox cbmType = (Combobox) listcells.get(2).getLastChild();
-				Combobox cbmSeq= (Combobox) listcells.get(3).getLastChild().getLastChild();
+				Combobox cbmSeq = (Combobox) listcells.get(3).getLastChild().getLastChild();
 
-				if(!StringUtils.equals(cbmSeq.getValue(),Labels.getLabel("Combo.Select"))){
+				if (!StringUtils.equals(cbmSeq.getValue(), Labels.getLabel("Combo.Select"))) {
 
-					int seq =0;
+					int seq = 0;
 
 					try {
-						seq = Integer.valueOf(cbmSeq.getValue())-1;	
-						if(seq > 14){
-							error=true;
-							wve.add(new WrongValueException(cbmSeq, Labels.getLabel(
-									"FIELD_NO_NUMBER",new String[] {Labels.getLabel("listheader_Order.label")})));
+						seq = Integer.valueOf(cbmSeq.getValue()) - 1;
+						if (seq > 14) {
+							error = true;
+							wve.add(new WrongValueException(cbmSeq, Labels.getLabel("FIELD_NO_NUMBER",
+									new String[] { Labels.getLabel("listheader_Order.label") })));
 							break;
 						}
 					} catch (Exception e) {
-						error=true;
-						wve.add(new WrongValueException(cbmSeq, Labels.getLabel(
-								"FIELD_NO_NUMBER",new String[] {Labels.getLabel("listheader_Order.label")})));
+						error = true;
+						wve.add(new WrongValueException(cbmSeq, Labels.getLabel("FIELD_NO_NUMBER",
+								new String[] { Labels.getLabel("listheader_Order.label") })));
 						break;
 					}
 
-					if(reportColCount > seq){
-						selectedCount=selectedCount+1;
+					if (reportColCount > seq) {
+						selectedCount = selectedCount + 1;
 					}
-					
+
 					//Setting Maximum Sequence Number Usage
-					if(seqMaxValue < seq){
+					if (seqMaxValue < seq) {
 						seqMaxValue = seq;
 					}
 
-					if(StringUtils.isBlank(this.fields[seq])){
-						this.fields[seq]=((LabelElement) listcells.get(1)).getLabel();
-						this.type[seq]=cbmType.getValue();
-						this.labels[seq]=((LabelElement) listcells.get(1)).getLabel();
-					}else{
-						error=true;
-						wve.add(new WrongValueException(cbmSeq, Labels.getLabel(
-								"DATA_ALREADY_EXISTS",new String[] {Labels.getLabel("listheader_Order.label")})));							
+					if (StringUtils.isBlank(this.fields[seq])) {
+						this.fields[seq] = ((LabelElement) listcells.get(1)).getLabel();
+						this.type[seq] = cbmType.getValue();
+						this.labels[seq] = ((LabelElement) listcells.get(1)).getLabel();
+					} else {
+						error = true;
+						wve.add(new WrongValueException(cbmSeq, Labels.getLabel("DATA_ALREADY_EXISTS",
+								new String[] { Labels.getLabel("listheader_Order.label") })));
 					}
-				}else{
-					wve.add(new WrongValueException(cbmSeq, Labels.getLabel(
-							"MUST_BE_ENTERED",new String[] {Labels.getLabel("listheader_Order.label")})));
-					error=true;
+				} else {
+					wve.add(new WrongValueException(cbmSeq, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("listheader_Order.label") })));
+					error = true;
 					break;
 				}
 			}
 		}
-		
-		if(!error){
-			
-			if (selectedCount != reportColCount){
+
+		if (!error) {
+
+			if (selectedCount != reportColCount) {
 				MessageUtil.showError(
 						Labels.getLabel("SELECTED_COUNT", new String[] { String.valueOf(this.sequenceList.size()) }));
 				return;
@@ -368,30 +362,31 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			throw new WrongValuesException(wvea);
 		}
 
-		String fieldValues="";
-		String typeValues="";
-		String labelValues="";
+		String fieldValues = "";
+		String typeValues = "";
+		String labelValues = "";
 
 		for (int i = 0; i < this.fields.length; i++) {
-			
-			if(seqMaxValue < i){
+
+			if (seqMaxValue < i) {
 				break;
 			}
 
-			if(i!=0){
+			if (i != 0) {
 				fieldValues = fieldValues.concat(",");
 				typeValues = typeValues.concat(",");
 				labelValues = labelValues.concat(",");
 			}
-			
-			if(this.fields[i] == null){
+
+			if (this.fields[i] == null) {
 				fieldValues = fieldValues.concat("null");
 				typeValues = typeValues.concat("null");
 				labelValues = labelValues.concat("");
-			}else{
+			} else {
 				fieldValues = fieldValues.concat(this.fields[i]);
 				typeValues = typeValues.concat(this.type[i]);
-				labelValues = labelValues.concat("listheader_" + this.fields[i].substring(0, 1).toUpperCase()+ this.fields[i].substring(1)+".label");
+				labelValues = labelValues.concat("listheader_" + this.fields[i].substring(0, 1).toUpperCase()
+						+ this.fields[i].substring(1) + ".label");
 			}
 		}
 
@@ -399,7 +394,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		reportList.setFieldType(typeValues);
 		reportList.setFieldLabels(labelValues);
 		this.reportListDialogCtrl.setReportList(reportList);
-		
+
 		closeDialog();
 		logger.debug("Leaving");
 	}
@@ -407,27 +402,27 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Method to load fields of the selected module
 	 */
-	private void loadFieldsList(List<Field> fields,ReportList aReportList) {
+	private void loadFieldsList(List<Field> fields, ReportList aReportList) {
 		logger.debug("Entering");
 
 		Listitem item;
 		Listcell lc;
-		for(int i=0; i<fields.size();i++){
+		for (int i = 0; i < fields.size(); i++) {
 			item = new Listitem();
 			Checkbox checkbox = new Checkbox();
 
-			if(!aReportList.isNewRecord()){
-				if(aReportList.getFieldValues()!=null){
+			if (!aReportList.isNewRecord()) {
+				if (aReportList.getFieldValues() != null) {
 					if ((aReportList.getFieldValues().concat(",")).contains(fields.get(i).getName().concat(","))) {
 						checkbox.setChecked(true);
-					}else{
+					} else {
 						checkbox.setChecked(false);
 					}
 				}
-				
+
 			}
-			
-			checkbox.setValue(fields.get(i).getName() +"-"+ fields.get(i).getType().getSimpleName());
+
+			checkbox.setValue(fields.get(i).getName() + "-" + fields.get(i).getType().getSimpleName());
 			checkbox.addEventListener("onCheck", new onCheckBoxCheked());
 
 			lc = new Listcell();
@@ -437,23 +432,23 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			lc.setParent(item);
 
 			Combobox combobox = new Combobox();
-			combobox.appendChild(new Comboitem("String","String"));
+			combobox.appendChild(new Comboitem("String", "String"));
 			combobox.appendChild(new Comboitem("long", "long"));
-			if(!StringUtils.equalsIgnoreCase(fields.get(i).getType().getSimpleName(), "String") && 
-					!StringUtils.equalsIgnoreCase(fields.get(i).getType().getSimpleName(), "long")){
-				combobox.appendChild(new Comboitem(fields.get(i).getType().getSimpleName(), 
+			if (!StringUtils.equalsIgnoreCase(fields.get(i).getType().getSimpleName(), "String")
+					&& !StringUtils.equalsIgnoreCase(fields.get(i).getType().getSimpleName(), "long")) {
+				combobox.appendChild(new Comboitem(fields.get(i).getType().getSimpleName(),
 						fields.get(i).getType().getSimpleName()));
 			}
 			combobox.setValue(fields.get(i).getType().getSimpleName());
 
-			if(!checkbox.isChecked()){
-				combobox.setDisabled(true);		 			
+			if (!checkbox.isChecked()) {
+				combobox.setDisabled(true);
 			}
 
-			lc = new Listcell();	
+			lc = new Listcell();
 			lc.appendChild(combobox);
 			lc.setParent(item);
-			
+
 			Hlayout hbox = new Hlayout();
 			hbox.setSpacing("2px");
 			Space space = new Space();
@@ -466,41 +461,42 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			for (int k = 0; k < sequenceList.size(); k++) {
 				comSeq.appendChild(new Comboitem(sequenceList.get(k).getLabel()));
 			}
-			if(!aReportList.isNewRecord()){
+			if (!aReportList.isNewRecord()) {
 				for (int j = 0; j < this.fields.length; j++) {
-					if(this.fields[j].equals(fields.get(i).getName())){
-						comSeq.setValue(String.valueOf(j+1));
+					if (this.fields[j].equals(fields.get(i).getName())) {
+						comSeq.setValue(String.valueOf(j + 1));
 					}
 				}
 			}
-			if(!checkbox.isChecked()){
-				space.setSclass("");		
-				comSeq.setDisabled(true);		 			
-			}else{
+			if (!checkbox.isChecked()) {
+				space.setSclass("");
+				comSeq.setDisabled(true);
+			} else {
 				space.setSclass(PennantConstants.mandateSclass);
 			}
-			lc = new Listcell();	
+			lc = new Listcell();
 			hbox.appendChild(space);
 			hbox.appendChild(comSeq);
 			lc.appendChild(hbox);
 			lc.setParent(item);
 
 			item.setParent(listBoxFields);
-			if(configureMode.equals(Labels.getLabel("label_ReportListDialog_btnConfiguration.value"))){
+			if (configureMode.equals(Labels.getLabel("label_ReportListDialog_btnConfiguration.value"))) {
 				checkbox.setDisabled(true);
 				combobox.setDisabled(true);
 				comSeq.setDisabled(true);
 			}
 
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * when the "checkBox" is checked. <br>
 	 * 
-	 * onEvent 
+	 * onEvent
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -508,25 +504,27 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		public onCheckBoxCheked() {
 			//
 		}
-		
+
 		public void onEvent(Event event) throws Exception {
 			logger.debug("Entering");
 
 			Checkbox checkbox = (Checkbox) event.getTarget();
-			Combobox cmbType = (Combobox) event.getTarget().getParent().getNextSibling().getNextSibling().getLastChild();
-		
-			Hlayout hbox = (Hlayout) event.getTarget().getParent().getNextSibling().getNextSibling().getNextSibling().getLastChild();
+			Combobox cmbType = (Combobox) event.getTarget().getParent().getNextSibling().getNextSibling()
+					.getLastChild();
+
+			Hlayout hbox = (Hlayout) event.getTarget().getParent().getNextSibling().getNextSibling().getNextSibling()
+					.getLastChild();
 			Combobox cmbSeq = (Combobox) hbox.getLastChild();
 			Space space = (Space) cmbSeq.getPreviousSibling();
 			cmbSeq.setValue(Labels.getLabel("Combo.Select"));
-			if(!checkbox.isChecked()){
+			if (!checkbox.isChecked()) {
 				cmbType.setDisabled(true);
 				cmbSeq.setDisabled(true);
-				space.setSclass("");	
-			}else{
+				space.setSclass("");
+			} else {
 				cmbType.setDisabled(false);
 				cmbSeq.setDisabled(false);
-				space.setSclass(PennantConstants.mandateSclass);	
+				space.setSclass(PennantConstants.mandateSclass);
 			}
 
 			logger.debug("Leaving");
@@ -539,20 +537,20 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	private static List<Field> getFieldList(Class<?> clazz) {
 
 		Field[] fields = clazz.getDeclaredFields();
-		List<Field> list= new ArrayList<Field>();
-		String excludeFields = "roleCode,nextRoleCode,taskId,nextTaskId,userAction,workflowId,serialVersionUID,newRecord,lovValue," +
-		"befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE," +
-		"auditDetailMap,version,lastMntBy,lastMntOn,";
+		List<Field> list = new ArrayList<Field>();
+		String excludeFields = "roleCode,nextRoleCode,taskId,nextTaskId,userAction,workflowId,serialVersionUID,newRecord,lovValue,"
+				+ "befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,"
+				+ "auditDetailMap,version,lastMntBy,lastMntOn,";
 
 		for (int i = 0; i < fields.length; i++) {
-			if (!excludeFields.contains(fields[i].getName() + ",") 
-					&& !fields[i].getName().startsWith("list") && !fields[i].getName().endsWith("List")) {
-				list.add(fields[i]);	
+			if (!excludeFields.contains(fields[i].getName() + ",") && !fields[i].getName().startsWith("list")
+					&& !fields[i].getName().endsWith("List")) {
+				list.add(fields[i]);
 			}
 		}
 		return list;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -560,6 +558,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	public ReportList getReportList() {
 		return reportList;
 	}
+
 	public void setReportList(ReportList reportList) {
 		this.reportList = reportList;
 	}
@@ -567,6 +566,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -574,6 +574,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	public ReportListDialogCtrl getReportListDialogCtrl() {
 		return reportListDialogCtrl;
 	}
+
 	public void setReportListDialogCtrl(ReportListDialogCtrl reportListDialogCtrl) {
 		this.reportListDialogCtrl = reportListDialogCtrl;
 	}
@@ -581,6 +582,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	public JdbcSearchObject<ReportList> getSearchObj() {
 		return searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<ReportList> searchObj) {
 		this.searchObj = searchObj;
 	}

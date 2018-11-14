@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +68,7 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 	public PRelationCodeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Personal Relation Codes details by key field
 	 * 
@@ -87,7 +86,8 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select PRelationCode, PRelationDesc, RelationCodeIsActive,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTPRelationCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PRelationCode =:PRelationCode");
@@ -107,10 +107,8 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTPRelationCodes or
-	 * BMTPRelationCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Personal Relation Codes by
-	 * key PRelationCode
+	 * This method Deletes the Record from the BMTPRelationCodes or BMTPRelationCodes_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Personal Relation Codes by key PRelationCode
 	 * 
 	 * @param Persional
 	 *            Relation Codes (pRelationCode)
@@ -129,12 +127,12 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 		deleteSql.append(" Delete From BMTPRelationCodes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PRelationCode =:PRelationCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pRelationCode);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -146,8 +144,7 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 	}
 
 	/**
-	 * This method insert new Records into BMTPRelationCodes or
-	 * BMTPRelationCodes_Temp.
+	 * This method insert new Records into BMTPRelationCodes or BMTPRelationCodes_Temp.
 	 * 
 	 * save Personal Relation Codes
 	 * 
@@ -167,13 +164,14 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 		insertSql.append("Insert Into BMTPRelationCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (PRelationCode, PRelationDesc, RelationCodeIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:PRelationCode, :PRelationDesc, :RelationCodeIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());		  
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pRelationCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -182,10 +180,8 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 	}
 
 	/**
-	 * This method updates the Record BMTPRelationCodes or
-	 * BMTPRelationCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Personal Relation Codes by
-	 * key PRelationCode and Version
+	 * This method updates the Record BMTPRelationCodes or BMTPRelationCodes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Personal Relation Codes by key PRelationCode and Version
 	 * 
 	 * @param Persional
 	 *            Relation Codes (pRelationCode)
@@ -205,17 +201,19 @@ public class PRelationCodeDAOImpl extends BasicDao<PRelationCode> implements PRe
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set PRelationDesc = :PRelationDesc,");
 		updateSql.append(" RelationCodeIsActive = :RelationCodeIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PRelationCode =:PRelationCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pRelationCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

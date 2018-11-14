@@ -7518,118 +7518,117 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-				// story #491
-				// Auto Generation of Loan Agreements while submitting
-				// before submitting loan generate AGREEMENTS...
+		// story #491
+		// Auto Generation of Loan Agreements while submitting
+		// before submitting loan generate AGREEMENTS...
 
-				// preparing aggreementimageDescription
-				// story #800
-				// Improve the performance of auto download of agreements
-				if (!recSave) {
-					List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
-					DocumentDetails documentDetails = null;
-					autoDownloadMap = new HashMap<>();
-					AgreementDefinition agreementDefinition = null;
-					List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
-					String templateValidateMsg = "";	
-					String accMsg = "";
-					boolean isTemplateError = false;
-					Set<String> allagrDataset = new HashSet<>();
-					Map<String, AgreementDefinition> agrdefMap = new HashMap();
-					Map<String, FinanceReferenceDetail> finRefMap = new HashMap();
-					List<DocumentDetails> existingUploadDocList = aFinanceDetail.getDocumentDetailsList();
-					for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
-						long id = financeReferenceDetail.getFinRefId();
-						agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
-						// For Agreement Rules
-						boolean isAgrRender = true;
-						// Check Each Agreement is attached with Rule or Not, If Rule
-						// Exists based on Rule Result Agreement will display
-						if (StringUtils.isNotBlank(financeReferenceDetail.getLovDescAggRuleName())) {
-							Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
-									RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
-							if (rule != null) {
-								HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
-										.getDeclaredFieldValues();
-								isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
-										getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
-										RuleReturnType.BOOLEAN);
-							}
-						}
-						if (isAgrRender) {
-							if (agreementDefinition.isAutoGeneration()) {
-								try {
-									templateValidateMsg = validateTemplate(financeReferenceDetail); // If
+		// preparing aggreementimageDescription
+		// story #800
+		// Improve the performance of auto download of agreements
+		if (!recSave) {
+			List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
+			DocumentDetails documentDetails = null;
+			autoDownloadMap = new HashMap<>();
+			AgreementDefinition agreementDefinition = null;
+			List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
+			String templateValidateMsg = "";
+			String accMsg = "";
+			boolean isTemplateError = false;
+			Set<String> allagrDataset = new HashSet<>();
+			Map<String, AgreementDefinition> agrdefMap = new HashMap();
+			Map<String, FinanceReferenceDetail> finRefMap = new HashMap();
+			List<DocumentDetails> existingUploadDocList = aFinanceDetail.getDocumentDetailsList();
+			for (FinanceReferenceDetail financeReferenceDetail : financeDetail.getAggrementList()) {
+				long id = financeReferenceDetail.getFinRefId();
+				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
+				// For Agreement Rules
+				boolean isAgrRender = true;
+				// Check Each Agreement is attached with Rule or Not, If Rule
+				// Exists based on Rule Result Agreement will display
+				if (StringUtils.isNotBlank(financeReferenceDetail.getLovDescAggRuleName())) {
+					Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
+							RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
+					if (rule != null) {
+						HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
+								.getDeclaredFieldValues();
+						isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
+								getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
+								RuleReturnType.BOOLEAN);
+					}
+				}
+				if (isAgrRender) {
+					if (agreementDefinition.isAutoGeneration()) {
+						try {
+							templateValidateMsg = validateTemplate(financeReferenceDetail); // If
 
-									if ("Y".equals(templateValidateMsg)) {
-										if (!isTemplateError) {
+							if ("Y".equals(templateValidateMsg)) {
+								if (!isTemplateError) {
 
-											allagrDataset.add(agreementDefinition.getAggImage());
-											agrdefMap.put(agreementDefinition.getAggReportName(), agreementDefinition);
-											finRefMap.put(agreementDefinition.getAggReportName(), financeReferenceDetail);
+									allagrDataset.add(agreementDefinition.getAggImage());
+									agrdefMap.put(agreementDefinition.getAggReportName(), agreementDefinition);
+									finRefMap.put(agreementDefinition.getAggReportName(), financeReferenceDetail);
 
-										} 
-									}
-										else {
-
-											accMsg = accMsg + "  " + templateValidateMsg;
-											isTemplateError = true;
-											continue;
-										}
-									
-								} catch (Exception e) {
-									MessageUtil.showError(e.getMessage());
 								}
-							}
-						}
-					} // for close
-					if(isTemplateError){
-						MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
-						return false;
-					}
-					if (!agrdefMap.isEmpty()) {
-						AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail,
-								allagrDataset.toString(), getUserWorkspace().getUserDetails());
-						for (String tempName : agrdefMap.keySet()) {
+							} else {
 
-							AgreementDefinition aggdef = agrdefMap.get(tempName);
-							documentDetails = autoGenerateAgreement(finRefMap.get(tempName), aFinanceDetail, aggdef,
-									existingUploadDocList,agrData);
-							agenDocList.add(documentDetails);
-							if (aggdef.isAutoDownload()) {
-								autoDownloadLst.add(documentDetails);
+								accMsg = accMsg + "  " + templateValidateMsg;
+								isTemplateError = true;
+								continue;
 							}
-						}
-						autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
-						agrdefMap = null;
-						finRefMap = null;
-						allagrDataset = null;
-						
-					}
-				}
-				
-				if (isWorkFlowEnabled()) {
-					String taskId = getTaskId(getRole());
-					afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					if (isNotesMandatory(taskId, afinanceMain)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
+
+						} catch (Exception e) {
+							MessageUtil.showError(e.getMessage());
 						}
 					}
-					auditHeader = getAuditHeader(aFinanceDetail, PennantConstants.TRAN_WF);
-					doProcess_Assets(aFinanceDetail);
-					auditHeader.getAuditDetail().setModelData(aFinanceDetail);
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					doProcess_Assets(aFinanceDetail);
-					auditHeader = getAuditHeader(aFinanceDetail, tranType);
-					processCompleted = doSaveProcess(auditHeader, null);
 				}
-				logger.debug("return value :" + processCompleted);
-				logger.debug(Literal.LEAVING);
-				return processCompleted;
+			} // for close
+			if (isTemplateError) {
+				MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
+				return false;
 			}
+			if (!agrdefMap.isEmpty()) {
+				AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail,
+						allagrDataset.toString(), getUserWorkspace().getUserDetails());
+				for (String tempName : agrdefMap.keySet()) {
+
+					AgreementDefinition aggdef = agrdefMap.get(tempName);
+					documentDetails = autoGenerateAgreement(finRefMap.get(tempName), aFinanceDetail, aggdef,
+							existingUploadDocList, agrData);
+					agenDocList.add(documentDetails);
+					if (aggdef.isAutoDownload()) {
+						autoDownloadLst.add(documentDetails);
+					}
+				}
+				autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
+				agrdefMap = null;
+				finRefMap = null;
+				allagrDataset = null;
+
+			}
+		}
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			if (isNotesMandatory(taskId, afinanceMain)) {
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
+				}
+			}
+			auditHeader = getAuditHeader(aFinanceDetail, PennantConstants.TRAN_WF);
+			doProcess_Assets(aFinanceDetail);
+			auditHeader.getAuditDetail().setModelData(aFinanceDetail);
+			processCompleted = doSaveProcess(auditHeader, null);
+		} else {
+			doProcess_Assets(aFinanceDetail);
+			auditHeader = getAuditHeader(aFinanceDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+		logger.debug("return value :" + processCompleted);
+		logger.debug(Literal.LEAVING);
+		return processCompleted;
+	}
 
 	private DocumentDetails isInAggremnetGenerated(DocumentDetails type, List<DocumentDetails> agenDocList) {
 		if (agenDocList != null) {
@@ -8545,7 +8544,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (branch != null) {
 				this.finBranch.setValue(branch.getUserBranch(), branch.getUserBranchDesc());
 				branchSwiftCode = branch.getBranchSwiftBrnCde();
-				getFinanceDetail().getFinScheduleData().getFinanceMain().setFinBranchProvinceCode(branch.getBranchProvince());
+				getFinanceDetail().getFinScheduleData().getFinanceMain()
+						.setFinBranchProvinceCode(branch.getBranchProvince());
 			}
 		}
 		isBranchanged = true;
@@ -15583,13 +15583,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-		}else if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGFRQ)){
+		} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGFRQ)) {
 
 			FinanceMain main = scheduleData.getFinanceMain();
 			this.gracePeriodEndDate.setText("");
 			this.gracePeriodEndDate_two.setValue(main.getGrcPeriodEndDate());
 			this.oldVar_gracePeriodEndDate = this.gracePeriodEndDate_two.getValue();
-			
+
 			//this.graceTerms_Two.setValue(main.getGraceTerms());
 			//this.oldVar_graceTerms = this.graceTerms_Two.intValue();
 		}
@@ -15891,9 +15891,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().getExtendedValue("COLLATERAL_TYPES");
 		detail.getCustomerEligibilityCheck().addExtendedField("maturityAge", maturityAge);
 		if (!this.row_FinAssetValue.isVisible()) {
-			detail.getCustomerEligibilityCheck().setCurrentAssetValue(PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), finFormatter));
+			detail.getCustomerEligibilityCheck().setCurrentAssetValue(
+					PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), finFormatter));
 		} else {
-			detail.getCustomerEligibilityCheck().setCurrentAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), finFormatter));
+			detail.getCustomerEligibilityCheck().setCurrentAssetValue(
+					PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), finFormatter));
 		}
 		detail.getCustomerEligibilityCheck().addExtendedField("Customer_Margin", customer.isMarginDeviation());
 		detail.getCustomerEligibilityCheck().addExtendedField("CUSTOMER_MARGIN_DEVIATION",
@@ -16251,7 +16253,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!StringUtils.equals(PennantConstants.YES, isCustomerBranch)) {
 			this.finBranch.setValue(customer.getCustDftBranch());
 			this.finBranch.setDescription(customer.getLovDescCustDftBranchName());
-			getFinanceDetail().getFinScheduleData().getFinanceMain().setFinBranchProvinceCode(customer.getBranchProvince());
+			getFinanceDetail().getFinScheduleData().getFinanceMain()
+					.setFinBranchProvinceCode(customer.getBranchProvince());
 		} else {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			this.finBranch.setValue(userDetails.getBranchCode());

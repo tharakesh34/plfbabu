@@ -67,30 +67,30 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/eod/EODConfig/eODConfigDialog.zul file. <br>
  */
 public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(EODConfigDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(EODConfigDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_EODConfigDialog;
-	protected Checkbox					extMnthRequired;
-	protected Datebox					mnthExtTo;
-	protected Checkbox					active;
-	private EODConfig					eODConfig;															// overhanded per param
-	private EODConfig					appRovedeodConfig;
-	private transient EODConfigListCtrl	eODConfigListCtrl;													// overhanded per param
-	private transient EODConfigService	eODConfigService;
+	protected Window window_EODConfigDialog;
+	protected Checkbox extMnthRequired;
+	protected Datebox mnthExtTo;
+	protected Checkbox active;
+	private EODConfig eODConfig; // overhanded per param
+	private EODConfig appRovedeodConfig;
+	private transient EODConfigListCtrl eODConfigListCtrl; // overhanded per param
+	private transient EODConfigService eODConfigService;
 
 	/**
 	 * default constructor.<br>
@@ -416,12 +416,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, DateUtility.getAppDate(),
 						DateUtility.getMonthEnd(DateUtility.getAppDate()), true));
 			} else {
-				Calendar calendar=Calendar.getInstance();
+				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(DateUtility.getAppDate());
-				calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
+				calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
 				//greater than current month end and less than next month end;
-				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true,
-						DateUtility.getMonthEnd(DateUtility.getAppDate()),DateUtility.getMonthEnd(calendar.getTime()), false));
+				this.mnthExtTo.setConstraint(
+						new PTDateValidator(lable, true, DateUtility.getMonthEnd(DateUtility.getAppDate()),
+								DateUtility.getMonthEnd(calendar.getTime()), false));
 			}
 
 		}

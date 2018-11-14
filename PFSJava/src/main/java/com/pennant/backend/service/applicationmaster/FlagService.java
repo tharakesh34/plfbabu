@@ -49,9 +49,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface FlagService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Flag getFlagById(String id);
+
 	Flag getApprovedFlagById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

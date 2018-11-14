@@ -114,9 +114,8 @@ public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> imple
 	}
 
 	/**
-	 * This method updates the Record InterfaceMapping or InterfaceMapping_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update InterfaceMapping by key InterfaceMappingId and Version
+	 * This method updates the Record InterfaceMapping or InterfaceMapping_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update InterfaceMapping by key InterfaceMappingId and Version
 	 * 
 	 * @param InterfaceMapping
 	 *            (interfaceMapping)
@@ -154,10 +153,8 @@ public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> imple
 	}
 
 	/**
-	 * This method Deletes the Record from the InterfaceMapping or
-	 * InterfaceMapping_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete InterfaceMapping by key
-	 * InterfaceMappingId
+	 * This method Deletes the Record from the InterfaceMapping or InterfaceMapping_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete InterfaceMapping by key InterfaceMappingId
 	 * 
 	 * @param InterfaceMapping
 	 *            (interfaceMapping)
@@ -192,9 +189,8 @@ public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> imple
 	}
 
 	/**
-	 * This method insert new Records into InterfaceMapping or
-	 * InterfaceMapping_Temp. it fetches the available Sequence form
-	 * InterfaceMapping by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into InterfaceMapping or InterfaceMapping_Temp. it fetches the available Sequence
+	 * form InterfaceMapping by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save InterfaceMapping
 	 * 
@@ -255,9 +251,9 @@ public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> imple
 		}
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		if(com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.POSTGRES){
+		if (com.pennanttech.pennapps.core.App.DATABASE == com.pennanttech.pennapps.core.App.Database.POSTGRES) {
 			paramSource.addValue("TABLE_NAME", tableName.toLowerCase());
-		}else{
+		} else {
 			paramSource.addValue("TABLE_NAME", tableName);
 		}
 

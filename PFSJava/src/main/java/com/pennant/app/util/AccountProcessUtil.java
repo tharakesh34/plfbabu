@@ -62,11 +62,11 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class AccountProcessUtil implements Serializable {
 
-	private static final long	serialVersionUID	= -1200799666995440280L;
+	private static final long serialVersionUID = -1200799666995440280L;
 
-	private AccountsDAO			accountsDAO;
-	private AccountsHistoryDAO	accountsHistoryDAO;
-	private AccountTypeDAO		accountTypeDAO;
+	private AccountsDAO accountsDAO;
+	private AccountsHistoryDAO accountsHistoryDAO;
+	private AccountTypeDAO accountTypeDAO;
 
 	public AccountProcessUtil() {
 		super();
@@ -80,7 +80,7 @@ public class AccountProcessUtil implements Serializable {
 
 		for (int i = 0; i < dataSets.size(); i++) {
 			ReturnDataSet posting = dataSets.get(i);
-			if(posting.getPostAmount().compareTo(BigDecimal.ZERO) <= 0 ){
+			if (posting.getPostAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
 			String acTypeKey = posting.getAccountType();

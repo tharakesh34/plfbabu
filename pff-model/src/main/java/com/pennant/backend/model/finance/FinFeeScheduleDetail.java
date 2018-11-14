@@ -43,7 +43,6 @@ package com.pennant.backend.model.finance;
  ********************************************************************************************
 */
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,7 +53,7 @@ import java.util.Set;
  *
  */
 public class FinFeeScheduleDetail {
-	
+
 	private String finReference;
 	private long feeID = Long.MIN_VALUE;
 	private Date schDate;
@@ -63,32 +62,32 @@ public class FinFeeScheduleDetail {
 	private BigDecimal osAmount = BigDecimal.ZERO;
 	private BigDecimal waiverAmount = BigDecimal.ZERO;
 	private BigDecimal writeoffAmount = BigDecimal.ZERO;
-	
+
 	private String feeTypeCode;
-	
+
 	//GST fields
 	private BigDecimal iGST = BigDecimal.ZERO;
 	private BigDecimal uGST = BigDecimal.ZERO;
 	private BigDecimal cGST = BigDecimal.ZERO;
 	private BigDecimal sGST = BigDecimal.ZERO;
 	private BigDecimal tGST = BigDecimal.ZERO;
-	private String feeTypeDesc;	// used in SOA report generation
+	private String feeTypeDesc; // used in SOA report generation
 
 	public FinFeeScheduleDetail() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
-		
+
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		excludeFields.add("finReference");
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("feeTypeDesc");
-		
+
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -96,6 +95,7 @@ public class FinFeeScheduleDetail {
 	public Date getSchDate() {
 		return schDate;
 	}
+
 	public void setSchDate(Date schDate) {
 		this.schDate = schDate;
 	}
@@ -103,6 +103,7 @@ public class FinFeeScheduleDetail {
 	public BigDecimal getSchAmount() {
 		return schAmount;
 	}
+
 	public void setSchAmount(BigDecimal schAmount) {
 		this.schAmount = schAmount;
 	}
@@ -110,6 +111,7 @@ public class FinFeeScheduleDetail {
 	public BigDecimal getPaidAmount() {
 		return paidAmount;
 	}
+
 	public void setPaidAmount(BigDecimal paidAmount) {
 		this.paidAmount = paidAmount;
 	}
@@ -117,6 +119,7 @@ public class FinFeeScheduleDetail {
 	public BigDecimal getOsAmount() {
 		return osAmount;
 	}
+
 	public void setOsAmount(BigDecimal osAmount) {
 		this.osAmount = osAmount;
 	}
@@ -124,6 +127,7 @@ public class FinFeeScheduleDetail {
 	public BigDecimal getWaiverAmount() {
 		return waiverAmount;
 	}
+
 	public void setWaiverAmount(BigDecimal waiverAmount) {
 		this.waiverAmount = waiverAmount;
 	}
@@ -131,6 +135,7 @@ public class FinFeeScheduleDetail {
 	public BigDecimal getWriteoffAmount() {
 		return writeoffAmount;
 	}
+
 	public void setWriteoffAmount(BigDecimal writeoffAmount) {
 		this.writeoffAmount = writeoffAmount;
 	}
@@ -198,7 +203,7 @@ public class FinFeeScheduleDetail {
 	public void setTGST(BigDecimal tGST) {
 		this.tGST = tGST;
 	}
-	
+
 	public String getFeeTypeDesc() {
 		return feeTypeDesc;
 	}
@@ -208,4 +213,3 @@ public class FinFeeScheduleDetail {
 	}
 
 }
-

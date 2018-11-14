@@ -50,17 +50,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class ExpenseType extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
-	private long				expenseTypeId		= Long.MIN_VALUE;
-	private String				expenseTypeCode;
-	private String				expenseTypeDesc;
-	private boolean				amortReq;
-	private boolean				taxApplicable;
-	private boolean				active;
-	private boolean				newRecord;
-	private String				lovValue;
-	private ExpenseType			befImage;
-	private LoggedInUser		userDetails;
+	private static final long serialVersionUID = 1L;
+	private long expenseTypeId = Long.MIN_VALUE;
+	private String expenseTypeCode;
+	private String expenseTypeDesc;
+	private boolean amortReq;
+	private boolean taxApplicable;
+	private boolean active;
+	private boolean newRecord;
+	private String lovValue;
+	private ExpenseType befImage;
+	private LoggedInUser userDetails;
 
 	public ExpenseType() {
 		super();

@@ -123,48 +123,48 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SusoenseDialog.zul file.
  */
 public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
-	private static final long							serialVersionUID	= 7798200490595650451L;
-	private static final Logger							logger				= Logger.getLogger(SuspenseDialogCtrl.class);
+	private static final long serialVersionUID = 7798200490595650451L;
+	private static final Logger logger = Logger.getLogger(SuspenseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window									window_SuspenseDialog;													// autowired
-	protected ExtendedCombobox							finReference;															// autowired
-	protected Textbox									finBranch;																// autowired
-	protected Textbox									finType;																// autowired
-	protected Longbox									custID;																// autowired
-	protected Textbox									lovDescCustCIF;														// autowired
-	protected Label										custShrtName;															// autowired
-	protected Intbox									finSuspSeq;															// autowired
-	protected Checkbox									finIsInSusp;															// autowired
-	protected Checkbox									manualSusp;															// autowired
-	protected Decimalbox								finSuspAmt;															// autowired
-	protected Decimalbox								finCurSuspAmt;															// autowired
-	protected Datebox									finSuspDate;															// autowired
-	protected Datebox									finSuspTrfDate;														// autowired
+	protected Window window_SuspenseDialog; // autowired
+	protected ExtendedCombobox finReference; // autowired
+	protected Textbox finBranch; // autowired
+	protected Textbox finType; // autowired
+	protected Longbox custID; // autowired
+	protected Textbox lovDescCustCIF; // autowired
+	protected Label custShrtName; // autowired
+	protected Intbox finSuspSeq; // autowired
+	protected Checkbox finIsInSusp; // autowired
+	protected Checkbox manualSusp; // autowired
+	protected Decimalbox finSuspAmt; // autowired
+	protected Decimalbox finCurSuspAmt; // autowired
+	protected Datebox finSuspDate; // autowired
+	protected Datebox finSuspTrfDate; // autowired
 
 	// not auto wired vars
-	private FinanceSuspHead								suspHead;																// overhanded per param
-	private transient SuspenseListCtrl					suspenseListCtrl;														// overhanded per param
+	private FinanceSuspHead suspHead; // overhanded per param
+	private transient SuspenseListCtrl suspenseListCtrl; // overhanded per param
 
-	protected Label										recordStatus;															// autowired
-	protected Radiogroup								userAction;
-	protected Groupbox									groupboxWf;
+	protected Label recordStatus; // autowired
+	protected Radiogroup userAction;
+	protected Groupbox groupboxWf;
 
-	private transient boolean							validationOn;
+	private transient boolean validationOn;
 
-	private String										menuItemRightName	= null;
+	private String menuItemRightName = null;
 
 	// ServiceDAOs / Domain Classes
-	private HashMap<String, ArrayList<ErrorDetail>>	overideMap			= new HashMap<String, ArrayList<ErrorDetail>>();
-	private transient SuspenseService					suspenseService;
-	private FinanceReferenceDetailService				financeReferenceDetailService;
-	private CustomerDetailsService						customerDetailsService;
-	private FinanceWorkFlowService						financeWorkFlowService;
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private transient SuspenseService suspenseService;
+	private FinanceReferenceDetailService financeReferenceDetailService;
+	private CustomerDetailsService customerDetailsService;
+	private FinanceWorkFlowService financeWorkFlowService;
 	private NotificationService notificationService;
-	private FinanceMain									financeMain;
+	private FinanceMain financeMain;
 
 	/**
 	 * default constructor.<br>
@@ -401,8 +401,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event)
+			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		this.doWriteComponentsToBean(suspHead);
 
@@ -780,8 +780,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		}
 	}
 
-	private void doLoadWorkFlow(FinanceSuspHead suspHead) throws FileNotFoundException, XMLStreamException,
-			UnsupportedEncodingException, FactoryConfigurationError {
+	private void doLoadWorkFlow(FinanceSuspHead suspHead)
+			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		String roleCode = null;
 		if (!suspHead.isNewRecord() && StringUtils.trimToEmpty(suspHead.getNextTaskId()).contains(";")) {
@@ -850,8 +850,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
-		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-				: moduleDefiner);
+		aFinanceDetail.setModuleDefiner(
+				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
@@ -867,8 +867,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
-			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
-					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
+			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum()
+					.compareTo(getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
@@ -1040,8 +1040,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(FinanceSuspHead aFinanceSuspHead, String tranType) throws InterruptedException,
-			InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(FinanceSuspHead aFinanceSuspHead, String tranType)
+			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
@@ -1212,8 +1212,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,
-			IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1246,8 +1246,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SuspenseDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1295,8 +1295,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		if (this.finReference.isVisible()) {
-			this.finReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SuspenseDialog_FinReference.value"), null, true, true));
+			this.finReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SuspenseDialog_FinReference.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1371,8 +1371,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException,
-			InvocationTargetException {
+	public FinanceDetail onExecuteStageAccDetail()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		getFinanceDetail().setModuleDefiner(
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 		return getFinanceDetail();
@@ -1391,9 +1391,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getAppValueDate();
 
-
-		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
-				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
+				profitDetail, eventCode, dateValueDate, dateValueDate);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 

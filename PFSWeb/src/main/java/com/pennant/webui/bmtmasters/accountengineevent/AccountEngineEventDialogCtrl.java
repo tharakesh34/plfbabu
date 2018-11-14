@@ -72,29 +72,26 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/BMTMasters/AccountEngineEvent/accountEngineEventDialog.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/BMTMasters/AccountEngineEvent/accountEngineEventDialog.zul file.
  */
 public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent> {
 	private static final long serialVersionUID = -5231127902551957898L;
 	private static final Logger logger = Logger.getLogger(AccountEngineEventDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_AccountEngineEventDialog;	
-	protected Textbox 		aEEventCode; 						
-	protected Textbox 		aEEventCodeDesc; 					
+	protected Window window_AccountEngineEventDialog;
+	protected Textbox aEEventCode;
+	protected Textbox aEEventCodeDesc;
 
 	// not auto wired Var's
-	private AccountEngineEvent accountEngineEvent; 			// overHanded per parameter
+	private AccountEngineEvent accountEngineEvent; // overHanded per parameter
 	private transient AccountEngineEventListCtrl accountEngineEventListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient AccountEngineEventService accountEngineEventService;
 	private transient PagedListService pagedListService;
@@ -114,9 +111,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected AccountEngineEvent
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected AccountEngineEvent object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -131,8 +127,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 			if (arguments.containsKey("accountEngineEvent")) {
-				this.accountEngineEvent = (AccountEngineEvent) arguments
-						.get("accountEngineEvent");
+				this.accountEngineEvent = (AccountEngineEvent) arguments.get("accountEngineEvent");
 				AccountEngineEvent befImage = new AccountEngineEvent();
 				BeanUtils.copyProperties(this.accountEngineEvent, befImage);
 				this.accountEngineEvent.setBefImage(befImage);
@@ -142,14 +137,12 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 				setAccountEngineEvent(null);
 			}
 
-			doLoadWorkFlow(this.accountEngineEvent.isWorkflow(),
-					this.accountEngineEvent.getWorkflowId(),
+			doLoadWorkFlow(this.accountEngineEvent.isWorkflow(), this.accountEngineEvent.getWorkflowId(),
 					this.accountEngineEvent.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"AccountEngineEventDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "AccountEngineEventDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -159,8 +152,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 			// or
 			// delete accountEngineEvent here.
 			if (arguments.containsKey("accountEngineEventListCtrl")) {
-				setAccountEngineEventListCtrl((AccountEngineEventListCtrl) arguments
-						.get("accountEngineEventListCtrl"));
+				setAccountEngineEventListCtrl((AccountEngineEventListCtrl) arguments.get("accountEngineEventListCtrl"));
 			} else {
 				setAccountEngineEventListCtrl(null);
 			}
@@ -197,8 +189,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -348,8 +339,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccountEngineEvent
 	 * @throws Exception
@@ -396,13 +386,16 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.aEEventCode.isReadonly()){
-			this.aEEventCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineEventDialog_AEEventCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}	
+		if (!this.aEEventCode.isReadonly()) {
+			this.aEEventCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccountEngineEventDialog_AEEventCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}
 
-		if (!this.aEEventCodeDesc.isReadonly()){
-			this.aEEventCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineEventDialog_AEEventCodeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.aEEventCodeDesc.isReadonly()) {
+			this.aEEventCodeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AccountEngineEventDialog_AEEventCodeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -457,8 +450,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aAccountEngineEvent.getAEEventCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aAccountEngineEvent.getAEEventCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aAccountEngineEvent.getRecordType())) {
 				aAccountEngineEvent.setVersion(aAccountEngineEvent.getVersion() + 1);
@@ -743,8 +736,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_AccountEngineEventDialog, auditHeader);
 						return processCompleted;
 					}
@@ -788,8 +781,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 */
 	private AuditHeader getAuditHeader(AccountEngineEvent aAccountEngineEvent, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAccountEngineEvent.getBefImage(), aAccountEngineEvent);
-		return new AuditHeader(String.valueOf(aAccountEngineEvent.getId()),
-				null, null, null, auditDetail,aAccountEngineEvent.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aAccountEngineEvent.getId()), null, null, null, auditDetail,
+				aAccountEngineEvent.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -826,7 +819,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	// Method for refreshing the list after successful updation
 	private void refreshList() {
 		logger.debug("Entering");
-		final JdbcSearchObject<AccountEngineEvent> soAccountEngineEvent = getAccountEngineEventListCtrl().getSearchObj();
+		final JdbcSearchObject<AccountEngineEvent> soAccountEngineEvent = getAccountEngineEventListCtrl()
+				.getSearchObj();
 		getAccountEngineEventListCtrl().pagingAccountEngineEventList.setActivePage(0);
 		getAccountEngineEventListCtrl().getPagedListWrapper().setSearchObject(soAccountEngineEvent);
 		if (getAccountEngineEventListCtrl().listBoxAccountEngineEvent != null) {
@@ -840,7 +834,6 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 		return String.valueOf(this.accountEngineEvent.getAEEventCode());
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -848,6 +841,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -855,6 +849,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	public AccountEngineEvent getAccountEngineEvent() {
 		return this.accountEngineEvent;
 	}
+
 	public void setAccountEngineEvent(AccountEngineEvent accountEngineEvent) {
 		this.accountEngineEvent = accountEngineEvent;
 	}
@@ -862,6 +857,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	public void setAccountEngineEventService(AccountEngineEventService accountEngineEventService) {
 		this.accountEngineEventService = accountEngineEventService;
 	}
+
 	public AccountEngineEventService getAccountEngineEventService() {
 		return this.accountEngineEventService;
 	}
@@ -869,6 +865,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	public void setAccountEngineEventListCtrl(AccountEngineEventListCtrl accountEngineEventListCtrl) {
 		this.accountEngineEventListCtrl = accountEngineEventListCtrl;
 	}
+
 	public AccountEngineEventListCtrl getAccountEngineEventListCtrl() {
 		return this.accountEngineEventListCtrl;
 	}
@@ -876,6 +873,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

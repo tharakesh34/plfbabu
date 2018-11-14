@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.finance;
 
-
-
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
@@ -55,14 +53,23 @@ import com.pennant.backend.model.finance.FinAssetEvaluation;
  */
 public interface FinAssetEvaluationService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	FinAssetEvaluation getFinAssetEvaluationById(String id,String type);
+
+	FinAssetEvaluation getFinAssetEvaluationById(String id, String type);
+
 	FinAssetEvaluation getApprovedFinAssetEvaluationById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	AuditDetail saveOrUpdate(FinAssetEvaluation finAssetEvaluation, String tableType, String auditTranType);
+
 	AuditDetail doApprove(FinAssetEvaluation finAssetEvaluation, String tableType, String auditTranType);
-	AuditDetail validate(FinAssetEvaluation finAssetEvaluation, String method, String auditTranType, String  usrLanguage);
+
+	AuditDetail validate(FinAssetEvaluation finAssetEvaluation, String method, String auditTranType,
+			String usrLanguage);
+
 	AuditDetail delete(FinAssetEvaluation finAssetEvaluation, String tableType, String auditTranType);
 }

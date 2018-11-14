@@ -94,9 +94,9 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 			throw new DependencyFoundException(e);
 		}
 
-		/*if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}*/
+		/*
+		 * if (recordCount <= 0) { throw new ConcurrencyException(); }
+		 */
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -184,7 +184,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
 		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
-		
+
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (Exception e) {
@@ -194,16 +194,16 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public List<CustomerIncome> getTotalIncomeBySamplingId(long samplingId) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("select income, margin, incomeexpense from income_details");
 		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("id", samplingId);
 		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
@@ -212,7 +212,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
@@ -235,7 +235,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("keyReference", keyReference);
 		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
-		
+
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (Exception e) {

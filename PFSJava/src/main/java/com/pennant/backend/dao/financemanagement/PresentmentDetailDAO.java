@@ -64,7 +64,8 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type);
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
+			String type);
 
 	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
 

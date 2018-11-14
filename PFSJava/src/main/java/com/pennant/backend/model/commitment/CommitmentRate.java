@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class CommitmentRate extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private String cmtReference;
 	private String cmtRvwFrq;
@@ -63,20 +63,20 @@ private static final long serialVersionUID = 1L;
 	private String cmtBaseRateName;
 	private String cmtSpecialRate;
 	private String cmtSpecialRateName;
-	
+
 	private BigDecimal cmtMargin = BigDecimal.ZERO;
 	private BigDecimal cmtActualRate = BigDecimal.ZERO;
 	private BigDecimal cmtCalculatedRate = BigDecimal.ZERO;
-	
- 	private boolean newRecord = false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private CommitmentRate befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	private String cmtCcy;
 	private BigDecimal cmtPftRateMin;
 	private BigDecimal cmtPftRateMax;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -89,54 +89,59 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
 
-			excludeFields.add("cmtBaseRateName");
-			excludeFields.add("cmtSpecialRateName");
-			excludeFields.add("cmtCcy");
-			excludeFields.add("cmtPftRateMin");
-			excludeFields.add("cmtPftRateMax");
-			
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+
+		excludeFields.add("cmtBaseRateName");
+		excludeFields.add("cmtSpecialRateName");
+		excludeFields.add("cmtCcy");
+		excludeFields.add("cmtPftRateMin");
+		excludeFields.add("cmtPftRateMax");
+
+		return excludeFields;
 	}
 
 	public String getCmtReference() {
 		return cmtReference;
 	}
+
 	public void setCmtReference(String cmtReference) {
 		this.cmtReference = cmtReference;
 	}
-	
+
 	public String getId() {
 		return cmtRvwFrq;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.cmtRvwFrq = id;
 	}
+
 	public String getCmtRvwFrq() {
 		return cmtRvwFrq;
 	}
+
 	public void setCmtRvwFrq(String cmtRvwFrq) {
 		this.cmtRvwFrq = cmtRvwFrq;
 	}
- 
+
 	public String getCmtBaseRate() {
 		return cmtBaseRate;
 	}
+
 	public void setCmtBaseRate(String cmtBaseRate) {
 		this.cmtBaseRate = cmtBaseRate;
 	}
+
 	public String getCmtBaseRateName() {
 		return this.cmtBaseRateName;
 	}
 
-	public void setCmtBaseRateName (String cmtBaseRateName) {
+	public void setCmtBaseRateName(String cmtBaseRateName) {
 		this.cmtBaseRateName = cmtBaseRateName;
 	}
-	 
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -144,7 +149,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -153,19 +158,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public CommitmentRate getBefImage(){
+	public CommitmentRate getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(CommitmentRate beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CommitmentRate beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

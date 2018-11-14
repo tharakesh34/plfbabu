@@ -78,12 +78,12 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.managercheque.model.ManagerChequeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -145,9 +145,9 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 	private MCType mcType = null;
 
 	public enum MCType {
-		MC(Labels.getLabel("window_ManagerChequeDialog.title")), RPMC(Labels
-				.getLabel("window_ReprintManagerChequeDialog.title")), CMC(Labels
-				.getLabel("window_CancelManagerChequeDialog.title"));
+		MC(Labels.getLabel("window_ManagerChequeDialog.title")),
+		RPMC(Labels.getLabel("window_ReprintManagerChequeDialog.title")),
+		CMC(Labels.getLabel("window_CancelManagerChequeDialog.title"));
 
 		private String title;
 
@@ -174,7 +174,7 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 		super.tableName = "ManagerCheques_AView";
 		super.queueTableName = "ManagerCheques_View";
 		super.enquiryTableName = "ManagerCheques_TView";
-		
+
 		if (StringUtils.isNotEmpty(getArgument("moduleType"))) {
 			this.mcType = MCType.valueOf(getArgument("moduleType"));
 		}
@@ -202,14 +202,14 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 
 		} else if (MCType.RPMC == mcType) {
 			this.button_ManagerChequeList_NewManagerCheque.setVisible(false);
-			this.searchObject
-					.addWhereClause("(( RecordType = '' And Reprint = 0 And  Cancel = 0) Or ( RecordType <> '' And Reprint = 1 ))  ");
+			this.searchObject.addWhereClause(
+					"(( RecordType = '' And Reprint = 0 And  Cancel = 0) Or ( RecordType <> '' And Reprint = 1 ))  ");
 			this.searchObject.addTabelName("ManagerCheques_View");
 
 		} else if (MCType.CMC == mcType) {
 			this.button_ManagerChequeList_NewManagerCheque.setVisible(false);
-			this.searchObject
-					.addWhereClause("(( RecordType = '' And Cancel = 0) Or (RecordType <> '' And Cancel = 1)) And  Reprint = 0 ");
+			this.searchObject.addWhereClause(
+					"(( RecordType = '' And Cancel = 0) Or (RecordType <> '' And Cancel = 1)) And  Reprint = 0 ");
 			this.searchObject.addTabelName("ManagerCheques_View");
 		}
 
@@ -226,19 +226,19 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 					// do nothing
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.valueDate_one.getValue() != null) {
-						this.searchObject.addFilter(new Filter("ValueDate", DateUtility.formatUtilDate(
-								this.valueDate_one.getValue(), PennantConstants.DBDateFormat),
-								Filter.OP_GREATER_OR_EQUAL));
+						this.searchObject.addFilter(
+								new Filter("ValueDate", DateUtility.formatUtilDate(this.valueDate_one.getValue(),
+										PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.valueDate_two.getValue() != null) {
-						this.searchObject
-								.addFilter(new Filter("ValueDate", DateUtility.formatUtilDate(
-										this.valueDate_two.getValue(), PennantConstants.DBDateFormat),
-										Filter.OP_LESS_OR_EQUAL));
+						this.searchObject.addFilter(
+								new Filter("ValueDate", DateUtility.formatUtilDate(this.valueDate_two.getValue(),
+										PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
-					this.searchObject.addFilter(new Filter("ValueDate", DateUtility.formatUtilDate(
-							this.valueDate_one.getValue(), PennantConstants.DBDateFormat), searchOpId));
+					this.searchObject.addFilter(new Filter("ValueDate",
+							DateUtility.formatUtilDate(this.valueDate_one.getValue(), PennantConstants.DBDateFormat),
+							searchOpId));
 				}
 			}
 		}
@@ -291,8 +291,8 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 		registerField("lovDescFundingCcyEditField");
 
 		SearchFilterControl.renderOperators(this.sortOperator_ValueDate, Operators.DATE_RANGE);
-		
-		if(enqiryModule) {
+
+		if (enqiryModule) {
 			doFillFilterList(getMGRCHQEnqFilters());
 		}
 
@@ -472,8 +472,8 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 
 	private void onChangeValueDateOperator() {
 		final Listitem item = sortOperator_ValueDate.getSelectedItem();
-		final String searchOpId = ((ValueLabel)item.getAttribute("data")).getValue();
-				
+		final String searchOpId = ((ValueLabel) item.getAttribute("data")).getValue();
+
 		this.valueDate_two.setText("");
 		if (Integer.parseInt(searchOpId) == Filter.OP_BETWEEN) {
 			this.valueDate_two.setVisible(true);

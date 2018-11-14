@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.Industry;
 import com.pennant.backend.service.systemmasters.IndustryService;
 import com.pennant.webui.systemmasters.industry.model.IndustryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Industry/IndustryList.zul file.
@@ -211,8 +211,8 @@ public class IndustryListCtrl extends GFCBaseListCtrl<Industry> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND IndustryCode='" + industry.getIndustryCode() + "' AND version="
-				+ industry.getVersion() + " ";
+		String whereCond = " AND IndustryCode='" + industry.getIndustryCode() + "' AND version=" + industry.getVersion()
+				+ " ";
 		if (doCheckAuthority(industry, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && industry.getWorkflowId() == 0) {

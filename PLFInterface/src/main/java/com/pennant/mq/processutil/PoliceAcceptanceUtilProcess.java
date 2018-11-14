@@ -23,7 +23,8 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		super();
 	}
 
-	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail, String msgFormat) throws InterfaceException {
+	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail, String msgFormat)
+			throws InterfaceException {
 		// Set MQ Message configuration details
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
@@ -36,20 +37,23 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		try {
 
 			// Generate Request Element for MQ Call
-			OMElement request = PFFXmlUtil.generateRequest(header, factory, getMortgageRequestElement(mortgageDetail, referenceNum, factory));
+			OMElement request = PFFXmlUtil.generateRequest(header, factory,
+					getMortgageRequestElement(mortgageDetail, referenceNum, factory));
 
 			// Fetch Response element from Client using MQ call
-			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
-		
+
 		return setMortgageDetails(response, header);
 	}
 
-	private OMElement getMortgageRequestElement(InterfaceMortgageDetail mortgageDetail, String referenceNum, OMFactory factory) {
+	private OMElement getMortgageRequestElement(InterfaceMortgageDetail mortgageDetail, String referenceNum,
+			OMFactory factory) {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
@@ -58,21 +62,22 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "ReferenceNum", referenceNum);
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "TransactionType", mortgageDetail.getTransactionType());
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "MortgageRefNo", mortgageDetail.getMortgageRefNo());
-		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "MortgageSourceCode", mortgageDetail.getMortgageSourceCode());
+		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "MortgageSourceCode",
+				mortgageDetail.getMortgageSourceCode());
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "ChassisNo", mortgageDetail.getChassisNo());
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "TcfNo", mortgageDetail.getTrafficProfileNo());
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "EmiratesId", mortgageDetail.getCustCRCPR());
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "ApprovedBy", mortgageDetail.getApprovedBy());
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "ApprovedDate", PFFXmlUtil.getTodayDate(null));
 		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "Remarks", mortgageDetail.getRemarks());
-		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "TimeStamp",	
+		PFFXmlUtil.setOMChildElement(factory, mortgageRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));
 
 		requestElement.addChild(mortgageRequest);
 		logger.debug("Leaving");
 		return requestElement;
 	}
-	
+
 	private InterfaceMortgageDetail setMortgageDetails(OMElement responseElement, AHBMQHeader header)
 			throws InterfaceException {
 		logger.debug("Entering");
@@ -87,20 +92,20 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 
 		detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/MaintainVehicleMortgageReply", responseElement);
 		header = PFFXmlUtil.parseHeader(responseElement, header);
-		header = getReturnStatus(detailElement, header,responseElement);
-		
+		header = getReturnStatus(detailElement, header, responseElement);
+
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
-		
+
 		interfaceMortgageDetail.setTransactionId(PFFXmlUtil.getStringValue(detailElement, "TransactionId"));
 		interfaceMortgageDetail.setReturncode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 		interfaceMortgageDetail.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 		logger.debug("Leaving");
-		
+
 		return interfaceMortgageDetail;
 	}
-	
+
 	/**
 	 * Cancel Mortgage
 	 * 
@@ -122,10 +127,12 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		try {
 
 			// Generate Request Element for MQ Call
-			OMElement request = PFFXmlUtil.generateRequest(header, factory, cancelMortgageRequestElement(transactionId, referenceNum, factory));
+			OMElement request = PFFXmlUtil.generateRequest(header, factory,
+					cancelMortgageRequestElement(transactionId, referenceNum, factory));
 
 			// Fetch Response element from Client using MQ call
-			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
@@ -134,7 +141,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 
 		return cancelMortgageResponse(response, header);
 	}
-	
+
 	/**
 	 * Cancel Mortgage
 	 * 
@@ -151,13 +158,13 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 
 		PFFXmlUtil.setOMChildElement(factory, cancelMortgageRequest, "ReferenceNum", referenceNum);
 		PFFXmlUtil.setOMChildElement(factory, cancelMortgageRequest, "TransactionId", transactionId);
-		PFFXmlUtil.setOMChildElement(factory, cancelMortgageRequest, "TimeStamp",	PFFXmlUtil.getTodayDateTime(null));
+		PFFXmlUtil.setOMChildElement(factory, cancelMortgageRequest, "TimeStamp", PFFXmlUtil.getTodayDateTime(null));
 
 		requestElement.addChild(cancelMortgageRequest);
 		logger.debug("Leaving");
 		return requestElement;
 	}
-	
+
 	private InterfaceMortgageDetail cancelMortgageResponse(OMElement responseElement, AHBMQHeader header)
 			throws InterfaceException {
 		logger.debug("Entering");
@@ -176,15 +183,14 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		interfaceMortgageDetail.setTransactionId(PFFXmlUtil.getStringValue(detailElement, "ReferenceNum"));
 		interfaceMortgageDetail.setReturncode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 		interfaceMortgageDetail.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
-		
+
 		if (!interfaceMortgageDetail.getReturncode().equals(InterfaceMasterConfigUtil.SUCCESS_RETURN_CODE)) {
-			throw new InterfaceException(interfaceMortgageDetail.getReturncode(), interfaceMortgageDetail.getReturnText());
+			throw new InterfaceException(interfaceMortgageDetail.getReturncode(),
+					interfaceMortgageDetail.getReturnText());
 		}
-		
+
 		logger.debug("Leaving");
 		return interfaceMortgageDetail;
 	}
-
-	
 
 }

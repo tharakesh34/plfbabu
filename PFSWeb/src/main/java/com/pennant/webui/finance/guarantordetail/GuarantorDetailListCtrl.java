@@ -60,8 +60,8 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.webui.finance.guarantordetail.model.GuarantorDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailList.zul file.
@@ -90,7 +90,6 @@ public class GuarantorDetailListCtrl extends GFCBaseListCtrl<GuarantorDetail> {
 	protected Button button_GuarantorDetailList_GuarantorDetailSearch;
 
 	private transient GuarantorDetailService guarantorDetailService;
-
 
 	/**
 	 * default constructor.<br>

@@ -54,13 +54,20 @@ import com.pennant.backend.model.rmtmasters.AccountType;
  * 
  */
 public interface AccountTypeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	AccountType getAccountTypeById(String id);
+
 	AccountType getApprovedAccountTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
+
 	AccountType getApprovedAccountType(String acType);
 }

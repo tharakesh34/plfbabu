@@ -76,59 +76,67 @@ public class CorpRelationCode extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return corpRelationCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.corpRelationCode = id;
 	}
-	
+
 	public String getCorpRelationCode() {
 		return corpRelationCode;
 	}
+
 	public void setCorpRelationCode(String corpRelationCode) {
 		this.corpRelationCode = corpRelationCode;
 	}
-	
+
 	public String getCorpRelationDesc() {
 		return corpRelationDesc;
 	}
+
 	public void setCorpRelationDesc(String corpRelationDesc) {
 		this.corpRelationDesc = corpRelationDesc;
 	}
-	
+
 	public boolean isCorpRelationIsActive() {
 		return corpRelationIsActive;
 	}
+
 	public void setCorpRelationIsActive(boolean corpRelationIsActive) {
 		this.corpRelationIsActive = corpRelationIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public CorpRelationCode getBefImage(){
+	public CorpRelationCode getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CorpRelationCode beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CorpRelationCode beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

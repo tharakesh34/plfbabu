@@ -33,17 +33,30 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 public interface GuarantorDetailDAO {
 
 	GuarantorDetail getGuarantorDetail();
+
 	GuarantorDetail getNewGuarantorDetail();
+
 	GuarantorDetail getGuarantorDetailById(long id, String type);
+
 	void update(GuarantorDetail guarantorDetail, String type);
+
 	void delete(GuarantorDetail guarantorDetail, String type);
+
 	long save(GuarantorDetail guarantorDetail, String type);
+
 	GuarantorDetail getGuarantorDetailByRefId(String finReference, long guarantorId, String type);
+
 	void deleteByFinRef(String finReference, String type);
-	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);	
+
+	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);
+
 	List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);
+
 	List<FinanceExposure> getSecondaryExposureList(GuarantorDetail guarantorDetail);
+
 	List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail);
+
 	FinanceExposure getOverDueDetails(FinanceExposure exposure);
+
 	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
 }

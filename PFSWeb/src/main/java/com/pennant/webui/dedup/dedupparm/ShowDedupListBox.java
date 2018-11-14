@@ -49,14 +49,14 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
 public class ShowDedupListBox extends Window implements Serializable {
 	private static final long serialVersionUID = -2854517425413800019L;
 	private static final Logger logger = Logger.getLogger(ShowDedupListBox.class);
-	
+
 	private Textbox _textbox;
 	private Paging _paging;
 	private int pageSize = 10;
@@ -76,6 +76,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	static boolean isCustomerDedup = false;
 	private static String curAccessedUser;
 	private FinanceDedup financeDedup;
+
 	public ShowDedupListBox() {
 		super();
 	}
@@ -87,14 +88,15 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	public static Object show(Component parent, List<?> dedupList, String dedupFields, FinanceDedup dedup, String curUser) {
+	public static Object show(Component parent, List<?> dedupList, String dedupFields, FinanceDedup dedup,
+			String curUser) {
 		isCustomerDedup = false;
 		curAccessedUser = curUser;
 		return new ShowDedupListBox(parent, dedupList, dedupFields, dedup);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Object show(Component parent, List<?> dedupList, String dedupFields, Object compareObject, 
+	public static Object show(Component parent, List<?> dedupList, String dedupFields, Object compareObject,
 			List<?> listCompare, String[] listCompareFileds, FinanceDedup dedup) {
 		isCustomerDedup = true;
 		compObject = compareObject;
@@ -104,8 +106,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
@@ -123,9 +124,9 @@ public class ShowDedupListBox extends Window implements Serializable {
 		// Window
 		int borderLayoutHeight = GFCBaseCtrl.getDesktopHeight();
 		int borderLayoutWidth = GFCBaseCtrl.getDesktopWidth();
-		this.setWidth((borderLayoutWidth -170) + "px");
-		this.setHeight((borderLayoutHeight -150) + "px");
-		
+		this.setWidth((borderLayoutWidth - 170) + "px");
+		this.setHeight((borderLayoutHeight - 150) + "px");
+
 		Div toolbardiv = new Div();
 		toolbardiv.setSclass("z-toolbar");
 		toolbardiv.setStyle("padding:0px;height:28px;");
@@ -135,11 +136,11 @@ public class ShowDedupListBox extends Window implements Serializable {
 		hbox.setWidth("100%");
 		hbox.setWidths("30%,40%,30%");
 		hbox.setParent(toolbardiv);
-		
+
 		Toolbar startToolbar = new Toolbar();
 		startToolbar.setAlign("start");
 		startToolbar.setSclass("toolbar-start");
-		
+
 		// Button Proceed
 		final Button btnProceed = new Button();
 		btnProceed.setSclass("z-toolbarbutton");
@@ -152,36 +153,36 @@ public class ShowDedupListBox extends Window implements Serializable {
 		btnCancel.setLabel("Duplicate Record");
 		btnCancel.addEventListener("onClick", new OnCancelListener());
 		btnCancel.setParent(startToolbar);
-		
+
 		Toolbar centerToolbar = new Toolbar();
 		centerToolbar.setAlign("center");
 		centerToolbar.setSclass("toolbar-center");
-		
+
 		Label title = new Label(Labels.getLabel("label_FinanceDedupAlert"));
 		centerToolbar.appendChild(title);
-		
+
 		Toolbar endToolbar = new Toolbar();
 		endToolbar.setAlign("end");
 		endToolbar.setSclass("toolbar-end");
-		
-		 // Button for Help
+
+		// Button for Help
 		final Button btnHelp = new Button();
 		btnHelp.setSclass("z-toolbarbutton");
 		btnHelp.setLabel("Help");
 		btnHelp.setParent(endToolbar);
-		
+
 		hbox.appendChild(startToolbar);
 		hbox.appendChild(centerToolbar);
 		hbox.appendChild(endToolbar);
-		toolbardiv.appendChild(hbox);		
-		
+		toolbardiv.appendChild(hbox);
+
 		// Grid Details for Checking Customer Details
 		Grid grid = new Grid();
 		Columns columns = new Columns();
-		Column column1 = new Column(); 
-		Column column2 = new Column(); 
-		Column column3 = new Column(); 
-		Column column4 = new Column(); 
+		Column column1 = new Column();
+		Column column2 = new Column();
+		Column column3 = new Column();
+		Column column4 = new Column();
 		column1.setWidth("15%");
 		column2.setWidth("35%");
 		column3.setWidth("15%");
@@ -192,36 +193,36 @@ public class ShowDedupListBox extends Window implements Serializable {
 		columns.appendChild(column3);
 		columns.appendChild(column4);
 		grid.appendChild(columns);
-		
+
 		setFinanceDedup(dedup);
 		//Rows Preparation
 		Rows rows = new Rows();
 		grid.appendChild(rows);
-		
-		rows.appendChild(prepareRow(new Row(),
-				Labels.getLabel("label_FinanceDeDupList_CustCIF.value"), dedup.getCustCIF(),
-				Labels.getLabel("label_FinanceDeDupList_mobileNumber.value"), dedup.getMobileNumber()));
-		
-		if(StringUtils.isNotBlank(dedup.getChassisNumber()) ||
-				StringUtils.isNotBlank(dedup.getEngineNumber())){
-			rows.appendChild(prepareRow(new Row(),
-					Labels.getLabel("label_FinanceDeDupList_chassisNumber.value"), dedup.getChassisNumber(),
-					Labels.getLabel("label_FinanceDeDupList_engineNumber.value"), dedup.getEngineNumber()));
-		}
-		
-		rows.appendChild(prepareRow(new Row(), 
-				Labels.getLabel("label_FinanceDeDupList_startDate.value"), DateUtility.formatToLongDate(dedup.getStartDate()),
-				Labels.getLabel("label_FinanceDeDupList_financeAmount.value"), PennantApplicationUtil.amountFormate(dedup.getFinanceAmount(), CurrencyUtil.getFormat(""))));
-		
-		rows.appendChild(prepareRow(new Row(), 
-				Labels.getLabel("label_FinanceDeDupList_financeType.value"), dedup.getFinanceType(), 
-				Labels.getLabel("label_FinanceDeDupList_ProfitAmount.value"), PennantApplicationUtil.amountFormate(dedup.getProfitAmount(), CurrencyUtil.getFormat(""))));
 
-		int listRows = Math.round((borderLayoutHeight-300) / 25) - 3;
+		rows.appendChild(
+				prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_CustCIF.value"), dedup.getCustCIF(),
+						Labels.getLabel("label_FinanceDeDupList_mobileNumber.value"), dedup.getMobileNumber()));
+
+		if (StringUtils.isNotBlank(dedup.getChassisNumber()) || StringUtils.isNotBlank(dedup.getEngineNumber())) {
+			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_chassisNumber.value"),
+					dedup.getChassisNumber(), Labels.getLabel("label_FinanceDeDupList_engineNumber.value"),
+					dedup.getEngineNumber()));
+		}
+
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_startDate.value"),
+				DateUtility.formatToLongDate(dedup.getStartDate()),
+				Labels.getLabel("label_FinanceDeDupList_financeAmount.value"),
+				PennantApplicationUtil.amountFormate(dedup.getFinanceAmount(), CurrencyUtil.getFormat(""))));
+
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_financeType.value"),
+				dedup.getFinanceType(), Labels.getLabel("label_FinanceDeDupList_ProfitAmount.value"),
+				PennantApplicationUtil.amountFormate(dedup.getProfitAmount(), CurrencyUtil.getFormat(""))));
+
+		int listRows = Math.round((borderLayoutHeight - 300) / 25) - 3;
 		setPageSize(listRows);
 		this.setVisible(true);
 		this.setClosable(true);
-		
+
 		// BorderLayout
 		final Borderlayout bl = new Borderlayout();
 		bl.setHeight("100%");
@@ -231,29 +232,29 @@ public class ShowDedupListBox extends Window implements Serializable {
 		center.setBorder("none");
 		center.setFlex(true);
 		center.setParent(bl);
-		
+
 		final North north = new North();
 		north.setBorder("none");
 		north.setFlex(true);
 		north.setParent(bl);
 		toolbardiv.setParent(north);
-		
+
 		// DIV Center area
 		final Div divCenter2 = new Div();
 		divCenter2.setWidth("100%");
 		divCenter2.setHeight("100%");
 		divCenter2.setParent(center);
 		grid.setParent(divCenter2);
-		
+
 		// ListBox
 		this.listbox = new Listbox();
 		listbox.setStyle("border: none;");
-		this.listbox.setHeight((borderLayoutHeight -300) + "px");
+		this.listbox.setHeight((borderLayoutHeight - 300) + "px");
 		this.listbox.setVisible(true);
 		this.listbox.setSizedByContent(true);
 		this.listbox.setSpan("true");
 		this.listbox.setParent(divCenter2);
-		
+
 		if (isCustomerDedup) {
 			this.listbox.setItemRenderer(new CustDedupBoxItemRenderer());
 		} else {
@@ -298,11 +299,11 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 * Inner Cancel class.<br>
 	 */
 	final class OnCancelListener implements EventListener<Event> {
-		
+
 		public OnCancelListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(0);
@@ -315,17 +316,17 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 * Inner OnProceedListener class.<br>
 	 */
 	final class OnProceedListener implements EventListener<Event> {
-		
+
 		public OnProceedListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(1);
-			if(!isCustomerDedup){
+			if (!isCustomerDedup) {
 				List<FinanceDedup> dedupList = new ArrayList<FinanceDedup>();
-				FinanceDedup dedup=null;
+				FinanceDedup dedup = null;
 				for (int i = 0; i < dedupListSize.size(); i++) {
 					dedup = (FinanceDedup) dedupListSize.get(i);
 					if (!dedup.isOverride()) {
@@ -336,30 +337,29 @@ public class ShowDedupListBox extends Window implements Serializable {
 						dedup.setOverrideUser(curAccessedUser);
 						dedupList.add(dedup);
 					}
-					if(!dedup.getOverrideUser().contains(StringUtils.trimToEmpty(curAccessedUser))){
-						dedup.setOverrideUser(dedup.getOverrideUser() + ","
-								+ curAccessedUser);
+					if (!dedup.getOverrideUser().contains(StringUtils.trimToEmpty(curAccessedUser))) {
+						dedup.setOverrideUser(dedup.getOverrideUser() + "," + curAccessedUser);
 						dedupList.add(dedup);
 					}
-					
+
 				}
 				if (getUserAction() == -1) {
-					StringBuffer massValues=new StringBuffer();
+					StringBuffer massValues = new StringBuffer();
 					for (Iterator<String> itr = dedup.getOverridenMap().values().iterator(); itr.hasNext();) {
 						massValues.append(",");
 						massValues.append(itr.next());
 					}
-					if(dedup.getOverridenMap().keySet().size()==1){
+					if (dedup.getOverridenMap().keySet().size() == 1) {
 						MessageUtil.showError(massValues.deleteCharAt(0) + " Rule not allowed to overriden.");
-					}else{
+					} else {
 						MessageUtil.showError(massValues.deleteCharAt(0) + " Rules are not allowed to overriden.");
 					}
-					
+
 				} else {
 					setObject(dedupList);
 					onClose();
 				}
-			}else{
+			} else {
 				setObject(String.valueOf("1"));
 			}
 		}
@@ -369,11 +369,11 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class CustDedupBoxItemRenderer implements ListitemRenderer<Object> {
-		
+
 		public CustDedupBoxItemRenderer() {
-			
+
 		}
-		
+
 		@Override
 		public void render(Listitem item, Object data, int count) throws Exception {
 			if (item instanceof Listgroup) {
@@ -381,7 +381,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 				Date dateFieldValue = new Date();
 				for (int j = 0; j < fieldString.length; j++) {
 					final Listcell lc;
-					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
+					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase()
+							+ fieldString[j].substring(1);
 					if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 						fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 						lc = new Listcell(fieldValue);
@@ -392,24 +393,24 @@ public class ShowDedupListBox extends Window implements Serializable {
 						fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 						lc = new Listcell(fieldValue);
 					}
-					if (j == fieldString.length-1 || j == fieldString.length-2) {
+					if (j == fieldString.length - 1 || j == fieldString.length - 2) {
 						lc.setLabel("");
 					}
-					
-					
+
 					if (compareObject(data, fieldMethod)) {
 						lc.setStyle("font-weight:bold;color:red");
 					}
 					lc.setParent(item);
-					
+
 				}
-			
+
 			} else {
 				String fieldValue = "";
 				Date dateFieldValue = new Date();
 				for (int j = 0; j < fieldString.length; j++) {
 					final Listcell lc;
-					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
+					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase()
+							+ fieldString[j].substring(1);
 					if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 						fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 						lc = new Listcell(fieldValue);
@@ -420,7 +421,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 						fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 						lc = new Listcell(fieldValue);
 					}
-					if (j != fieldString.length-1 && j != fieldString.length-2) {
+					if (j != fieldString.length - 1 && j != fieldString.length - 2) {
 						lc.setLabel("");
 					}
 					if (compareObject(data, fieldMethod)) {
@@ -436,54 +437,49 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class DedupBoxItemRenderer implements ListitemRenderer<Object> {
-		
+
 		public DedupBoxItemRenderer() {
-			
+
 		}
-		
+
 		@Override
 		public void render(Listitem item, Object data, int count) throws Exception {
 			String fieldValue = "";
 			Date dateFieldValue = new Date();
 			FinanceDedup dedup = (FinanceDedup) data;
-			String ruleFields[] = StringUtils.trimToEmpty(dedup.getRules())
-					.split(",");
+			String ruleFields[] = StringUtils.trimToEmpty(dedup.getRules()).split(",");
 			//String OverddenRules[]=(StringUtils.trimToEmpty(dedup.getDedupList()).split(","));
 
 			String currentFieldValue = "";
-			
+
 			for (int j = 0; j < fieldString.length; j++) {
 				final Listcell lc;
-				String fieldMethod = "get"
-						+ fieldString[j].substring(0, 1).toUpperCase()
-						+ fieldString[j].substring(1);
+				String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
 				// for String Data type 
-				if (data.getClass().getMethod(fieldMethod).getReturnType()
-						.equals(String.class)) {
+				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 
-					fieldValue = (String) data.getClass()
-							.getMethod(fieldMethod).invoke(data);
-					currentFieldValue = (String) getFinanceDedup().getClass()
-							.getMethod(fieldMethod).invoke(getFinanceDedup());
-					
-					if(StringUtils.trimToEmpty(fieldValue).startsWith(",")){
+					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
+					currentFieldValue = (String) getFinanceDedup().getClass().getMethod(fieldMethod)
+							.invoke(getFinanceDedup());
+
+					if (StringUtils.trimToEmpty(fieldValue).startsWith(",")) {
 						fieldValue = fieldValue.substring(1);
 					}
-					if(StringUtils.trimToEmpty(fieldValue).endsWith(",")){
-						fieldValue = fieldValue.substring(0, fieldValue.length()-1);
+					if (StringUtils.trimToEmpty(fieldValue).endsWith(",")) {
+						fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
 					}
 					//Rule is Overridden or not 
-					
+
 					//if Stage is Empty then set Stage as Active.
-					if(fieldMethod.equals("get"+ Labels.getLabel("label_FinanceDeDupListStageDesc"))){
-						if(fieldValue == null || StringUtils.isEmpty(fieldValue)){
+					if (fieldMethod.equals("get" + Labels.getLabel("label_FinanceDeDupListStageDesc"))) {
+						if (fieldValue == null || StringUtils.isEmpty(fieldValue)) {
 							fieldValue = Labels.getLabel("label_FinanceDeDupList_ActiveStage");
 						}
 					}
-					if(fieldMethod.equals("get"+ Labels.getLabel("label_FinanceDeDupListCustCRCPR"))){
-						if(fieldValue != null && currentFieldValue != null){
-							fieldValue =PennantApplicationUtil.formatEIDNumber(fieldValue);
-							currentFieldValue=PennantApplicationUtil.formatEIDNumber(currentFieldValue);
+					if (fieldMethod.equals("get" + Labels.getLabel("label_FinanceDeDupListCustCRCPR"))) {
+						if (fieldValue != null && currentFieldValue != null) {
+							fieldValue = PennantApplicationUtil.formatEIDNumber(fieldValue);
+							currentFieldValue = PennantApplicationUtil.formatEIDNumber(currentFieldValue);
 						}
 					}
 					lc = new Listcell(fieldValue);
@@ -495,22 +491,20 @@ public class ShowDedupListBox extends Window implements Serializable {
 					// Matches fields show with color  	
 					for (int k = 0; k < ruleFields.length; k++) {
 						if (fieldMethod.equalsIgnoreCase("get" + ruleFields[k])) {
-							if (StringUtils.equalsIgnoreCase(fieldValue,
-									StringUtils.trimToEmpty(currentFieldValue))) {
+							if (StringUtils.equalsIgnoreCase(fieldValue, StringUtils.trimToEmpty(currentFieldValue))) {
 								lc.setStyle("font-weight:bold;color:red");
 							}
 						}
 					}
-					
+
 					// For Date  Data type  
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
-					dateFieldValue = (Date) data.getClass()
-							.getMethod(fieldMethod).invoke(data);
+					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
-					Date curdateFieldValue = (Date) getFinanceDedup()
-							.getClass().getMethod(fieldMethod).invoke(getFinanceDedup());
-					
-					if(dateFieldValue != null && curdateFieldValue != null) {
+					Date curdateFieldValue = (Date) getFinanceDedup().getClass().getMethod(fieldMethod)
+							.invoke(getFinanceDedup());
+
+					if (dateFieldValue != null && curdateFieldValue != null) {
 						for (int k = 0; k < ruleFields.length; k++) {
 							if (fieldMethod.equalsIgnoreCase("get" + ruleFields[k])) {
 								if (dateFieldValue.compareTo(curdateFieldValue) == 0) {
@@ -520,18 +514,14 @@ public class ShowDedupListBox extends Window implements Serializable {
 						}
 					}
 					// For Decimal values    
-				} else if (data.getClass().getMethod(fieldMethod)
-						.getReturnType().equals(BigDecimal.class)) {
-					
-					BigDecimal decfieldValue = (BigDecimal) data.getClass()
-							.getMethod(fieldMethod).invoke(data);
-					lc = new Listcell(PennantAppUtil.amountFormate(
-							decfieldValue, CurrencyUtil.getFormat("")));
+				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(BigDecimal.class)) {
+
+					BigDecimal decfieldValue = (BigDecimal) data.getClass().getMethod(fieldMethod).invoke(data);
+					lc = new Listcell(PennantAppUtil.amountFormate(decfieldValue, CurrencyUtil.getFormat("")));
 					lc.setStyle("text-align:right;");
-					BigDecimal currBigdeValue = (BigDecimal) getFinanceDedup()
-							.getClass().getMethod(fieldMethod)
+					BigDecimal currBigdeValue = (BigDecimal) getFinanceDedup().getClass().getMethod(fieldMethod)
 							.invoke(getFinanceDedup());
-					
+
 					for (int k = 0; k < ruleFields.length; k++) {
 						if (fieldMethod.equalsIgnoreCase("get" + ruleFields[k])) {
 							if (PennantApplicationUtil.matches(decfieldValue, currBigdeValue)) {
@@ -541,8 +531,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 					}
 
 				} else {
-					fieldValue = data.getClass().getMethod(fieldMethod)
-							.invoke(data).toString();
+					fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 					lc = new Listcell(fieldValue);
 				}
 				lc.setParent(item);
@@ -553,11 +542,11 @@ public class ShowDedupListBox extends Window implements Serializable {
 	}
 
 	public final class OnPagingEventListener implements EventListener<Event> {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			final PagingEvent pe = (PagingEvent) event;
@@ -569,7 +558,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	}
 
 	// Setter/Getter
-	
+
 	public Object getObject() {
 		return this.objClass;
 	}
@@ -694,13 +683,15 @@ public class ShowDedupListBox extends Window implements Serializable {
 					for (Object object : complist) {
 						boolean equal = false;
 						for (int i = 0; i < compListFileds.length; i++) {
-								String value1 = (String) object.getClass().getMethod("get" + compListFileds[i]).invoke(object);
-								String value2 = (String) object1.getClass().getMethod("get" + compListFileds[i]).invoke(object1);
-								if (StringUtils.trimToEmpty(value1).equals(StringUtils.trimToEmpty(value2))) {
-									equal = true;
-								} else {
-									equal = false;
-								}
+							String value1 = (String) object.getClass().getMethod("get" + compListFileds[i])
+									.invoke(object);
+							String value2 = (String) object1.getClass().getMethod("get" + compListFileds[i])
+									.invoke(object1);
+							if (StringUtils.trimToEmpty(value1).equals(StringUtils.trimToEmpty(value2))) {
+								equal = true;
+							} else {
+								equal = false;
+							}
 						}
 						if (equal) {
 							return equal;
@@ -723,11 +714,11 @@ public class ShowDedupListBox extends Window implements Serializable {
 	}
 
 	class CompareCustomer implements Comparator {
-		
+
 		public CompareCustomer() {
-			
+
 		}
-		
+
 		@Override
 		public int compare(Object o1, Object o2) {
 			try {
@@ -747,6 +738,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 
 	/**
 	 * Method for Preparation of Row Item
+	 * 
 	 * @param row
 	 * @param label1
 	 * @param value1
@@ -754,8 +746,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 * @param value2
 	 * @return
 	 */
-	private Row prepareRow(Row row, String label1, String value1, String label2, String value2){
-		
+	private Row prepareRow(Row row, String label1, String value1, String label2, String value2) {
+
 		Label label = new Label();
 		label.setValue(label1);
 		row.appendChild(label);
@@ -768,10 +760,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 		label.setValue(label2);
 		row.appendChild(label);
 		textbox = new Textbox();
-		if (Labels.getLabel("label_FinanceDeDupList_financeAmount.value")
-				.equals(label2)
-				|| Labels.getLabel("label_FinanceDeDupList_ProfitAmount.value")
-						.equals(label2)) {
+		if (Labels.getLabel("label_FinanceDeDupList_financeAmount.value").equals(label2)
+				|| Labels.getLabel("label_FinanceDeDupList_ProfitAmount.value").equals(label2)) {
 			textbox.setStyle("text-align:right;");
 		}
 		textbox.setWidth("150px");
@@ -789,6 +779,4 @@ public class ShowDedupListBox extends Window implements Serializable {
 		this.financeDedup = financeDedup;
 	}
 
-	
-	
 }

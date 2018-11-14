@@ -17,53 +17,55 @@ public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 	public MQInterfaceDAOImpl() {
 		super();
 	}
+
 	private MQInterfaceDAO mqInterfaceDAO;
-	
+
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
+
 	@Override
 	/**
 	 * Mapping MDM code with PFF code
 	 * 
 	 */
-    public String getMDMCode(String code,String tableName) throws InterfaceException {
+	public String getMDMCode(String code, String tableName) throws InterfaceException {
 		logger.debug("Entering");
-		String value =new String();
-		StringBuilder selectSql = new StringBuilder("Select value From "+tableName);
+		String value = new String();
+		StringBuilder selectSql = new StringBuilder("Select value From " + tableName);
 		selectSql.append(" where code =:Code");
-		
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("Code", code);
 		try {
-			value = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),parameterSource,String.class); 
-		} catch(Exception e) {
+			value = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameterSource, String.class);
+		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			throw new InterfaceException("PTI7001", "MDM Code not found");
 		}
-			
+
 		logger.debug("Leaving");
 		return value;
 	}
-	
+
 	@Override
 	/**
 	 * Mapping PFF code with MDM code
 	 * 
 	 */
-	public String getPFFCode(String value,String tableName) throws InterfaceException {
+	public String getPFFCode(String value, String tableName) throws InterfaceException {
 		logger.debug("Entering");
-		String mdmCode =new String();
-		StringBuilder selectSql = new StringBuilder("Select code From "+tableName);
+		String mdmCode = new String();
+		StringBuilder selectSql = new StringBuilder("Select code From " + tableName);
 		selectSql.append(" where value =:Value");
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("Value", value);
 
 		try {
-			mdmCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),parameterSource,String.class); 
-		} catch(Exception e) {
+			mdmCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameterSource,
+					String.class);
+		} catch (Exception e) {
 			logger.warn("Exception: ", e);
 			throw new InterfaceException("PTI7001", "PFF Code not found");
 		}
@@ -79,7 +81,5 @@ public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 	public void setMqInterfaceDAO(MQInterfaceDAO mqInterfaceDAO) {
 		this.mqInterfaceDAO = mqInterfaceDAO;
 	}
-		
+
 }
-
-

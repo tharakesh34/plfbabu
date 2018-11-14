@@ -25,7 +25,6 @@ import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl;
 public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> implements CustomerExtLiabilityDAO {
 	private static Logger logger = Logger.getLogger(CustomerExtLiabilityDAOImpl.class);
 
-	
 	@Override
 	public CustomerExtLiability getLiability(CustomerExtLiability liability, String type, String inputSource) {
 		logger.debug(Literal.ENTERING);
@@ -171,7 +170,6 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 	}
 
-
 	@Override
 	public int getCustomerExtLiabilityByBank(String loanBank, String type) {
 		StringBuilder sql = new StringBuilder();
@@ -185,7 +183,6 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
 	}
-
 
 	@Override
 	public int getVersion(long custId, int liabilitySeq) {
@@ -201,7 +198,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("custid", custId);
 		mapSqlParameterSource.addValue("seqno", liabilitySeq);
-		
+
 		try {
 			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
@@ -233,7 +230,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		} catch (EmptyResultDataAccessException e) {
 			return emiSum;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return emiSum;
 	}
@@ -241,11 +238,11 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 	@Override
 	public BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custids) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (CollectionUtils.isEmpty(custids)) {
 			return BigDecimal.ZERO;
 		}
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select coalesce(sum(instalmentamount), 0)");
 		sql.append(" from customer_ext_liabilities_aview");
@@ -256,7 +253,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custids);
 		source.addValue("foir", 1);
-		
+
 		try {
 			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -296,7 +293,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
-	
+
 	@Override
 	public long getLinkId(long custId) {
 		StringBuilder sql = new StringBuilder();
@@ -331,7 +328,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("finreference", finReference);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerExtLiability.class);
 
 		logger.debug(Literal.LEAVING);
 
@@ -355,7 +353,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("samplingid", samplingId);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerExtLiability.class);
 
 		logger.debug(Literal.LEAVING);
 

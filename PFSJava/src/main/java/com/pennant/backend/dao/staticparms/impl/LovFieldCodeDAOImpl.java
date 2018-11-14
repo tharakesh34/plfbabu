@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -66,17 +64,18 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFieldCodeDAO {
 	private static Logger logger = Logger.getLogger(LovFieldCodeDAOImpl.class);
-	
+
 	public LovFieldCodeDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Field Code details by key field
+	 * Fetch the Record Field Code details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LovFieldCode
 	 */
 	@Override
@@ -87,10 +86,11 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select FieldCode, FieldCodeDesc, FieldCodeType, FieldEdit,isActive,");
-		/*if(type.contains("View")){
-			selectSql.append("");
-		}*/
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		/*
+		 * if(type.contains("View")){ selectSql.append(""); }
+		 */
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTLovFieldCode");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FieldCode =:FieldCode");
@@ -99,9 +99,9 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
 		RowMapper<LovFieldCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LovFieldCode.class);
 
-		try{
-			lovFieldCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			lovFieldCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			lovFieldCode = null;
 		}
@@ -110,19 +110,19 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTLovFieldCode or BMTLovFieldCode_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Field Code by key FieldCode
+	 * This method Deletes the Record from the BMTLovFieldCode or BMTLovFieldCode_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Field Code by key FieldCode
 	 * 
-	 * @param Field Code (lovFieldCode)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Field
+	 *            Code (lovFieldCode)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(LovFieldCode lovFieldCode,String type) {
+	public void delete(LovFieldCode lovFieldCode, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
@@ -130,15 +130,15 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 		deleteSql.append("Delete From BMTLovFieldCode");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FieldCode =:FieldCode");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
@@ -147,30 +147,32 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 	/**
 	 * This method insert new Records into BMTLovFieldCode or BMTLovFieldCode_Temp.
 	 *
-	 * save Field Code 
+	 * save Field Code
 	 * 
-	 * @param Field Code (lovFieldCode)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Field
+	 *            Code (lovFieldCode)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(LovFieldCode lovFieldCode,String type) {
+	public String save(LovFieldCode lovFieldCode, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append("Insert Into BMTLovFieldCode");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FieldCode, FieldCodeDesc, FieldCodeType, fieldEdit,isActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:FieldCode, :FieldCodeDesc, :FieldCodeType,:FieldEdit,:isActive,"); 
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" Values(:FieldCode, :FieldCodeDesc, :FieldCodeType,:FieldEdit,:isActive,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -179,37 +181,39 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 	}
 
 	/**
-	 * This method updates the Record BMTLovFieldCode or BMTLovFieldCode_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Field Code by key FieldCode and Version
+	 * This method updates the Record BMTLovFieldCode or BMTLovFieldCode_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Field Code by key FieldCode and Version
 	 * 
-	 * @param Field Code (lovFieldCode)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Field
+	 *            Code (lovFieldCode)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public void update(LovFieldCode lovFieldCode,String type) {
+	public void update(LovFieldCode lovFieldCode, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 
 		updateSql.append("Update BMTLovFieldCode");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set FieldCodeDesc = :FieldCodeDesc, FieldCodeType = :FieldCodeType,");
 		updateSql.append(" FieldEdit=:FieldEdit, isActive = :isActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FieldCode =:FieldCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

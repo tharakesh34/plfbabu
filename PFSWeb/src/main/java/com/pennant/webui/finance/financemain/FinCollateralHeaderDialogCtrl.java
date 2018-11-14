@@ -220,8 +220,8 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinCollateralDetailsDialog", this.roleCode);
-		this.btnNew_FinCollateralDetail.setVisible(getUserWorkspace().isAllowed(
-				"button_FinCollateralDetailsDialog_btnNew"));
+		this.btnNew_FinCollateralDetail
+				.setVisible(getUserWorkspace().isAllowed("button_FinCollateralDetailsDialog_btnNew"));
 		logger.debug("Leaving");
 	}
 
@@ -266,7 +266,8 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			for (FinCollaterals finCollateral : collaterals) {
 				Listitem listitem = new Listitem();
 				Listcell listcell;
-				listcell = new Listcell(PennantAppUtil.getlabelDesc(finCollateral.getCollateralType(), collateralTypes));
+				listcell = new Listcell(
+						PennantAppUtil.getlabelDesc(finCollateral.getCollateralType(), collateralTypes));
 				listitem.appendChild(listcell);
 				listcell = new Listcell(finCollateral.getReference());
 				listitem.appendChild(listcell);
@@ -276,8 +277,8 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 				listitem.appendChild(listcell);
 
 				BigDecimal cost = finCollateral.getValue() == null ? BigDecimal.ZERO : finCollateral.getValue();
-				if (!(StringUtils.equals(finCollateral.getRecordType(), PennantConstants.RECORD_TYPE_DEL) || StringUtils
-						.equals(finCollateral.getRecordType(), PennantConstants.RECORD_TYPE_CAN))) {
+				if (!(StringUtils.equals(finCollateral.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+						|| StringUtils.equals(finCollateral.getRecordType(), PennantConstants.RECORD_TYPE_CAN))) {
 					totCost = totCost.add(cost);
 				}
 				listitem.setAttribute("data", finCollateral);
@@ -313,8 +314,8 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			FinCollaterals finCollateral = (FinCollaterals) item.getAttribute("data");
 			if (PennantConstants.RECORD_TYPE_CAN
 					.equalsIgnoreCase(StringUtils.trimToEmpty(finCollateral.getRecordType()))
-					|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(StringUtils.trimToEmpty(finCollateral
-							.getRecordType()))) {
+					|| PennantConstants.RECORD_TYPE_DEL
+							.equalsIgnoreCase(StringUtils.trimToEmpty(finCollateral.getRecordType()))) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();

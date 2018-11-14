@@ -45,7 +45,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class InterfaceDAOImpl implements InterfaceDAO {
 	private static Logger logger = Logger.getLogger(InterfaceDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate; 
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public InterfaceDAOImpl() {
 		super();
@@ -60,7 +60,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> list = new ArrayList<CoreBankAccountDetail>();
-		
+
 		StringBuilder selectQuery = new StringBuilder();
 		selectQuery.append(" SELECT  AccountNumber, SCACT AcType, ");
 		selectQuery.append(" SCSHN CustShrtName, SCCCY AcCcy, SCBAL AcBal, ");
@@ -73,7 +73,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		}
 		selectQuery.append(" SCPF.SCAI14 <> 'Y' AND SCPF.SCAI17 <> 'Y' AND SCPF.SCAI20 <> 'Y' AND SCPF.SCAI30 <> 'Y'");
 		if (!StringUtils.isBlank(coreAcct.getAcType())) {
-			
+
 			StringBuffer temAccTypes = new StringBuffer();
 			String accTypes = StringUtils.trimToEmpty(coreAcct.getAcType().replaceAll(",", ""));
 			for (int i = 0; i < (accTypes.length()) / 2; i++) {
@@ -85,7 +85,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 				temAccTypes.append("'");
 			}
 			coreAcct.setAcType(temAccTypes.toString());
-			
+
 			selectQuery.append(" AND SCPF.SCACT in(");
 			selectQuery.append(temAccTypes.toString());
 			selectQuery.append(" )");
@@ -122,10 +122,10 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		selectQuery.append(" SELECT AccountNumber Account, ErrorCode, ErrorMessage FROM ACCFINDET_TEMP");
 		selectQuery.append(" WHERE  ReqRefId =:ReqRefId and ReqRefSeq =:ReqRefSeq");
 
-		insertQuery
-				.append("INSERT INTO ACCFINDET_temp(ReqRefId, ReqRefSeq, CustCIF, AcCcy, AcSPCode, AcBranch, AccountNumber, CreateNew, CreateIfNF, InternalAc, OpenStatus, ErrorCode, ErrorMessage)");
-		insertQuery
-				.append("VALUES(:ReqRefId, :ReqRefSeq, :CustCIF, :AcCcy, :AcSPCode, :AcBranch, :Account, :CreateNew, :CreateIfNF, :InternalAc, :OpenStatus, :ErrorCode, :ErrorMessage)");
+		insertQuery.append(
+				"INSERT INTO ACCFINDET_temp(ReqRefId, ReqRefSeq, CustCIF, AcCcy, AcSPCode, AcBranch, AccountNumber, CreateNew, CreateIfNF, InternalAc, OpenStatus, ErrorCode, ErrorMessage)");
+		insertQuery.append(
+				"VALUES(:ReqRefId, :ReqRefSeq, :CustCIF, :AcCcy, :AcSPCode, :AcBranch, :Account, :CreateNew, :CreateIfNF, :InternalAc, :OpenStatus, :ErrorCode, :ErrorMessage)");
 
 		logger.debug("selectSql: " + insertQuery.toString());
 		SqlParameterSource[] sqlParmSource = SqlParameterSourceUtils.createBatch(accountPostings.toArray());
@@ -164,7 +164,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 	public List<CoreBankAccountDetail> fetchAccountBalance(String accountNumber) {
 		logger.debug("Entering");
 
-		Map<String,String> map = new HashMap<String,String>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("AccountNumber", accountNumber);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -186,13 +186,14 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		logger.debug("Leaving");
 		return list;
 	}
+
 	@Override
 	public List<CoreBankAccountDetail> fetchAccountBalance(List<String> accountNumberList) {
 		logger.debug("Entering");
-		
+
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		map.put("AccNumberList", accountNumberList);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT AccountNumber, SCBAL AcBal,  ");
 		selectSql.append("SCCCY AcCcy,SCSHN AcShrtName , SCACT AcType, ");
@@ -202,7 +203,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CoreBankAccountDetail.class);
-		
+
 		List<CoreBankAccountDetail> list = null;
 		try {
 			list = this.namedParameterJdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
@@ -219,8 +220,8 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		StringBuilder selectSql = new StringBuilder(
 				"select AccountId, AcCcy, AcType, AcBranch, AcCustId,InternalAc, AcActive");
-		selectSql
-				.append(" from accounts where AcType =:AcType and AcCustId =:CustCIF and AcCcy =:AcCcy and AcBranch =:AcBranch");
+		selectSql.append(
+				" from accounts where AcType =:AcType and AcCustId =:CustCIF and AcCcy =:AcCcy and AcBranch =:AcBranch");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountDetail);
@@ -254,8 +255,8 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		StringBuilder insertQuery = new StringBuilder(
 				"INSERT INTO ACCFINDET_temp(ReqRefId, ReqRefSeq, CustCIF, AcCcy, AcType, AcSPCode, AcBranch, AccountNumber, CreateNew, CreateIfNF, InternalAc, OpenStatus, ErrorCode, ErrorMessage)");
-		insertQuery
-				.append("VALUES(:ReqRefId, :ReqRefSeq, :CustCIF, :AcCcy, :AcType, :AcSPCode, :AcBranch, :AccountNumber, :CreateNew, :CreateIfNF, :InternalAc, :OpenStatus, :ErrorCode, :ErrorMessage)");
+		insertQuery.append(
+				"VALUES(:ReqRefId, :ReqRefSeq, :CustCIF, :AcCcy, :AcType, :AcSPCode, :AcBranch, :AccountNumber, :CreateNew, :CreateIfNF, :InternalAc, :OpenStatus, :ErrorCode, :ErrorMessage)");
 
 		logger.debug("selectSql: " + insertQuery.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountDetail.toArray());
@@ -278,10 +279,10 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		deleteQuery.append("DELETE FROM AccountPosting_Temp");
 
-		insertQuery
-				.append("INSERT INTO AccountPosting_Temp(ReqRefId, ReqRefSeq, ReqShadow,  AccNumber, PostingBranch, PostingCcy, PostingCode, PostingAmount, PostingDate, ValueDate, PostingRef, PostingNar1, PostingNar2, PostingNar3, Error,  ErrDesc)");
-		insertQuery
-				.append("VALUES(:ReqRefId, :ReqRefSeq, :ReqShadow,  :AccNumber, :PostingBranch, :PostingCcy, :PostingCode, :PostingAmount, :PostingDate, :ValueDate, :PostingRef, :PostingNar1, :PostingNar2, :PostingNar3, :Error,  :ErrDesc)");
+		insertQuery.append(
+				"INSERT INTO AccountPosting_Temp(ReqRefId, ReqRefSeq, ReqShadow,  AccNumber, PostingBranch, PostingCcy, PostingCode, PostingAmount, PostingDate, ValueDate, PostingRef, PostingNar1, PostingNar2, PostingNar3, Error,  ErrDesc)");
+		insertQuery.append(
+				"VALUES(:ReqRefId, :ReqRefSeq, :ReqShadow,  :AccNumber, :PostingBranch, :PostingCcy, :PostingCode, :PostingAmount, :PostingDate, :ValueDate, :PostingRef, :PostingNar1, :PostingNar2, :PostingNar3, :Error,  :ErrDesc)");
 
 		logger.debug("deleteQuery: " + deleteQuery.toString());
 		logger.debug("selectSql: " + insertQuery.toString());
@@ -304,11 +305,11 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		StringBuilder selectQuery = new StringBuilder();
 		StringBuilder updateQuery = new StringBuilder();
 
-		selectQuery
-				.append("select ReqRefId, ReqRefSeq, ReqShadow,  AccNumber, PostingBranch, PostingCcy, PostingCode, PostingAmount, PostingDate, ValueDate, PostingRef, PostingNar1, PostingNar2, PostingNar3, Error,  ErrDesc from AccountPosting_Temp");
+		selectQuery.append(
+				"select ReqRefId, ReqRefSeq, ReqShadow,  AccNumber, PostingBranch, PostingCcy, PostingCode, PostingAmount, PostingDate, ValueDate, PostingRef, PostingNar1, PostingNar2, PostingNar3, Error,  ErrDesc from AccountPosting_Temp");
 
-		updateQuery
-				.append("UPDATE AccountPosting_Temp SET Error=:Error, ErrDesc=:ErrDesc WHERE ReqRefId=:ReqRefId AND ReqRefSeq=:ReqRefSeq");
+		updateQuery.append(
+				"UPDATE AccountPosting_Temp SET Error=:Error, ErrDesc=:ErrDesc WHERE ReqRefId=:ReqRefId AND ReqRefSeq=:ReqRefSeq");
 
 		logger.debug("selectQuery: " + selectQuery.toString());
 
@@ -433,24 +434,19 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		logger.debug("Entering");
 
 		/*
-		 * final StringBuilder builder = new
-		 * StringBuilder("{ call SP_PFFFAN(?, ?, ?, ?) }");
+		 * final StringBuilder builder = new StringBuilder("{ call SP_PFFFAN(?, ?, ?, ?) }");
 		 * 
 		 * logger.debug("selectSql: " + builder.toString());
 		 * 
 		 * try{
 		 * 
-		 * this.namedParameterJdbcTemplate.getJdbcOperations().execute( new
-		 * CallableStatementCreator() { public CallableStatement
-		 * createCallableStatement(Connection con) throws SQLException{
-		 * CallableStatement cs = con.prepareCall(builder.toString());
-		 * cs.setInt(1, reqRefId); cs.setString(2, createNow);
-		 * cs.registerOutParameter(3, Types.VARCHAR); cs.registerOutParameter(4,
-		 * Types.VARCHAR);
+		 * this.namedParameterJdbcTemplate.getJdbcOperations().execute( new CallableStatementCreator() { public
+		 * CallableStatement createCallableStatement(Connection con) throws SQLException{ CallableStatement cs =
+		 * con.prepareCall(builder.toString()); cs.setInt(1, reqRefId); cs.setString(2, createNow);
+		 * cs.registerOutParameter(3, Types.VARCHAR); cs.registerOutParameter(4, Types.VARCHAR);
 		 * 
-		 * return cs; } }, new CallableStatementCallback<Object>() { public
-		 * Object doInCallableStatement(CallableStatement cs) throws
-		 * SQLException{ cs.execute(); return cs.getString(4); } } );
+		 * return cs; } }, new CallableStatementCallback<Object>() { public Object
+		 * doInCallableStatement(CallableStatement cs) throws SQLException{ cs.execute(); return cs.getString(4); } } );
 		 * 
 		 * }catch (Exception e) { logger.info(e); }
 		 */
@@ -536,14 +532,14 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		customerInterfaceData.setCustCIF(custCIF);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql
-				.append(" SELECT CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName, CustShrtName, ");
-		selectSql
-				.append(" CustFNameLclLng,CustShrtNameLclLng,CustDftBranch,CustGenderCode,CustPOB,CustPassportNo,CustIsMinor,CustRO1,");
-		selectSql
-				.append(" CustIsBlocked,CustIsActive,CustIsClosed,CustIsDecease,CustIsTradeFinCust,CustSector,CustSubSector,CustProfession,CustTotalIncome,");
-		selectSql
-				.append(" CustMaritalSts,CustEmpSts,CustBaseCcy,CustParentCountry,CustResdCountry,CustRiskCountry,CustNationality, CustDOB,CustAddlVar83,CustAddlVar82");
+		selectSql.append(
+				" SELECT CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName, CustShrtName, ");
+		selectSql.append(
+				" CustFNameLclLng,CustShrtNameLclLng,CustDftBranch,CustGenderCode,CustPOB,CustPassportNo,CustIsMinor,CustRO1,");
+		selectSql.append(
+				" CustIsBlocked,CustIsActive,CustIsClosed,CustIsDecease,CustIsTradeFinCust,CustSector,CustSubSector,CustProfession,CustTotalIncome,");
+		selectSql.append(
+				" CustMaritalSts,CustEmpSts,CustBaseCcy,CustParentCountry,CustResdCountry,CustRiskCountry,CustNationality, CustDOB,CustAddlVar83,CustAddlVar82");
 		selectSql.append(" FROM Customers WHERE CustCIF=:CustCIF");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -578,8 +574,8 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		detail.setCustCIF(customerInterfaceData.getCustCIF());
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append("SELECT IdCustID, IdType, IdRef, IdIssueCountry, IdIssuedOn, IdExpiresOn FROM CustomerDocuments WHERE CustCIF= :CustCIF");
+		selectSql.append(
+				"SELECT IdCustID, IdType, IdRef, IdIssueCountry, IdIssuedOn, IdExpiresOn FROM CustomerDocuments WHERE CustCIF= :CustCIF");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
@@ -600,16 +596,16 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		detail.setCustCIF(customerInterfaceData.getCustCIF());
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append("SELECT CustRatingType,CustLongRate, CustShortRate FROM CUST_RATINGS_View WHERE CustCIF = :CustCIF");
+		selectSql.append(
+				"SELECT CustRatingType,CustLongRate, CustShortRate FROM CUST_RATINGS_View WHERE CustCIF = :CustCIF");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<InterfaceCustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(InterfaceCustomerRating.class);
 
-		List<InterfaceCustomerRating> list = this.namedParameterJdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		List<InterfaceCustomerRating> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		customerInterfaceData.setRatingsList(list);
 		logger.debug("Leaving");
 		return customerInterfaceData;
@@ -696,7 +692,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public List<CoreDocumentDetails> getDocumentDetailsByRef(String ref) {
 		logger.debug("Entering");
@@ -713,10 +709,10 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		CoreDocumentDetails documentDetails = new CoreDocumentDetails();
 		documentDetails.setReferenceId(ref);
 
-
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<CoreDocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CoreDocumentDetails.class);
+		RowMapper<CoreDocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CoreDocumentDetails.class);
 
 		logger.debug("Leaving");
 

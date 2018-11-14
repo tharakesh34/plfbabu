@@ -80,13 +80,12 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	private final static Logger logger = Logger.getLogger(SOAReportGenerationDialogCtrl.class);
 
 	protected Window window_SOAReportGenerationDialogCtrl;
-	protected ExtendedCombobox	finReference;
-	protected Datebox	startDate;
-	protected Datebox	endDate;
-	
+	protected ExtendedCombobox finReference;
+	protected Datebox startDate;
+	protected Datebox endDate;
+
 	private StatementOfAccount statementOfAccount = new StatementOfAccount();
 	private transient SOAReportGenerationService soaReportGenerationService;
-
 
 	public SOAReportGenerationDialogCtrl() {
 		super();
@@ -121,13 +120,13 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		// Finance Reference
 		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
@@ -137,13 +136,13 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		this.finReference.setTextBoxWidth(140);
-		
+
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.endDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -152,44 +151,44 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		//Close the current window
 		this.window_SOAReportGenerationDialogCtrl.onClose();
-		
+
 		//Close the current menu item
-		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");  
-		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+				.getFellow("tabBoxIndexCenter");
 		tabbox.getSelectedTab().close();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onClick$btnGenereate(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		doSetValidation();
-		
+
 		doWriteComponentsToBean(this.statementOfAccount);
-		
+
 		List<Object> list = new ArrayList<Object>();
 		list.add(this.statementOfAccount.getSoaSummaryReports());
 		list.add(this.statementOfAccount.getTransactionReports());
 		list.add(this.statementOfAccount.getApplicantDetails());
 		list.add(this.statementOfAccount.getOtherFinanceDetails());
 		list.add(this.statementOfAccount.getInterestRateDetails());
-		
-		try {
-				ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, true, 1,
-						getUserWorkspace().getLoggedInUser().getFullName(), null);
 
-			}
-		 catch (InterruptedException e) {
+		try {
+			ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, true, 1,
+					getUserWorkspace().getLoggedInUser().getFullName(), null);
+
+		} catch (InterruptedException e) {
 			MessageUtil.showError(e);
 		}
 		this.window_SOAReportGenerationDialogCtrl.setVisible(true);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$finReference(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -203,7 +202,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				this.finReference.setValue(details.getFinReference());
 				this.startDate.setValue(details.getFinStartDate());
 				this.endDate.setValue(DateUtility.getAppDate());
-			}else{
+			} else {
 				this.finReference.setValue("");
 				this.startDate.setValue(null);
 				this.endDate.setValue(null);
@@ -212,8 +211,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -232,7 +230,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Start Date
 		try {
 			startDate = this.startDate.getValue();
@@ -245,11 +243,12 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 
 		if (wve.isEmpty()) {
-			setStatementOfAccount(soaReportGenerationService.getStatmentofAccountDetails(finReference, startDate, endDate));
+			setStatementOfAccount(
+					soaReportGenerationService.getStatmentofAccountDetails(finReference, startDate, endDate));
 		} else {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -260,7 +259,6 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Remove the Validation by setting empty constraints.
@@ -274,7 +272,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
@@ -288,26 +286,27 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		doClearMessage();
 		doRemoveValidation();
-		
+
 		//Finance Type
-		this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_SOAReportDialog_FinReference.value"), null, true, true));
-		
+		this.finReference.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_SOAReportDialog_FinReference.value"), null, true, true));
+
 		//Date appStartDate = DateUtility.getAppDate();
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 		// Start Date
 		if (!this.startDate.isDisabled()) {
 			//this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_SOAReportDialog_StartDate.value"), true, appStartDate, appEndDate, true));
-			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_SOAReportDialog_StartDate.value"), true));
+			this.startDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_SOAReportDialog_StartDate.value"), true));
 		}
 		// end Date
 		if (!this.endDate.isDisabled()) {
@@ -320,7 +319,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 						true, true, null, false));
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

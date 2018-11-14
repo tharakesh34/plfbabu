@@ -51,7 +51,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEODDecider implements JobExecutionDecider {
 
-	private CustomerQueuingDAO	customerQueuingDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 
 	public MicroEODDecider() {
 	}

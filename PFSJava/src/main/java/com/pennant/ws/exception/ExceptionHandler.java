@@ -5,8 +5,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * This Exception is for handling JSON response when there is a exception
- * with the REST services request handling.
+ * This Exception is for handling JSON response when there is a exception with the REST services request handling.
  */
 public class ExceptionHandler implements ExceptionMapper<ServiceException> {
 	public Response toResponse(ServiceException exception) {

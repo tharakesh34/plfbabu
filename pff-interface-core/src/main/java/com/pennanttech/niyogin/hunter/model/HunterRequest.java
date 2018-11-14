@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HunterRequest implements Serializable {
 
-	private static final long	serialVersionUID	= -6496891130309488812L;
+	private static final long serialVersionUID = -6496891130309488812L;
 	private String identifier;
 	@XmlElement(name = "product_code")
 	private String productCode;

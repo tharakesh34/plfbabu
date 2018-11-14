@@ -77,24 +77,23 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger
-			.getLogger(MandateCheckDigitDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(MandateCheckDigitDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_MandateCheckDigitDialog;
-	protected Intbox							checkDigitValue;
-	protected Uppercasebox						lookUpValue;
-	protected Checkbox							active;
-	private MandateCheckDigit					mandateCheckDigit;				// overhanded per param
+	protected Window window_MandateCheckDigitDialog;
+	protected Intbox checkDigitValue;
+	protected Uppercasebox lookUpValue;
+	protected Checkbox active;
+	private MandateCheckDigit mandateCheckDigit; // overhanded per param
 
-	private transient MandateCheckDigitListCtrl	mandateCheckDigitListCtrl;		// overhanded
+	private transient MandateCheckDigitListCtrl mandateCheckDigitListCtrl; // overhanded
 	// per
 	// param
-	private transient MandateCheckDigitService	mandateCheckDigitService;
+	private transient MandateCheckDigitService mandateCheckDigitService;
 
 	/**
 	 * default constructor.<br>
@@ -314,10 +313,10 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 		this.checkDigitValue.setValue(aMandateCheckDigit.getCheckDigitValue());
 		this.lookUpValue.setValue(aMandateCheckDigit.getLookUpValue());
 		this.recordStatus.setValue(aMandateCheckDigit.getRecordStatus());
-		if(aMandateCheckDigit.isNewRecord()){
+		if (aMandateCheckDigit.isNewRecord()) {
 			this.active.setChecked(true);
-		}else{
-		this.active.setChecked(aMandateCheckDigit.isActive());
+		} else {
+			this.active.setChecked(aMandateCheckDigit.isActive());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -344,7 +343,7 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 									new String[] {
 											Labels.getLabel("label_MandateCheckDigitDialog_CheckDigitValue.value"),
 											String.valueOf(0) }));
-				} else if (checkDigit >= 43){
+				} else if (checkDigit >= 43) {
 					throw new WrongValueException(this.checkDigitValue,
 							Labels.getLabel("NUMBER_MAXVALUE_EQ",
 									new String[] {
@@ -432,10 +431,10 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		/*if (!this.checkDigitValue.isReadonly()) {
-			this.checkDigitValue.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_MandateCheckDigitDialog_CheckDigitValue.value"),true, true));
-		}*/
+		/*
+		 * if (!this.checkDigitValue.isReadonly()) { this.checkDigitValue.setConstraint(new PTNumberValidator(
+		 * Labels.getLabel("label_MandateCheckDigitDialog_CheckDigitValue.value"),true, true)); }
+		 */
 		if (!this.lookUpValue.isReadonly()) {
 			this.lookUpValue.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateCheckDigitDialog_LookUpValue.value"),

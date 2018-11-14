@@ -49,10 +49,15 @@ import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 public interface CustomerAdditionalDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerAdditionalDetail getCustomerAdditionalDetailById(long id);
+
 	CustomerAdditionalDetail getApprovedCustomerAdditionalDetailById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

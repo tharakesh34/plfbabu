@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.accounts;
+
 import com.pennant.backend.model.accounts.AccountsHistory;
 
 public interface AccountsHistoryDAO {

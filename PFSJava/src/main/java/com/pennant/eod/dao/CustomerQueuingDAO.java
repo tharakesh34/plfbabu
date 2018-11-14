@@ -37,13 +37,19 @@ public interface CustomerQueuingDAO {
 	int insertCustomerQueueing(long groupId, boolean eodProcess);
 
 	void updateCustomerQueuingStatus(long custGroupId, int progress);
+
 	void updateLimitRebuild();
-	
+
 	// Rebuild Process
 	public void insertCustQueueForRebuild(CustomerQueuing custQueuing);
+
 	public int getCountByCustId(long custId);
+
 	public void logCustomerQueuingByCustId(long custId);
+
 	public void deleteByCustId(long custId);
+
 	void logCustomerQueuingByGrpId(long custId);
+
 	void deleteByGroupId(long groupId);
 }

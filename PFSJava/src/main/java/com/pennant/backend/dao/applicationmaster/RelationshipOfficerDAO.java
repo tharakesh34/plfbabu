@@ -41,22 +41,22 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennanttech.pff.core.TableType;
 
-public interface RelationshipOfficerDAO extends BasicCrudDao<RelationshipOfficer>{
+public interface RelationshipOfficerDAO extends BasicCrudDao<RelationshipOfficer> {
 	RelationshipOfficer getRelationshipOfficerById(String id, String type);
-	
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param rOfficerCode
-	 *              rOfficerCode of the relationshipOfficer
+	 *            rOfficerCode of the relationshipOfficer
 	 * @param tableType
-	 *              The type of the table.
-	 * @return  true if the record exists
+	 *            The type of the table.
+	 * @return true if the record exists
 	 */
 	boolean isDuplicateKey(String rOfficerCode, TableType tableType);
 }

@@ -95,44 +95,43 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	private static final Logger logger = Logger.getLogger(CustomerBalanceSheetDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	 window_CustomerBalanceSheetDialog;	
-	protected Longbox 	 custID; 						   	
-	protected Combobox 	 financialYear; 					
-	protected Decimalbox totalAssets; 						
-	protected Decimalbox totalLiabilities; 					
-	protected Decimalbox netProfit; 						
-	protected Decimalbox netSales; 							
-	protected Decimalbox netIncome; 						
-	protected Decimalbox operatingProfit; 					
-	protected Decimalbox cashFlow;	 						
-	protected Decimalbox bookValue; 						
-	protected Decimalbox marketValue; 						
-	protected Textbox 	 custCIF;							
-	protected Label 	 custShrtName;						
+	protected Window window_CustomerBalanceSheetDialog;
+	protected Longbox custID;
+	protected Combobox financialYear;
+	protected Decimalbox totalAssets;
+	protected Decimalbox totalLiabilities;
+	protected Decimalbox netProfit;
+	protected Decimalbox netSales;
+	protected Decimalbox netIncome;
+	protected Decimalbox operatingProfit;
+	protected Decimalbox cashFlow;
+	protected Decimalbox bookValue;
+	protected Decimalbox marketValue;
+	protected Textbox custCIF;
+	protected Label custShrtName;
 
 	// not auto wired vars
-	private CustomerBalanceSheet customerBalanceSheet; 							// overhanded per param
+	private CustomerBalanceSheet customerBalanceSheet; // overhanded per param
 	private transient CustomerBalanceSheetListCtrl customerBalanceSheetListCtrl;// overhanded per param
 
 	private transient boolean validationOn;
-	
-	protected Button btnSearchPRCustid; 
+
+	protected Button btnSearchPRCustid;
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerBalanceSheetService customerBalanceSheetService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap= new HashMap<String, ArrayList<ErrorDetail>>();
-	private List<ValueLabel> listFinancialYear=PennantAppUtil.getFinancialYears(); 
+	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private List<ValueLabel> listFinancialYear = PennantAppUtil.getFinancialYears();
 
-	private boolean newRecord=false;
-	private boolean newCustomer=false;
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
 	private List<CustomerBalanceSheet> balanceSheetDetails;
 	private CustomerDialogCtrl customerDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject ;
+	protected JdbcSearchObject<Customer> newSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -149,9 +148,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerBalanceSheet object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerBalanceSheet object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -166,7 +164,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		doCheckRights();
 		if (arguments.containsKey("customerBalanceSheet")) {
 			this.customerBalanceSheet = (CustomerBalanceSheet) arguments.get("customerBalanceSheet");
-			CustomerBalanceSheet befImage =new CustomerBalanceSheet();
+			CustomerBalanceSheet befImage = new CustomerBalanceSheet();
 			BeanUtils.copyProperties(this.customerBalanceSheet, befImage);
 			this.customerBalanceSheet.setBefImage(befImage);
 			setCustomerBalanceSheet(this.customerBalanceSheet);
@@ -174,32 +172,32 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			setCustomerBalanceSheet(null);
 		}
 
-		if(getCustomerBalanceSheet().isNewRecord()){
+		if (getCustomerBalanceSheet().isNewRecord()) {
 			setNewRecord(true);
 		}
 
-		if(arguments.containsKey("customerDialogCtrl")){
+		if (arguments.containsKey("customerDialogCtrl")) {
 
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerDialogCtrl"));
 			setNewCustomer(true);
 
-			if(arguments.containsKey("newRecord")){
+			if (arguments.containsKey("newRecord")) {
 				setNewRecord(true);
-			}else{
+			} else {
 				setNewRecord(false);
 			}
 			this.customerBalanceSheet.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
+			if (arguments.containsKey("roleCode")) {
 				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"),
-				"CustomerBalanceSheetDialog");
+						"CustomerBalanceSheetDialog");
 			}
 		}
 
-		doLoadWorkFlow(this.customerBalanceSheet.isWorkflow(),
-				this.customerBalanceSheet.getWorkflowId(),this.customerBalanceSheet.getNextTaskId());
+		doLoadWorkFlow(this.customerBalanceSheet.isWorkflow(), this.customerBalanceSheet.getWorkflowId(),
+				this.customerBalanceSheet.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerBalanceSheetDialog");
 		}
 
@@ -210,8 +208,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete customerBalanceSheet here.
 		if (arguments.containsKey("customerBalanceSheetListCtrl")) {
-			setCustomerBalanceSheetListCtrl((CustomerBalanceSheetListCtrl) arguments.get(
-			"customerBalanceSheetListCtrl"));
+			setCustomerBalanceSheetListCtrl(
+					(CustomerBalanceSheetListCtrl) arguments.get("customerBalanceSheetListCtrl"));
 		} else {
 			setCustomerBalanceSheetListCtrl(null);
 		}
@@ -231,7 +229,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		//Empty sent any required attributes
 		this.totalAssets.setMaxlength(18);
@@ -262,13 +260,13 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		this.marketValue.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.marketValue.setScale(0);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -276,11 +274,10 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -290,7 +287,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerBalanceSheetDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -378,11 +375,11 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.customerBalanceSheet.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -392,28 +389,28 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 *            CustomerBalanceSheet
 	 */
 	public void doWriteBeanToComponents(CustomerBalanceSheet aCustomerBalanceSheet) {
-		logger.debug("Entering") ;
-		if(aCustomerBalanceSheet.getCustId()!=Long.MIN_VALUE){
+		logger.debug("Entering");
+		if (aCustomerBalanceSheet.getCustId() != Long.MIN_VALUE) {
 			this.custID.setValue(aCustomerBalanceSheet.getCustId());
 		}
 
-		this.custCIF.setValue(aCustomerBalanceSheet.getLovDescCustCIF()==null?"":
-			aCustomerBalanceSheet.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerBalanceSheet.getLovDescCustShrtName()==null?"":
-			aCustomerBalanceSheet.getLovDescCustShrtName().trim());
-		/*this.financialYear.setValue(PennantAppUtil.getlabelDesc(
-				aCustomerBalanceSheet.getFinancialYear(),listFinancialYear));*/
-		this.totalAssets.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalAssets(),0));
-		this.totalLiabilities.setValue(PennantAppUtil.formateAmount(
-				aCustomerBalanceSheet.getTotalLiabilities(),0));
-		this.netProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetProfit(),0));
-		this.netSales.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetSales(),0));
-		this.netIncome.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetIncome(),0));
-		this.operatingProfit.setValue(PennantAppUtil.formateAmount(
-				aCustomerBalanceSheet.getOperatingProfit(),0));
-		this.cashFlow.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getCashFlow(),0));
-		this.bookValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getBookValue(),0));
-		this.marketValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getMarketValue(),0));
+		this.custCIF.setValue(aCustomerBalanceSheet.getLovDescCustCIF() == null ? ""
+				: aCustomerBalanceSheet.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerBalanceSheet.getLovDescCustShrtName() == null ? ""
+				: aCustomerBalanceSheet.getLovDescCustShrtName().trim());
+		/*
+		 * this.financialYear.setValue(PennantAppUtil.getlabelDesc(
+		 * aCustomerBalanceSheet.getFinancialYear(),listFinancialYear));
+		 */
+		this.totalAssets.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalAssets(), 0));
+		this.totalLiabilities.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getTotalLiabilities(), 0));
+		this.netProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetProfit(), 0));
+		this.netSales.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetSales(), 0));
+		this.netIncome.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getNetIncome(), 0));
+		this.operatingProfit.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getOperatingProfit(), 0));
+		this.cashFlow.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getCashFlow(), 0));
+		this.bookValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getBookValue(), 0));
+		this.marketValue.setValue(PennantAppUtil.formateAmount(aCustomerBalanceSheet.getMarketValue(), 0));
 
 		this.recordStatus.setValue(aCustomerBalanceSheet.getRecordStatus());
 		logger.debug("Leaving");
@@ -425,7 +422,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * @param aCustomerBalanceSheet
 	 */
 	public void doWriteComponentsToBean(CustomerBalanceSheet aCustomerBalanceSheet) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -433,74 +430,67 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		try {
 			aCustomerBalanceSheet.setLovDescCustCIF(this.custCIF.getValue());
 			aCustomerBalanceSheet.setCustId(this.custID.longValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerBalanceSheet.setFinancialYear(this.financialYear.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setTotalAssets(PennantAppUtil.unFormateAmount(
-					this.totalAssets.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setTotalAssets(PennantAppUtil.unFormateAmount(this.totalAssets.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setTotalLiabilities(PennantAppUtil.unFormateAmount(
-					this.totalLiabilities.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet
+					.setTotalLiabilities(PennantAppUtil.unFormateAmount(this.totalLiabilities.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setNetProfit(PennantAppUtil.unFormateAmount(
-					this.netProfit.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setNetProfit(PennantAppUtil.unFormateAmount(this.netProfit.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setNetSales(PennantAppUtil.unFormateAmount(
-					this.netSales.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setNetSales(PennantAppUtil.unFormateAmount(this.netSales.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setNetIncome(PennantAppUtil.unFormateAmount(
-					this.netIncome.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setNetIncome(PennantAppUtil.unFormateAmount(this.netIncome.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setOperatingProfit(PennantAppUtil.unFormateAmount(
-					this.operatingProfit.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet
+					.setOperatingProfit(PennantAppUtil.unFormateAmount(this.operatingProfit.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setCashFlow(PennantAppUtil.unFormateAmount(
-					this.cashFlow.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setCashFlow(PennantAppUtil.unFormateAmount(this.cashFlow.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setBookValue(PennantAppUtil.unFormateAmount(
-					this.bookValue.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setBookValue(PennantAppUtil.unFormateAmount(this.bookValue.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCustomerBalanceSheet.setMarketValue(PennantAppUtil.unFormateAmount(
-					this.marketValue.getValue(), 0));
-		}catch (WrongValueException we ) {
+			aCustomerBalanceSheet.setMarketValue(PennantAppUtil.unFormateAmount(this.marketValue.getValue(), 0));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -515,14 +505,13 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerBalanceSheet
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(CustomerBalanceSheet aCustomerBalanceSheet) throws InterruptedException {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aCustomerBalanceSheet.isNew()) {
@@ -532,12 +521,12 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			this.custCIF.focus();
 		} else {
 			this.totalAssets.focus();
-			if (isNewCustomer()){
+			if (isNewCustomer()) {
 				doEdit();
-			}else if (isWorkFlowEnabled()){
+			} else if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -548,12 +537,12 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerBalanceSheet);
 
-			if(isNewCustomer()){
+			if (isNewCustomer()) {
 				this.window_CustomerBalanceSheetDialog.setHeight("400px");
 				this.window_CustomerBalanceSheetDialog.setWidth("800px");
 				this.groupboxWf.setVisible(false);
-				this.window_CustomerBalanceSheetDialog.doModal() ;
-			}else{
+				this.window_CustomerBalanceSheetDialog.doModal();
+			} else {
 				this.window_CustomerBalanceSheetDialog.setWidth("100%");
 				this.window_CustomerBalanceSheetDialog.setHeight("100%");
 				setDialog(DialogType.EMBEDDED);
@@ -561,7 +550,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -571,48 +560,50 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerBalanceSheetDialog_CustId.value"),null,true));
+		if (!this.custID.isReadonly()) {
+			this.custCIF.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_CustId.value"), null, true));
 		}
-		if (!this.financialYear.isDisabled()){
-			this.financialYear.setConstraint(new StaticListValidator(listFinancialYear,Labels.getLabel("label_CustomerBalanceSheetDialog_FinancialYear.value")));
-		}	
-		if (!this.totalAssets.isReadonly()){
-			this.totalAssets.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_TotalAssets.value"), 0, true));
-		}	
-		if (!this.totalLiabilities.isReadonly()){
-			this.totalLiabilities.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_TotalLiabilities.value"), 0, true));
-		}	
-		if (!this.netProfit.isReadonly()){
-			this.netProfit.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_NetProfit.value"), 0, true));
-		}	
-		if (!this.netSales.isReadonly()){
-			this.netSales.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_NetSales.value"), 0, true));
-		}	
-		if (!this.netIncome.isReadonly()){
-			this.netIncome.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_NetIncome.value"), 0, true));
-		}	
-		if (!this.operatingProfit.isReadonly()){
-			this.operatingProfit.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_OperatingProfit.value"), 0, true));
-		}	
-		if (!this.cashFlow.isReadonly()){
-			this.cashFlow.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_CashFlow.value"), 0, true));
-		}	
-		if (!this.bookValue.isReadonly()){
-			this.bookValue.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_BookValue.value"), 0, true));
-		}	
-		if (!this.marketValue.isReadonly()){
-			this.marketValue.setConstraint(new PTDecimalValidator(Labels.getLabel(
-			"label_CustomerBalanceSheetDialog_MarketValue.value"), 0, true));
-		}	
+		if (!this.financialYear.isDisabled()) {
+			this.financialYear.setConstraint(new StaticListValidator(listFinancialYear,
+					Labels.getLabel("label_CustomerBalanceSheetDialog_FinancialYear.value")));
+		}
+		if (!this.totalAssets.isReadonly()) {
+			this.totalAssets.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_TotalAssets.value"), 0, true));
+		}
+		if (!this.totalLiabilities.isReadonly()) {
+			this.totalLiabilities.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_TotalLiabilities.value"), 0, true));
+		}
+		if (!this.netProfit.isReadonly()) {
+			this.netProfit.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_NetProfit.value"), 0, true));
+		}
+		if (!this.netSales.isReadonly()) {
+			this.netSales.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_NetSales.value"), 0, true));
+		}
+		if (!this.netIncome.isReadonly()) {
+			this.netIncome.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_NetIncome.value"), 0, true));
+		}
+		if (!this.operatingProfit.isReadonly()) {
+			this.operatingProfit.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_OperatingProfit.value"), 0, true));
+		}
+		if (!this.cashFlow.isReadonly()) {
+			this.cashFlow.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_CashFlow.value"), 0, true));
+		}
+		if (!this.bookValue.isReadonly()) {
+			this.bookValue.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_BookValue.value"), 0, true));
+		}
+		if (!this.marketValue.isReadonly()) {
+			this.marketValue.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CustomerBalanceSheetDialog_MarketValue.value"), 0, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -671,8 +662,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	// Method for refreshing the list after successful updating
 	private void refreshList() {
 		getCustomerBalanceSheetListCtrl().search();
-		}
-	
+	}
+
 	// CRUD operations
 
 	/**
@@ -681,45 +672,43 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final CustomerBalanceSheet aCustomerBalanceSheet = new CustomerBalanceSheet();
 		BeanUtils.copyProperties(getCustomerBalanceSheet(), aCustomerBalanceSheet);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") 
-		+ "\n\n --> " + aCustomerBalanceSheet.getCustId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerBalanceSheet.getCustId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())){
-				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion()+1);
+			if (StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())) {
+				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion() + 1);
 				aCustomerBalanceSheet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCustomerBalanceSheet.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(isNewCustomer()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCusomerProcess(aCustomerBalanceSheet,tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog,
-							auditHeader);
+				if (isNewCustomer()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newCusomerProcess(aCustomerBalanceSheet, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || 
-							retValue==PennantConstants.porcessOVERIDE){
-					//	getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						//	getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
 						// send the data back to customer
 						closeDialog();
-					}	
-				}else if(doProcess(aCustomerBalanceSheet,tranType)){
+					}
+				} else if (doProcess(aCustomerBalanceSheet, tranType)) {
 					refreshList();
 					closeDialog();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
@@ -733,19 +722,19 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (isNewRecord()){
+		if (isNewRecord()) {
 
-			if(isNewCustomer()){
-				this.btnCancel.setVisible(false);	
+			if (isNewCustomer()) {
+				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-			}else{
+			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
-		}else{
+		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 		}
-		this.custCIF.setReadonly(true);	
+		this.custCIF.setReadonly(true);
 		this.custID.setReadonly(isReadOnly("CustomerBalanceSheetDialog_custID"));
 		this.financialYear.setDisabled(isReadOnly("CustomerBalanceSheetDialog_financialYear"));
 		this.totalAssets.setReadonly(isReadOnly("CustomerBalanceSheetDialog_totalAssets"));
@@ -758,26 +747,26 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		this.bookValue.setReadonly(isReadOnly("CustomerBalanceSheetDialog_bookValue"));
 		this.marketValue.setReadonly(isReadOnly("CustomerBalanceSheetDialog_marketValue"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.customerBalanceSheet.isNewRecord()){
+			if (this.customerBalanceSheet.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
-			if(newCustomer){
-				if (isNewRecord()){
+		} else {
+			if (newCustomer) {
+				if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
@@ -804,13 +793,13 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		this.marketValue.setReadonly(true);
 		this.btnSearchPRCustid.setVisible(false);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -859,45 +848,45 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		// Do data level validations here
 
 		isNew = aCustomerBalanceSheet.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())){
-				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())) {
+				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion() + 1);
+				if (isNew) {
 					aCustomerBalanceSheet.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCustomerBalanceSheet.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerBalanceSheet.setNewRecord(true);
 				}
 			}
-		}else{
-			if(isNewCustomer()){
-				if(isNewRecord()){
+		} else {
+			if (isNewCustomer()) {
+				if (isNewRecord()) {
 					aCustomerBalanceSheet.setVersion(1);
 					aCustomerBalanceSheet.setRecordType(PennantConstants.RCD_ADD);
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())){
-					aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion()+1);
+				if (StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())) {
+					aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion() + 1);
 					aCustomerBalanceSheet.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 
-			}else{
-				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion()+1);
-				if(isNew){
-					tranType =PennantConstants.TRAN_ADD;
-				}else{
-					tranType =PennantConstants.TRAN_UPD;
+			} else {
+				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
 				}
 			}
 		}
@@ -905,11 +894,11 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		// save it to database
 		try {
 
-			if(isNewCustomer()){
-				AuditHeader auditHeader =  newCusomerProcess(aCustomerBalanceSheet,tranType);
+			if (isNewCustomer()) {
+				AuditHeader auditHeader = newCusomerProcess(aCustomerBalanceSheet, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					//getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
 					//true;
 					// send the data back to customer
@@ -917,7 +906,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 
 				}
 
-			}else if(doProcess(aCustomerBalanceSheet,tranType)){
+			} else if (doProcess(aCustomerBalanceSheet, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -935,18 +924,20 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerBalanceSheet (CustomerBalanceSheet)
+	 * @param aCustomerBalanceSheet
+	 *            (CustomerBalanceSheet)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerBalanceSheet aCustomerBalanceSheet,String tranType){
+	private boolean doProcess(CustomerBalanceSheet aCustomerBalanceSheet, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCustomerBalanceSheet.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerBalanceSheet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -976,19 +967,19 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			}
 
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -998,28 +989,28 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			aCustomerBalanceSheet.setRoleCode(getRole());
 			aCustomerBalanceSheet.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCustomerBalanceSheet, tranType);
+			auditHeader = getAuditHeader(aCustomerBalanceSheet, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aCustomerBalanceSheet);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCustomerBalanceSheet, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aCustomerBalanceSheet, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aCustomerBalanceSheet, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCustomerBalanceSheet, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
@@ -1027,64 +1018,67 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader  (AuditHeader)
-	 * @param method (String)
+	 * @param auditHeader
+	 *            (AuditHeader)
+	 * @param method
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
 
 		CustomerBalanceSheet aCustomerBalanceSheet = (CustomerBalanceSheet) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCustomerBalanceSheetService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getCustomerBalanceSheetService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getCustomerBalanceSheetService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerBalanceSheetService().doApprove(auditHeader);
 
-						if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
 
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCustomerBalanceSheetService().doReject(auditHeader);
-						if(aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aCustomerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerBalanceSheetDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				auditHeader =	ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes(this.customerBalanceSheet),true);
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.customerBalanceSheet), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -1100,8 +1094,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		return processCompleted;
 	}
 
-
-	private void setListFinancialYear(){
+	private void setListFinancialYear() {
 		for (int i = 0; i < listFinancialYear.size(); i++) {
 
 			Comboitem comboitem = new Comboitem();
@@ -1109,16 +1102,17 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 			comboitem.setLabel(listFinancialYear.get(i).getLabel());
 			comboitem.setValue(listFinancialYear.get(i).getValue());
 			this.financialYear.appendChild(comboitem);
-		} 
+		}
 	}
 
 	/**
 	 * Method for Calling list Of existed Customers
+	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -1126,28 +1120,31 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException{
+	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();	
+		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
-		map.put("filtertype","Extended");
-		map.put("custCtgType",PennantConstants.PFF_CUSTCTG_CORP);
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null,map);
+		map.put("filtertype", "Extended");
+		map.put("custCtgType", PennantConstants.PFF_CUSTCTG_CORP);
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
@@ -1164,24 +1161,24 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(CustomerBalanceSheet aCustomerBalanceSheet, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBalanceSheet.getBefImage(), 
-				aCustomerBalanceSheet);   
-		return new AuditHeader(getReference(),String.valueOf(aCustomerBalanceSheet.getCustId()),null,null,auditDetail,
-				aCustomerBalanceSheet.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CustomerBalanceSheet aCustomerBalanceSheet, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBalanceSheet.getBefImage(),
+				aCustomerBalanceSheet);
+		return new AuditHeader(getReference(), String.valueOf(aCustomerBalanceSheet.getCustId()), null, null,
+				auditDetail, aCustomerBalanceSheet.getUserDetails(), getOverideMap());
 	}
 
 	/**
-	 * Display Message in Error Box
-	 * s
-	 * @param e (Exception)
+	 * Display Message in Error Box s
+	 * 
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_CustomerBalanceSheetDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1200,14 +1197,14 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.customerBalanceSheet);
 	}
+
 	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getCustomerBalanceSheet().getCustId()+PennantConstants.KEY_SEPERATOR
-		   +getCustomerBalanceSheet().getFinancialYear()
-		;
+		return getCustomerBalanceSheet().getCustId() + PennantConstants.KEY_SEPERATOR
+				+ getCustomerBalanceSheet().getFinancialYear();
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1216,6 +1213,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1223,6 +1221,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public CustomerBalanceSheet getCustomerBalanceSheet() {
 		return this.customerBalanceSheet;
 	}
+
 	public void setCustomerBalanceSheet(CustomerBalanceSheet customerBalanceSheet) {
 		this.customerBalanceSheet = customerBalanceSheet;
 	}
@@ -1230,6 +1229,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public void setCustomerBalanceSheetService(CustomerBalanceSheetService customerBalanceSheetService) {
 		this.customerBalanceSheetService = customerBalanceSheetService;
 	}
+
 	public CustomerBalanceSheetService getCustomerBalanceSheetService() {
 		return this.customerBalanceSheetService;
 	}
@@ -1237,6 +1237,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public void setCustomerBalanceSheetListCtrl(CustomerBalanceSheetListCtrl customerBalanceSheetListCtrl) {
 		this.customerBalanceSheetListCtrl = customerBalanceSheetListCtrl;
 	}
+
 	public CustomerBalanceSheetListCtrl getCustomerBalanceSheetListCtrl() {
 		return this.customerBalanceSheetListCtrl;
 	}
@@ -1244,6 +1245,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1251,6 +1253,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
@@ -1258,6 +1261,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -1265,6 +1269,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public boolean isNewCustomer() {
 		return newCustomer;
 	}
+
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
@@ -1272,14 +1277,15 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	public List<CustomerBalanceSheet> getBalanceSheetDetails() {
 		return balanceSheetDetails;
 	}
-	public void setBalanceSheetDetails(
-			List<CustomerBalanceSheet> balanceSheetDetails) {
+
+	public void setBalanceSheetDetails(List<CustomerBalanceSheet> balanceSheetDetails) {
 		this.balanceSheetDetails = balanceSheetDetails;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
+
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}

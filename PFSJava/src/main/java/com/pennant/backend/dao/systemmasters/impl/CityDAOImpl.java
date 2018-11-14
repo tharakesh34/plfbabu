@@ -69,57 +69,56 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	private static Logger logger = Logger.getLogger(CityDAOImpl.class);
-		
+
 	public CityDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  City details by key field
+	 * Fetch the Record City details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return City
 	 */
 	@Override
-	public City getCityById(final String pCCountry,String pCProvince,String pCCity, String type) {
+	public City getCityById(final String pCCountry, String pCProvince, String pCCity, String type) {
 		logger.debug(Literal.ENTERING);
 		City city = new City();
 		city.setPCCountry(pCCountry);
 		city.setPCProvince(pCProvince);
 		city.setPCCity(pCCity);
-		
-		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
-		if(type.contains("View")){
-			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName," );
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
+		if (type.contains("View")) {
+			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode," );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTProvinceVsCity");
-		selectSql.append(StringUtils.trimToEmpty(type)); 
-		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity " );
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
-		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(City.class);
-		
-		try{
-			city = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(City.class);
+
+		try {
+			city = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			city = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return city;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the RMTProvinceVsCity or
-	 * RMTProvinceVsCity_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete City by key PCCountry
+	 * This method Deletes the Record from the RMTProvinceVsCity or RMTProvinceVsCity_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete City by key PCCountry
 	 * 
 	 * @param City
 	 *            (city)
@@ -131,7 +130,7 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	 */
 	public void delete(City city, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTProvinceVsCity");
 		deleteSql.append(tableType.getSuffix());
@@ -156,8 +155,7 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	}
 
 	/**
-	 * This method insert new Records into RMTProvinceVsCity or
-	 * RMTProvinceVsCity_Temp.
+	 * This method insert new Records into RMTProvinceVsCity or RMTProvinceVsCity_Temp.
 	 * 
 	 * save City
 	 * 
@@ -172,16 +170,17 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	@Override
 	public String save(City city, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTProvinceVsCity" );
+
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTProvinceVsCity");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:PCCountry, :PCProvince, :PCCity, :PCCityName, :PCCityClassification, :BankRefNo, :CityIsActive," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
+		insertSql.append(" (PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:PCCountry, :PCProvince, :PCCity, :PCCityName, :PCCityClassification, :BankRefNo, :CityIsActive,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
 		try {
@@ -193,15 +192,15 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	/**
-	 * This method updates the Record RMTProvinceVsCity or RMTProvinceVsCity_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update City by key PCCountry and Version
+	 * This method updates the Record RMTProvinceVsCity or RMTProvinceVsCity_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update City by key PCCountry and Version
 	 * 
-	 * @param Ciry (city)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Ciry
+	 *            (city)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -209,22 +208,23 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	@Override
 	public void update(City city, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder("Update RMTProvinceVsCity" );
+		StringBuilder updateSql = new StringBuilder("Update RMTProvinceVsCity");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set PCCityName = :PCCityName, PCCityClassification = :PCCityClassification, BankRefNo = :BankRefNo, CityIsActive = :CityIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(
+				" Set PCCityName = :PCCityName, PCCityClassification = :PCCityClassification, BankRefNo = :BankRefNo, CityIsActive = :CityIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -269,7 +269,7 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public int getPCProvinceCount(String pcProvince, String type) {
 		logger.debug("Entering");

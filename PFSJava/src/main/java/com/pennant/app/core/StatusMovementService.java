@@ -60,14 +60,14 @@ import com.pennant.backend.util.BatchUtil;
 
 public class StatusMovementService extends ServiceHelper {
 
-	private static final long	serialVersionUID	= 4165353615228874397L;
-	private static Logger		logger				= Logger.getLogger(StatusMovementService.class);
+	private static final long serialVersionUID = 4165353615228874397L;
+	private static Logger logger = Logger.getLogger(StatusMovementService.class);
 
-	static final String			NORM_PD				= "select * from FinPftDetails where CurODDays=1 and PrvODDate = ? and  CustId = ?";
-	static final String			PD_NORM				= " select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate  from FInODDetails group by FinReference)t "
-															+ "	inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  where FinODTillDate=? and fpd.CurODDays=0 and fpd.CustId = ?";
-	static final String			PD_PIS				= "select * from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t"
-															+ "	inner join FinPftDetails fpd on fpd.FinReference=t.FinReference and fpd.CustId = ?";
+	static final String NORM_PD = "select * from FinPftDetails where CurODDays=1 and PrvODDate = ? and  CustId = ?";
+	static final String PD_NORM = " select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate  from FInODDetails group by FinReference)t "
+			+ "	inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  where FinODTillDate=? and fpd.CurODDays=0 and fpd.CustId = ?";
+	static final String PD_PIS = "select * from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t"
+			+ "	inner join FinPftDetails fpd on fpd.FinReference=t.FinReference and fpd.CustId = ?";
 
 	/**
 	 * @param custid
@@ -190,15 +190,16 @@ public class StatusMovementService extends ServiceHelper {
 		amountCodes.setPftS(resultSet.getBigDecimal("TdSchdPft").add(resultSet.getBigDecimal("TdPftCpz")));
 		amountCodes.setPftSB(resultSet.getBigDecimal("TdSchdPftBal"));
 		amountCodes.setPftSP(resultSet.getBigDecimal("TdSchdPftPaid"));
-		amountCodes.setAccrueTsfd(resultSet.getBigDecimal("pftAccrued").subtract(
-				resultSet.getBigDecimal("PftAccrueSusp")));
+		amountCodes.setAccrueTsfd(
+				resultSet.getBigDecimal("pftAccrued").subtract(resultSet.getBigDecimal("PftAccrueSusp")));
 		return aeEvent;
 	}
 
 	@SuppressWarnings("unused")
 	private String getPSIToNormal() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select * from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
+		sqlQuery.append(
+				" select * from (select FinReference from FinSuspHead where FinIsInSusp=0 and FinSuspTrfDate= ?) t  ");
 		sqlQuery.append(" inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  ");
 		return sqlQuery.toString();
 	}

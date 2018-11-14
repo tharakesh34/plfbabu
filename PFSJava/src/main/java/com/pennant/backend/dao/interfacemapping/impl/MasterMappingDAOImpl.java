@@ -101,9 +101,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	}
 
 	/**
-	 * This method updates the Record MasterMapping or MasterMapping_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update MasterMapping by key MasterMappingId and Version
+	 * This method updates the Record MasterMapping or MasterMapping_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update MasterMapping by key MasterMappingId and Version
 	 * 
 	 * @param MasterMapping
 	 *            (MasterMapping)
@@ -129,8 +128,7 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 		updateSql.append(" Where MasterMappingId = :MasterMappingId And InterfaceMappingId = :InterfaceMappingId ");
 
 		/*
-		 * if (!type.endsWith("_Temp")) {
-		 * updateSql.append("  AND Version= :Version-1"); }
+		 * if (!type.endsWith("_Temp")) { updateSql.append("  AND Version= :Version-1"); }
 		 */
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -145,9 +143,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	}
 
 	/**
-	 * This method Deletes the Record from the MasterMapping or
-	 * MasterMapping_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete MasterMapping by key MasterMappingId
+	 * This method Deletes the Record from the MasterMapping or MasterMapping_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete MasterMapping by key MasterMappingId
 	 * 
 	 * @param MasterMapping
 	 *            (MasterMapping)
@@ -180,9 +177,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	}
 
 	/**
-	 * This method insert new Records into MasterMapping or MasterMapping_Temp.
-	 * it fetches the available Sequence form MasterMapping by using
-	 * getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into MasterMapping or MasterMapping_Temp. it fetches the available Sequence form
+	 * MasterMapping by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save MasterMapping
 	 * 
@@ -209,7 +205,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 		insertSql.append(" (MasterMappingId,InterfaceMappingId,PlfValue,InterfaceValue,InterfaceSequence");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(" Values(:MasterMappingId,:InterfaceMappingId, :PlfValue , :InterfaceValue, :InterfaceSequence");
+		insertSql.append(
+				" Values(:MasterMappingId,:InterfaceMappingId, :PlfValue , :InterfaceValue, :InterfaceSequence");
 		insertSql.append(
 				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
 		insertSql.append(", :RecordType, :WorkflowId)");

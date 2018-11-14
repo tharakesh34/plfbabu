@@ -61,21 +61,19 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
  */
 public class DDAEnquiryDialogCtrl extends GFCBaseCtrl<DDAProcessData> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(DDAEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_DDAEnquiryDialog; 
-	protected Listbox listBoxDDA; 
-	protected Borderlayout borderlayoutDDAEnquiry; 
+	protected Window window_DDAEnquiryDialog;
+	protected Listbox listBoxDDA;
+	protected Borderlayout borderlayoutDDAEnquiry;
 	private Tabpanel tabPanel_dialogWindow;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
@@ -99,9 +97,8 @@ public class DDAEnquiryDialogCtrl extends GFCBaseCtrl<DDAProcessData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -136,8 +133,7 @@ public class DDAEnquiryDialogCtrl extends GFCBaseCtrl<DDAProcessData> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException

@@ -27,21 +27,20 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewDetails> implements CreditApplicationReviewDAO {
+public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewDetails>
+		implements CreditApplicationReviewDAO {
 	private static Logger logger = Logger.getLogger(CreditApplicationReviewDAOImpl.class);
-	
 
 	public CreditApplicationReviewDAOImpl() {
 		super();
 	}
-	
-	
+
 	/**
 	 * Method for get the CreditRevCategory Details
 	 */
 	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCode(String creditRevCode) {
 		logger.debug("Entering");
-		FinCreditRevCategory finCreditRevCategory= new FinCreditRevCategory();
+		FinCreditRevCategory finCreditRevCategory = new FinCreditRevCategory();
 		finCreditRevCategory.setCreditRevCode(creditRevCode);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CategoryId,CategorySeque,CreditRevCode,CategoryDesc,Remarks,NoOfyears,changedsply,");
@@ -52,162 +51,170 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		List<FinCreditRevCategory> creditRevCategories;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevCategory);
 		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinCreditRevCategory.class);
+				.newInstance(FinCreditRevCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		creditRevCategories = this.jdbcTemplate.query(selectSql.toString(), beanParameters,	typeRowMapper);
-		if(creditRevCategories != null){
+		creditRevCategories = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		if (creditRevCategories != null) {
 			return creditRevCategories;
-		}else {
+		} else {
 			return creditRevCategories = new ArrayList<>();
 		}
 	}
-	
+
 	/**
 	 * Method for get the CreditRevCategory Details
 	 */
-	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode, List<Long> eligibilityIds) {
+	public List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode,
+			List<Long> eligibilityIds) {
 		logger.debug("Entering");
-		
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from (");
 		sql.append(" select CategoryId, CategorySeque, CreditRevCode, CategoryDesc, Remarks, NoOfyears, changedsply, ");
-		sql.append(" brkdowndsply, Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" from FinCreditRevCategory where CreditRevCode = :CreditRevCode and EligibilityId in (:EligibilityId)");
+		sql.append(
+				" brkdowndsply, Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" from FinCreditRevCategory where CreditRevCode = :CreditRevCode and EligibilityId in (:EligibilityId)");
 		sql.append(" union all ");
 		sql.append(" select CategoryId, CategorySeque, CreditRevCode, CategoryDesc, Remarks, NoOfyears, changedsply, ");
-		sql.append(" brkdowndsply, Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" brkdowndsply, Version, LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from FinCreditRevCategory where CreditRevCode = :CreditRevCode and EligibilityId");
-		sql.append(" in (select fieldcodeid from rmtlovfielddetail where fieldcode = :fieldcode and fieldcodevalue in (:fieldcodevalue))) T");
+		sql.append(
+				" in (select fieldcodeid from rmtlovfielddetail where fieldcode = :fieldcode and fieldcodevalue in (:fieldcodevalue))) T");
 		sql.append(" order by CategoryId");
-		
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CreditRevCode", creditRevCode);
 		source.addValue("EligibilityId", eligibilityIds);
 		source.addValue("fieldcode", "ELGMETHOD");
-		source.addValue("fieldcodevalue", Arrays.asList(new String[]{"PL", "BL", "RT", "ES"})); //FIXME make me as constants
-		
-		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditRevCategory.class);
-		
-		logger.trace(Literal.SQL+sql.toString());
-		
+		source.addValue("fieldcodevalue", Arrays.asList(new String[] { "PL", "BL", "RT", "ES" })); //FIXME make me as constants
+
+		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditRevCategory.class);
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (DataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
-		
+
 		return new ArrayList<>();
 	}
 
 	@Override
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId) {
 		logger.debug("Entering");
-		FinCreditRevSubCategory finCreditRevSubCategory= new FinCreditRevSubCategory();
+		FinCreditRevSubCategory finCreditRevSubCategory = new FinCreditRevSubCategory();
 		finCreditRevSubCategory.setCategoryId(categoryId);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT SubCategoryCode,SubCategorySeque,CategoryId,SubCategoryDesc,SubCategoryItemType,");
-		selectSql.append(" MainSubCategoryCode,ItemsToCal,ItemRule,isCreditCCY,Version,LastMntBy,LastMntOn,RecordStatus,format, percentCategory, grand,");
+		selectSql.append(
+				" MainSubCategoryCode,ItemsToCal,ItemRule,isCreditCCY,Version,LastMntBy,LastMntOn,RecordStatus,format, percentCategory, grand,");
 		selectSql.append(" RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
-		selectSql.append(" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId order by CalcSeque asc");  // change Calseq - SubCategorySeque
+		selectSql.append(" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId order by CalcSeque asc"); // change Calseq - SubCategorySeque
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinCreditRevSubCategory.class);
+				.newInstance(FinCreditRevSubCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
-	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId, String subCategoryItemType) {
+	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId,
+			String subCategoryItemType) {
 		logger.debug("Entering");
-		FinCreditRevSubCategory finCreditRevSubCategory= new FinCreditRevSubCategory();
+		FinCreditRevSubCategory finCreditRevSubCategory = new FinCreditRevSubCategory();
 		finCreditRevSubCategory.setCategoryId(categoryId);
 		finCreditRevSubCategory.setSubCategoryItemType(subCategoryItemType);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT SubCategoryCode,SubCategorySeque,CategoryId,SubCategoryDesc,SubCategoryItemType,");
-		selectSql.append(" MainSubCategoryCode,ItemsToCal,ItemRule,isCreditCCY,Version,LastMntBy,LastMntOn,RecordStatus,format, percentCategory, grand,");
+		selectSql.append(
+				" MainSubCategoryCode,ItemsToCal,ItemRule,isCreditCCY,Version,LastMntBy,LastMntOn,RecordStatus,format, percentCategory, grand,");
 		selectSql.append(" RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
-		selectSql.append(" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId and SubCategoryItemType= :SubCategoryItemType order by CalcSeque"); // 2nd Time
-		
+		selectSql.append(
+				" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId and SubCategoryItemType= :SubCategoryItemType order by CalcSeque"); // 2nd Time
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinCreditRevSubCategory.class);
-		
+				.newInstance(FinCreditRevSubCategory.class);
+
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(long categoryId) {
 		logger.debug("Entering");
-		FinCreditRevSubCategory finCreditRevSubCategory= new FinCreditRevSubCategory();
+		FinCreditRevSubCategory finCreditRevSubCategory = new FinCreditRevSubCategory();
 		finCreditRevSubCategory.setCategoryId(categoryId);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.Remarks, T2.SubCategoryCode,T2.SubCategorySeque,T2.CalcSeque, T2.CategoryId,T2.SubCategoryDesc,T2.SubCategoryItemType,");
+		selectSql.append(
+				" SELECT T1.Remarks, T2.SubCategoryCode,T2.SubCategorySeque,T2.CalcSeque, T2.CategoryId,T2.SubCategoryDesc,T2.SubCategoryItemType,");
 		selectSql.append(" T2.MainSubCategoryCode,T2.ItemsToCal,T2.ItemRule,T2.isCreditCCY,");
-		selectSql.append(" T2.Version,T2.LastMntBy,T2.LastMntOn,T2.RecordStatus,T2.format, T2.percentCategory, T2.grand,");
+		selectSql.append(
+				" T2.Version,T2.LastMntBy,T2.LastMntOn,T2.RecordStatus,T2.format, T2.percentCategory, T2.grand,");
 		selectSql.append(" T2.RoleCode,T2.NextRoleCode,T2.TaskId,T2.NextTaskId,T2.RecordType,T2.WorkflowId");
-		selectSql.append(" FROM FinCreditRevCategory T1" );
-		selectSql.append(" inner join FinCreditRevSubCategory_View T2 On T1.CategoryId = T2.CategoryId " );
-		if(categoryId > 0){
-			selectSql.append(" Where T1.CategoryId= :CategoryId "); 
+		selectSql.append(" FROM FinCreditRevCategory T1");
+		selectSql.append(" inner join FinCreditRevSubCategory_View T2 On T1.CategoryId = T2.CategoryId ");
+		if (categoryId > 0) {
+			selectSql.append(" Where T1.CategoryId= :CategoryId ");
 		}
 		selectSql.append(" order by CalcSeque");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinCreditRevSubCategory.class);
+				.newInstance(FinCreditRevSubCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByMainCategory(String category) {
 		logger.debug("Entering");
-		FinCreditRevSubCategory finCreditRevSubCategory= new FinCreditRevSubCategory();
+		FinCreditRevSubCategory finCreditRevSubCategory = new FinCreditRevSubCategory();
 		finCreditRevSubCategory.setSubCategoryCode(category);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.Remarks, T2.SubCategoryCode,T2.SubCategorySeque,T2.CalcSeque, T2.CategoryId,T2.SubCategoryDesc,T2.SubCategoryItemType,");
+		selectSql.append(
+				" SELECT T1.Remarks, T2.SubCategoryCode,T2.SubCategorySeque,T2.CalcSeque, T2.CategoryId,T2.SubCategoryDesc,T2.SubCategoryItemType,");
 		selectSql.append(" T2.MainSubCategoryCode,T2.ItemsToCal,T2.ItemRule,T2.isCreditCCY,");
-		selectSql.append(" T2.Version,T2.LastMntBy,T2.LastMntOn,T2.RecordStatus,T2.format, T2.percentCategory, T2.grand,");
+		selectSql.append(
+				" T2.Version,T2.LastMntBy,T2.LastMntOn,T2.RecordStatus,T2.format, T2.percentCategory, T2.grand,");
 		selectSql.append(" T2.RoleCode,T2.NextRoleCode,T2.TaskId,T2.NextTaskId,T2.RecordType,T2.WorkflowId");
-		selectSql.append(" FROM FinCreditRevCategory T1" );
-		selectSql.append(" inner join FinCreditRevSubCategory_View T2 On T1.CategoryId = T2.CategoryId " );
-		selectSql.append(" Where T1.CreditRevCode = :SubCategoryCode "); 
+		selectSql.append(" FROM FinCreditRevCategory T1");
+		selectSql.append(" inner join FinCreditRevSubCategory_View T2 On T1.CategoryId = T2.CategoryId ");
+		selectSql.append(" Where T1.CreditRevCode = :SubCategoryCode ");
 		selectSql.append(" order by CalcSeque");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinCreditReviewDetails 
+	 * This method set the Work Flow id based on the module name and return the new FinCreditReviewDetails
+	 * 
 	 * @return FinCreditReviewDetails
 	 */
 	@Override
 	public FinCreditReviewDetails getCreditReviewDetails() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("FinCreditReviewDetails");
-		FinCreditReviewDetails creditReviewDetails= new FinCreditReviewDetails();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinCreditReviewDetails");
+		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
+		if (workFlowDetails != null) {
 			creditReviewDetails.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -215,8 +222,9 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method get the module from method getCreditReviewDetails() and 
-	 * set the new record flag as true and return FinCreditReviewDetails()   
+	 * This method get the module from method getCreditReviewDetails() and set the new record flag as true and return
+	 * FinCreditReviewDetails()
+	 * 
 	 * @return FinCreditReviewDetails
 	 */
 	@Override
@@ -229,11 +237,12 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * Fetch the Record  FinCreditReviewDetails  by key field
+	 * Fetch the Record FinCreditReviewDetails by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinCreditReviewDetails
 	 */
 	@Override
@@ -245,10 +254,11 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		StringBuilder selectSql = new StringBuilder("SELECT DetailId,CreditRevCode,CustomerId,AuditYear,BankName,");
 		selectSql.append(" Auditors,Consolidated,Location,ConversionRate,AuditedDate,NoOfShares,MarketPrice,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(
+				" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescCustCIF,lovDescCustCtgCode,lovDescCustShrtName,lovDescCcyEditField");
 		}
 		selectSql.append(" From FinCreditReviewDetails");
@@ -257,23 +267,25 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditReviewDetails.class);
 
-		try{
-			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			creditReviewDetails = null;
 		}
 		logger.debug("Leaving");
 		return creditReviewDetails;
 	}
-	
+
 	/*
 	 * 
 	 */
 	@Override
-	public FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type) {
+	public FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear,
+			String type) {
 		logger.debug("Entering");
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
 
@@ -282,10 +294,11 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		StringBuilder selectSql = new StringBuilder("SELECT DetailId,CreditRevCode,CustomerId,AuditYear,BankName,");
 		selectSql.append(" Auditors,Consolidated,Location,ConversionRate,AuditedDate,NoOfShares,MarketPrice,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(
+				" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescCustCIF,lovDescCustCtgCode,lovDescCustShrtName,lovDescCcyEditField");
 		}
 		selectSql.append(" From FinCreditReviewDetails");
@@ -294,20 +307,21 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditReviewDetails.class);
 
-		try{
-			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			creditReviewDetails = null;
 		}
 		logger.debug("Leaving");
 		return creditReviewDetails;
 	}
-	
 
-	public int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod, boolean isEnquiry, String type) {
+	public int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod,
+			boolean isEnquiry, String type) {
 		logger.debug("Entering");
 
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
@@ -315,11 +329,11 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		creditReviewDetails.setAuditYear(auditYear);
 
 		int period = 0;
-		StringBuilder selectSql =  new StringBuilder();
+		StringBuilder selectSql = new StringBuilder();
 		SqlParameterSource beanParameters;
 
 		try {
-			if(isEnquiry){
+			if (isEnquiry) {
 				selectSql.append("SELECT  COALESCE(MAX(AuditPeriod),0) ");
 				selectSql.append(" From FinCreditReviewDetails");
 				selectSql.append(StringUtils.trimToEmpty(type));
@@ -333,28 +347,27 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
-		if(period == 0){
+		if (period == 0) {
 			return 0;
 		} else {
 			return period;
 		}
 	}
 
-
 	/**
-	 * This method Deletes the Record from the CreditReviewDetails or CreditReviewDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete FinCreditReviewDetails by key detailId
+	 * This method Deletes the Record from the CreditReviewDetails or CreditReviewDetails_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete FinCreditReviewDetails by key detailId
 	 * 
-	 * @param FinCreditReviewDetails (creditReviewDetails)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param FinCreditReviewDetails
+	 *            (creditReviewDetails)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinCreditReviewDetails creditReviewDetails,String type) {
+	public void delete(FinCreditReviewDetails creditReviewDetails, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -364,12 +377,12 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 
 		}
@@ -377,33 +390,39 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method insert new Records into CreditReviewDetails or CreditReviewDetails_Temp.
-	 * it fetches the available Sequence form SeqCreditReviewDetails by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into CreditReviewDetails or CreditReviewDetails_Temp. it fetches the available
+	 * Sequence form SeqCreditReviewDetails by using getNextidviewDAO().getNextId() method.
 	 *
 	 * save FinCreditReviewDetails
 	 * 
-	 * @param FinCreditReviewDetails (creditReviewDetails)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param FinCreditReviewDetails
+	 *            (creditReviewDetails)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 
 	@Override
-	public long save(FinCreditReviewDetails creditReviewDetails,String type) {
+	public long save(FinCreditReviewDetails creditReviewDetails, String type) {
 		logger.debug("Entering");
-		if (creditReviewDetails.getDetailId()==Long.MIN_VALUE){
+		if (creditReviewDetails.getDetailId() == Long.MIN_VALUE) {
 			creditReviewDetails.setDetailId(getNextId("SeqFinCreditReviewDetails"));
-		}	
-		StringBuilder insertSql =new StringBuilder("Insert Into FinCreditReviewDetails");
+		}
+		StringBuilder insertSql = new StringBuilder("Insert Into FinCreditReviewDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (DetailId,CreditRevCode,CustomerId,AuditYear,BankName,Auditors,Consolidated,Location,");
-		insertSql.append("  ConversionRate,AuditedDate,NoOfShares,MarketPrice,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,");
-		insertSql.append(" TaskId,NextTaskId,RecordType,WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division)");
-		insertSql.append(" Values ( :DetailId, :CreditRevCode, :CustomerId, :AuditYear, :BankName, :Auditors, :Consolidated, ");
-		insertSql.append(" :Location, :ConversionRate, :AuditedDate, :NoOfShares, :MarketPrice, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AuditPeriod, :AuditType, :Qualified, :Currency, :Division)");
+		insertSql.append(
+				"  ConversionRate,AuditedDate,NoOfShares,MarketPrice,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,");
+		insertSql.append(
+				" TaskId,NextTaskId,RecordType,WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division)");
+		insertSql.append(
+				" Values ( :DetailId, :CreditRevCode, :CustomerId, :AuditYear, :BankName, :Auditors, :Consolidated, ");
+		insertSql.append(
+				" :Location, :ConversionRate, :AuditedDate, :NoOfShares, :MarketPrice, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
+		insertSql.append(
+				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AuditPeriod, :AuditType, :Qualified, :Currency, :Division)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -414,34 +433,36 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method updates the Record CreditReviewDetails or CreditReviewDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update FinCreditReviewDetails by key detailId and Version
+	 * This method updates the Record CreditReviewDetails or CreditReviewDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update FinCreditReviewDetails by key detailId and Version
 	 * 
 	 * @param FinCreditReviewDetails(creditReviewDetails)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(FinCreditReviewDetails creditReviewDetails,String type) {
+	public void update(FinCreditReviewDetails creditReviewDetails, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update FinCreditReviewDetails");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		StringBuilder updateSql = new StringBuilder("Update FinCreditReviewDetails");
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CreditRevCode = :CreditRevCode,CustomerId = :CustomerId,");
-		updateSql.append(" AuditYear = :AuditYear,BankName = :BankName,Auditors = :Auditors,Consolidated = :Consolidated,");
-		updateSql.append(" Location = :Location,ConversionRate = :ConversionRate,AuditedDate = :AuditedDate," );
-		updateSql.append(" NoOfShares = :NoOfShares,MarketPrice = :MarketPrice," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, ");
-		updateSql.append(" AuditPeriod = :AuditPeriod, AuditType = :AuditType, Qualified = :Qualified, Currency = :Currency");
+		updateSql.append(
+				" AuditYear = :AuditYear,BankName = :BankName,Auditors = :Auditors,Consolidated = :Consolidated,");
+		updateSql.append(" Location = :Location,ConversionRate = :ConversionRate,AuditedDate = :AuditedDate,");
+		updateSql.append(" NoOfShares = :NoOfShares,MarketPrice = :MarketPrice,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, ");
+		updateSql.append(
+				" AuditPeriod = :AuditPeriod, AuditType = :AuditType, Qualified = :Qualified, Currency = :Currency");
 		updateSql.append(" Where DetailId =:DetailId");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
@@ -456,132 +477,136 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * This method for getting the creditreviewdetails by creditrevcode
+	 * 
 	 * @param creditRevCode
 	 */
 	public FinCreditRevType getFinCreditRevByRevCode(String creditRevCode) {
 		logger.debug("Entering");
-		FinCreditRevType finCreditRev= new FinCreditRevType();
+		FinCreditRevType finCreditRev = new FinCreditRevType();
 		finCreditRev.setCreditRevCode(creditRevCode);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CreditRevCode,CreditRevDesc,CreditCCY,EntryCCY,Version,LastMntBy,LastMntOn,");		
+		selectSql.append(" SELECT CreditRevCode,CreditRevDesc,CreditCCY,EntryCCY,Version,LastMntBy,LastMntOn,");
 		selectSql.append(" RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
 		selectSql.append("  FROM FinCreditRevType Where CreditRevCode= :CreditRevCode ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRev);
 		RowMapper<FinCreditRevType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		.newInstance(FinCreditRevType.class);
+				.newInstance(FinCreditRevType.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	
 	/**
 	 * This method for checking whether record is already existed with the customer id and audited year.
+	 * 
 	 * @param custID
 	 * @param auditYear
 	 * @return int
 	 */
-	public int isCreditSummaryExists(long custID,String auditYear, int auditPeriod){
+	public int isCreditSummaryExists(long custID, String auditYear, int auditPeriod) {
 		logger.debug("Entering");
-		
+
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
 		creditReviewDetails.setCustomerId(custID);
 		creditReviewDetails.setAuditYear(auditYear);
 		creditReviewDetails.setAuditPeriod(auditPeriod);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT count(*) ");		
-		selectSql.append("  FROM FinCreditReviewDetails_View Where CustomerId= :CustomerId  and AuditYear  = :AuditYear and AuditPeriod = :AuditPeriod");
+		selectSql.append(" SELECT count(*) ");
+		selectSql.append(
+				"  FROM FinCreditReviewDetails_View Where CustomerId= :CustomerId  and AuditYear  = :AuditYear and AuditPeriod = :AuditPeriod");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
-		
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+
 	}
-	
-	public int getAuditPeriod(long customerId, String auditYear, int auditPeriod, String type){
+
+	public int getAuditPeriod(long customerId, String auditYear, int auditPeriod, String type) {
 		logger.debug("Entering");
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
 		creditReviewDetails.setCustomerId(customerId);
 		creditReviewDetails.setAuditYear(auditYear);
 		int period = 0;
 		SqlParameterSource beanParameters;
-		
-		  StringBuilder selectSql = new StringBuilder("Select CASE WHEN T2.AuditPeriod IS null THEN MAXAuditPeriod "); 
-	      selectSql.append(" ELSE T2.AuditPeriod  END AuditPeriod FROM (");
-	      selectSql.append(" Select T1.Audityear ,T1.Customerid,MAX(T1.AuditPeriod) MAXAuditPeriod");
-	      selectSql.append(" from FinCreditReviewDetails");
-	      selectSql.append(type);
-	      selectSql.append(" T1 GROUP BY T1.Audityear ,T1.Customerid) T1 Left Join FinCreditReviewDetails");
-	      selectSql.append(type);
-	      selectSql.append(" T2 ON");
-	      
-	      selectSql.append(" T1.AuditYear =T2.AuditYear and T1.CustomerId =T2.CustomerId and T2.AuditPeriod= :auditPeriod ");
-	      selectSql.append(" Where T1.AuditYear = :auditYear and T1.CustomerId = :customerId ");
-		
+
+		StringBuilder selectSql = new StringBuilder("Select CASE WHEN T2.AuditPeriod IS null THEN MAXAuditPeriod ");
+		selectSql.append(" ELSE T2.AuditPeriod  END AuditPeriod FROM (");
+		selectSql.append(" Select T1.Audityear ,T1.Customerid,MAX(T1.AuditPeriod) MAXAuditPeriod");
+		selectSql.append(" from FinCreditReviewDetails");
+		selectSql.append(type);
+		selectSql.append(" T1 GROUP BY T1.Audityear ,T1.Customerid) T1 Left Join FinCreditReviewDetails");
+		selectSql.append(type);
+		selectSql.append(" T2 ON");
+
+		selectSql.append(
+				" T1.AuditYear =T2.AuditYear and T1.CustomerId =T2.CustomerId and T2.AuditPeriod= :auditPeriod ");
+		selectSql.append(" Where T1.AuditYear = :auditYear and T1.CustomerId = :customerId ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		creditReviewDetails.setAuditPeriod(auditPeriod);
 		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		try{
+		try {
 			period = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		}catch (EmptyResultDataAccessException e) {
-            logger.error("Exception: ", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 		return period;
 	}
-	
+
 	@Override
-	public String getMaxAuditYearByCustomerId(long customerId, String type){
+	public String getMaxAuditYearByCustomerId(long customerId, String type) {
 		logger.debug("Entering");
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
 		creditReviewDetails.setCustomerId(customerId);
 		int maxAuditYear = 0;
 		SqlParameterSource beanParameters;
-		
-		  StringBuilder selectSql = new StringBuilder("SELECT COALESCE(Max(AuditYear), '0') FROM  FinCreditReviewDetails_View ");
-		  selectSql.append(" where CustomerId = :CustomerId");
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT COALESCE(Max(AuditYear), '0') FROM  FinCreditReviewDetails_View ");
+		selectSql.append(" where CustomerId = :CustomerId");
 		logger.debug("selectSql: " + selectSql.toString());
 		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		try{
+		try {
 			maxAuditYear = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		}catch (EmptyResultDataAccessException e) {
-            logger.error("Exception: ", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 		return String.valueOf(maxAuditYear);
 	}
-	
+
 	@Override
 	public List<FinCreditReviewDetails> getFinCreditRevDetailsByCustomerId(final long customerId, String type) {
 		logger.debug("Entering");
-		FinCreditReviewDetails finCreditReviewDetails= new FinCreditReviewDetails();
+		FinCreditReviewDetails finCreditReviewDetails = new FinCreditReviewDetails();
 		finCreditReviewDetails.setCustomerId(customerId);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT DetailId,CreditRevCode,CustomerId,AuditYear,BankName,");
 		selectSql.append(" Auditors,Consolidated,Location,ConversionRate,AuditedDate,NoOfShares,MarketPrice,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(
+				" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
 		selectSql.append(" FROM FinCreditReviewDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustomerId= :customerId "); 
+		selectSql.append(" Where CustomerId= :customerId ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditReviewDetails.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	
+
 	@Override
 	public List<FinCreditReviewDetails> getAuditYearsByCustId(Set<Long> custId) {
 		logger.debug("Entering");
@@ -596,7 +621,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditReviewDetails.class);
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -607,7 +633,6 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 	}
 
-
 	@Override
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCustCtg(String custCtgCode, String categorydesc) {
 		logger.debug("Entering");
@@ -617,12 +642,14 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		source.addValue("categorydesc", categorydesc);
 
 		StringBuilder selectSql = new StringBuilder("Select * ");
-		selectSql.append(" from fincreditrevsubcategory where categoryid = (select categoryid from fincreditrevcategory ");
+		selectSql.append(
+				" from fincreditrevsubcategory where categoryid = (select categoryid from fincreditrevcategory ");
 		selectSql.append(" Where creditrevcode = :creditrevcode and categorydesc = :categorydesc)");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditRevSubCategory.class);
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditRevSubCategory.class);
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);

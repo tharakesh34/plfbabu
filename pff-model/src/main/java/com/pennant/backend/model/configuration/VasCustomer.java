@@ -1,9 +1,9 @@
 package com.pennant.backend.model.configuration;
 
 public class VasCustomer {
-	private long	customerId;
-	private String	custCIF;
-	private String	custShrtName;
+	private long customerId;
+	private String custCIF;
+	private String custShrtName;
 
 	public long getCustomerId() {
 		return customerId;

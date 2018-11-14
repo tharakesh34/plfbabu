@@ -10,31 +10,31 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "address1", "address2", "address3", "city", "country", "district", "pin", "state" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CompanyAddress implements Serializable {
-	private static final long	serialVersionUID	= 2929025907999752246L;
+	private static final long serialVersionUID = 2929025907999752246L;
 
 	@XmlElement(name = "ADDRESS_LINE1")
-	private String				address1;
+	private String address1;
 
 	@XmlElement(name = "ADDRESS_LINE2")
-	private String				address2;
+	private String address2;
 
 	@XmlElement(name = "ADDRESS_LINE3")
-	private String				address3;
+	private String address3;
 
 	@XmlElement(name = "ADDRESS1_CITY")
-	private String				city;
+	private String city;
 
 	@XmlElement(name = "ADDRESS1_COUNTRY")
-	private String				country;
+	private String country;
 
 	@XmlElement(name = "ADDRESS1_DISTRICT")
-	private String				district;
+	private String district;
 
 	@XmlElement(name = "ADDRESS1_PIN")
-	private String				pin;
+	private String pin;
 
 	@XmlElement(name = "ADDRESS1_STATE")
-	private String				state;
+	private String state;
 
 	public String getAddress1() {
 		return address1;

@@ -34,53 +34,55 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class LimitRuleManagement {
 
 	private static Logger logger = Logger.getLogger(LimitRuleManagement.class);
-	private  LimitDetailDAO limitDetailDAO;
-	private  CustomerDAO customerDAO;
-	private  LimitRuleDAO limitRuleDAO;
-	private  LimitHeaderDAO limitHeaderDAO;
-	private  LimitTransactionDetailsDAO limitTransactionDetailDAO;
+	private LimitDetailDAO limitDetailDAO;
+	private CustomerDAO customerDAO;
+	private LimitRuleDAO limitRuleDAO;
+	private LimitHeaderDAO limitHeaderDAO;
+	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
 
-	private  LimitReferenceMappingDAO limitReferenceMappingDAO;
-	private  FinanceMainDAO financeMainDAO;
-	private  BigDecimal utilizedLimit=BigDecimal.ZERO;  
-	List<LimitFilterQuery> limitparamsList=null;
+	private LimitReferenceMappingDAO limitReferenceMappingDAO;
+	private FinanceMainDAO financeMainDAO;
+	private BigDecimal utilizedLimit = BigDecimal.ZERO;
+	List<LimitFilterQuery> limitparamsList = null;
 
-	public void processLimitRuleTransactions(String ruleBasedOn){	
+	public void processLimitRuleTransactions(String ruleBasedOn) {
 		logger.debug("Entering");
 
-		List<Customer> customerList = new ArrayList<Customer>();	
+		List<Customer> customerList = new ArrayList<Customer>();
 		// Send the details to Limitparms table  and get all the Limitparm rules (Execute the rule)
-		limitparamsList=getLimitRuleDAO().getLimitRuleByModule(RuleConstants.MODULE_LMTLINE,ruleBasedOn,"_View");
-		if(limitparamsList!=null){
+		limitparamsList = getLimitRuleDAO().getLimitRuleByModule(RuleConstants.MODULE_LMTLINE, ruleBasedOn, "_View");
+		if (limitparamsList != null) {
 			StringBuffer selectSql = new StringBuffer();
-			for(LimitFilterQuery limitRule:limitparamsList){			
-				if(StringUtils.equals(LimitConstants.LIMIT_CATEGORY_BANK, ruleBasedOn)){								
-					prepareUnionAllQuery(limitRule.getQueryCode(),limitRule.getSQLQuery(),selectSql);					
-				}else{
+			for (LimitFilterQuery limitRule : limitparamsList) {
+				if (StringUtils.equals(LimitConstants.LIMIT_CATEGORY_BANK, ruleBasedOn)) {
+					prepareUnionAllQuery(limitRule.getQueryCode(), limitRule.getSQLQuery(), selectSql);
+				} else {
 
 				}
 			}
-			if(!StringUtils.trimToEmpty(selectSql.toString()).isEmpty())
-			customerList=getCustomerDAO().getCustomerByLimitRule(selectSql.toString(),"");
+			if (!StringUtils.trimToEmpty(selectSql.toString()).isEmpty())
+				customerList = getCustomerDAO().getCustomerByLimitRule(selectSql.toString(), "");
 		}
-		if(customerList!=null){
-			String ruleCode="";
-			LimitHeader header=null;		
-			Map<String,LimitDetails> itemsListByrulecode=new HashMap<String,LimitDetails>();
-			for(Customer cust:customerList){						
-				if(!StringUtils.equals(cust.getRuleCode(),ruleCode)){
-					header=null;									
-					itemsListByrulecode=new HashMap<String,LimitDetails>();		
+		if (customerList != null) {
+			String ruleCode = "";
+			LimitHeader header = null;
+			Map<String, LimitDetails> itemsListByrulecode = new HashMap<String, LimitDetails>();
+			for (Customer cust : customerList) {
+				if (!StringUtils.equals(cust.getRuleCode(), ruleCode)) {
+					header = null;
+					itemsListByrulecode = new HashMap<String, LimitDetails>();
 					header = getLimitHeaderDAO().getLimitHeaderByRule(cust.getRuleCode(), "", "_AView");
-					if(header!=null){					
-						convertToMap(getLimitDetailDAO().getLimitDetailsByLimitLine(header.getHeaderId(),""),itemsListByrulecode,header.getLimitCcy());		
+					if (header != null) {
+						convertToMap(getLimitDetailDAO().getLimitDetailsByLimitLine(header.getHeaderId(), ""),
+								itemsListByrulecode, header.getLimitCcy());
 					}
 				}
-				ruleCode=cust.getRuleCode();
-				if(itemsListByrulecode.size()>0){
-					List<FinanceMain> financesEnqList = getFinanceMainDAO().getFinanceMainbyCustId(cust.getCustID());					
-					for(FinanceMain finnaceEnq:financesEnqList){
-						getReferenceMapping(itemsListByrulecode,finnaceEnq,header.getRuleCode(),header.getRuleValue(),cust,new FinanceType());
+				ruleCode = cust.getRuleCode();
+				if (itemsListByrulecode.size() > 0) {
+					List<FinanceMain> financesEnqList = getFinanceMainDAO().getFinanceMainbyCustId(cust.getCustID());
+					for (FinanceMain finnaceEnq : financesEnqList) {
+						getReferenceMapping(itemsListByrulecode, finnaceEnq, header.getRuleCode(),
+								header.getRuleValue(), cust, new FinanceType());
 					}
 				}
 			}
@@ -90,10 +92,12 @@ public class LimitRuleManagement {
 
 	private void prepareUnionAllQuery(String queryCode, String sqlQuery, StringBuffer selectSql) {
 		logger.debug("Entering");
-		if(!StringUtils.trimToEmpty(selectSql.toString()).equals("")){
+		if (!StringUtils.trimToEmpty(selectSql.toString()).equals("")) {
 			selectSql.append(" UNION ALL ");
 		}
-		selectSql.append("SELECT CustID ,custDftBranch ,custCtgCode ,custTypeCode ,custGenderCode ,custIsStaff ,custIndustry ,custSector ,custSubSector ,custEmpSts ,custMaritalSts ,custSegment ,custSubSegment ,custParentCountry ,custRiskCountry ,custNationality ,custAddrProvince,'"+queryCode+"' AS ");
+		selectSql
+				.append("SELECT CustID ,custDftBranch ,custCtgCode ,custTypeCode ,custGenderCode ,custIsStaff ,custIndustry ,custSector ,custSubSector ,custEmpSts ,custMaritalSts ,custSegment ,custSubSegment ,custParentCountry ,custRiskCountry ,custNationality ,custAddrProvince,'"
+						+ queryCode + "' AS ");
 		selectSql.append(" RuleCode  From FINANCEMAIN_LIMIT_CHECK_AVIEW  ");
 		selectSql.append(sqlQuery);
 		logger.debug("Leaving");
@@ -132,13 +136,15 @@ public class LimitRuleManagement {
 		logger.debug("Leaving");
 	}
 
-	private void saveLimitRuleTransactiondetails(FinanceMain financeMain,LimitDetails limitDetails, String ruleCode, String ruleValue) {
+	private void saveLimitRuleTransactiondetails(FinanceMain financeMain, LimitDetails limitDetails, String ruleCode,
+			String ruleValue) {
 		logger.debug("entering");
 		BigDecimal transactionAmount = financeMain.getFinAmount();
-		if(!StringUtils.equals(financeMain.getFinCcy(), limitDetails.getCurrency())){
-			transactionAmount = CalculationUtil.getConvertedAmount(financeMain.getFinCcy(), limitDetails.getCurrency(),financeMain.getFinAmount());
+		if (!StringUtils.equals(financeMain.getFinCcy(), limitDetails.getCurrency())) {
+			transactionAmount = CalculationUtil.getConvertedAmount(financeMain.getFinCcy(), limitDetails.getCurrency(),
+					financeMain.getFinAmount());
 		}
-		LimitTransactionDetail limitTransactionDetail  =new LimitTransactionDetail();
+		LimitTransactionDetail limitTransactionDetail = new LimitTransactionDetail();
 		limitTransactionDetail.setReferenceCode("F");
 		limitTransactionDetail.setReferenceNumber(financeMain.getFinReference());
 		limitTransactionDetail.setLimitLine(limitDetails.getLimitLine());
@@ -149,7 +155,7 @@ public class LimitRuleManagement {
 		limitTransactionDetail.setTransactionCurrency(financeMain.getFinCcy());
 		limitTransactionDetail.setLimitCurrency(limitDetails.getCurrency());
 		limitTransactionDetail.setLimitAmount(transactionAmount);
-		if(financeMain.getUserDetails()!=null){
+		if (financeMain.getUserDetails() != null) {
 			limitTransactionDetail.setCreatedBy(financeMain.getUserDetails().getUserId());
 			limitTransactionDetail.setLastMntBy(financeMain.getUserDetails().getUserId());
 		}
@@ -163,9 +169,9 @@ public class LimitRuleManagement {
 	public ArrayList<ErrorDetail> maintainLimitDetails() {
 		logger.debug("Entering");
 
-		ArrayList<ErrorDetail> errorDetails=new ArrayList<ErrorDetail>();
+		ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		getLimitTransactionDetailDAO().deleteAllRuleTransactions("");
-		processLimitRuleTransactions(RuleConstants.EVENT_BANK);				
+		processLimitRuleTransactions(RuleConstants.EVENT_BANK);
 		updateRuleBasedLimits();
 		logger.debug("Leaving");
 		return errorDetails;
@@ -173,17 +179,20 @@ public class LimitRuleManagement {
 
 	private void updateRuleBasedLimits() {
 		logger.debug("Entering");
-		if(limitparamsList!=null){
-			for(LimitFilterQuery limitRule:limitparamsList){			
+		if (limitparamsList != null) {
+			for (LimitFilterQuery limitRule : limitparamsList) {
 
-				LimitHeader limitHeader =getLimitHeaderDAO().getLimitHeaderByRule(limitRule.getQueryCode(), "", "_AView");
-				List<LimitDetails> limitDetailsList= null;
-				if(limitHeader!=null){
-					limitDetailsList= getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView");
-					for(LimitDetails limitDetails:limitDetailsList){
-						utilizedLimit=BigDecimal.ZERO;  
-						if(limitDetails.getLimitLine()!=null){
-							utilizedLimit= getLimitTransactionDetailDAO().getUtilizedSumByRulecode(limitHeader.getRuleCode(),limitDetails.getLimitLine(),"");
+				LimitHeader limitHeader = getLimitHeaderDAO().getLimitHeaderByRule(limitRule.getQueryCode(), "",
+						"_AView");
+				List<LimitDetails> limitDetailsList = null;
+				if (limitHeader != null) {
+					limitDetailsList = getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(),
+							"_AView");
+					for (LimitDetails limitDetails : limitDetailsList) {
+						utilizedLimit = BigDecimal.ZERO;
+						if (limitDetails.getLimitLine() != null) {
+							utilizedLimit = getLimitTransactionDetailDAO().getUtilizedSumByRulecode(
+									limitHeader.getRuleCode(), limitDetails.getLimitLine(), "");
 							limitDetails.setUtilisedLimit(utilizedLimit);
 							limitDetails.setReservedLimit(BigDecimal.ZERO);
 							getLimitDetailDAO().update(limitDetails, "");
@@ -198,7 +207,7 @@ public class LimitRuleManagement {
 
 	private void convertToMap(ArrayList<LimitDetails> limitDetailsByRuleCode,
 			Map<String, LimitDetails> itemsListByrulecode, String ccy) {
-		for(LimitDetails limit:limitDetailsByRuleCode){
+		for (LimitDetails limit : limitDetailsByRuleCode) {
 			limit.setCurrency(ccy);
 			itemsListByrulecode.put(limit.getLimitLine(), limit);
 		}
@@ -252,6 +261,7 @@ public class LimitRuleManagement {
 	public void setLimitRuleDAO(LimitRuleDAO limitRuleDAO) {
 		this.limitRuleDAO = limitRuleDAO;
 	}
+
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}

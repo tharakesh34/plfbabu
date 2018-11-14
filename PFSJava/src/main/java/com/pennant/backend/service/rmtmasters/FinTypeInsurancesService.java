@@ -54,15 +54,24 @@ import com.pennant.backend.model.audit.AuditHeader;
  * 
  */
 public interface FinTypeInsurancesService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	List<FinTypeInsurances> getFinTypeInsuranceListByID(String finType, int moduleId);
+
 	List<FinTypeInsurances> getApprovedFinTypeInsuranceListByID(String finType, int moduleId);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	List<AuditDetail> setFinTypeInsuranceDetailsAuditData(List<FinTypeInsurances> finTypeInsurancesList, String auditTranType, String method);
+
+	List<AuditDetail> setFinTypeInsuranceDetailsAuditData(List<FinTypeInsurances> finTypeInsurancesList,
+			String auditTranType, String method);
+
 	List<AuditDetail> processFinTypeInsuranceDetails(List<AuditDetail> auditDetails, String type);
+
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
-	
-	List<AuditDetail> delete(List<FinTypeInsurances> finTypeInsurancesList,  String tableType, String auditTranType, String finType, int moduleId);
+
+	List<AuditDetail> delete(List<FinTypeInsurances> finTypeInsurancesList, String tableType, String auditTranType,
+			String finType, int moduleId);
 }

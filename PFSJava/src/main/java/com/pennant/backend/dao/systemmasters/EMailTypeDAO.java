@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennanttech.pff.core.TableType;
@@ -52,7 +53,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface EMailTypeDAO extends BasicCrudDao<EMailType> {
 
-	EMailType getEMailTypeById(String id,String type);
+	EMailType getEMailTypeById(String id, String type);
 
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
@@ -64,6 +65,5 @@ public interface EMailTypeDAO extends BasicCrudDao<EMailType> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String emailTypeCode, TableType tableType);
-	
-	
+
 }

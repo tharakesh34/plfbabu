@@ -89,22 +89,20 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul file.
  */
 public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FinTypeAccountDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinTypeAccountDialog; // autowired
 
@@ -120,20 +118,20 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	private transient FinTypeAccountDialogCtrl finTypeAccountDialogCtrl; // overhanded per
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient AccountInterfaceService accountInterfaceService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 
 	protected List<ValueLabel> eventList = PennantStaticListUtil.getAccountEventsList();
-	private String userRole="";
+	private String userRole = "";
 	private FinanceTypeDialogCtrl financeTypeDialogCtrl;
 	private List<FinTypeAccount> finTypeAccountList;
 	protected Map<String, Object> accounTypesDataMap = new HashMap<String, Object>();
 	protected Listbox accountReceivableList;
 	protected Button addAccountReceivable;
-	private List<CoreBankAccountDetail> accounts=new ArrayList<CoreBankAccountDetail>();
-	private int ccyFormat=0;
+	private List<CoreBankAccountDetail> accounts = new ArrayList<CoreBankAccountDetail>();
+	private int ccyFormat = 0;
 
 	/**
 	 * default constructor.<br>
@@ -148,11 +146,10 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected finTypeAccount object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected finTypeAccount object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -174,13 +171,14 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 				setFinTypeAccount(null);
 			}
 			this.finTypeAccount.setWorkflowId(0);
-			doLoadWorkFlow(this.finTypeAccount.isWorkflow(), this.finTypeAccount.getWorkflowId(), this.finTypeAccount.getNextTaskId());
+			doLoadWorkFlow(this.finTypeAccount.isWorkflow(), this.finTypeAccount.getWorkflowId(),
+					this.finTypeAccount.getNextTaskId());
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinTypeAccountDialog");
 			}
 			if (arguments.containsKey("role")) {
-				userRole=arguments.get("role").toString();
+				userRole = arguments.get("role").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "FinTypeAccountDialog");
 			}
 			doCheckRights();
@@ -242,12 +240,11 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FinTypeAccountDialog",userRole);
+		getUserWorkspace().allocateAuthorities("FinTypeAccountDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinTypeAccountDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinTypeAccountDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinTypeAccountDialog_btnDelete"));
@@ -290,7 +287,6 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		MessageUtil.showHelpWindow(event, window_FinTypeAccountDialog);
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * when the "delete" button is clicked. <br>
@@ -347,12 +343,12 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	 */
 	public void doWriteBeanToComponents(FinTypeAccount aFinTypeAccount) {
 		logger.debug("Entering");
-		this.finCcy.setValue(aFinTypeAccount.getFinCcy()); 
+		this.finCcy.setValue(aFinTypeAccount.getFinCcy());
 		fillComboBox(this.finEvent, aFinTypeAccount.getEvent(), eventList, "");
-		this.alwManualEntry.setChecked(aFinTypeAccount.isAlwManualEntry()); 
-		this.alwCustAccount.setChecked(aFinTypeAccount.isAlwCustomerAccount()); 
-		this.custAccountTypes.setValue(aFinTypeAccount.getCustAccountTypes()); 
-		
+		this.alwManualEntry.setChecked(aFinTypeAccount.isAlwManualEntry());
+		this.alwCustAccount.setChecked(aFinTypeAccount.isAlwCustomerAccount());
+		this.custAccountTypes.setValue(aFinTypeAccount.getCustAccountTypes());
+
 		this.ccyFormat = CurrencyUtil.getFormat(aFinTypeAccount.getFinCcy());
 		setAccountNumberDetails(aFinTypeAccount.getAccountReceivable(), aFinTypeAccount.getDefaultAccNum());
 		setAccountTypesDetails(aFinTypeAccount.getCustAccountTypes());
@@ -365,7 +361,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinTypeAccount
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteComponentsToBean(FinTypeAccount aFinTypeAccount) throws InterruptedException {
 		logger.debug("Entering");
@@ -406,7 +402,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 			wve.add(we);
 		}
 		try {
-			if(StringUtils.isNotEmpty(this.accountReceivable.getValue())){
+			if (StringUtils.isNotEmpty(this.accountReceivable.getValue())) {
 				throw new WrongValueException(this.accountReceivable, Labels.getLabel("const_EMPTY",
 						new String[] { Labels.getLabel("label_FinTypeAccountDialog_AccountReceivable.value") }));
 			}
@@ -424,12 +420,13 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 					Component component = componentList.get(0);
 					if (component instanceof Checkbox) {
 						if (((Checkbox) component).isChecked()) {
-							if(!defaultAccNum) {
-								Listcell listCell =(Listcell) listitem.getChildren().get(0);
+							if (!defaultAccNum) {
+								Listcell listCell = (Listcell) listitem.getChildren().get(0);
 								defaultAccount = String.valueOf(listCell.getLabel());
 								defaultAccNum = true;
 							} else {
-								throw new WrongValueException(this.accountReceivableList,Labels.getLabel("DEFAULT_ACCOUNT"));
+								throw new WrongValueException(this.accountReceivableList,
+										Labels.getLabel("DEFAULT_ACCOUNT"));
 							}
 						} else {
 							aFinTypeAccount.setDefaultAccNum("");
@@ -456,8 +453,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinTypeAccount
 	 * @throws InterruptedException
@@ -479,7 +475,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinTypeAccount);
-			
+
 			this.window_FinTypeAccountDialog.doModal();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -494,12 +490,14 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.finCcy.isReadonly()) {
-			this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"),null,true,true));
+			this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"),
+					null, true, true));
 		}
 		if (!this.finEvent.isReadonly()) {
-			this.finEvent.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_Event.value"),null,true));
+			this.finEvent.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_Event.value"), null, true));
 		}
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -517,7 +515,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a FinTypeAccount object from database.<br>
 	 * 
@@ -529,10 +527,10 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		BeanUtils.copyProperties(getFinTypeAccount(), aFinTypeAccount);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value")+" : "+aFinTypeAccount.getFinCcy()+","+
-				Labels.getLabel("label_FinTypeAccountDialog_Event.value")+" : "+ 
-				PennantAppUtil.getlabelDesc(aFinTypeAccount.getEvent(), eventList);
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value") + " : " + aFinTypeAccount.getFinCcy() + ","
+				+ Labels.getLabel("label_FinTypeAccountDialog_Event.value") + " : "
+				+ PennantAppUtil.getlabelDesc(aFinTypeAccount.getEvent(), eventList);
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinTypeAccount.getRecordType())) {
 				aFinTypeAccount.setVersion(aFinTypeAccount.getVersion() + 1);
@@ -580,7 +578,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		readOnlyComponent(isReadOnly("FinTypeAccountDialog_alwCustAccount"), this.alwCustAccount);
 		readOnlyComponent(isReadOnly("FinTypeAccountDialog_accountReceivable"), this.accountReceivable);
 		this.addAccountReceivable.setVisible(!isReadOnly("FinTypeAccountDialog_accountReceivable"));
-		this.btnSearchAccountTypes.setDisabled(isReadOnly("FinTypeAccountDialog_custAccountTypes"));		
+		this.btnSearchAccountTypes.setDisabled(isReadOnly("FinTypeAccountDialog_custAccountTypes"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -596,11 +594,11 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	public boolean isReadOnly(String componentName){
+
+	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -652,18 +650,19 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		final FinTypeAccount aFinTypeAccount = new FinTypeAccount();
 		BeanUtils.copyProperties(getFinTypeAccount(), aFinTypeAccount);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the FinTypeAccount object with the components data
 		doWriteComponentsToBean(aFinTypeAccount);
-		if(!this.alwManualEntry.isChecked() && StringUtils.isEmpty(getAccountNumberDetails(getAccounts())) && StringUtils.isEmpty(this.custAccountTypes.getValue())){
+		if (!this.alwManualEntry.isChecked() && StringUtils.isEmpty(getAccountNumberDetails(getAccounts()))
+				&& StringUtils.isEmpty(this.custAccountTypes.getValue())) {
 			MessageUtil.showError("Please Enter Either Of The Fields   :  "
 					+ Labels.getLabel("label_FinTypeAccountDialog_AlwManualEntry.value") + " , "
 					+ Labels.getLabel("label_FinTypeAccountDialog_CustAccountTypes.value") + " , "
 					+ Labels.getLabel("label_FinTypeAccountDialog_AccountReceivable.value"));
-        	return;
-        }
+			return;
+		}
 		// Write the additional validations as per below example
 		// get the selected FinTypeAccount object from the listbox
 		// Do data level validations here
@@ -714,7 +713,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	}
 
 	/**
-	 * This method validates  FinTypeAccount details <br>
+	 * This method validates FinTypeAccount details <br>
 	 * and will return AuditHeader
 	 *
 	 */
@@ -732,10 +731,13 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		if (list != null && list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				FinTypeAccount finTypeAccount = list.get(i);
-				if (finTypeAccount.getFinCcy().equals(aFinTypeAccount.getFinCcy()) && finTypeAccount.getEvent().equals(aFinTypeAccount.getEvent())) {
+				if (finTypeAccount.getFinCcy().equals(aFinTypeAccount.getFinCcy())
+						&& finTypeAccount.getEvent().equals(aFinTypeAccount.getEvent())) {
 					// Both Current and Existing list rating same
 					if (aFinTypeAccount.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -751,7 +753,8 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 							finTypeAccountList.add(aFinTypeAccount);
 						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aFinTypeAccount.getRecordType())) {
 							recordAdded = true;
-							List<FinTypeAccount> savedList = getFinanceTypeDialogCtrl().getFinanceType().getFinTypeAccounts();
+							List<FinTypeAccount> savedList = getFinanceTypeDialogCtrl().getFinanceType()
+									.getFinTypeAccounts();
 							for (int j = 0; j < savedList.size(); j++) {
 								FinTypeAccount accType = savedList.get(j);
 								if (accType.getFinType().equals(aFinTypeAccount.getFinType())) {
@@ -778,99 +781,100 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		return auditHeader;
 	}
 
-
 	/**
-	 * When user clicks on "btnSearchAccountTypes" button
-	 * This method displays ExtendedMultipleSearchListBox with AccountType details
+	 * When user clicks on "btnSearchAccountTypes" button This method displays ExtendedMultipleSearchListBox with
+	 * AccountType details
+	 * 
 	 * @param event
 	 */
 	@SuppressWarnings("unchecked")
-	public void onClick$btnSearchAccountTypes(Event event){
+	public void onClick$btnSearchAccountTypes(Event event) {
 		logger.debug("Entering " + event.toString());
-		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_FinTypeAccountDialog, "AccountType", this.accounTypesDataMap);
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_FinTypeAccountDialog, "AccountType",
+				this.accounTypesDataMap);
+		if (dataObject instanceof String) {
 			this.custAccountTypes.setValue(dataObject.toString());
-		}else{
-			HashMap<String,Object> details= (HashMap<String,Object>) dataObject;
+		} else {
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
 			if (details != null) {
-				String multivalues=details.keySet().toString();
-				this.custAccountTypes.setValue(multivalues.replace("[","").replace("]","").replace(" ", ""));
+				String multivalues = details.keySet().toString();
+				this.custAccountTypes.setValue(multivalues.replace("[", "").replace("]", "").replace(" ", ""));
 			}
-			String toolTipDesc="";
-			for (String  key : details.keySet()) {
-				Object obj = (Object)details.get(key);
-				if(obj instanceof String){
+			String toolTipDesc = "";
+			for (String key : details.keySet()) {
+				Object obj = (Object) details.get(key);
+				if (obj instanceof String) {
 					//	
-				}else{
-					AccountType accountType = (AccountType)obj;
-					if(finTypeAccount != null){
-						toolTipDesc = toolTipDesc.concat(accountType.getAcTypeDesc()+" , ");
+				} else {
+					AccountType accountType = (AccountType) obj;
+					if (finTypeAccount != null) {
+						toolTipDesc = toolTipDesc.concat(accountType.getAcTypeDesc() + " , ");
 					}
 				}
 			}
-			if(StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")){
-				toolTipDesc = toolTipDesc.substring(0,toolTipDesc.length()-2);
+			if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
+				toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
 			}
 			this.custAccountTypes.setTooltiptext(toolTipDesc);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
-	public void onCheck$alwManualEntry(Event event){
+
+	public void onCheck$alwManualEntry(Event event) {
 		logger.debug(event.toString());
 		alwManualEntryIsChecked();
 		logger.debug(event.toString());
 	}
-	
-	private void alwManualEntryIsChecked(){
-		/*logger.debug("Entering ");
-		if(alwManualEntry.isChecked()){
-			alwCustAccount.setDisabled(isReadOnly("FinTypeAccountDialog_alwCustAccount"));
-		}else{
-			alwCustAccount.setDisabled(true);
-			alwCustAccount.setChecked(false);
-		}
-		logger.debug("Leaving ");*/
+
+	private void alwManualEntryIsChecked() {
+		/*
+		 * logger.debug("Entering "); if(alwManualEntry.isChecked()){
+		 * alwCustAccount.setDisabled(isReadOnly("FinTypeAccountDialog_alwCustAccount")); }else{
+		 * alwCustAccount.setDisabled(true); alwCustAccount.setChecked(false); } logger.debug("Leaving ");
+		 */
 	}
-	public void onFulfill$finCcy(Event event){
-		Object obj=this.finCcy.getObject();
+
+	public void onFulfill$finCcy(Event event) {
+		Object obj = this.finCcy.getObject();
 		if (obj instanceof Currency) {
-			Currency currency=(Currency) obj;
-			this.ccyFormat=currency.getCcyEditField();
+			Currency currency = (Currency) obj;
+			this.ccyFormat = currency.getCcyEditField();
 		}
-		
+
 	}
 
 	/**
-	 * This method will add  account number to <br>
+	 * This method will add account number to <br>
 	 * accountReceivableList
 	 *
 	 */
 	public void onClick$addAccountReceivable(Event event) throws WrongValueException, InterruptedException {
 		logger.debug(event.toString());
 		boolean valid = true;
-		String ccy=this.finCcy.getValidatedValue();
+		String ccy = this.finCcy.getValidatedValue();
 		if (StringUtils.isBlank(ccy)) {
 			valid = false;
 			throw new WrongValueException(this.finCcy, Labels.getLabel("FIELD_IS_MAND",
-					new String[] {Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value") }));
+					new String[] { Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value") }));
 		}
 		String accno = this.accountReceivable.getValue();
 		if (StringUtils.isBlank(accno)) {
 			valid = false;
 			throw new WrongValueException(this.accountReceivable, Labels.getLabel("FIELD_IS_MAND",
-					new String[] {Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
+					new String[] { Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
 		}
 		try {
-			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT));
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT));
 			Matcher matcher = pattern.matcher(accno);
 			valid = matcher.matches();
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		if (!valid) {
-			throw new WrongValueException(this.accountReceivable, Labels.getLabel(PennantRegularExpressions.REGEX_ACCOUNT,
-					new String[] {Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
+			throw new WrongValueException(this.accountReceivable, Labels.getLabel(
+					PennantRegularExpressions.REGEX_ACCOUNT,
+					new String[] { Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
 		} else {
 			CoreBankAccountDetail accountDetail = validateAccountInEquation(accno);
 			if (accountDetail == null) {
@@ -884,7 +888,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 				}
 				if (!isAccAlreadyInList(accno)) {
 					accounts.add(accountDetail);
-				}else{
+				} else {
 					MessageUtil.showError(Labels.getLabel("ACCOUNT_EXISTS", new String[] { accno }));
 				}
 				doFillAccountReceivables(accounts, getFinTypeAccount().getDefaultAccNum());
@@ -895,33 +899,32 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 
 	/**
 	 * this method validates account number balance <br>
-	 * by passing argument to checkAccountID method in 
-	 * AccountInterfaceService
+	 * by passing argument to checkAccountID method in AccountInterfaceService
 	 */
 	private CoreBankAccountDetail validateAccountInEquation(String accountId) throws InterruptedException {
 		try {
-			List<CoreBankAccountDetail> coreAcctList=new ArrayList<CoreBankAccountDetail>();
-			CoreBankAccountDetail accountDetail=new CoreBankAccountDetail();
+			List<CoreBankAccountDetail> coreAcctList = new ArrayList<CoreBankAccountDetail>();
+			CoreBankAccountDetail accountDetail = new CoreBankAccountDetail();
 			accountDetail.setAccountNumber(accountId);
 			coreAcctList.add(accountDetail);
 			List<CoreBankAccountDetail> accountDetails = getAccountInterfaceService().checkAccountID(coreAcctList);
-			if (accountDetails!=null && !accountDetails.isEmpty()) {
+			if (accountDetails != null && !accountDetails.isEmpty()) {
 				return accountDetails.get(0);
 			}
-			
+
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		return null;
 	}
 
-	private void doFillAccountReceivables(List<CoreBankAccountDetail> accounts, String defaultAccNum)   {
+	private void doFillAccountReceivables(List<CoreBankAccountDetail> accounts, String defaultAccNum) {
 		logger.debug("Entering ");
 		this.accountReceivable.setValue("");
 		this.accountReceivableList.getItems().clear();
 		for (CoreBankAccountDetail accountDetail : accounts) {
 			Listitem listitem = new Listitem();
-			Listcell listcell ;
+			Listcell listcell;
 			listcell = new Listcell(PennantApplicationUtil.formatAccountNumber(accountDetail.getAccountNumber()));
 			listcell.setParent(listitem);
 			listcell = new Listcell(StringUtils.trimToEmpty(accountDetail.getAcType()));
@@ -932,42 +935,42 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 			Checkbox defaultCheckbox = new Checkbox();
 			defaultCheckbox.setDisabled(isReadOnly("FinTypeAccountDialog_accountReceivable"));
 			defaultCheckbox.setParent(listcell);
-			if(StringUtils.equals(defaultAccNum, accountDetail.getAccountNumber())) {
+			if (StringUtils.equals(defaultAccNum, accountDetail.getAccountNumber())) {
 				defaultCheckbox.setChecked(true);
 			}
 			listcell.setParent(listitem);
-			
+
 			listcell = new Listcell();
-			Button button=new Button(Labels.getLabel("label_FinTypeAccountDialog_AccReceivableList_btnDelete.value"));
+			Button button = new Button(Labels.getLabel("label_FinTypeAccountDialog_AccReceivableList_btnDelete.value"));
 			button.setVisible(!isReadOnly("FinTypeAccountDialog_accountReceivable"));
-			Object object[]=new Object[2];
-			object[0]=listitem;
-			object[1]=accountDetail.getAccountNumber();
-			button.addForward("onClick", this.window_FinTypeAccountDialog, "onClickDeleteAccount",object);
+			Object object[] = new Object[2];
+			object[0] = listitem;
+			object[1] = accountDetail.getAccountNumber();
+			button.addForward("onClick", this.window_FinTypeAccountDialog, "onClickDeleteAccount", object);
 			button.setParent(listcell);
 			listcell.setParent(listitem);
 			accountReceivableList.appendChild(listitem);
 			logger.debug("Leaving ");
 		}
-		 doCheckRecords();
+		doCheckRecords();
 	}
 
 	/**
 	 * This method is to delete account added to the list . <br>
-	 *  accountReceivableList
+	 * accountReceivableList
 	 * 
 	 */
-	public void onClickDeleteAccount(ForwardEvent event){
+	public void onClickDeleteAccount(ForwardEvent event) {
 		logger.debug(event.toString());
-		Object object[]=(Object[]) event.getData();
-		Listitem listitem=(Listitem) object[0];
-		String accNo=(String) object[1];
-		removeAccount(accounts,accNo);
+		Object object[] = (Object[]) event.getData();
+		Listitem listitem = (Listitem) object[0];
+		String accNo = (String) object[1];
+		removeAccount(accounts, accNo);
 		this.accountReceivableList.removeChild(listitem);
-		if(!StringUtils.isBlank(getFinTypeAccount().getDefaultAccNum())) {
+		if (!StringUtils.isBlank(getFinTypeAccount().getDefaultAccNum())) {
 			getFinTypeAccount().setDefaultAccNum("");
 		}
-		 doCheckRecords();
+		doCheckRecords();
 		logger.debug("Leaving ");
 	}
 
@@ -987,20 +990,19 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		}
 		return false;
 	}
-	
 
 	/**
 	 * This method is to save account number details . <br>
 	 * 
 	 */
-	public String getAccountNumberDetails(List<CoreBankAccountDetail> accounts){
+	public String getAccountNumberDetails(List<CoreBankAccountDetail> accounts) {
 		logger.debug("Entering ");
-		StringBuilder totalAccounts=new StringBuilder();
-		if(accounts != null){
+		StringBuilder totalAccounts = new StringBuilder();
+		if (accounts != null) {
 			for (CoreBankAccountDetail accountDetail : accounts) {
 				if (StringUtils.isEmpty(totalAccounts.toString())) {
 					totalAccounts.append(accountDetail.getAccountNumber());
-				}else{
+				} else {
 					totalAccounts.append(",");
 					totalAccounts.append(accountDetail.getAccountNumber());
 				}
@@ -1012,12 +1014,12 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 
 	/**
 	 * This method is to set account number details . <br>
-	 *  
+	 * 
 	 */
-	public void setAccountNumberDetails(String custAccounts, String defaultAccNum){
+	public void setAccountNumberDetails(String custAccounts, String defaultAccNum) {
 		logger.debug("Entering ");
 		try {
-			List<CoreBankAccountDetail> accountDetails=new ArrayList<CoreBankAccountDetail>();
+			List<CoreBankAccountDetail> accountDetails = new ArrayList<CoreBankAccountDetail>();
 			if (StringUtils.isNotBlank(custAccounts)) {
 				String[] accounts = custAccounts.split(",");
 				for (String accountType : accounts) {
@@ -1044,22 +1046,21 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	}
 
 	/**
-	 * This method is to set Account Types  details . <br>
-	 *  
+	 * This method is to set Account Types details . <br>
+	 * 
 	 * 
 	 */
-	public void setAccountTypesDetails(String  custAccountTypes){
+	public void setAccountTypesDetails(String custAccountTypes) {
 		logger.debug("Entering ");
-		if(StringUtils.isNotBlank(custAccountTypes)){
+		if (StringUtils.isNotBlank(custAccountTypes)) {
 			String[] accountTypes = custAccountTypes.split(",");
-			for(String accountType : accountTypes){
+			for (String accountType : accountTypes) {
 				this.accounTypesDataMap.put(accountType, new AccountType());
 			}
 		}
 		logger.debug("Leaving ");
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1073,7 +1074,8 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 
 	private AuditHeader getAuditHeader(FinTypeAccount aFinTypeAccount, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinTypeAccount.getBefImage(), aFinTypeAccount);
-		return new AuditHeader(aFinTypeAccount.getFinType(), null, null, null, auditDetail, aFinTypeAccount.getUserDetails(), getOverideMap());
+		return new AuditHeader(aFinTypeAccount.getFinType(), null, null, null, auditDetail,
+				aFinTypeAccount.getUserDetails(), getOverideMap());
 	}
 
 	private void showMessage(Exception e) {
@@ -1089,7 +1091,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.finTypeAccount);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.finTypeAccount.getFinCcy());
@@ -1105,16 +1107,16 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		logger.debug("Leaving");
 	}
 
-	private void doCheckRecords(){
-		if (getAccounts().size()>0) {
-			this.finCcy.setReadonly(true); 
-		}else{
+	private void doCheckRecords() {
+		if (getAccounts().size() > 0) {
+			this.finCcy.setReadonly(true);
+		} else {
 			if (getFinTypeAccount().isNewRecord()) {
-				this.finCcy.setReadonly(false); 
+				this.finCcy.setReadonly(false);
 			}
 		}
 	}
-	
+
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
@@ -1127,8 +1129,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		return finTypeAccountDialogCtrl;
 	}
 
-	public void setFinTypeAccountDialogCtrl(
-			FinTypeAccountDialogCtrl finTypeAccountDialogCtrl) {
+	public void setFinTypeAccountDialogCtrl(FinTypeAccountDialogCtrl finTypeAccountDialogCtrl) {
 		this.finTypeAccountDialogCtrl = finTypeAccountDialogCtrl;
 	}
 

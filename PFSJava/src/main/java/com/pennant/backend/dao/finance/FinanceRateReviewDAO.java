@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.finance;
+
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,7 @@ import com.pennant.backend.model.finance.FinanceRateReview;
 public interface FinanceRateReviewDAO {
 
 	void save(FinanceRateReview rateReview);
+
 	List<FinanceRateReview> getFinanceRateReviewById(String id, Date date);
-	
+
 }

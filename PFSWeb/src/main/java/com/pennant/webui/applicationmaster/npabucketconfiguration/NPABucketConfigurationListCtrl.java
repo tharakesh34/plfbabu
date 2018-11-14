@@ -64,13 +64,14 @@ import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.service.applicationmaster.NPABucketConfigurationService;
 import com.pennant.webui.applicationmaster.npabucketconfiguration.model.NPABucketConfigurationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/NPABucketConfiguration/NPABucketConfigurationList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.applicationmaster/NPABucketConfiguration/NPABucketConfigurationList.zul file.
  * 
  */
 public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketConfiguration> {
@@ -94,14 +95,14 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 	// Search Fields
 	protected Textbox productCode; // autowired
 	protected Textbox bucketID; // autowired
-  	protected Intbox dueDays; // autowired
+	protected Intbox dueDays; // autowired
 	protected Checkbox suspendProfit; // autowired
-	
+
 	protected Listbox sortOperator_ProductCode;
 	protected Listbox sortOperator_BucketID;
 	protected Listbox sortOperator_DueDays;
 	protected Listbox sortOperator_SuspendProfit;
-	
+
 	private transient NPABucketConfigurationService nPABucketConfigurationService;
 
 	/**
@@ -129,17 +130,20 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 	public void onCreate$window_NPABucketConfigurationList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_NPABucketConfigurationList, borderLayout_NPABucketConfigurationList, listBoxNPABucketConfiguration,
-				pagingNPABucketConfigurationList);
+		setPageComponents(window_NPABucketConfigurationList, borderLayout_NPABucketConfigurationList,
+				listBoxNPABucketConfiguration, pagingNPABucketConfigurationList);
 		setItemRender(new NPABucketConfigurationListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_NPABucketConfigurationList_NPABucketConfigurationSearch);
-		registerButton(button_NPABucketConfigurationList_NewNPABucketConfiguration, "button_NPABucketConfigurationList_NewNPABucketConfiguration", true);
+		registerButton(button_NPABucketConfigurationList_NewNPABucketConfiguration,
+				"button_NPABucketConfigurationList_NewNPABucketConfiguration", true);
 
 		registerField("configID");
-		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode, Operators.STRING);
-		registerField("bucketCode", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
+		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode,
+				Operators.STRING);
+		registerField("bucketCode", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID,
+				Operators.NUMERIC);
 		registerField("dueDays", listheader_DueDays, SortOrder.NONE, dueDays, sortOperator_DueDays, Operators.NUMERIC);
 		// Render the page and display the data.
 		doRenderPage();
@@ -186,7 +190,6 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -197,23 +200,24 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 
 	public void onNPABucketConfigurationItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxNPABucketConfiguration.getSelectedItem();
 		final long configID = (long) selectedItem.getAttribute("configID");
-		NPABucketConfiguration npabucketconfiguration = nPABucketConfigurationService.getNPABucketConfiguration(configID);
+		NPABucketConfiguration npabucketconfiguration = nPABucketConfigurationService
+				.getNPABucketConfiguration(configID);
 
 		if (npabucketconfiguration == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  ConfigID = ");
-		whereCond.append( npabucketconfiguration.getConfigID());
+		whereCond.append(npabucketconfiguration.getConfigID());
 		whereCond.append(" AND  version=");
 		whereCond.append(npabucketconfiguration.getVersion());
-	
+
 		if (doCheckAuthority(npabucketconfiguration, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && npabucketconfiguration.getWorkflowId() == 0) {
@@ -223,10 +227,10 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -239,9 +243,11 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("npabucketconfiguration", npabucketconfiguration);
 		arg.put("npabucketconfigurationListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationDialog.zul", null, arg);
+			Executions.createComponents(
+					"/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -268,7 +274,7 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

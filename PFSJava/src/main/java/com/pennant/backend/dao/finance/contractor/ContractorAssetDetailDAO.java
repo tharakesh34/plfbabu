@@ -42,6 +42,7 @@
  */
 
 package com.pennant.backend.dao.finance.contractor;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
@@ -49,9 +50,14 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 public interface ContractorAssetDetailDAO {
 
 	ContractorAssetDetail getContractorAssetDetailById(String finReference, long contractorId, String type);
+
 	List<ContractorAssetDetail> getContractorDetailDetailByFinRef(String id, String type);
+
 	void update(ContractorAssetDetail contractorAssetDetail, String type);
+
 	void delete(ContractorAssetDetail contractorAssetDetail, String type);
+
 	String save(ContractorAssetDetail contractorAssetDetail, String type);
+
 	void deleteByFinRef(String finReference, String type);
 }

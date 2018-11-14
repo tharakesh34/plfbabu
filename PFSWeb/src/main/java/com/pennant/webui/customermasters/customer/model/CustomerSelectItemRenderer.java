@@ -63,42 +63,43 @@ import com.pennant.util.PennantAppUtil;
  */
 public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, Serializable {
 	private List<ValueLabel> custTargetList = null;
-	
+
 	public CustomerSelectItemRenderer() {
-		
+
 	}
-	
-	public CustomerSelectItemRenderer(List<ValueLabel> custTargetListDetails){
+
+	public CustomerSelectItemRenderer(List<ValueLabel> custTargetListDetails) {
 		custTargetList = custTargetListDetails;
 	}
 
 	private static final long serialVersionUID = 1552059797117039294L;
+
 	@Override
 	public void render(Listitem item, Customer customer, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(customer.getCustCIF());
+		lc = new Listcell(customer.getCustCIF());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustShrtName());
+		lc = new Listcell(customer.getCustShrtName());
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatToLongDate(customer.getCustDOB()));
+		lc = new Listcell(DateUtility.formatToLongDate(customer.getCustDOB()));
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formatPhoneNumber(
-	  			customer.getPhoneCountryCode(), customer.getPhoneAreaCode(), customer.getPhoneNumber()));
+		lc = new Listcell(PennantApplicationUtil.formatPhoneNumber(customer.getPhoneCountryCode(),
+				customer.getPhoneAreaCode(), customer.getPhoneNumber()));
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustCRCPR());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustPassportNo());
+		lc = new Listcell(customer.getCustPassportNo());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustTypeCode()+"-"+customer.getLovDescCustTypeCodeName());
+		lc = new Listcell(customer.getCustTypeCode() + "-" + customer.getLovDescCustTypeCodeName());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustNationality());
+		lc = new Listcell(customer.getCustNationality());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.getlabelDesc(customer.getCustAddlVar82(), custTargetList));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(customer.getCustAddlVar82(), custTargetList));
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getLovDescCustCtgCodeName());
+		lc = new Listcell(customer.getLovDescCustCtgCodeName());
 		lc.setParent(item);
-		
+
 		item.setAttribute("data", customer);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerItemDoubleClicked");
 	}

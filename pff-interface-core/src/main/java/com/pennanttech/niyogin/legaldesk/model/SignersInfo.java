@@ -12,10 +12,10 @@ import javax.xml.bind.annotation.XmlType;
 public class SignersInfo {
 
 	@XmlElement(name = "leander")
-	private List<SignerDetails>	lenders;
+	private List<SignerDetails> lenders;
 
 	@XmlElement(name = "borrower")
-	private List<SignerDetails>	borrowers;
+	private List<SignerDetails> borrowers;
 
 	public List<SignerDetails> getLenders() {
 		return lenders;

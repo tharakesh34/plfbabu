@@ -64,8 +64,10 @@ public class SysNotificationServiceImpl extends GenericService<SysNotification> 
 	public SysNotificationDAO getSysNotificationDAO() {
 		return sysNotificationDAO;
 	}
+
 	/**
-	 * @param sysNotificationDAO the sysNotificationDAO to set
+	 * @param sysNotificationDAO
+	 *            the sysNotificationDAO to set
 	 */
 	public void setSysNotificationDAO(SysNotificationDAO sysNotificationDAO) {
 		this.sysNotificationDAO = sysNotificationDAO;
@@ -90,24 +92,28 @@ public class SysNotificationServiceImpl extends GenericService<SysNotification> 
 	public SysNotification getSysNotificationById(long id) {
 		return null;
 	}
+
 	@Override
 	public SysNotification getApprovedSysNotificationById(long id, boolean mailMenu) {
 		logger.debug("Entering");
-		SysNotification sysNotification =  getSysNotificationDAO().getSysNotificationById(id, "_AView");
+		SysNotification sysNotification = getSysNotificationDAO().getSysNotificationById(id, "_AView");
 		if (sysNotification != null && mailMenu) {
-			sysNotification.setSysNotificationDetailsList(getSysNotificationDAO().getCustomerDetails(sysNotification.getLovDescSqlQuery()));
+			sysNotification.setSysNotificationDetailsList(
+					getSysNotificationDAO().getCustomerDetails(sysNotification.getLovDescSqlQuery()));
 		}
 		logger.debug("Leaving");
 		return sysNotification;
 
 	}
+
 	@Override
 	public long getTemplateId(String templateCode) {
- 		return getSysNotificationDAO().getTemplateId(templateCode);
+		return getSysNotificationDAO().getTemplateId(templateCode);
 	}
+
 	@Override
 	public String getCustomerEMail(long custID) {
- 		return getSysNotificationDAO().getCustomerEMail(custID);
+		return getSysNotificationDAO().getCustomerEMail(custID);
 	}
 
 }

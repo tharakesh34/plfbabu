@@ -29,7 +29,7 @@ public class ControlDump implements Tasklet {
 	private Date valueDate;
 	private Date appDate;
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
@@ -52,15 +52,17 @@ public class ControlDump implements Tasklet {
 		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
 
 		try {
-			logger.debug("START: Control-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
-			
+			logger.debug("START: Control-Dump Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
 			DataEngineStatus status = ControlDumpExtract.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ControlDumpProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
-			
-			logger.debug("COMPLETED: ontrol-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
+			logger.debug("COMPLETED: ontrol-Dump Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -81,7 +83,6 @@ public class ControlDump implements Tasklet {
 		return dataSource;
 	}
 
-	
 	public class ControlDumpProcessThread implements Runnable {
 		private long userId;
 

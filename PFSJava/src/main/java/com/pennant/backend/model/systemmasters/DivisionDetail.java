@@ -82,8 +82,8 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("entityDesc");
 		return excludeFields;
 	}
@@ -95,43 +95,43 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	public String getId() {
 		return divisionCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.divisionCode = id;
 	}
-	
+
 	public String getDivisionCode() {
 		return divisionCode;
 	}
+
 	public void setDivisionCode(String divisionCode) {
 		this.divisionCode = divisionCode;
 	}
-	
-	
-		
-	
+
 	public String getDivisionCodeDesc() {
 		return divisionCodeDesc;
 	}
+
 	public void setDivisionCodeDesc(String divisionCodeDesc) {
 		this.divisionCodeDesc = divisionCodeDesc;
 	}
 
 	public boolean isAlwPromotion() {
-	    return alwPromotion;
-    }
+		return alwPromotion;
+	}
 
 	public void setAlwPromotion(boolean alwPromotion) {
-	    this.alwPromotion = alwPromotion;
-    }
+		this.alwPromotion = alwPromotion;
+	}
 
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -139,7 +139,7 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -148,12 +148,12 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public DivisionDetail getBefImage(){
+	public DivisionDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DivisionDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DivisionDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -179,6 +179,7 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	public void setDivSuspRemarks(String divSuspRemarks) {
 		this.divSuspRemarks = divSuspRemarks;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

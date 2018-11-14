@@ -23,7 +23,7 @@ import java.util.Date;
 public class InterfaceCustomerDocument implements Serializable {
 
 	private static final long serialVersionUID = 6313156284826291908L;
-	
+
 	private long custID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	private String custDocType;
@@ -154,8 +154,7 @@ public class InterfaceCustomerDocument implements Serializable {
 		return lovDescCustDocIssuedCountry;
 	}
 
-	public void setLovDescCustDocIssuedCountry(
-			String lovDescCustDocIssuedCountry) {
+	public void setLovDescCustDocIssuedCountry(String lovDescCustDocIssuedCountry) {
 		this.lovDescCustDocIssuedCountry = lovDescCustDocIssuedCountry;
 	}
 

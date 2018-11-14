@@ -49,7 +49,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 		this.processedRecords = new AtomicLong(0L);
 		running = true;
 	}
-	
+
 	@Override
 	public void process(Object... objects) {
 		try {
@@ -245,14 +245,14 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		try {
 			new Thread(new GoldLoanPolicyDataMart()).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		try {
 			new Thread(new GoldLoanStatePolicyDataMart()).start();
 			totalThreads++;
@@ -301,7 +301,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		while (true) {
 			if (totalThreads == completedThreads.get()) {
 				processedCount = this.processedRecords.get();
@@ -513,7 +513,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 
 		public GoldLoanPolicyDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -571,12 +571,12 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			});
 		}
 	}
-	
+
 	public class GoldLoanStatePolicyDataMart implements Runnable {
 
 		public GoldLoanStatePolicyDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -614,7 +614,8 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-							DataMartMapper.saveGoldLoanStatePolicyDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							DataMartMapper.saveGoldLoanStatePolicyDetails(rs, appDate, valueDate, batchID,
+									jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -634,12 +635,12 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			});
 		}
 	}
-	
+
 	public class GoldRateDataMart implements Runnable {
 
 		public GoldRateDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -697,13 +698,12 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			});
 		}
 	}
-	
-	
+
 	public class GoldPromotionDataMart implements Runnable {
 
 		public GoldPromotionDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -761,11 +761,12 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			});
 		}
 	}
+
 	public class GoldPromotionSlabRatesDataMart implements Runnable {
-		
+
 		public GoldPromotionSlabRatesDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -775,7 +776,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			} else {
 				sql.append(" SELECT * from DM_PROMOTIONSLABWISERATES_VIEW");
 			}
-			
+
 			TransactionStatus txnStatus = null;
 			try {
 				txnStatus = extract(sql, paramMap);
@@ -785,17 +786,17 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 				conclude(txnStatus);
 			}
 			logger.debug(Literal.LEAVING);
-			
+
 		}
-		
+
 		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
 			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
-				
+
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
 					int inserted = 0;
-					
+
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						String[] keyFields = new String[] { "REFERENCEID" };
@@ -803,9 +804,10 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-							DataMartMapper.saveGoldPromotionSlabRateDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							DataMartMapper.saveGoldPromotionSlabRateDetails(rs, appDate, valueDate, batchID,
+									jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-							
+
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
@@ -823,12 +825,12 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			});
 		}
 	}
-	
-public class GoldPromotionBranchesDataMart implements Runnable {
-		
+
+	public class GoldPromotionBranchesDataMart implements Runnable {
+
 		public GoldPromotionBranchesDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -838,7 +840,7 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 			} else {
 				sql.append(" SELECT * from DM_PROMOTIONBRANCHES_VIEW");
 			}
-			
+
 			TransactionStatus txnStatus = null;
 			try {
 				txnStatus = extract(sql, paramMap);
@@ -848,17 +850,17 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 				conclude(txnStatus);
 			}
 			logger.debug(Literal.LEAVING);
-			
+
 		}
-		
+
 		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
 			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
-				
+
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
 					int inserted = 0;
-					
+
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						String[] keyFields = new String[] { "REFERENCEID" };
@@ -866,9 +868,10 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-							DataMartMapper.saveGoldPromotionBranchDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
+							DataMartMapper.saveGoldPromotionBranchDetails(rs, appDate, valueDate, batchID,
+									jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-							
+
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
@@ -886,7 +889,6 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 			});
 		}
 	}
-
 
 	public class GoldPromotionStatesDataMart implements Runnable {
 
@@ -951,11 +953,12 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 			});
 		}
 	}
+
 	public class GoldOrnamentTypeDataMart implements Runnable {
-		
+
 		public GoldOrnamentTypeDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -965,7 +968,7 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 			} else {
 				sql.append(" SELECT * from DM_ORNAMENTTYPE_VIEW");
 			}
-			
+
 			TransactionStatus txnStatus = null;
 			try {
 				txnStatus = extract(sql, paramMap);
@@ -975,17 +978,17 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 				conclude(txnStatus);
 			}
 			logger.debug(Literal.LEAVING);
-			
+
 		}
-		
+
 		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
 			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
-				
+
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
 					int inserted = 0;
-					
+
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						String[] keyFields = new String[] { "ORNAMENTTYPE" };
@@ -993,10 +996,9 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-							DataMartMapper.saveOrnamentTypeDetails(rs, appDate, valueDate, batchID,
-									jdbcTemplate);
+							DataMartMapper.saveOrnamentTypeDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-							
+
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
@@ -1014,11 +1016,12 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 			});
 		}
 	}
+
 	public class OrnamentDetailsDataMart implements Runnable {
-		
+
 		public OrnamentDetailsDataMart() {
 		}
-		
+
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
@@ -1028,7 +1031,7 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 			} else {
 				sql.append(" SELECT * from DM_ORNAMENTDETAILS_VIEW");
 			}
-			
+
 			TransactionStatus txnStatus = null;
 			try {
 				txnStatus = extract(sql, paramMap);
@@ -1038,28 +1041,27 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 				conclude(txnStatus);
 			}
 			logger.debug(Literal.LEAVING);
-			
+
 		}
-		
+
 		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paramMap) {
 			return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<TransactionStatus>() {
-				
+
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
 					int inserted = 0;
-					
+
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
-						String[] keyFields = new String[] { "APPL_ID" , "CUSTOMER_ID" };
+						String[] keyFields = new String[] { "APPL_ID", "CUSTOMER_ID" };
 						try {
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-							DataMartMapper.saveOrnamentDetails(rs, appDate, valueDate, batchID,
-									jdbcTemplate);
+							DataMartMapper.saveOrnamentDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-							
+
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
@@ -2472,8 +2474,6 @@ public class GoldPromotionBranchesDataMart implements Runnable {
 
 			logger.debug(Literal.LEAVING);
 		}
-		
-		
 
 		private TransactionStatus extract(StringBuilder sql, MapSqlParameterSource paraMap) {
 			return parameterJdbcTemplate.query(sql.toString(), paraMap, new ResultSetExtractor<TransactionStatus>() {

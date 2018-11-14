@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,62 +65,63 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> implements CustomerBalanceSheetDAO {
 	private static Logger logger = Logger.getLogger(CustomerBalanceSheetDAOImpl.class);
-	
+
 	public CustomerBalanceSheetDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Customer Balance Sheet Details details by key field
+	 * Fetch the Record Customer Balance Sheet Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerBalanceSheet
 	 */
 	@Override
-	public CustomerBalanceSheet getCustomerBalanceSheetById(final String financialYear,
-			long custId, String type) {
+	public CustomerBalanceSheet getCustomerBalanceSheetById(final String financialYear, long custId, String type) {
 		logger.debug("Entering");
-		
+
 		CustomerBalanceSheet customerBalanceSheet = new CustomerBalanceSheet();
 		customerBalanceSheet.setId(financialYear);
 		customerBalanceSheet.setCustId(custId);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select CustId, FinancialYear, TotalAssets,");
-		selectSql.append(" TotalLiabilities, NetProfit, NetSales, NetIncome, OperatingProfit," );
+		selectSql.append(" TotalLiabilities, NetProfit, NetSales, NetIncome, OperatingProfit,");
 		selectSql.append(" CashFlow, BookValue, MarketValue,");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescCustCIF, lovDescCustRecordType , lovDescCustShrtName,");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From CustomerBalanceSheet");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustId =:CustId AND FinancialYear =:FinancialYear");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBalanceSheet);
-		RowMapper<CustomerBalanceSheet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerBalanceSheet.class);
-		
-		try{
-			customerBalanceSheet = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CustomerBalanceSheet> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerBalanceSheet.class);
+
+		try {
+			customerBalanceSheet = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerBalanceSheet = null;
 		}
 		logger.debug("Leaving");
 		return customerBalanceSheet;
 	}
-	
+
 	/**
-	 * Fetch the Records  Customer Balance Sheet List Details by CustomerID
+	 * Fetch the Records Customer Balance Sheet List Details by CustomerID
 	 * 
-	 * @param id (long)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (long)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerBalanceSheet
 	 */
 	@Override
@@ -129,76 +129,78 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 		logger.debug("Entering");
 		CustomerBalanceSheet customerBalanceSheet = new CustomerBalanceSheet();
 		customerBalanceSheet.setCustId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select CustId, FinancialYear, TotalAssets,");
-		selectSql.append(" TotalLiabilities, NetProfit, NetSales, NetIncome, OperatingProfit," );
+		selectSql.append(" TotalLiabilities, NetProfit, NetSales, NetIncome, OperatingProfit,");
 		selectSql.append(" CashFlow, BookValue, MarketValue,");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescCustCIF, lovDescCustRecordType , lovDescCustShrtName,");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From CustomerBalanceSheet");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustId =:CustId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBalanceSheet);
-		RowMapper<CustomerBalanceSheet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerBalanceSheet.class);
-		
+		RowMapper<CustomerBalanceSheet> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerBalanceSheet.class);
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the CustomerBalanceSheet or CustomerBalanceSheet_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Balance Sheet Details by key CustId
+	 * This method Deletes the Record from the CustomerBalanceSheet or CustomerBalanceSheet_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Customer Balance Sheet Details by key CustId
 	 * 
-	 * @param Customer Balance Sheet Details (customerBalanceSheet)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Balance Sheet Details (customerBalanceSheet)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerBalanceSheet customerBalanceSheet,String type) {
+	public void delete(CustomerBalanceSheet customerBalanceSheet, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerBalanceSheet");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustId =:CustId AND FinancialYear =:FinancialYear");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBalanceSheet);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method Deletes the Records from the CustomerBalanceSheet or CustomerBalanceSheet_Temp.
-	 * delete Customer Balance Sheet Details List by key CustId
+	 * This method Deletes the Records from the CustomerBalanceSheet or CustomerBalanceSheet_Temp. delete Customer
+	 * Balance Sheet Details List by key CustId
 	 * 
-	 * @param CustomerID (long)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param CustomerID
+	 *            (long)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * 
 	 */
-	public void deleteByCustomer(final long id,String type) {
+	public void deleteByCustomer(final long id, String type) {
 		logger.debug("Entering");
 		CustomerBalanceSheet customerBalanceSheet = new CustomerBalanceSheet();
 		customerBalanceSheet.setCustId(id);
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerBalanceSheet");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustId =:CustId");
@@ -208,78 +210,79 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 		logger.debug("Leaving");
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-	
+
 	/**
 	 * This method insert new Records into CustomerBalanceSheet or CustomerBalanceSheet_Temp.
 	 *
-	 * save Customer Balance Sheet Details 
+	 * save Customer Balance Sheet Details
 	 * 
-	 * @param Customer Balance Sheet Details (customerBalanceSheet)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Balance Sheet Details (customerBalanceSheet)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(CustomerBalanceSheet customerBalanceSheet,String type) {
+	public String save(CustomerBalanceSheet customerBalanceSheet, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder(" Insert Into CustomerBalanceSheet");
+
+		StringBuilder insertSql = new StringBuilder(" Insert Into CustomerBalanceSheet");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustId, FinancialYear, TotalAssets, TotalLiabilities, NetProfit, NetSales,");
 		insertSql.append(" NetIncome, OperatingProfit, CashFlow, BookValue, MarketValue,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustId, :FinancialYear, :TotalAssets, :TotalLiabilities, :NetProfit,");
 		insertSql.append(" :NetSales, :NetIncome, :OperatingProfit, :CashFlow, :BookValue, :MarketValue,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBalanceSheet);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return customerBalanceSheet.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record CustomerBalanceSheet or CustomerBalanceSheet_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Balance Sheet Details by key CustId and Version
+	 * This method updates the Record CustomerBalanceSheet or CustomerBalanceSheet_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Customer Balance Sheet Details by key CustId and Version
 	 * 
-	 * @param Customer Balance Sheet Details (customerBalanceSheet)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Balance Sheet Details (customerBalanceSheet)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerBalanceSheet customerBalanceSheet,String type) {
+	public void update(CustomerBalanceSheet customerBalanceSheet, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update CustomerBalanceSheet");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set TotalAssets = :TotalAssets, TotalLiabilities = :TotalLiabilities," );
+		StringBuilder updateSql = new StringBuilder("Update CustomerBalanceSheet");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set TotalAssets = :TotalAssets, TotalLiabilities = :TotalLiabilities,");
 		updateSql.append(" NetProfit = :NetProfit, NetSales = :NetSales, NetIncome = :NetIncome,");
-		updateSql.append(" OperatingProfit = :OperatingProfit, CashFlow = :CashFlow," );
+		updateSql.append(" OperatingProfit = :OperatingProfit, CashFlow = :CashFlow,");
 		updateSql.append(" BookValue = :BookValue, MarketValue = :MarketValue,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustId =:CustId AND FinancialYear =:FinancialYear");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBalanceSheet);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

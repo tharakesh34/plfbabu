@@ -89,51 +89,49 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul file.
  */
 public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FinTypeFeesDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_FinTypeFeesDialog; 
+	protected Window window_FinTypeFeesDialog;
 
 	protected ExtendedCombobox feeType;
-	protected ExtendedCombobox finEvent; 
-	protected Combobox         calculationType; 
-	protected ExtendedCombobox ruleCode; 
-	protected CurrencyBox 	   amount; 
-	protected Space 	       space_percentage; 					
-	protected Decimalbox 	   percentage; 					
-	protected Intbox 		   feeOrder; 	
-	protected Row              row_CalculationOn; 
-	protected Combobox         calculationOn; 
-	protected Row              row_FeeScheduleMethod; 
-	protected Combobox         feeScheduleMethod; 
-	protected Checkbox         alwDeviation;
-	protected Decimalbox 	   maxWaiver; 			
-	protected Checkbox         alwModifyFee; 
-	protected Checkbox         alwModifyFeeSchdMthd; 
-	protected Checkbox         active; 
-	protected Checkbox         alwPreIncomization;
-	protected Label            label_Window_Title; 
-	
+	protected ExtendedCombobox finEvent;
+	protected Combobox calculationType;
+	protected ExtendedCombobox ruleCode;
+	protected CurrencyBox amount;
+	protected Space space_percentage;
+	protected Decimalbox percentage;
+	protected Intbox feeOrder;
+	protected Row row_CalculationOn;
+	protected Combobox calculationOn;
+	protected Row row_FeeScheduleMethod;
+	protected Combobox feeScheduleMethod;
+	protected Checkbox alwDeviation;
+	protected Decimalbox maxWaiver;
+	protected Checkbox alwModifyFee;
+	protected Checkbox alwModifyFeeSchdMthd;
+	protected Checkbox active;
+	protected Checkbox alwPreIncomization;
+	protected Label label_Window_Title;
+
 	// not auto wired vars
 	private FinTypeFees finTypeFees; // overhanded per param
 	private transient FinTypeFeesDialogCtrl finTypeFeesDialogCtrl; // overhanded per
 
 	private transient boolean validationOn;
-	
-	private String userRole="";
+
+	private String userRole = "";
 	//private FinanceTypeDialogCtrl financeTypeDialogCtrl;
 	private FinTypeFeesListCtrl finTypeFeesListCtrl;
 	private List<FinTypeFees> finTypeFeesList;
-	private int ccyFormat=0;
+	private int ccyFormat = 0;
 	boolean isOriginationFee = false;
 	boolean isOverdraft = false;
 	private String allowFeeZero = "";
@@ -151,11 +149,10 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected finTypeFees object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected finTypeFees object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -177,34 +174,35 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			} else {
 				setFinTypeFees(null);
 			}
-			
+
 			if (arguments.containsKey("ccyFormat")) {
-				ccyFormat =  (Integer) arguments.get("ccyFormat");
+				ccyFormat = (Integer) arguments.get("ccyFormat");
 			}
-			
+
 			if (arguments.containsKey("isOverdraft")) {
-				isOverdraft =  (boolean) arguments.get("isOverdraft");
+				isOverdraft = (boolean) arguments.get("isOverdraft");
 			}
-			
+
 			if (arguments.containsKey("finTypeFeesListCtrl")) {
 				setFinTypeFeesListCtrl((FinTypeFeesListCtrl) arguments.get("finTypeFeesListCtrl"));
 			} else {
 				setFinTypeFeesListCtrl(null);
 			}
-			
+
 			if (arguments.containsKey("role")) {
-				userRole=arguments.get("role").toString();
+				userRole = arguments.get("role").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, super.pageRightName);
 			}
-			
+
 			this.finTypeFees.setWorkflowId(0);
-			doLoadWorkFlow(this.finTypeFees.isWorkflow(), this.finTypeFees.getWorkflowId(), this.finTypeFees.getNextTaskId());
-			
+			doLoadWorkFlow(this.finTypeFees.isWorkflow(), this.finTypeFees.getWorkflowId(),
+					this.finTypeFees.getNextTaskId());
+
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
 			}
-			
+
 			doCheckRights();
 			doSetFieldProperties();
 			doShowDialog(getFinTypeFees());
@@ -237,8 +235,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.feeType.setValueColumn("FeeTypeCode");
 		this.feeType.setDescColumn("FeeTypeDesc");
 		this.feeType.setValidateColumns(new String[] { "FeeTypeCode" });
-		this.feeType.setFilters(new Filter[]{new Filter("Active", 1, Filter.OP_EQUAL)});
-		
+		this.feeType.setFilters(new Filter[] { new Filter("Active", 1, Filter.OP_EQUAL) });
+
 		this.finEvent.setMaxlength(8);
 		this.finEvent.setMandatoryStyle(true);
 		this.finEvent.setModuleName("AccountEngineEvent");
@@ -252,7 +250,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.ruleCode.setValueColumn("RuleCode");
 		this.ruleCode.setDescColumn("RuleCodeDesc");
 		this.ruleCode.setValidateColumns(new String[] { "RuleCode" });
-		
+
 		this.amount.setMandatory(false);
 		this.amount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
 		this.amount.setScale(ccyFormat);
@@ -273,19 +271,18 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
+
 		getUserWorkspace().allocateAuthorities("FinTypeFeesDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -323,7 +320,6 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		MessageUtil.showHelpWindow(event, window_FinTypeFeesDialog);
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * when the "delete" button is clicked. <br>
@@ -380,28 +376,29 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 */
 	public void doWriteBeanToComponents(FinTypeFees aFinTypeFees) {
 		logger.debug("Entering");
-		
+
 		String excluedeFields = "";
 		this.feeType.setObject(setObjectAsLong(aFinTypeFees.getFeeTypeID()));
-		this.feeType.setValue(aFinTypeFees.getFeeTypeCode()); 
-		this.feeType.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getFeeTypeDesc())); 
-		this.finEvent.setValue(aFinTypeFees.getFinEvent()); 
-		
+		this.feeType.setValue(aFinTypeFees.getFeeTypeCode());
+		this.feeType.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getFeeTypeDesc()));
+		this.finEvent.setValue(aFinTypeFees.getFinEvent());
+
 		if (StringUtils.isEmpty(aFinTypeFees.getFinEventDesc())) {
 			aFinTypeFees.setFinEventDesc(this.finEvent.getDescription());
 		} else {
 			this.finEvent.setDescription(aFinTypeFees.getFinEventDesc());
 		}
-		
-		this.ruleCode.setValue(aFinTypeFees.getRuleCode()); 
-		this.ruleCode.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getRuleDesc())); 
-		this.amount.setValue(PennantAppUtil.formateAmount(aFinTypeFees.getAmount(),ccyFormat));
-		this.percentage.setValue(aFinTypeFees.getPercentage()); 
+
+		this.ruleCode.setValue(aFinTypeFees.getRuleCode());
+		this.ruleCode.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getRuleDesc()));
+		this.amount.setValue(PennantAppUtil.formateAmount(aFinTypeFees.getAmount(), ccyFormat));
+		this.percentage.setValue(aFinTypeFees.getPercentage());
 		this.feeOrder.setValue(aFinTypeFees.getFeeOrder());
-		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc()); 
+		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc());
 		String calOnExcludeFields = "," + PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE + ",";
-		fillComboBox(this.calculationType, aFinTypeFees.getCalculationType(), PennantStaticListUtil.getFeeCalculationTypes(), "");
-		
+		fillComboBox(this.calculationType, aFinTypeFees.getCalculationType(),
+				PennantStaticListUtil.getFeeCalculationTypes(), "");
+
 		if (isOriginationFee) {
 			calOnExcludeFields = calOnExcludeFields + PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL + ",";
 			if (isOverdraft) {
@@ -421,41 +418,43 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",";
 		}
 
-		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(),calOnExcludeFields);
+		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(),
+				calOnExcludeFields);
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_CMTDISB)) {
 			excluedeFields = getExcludeFields();
 		}
-		
-		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) {	//Paid by customer and waived by bank has been excluded
-			excluedeFields = excluedeFields + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
+
+		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) { //Paid by customer and waived by bank has been excluded
+			excluedeFields = excluedeFields + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ","
+					+ CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
 		}
-		
-		fillComboBox(this.feeScheduleMethod, aFinTypeFees.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
-		this.alwDeviation.setChecked(aFinTypeFees.isAlwDeviation()); 
-		this.alwModifyFee.setChecked(aFinTypeFees.isAlwModifyFee()); 
-		this.alwModifyFeeSchdMthd.setChecked(aFinTypeFees.isAlwModifyFeeSchdMthd()); 
-		
-		if(aFinTypeFees.isNewRecord()){
-			this.alwModifyFeeSchdMthd.setChecked(true); 
-		} 
-		
+
+		fillComboBox(this.feeScheduleMethod, aFinTypeFees.getFeeScheduleMethod(),
+				PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
+		this.alwDeviation.setChecked(aFinTypeFees.isAlwDeviation());
+		this.alwModifyFee.setChecked(aFinTypeFees.isAlwModifyFee());
+		this.alwModifyFeeSchdMthd.setChecked(aFinTypeFees.isAlwModifyFeeSchdMthd());
+
+		if (aFinTypeFees.isNewRecord()) {
+			this.alwModifyFeeSchdMthd.setChecked(true);
+		}
+
 		this.active.setChecked(aFinTypeFees.isActive());
 		this.alwPreIncomization.setChecked(aFinTypeFees.isAlwPreIncomization());
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
-		
+
 		doSetRuleFilters();
 		doSetConditionalProp();
 		doSetCalculationTypeProp();
 		doSetFeeSchdMethodProp();
-		
+
 		logger.debug("Leaving");
 	}
 
 	private String getExcludeFields() {
 
-		return "," + CalculationConstants.REMFEE_PART_OF_DISBURSE + ","
-				+ CalculationConstants.REMFEE_PART_OF_SALE_PRICE + ","
-				+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
+		return "," + CalculationConstants.REMFEE_PART_OF_DISBURSE + "," + CalculationConstants.REMFEE_PART_OF_SALE_PRICE
+				+ "," + CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
 				+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + ","
 				+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
 	}
@@ -464,16 +463,17 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinTypeFees
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void doWriteComponentsToBean(FinTypeFees aFinTypeFees) throws InterruptedException {
 		logger.debug("Entering");
-	
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			if (readIDValueFromExtCombobox(this.feeType) == null) {
-				this.feeType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FeeType.value"),null,true,true));
+				this.feeType.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinTypeFeesDialog_FeeType.value"), null, true, true));
 			}
 			aFinTypeFees.setFeeTypeID(readIDValueFromExtCombobox(this.feeType));
 			aFinTypeFees.setFeeTypeCode(this.feeType.getValue());
@@ -481,14 +481,14 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinTypeFees.setFinEvent(this.finEvent.getValue());
 			aFinTypeFees.setFinEventDesc(this.finEvent.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if ("#".equals(getComboboxValue(this.calculationType))) {
 				throw new WrongValueException(this.calculationType, Labels.getLabel("STATIC_INVALID",
@@ -498,7 +498,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.row_CalculationOn.isVisible() && "#".equals(getComboboxValue(this.calculationOn))) {
 				throw new WrongValueException(this.calculationOn, Labels.getLabel("STATIC_INVALID",
@@ -508,12 +508,13 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-		/*	if (this.row_FeeScheduleMethod.isVisible() && "#".equals(getComboboxValue(this.feeScheduleMethod))) {
-				throw new WrongValueException(this.feeScheduleMethod, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinTypeFeesDialog_FeeScheduleMethod.value") }));
-			}*/
+			/*
+			 * if (this.row_FeeScheduleMethod.isVisible() && "#".equals(getComboboxValue(this.feeScheduleMethod))) {
+			 * throw new WrongValueException(this.feeScheduleMethod, Labels.getLabel("STATIC_INVALID", new String[] {
+			 * Labels.getLabel("label_FinTypeFeesDialog_FeeScheduleMethod.value") })); }
+			 */
 			aFinTypeFees.setFeeScheduleMethod(getComboboxValue(this.feeScheduleMethod));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -525,50 +526,53 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			wve.add(we);
 		}
 		try {
-			aFinTypeFees.setAmount(PennantAppUtil.unFormateAmount(this.amount.isReadonly() ?
-					this.amount.getActualValue() : this.amount.getValidateValue(), ccyFormat));
-			
+			aFinTypeFees.setAmount(PennantAppUtil.unFormateAmount(
+					this.amount.isReadonly() ? this.amount.getActualValue() : this.amount.getValidateValue(),
+					ccyFormat));
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		 try {
-				if (this.percentage.isVisible()) {
-					BigDecimal percentageValue = this.percentage.getValue();
-					
-					if (percentageValue == null || percentageValue.compareTo(BigDecimal.ZERO) == 0) {
-						throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MINVALUE",
-								new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "0" }));
-					} else if (percentageValue.compareTo(BigDecimal.ZERO) != 1) {
-						throw new WrongValueException(this.percentage, Labels.getLabel("FIELD_NO_NEGATIVE",
-								new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value") }));
-					} else if (percentageValue.compareTo(new BigDecimal(100)) > 0) {
-						throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-								new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "100" }));
-					}
-				}
-				aFinTypeFees.setPercentage(new BigDecimal(PennantApplicationUtil.formatRate(this.percentage.getValue().doubleValue(),2)));
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
 		try {
-			if(!this.maxWaiver.isReadonly() && this.maxWaiver.getValue() != null){
-				if(this.maxWaiver.getValue().compareTo(BigDecimal.ZERO) < 0){
+			if (this.percentage.isVisible()) {
+				BigDecimal percentageValue = this.percentage.getValue();
+
+				if (percentageValue == null || percentageValue.compareTo(BigDecimal.ZERO) == 0) {
+					throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MINVALUE",
+							new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "0" }));
+				} else if (percentageValue.compareTo(BigDecimal.ZERO) != 1) {
+					throw new WrongValueException(this.percentage, Labels.getLabel("FIELD_NO_NEGATIVE",
+							new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value") }));
+				} else if (percentageValue.compareTo(new BigDecimal(100)) > 0) {
+					throw new WrongValueException(this.percentage, Labels.getLabel("NUMBER_MAXVALUE_EQ",
+							new String[] { Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), "100" }));
+				}
+			}
+			aFinTypeFees.setPercentage(
+					new BigDecimal(PennantApplicationUtil.formatRate(this.percentage.getValue().doubleValue(), 2)));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (!this.maxWaiver.isReadonly() && this.maxWaiver.getValue() != null) {
+				if (this.maxWaiver.getValue().compareTo(BigDecimal.ZERO) < 0) {
 					throw new WrongValueException(this.maxWaiver, Labels.getLabel("PERCENT_NOTNEGATIVE_LABEL"));
-				}else if((this.maxWaiver.getValue()).compareTo(new BigDecimal(100)) > 0){
+				} else if ((this.maxWaiver.getValue()).compareTo(new BigDecimal(100)) > 0) {
 					throw new WrongValueException(this.maxWaiver, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-							new String[] { Labels.getLabel("label_FinTypeFeesDialog_MaxWaiver.value"),"100" }));
+							new String[] { Labels.getLabel("label_FinTypeFeesDialog_MaxWaiver.value"), "100" }));
 				}
 			}
-			aFinTypeFees.setMaxWaiverPerc(new BigDecimal(PennantApplicationUtil.formatRate(this.maxWaiver.doubleValue(),2)));
+			aFinTypeFees.setMaxWaiverPerc(
+					new BigDecimal(PennantApplicationUtil.formatRate(this.maxWaiver.doubleValue(), 2)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.feeOrder.intValue() == 0){
+			if (this.feeOrder.intValue() == 0) {
 				throw new WrongValueException(this.feeOrder, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_FinTypeFeesDialog_Order.value") }));
 			}
-			if(this.feeOrder.getValue() < 0){
+			if (this.feeOrder.getValue() < 0) {
 				throw new WrongValueException(this.feeOrder, Labels.getLabel("FIELD_NO_NEGATIVE",
 						new String[] { Labels.getLabel("label_FinTypeFeesDialog_Order.value") }));
 			}
@@ -601,7 +605,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -617,8 +621,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinTypeFees
 	 * @throws InterruptedException
@@ -641,8 +644,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinTypeFees);
 			allowFeeZero = SysParamUtil.getValueAsString(SMTParameterConstants.FEESALLOWZERO);
-			if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, this.calculationType.getSelectedItem().getValue().toString()) &&
-					StringUtils.equals("Y",allowFeeZero)) {
+			if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
+					this.calculationType.getSelectedItem().getValue().toString())
+					&& StringUtils.equals("Y", allowFeeZero)) {
 				this.amount.setMandatory(false);
 			}
 			this.window_FinTypeFeesDialog.doModal();
@@ -659,19 +663,25 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.feeType.isReadonly()) {
-			this.feeType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FeeType.value"),null,true,true));
+			this.feeType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FeeType.value"), null, true, true));
 		}
 		if (!this.finEvent.isReadonly()) {
-			this.finEvent.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value"),null,true,true));
+			this.finEvent.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value"), null, true, true));
 		}
 		if (this.row_FeeScheduleMethod.isVisible() && !this.feeScheduleMethod.isReadonly()) {
-			this.feeScheduleMethod.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FeeScheduleMethod.value"),null,true));
+			this.feeScheduleMethod.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinTypeFeesDialog_FeeScheduleMethod.value"), null, true));
 		}
 		if (this.ruleCode.isVisible() && !this.ruleCode.isReadonly()) {
-			this.ruleCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"),null,true,true));
+			this.ruleCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"), null, true, true));
 		}
 		if (!this.amount.isDisabled()) {
-			this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"),ccyFormat, this.amount.isVisible(), false));
+			this.amount
+					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinTypeFeesDialog_RuleAmtPerc.value"),
+							ccyFormat, this.amount.isVisible(), false));
 		}
 		logger.debug("Leaving");
 	}
@@ -696,7 +706,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a FinTypeFees object from database.<br>
 	 * 
@@ -708,16 +718,16 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		BeanUtils.copyProperties(getFinTypeFees(), aFinTypeFees);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_FinTypeFeesDialog_FeeType.value")+" : "+ aFinTypeFees.getFeeTypeCode()+","+
-				Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value")+" : "+aFinTypeFees.getFinEvent();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinTypeFeesDialog_FeeType.value") + " : " + aFinTypeFees.getFeeTypeCode() + ","
+				+ Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value") + " : " + aFinTypeFees.getFinEvent();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			
-			/*if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,false)){
-				return;
-			}*/
-			
+
+			/*
+			 * if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,false)){ return; }
+			 */
+
 			logger.debug("doDelete: Yes");
 			if (StringUtils.isBlank(aFinTypeFees.getRecordType())) {
 				aFinTypeFees.setVersion(aFinTypeFees.getVersion() + 1);
@@ -738,9 +748,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				auditHeader = ErrorControl.showErrorDetails(this.window_FinTypeFeesDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if(this.isOriginationFee){
+					if (this.isOriginationFee) {
 						getFinTypeFeesListCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
-					}else{
+					} else {
 						getFinTypeFeesListCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
 					}
 					closeDialog();
@@ -777,8 +787,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_alwModifyFee"), this.alwModifyFee);
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_alwModifyFeeSchdMthd"), this.alwModifyFeeSchdMthd);
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_active"), this.active);
-		
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -794,11 +803,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	public boolean isReadOnly(String componentName){
+
+	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -869,19 +878,19 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		final FinTypeFees aFinTypeFees = new FinTypeFees();
 		BeanUtils.copyProperties(getFinTypeFees(), aFinTypeFees);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the FinTypeFees object with the components data
 		doWriteComponentsToBean(aFinTypeFees);
-		if(validateFeeOrder(aFinTypeFees)){
+		if (validateFeeOrder(aFinTypeFees)) {
 			return;
 		}
-		
-		/*if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,true)){
-			return;
-		}*/
-		
+
+		/*
+		 * if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,true)){ return; }
+		 */
+
 		// Write the additional validations as per below example
 		// get the selected FinTypeFees object from the listbox
 		// Do data level validations here
@@ -921,9 +930,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			auditHeader = ErrorControl.showErrorDetails(this.window_FinTypeFeesDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-				if(this.isOriginationFee){
+				if (this.isOriginationFee) {
 					getFinTypeFeesListCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
-				}else{
+				} else {
 					getFinTypeFeesListCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
 				}
 				closeDialog();
@@ -936,7 +945,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	/**
-	 * This method validates  FinTypeFees details <br>
+	 * This method validates FinTypeFees details <br>
 	 * and will return AuditHeader
 	 *
 	 */
@@ -951,20 +960,23 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FeeType.value") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FinEvent.value") + ":" + valueParm[1];
 		List<FinTypeFees> finTypeExistingList = null;
-		if(this.isOriginationFee){
+		if (this.isOriginationFee) {
 			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesOriginationList();
-		}else{
+		} else {
 			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesServicingList();
 		}
-		
+
 		if (finTypeExistingList != null && finTypeExistingList.size() > 0) {
 			for (int i = 0; i < finTypeExistingList.size(); i++) {
 				FinTypeFees finTypeFees = finTypeExistingList.get(i);
-				if (finTypeFees.getFinEvent().equals(aFinTypeFees.getFinEvent()) && finTypeFees.getFeeTypeID() == aFinTypeFees.getFeeTypeID()
+				if (finTypeFees.getFinEvent().equals(aFinTypeFees.getFinEvent())
+						&& finTypeFees.getFeeTypeID() == aFinTypeFees.getFeeTypeID()
 						&& finTypeFees.isOriginationFee() == aFinTypeFees.isOriginationFee()) {
 					// Both Current and Existing list rating same
 					if (aFinTypeFees.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (tranType == PennantConstants.TRAN_DEL) {
@@ -1014,7 +1026,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		return value;
 	}
-	
+
 	private Long readIDValueFromExtCombobox(ExtendedCombobox extendedCombobox) {
 		Object obj = extendedCombobox.getObject();
 		if (obj != null) {
@@ -1027,18 +1039,18 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		return null;
 	}
-	
+
 	public void onCheck$alwDeviation(Event event) {
 		logger.debug("Entering");
-		if(this.alwDeviation.isChecked()){
+		if (this.alwDeviation.isChecked()) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.valueOf(100));
-		}else{
+		} else {
 			readOnlyComponent(isReadOnly("FinTypeFeesDialog_maxWaiver"), this.maxWaiver);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void onSelect$calculationType(Event event) {
 		logger.debug("Entering");
 		this.ruleCode.setValue("");
@@ -1048,8 +1060,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.calculationOn.setValue("");
 		doSetCalculationTypeProp();
 		//Fees allowed zero when calculation type is Fixed Amount
-		if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, this.calculationType.getSelectedItem().getValue().toString()) &&
-				StringUtils.equals("Y",allowFeeZero)) {
+		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
+				this.calculationType.getSelectedItem().getValue().toString())
+				&& StringUtils.equals("Y", allowFeeZero)) {
 			this.amount.setMandatory(false);
 		}
 		logger.debug("Leaving");
@@ -1060,7 +1073,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		doSetFeeSchdMethodProp();
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$finEvent(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
@@ -1089,11 +1102,12 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_EARLYSTL)) {
 			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
 		} else {
-			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(),"," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",");
+			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(),
+					"," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onFulfill$feeType(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		this.ruleCode.setObject("");
@@ -1101,8 +1115,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		doSetRuleFilters();
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void doSetRuleFilters(){
+
+	private void doSetRuleFilters() {
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("RuleModule", "FEES", Filter.OP_EQUAL);
 		filters[1] = new Filter("RuleEvent", this.finEvent.getValue(), Filter.OP_EQUAL);
@@ -1110,44 +1124,47 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.ruleCode.setFilters(filters);
 	}
-	
-	private void doSetConditionalProp(){
-		if(this.isOriginationFee){
+
+	private void doSetConditionalProp() {
+		if (this.isOriginationFee) {
 			this.row_FeeScheduleMethod.setVisible(true);
 			this.label_Window_Title.setValue(Labels.getLabel("label_FeeDetails_Origination"));
-		}else{
+		} else {
 			this.row_FeeScheduleMethod.setVisible(false);
 			this.label_Window_Title.setValue(Labels.getLabel("label_FeeDetails_Servicing"));
 		}
-		if(this.alwDeviation.isChecked()){
+		if (this.alwDeviation.isChecked()) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.ZERO);
-		}else{
+		} else {
 			readOnlyComponent(isReadOnly("FinTypeFeesDialog_maxWaiver"), this.maxWaiver);
 		}
 	}
-	
-	private void doSetCalculationTypeProp(){
-		if (StringUtils.equals("Y",allowFeeZero)) {
+
+	private void doSetCalculationTypeProp() {
+		if (StringUtils.equals("Y", allowFeeZero)) {
 			this.amount.setMandatory(false);
-		}else{
+		} else {
 			this.amount.setMandatory(true);
 		}
-		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_RULE, this.calculationType.getSelectedItem().getValue().toString())) {
+		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_RULE,
+				this.calculationType.getSelectedItem().getValue().toString())) {
 			this.ruleCode.setVisible(true);
 			this.amount.setVisible(false);
 			this.amount.setMandatory(false);
 			this.percentage.setVisible(false);
 			this.row_CalculationOn.setVisible(false);
 			this.space_percentage.setVisible(false);
-		}else if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, this.calculationType.getSelectedItem().getValue().toString())) {
+		} else if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
+				this.calculationType.getSelectedItem().getValue().toString())) {
 			this.amount.setVisible(true);
 			this.amount.setMandatory(true);
 			this.ruleCode.setVisible(false);
 			this.percentage.setVisible(false);
 			this.row_CalculationOn.setVisible(false);
 			this.space_percentage.setVisible(false);
-		}else if(StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE, this.calculationType.getSelectedItem().getValue().toString())) {
+		} else if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
+				this.calculationType.getSelectedItem().getValue().toString())) {
 			this.percentage.setVisible(true);
 			this.ruleCode.setVisible(false);
 			this.amount.setVisible(false);
@@ -1156,8 +1173,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.space_percentage.setVisible(true);
 		}
 	}
-	
-	private void doSetFeeSchdMethodProp(){
+
+	private void doSetFeeSchdMethodProp() {
 		String feeScheduleMethodValue = this.feeScheduleMethod.getSelectedItem().getValue();
 		if (StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethodValue)) {
 			readOnlyComponent(true, this.maxWaiver);
@@ -1166,7 +1183,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.alwDeviation.setChecked(false);
 			this.alwModifyFeeSchdMthd.setDisabled(true);
 			this.alwModifyFeeSchdMthd.setChecked(true);
-		} else if(StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethodValue)) {
+		} else if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethodValue)) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.valueOf(100));
 			this.alwDeviation.setDisabled(true);
@@ -1181,20 +1198,20 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.alwDeviation.setDisabled(isReadOnly("FinTypeFeesDialog_alwDeviation"));
 		}
 	}
-	
-	
-	private boolean validateFeeOrder(FinTypeFees finTypeFeesTemp){
+
+	private boolean validateFeeOrder(FinTypeFees finTypeFeesTemp) {
 		List<FinTypeFees> finTypeExistingList = null;
-		if(this.isOriginationFee){
+		if (this.isOriginationFee) {
 			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesOriginationList();
-		}else{
+		} else {
 			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesServicingList();
 		}
-		if(finTypeExistingList != null && !finTypeExistingList.isEmpty()){
+		if (finTypeExistingList != null && !finTypeExistingList.isEmpty()) {
 			for (FinTypeFees finTypeFees : finTypeExistingList) {
-				if(StringUtils.equals(finTypeFees.getFinEvent(), finTypeFeesTemp.getFinEvent()) && 
-						!StringUtils.equals(finTypeFees.getFeeTypeCode(), finTypeFeesTemp.getFeeTypeCode()) &&
-						finTypeFees.getFeeOrder() == finTypeFeesTemp.getFeeOrder() && finTypeFees.isOriginationFee() == this.isOriginationFee){
+				if (StringUtils.equals(finTypeFees.getFinEvent(), finTypeFeesTemp.getFinEvent())
+						&& !StringUtils.equals(finTypeFees.getFeeTypeCode(), finTypeFeesTemp.getFeeTypeCode())
+						&& finTypeFees.getFeeOrder() == finTypeFeesTemp.getFeeOrder()
+						&& finTypeFees.isOriginationFee() == this.isOriginationFee) {
 					MessageUtil.showError(Labels.getLabel("FeeOrder_Duplication_NotAllowed",
 							new String[] { Integer.toString(finTypeFeesTemp.getFeeOrder()) }));
 					return true;
@@ -1203,7 +1220,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		return false;
 	}
-	
+
 	public static String getEventDesc(String value, List<AccountEngineEvent> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (StringUtils.equals(list.get(i).getAEEventCode(), value)) {
@@ -1212,7 +1229,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 		return "";
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1226,7 +1243,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 	private AuditHeader getAuditHeader(FinTypeFees aFinTypeFees, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinTypeFees.getBefImage(), aFinTypeFees);
-		return new AuditHeader(aFinTypeFees.getFinType(), null, null, null, auditDetail, aFinTypeFees.getUserDetails(), getOverideMap());
+		return new AuditHeader(aFinTypeFees.getFinType(), null, null, null, auditDetail, aFinTypeFees.getUserDetails(),
+				getOverideMap());
 	}
 
 	private void showMessage(Exception e) {
@@ -1242,7 +1260,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.finTypeFees);
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.finTypeFees.getFinEvent());
@@ -1268,8 +1286,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		return finTypeFeesDialogCtrl;
 	}
 
-	public void setFinTypeFeesDialogCtrl(
-			FinTypeFeesDialogCtrl finTypeFeesDialogCtrl) {
+	public void setFinTypeFeesDialogCtrl(FinTypeFeesDialogCtrl finTypeFeesDialogCtrl) {
 		this.finTypeFeesDialogCtrl = finTypeFeesDialogCtrl;
 	}
 
@@ -1281,12 +1298,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
 	}
 
-	/*public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() {
-		return financeTypeDialogCtrl;
-	}
-
-	public void setFinanceTypeDialogCtrl(FinanceTypeDialogCtrl financeTypeDialogCtrl) {
-		this.financeTypeDialogCtrl = financeTypeDialogCtrl;
-	}*/
+	/*
+	 * public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() { return financeTypeDialogCtrl; }
+	 * 
+	 * public void setFinanceTypeDialogCtrl(FinanceTypeDialogCtrl financeTypeDialogCtrl) { this.financeTypeDialogCtrl =
+	 * financeTypeDialogCtrl; }
+	 */
 
 }

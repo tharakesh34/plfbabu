@@ -56,7 +56,6 @@ import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -69,9 +68,9 @@ public class LiabilityRequestListModelItemRenderer implements ListitemRenderer<L
 	public void render(Listitem item, LiabilityRequest liabilityRequest, int count) throws Exception {
 
 		Listcell lc;
-  	lc = new Listcell(liabilityRequest.getFinType());
+		lc = new Listcell(liabilityRequest.getFinType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(liabilityRequest.getCustCIF());
 		lc.setParent(item);
 		lc = new Listcell(liabilityRequest.getFinReference());
@@ -86,9 +85,10 @@ public class LiabilityRequestListModelItemRenderer implements ListitemRenderer<L
 		lc.setParent(item);
 		lc = new Listcell(liabilityRequest.getFinCcy());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(liabilityRequest.getFinAmount(), CurrencyUtil.getFormat(liabilityRequest.getFinCcy())));
+		lc = new Listcell(PennantAppUtil.amountFormate(liabilityRequest.getFinAmount(),
+				CurrencyUtil.getFormat(liabilityRequest.getFinCcy())));
 		lc.setParent(item);
-	  	lc = new Listcell(liabilityRequest.getRecordStatus());
+		lc = new Listcell(liabilityRequest.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(liabilityRequest.getRecordType()));
 		lc.setParent(item);

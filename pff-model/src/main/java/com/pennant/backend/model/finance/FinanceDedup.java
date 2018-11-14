@@ -11,7 +11,7 @@ import java.util.Set;
  * Model class for the <b>Customer table</b>.<br>
  *
  */
-public class FinanceDedup implements Serializable{
+public class FinanceDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long custId = Long.MIN_VALUE;
 	private String finReference;
@@ -28,8 +28,8 @@ public class FinanceDedup implements Serializable{
 	private String custNationality;
 	private String custParentCountry;
 	private Date custDOB;
-	private boolean newRecord=false;
-	
+	private boolean newRecord = false;
+
 	//new fields
 	private String mobileNumber;
 	private String chassisNumber;
@@ -37,13 +37,13 @@ public class FinanceDedup implements Serializable{
 	private BigDecimal financeAmount;
 	private BigDecimal profitAmount;
 	private String financeType;
-	private Date 	startDate;
-	private String 	stage="";
-	private String 	stageDesc="";
-	private String 	dedupeRule;
+	private Date startDate;
+	private String stage = "";
+	private String stageDesc = "";
+	private String dedupeRule;
 	private String custCRCPR;
 	private String overrideUser;
-	private String 	rules;
+	private String rules;
 	//Audit Purpose Fields
 	private long lastMntBy;
 	private String roleCode;
@@ -55,15 +55,14 @@ public class FinanceDedup implements Serializable{
 
 	private String titleDeedNo;
 	private String registrationNo;
-	private String tradeLicenceNo ;
-	private String finLimitRef ;
-	
+	private String tradeLicenceNo;
+	private String finLimitRef;
+
 	private FinanceDedup befImage;
 	private HashMap<String, String> overridenMap;
 	private String dedupFields;
 	private boolean override;
-	
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custId");
@@ -93,136 +92,154 @@ public class FinanceDedup implements Serializable{
 		return excludeFields;
 	}
 
-	public FinanceDedup(){
+	public FinanceDedup() {
 		super();
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setCustId(long custId) {
-	    this.custId = custId;
-    }
+		this.custId = custId;
+	}
+
 	public long getCustId() {
-	    return custId;
-    }
-	
+		return custId;
+	}
+
 	public void setFinReference(String finReference) {
-	    this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
+
 	public String getFinReference() {
-	    return finReference;
-    }
+		return finReference;
+	}
 
 	public String getCustCIF() {
-    	return custCIF;
-    }
+		return custCIF;
+	}
+
 	public void setCustCIF(String custCIF) {
-    	this.custCIF = custCIF;
-    }
+		this.custCIF = custCIF;
+	}
 
 	public String getCustFName() {
-    	return custFName;
-    }
+		return custFName;
+	}
+
 	public void setCustFName(String custFName) {
-    	this.custFName = custFName;
-    }
+		this.custFName = custFName;
+	}
 
 	public String getCustMName() {
-    	return custMName;
-    }
+		return custMName;
+	}
+
 	public void setCustMName(String custMName) {
-    	this.custMName = custMName;
-    }
+		this.custMName = custMName;
+	}
 
 	public String getCustLName() {
-    	return custLName;
-    }
+		return custLName;
+	}
+
 	public void setCustLName(String custLName) {
-    	this.custLName = custLName;
-    }
+		this.custLName = custLName;
+	}
 
 	public void setCustShrtName(String custShrtName) {
-	    this.custShrtName = custShrtName;
-    }
+		this.custShrtName = custShrtName;
+	}
+
 	public String getCustShrtName() {
-	    return custShrtName;
-    }
+		return custShrtName;
+	}
 
 	public String getCustMotherMaiden() {
-    	return custMotherMaiden;
-    }
+		return custMotherMaiden;
+	}
+
 	public void setCustMotherMaiden(String custMotherMaiden) {
-    	this.custMotherMaiden = custMotherMaiden;
-    }
+		this.custMotherMaiden = custMotherMaiden;
+	}
 
 	public String getLikeCustFName() {
-    	return likeCustFName;
-    }
+		return likeCustFName;
+	}
+
 	public void setLikeCustFName(String likeCustFName) {
-    	this.likeCustFName = likeCustFName;
-    }
+		this.likeCustFName = likeCustFName;
+	}
 
 	public String getLikeCustMName() {
-    	return likeCustMName;
-    }
+		return likeCustMName;
+	}
+
 	public void setLikeCustMName(String likeCustMName) {
-    	this.likeCustMName = likeCustMName;
-    }
+		this.likeCustMName = likeCustMName;
+	}
 
 	public String getLikeCustLName() {
-    	return likeCustLName;
-    }
+		return likeCustLName;
+	}
+
 	public void setLikeCustLName(String likeCustLName) {
-    	this.likeCustLName = likeCustLName;
-    }
+		this.likeCustLName = likeCustLName;
+	}
 
 	public String getCustPassportNo() {
-    	return custPassportNo;
-    }
+		return custPassportNo;
+	}
+
 	public void setCustPassportNo(String custPassportNo) {
-    	this.custPassportNo = custPassportNo;
-    }
-	
+		this.custPassportNo = custPassportNo;
+	}
+
 	public String getCustCPRNo() {
-    	return custCPRNo;
-    }
+		return custCPRNo;
+	}
+
 	public void setCustCPRNo(String custCPRNo) {
-    	this.custCPRNo = custCPRNo;
-    }
+		this.custCPRNo = custCPRNo;
+	}
 
 	public String getCustCRNo() {
-    	return custCRNo;
-    }
+		return custCRNo;
+	}
+
 	public void setCustCRNo(String custCRNo) {
-    	this.custCRNo = custCRNo;
-    }
+		this.custCRNo = custCRNo;
+	}
 
 	public String getCustNationality() {
-    	return custNationality;
-    }
+		return custNationality;
+	}
+
 	public void setCustNationality(String custNationality) {
-    	this.custNationality = custNationality;
-    }
+		this.custNationality = custNationality;
+	}
 
 	public void setCustParentCountry(String custParentCountry) {
-	    this.custParentCountry = custParentCountry;
-    }
+		this.custParentCountry = custParentCountry;
+	}
+
 	public String getCustParentCountry() {
-	    return custParentCountry;
-    }
+		return custParentCountry;
+	}
 
 	public Date getCustDOB() {
-    	return custDOB;
-    }
+		return custDOB;
+	}
+
 	public void setCustDOB(Date custDOB) {
-    	this.custDOB = custDOB;
-    }
-	
+		this.custDOB = custDOB;
+	}
+
 	public String getTitleDeedNo() {
 		return titleDeedNo;
 	}
+
 	public void setTitleDeedNo(String titleDeedNo) {
 		this.titleDeedNo = titleDeedNo;
 	}
@@ -230,6 +247,7 @@ public class FinanceDedup implements Serializable{
 	public String getRegistrationNo() {
 		return registrationNo;
 	}
+
 	public void setRegistrationNo(String registrationNo) {
 		this.registrationNo = registrationNo;
 	}
@@ -237,6 +255,7 @@ public class FinanceDedup implements Serializable{
 	public String getTradeLicenceNo() {
 		return tradeLicenceNo;
 	}
+
 	public void setTradeLicenceNo(String tradeLicenceNo) {
 		this.tradeLicenceNo = tradeLicenceNo;
 	}
@@ -244,130 +263,146 @@ public class FinanceDedup implements Serializable{
 	public FinanceDedup getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(FinanceDedup befImage) {
 		this.befImage = befImage;
 	}
-	
+
 	public HashMap<String, String> getOverridenMap() {
-	    return overridenMap;
-    }
+		return overridenMap;
+	}
+
 	public void setOverridenMap(HashMap<String, String> overridenMap) {
-	    this.overridenMap = overridenMap;
-    }
+		this.overridenMap = overridenMap;
+	}
 
 	public String getDedupFields() {
 		return dedupFields;
 	}
+
 	public void setDedupFields(String dedupFields) {
 		this.dedupFields = dedupFields;
 	}
-	
+
 	public boolean isChanged() {
-		boolean changed =false;
-		
-		if(befImage==null){
-			changed=true;
-		}else{
-			
+		boolean changed = false;
+
+		if (befImage == null) {
+			changed = true;
+		} else {
+
 		}
 		return changed;
 	}
 
 	public BigDecimal getFinanceAmount() {
-	    return financeAmount;
-    }
+		return financeAmount;
+	}
+
 	public void setFinanceAmount(BigDecimal financeAmount) {
-	    this.financeAmount = financeAmount;
-    }
+		this.financeAmount = financeAmount;
+	}
 
 	public BigDecimal getProfitAmount() {
-	    return profitAmount;
-    }
+		return profitAmount;
+	}
+
 	public void setProfitAmount(BigDecimal profitAmount) {
-	    this.profitAmount = profitAmount;
-    }
+		this.profitAmount = profitAmount;
+	}
 
 	public String getStage() {
-	    return stage;
-    }
+		return stage;
+	}
+
 	public void setStage(String stage) {
-	    this.stage = stage;
-    }
+		this.stage = stage;
+	}
 
 	public String getDedupeRule() {
-	    return dedupeRule;
-    }
+		return dedupeRule;
+	}
+
 	public void setDedupeRule(String dedupeRule) {
-	    this.dedupeRule = dedupeRule;
-    }
+		this.dedupeRule = dedupeRule;
+	}
 
 	public String getCustCRCPR() {
-	    return custCRCPR;
-    }
+		return custCRCPR;
+	}
+
 	public void setCustCRCPR(String custCRCPR) {
-	    this.custCRCPR = custCRCPR;
-    }
+		this.custCRCPR = custCRCPR;
+	}
 
 	public String getRules() {
-	    return rules;
-    }
+		return rules;
+	}
+
 	public void setRules(String rules) {
-	    this.rules = rules;
-    }
+		this.rules = rules;
+	}
 
 	public String getStageDesc() {
-	    return stageDesc;
-    }
+		return stageDesc;
+	}
+
 	public void setStageDesc(String stageDesc) {
-	    this.stageDesc = stageDesc;
-    }
-	
+		this.stageDesc = stageDesc;
+	}
+
 	public String getOverrideUser() {
-	    return overrideUser;
-    }
+		return overrideUser;
+	}
+
 	public void setOverrideUser(String overrideUser) {
-	    this.overrideUser = overrideUser;
-    }
+		this.overrideUser = overrideUser;
+	}
 
 	public long getLastMntBy() {
-	    return lastMntBy;
-    }
+		return lastMntBy;
+	}
+
 	public void setLastMntBy(long lastMntBy) {
-	    this.lastMntBy = lastMntBy;
-    }
+		this.lastMntBy = lastMntBy;
+	}
 
 	public String getRoleCode() {
-	    return roleCode;
-    }
+		return roleCode;
+	}
+
 	public void setRoleCode(String roleCode) {
-	    this.roleCode = roleCode;
-    }
+		this.roleCode = roleCode;
+	}
 
 	public String getRecordStatus() {
-	    return recordStatus;
-    }
+		return recordStatus;
+	}
+
 	public void setRecordStatus(String recordStatus) {
-	    this.recordStatus = recordStatus;
-    }
+		this.recordStatus = recordStatus;
+	}
 
 	public boolean isNewRecord() {
-	    return newRecord;
-    }
+		return newRecord;
+	}
+
 	public void setNewRecord(boolean newRecord) {
-	    this.newRecord = newRecord;
-    }
+		this.newRecord = newRecord;
+	}
 
 	public String getDupReference() {
-	    return dupReference;
-    }
-	public void setDupReference(String dupReference) {
-	    this.dupReference = dupReference;
-    }
+		return dupReference;
+	}
 
-	
+	public void setDupReference(String dupReference) {
+		this.dupReference = dupReference;
+	}
+
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
+
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
@@ -375,6 +410,7 @@ public class FinanceDedup implements Serializable{
 	public String getChassisNumber() {
 		return chassisNumber;
 	}
+
 	public void setChassisNumber(String chassisNumber) {
 		this.chassisNumber = chassisNumber;
 	}
@@ -382,13 +418,15 @@ public class FinanceDedup implements Serializable{
 	public String getEngineNumber() {
 		return engineNumber;
 	}
+
 	public void setEngineNumber(String engineNumber) {
 		this.engineNumber = engineNumber;
 	}
-	
+
 	public String getFinanceType() {
 		return financeType;
 	}
+
 	public void setFinanceType(String financeType) {
 		this.financeType = financeType;
 	}
@@ -396,20 +434,23 @@ public class FinanceDedup implements Serializable{
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
 	public boolean isOverride() {
-	    return override;
-    }
+		return override;
+	}
+
 	public void setOverride(boolean override) {
-	    this.override = override;
-    }
+		this.override = override;
+	}
 
 	public String getFinLimitRef() {
 		return finLimitRef;
 	}
+
 	public void setFinLimitRef(String finLimitRef) {
 		this.finLimitRef = finLimitRef;
 	}

@@ -22,7 +22,7 @@ public interface LimitDetailDAO {
 	int limitStructureCheck(String structureCode, String type);
 
 	int getLimitDetailByStructureId(long structureId, String type);
-	
+
 	void deletebyLimitStructureDetailId(long id, String string);
 
 	// Limit management
@@ -36,10 +36,12 @@ public interface LimitDetailDAO {
 	LimitDetails getLimitLineByDetailId(final long id, String type);
 
 	List<LimitDetails> getLimitByLineAndgroup(long headerId, String limitline, List<String> groupcode);
-	
+
 	public List<LimitDetails> getLimitDetails(long headerId);
+
 	public void updateReserveUtiliseList(List<LimitDetails> limitDetailsList, String type);
+
 	public void saveList(List<LimitDetails> limitDetailsList, String type);
-	
+
 	public List<LimitDetails> getLatestLimitExposures(final long id, String type);
 }

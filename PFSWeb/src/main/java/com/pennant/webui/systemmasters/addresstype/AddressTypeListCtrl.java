@@ -90,7 +90,7 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 	protected Intbox addrTypePriority;
 	protected Checkbox addrTypeFIRequired;
 	protected Checkbox addrTypeIsActive;
-	protected Row	   row_AddrTypePriority;
+	protected Row row_AddrTypePriority;
 
 	protected Listbox sortOperator_addrTypeCode;
 	protected Listbox sortOperator_addrTypeDesc;
@@ -146,9 +146,12 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 				Operators.STRING);
 		registerField("addrTypeDesc", listheader_AddrTypeDesc, SortOrder.NONE, addrTypeDesc, sortOperator_addrTypeDesc,
 				Operators.STRING);
-		registerField("addrTypePriority", listheader_AddrTypePriority, SortOrder.NONE, addrTypePriority, sortOperator_addrTypePriority, Operators.STRING);
-		registerField("addrTypeFIRequired", listheader_AddrTypeFIRequired, SortOrder.NONE, addrTypeFIRequired, sortOperator_addrTypeFIRequired, Operators.BOOLEAN);
-		registerField("addrTypeIsActive", listheader_AddrTypeIsActive, SortOrder.NONE, addrTypeIsActive, sortOperator_addrTypeIsActive, Operators.BOOLEAN);
+		registerField("addrTypePriority", listheader_AddrTypePriority, SortOrder.NONE, addrTypePriority,
+				sortOperator_addrTypePriority, Operators.STRING);
+		registerField("addrTypeFIRequired", listheader_AddrTypeFIRequired, SortOrder.NONE, addrTypeFIRequired,
+				sortOperator_addrTypeFIRequired, Operators.BOOLEAN);
+		registerField("addrTypeIsActive", listheader_AddrTypeIsActive, SortOrder.NONE, addrTypeIsActive,
+				sortOperator_addrTypeIsActive, Operators.BOOLEAN);
 		if (ImplementationConstants.ALLOW_ADDRESSTYPE_PRIORITY) {
 			this.row_AddrTypePriority.setVisible(true);
 			this.listheader_AddrTypePriority.setVisible(true);

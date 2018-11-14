@@ -67,32 +67,29 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/masters/BuilderGroup/builderGroupDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/masters/BuilderGroup/builderGroupDialog.zul file. <br>
  */
-public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
+public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(BuilderGroupDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_BuilderGroupDialog; 
-	protected Uppercasebox 		name; 
-	protected ExtendedCombobox 		segmentation; 
+	protected Window window_BuilderGroupDialog;
+	protected Uppercasebox name;
+	protected ExtendedCombobox segmentation;
 	private BuilderGroup builderGroup; // overhanded per param
 
 	private transient BuilderGroupListCtrl builderGroupListCtrl; // overhanded per param
 	private transient BuilderGroupService builderGroupService;
-
 
 	/**
 	 * default constructor.<br>
@@ -108,10 +105,9 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.builderGroup.getId()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.builderGroup.getId()));
 		return referenceBuffer.toString();
 	}
-
 
 	/**
 	 * 
@@ -126,7 +122,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		// Set the page level components.
 		setPageComponents(window_BuilderGroupDialog);
-
 
 		try {
 			// Get the required arguments.
@@ -147,12 +142,12 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 					this.builderGroup.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				if(!enqiryModule){
+				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -165,7 +160,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -180,11 +174,11 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		this.segmentation.setValueColumn("FieldCodeValue");
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setDisplayStyle(2);
-		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
+		this.segmentation.setValidateColumns(new String[] { "FieldCodeValue" });
 		Filter segmentFilter[] = new Filter[1];
 		segmentFilter[0] = new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
 		this.segmentation.setFilters(segmentFilter);
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -248,7 +242,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -313,15 +307,13 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		logger.debug(Literal.LEAVING);
 	}
 
-
-
-	public void onFulfill$segmentation(Event event){
+	public void onFulfill$segmentation(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = segmentation.getObject();
 		if (dataObject instanceof String) {
 			this.segmentation.setObject(null);
-			this.segmentation.setValue("","");
-		}else{
+			this.segmentation.setValue("", "");
+		} else {
 			if (dataObject instanceof LovFieldDetail) {
 				LovFieldDetail lovFieldDetail = (LovFieldDetail) dataObject;
 				this.segmentation.setObject(lovFieldDetail);
@@ -329,10 +321,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	}	
-
-
-
+	}
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -347,12 +336,12 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		this.segmentation.setValue(aBuilderGroup.getSegmentation());
 		this.segmentation.setDescColumn(aBuilderGroup.getSegmentationName());
 
-		if (aBuilderGroup.isNewRecord()){
+		if (aBuilderGroup.isNewRecord()) {
 			this.segmentation.setDescription("");
-		}else{
+		} else {
 			this.segmentation.setDescription(aBuilderGroup.getSegmentationName());
 		}
-		
+
 		this.recordStatus.setValue(aBuilderGroup.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -373,13 +362,13 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		//Name
 		try {
 			aBuilderGroup.setName(this.name.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Segmentation
 		try {
 			aBuilderGroup.setSegmentation(this.segmentation.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -387,7 +376,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -444,11 +433,13 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.name.isReadonly()){
-			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_name.value"),PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,true));
+		if (!this.name.isReadonly()) {
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_name.value"),
+					PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
-		if (!this.segmentation.isReadonly()){
-			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_segmentation.value"),null,true, true));
+		if (!this.segmentation.isReadonly()) {
+			this.segmentation.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BuilderGroupDialog_segmentation.value"), null, true, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -465,7 +456,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set Validations for LOV Fields
@@ -488,7 +478,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -498,7 +487,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -513,32 +501,34 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		final BuilderGroup aBuilderGroup = new BuilderGroup();
 		BeanUtils.copyProperties(this.builderGroup, aBuilderGroup);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBuilderGroup.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aBuilderGroup.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBuilderGroup.getRecordType()).equals("")){
-				aBuilderGroup.setVersion(aBuilderGroup.getVersion()+1);
+			if (StringUtils.trimToEmpty(aBuilderGroup.getRecordType()).equals("")) {
+				aBuilderGroup.setVersion(aBuilderGroup.getVersion() + 1);
 				aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aBuilderGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aBuilderGroup.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBuilderGroup.getNextTaskId(), aBuilderGroup);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBuilderGroup.getNextTaskId(),
+							aBuilderGroup);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aBuilderGroup,tranType)){
+				if (doProcess(aBuilderGroup, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 
@@ -578,14 +568,13 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		}
 
 		logger.debug(Literal.LEAVING);
-	}	
+	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
 		logger.debug(Literal.LEAVING);
-
 
 		readOnlyComponent(true, this.name);
 		readOnlyComponent(true, this.segmentation);
@@ -601,7 +590,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Clears the components values. <br>
@@ -798,8 +786,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BuilderGroupDialog, auditHeader);
 						return processCompleted;
 					}

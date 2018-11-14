@@ -199,8 +199,7 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different
-	 * Finances/Commitments
+	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
 	 */
 	@Override
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {

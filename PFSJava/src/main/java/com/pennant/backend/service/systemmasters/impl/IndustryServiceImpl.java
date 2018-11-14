@@ -72,7 +72,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	public IndustryServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -94,14 +94,11 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTIndustries/BMTIndustries_Temp by using IndustryDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using IndustryDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTIndustries by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTIndustries/BMTIndustries_Temp
+	 * by using IndustryDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using IndustryDAO's update method 3) Audit the record in to AuditHeader and AdtBMTIndustries by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -118,8 +115,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		Industry industry = (Industry) auditHeader.getAuditDetail()
-		.getModelData();
+		Industry industry = (Industry) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (industry.isWorkflow()) {
@@ -129,7 +125,8 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		if (industry.isNew()) {
 			getIndustryDAO().save(industry, tableType);
 			auditHeader.getAuditDetail().setModelData(industry);
-			auditHeader.setAuditReference(industry.getIndustryCode() +PennantConstants.KEY_SEPERATOR+ industry.getSubSectorCode());
+			auditHeader.setAuditReference(
+					industry.getIndustryCode() + PennantConstants.KEY_SEPERATOR + industry.getSubSectorCode());
 		} else {
 			getIndustryDAO().update(industry, tableType);
 		}
@@ -141,12 +138,10 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTIndustries by using IndustryDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTIndustries by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTIndustries by using IndustryDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTIndustries by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -172,8 +167,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * getIndustryById fetch the details by using IndustryDAO's getIndustryById
-	 * method.
+	 * getIndustryById fetch the details by using IndustryDAO's getIndustryById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -187,9 +181,8 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * getApprovedIndustryById fetch the details by using IndustryDAO's
-	 * getIndustryById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTIndustries.
+	 * getApprovedIndustryById fetch the details by using IndustryDAO's getIndustryById method . with parameter id and
+	 * type as blank. it fetches the approved records from the BMTIndustries.
 	 * 
 	 * @param id
 	 *            (String)
@@ -200,19 +193,15 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getIndustryDAO().delete with parameters industry,"" b) NEW Add new
-	 * record in to main table by using getIndustryDAO().save with parameters
-	 * industry,"" c) EDIT Update record in the main table by using
-	 * getIndustryDAO().update with parameters industry,"" 3) Delete the record
-	 * from the workFlow table by using getIndustryDAO().delete with parameters
-	 * industry,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTIndustries by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTIndustries by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getIndustryDAO().delete with
+	 * parameters industry,"" b) NEW Add new record in to main table by using getIndustryDAO().save with parameters
+	 * industry,"" c) EDIT Update record in the main table by using getIndustryDAO().update with parameters industry,""
+	 * 3) Delete the record from the workFlow table by using getIndustryDAO().delete with parameters industry,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtBMTIndustries by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and AdtBMTIndustries by using auditHeaderDAO.addAudit(auditHeader)
+	 * based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -230,11 +219,10 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 			return auditHeader;
 		}
 		Industry industry = new Industry();
-		BeanUtils.copyProperties((Industry) auditHeader.getAuditDetail()
-				.getModelData(), industry);
-		
+		BeanUtils.copyProperties((Industry) auditHeader.getAuditDetail().getModelData(), industry);
+
 		getIndustryDAO().delete(industry, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(industryDAO.getIndustryById(industry.getIndustryCode(), ""));
 		}
@@ -275,13 +263,10 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getIndustryDAO().delete with parameters
-	 * industry,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTIndustries by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getIndustryDAO().delete with parameters industry,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTIndustries by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -307,10 +292,8 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -318,7 +301,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -327,16 +310,15 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getGenderDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getGenderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
 		// Get the model object.
@@ -344,10 +326,8 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		String code = industry.getIndustryCode();
 
 		// Check the unique keys.
-		if (industry.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())
-				&& industryDAO.isDuplicateKey(code, industry.isWorkflow() ? TableType.BOTH_TAB
-						: TableType.MAIN_TAB)) {
+		if (industry.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())
+				&& industryDAO.isDuplicateKey(code, industry.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_IndustryCode") + ": " + code;
 
@@ -357,7 +337,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
-		return auditDetail;	
+		return auditDetail;
 	}
 
 }

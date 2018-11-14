@@ -20,10 +20,15 @@ import com.pennant.backend.model.systemmasters.Academic;
  */
 public interface AcademicService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Academic getAcademicById(long academicID);
+
 	Academic getApprovedAcademicById(long academicID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

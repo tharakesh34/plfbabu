@@ -68,7 +68,7 @@ public class RateDetail implements Serializable {
 		super();
 	}
 
-	public RateDetail(String baseRateCode,String currency, String splRateCode, BigDecimal margin, Date valueDate) {
+	public RateDetail(String baseRateCode, String currency, String splRateCode, BigDecimal margin, Date valueDate) {
 		super();
 		this.baseRateCode = baseRateCode;
 		this.currency = currency;
@@ -80,10 +80,11 @@ public class RateDetail implements Serializable {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getBaseRateCode() {
 		return baseRateCode;
 	}
+
 	public void setBaseRateCode(String baseRateCode) {
 		this.baseRateCode = baseRateCode;
 	}
@@ -91,6 +92,7 @@ public class RateDetail implements Serializable {
 	public String getCurrency() {
 		return currency;
 	}
+
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
@@ -98,6 +100,7 @@ public class RateDetail implements Serializable {
 	public String getSplRateCode() {
 		return splRateCode;
 	}
+
 	public void setSplRateCode(String splRateCode) {
 		this.splRateCode = splRateCode;
 	}
@@ -108,6 +111,7 @@ public class RateDetail implements Serializable {
 		}
 		return margin;
 	}
+
 	public void setMargin(BigDecimal margin) {
 		this.margin = margin;
 	}
@@ -115,6 +119,7 @@ public class RateDetail implements Serializable {
 	public Date getValueDate() {
 		return valueDate;
 	}
+
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
@@ -122,6 +127,7 @@ public class RateDetail implements Serializable {
 	public BigDecimal getBaseRefRate() {
 		return baseRefRate;
 	}
+
 	public void setBaseRefRate(BigDecimal baseRefRate) {
 		this.baseRefRate = baseRefRate;
 	}
@@ -129,6 +135,7 @@ public class RateDetail implements Serializable {
 	public BigDecimal getSplRefRate() {
 		return splRefRate;
 	}
+
 	public void setSplRefRate(BigDecimal splRefRate) {
 		this.splRefRate = splRefRate;
 	}
@@ -136,6 +143,7 @@ public class RateDetail implements Serializable {
 	public BigDecimal getNetRefRateDeposit() {
 		return netRefRateDeposit;
 	}
+
 	public void setNetRefRateDeposit(BigDecimal netRefRateDeposit) {
 		this.netRefRateDeposit = netRefRateDeposit;
 	}
@@ -143,6 +151,7 @@ public class RateDetail implements Serializable {
 	public BigDecimal getNetRefRateLoan() {
 		return netRefRateLoan;
 	}
+
 	public void setNetRefRateLoan(BigDecimal netRefRateLoan) {
 		this.netRefRateLoan = netRefRateLoan;
 	}
@@ -150,6 +159,7 @@ public class RateDetail implements Serializable {
 	public ErrorDetail getErrorDetails() {
 		return errorDetails;
 	}
+
 	public void setErrorDetails(ErrorDetail errorDetails) {
 		this.errorDetails = errorDetails;
 	}

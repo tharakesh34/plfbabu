@@ -70,10 +70,11 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/Administration/SecurityOperation/securityoperationDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Administration/SecurityOperation/securityoperationDialog.zul
+ * file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> {
@@ -83,29 +84,26 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	private static final Logger logger = Logger.getLogger(SecurityOperationDialogCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	
-	protected Window window_SecurityOperationDialog;                // autowired
-	protected Textbox    oprCode;                                   // autoWired
-	protected Textbox    oprDesc;                                   // autoWired
-	protected Row        statusRow;                                 // autoWired
-	
-	
-	/* not auto wired variables*/
-	private SecurityOperation securityOperation;                           // over handed per parameter
+
+	protected Window window_SecurityOperationDialog; // autowired
+	protected Textbox oprCode; // autoWired
+	protected Textbox oprDesc; // autoWired
+	protected Row statusRow; // autoWired
+
+	/* not auto wired variables */
+	private SecurityOperation securityOperation; // over handed per parameter
 	private transient SecurityOperationListCtrl securityOperationListCtrl; // over handed per parameter
 	private transient SecurityOperationDAO securityOperationDAO;
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient SecurityOperationService securityOperationService;
-	private transient PagedListService      pagedListService;
+	private transient PagedListService pagedListService;
 
 	/**
 	 * default constructor.<br>
@@ -124,9 +122,8 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SecurityOperation object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SecurityOperation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -136,11 +133,11 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 
 		// Set the page level components.
 		setPageComponents(window_SecurityOperationDialog);
-		
+
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("SecurityOperation")) {
 			this.securityOperation = (SecurityOperation) arguments.get("SecurityOperation");
-			SecurityOperation befImage =new SecurityOperation();
+			SecurityOperation befImage = new SecurityOperation();
 			BeanUtils.copyProperties(this.securityOperation, befImage);
 			this.securityOperation.setBefImage(befImage);
 			setSecurityOperation(this.securityOperation);
@@ -148,18 +145,18 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 			setSecurityOperation(null);
 		}
 
-		doLoadWorkFlow(this.securityOperation.isWorkflow(),this.securityOperation.getWorkflowId(),this.securityOperation.getNextTaskId());
+		doLoadWorkFlow(this.securityOperation.isWorkflow(), this.securityOperation.getWorkflowId(),
+				this.securityOperation.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "SecurityOperationDialog");
 		} else {
 			getUserWorkspace().allocateAuthorities(super.pageRightName);
 		}
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
-
 
 		// READ OVERHANDED parameters !
 		// we get the securityGroupListWindow controller. So we have access
@@ -186,10 +183,10 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		this.oprCode.setMaxlength(50);
 		this.oprDesc.setMaxlength(100);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			this.statusRow.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 			this.statusRow.setVisible(false);
 		}
@@ -201,12 +198,11 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		getUserWorkspace().allocateAuthorities("SecurityOperationDialog",getRole());
+		getUserWorkspace().allocateAuthorities("SecurityOperationDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SecurityOperationList_New"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SecurityOperationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SecurityOperationDialog_btnDelete"));
@@ -326,19 +322,19 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 
 		try {
 			aSecurityOperation.setOprCode(this.oprCode.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aSecurityOperation.setOprDesc(this.oprDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -351,8 +347,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityOperation
 	 * @throws InterruptedException
@@ -367,22 +362,22 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 			this.oprCode.focus();
 		} else {
 			this.oprCode.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
 		}
-		if(!isWorkFlowEnabled()){
+		if (!isWorkFlowEnabled()) {
 			this.userAction.setVisible(false);
 		}
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityOperation);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -396,11 +391,15 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	private void doSetValidation() {
 		logger.debug("Entering ");
 		setValidationOn(true);
-		if (!this.oprCode.isReadonly()){
-			this.oprCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityOperationDialog_OprCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+		if (!this.oprCode.isReadonly()) {
+			this.oprCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityOperationDialog_OprCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
-		if (!this.oprDesc.isReadonly()){
-			this.oprDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityOperationDialog_OprDescription.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.oprDesc.isReadonly()) {
+			this.oprDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SecurityOperationDialog_OprDescription.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving ");
 	}
@@ -415,7 +414,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		this.oprDesc.setConstraint("");
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -426,11 +425,11 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		this.oprDesc.setErrorMessage("");
 		logger.debug("Leaving ");
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ CRUD operations +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	
+
 	/**
 	 * Deletes a SecurityOperation object from database.<br>
 	 * 
@@ -440,60 +439,61 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		logger.debug("Entering ");
 		final SecurityOperation aSecurityOperation = new SecurityOperation();
 		BeanUtils.copyProperties(getSecurityOperation(), aSecurityOperation);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") 
-		+ "\n\n --> "+Labels.getLabel("label_SecurityOperationDialog_OprCode.value")+ " : " + aSecurityOperation.getOprCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SecurityOperationDialog_OprCode.value") + " : "
+				+ aSecurityOperation.getOprCode();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aSecurityOperation.getRecordType())){
-				aSecurityOperation.setVersion(aSecurityOperation.getVersion()+1);
+			if (StringUtils.isBlank(aSecurityOperation.getRecordType())) {
+				aSecurityOperation.setVersion(aSecurityOperation.getVersion() + 1);
 				aSecurityOperation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aSecurityOperation.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 			try {
-				if(doProcess(aSecurityOperation,tranType)){
+				if (doProcess(aSecurityOperation, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				showMessage(e);
 			}
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
-		if (getSecurityOperation().isNewRecord()){
+		if (getSecurityOperation().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.oprCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.oprDesc.setReadonly(isReadOnly("SecurityOperationDialog_operationDescription"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.securityOperation.isNewRecord()){
+			if (this.securityOperation.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 		logger.debug("Leaving ");
@@ -507,12 +507,12 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		this.oprCode.setReadonly(true);
 		this.oprDesc.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		if(isWorkFlowEnabled()){ 
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -553,30 +553,30 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		// Do data level validations here
 
 		isNew = aSecurityOperation.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aSecurityOperation.getRecordType())){
-				aSecurityOperation.setVersion(aSecurityOperation.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aSecurityOperation.getRecordType())) {
+				aSecurityOperation.setVersion(aSecurityOperation.getVersion() + 1);
+				if (isNew) {
 					aSecurityOperation.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aSecurityOperation.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSecurityOperation.setNewRecord(true);
 				}
 			}
-		}else{
-			aSecurityOperation.setVersion(aSecurityOperation.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aSecurityOperation.setVersion(aSecurityOperation.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 		// save it to database
 		try {
-			if(doProcess(aSecurityOperation,tranType)){
+			if (doProcess(aSecurityOperation, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -587,17 +587,17 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	}
 
 	/**
-	 * This Method used for setting all workFlow details from userWorkSpace 
-	 * and setting audit details to auditHeader
+	 * This Method used for setting all workFlow details from userWorkSpace and setting audit details to auditHeader
+	 * 
 	 * @param aSecurityOperation
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(SecurityOperation aSecurityOperation,String tranType){
+	private boolean doProcess(SecurityOperation aSecurityOperation, String tranType) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aSecurityOperation.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityOperation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -626,19 +626,19 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 				}
 			}
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
-							nextRoleCode =nextRoleCode.concat(",");
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -648,82 +648,84 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 			aSecurityOperation.setRoleCode(getRole());
 			aSecurityOperation.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aSecurityOperation, tranType);
+			auditHeader = getAuditHeader(aSecurityOperation, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aSecurityOperation);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aSecurityOperation, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					auditHeader = getAuditHeader(aSecurityOperation, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aSecurityOperation, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aSecurityOperation, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving ");
 		return processCompleted;
 	}
 
 	/**
-	 * This Method used for calling the all Database  Operations from the service By
-	 *  passing the  auditHeader and operationRefs(Method) as String
+	 * This Method used for calling the all Database Operations from the service By passing the auditHeader and
+	 * operationRefs(Method) as String
+	 * 
 	 * @param auditHeader
 	 * @param method
 	 * @return
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		SecurityOperation aSecurityOperation=(SecurityOperation)auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		SecurityOperation aSecurityOperation = (SecurityOperation) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
 
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getSecurityOperationService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getSecurityOperationService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getSecurityOperationService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getSecurityOperationService().doApprove(auditHeader);
-						if(aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getSecurityOperationService().doReject(auditHeader);
-						if(aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SecurityOperationDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(this.window_SecurityOperationDialog,auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_SecurityOperationDialog, auditHeader);
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.securityOperation),true);
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.securityOperation), true);
 					}
 				}
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -741,28 +743,30 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	/**
-   	 *	This method creates and returns Audit header Object
+	 * This method creates and returns Audit header Object
+	 * 
 	 * @param aSecurityOperation
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(SecurityOperation aSecurityOperation, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityOperation.getBefImage(),aSecurityOperation);   
-		return new AuditHeader(String.valueOf(aSecurityOperation.getId()),null,null,null
-				,auditDetail,aSecurityOperation.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(SecurityOperation aSecurityOperation, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityOperation.getBefImage(), aSecurityOperation);
+		return new AuditHeader(String.valueOf(aSecurityOperation.getId()), null, null, null, auditDetail,
+				aSecurityOperation.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * This method shows message box with error message
+	 * 
 	 * @param e
 	 */
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering ");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_SecurityOperationDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -771,25 +775,23 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	}
 
 	/**
-	 * when user clicks on "Notes" button.	
+	 * when user clicks on "Notes" button.
 	 *
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.securityOperation);
-		
+
 	}
 
-		
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getSecurityOperationListCtrl().search();
 	}
-	
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.securityOperation.getOprID());
@@ -802,6 +804,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -810,8 +813,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		return securityOperationService;
 	}
 
-	public void setSecurityOperationService(
-			SecurityOperationService securityOperationService) {
+	public void setSecurityOperationService(SecurityOperationService securityOperationService) {
 		this.securityOperationService = securityOperationService;
 	}
 
@@ -827,14 +829,14 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		return securityOperationListCtrl;
 	}
 
-	public void setSecurityOperationListCtrl(
-			SecurityOperationListCtrl securityOperationListCtrl) {
+	public void setSecurityOperationListCtrl(SecurityOperationListCtrl securityOperationListCtrl) {
 		this.securityOperationListCtrl = securityOperationListCtrl;
 	}
 
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}

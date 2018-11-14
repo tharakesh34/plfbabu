@@ -71,8 +71,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>ManualAdvise</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>ManualAdvise</code> with set of CRUD operations.
  */
 public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements ManualAdviseDAO {
 	private static Logger logger = Logger.getLogger(ManualAdviseDAOImpl.class);
@@ -318,7 +317,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("update ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append(" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,  ");
+		sql.append(
+				" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,  ");
 		sql.append(
 				" PaidCGST=PaidCGST + :PaidCGST, PaidSGST=PaidSGST + :PaidSGST, PaidUGST=PaidUGST + :PaidUGST, PaidIGST=PaidIGST + :PaidIGST ");
 		sql.append(" WHERE AdviseID = :AdviseID ");
@@ -421,7 +421,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, int adviseType, String type) {
+	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, int adviseType,
+			String type) {
 		logger.debug("Entering");
 
 		ManualAdviseMovements movements = new ManualAdviseMovements();
@@ -581,8 +582,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	/**
-	 * Method for Deleting Reserved Amounts against Advise ID Processed for
-	 * Utilization
+	 * Method for Deleting Reserved Amounts against Advise ID Processed for Utilization
 	 */
 	@Override
 	public void deletePayableReserve(long receiptID, long payAgainstID) {
@@ -845,7 +845,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	//MIGRATION PURPOSE
 	@Override
-	public List<ManualAdvise> getManualAdvisesByFinRef(String finReference , String type) {
+	public List<ManualAdvise> getManualAdvisesByFinRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -878,7 +878,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			// TODO: handle exception
 			return null;
 		} finally {
-		}		
+		}
 	}
 
 	@Override
@@ -888,8 +888,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		MapSqlParameterSource source = null;
 
-		StringBuilder selectSql = new StringBuilder(" Select T2.MovementID, T2.AdviseID, T2.MovementDate, T2.MovementAmount, T2.PaidAmount, ");
-		selectSql.append(" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST ");
+		StringBuilder selectSql = new StringBuilder(
+				" Select T2.MovementID, T2.AdviseID, T2.MovementDate, T2.MovementAmount, T2.PaidAmount, ");
+		selectSql.append(
+				" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST ");
 		selectSql.append(" From ManualAdvise");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" T1");
@@ -925,12 +927,16 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" select MA.adviseID,MA.AdviseType,MA.FeeTypeID,MA.Sequence,MA.finReference, MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount balanceAmt,");
-		sql.append(" MA.adviseAmount,MA.PaidAmount, MA.WaivedAmount,MA.ValueDate,MA.PostDate, MA.BounceID,MA.ReceiptID,MA.ReservedAmt,");
-
-		sql.append(" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId," );
 		sql.append(
-				"FT.feetypecode,FT.FeeTypeDesc from MANUALADVISE_Aview  MA Left join FEETYPES FT on MA.FEETYPEID=FT.FEETYPEID where (MA.advisetype="+FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+				" select MA.adviseID,MA.AdviseType,MA.FeeTypeID,MA.Sequence,MA.finReference, MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount balanceAmt,");
+		sql.append(
+				" MA.adviseAmount,MA.PaidAmount, MA.WaivedAmount,MA.ValueDate,MA.PostDate, MA.BounceID,MA.ReceiptID,MA.ReservedAmt,");
+
+		sql.append(
+				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
+		sql.append(
+				"FT.feetypecode,FT.FeeTypeDesc from MANUALADVISE_Aview  MA Left join FEETYPES FT on MA.FEETYPEID=FT.FEETYPEID where (MA.advisetype="
+						+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 		sql.append(" and (MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount) >0) and FinReference = :FinReference");
 		sql.append(" ORDER by MA.adviseID");
 		logger.trace(Literal.SQL + sql.toString());
@@ -960,7 +966,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	 * @param tableType
 	 */
 	@Override
-	public void updateWaivedAmount(ManualAdvise advise,TableType tableType) {
+	public void updateWaivedAmount(ManualAdvise advise, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("update ManualAdvise");
@@ -975,4 +981,4 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.LEAVING);
 	}
 
-}	
+}

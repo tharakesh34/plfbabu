@@ -53,10 +53,15 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface CustomerCategoryService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CustomerCategory getCustomerCategoryById(String id);
+
 	CustomerCategory getApprovedCustomerCategoryById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

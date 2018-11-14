@@ -79,7 +79,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.financemanagement.liability.model.LiabilityRequestListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperators;
@@ -88,11 +87,12 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/Finance
- * Management/LiabilityRequest/LiabilityRequestList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Finance Management/LiabilityRequest/LiabilityRequestList.zul
+ * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -100,52 +100,52 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(LiabilityRequestListCtrl.class);
 
-	protected Window window_LiabilityRequestList; 
-	protected Borderlayout borderLayout_LiabilityRequestList; 
-	protected Paging pagingLiabilityRequestList; 
-	protected Listbox listBoxLiabilityRequest; 
+	protected Window window_LiabilityRequestList;
+	protected Borderlayout borderLayout_LiabilityRequestList;
+	protected Paging pagingLiabilityRequestList;
+	protected Listbox listBoxLiabilityRequest;
 
 	// List headers
-	protected Listheader listheader_FinReference; 
-	protected Listheader listheader_InitiatedBy; 
-	protected Listheader listheader_FinType; 
-	protected Listheader listheader_FinBranch; 
-	protected Listheader listheader_FinStartDate; 
-	protected Listheader listheader_MaturityDate; 
-	protected Listheader listheader_FinAmount; 
-	protected Listheader listheader_FinCcy; 
-	protected Listheader listheader_CustCIF; 
-	protected Listheader listheader_NumberOfTerms; 
+	protected Listheader listheader_FinReference;
+	protected Listheader listheader_InitiatedBy;
+	protected Listheader listheader_FinType;
+	protected Listheader listheader_FinBranch;
+	protected Listheader listheader_FinStartDate;
+	protected Listheader listheader_MaturityDate;
+	protected Listheader listheader_FinAmount;
+	protected Listheader listheader_FinCcy;
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_NumberOfTerms;
 
-	protected Button button_LiabilityRequestList_NewLiabilityRequest; 
-	protected Button button_LiabilityRequestList_LiabilityRequestSearch; 
+	protected Button button_LiabilityRequestList_NewLiabilityRequest;
+	protected Button button_LiabilityRequestList_LiabilityRequestSearch;
 
 	private LiabilityRequestService liabilityRequestService;
 	private FinanceDetailService financeDetailService;
 	private WorkFlowDetails workFlowDetails = null;
 	private CustomerDetailsService customerDetailsService;
 
-	protected Textbox finReference; 
-	protected Textbox custCIF; 
-	protected Textbox finType; 
-	protected Textbox finCcy; 
-	protected Textbox finBranch; 
-	protected Listbox sortOperator_FinReference; 
-	protected Listbox sortOperator_custCIF; 
-	protected Listbox sortOperator_finType; 
-	protected Listbox sortOperator_finCcy; 
-	protected Listbox sortOperator_finBranch; 
+	protected Textbox finReference;
+	protected Textbox custCIF;
+	protected Textbox finType;
+	protected Textbox finCcy;
+	protected Textbox finBranch;
+	protected Listbox sortOperator_FinReference;
+	protected Listbox sortOperator_custCIF;
+	protected Listbox sortOperator_finType;
+	protected Listbox sortOperator_finCcy;
+	protected Listbox sortOperator_finBranch;
 
-	protected Longbox initiatedBy; 
-	protected Listbox sortOperator_InitiatedBy; 
+	protected Longbox initiatedBy;
+	protected Listbox sortOperator_InitiatedBy;
 
-	protected Textbox moduleType; 
+	protected Textbox moduleType;
 	protected Tabbox tabbox;
 
 	private String moduleDefiner = "";
 	private String workflowCode = "";
 	private String eventCodeRef = "";
-	
+
 	private int oldVar_sortOperator_finReference;
 
 	// NEEDED for the ReUse in the SearchWindow
@@ -167,15 +167,16 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		super.queueTableName = "FinLiabilityReq_View";
 
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
 		searchObject.addFilter(new Filter("FinEvent", moduleDefiner, Filter.OP_EQUAL));
 		searchObject.addWhereClause(getUsrFinAuthenticationQry(false));
-		/*searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),
-				true);*/
-		
+		/*
+		 * searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), true);
+		 */
+
 		String rolecodeList = "";
 		buildedWhereCondition = "";
 		if (getUserWorkspace().getUserRoles() != null && !getUserWorkspace().getUserRoles().isEmpty()) {
@@ -210,12 +211,10 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 
 		}
 		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
-		searchObject.addWhereClause(buildedWhereCondition);
+			searchObject.addWhereClause(buildedWhereCondition);
 		}
 	}
-	
-	
-	
+
 	public void onCreate$window_LiabilityRequestList(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -234,22 +233,23 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		}
 
 		// Set the page level components.
-		setPageComponents(window_LiabilityRequestList, borderLayout_LiabilityRequestList, listBoxLiabilityRequest, pagingLiabilityRequestList);
+		setPageComponents(window_LiabilityRequestList, borderLayout_LiabilityRequestList, listBoxLiabilityRequest,
+				pagingLiabilityRequestList);
 		setItemRender(new LiabilityRequestListModelItemRenderer());
 
-		boolean accessToCreateNewNOC = getFinanceDetailService().checkFirstTaskOwnerAccess(getUserWorkspace().getUserRoleSet(),
-				workflowCode, PennantConstants.WORFLOW_MODULE_FINANCE);
+		boolean accessToCreateNewNOC = getFinanceDetailService().checkFirstTaskOwnerAccess(
+				getUserWorkspace().getUserRoleSet(), workflowCode, PennantConstants.WORFLOW_MODULE_FINANCE);
 		setFirstTask(accessToCreateNewNOC);
-		
+
 		// Register buttons and fields.
-		registerButton(button_LiabilityRequestList_NewLiabilityRequest, "button_LiabilityRequestList_NewLiabilityRequest", true);
+		registerButton(button_LiabilityRequestList_NewLiabilityRequest,
+				"button_LiabilityRequestList_NewLiabilityRequest", true);
 		registerButton(button_LiabilityRequestList_LiabilityRequestSearch);
 
 		registerField("Id");
-		registerField("FinReference", listheader_FinReference, SortOrder.ASC,finReference,sortOperator_FinReference,
+		registerField("FinReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_FinReference,
 				Operators.MULTISELECT);
-		registerField("InitiatedBy",initiatedBy, SortOrder.NONE,  sortOperator_InitiatedBy,
-				Operators.STRING);
+		registerField("InitiatedBy", initiatedBy, SortOrder.NONE, sortOperator_InitiatedBy, Operators.STRING);
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF,
 				Operators.MULTISELECT);
 		registerField("FinType", listheader_FinType, SortOrder.NONE, finType, sortOperator_finType,
@@ -257,15 +257,15 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		registerField("finCcy", listheader_FinCcy, SortOrder.NONE, finCcy, sortOperator_finCcy, Operators.MULTISELECT);
 		registerField("finBranch", listheader_FinBranch, SortOrder.NONE, finBranch, sortOperator_finBranch,
 				Operators.MULTISELECT);
-		registerField("FinStartDate",listheader_FinStartDate,SortOrder.NONE);
-		registerField("FinEvent",SortOrder.NONE);
-		registerField("MaturityDate",listheader_MaturityDate,SortOrder.NONE);
-		registerField("NumberOfTerms",listheader_NumberOfTerms,SortOrder.NONE);
-		registerField("FinAmount",listheader_FinAmount,SortOrder.NONE);
+		registerField("FinStartDate", listheader_FinStartDate, SortOrder.NONE);
+		registerField("FinEvent", SortOrder.NONE);
+		registerField("MaturityDate", listheader_MaturityDate, SortOrder.NONE);
+		registerField("NumberOfTerms", listheader_NumberOfTerms, SortOrder.NONE);
+		registerField("FinAmount", listheader_FinAmount, SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -290,7 +290,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		search();
 	}
 
-	
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
@@ -311,7 +310,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -337,7 +335,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 
 			String userRole = aLiabilityRequest.getNextRoleCode();
 			if (StringUtils.isBlank(aLiabilityRequest.getRecordType())) {
-				
+
 				// Set Workflow Details
 				setWorkflowDetails(aLiabilityRequest.getFinType());
 
@@ -349,21 +347,19 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 				if (StringUtils.isBlank(userRole)) {
 					userRole = workFlowDetails.getFirstTaskOwner();
 				}
-				
+
 				aLiabilityRequest.setWorkflowId(workFlowDetails.getWorkFlowId());
-				
-				
-				
+
 			}
 
 			// Fetch Total Finance Details Object
-			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(
-					aLiabilityRequest.getFinReference(), "_View", false);
+			FinanceDetail financeDetail = getFinanceDetailService()
+					.getFinSchdDetailById(aLiabilityRequest.getFinReference(), "_View", false);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
 			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
-			financeDetail.setDocumentDetailsList(getFinanceDetailService().getFinDocByFinRef(
-					aLiabilityRequest.getFinReference(), moduleDefiner, "_View"));
+			financeDetail.setDocumentDetailsList(getFinanceDetailService()
+					.getFinDocByFinRef(aLiabilityRequest.getFinReference(), moduleDefiner, "_View"));
 			financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, userRole, "DDE",
 					eventCodeRef, moduleDefiner, false);
 			if (financeDetail != null) {
@@ -388,10 +384,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 
 		logger.debug("Leaving");
 	}
-
-		
-
-
 
 	/**
 	 * Displays the dialog page with the required parameters as map.
@@ -452,6 +444,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * When user clicks on button "btnSearchFinRef" button
 	 * 
@@ -462,26 +455,28 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		logger.debug("Entering " + event.toString());
 		Filter[] module = new Filter[1];
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
-			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_NOCISSUANCE, Filter.OP_EQUAL);
-		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ)){
-			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_LIABILITYREQ, Filter.OP_EQUAL);
-		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE)) {
-			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_TIMELYCLOSURE, Filter.OP_EQUAL);
-		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCLAIM)) {
-			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_INSCLAIM, Filter.OP_EQUAL);
+			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_NOCISSUANCE, Filter.OP_EQUAL);
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ)) {
+			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_LIABILITYREQ, Filter.OP_EQUAL);
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE)) {
+			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_TIMELYCLOSURE, Filter.OP_EQUAL);
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_INSCLAIM, Filter.OP_EQUAL);
 		}
 		if (this.oldVar_sortOperator_finReference == Filter.OP_IN
 				|| this.oldVar_sortOperator_finReference == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_LiabilityRequestList,
-					"LiabilityRequest", this.finReference.getValue(), module,StringUtils.trimToNull(this.searchObject.getWhereClause()));
+					"LiabilityRequest", this.finReference.getValue(), module,
+					StringUtils.trimToNull(this.searchObject.getWhereClause()));
 			if (selectedValues != null) {
 				this.finReference.setValue(selectedValues);
 			}
 
 		} else {
 
-			Object dataObject = ExtendedSearchListBox.show(this.window_LiabilityRequestList, "LiabilityRequest",this.finReference.getValue(),module,StringUtils.trimToNull(this.searchObject.getWhereClause()));
+			Object dataObject = ExtendedSearchListBox.show(this.window_LiabilityRequestList, "LiabilityRequest",
+					this.finReference.getValue(), module, StringUtils.trimToNull(this.searchObject.getWhereClause()));
 			if (dataObject instanceof String) {
 				this.finReference.setValue("");
 			} else {
@@ -493,11 +488,12 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	public void onSelect$sortOperator_finReference(Event event) {
-		this.oldVar_sortOperator_finReference = doChangeStringOperator(sortOperator_FinReference, oldVar_sortOperator_finReference, this.finReference);
+		this.oldVar_sortOperator_finReference = doChangeStringOperator(sortOperator_FinReference,
+				oldVar_sortOperator_finReference, this.finReference);
 	}
-	
+
 	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
 
 		final Listitem item = listbox.getSelectedItem();
@@ -517,16 +513,15 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	}
 
 	/**
-	 * When user clicks on "btnSearchBranch" button This method displays
-	 * ExtendedSearchListBox with branch details
+	 * When user clicks on "btnSearchBranch" button This method displays ExtendedSearchListBox with branch details
 	 * 
 	 * @param event
 	 */
 	public void onClick$btnSearchBranch(Event event) {
 		logger.debug("Entering  " + event.toString());
-		
+
 		setSearchValue(sortOperator_finBranch, this.finBranch, "Branch");
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -539,7 +534,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		logger.debug("Entering " + event.toString());
 
 		setSearchValue(sortOperator_finType, this.finType, "FinanceType");
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -552,7 +547,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		logger.debug("Entering " + event.toString());
 
 		setSearchValue(sortOperator_finCcy, this.finCcy, "Currency");
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -569,7 +564,8 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -583,13 +579,12 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		logger.debug("Leaving ");
 	}
 
-
 	/**
 	 * Method to check and set module definer value
 	 * 
 	 * @param tab
 	 *            (Tab)
-	 * */
+	 */
 	private void checkAndSetModDef(Tabbox tabbox) {
 		logger.debug("Entering");
 		// filterList = new ArrayList<Filter>();
@@ -623,7 +618,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		logger.debug("Leaving");
 	}
 
-
 	public void setLiabilityRequestService(LiabilityRequestService liabilityRequestService) {
 		this.liabilityRequestService = liabilityRequestService;
 	}
@@ -632,7 +626,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		return this.liabilityRequestService;
 	}
 
-	
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}

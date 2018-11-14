@@ -50,17 +50,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>WeekendMaster table</b>.<br>
  *
  */
-public class WeekendMaster  extends AbstractWorkflowEntity {
-	
+public class WeekendMaster extends AbstractWorkflowEntity {
+
 	private static final long serialVersionUID = -750235755863660231L;
-	
+
 	private String weekendCode;
 	private String weekendDesc;
 	private String weekend;
 	private boolean newRecord;
 	private WeekendMaster befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -77,58 +77,61 @@ public class WeekendMaster  extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return weekendCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.weekendCode = id;
 	}
-	
+
 	public String getWeekendCode() {
 		return weekendCode;
 	}
+
 	public void setWeekendCode(String weekendCode) {
 		this.weekendCode = weekendCode;
 	}
-	
 
-	
 	public String getWeekendDesc() {
 		return weekendDesc;
 	}
+
 	public void setWeekendDesc(String weekendDesc) {
 		this.weekendDesc = weekendDesc;
 	}
-	
+
 	public String getWeekend() {
 		return weekend;
 	}
+
 	public void setWeekend(String weekend) {
 		this.weekend = weekend;
 	}
-	
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
-	public WeekendMaster getBefImage(){
+
+	public WeekendMaster getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(WeekendMaster beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(WeekendMaster beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-
 
 }

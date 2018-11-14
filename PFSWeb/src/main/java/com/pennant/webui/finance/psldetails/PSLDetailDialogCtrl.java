@@ -95,43 +95,40 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
  */
-public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
+public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 	private static final long serialVersionUID = 1L;
-	private static final  Logger logger = Logger.getLogger(PSLDetailDialogCtrl.class);
-	
+	private static final Logger logger = Logger.getLogger(PSLDetailDialogCtrl.class);
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_PSLDetailDialog; 
-	protected Space			space_FinReference;
-	protected Textbox 		finReference; 
-    protected Combobox 		categoryCode; 
-    protected ExtendedCombobox 		weakerSection; 
- 	protected Combobox 		landHolding; 
- 	protected Combobox 		landArea; 
- 	protected Combobox 		sector; 
-	protected CurrencyBox	amount; 
-    protected Combobox 		subCategory; 
-    protected ExtendedCombobox 		purpose; 
-    protected ExtendedCombobox 		endUse; 
-    protected Uppercasebox    loanPurpose;
-    protected CurrencyBox  eligibiltyAmount;
-    protected Button       btnLoanPurpose;
-	protected Groupbox		finBasicdetails;
-	protected Groupbox		gb_EndUseDetails;
-	protected Space         space_LandArea;
+	protected Window window_PSLDetailDialog;
+	protected Space space_FinReference;
+	protected Textbox finReference;
+	protected Combobox categoryCode;
+	protected ExtendedCombobox weakerSection;
+	protected Combobox landHolding;
+	protected Combobox landArea;
+	protected Combobox sector;
+	protected CurrencyBox amount;
+	protected Combobox subCategory;
+	protected ExtendedCombobox purpose;
+	protected ExtendedCombobox endUse;
+	protected Uppercasebox loanPurpose;
+	protected CurrencyBox eligibiltyAmount;
+	protected Button btnLoanPurpose;
+	protected Groupbox finBasicdetails;
+	protected Groupbox gb_EndUseDetails;
+	protected Space space_LandArea;
 	private PSLDetail pSLDetail; // overhanded per param
-	private FinBasicDetailsCtrl						finBasicDetailsCtrl;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private boolean fromLoan = false;
-	private Object									financeMainDialogCtrl	= null;
+	private Object financeMainDialogCtrl = null;
 	Tab parenttab = null;
 	private boolean enquirymode = false;
 	protected Row row_Category;
@@ -147,18 +144,18 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 
 	private transient PSLDetailListCtrl pSLDetailListCtrl; // overhanded per param
 	private transient PSLDetailService pSLDetailService;
-	
-	private List<ValueLabel> listLandHolding=PennantStaticListUtil.getYesNo();
+
+	private List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
 	//private List<ValueLabel> listLandArea=PennantStaticListUtil.getYesNo();
 	//private List<ValueLabel> listSector=PennantStaticListUtil.getYesNo();
-	private List<ValueLabel> categoryList=PennantAppUtil.getPslCategoryList();
-	private List<ValueLabel> landAreaList=PennantStaticListUtil.getLandAreaList();
-	private List<ValueLabel> subCategoryList=PennantStaticListUtil.getSubCategoryList();
-	private List<ValueLabel> subCategoryListGeneral=PennantStaticListUtil.getSubCategoryGeneralList();
-	private List<ValueLabel> sectorList=PennantStaticListUtil.getPSLSectorList();
-	private List<ValueLabel> subSectorList=PennantStaticListUtil.getSubSectorList();
-	private Map<String, Object> rules= new HashMap<>();
-	
+	private List<ValueLabel> categoryList = PennantAppUtil.getPslCategoryList();
+	private List<ValueLabel> landAreaList = PennantStaticListUtil.getLandAreaList();
+	private List<ValueLabel> subCategoryList = PennantStaticListUtil.getSubCategoryList();
+	private List<ValueLabel> subCategoryListGeneral = PennantStaticListUtil.getSubCategoryGeneralList();
+	private List<ValueLabel> sectorList = PennantStaticListUtil.getPSLSectorList();
+	private List<ValueLabel> subSectorList = PennantStaticListUtil.getSubSectorList();
+	private Map<String, Object> rules = new HashMap<>();
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -170,10 +167,10 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	protected void doSetProperties() {
 		super.pageRightName = "PSLDetailDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(this.pSLDetail.getFinReference());
+		StringBuffer referenceBuffer = new StringBuffer(this.pSLDetail.getFinReference());
 		return referenceBuffer.toString();
 	}
 
@@ -184,7 +181,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	public void setRules(Map<String, Object> rules) {
 		this.rules = rules;
 	}
-	
+
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -196,32 +193,30 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_PSLDetailDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_PSLDetailDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.pSLDetail = (PSLDetail) arguments.get("pSLDetail");
-			
+
 			if (arguments.containsKey("fromLoan")) {
 				fromLoan = (Boolean) arguments.get("fromLoan");
 			} else {
 				this.pSLDetailListCtrl = (PSLDetailListCtrl) arguments.get("pSLDetailListCtrl");
 			}
-			
+
 			if (arguments.containsKey("enquirymode")) {
-				enquirymode=(boolean)arguments.containsKey("enquirymode");
+				enquirymode = (boolean) arguments.containsKey("enquirymode");
 			}
-			
-			
+
 			if (arguments.containsKey("finHeaderList")) {
 				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 			} else {
 				appendFinBasicDetails(null);
 			}
-			
+
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				setFinanceMainDialogCtrl(arguments.get("financeMainDialogCtrl"));
 			}
@@ -229,7 +224,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			if (arguments.containsKey("tab")) {
 				parenttab = (Tab) arguments.get("tab");
 			}
-			
+
 			if (this.pSLDetail == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -238,20 +233,19 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			PSLDetail pSLDetail = new PSLDetail();
 			BeanUtils.copyProperties(this.pSLDetail, pSLDetail);
 			this.pSLDetail.setBefImage(pSLDetail);
-			
+
 			// Render the page and display the data.
-			doLoadWorkFlow(this.pSLDetail.isWorkflow(), this.pSLDetail.getWorkflowId(),
-					this.pSLDetail.getNextTaskId());
+			doLoadWorkFlow(this.pSLDetail.isWorkflow(), this.pSLDetail.getWorkflowId(), this.pSLDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				if(!enqiryModule){
+				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
-			
+
 			fillComboBox(this.categoryCode, "", categoryList, "");
 			fillComboBox(this.landArea, "", landAreaList, "");
 			fillComboBox(this.sector, "", sectorList, "");
@@ -261,11 +255,10 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			this.groupboxWf.setVisible(false);
 			ArrayList<Object> finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
 
-			/*if ("205".equals(String.valueOf(finHeaderList.get(0)))) {
-				this.gb_EndUseDetails.setVisible(false);
-			} else {
-				this.gb_EndUseDetails.setVisible(false);
-			}*/
+			/*
+			 * if ("205".equals(String.valueOf(finHeaderList.get(0)))) { this.gb_EndUseDetails.setVisible(false); } else
+			 * { this.gb_EndUseDetails.setVisible(false); }
+			 */
 			this.btnCancel.setVisible(false);
 			this.btnNotes.setVisible(false);
 			this.eligibiltyAmount.setReadonly(true);
@@ -273,33 +266,33 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onChange$categoryCode(Event event) {
 		doRemoveValidation();
 		doClearMessage();
 		setWeakerSection();
-		
+
 		setValuesForCategory(categoryCode.getSelectedItem().getValue());
 	}
-	
+
 	public void onChange$subCategory(Event event) {
 		setPurposeForGeneral();
 	}
 
 	private void setPurposeForGeneral() {
-		if("GNL".equals(categoryCode.getSelectedItem().getValue())) {
-			if("EC".equals(subCategory.getSelectedItem().getValue())) {
+		if ("GNL".equals(categoryCode.getSelectedItem().getValue())) {
+			if ("EC".equals(subCategory.getSelectedItem().getValue())) {
 				setpurpose(subCategory.getSelectedItem().getValue());
-			} else if("SI".equals(subCategory.getSelectedItem().getValue())) {
+			} else if ("SI".equals(subCategory.getSelectedItem().getValue())) {
 				setpurpose(subCategory.getSelectedItem().getValue());
-			} else if("RE".equals(subCategory.getSelectedItem().getValue())) {
+			} else if ("RE".equals(subCategory.getSelectedItem().getValue())) {
 				setpurpose(subCategory.getSelectedItem().getValue());
-			} else if("ED".equals(subCategory.getSelectedItem().getValue())) {
+			} else if ("ED".equals(subCategory.getSelectedItem().getValue())) {
 				setpurpose(subCategory.getSelectedItem().getValue());
-			} else if("OT".equals(subCategory.getSelectedItem().getValue())){
+			} else if ("OT".equals(subCategory.getSelectedItem().getValue())) {
 				setpurpose(subCategory.getSelectedItem().getValue());
 			}
 		}
@@ -314,9 +307,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		purposeFilter[0] = new Filter("CategoryCode", categoryCode.getSelectedItem().getValue(), Filter.OP_EQUAL);
 		purposeFilter[1] = new Filter("SubCategoryCode", value, Filter.OP_EQUAL);
 		this.purpose.setFilters(purposeFilter);
-		this.purpose.setValidateColumns(new String[] {"Code","Description"});
-		
-		
+		this.purpose.setValidateColumns(new String[] { "Code", "Description" });
+
 	}
 
 	private void setWeakerSection() {
@@ -327,7 +319,6 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		}
 	}
 
-	
 	private void setValuesForCategory(String value) {
 		if ("AGRI".equals(value)) {
 			this.row_LandHolding.setVisible(true);
@@ -385,7 +376,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			this.landHolding.setValue("");
 			this.landArea.setValue("");
 			this.space_SubCategory.setSclass("mandatory");
-		} else if( "GNL".equals(value)) {
+		} else if ("GNL".equals(value)) {
 			this.row_LandHolding.setVisible(false);
 			this.row_Sector.setVisible(false);
 			this.row_Subcategory.setVisible(true);
@@ -446,29 +437,29 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		Filter purposeFilter[] = new Filter[1];
 		purposeFilter[0] = new Filter("CategoryCode", categoryCode.getSelectedItem().getValue(), Filter.OP_EQUAL);
 		this.purpose.setFilters(purposeFilter);
-		this.purpose.setValidateColumns(new String[] {"Code","Description"});
+		this.purpose.setValidateColumns(new String[] { "Code", "Description" });
 		this.purpose.setMandatoryStyle(true);
 
 	}
-	
+
 	public void onChange$landArea(Event event) {
 		setSubCateogoryValueForAgri();
 	}
-	
+
 	public void onChange$landHolding(Event event) {
 		setSubCateogoryValueForAgri();
 	}
-	
+
 	public void setSubCateogoryValueForAgri() {
 		if ("Agriculture".equals(categoryCode.getValue()) && "Y".equals(landHolding.getSelectedItem().getValue())) {
 			this.space_LandArea.setSclass("mandatory");
-			if (landArea.getSelectedItem()!=null && "1".equals(landArea.getSelectedItem().getValue())) {
+			if (landArea.getSelectedItem() != null && "1".equals(landArea.getSelectedItem().getValue())) {
 				fillComboBox(this.subCategory, "MF", subCategoryList, "");
 				this.subCategory.setDisabled(true);
-			} else if (landArea.getSelectedItem()!=null && "2".equals(landArea.getSelectedItem().getValue())) {
+			} else if (landArea.getSelectedItem() != null && "2".equals(landArea.getSelectedItem().getValue())) {
 				fillComboBox(this.subCategory, "SF", subCategoryList, "");
 				this.subCategory.setDisabled(true);
-			} else if (landArea.getSelectedItem()!=null && "3".equals(landArea.getSelectedItem().getValue())) {
+			} else if (landArea.getSelectedItem() != null && "3".equals(landArea.getSelectedItem().getValue())) {
 				fillComboBox(this.subCategory, "OF", subCategoryList, "");
 				this.subCategory.setDisabled(true);
 			} else {
@@ -477,33 +468,31 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 				this.subCategory.setDisabled(false);
 
 			}
-		} else if("Agriculture".equals(categoryCode.getValue()) && "N".equals(landHolding.getSelectedItem().getValue())) {
+		} else if ("Agriculture".equals(categoryCode.getValue())
+				&& "N".equals(landHolding.getSelectedItem().getValue())) {
 			this.space_LandArea.setSclass("");
 			this.landArea.setValue("");
 			String excludeValues = ",MF,SF,OF,";
 			fillComboBox(this.subCategory, "", subCategoryList, excludeValues);
 			this.subCategory.setDisabled(false);
-			
+
 		}
-		
-		if("Agriculture".equals(categoryCode.getValue())) {
-		this.purpose.setModuleName("PSLPurpose");
-		this.purpose.setValueColumn("Code");
-		this.purpose.setDescColumn("Description");
-		Filter purposeFilter[] = new Filter[1];
-		purposeFilter[0] = new Filter("CategoryCode", categoryCode.getSelectedItem().getValue(), Filter.OP_EQUAL);
-		this.purpose.setFilters(purposeFilter);
-		this.purpose.setValidateColumns(new String[] {"CategoryCode", "SubCategoryCode","Code","Description"});
+
+		if ("Agriculture".equals(categoryCode.getValue())) {
+			this.purpose.setModuleName("PSLPurpose");
+			this.purpose.setValueColumn("Code");
+			this.purpose.setDescColumn("Description");
+			Filter purposeFilter[] = new Filter[1];
+			purposeFilter[0] = new Filter("CategoryCode", categoryCode.getSelectedItem().getValue(), Filter.OP_EQUAL);
+			this.purpose.setFilters(purposeFilter);
+			this.purpose.setValidateColumns(new String[] { "CategoryCode", "SubCategoryCode", "Code", "Description" });
 		}
 	}
-	
-	
-	
+
 	public void onFulfill$amount(Event event) {
 		setSubCateogoryValueForMSMI();
 	}
-	
-	
+
 	public void setSubCateogoryValueForMSMI() {
 		BigDecimal amount = this.amount.getActualValue();
 		if ("MSME".equals(categoryCode.getValue())) {
@@ -540,7 +529,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 						&& amount.compareTo(BigDecimal.valueOf(50000000)) <= 0) {
 					fillComboBox(this.subCategory, "ME", subSectorList, "");
 					this.subCategory.setDisabled(true);
-					
+
 				}
 			} else {
 				//PSD 127735
@@ -553,9 +542,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			setPurpose();
 		}
 	}
-	
-	
-	
+
 	public void onFulfill$purpose(Event event) {
 		logger.debug("Entering");
 
@@ -573,13 +560,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		logger.debug(Literal.ENTERING);
-		
+
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
@@ -591,11 +578,10 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * Method for Adding Flags into Multi Selection Extended box
 	 * 
@@ -618,9 +604,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		} else {
 			dataObject = ExtendedMultipleSearchListBox.show(this.window, "LoanPurpose", loanPurposeMap);
 		}
-		
+
 		BigDecimal amount = BigDecimal.ZERO;
-		
+
 		if (dataObject instanceof String) {
 			this.loanPurpose.setValue(dataObject.toString());
 			this.loanPurpose.setTooltiptext("");
@@ -637,14 +623,15 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 				}
 				this.loanPurpose.setValue(purposeTypes);
 				Object[] loanPurposes = details.values().toArray();
-				
+
 				for (Object object : loanPurposes) {
-					if(object instanceof LoanPurpose){
-						LoanPurpose purpose= (LoanPurpose) object;
-						amount = amount .add(purpose.getEligibleAmount());
+					if (object instanceof LoanPurpose) {
+						LoanPurpose purpose = (LoanPurpose) object;
+						amount = amount.add(purpose.getEligibleAmount());
 					}
 				}
-				this.eligibiltyAmount.setValue(PennantApplicationUtil.formateAmount(amount, CurrencyUtil.getFormat("")));
+				this.eligibiltyAmount
+						.setValue(PennantApplicationUtil.formateAmount(amount, CurrencyUtil.getFormat("")));
 				rules.put("ASL_ELIGABLE_AMOUNT", amount);
 			}
 		}
@@ -652,45 +639,42 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		logger.debug("Leaving " + event.toString());
 	}
 
-
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			this.finReference.setMaxlength(20);
-			this.weakerSection.setModuleName("PSLWeakerSection");
-			this.weakerSection.setValueColumn("Code");
-			this.weakerSection.setDescColumn("Description");
-			this.weakerSection.setValidateColumns(new String[] {"Code", "Description"});
-			this.weakerSection.setMandatoryStyle(true);
-	  		this.amount.setProperties(false,PennantConstants.defaultCCYDecPos);
-	  		this.eligibiltyAmount.setProperties(false,PennantConstants.defaultCCYDecPos);
 
-	  		this.amount.setMandatory(true);
-		/*	this.purpose.setModuleName("PSLPurpose");
-			this.purpose.setValueColumn("Code");
-			this.purpose.setDescColumn("Description");
-			this.purpose.setValidateColumns(new String[] {"CategoryCode", "SubCategoryCode","Code","Description"});*/
-			
-			//this.subCategory.setModuleName("PSLPurpose");
-			//this.subCategory.setValueColumn("Code");
-			//this.subCategory.setDescColumn("Description");
-			//this.subCategory.setValidateColumns(new String[] {"purposeCode", "Code","Description"});
-			
-			
-		
+		this.finReference.setMaxlength(20);
+		this.weakerSection.setModuleName("PSLWeakerSection");
+		this.weakerSection.setValueColumn("Code");
+		this.weakerSection.setDescColumn("Description");
+		this.weakerSection.setValidateColumns(new String[] { "Code", "Description" });
+		this.weakerSection.setMandatoryStyle(true);
+		this.amount.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.eligibiltyAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
+
+		this.amount.setMandatory(true);
+		/*
+		 * this.purpose.setModuleName("PSLPurpose"); this.purpose.setValueColumn("Code");
+		 * this.purpose.setDescColumn("Description"); this.purpose.setValidateColumns(new String[] {"CategoryCode",
+		 * "SubCategoryCode","Code","Description"});
+		 */
+
+		//this.subCategory.setModuleName("PSLPurpose");
+		//this.subCategory.setValueColumn("Code");
+		//this.subCategory.setDescColumn("Description");
+		//this.subCategory.setValidateColumns(new String[] {"purposeCode", "Code","Description"});
+
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
 
-	
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -716,7 +700,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -749,7 +733,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -813,7 +797,6 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -835,23 +818,25 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		fillComboBox(this.sector, aPSLDetail.getSector(), sectorList, "");
 		this.amount.setValue(PennantApplicationUtil.formateAmount(new BigDecimal(aPSLDetail.getAmount()),
 				PennantConstants.defaultCCYDecPos));
-		if("AGRI".equals(aPSLDetail.getCategoryCode())){
+		if ("AGRI".equals(aPSLDetail.getCategoryCode())) {
 			fillComboBox(this.subCategory, aPSLDetail.getSubCategory(), subCategoryList, "");
-			if("MF".equals(aPSLDetail.getSubCategory())|| "OF".equals(aPSLDetail.getSubCategory())|| "SF".equals(aPSLDetail.getSubCategory())) {
+			if ("MF".equals(aPSLDetail.getSubCategory()) || "OF".equals(aPSLDetail.getSubCategory())
+					|| "SF".equals(aPSLDetail.getSubCategory())) {
 				subCategory.setDisabled(true);
 			}
-		} else if("MSME".equals(aPSLDetail.getCategoryCode())){
+		} else if ("MSME".equals(aPSLDetail.getCategoryCode())) {
 			fillComboBox(this.subCategory, aPSLDetail.getSubCategory(), subSectorList, "");
-			if("MI".equals(aPSLDetail.getSubCategory())|| "SI".equals(aPSLDetail.getSubCategory())|| "ME".equals(aPSLDetail.getSubCategory())) {
+			if ("MI".equals(aPSLDetail.getSubCategory()) || "SI".equals(aPSLDetail.getSubCategory())
+					|| "ME".equals(aPSLDetail.getSubCategory())) {
 				subCategory.setDisabled(true);
 			}
-		} else if("HF".equals(aPSLDetail.getCategoryCode())){
+		} else if ("HF".equals(aPSLDetail.getCategoryCode())) {
 			String excludeValues = ",MF,SF,OF,LL,TF,OL,SC,";
 			fillComboBox(subCategory, aPSLDetail.getSubCategory(), subCategoryList, excludeValues);
-			if("HF".equals(aPSLDetail.getSubCategory())) {
+			if ("HF".equals(aPSLDetail.getSubCategory())) {
 				subCategory.setDisabled(true);
 			}
-		} else if("GNL".equals(aPSLDetail.getCategoryCode())){
+		} else if ("GNL".equals(aPSLDetail.getCategoryCode())) {
 			fillComboBox(subCategory, aPSLDetail.getSubCategory(), subCategoryListGeneral, "");
 		}
 
@@ -873,16 +858,16 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 			this.purpose.setDescription(aPSLDetail.getPurposeName());
 			this.endUse.setDescription(aPSLDetail.getEndUseName());
 		}
-		
+
 		this.loanPurpose.setValue(aPSLDetail.getLoanPurpose());
 		this.eligibiltyAmount.setValue(aPSLDetail.getEligibleAmount());
 
 		this.recordStatus.setValue(aPSLDetail.getRecordStatus());
 		rules.put("ASL_ELIGABLE_AMOUNT", aPSLDetail.getEligibleAmount());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -971,7 +956,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
+
 		// Sub Category
 		try {
 			String strSubCategory = null;
@@ -999,22 +984,22 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aPSLDetail.setLoanPurpose(StringUtils.trimToNull(this.loanPurpose.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		try {
-			aPSLDetail.setEligibleAmount(PennantApplicationUtil.unFormateAmount(this.eligibiltyAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			aPSLDetail.setEligibleAmount(PennantApplicationUtil
+					.unFormateAmount(this.eligibiltyAmount.getValidateValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		rules.put("ASL_ELIGABLE_AMOUNT", aPSLDetail.getEligibleAmount());
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!fromLoan) {
@@ -1039,14 +1024,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	public void doShowDialog(PSLDetail pSLDetail) {
 		logger.debug(Literal.LEAVING);
 
-		
 		if (pSLDetail.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
 			this.finReference.focus();
 		} else {
-				this.finReference.setReadonly(true);
+			this.finReference.setReadonly(true);
 
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(pSLDetail.getRecordType())) {
@@ -1071,7 +1055,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		}
 
 		doWriteBeanToComponents(pSLDetail);
-		
+
 		if (fromLoan && !enqiryModule) {
 			try {
 				getFinanceMainDialogCtrl().getClass().getMethod("setpSLDetailDialogCtrl", this.getClass())
@@ -1083,7 +1067,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 				this.parenttab.setVisible(true);
 			}
 		} else {
-			if(enquirymode){
+			if (enquirymode) {
 				this.window_PSLDetailDialog.setHeight("80%");
 				this.window_PSLDetailDialog.setWidth("80%");
 				this.groupboxWf.setVisible(false);
@@ -1091,12 +1075,11 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 				this.btnDelete.setVisible(false);
 				this.btnNotes.setVisible(false);
 				doReadOnly();
-				this.window_PSLDetailDialog.doModal() ;
-			}else{				
+				this.window_PSLDetailDialog.doModal();
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
 		}
-
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1106,42 +1089,53 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		if (this.categoryCode.isVisible()){
-			this.categoryCode.setConstraint(new StaticListValidator(categoryList, Labels.getLabel("label_PSLDetailDialog_CategoryCode.value")));
+
+		if (this.categoryCode.isVisible()) {
+			this.categoryCode.setConstraint(
+					new StaticListValidator(categoryList, Labels.getLabel("label_PSLDetailDialog_CategoryCode.value")));
 		}
-		if (this.weakerSection.isVisible()){
-			this.weakerSection.setConstraint(new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_WeakerSection.value"),null,true));
+		if (this.weakerSection.isVisible()) {
+			this.weakerSection.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_WeakerSection.value"), null, true));
 		}
-		if (this.row_LandHolding.isVisible()&& this.landHolding.isVisible()){
-			this.landHolding.setConstraint(new StaticListValidator(listLandHolding,Labels.getLabel("label_PSLDetailDialog_LandHolding.value")));
+		if (this.row_LandHolding.isVisible() && this.landHolding.isVisible()) {
+			this.landHolding.setConstraint(new StaticListValidator(listLandHolding,
+					Labels.getLabel("label_PSLDetailDialog_LandHolding.value")));
 		}
-		if (this.row_LandHolding.isVisible() && this.landArea.isVisible() && "Y".equals(landHolding.getSelectedItem().getValue())){
-			this.landArea.setConstraint(new StaticListValidator(landAreaList,Labels.getLabel("label_PSLDetailDialog_LandArea.value")));
+		if (this.row_LandHolding.isVisible() && this.landArea.isVisible()
+				&& "Y".equals(landHolding.getSelectedItem().getValue())) {
+			this.landArea.setConstraint(
+					new StaticListValidator(landAreaList, Labels.getLabel("label_PSLDetailDialog_LandArea.value")));
 		}
-		
-		if (this.row_Sector.isVisible() && this.sector.isVisible()){
-			this.sector.setConstraint(new StaticListValidator(sectorList,Labels.getLabel("label_PSLDetailDialog_Sector.value")));
+
+		if (this.row_Sector.isVisible() && this.sector.isVisible()) {
+			this.sector.setConstraint(
+					new StaticListValidator(sectorList, Labels.getLabel("label_PSLDetailDialog_Sector.value")));
 		}
-		
-		if (this.row_Sector.isVisible() && ("SVS".equals(this.sector.getSelectedItem().getValue()) || "MNF".equals(this.sector.getSelectedItem().getValue()) )&& this.amount.isVisible()){
-			this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_PSLDetailDialog_Amount.value"),2,true,false,0));
+
+		if (this.row_Sector.isVisible() && ("SVS".equals(this.sector.getSelectedItem().getValue())
+				|| "MNF".equals(this.sector.getSelectedItem().getValue())) && this.amount.isVisible()) {
+			this.amount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_PSLDetailDialog_Amount.value"), 2, true, false, 0));
 		}
-		
-		if (this.row_Subcategory.isVisible() && this.subCategory.isVisible()){
-			this.subCategory.setConstraint(new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_SubCategory.value"),null,true));
+
+		if (this.row_Subcategory.isVisible() && this.subCategory.isVisible()) {
+			this.subCategory.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_SubCategory.value"), null, true));
 		}
-		if (this.row_Purpose.isVisible() && this.purpose.isVisible()){
-			this.purpose.setConstraint(new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_Purpose.value"),null,true));
+		if (this.row_Purpose.isVisible() && this.purpose.isVisible()) {
+			this.purpose.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_Purpose.value"), null, true));
 		}
-		
-		if (this.row_EndUse.isVisible() && this.endUse.isVisible()){
-			this.endUse.setConstraint(new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_EndUse.value"),null,true));
+
+		if (this.row_EndUse.isVisible() && this.endUse.isVisible()) {
+			this.endUse.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_EndUse.value"), null, true));
 		}
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
@@ -1163,36 +1157,33 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * Set Validations for LOV Fields
 	 */
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.categoryCode.setErrorMessage("");
 		this.weakerSection.setErrorMessage("");
 		this.landHolding.setErrorMessage("");
@@ -1204,7 +1195,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		this.endUse.setErrorMessage("");
 		this.loanPurpose.setErrorMessage("");
 		this.eligibiltyAmount.setErrorMessage("");
-	logger.debug(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1214,169 +1205,26 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final PSLDetail aPSLDetail = new PSLDetail();
 		BeanUtils.copyProperties(this.pSLDetail, aPSLDetail);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aPSLDetail.getFinReference();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aPSLDetail.getFinReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aPSLDetail.getRecordType()).equals("")){
-				aPSLDetail.setVersion(aPSLDetail.getVersion()+1);
+			if (StringUtils.trimToEmpty(aPSLDetail.getRecordType()).equals("")) {
+				aPSLDetail.setVersion(aPSLDetail.getVersion() + 1);
 				aPSLDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aPSLDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aPSLDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
+					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aPSLDetail.getNextTaskId(), aPSLDetail);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aPSLDetail,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				MessageUtil.showError(e);
-			}
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.pSLDetail.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-		} else {
-			this.btnCancel.setVisible(true);
-		}
-	
-			readOnlyComponent(isReadOnly("PSLDetailDialog_CategoryCode"), this.categoryCode);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_WeakerSection"), this.weakerSection);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_LandHolding"), this.landHolding);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_LandArea"), this.landArea);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_Sector"), this.sector);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_Amount"), this.amount);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_SubCategory"), this.subCategory);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_Purpose"), this.purpose);
-			readOnlyComponent(isReadOnly("PSLDetailDialog_EndUse"), this.endUse);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.pSLDetail.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			//readOnlyComponent(true, this.finReference);
-			readOnlyComponent(true, this.categoryCode);
-			readOnlyComponent(true, this.weakerSection);
-			readOnlyComponent(true, this.landHolding);
-			readOnlyComponent(true, this.landArea);
-			readOnlyComponent(true, this.sector);
-			readOnlyComponent(true, this.amount);
-			readOnlyComponent(true, this.subCategory);
-			readOnlyComponent(true, this.purpose);
-			readOnlyComponent(true, this.endUse);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.finReference.setValue("");
-			  	this.categoryCode.setValue("");
-			  	//this.categoryCode.setDescription("");
-			  	this.weakerSection.setValue("");
-			  	this.weakerSection.setDescription("");
-			 	this.landHolding.setSelectedIndex(0);
-			 	this.landArea.setSelectedIndex(0);
-			 	this.sector.setSelectedIndex(0);
-				this.amount.setValue("");
-			  	this.subCategory.setValue("");
-			  	//this.subCategory.setDescription("");
-			  	this.purpose.setValue("");
-			  	this.purpose.setDescription("");
-			  	this.endUse.setValue("");
-			  	this.endUse.setDescription("");
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final PSLDetail aPSLDetail = new PSLDetail();
-			BeanUtils.copyProperties(this.pSLDetail, aPSLDetail);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aPSLDetail);
-
-			isNew = aPSLDetail.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aPSLDetail.getRecordType())) {
-					aPSLDetail.setVersion(aPSLDetail.getVersion() + 1);
-					if (isNew) {
-						aPSLDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aPSLDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aPSLDetail.setNewRecord(true);
-					}
-				}
-			} else {
-				aPSLDetail.setVersion(aPSLDetail.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -1386,214 +1234,355 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
-				logger.error(e);
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			logger.debug("Leaving");
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(PSLDetail aPSLDetail, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aPSLDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aPSLDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aPSLDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aPSLDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.pSLDetail.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+		} else {
+			this.btnCancel.setVisible(true);
+		}
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aPSLDetail.getNextTaskId());
+		readOnlyComponent(isReadOnly("PSLDetailDialog_CategoryCode"), this.categoryCode);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_WeakerSection"), this.weakerSection);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_LandHolding"), this.landHolding);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_LandArea"), this.landArea);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_Sector"), this.sector);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_Amount"), this.amount);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_SubCategory"), this.subCategory);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_Purpose"), this.purpose);
+		readOnlyComponent(isReadOnly("PSLDetailDialog_EndUse"), this.endUse);
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aPSLDetail);
-					}
-
-					if (isNotesMandatory(taskId, aPSLDetail)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aPSLDetail.setTaskId(taskId);
-				aPSLDetail.setNextTaskId(nextTaskId);
-				aPSLDetail.setRoleCode(getRole());
-				aPSLDetail.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aPSLDetail, tranType);
-				String operationRefs = getServiceOperations(taskId, aPSLDetail);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aPSLDetail, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.pSLDetail.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aPSLDetail, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			PSLDetail aPSLDetail = (PSLDetail) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		//readOnlyComponent(true, this.finReference);
+		readOnlyComponent(true, this.categoryCode);
+		readOnlyComponent(true, this.weakerSection);
+		readOnlyComponent(true, this.landHolding);
+		readOnlyComponent(true, this.landArea);
+		readOnlyComponent(true, this.sector);
+		readOnlyComponent(true, this.amount);
+		readOnlyComponent(true, this.subCategory);
+		readOnlyComponent(true, this.purpose);
+		readOnlyComponent(true, this.endUse);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = pSLDetailService.delete(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.finReference.setValue("");
+		this.categoryCode.setValue("");
+		//this.categoryCode.setDescription("");
+		this.weakerSection.setValue("");
+		this.weakerSection.setDescription("");
+		this.landHolding.setSelectedIndex(0);
+		this.landArea.setSelectedIndex(0);
+		this.sector.setSelectedIndex(0);
+		this.amount.setValue("");
+		this.subCategory.setValue("");
+		//this.subCategory.setDescription("");
+		this.purpose.setValue("");
+		this.purpose.setDescription("");
+		this.endUse.setValue("");
+		this.endUse.setDescription("");
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final PSLDetail aPSLDetail = new PSLDetail();
+		BeanUtils.copyProperties(this.pSLDetail, aPSLDetail);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aPSLDetail);
+
+		isNew = aPSLDetail.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aPSLDetail.getRecordType())) {
+				aPSLDetail.setVersion(aPSLDetail.getVersion() + 1);
+				if (isNew) {
+					aPSLDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aPSLDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aPSLDetail.setNewRecord(true);
+				}
+			}
+		} else {
+			aPSLDetail.setVersion(aPSLDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aPSLDetail, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(PSLDetail aPSLDetail, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aPSLDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		aPSLDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aPSLDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aPSLDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aPSLDetail.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aPSLDetail);
+				}
+
+				if (isNotesMandatory(taskId, aPSLDetail)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aPSLDetail.setTaskId(taskId);
+			aPSLDetail.setNextTaskId(nextTaskId);
+			aPSLDetail.setRoleCode(getRole());
+			aPSLDetail.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aPSLDetail, tranType);
+			String operationRefs = getServiceOperations(taskId, aPSLDetail);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aPSLDetail, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aPSLDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		PSLDetail aPSLDetail = (PSLDetail) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = pSLDetailService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = pSLDetailService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = pSLDetailService.doApprove(auditHeader);
+
+						if (aPSLDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = pSLDetailService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = pSLDetailService.doReject(auditHeader);
+						if (aPSLDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = pSLDetailService.doApprove(auditHeader);
-
-							if (aPSLDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = pSLDetailService.doReject(auditHeader);
-							if (aPSLDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_PSLDetailDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_PSLDetailDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.pSLDetail), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_PSLDetailDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_PSLDetailDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.pSLDetail), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
+		}
+		setOverideMap(auditHeader.getOverideMap());
 
-			logger.debug("Leaving");
-			return processCompleted;
-		}
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		private AuditHeader getAuditHeader(PSLDetail aPSLDetail, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aPSLDetail.getBefImage(), aPSLDetail);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aPSLDetail.getUserDetails(),
-					getOverideMap());
-		}
+	private AuditHeader getAuditHeader(PSLDetail aPSLDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPSLDetail.getBefImage(), aPSLDetail);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aPSLDetail.getUserDetails(),
+				getOverideMap());
+	}
 
-		public void setPSLDetailService(PSLDetailService pSLDetailService) {
-			this.pSLDetailService = pSLDetailService;
-		}
-			
-		public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
-			return finBasicDetailsCtrl;
-		}
+	public void setPSLDetailService(PSLDetailService pSLDetailService) {
+		this.pSLDetailService = pSLDetailService;
+	}
 
-		public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
-			this.finBasicDetailsCtrl = finBasicDetailsCtrl;
-		}
-		
-		public Object getFinanceMainDialogCtrl() {
-			return financeMainDialogCtrl;
-		}
+	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
+		return finBasicDetailsCtrl;
+	}
 
-		public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
-			this.financeMainDialogCtrl = financeMainDialogCtrl;
-		}
+	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
+		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+
+	public Object getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
+
+	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	}
 
 	public void doSave(FinanceDetail aFinanceDetail, Tab pslDetailsTab, boolean recSave) throws InterruptedException {
 
@@ -1627,25 +1616,24 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail>{
 		logger.debug("Leaving");
 
 	}
-		
-		
-		private void showErrorDetails(ArrayList<WrongValueException> wve) {
-			logger.debug("Entering");
-		
-			doRemoveValidation();
-			
-			if (wve.size() > 0) {
-				logger.debug("Throwing occured Errors By using WrongValueException");
-				if (parenttab != null) {
-					parenttab.setSelected(true);
-				}
-				WrongValueException[] wvea = new WrongValueException[wve.size()];
-				for (int i = 0; i < wve.size(); i++) {
-					wvea[i] = wve.get(i);
-				}
-				throw new WrongValuesException(wvea);
-			}
 
-			logger.debug("Leaving");
+	private void showErrorDetails(ArrayList<WrongValueException> wve) {
+		logger.debug("Entering");
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			if (parenttab != null) {
+				parenttab.setSelected(true);
+			}
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
 		}
+
+		logger.debug("Leaving");
+	}
 }

@@ -101,87 +101,87 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(CoOwnerDetailDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(CoOwnerDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_CoOwnerDetailDialog;
+	protected Window window_CoOwnerDetailDialog;
 
-	protected Row						row0;
-	protected Checkbox					bankCustomer;
+	protected Row row0;
+	protected Checkbox bankCustomer;
 
-	protected Combobox					coOwnerIDType;
-	protected Decimalbox				coOwnerPercentage;
+	protected Combobox coOwnerIDType;
+	protected Decimalbox coOwnerPercentage;
 
-	protected Textbox					coOwnerCIF;
-	protected Button					btnSearchCoOwnerCIF;
-	protected Button					viewCustInfo;
-	protected Button					btnViewCoOwnerProof;
+	protected Textbox coOwnerCIF;
+	protected Button btnSearchCoOwnerCIF;
+	protected Button viewCustInfo;
+	protected Button btnViewCoOwnerProof;
 
-	protected Uppercasebox				coOwnerIDNumber;
-	protected Textbox					coOwnerCIFName;
+	protected Uppercasebox coOwnerIDNumber;
+	protected Textbox coOwnerCIFName;
 
-	protected Textbox					mobileNo;
-	protected Textbox					emailId;
+	protected Textbox mobileNo;
+	protected Textbox emailId;
 
-	protected Textbox					coOwnerProofName;
-	protected Button					btnUploadCoOwnerProof;
+	protected Textbox coOwnerProofName;
+	protected Button btnUploadCoOwnerProof;
 
-	protected Textbox					addrHNbr;
-	protected Textbox					flatNbr;
+	protected Textbox addrHNbr;
+	protected Textbox flatNbr;
 
-	protected Textbox					addrStreet;
-	protected Textbox					addrLine1;
+	protected Textbox addrStreet;
+	protected Textbox addrLine1;
 
-	protected Textbox					addrLine2;
-	protected Textbox					poBox;
+	protected Textbox addrLine2;
+	protected Textbox poBox;
 
-	protected ExtendedCombobox			addrCountry;
-	protected ExtendedCombobox			addrProvince;
+	protected ExtendedCombobox addrCountry;
+	protected ExtendedCombobox addrProvince;
 
-	protected ExtendedCombobox			addrCity;
-	protected Textbox					cityName;
-	protected Textbox					addrZIP;
+	protected ExtendedCombobox addrCity;
+	protected Textbox cityName;
+	protected Textbox addrZIP;
 
-	protected Textbox					remarks;
+	protected Textbox remarks;
 
-	protected Groupbox					gb_statusDetails;
+	protected Groupbox gb_statusDetails;
 
-	protected Hlayout					hlayout_CoOwnerCIF;
-	protected Hlayout					hlayout_CoOwnerIDNumber;
+	protected Hlayout hlayout_CoOwnerCIF;
+	protected Hlayout hlayout_CoOwnerIDNumber;
 
-	protected Space						space_CoOwnerCIF;
-	protected Space						space_CoOwnerPercentage;
-	protected Space						space_CoOwnerIDType;
-	protected Space						space_Name;
-	protected Space						space_MobileNo;
-	protected Space						space_EmailId;
-	protected Space						space_CoOwnerProof;
-	protected Space						space_addrHNbr;
-	protected Space						space_addrStreet;
-	protected Space						space_poBox;
-	protected Space						space_CoOwnerIDNumber;
+	protected Space space_CoOwnerCIF;
+	protected Space space_CoOwnerPercentage;
+	protected Space space_CoOwnerIDType;
+	protected Space space_Name;
+	protected Space space_MobileNo;
+	protected Space space_EmailId;
+	protected Space space_CoOwnerProof;
+	protected Space space_addrHNbr;
+	protected Space space_addrStreet;
+	protected Space space_poBox;
+	protected Space space_CoOwnerIDNumber;
 
-	private CollateralSetupDialogCtrl	collateralSetupDialogCtrl;
-	private CoOwnerDetail				coOwnerDetail;
-	private transient PagedListService	pagedListService;
+	private CollateralSetupDialogCtrl collateralSetupDialogCtrl;
+	private CoOwnerDetail coOwnerDetail;
+	private transient PagedListService pagedListService;
 
-	private boolean						enqModule			= false;
-	private int							index;
-	private String						cif[]				= null;
-	private Customer					customer			= null;
-	private boolean						newRecord			= false;
-	private List<ValueLabel>			listCoOwnerIDType	= PennantAppUtil.getIdentityType();
-	private byte[]						coOwnerProofContent;
-	private String						addrCountryTemp;
-	private String						addrProvinceTemp;
-	private List<CoOwnerDetail>			coOwnerDetailList;
-	private String						primaryCustCif;
-	private boolean						newCoOwnerDetails	= false;
-	
+	private boolean enqModule = false;
+	private int index;
+	private String cif[] = null;
+	private Customer customer = null;
+	private boolean newRecord = false;
+	private List<ValueLabel> listCoOwnerIDType = PennantAppUtil.getIdentityType();
+	private byte[] coOwnerProofContent;
+	private String addrCountryTemp;
+	private String addrProvinceTemp;
+	private List<CoOwnerDetail> coOwnerDetailList;
+	private String primaryCustCif;
+	private boolean newCoOwnerDetails = false;
+
 	public CoOwnerDetailDialogCtrl() {
 		super();
 	}
@@ -208,7 +208,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
-			} 
+			}
 			// READ OVERHANDED params !
 			if (arguments.containsKey("coOwnerDetail")) {
 				this.coOwnerDetail = (CoOwnerDetail) arguments.get("coOwnerDetail");
@@ -230,7 +230,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			if (arguments.containsKey("primaryCustCif")) {
 				primaryCustCif = (String) arguments.get("primaryCustCif");
 			}
-			
+
 			//collateralSetupCtrl
 			if (arguments.containsKey("collateralSetupCtrl")) {
 				setCollateralSetupDialogCtrl((CollateralSetupDialogCtrl) arguments.get("collateralSetupCtrl"));
@@ -338,8 +338,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		try {
-			ScreenCTL.displayNotes(getNotes("CoOwnerDetail", String.valueOf(getCoOwnerDetail().getCoOwnerId()), getCoOwnerDetail()
-							.getVersion()), this);
+			ScreenCTL.displayNotes(getNotes("CoOwnerDetail", String.valueOf(getCoOwnerDetail().getCoOwnerId()),
+					getCoOwnerDetail().getVersion()), this);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -422,7 +422,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	}
 
 	public void onClick$viewCustInfo(Event event) {
-		
+
 		this.coOwnerCIF.setConstraint("");
 		this.coOwnerCIF.setErrorMessage("");
 		if ((!this.btnSearchCoOwnerCIF.isDisabled()) && StringUtils.isEmpty(this.coOwnerCIF.getValue())) {
@@ -434,7 +434,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			map.put("custid", customer.getCustID());
 			map.put("custCIF", customer.getCustCIF());
 			map.put("custShrtName", customer.getCustShrtName());
-			map.put("finFormatter",CurrencyUtil.getFormat(customer.getCustBaseCcy()));
+			map.put("finFormatter", CurrencyUtil.getFormat(customer.getCustBaseCcy()));
 			map.put("finance", true);
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul",
@@ -504,7 +504,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.btnSearchCoOwnerCIF.setDisabled(true);
 		}
 		this.coOwnerPercentage.setDisabled(isReadOnly("CoOwnerDetailDialog_CoOwnerPercentage"));
-		this.coOwnerCIF.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerCIF"));  
+		this.coOwnerCIF.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerCIF"));
 		this.coOwnerCIFName.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerCIFName"));
 		this.coOwnerIDNumber.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerIDNumber"));
 		this.coOwnerProofName.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerProofName"));
@@ -577,7 +577,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnSave"));
-			this.btnUploadCoOwnerProof.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnUploadCoOwnerProof"));
+			this.btnUploadCoOwnerProof
+					.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnUploadCoOwnerProof"));
 		}
 		logger.debug("Leaving");
 	}
@@ -736,7 +737,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 */
 	public void doWriteComponentsToBean(CoOwnerDetail aCoOwnerDetail) {
 		logger.debug("Entering");
-		
+
 		doSetLOVValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -771,8 +772,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			getcoOwnerIdNumber();
 			if (this.coOwnerIDType.getSelectedIndex() != 0) {
 				if (this.coOwnerIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
-					aCoOwnerDetail.setCoOwnerIDNumber(PennantApplicationUtil.unFormatEIDNumber(this.coOwnerIDNumber
-							.getValue()));
+					aCoOwnerDetail.setCoOwnerIDNumber(
+							PennantApplicationUtil.unFormatEIDNumber(this.coOwnerIDNumber.getValue()));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -810,8 +811,10 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		}
 		// Proof Name
 		try {
-			if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.coOwnerProofName.getValue()) || this.coOwnerProofName == null)) {
-				throw new WrongValueException(this.coOwnerProofName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerProof.value") }));
+			if (!this.bankCustomer.isChecked()
+					&& (StringUtils.isBlank(this.coOwnerProofName.getValue()) || this.coOwnerProofName == null)) {
+				throw new WrongValueException(this.coOwnerProofName, Labels.getLabel("MUST_BE_UPLOADED",
+						new String[] { Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerProof.value") }));
 			}
 			aCoOwnerDetail.setCoOwnerProofName(this.coOwnerProofName.getValue());
 		} catch (WrongValueException we) {
@@ -823,7 +826,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// city name and addrcity
 		try {
 			if (PennantConstants.CITY_FREETEXT) {
@@ -925,7 +928,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	}
 
 	private BigDecimal getTotalPercentageValue(CoOwnerDetail aCoOwnerDetail) {
-		BigDecimal percValue = this.coOwnerPercentage.getValue() == null ? BigDecimal.ZERO : this.coOwnerPercentage.getValue();
+		BigDecimal percValue = this.coOwnerPercentage.getValue() == null ? BigDecimal.ZERO
+				: this.coOwnerPercentage.getValue();
 
 		List<CoOwnerDetail> coOwnerDetailsList = getCollateralSetupDialogCtrl().getCoOwnerDetailList();
 		if (isNewRecord()) {
@@ -945,8 +949,10 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 					if (oldCoOwnerDetail.getCustomerId() == aCoOwnerDetail.getCustomerId()) {
 						duplicateRecord = true;
 					}
-				} else if (StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDTypeName(), aCoOwnerDetail.getCoOwnerIDTypeName()) && 
-						StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDNumber(), aCoOwnerDetail.getCoOwnerIDNumber())) {
+				} else if (StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDTypeName(),
+						aCoOwnerDetail.getCoOwnerIDTypeName())
+						&& StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDNumber(),
+								aCoOwnerDetail.getCoOwnerIDNumber())) {
 					duplicateRecord = true;
 				}
 				if (!duplicateRecord) {
@@ -962,89 +968,117 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		doClearMessage();
-		
+
 		if (this.bankCustomer.isChecked()) {
-			this.coOwnerCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.coOwnerCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		
+
 		if (!this.coOwnerPercentage.isReadonly()) {
-			this.coOwnerPercentage.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerPercentage.value"), 2, true,false,1,100));
+			this.coOwnerPercentage.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerPercentage.value"), 2, true, false, 1, 100));
 		}
 
 		if (!this.bankCustomer.isChecked()) {
-			
+
 			if (!this.coOwnerIDNumber.isReadonly()) {
-					
-					if(StringUtils.equals(this.coOwnerIDType.getSelectedItem().getValue().toString(), PennantConstants.CPRCODE)){
-						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels
-								.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
-								PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
-							
-					}else if(StringUtils.equals(this.coOwnerIDType.getSelectedItem().getValue().toString(), PennantConstants.PANNUMBER)){
-						if(this.coOwnerIDNumber.getConstraint()!=null){
-							this.coOwnerIDNumber.setConstraint("");
-						}
-						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels
-								.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
-								PennantRegularExpressions.REGEX_PANNUMBER, true));
-					}else{
-						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));					
+
+				if (StringUtils.equals(this.coOwnerIDType.getSelectedItem().getValue().toString(),
+						PennantConstants.CPRCODE)) {
+					this.coOwnerIDNumber.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+							PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+
+				} else if (StringUtils.equals(this.coOwnerIDType.getSelectedItem().getValue().toString(),
+						PennantConstants.PANNUMBER)) {
+					if (this.coOwnerIDNumber.getConstraint() != null) {
+						this.coOwnerIDNumber.setConstraint("");
 					}
+					this.coOwnerIDNumber.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+							PennantRegularExpressions.REGEX_PANNUMBER, true));
+				} else {
+					this.coOwnerIDNumber.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 				}
-			
-			if (!this.coOwnerIDType.isDisabled()) {
-				this.coOwnerIDType.setConstraint(new StaticListValidator(listCoOwnerIDType, Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")));
 			}
-			
+
+			if (!this.coOwnerIDType.isDisabled()) {
+				this.coOwnerIDType.setConstraint(new StaticListValidator(listCoOwnerIDType,
+						Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")));
+			}
+
 			if (!this.coOwnerCIFName.isReadonly()) {
-				this.coOwnerCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_Name.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+				this.coOwnerCIFName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_Name.value"),
+								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 
 			if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), true));
+				this.mobileNo.setConstraint(
+						new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), true));
 			}
-			 
+
 			if (!this.emailId.isReadonly()) {
-				this.emailId.setConstraint(new PTEmailValidator(Labels.getLabel("label_CoOwnerDetailDialog_EmailId.value"), true));
+				this.emailId.setConstraint(
+						new PTEmailValidator(Labels.getLabel("label_CoOwnerDetailDialog_EmailId.value"), true));
 			}
 
 			if (!this.addrHNbr.isReadonly()) {
-				this.addrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrHNbr.value"), PennantRegularExpressions.REGEX_ADDRESS, true));
+				this.addrHNbr.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrHNbr.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 
 			if (!this.flatNbr.isReadonly()) {
-				this.flatNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_FlatNbr.value"), PennantRegularExpressions.REGEX_ADDRESS, false));
+				this.flatNbr
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_FlatNbr.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, false));
 			}
 
 			boolean addressConstraint = false;
-			if (StringUtils.isBlank(this.addrStreet.getValue()) && StringUtils.isBlank(this.addrLine1.getValue()) && StringUtils.isBlank(this.addrLine2.getValue())) {
+			if (StringUtils.isBlank(this.addrStreet.getValue()) && StringUtils.isBlank(this.addrLine1.getValue())
+					&& StringUtils.isBlank(this.addrLine2.getValue())) {
 				addressConstraint = true;
 			}
 			if (!this.addrStreet.isReadonly() && addressConstraint) {
-				this.addrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrStreet.value"), PennantRegularExpressions.REGEX_ADDRESS, true));
+				this.addrStreet.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrStreet.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 
 			if (!this.addrLine1.isReadonly() && addressConstraint) {
-				this.addrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrLine1.value"), PennantRegularExpressions.REGEX_ADDRESS, false));
+				this.addrLine1.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrLine1.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, false));
 			}
 
 			if (!this.addrLine2.isReadonly() && addressConstraint) {
-				this.addrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrLine2.value"), PennantRegularExpressions.REGEX_ADDRESS, false));
+				this.addrLine2.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrLine2.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, false));
 			}
 
 			if (!this.poBox.isReadonly()) {
-				this.poBox.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_POBox.value"), PennantRegularExpressions.REGEX_NUMERIC, true));
+				this.poBox.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_POBox.value"),
+						PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
 
 			if (!this.addrZIP.isReadonly()) {
-				this.addrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
+				this.addrZIP
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrZIP.value"),
+								PennantRegularExpressions.REGEX_ZIP, false));
 			}
 
 			if (PennantConstants.CITY_FREETEXT) {
 				if (!this.cityName.isReadonly()) {
-					this.cityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrCity.value"), PennantRegularExpressions.REGEX_NAME, false));
+					this.cityName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrCity.value"),
+									PennantRegularExpressions.REGEX_NAME, false));
 				}
 			}
 		}
@@ -1079,11 +1113,14 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		
-		this.addrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrCountry.value"), null, true, true));
-		this.addrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrProvince.value"), null, true, true));
+
+		this.addrCountry.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CoOwnerDetailDialog_AddrCountry.value"), null, true, true));
+		this.addrProvince.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CoOwnerDetailDialog_AddrProvince.value"), null, true, true));
 		if (!PennantConstants.CITY_FREETEXT) {
-			this.addrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_AddrCity.value"), null, false, true));
+			this.addrCity.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CoOwnerDetailDialog_AddrCity.value"), null, false, true));
 		}
 	}
 
@@ -1192,7 +1229,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.coOwnerCIF.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerCIFName"));
 			this.mobileNo.setReadonly(isReadOnly("CoOwnerDetailDialog_MobileNo"));
 			this.emailId.setReadonly(isReadOnly("CoOwnerDetailDialog_EmailId"));
-			this.btnUploadCoOwnerProof.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnUploadCoOwnerProof"));
+			this.btnUploadCoOwnerProof
+					.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnUploadCoOwnerProof"));
 			this.hlayout_CoOwnerCIF.setVisible(false);
 			this.hlayout_CoOwnerIDNumber.setVisible(true);
 			this.space_CoOwnerIDType.setVisible(true);
@@ -1243,9 +1281,11 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (aCoOwnerDetail.isBankCustomer() ? Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value")
-						+ " : " + this.coOwnerCIF.getValue() : Labels .getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")
-						+ " : " + aCoOwnerDetail.getCoOwnerIDType());
+				+ (aCoOwnerDetail.isBankCustomer()
+						? Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value") + " : "
+								+ this.coOwnerCIF.getValue()
+						: Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value") + " : "
+								+ aCoOwnerDetail.getCoOwnerIDType());
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCoOwnerDetail.getRecordType())) {
@@ -1425,7 +1465,9 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		errParm[0] = PennantJavaUtil.getLabel("label_CoOwnerCIF") + ": " + valueParm[0];
 		// Checks whether CoOwner customerCIF is same as actual custCIF
 		if (StringUtils.equals(primaryCustCif, aCoOwnerDetail.getCoOwnerCIF())) {
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+			auditHeader.setErrorDetails(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+							getUserWorkspace().getUserLanguage()));
 		}
 		List<CoOwnerDetail> oldCoOwnerDetailsList = null;
 		if (getCollateralSetupDialogCtrl() != null) {
@@ -1438,19 +1480,21 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 						duplicateRecord = true;
 					}
 				} else if (aCoOwnerDetail.isBankCustomer() && oldCoOwnerDetail.isBankCustomer()) {
-					if (oldCoOwnerDetail.getCustomerId() ==  aCoOwnerDetail.getCustomerId()) {
+					if (oldCoOwnerDetail.getCustomerId() == aCoOwnerDetail.getCustomerId()) {
 						duplicateRecord = true;
 					}
-				} else if (StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDTypeName(),aCoOwnerDetail.getCoOwnerIDTypeName())
-						&& StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDNumber(),aCoOwnerDetail.getCoOwnerIDNumber())) {
+				} else if (StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDTypeName(),
+						aCoOwnerDetail.getCoOwnerIDTypeName())
+						&& StringUtils.equals(oldCoOwnerDetail.getCoOwnerIDNumber(),
+								aCoOwnerDetail.getCoOwnerIDNumber())) {
 					duplicateRecord = true;
 				}
-				
+
 				if (duplicateRecord) {
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {

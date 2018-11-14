@@ -64,7 +64,7 @@ public class SukukBrokerBonds extends AbstractWorkflowEntity {
 	private String issuerAccount;
 	private String commissionType;
 	private BigDecimal commission;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private SukukBrokerBonds befImage;
 	private LoggedInUser userDetails;
@@ -82,11 +82,11 @@ public class SukukBrokerBonds extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("bondDesc");
-			excludeFields.add("brokerDesc");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("bondDesc");
+		excludeFields.add("brokerDesc");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -96,59 +96,59 @@ public class SukukBrokerBonds extends AbstractWorkflowEntity {
 	public String getId() {
 		return brokerCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.brokerCode = id;
 	}
-	
+
 	public String getBrokerCode() {
 		return brokerCode;
 	}
+
 	public void setBrokerCode(String brokerCode) {
 		this.brokerCode = brokerCode;
 	}
-	
-	
-		
-	
+
 	public String getBondCode() {
 		return bondCode;
 	}
+
 	public void setBondCode(String bondCode) {
 		this.bondCode = bondCode;
 	}
-	
-	
+
 	public String getPaymentMode() {
 		return paymentMode;
 	}
+
 	public void setPaymentMode(String paymentMode) {
 		this.paymentMode = paymentMode;
 	}
-	
-	
+
 	public String getIssuerAccount() {
 		return issuerAccount;
 	}
+
 	public void setIssuerAccount(String issuerAccount) {
 		this.issuerAccount = issuerAccount;
 	}
-		
-	
+
 	public String getCommissionType() {
 		return commissionType;
 	}
+
 	public void setCommissionType(String commissionType) {
 		this.commissionType = commissionType;
 	}
-	
+
 	public BigDecimal getCommission() {
 		return commission;
 	}
+
 	public void setCommission(BigDecimal commission) {
 		this.commission = commission;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -156,7 +156,7 @@ public class SukukBrokerBonds extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -165,12 +165,12 @@ public class SukukBrokerBonds extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public SukukBrokerBonds getBefImage(){
+	public SukukBrokerBonds getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(SukukBrokerBonds beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SukukBrokerBonds beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -182,18 +182,18 @@ public class SukukBrokerBonds extends AbstractWorkflowEntity {
 	}
 
 	public String getBondDesc() {
-	    return bondDesc;
-    }
+		return bondDesc;
+	}
 
 	public void setBondDesc(String bondDesc) {
-	    this.bondDesc = bondDesc;
-    }
+		this.bondDesc = bondDesc;
+	}
 
 	public String getBrokerDesc() {
-	    return brokerDesc;
-    }
+		return brokerDesc;
+	}
 
 	public void setBrokerDesc(String brokerDesc) {
-	    this.brokerDesc = brokerDesc;
-    }
+		this.brokerDesc = brokerDesc;
+	}
 }

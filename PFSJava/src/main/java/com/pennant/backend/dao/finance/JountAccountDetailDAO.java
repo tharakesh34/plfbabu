@@ -29,24 +29,42 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
+
 public interface JountAccountDetailDAO {
 
 	JointAccountDetail getJountAccountDetail();
+
 	JointAccountDetail getNewJountAccountDetail();
+
 	JointAccountDetail getJountAccountDetailById(long id, String type);
+
 	void update(JointAccountDetail jountAccountDetail, String type);
+
 	void delete(JointAccountDetail jountAccountDetail, String type);
+
 	long save(JointAccountDetail jountAccountDetail, String type);
+
 	JointAccountDetail getJountAccountDetailByRefId(String finReference, long jointAccountId, String type);
+
 	void deleteByFinRef(String finReference, String type);
-	List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference);	
-	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);	
+
+	List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference);
+
+	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+
 	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
+
 	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail);
+
 	List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail);
+
 	FinanceExposure getOverDueDetails(FinanceExposure exposure);
+
 	JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type);
+
 	List<FinanceExposure> getPrimaryExposureList(List<String> listCIF);
+
 	List<FinanceExposure> getSecondaryExposureList(List<String> listCIF);
+
 	List<JointAccountDetail> getCustIdsByFinnRef(String finReference);
 }

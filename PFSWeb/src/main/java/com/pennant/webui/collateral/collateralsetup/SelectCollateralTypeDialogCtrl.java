@@ -87,26 +87,26 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
-	private static final long				serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static final Logger				logger				= Logger.getLogger(SelectCollateralTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectCollateralTypeDialogCtrl.class);
 
-	protected Window						window_SelectCollateralDialog;
-	protected ExtendedCombobox				collateralType;
-	protected Button						btnProceed;
-	protected Button						btnSearchCustCIF;
-	protected Textbox						custCIF;
-	protected Label							custName;
+	protected Window window_SelectCollateralDialog;
+	protected ExtendedCombobox collateralType;
+	protected Button btnProceed;
+	protected Button btnSearchCustCIF;
+	protected Textbox custCIF;
+	protected Label custName;
 
-	private CollateralSetup					collateralSetup;
-	private CollateralSetupListCtrl			collateralSetupListCtrl;
-	private FinanceWorkFlow					financeWorkFlow;
-	private FinanceWorkFlowService			financeWorkFlowService;
-	private CollateralSetupService			collateralSetupService;
-	private CustomerDetailsService			customerDetailsService;
-	private CollateralStructureService		collateralStructureService;
-	private FinanceTypeService				financeTypeService;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	private CollateralSetup collateralSetup;
+	private CollateralSetupListCtrl collateralSetupListCtrl;
+	private FinanceWorkFlow financeWorkFlow;
+	private FinanceWorkFlowService financeWorkFlowService;
+	private CollateralSetupService collateralSetupService;
+	private CustomerDetailsService customerDetailsService;
+	private CollateralStructureService collateralStructureService;
+	private FinanceTypeService financeTypeService;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	private List<String> userRoleCodeList = new ArrayList<String>();
 
@@ -133,7 +133,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			this.collateralSetup = (CollateralSetup) arguments.get("collateralSetup");
 			this.collateralSetupListCtrl = (CollateralSetupListCtrl) arguments.get("collateralSetupListCtrl");
 			this.userRoleCodeList = (ArrayList<String>) arguments.get("role");
-			
+
 			if (arguments.containsKey("fromLoan")) {
 				this.fromLoan = (boolean) arguments.get("fromLoan");
 			}
@@ -227,7 +227,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			this.custName.setValue(customer.getCustShrtName());
 			this.custCIF.setReadonly(true);
 			this.btnSearchCustCIF.setVisible(false);
-		} 
+		}
 		logger.debug("Leaving");
 	}
 
@@ -284,22 +284,22 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 
 	private void setLoanCollateralSetupDetails() throws InterruptedException {
 		//Customer Data Fetching
-		
+
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
 		if (customerDetails == null) {
 			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 			return;
 		}
-		
+
 		// Workflow Details Setup
 		WorkFlowDetails workFlowDetails = null;
 		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
 			collateralSetup.setWorkflowId(0);
-		}  
+		}
 		//Role  need to send 
 		collateralSetup.setNewRecord(true);
-		
+
 		collateralSetup.setCollateralType(this.collateralType.getValue());
 		collateralSetup.setCollateralTypeName(this.collateralType.getDescription());
 		collateralSetup.setCollateralCcy(SysParamUtil.getAppCurrency());
@@ -307,13 +307,15 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		collateralSetup.setDepositorCif(customerDetails.getCustomer().getCustCIF());
 		collateralSetup.setDepositorId(customerDetails.getCustomer().getCustID());
 		collateralSetup.setDepositorName(customerDetails.getCustomer().getCustShrtName());
-		
+
 		//Fetching the collateral Structure details
-		collateralSetup.setCollateralStructure(getCollateralStructureService().getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+		collateralSetup.setCollateralStructure(getCollateralStructureService()
+				.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
 		// Fetching Finance Reference Detail
-		collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(), FinanceConstants.FINSER_EVENT_ORG);
+		collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(),
+				FinanceConstants.FINSER_EVENT_ORG);
 	}
-	
+
 	private void setCollateralSetupDetails() throws InterruptedException {
 		//Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData();
@@ -369,11 +371,13 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		collateralSetup.setDepositorName(customerDetails.getCustomer().getCustShrtName());
 
 		//Fetching the collateral Structure details
-		collateralSetup.setCollateralStructure(getCollateralStructureService().getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+		collateralSetup.setCollateralStructure(getCollateralStructureService()
+				.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
 
 		// Fetching Finance Reference Detail
 		if (getFinanceWorkFlow() != null) {
-			collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(), FinanceConstants.FINSER_EVENT_ORG);
+			collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(),
+					FinanceConstants.FINSER_EVENT_ORG);
 		}
 	}
 
@@ -391,8 +395,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			arguments.put("newRecord", true);
 		}
 		try {
-			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul",
-					window, arguments);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", window,
+					arguments);
 			this.window_SelectCollateralDialog.onClose();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -450,7 +454,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	 */
 	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
-		
+
 		// Get the data of Customer from Core Banking Customer
 		CustomerDetails customerDetails = null;
 		try {
@@ -501,7 +505,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -563,6 +568,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	public FinanceWorkFlow getFinanceWorkFlow() {
 		return financeWorkFlow;
 	}
+
 	public void setFinanceWorkFlow(FinanceWorkFlow financeWorkFlow) {
 		this.financeWorkFlow = financeWorkFlow;
 	}
@@ -570,6 +576,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
+
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
@@ -577,6 +584,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	public CollateralSetupService getCollateralSetupService() {
 		return collateralSetupService;
 	}
+
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
@@ -584,6 +592,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
+
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
@@ -591,6 +600,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	public CollateralStructureService getCollateralStructureService() {
 		return collateralStructureService;
 	}
+
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
 	}

@@ -23,28 +23,28 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	private static final Logger logger = Logger.getLogger(RepayEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_RepayEnquiryDialog; 		
-	protected Listbox 		listBox_RepayEnquiry;			
-	protected Borderlayout 	borderlayout_RepayEnquiry; 		
-	
+	protected Window window_RepayEnquiryDialog;
+	protected Listbox listBox_RepayEnquiry;
+	protected Borderlayout borderlayout_RepayEnquiry;
+
 	// List headers
-	protected Listheader listheader_RepayDate; 			
-	protected Listheader listheader_FinRepayFor; 		
-	protected Listheader listheader_SchdPft; 			
-	protected Listheader listheader_FinSchdPri; 		
-	protected Listheader listheader_TotalSchd; 			
-	protected Listheader listheader_Balance;			
-	
+	protected Listheader listheader_RepayDate;
+	protected Listheader listheader_FinRepayFor;
+	protected Listheader listheader_SchdPft;
+	protected Listheader listheader_FinSchdPri;
+	protected Listheader listheader_TotalSchd;
+	protected Listheader listheader_Balance;
+
 	// not auto wired variables
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinanceRepayments> finRepayments;
-	private Tabpanel 		tabPanel_dialogWindow;
-	
+	private Tabpanel tabPanel_dialogWindow;
+
 	private int formatter;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -56,7 +56,7 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	// Component Events
 
 	/**
@@ -75,13 +75,11 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 
 		try {
 			if (event.getTarget().getParent().getParent() != null) {
-				tabPanel_dialogWindow = (Tabpanel) event.getTarget()
-						.getParent().getParent();
+				tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 			}
 
 			if (arguments.containsKey("financeRepayments")) {
-				this.finRepayments = (List<FinanceRepayments>) arguments
-						.get("financeRepayments");
+				this.finRepayments = (List<FinanceRepayments>) arguments.get("financeRepayments");
 			} else {
 				this.finRepayments = null;
 			}
@@ -102,7 +100,7 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -114,21 +112,21 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void doShowDialog() throws Exception {
 		logger.debug("Entering");
-		
+
 		try {
-			
+
 			//Fill Repayment Details
-			if(finRepayments != null){
-				this.listBox_RepayEnquiry.setModel(new GroupsModelArray(
-						finRepayments.toArray(),new RepayEnquiryComparator()));		
+			if (finRepayments != null) {
+				this.listBox_RepayEnquiry
+						.setModel(new GroupsModelArray(finRepayments.toArray(), new RepayEnquiryComparator()));
 				this.listBox_RepayEnquiry.setItemRenderer(new RepayEnquiryListModelItemRenderer(formatter));
 			}
-			if(tabPanel_dialogWindow != null){
+			if (tabPanel_dialogWindow != null) {
 
 				getBorderLayoutHeight();
-				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				this.listBox_RepayEnquiry.setHeight(this.borderLayoutHeight-rowsHeight-90+"px");
-				this.window_RepayEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-45+"px");
+				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+				this.listBox_RepayEnquiry.setHeight(this.borderLayoutHeight - rowsHeight - 90 + "px");
+				this.window_RepayEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 45 + "px");
 				tabPanel_dialogWindow.appendChild(this.window_RepayEnquiryDialog);
 
 			}
@@ -141,14 +139,14 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 		logger.debug("Leaving");
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public List<FinanceRepayments> getFinRepayments() {
 		return finRepayments;
 	}
+
 	public void setFinRepayments(List<FinanceRepayments> finRepayments) {
 		this.finRepayments = finRepayments;
 	}

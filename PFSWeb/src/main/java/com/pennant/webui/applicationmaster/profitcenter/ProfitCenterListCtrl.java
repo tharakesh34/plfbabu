@@ -63,13 +63,14 @@ import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.service.applicationmaster.ProfitCenterService;
 import com.pennant.webui.applicationmaster.profitcenter.model.ProfitCenterListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/ProfitCenter/ProfitCenterList.zul file.
+ * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/ProfitCenter/ProfitCenterList.zul
+ * file.
  * 
  */
 public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
@@ -94,11 +95,11 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 	protected Textbox profitCenterCode; // autowired
 	protected Textbox profitCenterDesc; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_ProfitCenterCode;
 	protected Listbox sortOperator_ProfitCenterDesc;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient ProfitCenterService profitCenterService;
 
 	/**
@@ -135,8 +136,10 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		registerButton(button_ProfitCenterList_NewProfitCenter, "button_ProfitCenterList_NewProfitCenter", true);
 
 		registerField("profitCenterID");
-		registerField("profitCenterCode", listheader_ProfitCenterCode, SortOrder.NONE, profitCenterCode, sortOperator_ProfitCenterCode, Operators.STRING);
-		registerField("profitCenterDesc", listheader_ProfitCenterDesc, SortOrder.NONE, profitCenterDesc, sortOperator_ProfitCenterDesc, Operators.STRING);
+		registerField("profitCenterCode", listheader_ProfitCenterCode, SortOrder.NONE, profitCenterCode,
+				sortOperator_ProfitCenterCode, Operators.STRING);
+		registerField("profitCenterDesc", listheader_ProfitCenterDesc, SortOrder.NONE, profitCenterDesc,
+				sortOperator_ProfitCenterDesc, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -184,7 +187,6 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -195,7 +197,7 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 
 	public void onProfitCenterItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxProfitCenter.getSelectedItem();
 		final long profitCenterID = (long) selectedItem.getAttribute("profitCenterID");
@@ -205,13 +207,13 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  ProfitCenterID = ");
-		whereCond.append( profitcenter.getProfitCenterID());
+		whereCond.append(profitcenter.getProfitCenterID());
 		whereCond.append(" AND  version=");
 		whereCond.append(profitcenter.getVersion());
-	
+
 		if (doCheckAuthority(profitcenter, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && profitcenter.getWorkflowId() == 0) {
@@ -221,10 +223,10 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -237,9 +239,10 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("profitCenter", profitcenter);
 		arg.put("profitCenterListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -266,7 +269,7 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

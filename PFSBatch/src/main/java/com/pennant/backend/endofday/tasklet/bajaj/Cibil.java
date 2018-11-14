@@ -23,17 +23,15 @@ import com.pennanttech.pff.external.cibil.RetailCibilReport;
 
 public class Cibil implements Tasklet {
 	private Logger logger = Logger.getLogger(Cibil.class);
-	
+
 	private Date valueDate;
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
-
 	@Autowired
 	private RetailCibilReport retailCibilReport;
-
 
 	public EODConfig getEodConfig() {
 		try {
@@ -51,17 +49,19 @@ public class Cibil implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
-		
-		try {			
-			logger.debug("START: CIBIL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
-			
+
+		try {
+			logger.debug("START: CIBIL Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
 			DataEngineStatus status = RetailCibilReport.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new CIBILProcessThread(retailCibilReport)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
-			
-			logger.debug("COMPLETED: CIBIL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
+			logger.debug("COMPLETED: CIBIL Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -94,5 +94,5 @@ public class Cibil implements Tasklet {
 			}
 		}
 	}
-	
+
 }

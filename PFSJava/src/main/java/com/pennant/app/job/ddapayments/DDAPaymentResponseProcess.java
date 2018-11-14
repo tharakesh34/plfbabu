@@ -33,7 +33,7 @@ public class DDAPaymentResponseProcess extends QuartzJobBean implements Stateful
 		logger.debug("Entering");
 
 		logger.debug("---------------------------------------------------------------");
-		logger.debug("DDA Payment Response Job started at:"+System.currentTimeMillis());
+		logger.debug("DDA Payment Response Job started at:" + System.currentTimeMillis());
 		logger.debug("---------------------------------------------------------------");
 
 		/**
@@ -46,11 +46,11 @@ public class DDAPaymentResponseProcess extends QuartzJobBean implements Stateful
 		// fetch DDA Payment Response details from DDS_PFF_DD503 table
 		List<DDAPayments> ddaPaymentResList = getDdaPaymentResponseDAO().getDDAPaymentResDetails();
 
-		if(ddaPaymentResList != null && !ddaPaymentResList.isEmpty()) {
-			for(DDAPayments ddaPayments: ddaPaymentResList) {
+		if (ddaPaymentResList != null && !ddaPaymentResList.isEmpty()) {
+			for (DDAPayments ddaPayments : ddaPaymentResList) {
 
 				String[] t24Data = null;
-				if(!StringUtils.isBlank(ddaPayments.getT24Data())) {
+				if (!StringUtils.isBlank(ddaPayments.getT24Data())) {
 					t24Data = ddaPayments.getT24Data().split(";");
 				}
 
@@ -95,4 +95,3 @@ public class DDAPaymentResponseProcess extends QuartzJobBean implements Stateful
 	}
 
 }
-

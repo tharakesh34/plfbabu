@@ -5,34 +5,34 @@ import java.util.Date;
 
 public class PaymentRecoveryDetail {
 
-	private String		batchRefNumber;
+	private String batchRefNumber;
 
-	private String		transactionReference;
-	private String		primaryDebitAccount;
-	private String		secondaryDebitAccounts; // (with= ;delimited)
-	private String		creditAccount;
-	private Date		scheduleDate;
-	private String		financeReference;
-	private String		customerReference;
-	private String		debitCurrency;
-	private String		creditCurrency;
-	private BigDecimal	paymentAmount;
-	private String		transactionPurpose;
-	private String		financeBranch;
-	private String		financeType;
-	private String		financePurpose;
+	private String transactionReference;
+	private String primaryDebitAccount;
+	private String secondaryDebitAccounts; // (with= ;delimited)
+	private String creditAccount;
+	private Date scheduleDate;
+	private String financeReference;
+	private String customerReference;
+	private String debitCurrency;
+	private String creditCurrency;
+	private BigDecimal paymentAmount;
+	private String transactionPurpose;
+	private String financeBranch;
+	private String financeType;
+	private String financePurpose;
 	// response
-	private String		sysTranRef;
-	private BigDecimal	primaryAcDebitAmt;
-	private String		secondaryAcDebitAmt;
-	private String		paymentStatus;
-	private int			priority;
+	private String sysTranRef;
+	private BigDecimal primaryAcDebitAmt;
+	private String secondaryAcDebitAmt;
+	private String paymentStatus;
+	private int priority;
 	//others
 	private String finEvent;
 	private String finRpyFor;
 
-	private String		recordIdentifier;
-	
+	private String recordIdentifier;
+
 	public PaymentRecoveryDetail() {
 		super();
 	}

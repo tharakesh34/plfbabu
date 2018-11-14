@@ -62,9 +62,9 @@ import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.service.applicationmaster.TakafulProviderService;
 import com.pennant.webui.applicationmasters.takafulprovider.model.TakafulProviderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/TakafulProvider/TakafulProviderList.zul file.
@@ -138,7 +138,7 @@ public class TakafulProviderListCtrl extends GFCBaseListCtrl<TakafulProvider> {
 				Operators.STRING);
 		registerField("TakafulName", listheader_TakafulName, SortOrder.NONE, takafulName, sortOperator_TakafulName,
 				Operators.STRING);
-	
+
 		registerField("TakafulRate", listheader_TakafulRate, SortOrder.NONE, takafulRate, sortOperator_TakafulRate,
 				Operators.STRING);
 

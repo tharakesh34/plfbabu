@@ -24,7 +24,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class FinEODEvent implements Serializable {
 	private static final long serialVersionUID = 1183720618731771888L;
-	
+
 	private FinanceMain financeMain = new FinanceMain();
 	private FinanceType finType = new FinanceType();
 	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>(1);

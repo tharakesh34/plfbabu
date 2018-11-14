@@ -79,55 +79,51 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/DivisionDetail/divisionDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/DivisionDetail/divisionDetailDialog.zul file.
  */
 public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(DivisionDetailDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_DivisionDetailDialog; 
-	protected Row 			row0; 
-	protected Label 		label_DivisionCode;
-	protected Hlayout 		hlayout_DivisionCode;
-	protected Space 		space_DivisionCode; 
- 
-	protected Textbox 		divisionCode; 
-	protected Label 		label_DivisionCodeDesc;
-	protected Hlayout 		hlayout_DivisionCodeDesc;
-	protected Space 		space_DivisionCodeDesc; 
- 
-	protected Textbox 		divisionCodeDesc; 
-	protected Row 			row1; 
-	protected Label 		label_Active;
-	protected Hlayout 		hlayout_Active;
-	protected Space 		space_Active; 
-	protected Checkbox 		alwPromotion; 
-	protected Checkbox 		active; 
-	
-	protected Row 			row_Suspremarks;
-	protected Combobox		suspTrigger;
-	protected Label			label_DivisionDetailDialog_DivisionSuspRemarks;
-	protected Textbox		divisionSuspRemarks;
-	
-	protected Label			label_EntityCode;
-	protected ExtendedCombobox		entityCode;
+	protected Window window_DivisionDetailDialog;
+	protected Row row0;
+	protected Label label_DivisionCode;
+	protected Hlayout hlayout_DivisionCode;
+	protected Space space_DivisionCode;
 
-	protected Label 		recordType;	 
-	protected Groupbox 		gb_statusDetails;
-	private boolean 		enqModule=false;
+	protected Textbox divisionCode;
+	protected Label label_DivisionCodeDesc;
+	protected Hlayout hlayout_DivisionCodeDesc;
+	protected Space space_DivisionCodeDesc;
 
-	
+	protected Textbox divisionCodeDesc;
+	protected Row row1;
+	protected Label label_Active;
+	protected Hlayout hlayout_Active;
+	protected Space space_Active;
+	protected Checkbox alwPromotion;
+	protected Checkbox active;
+
+	protected Row row_Suspremarks;
+	protected Combobox suspTrigger;
+	protected Label label_DivisionDetailDialog_DivisionSuspRemarks;
+	protected Textbox divisionSuspRemarks;
+
+	protected Label label_EntityCode;
+	protected ExtendedCombobox entityCode;
+
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
+
 	// not auto wired vars
 	private DivisionDetail divisionDetail; // overhanded per param
 	private transient DivisionDetailListCtrl divisionDetailListCtrl; // overhanded per param
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient DivisionDetailService divisionDetailService;
 
@@ -146,9 +142,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected DivisionDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected DivisionDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -161,31 +156,32 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 
 		try {
 			if (arguments.containsKey("enqModule")) {
-				enqModule=(Boolean) arguments.get("enqModule");
-			}else{
-				enqModule=false;
+				enqModule = (Boolean) arguments.get("enqModule");
+			} else {
+				enqModule = false;
 			}
-			
+
 			// READ OVERHANDED params !
 			if (arguments.containsKey("divisionDetail")) {
 				this.divisionDetail = (DivisionDetail) arguments.get("divisionDetail");
-				DivisionDetail befImage =new DivisionDetail();
+				DivisionDetail befImage = new DivisionDetail();
 				BeanUtils.copyProperties(this.divisionDetail, befImage);
 				this.divisionDetail.setBefImage(befImage);
-				
+
 				setDivisionDetail(this.divisionDetail);
 			} else {
 				setDivisionDetail(null);
 			}
-			doLoadWorkFlow(this.divisionDetail.isWorkflow(),this.divisionDetail.getWorkflowId(),this.divisionDetail.getNextTaskId());
-	
-			if (isWorkFlowEnabled() && !enqModule){
-					this.userAction	= setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateRoleAuthorities(getRole(), "DivisionDetailDialog");
-			}else{
+			doLoadWorkFlow(this.divisionDetail.isWorkflow(), this.divisionDetail.getWorkflowId(),
+					this.divisionDetail.getNextTaskId());
+
+			if (isWorkFlowEnabled() && !enqModule) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DivisionDetailDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
-	
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -198,7 +194,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			} else {
 				setDivisionDetailListCtrl(null);
 			}
-	
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getDivisionDetail());
@@ -206,8 +202,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			MessageUtil.showError(e);
 			this.window_DivisionDetailDialog.onClose();
 		}
-		
-		logger.debug("Leaving" +event.toString());
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -216,12 +212,12 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
 		displayComponents(ScreenCTL.SCRN_GNEDT);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -229,11 +225,11 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -241,9 +237,9 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -252,14 +248,14 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doWriteBeanToComponents(this.divisionDetail.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -267,9 +263,9 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_DivisionDetailDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -291,16 +287,18 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		try {
-			
-			ScreenCTL.displayNotes(getNotes("DivisionDetail",getDivisionDetail().getDivisionCode(),getDivisionDetail().getVersion()),this);
+
+			ScreenCTL.displayNotes(
+					getNotes("DivisionDetail", getDivisionDetail().getDivisionCode(), getDivisionDetail().getVersion()),
+					this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" +event.toString());
-	
+		logger.debug("Leaving" + event.toString());
+
 	}
 
 	// GUI operations
@@ -308,8 +306,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDivisionDetail
 	 * @throws Exception
@@ -334,11 +331,10 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
-		} 
-		
-		
+		}
+
 		try {
-		
+
 			// fill the components with the data
 			doWriteBeanToComponents(aDivisionDetail);
 			// set ReadOnly mode accordingly if the object is new or not.
@@ -346,36 +342,37 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			//displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aDivisionDetail.isNewRecord()));
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_DivisionDetailDialog.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
-	
+
 	// 1 Enquiry
 	// 2 New Record
 	// 3 InitEdit
 	// 4 EditMode
 	// 5 WorkFlow Add
 	// 6 WorkFlow Edit
-	
-	private void displayComponents(int mode){
+
+	private void displayComponents(int mode) {
 		logger.debug("Entering");
-		
+
 		//doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(),isFirstTask(), this.userAction,this.divisionCode,this.divisionCodeDesc));
-		
-		if (getDivisionDetail().isNewRecord()){
-			  	setComponentAccessType("DivisionDetailDialog_DivisionCode", false, this.divisionCode, this.space_DivisionCode, this.label_DivisionCode, this.hlayout_DivisionCode,null);
-			  	setComponentAccessType("DivisionDetailDialog_DivisionCodeDesc", false, this.divisionCodeDesc, this.space_DivisionCodeDesc, this.label_DivisionCodeDesc, this.hlayout_DivisionCodeDesc,null);
-			}
-		
+
+		if (getDivisionDetail().isNewRecord()) {
+			setComponentAccessType("DivisionDetailDialog_DivisionCode", false, this.divisionCode,
+					this.space_DivisionCode, this.label_DivisionCode, this.hlayout_DivisionCode, null);
+			setComponentAccessType("DivisionDetailDialog_DivisionCodeDesc", false, this.divisionCodeDesc,
+					this.space_DivisionCodeDesc, this.label_DivisionCodeDesc, this.hlayout_DivisionCodeDesc, null);
+		}
+
 		logger.debug("Leaving");
-	} 
-	
-	
+	}
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -397,8 +394,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.divisionSuspRemarks.setReadonly(isReadOnly("DivisionDetailDialog_Active"));
 		this.entityCode.setReadonly(isReadOnly("DivisionDetailDialog_EntityCode"));
 		this.alwPromotion.setDisabled(true);
-		
-        this.active.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
+
+		this.active.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -415,28 +412,27 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		}
 		logger.debug("Leaving ");
 	}
-	
-	
-	
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
 		/*
-		boolean tempReadOnly= readOnly;
-		
-		if(readOnly || (!readOnly && (PennantConstants.RECORD_TYPE_DEL.equals(divisionDetail.getRecordType())))) {
-			tempReadOnly=true;
-		}
-		
-		setComponentAccessType("DivisionDetailDialog_DivisionCode", true, this.divisionCode, this.space_DivisionCode, this.label_DivisionCode, this.hlayout_DivisionCode,null);		
-  		setComponentAccessType("DivisionDetailDialog_DivisionCodeDesc", tempReadOnly, this.divisionCodeDesc, this.space_DivisionCodeDesc, this.label_DivisionCodeDesc, this.hlayout_DivisionCodeDesc,null);
-		setRowInvisible(this.row0, this.hlayout_DivisionCode,this.hlayout_DivisionCodeDesc);
-  		setComponentAccessType("DivisionDetailDialog_Active", tempReadOnly, this.active, this.space_Active, this.label_Active, this.hlayout_Active,null);
-		setRowInvisible(this.row1, this.hlayout_Active,null);*/
-		
+		 * boolean tempReadOnly= readOnly;
+		 * 
+		 * if(readOnly || (!readOnly && (PennantConstants.RECORD_TYPE_DEL.equals(divisionDetail.getRecordType())))) {
+		 * tempReadOnly=true; }
+		 * 
+		 * setComponentAccessType("DivisionDetailDialog_DivisionCode", true, this.divisionCode, this.space_DivisionCode,
+		 * this.label_DivisionCode, this.hlayout_DivisionCode,null);
+		 * setComponentAccessType("DivisionDetailDialog_DivisionCodeDesc", tempReadOnly, this.divisionCodeDesc,
+		 * this.space_DivisionCodeDesc, this.label_DivisionCodeDesc, this.hlayout_DivisionCodeDesc,null);
+		 * setRowInvisible(this.row0, this.hlayout_DivisionCode,this.hlayout_DivisionCodeDesc);
+		 * setComponentAccessType("DivisionDetailDialog_Active", tempReadOnly, this.active, this.space_Active,
+		 * this.label_Active, this.hlayout_Active,null); setRowInvisible(this.row1, this.hlayout_Active,null);
+		 */
+
 		this.divisionCode.setReadonly(true);
 		this.divisionCodeDesc.setReadonly(true);
 		this.alwPromotion.setDisabled(true);
@@ -453,9 +449,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		
-		
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -466,44 +460,43 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
-		if(!enqModule){
+		logger.debug("Entering");
+
+		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnSave"));	
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnSave"));
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.divisionCode.setMaxlength(8);
 		this.divisionCodeDesc.setMaxlength(50);
 		this.row_Suspremarks.setVisible(false);
-		
+
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-	
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -513,34 +506,35 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 *            DivisionDetail
 	 */
 	public void doWriteBeanToComponents(DivisionDetail aDivisionDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.divisionCode.setValue(aDivisionDetail.getDivisionCode());
 		this.divisionCodeDesc.setValue(aDivisionDetail.getDivisionCodeDesc());
-		fillComboBox(this.suspTrigger, aDivisionDetail.getDivSuspTrigger(), PennantStaticListUtil.getSuspendedTriggers(), "");
+		fillComboBox(this.suspTrigger, aDivisionDetail.getDivSuspTrigger(),
+				PennantStaticListUtil.getSuspendedTriggers(), "");
 
 		this.alwPromotion.setChecked(aDivisionDetail.isAlwPromotion());
 		this.active.setChecked(aDivisionDetail.isActive());
 		this.entityCode.setValue(aDivisionDetail.getEntityCode());
 		this.recordStatus.setValue(aDivisionDetail.getRecordStatus());
 		//this.recordType.setValue(aDivisionDetail.getRecordType());
-		if(aDivisionDetail.isNew()){
+		if (aDivisionDetail.isNew()) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		} else {
-			if(StringUtils.equals(getComboboxValue(this.suspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
+			if (StringUtils.equals(getComboboxValue(this.suspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
 				this.row_Suspremarks.setVisible(true);
 			}
-			if(this.row_Suspremarks.isVisible()) {
+			if (this.row_Suspremarks.isVisible()) {
 				this.divisionSuspRemarks.setValue(aDivisionDetail.getDivSuspRemarks());
 			}
 		}
-		
+
 		if (aDivisionDetail.isNewRecord()) {
 			this.entityCode.setDescription("");
 		} else {
 			this.entityCode.setDescription(aDivisionDetail.getEntityDesc());
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -550,37 +544,37 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @param aDivisionDetail
 	 */
 	public void doWriteComponentsToBean(DivisionDetail aDivisionDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Division Code
 		try {
-		    aDivisionDetail.setDivisionCode(this.divisionCode.getValue());
-		}catch (WrongValueException we ) {
+			aDivisionDetail.setDivisionCode(this.divisionCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Division Code Desc
 		try {
-		    aDivisionDetail.setDivisionCodeDesc(this.divisionCodeDesc.getValue());
-		}catch (WrongValueException we ) {
+			aDivisionDetail.setDivisionCodeDesc(this.divisionCodeDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aDivisionDetail.setDivSuspTrigger(PennantConstants.List_Select.equals(
-					getComboboxValue(this.suspTrigger))?"":getComboboxValue(this.suspTrigger));
+			aDivisionDetail.setDivSuspTrigger(PennantConstants.List_Select.equals(getComboboxValue(this.suspTrigger))
+					? "" : getComboboxValue(this.suspTrigger));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Division Susp Remarks
 		try {
-			if(this.divisionSuspRemarks.isVisible()) {
+			if (this.divisionSuspRemarks.isVisible()) {
 				aDivisionDetail.setDivSuspRemarks(this.divisionSuspRemarks.getValue());
 			} else {
 				aDivisionDetail.setDivSuspRemarks("");
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Allow Promotions
@@ -603,24 +597,24 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	public void onSelect$suspTrigger(Event event) {
 		logger.debug("Entering" + event.toString());
-		if(StringUtils.equals(getComboboxValue(this.suspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
+		if (StringUtils.equals(getComboboxValue(this.suspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
 			this.row_Suspremarks.setVisible(true);
 		} else {
 			this.row_Suspremarks.setVisible(false);
@@ -635,20 +629,24 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		logger.debug("Entering");
 		doClearMessage();
 		//Division Code
-		if (!this.divisionCode.isReadonly()){
-			this.divisionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value"),PennantRegularExpressions.REGEX_UPPERCASENAME,true));
+		if (!this.divisionCode.isReadonly()) {
+			this.divisionCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value"),
+							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
 		}
 		//Division Code Desc
-		if (!this.divisionCodeDesc.isReadonly()){
-			this.divisionCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCodeDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
+		if (!this.divisionCodeDesc.isReadonly()) {
+			this.divisionCodeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCodeDesc.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		
+
 		if (!this.entityCode.isReadonly()) {
-			this.entityCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DivisionDetailDialog_EntityCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.entityCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_EntityCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -659,9 +657,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.divisionCode.setConstraint("");
 		this.divisionCodeDesc.setConstraint("");
 		this.entityCode.setConstraint("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set Validations for LOV Fields
@@ -676,7 +673,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -684,11 +681,11 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
-			this.divisionCode.setErrorMessage("");
-			this.divisionCodeDesc.setErrorMessage("");
-			this.suspTrigger.setErrorMessage("");
-			this.entityCode.setErrorMessage("");
-	logger.debug("Leaving");
+		this.divisionCode.setErrorMessage("");
+		this.divisionCodeDesc.setErrorMessage("");
+		this.suspTrigger.setErrorMessage("");
+		this.entityCode.setErrorMessage("");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -704,26 +701,28 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final DivisionDetail aDivisionDetail = new DivisionDetail();
 		BeanUtils.copyProperties(getDivisionDetail(), aDivisionDetail);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value")+" : "+aDivisionDetail.getDivisionCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value") + " : "
+				+ aDivisionDetail.getDivisionCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDivisionDetail.getRecordType())){
-				aDivisionDetail.setVersion(aDivisionDetail.getVersion()+1);
+			if (StringUtils.isBlank(aDivisionDetail.getRecordType())) {
+				aDivisionDetail.setVersion(aDivisionDetail.getVersion() + 1);
 				aDivisionDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aDivisionDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aDivisionDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDivisionDetail.getNextTaskId(), aDivisionDetail);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDivisionDetail.getNextTaskId(),
+							aDivisionDetail);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -741,21 +740,20 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-		
+
 		this.divisionCode.setValue("");
 		this.divisionCodeDesc.setValue("");
 		this.entityCode.setValue("");
 		this.suspTrigger.setSelectedIndex(0);
 		this.alwPromotion.setChecked(false);
 		this.active.setChecked(false);
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -768,14 +766,15 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		final DivisionDetail aDivisionDetail = new DivisionDetail();
 		BeanUtils.copyProperties(getDivisionDetail(), aDivisionDetail);
 		boolean isNew = false;
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			aDivisionDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDivisionDetail.getNextTaskId(), aDivisionDetail);
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDivisionDetail.getNextTaskId(),
+					aDivisionDetail);
 		}
-		
+
 		// force validation, if on, than execute by component.getValue()
-		if(!PennantConstants.RECORD_TYPE_DEL.equals(aDivisionDetail.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aDivisionDetail.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the DivisionDetail object with the components data
 			doWriteComponentsToBean(aDivisionDetail);
@@ -783,30 +782,30 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
-		isNew = aDivisionDetail.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aDivisionDetail.getRecordType())){
-				aDivisionDetail.setVersion(aDivisionDetail.getVersion()+1);
-				if(isNew){
+		isNew = aDivisionDetail.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aDivisionDetail.getRecordType())) {
+				aDivisionDetail.setVersion(aDivisionDetail.getVersion() + 1);
+				if (isNew) {
 					aDivisionDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aDivisionDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aDivisionDetail.setNewRecord(true);
 				}
 			}
-		}else{
-			aDivisionDetail.setVersion(aDivisionDetail.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aDivisionDetail.setVersion(aDivisionDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
 
@@ -833,14 +832,14 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doProcess(DivisionDetail aDivisionDetail,String tranType){
+
+	private boolean doProcess(DivisionDetail aDivisionDetail, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
+		boolean processCompleted = false;
 		aDivisionDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDivisionDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDivisionDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -851,95 +850,99 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 					}
 				}
 			}
-			
+
 			aDivisionDetail.setTaskId(getTaskId());
 			aDivisionDetail.setNextTaskId(getNextTaskId());
 			aDivisionDetail.setRoleCode(getRole());
 			aDivisionDetail.setNextRoleCode(getNextRoleCode());
-			
+
 			if (StringUtils.isBlank(getOperationRefs())) {
-					processCompleted = doSaveProcess(getAuditHeader(aDivisionDetail, tranType),null);
+				processCompleted = doSaveProcess(getAuditHeader(aDivisionDetail, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				AuditHeader auditHeader =  getAuditHeader(aDivisionDetail, PennantConstants.TRAN_WF);
-				
+				AuditHeader auditHeader = getAuditHeader(aDivisionDetail, PennantConstants.TRAN_WF);
+
 				for (int i = 0; i < list.length; i++) {
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 			processCompleted = doSaveProcess(getAuditHeader(aDivisionDetail, tranType), null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param  AuditHeader auditHeader
-	 * @param method  (String)
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doSaveProcess(AuditHeader auditHeader, String method){
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
-		
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
+
 		DivisionDetail aDivisionDetail = (DivisionDetail) auditHeader.getAuditDetail().getModelData();
-		
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
 						auditHeader = getDivisionDetailService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getDivisionDetailService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getDivisionDetailService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+
+				} else {
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getDivisionDetailService().doApprove(auditHeader);
 
-						if(PennantConstants.RECORD_TYPE_DEL.equals(aDivisionDetail.getRecordType())){
-							deleteNotes=true;
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aDivisionDetail.getRecordType())) {
+							deleteNotes = true;
 						}
 
-					}else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getDivisionDetailService().doReject(auditHeader);
-						if(PennantConstants.RECORD_TYPE_NEW.equals(aDivisionDetail.getRecordType())){
-							deleteNotes=true;
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aDivisionDetail.getRecordType())) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DivisionDetailDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				auditHeader =	ErrorControl.showErrorDetails(this.window_DivisionDetailDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes("DivisionDetail",aDivisionDetail.getDivisionCode(),aDivisionDetail.getVersion()),true);
+				auditHeader = ErrorControl.showErrorDetails(this.window_DivisionDetailDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes("DivisionDetail", aDivisionDetail.getDivisionCode(),
+								aDivisionDetail.getVersion()), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -950,23 +953,24 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
-		
+
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(DivisionDetail aDivisionDetail, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDivisionDetail.getBefImage(), aDivisionDetail);   
-		return new AuditHeader(aDivisionDetail.getDivisionCode(),null,null,null,auditDetail,aDivisionDetail.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(DivisionDetail aDivisionDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDivisionDetail.getBefImage(), aDivisionDetail);
+		return new AuditHeader(aDivisionDetail.getDivisionCode(), null, null, null, auditDetail,
+				aDivisionDetail.getUserDetails(), getOverideMap());
 	}
 
 	// ******************************************************//

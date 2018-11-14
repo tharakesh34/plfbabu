@@ -13,13 +13,13 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> implements FinODPenaltyRateDAO{
+public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> implements FinODPenaltyRateDAO {
 	private static Logger logger = Logger.getLogger(FinODPenaltyRateDAOImpl.class);
 
 	public FinODPenaltyRateDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Finance Overdue Penalty details by key field
 	 * 
@@ -35,15 +35,18 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
 		finODPenaltyRate.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays,");
-		selectSql.append(" ODChargeType, ODGraceDays, ODChargeCalOn , ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc ");
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays,");
+		selectSql.append(
+				" ODChargeType, ODGraceDays, ODChargeCalOn , ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc ");
 		selectSql.append(" From FinODPenaltyRates");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		RowMapper<FinODPenaltyRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODPenaltyRate.class);
+		RowMapper<FinODPenaltyRate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinODPenaltyRate.class);
 
 		try {
 			finODPenaltyRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -60,7 +63,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	 */
 	public void delete(String finReference, String type) {
 		logger.debug("Entering");
-		
+
 		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
 		finODPenaltyRate.setFinReference(finReference);
 
@@ -70,7 +73,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		this.jdbcTemplate.update(deleteSql.toString(),  beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -85,7 +88,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays,");
 		insertSql.append(" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc )");
-		insertSql.append(" Values(:FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
+		insertSql.append(
+				" Values(:FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
 		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc )");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -95,7 +99,6 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		return finODPenaltyRate.getFinReference();
 
 	}
-	
 
 	/**
 	 * Method for Finance Overdue penalty rates Insertion
@@ -103,7 +106,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	@Override
 	public void saveLog(FinODPenaltyRate finODPenaltyRate, String type) {
 		logger.debug("Entering");
-		
+
 		if (finODPenaltyRate.getLogKey() == 0 || finODPenaltyRate.getLogKey() == Long.MIN_VALUE) {
 			finODPenaltyRate.setLogKey(getNextValue("SeqFinODPenaltyRates"));
 			logger.debug("get NextID:" + finODPenaltyRate.getLogKey());
@@ -111,9 +114,11 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinODPenaltyRates");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (LogKey, FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays,");
+		insertSql.append(
+				" (LogKey, FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays,");
 		insertSql.append(" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc )");
-		insertSql.append(" Values(:LogKey , :FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
+		insertSql.append(
+				" Values(:LogKey , :FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
 		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc )");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -133,8 +138,10 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		StringBuilder updateSql = new StringBuilder("Update FinODPenaltyRates");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set FinEffectDate = :FinEffectDate, ApplyODPenalty = :ApplyODPenalty,");
-		updateSql.append(" ODIncGrcDays = :ODIncGrcDays, ODChargeType = :ODChargeType, ODChargeAmtOrPerc = :ODChargeAmtOrPerc,");
-		updateSql.append(" ODGraceDays = :ODGraceDays, ODChargeCalOn = :ODChargeCalOn, ODAllowWaiver = :ODAllowWaiver,ODMaxWaiverPerc = :ODMaxWaiverPerc");
+		updateSql.append(
+				" ODIncGrcDays = :ODIncGrcDays, ODChargeType = :ODChargeType, ODChargeAmtOrPerc = :ODChargeAmtOrPerc,");
+		updateSql.append(
+				" ODGraceDays = :ODGraceDays, ODChargeCalOn = :ODChargeCalOn, ODAllowWaiver = :ODAllowWaiver,ODMaxWaiverPerc = :ODMaxWaiverPerc");
 		updateSql.append(" WHERE  FinReference = :FinReference ");
 
 		logger.debug("updateSql: " + updateSql.toString());

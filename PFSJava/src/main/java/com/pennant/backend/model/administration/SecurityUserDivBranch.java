@@ -55,11 +55,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -306657295035931426L;
 
-	private long  usrID = Long.MIN_VALUE;
-	private String    userDivision;
-	private String    userBranch;
-	private String    userBranchDesc;
-	private boolean newRecord=false;
+	private long usrID = Long.MIN_VALUE;
+	private String userDivision;
+	private String userBranch;
+	private String userBranchDesc;
+	private boolean newRecord = false;
 	private String lovValue;
 	private String lovDescPriKey;
 	private SecurityUserDivBranch befImage;
@@ -70,16 +70,16 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	public SecurityUserDivBranch() {
 		super();
 	}
-	
+
 	public boolean isNew() {
-		return getUsrID() == Long.MIN_VALUE;	
+		return getUsrID() == Long.MIN_VALUE;
 	}
 
 	public SecurityUserDivBranch(long id) {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("userBranchDesc");
@@ -91,6 +91,7 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	public void setId(long id) {
 		this.usrID = id;
 	}
+
 	public long getId() {
 		return usrID;
 	}
@@ -98,32 +99,39 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	public void setUsrID(long usrID) {
 		this.usrID = usrID;
 	}
+
 	public long getUsrID() {
 		return usrID;
 	}
+
 	public String getUserDivision() {
 		return userDivision;
 	}
+
 	public void setUserDivision(String userDivision) {
 		this.userDivision = userDivision;
 	}
+
 	public String getUserBranch() {
 		return userBranch;
 	}
+
 	public void setUserBranch(String userBranch) {
 		this.userBranch = userBranch;
 	}
+
 	public void setUserBranchDesc(String userBranchDesc) {
-	    this.userBranchDesc = userBranchDesc;
-    }
+		this.userBranchDesc = userBranchDesc;
+	}
 
 	public String getUserBranchDesc() {
-	    return userBranchDesc;
-    }
+		return userBranchDesc;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -131,31 +139,34 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public SecurityUserDivBranch getBefImage(){
+	public SecurityUserDivBranch getBefImage() {
 		return this.befImage;
-	}	
-	public void setBefImage(SecurityUserDivBranch beforeImage){
-		this.befImage=beforeImage;
+	}
+
+	public void setBefImage(SecurityUserDivBranch beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public String getLovDescPriKey() {
-	    return lovDescPriKey;
-    }
+		return lovDescPriKey;
+	}
 
 	public void setLovDescPriKey(String lovDescPriKey) {
-	    this.lovDescPriKey = lovDescPriKey;
-    }
+		this.lovDescPriKey = lovDescPriKey;
+	}
 
 	public String getBranchSwiftBrnCde() {
 		return branchSwiftBrnCde;

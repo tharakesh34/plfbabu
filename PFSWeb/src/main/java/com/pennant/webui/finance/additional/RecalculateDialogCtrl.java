@@ -78,35 +78,35 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
-	private static final long				serialVersionUID	= -6125624350998749280L;
-	private static final Logger				logger				= Logger.getLogger(RecalculateDialogCtrl.class);
+	private static final long serialVersionUID = -6125624350998749280L;
+	private static final Logger logger = Logger.getLogger(RecalculateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_RecalculateDialog;
-	protected Combobox						cbTillDate;
-	protected Combobox						cbEventFromDate;
-	protected Combobox						cbReCalType;
-	protected Row							row_recalType;
-	protected Row							tillDateRow;
-	protected Checkbox						pftIntact;
-	protected Label							label_RecalculateDialog_TillDate;
-	protected Row							numOfTermsRow;
-	protected Intbox						adjTerms;
-	protected Uppercasebox					serviceReqNo;
-	protected Textbox						remarks;
+	protected Window window_RecalculateDialog;
+	protected Combobox cbTillDate;
+	protected Combobox cbEventFromDate;
+	protected Combobox cbReCalType;
+	protected Row row_recalType;
+	protected Row tillDateRow;
+	protected Checkbox pftIntact;
+	protected Label label_RecalculateDialog_TillDate;
+	protected Row numOfTermsRow;
+	protected Intbox adjTerms;
+	protected Uppercasebox serviceReqNo;
+	protected Textbox remarks;
 
 	// not auto wired vars
-	private FinScheduleData					finScheduleData;														// overhanded per param
-	private FinanceScheduleDetail			financeScheduleDetail;													// overhanded per param
-	private ScheduleDetailDialogCtrl		scheduleDetailDialogCtrl;
+	private FinScheduleData finScheduleData; // overhanded per param
+	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
+	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 
-	private transient boolean				validationOn;
-	private transient String				moduleDefiner;
+	private transient boolean validationOn;
+	private transient String moduleDefiner;
 
-	private transient RecalculateService	recalService;
+	private transient RecalculateService recalService;
 	private boolean appDateValidationReq = false;
 
 	/**
@@ -143,9 +143,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else {
 				setFinScheduleData(null);
 			}
-			
+
 			if (arguments.containsKey("appDateValidationReq")) {
-				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
+				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			if (arguments.containsKey("financeScheduleDetail")) {
@@ -231,18 +231,18 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
 				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
 			}
-			
-			if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)){
+
+			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
 				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADDRECAL,
 						PennantStaticListUtil.getSchCalCodes(), excldValues);
 				this.row_recalType.setVisible(false);
 				this.cbReCalType.setDisabled(true);
 				this.window_RecalculateDialog.setTitle(Labels.getLabel("window_AddTermRecalculateDialog.title"));
-			}else{
+			} else {
 				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getSchCalCodes(), excldValues);
 			}
-			
+
 			fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails());
 			fillSchDates(this.cbTillDate, aFinSchData, aFinSchData.getFinanceMain().getFinStartDate());
 		}
@@ -267,7 +267,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
-		
+
 		boolean isMaturityDone = false;
 
 		if (financeScheduleDetails != null) {
@@ -280,14 +280,15 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (!curSchd.isRepayOnSchDate()) {
 					continue;
 				}
-				
+
 				// Not allow Before Current Business Date
-				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+				if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
 				}
-				
+
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -296,7 +297,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
-				
+
 				// Presentment Exists
 				if (curSchd.getPresentmentId() > 0) {
 					dateCombobox.getItems().clear();
@@ -307,22 +308,22 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
-				
+
 				// Dont add Zero Payment terms after Actual maturity
-				if(isMaturityDone){
+				if (isMaturityDone) {
 					continue;
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 				if (getFinanceScheduleDetail() != null
 						&& curSchd.getSchDate().equals(getFinanceScheduleDetail().getSchDate())) {
 					dateCombobox.setSelectedItem(comboitem);
 				}
-				
-				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
 					isMaturityDone = true;
 				}
 			}
@@ -368,15 +369,16 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							new String[] { Labels.getLabel("label_RecalculateDialog_TillDate.value") }));
 				}
 				if (((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(finMain.getFinStartDate()) < 0
-						|| ((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(finMain.getMaturityDate()) > 0) {
-					throw new WrongValueException(this.cbTillDate, Labels.getLabel(
-							"DATE_ALLOWED_RANGE",
-							new String[] { Labels.getLabel("label_RecalculateDialog_TillDate.value"),
-									DateUtility.formatToLongDate(finMain.getFinStartDate()),
-									DateUtility.formatToLongDate(finMain.getMaturityDate()) }));
+						|| ((Date) this.cbTillDate.getSelectedItem().getValue())
+								.compareTo(finMain.getMaturityDate()) > 0) {
+					throw new WrongValueException(this.cbTillDate,
+							Labels.getLabel("DATE_ALLOWED_RANGE",
+									new String[] { Labels.getLabel("label_RecalculateDialog_TillDate.value"),
+											DateUtility.formatToLongDate(finMain.getFinStartDate()),
+											DateUtility.formatToLongDate(finMain.getMaturityDate()) }));
 				}
 				//if schdpftBal greater than zero throw validation
-				if(this.cbTillDate.getSelectedItem().getAttribute("pftBal") != null){
+				if (this.cbTillDate.getSelectedItem().getAttribute("pftBal") != null) {
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel("Label_finSchdTillDate"));
 				}
 
@@ -412,7 +414,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RECALCULATE);
 
@@ -479,9 +481,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
 		setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData()));
-		
+
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		
+
 		/*
 		 * Setting Desired Values for the Profit Intact option By Using Change Profit Method Reverse Calculate the total
 		 * Profit Amount on Changing Rate Value
@@ -511,7 +513,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
 			}
 		}
-		
+
 		this.window_RecalculateDialog.onClose();
 		logger.debug("Leaving");
 	}
@@ -559,7 +561,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -604,9 +606,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.label_RecalculateDialog_TillDate.setValue(Labels.getLabel("label_RecalculateDialog_TillDate.value"));
 
 			if (isAction) {
-				if (isValidComboValue(this.cbEventFromDate, Labels.getLabel("label_RecalculateDialog_FromDate.value"))) {
-					fillSchDates(this.cbTillDate, getFinScheduleData(), (Date) this.cbEventFromDate.getSelectedItem()
-							.getValue());
+				if (isValidComboValue(this.cbEventFromDate,
+						Labels.getLabel("label_RecalculateDialog_FromDate.value"))) {
+					fillSchDates(this.cbTillDate, getFinScheduleData(),
+							(Date) this.cbEventFromDate.getSelectedItem().getValue());
 				}
 			}
 		} else {
@@ -653,14 +656,14 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		if (aFinSchData.getFinanceScheduleDetails() != null) {
 			List<FinanceScheduleDetail> financeScheduleDetails = aFinSchData.getFinanceScheduleDetails();
-			
+
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//Not Allowed for Repayment
-				if (!(curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(
-						BigDecimal.ZERO) > 0))) {
+				if (!(curSchd.isRepayOnSchDate()
+						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 					continue;
 				}
 
@@ -673,14 +676,15 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
-				
+
 				// When Add terms done with zero installments and trying with TILLDATE option 
 				// Date after closing balance is Zero and not a maturity date should not allow
-				if(curSchd.getSchDate().compareTo(aFinSchData.getFinanceMain().getMaturityDate()) != 0 &&
-						curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+				if (curSchd.getSchDate().compareTo(aFinSchData.getFinanceMain().getMaturityDate()) != 0
+						&& curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
 					continue;
 				}
-				
+
 				if (fillAfter.compareTo(curSchd.getSchDate()) < 0) {
 
 					comboitem = new Comboitem();
@@ -688,19 +692,19 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 				}
-				
+
 				/*
-				 * In Recalculation type if Till Date is selected and for the Same date if the profit Balance in schedule is greater
-				 * than zero then will set the pftbal attribute
+				 * In Recalculation type if Till Date is selected and for the Same date if the profit Balance in
+				 * schedule is greater than zero then will set the pftbal attribute
 				 */
-				if(this.cbReCalType.getSelectedIndex()>=0 &&
-						StringUtils.equals(this.cbReCalType.getSelectedItem().getValue().toString(), CalculationConstants.RPYCHG_TILLDATE)
-						&& curSchd.getProfitBalance().compareTo(BigDecimal.ZERO) > 0 && fillAfter!=null){
+				if (this.cbReCalType.getSelectedIndex() >= 0
+						&& StringUtils.equals(this.cbReCalType.getSelectedItem().getValue().toString(),
+								CalculationConstants.RPYCHG_TILLDATE)
+						&& curSchd.getProfitBalance().compareTo(BigDecimal.ZERO) > 0 && fillAfter != null) {
 					comboitem.setStyle("color:Red;");
 					comboitem.setAttribute("pftBal", curSchd.getProfitBalance());
 				}
-				
-				
+
 			}
 		}
 		logger.debug("Leaving");

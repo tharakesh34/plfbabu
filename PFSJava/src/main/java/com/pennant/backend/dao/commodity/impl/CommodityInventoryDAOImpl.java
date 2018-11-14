@@ -51,7 +51,6 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> implements CommodityInventoryDAO {
 	private static Logger logger = Logger.getLogger(CommodityInventoryDAOImpl.class);
 
-
 	public CommodityInventoryDAOImpl() {
 		super();
 	}
@@ -68,7 +67,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 	@Override
 	public CommodityInventory getCommodityInventoryById(final long id, String type) {
 		logger.debug("Entering");
-		
+
 		CommodityInventory commodityInventory = new CommodityInventory();
 
 		commodityInventory.setId(id);
@@ -78,7 +77,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		selectSql.append(", UnitPrice, FinalSettlementDate, PurchaseAmount, Units, Quantity, Location, BulkPurchase ");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		selectSql.append(", NextTaskId, RecordType, WorkflowId,CommodityCcy ");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BrokerShrtName,FeeOnUnsold,LocationCode,LocationDesc ");
 			selectSql.append(",BrokerCustID,AccountNumber,LovDescCommodityDesc ");
@@ -89,7 +88,8 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
-		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityInventory.class);
+		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CommodityInventory.class);
 
 		try {
 			commodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -97,12 +97,11 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 			logger.warn("Exception: ", e);
 			commodityInventory = null;
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return commodityInventory;
 	}
-
 
 	/**
 	 * This method Deletes the Record from the FCMTCommodityInventory or FCMTCommodityInventory_Temp. if Record not
@@ -120,7 +119,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 	@Override
 	public void delete(CommodityInventory commodityInventory, String type) {
 		logger.debug("Entering");
-		
+
 		int recordCount = 0;
 
 		StringBuilder deleteSql = new StringBuilder("Delete From FCMTCommodityInventory");
@@ -158,7 +157,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 	@Override
 	public long save(CommodityInventory commodityInventory, String type) {
 		logger.debug("Entering");
-		
+
 		if (commodityInventory.getId() == Long.MIN_VALUE) {
 			commodityInventory.setId(getNextId("SeqFCMTCommodityInventory"));
 			logger.debug("get NextID:" + commodityInventory.getId());
@@ -172,7 +171,8 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId,CommodityCcy )");
 		insertSql.append(" Values");
 		insertSql.append(" (:CommodityInvId, :BrokerCode,  :HoldCertificateNo, :CommodityCode, :PurchaseDate");
-		insertSql.append(", :UnitPrice, :FinalSettlementDate, :PurchaseAmount, :Units, :Quantity, :Location, :BulkPurchase");
+		insertSql.append(
+				", :UnitPrice, :FinalSettlementDate, :PurchaseAmount, :Units, :Quantity, :Location, :BulkPurchase");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		insertSql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :CommodityCcy )");
 
@@ -180,9 +180,9 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
-		
+
 		return commodityInventory.getId();
 	}
 
@@ -201,17 +201,21 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 	@Override
 	public void update(CommodityInventory commodityInventory, String type) {
 		logger.debug("Entering");
-		
+
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update FCMTCommodityInventory");
-		
+
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set BrokerCode = :BrokerCode");
-		updateSql.append(", HoldCertificateNo = :HoldCertificateNo, CommodityCode = :CommodityCode, PurchaseDate = :PurchaseDate");
-		updateSql.append(", UnitPrice =:UnitPrice, FinalSettlementDate = :FinalSettlementDate, PurchaseAmount = :PurchaseAmount, Units = :Units");
+		updateSql.append(
+				", HoldCertificateNo = :HoldCertificateNo, CommodityCode = :CommodityCode, PurchaseDate = :PurchaseDate");
+		updateSql.append(
+				", UnitPrice =:UnitPrice, FinalSettlementDate = :FinalSettlementDate, PurchaseAmount = :PurchaseAmount, Units = :Units");
 		updateSql.append(", Quantity = :Quantity, Location = :Location, BulkPurchase = :BulkPurchase");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
-		updateSql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
+		updateSql.append(
+				", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId, CommodityCcy=:CommodityCcy ");
 		updateSql.append(" Where CommodityInvId =:CommodityInvId");
 
@@ -235,30 +239,34 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 	 * 
 	 */
 	@Override
-    public List<FinCommodityInventory> getUsedCommInventory(String brokerCode, String holdCertificateNo) {
+	public List<FinCommodityInventory> getUsedCommInventory(String brokerCode, String holdCertificateNo) {
 		logger.debug("Entering");
-		
+
 		FinCommodityInventory finCommodityInventory = new FinCommodityInventory();
 		finCommodityInventory.setBrokerCode(brokerCode);
 		finCommodityInventory.setHoldCertificateNo(holdCertificateNo);
 		finCommodityInventory.setCommodityStatus(PennantConstants.COMMODITY_CANCELLED);
-		
-		StringBuilder selectSql = new StringBuilder("SELECT  FinInventoryID, Finreference, BrokerCode, HoldCertificateNo,");
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT  FinInventoryID, Finreference, BrokerCode, HoldCertificateNo,");
 		selectSql.append("  Quantity, SaleQuantity, SalePrice, UnitSalePrice, CommodityStatus, DateOfAllocation,");
 		selectSql.append("  DateOfSelling, DateCancelled, FeeCalculated, FeePayableDate, FeeBalance ");
 		selectSql.append("  FROM  FinCommodityInventory");
-		selectSql.append("  Where BrokerCode =:BrokerCode AND HoldCertificateNo =:HoldCertificateNo AND CommodityStatus !=:CommodityStatus");
+		selectSql.append(
+				"  Where BrokerCode =:BrokerCode AND HoldCertificateNo =:HoldCertificateNo AND CommodityStatus !=:CommodityStatus");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommodityInventory);
-		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCommodityInventory.class);
+		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCommodityInventory.class);
 
-		List<FinCommodityInventory> finCommInventoryList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-	
+		List<FinCommodityInventory> finCommInventoryList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
 		logger.debug("Leaving");
 		return finCommInventoryList;
-    }
+	}
 
 	/**
 	 * Method for getting commodity used finances count
@@ -267,35 +275,36 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 	@Override
 	public int getCommodityFinances(String brokerCode, String holdCertificateNo, String status) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BrokerCode", brokerCode);
 		source.addValue("HoldCertificateNo", holdCertificateNo);
 		source.addValue("CommodityStatus", status);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT  Count(*) FROM  FinCommodityInventory");
-		selectSql.append("  Where BrokerCode=:BrokerCode AND  HoldCertificateNo=:HoldCertificateNo AND CommodityStatus !=:CommodityStatus");
+		selectSql.append(
+				"  Where BrokerCode=:BrokerCode AND  HoldCertificateNo=:HoldCertificateNo AND CommodityStatus !=:CommodityStatus");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		logger.debug("Leaving");
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
-		}catch(EmptyResultDataAccessException e) {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			return 0;
 		}
 
 	}
-	
+
 	/**
 	 * Method for getting CommodityInventory Data from FCMTCommodityInventory
 	 * 
 	 */
 	@Override
-    public CommodityInventory getCommodityDetails(String holdCertificateNo, String brokerCode) {
+	public CommodityInventory getCommodityDetails(String holdCertificateNo, String brokerCode) {
 		logger.debug("Entering");
-		
+
 		CommodityInventory commodityInventory = new CommodityInventory();
 		commodityInventory.setHoldCertificateNo(holdCertificateNo);
 		commodityInventory.setBrokerCode(brokerCode);
@@ -307,7 +316,8 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		selectSql.append(" From FCMTCommodityInventory");
 		selectSql.append("  Where   HoldCertificateNo=:HoldCertificateNo AND  BrokerCode=:BrokerCode ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
-		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityInventory.class);
+		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CommodityInventory.class);
 		try {
 			commodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -318,9 +328,8 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		return commodityInventory;
 	}
 
-	
 	/**
-	 * Fetch the count of Commidity Inventories with the Broker Code and Holding number  
+	 * Fetch the count of Commidity Inventories with the Broker Code and Holding number
 	 * 
 	 * @param id
 	 *            (int)
@@ -336,14 +345,14 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		selectSql.append("Select Count(*)  From FCMTCommodityInventory");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where  BrokerCode =:BrokerCode And HoldCertificateNo =:HoldCertificateNo");
-		if(commodityInventory.getCommodityInvId() > 0 ){										
+		if (commodityInventory.getCommodityInvId() > 0) {
 			selectSql.append(" and commodityInvId != :commodityInvId ");
-		}			
+		}
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
- 		logger.debug("Leaving");
+		logger.debug("Leaving");
 
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -356,15 +365,15 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CommodityStatus", cmdSts);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select FinReference FROM FinCommodityInventory");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE CommodityStatus =:CommodityStatus ");
 
 		logger.debug("selectSql: " + selectSql.toString());
- 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);	
+		logger.debug("Leaving");
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
-    
+
 }

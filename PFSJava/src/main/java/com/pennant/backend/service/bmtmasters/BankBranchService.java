@@ -47,16 +47,26 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 
 public interface BankBranchService {
-	
+
 	BankBranch getBankBranch();
+
 	BankBranch getNewBankBranch();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BankBranch getBankBranchById(long id);
+
 	BankBranch getApprovedBankBranchById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	BankBranch getBankBrachByIFSC(String ifsc);
+
 	BankBranch getBankBrachByCode(String bankCode, String branchCode);
+
 	BankBranch getBankBrachByMicr(String micr);
 }

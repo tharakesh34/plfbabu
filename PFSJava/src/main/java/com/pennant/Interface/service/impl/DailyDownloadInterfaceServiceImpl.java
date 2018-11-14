@@ -52,46 +52,46 @@ import com.pennant.equation.dao.CoreInterfaceDAO;
 
 public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterfaceService {
 	private static final Logger logger = Logger.getLogger(DailyDownloadInterfaceServiceImpl.class);
-	
+
 	private DailyDownloadProcess dailyDownloadProcess;
 	private CoreInterfaceDAO coreInterfaceDAO;
 	private PFSParameterDAO pFSParameterDAO;
 	private CustomerInterfaceService customerInterfaceService;
-	
+
 	private EquationMasterMissedDetail masterMissedDetail;
-	
+
 	private Date dateValueDate = DateUtility.getAppValueDate();
-	
-	public DailyDownloadInterfaceServiceImpl(){
+
+	public DailyDownloadInterfaceServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Processing Currency Details
 	 */
 	@Override
-	public boolean processCurrencyDetails(){
+	public boolean processCurrencyDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
-		try{
-			
+
+		try {
+
 			//Fetch Existing Currency Details
 			List<EquationCurrency> existingCurrencies = getCoreInterfaceDAO().fetchCurrecnyDetails();
-			
+
 			//Import Currency Details
 			List<EquationCurrency> currienciesList = getDailyDownloadProcess().importCurrencyDetails();
 
 			List<EquationCurrency> saveCurrienciesList = new ArrayList<EquationCurrency>();
 			List<EquationCurrency> updateCurrienciesList = new ArrayList<EquationCurrency>();
-			
+
 			if (existingCurrencies != null && !existingCurrencies.isEmpty()) {
 				for (EquationCurrency eqtnCurrency : currienciesList) {
 					if (checkCurrecnyExist(eqtnCurrency, existingCurrencies)) {
 						updateCurrienciesList.add(eqtnCurrency);
 					} else {
-						
+
 						eqtnCurrency.setCcyIsActive(true);
 						eqtnCurrency.setVersion(1);
 						eqtnCurrency.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -103,14 +103,14 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnCurrency.setTaskId("");
 						eqtnCurrency.setNextTaskId("");
 						eqtnCurrency.setWorkflowId(0);
-						
+
 						saveCurrienciesList.add(eqtnCurrency);
 					}
 				}
 			} else {
-				
+
 				for (EquationCurrency eqtnCurrency : currienciesList) {
-	                
+
 					eqtnCurrency.setCcyIsActive(true);
 					eqtnCurrency.setVersion(1);
 					eqtnCurrency.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -122,23 +122,24 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					eqtnCurrency.setTaskId("");
 					eqtnCurrency.setNextTaskId("");
 					eqtnCurrency.setWorkflowId(0);
-					
-                }
+
+				}
 				saveCurrienciesList.addAll(currienciesList);
 			}
 
-			if(!updateCurrienciesList.isEmpty()){
+			if (!updateCurrienciesList.isEmpty()) {
 				getCoreInterfaceDAO().updateCurrecnyDetails(updateCurrienciesList);
 				isExecuted = true;
 			}
-			if(!saveCurrienciesList.isEmpty()){
+			if (!saveCurrienciesList.isEmpty()) {
 				getCoreInterfaceDAO().saveCurrecnyDetails(saveCurrienciesList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Currency","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("Currency", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -148,27 +149,27 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Relationship officer Details
 	 */
 	@Override
-	public boolean processRelationshipOfficerDetails(){
+	public boolean processRelationshipOfficerDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
 		List<EquationRelationshipOfficer> existingRelationshipOfficers;
 		List<EquationRelationshipOfficer> relationshipOfficerList;
-		
-		try{
-			
+
+		try {
+
 			existingRelationshipOfficers = getCoreInterfaceDAO().fetchRelationshipOfficerDetails();
-			relationshipOfficerList =  getDailyDownloadProcess().importRelationShipOfficersDetails();
+			relationshipOfficerList = getDailyDownloadProcess().importRelationShipOfficersDetails();
 
 			List<EquationRelationshipOfficer> saveRelationshipOfficerList = new ArrayList<EquationRelationshipOfficer>();
 			List<EquationRelationshipOfficer> updateRelationshipOfficerList = new ArrayList<EquationRelationshipOfficer>();
-			
+
 			if (existingRelationshipOfficers != null && !existingRelationshipOfficers.isEmpty()) {
 				for (EquationRelationshipOfficer eqtnRelationshipOfficer : relationshipOfficerList) {
 					if (checkRelationshipOfficerExist(eqtnRelationshipOfficer, existingRelationshipOfficers)) {
 						updateRelationshipOfficerList.add(eqtnRelationshipOfficer);
 					} else {
-						
+
 						eqtnRelationshipOfficer.setROfficerIsActive(true);
 						eqtnRelationshipOfficer.setVersion(1);
 						eqtnRelationshipOfficer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -180,12 +181,12 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnRelationshipOfficer.setTaskId("");
 						eqtnRelationshipOfficer.setNextTaskId("");
 						eqtnRelationshipOfficer.setWorkflowId(0);
-						
+
 						saveRelationshipOfficerList.add(eqtnRelationshipOfficer);
 					}
 				}
 			} else {
-				
+
 				for (EquationRelationshipOfficer eqtnRelationshipOfficer : relationshipOfficerList) {
 					eqtnRelationshipOfficer.setROfficerIsActive(true);
 					eqtnRelationshipOfficer.setVersion(1);
@@ -198,23 +199,24 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					eqtnRelationshipOfficer.setTaskId("");
 					eqtnRelationshipOfficer.setNextTaskId("");
 					eqtnRelationshipOfficer.setWorkflowId(0);
-                }
-				
+				}
+
 				saveRelationshipOfficerList.addAll(relationshipOfficerList);
 			}
 
-			if(!updateRelationshipOfficerList.isEmpty()){
+			if (!updateRelationshipOfficerList.isEmpty()) {
 				getCoreInterfaceDAO().updateRelationShipOfficerDetails(updateRelationshipOfficerList);
 				isExecuted = true;
 			}
-			if(!saveRelationshipOfficerList.isEmpty()){
+			if (!saveRelationshipOfficerList.isEmpty()) {
 				getCoreInterfaceDAO().saveRelationShipOfficerDetails(saveRelationshipOfficerList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("RelationshipOfficer","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(getMasterMissedDetail("RelationshipOfficer", "ProcessingError", getExceptionDetails(e),
+					dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -224,14 +226,14 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Customer Type Details
 	 */
 	@Override
-	public boolean processCustomerTypeDetails(){
+	public boolean processCustomerTypeDetails() {
 		logger.debug("Entering");
 		boolean isExecuted = false;
 		List<EquationCustomerType> existingCustomerTypes;
 		List<EquationCustomerType> customerTypeList;
-		try{
+		try {
 			existingCustomerTypes = getCoreInterfaceDAO().fetchCustomerTypeDetails();
-			customerTypeList =   getDailyDownloadProcess().importCustomerTypeDetails();
+			customerTypeList = getDailyDownloadProcess().importCustomerTypeDetails();
 
 			List<EquationCustomerType> saveCustomerTypeList = new ArrayList<EquationCustomerType>();
 			List<EquationCustomerType> updateCustomerTypeList = new ArrayList<EquationCustomerType>();
@@ -240,7 +242,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					if (checkCustomerTypeExist(eqtnCustomerType, existingCustomerTypes)) {
 						updateCustomerTypeList.add(eqtnCustomerType);
 					} else {
-						
+
 						eqtnCustomerType.setCustTypeIsActive(true);
 						eqtnCustomerType.setVersion(1);
 						eqtnCustomerType.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -252,12 +254,12 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnCustomerType.setTaskId("");
 						eqtnCustomerType.setNextTaskId("");
 						eqtnCustomerType.setWorkflowId(0);
-						
+
 						saveCustomerTypeList.add(eqtnCustomerType);
 					}
 				}
 			} else {
-				
+
 				for (EquationCustomerType customerType : customerTypeList) {
 					customerType.setCustTypeIsActive(true);
 					customerType.setVersion(1);
@@ -270,22 +272,23 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					customerType.setTaskId("");
 					customerType.setNextTaskId("");
 					customerType.setWorkflowId(0);
-                }
+				}
 				saveCustomerTypeList.addAll(customerTypeList);
 			}
 
-			if(!updateCustomerTypeList.isEmpty()){
+			if (!updateCustomerTypeList.isEmpty()) {
 				getCoreInterfaceDAO().updateCustomerTypeDetails(updateCustomerTypeList);
 				isExecuted = true;
 			}
-			if(!saveCustomerTypeList.isEmpty()){
+			if (!saveCustomerTypeList.isEmpty()) {
 				getCoreInterfaceDAO().saveCustomerTypeDetails(saveCustomerTypeList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("CustomerType","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("CustomerType", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -295,24 +298,24 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Department Details
 	 */
 	@Override
-	public boolean processDepartmentDetails(){
+	public boolean processDepartmentDetails() {
 		logger.debug("Entering");
 		boolean isExecuted = false;
 		List<EquationDepartment> existingDepartments;
 		List<EquationDepartment> departmentList;
-		try{
+		try {
 			existingDepartments = getCoreInterfaceDAO().fetchDepartmentDetails();
 			departmentList = getDailyDownloadProcess().importDepartmentDetails();
 
 			List<EquationDepartment> saveDepartmentList = new ArrayList<EquationDepartment>();
 			List<EquationDepartment> updateDepartmentList = new ArrayList<EquationDepartment>();
-			
+
 			if (existingDepartments != null && !existingDepartments.isEmpty()) {
 				for (EquationDepartment eqtnDepartment : departmentList) {
 					if (checkDepartmentExist(eqtnDepartment, existingDepartments)) {
 						updateDepartmentList.add(eqtnDepartment);
 					} else {
-						
+
 						eqtnDepartment.setDeptIsActive(true);
 						eqtnDepartment.setVersion(1);
 						eqtnDepartment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -324,7 +327,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnDepartment.setTaskId("");
 						eqtnDepartment.setNextTaskId("");
 						eqtnDepartment.setWorkflowId(0);
-						
+
 						saveDepartmentList.add(eqtnDepartment);
 					}
 				}
@@ -332,18 +335,19 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				saveDepartmentList.addAll(departmentList);
 			}
 
-			if(!updateDepartmentList.isEmpty()){
+			if (!updateDepartmentList.isEmpty()) {
 				getCoreInterfaceDAO().updateDepartmentDetails(updateDepartmentList);
 				isExecuted = true;
 			}
-			if(!saveDepartmentList.isEmpty()){
+			if (!saveDepartmentList.isEmpty()) {
 				getCoreInterfaceDAO().saveDepartmentDetails(saveDepartmentList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Department","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("Department", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -353,25 +357,25 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Customer Group Details
 	 */
 	@Override
-	public boolean processCustomerGroupDetails(){
+	public boolean processCustomerGroupDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
 		List<EquationCustomerGroup> existingCustomerGroups;
-		List<EquationCustomerGroup> customerGroupList;		
-		try{
+		List<EquationCustomerGroup> customerGroupList;
+		try {
 			existingCustomerGroups = getCoreInterfaceDAO().fetchCustomerGroupDetails();
 			customerGroupList = getDailyDownloadProcess().importCustomerGroupDetails();
 
 			List<EquationCustomerGroup> saveCustomerGroupList = new ArrayList<EquationCustomerGroup>();
 			List<EquationCustomerGroup> updateCustomerGroupList = new ArrayList<EquationCustomerGroup>();
-			
+
 			if (existingCustomerGroups != null && !existingCustomerGroups.isEmpty()) {
 				for (EquationCustomerGroup eqtnCustomerGroup : customerGroupList) {
 					if (checkCustomerGroupExist(eqtnCustomerGroup, existingCustomerGroups)) {
 						updateCustomerGroupList.add(eqtnCustomerGroup);
 					} else {
-						
+
 						eqtnCustomerGroup.setCustGrpIsActive(true);
 						eqtnCustomerGroup.setVersion(1);
 						eqtnCustomerGroup.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -383,12 +387,12 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnCustomerGroup.setTaskId("");
 						eqtnCustomerGroup.setNextTaskId("");
 						eqtnCustomerGroup.setWorkflowId(0);
-						
+
 						saveCustomerGroupList.add(eqtnCustomerGroup);
 					}
 				}
 			} else {
-				
+
 				for (EquationCustomerGroup customerGroup : customerGroupList) {
 					customerGroup.setCustGrpIsActive(true);
 					customerGroup.setVersion(1);
@@ -401,50 +405,51 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					customerGroup.setTaskId("");
 					customerGroup.setNextTaskId("");
 					customerGroup.setWorkflowId(0);
-                }
+				}
 				saveCustomerGroupList.addAll(customerGroupList);
 			}
 
-			if(!updateCustomerGroupList.isEmpty()){
+			if (!updateCustomerGroupList.isEmpty()) {
 				getCoreInterfaceDAO().updateCustomerGroupDetails(updateCustomerGroupList);
 				isExecuted = true;
 			}
-			if(!saveCustomerGroupList.isEmpty()){
+			if (!saveCustomerGroupList.isEmpty()) {
 				getCoreInterfaceDAO().saveCustomerGroupDetails(saveCustomerGroupList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("CustomerGroup","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("CustomerGroup", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
+
 	/**
-	 * Method for Processing Account Type  Details
+	 * Method for Processing Account Type Details
 	 */
 	@Override
-	public boolean processAccountTypeDetails(){
+	public boolean processAccountTypeDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
 		List<EquationAccountType> existingAccountTypes;
-		List<EquationAccountType> accountTypeList;		
-		try{
+		List<EquationAccountType> accountTypeList;
+		try {
 			existingAccountTypes = getCoreInterfaceDAO().fetchAccountTypeDetails();
 			accountTypeList = getDailyDownloadProcess().importAccountTypeDetails();
-			
+
 			List<EquationAccountType> saveAccountTypeList = new ArrayList<EquationAccountType>();
 			List<EquationAccountType> updateAccountTypeList = new ArrayList<EquationAccountType>();
-			
+
 			if (existingAccountTypes != null && !existingAccountTypes.isEmpty()) {
 				for (EquationAccountType accountType : accountTypeList) {
 					if (checkAccountTypeExist(accountType, existingAccountTypes)) {
 						updateAccountTypeList.add(accountType);
 					} else {
-						
+
 						accountType.setAcTypeIsActive(true);
 						accountType.setVersion(1);
 						accountType.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -456,12 +461,12 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						accountType.setTaskId("");
 						accountType.setNextTaskId("");
 						accountType.setWorkflowId(0);
-						
+
 						saveAccountTypeList.add(accountType);
 					}
 				}
 			} else {
-				
+
 				for (EquationAccountType accountType : accountTypeList) {
 					accountType.setAcTypeIsActive(true);
 					accountType.setVersion(1);
@@ -478,29 +483,31 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				saveAccountTypeList.addAll(accountTypeList);
 			}
 
-				if(!updateAccountTypeList.isEmpty()){
-					getCoreInterfaceDAO().updateAccountTypeDetails(updateAccountTypeList);
-					getCoreInterfaceDAO().updateAccountTypeNatureDetails(updateAccountTypeList);
-					isExecuted = true;
-				}
-				if(!saveAccountTypeList.isEmpty()){
-					getCoreInterfaceDAO().saveAccountTypeDetails(saveAccountTypeList);
-					getCoreInterfaceDAO().saveAccountTypeNatureDetails(saveAccountTypeList);
-					isExecuted = true;
-				}
-		}catch(Exception e){
+			if (!updateAccountTypeList.isEmpty()) {
+				getCoreInterfaceDAO().updateAccountTypeDetails(updateAccountTypeList);
+				getCoreInterfaceDAO().updateAccountTypeNatureDetails(updateAccountTypeList);
+				isExecuted = true;
+			}
+			if (!saveAccountTypeList.isEmpty()) {
+				getCoreInterfaceDAO().saveAccountTypeDetails(saveAccountTypeList);
+				getCoreInterfaceDAO().saveAccountTypeNatureDetails(saveAccountTypeList);
+				isExecuted = true;
+			}
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("AccountType","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("AccountType", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
+
 	/**
-	 * Method for Processing Customer Rating  Details
+	 * Method for Processing Customer Rating Details
 	 */
 	@Override
-	public boolean processCustomerRatingDetails(){
+	public boolean processCustomerRatingDetails() {
 		logger.debug("Entering");
 
 		boolean isExecuted = false;
@@ -508,7 +515,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		List<EquationCustomerRating> customerRatingsList;
 		List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
 		EquationMasterMissedDetail masterMissedDetail;
-		try{
+		try {
 			existingcuCustomerRatings = getCoreInterfaceDAO().fetchCustomerRatingDetails();
 			customerRatingsList = getDailyDownloadProcess().importCustomerRatingDetails();
 
@@ -520,14 +527,16 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 			if (existingcuCustomerRatings != null && !existingcuCustomerRatings.isEmpty()) {
 				for (EquationCustomerRating customerRating : customerRatingsList) {
 
-					if(!valueExistInMaster(customerRating.getCustID(),customerIdList)){
+					if (!valueExistInMaster(customerRating.getCustID(), customerIdList)) {
 						masterMissedDetail = new EquationMasterMissedDetail();
 						masterMissedDetail.setModule("CustomerRatings");
 						masterMissedDetail.setLastMntOn(dateValueDate);
 						masterMissedDetail.setFieldName("CustID");
-						masterMissedDetail.setDescription("CustID : '"+customerRating.getCustID()+"',CustRatingType : '"+customerRating.getCustRatingType()+"'.CustID Does Not Exist In Customers Table");
-						masterValueMissedDetails.add(masterMissedDetail);	
-					}else{
+						masterMissedDetail.setDescription("CustID : '" + customerRating.getCustID()
+								+ "',CustRatingType : '" + customerRating.getCustRatingType()
+								+ "'.CustID Does Not Exist In Customers Table");
+						masterValueMissedDetails.add(masterMissedDetail);
+					} else {
 						if (checkCustomerRatingExist(customerRating, existingcuCustomerRatings)) {
 							updateCustomerRatingsList.add(customerRating);
 						} else {
@@ -564,48 +573,48 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				saveCustomerRatingsList.addAll(customerRatingsList);
 			}
 
-			if(!updateCustomerRatingsList.isEmpty()){
+			if (!updateCustomerRatingsList.isEmpty()) {
 				getCoreInterfaceDAO().updateCustomerRatingDetails(updateCustomerRatingsList);
 				isExecuted = true;
 			}
-			if(!saveCustomerRatingsList.isEmpty()){
+			if (!saveCustomerRatingsList.isEmpty()) {
 				getCoreInterfaceDAO().saveCustomerRatingDetails(saveCustomerRatingsList);
 				isExecuted = true;
 			}
-			if(!masterValueMissedDetails.isEmpty()){
+			if (!masterValueMissedDetails.isEmpty()) {
 				getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("CustomerRating","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("CustomerRating", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
 
-	
 	/**
 	 * Method for Processing Country Details
 	 */
 	@Override
-	public boolean processCountryDetails(){
+	public boolean processCountryDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
-		try{
-			
+
+		try {
+
 			//Fetch Existing Currency Details
 			List<EquationCountry> existingCountries = getCoreInterfaceDAO().fetchCountryDetails();
-			
+
 			//Import Currency Details
 			List<EquationCountry> countryList = getDailyDownloadProcess().importCountryDetails();
 
 			List<EquationCountry> saveCountryList = new ArrayList<EquationCountry>();
 			List<EquationCountry> updatecountryList = new ArrayList<EquationCountry>();
-			
+
 			if (existingCountries != null && !existingCountries.isEmpty()) {
 				for (EquationCountry eqtnCountry : countryList) {
 					if (checkCountryExist(eqtnCountry, existingCountries)) {
@@ -615,7 +624,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnCountry.setCountryResidenceLimit(new BigDecimal(9999));
 						eqtnCountry.setCountryRiskLimit(new BigDecimal(9999));
 						eqtnCountry.setCountryIsActive(true);
-						
+
 						eqtnCountry.setVersion(1);
 						eqtnCountry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						eqtnCountry.setRecordType("");
@@ -626,18 +635,18 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnCountry.setTaskId("");
 						eqtnCountry.setNextTaskId("");
 						eqtnCountry.setWorkflowId(0);
-						
+
 						saveCountryList.add(eqtnCountry);
 					}
 				}
 			} else {
-				
+
 				for (EquationCountry eqtnCountry : countryList) {
 					eqtnCountry.setCountryParentLimit(new BigDecimal(9999));
 					eqtnCountry.setCountryResidenceLimit(new BigDecimal(9999));
 					eqtnCountry.setCountryRiskLimit(new BigDecimal(9999));
 					eqtnCountry.setCountryIsActive(true);
-					
+
 					eqtnCountry.setVersion(1);
 					eqtnCountry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					eqtnCountry.setRecordType("");
@@ -648,49 +657,48 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					eqtnCountry.setTaskId("");
 					eqtnCountry.setNextTaskId("");
 					eqtnCountry.setWorkflowId(0);
-					
-                }
+
+				}
 				saveCountryList.addAll(countryList);
 			}
 
-			if(!updatecountryList.isEmpty()){
+			if (!updatecountryList.isEmpty()) {
 				getCoreInterfaceDAO().updateCountryDetails(updatecountryList);
 				isExecuted = true;
 			}
-			if(!saveCountryList.isEmpty()){
+			if (!saveCountryList.isEmpty()) {
 				getCoreInterfaceDAO().saveCountryDetails(saveCountryList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Country","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(getMasterMissedDetail("Country", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
 
-	
 	/**
 	 * Method for Processing Customer Status Code Details
 	 */
 	@Override
-	public boolean processCustStatusCodeDetails(){
+	public boolean processCustStatusCodeDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
-		try{
-			
+
+		try {
+
 			//Fetch Existing Customer Status Code Details
 			List<EquationCustStatusCode> existingCustStatsuCodes = getCoreInterfaceDAO().fetchCustStatusCodeDetails();
-			
+
 			//Import Customer Status Code Details
 			List<EquationCustStatusCode> custStsCodeList = getDailyDownloadProcess().importCustStausCodeDetails();
 
 			List<EquationCustStatusCode> saveCustStsList = new ArrayList<EquationCustStatusCode>();
 			List<EquationCustStatusCode> updateCustStsList = new ArrayList<EquationCustStatusCode>();
-			
+
 			if (existingCustStatsuCodes != null && !existingCustStatsuCodes.isEmpty()) {
 				for (EquationCustStatusCode eqtnCustSts : custStsCodeList) {
 					if (checkCustStsExist(eqtnCustSts, existingCustStatsuCodes)) {
@@ -698,7 +706,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					} else {
 						eqtnCustSts.setSuspendProfit(eqtnCustSts.getDueDays() >= 90 ? true : false);
 						eqtnCustSts.setCustStsIsActive(true);
-						
+
 						eqtnCustSts.setVersion(1);
 						eqtnCustSts.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						eqtnCustSts.setRecordType("");
@@ -709,16 +717,16 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnCustSts.setTaskId("");
 						eqtnCustSts.setNextTaskId("");
 						eqtnCustSts.setWorkflowId(0);
-						
+
 						saveCustStsList.add(eqtnCustSts);
 					}
 				}
 			} else {
-				
+
 				for (EquationCustStatusCode eqtnCustSts : custStsCodeList) {
 					eqtnCustSts.setSuspendProfit(eqtnCustSts.getDueDays() >= 90 ? true : false);
 					eqtnCustSts.setCustStsIsActive(true);
-					
+
 					eqtnCustSts.setVersion(1);
 					eqtnCustSts.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					eqtnCustSts.setRecordType("");
@@ -729,23 +737,24 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					eqtnCustSts.setTaskId("");
 					eqtnCustSts.setNextTaskId("");
 					eqtnCustSts.setWorkflowId(0);
-					
-                }
+
+				}
 				saveCustStsList.addAll(custStsCodeList);
 			}
 
-			if(!updateCustStsList.isEmpty()){
+			if (!updateCustStsList.isEmpty()) {
 				getCoreInterfaceDAO().updateCustStatusCodeDetails(updateCustStsList);
 				isExecuted = true;
 			}
-			if(!saveCustStsList.isEmpty()){
+			if (!saveCustStsList.isEmpty()) {
 				getCoreInterfaceDAO().saveCustStatusCodeDetails(saveCustStsList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("CustStatusCode","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("CustStatusCode", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -755,31 +764,31 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Industry Details
 	 */
 	@Override
-	public boolean processIndustryDetails(){
+	public boolean processIndustryDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
-		try{
-			
+
+		try {
+
 			//Fetch Existing Industry Details
 			List<EquationIndustry> existingIndustryCodes = getCoreInterfaceDAO().fetchIndustryDetails();
-			
+
 			//Import Industry Details
 			List<EquationIndustry> industryList = getDailyDownloadProcess().importIndustryDetails();
 
 			List<EquationIndustry> saveIndustryList = new ArrayList<EquationIndustry>();
 			List<EquationIndustry> updateIndustryList = new ArrayList<EquationIndustry>();
-			
+
 			if (existingIndustryCodes != null && !existingIndustryCodes.isEmpty()) {
 				for (EquationIndustry eqtnIndustry : industryList) {
 					if (checkIndustryExist(eqtnIndustry, existingIndustryCodes)) {
 						updateIndustryList.add(eqtnIndustry);
 					} else {
-					    eqtnIndustry.setSubSectorCode(eqtnIndustry.getIndustryCode());
+						eqtnIndustry.setSubSectorCode(eqtnIndustry.getIndustryCode());
 						eqtnIndustry.setIndustryLimit(new BigDecimal(-1));
 						eqtnIndustry.setIndustryIsActive(true);
-						
+
 						eqtnIndustry.setVersion(1);
 						eqtnIndustry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						eqtnIndustry.setRecordType("");
@@ -790,17 +799,17 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnIndustry.setTaskId("");
 						eqtnIndustry.setNextTaskId("");
 						eqtnIndustry.setWorkflowId(0);
-						
+
 						saveIndustryList.add(eqtnIndustry);
 					}
 				}
 			} else {
-				
+
 				for (EquationIndustry eqtnIndustry : industryList) {
 					eqtnIndustry.setSubSectorCode(eqtnIndustry.getIndustryCode());
 					eqtnIndustry.setIndustryLimit(new BigDecimal(-1));
 					eqtnIndustry.setIndustryIsActive(true);
-					
+
 					eqtnIndustry.setVersion(1);
 					eqtnIndustry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					eqtnIndustry.setRecordType("");
@@ -811,48 +820,49 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					eqtnIndustry.setTaskId("");
 					eqtnIndustry.setNextTaskId("");
 					eqtnIndustry.setWorkflowId(0);
-					
-                }
+
+				}
 				saveIndustryList.addAll(industryList);
 			}
 
-			if(!updateIndustryList.isEmpty()){
+			if (!updateIndustryList.isEmpty()) {
 				getCoreInterfaceDAO().updateIndustryDetails(updateIndustryList);
 				isExecuted = true;
 			}
-			if(!saveIndustryList.isEmpty()){
+			if (!saveIndustryList.isEmpty()) {
 				getCoreInterfaceDAO().saveIndustryDetails(saveIndustryList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Industry","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("Industry", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
+
 	/**
-	 * Method for Processing Branch  Details
+	 * Method for Processing Branch Details
 	 */
 	@Override
-	public boolean processBranchDetails(){
+	public boolean processBranchDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
-		try{
-			
+
+		try {
+
 			//Fetch Existing Branch Details
 			List<EquationBranch> existingBranchs = getCoreInterfaceDAO().fetchBranchDetails();
-			
+
 			//Import Branch Details
 			List<EquationBranch> branchList = getDailyDownloadProcess().importBranchDetails();
 
 			List<EquationBranch> saveBranchList = new ArrayList<EquationBranch>();
 			List<EquationBranch> updateBranchList = new ArrayList<EquationBranch>();
-			
+
 			if (existingBranchs != null && !existingBranchs.isEmpty()) {
 				for (EquationBranch eqtnBranch : branchList) {
 					if (checkBranchExist(eqtnBranch, existingBranchs)) {
@@ -862,7 +872,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnBranch.setBranchProvince("MIGR");
 						eqtnBranch.setBranchCountry("BH");
 						eqtnBranch.setBranchIsActive(true);
-						
+
 						eqtnBranch.setVersion(1);
 						eqtnBranch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						eqtnBranch.setRecordType("");
@@ -873,18 +883,18 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnBranch.setTaskId("");
 						eqtnBranch.setNextTaskId("");
 						eqtnBranch.setWorkflowId(0);
-						
+
 						saveBranchList.add(eqtnBranch);
 					}
 				}
 			} else {
-				
+
 				for (EquationBranch eqtnBranch : branchList) {
 					eqtnBranch.setBranchCity("MIGR");
 					eqtnBranch.setBranchProvince("MIGR");
 					eqtnBranch.setBranchCountry("BH");
 					eqtnBranch.setBranchIsActive(true);
-					
+
 					eqtnBranch.setVersion(1);
 					eqtnBranch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					eqtnBranch.setRecordType("");
@@ -895,57 +905,56 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					eqtnBranch.setTaskId("");
 					eqtnBranch.setNextTaskId("");
 					eqtnBranch.setWorkflowId(0);
-					
-                }
+
+				}
 				saveBranchList.addAll(branchList);
 			}
 
-			if(!updateBranchList.isEmpty()){
+			if (!updateBranchList.isEmpty()) {
 				getCoreInterfaceDAO().updateBranchDetails(updateBranchList);
 				isExecuted = true;
 			}
-			if(!saveBranchList.isEmpty()){
+			if (!saveBranchList.isEmpty()) {
 				getCoreInterfaceDAO().saveBranchDetails(saveBranchList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Branch","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(getMasterMissedDetail("Branch", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
-	
+
 	/**
-	 * Method for Processing Internal Account  Details
+	 * Method for Processing Internal Account Details
 	 */
 	@Override
-	public boolean processInternalAccDetails(){
+	public boolean processInternalAccDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
+
 		List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
 		EquationMasterMissedDetail masterMissedDetail;
-		
-		try{
+
+		try {
 			//Fetch Account Type Master Details 
-			List<String>	masterAccountTypesList = getCoreInterfaceDAO().fetchAccountTypes();
-			
+			List<String> masterAccountTypesList = getCoreInterfaceDAO().fetchAccountTypes();
+
 			//Fetch Existing Internal Account Details
 			List<EquationInternalAccount> existingInternalAccs = getCoreInterfaceDAO().fetchInternalAccDetails();
-			
+
 			//Import Internal Account Details
 			List<EquationInternalAccount> internalAccList = getDailyDownloadProcess().importInternalAccDetails();
 
 			List<EquationInternalAccount> saveInternalAccList = new ArrayList<EquationInternalAccount>();
 			List<EquationInternalAccount> updateInternalAccList = new ArrayList<EquationInternalAccount>();
-			
+
 			if (existingInternalAccs != null && !existingInternalAccs.isEmpty()) {
 				for (EquationInternalAccount eqtnIntAcc : internalAccList) {
-					if(valueExistInMaster(eqtnIntAcc.getsIAAcType(), masterAccountTypesList)){
+					if (valueExistInMaster(eqtnIntAcc.getsIAAcType(), masterAccountTypesList)) {
 						if (checkAccIntExist(eqtnIntAcc, existingInternalAccs)) {
 							updateInternalAccList.add(eqtnIntAcc);
 						} else {
@@ -963,18 +972,20 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 
 							saveInternalAccList.add(eqtnIntAcc);
 						}
-					}else{
+					} else {
 						masterMissedDetail = new EquationMasterMissedDetail();
 						masterMissedDetail.setModule("SystemInternalAccounts");
 						masterMissedDetail.setLastMntOn(dateValueDate);
 						masterMissedDetail.setFieldName("sIAAcType");
-						masterMissedDetail.setDescription("SIACode : "+eqtnIntAcc.getsIACode()+" , '"+eqtnIntAcc.getsIAAcType()+"' Value Does Not Exist In Master RMTAccountTypes Table ");
-						masterValueMissedDetails.add(masterMissedDetail);	
+						masterMissedDetail.setDescription(
+								"SIACode : " + eqtnIntAcc.getsIACode() + " , '" + eqtnIntAcc.getsIAAcType()
+										+ "' Value Does Not Exist In Master RMTAccountTypes Table ");
+						masterValueMissedDetails.add(masterMissedDetail);
 					}
 				}
 			} else {
 				for (EquationInternalAccount eqtnIntAcc : internalAccList) {
-					if(valueExistInMaster(eqtnIntAcc.getsIAAcType(), masterAccountTypesList)){
+					if (valueExistInMaster(eqtnIntAcc.getsIAAcType(), masterAccountTypesList)) {
 						eqtnIntAcc.setVersion(1);
 						eqtnIntAcc.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						eqtnIntAcc.setRecordType("");
@@ -985,112 +996,113 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						eqtnIntAcc.setTaskId("");
 						eqtnIntAcc.setNextTaskId("");
 						eqtnIntAcc.setWorkflowId(0);
-						
+
 						saveInternalAccList.add(eqtnIntAcc);
-					}else{
+					} else {
 						masterMissedDetail = new EquationMasterMissedDetail();
 						masterMissedDetail.setModule("SystemInternalAccounts");
 						masterMissedDetail.setLastMntOn(dateValueDate);
 						masterMissedDetail.setFieldName("sIAAcType");
-						masterMissedDetail.setDescription("SIACode : "+eqtnIntAcc.getsIACode()+" , '"+eqtnIntAcc.getsIAAcType()+"' Value Does Not Exist In Master RMTAccountTypes Table ");
-						masterValueMissedDetails.add(masterMissedDetail);	
+						masterMissedDetail.setDescription(
+								"SIACode : " + eqtnIntAcc.getsIACode() + " , '" + eqtnIntAcc.getsIAAcType()
+										+ "' Value Does Not Exist In Master RMTAccountTypes Table ");
+						masterValueMissedDetails.add(masterMissedDetail);
 					}
 				}
 			}
 
-			if(updateInternalAccList != null && !updateInternalAccList.isEmpty()){
+			if (updateInternalAccList != null && !updateInternalAccList.isEmpty()) {
 				getCoreInterfaceDAO().updateInternalAccDetails(updateInternalAccList);
 				isExecuted = true;
 			}
-			if(saveInternalAccList != null && !saveInternalAccList.isEmpty()){
+			if (saveInternalAccList != null && !saveInternalAccList.isEmpty()) {
 				getCoreInterfaceDAO().saveInternalAccDetails(saveInternalAccList);
 				isExecuted = true;
 			}
-			if(!masterValueMissedDetails.isEmpty()){
+			if (!masterValueMissedDetails.isEmpty()) {
 				getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("SystemInternalAccount","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(getMasterMissedDetail("SystemInternalAccount", "ProcessingError", getExceptionDetails(e),
+					dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
-	
+
 	/**
 	 * Method for Processing Abuser Details
 	 */
 	@Override
-	public boolean processAbuserDetails(){
+	public boolean processAbuserDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
-		try{
+
+		try {
 			//Import Abuser Details From Core System
 			List<EquationAbuser> abuserList = getDailyDownloadProcess().importAbuserDetails();
 
 			if (abuserList != null && !abuserList.isEmpty()) {
 				for (EquationAbuser eqtnAbuser : abuserList) {
-						eqtnAbuser.setVersion(1);
-						eqtnAbuser.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-						eqtnAbuser.setRecordType("");
-						eqtnAbuser.setLastMntBy(1000);
-						eqtnAbuser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						eqtnAbuser.setRoleCode("");
-						eqtnAbuser.setNextRoleCode("");
-						eqtnAbuser.setTaskId("");
-						eqtnAbuser.setNextTaskId("");
-						eqtnAbuser.setWorkflowId(0);
+					eqtnAbuser.setVersion(1);
+					eqtnAbuser.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					eqtnAbuser.setRecordType("");
+					eqtnAbuser.setLastMntBy(1000);
+					eqtnAbuser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					eqtnAbuser.setRoleCode("");
+					eqtnAbuser.setNextRoleCode("");
+					eqtnAbuser.setTaskId("");
+					eqtnAbuser.setNextTaskId("");
+					eqtnAbuser.setWorkflowId(0);
 				}
-			} 
-			
-			if(abuserList != null && !abuserList.isEmpty()){
-				
+			}
+
+			if (abuserList != null && !abuserList.isEmpty()) {
+
 				//Deleting the existing Abusers
 				getCoreInterfaceDAO().deleteAbuserDetails();
-				
+
 				//Saving the new Abusers list
 				getCoreInterfaceDAO().saveAbuserDetails(abuserList);
-				
+
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Abusers","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(getMasterMissedDetail("Abusers", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
 
 	/**
 	 * Method for Processing Customer Details
 	 */
 	@Override
-	public boolean processCustomerDetails(){
+	public boolean processCustomerDetails() {
 		logger.debug("Entering");
 
 		boolean isExecuted = false;
 
-		try{
+		try {
 			Date dailyDownloadDate = SysParamUtil.getValueAsDate("DAILY_DOWNLOADS_DATE");
 
 			List<String> existingCustomers;
 			//Below condition fetches the customers who are newly created on the current date,so to fetch 
 			//all old customers for the first time we have hard coded the below date
-			if(dailyDownloadDate.compareTo(DateUtility.getDBDate("2014-04-04")) > 0){
+			if (dailyDownloadDate.compareTo(DateUtility.getDBDate("2014-04-04")) > 0) {
 				existingCustomers = getCoreInterfaceDAO().fetchExistingCustomers(dailyDownloadDate);
-			}else{
+			} else {
 				existingCustomers = getCoreInterfaceDAO().fetchExistingOldCustomers();
 			}
 
 			//Process Customer Numbers
-			if(existingCustomers != null && !existingCustomers.isEmpty()){
+			if (existingCustomers != null && !existingCustomers.isEmpty()) {
 				getDailyDownloadProcess().processCustomerNumbers(existingCustomers);
 			}
 
@@ -1099,8 +1111,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 
 			if (cutomersList != null && !cutomersList.isEmpty()) {
 				List<Customer> updateCustomerList = new ArrayList<Customer>();
-				List<CustomerAddres> saveAddressList = new ArrayList<CustomerAddres>(); 
-				List<CustomerAddres> updateAddressList = new ArrayList<CustomerAddres>(); 
+				List<CustomerAddres> saveAddressList = new ArrayList<CustomerAddres>();
+				List<CustomerAddres> updateAddressList = new ArrayList<CustomerAddres>();
 				List<CustomerPhoneNumber> savePhoneNumeberList = new ArrayList<CustomerPhoneNumber>();
 				List<CustomerPhoneNumber> updatePhoneNumeberList = new ArrayList<CustomerPhoneNumber>();
 				List<CustomerEMail> saveEmailList = new ArrayList<CustomerEMail>();
@@ -1108,31 +1120,34 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
 
 				List<CustomerAddres> existingCustomerAddress = getCoreInterfaceDAO().fetchExisitingCustomerAddress();
-				List<CustomerPhoneNumber> existingCustPhoneNumbers = getCoreInterfaceDAO().fetchExisitingCustPhoneNumbers();
+				List<CustomerPhoneNumber> existingCustPhoneNumbers = getCoreInterfaceDAO()
+						.fetchExisitingCustPhoneNumbers();
 				List<CustomerEMail> existingCustEmails = getCoreInterfaceDAO().fetchExisitingCustEmails();
 				List<CustomerDetails> customerDetails = new ArrayList<CustomerDetails>();
 
 				for (InterfaceCustomerDetail interfaceCustomerDetail : cutomersList) {
-					CustomerDetails customerDetail	= getCustomerInterfaceService().processCustInformation(interfaceCustomerDetail);
-					if(customerDetail != null){
+					CustomerDetails customerDetail = getCustomerInterfaceService()
+							.processCustInformation(interfaceCustomerDetail);
+					if (customerDetail != null) {
 						customerDetails.add(customerDetail);
 					}
 				}
 
-				List<CustomerDetails> customerDetailsList = getCustomerInterfaceService().validateMasterFieldDetails(customerDetails, dateValueDate);
+				List<CustomerDetails> customerDetailsList = getCustomerInterfaceService()
+						.validateMasterFieldDetails(customerDetails, dateValueDate);
 
 				for (CustomerDetails cDetails : customerDetailsList) {
-					if(cDetails != null){
+					if (cDetails != null) {
 
 						//*************** Customer ****************
 						updateCustomerList.add(cDetails.getCustomer());
 
 						//*************** Address Details ****************
-						if(cDetails.getAddressList() != null && !cDetails.getAddressList().isEmpty()){
+						if (cDetails.getAddressList() != null && !cDetails.getAddressList().isEmpty()) {
 							for (CustomerAddres customerAddres : cDetails.getAddressList()) {
-								if(customerAddressAlreadyExist(customerAddres, existingCustomerAddress)){
+								if (customerAddressAlreadyExist(customerAddres, existingCustomerAddress)) {
 									updateAddressList.add(customerAddres);
-								}else{
+								} else {
 									customerAddres.setVersion(1);
 									customerAddres.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 									customerAddres.setRecordType("");
@@ -1149,11 +1164,12 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						}
 
 						//*************** Phone Number Details ****************
-						if(cDetails.getCustomerPhoneNumList() != null && !cDetails.getCustomerPhoneNumList().isEmpty()){
+						if (cDetails.getCustomerPhoneNumList() != null
+								&& !cDetails.getCustomerPhoneNumList().isEmpty()) {
 							for (CustomerPhoneNumber customerPhoneNumber : cDetails.getCustomerPhoneNumList()) {
-								if(customerPhoneNumAlreadyExist(customerPhoneNumber, existingCustPhoneNumbers)){
+								if (customerPhoneNumAlreadyExist(customerPhoneNumber, existingCustPhoneNumbers)) {
 									updatePhoneNumeberList.add(customerPhoneNumber);
-								}else{
+								} else {
 									customerPhoneNumber.setVersion(1);
 									customerPhoneNumber.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 									customerPhoneNumber.setRecordType("");
@@ -1196,82 +1212,89 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 
 				masterValueMissedDetails.addAll(getCustomerInterfaceService().getMasterMissedDetails());
 
-				if(updateCustomerList != null && !updateCustomerList.isEmpty()){
-					try{
+				if (updateCustomerList != null && !updateCustomerList.isEmpty()) {
+					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().updateCustomerDetails(updateCustomerList);
 						isExecuted = true;
-					}catch(Exception e){
+					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("Customers", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("Customers", "UpdatingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
-				if(saveAddressList != null && !saveAddressList.isEmpty()){
-					try{
+				if (saveAddressList != null && !saveAddressList.isEmpty()) {
+					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().saveCustomerAddresses(saveAddressList);
 						isExecuted = true;
-					}catch(Exception e){
+					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("CustomerAddresses", "SavingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerAddresses", "SavingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
-				if(updateAddressList != null && !updateAddressList.isEmpty()){
-					try{
+				if (updateAddressList != null && !updateAddressList.isEmpty()) {
+					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().updateAddressDetails(updateAddressList);
 						isExecuted = true;
-					}catch(Exception e){
+					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("CustomerAddresses", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerAddresses", "UpdatingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
-				if(savePhoneNumeberList != null && !savePhoneNumeberList.isEmpty()){
-					try{
+				if (savePhoneNumeberList != null && !savePhoneNumeberList.isEmpty()) {
+					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().saveCustomerPhoneNumbers(savePhoneNumeberList);
 						isExecuted = true;
-					}catch(Exception e){
+					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("CustomerPhoneNumbers", "SavingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerPhoneNumbers", "SavingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
-				if(updatePhoneNumeberList != null && !updatePhoneNumeberList.isEmpty()){
-					try{
+				if (updatePhoneNumeberList != null && !updatePhoneNumeberList.isEmpty()) {
+					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().updatePhoneNumberDetails(updatePhoneNumeberList);
 						isExecuted = true;
-					}catch(Exception e){
+					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("CustomerPhoneNumbers", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerPhoneNumbers", "UpdatingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
-				if(saveEmailList != null && !saveEmailList.isEmpty()){
-					try{
+				if (saveEmailList != null && !saveEmailList.isEmpty()) {
+					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().saveCustomerEmails(saveEmailList);
 						isExecuted = true;
-					}catch(Exception e){
+					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("CustomerEmails", "SavingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerEmails", "SavingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
-				if(updateEmailList != null && !updateEmailList.isEmpty()){
+				if (updateEmailList != null && !updateEmailList.isEmpty()) {
 					try {
 						isExecuted = false;
 						getCoreInterfaceDAO().updateEMailDetails(updateEmailList);
 						isExecuted = true;
 					} catch (Exception e) {
 						logger.warn("Exception: ", e);
-						masterValueMissedDetails.add(getMasterMissedDetail("CustomerEmails", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerEmails", "UpdatingError",
+								getExceptionDetails(e), dateValueDate));
 					}
 				}
 				if (!masterValueMissedDetails.isEmpty()) {
 					getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
 				}
 				for (EquationMasterMissedDetail eMasterMissedDetail : masterValueMissedDetails) {
-					if("SavingError".equalsIgnoreCase(eMasterMissedDetail.getFieldName())  || 
-							"UpdatingError".equalsIgnoreCase(eMasterMissedDetail.getFieldName())){
+					if ("SavingError".equalsIgnoreCase(eMasterMissedDetail.getFieldName())
+							|| "UpdatingError".equalsIgnoreCase(eMasterMissedDetail.getFieldName())) {
 						isExecuted = false;
 						break;
 					}
@@ -1280,34 +1303,33 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 
 			updateDailyDownloadDate(dateValueDate);
 
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("Customers","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("Customers", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
-	
-	
+
 	/**
 	 * Method for Processing Transaction Code Details
 	 */
 	@Override
-	public boolean processTransactionCodeDetails(){
+	public boolean processTransactionCodeDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
 		List<EquationTransactionCode> existingcuTransactionCodes;
-		List<EquationTransactionCode> transactionCodesList;		
-		try{
+		List<EquationTransactionCode> transactionCodesList;
+		try {
 			existingcuTransactionCodes = getCoreInterfaceDAO().fetchTransactionCodeDetails();
 			transactionCodesList = getDailyDownloadProcess().importTransactionCodeDetails();
-			
+
 			List<EquationTransactionCode> saveTransactionCodesList = new ArrayList<EquationTransactionCode>();
 			List<EquationTransactionCode> updateTransactionCodesList = new ArrayList<EquationTransactionCode>();
-			
+
 			if (existingcuTransactionCodes != null && !existingcuTransactionCodes.isEmpty()) {
 				for (EquationTransactionCode transactionCode : transactionCodesList) {
 					if (checkTransactionCodeExist(transactionCode, existingcuTransactionCodes)) {
@@ -1324,12 +1346,12 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						transactionCode.setTaskId("");
 						transactionCode.setNextTaskId("");
 						transactionCode.setWorkflowId(0);
-						
+
 						saveTransactionCodesList.add(transactionCode);
 					}
 				}
 			} else {
-				
+
 				for (EquationTransactionCode transactionCode : transactionCodesList) {
 					transactionCode.setTranIsActive(true);
 					transactionCode.setVersion(1);
@@ -1345,41 +1367,42 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				}
 				saveTransactionCodesList.addAll(transactionCodesList);
 			}
-			
-			if(!updateTransactionCodesList.isEmpty()){
+
+			if (!updateTransactionCodesList.isEmpty()) {
 				getCoreInterfaceDAO().updateTransactionCodes(updateTransactionCodesList);
 				isExecuted = true;
 			}
-			if(!saveTransactionCodesList.isEmpty()){
+			if (!saveTransactionCodesList.isEmpty()) {
 				getCoreInterfaceDAO().saveTransactionCodeDetails(saveTransactionCodesList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("TransactionCode","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("TransactionCode", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
+
 	/**
 	 * Method for Processing Transaction Code Details
 	 */
 	@Override
-	public boolean processIdentityTypeDetails(){
+	public boolean processIdentityTypeDetails() {
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
 		List<EquationIdentityType> existingIdentityTypes;
-		List<EquationIdentityType> identityTypesList;		
-		try{
+		List<EquationIdentityType> identityTypesList;
+		try {
 			existingIdentityTypes = getCoreInterfaceDAO().fetchIdentityTypeDetails();
 			identityTypesList = getDailyDownloadProcess().importIdentityTypeDetails();
-			
+
 			List<EquationIdentityType> saveIdentityTypesList = new ArrayList<EquationIdentityType>();
 			List<EquationIdentityType> updateIdentityTypesList = new ArrayList<EquationIdentityType>();
-			
+
 			if (existingIdentityTypes != null && !existingIdentityTypes.isEmpty()) {
 				for (EquationIdentityType identityType : identityTypesList) {
 					if (checkIdentityTypeExist(identityType, existingIdentityTypes)) {
@@ -1395,7 +1418,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						identityType.setTaskId("");
 						identityType.setNextTaskId("");
 						identityType.setWorkflowId(0);
-						
+
 						saveIdentityTypesList.add(identityType);
 					}
 				}
@@ -1414,41 +1437,41 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				}
 				saveIdentityTypesList.addAll(identityTypesList);
 			}
-			
-			if(!updateIdentityTypesList.isEmpty()){
+
+			if (!updateIdentityTypesList.isEmpty()) {
 				getCoreInterfaceDAO().updateIdentityTypes(updateIdentityTypesList);
 				isExecuted = true;
 			}
-			if(!saveIdentityTypesList.isEmpty()){
+			if (!saveIdentityTypesList.isEmpty()) {
 				getCoreInterfaceDAO().saveIdentityTypeDetails(saveIdentityTypesList);
 				isExecuted = true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
-			saveErrorDetail(getMasterMissedDetail("IdentityType","ProcessingError",getExceptionDetails(e),dateValueDate));
+			saveErrorDetail(
+					getMasterMissedDetail("IdentityType", "ProcessingError", getExceptionDetails(e), dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
 
-	
-	private void updateDailyDownloadDate(Date valuedate){
+	private void updateDailyDownloadDate(Date valuedate) {
 		logger.debug("Entering");
 		PFSParameter pFSParameter = new PFSParameter();
-		pFSParameter.setSysParmValue(DateUtility.addDays(valuedate,1).toString());
+		pFSParameter.setSysParmValue(DateUtility.addDays(valuedate, 1).toString());
 		pFSParameter.setSysParmCode("DAILY_DOWNLOADS_DATE");
 		getpFSParameterDAO().updateParmValue(pFSParameter);
-		SysParamUtil.updateParamDetails("DAILY_DOWNLOADS_DATE",pFSParameter.getSysParmValue());
+		SysParamUtil.updateParamDetails("DAILY_DOWNLOADS_DATE", pFSParameter.getSysParmValue());
 		logger.debug("Leaving");
 	}
-	
-	private void saveErrorDetail(EquationMasterMissedDetail equationMasterMissedDetail){
+
+	private void saveErrorDetail(EquationMasterMissedDetail equationMasterMissedDetail) {
 		logger.debug("Entering");
 		getCoreInterfaceDAO().saveMasterValueMissedDetail(equationMasterMissedDetail);
 		logger.debug("Leaving");
 	}
-	
+
 	private EquationMasterMissedDetail getMasterMissedDetail(String module, String fieldDetail, String description,
 			Date valuedate) {
 		logger.debug("Entering");
@@ -1460,50 +1483,47 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		logger.debug("Leaving");
 		return masterMissedDetail;
 	}
-	
-	private String getExceptionDetails(Exception e){
+
+	private String getExceptionDetails(Exception e) {
 		logger.debug("Entering");
 		String errMsg = "";
 		if (e.getCause() == null) {
 			errMsg = "NullPointerException";
 		} else {
 			if (e.getCause().getMessage() != null) {
-				errMsg = e.getCause().getMessage().length() > 198 ? e.getCause().getMessage().substring(0,197) :
-					e.getCause().getMessage();
+				errMsg = e.getCause().getMessage().length() > 198 ? e.getCause().getMessage().substring(0, 197)
+						: e.getCause().getMessage();
 			} else if (e.getLocalizedMessage() != null) {
-				errMsg =  e.getLocalizedMessage().length() > 198 ? e.getLocalizedMessage().substring(0,197) :
-					e.getLocalizedMessage();
+				errMsg = e.getLocalizedMessage().length() > 198 ? e.getLocalizedMessage().substring(0, 197)
+						: e.getLocalizedMessage();
 			} else if (e.getMessage() != null) {
-				errMsg =  e.getMessage().length() > 198 ? e.getMessage().substring(0,197) :
-					e.getMessage();
+				errMsg = e.getMessage().length() > 198 ? e.getMessage().substring(0, 197) : e.getMessage();
 			}
 		}
 		logger.debug("Leaving");
 		return errMsg;
 	}
-	
-	
 
-	private boolean valueExistInMaster(String field,List<String> list){
+	private boolean valueExistInMaster(String field, List<String> list) {
 		for (String value : list) {
-	        if(StringUtils.trimToEmpty(field).equalsIgnoreCase(value)){
-	        	return true;
-	        }
-        }
+			if (StringUtils.trimToEmpty(field).equalsIgnoreCase(value)) {
+				return true;
+			}
+		}
 		return false;
 	}
-	
-	private boolean valueExistInMaster(long field,List<Long> list){
-		for (Long value : list) {
-	        if(field == value){
-	        	return true;
-	        }
-        }
-		return false;
-	}
-	
 
-	private boolean checkAccIntExist(EquationInternalAccount eqtnIntAcc,List<EquationInternalAccount> existingIntAccs){
+	private boolean valueExistInMaster(long field, List<Long> list) {
+		for (Long value : list) {
+			if (field == value) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean checkAccIntExist(EquationInternalAccount eqtnIntAcc,
+			List<EquationInternalAccount> existingIntAccs) {
 		for (EquationInternalAccount intAcc : existingIntAccs) {
 			if (StringUtils.trimToEmpty(eqtnIntAcc.getsIACode()).equals(intAcc.getsIACode())) {
 				return true;
@@ -1511,8 +1531,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	private boolean checkBranchExist(EquationBranch eqtnBranch,List<EquationBranch> existingBranchs){
+
+	private boolean checkBranchExist(EquationBranch eqtnBranch, List<EquationBranch> existingBranchs) {
 		for (EquationBranch branch : existingBranchs) {
 			if (StringUtils.trimToEmpty(eqtnBranch.getBranchCode()).equals(branch.getBranchCode())) {
 				return true;
@@ -1520,8 +1540,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	private boolean checkIndustryExist(EquationIndustry eqtnIndustry,List<EquationIndustry> existingIndustries){
+
+	private boolean checkIndustryExist(EquationIndustry eqtnIndustry, List<EquationIndustry> existingIndustries) {
 		for (EquationIndustry industry : existingIndustries) {
 			if (StringUtils.trimToEmpty(eqtnIndustry.getIndustryCode()).equals(industry.getIndustryCode())) {
 				return true;
@@ -1529,8 +1549,9 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	private boolean checkCustStsExist(EquationCustStatusCode eqtncuCode,List<EquationCustStatusCode> existingCustStatusCodes){
+
+	private boolean checkCustStsExist(EquationCustStatusCode eqtncuCode,
+			List<EquationCustStatusCode> existingCustStatusCodes) {
 		for (EquationCustStatusCode statusCode : existingCustStatusCodes) {
 			if (StringUtils.trimToEmpty(eqtncuCode.getCustStsCode()).equals(statusCode.getCustStsCode())) {
 				return true;
@@ -1538,9 +1559,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	
-	private boolean checkCountryExist(EquationCountry eqtnCountry,List<EquationCountry> existingCurrencies){
+
+	private boolean checkCountryExist(EquationCountry eqtnCountry, List<EquationCountry> existingCurrencies) {
 		for (EquationCountry country : existingCurrencies) {
 			if (StringUtils.trimToEmpty(eqtnCountry.getCountryCode()).equals(country.getCountryCode())) {
 				return true;
@@ -1548,9 +1568,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	
-	private boolean checkCurrecnyExist(EquationCurrency eqtnCurrency,List<EquationCurrency> existingCurrencies){
+
+	private boolean checkCurrecnyExist(EquationCurrency eqtnCurrency, List<EquationCurrency> existingCurrencies) {
 		for (EquationCurrency currency : existingCurrencies) {
 			if (StringUtils.trimToEmpty(eqtnCurrency.getCcyCode()).equals(currency.getCcyCode())) {
 				return true;
@@ -1559,16 +1578,19 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 
-	private boolean checkRelationshipOfficerExist(EquationRelationshipOfficer eqtnRelationshipOfficer,List<EquationRelationshipOfficer> existingRelationshipOfficers){
+	private boolean checkRelationshipOfficerExist(EquationRelationshipOfficer eqtnRelationshipOfficer,
+			List<EquationRelationshipOfficer> existingRelationshipOfficers) {
 		for (EquationRelationshipOfficer relationshipOfficer : existingRelationshipOfficers) {
-			if (StringUtils.trimToEmpty(eqtnRelationshipOfficer.getROfficerCode()).equals(relationshipOfficer.getROfficerCode())) {
+			if (StringUtils.trimToEmpty(eqtnRelationshipOfficer.getROfficerCode())
+					.equals(relationshipOfficer.getROfficerCode())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean checkCustomerTypeExist(EquationCustomerType eqtnCustomerType,List<EquationCustomerType> existingCustomerTypes){
+	private boolean checkCustomerTypeExist(EquationCustomerType eqtnCustomerType,
+			List<EquationCustomerType> existingCustomerTypes) {
 		for (EquationCustomerType customerType : existingCustomerTypes) {
 			if (StringUtils.trimToEmpty(eqtnCustomerType.getCustTypeCode()).equals(customerType.getCustTypeCode())) {
 				return true;
@@ -1577,7 +1599,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 
-	private boolean checkDepartmentExist(EquationDepartment eqtnDepartment,List<EquationDepartment> existingDepartments){
+	private boolean checkDepartmentExist(EquationDepartment eqtnDepartment,
+			List<EquationDepartment> existingDepartments) {
 		for (EquationDepartment department : existingDepartments) {
 			if (StringUtils.trimToEmpty(eqtnDepartment.getDeptCode()).equals(department.getDeptCode())) {
 				return true;
@@ -1586,7 +1609,8 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 
-	private boolean checkCustomerGroupExist(EquationCustomerGroup eqtnCustomerGroup,List<EquationCustomerGroup> existingCustomerGroups){
+	private boolean checkCustomerGroupExist(EquationCustomerGroup eqtnCustomerGroup,
+			List<EquationCustomerGroup> existingCustomerGroups) {
 		for (EquationCustomerGroup customerGroup : existingCustomerGroups) {
 			if (StringUtils.trimToEmpty(eqtnCustomerGroup.getCustGrpCode()).equals(customerGroup.getCustGrpCode())) {
 				return true;
@@ -1594,8 +1618,9 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	private boolean checkAccountTypeExist(EquationAccountType eqtnAccountType,List<EquationAccountType> existingAccountTypes){
+
+	private boolean checkAccountTypeExist(EquationAccountType eqtnAccountType,
+			List<EquationAccountType> existingAccountTypes) {
 		for (EquationAccountType accountType : existingAccountTypes) {
 			if (StringUtils.trimToEmpty(eqtnAccountType.getAcType()).equals(accountType.getAcType())) {
 				return true;
@@ -1603,19 +1628,20 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	private boolean checkCustomerRatingExist(EquationCustomerRating eqtncCustomerRating,List<EquationCustomerRating> existingcCustomerRatings){
+
+	private boolean checkCustomerRatingExist(EquationCustomerRating eqtncCustomerRating,
+			List<EquationCustomerRating> existingcCustomerRatings) {
 		for (EquationCustomerRating customerRating : existingcCustomerRatings) {
-			if (eqtncCustomerRating.getCustID() == customerRating.getCustID() &&  
-					StringUtils.trimToEmpty(eqtncCustomerRating.getCustRatingType()).equals(customerRating.getCustRatingType())) {
+			if (eqtncCustomerRating.getCustID() == customerRating.getCustID() && StringUtils
+					.trimToEmpty(eqtncCustomerRating.getCustRatingType()).equals(customerRating.getCustRatingType())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	
-	private boolean checkTransactionCodeExist(EquationTransactionCode eqnTransactionCode,List<EquationTransactionCode> existingTransactionCode){
+
+	private boolean checkTransactionCodeExist(EquationTransactionCode eqnTransactionCode,
+			List<EquationTransactionCode> existingTransactionCode) {
 		for (EquationTransactionCode transactionCode : existingTransactionCode) {
 			if (eqnTransactionCode.getTranCode().equals(transactionCode.getTranCode())) {
 				return true;
@@ -1623,8 +1649,9 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
-	
-	private boolean checkIdentityTypeExist(EquationIdentityType eqnEquationIdentityType,List<EquationIdentityType> existingEquationIdentityType){
+
+	private boolean checkIdentityTypeExist(EquationIdentityType eqnEquationIdentityType,
+			List<EquationIdentityType> existingEquationIdentityType) {
 		for (EquationIdentityType identityType : existingEquationIdentityType) {
 			String idType = StringUtils.trimToEmpty(eqnEquationIdentityType.getIdentityType());
 			if (idType.trim().equals(identityType.getIdentityType().trim())) {
@@ -1639,19 +1666,17 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 
-
-	
 	// ****************** Month End Downloads  *******************//
-	
+
 	@Override
 	public List<FinanceType> fetchFinanceTypeDetails() {
 		List<FinanceType> financeTypeList = getCoreInterfaceDAO().fetchFinanceTypeDetails();
-		if(financeTypeList != null && !financeTypeList.isEmpty()){
-			Map<String,List<FinTypeAccounting>> finTypeAccountingMap = getFinTypeAccountingMap();
-			if(finTypeAccountingMap.size() > 0){
+		if (financeTypeList != null && !financeTypeList.isEmpty()) {
+			Map<String, List<FinTypeAccounting>> finTypeAccountingMap = getFinTypeAccountingMap();
+			if (finTypeAccountingMap.size() > 0) {
 				for (FinanceType finTypeTemp : financeTypeList) {
 					String finType = finTypeTemp.getFinType().trim();
-					if(finTypeAccountingMap.containsKey(finType)){
+					if (finTypeAccountingMap.containsKey(finType)) {
 						finTypeTemp.setFinTypeAccountingList(finTypeAccountingMap.get(finType));
 					}
 				}
@@ -1659,14 +1684,15 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return financeTypeList;
 	}
-	
-	private Map<String,List<FinTypeAccounting>> getFinTypeAccountingMap(){
-		Map<String,List<FinTypeAccounting>> finTypeAccountingMap = new HashMap<String, List<FinTypeAccounting>>();
-		List<FinTypeAccounting> finTypeAccountingList = getCoreInterfaceDAO().fetchFinTypeAccountings(AccountEventConstants.ACCEVENT_AMZ);
-		if(finTypeAccountingList != null){
+
+	private Map<String, List<FinTypeAccounting>> getFinTypeAccountingMap() {
+		Map<String, List<FinTypeAccounting>> finTypeAccountingMap = new HashMap<String, List<FinTypeAccounting>>();
+		List<FinTypeAccounting> finTypeAccountingList = getCoreInterfaceDAO()
+				.fetchFinTypeAccountings(AccountEventConstants.ACCEVENT_AMZ);
+		if (finTypeAccountingList != null) {
 			for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
 				String finType = finTypeAcc.getFinType();
-				if(finTypeAccountingMap.containsKey(finType)) {
+				if (finTypeAccountingMap.containsKey(finType)) {
 					finTypeAccountingMap.get(finType).add(finTypeAcc);
 				} else {
 					finTypeAccountingMap.put(finType, new ArrayList<FinTypeAccounting>());
@@ -1676,193 +1702,209 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return finTypeAccountingMap;
 	}
-	
+
 	@Override
 	public List<TransactionEntry> fetchTransactionEntryDetails(long accountSetID) {
 		return getCoreInterfaceDAO().fetchTransactionEntryDetails(accountSetID);
 	}
-	
+
 	@Override
 	public boolean processIncomeAccTransactions(Date prvMnthStartDate) {
 		logger.debug("Entering");
 		boolean isExecuted = true;
-		try{
+		try {
 
 			List<IncomeAccountTransaction> tempIncomeAccounts = new ArrayList<IncomeAccountTransaction>();
 			List<IncomeAccountTransaction> saveIncomeAccTransactions = new ArrayList<IncomeAccountTransaction>();
 
 			IncomeAccountTransaction incomeAccountTransaction = new IncomeAccountTransaction();
 			incomeAccountTransaction.setLastMntOn(prvMnthStartDate);
-			
+
 			//Check Whether This Month Income Account Transactions Already Exist
 			boolean monthIncomeTxnsExist = getCoreInterfaceDAO().checkIncomeTransactionsExist(incomeAccountTransaction);
 
-			if(!monthIncomeTxnsExist){
+			if (!monthIncomeTxnsExist) {
 
 				//Fetch Existing Income Account Details
 				List<IncomeAccountTransaction> incomeAccounts = getCoreInterfaceDAO().fetchIncomeAccountDetails();
 
-				if(incomeAccounts!= null ) {
+				if (incomeAccounts != null) {
 
 					//Import Income Account Transactions From Core System
 					for (IncomeAccountTransaction incomeAccount : incomeAccounts) {
 						incomeAccount.setLastMntOn(prvMnthStartDate);
 						tempIncomeAccounts.add(incomeAccount);
-						if(tempIncomeAccounts.size()==498){
-							saveIncomeAccTransactions.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
+						if (tempIncomeAccounts.size() == 498) {
+							saveIncomeAccTransactions
+									.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
 							tempIncomeAccounts.clear();
 						}
 					}
-					if(tempIncomeAccounts.size() > 0){
-						saveIncomeAccTransactions.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
+					if (tempIncomeAccounts.size() > 0) {
+						saveIncomeAccTransactions
+								.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
 						tempIncomeAccounts.clear();
 					}
 
-					if(!saveIncomeAccTransactions.isEmpty()){
+					if (!saveIncomeAccTransactions.isEmpty()) {
 						getCoreInterfaceDAO().saveIncomeAccTransactions(saveIncomeAccTransactions);
 					}
 				}
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			isExecuted = false;
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
-	
-	public void updateFinProfitIncomeAccounts(List<FinanceProfitDetail> accounts){
+
+	public void updateFinProfitIncomeAccounts(List<FinanceProfitDetail> accounts) {
 		getCoreInterfaceDAO().updateFinProfitIncomeAccounts(accounts);
 	}
-	
-	private boolean customerAddressAlreadyExist(CustomerAddres customerAddres,List<CustomerAddres> list){
+
+	private boolean customerAddressAlreadyExist(CustomerAddres customerAddres, List<CustomerAddres> list) {
 		for (CustomerAddres cAddres : list) {
-			if(customerAddres.getCustID() == cAddres.getCustID() && 
-					StringUtils.trimToEmpty(customerAddres.getCustAddrType()).equalsIgnoreCase(cAddres.getCustAddrType())){
+			if (customerAddres.getCustID() == cAddres.getCustID() && StringUtils
+					.trimToEmpty(customerAddres.getCustAddrType()).equalsIgnoreCase(cAddres.getCustAddrType())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	private boolean customerPhoneNumAlreadyExist(CustomerPhoneNumber customerPhoneNumber,List<CustomerPhoneNumber> list){
+
+	private boolean customerPhoneNumAlreadyExist(CustomerPhoneNumber customerPhoneNumber,
+			List<CustomerPhoneNumber> list) {
 		for (CustomerPhoneNumber cPhoneNumber : list) {
-			if(customerPhoneNumber.getPhoneCustID() == cPhoneNumber.getPhoneCustID() && 
-					StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()).equalsIgnoreCase(cPhoneNumber.getPhoneTypeCode())){
+			if (customerPhoneNumber.getPhoneCustID() == cPhoneNumber.getPhoneCustID()
+					&& StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode())
+							.equalsIgnoreCase(cPhoneNumber.getPhoneTypeCode())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	private boolean customerEmailAlreadyExist(CustomerEMail customerEMail,List<CustomerEMail> list){
+
+	private boolean customerEmailAlreadyExist(CustomerEMail customerEMail, List<CustomerEMail> list) {
 		for (CustomerEMail cEMail : list) {
-			if(customerEMail.getCustID() == cEMail.getCustID() && 
-					StringUtils.trimToEmpty(customerEMail.getCustEMailTypeCode()).equalsIgnoreCase(cEMail.getCustEMailTypeCode())){
+			if (customerEMail.getCustID() == cEMail.getCustID()
+					&& StringUtils.trimToEmpty(customerEMail.getCustEMailTypeCode())
+							.equalsIgnoreCase(cEMail.getCustEMailTypeCode())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	// ****************** Single Customer Download*******************//
-	
+
 	/**
 	 * 
 	 * @param customer
 	 * @return
-	 * @throws Exception 
-	 * @throws CustomerNotFoundException 
+	 * @throws Exception
+	 * @throws CustomerNotFoundException
 	 */
 	@Override
-	public void saveCustomerDetails(CustomerDetails customerDetails) throws Exception{
+	public void saveCustomerDetails(CustomerDetails customerDetails) throws Exception {
 		logger.debug("Entering");
-		if(customerDetails.getAddressList() != null && !customerDetails.getAddressList().isEmpty()){
-				getCoreInterfaceDAO().saveCustomerAddresses(customerDetails.getAddressList());
+		if (customerDetails.getAddressList() != null && !customerDetails.getAddressList().isEmpty()) {
+			getCoreInterfaceDAO().saveCustomerAddresses(customerDetails.getAddressList());
 		}
-		if(customerDetails.getCustomerPhoneNumList() != null && !customerDetails.getCustomerPhoneNumList().isEmpty()){
+		if (customerDetails.getCustomerPhoneNumList() != null && !customerDetails.getCustomerPhoneNumList().isEmpty()) {
 			getCoreInterfaceDAO().saveCustomerPhoneNumbers(customerDetails.getCustomerPhoneNumList());
 		}
-		if(customerDetails.getCustomerEMailList() != null && !customerDetails.getCustomerEMailList().isEmpty()){
+		if (customerDetails.getCustomerEMailList() != null && !customerDetails.getCustomerEMailList().isEmpty()) {
 			getCoreInterfaceDAO().saveCustomerEmails(customerDetails.getCustomerEMailList());
 		}
-		if(customerDetails.getRatingsList() != null && !customerDetails.getRatingsList().isEmpty()){
+		if (customerDetails.getRatingsList() != null && !customerDetails.getRatingsList().isEmpty()) {
 			getCoreInterfaceDAO().saveRatingDetails(customerDetails.getRatingsList());
 		}
 		logger.debug("Leaving");
 	}
-	
-	
-	public void saveMasterValueMissedDetails(List<EquationMasterMissedDetail> masterMissedDetails){
+
+	public void saveMasterValueMissedDetails(List<EquationMasterMissedDetail> masterMissedDetails) {
 		getCoreInterfaceDAO().saveMasterValueMissedDetails(masterMissedDetails);
 	}
-	
-	public void updateObjectDetails(String updateQuery,Object object){
+
+	public void updateObjectDetails(String updateQuery, Object object) {
 		getCoreInterfaceDAO().updateObjectDetails(updateQuery, object);
 	}
-	
+
 	public List<String> fetchBranchCodes() {
-    	return  getCoreInterfaceDAO().fetchBranchCodes();
-    }
+		return getCoreInterfaceDAO().fetchBranchCodes();
+	}
+
 	public List<Long> fetchCustomerGroupCodes() {
-    	return  getCoreInterfaceDAO().fetchCustomerGroupCodes();
-    }
+		return getCoreInterfaceDAO().fetchCustomerGroupCodes();
+	}
+
 	public List<String> fetchCountryCodes() {
-    	return  getCoreInterfaceDAO().fetchCountryCodes();
-    }
+		return getCoreInterfaceDAO().fetchCountryCodes();
+	}
+
 	public List<String> fetchSalutationCodes() {
-    	return  getCoreInterfaceDAO().fetchSalutationCodes();
-    }
+		return getCoreInterfaceDAO().fetchSalutationCodes();
+	}
+
 	public List<String> fetchRelationshipOfficerCodes() {
-    	return  getCoreInterfaceDAO().fetchRelationshipOfficerCodes();
-    }
+		return getCoreInterfaceDAO().fetchRelationshipOfficerCodes();
+	}
+
 	public List<String> fetchMaritalStatusCodes() {
-    	return  getCoreInterfaceDAO().fetchMaritalStatusCodes();
-    }
+		return getCoreInterfaceDAO().fetchMaritalStatusCodes();
+	}
+
 	public List<SubSector> fetchSubSectorCodes() {
-    	return  getCoreInterfaceDAO().fetchSubSectorCodes();
-    }
+		return getCoreInterfaceDAO().fetchSubSectorCodes();
+	}
+
 	public List<String> fetchEmpStsCodes() {
-    	return  getCoreInterfaceDAO().fetchEmpStsCodes();
-    }
+		return getCoreInterfaceDAO().fetchEmpStsCodes();
+	}
+
 	public List<String> fetchCurrencyCodes() {
-    	return  getCoreInterfaceDAO().fetchCurrencyCodes();
-    }
+		return getCoreInterfaceDAO().fetchCurrencyCodes();
+	}
+
 	public List<String> fetchCustTypeCodes() {
-    	return  getCoreInterfaceDAO().fetchCustTypeCodes();
-    }
-	
+		return getCoreInterfaceDAO().fetchCustTypeCodes();
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public DailyDownloadProcess getDailyDownloadProcess() {
 		return dailyDownloadProcess;
 	}
+
 	public void setDailyDownloadProcess(DailyDownloadProcess dailyDownloadProcess) {
 		this.dailyDownloadProcess = dailyDownloadProcess;
 	}
 
 	public CoreInterfaceDAO getCoreInterfaceDAO() {
-    	return coreInterfaceDAO;
-	}	
+		return coreInterfaceDAO;
+	}
+
 	public void setCoreInterfaceDAO(CoreInterfaceDAO coreInterfaceDAO) {
-    	this.coreInterfaceDAO = coreInterfaceDAO;
-    }
+		this.coreInterfaceDAO = coreInterfaceDAO;
+	}
 
 	public PFSParameterDAO getpFSParameterDAO() {
 		return pFSParameterDAO;
 	}
+
 	public void setpFSParameterDAO(PFSParameterDAO pFSParameterDAO) {
 		this.pFSParameterDAO = pFSParameterDAO;
 	}
 
 	public CustomerInterfaceService getCustomerInterfaceService() {
-	    return customerInterfaceService;
-    }
+		return customerInterfaceService;
+	}
 
 	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
-	    this.customerInterfaceService = customerInterfaceService;
-    }
-	
+		this.customerInterfaceService = customerInterfaceService;
+	}
+
 }

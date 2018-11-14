@@ -16,63 +16,63 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoanDetail implements Serializable {
 
-	private static final long		serialVersionUID	= 6712137280931986929L;
+	private static final long serialVersionUID = 6712137280931986929L;
 
 	@XmlElement(name = "ACCT-NUMBER")
-	private String					acctNumber;
+	private String acctNumber;
 
 	@XmlElement(name = "CREDIT-GUARANTOR")
-	private String					creditGuarantor;
+	private String creditGuarantor;
 
 	@XmlElement(name = "ACCT-TYPE")
-	private String					acctType;
+	private String acctType;
 
 	@XmlElement(name = "DATE-REPORTED")
-	private Date					dateReported;
+	private Date dateReported;
 
 	@XmlElement(name = "OWNERSHIP-IND")
-	private String					ownershipInd;
+	private String ownershipInd;
 
 	@XmlElement(name = "ACCOUNT-STATUS")
-	private String					accountStatus;
+	private String accountStatus;
 
 	@XmlElement(name = "DISBURSED-AMT")
-	private BigDecimal				disbursedAmt;
+	private BigDecimal disbursedAmt;
 
 	@XmlElement(name = "DISBURSED-DATE")
-	private Date					disbursedDate;
+	private Date disbursedDate;
 
 	@XmlElement(name = "LAST-PAYMENT-DATE")
-	private Date					lastPaymentDate;
+	private Date lastPaymentDate;
 
 	@XmlElement(name = "CLOSED-DATE")
-	private Date					closedDate;
+	private Date closedDate;
 
 	@XmlElement(name = "OVERDUE-AMT")
-	private BigDecimal				overdueAmt			= BigDecimal.ZERO;
+	private BigDecimal overdueAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "WRITE-OFF-AMT")
-	private BigDecimal				writeOffAmt			= BigDecimal.ZERO;
+	private BigDecimal writeOffAmt = BigDecimal.ZERO;
 
 	@XmlElement(name = "CURRENT-BAL")
-	private BigDecimal				currentBal			= BigDecimal.ZERO;
+	private BigDecimal currentBal = BigDecimal.ZERO;
 
 	@XmlElement(name = "COMBINED-PAYMENT-HISTORY")
-	private String					combinedPaymentHistory;
+	private String combinedPaymentHistory;
 
 	@XmlElement(name = "MATCHED-TYPE")
-	private String					matchedType;
+	private String matchedType;
 
 	@XmlElement(name = "INFO-AS-ON")
-	private Date					infoAsOn;
+	private Date infoAsOn;
 
-	private String					interestRate;
+	private String interestRate;
 
 	@XmlElement(name = "LINKED-ACCOUNTS")
-	private List<LinkedAccounts>	linkedAccounts;
+	private List<LinkedAccounts> linkedAccounts;
 
 	@XmlElement(name = "SECURITY-DETAILS")
-	private List<SecurityDetails>	securityDetails;
+	private List<SecurityDetails> securityDetails;
 
 	public String getAcctNumber() {
 		return acctNumber;

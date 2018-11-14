@@ -128,8 +128,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 				row.appendChild(label);
 				label = new Label(":");
 				row.appendChild(label);
-				
-				
+
 				switch (details.getRbFldType().toLowerCase()) {
 				case "nvarchar":
 					textbox = new Textbox();

@@ -101,77 +101,74 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkChangeDialoglItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the 
- * WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
+ * This is the controller class for the WEB-INF/pages/FinanceManagement/SchdlRepayment/SchdlRepaymentDialog.zul
  */
 public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(BulkDefermentChangeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_BulkRateChangeDialog; 		
+	protected Window window_BulkRateChangeDialog;
 	protected Borderlayout borderlayout_BulkRate;
-	protected Listbox listBoxBulkrateChangeDialog;	    
-	protected Grid grid_BulkRateChange;					
-	protected Groupbox 		gb_RateDetails;             
-	protected Paging  pagingIjarahaFinancesList;         
+	protected Listbox listBoxBulkrateChangeDialog;
+	protected Grid grid_BulkRateChange;
+	protected Groupbox gb_RateDetails;
+	protected Paging pagingIjarahaFinancesList;
 
-	protected Decimalbox rateChange; 					
-	protected Datebox fromDate;  						
-	protected Datebox toDate;  							
-	protected Datebox tillDate; 	 					
-	protected Combobox cbReCalType; 					
-	protected Label label_IjaraBulkRateChange_TillDate; 
-	protected Hbox hbox_TillDate;						
-
+	protected Decimalbox rateChange;
+	protected Datebox fromDate;
+	protected Datebox toDate;
+	protected Datebox tillDate;
+	protected Combobox cbReCalType;
+	protected Label label_IjaraBulkRateChange_TillDate;
+	protected Hbox hbox_TillDate;
 
 	// For Bulk Deferment 
-	protected Datebox calFromDate;                  	 
+	protected Datebox calFromDate;
 	protected Label label_BulkDefferment_CalToDate;
 	protected Space space_CalToDate;
-	protected Datebox calToDate;                    	 
-	protected Checkbox exDefDate;                   	 
-	protected Combobox cbAddTermAfter;              	 
-	protected Tabpanel tabpanel_Query;              	 
-	protected Tabpanel tabpanel_IjarahaFinances;    	 
-	protected Tab   tab_Query;							 
-	protected Tab   tab_IjarahaFinance;					 
-	protected ExtendedCombobox ruleType;			     
-	protected Label label_BulkRateChangeDialog_RuleType; 
-	protected Hbox  hbox_ruleType;						 
+	protected Datebox calToDate;
+	protected Checkbox exDefDate;
+	protected Combobox cbAddTermAfter;
+	protected Tabpanel tabpanel_Query;
+	protected Tabpanel tabpanel_IjarahaFinances;
+	protected Tab tab_Query;
+	protected Tab tab_IjarahaFinance;
+	protected ExtendedCombobox ruleType;
+	protected Label label_BulkRateChangeDialog_RuleType;
+	protected Hbox hbox_ruleType;
 	protected QueryBuilder rule;
-	
-	protected Button btnPreview; 	
-	protected Button btnProceed; 	
-	protected Button btnRecal; 	    
-	protected Button btnPrint; 	    
 
-	protected Listheader listheader_reCalStartDate; 
-	protected Listheader listheader_reCalEndDate;   
+	protected Button btnPreview;
+	protected Button btnProceed;
+	protected Button btnRecal;
+	protected Button btnPrint;
+
+	protected Listheader listheader_reCalStartDate;
+	protected Listheader listheader_reCalEndDate;
 
 	//private FinanceDetailService financeDetailService;
 	private List<BulkProcessDetails> rateChangeFinances;
 	private BulkProcessHeader bulkProcessHeader;
-	private BulkDefermentChangeListCtrl bulkDefermentChangeListCtrl ;
+	private BulkDefermentChangeListCtrl bulkDefermentChangeListCtrl;
 	private BulkDefermentChangeProcessService bulkDefermentChangeProcessService;
 	private List<BulkProcessDetails> oldBulkProcessDetails = null;
 
-	
-	private Row recalFromDateRow;  
-	private Row excDefDateRow;     
-	private Row addTermRow;        
-	private Row rateChangeRow;     
+	private Row recalFromDateRow;
+	private Row excDefDateRow;
+	private Row addTermRow;
+	private Row rateChangeRow;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -187,9 +184,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -202,8 +198,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 		try {
 			if (arguments.containsKey("bulkProcessHeader")) {
-				this.bulkProcessHeader = (BulkProcessHeader) arguments
-						.get("bulkProcessHeader");
+				this.bulkProcessHeader = (BulkProcessHeader) arguments.get("bulkProcessHeader");
 				BulkProcessHeader befImage = new BulkProcessHeader();
 				BeanUtils.copyProperties(this.bulkProcessHeader, befImage);
 				this.bulkProcessHeader.setBefImage(befImage);
@@ -212,14 +207,12 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 				setBulkProcessHeader(null);
 			}
 
-			doLoadWorkFlow(this.bulkProcessHeader.isWorkflow(),
-					this.bulkProcessHeader.getWorkflowId(),
+			doLoadWorkFlow(this.bulkProcessHeader.isWorkflow(), this.bulkProcessHeader.getWorkflowId(),
 					this.bulkProcessHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"BulkProcessHeader");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "BulkProcessHeader");
 			}
 
 			/* set components visible dependent of the users rights */
@@ -232,8 +225,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			// or
 			// delete bulkProcessHeader here.
 			if (arguments.containsKey("bulkDefermentChangeListCtrl")) {
-				setBulkDefermentChangeListCtrl((BulkDefermentChangeListCtrl) arguments
-						.get("bulkDefermentChangeListCtrl"));
+				setBulkDefermentChangeListCtrl(
+						(BulkDefermentChangeListCtrl) arguments.get("bulkDefermentChangeListCtrl"));
 			} else {
 				setBulkDefermentChangeListCtrl(null);
 			}
@@ -242,7 +235,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			doSetFieldProperties();
 			getVisibilityOfComponents(getBulkProcessHeader());
 			doShowDialog(getBulkProcessHeader());
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_BulkRateChangeDialog.onClose();
@@ -250,9 +243,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void getVisibilityOfComponents(BulkProcessHeader bulkProcessHeader){
-		
-		if("D".equals(bulkProcessHeader.getBulkProcessFor())){
+	public void getVisibilityOfComponents(BulkProcessHeader bulkProcessHeader) {
+
+		if ("D".equals(bulkProcessHeader.getBulkProcessFor())) {
 			this.label_BulkRateChangeDialog_RuleType.setVisible(true);
 			this.hbox_ruleType.setVisible(true);
 			this.ruleType.setVisible(true);
@@ -266,31 +259,31 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 			Filter filter[] = new Filter[1];
 			filter[0] = new Filter("QueryModule", "BULKDEFEREMENT_DETAILS", Filter.OP_EQUAL);
-			this.ruleType.setFilters(filter);	
+			this.ruleType.setFilters(filter);
 
-		} else if("R".equals(bulkProcessHeader.getBulkProcessFor())) {
+		} else if ("R".equals(bulkProcessHeader.getBulkProcessFor())) {
 			this.rateChangeRow.setVisible(true);
-		} 
-		
-		if(StringUtils.isEmpty(bulkProcessHeader.getRuleType())){
+		}
+
+		if (StringUtils.isEmpty(bulkProcessHeader.getRuleType())) {
 			this.tab_Query.setVisible(false);
 			this.tab_IjarahaFinance.setSelected(true);
 		}
-		
+
 		this.btnProceed.setVisible(false);
 		this.btnPrint.setVisible(false);
-		if(!this.getBulkProcessHeader().isNew()){
+		if (!this.getBulkProcessHeader().isNew()) {
 			this.btnPreview.setVisible(false);
 			this.btnRecal.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnRecal"));
-		}else{
+		} else {
 			this.btnRecal.setVisible(false);
 		}
 	}
 
-	public void doCheckRights(){
+	public void doCheckRights() {
 		logger.debug("Entering");
-		
-		getUserWorkspace().allocateAuthorities("BulkProcessHeader",getRole());
+
+		getUserWorkspace().allocateAuthorities("BulkProcessHeader", getRole());
 		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnProceed"));
 		this.btnPreview.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnPreview"));
 		this.btnRecal.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnRecal"));
@@ -298,30 +291,31 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnEdit"));
 		//this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnSave"));
-		this.btnCancel.setVisible(false);	
-		
+		this.btnCancel.setVisible(false);
+
 		logger.debug("Leaving");
 	}
 
-	public void onChange$ruleType(Event event){
-		logger.debug("Entering "+event);
+	public void onChange$ruleType(Event event) {
+		logger.debug("Entering " + event);
 		event.getData();
-		logger.debug("Entering "+event);
+		logger.debug("Entering " + event);
 	}
 
 	/**
 	 * When user clicks on button "SearchFinType" button
+	 * 
 	 * @param event
 	 */
-	public void onFulfill$ruleType(Event event){
+	public void onFulfill$ruleType(Event event) {
 		logger.debug("Entering " + event.toString());
 		Object dataObject = this.ruleType.getObject();
-		if (dataObject instanceof String){
+		if (dataObject instanceof String) {
 			this.ruleType.setValue(dataObject.toString());
 			this.ruleType.setDescription("");
 			this.tab_Query.setVisible(false);
-		}else{
-			Query details= (Query) dataObject;
+		} else {
+			Query details = (Query) dataObject;
 			if (details != null) {
 				this.ruleType.setValue(details.getQueryCode());
 				this.ruleType.setDescription(details.getQueryDesc());
@@ -332,11 +326,11 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		}
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBulkProcessHeader
 	 * @throws Exception
@@ -356,14 +350,14 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 				if (StringUtils.isNotBlank(aBulkProcessHeader.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
-				doReadOnly(true,true);
+				doReadOnly(true, true);
 			}
 		}
 
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aBulkProcessHeader);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -376,51 +370,52 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	}
 
 	/*
-	 *  onSelect Event For Finances Tab
-	public void onSelect$tab_IjarahaFinance(Event event){
-		logger.debug("Entering "+event);
-		if(!StringUtils.trimToEmpty(getBulkProcessHeader().getRecordStatus()).equals(PennantConstants.RCD_STATUS_SAVED)
-			&& !StringUtils.trimToEmpty(getBulkProcessHeader().getRecordStatus()).equals(PennantConstants.RCD_STATUS_SUBMITTED)){
-			fillIjarahaFinances();
-		}
-		logger.debug("Leaving "+event);
-	}*/
+	 * onSelect Event For Finances Tab public void onSelect$tab_IjarahaFinance(Event event){
+	 * logger.debug("Entering "+event);
+	 * if(!StringUtils.trimToEmpty(getBulkProcessHeader().getRecordStatus()).equals(PennantConstants.RCD_STATUS_SAVED)
+	 * &&
+	 * !StringUtils.trimToEmpty(getBulkProcessHeader().getRecordStatus()).equals(PennantConstants.RCD_STATUS_SUBMITTED))
+	 * { fillIjarahaFinances(); } logger.debug("Leaving "+event); }
+	 */
 
 	/*
-	 *  Writing Bean Values to Components
+	 * Writing Bean Values to Components
 	 */
-	public void doWriteBeanToComponents(BulkProcessHeader aBulkProcessHeader){
+	public void doWriteBeanToComponents(BulkProcessHeader aBulkProcessHeader) {
 		logger.debug("Entering");
 
 		this.fromDate.setValue(aBulkProcessHeader.getFromDate());
 		this.toDate.setValue(aBulkProcessHeader.getToDate());
-		this.rateChange.setValue(aBulkProcessHeader.getNewProcessedRate() == null ? BigDecimal.ZERO : aBulkProcessHeader.getNewProcessedRate());
+		this.rateChange.setValue(aBulkProcessHeader.getNewProcessedRate() == null ? BigDecimal.ZERO
+				: aBulkProcessHeader.getNewProcessedRate());
 		this.exDefDate.setChecked(bulkProcessHeader.isExcludeDeferement());
 		this.ruleType.setValue(aBulkProcessHeader.getRuleType());
 		this.rule.setSqlQuery(aBulkProcessHeader.getLovDescSqlQuery());
 
 		String excldMthds = "";
-		if("D".equals(this.bulkProcessHeader.getBulkProcessFor())){
+		if ("D".equals(this.bulkProcessHeader.getBulkProcessFor())) {
 			excldMthds = ",ADDTERM,CURPRD,ADDLAST,STEPPOS,";
 		} else {
 			excldMthds = ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,";
 		}
-		fillComboBox(this.cbReCalType, StringUtils.trimToEmpty(aBulkProcessHeader.getReCalType()), PennantStaticListUtil.getSchCalCodes(), excldMthds);
+		fillComboBox(this.cbReCalType, StringUtils.trimToEmpty(aBulkProcessHeader.getReCalType()),
+				PennantStaticListUtil.getSchCalCodes(), excldMthds);
 		this.calFromDate.setValue(aBulkProcessHeader.getReCalFromDate());
 		this.calToDate.setValue(aBulkProcessHeader.getReCalToDate());
 
-		if(StringUtils.equals(aBulkProcessHeader.getReCalType(),CalculationConstants.RPYCHG_TILLMDT)){
+		if (StringUtils.equals(aBulkProcessHeader.getReCalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 			this.calToDate.setVisible(false);
 			this.space_CalToDate.setSclass("");
 			this.label_BulkDefferment_CalToDate.setVisible(false);
 		}
 
-		if(!aBulkProcessHeader.isNew() && !StringUtils.isEmpty(aBulkProcessHeader.getRuleType()) ){
+		if (!aBulkProcessHeader.isNew() && !StringUtils.isEmpty(aBulkProcessHeader.getRuleType())) {
 			this.tab_Query.setVisible(true);
 		}
 
-		if (StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLDATE) || 
-				StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLMDT)) {
+		if (StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLDATE)
+				|| StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType())
+						.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			this.listheader_reCalStartDate.setVisible(true);
 			this.listheader_reCalEndDate.setVisible(true);
 			this.recalFromDateRow.setVisible(true);
@@ -431,16 +426,21 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		}
 
 		// List Process Details for Rendering
-		if(aBulkProcessHeader.getBulkProcessDetailsList() != null) {
+		if (aBulkProcessHeader.getBulkProcessDetailsList() != null) {
 			getBulkProcessHeader().setBulkProcessDetailsList(aBulkProcessHeader.getBulkProcessDetailsList());
 			this.oldBulkProcessDetails = aBulkProcessHeader.getBulkProcessDetailsList();
-			this.listBoxBulkrateChangeDialog.setHeight(Integer.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).
-					substring(0,getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px"))) - 50 + "px");
-			this.pagingIjarahaFinancesList.setPageSize(Integer.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).
-					substring(0,getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px"))) - 50 );
+			this.listBoxBulkrateChangeDialog.setHeight(Integer
+					.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).substring(0,
+							getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px")))
+					- 50 + "px");
+			this.pagingIjarahaFinancesList.setPageSize(
+					Integer.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).substring(0,
+							getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px"))) - 50);
 
-			getPagedListWrapper().initList(getBulkProcessHeader().getBulkProcessDetailsList(), this.listBoxBulkrateChangeDialog, this.pagingIjarahaFinancesList);
-			this.listBoxBulkrateChangeDialog.setItemRenderer(new BulkChangeDialoglItemRenderer(!getUserWorkspace().isAllowed("BulkProcessHeader_isDeferedItemDisabled"),
+			getPagedListWrapper().initList(getBulkProcessHeader().getBulkProcessDetailsList(),
+					this.listBoxBulkrateChangeDialog, this.pagingIjarahaFinancesList);
+			this.listBoxBulkrateChangeDialog.setItemRenderer(new BulkChangeDialoglItemRenderer(
+					!getUserWorkspace().isAllowed("BulkProcessHeader_isDeferedItemDisabled"),
 					this.window_BulkRateChangeDialog));
 
 		}
@@ -450,70 +450,77 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	}
 
 	/*
-	 *  Writing Component Values to Bean
+	 * Writing Component Values to Bean
 	 */
-	public void doWriteComponentsToBean(BulkProcessHeader aBulkProcessHeader){
+	public void doWriteComponentsToBean(BulkProcessHeader aBulkProcessHeader) {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aBulkProcessHeader.setFromDate(DateUtility.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat)));
+			aBulkProcessHeader.setFromDate(DateUtility
+					.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aBulkProcessHeader.setToDate(DateUtility.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat)));
+			aBulkProcessHeader.setToDate(DateUtility
+					.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.toDate.getValue() != null && this.fromDate.getValue() != null && this.toDate.getValue().before(this.fromDate.getValue())){
-				throw new WrongValueException(this.toDate,Labels.getLabel("DATE_ALLOWED_AFTER",
-						new String[]{Labels.getLabel("label_BulkRateChangeDialog_ToDate.value"),
-						Labels.getLabel("label_BulkRateChangeDialog_FromDate.value")}));
+			if (this.toDate.getValue() != null && this.fromDate.getValue() != null
+					&& this.toDate.getValue().before(this.fromDate.getValue())) {
+				throw new WrongValueException(this.toDate,
+						Labels.getLabel("DATE_ALLOWED_AFTER",
+								new String[] { Labels.getLabel("label_BulkRateChangeDialog_ToDate.value"),
+										Labels.getLabel("label_BulkRateChangeDialog_FromDate.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(this.rateChangeRow.isVisible()){
+			if (this.rateChangeRow.isVisible()) {
 				aBulkProcessHeader.setNewProcessedRate(this.rateChange.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (isValidComboValue(this.cbReCalType, Labels.getLabel("label_BulkRateChangeDialog_RecalType.value")) 
+			if (isValidComboValue(this.cbReCalType, Labels.getLabel("label_BulkRateChangeDialog_RecalType.value"))
 					&& this.cbReCalType.getSelectedIndex() != 0) {
-			aBulkProcessHeader.setReCalType(this.cbReCalType.getSelectedItem().getValue().toString());
+				aBulkProcessHeader.setReCalType(this.cbReCalType.getSelectedItem().getValue().toString());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if(this.recalFromDateRow.isVisible()){
+		if (this.recalFromDateRow.isVisible()) {
 			try {
-				if(this.calFromDate.getValue() != null){
-					aBulkProcessHeader.setReCalFromDate(DateUtility.getDBDate(DateUtility.formatDate(this.calFromDate.getValue(), PennantConstants.DBDateFormat)));
+				if (this.calFromDate.getValue() != null) {
+					aBulkProcessHeader.setReCalFromDate(DateUtility.getDBDate(
+							DateUtility.formatDate(this.calFromDate.getValue(), PennantConstants.DBDateFormat)));
 				}
 
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				if(this.calToDate.getValue() != null){
-					aBulkProcessHeader.setReCalToDate(DateUtility.getDBDate(DateUtility.formatDate(this.calToDate.getValue(), PennantConstants.DBDateFormat)));
+				if (this.calToDate.getValue() != null) {
+					aBulkProcessHeader.setReCalToDate(DateUtility.getDBDate(
+							DateUtility.formatDate(this.calToDate.getValue(), PennantConstants.DBDateFormat)));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
 		try {
-			if(this.calToDate.getValue() != null){
-				if(this.calToDate.getValue().before(this.calFromDate.getValue())){
-					throw new WrongValueException(this.calToDate,Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[]{Labels.getLabel("label_BulkDefferment_CalToDate.value"),
-							Labels.getLabel("label_BulkDefferment_CalFromDate.value")}));
+			if (this.calToDate.getValue() != null) {
+				if (this.calToDate.getValue().before(this.calFromDate.getValue())) {
+					throw new WrongValueException(this.calToDate,
+							Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[] { Labels.getLabel("label_BulkDefferment_CalToDate.value"),
+											Labels.getLabel("label_BulkDefferment_CalFromDate.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -527,20 +534,20 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			wve.add(we);
 		}
 		try {
-			if(this.excDefDateRow.isVisible()){
+			if (this.excDefDateRow.isVisible()) {
 				aBulkProcessHeader.setExcludeDeferement(this.exDefDate.isChecked());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if(StringUtils.equals(aBulkProcessHeader.getReCalType(),CalculationConstants.RPYCHG_ADDTERM)){
+			if (StringUtils.equals(aBulkProcessHeader.getReCalType(), CalculationConstants.RPYCHG_ADDTERM)) {
 				aBulkProcessHeader.setAddTermAfter(this.cbAddTermAfter.getSelectedItem().getValue().toString());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -550,7 +557,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			throw new WrongValuesException(wvea);
 		}
 
-		if(aBulkProcessHeader.getBulkProcessDetailsList() != null && !aBulkProcessHeader.getBulkProcessDetailsList().isEmpty()){
+		if (aBulkProcessHeader.getBulkProcessDetailsList() != null
+				&& !aBulkProcessHeader.getBulkProcessDetailsList().isEmpty()) {
 			if (aBulkProcessHeader.isNewRecord()) {
 				for (BulkProcessDetails bulkProcessDetails : aBulkProcessHeader.getBulkProcessDetailsList()) {
 					bulkProcessDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -558,7 +566,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 					bulkProcessDetails.setWorkflowId(aBulkProcessHeader.getWorkflowId());
 					bulkProcessDetails.setNewRecord(true);
 				}
-			}else{
+			} else {
 				aBulkProcessHeader.setRecordStatus(this.recordStatus.getValue());
 			}
 		}
@@ -587,14 +595,17 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		readOnlyComponent(isReadOnly("BulkProcessHeader_cbReCalType"), this.cbReCalType);
 		readOnlyComponent(isReadOnly("BulkProcessHeader_ruleType"), this.ruleType);
 
-		if(StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLDATE) ||
-				StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLMDT)){
+		if (StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLDATE)
+				|| StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType())
+						.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			this.recalFromDateRow.setVisible(true);
 			readOnlyComponent(isReadOnly("BulkProcessHeader_reCalFromDate"), this.calFromDate);
-			if(!StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_TILLMDT)){
+			if (!StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType())
+					.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 				readOnlyComponent(isReadOnly("BulkProcessHeader_reCalToDate"), this.calToDate);
 			}
-		} else if(StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType()).equals(CalculationConstants.RPYCHG_ADDTERM)){
+		} else if (StringUtils.trimToEmpty(getBulkProcessHeader().getReCalType())
+				.equals(CalculationConstants.RPYCHG_ADDTERM)) {
 			readOnlyComponent(isReadOnly("BulkProcessHeader_cbAddTermAfter"), this.cbAddTermAfter);
 		}
 
@@ -630,12 +641,13 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		this.fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.rule.setEditable(false);
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * when user changes recalculation type 
+	 * when user changes recalculation type
+	 * 
 	 * @param event
 	 * 
 	 */
@@ -643,8 +655,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		logger.debug("Entering" + event.toString());
 		String recalType = this.cbReCalType.getSelectedItem().getValue().toString();
 		if ("D".equals(this.bulkProcessHeader.getBulkProcessFor())) {
-			if (recalType.equals(CalculationConstants.RPYCHG_TILLDATE) || recalType.equals(CalculationConstants.RPYCHG_TILLMDT)) {
-				if(recalType.equals(CalculationConstants.RPYCHG_TILLDATE)){
+			if (recalType.equals(CalculationConstants.RPYCHG_TILLDATE)
+					|| recalType.equals(CalculationConstants.RPYCHG_TILLMDT)) {
+				if (recalType.equals(CalculationConstants.RPYCHG_TILLDATE)) {
 					setEventDatesValidation(this.toDate.getValue());
 					this.calToDate.setVisible(true);
 					this.label_BulkDefferment_CalToDate.setVisible(true);
@@ -697,16 +710,20 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	}
 
 	/*
-	 *  Method for setting validations for event dates
+	 * Method for setting validations for event dates
 	 */
-	public void setEventDatesValidation(Date date){
+	public void setEventDatesValidation(Date date) {
 		logger.debug("Entering");
 		if (this.recalFromDateRow.isVisible()) {
 			if (!this.calFromDate.isDisabled()) {
-				this.calFromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalFromDate.value"), true, this.toDate.getValue(), null, false));
+				this.calFromDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalFromDate.value"),
+								true, this.toDate.getValue(), null, false));
 			}
-			if (!this.calToDate.isDisabled()&& this.calToDate.isVisible()) {
-				this.calToDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalToDate.value"), true, this.toDate.getValue(), null, false));
+			if (!this.calToDate.isDisabled() && this.calToDate.isVisible()) {
+				this.calToDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalToDate.value"),
+								true, this.toDate.getValue(), null, false));
 			}
 		}
 		logger.debug("Leaving");
@@ -716,7 +733,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -728,7 +745,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnDelete(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -747,7 +764,6 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -757,15 +773,15 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	private void doCancel() {
 		logger.debug("Entering");
 		doWriteBeanToComponents(this.bulkProcessHeader.getBefImage());
-		doReadOnly(true,false);
+		doReadOnly(true, false);
 		this.btnCtrl.setInitEdit();
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Deletes a Academic object from database.<br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	private void doDelete() throws Exception {
 		logger.debug("Entering");
@@ -774,8 +790,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBulkProcessHeader.getFromDate();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aBulkProcessHeader.getFromDate();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aBulkProcessHeader.getRecordType())) {
 				aBulkProcessHeader.setVersion(aBulkProcessHeader.getVersion() + 1);
@@ -801,10 +817,10 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug("Entering");
@@ -814,21 +830,23 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		boolean isNew = false;
 
 		// fill the Academic object with the components data
-		if(isValidationrequired()){
+		if (isValidationrequired()) {
 			doSetValidation();
 			doWriteComponentsToBean(aBulkProcessHeader);
 		}
 
-		if((aBulkProcessHeader.getBulkProcessDetailsList() == null || aBulkProcessHeader.getBulkProcessDetailsList().size() == 0 )|| isBulkProcessDetailsChanges()){
-			String msg ;
-			msg= Labels.getLabel("label_BulkMsg");
-			if(aBulkProcessHeader.getBulkProcessDetailsList() != null && aBulkProcessHeader.getBulkProcessDetailsList().size()>0){
-				msg =Labels.getLabel("label_BulkDataMsg");
+		if ((aBulkProcessHeader.getBulkProcessDetailsList() == null
+				|| aBulkProcessHeader.getBulkProcessDetailsList().size() == 0) || isBulkProcessDetailsChanges()) {
+			String msg;
+			msg = Labels.getLabel("label_BulkMsg");
+			if (aBulkProcessHeader.getBulkProcessDetailsList() != null
+					&& aBulkProcessHeader.getBulkProcessDetailsList().size() > 0) {
+				msg = Labels.getLabel("label_BulkDataMsg");
 			}
 			MessageUtil.showError(msg);
 			return;
 		}
-		
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
 		// Do data level validations here
@@ -870,8 +888,6 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		logger.debug("Leaving");
 	}
 
-
-
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -882,7 +898,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	private boolean doProcess(BulkProcessHeader aBulkProcessHeader, String tranType) throws Exception {
@@ -962,7 +978,6 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		return processCompleted;
 	}
 
-
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -997,7 +1012,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
@@ -1033,8 +1048,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BulkRateChangeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1067,7 +1082,6 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		return processCompleted;
 	}
 
-
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -1078,10 +1092,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 */
 	private AuditHeader getAuditHeader(BulkProcessHeader aBulkProcessHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBulkProcessHeader.getBefImage(), aBulkProcessHeader);
-		return new AuditHeader(getReference(), null, null,
-				null, auditDetail, aBulkProcessHeader.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aBulkProcessHeader.getUserDetails(),
+				getOverideMap());
 	}
-
 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
@@ -1089,7 +1102,6 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	private void refreshList() {
 		getBulkDefermentChangeListCtrl().search();
 	}
-
 
 	/**
 	 * Display Message in Error Box
@@ -1127,7 +1139,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	protected String getReference() {
 		return String.valueOf(getBulkProcessHeader().getBulkProcessId());
 	}
-	
+
 	private boolean isBulkProcessDetailsChanges() {
 		if (this.oldBulkProcessDetails != getBulkProcessHeader().getBulkProcessDetailsList()) {
 			return true;
@@ -1142,9 +1154,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_BulkRateChangeDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -1164,47 +1176,50 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 	/**
 	 * Method for List Preview for Condition List
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnPreview(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		fillProcessFinances();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * Method for recal culating list
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnRecal(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		this.btnPreview.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnPreview"));
 		this.btnRecal.setVisible(false);
-		doReadOnly(false,false);
-		logger.debug("Leaving" +event.toString());
+		doReadOnly(false, false);
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for Processing Check Action Events and saving data.
+	 * 
 	 * @param forwardEvent
 	 */
-	public void onFinanceItemSelected(ForwardEvent forwardEvent){
-		
+	public void onFinanceItemSelected(ForwardEvent forwardEvent) {
+
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>) forwardEvent.getData();
-		
-		Checkbox checkbox =  (Checkbox) list.get(0);
+
+		Checkbox checkbox = (Checkbox) list.get(0);
 		BulkProcessDetails processDetail = (BulkProcessDetails) list.get(1);
-		if(processDetail == null){
+		if (processDetail == null) {
 			return;
 		}
 		List<BulkProcessDetails> bulkProcDetailList = getBulkProcessHeader().getBulkProcessDetailsList();
-		if(bulkProcDetailList != null && !bulkProcDetailList.isEmpty()){
+		if (bulkProcDetailList != null && !bulkProcDetailList.isEmpty()) {
 			for (BulkProcessDetails detail : bulkProcDetailList) {
-				if(StringUtils.equals(detail.getFinReference(), processDetail.getFinReference()) && 
-						DateUtility.compare(detail.getDeferedSchdDate(), processDetail.getDeferedSchdDate()) == 0){
+				if (StringUtils.equals(detail.getFinReference(), processDetail.getFinReference())
+						&& DateUtility.compare(detail.getDeferedSchdDate(), processDetail.getDeferedSchdDate()) == 0) {
 					detail.setAlwProcess(checkbox.isChecked());
 				}
 			}
@@ -1216,41 +1231,51 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 */
 	public void fillProcessFinances() {
 		logger.debug("Entering");
-		
+
 		doSetValidation();
 		doWriteComponentsToBean(getBulkProcessHeader());
-		
-		String whereClause;
-		if (getUserWorkspace().isAllowed("button_BulkProcessHeader_btnProceed")
-				&& !StringUtils.trimToEmpty(this.bulkProcessHeader.getRecordStatus()).equals(PennantConstants.RCD_STATUS_APPROVED)) {
 
-			Date fromDate = DateUtility.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat));
-			Date toDate = DateUtility.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat));
+		String whereClause;
+		if (getUserWorkspace().isAllowed("button_BulkProcessHeader_btnProceed") && !StringUtils
+				.trimToEmpty(this.bulkProcessHeader.getRecordStatus()).equals(PennantConstants.RCD_STATUS_APPROVED)) {
+
+			Date fromDate = DateUtility
+					.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat));
+			Date toDate = DateUtility
+					.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat));
 
 			if ("R".equals(this.bulkProcessHeader.getBulkProcessFor())) {
 				setRateChangeFinances(getBulkDefermentChangeProcessService().getIjaraBulkRateFinList(fromDate, toDate));
-				getBulkProcessHeader().setBulkProcessDetailsList(getBulkDefermentChangeProcessService().getIjaraBulkRateFinList(fromDate, toDate));
+				getBulkProcessHeader().setBulkProcessDetailsList(
+						getBulkDefermentChangeProcessService().getIjaraBulkRateFinList(fromDate, toDate));
 			} else if ("D".equals(this.bulkProcessHeader.getBulkProcessFor())) {
-				if(StringUtils.isNotBlank(this.rule.getSqlQuery())){
-					whereClause = StringUtils.trimToEmpty(this.rule.getSqlQuery())+" AND "+getUsrFinAuthenticationQry(false) +" AND (DeferedSchdDate Between '"+fromDate+"' AND '"+toDate+"') "  ;
-				}else{
-					whereClause = getUsrFinAuthenticationQry(false)+" AND (DeferedSchdDate Between '"+fromDate+"' AND '"+toDate+"') "  ;
+				if (StringUtils.isNotBlank(this.rule.getSqlQuery())) {
+					whereClause = StringUtils.trimToEmpty(this.rule.getSqlQuery()) + " AND "
+							+ getUsrFinAuthenticationQry(false) + " AND (DeferedSchdDate Between '" + fromDate
+							+ "' AND '" + toDate + "') ";
+				} else {
+					whereClause = getUsrFinAuthenticationQry(false) + " AND (DeferedSchdDate Between '" + fromDate
+							+ "' AND '" + toDate + "') ";
 				}
-				getBulkProcessHeader().setBulkProcessDetailsList(getBulkDefermentChangeProcessService().getBulkDefermentFinList(fromDate, toDate, whereClause));
+				getBulkProcessHeader().setBulkProcessDetailsList(
+						getBulkDefermentChangeProcessService().getBulkDefermentFinList(fromDate, toDate, whereClause));
 			}
 
-			if(this.oldBulkProcessDetails != null && this.oldBulkProcessDetails.equals(getBulkProcessHeader().getBulkProcessDetailsList())){
+			if (this.oldBulkProcessDetails != null
+					&& this.oldBulkProcessDetails.equals(getBulkProcessHeader().getBulkProcessDetailsList())) {
 				getBulkProcessHeader().setLovDescIsOlddataChanged(false);
 			} else {
 				getBulkProcessHeader().setLovDescIsOlddataChanged(true);
 			}
 
-			if (getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLDATE) || 
-					getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLMDT)) {
-				List<ScheduleMapDetails> scheduleMapDetailsList = getBulkDefermentChangeProcessService().getDeferedDates(getBulkProcessHeader().getBulkProcessDetailsList(), 
-						getBulkProcessHeader().getReCalType(), getBulkProcessHeader().getReCalFromDate(), getBulkProcessHeader().getReCalToDate());
+			if (getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLDATE)
+					|| getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLMDT)) {
+				List<ScheduleMapDetails> scheduleMapDetailsList = getBulkDefermentChangeProcessService()
+						.getDeferedDates(getBulkProcessHeader().getBulkProcessDetailsList(),
+								getBulkProcessHeader().getReCalType(), getBulkProcessHeader().getReCalFromDate(),
+								getBulkProcessHeader().getReCalToDate());
 
-				List<BulkProcessDetails> schdBulkProcessDetails = new ArrayList<BulkProcessDetails>(); 
+				List<BulkProcessDetails> schdBulkProcessDetails = new ArrayList<BulkProcessDetails>();
 				for (BulkProcessDetails aBulkProcessDetails : getBulkProcessHeader().getBulkProcessDetailsList()) {
 					for (ScheduleMapDetails scheduleMapDetail : scheduleMapDetailsList) {
 						if (aBulkProcessDetails.getFinReference().equals(scheduleMapDetail.getFinReference())) {
@@ -1270,7 +1295,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 				this.listheader_reCalEndDate.setVisible(false);
 			}
 
-			if(getBulkProcessHeader().getBulkProcessDetailsList() == null || getBulkProcessHeader().getBulkProcessDetailsList().size() == 0){
+			if (getBulkProcessHeader().getBulkProcessDetailsList() == null
+					|| getBulkProcessHeader().getBulkProcessDetailsList().size() == 0) {
 				try {
 					MessageUtil.showError("No records found with schedule term in between "
 							+ DateUtility.formatToLongDate(this.fromDate.getValue()) + " and "
@@ -1285,25 +1311,26 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 		this.btnPreview.setVisible(false);
 		this.btnRecal.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnRecal"));
-		if(listBoxBulkrateChangeDialog != null && listBoxBulkrateChangeDialog.getItems().size() >0){
+		if (listBoxBulkrateChangeDialog != null && listBoxBulkrateChangeDialog.getItems().size() > 0) {
 			this.btnPrint.setVisible(false);
 		} else {
 			this.btnPrint.setVisible(false);
 		}
 		this.tab_IjarahaFinance.setSelected(true);
-		
+
 		logger.debug("Entering");
 	}
 
 	/**
 	 * Method for List Preview for Condition List
+	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws AccountNotFoundException 
-	 * @throws WrongValueException 
+	 * @throws AccountNotFoundException
+	 * @throws WrongValueException
 	 */
 	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, InterfaceException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		this.btnProceed.setDisabled(true);
 
 		//Processing Fetch Finance Details for IJARAH Bulk Rate Changes
@@ -1311,37 +1338,36 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 				this.cbReCalType.getSelectedItem().getValue().toString(), this.rateChange.getValue());
 
 		//Need to check Process failure case
-		if(success){
+		if (success) {
 			MessageUtil.showMessage(
 					"Bulk Rate Application Process Succeed for Finance Count " + getRateChangeFinances().size());
 		}
 
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/*
 	 * onClick Event For Print Button
 	 */
-	public void onClick$btnPrint(Event event) throws Exception{
+	public void onClick$btnPrint(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		doWriteComponentsToBean(getBulkProcessHeader());	
+		doWriteComponentsToBean(getBulkProcessHeader());
 
-		if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLMDT)){
+		if (getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Till_Maturity"));
-		} else if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_ADJMDT)){
+		} else if (getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_ADJMDT)) {
 			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Adj_To_Maturity"));
-		} else if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLDATE)){
+		} else if (getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_TILLDATE)) {
 			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Till_Date"));
-		} else if(getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_ADDTERM)){
+		} else if (getBulkProcessHeader().getReCalType().equals(CalculationConstants.RPYCHG_ADDTERM)) {
 			getBulkProcessHeader().setLovDescReCalType(Labels.getLabel("label_Add_Terms"));
 		}
 
 		List<BulkProcessDetails> bulkProcessDetailsRptData = new ArrayList<BulkProcessDetails>();
 		if (getBulkProcessHeader().getBulkProcessDetailsList() != null
 				&& getBulkProcessHeader().getBulkProcessDetailsList().size() > 0) {
-			for (BulkProcessDetails bulkProcessDetail : getBulkProcessHeader()
-					.getBulkProcessDetailsList()) {
+			for (BulkProcessDetails bulkProcessDetail : getBulkProcessHeader().getBulkProcessDetailsList()) {
 				if (!bulkProcessDetail.isAlwProcess()) {
 					bulkProcessDetailsRptData.add(bulkProcessDetail);
 				}
@@ -1350,14 +1376,13 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 		List<Object> list = new ArrayList<Object>();
 		list.add(bulkProcessDetailsRptData);
-		String reportName="FINENQ_BulkDifferemmentDetails";
+		String reportName = "FINENQ_BulkDifferemmentDetails";
 
-		ReportGenerationUtil.generateReport(reportName, getBulkProcessHeader(), list, true, 1, getUserWorkspace()
-				.getLoggedInUser().getFullName(), this.window_BulkRateChangeDialog);
+		ReportGenerationUtil.generateReport(reportName, getBulkProcessHeader(), list, true, 1,
+				getUserWorkspace().getLoggedInUser().getFullName(), this.window_BulkRateChangeDialog);
 
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
@@ -1368,55 +1393,66 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 		Date appStartDate = DateUtility.getAppDate();
 
-		if(!isValidationrequired()){
+		if (!isValidationrequired()) {
 			logger.debug("Leaving");
 			return;
 		}
 
-		this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"),true,appStartDate,endDate,true));
+		this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"),
+				true, appStartDate, endDate, true));
 
-		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"),true,null,endDate,true));
+		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"), true,
+				null, endDate, true));
 
-		if(!this.rateChange.isDisabled()){
-			this.rateChange.setConstraint(new PTStringValidator(Labels.getLabel("label_IjaraBulkRateChange_Rate.value"),null,true));
+		if (!this.rateChange.isDisabled()) {
+			this.rateChange.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_IjaraBulkRateChange_Rate.value"), null, true));
 		}
 
-		if(this.hbox_TillDate.isVisible()){
-			if(!this.tillDate.isDisabled()){
-				this.tillDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),true,appStartDate,endDate,true));
+		if (this.hbox_TillDate.isVisible()) {
+			if (!this.tillDate.isDisabled()) {
+				this.tillDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),
+								true, appStartDate, endDate, true));
 			}
 		}
 
-		if(this.recalFromDateRow.isVisible()) {
+		if (this.recalFromDateRow.isVisible()) {
 
-			if(!this.calFromDate.isDisabled()){
-				this.calFromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalFromDate.value"),true,appStartDate,endDate,true));
+			if (!this.calFromDate.isDisabled()) {
+				this.calFromDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_BulkDefferment_CalFromDate.value"), true, appStartDate, endDate, true));
 			}
 
-			if(this.calToDate.isVisible()){
-				this.calToDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalToDate.value"),true,appStartDate,endDate,true));
+			if (this.calToDate.isVisible()) {
+				this.calToDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_BulkDefferment_CalToDate.value"), true, appStartDate, endDate, true));
 			}
 
 		}
 
-		if(this.ruleType.isVisible() && !this.ruleType.isReadonly()){
-			this.ruleType.setConstraint(new PTStringValidator(Labels.getLabel("label_BulkRateChangeDialog_RuleType.value"),null,false,false));
+		if (this.ruleType.isVisible() && !this.ruleType.isReadonly()) {
+			this.ruleType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_BulkRateChangeDialog_RuleType.value"), null, false, false));
 		}
 
-		if (this.recalFromDateRow.isVisible()){
+		if (this.recalFromDateRow.isVisible()) {
 			setEventDatesValidation(this.toDate.getValue());
 		}
 
 		logger.debug("Leaving");
 	}
 
-	public boolean isValidationrequired(){
-		if(this.userAction.getSelectedItem()!= null){
-			if( this.userAction.getSelectedItem().getValue().toString().equalsIgnoreCase(PennantConstants.RCD_STATUS_CANCELLED)
-					|| this.userAction.getSelectedItem().getValue().toString().equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED)
-					|| this.userAction.getSelectedItem().getValue().toString().equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)){
+	public boolean isValidationrequired() {
+		if (this.userAction.getSelectedItem() != null) {
+			if (this.userAction.getSelectedItem().getValue().toString()
+					.equalsIgnoreCase(PennantConstants.RCD_STATUS_CANCELLED)
+					|| this.userAction.getSelectedItem().getValue().toString()
+							.equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED)
+					|| this.userAction.getSelectedItem().getValue().toString()
+							.equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)) {
 				return false;
-			} else{
+			} else {
 				return true;
 			}
 		}
@@ -1437,19 +1473,26 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		this.calFromDate.setDisabled(isReadOnly);
 		this.calToDate.setDisabled(isReadOnly);
 		this.calToDate.setDisabled(isReadOnly);
-		
-		if(!isBeforeRender){
-			if(isReadOnly){
+
+		if (!isBeforeRender) {
+			if (isReadOnly) {
 				isReadOnly = !getUserWorkspace().isAllowed("BulkProcessHeader_isDeferedItemDisabled");
-			}else{
+			} else {
 				isReadOnly = true;
 			}
 
-			this.listBoxBulkrateChangeDialog.setHeight(Integer.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).substring(0, getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px"))) - 50 + "px");
-			this.pagingIjarahaFinancesList.setPageSize(Integer.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).substring(0, getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px"))) - 50);
+			this.listBoxBulkrateChangeDialog.setHeight(Integer
+					.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).substring(0,
+							getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px")))
+					- 50 + "px");
+			this.pagingIjarahaFinancesList.setPageSize(
+					Integer.parseInt(getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).substring(0,
+							getListBoxHeight(grid_BulkRateChange.getRows().getVisibleItemCount()).indexOf("px"))) - 50);
 
-			getPagedListWrapper().initList(getBulkProcessHeader().getBulkProcessDetailsList(), this.listBoxBulkrateChangeDialog, this.pagingIjarahaFinancesList);
-			this.listBoxBulkrateChangeDialog.setItemRenderer(new BulkChangeDialoglItemRenderer(isReadOnly, this.window_BulkRateChangeDialog));
+			getPagedListWrapper().initList(getBulkProcessHeader().getBulkProcessDetailsList(),
+					this.listBoxBulkrateChangeDialog, this.pagingIjarahaFinancesList);
+			this.listBoxBulkrateChangeDialog
+					.setItemRenderer(new BulkChangeDialoglItemRenderer(isReadOnly, this.window_BulkRateChangeDialog));
 		}
 		logger.debug("Leaving");
 	}
@@ -1457,7 +1500,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	/**
 	 * Method to remove constraints
 	 * 
-	 * */
+	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		this.rateChange.setConstraint("");
@@ -1471,10 +1514,11 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Method to clear error messages
 	 * 
-	 * */
+	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -1493,6 +1537,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	public void setRateChangeFinances(List<BulkProcessDetails> rateChangeFinances) {
 		this.rateChangeFinances = rateChangeFinances;
 	}
+
 	public List<BulkProcessDetails> getRateChangeFinances() {
 		return rateChangeFinances;
 	}
@@ -1517,7 +1562,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		return bulkDefermentChangeProcessService;
 	}
 
-	public void setBulkDefermentChangeProcessService(BulkDefermentChangeProcessService bulkDefermentChangeProcessService) {
+	public void setBulkDefermentChangeProcessService(
+			BulkDefermentChangeProcessService bulkDefermentChangeProcessService) {
 		this.bulkDefermentChangeProcessService = bulkDefermentChangeProcessService;
 	}
 

@@ -17,19 +17,19 @@ public class SuitfiledAndWilful implements Serializable {
 	private static final long serialVersionUID = -1312467423645883549L;
 
 	@XmlElement(name = "SUIT-FILED-STATUS")
-	private String	suitFiledStatus;
+	private String suitFiledStatus;
 
 	@XmlElement(name = "DATE-OF-SUIT")
-	private Date	dateOfSuit;
+	private Date dateOfSuit;
 
 	@XmlElement(name = "WILFUL-DEFAULTER")
-	private String	wilfulDefaulter;
+	private String wilfulDefaulter;
 
 	@XmlElement(name = "SUIT-AMOUNT")
-	private String	suitAmount;
+	private String suitAmount;
 
 	@XmlElement(name = "WILFUL-DEFAULT-AS-ON")
-	private Date	wilfulDefaultAsOn;
+	private Date wilfulDefaultAsOn;
 
 	public String getSuitFiledStatus() {
 		return suitFiledStatus;

@@ -97,10 +97,11 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 
 		// finReference
 		this.finReference.setMaxlength(20);
-		/*this.finReference.setTextBoxWidth(120);
-		this.finReference.setModuleName("FinanceManagement");
-		this.finReference.setValueColumn("FinReference");
-		this.finReference.setValidateColumns(new String[] { "FinReference" });*/
+		/*
+		 * this.finReference.setTextBoxWidth(120); this.finReference.setModuleName("FinanceManagement");
+		 * this.finReference.setValueColumn("FinReference"); this.finReference.setValidateColumns(new String[] {
+		 * "FinReference" });
+		 */
 
 		//paymentType
 		fillComboBox(this.dmsDocumentStatus, "", PennantStaticListUtil.getDmsDocumentStatusTypes(), "");
@@ -116,7 +117,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	 */
 	public void onClick$button_DmsDocumentDetailList_DmsDocumentDetailSearch(Event event) {
 		this.dmsDocumentStatus.getValue();
-		
+
 		search();
 	}
 
@@ -145,7 +146,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxDmsDocumentDetail.getSelectedItem();
 		final long dmsId = (long) selectedItem.getAttribute("dmsId");
-		DMSDocumentDetails dmsDocumentDetails =(DMSDocumentDetails) selectedItem.getAttribute("dmsDocumentDetail");
+		DMSDocumentDetails dmsDocumentDetails = (DMSDocumentDetails) selectedItem.getAttribute("dmsDocumentDetail");
 		doShowDialogPage(dmsId, dmsDocumentDetails);
 
 		logger.debug(Literal.LEAVING);

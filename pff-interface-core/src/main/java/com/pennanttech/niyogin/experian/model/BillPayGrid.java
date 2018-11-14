@@ -3,8 +3,8 @@ package com.pennanttech.niyogin.experian.model;
 import java.util.Date;
 
 public class BillPayGrid {
-	private Date	billPayDate;
-	private String	assetClassification;
+	private Date billPayDate;
+	private String assetClassification;
 
 	public Date getBillPayDate() {
 		return billPayDate;

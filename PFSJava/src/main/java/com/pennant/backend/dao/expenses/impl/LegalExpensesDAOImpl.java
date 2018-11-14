@@ -112,10 +112,8 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 	}
 
 	/**
-	 * This method Deletes the Record from the FinLegalExpenses or
-	 * FinLegalExpenses_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Legal Expenses by key
-	 * CustomerID
+	 * This method Deletes the Record from the FinLegalExpenses or FinLegalExpenses_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Legal Expenses by key CustomerID
 	 * 
 	 * @param Legal
 	 *            Expenses (legalExpenses)
@@ -148,8 +146,7 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 	}
 
 	/**
-	 * This method insert new Records into FinLegalExpenses or
-	 * FinLegalExpenses_Temp.
+	 * This method insert new Records into FinLegalExpenses or FinLegalExpenses_Temp.
 	 *
 	 * save Legal Expenses
 	 * 
@@ -181,10 +178,8 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 
 		}
 		/*
-		 * if(legalExpenses.getExpReference() ==0 ||
-		 * legalExpenses.getExpReference() == Long.MIN_VALUE){
-		 * legalExpenses.setExpReference
-		 * (getNextidviewDAO().getNextId("Seq"+PennantJavaUtil
+		 * if(legalExpenses.getExpReference() ==0 || legalExpenses.getExpReference() == Long.MIN_VALUE){
+		 * legalExpenses.setExpReference (getNextidviewDAO().getNextId("Seq"+PennantJavaUtil
 		 * .getTabelMap("LegalExpenses"))); }
 		 */
 
@@ -208,9 +203,8 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 	}
 
 	/**
-	 * This method updates the Record FinLegalExpenses or FinLegalExpenses_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Legal Expenses by key CustomerID and Version
+	 * This method updates the Record FinLegalExpenses or FinLegalExpenses_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Legal Expenses by key CustomerID and Version
 	 * 
 	 * @param Legal
 	 *            Expenses (legalExpenses)

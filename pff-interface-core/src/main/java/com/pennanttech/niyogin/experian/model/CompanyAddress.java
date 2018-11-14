@@ -16,28 +16,28 @@ public class CompanyAddress implements Serializable {
 	private static final long serialVersionUID = -4978755658518155497L;
 
 	@XmlElement(name = "ADDRESS_LINE1")
-	private String	addressLine1;
+	private String addressLine1;
 
 	@XmlElement(name = "ADDRESS_LINE2")
-	private String	addressLine2;
+	private String addressLine2;
 
 	@XmlElement(name = "ADDRESS_LINE3")
-	private String	addressLine3;
+	private String addressLine3;
 
 	@XmlElement(name = "ADDRESS1_CITY")
-	private String	city;
+	private String city;
 
 	@XmlElement(name = "ADDRESS1_COUNTRY")
-	private String	country;
+	private String country;
 
 	@XmlElement(name = "ADDRESS1_DISTRICT")
-	private String	district;
+	private String district;
 
 	@XmlElement(name = "ADDRESS1_PIN")
-	private String	pin;
+	private String pin;
 
 	@XmlElement(name = "ADDRESS1_STATE")
-	private String	state;
+	private String state;
 
 	public String getAddressLine1() {
 		return addressLine1;

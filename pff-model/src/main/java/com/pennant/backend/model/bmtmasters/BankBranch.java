@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class BankBranch extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long bankBranchID = Long.MIN_VALUE;
 	private String bankCode;
 	private String bankName;
@@ -78,7 +78,7 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 	private BankBranch befImage;
 	private LoggedInUser userDetails;
 	private int accNoLength;
-		
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -92,70 +92,78 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("bankName");
-			excludeFields.add("PCCityName");
-			excludeFields.add("accNoLength");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("bankName");
+		excludeFields.add("PCCityName");
+		excludeFields.add("accNoLength");
+		return excludeFields;
 	}
-	
+
 	public long getId() {
 		return bankBranchID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.bankBranchID = id;
 	}
-	
+
 	public long getBankBranchID() {
 		return bankBranchID;
 	}
+
 	public void setBankBranchID(long bankBranchID) {
 		this.bankBranchID = bankBranchID;
 	}
-	
+
 	public String getBankCode() {
 		return bankCode;
 	}
+
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
 	}
+
 	public String getBranchCode() {
 		return branchCode;
 	}
+
 	public void setBranchCode(String branchCode) {
 		this.branchCode = branchCode;
 	}
-	
+
 	public String getBranchDesc() {
 		return branchDesc;
 	}
+
 	public void setBranchDesc(String branchDesc) {
 		this.branchDesc = branchDesc;
 	}
-	
+
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
-	
+
 	public String getMICR() {
 		return mICR;
 	}
+
 	public void setMICR(String mICR) {
 		this.mICR = mICR;
 	}
-	
+
 	public String getIFSC() {
 		return iFSC;
 	}
+
 	public void setIFSC(String iFSC) {
 		this.iFSC = iFSC;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -163,7 +171,7 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -172,12 +180,12 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public BankBranch getBefImage(){
+	public BankBranch getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(BankBranch beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BankBranch beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

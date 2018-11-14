@@ -63,7 +63,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			return  null;
+			return null;
 		}
 	}
 
@@ -95,7 +95,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			return  null;
+			return null;
 		}
 	}
 
@@ -107,7 +107,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void saveMCMMasters(List<ReferenceData> saveMasterList, String tableName) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into "+ tableName);
+		StringBuilder insertSql = new StringBuilder("Insert Into " + tableName);
 		insertSql.append(" (Code, Value, Description )");
 		insertSql.append(" Values( ");
 		insertSql.append(" :Code, :Value, :Description)");
@@ -128,8 +128,8 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateMCMMasters(List<ReferenceData> updateMasterList, String tableName) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update "+tableName);
-		updateSql.append(" Set Code = :Code, Description = :Description" );
+		StringBuilder updateSql = new StringBuilder("Update " + tableName);
+		updateSql.append(" Set Code = :Code, Description = :Description");
 		updateSql.append(" Where Value =:Value");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -145,23 +145,23 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void saveCurrencyMaster(List<Currency> saveCcyMasterList) {
 		logger.debug("Entering ");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTCurrencies" );
-		insertSql.append(" (CcyCode, CcyNumber, CcyDesc, CcySwiftCode, CcyEditField," );
-		insertSql.append(" CcyMinorCcyUnits, CcyDrRateBasisCode, CcyCrRateBasisCode," );
-		insertSql.append(" CcyIsIntRounding, CcySpotRate, CcyIsReceprocal, CcyUserRateBuy," );
-		insertSql.append(" CcyUserRateSell, CcyIsMember, CcyIsGroup, CcyIsAlwForLoans, CcyIsAlwForDepo," );
-		insertSql.append(" CcyIsAlwForAc, CcyIsActive, CcyMinorCcyDesc, CcySymbol," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTCurrencies");
+		insertSql.append(" (CcyCode, CcyNumber, CcyDesc, CcySwiftCode, CcyEditField,");
+		insertSql.append(" CcyMinorCcyUnits, CcyDrRateBasisCode, CcyCrRateBasisCode,");
+		insertSql.append(" CcyIsIntRounding, CcySpotRate, CcyIsReceprocal, CcyUserRateBuy,");
+		insertSql.append(" CcyUserRateSell, CcyIsMember, CcyIsGroup, CcyIsAlwForLoans, CcyIsAlwForDepo,");
+		insertSql.append(" CcyIsAlwForAc, CcyIsActive, CcyMinorCcyDesc, CcySymbol,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CcyCode, :CcyNumber, :CcyDesc, :CcySwiftCode, :CcyEditField," );
-		insertSql.append(" :CcyMinorCcyUnits, :CcyDrRateBasisCode, :CcyCrRateBasisCode," );
-		insertSql.append(" :CcyIsIntRounding, :CcySpotRate, :CcyIsReceprocal, :CcyUserRateBuy," );
-		insertSql.append(" :CcyUserRateSell, :CcyIsMember, :CcyIsGroup, :CcyIsAlwForLoans," );
+		insertSql.append(" Values(:CcyCode, :CcyNumber, :CcyDesc, :CcySwiftCode, :CcyEditField,");
+		insertSql.append(" :CcyMinorCcyUnits, :CcyDrRateBasisCode, :CcyCrRateBasisCode,");
+		insertSql.append(" :CcyIsIntRounding, :CcySpotRate, :CcyIsReceprocal, :CcyUserRateBuy,");
+		insertSql.append(" :CcyUserRateSell, :CcyIsMember, :CcyIsGroup, :CcyIsAlwForLoans,");
 		insertSql.append(" :CcyIsAlwForDepo, :CcyIsAlwForAc, :CcyIsActive, :CcyMinorCcyDesc, :CcySymbol,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(saveCcyMasterList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
@@ -173,11 +173,11 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateCurrencyMaster(List<Currency> updateCcyMasterList) {
 		logger.debug("Entering ");
 
-		StringBuilder updateSql = new StringBuilder("Update RMTCurrencies" );
+		StringBuilder updateSql = new StringBuilder("Update RMTCurrencies");
 		updateSql.append(" Set CcyDesc = :CcyDesc ");
 		updateSql.append(" Where CcyCode =:CcyCode ");
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateCcyMasterList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
@@ -201,21 +201,21 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		logger.debug("Leaving");
 		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-		}catch (DataAccessException e) {
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 	}
 
 	/**
-	 *  Method for fetching Industry Details
+	 * Method for fetching Industry Details
 	 */
 	@Override
 	public List<Industry> fetchIndustryDetails() {
 		logger.debug("Entering");
 
-		Industry  industry = new Industry();
+		Industry industry = new Industry();
 		StringBuilder selectSql = new StringBuilder("Select  IndustryCode  from BMTIndustries");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -224,21 +224,21 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		logger.debug("Leaving");
 		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-		}catch (DataAccessException e) {
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 	}
 
 	/**
-	 *  Method for fetching CustomerType Details
+	 * Method for fetching CustomerType Details
 	 */
 	@Override
 	public List<CustomerType> fetchCustTypeDetails() {
 		logger.debug("Entering");
 
-		CustomerType  customerType = new CustomerType();
+		CustomerType customerType = new CustomerType();
 		StringBuilder selectSql = new StringBuilder("Select  CustTypeCode  from RMTCustTypes");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -248,7 +248,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -258,20 +258,20 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void saveIndustryMaster(List<Industry> saveMasterList) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into BMTIndustries" );
-		insertSql.append(" (IndustryCode, SubSectorCode, IndustryDesc, IndustryLimit, IndustryIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		StringBuilder insertSql = new StringBuilder("Insert Into BMTIndustries");
+		insertSql.append(" (IndustryCode, SubSectorCode, IndustryDesc, IndustryLimit, IndustryIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:IndustryCode, :SubSectorCode, :IndustryDesc, :IndustryLimit, :IndustryIsActive," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" Values(:IndustryCode, :SubSectorCode, :IndustryDesc, :IndustryLimit, :IndustryIsActive,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(saveMasterList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -281,16 +281,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateIndustryMaster(List<Industry> updateMasterList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTIndustries" );
+		StringBuilder updateSql = new StringBuilder("Update BMTIndustries");
 		updateSql.append(" Set IndustryDesc = :IndustryDesc ");
 		updateSql.append(" Where IndustryCode = :IndustryCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateMasterList.toArray());
 
 		logger.debug("Leaving");
-		try{
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -302,8 +302,8 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCustTypes");
 		insertSql.append(" (CustTypeCode, CustTypeCtg, CustTypeDesc, CustTypeIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustTypeCode, :CustTypeCtg, :CustTypeDesc, :CustTypeIsActive,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -312,9 +312,9 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(custTypeList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -325,16 +325,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update RMTCustTypes");
-		updateSql.append(" Set CustTypeDesc = :CustTypeDesc" );
+		updateSql.append(" Set CustTypeDesc = :CustTypeDesc");
 		updateSql.append(" Where CustTypeCode =:CustTypeCode");
 
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(custTypeList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -344,7 +344,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public List<Sector> fetchSectorDetails() {
 		logger.debug("Entering");
 
-		Sector  sector = new Sector();
+		Sector sector = new Sector();
 		StringBuilder selectSql = new StringBuilder("Select  SectorCode  from BMTSectors");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -354,7 +354,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -370,16 +370,17 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:SectorCode, :SectorDesc, :SectorLimit, :SectorIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(saveSectorList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -390,16 +391,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update BMTSectors");
-		updateSql.append(" Set SectorDesc = :SectorDesc" );
+		updateSql.append(" Set SectorDesc = :SectorDesc");
 		updateSql.append(" Where SectorCode =:SectorCode");
 
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateSectorList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -419,7 +420,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -429,20 +430,22 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void saveCountryDetails(List<Country> countryList) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into BMTCountries" );
-		insertSql.append(" (CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit, CountryRiskLimit, CountryIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		StringBuilder insertSql = new StringBuilder("Insert Into BMTCountries");
+		insertSql.append(
+				" (CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit, CountryRiskLimit, CountryIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CountryCode, :CountryDesc, :CountryParentLimit, :CountryResidenceLimit, :CountryRiskLimit, :CountryIsActive," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(
+				" Values(:CountryCode, :CountryDesc, :CountryParentLimit, :CountryResidenceLimit, :CountryRiskLimit, :CountryIsActive,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(countryList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -452,16 +455,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateCountryDetails(List<Country> countryList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTCountries" );
+		StringBuilder updateSql = new StringBuilder("Update BMTCountries");
 		updateSql.append(" Set CountryDesc = :CountryDesc ");
 		updateSql.append(" Where CountryCode = :CountryCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(countryList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -476,12 +479,13 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
-		RowMapper<MaritalStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MaritalStatusCode.class);
+		RowMapper<MaritalStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(MaritalStatusCode.class);
 
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -497,15 +501,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:MaritalStsCode, :MaritalStsDesc, :MaritalStsIsActive, :SystemDefault,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(maritalStsList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -516,16 +521,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateMaritalStsDetails(List<MaritalStatusCode> maritalStsList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTMaritalStatusCodes" );
+		StringBuilder updateSql = new StringBuilder("Update BMTMaritalStatusCodes");
 		updateSql.append(" Set MaritalStsDesc = :MaritalStsDesc ");
 		updateSql.append(" Where MaritalStsCode = :MaritalStsCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(maritalStsList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -545,7 +550,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -555,24 +560,26 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void saveBranchDetails(List<Branch> branchList) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTBranches" );
-		insertSql.append(" (BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox," );
-		insertSql.append(" BranchCity, BranchProvince, BranchCountry, BranchFax, BranchTel, BranchSwiftBankCde," );
-		insertSql.append(" BranchSwiftCountry, BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTBranches");
+		insertSql.append(" (BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox,");
+		insertSql.append(" BranchCity, BranchProvince, BranchCountry, BranchFax, BranchTel, BranchSwiftBankCde,");
+		insertSql.append(" BranchSwiftCountry, BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2, :BranchPOBox," );
-		insertSql.append(" :BranchCity , :BranchProvince, :BranchCountry, :BranchFax, :BranchTel, :BranchSwiftBankCde," );
-		insertSql.append(" :BranchSwiftCountry, :BranchSwiftLocCode, :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" Values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2, :BranchPOBox,");
+		insertSql
+				.append(" :BranchCity , :BranchProvince, :BranchCountry, :BranchFax, :BranchTel, :BranchSwiftBankCde,");
+		insertSql.append(
+				" :BranchSwiftCountry, :BranchSwiftLocCode, :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(branchList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -582,16 +589,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateBranchDetails(List<Branch> branchList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update RMTBranches" );
+		StringBuilder updateSql = new StringBuilder("Update RMTBranches");
 		updateSql.append(" Set BranchDesc = :BranchDesc ");
 		updateSql.append(" Where BranchCode = :BranchCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(branchList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -611,7 +618,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -626,16 +633,18 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		insertSql.append(" (SalutationCode, SaluationDesc, SalutationIsActive,SalutationGenderCode,SystemDefault,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:SalutationCode, :SaluationDesc, :SalutationIsActive, :SalutationGenderCode,:SystemDefault,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" Values(:SalutationCode, :SaluationDesc, :SalutationIsActive, :SalutationGenderCode,:SystemDefault,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(salutationList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -645,16 +654,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateSalutationDetails(List<Salutation> salutationList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTSalutations" );
+		StringBuilder updateSql = new StringBuilder("Update BMTSalutations");
 		updateSql.append(" Set SaluationDesc = :SaluationDesc ");
 		updateSql.append(" Where SalutationCode = :SalutationCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(salutationList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -674,7 +683,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -687,7 +696,8 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		insertSql.append("Insert Into BMTLanguage");
 		insertSql.append(" (LngCode, LngDesc, LngNumber, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:LngCode, :LngDesc, :LngNumber, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
 		insertSql.append(" :NextTaskId, :RecordType, :WorkflowId)");
@@ -695,9 +705,9 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(languageList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -707,16 +717,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateLanguageDetails(List<Language> languageList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTLanguage" );
+		StringBuilder updateSql = new StringBuilder("Update BMTLanguage");
 		updateSql.append(" Set LngDesc = :LngDesc ");
 		updateSql.append(" Where LngCode = :LngCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(languageList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -736,7 +746,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -752,15 +762,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:SegmentCode, :SegmentDesc, :SegmentIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(segmentList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -770,16 +781,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateSegmentDetails(List<Segment> segmentList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTSegments" );
+		StringBuilder updateSql = new StringBuilder("Update BMTSegments");
 		updateSql.append(" Set SegmentDesc = :SegmentDesc ");
 		updateSql.append(" Where SegmentCode = :SegmentCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(segmentList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -794,12 +805,13 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(genDepartment);
-		RowMapper<GeneralDepartment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GeneralDepartment.class);
+		RowMapper<GeneralDepartment> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(GeneralDepartment.class);
 
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -809,20 +821,20 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void saveDepartmentDetails(List<GeneralDepartment> genDepartmentList) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTGenDepartments" );
+		StringBuilder insertSql = new StringBuilder("Insert Into RMTGenDepartments");
 		insertSql.append(" (GenDepartment, GenDeptDesc,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:GenDepartment, :GenDeptDesc," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:GenDepartment, :GenDeptDesc,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(genDepartmentList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -832,16 +844,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateDepartmentDetails(List<GeneralDepartment> genDepartmentList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update RMTGenDepartments" );
+		StringBuilder updateSql = new StringBuilder("Update RMTGenDepartments");
 		updateSql.append(" Set GenDeptDesc = :GenDeptDesc ");
 		updateSql.append(" Where GenDepartment = :GenDepartment ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(genDepartmentList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -861,7 +873,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -873,19 +885,21 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append("Insert Into BMTIncomeTypes");
-		insertSql.append(" ( IncomeExpense, Category,IncomeTypeCode, IncomeTypeDesc,Margin, IncomeTypeIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" ( IncomeExpense, Category,IncomeTypeCode, IncomeTypeDesc,Margin, IncomeTypeIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:IncomeExpense,:Category,:IncomeTypeCode, :IncomeTypeDesc,:Margin, :IncomeTypeIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" Values(:IncomeExpense,:Category,:IncomeTypeCode, :IncomeTypeDesc,:Margin, :IncomeTypeIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(incomeTypeList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -895,16 +909,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateIncomeTypeDetails(List<IncomeType> incomeTypeList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update BMTIncomeTypes" );
+		StringBuilder updateSql = new StringBuilder("Update BMTIncomeTypes");
 		updateSql.append(" Set IncomeTypeDesc = :IncomeTypeDesc ");
 		updateSql.append(" Where IncomeTypeCode = :IncomeTypeCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(incomeTypeList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -924,7 +938,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -937,18 +951,19 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 
 		insertSql.append("Insert Into TargetDetails");
 		insertSql.append(" (TargetCode, TargetDesc, Active,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values (:TargetCode, :TargetDesc, :Active,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(targetDetailList.toArray());
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -958,16 +973,16 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	public void updateTargetDetails(List<TargetDetail> targetDetailList) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update TargetDetails" );
+		StringBuilder updateSql = new StringBuilder("Update TargetDetails");
 		updateSql.append(" Set TargetDesc = :TargetDesc ");
 		updateSql.append(" Where TargetCode = :TargetCode ");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(targetDetailList.toArray());
 
 		logger.debug("Leaving");
-		try{	
+		try {
 			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -976,8 +991,8 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 	/**
 	 * Method for fetch list of MDM codes in respective table
 	 * 
-	 *  @param tableName
-	 *  @return List<ReferenceData>
+	 * @param tableName
+	 * @return List<ReferenceData>
 	 * 
 	 */
 	@Override
@@ -999,7 +1014,7 @@ public class ReferenceDataDAOImpl extends BasicDao<ReferenceData> implements Ref
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			return  null;
+			return null;
 		}
 	}
 }

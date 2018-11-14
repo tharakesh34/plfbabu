@@ -42,7 +42,6 @@
 */
 package com.pennant.webui.finance.externalfinance;
 
-
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
@@ -65,33 +64,31 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages//DocumentUpload/documentUploadDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages//DocumentUpload/documentUploadDialog.zul file.
  */
 public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 	private static final long serialVersionUID = -7966467989874119940L;
 	private static final Logger logger = Logger.getLogger(ExtFinanceUploadDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  		window_ExtFinanceUploadDialog;// autowired
-	protected Textbox 		fileName; 					// autowired
-	protected Tabbox 		tabbox;
-	protected Textbox 		extloanType;
-	protected Borderlayout 	borderlayoutExtFinanceUpload;
+	protected Window window_ExtFinanceUploadDialog;// autowired
+	protected Textbox fileName; // autowired
+	protected Tabbox tabbox;
+	protected Textbox extloanType;
+	protected Borderlayout borderlayoutExtFinanceUpload;
 
 	// Button controller for the CRUD buttons
-	protected Button btnValidate; 			// autowire
-	protected Button btnProcess; 			// autowire
-	
-	public String fileNameWithExt="";
-	public String  outFileAbsolultePath="";
+	protected Button btnValidate; // autowire
+	protected Button btnProcess; // autowire
+
+	public String fileNameWithExt = "";
+	public String outFileAbsolultePath = "";
 	private ExtFinanceUploadService extFinanceUploadService;
 	private LimitDetailService limitDetailService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -107,9 +104,8 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected External Finance Upload object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected External Finance Upload object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -130,8 +126,7 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -146,7 +141,7 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void onClick$btnValidate(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -179,26 +174,28 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception{	
+	public void onUpload$btnUpload(UploadEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		Media media = event.getMedia();
-		this.fileNameWithExt = media.getName();		
-		this.fileName.setValue("");		
+		this.fileNameWithExt = media.getName();
+		this.fileName.setValue("");
 		String status = "";
 
-		LimitHeader header=new LimitHeader();
+		LimitHeader header = new LimitHeader();
 		if (!"application/vnd.ms-excel".equalsIgnoreCase(media.getContentType())) {
-			status = Labels.getLabel("fileformat_invalid") +" : "+ fileNameWithExt;
-		}else{
+			status = Labels.getLabel("fileformat_invalid") + " : " + fileNameWithExt;
+		} else {
 			this.fileName.setValue(fileNameWithExt);
-			if(StringUtils.equals("LIMIT", extloanType.getValue())){
-				header= getLimitDetailService().procExternalFinance(media.getStreamData(), getUserWorkspace().getLoggedInUser());
-				status=header.getStatus();
-			}else{
-			status = getExtFinanceUploadService().procExternalFinance(media.getStreamData(), getUserWorkspace().getLoggedInUser());
+			if (StringUtils.equals("LIMIT", extloanType.getValue())) {
+				header = getLimitDetailService().procExternalFinance(media.getStreamData(),
+						getUserWorkspace().getLoggedInUser());
+				status = header.getStatus();
+			} else {
+				status = getExtFinanceUploadService().procExternalFinance(media.getStreamData(),
+						getUserWorkspace().getLoggedInUser());
 			}
 		}
 
@@ -206,7 +203,7 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -215,8 +212,7 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 		return extFinanceUploadService;
 	}
 
-	public void setExtFinanceUploadService(
-			ExtFinanceUploadService extFinanceUploadService) {
+	public void setExtFinanceUploadService(ExtFinanceUploadService extFinanceUploadService) {
 		this.extFinanceUploadService = extFinanceUploadService;
 	}
 

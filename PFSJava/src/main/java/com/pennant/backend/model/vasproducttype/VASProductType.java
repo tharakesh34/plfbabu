@@ -56,18 +56,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class VASProductType extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				productType;
-	private String				productTypeDesc;
-	private String				productCtg;
-	private String				productCtgDesc;
-	private boolean				active = true;
+	private String productType;
+	private String productTypeDesc;
+	private String productCtg;
+	private String productCtgDesc;
+	private boolean active = true;
 
-	private boolean				newRecord;
-	private String				lovValue;
-	private VASProductType		befImage;
-	private LoggedInUser		userDetails;
+	private boolean newRecord;
+	private String lovValue;
+	private VASProductType befImage;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -81,6 +81,7 @@ public class VASProductType extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("productCtgDesc");

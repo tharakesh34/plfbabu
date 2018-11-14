@@ -54,12 +54,19 @@ import com.pennant.backend.model.audit.AuditHeader;
  */
 public interface BaseRateService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	BaseRate getBaseRateById(String bRType,String currency, Date bREffDate);
-	BaseRate getApprovedBaseRateById(String bRType,String currency, Date bREffDate);
+
+	BaseRate getBaseRateById(String bRType, String currency, Date bREffDate);
+
+	BaseRate getApprovedBaseRateById(String bRType, String currency, Date bREffDate);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
-	boolean getBaseRateListById(String bRType,String currency, Date bREffDate);
+
+	boolean getBaseRateListById(String bRType, String currency, Date bREffDate);
+
 	BaseRate getBaseRateByDate(String repayBaseRate, String finCcy, Date bREffDate);
 
 }

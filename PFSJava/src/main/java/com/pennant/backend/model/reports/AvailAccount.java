@@ -1,7 +1,7 @@
 package com.pennant.backend.model.reports;
 
-public class AvailAccount{
-	
+public class AvailAccount {
+
 	private String accountNum = "";
 	private String acType = "";
 	private String accountDesc = "";
@@ -9,62 +9,69 @@ public class AvailAccount{
 	private String acBalance = "";
 	private String acBalBHD = "";
 	private String convertCcy = "";
-	
+
 	public AvailAccount() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getAccountNum() {
-    	return accountNum;
-    }
+		return accountNum;
+	}
+
 	public void setAccountNum(String accountNum) {
-    	this.accountNum = accountNum;
-    }
-	
+		this.accountNum = accountNum;
+	}
+
 	public String getAcType() {
-    	return acType;
-    }
+		return acType;
+	}
+
 	public void setAcType(String acType) {
-    	this.acType = acType;
-    }
-	
+		this.acType = acType;
+	}
+
 	public String getAccountDesc() {
-    	return accountDesc;
-    }
+		return accountDesc;
+	}
+
 	public void setAccountDesc(String accountDesc) {
-    	this.accountDesc = accountDesc;
-    }
-	
+		this.accountDesc = accountDesc;
+	}
+
 	public String getAccountCcy() {
-    	return accountCcy;
-    }
+		return accountCcy;
+	}
+
 	public void setAccountCcy(String accountCcy) {
-    	this.accountCcy = accountCcy;
-    }
-	
+		this.accountCcy = accountCcy;
+	}
+
 	public String getAcBalance() {
-    	return acBalance;
-    }
+		return acBalance;
+	}
+
 	public void setAcBalance(String acBalance) {
-    	this.acBalance = acBalance;
-    }
-	
+		this.acBalance = acBalance;
+	}
+
 	public String getAcBalBHD() {
-    	return acBalBHD;
-    }
+		return acBalBHD;
+	}
+
 	public void setAcBalBHD(String acBalBHD) {
-    	this.acBalBHD = acBalBHD;
-    }
-	
+		this.acBalBHD = acBalBHD;
+	}
+
 	public String getConvertCcy() {
-	    return convertCcy;
-    }
+		return convertCcy;
+	}
+
 	public void setConvertCcy(String convertCcy) {
-	    this.convertCcy = convertCcy;
-    }
-	
+		this.convertCcy = convertCcy;
+	}
+
 }

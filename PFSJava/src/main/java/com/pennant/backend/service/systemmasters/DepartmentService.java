@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.Department;
  * 
  */
 public interface DepartmentService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Department getDepartmentById(String id);
+
 	Department getApprovedDepartmentById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

@@ -55,19 +55,19 @@ import com.pennanttech.pennapps.pff.service.hook.PostDeviationHook;
 import com.rits.cloning.Cloner;
 
 public class DeviationExecutionCtrl {
-	private static final Logger		logger				= Logger.getLogger(DeviationExecutionCtrl.class);
+	private static final Logger logger = Logger.getLogger(DeviationExecutionCtrl.class);
 
-	private int						format				= 0;
-	private String					userRole;
-	private long					userid;
-	private List<DeviationParam>	deviationParamsList	= PennantAppUtil.getDeviationParams();
+	private int format = 0;
+	private String userRole;
+	private long userid;
+	private List<DeviationParam> deviationParamsList = PennantAppUtil.getDeviationParams();
 
-	private FinanceMainBaseCtrl		financeMainBaseCtrl;
-	private List<FinanceDeviations>	approvedFinanceDeviations;
+	private FinanceMainBaseCtrl financeMainBaseCtrl;
+	private List<FinanceDeviations> approvedFinanceDeviations;
 	@Autowired
-	private DeviationConfigService	deviationConfigService;
-	private RuleExecutionUtil		ruleExecutionUtil;
-	private CheckListDetailService	checkListDetailService;
+	private DeviationConfigService deviationConfigService;
+	private RuleExecutionUtil ruleExecutionUtil;
+	private CheckListDetailService checkListDetailService;
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
@@ -80,16 +80,17 @@ public class DeviationExecutionCtrl {
 	@Autowired
 	private DeviationHelper deviationHelper;
 	/* This list which hold the all deviation across the tab's */
-	private List<FinanceDeviations>	financeDeviations	= new ArrayList<>();
+	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
 	List<ValueLabel> delegators = new ArrayList<>();
 
 	public DeviationExecutionCtrl() {
 		super();
 	}
 
-	public boolean deviationAllowed(String product){
+	public boolean deviationAllowed(String product) {
 		return deviationConfigService.deviationAllowed(product);
 	}
+
 	/**
 	 * To product deviations
 	 * 
@@ -147,7 +148,6 @@ public class DeviationExecutionCtrl {
 	public void checkCustomDeviations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-
 		// If the post deviation hook not available, skip the process.
 		if (postDeviationHook == null) {
 			logger.info("Post deviation hook not available.");
@@ -156,7 +156,6 @@ public class DeviationExecutionCtrl {
 
 		delegators = deviationHelper
 				.getWorkflowRoles(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
-
 
 		// Clone the object.
 		Cloner cloner = new Cloner();
@@ -173,7 +172,7 @@ public class DeviationExecutionCtrl {
 
 		//Setting the collateral setup list
 		getCollateralSetupFetchingService().getCollateralSetupList(aFinanceDetail, true);
-		
+
 		// Call the customization hook.
 		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail);
 
@@ -289,11 +288,10 @@ public class DeviationExecutionCtrl {
 			if (resultval instanceof Double) {
 				BigDecimal tempResult = new BigDecimal(resultval.toString());
 				finElgDetail.setRuleResult(tempResult.toString());
-			}else  if (resultval instanceof Integer) {
+			} else if (resultval instanceof Integer) {
 				BigDecimal tempResult = new BigDecimal(resultval.toString());
 				finElgDetail.setRuleResult(tempResult.toString());
 			}
-
 
 			for (DeviationHeader deviationHeader : list) {
 				if (deviationHeader.getModuleCode().equals(String.valueOf(finElgDetail.getElgRuleCode()))) {
@@ -1091,5 +1089,5 @@ public class DeviationExecutionCtrl {
 	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
 	}
-	
+
 }

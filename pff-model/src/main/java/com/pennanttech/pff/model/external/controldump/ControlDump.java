@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class ControlDump implements Serializable {
 	static final long serialVersionUID = 1L;
-	
+
 	private BigDecimal ccyMinorUnits;
 	private int amountScale;
 	private String agreementNo;
@@ -122,8 +122,6 @@ public class ControlDump implements Serializable {
 	private String localOutStationFlag;
 	private Date firstRepaydueDate;
 	private Date createdOn;
-	
-
 
 	public ControlDump() {
 
@@ -1048,7 +1046,5 @@ public class ControlDump implements Serializable {
 	public void setAmountScale(int amountScale) {
 		this.amountScale = amountScale;
 	}
-
-	
 
 }

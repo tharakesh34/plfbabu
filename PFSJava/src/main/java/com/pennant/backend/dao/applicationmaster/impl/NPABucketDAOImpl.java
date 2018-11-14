@@ -67,25 +67,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>NPABucket</code> with set of CRUD operations.
  */
 public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucketDAO {
-	private static Logger	logger	= Logger.getLogger(NPABucketDAOImpl.class);
+	private static Logger logger = Logger.getLogger(NPABucketDAOImpl.class);
 
 	public NPABucketDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public NPABucket getNPABucket(long bucketID,String type) {
+	public NPABucket getNPABucket(long bucketID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID, bucketCode, bucketDesc, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From NPABUCKETS");
 		sql.append(type);
 		sql.append(" Where bucketID = :bucketID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -104,10 +105,10 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 
 		logger.debug(Literal.LEAVING);
 		return nPABucket;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long bucketID,String bucketCode, TableType tableType) {
+	public boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -131,7 +132,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("bucketID", bucketID);
 		paramSource.addValue("bucketCode", bucketCode);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -142,24 +143,26 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(NPABucket nPABucket,TableType tableType) {
+	public String save(NPABucket nPABucket, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into NPABUCKETS");
+		StringBuilder sql = new StringBuilder(" insert into NPABUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append(" (bucketID, bucketCode, bucketDesc, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :bucketID, :bucketCode, :bucketDesc, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Get the identity sequence number.
 		if (nPABucket.getBucketID() <= 0) {
 			nPABucket.setBucketID(getNextId("SeqNPABUCKETS"));
-				}
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucket);
@@ -172,14 +175,14 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(nPABucket.getBucketID());
-	}	
+	}
 
 	@Override
-	public void update(NPABucket nPABucket,TableType tableType) {
+	public void update(NPABucket nPABucket, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update NPABUCKETS" );
+		StringBuilder sql = new StringBuilder("update NPABUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append("  set bucketCode = :bucketCode, bucketDesc = :bucketDesc, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -187,10 +190,10 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where bucketID = :bucketID ");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucket);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -198,7 +201,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -234,12 +237,12 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 	@Override
 	public List<NPABucket> getNPABuckets() {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID, bucketCode ");
 		sql.append(" From NPABUCKETS");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -251,6 +254,4 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		return list;
 	}
 
-	
-	
-}	
+}

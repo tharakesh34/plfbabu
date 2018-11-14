@@ -146,42 +146,42 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class VASRecordingServiceImpl extends GenericService<VASRecording> implements VASRecordingService {
-	private static final Logger				logger	= Logger.getLogger(VASRecordingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VASRecordingServiceImpl.class);
 
-	private AuditHeaderDAO					auditHeaderDAO;
-	private VASRecordingDAO					vASRecordingDAO;
-	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
-	private DocumentDetailsDAO				documentDetailsDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private VASRecordingDAO vASRecordingDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
 
-	private CheckListDetailService			checkListDetailService;
-	private VASConfigurationService			vASConfigurationService;
-	private CustomerDetailsService			customerDetailsService;
+	private CheckListDetailService checkListDetailService;
+	private VASConfigurationService vASConfigurationService;
+	private CustomerDetailsService customerDetailsService;
 
-	private DocumentManagerDAO				documentManagerDAO;
-	private FinanceCheckListReferenceDAO	financeCheckListReferenceDAO;
-	private DocumentTypeDAO					documentTypeDAO;
-	private CustomerDocumentDAO				customerDocumentDAO;
-	private TransactionEntryDAO				transactionEntryDAO;
-	private FinFeeDetailDAO					finFeeDetailDAO;
-	private FinFeeScheduleDetailDAO			finFeeScheduleDetailDAO;
+	private DocumentManagerDAO documentManagerDAO;
+	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
+	private DocumentTypeDAO documentTypeDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
+	private TransactionEntryDAO transactionEntryDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
+	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
 
 	// Validation Service Classes
-	private DocumentDetailValidation		vasDocumentValidation;
-	private CustomerDAO						customerDAO;
-	private CollateralSetupDAO				collateralSetupDAO;
-	private VasRecordingValidation			vasRecordingValidation;
-	private PostingsDAO						postingsDAO;
-	private AccountProcessUtil				accountProcessUtil;
-	private FinanceMainDAO					financeMainDAO;
-	private FinanceScheduleDetailDAO		financeScheduleDetailDAO;
-	private FinanceDisbursementDAO			financeDisbursementDAO;
-	private RepayInstructionDAO				repayInstructionDAO;
-	private RelationshipOfficerDAO			relationshipOfficerDAO;
-	private PostingsPreparationUtil			postingsPreparationUtil;
-	private FinanceWorkFlowService			financeWorkFlowService;
+	private DocumentDetailValidation vasDocumentValidation;
+	private CustomerDAO customerDAO;
+	private CollateralSetupDAO collateralSetupDAO;
+	private VasRecordingValidation vasRecordingValidation;
+	private PostingsDAO postingsDAO;
+	private AccountProcessUtil accountProcessUtil;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private RepayInstructionDAO repayInstructionDAO;
+	private RelationshipOfficerDAO relationshipOfficerDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceWorkFlowService financeWorkFlowService;
 
-	private ExtendedFieldDetailsService		extendedFieldDetailsService;
-	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -466,8 +466,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
-
-					list = getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
+					list = getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(),
+							AccountEventConstants.ACCEVENT_VAS_FEE);
 
 					for (ReturnDataSet returnDataSet : list) {
 						String tranCode = returnDataSet.getTranCode();
@@ -486,8 +486,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					vasRecording.setReturnDataSetList(list);
 				}
-			}else{
-				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE));
+			} else {
+				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(),
+						AccountEventConstants.ACCEVENT_VAS_FEE));
 			}
 		}
 		logger.debug("Leaving");
@@ -1563,7 +1564,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException{
+	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException {
 		logger.debug("Entering");
 
 		VASRecording vASRecording = new VASRecording("");
@@ -2035,7 +2036,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
-						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(),""))) {
+						if (StringUtils.isBlank(Objects.toString(extendedFieldData.getFieldValue(), ""))) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
@@ -2141,8 +2142,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 								.invoke(object, object.getClass().getClasses());
 
 						AuditDetail auditDetail = new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
-								befImg,
-								object);
+								befImg, object);
 						if (extended) {
 							auditDetail.setExtended(extended);
 						}

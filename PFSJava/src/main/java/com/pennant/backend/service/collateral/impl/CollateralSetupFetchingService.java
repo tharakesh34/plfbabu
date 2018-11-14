@@ -24,16 +24,16 @@ public class CollateralSetupFetchingService {
 	private transient CollateralSetupService collateralSetupService;
 
 	/**
-	 * Checking if the Collateral Setup created from loan or not, if it is from
-	 * loan we will take the Collateral Setup from memory otherwise will take
-	 * from DB.
+	 * Checking if the Collateral Setup created from loan or not, if it is from loan we will take the Collateral Setup
+	 * from memory otherwise will take from DB.
 	 * 
 	 * @param aFinanceDetail
 	 * @param addReqFinanceMain
 	 * @return
 	 */
 	public List<CollateralSetup> getCollateralSetupList(FinanceDetail aFinanceDetail, boolean addReqFinanceMain) {
-		List<CollateralSetup> collateralSetupList = getCollateralSetupList(aFinanceDetail.getCollateralAssignmentList(), aFinanceDetail);
+		List<CollateralSetup> collateralSetupList = getCollateralSetupList(aFinanceDetail.getCollateralAssignmentList(),
+				aFinanceDetail);
 		if (addReqFinanceMain) {
 			aFinanceDetail.setCollaterals(collateralSetupList);
 		}
@@ -41,17 +41,17 @@ public class CollateralSetupFetchingService {
 	}
 
 	/**
-	 * Checking if the Collateral Setup created from loan or not, if it is from
-	 * loan we will take the Collateral Setup from memory otherwise will take
-	 * from DB.
+	 * Checking if the Collateral Setup created from loan or not, if it is from loan we will take the Collateral Setup
+	 * from memory otherwise will take from DB.
 	 * 
 	 * @param collateralAssignments
 	 * @param aFinanceDetail
 	 * @return
 	 */
-	public List<CollateralSetup> getCollateralSetupList(List<CollateralAssignment> collateralAssignments, FinanceDetail aFinanceDetail) {
+	public List<CollateralSetup> getCollateralSetupList(List<CollateralAssignment> collateralAssignments,
+			FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
-		
+
 		CollateralSetup collateralSetup;
 		List<CollateralSetup> collateralSetupList = aFinanceDetail.getCollaterals();
 		List<CollateralSetup> collateralSetupResultList = new ArrayList<>();
@@ -59,14 +59,14 @@ public class CollateralSetupFetchingService {
 		if (CollectionUtils.isEmpty(collateralAssignments)) {
 			return collateralSetupResultList;
 		}
-		
+
 		for (CollateralAssignment collateralAssignment : collateralAssignments) {
 
 			// If assignment is in deleted state, no need to consider.
-			if(isDeleted(collateralAssignment.getRecordType())){
+			if (isDeleted(collateralAssignment.getRecordType())) {
 				continue;
 			}
-			
+
 			// Checking Collateral Setup created from loan
 			if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 				boolean addedRcd = false;
@@ -80,14 +80,16 @@ public class CollateralSetupFetchingService {
 				}
 				if (!addedRcd) {
 					// if the Collateral Setup didn't created from loan, we will take Collateral Setup from DB.
-					collateralSetup = getCollateralSetupService().getCollateralSetupByRef(collateralAssignment.getCollateralRef(), "", false);
+					collateralSetup = getCollateralSetupService()
+							.getCollateralSetupByRef(collateralAssignment.getCollateralRef(), "", false);
 					if (collateralSetup != null) {
 						collateralSetupResultList.add(collateralSetup);
 					}
 				}
 			} else {
 				// Getting the Collateral Setup from DB.
-				collateralSetup = getCollateralSetupService().getCollateralSetupByRef(collateralAssignment.getCollateralRef(), "", false);
+				collateralSetup = getCollateralSetupService()
+						.getCollateralSetupByRef(collateralAssignment.getCollateralRef(), "", false);
 				if (collateralSetup != null) {
 					collateralSetupResultList.add(collateralSetup);
 				}
@@ -96,25 +98,26 @@ public class CollateralSetupFetchingService {
 		logger.debug(Literal.LEAVING);
 		return collateralSetupResultList;
 	}
-	
+
 	/**
-	 * * Checking if the Collateral Setup created from loan or not, if it is
-	 * from loan we will take the Collateral documents from memory otherwise
-	 * will take from DB.
+	 * * Checking if the Collateral Setup created from loan or not, if it is from loan we will take the Collateral
+	 * documents from memory otherwise will take from DB.
 	 * 
 	 * @param collateralAssignmentList
 	 * @param collateralSetupList
 	 * @param isDeleteCheckReq
 	 * @return
 	 */
-	public List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collateralAssignmentList, List<CollateralSetup> collateralSetupList, boolean isDeleteCheckReq) {
+	public List<DocumentDetails> getCollateralDocuments(List<CollateralAssignment> collateralAssignmentList,
+			List<CollateralSetup> collateralSetupList, boolean isDeleteCheckReq) {
 		logger.debug(Literal.ENTERING);
 
 		List<DocumentDetails> documents = new ArrayList<>();
 		long docId = -1;
 
 		for (CollateralAssignment assignment : collateralAssignmentList) {
-			List<DocumentDetails> list = getDocumentDetailsDAO().getDocumentDetailsByRef(assignment.getCollateralRef(), CollateralConstants.MODULE_NAME, "", "_View");
+			List<DocumentDetails> list = getDocumentDetailsDAO().getDocumentDetailsByRef(assignment.getCollateralRef(),
+					CollateralConstants.MODULE_NAME, "", "_View");
 			if (CollectionUtils.isNotEmpty(list)) {
 				if (isDeleteCheckReq) {
 					for (DocumentDetails documentDetails : list) {
@@ -155,12 +158,13 @@ public class CollateralSetupFetchingService {
 		return documents;
 	}
 
-	/** 
+	/**
 	 * @param collateralAsssignments
 	 * @param collateralSetupList
 	 * @return
 	 */
-	public List<CollateralSetup> getResultantCollateralsList(List<CollateralAssignment> collateralAsssignments, List<CollateralSetup> collateralSetupList) {
+	public List<CollateralSetup> getResultantCollateralsList(List<CollateralAssignment> collateralAsssignments,
+			List<CollateralSetup> collateralSetupList) {
 		logger.debug(Literal.ENTERING);
 
 		List<CollateralSetup> resultantCollateralSetupList = new ArrayList<>();
@@ -180,9 +184,10 @@ public class CollateralSetupFetchingService {
 		logger.debug(Literal.LEAVING);
 		return resultantCollateralSetupList;
 	}
-	
+
 	/**
 	 * Checking the record is in deleted state or not
+	 * 
 	 * @param recordType
 	 * @return
 	 */
@@ -207,6 +212,5 @@ public class CollateralSetupFetchingService {
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
-
 
 }

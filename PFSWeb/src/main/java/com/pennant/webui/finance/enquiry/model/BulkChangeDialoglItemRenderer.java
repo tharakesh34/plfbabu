@@ -15,20 +15,21 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 
-public class BulkChangeDialoglItemRenderer  implements ListitemRenderer<BulkProcessDetails>, Serializable{
+public class BulkChangeDialoglItemRenderer implements ListitemRenderer<BulkProcessDetails>, Serializable {
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	boolean isDisabled;
 	Window windowComp;
-	
+
 	public BulkChangeDialoglItemRenderer() {
-		
+
 	}
-	
-	public BulkChangeDialoglItemRenderer(boolean isDisabled, Window window){
+
+	public BulkChangeDialoglItemRenderer(boolean isDisabled, Window window) {
 		this.isDisabled = isDisabled;
 		this.windowComp = window;
 	}
+
 	@Override
 	public void render(Listitem item, BulkProcessDetails enquiry, int count) throws Exception {
 
@@ -37,8 +38,8 @@ public class BulkChangeDialoglItemRenderer  implements ListitemRenderer<BulkProc
 		List<Object> list = new ArrayList<>();
 		list.add(checkbox);
 		list.add(enquiry);
-		
-		checkbox.addForward("onCheck", this.windowComp, "onFinanceItemSelected" , list);
+
+		checkbox.addForward("onCheck", this.windowComp, "onFinanceItemSelected", list);
 		lc = new Listcell();
 		checkbox.setChecked(enquiry.isAlwProcess());
 		checkbox.setDisabled(this.isDisabled);
@@ -69,9 +70,9 @@ public class BulkChangeDialoglItemRenderer  implements ListitemRenderer<BulkProc
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getProfitDayBasisDesc());
 		lc.setParent(item);
-		
+
 		item.setAttribute("data", enquiry);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBulkDefermentChangeItemDoubleClicked");
-		
+
 	}
 }

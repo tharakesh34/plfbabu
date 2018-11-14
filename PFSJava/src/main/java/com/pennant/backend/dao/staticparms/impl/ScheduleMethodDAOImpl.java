@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,7 +68,7 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 	public ScheduleMethodDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Schedule Method details by key field
 	 * 
@@ -87,10 +86,11 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select SchdMethod, SchdMethodDesc,");
-		/*if(type.contains("View")){
-			selectSql.append("");
-		}*/
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		/*
+		 * if(type.contains("View")){ selectSql.append(""); }
+		 */
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTSchdMethod");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SchdMethod =:SchdMethod");
@@ -110,9 +110,8 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTSchdMethod or
-	 * BMTSchdMethod_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Schedule Method by key SchdMethod
+	 * This method Deletes the Record from the BMTSchdMethod or BMTSchdMethod_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Schedule Method by key SchdMethod
 	 * 
 	 * @param Schedule
 	 *            Method (scheduleMethod)
@@ -127,16 +126,16 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTSchdMethod");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SchdMethod =:SchdMethod");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleMethod);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -167,13 +166,14 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 		insertSql.append("Insert Into BMTSchdMethod");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (SchdMethod, SchdMethodDesc,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:SchdMethod, :SchdMethodDesc,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleMethod);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -182,9 +182,8 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 	}
 
 	/**
-	 * This method updates the Record BMTSchdMethod or BMTSchdMethod_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Schedule Method by key SchdMethod and Version
+	 * This method updates the Record BMTSchdMethod or BMTSchdMethod_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Schedule Method by key SchdMethod and Version
 	 * 
 	 * @param Schedule
 	 *            Method (scheduleMethod)
@@ -203,17 +202,19 @@ public class ScheduleMethodDAOImpl extends BasicDao<ScheduleMethod> implements S
 		updateSql.append("Update BMTSchdMethod");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set SchdMethodDesc = :SchdMethodDesc,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SchdMethod =:SchdMethod");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleMethod);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

@@ -63,10 +63,10 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.webui.administration.securityuser.model.SecurityUserListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.App.AuthenticationType;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityUser/SecurityUserList.zul file.
@@ -139,7 +139,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 			this.searchObject.addFilterEqual("authType", AuthenticationType.DAO.name());
 		}
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "SecurityUser";
@@ -150,10 +150,10 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 		} else {
 			super.pageRightName = "SecurityUserRolesList";
 		}
-		
-		if("USEROPR".equals(this.moduleType)){
+
+		if ("USEROPR".equals(this.moduleType)) {
 			super.queueTableName = "SecUsers_RView";
-		}else{
+		} else {
 			super.queueTableName = "SecUsers_View";
 		}
 
@@ -184,7 +184,8 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 		}
 
 		registerField("UsrID");
-		registerField("UsrLogin", listheader_UsrLogin, SortOrder.ASC, usrLogin, sortOperator_UsrLogin, Operators.STRING);
+		registerField("UsrLogin", listheader_UsrLogin, SortOrder.ASC, usrLogin, sortOperator_UsrLogin,
+				Operators.STRING);
 		registerField("UsrFName", listheader_UsrFName, SortOrder.NONE, usrFName, sortOperator_UsrFName,
 				Operators.STRING);
 		registerField("UsrMName", listheader_UsrMName, SortOrder.NONE, usrMName, sortOperator_UsrMName,

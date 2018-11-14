@@ -67,9 +67,12 @@ public class MasterDefServiceImpl implements MasterDefService {
 
 	/**
 	 * getMasterCode fetch the details by using MasterDefDAO getMasterCode method.
-	 * @param masterType (String)
-	 * @param  keytype (String)
-	 * 			
+	 * 
+	 * @param masterType
+	 *            (String)
+	 * @param keytype
+	 *            (String)
+	 * 
 	 * @return KeyCode (String)
 	 */
 	@Override
@@ -80,9 +83,11 @@ public class MasterDefServiceImpl implements MasterDefService {
 	/**
 	 * getMasterCode fetch the details by using MasterDefDAO getMasterCode method.
 	 * 
-	 * @param masterType (String)
-	 *            
-	 * @param KeyCode (String)
+	 * @param masterType
+	 *            (String)
+	 * 
+	 * @param KeyCode
+	 *            (String)
 	 * 
 	 * @return keyType (String)
 	 */

@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class CostOfFundCode extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1288421928415683359L;
-	
+
 	private String cofCode;
 	private String cofDesc;
 	private boolean newRecord;
@@ -132,17 +132,16 @@ public class CostOfFundCode extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public String getId() {
 		return cofCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.cofCode = id;
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
-	
-	
+
 }

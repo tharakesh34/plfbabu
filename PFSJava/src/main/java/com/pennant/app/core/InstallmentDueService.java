@@ -30,12 +30,12 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class InstallmentDueService extends ServiceHelper {
-	private static final long	serialVersionUID	= 1442146139821584760L;
-	private Logger				logger				= Logger.getLogger(InstallmentDueService.class);
-	
+	private static final long serialVersionUID = 1442146139821584760L;
+	private Logger logger = Logger.getLogger(InstallmentDueService.class);
+
 	@Autowired
 	private AccountEngineExecution engineExecution;
-	
+
 	/**
 	 * @param custId
 	 * @param date
@@ -78,7 +78,7 @@ public class InstallmentDueService extends ServiceHelper {
 		String finReference = curSchd.getFinReference();
 
 		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-		Date valueDate=custEODEvent.getEodValueDate();
+		Date valueDate = custEODEvent.getEodValueDate();
 		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, valueDate));
 		}
@@ -89,8 +89,8 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails,finEODEvent.getFinanceScheduleDetails(), AccountEventConstants.ACCEVENT_INSTDATE, valueDate,
-				curSchd.getSchDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, finEODEvent.getFinanceScheduleDetails(),
+				AccountEventConstants.ACCEVENT_INSTDATE, valueDate, curSchd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -144,17 +144,17 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
-		
+
 		//Accrual posted on the installment due postings
 		if (aeEvent.isuAmzExists()) {
 			profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(aeEvent.getAeAmountCodes().getuAmz()));
 			finEODEvent.setUpdLBDPostings(true);
 		}
-		
+
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.debug(" Leaving ");
 	}
-	
+
 	/**
 	 * @param custAppDate
 	 * @param postdate
@@ -163,9 +163,9 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, boolean post,String postBranch)   throws InterfaceException{
+			FinanceProfitDetail profiDetails, Date appDate, boolean post, String postBranch) throws InterfaceException {
 		logger.debug(" Entering ");
-		
+
 		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 		List<FinanceScheduleDetail> list = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
@@ -182,12 +182,11 @@ public class InstallmentDueService extends ServiceHelper {
 		if (accountingID == Long.MIN_VALUE) {
 			return datasets;
 		}
-		
 
 		if (main.getFinStartDate().compareTo(DateUtility.getAppDate()) >= 0) {
 			return datasets;
 		}
-		
+
 		//prepare schedule based fees
 		List<FinFeeDetail> totalFees = financeDetail.getFinScheduleData().getFinFeeDetailList();
 		List<FinFeeScheduleDetail> finFeeSchdDet = new ArrayList<FinFeeScheduleDetail>();
@@ -218,7 +217,7 @@ public class InstallmentDueService extends ServiceHelper {
 			if (financeScheduleDetail.getDefSchdDate().compareTo(DateUtility.getAppDate()) > 0) {
 				break;
 			}
-			
+
 			if (StringUtils.equals(FinanceConstants.FLAG_BPI, financeScheduleDetail.getBpiOrHoliday())) {
 				if (main.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, main.getBpiTreatment())) {
 					continue;
@@ -236,7 +235,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 			List<FinFeeScheduleDetail> feelist = new ArrayList<FinFeeScheduleDetail>();
 			List<FinSchFrqInsurance> finInsList = new ArrayList<FinSchFrqInsurance>();
-			
+
 			dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
 
 			//prepare fee list
@@ -257,7 +256,6 @@ public class InstallmentDueService extends ServiceHelper {
 				}
 			}
 
-			
 			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, list, AccountEventConstants.ACCEVENT_INSTDATE,
 					curSchd.getSchDate(), curSchd.getSchDate());
 			aeEvent.getAcSetIDList().add(accountingID);

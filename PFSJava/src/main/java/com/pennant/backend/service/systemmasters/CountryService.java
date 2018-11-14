@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.Country;
  * 
  */
 public interface CountryService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Country getCountryById(String id);
+
 	Country getApprovedCountryById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

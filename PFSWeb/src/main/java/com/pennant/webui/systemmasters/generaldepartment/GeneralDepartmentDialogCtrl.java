@@ -71,30 +71,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/GeneralDepartment/generalDepartmentDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/GeneralDepartment/generalDepartmentDialog.zul file.
  */
 public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> {
 	private static final long serialVersionUID = 4896504189951469996L;
 	private static final Logger logger = Logger.getLogger(GeneralDepartmentDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window  window_GeneralDepartmentDialog; 	
 
-	protected Uppercasebox	 genDepartment; 					
-	protected Textbox 	 genDeptDesc; 	
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_GeneralDepartmentDialog;
+
+	protected Uppercasebox genDepartment;
+	protected Textbox genDeptDesc;
 	protected Checkbox genDeptIsActive; // autoWired
-	
+
 	// not auto wired Var's
 	private GeneralDepartment generalDepartment; // overHanded per param
 	private transient GeneralDepartmentListCtrl generalDepartmentListCtrl; // overHanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient GeneralDepartmentService generalDepartmentService;
 
@@ -113,9 +111,8 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected GeneralDepartment object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected GeneralDepartment object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -131,8 +128,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 			doCheckRights();
 
 			if (arguments.containsKey("generalDepartment")) {
-				this.generalDepartment = (GeneralDepartment) arguments
-						.get("generalDepartment");
+				this.generalDepartment = (GeneralDepartment) arguments.get("generalDepartment");
 				GeneralDepartment befImage = new GeneralDepartment();
 				BeanUtils.copyProperties(this.generalDepartment, befImage);
 				this.generalDepartment.setBefImage(befImage);
@@ -142,15 +138,13 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 				setGeneralDepartment(null);
 			}
 
-			doLoadWorkFlow(this.generalDepartment.isWorkflow(),
-					this.generalDepartment.getWorkflowId(),
+			doLoadWorkFlow(this.generalDepartment.isWorkflow(), this.generalDepartment.getWorkflowId(),
 					this.generalDepartment.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"GeneralDepartmentDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "GeneralDepartmentDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -161,8 +155,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 			// or
 			// delete generalDepartment here.
 			if (arguments.containsKey("generalDepartmentListCtrl")) {
-				setGeneralDepartmentListCtrl((GeneralDepartmentListCtrl) arguments
-						.get("generalDepartmentListCtrl"));
+				setGeneralDepartmentListCtrl((GeneralDepartmentListCtrl) arguments.get("generalDepartmentListCtrl"));
 			} else {
 				setGeneralDepartmentListCtrl(null);
 			}
@@ -175,7 +168,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 			this.window_GeneralDepartmentDialog.onClose();
 		}
 
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -186,7 +179,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		//Empty sent any required attributes
 		this.genDepartment.setMaxlength(8);
 		this.genDeptDesc.setMaxlength(50);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -195,20 +188,15 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDepartmentDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDepartmentDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDepartmentDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_GeneralDepartmentDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_GeneralDepartmentDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_GeneralDepartmentDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_GeneralDepartmentDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_GeneralDepartmentDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -220,9 +208,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());		
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -231,9 +219,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -243,9 +231,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_GeneralDepartmentDialog);
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -255,9 +243,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -266,9 +254,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering"+event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving"+event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -308,7 +296,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		this.genDeptDesc.setValue(aGeneralDepartment.getGenDeptDesc());
 		this.recordStatus.setValue(aGeneralDepartment.getRecordStatus());
 		this.genDeptIsActive.setChecked(aGeneralDepartment.isGenDeptIsActive());
-		if(aGeneralDepartment.isNew() || (aGeneralDepartment.getRecordType() != null ? aGeneralDepartment.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aGeneralDepartment.isNew()
+				|| (aGeneralDepartment.getRecordType() != null ? aGeneralDepartment.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.genDeptIsActive.setChecked(true);
 			this.genDeptIsActive.setDisabled(true);
 		}
@@ -323,17 +313,17 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	public void doWriteComponentsToBean(GeneralDepartment aGeneralDepartment) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
 			aGeneralDepartment.setGenDepartment(this.genDepartment.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aGeneralDepartment.setGenDeptDesc(this.genDeptDesc.getValue());
-		}catch (WrongValueException we ) {
+			aGeneralDepartment.setGenDeptDesc(this.genDeptDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -341,18 +331,18 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aGeneralDepartment.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -360,8 +350,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGeneralDepartment
 	 * @throws Exception
@@ -376,13 +365,13 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 			// setFocus
 			this.genDepartment.focus();
 		} else {
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.genDeptDesc.focus();
-				if (StringUtils.isNotBlank(aGeneralDepartment.getRecordType())){
+				if (StringUtils.isNotBlank(aGeneralDepartment.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -409,15 +398,17 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
-		if (!this.genDepartment.isReadonly()){
-			this.genDepartment.setConstraint(new PTStringValidator(Labels.getLabel("label_GeneralDepartmentDialog_GenDepartment.value"), 
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
-		}	
-		if (!this.genDeptDesc.isReadonly()){
-			this.genDeptDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_GeneralDepartmentDialog_GenDeptDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		}	
+
+		if (!this.genDepartment.isReadonly()) {
+			this.genDepartment.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GeneralDepartmentDialog_GenDepartment.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+		}
+		if (!this.genDeptDesc.isReadonly()) {
+			this.genDeptDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GeneralDepartmentDialog_GenDeptDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -431,7 +422,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		this.genDeptDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set Validations for LOV Fields
 	 */
@@ -443,7 +434,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 */
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -454,13 +445,13 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		this.genDeptDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getGeneralDepartmentListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -473,31 +464,32 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		logger.debug("Entering");
 		final GeneralDepartment aGeneralDepartment = new GeneralDepartment();
 		BeanUtils.copyProperties(getGeneralDepartment(), aGeneralDepartment);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_GeneralDepartmentDialog_GenDepartment.value")+" : "+aGeneralDepartment.getGenDepartment();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_GeneralDepartmentDialog_GenDepartment.value") + " : "
+				+ aGeneralDepartment.getGenDepartment();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aGeneralDepartment.getRecordType())){
-				aGeneralDepartment.setVersion(aGeneralDepartment.getVersion()+1);
+			if (StringUtils.isBlank(aGeneralDepartment.getRecordType())) {
+				aGeneralDepartment.setVersion(aGeneralDepartment.getVersion() + 1);
 				aGeneralDepartment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aGeneralDepartment.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aGeneralDepartment,tranType)){
+				if (doProcess(aGeneralDepartment, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -509,28 +501,28 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
-		if (getGeneralDepartment().isNewRecord()){
+
+		if (getGeneralDepartment().isNewRecord()) {
 			this.genDepartment.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.genDepartment.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-			this.genDeptDesc.setReadonly(isReadOnly("GeneralDepartmentDialog_genDeptDesc"));
-			this.genDeptIsActive.setDisabled(isReadOnly("GeneralDepartmentDialog_GenDeptIsActive"));
-			if (isWorkFlowEnabled()){
-				for (int i = 0; i < userAction.getItemCount(); i++) {
+		this.genDeptDesc.setReadonly(isReadOnly("GeneralDepartmentDialog_genDeptDesc"));
+		this.genDeptIsActive.setDisabled(isReadOnly("GeneralDepartmentDialog_GenDeptIsActive"));
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
-			if (this.generalDepartment.isNewRecord()){
+
+			if (this.generalDepartment.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -545,13 +537,13 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		this.genDepartment.setReadonly(true);
 		this.genDeptDesc.setReadonly(true);
 		this.genDeptIsActive.setDisabled(true);
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -568,7 +560,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		this.genDeptDesc.setValue("");
 		this.genDeptIsActive.setChecked(false);
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**
@@ -577,12 +569,12 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * @throws InterruptedException
 	 */
 	public void doSave() throws InterruptedException {
-		
+
 		logger.debug("Entering");
 		final GeneralDepartment aGeneralDepartment = new GeneralDepartment();
 		BeanUtils.copyProperties(getGeneralDepartment(), aGeneralDepartment);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the GeneralDepartment object with the components data
@@ -591,33 +583,33 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		
-		isNew = aGeneralDepartment.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
+		isNew = aGeneralDepartment.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aGeneralDepartment.getRecordType())){
-				aGeneralDepartment.setVersion(aGeneralDepartment.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aGeneralDepartment.getRecordType())) {
+				aGeneralDepartment.setVersion(aGeneralDepartment.getVersion() + 1);
+				if (isNew) {
 					aGeneralDepartment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aGeneralDepartment.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aGeneralDepartment.setNewRecord(true);
 				}
 			}
-		}else{
-			aGeneralDepartment.setVersion(aGeneralDepartment.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aGeneralDepartment.setVersion(aGeneralDepartment.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			if(doProcess(aGeneralDepartment,tranType)){
+			if (doProcess(aGeneralDepartment, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -629,28 +621,29 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aGeneralDepartment (GeneralDepartment)
+	 * @param aGeneralDepartment
+	 *            (GeneralDepartment)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(GeneralDepartment aGeneralDepartment,String tranType){
-		
+	private boolean doProcess(GeneralDepartment aGeneralDepartment, String tranType) {
+
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
-		aGeneralDepartment.setLastMntBy(getUserWorkspace()
-				.getLoggedInUser().getUserId());
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aGeneralDepartment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aGeneralDepartment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aGeneralDepartment.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -673,20 +666,19 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 					}
 				}
 			}
-			
-			
+
 			if (!StringUtils.isBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
-				
-				if (nextTasks!=null && nextTasks.length>0){
+
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-						
-						if(nextRoleCode.length()>1){
+
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -695,100 +687,97 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 			aGeneralDepartment.setNextTaskId(nextTaskId);
 			aGeneralDepartment.setRoleCode(getRole());
 			aGeneralDepartment.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aGeneralDepartment, tranType);
-			
+
+			auditHeader = getAuditHeader(aGeneralDepartment, tranType);
+
 			String operationRefs = getServiceOperations(taskId, aGeneralDepartment);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aGeneralDepartment,
-							PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aGeneralDepartment, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			
-			auditHeader =  getAuditHeader(aGeneralDepartment, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+
+			auditHeader = getAuditHeader(aGeneralDepartment, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	/**	
-	 * Get the result after processing DataBase Operations 
+
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		GeneralDepartment aGeneralDepartment = (GeneralDepartment) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
-		
+		boolean deleteNotes = false;
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getGeneralDepartmentService().delete(auditHeader);
 
-						deleteNotes=true;
-					}else{
-						auditHeader = getGeneralDepartmentService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getGeneralDepartmentService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getGeneralDepartmentService().doApprove(auditHeader);
 
-						if(aGeneralDepartment.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aGeneralDepartment.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getGeneralDepartmentService().doReject(auditHeader);
-						if(aGeneralDepartment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aGeneralDepartment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_GeneralDepartmentDialog,auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_GeneralDepartmentDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				retValue = ErrorControl.showErrorControl(
-						this.window_GeneralDepartmentDialog, auditHeader);
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.generalDepartment),true);
+
+				retValue = ErrorControl.showErrorControl(this.window_GeneralDepartmentDialog, auditHeader);
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.generalDepartment), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -802,37 +791,37 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
-	 * @param aGeneralDepartment (GeneralDepartment)
-	 * @param tranType (String)
+	 * 
+	 * @param aGeneralDepartment
+	 *            (GeneralDepartment)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(GeneralDepartment aGeneralDepartment,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aGeneralDepartment.getBefImage(), aGeneralDepartment);
-		return new AuditHeader(String.valueOf(aGeneralDepartment.getId()),
-				null, null, null, auditDetail,
-				aGeneralDepartment.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(GeneralDepartment aGeneralDepartment, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aGeneralDepartment.getBefImage(), aGeneralDepartment);
+		return new AuditHeader(String.valueOf(aGeneralDepartment.getId()), null, null, null, auditDetail,
+				aGeneralDepartment.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
-			ErrorControl.showErrorControl(this.window_GeneralDepartmentDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_GeneralDepartmentDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -851,12 +840,11 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		doShowNotes(this.generalDepartment);
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.generalDepartment.getGenDepartment());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -864,6 +852,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -871,25 +860,25 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	public GeneralDepartment getGeneralDepartment() {
 		return this.generalDepartment;
 	}
+
 	public void setGeneralDepartment(GeneralDepartment generalDepartment) {
 		this.generalDepartment = generalDepartment;
 	}
 
-	public void setGeneralDepartmentService(
-			GeneralDepartmentService generalDepartmentService) {
+	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
 		this.generalDepartmentService = generalDepartmentService;
 	}
+
 	public GeneralDepartmentService getGeneralDepartmentService() {
 		return this.generalDepartmentService;
 	}
 
-	public void setGeneralDepartmentListCtrl(
-			GeneralDepartmentListCtrl generalDepartmentListCtrl) {
+	public void setGeneralDepartmentListCtrl(GeneralDepartmentListCtrl generalDepartmentListCtrl) {
 		this.generalDepartmentListCtrl = generalDepartmentListCtrl;
 	}
+
 	public GeneralDepartmentListCtrl getGeneralDepartmentListCtrl() {
 		return this.generalDepartmentListCtrl;
 	}
-
 
 }

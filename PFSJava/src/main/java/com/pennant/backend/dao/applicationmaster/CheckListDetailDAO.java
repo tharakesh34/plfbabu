@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,13 +51,22 @@ import com.pennant.backend.model.applicationmaster.CheckListDetail;
 public interface CheckListDetailDAO {
 
 	CheckListDetail getCheckListDetail();
+
 	CheckListDetail getNewCheckListDetail();
+
 	CheckListDetail getCheckListDetailById(long id, String type);
+
 	void update(CheckListDetail checkListDetail, String type);
+
 	void delete(CheckListDetail checkListDetail, String type);
+
 	void delete(long checkListId, String type);
+
 	long save(CheckListDetail checkListDetail, String type);
+
 	List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type);
+
 	List<CheckListDetail> getCheckListDetailByChkList(final Map<String, Set<Long>> checkListIdMap, String type);
+
 	CheckListDetail getCheckListDetailByDocType(String docType, String finType);
 }

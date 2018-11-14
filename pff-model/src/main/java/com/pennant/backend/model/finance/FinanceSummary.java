@@ -57,42 +57,42 @@ import javax.xml.bind.annotation.XmlType;
 		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate", "firstDisbDate",
 		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
 		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
-		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
-		"overDueInstlments", "finODDetail", "advPaymentAmount", "finStatus", "fullyDisb" })
+		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
+		"finODDetail", "advPaymentAmount", "finStatus", "fullyDisb" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
-	
-    private static final long serialVersionUID = 1854976637601258760L;
-    
+
+	private static final long serialVersionUID = 1854976637601258760L;
+
 	private String finReference;
 	private BigDecimal totalDisbursement = BigDecimal.ZERO;
 	private BigDecimal totalPriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal profitSchd = BigDecimal.ZERO;
-	@XmlElement(name="paidPft")
+	@XmlElement(name = "paidPft")
 	private BigDecimal schdPftPaid = BigDecimal.ZERO;
-	@XmlElement(name="paidPri")
+	@XmlElement(name = "paidPri")
 	private BigDecimal schdPriPaid = BigDecimal.ZERO;
 	private BigDecimal totalDownPayment = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal totalCpz = BigDecimal.ZERO;
-	
+
 	private int finCurODDays = 0;
 	private BigDecimal finODTotPenaltyAmt = BigDecimal.ZERO;
 	private BigDecimal finODTotWaived = BigDecimal.ZERO;
 	private BigDecimal finODTotPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal finODTotPenaltyBal = BigDecimal.ZERO;
-	
+
 	@XmlElement
 	private Date nextSchDate;
 	private Date schDate;
-	
+
 	//Posting Details
 	private BigDecimal totalFees = BigDecimal.ZERO;
 	private BigDecimal totalWaiverFee = BigDecimal.ZERO;
 	private BigDecimal totalPaidFee = BigDecimal.ZERO;
-	
+
 	// Finance Profit Enquiry
 	private String finType;
 	private String finBranch = null;
@@ -101,45 +101,45 @@ public class FinanceSummary implements Serializable {
 	private Date finStartDate;
 	@XmlElement
 	private Date maturityDate;
-	@XmlElement(name="finActiveStatus")
+	@XmlElement(name = "finActiveStatus")
 	private String finStatus;
 	private BigDecimal finRate = BigDecimal.ZERO;
-	@XmlElement(name="lastRepayDate")
+	@XmlElement(name = "lastRepayDate")
 	private Date finLastRepayDate;
-	@XmlElement(name="outstandingPri")
+	@XmlElement(name = "outstandingPri")
 	private BigDecimal outStandPrincipal = BigDecimal.ZERO;
-	@XmlElement(name="outstandingPft")
+	@XmlElement(name = "outstandingPft")
 	private BigDecimal outStandProfit = BigDecimal.ZERO;
-	@XmlElement(name="outstandingTotal")
+	@XmlElement(name = "outstandingTotal")
 	private BigDecimal totalOutStanding = BigDecimal.ZERO;
-	
+
 	private BigDecimal totalOriginal = BigDecimal.ZERO;
 	private BigDecimal totalPaid = BigDecimal.ZERO;
-	
+
 	private BigDecimal unPaidPrincipal = BigDecimal.ZERO;
 	private BigDecimal unPaidProfit = BigDecimal.ZERO;
 	private BigDecimal totalUnPaid = BigDecimal.ZERO;
-	
-	@XmlElement(name="overduePri")
+
+	@XmlElement(name = "overduePri")
 	private BigDecimal overDuePrincipal = BigDecimal.ZERO;
-	@XmlElement(name="overduePft")
+	@XmlElement(name = "overduePft")
 	private BigDecimal overDueProfit = BigDecimal.ZERO;
-	@XmlElement(name="overdueTotal")
+	@XmlElement(name = "overdueTotal")
 	private BigDecimal totalOverDue = BigDecimal.ZERO;
-	
+
 	private BigDecimal earnedPrincipal = BigDecimal.ZERO;
 	private BigDecimal earnedProfit = BigDecimal.ZERO;
 	private BigDecimal totalEarned = BigDecimal.ZERO;
-	
+
 	private BigDecimal unEarnedPrincipal = BigDecimal.ZERO;
 	private BigDecimal unEarnedProfit = BigDecimal.ZERO;
 	private BigDecimal totalUnEarned = BigDecimal.ZERO;
-	
+
 	private BigDecimal payOffPrincipal = BigDecimal.ZERO;
 	private BigDecimal payOffProfit = BigDecimal.ZERO;
 	private BigDecimal totalPayOff = BigDecimal.ZERO;
-	
-	@XmlElement(name="overdueInst")
+
+	@XmlElement(name = "overdueInst")
 	private long overDueInstlments;
 	private BigDecimal overDueInstlementPft = BigDecimal.ZERO;
 	private long paidInstlments;
@@ -149,34 +149,34 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private long numberOfTerms;
 	private int NOInst;
-	
+
 	private String custCIF;
-	
+
 	@XmlElement
 	private BigDecimal totalRepayAmt = BigDecimal.ZERO;
-	
+
 	private String finCommitmentRef;
 	private String cmtTitle;
 	private BigDecimal cmtAmount = BigDecimal.ZERO;
 	private BigDecimal cmtAvailable = BigDecimal.ZERO;
 	private Date CmtExpiryDate;
 	private int utilizedDefCnt;
-	
+
 	// PFF-API specific fields
 	@XmlElement
-	private BigDecimal 	effectiveRateOfReturn = BigDecimal.ZERO;
+	private BigDecimal effectiveRateOfReturn = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal 	totalGracePft = BigDecimal.ZERO;
+	private BigDecimal totalGracePft = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal 	totalGraceCpz = BigDecimal.ZERO;
+	private BigDecimal totalGraceCpz = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal 	totalGrossGrcPft = BigDecimal.ZERO;
+	private BigDecimal totalGrossGrcPft = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal 	totalProfit = BigDecimal.ZERO;
-	@XmlElement(name="feeChargeAmount")
-	private BigDecimal 	feeChargeAmt = BigDecimal.ZERO;
+	private BigDecimal totalProfit = BigDecimal.ZERO;
+	@XmlElement(name = "feeChargeAmount")
+	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
 	@XmlElement
-	private int	loanTenor;
+	private int loanTenor;
 	@XmlElement
 	private Date firstDisbDate;
 	@XmlElement
@@ -195,403 +195,508 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal paidTotal;
 	@XmlElement
 	private BigDecimal advPaymentAmount;
-	@XmlElementWrapper(name="overdueCharges")
-	@XmlElement(name="overdueCharge")
+	@XmlElementWrapper(name = "overdueCharges")
+	@XmlElement(name = "overdueCharge")
 	private List<FinODDetails> finODDetail;
 	@XmlElement
 	private boolean fullyDisb;
 
 	public FinanceSummary() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
 
 	public BigDecimal getTotalDisbursement() {
-    	return totalDisbursement;
-    }
+		return totalDisbursement;
+	}
+
 	public void setTotalDisbursement(BigDecimal totalDisbursement) {
-    	this.totalDisbursement = totalDisbursement;
-    }
-	
+		this.totalDisbursement = totalDisbursement;
+	}
+
 	public BigDecimal getTotalPriSchd() {
-    	return totalPriSchd;
-    }
+		return totalPriSchd;
+	}
+
 	public void setTotalPriSchd(BigDecimal totalPriSchd) {
-    	this.totalPriSchd = totalPriSchd;
-    }
-	
+		this.totalPriSchd = totalPriSchd;
+	}
+
 	public BigDecimal getTotalPftSchd() {
-    	return totalPftSchd;
-    }
+		return totalPftSchd;
+	}
+
 	public void setTotalPftSchd(BigDecimal totalPftSchd) {
-    	this.totalPftSchd = totalPftSchd;
-    }
-	
+		this.totalPftSchd = totalPftSchd;
+	}
+
 	public BigDecimal getPrincipalSchd() {
-    	return principalSchd;
-    }
+		return principalSchd;
+	}
+
 	public void setPrincipalSchd(BigDecimal principalSchd) {
-    	this.principalSchd = principalSchd;
-    }
-	
+		this.principalSchd = principalSchd;
+	}
+
 	public BigDecimal getProfitSchd() {
-    	return profitSchd;
-    }
+		return profitSchd;
+	}
+
 	public void setProfitSchd(BigDecimal profitSchd) {
-    	this.profitSchd = profitSchd;
-    }
-	
+		this.profitSchd = profitSchd;
+	}
+
 	public BigDecimal getSchdPftPaid() {
-    	return schdPftPaid;
-    }
+		return schdPftPaid;
+	}
+
 	public void setSchdPftPaid(BigDecimal schdPftPaid) {
-    	this.schdPftPaid = schdPftPaid;
-    }
-	
+		this.schdPftPaid = schdPftPaid;
+	}
+
 	public BigDecimal getSchdPriPaid() {
-    	return schdPriPaid;
-    }
+		return schdPriPaid;
+	}
+
 	public void setSchdPriPaid(BigDecimal schdPriPaid) {
-    	this.schdPriPaid = schdPriPaid;
-    }
-	
+		this.schdPriPaid = schdPriPaid;
+	}
+
 	public BigDecimal getTotalDownPayment() {
-    	return totalDownPayment;
-    }
+		return totalDownPayment;
+	}
+
 	public void setTotalDownPayment(BigDecimal totalDownPayment) {
-    	this.totalDownPayment = totalDownPayment;
-    }
-	
+		this.totalDownPayment = totalDownPayment;
+	}
+
 	public BigDecimal getTotalCpz() {
-    	return totalCpz;
-    }
+		return totalCpz;
+	}
+
 	public void setTotalCpz(BigDecimal totalCpz) {
-    	this.totalCpz = totalCpz;
-    }
-	
+		this.totalCpz = totalCpz;
+	}
+
 	public Date getNextSchDate() {
-    	return nextSchDate;
-    }
+		return nextSchDate;
+	}
+
 	public void setNextSchDate(Date nextSchDate) {
-    	this.nextSchDate = nextSchDate;
-    }
-	
+		this.nextSchDate = nextSchDate;
+	}
+
 	public Date getSchDate() {
-    	return schDate;
-    }
+		return schDate;
+	}
+
 	public void setSchDate(Date schDate) {
-    	this.schDate = schDate;
-    }
-	
+		this.schDate = schDate;
+	}
+
 	public BigDecimal getTotalFees() {
-    	return totalFees;
-    }
+		return totalFees;
+	}
+
 	public void setTotalFees(BigDecimal totalFees) {
-    	this.totalFees = totalFees;
-    }
+		this.totalFees = totalFees;
+	}
 
 	public void setFinCurODDays(int finCurODDays) {
-	    this.finCurODDays = finCurODDays;
-    }
+		this.finCurODDays = finCurODDays;
+	}
+
 	public int getFinCurODDays() {
-	    return finCurODDays;
-    }
+		return finCurODDays;
+	}
+
 	public void setFinODTotPenaltyAmt(BigDecimal finODTotPenaltyAmt) {
-	    this.finODTotPenaltyAmt = finODTotPenaltyAmt;
-    }
+		this.finODTotPenaltyAmt = finODTotPenaltyAmt;
+	}
+
 	public BigDecimal getFinODTotPenaltyAmt() {
-	    return finODTotPenaltyAmt;
-    }
+		return finODTotPenaltyAmt;
+	}
+
 	public void setFinODTotWaived(BigDecimal finODTotWaived) {
-	    this.finODTotWaived = finODTotWaived;
-    }
+		this.finODTotWaived = finODTotWaived;
+	}
+
 	public BigDecimal getFinODTotWaived() {
-	    return finODTotWaived;
-    }
+		return finODTotWaived;
+	}
+
 	public void setFinODTotPenaltyPaid(BigDecimal finODTotPenaltyPaid) {
-	    this.finODTotPenaltyPaid = finODTotPenaltyPaid;
-    }
+		this.finODTotPenaltyPaid = finODTotPenaltyPaid;
+	}
+
 	public BigDecimal getFinODTotPenaltyPaid() {
-	    return finODTotPenaltyPaid;
-    }
+		return finODTotPenaltyPaid;
+	}
+
 	public void setFinODTotPenaltyBal(BigDecimal finODTotPenaltyBal) {
-	    this.finODTotPenaltyBal = finODTotPenaltyBal;
-    }
+		this.finODTotPenaltyBal = finODTotPenaltyBal;
+	}
+
 	public BigDecimal getFinODTotPenaltyBal() {
-	    return finODTotPenaltyBal;
-    }
+		return finODTotPenaltyBal;
+	}
+
 	public String getFinType() {
-    	return finType;
-    }
+		return finType;
+	}
+
 	public void setFinType(String finType) {
-    	this.finType = finType;
-    }
+		this.finType = finType;
+	}
+
 	public String getFinBranch() {
-    	return finBranch;
-    }
+		return finBranch;
+	}
+
 	public void setFinBranch(String finBranch) {
-    	this.finBranch = finBranch;
-    }
+		this.finBranch = finBranch;
+	}
+
 	public String getFinCcy() {
-    	return finCcy;
-    }
+		return finCcy;
+	}
+
 	public void setFinCcy(String finCcy) {
-    	this.finCcy = finCcy;
-    }
+		this.finCcy = finCcy;
+	}
+
 	public long getCustID() {
-    	return custID;
-    }
+		return custID;
+	}
+
 	public void setCustID(long custID) {
-    	this.custID = custID;
-    }
+		this.custID = custID;
+	}
+
 	public Date getFinStartDate() {
-    	return finStartDate;
-    }
+		return finStartDate;
+	}
+
 	public void setFinStartDate(Date finStartDate) {
-    	this.finStartDate = finStartDate;
-    }
+		this.finStartDate = finStartDate;
+	}
+
 	public Date getMaturityDate() {
-    	return maturityDate;
-    }
+		return maturityDate;
+	}
+
 	public void setMaturityDate(Date maturityDate) {
-    	this.maturityDate = maturityDate;
-    }
+		this.maturityDate = maturityDate;
+	}
+
 	public String getFinStatus() {
-    	return finStatus;
-    }
+		return finStatus;
+	}
+
 	public void setFinStatus(String finStatus) {
-    	this.finStatus = finStatus;
-    }
+		this.finStatus = finStatus;
+	}
+
 	public BigDecimal getFinRate() {
-    	return finRate;
-    }
+		return finRate;
+	}
+
 	public void setFinRate(BigDecimal finRate) {
-    	this.finRate = finRate;
-    }
+		this.finRate = finRate;
+	}
+
 	public Date getFinLastRepayDate() {
-    	return finLastRepayDate;
-    }
+		return finLastRepayDate;
+	}
+
 	public void setFinLastRepayDate(Date finLastRepayDate) {
-    	this.finLastRepayDate = finLastRepayDate;
-    }
+		this.finLastRepayDate = finLastRepayDate;
+	}
+
 	public BigDecimal getOutStandPrincipal() {
-    	return outStandPrincipal;
-    }
+		return outStandPrincipal;
+	}
+
 	public void setOutStandPrincipal(BigDecimal outStandPrincipal) {
-    	this.outStandPrincipal = outStandPrincipal;
-    }
+		this.outStandPrincipal = outStandPrincipal;
+	}
+
 	public BigDecimal getOutStandProfit() {
-    	return outStandProfit;
-    }
+		return outStandProfit;
+	}
+
 	public void setOutStandProfit(BigDecimal outStandProfit) {
-    	this.outStandProfit = outStandProfit;
-    }
+		this.outStandProfit = outStandProfit;
+	}
+
 	public BigDecimal getTotalOutStanding() {
-    	return totalOutStanding;
-    }
+		return totalOutStanding;
+	}
+
 	public void setTotalOutStanding(BigDecimal totalOutStanding) {
-    	this.totalOutStanding = totalOutStanding;
-    }
+		this.totalOutStanding = totalOutStanding;
+	}
+
 	public BigDecimal getTotalOriginal() {
-    	return totalOriginal;
-    }
+		return totalOriginal;
+	}
+
 	public void setTotalOriginal(BigDecimal totalOriginal) {
-    	this.totalOriginal = totalOriginal;
-    }
+		this.totalOriginal = totalOriginal;
+	}
 
 	public BigDecimal getTotalPaid() {
-    	return totalPaid;
-    }
+		return totalPaid;
+	}
+
 	public void setTotalPaid(BigDecimal totalPaid) {
-    	this.totalPaid = totalPaid;
-    }
+		this.totalPaid = totalPaid;
+	}
+
 	public BigDecimal getUnPaidPrincipal() {
-    	return unPaidPrincipal;
-    }
+		return unPaidPrincipal;
+	}
+
 	public void setUnPaidPrincipal(BigDecimal unPaidPrincipal) {
-    	this.unPaidPrincipal = unPaidPrincipal;
-    }
+		this.unPaidPrincipal = unPaidPrincipal;
+	}
+
 	public BigDecimal getUnPaidProfit() {
-    	return unPaidProfit;
-    }
+		return unPaidProfit;
+	}
+
 	public void setUnPaidProfit(BigDecimal unPaidProfit) {
-    	this.unPaidProfit = unPaidProfit;
-    }
+		this.unPaidProfit = unPaidProfit;
+	}
+
 	public BigDecimal getTotalUnPaid() {
-    	return totalUnPaid;
-    }
+		return totalUnPaid;
+	}
+
 	public void setTotalUnPaid(BigDecimal totalUnPaid) {
-    	this.totalUnPaid = totalUnPaid;
-    }
+		this.totalUnPaid = totalUnPaid;
+	}
+
 	public BigDecimal getOverDuePrincipal() {
-    	return overDuePrincipal;
-    }
+		return overDuePrincipal;
+	}
+
 	public void setOverDuePrincipal(BigDecimal overDuePrincipal) {
-    	this.overDuePrincipal = overDuePrincipal;
-    }
+		this.overDuePrincipal = overDuePrincipal;
+	}
+
 	public BigDecimal getOverDueProfit() {
-    	return overDueProfit;
-    }
+		return overDueProfit;
+	}
+
 	public void setOverDueProfit(BigDecimal overDueProfit) {
-    	this.overDueProfit = overDueProfit;
-    }
+		this.overDueProfit = overDueProfit;
+	}
+
 	public BigDecimal getTotalOverDue() {
-    	return totalOverDue;
-    }
+		return totalOverDue;
+	}
+
 	public void setTotalOverDue(BigDecimal totalOverDue) {
-    	this.totalOverDue = totalOverDue;
-    }
+		this.totalOverDue = totalOverDue;
+	}
+
 	public BigDecimal getEarnedPrincipal() {
-    	return earnedPrincipal;
-    }
+		return earnedPrincipal;
+	}
+
 	public void setEarnedPrincipal(BigDecimal earnedPrincipal) {
-    	this.earnedPrincipal = earnedPrincipal;
-    }
+		this.earnedPrincipal = earnedPrincipal;
+	}
+
 	public BigDecimal getEarnedProfit() {
-    	return earnedProfit;
-    }
+		return earnedProfit;
+	}
+
 	public void setEarnedProfit(BigDecimal earnedProfit) {
-    	this.earnedProfit = earnedProfit;
-    }
+		this.earnedProfit = earnedProfit;
+	}
+
 	public BigDecimal getTotalEarned() {
-    	return totalEarned;
-    }
+		return totalEarned;
+	}
+
 	public void setTotalEarned(BigDecimal totalEarned) {
-    	this.totalEarned = totalEarned;
-    }
+		this.totalEarned = totalEarned;
+	}
+
 	public BigDecimal getUnEarnedPrincipal() {
-    	return unEarnedPrincipal;
-    }
+		return unEarnedPrincipal;
+	}
+
 	public void setUnEarnedPrincipal(BigDecimal unEarnedPrincipal) {
-    	this.unEarnedPrincipal = unEarnedPrincipal;
-    }
+		this.unEarnedPrincipal = unEarnedPrincipal;
+	}
+
 	public BigDecimal getUnEarnedProfit() {
-    	return unEarnedProfit;
-    }
+		return unEarnedProfit;
+	}
+
 	public void setUnEarnedProfit(BigDecimal unEarnedProfit) {
-    	this.unEarnedProfit = unEarnedProfit;
-    }
+		this.unEarnedProfit = unEarnedProfit;
+	}
+
 	public BigDecimal getTotalUnEarned() {
-    	return totalUnEarned;
-    }
+		return totalUnEarned;
+	}
+
 	public void setTotalUnEarned(BigDecimal totalUnEarned) {
-    	this.totalUnEarned = totalUnEarned;
-    }
+		this.totalUnEarned = totalUnEarned;
+	}
+
 	public BigDecimal getPayOffPrincipal() {
-    	return payOffPrincipal;
-    }
+		return payOffPrincipal;
+	}
+
 	public void setPayOffPrincipal(BigDecimal payOffPrincipal) {
-    	this.payOffPrincipal = payOffPrincipal;
-    }
+		this.payOffPrincipal = payOffPrincipal;
+	}
+
 	public BigDecimal getPayOffProfit() {
-    	return payOffProfit;
-    }
+		return payOffProfit;
+	}
+
 	public void setPayOffProfit(BigDecimal payOffProfit) {
-    	this.payOffProfit = payOffProfit;
-    }
+		this.payOffProfit = payOffProfit;
+	}
+
 	public BigDecimal getTotalPayOff() {
-    	return totalPayOff;
-    }
+		return totalPayOff;
+	}
+
 	public void setTotalPayOff(BigDecimal totalPayOff) {
-    	this.totalPayOff = totalPayOff;
-    }
+		this.totalPayOff = totalPayOff;
+	}
+
 	public long getOverDueInstlments() {
-    	return overDueInstlments;
-    }
+		return overDueInstlments;
+	}
+
 	public void setOverDueInstlments(long overDueInstlments) {
-    	this.overDueInstlments = overDueInstlments;
-    }
+		this.overDueInstlments = overDueInstlments;
+	}
+
 	public BigDecimal getOverDueInstlementPft() {
-    	return overDueInstlementPft;
-    }
+		return overDueInstlementPft;
+	}
+
 	public void setOverDueInstlementPft(BigDecimal overDueInstlementPft) {
-    	this.overDueInstlementPft = overDueInstlementPft;
-    }
+		this.overDueInstlementPft = overDueInstlementPft;
+	}
+
 	public long getPaidInstlments() {
-    	return paidInstlments;
-    }
+		return paidInstlments;
+	}
+
 	public void setPaidInstlments(long paidInstlments) {
-    	this.paidInstlments = paidInstlments;
-    }
+		this.paidInstlments = paidInstlments;
+	}
+
 	public BigDecimal getPaidInstlementPft() {
-    	return paidInstlementPft;
-    }
+		return paidInstlementPft;
+	}
+
 	public void setPaidInstlementPft(BigDecimal paidInstlementPft) {
-    	this.paidInstlementPft = paidInstlementPft;
-    }
+		this.paidInstlementPft = paidInstlementPft;
+	}
+
 	public long getUnPaidInstlments() {
-    	return unPaidInstlments;
-    }
+		return unPaidInstlments;
+	}
+
 	public void setUnPaidInstlments(long unPaidInstlments) {
-    	this.unPaidInstlments = unPaidInstlments;
-    }
+		this.unPaidInstlments = unPaidInstlments;
+	}
+
 	public BigDecimal getUnPaidInstlementPft() {
-    	return unPaidInstlementPft;
-    }
+		return unPaidInstlementPft;
+	}
+
 	public void setUnPaidInstlementPft(BigDecimal unPaidInstlementPft) {
-    	this.unPaidInstlementPft = unPaidInstlementPft;
-    }
-	
+		this.unPaidInstlementPft = unPaidInstlementPft;
+	}
+
 	public void setNumberOfTerms(long numberOfTerms) {
-	    this.numberOfTerms = numberOfTerms;
-    }
+		this.numberOfTerms = numberOfTerms;
+	}
+
 	public long getNumberOfTerms() {
-	    return numberOfTerms;
-    }
+		return numberOfTerms;
+	}
+
 	public void setTotalRepayAmt(BigDecimal totalRepayAmt) {
-	    this.totalRepayAmt = totalRepayAmt;
-    }
+		this.totalRepayAmt = totalRepayAmt;
+	}
+
 	public BigDecimal getTotalRepayAmt() {
-	    return totalRepayAmt;
-    }
+		return totalRepayAmt;
+	}
+
 	public String getFinCommitmentRef() {
-    	return finCommitmentRef;
-    }
+		return finCommitmentRef;
+	}
+
 	public void setFinCommitmentRef(String finCommitmentRef) {
-    	this.finCommitmentRef = finCommitmentRef;
-    }
-	
+		this.finCommitmentRef = finCommitmentRef;
+	}
+
 	public String getCmtTitle() {
-    	return cmtTitle;
-    }
+		return cmtTitle;
+	}
+
 	public void setCmtTitle(String cmtTitle) {
-    	this.cmtTitle = cmtTitle;
-    }
+		this.cmtTitle = cmtTitle;
+	}
+
 	public BigDecimal getCmtAvailable() {
-    	return cmtAvailable;
-    }
+		return cmtAvailable;
+	}
+
 	public void setCmtAvailable(BigDecimal cmtAvailable) {
-    	this.cmtAvailable = cmtAvailable;
-    }
+		this.cmtAvailable = cmtAvailable;
+	}
+
 	public BigDecimal getCmtAmount() {
-    	return cmtAmount;
-    }
+		return cmtAmount;
+	}
+
 	public void setCmtAmount(BigDecimal cmtAmount) {
-    	this.cmtAmount = cmtAmount;
-    }
+		this.cmtAmount = cmtAmount;
+	}
+
 	public Date getCmtExpiryDate() {
-    	return CmtExpiryDate;
-    }
+		return CmtExpiryDate;
+	}
+
 	public void setCmtExpiryDate(Date cmtExpiryDate) {
-    	CmtExpiryDate = cmtExpiryDate;
-    }
+		CmtExpiryDate = cmtExpiryDate;
+	}
+
 	public int getUtilizedDefCnt() {
 		return utilizedDefCnt;
 	}
+
 	public void setUtilizedDefCnt(int utilizedDefCnt) {
 		this.utilizedDefCnt = utilizedDefCnt;
 	}
-	
+
 	public BigDecimal getEffectiveRateOfReturn() {
 		return effectiveRateOfReturn;
 	}

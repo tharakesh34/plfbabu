@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.Segment;
 
 /**
@@ -49,9 +50,12 @@ import com.pennant.backend.model.systemmasters.Segment;
  * 
  */
 public interface SegmentDAO {
-	
-	Segment getSegmentById(String id,String type);
-	void update(Segment segment,String type);
-	void delete(Segment segment,String type);
-	String save(Segment segment,String type);
+
+	Segment getSegmentById(String id, String type);
+
+	void update(Segment segment, String type);
+
+	void delete(Segment segment, String type);
+
+	String save(Segment segment, String type);
 }

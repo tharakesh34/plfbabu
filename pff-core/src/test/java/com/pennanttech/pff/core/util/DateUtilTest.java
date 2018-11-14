@@ -24,9 +24,9 @@ import org.testng.annotations.Test;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class DateUtilTest {
-	Date	date;
-	String	shortDate;
-	String	longDate;
+	Date date;
+	String shortDate;
+	String longDate;
 
 	@BeforeClass
 	public void setUp() {
@@ -98,11 +98,17 @@ public class DateUtilTest {
 	public void getSysDate() {
 		Assert.assertNotNull(DateUtil.getSysDate());
 	}
-	
+
 	@Test
 	public void getDatePart() throws ParseException {
 		Assert.assertNull(DateUtil.getDatePart(null));
-		Assert.assertEquals(DateUtil.format(DateUtil.getDatePart(DateUtil.parse("1975-Jul-28 01:20:45", "yyyy-MMM-dd HH:mm:ss")), "yyyy-MMM-dd HH:mm:ss a"), "1975-Jul-28 00:00:00 AM");
-		Assert.assertEquals(DateUtil.format(DateUtil.getDatePart(DateUtil.parse("1975-Jul-28 13:20:45", "yyyy-MMM-dd HH:mm:ss")), "yyyy-MMM-dd HH:mm:ss a"), "1975-Jul-28 00:00:00 AM");
+		Assert.assertEquals(
+				DateUtil.format(DateUtil.getDatePart(DateUtil.parse("1975-Jul-28 01:20:45", "yyyy-MMM-dd HH:mm:ss")),
+						"yyyy-MMM-dd HH:mm:ss a"),
+				"1975-Jul-28 00:00:00 AM");
+		Assert.assertEquals(
+				DateUtil.format(DateUtil.getDatePart(DateUtil.parse("1975-Jul-28 13:20:45", "yyyy-MMM-dd HH:mm:ss")),
+						"yyyy-MMM-dd HH:mm:ss a"),
+				"1975-Jul-28 00:00:00 AM");
 	}
 }

@@ -32,7 +32,7 @@ public class HandlingInstructionProcess extends MQProcess {
 	 * @param msgFormat
 	 * @return DDARegistration
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
 	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction, String msgFormat)
 			throws JaxenException {
@@ -46,15 +46,16 @@ public class HandlingInstructionProcess extends MQProcess {
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(handlingInstruction, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch(InterfaceException pffe) {
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -81,7 +82,8 @@ public class HandlingInstructionProcess extends MQProcess {
 		HandlingInstruction handlingInstResponse = null;
 
 		try {
-			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/FinanceMaintenanceReply", responseElement);
+			OMElement detailElement = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/FinanceMaintenanceReply",
+					responseElement);
 			header = PFFXmlUtil.parseHeader(responseElement, header);
 			header = getReturnStatus(detailElement, header, responseElement);
 
@@ -107,8 +109,8 @@ public class HandlingInstructionProcess extends MQProcess {
 	}
 
 	/**
-	 * Prepare Handling Instruction Request for FinanceMaitenance 
-	 *  
+	 * Prepare Handling Instruction Request for FinanceMaitenance
+	 * 
 	 * @param handlingInstruction
 	 * @param factory
 	 * @return OMElement
@@ -121,14 +123,15 @@ public class HandlingInstructionProcess extends MQProcess {
 		OMElement detailRequest = factory.createOMElement("FinanceMaintenanceRequest", null);
 
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "ReferenceNum", PFFXmlUtil.getReferenceNumber());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "MaintenanceCode", handlingInstruction.getMaintenanceCode());
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "MaintenanceCode",
+				handlingInstruction.getMaintenanceCode());
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "FinanceRef", handlingInstruction.getFinanceRef());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "InstallmentDate", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "InstallmentDate",
 				DateUtility.formateDate(handlingInstruction.getInstallmentDate(), InterfaceMasterConfigUtil.XML_DATE));
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "NewMaturityDate", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "NewMaturityDate",
 				DateUtility.formateDate(handlingInstruction.getNewMaturityDate(), InterfaceMasterConfigUtil.XML_DATE));
 		PFFXmlUtil.setOMChildElement(factory, detailRequest, "Remarks", handlingInstruction.getRemarks());
-		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp", 
+		PFFXmlUtil.setOMChildElement(factory, detailRequest, "TimeStamp",
 				Long.valueOf(PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME)));
 
 		requestElement.addChild(detailRequest);

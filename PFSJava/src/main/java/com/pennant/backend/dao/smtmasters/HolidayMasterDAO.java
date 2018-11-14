@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.smtmasters;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -53,12 +54,18 @@ import com.pennant.backend.model.smtmasters.HolidayMaster;
  */
 public interface HolidayMasterDAO {
 
-	HolidayMaster getHolidayMasterByID(final String id,final BigDecimal year,String type);
-	void update(HolidayMaster holidayMaster,String type);
-	void delete(HolidayMaster holidayMaster,String type);
-	String save(HolidayMaster holidayMaster,String type);
+	HolidayMaster getHolidayMasterByID(final String id, final BigDecimal year, String type);
+
+	void update(HolidayMaster holidayMaster, String type);
+
+	void delete(HolidayMaster holidayMaster, String type);
+
+	String save(HolidayMaster holidayMaster, String type);
+
 	//ErrorDetails getErrorDetail (String errorId,String errorLanguage,String[] parameters);
-	List<HolidayMaster> getHolidayMasterCodeYear(final String holidayCode,final BigDecimal year,String type);
+	List<HolidayMaster> getHolidayMasterCodeYear(final String holidayCode, final BigDecimal year, String type);
+
 	List<HolidayMaster> getHolidayMasterCode(String holidayCode);
-	List<HolidayMaster> getHolidayMasterByCategory(String holidayCategory,BigDecimal year, String type);
+
+	List<HolidayMaster> getHolidayMasterByCategory(String holidayCategory, BigDecimal year, String type);
 }

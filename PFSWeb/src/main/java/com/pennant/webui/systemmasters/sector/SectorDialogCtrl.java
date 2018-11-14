@@ -74,31 +74,29 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMasters/Sector/SectorDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMasters/Sector/SectorDialog.zul file.
  */
 public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	private static final long serialVersionUID = -9084247536503236438L;
 	private static final Logger logger = Logger.getLogger(SectorDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  		window_SectorDialog; 		
-	protected Textbox 		sectorCode; 				
-	protected Textbox 		sectorDesc; 				
-	protected CurrencyBox   sectorLimit;                
-	protected Checkbox 		sectorIsActive; 
+	protected Window window_SectorDialog;
+	protected Textbox sectorCode;
+	protected Textbox sectorDesc;
+	protected CurrencyBox sectorLimit;
+	protected Checkbox sectorIsActive;
 
 	// not auto wired variables
-	private Sector 					 sector; 			// overHanded per parameter
-	private transient SectorListCtrl sectorListCtrl; 	// overHanded per parameter
+	private Sector sector; // overHanded per parameter
+	private transient SectorListCtrl sectorListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
-	private int	 defaultCCYDecPos = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+
+	private int defaultCCYDecPos = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 
 	// ServiceDAOs / Domain Classes
 	private transient SectorService sectorService;
@@ -118,9 +116,8 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Sector object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Sector object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -146,14 +143,12 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 				setSector(null);
 			}
 
-			doLoadWorkFlow(this.sector.isWorkflow(),
-					this.sector.getWorkflowId(), this.sector.getNextTaskId());
+			doLoadWorkFlow(this.sector.isWorkflow(), this.sector.getWorkflowId(), this.sector.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SectorDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SectorDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -196,8 +191,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -307,8 +301,9 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 		this.sectorLimit.setValue(PennantApplicationUtil.formateAmount(aSector.getSectorLimit(), defaultCCYDecPos));
 		this.sectorIsActive.setChecked(aSector.isSectorIsActive());
 		this.recordStatus.setValue(aSector.getRecordStatus());
-		
-		if(aSector.isNew() || (aSector.getRecordType() != null ? aSector.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aSector.isNew() || (aSector.getRecordType() != null ? aSector.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.sectorIsActive.setChecked(true);
 			this.sectorIsActive.setDisabled(true);
 		}
@@ -338,8 +333,9 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 			wve.add(we);
 		}
 		try {
-			aSector.setSectorLimit(PennantApplicationUtil.unFormateAmount(this.sectorLimit.getValidateValue(), defaultCCYDecPos));
-		}catch (WrongValueException we ) {
+			aSector.setSectorLimit(
+					PennantApplicationUtil.unFormateAmount(this.sectorLimit.getValidateValue(), defaultCCYDecPos));
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -365,8 +361,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSector
 	 *            (Sector)
@@ -400,7 +395,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 			doWriteBeanToComponents(aSector);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_SectorDialog.onClose();
 		} catch (Exception e) {
@@ -416,17 +411,19 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.sectorCode.isReadonly()){
-			this.sectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SectorDialog_SectorCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.sectorCode.isReadonly()) {
+			this.sectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SectorDialog_SectorCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.sectorDesc.isReadonly()){
-			this.sectorDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SectorDialog_SectorDesc.value"), 
+		if (!this.sectorDesc.isReadonly()) {
+			this.sectorDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SectorDialog_SectorDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.sectorLimit.isDisabled()) {
-			this.sectorLimit.setConstraint(new PTDecimalValidator(Labels.getLabel("label_SectorDialog_SectorLimit.value"), 0, false));
+			this.sectorLimit.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_SectorDialog_SectorLimit.value"), 0, false));
 		}
 		logger.debug("Leaving");
 	}
@@ -481,9 +478,8 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_SectorDialog_SectorCode.value")+" : "+aSector.getSectorCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SectorDialog_SectorCode.value") + " : " + aSector.getSectorCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSector.getRecordType())) {
 				aSector.setVersion(aSector.getVersion() + 1);
@@ -633,7 +629,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 			MessageUtil.showError(e);
 
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -684,7 +680,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				nextRoleCode = getFirstTaskOwner();
-				
+
 				String[] nextTasks = nextTaskId.split(";");
 
 				if (nextTasks != null && nextTasks.length > 0) {
@@ -714,7 +710,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aSector,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aSector, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -772,8 +768,8 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SectorDialog, auditHeader);
 						return processCompleted;
 					}
@@ -806,7 +802,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	}
 
 	// WorkFlow Details
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -817,10 +813,9 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Sector aSector, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSector.getBefImage(), aSector);
-		return new AuditHeader(String.valueOf(aSector.getId()), null, null,
-				null, auditDetail, aSector.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSector.getBefImage(), aSector);
+		return new AuditHeader(String.valueOf(aSector.getId()), null, null, null, auditDetail, aSector.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -861,12 +856,10 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 		getSectorListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.sector.getSectorCode());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -875,6 +868,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -882,6 +876,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	public Sector getSector() {
 		return this.sector;
 	}
+
 	public void setSector(Sector sector) {
 		this.sector = sector;
 	}
@@ -889,6 +884,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	public void setSectorService(SectorService sectorService) {
 		this.sectorService = sectorService;
 	}
+
 	public SectorService getSectorService() {
 		return this.sectorService;
 	}
@@ -896,6 +892,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	public void setSectorListCtrl(SectorListCtrl sectorListCtrl) {
 		this.sectorListCtrl = sectorListCtrl;
 	}
+
 	public SectorListCtrl getSectorListCtrl() {
 		return this.sectorListCtrl;
 	}

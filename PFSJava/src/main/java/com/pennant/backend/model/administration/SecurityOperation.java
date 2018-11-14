@@ -57,12 +57,12 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 	private long oprID = Long.MIN_VALUE;
 	private String oprCode;
 	private String oprDesc;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private SecurityOperation befImage;
 	private LoggedInUser userDetails;
 	private List<SecurityOperationRoles> securityOperationRolesList;
-	
+
 	public SecurityOperation() {
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("SecurityOperation"));
@@ -72,23 +72,23 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public long getId() {
 		return oprID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.oprID = id;
 	}
-	
+
 	public long getOprID() {
 		return oprID;
 	}
@@ -96,7 +96,7 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 	public void setOprID(long oprID) {
 		this.oprID = oprID;
 	}
-	
+
 	public String getOprCode() {
 		return oprCode;
 	}
@@ -120,7 +120,7 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -129,12 +129,12 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public SecurityOperation getBefImage(){
+	public SecurityOperation getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(SecurityOperation beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SecurityOperation beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -149,8 +149,7 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 		return securityOperationRolesList;
 	}
 
-	public void setSecurityOperationRolesList(
-			List<SecurityOperationRoles> securityOperationRolesList) {
+	public void setSecurityOperationRolesList(List<SecurityOperationRoles> securityOperationRolesList) {
 		this.securityOperationRolesList = securityOperationRolesList;
 	}
 }

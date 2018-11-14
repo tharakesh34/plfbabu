@@ -57,7 +57,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 
 	private static final long serialVersionUID = -4817133724784086357L;
 
-	private long pRCustID =Long.MIN_VALUE;
+	private long pRCustID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	private int pRCustPRSNo;
 	private String pRRelationCode;
@@ -115,13 +115,15 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public long getId() {
 		return pRCustID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.pRCustID = id;
 	}
 
 	public long getPRCustID() {
 		return pRCustID;
 	}
+
 	public void setPRCustID(long pRCustID) {
 		this.pRCustID = pRCustID;
 	}
@@ -129,6 +131,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public int getPRCustPRSNo() {
 		return pRCustPRSNo;
 	}
+
 	public void setPRCustPRSNo(int pRCustPRSNo) {
 		this.pRCustPRSNo = pRCustPRSNo;
 	}
@@ -136,6 +139,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRRelationCode() {
 		return pRRelationCode;
 	}
+
 	public void setPRRelationCode(String pRRelationCode) {
 		this.pRRelationCode = pRRelationCode;
 	}
@@ -143,6 +147,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescPRRelationCodeName() {
 		return this.lovDescPRRelationCodeName;
 	}
+
 	public void setLovDescPRRelationCodeName(String lovDescPRRelationCodeName) {
 		this.lovDescPRRelationCodeName = lovDescPRRelationCodeName;
 	}
@@ -150,6 +155,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRRelationCustID() {
 		return pRRelationCustID;
 	}
+
 	public void setPRRelationCustID(String pRRelationCustID) {
 		this.pRRelationCustID = pRRelationCustID;
 	}
@@ -157,6 +163,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public boolean isPRisGuardian() {
 		return pRisGuardian;
 	}
+
 	public void setPRisGuardian(boolean pRisGuardian) {
 		this.pRisGuardian = pRisGuardian;
 	}
@@ -164,6 +171,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRFName() {
 		return pRFName;
 	}
+
 	public void setPRFName(String pRFName) {
 		this.pRFName = pRFName;
 	}
@@ -171,6 +179,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRMName() {
 		return pRMName;
 	}
+
 	public void setPRMName(String pRMName) {
 		this.pRMName = pRMName;
 	}
@@ -178,6 +187,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRLName() {
 		return pRLName;
 	}
+
 	public void setPRLName(String pRLName) {
 		this.pRLName = pRLName;
 	}
@@ -185,6 +195,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRSName() {
 		return pRSName;
 	}
+
 	public void setPRSName(String pRSName) {
 		this.pRSName = pRSName;
 	}
@@ -192,6 +203,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRFNameLclLng() {
 		return pRFNameLclLng;
 	}
+
 	public void setPRFNameLclLng(String pRFNameLclLng) {
 		this.pRFNameLclLng = pRFNameLclLng;
 	}
@@ -199,6 +211,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRMNameLclLng() {
 		return pRMNameLclLng;
 	}
+
 	public void setPRMNameLclLng(String pRMNameLclLng) {
 		this.pRMNameLclLng = pRMNameLclLng;
 	}
@@ -206,6 +219,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRLNameLclLng() {
 		return pRLNameLclLng;
 	}
+
 	public void setPRLNameLclLng(String pRLNameLclLng) {
 		this.pRLNameLclLng = pRLNameLclLng;
 	}
@@ -213,6 +227,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public Date getPRDOB() {
 		return pRDOB;
 	}
+
 	public void setPRDOB(Date pRDOB) {
 		this.pRDOB = pRDOB;
 	}
@@ -220,6 +235,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrHNbr() {
 		return pRAddrHNbr;
 	}
+
 	public void setPRAddrHNbr(String pRAddrHNbr) {
 		this.pRAddrHNbr = pRAddrHNbr;
 	}
@@ -227,6 +243,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrFNbr() {
 		return pRAddrFNbr;
 	}
+
 	public void setPRAddrFNbr(String pRAddrFNbr) {
 		this.pRAddrFNbr = pRAddrFNbr;
 	}
@@ -234,6 +251,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrStreet() {
 		return pRAddrStreet;
 	}
+
 	public void setPRAddrStreet(String pRAddrStreet) {
 		this.pRAddrStreet = pRAddrStreet;
 	}
@@ -241,6 +259,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrLine1() {
 		return pRAddrLine1;
 	}
+
 	public void setPRAddrLine1(String pRAddrLine1) {
 		this.pRAddrLine1 = pRAddrLine1;
 	}
@@ -248,6 +267,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrLine2() {
 		return pRAddrLine2;
 	}
+
 	public void setPRAddrLine2(String pRAddrLine2) {
 		this.pRAddrLine2 = pRAddrLine2;
 	}
@@ -255,6 +275,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrPOBox() {
 		return pRAddrPOBox;
 	}
+
 	public void setPRAddrPOBox(String pRAddrPOBox) {
 		this.pRAddrPOBox = pRAddrPOBox;
 	}
@@ -262,6 +283,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrCity() {
 		return pRAddrCity;
 	}
+
 	public void setPRAddrCity(String pRAddrCity) {
 		this.pRAddrCity = pRAddrCity;
 	}
@@ -269,6 +291,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescPRAddrCityName() {
 		return this.lovDescPRAddrCityName;
 	}
+
 	public void setLovDescPRAddrCityName(String lovDescPRAddrCityName) {
 		this.lovDescPRAddrCityName = lovDescPRAddrCityName;
 	}
@@ -276,6 +299,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrProvince() {
 		return pRAddrProvince;
 	}
+
 	public void setPRAddrProvince(String pRAddrProvince) {
 		this.pRAddrProvince = pRAddrProvince;
 	}
@@ -283,6 +307,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescPRAddrProvinceName() {
 		return this.lovDescPRAddrProvinceName;
 	}
+
 	public void setLovDescPRAddrProvinceName(String lovDescPRAddrProvinceName) {
 		this.lovDescPRAddrProvinceName = lovDescPRAddrProvinceName;
 	}
@@ -290,6 +315,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrCountry() {
 		return pRAddrCountry;
 	}
+
 	public void setPRAddrCountry(String pRAddrCountry) {
 		this.pRAddrCountry = pRAddrCountry;
 	}
@@ -297,6 +323,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescPRAddrCountryName() {
 		return this.lovDescPRAddrCountryName;
 	}
+
 	public void setLovDescPRAddrCountryName(String lovDescPRAddrCountryName) {
 		this.lovDescPRAddrCountryName = lovDescPRAddrCountryName;
 	}
@@ -304,6 +331,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRAddrZIP() {
 		return pRAddrZIP;
 	}
+
 	public void setPRAddrZIP(String pRAddrZIP) {
 		this.pRAddrZIP = pRAddrZIP;
 	}
@@ -311,6 +339,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRPhone() {
 		return pRPhone;
 	}
+
 	public void setPRPhone(String pRPhone) {
 		this.pRPhone = pRPhone;
 	}
@@ -318,6 +347,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getPRMail() {
 		return pRMail;
 	}
+
 	public void setPRMail(String pRMail) {
 		this.pRMail = pRMail;
 	}
@@ -325,6 +355,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -332,6 +363,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -339,6 +371,7 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -346,20 +379,23 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
-	public CustomerPRelation getBefImage(){
+	public CustomerPRelation getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustomerPRelation beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustomerPRelation beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -367,13 +403,14 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 
 	}
 

@@ -88,107 +88,121 @@ public class ReportList extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return code;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.code = id;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public String getModule() {
 		return module;
 	}
+
 	public void setModule(String module) {
 		this.module = module;
 	}
-	
+
 	public String getFieldLabels() {
 		return fieldLabels;
 	}
+
 	public String[] getLabels() {
-		String[] strLabels=new String[15];
-		if(fieldLabels!=null){
-			strLabels= fieldLabels.split(",");
+		String[] strLabels = new String[15];
+		if (fieldLabels != null) {
+			strLabels = fieldLabels.split(",");
 			for (int i = 0; i < strLabels.length; i++) {
-				strLabels[i]= PennantJavaUtil.getLabel(strLabels[i]);
+				strLabels[i] = PennantJavaUtil.getLabel(strLabels[i]);
 			}
 		}
 		return strLabels;
 	}
+
 	public void setFieldLabels(String fieldLabels) {
 		this.fieldLabels = fieldLabels;
 	}
-	
+
 	public String getFieldValues() {
 		return fieldValues;
 	}
+
 	public String[] getValues() {
-		String[] strValues=null;
-		if(fieldValues!=null){
-			strValues= fieldValues.split(",");
+		String[] strValues = null;
+		if (fieldValues != null) {
+			strValues = fieldValues.split(",");
 		}
 		return strValues;
 	}
+
 	public void setFieldValues(String fieldValues) {
 		this.fieldValues = fieldValues;
 	}
-	
+
 	public String getFieldType() {
 		return fieldType;
 	}
+
 	public String[] getType() {
-		String[] strType=null;
-		if(fieldType!=null){
-			strType= fieldType.split(",");
+		String[] strType = null;
+		if (fieldType != null) {
+			strType = fieldType.split(",");
 		}
 		return strType;
 	}
+
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
 	}
-	
+
 	public String getAddfields() {
 		return addfields;
 	}
+
 	public void setAddfields(String addfields) {
 		this.addfields = addfields;
 	}
-	
+
 	public String getReportFileName() {
 		return reportFileName;
 	}
+
 	public void setReportFileName(String reportFileName) {
 		this.reportFileName = reportFileName;
 	}
-	
+
 	public String getReportHeading() {
 		return reportHeading;
 	}
+
 	public void setReportHeading(String reportHeading) {
 		this.reportHeading = reportHeading;
 	}
-	
+
 	public String getModuleType() {
 		return moduleType;
 	}
+
 	public void setModuleType(String moduleType) {
 		this.moduleType = moduleType;
 	}
-	
+
 	public boolean isFormatReq() {
-	    return formatReq;
-    }
+		return formatReq;
+	}
+
 	public void setFormatReq(boolean formatReq) {
-	    this.formatReq = formatReq;
-    }
+		this.formatReq = formatReq;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -197,7 +211,7 @@ public class ReportList extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -206,12 +220,12 @@ public class ReportList extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public ReportList getBefImage(){
+	public ReportList getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(ReportList beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(ReportList beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -221,9 +235,9 @@ public class ReportList extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
-	public Map<String, Object> getMainHeaderDetails(Map<String, Object> mainHeaders){
-		User userImpl =  SessionUserDetails.getLogiedInUser();
+
+	public Map<String, Object> getMainHeaderDetails(Map<String, Object> mainHeaders) {
+		User userImpl = SessionUserDetails.getLogiedInUser();
 
 		mainHeaders.put("reportHeading", getReportHeading());
 		mainHeaders.put("moduleType", getModuleType());

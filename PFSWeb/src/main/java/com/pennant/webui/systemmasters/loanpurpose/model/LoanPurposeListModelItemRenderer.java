@@ -74,7 +74,7 @@ public class LoanPurposeListModelItemRenderer implements ListitemRenderer<LoanPu
 		lc.setParent(item);
 		lc = new Listcell(loanPurpose.getLoanPurposeDesc());
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox cbAddrTypeIsActive = new Checkbox();
 		cbAddrTypeIsActive.setDisabled(true);

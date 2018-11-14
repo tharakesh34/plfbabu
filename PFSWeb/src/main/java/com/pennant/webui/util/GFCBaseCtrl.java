@@ -50,5 +50,5 @@ import com.pennanttech.framework.web.AbstractDialogController;
  */
 abstract public class GFCBaseCtrl<T> extends AbstractDialogController<T> {
 	private static final long serialVersionUID = 7997527704705222968L;
-	
+
 }

@@ -85,10 +85,10 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DisbursementDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -100,40 +100,38 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	private static final Logger logger = Logger.getLogger(ContractorAssetDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ContractorAssetDetailDialog; 
+	protected Window window_ContractorAssetDetailDialog;
 
-	protected Longbox	    custID;
-	protected Textbox 		custIDName;
-	protected Label	        labelCustIDName;
-	protected Button	   	btnSearchcustID;
-	protected Textbox 		finReference; 
-	protected Textbox 		contractorName; 
-	protected Decimalbox 	dftRetentionPerc; 
-	protected Datebox	 	retentionTillDate; 
-	protected Space	 		space_RetentionTillDate; 
-	protected Textbox 		assetDesc; 
-	protected CurrencyBox	assetValue; 
+	protected Longbox custID;
+	protected Textbox custIDName;
+	protected Label labelCustIDName;
+	protected Button btnSearchcustID;
+	protected Textbox finReference;
+	protected Textbox contractorName;
+	protected Decimalbox dftRetentionPerc;
+	protected Datebox retentionTillDate;
+	protected Space space_RetentionTillDate;
+	protected Textbox assetDesc;
+	protected CurrencyBox assetValue;
 
-	private boolean 		enqModule=false;
+	private boolean enqModule = false;
 
 	// not auto wired vars
 	private ContractorAssetDetail contractorAssetDetail; // overhanded per param
 	private transient DisbursementDetailDialogCtrl disbursementDetailDialogCtrl; // overhanded per param
-	private boolean newRecord=false;
-	private boolean newContractor=false;
+	private boolean newRecord = false;
+	private boolean newContractor = false;
 	private int ccyFormatter = 0;
 	private Date startDate = null;
 	private Date grcEndDate = null;
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient ContractorAssetDetailService contractorAssetDetailService;
 	private List<ContractorAssetDetail> contractorAssetDetails;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -149,9 +147,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected ContractorAssetDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected ContractorAssetDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -165,9 +162,9 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		try {
 
 			if (arguments.containsKey("enqModule")) {
-				enqModule=(Boolean) arguments.get("enqModule");
-			}else{
-				enqModule=false;
+				enqModule = (Boolean) arguments.get("enqModule");
+			} else {
+				enqModule = false;
 			}
 
 			// READ OVERHANDED params !
@@ -182,44 +179,48 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 				setContractorAssetDetail(null);
 			}
 
-			if(getContractorAssetDetail().isNewRecord()){
+			if (getContractorAssetDetail().isNewRecord()) {
 				setNewRecord(true);
 			}
 
-			if(arguments.containsKey("disbursementDetailDialogCtrl")){
-				setDisbursementDetailDialogCtrl((DisbursementDetailDialogCtrl)arguments.get("disbursementDetailDialogCtrl"));
+			if (arguments.containsKey("disbursementDetailDialogCtrl")) {
+				setDisbursementDetailDialogCtrl(
+						(DisbursementDetailDialogCtrl) arguments.get("disbursementDetailDialogCtrl"));
 			}
-			
+
 			if (arguments.containsKey("startDate")) {
 				this.startDate = (Date) arguments.get("startDate");
-			} 
+			}
 			if (arguments.containsKey("grcEndDate")) {
 				this.grcEndDate = (Date) arguments.get("grcEndDate");
-			} 
+			}
 
-			if(arguments.containsKey("financeMainDialogCtrl")){
-				ccyFormatter = CurrencyUtil.getFormat(getDisbursementDetailDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+			if (arguments.containsKey("financeMainDialogCtrl")) {
+				ccyFormatter = CurrencyUtil.getFormat(getDisbursementDetailDialogCtrl().getFinanceDetail()
+						.getFinScheduleData().getFinanceMain().getFinCcy());
 
 				setNewContractor(true);
-				if(arguments.containsKey("newRecord")){
+				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);
-				}else{
+				} else {
 					setNewRecord(false);
 				}
 
 				this.contractorAssetDetail.setWorkflowId(0);
-				if(arguments.containsKey("roleCode")){
+				if (arguments.containsKey("roleCode")) {
 					setRole((String) arguments.get("roleCode"));
-					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "ContractorAssetDetailDialog");
+					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"),
+							"ContractorAssetDetailDialog");
 				}
-			}else{
+			} else {
 				ccyFormatter = 2;
 			}
 
-			doLoadWorkFlow(this.contractorAssetDetail.isWorkflow(),this.contractorAssetDetail.getWorkflowId(),this.contractorAssetDetail.getNextTaskId());
+			doLoadWorkFlow(this.contractorAssetDetail.isWorkflow(), this.contractorAssetDetail.getWorkflowId(),
+					this.contractorAssetDetail.getNextTaskId());
 
-			if (isWorkFlowEnabled()){
-				this.userAction	= setListRecordStatus(this.userAction);
+			if (isWorkFlowEnabled()) {
+				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "ContractorAssetDetailDialog");
 			}
 
@@ -233,7 +234,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			MessageUtil.showError(e);
 			this.window_ContractorAssetDetailDialog.onClose();
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -242,9 +243,9 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -254,9 +255,9 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -266,9 +267,9 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -277,9 +278,9 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doWriteBeanToComponents(this.contractorAssetDetail.getBefImage());
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -289,16 +290,16 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_ContractorAssetDetailDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *			  An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -309,9 +310,9 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 
 		this.custIDName.clearErrorMessage();
 
-		Customer details = (Customer)PennantAppUtil.getCustomerObject(this.custIDName.getValue(), null);
+		Customer details = (Customer) PennantAppUtil.getCustomerObject(this.custIDName.getValue(), null);
 
-		if(details == null) {
+		if (details == null) {
 			this.custID.setValue(Long.valueOf(0));
 			this.labelCustIDName.setValue("");
 			//throw new WrongValueException( this.custIDName, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_custID.value") }));
@@ -329,16 +330,18 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		this.dftRetentionPerc.clearErrorMessage();
 		this.retentionTillDate.setDisabled(true);
 		this.space_RetentionTillDate.setSclass("");
-		if(this.dftRetentionPerc.getValue() != null  && this.dftRetentionPerc.getValue().compareTo(BigDecimal.ZERO) > 0){
+		if (this.dftRetentionPerc.getValue() != null
+				&& this.dftRetentionPerc.getValue().compareTo(BigDecimal.ZERO) > 0) {
 			this.retentionTillDate.setDisabled(isReadOnly("ContractorAssetDetailDialog_RetentionTillDate"));
 			this.space_RetentionTillDate.setSclass(PennantConstants.mandateSclass);
 		}
-		if(this.dftRetentionPerc.getValue() == null || this.dftRetentionPerc.getValue().compareTo(BigDecimal.ZERO) == 0){
+		if (this.dftRetentionPerc.getValue() == null
+				|| this.dftRetentionPerc.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			this.retentionTillDate.setText("");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchcustID(Event event) {
 
 		Object dataObject = ExtendedSearchListBox.show(this.window_ContractorAssetDetailDialog, "Customer");
@@ -365,15 +368,15 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
-		try {			
-			ScreenCTL.displayNotes(getNotes("ContractorAssetDetail",getContractorAssetDetail().
-					getFinReference(),getContractorAssetDetail().getVersion()),this);
+		logger.debug("Entering" + event.toString());
+		try {
+			ScreenCTL.displayNotes(getNotes("ContractorAssetDetail", getContractorAssetDetail().getFinReference(),
+					getContractorAssetDetail().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 
 	}
 
@@ -382,8 +385,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aContractorAssetDetail
 	 * @throws Exception
@@ -392,7 +394,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		logger.debug("Entering");
 
 		try {
-			
+
 			// set ReadOnly mode accordingly if the object is new or not.
 			if (isNewRecord()) {
 				this.btnCtrl.setInitNew();
@@ -418,7 +420,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			getBorderLayoutHeight();
-			this.window_ContractorAssetDetailDialog.setHeight(this.borderLayoutHeight-200+"px");
+			this.window_ContractorAssetDetailDialog.setHeight(this.borderLayoutHeight - 200 + "px");
 			this.window_ContractorAssetDetailDialog.setWidth("70%");
 			this.window_ContractorAssetDetailDialog.doModal();
 		} catch (UiException e) {
@@ -427,7 +429,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	// 1 Enquiry
@@ -451,7 +453,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			this.btnCancel.setVisible(true);
 			this.contractorName.setReadonly(true);
 		}
-		
+
 		this.custID.setReadonly(true);
 		this.finReference.setReadonly(isReadOnly("ContractorAssetDetailDialog_FinReference"));
 		this.custIDName.setReadonly(isReadOnly("ContractorAssetDetailDialog_custID"));
@@ -461,11 +463,12 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		this.assetValue.setDisabled(isReadOnly("ContractorAssetDetailDialog_AssetValue"));
 		this.dftRetentionPerc.setDisabled(isReadOnly("ContractorAssetDetailDialog_DftRetentionPerc"));
 		this.retentionTillDate.setDisabled(true);
-		if(this.dftRetentionPerc.getValue() != null  && this.dftRetentionPerc.getValue().compareTo(BigDecimal.ZERO) > 0){
+		if (this.dftRetentionPerc.getValue() != null
+				&& this.dftRetentionPerc.getValue().compareTo(BigDecimal.ZERO) > 0) {
 			this.retentionTillDate.setDisabled(isReadOnly("ContractorAssetDetailDialog_RetentionTillDate"));
 			this.space_RetentionTillDate.setSclass(PennantConstants.mandateSclass);
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -477,28 +480,27 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			if(newContractor){
-				if (isNewRecord()){
+			if (newContractor) {
+				if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				}else{
+				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newContractor);
 				}
-			}else{
+			} else {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");
 	}
-	
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled() || isNewContractor()){
+
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled() || isNewContractor()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
 	}
-
 
 	public void doReadOnly() {
 		logger.debug("Entering");
@@ -508,7 +510,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
+
 		this.finReference.setReadonly(true);
 		this.contractorName.setReadonly(true);
 		this.dftRetentionPerc.setDisabled(true);
@@ -518,7 +520,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		this.btnSearchcustID.setDisabled(true);
 		this.assetDesc.setReadonly(true);
 		this.assetValue.setDisabled(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
@@ -533,12 +535,11 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		if(!enqModule){
+		logger.debug("Entering");
+		if (!enqModule) {
 			getUserWorkspace().allocateAuthorities("ContractorAssetDetailDialog", getRole());
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ContractorAssetDetailDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ContractorAssetDetailDialog_btnEdit"));
@@ -547,14 +548,14 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			this.btnCancel.setVisible(false);
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.finReference.setMaxlength(50);
 		this.contractorName.setMaxlength(50);
@@ -566,14 +567,14 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		this.dftRetentionPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.retentionTillDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
-		if (isWorkFlowEnabled()){
-			if(enqModule){
+		if (isWorkFlowEnabled()) {
+			if (enqModule) {
 				groupboxWf.setVisible(false);
 			}
-		}else{
+		} else {
 			groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -583,7 +584,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 *            ContractorAssetDetail
 	 */
 	public void doWriteBeanToComponents(ContractorAssetDetail aContractorAssetDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.custID.setValue(aContractorAssetDetail.getCustID());
 		this.custIDName.setValue(aContractorAssetDetail.getLovDescCustCIF());
 		this.contractorName.setValue(aContractorAssetDetail.getContractorName());
@@ -591,7 +592,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		this.finReference.setValue(aContractorAssetDetail.getFinReference());
 		this.finReference.setValue(aContractorAssetDetail.getFinReference());
 		this.assetDesc.setValue(aContractorAssetDetail.getAssetDesc());
-		this.assetValue.setValue(PennantApplicationUtil.formateAmount(aContractorAssetDetail.getAssetValue(), ccyFormatter));
+		this.assetValue
+				.setValue(PennantApplicationUtil.formateAmount(aContractorAssetDetail.getAssetValue(), ccyFormatter));
 		this.dftRetentionPerc.setValue(aContractorAssetDetail.getDftRetentionPerc());
 		this.retentionTillDate.setValue(aContractorAssetDetail.getRetentionTillDate());
 
@@ -605,7 +607,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @param aContractorAssetDetail
 	 */
 	public void doWriteComponentsToBean(ContractorAssetDetail aContractorAssetDetail) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -613,12 +615,12 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		//Fin Reference
 		try {
 			aContractorAssetDetail.setFinReference(this.finReference.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aContractorAssetDetail.setContractorName(this.contractorName.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -633,37 +635,39 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		//Asset Desc
 		try {
 			aContractorAssetDetail.setAssetDesc(this.assetDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Default Retention percentage
 		try {
-			aContractorAssetDetail.setDftRetentionPerc(this.dftRetentionPerc.getValue() == null ? BigDecimal.ZERO : this.dftRetentionPerc.getValue());
-		}catch (WrongValueException we ) {
+			aContractorAssetDetail.setDftRetentionPerc(
+					this.dftRetentionPerc.getValue() == null ? BigDecimal.ZERO : this.dftRetentionPerc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Retention Till Date
 		try {
 			aContractorAssetDetail.setRetentionTillDate(this.retentionTillDate.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Asset Value
 		try {
-			if(this.assetValue.getValidateValue()!=null){
-				aContractorAssetDetail.setAssetValue(PennantApplicationUtil.unFormateAmount(this.assetValue.getActualValue(), ccyFormatter));
+			if (this.assetValue.getValidateValue() != null) {
+				aContractorAssetDetail.setAssetValue(
+						PennantApplicationUtil.unFormateAmount(this.assetValue.getActualValue(), ccyFormatter));
 			}
-			if(aContractorAssetDetail.getAssetValue().compareTo(aContractorAssetDetail.getTotClaimAmt()) < 0){
-				throw new WrongValueException(this.assetValue, "Asset Value cannot be Less than the claim amount of " + 
-						PennantApplicationUtil.formateAmount(aContractorAssetDetail.getTotClaimAmt(), ccyFormatter));
+			if (aContractorAssetDetail.getAssetValue().compareTo(aContractorAssetDetail.getTotClaimAmt()) < 0) {
+				throw new WrongValueException(this.assetValue, "Asset Value cannot be Less than the claim amount of "
+						+ PennantApplicationUtil.formateAmount(aContractorAssetDetail.getTotClaimAmt(), ccyFormatter));
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		if(aContractorAssetDetail.getAssetValue().compareTo(BigDecimal.ZERO) != 0){
-			BigDecimal amount = (aContractorAssetDetail.getTotClaimAmt().divide(aContractorAssetDetail.getAssetValue(), 
-					2, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100)) ;
+		if (aContractorAssetDetail.getAssetValue().compareTo(BigDecimal.ZERO) != 0) {
+			BigDecimal amount = (aContractorAssetDetail.getTotClaimAmt().divide(aContractorAssetDetail.getAssetValue(),
+					2, RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100));
 
 			aContractorAssetDetail.setLovDescClaimPercent(PennantApplicationUtil.unFormateAmount(amount, 2));
 		}
@@ -672,7 +676,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -689,33 +693,41 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		logger.debug("Entering");
 		doClearMessage();
 		//Contractor Name
-		if (!this.contractorName.isReadonly()){
-			this.contractorName.setConstraint(new PTStringValidator(Labels.getLabel("label_ContractorAssetDetailDialog_ContractorName.value"),PennantRegularExpressions.REGEX_NAME,true));
+		if (!this.contractorName.isReadonly()) {
+			this.contractorName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ContractorAssetDetailDialog_ContractorName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		
+
 		//Asset Value
-		if (!this.assetValue.isReadonly()){
-			this.assetValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ContractorAssetDetailDialog_AssetValue.value"), ccyFormatter, true, false, 0));
+		if (!this.assetValue.isReadonly()) {
+			this.assetValue.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_ContractorAssetDetailDialog_AssetValue.value"),
+							ccyFormatter, true, false, 0));
 		}
-		
+
 		//Asset Desc
-		if (!this.assetDesc.isReadonly()){
-			this.assetDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ContractorAssetDetailDialog_AssetDesc.value"),PennantRegularExpressions.REGEX_ALPHANUM_SPACE,true));
+		if (!this.assetDesc.isReadonly()) {
+			this.assetDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ContractorAssetDetailDialog_AssetDesc.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
-		
+
 		//Default Retention Percentage
-		BigDecimal retentionPerc = this.dftRetentionPerc.getValue() == null ? BigDecimal.ZERO : this.dftRetentionPerc.getValue();
-		if (!this.dftRetentionPerc.isDisabled()){
-			this.dftRetentionPerc.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_ContractorAssetDetailDialog_DftRetentionPerc.value"), 2, true, false, 99));
+		BigDecimal retentionPerc = this.dftRetentionPerc.getValue() == null ? BigDecimal.ZERO
+				: this.dftRetentionPerc.getValue();
+		if (!this.dftRetentionPerc.isDisabled()) {
+			this.dftRetentionPerc.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_ContractorAssetDetailDialog_DftRetentionPerc.value"), 2, true, false, 99));
 		}
-		
+
 		//Retention Till Date
-		if (!this.retentionTillDate.isDisabled() && retentionPerc.compareTo(BigDecimal.ZERO) > 0){
-			this.retentionTillDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ContractorAssetDetailDialog_RetentionTillDate.value"),
-					true, startDate, grcEndDate,true));
+		if (!this.retentionTillDate.isDisabled() && retentionPerc.compareTo(BigDecimal.ZERO) > 0) {
+			this.retentionTillDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_ContractorAssetDetailDialog_RetentionTillDate.value"),
+							true, startDate, grcEndDate, true));
 		}
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -738,7 +750,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 */
 	private void doSetLOVValidation() {
 		if (this.btnSearchcustID.isVisible() && !this.btnSearchcustID.isDisabled()) {
-			this.custIDName.setConstraint(new PTStringValidator(Labels.getLabel("label_ContractorAssetDetailDialog_custID.value"),null,false));
+			this.custIDName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ContractorAssetDetailDialog_custID.value"), null, false));
 		}
 	}
 
@@ -771,21 +784,23 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final ContractorAssetDetail aContractorAssetDetail = new ContractorAssetDetail();
 		BeanUtils.copyProperties(getContractorAssetDetail(), aContractorAssetDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				Labels.getLabel("label_ContractorAssetDetailDialog_ContractorName.value")+" : "+aContractorAssetDetail.getContractorName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ContractorAssetDetailDialog_ContractorName.value") + " : "
+				+ aContractorAssetDetail.getContractorName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if(getDisbursementDetailDialogCtrl() != null){
+			if (getDisbursementDetailDialogCtrl() != null) {
 				List<FinanceDisbursement> list = getDisbursementDetailDialogCtrl().getDisbursementDetails();
-				if(list != null && !list.isEmpty()){
+				if (list != null && !list.isEmpty()) {
 					for (FinanceDisbursement disbursement : list) {
-						if(disbursement.getContractorId() == aContractorAssetDetail.getContractorId() && 
-								!StringUtils.trimToEmpty(disbursement.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
+						if (disbursement.getContractorId() == aContractorAssetDetail.getContractorId()
+								&& !StringUtils.trimToEmpty(disbursement.getRecordType())
+										.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 							MessageUtil.showError(
 									"Not Allowed to Delete This Record. Disbursement Details Exist on this Contractor.");
 							return;
@@ -794,30 +809,31 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 				}
 			}
 
-			if (StringUtils.isBlank(aContractorAssetDetail.getRecordType())){
-				aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion()+1);
+			if (StringUtils.isBlank(aContractorAssetDetail.getRecordType())) {
+				aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion() + 1);
 				aContractorAssetDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aContractorAssetDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aContractorAssetDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aContractorAssetDetail.getNextTaskId(), aContractorAssetDetail);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aContractorAssetDetail.getNextTaskId(),
+							aContractorAssetDetail);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(isNewContractor()){
-					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newContractor(aContractorAssetDetail, tranType);
+				if (isNewContractor()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newContractor(aContractorAssetDetail, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_ContractorAssetDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						getDisbursementDetailDialogCtrl().doFillContractorDetails(this.contractorAssetDetails);
 						closeDialog();
-					}	
+					}
 				}
 
 			} catch (DataAccessException e) {
@@ -827,7 +843,6 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Clears the components values. <br>
@@ -856,13 +871,14 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		BeanUtils.copyProperties(getContractorAssetDetail(), aContractorAssetDetail);
 		boolean isNew = false;
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			aContractorAssetDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aContractorAssetDetail.getNextTaskId(), aContractorAssetDetail);
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aContractorAssetDetail.getNextTaskId(),
+					aContractorAssetDetail);
 		}
 
 		// force validation, if on, than execute by component.getValue()
-		if(!PennantConstants.RECORD_TYPE_DEL.equals(aContractorAssetDetail.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aContractorAssetDetail.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the ContractorAssetDetail object with the components data
 			doWriteComponentsToBean(aContractorAssetDetail);
@@ -872,56 +888,56 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		// Do data level validations here
 
 		isNew = aContractorAssetDetail.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aContractorAssetDetail.getRecordType())){
-				aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aContractorAssetDetail.getRecordType())) {
+				aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion() + 1);
+				if (isNew) {
 					aContractorAssetDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aContractorAssetDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aContractorAssetDetail.setNewRecord(true);
 				}
 			}
-		}else{
+		} else {
 
-			if(isNewContractor()){
-				if(isNewRecord()){
+			if (isNewContractor()) {
+				if (isNewRecord()) {
 					aContractorAssetDetail.setVersion(1);
 					aContractorAssetDetail.setRecordType(PennantConstants.RCD_ADD);
-				}else{
+				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if(StringUtils.isBlank(aContractorAssetDetail.getRecordType())){
-					aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion()+1);
+				if (StringUtils.isBlank(aContractorAssetDetail.getRecordType())) {
+					aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion() + 1);
 					aContractorAssetDetail.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if(aContractorAssetDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
-					tranType =PennantConstants.TRAN_ADD;
-				} else if(aContractorAssetDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-					tranType =PennantConstants.TRAN_UPD;
+				if (aContractorAssetDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aContractorAssetDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
 				}
-			}else{
+			} else {
 				aContractorAssetDetail.setVersion(aContractorAssetDetail.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
-			}			
+			}
 		}
 
 		// save it to database
 		try {
 
-			AuditHeader auditHeader =  newContractor(aContractorAssetDetail, tranType);
+			AuditHeader auditHeader = newContractor(aContractorAssetDetail, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_ContractorAssetDetailDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
-			if (retValue == PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getDisbursementDetailDialogCtrl().doFillContractorDetails(this.contractorAssetDetails);
 				closeDialog();
 			}
@@ -932,11 +948,10 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		logger.debug("Leaving");
 	}
 
+	private AuditHeader newContractor(ContractorAssetDetail aContractorAssetDetail, String tranType) {
+		boolean recordAdded = false;
 
-	private AuditHeader newContractor(ContractorAssetDetail aContractorAssetDetail, String tranType){
-		boolean recordAdded=false;
-
-		AuditHeader auditHeader= getAuditHeader(aContractorAssetDetail, tranType);
+		AuditHeader auditHeader = getAuditHeader(aContractorAssetDetail, tranType);
 		this.contractorAssetDetails = new ArrayList<ContractorAssetDetail>();
 
 		String[] valueParm = new String[2];
@@ -945,52 +960,56 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		valueParm[0] = aContractorAssetDetail.getContractorName();
 		valueParm[1] = String.valueOf(aContractorAssetDetail.getFinReference());
 
-		errParm[0] = PennantJavaUtil.getLabel("label_ContractorAssetDetailDialog_Contractor.value") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_ContractorAssetDetailDialog_FinReference.value") + ":"+valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_ContractorAssetDetailDialog_Contractor.value") + ":"
+				+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_ContractorAssetDetailDialog_FinReference.value") + ":"
+				+ valueParm[1];
 
-		if(getDisbursementDetailDialogCtrl().getContractorAssetDetails() !=null && getDisbursementDetailDialogCtrl().getContractorAssetDetails().size()>0){
+		if (getDisbursementDetailDialogCtrl().getContractorAssetDetails() != null
+				&& getDisbursementDetailDialogCtrl().getContractorAssetDetails().size() > 0) {
 			for (int i = 0; i < getDisbursementDetailDialogCtrl().getContractorAssetDetails().size(); i++) {
 				ContractorAssetDetail loanDetail = getDisbursementDetailDialogCtrl().getContractorAssetDetails().get(i);
 
-				if(aContractorAssetDetail.getContractorName().equals(loanDetail.getContractorName())){ // Both Current and Existing list same
+				if (aContractorAssetDetail.getContractorName().equals(loanDetail.getContractorName())) { // Both Current and Existing list same
 
-					if(isNewRecord()){
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-								"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+					if (isNewRecord()) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
-					if(PennantConstants.TRAN_DEL.equals(tranType)){
-						if(PennantConstants.RECORD_TYPE_UPD.equals(aContractorAssetDetail.getRecordType())){
+					if (PennantConstants.TRAN_DEL.equals(tranType)) {
+						if (PennantConstants.RECORD_TYPE_UPD.equals(aContractorAssetDetail.getRecordType())) {
 							aContractorAssetDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-							recordAdded=true;
+							recordAdded = true;
 							contractorAssetDetails.add(aContractorAssetDetail);
-						}else if(PennantConstants.RCD_ADD.equals(aContractorAssetDetail.getRecordType())){
-							recordAdded=true;
-						}else if(PennantConstants.RECORD_TYPE_NEW.equals(aContractorAssetDetail.getRecordType())){
+						} else if (PennantConstants.RCD_ADD.equals(aContractorAssetDetail.getRecordType())) {
+							recordAdded = true;
+						} else if (PennantConstants.RECORD_TYPE_NEW.equals(aContractorAssetDetail.getRecordType())) {
 							aContractorAssetDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							recordAdded=true;
+							recordAdded = true;
 							contractorAssetDetails.add(aContractorAssetDetail);
-						}else if(PennantConstants.RECORD_TYPE_CAN.equals(aContractorAssetDetail.getRecordType())){
-							recordAdded=true;
+						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aContractorAssetDetail.getRecordType())) {
+							recordAdded = true;
 							//No Such Case
 						}
-					}else{
-						if(!PennantConstants.TRAN_UPD.equals(tranType)){
+					} else {
+						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							contractorAssetDetails.add(loanDetail);
 						}
 					}
-				}else{
+				} else {
 					contractorAssetDetails.add(loanDetail);
 				}
 			}
 		}
 
-		if(!recordAdded){
+		if (!recordAdded) {
 			contractorAssetDetails.add(aContractorAssetDetail);
 		}
 		return auditHeader;
-	} 
+	}
 
 	// WorkFlow Components
 
@@ -1000,9 +1019,11 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(ContractorAssetDetail aContractorAssetDetail, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aContractorAssetDetail.getBefImage(), aContractorAssetDetail);   
-		return new AuditHeader(aContractorAssetDetail.getFinReference(),null,null,null,auditDetail,aContractorAssetDetail.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(ContractorAssetDetail aContractorAssetDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aContractorAssetDetail.getBefImage(),
+				aContractorAssetDetail);
+		return new AuditHeader(aContractorAssetDetail.getFinReference(), null, null, null, auditDetail,
+				aContractorAssetDetail.getUserDetails(), getOverideMap());
 	}
 
 	// ******************************************************//
@@ -1012,6 +1033,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	public ContractorAssetDetail getContractorAssetDetail() {
 		return this.contractorAssetDetail;
 	}
+
 	public void setContractorAssetDetail(ContractorAssetDetail contractorAssetDetail) {
 		this.contractorAssetDetail = contractorAssetDetail;
 	}
@@ -1019,6 +1041,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	public void setContractorAssetDetailService(ContractorAssetDetailService contractorAssetDetailService) {
 		this.contractorAssetDetailService = contractorAssetDetailService;
 	}
+
 	public ContractorAssetDetailService getContractorAssetDetailService() {
 		return this.contractorAssetDetailService;
 	}
@@ -1026,9 +1049,11 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	public void setDisbursementDetailDialogCtrl(DisbursementDetailDialogCtrl disbursementDetailDialogCtrl) {
 		this.disbursementDetailDialogCtrl = disbursementDetailDialogCtrl;
 	}
+
 	public DisbursementDetailDialogCtrl getDisbursementDetailDialogCtrl() {
 		return this.disbursementDetailDialogCtrl;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -1036,6 +1061,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public boolean isNewContractor() {
 		return newContractor;
 	}
@@ -1047,8 +1073,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 	public List<ContractorAssetDetail> getContractorAssetDetails() {
 		return contractorAssetDetails;
 	}
-	public void setContractorAssetDetails(
-			List<ContractorAssetDetail> contractorAssetDetails) {
+
+	public void setContractorAssetDetails(List<ContractorAssetDetail> contractorAssetDetails) {
 		this.contractorAssetDetails = contractorAssetDetails;
 	}
 

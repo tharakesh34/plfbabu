@@ -11,11 +11,11 @@ import com.pennanttech.bajaj.services.PosidexResponseServiceImpl;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PosidexCustomerUpdateResponseJob implements Job, Serializable {
-	private static final Logger				logger				= Logger.getLogger(PosidexCustomerUpdateResponseJob.class);
+	private static final Logger logger = Logger.getLogger(PosidexCustomerUpdateResponseJob.class);
 
-	private static final long				serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static PosidexResponseServiceImpl	posidexResponseService;
+	private static PosidexResponseServiceImpl posidexResponseService;
 
 	public PosidexCustomerUpdateResponseJob() {
 		super();

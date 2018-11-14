@@ -13,6 +13,7 @@ public class EODHealthCheck {
 	}
 
 	public void doHealthCheck() throws Exception {
-		new TrailBalanceEngine(dataSource, 1000, DateUtility.getAppValueDate(), DateUtility.getAppDate()).doHealthCheck();
+		new TrailBalanceEngine(dataSource, 1000, DateUtility.getAppValueDate(), DateUtility.getAppDate())
+				.doHealthCheck();
 	}
 }

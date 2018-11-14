@@ -69,23 +69,22 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/Enquiry/FeeEnquiryDialogCtrl.zul file.
  */
 public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
-	private static final long				serialVersionUID				= 3184249234920071313L;
-	private static final Logger				logger							= Logger
-			.getLogger(ExpenseEnquiryDialogCtrl.class);
+	private static final long serialVersionUID = 3184249234920071313L;
+	private static final Logger logger = Logger.getLogger(ExpenseEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_ExpenseEnquiryDialog;
-	protected Listbox						listBoxExpenseDetail;
-	private Tabpanel						tabPanel_dialogWindow;
+	protected Window window_ExpenseEnquiryDialog;
+	protected Listbox listBoxExpenseDetail;
+	private Tabpanel tabPanel_dialogWindow;
 
-	private FinanceEnquiryHeaderDialogCtrl	financeEnquiryHeaderDialogCtrl	= null;
-	private List<FinExpenseDetails>			finExpenseDetails;
-	private UploadHeaderService				uploadHeaderService;
-	private String							finReference;
-	private int								ccyFormatter					= 0;
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
+	private List<FinExpenseDetails> finExpenseDetails;
+	private UploadHeaderService uploadHeaderService;
+	private String finReference;
+	private int ccyFormatter = 0;
 
 	/**
 	 * default constructor.<br>
@@ -128,7 +127,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 		} else {
 			this.finReference = null;
 		}
-		
+
 		if (arguments.containsKey("ccyformat")) {
 			this.ccyFormatter = (int) arguments.get("ccyformat");
 		}
@@ -188,7 +187,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 				lc = new Listcell(detail.getExpenseTypeDesc());
 				lc.setParent(item);
 
-				lc = new Listcell(PennantAppUtil.amountFormate(detail.getAmount(),ccyFormatter));
+				lc = new Listcell(PennantAppUtil.amountFormate(detail.getAmount(), ccyFormatter));
 				lc.setParent(item);
 
 				lc = new Listcell(DateUtility.formatToLongDate(detail.getLastMntOn()));
@@ -216,7 +215,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 		FinExpenseDetails finExpenseDetails = (FinExpenseDetails) event.getData();
 
 		List<FinExpenseMovements> finExpenseMovements = getUploadHeaderService()
-				.getFinExpenseMovementById(this.finReference,finExpenseDetails.getFinExpenseId());
+				.getFinExpenseMovementById(this.finReference, finExpenseDetails.getFinExpenseId());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 
 		map.put("finExpenseDetails", finExpenseDetails);

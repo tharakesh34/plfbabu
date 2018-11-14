@@ -44,7 +44,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -67,7 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements InsuranceTypeDAO {
 	private static Logger logger = Logger.getLogger(InsuranceTypeDAOImpl.class);
-		
+
 	public InsuranceTypeDAOImpl() {
 		super();
 	}
@@ -93,7 +92,8 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 			sql.append("");
 		}
 
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From InsuranceType");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where InsuranceType =:InsuranceType");
@@ -103,8 +103,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 		RowMapper<InsuranceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InsuranceType.class);
 
 		try {
-			insuranceType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters,
-					typeRowMapper);
+			insuranceType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			insuranceType = null;
@@ -191,10 +190,12 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 		StringBuilder sql = new StringBuilder("Insert Into InsuranceType");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (insuranceType,insuranceTypeDesc,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
 		sql.append(" :insuranceType,:insuranceTypeDesc,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("sql: " + sql.toString());
 
@@ -267,8 +268,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 				.newInstance(InsuranceTypeProvider.class);
 
 		try {
-			provider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			provider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			provider = null;
@@ -319,8 +319,8 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 		insertSql.append(" InsuranceTypeProvider");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (InsuranceType,ProviderCode,");
-		insertSql
-				.append(" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
+		insertSql.append(
+				" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
 		insertSql.append(" values (:InsuranceType,:ProviderCode, ");
 		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 
@@ -357,7 +357,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 		logger.debug("Leaving");
 
 	}
-	
+
 	@Override
 	public List<InsuranceTypeProvider> getInsuranceType(String providerCode, String type) {
 		logger.debug("Entering");

@@ -1,13 +1,10 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<div style="overflow:auto" height="100%">
 		<groupbox mold="3d" height="50%">
-			<caption label="${c:l('message.dashboard_instructions.title')}"
-				style="color:#FF6600" />
+			<caption label="${c:l('message.dashboard_instructions.title')}" style="color:#FF6600" />
 			<html sclass="z-label" style="color:#555">
 				<![CDATA[
 		   <pre>
@@ -22,11 +19,10 @@ use below values</br>
 * &ROLES  --> It replaces with " ('role1','role2',...) ".Here Role1,Role2 are login user roles</br>
   For e.g select empName as label,salary as value from salary where rolecode in &ROLES</br>
 * &USERLOGIN --> It replaces with Login userLogin .like James_S059</pre>  ]]>
-				 </html>
-      </groupbox>
+			</html>
+		</groupbox>
 		<groupbox mold="3d" open="true" height="230px" contentStyle="overflow:auto;">
-			<caption label="${c:l('message.dashboard_instructions_DrillDown.title')}"
-				style="color:#FF6600" />
+			<caption label="${c:l('message.dashboard_instructions_DrillDown.title')}" style="color:#FF6600" />
 			<html sclass="z-label" style="color:#555">
 				<![CDATA[<pre>
 * Query :<br/>
@@ -39,7 +35,7 @@ select  BenifitName as label,BenifitAmount as value, EmpName as reference from E
 * Remarks:<br/>
 4)Remarks for Each Chart must separated by symbol ||<br/>
 || ...so on</pre>]]>
-				 </html>
+			</html>
 		</groupbox>
 	</div>
 </zk>

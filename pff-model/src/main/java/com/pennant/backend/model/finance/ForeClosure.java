@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ForeClosure implements Serializable {
-	private static final long	serialVersionUID	= 1051334309884378798L;
+	private static final long serialVersionUID = 1051334309884378798L;
 
-	private Date				valueDate;
-	private BigDecimal			accuredIntTillDate	= BigDecimal.ZERO;
-	private BigDecimal			foreCloseAmount		= BigDecimal.ZERO;
-	private BigDecimal			chargeAmount		= BigDecimal.ZERO;
+	private Date valueDate;
+	private BigDecimal accuredIntTillDate = BigDecimal.ZERO;
+	private BigDecimal foreCloseAmount = BigDecimal.ZERO;
+	private BigDecimal chargeAmount = BigDecimal.ZERO;
 
 	public ForeClosure() {
 

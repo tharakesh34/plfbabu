@@ -64,6 +64,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
+import com.pennant.backend.delegationdeviation.DeviationConfigService;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -72,8 +74,6 @@ import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.delegationdeviation.DeviationHelper;
-import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -83,33 +83,33 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class DeviationConfigCtrl {
 
-	private static final Logger					logger				= Logger.getLogger(DeviationConfigCtrl.class);
+	private static final Logger logger = Logger.getLogger(DeviationConfigCtrl.class);
 
 	// Variables
-	private String								fintype;
-	private int									percnetageFormatter	= 2;
-	private int									finFormatter		= 0;
+	private String fintype;
+	private int percnetageFormatter = 2;
+	private int finFormatter = 0;
 
 	// Components
-	protected Listbox							delationDeviation;
+	protected Listbox delationDeviation;
 
 	// Objects
-	List<ValueLabel>							delgationRoles;
-	List<DeviationHeader>						deviationHeaderList;
+	List<ValueLabel> delgationRoles;
+	List<DeviationHeader> deviationHeaderList;
 	@Autowired
-	private transient DeviationConfigService	deviationConfigService;
-	private FinTypeAccountingDAO				finTypeAccountingDAO;
+	private transient DeviationConfigService deviationConfigService;
+	private FinTypeAccountingDAO finTypeAccountingDAO;
 	@Autowired
-	DeviationHelper								deviationHelper;
+	DeviationHelper deviationHelper;
 
 	// Constants
-	private static final String					styleCenter			= "text-align: center;";
-	private static final String					styleListGroup		= "font-weight: bold; background: #808080;  color: white;";
-	private static final String					styleBold			= "font-weight: bold;";
-	private static final String					ATT_DATA_TYPE		= "dataType";
-	private static final String					ATT_Module			= "module";
-	private static final String					BOOLEAN_TRUE		= "1";
-	private static final String					BOOLEAN_FALSE		= "0";
+	private static final String styleCenter = "text-align: center;";
+	private static final String styleListGroup = "font-weight: bold; background: #808080;  color: white;";
+	private static final String styleBold = "font-weight: bold;";
+	private static final String ATT_DATA_TYPE = "dataType";
+	private static final String ATT_Module = "module";
+	private static final String BOOLEAN_TRUE = "1";
+	private static final String BOOLEAN_FALSE = "0";
 
 	public DeviationConfigCtrl() {
 
@@ -310,8 +310,7 @@ public class DeviationConfigCtrl {
 		 * List<Long> listAcc = getFinanceTypeAccountSetID(); if (listAcc == null || listAcc.isEmpty()) { return; }
 		 * accountingsetIds.addAll(listAcc);
 		 */
-		List<FinTypeFees> feeCodes = deviationConfigService.getFeeCodeList(finType,
-				FinanceConstants.MODULEID_FINTYPE);
+		List<FinTypeFees> feeCodes = deviationConfigService.getFeeCodeList(finType, FinanceConstants.MODULEID_FINTYPE);
 
 		if (!feeCodes.isEmpty()) {
 

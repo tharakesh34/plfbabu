@@ -7,7 +7,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.mandate.AbstractMandateProcess;
 
 public class MandateProcess extends AbstractMandateProcess {
-	
+
 	public MandateProcess() {
 		super();
 	}

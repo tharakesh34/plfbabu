@@ -198,5 +198,4 @@ public class LocalityDAOImpl extends SequenceDao<Locality> implements LocalityDA
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 }

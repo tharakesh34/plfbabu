@@ -50,8 +50,10 @@ import com.pennanttech.pff.core.TableType;
 
 public interface FinIRRDetailsDAO extends BasicCrudDao<FinIRRDetails> {
 
-	List<FinIRRDetails> getFinIRRList(String finReference,  String type);
+	List<FinIRRDetails> getFinIRRList(String finReference, String type);
+
 	void saveList(List<FinIRRDetails> baseIRRFeeTypes, TableType tableType);
+
 	void deleteList(String finReference, TableType tableType);
-	
+
 }

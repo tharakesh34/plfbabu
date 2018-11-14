@@ -90,12 +90,12 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	protected Textbox mICR;
 	protected Textbox iFSC;
 	protected Textbox addOfBranch;
-	protected Checkbox 		cheque; 
-	protected Checkbox 		dd; 
-	protected Checkbox 		ecs; 
-	protected Checkbox 		nach; 
-	protected Checkbox 		dda; 
-	protected Checkbox 		active; 
+	protected Checkbox cheque;
+	protected Checkbox dd;
+	protected Checkbox ecs;
+	protected Checkbox nach;
+	protected Checkbox dda;
+	protected Checkbox active;
 	private boolean enqModule = false;
 	// not auto wired vars
 	private BankBranch bankBranch; // overhanded per param
@@ -164,7 +164,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "BankBranchDialog");
-			}else{
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -209,7 +209,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.bankCode.setValidateColumns(new String[] { "BankCode", "BankName" });
 
 		this.city.setModuleName("City");
-	
+
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
 		this.city.setDisplayStyle(2);
@@ -221,7 +221,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**
@@ -234,14 +234,14 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		if(!enqModule){
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnSave"));
-		this.btnCancel.setVisible(false);
+		if (!enqModule) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnSave"));
+			this.btnCancel.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -357,10 +357,10 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.ecs.setChecked(aBankBranch.isEcs());
 		this.dd.setChecked(aBankBranch.isDd());
 		this.cheque.setChecked(aBankBranch.isCheque());
-		this.dda.setChecked(aBankBranch.isDda());		
-		this.active.setChecked(aBankBranch.isActive());		
+		this.dda.setChecked(aBankBranch.isDda());
+		this.active.setChecked(aBankBranch.isActive());
 		this.recordStatus.setValue(aBankBranch.getRecordStatus());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -440,19 +440,19 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aBankBranch.setCheque(this.cheque.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aBankBranch.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -515,7 +515,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aBankBranch);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -525,7 +525,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -538,17 +538,20 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		}
 		// Branch Code
 		if (!this.branchCode.isReadonly()) {
-			this.branchCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BankBranchDialog_BranchCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.branchCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_BranchCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		// Branch Desc
 		if (!this.branchDesc.isReadonly()) {
-			this.branchDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BankBranchDialog_BranchDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.branchDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_BranchDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		// City
 		if (!this.city.isReadonly()) {
-			this.city.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_City.value"),null, false,true));
+			this.city.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BankBranchDialog_City.value"), null, false, true));
 		}
 		// MICR Code
 		if (!this.mICR.isReadonly()) {
@@ -562,10 +565,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		}
 		// addOfBranch
 		if (!this.addOfBranch.isReadonly()) {
-			this.addOfBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_AddOfBranch.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, false));
+			this.addOfBranch
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_AddOfBranch.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -632,7 +636,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ 	Labels.getLabel("label_BankBranchDialog_BranchCode.value")+" : "+aBankBranch.getBranchCode();
+				+ Labels.getLabel("label_BankBranchDialog_BranchCode.value") + " : " + aBankBranch.getBranchCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aBankBranch.getRecordType()).equals("")) {
 				aBankBranch.setVersion(aBankBranch.getVersion() + 1);
@@ -677,7 +681,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.bankCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-		
+
 		readOnlyComponent(isReadOnly("BankBranchDialog_BranchDesc"), this.branchDesc);
 		readOnlyComponent(isReadOnly("BankBranchDialog_City"), this.city);
 		readOnlyComponent(isReadOnly("BankBranchDialog_IFSC"), this.iFSC);
@@ -758,7 +762,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.dda.setChecked(false);
 		this.cheque.setChecked(false);
 		this.active.setChecked(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -965,8 +969,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_BankBranchDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1035,7 +1039,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		getBankBranchListCtrl().search();
 	}
 
-
 	/**
 	 * Get the Reference value
 	 */
@@ -1071,6 +1074,5 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	public BankBranchListCtrl getBankBranchListCtrl() {
 		return this.bankBranchListCtrl;
 	}
-
 
 }

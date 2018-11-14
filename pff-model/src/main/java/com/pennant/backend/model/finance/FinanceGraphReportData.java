@@ -47,9 +47,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class FinanceGraphReportData implements Serializable {
-	
-    private static final long serialVersionUID = -2686011251580058466L;
-    
+
+	private static final long serialVersionUID = -2686011251580058466L;
+
 	private int recordNo;
 	private String schDate;
 	private BigDecimal profitBal;
@@ -59,45 +59,49 @@ public class FinanceGraphReportData implements Serializable {
 	public FinanceGraphReportData() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
 	public int getRecordNo() {
-    	return recordNo;
-    }
+		return recordNo;
+	}
+
 	public void setRecordNo(int recordNo) {
-    	this.recordNo = recordNo;
-    }
-	
+		this.recordNo = recordNo;
+	}
+
 	public String getSchDate() {
 		return schDate;
 	}
+
 	public void setSchDate(String schDate) {
 		this.schDate = schDate;
 	}
-	
-	public BigDecimal getProfitBal() {
-    	return profitBal;
-    }
-	public void setProfitBal(BigDecimal profitBal) {
-    	this.profitBal = profitBal;
-    }
-	
-	public BigDecimal getPrincipalBal() {
-    	return principalBal;
-    }
-	public void setPrincipalBal(BigDecimal principalBal) {
-    	this.principalBal = principalBal;
-    }
-	
-	public BigDecimal getFinanceBal() {
-    	return financeBal;
-    }
-	public void setFinanceBal(BigDecimal financeBal) {
-    	this.financeBal = financeBal;
-    }
 
-	
+	public BigDecimal getProfitBal() {
+		return profitBal;
+	}
+
+	public void setProfitBal(BigDecimal profitBal) {
+		this.profitBal = profitBal;
+	}
+
+	public BigDecimal getPrincipalBal() {
+		return principalBal;
+	}
+
+	public void setPrincipalBal(BigDecimal principalBal) {
+		this.principalBal = principalBal;
+	}
+
+	public BigDecimal getFinanceBal() {
+		return financeBal;
+	}
+
+	public void setFinanceBal(BigDecimal financeBal) {
+		this.financeBal = financeBal;
+	}
+
 }

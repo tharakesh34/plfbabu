@@ -46,7 +46,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennanttech.pff.core.TableType;
 
-public interface FlagDAO extends BasicCrudDao<Flag>{
+public interface FlagDAO extends BasicCrudDao<Flag> {
 
 	Flag getFlagById(String id, String type);
 
@@ -54,10 +54,10 @@ public interface FlagDAO extends BasicCrudDao<Flag>{
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param flagCode
-	 *              flagCode of the flag.
+	 *            flagCode of the flag.
 	 * @param tableType
-	 *              The type of the table.
-	 * @return  true if the record exists.
+	 *            The type of the table.
+	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String flagCode, TableType tableType);
 

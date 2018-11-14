@@ -60,28 +60,28 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class PFSParameterListModelItemRenderer implements ListitemRenderer<PFSParameter>, Serializable {
 
 	private static final long serialVersionUID = -8769182690540455637L;
-	
+
 	public PFSParameterListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, PFSParameter pFSParameter, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(pFSParameter.getSysParmCode());
+		lc = new Listcell(pFSParameter.getSysParmCode());
 		lc.setParent(item);
-	  	lc = new Listcell(pFSParameter.getSysParmDesc());
+		lc = new Listcell(pFSParameter.getSysParmDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(pFSParameter.getSysParmValue());
+		lc = new Listcell(pFSParameter.getSysParmValue());
 		lc.setParent(item);
-	  	lc = new Listcell(pFSParameter.getRecordStatus());
+		lc = new Listcell(pFSParameter.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(pFSParameter.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", pFSParameter.getSysParmCode());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPFSParameterItemDoubleClicked");
 	}
 }

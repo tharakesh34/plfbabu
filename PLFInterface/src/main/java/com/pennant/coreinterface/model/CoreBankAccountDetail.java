@@ -9,14 +9,14 @@ public class CoreBankAccountDetail implements Serializable {
 	private static final long serialVersionUID = -5109328909531296518L;
 
 	public CoreBankAccountDetail() {
-    	super();
-    }
-	
+		super();
+	}
+
 	private String custCIF;
 	private String acBranch;
 	private String acCcy;
 	private String acType;
-	private long   acCustId;
+	private long acCustId;
 	private String acFullName;
 	private String acShrtName;
 	private String tranAc;
@@ -39,7 +39,7 @@ public class CoreBankAccountDetail implements Serializable {
 	private int reqRefSeq;
 
 	private String division;
-	
+
 	//additional fields
 	private String referenceNumber;
 	private String customerType;
@@ -374,7 +374,7 @@ public class CoreBankAccountDetail implements Serializable {
 	public void setAccSummary(List<CoreBankAccountDetail> accSummary) {
 		this.accSummary = accSummary;
 	}
-	
+
 	public long getAcCustId() {
 		return acCustId;
 	}

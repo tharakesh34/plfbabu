@@ -42,14 +42,20 @@
 */
 
 package com.pennant.backend.dao.reports;
+
 import com.pennant.backend.model.reports.ReportList;
 
 public interface ReportListDAO {
 
 	ReportList getReportList();
+
 	ReportList getNewReportList();
-	ReportList getReportListById(String id,String type);
-	void update(ReportList reportList,String type);
-	void delete(ReportList reportList,String type);
-	String save(ReportList reportList,String type);
+
+	ReportList getReportListById(String id, String type);
+
+	void update(ReportList reportList, String type);
+
+	void delete(ReportList reportList, String type);
+
+	String save(ReportList reportList, String type);
 }

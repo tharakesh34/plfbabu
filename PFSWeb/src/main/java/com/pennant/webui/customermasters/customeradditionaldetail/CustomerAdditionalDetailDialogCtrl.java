@@ -76,14 +76,13 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerAdditionalDetail
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerAdditionalDetail
  * /customerAdditionalDetailDialog.zul file.
  */
 public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAdditionalDetail> {
@@ -91,42 +90,39 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	private static final Logger logger = Logger.getLogger(CustomerAdditionalDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerAdditionalDetailDialog; // autoWired
 
-	protected Longbox custID; 								// autoWired
-	protected Textbox custAcademicLevel; 					// autoWired
-	protected Textbox academicDecipline; 					// autoWired
-	protected Longbox custRefCustID; 						// autoWired
-	protected Textbox custRefStaffID; 						// autoWired
-	protected Textbox custCIF;								// autoWired
-	protected Label   custShrtName;							// autoWired
-
+	protected Longbox custID; // autoWired
+	protected Textbox custAcademicLevel; // autoWired
+	protected Textbox academicDecipline; // autoWired
+	protected Longbox custRefCustID; // autoWired
+	protected Textbox custRefStaffID; // autoWired
+	protected Textbox custCIF; // autoWired
+	protected Label custShrtName; // autoWired
 
 	// not auto wired variables
 	private CustomerAdditionalDetail customerAdditionalDetail; // overHanded per parameter
 	private transient CustomerAdditionalDetailListCtrl customerAdditionalDetailListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	protected Button btnSearchPRCustid; // autoWire
 
-	protected Button  btnSearchCustAcademicLevel; 		// autoWired
+	protected Button btnSearchCustAcademicLevel; // autoWired
 	protected Textbox lovDescCustAcademicLevelName;
-	
-	protected Button  btnSearchAcademicDecipline; 		// autoWired
+
+	protected Button btnSearchAcademicDecipline; // autoWired
 	protected Textbox lovDescAcademicDeciplineName;
-	
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerAdditionalDetailService customerAdditionalDetailService;
 	private transient PagedListService pagedListService;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private CustomerDialogCtrl customerDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject ;
+	protected JdbcSearchObject<Customer> newSearchObject;
 
 	/**
 	 * default constructor.<br>
@@ -143,14 +139,13 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerAdditionalDetail object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerAdditionalDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerAdditionalDetailDialog(Event event)	throws Exception {
+	public void onCreate$window_CustomerAdditionalDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -161,7 +156,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 
 		if (arguments.containsKey("customerAdditionalDetail")) {
 			this.customerAdditionalDetail = (CustomerAdditionalDetail) arguments.get("customerAdditionalDetail");
-			CustomerAdditionalDetail befImage =new CustomerAdditionalDetail();
+			CustomerAdditionalDetail befImage = new CustomerAdditionalDetail();
 			BeanUtils.copyProperties(this.customerAdditionalDetail, befImage);
 			this.customerAdditionalDetail.setBefImage(befImage);
 			setCustomerAdditionalDetail(this.customerAdditionalDetail);
@@ -169,30 +164,31 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 			setCustomerAdditionalDetail(null);
 		}
 
-		if(arguments.containsKey("customerAdditionalDetailDialogCtrl")){
+		if (arguments.containsKey("customerAdditionalDetailDialogCtrl")) {
 
 			setCustomerDialogCtrl((CustomerDialogCtrl) arguments.get("customerAdditionalDetailDialogCtrl"));
 
 			this.customerAdditionalDetail.setWorkflowId(0);
-			if(arguments.containsKey("roleCode")){
-				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "CustomerAdditionalDetailDialog");
+			if (arguments.containsKey("roleCode")) {
+				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"),
+						"CustomerAdditionalDetailDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerAdditionalDetail.isWorkflow(), this.customerAdditionalDetail.getWorkflowId(),
 				this.customerAdditionalDetail.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerAdditionalDetailDialog");
 		}
-
 
 		// READ OVERHANDED parameters !
 		// we get the customerAdditionalDetailListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete customerAdditionalDetail here.
 		if (arguments.containsKey("customerAdditionalDetailListCtrl")) {
-			setCustomerAdditionalDetailListCtrl((CustomerAdditionalDetailListCtrl) arguments.get("customerAdditionalDetailListCtrl"));
+			setCustomerAdditionalDetailListCtrl(
+					(CustomerAdditionalDetailListCtrl) arguments.get("customerAdditionalDetailListCtrl"));
 		} else {
 			setCustomerAdditionalDetailListCtrl(null);
 		}
@@ -202,7 +198,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		doShowDialog(getCustomerAdditionalDetail());
 
 		//Calling SelectCtrl For proper selection of Customer
-		if(getCustomerAdditionalDetail().isNew()){
+		if (getCustomerAdditionalDetail().isNew()) {
 			onLoad();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -218,12 +214,12 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		this.academicDecipline.setMaxlength(8);
 		this.custRefStaffID.setMaxlength(8);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-			
-		}else{
+
+		} else {
 			this.groupboxWf.setVisible(false);
-			
+
 		}
 		this.btnSearchAcademicDecipline.setVisible(false);
 		logger.debug("Leaving ");
@@ -234,8 +230,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
@@ -340,27 +335,25 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public void doWriteBeanToComponents(CustomerAdditionalDetail aCustomerAdditionalDetail) {
 		logger.debug("Entering ");
 
-		if(aCustomerAdditionalDetail.getCustID()!=Long.MIN_VALUE){
-			this.custID.setValue(aCustomerAdditionalDetail.getCustID());	
+		if (aCustomerAdditionalDetail.getCustID() != Long.MIN_VALUE) {
+			this.custID.setValue(aCustomerAdditionalDetail.getCustID());
 		}
 		this.custAcademicLevel.setValue(aCustomerAdditionalDetail.getCustAcademicLevel());
 		this.academicDecipline.setValue(aCustomerAdditionalDetail.getAcademicDecipline());
 		this.custRefCustID.setValue(aCustomerAdditionalDetail.getCustRefCustID());
 		this.custRefStaffID.setValue(aCustomerAdditionalDetail.getCustRefStaffID());
-		this.custCIF.setValue(aCustomerAdditionalDetail.getLovDescCustCIF()==null?
-				"":aCustomerAdditionalDetail.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerAdditionalDetail.getLovDescCustShrtName()==null?
-				"":aCustomerAdditionalDetail.getLovDescCustShrtName().trim());
+		this.custCIF.setValue(aCustomerAdditionalDetail.getLovDescCustCIF() == null ? ""
+				: aCustomerAdditionalDetail.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerAdditionalDetail.getLovDescCustShrtName() == null ? ""
+				: aCustomerAdditionalDetail.getLovDescCustShrtName().trim());
 
-		if (aCustomerAdditionalDetail.isNewRecord()){
+		if (aCustomerAdditionalDetail.isNewRecord()) {
 			this.lovDescCustAcademicLevelName.setValue("");
 			this.lovDescAcademicDeciplineName.setValue("");
-		}else{
-			this.lovDescCustAcademicLevelName
-			.setValue(aCustomerAdditionalDetail.getCustAcademicLevel()+ "-"
+		} else {
+			this.lovDescCustAcademicLevelName.setValue(aCustomerAdditionalDetail.getCustAcademicLevel() + "-"
 					+ aCustomerAdditionalDetail.getLovDescCustAcademicLevelName());
-			this.lovDescAcademicDeciplineName
-			.setValue(aCustomerAdditionalDetail.getAcademicDecipline()+ "-"
+			this.lovDescAcademicDeciplineName.setValue(aCustomerAdditionalDetail.getAcademicDecipline() + "-"
 					+ aCustomerAdditionalDetail.getLovDescAcademicDeciplineName());
 		}
 		this.recordStatus.setValue(aCustomerAdditionalDetail.getRecordStatus());
@@ -381,37 +374,37 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		try {
 			aCustomerAdditionalDetail.setCustID(this.custID.getValue());
 			aCustomerAdditionalDetail.setLovDescCustCIF(this.custCIF.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerAdditionalDetail.setLovDescCustAcademicLevelName(this.lovDescCustAcademicLevelName.getValue());
-			aCustomerAdditionalDetail.setCustAcademicLevel(this.custAcademicLevel.getValue());	
-		}catch (WrongValueException we ) {
+			aCustomerAdditionalDetail.setCustAcademicLevel(this.custAcademicLevel.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerAdditionalDetail.setLovDescAcademicDeciplineName(this.lovDescAcademicDeciplineName.getValue());
-			aCustomerAdditionalDetail.setAcademicDecipline(this.academicDecipline.getValue());	
-		}catch (WrongValueException we ) {
+			aCustomerAdditionalDetail.setAcademicDecipline(this.academicDecipline.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerAdditionalDetail.setCustRefCustID(this.custRefCustID.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aCustomerAdditionalDetail.setCustRefStaffID(this.custRefStaffID.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -425,8 +418,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerAdditionalDetail
 	 * @throws InterruptedException
@@ -442,10 +434,10 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 			this.btnSearchCustAcademicLevel.focus();
 		} else {
 			this.custRefCustID.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -455,7 +447,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerAdditionalDetail);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -470,15 +462,17 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		logger.debug("Entering ");
 		setValidationOn(true);
 
-		if (!this.btnSearchPRCustid.isVisible()){
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_CustID.value"),null,true));
+		if (!this.btnSearchPRCustid.isVisible()) {
+			this.custCIF.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerAdditionalDetailDialog_CustID.value"), null, true));
 		}
-		if (!this.custRefCustID.isReadonly()){
-			this.custRefCustID.setConstraint(new PTNumberValidator(Labels.getLabel(
-			"label_CustomerAdditionalDetailDialog_CustRefCustID.value"), true));
+		if (!this.custRefCustID.isReadonly()) {
+			this.custRefCustID.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_CustomerAdditionalDetailDialog_CustRefCustID.value"), true));
 		}
-		if (!this.custRefStaffID.isReadonly()){
-			this.custRefStaffID.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_CustRefStaffID.value"),null,true));
+		if (!this.custRefStaffID.isReadonly()) {
+			this.custRefStaffID.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerAdditionalDetailDialog_CustRefStaffID.value"), null, true));
 		}
 		logger.debug("Leaving ");
 	}
@@ -500,8 +494,10 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustAcademicLevelName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_CustAcademicLevel.value"),null,true));
-		this.lovDescAcademicDeciplineName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_AcademicDecipline.value"),null,true));
+		this.lovDescCustAcademicLevelName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerAdditionalDetailDialog_CustAcademicLevel.value"), null, true));
+		this.lovDescAcademicDeciplineName.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerAdditionalDetailDialog_AcademicDecipline.value"), null, true));
 		logger.debug("Leaving");
 	}
 
@@ -539,32 +535,31 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 
 		final CustomerAdditionalDetail aCustomerAdditionalDetail = new CustomerAdditionalDetail();
 		BeanUtils.copyProperties(getCustomerAdditionalDetail(), aCustomerAdditionalDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-		"message.Question.Are_you_sure_to_delete_this_record")
-		+ "\n\n --> " + aCustomerAdditionalDetail.getCustID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerAdditionalDetail.getCustID();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerAdditionalDetail.getRecordType())){
-				aCustomerAdditionalDetail.setVersion(aCustomerAdditionalDetail.getVersion()+1);
+			if (StringUtils.isBlank(aCustomerAdditionalDetail.getRecordType())) {
+				aCustomerAdditionalDetail.setVersion(aCustomerAdditionalDetail.getVersion() + 1);
 				aCustomerAdditionalDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aCustomerAdditionalDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aCustomerAdditionalDetail,tranType)){
+				if (doProcess(aCustomerAdditionalDetail, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.debug("Leaving");
 				showMessage(e);
 			}
@@ -577,10 +572,10 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
-		if (getCustomerAdditionalDetail().isNewRecord()){
+		if (getCustomerAdditionalDetail().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.btnSearchPRCustid.setVisible(true);
-		}else{
+		} else {
 			this.btnSearchPRCustid.setVisible(false);
 			this.custID.setReadonly(true);
 			this.btnCancel.setVisible(true);
@@ -590,27 +585,27 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		this.btnSearchAcademicDecipline.setDisabled(isReadOnly("CustomerAdditionalDetailDialog_academicDecipline"));
 		this.custRefCustID.setReadonly(isReadOnly("CustomerAdditionalDetailDialog_custRefCustID"));
 		this.custRefStaffID.setReadonly(isReadOnly("CustomerAdditionalDetailDialog_custRefStaffID"));
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.customerAdditionalDetail.isNewRecord()){
+			if (this.customerAdditionalDetail.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
-		
+
 		logger.debug("Leaving ");
 	}
 
-	public boolean isReadOnly(String componentName){
-		if (isWorkFlowEnabled()){
+	public boolean isReadOnly(String componentName) {
+		if (isWorkFlowEnabled()) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -628,12 +623,12 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		this.custRefCustID.setReadonly(true);
 		this.custRefStaffID.setReadonly(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -679,25 +674,25 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		// Do data level validations here
 
 		isNew = aCustomerAdditionalDetail.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aCustomerAdditionalDetail.getRecordType())){
-				aCustomerAdditionalDetail.setVersion(aCustomerAdditionalDetail.getVersion()+1);
-				if(isNew){
+			if (StringUtils.isBlank(aCustomerAdditionalDetail.getRecordType())) {
+				aCustomerAdditionalDetail.setVersion(aCustomerAdditionalDetail.getVersion() + 1);
+				if (isNew) {
 					aCustomerAdditionalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCustomerAdditionalDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCustomerAdditionalDetail.setNewRecord(true);
 				}
 			}
-		}else{
-			aCustomerAdditionalDetail.setVersion(aCustomerAdditionalDetail.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aCustomerAdditionalDetail.setVersion(aCustomerAdditionalDetail.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
@@ -729,12 +724,12 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerAdditionalDetail aCustomerAdditionalDetail, String tranType){
+	private boolean doProcess(CustomerAdditionalDetail aCustomerAdditionalDetail, String tranType) {
 		logger.debug("Entering ");
 
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
 		aCustomerAdditionalDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCustomerAdditionalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -764,19 +759,19 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 			}
 
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -786,25 +781,25 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 			aCustomerAdditionalDetail.setRoleCode(getRole());
 			aCustomerAdditionalDetail.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aCustomerAdditionalDetail, tranType);
+			auditHeader = getAuditHeader(aCustomerAdditionalDetail, tranType);
 			String operationRefs = getServiceOperations(taskId, aCustomerAdditionalDetail);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aCustomerAdditionalDetail, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
+					auditHeader = getAuditHeader(aCustomerAdditionalDetail, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aCustomerAdditionalDetail, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aCustomerAdditionalDetail, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving ");
 		return processCompleted;
@@ -822,27 +817,27 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering ");
 
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		CustomerAdditionalDetail aCustomerAdditionalDetail = (CustomerAdditionalDetail)
-		auditHeader.getAuditDetail().getModelData();
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		CustomerAdditionalDetail aCustomerAdditionalDetail = (CustomerAdditionalDetail) auditHeader.getAuditDetail()
+				.getModelData();
 		boolean deleteNotes = false;
 
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getCustomerAdditionalDetailService().delete(auditHeader);
 						deleteNotes = true;
-					}else{
-						auditHeader = getCustomerAdditionalDetailService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getCustomerAdditionalDetailService().saveOrUpdate(auditHeader);
 					}
 
-				}else{
+				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerAdditionalDetailService().doApprove(auditHeader);
 
@@ -858,9 +853,10 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(this.window_CustomerAdditionalDetailDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_CustomerAdditionalDetailDialog,
+								auditHeader);
 						return processCompleted;
 					}
 				}
@@ -892,53 +888,53 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 
 	// Search Button Component Events
 
-	public void onClick$btnSearchCustAcademicLevel(Event event){
+	public void onClick$btnSearchCustAcademicLevel(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		String sCustAcademicLevel= this.custAcademicLevel.getValue();
+		String sCustAcademicLevel = this.custAcademicLevel.getValue();
 		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerAdditionalDetailDialog, "Academic");
 
-		if (dataObject instanceof String){
+		if (dataObject instanceof String) {
 			this.custAcademicLevel.setValue(dataObject.toString());
 			this.lovDescCustAcademicLevelName.setValue("");
-		}else{
-			Academic details= (Academic) dataObject;
+		} else {
+			Academic details = (Academic) dataObject;
 			if (details != null) {
 				this.custAcademicLevel.setValue(details.getAcademicLevel());
 				this.lovDescCustAcademicLevelName.setValue(details.getLovValue() + "-" + details.getAcademicDesc());
 			}
 		}
-		if (!StringUtils.trimToEmpty(sCustAcademicLevel).equals(this.custAcademicLevel.getValue())){
+		if (!StringUtils.trimToEmpty(sCustAcademicLevel).equals(this.custAcademicLevel.getValue())) {
 			this.academicDecipline.setValue("");
 			this.lovDescAcademicDeciplineName.setValue("");
 			this.btnSearchAcademicDecipline.setVisible(false);
 		}
 
-		if(StringUtils.isNotEmpty(this.lovDescCustAcademicLevelName.getValue())){		   
-			this.btnSearchAcademicDecipline.setVisible(true);		   
-		}else{
+		if (StringUtils.isNotEmpty(this.lovDescCustAcademicLevelName.getValue())) {
+			this.btnSearchAcademicDecipline.setVisible(true);
+		} else {
 			this.lovDescAcademicDeciplineName.setValue("");
-			this.btnSearchAcademicDecipline.setVisible(false);	
+			this.btnSearchAcademicDecipline.setVisible(false);
 		}
 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchAcademicDecipline(Event event){
+	public void onClick$btnSearchAcademicDecipline(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("academicLevel", this.custAcademicLevel.getValue(), Filter.OP_EQUAL); 
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("academicLevel", this.custAcademicLevel.getValue(), Filter.OP_EQUAL);
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerAdditionalDetailDialog, "Academic",filters);
-		if (dataObject instanceof String){
+		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerAdditionalDetailDialog, "Academic", filters);
+		if (dataObject instanceof String) {
 			this.academicDecipline.setValue(dataObject.toString());
 			this.lovDescAcademicDeciplineName.setValue("");
-		}else{
-			Academic details= (Academic) dataObject;
+		} else {
+			Academic details = (Academic) dataObject;
 			if (details != null) {
 				this.academicDecipline.setValue(details.getAcademicDecipline());
-				this.lovDescAcademicDeciplineName.setValue(details.getLovValue()+ "-"	+ details.getAcademicDesc());
+				this.lovDescAcademicDeciplineName.setValue(details.getLovValue() + "-" + details.getAcademicDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -946,11 +942,12 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 
 	/**
 	 * Method for Calling list Of existed Customers
+	 * 
 	 * @param event
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onLoad();
 		logger.debug("Leaving" + event.toString());
@@ -958,28 +955,31 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 
 	/**
 	 * To load the customerSelect filter dialog
+	 * 
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	private void onLoad() throws SuspendNotAllowedException, InterruptedException{
+	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();	
+		final HashMap<String, Object> map = new HashMap<String, Object>();
 
 		map.put("DialogCtrl", this);
-		map.put("filtertype","Extended");
-		map.put("searchObject",this.newSearchObject);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null,map);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.newSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * To set the customer id from Customer filter
+	 * 
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer,JdbcSearchObject<Customer> newSearchObject) throws InterruptedException{
-		logger.debug("Entering"); 
-		final Customer aCustomer = (Customer)nCustomer; 		
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
@@ -997,11 +997,11 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * @return AuditHeader
 	 */
 	private AuditHeader getAuditHeader(CustomerAdditionalDetail aCustomerAdditionalDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerAdditionalDetail.getBefImage(),aCustomerAdditionalDetail);
-		return new AuditHeader(String.valueOf(aCustomerAdditionalDetail.getId())
-				, String.valueOf(aCustomerAdditionalDetail.getCustID()),
-				null, null, auditDetail, aCustomerAdditionalDetail.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAdditionalDetail.getBefImage(),
+				aCustomerAdditionalDetail);
+		return new AuditHeader(String.valueOf(aCustomerAdditionalDetail.getId()),
+				String.valueOf(aCustomerAdditionalDetail.getCustID()), null, null, auditDetail,
+				aCustomerAdditionalDetail.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1010,7 +1010,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * @param e
 	 *            (Exception)
 	 */
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
@@ -1032,7 +1032,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.customerAdditionalDetail);
-		
+
 	}
 
 	/**
@@ -1042,8 +1042,6 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		getCustomerAdditionalDetailListCtrl().search();
 	}
 
-	
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.customerAdditionalDetail.getId());
@@ -1056,6 +1054,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1063,15 +1062,15 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public CustomerAdditionalDetail getCustomerAdditionalDetail() {
 		return this.customerAdditionalDetail;
 	}
-	public void setCustomerAdditionalDetail(
-			CustomerAdditionalDetail customerAdditionalDetail) {
+
+	public void setCustomerAdditionalDetail(CustomerAdditionalDetail customerAdditionalDetail) {
 		this.customerAdditionalDetail = customerAdditionalDetail;
 	}
 
-	public void setCustomerAdditionalDetailService(
-			CustomerAdditionalDetailService customerAdditionalDetailService) {
+	public void setCustomerAdditionalDetailService(CustomerAdditionalDetailService customerAdditionalDetailService) {
 		this.customerAdditionalDetailService = customerAdditionalDetailService;
 	}
+
 	public CustomerAdditionalDetailService getCustomerAdditionalDetailService() {
 		return this.customerAdditionalDetailService;
 	}
@@ -1079,6 +1078,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public void setCustomerAdditionalDetailListCtrl(CustomerAdditionalDetailListCtrl customerAdditionalDetailListCtrl) {
 		this.customerAdditionalDetailListCtrl = customerAdditionalDetailListCtrl;
 	}
+
 	public CustomerAdditionalDetailListCtrl getCustomerAdditionalDetailListCtrl() {
 		return this.customerAdditionalDetailListCtrl;
 	}
@@ -1086,6 +1086,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1093,6 +1094,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
@@ -1100,6 +1102,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}

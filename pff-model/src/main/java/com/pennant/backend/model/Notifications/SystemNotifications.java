@@ -139,6 +139,4 @@ public class SystemNotifications extends AbstractWorkflowEntity implements Entit
 		this.active = active;
 	}
 
-
-
 }

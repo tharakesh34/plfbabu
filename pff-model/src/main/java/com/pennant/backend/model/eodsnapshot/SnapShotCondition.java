@@ -59,23 +59,23 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>SnapShotConditions table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","executionOrder","condition"})
+@XmlType(propOrder = { "id", "executionOrder", "condition" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SnapShotCondition extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class SnapShotCondition extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-private int executionOrder;
-private String condition;
+	private int executionOrder;
+	private String condition;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private SnapShotCondition befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -88,34 +88,36 @@ private String condition;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public int getExecutionOrder() {
 		return executionOrder;
 	}
+
 	public void setExecutionOrder(int executionOrder) {
 		this.executionOrder = executionOrder;
 	}
-	
+
 	public String getCondition() {
 		return condition;
 	}
+
 	public void setCondition(String condition) {
 		this.condition = condition;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -123,7 +125,7 @@ private String condition;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -132,19 +134,19 @@ private String condition;
 		this.lovValue = lovValue;
 	}
 
-	public SnapShotCondition getBefImage(){
+	public SnapShotCondition getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(SnapShotCondition beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SnapShotCondition beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

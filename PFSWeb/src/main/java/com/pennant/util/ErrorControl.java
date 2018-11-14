@@ -54,8 +54,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ErrorControl {
-	private int	returnCode	= PennantConstants.porcessCONTINUE;
-	AuditHeader	auditHeader;
+	private int returnCode = PennantConstants.porcessCONTINUE;
+	AuditHeader auditHeader;
 
 	public ErrorControl() {
 		super();

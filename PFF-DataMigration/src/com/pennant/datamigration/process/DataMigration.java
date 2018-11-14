@@ -14,25 +14,24 @@ public class DataMigration {
 	public static DMTransactionService getDetailService() {
 		return detailService;
 	}
+
 	public static void setDetailService(DMTransactionService detailService) {
 		DataMigration.detailService = detailService;
 	}
-	
-	
+
 	public static boolean processFinance(ApplicationContext mainContext) {
 		try {
 
-			setDetailService((DMTransactionService)mainContext.getBean("dmFinanceDetailService"));
-			
+			setDetailService((DMTransactionService) mainContext.getBean("dmFinanceDetailService"));
+
 			String typeMain = "";
 			String typeStage2 = "_STG1";
-			
+
 			//Fetching List of all Finance Reference Details
 			List<String> finRefList = getDetailService().getFinanceReferenceList(typeStage2);
-			
+
 			for (String finReference : finRefList) {
 				FinScheduleData financeDetails = null;//getDetailService().getFinanceDetails(finReference, "");
-
 
 				// Process Finances
 				doProcess(financeDetails);
@@ -40,17 +39,16 @@ public class DataMigration {
 				// Update Finances
 				getDetailService().updateFinanceDetails(financeDetails, "");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return isSuccess;
 	}
-	
-	
-	private static void doProcess(FinScheduleData financeDetails){
+
+	private static void doProcess(FinScheduleData financeDetails) {
 		// TODO 
 	}
-	
+
 }

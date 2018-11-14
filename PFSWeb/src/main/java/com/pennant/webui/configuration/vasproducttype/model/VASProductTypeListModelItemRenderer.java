@@ -60,7 +60,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class VASProductTypeListModelItemRenderer implements ListitemRenderer<VASProductType>, Serializable {
 
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void render(Listitem item, VASProductType vASProductType, int count) throws Exception {

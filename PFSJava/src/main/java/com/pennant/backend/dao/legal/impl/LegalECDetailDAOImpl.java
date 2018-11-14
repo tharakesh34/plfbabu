@@ -66,26 +66,25 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalECDetail</code> with set of CRUD operations.
  */
 public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements LegalECDetailDAO {
-	private static Logger	logger	= Logger.getLogger(LegalECDetailDAOImpl.class);
-
-
+	private static Logger logger = Logger.getLogger(LegalECDetailDAOImpl.class);
 
 	public LegalECDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public LegalECDetail getLegalECDetail(long legalECId,String type) {
+	public LegalECDetail getLegalECDetail(long legalECId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalECId, legalId, ecDate, document, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalECDetails");
 		sql.append(type);
 		sql.append(" Where legalECId = :legalECId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -102,29 +101,30 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		}
 		logger.debug(Literal.LEAVING);
 		return legalECDetail;
-	}	
-	
+	}
+
 	@Override
-	public List<LegalECDetail> getLegalECDetailList(long legalId,String type) {
+	public List<LegalECDetail> getLegalECDetailList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalECId, legalId, ecDate, document, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalECDetails");
 		sql.append(type);
 		sql.append(" Where legalId = :legalId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		LegalECDetail legalECDetail = new LegalECDetail();
 		legalECDetail.setLegalId(legalId);
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
 		RowMapper<LegalECDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalECDetail.class);
-		
+
 		try {
 			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (Exception e) {
@@ -133,24 +133,26 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 			sql = null;
 		}
 		return null;
-	}		
-	
+	}
+
 	@Override
-	public String save(LegalECDetail legalECDetail,TableType tableType) {
+	public String save(LegalECDetail legalECDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into LegalECDetails");
+		StringBuilder sql = new StringBuilder(" insert into LegalECDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (legalECId, legalId, ecDate, document, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalECId, :legalId, :ecDate, :document, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		if (legalECDetail.getId()==Long.MIN_VALUE){
+		if (legalECDetail.getId() == Long.MIN_VALUE) {
 			legalECDetail.setId(getNextId("SeqLegalECDetails"));
-			logger.debug("get NextID:"+legalECDetail.getId());
+			logger.debug("get NextID:" + legalECDetail.getId());
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -165,24 +167,24 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(legalECDetail.getLegalECId());
-	}	
+	}
 
 	@Override
-	public void update(LegalECDetail legalECDetail,TableType tableType) {
+	public void update(LegalECDetail legalECDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update LegalECDetails" );
+		StringBuilder sql = new StringBuilder("update LegalECDetails");
 		sql.append(tableType.getSuffix());
 		sql.append("  set legalId = :legalId, ecDate = :ecDate, document = :document, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where legalECId = :legalECId ");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -222,7 +224,7 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 
 	@Override
 	public void deleteList(LegalECDetail legalECDetail, String tableType) {
-	
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LegalECDetails");
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where legalId = :legalId");
@@ -231,6 +233,5 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(legalECDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-	
-	
-}	
+
+}

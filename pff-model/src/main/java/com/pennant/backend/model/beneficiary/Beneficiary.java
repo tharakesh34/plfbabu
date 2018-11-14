@@ -102,11 +102,11 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private String sourceId;
-	
+
 	private boolean beneficiaryActive;
 	private boolean defaultBeneficiary;
 	private String micr;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -248,7 +248,7 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Beneficiary getValidateBeneficiary() {
 		return validateBeneficiary;
 	}
@@ -352,7 +352,7 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	public void setDefaultBeneficiary(boolean defaultBeneficiary) {
 		this.defaultBeneficiary = defaultBeneficiary;
 	}
-	
+
 	public String getMicr() {
 		return micr;
 	}

@@ -13,13 +13,14 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.util.PennantAppUtil;
 
-public class FinApprovalStsInquiryListModelItemRenderer implements ListitemRenderer<CustomerFinanceDetail>, Serializable{
+public class FinApprovalStsInquiryListModelItemRenderer
+		implements ListitemRenderer<CustomerFinanceDetail>, Serializable {
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	public FinApprovalStsInquiryListModelItemRenderer() {
 		super();
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerFinanceDetail enquiry, int count) throws Exception {
 
@@ -33,13 +34,14 @@ public class FinApprovalStsInquiryListModelItemRenderer implements ListitemRende
 		lc = new Listcell(enquiry.getFinTypeDesc());
 		lc.setParent(item);
 		BigDecimal finAmount = enquiry.getFinAmount();
-		if(enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+		if (enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
-		/*if(enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0){
-			finAmount = finAmount.add(enquiry.getInsuranceAmt());
-		}*/
-		if(enquiry.getDownPayment() != null && enquiry.getDownPayment().compareTo(BigDecimal.ZERO) > 0){
+		/*
+		 * if(enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0){ finAmount
+		 * = finAmount.add(enquiry.getInsuranceAmt()); }
+		 */
+		if (enquiry.getDownPayment() != null && enquiry.getDownPayment().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.subtract(enquiry.getDownPayment());
 		}
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));

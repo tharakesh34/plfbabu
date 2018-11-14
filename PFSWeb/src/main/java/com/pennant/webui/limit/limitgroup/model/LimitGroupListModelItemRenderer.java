@@ -55,7 +55,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.limit.LimitGroup;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -75,7 +74,7 @@ public class LimitGroupListModelItemRenderer implements ListitemRenderer<LimitGr
 		lc = new Listcell(Labels.getLabel(limitGroup.getLimitCategory()));
 		lc.setParent(item);
 		lc = new Listcell();
-		Checkbox ckActive= new Checkbox();
+		Checkbox ckActive = new Checkbox();
 		ckActive.setChecked(limitGroup.isActive());
 		ckActive.setDisabled(true);
 		ckActive.setParent(lc);

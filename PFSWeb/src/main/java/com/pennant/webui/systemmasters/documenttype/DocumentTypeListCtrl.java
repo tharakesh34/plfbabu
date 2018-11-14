@@ -62,9 +62,9 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.webui.systemmasters.documenttype.model.DocumentTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul file.
@@ -244,7 +244,7 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("documentType", documentType);
 		arg.put("documentTypeListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeDialog.zul", null, arg);
 		} catch (Exception e) {

@@ -78,21 +78,20 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final Logger logger = Logger.getLogger(DocumentEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_DocumentEnquiryDialog; 		
-	protected Listbox 		listBoxDocument; 					
-	protected Borderlayout  borderlayoutDocumentEnquiry;		
-	private Tabpanel 		tabPanel_dialogWindow;
+	protected Window window_DocumentEnquiryDialog;
+	protected Listbox listBoxDocument;
+	protected Borderlayout borderlayoutDocumentEnquiry;
+	private Tabpanel tabPanel_dialogWindow;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<DocumentDetails> finDocuments;
-	
+
 	private FinanceDetailService financeDetailService;
 	private AgreementDetailService agreementDetailService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -108,9 +107,8 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -122,18 +120,19 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		// Set the page level components.
 		setPageComponents(window_DocumentEnquiryDialog);
 
-		if(event.getTarget().getParent().getParent() != null){
+		if (event.getTarget().getParent().getParent() != null) {
 			tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 		}
 
 		if (arguments.containsKey("finDocuments")) {
 			this.finDocuments = (List<DocumentDetails>) arguments.get("finDocuments");
-		}else{
+		} else {
 			this.finDocuments = null;
 		}
-		
+
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
 		doShowDialog();
@@ -152,16 +151,16 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	public void doShowDialog() throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			
+
 			// fill the components with the data
 			doFillDocList(this.finDocuments);
-			
-			if(tabPanel_dialogWindow != null){
-				
+
+			if (tabPanel_dialogWindow != null) {
+
 				getBorderLayoutHeight();
-				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20;
-				this.listBoxDocument.setHeight(this.borderLayoutHeight-rowsHeight-200+"px");
-				this.window_DocumentEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-30+"px");
+				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+				this.listBoxDocument.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
+				this.window_DocumentEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 				tabPanel_dialogWindow.appendChild(this.window_DocumentEnquiryDialog);
 
 			}
@@ -173,29 +172,30 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	/**
 	 * Method to fill the Finance Document Details List
+	 * 
 	 * @param docDetails
 	 */
 	public void doFillDocList(List<DocumentDetails> docDetails) {
 		logger.debug("Entering");
-		
+
 		List<ValueLabel> list = PennantAppUtil.getDocumentTypes();
 		Listitem listitem = null;
 		Listcell lc = null;
 		for (DocumentDetails doc : docDetails) {
-			
+
 			listitem = new Listitem();
 			lc = new Listcell(String.valueOf(doc.getDocId()));
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell(PennantAppUtil.getlabelDesc(doc.getDocCategory(), list));
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell(doc.getDoctype());
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell(doc.getDocName());
 			listitem.appendChild(lc);
-			
+
 			lc = new Listcell();
 			final Checkbox documentIsActive = new Checkbox();
 			documentIsActive.setDisabled(true);
@@ -203,26 +203,25 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			lc.appendChild(documentIsActive);
 			listitem.appendChild(lc);
 
-			
 			lc = new Listcell();
 			Button viewBtn = new Button("View");
 			if (StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
 				viewBtn.setLabel("Download");
 			}
-			viewBtn.addForward("onClick",window_DocumentEnquiryDialog,"onDocViewButtonClicked",doc.getDocId());
+			viewBtn.addForward("onClick", window_DocumentEnquiryDialog, "onDocViewButtonClicked", doc.getDocId());
 			lc.appendChild(viewBtn);
 			viewBtn.setStyle("font-weight:bold;");
 			listitem.appendChild(lc);
-			
+
 			this.listBoxDocument.appendChild(listitem);
 		}
 		logger.debug("Leaving");
 	}
-	
-	public void onDocViewButtonClicked(Event event) throws Exception{
+
+	public void onDocViewButtonClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
-		long docId  = Long.parseLong(event.getData().toString());
+
+		long docId = Long.parseLong(event.getData().toString());
 		DocumentDetails detail = getFinanceDetailService().getFinDocDetailByDocId(docId, "_View", true);
 
 		if (StringUtils.isNotBlank(detail.getDocName()) && detail.getDocImage() != null
@@ -239,9 +238,9 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				logger.debug(e);
 			}
 		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("documentRef", detail);
-				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("documentRef", detail);
+			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 		} else {
 			MessageUtil.showError("Document Details not Found.");
 		}
@@ -251,10 +250,11 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
+
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
@@ -266,5 +266,5 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	public AgreementDetailService getAgreementDetailService() {
 		return agreementDetailService;
 	}
-	
+
 }

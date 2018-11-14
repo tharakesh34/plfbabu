@@ -55,7 +55,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -68,25 +67,26 @@ public class VASConfigurationListModelItemRenderer implements ListitemRenderer<V
 	public void render(Listitem item, VASConfiguration vASConfiguration, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(vASConfiguration.getProductCode());
+		lc = new Listcell(vASConfiguration.getProductCode());
 		lc.setParent(item);
-		
-	  	lc = new Listcell(vASConfiguration.getProductDesc());
+
+		lc = new Listcell(vASConfiguration.getProductDesc());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(vASConfiguration.getProductType());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(vASConfiguration.getProductCategory());
 		lc.setParent(item);
-		
-		lc = new Listcell(PennantAppUtil.getlabelDesc(vASConfiguration.getRecAgainst(), PennantStaticListUtil.getRecAgainstTypes()));
-	  	lc.setParent(item);
-	  	
-	  	lc = new Listcell(vASConfiguration.getManufacturerName());
-	  	lc.setParent(item);
-	  	
-	  	lc = new Listcell(vASConfiguration.getRecordStatus());
+
+		lc = new Listcell(PennantAppUtil.getlabelDesc(vASConfiguration.getRecAgainst(),
+				PennantStaticListUtil.getRecAgainstTypes()));
+		lc.setParent(item);
+
+		lc = new Listcell(vASConfiguration.getManufacturerName());
+		lc.setParent(item);
+
+		lc = new Listcell(vASConfiguration.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(vASConfiguration.getRecordType()));
 		lc.setParent(item);

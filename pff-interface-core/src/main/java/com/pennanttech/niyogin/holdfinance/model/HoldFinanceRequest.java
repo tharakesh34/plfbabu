@@ -11,12 +11,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "holdfinancerequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HoldFinanceRequest {
-	private String				loanReference;
-	private String				cif;
-	private String				customerName;
-	private String				holdCategory;
-	private List<HoldReason>	holdReasons;
-	private String				remarks;
+	private String loanReference;
+	private String cif;
+	private String customerName;
+	private String holdCategory;
+	private List<HoldReason> holdReasons;
+	private String remarks;
 
 	public String getLoanReference() {
 		return loanReference;

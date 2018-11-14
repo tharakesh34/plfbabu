@@ -74,18 +74,15 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/LMTMasters/VesselDetail/vesselDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/LMTMasters/VesselDetail/vesselDetailDialog.zul file.
  */
 public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger
-			.getLogger(VesselDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(VesselDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_VesselDetailDialog;
 	protected Row row0;
@@ -126,15 +123,13 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected VesselDetail object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected VesselDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_VesselDetailDialog(Event event)
-			throws Exception {
+	public void onCreate$window_VesselDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -146,8 +141,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("vesselDetail")) {
-				this.vesselDetail = (VesselDetail) arguments
-						.get("vesselDetail");
+				this.vesselDetail = (VesselDetail) arguments.get("vesselDetail");
 				VesselDetail befImage = new VesselDetail();
 				BeanUtils.copyProperties(this.vesselDetail, befImage);
 				this.vesselDetail.setBefImage(befImage);
@@ -156,14 +150,12 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			} else {
 				setVesselDetail(null);
 			}
-			doLoadWorkFlow(this.vesselDetail.isWorkflow(),
-					this.vesselDetail.getWorkflowId(),
+			doLoadWorkFlow(this.vesselDetail.isWorkflow(), this.vesselDetail.getWorkflowId(),
 					this.vesselDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"VesselDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "VesselDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -172,8 +164,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			// or
 			// delete vesselDetail here.
 			if (arguments.containsKey("vesselDetailListCtrl")) {
-				setVesselDetailListCtrl((VesselDetailListCtrl) arguments
-						.get("vesselDetailListCtrl"));
+				setVesselDetailListCtrl((VesselDetailListCtrl) arguments.get("vesselDetailListCtrl"));
 			} else {
 				setVesselDetailListCtrl(null);
 			}
@@ -273,14 +264,12 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVesselDetail
 	 * @throws InterruptedException
 	 */
-	public void doShowDialog(VesselDetail aVesselDetail)
-			throws InterruptedException {
+	public void doShowDialog(VesselDetail aVesselDetail) throws InterruptedException {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aVesselDetail.isNew()) {
@@ -349,8 +338,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			this.btnCancel.setVisible(true);
 		}
 		this.vesselType.setReadonly(isReadOnly("VesselDialog_vesselType"));
-		this.vesselSubType
-				.setReadonly(isReadOnly("VesselDialog_vesselSubType"));
+		this.vesselSubType.setReadonly(isReadOnly("VesselDialog_vesselSubType"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -376,20 +364,15 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_VesselDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_VesselDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_VesselDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_VesselDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_VesselDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VesselDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VesselDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_VesselDialog_btnSave"));
 		logger.debug("Leaving");
 	}
 
@@ -514,15 +497,15 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		logger.debug("Entering");
 		// Vessel TypeID
 		if (!this.vesselTypeID.isReadonly()) {
-			this.vesselTypeID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VesselDetailDialog_VesselTypeID.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
+			this.vesselTypeID
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_VesselDetailDialog_VesselTypeID.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
 		// Vessel Sub Type
 		if (!this.vesselSubType.isReadonly()) {
-			this.vesselSubType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VesselDetailDialog_VesselSubType.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
+			this.vesselSubType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VesselDetailDialog_VesselSubType.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -543,9 +526,8 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 
 	private void doSetLOVValidation() {
 		// Vessel Type
-		this.vesselType.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_VesselDetailDialog_VesselType.value"), null,
-				true, true));
+		this.vesselType.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_VesselDetailDialog_VesselType.value"), null, true, true));
 	}
 
 	/**
@@ -588,23 +570,20 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_VesselDetailDialog_VesselTypeID.value")
-				+ " : " + aVesselDetail.getVesselTypeID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_VesselDetailDialog_VesselTypeID.value") + " : "
+				+ aVesselDetail.getVesselTypeID();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aVesselDetail.getRecordType())) {
 				aVesselDetail.setVersion(aVesselDetail.getVersion() + 1);
 				aVesselDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
 				if (isWorkFlowEnabled()) {
-					aVesselDetail.setRecordStatus(userAction.getSelectedItem()
-							.getValue().toString());
+					aVesselDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aVesselDetail.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-							aVesselDetail.getNextTaskId(), aVesselDetail);
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVesselDetail.getNextTaskId(),
+							aVesselDetail);
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
@@ -650,15 +629,12 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		boolean isNew = false;
 
 		if (isWorkFlowEnabled()) {
-			aVesselDetail.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(),
-					aVesselDetail.getNextTaskId(), aVesselDetail);
+			aVesselDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVesselDetail.getNextTaskId(), aVesselDetail);
 		}
 
 		// force validation, if on, than execute by component.getValue()
-		if (!PennantConstants.RECORD_TYPE_DEL.equals(aVesselDetail
-				.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aVesselDetail.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the VesselDetail object with the components data
 			doWriteComponentsToBean(aVesselDetail);
@@ -675,11 +651,9 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			if (StringUtils.isBlank(aVesselDetail.getRecordType())) {
 				aVesselDetail.setVersion(aVesselDetail.getVersion() + 1);
 				if (isNew) {
-					aVesselDetail
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aVesselDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aVesselDetail
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aVesselDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aVesselDetail.setNewRecord(true);
 				}
 			}
@@ -723,8 +697,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	private boolean doProcess(VesselDetail aVesselDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
-		aVesselDetail.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aVesselDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVesselDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aVesselDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -745,12 +718,10 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			aVesselDetail.setNextRoleCode(getNextRoleCode());
 
 			if (StringUtils.isBlank(getOperationRefs())) {
-				processCompleted = doSaveProcess(
-						getAuditHeader(aVesselDetail, tranType), null);
+				processCompleted = doSaveProcess(getAuditHeader(aVesselDetail, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				AuditHeader auditHeader = getAuditHeader(aVesselDetail,
-						PennantConstants.TRAN_WF);
+				AuditHeader auditHeader = getAuditHeader(aVesselDetail, PennantConstants.TRAN_WF);
 
 				for (int i = 0; i < list.length; i++) {
 					processCompleted = doSaveProcess(auditHeader, list[i]);
@@ -760,8 +731,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 				}
 			}
 		} else {
-			processCompleted = doSaveProcess(
-					getAuditHeader(aVesselDetail, tranType), null);
+			processCompleted = doSaveProcess(getAuditHeader(aVesselDetail, tranType), null);
 		}
 		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
@@ -785,41 +755,31 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
-		VesselDetail aVesselDetail = (VesselDetail) auditHeader
-				.getAuditDetail().getModelData();
+		VesselDetail aVesselDetail = (VesselDetail) auditHeader.getAuditDetail().getModelData();
 
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader
-							.getAuditTranType())) {
-						auditHeader = getVesselDetailService().delete(
-								auditHeader);
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+						auditHeader = getVesselDetailService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getVesselDetailService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getVesselDetailService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove
-							.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getVesselDetailService().doApprove(
-								auditHeader);
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+						auditHeader = getVesselDetailService().doApprove(auditHeader);
 
-						if (PennantConstants.RECORD_TYPE_DEL
-								.equals(aVesselDetail.getRecordType())) {
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aVesselDetail.getRecordType())) {
 							deleteNotes = true;
 						}
 
-					} else if (PennantConstants.method_doReject
-							.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getVesselDetailService().doReject(
-								auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW
-								.equals(aVesselDetail.getRecordType())) {
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+						auditHeader = getVesselDetailService().doReject(auditHeader);
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aVesselDetail.getRecordType())) {
 							deleteNotes = true;
 						}
 
@@ -828,14 +788,12 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 						// ErrorDetails(PennantConstants.ERR_9999,
 						// Labels.getLabel("InvalidWorkFlowMethod"),
 						// null,PennantConstants.ERR_SEV_ERROR));
-						retValue = ErrorControl.showErrorControl(
-								this.window_VesselDetailDialog, auditHeader);
+						retValue = ErrorControl.showErrorControl(this.window_VesselDetailDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_VesselDetailDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_VesselDetailDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -871,13 +829,10 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(VesselDetail aVesselDetail,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aVesselDetail.getBefImage(), aVesselDetail);
-		return new AuditHeader(String.valueOf(aVesselDetail.getVesselTypeID()),
-				null, null, null, auditDetail, aVesselDetail.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(VesselDetail aVesselDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVesselDetail.getBefImage(), aVesselDetail);
+		return new AuditHeader(String.valueOf(aVesselDetail.getVesselTypeID()), null, null, null, auditDetail,
+				aVesselDetail.getUserDetails(), getOverideMap());
 	}
 
 	public void onFulfill$vesselType(Event event) {
@@ -889,8 +844,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
-				this.vesselType.setValue(String.valueOf(details
-						.getFieldCodeId()));
+				this.vesselType.setValue(String.valueOf(details.getFieldCodeId()));
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -916,8 +870,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 		return this.vesselDetailService;
 	}
 
-	public void setVesselDetailListCtrl(
-			VesselDetailListCtrl vesselDetailListCtrl) {
+	public void setVesselDetailListCtrl(VesselDetailListCtrl vesselDetailListCtrl) {
 		this.vesselDetailListCtrl = vesselDetailListCtrl;
 	}
 

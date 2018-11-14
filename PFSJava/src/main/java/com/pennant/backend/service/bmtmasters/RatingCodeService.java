@@ -52,10 +52,15 @@ import com.pennant.backend.model.bmtmasters.RatingCode;
  */
 public interface RatingCodeService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	RatingCode getRatingCodeById(String ratingType, String ratingCode);
+
 	RatingCode getApprovedRatingCodeById(String ratingType, String ratingCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

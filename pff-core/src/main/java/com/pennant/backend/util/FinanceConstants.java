@@ -277,8 +277,7 @@ public class FinanceConstants {
 	// FIXME: PV: 31MAY17 Duplicate and different version present in calculation
 	// constants
 	/*
-	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static
-	 * final String RVW_ALL = "RVWALL";
+	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static final String RVW_ALL = "RVWALL";
 	 */
 	// Method code for Schedule Change exists or not on Maintenance
 	public static final String method_scheduleChange = "scheduleChange";
@@ -322,7 +321,7 @@ public class FinanceConstants {
 	public static final String FLAG_REAGE = "A";
 	public static final String FLAG_UNPLANNED = "U";
 	public static final String FLAG_HOLDEMI = "S";
-	public static final String	FLAG_30DAYS_FIXED				= "Z";
+	public static final String FLAG_30DAYS_FIXED = "Z";
 
 	// Recording Fee Type
 	public static final String RECFEETYPE_CASH = "Cash";
@@ -384,8 +383,8 @@ public class FinanceConstants {
 
 	// Query Management
 	public static final String QUERY_MANAGEMENT = "QUERY_MGMT";
-	public static final String FEE_UPFRONT_REQ    = "FEE_UPFRONT_REQ";
-	
+	public static final String FEE_UPFRONT_REQ = "FEE_UPFRONT_REQ";
+
 	// Fee Waivers
 	public static final String FINSER_EVENT_FEEWAIVERS = "FeeWaivers";
 }

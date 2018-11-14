@@ -73,8 +73,8 @@ public class RelationshipOfficerListModelItemRenderer implements ListitemRendere
 		lc.setParent(item);
 		lc = new Listcell(relationshipOfficer.getROfficerDesc());
 		lc.setParent(item);
-		lc = new Listcell(relationshipOfficer.getROfficerDeptCode() + "-"
-				+ relationshipOfficer.getLovDescROfficerDeptCodeName());
+		lc = new Listcell(
+				relationshipOfficer.getROfficerDeptCode() + "-" + relationshipOfficer.getLovDescROfficerDeptCodeName());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbROfficerIsActive = new Checkbox();

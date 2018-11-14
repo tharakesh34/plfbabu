@@ -62,10 +62,10 @@ import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.service.masters.LocalityService;
 import com.pennant.webui.masters.locality.model.LocalityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.masters/Locality/LocalityList.zul file.
@@ -93,7 +93,7 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 	protected Longbox id; // autowired
 	protected Textbox name; // autowired
 	protected Textbox city; // autowired
-    
+
 	protected Listbox sortOperator_id;
 	protected Listbox sortOperator_name;
 	protected Listbox sortOperator_city;

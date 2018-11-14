@@ -63,9 +63,9 @@ import com.pennant.backend.model.customermasters.CustomerPRelation;
 import com.pennant.backend.service.customermasters.CustomerPRelationService;
 import com.pennant.webui.customermasters.customerprelation.model.CustomerPRelationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPRelation/CustomerPRelationList.zul file.
@@ -92,7 +92,7 @@ public class CustomerPRelationListCtrl extends GFCBaseListCtrl<CustomerPRelation
 	protected Textbox pRRelationCustID;
 	protected Checkbox pRisGuardian;
 	protected Textbox pRSName;
-	
+
 	protected Listbox sortOperator_pRSName;
 	protected Listbox sortOperator_pRCustCIF;
 	protected Listbox sortOperator_pRCustPRSNo;

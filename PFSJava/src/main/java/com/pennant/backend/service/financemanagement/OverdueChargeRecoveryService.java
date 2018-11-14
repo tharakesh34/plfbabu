@@ -50,15 +50,24 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 
 public interface OverdueChargeRecoveryService {
-	
+
 	OverdueChargeRecovery getOverdueChargeRecovery();
+
 	OverdueChargeRecovery getNewOverdueChargeRecovery();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	OverdueChargeRecovery getOverdueChargeRecoveryById(String id, Date finSchDate, String finOdFor);
+
 	OverdueChargeRecovery getApprovedOverdueChargeRecoveryById(String id, Date finSchDate, String finOdFor);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	BigDecimal getPendingODCAmount(String finReference);
+
 	OverdueChargeRecovery getOverdueChargeRecovery(String finReference);
 }

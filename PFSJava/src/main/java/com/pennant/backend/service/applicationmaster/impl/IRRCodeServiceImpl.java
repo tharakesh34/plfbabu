@@ -156,14 +156,12 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * IRRCodes/IRRCodes_Temp by using IRRCodesDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using
-	 * IRRCodesDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtIRRCodes by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table IRRCodes/IRRCodes_Temp by using
+	 * IRRCodesDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
+	 * IRRCodesDAO's update method 3) Audit the record in to AuditHeader and AdtIRRCodes by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -207,12 +205,10 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table IRRCodes by using IRRCodesDAO's delete method with type as Blank 3)
-	 * Audit the record in to AuditHeader and AdtIRRCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * IRRCodes by using IRRCodesDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtIRRCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -238,8 +234,7 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * getIRRCodes fetch the details by using IRRCodesDAO's getIRRCodesById
-	 * method.
+	 * getIRRCodes fetch the details by using IRRCodesDAO's getIRRCodesById method.
 	 * 
 	 * @param iRRID
 	 *            iRRID of the IRRCode.
@@ -350,9 +345,8 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * getApprovedIRRCodesById fetch the details by using IRRCodesDAO's
-	 * getIRRCodesById method . with parameter id and type as blank. it fetches
-	 * the approved records from the IRRCodes.
+	 * getApprovedIRRCodesById fetch the details by using IRRCodesDAO's getIRRCodesById method . with parameter id and
+	 * type as blank. it fetches the approved records from the IRRCodes.
 	 * 
 	 * @param iRRID
 	 *            iRRID of the IRRCode. (String)
@@ -367,19 +361,15 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getIRRCodeDAO().delete with parameters iRRCode,"" b) NEW Add new
-	 * record in to main table by using getIRRCodeDAO().save with parameters
-	 * iRRCode,"" c) EDIT Update record in the main table by using
-	 * getIRRCodeDAO().update with parameters iRRCode,"" 3) Delete the record
-	 * from the workFlow table by using getIRRCodeDAO().delete with parameters
-	 * iRRCode,"_Temp" 4) Audit the record in to AuditHeader and AdtIRRCodes by
-	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtIRRCodes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getIRRCodeDAO().delete with parameters
+	 * iRRCode,"" b) NEW Add new record in to main table by using getIRRCodeDAO().save with parameters iRRCode,"" c)
+	 * EDIT Update record in the main table by using getIRRCodeDAO().update with parameters iRRCode,"" 3) Delete the
+	 * record from the workFlow table by using getIRRCodeDAO().delete with parameters iRRCode,"_Temp" 4) Audit the
+	 * record in to AuditHeader and AdtIRRCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtIRRCodes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
+	 * Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -457,12 +447,10 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getIRRCodeDAO().delete with parameters
-	 * iRRCode,"_Temp" 3) Audit the record in to AuditHeader and AdtIRRCodes by
-	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getIRRCodeDAO().delete with parameters iRRCode,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtIRRCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -491,10 +479,8 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -525,10 +511,9 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getIRRCodeDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getIRRCodeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage

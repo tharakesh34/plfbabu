@@ -59,25 +59,23 @@ import com.pennant.backend.service.finance.FinanceEligibility;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
- * This is the controller class for the 
- * /WEB-INF/pages/Enquiry/FinanceInquiry/FinancePurposeSelectDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/FinancePurposeSelectDialog.zul file.
  */
 public class FinancePurposeSelectDialogCtrl extends GFCBaseCtrl<FinanceEligibility> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FinancePurposeSelectDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_FinancePurposeSelectDialog; 		
-    protected Combobox      finPurpose;  		
-	
+	protected Window window_FinancePurposeSelectDialog;
+	protected Combobox finPurpose;
+
 	private List<ValueLabel> productAssets = new ArrayList<ValueLabel>();
 	private FinanceEligibility finEligibility;
 	private FinanceEligibilityRuleResultCtrl finElgRuleResultCtrl;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -93,8 +91,7 @@ public class FinancePurposeSelectDialogCtrl extends GFCBaseCtrl<FinanceEligibili
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, 
-	 * if the ZUL-file is called with a parameter for a
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
@@ -110,23 +107,23 @@ public class FinancePurposeSelectDialogCtrl extends GFCBaseCtrl<FinanceEligibili
 		if (arguments.containsKey("productAssetlist")) {
 			List<ProductAsset> productAssetlist = (List<ProductAsset>) arguments.get("productAssetlist");
 			for (ProductAsset productAsset : productAssetlist) {
-				productAssets.add(new ValueLabel(productAsset.getAssetCode(),productAsset.getAssetDesc()));
+				productAssets.add(new ValueLabel(productAsset.getAssetCode(), productAsset.getAssetDesc()));
 			}
 		}
 		if (arguments.containsKey("finEligibility")) {
-			finEligibility =  (FinanceEligibility) arguments.get("finEligibility");
+			finEligibility = (FinanceEligibility) arguments.get("finEligibility");
 		}
 		if (arguments.containsKey("finElgRuleResultCtrl")) {
-			finElgRuleResultCtrl =  (FinanceEligibilityRuleResultCtrl) arguments.get("finElgRuleResultCtrl");
+			finElgRuleResultCtrl = (FinanceEligibilityRuleResultCtrl) arguments.get("finElgRuleResultCtrl");
 		}
-		
+
 		fillComboBox(this.finPurpose, "", productAssets, "");
-		
+
 		this.window_FinancePurposeSelectDialog.doModal();
-		
+
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
@@ -143,29 +140,28 @@ public class FinancePurposeSelectDialogCtrl extends GFCBaseCtrl<FinanceEligibili
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
-	public void onClick$btnProceed(Event event) throws InterruptedException{
+
+	public void onClick$btnProceed(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		this.finPurpose.setErrorMessage("");
-		if("#".equals(this.finPurpose.getSelectedItem().getValue())){
-			throw new WrongValueException(this.finPurpose,Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_FinancePurposeDialog_FinPurpose.value")})); 
+		if ("#".equals(this.finPurpose.getSelectedItem().getValue())) {
+			throw new WrongValueException(this.finPurpose, Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_FinancePurposeDialog_FinPurpose.value") }));
 		}
 		this.finEligibility.setLovDescFinPurposeName(this.finPurpose.getSelectedItem().getLabel());
 		this.finEligibility.setFinPurpose(this.finPurpose.getSelectedItem().getValue().toString());
-		
+
 		processFinanceScreen();
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void processFinanceScreen() throws InterruptedException{
+
+	public void processFinanceScreen() throws InterruptedException {
 		logger.debug("Entering");
 		this.window_FinancePurposeSelectDialog.onClose();
 		this.finElgRuleResultCtrl.doCreateFinanceWindow(this.finEligibility);
 		logger.debug("Leaving");
 	}
-	
+
 }

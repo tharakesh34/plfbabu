@@ -47,11 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public interface WIFFinanceScheduleDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceScheduleDetail getWIFFinanceScheduleDetailById(String id);
+
 	FinanceScheduleDetail getApprovedWIFFinanceScheduleDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

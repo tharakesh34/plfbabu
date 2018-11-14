@@ -26,7 +26,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 
 public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	private static Logger logger = Logger.getLogger(CIBILDAOImpl.class);
-	
+
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId) {
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -35,7 +35,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			customerDetails.setCustomer(getCustomer(customerId));
 			customerDetails.setCustomerDocumentsList(getCustomerDocuments(customerId));
 			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumbers(customerId));
-			customerDetails.setCustomerEMailList(getCustomerEmails(customerId)); 
+			customerDetails.setCustomerEMailList(getCustomerEmails(customerId));
 			customerDetails.setAddressList(getCustomerAddres(customerId));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -161,7 +161,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder("Insert Into CIBIL_FILE_INFO");
-		sql.append(" (FILE_NAME, MEMBER_ID, MEMBER_NAME, MEMBER_PASSWORD, CREATEDON, STATUS, FILE_LOCATION, START_TIME)");
+		sql.append(
+				" (FILE_NAME, MEMBER_ID, MEMBER_NAME, MEMBER_PASSWORD, CREATEDON, STATUS, FILE_LOCATION, START_TIME)");
 		sql.append(" Values(:FILE_NAME, :MEMBER_ID, :MEMBER_NAME, :MEMBER_PASSWORD, :CREATEDON, :STATUS,");
 		sql.append(":FILE_LOCATION, :START_TIME)");
 
@@ -173,7 +174,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		paramMap.addValue("CREATEDON", DateUtility.getAppDate());
 		paramMap.addValue("STATUS", "I");
 		paramMap.addValue("FILE_LOCATION", reportPath);
-		paramMap.addValue("START_TIME",  DateUtil.getSysDate());
+		paramMap.addValue("START_TIME", DateUtil.getSysDate());
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "id" });
@@ -183,7 +184,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		return keyHolder.getKey().longValue();
 
 	}
-	
+
 	@Override
 	public void logFileInfoException(long id, String finReference, String reason) {
 
@@ -207,7 +208,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.trace(Literal.LEAVING);
 
 	}
-	
+
 	@Override
 	public DataEngineStatus getLatestExecution() {
 		DataEngineStatus dataStatus = null;
@@ -260,7 +261,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void updateFileStatus(long headerid, String status, long totalRecords, long processedRecords,
 			long successCount, long failedCount, String remarks) {
@@ -294,7 +295,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.trace(Literal.LEAVING);
 
 	}
-	
+
 	@Override
 	public void deleteDetails() {
 		logger.debug(Literal.ENTERING);
@@ -324,7 +325,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			throw new Exception("Unable to insert CIBIL Details");
 		}
 	}
-	
+
 	@Override
 	public EventProperties getEventProperties(String configName, String eventType) {
 		RowMapper<EventProperties> rowMapper = null;
@@ -342,7 +343,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		} catch (Exception e) {
 			logger.warn("Configuration details not available for " + configName);
-		} 
+		}
 
 		return null;
 	}

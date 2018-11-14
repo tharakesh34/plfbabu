@@ -65,46 +65,45 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>IRRFinanceType</code> with set of CRUD operations.
  */
 public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements FinIRRDetailsDAO {
-	private static Logger	logger	= Logger.getLogger(FinIRRDetailsDAOImpl.class);
-
-	
+	private static Logger logger = Logger.getLogger(FinIRRDetailsDAOImpl.class);
 
 	@Override
 	public List<FinIRRDetails> getFinIRRList(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 		FinIRRDetails finIRRDetails = new FinIRRDetails();
 		finIRRDetails.setFinReference(finReference);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT IRRID, FinReference, IRR, IRRCode, IrrCodeDesc, ");
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode," );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinIRRDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference" );
+		selectSql.append(" Where FinReference =:FinReference");
 
 		List<FinIRRDetails> details = new ArrayList<FinIRRDetails>();
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finIRRDetails);
-		RowMapper<FinIRRDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinIRRDetails.class);
+		RowMapper<FinIRRDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinIRRDetails.class);
 		details = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		
+
 		logger.debug(Literal.LEAVING);
 		return details;
 	}
-	
+
 	@Override
 	public String save(FinIRRDetails entity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into FinIRRDetails");
+		StringBuilder sql = new StringBuilder(" insert into FinIRRDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (iRRID, finReference, iRR, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iRRID, :finReference, :iRR,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -123,7 +122,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 	@Override
 	public void update(FinIRRDetails entity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder	updatesql =new StringBuilder("update FinIRRDetails" );
+		StringBuilder updatesql = new StringBuilder("update FinIRRDetails");
 		updatesql.append(tableType.getSuffix());
 		updatesql.append(" set iRRID = :iRRID, ");
 		updatesql.append(" finReference = :finReference, iRR = :iRR,");
@@ -156,14 +155,14 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(entity);
-		this.jdbcTemplate.update(deleteSql.toString(),  beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	@Override
 	public void deleteList(String finReference, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinIRRDetails irrFeeType = new FinIRRDetails();
 		irrFeeType.setFinReference(finReference);
 
@@ -180,13 +179,15 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 
 	@Override
 	public void saveList(List<FinIRRDetails> finIrrDetails, TableType tableType) {
-		StringBuilder sql =new StringBuilder(" insert into FinIRRDetails");
+		StringBuilder sql = new StringBuilder(" insert into FinIRRDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (iRRID, finReference, iRR, ");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :iRRID, :finReference, :iRR,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -202,5 +203,4 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 
 	}
 
-	
-}	
+}

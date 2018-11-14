@@ -65,13 +65,10 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>LegalDetail</code> with set of
- * CRUD operations.
+ * Data access layer implementation for <code>LegalDetail</code> with set of CRUD operations.
  */
 public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements LegalDetailDAO {
 	private static Logger logger = Logger.getLogger(LegalDetailDAOImpl.class);
-
-
 
 	public LegalDetailDAOImpl() {
 		super();
@@ -83,9 +80,12 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
-		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
+		sql.append(
+				" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
 			sql.append(" ,branchDesc");
 		}
@@ -152,13 +152,19 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into LegalDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("( legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
-		sql.append(" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				"( legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
+		sql.append(
+				" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :legalId, :legalReference, :loanReference, :collateralReference, :branch, :legalDate, :schedulelevelArea, ");
-		sql.append(" :legalDecision, :legalRemarks, :propertyDetailModt, :propertyDetailECDate, :ecPropertyOwnerName, :active, :module,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :legalId, :legalReference, :loanReference, :collateralReference, :branch, :legalDate, :schedulelevelArea, ");
+		sql.append(
+				" :legalDecision, :legalRemarks, :propertyDetailModt, :propertyDetailECDate, :ecPropertyOwnerName, :active, :module,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalDetail.getId() == Long.MIN_VALUE) {
 			legalDetail.setId(getNextId("SeqLegalDetails"));
@@ -186,9 +192,12 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update LegalDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" set legalId = :legalId, loanReference = :loanReference, collateralReference = :collateralReference, branch = :branch, ");
-		sql.append(" legalDate = :legalDate, schedulelevelArea = :schedulelevelArea, legalDecision = :legalDecision, active = :active, module= :module,");
-		sql.append(" legalRemarks = :legalRemarks, propertyDetailModt = :propertyDetailModt, propertyDetailECDate = :propertyDetailECDate, ecPropertyOwnerName = :ecPropertyOwnerName,");
+		sql.append(
+				" set legalId = :legalId, loanReference = :loanReference, collateralReference = :collateralReference, branch = :branch, ");
+		sql.append(
+				" legalDate = :legalDate, schedulelevelArea = :schedulelevelArea, legalDecision = :legalDecision, active = :active, module= :module,");
+		sql.append(
+				" legalRemarks = :legalRemarks, propertyDetailModt = :propertyDetailModt, propertyDetailECDate = :propertyDetailECDate, ecPropertyOwnerName = :ecPropertyOwnerName,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -241,12 +250,12 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 
 		int count = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  LegalDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where loanReference = :loanReference and collateralReference = :collateralReference");
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		source.addValue("loanReference", reference);
 		source.addValue("collateralReference", collateralRef);
 		try {
@@ -257,7 +266,7 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		logger.debug(Literal.LEAVING);
 		return count > 0 ? true : false;
 	}
-	
+
 	/**
 	 * Updating the legal details
 	 */
@@ -292,14 +301,13 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private String getLegalReference(long legalId) {
-		String reference  = new String();
-		reference  = reference.concat("LG");
+		String reference = new String();
+		reference = reference.concat("LG");
 		reference = reference.concat(StringUtils.leftPad(String.valueOf(legalId), 18, "0"));
 		return reference;
 	}
-	
 
 	@Override
 	public boolean isExists(String loanReference, TableType tableType) {
@@ -307,12 +315,12 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 
 		int count = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  LegalDetails");
 		selectSql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		selectSql.append(" Where loanReference = :loanReference");
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		source.addValue("loanReference", loanReference);
 		try {
 			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
@@ -341,6 +349,5 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
 	}
-	
 
 }

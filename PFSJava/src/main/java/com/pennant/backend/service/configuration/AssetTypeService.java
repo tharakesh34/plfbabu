@@ -49,11 +49,18 @@ import com.pennant.backend.model.configuration.AssetType;
 public interface AssetTypeService {
 
 	AssetType getAssetType();
+
 	AssetType getNewAssetType();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	AssetType getAssetTypeById(String id);
+
 	AssetType getApprovedAssetTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

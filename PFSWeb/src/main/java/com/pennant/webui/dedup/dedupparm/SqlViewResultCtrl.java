@@ -47,7 +47,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 
 	private static final long serialVersionUID = -446102445582419907L;
 	private static final Logger logger = Logger.getLogger(SqlViewResultCtrl.class);
-	
+
 	protected Window window_SqlViewResult;
 	protected Button button_SqlViewResult;
 	protected Button btnClose;
@@ -64,22 +64,22 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 
 	// row count for listBox
 	private int countRows;
-	boolean isExecuted= true;
-	int noOfAttempts =1;
-	String resultQuery =null;
-	Datebox datebox ;
- 	Textbox textbox;
-	
+	boolean isExecuted = true;
+	int noOfAttempts = 1;
+	String resultQuery = null;
+	Datebox datebox;
+	Textbox textbox;
+
 	private transient DedupParmService dedupParmService;
 	@SuppressWarnings("rawtypes")
 	List resultList = new ArrayList();
 	@SuppressWarnings("rawtypes")
-	List keyList; 
+	List keyList;
 	@SuppressWarnings("rawtypes")
 	List valueList;
 	LinkedHashMap<String, String[]> fieldMap = new LinkedHashMap<String, String[]>();
 	List<String> fields = new ArrayList<String>();
-	
+
 	public SqlViewResultCtrl() {
 		super();
 	}
@@ -88,7 +88,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SqlViewResult(Event event) throws Exception {
 		logger.debug("Entering");
@@ -173,32 +173,32 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	 
+
 	/**
 	 * separating List of values
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void separatingList(){
+	public void separatingList() {
 		logger.debug("Entering");
 		keyList = new ArrayList();
 		valueList = new ArrayList();
-		int rowCount=0;
-		for(int i=0;i<resultList.size();i++){
+		int rowCount = 0;
+		for (int i = 0; i < resultList.size(); i++) {
 			LinkedHashMap map = new LinkedHashMap();
 			map = (LinkedHashMap) resultList.get(i);
-			if(rowCount==0){
-				Set set = (Set)map.keySet();
+			if (rowCount == 0) {
+				Set set = (Set) map.keySet();
 				keyList.addAll(set);
 			}
-			Collection newList = (Collection)map.values();
+			Collection newList = (Collection) map.values();
 			valueList.addAll(newList);
 			rowCount++;
 		}
 		Listhead listHead = new Listhead();
 		Listheader listheader;
-		int columnCount =keyList.size(); 
-		if(isExecuted){
-			for(int k=0;k<columnCount;k++){
+		int columnCount = keyList.size();
+		if (isExecuted) {
+			for (int k = 0; k < columnCount; k++) {
 				listheader = new Listheader();
 				listheader.setLabel(getLabel(keyList.get(k).toString()));
 				listheader.setHflex("min");
@@ -208,24 +208,24 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 				isExecuted = false;
 			}
 		}
-		
-		renderlist(0,1);
+
+		renderlist(0, 1);
 		logger.debug("Leaving");
 	}
-	
-	public void onClick$btnSimulation(Event event){
+
+	public void onClick$btnSimulation(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSimulate();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private void doSimulate() {
 		Object object = new CustomerDedup();
 		listBoxSqlView.getItems().clear();
-		String fieldType ="";
-		
+		String fieldType = "";
+
 		List<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		for (int i = 0; i < fields.size(); i++) {
 			try {
 				if (fieldMap.containsKey(fields.get(i))) {
@@ -233,12 +233,12 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 				}
 				if ("datetime".equalsIgnoreCase(fieldType)) {
 					datebox = (Datebox) rows_Fields.getFellowIfAny(fields.get(i));
-					object.getClass().getMethod("set" + fields.get(i), Class.forName("java.util.Date"))
-							.invoke(object, datebox.getValue());
+					object.getClass().getMethod("set" + fields.get(i), Class.forName("java.util.Date")).invoke(object,
+							datebox.getValue());
 				} else {
 					textbox = (Textbox) rows_Fields.getFellowIfAny(fields.get(i));
-					object.getClass().getMethod("set" + fields.get(i), Class.forName("java.lang.String"))
-							.invoke(object, textbox.getValue());
+					object.getClass().getMethod("set" + fields.get(i), Class.forName("java.lang.String")).invoke(object,
+							textbox.getValue());
 				}
 			} catch (WrongValueException we) {
 				logger.error("Exception: ", we);
@@ -247,7 +247,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 				logger.error("Exception: ", e);
 			}
 		}
-		
+
 		if (!wve.isEmpty()) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -256,109 +256,113 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		//query for getting list of values on validation		
-		resultList = getDedupParmService().validate(resultQuery, (CustomerDedup)object);
-		resultCount.setValue("Total number of records are :"+ resultList.size());
+		resultList = getDedupParmService().validate(resultQuery, (CustomerDedup) object);
+		resultCount.setValue("Total number of records are :" + resultList.size());
 		this.gb_resultCount.setVisible(true);
 		this.listBoxSqlView.setVisible(true);
 		this.paging_South.setVisible(true);
-		
+
 		// set the paging params
 		this.pagingSqlViewResult.setPageSize(getCountRows());
 		this.pagingSqlViewResult.setDetailed(true);
 		this.pagingSqlViewResult.setTotalSize(resultList.size());
 		this.pagingSqlViewResult.addEventListener("onPaging", new OnPagingEventListener());
-		
+
 		separatingList();
-		
+
 	}
 
 	//paging Event Class for pagination
 	public final class OnPagingEventListener implements EventListener<Event> {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
-			
+
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getCountRows();
 			pagingSqlViewResult.setTotalSize(resultList.size());
 
-			int incValue = pageNo+1;
-			renderlist(start,incValue);
-			
+			int incValue = pageNo + 1;
+			renderlist(start, incValue);
+
 		}
 	}
-	
+
 	//method for rendering values into listBox
-	public void renderlist(int start, int incValue){
+	public void renderlist(int start, int incValue) {
 		logger.debug("Entering");
-		
-		int columnCount =keyList.size();
+
+		int columnCount = keyList.size();
 		Listitem listitem = null;
 		Listcell listcell = null;
 		listBoxSqlView.getItems().clear();
-		
-		int count =1;
 
-		for(int c=columnCount*start;c<((incValue*(columnCount*getCountRows()))-1);c++){
-			if(count==1){
+		int count = 1;
+
+		for (int c = columnCount * start; c < ((incValue * (columnCount * getCountRows())) - 1); c++) {
+			if (count == 1) {
 				listitem = new Listitem();
-			}if(c == valueList.size()){
+			}
+			if (c == valueList.size()) {
 				break;
 			}
-			if((valueList.get(c) != null) && (StringUtils.isNotEmpty(valueList.get(c).toString()))){
+			if ((valueList.get(c) != null) && (StringUtils.isNotEmpty(valueList.get(c).toString()))) {
 				listcell = new Listcell(valueList.get(c).toString());
-			}else{
+			} else {
 				listcell = new Listcell("");
 			}
-			
+
 			listcell.setParent(listitem);
-			
-			if(count == columnCount){
+
+			if (count == columnCount) {
 				listitem.setHeight("20px");
 				listBoxSqlView.appendChild(listitem);
-				count=0;
+				count = 0;
 			}
 			count++;
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 */	
-	public void onClick$btnClose(Event event) throws InterruptedException{
+	 */
+	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		this.window_SqlViewResult.onClose();
 		logger.debug("Leaving");
 	}
 
 	// Getters & Setters
-	
+
 	public void setCountRows(int countRows) {
 		this.countRows = countRows;
 	}
+
 	public int getCountRows() {
 		return countRows;
 	}
-	
+
 	public DedupParmService getDedupParmService() {
 		return dedupParmService;
 	}
+
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
 	}
-	private String getLabel(String value){
-		String label=Labels.getLabel(value+"_label");
+
+	private String getLabel(String value) {
+		String label = Labels.getLabel(value + "_label");
 		if (StringUtils.isBlank(label)) {
 			return value;
 		}

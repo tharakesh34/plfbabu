@@ -45,7 +45,6 @@ package com.pennant.backend.dao.smtmasters.impl;
 
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -68,11 +67,11 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
  */
 public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSParameterDAO {
 	private static Logger logger = Logger.getLogger(PFSParameterDAOImpl.class);
-	
+
 	public PFSParameterDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record System Parameter details by key field
 	 * 
@@ -92,8 +91,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		StringBuilder sql = new StringBuilder("SELECT SysParmCode, SysParmDesc, ");
 		sql.append(" SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, ");
 		sql.append(" SysParmList, SysParmValdMod, SysParmDescription, ");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode," );
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
+		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		sql.append(" FROM  SMTparameters");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where SysParmCode =:SysParmCode ");
@@ -103,8 +102,7 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
 
 		try {
-			parameter = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters,
-					typeRowMapper);
+			parameter = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			parameter = null;
@@ -115,9 +113,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	}
 
 	/**
-	 * This method Deletes the Record from the SMTparameters or
-	 * SMTparameters_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete System Parameter by key SysParmCode
+	 * This method Deletes the Record from the SMTparameters or SMTparameters_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete System Parameter by key SysParmCode
 	 * 
 	 * @param System
 	 *            Parameter (pFSParameter)
@@ -131,18 +128,16 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	public void delete(PFSParameter pFSParameter, String type) {
 		logger.debug("Entering ");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From SMTparameters");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SysParmCode =:SysParmCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				pFSParameter);
-	
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
+
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),
-					beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -169,17 +164,20 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	@Override
 	public String save(PFSParameter pFSParameter, String type) {
 		logger.debug("Entering ");
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into SMTparameters");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec,");
-		insertSql.append(" SysParmList, SysParmValdMod, SysParmDescription,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(
+				" (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec,");
+		insertSql.append(
+				" SysParmList, SysParmValdMod, SysParmDescription,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:SysParmCode, :SysParmDesc, :SysParmType, :SysParmMaint, :SysParmValue, :SysParmLength,");
+		insertSql.append(
+				" Values(:SysParmCode, :SysParmDesc, :SysParmType, :SysParmMaint, :SysParmValue, :SysParmLength,");
 		insertSql.append(" :SysParmDec, :SysParmList, :SysParmValdMod, :SysParmDescription,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," ); 
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -188,9 +186,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	}
 
 	/**
-	 * This method updates the Record SMTparameters or SMTparameters_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update System Parameter by key SysParmCode and Version
+	 * This method updates the Record SMTparameters or SMTparameters_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update System Parameter by key SysParmCode and Version
 	 * 
 	 * @param System
 	 *            Parameter (pFSParameter)
@@ -206,15 +203,15 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		logger.debug("Entering ");
 		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SysParmDesc = :SysParmDesc, " );
-		updateSql.append(" SysParmType = :SysParmType, SysParmMaint = :SysParmMaint, " );
-		updateSql.append(" SysParmValue = :SysParmValue, SysParmLength = :SysParmLength, " );
-		updateSql.append(" SysParmDec = :SysParmDec, SysParmList = :SysParmList, " );
+		updateSql.append(" Set SysParmDesc = :SysParmDesc, ");
+		updateSql.append(" SysParmType = :SysParmType, SysParmMaint = :SysParmMaint, ");
+		updateSql.append(" SysParmValue = :SysParmValue, SysParmLength = :SysParmLength, ");
+		updateSql.append(" SysParmDec = :SysParmDec, SysParmList = :SysParmList, ");
 		updateSql.append(" SysParmValdMod = :SysParmValdMod, SysParmDescription = :SysParmDescription, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SysParmCode =:SysParmCode");
 
 		if (!type.endsWith("_Temp")) {
@@ -229,30 +226,31 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
-	 * This method updates the Record SMTparameters or SMTparameters_Temp. 
-	 * update System Parameter value by key SysParmCode 
+	 * This method updates the Record SMTparameters or SMTparameters_Temp. update System Parameter value by key
+	 * SysParmCode
+	 * 
 	 * @param sysParmCode
 	 * @param sysParmValue
 	 * @param type
 	 */
 	@Override
-	public void update(String sysParmCode, String sysParmValue,String type) {
+	public void update(String sysParmCode, String sysParmValue, String type) {
 		logger.debug("Entering ");
-		
-		PFSParameter pFSParameter=new PFSParameter();
+
+		PFSParameter pFSParameter = new PFSParameter();
 		pFSParameter.setSysParmCode(sysParmCode);
 		pFSParameter.setSysParmValue(sysParmValue);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SysParmValue = :SysParmValue " );
+		updateSql.append(" Set SysParmValue = :SysParmValue ");
 		updateSql.append(" Where SysParmCode =:SysParmCode");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving ");
 	}
 
@@ -260,42 +258,40 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * Method for Updating Parameter Value
 	 */
 	@Override
-    public void updateParmValue(PFSParameter pFSParameter) {
+	public void updateParmValue(PFSParameter pFSParameter) {
 		int recordCount = 0;
 		logger.debug("Entering ");
 		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
-		updateSql.append(" Set SysParmValue = :SysParmValue Where SysParmCode =:SysParmCode " );
+		updateSql.append(" Set SysParmValue = :SysParmValue Where SysParmCode =:SysParmCode ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
 
-	
-	
 	/**
 	 * Method for getting the List of Static PFSParameters list
 	 */
 	public List<PFSParameter> getAllPFSParameter() {
 		logger.debug("Entering");
-		
-		StringBuilder selectSql = new StringBuilder(" Select SysParmCode, SysParmDesc, " );
-		selectSql.append(" SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, " );
+
+		StringBuilder selectSql = new StringBuilder(" Select SysParmCode, SysParmDesc, ");
+		selectSql.append(" SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, ");
 		selectSql.append(" SysParmList, SysParmValdMod, SysParmDescription, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn From SMTparameters");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new PFSParameter());
-		
+
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
-		List<PFSParameter> systemParms = this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);  
+		List<PFSParameter> systemParms = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");
 		return systemParms;
 	}
-	
+
 	/**
 	 * Method for get the list of Global Variable records
 	 */
@@ -307,5 +303,5 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		RowMapper<GlobalVariable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GlobalVariable.class);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 }

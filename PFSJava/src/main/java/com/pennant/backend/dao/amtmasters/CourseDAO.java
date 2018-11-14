@@ -41,12 +41,16 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.amtmasters;
+
 import com.pennant.backend.model.amtmasters.Course;
 
 public interface CourseDAO {
 
 	Course getCourseById(String id, String type);
+
 	void update(Course course, String type);
+
 	void delete(Course course, String type);
+
 	String save(Course course, String type);
 }

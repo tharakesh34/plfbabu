@@ -63,24 +63,22 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>StepPolicyHeader table</b>.<br>
  *
  */
-@XmlType(propOrder = {
-		"policyCode","policyDesc","stepType","stepPolicyDetails","returnStatus"
-})
+@XmlType(propOrder = { "policyCode", "policyDesc", "stepType", "stepPolicyDetails", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class StepPolicyHeader extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3832850641524383002L;
-	
+
 	@XmlElement
 	private String policyCode;
 	@XmlElement
 	private String policyDesc;
-	
+
 	private String stepNumber;
 	private String tenorSplitPerc;
 	private String rateMargin;
 	private String emiSplitPerc;
-	
+
 	private boolean newRecord;
 	private String lovValue;
 	private StepPolicyHeader befImage;
@@ -88,14 +86,14 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String stepType;
 
-	@XmlElementWrapper(name="stepDetails")
-	@XmlElement(name="stepDetail")
+	@XmlElementWrapper(name = "stepDetails")
+	@XmlElement(name = "stepDetail")
 	private List<StepPolicyDetail> stepPolicyDetails = null;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -103,12 +101,12 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	public StepPolicyHeader() {
 		super();
 	}
-	
+
 	public StepPolicyHeader(String id) {
 		super();
 		this.setPolicyCode(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("stepPolicyDetails");
@@ -119,7 +117,7 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 		excludeFields.add("returnStatus");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//	
@@ -131,7 +129,7 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	public void setId(String id) {
 		this.policyCode = id;
 	}
-	
+
 	public String getPolicyCode() {
 		return policyCode;
 	}
@@ -151,27 +149,31 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public StepPolicyHeader getBefImage(){
+	public StepPolicyHeader getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(StepPolicyHeader beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(StepPolicyHeader beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -179,6 +181,7 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	public List<StepPolicyDetail> getStepPolicyDetails() {
 		return stepPolicyDetails;
 	}
+
 	public void setStepPolicyDetails(List<StepPolicyDetail> stepPolicyDetails) {
 		this.stepPolicyDetails = stepPolicyDetails;
 	}
@@ -186,6 +189,7 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
@@ -238,5 +242,4 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 		this.returnStatus = returnStatus;
 	}
 
-	
 }

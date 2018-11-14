@@ -7,8 +7,8 @@ public class PasswordEncoderGenerator {
 		String password = "Pennant@123";
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String encodedPassword = passwordEncoder.encode(password);
-		System.out.println("Password : " +encodedPassword);
+		System.out.println("Password : " + encodedPassword);
 		System.out.println(passwordEncoder.matches("Pennant@123", encodedPassword));
-		
+
 	}
 }

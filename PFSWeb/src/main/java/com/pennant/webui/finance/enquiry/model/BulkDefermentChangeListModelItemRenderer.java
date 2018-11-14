@@ -8,14 +8,14 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.BulkDefermentChange;
 
-public class BulkDefermentChangeListModelItemRenderer implements ListitemRenderer<BulkDefermentChange>, Serializable{
+public class BulkDefermentChangeListModelItemRenderer implements ListitemRenderer<BulkDefermentChange>, Serializable {
 
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	public BulkDefermentChangeListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, BulkDefermentChange enquiry, int count) throws Exception {
 

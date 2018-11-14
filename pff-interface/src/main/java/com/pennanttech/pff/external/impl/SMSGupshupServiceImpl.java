@@ -28,10 +28,10 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 	@Override
 	public String sendNotification(Notification notification) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder smsData = new StringBuilder();
 		Timestamp reqSentOn = new Timestamp(System.currentTimeMillis());
-		
+
 		String hostReferece = null;
 		try {
 
@@ -62,7 +62,7 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 			while ((line = rd.readLine()) != null) {
 				buffer.append(line).append("\n");
 			}
-			
+
 			String[] response = StringUtils.split(buffer.toString(), "|");
 
 			if ("error".contains(buffer.toString())) {
@@ -71,7 +71,7 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 			} else {
 				doInterfaceLogging(notification.getKeyReference(), smsData.toString(), buffer.toString(), null, null,
 						reqSentOn, InterfaceConstants.STATUS_SUCCESS);
-			} 
+			}
 
 			rd.close();
 			conn.disconnect();
@@ -83,7 +83,7 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 			throw new InterfaceException("9999", e.getMessage());
 		}
 
-		logger.debug(Literal.LEAVING);		
+		logger.debug(Literal.LEAVING);
 		return hostReferece;
 	}
 

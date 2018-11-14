@@ -67,69 +67,67 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.reinstatefinance.model.ReinstateFinanceListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceList.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceList.zul file.
  */
 public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> {
 	private static final long serialVersionUID = 5327118548986437717L;
 	private static final Logger logger = Logger.getLogger(ReinstateFinanceListCtrl.class);
 
-	protected Window 			window_ReinstateFinanceList; 			
-	protected Borderlayout 		borderLayout_ReinstateFinanceList; 		
-	protected Paging 			pagingReinstateFinanceList; 			
-	protected Listbox 			listBoxReinstateFinance; 				
+	protected Window window_ReinstateFinanceList;
+	protected Borderlayout borderLayout_ReinstateFinanceList;
+	protected Paging pagingReinstateFinanceList;
+	protected Listbox listBoxReinstateFinance;
 
-	protected Textbox 			custCIF; 								
-	protected Textbox 			finType; 								
-	protected Textbox 			finCcy; 								
-	protected Textbox 			finBranch;								
-	protected Textbox 			scheduleMethod; 						
-	protected Textbox 			profitDaysBasis; 						
-	
-	protected Button  			btnClose; 								
-	protected Div 	  			div_ToolBar;       						
+	protected Textbox custCIF;
+	protected Textbox finType;
+	protected Textbox finCcy;
+	protected Textbox finBranch;
+	protected Textbox scheduleMethod;
+	protected Textbox profitDaysBasis;
 
-	protected Listbox 			sortOperator_custCIF; 					
-	protected Listbox 			sortOperator_finType; 					
-	protected Listbox 			sortOperator_finCcy; 					
-	protected Listbox 			sortOperator_finBranch;					
-	protected Listbox 			sortOperator_scheduleMethod; 			
-	protected Listbox 			sortOperator_profitDaysBasis; 			
+	protected Button btnClose;
+	protected Div div_ToolBar;
 
-	protected Listheader 		listheader_FinType;						
-	protected Listheader 		listheader_FinProduct;					
-	protected Listheader 		listheader_CustCIF;						
-	protected Listheader 		listheader_FinRef;						
-	protected Listheader 		listheader_FinBranch;					
-	protected Listheader 		listheader_FinStartDate;				
-	protected Listheader 		listheader_NumberOfTerms;				
-	protected Listheader 		listheader_MaturityDate;				
-	protected Listheader 		listheader_FinCcy;						
-	protected Listheader 		listheader_FinAmount;					
-	protected Listheader 		listheader_CurFinAmount;				
-	protected Listheader 		listheader_FinReference; 				
+	protected Listbox sortOperator_custCIF;
+	protected Listbox sortOperator_finType;
+	protected Listbox sortOperator_finCcy;
+	protected Listbox sortOperator_finBranch;
+	protected Listbox sortOperator_scheduleMethod;
+	protected Listbox sortOperator_profitDaysBasis;
 
-	protected Button button_ReinstateFinanceList_NewReinstateFinance; 			
-	protected Button button_ReinstateFinanceList_ReinstateFinanceSearchDialog;  
+	protected Listheader listheader_FinType;
+	protected Listheader listheader_FinProduct;
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_FinRef;
+	protected Listheader listheader_FinBranch;
+	protected Listheader listheader_FinStartDate;
+	protected Listheader listheader_NumberOfTerms;
+	protected Listheader listheader_MaturityDate;
+	protected Listheader listheader_FinCcy;
+	protected Listheader listheader_FinAmount;
+	protected Listheader listheader_CurFinAmount;
+	protected Listheader listheader_FinReference;
 
-	protected Textbox finReference;                             
-	protected Listbox sortOperator_finReference;                
+	protected Button button_ReinstateFinanceList_NewReinstateFinance;
+	protected Button button_ReinstateFinanceList_ReinstateFinanceSearchDialog;
+
+	protected Textbox finReference;
+	protected Listbox sortOperator_finReference;
 
 	// NEEDED for the ReUse in the SearchWindow
-	private List<Filter> 		filterList;
-	
-	private transient ReinstateFinanceService reinstateFinanceService;
-	private FinanceWorkFlowService  financeWorkFlowService;
-	private String buildedWhereCondition = "";
+	private List<Filter> filterList;
 
+	private transient ReinstateFinanceService reinstateFinanceService;
+	private FinanceWorkFlowService financeWorkFlowService;
+	private String buildedWhereCondition = "";
 
 	/**
 	 * default constructor.<br>
@@ -141,10 +139,10 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		
+
 		searchObject.addTabelName("ReinstateFinance_View");
 		searchObject.addWhereClause(getUsrFinAuthenticationQry(false));
-		searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), 
+		searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),
 				getUserWorkspace().isAllowed("button_ReinstateFinanceList_NewReinstateFinance"));
 		String rolecodeList = "";
 		buildedWhereCondition = "";
@@ -153,8 +151,8 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 				rolecodeList = rolecodeList.concat(role).concat("','");
 			}
 
-			if(StringUtils.isNotEmpty(rolecodeList)){
-				rolecodeList = rolecodeList.substring(0,rolecodeList.length()-2);
+			if (StringUtils.isNotEmpty(rolecodeList)) {
+				rolecodeList = rolecodeList.substring(0, rolecodeList.length() - 2);
 				rolecodeList = "'".concat(rolecodeList);
 			}
 		}
@@ -164,8 +162,10 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";
 		}
-		buildedWhereCondition = buildedWhereCondition.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
-		buildedWhereCondition = buildedWhereCondition.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
+		buildedWhereCondition = buildedWhereCondition
+				.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
+		buildedWhereCondition = buildedWhereCondition
+				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 		buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
 		buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_REINSTATE);
 		buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
@@ -174,16 +174,16 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
 		buildedWhereCondition = buildedWhereCondition.concat(") ");
 
-		if(StringUtils.isNotEmpty(buildedWhereCondition)){
-			this.searchObject.addWhereClause(buildedWhereCondition); 
+		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
+			this.searchObject.addWhereClause(buildedWhereCondition);
 		}
-		if(filterList != null && !filterList.isEmpty()){
+		if (filterList != null && !filterList.isEmpty()) {
 			for (Filter filter : filterList) {
 				this.searchObject.addFilter(filter);
 			}
 		}
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "ReinstateFinance";
@@ -200,11 +200,13 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 	 */
 	public void onCreate$window_ReinstateFinanceList(Event event) throws Exception {
 		// Set the page level components.
-		setPageComponents(window_ReinstateFinanceList, borderLayout_ReinstateFinanceList, listBoxReinstateFinance, pagingReinstateFinanceList);
+		setPageComponents(window_ReinstateFinanceList, borderLayout_ReinstateFinanceList, listBoxReinstateFinance,
+				pagingReinstateFinanceList);
 		setItemRender(new ReinstateFinanceListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_ReinstateFinanceList_NewReinstateFinance, "button_ReinstateFinanceList_NewReinstateFinance", true);
+		registerButton(button_ReinstateFinanceList_NewReinstateFinance,
+				"button_ReinstateFinanceList_NewReinstateFinance", true);
 		registerButton(button_ReinstateFinanceList_ReinstateFinanceSearchDialog);
 
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF,
@@ -228,11 +230,11 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-	
+
 		logger.debug("Entering");
 
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
@@ -314,7 +316,6 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -344,8 +345,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		logger.debug("Leaving");
 
 	}
-	
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
@@ -365,8 +365,6 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
-	
 
 	/**
 	 * When user clicks on "btnSearchFinRef" button This method displays ExtendedSearchListBox with branch details
@@ -459,14 +457,12 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		logger.debug("Leaving");
 
 	}
-	
-	
+
 	public JdbcSearchObject<ReinstateFinance> getSearchObject() {
 
-		
 		this.searchObject.addTabelName("ReinstateFinance_View");
 		this.searchObject.addWhereClause(getUsrFinAuthenticationQry(false));
-		this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), 
+		this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),
 				getUserWorkspace().isAllowed("button_ReinstateFinanceList_NewReinstateFinance"));
 		String rolecodeList = "";
 		buildedWhereCondition = "";
@@ -475,8 +471,8 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 				rolecodeList = rolecodeList.concat(role).concat("','");
 			}
 
-			if(StringUtils.isNotEmpty(rolecodeList)){
-				rolecodeList = rolecodeList.substring(0,rolecodeList.length()-2);
+			if (StringUtils.isNotEmpty(rolecodeList)) {
+				rolecodeList = rolecodeList.substring(0, rolecodeList.length() - 2);
 				rolecodeList = "'".concat(rolecodeList);
 			}
 		}
@@ -486,8 +482,10 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		} else {
 			buildedWhereCondition = " (NextRoleCode = '' ";
 		}
-		buildedWhereCondition = buildedWhereCondition.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
-		buildedWhereCondition = buildedWhereCondition.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
+		buildedWhereCondition = buildedWhereCondition
+				.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
+		buildedWhereCondition = buildedWhereCondition
+				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 		buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
 		buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_REINSTATE);
 		buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
@@ -496,10 +494,10 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
 		buildedWhereCondition = buildedWhereCondition.concat(") ");
 
-		if(StringUtils.isNotEmpty(buildedWhereCondition)){
-			this.searchObject.addWhereClause(buildedWhereCondition); 
+		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
+			this.searchObject.addWhereClause(buildedWhereCondition);
 		}
-		if(filterList != null && !filterList.isEmpty()){
+		if (filterList != null && !filterList.isEmpty()) {
 			for (Filter filter : filterList) {
 				this.searchObject.addFilter(filter);
 			}
@@ -513,6 +511,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 	public void setReinstateFinanceService(ReinstateFinanceService reinstateFinanceService) {
 		this.reinstateFinanceService = reinstateFinanceService;
 	}
+
 	public ReinstateFinanceService getReinstateFinanceService() {
 		return this.reinstateFinanceService;
 	}

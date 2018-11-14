@@ -1,8 +1,9 @@
 package com.pennant.backend.batch.listeners;
 
-import com.pennant.app.util.DateUtility;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
+
+import com.pennant.app.util.DateUtility;
 
 public class EodJobListener implements JobExecutionListener {
 
@@ -12,7 +13,7 @@ public class EodJobListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution arg0) {
-		
+
 	}
 
 	@Override

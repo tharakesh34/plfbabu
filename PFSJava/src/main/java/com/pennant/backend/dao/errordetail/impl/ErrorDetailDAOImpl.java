@@ -116,9 +116,8 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 	}
 
 	/**
-	 * This method Deletes the Record from the ErrorDetails or
-	 * ErrorDetails_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Error Detail by key ErrorCode
+	 * This method Deletes the Record from the ErrorDetails or ErrorDetails_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Error Detail by key ErrorCode
 	 * 
 	 * @param Error
 	 *            Detail (errorDetail)
@@ -186,9 +185,8 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 	}
 
 	/**
-	 * This method updates the Record ErrorDetails or ErrorDetails_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Error Detail by key ErrorCode and Version
+	 * This method updates the Record ErrorDetails or ErrorDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Error Detail by key ErrorCode and Version
 	 * 
 	 * @param Error
 	 *            Detail (errorDetail)

@@ -58,7 +58,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -71,52 +70,51 @@ public class AuthorizationLimitListModelItemRenderer implements ListitemRenderer
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, AuthorizationLimit authorizationLimit, int count) throws Exception {
 
-		
 		Listcell lc;
 		lc = new Listcell(authorizationLimit.getUsrLogin());
 		lc.setParent(item);
 		lc = new Listcell(authorizationLimit.getRoleCd());
 		lc.setParent(item);
 
-		
-		if(authorizationLimit.getLimitType()==1){
-			lc = new Listcell(PennantApplicationUtil.getFullName(authorizationLimit.getUsrFName(),authorizationLimit.getUsrMName(),authorizationLimit.getUsrLName()));
+		if (authorizationLimit.getLimitType() == 1) {
+			lc = new Listcell(PennantApplicationUtil.getFullName(authorizationLimit.getUsrFName(),
+					authorizationLimit.getUsrMName(), authorizationLimit.getUsrLName()));
 			lc.setParent(item);
-		}else{
+		} else {
 			lc = new Listcell(authorizationLimit.getRoleName());
 			lc.setParent(item);
 		}
 
-		lc = new Listcell(PennantApplicationUtil.amountFormate(authorizationLimit.getLimitAmount(),CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(authorizationLimit.getLimitAmount(),
+				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		lc.setParent(item);
 		lc.setStyle("text-align:Right;");
-		
+
 		lc = new Listcell(DateUtil.format(authorizationLimit.getExpiryDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		
+
 		lc = new Listcell(DateUtil.format(authorizationLimit.getHoldStartDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		
+
 		lc = new Listcell(DateUtil.format(authorizationLimit.getHoldExpiryDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
 		cbActive.setDisabled(true);
 		cbActive.setChecked(authorizationLimit.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(authorizationLimit.getRecordStatus());
+		lc = new Listcell(authorizationLimit.getRecordStatus());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(PennantJavaUtil.getLabel(authorizationLimit.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", authorizationLimit.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onAuthorizationLimitItemDoubleClicked");
 	}
 }

@@ -67,6 +67,6 @@ public interface InsuranceTypeDAO {
 	void saveList(InsuranceTypeProvider insTypeProvider, String type);
 
 	void delete(InsuranceTypeProvider insTypeProvider, String type);
-	
-	 List<InsuranceTypeProvider> getInsuranceType(String providerCode, String type);
+
+	List<InsuranceTypeProvider> getInsuranceType(String providerCode, String type);
 }

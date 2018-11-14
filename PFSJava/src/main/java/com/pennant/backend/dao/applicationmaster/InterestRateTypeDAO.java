@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.InterestRateType;
 
 /**
@@ -49,7 +50,10 @@ import com.pennant.backend.model.applicationmaster.InterestRateType;
  */
 public interface InterestRateTypeDAO {
 	InterestRateType getInterestRateTypeById(String id, String type);
+
 	void update(InterestRateType interestRateType, String type);
+
 	void delete(InterestRateType interestRateType, String type);
+
 	String save(InterestRateType interestRateType, String type);
 }

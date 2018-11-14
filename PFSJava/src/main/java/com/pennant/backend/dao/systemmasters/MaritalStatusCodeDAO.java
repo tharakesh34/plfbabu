@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.MaritalStatusCode;
 import com.pennanttech.pff.core.TableType;
@@ -52,7 +53,8 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface MaritalStatusCodeDAO extends BasicCrudDao<MaritalStatusCode> {
 
-	MaritalStatusCode getMaritalStatusCodeById(String id,String type);
+	MaritalStatusCode getMaritalStatusCodeById(String id, String type);
+
 	String getSystemDefaultCount(String maritalStsCode);
 
 	/**

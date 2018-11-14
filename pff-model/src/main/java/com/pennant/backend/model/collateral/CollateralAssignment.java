@@ -59,12 +59,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CollateralAssignment table</b>.<br>
  * 
  */
-@XmlType(propOrder ={
-		"collateralRef", "assignPerc"})
+@XmlType(propOrder = { "collateralRef", "assignPerc" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralAssignment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String reference;
 	private String module;
 	@XmlElement
@@ -79,20 +78,20 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private BigDecimal availableAssignValue = BigDecimal.ZERO;
 	private BigDecimal totAssignedPerc = BigDecimal.ZERO;
 	private boolean active = true;
-	
+
 	private boolean newRecord;
 	private String lovValue;
 	private CollateralAssignment befImage;
-	private  String hostReference;
+	private String hostReference;
 
 	//### 16-05-2018 Start Development Item 82
-	private BigDecimal			specialLTV = BigDecimal.ZERO;
-	private BigDecimal			bankLTV = BigDecimal.ZERO;
+	private BigDecimal specialLTV = BigDecimal.ZERO;
+	private BigDecimal bankLTV = BigDecimal.ZERO;
 	//### 16-05-2018 End Development Item 82
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		excludeFields.add("collateralCcy");
 		excludeFields.add("bankValuation");
 		excludeFields.add("collateralValue");
@@ -104,10 +103,10 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("specialLTV");
 		excludeFields.add("bankLTV");
 		//### 16-05-2018 End Development Item 82
-		
+
 		return excludeFields;
 	}
-	
+
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -122,6 +121,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public String getReference() {
 		return reference;
 	}
+
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
@@ -129,6 +129,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public String getModule() {
 		return module;
 	}
+
 	public void setModule(String module) {
 		this.module = module;
 	}
@@ -136,13 +137,15 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public String getCollateralRef() {
 		return collateralRef;
 	}
+
 	public void setCollateralRef(String collateralRef) {
 		this.collateralRef = collateralRef;
 	}
-	
+
 	public String getCollateralCcy() {
 		return collateralCcy;
 	}
+
 	public void setCollateralCcy(String collateralCcy) {
 		this.collateralCcy = collateralCcy;
 	}
@@ -150,6 +153,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public BigDecimal getBankValuation() {
 		return bankValuation;
 	}
+
 	public void setBankValuation(BigDecimal bankValuation) {
 		this.bankValuation = bankValuation;
 	}
@@ -157,6 +161,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public BigDecimal getAssignPerc() {
 		return assignPerc;
 	}
+
 	public void setAssignPerc(BigDecimal assignPerc) {
 		this.assignPerc = assignPerc;
 	}
@@ -164,6 +169,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public BigDecimal getAvailableAssignPerc() {
 		return availableAssignPerc;
 	}
+
 	public void setAvailableAssignPerc(BigDecimal availableAssignPerc) {
 		this.availableAssignPerc = availableAssignPerc;
 	}
@@ -171,6 +177,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public BigDecimal getAssignedValue() {
 		return assignedValue;
 	}
+
 	public void setAssignedValue(BigDecimal assignedValue) {
 		this.assignedValue = assignedValue;
 	}
@@ -178,6 +185,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public BigDecimal getAvailableAssignValue() {
 		return availableAssignValue;
 	}
+
 	public void setAvailableAssignValue(BigDecimal availableAssignValue) {
 		this.availableAssignValue = availableAssignValue;
 	}
@@ -185,6 +193,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -192,6 +201,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -199,13 +209,15 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public CollateralAssignment getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CollateralAssignment beforeImage) {
 		this.befImage = beforeImage;
 	}
-	
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -221,6 +233,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public BigDecimal getTotAssignedPerc() {
 		return totAssignedPerc;
 	}
+
 	public void setTotAssignedPerc(BigDecimal totAssignedPerc) {
 		this.totAssignedPerc = totAssignedPerc;
 	}
@@ -228,6 +241,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -256,7 +270,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public void setHostReference(String hostReference) {
 		this.hostReference = hostReference;
 	}
-	
+
 	//### 16-05-2018 End Development Item 82
 
 }

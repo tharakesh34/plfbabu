@@ -64,12 +64,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>LegalPropertyDetail</code> with
- * set of CRUD operations.
+ * Data access layer implementation for <code>LegalPropertyDetail</code> with set of CRUD operations.
  */
 public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail> implements LegalPropertyDetailDAO {
 	private static Logger logger = Logger.getLogger(LegalPropertyDetailDAOImpl.class);
-
 
 	public LegalPropertyDetailDAOImpl() {
 		super();
@@ -84,7 +82,8 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append(" legalId, legalPropertyId, scheduleType, propertySchedule, propertyType, northBy, ");
 		sql.append(" southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, ");
 		sql.append(" propertyOwner, ");
-		sql.append( " Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalPropertyDetails");
 		sql.append(type);
 		sql.append(" Where legalPropertyId = :legalPropertyId AND legalId = :legalId");
@@ -97,7 +96,8 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		legalPropertyDetail.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalPropertyDetail);
-		RowMapper<LegalPropertyDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalPropertyDetail.class);
+		RowMapper<LegalPropertyDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LegalPropertyDetail.class);
 		try {
 			legalPropertyDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -106,7 +106,7 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		logger.debug(Literal.LEAVING);
 		return legalPropertyDetail;
 	}
-	
+
 	@Override
 	public List<LegalPropertyDetail> getPropertyDetailsList(long legalId, String type) {
 		// Prepare the SQL.
@@ -126,7 +126,8 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("legalId", legalId);
 
-		RowMapper<LegalPropertyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalPropertyDetail.class);
+		RowMapper<LegalPropertyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LegalPropertyDetail.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -147,12 +148,14 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append("(legalPropertyId, legalId, scheduleType, propertySchedule, propertyType, northBy, ");
 		sql.append("southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, ");
 		sql.append(" propertyOwner, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalPropertyId, :legalId, :scheduleType, :propertySchedule, :propertyType, :northBy, ");
 		sql.append(" :southBy, :eastBy, :westBy, :measurement, :registrationOffice, :registrationDistrict, ");
 		sql.append(" :propertyOwner, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalPropertyDetail.getLegalPropertyId() == Long.MIN_VALUE) {
 			legalPropertyDetail.setLegalPropertyId(getNextId("SeqLegalPropertyDetails"));
@@ -180,7 +183,8 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append("  set legalId = :legalId, scheduleType = :scheduleType, propertySchedule = :propertySchedule, ");
 		sql.append(" propertyType = :propertyType, northBy = :northBy, southBy = :southBy, ");
 		sql.append(" eastBy = :eastBy, westBy = :westBy, measurement = :measurement, ");
-		sql.append(" registrationOffice = :registrationOffice, registrationDistrict = :registrationDistrict, propertyOwner = :propertyOwner, ");
+		sql.append(
+				" registrationOffice = :registrationOffice, registrationDistrict = :registrationDistrict, propertyOwner = :propertyOwner, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -231,6 +235,5 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(propertyDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 	}
-	
-	
+
 }

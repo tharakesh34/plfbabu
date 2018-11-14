@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 
 /**
@@ -50,10 +51,16 @@ import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 public interface CustomerStatusCodeDAO {
 
 	CustomerStatusCode getCustomerStatusCodeById(String id, String type);
+
 	void update(CustomerStatusCode customerStatusCode, String type);
+
 	void delete(CustomerStatusCode customerStatusCode, String type);
+
 	String save(CustomerStatusCode customerStatusCode, String type);
+
 	boolean getFinanceSuspendStatus(int curODDays);
+
 	String getFinanceStatus(String finReference, boolean isCurFinSts);
+
 	CustomerStatusCode getCustStatusByMinDueDays(String type);
 }

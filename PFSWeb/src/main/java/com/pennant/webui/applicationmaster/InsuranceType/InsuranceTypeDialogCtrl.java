@@ -90,58 +90,59 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/applicationmasters/InsuranceType/insuranceTypeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/applicationmasters/InsuranceType/insuranceTypeDialog.zul file.
+ * <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
-	private static final long				serialVersionUID			= 1L;
-	private static final Logger				logger						= Logger.getLogger(InsuranceTypeDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(InsuranceTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window						window_InsuranceTypeDialog;
-	protected Row							row0;
-	protected Label							label_InsuranceType;
-	protected Hlayout						hlayout_InsuranceType;
-	protected Space							space_InsuranceType;
+	protected Window window_InsuranceTypeDialog;
+	protected Row row0;
+	protected Label label_InsuranceType;
+	protected Hlayout hlayout_InsuranceType;
+	protected Space space_InsuranceType;
 
-	protected Uppercasebox					insuranceTypeCode;
-	protected Label							label_InsuranceTypeDesc;
-	protected Hlayout						hlayout_InsuranceTypeDesc;
-	protected Space							space_InsuranceTypeDesc;
+	protected Uppercasebox insuranceTypeCode;
+	protected Label label_InsuranceTypeDesc;
+	protected Hlayout hlayout_InsuranceTypeDesc;
+	protected Space space_InsuranceTypeDesc;
 
-	protected Textbox						insuranceTypeDesc;
+	protected Textbox insuranceTypeDesc;
 
-	protected Label							recordType;
-	protected Groupbox						gb_statusDetails;
-	private boolean							enqModule					= false;
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
 
 	// not auto wired vars
-	private InsuranceType					insuranceType;																	// overhanded per param
-	private transient InsuranceTypeListCtrl	insuranceTypeListCtrl;															// overhanded
-																															// per param
-	private boolean							notes_Entered				= false;
+	private InsuranceType insuranceType; // overhanded per param
+	private transient InsuranceTypeListCtrl insuranceTypeListCtrl; // overhanded
+																	// per param
+	private boolean notes_Entered = false;
 
 	// Button controller for the CRUD buttons
-	private transient final String			btnCtroller_ClassPrefix		= "button_InsuranceTypeDialog_";
-	protected Button						btnHelp;
-	private Button							btnNew_insuranceProvider;
-	private Listbox							listBoxInsuranceProvider;
+	private transient final String btnCtroller_ClassPrefix = "button_InsuranceTypeDialog_";
+	protected Button btnHelp;
+	private Button btnNew_insuranceProvider;
+	private Listbox listBoxInsuranceProvider;
 	// ServiceDAOs / Domain Classes
-	private transient InsuranceTypeService	insuranceTypeService;
-	private transient PagedListService		pagedListService;
-	protected Grid							grid_insuranceType;
-	private PagedListWrapper<InsuranceType>	insuranceTypetDetailPagedListWrapper;
-	private List<InsuranceTypeProvider>		insuranceTypeProviderList	= new ArrayList<InsuranceTypeProvider>();
+	private transient InsuranceTypeService insuranceTypeService;
+	private transient PagedListService pagedListService;
+	protected Grid grid_insuranceType;
+	private PagedListWrapper<InsuranceType> insuranceTypetDetailPagedListWrapper;
+	private List<InsuranceTypeProvider> insuranceTypeProviderList = new ArrayList<InsuranceTypeProvider>();
 
 	/**
 	 * default constructor.<br>
@@ -210,8 +211,8 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 
 			// set Field Properties
 			doSetFieldProperties();
-			this.listBoxInsuranceProvider.setHeight(getListBoxHeight(this.grid_insuranceType.getRows()
-					.getVisibleItemCount() + 3));
+			this.listBoxInsuranceProvider
+					.setHeight(getListBoxHeight(this.grid_insuranceType.getRows().getVisibleItemCount() + 3));
 			doShowDialog(getInsuranceType());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -252,7 +253,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
@@ -384,11 +385,10 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		insuranceTypeProvider.setInsuranceTypeDesc(this.insuranceTypeDesc.getValue());
 		insuranceTypeProvider.setNewRecord(true);
 		insuranceTypeProvider.setWorkflowId(getWorkFlowId());
-		
+
 		doShowDialogPage(insuranceTypeProvider);
 	}
-	
-	
+
 	public void onInsuranceTypeProviderItemDoubleClicked(ForwardEvent event) throws InterruptedException {
 
 		logger.debug("Entering" + event.toString());
@@ -403,17 +403,15 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 			map.put("role", getRole());
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents("/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeProviderDialog.zul", null,map);
-				
-				
+				Executions.createComponents(
+						"/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeProviderDialog.zul", null, map);
+
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	
-		
-		
+
 	}
 
 	private void doShowDialogPage(InsuranceTypeProvider insuranceTypeProvider) {
@@ -424,8 +422,8 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		map.put("role", getRole());
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeProviderDialog.zul", null,
-					map);
+			Executions.createComponents(
+					"/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeProviderDialog.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -455,21 +453,21 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 
 			lc = new Listcell(InsTypeProvider.getProviderCode());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(InsTypeProvider.getProviderName());
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.formatRate(InsTypeProvider.getInsuranceRate().doubleValue(),9));
+			lc = new Listcell(PennantApplicationUtil.formatRate(InsTypeProvider.getInsuranceRate().doubleValue(), 9));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-            if(isWorkFlowEnabled()){
-			lc = new Listcell(InsTypeProvider.getRecordStatus());
-			lc.setParent(item);
+			if (isWorkFlowEnabled()) {
+				lc = new Listcell(InsTypeProvider.getRecordStatus());
+				lc.setParent(item);
 
-			lc = new Listcell(PennantJavaUtil.getLabel(InsTypeProvider.getRecordType()));
-			lc.setParent(item);
-            
-            }
+				lc = new Listcell(PennantJavaUtil.getLabel(InsTypeProvider.getRecordType()));
+				lc.setParent(item);
+
+			}
 
 			item.setAttribute("data", InsTypeProvider);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onInsuranceTypeProviderItemDoubleClicked");
@@ -477,7 +475,6 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		}
 	}
 
-	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -496,7 +493,8 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_InsuranceTypeDialog_btnNew"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_InsuranceTypeDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_InsuranceTypeDialog_btnSave"));
-			this.btnNew_insuranceProvider.setVisible(getUserWorkspace().isAllowed("btnNew_InsuranceTypeDialog_insuranceProvider"));
+			this.btnNew_insuranceProvider
+					.setVisible(getUserWorkspace().isAllowed("btnNew_InsuranceTypeDialog_insuranceProvider"));
 		}
 
 		/* create the Button Controller. Disable not used buttons during working */
@@ -519,7 +517,6 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -580,15 +577,15 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		logger.debug("Entering");
 		// Insurance Type
 		if (!this.insuranceTypeCode.isReadonly()) {
-			this.insuranceTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_InsuranceTypeDialog_InsuranceType.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE,
-					true));
+			this.insuranceTypeCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_InsuranceTypeDialog_InsuranceType.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		// Insurance Type Description
 		if (!this.insuranceTypeDesc.isReadonly()) {
-			this.insuranceTypeDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_InsuranceTypeDialog_InsuranceTypeDesc.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+			this.insuranceTypeDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_InsuranceTypeDialog_InsuranceTypeDesc.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -800,8 +797,8 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 			map.put("role", getRole());
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul",
-						null, map);
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul", null,
+						map);
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
@@ -819,7 +816,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		final InsuranceType aInsuranceType = new InsuranceType();
 		BeanUtils.copyProperties(getInsuranceType(), aInsuranceType);
 		boolean isNew = false;
-		boolean isprovidersEmpty=false;
+		boolean isprovidersEmpty = false;
 
 		if (isWorkFlowEnabled()) {
 			aInsuranceType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -863,8 +860,8 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 
 		// save it to database
 		try {
-			
-			if(isprovidersEmpty){
+
+			if (isprovidersEmpty) {
 				throw new WrongValueException(this.btnNew_insuranceProvider,
 						Labels.getLabel("label_InsuranceProviderList_AtleastOne_Mandatory"));
 			}
@@ -1019,8 +1016,8 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_InsuranceTypeDialog, auditHeader);
 						return processCompleted;
 					}

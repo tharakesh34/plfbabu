@@ -73,28 +73,26 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/
- * SelectFinanceTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
  */
 public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = Logger.getLogger(SelectNewFacilityDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_SelectNewFacilityDialog; 
+	protected Window window_SelectNewFacilityDialog;
 	protected Combobox approvalFor;
 	protected Label label_financeReference;
 	protected ExtendedCombobox financeReference;
-	protected Button btnProceed; 
+	protected Button btnProceed;
 	protected FacilityDetailListCtrl facilityDetailListCtrl; // over handed
 	// parameter
 	private Facility facility = null;
 	private FacilityDetail facilityDetail;
-	private Commitment commitment=null;
+	private Commitment commitment = null;
 	private transient FacilityService facilityService;
 	private String[] termsdetails;
 
@@ -111,11 +109,10 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -132,7 +129,7 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			setFacility(null);
 		}
 		if (arguments.containsKey("filter")) {
-			termsdetails= (String[]) arguments.get("filter");
+			termsdetails = (String[]) arguments.get("filter");
 		}
 		if (arguments.containsKey("facilityDetail")) {
 			setFacilityDetail((FacilityDetail) arguments.get("facilityDetail"));
@@ -152,28 +149,34 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public void onChange$approvalFor(Event event) {
 		logger.debug("Entering");
 		this.financeReference.setValue("", "");
-		if (this.approvalFor.getSelectedItem() != null && !StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
+		if (this.approvalFor.getSelectedItem() != null
+				&& !StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString())
+						.equals(PennantConstants.List_Select)) {
 			this.financeReference.setReadonly(false);
-			if (StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(FacilityConstants.FACILITY_NEW)) {
+			if (StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString())
+					.equals(FacilityConstants.FACILITY_NEW)) {
 				this.financeReference.setMandatoryStyle(false);
 				this.financeReference.setModuleName("IndicativeTermDetail");
 				this.financeReference.setValueColumn("FinReference");
 				this.financeReference.setDescColumn("RpsnName");
-				Filter[] filters =null;
-				if (termsdetails!=null && termsdetails.length!=0) {
+				Filter[] filters = null;
+				if (termsdetails != null && termsdetails.length != 0) {
 					filters = new Filter[2];
 					filters[0] = new Filter("CustID", getFacility().getCustID(), Filter.OP_EQUAL);
 					filters[1] = new Filter("FinReference", termsdetails, Filter.OP_NOT_IN);
-				}else{
+				} else {
 					filters = new Filter[1];
 					filters[0] = new Filter("CustID", getFacility().getCustID(), Filter.OP_EQUAL);
 				}
 				this.financeReference.setFilters(filters);
 				this.financeReference.setValidateColumns(new String[] { "FinReference" });
-				this.label_financeReference.setValue(Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value"));
+				this.label_financeReference
+						.setValue(Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value"));
 
-			} else if (StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(FacilityConstants.FACILITY_REVIEW)||
-					StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(FacilityConstants.FACILITY_AMENDMENT)) {
+			} else if (StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString())
+					.equals(FacilityConstants.FACILITY_REVIEW)
+					|| StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString())
+							.equals(FacilityConstants.FACILITY_AMENDMENT)) {
 				this.financeReference.setMandatoryStyle(true);
 				this.financeReference.setModuleName("Commitment");
 				this.financeReference.setValueColumn("CmtReference");
@@ -182,12 +185,14 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				filters[0] = new Filter("CustID", getFacility().getCustID(), Filter.OP_EQUAL);
 				this.financeReference.setFilters(filters);
 				this.financeReference.setValidateColumns(new String[] { "CmtReference" });
-				this.label_financeReference.setValue(Labels.getLabel("label_SelectNewFacilityDialog_FacilityReference.value"));
+				this.label_financeReference
+						.setValue(Labels.getLabel("label_SelectNewFacilityDialog_FacilityReference.value"));
 			}
 		} else {
 			this.financeReference.setValue("", "");
 			this.financeReference.setReadonly(true);
-			this.label_financeReference.setValue(Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value"));
+			this.label_financeReference
+					.setValue(Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value"));
 		}
 		logger.debug("Leaving");
 	}
@@ -200,33 +205,41 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		if (this.approvalFor.getSelectedItem() == null || StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
-			throw new WrongValueException(this.approvalFor, Labels.getLabel("FIELD_IS_MAND", new String[] { label_financeReference.getValue() }));
+		if (this.approvalFor.getSelectedItem() == null
+				|| StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString())
+						.equals(PennantConstants.List_Select)) {
+			throw new WrongValueException(this.approvalFor,
+					Labels.getLabel("FIELD_IS_MAND", new String[] { label_financeReference.getValue() }));
 		}
-		if (!StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(FacilityConstants.FACILITY_NEW)) {
-			if (this.financeReference.getValidatedValue() == null || StringUtils.isBlank(this.financeReference.getValidatedValue())) {
-				throw new WrongValueException(this.financeReference, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value") }));
+		if (!StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString())
+				.equals(FacilityConstants.FACILITY_NEW)) {
+			if (this.financeReference.getValidatedValue() == null
+					|| StringUtils.isBlank(this.financeReference.getValidatedValue())) {
+				throw new WrongValueException(this.financeReference, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value") }));
 			}
 		}
 
 		dowriteData();
 		this.window_SelectNewFacilityDialog.onClose();
-		getFacilityDetailListCtrl().loadWindow(getFacilityDetail(),getCommitment());
+		getFacilityDetailListCtrl().loadWindow(getFacilityDetail(), getCommitment());
 		logger.debug("Leaving " + event.toString());
 	}
 
 	private void dowriteData() {
 		logger.debug("Entering");
-		getFacilityDetail().setFacilityFor(StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()));
+		getFacilityDetail()
+				.setFacilityFor(StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()));
 		if (getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_NEW)) {
 			getFacilityDetail().setFacilityRef(ReferenceUtil.genNewFacilityRef(getFacilityDetail().getCAFReference()));
 			IndicativeTermDetail termDetail = null;
-			if (this.financeReference.getObject()!=null && this.financeReference.getObject() instanceof IndicativeTermDetail) {
+			if (this.financeReference.getObject() != null
+					&& this.financeReference.getObject() instanceof IndicativeTermDetail) {
 				termDetail = (IndicativeTermDetail) this.financeReference.getObject();
 			}
-			if (termDetail !=null) {
+			if (termDetail != null) {
 				FinanceMain financeMain = getFinanceByCust(this.financeReference.getValue());
-				
+
 				getFacilityDetail().setFacilityType(termDetail.getFacilityType());
 				getFacilityDetail().setFacilityCCY(financeMain.getFinCcy());
 				getFacilityDetail().setFinanceAmount(financeMain.getFinAmount());
@@ -263,24 +276,24 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				getFacilityDetail().setPropFinalTakeCcy(termDetail.getPropFinalTakeCCY());
 
 			}
-		} else if (getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_REVIEW) || 
-				getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_AMENDMENT)) {
-			Object object=this.financeReference.getObject();
-			if (object!=null) {
-				if( object instanceof Commitment){
-					Commitment commitment=(Commitment) object;
+		} else if (getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_REVIEW)
+				|| getFacilityDetail().getFacilityFor().equals(FacilityConstants.FACILITY_AMENDMENT)) {
+			Object object = this.financeReference.getObject();
+			if (object != null) {
+				if (object instanceof Commitment) {
+					Commitment commitment = (Commitment) object;
 					setCommitment(commitment);
 					FacilityDetail facilitydetails = getFacilityDetailsByReference(commitment.getCmtReference());
 					if (facilitydetails != null) {
 						facilitydetails.setFacilityFor(getFacilityDetail().getFacilityFor());
 						setFacilityDetail(facilitydetails);
-					}else{
+					} else {
 						getFacilityDetail().setFacilityRef(commitment.getCmtReference());
 						getFacilityDetail().setFacilityCCY(commitment.getCmtCcy());
-						if (commitment.getCmtPftRateMin()!=null ) {
+						if (commitment.getCmtPftRateMin() != null) {
 							getFacilityDetail().setPricing(commitment.getCmtPftRateMin().toString());
 						}
-					
+
 					}
 				}
 			}
@@ -303,6 +316,7 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 		return null;
 	}
+
 	private FacilityDetail getFacilityDetailsByReference(String facilityRef) {
 		logger.debug("Entering");
 		JdbcSearchObject<FacilityDetail> searchObject = new JdbcSearchObject<FacilityDetail>(FacilityDetail.class);
@@ -319,7 +333,7 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// GUI Process
-	
+
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
@@ -337,7 +351,7 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	// Getters and Setters
-	
+
 	public FacilityDetailListCtrl getFacilityDetailListCtrl() {
 		return facilityDetailListCtrl;
 	}
@@ -377,5 +391,5 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	public void setCommitment(Commitment commitment) {
 		this.commitment = commitment;
 	}
-	
+
 }

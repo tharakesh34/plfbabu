@@ -41,7 +41,6 @@
  ********************************************************************************************
  */
 
-
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
@@ -49,8 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RepayData {
-	
-	private String finReference = null;	
+
+	private String finReference = null;
 	private String buildProcess = "";
 	private BigDecimal accruedTillLBD = BigDecimal.ZERO;
 	private BigDecimal pendingODC = BigDecimal.ZERO;
@@ -61,101 +60,111 @@ public class RepayData {
 	private String sourceId;
 
 	private RepayMain repayMain = new RepayMain();
-	
+
 	private FinRepayHeader finRepayHeader = new FinRepayHeader();
 	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<RepayScheduleDetail>();
 	private FinanceDetail financeDetail;
-	
-	
+
 	public RepayData() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getBuildProcess() {
 		return buildProcess;
 	}
+
 	public void setBuildProcess(String buildProcess) {
 		this.buildProcess = buildProcess;
 	}
-	
+
 	public RepayMain getRepayMain() {
 		return repayMain;
 	}
+
 	public void setRepayMain(RepayMain repayMain) {
 		this.repayMain = repayMain;
 	}
-	
+
 	public List<RepayScheduleDetail> getRepayScheduleDetails() {
 		return repayScheduleDetails;
 	}
-	public void setRepayScheduleDetails(
-			List<RepayScheduleDetail> repayScheduleDetails) {
+
+	public void setRepayScheduleDetails(List<RepayScheduleDetail> repayScheduleDetails) {
 		this.repayScheduleDetails = repayScheduleDetails;
 	}
-	
+
 	public BigDecimal getAccruedTillLBD() {
 		return accruedTillLBD;
 	}
+
 	public void setAccruedTillLBD(BigDecimal accruedTillLBD) {
 		this.accruedTillLBD = accruedTillLBD;
 	}
-	
+
 	public BigDecimal getPendingODC() {
 		return pendingODC;
 	}
+
 	public void setPendingODC(BigDecimal pendingODC) {
 		this.pendingODC = pendingODC;
 	}
-	
+
 	public FinRepayHeader getFinRepayHeader() {
-	    return finRepayHeader;
-    }
+		return finRepayHeader;
+	}
+
 	public void setFinRepayHeader(FinRepayHeader finRepayHeader) {
-	    this.finRepayHeader = finRepayHeader;
-    }
-	
+		this.finRepayHeader = finRepayHeader;
+	}
+
 	public boolean isSufficientRefund() {
-	    return sufficientRefund;
-    }
+		return sufficientRefund;
+	}
+
 	public void setSufficientRefund(boolean sufficientRefund) {
-	    this.sufficientRefund = sufficientRefund;
-    }
-	
+		this.sufficientRefund = sufficientRefund;
+	}
+
 	public BigDecimal getMaxRefundAmt() {
-	    return maxRefundAmt;
-    }
+		return maxRefundAmt;
+	}
+
 	public void setMaxRefundAmt(BigDecimal maxRefundAmt) {
-	    this.maxRefundAmt = maxRefundAmt;
-    }
-	
+		this.maxRefundAmt = maxRefundAmt;
+	}
+
 	public String getEventCodeRef() {
-	    return eventCodeRef;
-    }
+		return eventCodeRef;
+	}
+
 	public void setEventCodeRef(String eventCodeRef) {
-	    this.eventCodeRef = eventCodeRef;
-    }
-	
+		this.eventCodeRef = eventCodeRef;
+	}
+
 	public BigDecimal getActInsRefundAmt() {
-	    return actInsRefundAmt;
-    }
+		return actInsRefundAmt;
+	}
+
 	public void setActInsRefundAmt(BigDecimal actInsRefundAmt) {
-	    this.actInsRefundAmt = actInsRefundAmt;
-    }
+		this.actInsRefundAmt = actInsRefundAmt;
+	}
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}

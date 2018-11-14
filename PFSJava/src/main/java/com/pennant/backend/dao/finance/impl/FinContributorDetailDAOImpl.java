@@ -65,48 +65,46 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetail> implements FinContributorDetailDAO {
-     private static Logger logger = Logger.getLogger(FinContributorDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(FinContributorDetailDAOImpl.class);
 
-	
 	public FinContributorDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * Fetch the Record  Finance Contributor Details by key field
+	 * Fetch the Record Finance Contributor Details by key field
 	 */
 	@Override
-	public FinContributorDetail getFinContributorDetailByID(final String finReference, long id,String type) {
+	public FinContributorDetail getFinContributorDetailByID(final String finReference, long id, String type) {
 		logger.debug("Entering");
-		
+
 		FinContributorDetail contributorDetail = new FinContributorDetail();
 		contributorDetail.setFinReference(finReference);
 		contributorDetail.setContributorBaseNo(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference , ContributorBaseNo , CustID , " );
-		selectSql.append(" ContributorName , ContributorInvest , InvestAccount , " );
-		selectSql.append(" InvestDate ,RecordDate, TotalInvestPerc , MudaribPerc, " );
-		
-		if(type.contains("View")){
+		selectSql.append(" SELECT FinReference , ContributorBaseNo , CustID , ");
+		selectSql.append(" ContributorName , ContributorInvest , InvestAccount , ");
+		selectSql.append(" InvestDate ,RecordDate, TotalInvestPerc , MudaribPerc, ");
+
+		if (type.contains("View")) {
 			selectSql.append(" LovDescContributorCIF, LovDescFinFormatter, ");
 		}
-		
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
-		selectSql.append(" FROM  FinContributorDetail") ;
+
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM  FinContributorDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference AND ContributorBaseNo = :ContributorBaseNo") ;
-				
+		selectSql.append(" Where FinReference = :FinReference AND ContributorBaseNo = :ContributorBaseNo");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				FinContributorDetail.class);
+		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinContributorDetail.class);
 
-		try{
-			contributorDetail = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			contributorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			contributorDetail = null;
 		}
@@ -114,62 +112,61 @@ public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetai
 		return contributorDetail;
 	}
 
-	/** 
+	/**
 	 * Method For getting List of Finance Contributor Details
 	 */
-	public List<FinContributorDetail> getFinContributorDetailByFinRef(final String finReference,String type) {
+	public List<FinContributorDetail> getFinContributorDetailByFinRef(final String finReference, String type) {
 		logger.debug("Entering");
 		FinContributorDetail contributorDetail = new FinContributorDetail();
 		contributorDetail.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference , ContributorBaseNo , CustID , " );
-		selectSql.append(" ContributorName , ContributorInvest , InvestAccount , " );
-		selectSql.append(" InvestDate , RecordDate, TotalInvestPerc , MudaribPerc , " );
-		if(type.contains("View")){
+		selectSql.append(" SELECT FinReference , ContributorBaseNo , CustID , ");
+		selectSql.append(" ContributorName , ContributorInvest , InvestAccount , ");
+		selectSql.append(" InvestDate , RecordDate, TotalInvestPerc , MudaribPerc , ");
+		if (type.contains("View")) {
 			selectSql.append(" LovDescContributorCIF, ");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  FinContributorDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference ") ;
-				
+		selectSql.append(" Where FinReference = :FinReference ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinContributorDetail.class);
+		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinContributorDetail.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the FinContributorDetails or FinContributorDetails_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Contributor Details List by FinReference
+	 * This method Deletes the Record from the FinContributorDetails or FinContributorDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Contributor Details List by FinReference
 	 * 
-	 * @param Contributor Details (contributorDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Contributor
+	 *            Details (contributorDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(FinContributorDetail contributorDetail,String type) {
+	public void delete(FinContributorDetail contributorDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinContributorDetail" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append("Delete From FinContributorDetail");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference AND ContributorBaseNo =:ContributorBaseNo");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -183,17 +180,17 @@ public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetai
 	/**
 	 * Method for Deletion of Customer Related List of FinContributorDetails for the Customer
 	 */
-	public void deleteByFinRef(final String finReference,String type) {
+	public void deleteByFinRef(final String finReference, String type) {
 		logger.debug("Entering");
 		FinContributorDetail contributorDetail = new FinContributorDetail();
 		contributorDetail.setFinReference(finReference);
 
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinContributorDetail" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append("Delete From FinContributorDetail");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference =:FinReference ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -202,36 +199,40 @@ public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetai
 	/**
 	 * This method insert new Records into FinContributorDetails or FinContributorDetails_Temp.
 	 *
-	 * save Customer Ratings 
+	 * save Customer Ratings
 	 * 
-	 * @param Customer Ratings (contributorDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Ratings (contributorDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(FinContributorDetail contributorDetail,String type) {
+	public long save(FinContributorDetail contributorDetail, String type) {
 		logger.debug("Entering");
-		
-		if(contributorDetail.getContributorBaseNo() == 0 || contributorDetail.getContributorBaseNo()==Long.MIN_VALUE){
-			contributorDetail.setContributorBaseNo(getNextId("SeqFinContributorDetail"));	
+
+		if (contributorDetail.getContributorBaseNo() == 0
+				|| contributorDetail.getContributorBaseNo() == Long.MIN_VALUE) {
+			contributorDetail.setContributorBaseNo(getNextId("SeqFinContributorDetail"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into FinContributorDetail" );
+		insertSql.append(" Insert Into FinContributorDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference , ContributorBaseNo , CustID , ContributorName , " );
-		insertSql.append(" ContributorInvest , InvestAccount , InvestDate ,RecordDate, TotalInvestPerc , MudaribPerc, " );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" VALUES (:FinReference , :ContributorBaseNo , :CustID , :ContributorName , " );
-		insertSql.append(" :ContributorInvest , :InvestAccount , :InvestDate ,:RecordDate, :TotalInvestPerc , :MudaribPerc, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" (FinReference , ContributorBaseNo , CustID , ContributorName , ");
+		insertSql
+				.append(" ContributorInvest , InvestAccount , InvestDate ,RecordDate, TotalInvestPerc , MudaribPerc, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" VALUES (:FinReference , :ContributorBaseNo , :CustID , :ContributorName , ");
+		insertSql.append(
+				" :ContributorInvest , :InvestAccount , :InvestDate ,:RecordDate, :TotalInvestPerc , :MudaribPerc, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -240,39 +241,40 @@ public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetai
 	}
 
 	/**
-	 * This method updates the Record FinContributorDetails or FinContributorDetails_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Contributor Details by key FinReference and Version
+	 * This method updates the Record FinContributorDetails or FinContributorDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Contributor Details by key FinReference and Version
 	 * 
-	 * @param Customer Ratings (contributorDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Ratings (contributorDetail)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(FinContributorDetail contributorDetail,String type) {
+	public void update(FinContributorDetail contributorDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update FinContributorDetail" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CustID =:CustID , ContributorName =:ContributorName , ContributorInvest =:ContributorInvest , " );
-		updateSql.append(" InvestAccount =:InvestAccount , InvestDate =:InvestDate ,RecordDate=:RecordDate, " );
-		updateSql.append(" TotalInvestPerc =:TotalInvestPerc , MudaribPerc =:MudaribPerc , " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
+		updateSql.append("Update FinContributorDetail");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set CustID =:CustID , ContributorName =:ContributorName , ContributorInvest =:ContributorInvest , ");
+		updateSql.append(" InvestAccount =:InvestAccount , InvestDate =:InvestDate ,RecordDate=:RecordDate, ");
+		updateSql.append(" TotalInvestPerc =:TotalInvestPerc , MudaribPerc =:MudaribPerc , ");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
-		updateSql.append(" WorkflowId = :WorkflowId" );
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
+		updateSql.append(" WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference and ContributorBaseNo = :ContributorBaseNo ");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1 ");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

@@ -6,20 +6,20 @@ import java.util.Date;
 
 public class PostingsDownload implements Serializable {
 
-	private static final long	serialVersionUID	= -6486440833785900370L;
+	private static final long serialVersionUID = -6486440833785900370L;
 
-	private Date				date;
-	private long				number;
-	private String				type;
-	private String				glCode;
-	private String				description;
-	private String				profit_Center;
-	private String				debit_Credit;
-	private BigDecimal			amount				= BigDecimal.ZERO;
-	private String				narration;
+	private Date date;
+	private long number;
+	private String type;
+	private String glCode;
+	private String description;
+	private String profit_Center;
+	private String debit_Credit;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private String narration;
 
-	public PostingsDownload(long number, String type, String glCode, String description,
-			String profit_Center, String debit_Credit, BigDecimal amount, String narration) {
+	public PostingsDownload(long number, String type, String glCode, String description, String profit_Center,
+			String debit_Credit, BigDecimal amount, String narration) {
 		//this.date = postDate;
 		this.number = number;
 		this.type = type;

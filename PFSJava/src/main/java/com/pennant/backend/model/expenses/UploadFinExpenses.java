@@ -46,20 +46,20 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class UploadFinExpenses {
-	
-	private long 		uploadId = 0;
-	private String 		finType = null;
-	private String 		finReference = null;
-	private Date		finApprovalStartDate;
-	private Date		finApprovalEndDate;
-	private String 		expenseTypeCode = null;
-	private long 		expenseId = 0;
-	private BigDecimal 	percentage = BigDecimal.ZERO;
-	private BigDecimal 	amountValue = BigDecimal.ZERO;
-	private String 		type;
-	private String 		status;
-	private String 		reason;
-	
+
+	private long uploadId = 0;
+	private String finType = null;
+	private String finReference = null;
+	private Date finApprovalStartDate;
+	private Date finApprovalEndDate;
+	private String expenseTypeCode = null;
+	private long expenseId = 0;
+	private BigDecimal percentage = BigDecimal.ZERO;
+	private BigDecimal amountValue = BigDecimal.ZERO;
+	private String type;
+	private String status;
+	private String reason;
+
 	public UploadFinExpenses() {
 		super();
 	}

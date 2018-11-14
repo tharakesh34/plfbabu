@@ -271,7 +271,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private List<LegalNote> legalNotesList = null;
 	private String method = null;
 	private boolean newApplicants = false;
-	
+
 	private boolean fromLoan = false;
 	private boolean newRecord = false;
 
@@ -314,18 +314,17 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		try {
 			// Get the required arguments.
 			this.legalDetail = (LegalDetail) arguments.get("legalDetail");
-			
+
 			if (arguments.containsKey("fromLoan")) {
 				this.fromLoan = (boolean) arguments.get("fromLoan");
 				setNewRecord(true);
 			}
-			
+
 			if (fromLoan) {
 				setLegalDetailLoanListCtrl((LegalDetailLoanListCtrl) arguments.get("dialogCtrl"));
 			} else {
 				this.legalDetailListCtrl = (LegalDetailListCtrl) arguments.get("legalDetailListCtrl");
 			}
-			
 
 			if (this.legalDetail == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
@@ -335,7 +334,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			// Store the before image.
 			LegalDetail legalDetail = new LegalDetail();
 			BeanUtils.copyProperties(this.legalDetail, legalDetail);
@@ -343,7 +342,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 			// Render the page and display the data.
 			if (!fromLoan) {
-				doLoadWorkFlow(this.legalDetail.isWorkflow(), this.legalDetail.getWorkflowId(), this.legalDetail.getNextTaskId());
+				doLoadWorkFlow(this.legalDetail.isWorkflow(), this.legalDetail.getWorkflowId(),
+						this.legalDetail.getNextTaskId());
 			}
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
@@ -351,7 +351,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
 				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-			}  
+			}
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.legalDetail);
@@ -423,6 +423,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 
 	}
+
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
@@ -556,7 +557,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			this.window_LegalDetailDialog.setHeight("100%");
 			setDialog(DialogType.EMBEDDED);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -654,7 +655,6 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		logger.debug(Literal.LEAVING);
 	}
- 
 
 	/**
 	 * Disables the Validation by setting empty constraints.
@@ -786,15 +786,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	public boolean isReadOnly(String componentName) {
 		if (fromLoan) {
- 			return getUserWorkspace().isReadOnly(componentName);
+			return getUserWorkspace().isReadOnly(componentName);
 		} else {
 			return super.isReadOnly(componentName);
 		}
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -848,7 +847,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (isNew) {
 				aLegalDetail.setVersion(1);
 				aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			} 
+			}
 			if (StringUtils.isBlank(aLegalDetail.getRecordType())) {
 				aLegalDetail.setVersion(aLegalDetail.getVersion() + 1);
 				aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -877,13 +876,12 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	/**
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		
+
 		final LegalDetail aLegalDetail = new LegalDetail();
 		if (doWriteComponentsToBean(aLegalDetail)) {
 			return;
@@ -978,11 +976,12 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	private boolean doWriteComponentsToBean(LegalDetail aLegalDetail) {
-		
+
 		BeanUtils.copyProperties(this.legalDetail, aLegalDetail);
 
 		// Setting the formatted fin amount for approval process
-		aLegalDetail.setFinAmount(PennantAppUtil.formateAmount(aLegalDetail.getFinAmount(), CurrencyUtil.getFormat(aLegalDetail.getFinCcy())));
+		aLegalDetail.setFinAmount(PennantAppUtil.formateAmount(aLegalDetail.getFinAmount(),
+				CurrencyUtil.getFormat(aLegalDetail.getFinCcy())));
 
 		doRemoveValidation();
 
@@ -1145,11 +1144,11 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				}
 			}
 		}
-		
+
 		if (this.documentDetailTab.isVisible() && CollectionUtils.isNotEmpty(getLegalDocumentList())
 				&& ((fromLoan ? fromLoan : !"Resubmit".equals(this.userAction.getSelectedItem().getLabel())))) {
 			for (LegalDocument document : getLegalDocumentList()) {
-				if (isRoleContains("ESFB_LEGAL_DETAIL_DOCUMENTNAME_MANDATORY_ROLES", getRole())) { 
+				if (isRoleContains("ESFB_LEGAL_DETAIL_DOCUMENTNAME_MANDATORY_ROLES", getRole())) {
 					if (StringUtils.trimToNull(document.getDocumentName()) == null) {
 						this.documentDetailTab.setSelected(true);
 						MessageUtil.showError(Labels.getLabel("label_LegalDetail_DocumentDetails_List_Validation"));
@@ -1188,7 +1187,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -1281,7 +1280,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					}
 				}
 			}
-			
+
 			// Document details
 			List<LegalDocument> legaldDocumentDetails = aLegalDetail.getDocumentList();
 			if (CollectionUtils.isNotEmpty(legaldDocumentDetails)) {
@@ -1304,7 +1303,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					}
 				}
 			}
-			
+
 			// Legal Property Title
 			List<LegalPropertyTitle> legalPropertyTitles = aLegalDetail.getPropertyTitleList();
 			if (CollectionUtils.isNotEmpty(legalPropertyTitles)) {
@@ -1327,7 +1326,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					}
 				}
 			}
-			
+
 			// Legal EC Details
 			List<LegalECDetail> legalECDetails = aLegalDetail.getEcdDetailsList();
 			if (CollectionUtils.isNotEmpty(legalECDetails)) {
@@ -1350,7 +1349,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					}
 				}
 			}
-			
+
 			// Legal Notes
 			List<LegalNote> legalNotes = aLegalDetail.getLegalNotesList();
 			if (CollectionUtils.isNotEmpty(legalNotes)) {
@@ -2670,10 +2669,12 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private String downloadDocuments(LegalDetail legalDetail) {
 		logger.debug(Literal.ENTERING);
 		try {
-			if (isRoleContains("ESFB_LEGAL_DETAIL_PRELIMINARY_DOC_ROLES", getRole()) && (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
+			if (isRoleContains("ESFB_LEGAL_DETAIL_PRELIMINARY_DOC_ROLES", getRole())
+					&& (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
 				// Legal Preliminary Document
 				return downloadDocument(legalDetail, "PRELIMINARY Draft", true);
-			} else if ((isRoleContains("ESFB_LEGAL_DETAIL_FINAL_OPINION_DOC_ROLES", getRole())) && (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
+			} else if ((isRoleContains("ESFB_LEGAL_DETAIL_FINAL_OPINION_DOC_ROLES", getRole()))
+					&& (!"Resubmit".equals(this.userAction.getSelectedItem().getLabel()))) {
 				// Legal Final Opinion Document
 				return downloadDocument(legalDetail, "FINAL OPINION Draft", false);
 			}
@@ -2956,7 +2957,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
 		this.legalDetailLoanListCtrl = legalDetailLoanListCtrl;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}

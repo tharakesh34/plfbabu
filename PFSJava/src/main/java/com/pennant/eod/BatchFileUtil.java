@@ -9,32 +9,32 @@ import com.pennant.app.util.PathUtil;
 
 public class BatchFileUtil {
 
-	public static final String	DELIMITER				= "|";
-	public static final String	SEMI_COLON				= ";";
+	public static final String DELIMITER = "|";
+	public static final String SEMI_COLON = ";";
 
-	public static final String	HEADER					= "H";
-	public static final String	DETAILS					= "B";
-	public static final String	FOOTER					= "T";
-	public static final String	FILE_EXT				= ".txt";
-	public static final String	TXT_QUA					= "'";
+	public static final String HEADER = "H";
+	public static final String DETAILS = "B";
+	public static final String FOOTER = "T";
+	public static final String FILE_EXT = ".txt";
+	public static final String TXT_QUA = "'";
 
 	// Date Formats
-	public static final String	DATE_FORMAT_YMd			= "YYYYMMdd";
-	public static final String	DATE_FORMAT_YMD			= "YYYYMMDD";
-	public static final String	DATE_FORMAT_DMYT		= "DDMMYYYYkkmm";
-	public static final String	DATE_FORMAT_MDY			= "MMddyyyy";
+	public static final String DATE_FORMAT_YMd = "YYYYMMdd";
+	public static final String DATE_FORMAT_YMD = "YYYYMMDD";
+	public static final String DATE_FORMAT_DMYT = "DDMMYYYYkkmm";
+	public static final String DATE_FORMAT_MDY = "MMddyyyy";
 
 	// Auto Payments
-	public static final String	BATCH_CODE				= "T24_ACCT_POST";
+	public static final String BATCH_CODE = "T24_ACCT_POST";
 
 	// Salary Postings
-	public static final String	SLARY_POST_BATCH_TYPE	= "T24_FIN_INST";
+	public static final String SLARY_POST_BATCH_TYPE = "T24_FIN_INST";
 
 	// Constants for SMS
-	public static final String	SERVICE					= "MBM.SMS.V.1.1";
-	public static final String	SMS						= "SMS";
-	public static final String	SERVICEID_1023			= "1023";
-	public static final String	SERVICEID_1024			= "1024";
+	public static final String SERVICE = "MBM.SMS.V.1.1";
+	public static final String SMS = "SMS";
+	public static final String SERVICEID_1023 = "1023";
+	public static final String SERVICEID_1024 = "1024";
 
 	/********** File Name Methods **********/
 

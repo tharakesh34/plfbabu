@@ -53,7 +53,7 @@ public class CacheStats {
 	public void setClusterSize(int clusterSize) {
 		this.clusterSize = clusterSize;
 	}
-		
+
 	public String getClusterNode() {
 		return clusterNode;
 	}
@@ -103,7 +103,7 @@ public class CacheStats {
 			this.cacheNames.add(cacheName);
 		}
 	}
-	
+
 	public String getManagerCacheStatus() {
 		return managerCacheStatus;
 	}
@@ -167,7 +167,7 @@ public class CacheStats {
 	public void setCacheNamesDet(String cacheNamesDet) {
 		this.cacheNamesDet = cacheNamesDet;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Cluster Name   : ");

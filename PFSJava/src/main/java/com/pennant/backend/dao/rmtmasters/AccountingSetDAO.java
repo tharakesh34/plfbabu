@@ -42,21 +42,28 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 
 public interface AccountingSetDAO {
 
-	 AccountingSet getAccountingSetById(long id,String type);
-	 void update(AccountingSet accountingSet,String type);
-	 void delete(AccountingSet accountingSet,String type);
-	 long save(AccountingSet accountingSet,String type);
-	 List<AccountingSet> getListAERuleBySysDflt(boolean isAllowedRIA, String type);
-	 AccountingSet getAccSetSysDflByEvent(String event, String setCode,String type);
-	
+	AccountingSet getAccountingSetById(long id, String type);
+
+	void update(AccountingSet accountingSet, String type);
+
+	void delete(AccountingSet accountingSet, String type);
+
+	long save(AccountingSet accountingSet, String type);
+
+	List<AccountingSet> getListAERuleBySysDflt(boolean isAllowedRIA, String type);
+
+	AccountingSet getAccSetSysDflByEvent(String event, String setCode, String type);
+
 	//Commitments
-	 Long getAccountingSetId(String eventCode, String accSetCode);
-	 AccountingSet getAccountingSetbyEventCode(AccountingSet accountingset,String type);
+	Long getAccountingSetId(String eventCode, String accSetCode);
+
+	AccountingSet getAccountingSetbyEventCode(AccountingSet accountingset, String type);
 
 }

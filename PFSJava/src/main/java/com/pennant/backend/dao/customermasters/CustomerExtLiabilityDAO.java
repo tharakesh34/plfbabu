@@ -10,7 +10,7 @@ public interface CustomerExtLiabilityDAO {
 
 	void setLinkId(CustomerExtLiability liability);
 
-	CustomerExtLiability getLiability(CustomerExtLiability liability, String string,String inputSource);
+	CustomerExtLiability getLiability(CustomerExtLiability liability, String string, String inputSource);
 
 	boolean isBankExists(String loanBank);
 
@@ -23,7 +23,7 @@ public interface CustomerExtLiabilityDAO {
 	int getVersion(long custId, int liabilitySeq);
 
 	BigDecimal getExternalLiabilitySum(long custId);
-	
+
 	BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId);
 
 	List<CustomerExtLiability> getLiabilityByFinReference(String finReference);

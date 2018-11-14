@@ -12,8 +12,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.util.PennantAppUtil;
 
-public class CoreProvisionListModelItemRender implements
-		ListitemRenderer<Provision>, Serializable {
+public class CoreProvisionListModelItemRender implements ListitemRenderer<Provision>, Serializable {
 
 	private static final long serialVersionUID = -6954091801433341494L;
 
@@ -22,25 +21,20 @@ public class CoreProvisionListModelItemRender implements
 	}
 
 	@Override
-	public void render(Listitem item, Provision provisions, int count)
-			throws Exception {
+	public void render(Listitem item, Provision provisions, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(provisions.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(provisions
-				.getProvisionCalDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(provisions.getProvisionCalDate()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				provisions.getProvisionedAmt(), 2));
+		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionedAmt(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				provisions.getProvisionAmtCal(), 2));
+		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getProvisionAmtCal(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				provisions.getNonFormulaProv(), 2));
+		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getNonFormulaProv(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
@@ -52,12 +46,10 @@ public class CoreProvisionListModelItemRender implements
 		lc.setStyle("text-align:center");
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(provisions
-				.getPrevProvisionCalDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(provisions.getPrevProvisionCalDate()));
 		lc.setParent(item);
 
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				provisions.getPrevProvisionedAmt(), 2));
+		lc = new Listcell(PennantAppUtil.amountFormate(provisions.getPrevProvisionedAmt(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 

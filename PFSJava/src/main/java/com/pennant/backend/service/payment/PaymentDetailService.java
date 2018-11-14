@@ -64,15 +64,18 @@ public interface PaymentDetailService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	List<AuditDetail> setPaymentDetailAuditData(List<PaymentDetail> paymentDetailList, String auditTranType, String method);
+	List<AuditDetail> setPaymentDetailAuditData(List<PaymentDetail> paymentDetailList, String auditTranType,
+			String method);
 
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
 
-	List<AuditDetail> delete(List<PaymentDetail> paymentDetailList, TableType tableType, String auditTranType, long paymentId);
+	List<AuditDetail> delete(List<PaymentDetail> paymentDetailList, TableType tableType, String auditTranType,
+			long paymentId);
 
 	List<PaymentDetail> getPaymentDetailList(long paymentId, String type);
 
-	List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName, long linkedTranId, String finReference);
+	List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName,
+			long linkedTranId, String finReference);
 
 	void paymentReversal(PaymentInstruction paymentInstruction);
 

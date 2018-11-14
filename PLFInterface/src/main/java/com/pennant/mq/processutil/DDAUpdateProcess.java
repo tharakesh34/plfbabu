@@ -24,7 +24,7 @@ public class DDAUpdateProcess extends MQProcess {
 	public DDAUpdateProcess() {
 		super();
 	}
-	
+
 	/**
 	 * Process the DDAUpdate Request and send Response
 	 * 
@@ -45,14 +45,15 @@ public class DDAUpdateProcess extends MQProcess {
 
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		String referenceNum = PFFXmlUtil.getReferenceNumber();
-		AHBMQHeader header =  new AHBMQHeader(msgFormat);
+		AHBMQHeader header = new AHBMQHeader(msgFormat);
 		MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
 		OMElement response = null;
 
 		try {
 			OMElement requestElement = getRequestElement(ddaUpdateReq, referenceNum, factory);
-			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
-			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
+			OMElement request = PFFXmlUtil.generateRequest(header, factory, requestElement);
+			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+					getWaitTime());
 		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
@@ -110,7 +111,7 @@ public class DDAUpdateProcess extends MQProcess {
 	 * @return
 	 * @throws InterfaceException
 	 */
-	private OMElement getRequestElement(DDAUpdate ddaUpdateReq, String referenceNum, OMFactory factory) 
+	private OMElement getRequestElement(DDAUpdate ddaUpdateReq, String referenceNum, OMFactory factory)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -128,7 +129,7 @@ public class DDAUpdateProcess extends MQProcess {
 		requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		requestElement.addChild(rootElement);
 		logger.debug("Leaving");
-		
+
 		return requestElement;
 	}
 

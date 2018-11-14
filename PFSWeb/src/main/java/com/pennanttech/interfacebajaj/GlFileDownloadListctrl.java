@@ -104,7 +104,8 @@ import com.pennanttech.service.AmazonS3Bucket;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul
+ * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -125,13 +126,12 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	private List<ValueLabel> dimentionsList = new ArrayList<>();
 	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds(DateUtility.getAppDate());
 
-	
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
 	private Button downlaod;
- 	
+
 	protected AmazonS3Bucket bucket;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -155,17 +155,18 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
-		setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList,
-				listBoxFileDownload,null);
+		setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList, listBoxFileDownload, null);
 		setItemRender(new FileDownloadListModelItemRenderer());
 		setComparator(new FileDownloadComparator());
-		
-		dimentionsList.add(new ValueLabel(TrailBalanceEngine.Dimension.STATE.name(), TrailBalanceEngine.Dimension.STATE.name()));
-		dimentionsList.add(new ValueLabel(TrailBalanceEngine.Dimension.CONSOLIDATE.name(), TrailBalanceEngine.Dimension.CONSOLIDATE.name()));
-		
+
+		dimentionsList.add(
+				new ValueLabel(TrailBalanceEngine.Dimension.STATE.name(), TrailBalanceEngine.Dimension.STATE.name()));
+		dimentionsList.add(new ValueLabel(TrailBalanceEngine.Dimension.CONSOLIDATE.name(),
+				TrailBalanceEngine.Dimension.CONSOLIDATE.name()));
+
 		fillComboBox(dimention, "", dimentionsList, "");
 		fillComboBox(months, "", monthsList, "");
-		
+
 		registerField("Id", SortOrder.DESC);
 		registerField("Name");
 		registerField("Status");
@@ -174,21 +175,21 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("ValueDate", SortOrder.DESC);
-		
+
 		doRenderPage();
 		search();
 		doSetFieldProperties();
 		this.listBoxFileDownload.setHeight(this.borderLayoutHeight - 60 + "px");
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public class FileDownloadComparator implements Comparator<Object>, Serializable {
 		private static final long serialVersionUID = -8606975433219761922L;
 
 		public FileDownloadComparator() {
-			
+
 		}
-		
+
 		@Override
 		public int compare(Object o1, Object o2) {
 			FileDownlaod data = (FileDownlaod) o1;
@@ -208,8 +209,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		this.searchObject.addFilterIn("NAME", list);
 	}
-	
-	
+
 	private void doSetFieldProperties() {
 
 		this.entityCode.setMaxlength(8);
@@ -218,7 +218,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-		
+
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			row_entity.setVisible(true);
 			this.entityCode.setMandatoryStyle(true);
@@ -231,7 +231,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	public void onClick$btnRefresh(Event event) throws Exception {
 		refresh();
 	}
-	
+
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
@@ -250,8 +250,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		try {
 			if (!this.entityCode.isReadonly())
 				this.entityCode
@@ -292,20 +291,24 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 				if (conf == MessageUtil.NO) {
 					return;
-				} 
+				}
 			}
-			
+
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
-			
+
 			if (selectedDimention.equals(TrailBalanceEngine.Dimension.STATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimension.STATE, new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});
-								
-				if("S".equals(status.getStatus())) {
-					new SAPGLExtract((DataSource) SpringUtil.getBean("dataSource"), getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport(new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});
-				}				
+				trialbal.extractReport(TrailBalanceEngine.Dimension.STATE,
+						new String[] { this.entityCode.getValue(), this.entityCode.getDescription() });
+
+				if ("S".equals(status.getStatus())) {
+					new SAPGLExtract((DataSource) SpringUtil.getBean("dataSource"),
+							getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport(
+									new String[] { this.entityCode.getValue(), this.entityCode.getDescription() });
+				}
 			} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,new String[]{this.entityCode.getValue(), this.entityCode.getDescription()});
+				trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,
+						new String[] { this.entityCode.getValue(), this.entityCode.getDescription() });
 			}
 
 			refresh();
@@ -315,7 +318,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 	}
 
-	
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -329,7 +331,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			this.months.setConstraint(
 					new StaticListValidator(monthsList, Labels.getLabel("label_GLFileList_Months.value")));
 	}
-	
+
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
@@ -341,7 +343,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		logger.debug("Leaving ");
 	}
-	
+
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -396,19 +398,19 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
 		stream.close();
 	}
-	
+
 	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
 		String key = prefix.concat("/").concat(fileName);
-		
+
 		byte[] fileData = bucket.getObject(key);
 		Filedownload.save(fileData, "text/plain", fileName);
 	}
 
-	
 	private void refresh() {
 		doReset();
 		search();
 	}
+
 	/**
 	 * Item renderer for listitems in the listbox.
 	 * 
@@ -420,43 +422,41 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
 			Listcell lc;
 
-			
-			if (item instanceof Listgroup) {	
-				item.appendChild(new Listcell((DateUtility.formatDate(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern())))); 
-			} else if (item instanceof Listgroupfoot) { 
+			if (item instanceof Listgroup) {
+				item.appendChild(new Listcell(
+						(DateUtility.formatDate(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern()))));
+			} else if (item instanceof Listgroupfoot) {
 				Listcell cell = new Listcell("");
 				cell.setSpan(4);
-				item.appendChild(cell); 
+				item.appendChild(cell);
 
 			} else {
-			
-			lc = new Listcell(fileDownlaod.getName());
-			lc.setParent(item);
 
-			lc = new Listcell(fileDownlaod.getFileName());
-			lc.setParent(item);
-			
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
-			lc.setParent(item);
+				lc = new Listcell(fileDownlaod.getName());
+				lc.setParent(item);
 
+				lc = new Listcell(fileDownlaod.getFileName());
+				lc.setParent(item);
 
-			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
-			lc.setParent(item);
+				lc = new Listcell(DateUtility.formatDate(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
+				lc.setParent(item);
 
+				lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
+				lc.setParent(item);
 
-			lc = new Listcell();
-			downlaod = new Button();
-			downlaod.addForward("onClick", self, "onClick_Downlaod");
-			lc.appendChild(downlaod);
-			downlaod.setLabel("Download");
-			downlaod.setTooltiptext("Download");
+				lc = new Listcell();
+				downlaod = new Button();
+				downlaod.addForward("onClick", self, "onClick_Downlaod");
+				lc.appendChild(downlaod);
+				downlaod.setLabel("Download");
+				downlaod.setTooltiptext("Download");
 
-			downlaod.setAttribute("object", fileDownlaod);
-			StringBuilder builder = new StringBuilder();
-			builder.append(fileDownlaod.getFileLocation());
-			builder.append(File.separator);
-			builder.append(fileDownlaod.getFileName());
-			
+				downlaod.setAttribute("object", fileDownlaod);
+				StringBuilder builder = new StringBuilder();
+				builder.append(fileDownlaod.getFileLocation());
+				builder.append(File.separator);
+				builder.append(fileDownlaod.getFileName());
+
 				if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 					downlaod.setDisabled(true);
 					downlaod.setTooltiptext("SAPGL request for file generation failed.");
@@ -469,8 +469,8 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 						downlaod.setTooltiptext("File not available.");
 					}
 				}
-	
-			lc.setParent(item);
+
+				lc.setParent(item);
 			}
 
 		}

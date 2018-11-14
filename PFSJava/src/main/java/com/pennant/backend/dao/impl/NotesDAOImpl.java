@@ -60,73 +60,73 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO{
+public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	private static Logger logger = Logger.getLogger(NotesDAOImpl.class);
-
-	
 
 	public NotesDAOImpl() {
 		super();
 	}
-	
-	public List<Notes> getNotesList(Notes notes, boolean isNotes){
+
+	public List<Notes> getNotesList(Notes notes, boolean isNotes) {
 		logger.debug("Entering");
-		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
-		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, " );
-		selectSql.append(" T2.UsrLogin, T2.UsrFName , T2.UsrMName , T2.UsrLName From Notes T1 "); 
+		StringBuilder selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, ");
+		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, ");
+		selectSql.append(" T2.UsrLogin, T2.UsrFName , T2.UsrMName , T2.UsrLName From Notes T1 ");
 		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
-		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName " );
-		if(isNotes){
-			selectSql.append(" AND RemarkType IN('N', 'I') " );
-		}else{
-			selectSql.append(" AND RemarkType IN('R', 'C') " );
+		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName ");
+		if (isNotes) {
+			selectSql.append(" AND RemarkType IN('N', 'I') ");
+		} else {
+			selectSql.append(" AND RemarkType IN('R', 'C') ");
 		}
 		selectSql.append(" ORDER BY InputDate Desc ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	public List<Notes> getNotesForAgreements(Notes notes){
+
+	public List<Notes> getNotesForAgreements(Notes notes) {
 		logger.debug("Entering");
-		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
-		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, " );
-		selectSql.append(" T2.UsrLogin, T2.UsrFName , T2.UsrMName , T2.UsrLName From Notes T1 "); 
+		StringBuilder selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, ");
+		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, ");
+		selectSql.append(" T2.UsrLogin, T2.UsrFName , T2.UsrMName , T2.UsrLName From Notes T1 ");
 		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
-		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName " );
-		selectSql.append(" AND RemarkType IN('N', 'I', 'R', 'C') " );
+		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName ");
+		selectSql.append(" AND RemarkType IN('N', 'I', 'R', 'C') ");
 		selectSql.append(" ORDER BY InputDate Asc ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
-	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes){
+	public List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes) {
 		logger.debug("Entering");
-		StringBuilder   selectSql = new StringBuilder(" Select T1.NoteId, T1.ModuleName, T1.Reference,  T1.RemarkType, T1.AlignType, T1.RoleCode, T1.Version, " );
-		selectSql.append(" T1.Remarks, T1.InputBy, T1.InputDate, T2.UsrLogin,T3.RoleDesc  From Notes T1 "); 
-		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy LEFT OUTER JOIN SecRoles T3 on T1.RoleCode = T3.RoleCd  ");
-		selectSql.append(" Where T1.Reference = :Reference and T1.ModuleName = :ModuleName " );
-		selectSql.append(" AND T1.RemarkType ='R'" );
-		if (roleCodes!=null) {
-	        selectSql.append(" AND T1.RoleCode IN(" + getRolesWithFormat(roleCodes) + ")");
-        }
+		StringBuilder selectSql = new StringBuilder(
+				" Select T1.NoteId, T1.ModuleName, T1.Reference,  T1.RemarkType, T1.AlignType, T1.RoleCode, T1.Version, ");
+		selectSql.append(" T1.Remarks, T1.InputBy, T1.InputDate, T2.UsrLogin,T3.RoleDesc  From Notes T1 ");
+		selectSql.append(
+				" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy LEFT OUTER JOIN SecRoles T3 on T1.RoleCode = T3.RoleCd  ");
+		selectSql.append(" Where T1.Reference = :Reference and T1.ModuleName = :ModuleName ");
+		selectSql.append(" AND T1.RemarkType ='R'");
+		if (roleCodes != null) {
+			selectSql.append(" AND T1.RoleCode IN(" + getRolesWithFormat(roleCodes) + ")");
+		}
 		selectSql.append(" ORDER BY InputDate Desc ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	public String getRolesWithFormat(String[] roleCodes) {
 		String tempRoleCodes = "'";
 		if (roleCodes.length > 0) {
@@ -140,7 +140,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO{
 		}
 		return tempRoleCodes;
 	}
-	
+
 	// PSD - Ticket: 126490 LMS > Notes of the rejected or resubmitted disbursed tranche is not visible.
 	@Override
 	public List<Notes> getNotesListAsc(Notes notes) {
@@ -211,52 +211,50 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO{
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
-	
 	@Override
 	public void save(Notes notes) {
 		logger.debug("Entering");
 		notes.setId(getNextId("SeqNotes"));
-		
-		StringBuilder  insertSql = 	new StringBuilder(" INSERT INTO Notes (NoteId, ModuleName, Reference , " );
+
+		StringBuilder insertSql = new StringBuilder(" INSERT INTO Notes (NoteId, ModuleName, Reference , ");
 		insertSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate )");
-		insertSql.append(" Values( :NoteId, :ModuleName, :Reference, :RemarkType, :AlignType, :RoleCode, " );
+		insertSql.append(" Values( :NoteId, :ModuleName, :Reference, :RemarkType, :AlignType, :RoleCode, ");
 		insertSql.append(" :Version, :Remarks, :InputBy, :InputDate)");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		logger.debug("Leaving");
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 	}
-	
+
 	public void delete(Notes notes) {
 		logger.debug("Entering");
-		StringBuilder  deleteSql = new StringBuilder(" Delete From Notes " );
+		StringBuilder deleteSql = new StringBuilder(" Delete From Notes ");
 		deleteSql.append(" Where Reference = :Reference and ModuleName = :ModuleName and Version = :Version");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	public void deleteAllNotes(Notes notes) {
 		logger.debug("Entering");
-		
-		StringBuilder  deleteSql = new StringBuilder(" Delete From Notes " );
+
+		StringBuilder deleteSql = new StringBuilder(" Delete From Notes ");
 		deleteSql.append(" Where Reference = :Reference and ModuleName = :ModuleName ");
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 		logger.debug("Leaving");
 	}
-	
+
 }

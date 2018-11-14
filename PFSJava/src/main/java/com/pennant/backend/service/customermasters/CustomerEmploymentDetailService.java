@@ -58,12 +58,12 @@ public interface CustomerEmploymentDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	/*CustomerEmploymentDetail getCustomerEmploymentDetailById(long id, long custEmpName);*/
-	
+	/* CustomerEmploymentDetail getCustomerEmploymentDetailById(long id, long custEmpName); */
+
 	CustomerEmploymentDetail getCustomerEmploymentDetailByCustEmpId(long custEmpId);
 
-	/*CustomerEmploymentDetail getApprovedCustomerEmploymentDetailById(long id, long custEmpName);*/
-	
+	/* CustomerEmploymentDetail getApprovedCustomerEmploymentDetailById(long id, long custEmpName); */
+
 	CustomerEmploymentDetail getApprovedCustomerEmploymentDetailByCustEmpId(long custEmpId);
 
 	AuditHeader delete(AuditHeader auditHeader);
@@ -73,9 +73,9 @@ public interface CustomerEmploymentDetailService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	List<CustomerEmploymentDetail> getApprovedCustomerEmploymentDetailById(long custID);
-	
+
 	AuditDetail doValidations(CustomerEmploymentDetail customerEmploymentDetail, Customer customer);
-	
+
 	int getVersion(long custId, long custEmpId);
 
 }

@@ -74,36 +74,35 @@ public class FinanceRepayPriority extends AbstractWorkflowEntity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return finType;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finType = id;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
 
 	public String getLovDescFinTypeName() {
 		return this.lovDescFinTypeName;
 	}
 
-	public void setLovDescFinTypeName (String lovDescFinTypeName) {
+	public void setLovDescFinTypeName(String lovDescFinTypeName) {
 		this.lovDescFinTypeName = lovDescFinTypeName;
 	}
-	
-		
-	
+
 	public int getFinPriority() {
 		return finPriority;
 	}
+
 	public void setFinPriority(int finPriority) {
 		this.finPriority = finPriority;
 	}
@@ -115,7 +114,7 @@ public class FinanceRepayPriority extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -124,12 +123,12 @@ public class FinanceRepayPriority extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public FinanceRepayPriority getBefImage(){
+	public FinanceRepayPriority getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(FinanceRepayPriority beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinanceRepayPriority beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

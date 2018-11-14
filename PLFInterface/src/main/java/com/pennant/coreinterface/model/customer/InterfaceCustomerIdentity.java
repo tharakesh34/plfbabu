@@ -6,7 +6,7 @@ import java.util.Date;
 public class InterfaceCustomerIdentity implements Serializable {
 
 	private static final long serialVersionUID = -5822763684521083089L;
-	
+
 	private long idCustID;
 	private String idType;
 	private String idIssuedBy;
@@ -18,9 +18,9 @@ public class InterfaceCustomerIdentity implements Serializable {
 	private String recordType;
 
 	public InterfaceCustomerIdentity() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

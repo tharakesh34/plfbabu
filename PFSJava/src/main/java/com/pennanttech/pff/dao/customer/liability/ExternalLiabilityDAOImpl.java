@@ -23,13 +23,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> implements ExternalLiabilityDAO {
 	private static Logger logger = LogManager.getLogger(ExternalLiabilityDAOImpl.class);
-	
+
 	public static final String SEQUENCE = "SeqExternalLiabilities";
 	public static final String SEQUENCE_LINK = "SeqExternalLiabilitiLink";
 
 	@Override
 	public long save(CustomerExtLiability custExtLiability, String type) {
-		
+
 		if (custExtLiability.getId() == 0) {
 			custExtLiability.setId(getNextValue(SEQUENCE));
 		}
@@ -39,18 +39,21 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(type);
 		sql.append(" (id, linkid, seqno, fintype, findate, loanbank, rateofinterest,");
 		sql.append(" tenure, originalamount, instalmentamount, outstandingbalance, balancetenure, bounceinstalments,");
-		sql.append(" principaloutstanding, overdueamount, finstatus, foir, source, checkedby, securitydetails, loanpurpose, repaybank, otherFinInstitute,");
+		sql.append(
+				" principaloutstanding, overdueamount, finstatus, foir, source, checkedby, securitydetails, loanpurpose, repaybank, otherFinInstitute,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
-		
+
 		sql.append(" values(:Id, :LinkId, :SeqNo, :FinType, :finDate, :loanBank, :rateOfInterest,");
-		sql.append(" :tenure, :originalAmount, :instalmentAmount, :outstandingBalance, :balanceTenure, :bounceInstalments,");
-		sql.append(" :principalOutstanding, :overdueAmount, :finStatus, :foir, :source, :checkedBy, :securityDetails, :loanPurpose, :repayBank, :otherFinInstitute,");
+		sql.append(
+				" :tenure, :originalAmount, :instalmentAmount, :outstandingBalance, :balanceTenure, :bounceInstalments,");
+		sql.append(
+				" :principalOutstanding, :overdueAmount, :finStatus, :foir, :source, :checkedBy, :securityDetails, :loanPurpose, :repayBank, :otherFinInstitute,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode,");
 		sql.append(" :taskId, :nextTaskId, :recordType, :workflowId");
 		sql.append(")");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custExtLiability);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
@@ -78,7 +81,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
 		sql.append(" where id = :Id ");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custExtLiability);
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
@@ -88,7 +91,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void delete(long id, String type) {
 		logger.debug(Literal.ENTERING);
@@ -134,7 +137,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
-		
+
 	@Override
 	public List<CustomerExtLiability> getLiabilities(long custId, String type) {
 
@@ -176,7 +179,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		BigDecimal emiSum = BigDecimal.ZERO;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("linkid", linkid);
-		
+
 		try {
 			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -185,20 +188,20 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		logger.debug(Literal.LEAVING);
 		return emiSum;
 	}
-	
+
 	@Override
 	public BigDecimal getTotalLiabilityBySamplingId(long samplingId) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select coalesce(sum(instalmentamount), 0) from external_liabilities");
 		sql.append(" where linkid in  (select linkid from link_sampling_liabilities where samplingid = :id)");
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		BigDecimal emiSum = BigDecimal.ZERO;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", samplingId);
-		
+
 		try {
 			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -207,7 +210,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		logger.debug(Literal.LEAVING);
 		return emiSum;
 	}
-	
+
 	@Override
 	public BigDecimal getTotalLiabilityByFinReference(String keyReference) {
 		logger.debug(Literal.ENTERING);
@@ -220,9 +223,9 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" union all");
 		sql.append(" select custid, finreference from finjointaccountdetails_view");
 		sql.append(") t where t.finreference = :keyReference)");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("keyReference", keyReference);
 		BigDecimal totalIncome = BigDecimal.ZERO;
@@ -235,7 +238,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		logger.debug(Literal.LEAVING);
 		return totalIncome;
-	
+
 	}
 
 	@Override
@@ -248,7 +251,8 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerExtLiability.class);
 
 		logger.debug(Literal.LEAVING);
 

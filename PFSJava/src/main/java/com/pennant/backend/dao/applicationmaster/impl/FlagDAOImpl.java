@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -69,51 +68,53 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 	private static Logger logger = Logger.getLogger(FlagDAOImpl.class);
-	
+
 	public FlagDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Flags details by key field
+	 * Fetch the Record Flags details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Flag
 	 */
 	@Override
 	public Flag getFlagById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		Flag flag = new Flag();
-		
+
 		flag.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select FlagCode, FlagDesc, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From Flags");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FlagCode =:FlagCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
 		RowMapper<Flag> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Flag.class);
-		
-		try{
-			flag = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			flag = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			flag = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return flag;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String flagCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -158,9 +159,11 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		StringBuilder sql = new StringBuilder("insert into Flags");
 		sql.append(tableType.getSuffix());
 		sql.append(" (FlagCode, FlagDesc, Active");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(:FlagCode, :FlagDesc, :Active");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -171,11 +174,11 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return flag.getFlagCode();
 	}
-	
+
 	@Override
 	public void update(Flag flag, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -184,7 +187,8 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		StringBuilder sql = new StringBuilder("update Flags");
 		sql.append(tableType.getSuffix());
 		sql.append(" set FlagDesc = :FlagDesc, Active = :Active");
-		sql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where FlagCode =:FlagCode");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -216,7 +220,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
@@ -227,7 +231,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 }

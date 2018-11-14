@@ -68,25 +68,22 @@ import com.pennant.backend.service.ddapayments.impl.DDARepresentmentService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul file.
  */
 public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 	private static final long serialVersionUID = 2808357374960437326L;
-	private static final Logger logger = Logger
-			.getLogger(DDARepresentmentListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DDARepresentmentListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_DDARepresentmentList; // autowired
 	protected Borderlayout borderLayout_DDAPresentmentList; // autowired
@@ -122,27 +119,24 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 	public DDARepresentmentListCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
-		
+
 	}
 
-	public void onCreate$window_DDARepresentmentList(Event event)
-			throws Exception {
+	public void onCreate$window_DDARepresentmentList(Event event) throws Exception {
 		logger.debug("Entering");
 
-		this.sortOperator_DDADate.setModel(new ListModelList<SearchOperators>(
-				new SearchOperators().getNumericOperators()));
 		this.sortOperator_DDADate
-				.setItemRenderer(new SearchOperatorListModelItemRenderer());
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_DDADate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		/* set components visible dependent on the users rights */
 		doCheckRights();
 
 		this.borderLayout_DDAPresentmentList.setHeight(getBorderLayoutHeight());
-		this.listBoxDdaPresentment.setHeight(getListBoxHeight(searchGrid
-				.getRows().getVisibleItemCount()));
+		this.listBoxDdaPresentment.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
 		// set the paging parameters
 		this.pagingWIFFinanceMainList.setPageSize(getListRows());
 		this.pagingWIFFinanceMainList.setDetailed(true);
@@ -159,8 +153,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 		getUserWorkspace().allocateAuthorities("WIFFinanceMainList");
 
 		this.button_DDARepresentmentList_Search
-				.setVisible(getUserWorkspace().isAllowed(
-						"button_WIFFinanceMainList_WIFFinanceMainFindDialog"));
+				.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_WIFFinanceMainFindDialog"));
 
 		logger.debug("Leaving");
 	}
@@ -201,8 +194,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 	 * call the WIFFinanceMain dialog
 	 */
 
-	public void onClick$button_DDARepresentmentList_Search(Event event)
-			throws Exception {
+	public void onClick$button_DDARepresentmentList_Search(Event event) throws Exception {
 		logger.debug("Entering");
 
 		doSearch();
@@ -214,8 +206,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 		logger.debug("Entering");
 
 		// ++ create the searchObject and init sorting ++//
-		this.searchObj = new JdbcSearchObject<DdaPresentment>(
-				DdaPresentment.class);
+		this.searchObj = new JdbcSearchObject<DdaPresentment>(DdaPresentment.class);
 		this.searchObj.addSort("ddaReference", false);
 		this.searchObj.addField("ddaReference");
 		this.searchObj.addField("ddaDate");
@@ -229,21 +220,16 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 		this.searchObj.addTabelName("DDARepresentment");
 
 		if (this.ddaDate.getValue() != null) {
-			searchObj = getSearchFilter(searchObj,
-					this.sortOperator_DDADate.getSelectedItem(),
-					DateUtility.formatDate(this.ddaDate.getValue(),
-							PennantConstants.DBDateFormat), "ddaDate");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_DDADate.getSelectedItem(),
+					DateUtility.formatDate(this.ddaDate.getValue(), PennantConstants.DBDateFormat), "ddaDate");
 		}
 		if (this.noPay.isChecked()) {
-			searchObj = getSearchFilter(searchObj, Filter.OP_EQUAL, "NOPAY",
-					"ddaStatus");
+			searchObj = getSearchFilter(searchObj, Filter.OP_EQUAL, "NOPAY", "ddaStatus");
 		}
 
 		// Set the ListModel for the articles.
-		PagedListService pagedListService = (PagedListService) SpringUtil
-				.getBean("extPagedListService");
-		List<DdaPresentment> list = pagedListService
-				.getBySearchObject(this.searchObj);
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("extPagedListService");
+		List<DdaPresentment> list = pagedListService.getBySearchObject(this.searchObj);
 
 		doFillList(list, listBoxDdaPresentment);
 
@@ -273,8 +259,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 			listcell = new Listcell(item.getDdaReference());
 			listitem.appendChild(listcell);
 
-			listcell = new Listcell(DateUtility.format(item.getDdaDate(),
-					DateFormat.SHORT_DATE));
+			listcell = new Listcell(DateUtility.format(item.getDdaDate(), DateFormat.SHORT_DATE));
 			listitem.appendChild(listcell);
 
 			listcell = new Listcell(item.getFinReference());
@@ -330,8 +315,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 		return ddaRepresentmentService;
 	}
 
-	public void setDdaRepresentmentService(
-			DDARepresentmentService ddaRepresentmentService) {
+	public void setDdaRepresentmentService(DDARepresentmentService ddaRepresentmentService) {
 		this.ddaRepresentmentService = ddaRepresentmentService;
 	}
 }

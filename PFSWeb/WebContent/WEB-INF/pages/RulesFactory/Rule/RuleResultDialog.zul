@@ -2,28 +2,25 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
-	xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-		<style>
-			.CodeMirror-line-numbers {
-			width: 2.2em;
-			color: #aaa;
-			background-color: #eee; 
-			text-align: right; 
-			padding-right: .3em;
-			font-size: 10pt; 
-			font-family: monospace; 
-			padding-top: .4em;
-			line-height: normal; 
+	<style>
+		.CodeMirror-line-numbers {
+		width: 2.2em;
+		color: #aaa;
+		background-color: #eee;
+		text-align: right;
+		padding-right: .3em;
+		font-size: 10pt;
+		font-family: monospace;
+		padding-top: .4em;
+		line-height: normal;
 		}
 	</style>
-    
-	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
-    		<script type="text/javascript">
+
+	<script type="text/javascript" src="/ptjs/fulljslint.js" />
+	<script type="text/javascript">
 			<![CDATA[ 
 			         
                var code;   
@@ -84,51 +81,36 @@
   				 	 }
   				}
 			]]>
-			  </script>
+	</script>
 
-	<window id="window_RuleResultDialog"
-		title="${c:l('window_RuleResultDialog.title')}" border="normal"
-		apply="${ruleResultDialogCtrl}" width="80%" height="70%"
-		sizable="false">
+	<window id="window_RuleResultDialog" title="${c:l('window_RuleResultDialog.title')}" border="normal"
+		apply="${ruleResultDialogCtrl}" width="80%" height="70%" sizable="false">
 
 		<div sclass="z-toolbar" style="padding:0">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-				width="100%">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start"
-					style="float:left; border-style: none;">
-					<button id="btnSave"
-						label="SAVE"
-						tooltiptext="${c:l('btnSave.tooltiptext')}"
+				<toolbar align="start" style="float:left; border-style: none;">
+					<button id="btnSave" label="SAVE" tooltiptext="${c:l('btnSave.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
 						w:onClick="validate2Js(false,true);" />
 				</toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center" style="border-style: none;">
-					<button id="ruleResult_btnValidate"
-						tooltiptext="${c:l('button_Validation.tooltiptext')}"
-						label="VALIDATE"
+					<button id="ruleResult_btnValidate" tooltiptext="${c:l('button_Validation.tooltiptext')}" label="VALIDATE"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
 						w:onClick="validate2Js(false,false);" />
-					<button id="btnSimulate"
-						tooltiptext="${c:l('button_Simulation.tooltiptext')}"
-						label="SIMULATE"
+					<button id="btnSimulate" tooltiptext="${c:l('button_Simulation.tooltiptext')}" label="SIMULATE"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
 						w:onClick="validate2Js(true,false);" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"
-					style="float:right; border-style: none;">
-					<button id="btnHelp" visible="false" 
-						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+				<toolbar align="end" style="float:right; border-style: none;">
+					<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
-					<button id="btnClose" 
-						label="CLOSE"
-						tooltiptext="${c:l('btnClose.tooltiptext')}"
+					<button id="btnClose" label="CLOSE" tooltiptext="${c:l('btnClose.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
 				</toolbar>
 			</hbox>
@@ -138,37 +120,25 @@
 			<center border="none" autoscroll="true">
 
 				<groupbox height="95%">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
-							<column align="left" id="amtCodeColumn"
-								width="0%" />
-							<column align="left" id="coremirrorColumn"
-								width="100%" />
-							<column align="right" id="optValuesColumn"
-								width="0%" />
+							<column align="left" id="amtCodeColumn" width="0%" />
+							<column align="left" id="coremirrorColumn" width="100%" />
+							<column align="right" id="optValuesColumn" width="0%" />
 						</columns>
 						<rows>
 							<row>
 								<tabbox id="tabbox_AmtCodes">
 									<tabs>
-										<tab
-											label="Rule Codes" />
+										<tab label="Rule Codes" />
 									</tabs>
 									<tabpanels>
 										<tabpanel>
-											<listbox
-												id="listboxFieldCodes" mold="default" height="620px"
-												sizedByContent="true" span="true"
+											<listbox id="listboxFieldCodes" mold="default" height="620px" sizedByContent="true" span="true"
 												w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
-												<listhead
-													sizable="true">
-													<listheader
-														id="listheader_AmountCode" label="Rule" sort="auto"
-														hflex="min" />
-													<listheader
-														id="listheader_AmountCodeDesc" label="Description"
-														sort="auto" hflex="min" />
+												<listhead sizable="true">
+													<listheader id="listheader_AmountCode" label="Rule" sort="auto" hflex="min" />
+													<listheader id="listheader_AmountCodeDesc" label="Description" sort="auto" hflex="min" />
 												</listhead>
 											</listbox>
 										</tabpanel>
@@ -177,32 +147,23 @@
 
 								<!-- CodeMirror -->
 
-								<codemirror id="formula" syntax="js" 
-									config="lineNumbers:true" height="620px" />
+								<codemirror id="formula" syntax="js" config="lineNumbers:true" height="620px" />
 
 								<!-- operators && Statements -->
 
 								<tabbox id="tabbox_optValues">
 									<tabs>
-										<tab
-											label="${c:l('label_OperatorValues.value')}" />
+										<tab label="${c:l('label_OperatorValues.value')}" />
 									</tabs>
 									<tabpanels>
 										<tabpanel>
-											<listbox
-												id="listboxFeeOperators" mold="default" height="620px"
-												sizedByContent="true" span="true"
+											<listbox id="listboxFeeOperators" mold="default" height="620px" sizedByContent="true" span="true"
 												w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
-												<listhead
-													sizable="true">
-													<listheader
-														id="listheader_Operator"
-														label="${c:l('listheader_Operator.label')}" sort="auto"
+												<listhead sizable="true">
+													<listheader id="listheader_Operator" label="${c:l('listheader_Operator.label')}" sort="auto"
 														hflex="min" />
-													<listheader
-														id="listheader_Description"
-														label="${c:l('listheader_OperatorDesc.label')}"
-														sort="auto" hflex="min" />
+													<listheader id="listheader_Description" label="${c:l('listheader_OperatorDesc.label')}" sort="auto"
+														hflex="min" />
 												</listhead>
 											</listbox>
 										</tabpanel>

@@ -45,9 +45,9 @@ package com.pennant.backend.model.rmtmasters;
 import java.io.Serializable;
 
 public class TransactionDetail implements Serializable {
-	
-    private static final long serialVersionUID = 2227130675528572705L;
-    
+
+	private static final long serialVersionUID = 2227130675528572705L;
+
 	private String eventCode;
 	private String eventDesc;
 	private String tranType;
@@ -61,67 +61,76 @@ public class TransactionDetail implements Serializable {
 	private String revTranCode;
 
 	public TransactionDetail() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getEventCode() {
-    	return eventCode;
-    }
+		return eventCode;
+	}
+
 	public void setEventCode(String eventCode) {
-    	this.eventCode = eventCode;
-    }
-	
+		this.eventCode = eventCode;
+	}
+
 	public String getEventDesc() {
-    	return eventDesc;
-    }
+		return eventDesc;
+	}
+
 	public void setEventDesc(String eventDesc) {
-    	this.eventDesc = eventDesc;
-    }
-	
+		this.eventDesc = eventDesc;
+	}
+
 	public String getTranType() {
-    	return tranType;
-    }
+		return tranType;
+	}
+
 	public void setTranType(String tranType) {
-    	this.tranType = tranType;
-    }
-	
+		this.tranType = tranType;
+	}
+
 	public String getTransDesc() {
-    	return transDesc;
-    }
+		return transDesc;
+	}
+
 	public void setTransDesc(String transDesc) {
-    	this.transDesc = transDesc;
-    }
-	
+		this.transDesc = transDesc;
+	}
+
 	public String getTransactionCode() {
-    	return transactionCode;
-    }
+		return transactionCode;
+	}
+
 	public void setTransactionCode(String transactionCode) {
-    	this.transactionCode = transactionCode;
-    }
-	
+		this.transactionCode = transactionCode;
+	}
+
 	public String getAccount() {
-    	return account;
-    }
+		return account;
+	}
+
 	public void setAccount(String account) {
-    	this.account = account;
-    }
-	
+		this.account = account;
+	}
+
 	public String getPostAmount() {
-    	return postAmount;
-    }
+		return postAmount;
+	}
+
 	public void setPostAmount(String postAmount) {
-    	this.postAmount = postAmount;
-    }
+		this.postAmount = postAmount;
+	}
+
 	public String getCcy() {
-	    return ccy;
-    }
+		return ccy;
+	}
+
 	public void setCcy(String ccy) {
-	    this.ccy = ccy;
-    }
+		this.ccy = ccy;
+	}
 
 	public String getPostDate() {
 		return postDate;
@@ -146,5 +155,5 @@ public class TransactionDetail implements Serializable {
 	public void setRevTranCode(String revTranCode) {
 		this.revTranCode = revTranCode;
 	}
-	
+
 }

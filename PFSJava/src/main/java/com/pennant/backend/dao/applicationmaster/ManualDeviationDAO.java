@@ -71,9 +71,9 @@ public interface ManualDeviationDAO extends BasicCrudDao<ManualDeviation> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long deviationID, String code, TableType tableType);
-	
+
 	boolean isExistsFieldCodeID(long fieldCodeID, String type);
-	
+
 	long getDeviationIdByCode(String deviationCode);
 
 	ManualDeviation getManualDeviationDesc(long deviationID);

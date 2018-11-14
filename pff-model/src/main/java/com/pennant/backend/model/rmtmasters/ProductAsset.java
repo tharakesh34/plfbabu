@@ -51,15 +51,15 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ProductAsset table</b>.<br>
  *
  */
-public class ProductAsset extends AbstractWorkflowEntity implements Entity{
+public class ProductAsset extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -2377149322561552420L;
-	private long assetID = Long.MIN_VALUE ;
+	private long assetID = Long.MIN_VALUE;
 	private String productCode;
 	private String assetCode;
 	private String assetDesc;
 	private boolean assetIsActive;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private ProductAsset befImage;
 	private LoggedInUser userDetails;
@@ -71,6 +71,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public ProductAsset() {
 		super();
 	}
+
 	public ProductAsset(long id) {
 		super();
 		this.setAssetID(id);
@@ -83,13 +84,15 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public long getId() {
 		return assetID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.assetID = id;
 	}
 
 	public long getAssetID() {
 		return assetID;
 	}
+
 	public void setAssetID(long assetID) {
 		this.assetID = assetID;
 	}
@@ -97,6 +100,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public String getProductCode() {
 		return productCode;
 	}
+
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
 	}
@@ -104,6 +108,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public String getAssetCode() {
 		return assetCode;
 	}
+
 	public void setAssetCode(String assetCode) {
 		this.assetCode = assetCode;
 	}
@@ -111,6 +116,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public String getAssetDesc() {
 		return assetDesc;
 	}
+
 	public void setAssetDesc(String assetDesc) {
 		this.assetDesc = assetDesc;
 	}
@@ -118,6 +124,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public boolean isAssetIsActive() {
 		return assetIsActive;
 	}
+
 	public void setAssetIsActive(boolean assetIsActive) {
 		this.assetIsActive = assetIsActive;
 	}
@@ -125,6 +132,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -132,6 +140,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -139,6 +148,7 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public ProductAsset getBefImage() {
 		return befImage;
 	}
+
 	public void setBefImage(ProductAsset befImage) {
 		this.befImage = befImage;
 	}
@@ -146,13 +156,14 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity{
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 
 	}
 }

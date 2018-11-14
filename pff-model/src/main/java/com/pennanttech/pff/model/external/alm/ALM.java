@@ -27,12 +27,11 @@ public class ALM implements Serializable {
 	private Date maturityDate;
 	private BigDecimal ccyMinorCcyUnits;
 	private int ccyEditField;
-	private String	calRoundingMode;
-	private int	roundingTarget;
+	private String calRoundingMode;
+	private int roundingTarget;
 	private String entityCode;
 
 	private List<ProjectedAccrual> accrualList = new ArrayList<>();
-
 
 	public long getAgreementId() {
 		return agreementId;
@@ -133,7 +132,6 @@ public class ALM implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
 
 	public List<ProjectedAccrual> getAccrualList() {
 		return accrualList;

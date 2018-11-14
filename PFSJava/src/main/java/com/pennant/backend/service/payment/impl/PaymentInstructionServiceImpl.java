@@ -65,7 +65,8 @@ import com.pennanttech.pff.core.TableType;
 /**
  * Service implementation for methods that depends on <b>PaymentInstruction</b>.<br>
  */
-public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruction> implements PaymentInstructionService {
+public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruction>
+		implements PaymentInstructionService {
 	private static final Logger logger = Logger.getLogger(PaymentInstructionServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -231,7 +232,8 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		getPaymentInstructionDAO().delete(paymentInstruction, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentInstruction.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(paymentInstructionDAO.getPaymentInstruction(paymentInstruction.getPaymentInstructionId(), ""));
+			auditHeader.getAuditDetail().setBefImage(
+					paymentInstructionDAO.getPaymentInstruction(paymentInstruction.getPaymentInstructionId(), ""));
 		}
 
 		if (paymentInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -338,7 +340,8 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	@Override
-	public List<AuditDetail> setPaymentInstructionDetailsAuditData(PaymentInstruction paymentInstruction, String auditTranType, String method) {
+	public List<AuditDetail> setPaymentInstructionDetailsAuditData(PaymentInstruction paymentInstruction,
+			String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -379,7 +382,8 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	@Override
-	public List<AuditDetail> processPaymentInstrDetails(List<AuditDetail> auditDetails, TableType type, String methodName) {
+	public List<AuditDetail> processPaymentInstrDetails(List<AuditDetail> auditDetails, TableType type,
+			String methodName) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -453,10 +457,11 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 				paymentInstruction.setRecordType(rcdType);
 				paymentInstruction.setRecordStatus(recordStatus);
 			}
-			
+
 			if ("doApprove".equals(methodName)) {
 				if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentInstruction.getRecordType())) {
-					paymentInstruction.setBefImage(paymentInstructionDAO.getPaymentInstruction(paymentInstruction.getPaymentInstructionId(), ""));
+					paymentInstruction.setBefImage(paymentInstructionDAO
+							.getPaymentInstruction(paymentInstruction.getPaymentInstructionId(), ""));
 				}
 			}
 			auditDetails.get(i).setModelData(paymentInstruction);
@@ -466,12 +471,16 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	@Override
-	public List<AuditDetail> delete(PaymentInstruction paymentInstruction, TableType tableType, String auditTranType, long paymentId) {
+	public List<AuditDetail> delete(PaymentInstruction paymentInstruction, TableType tableType, String auditTranType,
+			long paymentId) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (paymentInstruction != null) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentInstruction(), new PaymentInstruction().getExcludeFields());
-			if (StringUtils.isNotEmpty(paymentInstruction.getRecordType()) || StringUtils.isEmpty(tableType.toString())) {
-				auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], paymentInstruction.getBefImage(), paymentInstruction));
+			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentInstruction(),
+					new PaymentInstruction().getExcludeFields());
+			if (StringUtils.isNotEmpty(paymentInstruction.getRecordType())
+					|| StringUtils.isEmpty(tableType.toString())) {
+				auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1],
+						paymentInstruction.getBefImage(), paymentInstruction));
 			}
 			getPaymentInstructionDAO().delete(paymentInstruction, tableType);
 		}

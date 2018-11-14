@@ -86,66 +86,64 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/Customer/customerQDEDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/customerQDEDialog.zul file.
  */
 public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 398317712417132602L;
 	private static final Logger logger = Logger.getLogger(CustomerQDEDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_CustomerQDEDialog; 					
-	
-	protected Textbox 	custCIF; 									
-	protected Textbox 	custCoreBank; 								
-	protected Textbox 	custCtgCode; 								
-	protected Textbox 	custTypeCode; 								
-	protected Textbox 	custParentCountry; 							
-	
+	protected Window window_CustomerQDEDialog;
+
+	protected Textbox custCIF;
+	protected Textbox custCoreBank;
+	protected Textbox custCtgCode;
+	protected Textbox custTypeCode;
+	protected Textbox custParentCountry;
+
 	//Retail Customer Details
-	protected Textbox 	custFName; 									
-	protected Textbox 	custMName; 									
-	protected Textbox 	custLName; 									
-	protected Datebox 	custDOB; 									
-	protected Textbox 	custPassportNo;								
-	protected Textbox 	custVisaNum;								
-	protected Textbox 	custTradeLicenceNum; 						
-	
+	protected Textbox custFName;
+	protected Textbox custMName;
+	protected Textbox custLName;
+	protected Datebox custDOB;
+	protected Textbox custPassportNo;
+	protected Textbox custVisaNum;
+	protected Textbox custTradeLicenceNum;
+
 	//Row(s) declaration visibility depend on selection of Customer Category 
-	protected Row 		row_retailCustomerNames;					
-	protected Row 		row_corpCustomerTL;							
-	protected Row 		row_retailCustomerPPT;						
-	
+	protected Row row_retailCustomerNames;
+	protected Row row_corpCustomerTL;
+	protected Row row_retailCustomerPPT;
+
 	//Set Fields are mandatory or not
-	protected Space 	space_CustCoreBank;							
-	protected Hbox		hbox_visaNum;								
-	
+	protected Space space_CustCoreBank;
+	protected Hbox hbox_visaNum;
+
 	//Label(s) declarations of fields
-	protected Label 	label_CustomerDialog_CustOrgName;			
-	protected Label 	label_CustomerDialog_CustLName;				
-	protected Label 	label_CustomerDialog_CustDOB;				
-	protected Label 	label_CustomerDialog_CustDateOfIncorporation;
-	protected Label 	label_CustomerDialog_CustVisaNum;			
-	
+	protected Label label_CustomerDialog_CustOrgName;
+	protected Label label_CustomerDialog_CustLName;
+	protected Label label_CustomerDialog_CustDOB;
+	protected Label label_CustomerDialog_CustDateOfIncorporation;
+	protected Label label_CustomerDialog_CustVisaNum;
+
 	//LOV field declarations
-	protected Textbox 	lovDescCustCtgCodeName;						
-	protected Button 	btnSearchCustCtgCode; 						
-	protected Textbox 	lovDescCustTypeCodeName;					
-	protected Button 	btnSearchCustTypeCode; 						
-	protected Textbox 	lovDescCustParentCountryName;				
-	protected Button 	btnSearchCustParentCountry; 				
-	
+	protected Textbox lovDescCustCtgCodeName;
+	protected Button btnSearchCustCtgCode;
+	protected Textbox lovDescCustTypeCodeName;
+	protected Button btnSearchCustTypeCode;
+	protected Textbox lovDescCustParentCountryName;
+	protected Button btnSearchCustParentCountry;
+
 	private transient boolean validationOn;
 	private transient String CUSTCIF_REGEX;
 	private CustomerDetails customerDetails;
@@ -154,11 +152,11 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private transient FinanceDetailService financeDetailService;
 	private transient DedupParmService dedupParmService;
 	private transient CustomerInterfaceService customerInterfaceService;
-	
+
 	private String custCtgType = "";
 	Date appStartDate = DateUtility.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -172,11 +170,10 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -195,32 +192,32 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} else {
 			setCustomerDetails(null);
 		}
-		
+
 		// READ OVERHANDED params !
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
-			
-			if(arguments.containsKey("roleCode")){
+
+			if (arguments.containsKey("roleCode")) {
 				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "CustomerDialog");
 			}
-			
+
 		} else {
 			this.financeDetail = null;
 		}
 
 		Customer customer = getCustomerDetails().getCustomer();
-		doLoadWorkFlow(customer.isWorkflow(), customer.getWorkflowId(),customer.getNextTaskId());
+		doLoadWorkFlow(customer.isWorkflow(), customer.getWorkflowId(), customer.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction, false);
-			if(this.financeDetail != null){
-				if (this.userAction.getItemAtIndex(0) != null && 
-						"Rejected".equals(this.userAction.getItemAtIndex(0).getValue())) {
+			if (this.financeDetail != null) {
+				if (this.userAction.getItemAtIndex(0) != null
+						&& "Rejected".equals(this.userAction.getItemAtIndex(0).getValue())) {
 					this.userAction.getItemAtIndex(0).setVisible(false);
 					this.userAction.getItemAtIndex(1).setSelected(true);
 				}
 			}
-			getUserWorkspace().allocateRoleAuthorities(getRole(),"CustomerDialog");
+			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerDialog");
 		}
 
 		// set Field Properties
@@ -234,7 +231,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		this.custCoreBank.setMaxlength(50);
 		this.custCtgCode.setMaxlength(8);
 		this.custFName.setMaxlength(50);
@@ -277,14 +274,12 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
 	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerDetails aCustomerDetails)
-			throws InterruptedException {
+	public void doShowDialog(CustomerDetails aCustomerDetails) throws InterruptedException {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -300,7 +295,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				btnCancel.setVisible(false);
 			}
 		}
-		
+
 		this.custCIF.focus();
 		setDialog(DialogType.EMBEDDED);
 		logger.debug("Leaving");
@@ -311,11 +306,11 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		
+
 		if (customerDetails.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 		}
-		
+
 		this.custCIF.setReadonly(true);//isReadOnly("CustomerDialog_custCIF")
 		if ("CIF".equals(SysParamUtil.getValueAsString("CB_CID"))) {
 			this.custCoreBank.setReadonly(true);
@@ -323,7 +318,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} else {
 			this.custCoreBank.setReadonly(isReadOnly("CustomerDialog_custCoreBank"));
 		}
-		
+
 		this.btnSearchCustCtgCode.setDisabled(isReadOnly("CustomerDialog_custCtgCode"));
 		this.btnSearchCustTypeCode.setDisabled(isReadOnly("CustomerDialog_custCtgCode"));
 		this.btnSearchCustParentCountry.setDisabled(isReadOnly("CustomerDialog_custParentCountry"));
@@ -334,7 +329,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custTradeLicenceNum.setReadonly(isReadOnly("CustomerDialog_custTradeLicenceNum"));
 		this.custVisaNum.setReadonly(isReadOnly("CustomerDialog_custVisaNum"));
 		this.custPassportNo.setReadonly(isReadOnly("CustomerDialog_custPassportNo"));
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -363,25 +358,25 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ParseException
-	 * @throws CustomerNotFoundException 
+	 * @throws CustomerNotFoundException
 	 */
 	public void doSave() throws InterruptedException, ParseException, InterfaceException {
 		logger.debug("Entering");
-		
+
 		final CustomerDetails aCustomerDetails = new CustomerDetails();
 		BeanUtils.copyProperties(getCustomerDetails(), aCustomerDetails);
 		boolean isNew = false;
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the Customer object with the components data
 		doWriteComponentsToBean(aCustomerDetails);
 		aCustomer = aCustomerDetails.getCustomer();
 		aCustomer.setCustomerQDE(aCustomerDetails.getCustomer().getCustomerQDE());
-		
+
 		//Create new CIF By Using Core Banking System
-		if(this.financeDetail != null && StringUtils.isBlank(aCustomer.getCustCIF())){
+		if (this.financeDetail != null && StringUtils.isBlank(aCustomer.getCustCIF())) {
 			aCustomer.setLovDescCustCtgType(custCtgType);
 			String custCIF = getCustomerInterfaceService().generateNewCIF("B", aCustomer,
 					this.financeDetail.getFinScheduleData().getFinReference());
@@ -390,9 +385,9 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				aCustomer.setCustCoreBank(custCIF);
 			}
 		}
-		
+
 		// Show a confirm box
-		final String msg = "Generated Customer CIF "+aCustomer.getCustCIF();
+		final String msg = "Generated Customer CIF " + aCustomer.getCustCIF();
 
 		MessageUtil.showMessage(msg);
 
@@ -423,9 +418,9 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			aCustomerDetails.setCustomer(aCustomer);
 			if (doProcess(aCustomerDetails, tranType)) {
-				
-				if(this.financeDetail != null){
-					getFinanceDetailService().updateCustCIF(aCustomerDetails.getCustID(), 
+
+				if (this.financeDetail != null) {
+					getFinanceDetailService().updateCustCIF(aCustomerDetails.getCustID(),
 							this.financeDetail.getFinScheduleData().getFinReference());
 				}
 				// Close the Existing Dialog
@@ -439,11 +434,10 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	// WorkFlow Creations
-	
-	private String getServiceTasks(String taskId, Customer aCustomer,
-			String finishedTasks) {
+
+	private String getServiceTasks(String taskId, Customer aCustomer, String finishedTasks) {
 		logger.debug("Entering");
-		
+
 		String serviceTasks = getServiceOperations(taskId, aCustomer);
 
 		if (!"".equals(finishedTasks)) {
@@ -459,7 +453,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	private void setNextTaskDetails(String taskId, Customer aCustomer) {
 		logger.debug("Entering");
-		
+
 		// Set the next task id
 		String action = userAction.getSelectedItem().getLabel();
 		String nextTaskId = StringUtils.trimToEmpty(aCustomer.getNextTaskId());
@@ -501,7 +495,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setRoleCode(getRole());
 		aCustomer.setNextRoleCode(nextRoleCode);
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**
@@ -513,8 +507,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws CustomerNotFoundException 
-	 * */
+	 * @throws CustomerNotFoundException
+	 */
 	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
@@ -543,21 +537,22 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
-			String serviceTasks = getServiceTasks(taskId, aCustomer,finishedTasks);
+			String serviceTasks = getServiceTasks(taskId, aCustomer, finishedTasks);
 
 			while (!"".equals(serviceTasks)) {
 				String method = serviceTasks.split(";")[0];
 
 				if ("doQdeDedup".equals(method)) {
-					aCustomerDetails = FetchDedupDetails.getCustomerDedup(getRole(),
-							aCustomerDetails, this.window_CustomerQDEDialog);
-					if(aCustomerDetails.getCustomer().isDedupFound() && !aCustomerDetails.getCustomer().isSkipDedup()){
-						processCompleted =false;						
-					}else{
-						processCompleted =true;	
+					aCustomerDetails = FetchDedupDetails.getCustomerDedup(getRole(), aCustomerDetails,
+							this.window_CustomerQDEDialog);
+					if (aCustomerDetails.getCustomer().isDedupFound()
+							&& !aCustomerDetails.getCustomer().isSkipDedup()) {
+						processCompleted = false;
+					} else {
+						processCompleted = true;
 					}
 
-				}else {
+				} else {
 					setNextTaskDetails(taskId, aCustomer);
 					aCustomerDetails.setCustomer(aCustomer);
 					auditHeader = getAuditHeader(aCustomerDetails, PennantConstants.TRAN_WF);
@@ -606,8 +601,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws CustomerNotFoundException 
-	 * */
+	 * @throws CustomerNotFoundException
+	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 
@@ -623,15 +618,13 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						auditHeader = getCustomerDetailsService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getCustomerDetailsService().doApprove(auditHeader);
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getCustomerDetailsService().doReject(auditHeader);
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerQDEDialog, auditHeader);
 						return processCompleted;
 					}
@@ -695,54 +688,79 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		
+
 		// Basic Details Tab
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel(
-					"MAND_FIELD_ALLOWED_CHARS",new String[] {Labels.getLabel("label_CustomerDialog_CustCIF.value"),
-					SysParamUtil.getValueAsString("CIF_CHAR"),
-					SysParamUtil.getValueAsString("CIF_LENGTH") }),this.CUSTCIF_REGEX));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("MAND_FIELD_ALLOWED_CHARS",
+					new String[] { Labels.getLabel("label_CustomerDialog_CustCIF.value"),
+							SysParamUtil.getValueAsString("CIF_CHAR"), SysParamUtil.getValueAsString("CIF_LENGTH") }),
+					this.CUSTCIF_REGEX));
 		}
 		if (!this.custCoreBank.isReadonly() || "CIF".equals(SysParamUtil.getValueAsString("CB_CID"))) {
-			/*this.custCoreBank.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCoreBank.value"),null,true));*/
+			/*
+			 * this.custCoreBank.setConstraint(new
+			 * PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCoreBank.value"),null,true));
+			 */
 		}
 		this.custDOB.clearErrorMessage();
-		if(this.row_retailCustomerPPT.isVisible() && this.row_retailCustomerNames.isVisible()){
+		if (this.row_retailCustomerPPT.isVisible() && this.row_retailCustomerNames.isVisible()) {
 			if (!this.custFName.isReadonly()) {
-				this.custFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustFName.value"), 
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.custFName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustFName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custMName.isReadonly()) {
-				this.custMName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMName.value"), PennantRegularExpressions.REGEX_NAME, false));
+				this.custMName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMName.value"),
+								PennantRegularExpressions.REGEX_NAME, false));
 			}
 			if (!this.custLName.isReadonly()) {
-				this.custLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLName.value"), 
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.custLName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
-			if (!this.custDOB.isReadonly() ) {
-				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDOB.value"),true,startDate,appStartDate,false));
-			} 
+			if (!this.custDOB.isReadonly()) {
+				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDOB.value"),
+						true, startDate, appStartDate, false));
+			}
 			if (!this.custPassportNo.isReadonly() && this.custPassportNo.isVisible()) {
-				this.custPassportNo.setConstraint(new PTStringValidator(Labels.getLabel("MAND_FIELD_CHAR_NUMBER",new String[] { Labels.getLabel(
-						"label_CustomerDialog_CustPassportNo.value") }),PennantRegularExpressions.REGEX_ALPHANUM_SPL));
+				this.custPassportNo
+						.setConstraint(
+								new PTStringValidator(
+										Labels.getLabel("MAND_FIELD_CHAR_NUMBER",
+												new String[] {
+														Labels.getLabel("label_CustomerDialog_CustPassportNo.value") }),
+										PennantRegularExpressions.REGEX_ALPHANUM_SPL));
 			}
 			if (!this.custVisaNum.isReadonly() && this.hbox_visaNum.isVisible()) {
-				this.custVisaNum.setConstraint(new PTStringValidator(
-						Labels.getLabel("MAND_FIELD_CHAR_NUMBER",new String[] { Labels.getLabel(
-						"label_CustomerDialog_CustVisaNum.value") }),PennantRegularExpressions.REGEX_ALPHANUM_SPL));
+				this.custVisaNum
+						.setConstraint(
+								new PTStringValidator(
+										Labels.getLabel("MAND_FIELD_CHAR_NUMBER",
+												new String[] {
+														Labels.getLabel("label_CustomerDialog_CustVisaNum.value") }),
+										PennantRegularExpressions.REGEX_ALPHANUM_SPL));
 			}
-		}else if(this.row_corpCustomerTL.isVisible()){
+		} else if (this.row_corpCustomerTL.isVisible()) {
 
 			if (!this.custLName.isReadonly()) {
-				this.custLName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustOrgName.value"), 
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.custLName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustOrgName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custTradeLicenceNum.isReadonly() && this.custTradeLicenceNum.isVisible()) {
-				this.custTradeLicenceNum.setConstraint(new PTStringValidator(Labels.getLabel("MAND_FIELD_CHAR_NUMBER",new String[] { Labels.getLabel(
-						"label_CustomerDialog_CustTradeLicenceNum.value") }),PennantRegularExpressions.ALPHA_NUMERIC_REGEX));
+				this.custTradeLicenceNum
+						.setConstraint(
+								new PTStringValidator(
+										Labels.getLabel("MAND_FIELD_CHAR_NUMBER",
+												new String[] { Labels
+														.getLabel("label_CustomerDialog_CustTradeLicenceNum.value") }),
+										PennantRegularExpressions.ALPHA_NUMERIC_REGEX));
 			}
-			if (!this.custDOB.isReadonly() ) {
-				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"),true,startDate,appStartDate,false));
+			if (!this.custDOB.isReadonly()) {
+				this.custDOB.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"), true,
+								startDate, appStartDate, false));
 			}
 		}
 		logger.debug("Leaving");
@@ -769,20 +787,20 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custTradeLicenceNum.setValue(aCustomer.getCustTradeLicenceNum());
 		this.custVisaNum.setValue(aCustomer.getCustVisaNum());
 		this.custPassportNo.setValue(aCustomer.getCustVisaNum());
-		this.custParentCountry.setValue(aCustomer.getCustParentCountry() == null ? SysParamUtil
-				.getValueAsString("APP_DFT_COUNTRY") : aCustomer.getCustParentCountry());
+		this.custParentCountry.setValue(aCustomer.getCustParentCountry() == null
+				? SysParamUtil.getValueAsString("APP_DFT_COUNTRY") : aCustomer.getCustParentCountry());
 
 		if (aCustomerDetails.isNewRecord()) {
 			this.lovDescCustCtgCodeName.setValue("");
 			this.lovDescCustTypeCodeName.setValue("");
 			this.lovDescCustParentCountryName.setValue("");
 		} else {
-			this.lovDescCustCtgCodeName.setValue(aCustomer.getCustCtgCode()
-					+ "-" + aCustomer.getLovDescCustCtgCodeName());
-			this.lovDescCustTypeCodeName.setValue(aCustomer.getCustTypeCode()
-					+ "-" + aCustomer.getLovDescCustTypeCodeName());
-			this.lovDescCustParentCountryName.setValue(aCustomer.getCustParentCountry()
-					+ "-"+ aCustomer.getLovDescCustParentCountryName());
+			this.lovDescCustCtgCodeName
+					.setValue(aCustomer.getCustCtgCode() + "-" + aCustomer.getLovDescCustCtgCodeName());
+			this.lovDescCustTypeCodeName
+					.setValue(aCustomer.getCustTypeCode() + "-" + aCustomer.getLovDescCustTypeCodeName());
+			this.lovDescCustParentCountryName
+					.setValue(aCustomer.getCustParentCountry() + "-" + aCustomer.getLovDescCustParentCountryName());
 		}
 		this.recordStatus.setValue(aCustomer.getRecordStatus());
 		logger.debug("Leaving");
@@ -794,8 +812,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param aCustomer
 	 * @throws ParseException
 	 */
-	public void doWriteComponentsToBean(CustomerDetails aCustomerDetails)
-			throws ParseException {
+	public void doWriteComponentsToBean(CustomerDetails aCustomerDetails) throws ParseException {
 		logger.debug("Entering");
 		CustomerQDE aCustomer = aCustomerDetails.getCustomer().getCustomerQDE();
 
@@ -901,8 +918,10 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustCtgCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCtgCode.value"),null,true));
-		this.lovDescCustParentCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustParentCountry.value"),null,true));
+		this.lovDescCustCtgCodeName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCtgCode.value"), null, true));
+		this.lovDescCustParentCountryName.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustParentCountry.value"), null, true));
 		logger.debug("Leaving");
 	}
 
@@ -936,24 +955,24 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	// Search Button Component Events
-	
+
 	public void onClick$btnSearchCustCtgCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerQDEDialog, "CustomerCategory");
-		
+
 		if (dataObject instanceof String) {
 			this.custCtgCode.setValue(dataObject.toString());
 			this.lovDescCustCtgCodeName.setValue("");
-			setFieldValues(true);	
+			setFieldValues(true);
 		} else {
 			CustomerCategory details = (CustomerCategory) dataObject;
 			if (details != null) {
 				this.custCtgCode.setValue(details.getCustCtgCode());
-				this.lovDescCustCtgCodeName.setValue(details.getCustCtgCode()+ "-" + details.getCustCtgDesc());
-				
+				this.lovDescCustCtgCodeName.setValue(details.getCustCtgCode() + "-" + details.getCustCtgDesc());
+
 				getCustomerDetails().getCustomer().setLovDescCustCtgType(details.getCustCtgType());
-				
+
 				if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, details.getCustCtgType())) {
 					setFieldValues(false);
 				} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, details.getCustCtgType())) {
@@ -963,12 +982,12 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnSearchCustTypeCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerQDEDialog, "CustomerType");
-		
+
 		if (dataObject instanceof String) {
 			this.custTypeCode.setValue(dataObject.toString());
 			this.lovDescCustTypeCodeName.setValue("");
@@ -976,15 +995,15 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			CustomerType details = (CustomerType) dataObject;
 			if (details != null) {
 				this.custTypeCode.setValue(details.getCustTypeCode());
-				this.lovDescCustTypeCodeName.setValue(details.getCustTypeCode()+ "-" + details.getCustTypeDesc());
+				this.lovDescCustTypeCodeName.setValue(details.getCustTypeCode() + "-" + details.getCustTypeDesc());
 				this.custCtgType = details.getCustTypeCtg();
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void setFieldValues(boolean isRetailCustomer){
-		
+
+	private void setFieldValues(boolean isRetailCustomer) {
+
 		this.row_retailCustomerNames.setVisible(isRetailCustomer);
 		this.row_retailCustomerPPT.setVisible(isRetailCustomer);
 		this.row_corpCustomerTL.setVisible(!isRetailCustomer);
@@ -1002,41 +1021,40 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custVisaNum.setValue("");
 		this.custTradeLicenceNum.setValue("");
 
-		if(isRetailCustomer){
-			if (StringUtils.trimToEmpty(this.custParentCountry.getValue()).equals(
-					SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"))) {
+		if (isRetailCustomer) {
+			if (StringUtils.trimToEmpty(this.custParentCountry.getValue())
+					.equals(SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"))) {
 				this.label_CustomerDialog_CustVisaNum.setVisible(!isRetailCustomer);
 				this.hbox_visaNum.setVisible(!isRetailCustomer);
 			}
 		}
-		
+
 	}
 
 	public void onClick$btnSearchCustParentCountry(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_CustomerQDEDialog, "Country");
-		
-		if(StringUtils.isEmpty(this.custCtgCode.getValue()) || 
-				StringUtils.equals(getCustomerDetails().getCustomer().getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)){
+
+		if (StringUtils.isEmpty(this.custCtgCode.getValue()) || StringUtils
+				.equals(getCustomerDetails().getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			this.label_CustomerDialog_CustVisaNum.setVisible(true);
 			this.hbox_visaNum.setVisible(true);
 		}
-		
+
 		if (dataObject instanceof String) {
 			this.custParentCountry.setValue(dataObject.toString());
 			this.lovDescCustParentCountryName.setValue("");
-			
+
 		} else {
 			Country details = (Country) dataObject;
 			if (details != null) {
 				this.custParentCountry.setValue(details.getCountryCode());
-				this.lovDescCustParentCountryName.setValue(details.getCountryCode() 
-						+ "-" + details.getCountryDesc());
+				this.lovDescCustParentCountryName.setValue(details.getCountryCode() + "-" + details.getCountryDesc());
 
 				String arr[] = SysParamUtil.getValueAsString("NONEED_VISA_COUNTRIES").split(",");
-				for(int i=0;i<arr.length;i++){
-					if(arr[i].equals(this.custParentCountry.getValue())){ //If selected country is in list of visa not needed countries make visa invisble.
+				for (int i = 0; i < arr.length; i++) {
+					if (arr[i].equals(this.custParentCountry.getValue())) { //If selected country is in list of visa not needed countries make visa invisble.
 						this.label_CustomerDialog_CustVisaNum.setVisible(false);
 						this.hbox_visaNum.setVisible(false);
 					}
@@ -1055,27 +1073,25 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 *            (String)
 	 * 
 	 * @return AuditHeader
-	 * */
-	private AuditHeader getAuditHeader(CustomerDetails aCustomerDetails,
-			String tranType) {
+	 */
+	private AuditHeader getAuditHeader(CustomerDetails aCustomerDetails, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aCustomerDetails.getBefImage(), aCustomerDetails);
-		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),null, null, null, 
-				auditDetail,aCustomerDetails.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
+		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()), null, null, null, auditDetail,
+				aCustomerDetails.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Method to show message
 	 * 
 	 * @param exception
-	 * */
+	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail("", e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CustomerQDEDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_CustomerQDEDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1083,8 +1099,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	/**
-	 * Method to set the value in Customer CIF field to upper case, if manually
-	 * entered by user.
+	 * Method to set the value in Customer CIF field to upper case, if manually entered by user.
 	 * 
 	 * @param event
 	 */
@@ -1101,18 +1116,19 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
 	}
+
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
 	}
 
-	public void setCustomerDetailsService(
-			CustomerDetailsService customerDetailsService) {
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
@@ -1120,13 +1136,15 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public DedupParmService getDedupParmService() {
 		return dedupParmService;
 	}
+
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
 	}
-	
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return validationOn;
 	}

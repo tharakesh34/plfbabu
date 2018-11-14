@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennanttech.pff.core.TableType;
@@ -50,11 +51,12 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods declaration for the <b>CustomerType model</b> class.<br>
  * 
  */
-public interface CustomerTypeDAO extends BasicCrudDao<CustomerType>  {
+public interface CustomerTypeDAO extends BasicCrudDao<CustomerType> {
 
-	CustomerType getCustomerTypeById(String id,String type);
+	CustomerType getCustomerTypeById(String id, String type);
+
 	int validateTypeAndCategory(String custTypeCode, String custCtgCode);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -65,6 +67,5 @@ public interface CustomerTypeDAO extends BasicCrudDao<CustomerType>  {
 	 * @return
 	 */
 	boolean isDuplicateKey(String customerTypeCode, TableType tableType);
-	
 
 }

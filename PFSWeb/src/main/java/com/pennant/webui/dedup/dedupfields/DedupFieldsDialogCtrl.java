@@ -80,34 +80,32 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Dedup/DedupFields/dedupFieldsDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Dedup/DedupFields/dedupFieldsDialog.zul file.
  */
 public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(DedupFieldsDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window window_DedupFieldsDialog; 
 
-	protected Textbox fieldName; 
- 	protected Combobox fieldControl; 
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_DedupFieldsDialog;
+
+	protected Textbox fieldName;
+	protected Combobox fieldControl;
 
 	// not auto wired vars
 	private DedupFields dedupFields; // overhanded per param
 	private transient DedupFieldsListCtrl dedupFieldsListCtrl; // overhanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient DedupFieldsService dedupFieldsService;
 	private transient PagedListService pagedListService;
-	
-	private List<ValueLabel> listFieldControl=PennantStaticListUtil.getFieldTypeList(); 
+
+	private List<ValueLabel> listFieldControl = PennantStaticListUtil.getFieldTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -124,9 +122,8 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected DedupFields object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected DedupFields object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -142,24 +139,25 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 
 		if (arguments.containsKey("dedupFields")) {
 			this.dedupFields = (DedupFields) arguments.get("dedupFields");
-			DedupFields befImage =new DedupFields();
+			DedupFields befImage = new DedupFields();
 			BeanUtils.copyProperties(this.dedupFields, befImage);
 			this.dedupFields.setBefImage(befImage);
-			
+
 			setDedupFields(this.dedupFields);
 		} else {
 			setDedupFields(null);
 		}
-	
-		doLoadWorkFlow(this.dedupFields.isWorkflow(),this.dedupFields.getWorkflowId(),this.dedupFields.getNextTaskId());
 
-		if (isWorkFlowEnabled()){
-			this.userAction	= setListRecordStatus(this.userAction);
+		doLoadWorkFlow(this.dedupFields.isWorkflow(), this.dedupFields.getWorkflowId(),
+				this.dedupFields.getNextTaskId());
+
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "DedupFieldsDialog");
 		}
 
 		setListFieldControl();
-	
+
 		// READ OVERHANDED params !
 		// we get the dedupFieldsListWindow controller. So we have access
 		// to it and can synchronize the shown data when we do insert, edit or
@@ -180,17 +178,17 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.fieldName.setMaxlength(50);
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
-		logger.debug("Leaving") ;
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -198,21 +196,20 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
+		logger.debug("Entering");
+
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DedupFieldsDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DedupFieldsDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DedupFieldsDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DedupFieldsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
-		logger.debug("Leaving") ;
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -290,11 +287,11 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doWriteBeanToComponents(this.dedupFields.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -304,10 +301,10 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 *            DedupFields
 	 */
 	public void doWriteBeanToComponents(DedupFields aDedupFields) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.fieldName.setValue(aDedupFields.getFieldName());
-		this.fieldControl.setValue(PennantAppUtil.getlabelDesc(aDedupFields.getFieldControl(),listFieldControl));
-	
+		this.fieldControl.setValue(PennantAppUtil.getlabelDesc(aDedupFields.getFieldControl(), listFieldControl));
+
 		this.recordStatus.setValue(aDedupFields.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -318,35 +315,35 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 * @param aDedupFields
 	 */
 	public void doWriteComponentsToBean(DedupFields aDedupFields) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		try {
-		    aDedupFields.setFieldName(this.fieldName.getValue());
-		    
-		}catch (WrongValueException we ) {
+			aDedupFields.setFieldName(this.fieldName.getValue());
+
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-		    aDedupFields.setFieldControl(this.fieldControl.getValue());
-		    
-		}catch (WrongValueException we ) {
+			aDedupFields.setFieldControl(this.fieldControl.getValue());
+
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		aDedupFields.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
@@ -354,8 +351,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDedupFields
 	 * @throws Exception
@@ -371,10 +367,10 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 			this.fieldName.focus();
 		} else {
 			this.fieldControl.focus();
-			if (isWorkFlowEnabled()){
+			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -384,13 +380,13 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aDedupFields);
-			
+
 			setDialog(DialogType.EMBEDDED);
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -399,14 +395,16 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	private void doSetValidation() {
 		logger.debug("Enterring");
 		setValidationOn(true);
-		
-		if (!this.fieldName.isReadonly()){
-			this.fieldName.setConstraint(new PTStringValidator(Labels.getLabel("label_DedupFieldsDialog_FieldName.value"),null,true));
-		}	
-		if (!this.fieldControl.isDisabled()){
-			this.fieldControl.setConstraint(new StaticListValidator(listFieldControl,Labels.getLabel("label_DedupFieldsDialog_FieldControl.value")));
-		}	
-	logger.debug("Leaving");
+
+		if (!this.fieldName.isReadonly()) {
+			this.fieldName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DedupFieldsDialog_FieldName.value"), null, true));
+		}
+		if (!this.fieldControl.isDisabled()) {
+			this.fieldControl.setConstraint(new StaticListValidator(listFieldControl,
+					Labels.getLabel("label_DedupFieldsDialog_FieldControl.value")));
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -417,7 +415,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		setValidationOn(false);
 		this.fieldName.setConstraint("");
 		this.fieldControl.setConstraint("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	// CRUD operations
@@ -429,35 +427,37 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 */
 	@SuppressWarnings("rawtypes")
 	private void doDelete() throws InterruptedException {
-		logger.debug("Enterring");	
+		logger.debug("Enterring");
 		final DedupFields aDedupFields = new DedupFields();
 		BeanUtils.copyProperties(getDedupFields(), aDedupFields);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aDedupFields.getFieldName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aDedupFields.getFieldName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDedupFields.getRecordType())){
-				aDedupFields.setVersion(aDedupFields.getVersion()+1);
+			if (StringUtils.isBlank(aDedupFields.getRecordType())) {
+				aDedupFields.setVersion(aDedupFields.getVersion() + 1);
 				aDedupFields.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aDedupFields.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aDedupFields,tranType)){
+				if (doProcess(aDedupFields, tranType)) {
 
 					final JdbcSearchObject<DedupFields> soDedupFields = getDedupFieldsListCtrl().getSearchObj();
 					// Set the ListModel
 					getDedupFieldsListCtrl().getPagedListWrapper().setSearchObject(soDedupFields);
 
 					// now synchronize the DedupFields listBox
-					final ListModelList lml = (ListModelList) getDedupFieldsListCtrl().listBoxDedupFields.getListModel();
+					final ListModelList lml = (ListModelList) getDedupFieldsListCtrl().listBoxDedupFields
+							.getListModel();
 
 					// Check if the DedupFields object is new or updated -1
 					// means that the obj is not in the list, so it's new ..
@@ -465,14 +465,14 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 					} else {
 						lml.remove(lml.indexOf(aDedupFields));
 					}
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				logger.error("Exception: ", e);
 				showMessage(e);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -482,29 +482,29 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 */
 	private void doEdit() {
 		logger.debug("Enterring");
-		
-		if (getDedupFields().isNewRecord()){
-		  	this.fieldName.setReadonly(false);
+
+		if (getDedupFields().isNewRecord()) {
+			this.fieldName.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.fieldName.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-	
-	 	this.fieldControl.setDisabled(isReadOnly("DedupFieldsDialog_fieldControl"));
 
-		if (isWorkFlowEnabled()){
+		this.fieldControl.setDisabled(isReadOnly("DedupFieldsDialog_fieldControl"));
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
-			if (this.dedupFields.isNewRecord()){
+
+			if (this.dedupFields.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
 		}
@@ -518,14 +518,14 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		logger.debug("Enterring");
 		this.fieldName.setReadonly(true);
 		this.fieldControl.setDisabled(true);
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -538,10 +538,10 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	public void doClear() {
 		logger.debug("Enterring");
 		// remove validation, if there are a save before
-		
+
 		this.fieldName.setValue("");
 		this.fieldControl.setValue("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -554,7 +554,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		final DedupFields aDedupFields = new DedupFields();
 		BeanUtils.copyProperties(getDedupFields(), aDedupFields);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the DedupFields object with the components data
@@ -563,34 +563,34 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
-		isNew = aDedupFields.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aDedupFields.getRecordType())){
-				aDedupFields.setVersion(aDedupFields.getVersion()+1);
-				if(isNew){
+		isNew = aDedupFields.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aDedupFields.getRecordType())) {
+				aDedupFields.setVersion(aDedupFields.getVersion() + 1);
+				if (isNew) {
 					aDedupFields.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aDedupFields.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aDedupFields.setNewRecord(true);
 				}
 			}
-		}else{
-			aDedupFields.setVersion(aDedupFields.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aDedupFields.setVersion(aDedupFields.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			
-			if(doProcess(aDedupFields,tranType)){
+
+			if (doProcess(aDedupFields, tranType)) {
 				doWriteBeanToComponents(aDedupFields);
 				// ++ create the searchObject and init sorting ++ //
 				final JdbcSearchObject<DedupFields> soDedupFields = getDedupFieldsListCtrl().getSearchObj();
@@ -619,16 +619,16 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(DedupFields aDedupFields,String tranType){
+	private boolean doProcess(DedupFields aDedupFields, String tranType) {
 		logger.debug("Enterring");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
-		
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
 		aDedupFields.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aDedupFields.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aDedupFields.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -651,22 +651,21 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 					}
 				}
 			}
-			
-			
+
 			if (StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
+				nextRoleCode = getFirstTaskOwner();
 			} else {
 				String[] nextTasks = nextTaskId.split(";");
-				
-				if (nextTasks!=null && nextTasks.length>0){
+
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-						
-						if(nextRoleCode.length()>1){
+
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -675,71 +674,71 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 			aDedupFields.setNextTaskId(nextTaskId);
 			aDedupFields.setRoleCode(getRole());
 			aDedupFields.setNextRoleCode(nextRoleCode);
-			
-			auditHeader =  getAuditHeader(aDedupFields, tranType);
-			
+
+			auditHeader = getAuditHeader(aDedupFields, tranType);
+
 			String operationRefs = getServiceOperations(taskId, aDedupFields);
-			
+
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aDedupFields, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aDedupFields, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			
-			auditHeader =  getAuditHeader(aDedupFields, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+
+			auditHeader = getAuditHeader(aDedupFields, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
 
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Enterring");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getDedupFieldsService().delete(auditHeader);
-					}else{
-						auditHeader = getDedupFieldsService().saveOrUpdate(auditHeader);	
+					} else {
+						auditHeader = getDedupFieldsService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)){
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getDedupFieldsService().doApprove(auditHeader);
-					}else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)){
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getDedupFieldsService().doReject(auditHeader);
 						deleteNotes();
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DedupFieldsDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
+
 				retValue = ErrorControl.showErrorControl(this.window_DedupFieldsDialog, auditHeader);
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -749,22 +748,21 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
 
-   private void setListFieldControl(){
+	private void setListFieldControl() {
 		for (int i = 0; i < listFieldControl.size(); i++) {
-			
-			   Comboitem comboitem = new Comboitem();
-			   comboitem = new Comboitem();
-			   comboitem.setLabel(listFieldControl.get(i).getLabel());
-			   comboitem.setValue(listFieldControl.get(i).getValue());
-			   this.fieldControl.appendChild(comboitem);
-		} 
+
+			Comboitem comboitem = new Comboitem();
+			comboitem = new Comboitem();
+			comboitem.setLabel(listFieldControl.get(i).getLabel());
+			comboitem.setValue(listFieldControl.get(i).getValue());
+			this.fieldControl.appendChild(comboitem);
+		}
 	}
 
 	// ******************************************************//
@@ -811,49 +809,48 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		this.pagedListService = pagedListService;
 	}
 
-	
-	private AuditHeader getAuditHeader(DedupFields aDedupFields, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDedupFields.getBefImage(), aDedupFields);   
-		return new AuditHeader(aDedupFields.getFieldName(),null,null,null,auditDetail,aDedupFields.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(DedupFields aDedupFields, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDedupFields.getBefImage(), aDedupFields);
+		return new AuditHeader(aDedupFields.getFieldName(), null, null, null, auditDetail,
+				aDedupFields.getUserDetails(), getOverideMap());
 	}
-	
-	private void showMessage(Exception e){
-		AuditHeader auditHeader= new AuditHeader();
+
+	private void showMessage(Exception e) {
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail("",e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetail("", e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_DedupFieldsDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
 	}
-	
-	
+
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.dedupFields);
 	}
-	
+
 	private void doSetLOVValidation() {
 	}
+
 	private void doRemoveLOVValidation() {
 	}
-	
-	private void deleteNotes(){
-		NotesService notesService= (NotesService) SpringUtil.getBean("notesService");		
+
+	private void deleteNotes() {
+		NotesService notesService = (NotesService) SpringUtil.getBean("notesService");
 		notesService.delete(getNotes(this.dedupFields));
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.dedupFields.getFieldName());
 	}
 
-	
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Enterring");
-			this.fieldName.setErrorMessage("");
-			this.fieldControl.setErrorMessage("");
-	logger.debug("Leaving");
+		this.fieldName.setErrorMessage("");
+		this.fieldControl.setErrorMessage("");
+		logger.debug("Leaving");
 	}
-	
+
 }

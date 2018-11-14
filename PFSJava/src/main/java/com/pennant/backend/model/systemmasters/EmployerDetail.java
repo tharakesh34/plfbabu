@@ -86,12 +86,12 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	private String empAlocationTypeName;
 	private String bankRefNo;
 	private boolean empIsActive;
-	
+
 	private boolean newRecord;
 	private String lovValue;
 	private EmployerDetail befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -105,14 +105,14 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("empIndustryName");
-			excludeFields.add("empCountryName");
-			excludeFields.add("empProvinceName");
-			excludeFields.add("empCityName");
-			excludeFields.add("empAlocationTypeName");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("empIndustryName");
+		excludeFields.add("empCountryName");
+		excludeFields.add("empProvinceName");
+		excludeFields.add("empCityName");
+		excludeFields.add("empAlocationTypeName");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -122,262 +122,219 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	public long getId() {
 		return employerId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.employerId = id;
 	}
-	
+
 	public long getEmployerId() {
 		return employerId;
 	}
+
 	public void setEmployerId(long employerId) {
 		this.employerId = employerId;
 	}
-	
-	
-		
-	
+
 	public String getEmpIndustry() {
 		return empIndustry;
 	}
+
 	public void setEmpIndustry(String empIndustry) {
 		this.empIndustry = empIndustry;
 	}
-	
-	
-	
-		
-	
+
 	public String getEmpName() {
 		return empName;
 	}
+
 	public void setEmpName(String empName) {
 		this.empName = empName;
 	}
-	
-	
-		
-	
+
 	public Date getEstablishDate() {
 		return establishDate;
 	}
+
 	public void setEstablishDate(Date establishDate) {
 		this.establishDate = establishDate;
 	}
-	
-	
-		
-	
+
 	public String getEmpAddrHNbr() {
 		return empAddrHNbr;
 	}
+
 	public void setEmpAddrHNbr(String empAddrHNbr) {
 		this.empAddrHNbr = empAddrHNbr;
 	}
-	
-	
-		
-	
+
 	public String getEmpFlatNbr() {
 		return empFlatNbr;
 	}
+
 	public void setEmpFlatNbr(String empFlatNbr) {
 		this.empFlatNbr = empFlatNbr;
 	}
-	
-	
-		
-	
+
 	public String getEmpAddrStreet() {
 		return empAddrStreet;
 	}
+
 	public void setEmpAddrStreet(String empAddrStreet) {
 		this.empAddrStreet = empAddrStreet;
 	}
-	
-	
-		
-	
+
 	public String getEmpAddrLine1() {
 		return empAddrLine1;
 	}
+
 	public void setEmpAddrLine1(String empAddrLine1) {
 		this.empAddrLine1 = empAddrLine1;
 	}
-	
-	
-		
-	
+
 	public String getEmpAddrLine2() {
 		return empAddrLine2;
 	}
+
 	public void setEmpAddrLine2(String empAddrLine2) {
 		this.empAddrLine2 = empAddrLine2;
 	}
-	
-	
-		
-	
+
 	public String getEmpPOBox() {
 		return empPOBox;
 	}
+
 	public void setEmpPOBox(String empPOBox) {
 		this.empPOBox = empPOBox;
 	}
-	
-	
-		
-	
+
 	public String getEmpCountry() {
 		return empCountry;
 	}
+
 	public void setEmpCountry(String empCountry) {
 		this.empCountry = empCountry;
 	}
-	
-	
-	
-		
-	
+
 	public String getEmpProvince() {
 		return empProvince;
 	}
+
 	public void setEmpProvince(String empProvince) {
 		this.empProvince = empProvince;
 	}
-	
-	
-	
-		
-	
+
 	public String getEmpCity() {
 		return empCity;
 	}
+
 	public void setEmpCity(String empCity) {
 		this.empCity = empCity;
 	}
-	
-	
-	
-		
-	
+
 	public String getLovDescIndustryDesc() {
-    	return lovDescIndustryDesc;
-    }
+		return lovDescIndustryDesc;
+	}
 
 	public void setLovDescIndustryDesc(String lovDescIndustryDesc) {
-    	this.lovDescIndustryDesc = lovDescIndustryDesc;
-    }
+		this.lovDescIndustryDesc = lovDescIndustryDesc;
+	}
 
 	public String getLovDescCountryDesc() {
-    	return lovDescCountryDesc;
-    }
+		return lovDescCountryDesc;
+	}
 
 	public void setLovDescCountryDesc(String lovDescCountryDesc) {
-    	this.lovDescCountryDesc = lovDescCountryDesc;
-    }
+		this.lovDescCountryDesc = lovDescCountryDesc;
+	}
 
 	public String getLovDescProvinceName() {
-    	return lovDescProvinceName;
-    }
+		return lovDescProvinceName;
+	}
 
 	public void setLovDescProvinceName(String lovDescProvinceName) {
-    	this.lovDescProvinceName = lovDescProvinceName;
-    }
+		this.lovDescProvinceName = lovDescProvinceName;
+	}
 
 	public String getLovDescCityName() {
-    	return lovDescCityName;
-    }
+		return lovDescCityName;
+	}
 
 	public void setLovDescCityName(String lovDescCityName) {
-    	this.lovDescCityName = lovDescCityName;
-    }
+		this.lovDescCityName = lovDescCityName;
+	}
 
 	public String getEmpPhone() {
 		return empPhone;
 	}
+
 	public void setEmpPhone(String empPhone) {
 		this.empPhone = empPhone;
 	}
-	
-	
-		
-	
+
 	public String getEmpFax() {
 		return empFax;
 	}
+
 	public void setEmpFax(String empFax) {
 		this.empFax = empFax;
 	}
-	
-	
-		
-	
+
 	public String getEmpTelexNo() {
 		return empTelexNo;
 	}
+
 	public void setEmpTelexNo(String empTelexNo) {
 		this.empTelexNo = empTelexNo;
 	}
-	
-	
-		
-	
+
 	public String getEmpEmailId() {
 		return empEmailId;
 	}
+
 	public void setEmpEmailId(String empEmailId) {
 		this.empEmailId = empEmailId;
 	}
-	
-	
-		
-	
+
 	public String getEmpWebSite() {
 		return empWebSite;
 	}
+
 	public void setEmpWebSite(String empWebSite) {
 		this.empWebSite = empWebSite;
 	}
-	
-	
-		
-	
+
 	public String getContactPersonName() {
 		return contactPersonName;
 	}
+
 	public void setContactPersonName(String contactPersonName) {
 		this.contactPersonName = contactPersonName;
 	}
-	
-	
-		
-	
+
 	public String getContactPersonNo() {
 		return contactPersonNo;
 	}
+
 	public void setContactPersonNo(String contactPersonNo) {
 		this.contactPersonNo = contactPersonNo;
 	}
-	
-	
-		
-	
+
 	public String getEmpAlocationType() {
 		return empAlocationType;
 	}
+
 	public void setEmpAlocationType(String empAlocationType) {
 		this.empAlocationType = empAlocationType;
 	}
-	
+
 	public String getEmpAlocationTypeName() {
 		return this.empAlocationTypeName;
 	}
 
-	public void setEmpAlocationTypeName (String empAlocationTypeName) {
+	public void setEmpAlocationTypeName(String empAlocationTypeName) {
 		this.empAlocationTypeName = empAlocationTypeName;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -385,7 +342,7 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -394,12 +351,12 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public EmployerDetail getBefImage(){
+	public EmployerDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(EmployerDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(EmployerDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -417,7 +374,7 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	public void setBankRefNo(String bankRefNo) {
 		this.bankRefNo = bankRefNo;
 	}
-	
+
 	public boolean isEmpIsActive() {
 		return empIsActive;
 	}
@@ -425,7 +382,7 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	public void setEmpIsActive(boolean empIsActive) {
 		this.empIsActive = empIsActive;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -26,7 +26,6 @@ package com.pennant.coreinterface.model;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-
 /**
  * Model class for the <b>CustomerRating table</b>.<br>
  * 
@@ -38,7 +37,7 @@ public class EquationCustomerRating extends AbstractWorkflowEntity {
 	public EquationCustomerRating() {
 		super();
 	}
-	
+
 	private long custID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	private String custRatingType;
@@ -101,6 +100,7 @@ public class EquationCustomerRating extends AbstractWorkflowEntity {
 	public void setCustRatingCode(String custRatingCode) {
 		this.custRatingCode = custRatingCode;
 	}
+
 	public String getCustRating() {
 		return custRating;
 	}
@@ -126,12 +126,12 @@ public class EquationCustomerRating extends AbstractWorkflowEntity {
 	}
 
 	public String getLovDesccustRatingCodeDesc() {
-    	return lovDesccustRatingCodeDesc;
-    }
+		return lovDesccustRatingCodeDesc;
+	}
 
 	public void setLovDesccustRatingCodeDesc(String lovDesccustRatingCodeDesc) {
-    	this.lovDesccustRatingCodeDesc = lovDesccustRatingCodeDesc;
-    }
+		this.lovDesccustRatingCodeDesc = lovDesccustRatingCodeDesc;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -166,11 +166,11 @@ public class EquationCustomerRating extends AbstractWorkflowEntity {
 	}
 
 	public void setLovDescCustRatingName(String lovDescCustRatingName) {
-	    this.lovDescCustRatingName = lovDescCustRatingName;
-    }
+		this.lovDescCustRatingName = lovDescCustRatingName;
+	}
 
 	public String getLovDescCustRatingName() {
-	    return lovDescCustRatingName;
-    }
+		return lovDescCustRatingName;
+	}
 
 }

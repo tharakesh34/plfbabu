@@ -14,7 +14,7 @@ import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
-public class BulkDefermentListModelItemRenderer implements ListitemRenderer<BulkProcessHeader>, Serializable{
+public class BulkDefermentListModelItemRenderer implements ListitemRenderer<BulkProcessHeader>, Serializable {
 
 	private static final long serialVersionUID = 5574543684897936853L;
 
@@ -30,13 +30,13 @@ public class BulkDefermentListModelItemRenderer implements ListitemRenderer<Bulk
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getToDate()));
 		lc.setParent(item);
-		if("R".equals(StringUtils.trimToEmpty(enquiry.getBulkProcessFor()))){			
+		if ("R".equals(StringUtils.trimToEmpty(enquiry.getBulkProcessFor()))) {
 			lc = new Listcell(enquiry.getNewProcessedRate().toString());
 		} else {
 			lc = new Listcell("0.00");
 		}
 		lc.setParent(item);
-		if("D".equals(StringUtils.trimToEmpty(enquiry.getBulkProcessFor()))){
+		if ("D".equals(StringUtils.trimToEmpty(enquiry.getBulkProcessFor()))) {
 			Date recalFromDate = enquiry.getReCalFromDate();
 			lc = new Listcell(recalFromDate != null ? DateUtility.formatToLongDate(recalFromDate) : "");
 			lc.setParent(item);
@@ -44,7 +44,8 @@ public class BulkDefermentListModelItemRenderer implements ListitemRenderer<Bulk
 			lc = new Listcell(recalToDate != null ? DateUtility.formatToLongDate(recalToDate) : "");
 			lc.setParent(item);
 		}
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(enquiry.getReCalType(), PennantStaticListUtil.getSchCalCodes()));
+		lc = new Listcell(
+				PennantStaticListUtil.getlabelDesc(enquiry.getReCalType(), PennantStaticListUtil.getSchCalCodes()));
 		lc.setParent(item);
 
 		lc = new Listcell(enquiry.getRecordStatus());

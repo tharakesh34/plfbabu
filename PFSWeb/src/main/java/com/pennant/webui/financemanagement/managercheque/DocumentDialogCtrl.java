@@ -91,22 +91,18 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/Finance/Contributor/DocumentDetailsDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Finance/Contributor/DocumentDetailsDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private static final long serialVersionUID = -6959194080451993569L;
-	private static final Logger logger = Logger
-			.getLogger(DocumentDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DocumentDialogCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the ZUL-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window window_FinDocumentDetailDialog; // autowired
 
@@ -155,16 +151,14 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DocumentDetails object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DocumentDetails object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinDocumentDetailDialog(Event event)
-			throws Exception {
+	public void onCreate$window_FinDocumentDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -181,8 +175,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		// READ OVERHANDED params !
 		if (arguments.containsKey("finDocumentDetail")) {
-			this.finDocumentDetail = (DocumentDetails) arguments
-					.get("finDocumentDetail");
+			this.finDocumentDetail = (DocumentDetails) arguments.get("finDocumentDetail");
 			DocumentDetails befImage = new DocumentDetails();
 			BeanUtils.copyProperties(this.finDocumentDetail, befImage);
 			this.finDocumentDetail.setBefImage(befImage);
@@ -193,8 +186,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		if (arguments.containsKey("documentType")) {
 			if (StringUtils.trimToEmpty(getDocumentDetails().getDocCategory()) == "") {
-				getDocumentDetails().setDocCategory(
-						(String) arguments.get("documentType"));
+				getDocumentDetails().setDocCategory((String) arguments.get("documentType"));
 			}
 		}
 
@@ -210,8 +202,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		if (arguments.containsKey("checkListDocTypeMap")) {
-			checkListDocTypeMap = (Map<String, List<Listitem>>) arguments
-					.get("checkListDocTypeMap");
+			checkListDocTypeMap = (Map<String, List<Listitem>>) arguments.get("checkListDocTypeMap");
 		}
 
 		if (getDocumentDetails().isNewRecord()) {
@@ -220,8 +211,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		if (arguments.containsKey("DocumentDialogCtrl")) {
 
-			setManagerChequeDialogCtrl((ManagerChequeDialogCtrl) arguments
-					.get("DocumentDialogCtrl"));
+			setManagerChequeDialogCtrl((ManagerChequeDialogCtrl) arguments.get("DocumentDialogCtrl"));
 			setNewDocument(true);
 
 			if (arguments.containsKey("newRecord")) {
@@ -231,20 +221,16 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 			this.finDocumentDetail.setWorkflowId(0);
 			if (arguments.containsKey("roleCode")) {
-				getUserWorkspace().allocateRoleAuthorities(
-						(String) arguments.get("roleCode"),
-						"DocumentDetailsDialog");
+				getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "DocumentDetailsDialog");
 			}
 		}
 
-		doLoadWorkFlow(this.finDocumentDetail.isWorkflow(),
-				this.finDocumentDetail.getWorkflowId(),
+		doLoadWorkFlow(this.finDocumentDetail.isWorkflow(), this.finDocumentDetail.getWorkflowId(),
 				this.finDocumentDetail.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
-			getUserWorkspace().allocateRoleAuthorities(getRole(),
-					"DocumentDetailsDialog");
+			getUserWorkspace().allocateRoleAuthorities(getRole(), "DocumentDetailsDialog");
 		}
 
 		this.finDocumentDiv.setHeight(this.borderLayoutHeight - 152 + "px");// 425px
@@ -284,20 +270,15 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_DocumentDetailsDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_DocumentDetailsDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_DocumentDetailsDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_DocumentDetailsDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DocumentDetailsDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DocumentDetailsDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DocumentDetailsDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DocumentDetailsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		this.btnSave.setVisible(true);
 		logger.debug("Leaving");
@@ -345,8 +326,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		String doctype = this.docCategory.getSelectedItem().getValue()
-				.toString();
+		String doctype = this.docCategory.getSelectedItem().getValue().toString();
 		logger.debug("Entering" + event.toString());
 		doDelete(doctype);
 		logger.debug("Leaving" + event.toString());
@@ -396,11 +376,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
 
-		fillComboBox(this.docCategory, aDocumentDetails.getDocCategory(),
-				documentTypes, "");
-		if (checkListDocTypeMap != null
-				&& checkListDocTypeMap.containsKey(aDocumentDetails
-						.getDocCategory())) {
+		fillComboBox(this.docCategory, aDocumentDetails.getDocCategory(), documentTypes, "");
+		if (checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
 			this.docCategory.setDisabled(true);
 		}
 
@@ -409,33 +386,24 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		AMedia amedia = null;
 		if (aDocumentDetails.getDocImage() != null) {
-			final InputStream data = new ByteArrayInputStream(
-					aDocumentDetails.getDocImage());
-			if (aDocumentDetails.getDoctype().equals(
-					PennantConstants.DOC_TYPE_PDF)) {
-				amedia = new AMedia("document.pdf", "pdf", "application/pdf",
-						data);
-			} else if (aDocumentDetails.getDoctype().equals(
-					PennantConstants.DOC_TYPE_IMAGE)) {
+			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
+			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
+				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
+			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
 				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
-			} else if (aDocumentDetails.getDoctype().equals(
-					PennantConstants.DOC_TYPE_WORD)
-					|| aDocumentDetails.getDoctype().equals(
-							PennantConstants.DOC_TYPE_MSG)) {
+			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				Html ageementLink = new Html();
 				ageementLink.setStyle("padding:10px;");
 				ageementLink
-						.setContent("<a href='' style = 'font-weight:bold'>"
-								+ aDocumentDetails.getDocName() + "</a> ");
+						.setContent("<a href='' style = 'font-weight:bold'>" + aDocumentDetails.getDocName() + "</a> ");
 
 				List<Object> list = new ArrayList<Object>();
 				list.add(aDocumentDetails.getDoctype());
 				list.add(aDocumentDetails.getDocImage());
 
-				ageementLink.addForward("onClick",
-						window_FinDocumentDetailDialog, "onDocumentClicked",
-						list);
+				ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
 				this.docDiv.appendChild(ageementLink);
 			}
 			finDocumentPdfView.setContent(amedia);
@@ -458,39 +426,26 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		// aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);//### TODO ###
 		try {
 			if (this.docCategory.getSelectedItem() == null
-					|| this.docCategory.getSelectedItem().getValue().toString()
-							.equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(
-						this.docCategory,
-						Labels.getLabel(
-								"STATIC_INVALID",
-								new String[] { Labels
-										.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
+					|| this.docCategory.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.docCategory, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocCategory.value") }));
 			} else {
 				this.docCategory.getSelectedItem().setDisabled(true);
 			}
-			aDocumentDetails.setDocCategory(this.docCategory.getSelectedItem()
-					.getValue().toString());
-			aDocumentDetails.setLovDescDocCategoryName(this.docCategory
-					.getValue());
+			aDocumentDetails.setDocCategory(this.docCategory.getSelectedItem().getValue().toString());
+			aDocumentDetails.setLovDescDocCategoryName(this.docCategory.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 
-			if (this.documnetName.getValue() == null
-					|| StringUtils.isEmpty(this.documnetName.getValue())
+			if (this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue())
 					|| this.documnetName.getAttribute("data") == null) {
-				throw new WrongValueException(
-						this.documnetName,
-						Labels.getLabel(
-								"MUST_BE_UPLOADED",
-								new String[] { Labels
-										.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
+				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED",
+						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
 			}
 			aDocumentDetails.setDocName(this.documnetName.getValue());
-			DocumentDetails details = (DocumentDetails) this.documnetName
-					.getAttribute("data");
+			DocumentDetails details = (DocumentDetails) this.documnetName.getAttribute("data");
 			aDocumentDetails.setDocImage(details.getDocImage());
 			aDocumentDetails.setDoctype(details.getDoctype());
 
@@ -518,14 +473,12 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentDetails
 	 * @throws InterruptedException
 	 */
-	public void doShowDialog(DocumentDetails aDocumentDetails)
-			throws InterruptedException {
+	public void doShowDialog(DocumentDetails aDocumentDetails) throws InterruptedException {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -556,10 +509,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.btnDelete.setVisible(false);
 			}
 
-			if (isCheckList
-					&& StringUtils
-							.trimToEmpty(aDocumentDetails.getRecordType())
-							.equals(PennantConstants.RECORD_TYPE_CAN)) {
+			if (isCheckList && StringUtils.trimToEmpty(aDocumentDetails.getRecordType())
+					.equals(PennantConstants.RECORD_TYPE_CAN)) {
 				viewProcess = true;
 			}
 			if (isCheckList && viewProcess) {
@@ -610,12 +561,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		setValidationOn(true);
 
 		if (!this.documnetName.isReadonly()) {
-			this.documnetName
-					.setConstraint("NO EMPTY:"
-							+ Labels.getLabel(
-									"FIELD_NO_EMPTY",
-									new String[] { Labels
-											.getLabel("label_DocumentDetailsDialog_CustID.value") }));
+			this.documnetName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_DocumentDetailsDialog_CustID.value") }));
 		}
 		logger.debug("Leaving");
 	}
@@ -668,14 +615,12 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> " + aDocumentDetails.getDocName();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aDocumentDetails.getDocName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDocumentDetails.getRecordType())) {
 				aDocumentDetails.setVersion(aDocumentDetails.getVersion() + 1);
-				aDocumentDetails
-						.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				aDocumentDetails.setNewRecord(true);
 
 				if (isWorkFlowEnabled()) {
@@ -688,15 +633,11 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			try {
 				if (isNewDocument()) {
 					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newDocumentProcess(
-							aDocumentDetails, tranType);
-					auditHeader = ErrorControl.showErrorDetails(
-							this.window_FinDocumentDetailDialog, auditHeader);
+					AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_FinDocumentDetailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE
-							|| retValue == PennantConstants.porcessOVERIDE) {
-						getManagerChequeDialogCtrl().doFillDocumentDetails(
-								this.documentDetailList);
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						getManagerChequeDialogCtrl().doFillDocumentDetails(this.documentDetailList);
 						closeDialog();
 					}
 
@@ -831,11 +772,9 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (StringUtils.isBlank(aDocumentDetails.getRecordType())) {
 				aDocumentDetails.setVersion(aDocumentDetails.getVersion() + 1);
 				if (isNew) {
-					aDocumentDetails
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aDocumentDetails
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aDocumentDetails.setNewRecord(true);
 				}
 			}
@@ -850,17 +789,13 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				}
 
 				if (StringUtils.isBlank(aDocumentDetails.getRecordType())) {
-					aDocumentDetails
-							.setVersion(aDocumentDetails.getVersion() + 1);
+					aDocumentDetails.setVersion(aDocumentDetails.getVersion() + 1);
 					aDocumentDetails.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if (aDocumentDetails.getRecordType().equals(
-						PennantConstants.RCD_ADD)
-						&& isNewRecord()) {
+				if (aDocumentDetails.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
 					tranType = PennantConstants.TRAN_ADD;
-				} else if (aDocumentDetails.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
@@ -877,21 +812,15 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		// save it to database
 		try {
 			if (isNewDocument()) {
-				AuditHeader auditHeader = newDocumentProcess(aDocumentDetails,
-						tranType);
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_FinDocumentDetailDialog, auditHeader);
+				AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FinDocumentDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE
-						|| retValue == PennantConstants.porcessOVERIDE) {
-					getManagerChequeDialogCtrl().doFillDocumentDetails(
-							this.documentDetailList);
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getManagerChequeDialogCtrl().doFillDocumentDetails(this.documentDetailList);
 					// send the data back to customer
 					if (checkListDocTypeMap != null
-							&& checkListDocTypeMap.containsKey(aDocumentDetails
-									.getDocCategory())) {
-						List<Listitem> list = checkListDocTypeMap
-								.get(aDocumentDetails.getDocCategory());
+							&& checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
+						List<Listitem> list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
 						for (int i = 0; i < list.size(); i++) {
 							list.get(i).setSelected(true);
 						}
@@ -906,8 +835,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader newDocumentProcess(DocumentDetails aDocumentDetails,
-			String tranType) {
+	private AuditHeader newDocumentProcess(DocumentDetails aDocumentDetails, String tranType) {
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = getAuditHeader(aDocumentDetails, tranType);
@@ -919,63 +847,45 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		valueParm[0] = aDocumentDetails.getDocName();
 		valueParm[1] = aDocumentDetails.getReferenceId();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_DocumnetName") + ":"
-				+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_FinReference") + ":"
-				+ valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_DocumnetName") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[1];
 
 		if (getManagerChequeDialogCtrl().getDocumentDetailsList() != null
 				&& getManagerChequeDialogCtrl().getDocumentDetailsList().size() > 0) {
-			for (int i = 0; i < getManagerChequeDialogCtrl()
-					.getDocumentDetailsList().size(); i++) {
-				DocumentDetails documentDetails = getManagerChequeDialogCtrl()
-						.getDocumentDetailsList().get(i);
+			for (int i = 0; i < getManagerChequeDialogCtrl().getDocumentDetailsList().size(); i++) {
+				DocumentDetails documentDetails = getManagerChequeDialogCtrl().getDocumentDetailsList().get(i);
 
-				if (documentDetails.getDocCategory().equals(
-						aDocumentDetails.getDocCategory())) { // Both Current
-																// and Existing
-																// list rating
-																// same
+				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both Current
+																										// and Existing
+																									// list rating
+																									// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD,
-										"41001", errParm, valueParm),
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
 					if (tranType == PennantConstants.TRAN_DEL) {
-						if (aDocumentDetails.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_UPD)) {
-							aDocumentDetails
-									.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+							aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded = true;
 							documentDetailList.add(aDocumentDetails);
-						} else if (aDocumentDetails.getRecordType().equals(
-								PennantConstants.RCD_ADD)) {
+						} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RCD_ADD)) {
 							recordAdded = true;
-						} else if (aDocumentDetails.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
-							aDocumentDetails
-									.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+						} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 							recordAdded = true;
 							documentDetailList.add(aDocumentDetails);
-						} else if (aDocumentDetails.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_CAN)) {
+						} else if (aDocumentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
 							/*
-							 * for (int j = 0; j <
-							 * getFinanceMainDialogCtrl().getFinanceDetail
-							 * ().getFinContributorHeader
-							 * ().getContributorDetailList().size(); j++) {
-							 * DocumentDetails detail =
-							 * getFinanceMainDialogCtrl(
-							 * ).getFinanceDetail().getFinContributorHeader
-							 * ().getContributorDetailList().get(j);
-							 * if(detail.getCustID() ==
-							 * aDocumentDetails.getCustID()){
-							 * contributorDetails.add(detail); } }
+							 * for (int j = 0; j < getFinanceMainDialogCtrl().getFinanceDetail
+							 * ().getFinContributorHeader ().getContributorDetailList().size(); j++) { DocumentDetails
+							 * detail = getFinanceMainDialogCtrl( ).getFinanceDetail().getFinContributorHeader
+							 * ().getContributorDetailList().get(j); if(detail.getCustID() ==
+							 * aDocumentDetails.getCustID()){ contributorDetails.add(detail); } }
 							 */
 						}
 					} else {
@@ -1005,13 +915,10 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
-	private AuditHeader getAuditHeader(DocumentDetails aDocumentDetails,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aDocumentDetails.getBefImage(), aDocumentDetails);
+	private AuditHeader getAuditHeader(DocumentDetails aDocumentDetails, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDocumentDetails.getBefImage(), aDocumentDetails);
 
-		return new AuditHeader(getReference(), String.valueOf(aDocumentDetails
-				.getDocId()), null, null, auditDetail,
+		return new AuditHeader(getReference(), String.valueOf(aDocumentDetails.getDocId()), null, null, auditDetail,
 				aDocumentDetails.getUserDetails(), getOverideMap());
 	}
 
@@ -1025,10 +932,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(
-					PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_FinDocumentDetailDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_FinDocumentDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1056,8 +961,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	@Override
 	protected String getReference() {
-		return getDocumentDetails().getDocId() + PennantConstants.KEY_SEPERATOR
-				+ getDocumentDetails().getReferenceId();
+		return getDocumentDetails().getDocId() + PennantConstants.KEY_SEPERATOR + getDocumentDetails().getReferenceId();
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1104,8 +1008,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.newDocument = newDocument;
 	}
 
-	public void onUpload$btnUploadDoc(UploadEvent event)
-			throws InterruptedException {
+	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 		browseDoc(media);
@@ -1119,11 +1022,9 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_PDF;
-			} else if ("image/jpeg".equals(media.getContentType())
-					|| "image/png".equals(media.getContentType())) {
+			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
-			} else if (media.getName().endsWith(".doc")
-					|| media.getName().endsWith(".docx")) {
+			} else if (media.getName().endsWith(".doc") || media.getName().endsWith(".docx")) {
 				docType = PennantConstants.DOC_TYPE_WORD;
 
 			} else {
@@ -1132,34 +1033,27 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 			if (isSupported) {
 				String fileName = media.getName();
-				byte[] ddaImageData = IOUtils
-						.toByteArray(media.getStreamData());
+				byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
 				// Data Fill by QR Bar Code Reader
 				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
-					this.finDocumentPdfView.setContent(new AMedia(
-							"document.pdf", "pdf", "application/pdf",
+					this.finDocumentPdfView.setContent(new AMedia("document.pdf", "pdf", "application/pdf",
 							new ByteArrayInputStream(ddaImageData)));
 
 				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
-					this.finDocumentPdfView.setContent(new AMedia(
-							"document.jpg", "jpg", "image",
-							new ByteArrayInputStream(ddaImageData)));
+					this.finDocumentPdfView.setContent(
+							new AMedia("document.jpg", "jpg", "image", new ByteArrayInputStream(ddaImageData)));
 				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
 						|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 					this.docDiv.getChildren().clear();
 					Html ageementLink = new Html();
 					ageementLink.setStyle("padding:10px;");
-					ageementLink
-							.setContent("<a href='' style = 'font-weight:bold'>"
-									+ fileName + "</a> ");
+					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName + "</a> ");
 
 					List<Object> list = new ArrayList<Object>();
 					list.add(docType);
 					list.add(ddaImageData);
 
-					ageementLink.addForward("onClick",
-							window_FinDocumentDetailDialog,
-							"onDocumentClicked", list);
+					ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
 					this.docDiv.appendChild(ageementLink);
 				}
 
@@ -1173,12 +1067,11 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 				this.documnetName.setValue(fileName);
 				if (this.documnetName.getAttribute("data") == null) {
-					DocumentDetails documentDetails = new DocumentDetails(
-							FinanceConstants.MODULE_NAME, "", docType, fileName, ddaImageData);
+					DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
+							fileName, ddaImageData);
 					this.documnetName.setAttribute("data", documentDetails);
 				} else {
-					DocumentDetails documentDetails = (DocumentDetails) this.documnetName
-							.getAttribute("data");
+					DocumentDetails documentDetails = (DocumentDetails) this.documnetName.getAttribute("data");
 					documentDetails.setDoctype(docType);
 					documentDetails.setDocImage(ddaImageData);
 					this.documnetName.setAttribute("data", documentDetails);
@@ -1198,11 +1091,9 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		byte[] ddaImageData = (byte[]) list.get(1);
 
 		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
-			Filedownload.save(ddaImageData, "application/msword",
-					this.documnetName.getValue());
+			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
 		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-			Filedownload.save(ddaImageData, "application/octet-stream",
-					this.documnetName.getValue());
+			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
 		}
 	}
 
@@ -1210,8 +1101,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		return managerChequeDialogCtrl;
 	}
 
-	public void setManagerChequeDialogCtrl(
-			ManagerChequeDialogCtrl managerChequeDialogCtrl) {
+	public void setManagerChequeDialogCtrl(ManagerChequeDialogCtrl managerChequeDialogCtrl) {
 		this.managerChequeDialogCtrl = managerChequeDialogCtrl;
 	}
 

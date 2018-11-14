@@ -8,13 +8,14 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.interfacebajaj.fileextract.service.AbstractFileExtractService;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 
-public class PresentmentExtractService extends AbstractFileExtractService implements FileExtractService<PresentmentDetailExtract> {
+public class PresentmentExtractService extends AbstractFileExtractService
+		implements FileExtractService<PresentmentDetailExtract> {
 
 	private DataSource dataSource;
 	private PresentmentDetailService presentmentDetailService;
 
 	@Override
-	public PresentmentDetailExtract getFileExtract(long userId,String contentType) throws Exception {
+	public PresentmentDetailExtract getFileExtract(long userId, String contentType) throws Exception {
 		PresentmentDetailExtract extractDetails = new PresentmentDetailExtract(dataSource, presentmentDetailService);
 		extractDetails.setDefaultDirectory(getLoacation("PRESENTMENT_RESPONSE_UPLOAD_FILEPATH"));
 		extractDetails.setFileExtension(contentType);
@@ -25,7 +26,7 @@ public class PresentmentExtractService extends AbstractFileExtractService implem
 
 		return extractDetails;
 	}
-	
+
 	@Override
 	public void renderPannel(PresentmentDetailExtract extractDetails) {
 		PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.reset();

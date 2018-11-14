@@ -85,7 +85,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class RuleServiceImpl extends GenericService<Rule> implements RuleService {
 
-	private static Logger logger=Logger.getLogger(RuleServiceImpl.class);
+	private static Logger logger = Logger.getLogger(RuleServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private RuleDAO ruleDAO;
@@ -101,23 +101,21 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private PromotionDAO promotionDAO;
 	private BounceReasonDAO bounceReasonDAO;
 	private LimitGroupLinesDAO limitGroupLinesDAO;
-	
+
 	public RuleServiceImpl() {
 		super();
 	}
-	
+
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table Queries/Queries_Temp 
-	 * 			by using RuleDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using RuleDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtRules by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Queries/Queries_Temp by using
+	 * RuleDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
+	 * RuleDAO's update method 3) Audit the record in to AuditHeader and AdtRules by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 *
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -135,12 +133,13 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 		if (rule.isWorkflow()) {
 			tableType = "_Temp";
-		}if (rule.isNew()) {
-			getRuleDAO().save(rule,tableType);
+		}
+		if (rule.isNew()) {
+			getRuleDAO().save(rule, tableType);
 			auditHeader.getAuditDetail().setModelData(rule);
 			auditHeader.setAuditReference(rule.getRuleCode());
 		} else {
-			getRuleDAO().update(rule,tableType);
+			getRuleDAO().update(rule, tableType);
 			if (StringUtils.isEmpty(tableType)) {
 				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 			}
@@ -149,15 +148,15 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table Rules by using RuleDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtRule by using auditHeaderDAO.addAudit(auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * Rules by using RuleDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and AdtRule by
+	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -181,64 +180,67 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	/**
 	 * getRuleById fetch the details by using RuleDAO's getRuleById method.
 	 * 
-	 * @param id (String)
+	 * @param id
+	 *            (String)
 	 * 
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
-	public Rule getRuleById(String id,String module,String event) {
-		return getRuleDAO().getRuleByID(id,module,event, "_View");
+	public Rule getRuleById(String id, String module, String event) {
+		return getRuleDAO().getRuleByID(id, module, event, "_View");
 	}
-	
+
 	/**
 	 * Method for Fetch SQL Rule based on Parameters
 	 */
 	@Override
-	public String getAmountRule(String id,String module,String event) {
-		return getRuleDAO().getAmountRule(id,module,event);
+	public String getAmountRule(String id, String module, String event) {
+		return getRuleDAO().getAmountRule(id, module, event);
 	}
 
 	/**
-	 * getApprovedRuleById fetch the details by using RuleDAO's getRuleById method .
-	 * with parameter id and type as blank. it fetches the approved records from the Rules.
+	 * getApprovedRuleById fetch the details by using RuleDAO's getRuleById method . with parameter id and type as
+	 * blank. it fetches the approved records from the Rules.
 	 * 
-	 * @param id (String)
+	 * @param id
+	 *            (String)
 	 * 
 	 * @return Rule
 	 */
-	public Rule getApprovedRuleById(String id,String module,String event) {
-		return getRuleDAO().getRuleByID(id,module,event, "_AView");
+	public Rule getApprovedRuleById(String id, String module, String event) {
+		return getRuleDAO().getRuleByID(id, module, event, "_AView");
 	}
-	
-	
 
-	
 	/**
 	 * Fetch Approved Rule.
-	 * @param String ruleCode
-	 * @param String ruleModule
-	 * @param String ruleEvent
-	 * @return Rule 
+	 * 
+	 * @param String
+	 *            ruleCode
+	 * @param String
+	 *            ruleModule
+	 * @param String
+	 *            ruleEvent
+	 * @return Rule
 	 */
 	@Override
-	public Rule getApprovedRule(String ruleCode,String ruleModule,String ruleEvent) {
+	public Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent) {
 		return AccountingConfigCache.getRule(ruleCode, ruleModule, ruleEvent);
 	}
-	
+
 	/**
 	 * This method return the columns list of the table
 	 * 
 	 * @return List
 	 */
 	@Override
-	public List<BMTRBFldDetails> getFieldList(String module,String event) {
+	public List<BMTRBFldDetails> getFieldList(String module, String event) {
 		return getRuleDAO().getFieldList(module, event);
 	}
 
 	/**
-	 * This method return the Operator list 
+	 * This method return the Operator list
 	 * 
 	 * @return List
 	 */
@@ -254,37 +256,36 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public List<RuleModule> getRuleModules(String module) {
 		return getRuleDAO().getRuleModules(module);
 	}
-	
-	@Override
-    public List<Rule> getRulesByGroupId(long groupId,String ruleModule, String ruleEvent) {
-	    return getRuleDAO().getRulesByGroupId(groupId,ruleModule, ruleEvent,"_AView");
-    }	
 
 	@Override
-    public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId) {
-	    return getRuleDAO().getNFRulesByGroupId(groupId , "");
-    }
+	public List<Rule> getRulesByGroupId(long groupId, String ruleModule, String ruleEvent) {
+		return getRuleDAO().getRulesByGroupId(groupId, ruleModule, ruleEvent, "_AView");
+	}
+
+	@Override
+	public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId) {
+		return getRuleDAO().getNFRulesByGroupId(groupId, "");
+	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getRuleDAO().delete with parameters Rule,""
-	 * 		b)  NEW		Add new record in to main table by using getRuleDAO().save with parameters Rule,""
-	 * 		c)  EDIT	Update record in the main table by using getRuleDAO().update with parameters Rule,""
-	 * 3)	Delete the record from the workFlow table by using getRuleDAO().delete with parameters Rule,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtRules by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtRules by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getRuleDAO().delete with parameters
+	 * Rule,"" b) NEW Add new record in to main table by using getRuleDAO().save with parameters Rule,"" c) EDIT Update
+	 * record in the main table by using getRuleDAO().update with parameters Rule,"" 3) Delete the record from the
+	 * workFlow table by using getRuleDAO().delete with parameters Rule,"_Temp" 4) Audit the record in to AuditHeader
+	 * and AdtRules by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader
+	 * and AdtRules by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader, "doApprove");
-		String tranType="";
+		String tranType = "";
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -330,14 +331,13 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getRuleDAO().delete with parameters Rule,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtRules by using 
-	 * 			auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getRuleDAO().delete with parameters Rule,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtRules by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 *
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -359,44 +359,38 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from 
-	 * 			getRuleDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getRuleDAO().getErrorDetail with Error ID and language
+	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
-	
+
 	}
+
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -404,10 +398,10 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		Rule tempRule = null;
 
 		if (rule.isWorkflow()) {
-			tempRule = getRuleDAO().getRuleByID(rule.getRuleCode(),rule.getRuleModule(),rule.getRuleEvent(),"_Temp");
+			tempRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "_Temp");
 		}
 
-		Rule befRule = getRuleDAO().getRuleByID(rule.getRuleCode(),rule.getRuleModule(),rule.getRuleEvent(), "");
+		Rule befRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "");
 		Rule oldRule = rule.getBefImage();
 
 		String[] valueParm = new String[3];
@@ -416,29 +410,28 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		valueParm[0] = rule.getRuleCode();
 		valueParm[1] = rule.getRuleModule();
 		valueParm[2] = rule.getRuleEvent();
-		errParm[0] = PennantJavaUtil.getLabel("label_RuleCode") + ": "+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_RuleModule") + ": "+ valueParm[1];
-		errParm[2] = PennantJavaUtil.getLabel("label_RuleEvent") + ": "+ valueParm[2];
-		
+		errParm[0] = PennantJavaUtil.getLabel("label_RuleCode") + ": " + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_RuleModule") + ": " + valueParm[1];
+		errParm[2] = PennantJavaUtil.getLabel("label_RuleEvent") + ": " + valueParm[2];
+
 		if (rule.isNew()) { // for New record or new record into work flow
 
 			if (!rule.isWorkflow()) {// With out Work flow only new records
 				if (befRule != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (rule.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (rule.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befRule != null || tempRule != null) { //if records 
 						// already exists
 						// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befRule == null || tempRule != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -450,13 +443,16 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 				if (befRule == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldRule != null && !oldRule.getLastMntOn().equals(befRule.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, null));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -464,11 +460,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 				if (tempRule == null) { // if records not exists in the Work
 					// flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempRule != null && oldRule != null && !oldRule.getLastMntOn().equals(tempRule.getLastMntOn())) {
 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
@@ -513,10 +509,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				break;
 			}
 			if (count != 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !rule.isWorkflow()) {
 			auditDetail.setBefImage(befRule);
@@ -524,18 +521,18 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
-	
-	/** (non-Javadoc)
+
+	/**
+	 * (non-Javadoc)
+	 * 
 	 * @see com.pennant.backend.service.rulefactory.RuleService
 	 * 
-	 * validationCheck(ruleModule, ruleEvent, ruleCode)
+	 *      validationCheck(ruleModule, ruleEvent, ruleCode)
 	 **/
 	@Override
-	public boolean validationCheck( String ruleEvent,
-			String ruleCode) {
-		return getLimitGroupService().limitLineActiveCheck(ruleEvent,ruleCode);
-		
+	public boolean validationCheck(String ruleEvent, String ruleCode) {
+		return getLimitGroupService().limitLineActiveCheck(ruleEvent, ruleCode);
+
 	}
 
 	/**
@@ -559,7 +556,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent) {
 		return getRuleDAO().getRuleDetailList(ruleCodeList, ruleModule, ruleEvent);
 	}
-	
+
 	@Override
 	public List<String> getAEAmountCodesList(String event) {
 		return getRuleDAO().getAEAmountCodesList(event);
@@ -569,19 +566,20 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public Rule getRuleById(long ruleID, String type) {
 		return getRuleDAO().getRuleByID(ruleID, type);
 	}
-	
+
 	@Override
 	public List<Rule> getGSTRuleDetails(String ruleModule, String type) {
-		return getRuleDAO().getGSTRuleDetails(ruleModule,"");
+		return getRuleDAO().getGSTRuleDetails(ruleModule, "");
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -589,6 +587,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public RuleDAO getRuleDAO() {
 		return ruleDAO;
 	}
+
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
@@ -600,7 +599,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public void setLimitGroupService(LimitGroupService limitGroupService) {
 		this.limitGroupService = limitGroupService;
 	}
-	
+
 	public FinTypeFeesDAO getFinTypeFeesDAO() {
 		return finTypeFeesDAO;
 	}

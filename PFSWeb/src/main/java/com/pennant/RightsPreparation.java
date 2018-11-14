@@ -24,7 +24,7 @@ public class RightsPreparation {
 		String group = "";
 		String role = "";
 		String excelFilePath = "/home/veeraprasad.d/Downloads/Caste_Rights.xls";
-		
+
 		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 		Workbook workbook = new HSSFWorkbook(inputStream);
 		Sheet firstSheet = workbook.getSheetAt(0);
@@ -35,7 +35,7 @@ public class RightsPreparation {
 		System.out.println("Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);");
 		System.out.println("Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);");
 		System.out.println();
-		
+
 		while (iterator.hasNext()) {
 			Row nextRow = iterator.next();
 			Iterator<Cell> cellIterator = nextRow.cellIterator();
@@ -59,12 +59,17 @@ public class RightsPreparation {
 			if ("Y".equals(newGroup)) {
 				groupDesc = getValue(cellIterator.next());
 				role = getValue(cellIterator.next());
-				System.out.println("Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = '" + group + "');");
-				System.out.println("Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = '" + group + "')"
-						+ " And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = '" + role + "');");
+				System.out.println(
+						"Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = '"
+								+ group + "');");
+				System.out.println(
+						"Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = '"
+								+ group + "')" + " And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = '" + role
+								+ "');");
 				System.out.println("Delete from SecGroups where GrpCode = '" + group + "';");
-				System.out.println("INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), '" + group
-						+ "'," + "'" + groupDesc + "', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);");
+				System.out.println(
+						"INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), '" + group + "'," + "'"
+								+ groupDesc + "', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);");
 				System.out.println();
 			}
 
@@ -75,9 +80,10 @@ public class RightsPreparation {
 
 				script = "Delete from SecRights where RightName = '" + rightName + "';";
 				System.out.println(script);
-				
+
 				script = "Insert into SecRights Values((Select max(RightID) + 1 from SecRights), " + rightType + ", '"
-						+ rightName + "', '" + page + "', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );";
+						+ rightName + "', '" + page
+						+ "', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );";
 
 				System.out.println(script);
 			}
@@ -87,15 +93,16 @@ public class RightsPreparation {
 					+ "(Select RightID from SecRights where RightName = '" + rightName
 					+ "'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );";
 			System.out.println(script);
-			
+
 			script = "INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), "
 					+ "(Select MAX(GrpId) from SecGroups WHERE GrpCode = '" + group + "'), "
 					+ "(Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);";
-			
+
 			if ("Y".equals(newGroup)) {
 				System.out.println("INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), "
-						+ "(Select MAX(GrpId) from SecGroups WHERE GrpCode = '" + group +"'), "
-								+ "(Select MAX(RoleID) from SecRoles WHERE RoleCd = '" + role + "'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);");
+						+ "(Select MAX(GrpId) from SecGroups WHERE GrpCode = '" + group + "'), "
+						+ "(Select MAX(RoleID) from SecRoles WHERE RoleCd = '" + role
+						+ "'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);");
 			}
 
 			System.out.println();

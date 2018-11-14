@@ -14,17 +14,16 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.util.PennantAppUtil;
 
-public class CustomerEnquiryListModelItemRender implements ListitemRenderer<FinanceEnquiry>,
-		Serializable {
+public class CustomerEnquiryListModelItemRender implements ListitemRenderer<FinanceEnquiry>, Serializable {
 
 	private static final long serialVersionUID = -6954091801433341494L;
-	
+
 	public CustomerEnquiryListModelItemRender() {
-		
+
 	}
-	
+
 	@Override
-	public void render(Listitem item,final FinanceEnquiry aFinanceEnq, int count) throws Exception {
+	public void render(Listitem item, final FinanceEnquiry aFinanceEnq, int count) throws Exception {
 
 		if (item instanceof Listgroup) {
 			Listcell cell = new Listcell(aFinanceEnq.getLovDescFinTypeName());
@@ -35,9 +34,11 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			cell.setSpan(3);
 			item.appendChild(cell);
 		} else if (item instanceof Listgroupfoot) {
-			Listcell cell = new Listcell(PennantAppUtil.amountFormate(
-					aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt()).subtract(aFinanceEnq.getFinRepaymentAmount()),
-					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+			Listcell cell = new Listcell(
+					PennantAppUtil.amountFormate(
+							aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
+									.subtract(aFinanceEnq.getFinRepaymentAmount()),
+							CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			cell.setSpan(5);
 			item.appendChild(cell);
 		} else {
@@ -54,20 +55,17 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getMaturityDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(
-					aFinanceEnq.getFinAmount(),
+			lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount(),
 					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(
-					aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt()).subtract(aFinanceEnq.getFinRepaymentAmount()),
-					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
+			lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
+					.subtract(aFinanceEnq.getFinRepaymentAmount()), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getNextDueDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(
-					aFinanceEnq.getNextDueAmount(),
+			lc = new Listcell(PennantAppUtil.amountFormate(aFinanceEnq.getNextDueAmount(),
 					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);

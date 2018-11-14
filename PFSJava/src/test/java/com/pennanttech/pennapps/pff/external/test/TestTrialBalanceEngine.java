@@ -31,25 +31,30 @@ public class TestTrialBalanceEngine {
 		try {
 			Date date = DateUtil.getDate(2017, 6, 31);
 			date = DateUtil.getDatePart(date);
-			
-			/*new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE);
-			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE);
-			new SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();*/
-			
+
+			/*
+			 * new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE); new
+			 * TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE); new
+			 * SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();
+			 */
+
 			date = DateUtil.getDate(2017, 7, 31);
 			date = DateUtil.getDatePart(date);
-			
-		/*	new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimension.STATE);
-			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimension.CONSOLIDATE);
-			new SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();*/
-			
-			/*date = DateUtil.getDate(2017, 8, 30);
-			date = DateUtil.getDatePart(date);
-			
-			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE);
-			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE);
-			new SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();*/
-			
+
+			/*
+			 * new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimension.STATE); new
+			 * TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimension.CONSOLIDATE); new
+			 * SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();
+			 */
+
+			/*
+			 * date = DateUtil.getDate(2017, 8, 30); date = DateUtil.getDatePart(date);
+			 * 
+			 * new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE); new
+			 * TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE); new
+			 * SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();
+			 */
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

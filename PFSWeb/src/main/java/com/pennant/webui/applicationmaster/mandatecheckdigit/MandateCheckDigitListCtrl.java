@@ -75,33 +75,33 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * 
  */
 public class MandateCheckDigitListCtrl extends GFCBaseListCtrl<MandateCheckDigit> {
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(MandateCheckDigitListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(MandateCheckDigitListCtrl.class);
 
-	protected Window							window_MandateCheckDigitList;
-	protected Borderlayout						borderLayout_MandateCheckDigitList;
-	protected Paging							pagingMandateCheckDigitList;
-	protected Listbox							listBoxMandateCheckDigit;
+	protected Window window_MandateCheckDigitList;
+	protected Borderlayout borderLayout_MandateCheckDigitList;
+	protected Paging pagingMandateCheckDigitList;
+	protected Listbox listBoxMandateCheckDigit;
 
 	// List headers
-	protected Listheader						listheader_CheckDigitValue;
-	protected Listheader						listheader_LookUpValue;
-	protected Listheader						listheader_Active;
+	protected Listheader listheader_CheckDigitValue;
+	protected Listheader listheader_LookUpValue;
+	protected Listheader listheader_Active;
 
 	// checkRights
-	protected Button							button_MandateCheckDigitList_NewMandateCheckDigit;
-	protected Button							button_MandateCheckDigitList_MandateCheckDigitSearch;
+	protected Button button_MandateCheckDigitList_NewMandateCheckDigit;
+	protected Button button_MandateCheckDigitList_MandateCheckDigitSearch;
 
 	// Search Fields
-	protected Intbox							checkDigitValue;														// autowired
-	protected Textbox							lookUpValue;															// autowired
-	protected Checkbox							active;																	// autowired
+	protected Intbox checkDigitValue; // autowired
+	protected Textbox lookUpValue; // autowired
+	protected Checkbox active; // autowired
 
-	protected Listbox							sortOperator_CheckDigitValue;
-	protected Listbox							sortOperator_LookUpValue;
-	protected Listbox							sortOperator_Active;
+	protected Listbox sortOperator_CheckDigitValue;
+	protected Listbox sortOperator_LookUpValue;
+	protected Listbox sortOperator_Active;
 
-	private transient MandateCheckDigitService	mandateCheckDigitService;
+	private transient MandateCheckDigitService mandateCheckDigitService;
 
 	/**
 	 * default constructor.<br>

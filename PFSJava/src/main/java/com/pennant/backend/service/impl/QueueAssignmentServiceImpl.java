@@ -57,8 +57,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> implements
-        QueueAssignmentService {
+public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> implements QueueAssignmentService {
 	private static final Logger logger = Logger.getLogger(QueueAssignmentServiceImpl.class);
 
 	private QueueAssignmentDAO queueAssignmentDAO;
@@ -70,7 +69,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	public QueueAssignmentServiceImpl() {
 		super();
 	}
-	
+
 	public QueueAssignmentDAO getQueueAssignmentDAO() {
 		return queueAssignmentDAO;
 	}
@@ -94,7 +93,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	public void setUserActivityLogDAO(UserActivityLogDAO userActivityLogDAO) {
 		this.userActivityLogDAO = userActivityLogDAO;
 	}
-	
+
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
@@ -102,14 +101,14 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
-	    return auditHeaderDAO;
-    }
+		return auditHeaderDAO;
+	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-	    this.auditHeaderDAO = auditHeaderDAO;
-    }
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -124,19 +123,20 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 
 		String tableType = "";
 		QueueAssignmentHeader queueAssignmentHeader = (QueueAssignmentHeader) auditHeader.getAuditDetail()
-		        .getModelData();
+				.getModelData();
 
 		if (queueAssignmentHeader.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		
+
 		if (queueAssignmentHeader.isNew()) {
 			getQueueAssignmentDAO().saveHeader(queueAssignmentHeader, tableType);
 		} else {
 			getQueueAssignmentDAO().updateHeader(queueAssignmentHeader, tableType);
 		}
 
-		if (queueAssignmentHeader.getQueueAssignmentsList() != null && queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
+		if (queueAssignmentHeader.getQueueAssignmentsList() != null
+				&& queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
 			List<AuditDetail> details = queueAssignmentHeader.getAuditDetailMap().get("QueueAssignment");
 			details = processingQueueAssignmentList(queueAssignmentHeader, details, tableType);
 			auditDetails.addAll(details);
@@ -148,7 +148,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		return auditHeader;
 
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Queue Assignment
 	 * 
@@ -156,7 +156,8 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingQueueAssignmentList(QueueAssignmentHeader queueAssignment, List<AuditDetail> auditDetails, String type) {
+	private List<AuditDetail> processingQueueAssignmentList(QueueAssignmentHeader queueAssignment,
+			List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -178,12 +179,12 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 				queueDetail.setNextRoleCode("");
 				queueDetail.setTaskId("");
 				queueDetail.setNextTaskId("");
-			}else {
+			} else {
 				queueDetail.setWorkflowId(queueAssignment.getWorkflowId());
 				queueDetail.setRoleCode(queueAssignment.getRoleCode());
 				queueDetail.setTaskId(queueAssignment.getTaskId());
 				queueDetail.setNextRoleCode(queueAssignment.getNextRoleCode());
-				queueDetail.setNextTaskId(queueAssignment.getNextTaskId());				
+				queueDetail.setNextTaskId(queueAssignment.getNextTaskId());
 			}
 
 			if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
@@ -192,26 +193,21 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 				saveRecord = true;
 				if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					queueDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (queueDetail.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					queueDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (queueDetail.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					queueDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (queueDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (queueDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (queueDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
 				} else if (queueDetail.isNew()) {
@@ -227,21 +223,23 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 				queueDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				if(approveRec){
-					if(queueDetail.getUserId() != 0){
+				if (approveRec) {
+					if (queueDetail.getUserId() != 0) {
 						// If single user Insert one time and update remaining else Insert and Update counts in task_assignments table
-						if(queueAssignment.isSingleUser()){
-							if(i == 0){
+						if (queueAssignment.isSingleUser()) {
+							if (i == 0) {
 								getQueueAssignmentDAO().save(queueDetail);
 							}
-						}else{
+						} else {
 							getQueueAssignmentDAO().save(queueDetail);
 						}
-						if(queueAssignment.isManualAssign()){
-							getQueueAssignmentDAO().updateUserCounts(queueDetail.getModule(), queueDetail.getUserRoleCode(), queueDetail.getUserId(), 
+						if (queueAssignment.isManualAssign()) {
+							getQueueAssignmentDAO().updateUserCounts(queueDetail.getModule(),
+									queueDetail.getUserRoleCode(), queueDetail.getUserId(),
 									queueDetail.getUserRoleCode(), queueDetail.getFromUserId(), false, false);
-						}else {
-							getQueueAssignmentDAO().updateUserCounts(queueDetail.getModule(), queueDetail.getUserRoleCode(), queueDetail.getUserId(), 
+						} else {
+							getQueueAssignmentDAO().updateUserCounts(queueDetail.getModule(),
+									queueDetail.getUserRoleCode(), queueDetail.getUserId(),
 									queueDetail.getUserRoleCode(), queueDetail.getFromUserId(), false, true);
 						}
 
@@ -254,18 +252,18 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 						getTaskOwnersDAO().update(owner);
 
 						// Insert into activity log
-						
+
 						UserActivityLog userActivityLog = new UserActivityLog();
 						userActivityLog.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
 						userActivityLog.setReference(queueDetail.getReference());
 						userActivityLog.setFromUser(queueDetail.getLastMntBy());
 						userActivityLog.setRoleCode(queueDetail.getUserRoleCode());
-						if(queueAssignment.isManualAssign()){
+						if (queueAssignment.isManualAssign()) {
 							userActivityLog.setActivity(PennantConstants.RCD_STATUS_MANUALASSIGNED);
-						}else {
+						} else {
 							userActivityLog.setActivity(PennantConstants.RCD_STATUS_REASSIGNED);
 						}
-						if(queueDetail.getUserId() != 0) {
+						if (queueDetail.getUserId() != 0) {
 							userActivityLog.setToUser(queueDetail.getUserId());
 						}
 						userActivityLog.setNextRoleCode(queueDetail.getUserRoleCode());
@@ -273,18 +271,18 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 						userActivityLog.setReassignedTime(queueDetail.getLastMntOn());
 						userActivityLog.setProcessed(false);
 						logList.add(userActivityLog);
-						if(i == auditDetails.size()-1){
+						if (i == auditDetails.size() - 1) {
 							getUserActivityLogDAO().saveList(logList);
 						}
 
 						// Update financemain_temp
 						List<String> refList = new ArrayList<String>();
 						refList.add(queueDetail.getReference());
-						getFinanceMainDAO().updateNextUserId(refList, String.valueOf(queueDetail.getFromUserId()), String.valueOf(queueDetail.getUserId()), 
-								queueAssignment.isManualAssign());
+						getFinanceMainDAO().updateNextUserId(refList, String.valueOf(queueDetail.getFromUserId()),
+								String.valueOf(queueDetail.getUserId()), queueAssignment.isManualAssign());
 					}
 					getQueueAssignmentDAO().delete(queueDetail, "_Temp");
-				}else{
+				} else {
 					getQueueAssignmentDAO().save(queueDetail, type);
 				}
 			}
@@ -327,7 +325,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
@@ -340,21 +338,18 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-		QueueAssignmentHeader queueAssignment = (QueueAssignmentHeader) auditHeader.getAuditDetail()
-		        .getModelData();
+		QueueAssignmentHeader queueAssignment = (QueueAssignmentHeader) auditHeader.getAuditDetail().getModelData();
 
 		String auditTranType = "";
 
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method)
-		        || "doReject".equals(method)) {
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (queueAssignment.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
 		if (queueAssignment.getQueueAssignmentsList() != null && queueAssignment.getQueueAssignmentsList().size() > 0) {
-			auditDetailMap
-			        .put("QueueAssignment", setAssignmentAuditData(queueAssignment, auditTranType, method));
+			auditDetailMap.put("QueueAssignment", setAssignmentAuditData(queueAssignment, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("QueueAssignment"));
 		}
 
@@ -364,7 +359,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -373,8 +368,8 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setAssignmentAuditData(QueueAssignmentHeader queueAssignment,
-	        String auditTranType, String method) {
+	private List<AuditDetail> setAssignmentAuditData(QueueAssignmentHeader queueAssignment, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		QueueAssignment object = new QueueAssignment();
@@ -394,7 +389,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 				queueDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				if (queueAssignment.isWorkflow()) {
 					isRcdType = true;
-                }
+				}
 			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				queueDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
@@ -404,13 +399,10 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (queueDetail.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RECORD_TYPE_NEW)) {
+				if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (queueDetail.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RECORD_TYPE_DEL)
-				        || queueDetail.getRecordType().equalsIgnoreCase(
-				                PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -422,14 +414,13 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			queueDetail.setLastMntOn(queueAssignment.getLastMntOn());
 
 			if (StringUtils.isNotEmpty(queueDetail.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-				        queueDetail.getBefImage(), queueDetail));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], queueDetail.getBefImage(),
+						queueDetail));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-
 
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -443,16 +434,17 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		}
 
 		QueueAssignmentHeader queueAssignmentHeader = (QueueAssignmentHeader) auditHeader.getAuditDetail()
-		        .getModelData();
+				.getModelData();
 
 		getQueueAssignmentDAO().deleteHeader(queueAssignmentHeader);
 
-		if (queueAssignmentHeader.getQueueAssignmentsList() != null && queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
+		if (queueAssignmentHeader.getQueueAssignmentsList() != null
+				&& queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
 			List<AuditDetail> details = queueAssignmentHeader.getAuditDetailMap().get("QueueAssignment");
 			details = processingQueueAssignmentList(queueAssignmentHeader, details, "");
 			auditDetails.addAll(details);
 		}
-		
+
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -467,34 +459,35 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "doReject");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		QueueAssignmentHeader queueAssignmentHeader = (QueueAssignmentHeader) auditHeader.getAuditDetail()
-		        .getModelData();
+				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getQueueAssignmentDAO().deleteHeader(queueAssignmentHeader);
-		
-		auditDetails.addAll(getListAuditDetails(listDeletion(queueAssignmentHeader, "_Temp",
-		        auditHeader.getAuditTranType())));
+
+		auditDetails.addAll(
+				getListAuditDetails(listDeletion(queueAssignmentHeader, "_Temp", auditHeader.getAuditTranType())));
 
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	//Method for Deleting all records related to QueueAssignment in _Temp tables  depend on method type
 	public List<AuditDetail> listDeletion(QueueAssignmentHeader queueAssignmentHeader, String tableType,
 			String auditTranType) {
 		logger.debug("Entering");
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if (queueAssignmentHeader.getQueueAssignmentsList() != null && queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
+		if (queueAssignmentHeader.getQueueAssignmentsList() != null
+				&& queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
 			QueueAssignment object = new QueueAssignment();
 			String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
 			for (int i = 0; i < queueAssignmentHeader.getQueueAssignmentsList().size(); i++) {
@@ -507,7 +500,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		logger.debug("Leaving");
 		return auditList;
 	}
-	
+
 	/**
 	 * Common Method for QueueAssignments list validation
 	 * 
@@ -530,13 +523,12 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 				Object object = ((AuditDetail) list.get(i)).getModelData();
 				try {
 
-					rcdType = object.getClass().getMethod("getRecordType")
-					        .invoke(object).toString();
+					rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
 
 					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 						transType = PennantConstants.TRAN_ADD;
 					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-					        || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+							|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 						transType = PennantConstants.TRAN_DEL;
 					} else {
 						transType = PennantConstants.TRAN_UPD;
@@ -544,11 +536,10 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 
 					if (StringUtils.isNotEmpty(transType)) {
 						//check and change below line for Complete code
-						Object befImg = object.getClass()
-						        .getMethod("getBefImage", object.getClass().getClasses())
-						        .invoke(object, object.getClass().getClasses());
-						auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i))
-						        .getAuditSeq(), befImg, object));
+						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
+								.invoke(object, object.getClass().getClasses());
+						auditDetailsList.add(
+								new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
 					}
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
@@ -562,18 +553,20 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	@Override
 	public QueueAssignmentHeader getFinances(QueueAssignmentHeader aQueueAssignmentHeader) {
 		logger.debug("Entering");
-		QueueAssignmentHeader  header = getQueueAssignmentDAO().isNewRequest(aQueueAssignmentHeader.getModule(), aQueueAssignmentHeader.getUserId(), 
-				aQueueAssignmentHeader.getUserRoleCode(), aQueueAssignmentHeader.isManualAssign());
-		if(header == null){
+		QueueAssignmentHeader header = getQueueAssignmentDAO().isNewRequest(aQueueAssignmentHeader.getModule(),
+				aQueueAssignmentHeader.getUserId(), aQueueAssignmentHeader.getUserRoleCode(),
+				aQueueAssignmentHeader.isManualAssign());
+		if (header == null) {
 			aQueueAssignmentHeader.setNewRecord(true);
-		}else {
+		} else {
 			aQueueAssignmentHeader = header;
 		}
-		aQueueAssignmentHeader.setQueueAssignmentsList(getQueueAssignmentDAO().getFinances(aQueueAssignmentHeader.getUserId(), 
-				aQueueAssignmentHeader.getUserRoleCode(), aQueueAssignmentHeader.isManualAssign()));
-		if(aQueueAssignmentHeader.isManualAssign()){
+		aQueueAssignmentHeader
+				.setQueueAssignmentsList(getQueueAssignmentDAO().getFinances(aQueueAssignmentHeader.getUserId(),
+						aQueueAssignmentHeader.getUserRoleCode(), aQueueAssignmentHeader.isManualAssign()));
+		if (aQueueAssignmentHeader.isManualAssign()) {
 			aQueueAssignmentHeader.setFromUserId(0);
-		}else {
+		} else {
 			aQueueAssignmentHeader.setFromUserId(Long.parseLong(aQueueAssignmentHeader.getUserId()));
 		}
 		logger.debug("Leaving");
@@ -581,10 +574,10 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	}
 
 	@Override
-    public boolean checkIfUserAlreadyAccessed(String finReferences, String selectedUser, String roleCode) {
+	public boolean checkIfUserAlreadyAccessed(String finReferences, String selectedUser, String roleCode) {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getTaskOwnersDAO().checkIfUserAlreadyAccessed(finReferences, selectedUser, roleCode);
-		
-    }
+
+	}
 }

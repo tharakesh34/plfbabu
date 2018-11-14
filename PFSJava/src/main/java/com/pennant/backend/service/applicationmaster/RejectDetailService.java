@@ -52,10 +52,15 @@ import com.pennant.backend.model.audit.AuditHeader;
  */
 public interface RejectDetailService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	RejectDetail getRejectDetailById(String id);
+
 	RejectDetail getApprovedRejectDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

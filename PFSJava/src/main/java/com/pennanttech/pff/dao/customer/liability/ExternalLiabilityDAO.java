@@ -10,11 +10,11 @@ public interface ExternalLiabilityDAO {
 	long save(CustomerExtLiability custExtLiability, String type);
 
 	void update(CustomerExtLiability custExtLiability, String type);
-	
+
 	void delete(long id, String type);
-	
+
 	void deleteByLinkId(Long linkId, String type);
-	
+
 	List<CustomerExtLiability> getLiabilities(long custId, String type);
 
 	BigDecimal getTotalLiabilityByLinkId(Long liabilityLinkId);

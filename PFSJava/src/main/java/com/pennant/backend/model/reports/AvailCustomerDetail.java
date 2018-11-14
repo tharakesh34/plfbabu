@@ -12,155 +12,183 @@ public class AvailCustomerDetail {
 	private boolean acPayblRequired = true;
 	private boolean acUnclsRequired = true;
 	private boolean collateralRequired = true;
-	
+
 	private List<AvailAccount> offBSAcList = new ArrayList<AvailAccount>();
 	private List<AvailAccount> acRcvblList = new ArrayList<AvailAccount>();
 	private List<AvailAccount> acPayblList = new ArrayList<AvailAccount>();
 	private List<AvailAccount> acUnclsList = new ArrayList<AvailAccount>();
 	private List<AvailCollateral> colList = new ArrayList<AvailCollateral>();
-	
+
 	private BigDecimal custActualBal = BigDecimal.ZERO;
 	private BigDecimal custBlockedBal = BigDecimal.ZERO;
 	private BigDecimal custDeposit = BigDecimal.ZERO;
 	private BigDecimal custBlockedDeposit = BigDecimal.ZERO;
 	private BigDecimal totalCustBal = BigDecimal.ZERO;
 	private BigDecimal totalCustBlockedBal = BigDecimal.ZERO;
-	
+
 	private AvailLimit availLimit = null;
-	
+
 	//Account Type List
 	private List<String> accTypeList = new ArrayList<String>();
-	
+
 	public AvailCustomerDetail() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getCustCIF() {
-    	return custCIF;
-    }
+		return custCIF;
+	}
+
 	public void setCustCIF(String custCIF) {
-    	this.custCIF = custCIF;
-    }
-	
+		this.custCIF = custCIF;
+	}
+
 	public boolean isOffBSRequired() {
-    	return offBSRequired;
-    }
+		return offBSRequired;
+	}
+
 	public void setOffBSRequired(boolean offBSRequired) {
-    	this.offBSRequired = offBSRequired;
-    }
-	
+		this.offBSRequired = offBSRequired;
+	}
+
 	public boolean isAcRcvblRequired() {
-    	return acRcvblRequired;
-    }
+		return acRcvblRequired;
+	}
+
 	public void setAcRcvblRequired(boolean acRcvblRequired) {
-    	this.acRcvblRequired = acRcvblRequired;
-    }
-	
+		this.acRcvblRequired = acRcvblRequired;
+	}
+
 	public boolean isAcPayblRequired() {
-    	return acPayblRequired;
-    }
+		return acPayblRequired;
+	}
+
 	public void setAcPayblRequired(boolean acPayblRequired) {
-    	this.acPayblRequired = acPayblRequired;
-    }
-	
+		this.acPayblRequired = acPayblRequired;
+	}
+
 	public boolean isAcUnclsRequired() {
-    	return acUnclsRequired;
-    }
+		return acUnclsRequired;
+	}
+
 	public void setAcUnclsRequired(boolean acUnclsRequired) {
-    	this.acUnclsRequired = acUnclsRequired;
-    }
-	
+		this.acUnclsRequired = acUnclsRequired;
+	}
+
 	public boolean isCollateralRequired() {
-    	return collateralRequired;
-    }
+		return collateralRequired;
+	}
+
 	public void setCollateralRequired(boolean collateralRequired) {
-    	this.collateralRequired = collateralRequired;
-    }
-	
+		this.collateralRequired = collateralRequired;
+	}
+
 	public void setOffBSAcList(List<AvailAccount> offBSAcList) {
-	    this.offBSAcList = offBSAcList;
-    }
+		this.offBSAcList = offBSAcList;
+	}
+
 	public List<AvailAccount> getOffBSAcList() {
-	    return offBSAcList;
-    }
-	
+		return offBSAcList;
+	}
+
 	public void setAcRcvblList(List<AvailAccount> acRcvblList) {
-	    this.acRcvblList = acRcvblList;
-    }
+		this.acRcvblList = acRcvblList;
+	}
+
 	public List<AvailAccount> getAcRcvblList() {
-	    return acRcvblList;
-    }
-	
+		return acRcvblList;
+	}
+
 	public void setAcPayblList(List<AvailAccount> acPayblList) {
-	    this.acPayblList = acPayblList;
-    }
+		this.acPayblList = acPayblList;
+	}
+
 	public List<AvailAccount> getAcPayblList() {
-	    return acPayblList;
-    }
+		return acPayblList;
+	}
+
 	public void setColList(List<AvailCollateral> colList) {
-	    this.colList = colList;
-    }
+		this.colList = colList;
+	}
+
 	public List<AvailCollateral> getColList() {
-	    return colList;
-    }
-	
+		return colList;
+	}
+
 	public BigDecimal getCustActualBal() {
-    	return custActualBal;
-    }
+		return custActualBal;
+	}
+
 	public void setCustActualBal(BigDecimal custActualBal) {
-    	this.custActualBal = custActualBal;
-    }
+		this.custActualBal = custActualBal;
+	}
+
 	public BigDecimal getCustBlockedBal() {
-    	return custBlockedBal;
-    }
+		return custBlockedBal;
+	}
+
 	public void setCustBlockedBal(BigDecimal custBlockedBal) {
-    	this.custBlockedBal = custBlockedBal;
-    }
+		this.custBlockedBal = custBlockedBal;
+	}
+
 	public BigDecimal getCustDeposit() {
-    	return custDeposit;
-    }
+		return custDeposit;
+	}
+
 	public void setCustDeposit(BigDecimal custDeposit) {
-    	this.custDeposit = custDeposit;
-    }
+		this.custDeposit = custDeposit;
+	}
+
 	public BigDecimal getCustBlockedDeposit() {
-    	return custBlockedDeposit;
-    }
+		return custBlockedDeposit;
+	}
+
 	public void setCustBlockedDeposit(BigDecimal custBlockedDeposit) {
-    	this.custBlockedDeposit = custBlockedDeposit;
-    }
+		this.custBlockedDeposit = custBlockedDeposit;
+	}
+
 	public BigDecimal getTotalCustBal() {
-    	return totalCustBal;
-    }
+		return totalCustBal;
+	}
+
 	public void setTotalCustBal(BigDecimal totalCustBal) {
-    	this.totalCustBal = totalCustBal;
-    }
+		this.totalCustBal = totalCustBal;
+	}
+
 	public BigDecimal getTotalCustBlockedBal() {
-    	return totalCustBlockedBal;
-    }
+		return totalCustBlockedBal;
+	}
+
 	public void setTotalCustBlockedBal(BigDecimal totalCustBlockedBal) {
-    	this.totalCustBlockedBal = totalCustBlockedBal;
-    }
+		this.totalCustBlockedBal = totalCustBlockedBal;
+	}
+
 	public void setAvailLimit(AvailLimit availLimit) {
-	    this.availLimit = availLimit;
-    }
+		this.availLimit = availLimit;
+	}
+
 	public AvailLimit getAvailLimit() {
-	    return availLimit;
-    }
+		return availLimit;
+	}
+
 	public List<String> getAccTypeList() {
-	    return accTypeList;
-    }
+		return accTypeList;
+	}
+
 	public void setAccTypeList(List<String> accTypeList) {
-	    this.accTypeList = accTypeList;
-    }
+		this.accTypeList = accTypeList;
+	}
+
 	public List<AvailAccount> getAcUnclsList() {
-	    return acUnclsList;
-    }
+		return acUnclsList;
+	}
+
 	public void setAcUnclsList(List<AvailAccount> acUnclsList) {
-	    this.acUnclsList = acUnclsList;
-    }
-	
+		this.acUnclsList = acUnclsList;
+	}
+
 }

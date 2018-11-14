@@ -41,13 +41,18 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import com.pennant.backend.model.bmtmasters.CheckList;
 
 public interface CheckListDAO {
 
 	CheckList getCheckListById(long id, String type);
+
 	void update(CheckList checkList, String type);
+
 	void delete(CheckList checkList, String type);
+
 	long save(CheckList checkList, String type);
+
 	int getCheckListByRuleCode(String ruleCode, String type);
 }

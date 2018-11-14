@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.bmtmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -67,36 +66,36 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBranchDAO {
-   private static Logger logger = Logger.getLogger(BankBranchDAOImpl.class);
-	
+	private static Logger logger = Logger.getLogger(BankBranchDAOImpl.class);
 
-	public BankBranchDAOImpl(){
+	public BankBranchDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new BankBranch 
+	 * This method set the Work Flow id based on the module name and return the new BankBranch
+	 * 
 	 * @return BankBranch
 	 */
 
 	@Override
 	public BankBranch getBankBranch() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("BankBranch");
-		BankBranch bankBranch= new BankBranch();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("BankBranch");
+		BankBranch bankBranch = new BankBranch();
+		if (workFlowDetails != null) {
 			bankBranch.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return bankBranch;
 	}
 
-
 	/**
-	 * This method get the module from method getBankBranch() and set the new record flag as true and return BankBranch()   
+	 * This method get the module from method getBankBranch() and set the new record flag as true and return
+	 * BankBranch()
+	 * 
 	 * @return BankBranch
 	 */
-
 
 	@Override
 	public BankBranch getNewBankBranch() {
@@ -108,184 +107,196 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	}
 
 	/**
-	 * Fetch the Record  Bank Branch details by key field
+	 * Fetch the Record Bank Branch details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 	@Override
 	public BankBranch getBankBranchById(final long id, String type) {
 		logger.debug("Entering");
 		BankBranch bankBranch = getBankBranch();
-		
+
 		bankBranch.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName,PcCityName");
 		}
 		selectSql.append(" From BankBranches");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BankBranchID =:BankBranchID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
-		
-		try{
-			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			bankBranch = null;
 		}
 		logger.debug("Leaving");
 		return bankBranch;
 	}
-	
+
 	/**
-	 * Fetch the Record  Bank Branch details by key field
+	 * Fetch the Record Bank Branch details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 	@Override
-	public int getBankBranchByIFSC(final String iFSC,long id, String type) {
+	public int getBankBranchByIFSC(final String iFSC, long id, String type) {
 		logger.debug("Entering");
 		BankBranch bankBranch = getBankBranch();
-		
+
 		bankBranch.setIFSC(iFSC);
 		bankBranch.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From BankBranches");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where IFSC =:IFSC AND BankBranchID !=:BankBranchID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the BankBranches or BankBranches_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Bank Branch by key BankBranchID
+	 * This method Deletes the Record from the BankBranches or BankBranches_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Bank Branch by key BankBranchID
 	 * 
-	 * @param Bank Branch (bankBranch)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Bank
+	 *            Branch (bankBranch)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(BankBranch bankBranch,String type) {
+	public void delete(BankBranch bankBranch, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From BankBranches");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where BankBranchID =:BankBranchID");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into BankBranches or BankBranches_Temp.
-	 * it fetches the available Sequence form SeqBankBranches by using getNextidviewDAO().getNextId() method.  
+	 * This method insert new Records into BankBranches or BankBranches_Temp. it fetches the available Sequence form
+	 * SeqBankBranches by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Bank Branch 
+	 * save Bank Branch
 	 * 
-	 * @param Bank Branch (bankBranch)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Bank
+	 *            Branch (bankBranch)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public long save(BankBranch bankBranch,String type) {
+	public long save(BankBranch bankBranch, String type) {
 		logger.debug("Entering");
-		if (bankBranch.getId()==Long.MIN_VALUE){
+		if (bankBranch.getId() == Long.MIN_VALUE) {
 			bankBranch.setId(getNextId("SeqBankBranches"));
-			logger.debug("get NextID:"+bankBranch.getId());
+			logger.debug("get NextID:" + bankBranch.getId());
 		}
 		//since it has foreign key
 		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into BankBranches");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into BankBranches");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:BankBranchID, :BankCode, :BranchCode, :BranchDesc, :City, :MICR, :IFSC, :AddOfBranch, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Active");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:BankBranchID, :BankCode, :BranchCode, :BranchDesc, :City, :MICR, :IFSC, :AddOfBranch, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Active");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return bankBranch.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record BankBranches or BankBranches_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Bank Branch by key BankBranchID and Version
+	 * This method updates the Record BankBranches or BankBranches_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Bank Branch by key BankBranchID and Version
 	 * 
-	 * @param Bank Branch (bankBranch)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Bank
+	 *            Branch (bankBranch)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(BankBranch bankBranch,String type) {
+	public void update(BankBranch bankBranch, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		//since it has foreign key
 		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));
-		StringBuilder	updateSql =new StringBuilder("Update BankBranches");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");
-		updateSql.append(",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update BankBranches");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");
+		updateSql.append(
+				",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BankBranchID =:BankBranchID");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * fetch BankBranch details by it's IFSC code.
 	 * 
@@ -301,7 +312,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
 		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName");
 		}
@@ -319,7 +330,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			logger.warn("Exception: ", e);
 			bankBranch = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return bankBranch;
 	}
@@ -334,7 +345,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
 		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName,PcCityName");
 		}
@@ -352,11 +363,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			logger.warn("Exception: ", e);
 			bankBranch = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return bankBranch;
 	}
-	
+
 	@Override
 	public int getBankBrachByBank(String bankCode, String type) {
 		BankBranch bankBranch = getBankBranch();
@@ -382,7 +393,8 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setMICR(micr);
 
 		bankBranch.setActive(true);
-		StringBuilder selectSql = new StringBuilder("Select b.BankCode,bb.micr,bb.branchcode,bb.bankbranchId,b.accnolength,b.BankName, bb.BranchDesc From BMTBankDetail b ");
+		StringBuilder selectSql = new StringBuilder(
+				"Select b.BankCode,bb.micr,bb.branchcode,bb.bankbranchId,b.accnolength,b.BankName, bb.BranchDesc From BMTBankDetail b ");
 		selectSql.append("Inner Join BankBranches bb on b.Bankcode = bb.bankCode");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where MICR =:MICR AND bb.ACTIVE = :Active");
@@ -392,8 +404,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
-			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			bankBranch = null;
@@ -402,33 +413,34 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug("Leaving");
 		return bankBranch;
 	}
-	
+
 	/**
-	 * Fetch the Record  Bank Branch details by key field
+	 * Fetch the Record Bank Branch details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 	@Override
-	public int getBankBranchByMICR(final String mICR,long id, String type) {
+	public int getBankBranchByMICR(final String mICR, long id, String type) {
 		logger.debug("Entering");
 		BankBranch bankBranch = getBankBranch();
-		
+
 		bankBranch.setMICR(mICR);
 		bankBranch.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From BankBranches");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where MICR =:MICR AND BankBranchID !=:BankBranchID");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		
+
 		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
 }

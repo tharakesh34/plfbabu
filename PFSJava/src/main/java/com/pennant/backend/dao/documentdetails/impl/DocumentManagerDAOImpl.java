@@ -17,24 +17,21 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 	public DocumentManagerDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public long save(DocumentManager documentManager) {
-		logger.debug("Entering"+", documentManager="+documentManager);
-		
+		logger.debug("Entering" + ", documentManager=" + documentManager);
+
 		if (documentManager.getId() == Long.MIN_VALUE) {
-			documentManager.setId(getNextValue(
-					"SeqDocumentManager"));
+			documentManager.setId(getNextValue("SeqDocumentManager"));
 
 			StringBuilder insertSql = new StringBuilder(
 					"Insert Into DocumentManager (Id, Docimage) Values (:Id, :DocImage)");
 
 			logger.debug("insertSql: " + insertSql.toString());
 
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-					documentManager);
-			this.jdbcTemplate.update(insertSql.toString(),
-					beanParameters);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentManager);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		}
 		logger.debug("Leaving");
 		return documentManager.getId();
@@ -50,7 +47,8 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentManager);
-		RowMapper<DocumentManager> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentManager.class);
+		RowMapper<DocumentManager> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DocumentManager.class);
 
 		try {
 			documentManager = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -58,7 +56,7 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 			logger.warn("Exception: ", e);
 			documentManager = null;
 		}
-		
+
 		logger.debug("Leaving");
 		return documentManager;
 	}

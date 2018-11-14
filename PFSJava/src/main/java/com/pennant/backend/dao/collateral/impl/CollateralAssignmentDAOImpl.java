@@ -54,6 +54,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CollateralAssignment;

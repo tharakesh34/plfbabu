@@ -47,11 +47,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 
 public interface DivisionDetailService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	DivisionDetail getDivisionDetailById(String id);
+
 	DivisionDetail getApprovedDivisionDetailById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -48,7 +48,6 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
-import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -60,66 +59,65 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class DeviationConfigServiceImpl implements DeviationConfigService {
 	private static final Logger logger = Logger.getLogger(DeviationConfigServiceImpl.class);
 
-	
 	private LoggedInUser userDetails;
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
 
 	private DeviationHeaderDAO deviationHeaderDAO;
 
 	private DeviationDetailDAO deviationDetailDAO;
-	
+
 	private FinanceTypeDAO financeTypeDAO;
 
 	private FinTypeFeesDAO finTypeFeesDAO;
 	@Autowired
-	private ProductDAO productDAO; 
-	
+	private ProductDAO productDAO;
+
 	public DeviationConfigServiceImpl() {
 		super();
 	}
-	
+
 	@Override
 	public FinanceType getFinanceType(String fintype) {
-	    return getFinanceTypeDAO().getFinanceTypeByFinType(fintype);
-    }
-	
+		return getFinanceTypeDAO().getFinanceTypeByFinType(fintype);
+	}
+
 	@Override
 	public List<FinTypeFees> getFeeCodeList(String finType, int moduleId) {
-	 return  getFinTypeFeesDAO().getFinTypeFeeCodes(finType, moduleId);
-    }
-	
+		return getFinTypeFeesDAO().getFinTypeFeeCodes(finType, moduleId);
+	}
+
 	@Override
-	public boolean deviationAllowed(String product){
+	public boolean deviationAllowed(String product) {
 		Product prod = productDAO.getProductByProduct(product);
-		if (prod!=null) {
+		if (prod != null) {
 			return prod.isAllowDeviation();
 		}
 		return false;
 	}
-	
+
 	@Override
 	public List<DeviationHeader> getDeviationsByFinType(String finType) {
 		logger.debug(" Entering ");
-		
-		List<DeviationHeader> list = getDeviationHeaderDAO().getDeviationHeaderByFinType(finType,"");
+
+		List<DeviationHeader> list = getDeviationHeaderDAO().getDeviationHeaderByFinType(finType, "");
 
 		for (DeviationHeader deviationHeader : list) {
 			List<DeviationDetail> details = getDeviationDetailDAO()
-			        .getDeviationDetailsByDeviationId(deviationHeader.getDeviationID(), "");
+					.getDeviationDetailsByDeviationId(deviationHeader.getDeviationID(), "");
 			deviationHeader.setDeviationDetails(details);
 		}
 		return list;
 
 	}
-	
+
 	@Override
-	public List<DeviationHeader> getDeviationsbyModule(String finType,String module) {
+	public List<DeviationHeader> getDeviationsbyModule(String finType, String module) {
 		logger.debug(" Entering ");
-		
-		List<DeviationHeader> list = getDeviationHeaderDAO().getDeviationHeader(finType,module,"");
+
+		List<DeviationHeader> list = getDeviationHeaderDAO().getDeviationHeader(finType, module, "");
 		List<DeviationDetail> details = getDeviationDetailDAO().getDeviationDetailsByModuleFinType(finType, module, "");
-		
+
 		for (DeviationHeader deviationHeader : list) {
 
 			Iterator<DeviationDetail> it = details.iterator();
@@ -133,15 +131,15 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 		}
 		logger.debug(" Leaving ");
 		return list;
-		
+
 	}
 
 	@Override
 	public void processDelegationDeviation(List<DeviationHeader> newHeaderList, String finType, LoggedInUser user) {
 		logger.debug(" Entering ");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		userDetails=user;
+		userDetails = user;
 		//get previous details
 		List<DeviationHeader> prevHeaderList = getDeviationsByFinType(finType);
 
@@ -158,9 +156,9 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 						deviationDetail.setRecordType(PennantConstants.RCD_ADD);
 					}
 				}
-				
+
 				//No configuration specified
-				if (newHeader.getDeviationDetails()==null || newHeader.getDeviationDetails().isEmpty()) {
+				if (newHeader.getDeviationDetails() == null || newHeader.getDeviationDetails().isEmpty()) {
 					continue;
 				}
 				//add new records to database
@@ -171,16 +169,15 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 
 			// Update the Header 
 			if (!StringUtils.equals(prvHeader.getValueType(), newHeader.getValueType())) {
-				
-				DeviationHeader befImageHeader=new DeviationHeader();
+
+				DeviationHeader befImageHeader = new DeviationHeader();
 				BeanUtils.copyProperties(prvHeader, befImageHeader);
-				
+
 				prvHeader.setValueType(newHeader.getValueType());
 				prvHeader.setRecordType(PennantConstants.RCD_UPD);
 				prvHeader.setBefImage(befImageHeader);
-            }
-	
-			
+			}
+
 			// Process details
 			List<DeviationDetail> listToProcess = new ArrayList<DeviationDetail>();
 			List<DeviationDetail> newDetailList = newHeader.getDeviationDetails();
@@ -194,9 +191,9 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 					continue;
 				}
 
-			//update the previous deviation details if changed 
+				//update the previous deviation details if changed 
 				if (!StringUtils.equals(prvDetails.getDeviatedValue(), newdeviationDetail.getDeviatedValue())) {
-					DeviationDetail befImage=new DeviationDetail();
+					DeviationDetail befImage = new DeviationDetail();
 					BeanUtils.copyProperties(prvDetails, befImage);
 
 					prvDetails.setDeviatedValue(newdeviationDetail.getDeviatedValue());
@@ -204,12 +201,12 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 					prvDetails.setLastMntOn(newdeviationDetail.getLastMntOn());
 					prvDetails.setRecordType(PennantConstants.RCD_UPD);
 					prvDetails.setBefImage(befImage);
-					
+
 					listToProcess.add(prvDetails);
-                }
+				}
 			}
 
-			boolean emptyHeader=true;
+			boolean emptyHeader = true;
 			//TO delete Previous deviation details
 			for (DeviationDetail prvdeviationDetail : prvdetails) {
 				DeviationDetail recordtodelete = isFoundinList(newDetailList, prvdeviationDetail);
@@ -218,15 +215,16 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 					prvdeviationDetail.setRecordType(PennantConstants.RCD_DEL);
 					listToProcess.add(prvdeviationDetail);
 				}
-				if (emptyHeader && !StringUtils.trimToEmpty(prvdeviationDetail.getRecordType()).equals(PennantConstants.RCD_DEL)) {
-					emptyHeader=false;
+				if (emptyHeader && !StringUtils.trimToEmpty(prvdeviationDetail.getRecordType())
+						.equals(PennantConstants.RCD_DEL)) {
+					emptyHeader = false;
 				}
 			}
 
 			//update or delete the records
 			prvHeader.setDeviationDetails(listToProcess);
 			if (emptyHeader) {
-				prvHeader.setRecordType(PennantConstants.RCD_DEL);	
+				prvHeader.setRecordType(PennantConstants.RCD_DEL);
 			}
 			List<AuditDetail> updateaudit = processDeviationHeader(prvHeader);
 			auditDetails.addAll(updateaudit);
@@ -249,16 +247,16 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 				continue;
 			}
 		}
-		
-		AuditHeader auditHeader=getAuditHeader(finType,auditDetails);
+
+		AuditHeader auditHeader = getAuditHeader(finType, auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		userDetails=null;
+		userDetails = null;
 
 		logger.debug(" Leaving ");
 	}
 
-	public AuditHeader getAuditHeader(String finType, List<AuditDetail> auditDetails){
-		AuditHeader auditHeader=new AuditHeader();
+	public AuditHeader getAuditHeader(String finType, List<AuditDetail> auditDetails) {
+		AuditHeader auditHeader = new AuditHeader();
 		auditHeader.setAuditModule("DEVIATION");
 		auditHeader.setAuditReference(finType);
 		auditHeader.setAuditUsrId(userDetails.getUserId());
@@ -267,17 +265,16 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 		auditHeader.setAuditSystemIP(userDetails.getIpAddress());
 		auditHeader.setAuditSessionID(userDetails.getSessionId());
 		auditHeader.setUsrLanguage(userDetails.getLanguage());
-		int count=0;
+		int count = 0;
 		for (AuditDetail auditDetail : auditDetails) {
 			auditDetail.setAuditSeq(count++);
-        }
+		}
 		auditHeader.setAuditDetails(auditDetails);
-		
+
 		return auditHeader;
 	}
-	
-	
-	private DeviationHeader isFoundinList(List<DeviationHeader> list,DeviationHeader deviationHeader) {
+
+	private DeviationHeader isFoundinList(List<DeviationHeader> list, DeviationHeader deviationHeader) {
 
 		if (list == null || list.isEmpty()) {
 			return null;
@@ -292,7 +289,7 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 		return null;
 	}
 
-	private DeviationDetail isFoundinList(List<DeviationDetail> details,DeviationDetail dev) {
+	private DeviationDetail isFoundinList(List<DeviationDetail> details, DeviationDetail dev) {
 
 		if (details == null || details.isEmpty()) {
 			return null;
@@ -313,24 +310,24 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 		long deviationId = deviationHeader.getDeviationID();
 
 		if (PennantConstants.RCD_ADD.equals(rcdType)) {
-			
+
 			setStatus(deviationHeader);
 			deviationId = getDeviationHeaderDAO().save(deviationHeader, "");
 			auditDetails.add(getDeviationHeaderAudit(deviationHeader, PennantConstants.TRAN_ADD));
-			
+
 		} else if (PennantConstants.RCD_UPD.equals(rcdType)) {
-			
+
 			setStatus(deviationHeader);
 			getDeviationHeaderDAO().update(deviationHeader, "");
 			auditDetails.add(getDeviationHeaderAudit(deviationHeader, PennantConstants.TRAN_UPD));
-			
+
 		} else if (PennantConstants.RCD_DEL.equals(rcdType)) {
-			
+
 			setStatus(deviationHeader);
 			getDeviationHeaderDAO().delete(deviationHeader, "");
 			deviationHeader.setBefImage(deviationHeader);
 			auditDetails.add(getDeviationHeaderAudit(deviationHeader, PennantConstants.TRAN_DEL));
-			
+
 		}
 		// process Details
 		List<DeviationDetail> list = deviationHeader.getDeviationDetails();
@@ -353,20 +350,20 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 			deviationDetail.setDeviationID(deviationId);
 			setStatus(deviationDetail);
 			getDeviationDetailDAO().save(deviationDetail, "");
-			return getDeviationDetailAudit(deviationDetail,PennantConstants.TRAN_ADD);
+			return getDeviationDetailAudit(deviationDetail, PennantConstants.TRAN_ADD);
 		}
 
 		if (PennantConstants.RCD_UPD.equals(rcdType)) {
 			setStatus(deviationDetail);
 			getDeviationDetailDAO().update(deviationDetail, "");
-			return getDeviationDetailAudit(deviationDetail,PennantConstants.TRAN_UPD);
+			return getDeviationDetailAudit(deviationDetail, PennantConstants.TRAN_UPD);
 		}
 
 		if (PennantConstants.RCD_DEL.equals(rcdType)) {
 			setStatus(deviationDetail);
 			getDeviationDetailDAO().delete(deviationDetail, "");
 			deviationDetail.setBefImage(deviationDetail);
-			return getDeviationDetailAudit(deviationDetail,PennantConstants.TRAN_DEL);
+			return getDeviationDetailAudit(deviationDetail, PennantConstants.TRAN_DEL);
 		}
 
 		logger.debug(" Leaving ");
@@ -376,17 +373,15 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 
 	public AuditDetail getDeviationHeaderAudit(DeviationHeader deviationHeader, String transType) {
 		String[] fields = PennantJavaUtil.getFieldDetails(new DeviationHeader(),
-		        new DeviationHeader().getExcludeFields());
-		return new AuditDetail(transType, 1, fields[0], fields[1], deviationHeader.getBefImage(),
-		        deviationHeader);
+				new DeviationHeader().getExcludeFields());
+		return new AuditDetail(transType, 1, fields[0], fields[1], deviationHeader.getBefImage(), deviationHeader);
 
 	}
 
 	public AuditDetail getDeviationDetailAudit(DeviationDetail deviationDetail, String transType) {
 		String[] fields = PennantJavaUtil.getFieldDetails(new DeviationDetail(),
-		        new DeviationDetail().getExcludeFields());
-		return new AuditDetail(transType, 1, fields[0], fields[1], deviationDetail.getBefImage(),
-		        deviationDetail);
+				new DeviationDetail().getExcludeFields());
+		return new AuditDetail(transType, 1, fields[0], fields[1], deviationDetail.getBefImage(), deviationDetail);
 
 	}
 
@@ -405,7 +400,7 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 		deviationDetail.setLastMntBy(userDetails.getUserId());
 		deviationDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 	}
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -429,7 +424,7 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 	public void setDeviationDetailDAO(DeviationDetailDAO deviationDetailDAO) {
 		this.deviationDetailDAO = deviationDetailDAO;
 	}
-	
+
 	public FinanceTypeDAO getFinanceTypeDAO() {
 		return financeTypeDAO;
 	}
@@ -441,9 +436,9 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 	public FinTypeFeesDAO getFinTypeFeesDAO() {
 		return finTypeFeesDAO;
 	}
-	
+
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
-	
+
 }

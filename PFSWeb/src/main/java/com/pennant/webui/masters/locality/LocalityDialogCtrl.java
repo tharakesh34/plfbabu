@@ -74,20 +74,20 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/masters/Locality/localityDialog.zul file. <br>
  */
 public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(LocalityDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(LocalityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_LocalityDialog;
-	protected Uppercasebox				name;
-	protected ExtendedCombobox			city;
-	private Locality					locality;															// overhanded per param
+	protected Window window_LocalityDialog;
+	protected Uppercasebox name;
+	protected ExtendedCombobox city;
+	private Locality locality; // overhanded per param
 
-	private transient LocalityListCtrl	localityListCtrl;													// overhanded per param
-	private transient LocalityService	localityService;
+	private transient LocalityListCtrl localityListCtrl; // overhanded per param
+	private transient LocalityService localityService;
 
 	/**
 	 * default constructor.<br>

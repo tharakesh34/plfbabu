@@ -61,12 +61,12 @@ public class RBFieldDetail extends AbstractWorkflowEntity {
 	private String rbFldName;
 	private String rbFldDesc;
 	private String rbFldType;
-	private int	   rbFldLen;
+	private int rbFldLen;
 	private String rbFldTableName;
 	private String rbStFlds;
 	private String moduleCode;
 
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private LoggedInUser userDetails;
 
@@ -74,21 +74,20 @@ public class RBFieldDetail extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-
 	public RBFieldDetail(String entityCode) {
 		super();
-		this.entityCode= entityCode;
+		this.entityCode = entityCode;
 	}
 
 	public RBFieldDetail() {
 		super();
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("countryCodeName");
 		excludeFields.add("provinceCodeName");
-		
+
 		return excludeFields;
 	}
 
@@ -100,74 +99,61 @@ public class RBFieldDetail extends AbstractWorkflowEntity {
 		return rbFldName;
 	}
 
-	public void setId (String id) {
+	public void setId(String id) {
 		this.rbFldName = id;
 	}
- 
+
 	public String getRbModule() {
 		return rbModule;
 	}
-
 
 	public void setRbModule(String rbModule) {
 		this.rbModule = rbModule;
 	}
 
-
 	public String getRbFldName() {
 		return rbFldName;
 	}
-
 
 	public void setRbFldName(String rbFldName) {
 		this.rbFldName = rbFldName;
 	}
 
-
 	public String getRbFldDesc() {
 		return rbFldDesc;
 	}
-
 
 	public void setRbFldDesc(String rbFldDesc) {
 		this.rbFldDesc = rbFldDesc;
 	}
 
-
 	public String getRbFldType() {
 		return rbFldType;
 	}
-
 
 	public void setRbFldType(String rbFldType) {
 		this.rbFldType = rbFldType;
 	}
 
-
 	public int getRbFldLen() {
 		return rbFldLen;
 	}
-
 
 	public void setRbFldLen(int rbFldLen) {
 		this.rbFldLen = rbFldLen;
 	}
 
-
 	public String getRbFldTableName() {
 		return rbFldTableName;
 	}
-
 
 	public void setRbFldTableName(String rbFldTableName) {
 		this.rbFldTableName = rbFldTableName;
 	}
 
-
 	public String getRbStFlds() {
 		return rbStFlds;
 	}
-
 
 	public void setRbStFlds(String rbStFlds) {
 		this.rbStFlds = rbStFlds;
@@ -209,16 +195,13 @@ public class RBFieldDetail extends AbstractWorkflowEntity {
 		return moduleCode;
 	}
 
-
 	public void setModuleCode(String moduleCode) {
 		this.moduleCode = moduleCode;
 	}
 
-
 	public String getRbEvent() {
 		return rbEvent;
 	}
-
 
 	public void setRbEvent(String rbEvent) {
 		this.rbEvent = rbEvent;

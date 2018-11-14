@@ -17,21 +17,21 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	public NationalBondProcessImpl() {
 		super();
 	}
-	
+
 	@Override
-	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws InterfaceException {
+	public NationalBondDetail doBondPurchase(String refNumConsumer, BigDecimal amount) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
-		
+
 		BondPurchaseDetail purchaseDetail = new BondPurchaseDetail();
 		purchaseDetail.setPurchaseReceiptNo("123456789");
 		purchaseDetail.setUnitStart("12345");
 		purchaseDetail.setUnitEnd("65412");
-		
+
 		List<BondPurchaseDetail> detailList = new ArrayList<BondPurchaseDetail>();
 		detailList.add(purchaseDetail);
-		
+
 		detail.setPurchaseDetailList(detailList);
 		detail.setReturnCode("0000");
 		detail.setReturnText("SUCCESS");
@@ -53,7 +53,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 
 	@Override
-	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer) 
+	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -66,7 +66,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 
 	@Override
-	public NationalBondDetail cancelBondPurchase(String refNumProvider,	String refNumConsumer)
+	public NationalBondDetail cancelBondPurchase(String refNumProvider, String refNumConsumer)
 			throws InterfaceException {
 		logger.debug("Entering");
 

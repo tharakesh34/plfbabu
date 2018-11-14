@@ -50,13 +50,21 @@ import com.pennant.backend.model.finance.FinAgreementDetail;
 public interface FinAgreementDetailDAO {
 
 	FinAgreementDetail getFinAgreementDetail();
+
 	FinAgreementDetail getNewFinAgreementDetail();
+
 	FinAgreementDetail getFinAgreementDetailById(String finReference, long agrId, String type);
+
 	long save(FinAgreementDetail finAgreementDetail, String type);
+
 	void update(FinAgreementDetail finAgreementDetail, String type);
-	List<FinAgreementDetail> getFinAgreementDetailList(String finReference,String finType,
-			boolean isAgrsExist, String agrIds, String type);
+
+	List<FinAgreementDetail> getFinAgreementDetailList(String finReference, String finType, boolean isAgrsExist,
+			String agrIds, String type);
+
 	void delete(FinAgreementDetail agreementDetail, String type);
+
 	void deleteByFinRef(String finReference, String type);
+
 	List<FinAgreementDetail> getFinAgrByFinRef(String finReference, String type);
 }

@@ -61,43 +61,41 @@ import com.pennant.backend.model.bmtmasters.ScoringType;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RulesFactory/ScoringType/ScoringTypeSearch.zul file.
+ * This is the controller class for the /WEB-INF/pages/RulesFactory/ScoringType/ScoringTypeSearch.zul file.
  */
-public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
+public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType> {
 	private static final long serialVersionUID = 8749922359221017261L;
 	private static final Logger logger = Logger.getLogger(ScoringTypeSearchCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_ScoringTypeSearch; 		
+	protected Window window_ScoringTypeSearch;
 
-	protected Textbox 	scoType; 						
-	protected Listbox 	sortOperator_scoType; 			
-	protected Textbox 	scoDesc; 						
-	protected Listbox 	sortOperator_scoDesc; 			
-	protected Textbox 	recordStatus; 					
-	protected Listbox 	recordType;						
-	protected Listbox 	sortOperator_recordStatus; 		
-	protected Listbox 	sortOperator_recordType; 		
+	protected Textbox scoType;
+	protected Listbox sortOperator_scoType;
+	protected Textbox scoDesc;
+	protected Listbox sortOperator_scoDesc;
+	protected Textbox recordStatus;
+	protected Listbox recordType;
+	protected Listbox sortOperator_recordStatus;
+	protected Listbox sortOperator_recordType;
 
-	protected Label label_ScoringTypeSearch_RecordStatus;	 	
-	protected Label label_ScoringTypeSearch_RecordType; 		
-	protected Label label_ScoringTypeSearchResult; 				
+	protected Label label_ScoringTypeSearch_RecordStatus;
+	protected Label label_ScoringTypeSearch_RecordType;
+	protected Label label_ScoringTypeSearchResult;
 
 	// not auto wired variables
 	private transient ScoringTypeListCtrl scoringTypeCtrl; // overHanded per parameter
-	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("ScoringType");
+	private transient WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("ScoringType");
 
 	/**
 	 * Default Constructor
@@ -112,11 +110,10 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the Search window we check, if the
-	 * ZUL-file is called with a parameter for a selected ScoringType object in
-	 * a Map.
+	 * Before binding the data and calling the Search window we check, if the ZUL-file is called with a parameter for a
+	 * selected ScoringType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -127,9 +124,9 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 		// Set the page level components.
 		setPageComponents(window_ScoringTypeSearch);
 
-		if (workFlowDetails==null){
+		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
-		}else{
+		} else {
 			setWorkFlowEnabled(true);
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
@@ -143,19 +140,23 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 
 		// DropDown ListBox
 
-		this.sortOperator_scoType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_scoType
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scoType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_scoDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		this.sortOperator_scoDesc
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_scoDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=setRecordType(this.recordType);	
-		}else{
+			this.recordType = setRecordType(this.recordType);
+		} else {
 			this.recordStatus.setVisible(false);
 			this.recordType.setVisible(false);
 			this.sortOperator_recordStatus.setVisible(false);
@@ -169,7 +170,7 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 		if (arguments.containsKey("searchObject")) {
 			@SuppressWarnings("unchecked")
 			final JdbcSearchObject<ScoringType> searchObj = (JdbcSearchObject<ScoringType>) arguments
-									.get("searchObject");
+					.get("searchObject");
 
 			// get the filters from the searchObject
 			final List<Filter> ft = searchObj.getFilters();
@@ -189,7 +190,7 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 				} else if ("recordType".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_recordType, filter);
 					for (int i = 0; i < this.recordType.getItemCount(); i++) {
-						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())){
+						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())) {
 							this.recordType.setSelectedIndex(i);
 						}
 					}
@@ -242,16 +243,16 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 	 * 2. Checks which operator is selected. <br>
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
-	 */ 
+	 */
 	@SuppressWarnings("unchecked")
 	public void doSearch() {
 		logger.debug("Entering");
 		final JdbcSearchObject<ScoringType> so = new JdbcSearchObject<ScoringType>(ScoringType.class);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			so.addTabelName("BMTScoringType_View");
-			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
-		}else{
+			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		} else {
 			so.addTabelName("BMTScoringType_AView");
 		}
 
@@ -272,7 +273,7 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 				}
 			}
 		}
-		
+
 		if (StringUtils.isNotEmpty(this.scoDesc.getValue())) {
 
 			// get the search operator
@@ -290,15 +291,17 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 				}
 			}
 		}
-		
+
 		if (StringUtils.isNotEmpty(this.recordStatus.getValue())) {
 			// get the search operator
 			final Listitem listItemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (listItemRecordStatus != null) {
-				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data")).getSearchOperatorId();
+				final int searchOpId = ((SearchOperators) listItemRecordStatus.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -307,16 +310,17 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 			}
 		}
 
-		String selectedValue="";
-		if (this.recordType.getSelectedItem()!=null){
-			selectedValue =this.recordType.getSelectedItem().getValue().toString();
+		String selectedValue = "";
+		if (this.recordType.getSelectedItem() != null) {
+			selectedValue = this.recordType.getSelectedItem().getValue().toString();
 		}
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
 			final Listitem listItemRecordType = this.sortOperator_recordType.getSelectedItem();
-			if (listItemRecordType!= null) {
-				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data")).getSearchOperatorId();
+			if (listItemRecordType != null) {
+				final int searchOpId = ((SearchOperators) listItemRecordType.getAttribute("data"))
+						.getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
@@ -327,7 +331,7 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 				}
 			}
 		}
-		
+
 		// Default Sort on the table
 		so.addSort("ScoType", false);
 
@@ -339,8 +343,8 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 		// set the model to the listBox with the initial resultSet get by the DAO method.
 		((PagedListWrapper<ScoringType>) listBox.getModel()).init(so, listBox, paging);
 
-		this.label_ScoringTypeSearchResult.setValue(Labels.getLabel("label_ScoringTypeSearchResult.value") + " "
-				+ String.valueOf(paging.getTotalSize()));
+		this.label_ScoringTypeSearchResult.setValue(
+				Labels.getLabel("label_ScoringTypeSearchResult.value") + " " + String.valueOf(paging.getTotalSize()));
 		logger.debug("Leaving");
 	}
 

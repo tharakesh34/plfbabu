@@ -12,11 +12,12 @@ public interface CIBILService {
 	void deleteDetails();
 
 	long extractCustomers() throws Exception;
-	
-	void updateFileStatus(long headerid, String status,long totalRecords, long processedRecords, long successCount, long failedCount, String remarks);
-	
+
+	void updateFileStatus(long headerid, String status, long totalRecords, long processedRecords, long successCount,
+			long failedCount, String remarks);
+
 	void logFileInfoException(long id, String finReference, String reason);
-	
+
 	DataEngineStatus getLatestExecution();
 
 	EventProperties getEventProperties(String configName, String eventType);

@@ -83,17 +83,19 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	public OverdueChargeServiceImpl() {
 		super();
 	}
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	public OverdueChargeDAO getOverdueChargeDAO() {
 		return overdueChargeDAO;
 	}
+
 	public void setOverdueChargeDAO(OverdueChargeDAO overdueChargeDAO) {
 		this.overdueChargeDAO = overdueChargeDAO;
 	}
@@ -102,7 +104,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	public OverdueCharge getOverdueCharge() {
 		return getOverdueChargeDAO().getOverdueCharge();
 	}
-	
+
 	@Override
 	public OverdueCharge getNewOverdueCharge() {
 		return getOverdueChargeDAO().getNewOverdueCharge();
@@ -116,45 +118,45 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	public void setOverdueChargeDetailDAO(OverdueChargeDetailDAO overdueChargeDetailDAO) {
 		this.overdueChargeDetailDAO = overdueChargeDetailDAO;
 	}
+
 	public OverdueChargeDetailDAO getOverdueChargeDetailDAO() {
 		return overdueChargeDetailDAO;
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table FinODCHeader/FinODCHeader_Temp 
-	 * 			by using OverdueChargeDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using OverdueChargeDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinODCHeader/FinODCHeader_Temp
+	 * by using OverdueChargeDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using OverdueChargeDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		OverdueCharge overdueCharge = (OverdueCharge) auditHeader.getAuditDetail().getModelData();
 
 		if (overdueCharge.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (overdueCharge.isNew()) {
-			overdueCharge.setId(getOverdueChargeDAO().save(overdueCharge,tableType));
+			overdueCharge.setId(getOverdueChargeDAO().save(overdueCharge, tableType));
 			auditHeader.getAuditDetail().setModelData(overdueCharge);
 			auditHeader.setAuditReference(overdueCharge.getODCRuleCode());
-		}else{
-			getOverdueChargeDAO().update(overdueCharge,tableType);
+		} else {
+			getOverdueChargeDAO().update(overdueCharge, tableType);
 		}
 
 		if (overdueCharge.getChargeDetailEntries() != null && overdueCharge.getChargeDetailEntries().size() > 0) {
@@ -171,28 +173,30 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table FinODCHeader by using OverdueChargeDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * FinODCHeader by using OverdueChargeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		OverdueCharge overdueCharge = (OverdueCharge) auditHeader.getAuditDetail().getModelData();
-		getOverdueChargeDAO().delete(overdueCharge,"");
+		getOverdueChargeDAO().delete(overdueCharge, "");
 
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(overdueCharge, "", auditHeader.getAuditTranType())));
+		auditHeader
+				.setAuditDetails(getListAuditDetails(listDeletion(overdueCharge, "", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -200,9 +204,11 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 
 	/**
 	 * getOverdueChargeById fetch the details by using OverdueChargeDAO's getOverdueChargeById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return OverdueCharge
 	 */
 
@@ -212,10 +218,13 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		overdueCharge.setChargeDetailEntries(getOverdueChargeDetailDAO().getListOverdueChargeDetailById(id, "_View"));
 		return overdueCharge;
 	}
+
 	/**
-	 * getApprovedOverdueChargeById fetch the details by using OverdueChargeDAO's getOverdueChargeById method .
-	 * with parameter id and type as blank. it fetches the approved records from the FinODCHeader.
-	 * @param id (String)
+	 * getApprovedOverdueChargeById fetch the details by using OverdueChargeDAO's getOverdueChargeById method . with
+	 * parameter id and type as blank. it fetches the approved records from the FinODCHeader.
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return OverdueCharge
 	 */
 
@@ -226,25 +235,26 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getOverdueChargeDAO().delete with parameters overdueCharge,""
-	 * 		b)  NEW		Add new record in to main table by using getOverdueChargeDAO().save with parameters overdueCharge,""
-	 * 		c)  EDIT	Update record in the main table by using getOverdueChargeDAO().update with parameters overdueCharge,""
-	 * 3)	Delete the record from the workFlow table by using getOverdueChargeDAO().delete with parameters overdueCharge,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getOverdueChargeDAO().delete with
+	 * parameters overdueCharge,"" b) NEW Add new record in to main table by using getOverdueChargeDAO().save with
+	 * parameters overdueCharge,"" c) EDIT Update record in the main table by using getOverdueChargeDAO().update with
+	 * parameters overdueCharge,"" 3) Delete the record from the workFlow table by using getOverdueChargeDAO().delete
+	 * with parameters overdueCharge,"_Temp" 4) Audit the record in to AuditHeader and AdtFinODCHeader by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinODCHeader by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType="";
+		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -253,8 +263,8 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		BeanUtils.copyProperties((OverdueCharge) auditHeader.getAuditDetail().getModelData(), overdueCharge);
 
 		if (overdueCharge.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
-			getOverdueChargeDAO().delete(overdueCharge,"");
+			tranType = PennantConstants.TRAN_DEL;
+			getOverdueChargeDAO().delete(overdueCharge, "");
 		} else {
 			overdueCharge.setRoleCode("");
 			overdueCharge.setNextRoleCode("");
@@ -262,23 +272,24 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 			overdueCharge.setNextTaskId("");
 			overdueCharge.setWorkflowId(0);
 
-			if (overdueCharge.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){	
-				tranType=PennantConstants.TRAN_ADD;
+			if (overdueCharge.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				overdueCharge.setRecordType("");
-				getOverdueChargeDAO().save(overdueCharge,"");
+				getOverdueChargeDAO().save(overdueCharge, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				overdueCharge.setRecordType("");
-				getOverdueChargeDAO().update(overdueCharge,"");
-				
+				getOverdueChargeDAO().update(overdueCharge, "");
+
 				//Transaction Entry updation if Exist
-				List<TransactionEntry> entries = getTransactionEntryDAO().getTransactionEntryList(overdueCharge.getODCRuleCode());
-				if(entries != null && entries.size() > 0){
+				List<TransactionEntry> entries = getTransactionEntryDAO()
+						.getTransactionEntryList(overdueCharge.getODCRuleCode());
+				if (entries != null && entries.size() > 0) {
 					for (int i = 0; i < entries.size(); i++) {
-						if("PLA".equals(entries.get(i).getAccountType())){
+						if ("PLA".equals(entries.get(i).getAccountType())) {
 							entries.get(i).setAccountType(overdueCharge.getODCPLAccount());
 							entries.get(i).setAccountSubHeadRule(overdueCharge.getoDCPLSubHead());
-						}else if("CA".equals(entries.get(i).getAccountType())){
+						} else if ("CA".equals(entries.get(i).getAccountType())) {
 							entries.get(i).setAccountType(overdueCharge.getODCCharityAccount());
 							entries.get(i).setAccountSubHeadRule(overdueCharge.getoDCCharitySubHead());
 						}
@@ -296,7 +307,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 			auditHeader.setAuditDetails(auditDetails);
 		}
 
-		getOverdueChargeDAO().delete(overdueCharge,"_Temp");
+		getOverdueChargeDAO().delete(overdueCharge, "_Temp");
 		auditHeader.setAuditDetails(listDeletion(overdueCharge, "_Temp", auditHeader.getAuditTranType()));
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -306,24 +317,25 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		auditHeader.getAuditDetail().setModelData(overdueCharge);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getOverdueChargeDAO().delete with parameters overdueCharge,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getOverdueChargeDAO().delete with parameters overdueCharge,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtFinODCHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -332,10 +344,12 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		OverdueCharge overdueCharge = (OverdueCharge) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getOverdueChargeDAO().delete(overdueCharge,"_Temp");
+		getOverdueChargeDAO().delete(overdueCharge, "_Temp");
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, overdueCharge.getBefImage(), overdueCharge));
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(overdueCharge, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, overdueCharge.getBefImage(), overdueCharge));
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(overdueCharge, "_Temp", auditHeader.getAuditTranType())));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -344,17 +358,16 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getOverdueChargeDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getOverdueChargeDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -367,88 +380,100 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		String usrLanguage = overdueCharge.getUserDetails().getLanguage();
 
 		// FeeTier Validation
-		if (overdueCharge.getChargeDetailEntries() != null && overdueCharge.getChargeDetailEntries() .size() > 0) {
+		if (overdueCharge.getChargeDetailEntries() != null && overdueCharge.getChargeDetailEntries().size() > 0) {
 			List<AuditDetail> details = overdueCharge.getAuditDetailMap().get("OverdueChargeDetail");
-			details = getOverdueChargeDetailValidation().overDueChargeDetailsListValidation(details, method, usrLanguage);
+			details = getOverdueChargeDetailValidation().overDueChargeDetailsListValidation(details, method,
+					usrLanguage);
 			auditDetails.addAll(details);
 		}
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
 
-
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		OverdueCharge overdueCharge= (OverdueCharge) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		OverdueCharge overdueCharge = (OverdueCharge) auditDetail.getModelData();
 
-		OverdueCharge tempOverdueCharge= null;
-		if (overdueCharge.isWorkflow()){
+		OverdueCharge tempOverdueCharge = null;
+		if (overdueCharge.isWorkflow()) {
 			tempOverdueCharge = getOverdueChargeDAO().getOverdueChargeById(overdueCharge.getId(), "_Temp");
 		}
-		OverdueCharge befOverdueCharge= getOverdueChargeDAO().getOverdueChargeById(overdueCharge.getId(), "");
+		OverdueCharge befOverdueCharge = getOverdueChargeDAO().getOverdueChargeById(overdueCharge.getId(), "");
 
-		OverdueCharge oldOverdueCharge= overdueCharge.getBefImage();
+		OverdueCharge oldOverdueCharge = overdueCharge.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = overdueCharge.getId();
+		errParm[0] = PennantJavaUtil.getLabel("label_ODCRuleCode") + ":" + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=overdueCharge.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_ODCRuleCode")+":"+valueParm[0];
+		if (overdueCharge.isNew()) { // for New record or new record into work flow
 
-		if (overdueCharge.isNew()){ // for New record or new record into work flow
-
-			if (!overdueCharge.isWorkflow()){// With out Work flow only new records  
-				if (befOverdueCharge !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (overdueCharge.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befOverdueCharge !=null || tempOverdueCharge!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+			if (!overdueCharge.isWorkflow()) {// With out Work flow only new records  
+				if (befOverdueCharge != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (overdueCharge.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befOverdueCharge != null || tempOverdueCharge != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befOverdueCharge ==null || tempOverdueCharge!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befOverdueCharge == null || tempOverdueCharge != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!overdueCharge.isWorkflow()){	// With out Work flow for update and delete
+			if (!overdueCharge.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befOverdueCharge ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldOverdueCharge!=null && !oldOverdueCharge.getLastMntOn().equals(befOverdueCharge.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+				if (befOverdueCharge == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldOverdueCharge != null
+							&& !oldOverdueCharge.getLastMntOn().equals(befOverdueCharge.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempOverdueCharge==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempOverdueCharge == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempOverdueCharge!=null && oldOverdueCharge!=null && !oldOverdueCharge.getLastMntOn().equals(tempOverdueCharge.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempOverdueCharge != null && oldOverdueCharge != null
+						&& !oldOverdueCharge.getLastMntOn().equals(tempOverdueCharge.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !overdueCharge.isWorkflow()){
-			overdueCharge.setBefImage(befOverdueCharge);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !overdueCharge.isWorkflow()) {
+			overdueCharge.setBefImage(befOverdueCharge);
 		}
 
 		return auditDetail;
@@ -479,7 +504,6 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 				overdueChargeDetail.setTaskId("");
 				overdueChargeDetail.setNextTaskId("");
 			}
-
 
 			overdueChargeDetail.setWorkflowId(0);
 
@@ -542,6 +566,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		return auditDetails;
 
 	}
+
 	/**
 	 * Method deletion of feeTier list with existing fee type
 	 * 
@@ -556,7 +581,8 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 			for (int i = 0; i < overdueCharge.getChargeDetailEntries().size(); i++) {
 				chargeDetails = overdueCharge.getChargeDetailEntries().get(i);
 				if (StringUtils.isNotEmpty(chargeDetails.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], chargeDetails.getBefImage(), chargeDetails));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							chargeDetails.getBefImage(), chargeDetails));
 				}
 			}
 			getOverdueChargeDetailDAO().delete(chargeDetails, tableType);
@@ -581,13 +607,15 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 
 				String transType = "";
 				String rcdType = "";
-				OverdueChargeDetail overdueChargeDetail = (OverdueChargeDetail) ((AuditDetail) list.get(i)).getModelData();
+				OverdueChargeDetail overdueChargeDetail = (OverdueChargeDetail) ((AuditDetail) list.get(i))
+						.getModelData();
 
 				rcdType = overdueChargeDetail.getRecordType();
 
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					transType = PennantConstants.TRAN_ADD;
-				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) || rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					transType = PennantConstants.TRAN_DEL;
 				} else {
 					transType = PennantConstants.TRAN_UPD;
@@ -595,13 +623,15 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 
 				if (StringUtils.isNotEmpty(transType)) {
 					// check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), overdueChargeDetail.getBefImage(), overdueChargeDetail));
+					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
+							overdueChargeDetail.getBefImage(), overdueChargeDetail));
 				}
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetailsList;
 	}
+
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 
@@ -646,7 +676,8 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setChargeDetailAuditData(OverdueCharge overdueCharge, String auditTranType, String method) {
+	private List<AuditDetail> setChargeDetailAuditData(OverdueCharge overdueCharge, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -671,7 +702,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 				isRcdType = true;
 			}
 
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				overdueChargeDetail.setNewRecord(true);
 			}
 
@@ -691,12 +722,14 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 			overdueChargeDetail.setLastMntOn(overdueCharge.getLastMntOn());
 
 			if (StringUtils.isNotBlank(overdueChargeDetail.getRecordType())) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], overdueChargeDetail.getBefImage(), overdueChargeDetail));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						overdueChargeDetail.getBefImage(), overdueChargeDetail));
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
+
 	public OverdueChargeDetailValidation getOverdueChargeDetailValidation() {
 		if (overdueChargeDetailValidation == null) {
 			this.overdueChargeDetailValidation = new OverdueChargeDetailValidation(overdueChargeDetailDAO);
@@ -705,11 +738,11 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 	}
 
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
-	    this.transactionEntryDAO = transactionEntryDAO;
-    }
+		this.transactionEntryDAO = transactionEntryDAO;
+	}
 
 	public TransactionEntryDAO getTransactionEntryDAO() {
-	    return transactionEntryDAO;
-    }
+		return transactionEntryDAO;
+	}
 
 }

@@ -59,10 +59,10 @@ public class SOASummaryReport {
 	private BigDecimal receipt;
 	private BigDecimal overDue;
 	private int ccyEditField;
-	
+
 	private BigDecimal ccyMinorCcyUnits;
 	private Date appDate;
-	
+
 	public SOASummaryReport() {
 		super();
 	}
@@ -130,6 +130,7 @@ public class SOASummaryReport {
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
 	}
+
 	public Date getAppDate(Date appDate) {
 		return appDate;
 	}

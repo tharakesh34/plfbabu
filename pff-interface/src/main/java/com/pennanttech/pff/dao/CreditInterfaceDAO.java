@@ -14,26 +14,26 @@ import com.pennanttech.model.interfacemapping.InterfaceMappingDetails;
 
 public interface CreditInterfaceDAO {
 
-	
 	List<ExtendedFieldDetail> getExtendedFieldDetailsByFieldName(Set<String> fieldNames);
 
 	List<CustomerDetails> getCoApplicants(List<Long> coApplicantIDs, String string);
 
-    ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String string, String string2);
+	ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String string, String string2);
 
 	List<Customer> getCustomerByID(List<Long> customerIds, String type);
 
 	Map<String, Object> getExtendedField(String custCIF, String string);
-	
+
 	public void save(ServiceTaskDetail serviceTaskDetail, String type);
 
 	public List<ServiceTaskDetail> getServiceTaskDetails(String module, String reference, String serviceTaskName);
-	
+
 	City getCityDetails(final String pCCountry, String pCProvince, String pCCity, String type);
 
 	void saveExtendedDetails(Map<String, Object> appplicationdata, String type, String tableName);
 
-	void updateExtendedDetails(String custCIF, int seqNo, Map<String, Object> appplicationdata, String type, String tableName);
+	void updateExtendedDetails(String custCIF, int seqNo, Map<String, Object> appplicationdata, String type,
+			String tableName);
 
-	List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference,String moduleValue);
+	List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference, String moduleValue);
 }

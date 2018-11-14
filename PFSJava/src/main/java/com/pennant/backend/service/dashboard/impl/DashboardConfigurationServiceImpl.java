@@ -79,25 +79,21 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Service implementation for methods that depends on <b>DashboardDetail</b>.<br>
  * 
  */
-public class DashboardConfigurationServiceImpl extends GenericService<DashboardConfiguration> implements
-		DashboardConfigurationService {
-	Logger logger= Logger.getLogger(DashboardConfigurationServiceImpl.class);
+public class DashboardConfigurationServiceImpl extends GenericService<DashboardConfiguration>
+		implements DashboardConfigurationService {
+	Logger logger = Logger.getLogger(DashboardConfigurationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DashboardConfigurationDAO dashboardConfigurationDAO;
 	private DetailStatisticsDAO detailStatisticsDAO;
 
-
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * DashboardDetails/DashboardDetails_Temp by using DashboardDetailDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using DashboardDetailDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtDashboardDetails by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * DashboardDetails/DashboardDetails_Temp by using DashboardDetailDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using DashboardDetailDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -114,16 +110,18 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			return auditHeader;
 		}
 		String tableType = "";
-		DashboardConfiguration dashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail().getModelData();
+		DashboardConfiguration dashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail()
+				.getModelData();
 
 		if (dashboardConfiguration.isWorkflow()) {
 			tableType = "_Temp";
-		}if (dashboardConfiguration.isNew()) {
-			dashboardConfiguration.setId(getDashboardConfigurationDAO().save(dashboardConfiguration,tableType));
+		}
+		if (dashboardConfiguration.isNew()) {
+			dashboardConfiguration.setId(getDashboardConfigurationDAO().save(dashboardConfiguration, tableType));
 			auditHeader.getAuditDetail().setModelData(dashboardConfiguration);
 			auditHeader.setAuditReference(dashboardConfiguration.getId());
 		} else {
-			getDashboardConfigurationDAO().update(dashboardConfiguration,tableType);
+			getDashboardConfigurationDAO().update(dashboardConfiguration, tableType);
 		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Entering");
@@ -132,12 +130,10 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table DashboardDetails by using DashboardDetailDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * DashboardDetails by using DashboardDetailDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -154,7 +150,8 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			return auditHeader;
 		}
 
-		DashboardConfiguration dashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail().getModelData();
+		DashboardConfiguration dashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail()
+				.getModelData();
 		getDashboardConfigurationDAO().delete(dashboardConfiguration, "");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -162,8 +159,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * getDashboardDetailById fetch the details by using DashboardDetailDAO's
-	 * getDashboardDetailById method.
+	 * getDashboardDetailById fetch the details by using DashboardDetailDAO's getDashboardDetailById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -178,10 +174,8 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * getApprovedDashboardDetailById fetch the details by using
-	 * DashboardDetailDAO's getDashboardDetailById method . with parameter id
-	 * and type as blank. it fetches the approved records from the
-	 * DashboardDetails.
+	 * getApprovedDashboardDetailById fetch the details by using DashboardDetailDAO's getDashboardDetailById method .
+	 * with parameter id and type as blank. it fetches the approved records from the DashboardDetails.
 	 * 
 	 * @param id
 	 *            (String)
@@ -193,21 +187,16 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDashboardConfigurationDAO().delete with parameters dashboardDetail,""
-	 * b) NEW Add new record in to main table by using
-	 * getDashboardConfigurationDAO().save with parameters dashboardDetail,"" c) EDIT
-	 * Update record in the main table by using getDashboardConfigurationDAO().update
-	 * with parameters dashboardDetail,"" 3) Delete the record from the workFlow
-	 * table by using getDashboardConfigurationDAO().delete with parameters
-	 * dashboardDetail,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtDashboardDetails
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDashboardConfigurationDAO().delete
+	 * with parameters dashboardDetail,"" b) NEW Add new record in to main table by using
+	 * getDashboardConfigurationDAO().save with parameters dashboardDetail,"" c) EDIT Update record in the main table by
+	 * using getDashboardConfigurationDAO().update with parameters dashboardDetail,"" 3) Delete the record from the
+	 * workFlow table by using getDashboardConfigurationDAO().delete with parameters dashboardDetail,"_Temp" 4) Audit
+	 * the record in to AuditHeader and AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 5) Audit the record in to AuditHeader and AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader) based
+	 * on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -227,8 +216,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			return auditHeader;
 		}
 
-		if (dashboardConfiguration.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (dashboardConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getDashboardConfigurationDAO().delete(dashboardConfiguration, "");
@@ -240,8 +228,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			dashboardConfiguration.setNextTaskId("");
 			dashboardConfiguration.setWorkflowId(0);
 
-			if (dashboardConfiguration.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (dashboardConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				dashboardConfiguration.setRecordType("");
 				getDashboardConfigurationDAO().save(dashboardConfiguration, "");
@@ -265,13 +252,10 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getDashboardConfigurationDAO().delete with
-	 * parameters dashboardDetail,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getDashboardConfigurationDAO().delete with parameters dashboardDetail,"_Temp" 3) Audit
+	 * the record in to AuditHeader and AdtDashboardDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -287,7 +271,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 			return auditHeader;
 		}
 		DashboardConfiguration dashboardConfiguration = (DashboardConfiguration) auditHeader.getAuditDetail()
-		.getModelData();
+				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getDashboardConfigurationDAO().delete(dashboardConfiguration, "_Temp");
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -296,34 +280,30 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getDashboardConfigurationDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getDashboardConfigurationDAO().getErrorDetail with Error
+	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -331,8 +311,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -341,38 +320,41 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 
 		if (dashboardConfiguration.isWorkflow()) {
 			tempDashboardConfiguration = getDashboardConfigurationDAO()
-			.getDashboardDetailByID(dashboardConfiguration.getId(),"_Temp");
+					.getDashboardDetailByID(dashboardConfiguration.getId(), "_Temp");
 		}
 
 		DashboardConfiguration befDashboardConfiguration = getDashboardConfigurationDAO()
-		.getDashboardDetailByID(dashboardConfiguration.getId(), "");
+				.getDashboardDetailByID(dashboardConfiguration.getId(), "");
 		DashboardConfiguration oldDashboardConfiguration = dashboardConfiguration.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
 		valueParm[0] = dashboardConfiguration.getId();
-		errParm[0] = PennantJavaUtil.getLabel("label_DashboardConfigurationDialog_DashboardCode.value") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_DashboardConfigurationDialog_DashboardCode.value") + ":"
+				+ valueParm[0];
 
 		if (dashboardConfiguration.isNew()) { // for New record or new record into work flow
 
 			if (!dashboardConfiguration.isWorkflow()) {// With out Work flow only new records
 				if (befDashboardConfiguration != null) { // Record Already Exists in the table
 					// then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001",errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (dashboardConfiguration.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (dashboardConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befDashboardConfiguration != null || tempDashboardConfiguration != null) { //if records 
 						// already exists
 						// in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befDashboardConfiguration == null || tempDashboardConfiguration != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -384,14 +366,18 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 
 				if (befDashboardConfiguration == null) { // if records not exists in the main
 					// table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002",errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
 					if (oldDashboardConfiguration != null && !oldDashboardConfiguration.getLastMntOn()
 							.equals(befDashboardConfiguration.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003",errParm, valueParm));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004",errParm, valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
@@ -399,12 +385,15 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 
 				if (tempDashboardConfiguration == null) { // if records not exists in the Work
 					// flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				if (tempDashboardConfiguration != null && oldDashboardConfiguration != null && !oldDashboardConfiguration.getLastMntOn()
-						.equals(tempDashboardConfiguration.getLastMntOn())) {
+				if (tempDashboardConfiguration != null && oldDashboardConfiguration != null
+						&& !oldDashboardConfiguration.getLastMntOn()
+								.equals(tempDashboardConfiguration.getLastMntOn())) {
 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
@@ -415,7 +404,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 		}
 		logger.debug("Leaving");
 		return auditDetail;
-	}	
+	}
 
 	/**
 	 * Save the positions of the DashBoards in to the database
@@ -429,23 +418,23 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 		}
 	}
 
-
 	/**
 	 * Get the dashboard Details
 	 */
 	public Map<String, DashboardPosition> getDashboardPositionsByUser(long userId) {
-		List<DashboardPosition> dashboardList= this.dashboardConfigurationDAO.getDashboardPositionsByUser(userId);
-		Map<String, DashboardPosition> dashBoardMap=new HashMap<String, DashboardPosition>();
-		for(DashboardPosition dashBoardPostion:dashboardList){
+		List<DashboardPosition> dashboardList = this.dashboardConfigurationDAO.getDashboardPositionsByUser(userId);
+		Map<String, DashboardPosition> dashBoardMap = new HashMap<String, DashboardPosition>();
+		for (DashboardPosition dashBoardPostion : dashboardList) {
 			dashBoardMap.put(dashBoardPostion.getDashboardRef(), dashBoardPostion);
 		}
 
 		return dashBoardMap;
 	}
 
-	public Map<String,DashboardConfiguration> getDashboardConfigurations(long userId) {
-		List<DashboardConfiguration> dashConfigList=this.getDashboardConfigurationDAO().getDashboardConfigurations(userId); 
-		Map<String,DashboardConfiguration> dashBrdConfigMap=new LinkedHashMap<String, DashboardConfiguration>();
+	public Map<String, DashboardConfiguration> getDashboardConfigurations(long userId) {
+		List<DashboardConfiguration> dashConfigList = this.getDashboardConfigurationDAO()
+				.getDashboardConfigurations(userId);
+		Map<String, DashboardConfiguration> dashBrdConfigMap = new LinkedHashMap<String, DashboardConfiguration>();
 		for (int i = 0; i < dashConfigList.size(); i++) {
 			dashBrdConfigMap.put(dashConfigList.get(i).getDashboardCode(), dashConfigList.get(i));
 
@@ -469,23 +458,27 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	@Override
 	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration aDashboardConfiguration, String condition,
 			LoggedInUser user, List<SecurityRole> roles) throws DataAccessException {
-		/*Check this query contains any dynamic where condition parameters 
-		 if contains replace where condition by calling DynamicWhereConditionUtil.getModifiedQuery()*/
+		/*
+		 * Check this query contains any dynamic where condition parameters if contains replace where condition by
+		 * calling DynamicWhereConditionUtil.getModifiedQuery()
+		 */
 		if (aDashboardConfiguration.isDrillDownChart()) {
 			return getDrillDownLabelAndValues(aDashboardConfiguration, condition, user, roles);
 		}
-		aDashboardConfiguration.setQuery(DynamicWhereConditionUtil.getModifiedQuery(aDashboardConfiguration, user,
-				roles));
+		aDashboardConfiguration
+				.setQuery(DynamicWhereConditionUtil.getModifiedQuery(aDashboardConfiguration, user, roles));
 
-		if(aDashboardConfiguration.isAdtDataSource()){
+		if (aDashboardConfiguration.isAdtDataSource()) {
 			return getDetailStatisticsDAO().getLabelAndValues(aDashboardConfiguration);
-		}else{
+		} else {
 			return getDashboardConfigurationDAO().getLabelAndValues(aDashboardConfiguration);
 
 		}
 	}
+
 	/**
-	 * This method returns the List<ChartSetElement> by processing all child tables data and set those  as child records
+	 * This method returns the List<ChartSetElement> by processing all child tables data and set those as child records
+	 * 
 	 * @param aDashboardConfiguration
 	 * @param condition
 	 * @return
@@ -493,37 +486,38 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	 */
 	public List<ChartSetElement> getDrillDownLabelAndValues(DashboardConfiguration aDashboardConfiguration,
 			String condition, LoggedInUser user, List<SecurityRole> roles) throws DataAccessException {
-		/*Check this query contains any dynamic where condition parameters 
-		 if contains replace where condition by calling DynamicWhereConditionUtil.getModifiedQuery()*/
+		/*
+		 * Check this query contains any dynamic where condition parameters if contains replace where condition by
+		 * calling DynamicWhereConditionUtil.getModifiedQuery()
+		 */
 		String[] querysList = null;
 
-		DashboardConfiguration dashBoardConfiguration=new DashboardConfiguration();
-		if(StringUtils.contains(aDashboardConfiguration.getQuery(), "||")){
-			querysList=StringUtils.split(aDashboardConfiguration.getQuery(),"||");
+		DashboardConfiguration dashBoardConfiguration = new DashboardConfiguration();
+		if (StringUtils.contains(aDashboardConfiguration.getQuery(), "||")) {
+			querysList = StringUtils.split(aDashboardConfiguration.getQuery(), "||");
 		}
-		List<List<ChartSetElement>> rootSetElements=new ArrayList<List<ChartSetElement>>();
-		
-		if(querysList!=null){
-			for(int i=0;i<querysList.length;i++){
+		List<List<ChartSetElement>> rootSetElements = new ArrayList<List<ChartSetElement>>();
+
+		if (querysList != null) {
+			for (int i = 0; i < querysList.length; i++) {
 				logger.debug(querysList[i]);
 				dashBoardConfiguration.setQuery(querysList[i]);
-				dashBoardConfiguration.setQuery(DynamicWhereConditionUtil.getModifiedQuery(dashBoardConfiguration, user,
-						roles));
+				dashBoardConfiguration
+						.setQuery(DynamicWhereConditionUtil.getModifiedQuery(dashBoardConfiguration, user, roles));
 
-				if(aDashboardConfiguration.isAdtDataSource()){
+				if (aDashboardConfiguration.isAdtDataSource()) {
 					rootSetElements.add(getDetailStatisticsDAO().getLabelAndValues(dashBoardConfiguration));
-				}else{
+				} else {
 					rootSetElements.add(getDashboardConfigurationDAO().getLabelAndValues(dashBoardConfiguration));
 				}
 			}
 		}
-		
-		
-		try{
+
+		try {
 			//Setting Parent child relation
-			for(int i=0;i<rootSetElements.size();i++){
-				if(i!=rootSetElements.size()-1){
-					setChildernElemetsToParentElements(rootSetElements.get(i),rootSetElements.get(i+1));
+			for (int i = 0; i < rootSetElements.size(); i++) {
+				if (i != rootSetElements.size() - 1) {
+					setChildernElemetsToParentElements(rootSetElements.get(i), rootSetElements.get(i + 1));
 				}
 			}
 		} catch (Exception e) {
@@ -533,71 +527,70 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	}
 
 	/**
-	 * This method do the following
-	 * a) Prepares a map that keys are parent list References and values are List<ChartSetElement>
-	 * b) From prepared map it get the list of ChartSetElement for each parent reference and set it to ChartSetElement  objects
-	 *    of parent list
-	 * c)Simply this method prepares a map<String,List<ChartSetElement>>  from childList and sets InnerChrtSetElementsList()to
-	 *    all elements of parent List by using key  
+	 * This method do the following a) Prepares a map that keys are parent list References and values are
+	 * List<ChartSetElement> b) From prepared map it get the list of ChartSetElement for each parent reference and set
+	 * it to ChartSetElement objects of parent list c)Simply this method prepares a map<String,List<ChartSetElement>>
+	 * from childList and sets InnerChrtSetElementsList()to all elements of parent List by using key
+	 * 
 	 * @param rootElementsList
 	 * @param childElementsList
 	 * @return
 	 */
-	private List<ChartSetElement> setChildernElemetsToParentElements(List<ChartSetElement> rootElementsList
-			,List<ChartSetElement> childElementsList){
+	private List<ChartSetElement> setChildernElemetsToParentElements(List<ChartSetElement> rootElementsList,
+			List<ChartSetElement> childElementsList) {
 
 		logger.debug("Entering");
 		Comparator<Object> comp = new BeanComparator<Object>("reference");
-		Collections.sort(childElementsList,comp);
-		List<ChartSetElement> aSetElementsList=new ArrayList<ChartSetElement>();
+		Collections.sort(childElementsList, comp);
+		List<ChartSetElement> aSetElementsList = new ArrayList<ChartSetElement>();
 
-		Map<String,List<ChartSetElement>> refBySetElementsMap=new HashMap<String,List<ChartSetElement>>();
-		int size=childElementsList.size();
+		Map<String, List<ChartSetElement>> refBySetElementsMap = new HashMap<String, List<ChartSetElement>>();
+		int size = childElementsList.size();
 		for (int i = 0; i < size; i++) {
 			//if i is not last element
-			if(i!=size-1){
-				if(childElementsList.get(i).getReference()
-						.equals(childElementsList.get(i+1).getReference())){
+			if (i != size - 1) {
+				if (childElementsList.get(i).getReference().equals(childElementsList.get(i + 1).getReference())) {
 
-					if(refBySetElementsMap.containsKey(childElementsList.get(i).getReference())){
+					if (refBySetElementsMap.containsKey(childElementsList.get(i).getReference())) {
 						aSetElementsList.add(childElementsList.get(i));
-					}else{
-						aSetElementsList=new ArrayList<ChartSetElement>();
+					} else {
+						aSetElementsList = new ArrayList<ChartSetElement>();
 						aSetElementsList.add(childElementsList.get(i));
 					}
 					refBySetElementsMap.put(childElementsList.get(i).getReference(), aSetElementsList);
-				}else{
-					if(refBySetElementsMap.containsKey(childElementsList.get(i).getReference())){
-						List<ChartSetElement> tempList=(List<ChartSetElement>) refBySetElementsMap
-						.get(childElementsList.get(i).getReference());
+				} else {
+					if (refBySetElementsMap.containsKey(childElementsList.get(i).getReference())) {
+						List<ChartSetElement> tempList = (List<ChartSetElement>) refBySetElementsMap
+								.get(childElementsList.get(i).getReference());
 						tempList.add(childElementsList.get(i));
-						refBySetElementsMap.put(childElementsList.get(i).getReference(), tempList);	
-					}else{
-						aSetElementsList=new ArrayList<ChartSetElement>();
+						refBySetElementsMap.put(childElementsList.get(i).getReference(), tempList);
+					} else {
+						aSetElementsList = new ArrayList<ChartSetElement>();
 						aSetElementsList.add(childElementsList.get(i));
 						refBySetElementsMap.put(childElementsList.get(i).getReference(), aSetElementsList);
 					}
-				}   
-			}else{//if i is last element
-				if(refBySetElementsMap.containsKey(childElementsList.get(i).getReference())){
-					List<ChartSetElement> tempList=(List<ChartSetElement>) refBySetElementsMap
-					.get(childElementsList.get(i).getReference());
+				}
+			} else {//if i is last element
+				if (refBySetElementsMap.containsKey(childElementsList.get(i).getReference())) {
+					List<ChartSetElement> tempList = (List<ChartSetElement>) refBySetElementsMap
+							.get(childElementsList.get(i).getReference());
 					tempList.add(childElementsList.get(i));
-					refBySetElementsMap.put(childElementsList.get(i).getReference(), tempList);	
+					refBySetElementsMap.put(childElementsList.get(i).getReference(), tempList);
 
-				}else{
-					aSetElementsList=new ArrayList<ChartSetElement>();
-					aSetElementsList .add(childElementsList.get(i));
+				} else {
+					aSetElementsList = new ArrayList<ChartSetElement>();
+					aSetElementsList.add(childElementsList.get(i));
 					refBySetElementsMap.put(childElementsList.get(i).getReference(), aSetElementsList);
 				}
 			}
 		}
 		//Set children list to  parent details list
-		for(int i=0;i<rootElementsList.size();i++){
-			if(refBySetElementsMap.containsKey(rootElementsList.get(i).getLabel())){
-				rootElementsList.get(i).setLink("newchart-xml-childrenLink-"+i);
-				rootElementsList.get(i).setInnerChrtSetElementsList(refBySetElementsMap.get(rootElementsList.get(i).getLabel()));	
-			}	
+		for (int i = 0; i < rootElementsList.size(); i++) {
+			if (refBySetElementsMap.containsKey(rootElementsList.get(i).getLabel())) {
+				rootElementsList.get(i).setLink("newchart-xml-childrenLink-" + i);
+				rootElementsList.get(i)
+						.setInnerChrtSetElementsList(refBySetElementsMap.get(rootElementsList.get(i).getLabel()));
+			}
 		}
 		logger.debug("Leaving");
 		return rootElementsList;
@@ -608,15 +601,13 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 		return dashboardConfigurationDAO;
 	}
 
-	public void setDashboardConfigurationDAO(
-			DashboardConfigurationDAO dashboardConfigurationDAO) {
+	public void setDashboardConfigurationDAO(DashboardConfigurationDAO dashboardConfigurationDAO) {
 		this.dashboardConfigurationDAO = dashboardConfigurationDAO;
 	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -626,6 +617,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	public DashboardConfiguration getNewDashboardDetail() {
 		return getDashboardConfigurationDAO().getNewDashboardDetail();
 	}
+
 	public void setDetailStatisticsDAO(DetailStatisticsDAO detailStatisticsDAO) {
 		this.detailStatisticsDAO = detailStatisticsDAO;
 	}

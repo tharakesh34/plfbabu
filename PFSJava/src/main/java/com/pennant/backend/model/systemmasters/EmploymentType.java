@@ -63,7 +63,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	private EmploymentType befImage;
 	private LoggedInUser userDetails;
 	private boolean empTypeIsActive;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -84,6 +84,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public String getId() {
 		return empType;
 	}
+
 	public void setId(String id) {
 		this.empType = id;
 	}
@@ -91,6 +92,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public String getEmpType() {
 		return empType;
 	}
+
 	public void setEmpType(String empType) {
 		this.empType = empType;
 	}
@@ -98,6 +100,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public String getEmpTypeDesc() {
 		return empTypeDesc;
 	}
+
 	public void setEmpTypeDesc(String empTypeDesc) {
 		this.empTypeDesc = empTypeDesc;
 	}
@@ -105,6 +108,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -112,6 +116,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -119,6 +124,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public EmploymentType getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(EmploymentType beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -126,9 +132,11 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
 	public boolean isEmpTypeIsActive() {
 		return empTypeIsActive;
 	}
@@ -136,7 +144,7 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public void setEmpTypeIsActive(boolean empTypeIsActive) {
 		this.empTypeIsActive = empTypeIsActive;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

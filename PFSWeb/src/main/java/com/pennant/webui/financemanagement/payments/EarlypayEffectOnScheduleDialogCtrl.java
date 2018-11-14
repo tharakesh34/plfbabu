@@ -67,28 +67,26 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/FinanceManagement/Payments/EarlypayEffectOnSchedule.zul
+ * This is the controller class for the /WEB-INF/pages/FinanceManagement/Payments/EarlypayEffectOnSchedule.zul
  */
 public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(EarlypayEffectOnScheduleDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 			window_EarlypayEffectOnSchedule;
-	protected Borderlayout		borderlayout_EarlypayEffectOnSchedule;
+	protected Window window_EarlypayEffectOnSchedule;
+	protected Borderlayout borderlayout_EarlypayEffectOnSchedule;
 
 	//Summary Details
-	protected Combobox 			effectOnSchedule;
-	
+	protected Combobox effectOnSchedule;
+
 	//Buttons
-	protected Button 			btnHelp;
-	protected Button 			btnProceed;
-	
+	protected Button btnHelp;
+	protected Button btnProceed;
+
 	private ManualPaymentDialogCtrl manualPaymentDialogCtrl = null;
 	private RepayData repayData = null;
 
@@ -109,8 +107,8 @@ public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseCtrl<FinanceMain>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -121,37 +119,36 @@ public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseCtrl<FinanceMain>
 		// Set the page level components.
 		setPageComponents(window_EarlypayEffectOnSchedule);
 
-
 		if (arguments.containsKey("manualPaymentDialogCtrl")) {
 			manualPaymentDialogCtrl = (ManualPaymentDialogCtrl) arguments.get("manualPaymentDialogCtrl");
 		}
-		
+
 		if (arguments.containsKey("repayData")) {
 			repayData = (RepayData) arguments.get("repayData");
 		}
-		
+
 		List<ValueLabel> epList = new ArrayList<>();
-		if(manualPaymentDialogCtrl.getFinanceType() != null){
+		if (manualPaymentDialogCtrl.getFinanceType() != null) {
 			FinanceType financeType = manualPaymentDialogCtrl.getFinanceType();
 			String[] epMthds = financeType.getAlwEarlyPayMethods().split(",");
-			if(epMthds.length > 0){
+			if (epMthds.length > 0) {
 				List<String> list = Arrays.asList(epMthds);
 				for (ValueLabel epMthd : earlyRpyEffectList) {
-					if(list.contains(epMthd.getValue())){
+					if (list.contains(epMthd.getValue())) {
 						epList.add(epMthd);
 					}
 				}
 			}
 		}
-		
-		if(repayData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null && 
-				CalculationConstants.RATE_BASIS_D.equals(StringUtils.trimToEmpty(repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRepayRateBasis()))){
+
+		if (repayData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null
+				&& CalculationConstants.RATE_BASIS_D.equals(StringUtils.trimToEmpty(
+						repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRepayRateBasis()))) {
 			fillComboBox(this.effectOnSchedule, "", epList, ",ADJMUR,ADMPFI,RECRPY,RECPFI,");
-		}else{
+		} else {
 			fillComboBox(this.effectOnSchedule, "", epList, "");
 		}
-		
-		
+
 		this.window_EarlypayEffectOnSchedule.doModal();
 		logger.debug("Leaving" + event.toString());
 	}
@@ -164,28 +161,28 @@ public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseCtrl<FinanceMain>
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		this.manualPaymentDialogCtrl.totRefundAmt.setDisabled(true);
 		repayData.getRepayMain().setRepayAmountExcess(BigDecimal.ZERO);
 		closeWindow();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onClick$btnProceed(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		if(this.effectOnSchedule.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)){
+		if (this.effectOnSchedule.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
 			throw new WrongValueException(this.effectOnSchedule, Labels.getLabel("STATIC_INVALID",
-					new String[]{Labels.getLabel("label_EarlypayEffectOnSchedule_effectOnSchedule.value")}));
+					new String[] { Labels.getLabel("label_EarlypayEffectOnSchedule_effectOnSchedule.value") }));
 		}
-		
-		fillComboBox(this.manualPaymentDialogCtrl.earlyRpyEffectOnSchd, 
+
+		fillComboBox(this.manualPaymentDialogCtrl.earlyRpyEffectOnSchd,
 				this.effectOnSchedule.getSelectedItem().getValue().toString(), earlyRpyEffectList, "");
 
 		this.manualPaymentDialogCtrl.setEarlyRepayEffectOnSchedule(this.repayData);
 		closeWindow();
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

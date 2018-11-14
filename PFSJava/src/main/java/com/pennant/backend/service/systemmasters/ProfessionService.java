@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.Profession;
  * 
  */
 public interface ProfessionService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Profession getProfessionById(String id);
+
 	Profession getApprovedProfessionById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

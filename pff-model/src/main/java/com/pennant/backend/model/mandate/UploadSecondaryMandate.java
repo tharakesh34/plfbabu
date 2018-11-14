@@ -62,9 +62,9 @@ public class UploadSecondaryMandate {
 	private String reason;
 	private String fileName;
 	private boolean status;
-	private long 	lastMntBy;
+	private long lastMntBy;
 	private String module;
-	
+
 	public UploadSecondaryMandate() {
 		super();
 	}
@@ -185,8 +185,4 @@ public class UploadSecondaryMandate {
 		this.module = module;
 	}
 
-
-
-
-	
 }

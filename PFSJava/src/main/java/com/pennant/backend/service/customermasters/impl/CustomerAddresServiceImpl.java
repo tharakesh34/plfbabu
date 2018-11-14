@@ -69,8 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * Service implementation for methods that depends on <b>CustomerAddres</b>.<br>
  * 
  */
-public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
-		implements CustomerAddresService {
+public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> implements CustomerAddresService {
 
 	private static Logger logger = Logger.getLogger(CustomerAddresServiceImpl.class);
 
@@ -84,7 +83,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	public CustomerAddresServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -92,6 +91,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -99,28 +99,26 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	public CustomerAddresDAO getCustomerAddresDAO() {
 		return customerAddresDAO;
 	}
+
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
 	}
 
-	public CustomerAddressValidation getAddressValidation(){
-		
-		if(customerAddressValidation==null){
+	public CustomerAddressValidation getAddressValidation() {
+
+		if (customerAddressValidation == null) {
 			this.customerAddressValidation = new CustomerAddressValidation(customerAddresDAO);
 		}
 		return this.customerAddressValidation;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * CustomerAddresses/CustomerAddresses_Temp by using CustomerAddresDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using CustomerAddresDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtCustomerAddresses by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * CustomerAddresses/CustomerAddresses_Temp by using CustomerAddresDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using CustomerAddresDAO's update method 3) Audit the record
+	 * in to AuditHeader and AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -146,7 +144,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 		if (customerAddres.isNew()) {
 			customerAddres.setId(getCustomerAddresDAO().save(customerAddres, tableType));
 			auditHeader.getAuditDetail().setModelData(customerAddres);
-		/*	auditHeader.setAuditReference(String.valueOf(customerAddres.getId()));*/
+			/* auditHeader.setAuditReference(String.valueOf(customerAddres.getId())); */
 		} else {
 			getCustomerAddresDAO().update(customerAddres, tableType);
 		}
@@ -157,12 +155,10 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table CustomerAddresses by using CustomerAddresDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * CustomerAddresses by using CustomerAddresDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -186,8 +182,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	/**
-	 * getCustomerAddresById fetch the details by using CustomerAddresDAO's
-	 * getCustomerAddresById method.
+	 * getCustomerAddresById fetch the details by using CustomerAddresDAO's getCustomerAddresById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -201,10 +196,8 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	/**
-	 * getApprovedCustomerAddresById fetch the details by using
-	 * CustomerAddresDAO's getCustomerAddresById method . with parameter id and
-	 * type as blank. it fetches the approved records from the
-	 * CustomerAddresses.
+	 * getApprovedCustomerAddresById fetch the details by using CustomerAddresDAO's getCustomerAddresById method . with
+	 * parameter id and type as blank. it fetches the approved records from the CustomerAddresses.
 	 * 
 	 * @param id
 	 *            (String)
@@ -215,22 +208,18 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCustomerAddresDAO().delete with parameters customerAddres,"" b)
-	 * NEW Add new record in to main table by using getCustomerAddresDAO().save
-	 * with parameters customerAddres,"" c) EDIT Update record in the main table
-	 * by using getCustomerAddresDAO().update with parameters customerAddres,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getCustomerAddresDAO().delete with parameters customerAddres,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtCustomerAddresses by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtCustomerAddresses by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerAddresDAO().delete with
+	 * parameters customerAddres,"" b) NEW Add new record in to main table by using getCustomerAddresDAO().save with
+	 * parameters customerAddres,"" c) EDIT Update record in the main table by using getCustomerAddresDAO().update with
+	 * parameters customerAddres,"" 3) Delete the record from the workFlow table by using getCustomerAddresDAO().delete
+	 * with parameters customerAddres,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomerAddresses by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCustomerAddresses
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader (auditHeader)
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -244,8 +233,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 		}
 
 		CustomerAddres customerAddres = new CustomerAddres();
-		BeanUtils.copyProperties((CustomerAddres) auditHeader.getAuditDetail()
-				.getModelData(), customerAddres);
+		BeanUtils.copyProperties((CustomerAddres) auditHeader.getAuditDetail().getModelData(), customerAddres);
 
 		if (customerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -269,10 +257,10 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 			}
 		}
 
-		if(!StringUtils.equals(customerAddres.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-		getCustomerAddresDAO().delete(customerAddres, "_Temp");
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		if (!StringUtils.equals(customerAddres.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			getCustomerAddresDAO().delete(customerAddres, "_Temp");
+			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);
@@ -284,13 +272,10 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCustomerAddresDAO().delete with parameters
-	 * customerAddres,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerAddresDAO().delete with parameters customerAddres,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -305,8 +290,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 			return auditHeader;
 		}
 
-		CustomerAddres customerAddres = (CustomerAddres) auditHeader
-				.getAuditDetail().getModelData();
+		CustomerAddres customerAddres = (CustomerAddres) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getCustomerAddresDAO().delete(customerAddres, "_Temp");
 
@@ -316,17 +300,14 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		auditHeader = getAddressValidation().addressValidation(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);
@@ -344,16 +325,17 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	 */
 	@Override
 	public int getVersion(long id, String addrType) {
-		return getCustomerAddresDAO().getVersion(id,addrType);
-		
+		return getCustomerAddresDAO().getVersion(id, addrType);
+
 	}
+
 	@Override
 	public List<CustomerAddres> getApprovedCustomerAddresById(long id) {
 		return getCustomerAddresDAO().getCustomerAddresByCustomer(id, "_AView");
 	}
 
 	@Override
-	public AuditDetail doValidations(CustomerAddres customerAddres,String method) {
+	public AuditDetail doValidations(CustomerAddres customerAddres, String method) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
 
@@ -421,7 +403,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 				}
 			}
 		}
-		
+
 		// validate Master code with PLF system masters
 		int count = getCustomerAddresDAO().getAddrTypeCount(customerAddres.getCustAddrType());
 		if (count <= 0) {
@@ -436,7 +418,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 		if (pincode != null) {
 			if (StringUtils.isNotBlank(customerAddres.getCustAddrCountry())
 					&& !customerAddres.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
-		
+
 				String[] valueParm = new String[2];
 				valueParm[0] = customerAddres.getCustAddrCountry();
 				valueParm[1] = customerAddres.getCustAddrZIP();
@@ -462,7 +444,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 
 			if (StringUtils.isNotBlank(customerAddres.getCustAddrCity())
 					&& !customerAddres.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
-				
+
 				String[] valueParm = new String[2];
 				valueParm[0] = customerAddres.getCustAddrCity();
 				valueParm[1] = customerAddres.getCustAddrZIP();
@@ -474,16 +456,16 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 			}
 
 		}
-		if(!(customerAddres.getCustAddrPriority()>=1 && customerAddres.getCustAddrPriority()<=5)){
+		if (!(customerAddres.getCustAddrPriority() >= 1 && customerAddres.getCustAddrPriority() <= 5)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(customerAddres.getCustAddrPriority());
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90114", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
-			
+
 		}
-		if(StringUtils.isNotBlank(customerAddres.getCustAddrZIP())){
-			if(customerAddres.getCustAddrZIP().length()<3 || customerAddres.getCustAddrZIP().length()>6){
+		if (StringUtils.isNotBlank(customerAddres.getCustAddrZIP())) {
+			if (customerAddres.getCustAddrZIP().length() < 3 || customerAddres.getCustAddrZIP().length() > 6) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "pinCode";
 				valueParm[1] = "2 digits";
@@ -495,7 +477,6 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 		return auditDetail;
 	}
 
-	
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
 	}
@@ -511,8 +492,5 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		this.pinCodeDAO = pinCodeDAO;
 	}
-
-	
-	
 
 }

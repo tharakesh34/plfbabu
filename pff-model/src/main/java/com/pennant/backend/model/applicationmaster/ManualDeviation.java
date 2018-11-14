@@ -55,22 +55,22 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long				deviationID			= Long.MIN_VALUE;
-	private String				code;
-	private String				description;
-	private String				module;
-	private String				moduleName;
-	private long				categorization;
-	private String				categorizationCode;
-	private String				categorizationName;
-	private long				severity;
-	private boolean				active				= false;
-	private boolean				newRecord			= false;
-	private String				lovValue;
-	private ManualDeviation		befImage;
-	private LoggedInUser		userDetails;
+	private long deviationID = Long.MIN_VALUE;
+	private String code;
+	private String description;
+	private String module;
+	private String moduleName;
+	private long categorization;
+	private String categorizationCode;
+	private String categorizationName;
+	private long severity;
+	private boolean active = false;
+	private boolean newRecord = false;
+	private String lovValue;
+	private ManualDeviation befImage;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -167,7 +167,6 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 		this.severity = severity;
 	}
 
-
 	public boolean isActive() {
 		return active;
 	}
@@ -219,6 +218,5 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 	public void setCategorizationCode(String categorizationCode) {
 		this.categorizationCode = categorizationCode;
 	}
-
 
 }

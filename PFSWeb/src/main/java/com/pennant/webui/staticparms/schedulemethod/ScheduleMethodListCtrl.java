@@ -61,9 +61,9 @@ import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.service.staticparms.ScheduleMethodService;
 import com.pennant.webui.staticparms.schedulemethod.model.ScheduleMethodListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodList.zul file.
@@ -227,8 +227,8 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> {
 		arg.put("scheduleMethodListCtrl", this);
 
 		try {
-			Executions
-					.createComponents("/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodDialog.zul", null,
+					arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

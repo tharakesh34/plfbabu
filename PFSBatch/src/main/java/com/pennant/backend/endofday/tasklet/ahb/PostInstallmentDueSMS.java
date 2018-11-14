@@ -30,10 +30,10 @@ import com.pennanttech.pennapps.core.App;
 
 public class PostInstallmentDueSMS implements Tasklet {
 
-	private Logger			logger	= Logger.getLogger(PostInstallmentDueSMS.class);
+	private Logger logger = Logger.getLogger(PostInstallmentDueSMS.class);
 
-	private DataSource		dataSource;
-	private ExtTablesDAO	extTablesDAO;
+	private DataSource dataSource;
+	private ExtTablesDAO extTablesDAO;
 
 	public PostInstallmentDueSMS() {
 		super();
@@ -58,11 +58,11 @@ public class PostInstallmentDueSMS implements Tasklet {
 			sqlStatement = connection.prepareStatement(getCountQuery());
 			sqlStatement.setDate(1, DateUtility.getDBDate(sendSmsDate.toString()));
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL",Integer.toString(count));
+			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
@@ -147,8 +147,10 @@ public class PostInstallmentDueSMS implements Tasklet {
 		appendColon(tabDat, 3);// Free space
 
 		addLine(tabDat, getDate(resultSet.getDate("SchDate")));
-		addLine(tabDat, getAmt(resultSet.getBigDecimal("PrincipalSchd").add(resultSet.getBigDecimal("ProfitSchd")), ccy));
-		addLine(tabDat, getAmt(resultSet.getBigDecimal("TotalPriBal").add(resultSet.getBigDecimal("TotalPftBal")), ccy));
+		addLine(tabDat,
+				getAmt(resultSet.getBigDecimal("PrincipalSchd").add(resultSet.getBigDecimal("ProfitSchd")), ccy));
+		addLine(tabDat,
+				getAmt(resultSet.getBigDecimal("TotalPriBal").add(resultSet.getBigDecimal("TotalPftBal")), ccy));
 		addLine(tabDat, Integer.toString(resultSet.getInt("NOInst") - resultSet.getInt("NOPaidInst")));
 		appendColon(tabDat, 50);// Free space
 		return tabDat.toString();
@@ -173,10 +175,12 @@ public class PostInstallmentDueSMS implements Tasklet {
 	}
 
 	private String prepareSelectQuery() {
-		StringBuilder query = new StringBuilder(" select fpd.FinBranch,fpd.CustCIF,fpd.FinReference,fpd.FinType,fpd.FinAmount,");
+		StringBuilder query = new StringBuilder(
+				" select fpd.FinBranch,fpd.CustCIF,fpd.FinReference,fpd.FinType,fpd.FinAmount,");
 		query.append(" fpd.FinCcy,s.SchDate,s.PrincipalSchd, s.ProfitSchd,fpd.TotalPriBal,fpd.TotalPftBal,");
 		query.append(" fpd.NOInst,fpd.NOPaidInst,su.UsrFName,su.UsrMName,su.UsrLName");
-		query.append(" from (select FinReference,SchDate,ProfitSchd,PrincipalSchd from FinScheduleDetails where SchDate = ? ) s");
+		query.append(
+				" from (select FinReference,SchDate,ProfitSchd,PrincipalSchd from FinScheduleDetails where SchDate = ? ) s");
 		query.append(" inner join FinPftDetails fpd on s.FinReference=fpd.FinReference ");
 		query.append(" inner join FinanceMain fm on fm.FinReference=s.FinReference");
 		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID   ");
@@ -185,7 +189,8 @@ public class PostInstallmentDueSMS implements Tasklet {
 
 	private String getCountQuery() {
 		StringBuilder query = new StringBuilder(" SELECT Count(*) ");
-		query.append(" from (select FinReference,SchDate,ProfitSchd,PrincipalSchd from FinScheduleDetails where SchDate = ? ) s");
+		query.append(
+				" from (select FinReference,SchDate,ProfitSchd,PrincipalSchd from FinScheduleDetails where SchDate = ? ) s");
 		query.append(" inner join FinPftDetails fpd on s.FinReference=fpd.FinReference ");
 		query.append(" inner join FinanceMain fm on fm.FinReference=s.FinReference");
 		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID   ");

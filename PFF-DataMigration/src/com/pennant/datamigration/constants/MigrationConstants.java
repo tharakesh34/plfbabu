@@ -48,19 +48,19 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.util.FinanceConstants;
 
 public class MigrationConstants {
-	
-	public MigrationConstants() {
-	    super();
-    }
 
-	public static final String SOURCE_ID 				= 	"MIGR";
-	
-	public static final String REPAY_RATE_BASIS 		= 	CalculationConstants.RATE_BASIS_R;
-	public static final String BPI_PFT_DAYS_BASIS 		= 	CalculationConstants.IDB_ACT_360;
-	public static final String BPI_TREATMENT 			= 	FinanceConstants.BPI_SCHEDULE;
-	public static final String GRC_PFT_DAYS_BASIS 		= 	CalculationConstants.IDB_30U360;
-	public static final String RPY_PFT_DAYS_BASIS 		= 	CalculationConstants.IDB_30U360;
-	public static final String RECAL_TYPE		 		= 	CalculationConstants.RPYCHG_TILLMDT;
-	public static final String ROUNDING_MODE 			= 	RoundingMode.HALF_UP.name();
-	public static final int ROUNDING_TARGET 			= 	100;
+	public MigrationConstants() {
+		super();
+	}
+
+	public static final String SOURCE_ID = "MIGR";
+
+	public static final String REPAY_RATE_BASIS = CalculationConstants.RATE_BASIS_R;
+	public static final String BPI_PFT_DAYS_BASIS = CalculationConstants.IDB_ACT_360;
+	public static final String BPI_TREATMENT = FinanceConstants.BPI_SCHEDULE;
+	public static final String GRC_PFT_DAYS_BASIS = CalculationConstants.IDB_30U360;
+	public static final String RPY_PFT_DAYS_BASIS = CalculationConstants.IDB_30U360;
+	public static final String RECAL_TYPE = CalculationConstants.RPYCHG_TILLMDT;
+	public static final String ROUNDING_MODE = RoundingMode.HALF_UP.name();
+	public static final int ROUNDING_TARGET = 100;
 }

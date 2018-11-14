@@ -53,23 +53,23 @@ import org.zkoss.zul.Constraint;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 
-public class StaticListValidator implements Constraint{
+public class StaticListValidator implements Constraint {
 
 	List<?> valueList;
-	private String fieldParm="";
+	private String fieldParm = "";
 
 	public StaticListValidator(List<?> valueList, String fieldParm) {
-		this.valueList=valueList;	
+		this.valueList = valueList;
 		setFieldParm(fieldParm);
 	}
 
 	public void validate(Component comp, Object value) {
 
-		boolean validate=false;
-		
+		boolean validate = false;
+
 		if (value == null || "".equals(value)) {
-			validate =false;
-		}else{ 
+			validate = false;
+		} else {
 			for (int i = 0; i < this.valueList.size(); i++) {
 				Object object = this.valueList.get(i);
 
@@ -85,15 +85,15 @@ public class StaticListValidator implements Constraint{
 					}
 				} else {
 					throw new IllegalArgumentException("Unsupported List.");
-				}	
-			} 
+				}
+			}
 		}
-	
-		if (!validate){
-			throw new WrongValueException(comp, Labels.getLabel("STATIC_INVALID",new String[]{fieldParm}));
+
+		if (!validate) {
+			throw new WrongValueException(comp, Labels.getLabel("STATIC_INVALID", new String[] { fieldParm }));
 		}
 	}
-	
+
 	public String getFieldParm() {
 		return fieldParm;
 	}
@@ -102,6 +102,4 @@ public class StaticListValidator implements Constraint{
 		this.fieldParm = fieldParm;
 	}
 
-
 }
-

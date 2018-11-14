@@ -82,8 +82,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 	protected Button button_PSLDetailList_PSLDetailSearch;
 
 	// Search Fields
-	
-	
+
 	private transient PSLDetailService pSLDetailService;
 
 	/**
@@ -111,31 +110,30 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 	public void onCreate$window_PSLDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_PSLDetailList, borderLayout_PSLDetailList, listBoxPSLDetail,
-				pagingPSLDetailList);
+		setPageComponents(window_PSLDetailList, borderLayout_PSLDetailList, listBoxPSLDetail, pagingPSLDetailList);
 		//setItemRender(new PSLDetailListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_PSLDetailList_PSLDetailSearch);
 		registerButton(button_PSLDetailList_NewPSLDetail, "button_PSLDetailList_NewPSLDetail", true);
 
-		registerField("finReference");		
-		registerField("categoryCode");		
+		registerField("finReference");
+		registerField("categoryCode");
 		registerField("categoryCodeName");
-		registerField("weakerSection");		
+		registerField("weakerSection");
 		registerField("weakerSectionName");
-		registerField("landHolding");		
+		registerField("landHolding");
 		registerField("landHoldingName");
-		registerField("landArea");		
+		registerField("landArea");
 		registerField("landAreaName");
-		registerField("sector");		
+		registerField("sector");
 		registerField("sectorName");
-		registerField("amount");		
-		registerField("subCategory");		
+		registerField("amount");
+		registerField("subCategory");
 		registerField("subCategoryName");
-		registerField("purpose");		
+		registerField("purpose");
 		registerField("purposeName");
-		registerField("endUse");		
+		registerField("endUse");
 		registerField("endUseName");
 
 		// Render the page and display the data.
@@ -183,7 +181,6 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -194,7 +191,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 
 	public void onPSLDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPSLDetail.getSelectedItem();
 		final String finReference = (String) selectedItem.getAttribute("finReference");
@@ -204,13 +201,13 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  FinReference = '");
-		whereCond.append( psldetail.getFinReference());
+		whereCond.append(psldetail.getFinReference());
 		whereCond.append("' AND  version=");
 		whereCond.append(psldetail.getVersion());
-	
+
 		if (doCheckAuthority(psldetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && psldetail.getWorkflowId() == 0) {
@@ -220,10 +217,10 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -236,7 +233,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("pSLDetail", psldetail);
 		arg.put("pSLDetailListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/PSLDetail/PSLDetailDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -266,7 +263,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

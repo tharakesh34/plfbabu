@@ -111,8 +111,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 				.newInstance(FeeWaiverHeader.class);
 
 		try {
-			feeWaiverHeader = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			feeWaiverHeader = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			feeWaiverHeader = null;
@@ -155,8 +154,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 				.newInstance(FeeWaiverHeader.class);
 
 		try {
-			feeWaiverHeader = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			feeWaiverHeader = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			feeWaiverHeader = null;
@@ -164,7 +162,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		logger.debug("Leaving");
 		return feeWaiverHeader;
 	}
-	
+
 	@Override
 	public List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type) {
 		logger.debug("Entering");
@@ -235,7 +233,8 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 
 		StringBuilder sql = new StringBuilder("update FeeWaiverHeader");
 		sql.append(tableType.getSuffix());
-		sql.append(" set FinReference =:FinReference, Event =:Event, Remarks =:Remarks,PostingDate =:PostingDate,ValueDate=:ValueDate,");
+		sql.append(
+				" set FinReference =:FinReference, Event =:Event, Remarks =:Remarks,PostingDate =:PostingDate,ValueDate=:ValueDate,");
 		sql.append(
 				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -287,5 +286,4 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 }

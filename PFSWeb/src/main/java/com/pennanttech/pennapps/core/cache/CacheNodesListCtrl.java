@@ -17,8 +17,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.core.cache.CacheAdmin;
-import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {

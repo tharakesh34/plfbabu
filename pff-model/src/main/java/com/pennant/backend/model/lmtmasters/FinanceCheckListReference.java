@@ -61,16 +61,17 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	private long questionId;
 	private long answer;
 	private String remarks;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceCheckListReference befImage;
 	private LoggedInUser userDetails;
 
-	private Map<Long, Long>  lovDescSelAnsCountMap  =new HashMap<Long, Long>();
+	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>();
 	private String lovDescQuesDesc;
 	private String lovDescAnswerDesc;
-	private long  lovDescMaxAnsCount;
-	private long  lovDescMinAnsCount;
+	private long lovDescMaxAnsCount;
+	private long lovDescMinAnsCount;
+
 	public String getLovDescQuesDesc() {
 		return lovDescQuesDesc;
 	}
@@ -79,7 +80,6 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 		this.lovDescQuesDesc = lovDescQuesDesc;
 	}
 
-
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -87,10 +87,10 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	public FinanceCheckListReference() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
 
@@ -106,24 +106,23 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	public String getId() {
 		return finReference;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
-	
-		
-	
+
 	public long getQuestionId() {
 		return questionId;
 	}
+
 	public void setQuestionId(long questionId) {
 		this.questionId = questionId;
 	}
@@ -135,7 +134,7 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -144,12 +143,12 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public FinanceCheckListReference getBefImage(){
+	public FinanceCheckListReference getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(FinanceCheckListReference beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinanceCheckListReference beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -167,7 +166,7 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	public long getAnswer() {
 		return answer;
 	}
-	
+
 	public void setLovDescMaxAnsCount(long lovDescMaxAnsCount) {
 		this.lovDescMaxAnsCount = lovDescMaxAnsCount;
 	}

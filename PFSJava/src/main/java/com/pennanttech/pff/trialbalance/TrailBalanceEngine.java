@@ -77,7 +77,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	/**
-	 *  validate Account Mapping
+	 * validate Account Mapping
+	 * 
 	 * @throws Exception
 	 */
 	private void validateAccountMapping() throws Exception {
@@ -86,16 +87,18 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("START_DATE", startDate);
 		paramMap.addValue("END_DATE", endDate);
 		paramMap.addValue("ENTITYCODE", entityCode);
-		StringBuilder sql =new StringBuilder( "Select count (*) from POSTINGS where POSTDATE BETWEEN :START_DATE AND :END_DATE and POSTAMOUNT <>0   and account not in(select account from AccountMapping) ");
-		
+		StringBuilder sql = new StringBuilder(
+				"Select count (*) from POSTINGS where POSTDATE BETWEEN :START_DATE AND :END_DATE and POSTAMOUNT <>0   and account not in(select account from AccountMapping) ");
+
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			sql.append("AND ENTITYCODE = :ENTITYCODE");
 		}
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		if (parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
 			EXTRACT_STATUS.setStatus("F");
-			EXTRACT_STATUS.setRemarks("Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");
+			EXTRACT_STATUS.setRemarks(
+					"Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");
 			throw new AppException(EXTRACT_STATUS.getRemarks());
 		}
 		logger.debug(Literal.LEAVING);
@@ -103,6 +106,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 	/**
 	 * validate Postings Data
+	 * 
 	 * @throws Exception
 	 */
 	private void validatePostings() throws Exception {
@@ -112,12 +116,13 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("END_DATE", endDate);
 		paramMap.addValue("ENTITYCODE", entityCode);
 
-		StringBuilder sql =new StringBuilder( "select SUM(CASE WHEN DRORCR = 'D' Then POSTAMOUNT * -1 Else PostAmount END) from POSTINGS where POSTDATE BETWEEN :START_DATE AND :END_DATE ");
+		StringBuilder sql = new StringBuilder(
+				"select SUM(CASE WHEN DRORCR = 'D' Then POSTAMOUNT * -1 Else PostAmount END) from POSTINGS where POSTDATE BETWEEN :START_DATE AND :END_DATE ");
 
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			sql.append("AND ENTITYCODE = :ENTITYCODE");
 		}
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		BigDecimal amount = parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, BigDecimal.class);
 
@@ -161,21 +166,20 @@ public class TrailBalanceEngine extends DataEngineExport {
 		} else {
 			parameterMap.put("COMPANY_NAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
 		}
-		
 
 		if (dimension == Dimension.STATE) {
 			parameterMap.put("REPORT_NAME", "State Wise Trial Balance - Ledger A/C wise");
 			if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 				parameterMap.put("ENTITY_CODE", entityCode + "_TRAIL_BALANCE_");
-			}else{
+			} else {
 				parameterMap.put("ENTITY_CODE", "TRAIL_BALANCE_");
 			}
 
 		} else {
 			parameterMap.put("REPORT_NAME", "Consolidated Trial Balance - Ledger A/C wise");
 			if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
-			parameterMap.put("ENTITY_CODE", entityCode + "_TRIAL_BALANCE_CONSOLIDATE_");
-			}else{
+				parameterMap.put("ENTITY_CODE", entityCode + "_TRIAL_BALANCE_CONSOLIDATE_");
+			} else {
 				parameterMap.put("ENTITY_CODE", "TRIAL_BALANCE_CONSOLIDATE_");
 			}
 
@@ -543,7 +547,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
 		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER");
 		sql.append(" WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE AND DIMENSION = :DIMENSION");
-		
+
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			sql.append("AND ENTITYCODE = :ENTITYCODE ");
 		}
@@ -554,11 +558,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql = new StringBuilder();
 		sql = sql.append("DELETE FROM TRIAL_BALANCE_HEADER WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE");
 		sql.append(" AND DIMENSION = :DIMENSION");
-		
+
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			sql.append("AND ENTITYCODE = :ENTITYCODE ");
 		}
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
@@ -652,8 +656,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	/**
-	 * get Opening balance from Previous Month Closing balance And closing
-	 * balance is the sum of credits and debits
+	 * get Opening balance from Previous Month Closing balance And closing balance is the sum of credits and debits
 	 * 
 	 * @return List<TrailBalance>
 	 */
@@ -704,7 +707,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 				sql.append("AND ENTITYCODE = :ENTITYCODE ");
 			}
-			
+
 			sql.append(" and P.DRORCR = :DRORCR");
 			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT, RB.BRANCHPROVINCE");
 		} else {
@@ -712,11 +715,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 			sql.append(" from POSTINGS P");
 			sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
 			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE ");
-			
+
 			if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 				sql.append("AND ENTITYCODE = :ENTITYCODE ");
 			}
-			
+
 			sql.append(" and P.DRORCR = :DRORCR");
 			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT");
 		}
@@ -755,7 +758,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 				sql.append("AND ENTITYCODE = :ENTITYCODE ");
 			}
-			
+
 			sql.append(" and P.DRORCR = :DRORCR");
 			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT, RB.BRANCHPROVINCE");
 		} else {
@@ -766,7 +769,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 				sql.append("AND ENTITYCODE = :ENTITYCODE ");
 			}
-			
+
 			sql.append(" and P.DRORCR = :DRORCR");
 			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT");
 		}
@@ -897,9 +900,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	/**
-	 * Second last row shall be the sum of balances of income (Account type
-	 * group code) minus sum of balances of expense (Account type group code)
-	 * ledgers for the previous financial year
+	 * Second last row shall be the sum of balances of income (Account type group code) minus sum of balances of expense
+	 * (Account type group code) ledgers for the previous financial year
 	 */
 	private void addFinancialSummaryForConsolidate() {
 		logger.debug(Literal.ENTERING);
@@ -1123,11 +1125,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" SELECT count(*) from ");
 		sql.append(
 				" TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND STARTDATE = :STARTDATE AND ENDDATE = :ENDDATE");
-		
+
 		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
 			sql.append("AND ENTITYCODE = :ENTITYCODE ");
 		}
-		
+
 		int count = 0;
 		try {
 			count = this.parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);

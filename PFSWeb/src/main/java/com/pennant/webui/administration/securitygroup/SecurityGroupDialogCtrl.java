@@ -71,18 +71,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Administration/SecurityGroup/securityGroupDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Administration/SecurityGroup/securityGroupDialog.zul file.
  */
 public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	private static final long serialVersionUID = 1709997819133952587L;
-	private static final Logger logger = Logger
-			.getLogger(SecurityGroupDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityGroupDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_SecurityGroupDialog; // autoWired
 	protected Textbox grpCode; // autoWired
@@ -116,15 +113,13 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SecurityGroup object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SecurityGroup object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_SecurityGroupDialog(Event event)
-			throws Exception {
+	public void onCreate$window_SecurityGroupDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -135,8 +130,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			doCheckRights();
 
 			if (arguments.containsKey("securityGroup")) {
-				this.securityGroup = (SecurityGroup) arguments
-						.get("securityGroup");
+				this.securityGroup = (SecurityGroup) arguments.get("securityGroup");
 				SecurityGroup befImage = new SecurityGroup();
 				BeanUtils.copyProperties(this.securityGroup, befImage);
 				this.securityGroup.setBefImage(befImage);
@@ -145,14 +139,12 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				setSecurityGroup(null);
 			}
 
-			doLoadWorkFlow(this.securityGroup.isWorkflow(),
-					this.securityGroup.getWorkflowId(),
+			doLoadWorkFlow(this.securityGroup.isWorkflow(), this.securityGroup.getWorkflowId(),
 					this.securityGroup.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SecurityGroupDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SecurityGroupDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -161,8 +153,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			// or
 			// delete securityGroup here.
 			if (arguments.containsKey("securityGroupListCtrl")) {
-				setSecurityGroupListCtrl((SecurityGroupListCtrl) arguments
-						.get("securityGroupListCtrl"));
+				setSecurityGroupListCtrl((SecurityGroupListCtrl) arguments.get("securityGroupListCtrl"));
 			} else {
 				setSecurityGroupListCtrl(null);
 			}
@@ -199,21 +190,16 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityGroupDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityGroupDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityGroupDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_SecurityGroupDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SecurityGroupDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
 	}
@@ -359,8 +345,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityGroup
 	 * @throws Exception
@@ -407,15 +392,12 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		setValidationOn(true);
 
 		if (!this.grpCode.isReadonly()) {
-			this.grpCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SecurityGroupDialog_GrpCode.value"),
-					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE,
-					true));
+			this.grpCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityGroupDialog_GrpCode.value"),
+					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 
 		if (!this.grpDesc.isReadonly()) {
-			this.grpDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SecurityGroupDialog_GrpDesc.value"),
+			this.grpDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityGroupDialog_GrpDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
@@ -472,11 +454,8 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> "
-				+ Labels.getLabel("label_SecurityGroupDialog_GrpCode.value")
-				+ " : " + aSecurityGroup.getGrpCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SecurityGroupDialog_GrpCode.value") + " : " + aSecurityGroup.getGrpCode();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSecurityGroup.getRecordType())) {
@@ -593,11 +572,9 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			if (StringUtils.isBlank(aSecurityGroup.getRecordType())) {
 				aSecurityGroup.setVersion(aSecurityGroup.getVersion() + 1);
 				if (isNew) {
-					aSecurityGroup
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aSecurityGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aSecurityGroup
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aSecurityGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSecurityGroup.setNewRecord(true);
 				}
 			}
@@ -623,8 +600,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	}
 
 	/**
-	 * This Method used for setting all workFlow details from userWorkSpace and
-	 * setting audit details to auditHeader
+	 * This Method used for setting all workFlow details from userWorkSpace and setting audit details to auditHeader
 	 * 
 	 * @param aSecurityGroup
 	 * @param tranType
@@ -636,22 +612,19 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aSecurityGroup.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aSecurityGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSecurityGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSecurityGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aSecurityGroup.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aSecurityGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aSecurityGroup
-						.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(aSecurityGroup.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
@@ -698,8 +671,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aSecurityGroup,
-							PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aSecurityGroup, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -715,8 +687,8 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	}
 
 	/**
-	 * This Method used for calling the all Database Operations from the service
-	 * By passing the auditHeader and operationRefs(Method) as String
+	 * This Method used for calling the all Database Operations from the service By passing the auditHeader and
+	 * operationRefs(Method) as String
 	 * 
 	 * @param auditHeader
 	 * @param method
@@ -726,8 +698,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		SecurityGroup aSecurityGroup = (SecurityGroup) auditHeader
-				.getAuditDetail().getModelData();
+		SecurityGroup aSecurityGroup = (SecurityGroup) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -735,48 +706,35 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
-						auditHeader = getSecurityGroupService().delete(
-								auditHeader);
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getSecurityGroupService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getSecurityGroupService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getSecurityGroupService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getSecurityGroupService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getSecurityGroupService().doApprove(auditHeader);
 
-						if (aSecurityGroup.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aSecurityGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSecurityGroupService().doReject(
-								auditHeader);
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getSecurityGroupService().doReject(auditHeader);
 
-						if (aSecurityGroup.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aSecurityGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_SecurityGroupDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_SecurityGroupDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_SecurityGroupDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_SecurityGroupDialog, auditHeader);
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -810,13 +768,10 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * @param tranType
 	 * @return
 	 */
-	private AuditHeader getAuditHeader(SecurityGroup aSecurityGroup,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aSecurityGroup.getBefImage(), aSecurityGroup);
-		return new AuditHeader(String.valueOf(aSecurityGroup.getId()), null,
-				null, null, auditDetail, aSecurityGroup.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(SecurityGroup aSecurityGroup, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityGroup.getBefImage(), aSecurityGroup);
+		return new AuditHeader(String.valueOf(aSecurityGroup.getId()), null, null, null, auditDetail,
+				aSecurityGroup.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -861,8 +816,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		this.securityGroup = securityGroup;
 	}
 
-	public void setSecurityGroupService(
-			SecurityGroupService securityGroupService) {
+	public void setSecurityGroupService(SecurityGroupService securityGroupService) {
 		this.securityGroupService = securityGroupService;
 	}
 
@@ -870,8 +824,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		return this.securityGroupService;
 	}
 
-	public void setSecurityGroupListCtrl(
-			SecurityGroupListCtrl securityGroupListCtrl) {
+	public void setSecurityGroupListCtrl(SecurityGroupListCtrl securityGroupListCtrl) {
 		this.securityGroupListCtrl = securityGroupListCtrl;
 	}
 

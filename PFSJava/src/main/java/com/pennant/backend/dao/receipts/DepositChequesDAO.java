@@ -50,12 +50,20 @@ import com.pennanttech.pff.core.TableType;
 public interface DepositChequesDAO {
 
 	List<DepositCheques> getDepositChequesList(long id, String type);
+
 	boolean isDuplicateKey(long processId, TableType tableType);
+
 	void update(DepositCheques depositCheques, String type);
+
 	String save(DepositCheques depositCheques, String type);
+
 	void delete(DepositCheques depositCheques, String type);
+
 	void deleteByMovementId(long movementId, String tableType);
+
 	List<DepositCheques> getDepositChequesList(String branchCode);
+
 	DepositCheques getDepositChequeByReceiptID(long receiptID);
+
 	void reverseChequeStatus(long movementId, long receiptID, long linkedTranId);
 }

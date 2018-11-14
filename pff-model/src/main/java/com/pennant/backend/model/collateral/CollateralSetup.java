@@ -84,99 +84,98 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "CollateralSetup")
 public class CollateralSetup extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	@XmlElement
-	private String				collateralRef;
+	private String collateralRef;
 	@XmlElement
-	private String				finReference;
+	private String finReference;
 	@XmlElement(name = "cif")
-	private String				depositorCif;
-	
-	private long				depositorId;
-	private String				depositorName;
-	
-	@XmlElement
-	private String				collateralType;
-	private String				collateralTypeName;
-	@XmlElement
-	private String				collateralCcy;
-	private BigDecimal			collateralValue = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal			maxCollateralValue = BigDecimal.ZERO;
-	
-	private BigDecimal			bankLTV = BigDecimal.ZERO;
-	@XmlElement(name = "splLtv")
-	private BigDecimal			specialLTV = BigDecimal.ZERO;
-	private BigDecimal			bankValuation = BigDecimal.ZERO;
-	
-	@XmlElement
-	private String				collateralLoc;
-	@XmlElement
-	private String				valuator;
-	@XmlElement
-	private Date				expiryDate;
-	
-	@XmlElement(name = "rvwFrq")
-	private String				reviewFrequency;
-	
-	@XmlElement
-	private Date				nextReviewDate;
-	
-	@XmlElement(name = "alwMultiLoanAssign")
-	private boolean				multiLoanAssignment;
-	
-	@XmlElement(name = "alwThirdPartyAssign")
-	private boolean				thirdPartyAssignment;
-	
-	private boolean				fromLoan;
-	
-	@XmlElement
-	private String				remarks;
-	private boolean				newRecord			= false;
-	private String				lovValue;
+	private String depositorCif;
 
-	private CollateralSetup		befImage;
+	private long depositorId;
+	private String depositorName;
+
+	@XmlElement
+	private String collateralType;
+	private String collateralTypeName;
+	@XmlElement
+	private String collateralCcy;
+	private BigDecimal collateralValue = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal maxCollateralValue = BigDecimal.ZERO;
+
+	private BigDecimal bankLTV = BigDecimal.ZERO;
+	@XmlElement(name = "splLtv")
+	private BigDecimal specialLTV = BigDecimal.ZERO;
+	private BigDecimal bankValuation = BigDecimal.ZERO;
+
+	@XmlElement
+	private String collateralLoc;
+	@XmlElement
+	private String valuator;
+	@XmlElement
+	private Date expiryDate;
+
+	@XmlElement(name = "rvwFrq")
+	private String reviewFrequency;
+
+	@XmlElement
+	private Date nextReviewDate;
+
+	@XmlElement(name = "alwMultiLoanAssign")
+	private boolean multiLoanAssignment;
+
+	@XmlElement(name = "alwThirdPartyAssign")
+	private boolean thirdPartyAssignment;
+
+	private boolean fromLoan;
+
+	@XmlElement
+	private String remarks;
+	private boolean newRecord = false;
+	private String lovValue;
+
+	private CollateralSetup befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
-	
-	private long				createdBy;
-	private Timestamp			createdOn;
-	private String				status;
-	
+	private LoggedInUser userDetails;
+
+	private long createdBy;
+	private Timestamp createdOn;
+	private String status;
+
 	private CollateralStructure collateralStructure = null;
-	private CustomerDetails 		customerDetails;
-	
-	@XmlElementWrapper(name="coOwnerDetails")
-	@XmlElement(name="coOwnerDetail")
-	private List<CoOwnerDetail>		coOwnerDetailList		= null;
-	
-	@XmlElementWrapper(name="thirdParties")
-	@XmlElement(name="thirdParty")
-	private List<CollateralThirdParty>		collateralThirdPartyList	= null;
-	private List<AssignmentDetails>			assignmentDetails	= null;
-	private List<FinanceReferenceDetail> aggrements 		= null;
-	private List<FinanceReferenceDetail> checkLists			= null;
-	private List<FinanceCheckListReference> collateralCheckLists	= null;
+	private CustomerDetails customerDetails;
+
+	@XmlElementWrapper(name = "coOwnerDetails")
+	@XmlElement(name = "coOwnerDetail")
+	private List<CoOwnerDetail> coOwnerDetailList = null;
+
+	@XmlElementWrapper(name = "thirdParties")
+	@XmlElement(name = "thirdParty")
+	private List<CollateralThirdParty> collateralThirdPartyList = null;
+	private List<AssignmentDetails> assignmentDetails = null;
+	private List<FinanceReferenceDetail> aggrements = null;
+	private List<FinanceReferenceDetail> checkLists = null;
+	private List<FinanceCheckListReference> collateralCheckLists = null;
 	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
-	
-	@XmlElementWrapper(name="documents")
-	@XmlElement(name="document")
-	private List<DocumentDetails> documents					= null;
+
+	@XmlElementWrapper(name = "documents")
+	@XmlElement(name = "document")
+	private List<DocumentDetails> documents = null;
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinFlagsDetail> finFlagsDetailsList;
-	
+
 	// API specific
-	@XmlElementWrapper(name="extendedDetails")
-	@XmlElement(name="extendedDetail")
+	@XmlElementWrapper(name = "extendedDetails")
+	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private String sourceId;
 
-	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -328,6 +327,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public Date getNextReviewDate() {
 		return nextReviewDate;
 	}
+
 	public void setNextReviewDate(Date nextReviewDate) {
 		this.nextReviewDate = nextReviewDate;
 	}
@@ -335,6 +335,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public boolean isMultiLoanAssignment() {
 		return multiLoanAssignment;
 	}
+
 	public void setMultiLoanAssignment(boolean multiLoanAssignment) {
 		this.multiLoanAssignment = multiLoanAssignment;
 	}
@@ -342,6 +343,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public boolean isThirdPartyAssignment() {
 		return thirdPartyAssignment;
 	}
+
 	public void setThirdPartyAssignment(boolean thirdPartyAssignment) {
 		this.thirdPartyAssignment = thirdPartyAssignment;
 	}
@@ -357,6 +359,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -364,6 +367,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -371,6 +375,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -378,6 +383,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public CollateralSetup getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CollateralSetup beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -385,10 +391,11 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public long getCreatedBy() {
 		return createdBy;
 	}
@@ -408,6 +415,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public List<CoOwnerDetail> getCoOwnerDetailList() {
 		return coOwnerDetailList;
 	}
+
 	public void setCoOwnerDetailList(List<CoOwnerDetail> coOwnerDetailList) {
 		this.coOwnerDetailList = coOwnerDetailList;
 	}
@@ -415,6 +423,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
 	}
+
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
 	}
@@ -422,6 +431,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public List<FinanceReferenceDetail> getAggrements() {
 		return aggrements;
 	}
+
 	public void setAggrements(List<FinanceReferenceDetail> aggrements) {
 		this.aggrements = aggrements;
 	}
@@ -429,6 +439,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public List<FinanceReferenceDetail> getCheckLists() {
 		return checkLists;
 	}
+
 	public void setCheckLists(List<FinanceReferenceDetail> checkLists) {
 		this.checkLists = checkLists;
 	}
@@ -436,6 +447,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public List<DocumentDetails> getDocuments() {
 		return documents;
 	}
+
 	public void setDocuments(List<DocumentDetails> documents) {
 		this.documents = documents;
 	}
@@ -443,6 +455,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public List<FinanceCheckListReference> getCollateralCheckLists() {
 		return collateralCheckLists;
 	}
+
 	public void setCollateralCheckLists(List<FinanceCheckListReference> collateralCheckLists) {
 		this.collateralCheckLists = collateralCheckLists;
 	}
@@ -458,6 +471,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public String getDepositorName() {
 		return depositorName;
 	}
+
 	public void setDepositorName(String depositorName) {
 		this.depositorName = depositorName;
 	}
@@ -477,7 +491,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
-	
+
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
 	}
@@ -518,7 +532,6 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		this.extendedDetails = extendedDetails;
 	}
 
-
 	public List<FinFlagsDetail> getFinFlagsDetailsList() {
 		return finFlagsDetailsList;
 	}
@@ -558,12 +571,12 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public void setBankValuation(BigDecimal bankValuation) {
 		this.bankValuation = bankValuation;
 	}
-	
-	public void getDeclaredFieldValues(HashMap<String, Object> collateralSetupMap){
+
+	public void getDeclaredFieldValues(HashMap<String, Object> collateralSetupMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				collateralSetupMap.put("cs_"+this.getClass().getDeclaredFields()[i].getName(),
+				collateralSetupMap.put("cs_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO

@@ -4,65 +4,71 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class CustLimitCategoryBreakdown implements Serializable{
+public class CustLimitCategoryBreakdown implements Serializable {
 
-    private static final long serialVersionUID = 1348575696181175930L;
-    
-    private String accountNum;
-    private String currency;
-    private BigDecimal equivalent;
-    private Date endDate;
-    private String type;
-    private String comments;
+	private static final long serialVersionUID = 1348575696181175930L;
 
-    public CustLimitCategoryBreakdown() {
-    	
-    }
-    
+	private String accountNum;
+	private String currency;
+	private BigDecimal equivalent;
+	private Date endDate;
+	private String type;
+	private String comments;
+
+	public CustLimitCategoryBreakdown() {
+
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
 	public String getAccountNum() {
-    	return accountNum;
-    }
+		return accountNum;
+	}
+
 	public void setAccountNum(String accountNum) {
-    	this.accountNum = accountNum;
-    }
-	
+		this.accountNum = accountNum;
+	}
+
 	public String getCurrency() {
-    	return currency;
-    }
+		return currency;
+	}
+
 	public void setCurrency(String currency) {
-    	this.currency = currency;
-    }
-	
+		this.currency = currency;
+	}
+
 	public BigDecimal getEquivalent() {
-    	return equivalent;
-    }
+		return equivalent;
+	}
+
 	public void setEquivalent(BigDecimal equivalent) {
-    	this.equivalent = equivalent;
-    }
-	
+		this.equivalent = equivalent;
+	}
+
 	public Date getEndDate() {
-    	return endDate;
-    }
+		return endDate;
+	}
+
 	public void setEndDate(Date endDate) {
-    	this.endDate = endDate;
-    }
-	
+		this.endDate = endDate;
+	}
+
 	public String getType() {
-    	return type;
-    }
+		return type;
+	}
+
 	public void setType(String type) {
-    	this.type = type;
-    }
-	
+		this.type = type;
+	}
+
 	public String getComments() {
-    	return comments;
-    }
+		return comments;
+	}
+
 	public void setComments(String comments) {
-    	this.comments = comments;
-    }
+		this.comments = comments;
+	}
 
 }

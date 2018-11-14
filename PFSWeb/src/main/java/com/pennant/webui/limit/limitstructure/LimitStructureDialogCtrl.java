@@ -96,8 +96,8 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -105,79 +105,78 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  * ************************************************************<br>
  */
 public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implements Serializable {
-	private static final long						serialVersionUID				= 1L;
-	private static final Logger						logger							= Logger.getLogger(LimitStructureDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(LimitStructureDialogCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
+	 * GenericForwardComposer. ************************************************************************
 	 */
-	protected Window								window_LimitStructureDialog;
-	protected Row									row0;
-	protected Label									label_StructureCode;
-	protected Hlayout								hlayout_StructureCode;
-	protected Space									space_StructureCode;
+	protected Window window_LimitStructureDialog;
+	protected Row row0;
+	protected Label label_StructureCode;
+	protected Hlayout hlayout_StructureCode;
+	protected Space space_StructureCode;
 
-	protected Textbox								structureCode;
-	protected Label									label_StructureName;
-	protected Hlayout								hlayout_StructureName;
-	protected Space									space_StructureName;
+	protected Textbox structureCode;
+	protected Label label_StructureName;
+	protected Hlayout hlayout_StructureName;
+	protected Space space_StructureName;
 
-	protected Textbox								structureName;
-	protected Row									row1;
-	protected Label									window_LimitStructureDialog_title;
-	protected Space									space_Active;
+	protected Textbox structureName;
+	protected Row row1;
+	protected Label window_LimitStructureDialog_title;
+	protected Space space_Active;
 
-	protected Label									label_ShowLimitsIn;
-	protected Hlayout								hlayout_ShowLimitsIn;
-	protected Space									space_ShowLimitsIn;
-	protected Combobox								showLimitsIn;
+	protected Label label_ShowLimitsIn;
+	protected Hlayout hlayout_ShowLimitsIn;
+	protected Space space_ShowLimitsIn;
+	protected Combobox showLimitsIn;
 
-	protected Checkbox								active;
-	int												itemSeq							= 1;
+	protected Checkbox active;
+	int itemSeq = 1;
 
 	// not auto wired vars
-	private LimitStructure							limitStructure;																	// overhanded per param
-	private transient LimitStructureListCtrl		limitStructureListCtrl;															// overhanded
+	private LimitStructure limitStructure; // overhanded per param
+	private transient LimitStructureListCtrl limitStructureListCtrl; // overhanded
 
-	protected Button								btnGroup;
-	protected Button								btnTop;
-	protected Button								btnUp;
-	protected Button								btnDown;
-	protected Button								btnBottom;
+	protected Button btnGroup;
+	protected Button btnTop;
+	protected Button btnUp;
+	protected Button btnDown;
+	protected Button btnBottom;
 
-	protected Listheader							listheader_Revolving;
-	protected Listheader							listheader_Editable;
+	protected Listheader listheader_Revolving;
+	protected Listheader listheader_Editable;
 
-	private static Map<String, LimitGroup>			limitGroupsMap;
-	private static List<ValueLabel>					limitDisplayStyle;
-	private List<ValueLabel>						limitGroupslist;
+	private static Map<String, LimitGroup> limitGroupsMap;
+	private static List<ValueLabel> limitDisplayStyle;
+	private List<ValueLabel> limitGroupslist;
 
-	private int										key								= 0;
-	private int										indentLevel						= 0;
-	protected String								indent							= null;
-	protected boolean								isInstitutionType				= false;
-	protected Checkbox								editable;
-	protected Checkbox								revolving;
-	protected Checkbox								check;
-	protected Combobox								displayStyle;
-	protected Button								btnRemove;
+	private int key = 0;
+	private int indentLevel = 0;
+	protected String indent = null;
+	protected boolean isInstitutionType = false;
+	protected Checkbox editable;
+	protected Checkbox revolving;
+	protected Checkbox check;
+	protected Combobox displayStyle;
+	protected Button btnRemove;
 
-	private List<LimitStructureDetail>				limitStructureDetailItemsList	= new ArrayList<LimitStructureDetail>();
-	protected Map<Integer, LimitStructureDetail>	deleteMap						= new HashMap<Integer, LimitStructureDetail>();
-	protected Map<Integer, LimitStructureDetail>	addHashMap						= new HashMap<Integer, LimitStructureDetail>();
-	protected Map<String, LimitStructureDetail>		assignedHashMap					= new HashMap<String, LimitStructureDetail>();
+	private List<LimitStructureDetail> limitStructureDetailItemsList = new ArrayList<LimitStructureDetail>();
+	protected Map<Integer, LimitStructureDetail> deleteMap = new HashMap<Integer, LimitStructureDetail>();
+	protected Map<Integer, LimitStructureDetail> addHashMap = new HashMap<Integer, LimitStructureDetail>();
+	protected Map<String, LimitStructureDetail> assignedHashMap = new HashMap<String, LimitStructureDetail>();
 
-	protected Listbox								listBoxLimitStructureDetailItems;
-	private PagedListWrapper<LimitStructureDetail>	assignedLimitStructureDetailItemsPagedListWrapper;
-	protected Paging								pagingLimitStructureDetail;
+	protected Listbox listBoxLimitStructureDetailItems;
+	private PagedListWrapper<LimitStructureDetail> assignedLimitStructureDetailItemsPagedListWrapper;
+	protected Paging pagingLimitStructureDetail;
 
 	// ServiceDAOs / Domain Classes
-	private transient LimitStructureService			limitStructureService;
-	private transient PagedListService				pagedListService;
-	private List<ValueLabel>						listCurrencyUnits;
+	private transient LimitStructureService limitStructureService;
+	private transient PagedListService pagedListService;
+	private List<ValueLabel> listCurrencyUnits;
 
 	/**
 	 * default constructor.<br>
@@ -623,10 +622,9 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			btnRemove.setParent(lc);
 			if (!limitStructureDetail.isNew())
 				readOnlyComponent(
-						isReadOnly("LimitStructureDetailDialog_Delete")
-								|| active.isDisabled()
-								|| !(StringUtils.equals(PennantConstants.RECORD_TYPE_NEW,
-										limitStructureDetail.getRecordType())), btnRemove);
+						isReadOnly("LimitStructureDetailDialog_Delete") || active.isDisabled() || !(StringUtils
+								.equals(PennantConstants.RECORD_TYPE_NEW, limitStructureDetail.getRecordType())),
+						btnRemove);
 
 			if (enqiryModule
 					|| StringUtils.equals(getLimitStructure().getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
@@ -795,8 +793,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		LimitStructureDetail limitStructureDetailItems = (LimitStructureDetail) groupCode.getParent().getParent()
 				.getAttribute("Data");
 		limitStructureDetailItems.setSubGroupsMap(new HashMap<String, LimitStructureDetail>());
-		if (groupCode.getValue() != null
-				&& !StringUtils.equals(PennantConstants.List_Select, groupCode.getSelectedItem().getValue().toString())) {
+		if (groupCode.getValue() != null && !StringUtils.equals(PennantConstants.List_Select,
+				groupCode.getSelectedItem().getValue().toString())) {
 			limitStructureDetailItems.setGroupCode(groupCode.getSelectedItem().getValue().toString());
 			writeValuetoBean(limitStructureDetailItems);
 		}
@@ -976,8 +974,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LimitStructureDetailDialog_btnSave"));
 
 			if (!StringUtils.equalsIgnoreCase(getLimitStructure().getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				this.btnGroup.setVisible(getUserWorkspace().isAllowed(
-						"button_LimitStructureDetailDialog_NewLimitStructureDetails"));
+				this.btnGroup.setVisible(
+						getUserWorkspace().isAllowed("button_LimitStructureDetailDialog_NewLimitStructureDetails"));
 				this.btnUp.setVisible(getUserWorkspace().isAllowed("button_LimitStructureDetailDialog_Up"));
 				this.btnTop.setVisible(getUserWorkspace().isAllowed("button_LimitStructureDetailDialog_Top"));
 				this.btnBottom.setVisible(getUserWorkspace().isAllowed("button_LimitStructureDetailDialog_Bottom"));
@@ -1011,8 +1009,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 
 		this.listBoxLimitStructureDetailItems.setWidth(getListBoxWidth(50));
 		this.listBoxLimitStructureDetailItems.setHeight(getListBoxHeight(5));
-		this.window_LimitStructureDialog_title.setValue(Labels.getLabel("window_LimitStructureDialog_title_"
-				+ getLimitStructure().getLimitCategory()));
+		this.window_LimitStructureDialog_title.setValue(
+				Labels.getLabel("window_LimitStructureDialog_title_" + getLimitStructure().getLimitCategory()));
 
 		setStatusDetails();
 		logger.debug("Leaving");
@@ -1143,9 +1141,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		// Type
 		try {
 			String limitIn = "D";
-			if (this.showLimitsIn.getSelectedItem() != null
-					&& !StringUtils.equals(PennantConstants.List_Select, this.showLimitsIn.getSelectedItem().getValue()
-							.toString())) {
+			if (this.showLimitsIn.getSelectedItem() != null && !StringUtils.equals(PennantConstants.List_Select,
+					this.showLimitsIn.getSelectedItem().getValue().toString())) {
 				limitIn = this.showLimitsIn.getSelectedItem().getValue().toString();
 			}
 			aLimitStructure.setShowLimitsIn(limitIn);
@@ -1181,10 +1178,10 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				 * if (StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, aLimitStructure.getRecordStatus()) &&
 				 * StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, aLimitStructure.getRecordType())) {
 				 */
-				tempLimitStructureDetailList.add(getUnclassifiedLimitStructureDetails(false,
-						LimitConstants.LIMIT_ITEM_TOTAL));
-				tempLimitStructureDetailList.add(getUnclassifiedLimitStructureDetails(true,
-						LimitConstants.LIMIT_ITEM_UNCLSFD));
+				tempLimitStructureDetailList
+						.add(getUnclassifiedLimitStructureDetails(false, LimitConstants.LIMIT_ITEM_TOTAL));
+				tempLimitStructureDetailList
+						.add(getUnclassifiedLimitStructureDetails(true, LimitConstants.LIMIT_ITEM_UNCLSFD));
 				//	}
 
 				aLimitStructure.setLimitStructureDetailItemsList(tempLimitStructureDetailList);
@@ -1220,15 +1217,15 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		doRemoveValidation();
 		// Structure Code
 		if (!this.structureCode.isReadonly()) {
-			this.structureCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_LimitStructureDialog_StructureCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.structureCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LimitStructureDialog_StructureCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		// Structure Name
 		if (!this.structureName.isReadonly()) {
-			this.structureName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_LimitStructureDialog_StructureName.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.structureName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LimitStructureDialog_StructureName.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		// Currency Notation
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1246,10 +1243,9 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				if (lmtStructureDetails.getGroupCode() != null) {
 					Combobox lmtGrpCombobox = (Combobox) (Combobox) item.getChildren().get(0).getFirstChild();
 					try {
-						if (lmtGrpCombobox != null
-								&& lmtGrpCombobox.getValue() != null
-								&& !StringUtils.equals(PennantConstants.List_Select, lmtGrpCombobox.getSelectedItem()
-										.getValue().toString())) {
+						if (lmtGrpCombobox != null && lmtGrpCombobox.getValue() != null
+								&& !StringUtils.equals(PennantConstants.List_Select,
+										lmtGrpCombobox.getSelectedItem().getValue().toString())) {
 							addStructureDetails(lmtStructureDetails, list, lmtGrpCombobox,
 									lmtStructureDetails.getGroupCode());
 							if (!isInstitutionType && limitGroupsMap.containsKey(lmtStructureDetails.getGroupCode())) {
@@ -1297,12 +1293,12 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			for (LimitStructureDetail limitGroup : list) {
 				if (limitGroup.getGroupCode() != null && structureDetail.getGroupCode() != null
 						&& StringUtils.equals(structureDetail.getGroupCode(), limitGroup.getGroupCode())) {
-					throw new WrongValueException(lmtGrp, limitGroup.getGroupCode()
-							+ " Already exists. Please Select Another Group.");
+					throw new WrongValueException(lmtGrp,
+							limitGroup.getGroupCode() + " Already exists. Please Select Another Group.");
 				} else if (structureDetail.getLimitLine() != null && limitGroup.getLimitLine() != null
 						&& StringUtils.equals(limitGroup.getLimitLine(), structureDetail.getLimitLine())) {
-					throw new WrongValueException(lmtGrp, structureDetail.getLimitLine()
-							+ " Already exists. Please Select Another Group.");
+					throw new WrongValueException(lmtGrp,
+							structureDetail.getLimitLine() + " Already exists. Please Select Another Group.");
 				}
 			}
 

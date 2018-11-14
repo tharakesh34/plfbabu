@@ -12,10 +12,10 @@ import com.pennanttech.pff.core.TableType;
  * 
  * @param <T>
  */
-public interface ReturnedChequeDAO extends BasicCrudDao<ReturnedChequeDetails>{
-	ReturnedChequeDetails getReturnedChequeById(String custCIF,String chequeNo,String type);
-	
-	List<ReturnedCheques> fetchReturnedCheques(ReturnedCheques  returnedCheques );
+public interface ReturnedChequeDAO extends BasicCrudDao<ReturnedChequeDetails> {
+	ReturnedChequeDetails getReturnedChequeById(String custCIF, String chequeNo, String type);
+
+	List<ReturnedCheques> fetchReturnedCheques(ReturnedCheques returnedCheques);
 
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.

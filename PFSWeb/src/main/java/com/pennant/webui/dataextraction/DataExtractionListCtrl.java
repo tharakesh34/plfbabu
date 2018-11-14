@@ -35,17 +35,16 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
 import com.pennanttech.pff.model.external.gst.TaxDownload;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/DataExtraction/DataExtractionList.zul file.
+ * This is the controller class for the /WEB-INF/pages/DataExtraction/DataExtractionList.zul file.
  * 
  */
 public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
@@ -73,8 +72,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -105,8 +103,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	/**
-	 * Download the data from Interface data source into browser as excel file
-	 * format
+	 * Download the data from Interface data source into browser as excel file format
 	 */
 	public void onClick$btn_Download(Event event) {
 		validateAndProcess(true);
@@ -179,9 +176,8 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	/**
-	 * Import the Data from Pennant data source into Interface data source(Bajaj)
-	 * Or Download the data from Interface data source into browser as excel file
-	 * format Based process Invocation
+	 * Import the Data from Pennant data source into Interface data source(Bajaj) Or Download the data from Interface
+	 * data source into browser as excel file format Based process Invocation
 	 * 
 	 * @param processMonth
 	 * @param configName
@@ -259,8 +255,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	}
 
 	/**
-	 * Download the GstTransaction data from Interface datasource into browser as excel file
-	 * format
+	 * Download the GstTransaction data from Interface datasource into browser as excel file format
 	 * 
 	 * @throws Exception
 	 */
@@ -280,7 +275,6 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		}
 		return Labels.getLabel("label_DataExtractionList_DownloadedSuccess.value");
 	}
-	
 
 	/**
 	 * Save Data from Pennant datasource into Interface datasource(Bajaj)
@@ -302,7 +296,6 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		return status.getRemarks();
 	}
 
-
 	/**
 	 * Download the data into browser as excel file format
 	 * 
@@ -322,7 +315,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 			CellStyle dateFormat = workbook.createCellStyle();
 			CreationHelper createHelper = workbook.getCreationHelper();
 			dateFormat.setDataFormat(createHelper.createDataFormat().getFormat(DateFormat.LONG_DATE.getPattern()));
-			 
+
 			Map<Integer, Object[]> data = new TreeMap<Integer, Object[]>();
 			data.put(1, getGstTransactionHeaderNames());
 			int i = 2;
@@ -404,22 +397,21 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 				item.getAgreementId(), item.getConsiderForGst(), item.getExemptedState(), item.getExemptedCustomer() };
 		return columnValues;
 	}
-	
+
 	/**
-	 * Download the data from Interface datasource into browser as excel file
-	 * format
+	 * Download the data from Interface datasource into browser as excel file format
 	 * 
 	 * @throws Exception
 	 */
 	private String downloadGstSummaryData(String configName, TaxDownlaodExtract process) throws Exception {
-		
+
 		long count = process.getGSTSummaryRecordCount();
 		if (count <= 0) {
 			return Labels.getLabel("label_DataExtraction_NoRecordsavailable.value");
 		}
-		
+
 		List<TaxDownload> list = process.getGstSummaryDeatils();
-		
+
 		if (list != null && !list.isEmpty()) {
 			downloadGstSummaryData(list);
 		} else {
@@ -427,6 +419,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		}
 		return Labels.getLabel("label_DataExtractionList_DownloadedSuccess.value");
 	}
+
 	/**
 	 * Download the data into browser as excel file format
 	 * 
@@ -434,26 +427,26 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 */
 	private void downloadGstSummaryData(List<TaxDownload> list) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		ByteArrayOutputStream bos = null;
 		HSSFWorkbook workbook = null;
 		Sheet sheet = null;
 		try {
 			workbook = new HSSFWorkbook();
 			sheet = workbook.createSheet("GST Summary Details");
-			
+
 			CellStyle dateFormat = workbook.createCellStyle();
 			CreationHelper createHelper = workbook.getCreationHelper();
 			dateFormat.setDataFormat(createHelper.createDataFormat().getFormat(DateFormat.LONG_DATE.getPattern()));
-			
+
 			Map<Integer, Object[]> data = new TreeMap<Integer, Object[]>();
 			data.put(1, getGstSummaryHeaderNames());
 			int i = 2;
 			for (TaxDownload item : list) {
-				data.put(i,getGstSummaryColumnValues(item));
+				data.put(i, getGstSummaryColumnValues(item));
 				i++;
 			}
-			
+
 			Set<Integer> keyset = data.keySet();
 			int rownum = 0;
 			for (int key : keyset) {
@@ -479,7 +472,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 					}
 				}
 			}
-			
+
 			bos = new ByteArrayOutputStream();
 			workbook.write(bos);
 			Filedownload.save(new AMedia("GSTDetails", "xls", "application/vnd.ms-excel", bos.toByteArray()));
@@ -499,7 +492,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private Object[] getGstSummaryHeaderNames() {
 		Object[] columnNames = new Object[] { "TRANSACTION_DATE", "ENTITYNAME", "ENTITYGSTIN", "LEDGERCODE",
 				"FINNONEBRANCHID", "REGISTEREDUNREGISTERED", "INTERINTRASTATE", "AMOUNT" };

@@ -53,7 +53,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -61,30 +60,30 @@ import com.pennant.util.PennantAppUtil;
 public class ProvisionPostingsListModelItemRenderer implements ListitemRenderer<ReturnDataSet>, Serializable {
 
 	private static final long serialVersionUID = -4343497695244309847L;
-	
+
 	public ProvisionPostingsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ReturnDataSet returnDataSet, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(returnDataSet.getPostDate().toString());
+		lc = new Listcell(returnDataSet.getPostDate().toString());
 		lc.setParent(item);
-	  	lc = new Listcell(returnDataSet.getValueDate().toString());
-	  	lc.setParent(item);
-	  	lc = new Listcell(returnDataSet.getAccount());
-	  	lc.setParent(item);
-	  	lc = new Listcell(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)?"Debit":"Credit");
-	  	lc.setParent(item);
-	  	lc = new Listcell(returnDataSet.getTranCode());
-	  	lc.setParent(item);
-	  	lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),0));
-	  	lc.setStyle("text-align:right;");
-	  	lc.setParent(item);
-	  	lc = new Listcell(returnDataSet.getPostStatus());
-	  	lc.setParent(item);
+		lc = new Listcell(returnDataSet.getValueDate().toString());
+		lc.setParent(item);
+		lc = new Listcell(returnDataSet.getAccount());
+		lc.setParent(item);
+		lc = new Listcell(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT) ? "Debit" : "Credit");
+		lc.setParent(item);
+		lc = new Listcell(returnDataSet.getTranCode());
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), 0));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+		lc = new Listcell(returnDataSet.getPostStatus());
+		lc.setParent(item);
 		lc = new Listcell(returnDataSet.getPostingId());
 		lc.setParent(item);
 	}

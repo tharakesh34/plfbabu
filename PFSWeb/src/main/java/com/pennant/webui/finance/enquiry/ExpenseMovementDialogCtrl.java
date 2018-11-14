@@ -67,27 +67,27 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * This is the controller class for the /WEB-INF/pages/Enquiry/ExpenseMovementDialogCtrl.zul file.
  */
 public class ExpenseMovementDialogCtrl extends GFCBaseCtrl<FinExpenseMovements> {
-	private static final long						serialVersionUID	= 8602015982512929710L;
-	private static final Logger						logger				= Logger.getLogger(ExpenseMovementDialogCtrl.class);
+	private static final long serialVersionUID = 8602015982512929710L;
+	private static final Logger logger = Logger.getLogger(ExpenseMovementDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window								window_ExpenseMovementDialog;
-	protected Borderlayout							borderLayout_GlFileDownloadList;
-	protected Listbox								listBoxExpensiveMovements;
-	protected Textbox								expenseTypeCode;
-	protected Textbox								expenseTypeDesc;
-	protected Paging								pagingExpenseMovementList;
-	protected Grid									grid_Basicdetails;
-	private PagedListWrapper<FinExpenseMovements>	movementsDetailPagedListWrapper;
+	protected Window window_ExpenseMovementDialog;
+	protected Borderlayout borderLayout_GlFileDownloadList;
+	protected Listbox listBoxExpensiveMovements;
+	protected Textbox expenseTypeCode;
+	protected Textbox expenseTypeDesc;
+	protected Paging pagingExpenseMovementList;
+	protected Grid grid_Basicdetails;
+	private PagedListWrapper<FinExpenseMovements> movementsDetailPagedListWrapper;
 
-	private FinExpenseDetails						finExpenseDetails;
-	private List<FinExpenseMovements>				finExpenseMovements;
+	private FinExpenseDetails finExpenseDetails;
+	private List<FinExpenseMovements> finExpenseMovements;
 
-	int												listRows;
-	private int										ccyFormatter		= 0; 
+	int listRows;
+	private int ccyFormatter = 0;
 
 	/**
 	 * default constructor.<br>
@@ -132,7 +132,7 @@ public class ExpenseMovementDialogCtrl extends GFCBaseCtrl<FinExpenseMovements> 
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (int) arguments.get("ccyFormatter");
 		}
-		
+
 		getBorderLayoutHeight();
 		int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 170;
 		int listboxHeight = borderLayoutHeight - dialogHeight;

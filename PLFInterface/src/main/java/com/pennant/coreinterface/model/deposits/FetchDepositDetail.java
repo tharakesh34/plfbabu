@@ -16,11 +16,11 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 public class FetchDepositDetail implements Serializable {
 
 	private static final long serialVersionUID = 4396116722765788718L;
-	
+
 	public FetchDepositDetail() {
-		
+
 	}
-	
+
 	private String referenceNum;
 	private String invstContractNo;
 	private String returnCode;
@@ -258,7 +258,7 @@ public class FetchDepositDetail implements Serializable {
 	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
-	
+
 	private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat(InterfaceMasterConfigUtil.MQDATE);
 

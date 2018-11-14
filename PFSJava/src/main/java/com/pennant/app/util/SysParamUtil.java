@@ -61,10 +61,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class SysParamUtil {
 	private static final Logger logger = Logger.getLogger(SysParamUtil.class);
-	
+
 	private static PFSParameterService systemParameterService;
 	private static List<GlobalVariable> globalVariablesList = null;
-	
+
 	/**
 	 * Enumerates the system parameter codes.
 	 */
@@ -83,13 +83,12 @@ public class SysParamUtil {
 	}
 
 	/**
-	 * Returns a {@link java.util.String} object that represents the application
-	 * Currency.
+	 * Returns a {@link java.util.String} object that represents the application Currency.
 	 */
 	public static String getAppCurrency() {
 		return SysParamUtil.getValueAsString(Param.APP_DFT_CURR.getCode());
 	}
-	
+
 	/**
 	 * Convenience method for getting the value of a system parameter.
 	 * 
@@ -173,8 +172,8 @@ public class SysParamUtil {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	private static HashMap<String, PFSParameter> parmDetails = null;
+
 	public static void setParmDetails(String code, String value) {
 		logger.debug("Entering");
 		if (parmDetails != null) {
@@ -187,8 +186,7 @@ public class SysParamUtil {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Get the List of System Parameters
 	 * 
@@ -239,12 +237,12 @@ public class SysParamUtil {
 		}
 		return object;
 	}
-			
-	private static PFSParameter getParamByID(String code){
+
+	private static PFSParameter getParamByID(String code) {
 		return systemParameterService.getParameterByCode(StringUtils.trimToEmpty(code));
 	}
 
 	public static void setSystemParameterService(PFSParameterService systemParameterService) {
 		SysParamUtil.systemParameterService = systemParameterService;
-	}	
+	}
 }

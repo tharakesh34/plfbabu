@@ -62,11 +62,12 @@ import com.pennanttech.pff.core.TableType;
 /**
  * Service implementation for methods that depends on <b>FinanceStatusCode</b>.<br>
  */
-public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCode> implements FinanceStatusCodeService {
-	private static final Logger		logger	= Logger.getLogger(FinanceStatusCodeServiceImpl.class);
+public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCode>
+		implements FinanceStatusCodeService {
+	private static final Logger logger = Logger.getLogger(FinanceStatusCodeServiceImpl.class);
 
-	private AuditHeaderDAO			auditHeaderDAO;
-	private FinanceStatusCodeDAO	financeStatusCodeDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private FinanceStatusCodeDAO financeStatusCodeDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -232,8 +233,8 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 		getFinanceStatusCodeDAO().delete(financeStatusCode, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(financeStatusCode.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					financeStatusCodeDAO.getFinanceStatusCode(financeStatusCode.getStatusId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(financeStatusCodeDAO.getFinanceStatusCode(financeStatusCode.getStatusId(), ""));
 		}
 
 		if (financeStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -338,9 +339,9 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 		FinanceStatusCode financeStatusCode = (FinanceStatusCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (financeStatusCode.isNew()
-				&& financeStatusCodeDAO.isDuplicateKey(financeStatusCode.getStatusId(), financeStatusCode
-						.getStatusCode(), financeStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (financeStatusCode.isNew() && financeStatusCodeDAO.isDuplicateKey(financeStatusCode.getStatusId(),
+				financeStatusCode.getStatusCode(),
+				financeStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_StatusCode") + ": " + financeStatusCode.getStatusCode();

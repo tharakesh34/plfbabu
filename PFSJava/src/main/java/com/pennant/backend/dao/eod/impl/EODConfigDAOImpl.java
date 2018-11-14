@@ -66,26 +66,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>EODConfig</code> with set of CRUD operations.
  */
 public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfigDAO {
-	private static Logger	logger	= Logger.getLogger(EODConfigDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(EODConfigDAOImpl.class);
 
 	public EODConfigDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public EODConfig getEODConfig(long eodConfigId,String type) {
+	public EODConfig getEODConfig(long eodConfigId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" eodConfigId, extMnthRequired, mnthExtTo, active,InExtMnth,PrvExtMnth, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From EodConfig");
 		sql.append(type);
 		sql.append(" Where eodConfigId = :eodConfigId");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -104,25 +104,27 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 
 		logger.debug(Literal.LEAVING);
 		return eODConfig;
-	}		
-	
+	}
+
 	@Override
-	public String save(EODConfig eODConfig,TableType tableType) {
+	public String save(EODConfig eODConfig, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into EodConfig");
+		StringBuilder sql = new StringBuilder(" insert into EodConfig");
 		sql.append(tableType.getSuffix());
 		sql.append(" (eodConfigId, extMnthRequired, mnthExtTo, active,InExtMnth,PrvExtMnth, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :eodConfigId, :extMnthRequired, :mnthExtTo, :active,:InExtMnth,:PrvExtMnth, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		if (eODConfig.getEodConfigId() <= 0) {
 			eODConfig.setEodConfigId(getNextId("SeqEodConfig"));
 		}
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
@@ -135,14 +137,14 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(eODConfig.getEodConfigId());
-	}	
+	}
 
 	@Override
-	public void update(EODConfig eODConfig,TableType tableType) {
+	public void update(EODConfig eODConfig, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EodConfig" );
+		StringBuilder sql = new StringBuilder("update EodConfig");
 		sql.append(tableType.getSuffix());
 		sql.append("  set extMnthRequired = :extMnthRequired, mnthExtTo = :mnthExtTo, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -150,10 +152,10 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where eodConfigId = :eodConfigId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -161,7 +163,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -193,17 +195,17 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public List<EODConfig> getEODConfig() {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" EodConfigId, ExtMnthRequired, MnthExtTo, Active, ");
 		sql.append(" InExtMnth, PrvExtMnth ");
 		sql.append(" From EodConfig");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -215,22 +217,22 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 
 		List<EODConfig> list = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
-		return list ;
-	}	
+		return list;
+	}
 
 	@Override
-	public void updateExtMnthEnd(EODConfig eODConfig){
+	public void updateExtMnthEnd(EODConfig eODConfig) {
 
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EodConfig" );
+		StringBuilder sql = new StringBuilder("update EodConfig");
 		sql.append("  set InExtMnth=:InExtMnth ,PrvExtMnth=:PrvExtMnth ");
 		sql.append(" where eodConfigId = :eodConfigId ");
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -238,11 +240,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
-		logger.debug(Literal.LEAVING);
-	
-	}
-	
-	
 
-}	
+		logger.debug(Literal.LEAVING);
+
+	}
+
+}

@@ -8,9 +8,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class IndicativeTermDetail extends AbstractWorkflowEntity {
 
-    private static final long serialVersionUID = -9145740108425516287L;
-    
-    private String finReference;
+	private static final long serialVersionUID = -9145740108425516287L;
+
+	private String finReference;
 	private String facilityType;
 	private String lovDescFacilityType;
 	private String rpsnName;
@@ -52,18 +52,18 @@ public class IndicativeTermDetail extends AbstractWorkflowEntity {
 	private String underWritingCCY;
 	private BigDecimal propFinalTake = BigDecimal.ZERO;
 	private String propFinalTakeCCY;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private IndicativeTermDetail befImage;
 	private LoggedInUser userDetails;
 
 	private Date lovDescFinStartDate;
 	private Date lovDescMaturityDate;
-	
+
 	private int tenorYear = 0;
 	private int tenorMonth = 0;
-	private String tenorDesc="";
+	private String tenorDesc = "";
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -77,420 +77,442 @@ public class IndicativeTermDetail extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
-	
+
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
+
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
 
 	public String getFacilityType() {
-    	return facilityType;
-    }
+		return facilityType;
+	}
+
 	public void setFacilityType(String facilityType) {
-    	this.facilityType = facilityType;
-    }
-	
+		this.facilityType = facilityType;
+	}
+
 	public String getLovDescFacilityType() {
-    	return lovDescFacilityType;
-    }
+		return lovDescFacilityType;
+	}
+
 	public void setLovDescFacilityType(String lovDescFacilityType) {
-    	this.lovDescFacilityType = lovDescFacilityType;
-    }
-	
+		this.lovDescFacilityType = lovDescFacilityType;
+	}
+
 	public String getRpsnName() {
-    	return rpsnName;
-    }
+		return rpsnName;
+	}
+
 	public void setRpsnName(String rpsnName) {
-    	this.rpsnName = rpsnName;
-    }
-	
+		this.rpsnName = rpsnName;
+	}
+
 	public String getRpsnDesg() {
-    	return rpsnDesg;
-    }
+		return rpsnDesg;
+	}
+
 	public void setRpsnDesg(String rpsnDesg) {
-    	this.rpsnDesg = rpsnDesg;
-    }
+		this.rpsnDesg = rpsnDesg;
+	}
 
 	public String getPricing() {
-    	return pricing;
-    }
+		return pricing;
+	}
+
 	public void setPricing(String pricing) {
-    	this.pricing = pricing;
-    }
-	
+		this.pricing = pricing;
+	}
+
 	public String getRepayments() {
-    	return repayments;
-    }
+		return repayments;
+	}
+
 	public void setRepayments(String repayments) {
-    	this.repayments = repayments;
-    }
-	
+		this.repayments = repayments;
+	}
+
 	public String getLCPeriod() {
-    	return lCPeriod;
-    }
+		return lCPeriod;
+	}
+
 	public void setLCPeriod(String lCPeriod) {
-    	this.lCPeriod = lCPeriod;
-    }
-	
+		this.lCPeriod = lCPeriod;
+	}
+
 	public String getUsancePeriod() {
-    	return usancePeriod;
-    }
+		return usancePeriod;
+	}
+
 	public void setUsancePeriod(String usancePeriod) {
-    	this.usancePeriod = usancePeriod;
-    }
-	
+		this.usancePeriod = usancePeriod;
+	}
+
 	public boolean isSecurityClean() {
-    	return securityClean;
-    }
+		return securityClean;
+	}
+
 	public void setSecurityClean(boolean securityClean) {
-    	this.securityClean = securityClean;
-    }
-	
+		this.securityClean = securityClean;
+	}
+
 	public String getSecurityName() {
-    	return securityName;
-    }
+		return securityName;
+	}
+
 	public void setSecurityName(String securityName) {
-    	this.securityName = securityName;
-    }
-	
+		this.securityName = securityName;
+	}
+
 	public String getUtilization() {
-    	return utilization;
-    }
+		return utilization;
+	}
+
 	public void setUtilization(String utilization) {
-    	this.utilization = utilization;
-    }
-	
+		this.utilization = utilization;
+	}
+
 	public String getCommission() {
-    	return commission;
-    }
+		return commission;
+	}
+
 	public void setCommission(String commission) {
-    	this.commission = commission;
-    }
-	
+		this.commission = commission;
+	}
+
 	public String getPurpose() {
-    	return purpose;
-    }
+		return purpose;
+	}
+
 	public void setPurpose(String purpose) {
-    	this.purpose = purpose;
-    }
+		this.purpose = purpose;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
 	public IndicativeTermDetail getBefImage() {
-	    return this.befImage;
-    }
+		return this.befImage;
+	}
+
 	public void setBefImage(IndicativeTermDetail befImage) {
-	    this.befImage = befImage;
-    }
+		this.befImage = befImage;
+	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public String getLovDescCustCIF() {
-    	return lovDescCustCIF;
-    }
+		return lovDescCustCIF;
+	}
 
 	public void setLovDescCustCIF(String lovDescCustCIF) {
-    	this.lovDescCustCIF = lovDescCustCIF;
-    }
+		this.lovDescCustCIF = lovDescCustCIF;
+	}
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-	    this.lovDescCustShrtName = lovDescCustShrtName;
-    }
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
 
 	public String getLovDescCustShrtName() {
-	    return lovDescCustShrtName;
-    }
+		return lovDescCustShrtName;
+	}
 
 	public void setCustId(long custId) {
-	    this.custId = custId;
-    }
+		this.custId = custId;
+	}
 
 	public long getCustId() {
-	    return custId;
-    }
+		return custId;
+	}
 
 	public void setLovDescRpsnDesgName(String lovDescRpsnDesgName) {
-	    this.lovDescRpsnDesgName = lovDescRpsnDesgName;
-    }
+		this.lovDescRpsnDesgName = lovDescRpsnDesgName;
+	}
 
 	public String getLovDescRpsnDesgName() {
-	    return lovDescRpsnDesgName;
-    }
+		return lovDescRpsnDesgName;
+	}
 
 	public void setLovDescRevolving(String lovDescRevolving) {
-	    this.lovDescRevolving = lovDescRevolving;
-    }
+		this.lovDescRevolving = lovDescRevolving;
+	}
 
 	public String getLovDescRevolving() {
-	    return lovDescRevolving;
-    }
+		return lovDescRevolving;
+	}
 
 	public void setLovDescFinStartDate(Date lovDescFinStartDate) {
-	    this.lovDescFinStartDate = lovDescFinStartDate;
-    }
+		this.lovDescFinStartDate = lovDescFinStartDate;
+	}
 
 	public Date getLovDescFinStartDate() {
-	    return lovDescFinStartDate;
-    }
+		return lovDescFinStartDate;
+	}
 
 	public void setLovDescMaturityDate(Date lovDescMaturityDate) {
-	    this.lovDescMaturityDate = lovDescMaturityDate;
-    }
+		this.lovDescMaturityDate = lovDescMaturityDate;
+	}
 
 	public Date getLovDescMaturityDate() {
-	    return lovDescMaturityDate;
-    }
+		return lovDescMaturityDate;
+	}
 
 	public void setTenor(String tenor) {
-	    this.tenor = tenor;
-    }
+		this.tenor = tenor;
+	}
 
 	public String getTenor() {
-	    return tenor;
-    }
+		return tenor;
+	}
 
 	public void setFinCcy(String ccy) {
-	    this.finCcy = ccy;
-    }
+		this.finCcy = ccy;
+	}
 
 	public String getFinCcy() {
-	    return finCcy;
-    }
+		return finCcy;
+	}
 
 	public void setFinPurpose(String finPurpose) {
-	    this.finPurpose = finPurpose;
-    }
+		this.finPurpose = finPurpose;
+	}
 
 	public String getFinPurpose() {
-	    return finPurpose;
-    }
+		return finPurpose;
+	}
 
 	public String getGuarantee() {
-	    return guarantee;
-    }
+		return guarantee;
+	}
 
 	public void setGuarantee(String guarantee) {
-	    this.guarantee = guarantee;
-    }
+		this.guarantee = guarantee;
+	}
 
 	public String getCovenants() {
-	    return covenants;
-    }
+		return covenants;
+	}
 
 	public void setCovenants(String covenants) {
-	    this.covenants = covenants;
-    }
+		this.covenants = covenants;
+	}
 
 	public void setFinAmount(String finAmount) {
-	    this.finAmount = finAmount;
-    }
+		this.finAmount = finAmount;
+	}
 
 	public String getFinAmount() {
-	    return finAmount;
-    }
+		return finAmount;
+	}
+
 	public String getPoBox() {
-    	return poBox;
-    }
+		return poBox;
+	}
 
 	public void setPoBox(String poBox) {
-    	this.poBox = poBox;
-    }
+		this.poBox = poBox;
+	}
 
 	public String getFax() {
-    	return fax;
-    }
+		return fax;
+	}
 
 	public void setFax(String fax) {
-    	this.fax = fax;
-    }
+		this.fax = fax;
+	}
 
 	public String getCity() {
-    	return city;
-    }
+		return city;
+	}
 
 	public void setCity(String city) {
-    	this.city = city;
-    }
+		this.city = city;
+	}
 
 	public String getCountry() {
-    	return country;
-    }
+		return country;
+	}
 
 	public void setCountry(String country) {
-    	this.country = country;
-    }
+		this.country = country;
+	}
 
 	public String getAppDate() {
-    	return appDate;
-    }
+		return appDate;
+	}
 
 	public void setAppDate(String appDate) {
-    	this.appDate = appDate;
-    }
+		this.appDate = appDate;
+	}
 
 	public String getAppPastYear() {
-    	return appPastYear;
-    }
+		return appPastYear;
+	}
 
 	public void setAppPastYear(String appPastYear) {
-    	this.appPastYear = appPastYear;
-    }
+		this.appPastYear = appPastYear;
+	}
 
 	public String getAppLastYear() {
-    	return appLastYear;
-    }
+		return appLastYear;
+	}
 
 	public void setAppLastYear(String appLastYear) {
-    	this.appLastYear = appLastYear;
-    }
+		this.appLastYear = appLastYear;
+	}
+
 	//Ck Editor Display fields
 	public String getHtmlCommission() {
-    	return commission;
-    }
+		return commission;
+	}
+
 	public String getHtmlPurpose() {
 		return purpose;
 	}
+
 	public String getHtmlSecurityName() {
 		return securityName;
 	}
 
 	public int getTenorYear() {
-	    return tenorYear;
-    }
+		return tenorYear;
+	}
 
 	public void setTenorYear(int tenorYear) {
-	    this.tenorYear = tenorYear;
-    }
+		this.tenorYear = tenorYear;
+	}
 
 	public int getTenorMonth() {
-	    return tenorMonth;
-    }
+		return tenorMonth;
+	}
 
 	public void setTenorMonth(int tenorMonth) {
-	    this.tenorMonth = tenorMonth;
-    }
+		this.tenorMonth = tenorMonth;
+	}
 
 	public String getTenorDesc() {
-	    return tenorDesc;
-    }
+		return tenorDesc;
+	}
 
 	public void setTenorDesc(String tenorDesc) {
-	    this.tenorDesc = tenorDesc;
-    }
+		this.tenorDesc = tenorDesc;
+	}
 
 	public String getDocumentsRequired() {
-	    return documentsRequired;
-    }
+		return documentsRequired;
+	}
 
 	public String getHtmlDocumentsRequired() {
 		return documentsRequired;
 	}
-	
+
 	public void setDocumentsRequired(String documentsRequired) {
-	    this.documentsRequired = documentsRequired;
-    }
+		this.documentsRequired = documentsRequired;
+	}
 
 	public String getTransactionType() {
-	    return transactionType;
-    }
+		return transactionType;
+	}
 
 	public void setTransactionType(String transactionType) {
-	    this.transactionType = transactionType;
-    }
+		this.transactionType = transactionType;
+	}
 
 	public String getAgentBank() {
-	    return agentBank;
-    }
+		return agentBank;
+	}
 
 	public void setAgentBank(String agentBank) {
-	    this.agentBank = agentBank;
-    }
+		this.agentBank = agentBank;
+	}
 
 	public String getOtherDetails() {
-	    return otherDetails;
-    }
+		return otherDetails;
+	}
 
 	public void setOtherDetails(String otherDetails) {
-	    this.otherDetails = otherDetails;
-    }
+		this.otherDetails = otherDetails;
+	}
 
 	public BigDecimal getTotalFacility() {
-	    return totalFacility;
-    }
+		return totalFacility;
+	}
 
 	public void setTotalFacility(BigDecimal totalFacility) {
-	    this.totalFacility = totalFacility;
-    }
+		this.totalFacility = totalFacility;
+	}
 
 	public String getTotalFacilityCCY() {
-	    return totalFacilityCCY;
-    }
+		return totalFacilityCCY;
+	}
 
 	public void setTotalFacilityCCY(String totalFacilityCCY) {
-	    this.totalFacilityCCY = totalFacilityCCY;
-    }
+		this.totalFacilityCCY = totalFacilityCCY;
+	}
 
 	public BigDecimal getUnderWriting() {
-	    return underWriting;
-    }
+		return underWriting;
+	}
 
 	public void setUnderWriting(BigDecimal underWriting) {
-	    this.underWriting = underWriting;
-    }
+		this.underWriting = underWriting;
+	}
 
 	public String getUnderWritingCCY() {
-	    return underWritingCCY;
-    }
+		return underWritingCCY;
+	}
 
 	public void setUnderWritingCCY(String underWritingCCY) {
-	    this.underWritingCCY = underWritingCCY;
-    }
+		this.underWritingCCY = underWritingCCY;
+	}
 
 	public BigDecimal getPropFinalTake() {
-	    return propFinalTake;
-    }
+		return propFinalTake;
+	}
 
 	public void setPropFinalTake(BigDecimal propFinalTake) {
-	    this.propFinalTake = propFinalTake;
-    }
+		this.propFinalTake = propFinalTake;
+	}
 
 	public String getPropFinalTakeCCY() {
-	    return propFinalTakeCCY;
-    }
+		return propFinalTakeCCY;
+	}
 
 	public void setPropFinalTakeCCY(String propFinalTakeCCY) {
-	    this.propFinalTakeCCY = propFinalTakeCCY;
-    }
-
+		this.propFinalTakeCCY = propFinalTakeCCY;
+	}
 
 }

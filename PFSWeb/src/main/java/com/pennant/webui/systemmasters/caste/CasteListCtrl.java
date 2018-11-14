@@ -67,17 +67,15 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Caste/CasteList.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Caste/CasteList.zul file.
  */
 public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	private static final long serialVersionUID = 1817958653208633892L;
 	private static final Logger logger = Logger.getLogger(CasteListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CasteList;
 	protected Borderlayout borderLayout_CasteList;
@@ -119,8 +117,7 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -148,8 +145,7 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -159,8 +155,7 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -171,8 +166,7 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -192,8 +186,8 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -255,8 +249,7 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

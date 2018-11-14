@@ -51,7 +51,7 @@ import org.zkoss.zul.Radiogroup;
 import com.pennant.backend.model.Notes;
 
 public class ScreenCTL {
-	
+
 	public static final int SCRN_GNENQ = 1;
 	public static final int SCRN_GNADD = 2;
 	public static final int SCRN_GNINT = 3;
@@ -59,41 +59,41 @@ public class ScreenCTL {
 	public static final int SCRN_WFADD = 5;
 	public static final int SCRN_WFEDT = 6;
 
-	
-	public static int getMode(boolean enquiry,boolean workFlow,boolean newRecord) {
-		if(enquiry){
+	public static int getMode(boolean enquiry, boolean workFlow, boolean newRecord) {
+		if (enquiry) {
 			return SCRN_GNENQ;
 		}
-		if(workFlow){
-			if (newRecord){
+		if (workFlow) {
+			if (newRecord) {
 				return SCRN_WFADD;
-			}else{
+			} else {
 				return SCRN_WFEDT;
 			}
-		}else{
-			if (newRecord){
+		} else {
+			if (newRecord) {
 				return SCRN_GNADD;
-			}else{
+			} else {
 				return SCRN_GNINT;
 			}
 		}
 	}
-	
-	public static boolean initButtons(int mode,ButtonStatusCtrl btnCtrl,Button btnNotes,boolean workFlow,boolean firstTask,Radiogroup userAction,HtmlBasedComponent focusField1,HtmlBasedComponent focusField2){
-		boolean readOnly=false;
-		
-		if(focusField2!=null){
+
+	public static boolean initButtons(int mode, ButtonStatusCtrl btnCtrl, Button btnNotes, boolean workFlow,
+			boolean firstTask, Radiogroup userAction, HtmlBasedComponent focusField1, HtmlBasedComponent focusField2) {
+		boolean readOnly = false;
+
+		if (focusField2 != null) {
 			focusField2.focus();
 		}
 		switch (mode) {
 		case SCRN_GNADD:
 			btnCtrl.setInitNew();
-			if(focusField1!=null){
+			if (focusField1 != null) {
 				focusField1.focus();
 			}
 			break;
 		case SCRN_GNINT:
-			readOnly=true;
+			readOnly = true;
 			btnCtrl.setInitEdit();
 			break;
 		case SCRN_GNEDT:
@@ -101,7 +101,7 @@ public class ScreenCTL {
 			break;
 		case SCRN_WFADD:
 			btnCtrl.setInitNew();
-			if(focusField1!=null){
+			if (focusField1 != null) {
 				focusField1.focus();
 			}
 			break;
@@ -112,20 +112,20 @@ public class ScreenCTL {
 		default:
 			btnCtrl.setBtnStatus_Enquiry();
 			btnCtrl.setCloseFocus();
-			readOnly=true;
+			readOnly = true;
 			break;
 		}
-		
-		if(workFlow && userAction!=null){
-			
-			if(userAction.getItemCount()>0){
+
+		if (workFlow && userAction != null) {
+
+			if (userAction.getItemCount() > 0) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
 					userAction.getItemAtIndex(i).setDisabled(readOnly);
 				}
 				userAction.setSelectedIndex(0);
 			}
 		}
-		
+
 		return readOnly;
 	}
 
@@ -137,11 +137,11 @@ public class ScreenCTL {
 	 * 
 	 * @throws Exception
 	 */
-	public static void displayNotes(Notes notes,Object control) throws Exception {
+	public static void displayNotes(Notes notes, Object control) throws Exception {
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", notes);
 		map.put("control", control);
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
+		Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 	}
 }

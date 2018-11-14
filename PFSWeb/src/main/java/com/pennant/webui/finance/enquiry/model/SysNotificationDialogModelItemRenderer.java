@@ -11,7 +11,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennant.util.PennantAppUtil;
 
-public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<SysNotificationDetails>, Serializable{
+public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<SysNotificationDetails>, Serializable {
 
 	private static final long serialVersionUID = 5574543684897936853L;
 
@@ -22,7 +22,7 @@ public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<
 	@Override
 	public void render(Listitem item, SysNotificationDetails details, int count) throws Exception {
 
-		((Listbox)item.getParent()).setMultiple(true);
+		((Listbox) item.getParent()).setMultiple(true);
 		Listcell lc;
 		lc = new Listcell(details.getCustCIF());
 		lc.setParent(item);
@@ -35,12 +35,13 @@ public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<
 		lc = new Listcell(details.getFinCcy());
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(details.getFinCurODDays()));
- 		lc.setParent(item);
- 		lc = new Listcell(PennantAppUtil.amountFormate(details.getFinCurODAmt(), CurrencyUtil.getFormat(details.getFinCcy())));
+		lc.setParent(item);
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(details.getFinCurODAmt(), CurrencyUtil.getFormat(details.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
- 
+
 		item.setAttribute("data", details);
- 
+
 	}
 }

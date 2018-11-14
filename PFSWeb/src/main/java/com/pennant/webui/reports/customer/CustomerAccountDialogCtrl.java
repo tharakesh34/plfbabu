@@ -43,34 +43,33 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final Logger logger = Logger.getLogger(CustomerAccountDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected  	Window    			window_CustomerAccountDialog; // autoWired
+	protected Window window_CustomerAccountDialog; // autoWired
 
-	protected 	Borderlayout 		borderlayout_Account;  		  // autoWired
-	protected 	ExtendedCombobox    			custCIF;	          		  // autoWired
-	protected 	Textbox				dftBranch;		  			  // autoWired
+	protected Borderlayout borderlayout_Account; // autoWired
+	protected ExtendedCombobox custCIF; // autoWired
+	protected Textbox dftBranch; // autoWired
 
-	protected 	Button    			button_Print;	              // autoWired
+	protected Button button_Print; // autoWired
 
-	protected 	Listbox				listBoxEnquiryResult;		  // autoWired
-	protected 	Paging     			pagingEnquiryList;	          // autoWired
-	protected 	Grid      			grid_accountDetails;          // autoWired
-	protected 	Menu		 		menu_filter;				 // autoWired
-	protected 	Menupopup  			menupopup_filter;			 // autoWired
-	protected 	Menuitem 			menuitem;
-	private 	Tab 				tab;
-	private 	Tabbox				tabbox;
+	protected Listbox listBoxEnquiryResult; // autoWired
+	protected Paging pagingEnquiryList; // autoWired
+	protected Grid grid_accountDetails; // autoWired
+	protected Menu menu_filter; // autoWired
+	protected Menupopup menupopup_filter; // autoWired
+	protected Menuitem menuitem;
+	private Tab tab;
+	private Tabbox tabbox;
 
 	// not auto wired variables
 	protected List<Accounts> accounts;
 	protected JdbcSearchObject<Accounts> searchObjAc;
 	protected Customer customer = null;
 	private transient PagedListService pagedListService;
-	private int 		listRows;
-	private long		custId;
+	private int listRows;
+	private long custId;
 
 	/**
 	 * default constructor.<br>
@@ -85,9 +84,8 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Academic object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Academic object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -99,12 +97,10 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 		setPageComponents(window_CustomerAccountDialog);
 
 		try {
-			if (event.getTarget() != null
-					&& event.getTarget().getParent() != null
+			if (event.getTarget() != null && event.getTarget().getParent() != null
 					&& event.getTarget().getParent().getParent() != null
 					&& event.getTarget().getParent().getParent().getParent() != null) {
-				tabbox = (Tabbox) event.getTarget().getParent().getParent()
-						.getParent().getParent();
+				tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 				if (tabbox != null) {
 					tab = (Tab) tabbox.getFellowIfAny("tab_CustomerAccount");
 				}
@@ -113,8 +109,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 			doSetFieldProperties();
 			doFillFilterList();
 			this.borderlayout_Account.setHeight(getBorderLayoutHeight());
-			int dialogHeight = grid_accountDetails.getRows()
-					.getVisibleItemCount() * 20 + 52;
+			int dialogHeight = grid_accountDetails.getRows().getVisibleItemCount() * 20 + 52;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listBoxEnquiryResult.setHeight(listboxHeight + "px");
 			listRows = Math.round(listboxHeight / 22);
@@ -132,8 +127,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 			}
 
 			if (arguments.containsKey("custShrtName")) {
-				this.custCIF.setDescription(String.valueOf(arguments
-						.get("custShrtName")));
+				this.custCIF.setDescription(String.valueOf(arguments.get("custShrtName")));
 			}
 
 			if (arguments.containsKey("dftBranch")) {
@@ -148,7 +142,9 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 
 	// Helpers
 
-	/** Set the properties of the fields, like maxLength.<br> */
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
 	private void doSetFieldProperties() {
 		this.dftBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.custCIF.setMaxlength(12);
@@ -159,11 +155,11 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	}
 
 	/**
-	 * Method to fill menu items 
+	 * Method to fill menu items
 	 */
 	private void doFillFilterList() {
 		logger.debug("Entering");
-		
+
 		this.menupopup_filter.getChildren().clear();
 		menuitem = new Menuitem();
 		menuitem.setLabel(Labels.getLabel("label_CustomerFinanceSummary"));
@@ -172,23 +168,24 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 		menuitem.addForward("onClick", this.window_CustomerAccountDialog, "onFilterMenuItem", menuitem);
 		this.menupopup_filter.appendChild(menuitem);
 		this.menu_filter.setLabel(Labels.getLabel("label_CustomerAccountSummary"));
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * Method for OnClick Event on Menu Item Enqiries 
+	 * Method for OnClick Event on Menu Item Enqiries
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void onFilterMenuItem(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering");
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("custId",this.custId);
-		map.put("custCIF",this.custCIF.getValue());
-		map.put("custShrtName",this.custCIF.getDescription());
-		map.put("dftBranch",this.dftBranch.getValue());
+		map.put("custId", this.custId);
+		map.put("custCIF", this.custCIF.getValue());
+		map.put("custShrtName", this.custCIF.getDescription());
+		map.put("dftBranch", this.dftBranch.getValue());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -202,8 +199,8 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 					this.window_CustomerAccountDialog.onClose();
 					custAcctab.close();
 				}
-				
-				if(custEnqtab != null){
+
+				if (custEnqtab != null) {
 					custEnqtab.close();
 				}
 
@@ -222,7 +219,8 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 
 				tab.setParent(tabbox.getFellow("tabsIndexCenter"));
 
-				final Tabpanels tabpanels = (Tabpanels) tabbox.getFellow("tabsIndexCenter").getFellow("tabpanelsBoxIndexCenter");
+				final Tabpanels tabpanels = (Tabpanels) tabbox.getFellow("tabsIndexCenter")
+						.getFellow("tabpanelsBoxIndexCenter");
 				final Tabpanel tabpanel = new Tabpanel();
 				tabpanel.setHeight("100%");
 				tabpanel.setStyle("padding: 0px;");
@@ -239,24 +237,25 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 
 	/**
 	 * When user clicks on button "button_Print" button
+	 * 
 	 * @param event
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public void onClick$button_Print(Event event) throws InterruptedException{
+	public void onClick$button_Print(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-		if(getAccounts()!=null && getAccounts().size()>0){
-			ReportGenerationUtil.generateReport("Sample", customer,
-					getAccounts(),true, 1, getUserWorkspace().getLoggedInUser().getUserName(),null);
+		if (getAccounts() != null && getAccounts().size() > 0) {
+			ReportGenerationUtil.generateReport("Sample", customer, getAccounts(), true, 1,
+					getUserWorkspace().getLoggedInUser().getUserName(), null);
 		}
 		logger.debug("Leaving ");
 	}
-	
 
 	/**
 	 * This method fill the CustomerName, Branch and CIF values by using Search box. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 **/
-	public void onFulfill$custCIF(Event event)  {
+	public void onFulfill$custCIF(Event event) {
 		logger.debug("Entering");
 
 		Object dataObject = custCIF.getObject();
@@ -279,13 +278,14 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 
 	/**
 	 * This method fill the Account Details by using Search box. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 **/
 	public void doFillAccountDetail(long custId) {
-		if(custId != Long.MIN_VALUE || custId != 0) {
+		if (custId != Long.MIN_VALUE || custId != 0) {
 			pagingEnquiryList.setDetailed(true);
 			this.searchObjAc = new JdbcSearchObject<Accounts>(Accounts.class);
-			this.searchObjAc.addFilter(new Filter("acCustId", custId,Filter.OP_EQUAL));
+			this.searchObjAc.addFilter(new Filter("acCustId", custId, Filter.OP_EQUAL));
 			this.searchObjAc.addTabelName("Accounts_AView");
 			this.accounts = getPagedListService().getSRBySearchObject(this.searchObjAc).getResult();
 			getPagedListWrapper().initList(this.accounts, this.listBoxEnquiryResult, this.pagingEnquiryList);
@@ -300,6 +300,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	public List<Accounts> getAccounts() {
 		return this.accounts;
 	}
+
 	public void setAccounts(List<Accounts> accounts) {
 		this.accounts = accounts;
 	}
@@ -307,6 +308,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	public JdbcSearchObject<Accounts> getSearchObjAc() {
 		return searchObjAc;
 	}
+
 	public void setSearchObjAc(JdbcSearchObject<Accounts> searchObjAc) {
 		this.searchObjAc = searchObjAc;
 	}

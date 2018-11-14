@@ -82,32 +82,30 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerRating/customerRatingDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerRating/customerRatingDialog.zul file.
  */
 public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	private static final long serialVersionUID = -6959194080451993569L;
 	private static final Logger logger = Logger.getLogger(FacilityCustomerRatingDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerRatingDialog;
-	protected Longbox custID; 
-	protected ExtendedCombobox custRatingType; 
-	protected ExtendedCombobox custRatingCode; 
-	protected ExtendedCombobox custRating; 
-	protected Textbox custCIF; 
-	protected Label custShrtName; 
+	protected Longbox custID;
+	protected ExtendedCombobox custRatingType;
+	protected ExtendedCombobox custRatingCode;
+	protected ExtendedCombobox custRating;
+	protected Textbox custCIF;
+	protected Label custShrtName;
 	// not auto wired vars
 	private CustomerRating customerRating; // overhanded per param
 
 	private transient boolean validationOn;
-	
-	protected Button btnSearchPRCustid; 
-	
+
+	protected Button btnSearchPRCustid;
+
 	// ServiceDAOs / Domain Classes
 	private transient CustomerRatingService customerRatingService;
 	private transient CustomerSelectCtrl customerSelectCtrl;
@@ -117,7 +115,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	private transient boolean isRatingTypeNumeric;
 	protected JdbcSearchObject<Customer> newSearchObject;
 	private String sCustRatingType;
-	private String userRole="";
+	private String userRole = "";
 
 	/**
 	 * default constructor.<br>
@@ -132,11 +130,10 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	}
 
 	// Component Events
-	
+
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerRating object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerRating object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -146,7 +143,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 
 		// Set the page level components.
 		setPageComponents(window_CustomerRatingDialog);
-		
+
 		if (arguments.containsKey("customerRating")) {
 			this.customerRating = (CustomerRating) arguments.get("customerRating");
 			CustomerRating befImage = new CustomerRating();
@@ -156,22 +153,23 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		} else {
 			setCustomerRating(null);
 		}
-		
+
 		this.customerRating.setWorkflowId(0);
-		doLoadWorkFlow(this.customerRating.isWorkflow(), this.customerRating.getWorkflowId(), this.customerRating.getNextTaskId());
+		doLoadWorkFlow(this.customerRating.isWorkflow(), this.customerRating.getWorkflowId(),
+				this.customerRating.getNextTaskId());
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerRatingDialog");
 		}
 		if (arguments.containsKey("roleCode")) {
-			userRole=(String) arguments.get("roleCode");
+			userRole = (String) arguments.get("roleCode");
 			getUserWorkspace().allocateRoleAuthorities(userRole, "CustomerRatingDialog");
 		}
 		if (arguments.containsKey("customerDialogCtrl")) {
 			setCustomerDialogCtrl((FacilityDialogCtrl) arguments.get("customerDialogCtrl"));
 		}
 		doCheckRights();
-	
+
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getCustomerRating());
@@ -194,19 +192,19 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		this.custRatingType.setValueColumn("RatingType");
 		this.custRatingType.setDescColumn("RatingTypeDesc");
 		this.custRatingType.setValidateColumns(new String[] { "RatingType" });
-		
+
 		this.custRatingCode.setTextBoxWidth(110);
 		this.custRatingCode.setModuleName("RatingCode");
 		this.custRatingCode.setValueColumn("RatingCode");
 		this.custRatingCode.setDescColumn("RatingCodeDesc");
 		this.custRatingCode.setValidateColumns(new String[] { "RatingCode" });
-		
+
 		this.custRating.setTextBoxWidth(110);
 		this.custRating.setModuleName("RatingCode");
 		this.custRating.setValueColumn("RatingCode");
 		this.custRating.setDescColumn("RatingCodeDesc");
 		this.custRating.setValidateColumns(new String[] { "RatingCode" });
-	
+
 		this.custRatingCode.setMaxlength(8);
 		this.custRating.setMaxlength(8);
 		if (isWorkFlowEnabled()) {
@@ -222,12 +220,11 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("CustomerRatingDialog",userRole);
+		getUserWorkspace().allocateAuthorities("CustomerRatingDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerRatingDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerRatingDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerRatingDialog_btnDelete"));
@@ -304,7 +301,6 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		doClose(this.btnSave.isVisible());
 	}
 
-	
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -332,11 +328,15 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		}
 		this.custRatingType.setValue(aCustomerRating.getCustRatingType());
 		doSetRatingCodeFilters(aCustomerRating.getCustRatingType());
-		this.custRatingCode.setValue(aCustomerRating.getCustRatingCode(),StringUtils.trimToEmpty(aCustomerRating.getLovDesccustRatingCodeDesc()));
-		this.custRating.setValue(aCustomerRating.getCustRating(),StringUtils.trimToEmpty(aCustomerRating.getLovDescCustRatingName()));
+		this.custRatingCode.setValue(aCustomerRating.getCustRatingCode(),
+				StringUtils.trimToEmpty(aCustomerRating.getLovDesccustRatingCodeDesc()));
+		this.custRating.setValue(aCustomerRating.getCustRating(),
+				StringUtils.trimToEmpty(aCustomerRating.getLovDescCustRatingName()));
 		this.isRatingTypeNumeric = aCustomerRating.isValueType();
-		this.custCIF.setValue(aCustomerRating.getLovDescCustCIF() == null ? "" : aCustomerRating.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerRating.getLovDescCustShrtName() == null ? "" : aCustomerRating.getLovDescCustShrtName().trim());
+		this.custCIF.setValue(
+				aCustomerRating.getLovDescCustCIF() == null ? "" : aCustomerRating.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerRating.getLovDescCustShrtName() == null ? ""
+				: aCustomerRating.getLovDescCustShrtName().trim());
 		if (aCustomerRating.isNewRecord()) {
 			this.custRatingType.setDescription("");
 			this.custRatingType.setReadonly(false);
@@ -377,7 +377,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 			wve.add(we);
 		}
 		try {
-			
+
 			aCustomerRating.setCustRating(this.custRating.getValidatedValue());
 			aCustomerRating.setLovDescCustRatingName(this.custRating.getDescription());
 		} catch (WrongValueException we) {
@@ -400,8 +400,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerRating
 	 * @throws InterruptedException
@@ -420,8 +419,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 			btnCancel.setVisible(false);
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerRatingDialog_btnDelete"));
 		}
-		
-		
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerRating);
@@ -444,7 +442,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.custID.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustID.value"),null,true));
+			this.custCIF.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustID.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -465,7 +464,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custRatingType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value"),null,true,true));
+		this.custRatingType.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value"), null, true, true));
 		// this.custRatingCode.setConstraint("new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value"),null,true));
 		logger.debug("Leaving");
 	}
@@ -494,7 +494,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	}
 
 	// CRUD operations
-	
+
 	/**
 	 * Deletes a CustomerRating object from database.<br>
 	 * 
@@ -506,7 +506,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		BeanUtils.copyProperties(getCustomerRating(), aCustomerRating);
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aCustomerRating.getCustID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aCustomerRating.getCustID();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerRating.getRecordType())) {
 				aCustomerRating.setVersion(aCustomerRating.getVersion() + 1);
@@ -626,7 +627,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		final CustomerRating aCustomerRating = new CustomerRating();
 		BeanUtils.copyProperties(getCustomerRating(), aCustomerRating);
 		boolean isNew = false;
-		
+
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the CustomerRating object with the components data
@@ -693,9 +694,11 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		if (getCustomerDialogCtrl().getRatingsList() != null && getCustomerDialogCtrl().getRatingsList().size() > 0) {
 			for (int i = 0; i < getCustomerDialogCtrl().getRatingsList().size(); i++) {
 				CustomerRating customerRating = getCustomerDialogCtrl().getRatingsList().get(i);
-				if (customerRating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) { 
+				if (customerRating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) {
 					if (aCustomerRating.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -711,9 +714,12 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 							customerRatings.add(aCustomerRating);
 						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aCustomerRating.getRecordType())) {
 							recordAdded = true;
-							for (int j = 0; j < getCustomerDialogCtrl().getFacility().getCustomerRatings().size(); j++) {
-								CustomerRating rating = getCustomerDialogCtrl().getFacility().getCustomerRatings().get(j);
-								if (rating.getCustID() == aCustomerRating.getCustID() && rating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) {
+							for (int j = 0; j < getCustomerDialogCtrl().getFacility().getCustomerRatings()
+									.size(); j++) {
+								CustomerRating rating = getCustomerDialogCtrl().getFacility().getCustomerRatings()
+										.get(j);
+								if (rating.getCustID() == aCustomerRating.getCustID()
+										&& rating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) {
 									customerRatings.add(rating);
 								}
 							}
@@ -850,7 +856,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_CustomerRatingDialog, auditHeader);
 						return processCompleted;
 					}
@@ -879,7 +886,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	}
 
 	// Search Button Component Events
-	
+
 	public void onFulfill$custRatingType(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = custRatingType.getObject();
@@ -936,7 +943,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	 * @param nCustomer
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
@@ -947,7 +955,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -957,7 +965,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	 */
 	private AuditHeader getAuditHeader(CustomerRating aCustomerRating, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerRating.getBefImage(), aCustomerRating);
-		return new AuditHeader(getReference(), String.valueOf(aCustomerRating.getCustID()), null, null, auditDetail, aCustomerRating.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), String.valueOf(aCustomerRating.getCustID()), null, null, auditDetail,
+				aCustomerRating.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -995,7 +1004,8 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	 */
 	@Override
 	protected String getReference() {
-		return getCustomerRating().getCustID() + PennantConstants.KEY_SEPERATOR + getCustomerRating().getCustRatingType();
+		return getCustomerRating().getCustID() + PennantConstants.KEY_SEPERATOR
+				+ getCustomerRating().getCustRatingType();
 	}
 
 	// ******************************************************//
@@ -1048,17 +1058,16 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	public void setCustomerDialogCtrl(FacilityDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
+
 	public void doSetRatingCodeFilters(String sectorcode) {
 		if (StringUtils.isNotBlank(sectorcode)) {
 			Filter filters[] = new Filter[1];
 			filters[0] = new Filter("RatingType", sectorcode, Filter.OP_EQUAL);
 			this.custRatingCode.setFilters(filters);
 			this.custRating.setFilters(filters);
-		} 
+		}
 		this.custRatingCode.setValue("", "");
 		this.custRating.setValue("", "");
 	}
-	
-	
-	
+
 }

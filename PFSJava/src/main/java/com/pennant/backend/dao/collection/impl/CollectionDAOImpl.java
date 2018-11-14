@@ -57,7 +57,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>Collection model</b> class.<br>
  */
 public class CollectionDAOImpl extends BasicDao<Collection> implements CollectionDAO {
-	private static Logger logger = Logger.getLogger(CollectionDAOImpl.class); 
+	private static Logger logger = Logger.getLogger(CollectionDAOImpl.class);
 
 	public CollectionDAOImpl() {
 		super();
@@ -71,7 +71,8 @@ public class CollectionDAOImpl extends BasicDao<Collection> implements Collectio
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuilder selectSql = new StringBuilder("select TABLE_NAME TableName, Status, ERROR_DESC ErrorMessage, EFFECTED_COUNT InsertCount");
+		StringBuilder selectSql = new StringBuilder(
+				"select TABLE_NAME TableName, Status, ERROR_DESC ErrorMessage, EFFECTED_COUNT InsertCount");
 		selectSql.append(" From COLLECTIONS_TABLES");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -83,7 +84,7 @@ public class CollectionDAOImpl extends BasicDao<Collection> implements Collectio
 
 		return collections;
 	}
-	
+
 	/**
 	 * get the Collection Tables List
 	 */
@@ -96,7 +97,7 @@ public class CollectionDAOImpl extends BasicDao<Collection> implements Collectio
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int count =  this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 
 		logger.debug("Leaving");
 		return count;

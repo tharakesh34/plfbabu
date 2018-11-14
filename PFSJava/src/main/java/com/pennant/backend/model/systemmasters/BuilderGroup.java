@@ -59,10 +59,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BuilderGroup table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","name","segmentation"})
+@XmlType(propOrder = { "id", "name", "segmentation" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BuilderGroup extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class BuilderGroup extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String name;
@@ -70,14 +70,14 @@ private static final long serialVersionUID = 1L;
 	private String segmentationName;
 	private String fieldCode;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private BuilderGroup befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -90,49 +90,54 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("segmentationName");
-			excludeFields.add("fieldCode");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("segmentationName");
+		excludeFields.add("fieldCode");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
+
 	public long getBuilderGroupId() {
 		return id;
 	}
+
 	public void setBuilderGroupId(long builderGroupId) {
 		this.id = builderGroupId;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getSegmentation() {
 		return segmentation;
 	}
+
 	public void setSegmentation(String segmentation) {
 		this.segmentation = segmentation;
 	}
+
 	public String getSegmentationName() {
 		return this.segmentationName;
 	}
 
-	public void setSegmentationName (String segmentationName) {
+	public void setSegmentationName(String segmentationName) {
 		this.segmentationName = segmentationName;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -140,7 +145,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -149,19 +154,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public BuilderGroup getBefImage(){
+	public BuilderGroup getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(BuilderGroup beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BuilderGroup beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

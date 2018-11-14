@@ -57,11 +57,11 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private String batchPurpose;
 	private String validationStatus = "";
 	private String batchPostingStatus = "";
-	private String txnId  = "";
+	private String txnId = "";
 	private Date postingDate;
-	private String finType  = "";
-	private String branch  = "";
-	private String branchDesc  = "";
+	private String finType = "";
+	private String branch = "";
+	private String branchDesc = "";
 	private boolean rePostingModule = false;
 	private List<JVPostingEntry> JVPostingEntrysList = new ArrayList<JVPostingEntry>();
 	private List<JVPostingEntry> postingEntryList = new ArrayList<JVPostingEntry>();
@@ -77,7 +77,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private String reference;
 	private String postingDivision;
 	private String divisionCodeDesc;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -85,7 +85,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	public JVPosting() {
 		super();
 	}
-	
+
 	public JVPosting(String id) {
 		super();
 	}
@@ -95,7 +95,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("branchDesc");
 		excludeFields.add("RateTypeDescription");
 		excludeFields.add("JVPostingEntrysList");
-		excludeFields.add("rePostingModule");	
+		excludeFields.add("rePostingModule");
 		excludeFields.add("txnId");
 		excludeFields.add("finType");
 		excludeFields.add("divisionCodeDesc");
@@ -226,7 +226,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	public void setValidationStatus(String validationStatus) {
 		this.validationStatus = validationStatus;
 	}
-	
+
 	public String getCurrency() {
 		return currency;
 	}
@@ -276,20 +276,20 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public boolean isRePostingModule() {
-	    return rePostingModule;
-    }
+		return rePostingModule;
+	}
 
 	public void setRePostingModule(boolean rePostingModule) {
-	    this.rePostingModule = rePostingModule;
-    }
+		this.rePostingModule = rePostingModule;
+	}
 
 	public String getTxnId() {
-	    return txnId;
-    }
+		return txnId;
+	}
 
 	public void setTxnId(String txnId) {
-	    this.txnId = txnId;
-    }
+		this.txnId = txnId;
+	}
 
 	public Date getPostingDate() {
 		return postingDate;
@@ -300,37 +300,36 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getFinType() {
-	    return finType;
-    }
+		return finType;
+	}
 
 	public void setFinType(String finType) {
-	    this.finType = finType;
-    }
+		this.finType = finType;
+	}
 
 	public String getBranch() {
-	    return branch;
-    }
+		return branch;
+	}
 
 	public void setBranch(String branch) {
-	    this.branch = branch;
-    }
-
+		this.branch = branch;
+	}
 
 	public List<JVPostingEntry> getPostingEntryList() {
-	    return postingEntryList;
-    }
+		return postingEntryList;
+	}
 
 	public void setPostingEntryList(List<JVPostingEntry> postingEntryList) {
-	    this.postingEntryList = postingEntryList;
-    }
+		this.postingEntryList = postingEntryList;
+	}
 
 	public String getBranchDesc() {
-	    return branchDesc;
-    }
+		return branchDesc;
+	}
 
 	public void setBranchDesc(String branchDesc) {
-	    this.branchDesc = branchDesc;
-    }
+		this.branchDesc = branchDesc;
+	}
 
 	public String getExpReference() {
 		return expReference;
@@ -371,5 +370,5 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	public void setDivisionCodeDesc(String divisionCodeDesc) {
 		this.divisionCodeDesc = divisionCodeDesc;
 	}
-	
+
 }

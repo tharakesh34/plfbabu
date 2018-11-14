@@ -68,11 +68,11 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 	private static Logger logger = Logger.getLogger(CountryDAOImpl.class);
-		
+
 	public CountryDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Country details by key field
 	 * 
@@ -85,16 +85,18 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 	@Override
 	public Country getCountryById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		Country country = new Country();
 		country.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("SELECT CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit,CountryRiskLimit, CountryIsActive,SystemDefault," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append(
+				"SELECT CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit,CountryRiskLimit, CountryIsActive,SystemDefault,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTCountries");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CountryCode =:CountryCode") ;
+		selectSql.append(" Where CountryCode =:CountryCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
@@ -109,15 +111,15 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		logger.debug("Leaving");
 		return country;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String countryCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		String sql;
 		String whereClause = "CountryCode = :countryCode";
-		
+
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("BMTCountries", whereClause);
@@ -145,7 +147,7 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public String save(Country country, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -155,18 +157,19 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		sql.append(tableType.getSuffix());
 		sql.append(" (CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit,");
 		sql.append(" CountryRiskLimit, CountryIsActive,SystemDefault,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(:CountryCode, :CountryDesc, :CountryParentLimit, :CountryResidenceLimit,");
 		sql.append(" :CountryRiskLimit, :CountryIsActive,:SystemDefault,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL +sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(country);
 		try {
-		jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -174,7 +177,7 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		logger.debug(Literal.LEAVING);
 		return country.getId();
 	}
-	
+
 	@Override
 	public void update(Country country, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -186,7 +189,8 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		sql.append(" CountryResidenceLimit = :CountryResidenceLimit, CountryRiskLimit = :CountryRiskLimit,");
 		sql.append(" CountryIsActive = :CountryIsActive, SystemDefault = :SystemDefault,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where CountryCode =:CountryCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
@@ -207,7 +211,7 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 	@Override
 	public void delete(Country country, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from BMTCountries");
 		sql.append(tableType.getSuffix());
@@ -215,10 +219,10 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
-	    logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(country);
 		int recordCount = 0;
-		
+
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -259,10 +263,10 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 		String dftCountryCode = "";
 		try {
 			dftCountryCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-        } catch (EmptyResultDataAccessException e) {
-        	logger.warn("Exception: ", e);
-        	dftCountryCode = "";
-        }
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			dftCountryCode = "";
+		}
 
 		logger.debug("Leaving");
 		return dftCountryCode;

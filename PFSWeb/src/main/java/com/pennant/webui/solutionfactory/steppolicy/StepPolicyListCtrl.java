@@ -61,9 +61,9 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.webui.solutionfactory.steppolicy.model.StepPolicyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/StepPolicyHeader/StepPolicyHeaderList.zul file.

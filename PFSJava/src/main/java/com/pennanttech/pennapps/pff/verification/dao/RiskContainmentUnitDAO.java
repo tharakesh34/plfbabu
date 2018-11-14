@@ -41,4 +41,3 @@ public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit
 
 	void deleteRCUDocument(RCUDocument rcuDocument, String tableType);
 }
-

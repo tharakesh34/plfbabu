@@ -66,39 +66,37 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.bmtmasters.accountengineevent.model.AccountEngineEventListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.PTListReportUtils;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/BMTMasters/AccountEngineEvent/AccountEngineEventList.zul file.
+ * This is the controller class for the /WEB-INF/pages/BMTMasters/AccountEngineEvent/AccountEngineEventList.zul file.
  */
 public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEvent> {
 	private static final long serialVersionUID = -3818155098220806436L;
 	private static final Logger logger = Logger.getLogger(AccountEngineEventListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * Component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding Component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_AccountEngineEventList; 			// autoWired
-	protected Borderlayout 	borderLayout_AccountEngineEventList; 	// autoWired
-	protected Paging 		pagingAccountEngineEventList; 			// autoWired
-	protected Listbox 		listBoxAccountEngineEvent; 				// autoWired
+	protected Window window_AccountEngineEventList; // autoWired
+	protected Borderlayout borderLayout_AccountEngineEventList; // autoWired
+	protected Paging pagingAccountEngineEventList; // autoWired
+	protected Listbox listBoxAccountEngineEvent; // autoWired
 
 	// List headers
-	protected Listheader listheader_AEEventCode; 		// autoWired
-	protected Listheader listheader_AEEventCodeDesc; 	// autoWired
-	protected Listheader listheader_RecordStatus; 		// autoWired
-	protected Listheader listheader_RecordType;			// autoWired
+	protected Listheader listheader_AEEventCode; // autoWired
+	protected Listheader listheader_AEEventCodeDesc; // autoWired
+	protected Listheader listheader_RecordStatus; // autoWired
+	protected Listheader listheader_RecordType; // autoWired
 
 	// checkRights
-	protected Button btnHelp; 														// autoWired
-	protected Button button_AccountEngineEventList_NewAccountEngineEvent; 			// autoWired
-	protected Button button_AccountEngineEventList_AccountEngineEventSearchDialog; 	// autoWired
-	protected Button button_AccountEngineEventList_PrintList;				 		// autoWired
+	protected Button btnHelp; // autoWired
+	protected Button button_AccountEngineEventList_NewAccountEngineEvent; // autoWired
+	protected Button button_AccountEngineEventList_AccountEngineEventSearchDialog; // autoWired
+	protected Button button_AccountEngineEventList_PrintList; // autoWired
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<AccountEngineEvent> searchObj;
@@ -118,19 +116,18 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	}
 
 	/**
-	 * Before binding the data and calling the List window we check, if the
-	 * ZUL-file is called with a parameter for a selected AccountEngineEventCode
-	 * object in a Map.
+	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
+	 * selected AccountEngineEventCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_AccountEngineEventList(Event event)	throws Exception {
+	public void onCreate$window_AccountEngineEventList(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		/* set components visible dependent of the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_AccountEngineEventList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
@@ -175,7 +172,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 		getPagedListWrapper().init(this.searchObj, this.listBoxAccountEngineEvent, this.pagingAccountEngineEventList);
 		// set the itemRenderer
 		this.listBoxAccountEngineEvent.setItemRenderer(new AccountEngineEventListModelItemRenderer());
-					
+
 		logger.debug("Leaving");
 	}
 
@@ -186,19 +183,18 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("AccountEngineEventList");
 
-		this.button_AccountEngineEventList_NewAccountEngineEvent.setVisible(getUserWorkspace()
-				.isAllowed("button_AccountEngineEventList_NewAccountEngineEvent"));
-		this.button_AccountEngineEventList_AccountEngineEventSearchDialog.setVisible(getUserWorkspace()
-				.isAllowed("button_AccountEngineEventList_AccountEngineEventFindDialog"));
-		this.button_AccountEngineEventList_PrintList.setVisible(getUserWorkspace()
-				.isAllowed("button_AccountEngineEventList_PrintList"));
+		this.button_AccountEngineEventList_NewAccountEngineEvent
+				.setVisible(getUserWorkspace().isAllowed("button_AccountEngineEventList_NewAccountEngineEvent"));
+		this.button_AccountEngineEventList_AccountEngineEventSearchDialog
+				.setVisible(getUserWorkspace().isAllowed("button_AccountEngineEventList_AccountEngineEventFindDialog"));
+		this.button_AccountEngineEventList_PrintList
+				.setVisible(getUserWorkspace().isAllowed("button_AccountEngineEventList_PrintList"));
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * This method is forwarded from the listBoxes item renderer. <br>
-	 * see: com.pennant.webui.bmtmasters.accountengineevent.model.
-	 * AccountEngineEventListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.bmtmasters.accountengineevent.model. AccountEngineEventListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -213,7 +209,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 			// CAST AND STORE THE SELECTED OBJECT
 			final AccountEngineEvent aAccountEngineEvent = (AccountEngineEvent) item.getAttribute("data");
 			final AccountEngineEvent accountEngineEvent = getAccountEngineEventService()
-			.getAccountEngineEventById(aAccountEngineEvent.getId());
+					.getAccountEngineEventById(aAccountEngineEvent.getId());
 
 			if (accountEngineEvent == null) {
 
@@ -221,18 +217,21 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 				String[] errorParm = new String[2];
 
 				valueParm[0] = aAccountEngineEvent.getAEEventCode();
-				errorParm[0] = PennantJavaUtil.getLabel("label_AEEventCode") + ":" + aAccountEngineEvent.getAEEventCode();
+				errorParm[0] = PennantJavaUtil.getLabel("label_AEEventCode") + ":"
+						+ aAccountEngineEvent.getAEEventCode();
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005",errorParm, valueParm), getUserWorkspace().getUserLanguage());
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errorParm, valueParm),
+						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			} else {
-				String whereCond = " AND AEEventCode='"	+ accountEngineEvent.getAEEventCode()
-				+ "' AND version=" + accountEngineEvent.getVersion() + " ";
+				String whereCond = " AND AEEventCode='" + accountEngineEvent.getAEEventCode() + "' AND version="
+						+ accountEngineEvent.getVersion() + " ";
 
 				if (isWorkFlowEnabled()) {
-					boolean userAcces = validateUserAccess(accountEngineEvent.getWorkflowId(), getUserWorkspace().getLoggedInUser().getUserId(),
-							"AccountEngineEvent", whereCond, accountEngineEvent.getTaskId(), accountEngineEvent.getNextTaskId());
+					boolean userAcces = validateUserAccess(accountEngineEvent.getWorkflowId(),
+							getUserWorkspace().getLoggedInUser().getUserId(), "AccountEngineEvent", whereCond,
+							accountEngineEvent.getTaskId(), accountEngineEvent.getNextTaskId());
 					if (userAcces) {
 						showDetailView(accountEngineEvent);
 					} else {
@@ -269,13 +268,12 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 *            (aAccountEngineEvent)
 	 * @throws Exception
 	 */
-	private void showDetailView(AccountEngineEvent aAccountEngineEvent)	throws Exception {
+	private void showDetailView(AccountEngineEvent aAccountEngineEvent) throws Exception {
 		logger.debug("Entering");
 
 		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them
-		 * with a object of the selected item. For handed over these parameter
-		 * only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
+		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 		if (aAccountEngineEvent.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aAccountEngineEvent.setWorkflowId(getWorkFlowId());
@@ -283,17 +281,16 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 		Map<String, Object> map = getDefaultArguments();
 		map.put("accountEngineEvent", aAccountEngineEvent);
 		/*
-		 * we can additionally handed over the listBox or the controller self,
-		 * so we have in the dialog access to the listBox ListModel. This is
-		 * fine for synchronizing the data in the AccountEngineEventListbox from
-		 * the dialog when we do a delete, edit or insert a AccountEngineEvent.
+		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
+		 * listBox ListModel. This is fine for synchronizing the data in the AccountEngineEventListbox from the dialog
+		 * when we do a delete, edit or insert a AccountEngineEvent.
 		 */
 		map.put("accountEngineEventListCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/BMTMasters/AccountEngineEvent/AccountEngineEventDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/BMTMasters/AccountEngineEvent/AccountEngineEventDialog.zul",
+					null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -338,9 +335,8 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 		logger.debug("Entering" + event.toString());
 
 		/*
-		 * we can call our AccountEngineEventDialog ZUL-file with parameters. So
-		 * we can call them with a object of the selected AccountEngineEvent.
-		 * For handed over these parameter only a Map is accepted. So we put the
+		 * we can call our AccountEngineEventDialog ZUL-file with parameters. So we can call them with a object of the
+		 * selected AccountEngineEvent. For handed over these parameter only a Map is accepted. So we put the
 		 * AccountEngineEvent object in a HashMap.
 		 */
 		Map<String, Object> map = getDefaultArguments();
@@ -365,7 +361,8 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 */
 	public void onClick$button_AccountEngineEventList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		new PTListReportUtils("AccountEngineEvent", getSearchObj(),this.pagingAccountEngineEventList.getTotalSize()+1);
+		new PTListReportUtils("AccountEngineEvent", getSearchObj(),
+				this.pagingAccountEngineEventList.getTotalSize() + 1);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -376,6 +373,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	public void setAccountEngineEventService(AccountEngineEventService accountEngineEventService) {
 		this.accountEngineEventService = accountEngineEventService;
 	}
+
 	public AccountEngineEventService getAccountEngineEventService() {
 		return this.accountEngineEventService;
 	}
@@ -383,6 +381,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	public JdbcSearchObject<AccountEngineEvent> getSearchObj() {
 		return this.searchObj;
 	}
+
 	public void setSearchObj(JdbcSearchObject<AccountEngineEvent> searchObj) {
 		this.searchObj = searchObj;
 	}

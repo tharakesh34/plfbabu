@@ -196,8 +196,8 @@ public class BusinessCalendar implements Serializable {
 		if (!holidayList.isEmpty()) {
 			normalHolidayMasters = new ArrayList<HolidayMaster>();
 			for (int i = 0; i < holidayList.size(); i++) {
-				if (StringUtils.trimToEmpty(holidayList.get(i).getHolidayType()).equalsIgnoreCase(
-						HolidayHandlerTypes.HOLIDAYTYPE_PERMINENT)) {
+				if (StringUtils.trimToEmpty(holidayList.get(i).getHolidayType())
+						.equalsIgnoreCase(HolidayHandlerTypes.HOLIDAYTYPE_PERMINENT)) {
 					permanentHolidayMaster = holidayList.get(i);
 				} else {
 					normalHolidayMasters.add(holidayList.get(i));
@@ -323,8 +323,8 @@ public class BusinessCalendar implements Serializable {
 		}
 
 		CalendarKitCalculatorsFactory.getDefaultInstance().registerHolidays(holidayCode, holidayCalendar);
-		DateCalculator<Calendar> dateCalculator = CalendarKitCalculatorsFactory.getDefaultInstance().getDateCalculator(
-				holidayCode, holidayHandlerType);
+		DateCalculator<Calendar> dateCalculator = CalendarKitCalculatorsFactory.getDefaultInstance()
+				.getDateCalculator(holidayCode, holidayHandlerType);
 
 		if (week != null) {
 			dateCalculator.setWorkingWeek(week);
@@ -383,10 +383,10 @@ public class BusinessCalendar implements Serializable {
 		if (HolidayHandlerTypes.MOVE_NONE.equals(nBDAction)) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(date.getTime());
-			
+
 			return calendar;
 		}
-		
+
 		if (StringUtils.isBlank(holidayCode)) {
 			holidayCode = HolidayHandlerTypes.getHolidayCode("");
 		}
@@ -455,7 +455,8 @@ public class BusinessCalendar implements Serializable {
 			} else if (handlerType.equals(HolidayHandlerTypes.MOVE_PREVIOUS)) {
 				tempDate.add(Calendar.DATE, -1);
 			}
-			if (!holidayListMap.containsKey(DateUtility.formatDate(tempDate.getTime(), PennantConstants.DBDateFormat))) {
+			if (!holidayListMap
+					.containsKey(DateUtility.formatDate(tempDate.getTime(), PennantConstants.DBDateFormat))) {
 				workingBussDateFound = true;
 			}
 		}

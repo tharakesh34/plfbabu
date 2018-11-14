@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>NomineeDetail table</b>.<br>
  *
  */
-public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
+public class NomineeDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long nomineeId = Long.MIN_VALUE;
@@ -74,16 +74,16 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	private String address3;
 	private String landMark;
 	private String street;
-	private long pinCode= 0;
+	private long pinCode = 0;
 	private String province;
 	private String country;
 	private String city;
 	private long district = 0;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private boolean newNominee = false;
 	private String lovValue;
 	private NomineeDetail befImage;
-	private  LoggedInUser userDetails;
+	private LoggedInUser userDetails;
 	private String provinceName;
 	private String cityName;
 	private String pinCodeId;
@@ -112,6 +112,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	private String scheduleMethod;
 	private long custID;
 	private String rcdMaintainSts;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -125,8 +126,8 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finReferenceName");
 		excludeFields.add("provinceName");
 		excludeFields.add("cityName");
@@ -156,8 +157,8 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 		excludeFields.add("currency");
 		excludeFields.add("custID");
 		excludeFields.add("newNominee");
-		excludeFields.add("finNomineeDetail"); 
-		excludeFields.add("rcdMaintainSts"); 
+		excludeFields.add("finNomineeDetail");
+		excludeFields.add("rcdMaintainSts");
 		return excludeFields;
 	}
 
@@ -165,12 +166,14 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 		return nomineeId;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.nomineeId = id;
 	}
+
 	public long getNomineeId() {
 		return nomineeId;
 	}
+
 	public void setNomineeId(long nomineeId) {
 		this.nomineeId = nomineeId;
 	}
@@ -178,20 +181,23 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
+
 	public String getFinReferenceName() {
 		return this.finReferenceName;
 	}
 
-	public void setFinReferenceName (String finReferenceName) {
+	public void setFinReferenceName(String finReferenceName) {
 		this.finReferenceName = finReferenceName;
 	}
 
 	public String getNomineeName() {
 		return nomineeName;
 	}
+
 	public void setNomineeName(String nomineeName) {
 		this.nomineeName = nomineeName;
 	}
@@ -199,6 +205,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getRelation() {
 		return relation;
 	}
+
 	public void setRelation(String relation) {
 		this.relation = relation;
 	}
@@ -206,6 +213,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public boolean isMinor() {
 		return minor;
 	}
+
 	public void setMinor(boolean minor) {
 		this.minor = minor;
 	}
@@ -213,6 +221,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getGuardianName() {
 		return guardianName;
 	}
+
 	public void setGuardianName(String guardianName) {
 		this.guardianName = guardianName;
 	}
@@ -220,6 +229,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getGuardianRelation() {
 		return guardianRelation;
 	}
+
 	public void setGuardianRelation(String guardianRelation) {
 		this.guardianRelation = guardianRelation;
 	}
@@ -227,6 +237,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public Date getDOB() {
 		return dOB;
 	}
+
 	public void setDOB(Date dOB) {
 		this.dOB = dOB;
 	}
@@ -234,6 +245,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public boolean isSameAsApplicantAddr() {
 		return sameAsApplicantAddr;
 	}
+
 	public void setSameAsApplicantAddr(boolean sameAsApplicantAddr) {
 		this.sameAsApplicantAddr = sameAsApplicantAddr;
 	}
@@ -241,6 +253,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getAddress1() {
 		return address1;
 	}
+
 	public void setAddress1(String address1) {
 		this.address1 = address1;
 	}
@@ -248,6 +261,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getAddress2() {
 		return address2;
 	}
+
 	public void setAddress2(String address2) {
 		this.address2 = address2;
 	}
@@ -255,6 +269,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getAddress3() {
 		return address3;
 	}
+
 	public void setAddress3(String address3) {
 		this.address3 = address3;
 	}
@@ -262,6 +277,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getLandMark() {
 		return landMark;
 	}
+
 	public void setLandMark(String landMark) {
 		this.landMark = landMark;
 	}
@@ -269,6 +285,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getStreet() {
 		return street;
 	}
+
 	public void setStreet(String street) {
 		this.street = street;
 	}
@@ -276,6 +293,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public long getPinCode() {
 		return pinCode;
 	}
+
 	public void setPinCode(long pinCode) {
 		this.pinCode = pinCode;
 	}
@@ -283,6 +301,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getProvince() {
 		return province;
 	}
+
 	public void setProvince(String province) {
 		this.province = province;
 	}
@@ -290,6 +309,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -297,6 +317,7 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
@@ -317,19 +338,19 @@ public class NomineeDetail extends AbstractWorkflowEntity  implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public NomineeDetail getBefImage(){
+	public NomineeDetail getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(NomineeDetail beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(NomineeDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

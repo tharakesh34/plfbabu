@@ -137,113 +137,112 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Payments/FinanceWriteoffDialog.zul
  */
 public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
-	private static final long				serialVersionUID	= 966281186831332116L;
-	private static final Logger				logger				= Logger.getLogger(FinanceWriteoffDialogCtrl.class);
+	private static final long serialVersionUID = 966281186831332116L;
+	private static final Logger logger = Logger.getLogger(FinanceWriteoffDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_FinWriteoffDialog;
-	protected Borderlayout					borderlayoutFinWriteoffDialog;
+	protected Window window_FinWriteoffDialog;
+	protected Borderlayout borderlayoutFinWriteoffDialog;
 
 	//Summary Details
-	protected Textbox						finReference;
-	protected Textbox						finType;
-	protected Textbox						finBranch;
-	protected Textbox						finCcy;
-	protected Textbox						custID;
-	protected Datebox						finStartDate;
-	protected Datebox						maturityDate;
-	protected Datebox						writeoffDate;
+	protected Textbox finReference;
+	protected Textbox finType;
+	protected Textbox finBranch;
+	protected Textbox finCcy;
+	protected Textbox custID;
+	protected Datebox finStartDate;
+	protected Datebox maturityDate;
+	protected Datebox writeoffDate;
 
-	protected Decimalbox					label_FinWriteoffDialog_WOPriAmt;
-	protected Decimalbox					label_FinWriteoffDialog_WOPftAmt;
-	protected Decimalbox					label_FinWriteoffDialog_WOInsAmt;
-	protected Decimalbox					label_FinWriteoffDialog_WOIncrCostAmt;
-	protected Decimalbox					label_FinWriteoffDialog_WOSuplRentAmt;
-	protected Decimalbox					label_FinWriteoffDialog_WOSchdFeeAmt;
-	protected Decimalbox					label_FinWriteoffDialog_ODPriAmt;
-	protected Decimalbox					label_FinWriteoffDialog_ODPftAmt;
-	protected Decimalbox					label_FinWriteoffDialog_UnPaidPriAmt;
-	protected Decimalbox					label_FinWriteoffDialog_UnPaidPftAmt;
-	protected Decimalbox					label_FinWriteoffDialog_UnPaidInsAmt;
-	protected Decimalbox					label_FinWriteoffDialog_UnPaidIncrCostAmt;
-	protected Decimalbox					label_FinWriteoffDialog_UnPaidSuplRentAmt;
-	protected Decimalbox					label_FinWriteoffDialog_UnPaidSchFeeAmt;
-	protected Decimalbox					label_FinWriteoffDialog_OutStandPrincipal;
-	protected Decimalbox					label_FinWriteoffDialog_OutStandProfit;
-	protected Decimalbox					label_FinWriteoffDialog_OutStandIns;
-	protected Decimalbox					label_FinWriteoffDialog_OutStandIncrCost;
-	protected Decimalbox					label_FinWriteoffDialog_OutStandSuplRent;
-	protected Decimalbox					label_FinWriteoffDialog_OutStandSchFee;
-	protected Decimalbox					label_FinWriteoffDialog_ProvisionAmt;
-	protected Decimalbox					label_FinWriteoffDialog_PenaltyAmt;
+	protected Decimalbox label_FinWriteoffDialog_WOPriAmt;
+	protected Decimalbox label_FinWriteoffDialog_WOPftAmt;
+	protected Decimalbox label_FinWriteoffDialog_WOInsAmt;
+	protected Decimalbox label_FinWriteoffDialog_WOIncrCostAmt;
+	protected Decimalbox label_FinWriteoffDialog_WOSuplRentAmt;
+	protected Decimalbox label_FinWriteoffDialog_WOSchdFeeAmt;
+	protected Decimalbox label_FinWriteoffDialog_ODPriAmt;
+	protected Decimalbox label_FinWriteoffDialog_ODPftAmt;
+	protected Decimalbox label_FinWriteoffDialog_UnPaidPriAmt;
+	protected Decimalbox label_FinWriteoffDialog_UnPaidPftAmt;
+	protected Decimalbox label_FinWriteoffDialog_UnPaidInsAmt;
+	protected Decimalbox label_FinWriteoffDialog_UnPaidIncrCostAmt;
+	protected Decimalbox label_FinWriteoffDialog_UnPaidSuplRentAmt;
+	protected Decimalbox label_FinWriteoffDialog_UnPaidSchFeeAmt;
+	protected Decimalbox label_FinWriteoffDialog_OutStandPrincipal;
+	protected Decimalbox label_FinWriteoffDialog_OutStandProfit;
+	protected Decimalbox label_FinWriteoffDialog_OutStandIns;
+	protected Decimalbox label_FinWriteoffDialog_OutStandIncrCost;
+	protected Decimalbox label_FinWriteoffDialog_OutStandSuplRent;
+	protected Decimalbox label_FinWriteoffDialog_OutStandSchFee;
+	protected Decimalbox label_FinWriteoffDialog_ProvisionAmt;
+	protected Decimalbox label_FinWriteoffDialog_PenaltyAmt;
 
-	protected Decimalbox					writeoffPriAmt;
-	protected Decimalbox					writeoffPftAmt;
-	protected Decimalbox					writeoffInsAmt;
-	protected Decimalbox					writeoffIncrCost;
-	protected Decimalbox					writeoffSuplRent;
-	protected Decimalbox					writeoffSchFee;
-	protected AccountSelectionBox			writtenoffAcc;
-	protected Label							label_FinWriteoffDialog_WrittenoffAcc;
-	protected Decimalbox					adjAmount;
-	protected Textbox						remarks;
-	protected Row							row_WrittenOff;
+	protected Decimalbox writeoffPriAmt;
+	protected Decimalbox writeoffPftAmt;
+	protected Decimalbox writeoffInsAmt;
+	protected Decimalbox writeoffIncrCost;
+	protected Decimalbox writeoffSuplRent;
+	protected Decimalbox writeoffSchFee;
+	protected AccountSelectionBox writtenoffAcc;
+	protected Label label_FinWriteoffDialog_WrittenoffAcc;
+	protected Decimalbox adjAmount;
+	protected Textbox remarks;
+	protected Row row_WrittenOff;
 
-	protected transient Date				oldVar_writeoffDate;
-	protected transient BigDecimal			oldVar_writeoffPriAmt;
-	protected transient BigDecimal			oldVar_writeoffPftAmt;
-	protected transient BigDecimal			oldVar_writeoffInsAmt;
-	protected transient BigDecimal			oldVar_writeoffIncrCost;
-	protected transient BigDecimal			oldVar_writeoffSuplRent;
-	protected transient BigDecimal			oldVar_writeoffSchFee;
-	protected transient BigDecimal			oldVar_adjAmount;
-	protected transient String				oldVar_remarks;
-	protected transient String				oldVar_writtenoffAcc;
+	protected transient Date oldVar_writeoffDate;
+	protected transient BigDecimal oldVar_writeoffPriAmt;
+	protected transient BigDecimal oldVar_writeoffPftAmt;
+	protected transient BigDecimal oldVar_writeoffInsAmt;
+	protected transient BigDecimal oldVar_writeoffIncrCost;
+	protected transient BigDecimal oldVar_writeoffSuplRent;
+	protected transient BigDecimal oldVar_writeoffSchFee;
+	protected transient BigDecimal oldVar_adjAmount;
+	protected transient String oldVar_remarks;
+	protected transient String oldVar_writtenoffAcc;
 
-	protected Listheader					listheader_ScheduleDetailDialog_Date;
-	protected Listheader					listheader_ScheduleDetailDialog_ScheduleEvent;
-	protected Listheader					listheader_ScheduleDetailDialog_CalProfit;
-	protected Listheader					listheader_ScheduleDetailDialog_SchFee;
-	protected Listheader					listheader_ScheduleDetailDialog_SupplementRent;
-	protected Listheader					listheader_ScheduleDetailDialog_IncreasedCost;
-	protected Listheader					listheader_ScheduleDetailDialog_SchAdvProfit;
-	protected Listheader					listheader_ScheduleDetailDialog_SchProfit;
-	protected Listheader					listheader_ScheduleDetailDialog_Principal;
-	protected Listheader					listheader_ScheduleDetailDialog_AdvTotal;
-	protected Listheader					listheader_ScheduleDetailDialog_Rebate;
-	protected Listheader					listheader_ScheduleDetailDialog_Total;
-	protected Listheader					listheader_ScheduleDetailDialog_ScheduleEndBal;
-	protected Listheader					listHeader_cashFlowEffect;
-	protected Listheader					listHeader_vSProfit;
-	protected Listheader					listHeader_orgPrincipalDue;
+	protected Listheader listheader_ScheduleDetailDialog_Date;
+	protected Listheader listheader_ScheduleDetailDialog_ScheduleEvent;
+	protected Listheader listheader_ScheduleDetailDialog_CalProfit;
+	protected Listheader listheader_ScheduleDetailDialog_SchFee;
+	protected Listheader listheader_ScheduleDetailDialog_SupplementRent;
+	protected Listheader listheader_ScheduleDetailDialog_IncreasedCost;
+	protected Listheader listheader_ScheduleDetailDialog_SchAdvProfit;
+	protected Listheader listheader_ScheduleDetailDialog_SchProfit;
+	protected Listheader listheader_ScheduleDetailDialog_Principal;
+	protected Listheader listheader_ScheduleDetailDialog_AdvTotal;
+	protected Listheader listheader_ScheduleDetailDialog_Rebate;
+	protected Listheader listheader_ScheduleDetailDialog_Total;
+	protected Listheader listheader_ScheduleDetailDialog_ScheduleEndBal;
+	protected Listheader listHeader_cashFlowEffect;
+	protected Listheader listHeader_vSProfit;
+	protected Listheader listHeader_orgPrincipalDue;
 
-	protected Button						btnWriteoffCal;
-	protected Button						btnWriteoffReCal;
-	protected Button						btnWriteoffPay;
-	protected Button						btnNotes;
+	protected Button btnWriteoffCal;
+	protected Button btnWriteoffReCal;
+	protected Button btnWriteoffPay;
+	protected Button btnNotes;
 
-	protected Listbox						listBoxSchedule;
-	protected Tab							finWriteoffTab;
-	protected Tab							finScheduleTab;
+	protected Listbox listBoxSchedule;
+	protected Tab finWriteoffTab;
+	protected Tab finScheduleTab;
 
-	private transient FinanceSelectCtrl		financeSelectCtrl	= null;
-	private FinanceMain						financeMain;
-	private FinanceWriteoffHeader			financeWriteoffHeader;
-	private FinanceWriteoffHeader			effectFinScheduleData;
-	private FinanceWriteoff					financeWriteoff;
-	private FinanceWriteoffService			financeWriteoffService;
-	private FinanceReferenceDetailService	financeReferenceDetailService;
-	private AccrualService 									accrualService;
+	private transient FinanceSelectCtrl financeSelectCtrl = null;
+	private FinanceMain financeMain;
+	private FinanceWriteoffHeader financeWriteoffHeader;
+	private FinanceWriteoffHeader effectFinScheduleData;
+	private FinanceWriteoff financeWriteoff;
+	private FinanceWriteoffService financeWriteoffService;
+	private FinanceReferenceDetailService financeReferenceDetailService;
+	private AccrualService accrualService;
 
-
-	private int								format				= 0;
+	private int format = 0;
 
 	private NotificationService notificationService;
 
-	private boolean							WRITEOFF_FULLAMOUNT	= true;
+	private boolean WRITEOFF_FULLAMOUNT = true;
 
 	/**
 	 * default constructor.<br>
@@ -556,32 +555,32 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException, IllegalAccessException,
-			InvocationTargetException {
+	private void doWriteBeanToComponents()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		this.listheader_ScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Date"));
-		this.listheader_ScheduleDetailDialog_ScheduleEvent.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
-		this.listheader_ScheduleDetailDialog_CalProfit.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_CalProfit"));
+		this.listheader_ScheduleDetailDialog_ScheduleEvent
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
+		this.listheader_ScheduleDetailDialog_CalProfit
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_CalProfit"));
 		this.listheader_ScheduleDetailDialog_SchFee.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchFee"));
-		this.listheader_ScheduleDetailDialog_SupplementRent.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_SupplementRent"));
-		this.listheader_ScheduleDetailDialog_IncreasedCost.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_IncreasedCost"));
-		this.listheader_ScheduleDetailDialog_SchProfit.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_SchProfit"));
-		this.listheader_ScheduleDetailDialog_SchAdvProfit.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_SchAdvProfit"));
-		this.listheader_ScheduleDetailDialog_Principal.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_Principal"));
-		this.listheader_ScheduleDetailDialog_AdvTotal.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_AdvTotal"));
+		this.listheader_ScheduleDetailDialog_SupplementRent
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SupplementRent"));
+		this.listheader_ScheduleDetailDialog_IncreasedCost
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_IncreasedCost"));
+		this.listheader_ScheduleDetailDialog_SchProfit
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchProfit"));
+		this.listheader_ScheduleDetailDialog_SchAdvProfit
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchAdvProfit"));
+		this.listheader_ScheduleDetailDialog_Principal
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Principal"));
+		this.listheader_ScheduleDetailDialog_AdvTotal
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AdvTotal"));
 		this.listheader_ScheduleDetailDialog_Rebate.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Rebate"));
 		this.listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Total"));
-		this.listheader_ScheduleDetailDialog_ScheduleEndBal.setLabel(Labels
-				.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
+		this.listheader_ScheduleDetailDialog_ScheduleEndBal
+				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
 		listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_CashFlowEffect"));
 		listHeader_vSProfit.setLabel(Labels.getLabel("listheader_VsProfit"));
 		listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_OrgPrincipalDue"));
@@ -602,44 +601,44 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finStartDate.setValue(financeMain.getFinStartDate());
 		this.maturityDate.setValue(financeMain.getMaturityDate());
 
-		this.label_FinWriteoffDialog_WOPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffPri(),
-				format));
-		this.label_FinWriteoffDialog_WOPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffPft(),
-				format));
+		this.label_FinWriteoffDialog_WOPriAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffPri(), format));
+		this.label_FinWriteoffDialog_WOPftAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffPft(), format));
 
-		this.label_FinWriteoffDialog_WOInsAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffIns(),
-				format));
-		this.label_FinWriteoffDialog_WOIncrCostAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getWrittenoffIncrCost(), format));
-		this.label_FinWriteoffDialog_WOSuplRentAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getWrittenoffSuplRent(), format));
-		this.label_FinWriteoffDialog_WOSchdFeeAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getWrittenoffSchFee(), format));
+		this.label_FinWriteoffDialog_WOInsAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffIns(), format));
+		this.label_FinWriteoffDialog_WOIncrCostAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffIncrCost(), format));
+		this.label_FinWriteoffDialog_WOSuplRentAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffSuplRent(), format));
+		this.label_FinWriteoffDialog_WOSchdFeeAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffSchFee(), format));
 
-		this.label_FinWriteoffDialog_ODPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getCurODPri(),
-				format));
-		this.label_FinWriteoffDialog_ODPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getCurODPft(),
-				format));
-		this.label_FinWriteoffDialog_UnPaidPriAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnPaidSchdPri(), format));
-		this.label_FinWriteoffDialog_UnPaidPftAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnPaidSchdPft(), format));
-		this.label_FinWriteoffDialog_UnPaidInsAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIns(),
-				format));
-		this.label_FinWriteoffDialog_UnPaidIncrCostAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnpaidIncrCost(), format));
-		this.label_FinWriteoffDialog_UnPaidSuplRentAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnpaidSuplRent(), format));
-		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnpaidSchFee(), format));
-		this.label_FinWriteoffDialog_OutStandPrincipal.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnPaidSchdPri(), format));
-		this.label_FinWriteoffDialog_OutStandProfit.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getUnPaidSchdPft(), format));
-		this.label_FinWriteoffDialog_PenaltyAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getPenaltyAmount(), format));
-		this.label_FinWriteoffDialog_ProvisionAmt.setValue(PennantAppUtil.formateAmount(
-				financeWriteoff.getProvisionedAmount(), format));
+		this.label_FinWriteoffDialog_ODPriAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getCurODPri(), format));
+		this.label_FinWriteoffDialog_ODPftAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getCurODPft(), format));
+		this.label_FinWriteoffDialog_UnPaidPriAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPri(), format));
+		this.label_FinWriteoffDialog_UnPaidPftAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
+		this.label_FinWriteoffDialog_UnPaidInsAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIns(), format));
+		this.label_FinWriteoffDialog_UnPaidIncrCostAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIncrCost(), format));
+		this.label_FinWriteoffDialog_UnPaidSuplRentAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSuplRent(), format));
+		this.label_FinWriteoffDialog_UnPaidSchFeeAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSchFee(), format));
+		this.label_FinWriteoffDialog_OutStandPrincipal
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPri(), format));
+		this.label_FinWriteoffDialog_OutStandProfit
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
+		this.label_FinWriteoffDialog_PenaltyAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getPenaltyAmount(), format));
+		this.label_FinWriteoffDialog_ProvisionAmt
+				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getProvisionedAmount(), format));
 
 		this.writeoffPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffPrincipal(), format));
 		this.writeoffPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffProfit(), format));
@@ -726,8 +725,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event)
+			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		this.doWriteComponentsToBean();
 
@@ -816,10 +815,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Reset only Schedule Details Data
 		Cloner cloner = new Cloner();
 		FinanceWriteoffHeader schdData = cloner.deepClone(financeWriteoffHeader);
-		schdData.getFinanceDetail()
-				.getFinScheduleData()
-				.setFinanceScheduleDetails(
-						getFinanceWriteoffService().getFinScheduleDetails(financeMain.getFinReference()));
+		schdData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
+				getFinanceWriteoffService().getFinScheduleDetails(financeMain.getFinReference()));
 
 		calScheduleWriteOffDetails(schdData);
 		doStoreInitValues();
@@ -880,8 +877,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				//Reset Write-off Insurance Amount
 				if (woInsAmt.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal schInsBal = curSchdl.getInsSchd().subtract(
-							curSchdl.getSchdInsPaid().subtract(curSchdl.getWriteoffIns()));
+					BigDecimal schInsBal = curSchdl.getInsSchd()
+							.subtract(curSchdl.getSchdInsPaid().subtract(curSchdl.getWriteoffIns()));
 					if (schInsBal.compareTo(BigDecimal.ZERO) > 0) {
 						if (woInsAmt.compareTo(schInsBal) >= 0) {
 							curSchdl.setWriteoffIns(curSchdl.getWriteoffIns().add(schInsBal));
@@ -895,8 +892,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				//Reset Write-off Increased Cost 
 				if (woIncrCost.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal schIncrCost = curSchdl.getIncrCost().subtract(
-							curSchdl.getIncrCostPaid().subtract(curSchdl.getWriteoffIncrCost()));
+					BigDecimal schIncrCost = curSchdl.getIncrCost()
+							.subtract(curSchdl.getIncrCostPaid().subtract(curSchdl.getWriteoffIncrCost()));
 					if (schIncrCost.compareTo(BigDecimal.ZERO) > 0) {
 						if (woIncrCost.compareTo(schIncrCost) >= 0) {
 							curSchdl.setWriteoffIncrCost(curSchdl.getWriteoffIncrCost().add(schIncrCost));
@@ -909,8 +906,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				//Reset Write-off Suplement Rent 
 				if (woSuplRent.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal schSuplRent = curSchdl.getSuplRent().subtract(
-							curSchdl.getSuplRentPaid().subtract(curSchdl.getWriteoffSuplRent()));
+					BigDecimal schSuplRent = curSchdl.getSuplRent()
+							.subtract(curSchdl.getSuplRentPaid().subtract(curSchdl.getWriteoffSuplRent()));
 					if (schSuplRent.compareTo(BigDecimal.ZERO) > 0) {
 						if (woSuplRent.compareTo(schSuplRent) >= 0) {
 							curSchdl.setWriteoffSuplRent(curSchdl.getWriteoffSuplRent().add(schSuplRent));
@@ -923,8 +920,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				//Reset Write-off Schedule Fee
 				if (woSchFee.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal schFee = curSchdl.getFeeSchd().subtract(
-							curSchdl.getSchdFeePaid().subtract(curSchdl.getWriteoffSchFee()));
+					BigDecimal schFee = curSchdl.getFeeSchd()
+							.subtract(curSchdl.getSchdFeePaid().subtract(curSchdl.getWriteoffSchFee()));
 					if (schFee.compareTo(BigDecimal.ZERO) > 0) {
 						if (woSchFee.compareTo(schFee) >= 0) {
 							curSchdl.setWriteoffSchFee(curSchdl.getWriteoffSchFee().add(schFee));
@@ -974,10 +971,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Reset To Finance Schedule Data Object For rendering purpose
 		FinScheduleData aFinScheduleData = new FinScheduleData();
 		aFinScheduleData.setFinanceMain(writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain());
-		aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(writeoffHeader.getFinanceDetail()
-				.getFinScheduleData().getFinanceScheduleDetails()));
-		aFinScheduleData.setDisbursementDetails(writeoffHeader.getFinanceDetail().getFinScheduleData()
-				.getDisbursementDetails());
+		aFinScheduleData.setFinanceScheduleDetails(
+				sortSchdDetails(writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails()));
+		aFinScheduleData.setDisbursementDetails(
+				writeoffHeader.getFinanceDetail().getFinScheduleData().getDisbursementDetails());
 		aFinScheduleData.setFinanceType(writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceType());
 
 		FinScheduleListItemRenderer finRender = new FinScheduleListItemRenderer();
@@ -1009,8 +1006,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				for (OverdueChargeRecovery penaltyDetail : aFinScheduleData.getPenaltyDetails()) {
 					if (penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())) {
-						ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap.get(penaltyDetail
-								.getFinODSchdDate());
+						ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap
+								.get(penaltyDetail.getFinODSchdDate());
 						penaltyDetailList.add(penaltyDetail);
 						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
 					} else {
@@ -1042,10 +1039,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_FinWriteoffDialog);
-				finRender.render(map, prvSchDetail, false, true, true,  aFinScheduleData.getFinFeeDetailList(), showRate, false);
+				finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
+						false);
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, true, true,  aFinScheduleData.getFinFeeDetailList(), showRate, false);
+					finRender.render(map, prvSchDetail, true, true, true, aFinScheduleData.getFinFeeDetailList(),
+							showRate, false);
 					break;
 				}
 			}
@@ -1084,13 +1083,16 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		if ((this.writeoffPriAmt.getValue() == null || this.writeoffPriAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
-				&& (this.writeoffPftAmt.getValue() == null || this.writeoffPftAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
-				&& (this.writeoffInsAmt.getValue() == null || this.writeoffInsAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
-				&& (this.writeoffIncrCost.getValue() == null || this.writeoffIncrCost.getValue().compareTo(
-						BigDecimal.ZERO) <= 0)
-				&& (this.writeoffSuplRent.getValue() == null || this.writeoffSuplRent.getValue().compareTo(
-						BigDecimal.ZERO) <= 0)
-				&& (this.writeoffSchFee.getValue() == null || this.writeoffSchFee.getValue().compareTo(BigDecimal.ZERO) <= 0)) {
+				&& (this.writeoffPftAmt.getValue() == null
+						|| this.writeoffPftAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
+				&& (this.writeoffInsAmt.getValue() == null
+						|| this.writeoffInsAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
+				&& (this.writeoffIncrCost.getValue() == null
+						|| this.writeoffIncrCost.getValue().compareTo(BigDecimal.ZERO) <= 0)
+				&& (this.writeoffSuplRent.getValue() == null
+						|| this.writeoffSuplRent.getValue().compareTo(BigDecimal.ZERO) <= 0)
+				&& (this.writeoffSchFee.getValue() == null
+						|| this.writeoffSchFee.getValue().compareTo(BigDecimal.ZERO) <= 0)) {
 
 			MessageUtil.showError("Write-off Amount must be Entered.");
 			return false;
@@ -1126,38 +1128,38 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceWriteoff writeoff = getFinanceWriteoff();
 
 		writeoff.setFinReference(this.finReference.getValue());
-		writeoff.setWrittenoffPri(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_WOPriAmt.getValue(), format));
-		writeoff.setWrittenoffPft(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_WOPftAmt.getValue(), format));
-		writeoff.setWriteoffIns(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_WOInsAmt.getValue(), format));
-		writeoff.setWrittenoffIncrCost(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_WOIncrCostAmt.getValue(), format));
-		writeoff.setWrittenoffSuplRent(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_WOSuplRentAmt.getValue(), format));
-		writeoff.setWrittenoffSchFee(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_WOSchdFeeAmt.getValue(), format));
-		writeoff.setCurODPri(PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_ODPriAmt.getValue(),
-				format));
-		writeoff.setCurODPft(PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_ODPftAmt.getValue(),
-				format));
-		writeoff.setUnPaidSchdPri(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_UnPaidPriAmt.getValue(), format));
-		writeoff.setUnPaidSchdPft(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_UnPaidPftAmt.getValue(), format));
-		writeoff.setUnpaidIns(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_UnPaidInsAmt.getValue(), format));
-		writeoff.setUnpaidIncrCost(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_UnPaidIncrCostAmt.getValue(), format));
-		writeoff.setUnpaidSuplRent(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_UnPaidSuplRentAmt.getValue(), format));
-		writeoff.setUnpaidSchFee(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_UnPaidSchFeeAmt.getValue(), format));
-		writeoff.setPenaltyAmount(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_PenaltyAmt.getValue(), format));
-		writeoff.setProvisionedAmount(PennantApplicationUtil.unFormateAmount(
-				this.label_FinWriteoffDialog_ProvisionAmt.getValue(), format));
+		writeoff.setWrittenoffPri(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOPriAmt.getValue(), format));
+		writeoff.setWrittenoffPft(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOPftAmt.getValue(), format));
+		writeoff.setWriteoffIns(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOInsAmt.getValue(), format));
+		writeoff.setWrittenoffIncrCost(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOIncrCostAmt.getValue(), format));
+		writeoff.setWrittenoffSuplRent(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOSuplRentAmt.getValue(), format));
+		writeoff.setWrittenoffSchFee(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOSchdFeeAmt.getValue(), format));
+		writeoff.setCurODPri(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_ODPriAmt.getValue(), format));
+		writeoff.setCurODPft(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_ODPftAmt.getValue(), format));
+		writeoff.setUnPaidSchdPri(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_UnPaidPriAmt.getValue(), format));
+		writeoff.setUnPaidSchdPft(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_UnPaidPftAmt.getValue(), format));
+		writeoff.setUnpaidIns(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_UnPaidInsAmt.getValue(), format));
+		writeoff.setUnpaidIncrCost(PennantApplicationUtil
+				.unFormateAmount(this.label_FinWriteoffDialog_UnPaidIncrCostAmt.getValue(), format));
+		writeoff.setUnpaidSuplRent(PennantApplicationUtil
+				.unFormateAmount(this.label_FinWriteoffDialog_UnPaidSuplRentAmt.getValue(), format));
+		writeoff.setUnpaidSchFee(PennantApplicationUtil
+				.unFormateAmount(this.label_FinWriteoffDialog_UnPaidSchFeeAmt.getValue(), format));
+		writeoff.setPenaltyAmount(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_PenaltyAmt.getValue(), format));
+		writeoff.setProvisionedAmount(
+				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_ProvisionAmt.getValue(), format));
 
 		writeoff.setWriteoffPrincipal(PennantApplicationUtil.unFormateAmount(this.writeoffPriAmt.getValue(), format));
 		writeoff.setWriteoffProfit(PennantApplicationUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format));
@@ -1173,9 +1175,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (this.writeoffDate.getValue() == null) {
 				this.writeoffDate.setValue(DateUtility.getAppDate());
 			} else if (!this.writeoffDate.isDisabled()) {
-				this.writeoffDate.setConstraint(new PTDateValidator(Labels
-						.getLabel("label_FinWriteoffDialog_WriteoffDate.value"), false, SysParamUtil
-						.getValueAsDate("APP_DFT_START_DATE"), DateUtility.getAppDate(), true));
+				this.writeoffDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_FinWriteoffDialog_WriteoffDate.value"), false,
+								SysParamUtil.getValueAsDate("APP_DFT_START_DATE"), DateUtility.getAppDate(), true));
 			}
 
 			writeoff.setWriteoffDate(this.writeoffDate.getValue());
@@ -1185,8 +1187,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			if (!recSave && this.writtenoffAcc.isMandatory() && this.writtenoffAcc.isVisible()
 					&& !this.writtenoffAcc.isReadonly()) {
-				this.writtenoffAcc.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinWriteoffDialog_WrittenoffAcc.value"), null, true));
+				this.writtenoffAcc.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinWriteoffDialog_WrittenoffAcc.value"), null, true));
 			}
 			writeoff.setWrittenoffAcc(this.writtenoffAcc.getValue());
 		} catch (WrongValueException we) {
@@ -1294,8 +1296,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
-			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
-					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
+			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum()
+					.compareTo(getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
@@ -1415,11 +1417,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							}
 
 							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceMain
-										.getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-													+ reference, Notify.USER, to);
+								if (!PennantConstants.RCD_STATUS_CANCELLED
+										.equalsIgnoreCase(aFinanceMain.getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, Notify.USER, to);
 								}
 							} else {
 								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.USER, to);
@@ -1528,7 +1529,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	private boolean doProcess(FinanceWriteoffHeader aFinanceWriteoffHeader, String tranType)
-			throws InterruptedException,InterfaceException {
+			throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1584,8 +1585,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else {
 					FinanceWriteoffHeader tFinanceWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail()
 							.getModelData();
-					setNextTaskDetails(taskId, tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData()
-							.getFinanceMain());
+					setNextTaskDetails(taskId,
+							tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain());
 					auditHeader.getAuditDetail().setModelData(tFinanceWriteoffHeader);
 					processCompleted = doSaveProcess(auditHeader, method);
 
@@ -1598,8 +1599,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				finishedTasks += (method + ";");
 				FinanceWriteoffHeader tFinanceWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail()
 						.getModelData();
-				serviceTasks = getServiceTasks(taskId, tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData()
-						.getFinanceMain(), finishedTasks);
+				serviceTasks = getServiceTasks(taskId,
+						tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain(), finishedTasks);
 
 			}
 
@@ -1607,8 +1608,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					.getModelData();
 
 			// Check whether to proceed further or not
-			String nextTaskId = getNextTaskIds(taskId, tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData()
-					.getFinanceMain());
+			String nextTaskId = getNextTaskIds(taskId,
+					tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain());
 
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
@@ -1618,8 +1619,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (processCompleted) {
 
 				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
-					setNextTaskDetails(taskId, tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData()
-							.getFinanceMain());
+					setNextTaskDetails(taskId,
+							tFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain());
 					auditHeader.getAuditDetail().setModelData(tFinanceWriteoffHeader);
 					processCompleted = doSaveProcess(auditHeader, null);
 				}
@@ -1643,7 +1644,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException , InterfaceException{
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)
+			throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1676,8 +1678,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinWriteoffDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1763,8 +1765,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	private AuditHeader getAuditHeader(FinanceWriteoffHeader header, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, header);
-		return new AuditHeader(header.getFinReference(), null, null, null, auditDetail, header.getFinanceDetail()
-				.getFinScheduleData().getFinanceMain().getUserDetails(), getOverideMap());
+		return new AuditHeader(header.getFinReference(), null, null, null, auditDetail,
+				header.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1825,8 +1827,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException,
-			InvocationTargetException {
+	public FinanceDetail onExecuteStageAccDetail()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		getFinanceDetail().setModuleDefiner(
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 		return getFinanceDetail();
@@ -1842,24 +1844,25 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-		
+
 		FinanceProfitDetail profitDetail = null;
-		if(StringUtils.isEmpty(moduleDefiner)){
+		if (StringUtils.isEmpty(moduleDefiner)) {
 			profitDetail = new FinanceProfitDetail();
-		}else{
-			profitDetail = getFinanceDetailService().getFinProfitDetailsById(getFinanceDetail().getFinScheduleData().getFinReference());
+		} else {
+			profitDetail = getFinanceDetailService()
+					.getFinProfitDetailsById(getFinanceDetail().getFinScheduleData().getFinReference());
 		}
-		
+
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 
 		prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
-		aeEvent.getAeAmountCodes().setTotalWriteoff(financeWriteoff.getWriteoffPrincipal().add(
-				financeWriteoff.getWriteoffProfit().add(financeWriteoff.getWrittenoffSchFee())));
+		aeEvent.getAeAmountCodes().setTotalWriteoff(financeWriteoff.getWriteoffPrincipal()
+				.add(financeWriteoff.getWriteoffProfit().add(financeWriteoff.getWrittenoffSchFee())));
 		aeEvent.getAeAmountCodes().getDeclaredFieldValues(dataMap);
 		financeWriteoff.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
-		
+
 		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 		accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
@@ -1880,8 +1883,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail) throws InterruptedException, IllegalAccessException,
-			InvocationTargetException {
+	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		Date curBDay = DateUtility.getAppDate();
 
@@ -1907,11 +1910,13 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
+					FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
+					FinanceConstants.MODULEID_FINTYPE));
 		}
-		
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
@@ -1933,18 +1938,21 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return aeEvent;
 	}
 
-	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries, AEEvent aeEvent) throws Exception {
-		
+	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries, AEEvent aeEvent)
+			throws Exception {
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();
-		
+
 		aeEvent.getAcSetIDList().clear();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_PROMOTION));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
+					AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
+					AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		//loop through the disbursements.
@@ -1964,7 +1972,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
 					aeEvent.setNewRecord(true);
 				}
-				
+
 				// Call Map Build Method
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
@@ -2033,7 +2041,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

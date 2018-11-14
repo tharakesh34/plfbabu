@@ -95,7 +95,8 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import freemarker.template.TemplateException;
 
 /**
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SysNotification/sysNotificationDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SysNotification/sysNotificationDialog.zul file.
+ * <br>
  */
 public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	private static final long serialVersionUID = 1L;
@@ -128,7 +129,6 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	private SysNotification sysNotification; // overhanded per param
 	private transient SysNotificationListCtrl sysNotificationListCtrl; // overhanded per param
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient SysNotificationService sysNotificationService;
 	private transient PagedListService pagedListService;
@@ -150,7 +150,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 
 	private PagedListWrapper<SysNotificationDetails> custListWrapper;
 	private NotificationService notificationService;
-	
+
 	private String sendNotification;
 
 	/**
@@ -206,13 +206,14 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 			doSetFieldProperties();
 			doShowDialog(getSysNotification());
 
-			this.listBox_CustomersList.setHeight(Integer.parseInt(getListBoxHeight(
-					grid_SysNotification.getRows().getVisibleItemCount()).substring(0,
+			this.listBox_CustomersList.setHeight(Integer
+					.parseInt(getListBoxHeight(grid_SysNotification.getRows().getVisibleItemCount()).substring(0,
 							getListBoxHeight(grid_SysNotification.getRows().getVisibleItemCount()).indexOf("px")))
-							- 70 + "px");
-			this.paging_CustomersList.setPageSize(Integer.parseInt(getListBoxHeight(
-					grid_SysNotification.getRows().getVisibleItemCount()).substring(0,
-							getListBoxHeight(grid_SysNotification.getRows().getVisibleItemCount()).indexOf("px"))) - 70);
+					- 70 + "px");
+			this.paging_CustomersList.setPageSize(Integer
+					.parseInt(getListBoxHeight(grid_SysNotification.getRows().getVisibleItemCount()).substring(0,
+							getListBoxHeight(grid_SysNotification.getRows().getVisibleItemCount()).indexOf("px")))
+					- 70);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -497,13 +498,13 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 		logger.debug("Entering");
 
 		if (!this.queryCode.isReadonly()) {
-			this.queryCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SysNotificationDialog_QueryCode.value"), null, true, true));
+			this.queryCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SysNotificationDialog_QueryCode.value"), null, true, true));
 		}
 
 		if (!this.template.isReadonly()) {
-			this.template.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SysNotificationDialog_Template.value"), null, true, true));
+			this.template.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SysNotificationDialog_Template.value"), null, true, true));
 		}
 
 		logger.debug("Leaving");
@@ -590,7 +591,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	/**
 	 * Method to remove constraints
 	 * 
-	 * */
+	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		this.queryCode.setConstraint("");
@@ -602,7 +603,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	/**
 	 * Method to clear error messages
 	 * 
-	 * */
+	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -704,6 +705,5 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
-
 
 }

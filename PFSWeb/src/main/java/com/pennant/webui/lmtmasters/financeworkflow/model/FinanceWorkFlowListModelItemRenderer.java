@@ -77,8 +77,8 @@ public class FinanceWorkFlowListModelItemRenderer implements ListitemRenderer<Fi
 		Listcell lc;
 		lc = new Listcell(financeWorkFlow.getFinType());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(financeWorkFlow.getScreenCode(),
-				PennantStaticListUtil.getScreenCodes()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(financeWorkFlow.getScreenCode(), PennantStaticListUtil.getScreenCodes()));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(financeWorkFlow.getFinEvent(), eventList));
 		lc.setParent(item);

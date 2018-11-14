@@ -16,12 +16,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long custId = Long.MIN_VALUE;
 	private String finReference;
 	private String finEvent;
 	private String finBranch;
- 	private String custCIF;
+	private String custCIF;
 	private String custShrtName;
 	private String custDocType;
 	private String custDocTitle;
@@ -32,13 +32,13 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String phoneCountryCode;
 	private String lovDescPhoneCountryName;
 	private String phoneAreaCode;
-	
+
 	private String custEMailTypeCode;
 	private String lovDescCustEMailTypeCode;
 	private int custEMailPriority;
 	private String custEMail;
 	public String deptDesc;
-	
+
 	private String finType;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal downPayment = BigDecimal.ZERO;
@@ -48,27 +48,26 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String lastMntByUser;
 	private String finCcy;
 	private String finTypeDesc;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 
 	private CustomerFinanceDetail befImage;
- 	private LoggedInUser userDetails;
+	private LoggedInUser userDetails;
 
-	private String prvRoleDesc="";
-	private String nextRoleDesc= "";
-	
+	private String prvRoleDesc = "";
+	private String nextRoleDesc = "";
+
 	private List<AuditTransaction> auditTransactionsList;
 	private List<Notes> notesList;
-	
-  
-	public CustomerFinanceDetail(){
+
+	public CustomerFinanceDetail() {
 		super();
 	}
 
-	public Set<String> getExcludeFields(){
+	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("usrFName");
 		return excludeFields;
@@ -76,289 +75,289 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//	
- 	
+
 	public long getCustId() {
-    	return custId;
-    }
+		return custId;
+	}
 
 	public void setCustId(long custId) {
-    	this.custId = custId;
-    }
+		this.custId = custId;
+	}
 
 	public String getFinReference() {
-    	return finReference;
-    }
+		return finReference;
+	}
 
 	public void setFinReference(String finReference) {
-    	this.finReference = finReference;
-    }
+		this.finReference = finReference;
+	}
 
 	public String getFinBranch() {
-    	return finBranch;
-    }
+		return finBranch;
+	}
 
 	public void setFinBranch(String finBranch) {
-    	this.finBranch = finBranch;
-    }
+		this.finBranch = finBranch;
+	}
 
 	public String getCustCIF() {
-    	return custCIF;
-    }
+		return custCIF;
+	}
 
 	public void setCustCIF(String custCIF) {
-    	this.custCIF = custCIF;
-    }
+		this.custCIF = custCIF;
+	}
 
 	public String getCustShrtName() {
-    	return custShrtName;
-    }
+		return custShrtName;
+	}
 
 	public void setCustShrtName(String custShrtName) {
-    	this.custShrtName = custShrtName;
-    }
+		this.custShrtName = custShrtName;
+	}
 
 	public String getCustDocType() {
-    	return custDocType;
-    }
+		return custDocType;
+	}
 
 	public void setCustDocType(String custDocType) {
-    	this.custDocType = custDocType;
-    }
+		this.custDocType = custDocType;
+	}
 
 	public String getCustDocTitle() {
-    	return custDocTitle;
-    }
+		return custDocTitle;
+	}
 
 	public void setCustDocTitle(String custDocTitle) {
-    	this.custDocTitle = custDocTitle;
-    }
+		this.custDocTitle = custDocTitle;
+	}
 
 	public String getPhoneNumber() {
-    	return phoneNumber;
-    }
+		return phoneNumber;
+	}
 
 	public void setPhoneNumber(String phoneNumber) {
-    	this.phoneNumber = phoneNumber;
-    }
+		this.phoneNumber = phoneNumber;
+	}
 
 	public String getPhoneTypeCode() {
-    	return phoneTypeCode;
-    }
+		return phoneTypeCode;
+	}
 
 	public void setPhoneTypeCode(String phoneTypeCode) {
-    	this.phoneTypeCode = phoneTypeCode;
-    }
+		this.phoneTypeCode = phoneTypeCode;
+	}
 
 	public String getLovDescPhoneTypeCodeName() {
-    	return lovDescPhoneTypeCodeName;
-    }
+		return lovDescPhoneTypeCodeName;
+	}
 
 	public void setLovDescPhoneTypeCodeName(String lovDescPhoneTypeCodeName) {
-    	this.lovDescPhoneTypeCodeName = lovDescPhoneTypeCodeName;
-    }
+		this.lovDescPhoneTypeCodeName = lovDescPhoneTypeCodeName;
+	}
 
 	public String getPhoneCountryCode() {
-    	return phoneCountryCode;
-    }
+		return phoneCountryCode;
+	}
 
 	public void setPhoneCountryCode(String phoneCountryCode) {
-    	this.phoneCountryCode = phoneCountryCode;
-    }
+		this.phoneCountryCode = phoneCountryCode;
+	}
 
 	public String getLovDescPhoneCountryName() {
-    	return lovDescPhoneCountryName;
-    }
+		return lovDescPhoneCountryName;
+	}
 
 	public void setLovDescPhoneCountryName(String lovDescPhoneCountryName) {
-    	this.lovDescPhoneCountryName = lovDescPhoneCountryName;
-    }
+		this.lovDescPhoneCountryName = lovDescPhoneCountryName;
+	}
 
 	public String getPhoneAreaCode() {
-    	return phoneAreaCode;
-    }
+		return phoneAreaCode;
+	}
 
 	public void setPhoneAreaCode(String phoneAreaCode) {
-    	this.phoneAreaCode = phoneAreaCode;
-    }
+		this.phoneAreaCode = phoneAreaCode;
+	}
 
 	public String getCustEMailTypeCode() {
-    	return custEMailTypeCode;
-    }
+		return custEMailTypeCode;
+	}
 
 	public void setCustEMailTypeCode(String custEMailTypeCode) {
-    	this.custEMailTypeCode = custEMailTypeCode;
-    }
+		this.custEMailTypeCode = custEMailTypeCode;
+	}
 
 	public String getLovDescCustEMailTypeCode() {
-    	return lovDescCustEMailTypeCode;
-    }
+		return lovDescCustEMailTypeCode;
+	}
 
 	public void setLovDescCustEMailTypeCode(String lovDescCustEMailTypeCode) {
-    	this.lovDescCustEMailTypeCode = lovDescCustEMailTypeCode;
-    }
+		this.lovDescCustEMailTypeCode = lovDescCustEMailTypeCode;
+	}
 
 	public int getCustEMailPriority() {
-    	return custEMailPriority;
-    }
+		return custEMailPriority;
+	}
 
 	public void setCustEMailPriority(int custEMailPriority) {
-    	this.custEMailPriority = custEMailPriority;
-    }
+		this.custEMailPriority = custEMailPriority;
+	}
 
 	public String getCustEMail() {
-    	return custEMail;
-    }
+		return custEMail;
+	}
 
 	public void setCustEMail(String custEMail) {
-    	this.custEMail = custEMail;
-    }
+		this.custEMail = custEMail;
+	}
 
 	public String getDeptDesc() {
-    	return deptDesc;
-    }
+		return deptDesc;
+	}
 
 	public void setDeptDesc(String deptDesc) {
-    	this.deptDesc = deptDesc;
-    }
+		this.deptDesc = deptDesc;
+	}
 
 	public boolean isNewRecord() {
-    	return newRecord;
-    }
+		return newRecord;
+	}
 
 	public void setNewRecord(boolean newRecord) {
-    	this.newRecord = newRecord;
-    }
+		this.newRecord = newRecord;
+	}
 
 	public String getLovValue() {
-    	return lovValue;
-    }
+		return lovValue;
+	}
 
 	public void setLovValue(String lovValue) {
-    	this.lovValue = lovValue;
-    }
+		this.lovValue = lovValue;
+	}
 
 	public String getLovDescCustRecordType() {
-    	return lovDescCustRecordType;
-    }
+		return lovDescCustRecordType;
+	}
 
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
-    	this.lovDescCustRecordType = lovDescCustRecordType;
-    }
+		this.lovDescCustRecordType = lovDescCustRecordType;
+	}
 
 	public String getLovDescCustCIF() {
-    	return lovDescCustCIF;
-    }
+		return lovDescCustCIF;
+	}
 
 	public void setLovDescCustCIF(String lovDescCustCIF) {
-    	this.lovDescCustCIF = lovDescCustCIF;
-    }
+		this.lovDescCustCIF = lovDescCustCIF;
+	}
 
 	public CustomerFinanceDetail getBefImage() {
-    	return befImage;
-    }
+		return befImage;
+	}
 
 	public void setBefImage(CustomerFinanceDetail befImage) {
-    	this.befImage = befImage;
-    }
+		this.befImage = befImage;
+	}
 
 	public LoggedInUser getUserDetails() {
-    	return userDetails;
-    }
+		return userDetails;
+	}
 
 	public void setUserDetails(LoggedInUser userDetails) {
-    	this.userDetails = userDetails;
-    }
+		this.userDetails = userDetails;
+	}
 
 	public String getPrvRoleDesc() {
-    	return prvRoleDesc;
-    }
+		return prvRoleDesc;
+	}
 
 	public void setPrvRoleDesc(String prvRoleDesc) {
-    	this.prvRoleDesc = prvRoleDesc;
-    }
+		this.prvRoleDesc = prvRoleDesc;
+	}
 
 	public String getNextRoleDesc() {
-    	return nextRoleDesc;
-    }
+		return nextRoleDesc;
+	}
 
 	public void setNextRoleDesc(String nextRoleDesc) {
-    	this.nextRoleDesc = nextRoleDesc;
-    }
+		this.nextRoleDesc = nextRoleDesc;
+	}
 
 	public boolean isChanged() {
-		boolean changed =false;
-		
-		if(befImage==null){
-			changed=true;
-		}else{
-			
+		boolean changed = false;
+
+		if (befImage == null) {
+			changed = true;
+		} else {
+
 		}
 		return changed;
 	}
 
 	public List<AuditTransaction> getAuditTransactionsList() {
-    	return auditTransactionsList;
-    }
+		return auditTransactionsList;
+	}
 
 	public void setAuditTransactionsList(List<AuditTransaction> auditTransactionsList) {
-    	this.auditTransactionsList = auditTransactionsList;
-    }
+		this.auditTransactionsList = auditTransactionsList;
+	}
 
 	public List<Notes> getNotesList() {
-    	return notesList;
-    }
+		return notesList;
+	}
 
 	public void setNotesList(List<Notes> notesList) {
-    	this.notesList = notesList;
-    }
+		this.notesList = notesList;
+	}
 
 	public void setFinType(String finType) {
-	    this.finType = finType;
-    }
+		this.finType = finType;
+	}
 
 	public String getFinType() {
-	    return finType;
-    }
+		return finType;
+	}
 
 	public void setFinAmount(BigDecimal finAmount) {
-	    this.finAmount = finAmount;
-    }
+		this.finAmount = finAmount;
+	}
 
 	public BigDecimal getFinAmount() {
-	    return finAmount;
-    }
+		return finAmount;
+	}
 
 	public void setFinStartDate(Date finStartDate) {
-	    this.finStartDate = finStartDate;
-    }
+		this.finStartDate = finStartDate;
+	}
 
 	public Date getFinStartDate() {
-	    return finStartDate;
-    }
+		return finStartDate;
+	}
 
 	public void setLastMntByUser(String lastMntByUser) {
-	    this.lastMntByUser = lastMntByUser;
-    }
+		this.lastMntByUser = lastMntByUser;
+	}
 
 	public String getLastMntByUser() {
-	    return lastMntByUser;
-    }
+		return lastMntByUser;
+	}
 
 	public void setFinCcy(String finCcy) {
-	    this.finCcy = finCcy;
-    }
+		this.finCcy = finCcy;
+	}
 
 	public String getFinCcy() {
-	    return finCcy;
-    }
+		return finCcy;
+	}
 
 	public void setFinTypeDesc(String finTypeDesc) {
-	    this.finTypeDesc = finTypeDesc;
-    }
+		this.finTypeDesc = finTypeDesc;
+	}
 
 	public String getFinTypeDesc() {
-	    return finTypeDesc;
-    }
+		return finTypeDesc;
+	}
 
 	public String getFinEvent() {
 		return finEvent;

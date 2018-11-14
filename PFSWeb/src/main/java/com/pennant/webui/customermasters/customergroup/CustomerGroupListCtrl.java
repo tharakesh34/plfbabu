@@ -62,9 +62,9 @@ import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.service.customermasters.CustomerGroupService;
 import com.pennant.webui.customermasters.customergroup.model.CustomerGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerGroup/CustomerGroupList.zul file.

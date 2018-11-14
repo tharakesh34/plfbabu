@@ -72,33 +72,30 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/ReScheduleDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/ReScheduleDialog.zul file.
  */
 public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 454600127282110738L;
 	private static final Logger logger = Logger.getLogger(ChangeScheduleMethodDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ChangeScheduleMethodDialog; 		
-	protected Combobox cbFrqFromDate; 	
-	protected Combobox cbSchdMthd; 
-	protected Combobox oldSchdMthd; 
+	protected Window window_ChangeScheduleMethodDialog;
+	protected Combobox cbFrqFromDate;
+	protected Combobox cbSchdMthd;
+	protected Combobox oldSchdMthd;
 	protected Uppercasebox serviceReqNo;
-	protected Textbox	   remarks;
-	
+	protected Textbox remarks;
+
 	// not auto wired vars
-	private FinScheduleData finScheduleData; 				// overhanded per param
+	private FinScheduleData finScheduleData; // overhanded per param
 	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
 	private transient ChangeScheduleMethodService changeScheduleMethodService;
 
 	private boolean appDateValidationReq = true;
 
-	
 	/**
 	 * default constructor.<br>
 	 */
@@ -114,9 +111,8 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceMain object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -129,15 +125,14 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 
 		try {
 			if (arguments.containsKey("finScheduleData")) {
-				this.finScheduleData = (FinScheduleData) arguments
-						.get("finScheduleData");
+				this.finScheduleData = (FinScheduleData) arguments.get("finScheduleData");
 				setFinScheduleData(this.finScheduleData);
 			} else {
 				setFinScheduleData(null);
 			}
-			
+
 			if (arguments.containsKey("appDateValidationReq")) {
-				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
+				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// we get the FinanceMainDialogCtrl controller. So we have access
@@ -145,8 +140,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 			// or
 			// delete WIF/FinanceMain here.
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) arguments
-						.get("financeMainDialogCtrl"));
+				setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) arguments.get("financeMainDialogCtrl"));
 			} else {
 				setFinanceMainDialogCtrl(null);
 			}
@@ -164,8 +158,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
 	 * @throws Exception
@@ -183,7 +176,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		} catch (Exception e) {
 			throw e;
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -203,7 +196,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	private void doSetValidation() {
 
 	}
-	
+
 	/**
 	 * when the "Apply" button is clicked. <br>
 	 * 
@@ -224,13 +217,13 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
-	
+
 	/**
 	 * The Click event is raised when the Close event is occurred.
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -248,11 +241,11 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		this.window_ChangeScheduleMethodDialog.onClose();
 		logger.debug("Leaving");
 	}
-	
-	public void doClearMessage(){
+
+	public void doClearMessage() {
 		this.cbFrqFromDate.setConstraint("");
 		this.cbFrqFromDate.setErrorMessage("");
-		
+
 	}
 
 	/**
@@ -263,12 +256,13 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		
+
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
-		fillComboBox(this.oldSchdMthd,aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), "" );
-		fillComboBox(this.cbSchdMthd,"", PennantStaticListUtil.getScheduleMethods(),",GRCNDPAY,NO_PAY,PFTCAP,");
+		fillComboBox(this.oldSchdMthd, aFinanceMain.getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(),
+				"");
+		fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,NO_PAY,PFTCAP,");
 		fillSchFromDates(aFinSchData.getFinanceScheduleDetails());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -281,29 +275,30 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		this.cbFrqFromDate.appendChild(comboitem);
 		this.cbFrqFromDate.setSelectedItem(comboitem);
-		
+
 		if (financeScheduleDetails != null) {
 			Date curBussDate = DateUtility.getAppDate();
 			Date grcEndDate = finScheduleData.getFinanceMain().getGrcPeriodEndDate();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
+				if (curSchd.getSchDate().compareTo(grcEndDate) <= 0) {
 					continue;
 				}
 
 				// Not allow Before Current Business Date
-				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+				if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
 				}
-				
+
 				// Only allowed if payment amount is greater than Zero
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.cbFrqFromDate.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -311,7 +306,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 					this.cbFrqFromDate.appendChild(comboitem);
 					continue;
 				}
-				
+
 				// If Presentment Exists, should not consider for recalculation
 				if (curSchd.getPresentmentId() > 0) {
 					this.cbFrqFromDate.getItems().clear();
@@ -322,17 +317,17 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 					continue;
 				}
 
-				if(i == financeScheduleDetails.size() -1){
+				if (i == financeScheduleDetails.size() - 1) {
 					continue;
 				}
-				
+
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				this.cbFrqFromDate.appendChild(comboitem);
-				
-				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
 					break;
 				}
 			}
@@ -347,25 +342,26 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	 */
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		Date fromDate = null;
-		
+
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		
+
 		try {
 			if (isValidComboValue(this.cbFrqFromDate, Labels.getLabel("label_ReScheduleDialog_FromDate.value"))) {
-				fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();
+				fromDate = (Date) this.cbFrqFromDate.getSelectedItem().getValue();
 				finServiceInstruction.setFromDate(fromDate);
 				financeMain.setEventFromDate(fromDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_ReScheduleDialog_SchdMthd.value")) && this.cbSchdMthd.getSelectedIndex() != 0) {
+			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_ReScheduleDialog_SchdMthd.value"))
+					&& this.cbSchdMthd.getSelectedIndex() != 0) {
 				finServiceInstruction.setSchdMethod(getComboboxValue(this.cbSchdMthd));
 				financeMain.setRecalSchdMethod(getComboboxValue(this.cbSchdMthd));
 			}
@@ -380,25 +376,26 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		//finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD);
 
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
-		setFinScheduleData(changeScheduleMethodService.doChangeScheduleMethod(getFinScheduleData(), finServiceInstruction));
+		setFinScheduleData(
+				changeScheduleMethodService.doChangeScheduleMethod(getFinScheduleData(), finServiceInstruction));
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
-		
+
 		//Show Error Details in Schedule Maintenance
-		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
-		}else{
+		} else {
 			getFinScheduleData().setSchduleGenerated(true);
-			if(getFinanceMainDialogCtrl()!=null){
+			if (getFinanceMainDialogCtrl() != null) {
 				try {
 					getFinanceMainDialogCtrl().doFillScheduleList(getFinScheduleData());
 				} catch (Exception e) {
@@ -406,34 +403,31 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
-	
-	
+
 	public void onChange$cbFrqFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		//fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
-		
-		if(this.cbFrqFromDate.getSelectedIndex() != 0){
-			Date fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();
-			
+
+		if (this.cbFrqFromDate.getSelectedIndex() != 0) {
+			Date fromDate = (Date) this.cbFrqFromDate.getSelectedItem().getValue();
+
 			List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-					
+
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-					
-					if(curSchd.isRepayOnSchDate() ||
-							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) || 
-							fromDate.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
-						if(fromDate.compareTo(curSchd.getSchDate()) == 0){
-							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0){
-							//	fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
-							}else{
+
+					if (curSchd.isRepayOnSchDate()
+							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)
+							|| fromDate.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+						if (fromDate.compareTo(curSchd.getSchDate()) == 0) {
+							if (fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0) {
+								//	fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
+							} else {
 								//fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
 							}
 							break;
@@ -444,8 +438,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
+
 	public void onSelectCode$repayFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		logger.debug("Leaving" + event.toString());
@@ -455,19 +448,20 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		logger.debug("Entering" + event.toString());
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onSelectDay$repayFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public ScheduleDetailDialogCtrl getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
+
 	public void setFinanceMainDialogCtrl(ScheduleDetailDialogCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
@@ -475,6 +469,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}

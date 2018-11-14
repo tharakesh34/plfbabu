@@ -55,7 +55,6 @@ import com.pennant.backend.model.inventorysettlement.InventorySettlement;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -68,13 +67,13 @@ public class InventorySettlementListModelItemRenderer implements ListitemRendere
 	public void render(Listitem item, InventorySettlement inventorySettlement, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(String.valueOf(inventorySettlement.getId()));
+		lc = new Listcell(String.valueOf(inventorySettlement.getId()));
 		lc.setParent(item);
-	  	lc = new Listcell(inventorySettlement.getBrokerCode());
+		lc = new Listcell(inventorySettlement.getBrokerCode());
 		lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatDate(inventorySettlement.getSettlementDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(inventorySettlement.getRecordStatus());
+		lc = new Listcell(DateUtility.formatDate(inventorySettlement.getSettlementDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(inventorySettlement.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(inventorySettlement.getRecordType()));
 		lc.setParent(item);

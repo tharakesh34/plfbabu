@@ -51,12 +51,17 @@ import com.pennant.backend.model.audit.AuditHeader;
  * 
  */
 public interface CorpRelationCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CorpRelationCode getCorpRelationCodeById(String id);
+
 	CorpRelationCode getApprovedCorpRelationCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

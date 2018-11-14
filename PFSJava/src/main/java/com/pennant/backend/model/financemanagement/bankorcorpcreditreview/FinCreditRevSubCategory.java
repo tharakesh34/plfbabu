@@ -7,12 +7,12 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
 	private String subCategoryCode;
-	private long  categoryId;
+	private long categoryId;
 	private String subCategorySeque;
 	private String subCategoryDesc;
 	private String subCategoryItemType;
 	private String itemsToCal;
-	private String itemRule;	
+	private String itemRule;
 	private String calcSeque;
 	private boolean isCreditCCY;
 	private boolean format;
@@ -23,9 +23,9 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinCreditRevSubCategory befImage;
 	private LoggedInUser userDetails;
-	
+
 	private String remarks;
-	
+
 	public FinCreditRevSubCategory() {
 		super();
 	}
@@ -33,6 +33,7 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -40,6 +41,7 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -47,6 +49,7 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	public FinCreditRevSubCategory getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(FinCreditRevSubCategory beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -54,110 +57,138 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getRemarks() {
-    	return remarks;
-    }
+		return remarks;
+	}
+
 	public void setRemarks(String remarks) {
-    	this.remarks = remarks;
-    }
+		this.remarks = remarks;
+	}
+
 	public long getCategoryId() {
-    	return categoryId;
-    }
+		return categoryId;
+	}
+
 	public void setCategoryId(long categoryId) {
-    	this.categoryId = categoryId;
-    }
+		this.categoryId = categoryId;
+	}
+
 	public String getSubCategorySeque() {
-    	return subCategorySeque;
-    }
+		return subCategorySeque;
+	}
+
 	public void setSubCategorySeque(String subCategorySeque) {
-    	this.subCategorySeque = subCategorySeque;
-    }
+		this.subCategorySeque = subCategorySeque;
+	}
+
 	public String getSubCategoryDesc() {
-    	return subCategoryDesc;
-    }
+		return subCategoryDesc;
+	}
+
 	public void setSubCategoryDesc(String subCategoryDesc) {
-    	this.subCategoryDesc = subCategoryDesc;
-    }
+		this.subCategoryDesc = subCategoryDesc;
+	}
+
 	public String getSubCategoryItemType() {
-    	return subCategoryItemType;
-    }
+		return subCategoryItemType;
+	}
+
 	public void setSubCategoryItemType(String subCategoryItemType) {
-    	this.subCategoryItemType = subCategoryItemType;
-    }
+		this.subCategoryItemType = subCategoryItemType;
+	}
+
 	public String getItemsToCal() {
-    	return itemsToCal;
-    }
+		return itemsToCal;
+	}
+
 	public void setItemsToCal(String itemsToCal) {
-    	this.itemsToCal = itemsToCal;
-    }
+		this.itemsToCal = itemsToCal;
+	}
+
 	public String getItemRule() {
-    	return itemRule;
-    }
+		return itemRule;
+	}
+
 	public void setItemRule(String itemRule) {
-    	this.itemRule = itemRule;
-    }
+		this.itemRule = itemRule;
+	}
+
 	public boolean isIsCreditCCY() {
-    	return isCreditCCY;
-    }
+		return isCreditCCY;
+	}
+
 	public void setIsCreditCCY(boolean isCreditCCY) {
-    	this.isCreditCCY = isCreditCCY;
-    }
+		this.isCreditCCY = isCreditCCY;
+	}
+
 	public void setSubCategoryCode(String subCategoryCode) {
-	    this.subCategoryCode = subCategoryCode;
-    }
+		this.subCategoryCode = subCategoryCode;
+	}
+
 	public String getSubCategoryCode() {
-	    return subCategoryCode;
-    }
+		return subCategoryCode;
+	}
+
 	public void setMainSubCategoryCode(String mainSubCategoryCode) {
-	    this.mainSubCategoryCode = mainSubCategoryCode;
-    }
+		this.mainSubCategoryCode = mainSubCategoryCode;
+	}
+
 	public String getMainSubCategoryCode() {
-	    return mainSubCategoryCode;
-    }
+		return mainSubCategoryCode;
+	}
+
 	public void setFormat(boolean format) {
-	    this.format = format;
-    }
+		this.format = format;
+	}
+
 	public boolean isFormat() {
-	    return format;
-    }
-	
+		return format;
+	}
+
 	public boolean isPercentCategory() {
-    	return percentCategory;
-    }
+		return percentCategory;
+	}
+
 	public void setPercentCategory(boolean percentCategory) {
-    	this.percentCategory = percentCategory;
-    }
+		this.percentCategory = percentCategory;
+	}
+
 	public void setGrand(boolean grand) {
-	    this.grand = grand;
-    }
+		this.grand = grand;
+	}
+
 	public boolean isGrand() {
-	    return grand;
-    }
+		return grand;
+	}
+
 	public void setCalcSeque(String calcSeque) {
-	    this.calcSeque = calcSeque;
-    }
+		this.calcSeque = calcSeque;
+	}
+
 	public String getCalcSeque() {
-	    return calcSeque;
-    }	
-	
-	public boolean isNew(){
+		return calcSeque;
+	}
+
+	public boolean isNew() {
 		return isNewRecord();
 	}
+
 	public String getId() {
 		return subCategoryCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.subCategoryCode = id;
 	}
 
 	public void setSubCategorySeque(int sequence) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

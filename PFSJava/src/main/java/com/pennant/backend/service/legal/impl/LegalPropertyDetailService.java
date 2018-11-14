@@ -61,8 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>LegalPropertyDetail</b>.<br>
+ * Service implementation for methods that depends on <b>LegalPropertyDetail</b>.<br>
  */
 public class LegalPropertyDetailService extends GenericService<LegalPropertyDetail> {
 	private static final Logger logger = Logger.getLogger(LegalPropertyDetailService.class);
@@ -171,7 +170,7 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !legalPropertyDetail.isWorkflow()) {
 			legalPropertyDetail.setBefImage(befApplicantDetail);
 		}
-		
+
 		return auditDetail;
 	}
 
@@ -224,8 +223,9 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 		return auditDetails;
 
 	}
-	
-	public List<AuditDetail> processingPropertyDetail(LegalDetail legalDetail, List<AuditDetail> auditDetails, TableType tableType) {
+
+	public List<AuditDetail> processingPropertyDetail(LegalDetail legalDetail, List<AuditDetail> auditDetails,
+			TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
@@ -236,7 +236,7 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 		for (int i = 0; i < auditDetails.size(); i++) {
 			LegalPropertyDetail legalPropertyDetail = (LegalPropertyDetail) auditDetails.get(i).getModelData();
 			legalPropertyDetail.setLegalId(legalDetail.getLegalId());
-			
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -308,16 +308,19 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
-	
-	public List<AuditDetail> deletePropertyDetails(List<AuditDetail> applicantDetails, String tableType, String auditTranType) {
+
+	public List<AuditDetail> deletePropertyDetails(List<AuditDetail> applicantDetails, String tableType,
+			String auditTranType) {
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		
+
 		LegalPropertyDetail propertyDetail = null;
-		String[] fields = PennantJavaUtil.getFieldDetails(new LegalPropertyDetail(), new LegalPropertyDetail().getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new LegalPropertyDetail(),
+				new LegalPropertyDetail().getExcludeFields());
 		for (int i = 0; i < applicantDetails.size(); i++) {
 			propertyDetail = (LegalPropertyDetail) applicantDetails.get(i).getModelData();
 			propertyDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-			auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], propertyDetail.getBefImage(), propertyDetail));
+			auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], propertyDetail.getBefImage(),
+					propertyDetail));
 		}
 		getLegalPropertyDetailDAO().deleteList(propertyDetail, tableType);
 		return auditList;

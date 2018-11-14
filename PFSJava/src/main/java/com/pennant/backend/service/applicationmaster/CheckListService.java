@@ -49,9 +49,14 @@ import com.pennant.backend.model.bmtmasters.CheckList;
 public interface CheckListService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CheckList getCheckListById(long id);
+
 	CheckList getApprovedCheckListById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

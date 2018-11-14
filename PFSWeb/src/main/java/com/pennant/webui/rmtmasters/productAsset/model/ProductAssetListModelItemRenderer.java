@@ -61,20 +61,20 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class ProductAssetListModelItemRenderer implements ListitemRenderer<ProductAsset>, Serializable {
 
 	private static final long serialVersionUID = 5546399736336410891L;
-	
+
 	public ProductAssetListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, ProductAsset productAsset, int count) throws Exception {
 		Listcell lc;
-	  	lc = new Listcell(productAsset.getAssetCode());
+		lc = new Listcell(productAsset.getAssetCode());
 		lc.setParent(item);
-	  	lc = new Listcell(productAsset.getAssetDesc());
-	  	lc.setParent(item);
-	  	lc = new Listcell();
-	  	final Checkbox assetIsActive = new Checkbox();
+		lc = new Listcell(productAsset.getAssetDesc());
+		lc.setParent(item);
+		lc = new Listcell();
+		final Checkbox assetIsActive = new Checkbox();
 		assetIsActive.setDisabled(true);
 		assetIsActive.setChecked(productAsset.isAssetIsActive());
 		lc.appendChild(assetIsActive);

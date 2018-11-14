@@ -42,12 +42,16 @@
 */
 
 package com.pennant.backend.dao.staticparms;
+
 import com.pennant.backend.model.staticparms.ScheduleMethod;
 
 public interface ScheduleMethodDAO {
 
-	ScheduleMethod getScheduleMethodById(String id,String type);
-	void update(ScheduleMethod scheduleMethod,String type);
-	void delete(ScheduleMethod scheduleMethod,String type);
-	String save(ScheduleMethod scheduleMethod,String type);
+	ScheduleMethod getScheduleMethodById(String id, String type);
+
+	void update(ScheduleMethod scheduleMethod, String type);
+
+	void delete(ScheduleMethod scheduleMethod, String type);
+
+	String save(ScheduleMethod scheduleMethod, String type);
 }

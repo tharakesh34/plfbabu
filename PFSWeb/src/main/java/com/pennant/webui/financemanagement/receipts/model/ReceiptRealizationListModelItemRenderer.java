@@ -64,25 +64,29 @@ import com.pennant.util.PennantAppUtil;
 public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer<FinReceiptHeader>, Serializable {
 
 	private static final long serialVersionUID = 3736186724610414895L;
-	
+
 	public ReceiptRealizationListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinReceiptHeader header, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(header.getReference());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
 		lc.setParent(item);
-		lc = new Listcell(PennantApplicationUtil.amountFormate(header.getReceiptAmount(), CurrencyUtil.getFormat(header.getFinCcy())));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(header.getReceiptAmount(),
+				CurrencyUtil.getFormat(header.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getAllocationType(), PennantStaticListUtil.getAllocationMethods()));
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(header.getAllocationType(), PennantStaticListUtil.getAllocationMethods()));
 		lc.setParent(item);
 		lc = new Listcell(header.getFinType());
 		lc.setParent(item);
@@ -92,13 +96,13 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		lc = new Listcell(header.getCustShrtName());
 		lc.setParent(item);
-		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_"+header.getReceiptModeStatus()));
+		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_" + header.getReceiptModeStatus()));
 		lc.setParent(item);
 		lc = new Listcell(header.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(header.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", header.getReceiptID());
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptItemDoubleClicked");
 	}

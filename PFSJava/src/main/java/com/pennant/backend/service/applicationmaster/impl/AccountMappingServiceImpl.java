@@ -72,11 +72,11 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>AccountMapping</b>.<br>
  */
 public class AccountMappingServiceImpl extends GenericService<AccountMapping> implements AccountMappingService {
-	private static final Logger	logger	= Logger.getLogger(AccountMappingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AccountMappingServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
-	private AccountMappingDAO	accountMappingDAO;
-	private TransactionEntryDAO	transactionEntryDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private AccountMappingDAO accountMappingDAO;
+	private TransactionEntryDAO transactionEntryDAO;
 
 	public AccountMappingServiceImpl() {
 		super();
@@ -631,13 +631,11 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 				if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befAccountMapping != null || tempAccountMapping != null) { // if records already exists in the main
 																						// table
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAccountMapping == null || tempAccountMapping != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}

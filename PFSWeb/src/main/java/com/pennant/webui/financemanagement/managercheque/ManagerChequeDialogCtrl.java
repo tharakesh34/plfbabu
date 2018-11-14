@@ -128,13 +128,14 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.financemanagement.managercheque.ManagerChequeListCtrl.MCType;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/FinanceManagement/ManagerCheque/managerChequeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/FinanceManagement/ManagerCheque/managerChequeDialog.zul file.
+ * <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
@@ -336,13 +337,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private ManagerCheque managerCheque; // overhanded per param
 	private transient ManagerChequeListCtrl managerChequeListCtrl; // overhanded per param
 
-	
 	protected Button btnPrintCancelChq;
 
 	protected Button btnNew_DocumentDetails;
-
-	
-	
 
 	// ServiceDAOs / Domain Classes
 	private transient ManagerChequeService managerChequeService;
@@ -407,18 +404,17 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		// Set the page level components.
 		setPageComponents(window_ManagerChequeDialog);
 		try {
-			
+
 			this.managerCheque = (ManagerCheque) arguments.get("managerCheque");
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
 			this.managerChequeListCtrl = (ManagerChequeListCtrl) arguments.get("managerChequeListCtrl");
 			this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 			this.mcType = (MCType) arguments.get("mcType");
 
-
 			ManagerCheque befImage = new ManagerCheque();
 			BeanUtils.copyProperties(this.managerCheque, befImage);
 			this.managerCheque.setBefImage(befImage);
-			
+
 			mcType = (MCType) arguments.get("mcType");
 			this.label_ManagerChequeDialog_title.setValue(mcType.getTitle());
 
@@ -446,7 +442,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(managerCheque);
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -536,8 +532,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		try {
 
 			ScreenCTL.displayNotes(
-					getNotes("ManagerCheque", String.valueOf(managerCheque.getChequeID()), managerCheque
-							.getVersion()), this);
+					getNotes("ManagerCheque", String.valueOf(managerCheque.getChequeID()), managerCheque.getVersion()),
+					this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -663,11 +659,13 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 					this.custShrtName.setValue(customerDetails.getCustomer().getCustShrtName());
 					// this.beneficiaryName.setValue(customerDetails.getCustomer().getCustFName());
 					this.draftCcy.setValue(customerDetails.getCustomer().getCustBaseCcy());
-					this.draftCcy.setDescription(CurrencyUtil.getCcyDesc(customerDetails.getCustomer().getCustBaseCcy()));
+					this.draftCcy
+							.setDescription(CurrencyUtil.getCcyDesc(customerDetails.getCustomer().getCustBaseCcy()));
 					this.fundingCcy.setValue(customerDetails.getCustomer().getCustBaseCcy());
-					this.fundingCcy.setDescription(CurrencyUtil.getCcyDesc(customerDetails.getCustomer().getCustBaseCcy()));
-					this.branchCode.setValue(customerDetails.getCustomer().getCustDftBranch(), customerDetails
-							.getCustomer().getLovDescCustDftBranchName());
+					this.fundingCcy
+							.setDescription(CurrencyUtil.getCcyDesc(customerDetails.getCustomer().getCustBaseCcy()));
+					this.branchCode.setValue(customerDetails.getCustomer().getCustDftBranch(),
+							customerDetails.getCustomer().getLovDescCustDftBranchName());
 					this.fundingAccount.setCustCIF(customerDetails.getCustomer().getCustCIF());
 					this.fundingAccount.setBranchCode(customerDetails.getCustomer().getCustDftBranch());
 					this.nostroAccount.setCustCIF(customerDetails.getCustomer().getCustCIF());
@@ -953,9 +951,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		logger.debug("Entering");
 
 		boolean tempReadOnly = readOnly;
-		if (readOnly){
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.managerCheque.getRecordType())) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.managerCheque.getRecordType())) {
 			tempReadOnly = true;
 		}
 		if (isReprint || isCancel || enqiryModule) {
@@ -1035,10 +1033,10 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				this.space_NostroFullName, this.label_NostroFullName, this.hlayout_NostroFullName, null);
 		setRowInvisible(this.row6, null, this.hlayout_NostroFullName);// AHB
 
-		setComponentAccessType("ManagerChequeDialog_Narration1", readOnly, this.narration1, null,
-				this.label_Narration1, this.hlayout_Narration1, null);
-		setComponentAccessType("ManagerChequeDialog_Narration2", readOnly, this.narration2, null,
-				this.label_Narration2, this.hlayout_Narration2, null);
+		setComponentAccessType("ManagerChequeDialog_Narration1", readOnly, this.narration1, null, this.label_Narration1,
+				this.hlayout_Narration1, null);
+		setComponentAccessType("ManagerChequeDialog_Narration2", readOnly, this.narration2, null, this.label_Narration2,
+				this.hlayout_Narration2, null);
 		setRowInvisible(this.row7, this.hlayout_Narration1, this.hlayout_Narration2);
 
 		logger.debug("Leaving");
@@ -1049,69 +1047,66 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	 */
 	private void doFillFinanceBasicDetails() {
 		logger.debug("Entering");
-		int format=CurrencyUtil.getFormat(this.financeMain.getFinCcy());
+		int format = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
 
 		// Label Names
 		this.label_ManagerChequeDialog_FinType.setValue(Labels.getLabel("label_ManagerChequeDialog_FinType.value"));
-		this.label_ManagerChequeDialog_FinReference.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_FinReference.value"));
-		this.label_ManagerChequeDialog_CustomerCIF.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_CustomerCIF.value"));
+		this.label_ManagerChequeDialog_FinReference
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_FinReference.value"));
+		this.label_ManagerChequeDialog_CustomerCIF
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_CustomerCIF.value"));
 		this.label_ManagerChequeDialog_Currency.setValue(Labels.getLabel("label_ManagerChequeDialog_Currency.value"));
 		this.label_ManagerChequeDialog_FinBranch.setValue(Labels.getLabel("label_ManagerChequeDialog_FinBranch.value"));
-		this.label_ManagerChequeDialog_GrcEndDate.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_GrcEndDate.value"));
+		this.label_ManagerChequeDialog_GrcEndDate
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_GrcEndDate.value"));
 		this.label_ManagerChequeDialog_StartDate.setValue(Labels.getLabel("label_ManagerChequeDialog_StartDate.value"));
-		this.label_ManagerChequeDialog_MaturityDate.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_MaturityDate.value"));
+		this.label_ManagerChequeDialog_MaturityDate
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_MaturityDate.value"));
 		this.label_ManagerChequeDialog_FinAmount.setValue(Labels.getLabel("label_ManagerChequeDialog_FinAmount.value"));
-		this.label_ManagerChequeDialog_DownPayments.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_DownPayments.value"));
+		this.label_ManagerChequeDialog_DownPayments
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_DownPayments.value"));
 		this.label_ManagerChequeDialog_Fees.setValue(Labels.getLabel("label_ManagerChequeDialog_Fees.value"));
-		this.label_ManagerChequeDialog_TotalProfitAmt.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_TotalProfitAmt.value"));
-		this.label_ManagerChequeDialog_DisbursementAmt.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_DisbursementAmt.value"));
-		this.label_ManagerChequeDialog_NetEffectiveRate.setValue(Labels
-				.getLabel("label_ManagerChequeDialog_NetEffectiveRate.value"));
+		this.label_ManagerChequeDialog_TotalProfitAmt
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_TotalProfitAmt.value"));
+		this.label_ManagerChequeDialog_DisbursementAmt
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_DisbursementAmt.value"));
+		this.label_ManagerChequeDialog_NetEffectiveRate
+				.setValue(Labels.getLabel("label_ManagerChequeDialog_NetEffectiveRate.value"));
 
 		// Label Values
-		this.managerChq_finType.setValue(this.financeMain.getFinType() + " - "
-				+ this.financeMain.getLovDescFinTypeName());
+		this.managerChq_finType
+				.setValue(this.financeMain.getFinType() + " - " + this.financeMain.getLovDescFinTypeName());
 		this.managerChq_finReference.setValue(this.financeMain.getFinReference());
-		this.managerChq_CustCIF.setValue(this.financeMain.getLovDescCustCIF() + " - "
-				+ this.financeMain.getLovDescCustShrtName());
+		this.managerChq_CustCIF
+				.setValue(this.financeMain.getLovDescCustCIF() + " - " + this.financeMain.getLovDescCustShrtName());
 		this.managerChq_Currency.setValue(this.financeMain.getFinCcy());
-		this.managerChq_FinBranch.setValue(this.financeMain.getFinBranch() + " - "
-				+ this.financeMain.getLovDescFinBranchName());
+		this.managerChq_FinBranch
+				.setValue(this.financeMain.getFinBranch() + " - " + this.financeMain.getLovDescFinBranchName());
 		this.managerChq_grcEndDate.setValue(DateUtility.formatToLongDate(this.financeMain.getGrcPeriodEndDate()));
 		this.managerChq_startDate.setValue(DateUtility.formatToLongDate(this.financeMain.getFinStartDate()));
 		this.managerChq_maturityDate.setValue(DateUtility.formatToLongDate(this.financeMain.getMaturityDate()));
 		this.managerChq_FinAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.managerChq_FinAmount.setValue(PennantAppUtil.formateAmount(this.financeMain.getFinAmount(),
-				format));
+		this.managerChq_FinAmount.setValue(PennantAppUtil.formateAmount(this.financeMain.getFinAmount(), format));
 		this.managerChq_DownPayments.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.managerChq_DownPayments.setValue(PennantAppUtil.formateAmount(this.financeMain.getDownPayment(),
-				format));
+		this.managerChq_DownPayments.setValue(PennantAppUtil.formateAmount(this.financeMain.getDownPayment(), format));
 		this.managerChq_Fees.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.managerChq_Fees.setValue(PennantAppUtil.formateAmount(this.financeMain.getFeeChargeAmt(),
-				format));
+		this.managerChq_Fees.setValue(PennantAppUtil.formateAmount(this.financeMain.getFeeChargeAmt(), format));
 		this.managerChq_TotalProfitAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.managerChq_TotalProfitAmt.setValue(PennantAppUtil.formateAmount(this.financeMain.getTotalProfit(),
-				format));
+		this.managerChq_TotalProfitAmt
+				.setValue(PennantAppUtil.formateAmount(this.financeMain.getTotalProfit(), format));
 
 		// this.managerChq_DisbursementAmt.setValue(financeMain.getFinAmount() - financeMain.getDownPayment() +
 		// financeMain.getFeeChargeAmt());
 		this.managerChq_DisbursementAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.managerChq_DisbursementAmt.setValue(PennantAppUtil.formateAmount(
-				this.financeMain.getLovDescFinancingAmount(), format));
+		this.managerChq_DisbursementAmt
+				.setValue(PennantAppUtil.formateAmount(this.financeMain.getLovDescFinancingAmount(), format));
 
 		if (this.financeMain.getEffectiveRateOfReturn() == null) {
 			this.financeMain.setEffectiveRateOfReturn(BigDecimal.ZERO);
 		}
-		this.managerChq_NetEffectiveRate.setValue(PennantApplicationUtil.formatRate(this.financeMain
-				.getEffectiveRateOfReturn().doubleValue(), PennantConstants.rateFormate)
-				+ "%");
+		this.managerChq_NetEffectiveRate
+				.setValue(PennantApplicationUtil.formatRate(this.financeMain.getEffectiveRateOfReturn().doubleValue(),
+						PennantConstants.rateFormate) + "%");
 
 		logger.debug("Leaving");
 	}
@@ -1121,9 +1116,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	 */
 	private void doFillManagerChequeDetails(Boolean newRecord) {
 		logger.debug("Entering");
-		int format=CurrencyUtil.getFormat( this.financeMain.getFinCcy());
-		BigDecimal disbursedAmt = getManagerChequeService().getTotalChqAmtByFinReference(
-				this.financeMain.getFinReference());
+		int format = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
+		BigDecimal disbursedAmt = getManagerChequeService()
+				.getTotalChqAmtByFinReference(this.financeMain.getFinReference());
 		if (disbursedAmt == null) {
 			disbursedAmt = BigDecimal.ZERO;
 		}
@@ -1135,7 +1130,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			this.beneficiaryName.setValue(StringUtils.trimToEmpty(this.financeMain.getLovDescCustFName())
 					+ StringUtils.trimToEmpty(this.financeMain.getLovDescCustLName()));
 			this.draftCcy.setValue(this.financeMain.getFinCcy(), CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
-			this.fundingCcy.setValue(this.financeMain.getFinCcy(), CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
+			this.fundingCcy.setValue(this.financeMain.getFinCcy(),
+					CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
 			this.fundingAccount.setValue(this.financeMain.getDisbAccountId());
 			this.fundingAccount.setCustCIF(this.financeMain.getLovDescCustCIF());
 			this.fundingAccount.setBranchCode(this.financeMain.getFinBranch());
@@ -1143,20 +1139,19 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			this.nostroAccount.setBranchCode(this.financeMain.getFinBranch());
 			this.nostroAccount.setValue(SysParamUtil.getValueAsString("FIN_MGRCHQ_NOSTROACC")); // ### 12-01-2016 Ticket
 																								// ID : 124096
-			this.narration1.setValue(this.financeMain.getLovDescCustCIF() + " - "
-					+ this.financeMain.getLovDescCustShrtName());
+			this.narration1
+					.setValue(this.financeMain.getLovDescCustCIF() + " - " + this.financeMain.getLovDescCustShrtName());
 			this.narration2.setValue(this.financeMain.getFinReference());
-			this.chequeAmount.setValue(PennantAppUtil.formateAmount(
-					this.financeMain.getFinAmount().subtract(disbursedAmt), format));
+			this.chequeAmount.setValue(
+					PennantAppUtil.formateAmount(this.financeMain.getFinAmount().subtract(disbursedAmt), format));
 		}
 		this.availableAmt.setScale(ccyEditField);
 		this.disbursedAmt.setScale(ccyEditField);
 		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyEditField));
 		this.disbursedAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyEditField));
-		this.availableAmt.setValue(PennantAppUtil.formateAmount(this.financeMain.getFinAmount().subtract(disbursedAmt),
-				format));
-		this.disbursedAmt
-				.setValue(PennantAppUtil.formateAmount(disbursedAmt, format));
+		this.availableAmt
+				.setValue(PennantAppUtil.formateAmount(this.financeMain.getFinAmount().subtract(disbursedAmt), format));
+		this.disbursedAmt.setValue(PennantAppUtil.formateAmount(disbursedAmt, format));
 
 		logger.debug("Leaving");
 	}
@@ -1167,8 +1162,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private void doFillAccountingBasicDetails() {
 		logger.debug("Entering");
 
-		this.acc_ManagerChq_finType.setValue(this.financeMain.getFinType() + " - "
-				+ this.financeMain.getLovDescFinTypeName());
+		this.acc_ManagerChq_finType
+				.setValue(this.financeMain.getFinType() + " - " + this.financeMain.getLovDescFinTypeName());
 		this.acc_ManagerChq_Currency.setValue(this.financeMain.getFinCcy());
 		this.acc_ManagerChq_RepaymantSchMethod.setValue(this.financeMain.getScheduleMethod());
 		this.acc_ManagerChq_ProfitDaysBasis.setValue(this.financeMain.getProfitDaysBasis());
@@ -1262,15 +1257,15 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			postings.setTranDesc(Labels.getLabel("label_ManagerChequeDialog_FundingAccount.value"));
 			postings.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.fundingAccount.getValue()));
 			postings.setAcCcy(this.fundingCcy.getValidatedValue());
-			decPos = this.fundingCcy.getObject() == null ? 3 : ((Currency) this.fundingCcy.getObject())
-					.getCcyEditField();
+			decPos = this.fundingCcy.getObject() == null ? 3
+					: ((Currency) this.fundingCcy.getObject()).getCcyEditField();
 		} else {
 			postings.setAccountType("MNGR");
 			postings.setTranDesc(Labels.getLabel("label_ManagerChequeDialog_NostroAccount.value"));
 			postings.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.nostroAccount.getValue()));
 			postings.setAcCcy(this.draftCcy.getValidatedValue());
-			decPos = this.fundingCcy.getObject() == null ? 3 : ((Currency) this.fundingCcy.getObject())
-					.getCcyEditField();
+			decPos = this.fundingCcy.getObject() == null ? 3
+					: ((Currency) this.fundingCcy.getObject()).getCcyEditField();
 		}
 		BigDecimal postAmount = PennantApplicationUtil.unFormateAmount(this.chequeAmount.getActualValue(), decPos);
 		postings.setPostAmount(postAmount);
@@ -1326,10 +1321,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			Listcell lc;
 			lc = new Listcell("D".equals(returnDataSet.getDrOrCr()) ? "Debit" : "Credit");
 			lc.setParent(item);
-			lc = new Listcell(
-					"DISB".equals(returnDataSet.getAccountType()) ? Labels
-							.getLabel("label_ManagerChequeDialog_FundingAccount.value") : Labels
-							.getLabel("label_ManagerChequeDialog_NostroAccount.value"));
+			lc = new Listcell("DISB".equals(returnDataSet.getAccountType())
+					? Labels.getLabel("label_ManagerChequeDialog_FundingAccount.value")
+					: Labels.getLabel("label_ManagerChequeDialog_NostroAccount.value"));
 			lc.setParent(item);
 			lc = new Listcell(returnDataSet.getTranCode());
 			lc.setParent(item);
@@ -1383,10 +1377,10 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private void doCalculateFundingAmt() {
 		logger.debug("Entering");
 
-		BigDecimal chequeAmt = this.chequeAmount.getActualValue() == null ? BigDecimal.ZERO : this.chequeAmount
-				.getActualValue();
-		BigDecimal chargeAmt = this.chargeAmount.getActualValue() == null ? BigDecimal.ZERO : this.chargeAmount
-				.getActualValue();
+		BigDecimal chequeAmt = this.chequeAmount.getActualValue() == null ? BigDecimal.ZERO
+				: this.chequeAmount.getActualValue();
+		BigDecimal chargeAmt = this.chargeAmount.getActualValue() == null ? BigDecimal.ZERO
+				: this.chargeAmount.getActualValue();
 		this.fundingAmount.setValue(chequeAmt.add(chargeAmt));
 
 		// String fundingAmt;
@@ -1436,12 +1430,12 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		logger.debug("Entering");
 
 		SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
-		String usrName = (securityUser.getUsrFName().trim() + " " + securityUser.getUsrMName().trim() + " " + securityUser
-				.getUsrLName()).trim();
+		String usrName = (securityUser.getUsrFName().trim() + " " + securityUser.getUsrMName().trim() + " "
+				+ securityUser.getUsrLName()).trim();
 
 		printManagerCheque.setIssueDate(DateUtility.getAppDate());
-		printManagerCheque.setTodayDate(DateUtility.formatDate(this.valueDate.getValue(), PennantConstants.dateFormat)
-				.replace("/", ""));
+		printManagerCheque.setTodayDate(
+				DateUtility.formatDate(this.valueDate.getValue(), PennantConstants.dateFormat).replace("/", ""));
 		printManagerCheque.setFundingAccount(this.fundingAccount.getValue());
 		printManagerCheque.setNostroAccount(this.nostroAccount.getValue());
 		printManagerCheque.setLoginUsrName(usrName);
@@ -1474,8 +1468,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ManagerChequeDialog_btnEdit"));
 			// this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ManagerChequeDialog_btnDelete"));
 			//this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ManagerChequeDialog_btnSave"));
-			this.btnNew_DocumentDetails.setVisible(getUserWorkspace().isAllowed(
-					"button_ManagerChequeDialog_btnNew_Documents"));
+			this.btnNew_DocumentDetails
+					.setVisible(getUserWorkspace().isAllowed("button_ManagerChequeDialog_btnNew_Documents"));
 			this.print.setVisible(getUserWorkspace().isAllowed("button_ManagerChequeDialog_btnPrint"));
 			if (isReprint) {
 				this.btnPrintCancelChq.setVisible(getUserWorkspace().isAllowed("button_ManagerChequeDialog_btnPrint"));
@@ -1611,8 +1605,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			this.issueDate.setValue(DateUtility.getAppDate());
 
 			if (financeMain != null) { // Finance ManagerCheque
-				
-				ccyEditField =CurrencyUtil.getFormat(this.financeMain.getFinCcy());;
+
+				ccyEditField = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
+				;
 				this.gb_basicDetails.setVisible(true);
 				this.gb_AccDetails.setVisible(true);
 				fillComboBox(this.chqPurposeCode, PennantConstants.FIN_MGRCHQ__CHQPURPOSECODE, listChqPurposeCodes, "");// AHB
@@ -1629,8 +1624,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				this.custCIF.setValue(aManagerCheque.getCustCIF());
 				this.branchCode.setValue(aManagerCheque.getBranchCode());
 				this.branchCode.setDescription("");
-				fillComboBox(this.chqPurposeCode, aManagerCheque.getChqPurposeCode(), listChqPurposeCodes, ","
-						+ PennantConstants.FIN_MGRCHQ__CHQPURPOSECODE + ",");
+				fillComboBox(this.chqPurposeCode, aManagerCheque.getChqPurposeCode(), listChqPurposeCodes,
+						"," + PennantConstants.FIN_MGRCHQ__CHQPURPOSECODE + ",");
 				this.nostroAccount.setValue(SysParamUtil.getValueAsString("NONFIN_MGRCHQ_NOSTROACC")); // ### 12-01-2016
 																										// Ticket ID :
 																										// 124096
@@ -1638,12 +1633,12 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			doSetNostroFullName(); // ### 12-01-2016 Ticket ID : 124096
 		} else { // Existing Record
 			fillComboBox(this.chqPurposeCode, aManagerCheque.getChqPurposeCode(), listChqPurposeCodes, "");
-			ccyEditField =  CurrencyUtil.getFormat(aManagerCheque.getFundingCcy());
+			ccyEditField = CurrencyUtil.getFormat(aManagerCheque.getFundingCcy());
 			this.custCIF.setValue(aManagerCheque.getCustCIF());
 
 			if (StringUtils.isNotBlank(aManagerCheque.getCustCIF())
 					&& StringUtils.isBlank(aManagerCheque.getLovDescCustShrtName())) { // Get the data of Customer from
-																						// Core Banking Customer
+																																			// Core Banking Customer
 				CustomerDetails customerDetails = doGetCustomerDetails(aManagerCheque.getCustCIF());
 				if (customerDetails == null) {
 					this.custCIF.setValue("");
@@ -1660,11 +1655,11 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			this.issueDate.setValue(aManagerCheque.getIssueDate());
 
 			this.branchCode.setValue(aManagerCheque.getBranchCode());
-			this.branchCode.setDescription(StringUtils.isBlank(aManagerCheque.getLovDescBranchDesc()) ? "" : aManagerCheque.getLovDescBranchDesc());
+			this.branchCode.setDescription(StringUtils.isBlank(aManagerCheque.getLovDescBranchDesc()) ? ""
+					: aManagerCheque.getLovDescBranchDesc());
 
-			
-			String draftCcy =  CurrencyUtil.getCcyDesc(aManagerCheque.getDraftCcy());
-			String fundCcy =  CurrencyUtil.getCcyDesc(aManagerCheque.getFundingCcy());
+			String draftCcy = CurrencyUtil.getCcyDesc(aManagerCheque.getDraftCcy());
+			String fundCcy = CurrencyUtil.getCcyDesc(aManagerCheque.getFundingCcy());
 			this.draftCcy.setValue(aManagerCheque.getDraftCcy());
 			this.draftCcy.setDescription(StringUtils.isBlank(draftCcy) ? "" : draftCcy);
 
@@ -1688,7 +1683,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			this.addressLine5.setValue(aManagerCheque.getAddressLine5());
 
 			if (financeMain != null && StringUtils.isNotEmpty(aManagerCheque.getChequeRef())) { // Finance
-																										// ManagerCheque
+																									// ManagerCheque
 				this.gb_basicDetails.setVisible(true);
 				this.gb_AccDetails.setVisible(true);
 
@@ -1799,8 +1794,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		try {
 			if (isReprint && isRecordSave && !enqiryModule) {
 				// Reprint ManagerCheque basic Validation
-				if (StringUtils.trimToEmpty(this.chequeNo.getValue().trim()).equals(
-						StringUtils.trimToEmpty(this.oldChequeNo.getValue()))) {
+				if (StringUtils.trimToEmpty(this.chequeNo.getValue().trim())
+						.equals(StringUtils.trimToEmpty(this.oldChequeNo.getValue()))) {
 					wve.add(new WrongValueException(this.chequeNo, Labels.getLabel("ChequeNo_Validation",
 							new String[] { Labels.getLabel("label_ManagerChequeDialog_ChequeNo.value") })));
 				} else {
@@ -1854,11 +1849,11 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		// Funding Account
 		try {
 			if (isRecordSave && !enqiryModule) {
-				aManagerCheque.setFundingAccount(PennantApplicationUtil.unFormatAccountNumber(this.fundingAccount
-						.getValidatedValue()));
+				aManagerCheque.setFundingAccount(
+						PennantApplicationUtil.unFormatAccountNumber(this.fundingAccount.getValidatedValue()));
 			} else {
-				aManagerCheque.setFundingAccount(PennantApplicationUtil.unFormatAccountNumber(this.fundingAccount
-						.getValue()));
+				aManagerCheque.setFundingAccount(
+						PennantApplicationUtil.unFormatAccountNumber(this.fundingAccount.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1866,11 +1861,11 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		// Nostro Account
 		try {
 			if (isRecordSave && !enqiryModule) {
-				aManagerCheque.setNostroAccount(PennantApplicationUtil.unFormatAccountNumber(this.nostroAccount
-						.getValidatedValue()));
+				aManagerCheque.setNostroAccount(
+						PennantApplicationUtil.unFormatAccountNumber(this.nostroAccount.getValidatedValue()));
 			} else {
-				aManagerCheque.setNostroAccount(PennantApplicationUtil.unFormatAccountNumber(this.nostroAccount
-						.getValue()));
+				aManagerCheque
+						.setNostroAccount(PennantApplicationUtil.unFormatAccountNumber(this.nostroAccount.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1884,16 +1879,16 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		// Cheque Amount
 		try {
 			if (this.chequeAmount.getActualValue() != null) {
-				aManagerCheque.setChequeAmount(PennantAppUtil.unFormateAmount(this.chequeAmount.getActualValue(),
-						ccyEditField));
+				aManagerCheque.setChequeAmount(
+						PennantAppUtil.unFormateAmount(this.chequeAmount.getActualValue(), ccyEditField));
 			}
 			if (this.financeMain != null && isRecordSave && isManagerCheque && !enqiryModule) {
 				// Comparing ChequeAmount and Available Amounts
 				if (this.chequeAmount.getActualValue().compareTo(this.availableAmt.getActualValue()) > 0) {
-					throw new WrongValueException(this.chequeAmount, Labels.getLabel(
-							"FIELD_IS_EQUAL_OR_LESSER",
-							new String[] { Labels.getLabel("label_ManagerChequeDialog_ChequeAmount.value"),
-									Labels.getLabel("label_ManagerChequeDialog_AvailableAmt.value") }));
+					throw new WrongValueException(this.chequeAmount,
+							Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+									new String[] { Labels.getLabel("label_ManagerChequeDialog_ChequeAmount.value"),
+											Labels.getLabel("label_ManagerChequeDialog_AvailableAmt.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1902,8 +1897,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		// Charge Amount
 		try {
 			if (this.chargeAmount.getActualValue() != null) {
-				aManagerCheque.setChargeAmount(PennantAppUtil.unFormateAmount(this.chargeAmount.getActualValue(),
-						ccyEditField));
+				aManagerCheque.setChargeAmount(
+						PennantAppUtil.unFormateAmount(this.chargeAmount.getActualValue(), ccyEditField));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2007,8 +2002,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		logger.debug("Entering");
 		// Cheque Purpose
 		if (!this.chqPurposeCode.isDisabled()) {
-			this.chqPurposeCode.setConstraint(new StaticListValidator(listChqPurposeCodes, Labels
-					.getLabel("label_ManagerChequeDialog_ChqPurposeCode.value")));
+			this.chqPurposeCode.setConstraint(new StaticListValidator(listChqPurposeCodes,
+					Labels.getLabel("label_ManagerChequeDialog_ChqPurposeCode.value")));
 		}
 		// Cheque Reference
 		if (!this.chequeRef.isReadonly()) {
@@ -2018,113 +2013,110 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		}
 		// Cheque No
 		if (!this.chequeNo.isReadonly()) {
-			this.chequeNo.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_ChequeNo.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.chequeNo
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_ChequeNo.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		// Beneficiary Name
 		if (!this.beneficiaryName.isReadonly()) {
-			this.beneficiaryName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_BeneficiaryName.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
+			this.beneficiaryName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_BeneficiaryName.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
 		// Customer CIF
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ManagerChequeDialog_CustCIF.value"),
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_CustCIF.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
 		}
 		// Funding Account
 		if (isRecordSave && !this.fundingAccount.isReadonly()) {
-			this.fundingAccount.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY",
-							new String[] { Labels.getLabel("label_ManagerChequeDialog_FundingAccount.value") }));
+			this.fundingAccount.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_ManagerChequeDialog_FundingAccount.value") }));
 		}
 		// Nostro Account
 		if (isRecordSave && !this.nostroAccount.isReadonly()) {
-			this.nostroAccount.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY",
-							new String[] { Labels.getLabel("label_ManagerChequeDialog_NostroAccount.value") }));
+			this.nostroAccount.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_ManagerChequeDialog_NostroAccount.value") }));
 		}
 		// Nostro Full Name
 		if (!this.nostroFullName.isReadonly()) {
-			this.nostroFullName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_NostroFullName.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.nostroFullName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_NostroFullName.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		// Cheque Amount
 		if (!this.chequeAmount.isReadonly()) {
-			this.chequeAmount.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_ManagerChequeDialog_ChequeAmount.value"), ccyEditField, true, false, 0));
+			this.chequeAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_ManagerChequeDialog_ChequeAmount.value"), ccyEditField, true, false, 0));
 		}
 		// Value Date
 		if (!this.valueDate.isReadonly()) {
-			this.valueDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_ManagerChequeDialog_ValueDate.value"), true));
+			this.valueDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_ManagerChequeDialog_ValueDate.value"), true));
 		}
 		// Narration 1
 		if (!this.narration1.isReadonly()) {
-			this.narration1.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_Narration1.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.narration1
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_Narration1.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		// Narration 2
 		if (!this.narration2.isReadonly()) {
-			this.narration2.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_Narration2.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.narration2
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_Narration2.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
 		// Branch
 		if (!branchCode.isReadonly()) {
-			this.branchCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_branchCode.value"), null, true));
+			this.branchCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_branchCode.value"), null, true));
 		}
 		// draftCcy
 		if (!this.draftCcy.isReadonly()) {
-			this.draftCcy.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_DraftCcy.value"), null, true));
+			this.draftCcy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_DraftCcy.value"), null, true));
 		}
 		// fundingCcy
 		if (!this.fundingCcy.isReadonly()) {
-			this.fundingCcy.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_FundingCcy.value"), null, true));
+			this.fundingCcy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_FundingCcy.value"), null, true));
 		}
 
 		// Charge Amount
 		if (!this.chargeAmount.isReadonly()) {
-			this.chargeAmount.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_ManagerChequeDialog_ChargeAmount.value"), ccyEditField, false, false, 0));
+			this.chargeAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_ManagerChequeDialog_ChargeAmount.value"), ccyEditField, false, false, 0));
 		}
 		// Address Line 1
 		if (!this.addressLine1.isReadonly()) {
-			this.addressLine1.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_AddressLine1.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.addressLine1.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_AddressLine1.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		// Address Line 2
 		if (!this.addressLine2.isReadonly()) {
-			this.addressLine2.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_AddressLine2.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.addressLine2.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_AddressLine2.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		// Address Line 3
 		if (!this.addressLine3.isReadonly()) {
-			this.addressLine3.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_AddressLine3.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.addressLine3.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_AddressLine3.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		// Address Line 4
 		if (!this.addressLine4.isReadonly()) {
-			this.addressLine4.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_AddressLine4.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.addressLine4.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_AddressLine4.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		// Address Line 5
 		if (!this.addressLine5.isReadonly()) {
-			this.addressLine5.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_ManagerChequeDialog_AddressLine5.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+			this.addressLine5.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManagerChequeDialog_AddressLine5.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
 		logger.debug("Leaving");
@@ -2520,8 +2512,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ManagerChequeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -2534,9 +2526,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(
-								getNotes("ManagerCheque", String.valueOf(aManagerCheque.getChequeID()),
-										aManagerCheque.getVersion()), true);
+						deleteNotes(getNotes("ManagerCheque", String.valueOf(aManagerCheque.getChequeID()),
+								aManagerCheque.getVersion()), true);
 					}
 				}
 
@@ -2582,8 +2573,8 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		for (DocumentDetails documentDetail : documentDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
-			listcell = new Listcell(PennantAppUtil.getlabelDesc(documentDetail.getDocCategory(),
-					PennantAppUtil.getDocumentTypes()));
+			listcell = new Listcell(
+					PennantAppUtil.getlabelDesc(documentDetail.getDocCategory(), PennantAppUtil.getDocumentTypes()));
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
@@ -2606,13 +2597,13 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			DocumentDetails managerDocumentDetail = (DocumentDetails) item.getAttribute("data");
-			if (StringUtils.trimToEmpty(managerDocumentDetail.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.trimToEmpty(managerDocumentDetail.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				boolean viewProcess = false;
-				if (!StringUtils.trimToEmpty(managerDocumentDetail.getRecordType()).equalsIgnoreCase(
-						PennantConstants.RCD_ADD)) {
+				if (!StringUtils.trimToEmpty(managerDocumentDetail.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					viewProcess = true;
 				}
 				updateExistingDocument(managerDocumentDetail, viewProcess);
@@ -2729,7 +2720,6 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-
 	/**
 	 * Recommendations Notes Method for get the ChequeID to be stored in Notes table as reference
 	 * 
@@ -2764,7 +2754,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
-	
+
 	public List<DocumentDetails> getDocumentDetailsList() {
 		return documentDetailsList;
 	}

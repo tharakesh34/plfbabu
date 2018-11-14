@@ -45,7 +45,7 @@ public class SeqGSTInvoice {
 	private String gstStateCode;
 	private String transactionType = "D";
 	private long seqNo = 0;
-	
+
 	public SeqGSTInvoice() {
 		super();
 	}

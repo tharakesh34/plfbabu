@@ -46,13 +46,20 @@ import java.util.List;
 
 import com.pennant.backend.model.WorkFlowDetails;
 
-public interface  WorkFlowDetailsDAO {
+public interface WorkFlowDetailsDAO {
 	WorkFlowDetails getWorkFlowDetailsByID(long id);
+
 	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
+
 	long save(WorkFlowDetails workFlowDetails);
+
 	void update(WorkFlowDetails workFlowDetails);
+
 	List<WorkFlowDetails> getActiveWorkFlowDetails();
+
 	long getWorkFlowDetailsCountByID(long id);
+
 	int getWorkFlowDetailsVersionByID(long id);
+
 	boolean isworkFlowTypeExist(String workFlowType);
 }

@@ -9,7 +9,7 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 	public EquationIdentityType() {
 		super();
 	}
-	
+
 	private String identityType = null;
 	private String identityDesc;
 	private boolean newRecord = false;
@@ -19,7 +19,6 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -27,6 +26,7 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 	public String getId() {
 		return identityType;
 	}
+
 	public void setId(String id) {
 		this.identityType = id;
 	}
@@ -34,6 +34,7 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 	public String getIdentityType() {
 		return identityType;
 	}
+
 	public void setIdentityType(String identityType) {
 		this.identityType = identityType;
 	}
@@ -41,6 +42,7 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 	public String getIdentityDesc() {
 		return identityDesc;
 	}
+
 	public void setIdentityDesc(String identityDesc) {
 		this.identityDesc = identityDesc;
 	}
@@ -48,6 +50,7 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -55,6 +58,7 @@ public class EquationIdentityType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}

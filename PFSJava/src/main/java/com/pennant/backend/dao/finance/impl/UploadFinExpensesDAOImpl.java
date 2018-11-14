@@ -43,9 +43,7 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.List;
-
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -61,7 +59,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class UploadFinExpensesDAOImpl extends BasicDao<UploadFinExpenses> implements UploadFinExpensesDAO {
 	private static Logger logger = Logger.getLogger(UploadFinExpensesDAOImpl.class);
-	
+
 	public UploadFinExpensesDAOImpl() {
 		super();
 	}
@@ -72,19 +70,21 @@ public class UploadFinExpensesDAOImpl extends BasicDao<UploadFinExpenses> implem
 	@Override
 	public void saveUploadFinExpenses(List<UploadFinExpenses> uploadFinExpensesList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" INSERT INTO UploadFinExpenses");
-		insertSql.append(" (UploadId, FinType, FinReference, FinApprovalStartDate, FinApprovalEndDate, ExpenseTypeCode, Percentage, AmountValue, Type, Status, Reason) ");
-		insertSql.append(" VALUES (:UploadId, :FinType, :FinReference, :FinApprovalStartDate, :FinApprovalEndDate, :ExpenseTypeCode, :Percentage, :AmountValue, :Type, :Status, :Reason)");
+		insertSql.append(
+				" (UploadId, FinType, FinReference, FinApprovalStartDate, FinApprovalEndDate, ExpenseTypeCode, Percentage, AmountValue, Type, Status, Reason) ");
+		insertSql.append(
+				" VALUES (:UploadId, :FinType, :FinReference, :FinApprovalStartDate, :FinApprovalEndDate, :ExpenseTypeCode, :Percentage, :AmountValue, :Type, :Status, :Reason)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(uploadFinExpensesList.toArray());
-		
+
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 }

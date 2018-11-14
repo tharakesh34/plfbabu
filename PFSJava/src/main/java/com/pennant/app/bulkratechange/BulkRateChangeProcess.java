@@ -58,7 +58,7 @@ public class BulkRateChangeProcess extends Thread {
 	public AtomicLong failure = null;
 	public int finListSize = 0;
 
-	public BulkRateChangeProcess(){
+	public BulkRateChangeProcess() {
 
 	}
 
@@ -70,7 +70,9 @@ public class BulkRateChangeProcess extends Thread {
 	 * @param failure
 	 * @param finListSize
 	 */
-	public BulkRateChangeProcess(BulkRateChangeHeader bulkRateChangeHeader, BulkRateChangeProcessService bulkRateChangeProcessService, AtomicLong success, AtomicLong failure, int finListSize){
+	public BulkRateChangeProcess(BulkRateChangeHeader bulkRateChangeHeader,
+			BulkRateChangeProcessService bulkRateChangeProcessService, AtomicLong success, AtomicLong failure,
+			int finListSize) {
 		this.bulkRateChangeProcessService = bulkRateChangeProcessService;
 		this.bulkRateChangeHeader = bulkRateChangeHeader;
 		this.finListSize = finListSize;
@@ -87,7 +89,8 @@ public class BulkRateChangeProcess extends Thread {
 
 		try {
 			for (BulkRateChangeDetails bulkRateChangeDetail : bulkRateChangeHeader.getBulkRateChangeDetailsList()) {
-				boolean rateChangeSuccess = bulkRateChangeProcessService.processBulkRateChangeDetail(bulkRateChangeHeader, bulkRateChangeDetail);
+				boolean rateChangeSuccess = bulkRateChangeProcessService
+						.processBulkRateChangeDetail(bulkRateChangeHeader, bulkRateChangeDetail);
 				if (rateChangeSuccess) {
 					success.getAndIncrement();
 				} else {
@@ -96,12 +99,13 @@ public class BulkRateChangeProcess extends Thread {
 			}
 
 			if (finListSize == (success.get() + failure.get())) {
-				bulkRateChangeProcessService.doApproveBulkRateChangeHeader(bulkRateChangeHeader, success.get(), failure.get());
+				bulkRateChangeProcessService.doApproveBulkRateChangeHeader(bulkRateChangeHeader, success.get(),
+						failure.get());
 			}
 
 		} catch (Exception e) {
 			logger.error(e);
-		} 
+		}
 
 		logger.debug("Leaving");
 	}

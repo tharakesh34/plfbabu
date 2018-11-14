@@ -78,42 +78,39 @@ public class OtherBankFinanceType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finType;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finType = id;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
-	
-		
-	
+
 	public String getFinTypeDesc() {
 		return finTypeDesc;
 	}
+
 	public void setFinTypeDesc(String finTypeDesc) {
 		this.finTypeDesc = finTypeDesc;
 	}
-	
-	
-		
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -121,7 +118,7 @@ public class OtherBankFinanceType extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -130,12 +127,12 @@ public class OtherBankFinanceType extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public OtherBankFinanceType getBefImage(){
+	public OtherBankFinanceType getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(OtherBankFinanceType beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(OtherBankFinanceType beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -145,7 +142,7 @@ public class OtherBankFinanceType extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

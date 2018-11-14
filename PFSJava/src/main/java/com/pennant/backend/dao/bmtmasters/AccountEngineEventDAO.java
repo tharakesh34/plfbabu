@@ -41,6 +41,7 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.bmtmasters;
+
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 
 /**
@@ -50,9 +51,14 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 public interface AccountEngineEventDAO {
 
 	AccountEngineEvent getAccountEngineEvent();
+
 	AccountEngineEvent getNewAccountEngineEvent();
-	AccountEngineEvent getAccountEngineEventById(String id,String type);
-	void update(AccountEngineEvent accountEngineEvent,String type);
-	void delete(AccountEngineEvent accountEngineEvent,String type);
-	String save(AccountEngineEvent accountEngineEvent,String type);
+
+	AccountEngineEvent getAccountEngineEventById(String id, String type);
+
+	void update(AccountEngineEvent accountEngineEvent, String type);
+
+	void delete(AccountEngineEvent accountEngineEvent, String type);
+
+	String save(AccountEngineEvent accountEngineEvent, String type);
 }

@@ -11,16 +11,16 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class Entities extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= -1472467289111692722L;
+	private static final long serialVersionUID = -1472467289111692722L;
 
-	private String				entityCode;
-	private String				entityDesc;
-	private boolean				active;
-	private boolean				newRecord;
-	private String				lovValue;
-	private Academic			befImage;
+	private String entityCode;
+	private String entityDesc;
+	private boolean active;
+	private boolean newRecord;
+	private String lovValue;
+	private Academic befImage;
 	@XmlTransient
-	private LoggedInUser		userDetails;
+	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();

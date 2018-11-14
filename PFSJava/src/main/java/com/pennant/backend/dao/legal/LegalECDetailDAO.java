@@ -48,7 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.legal.LegalECDetail;
 
 public interface LegalECDetailDAO extends BasicCrudDao<LegalECDetail> {
-	
+
 	/**
 	 * Fetch the Record LegalECDetail by key field
 	 * 
@@ -58,10 +58,10 @@ public interface LegalECDetailDAO extends BasicCrudDao<LegalECDetail> {
 	 *            The type of the table.
 	 * @return LegalECDetail
 	 */
-	LegalECDetail getLegalECDetail(long legalECId,String type);
+	LegalECDetail getLegalECDetail(long legalECId, String type);
 
 	List<LegalECDetail> getLegalECDetailList(long legalId, String type);
 
 	void deleteList(LegalECDetail legalECDetail, String tableType);
-	
+
 }

@@ -48,12 +48,17 @@ import com.pennant.backend.model.applicationmaster.SysNotification;
 public interface SysNotificationService {
 
 	void saveSysNotification(SysNotification sysNotification);
+
 	void updateSysNotification(SysNotification sysNotification);
+
 	void deleteSysNotification(long id);
- 	SysNotification getSysNotificationById(long id);
+
+	SysNotification getSysNotificationById(long id);
+
 	SysNotification getApprovedSysNotificationById(long id, boolean mailMenu);
 
 	long getTemplateId(String templateCode);
+
 	String getCustomerEMail(long custID);
-	
+
 }

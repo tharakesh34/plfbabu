@@ -28,7 +28,7 @@ public class SAPGL implements Tasklet {
 	private Date valueDate;
 	private Date appDate;
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
@@ -51,16 +51,18 @@ public class SAPGL implements Tasklet {
 		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
 
 		try {
-						
-			logger.debug("START: SAP-GL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
-			
+
+			logger.debug("START: SAP-GL Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
 			DataEngineStatus status = SAPGLExtract.SAP_GL_STATUS;
 			status.setStatus("I");
 			new Thread(new SAPGLProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
-			
-			logger.debug("COMPLETED: SAP-GL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+
+			logger.debug("COMPLETED: SAP-GL Process for the value date: "
+					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -82,7 +84,7 @@ public class SAPGL implements Tasklet {
 		return dataSource;
 	}
 
-	public class SAPGLProcessThread implements Runnable{
+	public class SAPGLProcessThread implements Runnable {
 		private long userId;
 
 		public SAPGLProcessThread(long userId) {
@@ -92,15 +94,12 @@ public class SAPGL implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("SAP-GL Process initiated...");
-				 //new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
+				//new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}
-
-
-
 
 }

@@ -54,38 +54,37 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.rulefactory.OverdueCharge;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
 public class OverdueChargeListModelItemRenderer implements ListitemRenderer<OverdueCharge>, Serializable {
-	
-    private static final long serialVersionUID = 7335935028165679463L;
-    
-    public OverdueChargeListModelItemRenderer() {
-    	
-    }
-    
+
+	private static final long serialVersionUID = 7335935028165679463L;
+
+	public OverdueChargeListModelItemRenderer() {
+
+	}
+
 	@Override
 	public void render(Listitem item, OverdueCharge overdueCharge, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(overdueCharge.getODCRuleCode());
+		lc = new Listcell(overdueCharge.getODCRuleCode());
 		lc.setParent(item);
-	  	lc = new Listcell(overdueCharge.getODCPLAccount() );
+		lc = new Listcell(overdueCharge.getODCPLAccount());
 		lc.setParent(item);
-	  	lc = new Listcell(overdueCharge.getODCCharityAccount());
+		lc = new Listcell(overdueCharge.getODCCharityAccount());
 		lc.setParent(item);
-	  	lc = new Listcell(overdueCharge.getODCPLShare().toString());
-	  	lc.setParent(item);
+		lc = new Listcell(overdueCharge.getODCPLShare().toString());
+		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbODCSweepCharges = new Checkbox();
 		cbODCSweepCharges.setDisabled(true);
 		cbODCSweepCharges.setChecked(overdueCharge.isODCSweepCharges());
 		lc.appendChild(cbODCSweepCharges);
 		lc.setParent(item);
-	  	lc = new Listcell(overdueCharge.getRecordStatus());
+		lc = new Listcell(overdueCharge.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(overdueCharge.getRecordType()));
 		lc.setParent(item);

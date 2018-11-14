@@ -29,11 +29,9 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 	private static final Logger logger = Logger.getLogger(LimtDetailsHeaderDialogCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ************************************************************************
 	 */
 	protected Window window_LimtDetailsHeaderDialog;
 	protected Borderlayout borderLayout_LimtDetailsHeaderDialog;
@@ -48,14 +46,13 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 	private LimitHeader limitHeader; // overhanded per param
 	private transient LimitDetailListCtrl limitDetailListCtrl; // overhanded per param
 
-	
 	/**
 	 * default constructor.<br>
 	 */
 	public LimtDetailsHeaderDialogCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "LimitHeaderDialog";
@@ -68,10 +65,10 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 
 	public void onCreate$window_LimtDetailsHeaderDialog(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		setPageComponents(window_LimtDetailsHeaderDialog);
 
-		limitHeader=(LimitHeader) arguments.get("limitHeader");
+		limitHeader = (LimitHeader) arguments.get("limitHeader");
 		limitHeader.setNewRecord(true);
 
 		// READ OVERHANDED params !
@@ -83,11 +80,11 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		} else {
 			setLimitDetailListCtrl(null);
 		}
-		
-		/*doLoadWorkFlow(this.limitHeader.isWorkflow(),
-				this.limitHeader.getWorkflowId(),
-				this.limitHeader.getNextTaskId());
-*/
+
+		/*
+		 * doLoadWorkFlow(this.limitHeader.isWorkflow(), this.limitHeader.getWorkflowId(),
+		 * this.limitHeader.getNextTaskId());
+		 */
 		// set Field Properties
 		doSetFieldProperties();
 
@@ -103,7 +100,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		this.group.setValueColumn("CustGrpID");
 		this.group.setValidateColumns(new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" });
 
-		List<String> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false,false);
+		List<String> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false, false);
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("CustGrpID", existingGroups, Filter.OP_NOT_IN);
 		if (existingGroups != null && existingGroups.size() > 0) {
@@ -113,14 +110,15 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		this.customer.getTextbox().setReadonly(false);
 		this.customer.setModuleName("Customer");
 		this.customer.setValueColumn("CustCIF");
-		this.customer.setValidateColumns(new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
-		List<String> existingcustomers = PennantAppUtil.getLimitHeaderCustomer(true,false);
+		this.customer.setValidateColumns(
+				new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
+		List<String> existingcustomers = PennantAppUtil.getLimitHeaderCustomer(true, false);
 		Filter[] filters2 = new Filter[1];
 		filters2[0] = new Filter("CustID", existingcustomers, Filter.OP_NOT_IN);
 		if (existingcustomers != null && existingcustomers.size() > 0) {
 			this.customer.setFilters(filters2);
 		}
-		
+
 		//Rule
 		logger.debug("Leaving");
 	}
@@ -142,7 +140,8 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 				getLimitHeader().setCustCoreBank(details.getCustCoreBank());
 				getLimitHeader().setCustSalutationCode(details.getCustSalutationCode());
 				getLimitHeader().setCustShrtName(details.getCustShrtName());
-				getLimitHeader().setCustFullName(PennantApplicationUtil.getFullName(details.getCustFName(), details.getCustMName(), details.getCustShrtName()));
+				getLimitHeader().setCustFullName(PennantApplicationUtil.getFullName(details.getCustFName(),
+						details.getCustMName(), details.getCustShrtName()));
 				getLimitHeader().setCustDftBranch(details.getCustDftBranch());
 				getLimitHeader().setResponsibleBranchName(details.getLovDescCustDftBranchName());
 				getLimitHeader().setCustomerGroup(0);
@@ -197,15 +196,17 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		} else {
 			try {
 				if (getLimitHeader().getCustomerId() == 0) {
-					throw new WrongValueException(group,  "  Please Select " +Labels.getLabel("label_LimtDetailsHeaderDialog_Group.value"));
+					throw new WrongValueException(group,
+							"  Please Select " + Labels.getLabel("label_LimtDetailsHeaderDialog_Group.value"));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
 				if (getLimitHeader().getCustomerGroup() == 0) {
-					throw new WrongValueException(customer, " Please Select "+ Labels.getLabel("label_LimtDetailsHeaderDialog_Customer.value") );
-					}
+					throw new WrongValueException(customer,
+							" Please Select " + Labels.getLabel("label_LimtDetailsHeaderDialog_Customer.value"));
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

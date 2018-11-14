@@ -63,9 +63,9 @@ import com.pennant.backend.service.customermasters.CustomerBalanceSheetService;
 import com.pennant.webui.customermasters.customerbalancesheet.model.CustomerBalanceSheetComparator;
 import com.pennant.webui.customermasters.customerbalancesheet.model.CustomerBalanceSheetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerBalanceSheet
@@ -207,8 +207,8 @@ public class CustomerBalanceSheetListCtrl extends GFCBaseListCtrl<CustomerBalanc
 			// CAST AND STORE THE SELECTED OBJECT
 			String id = (String) item.getAttribute("id");
 			long custId = (long) item.getAttribute("custId");
-			final CustomerBalanceSheet customerBalanceSheet = customerBalanceSheetService.getCustomerBalanceSheetById(
-					id, custId);
+			final CustomerBalanceSheet customerBalanceSheet = customerBalanceSheetService
+					.getCustomerBalanceSheetById(id, custId);
 
 			if (customerBalanceSheet == null) {
 				MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

@@ -71,9 +71,9 @@ import com.pennant.backend.service.staticparms.ExtendedFieldHeaderService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.staticparms.extendedfieldheader.model.ExtendedFieldHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMasters/ExtendedFieldHeader/ExtendedFieldHeaderList.zul
@@ -155,7 +155,7 @@ public class ExtendedFieldHeaderListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 		registerButton(button_ExtendedFieldHeaderList_NewExtendedFieldHeader,
 				"button_ExtendedFieldHeaderList_NewExtendedFieldHeader", true);
 		registerButton(button_ExtendedFieldHeaderList_ExtendedFieldHeaderSearchDialog);
-		
+
 		registerField("moduleId");
 		fillComboBox(moduleName, null, modulesList, "");
 		registerField("moduleName", listheader_ModuleName, SortOrder.ASC, moduleName, sortOperator_moduleName,
@@ -167,19 +167,19 @@ public class ExtendedFieldHeaderListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 				Operators.STRING);
 		registerField("numberOfColumns", listheader_NumberOfColumns, SortOrder.NONE, numberOfColumns,
 				sortOperator_numberOfColumns, Operators.NUMERIC);
-		
+
 		setItemRender(new ExtendedFieldHeaderListModelItemRenderer(modulesList));
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-	
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		
-		if(modulesList != null && !modulesList.isEmpty()){
+
+		if (modulesList != null && !modulesList.isEmpty()) {
 			List<String> moduleFiletrs = new ArrayList<>();
 			for (ValueLabel filter : modulesList) {
 				moduleFiletrs.add(filter.getValue());

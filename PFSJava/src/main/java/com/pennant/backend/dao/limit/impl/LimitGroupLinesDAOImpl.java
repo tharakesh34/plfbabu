@@ -3,7 +3,6 @@ package com.pennant.backend.dao.limit.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -24,13 +23,14 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements LimitGroupLinesDAO {
 	private static Logger logger = Logger.getLogger(LimitGroupLinesDAOImpl.class);
-		
+
 	public LimitGroupLinesDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new LimitGroupLines 
+	 * This method set the Work Flow id based on the module name and return the new LimitGroupLines
+	 * 
 	 * @return LimitGroupLines
 	 */
 
@@ -38,20 +38,20 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 	public LimitGroupLines getLimitGroupLines() {
 		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("LimitGroup");
-		LimitGroupLines limitGroupItemsItems= new LimitGroupLines();
-		if (workFlowDetails!=null){
+		LimitGroupLines limitGroupItemsItems = new LimitGroupLines();
+		if (workFlowDetails != null) {
 			limitGroupItemsItems.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
 		return limitGroupItemsItems;
 	}
 
-
 	/**
-	 * This method get the module from method getLimitGroupLines() and set the new record flag as true and return LimitGroupLines()   
+	 * This method get the module from method getLimitGroupLines() and set the new record flag as true and return
+	 * LimitGroupLines()
+	 * 
 	 * @return LimitGroupLines
 	 */
-
 
 	@Override
 	public LimitGroupLines getNewLimitGroupLines() {
@@ -63,33 +63,36 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 	}
 
 	/**
-	 * Fetch the Record  Limit Group details by key field
+	 * Fetch the Record Limit Group details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitGroupLines
 	 */
 	@Override
 	public List<LimitGroupLines> getLimitGroupLinesById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = null;
-		
+
 		StringBuilder selectSql = new StringBuilder("Select LimitGroupCode, GroupCode, LimitLine, LimitLines,ItemSeq");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 		}
 		selectSql.append(" From LimitGroupLines");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LimitGroupCode = :LimitGroupCode");
 		selectSql.append("  order by ItemSeq");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		source = new MapSqlParameterSource();
 		source.addValue("LimitGroupCode", id);
-		
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
+
+		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LimitGroupLines.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -101,123 +104,127 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		}
 		return null;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the LimitGroupLines or LimitGroupLines_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Limit Group by key GroupCode
+	 * This method Deletes the Record from the LimitGroupLines or LimitGroupLines_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Limit Group by key GroupCode
 	 * 
-	 * @param Limit Group (limitGroupItems)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Group (limitGroupItems)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(String limitGroupCode,String type) {
+	public void delete(String limitGroupCode, String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LimitGroupLines");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where LimitGroupCode = :LimitGroupCode");
 		logger.debug("deleteSql: " + deleteSql.toString());
-		
+
 		source = new MapSqlParameterSource();
 		source.addValue("LimitGroupCode", limitGroupCode);
 
-		try{
+		try {
 			this.jdbcTemplate.update(deleteSql.toString(), source);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into LimitGroupLines or LimitGroupLines_Temp.
 	 *
-	 * save Limit Group 
+	 * save Limit Group
 	 * 
-	 * @param Limit Group (limitGroupItems)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Group (limitGroupItems)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public String save(LimitGroupLines limitGroupItems,String type) {
+	public String save(LimitGroupLines limitGroupItems, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into LimitGroupLines");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into LimitGroupLines");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (LimitGroupCode, GroupCode, LimitLine, LimitLines,ItemSeq");
-		insertSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:LimitGroupCode, :GroupCode, :LimitLine, :LimitLines,:ItemSeq");
-		insertSql.append(", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitGroupItems.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record LimitGroupLines or LimitGroupLines_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Limit Group by key GroupCode and Version
+	 * This method updates the Record LimitGroupLines or LimitGroupLines_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Limit Group by key GroupCode and Version
 	 * 
-	 * @param Limit Group (limitGroupItems)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Limit
+	 *            Group (limitGroupItems)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void update(LimitGroupLines limitGroupItems,String type) {
+	public void update(LimitGroupLines limitGroupItems, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update LimitGroupLines");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set GroupCode = :GroupCode, LimitLine = :LimitLine , LimitLines = :LimitLines ,ItemSeq =:ItemSeq");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		if(limitGroupItems.getGroupCode() != null) {
+		StringBuilder updateSql = new StringBuilder("Update LimitGroupLines");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set GroupCode = :GroupCode, LimitLine = :LimitLine , LimitLines = :LimitLines ,ItemSeq =:ItemSeq");
+		updateSql.append(
+				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		if (limitGroupItems.getGroupCode() != null) {
 			updateSql.append(" Where LimitGroupCode = :LimitGroupCode AND GroupCode = :GroupCode");
 		} else {
 			updateSql.append(" Where LimitGroupCode = :LimitGroupCode AND LimitLine = :LimitLine");
 		}
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
 
 	@Override
 	public void deleteLimitGroupLines(LimitGroupLines limitGroupItems, String type) {
-		
+
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From LimitGroupLines");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		if(limitGroupItems.getGroupCode() != null) {
+		if (limitGroupItems.getGroupCode() != null) {
 			deleteSql.append(" Where LimitGroupCode = :LimitGroupCode AND GroupCode = :GroupCode");
 		} else {
 			deleteSql.append(" Where LimitGroupCode = :LimitGroupCode AND LimitLine = :LimitLine");
@@ -225,18 +232,17 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
-		
-	}
 
+	}
 
 	@Override
 	public String getLimitLines(LimitGroupLines lmtGrpItems, String limitGroupCode) {
@@ -244,22 +250,22 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 
 		MapSqlParameterSource source = null;
 		StringBuilder selectSql;
-		
-		if(lmtGrpItems.getLimitLine() == null) {
+
+		if (lmtGrpItems.getLimitLine() == null) {
 			selectSql = new StringBuilder("SELECT STUFF((SELECT '|' + CAST(LimitLines as varchar)");
 		} else {
 			selectSql = new StringBuilder("SELECT STUFF((SELECT '|' + CAST(LimitLine as varchar)");
 		}
-		
+
 		selectSql.append(" FROM LimitGroupLines");
-		
+
 		selectSql.append(" Where LimitGroupCode = :LimitGroupCode");
 		selectSql.append(" FOR XML PATH(''), TYPE).value('.', 'varchar(max)'),1,1,'');");
-				
+
 		logger.debug("selectSql: " + selectSql.toString());
 		source = new MapSqlParameterSource();
 		source.addValue("LimitGroupCode", limitGroupCode);
-		
+
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -271,47 +277,49 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		}
 		return new String();
 	}
-	
+
 	@Override
 	public List<LimitGroupLines> getLimitGroupItemById(final String id, String type) {
 		logger.debug("Entering");
 		LimitGroupLines limitGroupItems = getLimitGroupLines();
-		
+
 		limitGroupItems.setId(id);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select LimitGroupCode, GroupCode, LimitLine, LimitLines,ItemSeq");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From LimitGroupLines");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LimitGroupCode = :LimitGroupCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
-		
+		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LimitGroupLines.class);
+
 		logger.debug("Leaving");
-			return  this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
-		
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public int validationCheck(String limitGroup, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder	selectSql = new StringBuilder("Select Count(*) From LimitGroupLines");
+		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitGroupLines");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GroupCode = :GroupCode");
 		source.addValue("GroupCode", limitGroup);
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		try {
-			
+
 			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
@@ -320,25 +328,24 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 			selectSql = null;
 			logger.debug("Leaving");
 		}
-		
+
 		return recordCount;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public int limitLineCheck(String limitLine,String limitCategory, String type) {
+	public int limitLineCheck(String limitLine, String limitCategory, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder	selectSql = new StringBuilder("Select Count(*) From LimitGroupLines");
+		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitGroupLines");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LimitLine = :LimitLine AND LimitCategory = :LimitCategory ");
 		source.addValue("LimitLine", limitLine);
 		source.addValue("LimitCategory", limitCategory);
 
-		
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		try {
 			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
@@ -348,23 +355,22 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 			selectSql = null;
 			logger.debug("Leaving");
 		}
-		
+
 		return recordCount;
 	}
-	
+
 	@Override
 	public String getGroupcodes(String code, boolean limitLine, String type) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Code", code);
 
-
-		StringBuilder	selectSql = new StringBuilder("Select LimitGroupCode  ");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		StringBuilder selectSql = new StringBuilder("Select LimitGroupCode  ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From LimitGroupLines");
 		selectSql.append(StringUtils.trimToEmpty(type));
-	
+
 		if (limitLine) {
 			selectSql.append(" Where LimitLine in (:Code) ");
 		} else {
@@ -374,15 +380,16 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		String groupCode = null;
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
+		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LimitGroupLines.class);
 		logger.debug("Leaving");
 		try {
 			record = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 			for (LimitGroupLines gCode : record) {
-				if(groupCode==null){
-					groupCode ="'" + gCode.getLimitGroupCode() + "'";
-				}else{
-					groupCode  = groupCode.concat(",'" + gCode.getLimitGroupCode() + "'");
+				if (groupCode == null) {
+					groupCode = "'" + gCode.getLimitGroupCode() + "'";
+				} else {
+					groupCode = groupCode.concat(",'" + gCode.getLimitGroupCode() + "'");
 				}
 			}
 
@@ -396,34 +403,33 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		return groupCode;
 
 	}
-	
-	
-	
+
 	@Override
 	public List<LimitGroupLines> getGroupCodesByLimitGroup(String code, boolean limitLine, String type) {
-		MapSqlParameterSource source= new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Code", code);
-		
-		StringBuilder	selectSql = new StringBuilder("Select LimitGroupCode,GroupCode,LimitLine,LimitLines ,ItemSeq");
-		selectSql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(StringUtils.trimToEmpty(type).contains("View")){
+
+		StringBuilder selectSql = new StringBuilder("Select LimitGroupCode,GroupCode,LimitLine,LimitLines ,ItemSeq");
+		selectSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
 		selectSql.append(" From LimitGroupLines");
 		selectSql.append(StringUtils.trimToEmpty(type));
 
-		if(limitLine){		
+		if (limitLine) {
 			selectSql.append(" where LimitLine in ( :Code) ");
-		}else{
+		} else {
 			selectSql.append(" where GroupCode in ( :Code) ");
 		}
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroupLines.class);
+		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LimitGroupLines.class);
 		logger.debug("Leaving");
 		try {
-			return	 this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);	
-			
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e);
@@ -431,10 +437,10 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 			selectSql = null;
 			logger.debug("Leaving");
 		}
-		return new ArrayList<LimitGroupLines>();		
+		return new ArrayList<LimitGroupLines>();
 
 	}
-	
+
 	@Override
 	public String getGroupByLineAndHeader(String limitLine, long headerID) {
 
@@ -467,7 +473,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getGroupByGroupAndHeader(String groupCode, long headerID) {
 
@@ -500,32 +506,32 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		}
 		return null;
 	}
-	
+
 	@Override
 	public List<LimitGroupLines> getAllLimitLinesByGroup(final String group, String type) {
 		logger.debug("Entering");
-		
-		List<LimitGroupLines> groupLines=new ArrayList<LimitGroupLines>();
+
+		List<LimitGroupLines> groupLines = new ArrayList<LimitGroupLines>();
 		getLimitLinesByGroup(group, type, groupLines);
-		
+
 		logger.debug(" Entering ");
 		return groupLines;
 	}
-	
-	private void getLimitLinesByGroup(final String group, String type,List<LimitGroupLines> groupLines) {
+
+	private void getLimitLinesByGroup(final String group, String type, List<LimitGroupLines> groupLines) {
 		List<LimitGroupLines> list = getLimitGroupLinesById(group, type);
 		for (LimitGroupLines limitGroupLines : list) {
 			groupLines.add(limitGroupLines);
-			if (limitGroupLines.getGroupCode() !=null) {
+			if (limitGroupLines.getGroupCode() != null) {
 				getLimitLinesByGroup(limitGroupLines.getGroupCode(), type, groupLines);
 			}
 		}
 	}
-	
+
 	@Override
 	public int getLimitLinesByRuleCode(String ruleCode, String type) {
 		logger.debug("Entering");
-		LimitGroupLines limitGroupItemsItems= new LimitGroupLines();
+		LimitGroupLines limitGroupItemsItems = new LimitGroupLines();
 		limitGroupItemsItems.setLimitLine(ruleCode);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
@@ -540,5 +546,4 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
-	
 }

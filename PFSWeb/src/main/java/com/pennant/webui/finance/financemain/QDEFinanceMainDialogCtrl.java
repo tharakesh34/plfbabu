@@ -125,76 +125,74 @@ import com.rits.cloning.Cloner;
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/QDEFinanceMainDialog.zul file.
  */
 public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
-	private static final long				serialVersionUID	= 6004939933729664895L;
-	private static final Logger				logger				= Logger.getLogger(QDEFinanceMainDialogCtrl.class);
+	private static final long serialVersionUID = 6004939933729664895L;
+	private static final Logger logger = Logger.getLogger(QDEFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_QDEFinanceMainDialog;												// autoWired
+	protected Window window_QDEFinanceMainDialog; // autoWired
 
 	// Finance Main Details Tab---> 1. Key Details
-	protected CurrencyBox					downPaySupl;																// autoWired
-	protected Row							row_downPaySupl;															// autoWired
+	protected CurrencyBox downPaySupl; // autoWired
+	protected Row row_downPaySupl; // autoWired
 
-	protected Label							label_QDEFinanceMainDialog_FinType;										// autoWired
-	protected Label							label_QDEFinanceMainDialog_ScheduleMethod;									// autoWired
-	protected Label							label_QDEFinanceMainDialog_FinRepayPftOnFrq;								// autoWired
-	protected Label							label_QDEFinanceMainDialog_CommitRef;										// autoWired
-	protected Label							label_QDEFinanceMainDialog_DepriFrq;										// autoWired
-	protected Label							label_QDEFinanceMainDialog_PlanDeferCount;									// autoWired
-	protected Label							label_QDEFinanceMainDialog_AlwGrace;										// autoWired
-	protected Label							label_QDEFinanceMainDialog_StepPolicy;										// autoWired
-	protected Label							label_QDEFinanceMainDialog_numberOfSteps;									// autoWired
-	protected Label							label_QDEFinanceMainDialog_FinLimitRef;									// autoWired
+	protected Label label_QDEFinanceMainDialog_FinType; // autoWired
+	protected Label label_QDEFinanceMainDialog_ScheduleMethod; // autoWired
+	protected Label label_QDEFinanceMainDialog_FinRepayPftOnFrq; // autoWired
+	protected Label label_QDEFinanceMainDialog_CommitRef; // autoWired
+	protected Label label_QDEFinanceMainDialog_DepriFrq; // autoWired
+	protected Label label_QDEFinanceMainDialog_PlanDeferCount; // autoWired
+	protected Label label_QDEFinanceMainDialog_AlwGrace; // autoWired
+	protected Label label_QDEFinanceMainDialog_StepPolicy; // autoWired
+	protected Label label_QDEFinanceMainDialog_numberOfSteps; // autoWired
+	protected Label label_QDEFinanceMainDialog_FinLimitRef; // autoWired
 
-	protected Textbox						custFirstName;																// autowired
-	protected Textbox						custMiddleName;															// autowired
-	protected Textbox						custLastName;																// autowired
-	protected Datebox						custDOB;																	// autowired
-	protected Combobox						custGenderCode;															// autowired
-	protected Combobox						custSalutationCode;														// autowired
-	protected Combobox						custMaritalSts;															// autowired
-	protected Intbox						noOfDependents;															// autowired
-	protected Checkbox						salariedCustomer;															// autowired
-	private String							sCustGender;
-	protected Textbox						eidNumber;																	// autowired
+	protected Textbox custFirstName; // autowired
+	protected Textbox custMiddleName; // autowired
+	protected Textbox custLastName; // autowired
+	protected Datebox custDOB; // autowired
+	protected Combobox custGenderCode; // autowired
+	protected Combobox custSalutationCode; // autowired
+	protected Combobox custMaritalSts; // autowired
+	protected Intbox noOfDependents; // autowired
+	protected Checkbox salariedCustomer; // autowired
+	private String sCustGender;
+	protected Textbox eidNumber; // autowired
 
-	protected Textbox						phoneCountryCode;
-	protected Textbox						phoneAreaCode;
-	protected Textbox						phoneNumber;
+	protected Textbox phoneCountryCode;
+	protected Textbox phoneAreaCode;
+	protected Textbox phoneNumber;
 
-	protected Textbox						custPassportNo;
+	protected Textbox custPassportNo;
 
-	protected Label							label_PromotionProduct;
-	protected Hbox							hboxPromotionProduct;
+	protected Label label_PromotionProduct;
+	protected Hbox hboxPromotionProduct;
 
-	private transient String				oldVar_custFirstName;
-	private transient String				oldVar_custMiddleName;
-	private transient String				oldVar_custLastName;
-	private transient Date					oldVar_custDOB;
-	private transient String				oldVar_custSalutationCode;
-	private transient String				oldVar_custGenderCode;
-	private transient String				oldVar_custMaritalSts;
-	private transient int					oldVar_noOfDependents;
-	private transient String				oldVar_phoneCountryCode;
-	private transient String				oldVar_phoneAreaCode;
-	private transient String				oldVar_phoneNumber;
-	private transient String				oldVar_custPassportNo;
+	private transient String oldVar_custFirstName;
+	private transient String oldVar_custMiddleName;
+	private transient String oldVar_custLastName;
+	private transient Date oldVar_custDOB;
+	private transient String oldVar_custSalutationCode;
+	private transient String oldVar_custGenderCode;
+	private transient String oldVar_custMaritalSts;
+	private transient int oldVar_noOfDependents;
+	private transient String oldVar_phoneCountryCode;
+	private transient String oldVar_phoneAreaCode;
+	private transient String oldVar_phoneNumber;
+	private transient String oldVar_custPassportNo;
 
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
-	protected transient BigDecimal			oldVar_downPaySupl;
-	Date									startDate			= DateUtility.addDays(DateUtility.getAppDate(),
-																		-SysParamUtil
-																				.getValueAsInt("BACKDAYS_STARTDATE"));
-	Date									endDate				= SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-	int										finFormatter		= 0;
+	protected transient BigDecimal oldVar_downPaySupl;
+	Date startDate = DateUtility.addDays(DateUtility.getAppDate(), -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
+	int finFormatter = 0;
 
-	protected transient String				nextUserId;
+	protected transient String nextUserId;
 
 	/**
 	 * default constructor.<br>
@@ -370,8 +368,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (!allow) {
 				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
 				return;
-			} 
-		} 
+			}
+		}
 
 		Long capturereaonse = null;
 		String taskId = getTaskId(getRole());
@@ -396,7 +394,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * When record is rejected . <br>
@@ -515,10 +512,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finReference.setValue(aFinanceMain.getFinReference());
-		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(),
-				format));
-		this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(),
-				format));
+		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), format));
+		this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
 		this.numberOfTerms.setValue(aFinanceMain.getNumberOfTerms());
 		this.finCcy.setValue(aFinanceMain.getFinCcy());
 		this.finBranch.setValue(aFinanceMain.getFinBranch());
@@ -590,7 +585,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private void doFillTabs(FinanceDetail aFinanceDetail) throws ParseException, InterruptedException {
 		logger.debug("Entering");
 
-
 		// Joint Account and Guaranteer Tab Addition
 		// if (!finDivision.equals(PennantConstants.FIN_DIVISION_COMMERCIAL) &&
 		// !finDivision.equals(PennantConstants.FIN_DIVISION_CORPORATE)) {
@@ -661,7 +655,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceMain.setFinBranch(getUserWorkspace().getLoggedInUser().getBranchCode());
 		try {
 			if (StringUtils.isBlank(this.finReference.getValue())) {
-				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain,fintype)));
+				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, fintype)));
 			}
 			aFinanceMain.setFinReference(this.finReference.getValue());
 			detail.getFinScheduleData().setFinReference(this.finReference.getValue());
@@ -709,10 +703,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			if (!this.custCIF.isReadonly()) {
 				if (this.custID.longValue() == 0 || this.custID.longValue() == Long.MIN_VALUE) {
-					throw new WrongValueException(this.custCIF, Labels.getLabel(
-							"FIELD_NO_INVALID",
-							new String[] { Labels.getLabel("label_" + getProductCode()
-									+ "FinanceMainDialog_CustID.value") }));
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] {
+							Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_CustID.value") }));
 				}
 			}
 			aFinanceMain.setCustID(this.custID.longValue());
@@ -1104,14 +1096,14 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 		if (!this.custFirstName.isReadonly()) {
-			this.custFirstName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerDialog_CustFirstName.value"), PennantRegularExpressions.REGEX_CUST_NAME,
-					true));
+			this.custFirstName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustFirstName.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, true));
 		}
 		if (!this.custLastName.isReadonly()) {
-			this.custLastName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerDialog_CustLastName.value"), PennantRegularExpressions.REGEX_CUST_NAME,
-					true));
+			this.custLastName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLastName.value"),
+							PennantRegularExpressions.REGEX_CUST_NAME, true));
 		}
 
 		if (!this.custDOB.isDisabled()) {
@@ -1120,22 +1112,22 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneCountryCode.value"), true, 1));
+			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneCountryCode.value"), true, 1));
 		}
 		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneAreaCode.value"), true, 2));
+			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneAreaCode.value"), true, 2));
 		}
 		if (!this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true, 3));
+			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(
+					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true, 3));
 		}
 
 		if (!this.custPassportNo.isReadonly()) {
-			this.custPassportNo.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_QDEFinanceMainDialog_custPassportNo.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.custPassportNo.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_QDEFinanceMainDialog_custPassportNo.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -1144,18 +1136,18 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (!this.finReference.isReadonly() && !financeType.isFinIsGenRef()) {
 
-			this.finReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinanceMainDialog_FinReference.value"), null, true));
+			this.finReference.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_FinReference.value"), null, true));
 		}
 
 		if (!this.finAmount.isDisabled()) {
-			this.finAmount.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinanceMainDialog_PurchasePrice.value"), 0, true, false));
+			this.finAmount.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_FinanceMainDialog_PurchasePrice.value"), 0, true, false));
 		}
 
 		if (!this.numberOfTerms.isDisabled() && !this.numberOfTerms.isReadonly()) {
-			this.numberOfTerms.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_FinanceMainDialog_NumberOfTerms.value"), true, false));
+			this.numberOfTerms.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"), true, false));
 		}
 
 		logger.debug("Leaving");
@@ -1192,7 +1184,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to set validation on LOV fields
-	 * */
+	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
@@ -1202,7 +1194,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method to remove validation on LOV fields.
 	 * 
-	 * **/
+	 **/
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering ");
 
@@ -1218,7 +1210,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to clear error messages.
-	 * */
+	 */
 	public void doClearMessage() {
 		logger.debug("Entering");
 		this.custFirstName.setErrorMessage("");
@@ -1398,22 +1390,19 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doWriteComponentsToBean(aFinanceDetail, true);
 
 		// Save Contributor List Details
-/*		if (isRIAExist) {
-			Tab tab = null;
-			if (tabsIndexCenter.getFellowIfAny("contributorsTab") != null) {
-				tab = (Tab) tabsIndexCenter.getFellowIfAny("contributorsTab");
-			}
-
-			aFinanceDetail = getContributorDetailsDialogCtrl().doSaveContributorsDetail(aFinanceDetail, tab);
-		} else {
-*/			aFinanceDetail.setFinContributorHeader(null);
-/*		}
-*/
+		/*
+		 * if (isRIAExist) { Tab tab = null; if (tabsIndexCenter.getFellowIfAny("contributorsTab") != null) { tab =
+		 * (Tab) tabsIndexCenter.getFellowIfAny("contributorsTab"); }
+		 * 
+		 * aFinanceDetail = getContributorDetailsDialogCtrl().doSaveContributorsDetail(aFinanceDetail, tab); } else {
+		 */ aFinanceDetail.setFinContributorHeader(null);
+		/*
+		 * }
+		 */
 		// Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
 			return;
 		}
-
 
 		isNew = aFinanceDetail.isNewRecord();
 
@@ -1438,9 +1427,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}
-				if (!recSave
-						&& getAccountingDetailDialogCtrl().getDisbCrSum().compareTo(
-								getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
+				if (!recSave && getAccountingDetailDialogCtrl().getDisbCrSum()
+						.compareTo(getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 					return;
 				}
@@ -1615,7 +1603,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (StringUtils.isBlank(corebank)) {
 
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),
+			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),
+					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),
 					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(),
 					aFinanceDetail.getCustomerDetails(), getMainWindow(), curLoginUser);
 
@@ -1750,8 +1739,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						nextRoleCode = nextRoleCode.concat(",");
 					}
 					nextRoleCode += getTaskOwner(nextTasks[i]);
-					baseRoleMap.put(getTaskOwner(nextTasks[i]),
-							StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i])));
+					baseRoleMap.put(getTaskOwner(nextTasks[i]), StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i])));
 				}
 			}
 		}
@@ -1839,11 +1827,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					// If Core Bank ID is Exists then Customer is already
 					// existed in Core Banking System
 					if (StringUtils.isNotBlank(tFinanceMain.getLovDescCustCoreBank())) {
-						tFinanceDetail
-								.getFinScheduleData()
-								.getFinanceMain()
-								.setBlacklisted(
-										getFinanceDetailService().checkExistCustIsBlackListed(tFinanceMain.getCustID()));
+						tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(
+								getFinanceDetailService().checkExistCustIsBlackListed(tFinanceMain.getCustID()));
 						tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(false);
 					} else {
 						String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
@@ -1904,8 +1889,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doFundsAvailConfirmed)) {
 
-					String nextRoleCode = StringUtils.trimToEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
-							.getNextRoleCode());
+					String nextRoleCode = StringUtils
+							.trimToEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
 					String nextRoleCodes[] = nextRoleCode.split(",");
 
 					if (nextRoleCodes.length > 1) {
@@ -1917,8 +1902,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckProspectCustomer)) {
 					// Prospect Customer Checking
-					if (StringUtils.isBlank(aFinanceDetail.getFinScheduleData().getFinanceMain()
-							.getLovDescCustCoreBank())) {
+					if (StringUtils
+							.isBlank(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescCustCoreBank())) {
 						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
 						return false;
 					}
@@ -2022,8 +2007,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_QDEFinanceMainDialog, auditHeader);
 						return processCompleted;
 					}
@@ -2141,12 +2126,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} catch (Exception e) {
 				}
 				if (StringUtils.isEmpty(moduleDefiner)) {
-					getFinanceDetail()
-							.getFinScheduleData()
-							.getFinanceMain()
-							.setFinAmount(
-									PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(),
-											details.getCcyEditField()));
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setFinAmount(
+							PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), details.getCcyEditField()));
 				}
 			}
 		}
@@ -2203,7 +2184,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
-					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
+					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate,
+					this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
 			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = graceRate.getSpecialObject();
@@ -2221,7 +2203,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
-					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
+					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate,
+					this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 
 		}
@@ -2306,7 +2289,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.repayRate.getBaseComp(), this.repayRate.getSpecialComp(), this.repayRate.getBaseComp(),
-					this.repayRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
+					this.repayRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate,
+					this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 
 		}
@@ -2413,7 +2397,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method to store the default values if no values are entered in respective fields when validate or build schedule
 	 * buttons are clicked
 	 * 
-	 * */
+	 */
 	public void doStoreDefaultValues() {
 		// calling method to clear the constraints
 		logger.debug("Entering");
@@ -2460,8 +2444,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Current Finance Monthly Installment Calculation
 		BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
-		int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
-				financeMain.getMaturityDate(), true);
+		int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate(),
+				true);
 
 		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
 		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
@@ -2473,24 +2457,24 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String custOtherIncome = "";
 		if (financeDetail.getCustomerDetails() != null
 				&& financeDetail.getCustomerDetails().getCustEmployeeDetail() != null) {
-			custEmpDesg = StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail()
-					.getEmpDesg());
-			custEmpSector = StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail()
-					.getEmpSector());
-			custEmpAlocType = StringUtils.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail()
-					.getEmpAlocType());
-			custOtherIncome = StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail()
-					.getOtherIncome());
+			custEmpDesg = StringUtils
+					.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+			custEmpSector = StringUtils
+					.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail().getEmpSector());
+			custEmpAlocType = StringUtils
+					.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail().getEmpAlocType());
+			custOtherIncome = StringUtils
+					.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail().getOtherIncome());
 		}
 
 		// Set Customer Data to check the eligibility
-		financeDetail.setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
-				productCode, financeMain.getFinReference(), financeMain.getFinCcy(), curFinRepayAmt, months,
-				financeMain.getCustDSR(), null));
+		financeDetail.setCustomerEligibilityCheck(
+				getFinanceDetailService().getCustEligibilityDetail(customer, productCode, financeMain.getFinReference(),
+						financeMain.getFinCcy(), curFinRepayAmt, months, financeMain.getCustDSR(), null));
 
 		financeDetail.getCustomerEligibilityCheck().setReqFinAmount(financeMain.getFinAmount());
-		financeDetail.getCustomerEligibilityCheck().setDisbursedAmount(
-				financeMain.getFinAmount().subtract(financeMain.getDownPayment()));
+		financeDetail.getCustomerEligibilityCheck()
+				.setDisbursedAmount(financeMain.getFinAmount().subtract(financeMain.getDownPayment()));
 		financeDetail.getCustomerEligibilityCheck().setDownpayBank(financeMain.getDownPayBank());
 		financeDetail.getCustomerEligibilityCheck().setDownpaySupl(financeMain.getDownPaySupl());
 		financeDetail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
@@ -2499,10 +2483,10 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		financeDetail.getCustomerEligibilityCheck().setStepFinance(financeMain.isStepFinance());
 		financeDetail.getCustomerEligibilityCheck().setNoOfTerms(financeMain.getNumberOfTerms());
 		financeDetail.getCustomerEligibilityCheck().setFinRepayMethod(financeMain.getFinRepayMethod());
-		financeDetail.getCustomerEligibilityCheck().setAlwDPSP(
-				financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm());
-		financeDetail.getCustomerEligibilityCheck().setAlwPlannedDefer(
-				financeMain.getPlanDeferCount() > 0 ? true : false);
+		financeDetail.getCustomerEligibilityCheck()
+				.setAlwDPSP(financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm());
+		financeDetail.getCustomerEligibilityCheck()
+				.setAlwPlannedDefer(financeMain.getPlanDeferCount() > 0 ? true : false);
 		financeDetail.getCustomerEligibilityCheck().setSalariedCustomer(customer.isSalariedCustomer());
 		financeDetail.getCustomerEligibilityCheck().setCustEmpDesg(custEmpDesg);
 		financeDetail.getCustomerEligibilityCheck().setCustEmpSector(custEmpSector);
@@ -2560,10 +2544,10 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if ((this.downPaySupl.getActualValue().compareTo(BigDecimal.ZERO) > 0)
 				&& (this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0)) {
 			if (this.finAmount.getActualValue().compareTo(this.downPaySupl.getActualValue()) <= 0) {
-				throw new WrongValueException(this.downPaySupl.getChildren().get(1), Labels.getLabel(
-						"NUMBER_MAXVALUE",
-						new String[] { Labels.getLabel("label_QDEFinanceMainDialog_DownPaySupl.value"),
-								Labels.getLabel("label_QDEFinanceMainDialog_FinAmount.value") }));
+				throw new WrongValueException(this.downPaySupl.getChildren().get(1),
+						Labels.getLabel("NUMBER_MAXVALUE",
+								new String[] { Labels.getLabel("label_QDEFinanceMainDialog_DownPaySupl.value"),
+										Labels.getLabel("label_QDEFinanceMainDialog_FinAmount.value") }));
 			}
 
 		}
@@ -2580,13 +2564,15 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {
 			if (this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 				reqDwnPay = PennantAppUtil.getPercentageValue(
-						PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter), getFinanceDetail()
-								.getFinScheduleData().getFinanceMain().getMinDownPayPerc());
+						PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter),
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getMinDownPayPerc());
 				if (this.downPaySupl.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-					this.downPayBank.setValue(PennantAppUtil.formateAmount(reqDwnPay.subtract(PennantAppUtil
-							.unFormateAmount(this.downPaySupl.getActualValue(), formatter)), formatter));
-					if (PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter).compareTo(
-							BigDecimal.ZERO) < 0) {
+					this.downPayBank.setValue(PennantAppUtil.formateAmount(
+							reqDwnPay.subtract(
+									PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter)),
+							formatter));
+					if (PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter)
+							.compareTo(BigDecimal.ZERO) < 0) {
 						this.downPayBank.setValue(BigDecimal.ZERO);
 					}
 				} else {
@@ -2605,17 +2591,14 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 	}
 
-
-
-
 	/**
 	 * Get the Finance Main Details from the Screen
 	 */
 	public FinanceMain getFinanceMain() {
 		FinanceMain financeMain = super.getFinanceMain();
-		financeMain.setDownPayment(PennantAppUtil.unFormateAmount(
-				this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()), 
-				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
+		financeMain.setDownPayment(
+				PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()),
+						CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 		return financeMain;
 	}
 
@@ -2662,7 +2645,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
 			map.put("custShrtName", this.custShrtName.getValue());
-			map.put("finFormatter", CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+			map.put("finFormatter",
+					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 			map.put("finReference", this.finReference.getValue());
 			map.put("finance", true);
 			if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)) {
@@ -2677,7 +2661,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		setCustomer((Customer) nCustomer);
@@ -2739,7 +2724,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 			return null;
 		}
-
 
 		// Finance Scoring Details Tab --- > Scoring Module Details Check
 		// Check if any overrides exits then the overridden score count is same
@@ -2814,8 +2798,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!StringUtils.trimToEmpty(sCustGender).equals(this.custGenderCode.getSelectedItem().getValue().toString())) {
 			this.custSalutationCode.setValue("");
 		}
-		if (StringUtils.trimToEmpty(this.custGenderCode.getSelectedItem().getValue().toString()).equals(
-				PennantConstants.List_Select)) {
+		if (StringUtils.trimToEmpty(this.custGenderCode.getSelectedItem().getValue().toString())
+				.equals(PennantConstants.List_Select)) {
 			this.custSalutationCode.setDisabled(true);
 		} else {
 			this.custSalutationCode.setDisabled(false);
@@ -2844,8 +2828,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return idNumber;
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event)
+			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		doWriteComponentsToBean(getFinanceDetail(), false);
 

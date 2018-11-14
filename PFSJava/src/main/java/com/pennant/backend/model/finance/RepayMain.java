@@ -46,7 +46,6 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
 public class RepayMain implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -90,7 +89,7 @@ public class RepayMain implements java.io.Serializable {
 	private BigDecimal pendindODCharges = BigDecimal.ZERO;
 	private int lovDescFinFormatter;
 	private BigDecimal repayAmountExcess = BigDecimal.ZERO;
-	
+
 	private String earlyPayEffectOn;
 	private boolean earlyPay;
 	private BigDecimal earlyPayAmount = BigDecimal.ZERO;
@@ -100,18 +99,19 @@ public class RepayMain implements java.io.Serializable {
 	private Date earlyPayNextSchDate;
 	private Date refundCalStartDate;
 	private String payApportionment;
-	
+
 	public RepayMain() {
-		
+
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -119,20 +119,23 @@ public class RepayMain implements java.io.Serializable {
 	public String getFinCcy() {
 		return finCcy;
 	}
+
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
 	}
 
 	public String getProfitDaysBais() {
-    	return profitDaysBais;
-    }
+		return profitDaysBais;
+	}
+
 	public void setProfitDaysBais(String profitDaysBais) {
-    	this.profitDaysBais = profitDaysBais;
-    }
+		this.profitDaysBais = profitDaysBais;
+	}
 
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -140,6 +143,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescFinTypeName() {
 		return lovDescFinTypeName;
 	}
+
 	public void setLovDescFinTypeName(String lovDescFinTypeName) {
 		this.lovDescFinTypeName = lovDescFinTypeName;
 	}
@@ -147,6 +151,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getFinBranch() {
 		return finBranch;
 	}
+
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
@@ -154,6 +159,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescFinBranchName() {
 		return lovDescFinBranchName;
 	}
+
 	public void setLovDescFinBranchName(String lovDescFinBranchName) {
 		this.lovDescFinBranchName = lovDescFinBranchName;
 	}
@@ -161,6 +167,7 @@ public class RepayMain implements java.io.Serializable {
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
@@ -168,6 +175,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -175,6 +183,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescSalutationName() {
 		return lovDescSalutationName;
 	}
+
 	public void setLovDescSalutationName(String lovDescSalutationName) {
 		this.lovDescSalutationName = lovDescSalutationName;
 	}
@@ -182,6 +191,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescCustFName() {
 		return lovDescCustFName;
 	}
+
 	public void setLovDescCustFName(String lovDescCustFName) {
 		this.lovDescCustFName = lovDescCustFName;
 	}
@@ -189,6 +199,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescCustLName() {
 		return lovDescCustLName;
 	}
+
 	public void setLovDescCustLName(String lovDescCustLName) {
 		this.lovDescCustLName = lovDescCustLName;
 	}
@@ -196,6 +207,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -203,6 +215,7 @@ public class RepayMain implements java.io.Serializable {
 	public Date getDateStart() {
 		return dateStart;
 	}
+
 	public void setDateStart(Date dateStart) {
 		this.dateStart = dateStart;
 	}
@@ -210,6 +223,7 @@ public class RepayMain implements java.io.Serializable {
 	public Date getDateMatuirty() {
 		return dateMatuirty;
 	}
+
 	public void setDateMatuirty(Date dateMatuirty) {
 		this.dateMatuirty = dateMatuirty;
 	}
@@ -217,6 +231,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getFinAmount() {
 		return finAmount;
 	}
+
 	public void setFinAmount(BigDecimal finAmount) {
 		this.finAmount = finAmount;
 	}
@@ -224,6 +239,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getCurFinAmount() {
 		return curFinAmount;
 	}
+
 	public void setCurFinAmount(BigDecimal curFinAmount) {
 		this.curFinAmount = curFinAmount;
 	}
@@ -231,6 +247,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getProfit() {
 		return profit;
 	}
+
 	public void setProfit(BigDecimal profit) {
 		this.profit = profit;
 	}
@@ -238,6 +255,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getProfitBalance() {
 		return profitBalance;
 	}
+
 	public void setProfitBalance(BigDecimal profitBalance) {
 		this.profitBalance = profitBalance;
 	}
@@ -245,6 +263,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getPrincipal() {
 		return principal;
 	}
+
 	public void setPrincipal(BigDecimal principal) {
 		this.principal = principal;
 	}
@@ -252,6 +271,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getPrincipalBalance() {
 		return principalBalance;
 	}
+
 	public void setPrincipalBalance(BigDecimal principalBalance) {
 		this.principalBalance = principalBalance;
 	}
@@ -259,6 +279,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getTotalCapitalize() {
 		return totalCapitalize;
 	}
+
 	public void setTotalCapitalize(BigDecimal totalCapitalize) {
 		this.totalCapitalize = totalCapitalize;
 	}
@@ -266,6 +287,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getCapitalizeBalance() {
 		return capitalizeBalance;
 	}
+
 	public void setCapitalizeBalance(BigDecimal capitalizeBalance) {
 		this.capitalizeBalance = capitalizeBalance;
 	}
@@ -273,6 +295,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getOverduePrincipal() {
 		return overduePrincipal;
 	}
+
 	public void setOverduePrincipal(BigDecimal overduePrincipal) {
 		this.overduePrincipal = overduePrincipal;
 	}
@@ -280,20 +303,23 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getOverdueProfit() {
 		return overdueProfit;
 	}
+
 	public void setOverdueProfit(BigDecimal overdueProfit) {
 		this.overdueProfit = overdueProfit;
 	}
 
 	public BigDecimal getTotalFeeAmt() {
-    	return totalFeeAmt;
-    }
+		return totalFeeAmt;
+	}
+
 	public void setTotalFeeAmt(BigDecimal totalFeeAmt) {
-    	this.totalFeeAmt = totalFeeAmt;
-    }
-	
+		this.totalFeeAmt = totalFeeAmt;
+	}
+
 	public Date getDateLastFullyPaid() {
 		return dateLastFullyPaid;
 	}
+
 	public void setDateLastFullyPaid(Date dateLastFullyPaid) {
 		this.dateLastFullyPaid = dateLastFullyPaid;
 	}
@@ -301,6 +327,7 @@ public class RepayMain implements java.io.Serializable {
 	public Date getDateNextPaymentDue() {
 		return dateNextPaymentDue;
 	}
+
 	public void setDateNextPaymentDue(Date dateNextPaymentDue) {
 		this.dateNextPaymentDue = dateNextPaymentDue;
 	}
@@ -308,6 +335,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getAccrued() {
 		return accrued;
 	}
+
 	public void setAccrued(BigDecimal accrued) {
 		this.accrued = accrued;
 	}
@@ -315,6 +343,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getDownpayment() {
 		return downpayment;
 	}
+
 	public void setDownpayment(BigDecimal downpayment) {
 		this.downpayment = downpayment;
 	}
@@ -322,6 +351,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getRepayAccountId() {
 		return repayAccountId;
 	}
+
 	public void setRepayAccountId(String repayAccountId) {
 		this.repayAccountId = repayAccountId;
 	}
@@ -329,6 +359,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getFinAccount() {
 		return finAccount;
 	}
+
 	public void setFinAccount(String finAccount) {
 		this.finAccount = finAccount;
 	}
@@ -336,6 +367,7 @@ public class RepayMain implements java.io.Serializable {
 	public String getFinCustPftAccount() {
 		return finCustPftAccount;
 	}
+
 	public void setFinCustPftAccount(String finCustPftAccount) {
 		this.finCustPftAccount = finCustPftAccount;
 	}
@@ -343,6 +375,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getRepayAmountNow() {
 		return repayAmountNow;
 	}
+
 	public void setRepayAmountNow(BigDecimal repayAmountNow) {
 		this.repayAmountNow = repayAmountNow;
 	}
@@ -350,6 +383,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getPrincipalPayNow() {
 		return principalPayNow;
 	}
+
 	public void setPrincipalPayNow(BigDecimal principalPayNow) {
 		this.principalPayNow = principalPayNow;
 	}
@@ -357,6 +391,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getProfitPayNow() {
 		return profitPayNow;
 	}
+
 	public void setProfitPayNow(BigDecimal profitPayNow) {
 		this.profitPayNow = profitPayNow;
 	}
@@ -364,6 +399,7 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getRefundNow() {
 		return refundNow;
 	}
+
 	public void setRefundNow(BigDecimal refundNow) {
 		this.refundNow = refundNow;
 	}
@@ -371,6 +407,7 @@ public class RepayMain implements java.io.Serializable {
 	public int getLovDescFinFormatter() {
 		return lovDescFinFormatter;
 	}
+
 	public void setLovDescFinFormatter(int lovDescFinFormatter) {
 		this.lovDescFinFormatter = lovDescFinFormatter;
 	}
@@ -378,69 +415,82 @@ public class RepayMain implements java.io.Serializable {
 	public BigDecimal getPendindODCharges() {
 		return pendindODCharges;
 	}
+
 	public void setPendindODCharges(BigDecimal pendindODCharges) {
 		this.pendindODCharges = pendindODCharges;
 	}
 
 	public BigDecimal getRepayAmountExcess() {
-    	return repayAmountExcess;
-    }
+		return repayAmountExcess;
+	}
+
 	public void setRepayAmountExcess(BigDecimal repayAmountExcess) {
-    	this.repayAmountExcess = repayAmountExcess;
-    }
+		this.repayAmountExcess = repayAmountExcess;
+	}
 
 	public void setEarlyPay(boolean earlyPay) {
-	    this.earlyPay = earlyPay;
-    }
+		this.earlyPay = earlyPay;
+	}
+
 	public boolean isEarlyPay() {
-	    return earlyPay;
-    }
+		return earlyPay;
+	}
 
 	public void setEarlyPayAmount(BigDecimal earlyPayAmount) {
-	    this.earlyPayAmount = earlyPayAmount;
+		this.earlyPayAmount = earlyPayAmount;
 	}
+
 	public BigDecimal getEarlyPayAmount() {
-	    return earlyPayAmount;
-    }
-	
+		return earlyPayAmount;
+	}
+
 	public FinanceScheduleDetail getEarlyRepayNewSchd() {
-    	return earlyRepayNewSchd;
-    }
+		return earlyRepayNewSchd;
+	}
+
 	public void setEarlyRepayNewSchd(FinanceScheduleDetail earlyRepayNewSchd) {
-    	this.earlyRepayNewSchd = earlyRepayNewSchd;
-    }
-	
+		this.earlyRepayNewSchd = earlyRepayNewSchd;
+	}
+
 	public Date getEarlyPayOnSchDate() {
-    	return earlyPayOnSchDate;
-    }
+		return earlyPayOnSchDate;
+	}
+
 	public void setEarlyPayOnSchDate(Date earlyPayOnSchDate) {
-    	this.earlyPayOnSchDate = earlyPayOnSchDate;
-    }
-	
+		this.earlyPayOnSchDate = earlyPayOnSchDate;
+	}
+
 	public Date getEarlyPayNextSchDate() {
-    	return earlyPayNextSchDate;
-    }
+		return earlyPayNextSchDate;
+	}
+
 	public void setEarlyPayNextSchDate(Date earlyPayNextSchDate) {
-    	this.earlyPayNextSchDate = earlyPayNextSchDate;
-    }
+		this.earlyPayNextSchDate = earlyPayNextSchDate;
+	}
+
 	public void setEarlyPayEffectOn(String earlyPayEffectOn) {
-	    this.earlyPayEffectOn = earlyPayEffectOn;
-    }
+		this.earlyPayEffectOn = earlyPayEffectOn;
+	}
+
 	public String getEarlyPayEffectOn() {
-	    return earlyPayEffectOn;
-    }
+		return earlyPayEffectOn;
+	}
+
 	public void setInsRefund(BigDecimal insRefund) {
-	    this.insRefund = insRefund;
-    }
+		this.insRefund = insRefund;
+	}
+
 	public BigDecimal getInsRefund() {
-	    return insRefund;
-    }
+		return insRefund;
+	}
+
 	public void setRefundCalStartDate(Date refundCalStartDate) {
-	    this.refundCalStartDate = refundCalStartDate;
-    }
+		this.refundCalStartDate = refundCalStartDate;
+	}
+
 	public Date getRefundCalStartDate() {
-	    return refundCalStartDate;
-    }
+		return refundCalStartDate;
+	}
 
 	public String getPayApportionment() {
 		return payApportionment;
@@ -449,5 +499,5 @@ public class RepayMain implements java.io.Serializable {
 	public void setPayApportionment(String payApportionment) {
 		this.payApportionment = payApportionment;
 	}
-	
+
 }

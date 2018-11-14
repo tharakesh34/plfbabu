@@ -87,6 +87,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public String getId() {
 		return industryCode;
 	}
+
 	public void setId(String id) {
 		this.industryCode = id;
 	}
@@ -94,6 +95,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public String getIndustryCode() {
 		return industryCode;
 	}
+
 	public void setIndustryCode(String industryCode) {
 		this.industryCode = industryCode;
 	}
@@ -101,20 +103,20 @@ public class Industry extends AbstractWorkflowEntity {
 	public String getIndustryDesc() {
 		return industryDesc;
 	}
+
 	public void setIndustryDesc(String industryDesc) {
 		this.industryDesc = industryDesc;
 	}
 
-	/*public BigDecimal getIndustryLimit() {
-		return industryLimit;
-	}
-	public void setIndustryLimit(BigDecimal industryLimit) {
-		this.industryLimit = industryLimit;
-	}*/
+	/*
+	 * public BigDecimal getIndustryLimit() { return industryLimit; } public void setIndustryLimit(BigDecimal
+	 * industryLimit) { this.industryLimit = industryLimit; }
+	 */
 
 	public boolean isIndustryIsActive() {
 		return industryIsActive;
 	}
+
 	public void setIndustryIsActive(boolean industryIsActive) {
 		this.industryIsActive = industryIsActive;
 	}
@@ -122,6 +124,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -129,6 +132,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -136,6 +140,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public Industry getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Industry beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -143,6 +148,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -162,6 +168,7 @@ public class Industry extends AbstractWorkflowEntity {
 	public String getLovDescSubSectorCodeName() {
 		return lovDescSubSectorCodeName;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

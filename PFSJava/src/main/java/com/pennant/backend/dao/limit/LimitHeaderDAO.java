@@ -12,8 +12,7 @@ public interface LimitHeaderDAO {
 
 	LimitHeader getLimitHeaderByCustomerGroupCode(long groupCode, String type);
 
-	LimitHeader getLimitHeaderByRule(String ruleCode, String ruleValue,
-			String type);
+	LimitHeader getLimitHeaderByRule(String ruleCode, String ruleValue, String type);
 
 	long save(LimitHeader limitHeader, String tableType);
 
@@ -32,9 +31,9 @@ public interface LimitHeaderDAO {
 	void updateRebuild(long headerId, boolean rebuild, String type);
 
 	int getLimitHeaderCountById(long headerId, String type);
-	
+
 	int getLimitHeaderAndCustCountById(long headerId, long CustID);
-	
+
 	List<LimitHeader> getLimitHeaders(String type);
 
 	int getLimitHeaderAndCustGrpCountById(long headerId, long CustGrpID);

@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.PRelationCode;
  * 
  */
 public interface PRelationCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	PRelationCode getPRelationCodeById(String id);
+
 	PRelationCode getApprovedPRelationCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

@@ -64,7 +64,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>GeneralDepartment</b>.<br>
  * 
  */
-public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartment> implements GeneralDepartmentService {
+public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartment>
+		implements GeneralDepartmentService {
 
 	private static Logger logger = Logger.getLogger(GeneralDepartmentDAOImpl.class);
 
@@ -74,7 +75,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	public GeneralDepartmentServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -82,6 +83,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -89,21 +91,18 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	public GeneralDepartmentDAO getGeneralDepartmentDAO() {
 		return generalDepartmentDAO;
 	}
-	public void setGeneralDepartmentDAO(
-			GeneralDepartmentDAO generalDepartmentDAO) {
+
+	public void setGeneralDepartmentDAO(GeneralDepartmentDAO generalDepartmentDAO) {
 		this.generalDepartmentDAO = generalDepartmentDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTGenDepartments/RMTGenDepartments_Temp by using GeneralDepartmentDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using GeneralDepartmentDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtRMTGenDepartments by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * RMTGenDepartments/RMTGenDepartments_Temp by using GeneralDepartmentDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using GeneralDepartmentDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -114,24 +113,21 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		TableType tableType = TableType.MAIN_TAB;
-		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader
-				.getAuditDetail().getModelData();
+		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader.getAuditDetail().getModelData();
 
 		if (generalDepartment.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 		if (generalDepartment.isNew()) {
-			generalDepartment.setGenDepartment(getGeneralDepartmentDAO().save(
-					generalDepartment, tableType));
+			generalDepartment.setGenDepartment(getGeneralDepartmentDAO().save(generalDepartment, tableType));
 			auditHeader.getAuditDetail().setModelData(generalDepartment);
-			auditHeader.setAuditReference(generalDepartment
-					.getGenDepartment());
+			auditHeader.setAuditReference(generalDepartment.getGenDepartment());
 		} else {
 			getGeneralDepartmentDAO().update(generalDepartment, tableType);
 		}
@@ -143,12 +139,10 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTGenDepartments by using GeneralDepartmentDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTGenDepartments by using GeneralDepartmentDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -159,13 +153,12 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader
-				.getAuditDetail().getModelData();
+		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader.getAuditDetail().getModelData();
 		getGeneralDepartmentDAO().delete(generalDepartment, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -174,8 +167,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	}
 
 	/**
-	 * getGeneralDepartmentById fetch the details by using
-	 * GeneralDepartmentDAO's getGeneralDepartmentById method.
+	 * getGeneralDepartmentById fetch the details by using GeneralDepartmentDAO's getGeneralDepartmentById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -189,10 +181,8 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	}
 
 	/**
-	 * getApprovedGeneralDepartmentById fetch the details by using
-	 * GeneralDepartmentDAO's getGeneralDepartmentById method . with parameter
-	 * id and type as blank. it fetches the approved records from the
-	 * RMTGenDepartments.
+	 * getApprovedGeneralDepartmentById fetch the details by using GeneralDepartmentDAO's getGeneralDepartmentById
+	 * method . with parameter id and type as blank. it fetches the approved records from the RMTGenDepartments.
 	 * 
 	 * @param id
 	 *            (String)
@@ -203,22 +193,16 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getGeneralDepartmentDAO().delete with parameters
-	 * generalDepartment,"" b) NEW Add new record in to main table by using
-	 * getGeneralDepartmentDAO().save with parameters generalDepartment,"" c)
-	 * EDIT Update record in the main table by using
-	 * getGeneralDepartmentDAO().update with parameters generalDepartment,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getGeneralDepartmentDAO().delete with parameters
-	 * generalDepartment,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtRMTGenDepartments
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getGeneralDepartmentDAO().delete with
+	 * parameters generalDepartment,"" b) NEW Add new record in to main table by using getGeneralDepartmentDAO().save
+	 * with parameters generalDepartment,"" c) EDIT Update record in the main table by using
+	 * getGeneralDepartmentDAO().update with parameters generalDepartment,"" 3) Delete the record from the workFlow
+	 * table by using getGeneralDepartmentDAO().delete with parameters generalDepartment,"_Temp" 4) Audit the record in
+	 * to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -229,23 +213,22 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		GeneralDepartment generalDepartment = new GeneralDepartment();
-		BeanUtils.copyProperties((GeneralDepartment) auditHeader
-				.getAuditDetail().getModelData(), generalDepartment);
-		
+		BeanUtils.copyProperties((GeneralDepartment) auditHeader.getAuditDetail().getModelData(), generalDepartment);
+
 		getGeneralDepartmentDAO().delete(generalDepartment, TableType.TEMP_TAB);
-		
+
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(generalDepartmentDAO.getGeneralDepartmentById(generalDepartment.getGenDepartment(), ""));
+			auditHeader.getAuditDetail().setBefImage(
+					generalDepartmentDAO.getGeneralDepartmentById(generalDepartment.getGenDepartment(), ""));
 		}
 
-		if (generalDepartment.getRecordType().equals(
-				PennantConstants.RECORD_TYPE_DEL)) {
+		if (generalDepartment.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
 			getGeneralDepartmentDAO().delete(generalDepartment, TableType.MAIN_TAB);
@@ -257,8 +240,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 			generalDepartment.setNextTaskId("");
 			generalDepartment.setWorkflowId(0);
 
-			if (generalDepartment.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (generalDepartment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				generalDepartment.setRecordType("");
 				getGeneralDepartmentDAO().save(generalDepartment, TableType.MAIN_TAB);
@@ -269,7 +251,6 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 			}
 		}
 
-		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -282,13 +263,10 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getGeneralDepartmentDAO().delete with
-	 * parameters generalDepartment,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtRMTGenDepartments by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getGeneralDepartmentDAO().delete with parameters generalDepartment,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -298,13 +276,12 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader
-				.getAuditDetail().getModelData();
+		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getGeneralDepartmentDAO().delete(generalDepartment, TableType.TEMP_TAB);
 
@@ -314,10 +291,8 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -325,20 +300,18 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getGeneralDepartmentDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getGeneralDepartmentDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -348,18 +321,16 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		logger.debug("Entering");
 
 		// Get the model object.
-		GeneralDepartment generalDepartment = (GeneralDepartment) auditDetail
-				.getModelData();
+		GeneralDepartment generalDepartment = (GeneralDepartment) auditDetail.getModelData();
 		// Check the unique keys.
-		if (generalDepartment.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
+		if (generalDepartment.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
 				&& generalDepartmentDAO.isDuplicateKey(generalDepartment.getGenDepartment(),
 						generalDepartment.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			
 
-			parameters[0] = PennantJavaUtil.getLabel("label_GenDepartment") + ":"+ generalDepartment.getGenDepartment();
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			parameters[0] = PennantJavaUtil.getLabel("label_GenDepartment") + ":"
+					+ generalDepartment.getGenDepartment();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

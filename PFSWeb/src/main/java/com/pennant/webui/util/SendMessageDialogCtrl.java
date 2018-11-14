@@ -72,17 +72,15 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Messages/SendMessageDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Messages/SendMessageDialog.zul file.
  */
 public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = -7028973478971693678L;
 	private static final Logger logger = Logger.getLogger(SendMessageDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * 'GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by 'GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_UserDialog;
 	protected Panel contactsPanel;
@@ -197,15 +195,14 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("UsrID", getUserWorkspace().getLoggedInUser().getUserId(), Filter.OP_NOT_EQUAL);		
-		
-		dataMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
-				this.window_UserDialog, "SecurityUsers", dataMap,filter);
+		filter[0] = new Filter("UsrID", getUserWorkspace().getLoggedInUser().getUserId(), Filter.OP_NOT_EQUAL);
+
+		dataMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(this.window_UserDialog, "SecurityUsers",
+				dataMap, filter);
 
 		if (dataMap != null && dataMap.size() > 0) {
 			for (String contact : dataMap.keySet()) {
-				if (!username.equals(contact)
-						&& this.contacts.getFellowIfAny(contact) == null) {
+				if (!username.equals(contact) && this.contacts.getFellowIfAny(contact) == null) {
 					Listitem listitem = new Listitem();
 					listitem.setId(contact);
 
@@ -284,8 +281,7 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	public void onCheck$notificationType(Event event) {
 		logger.debug("Entering");
 
-		Notify notify = Notify.valueOf((String) this.notificationType
-				.getSelectedItem().getValue());
+		Notify notify = Notify.valueOf((String) this.notificationType.getSelectedItem().getValue());
 
 		if (notify == Notify.USER) {
 			this.roles.clearSelection();
@@ -301,9 +297,8 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	}
 
 	/**
-	 * When user Click on send button.Publish the message and capture off line
-	 * users and save message in "OfflineMessagebackup" table for show message
-	 * when they login
+	 * When user Click on send button.Publish the message and capture off line users and save message in
+	 * "OfflineMessagebackup" table for show message when they login
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -318,8 +313,7 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 			return;
 		}
 
-		Notify notify = Notify.valueOf((String) this.notificationType
-				.getSelectedItem().getValue());
+		Notify notify = Notify.valueOf((String) this.notificationType.getSelectedItem().getValue());
 
 		// Get the recipients
 		Listbox listbox = null;
@@ -343,13 +337,11 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		int i = 0;
 
 		for (Listitem item : items) {
-			to[i++] = notify == Notify.USER ? item.getId() : item.getId()
-					.substring(5);
+			to[i++] = notify == Notify.USER ? item.getId() : item.getId().substring(5);
 		}
 
 		// Publish the message
-		getEventManager().publish(this.messageBox.getValue(), username, notify,
-				to);
+		getEventManager().publish(this.messageBox.getValue(), username, notify, to);
 
 		doClear();
 

@@ -68,45 +68,42 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMasters/Flag/flagDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMasters/Flag/flagDialog.zul file.
  */
 public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FlagDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_FlagDialog; 
-	protected Row 			row0; 
-	protected Label 		label_FlagCode;
-	protected Space 		space_FlagCode; 
- 
-	protected Textbox 		flagCode; 
-	protected Label 		label_FlagDesc;
-	protected Space 		space_FlagDesc; 
- 
-	protected Textbox 		flagDesc; 
-	protected Row 			row1; 
-	protected Label 		label_Active;
-	protected Space 		space_Active; 
- 
-	protected Checkbox 		active; 
-	private boolean 		enqModule=false;
-	
+	protected Window window_FlagDialog;
+	protected Row row0;
+	protected Label label_FlagCode;
+	protected Space space_FlagCode;
+
+	protected Textbox flagCode;
+	protected Label label_FlagDesc;
+	protected Space space_FlagDesc;
+
+	protected Textbox flagDesc;
+	protected Row row1;
+	protected Label label_Active;
+	protected Space space_Active;
+
+	protected Checkbox active;
+	private boolean enqModule = false;
+
 	// not auto wired vars
 	private Flag flag; // overhanded per param
 	private transient FlagListCtrl flagListCtrl; // overhanded per param
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient FlagService flagService;
 
@@ -125,9 +122,8 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Flag object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Flag object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -141,31 +137,31 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		try {
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
-				enqModule=(Boolean) arguments.get("enqModule");
-			}else{
-				enqModule=false;
+				enqModule = (Boolean) arguments.get("enqModule");
+			} else {
+				enqModule = false;
 			}
-			
+
 			// READ OVERHANDED params !
 			if (arguments.containsKey("flag")) {
 				this.flag = (Flag) arguments.get("flag");
-				Flag befImage =new Flag();
+				Flag befImage = new Flag();
 				BeanUtils.copyProperties(this.flag, befImage);
 				this.flag.setBefImage(befImage);
-				
+
 				setFlag(this.flag);
 			} else {
 				setFlag(null);
 			}
-			doLoadWorkFlow(this.flag.isWorkflow(),this.flag.getWorkflowId(),this.flag.getNextTaskId());
-	
-			if (isWorkFlowEnabled() && !enqModule){
-					this.userAction	= setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateRoleAuthorities(getRole(), "FlagsDialog");
-			}else{
+			doLoadWorkFlow(this.flag.isWorkflow(), this.flag.getWorkflowId(), this.flag.getNextTaskId());
+
+			if (isWorkFlowEnabled() && !enqModule) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FlagsDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
-	
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -178,15 +174,15 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			} else {
 				setFlagListCtrl(null);
 			}
-	
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getFlag());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
-		logger.debug("Leaving" +event.toString());
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -195,11 +191,11 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -207,11 +203,11 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -219,9 +215,9 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -230,11 +226,11 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -242,9 +238,9 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_FlagDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -266,27 +262,24 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		try {
-			
-			
-			ScreenCTL.displayNotes(getNotes("Flag",getFlag().getFlagCode(),getFlag().getVersion()),this);
+
+			ScreenCTL.displayNotes(getNotes("Flag", getFlag().getFlagCode(), getFlag().getVersion()), this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" +event.toString());
-	
-	}
+		logger.debug("Leaving" + event.toString());
 
+	}
 
 	// GUI operations
 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFlag
 	 * @throws InterruptedException
@@ -295,38 +288,38 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-				if (aFlag.isNew()) {
-					this.flagCode.setVisible(true);
-					this.btnCtrl.setInitNew();
-					doEdit();
-					// setFocus
-					this.flagCode.focus();
-				} else {
-					this.flagCode.setReadonly(true);
-					this.flagDesc.focus();
-					if (isWorkFlowEnabled()){
-						if (StringUtils.isNotBlank(aFlag.getRecordType())){
-							this.btnNotes.setVisible(true);
-						}
-						doEdit();
-					}else{
-						this.btnCtrl.setInitEdit();
-						doReadOnly();
-						btnCancel.setVisible(false);
-					}
+		if (aFlag.isNew()) {
+			this.flagCode.setVisible(true);
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+			this.flagCode.focus();
+		} else {
+			this.flagCode.setReadonly(true);
+			this.flagDesc.focus();
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(aFlag.getRecordType())) {
+					this.btnNotes.setVisible(true);
 				}
+				doEdit();
+			} else {
+				this.btnCtrl.setInitEdit();
+				doReadOnly();
+				btnCancel.setVisible(false);
+			}
+		}
 		try {
-		
+
 			// fill the components with the data
 			doWriteBeanToComponents(aFlag);
-			
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -341,10 +334,10 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			this.flagCode.setReadonly(true);
 		}
 
-		
 		this.flagDesc.setReadonly(isReadOnly("FlagsDialog_FlagDesc"));
 		this.active.setDisabled(isReadOnly("FlagsDialog_Active"));
-		if(getFlag().isNewRecord() || StringUtils.equals(getFlag().getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+		if (getFlag().isNewRecord()
+				|| StringUtils.equals(getFlag().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			//this.active.setDisabled(true);
 		}
 
@@ -363,6 +356,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -372,12 +366,12 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		this.flagDesc.setReadonly(true);
 		this.active.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
-		}		
-		if(isWorkFlowEnabled()){
+		}
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -391,37 +385,36 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		if(!enqModule){
+		logger.debug("Entering");
+		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnSave"));	
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnSave"));
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.flagCode.setMaxlength(6);
 		this.flagDesc.setMaxlength(50);
-		
-		if (isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
-		logger.debug("Leaving") ;
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -438,7 +431,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -446,12 +439,12 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 *            Flag
 	 */
 	public void doWriteBeanToComponents(Flag aFlag) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.flagCode.setValue(aFlag.getFlagCode());
 		this.flagDesc.setValue(aFlag.getFlagDesc());
 		this.active.setChecked(aFlag.isActive());
 		this.recordStatus.setValue(aFlag.getRecordStatus());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -461,41 +454,41 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @param aFlag
 	 */
 	public void doWriteComponentsToBean(Flag aFlag) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Code
 		try {
-		    aFlag.setFlagCode(this.flagCode.getValue());
-		}catch (WrongValueException we ) {
+			aFlag.setFlagCode(this.flagCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Description
 		try {
-		    aFlag.setFlagDesc(this.flagDesc.getValue());
-		}catch (WrongValueException we ) {
+			aFlag.setFlagDesc(this.flagDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
 		try {
 			aFlag.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -505,14 +498,16 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		//Code
-		if (!this.flagCode.isReadonly()){
-			this.flagCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHA,true));
+		if (!this.flagCode.isReadonly()) {
+			this.flagCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
 		//Description
-		if (!this.flagDesc.isReadonly()){
-			this.flagDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.flagDesc.isReadonly()) {
+			this.flagDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -522,9 +517,8 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		logger.debug("Entering");
 		this.flagCode.setConstraint("");
 		this.flagDesc.setConstraint("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set Validations for LOV Fields
@@ -539,7 +533,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -551,10 +545,11 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		this.flagDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getFlagListCtrl().search();
 	}
 
@@ -564,42 +559,42 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final Flag aFlag = new Flag();
 		BeanUtils.copyProperties(getFlag(), aFlag);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +Labels.getLabel("label_FlagCode")+":"+ aFlag.getFlagCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FlagCode") + ":" + aFlag.getFlagCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFlag.getRecordType())){
-				aFlag.setVersion(aFlag.getVersion()+1);
+			if (StringUtils.isBlank(aFlag.getRecordType())) {
+				aFlag.setVersion(aFlag.getVersion() + 1);
 				aFlag.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aFlag.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aFlag.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
+					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFlag.getNextTaskId(), aFlag);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aFlag,tranType)){
+				if (doProcess(aFlag, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Clears the components values. <br>
@@ -607,11 +602,11 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-		
+
 		this.flagCode.setValue("");
 		this.flagDesc.setValue("");
 		this.active.setChecked(false);
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -624,14 +619,14 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		final Flag aFlag = new Flag();
 		BeanUtils.copyProperties(getFlag(), aFlag);
 		boolean isNew = false;
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			aFlag.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFlag.getNextTaskId(), aFlag);
 		}
-		
+
 		// force validation, if on, than execute by component.getValue()
-		if(!PennantConstants.RECORD_TYPE_DEL.equals(aFlag.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aFlag.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the Flag object with the components data
 			doWriteComponentsToBean(aFlag);
@@ -639,34 +634,34 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
-		isNew = aFlag.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aFlag.getRecordType())){
-				aFlag.setVersion(aFlag.getVersion()+1);
-				if(isNew){
+		isNew = aFlag.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aFlag.getRecordType())) {
+				aFlag.setVersion(aFlag.getVersion() + 1);
+				if (isNew) {
 					aFlag.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aFlag.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aFlag.setNewRecord(true);
 				}
 			}
-		}else{
-			aFlag.setVersion(aFlag.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aFlag.setVersion(aFlag.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			
-			if(doProcess(aFlag,tranType)){
+
+			if (doProcess(aFlag, tranType)) {
 				//doWriteBeanToComponents(aFlag);
 				refreshList();
 				closeDialog();
@@ -690,14 +685,14 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doProcess(Flag aFlag,String tranType){
+
+	private boolean doProcess(Flag aFlag, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
+		boolean processCompleted = false;
 		aFlag.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFlag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aFlag.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -708,95 +703,98 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 					}
 				}
 			}
-			
+
 			aFlag.setTaskId(getTaskId());
 			aFlag.setNextTaskId(getNextTaskId());
 			aFlag.setRoleCode(getRole());
 			aFlag.setNextRoleCode(getNextRoleCode());
-			
+
 			if (StringUtils.isBlank(getOperationRefs())) {
-					processCompleted = doSaveProcess(getAuditHeader(aFlag, tranType),null);
+				processCompleted = doSaveProcess(getAuditHeader(aFlag, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				AuditHeader auditHeader =  getAuditHeader(aFlag, PennantConstants.TRAN_WF);
-				
+				AuditHeader auditHeader = getAuditHeader(aFlag, PennantConstants.TRAN_WF);
+
 				for (int i = 0; i < list.length; i++) {
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 			processCompleted = doSaveProcess(getAuditHeader(aFlag, tranType), null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param  AuditHeader auditHeader
-	 * @param method  (String)
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doSaveProcess(AuditHeader auditHeader, String method){
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
-		
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
+
 		Flag aFlag = (Flag) auditHeader.getAuditDetail().getModelData();
-		
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
 						auditHeader = getFlagService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getFlagService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getFlagService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+
+				} else {
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getFlagService().doApprove(auditHeader);
 
-						if(PennantConstants.RECORD_TYPE_DEL.equals(aFlag.getRecordType())){
-							deleteNotes=true;
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aFlag.getRecordType())) {
+							deleteNotes = true;
 						}
 
-					}else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getFlagService().doReject(auditHeader);
-						if(PennantConstants.RECORD_TYPE_NEW.equals(aFlag.getRecordType())){
-							deleteNotes=true;
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aFlag.getRecordType())) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FlagDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				auditHeader =	ErrorControl.showErrorDetails(this.window_FlagDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes("Flag",aFlag.getFlagCode(),aFlag.getVersion()),true);
+				auditHeader = ErrorControl.showErrorDetails(this.window_FlagDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes("Flag", aFlag.getFlagCode(), aFlag.getVersion()), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -807,23 +805,24 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
-		
+
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(Flag aFlag, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFlag.getBefImage(), aFlag);   
-		return new AuditHeader(aFlag.getFlagCode(),null,null,null,auditDetail,aFlag.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(Flag aFlag, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFlag.getBefImage(), aFlag);
+		return new AuditHeader(aFlag.getFlagCode(), null, null, null, auditDetail, aFlag.getUserDetails(),
+				getOverideMap());
 	}
 
 	// ******************************************************//

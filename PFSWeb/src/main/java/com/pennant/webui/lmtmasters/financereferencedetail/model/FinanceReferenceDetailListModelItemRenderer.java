@@ -71,29 +71,29 @@ public class FinanceReferenceDetailListModelItemRenderer implements ListitemRend
 		this.eventList = list;
 		this.moduleName = moduleName;
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceWorkFlow financeWorkflow, int count) throws Exception {
 
 		Listcell lc;
 		lc = new Listcell(financeWorkflow.getFinType().toUpperCase());
 		lc.setParent(item);
-		
+
 		String desc = "";
-		if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FINANCE)){
+		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FINANCE)) {
 			desc = financeWorkflow.getLovDescFinTypeName();
-		}else if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COLLATERAL)){ 
+		} else if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COLLATERAL)) {
 			desc = financeWorkflow.getCollateralDesc();
-		} else if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS)){
+		} else if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS)) {
 			desc = financeWorkflow.getVasProductDesc();
-		} else if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COMMITMENT)){
+		} else if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COMMITMENT)) {
 			desc = financeWorkflow.getCommitmentTypeDesc();
-		}else if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_PROMOTION)){
+		} else if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_PROMOTION)) {
 			desc = financeWorkflow.getLovDescPromotionName();
-		}else if(StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FACILITY)){
+		} else if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_FACILITY)) {
 			desc = financeWorkflow.getLovDescFacilityTypeName();
 		}
-				
+
 		lc = new Listcell(desc);
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(financeWorkflow.getFinEvent(), eventList));

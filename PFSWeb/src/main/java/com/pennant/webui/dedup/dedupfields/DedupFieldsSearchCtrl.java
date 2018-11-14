@@ -62,41 +62,40 @@ import com.pennant.backend.service.dedup.DedupFieldsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
+public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(DedupFieldsSearchCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_DedupFieldsSearch; 
-	
-	protected Textbox fieldName; 
-	protected Listbox sortOperator_fieldName; 
-	protected Textbox fieldControl; 
-	protected Listbox sortOperator_fieldControl; 
-	protected Textbox recordStatus; 
-	protected Listbox recordType;	
-	protected Listbox sortOperator_recordStatus; 
-	protected Listbox sortOperator_recordType; 
-	
-	protected Label label_DedupFieldsSearch_RecordStatus; 
-	protected Label label_DedupFieldsSearch_RecordType; 
-	protected Label label_DedupFieldsSearchResult; 
+	protected Window window_DedupFieldsSearch;
+
+	protected Textbox fieldName;
+	protected Listbox sortOperator_fieldName;
+	protected Textbox fieldControl;
+	protected Listbox sortOperator_fieldControl;
+	protected Textbox recordStatus;
+	protected Listbox recordType;
+	protected Listbox sortOperator_recordStatus;
+	protected Listbox sortOperator_recordType;
+
+	protected Label label_DedupFieldsSearch_RecordStatus;
+	protected Label label_DedupFieldsSearch_RecordType;
+	protected Label label_DedupFieldsSearchResult;
 
 	// not auto wired vars
 	private transient DedupFieldsListCtrl dedupFieldsCtrl; // overhanded per param
 	private transient DedupFieldsService dedupFieldsService;
-	private transient WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("DedupFields");
-	
+	private transient WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("DedupFields");
+
 	/**
 	 * constructor
 	 */
@@ -120,14 +119,14 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 		// Set the page level components.
 		setPageComponents(window_DedupFieldsSearch);
 
-		if (workFlowDetails==null){
+		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
-		}else{
+		} else {
 			setWorkFlowEnabled(true);
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
-	
+
 		if (arguments.containsKey("dedupFieldsCtrl")) {
 			this.dedupFieldsCtrl = (DedupFieldsListCtrl) arguments.get("dedupFieldsCtrl");
 		} else {
@@ -135,20 +134,24 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 		}
 
 		// DropDown ListBox
-	
-		this.sortOperator_fieldName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_fieldName
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fieldName.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
-		this.sortOperator_fieldControl.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		this.sortOperator_fieldControl
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_fieldControl.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		
-		if (isWorkFlowEnabled()){
-			this.sortOperator_recordStatus.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordStatus.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.sortOperator_recordType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_recordType
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-			this.recordType=setRecordType(this.recordType);	
-		}else{
+			this.recordType = setRecordType(this.recordType);
+		} else {
 			this.recordStatus.setVisible(false);
 			this.recordType.setVisible(false);
 			this.sortOperator_recordStatus.setVisible(false);
@@ -156,7 +159,7 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 			this.label_DedupFieldsSearch_RecordStatus.setVisible(false);
 			this.label_DedupFieldsSearch_RecordType.setVisible(false);
 		}
-		
+
 		// Restore the search mask input definition
 		// if exists a searchObject than show formerly inputs of filter values
 		if (arguments.containsKey("searchObject")) {
@@ -169,10 +172,10 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 			for (final Filter filter : ft) {
 
 				// restore founded properties
-			    if ("fieldName".equals(filter.getProperty())) {
+				if ("fieldName".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_fieldName, filter);
 					this.fieldName.setValue(filter.getValue().toString());
-			    } else if ("fieldControl".equals(filter.getProperty())) {
+				} else if ("fieldControl".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_fieldControl, filter);
 					this.fieldControl.setValue(filter.getValue().toString());
 				} else if ("recordStatus".equals(filter.getProperty())) {
@@ -181,14 +184,14 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 				} else if ("recordType".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_recordType, filter);
 					for (int i = 0; i < this.recordType.getItemCount(); i++) {
-						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())){
+						if (this.recordType.getItemAtIndex(i).getValue().equals(filter.getValue().toString())) {
 							this.recordType.setSelectedIndex(i);
 						}
 					}
-	
+
 				}
 			}
-			
+
 		}
 		showDedupFieldsSeekDialog();
 	}
@@ -235,18 +238,17 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 	 * 2. Checks which operator is selected. <br>
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
-	 */ 
+	 */
 	@SuppressWarnings("unchecked")
 	public void doSearch() {
 
 		final JdbcSearchObject<DedupFields> so = new JdbcSearchObject<DedupFields>(DedupFields.class);
 		so.addTabelName("DedupFields_View");
-		
-		if (isWorkFlowEnabled()){
-			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());	
+
+		if (isWorkFlowEnabled()) {
+			so.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		}
-		
-		
+
 		if (StringUtils.isNotEmpty(this.fieldName.getValue())) {
 
 			// get the search operator
@@ -255,7 +257,8 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 				final int searchOpId = ((SearchOperators) itemFieldName.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("fieldName", "%" + this.fieldName.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(
+							new Filter("fieldName", "%" + this.fieldName.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -271,7 +274,8 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 				final int searchOpId = ((SearchOperators) itemFieldControl.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("fieldControl", "%" + this.fieldControl.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("fieldControl", "%" + this.fieldControl.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -284,9 +288,10 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 			final Listitem itemRecordStatus = this.sortOperator_recordStatus.getSelectedItem();
 			if (itemRecordStatus != null) {
 				final int searchOpId = ((SearchOperators) itemRecordStatus.getAttribute("data")).getSearchOperatorId();
-	
+
 				if (searchOpId == Filter.OP_LIKE) {
-					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%", searchOpId));
+					so.addFilter(new Filter("recordStatus", "%" + this.recordStatus.getValue().toUpperCase() + "%",
+							searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
@@ -294,18 +299,18 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 				}
 			}
 		}
-		
-		String selectedValue="";
-		if (this.recordType.getSelectedItem()!=null){
-			selectedValue =this.recordType.getSelectedItem().getValue().toString();
+
+		String selectedValue = "";
+		if (this.recordType.getSelectedItem() != null) {
+			selectedValue = this.recordType.getSelectedItem().getValue().toString();
 		}
 
 		if (StringUtils.isNotEmpty(selectedValue)) {
 			// get the search operator
 			final Listitem itemRecordType = this.sortOperator_recordType.getSelectedItem();
-			if (itemRecordType!= null) {
+			if (itemRecordType != null) {
 				final int searchOpId = ((SearchOperators) itemRecordType.getAttribute("data")).getSearchOperatorId();
-	
+
 				if (searchOpId == Filter.OP_LIKE) {
 					so.addFilter(new Filter("recordType", "%" + selectedValue.toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
@@ -323,14 +328,13 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 
 		final Listbox listBox = this.dedupFieldsCtrl.listBoxDedupFields;
 		final Paging paging = this.dedupFieldsCtrl.pagingDedupFieldsList;
-		
 
 		// set the model to the listbox with the initial resultset get by the DAO method.
 		((PagedListWrapper<DedupFields>) listBox.getModel()).init(so, listBox, paging);
 		this.dedupFieldsCtrl.setSearchObj(so);
 
-		this.label_DedupFieldsSearchResult.setValue(Labels.getLabel("label_DedupFieldsSearchResult.value") + " "
-				+ String.valueOf(paging.getTotalSize()));
+		this.label_DedupFieldsSearchResult.setValue(
+				Labels.getLabel("label_DedupFieldsSearchResult.value") + " " + String.valueOf(paging.getTotalSize()));
 	}
 
 	// ******************************************************//

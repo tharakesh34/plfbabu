@@ -3,13 +3,13 @@ package com.pennant.coreinterface.model.account;
 import java.io.Serializable;
 
 public class InterfaceAccount implements Serializable {
-	
+
 	private static final long serialVersionUID = 3988443874861414927L;
 
 	public InterfaceAccount() {
 		super();
 	}
-	
+
 	private String referenceNum;
 	private String custCIF;
 	private String branchCode;

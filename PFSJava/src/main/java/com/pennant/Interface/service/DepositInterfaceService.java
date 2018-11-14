@@ -7,6 +7,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public interface DepositInterfaceService {
 
 	FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException;
-	
+
 	FinCollaterals fetchDepositDetails(String depositReference) throws InterfaceException;
 }

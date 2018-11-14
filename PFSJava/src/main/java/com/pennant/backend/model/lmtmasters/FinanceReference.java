@@ -9,7 +9,7 @@ public class FinanceReference {
 	private String finType;
 	private String finEvent;
 	private String lovDescFinTypeDescName;
-	
+
 	private List<FinanceReferenceDetail> checkList;
 	private List<FinanceReferenceDetail> aggrementList;
 	private List<FinanceReferenceDetail> eligibilityRuleList;
@@ -25,7 +25,7 @@ public class FinanceReference {
 	private List<FinanceReferenceDetail> limitCodeDetailList;
 	private List<FinanceReferenceDetail> tatNotificationList;
 	private List<FinanceReferenceDetail> financeTabsList;
-	
+
 	private String workFlowType;
 	private String lovDescWorkFlowTypeName;
 	private String lovDescWorkFlowRolesName;
@@ -40,6 +40,7 @@ public class FinanceReference {
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -47,6 +48,7 @@ public class FinanceReference {
 	public String getLovDescFinTypeDescName() {
 		return lovDescFinTypeDescName;
 	}
+
 	public void setLovDescFinTypeDescName(String lovDescFinTypeDescName) {
 		this.lovDescFinTypeDescName = lovDescFinTypeDescName;
 	}
@@ -54,6 +56,7 @@ public class FinanceReference {
 	public List<FinanceReferenceDetail> getCheckList() {
 		return checkList;
 	}
+
 	public void setCheckList(List<FinanceReferenceDetail> checkList) {
 		this.checkList = checkList;
 	}
@@ -61,6 +64,7 @@ public class FinanceReference {
 	public List<FinanceReferenceDetail> getAggrementList() {
 		return aggrementList;
 	}
+
 	public void setAggrementList(List<FinanceReferenceDetail> aggrementList) {
 		this.aggrementList = aggrementList;
 	}
@@ -68,6 +72,7 @@ public class FinanceReference {
 	public List<FinanceReferenceDetail> getEligibilityRuleList() {
 		return eligibilityRuleList;
 	}
+
 	public void setEligibilityRuleList(List<FinanceReferenceDetail> eligibilityRuleList) {
 		this.eligibilityRuleList = eligibilityRuleList;
 	}
@@ -75,59 +80,66 @@ public class FinanceReference {
 	public List<FinanceReferenceDetail> getScoringGroupList() {
 		return scoringGroupList;
 	}
+
 	public void setScoringGroupList(List<FinanceReferenceDetail> scoringGroup) {
 		this.scoringGroupList = scoringGroup;
 	}
-	
+
 	public List<FinanceReferenceDetail> getCorpScoringGroupList() {
-    	return corpScoringGroupList;
-    }
+		return corpScoringGroupList;
+	}
+
 	public void setCorpScoringGroupList(List<FinanceReferenceDetail> corpScoringGroupList) {
-    	this.corpScoringGroupList = corpScoringGroupList;
-    }
+		this.corpScoringGroupList = corpScoringGroupList;
+	}
 
 	public void setAccountingList(List<FinanceReferenceDetail> accountingList) {
-	    this.accountingList = accountingList;
-    }
+		this.accountingList = accountingList;
+	}
+
 	public List<FinanceReferenceDetail> getAccountingList() {
-	    return accountingList;
-    }
-	
+		return accountingList;
+	}
+
 	public void setMailTemplateList(List<FinanceReferenceDetail> mailTemplateList) {
-	    this.mailTemplateList = mailTemplateList;
-    }
+		this.mailTemplateList = mailTemplateList;
+	}
+
 	public List<FinanceReferenceDetail> getMailTemplateList() {
-	    return mailTemplateList;
-    }
-	
+		return mailTemplateList;
+	}
+
 	public List<FinanceReferenceDetail> getFinanceDedupeList() {
-	    return financeDedupeList;
-    }
+		return financeDedupeList;
+	}
+
 	public void setFinanceDedupeList(List<FinanceReferenceDetail> financeDedupeList) {
-	    this.financeDedupeList = financeDedupeList;
-    }
-	
+		this.financeDedupeList = financeDedupeList;
+	}
+
 	public List<FinanceReferenceDetail> getCustomerDedupeList() {
 		return customerDedupeList;
 	}
+
 	public void setCustomerDedupeList(List<FinanceReferenceDetail> customerDedupeList) {
 		this.customerDedupeList = customerDedupeList;
 	}
 
 	public List<FinanceReferenceDetail> getBlackListDedupeList() {
-	    return blackListDedupeList;
-    }
+		return blackListDedupeList;
+	}
+
 	public void setBlackListDedupeList(List<FinanceReferenceDetail> blackListDedupeList) {
-	    this.blackListDedupeList = blackListDedupeList;
-    }
+		this.blackListDedupeList = blackListDedupeList;
+	}
 
 	public List<FinanceReferenceDetail> getPoliceDedupeList() {
-	    return policeDedupeList;
-    }
+		return policeDedupeList;
+	}
 
 	public void setPoliceDedupeList(List<FinanceReferenceDetail> policeDedupeList) {
-	    this.policeDedupeList = policeDedupeList;
-    }
+		this.policeDedupeList = policeDedupeList;
+	}
 
 	public String getWorkFlowType() {
 		return workFlowType;
@@ -176,7 +188,7 @@ public class FinanceReference {
 	public void setLimitCodeDetailList(List<FinanceReferenceDetail> limitCodeDetailList) {
 		this.limitCodeDetailList = limitCodeDetailList;
 	}
-	
+
 	public List<FinanceReferenceDetail> getTatNotificationList() {
 		return tatNotificationList;
 	}
@@ -184,13 +196,14 @@ public class FinanceReference {
 	public void setTatNotificationList(List<FinanceReferenceDetail> tatNotificationList) {
 		this.tatNotificationList = tatNotificationList;
 	}
-	
+
 	public String getFinEvent() {
-	    return finEvent;
-    }
+		return finEvent;
+	}
+
 	public void setFinEvent(String finEvent) {
-	    this.finEvent = finEvent;
-    }
+		this.finEvent = finEvent;
+	}
 
 	public List<FinanceReferenceDetail> getReturnChequeList() {
 		return returnChequeList;

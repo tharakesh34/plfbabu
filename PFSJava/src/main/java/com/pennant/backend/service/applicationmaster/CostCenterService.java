@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface CostCenterService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CostCenter getCostCenter(long costCenterID);
+
 	CostCenter getApprovedCostCenter(long costCenterID);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

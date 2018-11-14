@@ -162,14 +162,14 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 		selectSql.append(" Where orgid = :orgid");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try{
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
 		}
 		logger.debug(Literal.LEAVING);
 		return count > 0 ? true : false;
-		
+
 	}
 }

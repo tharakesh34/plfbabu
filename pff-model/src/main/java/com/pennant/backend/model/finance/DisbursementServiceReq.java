@@ -31,7 +31,7 @@ public class DisbursementServiceReq extends AbstractWorkflowEntity implements En
 	private Date maturityDate;
 	@XmlElement(name = "totalDisbAmount")
 	private BigDecimal finCurrAssetValue;
-	@XmlElement(name="disbursement")
+	@XmlElement(name = "disbursement")
 	private List<FinAdvancePayments> finAdvancePayments;
 	@XmlElement(name = "postings")
 	private List<ReturnDataSet> postingList;
@@ -40,7 +40,6 @@ public class DisbursementServiceReq extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private String serviceReqNo;
 
-	
 	public String getFinReference() {
 		return finReference;
 	}

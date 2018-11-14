@@ -59,7 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinTypePartnerBank table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "purpose","paymentMode","partnerBankID"})
+@XmlType(propOrder = { "purpose", "paymentMode", "partnerBankID" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 	private String purpose;
 	@XmlElement
 	private String paymentMode;
-	@XmlElement(name="partnerBankId")
+	@XmlElement(name = "partnerBankId")
 	private long partnerBankID;
 	private String partnerBankCode;
 	private String partnerBankName;

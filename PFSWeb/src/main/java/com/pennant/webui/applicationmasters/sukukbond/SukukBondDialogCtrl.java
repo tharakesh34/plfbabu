@@ -71,46 +71,42 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMasters/SukukBond/sukukBondDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMasters/SukukBond/sukukBondDialog.zul file.
  */
 public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SukukBondDialogCtrl.class);
-	
-	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window window_SukukBondDialog; 
-	protected Row 			row0; 
-	protected Label 		label_BondCode;
-	protected Hlayout 		hlayout_BondCode;
-	protected Space 		space_BondCode; 
- 
-	protected Textbox 		bondCode; 
-	protected Label 		label_BondDesc;
-	protected Hlayout 		hlayout_BondDesc;
-	protected Space 		space_BondDesc; 
- 
-	protected Textbox 		bondDesc; 
 
-	
-	protected Label 		recordType;	 
-	protected Groupbox 		gb_statusDetails;
-	private boolean 		enqModule=false;
-	
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window window_SukukBondDialog;
+	protected Row row0;
+	protected Label label_BondCode;
+	protected Hlayout hlayout_BondCode;
+	protected Space space_BondCode;
+
+	protected Textbox bondCode;
+	protected Label label_BondDesc;
+	protected Hlayout hlayout_BondDesc;
+	protected Space space_BondDesc;
+
+	protected Textbox bondDesc;
+
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
+
 	// not auto wired vars
 	private SukukBond sukukBond; // overhanded per param
 	private transient SukukBondListCtrl sukukBondListCtrl; // overhanded per param
 
-	
 	// ServiceDAOs / Domain Classes
 	private transient SukukBondService sukukBondService;
 	private transient PagedListService pagedListService;
@@ -130,9 +126,8 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected SukukBond object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected SukukBond object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -147,31 +142,31 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
-				enqModule=(Boolean) arguments.get("enqModule");
-			}else{
-				enqModule=false;
+				enqModule = (Boolean) arguments.get("enqModule");
+			} else {
+				enqModule = false;
 			}
-			
+
 			// READ OVERHANDED params !
 			if (arguments.containsKey("sukukBond")) {
 				this.sukukBond = (SukukBond) arguments.get("sukukBond");
-				SukukBond befImage =new SukukBond();
+				SukukBond befImage = new SukukBond();
 				BeanUtils.copyProperties(this.sukukBond, befImage);
 				this.sukukBond.setBefImage(befImage);
-				
+
 				setSukukBond(this.sukukBond);
 			} else {
 				setSukukBond(null);
 			}
-			doLoadWorkFlow(this.sukukBond.isWorkflow(),this.sukukBond.getWorkflowId(),this.sukukBond.getNextTaskId());
-	
-			if (isWorkFlowEnabled() && !enqModule){
-					this.userAction	= setListRecordStatus(this.userAction);
-					getUserWorkspace().allocateRoleAuthorities(getRole(), "SukukBondDialog");
-			}else{
+			doLoadWorkFlow(this.sukukBond.isWorkflow(), this.sukukBond.getWorkflowId(), this.sukukBond.getNextTaskId());
+
+			if (isWorkFlowEnabled() && !enqModule) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SukukBondDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
-	
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -184,15 +179,15 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 			} else {
 				setSukukBondListCtrl(null);
 			}
-	
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getSukukBond());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
-		logger.debug("Leaving" +event.toString());
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -201,12 +196,12 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		displayComponents(ScreenCTL.SCRN_GNEDT);
 		this.btnCancel.setVisible(true);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "delete" button is clicked. <br>
 	 * 
@@ -214,11 +209,11 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -226,9 +221,9 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -237,13 +232,13 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doWriteBeanToComponents(this.sukukBond.getBefImage());
 		displayComponents(ScreenCTL.SCRN_GNINT);
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -251,9 +246,9 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_SukukBondDialog);
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -275,27 +270,25 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		try {
-			
-			
-			ScreenCTL.displayNotes(getNotes("SukukBond",getSukukBond().getBondCode(),getSukukBond().getVersion()),this);
+
+			ScreenCTL.displayNotes(getNotes("SukukBond", getSukukBond().getBondCode(), getSukukBond().getVersion()),
+					this);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" +event.toString());
-	
-	}
+		logger.debug("Leaving" + event.toString());
 
+	}
 
 	// GUI operations
 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSukukBond
 	 * @throws InterruptedException
@@ -304,53 +297,57 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 		logger.debug("Entering");
 
 		try {
-		
+
 			// fill the components with the data
 			doWriteBeanToComponents(aSukukBond);
 			// set ReadOnly mode accordingly if the object is new or not.
 
-			displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aSukukBond.isNewRecord()));
+			displayComponents(ScreenCTL.getMode(enqModule, isWorkFlowEnabled(), aSukukBond.isNewRecord()));
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
-	
+
 	// 1 Enquiry
 	// 2 New Record
 	// 3 InitEdit
 	// 4 EditMode
 	// 5 WorkFlow Add
 	// 6 WorkFlow Edit
-	
-	private void displayComponents(int mode){
+
+	private void displayComponents(int mode) {
 		logger.debug("Entering");
-		
-		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(),isFirstTask(), this.userAction,this.bondCode,this.bondCode));
-		
-		if (getSukukBond().isNewRecord()){
-			  	setComponentAccessType("SukukBondDialog_BondCode", false, this.bondCode, this.space_BondCode, this.label_BondCode, this.hlayout_BondCode,null);
-			}
-		
+
+		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
+				this.userAction, this.bondCode, this.bondCode));
+
+		if (getSukukBond().isNewRecord()) {
+			setComponentAccessType("SukukBondDialog_BondCode", false, this.bondCode, this.space_BondCode,
+					this.label_BondCode, this.hlayout_BondCode, null);
+		}
+
 		logger.debug("Leaving");
-	} 
-	
+	}
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly(boolean readOnly) {
 		logger.debug("Entering");
-		
-		boolean tempReadOnly= readOnly;
-		if (readOnly){
+
+		boolean tempReadOnly = readOnly;
+		if (readOnly) {
 			tempReadOnly = true;
-		}else if (PennantConstants.RECORD_TYPE_DEL.equals(this.sukukBond.getRecordType())) {
+		} else if (PennantConstants.RECORD_TYPE_DEL.equals(this.sukukBond.getRecordType())) {
 			tempReadOnly = true;
 		}
-		setComponentAccessType("SukukBondDialog_BondCode", true, this.bondCode, this.space_BondCode, this.label_BondCode, this.hlayout_BondCode,null);		
-  		setComponentAccessType("SukukBondDialog_BondDesc", tempReadOnly, this.bondDesc, this.space_BondDesc, this.label_BondDesc, this.hlayout_BondDesc,null);
-		setRowInvisible(this.row0, this.hlayout_BondCode,this.hlayout_BondDesc);
+		setComponentAccessType("SukukBondDialog_BondCode", true, this.bondCode, this.space_BondCode,
+				this.label_BondCode, this.hlayout_BondCode, null);
+		setComponentAccessType("SukukBondDialog_BondDesc", tempReadOnly, this.bondDesc, this.space_BondDesc,
+				this.label_BondDesc, this.hlayout_BondDesc, null);
+		setRowInvisible(this.row0, this.hlayout_BondCode, this.hlayout_BondDesc);
 		logger.debug("Leaving");
 	}
 
@@ -361,33 +358,32 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		if(!enqModule){
+		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SukukBondDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SukukBondDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SukukBondDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SukukBondDialog_btnSave"));	
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SukukBondDialog_btnSave"));
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.bondCode.setMaxlength(20);
-	 	this.bondDesc.setMaxlength(150);
-	
-	setStatusDetails(gb_statusDetails,groupboxWf,south,enqModule);
-		logger.debug("Leaving") ;
+		this.bondDesc.setMaxlength(150);
+
+		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -397,10 +393,10 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 *            SukukBond
 	 */
 	public void doWriteBeanToComponents(SukukBond aSukukBond) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		this.bondCode.setValue(aSukukBond.getBondCode());
 		this.bondDesc.setValue(aSukukBond.getBondDesc());
-	
+
 		this.recordStatus.setValue(aSukukBond.getRecordStatus());
 		//this.recordType.setValue(PennantJavaUtil.getLabel(aSukukBond.getRecordType()));
 		logger.debug("Leaving");
@@ -412,35 +408,35 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @param aSukukBond
 	 */
 	public void doWriteComponentsToBean(SukukBond aSukukBond) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Code
 		try {
-		    aSukukBond.setBondCode(this.bondCode.getValue());
-		}catch (WrongValueException we ) {
+			aSukukBond.setBondCode(this.bondCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Description
 		try {
-		    aSukukBond.setBondDesc(this.bondDesc.getValue());
-		}catch (WrongValueException we ) {
+			aSukukBond.setBondDesc(this.bondDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -450,14 +446,16 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		//Code
-		if (!this.bondCode.isReadonly()){
-			this.bondCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukBondDialog_BondCode.value"),PennantRegularExpressions.REGEX_UPPERCASENAME,true));
+		if (!this.bondCode.isReadonly()) {
+			this.bondCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukBondDialog_BondCode.value"),
+					PennantRegularExpressions.REGEX_UPPERCASENAME, true));
 		}
 		//Description
-		if (!this.bondDesc.isReadonly()){
-			this.bondDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukBondDialog_BondDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
+		if (!this.bondDesc.isReadonly()) {
+			this.bondDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukBondDialog_BondDesc.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
 		}
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -467,9 +465,8 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 		logger.debug("Entering");
 		this.bondCode.setConstraint("");
 		this.bondDesc.setConstraint("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Set Validations for LOV Fields
@@ -484,7 +481,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -500,7 +497,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getSukukBondListCtrl().search();
 	}
 
@@ -510,43 +507,42 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 		final SukukBond aSukukBond = new SukukBond();
 		BeanUtils.copyProperties(getSukukBond(), aSukukBond);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_SukukBondDialog_BondCode.value")+" : "+aSukukBond.getBondCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SukukBondDialog_BondCode.value") + " : " + aSukukBond.getBondCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aSukukBond.getRecordType())){
-				aSukukBond.setVersion(aSukukBond.getVersion()+1);
+			if (StringUtils.isBlank(aSukukBond.getRecordType())) {
+				aSukukBond.setVersion(aSukukBond.getVersion() + 1);
 				aSukukBond.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aSukukBond.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aSukukBond.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
+					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aSukukBond.getNextTaskId(), aSukukBond);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aSukukBond,tranType)){
+				if (doProcess(aSukukBond, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Clears the components values. <br>
@@ -554,10 +550,10 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-		
+
 		this.bondCode.setValue("");
 		this.bondDesc.setValue("");
-	logger.debug("Leaving");
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -570,14 +566,14 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 		final SukukBond aSukukBond = new SukukBond();
 		BeanUtils.copyProperties(getSukukBond(), aSukukBond);
 		boolean isNew = false;
-		
-		if(isWorkFlowEnabled()){
+
+		if (isWorkFlowEnabled()) {
 			aSukukBond.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aSukukBond.getNextTaskId(), aSukukBond);
 		}
-		
+
 		// force validation, if on, than execute by component.getValue()
-		if(!PennantConstants.RECORD_TYPE_DEL.equals(aSukukBond.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aSukukBond.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the SukukBond object with the components data
 			doWriteComponentsToBean(aSukukBond);
@@ -585,34 +581,34 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		
-		isNew = aSukukBond.isNew();
-		String tranType="";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aSukukBond.getRecordType())){
-				aSukukBond.setVersion(aSukukBond.getVersion()+1);
-				if(isNew){
+		isNew = aSukukBond.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aSukukBond.getRecordType())) {
+				aSukukBond.setVersion(aSukukBond.getVersion() + 1);
+				if (isNew) {
 					aSukukBond.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aSukukBond.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSukukBond.setNewRecord(true);
 				}
 			}
-		}else{
-			aSukukBond.setVersion(aSukukBond.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aSukukBond.setVersion(aSukukBond.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-		
+
 		// save it to database
 		try {
-			
-			if(doProcess(aSukukBond,tranType)){
+
+			if (doProcess(aSukukBond, tranType)) {
 				//doWriteBeanToComponents(aSukukBond);
 				refreshList();
 				closeDialog();
@@ -636,14 +632,14 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doProcess(SukukBond aSukukBond,String tranType){
+
+	private boolean doProcess(SukukBond aSukukBond, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
+		boolean processCompleted = false;
 		aSukukBond.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSukukBond.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSukukBond.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		if (isWorkFlowEnabled()) {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -654,95 +650,98 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 					}
 				}
 			}
-			
+
 			aSukukBond.setTaskId(getTaskId());
 			aSukukBond.setNextTaskId(getNextTaskId());
 			aSukukBond.setRoleCode(getRole());
 			aSukukBond.setNextRoleCode(getNextRoleCode());
-			
+
 			if (StringUtils.isBlank(getOperationRefs())) {
-					processCompleted = doSaveProcess(getAuditHeader(aSukukBond, tranType),null);
+				processCompleted = doSaveProcess(getAuditHeader(aSukukBond, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				AuditHeader auditHeader =  getAuditHeader(aSukukBond, PennantConstants.TRAN_WF);
-				
+				AuditHeader auditHeader = getAuditHeader(aSukukBond, PennantConstants.TRAN_WF);
+
 				for (int i = 0; i < list.length; i++) {
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 			processCompleted = doSaveProcess(getAuditHeader(aSukukBond, tranType), null);
 		}
-		logger.debug("return value :"+processCompleted);
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param  AuditHeader auditHeader
-	 * @param method  (String)
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doSaveProcess(AuditHeader auditHeader, String method){
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
-		boolean deleteNotes=false;
-		
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		boolean deleteNotes = false;
+
 		SukukBond aSukukBond = (SukukBond) auditHeader.getAuditDetail().getModelData();
-		
+
 		try {
-			
-			while(retValue==PennantConstants.porcessOVERIDE){
-				
-				if (StringUtils.isBlank(method)){
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())){
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
 						auditHeader = getSukukBondService().delete(auditHeader);
-						deleteNotes=true;
-					}else{
-						auditHeader = getSukukBondService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getSukukBondService().saveOrUpdate(auditHeader);
 					}
-					
-				}else{
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+
+				} else {
+					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getSukukBondService().doApprove(auditHeader);
 
-						if(PennantConstants.RECORD_TYPE_DEL.equals(aSukukBond.getRecordType())){
-							deleteNotes=true;
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aSukukBond.getRecordType())) {
+							deleteNotes = true;
 						}
 
-					}else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))){
+					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = getSukukBondService().doReject(auditHeader);
-						if(PennantConstants.RECORD_TYPE_NEW.equals(aSukukBond.getRecordType())){
-							deleteNotes=true;
+						if (PennantConstants.RECORD_TYPE_NEW.equals(aSukukBond.getRecordType())) {
+							deleteNotes = true;
 						}
 
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_SukukBondDialog, auditHeader);
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
-				
-				auditHeader =	ErrorControl.showErrorDetails(this.window_SukukBondDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
 
-					if(deleteNotes){
-						deleteNotes(getNotes("SukukBond",aSukukBond.getBondCode(),aSukukBond.getVersion()),true);
+				auditHeader = ErrorControl.showErrorDetails(this.window_SukukBondDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes("SukukBond", aSukukBond.getBondCode(), aSukukBond.getVersion()), true);
 					}
 				}
-				
-				if (retValue==PennantConstants.porcessOVERIDE){
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -753,23 +752,24 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
-		
+
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
 	// WorkFlow Components
-	
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(SukukBond aSukukBond, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSukukBond.getBefImage(), aSukukBond);   
-		return new AuditHeader(aSukukBond.getBondCode(),null,null,null,auditDetail,aSukukBond.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(SukukBond aSukukBond, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSukukBond.getBefImage(), aSukukBond);
+		return new AuditHeader(aSukukBond.getBondCode(), null, null, null, auditDetail, aSukukBond.getUserDetails(),
+				getOverideMap());
 	}
 
 	// ******************************************************//

@@ -84,69 +84,71 @@ public class EntityCodes extends AbstractWorkflowEntity {
 	public String getId() {
 		return entityCode;
 	}
+
 	public void setId(String id) {
 		this.entityCode = id;
 	}
 
 	public String getEntityCode() {
-    	return entityCode;
-    }
+		return entityCode;
+	}
 
 	public void setEntityCode(String entityCode) {
-    	this.entityCode = entityCode;
-    }
+		this.entityCode = entityCode;
+	}
 
 	public String getEntityDesc() {
-    	return entityDesc;
-    }
+		return entityDesc;
+	}
 
 	public void setEntityDesc(String entityDesc) {
-    	this.entityDesc = entityDesc;
-    }
+		this.entityDesc = entityDesc;
+	}
 
 	public String getCountryCode() {
-    	return countryCode;
-    }
+		return countryCode;
+	}
 
 	public void setCountryCode(String countryCode) {
-    	this.countryCode = countryCode;
-    }
+		this.countryCode = countryCode;
+	}
 
 	public String getDateFormat() {
-    	return dateFormat;
-    }
+		return dateFormat;
+	}
 
 	public void setDateFormat(String dateFormat) {
-    	this.dateFormat = dateFormat;
-    }
+		this.dateFormat = dateFormat;
+	}
 
 	public String getAmountFormat() {
-    	return amountFormat;
-    }
+		return amountFormat;
+	}
 
 	public void setAmountFormat(String amountFormat) {
-    	this.amountFormat = amountFormat;
-    }
+		this.amountFormat = amountFormat;
+	}
 
 	public String getRateFormat() {
-    	return rateFormat;
-    }
+		return rateFormat;
+	}
 
 	public void setRateFormat(String rateFormat) {
-    	this.rateFormat = rateFormat;
-    }
+		this.rateFormat = rateFormat;
+	}
 
 	public String getWeekend() {
-    	return weekend;
-    }
+		return weekend;
+	}
 
 	public void setWeekend(String weekend) {
-    	this.weekend = weekend;
-    }
+		this.weekend = weekend;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -154,6 +156,7 @@ public class EntityCodes extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -161,6 +164,7 @@ public class EntityCodes extends AbstractWorkflowEntity {
 	public EntityCodes getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(EntityCodes beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -168,6 +172,7 @@ public class EntityCodes extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

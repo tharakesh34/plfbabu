@@ -12,16 +12,16 @@ import javax.xml.bind.annotation.XmlType;
 public class Applicant {
 
 	@XmlElement(name = "DEMOGS")
-	private DeMogs		demogs;
+	private DeMogs demogs;
 
 	@XmlElement(name = "FINANCIALS")
-	private Financials	financials;
+	private Financials financials;
 
 	@XmlElement(name = "BUSINESS")
-	private Business	business;
+	private Business business;
 
 	@XmlElement(name = "PERFIOS")
-	private Perfios		perfios;
+	private Perfios perfios;
 
 	public DeMogs getDemogs() {
 		return demogs;

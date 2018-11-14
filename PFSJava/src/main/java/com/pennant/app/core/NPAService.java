@@ -56,10 +56,10 @@ import com.pennant.eod.constants.EodConstants;
 
 public class NPAService extends ServiceHelper {
 
-	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(NPAService.class);
-	private RuleExecutionUtil	ruleExecutionUtil;
-	private RuleDAO				ruleDAO;
+	private static final long serialVersionUID = 6161809223570900644L;
+	private static Logger logger = Logger.getLogger(NPAService.class);
+	private RuleExecutionUtil ruleExecutionUtil;
+	private RuleDAO ruleDAO;
 
 	/**
 	 * Default constructor
@@ -128,7 +128,7 @@ public class NPAService extends ServiceHelper {
 				}
 			}
 		}
-		
+
 		if (npaBucket == 0) {
 			int size = list.size();
 			NPABucketConfiguration conigMin = null;
@@ -147,7 +147,6 @@ public class NPAService extends ServiceHelper {
 			}
 
 		}
-		
 
 		provision.setFinReference(finReference);
 		provision.setFinBranch(pftDetail.getFinBranch());
@@ -159,8 +158,8 @@ public class NPAService extends ServiceHelper {
 		provision.setPrincipalDue(pftDetail.getODPrincipal());
 		provision.setProfitDue(pftDetail.getODProfit());
 		Date lastFullypaid = pftDetail.getFullPaidDate();
-		if (lastFullypaid==null) {
-			lastFullypaid=pftDetail.getFinStartDate();
+		if (lastFullypaid == null) {
+			lastFullypaid = pftDetail.getFinStartDate();
 		}
 		provision.setLastFullyPaidDate(lastFullypaid);
 		provision.setDueFromDate(pftDetail.getPrvODDate());
@@ -204,8 +203,8 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("ODDays", pftDetail.getCurODDays());
 		dataMap.put("Product", pftDetail.getFinCategory());
 
-		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil
-				.executeRule(rule, dataMap, finCcy, RuleReturnType.DECIMAL);
+		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil.executeRule(rule, dataMap, finCcy,
+				RuleReturnType.DECIMAL);
 
 		//since rule is considered as percentage we need have eight decimals 
 		pecentage = pecentage.divide(new BigDecimal(100), 8, RoundingMode.HALF_DOWN);
@@ -226,13 +225,13 @@ public class NPAService extends ServiceHelper {
 		//2 - profit
 		if (total == 1) {
 			dueAmount = provision.getPriBal();
-		}else if (total==2) {
+		} else if (total == 2) {
 			dueAmount = provision.getPftBal();
 		}
 		BigDecimal provisonAmt = BigDecimal.ZERO;
 		if (percentage.compareTo(BigDecimal.ZERO) != 0) {
 			provisonAmt = dueAmount.multiply(percentage);
-			provisonAmt = provisonAmt.setScale(0,RoundingMode.HALF_DOWN);
+			provisonAmt = provisonAmt.setScale(0, RoundingMode.HALF_DOWN);
 
 		}
 		return provisonAmt;

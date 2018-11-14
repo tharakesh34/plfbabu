@@ -50,13 +50,18 @@ import com.pennanttech.pff.core.TableType;
 
 public interface IRRFinanceTypeDAO extends BasicCrudDao<IRRFinanceType> {
 
-	IRRFinanceType getIRRFinanceType(long iRRID,String finType,String type);
-	List<IRRFinanceType> getIRRFinanceTypeByFinType(String finType, String type);
-	List<IRRFinanceType> getIRRFinanceTypeList(String finType,String type);
-	String save(IRRFinanceType iRRFinanceType,TableType tableType);
-	void update(IRRFinanceType iRRFinanceType,TableType tableType);
-	void delete(IRRFinanceType iRRFinanceType, TableType tableType);
-	void deleteList(String finType, String type);
+	IRRFinanceType getIRRFinanceType(long iRRID, String finType, String type);
 
+	List<IRRFinanceType> getIRRFinanceTypeByFinType(String finType, String type);
+
+	List<IRRFinanceType> getIRRFinanceTypeList(String finType, String type);
+
+	String save(IRRFinanceType iRRFinanceType, TableType tableType);
+
+	void update(IRRFinanceType iRRFinanceType, TableType tableType);
+
+	void delete(IRRFinanceType iRRFinanceType, TableType tableType);
+
+	void deleteList(String finType, String type);
 
 }

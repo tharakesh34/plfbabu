@@ -7,36 +7,36 @@ import java.util.Map;
 
 public class FinRepayQueueHeader {
 
-	private BigDecimal	principal	= BigDecimal.ZERO;
-	private BigDecimal	profit		= BigDecimal.ZERO;
-	private BigDecimal	tds			= BigDecimal.ZERO;
-	private BigDecimal	lateProfit	= BigDecimal.ZERO;
-	private BigDecimal	penalty		= BigDecimal.ZERO;
-	private BigDecimal	fee			= BigDecimal.ZERO;
-	private BigDecimal	insurance	= BigDecimal.ZERO;
-	private BigDecimal	suplRent	= BigDecimal.ZERO;
-	private BigDecimal	incrCost	= BigDecimal.ZERO;
-	
-	private BigDecimal	priWaived		= BigDecimal.ZERO;
-	private BigDecimal	pftWaived		= BigDecimal.ZERO;
-	private BigDecimal	latePftWaived	= BigDecimal.ZERO;
-	private BigDecimal	penaltyWaived	= BigDecimal.ZERO;
-	private BigDecimal	feeWaived		= BigDecimal.ZERO;
-	private BigDecimal	insWaived		= BigDecimal.ZERO;
-	private BigDecimal	suplRentWaived	= BigDecimal.ZERO;
-	private BigDecimal	incrCostWaived	= BigDecimal.ZERO;
-	
+	private BigDecimal principal = BigDecimal.ZERO;
+	private BigDecimal profit = BigDecimal.ZERO;
+	private BigDecimal tds = BigDecimal.ZERO;
+	private BigDecimal lateProfit = BigDecimal.ZERO;
+	private BigDecimal penalty = BigDecimal.ZERO;
+	private BigDecimal fee = BigDecimal.ZERO;
+	private BigDecimal insurance = BigDecimal.ZERO;
+	private BigDecimal suplRent = BigDecimal.ZERO;
+	private BigDecimal incrCost = BigDecimal.ZERO;
+
+	private BigDecimal priWaived = BigDecimal.ZERO;
+	private BigDecimal pftWaived = BigDecimal.ZERO;
+	private BigDecimal latePftWaived = BigDecimal.ZERO;
+	private BigDecimal penaltyWaived = BigDecimal.ZERO;
+	private BigDecimal feeWaived = BigDecimal.ZERO;
+	private BigDecimal insWaived = BigDecimal.ZERO;
+	private BigDecimal suplRentWaived = BigDecimal.ZERO;
+	private BigDecimal incrCostWaived = BigDecimal.ZERO;
+
 	private String payType;
 	private String postBranch;
 	private String partnerBankAc;
 	private String partnerBankAcType;
 	private boolean pftChgAccReq;
 	private long receiptId;
-	
-	private Map<String , BigDecimal> extDataMap = null;
+
+	private Map<String, BigDecimal> extDataMap = null;
 	private HashMap<String, Object> gstExecutionMap = null;
 	private List<FinRepayQueue> queueList = null;
-	
+
 	public FinRepayQueueHeader() {
 
 	}
@@ -48,6 +48,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getPrincipal() {
 		return principal;
 	}
+
 	public void setPrincipal(BigDecimal principal) {
 		this.principal = principal;
 	}
@@ -55,6 +56,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getProfit() {
 		return profit;
 	}
+
 	public void setProfit(BigDecimal profit) {
 		this.profit = profit;
 	}
@@ -62,6 +64,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getLateProfit() {
 		return lateProfit;
 	}
+
 	public void setLateProfit(BigDecimal lateProfit) {
 		this.lateProfit = lateProfit;
 	}
@@ -69,6 +72,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getPenalty() {
 		return penalty;
 	}
+
 	public void setPenalty(BigDecimal penalty) {
 		this.penalty = penalty;
 	}
@@ -76,6 +80,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getFee() {
 		return fee;
 	}
+
 	public void setFee(BigDecimal fee) {
 		this.fee = fee;
 	}
@@ -83,6 +88,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getInsurance() {
 		return insurance;
 	}
+
 	public void setInsurance(BigDecimal insurance) {
 		this.insurance = insurance;
 	}
@@ -90,6 +96,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getSuplRent() {
 		return suplRent;
 	}
+
 	public void setSuplRent(BigDecimal suplRent) {
 		this.suplRent = suplRent;
 	}
@@ -97,13 +104,15 @@ public class FinRepayQueueHeader {
 	public BigDecimal getIncrCost() {
 		return incrCost;
 	}
+
 	public void setIncrCost(BigDecimal incrCost) {
 		this.incrCost = incrCost;
 	}
-	
+
 	public BigDecimal getPriWaived() {
 		return priWaived;
 	}
+
 	public void setPriWaived(BigDecimal priWaived) {
 		this.priWaived = priWaived;
 	}
@@ -111,6 +120,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getPftWaived() {
 		return pftWaived;
 	}
+
 	public void setPftWaived(BigDecimal pftWaived) {
 		this.pftWaived = pftWaived;
 	}
@@ -118,6 +128,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getLatePftWaived() {
 		return latePftWaived;
 	}
+
 	public void setLatePftWaived(BigDecimal latePftWaived) {
 		this.latePftWaived = latePftWaived;
 	}
@@ -125,6 +136,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getPenaltyWaived() {
 		return penaltyWaived;
 	}
+
 	public void setPenaltyWaived(BigDecimal penaltyWaived) {
 		this.penaltyWaived = penaltyWaived;
 	}
@@ -132,6 +144,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getFeeWaived() {
 		return feeWaived;
 	}
+
 	public void setFeeWaived(BigDecimal feeWaived) {
 		this.feeWaived = feeWaived;
 	}
@@ -139,6 +152,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getInsWaived() {
 		return insWaived;
 	}
+
 	public void setInsWaived(BigDecimal insWaived) {
 		this.insWaived = insWaived;
 	}
@@ -146,6 +160,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getSuplRentWaived() {
 		return suplRentWaived;
 	}
+
 	public void setSuplRentWaived(BigDecimal suplRentWaived) {
 		this.suplRentWaived = suplRentWaived;
 	}
@@ -153,6 +168,7 @@ public class FinRepayQueueHeader {
 	public BigDecimal getIncrCostWaived() {
 		return incrCostWaived;
 	}
+
 	public void setIncrCostWaived(BigDecimal incrCostWaived) {
 		this.incrCostWaived = incrCostWaived;
 	}
@@ -160,6 +176,7 @@ public class FinRepayQueueHeader {
 	public List<FinRepayQueue> getQueueList() {
 		return queueList;
 	}
+
 	public void setQueueList(List<FinRepayQueue> queueList) {
 		this.queueList = queueList;
 	}
@@ -212,11 +229,11 @@ public class FinRepayQueueHeader {
 		this.pftChgAccReq = pftChgAccReq;
 	}
 
-	public Map<String , BigDecimal> getExtDataMap() {
+	public Map<String, BigDecimal> getExtDataMap() {
 		return extDataMap;
 	}
 
-	public void setExtDataMap(Map<String , BigDecimal> extDataMap) {
+	public void setExtDataMap(Map<String, BigDecimal> extDataMap) {
 		this.extDataMap = extDataMap;
 	}
 
@@ -235,6 +252,5 @@ public class FinRepayQueueHeader {
 	public void setGstExecutionMap(HashMap<String, Object> gstExecutionMap) {
 		this.gstExecutionMap = gstExecutionMap;
 	}
-
 
 }

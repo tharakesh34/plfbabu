@@ -34,23 +34,23 @@ import com.pennant.util.PennantAppUtil;
 
 public class DeviationRenderer {
 
-	private static final Logger		logger			= Logger.getLogger(DeviationRenderer.class);
+	private static final Logger logger = Logger.getLogger(DeviationRenderer.class);
 
-	private static final String		bold			= " font-weight: bold;";
-	private static final String		boldAndRed		= "font-weight:bold;color:red;";
-	int								ccyformat		= 0;
-	private transient UserWorkspace	userWorkspace;
-	private boolean					approverScreen	= false;
+	private static final String bold = " font-weight: bold;";
+	private static final String boldAndRed = "font-weight:bold;color:red;";
+	int ccyformat = 0;
+	private transient UserWorkspace userWorkspace;
+	private boolean approverScreen = false;
 	private boolean workflow = false;
 
-	List<DeviationParam>			deviationParams	= PennantAppUtil.getDeviationParams();
-	ArrayList<ValueLabel>			approveStatus	= PennantStaticListUtil.getApproveStatus();
-	ArrayList<ValueLabel>			secRolesList	= PennantAppUtil.getSecRolesList(null);
+	List<DeviationParam> deviationParams = PennantAppUtil.getDeviationParams();
+	ArrayList<ValueLabel> approveStatus = PennantStaticListUtil.getApproveStatus();
+	ArrayList<ValueLabel> secRolesList = PennantAppUtil.getSecRolesList(null);
 	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 	List<ValueLabel> delegators = new ArrayList<>();
 
 	@Autowired
-	private DeviationHelper			deviationHelper;
+	private DeviationHelper deviationHelper;
 
 	public void init(UserWorkspace userWorkspace, int ccyformat, boolean approverScreen, boolean workflow,
 			List<ValueLabel> delegators) {
@@ -109,8 +109,7 @@ public class DeviationRenderer {
 							allowedLevel = true;
 						}
 
-						if (allowedLevel
-								&& userWorkspace.getUserRoles().contains(delegator.getValue())) {
+						if (allowedLevel && userWorkspace.getUserRoles().contains(delegator.getValue())) {
 							readOnly = false;
 							break;
 						}
@@ -164,17 +163,21 @@ public class DeviationRenderer {
 				listcell = new Listcell(deviationDetail.getDeviationValue());
 			}
 			listitem.appendChild(listcell);
-			
+
 			listcell = getNewListCell(deviationDetail.getUserRole(), deviationNotallowed);
 			listitem.appendChild(listcell);
-			
-			listcell = new Listcell(PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
-			listitem.appendChild(listcell);
-			
-			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()), deviationNotallowed);
+
+			listcell = new Listcell(
+					PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
 			listitem.appendChild(listcell);
 
-			listcell = getNewListCell(PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus), deviationNotallowed);
+			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()),
+					deviationNotallowed);
+			listitem.appendChild(listcell);
+
+			listcell = getNewListCell(
+					PennantStaticListUtil.getlabelDesc(deviationDetail.getApprovalStatus(), approveStatus),
+					deviationNotallowed);
 
 			if (approverScreen || workflow) {
 				if (!approved) {
@@ -182,9 +185,10 @@ public class DeviationRenderer {
 					Combobox combobox = new Combobox();
 					combobox.setReadonly(true);
 					combobox.setWidth("100px");
-					combobox.setId("combo_" + (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
-									+ deviationDetail.getDeviationCode() + StringUtils.trimToEmpty(deviationDetail.getModule())
-									+ deviationDetail.getDeviationCategory());
+					combobox.setId("combo_"
+							+ (deviationDetail.getDeviationId() < 0 ? 0 : deviationDetail.getDeviationId())
+							+ deviationDetail.getDeviationCode() + StringUtils.trimToEmpty(deviationDetail.getModule())
+							+ deviationDetail.getDeviationCategory());
 					combobox.addForward("onChange", "", "onChangeAutoDevStatus", deviationDetail);
 					fillComboBox(combobox, deviationDetail.getApprovalStatus(), approveStatus);
 					combobox.setDisabled(readOnly);
@@ -301,8 +305,7 @@ public class DeviationRenderer {
 			listitem.appendChild(listcell);
 
 			// Approval Authority
-			listcell = new Listcell(
-					PennantStaticListUtil.getlabelDesc(deviation.getDelegationRole(), secRolesList));
+			listcell = new Listcell(PennantStaticListUtil.getlabelDesc(deviation.getDelegationRole(), secRolesList));
 			listitem.appendChild(listcell);
 
 			// Approval Status

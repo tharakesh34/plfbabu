@@ -54,49 +54,53 @@ public class EquationInternalAccount extends AbstractWorkflowEntity {
 	public EquationInternalAccount() {
 		super();
 	}
-	
+
 	private String sIACode;
 	private String sIAName;
 	private String sIAShortName;
 	private String sIAAcType;
 	private String sIANumber;
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
-	
+
 	public String getsIACode() {
 		return sIACode;
 	}
+
 	public void setsIACode(String sIACode) {
 		this.sIACode = sIACode;
 	}
-	
+
 	public String getsIAName() {
 		return sIAName;
 	}
+
 	public void setsIAName(String sIAName) {
 		this.sIAName = sIAName;
 	}
-	
+
 	public String getsIAShortName() {
 		return sIAShortName;
 	}
+
 	public void setsIAShortName(String sIAShortName) {
 		this.sIAShortName = sIAShortName;
 	}
-	
+
 	public String getsIAAcType() {
 		return sIAAcType;
 	}
+
 	public void setsIAAcType(String sIAAcType) {
 		this.sIAAcType = sIAAcType;
 	}
-	
+
 	public String getsIANumber() {
 		return sIANumber;
 	}
+
 	public void setsIANumber(String sIANumber) {
 		this.sIANumber = sIANumber;
 	}

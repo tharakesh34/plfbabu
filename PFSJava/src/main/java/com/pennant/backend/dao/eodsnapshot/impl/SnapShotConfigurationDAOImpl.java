@@ -69,28 +69,27 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>SnapShotConfiguration</code> with set of CRUD operations.
  */
 public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration> implements SnapShotConfigurationDAO {
-	private static Logger				logger	= Logger.getLogger(SnapShotConfigurationDAOImpl.class);
-
-	
+	private static Logger logger = Logger.getLogger(SnapShotConfigurationDAOImpl.class);
 
 	public SnapShotConfigurationDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public SnapShotConfiguration getSnapShotConfiguration(long id,String type) {
+	public SnapShotConfiguration getSnapShotConfiguration(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, type, fromSchema,fromTable, toTable, executionOrder, executionType, ");
 		sql.append(" executionMethod, clearingType ,active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From EODSnapShotConfiguration");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -98,7 +97,8 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		snapShotConfiguration.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
-		RowMapper<SnapShotConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotConfiguration.class);
+		RowMapper<SnapShotConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SnapShotConfiguration.class);
 
 		try {
 			snapShotConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -109,10 +109,10 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 
 		logger.debug(Literal.LEAVING);
 		return snapShotConfiguration;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,String fromTable, TableType tableType) {
+	public boolean isDuplicateKey(long id, String fromTable, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -127,7 +127,8 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 			sql = QueryUtil.getCountQuery("EODSnapShotConfiguration_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "EODSnapShotConfiguration_Temp", "EODSnapShotConfiguration" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "EODSnapShotConfiguration_Temp", "EODSnapShotConfiguration" },
+					whereClause);
 			break;
 		}
 
@@ -136,7 +137,7 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("fromTable", fromTable);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -147,22 +148,24 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(SnapShotConfiguration snapShotConfiguration,TableType tableType) {
+	public String save(SnapShotConfiguration snapShotConfiguration, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into EODSnapShotConfiguration");
+		StringBuilder sql = new StringBuilder(" insert into EODSnapShotConfiguration");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, type, fromSchema,fromTable, toTable, executionOrder, executionType, ");
 		sql.append(" executionMethod, clearingType, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :type,:fromSchema, :fromTable, :toTable, :executionOrder, :executionType, ");
 		sql.append(" :executionMethod, :clearingType, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
@@ -175,27 +178,28 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(snapShotConfiguration.getId());
-	}	
+	}
 
 	@Override
-	public void update(SnapShotConfiguration snapShotConfiguration,TableType tableType) {
+	public void update(SnapShotConfiguration snapShotConfiguration, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EODSnapShotConfiguration" );
+		StringBuilder sql = new StringBuilder("update EODSnapShotConfiguration");
 		sql.append(tableType.getSuffix());
 		sql.append("  set type = :type, fromSchema=:fromSchema, fromTable = :fromTable, toTable = :toTable, ");
-		sql.append(" executionOrder = :executionOrder, executionType = :executionType, executionMethod = :executionMethod, ");
+		sql.append(
+				" executionOrder = :executionOrder, executionType = :executionType, executionMethod = :executionMethod, ");
 		sql.append(" clearingType=:clearingType, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -203,7 +207,7 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -239,17 +243,18 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 	@Override
 	public List<SnapShotConfiguration> getActiveConfigurationList() {
 		logger.debug(Literal.ENTERING);
-		
-		List<SnapShotConfiguration> configurations= new ArrayList<SnapShotConfiguration>();
+
+		List<SnapShotConfiguration> configurations = new ArrayList<SnapShotConfiguration>();
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, type, fromSchema,fromTable, toTable, executionOrder, executionType, ");
 		sql.append(" executionMethod, clearingType, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From EODSnapShotConfiguration");
 		sql.append(" Where active=:Active");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -257,34 +262,35 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		snapShotConfiguration.setActive(true);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
-		RowMapper<SnapShotConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotConfiguration.class);
+		RowMapper<SnapShotConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SnapShotConfiguration.class);
 		try {
 			configurations = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			snapShotConfiguration = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return configurations;
 	}
 
 	@Override
-	public void updateLastRunDate(long id,Timestamp lastRunDate) {
+	public void updateLastRunDate(long id, Timestamp lastRunDate) {
 		logger.debug(Literal.ENTERING);
-		
+
 		SnapShotConfiguration snapShotConfiguration = new SnapShotConfiguration();
 		snapShotConfiguration.setId(id);
 		snapShotConfiguration.setLastRunDate(lastRunDate);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EODSnapShotConfiguration" );
+		StringBuilder sql = new StringBuilder("update EODSnapShotConfiguration");
 		sql.append("  set lastRunDate = :LastRunDate, ");
 		sql.append(" where id = :id ");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -292,8 +298,8 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-}	
+
+}

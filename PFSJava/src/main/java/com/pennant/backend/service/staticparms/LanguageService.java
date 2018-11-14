@@ -51,12 +51,17 @@ import com.pennant.backend.model.staticparms.Language;
  * 
  */
 public interface LanguageService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Language getLanguageById(String id);
+
 	Language getApprovedLanguageById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

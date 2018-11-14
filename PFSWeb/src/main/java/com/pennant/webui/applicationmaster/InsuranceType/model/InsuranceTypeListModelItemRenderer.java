@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,11 +65,11 @@ public class InsuranceTypeListModelItemRenderer implements ListitemRenderer<Insu
 	public void render(Listitem item, InsuranceType insuranceType, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(insuranceType.getInsuranceType());
+		lc = new Listcell(insuranceType.getInsuranceType());
 		lc.setParent(item);
-	  	lc = new Listcell(insuranceType.getInsuranceTypeDesc());
+		lc = new Listcell(insuranceType.getInsuranceTypeDesc());
 		lc.setParent(item);
-	  	lc = new Listcell(insuranceType.getRecordStatus());
+		lc = new Listcell(insuranceType.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(insuranceType.getRecordType()));
 		lc.setParent(item);

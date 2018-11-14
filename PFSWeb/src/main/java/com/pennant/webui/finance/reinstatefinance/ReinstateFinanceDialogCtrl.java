@@ -93,56 +93,54 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceDialog.zul file.
  */
 public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	private static final long serialVersionUID = -6945930303723518608L;
 	private static final Logger logger = Logger.getLogger(ReinstateFinanceDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ReinstateFinanceDialog; 	
-	protected ExtendedCombobox 	finReference; 			    
-	protected Textbox           custCIF; 			        
-	protected Label             custShortName; 			    
-	protected ExtendedCombobox  finType; 			        
-	protected ExtendedCombobox  finBranch; 			        
-	protected ExtendedCombobox  finCcy; 			        
-	protected CurrencyBox       finAmount; 			        
-	protected CurrencyBox       totDownpayment; 			
-	protected Datebox           finStartDate; 			    
-	protected Datebox           maturityDate; 			    
-	protected CurrencyBox       totProfit; 			        
-	
-	protected Textbox           rejectSts; 			        
-	protected Textbox           rejectRemarks; 			    
-	protected Textbox           rejectedBy; 			    
-	protected Datebox           rejectedOn; 			    
-	
-	protected Groupbox          gb_RejectDetails; 		     
-	protected Groupbox          gb_financeDetails; 		     
+	protected Window window_ReinstateFinanceDialog;
+	protected ExtendedCombobox finReference;
+	protected Textbox custCIF;
+	protected Label custShortName;
+	protected ExtendedCombobox finType;
+	protected ExtendedCombobox finBranch;
+	protected ExtendedCombobox finCcy;
+	protected CurrencyBox finAmount;
+	protected CurrencyBox totDownpayment;
+	protected Datebox finStartDate;
+	protected Datebox maturityDate;
+	protected CurrencyBox totProfit;
+
+	protected Textbox rejectSts;
+	protected Textbox rejectRemarks;
+	protected Textbox rejectedBy;
+	protected Datebox rejectedOn;
+
+	protected Groupbox gb_RejectDetails;
+	protected Groupbox gb_financeDetails;
 
 	// not auto wired variables
 	private ReinstateFinance reinstateFinance; // overHanded per parameter
 	private transient ReinstateFinanceListCtrl reinstateFinanceListCtrl; // overHanded per parameter
-	private FinanceEnquiryListCtrl	     financeEnquiryListCtrl	= null;
+	private FinanceEnquiryListCtrl financeEnquiryListCtrl = null;
 	private transient boolean rejectedList;
 	private Label label_ReinstateFinanceDialog;
 
 	private transient boolean validationOn;
-	
-	private boolean	enqModule	= false;
-	
+
+	private boolean enqModule = false;
+
 	// ServiceDAOs / Domain Classes
 	private transient ReinstateFinanceService reinstateFinanceService;
 	private transient PagedListService pagedListService;
@@ -166,9 +164,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected ReinstateFinance object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected ReinstateFinance object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -193,8 +190,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("reinstateFinance")) {
-				this.reinstateFinance = (ReinstateFinance) arguments
-						.get("reinstateFinance");
+				this.reinstateFinance = (ReinstateFinance) arguments.get("reinstateFinance");
 				ReinstateFinance befImage = new ReinstateFinance();
 				BeanUtils.copyProperties(this.reinstateFinance, befImage);
 				this.reinstateFinance.setBefImage(befImage);
@@ -203,10 +199,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			} else {
 				setReinstateFinance(null);
 			}
-			
-			if(!getReinstateFinance().isNewRecord()){
-				doLoadWorkFlow(this.reinstateFinance.isWorkflow(),
-						this.reinstateFinance.getWorkflowId(),
+
+			if (!getReinstateFinance().isNewRecord()) {
+				doLoadWorkFlow(this.reinstateFinance.isWorkflow(), this.reinstateFinance.getWorkflowId(),
 						this.reinstateFinance.getNextTaskId());
 			}
 
@@ -221,7 +216,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			if (arguments.containsKey("rejectedList")) {
 				this.rejectedList = (Boolean) arguments.get("rejectedList");
 			}
-			
+
 			// READ OVERHANDED parameters !
 			// we get the ReinstateFinanceListWindow controller. So we have
 			// access
@@ -229,25 +224,23 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			// or
 			// delete ReinstateFinance here.
 			if (arguments.containsKey("reinstateFinanceListCtrl")) {
-				setReinstateFinanceListCtrl((ReinstateFinanceListCtrl) arguments
-						.get("reinstateFinanceListCtrl"));
+				setReinstateFinanceListCtrl((ReinstateFinanceListCtrl) arguments.get("reinstateFinanceListCtrl"));
 			} else {
 				setReinstateFinanceListCtrl(null);
 			}
-			
+
 			if (arguments.containsKey("financeEnquiryListCtrl")) {
-				this.setFinanceEnquiryListCtrl((FinanceEnquiryListCtrl) arguments
-						.get("financeEnquiryListCtrl"));
+				this.setFinanceEnquiryListCtrl((FinanceEnquiryListCtrl) arguments.get("financeEnquiryListCtrl"));
 			}
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 			// set Field Properties
 			doSetFieldProperties();
-			if(getReinstateFinance().isNewRecord()){
+			if (getReinstateFinance().isNewRecord()) {
 				doShowReinstateDialog(financeMain);
-				
-			}else{
+
+			} else {
 				doShowDialog(getReinstateFinance());
 			}
 		} catch (Exception e) {
@@ -263,7 +256,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		this.custCIF.setWidth("165px");
-		
+
 		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.finAmount.setScale(finFormatter);
 		this.finAmount.setTextBoxWidth(164);
@@ -273,22 +266,22 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		this.totProfit.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.totProfit.setScale(finFormatter);
 		this.totProfit.setTextBoxWidth(164);
-		
+
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finStartDate.setWidth("164px");
-		
+
 		this.maturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.maturityDate.setWidth("164px");
-		
+
 		this.rejectedOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.rejectedOn.setWidth("164px");
-		
+
 		this.rejectRemarks.setWidth("260px");
-		
-		if(!getReinstateFinance().isNewRecord()){
-			if (isWorkFlowEnabled()){
+
+		if (!getReinstateFinance().isNewRecord()) {
+			if (isWorkFlowEnabled()) {
 				this.groupboxWf.setVisible(true);
-			}else{
+			} else {
 				this.groupboxWf.setVisible(false);
 			}
 		}
@@ -300,8 +293,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -320,8 +312,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws XMLStreamException 
-	 * @throws FileNotFoundException 
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException, FileNotFoundException, XMLStreamException {
 		logger.debug("Entering" + event.toString());
@@ -357,12 +349,13 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws XMLStreamException 
-	 * @throws FileNotFoundException 
-	 * @throws FactoryConfigurationError 
-	 * @throws UnsupportedEncodingException 
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
+	 * @throws FactoryConfigurationError
+	 * @throws UnsupportedEncodingException
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	public void onClick$btnDelete(Event event) throws InterruptedException, FileNotFoundException, XMLStreamException,
+			UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
@@ -417,11 +410,11 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		logger.debug("Leaving");
 	}
 
-	private void doSetFinanceData(String finReference){
+	private void doSetFinanceData(String finReference) {
 		logger.debug("Entering");
-		if(StringUtils.isNotBlank(finReference)){
-			ReinstateFinance reinstateFinance =  getReinstateFinanceService().getFinanceDetailsById(finReference);
-			if(reinstateFinance != null){
+		if (StringUtils.isNotBlank(finReference)) {
+			ReinstateFinance reinstateFinance = getReinstateFinanceService().getFinanceDetailsById(finReference);
+			if (reinstateFinance != null) {
 				finFormatter = CurrencyUtil.getFormat(reinstateFinance.getFinCcy());
 				setCurrencyFieldProperties();
 				this.finReference.setValue(reinstateFinance.getFinReference());
@@ -433,26 +426,27 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				this.finBranch.setDescription(reinstateFinance.getLovDescFinBranchName());
 				this.finCcy.setValue(reinstateFinance.getFinCcy());
 				this.finCcy.setDescription(CurrencyUtil.getCcyDesc(reinstateFinance.getFinCcy()));
-				this.finAmount.setValue(PennantAppUtil.formateAmount(reinstateFinance.getFinAmount(),finFormatter));
-				this.totDownpayment.setValue(PennantAppUtil.formateAmount(reinstateFinance.getDownPayment(),finFormatter));
+				this.finAmount.setValue(PennantAppUtil.formateAmount(reinstateFinance.getFinAmount(), finFormatter));
+				this.totDownpayment
+						.setValue(PennantAppUtil.formateAmount(reinstateFinance.getDownPayment(), finFormatter));
 				this.finStartDate.setValue(reinstateFinance.getFinStartDate());
 				this.maturityDate.setValue(reinstateFinance.getMaturityDate());
-				this.totProfit.setValue(PennantAppUtil.formateAmount(reinstateFinance.getTotalProfit(),finFormatter));
+				this.totProfit.setValue(PennantAppUtil.formateAmount(reinstateFinance.getTotalProfit(), finFormatter));
 				this.rejectSts.setValue(reinstateFinance.getRejectStatus());
 				this.rejectRemarks.setValue(reinstateFinance.getRejectRemarks());
 				this.rejectedBy.setValue(reinstateFinance.getRejectedBy());
 				this.rejectedOn.setValue(reinstateFinance.getRejectedOn());
-				
+
 				this.gb_RejectDetails.setVisible(true);
 				this.gb_financeDetails.setVisible(true);
-			}else{
+			} else {
 				doClear();
 			}
 		}
 		logger.debug("Leaving");
 	}
-	
-	private void setCurrencyFieldProperties(){
+
+	private void setCurrencyFieldProperties() {
 		logger.debug("Entering");
 		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.finAmount.setScale(finFormatter);
@@ -463,7 +457,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		this.totProfit.setScale(finFormatter);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -506,8 +500,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReinstateFinance
 	 * @throws Exception
@@ -535,8 +528,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				doReadOnly();
 				btnCancel.setVisible(false);
 				if (rejectedList) {
-				this.btnDelete.setVisible(false);
-				this.label_ReinstateFinanceDialog.setValue(Labels.getLabel("label_RejectedFinanceDialog.value"));
+					this.btnDelete.setVisible(false);
+					this.label_ReinstateFinanceDialog.setValue(Labels.getLabel("label_RejectedFinanceDialog.value"));
 				}
 			}
 		}
@@ -561,10 +554,10 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-	
+
 		if (!this.finReference.isReadonly()) {
-			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ReinstateFinanceDialog_FinReference.value"), 
-					null, true,true));
+			this.finReference.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReinstateFinanceDialog_FinReference.value"), null, true, true));
 		}
 
 		logger.debug("Leaving");
@@ -608,21 +601,23 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * Deletes a ReinstateFinance object from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws XMLStreamException 
-	 * @throws FileNotFoundException 
-	 * @throws FactoryConfigurationError 
-	 * @throws UnsupportedEncodingException 
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
+	 * @throws FactoryConfigurationError
+	 * @throws UnsupportedEncodingException
 	 */
-	private void doDelete() throws InterruptedException, FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	private void doDelete() throws InterruptedException, FileNotFoundException, XMLStreamException,
+			UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		final ReinstateFinance aReinstateFinance = new ReinstateFinance();
 		BeanUtils.copyProperties(getReinstateFinance(), aReinstateFinance);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_ReinstateFinanceDialog_FinReference.value")+" : "+aReinstateFinance.getFinReference();
-		
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ReinstateFinanceDialog_FinReference.value") + " : "
+				+ aReinstateFinance.getFinReference();
+
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aReinstateFinance.getRecordType())) {
 				aReinstateFinance.setVersion(aReinstateFinance.getVersion() + 1);
@@ -738,8 +733,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * Saves the components to table. <br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws XMLStreamException 
-	 * @throws FileNotFoundException 
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
 	 */
 	public void doSave() throws InterruptedException, FileNotFoundException, XMLStreamException {
 		logger.debug("Entering");
@@ -787,54 +782,54 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				refreshList();
 				closeDialog();
 				//Customer Notification for Role Identification
-				if(StringUtils.isBlank(aReinstateFinance.getNextTaskId())){
+				if (StringUtils.isBlank(aReinstateFinance.getNextTaskId())) {
 					aReinstateFinance.setNextRoleCode("");
 				}
-				String msg = "" ;
-				if(StringUtils.isBlank(aReinstateFinance.getNextRoleCode()) && !StringUtils.equals(aReinstateFinance.getRecordStatus(), PennantConstants.RCD_STATUS_CANCELLED)){
-					if(StringUtils.isEmpty(aReinstateFinance.getFinPreApprovedRef())){
-						msg = "Finance with Reference : " + aReinstateFinance.getFinReference()+" "+Labels.getLabel("label_ReinstateFinance_Success");
-					}else{
-						msg = "Finance with Reference : " + aReinstateFinance.getFinReference()+" "+Labels.getLabel("label_ReinstateFinance_PreApproval_Success");
+				String msg = "";
+				if (StringUtils.isBlank(aReinstateFinance.getNextRoleCode()) && !StringUtils
+						.equals(aReinstateFinance.getRecordStatus(), PennantConstants.RCD_STATUS_CANCELLED)) {
+					if (StringUtils.isEmpty(aReinstateFinance.getFinPreApprovedRef())) {
+						msg = "Finance with Reference : " + aReinstateFinance.getFinReference() + " "
+								+ Labels.getLabel("label_ReinstateFinance_Success");
+					} else {
+						msg = "Finance with Reference : " + aReinstateFinance.getFinReference() + " "
+								+ Labels.getLabel("label_ReinstateFinance_PreApproval_Success");
 					}
-					Clients.showNotification(msg,  "info", null, null, -1);
-				}
-				else{
-					msg = PennantApplicationUtil.getSavingStatus(aReinstateFinance.getRoleCode(),aReinstateFinance.getNextRoleCode(), 
-							aReinstateFinance.getFinReference(), " Loan ", aReinstateFinance.getRecordStatus());
-					Clients.showNotification(msg,  "info", null, null, -1);
+					Clients.showNotification(msg, "info", null, null, -1);
+				} else {
+					msg = PennantApplicationUtil.getSavingStatus(aReinstateFinance.getRoleCode(),
+							aReinstateFinance.getNextRoleCode(), aReinstateFinance.getFinReference(), " Loan ",
+							aReinstateFinance.getRecordStatus());
+					Clients.showNotification(msg, "info", null, null, -1);
 				}
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
-		
-		
-		
-		// User Notifications Message/Alert
-					try {
-						if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-								&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-								&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 
-							String nextRoleCodes = aReinstateFinance.getNextRoleCode();
-							if (StringUtils.isNotEmpty(nextRoleCodes)) {
-								Notify notify = Notify.valueOf("ROLE");
-								String[] to = nextRoleCodes.split(",");
-								if (StringUtils.isNotEmpty(aReinstateFinance.getFinReference())) {
-									String reference = aReinstateFinance.getFinReference();
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + reference,
-											notify, to);
-								} else {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-								}
-							}
-						}
-					} catch (Exception e) {
-						logger.error("Exception: ", e);
+		// User Notifications Message/Alert
+		try {
+			if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+
+				String nextRoleCodes = aReinstateFinance.getNextRoleCode();
+				if (StringUtils.isNotEmpty(nextRoleCodes)) {
+					Notify notify = Notify.valueOf("ROLE");
+					String[] to = nextRoleCodes.split(",");
+					if (StringUtils.isNotEmpty(aReinstateFinance.getFinReference())) {
+						String reference = aReinstateFinance.getFinReference();
+						getEventManager().publish(
+								Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + reference, notify,
+								to);
+					} else {
+						getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
 					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -848,13 +843,14 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws XMLStreamException 
-	 * @throws FileNotFoundException 
-	 * @throws FactoryConfigurationError 
-	 * @throws UnsupportedEncodingException 
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
+	 * @throws FactoryConfigurationError
+	 * @throws UnsupportedEncodingException
 	 * 
 	 */
-	private boolean doProcess(ReinstateFinance aReinstateFinance, String tranType) throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	private boolean doProcess(ReinstateFinance aReinstateFinance, String tranType)
+			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -884,27 +880,27 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)){
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
 					processCompleted = true;
-				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
-				} else if(StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)){
-					List<String> finTypeList =getReinstateFinanceService().getScheduleEffectModuleList(true);
+				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
+					List<String> finTypeList = getReinstateFinanceService().getScheduleEffectModuleList(true);
 					boolean isScheduleModify = false;
-					for(String fintypeList :finTypeList){
-						if(StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_REINSTATE) &&
-								StringUtils.equals(FinanceConstants.FINSER_EVENT_REINSTATE,fintypeList)){
+					for (String fintypeList : finTypeList) {
+						if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_REINSTATE)
+								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_REINSTATE, fintypeList)) {
 							isScheduleModify = true;
 							break;
 						}
 					}
-					if(isScheduleModify){
+					if (isScheduleModify) {
 						aReinstateFinance.setScheduleChange(true);
-					}else{
+					} else {
 						aReinstateFinance.setScheduleChange(false);
 					}
-				}else {
-					ReinstateFinance tReinstateFinance=  (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
+				} else {
+					ReinstateFinance tReinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, aReinstateFinance);
 					auditHeader.getAuditDetail().setModelData(tReinstateFinance);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -916,12 +912,12 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				}
 
 				finishedTasks += (method + ";");
-				ReinstateFinance tReinstateFinance=  (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tReinstateFinance,finishedTasks);
+				ReinstateFinance tReinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tReinstateFinance, finishedTasks);
 
 			}
 
-			ReinstateFinance tReinstateFinance=  (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
+			ReinstateFinance tReinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tReinstateFinance);
@@ -929,11 +925,11 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
 			}
-			
+
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)|| "Save".equals(userAction.getSelectedItem().getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, aReinstateFinance);
 					auditHeader.getAuditDetail().setModelData(tReinstateFinance);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -948,14 +944,13 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		return processCompleted;
 	}
 
-	protected String getServiceTasks(String taskId, ReinstateFinance reinstateFinance,
-			String finishedTasks) {
+	protected String getServiceTasks(String taskId, ReinstateFinance reinstateFinance, String finishedTasks) {
 		logger.debug("Entering");
-      // changes regarding parallel work flow 
+		// changes regarding parallel work flow 
 		String nextRoleCode = StringUtils.trimToEmpty(reinstateFinance.getNextRoleCode());
-		String nextRoleCodes[]=nextRoleCode.split(",");
-		
-		if (nextRoleCodes.length > 1 ) {
+		String nextRoleCodes[] = nextRoleCode.split(",");
+
+		if (nextRoleCodes.length > 1) {
 			return "";
 		}
 
@@ -970,7 +965,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		logger.debug("Leaving");
 		return serviceTasks;
 	}
-	
+
 	protected void setNextTaskDetails(String taskId, ReinstateFinance reinstateFinance) {
 		logger.debug("Entering");
 
@@ -985,7 +980,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		} else {
 			if ("Resubmit".equals(action)) {
 				nextTaskId = "";
-			}else if (!"Save".equals(action)) {
+			} else if (!"Save".equals(action)) {
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 			}
 		}
@@ -1014,7 +1009,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 					nextRoleCode += nextRole;
 					String baseRole = "";
 					if (!"Resubmit".equals(action)) {
-						baseRole= StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
+						baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
 					}
 					baseRoleMap.put(nextRole, baseRole);
 				}
@@ -1025,10 +1020,10 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		reinstateFinance.setNextTaskId(nextTaskId);
 		reinstateFinance.setRoleCode(getRole());
 		reinstateFinance.setNextRoleCode(nextRoleCode);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
@@ -1039,14 +1034,14 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws XMLStreamException 
-	 * @throws FileNotFoundException 
-	 * @throws FactoryConfigurationError 
-	 * @throws UnsupportedEncodingException 
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
+	 * @throws FactoryConfigurationError
+	 * @throws UnsupportedEncodingException
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws FileNotFoundException,
-			XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method)
+			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1065,24 +1060,26 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-                        String finEvent = "";
-                        if(StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, aReinstateFinance.getFinPreApprovedRef())){
-                        	finEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
-                        }else{
-                        	finEvent = FinanceConstants.FINSER_EVENT_ORG;
-                        }
-						FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(aReinstateFinance.getFinType(), 
-								finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
-						if(financeWorkFlow != null){
-							WorkFlowDetails	workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
-							if(workFlowDetails != null){
+						String finEvent = "";
+						if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+								aReinstateFinance.getFinPreApprovedRef())) {
+							finEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
+						} else {
+							finEvent = FinanceConstants.FINSER_EVENT_ORG;
+						}
+						FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
+								aReinstateFinance.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+						if (financeWorkFlow != null) {
+							WorkFlowDetails workFlowDetails = WorkFlowUtil
+									.getDetailsByType(financeWorkFlow.getWorkFlowType());
+							if (workFlowDetails != null) {
 								WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
 								String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
 								aReinstateFinance.setLovDescWorkflowId(workFlowDetails.getWorkFlowId());
 								aReinstateFinance.setLovDescRoleCode(workflow.firstTaskOwner());
 								aReinstateFinance.setLovDescNextRoleCode(workflow.firstTaskOwner());
 								aReinstateFinance.setLovDescTaskId(taskid);
-								aReinstateFinance.setLovDescNextTaskId(taskid+";");
+								aReinstateFinance.setLovDescNextTaskId(taskid + ";");
 							}
 						}
 
@@ -1100,8 +1097,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ReinstateFinanceDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1145,8 +1142,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 */
 	private AuditHeader getAuditHeader(ReinstateFinance aReinstateFinance, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aReinstateFinance.getBefImage(), aReinstateFinance);
-		return new AuditHeader(getReference(), null, null,
-				null, auditDetail, aReinstateFinance.getUserDetails(), getOverideMap());
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aReinstateFinance.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -1194,44 +1191,43 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	protected String getReference() {
 		return String.valueOf(getReinstateFinance().getFinReference());
 	}
-	
-	
+
 	public void doShowReinstateDialog(FinanceMain details) throws Exception {
 		logger.debug("Entering");
-		
-			if (details != null) {
-				this.finReference.setValue(details.getFinReference());
-				this.finReference.setDescription("");
-				doSetFinanceData(details.getFinReference());
-				getReinstateFinance().setFinPreApprovedRef(details.getFinPreApprovedRef());
-				//Workflow Details
-				setWorkflowDetails(details.getFinType());
-				getReinstateFinance().setWorkflowId(getWorkFlowId());
-				doLoadWorkFlow(this.reinstateFinance.isWorkflow(), this.reinstateFinance.getWorkflowId(), 
-						this.reinstateFinance.getNextTaskId());
-				if (isWorkFlowEnabled()) {
-					this.userAction = setListRecordStatus(this.userAction);
-					for (int i = 0; i < userAction.getItemCount(); i++) {
-						userAction.getItemAtIndex(i).setDisabled(false);
-					}
-					if (getReinstateFinance().isNewRecord()) {
-						this.btnCtrl.setBtnStatus_Edit();
-						btnCancel.setVisible(false);
-					} else {
-						this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-					}
-					this.groupboxWf.setVisible(true);
+
+		if (details != null) {
+			this.finReference.setValue(details.getFinReference());
+			this.finReference.setDescription("");
+			doSetFinanceData(details.getFinReference());
+			getReinstateFinance().setFinPreApprovedRef(details.getFinPreApprovedRef());
+			//Workflow Details
+			setWorkflowDetails(details.getFinType());
+			getReinstateFinance().setWorkflowId(getWorkFlowId());
+			doLoadWorkFlow(this.reinstateFinance.isWorkflow(), this.reinstateFinance.getWorkflowId(),
+					this.reinstateFinance.getNextTaskId());
+			if (isWorkFlowEnabled()) {
+				this.userAction = setListRecordStatus(this.userAction);
+				for (int i = 0; i < userAction.getItemCount(); i++) {
+					userAction.getItemAtIndex(i).setDisabled(false);
 				}
-				doEdit();
-				this.finReference.setReadonly(true);
-			}else{
-				doClear();
+				if (getReinstateFinance().isNewRecord()) {
+					this.btnCtrl.setBtnStatus_Edit();
+					btnCancel.setVisible(false);
+				} else {
+					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+				}
+				this.groupboxWf.setVisible(true);
 			}
-			setDialog(DialogType.EMBEDDED);
-		
+			doEdit();
+			this.finReference.setReadonly(true);
+		} else {
+			doClear();
+		}
+		setDialog(DialogType.EMBEDDED);
+
 		logger.debug("Leaving");
 	}
-	
+
 	private void setWorkflowDetails(String finType) {
 
 		// Finance Maintenance Workflow Check & Assignment
@@ -1252,7 +1248,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			setWorkFlowId(workFlowDetails.getId());
 		}
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1260,6 +1256,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1267,6 +1264,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public ReinstateFinance getReinstateFinance() {
 		return this.reinstateFinance;
 	}
+
 	public void setReinstateFinance(ReinstateFinance reinstateFinance) {
 		this.reinstateFinance = reinstateFinance;
 	}
@@ -1274,6 +1272,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void setReinstateFinanceService(ReinstateFinanceService reinstateFinanceService) {
 		this.reinstateFinanceService = reinstateFinanceService;
 	}
+
 	public ReinstateFinanceService getReinstateFinanceService() {
 		return this.reinstateFinanceService;
 	}
@@ -1281,6 +1280,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void setReinstateFinanceListCtrl(ReinstateFinanceListCtrl reinstateFinanceListCtrl) {
 		this.reinstateFinanceListCtrl = reinstateFinanceListCtrl;
 	}
+
 	public ReinstateFinanceListCtrl getReinstateFinanceListCtrl() {
 		return this.reinstateFinanceListCtrl;
 	}
@@ -1288,6 +1288,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}
+
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
@@ -1295,8 +1296,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
-	public void setFinanceWorkFlowService(
-			FinanceWorkFlowService financeWorkFlowService) {
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 
@@ -1307,10 +1308,11 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}
-	
+
 	public void setFinanceEnquiryListCtrl(FinanceEnquiryListCtrl financeEnquiryListCtrl) {
 		this.financeEnquiryListCtrl = financeEnquiryListCtrl;
 	}
+
 	public FinanceEnquiryListCtrl getFinanceEnquiryListCtrl() {
 		return financeEnquiryListCtrl;
 	}

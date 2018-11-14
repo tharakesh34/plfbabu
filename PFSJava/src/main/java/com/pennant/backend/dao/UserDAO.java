@@ -49,19 +49,32 @@ import com.pennant.backend.model.administration.SecurityUser;
 
 public interface UserDAO {
 
-	 SecurityUser getNewSecUser();
-	 int getCountAllSecUser();
-	 List<SecurityUser> getAlleUser();
-	 SecurityUser getUserByID(Long usrID);
-	 SecurityUser getUserByFiluserNr(String usrNum);
-	 SecurityUser getUserByNameAndPassword(String userName, String passWord);
-	 SecurityUser getUserByLogin(final String userName);
-	 List<SecurityUser> getUserLikeLastname(String value);
-	 List<SecurityUser> getUserLikeLogin(String value);
-	 List<SecurityUser> getUserLikeEmail(String email);
-	 List<SecurityUser> getUserListByLogin(String login);
-	 void updateLoginStatus(String userName, int authPass);
-	 List<SecurityRole> getUserRolesByUserID(long userID);
-	 void update(SecurityUser user);//for changing password
+	SecurityUser getNewSecUser();
+
+	int getCountAllSecUser();
+
+	List<SecurityUser> getAlleUser();
+
+	SecurityUser getUserByID(Long usrID);
+
+	SecurityUser getUserByFiluserNr(String usrNum);
+
+	SecurityUser getUserByNameAndPassword(String userName, String passWord);
+
+	SecurityUser getUserByLogin(final String userName);
+
+	List<SecurityUser> getUserLikeLastname(String value);
+
+	List<SecurityUser> getUserLikeLogin(String value);
+
+	List<SecurityUser> getUserLikeEmail(String email);
+
+	List<SecurityUser> getUserListByLogin(String login);
+
+	void updateLoginStatus(String userName, int authPass);
+
+	List<SecurityRole> getUserRolesByUserID(long userID);
+
+	void update(SecurityUser user);//for changing password
 
 }

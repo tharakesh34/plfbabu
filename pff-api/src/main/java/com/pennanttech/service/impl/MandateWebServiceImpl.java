@@ -75,7 +75,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		Mandate response = null;
 
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
-		if(StringUtils.isNotBlank(mandate.getMandateRef())) {
+		if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 			response = new Mandate();
 			String[] paramValue = new String[2];
 			paramValue[0] = "mandateRef";
@@ -152,11 +152,11 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
 
 			returnStatus = doMandateValidation(mandate);
-			if(StringUtils.isNotBlank(mandate.getMandateRef())) {
+			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 				String[] paramValue = new String[2];
 				paramValue[0] = "mandateRef";
 				paramValue[1] = "updateMandate";
-				 returnStatus= APIErrorHandlerService.getFailedStatus("90329", paramValue);
+				returnStatus = APIErrorHandlerService.getFailedStatus("90329", paramValue);
 				return returnStatus;
 			}
 			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
@@ -443,7 +443,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				valueParm[1] = mandate.getOrgReference();
 				return APIErrorHandlerService.getFailedStatus("90406", valueParm);
 			}
-			
+
 			List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
 					.getFinScheduleDetails(mandate.getOrgReference(), "", false);
 			BigDecimal repayAmt = BigDecimal.ZERO;
@@ -461,7 +461,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
 				String[] valueParm = new String[1];
 				returnStatus = APIErrorHandlerService.getFailedStatus("90320");
-				return getErrorDetails("90320",valueParm);
+				return getErrorDetails("90320", valueParm);
 			}
 		}
 
@@ -730,7 +730,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				paramValue[0] = "finReference";
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
 				return response;
-			} 
+			}
 			if (mandate.isSwapIsActive()) {
 				FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
 				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finMain.getFinType());
@@ -753,7 +753,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 					}
 				}
 			}
-			
+
 			response = mandateController.doApproveMandate(mandate);
 		} else {
 			response = new Mandate();
@@ -766,6 +766,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		logger.debug("Leaving");
 		return response;
 	}
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;

@@ -75,35 +75,35 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/vasproduct/VASProductCategory/vASProductCategoryDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/vasproduct/VASProductCategory/vASProductCategoryDialog.zul file.
+ * <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory> {
 
-	private static final long						serialVersionUID	= 1L;
-	private static final Logger						logger				= Logger.getLogger(VASProductCategoryDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(VASProductCategoryDialogCtrl.class);
 
-	
-	protected Window								window_VASProductCategoryDialog;
-	protected Row									row0;
-	protected Label									label_ProductCtg;
-	protected Space									space_ProductCtg;
+	protected Window window_VASProductCategoryDialog;
+	protected Row row0;
+	protected Label label_ProductCtg;
+	protected Space space_ProductCtg;
 
-	protected Textbox								productCtg;
-	protected Label									label_ProductCtgDesc;
-	protected Space									space_ProductCtgDesc;
+	protected Textbox productCtg;
+	protected Label label_ProductCtgDesc;
+	protected Space space_ProductCtgDesc;
 
-	protected Textbox								productCtgDesc;
-	protected Checkbox 								active;
+	protected Textbox productCtgDesc;
+	protected Checkbox active;
 
-	protected Label									recordType;
-	protected Groupbox								gb_statusDetails;
-	private boolean									enqModule			= false;
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	private boolean enqModule = false;
 
-	private VASProductCategory						vASProductCategory;
-	private transient VASProductCategoryListCtrl	vASProductCategoryListCtrl;
+	private VASProductCategory vASProductCategory;
+	private transient VASProductCategoryListCtrl vASProductCategoryListCtrl;
 
-	private transient VASProductCategoryService		vASProductCategoryService;
+	private transient VASProductCategoryService vASProductCategoryService;
 
 	/**
 	 * default constructor.<br>
@@ -116,7 +116,6 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	protected void doSetProperties() {
 		super.pageRightName = "VASProductCategoryDialog";
 	}
-
 
 	/**
 	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
@@ -155,7 +154,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "VASProductCategoryDialog");
 			} else {
-				if(!enqModule){
+				if (!enqModule) {
 					getUserWorkspace().allocateAuthorities("VASProductCategoryDialog");
 				}
 			}
@@ -317,7 +316,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
-				
+
 		// fill the components with the data
 		doWriteBeanToComponents(aVASProductCategory);
 		setDialog(DialogType.EMBEDDED);
@@ -362,7 +361,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		if(!enqiryModule){
+		if (!enqiryModule) {
 			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_VASProductCategoryDialog_btnNew"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VASProductCategoryDialog_btnDelete"));
@@ -394,10 +393,10 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 */
 	public void doWriteBeanToComponents(VASProductCategory aVASProductCategory) {
 		logger.debug("Entering");
-		
+
 		this.productCtg.setValue(aVASProductCategory.getProductCtg());
 		this.productCtgDesc.setValue(aVASProductCategory.getProductCtgDesc());
-		 this.active.setChecked(aVASProductCategory.isActive());
+		this.active.setChecked(aVASProductCategory.isActive());
 
 		this.recordStatus.setValue(aVASProductCategory.getRecordStatus());
 		logger.debug("Leaving");
@@ -454,13 +453,15 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		logger.debug("Entering");
 		//Product Ctg
 		if (!this.productCtg.isReadonly()) {
-			this.productCtg.setConstraint(new PTStringValidator(Labels.getLabel("label_VASProductCategoryDialog_ProductCtg.value"), 
-					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+			this.productCtg.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASProductCategoryDialog_ProductCtg.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		//Product Ctg Desc
 		if (!this.productCtgDesc.isReadonly()) {
-			this.productCtgDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_VASProductCategoryDialog_ProductCtgDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.productCtgDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASProductCategoryDialog_ProductCtgDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -498,12 +499,12 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	private void refreshList() {
 		vASProductCategoryListCtrl.search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.vASProductCategory.getProductCtg());
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -524,7 +525,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 
 		this.productCtgDesc.setReadonly(isReadOnly("VASProductCategoryDialog_ProductCtgDesc"));
 		int count = vASProductCategoryService.getVASProductCategoryByACtive(this.vASProductCategory.getProductCtg());
-		
+
 		if (count > 0) {
 			this.active.setDisabled(true);
 		} else if (vASProductCategory.isNew()) {
@@ -532,7 +533,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		} else {
 			this.active.setDisabled(isReadOnly("VASProductCategoryDialog_Active"));
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -546,7 +547,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		if(count > 0){
+		if (count > 0) {
 			this.btnDelete.setVisible(false);
 		}
 
@@ -827,8 +828,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_VASProductCategoryDialog, auditHeader);
 						return processCompleted;
 					}
@@ -841,7 +842,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 					processCompleted = true;
 
 					if (deleteNotes) {
-						deleteNotes(getNotes("VASProductCategory", aVASProductCategory.getProductCtg(),aVASProductCategory.getVersion()), true);
+						deleteNotes(getNotes("VASProductCategory", aVASProductCategory.getProductCtg(),
+								aVASProductCategory.getVersion()), true);
 					}
 				}
 
@@ -884,6 +886,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	public VASProductCategory getVASProductCategory() {
 		return this.vASProductCategory;
 	}
+
 	public void setVASProductCategory(VASProductCategory vASProductCategory) {
 		this.vASProductCategory = vASProductCategory;
 	}
@@ -891,6 +894,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	public void setVASProductCategoryService(VASProductCategoryService vASProductCategoryService) {
 		this.vASProductCategoryService = vASProductCategoryService;
 	}
+
 	public VASProductCategoryService getVASProductCategoryService() {
 		return this.vASProductCategoryService;
 	}
@@ -898,6 +902,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	public void setVASProductCategoryListCtrl(VASProductCategoryListCtrl vASProductCategoryListCtrl) {
 		this.vASProductCategoryListCtrl = vASProductCategoryListCtrl;
 	}
+
 	public VASProductCategoryListCtrl getVASProductCategoryListCtrl() {
 		return this.vASProductCategoryListCtrl;
 	}

@@ -81,7 +81,7 @@ public class Country extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -89,6 +89,7 @@ public class Country extends AbstractWorkflowEntity {
 	public String getId() {
 		return countryCode;
 	}
+
 	public void setId(String id) {
 		this.countryCode = id;
 	}
@@ -96,6 +97,7 @@ public class Country extends AbstractWorkflowEntity {
 	public String getCountryCode() {
 		return countryCode;
 	}
+
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
 	}
@@ -103,6 +105,7 @@ public class Country extends AbstractWorkflowEntity {
 	public String getCountryDesc() {
 		return countryDesc;
 	}
+
 	public void setCountryDesc(String countryDesc) {
 		this.countryDesc = countryDesc;
 	}
@@ -110,6 +113,7 @@ public class Country extends AbstractWorkflowEntity {
 	public BigDecimal getCountryParentLimit() {
 		return countryParentLimit;
 	}
+
 	public void setCountryParentLimit(BigDecimal countryParentLimit) {
 		this.countryParentLimit = countryParentLimit;
 	}
@@ -117,6 +121,7 @@ public class Country extends AbstractWorkflowEntity {
 	public BigDecimal getCountryResidenceLimit() {
 		return countryResidenceLimit;
 	}
+
 	public void setCountryResidenceLimit(BigDecimal countryResidenceLimit) {
 		this.countryResidenceLimit = countryResidenceLimit;
 	}
@@ -124,6 +129,7 @@ public class Country extends AbstractWorkflowEntity {
 	public BigDecimal getCountryRiskLimit() {
 		return countryRiskLimit;
 	}
+
 	public void setCountryRiskLimit(BigDecimal countryRiskLimit) {
 		this.countryRiskLimit = countryRiskLimit;
 	}
@@ -131,6 +137,7 @@ public class Country extends AbstractWorkflowEntity {
 	public boolean isCountryIsActive() {
 		return countryIsActive;
 	}
+
 	public void setCountryIsActive(boolean countryIsActive) {
 		this.countryIsActive = countryIsActive;
 	}
@@ -138,6 +145,7 @@ public class Country extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -145,6 +153,7 @@ public class Country extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -152,6 +161,7 @@ public class Country extends AbstractWorkflowEntity {
 	public Country getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Country beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -159,17 +169,19 @@ public class Country extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isSystemDefault() {
-	    return systemDefault;
-    }
+		return systemDefault;
+	}
 
 	public void setSystemDefault(boolean systemDefault) {
-	    this.systemDefault = systemDefault;
-    }
+		this.systemDefault = systemDefault;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

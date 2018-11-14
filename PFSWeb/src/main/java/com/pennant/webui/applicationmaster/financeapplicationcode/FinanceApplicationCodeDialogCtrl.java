@@ -73,8 +73,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/FinanceApplicationCode
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FinanceApplicationCode
  * /financeApplicationCodeDialog.zul file.
  */
 public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplicationCode> {
@@ -82,22 +81,21 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	private static final Logger logger = Logger.getLogger(FinanceApplicationCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_FinanceApplicationCodeDialog;	// autoWired
+	protected Window window_FinanceApplicationCodeDialog; // autoWired
 
-	protected Textbox 		finAppType; 						// autoWired
-	protected Textbox 		finAppDesc; 						// autoWired
-	protected Checkbox 		finAppIsActive; 					// autoWired
+	protected Textbox finAppType; // autoWired
+	protected Textbox finAppDesc; // autoWired
+	protected Checkbox finAppIsActive; // autoWired
 
 	// not autoWired variables
 	private FinanceApplicationCode financeApplicationCode; // overHanded per parameter
 	private transient FinanceApplicationCodeListCtrl financeApplicationCodeListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient FinanceApplicationCodeService financeApplicationCodeService;
 
@@ -116,9 +114,8 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceApplicationCode
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceApplicationCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -134,8 +131,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 			doCheckRights();
 
 			if (arguments.containsKey("financeApplicationCode")) {
-				this.financeApplicationCode = (FinanceApplicationCode) arguments
-						.get("financeApplicationCode");
+				this.financeApplicationCode = (FinanceApplicationCode) arguments.get("financeApplicationCode");
 				FinanceApplicationCode befImage = new FinanceApplicationCode();
 				BeanUtils.copyProperties(this.financeApplicationCode, befImage);
 				this.financeApplicationCode.setBefImage(befImage);
@@ -144,14 +140,12 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 				setFinanceApplicationCode(null);
 			}
 
-			doLoadWorkFlow(this.financeApplicationCode.isWorkflow(),
-					this.financeApplicationCode.getWorkflowId(),
+			doLoadWorkFlow(this.financeApplicationCode.isWorkflow(), this.financeApplicationCode.getWorkflowId(),
 					this.financeApplicationCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"FinanceApplicationCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceApplicationCodeDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -162,7 +156,8 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 			// or
 			// delete financeApplicationCode here.
 			if (arguments.containsKey("financeApplicationCodeListCtrl")) {
-				setFinanceApplicationCodeListCtrl((FinanceApplicationCodeListCtrl)arguments.get("financeApplicationCodeListCtrl"));
+				setFinanceApplicationCodeListCtrl(
+						(FinanceApplicationCodeListCtrl) arguments.get("financeApplicationCodeListCtrl"));
 			} else {
 				setFinanceApplicationCodeListCtrl(null);
 			}
@@ -200,8 +195,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -310,8 +304,10 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		this.finAppDesc.setValue(aFinanceApplicationCode.getFinAppDesc());
 		this.finAppIsActive.setChecked(aFinanceApplicationCode.isFinAppIsActive());
 		this.recordStatus.setValue(aFinanceApplicationCode.getRecordStatus());
-		
-		if(aFinanceApplicationCode.isNew() || (aFinanceApplicationCode.getRecordType() != null ? aFinanceApplicationCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aFinanceApplicationCode.isNew()
+				|| (aFinanceApplicationCode.getRecordType() != null ? aFinanceApplicationCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.finAppIsActive.setChecked(true);
 			this.finAppIsActive.setDisabled(true);
 		}
@@ -364,8 +360,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceApplicationCode
 	 * @throws Exception
@@ -415,13 +410,16 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 
 		setValidationOn(true);
 
-		if (!this.finAppType.isReadonly()){
-			this.finAppType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppType.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}	
+		if (!this.finAppType.isReadonly()) {
+			this.finAppType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppType.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 
-		if (!this.finAppDesc.isReadonly()){
-			this.finAppDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.finAppDesc.isReadonly()) {
+			this.finAppDesc.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -476,9 +474,9 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppType.value")+" : "+aFinanceApplicationCode.getFinAppType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_FinanceApplicationCodeDialog_FinAppType.value") + " : "
+				+ aFinanceApplicationCode.getFinAppType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinanceApplicationCode.getRecordType())) {
 				aFinanceApplicationCode.setVersion(aFinanceApplicationCode.getVersion() + 1);
@@ -689,7 +687,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
 				} else {
-					nextRoleCode =getTaskOwner(nextTaskId);
+					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
 
@@ -734,7 +732,8 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		FinanceApplicationCode aFinanceApplicationCode = (FinanceApplicationCode) auditHeader.getAuditDetail().getModelData();
+		FinanceApplicationCode aFinanceApplicationCode = (FinanceApplicationCode) auditHeader.getAuditDetail()
+				.getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -765,8 +764,8 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinanceApplicationCodeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -809,9 +808,10 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceApplicationCode aFinanceApplicationCode, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceApplicationCode.getBefImage(), aFinanceApplicationCode);
-		return new AuditHeader(String.valueOf(aFinanceApplicationCode.getId()),
-				null, null, null, auditDetail, aFinanceApplicationCode.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceApplicationCode.getBefImage(),
+				aFinanceApplicationCode);
+		return new AuditHeader(String.valueOf(aFinanceApplicationCode.getId()), null, null, null, auditDetail,
+				aFinanceApplicationCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -851,7 +851,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,	map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -864,12 +864,12 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	private void refreshList() {
 		getFinanceApplicationCodeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.financeApplicationCode.getFinAppType());
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -877,6 +877,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -884,6 +885,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	public FinanceApplicationCode getFinanceApplicationCode() {
 		return this.financeApplicationCode;
 	}
+
 	public void setFinanceApplicationCode(FinanceApplicationCode financeApplicationCode) {
 		this.financeApplicationCode = financeApplicationCode;
 	}
@@ -891,6 +893,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	public void setFinanceApplicationCodeService(FinanceApplicationCodeService financeApplicationCodeService) {
 		this.financeApplicationCodeService = financeApplicationCodeService;
 	}
+
 	public FinanceApplicationCodeService getFinanceApplicationCodeService() {
 		return this.financeApplicationCodeService;
 	}
@@ -898,6 +901,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	public void setFinanceApplicationCodeListCtrl(FinanceApplicationCodeListCtrl financeApplicationCodeListCtrl) {
 		this.financeApplicationCodeListCtrl = financeApplicationCodeListCtrl;
 	}
+
 	public FinanceApplicationCodeListCtrl getFinanceApplicationCodeListCtrl() {
 		return this.financeApplicationCodeListCtrl;
 	}

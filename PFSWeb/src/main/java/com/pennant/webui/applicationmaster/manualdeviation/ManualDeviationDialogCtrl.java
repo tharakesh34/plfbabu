@@ -85,31 +85,31 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger.getLogger(ManualDeviationDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(ManualDeviationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_ManualDeviationDialog;
-	protected Space								space_Code;
-	protected Textbox							code;
-	protected Space								space_Description;
-	protected Textbox							description;
-	protected Combobox							module;
-	protected Space								space_Categorization;
-	protected ExtendedCombobox					categorization;
-	protected Space								space_Severity;
+	protected Window window_ManualDeviationDialog;
+	protected Space space_Code;
+	protected Textbox code;
+	protected Space space_Description;
+	protected Textbox description;
+	protected Combobox module;
+	protected Space space_Categorization;
+	protected ExtendedCombobox categorization;
+	protected Space space_Severity;
 	protected Combobox severity;
-	protected Space								space_Active;
-	protected Checkbox							active;
-	private ManualDeviation						manualDeviation;														// overhanded per param
+	protected Space space_Active;
+	protected Checkbox active;
+	private ManualDeviation manualDeviation; // overhanded per param
 
-	private transient ManualDeviationListCtrl	manualDeviationListCtrl;												// overhanded per param
-	private transient ManualDeviationService	manualDeviationService;
+	private transient ManualDeviationListCtrl manualDeviationListCtrl; // overhanded per param
+	private transient ManualDeviationService manualDeviationService;
 
-	private List<ValueLabel>					moduleList			= PennantStaticListUtil.getWorkFlowModules();
+	private List<ValueLabel> moduleList = PennantStaticListUtil.getWorkFlowModules();
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 
 	/**

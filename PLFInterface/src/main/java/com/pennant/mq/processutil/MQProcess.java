@@ -18,39 +18,40 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public abstract class MQProcess {
 	private static final Logger logger = Logger.getLogger(MQProcess.class);
-	private String[] configDetails = null; 
+	private String[] configDetails = null;
 
 	public MQProcess() {
 		super();
 	}
-	
-	public String getRequestQueue() throws InterfaceException{
-		return InterfacePropertiesUtil.getProperty(getServiceConfigKey()+"_"+configDetails[1]+"_"+ "QUEUE");
+
+	public String getRequestQueue() throws InterfaceException {
+		return InterfacePropertiesUtil.getProperty(getServiceConfigKey() + "_" + configDetails[1] + "_" + "QUEUE");
 	}
 
-	public String getResponseQueue() throws InterfaceException{
-		return InterfacePropertiesUtil.getProperty(getServiceConfigKey()+"_"+configDetails[2]+"_"+ "QUEUE");
+	public String getResponseQueue() throws InterfaceException {
+		return InterfacePropertiesUtil.getProperty(getServiceConfigKey() + "_" + configDetails[2] + "_" + "QUEUE");
 	}
 
-	public int getWaitTime() throws InterfaceException{
-		return InterfacePropertiesUtil.getIntProperty(getServiceConfigKey()+"_"+configDetails[2]+"_"+ "QUEUEWTIME");
+	public int getWaitTime() throws InterfaceException {
+		return InterfacePropertiesUtil
+				.getIntProperty(getServiceConfigKey() + "_" + configDetails[2] + "_" + "QUEUEWTIME");
 	}
 
 	@Deprecated
-	public AHBMQHeader getReturnStatus(OMElement detailElement,AHBMQHeader header) throws InterfaceException{
+	public AHBMQHeader getReturnStatus(OMElement detailElement, AHBMQHeader header) throws InterfaceException {
 		try {
 			OMElement returnText = detailElement.getFirstChildWithName(new QName("ReturnText"));
 			OMElement timeStamp = detailElement.getFirstChildWithName(new QName("TimeStamp"));
-			
+
 			header.setReturnCode(detailElement.getFirstChildWithName(new QName("ReturnCode")).getText());
 			header.setReferenceNum(detailElement.getFirstChildWithName(new QName("ReferenceNum")).getText());
 			if (returnText != null) {
 				header.setReturnText(returnText.getText());
 			}
-			if(timeStamp!=null){
-				header.setReturnTime(timeStamp.getText());	
+			if (timeStamp != null) {
+				header.setReturnTime(timeStamp.getText());
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 			throw new InterfaceException("PTI3003", "Header: mandatory fields are Empty");
 		}
@@ -58,33 +59,35 @@ public abstract class MQProcess {
 		return header;
 
 	}
-	
-	public AHBMQHeader getReturnStatus(OMElement detailElement,AHBMQHeader header, OMElement responseElement) throws InterfaceException{
+
+	public AHBMQHeader getReturnStatus(OMElement detailElement, AHBMQHeader header, OMElement responseElement)
+			throws InterfaceException {
 		try {
 			if (detailElement == null) {
-				OMElement returnText = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/ErrorReply/Detail/Text", responseElement);
-				
+				OMElement returnText = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/ErrorReply/Detail/Text",
+						responseElement);
+
 				if (returnText != null) {
 					header.setReturnText(returnText.getText());
 				}
-				
+
 				if ("0000".equals(header.getReturnCode())) {
 					header.setReturnCode("UHEC");
 				}
 			} else {
 				OMElement returnText = detailElement.getFirstChildWithName(new QName("ReturnText"));
 				OMElement timeStamp = detailElement.getFirstChildWithName(new QName("TimeStamp"));
-				
+
 				header.setReturnCode(detailElement.getFirstChildWithName(new QName("ReturnCode")).getText());
 				header.setReferenceNum(detailElement.getFirstChildWithName(new QName("ReferenceNum")).getText());
 				if (returnText != null) {
 					header.setReturnText(returnText.getText());
 				}
-				if(timeStamp!=null){
-					header.setReturnTime(timeStamp.getText());	
+				if (timeStamp != null) {
+					header.setReturnTime(timeStamp.getText());
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.debug("Exception: ", e);
 			throw new InterfaceException("PTI3003", "Header: mandatory fields are Empty");
 		}
@@ -102,7 +105,7 @@ public abstract class MQProcess {
 	 */
 	public OMElement doMarshalling(Object request) throws InterfaceException {
 
-		if(request == null) {
+		if (request == null) {
 			throw new InterfaceException("PTI5002", "Request Element is Empty");
 		}
 		StringWriter writer = new StringWriter();
@@ -130,7 +133,7 @@ public abstract class MQProcess {
 	 */
 	public Object doUnMarshalling(OMElement request, Object classType) throws InterfaceException {
 
-		if(request == null) {
+		if (request == null) {
 			throw new InterfaceException("PTI5002", "Response Element is Empty");
 		}
 		Object resObject = null;

@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.dedup;
+
 import java.util.List;
 
 import com.pennant.backend.model.BuilderTable;
@@ -50,10 +51,16 @@ import com.pennant.backend.model.dedup.DedupFields;
 public interface DedupFieldsDAO {
 
 	DedupFields getDedupFields();
+
 	DedupFields getNewDedupFields();
-	DedupFields getDedupFieldsByID(String id,String type);
-	void update(DedupFields dedupFields,String type);
-	void delete(DedupFields dedupFields,String type);
-	String save(DedupFields dedupFields,String type);
+
+	DedupFields getDedupFieldsByID(String id, String type);
+
+	void update(DedupFields dedupFields, String type);
+
+	void delete(DedupFields dedupFields, String type);
+
+	String save(DedupFields dedupFields, String type);
+
 	List<BuilderTable> getFieldList(String queryModule);
 }

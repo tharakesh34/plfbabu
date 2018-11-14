@@ -58,11 +58,12 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class FinanceStatusCodeListModelItemRenderer implements ListitemRenderer<FinanceStatusCode>, Serializable {
 
-	private static final long	serialVersionUID	= 1L;
-	
+	private static final long serialVersionUID = 1L;
+
 	public FinanceStatusCodeListModelItemRenderer() {
-		
+
 	}
+
 	@Override
 	public void render(Listitem item, FinanceStatusCode financeStatusCode, int count) throws Exception {
 

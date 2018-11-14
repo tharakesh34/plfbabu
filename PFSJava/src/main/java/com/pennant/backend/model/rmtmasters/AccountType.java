@@ -83,11 +83,11 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String costCenterCode;
 	private String profitCenterCode;
 	private boolean taxApplicable;
-	private String  aCCADDLVAR1;
-	private String  aCCADDLVAR2;
+	private String aCCADDLVAR1;
+	private String aCCADDLVAR2;
 	private boolean aCCADDLCHAR1;
-	
-	private String  extractionType;
+
+	private String extractionType;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -109,6 +109,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public String getId() {
 		return acType;
 	}
+
 	public void setId(String id) {
 		this.acType = id;
 	}
@@ -116,6 +117,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public String getAcType() {
 		return acType;
 	}
+
 	public void setAcType(String acType) {
 		this.acType = acType;
 	}
@@ -123,6 +125,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public String getAcTypeDesc() {
 		return acTypeDesc;
 	}
+
 	public void setAcTypeDesc(String acTypeDesc) {
 		this.acTypeDesc = acTypeDesc;
 	}
@@ -130,6 +133,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public String getAcPurpose() {
 		return acPurpose;
 	}
+
 	public void setAcPurpose(String acPurpose) {
 		this.acPurpose = acPurpose;
 	}
@@ -137,6 +141,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public String getAcHeadCode() {
 		return acHeadCode;
 	}
+
 	public void setAcHeadCode(String acHeadCode) {
 		this.acHeadCode = acHeadCode;
 	}
@@ -156,18 +161,19 @@ public class AccountType extends AbstractWorkflowEntity {
 	public void setCustSysAc(boolean custSysAc) {
 		this.custSysAc = custSysAc;
 	}
-	
+
 	public String getAcLmtCategory() {
-    	return acLmtCategory;
-    }
+		return acLmtCategory;
+	}
 
 	public void setAcLmtCategory(String acLmtCategory) {
-    	this.acLmtCategory = acLmtCategory;
-    }
+		this.acLmtCategory = acLmtCategory;
+	}
 
 	public boolean isAcTypeIsActive() {
 		return acTypeIsActive;
 	}
+
 	public void setAcTypeIsActive(boolean acTypeIsActive) {
 		this.acTypeIsActive = acTypeIsActive;
 	}
@@ -175,6 +181,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -182,6 +189,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -189,6 +197,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public AccountType getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(AccountType beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -196,6 +205,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

@@ -12,13 +12,13 @@ import javax.xml.bind.annotation.XmlType;
 public class CoAppBureau {
 
 	@XmlElement(name = "COAPPLICANTSCORE")
-	private String	coAppscore;
+	private String coAppscore;
 
 	@XmlElement(name = "NOOFTIMES30INL6M")
-	private int		noOfTimes30inL6M;
+	private int noOfTimes30inL6M;
 
 	@XmlElement(name = "COAPPLICANTASSETCLASSIFICATION")
-	private String	coAppAssetClassification;
+	private String coAppAssetClassification;
 
 	public String getCoAppscore() {
 		return coAppscore;

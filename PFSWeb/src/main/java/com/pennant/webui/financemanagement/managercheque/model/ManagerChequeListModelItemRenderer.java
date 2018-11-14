@@ -56,7 +56,6 @@ import com.pennant.backend.model.financemanagement.ManagerCheque;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -83,16 +82,17 @@ public class ManagerChequeListModelItemRenderer implements ListitemRenderer<Mana
 		lc.setParent(item);
 		lc = new Listcell(managerCheque.getDraftCcy() + "-" + CurrencyUtil.getCcyDesc(managerCheque.getDraftCcy()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(PennantApplicationUtil.amountFormate(managerCheque.getChequeAmount(),  CurrencyUtil.getFormat(managerCheque.getFundingCcy()))));
+		lc = new Listcell(String.valueOf(PennantApplicationUtil.amountFormate(managerCheque.getChequeAmount(),
+				CurrencyUtil.getFormat(managerCheque.getFundingCcy()))));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(managerCheque.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(managerCheque.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("id", managerCheque.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onManagerChequeItemDoubleClicked");
 	}
 }

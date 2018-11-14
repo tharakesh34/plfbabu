@@ -48,66 +48,66 @@ import com.pennanttech.pff.external.service.NiyoginService;
 
 public class CrifBureauServiceImpl extends NiyoginService implements CriffBureauService {
 
-	private static final Logger	logger													= Logger.getLogger(CrifBureauServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CrifBureauServiceImpl.class);
 
-	private final String		commercialConfigFileName								= "crifBureauCommercial.properties";
-	private final String		consumerConfigFileName									= "crifBureauConsumer.properties";
+	private final String commercialConfigFileName = "crifBureauCommercial.properties";
+	private final String consumerConfigFileName = "crifBureauConsumer.properties";
 
-	private String				consumerUrl;
-	private String				commercialUrl;
+	private String consumerUrl;
+	private String commercialUrl;
 
 	//Experian Bureau
-	public static final String	REQ_SEND												= "REQSENDCRIF";
-	public static final String	STATUSCODE												= "STATUSCRIF";
-	public static final String	RSN_CODE												= "REASONCRIF";
-	public static final String	REMARKS													= "REMARKSCRIF";
+	public static final String REQ_SEND = "REQSENDCRIF";
+	public static final String STATUSCODE = "STATUSCRIF";
+	public static final String RSN_CODE = "REASONCRIF";
+	public static final String REMARKS = "REMARKSCRIF";
 
-	public static final String	OLDEST_LOANDISBURSED_DT									= "OLDESTLOANDISBUR";
-	public static final String	NO_PREVS_LOANS_AS_OF_APP_DT								= "NOPREVIOUSLOANS";
-	public static final String	IS_APP_SUBSTANDARD_IN_L6M								= "ISAPPLICANTSUBST";
-	public static final String	IS_APP_REPORTED_AS_LOSS_IN_L6M							= "ISAPPLICANTREPOR";
-	public static final String	IS_APP_DOUBTFUL_IN_L6M									= "ISAPPLICANTDOUBT";
-	public static final String	IS_APP_MENTIONED_AS_SMA									= "ISAPPMENTSMA";
-	public static final String	IS_APP_90PLUS_DPD_IN_L6M								= "ISAPPLICANT90DP";
-	public static final String	LAST_UPDATE_DT_IN_BUREAU								= "LASTUPDATEDATE";
-	public static final String	NOT_ENOUGH_INFO											= "NOTENOUGHINFO";
-	public static final String	COMB_OF_PREVS_LOANS_TAKEN								= "AMBOFPRVSLOANS";
-	public static final String	PRODUCT_INDEX											= "PROINDEXDETAILSHT";
-	public static final String	SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS				= "SUMOFDISBURSEDAMT";
-	public static final String	RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS		= "RATIOOFOVRDUEDIS";
-	public static final String	NUMB_OF_BUS_LOANS_OPENED_IN_L6M							= "NOOFBUSILOANS";
-	public static final String	MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS			= "MAXPEROFAMTREPAID";
-	public static final String	MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "MAXIMUMDISBURSED";
-	public static final String	MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS			= "MINIMUMPEROFAMT";
-	public static final String	MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "MNTHSIN30DPDINALAS";
-	
+	public static final String OLDEST_LOANDISBURSED_DT = "OLDESTLOANDISBUR";
+	public static final String NO_PREVS_LOANS_AS_OF_APP_DT = "NOPREVIOUSLOANS";
+	public static final String IS_APP_SUBSTANDARD_IN_L6M = "ISAPPLICANTSUBST";
+	public static final String IS_APP_REPORTED_AS_LOSS_IN_L6M = "ISAPPLICANTREPOR";
+	public static final String IS_APP_DOUBTFUL_IN_L6M = "ISAPPLICANTDOUBT";
+	public static final String IS_APP_MENTIONED_AS_SMA = "ISAPPMENTSMA";
+	public static final String IS_APP_90PLUS_DPD_IN_L6M = "ISAPPLICANT90DP";
+	public static final String LAST_UPDATE_DT_IN_BUREAU = "LASTUPDATEDATE";
+	public static final String NOT_ENOUGH_INFO = "NOTENOUGHINFO";
+	public static final String COMB_OF_PREVS_LOANS_TAKEN = "AMBOFPRVSLOANS";
+	public static final String PRODUCT_INDEX = "PROINDEXDETAILSHT";
+	public static final String SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS = "SUMOFDISBURSEDAMT";
+	public static final String RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS = "RATIOOFOVRDUEDIS";
+	public static final String NUMB_OF_BUS_LOANS_OPENED_IN_L6M = "NOOFBUSILOANS";
+	public static final String MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS = "MAXPEROFAMTREPAID";
+	public static final String MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M = "MAXIMUMDISBURSED";
+	public static final String MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS = "MINIMUMPEROFAMT";
+	public static final String MONTHS_SINCE_30_PLUS_DPD_IN_L12M = "MNTHSIN30DPDINALAS";
+
 	//for CoAPP
-	private final String		COAPP_REQ_SEND												= "CAREQSENDCRIF";
-	private final String		COAPP_STATUSCODE											= "CASTATUSCRIF";
-	private final String		COAPP_RSN_CODE												= "CAREASONCRIF";
-	private final String		COAPP_REMARKS												= "CAREMARKSCRIF";
-	private final String		COAPP_OLDEST_LOANDISBURSED_DT								= "CAOLDESTLOANDISBUR";
-	private final String		COAPP_NO_PREVS_LOANS_AS_OF_APP_DT							= "CANOPREVIOUSLOANS";
-	private final String		COAPP_IS_APP_SUBSTANDARD_IN_L6M								= "CAISAPPLICANTSUBST";
-	private final String		COAPP_IS_APP_REPORTED_AS_LOSS_IN_L6M						= "CAISAPPLICANTREPOR";
-	private final String		COAPP_IS_APP_DOUBTFUL_IN_L6M								= "CAISAPPLICANTDOUBT";
-	private final String		COAPP_IS_APP_MENTIONED_AS_SMA								= "CAISAPPMENTSMA";
-	private final String		COAPP_IS_APP_90PLUS_DPD_IN_L6M								= "CAISAPPLICANT90DP";
-	private final String		COAPP_LAST_UPDATE_DT_IN_BUREAU								= "CALASTUPDATEDATE";
-	private final String		COAPP_NOT_ENOUGH_INFO										= "CANOTENOUGHINFO";
-	private final String		COAPP_COMB_OF_PREVS_LOANS_TAKEN								= "CAAMBOFPRVSLOANS";
-	private final String		COAPP_PRODUCT_INDEX											= "CAPROINDEXDETAILSHT";
-	private final String		COAPP_SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS				= "CASUMOFDISBURSEDAMT";
-	private final String		COAPP_RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS	= "CARATIOOFOVRDUEDIS";
-	private final String		COAPP_NUMB_OF_BUS_LOANS_OPENED_IN_L6M						= "CANOOFBUSILOANS";
-	private final String		COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS		= "CANOOFBUSILOANS";
-	private final String		COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M	= "CAMAXIMUMDISBURSED";
-	private final String		COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS		= "CAMINIMUMPEROFAMT";
-	private final String		COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M						= "CAMNTHSIN30DPDINALAS";
+	private final String COAPP_REQ_SEND = "CAREQSENDCRIF";
+	private final String COAPP_STATUSCODE = "CASTATUSCRIF";
+	private final String COAPP_RSN_CODE = "CAREASONCRIF";
+	private final String COAPP_REMARKS = "CAREMARKSCRIF";
+	private final String COAPP_OLDEST_LOANDISBURSED_DT = "CAOLDESTLOANDISBUR";
+	private final String COAPP_NO_PREVS_LOANS_AS_OF_APP_DT = "CANOPREVIOUSLOANS";
+	private final String COAPP_IS_APP_SUBSTANDARD_IN_L6M = "CAISAPPLICANTSUBST";
+	private final String COAPP_IS_APP_REPORTED_AS_LOSS_IN_L6M = "CAISAPPLICANTREPOR";
+	private final String COAPP_IS_APP_DOUBTFUL_IN_L6M = "CAISAPPLICANTDOUBT";
+	private final String COAPP_IS_APP_MENTIONED_AS_SMA = "CAISAPPMENTSMA";
+	private final String COAPP_IS_APP_90PLUS_DPD_IN_L6M = "CAISAPPLICANT90DP";
+	private final String COAPP_LAST_UPDATE_DT_IN_BUREAU = "CALASTUPDATEDATE";
+	private final String COAPP_NOT_ENOUGH_INFO = "CANOTENOUGHINFO";
+	private final String COAPP_COMB_OF_PREVS_LOANS_TAKEN = "CAAMBOFPRVSLOANS";
+	private final String COAPP_PRODUCT_INDEX = "CAPROINDEXDETAILSHT";
+	private final String COAPP_SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS = "CASUMOFDISBURSEDAMT";
+	private final String COAPP_RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS = "CARATIOOFOVRDUEDIS";
+	private final String COAPP_NUMB_OF_BUS_LOANS_OPENED_IN_L6M = "CANOOFBUSILOANS";
+	private final String COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS = "CANOOFBUSILOANS";
+	private final String COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M = "CAMAXIMUMDISBURSED";
+	private final String COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS = "CAMINIMUMPEROFAMT";
+	private final String COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M = "CAMNTHSIN30DPDINALAS";
 
-	private Date				appDate														= getAppDate();
-	private String				pincode														= null;
-	private final String		ACCOUNT_STATUS_CLOSED										= "S07";
+	private Date appDate = getAppDate();
+	private String pincode = null;
+	private final String ACCOUNT_STATUS_CLOSED = "S07";
 
 	/**
 	 * Method for execute CRIFF Bureau service<br>
@@ -119,12 +119,11 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	@Override
 	public AuditHeader executeCriffBureau(AuditHeader auditHeader) throws InterfaceException, ParseException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(consumerUrl) && StringUtils.isBlank(commercialUrl)) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
@@ -146,8 +145,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		Map<String, Object> coAppplicantsdata = new HashMap<>();
 		List<CustomerDetails> coApplicantCustomers = getCoApplicants(coApplicantIDs);
 		for (CustomerDetails coAppCustomerDetail : coApplicantCustomers) {
-			appplicationdata=executeBureau(financeDetail, coAppCustomerDetail);
-			processCoAppResponse(coAppplicantsdata,appplicationdata);
+			appplicationdata = executeBureau(financeDetail, coAppCustomerDetail);
+			processCoAppResponse(coAppplicantsdata, appplicationdata);
 		}
 		Map<String, Object> mapvalidData = validateExtendedMapValues(coAppplicantsdata);
 		prepareResponseObj(mapvalidData, financeDetail);
@@ -165,34 +164,49 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 	private void processCoAppResponse(Map<String, Object> coAppplicantsdata, Map<String, Object> appplicationdata) {
 		logger.debug(Literal.ENTERING);
 		if (appplicationdata != null) {
-			
-			prepareListData(COAPP_REQ_SEND,REQ_SEND, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_STATUSCODE,STATUSCODE, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_RSN_CODE,RSN_CODE, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_REMARKS,REMARKS, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_OLDEST_LOANDISBURSED_DT,OLDEST_LOANDISBURSED_DT, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_NO_PREVS_LOANS_AS_OF_APP_DT,NO_PREVS_LOANS_AS_OF_APP_DT, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_IS_APP_SUBSTANDARD_IN_L6M,IS_APP_SUBSTANDARD_IN_L6M, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_IS_APP_REPORTED_AS_LOSS_IN_L6M,IS_APP_REPORTED_AS_LOSS_IN_L6M, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_IS_APP_DOUBTFUL_IN_L6M,IS_APP_DOUBTFUL_IN_L6M, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_IS_APP_MENTIONED_AS_SMA,IS_APP_MENTIONED_AS_SMA, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_IS_APP_90PLUS_DPD_IN_L6M,IS_APP_90PLUS_DPD_IN_L6M, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_LAST_UPDATE_DT_IN_BUREAU, LAST_UPDATE_DT_IN_BUREAU, coAppplicantsdata, appplicationdata);
+
+			prepareListData(COAPP_REQ_SEND, REQ_SEND, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_STATUSCODE, STATUSCODE, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_RSN_CODE, RSN_CODE, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_REMARKS, REMARKS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_OLDEST_LOANDISBURSED_DT, OLDEST_LOANDISBURSED_DT, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_NO_PREVS_LOANS_AS_OF_APP_DT, NO_PREVS_LOANS_AS_OF_APP_DT, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_IS_APP_SUBSTANDARD_IN_L6M, IS_APP_SUBSTANDARD_IN_L6M, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_IS_APP_REPORTED_AS_LOSS_IN_L6M, IS_APP_REPORTED_AS_LOSS_IN_L6M, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_IS_APP_DOUBTFUL_IN_L6M, IS_APP_DOUBTFUL_IN_L6M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_IS_APP_MENTIONED_AS_SMA, IS_APP_MENTIONED_AS_SMA, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_IS_APP_90PLUS_DPD_IN_L6M, IS_APP_90PLUS_DPD_IN_L6M, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_LAST_UPDATE_DT_IN_BUREAU, LAST_UPDATE_DT_IN_BUREAU, coAppplicantsdata,
+					appplicationdata);
 			prepareListData(COAPP_NOT_ENOUGH_INFO, NOT_ENOUGH_INFO, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_COMB_OF_PREVS_LOANS_TAKEN, COMB_OF_PREVS_LOANS_TAKEN, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_COMB_OF_PREVS_LOANS_TAKEN, COMB_OF_PREVS_LOANS_TAKEN, coAppplicantsdata,
+					appplicationdata);
 			prepareListData(COAPP_PRODUCT_INDEX, PRODUCT_INDEX, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS,SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_NUMB_OF_BUS_LOANS_OPENED_IN_L6M,NUMB_OF_BUS_LOANS_OPENED_IN_L6M, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, coAppplicantsdata, appplicationdata);
-			prepareListData(COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M, MONTHS_SINCE_30_PLUS_DPD_IN_L12M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS, SUM_OF_DISBURSED_AMT_OF_ALL_CLOSED_LOANS,
+					coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS,
+					RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_NUMB_OF_BUS_LOANS_OPENED_IN_L6M, NUMB_OF_BUS_LOANS_OPENED_IN_L6M, coAppplicantsdata,
+					appplicationdata);
+			prepareListData(COAPP_MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS,
+					MAX_PER_OF_AMT_REPAID_ACROSS_ALL_ACT_SEC_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M,
+					MAX_DISBURSED_AMT_ACROSS_ALL_UNSECURED_LOANS_IN_L12M, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS,
+					MIN_PER_OF_AMT_REPAID_ACROSS_ALL_UNSECURE_LOANS, coAppplicantsdata, appplicationdata);
+			prepareListData(COAPP_MONTHS_SINCE_30_PLUS_DPD_IN_L12M, MONTHS_SINCE_30_PLUS_DPD_IN_L12M, coAppplicantsdata,
+					appplicationdata);
 
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for combining both coApplicantsMap data and currentDataMap data by appending a delimeter.
 	 * 
@@ -423,7 +437,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			//Formula = ((Total Sanctioned Amount - Total Current Balance)/Total Sanctioned Amount)*100
 			BigDecimal ratioOfOverdue = BigDecimal.ZERO;
 			if (totSanctionAmt.compareTo(BigDecimal.ZERO) > 0) {
-				ratioOfOverdue = (totSanctionAmt.subtract(totCurrentBal)).divide(totSanctionAmt, 5, RoundingMode.HALF_DOWN);
+				ratioOfOverdue = (totSanctionAmt.subtract(totCurrentBal)).divide(totSanctionAmt, 5,
+						RoundingMode.HALF_DOWN);
 				ratioOfOverdue = ratioOfOverdue.multiply(new BigDecimal(100));
 			}
 			extendedFieldMap.put(RATIO_OF_OVERDUE_AND_DISBURSEMENT_AMT_FOR_ALL_LOANS, ratioOfOverdue);
@@ -588,8 +603,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		BigDecimal overDueAmt = BigDecimal.ZERO;
 		BigDecimal disBursedAmt = BigDecimal.ZERO;
 		int noBusLoanOpened = 0;
-		BigDecimal tempValueForMaxAmt=BigDecimal.ZERO;
-		BigDecimal tempValueForMinAmt=BigDecimal.ZERO;
+		BigDecimal tempValueForMaxAmt = BigDecimal.ZERO;
+		BigDecimal tempValueForMinAmt = BigDecimal.ZERO;
 
 		//for minimum checking take first one and compare
 		BigDecimal minPerOfAmtRepaidOnSL = loanDetailsList.get(0).getDisbursedAmt();
@@ -608,7 +623,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			//for max amount repaid across all active secured_loans
 			if (loanDetail.getSecurityDetails() != null && !loanDetail.getSecurityDetails().isEmpty()) {
 				BigDecimal paidAmt = loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
-				if (loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO) > 0 && paidAmt.compareTo(BigDecimal.ZERO) > 0) {
+				if (loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO) > 0
+						&& paidAmt.compareTo(BigDecimal.ZERO) > 0) {
 					tempValueForMaxAmt = paidAmt.divide(loanDetail.getDisbursedAmt(), 5, RoundingMode.HALF_DOWN);
 				}
 				if (tempValueForMaxAmt.compareTo(maxPerOfAmtRepaidOnSL) > 0) {
@@ -631,9 +647,10 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 
 			//for min per of amt repaid across all unsecure loans
 			if (loanDetail.getSecurityDetails() != null && loanDetail.getSecurityDetails().isEmpty()) {
-				BigDecimal paidAmt=loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
-				if(loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO)>0&&paidAmt.compareTo(BigDecimal.ZERO)>0){
-					tempValueForMinAmt=paidAmt.divide(loanDetail.getDisbursedAmt(), 5,  RoundingMode.HALF_DOWN);
+				BigDecimal paidAmt = loanDetail.getDisbursedAmt().subtract(loanDetail.getCurrentBal());
+				if (loanDetail.getDisbursedAmt().compareTo(BigDecimal.ZERO) > 0
+						&& paidAmt.compareTo(BigDecimal.ZERO) > 0) {
+					tempValueForMinAmt = paidAmt.divide(loanDetail.getDisbursedAmt(), 5, RoundingMode.HALF_DOWN);
 				}
 				if (tempValueForMinAmt.compareTo(minPerOfAmtRepaidOnSL) < 0) {
 					minPerOfAmtRepaidOnSL = tempValueForMinAmt;
@@ -652,7 +669,8 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 			disBursedAmt = disBursedAmt.add(loanDetail.getDisbursedAmt());
 			overDueAmt = overDueAmt.add(loanDetail.getOverdueAmt());
 
-			if (loanDetail.getDisbursedDate()!=null && NiyoginUtility.getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
+			if (loanDetail.getDisbursedDate() != null
+					&& NiyoginUtility.getMonthsBetween(getAppDate(), loanDetail.getDisbursedDate()) <= 6) {
 				noBusLoanOpened++;
 			}
 			//for oldest loan disbursed date
@@ -801,7 +819,7 @@ public class CrifBureauServiceImpl extends NiyoginService implements CriffBureau
 		List<PaymentHistory> paymentHistoryList = new ArrayList<PaymentHistory>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd:MMM:yyyy");
 		for (String payment : paymentList) {
-			if(StringUtils.isEmpty(payment)){
+			if (StringUtils.isEmpty(payment)) {
 				continue;
 			}
 			String[] block = payment.split("\\|");

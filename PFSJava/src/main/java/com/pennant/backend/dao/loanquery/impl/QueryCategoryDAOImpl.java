@@ -65,26 +65,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>QueryCategory</code> with set of CRUD operations.
  */
 public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements QueryCategoryDAO {
-	private static Logger				logger	= Logger.getLogger(QueryCategoryDAOImpl.class);
-
+	private static Logger logger = Logger.getLogger(QueryCategoryDAOImpl.class);
 
 	public QueryCategoryDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public QueryCategory getQueryCategory(long id,String type) {
+	public QueryCategory getQueryCategory(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, code, description, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From BMTQueryCategories");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -103,10 +103,10 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 
 		logger.debug(Literal.LEAVING);
 		return queryCategory;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,String code, TableType tableType) {
+	public boolean isDuplicateKey(long id, String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -121,7 +121,8 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 			sql = QueryUtil.getCountQuery("BMTQueryCategories_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "BMTQueryCategories_Temp", "BMTQueryCategories" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "BMTQueryCategories_Temp", "BMTQueryCategories" },
+					whereClause);
 			break;
 		}
 
@@ -130,7 +131,7 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("code", code);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -141,23 +142,25 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(QueryCategory queryCategory,TableType tableType) {
+	public String save(QueryCategory queryCategory, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into BMTQueryCategories");
+		StringBuilder sql = new StringBuilder(" insert into BMTQueryCategories");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, code, description, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :code, :description, :active, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		if (queryCategory.getId()==Long.MIN_VALUE){
+		if (queryCategory.getId() == Long.MIN_VALUE) {
 			queryCategory.setId(getNextValue("SeqBMTQueryCategories"));
-			logger.debug("get NextID:"+queryCategory.getId());
+			logger.debug("get NextID:" + queryCategory.getId());
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -172,14 +175,14 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(queryCategory.getId());
-	}	
+	}
 
 	@Override
-	public void update(QueryCategory queryCategory,TableType tableType) {
+	public void update(QueryCategory queryCategory, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update BMTQueryCategories" );
+		StringBuilder sql = new StringBuilder("update BMTQueryCategories");
 		sql.append(tableType.getSuffix());
 		sql.append("  set code = :code, description = :description, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -187,10 +190,10 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryCategory);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -198,7 +201,7 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -230,5 +233,5 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-}	
+
+}

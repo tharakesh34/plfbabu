@@ -50,14 +50,19 @@ import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 
 public interface FinContributorDetailService {
-	
 
 	FinContributorDetail getContributorDetailById(String finReference, long contributorBaseNo);
+
 	FinContributorDetail getApprovedContributorDetailById(String finReference, long contributorBaseNo);
-	
+
 	FinContributorHeader getContributorHeaderById(String id);
+
 	List<AuditDetail> saveOrUpdate(FinContributorHeader contributorHeader, String tableType, String auditTranType);
+
 	List<AuditDetail> doApprove(FinContributorHeader contributorHeader, String tableType, String auditTranType);
+
 	List<AuditDetail> delete(FinContributorHeader contributorHeader, String tableType, String auditTranType);
-	List<AuditDetail> validate(List<FinContributorDetail> finContributorDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+
+	List<AuditDetail> validate(List<FinContributorDetail> finContributorDetails, long workflowId, String method,
+			String auditTranType, String usrLanguage);
 }

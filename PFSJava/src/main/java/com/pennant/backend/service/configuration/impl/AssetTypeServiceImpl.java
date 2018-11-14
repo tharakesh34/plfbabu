@@ -78,11 +78,10 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	private AuditHeaderDAO auditHeaderDAO;
 
 	private AssetTypeDAO assetTypeDAO;
-	private ExtendedFieldsValidation	extendedFieldsValidation;
+	private ExtendedFieldsValidation extendedFieldsValidation;
 
-	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
-	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
-
+	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -96,19 +95,23 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the assetTypeDAO
 	 */
 	public AssetTypeDAO getAssetTypeDAO() {
 		return assetTypeDAO;
 	}
+
 	/**
-	 * @param assetTypeDAO the assetTypeDAO to set
+	 * @param assetTypeDAO
+	 *            the assetTypeDAO to set
 	 */
 	public void setAssetTypeDAO(AssetTypeDAO assetTypeDAO) {
 		this.assetTypeDAO = assetTypeDAO;
@@ -121,6 +124,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	public AssetType getAssetType() {
 		return getAssetTypeDAO().getAssetType();
 	}
+
 	/**
 	 * @return the assetType for New Record
 	 */
@@ -130,16 +134,15 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table VasStructure/VasStructure_Temp 
-	 * 			by using VASConfigurationDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using VASConfigurationDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table VasStructure/VasStructure_Temp
+	 * by using VASConfigurationDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using VASConfigurationDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -148,43 +151,41 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * AssetTypes/AssetTypes_Temp by using AssetTypesDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using AssetTypesDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtAssetTypes by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table AssetTypes/AssetTypes_Temp by
+	 * using AssetTypesDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using AssetTypesDAO's update method 3) Audit the record in to AuditHeader and AdtAssetTypes by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		AssetType aAssetType = (AssetType) auditHeader.getAuditDetail().getModelData();
 
 		if (aAssetType.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (aAssetType.isNew()) {
-			getAssetTypeDAO().save(aAssetType,tableType);
-		}else{
-			getAssetTypeDAO().update(aAssetType,tableType);
+			getAssetTypeDAO().save(aAssetType, tableType);
+		} else {
+			getAssetTypeDAO().update(aAssetType, tableType);
 		}
 
 		//ExtendedFieldHeader processing
-		List<AuditDetail> headerDetail = aAssetType.getExtendedFieldHeader().getAuditDetailMap().get("ExtendedFieldHeader");
+		List<AuditDetail> headerDetail = aAssetType.getExtendedFieldHeader().getAuditDetailMap()
+				.get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
@@ -220,12 +221,10 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table AssetTypes by using AssetTypesDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtAssetTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * AssetTypes by using AssetTypesDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtAssetTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -234,14 +233,14 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		AssetType assetType = (AssetType) auditHeader.getAuditDetail().getModelData();
-		getAssetTypeDAO().delete(assetType,"");
+		getAssetTypeDAO().delete(assetType, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -249,8 +248,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * getAssetTypesById fetch the details by using AssetTypesDAO's getAssetTypesById
-	 * method.
+	 * getAssetTypesById fetch the details by using AssetTypesDAO's getAssetTypesById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -261,20 +259,21 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	@Override
 	public AssetType getAssetTypeById(String id) {
 		AssetType assetType = getAssetTypeDAO().getAssetTypeById(id, "_View");
-		if(assetType != null) {
+		if (assetType != null) {
 			ExtendedFieldHeader extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
 					AssetConstants.EXTENDEDFIELDS_MODULE, assetType.getAssetType(), "_View");
 			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
+				extFldHeader.setExtendedFieldDetails(
+						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
 			}
 			assetType.setExtendedFieldHeader(extFldHeader);
 		}
 		return assetType;
 	}
+
 	/**
-	 * getApprovedAssetTypesById fetch the details by using AssetTypesDAO's
-	 * getAssetTypesById method . with parameter id and type as blank. it fetches
-	 * the approved records from the AssetTypes.
+	 * getApprovedAssetTypesById fetch the details by using AssetTypesDAO's getAssetTypesById method . with parameter id
+	 * and type as blank. it fetches the approved records from the AssetTypes.
 	 * 
 	 * @param id
 	 *            (String)
@@ -285,26 +284,23 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		ExtendedFieldHeader extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(
 				AssetConstants.EXTENDEDFIELDS_MODULE, assetType.getAssetType(), "_AView");
 		if (extFldHeader != null) {
-			extFldHeader.setExtendedFieldDetails(getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
+			extFldHeader.setExtendedFieldDetails(
+					getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
 		}
 		assetType.setExtendedFieldHeader(extFldHeader);
 		return assetType;
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getAssetTypeDAO().delete with parameters assetType,"" b) NEW Add new
-	 * record in to main table by using getAssetTypeDAO().save with parameters
-	 * assetType,"" c) EDIT Update record in the main table by using
-	 * getAssetTypeDAO().update with parameters assetType,"" 3) Delete the record
-	 * from the workFlow table by using getAssetTypeDAO().delete with parameters
-	 * assetType,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtAssetTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtAssetTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getAssetTypeDAO().delete with
+	 * parameters assetType,"" b) NEW Add new record in to main table by using getAssetTypeDAO().save with parameters
+	 * assetType,"" c) EDIT Update record in the main table by using getAssetTypeDAO().update with parameters
+	 * assetType,"" 3) Delete the record from the workFlow table by using getAssetTypeDAO().delete with parameters
+	 * assetType,"_Temp" 4) Audit the record in to AuditHeader and AdtAssetTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAssetTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -313,8 +309,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (!auditHeader.isNextProcess()) {
@@ -323,19 +319,20 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		AssetType assetType = new AssetType("");
 		BeanUtils.copyProperties((AssetType) auditHeader.getAuditDetail().getModelData(), assetType);
-		
+
 		// Extended field Details
 		ExtendedFieldHeader extendedFieldHeader = assetType.getExtendedFieldHeader();
 
 		if (assetType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			
+
 			tranType = PennantConstants.TRAN_DEL;
 			// Table dropping in DB for Configured Asset Details
-			getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName());
+			getExtendedFieldHeaderDAO().dropTable(extendedFieldHeader.getModuleName(),
+					extendedFieldHeader.getSubModuleName());
 			auditDetails.addAll(listDeletion(extendedFieldHeader, "", auditHeader.getAuditTranType()));
 			getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "");
-				
-			getAssetTypeDAO().delete(assetType,"");
+
+			getAssetTypeDAO().delete(assetType, "");
 		} else {
 			assetType.setRoleCode("");
 			assetType.setNextRoleCode("");
@@ -343,16 +340,16 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			assetType.setNextTaskId("");
 			assetType.setWorkflowId(0);
 
-			if (assetType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
-				tranType=PennantConstants.TRAN_ADD;
+			if (assetType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				assetType.setRecordType("");
-				getAssetTypeDAO().save(assetType,"");
+				getAssetTypeDAO().save(assetType, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				assetType.setRecordType("");
-				getAssetTypeDAO().update(assetType,"");
+				getAssetTypeDAO().update(assetType, "");
 			}
-			
+
 			extendedFieldHeader.setRoleCode("");
 			extendedFieldHeader.setNextRoleCode("");
 			extendedFieldHeader.setTaskId("");
@@ -373,8 +370,9 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 				extendedFieldHeader.setRecordType("");
 				getExtendedFieldHeaderDAO().update(extendedFieldHeader, "");
 			}
-			auditDetails.add(new AuditDetail(tranType, 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
-			if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			auditDetails.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
+			if (extendedFieldHeader.getExtendedFieldDetails() != null
+					&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 				List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
 				details = getExtendedFieldsValidation().processingExtendeFieldList(details, "");
 				auditDetails.addAll(details);
@@ -385,12 +383,12 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		//Extended filed header
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
-		auditDetailList.add(new AuditDetail(tranType, 1,  extendedFieldHeader.getBefImage(), extendedFieldHeader));
+		auditDetailList.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
 
 		//Extended Field Detail List
 		auditDetailList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
-		getAssetTypeDAO().delete(assetType,"_Temp");
+		getAssetTypeDAO().delete(assetType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -399,28 +397,25 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		auditHeader.getAuditDetail().setModelData(assetType);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getAssetTypeDAO().delete with parameters
-	 * assetType,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtAssetTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getAssetTypeDAO().delete with parameters assetType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtAssetTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -428,7 +423,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		AssetType assetType = (AssetType) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAssetTypeDAO().delete(assetType,"_Temp");
+		getAssetTypeDAO().delete(assetType, "_Temp");
 
 		//ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = assetType.getExtendedFieldHeader();
@@ -456,8 +451,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			for (int i = 0; i < extendedFieldHeader.getExtendedFieldDetails().size(); i++) {
 				ExtendedFieldDetail extendedFieldDetail = extendedFieldHeader.getExtendedFieldDetails().get(i);
 				if (StringUtils.isNotBlank(extendedFieldDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], extendedFieldDetail
-							.getBefImage(), extendedFieldDetail));
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							extendedFieldDetail.getBefImage(), extendedFieldDetail));
 				}
 			}
 			getExtendedFieldDetailDAO().deleteByExtendedFields(extendedFieldHeader.getId(), tableType);
@@ -466,18 +461,16 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		return auditList;
 	}
 
-	/** 
+	/**
 	 * 
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
@@ -492,14 +485,17 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		//Extended field details
 		ExtendedFieldHeader extendedFieldHeader = assetType.getExtendedFieldHeader();
-		if(extendedFieldHeader != null){
+		if (extendedFieldHeader != null) {
 			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
-			AuditDetail	detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method, usrLanguage);
+			AuditDetail detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method,
+					usrLanguage);
 			auditDetails.add(detail);
 
-			if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			if (extendedFieldHeader.getExtendedFieldDetails() != null
+					&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 				List<AuditDetail> detailList = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldDetails");
-				detailList = getExtendedFieldsValidation().extendedFieldsListValidation(detailList, method, usrLanguage);
+				detailList = getExtendedFieldsValidation().extendedFieldsListValidation(detailList, method,
+						usrLanguage);
 				auditDetails.addAll(detailList);
 			}
 		}
@@ -535,14 +531,17 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		}
 
 		//Audit Detail Preparation for Extended Field Header
-		AuditDetail auditDetail =  new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader);
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
+				extendedFieldHeader);
 		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
 		auditDetailHeaderList.add(auditDetail);
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
 		//Audit Detail Preparation for Extended Field Detail
-		if (extendedFieldHeader.getExtendedFieldDetails() != null && extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
-			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation().setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
+		if (extendedFieldHeader.getExtendedFieldDetails() != null
+				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
+			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation()
+					.setExtendedFieldsAuditData(extendedFieldHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -554,10 +553,9 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAssetTypeDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAssetTypeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -565,69 +563,78 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * @return
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		AssetType aAssetType= (AssetType) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		AssetType aAssetType = (AssetType) auditDetail.getModelData();
 
-		AssetType tempAssetType= null;
-		if (aAssetType.isWorkflow()){
+		AssetType tempAssetType = null;
+		if (aAssetType.isWorkflow()) {
 			tempAssetType = getAssetTypeDAO().getAssetTypeById(aAssetType.getId(), "_Temp");
 		}
-		AssetType befAssetType= getAssetTypeDAO().getAssetTypeById(aAssetType.getId(), "");
+		AssetType befAssetType = getAssetTypeDAO().getAssetTypeById(aAssetType.getId(), "");
 
-		AssetType oldAssetType= aAssetType.getBefImage();
+		AssetType oldAssetType = aAssetType.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = aAssetType.getAssetType();
+		errParm[0] = PennantJavaUtil.getLabel("label_AssetType") + ": " + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=aAssetType.getAssetType();
-		errParm[0]=PennantJavaUtil.getLabel("label_AssetType")+": "+valueParm[0];
+		if (aAssetType.isNew()) { // for New record or new record into work flow
 
-		if (aAssetType.isNew()){ // for New record or new record into work flow
-
-			if (!aAssetType.isWorkflow()){// With out Work flow only new records  
-				if (befAssetType !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (aAssetType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befAssetType !=null || tempAssetType!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
+			if (!aAssetType.isWorkflow()) {// With out Work flow only new records  
+				if (befAssetType != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (aAssetType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befAssetType != null || tempAssetType != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befAssetType ==null || tempAssetType!=null ){
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				} else { // if records not exists in the Main flow table
+					if (befAssetType == null || tempAssetType != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!aAssetType.isWorkflow()){	// With out Work flow for update and delete
+			if (!aAssetType.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befAssetType ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldAssetType!=null && !oldAssetType.getLastMntOn().equals(befAssetType.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
+				if (befAssetType == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldAssetType != null && !oldAssetType.getLastMntOn().equals(befAssetType.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempAssetType==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				if (tempAssetType == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (tempAssetType!=null  && oldAssetType!=null && !oldAssetType.getLastMntOn().equals(tempAssetType.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
+				if (tempAssetType != null && oldAssetType != null
+						&& !oldAssetType.getLastMntOn().equals(tempAssetType.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
-		 
+
 		//Checking the Asset type is used in loan origination while deletion. If used throws error message like 
 		// Asset type is in used.
 		if (PennantConstants.RECORD_TYPE_DEL.equals(aAssetType.getRecordType())) {
@@ -635,11 +642,11 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
 			}
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if(StringUtils.trimToEmpty(method).equals("doApprove") || !aAssetType.isWorkflow()){
-			auditDetail.setBefImage(befAssetType);	
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !aAssetType.isWorkflow()) {
+			auditDetail.setBefImage(befAssetType);
 		}
 
 		return auditDetail;
@@ -647,7 +654,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 	public ExtendedFieldsValidation getExtendedFieldsValidation() {
 		if (extendedFieldsValidation == null) {
-			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO, extendedFieldHeaderDAO);
+			this.extendedFieldsValidation = new ExtendedFieldsValidation(extendedFieldDetailDAO,
+					extendedFieldHeaderDAO);
 		}
 		return extendedFieldsValidation;
 	}

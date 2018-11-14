@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -65,11 +64,10 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmentDAO {
 	private static Logger logger = Logger.getLogger(SubSegmentDAOImpl.class);
-	
+
 	public SubSegmentDAOImpl() {
 		super();
 	}
-	
 
 	/**
 	 * Fetch the Record Sub Segments details by key field
@@ -81,19 +79,19 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 	 * @return SubSegment
 	 */
 	@Override
-	public SubSegment getSubSegmentById(final String id, String subSegmentCode,String type) {
+	public SubSegment getSubSegmentById(final String id, String subSegmentCode, String type) {
 		logger.debug("Entering");
 		SubSegment subSegment = new SubSegment();
 		subSegment.setId(id);
 		subSegment.setSubSegmentCode(subSegmentCode);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select SegmentCode, SubSegmentCode, SubSegmentDesc, SubSegmentIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append("lovDescSegmentCodeName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId"); 
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTSubSegments");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SubSegmentCode=:SubSegmentCode");
@@ -113,10 +111,8 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTSubSegments or
-	 * BMTSubSegments_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Sub Segments by key
-	 * SegmentCode
+	 * This method Deletes the Record from the BMTSubSegments or BMTSubSegments_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Sub Segments by key SegmentCode
 	 * 
 	 * @param Sub
 	 *            Segments (subSegment)
@@ -131,16 +127,16 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append(" Delete From BMTSubSegments");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where SegmentCode =:SegmentCode and SubSegmentCode = :SubSegmentCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -152,8 +148,7 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 	}
 
 	/**
-	 * This method insert new Records into BMTSubSegments or
-	 * BMTSubSegments_Temp.
+	 * This method insert new Records into BMTSubSegments or BMTSubSegments_Temp.
 	 * 
 	 * save Sub Segments
 	 * 
@@ -176,19 +171,19 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:SegmentCode, :SubSegmentCode, :SubSegmentDesc, :SubSegmentIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());		
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method updates the Record BMTSubSegments or BMTSubSegments_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Sub Segments by key SegmentCode and Version
+	 * This method updates the Record BMTSubSegments or BMTSubSegments_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Sub Segments by key SegmentCode and Version
 	 * 
 	 * @param Sub
 	 *            Segments (subSegment)
@@ -208,17 +203,19 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set SegmentCode = :SegmentCode,SubSegmentDesc = :SubSegmentDesc,");
 		updateSql.append(" SubSegmentIsActive = :SubSegmentIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where  SubSegmentCode = :SubSegmentCode");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

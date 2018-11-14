@@ -105,7 +105,6 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-
 /**
  * Service implementation for methods that depends on <b>LimitDetail</b>.<br>
  * 
@@ -122,13 +121,13 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private CurrencyService currencyService;
 	private CustomerGroupService customerGroupService;
 	private LimitManagement limitManagement;
-	private LimitReferenceMappingDAO limitReferenceMappingDAO; 
+	private LimitReferenceMappingDAO limitReferenceMappingDAO;
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	private LimitRebuild limitRebuild;
-	private FinanceMainDAO financeMainDAO; 
+	private FinanceMainDAO financeMainDAO;
 
 	private CustomerQueuingDAO customerQueuingDAO;
-	private CustomerGroupQueuingDAO	customerGroupQueuingDAO;
+	private CustomerGroupQueuingDAO customerGroupQueuingDAO;
 
 	protected long userID;
 	private String userLangauge;
@@ -141,12 +140,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
 
 	/**
 	 * @return the limitDetail
@@ -155,6 +154,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	public LimitHeader getLimitHeader() {
 		return getLimitHeaderDAO().getLimitHeader();
 	}
+
 	/**
 	 * @return the limitDetail for New Record
 	 */
@@ -164,16 +164,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table LIMIT_DETAILS/LIMIT_DETAILS_Temp 
-	 * 			by using LimitDetailDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using LimitDetailDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table LIMIT_DETAILS/LIMIT_DETAILS_Temp
+	 * by using LimitDetailDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using LimitDetailDAO's update method 3) Audit the record in to AuditHeader and AdtLIMIT_DETAILS
+	 * by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -182,46 +181,46 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table LIMIT_DETAILS/LIMIT_DETAILS_Temp 
-	 * 			by using LimitDetailDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using LimitDetailDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
-	 * @param boolean onlineRequest
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table LIMIT_DETAILS/LIMIT_DETAILS_Temp
+	 * by using LimitDetailDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using LimitDetailDAO's update method 3) Audit the record in to AuditHeader and AdtLIMIT_DETAILS
+	 * by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
-
-	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
+	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate", online);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		LimitHeader limitHeader = (LimitHeader) auditHeader.getAuditDetail().getModelData();
 
 		if (limitHeader.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (limitHeader.isNew()) {
-			limitHeader.setId(getLimitHeaderDAO().save(limitHeader,tableType));
+			limitHeader.setId(getLimitHeaderDAO().save(limitHeader, tableType));
 			auditHeader.getAuditDetail().setModelData(limitHeader);
-			auditHeader.setAuditReference(String.valueOf(limitHeader.getHeaderId()));			
-		}else{
-			getLimitHeaderDAO().update(limitHeader,tableType);
+			auditHeader.setAuditReference(String.valueOf(limitHeader.getHeaderId()));
+		} else {
+			getLimitHeaderDAO().update(limitHeader, tableType);
 		}
 
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 
-			auditHeader.setAuditDetails(processingCustomerLimitDetailsList(auditHeader.getAuditDetails(), limitHeader.getHeaderId(),limitHeader.getCustomerId(),tableType));
+			auditHeader.setAuditDetails(processingCustomerLimitDetailsList(auditHeader.getAuditDetails(),
+					limitHeader.getHeaderId(), limitHeader.getCustomerId(), tableType));
 
 		}
 
@@ -232,19 +231,20 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table LIMIT_DETAILS by using LimitDetailDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * LIMIT_DETAILS by using LimitDetailDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete",false);
+		auditHeader = businessValidation(auditHeader, "delete", false);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -254,7 +254,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(), "");
 		}
-		getLimitHeaderDAO().delete(limitHeader,"");
+		getLimitHeaderDAO().delete(limitHeader, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -263,9 +263,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	/**
 	 * getLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method.
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 
@@ -274,10 +276,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Entering");
 
 		LimitHeader limitHeader;
-		limitHeader = getLimitHeaderDAO().getLimitHeaderById(limitHeaderId, "_View");		
+		limitHeader = getLimitHeaderDAO().getLimitHeaderById(limitHeaderId, "_View");
 
 		if (limitHeader != null) {
-			List<LimitDetails> limitDetailList = getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_View");
+			List<LimitDetails> limitDetailList = getLimitDetailDAO()
+					.getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_View");
 			updateLatestLimitExposures(limitHeader.getHeaderId(), limitDetailList);
 			limitHeader.setCustomerLimitDetailsList(limitDetailList);
 		}
@@ -316,9 +319,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * getApprovedLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method.
-	 * with parameter id and type as blank. it fetches the approved records from the LIMIT_DETAILS.
-	 * @param id (int)
+	 * getApprovedLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method. with parameter
+	 * id and type as blank. it fetches the approved records from the LIMIT_DETAILS.
+	 * 
+	 * @param id
+	 *            (int)
 	 * @return LimitDetail
 	 */
 
@@ -328,12 +333,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "_AView");
 		if (limitHeader != null) {
-			limitHeader.setCustomerLimitDetailsList(getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
+			limitHeader.setCustomerLimitDetailsList(
+					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
 		logger.debug("Leaving");
 		return limitHeader;
-	}	
-
+	}
 
 	/**
 	 * Method for fetch LimitHeader details by customer id.
@@ -346,12 +351,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderByCustomerId(custId, "_AView");
 		if (limitHeader != null) {
-			limitHeader.setCustomerLimitDetailsList(getLimitDetailDAO().getLimitDetailsByHeaderId(
-					limitHeader.getHeaderId(), "_AView"));
+			limitHeader.setCustomerLimitDetailsList(
+					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
 		return limitHeader;
-	}	
-	
+	}
+
 	/**
 	 * Method for fetch LimitHeader details by customer group id.
 	 * 
@@ -366,53 +371,53 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		limitHeader = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(custGrpId, "_AView");
 
 		if (limitHeader != null) {
-			limitHeader.setCustomerLimitDetailsList(getLimitDetailDAO().getLimitDetailsByHeaderId(
-					limitHeader.getHeaderId(), "_AView"));
+			limitHeader.setCustomerLimitDetailsList(
+					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
 
 		logger.debug("Leaving");
 		return limitHeader;
-	}	
-
+	}
 
 	@Override
 	public List<LimitReferenceMapping> getLimitReferences(LimitDetails limitItem) {
-		return getLimitReferenceMappingDAO().getLimitReferences(limitItem.getLimitHeaderId(),limitItem.getLimitLine());
+		return getLimitReferenceMappingDAO().getLimitReferences(limitItem.getLimitHeaderId(), limitItem.getLimitLine());
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getLimitDetailDAO().delete with parameters limitDetail,""
-	 * 		b)  NEW		Add new record in to main table by using getLimitDetailDAO().save with parameters limitDetail,""
-	 * 		c)  EDIT	Update record in the main table by using getLimitDetailDAO().update with parameters limitDetail,""
-	 * 3)	Delete the record from the workFlow table by using getLimitDetailDAO().delete with parameters limitDetail,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getLimitDetailDAO().delete with
+	 * parameters limitDetail,"" b) NEW Add new record in to main table by using getLimitDetailDAO().save with
+	 * parameters limitDetail,"" c) EDIT Update record in the main table by using getLimitDetailDAO().update with
+	 * parameters limitDetail,"" 3) Delete the record from the workFlow table by using getLimitDetailDAO().delete with
+	 * parameters limitDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLIMIT_DETAILS by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	public AuditHeader doApprove(AuditHeader auditHeader,boolean fromScreen) {
+	public AuditHeader doApprove(AuditHeader auditHeader, boolean fromScreen) {
 		logger.debug("Entering");
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove",false);
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
-		
-		boolean rebuild=false;
+
+		boolean rebuild = false;
 
 		LimitHeader limitHeader = new LimitHeader();
 		BeanUtils.copyProperties((LimitHeader) auditHeader.getAuditDetail().getModelData(), limitHeader);
 
 		if (limitHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(),"");			
-			getLimitHeaderDAO().delete(limitHeader,"");
+			getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(), "");
+			getLimitHeaderDAO().delete(limitHeader, "");
 
 		} else {
 			limitHeader.setRoleCode("");
@@ -421,46 +426,46 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			limitHeader.setNextTaskId("");
 			limitHeader.setWorkflowId(0);
 
-			if (limitHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) 
-			{	
-				tranType=PennantConstants.TRAN_ADD;
+			if (limitHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				limitHeader.setRecordType("");
-				getLimitHeaderDAO().save(limitHeader,"");
-				rebuild=true;
-				
+				getLimitHeaderDAO().save(limitHeader, "");
+				rebuild = true;
+
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				limitHeader.setRecordType("");
-				getLimitHeaderDAO().update(limitHeader,"");
+				getLimitHeaderDAO().update(limitHeader, "");
 			}
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-				auditHeader.setAuditDetails(processingCustomerLimitDetailsList(auditHeader.getAuditDetails(), limitHeader.getHeaderId(),limitHeader.getCustomerId(),""));
-				if(fromScreen)
-					getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(),"_Temp");	
+				auditHeader.setAuditDetails(processingCustomerLimitDetailsList(auditHeader.getAuditDetails(),
+						limitHeader.getHeaderId(), limitHeader.getCustomerId(), ""));
+				if (fromScreen)
+					getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(), "_Temp");
 
 			}
 		}
-		
+
 		//rebuild is required for group hear since , first group added to the customer ,
 		//then created the set up for the group 
 		if (rebuild) {
 			if (limitHeader.getCustomerGroup() != 0 && limitHeader.getCustomerGroup() != Long.MIN_VALUE) {
 				limitRebuild.processCustomerGroupRebuild(limitHeader.getCustomerGroup(), false, true);
 			}
-			
+
 			if (limitHeader.getCustomerId() != 0 && limitHeader.getCustomerId() != Long.MIN_VALUE) {
 				//check customer active finance before calling the rebuild
-			
+
 				int count = getFinanceMainDAO().getFinCountByCustId(limitHeader.getCustomerId());
-				if (count >0 ) {
+				if (count > 0) {
 					limitRebuild.processCustomerRebuild(limitHeader.getCustomerId(), false);
 				}
 
 			}
 		}
-		
-		if(fromScreen)
-			getLimitHeaderDAO().delete(limitHeader,"_Temp");
+
+		if (fromScreen)
+			getLimitHeaderDAO().delete(limitHeader, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -469,7 +474,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		auditHeader.getAuditDetail().setModelData(limitHeader);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
@@ -504,7 +509,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		} catch (Exception e) {
 
 			returnList.add(0);
-			returnList.add(false);	// Customer Rebuild Failed
+			returnList.add(false); // Customer Rebuild Failed
 			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_FAILED);
 			logger.debug("Exception: ", e);
 
@@ -551,7 +556,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		} catch (Exception e) {
 
 			returnList.add(0);
-			returnList.add(false);	// Customer Group Rebuild Failed
+			returnList.add(false); // Customer Group Rebuild Failed
 			this.customerGroupQueuingDAO.updateStatus(groupId, EodConstants.PROGRESS_FAILED);
 			//this.customerQueuingDAO.updateCustomerQueuingStatus(groupId, EodConstants.PROGRESS_FAILED); // Check Required or Not ?
 			logger.debug("Exception: ", e);
@@ -606,7 +611,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private CustomerGroupQueuing prepareCustomerGroupQueue(long groupId) {
 		logger.debug("Entering");
 
-		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing(); 
+		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing();
 		custGrpQueuing.setGroupId(groupId);
 		custGrpQueuing.setEodDate(DateUtility.getAppValueDate());
 		custGrpQueuing.setStartTime(DateUtility.getSysDate());
@@ -618,18 +623,19 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getLimitDetailDAO().delete with parameters limitDetail,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getLimitDetailDAO().delete with parameters limitDetail,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doApprove",false);
+		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -637,9 +643,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-			getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(),"_Temp");
+			getLimitDetailDAO().deletebyHeaderId(limitHeader.getHeaderId(), "_Temp");
 		}
-		getLimitHeaderDAO().delete(limitHeader,"_Temp");
+		getLimitHeaderDAO().delete(limitHeader, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -648,36 +654,34 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	validate the audit detail 
-	 * 2)	if any error/Warnings  then assign the to auditHeader
-	 * 3)   identify the nextprocess
-	 *  
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
+	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
+	 * assign the to auditHeader 3) identify the nextprocess
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
-
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,
+				onlineRequest);
 		auditHeader.setAuditDetail(auditDetail);
-
-
 
 		//AuditDetail auditDetail=auditHeader.getAuditDetail();
 
-		auditHeader = getAuditDetails(auditHeader, method,onlineRequest);		
+		auditHeader = getAuditDetails(auditHeader, method, onlineRequest);
 
-		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {			
+		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			for (AuditDetail detail : auditHeader.getAuditDetails()) {
 				auditHeader.setErrorList(detail.getErrorDetails());
 			}
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+		auditDetail.setErrorDetails(
+				ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -691,7 +695,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * 
 	 * @param auditHeader
 	 * @param method
-	 * @param onlineRequest 
+	 * @param onlineRequest
 	 * @return
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method, boolean onlineRequest) {
@@ -702,8 +706,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		String auditTranType = "";
 
-		if (method.equals("saveOrUpdate") || method.equals("doApprove")
-				|| method.equals("doReject")) {
+		if (method.equals("saveOrUpdate") || method.equals("doApprove") || method.equals("doReject")) {
 			if (limitDetail.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
@@ -746,34 +749,27 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			limitDetails.setWorkflowId(limitHeader.getWorkflowId());
 			limitDetails.setUserDetails(limitHeader.getUserDetails());
 			limitDetails.setCreatedBy(limitHeader.getCreatedBy());
-			
+
 			if (StringUtils.isEmpty(limitDetails.getRecordType())) {
 				continue;
 			}
-			
-			/*
-			boolean isRcdType = false;
 
-			if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				limitDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				limitDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				limitDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
+			/*
+			 * boolean isRcdType = false;
+			 * 
+			 * if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			 * limitDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW); isRcdType = true; } else if
+			 * (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			 * limitDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD); isRcdType = true; } else if
+			 * (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			 * limitDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL); isRcdType = true; }
 			 */
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (limitDetails.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (limitDetails.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_DEL)
-						|| limitDetails.getRecordType().equalsIgnoreCase(
-								PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -784,18 +780,17 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			limitDetails.setLastMntOn(limitHeader.getLastMntOn());
 			try {
 				limitDetails.setCreatedOn(limitHeader.getCreatedOn());
-			} catch (DatatypeConfigurationException e) {					
+			} catch (DatatypeConfigurationException e) {
 				logger.warn("Exception: ", e);
 			}
 
-
-			/*	if (limitDetails.getCommitmentRefList() != null && limitDetails.getCommitmentRefList() .size() > 0) {
-				auditDetails.addAll(setCommitmentRefDetailsAuditData(limitDetails, auditTranType, method));
-			}*/
+			/*
+			 * if (limitDetails.getCommitmentRefList() != null && limitDetails.getCommitmentRefList() .size() > 0) {
+			 * auditDetails.addAll(setCommitmentRefDetailsAuditData(limitDetails, auditTranType, method)); }
+			 */
 
 			if (!limitDetails.getRecordType().equals("")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, limitDetails
-						.getBefImage(), limitDetails));
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, limitDetails.getBefImage(), limitDetails));
 			}
 		}
 
@@ -803,87 +798,69 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		return auditDetails;
 	}
 
-	/*private List<AuditDetail> setCommitmentRefDetailsAuditData(
-			LimitDetails limitDetails, String auditTranType, String method) {
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-
-		for (int i=0;i<limitDetails.getCommitmentRefList().size();i++) {
-
-			LimitCommitmentReference limitComtReference=limitDetails.getCommitmentRefList().get(i);
-			limitComtReference.setLimitDetailId(limitDetails.getDetailId());
-			limitComtReference.setLastMntBy(limitDetails.getLastMntBy());
-			limitComtReference.setRoleCode(limitDetails.getRoleCode());
-			limitComtReference.setNextRoleCode(limitDetails.getNextRoleCode());
-			limitComtReference.setTaskId(limitDetails.getTaskId());
-			limitComtReference.setNextTaskId(limitDetails.getNextTaskId());
-			limitComtReference.setWorkflowId(limitDetails.getWorkflowId());
-			limitComtReference.setUserDetails(limitDetails.getUserDetails());
-			limitComtReference.setCreatedBy(limitDetails.getCreatedBy());
-
-
-			boolean isRcdType = false;
-
-			if (limitComtReference.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				limitComtReference.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (limitComtReference.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				limitComtReference.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (limitComtReference.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				limitComtReference.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (limitComtReference.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (limitComtReference.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_DEL)
-						|| limitComtReference.getRecordType().equalsIgnoreCase(
-								PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			limitComtReference.setRecordStatus(limitDetails.getRecordStatus());
-			limitComtReference.setLastMntOn(limitDetails.getLastMntOn());
-			try {
-				limitComtReference.setCreatedOn(limitDetails.getCreatedOn());
-			} catch (DatatypeConfigurationException e) {					
-				logger.error("Exception: ", e);
-			}
-
-			if (!limitComtReference.getRecordType().equals("")) {
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, limitComtReference
-						.getBefImage(), limitComtReference));
-			}
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}*/
+	/*
+	 * private List<AuditDetail> setCommitmentRefDetailsAuditData( LimitDetails limitDetails, String auditTranType,
+	 * String method) { List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+	 * 
+	 * for (int i=0;i<limitDetails.getCommitmentRefList().size();i++) {
+	 * 
+	 * LimitCommitmentReference limitComtReference=limitDetails.getCommitmentRefList().get(i);
+	 * limitComtReference.setLimitDetailId(limitDetails.getDetailId());
+	 * limitComtReference.setLastMntBy(limitDetails.getLastMntBy());
+	 * limitComtReference.setRoleCode(limitDetails.getRoleCode());
+	 * limitComtReference.setNextRoleCode(limitDetails.getNextRoleCode());
+	 * limitComtReference.setTaskId(limitDetails.getTaskId());
+	 * limitComtReference.setNextTaskId(limitDetails.getNextTaskId());
+	 * limitComtReference.setWorkflowId(limitDetails.getWorkflowId());
+	 * limitComtReference.setUserDetails(limitDetails.getUserDetails());
+	 * limitComtReference.setCreatedBy(limitDetails.getCreatedBy());
+	 * 
+	 * 
+	 * boolean isRcdType = false;
+	 * 
+	 * if (limitComtReference.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+	 * limitComtReference.setRecordType(PennantConstants.RECORD_TYPE_NEW); isRcdType = true; } else if
+	 * (limitComtReference.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+	 * limitComtReference.setRecordType(PennantConstants.RECORD_TYPE_UPD); isRcdType = true; } else if
+	 * (limitComtReference.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+	 * limitComtReference.setRecordType(PennantConstants.RECORD_TYPE_DEL); isRcdType = true; }
+	 * 
+	 * if (!auditTranType.equals(PennantConstants.TRAN_WF)) { if (limitComtReference.getRecordType().equalsIgnoreCase(
+	 * PennantConstants.RECORD_TYPE_NEW)) { auditTranType = PennantConstants.TRAN_ADD; } else if
+	 * (limitComtReference.getRecordType().equalsIgnoreCase( PennantConstants.RECORD_TYPE_DEL) ||
+	 * limitComtReference.getRecordType().equalsIgnoreCase( PennantConstants.RECORD_TYPE_CAN)) { auditTranType =
+	 * PennantConstants.TRAN_DEL; } else { auditTranType = PennantConstants.TRAN_UPD; } }
+	 * 
+	 * limitComtReference.setRecordStatus(limitDetails.getRecordStatus());
+	 * limitComtReference.setLastMntOn(limitDetails.getLastMntOn()); try {
+	 * limitComtReference.setCreatedOn(limitDetails.getCreatedOn()); } catch (DatatypeConfigurationException e) {
+	 * logger.error("Exception: ", e); }
+	 * 
+	 * if (!limitComtReference.getRecordType().equals("")) { auditDetails.add(new AuditDetail(auditTranType, i + 1,
+	 * limitComtReference .getBefImage(), limitComtReference)); } }
+	 * 
+	 * logger.debug("Leaving"); return auditDetails; }
+	 */
 
 	/**
 	 * Method For Preparing List of AuditDetails for Business Units
 	 * 
 	 * @param auditDetails
-	 * @param id 
-	 * @param custId 
+	 * @param id
+	 * @param custId
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingCustomerLimitDetailsList(List<AuditDetail> auditDetails, long id, long custId, String type) {
+	private List<AuditDetail> processingCustomerLimitDetailsList(List<AuditDetail> auditDetails, long id, long custId,
+			String type) {
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
-		for (int i = 0; i < auditDetails.size(); i++) {			
-			if(auditDetails.get(i).getModelData() instanceof LimitDetails){
+		for (int i = 0; i < auditDetails.size(); i++) {
+			if (auditDetails.get(i).getModelData() instanceof LimitDetails) {
 				LimitDetails limitDetails = (LimitDetails) auditDetails.get(i).getModelData();
 				saveRecord = false;
 				updateRecord = false;
@@ -907,26 +884,21 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					saveRecord = true;
 					if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 						limitDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else if (limitDetails.getRecordType().equalsIgnoreCase(
-							PennantConstants.RCD_DEL)) {
+					} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 						limitDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					} else if (limitDetails.getRecordType().equalsIgnoreCase(
-							PennantConstants.RCD_UPD)) {
+					} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 						limitDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					}
 
-				} else if (limitDetails.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					if (approveRec) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
 					}
-				} else if (limitDetails.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_UPD)) {
+				} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 					updateRecord = true;
-				} else if (limitDetails.getRecordType().equalsIgnoreCase(
-						PennantConstants.RECORD_TYPE_DEL)) {
+				} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
 					} else if (limitDetails.isNew()) {
@@ -953,9 +925,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					getLimitDetailDAO().deletebyHeaderId(limitDetails.getLimitHeaderId(), type);
 				}
 
-				if (approveRec) {					
+				if (approveRec) {
 					limitDetails.setRecordType(rcdType);
-					limitDetails.setRecordStatus(recordStatus);				
+					limitDetails.setRecordStatus(recordStatus);
 				}
 				auditDetails.get(i).setModelData(limitDetails);
 
@@ -964,7 +936,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		return auditDetails;
 
 	}
-
 
 	//////////####### FOR DEMO #########////////////
 	/**
@@ -1004,7 +975,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 				// New Object creation on each Record
 
-				if (finRow.getCell(0)!=null) {
+				if (finRow.getCell(0) != null) {
 					rcdCount = rcdCount + 1;
 
 					headerDetails = new LimitHeader();
@@ -1012,11 +983,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					headerDetails.setActive(true);
 					headerDetails.setVersion(1);
 					headerDetails.setCreatedBy(user.getUserId());
-					headerDetails.setCreatedOn(new Timestamp(System.currentTimeMillis()));					
+					headerDetails.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 					headerDetails.setLastMntBy(user.getUserId());
-					headerDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));					
+					headerDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-					headerDetails = prepareExtFinanceData(finRow, headerDetails,user);
+					headerDetails = prepareExtFinanceData(finRow, headerDetails, user);
 					headerDetails = validateExtFinanceData(headerDetails);
 
 					if ("E".equals(headerDetails.getRecordStatus())) {
@@ -1043,17 +1014,19 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		return headerDetails;
 	}
 
-	private void processFinanceData(LoggedInUser usrDetails,
-			LimitHeader headerDetails) throws DatatypeConfigurationException {
+	private void processFinanceData(LoggedInUser usrDetails, LimitHeader headerDetails)
+			throws DatatypeConfigurationException {
 		logger.debug("Entering");
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, headerDetails);
 
-		AuditHeader auditHeader = new AuditHeader(String.valueOf(headerDetails.getHeaderId()), null, null, null, auditDetail, headerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
-		doApprove(auditHeader,false);
+		AuditHeader auditHeader = new AuditHeader(String.valueOf(headerDetails.getHeaderId()), null, null, null,
+				auditDetail, headerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		doApprove(auditHeader, false);
 		logger.debug("Leaving");
 	}
 
-	private void setRecordDetails(LimitDetails limitDetails,LimitHeader headerDetails) throws DatatypeConfigurationException {
+	private void setRecordDetails(LimitDetails limitDetails, LimitHeader headerDetails)
+			throws DatatypeConfigurationException {
 		limitDetails.setNewRecord(true);
 		limitDetails.setLimitHeaderId(headerDetails.getHeaderId());
 		limitDetails.setExpiryDate(headerDetails.getLimitExpiryDate());
@@ -1073,7 +1046,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		return "";
 	}
 
-
 	private BigDecimal getDecimalValue(HSSFCell cell) {
 		String strValue = null;
 		if (cell != null) {
@@ -1087,15 +1059,17 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 		return BigDecimal.ZERO;
 	}
+
 	/***
 	 * Method to set excel data to external finanace bean.
 	 * 
 	 * @param finRow
 	 * @param headerDetails
-	 * @param usrDetails 
-	 * @throws DatatypeConfigurationException 
-	 * */
-	public LimitHeader prepareExtFinanceData(HSSFRow finRow, LimitHeader headerDetails, LoggedInUser usrDetails) throws DatatypeConfigurationException{
+	 * @param usrDetails
+	 * @throws DatatypeConfigurationException
+	 */
+	public LimitHeader prepareExtFinanceData(HSSFRow finRow, LimitHeader headerDetails, LoggedInUser usrDetails)
+			throws DatatypeConfigurationException {
 		logger.debug("Entering");
 
 		System.out.println("----> START PREPARING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
@@ -1134,42 +1108,43 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		headerDetails.setNewRecord(true);
 		headerDetails.setUserDetails(usrDetails);
 
-		List<LimitStructureDetail> structurList=getLimitStructureDetailDAO().getLimitStructureDetailById(headerDetails.getLimitStructureCode(), "");
+		List<LimitStructureDetail> structurList = getLimitStructureDetailDAO()
+				.getLimitStructureDetailById(headerDetails.getLimitStructureCode(), "");
 		BigDecimal total = BigDecimal.ZERO;
-		List<LimitDetails> limitDetailsList= new ArrayList<LimitDetails>();
+		List<LimitDetails> limitDetailsList = new ArrayList<LimitDetails>();
 
-		if(structurList!=null)
-			for(LimitStructureDetail structure:structurList){
-				LimitDetails detail =new LimitDetails(); 
-				int i=5;		
-				i=i+structure.getItemSeq();		
+		if (structurList != null)
+			for (LimitStructureDetail structure : structurList) {
+				LimitDetails detail = new LimitDetails();
+				int i = 5;
+				i = i + structure.getItemSeq();
 
 				// Limit Amount
 				if (StringUtils.isNotEmpty(getValue(finRow.getCell(i)))) {
 					detail.setLimitSanctioned(getDecimalValue((finRow.getCell(i))));
 					detail.setLimitSanctioned(getDecimalValue((finRow.getCell(i))));
-				}else{
+				} else {
 					detail.setLimitSanctioned(BigDecimal.ZERO);
 					detail.setLimitSanctioned(BigDecimal.ZERO);
 				}
 
-				total=total.add(detail.getLimitSanctioned());
+				total = total.add(detail.getLimitSanctioned());
 
-				if(structure.getLimitLine()==null){
+				if (structure.getLimitLine() == null) {
 					detail.setGroupCode(structure.getGroupCode());
 					detail.setLimitSanctioned(total);
 					detail.setLimitSanctioned(total);
-				}else{
+				} else {
 					detail.setLimitLine(structure.getLimitLine());
-				}			
+				}
 				detail.setLimitCheck(true);
 				detail.setEditable(structure.isEditable());
 				detail.setItemSeq(structure.getItemSeq());
-				setRecordDetails(detail,headerDetails);
+				setRecordDetails(detail, headerDetails);
 
 				limitDetailsList.add(detail);
 			}
-		if(headerDetails.getCustomerLimitDetailsList()==null){
+		if (headerDetails.getCustomerLimitDetailsList() == null) {
 			headerDetails.setCustomerLimitDetailsList(new ArrayList<LimitDetails>());
 		}
 		headerDetails.setCustomerLimitDetailsList(limitDetailsList);
@@ -1195,8 +1170,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		// Validate REFERENCE
 		if (headerDetails.getCustomerId() == 0) {
 			headerDetails.setRecordStatus("E");
-			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetail("41002", "", new String[] { "Customer", "" }), userLangauge).getError());
+			headerDetails.setErrDesc(ErrorUtil
+					.getErrorDetail(new ErrorDetail("41002", "", new String[] { "Customer", "" }), userLangauge)
+					.getError());
 			return headerDetails;
 		}
 
@@ -1205,34 +1181,43 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (getLimitHeaderDAO().isCustomerExists(headerDetails.getCustomerId(), "")) {
 
 			headerDetails.setRecordStatus("E");
-			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetail("30506", "", new String[] { "Customer", String.valueOf(headerDetails.getCustomerId()) }),
-					userLangauge).getError());
+			headerDetails
+					.setErrDesc(
+							ErrorUtil
+									.getErrorDetail(
+											new ErrorDetail("30506", "",
+													new String[] { "Customer",
+															String.valueOf(headerDetails.getCustomerId()) }),
+											userLangauge)
+									.getError());
 
-			return headerDetails;
-		}		
-
-		if (headerDetails.getResponsibleBranch()==null || StringUtils.isEmpty(headerDetails.getResponsibleBranch()) ) {
-			headerDetails.setRecordStatus("E");
-			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetail("41002", "", new String[] { "Branch", "" }), userLangauge).getError());
 			return headerDetails;
 		}
 
-		if (headerDetails.getLimitCcy()==null || StringUtils.isEmpty(headerDetails.getLimitCcy())) {
+		if (headerDetails.getResponsibleBranch() == null || StringUtils.isEmpty(headerDetails.getResponsibleBranch())) {
 			headerDetails.setRecordStatus("E");
-			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetail("41002", "", new String[] { "Currency", "" }), userLangauge).getError());
+			headerDetails.setErrDesc(
+					ErrorUtil.getErrorDetail(new ErrorDetail("41002", "", new String[] { "Branch", "" }), userLangauge)
+							.getError());
 			return headerDetails;
 		}
 
-		if (headerDetails.getLimitStructureCode() ==null || StringUtils.isEmpty(headerDetails.getLimitStructureCode())) {
+		if (headerDetails.getLimitCcy() == null || StringUtils.isEmpty(headerDetails.getLimitCcy())) {
 			headerDetails.setRecordStatus("E");
-			headerDetails.setErrDesc(ErrorUtil.getErrorDetail(
-					new ErrorDetail("41002", "", new String[] { "Limit Structure Code", "" }), userLangauge).getError());
+			headerDetails.setErrDesc(ErrorUtil
+					.getErrorDetail(new ErrorDetail("41002", "", new String[] { "Currency", "" }), userLangauge)
+					.getError());
 			return headerDetails;
 		}
 
+		if (headerDetails.getLimitStructureCode() == null
+				|| StringUtils.isEmpty(headerDetails.getLimitStructureCode())) {
+			headerDetails.setRecordStatus("E");
+			headerDetails.setErrDesc(
+					ErrorUtil.getErrorDetail(new ErrorDetail("41002", "", new String[] { "Limit Structure Code", "" }),
+							userLangauge).getError());
+			return headerDetails;
+		}
 
 		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
 				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
@@ -1240,84 +1225,95 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getLimitDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getLimitDetailDAO().getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		LimitHeader limitDetail= (LimitHeader) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		LimitHeader limitDetail = (LimitHeader) auditDetail.getModelData();
 
-		LimitHeader tempLimitDetail= null;
-		if (limitDetail.isWorkflow()){
+		LimitHeader tempLimitDetail = null;
+		if (limitDetail.isWorkflow()) {
 			tempLimitDetail = getLimitHeaderDAO().getLimitHeaderById(limitDetail.getId(), "_Temp");
 		}
-		LimitHeader befLimitDetail= getLimitHeaderDAO().getLimitHeaderById(limitDetail.getId(), "");
+		LimitHeader befLimitDetail = getLimitHeaderDAO().getLimitHeaderById(limitDetail.getId(), "");
 
-		LimitHeader oldLimitDetail= limitDetail.getBefImage();
+		LimitHeader oldLimitDetail = limitDetail.getBefImage();
 
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = String.valueOf(limitDetail.getId());
+		errParm[0] = PennantJavaUtil.getLabel("label_DetailId") + ":" + valueParm[0];
 
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(limitDetail.getId());
-		errParm[0]=PennantJavaUtil.getLabel("label_DetailId")+":"+valueParm[0];
+		if (limitDetail.isNew()) { // for New record or new record into work flow
 
-		if (limitDetail.isNew()){ // for New record or new record into work flow
-
-			if (!limitDetail.isWorkflow()){// With out Work flow only new records  
-				if (befLimitDetail !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (limitDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befLimitDetail !=null || tempLimitDetail!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+			if (!limitDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befLimitDetail != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (limitDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befLimitDetail != null || tempLimitDetail != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befLimitDetail ==null || tempLimitDetail!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befLimitDetail == null || tempLimitDetail != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!limitDetail.isWorkflow()){	// With out Work flow for update and delete
+			if (!limitDetail.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befLimitDetail ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldLimitDetail!=null && !oldLimitDetail.getLastMntOn().equals(befLimitDetail.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+				if (befLimitDetail == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldLimitDetail != null
+							&& !oldLimitDetail.getLastMntOn().equals(befLimitDetail.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempLimitDetail==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-				}		
-				else if (oldLimitDetail!=null && !oldLimitDetail.getLastMntOn().equals(tempLimitDetail.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempLimitDetail == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+				} else if (oldLimitDetail != null
+						&& !oldLimitDetail.getLastMntOn().equals(tempLimitDetail.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if(StringUtils.trimToEmpty(method).equals("doApprove") || !limitDetail.isWorkflow()){
-			auditDetail.setBefImage(befLimitDetail);	
+		if (StringUtils.trimToEmpty(method).equals("doApprove") || !limitDetail.isWorkflow()) {
+			auditDetail.setBefImage(befLimitDetail);
 		}
 
 		return auditDetail;
@@ -1329,7 +1325,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	@Override
-	public int limitItemCheck(String lmtItem,  String limitCategory,String type) {
+	public int limitItemCheck(String lmtItem, String limitCategory, String type) {
 		return getLimitDetailDAO().limitItemCheck(lmtItem, limitCategory, type);
 	}
 
@@ -1339,7 +1335,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	@Override
-	public List<LimitTransactionDetail> getLimitTranDetails(String code, String ref,long headerId) {
+	public List<LimitTransactionDetail> getLimitTranDetails(String code, String ref, long headerId) {
 		return getLimitTransactionDetailDAO().getLimitTranDetails(code, ref, headerId);
 	}
 
@@ -1385,9 +1381,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				BigDecimal childMaxAmount = getMaxSactionedAmt(validList, limitDetails);
 
 				if (sactioned.compareTo(childMaxAmount) < 0) {
-					String message = limitDetail.getGroupName()+"("+limitDetail.getLimitStructureDetailsID()+")";
-					if(StringUtils.isNotBlank(limitDetail.getLimitLine())) {
-						message = limitDetail.getLimitLineDesc()+"("+limitDetail.getLimitStructureDetailsID()+")";
+					String message = limitDetail.getGroupName() + "(" + limitDetail.getLimitStructureDetailsID() + ")";
+					if (StringUtils.isNotBlank(limitDetail.getLimitLine())) {
+						message = limitDetail.getLimitLineDesc() + "(" + limitDetail.getLimitStructureDetailsID() + ")";
 					}
 					String[] valueParm = new String[1];
 					valueParm[0] = message;
@@ -1407,7 +1403,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				totalGrpCode = String.valueOf(limitDetail.getLimitStructureDetailsID());
 				continue;
 			}
-			
+
 			Set<String> totalGroups = groupLineMap.keySet();
 			if (!StringUtils.isEmpty(limitDetail.getGroupCode()) && totalGroups.contains(limitDetail.getGroupCode())) {
 				if (maxofGroups.compareTo(sactioned) <= 0) {
@@ -1423,14 +1419,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		if (total.compareTo(maxofGroups) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "Total"+"("+totalGrpCode+")";
+			valueParm[0] = "Total" + "(" + totalGrpCode + ")";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("60315", "", valueParm), "EN"));
 		}
 
 		logger.debug(" Leaving ");
 		return errorDetails;
 	}
-	
+
 	private BigDecimal getMaxSactionedAmt(List<String> validList, List<LimitDetails> limitDetails) {
 		BigDecimal childMaxAmount = BigDecimal.ZERO;
 		for (LimitDetails limitDetail : limitDetails) {
@@ -1453,7 +1449,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		return childMaxAmount;
 
 	}
-	
+
 	/**
 	 * Validate Limit header details
 	 * 
@@ -1482,7 +1478,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (limitHeader.getLimitRvwDate().compareTo(limitHeader.getLimitExpiryDate()) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Review date(" + DateUtility.formatToShortDate(limitHeader.getLimitRvwDate()) + ")";
-				valueParm[1] = "Limit expiry date(" + DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+ ")";
+				valueParm[1] = "Limit expiry date(" + DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())
+						+ ")";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm)));
 			}
 		}
@@ -1534,7 +1531,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 
 				if (limitHeader.isNew()) {
-					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerId(customer.getCustID(), "_AView");
+					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerId(customer.getCustID(),
+							"_AView");
 					if (headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custCIF;
@@ -1564,14 +1562,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					}
 				}
 				if (limitHeader.isNew()) {
-					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(
-							customerGroup.getCustGrpID(), "_AView");
+					LimitHeader headerDetail = getLimitHeaderDAO()
+							.getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(), "_AView");
 					if (headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custGrpCode;
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90805", "", valueParm)));
 					}
-				} 
+				}
 			}
 		}
 
@@ -1601,7 +1599,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (limitDetails != null) {
 			for (LimitDetails detail : limitDetails) {
 				long structureId = detail.getLimitStructureDetailsID();
-				if(!structureMap.containsKey(structureId)) {
+				if (!structureMap.containsKey(structureId)) {
 					structureMap.put(structureId, structureId);
 				} else {
 					String[] valueParm = new String[1];
@@ -1656,13 +1654,13 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 			}
 		}
-		
+
 		// For Garbage collection
 		structureMap = null;
 
 		// validate Limit Structure details
-		List<LimitStructureDetail> extgStructDetails = getLimitStructureDetailDAO().getLimitStructureDetailById(
-				limitHeader.getLimitStructureCode(), "_AView");
+		List<LimitStructureDetail> extgStructDetails = getLimitStructureDetailDAO()
+				.getLimitStructureDetailById(limitHeader.getLimitStructureCode(), "_AView");
 		if (extgStructDetails != null) {
 			for (LimitStructureDetail structDetail : extgStructDetails) {
 				boolean limitStrFound = false;
@@ -1695,6 +1693,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
 	@Override
 	public LimitHeader getCustomerLimitsById(long headerId) {
 		logger.debug("Entering");
@@ -1703,6 +1702,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Leaving");
 		return limitHeader;
 	}
+
 	/**
 	 * 
 	 * 
@@ -1714,15 +1714,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "_AView");
 		if (limitHeader != null) {
-			limitHeader.setCustomerLimitDetailsList(getLimitDetailDAO().getLimitDetailsByHeaderId(
-					limitHeader.getHeaderId(), "_AView"));
+			limitHeader.setCustomerLimitDetailsList(
+					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
 
 		logger.debug("Leaving");
 		return limitHeader;
 	}
-	
-	
+
 	@Override
 	public List<String> getLinesForGroup(String groupCode) {
 		List<String> listString = new ArrayList<>();
@@ -1737,7 +1736,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 		return listString;
 	}
-	
+
 	/**
 	 * Method for fetch record count of limitHeader
 	 * 
@@ -1750,7 +1749,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Leaving");
 		return getLimitHeaderDAO().getLimitHeaderCountById(headerId, "");
 	}
-	
+
 	@Override
 	public int limitLineUtilizationCheck(String lmtline) {
 		return getLimitReferenceMappingDAO().isLimitLineExist(lmtline);
@@ -1772,7 +1771,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * @param limitDetailDAO the limitDetailDAO to set
+	 * @param limitDetailDAO
+	 *            the limitDetailDAO to set
 	 */
 
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailsDAO) {
@@ -1783,8 +1783,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		return limitTransactionDetailDAO;
 	}
 
-	public void setLimitTransactionDetailDAO(
-			LimitTransactionDetailsDAO limitTransactionDetailDAO) {
+	public void setLimitTransactionDetailDAO(LimitTransactionDetailsDAO limitTransactionDetailDAO) {
 		this.limitTransactionDetailDAO = limitTransactionDetailDAO;
 	}
 
@@ -1811,7 +1810,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	public void setCustomerGroupService(CustomerGroupService customerGroupService) {
 		this.customerGroupService = customerGroupService;
 	}
-	
+
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}
@@ -1851,6 +1850,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
+
 	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
 		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
 	}

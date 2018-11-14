@@ -57,21 +57,36 @@ import com.pennant.backend.model.rulefactory.Rule;
 public interface CommitmentService {
 
 	Commitment getCommitment();
+
 	Commitment getNewCommitment();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Commitment getCommitmentByCmtRef(String cmtReference, String nextRoleCode, boolean isEnquiry);
+
 	Commitment getApprovedCommitmentById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	int getCmtAmountCount(long custID);
+
 	List<Rule> getRuleByModuleAndEvent(String module, String event);
+
 	Map<String, Object> getAmountSummary(long custID);
+
 	List<AvailCommitment> getCommitmentListByCustId(long custId);
+
 	List<CommitmentSummary> getCommitmentSummary(long custID);
+
 	int getCommitmentCountById(String id);
 
 	LimitHeader getLimitHeaderByCustomerId(long customerId);
+
 	LimitDetails getLimitLineByDetailId(long limitLineId);
+
 	Commitment getProcessEditorDetails(Commitment commitment, String nextRoleCode, String procEdtEvent);
 }

@@ -96,7 +96,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 		this.successRecords = new AtomicLong(0L);
 		this.appDate = appDate;
 	}
-	
+
 	@Override
 	public void process(Object... objects) {
 		try {
@@ -105,8 +105,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 			throw new InterfaceException("CONTROL_DUMP_REQUEST", e.getMessage());
 		}
 	}
-	
-	
+
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
@@ -129,13 +128,13 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 			}
 
 			loadFinances();
-			
+
 			do {
 				extractData();
 			} while (totalRecords != processedCount);
-			
+
 			EXTRACT_STATUS.setStatus("S");
-			
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			EXTRACT_STATUS.setStatus("F");
@@ -147,14 +146,14 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 	private void extractData() throws Exception {
 		totalThreads = 0;
 		completedThreads.set(0L);
-		
+
 		long threadCount = 5;
 		long recordCount = batchSize;
-		
-		if(recordCount > totalRecords) {
+
+		if (recordCount > totalRecords) {
 			recordCount = totalRecords;
 		}
-		
+
 		long batchSize = recordCount / threadCount;
 
 		long fromSeq = 1;
@@ -171,10 +170,10 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 			thread.start();
 			Thread.sleep(2000);
 			totalThreads++;
-			
+
 			fromSeq = fromSeq + batchSize;
 		}
-		
+
 		while (true) {
 			if (totalThreads == completedThreads.get()) {
 				processedCount = this.processedRecords.get();
@@ -220,7 +219,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 	private void deleteAll() {
 		jdbcTemplate.update("TRUNCATE TABLE ALM");
 	}
-	
+
 	/**
 	 * Delete the records from ALM table with accrued on greater than or equal to execution date to handle retry case
 	 */
@@ -277,7 +276,8 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select AE.FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate,");
-		sql.append(" RvwOnSchDate, BalanceForPftCal, CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount,");
+		sql.append(
+				" RvwOnSchDate, BalanceForPftCal, CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount,");
 		sql.append(" DisbAmount, DownPaymentAmount, CpzAmount, FSD.FeeChargeAmt, ");
 		sql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, AE.FinStartDate,");
 		sql.append(" AE.MaturityDate, CcyMinorCcyUnits, CcyEditField, AE.EmiAdv, AE.ClosingStatus, AE.FinType,");
@@ -365,7 +365,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 
 						alm.getAccrualList().add(schedule);
 					}
-					
+
 					alm.setCalRoundingMode(rs.getString("CalRoundingMode"));
 					alm.setRoundingTarget(rs.getInt("RoundingTarget"));
 				} catch (Exception e) {
@@ -389,10 +389,10 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 		@Override
 		public void run() {
 			logger.debug("Entering thread :");
-			
+
 			// ALM Extraction configuration from SMT parameter
 			String fromFinStartDate = SysParamUtil.getValueAsString(SMTParameterConstants.ALMEXTRACT_FROMFINSTARTDATE);
-			
+
 			// extract Schedule details
 			Map<String, ALM> map = getFinSchdDetailsForALM(fromSeq, toSeq);
 
@@ -403,7 +403,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 				List<ProjectedAccrual> accrualList = null;
 				executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 				try {
-					
+
 					if (!alm.getAccrualList().isEmpty()) {
 						accrualList = calculateAccrualsOnMonthEnd(alm, appDate, fromFinStartDate);
 					}
@@ -414,12 +414,12 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 						saveAccruals(alm, accrualList);
 						transManager.commit(txnStatus);
 					}
-					
+
 				} catch (Exception e) {
-					if(txnStatus != null && !txnStatus.isCompleted()) {
+					if (txnStatus != null && !txnStatus.isCompleted()) {
 						transManager.rollback(txnStatus);
 					}
-					
+
 					executionStatus.setFailedRecords(failedCount++);
 					String keyId = alm.getAgreementNo();
 
@@ -450,11 +450,16 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 				alm.setFinStartDate(object.getFinStartDate());
 				alm.setMaturityDate(object.getMaturityDate());
 
-				alm.setInstallment(item.getSchdTot().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(), RoundingMode.HALF_DOWN));
-				alm.setPrinComp(item.getSchdPri().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(), RoundingMode.HALF_DOWN));
-				alm.setIntComp(item.getSchdPft().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(), RoundingMode.HALF_DOWN));
-				alm.setAccruedAmt(item.getPftAccrued().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(), RoundingMode.HALF_DOWN));
-				alm.setCumulativeAccrualAmt(item.getCumulativeAccrued().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(), RoundingMode.HALF_DOWN));
+				alm.setInstallment(item.getSchdTot().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(),
+						RoundingMode.HALF_DOWN));
+				alm.setPrinComp(item.getSchdPri().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(),
+						RoundingMode.HALF_DOWN));
+				alm.setIntComp(item.getSchdPft().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(),
+						RoundingMode.HALF_DOWN));
+				alm.setAccruedAmt(item.getPftAccrued().divide(object.getCcyMinorCcyUnits(), object.getCcyEditField(),
+						RoundingMode.HALF_DOWN));
+				alm.setCumulativeAccrualAmt(item.getCumulativeAccrued().divide(object.getCcyMinorCcyUnits(),
+						object.getCcyEditField(), RoundingMode.HALF_DOWN));
 
 				alm.setDueDate(item.getSchdDate());
 				alm.setAccruedOn(item.getAccruedOn());
@@ -474,10 +479,11 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 			}
 		}
 	}
-	
-	private List<ProjectedAccrual> calculateAccrualsOnMonthEnd(ALM alm, Date appDate, String fromFinStartDate) throws Exception {
+
+	private List<ProjectedAccrual> calculateAccrualsOnMonthEnd(ALM alm, Date appDate, String fromFinStartDate)
+			throws Exception {
 		List<FinanceScheduleDetail> schList = new ArrayList<FinanceScheduleDetail>(alm.getAccrualList().size());
-	
+
 		FinanceMain finMain = new FinanceMain();
 		finMain.setFinReference(alm.getAgreementNo());
 		finMain.setFinStartDate(alm.getFinStartDate());

@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -70,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements HolidayMasterDAO {
 	private static Logger logger = Logger.getLogger(HolidayMasterDAOImpl.class);
-	
+
 	public HolidayMasterDAOImpl() {
 		super();
 	}
@@ -96,8 +95,8 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		StringBuilder selectListSql = new StringBuilder(
 				"Select HolidayCode, HolidayYear,HolidayCategory, HolidayType, Holidays,");
 		selectListSql.append(" HolidayCodeDesc,HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
-		selectListSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectListSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From SMTHolidayMaster");
 		selectListSql.append(StringUtils.trimToEmpty(type));
 		selectListSql.append(" Where HolidayCode =:HolidayCode AND HolidayYear =:HolidayYear ");
@@ -107,8 +106,7 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		try {
-			holidayMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters,
-					typeRowMapper);
+			holidayMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			holidayMaster = null;
 			logger.error("Exception: ", e);
@@ -139,12 +137,12 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		StringBuilder selectListSql = new StringBuilder(
 				"Select HolidayCode, HolidayCategory, HolidayYear, HolidayType,");
 		selectListSql.append(" Holidays, HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
-		selectListSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectListSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From SMTHolidayMaster");
 		selectListSql.append(StringUtils.trimToEmpty(type));
-		selectListSql
-				.append(" Where HolidayYear in (0,:HolidayYear) AND HolidayCategory = :HolidayCategory ORDER BY HolidayType ");
+		selectListSql.append(
+				" Where HolidayYear in (0,:HolidayYear) AND HolidayCategory = :HolidayCategory ORDER BY HolidayType ");
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
@@ -176,8 +174,8 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		StringBuilder selectListSql = new StringBuilder(
 				"Select HolidayCode, HolidayCategory, HolidayYear, HolidayType,");
 		selectListSql.append(" Holidays, HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
-		selectListSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectListSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From SMTHolidayMaster");
 		selectListSql.append(StringUtils.trimToEmpty(type));
 		selectListSql
@@ -212,29 +210,29 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		holidayMaster.setHolidayCode(holidayCode);
 		holidayMaster.setHolidayYear(new BigDecimal(holidayYear));
 
-		StringBuilder selectListSql = new StringBuilder("Select HolidayCode,HolidayCategory, HolidayYear, HolidayType,");
+		StringBuilder selectListSql = new StringBuilder(
+				"Select HolidayCode,HolidayCategory, HolidayYear, HolidayType,");
 		selectListSql.append(" Holidays, HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
-		selectListSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectListSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectListSql.append(" From SMTHolidayMaster");
-		selectListSql
-				.append(" Where HolidayCode =:HolidayCode AND (HolidayYear >= :HolidayYear-1 AND HolidayYear <= :HolidayYear+1) ORDER BY HolidayYear asc");
+		selectListSql.append(
+				" Where HolidayCode =:HolidayCode AND (HolidayYear >= :HolidayYear-1 AND HolidayYear <= :HolidayYear+1) ORDER BY HolidayYear asc");
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
-		
-		List<HolidayMaster> holidayMasters = this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper); 
-		
+
+		List<HolidayMaster> holidayMasters = this.jdbcTemplate.query(selectListSql.toString(), beanParameters,
+				typeRowMapper);
+
 		logger.debug("Leaving");
 		return holidayMasters;
 	}
 
 	/**
-	 * This method Deletes the Record from the SMTHolidayMaster or
-	 * SMTHolidayMaster_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Holiday Details by key
-	 * HolidayCode
+	 * This method Deletes the Record from the SMTHolidayMaster or SMTHolidayMaster_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Holiday Details by key HolidayCode
 	 * 
 	 * @param Holiday
 	 *            Details (holidayMaster)
@@ -272,8 +270,7 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 	}
 
 	/**
-	 * This method insert new Records into SMTHolidayMaster or
-	 * SMTHolidayMaster_Temp.
+	 * This method insert new Records into SMTHolidayMaster or SMTHolidayMaster_Temp.
 	 * 
 	 * save Holiday Details
 	 * 
@@ -294,12 +291,12 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (HolidayCode, HolidayCodeDesc, HolidayYear, HolidayType,");
 		insertSql.append(" Holidays, HolidayDesc1,HolidayDesc2, HolidayDesc3, HolidayCategory, ");
-		insertSql
-				.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,RecordType, WorkflowId)");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,RecordType, WorkflowId)");
 		insertSql.append(" Values(:HolidayCode, :HolidayCodeDesc, :HolidayYear, :HolidayType,");
 		insertSql.append(" :Holidays, :HolidayDesc1, :HolidayDesc2, :HolidayDesc3, :HolidayCategory, ");
-		insertSql
-				.append(" :Version , :LastMntBy, :LastMntOn,:RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,:RecordType, :WorkflowId )");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn,:RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,:RecordType, :WorkflowId )");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -309,9 +306,8 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 	}
 
 	/**
-	 * This method updates the Record SMTHolidayMaster or SMTHolidayMaster_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Holiday Details by key HolidayCode and Version
+	 * This method updates the Record SMTHolidayMaster or SMTHolidayMaster_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Holiday Details by key HolidayCode and Version
 	 * 
 	 * @param Holiday
 	 *            Details (holidayMaster)
@@ -332,8 +328,8 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 		updateSql.append(" HolidayDesc1 = :HolidayDesc1, HolidayDesc2 = :HolidayDesc2,");
 		updateSql.append(" HolidayDesc3 = :HolidayDesc3, HolidayCategory = :HolidayCategory, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql
-				.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 
 		updateSql.append(" Where HolidayCode =:HolidayCode AND HolidayYear = :HolidayYear ");

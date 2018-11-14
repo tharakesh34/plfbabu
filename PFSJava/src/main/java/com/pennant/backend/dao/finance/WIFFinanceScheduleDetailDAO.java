@@ -42,15 +42,20 @@
 */
 
 package com.pennant.backend.dao.finance;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public interface WIFFinanceScheduleDetailDAO {
 
-	FinanceScheduleDetail getWIFFinanceScheduleDetailById(String id,String type);
-	void update(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
-	void delete(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
-	String save(FinanceScheduleDetail wIFFinanceScheduleDetail,String type);
+	FinanceScheduleDetail getWIFFinanceScheduleDetailById(String id, String type);
+
+	void update(FinanceScheduleDetail wIFFinanceScheduleDetail, String type);
+
+	void delete(FinanceScheduleDetail wIFFinanceScheduleDetail, String type);
+
+	String save(FinanceScheduleDetail wIFFinanceScheduleDetail, String type);
+
 	List<FinanceScheduleDetail> getWIFFinScheduleDetails(String id, String type);
 }

@@ -9,7 +9,8 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 
 	@Override
 	public void sendReqest(List<Long> idList, long headerId, boolean isError, boolean isPDC) throws Exception {
-		PresentmentRequestProcess process = new PresentmentRequestProcess(dataSource,new Long(1000),getValueDate(), idList, headerId,isError);
+		PresentmentRequestProcess process = new PresentmentRequestProcess(dataSource, new Long(1000), getValueDate(),
+				idList, headerId, isError);
 		process.processData();
 	}
 }

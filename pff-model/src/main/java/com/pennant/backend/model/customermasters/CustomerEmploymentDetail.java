@@ -60,14 +60,15 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerEmploymentDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custEmpId","custEmpName", "custEmpType", "custEmpDesg", "custEmpDept", "custEmpFrom", "custEmpTo"})
+@XmlType(propOrder = { "custEmpId", "custEmpName", "custEmpType", "custEmpDesg", "custEmpDept", "custEmpFrom",
+		"custEmpTo" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements Entity{
+public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -5317225672461108680L;
 
 	private long custID;
-	@XmlElement(name="employmentId")
+	@XmlElement(name = "employmentId")
 	private long custEmpId = Long.MIN_VALUE;
 	@XmlElement(name = "employerId")
 	private long custEmpName;
@@ -91,13 +92,13 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-	
+
 	private String sourceId;
 
 	private CustomerEmploymentDetail befImage;
 	private LoggedInUser userDetails;
 	private String companyName;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -286,7 +287,6 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	public boolean isCurrentEmployer() {
 		return currentEmployer;
 	}
-	
 
 	public String getSourceId() {
 		return sourceId;
@@ -295,6 +295,7 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
+
 	public long getCustEmpId() {
 		return custEmpId;
 	}

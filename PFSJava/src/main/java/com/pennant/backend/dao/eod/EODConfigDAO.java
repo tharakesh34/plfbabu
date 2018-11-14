@@ -48,8 +48,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.eod.EODConfig;
 
 public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -59,10 +58,10 @@ public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
 	 *            The type of the table.
 	 * @return EODConfig
 	 */
-	EODConfig getEODConfig(long eodConfigId,String type);
+	EODConfig getEODConfig(long eodConfigId, String type);
 
 	List<EODConfig> getEODConfig();
 
 	void updateExtMnthEnd(EODConfig eODConfig);
-	
+
 }

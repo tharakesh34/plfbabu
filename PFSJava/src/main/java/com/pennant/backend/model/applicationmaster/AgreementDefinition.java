@@ -74,7 +74,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	private String lovValue;
 	private AgreementDefinition befImage;
 	private LoggedInUser userDetails;
-	private	String moduleName;
+	private String moduleName;
 	private boolean allowMultiple;
 	private String moduleType;
 
@@ -85,6 +85,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public AgreementDefinition() {
 		super();
 	}
+
 	public AgreementDefinition(long id) {
 		super();
 		this.setId(id);
@@ -97,11 +98,11 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public long getId() {
 		return aggId;
 	}
-	public void setId (long id) {
-		this.aggId= id;
+
+	public void setId(long id) {
+		this.aggId = id;
 	}
 
-	
 	public long getAggId() {
 		return aggId;
 	}
@@ -266,7 +267,6 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	
 	public boolean isAutoGeneration() {
 		return autoGeneration;
 	}

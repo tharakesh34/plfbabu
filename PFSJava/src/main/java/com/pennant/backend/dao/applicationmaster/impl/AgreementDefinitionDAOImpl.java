@@ -68,118 +68,120 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition> implements AgreementDefinitionDAO {
 	private static Logger logger = Logger.getLogger(AgreementDefinitionDAOImpl.class);
-	
-	
+
 	public AgreementDefinitionDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Agreement Definition details by key field
+	 * Fetch the Record Agreement Definition details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return AgreementDefinition
 	 */
 	@Override
 	public AgreementDefinition getAgreementDefinitionById(final long id, String type) {
 		logger.debug(Literal.ENTERING);
 		AgreementDefinition agreementDefinition = new AgreementDefinition();
-		
+
 		agreementDefinition.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, " );
+
+		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, ");
 		selectSql.append(" AggDesc, AggReportName, AggReportPath, AggIsActive , Aggtype, AggImage, AgrRule, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName, DocType, AutoGeneration, AutoDownload");
-		if(type.contains("View")){
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		selectSql.append(
+				" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName, DocType, AutoGeneration, AutoDownload");
+		if (type.contains("View")) {
 			selectSql.append(" , lovDescAgrRuleDesc");
 		}
 		selectSql.append(" From BMTAggrementDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AggId =:AggId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
-		RowMapper<AgreementDefinition> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				AgreementDefinition.class);
-		
-		try{
-			agreementDefinition = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<AgreementDefinition> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AgreementDefinition.class);
+
+		try {
+			agreementDefinition = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			agreementDefinition = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return agreementDefinition;
 	}
 
 	/**
-	 * Fetch the Record  Agreement Definition details by key field
+	 * Fetch the Record Agreement Definition details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return AgreementDefinition
 	 */
 	@Override
 	public AgreementDefinition getAgreementDefinitionByCode(final String aggCode, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		AgreementDefinition agreementDefinition = new AgreementDefinition();
 		agreementDefinition.setAggCode(aggCode);
-		
-		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, AggDesc, " );
+
+		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, AggDesc, ");
 		selectSql.append(" AggReportName, AggReportPath, AggIsActive, Aggtype, AggImage, AgrRule, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName,DocType, AutoGeneration, AutoDownload");
-		if(type.contains("View")){
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		selectSql.append(
+				" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName,DocType, AutoGeneration, AutoDownload");
+		if (type.contains("View")) {
 			selectSql.append(" , lovDescAgrRuleDesc");
 		}
 		selectSql.append(" From BMTAggrementDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AggCode =:AggCode");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
-		RowMapper<AgreementDefinition> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AgreementDefinition.class);
-		
-		try{
-			agreementDefinition = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<AgreementDefinition> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AgreementDefinition.class);
+
+		try {
+			agreementDefinition = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			agreementDefinition = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return agreementDefinition;
 	}
-	
-	
+
 	/**
-	 * This method Deletes the Record from the BMTAggrementDef or BMTAggrementDef_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Agreement Definition by key AggCode
+	 * This method Deletes the Record from the BMTAggrementDef or BMTAggrementDef_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Agreement Definition by key AggCode
 	 * 
-	 * @param Agreement Definition (agreementDefinition)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Agreement
+	 *            Definition (agreementDefinition)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	public void delete(AgreementDefinition agreementDefinition, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder("Delete From BMTAggrementDef");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where AggCode =:AggCode");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
-		logger.trace(Literal.SQL +  deleteSql.toString());
+
+		logger.trace(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
 		try {
@@ -194,15 +196,16 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * This method insert new Records into BMTAggrementDef or BMTAggrementDef_Temp.
 	 *
-	 * save Agreement Definition 
+	 * save Agreement Definition
 	 * 
-	 * @param Agreement Definition (agreementDefinition)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Agreement
+	 *            Definition (agreementDefinition)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -210,43 +213,45 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 	@Override
 	public String save(AgreementDefinition agreementDefinition, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
-		if (agreementDefinition.getId()==Long.MIN_VALUE){
+
+		if (agreementDefinition.getId() == Long.MIN_VALUE) {
 			agreementDefinition.setId(getNextId("SeqBMTAggrementDef"));
-			logger.debug("get NextID:"+agreementDefinition.getId());
+			logger.debug("get NextID:" + agreementDefinition.getId());
 		}
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into BMTAggrementDef");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into BMTAggrementDef");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (AggId, AggCode, AggName, AggDesc, AggReportName, AggReportPath, " );
+		insertSql.append(" (AggId, AggCode, AggName, AggDesc, AggReportName, AggReportPath, ");
 		insertSql.append(" AggIsActive , Aggtype, AggImage, AgrRule, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
-		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName, DocType, AutoGeneration, AutoDownload)");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		insertSql.append(
+				" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleType, AllowMultiple, ModuleName, DocType, AutoGeneration, AutoDownload)");
 		insertSql.append(" Values(:AggId, :AggCode, :AggName, :AggDesc, :AggReportName, ");
 		insertSql.append(" :AggReportPath, :AggIsActive, :Aggtype, :AggImage, :AgrRule, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleType, :AllowMultiple, :ModuleName, :DocType, :AutoGeneration, :AutoDownload)");
-		
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
+		insertSql.append(
+				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleType, :AllowMultiple, :ModuleName, :DocType, :AutoGeneration, :AutoDownload)");
+
 		logger.trace(Literal.SQL + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(agreementDefinition.getId());
 	}
-	
+
 	/**
-	 * This method updates the Record BMTAggrementDef or BMTAggrementDef_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Agreement Definition by key AggCode and Version
+	 * This method updates the Record BMTAggrementDef or BMTAggrementDef_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Agreement Definition by key AggCode and Version
 	 * 
-	 * @param Agreement Definition (agreementDefinition)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Agreement
+	 *            Definition (agreementDefinition)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -254,31 +259,33 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 	@Override
 	public void update(AgreementDefinition agreementDefinition, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
-		StringBuilder	updateSql =new StringBuilder("Update BMTAggrementDef");
+		StringBuilder updateSql = new StringBuilder("Update BMTAggrementDef");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set AggCode = :AggCode, AggName = :AggName, AggDesc = :AggDesc, " );
-		updateSql.append(" AggReportName = :AggReportName, AggReportPath = :AggReportPath, " );
+		updateSql.append(" Set AggCode = :AggCode, AggName = :AggName, AggDesc = :AggDesc, ");
+		updateSql.append(" AggReportName = :AggReportName, AggReportPath = :AggReportPath, ");
 		updateSql.append(" AggIsActive = :AggIsActive , Aggtype = :Aggtype, AggImage = :AggImage, AgrRule=:AgrRule, ");
-		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,Doctype = :DocType, AutoGeneration = :AutoGeneration,AutoDownload = :AutoDownload," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleType = :ModuleType, AllowMultiple= :AllowMultiple, ModuleName = :ModuleName");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
+		updateSql.append(
+				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,Doctype = :DocType, AutoGeneration = :AutoGeneration,AutoDownload = :AutoDownload,");
+		updateSql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleType = :ModuleType, AllowMultiple= :AllowMultiple, ModuleName = :ModuleName");
 		updateSql.append(" Where AggId =:AggId");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String aggCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -331,5 +338,5 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
 }

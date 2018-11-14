@@ -122,27 +122,27 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
-	private static final Logger				logger	= Logger.getLogger(ManualPaymentServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ManualPaymentServiceImpl.class);
 
-	private FinanceRepayPriorityDAO			financeRepayPriorityDAO;
-	private FinRepayQueueDAO				finRepayQueueDAO;
-	private RepaymentPostingsUtil			repayPostingUtil;
-	private AccountingSetDAO				accountingSetDAO;
-	private FinanceReferenceDetailDAO		financeReferenceDetailDAO;
-	private DDAControllerService			ddaControllerService;
-	private CollateralMarkProcess			collateralMarkProcess;
-	private HandlingInstructionService		handlingInstructionService;
-	private LimitInterfaceDAO				limitInterfaceDAO;
-	private CustomerLimitIntefaceService	custLimitIntefaceService;
-	private DDARepresentmentService			ddaRepresentmentService;
-	private LimitCheckDetails				limitCheckDetails;
-	private RuleService						ruleService;
-	private FinanceDetailService			financeDetailService;
-	private RepayCalculator					repayCalculator;
-	private LimitManagement					limitManagement;
-	
-	private FinTypeFeesDAO					finTypeFeesDAO;
-	private FinFeeDetailService 			finFeeDetailService;
+	private FinanceRepayPriorityDAO financeRepayPriorityDAO;
+	private FinRepayQueueDAO finRepayQueueDAO;
+	private RepaymentPostingsUtil repayPostingUtil;
+	private AccountingSetDAO accountingSetDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private DDAControllerService ddaControllerService;
+	private CollateralMarkProcess collateralMarkProcess;
+	private HandlingInstructionService handlingInstructionService;
+	private LimitInterfaceDAO limitInterfaceDAO;
+	private CustomerLimitIntefaceService custLimitIntefaceService;
+	private DDARepresentmentService ddaRepresentmentService;
+	private LimitCheckDetails limitCheckDetails;
+	private RuleService ruleService;
+	private FinanceDetailService financeDetailService;
+	private RepayCalculator repayCalculator;
+	private LimitManagement limitManagement;
+
+	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinFeeDetailService finFeeDetailService;
 
 	public ManualPaymentServiceImpl() {
 		super();
@@ -173,21 +173,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (financeMain != null) {
 
 			//Finance Schedule Details
-			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
-					"_View", false));
+			scheduleData.setFinanceScheduleDetails(
+					getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "_View", false));
 
 			//Finance Disbursement Details
-			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
-					"_View", false));
+			scheduleData.setDisbursementDetails(
+					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "_View", false));
 
 			//Finance Repayments Instruction Details
-			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, "_View",
-					false));
+			scheduleData
+					.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, "_View", false));
 
 			//Finance Type Details
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "_AView");
 			scheduleData.setFinanceType(financeType);
-			
+
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getPromotionCode(),
 						AccountEventConstants.ACCEVENT_EARLYSTL, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
@@ -195,14 +195,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(),
 						AccountEventConstants.ACCEVENT_EARLYSTL, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 			}
-			
+
 			// Finance Fee Details
-			scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
+			scheduleData
+					.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 
 			//Finance Customer Details			
 			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
-						financeMain.getCustID(), true, "_View"));
+				financeDetail.setCustomerDetails(
+						getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
 			}
 
 			//Finance Agreement Details	
@@ -230,8 +231,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				repayData.setRepayScheduleDetails(getFinanceRepaymentsDAO().getRpySchdList(finReference, "_Temp"));
 
 				//Fee Rule Details
-				scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, false,
-						"_Temp"));
+				scheduleData.setFeeRules(
+						getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, false, "_Temp"));
 
 				//Finance Document Details
 				financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
@@ -255,8 +256,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(financeType.getFinType(),
 						procEdtEvent, null, "_ACView"));
 				if (!accSetIdList.isEmpty()) {
-					financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, eventCode,
-							"_AView", 0));
+					financeDetail.setFeeCharges(
+							getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, eventCode, "_AView", 0));
 				}
 
 			}
@@ -310,8 +311,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTRPY,
 						AccountEventConstants.ACCEVENT_CMTRPY);
 				if (accountingSetId != 0) {
-					financeDetail.setCmtFinanceEntries(getTransactionEntryDAO().getListTransactionEntryById(
-							accountingSetId, "_AEView", true));
+					financeDetail.setCmtFinanceEntries(
+							getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView", true));
 				}
 			}
 		}
@@ -342,8 +343,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -444,7 +445,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (!financeMain.isNewRecord()) {
 
-			if (tableType == TableType.MAIN_TAB && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+			if (tableType == TableType.MAIN_TAB
+					&& financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				//Fetch Existing data before Modification
 
 				FinScheduleData oldFinSchdData = null;
@@ -494,8 +496,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (repayData.getFinanceDetail().getFinanceCheckList() != null
 				&& !repayData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(),
-					tableType.getSuffix()));
+			auditDetails.addAll(
+					getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(), tableType.getSuffix()));
 		}
 
 		//Process Updations For Postings
@@ -521,8 +523,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
-				.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("FinanceDetail");
@@ -559,11 +561,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -598,8 +601,9 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = repayData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", repayData.getFinanceDetail().getFinScheduleData()
-					.getFinanceMain(), repayData.getFinRepayHeader().getFinEvent());
+			details = processingDocumentDetailsList(details, "_Temp",
+					repayData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					repayData.getFinRepayHeader().getFinEvent());
 			auditHeader.setAuditDetails(details);
 		}
 
@@ -609,13 +613,13 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		// Checklist Details delete
 		//=======================================
-		auditHeader.getAuditDetails().addAll(
-				getCheckListDetailService().delete(repayData.getFinanceDetail(), "_Temp", tranType));
+		auditHeader.getAuditDetails()
+				.addAll(getCheckListDetailService().delete(repayData.getFinanceDetail(), "_Temp", tranType));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
-				.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -646,8 +650,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -696,8 +700,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		boolean emptyRepayInstructions = scheduleData.getRepayInstructions() == null ? true : false;
 
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
-		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO().getNextSchPayment(
-				financeMain.getFinReference(), curBDay);
+		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO()
+				.getNextSchPayment(financeMain.getFinReference(), curBDay);
 
 		//Repayments Posting Process Execution
 		//=====================================
@@ -784,8 +788,9 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			if (repayData.getFinanceDetail().getDocumentDetailsList() != null
 					&& repayData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 				List<AuditDetail> details = repayData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-				details = processingDocumentDetailsList(details, "", repayData.getFinanceDetail().getFinScheduleData()
-						.getFinanceMain(), finRepayHeader.getFinEvent());
+				details = processingDocumentDetailsList(details, "",
+						repayData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+						finRepayHeader.getFinEvent());
 				auditDetails.addAll(details);
 				listDocDeletion(repayData.getFinanceDetail(), "_Temp");
 			}
@@ -810,8 +815,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			// Checklist Details delete
 			//=======================================
-			tempAuditDetailList.addAll(getCheckListDetailService().delete(repayData.getFinanceDetail(), "_Temp",
-					tranType));
+			tempAuditDetailList
+					.addAll(getCheckListDetailService().delete(repayData.getFinanceDetail(), "_Temp", tranType));
 
 			//Delete Finance Repay Header
 			getFinanceRepaymentsDAO().deleteFinRepayHeader(repayData.getFinRepayHeader(), "_Temp");
@@ -891,7 +896,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
-			
+
 			FinanceDetail finDetails = repayData.getFinanceDetail();
 			FinRepayHeader header = repayData.getFinRepayHeader();
 			BigDecimal priAmt = BigDecimal.ZERO;
@@ -899,7 +904,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
 				priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
 			}
-			
+
 			getLimitManagement().processLoanRepay(financeMain, finDetails.getCustomerDetails().getCustomer(), priAmt,
 					StringUtils.trimToEmpty(finDetails.getFinScheduleData().getFinanceType().getProductCategory()));
 		} else {
@@ -927,7 +932,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		HandlingInstruction handlingInstruction = new HandlingInstruction();
 		String narration = "";
 
-		if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {//Early Settlement
+		if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(),
+				FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {//Early Settlement
 			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_EARLYSTLMNT);
 			narration = "Early Settlement";
 		} else if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(),
@@ -997,8 +1003,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// FETCH Finance type Repayment Priority
-			FinanceRepayPriority repayPriority = getFinanceRepayPriorityDAO().getFinanceRepayPriorityById(
-					financeMain.getFinType(), "");
+			FinanceRepayPriority repayPriority = getFinanceRepayPriorityDAO()
+					.getFinanceRepayPriorityById(financeMain.getFinType(), "");
 
 			//Check Finance is RIA Finance Type or Not
 			BigDecimal totRpyPri = BigDecimal.ZERO;
@@ -1026,8 +1032,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
 				finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-				finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt()
-						.subtract(repaySchdList.get(i).getPenaltyPayNow()));
+				finRepayQueue.setPenaltyBal(
+						repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
 				finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 				//Total Repayments Calculation for Principal, Profit & Refunds
@@ -1159,15 +1165,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 *            (String)
 	 * @param isWIF
 	 *            (boolean)
-	 * **/
+	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
-				false));
-		finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type,
-				false));
+		finSchData.setFinanceScheduleDetails(
+				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		finSchData.setDisbursementDetails(
+				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 		logger.debug("Leaving");
 		return finSchData;
@@ -1283,21 +1289,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				// records
 				if (befFinanceMain != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
 					// records type is new
 					if (befFinanceMain != null || tempFinanceMain != null) { // if
 						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceMain == null || tempFinanceMain != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -1309,17 +1315,20 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 				if (befFinanceMain == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+					if (oldFinanceMain != null
+							&& !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
@@ -1327,14 +1336,14 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 				if (tempFinanceMain == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinanceMain != null && oldFinanceMain != null
 						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
@@ -1344,19 +1353,19 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 		if (eodProgressCount > 0) {
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60203",
-					errParm, valueParm), usrLanguage));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
 		//Checking For Commitment , Is it In Maintenance Or not
 		if (StringUtils.trimToEmpty(financeMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)
 				&& "doApprove".equals(method) && StringUtils.isNotEmpty(financeMain.getFinCommitmentRef())) {
 
-			Commitment tempcommitment = getCommitmentDAO()
-					.getCommitmentById(financeMain.getFinCommitmentRef(), "_Temp");
+			Commitment tempcommitment = getCommitmentDAO().getCommitmentById(financeMain.getFinCommitmentRef(),
+					"_Temp");
 			if (tempcommitment != null && tempcommitment.isRevolving()) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-						"30538", errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "30538", errParm, valueParm), usrLanguage));
 			}
 		}
 
@@ -1579,9 +1588,11 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//Calculation for Insurance Refund
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), repayData.getRepayMain()
-					.getRefundCalStartDate() == null ? financeMain.getMaturityDate() : repayData.getRepayMain()
-					.getRefundCalStartDate(), true);
+			int months = DateUtility
+					.getMonthsBetween(
+							financeMain.getMaturityDate(), repayData.getRepayMain().getRefundCalStartDate() == null
+									? financeMain.getMaturityDate() : repayData.getRepayMain().getRefundCalStartDate(),
+							true);
 			subHeadRule.setRemTenure(months);
 
 			Rule insRefundRule = getRuleService().getApprovedRuleById("INSREFND", RuleConstants.MODULE_REFUND,
@@ -1638,8 +1649,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 						break;
 					} else {
 						final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
-						repayData.getRepayMain().setEarlyPayAmount(
-								repayData.getRepayMain().getEarlyPayAmount().add(earlypaidBal));
+						repayData.getRepayMain()
+								.setEarlyPayAmount(repayData.getRepayMain().getEarlyPayAmount().add(earlypaidBal));
 					}
 				}
 				if (detail.getDefSchdDate().compareTo(repayData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
@@ -1650,16 +1661,16 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			finScheduleData.setFinanceType(repayData.getFinanceDetail().getFinScheduleData().getFinanceType());
-			
+
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
-			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, repayData.getRepayMain()
-					.getEarlyPayOnSchDate(), repayData.getRepayMain().getEarlyPayNextSchDate(), repayData
-					.getRepayMain().getEarlyPayAmount(), method);
+			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData,
+					repayData.getRepayMain().getEarlyPayOnSchDate(), repayData.getRepayMain().getEarlyPayNextSchDate(),
+					repayData.getRepayMain().getEarlyPayAmount(), method);
 
 			financeDetail.setFinScheduleData(finScheduleData);
 			aFinanceMain = finScheduleData.getFinanceMain();
-			aFinanceMain.setWorkflowId(repayData.getFinanceDetail().getFinScheduleData().getFinanceMain()
-					.getWorkflowId());
+			aFinanceMain
+					.setWorkflowId(repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
 			repayData.setFinanceDetail(financeDetail);//Object Setting for Future save purpose
 			repayData.setFinanceDetail(financeDetail);
 
@@ -1690,7 +1701,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * @param toDate
 	 * @return
 	 */
-	private List<FinanceScheduleDetail> rePrepareScheduleTerms(List<FinanceScheduleDetail> scheduleDetails, Date toDate) {
+	private List<FinanceScheduleDetail> rePrepareScheduleTerms(List<FinanceScheduleDetail> scheduleDetails,
+			Date toDate) {
 		logger.debug("Entering");
 
 		Date paidTillTerm = toDate;

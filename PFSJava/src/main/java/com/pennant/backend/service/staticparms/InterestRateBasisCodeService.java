@@ -51,12 +51,17 @@ import com.pennant.backend.model.staticparms.InterestRateBasisCode;
  * 
  */
 public interface InterestRateBasisCodeService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	InterestRateBasisCode getInterestRateBasisCodeById(String id);
+
 	InterestRateBasisCode getApprovedInterestRateBasisCodeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

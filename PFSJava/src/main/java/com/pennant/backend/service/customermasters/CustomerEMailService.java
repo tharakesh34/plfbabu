@@ -55,14 +55,23 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
  */
 public interface CustomerEMailService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CustomerEMail getCustomerEMailById(long id,String typeCode);
-	CustomerEMail getApprovedCustomerEMailById(long id,String typeCode);
+
+	CustomerEMail getCustomerEMailById(long id, String typeCode);
+
+	CustomerEMail getApprovedCustomerEMailById(long id, String typeCode);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	List<String> getCustEmailsByCustId(long custId);
+
 	List<CustomerEMail> getApprovedCustomerEMailById(long id);
-	AuditDetail doValidations(CustomerEMail customerEMail,String method);
+
+	AuditDetail doValidations(CustomerEMail customerEMail, String method);
+
 	int getVersion(long id, String typeCode);
-	
+
 }

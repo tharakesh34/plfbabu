@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,23 +69,23 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements ProductAssetDAO {
-    private static Logger logger = Logger.getLogger(ProductAssetDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ProductAssetDAOImpl.class);
 
-	
 	public ProductAssetDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new Product Asset 
+	 * This method set the Work Flow id based on the module name and return the new Product Asset
+	 * 
 	 * @return Product Asset
 	 */
 	@Override
 	public ProductAsset getProductAsset() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("ProductAsset");
-		ProductAsset productAsset= new ProductAsset();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("ProductAsset");
+		ProductAsset productAsset = new ProductAsset();
+		if (workFlowDetails != null) {
 			productAsset.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -95,7 +93,9 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	}
 
 	/**
-	 * This method get the module from method getProduct Asset() and set the new record flag as true and return Product Asset()   
+	 * This method get the module from method getProduct Asset() and set the new record flag as true and return Product
+	 * Asset()
+	 * 
 	 * @return Product Asset
 	 */
 	@Override
@@ -108,11 +108,12 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	}
 
 	/**
-	 * Fetch the Record  Product  Asset Details details by key field
+	 * Fetch the Record Product Asset Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Product Asset
 	 */
 	@Override
@@ -124,7 +125,7 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT AssetID, ProductCode, AssetCode, AssetDesc, AssetIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" ");
 		}
 		selectSql.append("Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -148,11 +149,12 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	}
 
 	/**
-	 * Fetch the Record  Product Asset details by product Code field
+	 * Fetch the Record Product Asset details by product Code field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ProductAsset
 	 */
 	@Override
@@ -163,10 +165,11 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("Select AssetID, ProductCode, AssetCode, AssetDesc, AssetIsActive,");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(" ");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTProductAssets");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ProductCode = :ProductCode");
@@ -176,21 +179,22 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		RowMapper<ProductAsset> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
-	
+
 	/**
-	 * To fetch finance Purpose details by AssetId 
-	 * @param id (list)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * To fetch finance Purpose details by AssetId
+	 * 
+	 * @param id
+	 *            (list)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return ProductAsset details list
 	 */
 	@Override
 	public List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> list, String type) {
 		logger.debug("Entering");
-		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("paramValue", list);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("select AssetCode,AssetDesc from RMTProductAssets");
@@ -199,25 +203,25 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		logger.debug("selectSql: " + selectSql.toString());
 		List<ProductAsset> finPurposeList = null;
 		RowMapper<ProductAsset> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
-		finPurposeList = this.jdbcTemplate.query(selectSql.toString(),mapSqlParameterSource,rowMapper);
+		finPurposeList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, rowMapper);
 		logger.debug("Leaving");
 		return finPurposeList;
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTProductAssets or RMTProductAssets_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Product Asset Details by key ProductCode
+	 * This method Deletes the Record from the RMTProductAssets or RMTProductAssets_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Product Asset Details by key ProductCode
 	 * 
-	 * @param Product Asset Details (productAsset)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Product
+	 *            Asset Details (productAsset)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(ProductAsset productAsset,String type) {
+	public void delete(ProductAsset productAsset, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
@@ -229,36 +233,37 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
 
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTProductAssets or RMTProductAssets_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Product Asset Details by key ProductCode
+	 * This method Deletes the Record from the RMTProductAssets or RMTProductAssets_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Product Asset Details by key ProductCode
 	 * 
-	 * @param Product Asset Details (productAsset)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Product
+	 *            Asset Details (productAsset)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void deleteByProduct(ProductAsset productAsset,String type) {
+	public void deleteByProduct(ProductAsset productAsset, String type) {
 		logger.debug("Entering");
 		@SuppressWarnings("unused")
 		int recordCount = 0;
-		/*ProductAsset productAsset = new ProductAsset();
-		productAsset.setProductCode(prodCode);*/
+		/*
+		 * ProductAsset productAsset = new ProductAsset(); productAsset.setProductCode(prodCode);
+		 */
 		StringBuilder deleteSql = new StringBuilder();
 
 		deleteSql.append("Delete From RMTProductAssets");
@@ -267,41 +272,44 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			/*if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}*/
-		}catch(DataAccessException e){
+			/*
+			 * if (recordCount <= 0) { throw new ConcurrencyException(); }
+			 */
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * This method insert new Records into RMTProductAssets or RMTProductAssets_Temp.
 	 *
-	 * save Product  Asset Details 
+	 * save Product Asset Details
 	 * 
-	 * @param Product Assets Details (productAsset)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Product
+	 *            Assets Details (productAsset)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(ProductAsset productAsset,String type) {
+	public long save(ProductAsset productAsset, String type) {
 		logger.debug("Entering");
-		if (productAsset.getId()==Long.MIN_VALUE){
+		if (productAsset.getId() == Long.MIN_VALUE) {
 			productAsset.setId(getNextId("SeqRMTProductAssets"));
-			logger.debug("get NextID:"+productAsset.getId());
+			logger.debug("get NextID:" + productAsset.getId());
 		}
-		StringBuilder insertSql =new StringBuilder();
+		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append("Insert Into RMTProductAssets");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AssetID, ProductCode, AssetCode, AssetDesc, AssetIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:AssetID, :ProductCode, :AssetCode, :AssetDesc, :AssetIsActive,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -314,27 +322,28 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	}
 
 	/**
-	 * This method updates the Record RMTProductAssets or RMTProductAssets_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Product  Asset Details by key FinType and Version
+	 * This method updates the Record RMTProductAssets or RMTProductAssets_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Product Asset Details by key FinType and Version
 	 * 
-	 * @param Product Asset (productAsset)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Product
+	 *            Asset (productAsset)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(ProductAsset productAsset,String type) {
+	public void update(ProductAsset productAsset, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder();
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update RMTProductAssets");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ProductCode = :ProductCode, AssetCode = :AssetCode,");
 		updateSql.append(" AssetDesc = :AssetDesc, AssetIsActive = :AssetIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where AssetID = :AssetID");

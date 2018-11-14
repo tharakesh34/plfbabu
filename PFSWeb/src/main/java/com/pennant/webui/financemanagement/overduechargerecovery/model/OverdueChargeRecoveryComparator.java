@@ -51,20 +51,20 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 
 /**
  * Comparator class for OverdueChargeRecovery
- * */
-public class OverdueChargeRecoveryComparator  implements Comparator<Object>,Serializable{
-	
+ */
+public class OverdueChargeRecoveryComparator implements Comparator<Object>, Serializable {
+
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public OverdueChargeRecoveryComparator() {
-		
+
 	}
-	
+
 	@Override
-    public int compare(Object o1, Object o2) { 
-		OverdueChargeRecovery data = (OverdueChargeRecovery) o1; 
-		OverdueChargeRecovery data2 = (OverdueChargeRecovery) o2; 
+	public int compare(Object o1, Object o2) {
+		OverdueChargeRecovery data = (OverdueChargeRecovery) o1;
+		OverdueChargeRecovery data2 = (OverdueChargeRecovery) o2;
 		return DateUtility.compare(data.getFinODSchdDate(), data2.getFinODSchdDate());
-    }
+	}
 
 }

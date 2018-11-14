@@ -23,8 +23,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	private static Logger logger = Logger.getLogger(APIChannelDAOImpl.class);
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new ChannelDetails
+	 * This method set the Work Flow id based on the module name and return the new ChannelDetails
 	 * 
 	 * @return ChannelDetails
 	 */
@@ -37,8 +36,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method get the module from method getChannelDetails() and set the
-	 * new record flag as true and return ChannelDetails()
+	 * This method get the module from method getChannelDetails() and set the new record flag as true and return
+	 * ChannelDetails()
 	 * 
 	 * @return ChannelDetails
 	 */
@@ -93,13 +92,9 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 		}
 	}
 
-	
-
 	/**
-	 * This method Deletes the Record from the ChannelDetails or
-	 * ChannelDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete ChannelDetails by key
-	 * CcyCode
+	 * This method Deletes the Record from the ChannelDetails or ChannelDetails_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete ChannelDetails by key CcyCode
 	 * 
 	 * @param APIChannel
 	 *            (ChannelDetails)
@@ -132,8 +127,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method insert new Records into ChannelDetails or
-	 * ChannelDetails_Temp.
+	 * This method insert new Records into ChannelDetails or ChannelDetails_Temp.
 	 * 
 	 * save ChannelDetails
 	 * 
@@ -170,9 +164,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method updates the Record ChannelDetails or ChannelDetails_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update ChannelDetails by key CcyCode and Version
+	 * This method updates the Record ChannelDetails or ChannelDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update ChannelDetails by key CcyCode and Version
 	 * 
 	 * @param ChannelDetails
 	 *            (ChannelDetails)
@@ -215,8 +208,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method get the module from method getChannelAuthDetails() and set
-	 * the new record flag as true and return ChannelAuthDetails()
+	 * This method get the module from method getChannelAuthDetails() and set the new record flag as true and return
+	 * ChannelAuthDetails()
 	 * 
 	 * @return ChannelAuthDetails
 	 */
@@ -274,10 +267,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method Deletes the Record from the ChannelAuthDetails or
-	 * ChannelAuthDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete ChannelAuthDetails by key
-	 * CcyCode
+	 * This method Deletes the Record from the ChannelAuthDetails or ChannelAuthDetails_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete ChannelAuthDetails by key CcyCode
 	 * 
 	 * @param APIChannelIP
 	 *            (ChannelAuthDetails)
@@ -309,8 +300,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method insert new Records into ChannelAuthDetails or
-	 * ChannelAuthDetails_Temp.
+	 * This method insert new Records into ChannelAuthDetails or ChannelAuthDetails_Temp.
 	 * 
 	 * save ChannelAuthDetails
 	 * 
@@ -344,10 +334,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	}
 
 	/**
-	 * This method updates the Record ChannelAuthDetails or
-	 * ChannelAuthDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update ChannelAuthDetails by key
-	 * CcyCode and Version
+	 * This method updates the Record ChannelAuthDetails or ChannelAuthDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update ChannelAuthDetails by key CcyCode and Version
 	 * 
 	 * @param APIChannelIP
 	 *            (ChannelAuthDetails)

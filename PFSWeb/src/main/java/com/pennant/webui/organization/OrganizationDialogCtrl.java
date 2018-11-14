@@ -133,7 +133,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		this.cif.setModuleName("Customer");
 		this.cif.setValueColumn("CustCIF");
 		this.cif.setDescColumn("CustShrtName");
-		this.cif.setValidateColumns(new String[] { "CustCIF" });	
+		this.cif.setValidateColumns(new String[] { "CustCIF" });
 
 		this.code.setMaxlength(15);
 		this.name.setMaxlength(50);

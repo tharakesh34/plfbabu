@@ -100,19 +100,20 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 			if (this.ruleResultDialogCtrl != null) {
 				amountRuleFormula = this.ruleResultDialogCtrl.formula.getValue().trim();
-				amountRuleFormula = "Result = "+amountRuleFormula;
+				amountRuleFormula = "Result = " + amountRuleFormula;
 			} else if (this.finCreditRevSubCategoryDialogCtrl != null) {
 				amountRuleFormula = this.finCreditRevSubCategoryDialogCtrl.formula.getValue().trim();
-			} 
-			
-			if(variablesList != null){
+			}
+
+			if (variablesList != null) {
 				for (ValueLabel valueLabel : variablesList) {
-					createComponent(valueLabel.getValue(),valueLabel.getLabel());
+					createComponent(valueLabel.getValue(), valueLabel.getLabel());
 				}
 			}
-			
+
 			if (rows_ruleValues.getVisibleItemCount() == 0) {
-				BigDecimal result = (BigDecimal) ruleExecutionUtil.executeRule(amountRuleFormula, null, null, RuleReturnType.DECIMAL);
+				BigDecimal result = (BigDecimal) ruleExecutionUtil.executeRule(amountRuleFormula, null, null,
+						RuleReturnType.DECIMAL);
 				this.btn_Simulate.setVisible(false);
 				setRuleResult(result);
 			}
@@ -126,8 +127,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
-	private void createComponent(String value, String description){
+	private void createComponent(String value, String description) {
 		Label label;
 		Row row;
 		Pattern pattern = Pattern.compile(RuleConstants.RULEFIELD_CCY + "[A-Z]{3}[0-9]+");
@@ -149,9 +149,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			row.setParent(rows_ruleValues);
 		}
 	}
-	
-	
-	
+
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -173,7 +171,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 		// evaluate JavaScript code from String
 		try {
-			
+
 			for (ValueLabel valueLabel : variablesList) {
 				decimalbox = (Decimalbox) rows_ruleValues.getFellowIfAny(valueLabel.getValue());
 				map.put(valueLabel.getValue(), decimalbox.getValue() == null ? new Double(0) : decimalbox.getValue());
@@ -188,7 +186,8 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			// Execute the Rule
-			BigDecimal result = (BigDecimal) this.ruleExecutionUtil.executeRule("Result = " + rule, map, null, RuleReturnType.DECIMAL);
+			BigDecimal result = (BigDecimal) this.ruleExecutionUtil.executeRule("Result = " + rule, map, null,
+					RuleReturnType.DECIMAL);
 
 			setRuleResult(result);
 		} catch (final WrongValueException e) {
@@ -201,33 +200,27 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
-	private void setRuleResult(BigDecimal ruleResult){
-		 
+
+	private void setRuleResult(BigDecimal ruleResult) {
+
 		this.result_row.setVisible(true);
-		if(ruleResult == null){
+		if (ruleResult == null) {
 			this.result_label.setValue(Labels.getLabel("NOVALUE"));
-		}else{
+		} else {
 			this.result_label.setValue(ruleResult.toString());
-			
-			/*try{
-				if(ruleResult.toString().contains(".")){
-					BigDecimal fractionValue = new BigDecimal(ruleResult.toString().substring(ruleResult.toString().indexOf(".")+1));
-					if(fractionValue.compareTo(BigDecimal.ZERO) == 0){
-						this.result_label.setValue(PennantApplicationUtil.amountFormate(
-								new BigDecimal(ruleResult.toString().substring(0, ruleResult.toString().indexOf("."))), PennantConstants.defaultCCYDecPos));
-					}
-				}
-			}catch(Exception e){
-				logger.info(e.getMessage());
-			}*/
+
+			/*
+			 * try{ if(ruleResult.toString().contains(".")){ BigDecimal fractionValue = new
+			 * BigDecimal(ruleResult.toString().substring(ruleResult.toString().indexOf(".")+1));
+			 * if(fractionValue.compareTo(BigDecimal.ZERO) == 0){
+			 * this.result_label.setValue(PennantApplicationUtil.amountFormate( new
+			 * BigDecimal(ruleResult.toString().substring(0, ruleResult.toString().indexOf("."))),
+			 * PennantConstants.defaultCCYDecPos)); } } }catch(Exception e){ logger.info(e.getMessage()); }
+			 */
 		}
 		// make result row visible and set value
 	}
-	
-	
- 
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

@@ -27,30 +27,29 @@ import com.pennant.backend.service.limitservice.LimitRebuild;
 public class EodService {
 
 	@SuppressWarnings("unused")
-	private DataSource					dataSource;
+	private DataSource dataSource;
 
-	private LatePayMarkingService		latePayMarkingService;
+	private LatePayMarkingService latePayMarkingService;
 	@Autowired
-	private LatePayBucketService		latePayBuketService;
-	private NPAService					npaService;
-	private DateRollOverService			dateRollOverService;
-	private LoadFinanceData				loadFinanceData;
-	private RateReviewService			rateReviewService;
-	private AccrualService				accrualService;
-	private AutoDisbursementService		autoDisbursementService;
-	private ReceiptPaymentService		receiptPaymentService;
-	private InstallmentDueService		installmentDueService;
+	private LatePayBucketService latePayBuketService;
+	private NPAService npaService;
+	private DateRollOverService dateRollOverService;
+	private LoadFinanceData loadFinanceData;
+	private RateReviewService rateReviewService;
+	private AccrualService accrualService;
+	private AutoDisbursementService autoDisbursementService;
+	private ReceiptPaymentService receiptPaymentService;
+	private InstallmentDueService installmentDueService;
 	@Autowired
-	private LimitRebuild 				limitRebuild;
+	private LimitRebuild limitRebuild;
 
-	private PlatformTransactionManager	transactionManager;
+	private PlatformTransactionManager transactionManager;
 	private ProjectedAmortizationService projectedAmortizationService;
 
 	public EodService() {
 		super();
 	}
 
-	
 	public void doUpdate(CustEODEvent custEODEvent) throws Exception {
 		Customer customer = custEODEvent.getCustomer();
 		//update customer EOD
@@ -59,8 +58,8 @@ public class EodService {
 		if (custEODEvent.isCheckPresentment()) {
 			getReceiptPaymentService().processrReceipts(custEODEvent);
 		}
-		
-		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(),true);
+
+		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
 		//customer Date update
 		String newCustStatus = null;
 		if (custEODEvent.isUpdCustomer()) {
@@ -70,6 +69,7 @@ public class EodService {
 		getLoadFinanceData().updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
 
 	}
+
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
 		Customer customer = custEODEvent.getCustomer();
 		//update customer EOD
@@ -78,11 +78,11 @@ public class EodService {
 		if (custEODEvent.isCheckPresentment()) {
 			getReceiptPaymentService().processrReceipts(custEODEvent);
 		}
-		
+
 		if (isLimitRebuild) {
 			this.limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
 		}
-		
+
 		//customer Date update
 		String newCustStatus = null;
 		if (custEODEvent.isUpdCustomer()) {
@@ -91,7 +91,7 @@ public class EodService {
 
 		getLoadFinanceData().updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
 	}
-	
+
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
 		limitRebuild.processCustomerRebuild(custID, rebuildOnStrChg);
 	}
@@ -122,10 +122,10 @@ public class EodService {
 
 		/**************** SOD ***********/
 		//moving customer date to sod
-		Date eodValueDate=DateUtility.addDays(custEODEvent.getEodDate(), 1);
+		Date eodValueDate = DateUtility.addDays(custEODEvent.getEodDate(), 1);
 		custEODEvent.setEodValueDate(eodValueDate);
 		custEODEvent.getCustomer().setCustAppDate(eodValueDate);
-		
+
 		//Date rollover
 		if (custEODEvent.isDateRollover()) {
 			custEODEvent = dateRollOverService.process(custEODEvent);

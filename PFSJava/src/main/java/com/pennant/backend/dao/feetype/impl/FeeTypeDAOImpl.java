@@ -64,12 +64,11 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FeeType</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>FeeType</code> with set of CRUD operations.
  */
 
 public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
-     private static Logger logger = Logger.getLogger(FeeTypeDAOImpl.class);
+	private static Logger logger = Logger.getLogger(FeeTypeDAOImpl.class);
 
 	public FeeTypeDAOImpl() {
 		super();
@@ -264,7 +263,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		feeType.setFeeTypeCode(feeTypeCode);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent");
+		selectSql.append(
+				" Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(" Where FeeTypeCode = :FeeTypeCode");
 
@@ -352,7 +352,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		FeeType feeType = new FeeType();
 		feeType.setFeeTypeCode(feeTypeCode);
 
-		StringBuilder selectSql = new StringBuilder(" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId, FeeTypeCode, FeeTypeDesc");
+		StringBuilder selectSql = new StringBuilder(
+				" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId, FeeTypeCode, FeeTypeDesc");
 		selectSql.append(" From FeeTypes Where FeeTypeCode = :FeeTypeCode");
 
 		logger.debug("sql: " + selectSql.toString());

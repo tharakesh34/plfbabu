@@ -12,26 +12,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "applicant")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Applicant implements Serializable {
-	private static final long	serialVersionUID	= -1685092053724752809L;
+	private static final long serialVersionUID = -1685092053724752809L;
 
 	@XmlElement(name = "FIRST_NAME")
-	private String				firstName;
+	private String firstName;
 	@XmlElement(name = "LAST_NAME")
-	private String				lastName;
+	private String lastName;
 	@XmlElement(name = "DOB")
-	private String				dob;
+	private String dob;
 	@XmlElement(name = "GENDER")
-	private String				gender;
+	private String gender;
 	@XmlElement(name = "MOBILE")
-	private String				mobile;
+	private String mobile;
 	@XmlElement(name = "PAN")
-	private String				pan;
+	private String pan;
 	@XmlElement(name = "MARITAL_STATUS")
-	private String				maritalStatus;
+	private String maritalStatus;
 	@XmlElement(name = "UID_")
-	private String				uid;
+	private String uid;
 	@XmlElement(name = "address")
-	private PersonalAddress		personalAddress;
+	private PersonalAddress personalAddress;
 
 	public String getFirstName() {
 		return firstName;

@@ -85,10 +85,9 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private String feeTypeDesc;
 	private boolean taxApplicable = false;
 	private String taxComponent;
-	
+
 	private PaymentTaxDetail paymentTaxDetail;
-	
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

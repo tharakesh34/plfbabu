@@ -12,11 +12,11 @@ import com.pennanttech.pennapps.core.InterfaceException;
 public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 
 	private static final Logger logger = Logger.getLogger(DepositInterfaceServiceImpl.class);
-	
+
 	public DepositInterfaceServiceImpl() {
-		
+
 	}
-	
+
 	private DepositDetailProcess depositDetailProcess;
 
 	/**
@@ -24,26 +24,26 @@ public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 	 * 
 	 */
 	@Override
-    public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
+	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getDepositDetailProcess().fetchDeposits(fetchDeposit);
-    }
+	}
 
 	/**
 	 * Method to fetch deposit details
 	 * 
 	 */
 	@Override
-    public FinCollaterals fetchDepositDetails(String depositReference) throws InterfaceException {
+	public FinCollaterals fetchDepositDetails(String depositReference) throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		FetchDepositDetail fetchDepositDetail = new FetchDepositDetail();
 		fetchDepositDetail.setInvstContractNo(depositReference);
 		fetchDepositDetail = getDepositDetailProcess().fetchDepositDetails(fetchDepositDetail);
-		
+
 		FinCollaterals finCollaterals = new FinCollaterals();
-		if(fetchDepositDetail != null) {
+		if (fetchDepositDetail != null) {
 			finCollaterals.setReference(fetchDepositDetail.getInvstContractNo());
 			finCollaterals.setCcy(fetchDepositDetail.getCurrencyCode());
 			finCollaterals.setValue(fetchDepositDetail.getInvstAmount());
@@ -53,16 +53,16 @@ public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 			finCollaterals.setMaturityDate(fetchDepositDetail.getMaturityDate());
 			finCollaterals.setRemarks(fetchDepositDetail.getStatus());
 		}
-		
+
 		logger.debug("Leaving");
-		
-		return finCollaterals; 
-    }
-	
+
+		return finCollaterals;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public DepositDetailProcess getDepositDetailProcess() {
 		return depositDetailProcess;
 	}

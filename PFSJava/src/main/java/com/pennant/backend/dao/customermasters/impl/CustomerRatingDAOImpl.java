@@ -65,46 +65,45 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements CustomerRatingDAO {
 	private static Logger logger = Logger.getLogger(CustomerRatingDAOImpl.class);
-	
+
 	public CustomerRatingDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Customer Ratings details by key field
+	 * Fetch the Record Customer Ratings details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerRating
 	 */
 	@Override
-	public CustomerRating getCustomerRatingByID(final long id,String ratingType, String type) {
+	public CustomerRating getCustomerRatingByID(final long id, String ratingType, String type) {
 		logger.debug("Entering");
 		CustomerRating customerRating = new CustomerRating();
 		customerRating.setId(id);
 		customerRating.setCustRatingType(ratingType);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType," );
-		if(type.contains("View")){
+		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType,");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerRatings");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND CustRatingType = :custRatingType") ;
-				
+		selectSql.append(" Where CustID = :custID AND CustRatingType = :custRatingType");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerRating.class);
+		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
-		try{
-			customerRating = this.jdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			customerRating = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerRating = null;
 		}
@@ -112,35 +111,36 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 		return customerRating;
 	}
 
-	/** 
+	/**
 	 * Method For getting List of Customer related Ratings for Customer
 	 */
-	public List<CustomerRating> getCustomerRatingByCustomer(final long id,String type) {
+	public List<CustomerRating> getCustomerRatingByCustomer(final long id, String type) {
 		logger.debug("Entering");
 		CustomerRating customerRating = new CustomerRating();
 		customerRating.setId(id);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType, " );
-		if(type.contains("View")){
+		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType, ");
+		if (type.contains("View")) {
 			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerRatings");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID ") ;
-				
+		selectSql.append(" Where CustID = :custID ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
-		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
+		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return customerRatings;
 	}
-	
-	/** 
+
+	/**
 	 * Method For getting List of Customer related Ratings for Customer
 	 */
 	@Override
@@ -150,46 +150,47 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 		customerRating.setId(id);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select CustRatingType, CustRatingCode , LovDescCustRatingCodeDesc " );
+		selectSql.append(" Select CustRatingType, CustRatingCode , LovDescCustRatingCodeDesc ");
 		selectSql.append(" FROM  CustomerRatings");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND CustRatingCode != '' ") ;
-				
+		selectSql.append(" Where CustID = :custID AND CustRatingCode != '' ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
-		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
+		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 
 		logger.debug("Leaving");
 		return customerRatings;
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerRatings or CustomerRatings_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer Ratings by key CustID
+	 * This method Deletes the Record from the CustomerRatings or CustomerRatings_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Customer Ratings by key CustID
 	 * 
-	 * @param Customer Ratings (customerRating)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Ratings (customerRating)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerRating customerRating,String type) {
+	public void delete(CustomerRating customerRating, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From CustomerRatings" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append("Delete From CustomerRatings");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID AND CustRatingType =:CustRatingType");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -203,17 +204,17 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 	/**
 	 * Method for Deletion of Customer Related List of CustomerRatings for the Customer
 	 */
-	public void deleteByCustomer(final long customerId,String type) {
+	public void deleteByCustomer(final long customerId, String type) {
 		logger.debug("Entering");
 		CustomerRating customerRating = new CustomerRating();
 		customerRating.setId(customerId);
 
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From CustomerRatings" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append("Delete From CustomerRatings");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CustID =:CustID ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
@@ -222,30 +223,31 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 	/**
 	 * This method insert new Records into CustomerRatings or CustomerRatings_Temp.
 	 *
-	 * save Customer Ratings 
+	 * save Customer Ratings
 	 * 
-	 * @param Customer Ratings (customerRating)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Ratings (customerRating)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerRating customerRating,String type) {
+	public long save(CustomerRating customerRating, String type) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CustomerRatings" );
+		insertSql.append(" Insert Into CustomerRatings");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, CustRatingType, CustRatingCode, CustRating, ValueType," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:CustID, :CustRatingType, :CustRatingCode, :CustRating, :ValueType, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" (CustID, CustRatingType, CustRatingCode, CustRating, ValueType,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CustID, :CustRatingType, :CustRatingCode, :CustRating, :ValueType, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -254,38 +256,38 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 	}
 
 	/**
-	 * This method updates the Record CustomerRatings or CustomerRatings_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer Ratings by key CustID and Version
+	 * This method updates the Record CustomerRatings or CustomerRatings_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Ratings by key CustID and Version
 	 * 
-	 * @param Customer Ratings (customerRating)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            Ratings (customerRating)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerRating customerRating,String type) {
+	public void update(CustomerRating customerRating, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update CustomerRatings" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CustRatingCode = :CustRatingCode," );
-		updateSql.append(" CustRating = :CustRating, ValueType = :ValueType ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
+		updateSql.append("Update CustomerRatings");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set CustRatingCode = :CustRatingCode,");
+		updateSql.append(" CustRating = :CustRating, ValueType = :ValueType ,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
-		updateSql.append(" WorkflowId = :WorkflowId" );
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
+		updateSql.append(" WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustID =:CustID and CustRatingType = :CustRatingType ");
 
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

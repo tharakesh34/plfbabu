@@ -87,10 +87,10 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class SuspenseServiceImpl extends GenericFinanceDetailService implements SuspenseService {
 
-	private static final Logger			logger	= Logger.getLogger(SuspenseServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SuspenseServiceImpl.class);
 
-	private FinanceSuspHeadDAO			financeSuspHeadDAO;
-	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
+	private FinanceSuspHeadDAO financeSuspHeadDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 
 	public SuspenseServiceImpl() {
 		super();
@@ -136,7 +136,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 * @return FinanceSuspHead
 	 */
 	@Override
-	public FinanceSuspHead getFinanceSuspHeadById(String finRef, boolean isEnquiry, String userRole, String procEdtEvent) {
+	public FinanceSuspHead getFinanceSuspHeadById(String finRef, boolean isEnquiry, String userRole,
+			String procEdtEvent) {
 		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finRef, "_View");
 		if (suspHead == null) {
 			return null;
@@ -164,30 +165,30 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			}
 
 			//Finance Schedule Details
-			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finRef, "",
-					false));
-			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finRef, "",
-					false));
+			scheduleData
+					.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finRef, "", false));
+			scheduleData.setDisbursementDetails(
+					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finRef, "", false));
 
 			scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finRef, procEdtEvent, false, ""));
 			scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finRef, false, ""));
 			scheduleData.setPenaltyDetails(getRecoveryDAO().getFinancePenaltysByFinRef(finRef, ""));
 
-			scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(
-					scheduleData.getFinanceMain().getFinType(), "_AView"));
+			scheduleData.setFinanceType(
+					getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
 
 			//Finance Customer Details			
 			if (scheduleData.getFinanceMain().getCustID() != 0
 					&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
-						scheduleData.getFinanceMain().getCustID(), true, "_View"));
+				financeDetail.setCustomerDetails(getCustomerDetailsService()
+						.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 			}
 
 			//Finance Agreement Details	
 			//=======================================
 			String finType = scheduleData.getFinanceType().getFinType();
-			financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent,
-					userRole));
+			financeDetail.setAggrementList(
+					getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
 			// Finance Check List Details 
 			//=======================================
@@ -196,8 +197,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			//Finance Fee Charge Details
 			//=======================================
 			List<Long> accSetIdList = new ArrayList<Long>();
-			accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null,
-					"_ACView"));
+			accSetIdList.addAll(
+					getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
 			if (!accSetIdList.isEmpty()) {
 				financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
 						AccountEventConstants.ACCEVENT_NORM_PIS, "_AView", 0));
@@ -246,8 +247,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
@@ -277,9 +278,9 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		if (!financeSuspHead.isWorkflow()) {
 			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
-			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, financeSuspHead.getFinanceDetail().getFinScheduleData()
-					.getFinanceScheduleDetails(), profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,
-					financeMain.getMaturityDate());
+			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain,
+					financeSuspHead.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), profitDetail,
+					AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -318,15 +319,16 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
 					financeSuspHead.getFinanceDetail().getModuleDefiner(), false, tableType);
 		}
-		saveFeeChargeList(financeSuspHead.getFinanceDetail().getFinScheduleData(), financeSuspHead.getFinanceDetail()
-				.getModuleDefiner(), false, tableType);
+		saveFeeChargeList(financeSuspHead.getFinanceDetail().getFinScheduleData(),
+				financeSuspHead.getFinanceDetail().getModuleDefiner(), false, tableType);
 
 		// Save Document Details
 		if (financeSuspHead.getFinanceDetail().getDocumentDetailsList() != null
 				&& financeSuspHead.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeSuspHead.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeSuspHead.getFinanceDetail()
-					.getFinScheduleData().getFinanceMain(), financeSuspHead.getFinanceDetail().getModuleDefiner());
+			details = processingDocumentDetailsList(details, tableType,
+					financeSuspHead.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					financeSuspHead.getFinanceDetail().getModuleDefiner());
 			auditDetails.addAll(details);
 		}
 
@@ -392,8 +394,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -441,15 +443,16 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		// Save Fee Charges List
 		//=======================================
-		saveFeeChargeList(financeSuspHead.getFinanceDetail().getFinScheduleData(), financeSuspHead.getFinanceDetail()
-				.getModuleDefiner(), false, "");
+		saveFeeChargeList(financeSuspHead.getFinanceDetail().getFinScheduleData(),
+				financeSuspHead.getFinanceDetail().getModuleDefiner(), false, "");
 
 		// Save Document Details
 		if (financeSuspHead.getFinanceDetail().getDocumentDetailsList() != null
 				&& financeSuspHead.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeSuspHead.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeSuspHead.getFinanceDetail()
-					.getFinScheduleData().getFinanceMain(), financeSuspHead.getFinanceDetail().getModuleDefiner());
+			details = processingDocumentDetailsList(details, "",
+					financeSuspHead.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					financeSuspHead.getFinanceDetail().getModuleDefiner());
 			auditDetails.addAll(details);
 		}
 
@@ -465,8 +468,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		Date curBussDate = DateUtility.getAppDate();
 
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, "", false);
-		List<FinanceScheduleDetail> scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
-				finReference);
+		List<FinanceScheduleDetail> scheduleDetailList = getFinanceScheduleDetailDAO()
+				.getFinSchdDetailsForBatch(finReference);
 
 		//Commitment Set Non-Performing Status
 		if (StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
@@ -528,11 +531,12 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -559,8 +563,9 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = financeSuspHead.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", financeSuspHead.getFinanceDetail()
-					.getFinScheduleData().getFinanceMain(), financeSuspHead.getFinanceDetail().getModuleDefiner());
+			details = processingDocumentDetailsList(details, "_Temp",
+					financeSuspHead.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					financeSuspHead.getFinanceDetail().getModuleDefiner());
 			auditHeader.setAuditDetails(details);
 			listDocDeletion(financeSuspHead.getFinanceDetail(), "_Temp");
 		}
@@ -666,8 +671,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		if (financeSuspHead.isWorkflow()) {
 			tempFinanceSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeSuspHead.getId(), "_Temp");
 		}
-		FinanceSuspHead befFinanceSuspHead = getFinanceSuspHeadDAO()
-				.getFinanceSuspHeadById(financeSuspHead.getId(), "");
+		FinanceSuspHead befFinanceSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeSuspHead.getId(),
+				"");
 		FinanceSuspHead oldFinanceSuspHead = financeSuspHead.getBefImage();
 
 		String[] errParm = new String[1];
@@ -679,19 +684,19 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 			if (!financeSuspHead.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceSuspHead != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeSuspHead.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befFinanceSuspHead != null || tempFinanceSuspHead != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceSuspHead == null || tempFinanceSuspHead != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -700,32 +705,34 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			if (!financeSuspHead.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befFinanceSuspHead == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldFinanceSuspHead != null
 							&& !oldFinanceSuspHead.getLastMntOn().equals(befFinanceSuspHead.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempFinanceSuspHead == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (oldFinanceSuspHead != null && tempFinanceSuspHead != null
 						&& !oldFinanceSuspHead.getLastMntOn().equals(tempFinanceSuspHead.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

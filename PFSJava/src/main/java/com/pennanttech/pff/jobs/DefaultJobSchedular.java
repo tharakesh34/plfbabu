@@ -19,7 +19,6 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String SYS_NOTIFICATIONS_INVOKE_JOB = "SYS_NOTIFICATIONS_INVOKE_JOB";
 	private static final String SYS_NOTIFICATIONS_PROCESS_JOB = "SYS_NOTIFICATIONS_PROCESS_JOB";
 
-
 	@Override
 	protected void registerJobs() throws Exception {
 		registerGstInvoiceJob();
@@ -27,21 +26,21 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerSystemNotificationProcessJob();
 	}
 
-
 	/**
 	 * Invoice number Auto Generation
 	 */
 	private void registerGstInvoiceJob() {
-		
+
 		if (GENERATE_GST_INVOICE_NO) {
 			Job job = new Job();
 			job.setJobDetail(JobBuilder.newJob(GSTInvoiceGeneratorJob.class)
 					.withIdentity(GST_INVOICE_GENERATE_JOB, GST_INVOICE_GENERATE_JOB)
 					.withDescription("GST Invoice Preparation").build());
-			job.setTrigger(TriggerBuilder.newTrigger().withIdentity("GST_INVOICE_GENERATE_JOB", "GST_INVOICE_GENERATE_JOB")
-					.withDescription("GST Invoice job trigger")
-					.withSchedule(CronScheduleBuilder.cronSchedule(GST_INVOICE_SCHEDULE_TIME)).build());
-			
+			job.setTrigger(
+					TriggerBuilder.newTrigger().withIdentity("GST_INVOICE_GENERATE_JOB", "GST_INVOICE_GENERATE_JOB")
+							.withDescription("GST Invoice job trigger")
+							.withSchedule(CronScheduleBuilder.cronSchedule(GST_INVOICE_SCHEDULE_TIME)).build());
+
 			jobs.put(GST_INVOICE_GENERATE_JOB, job);
 		}
 

@@ -23,11 +23,11 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	private CustomerLimitDetailProcess customerLimitDetailProcess;
 	private CustomerLimitPositionProcess customerLimitPositionProcess;
 	private CustomerLimitUtilProcess customerLimitUtilProcess;
-	
+
 	public CustomerLimitServiceImpl() {
 		super();
 	}
-	
+
 	@Override
 	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException {
 		return null;
@@ -39,14 +39,15 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	}
 
 	@Override
-	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws InterfaceException{
+	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitPosition customerLimitPosition = null;
 		try {
 			customerLimitPosition = getCustomerLimitPositionProcess().getCustomerLimitSummary(custLimitSummary,
 					InterfaceMasterConfigUtil.CUST_LIMIT_SUMMARY);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -61,16 +62,15 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	}
 
 	/********* Excess Interface Connection calls ********/
-	
 
 	/**
 	 * Get Customer Limit Details by passing the Request to MQ<br>
 	 * 
 	 * getCustomerLimitDetails method do the following steps.<br>
-	 *  1)  Send getLimitDetail Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitDetailReply
+	 * 1) Send getLimitDetail Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitDetailReply
 	 */
 	public CustomerLimitDetail getLimitDetails(String limitRef, String branchCode) throws InterfaceException {
 		logger.debug("Entering");
@@ -78,7 +78,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 		CustomerLimitDetail limitDetail = new CustomerLimitDetail();
 		limitDetail.setLimitRef(limitRef);
 		limitDetail.setBranchCode(branchCode);
-		CustomerLimitDetail limitDetailReply = getCustomerLimitDetailProcess().getCustomerLimitDetails(limitDetail,	
+		CustomerLimitDetail limitDetailReply = getCustomerLimitDetailProcess().getCustomerLimitDetails(limitDetail,
 				InterfaceMasterConfigUtil.CUST_LIMIT_DETAILS);
 
 		logger.debug("Leaving");
@@ -90,21 +90,21 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * Get Customer Limit Position Details by passing the Request to MQ<br>
 	 * 
 	 * getCustomerLimitPosition method do the following steps.<br>
-	 *  1)  Send getLimitPosition Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitPositionReply
-	 * @throws JaxenException 
+	 * 1) Send getLimitPosition Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitPositionReply
+	 * @throws JaxenException
 	 */
-	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq) 
-			throws InterfaceException{
+	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq)
+			throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		CustomerLimitPosition limitPosReply = null;
 		try {
-			limitPosReply = getCustomerLimitPositionProcess().getCustomerLimitSummary(limitPositionReq, 
+			limitPosReply = getCustomerLimitPositionProcess().getCustomerLimitSummary(limitPositionReq,
 					InterfaceMasterConfigUtil.CUST_LIMIT_SUMMARY);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -112,30 +112,30 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 
 		return limitPosReply;
 	}
-	
+
 	/**
 	 * Do Customer PredealCheck by passing the Request to MQ <br>
 	 * 
 	 * doPredealCheck method do the following steps.<br>
-	 *  1)  Send PredealCheck Request to MQ<br>
-	 *  2)  Receive GO/NOGO/Error Response from MQ<br>
-	 *  Go------doReserve<br>
-	 *  NOGO----Show Message Breaches<br>
-	 *  Error---Cancel the Service<br>
-	 *  
-	 *  @return CustomerLimitUtilization
-	 * @throws JaxenException 
+	 * 1) Send PredealCheck Request to MQ<br>
+	 * 2) Receive GO/NOGO/Error Response from MQ<br>
+	 * Go------doReserve<br>
+	 * NOGO----Show Message Breaches<br>
+	 * Error---Cancel the Service<br>
+	 * 
+	 * @return CustomerLimitUtilization
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization custLimitUtilization) 
+	public CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization custLimitUtilization)
 			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
 		try {
-			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilization, 
+			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilization,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -148,22 +148,22 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * Reserve the Amount by passing the Request to MQ <br>
 	 * 
 	 * doReserveUtilization method do the following steps.<br>
-	 *  1)  Send Reserve Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitUtilDetail
-	 * @throws JaxenException 
+	 * 1) Send Reserve Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitUtilDetail
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization custLimitUtilization) 
+	public CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization custLimitUtilization)
 			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
 		try {
-			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilization, 
+			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilization,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -176,14 +176,14 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * Do Override & Reserve the Amount by passing the Request to MQ <br>
 	 * 
 	 * doOverrideAndReserveUtil method do the following steps.<br>
-	 *  1)  Send Override & Reserve Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitUtilDetail
-	 * @throws JaxenException 
+	 * 1) Send Override & Reserve Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitUtilDetail
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization custLimitUtilReq) 
+	public CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization custLimitUtilReq)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -191,7 +191,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 		try {
 			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -204,22 +204,22 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * Do Override & Reserve the Amount by passing the Request to MQ <br>
 	 * 
 	 * doConfirmReservation method do the following steps.<br>
-	 *  1)  Send ConfirmReserve Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitUtilDetail
-	 * @throws JaxenException 
+	 * 1) Send ConfirmReserve Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitUtilDetail
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization custLimitUtilReq) 
+	public CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization custLimitUtilReq)
 			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
 		try {
-			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq, 
+			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -232,14 +232,14 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * Cancel the Reserve Amount by passing the Request to MQ <br>
 	 * 
 	 * doCancelReservation method do the following steps.<br>
-	 *  1)  Send CancelReserve Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitUtilDetail
-	 * @throws JaxenException 
+	 * 1) Send CancelReserve Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitUtilDetail
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization custLimitUtilReq) 
+	public CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization custLimitUtilReq)
 			throws InterfaceException {
 		logger.debug("Entering");
 
@@ -247,7 +247,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 		try {
 			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -260,22 +260,22 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * Cancel the Utilization Amount by passing the Request to MQ <br>
 	 * 
 	 * doCancelUtilization method do the following steps.<br>
-	 *  1)  Send CancelUtilization Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitUtilDetail
-	 * @throws JaxenException 
+	 * 1) Send CancelUtilization Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitUtilDetail
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization custLimitUtilReq) 
+	public CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization custLimitUtilReq)
 			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
 		try {
-			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq, 
+			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
@@ -283,32 +283,32 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 
 		return limitUtilReply;
 	}
-	
+
 	/**
 	 * Cancel the Utilization Amount by passing the Request to MQ <br>
 	 * 
 	 * doCancelUtilization method do the following steps.<br>
-	 *  1)  Send CancelUtilization Request to MQ<br>
-	 *  2)  Receive Response from MQ
-	 *  
-	 *  @return CustomerLimitUtilDetail
-	 * @throws JaxenException 
+	 * 1) Send CancelUtilization Request to MQ<br>
+	 * 2) Receive Response from MQ
+	 * 
+	 * @return CustomerLimitUtilDetail
+	 * @throws JaxenException
 	 */
 	@Override
-	public CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization custLimitUtilReq) 
+	public CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization custLimitUtilReq)
 			throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		CustomerLimitUtilization limitUtilReply = null;
 		try {
-			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq, 
+			limitUtilReply = getCustomerLimitUtilProcess().getLimitUtilizationDetails(custLimitUtilReq,
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
-		} catch(JaxenException jxe) {
+		} catch (JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
 			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
-		
+
 		return limitUtilReply;
 	}
 
@@ -319,23 +319,23 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	public CustomerLimitDetailProcess getCustomerLimitDetailProcess() {
 		return customerLimitDetailProcess;
 	}
-	
-	public void setCustomerLimitDetailProcess(
-			CustomerLimitDetailProcess customerLimitDetailProcess) {
+
+	public void setCustomerLimitDetailProcess(CustomerLimitDetailProcess customerLimitDetailProcess) {
 		this.customerLimitDetailProcess = customerLimitDetailProcess;
 	}
-	
+
 	public CustomerLimitPositionProcess getCustomerLimitPositionProcess() {
 		return customerLimitPositionProcess;
 	}
-	public void setCustomerLimitPositionProcess(
-			CustomerLimitPositionProcess customerLimitPositionProcess) {
+
+	public void setCustomerLimitPositionProcess(CustomerLimitPositionProcess customerLimitPositionProcess) {
 		this.customerLimitPositionProcess = customerLimitPositionProcess;
 	}
 
 	public CustomerLimitUtilProcess getCustomerLimitUtilProcess() {
 		return customerLimitUtilProcess;
 	}
+
 	public void setCustomerLimitUtilProcess(CustomerLimitUtilProcess customerLimitUtilProcess) {
 		this.customerLimitUtilProcess = customerLimitUtilProcess;
 	}

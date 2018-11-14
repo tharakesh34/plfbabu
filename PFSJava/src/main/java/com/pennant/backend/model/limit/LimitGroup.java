@@ -68,14 +68,14 @@ public class LimitGroup extends AbstractWorkflowEntity {
 	private boolean active;
 	private String groupOf;
 	private String limitCategory;
-	
+
 	private long createdBy;
 	private Timestamp createdOn;
 	private boolean newRecord = false;
 	private String lovValue;
 	private LimitGroup befImage;
 	private LoggedInUser userDetails;
-	
+
 	private List<LimitGroupLines> limitGroupLinesList = new ArrayList<LimitGroupLines>();
 
 	public boolean isNew() {
@@ -95,7 +95,7 @@ public class LimitGroup extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("limitGroupItemsList");
-		
+
 		return excludeFields;
 	}
 
@@ -143,8 +143,7 @@ public class LimitGroup extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public XMLGregorianCalendar getCreatedDate()
-			throws DatatypeConfigurationException {
+	public XMLGregorianCalendar getCreatedDate() throws DatatypeConfigurationException {
 
 		if (createdOn == null) {
 			return null;

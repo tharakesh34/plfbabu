@@ -356,7 +356,7 @@ public class CustomerLimitUtilization implements Serializable {
 	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
-	
+
 	@XmlElement(name = "BranchCode")
 	public String getBranchCode() {
 		return branchCode;
@@ -382,7 +382,7 @@ public class CustomerLimitUtilization implements Serializable {
 	public void setMsgBreach(String msgBreach) {
 		this.msgBreach = msgBreach;
 	}
-	
+
 	@XmlElement(name = "Response")
 	public String getResponse() {
 		return response;
@@ -418,7 +418,7 @@ public class CustomerLimitUtilization implements Serializable {
 	public void setReturnText(String returnText) {
 		this.returnText = returnText;
 	}
-	
+
 	public String getRequestType() {
 		return requestType;
 	}
@@ -426,10 +426,9 @@ public class CustomerLimitUtilization implements Serializable {
 	public void setRequestType(String requestType) {
 		this.requestType = requestType;
 	}
-	
+
 	private static class DateFormatterAdapter extends XmlAdapter<String, Date> {
-		private final SimpleDateFormat dateFormat = new SimpleDateFormat(
-				InterfaceMasterConfigUtil.SHORT_DATE);
+		private final SimpleDateFormat dateFormat = new SimpleDateFormat(InterfaceMasterConfigUtil.SHORT_DATE);
 
 		@Override
 		public Date unmarshal(final String v) throws Exception {

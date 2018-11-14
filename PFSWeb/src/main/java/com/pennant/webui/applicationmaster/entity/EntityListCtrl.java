@@ -63,10 +63,10 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.webui.applicationmaster.entity.model.EntityListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/Entity/EntityList.zul file.
@@ -100,9 +100,9 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 	protected Textbox country; // autowired
 	protected Textbox stateCode; // autowired
 	protected Textbox cityCode; // autowired
-	protected Textbox pinCode;  // autowired
+	protected Textbox pinCode; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_EntityCode;
 	protected Listbox sortOperator_EntityDesc;
 	protected Listbox sortOperator_Country;
@@ -110,7 +110,7 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 	protected Listbox sortOperator_CityCode;
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient EntityService entityService;
 
 	/**
@@ -138,20 +138,23 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 	public void onCreate$window_EntityList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_EntityList, borderLayout_EntityList, listBoxEntity,
-				pagingEntityList);
+		setPageComponents(window_EntityList, borderLayout_EntityList, listBoxEntity, pagingEntityList);
 		setItemRender(new EntityListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_EntityList_EntitySearch);
 		registerButton(button_EntityList_NewEntity, "button_EntityList_NewEntity", true);
 
-		registerField("entityCode", listheader_EntityCode, SortOrder.NONE, entityCode, sortOperator_EntityCode, Operators.STRING);
-		registerField("entityDesc", listheader_EntityDesc, SortOrder.NONE, entityDesc, sortOperator_EntityDesc, Operators.STRING);
+		registerField("entityCode", listheader_EntityCode, SortOrder.NONE, entityCode, sortOperator_EntityCode,
+				Operators.STRING);
+		registerField("entityDesc", listheader_EntityDesc, SortOrder.NONE, entityDesc, sortOperator_EntityDesc,
+				Operators.STRING);
 		registerField("country", listheader_Country, SortOrder.NONE, country, sortOperator_Country, Operators.STRING);
-		registerField("stateCode", listheader_StateCode, SortOrder.NONE, stateCode, sortOperator_StateCode, Operators.STRING);
-		registerField("cityCode", listheader_CityCode, SortOrder.NONE, cityCode, sortOperator_CityCode, Operators.STRING);
-		registerField("pinCode", listheader_PinCode, SortOrder.NONE, pinCode, sortOperator_PinCode, Operators.STRING);		
+		registerField("stateCode", listheader_StateCode, SortOrder.NONE, stateCode, sortOperator_StateCode,
+				Operators.STRING);
+		registerField("cityCode", listheader_CityCode, SortOrder.NONE, cityCode, sortOperator_CityCode,
+				Operators.STRING);
+		registerField("pinCode", listheader_PinCode, SortOrder.NONE, pinCode, sortOperator_PinCode, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -199,7 +202,6 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -210,7 +212,7 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 
 	public void onEntityItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxEntity.getSelectedItem();
 		final String entityCode = (String) selectedItem.getAttribute("entityCode");
@@ -220,13 +222,13 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  EntityCode = '");
-		whereCond.append( entity.getEntityCode());
+		whereCond.append(entity.getEntityCode());
 		whereCond.append("' AND  version=");
 		whereCond.append(entity.getVersion());
-	
+
 		if (doCheckAuthority(entity, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && entity.getWorkflowId() == 0) {
@@ -236,10 +238,10 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -252,7 +254,7 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("entity", entity);
 		arg.put("entityListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Entity/EntityDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -282,7 +284,7 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

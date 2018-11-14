@@ -10,8 +10,7 @@ import com.ibm.as400.data.ProgramCallDocument;
 public class HostConnection {
 	private static Logger logger = Logger.getLogger(HostConnection.class);
 	private static AS400ConnectionPool connectionPool = new AS400ConnectionPool();
-	
-	
+
 	private String serverName;
 	private String unitName;
 	private String userName;
@@ -24,14 +23,15 @@ public class HostConnection {
 	 */
 	public HostConnection() {
 		connectionPool.setMaxConnections(10);
-		connectionPool.setCleanupInterval(10*60*1000);
-		connectionPool.setMaxInactivity(60*1000);
-		connectionPool.setMaxLifetime(10*60*60*1000);
+		connectionPool.setCleanupInterval(10 * 60 * 1000);
+		connectionPool.setMaxInactivity(60 * 1000);
+		connectionPool.setMaxLifetime(10 * 60 * 60 * 1000);
 	}
 
 	/**
 	 * Method for Establishing connection for HOST
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@SuppressWarnings("unused")
 	public AS400 getConnection() throws Exception {
@@ -39,16 +39,16 @@ public class HostConnection {
 		boolean returnFlag = false;
 		AS400Message[] messages = null;
 		Object object = null;
-		AS400 as400=null;
+		AS400 as400 = null;
 		boolean newConnection = false;
 		try {
 			int i = 0;
-			while (i <= 100){
+			while (i <= 100) {
 				// New AS400 Object
 				as400 = connectionPool.getConnection(serverName, userName, password);
-				
-				if(as400 != null){
- 					break;
+
+				if (as400 != null) {
+					break;
 				}
 			}
 
@@ -66,8 +66,8 @@ public class HostConnection {
 			logger.error("Exception: ", e);
 			throw e;
 
-		}finally{
-			if(as400 != null) { 
+		} finally {
+			if (as400 != null) {
 				closeConnection(as400);
 			}
 		}
@@ -108,7 +108,7 @@ public class HostConnection {
 	 */
 	public void closeConnection(AS400 as400) {
 		logger.debug("Entering");
-		if(as400 != null){
+		if (as400 != null) {
 			connectionPool.returnConnectionToPool(as400);
 		}
 		logger.debug("Leaving");
@@ -123,7 +123,6 @@ public class HostConnection {
 		logger.debug("Leaving");
 	}
 
-	
 	public String getServerName() {
 		return serverName;
 	}
@@ -155,7 +154,5 @@ public class HostConnection {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 
-	
 }

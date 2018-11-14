@@ -98,18 +98,18 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 	protected Listbox sortOperator_finType;
 	protected Textbox screenCode;
 	protected Listbox sortOperator_screenCode;
-	protected Combobox  finEvent;  
-	protected Listbox  sortOperator_finEvent;
+	protected Combobox finEvent;
+	protected Listbox sortOperator_finEvent;
 	protected Row row_finevent;
 	protected Textbox workFlowType;
 	protected Listbox sortOperator_workFlowType;
-	
+
 	protected Label label_FinanceWorkFlowSearch_FinType;
 
 	private transient boolean isPromotion = false;
-	private transient boolean isVAS =false;
-	private transient boolean isCommitment =false;
-	private transient boolean isCollateral =false;
+	private transient boolean isVAS = false;
+	private transient boolean isCommitment = false;
+	private transient boolean isCollateral = false;
 	protected Button button_FinanceWorkFlowList_NewFinanceWorkFlow;
 	protected Button button_FinanceWorkFlowList_FinanceWorkFlowSearchDialog;
 
@@ -134,37 +134,41 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		String moduleName = "Finance";
 		if (PennantConstants.WORFLOW_MODULE_PROMOTION.equals(this.module)) {
 			moduleName = "Promotion";
-			this.label_FinanceWorkFlowSearch_FinType.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_PromotionCode.value"));
+			this.label_FinanceWorkFlowSearch_FinType
+					.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_PromotionCode.value"));
 			this.listheader_FinType.setLabel(Labels.getLabel("listheader_PromotionCode.label"));
 			isPromotion = true;
-		}else if (PennantConstants.WORFLOW_MODULE_COLLATERAL.equals(this.module)) {
+		} else if (PennantConstants.WORFLOW_MODULE_COLLATERAL.equals(this.module)) {
 			moduleName = "Collateral";
-			this.label_FinanceWorkFlowSearch_FinType.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_CollateralType.value"));
+			this.label_FinanceWorkFlowSearch_FinType
+					.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_CollateralType.value"));
 			this.listheader_FinType.setLabel(Labels.getLabel("listheader_CollateralType.label"));
-			isCollateral =true;
-		}else if (PennantConstants.WORFLOW_MODULE_COMMITMENT.equals(this.module)) {
+			isCollateral = true;
+		} else if (PennantConstants.WORFLOW_MODULE_COMMITMENT.equals(this.module)) {
 			moduleName = "Commitment";
-			this.label_FinanceWorkFlowSearch_FinType.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_Commitment.value"));
+			this.label_FinanceWorkFlowSearch_FinType
+					.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_Commitment.value"));
 			this.listheader_FinType.setLabel(Labels.getLabel("listheader_Commitment.label"));
-			isCommitment=true;
-		}else if (PennantConstants.WORFLOW_MODULE_VAS.equals(this.module)) {
+			isCommitment = true;
+		} else if (PennantConstants.WORFLOW_MODULE_VAS.equals(this.module)) {
 			moduleName = "VAS";
-			this.label_FinanceWorkFlowSearch_FinType.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_VasProduct.value"));
+			this.label_FinanceWorkFlowSearch_FinType
+					.setValue(Labels.getLabel("label_FinanceWorkFlowSearch_VasProduct.value"));
 			this.listheader_FinType.setLabel(Labels.getLabel("listheader_VASProductCode.label"));
-			isVAS=true;
+			isVAS = true;
 		}
 
-		super.moduleCode = moduleName+"WorkFlow";
-		super.pageRightName = moduleName+"WorkFlowList";
-		
-		if(isPromotion){
+		super.moduleCode = moduleName + "WorkFlow";
+		super.pageRightName = moduleName + "WorkFlowList";
+
+		if (isPromotion) {
 			super.tableName = "LMTPromotionWorkflowdef_AView";
 			super.queueTableName = "LMTPromotionWorkflowdef_View";
-		}else{
+		} else {
 			super.tableName = "LMTFinanceWorkFlowDef_AView";
 			super.queueTableName = "LMTFinanceWorkFlowDef_View";
 		}
-		
+
 	}
 
 	@Override
@@ -172,9 +176,9 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		super.doAddFilters();
 
 		this.searchObject.addFilter(new Filter("ModuleName", this.module, Filter.OP_EQUAL));
-		if (!StringUtils.equals(PennantConstants.WORFLOW_MODULE_COLLATERAL,this.module) &&
-				!StringUtils.equals(PennantConstants.WORFLOW_MODULE_VAS,this.module) &&
-				!StringUtils.equals(PennantConstants.WORFLOW_MODULE_COMMITMENT,this.module)) {
+		if (!StringUtils.equals(PennantConstants.WORFLOW_MODULE_COLLATERAL, this.module)
+				&& !StringUtils.equals(PennantConstants.WORFLOW_MODULE_VAS, this.module)
+				&& !StringUtils.equals(PennantConstants.WORFLOW_MODULE_COMMITMENT, this.module)) {
 			if (isPromotion) {
 				this.searchObject.addFilter(new Filter("lovDescProductName", "", Filter.OP_NOT_EQUAL));
 			} else {
@@ -182,11 +186,13 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 			}
 
 			if (FinanceConstants.FINSER_EVENT_ORG.equals(eventAction)) {
-				this.searchObject.addFilter(new Filter("finEvent", new String[] { FinanceConstants.FINSER_EVENT_ORG,
-						FinanceConstants.FINSER_EVENT_PREAPPROVAL }, Filter.OP_IN));
+				this.searchObject.addFilter(new Filter("finEvent",
+						new String[] { FinanceConstants.FINSER_EVENT_ORG, FinanceConstants.FINSER_EVENT_PREAPPROVAL },
+						Filter.OP_IN));
 			} else {
-				this.searchObject.addFilter(new Filter("finEvent", new String[] { FinanceConstants.FINSER_EVENT_ORG,
-						FinanceConstants.FINSER_EVENT_PREAPPROVAL }, Filter.OP_NOT_IN));
+				this.searchObject.addFilter(new Filter("finEvent",
+						new String[] { FinanceConstants.FINSER_EVENT_ORG, FinanceConstants.FINSER_EVENT_PREAPPROVAL },
+						Filter.OP_NOT_IN));
 			}
 		}
 	}
@@ -210,24 +216,25 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		} else {
 			events = PennantStaticListUtil.getFinServiceEvents(true);
 		}
-		
+
 		List<ValueLabel> list = PennantStaticListUtil.getValueLabels(events);
 
 		setItemRender(new FinanceWorkFlowListModelItemRenderer(list));
 
 		// Register buttons and fields.
-		registerButton(button_FinanceWorkFlowList_NewFinanceWorkFlow, "button_" + super.pageRightName
-				+ "_NewFinanceWorkFlow", true);
+		registerButton(button_FinanceWorkFlowList_NewFinanceWorkFlow,
+				"button_" + super.pageRightName + "_NewFinanceWorkFlow", true);
 		registerButton(button_FinanceWorkFlowList_FinanceWorkFlowSearchDialog);
 
 		registerField("finType", listheader_FinType, SortOrder.ASC, finType, sortOperator_finType, Operators.STRING);
 		registerField("screenCode", listheader_ScreenCode, SortOrder.NONE, screenCode, sortOperator_screenCode,
 				Operators.STRING);
-		
-		registerField("finEvent", listheader_FinEvent,SortOrder.ASC, finEvent, sortOperator_finEvent,Operators.STRING);
+
+		registerField("finEvent", listheader_FinEvent, SortOrder.ASC, finEvent, sortOperator_finEvent,
+				Operators.STRING);
 		fillComboBox(finEvent, null,
 				PennantStaticListUtil.getValueLabels(PennantStaticListUtil.getFinServiceEvents(true)), "");
-		
+
 		registerField("workFlowType", listheader_WorkFlowType, SortOrder.NONE, workFlowType, sortOperator_workFlowType,
 				Operators.STRING);
 		registerField("ModuleName");
@@ -303,7 +310,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		String id = (String) selectedItem.getAttribute("id");
 		String finEvent = (String) selectedItem.getAttribute("finEvent");
 		String moduleName = (String) selectedItem.getAttribute("moduleName");
- 
+
 		FinanceWorkFlow aFinanceWorkFlow = financeWorkFlowService.getFinanceWorkFlowById(id, finEvent, moduleName);
 
 		if (aFinanceWorkFlow == null) {

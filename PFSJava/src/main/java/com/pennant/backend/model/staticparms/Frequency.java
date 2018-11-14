@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Frequency extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -2944905072362782172L;
-	
+
 	private String frqCode;
 	private String frqDesc;
 	private boolean frqIsActive;
@@ -82,6 +82,7 @@ public class Frequency extends AbstractWorkflowEntity {
 	public String getId() {
 		return frqCode;
 	}
+
 	public void setId(String id) {
 		this.frqCode = id;
 	}
@@ -89,6 +90,7 @@ public class Frequency extends AbstractWorkflowEntity {
 	public String getFrqCode() {
 		return frqCode;
 	}
+
 	public void setFrqCode(String frqCode) {
 		this.frqCode = frqCode;
 	}
@@ -96,6 +98,7 @@ public class Frequency extends AbstractWorkflowEntity {
 	public String getFrqDesc() {
 		return frqDesc;
 	}
+
 	public void setFrqDesc(String frqDesc) {
 		this.frqDesc = frqDesc;
 	}
@@ -103,13 +106,15 @@ public class Frequency extends AbstractWorkflowEntity {
 	public boolean isFrqIsActive() {
 		return frqIsActive;
 	}
+
 	public void setFrqIsActive(boolean frqIsActive) {
 		this.frqIsActive = frqIsActive;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -117,6 +122,7 @@ public class Frequency extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -124,6 +130,7 @@ public class Frequency extends AbstractWorkflowEntity {
 	public Frequency getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(Frequency beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -131,6 +138,7 @@ public class Frequency extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

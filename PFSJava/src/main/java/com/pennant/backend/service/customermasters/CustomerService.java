@@ -52,23 +52,40 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 
 public interface CustomerService {
-	
+
 	Customer getCustomer(Customer customer);
+
 	Customer getNewCustomer(Customer customer);
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Customer getCustomerById(long id);
+
 	Customer getApprovedCustomerById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	boolean isJointCustExist(long custID);
+
 	WIFCustomer getWIFCustomerByID(long custId, String custCRCPR);
+
 	Date getCustBlackListedDate(String custCRCPR);
-	String getCustomerByCRCPR(String custCRCPR,String type);
+
+	String getCustomerByCRCPR(String custCRCPR, String type);
+
 	void updateCustSuspenseDetails(Customer aCustomer, String tableType);
+
 	void saveCustSuspMovements(Customer aCustomer);
+
 	String getCustSuspRemarks(long custID);
+
 	Customer getSuspendCustomer(Long value);
+
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
-	public void prepareGCDCustomerData(CustomerDetails customerDetails) ;
+
+	public void prepareGCDCustomerData(CustomerDetails customerDetails);
 }

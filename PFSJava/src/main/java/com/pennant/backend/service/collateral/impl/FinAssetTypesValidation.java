@@ -14,7 +14,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinAssetTypesValidation {
-	
+
 	private FinAssetTypeDAO finAssetTypeDAO;
 
 	public FinAssetTypeDAO getFinAssetTypeDAO() {
@@ -25,8 +25,7 @@ public class FinAssetTypesValidation {
 		this.finAssetTypeDAO = finAssetTypeDAO;
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -44,7 +43,7 @@ public class FinAssetTypesValidation {
 		FinAssetTypes finAssetTypes = (FinAssetTypes) auditDetail.getModelData();
 		FinAssetTypes tempAssignment = null;
 		if (finAssetTypes.isWorkflow()) {
-			tempAssignment = getFinAssetTypeDAO().getFinAssetTypesbyID(finAssetTypes,"_Temp");
+			tempAssignment = getFinAssetTypeDAO().getFinAssetTypesbyID(finAssetTypes, "_Temp");
 		}
 
 		FinAssetTypes befAssignment = getFinAssetTypeDAO().getFinAssetTypesbyID(finAssetTypes, "");
@@ -68,13 +67,11 @@ public class FinAssetTypesValidation {
 
 				if (finAssetTypes.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befAssignment != null || tempAssignment != null) { // if records already exists in the main table
-						auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befAssignment == null || tempAssignment != null) {
-						auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -86,15 +83,14 @@ public class FinAssetTypesValidation {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
-					if (oldAssignment != null
-							&& !oldAssignment.getLastMntOn().equals(befAssignment.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+					if (oldAssignment != null && !oldAssignment.getLastMntOn().equals(befAssignment.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
@@ -118,6 +114,5 @@ public class FinAssetTypesValidation {
 		}
 		return auditDetail;
 	}
-
 
 }

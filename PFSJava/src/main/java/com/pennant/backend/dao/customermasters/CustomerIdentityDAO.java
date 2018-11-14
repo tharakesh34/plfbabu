@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.customermasters;
+
 import com.pennant.backend.model.customermasters.CustomerIdentity;
 
 /**
@@ -48,8 +49,11 @@ import com.pennant.backend.model.customermasters.CustomerIdentity;
  * 
  */
 public interface CustomerIdentityDAO {
-	 CustomerIdentity getCustomerIdentityByID(long id,String idType,String type);
-	 void update(CustomerIdentity customerIdentity,String type);
-	 void delete(CustomerIdentity customerIdentity,String type);
-	 long save(CustomerIdentity customerIdentity,String type);
+	CustomerIdentity getCustomerIdentityByID(long id, String idType, String type);
+
+	void update(CustomerIdentity customerIdentity, String type);
+
+	void delete(CustomerIdentity customerIdentity, String type);
+
+	long save(CustomerIdentity customerIdentity, String type);
 }

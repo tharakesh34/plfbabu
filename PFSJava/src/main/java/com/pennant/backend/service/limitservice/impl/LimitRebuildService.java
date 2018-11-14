@@ -83,36 +83,36 @@ import com.pennant.backend.util.RuleReturnType;
 
 public class LimitRebuildService implements LimitRebuild {
 
-	private static Logger				logger	= Logger.getLogger(LimitManagement.class);
+	private static Logger logger = Logger.getLogger(LimitManagement.class);
 
 	@Autowired
-	private CustomerDAO					customerDAO;
+	private CustomerDAO customerDAO;
 	@Autowired
-	private LimitDetailDAO				limitDetailDAO;
+	private LimitDetailDAO limitDetailDAO;
 	@Autowired
-	private LimitHeaderDAO				limitHeaderDAO;
+	private LimitHeaderDAO limitHeaderDAO;
 	@Autowired
-	private FinanceMainDAO				financeMainDAO;
+	private FinanceMainDAO financeMainDAO;
 	@Autowired
-	private FinanceDisbursementDAO		financeDisbursementDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
 	@Autowired
-	private RuleExecutionUtil			ruleExecutionUtil;
+	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
-	private LimitGroupLinesDAO			limitGroupLinesDAO;
+	private LimitGroupLinesDAO limitGroupLinesDAO;
 	@Autowired
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	@Autowired
-	private LimitStructureDetailDAO		limitStructureDetailDAO;
+	private LimitStructureDetailDAO limitStructureDetailDAO;
 	@Autowired
-	private LimitReferenceMappingDAO	limitReferenceMappingDAO;
+	private LimitReferenceMappingDAO limitReferenceMappingDAO;
 	@Autowired
-	private LimitTransactionDetailsDAO	limitTransactionDetailsDAO;
-	
+	private LimitTransactionDetailsDAO limitTransactionDetailsDAO;
+
 	@Autowired
-	private RuleDAO	ruleDAO;
+	private RuleDAO ruleDAO;
 
 	@Override
-	public void processCustomerRebuild(long custID,boolean rebuildOnStrChg) {
+	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
 
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custID, "");
 		if (limitHeader != null && limitHeader.isActive()) {
@@ -153,7 +153,6 @@ public class LimitRebuildService implements LimitRebuild {
 			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
 		}
 	}
-		
 
 	@Override
 	public void processCustomerGroupRebuild(long rebuildGroupID, boolean removedFromGroup, boolean addedNewlyToGroup) {
@@ -203,7 +202,7 @@ public class LimitRebuildService implements LimitRebuild {
 					if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 						processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
 					}
-					
+
 					if (removedFromGroup) {
 						limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(),
 								limitHeader.getHeaderId(), 0);
@@ -289,7 +288,7 @@ public class LimitRebuildService implements LimitRebuild {
 				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 					processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
 				}
-				
+
 				//update the transaction with the limit header id
 				limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), prvLimitHeaderID, headerId);
 				// add the mapping
@@ -429,14 +428,14 @@ public class LimitRebuildService implements LimitRebuild {
 	 */
 	private boolean processStructuralChanges(List<LimitDetails> limitDetailsList, LimitHeader limitHeader) {
 		logger.debug(" Entering ");
-		boolean changed=false;
+		boolean changed = false;
 		List<LimitDetails> list = new ArrayList<LimitDetails>();
 		List<LimitStructureDetail> structureList = limitStructureDetailDAO
 				.getLimitStructureDetailById(limitHeader.getLimitStructureCode(), "");
 
 		for (LimitStructureDetail limitStructureDetail : structureList) {
 			if (!isExist(limitDetailsList, limitStructureDetail)) {
-				changed=true;
+				changed = true;
 				LimitDetails details = getLimitDetails(limitStructureDetail, limitHeader);
 				list.add(details);
 			}
@@ -476,8 +475,9 @@ public class LimitRebuildService implements LimitRebuild {
 	private LimitDetails getLimitDetails(LimitStructureDetail limitStructureDetail, LimitHeader limitHeader) {
 
 		LimitDetails limitDetail = new LimitDetails();
-		
-		String sqlRule = this.ruleDAO.getAmountRule(limitStructureDetail.getLimitLine(), RuleConstants.MODULE_LMTLINE, RuleConstants.EVENT_CUSTOMER);
+
+		String sqlRule = this.ruleDAO.getAmountRule(limitStructureDetail.getLimitLine(), RuleConstants.MODULE_LMTLINE,
+				RuleConstants.EVENT_CUSTOMER);
 
 		limitDetail.setDetailId(Long.MIN_VALUE);
 		limitDetail.setLimitHeaderId(limitHeader.getHeaderId());

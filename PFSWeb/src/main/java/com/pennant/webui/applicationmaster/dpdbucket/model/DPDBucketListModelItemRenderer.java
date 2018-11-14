@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,14 +65,13 @@ public class DPDBucketListModelItemRenderer implements ListitemRenderer<DPDBucke
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, DPDBucket dPDBucket, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(dPDBucket.getBucketCode());
+		lc = new Listcell(dPDBucket.getBucketCode());
 		lc.setParent(item);
-	  	lc = new Listcell(dPDBucket.getBucketDesc());
+		lc = new Listcell(dPDBucket.getBucketDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
@@ -81,12 +79,12 @@ public class DPDBucketListModelItemRenderer implements ListitemRenderer<DPDBucke
 		cbActive.setChecked(dPDBucket.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(dPDBucket.getRecordStatus());
+		lc = new Listcell(dPDBucket.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(dPDBucket.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("bucketID", dPDBucket.getBucketID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onDPDBucketItemDoubleClicked");
 	}
 }

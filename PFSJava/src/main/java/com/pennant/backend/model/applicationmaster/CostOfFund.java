@@ -74,7 +74,7 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public CostOfFund() {
 		super();
 	}
-	
+
 	public CostOfFund(String id) {
 		super();
 		this.setId(id);
@@ -84,13 +84,11 @@ public class CostOfFund extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
 	}
-	
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -98,6 +96,7 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public String getId() {
 		return cofCode;
 	}
+
 	public void setId(String id) {
 		this.cofCode = id;
 	}
@@ -105,6 +104,7 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public String getCofCode() {
 		return cofCode;
 	}
+
 	public void setCofCode(String cofCode) {
 		this.cofCode = cofCode;
 	}
@@ -112,6 +112,7 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public String getLovDescCofTypeName() {
 		return this.lovDescCofTypeName;
 	}
+
 	public void setLovDescCofTypeName(String lovDescCofTypeName) {
 		this.lovDescCofTypeName = lovDescCofTypeName;
 	}
@@ -119,13 +120,15 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public String getCurrency() {
 		return currency;
 	}
+
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
- 
+
 	public Date getCofEffDate() {
 		return cofEffDate;
 	}
+
 	public void setCofEffDate(Date cofEffDate) {
 		this.cofEffDate = cofEffDate;
 	}
@@ -133,20 +136,23 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public BigDecimal getCofRate() {
 		return cofRate;
 	}
+
 	public void setCofRate(BigDecimal cofRate) {
 		this.cofRate = cofRate;
 	}
 
 	public boolean isDelExistingRates() {
-    	return delExistingRates;
-    }
+		return delExistingRates;
+	}
+
 	public void setDelExistingRates(boolean delExistingRates) {
-    	this.delExistingRates = delExistingRates;
-    }
+		this.delExistingRates = delExistingRates;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -154,6 +160,7 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -161,6 +168,7 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public CostOfFund getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CostOfFund beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -168,18 +176,19 @@ public class CostOfFund extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Date getLastMdfDate() {
-    	return lastMdfDate;
-    }
+		return lastMdfDate;
+	}
 
 	public void setLastMdfDate(Date lastMdfDate) {
-    	this.lastMdfDate = lastMdfDate;
-    }
-	
+		this.lastMdfDate = lastMdfDate;
+	}
+
 	public boolean isActive() {
 		return active;
 	}

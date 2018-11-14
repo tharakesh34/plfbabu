@@ -47,8 +47,7 @@ import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennanttech.pff.core.TableType;
 
 public interface CostCenterDAO extends BasicCrudDao<CostCenter> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,7 +57,8 @@ public interface CostCenterDAO extends BasicCrudDao<CostCenter> {
 	 *            The type of the table.
 	 * @return CostCenter
 	 */
-	CostCenter getCostCenter(long costCenterID,String type);
+	CostCenter getCostCenter(long costCenterID, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -70,6 +70,6 @@ public interface CostCenterDAO extends BasicCrudDao<CostCenter> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long costCenterID, String costCenterCode, TableType tableType);	
-	
+	boolean isDuplicateKey(long costCenterID, String costCenterCode, TableType tableType);
+
 }

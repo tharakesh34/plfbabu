@@ -8,12 +8,12 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess {
 
-private static final Logger logger = Logger.getLogger(FinanceMaintenanceProcessImpl.class);
-	
+	private static final Logger logger = Logger.getLogger(FinanceMaintenanceProcessImpl.class);
+
 	public FinanceMaintenanceProcessImpl() {
-		
+
 	}
-	
+
 	@Override
 	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction)
 			throws InterfaceException {

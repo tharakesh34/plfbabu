@@ -107,10 +107,10 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennant.webui.util.ScreenCTL;
 
 /**
  * ************************************************************<br>
@@ -119,79 +119,79 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements Serializable {
 
-	private static final long				serialVersionUID	= 1L;
-	private static final Logger				logger				= Logger.getLogger(LimitDetailDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(LimitDetailDialogCtrl.class);
 
 	/*
 	 * ************************************************************************ All the components that are defined here
 	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
 	 * GenericForwardComposer. ************************************************************************
 	 */
-	protected Window						window_LimitHeaderDialog;
-	protected Listbox						listBoxLimitDetail;
-	protected Row							row1;
+	protected Window window_LimitHeaderDialog;
+	protected Listbox listBoxLimitDetail;
+	protected Row row1;
 
-	protected Label							customerGroup;
-	protected Label							customerGroupName;
-	protected Label							label_CustomerId;
+	protected Label customerGroup;
+	protected Label customerGroupName;
+	protected Label label_CustomerId;
 
-	protected Label							customerId;
+	protected Label customerId;
 
-	protected Label							custFullName;
-	protected Label							custSalutationCode;
+	protected Label custFullName;
+	protected Label custSalutationCode;
 
-	protected Label							custDftBranchCode;
-	protected Label							custDftBranchName;
+	protected Label custDftBranchCode;
+	protected Label custDftBranchName;
 
-	protected Row							row2;
-	protected Label							label_ResponsibleBranch;
-	protected Label							label_Currency;
+	protected Row row2;
+	protected Label label_ResponsibleBranch;
+	protected Label label_Currency;
 
-	protected ExtendedCombobox				currency;
-	protected Row							row3;
-	protected Label							label_ExpiryDate;
-	protected Hbox							hlayout_ExpiryDate;
-	protected Space							space_ExpiryDate;
-	protected Listheader					listheader_ExpiryDate;
+	protected ExtendedCombobox currency;
+	protected Row row3;
+	protected Label label_ExpiryDate;
+	protected Hbox hlayout_ExpiryDate;
+	protected Space space_ExpiryDate;
+	protected Listheader listheader_ExpiryDate;
 
-	protected Datebox						expiryDate;
-	protected Label							label_ReviewDate;
-	protected Hbox							hlayout_ReviewDate;
-	protected Space							space_ReviewDate;
+	protected Datebox expiryDate;
+	protected Label label_ReviewDate;
+	protected Hbox hlayout_ReviewDate;
+	protected Space space_ReviewDate;
 
-	protected Datebox						reviewDate;
-	protected Row							row4;
-	protected Label							label_LimitStructureCode;
+	protected Datebox reviewDate;
+	protected Row row4;
+	protected Label label_LimitStructureCode;
 
-	protected ExtendedCombobox				limitStructureCode;
-	protected Label							label_Remarks;
-	protected Hbox							hlayout_Remarks;
-	protected Space							space_Remarks;
-	protected Checkbox						active;																// autoWired
-	protected Space							space_Active;
+	protected ExtendedCombobox limitStructureCode;
+	protected Label label_Remarks;
+	protected Hbox hlayout_Remarks;
+	protected Space space_Remarks;
+	protected Checkbox active; // autoWired
+	protected Space space_Active;
 
-	protected Textbox						remarks;
-	protected Paging						pagingLimitDetailDialog;
-	protected ExtendedCombobox				limiDialogRule;
+	protected Textbox remarks;
+	protected Paging pagingLimitDetailDialog;
+	protected ExtendedCombobox limiDialogRule;
 
-	protected Div							gb_CustomerDetails;
-	protected Div							gb_GroupDetails;
-	protected Div							gb_RuleBased;
+	protected Div gb_CustomerDetails;
+	protected Div gb_GroupDetails;
+	protected Div gb_RuleBased;
 
-	private String							limitType;
-	private Label							limiDialogRuleValue;
-	private Label							window_LimitHeaderDialog_title;
+	private String limitType;
+	private Label limiDialogRuleValue;
+	private Label window_LimitHeaderDialog_title;
 
 	// not auto wired vars
-	private transient LimitHeader			limitHeader;														// overhanded per param
-	private transient LimitDetailListCtrl	limitDetailListCtrl;												// overhanded per
+	private transient LimitHeader limitHeader; // overhanded per param
+	private transient LimitDetailListCtrl limitDetailListCtrl; // overhanded per
 	// param
 
 	// ServiceDAOs / Domain Classes
-	private transient LimitDetailService	limitDetailService;
-	private transient PagedListService		pagedListService;
-	int										ccyFormat			= 0;
-	private boolean							validationReq = false;
+	private transient LimitDetailService limitDetailService;
+	private transient PagedListService pagedListService;
+	int ccyFormat = 0;
+	private boolean validationReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -721,14 +721,14 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	 */
 	public void doWriteComponentsToBean(LimitHeader aLimitHeader) {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		if (aLimitHeader.isNewRecord()) {
 			aLimitHeader.setNewRecord(true);
 			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitHeader.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
-		
+
 		if (custDftBranchCode.getValue() != null)
 			aLimitHeader.setResponsibleBranch(custDftBranchCode.getValue());
 		else {
@@ -813,11 +813,11 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			wve.add(we);
 		}
 		ccyFormat = CurrencyUtil.getFormat(aLimitHeader.getLimitCcy());
-		
+
 		if (validationReq) {
 			validateLimitSetup(aLimitHeader, wve);
 		}
-		
+
 		if (wve.isEmpty()) {
 			setCustomerLimitList(aLimitHeader);
 		}
@@ -844,14 +844,16 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 		// ExpiryDate
 		if (!this.expiryDate.isReadonly() && active.isChecked()) {
-			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, true));
+			this.expiryDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, true));
 		}
 		// Review Date
 		if (!this.reviewDate.isReadonly() && active.isChecked()) {
 
 			Date appDate = DateUtility.getAppDate();
 			Date nextYear = DateUtility.addYears(appDate, 1);
-			this.reviewDate.setConstraint(new PTDateValidator(Labels.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, true));
+			this.reviewDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, true));
 		}
 
 		logger.debug("Leaving");
@@ -987,7 +989,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				}
 				expryDate.setParent(lc);
 
-				expryDate.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				expryDate.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				if (active.isChecked()) {
 					expryDate.setConstraint(new PTDateValidator(
 							Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, true));
@@ -1040,12 +1042,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 						Labels.getLabel("listheader_ReservedOrActual.label")));
 				actulOrReserved.setStyle("background:none;");
 				actulOrReserved.setParent(lc);
-				actulOrReserved.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				actulOrReserved.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc.setParent(item);
 				//====================
 				Decimalbox limitSanctioned = new Decimalbox();
-				limitSanctioned.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				limitSanctioned.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc = new Listcell();
 				limitSanctioned.setMaxlength(21);
@@ -1165,23 +1167,23 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	 */
 	public void doSave() throws InterruptedException, DatatypeConfigurationException {
 		logger.debug("Entering");
-		
+
 		final LimitHeader aLimitHeader = new LimitHeader();
 		BeanUtils.copyProperties(getLimitHeader(), aLimitHeader);
 		boolean isNew = false;
 		validationReq = false;
-		
+
 		if (isWorkFlowEnabled()) {
 			aLimitHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitHeader.getNextTaskId(), aLimitHeader);
 		}
-		
+
 		// force validation, if on, than execute by component.getValue()
 		if (!PennantConstants.RECORD_TYPE_DEL.equals(aLimitHeader.getRecordType()) && isValidation()
 				&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 				&& !"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 				&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-			
+
 			validationReq = true;
 			doSetValidation();
 		}
@@ -1193,7 +1195,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			// fill the LimitHeader object with the components data
 			doWriteComponentsToBean(aLimitHeader);
 		}
-		
+
 		isNew = aLimitHeader.isNew();
 		String tranType = "";
 
@@ -1229,9 +1231,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				} else {
 					reference = aLimitHeader.getCustGrpCode();
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(aLimitHeader.getRoleCode(),aLimitHeader.getNextRoleCode(), 
-						reference, " Limit Setup ", aLimitHeader.getRecordStatus());
-				Clients.showNotification(msg,  "info", null, null, -1);
+				String msg = PennantApplicationUtil.getSavingStatus(aLimitHeader.getRoleCode(),
+						aLimitHeader.getNextRoleCode(), reference, " Limit Setup ", aLimitHeader.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
 
 				closeDialog();
 			}

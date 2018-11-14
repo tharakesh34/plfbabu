@@ -97,8 +97,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalDocument/legalDocumentDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalDocument/legalDocumentDialog.zul file. <br>
  */
 public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
@@ -145,9 +144,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	private List<ValueLabel> listDocumentTypeVerify = PennantStaticListUtil.getDocumentTypes();
 	private List<ValueLabel> listDocumentTypeApprove = PennantStaticListUtil.getDocumentTypes();
 	private List<ValueLabel> listDocumentAccepted = PennantStaticListUtil.getDocumentAcceptedList();
-	
+
 	private Map<String, String> cetegoryDescMap = new HashMap<>();
-	
+
 	@Autowired
 	private SearchProcessor searchProcessor;
 
@@ -173,8 +172,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -209,7 +207,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
-			} 
+			}
 
 			// Store the before image.
 			LegalDocument legalDocument = new LegalDocument();
@@ -243,7 +241,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		this.documentName.setMaxlength(100);
 		this.documentRemarks.setMaxlength(3000);
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -306,8 +304,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -319,8 +316,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -368,7 +364,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -378,7 +374,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	public void doWriteBeanToComponents(LegalDocument aLegalDocument) {
 		logger.debug(Literal.ENTERING);
 
-		List<DocumentDetails> collateralDocumentList = getLegalDetailDialogCtrl().getLegalDetail().getCollateralDocumentList();
+		List<DocumentDetails> collateralDocumentList = getLegalDetailDialogCtrl().getLegalDetail()
+				.getCollateralDocumentList();
 		if (CollectionUtils.isNotEmpty(collateralDocumentList)) {
 			List<String> docCategoryList = new ArrayList<>();
 			for (DocumentDetails documentDetails : collateralDocumentList) {
@@ -386,7 +383,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			}
 			prepareDocumentsList(docCategoryList);
 		}
-		
+
 		// Maker
 		this.documentDate.setValue(aLegalDocument.getDocumentDate());
 		this.documentDetail.setValue(aLegalDocument.getDocumentDetail());
@@ -476,7 +473,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			}
 		}
 	}
-	
+
 	private void fillDocumentCategory(String documentCategory) {
 		if (StringUtils.trimToNull(documentCategory) == null || PennantConstants.List_Select.equals(documentCategory)) {
 			fillComboBox(this.documentCategory, documentCategory, getListDocumentCategory(), "");
@@ -485,7 +482,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			fillComboBox(this.documentCategory, docCategory, getListDocumentCategory(), "");
 		}
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -569,7 +566,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		}
 
 		try {
-			if (this.gb_documentVerifyDetails.isVisible() && StringUtils.trimToNull(this.documentName.getValue()) != null) {
+			if (this.gb_documentVerifyDetails.isVisible()
+					&& StringUtils.trimToNull(this.documentName.getValue()) != null) {
 				aLegalDocument.setDocumentName(this.documentName.getValue());
 				LegalDocument details = (LegalDocument) this.documentName.getAttribute("data");
 				aLegalDocument.setDocImage(details.getDocImage());
@@ -636,7 +634,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			if (isNewDocumentDetails()) {
 				this.groupboxWf.setVisible(false);
 			}
-			
+
 			if (isEnquiry()) {
 				this.btnCtrl.setBtnStatus_Enquiry();
 				this.btnNotes.setVisible(false);
@@ -645,7 +643,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				this.gb_documentApproverDetails.setVisible(true);
 				doReadOnly();
 			}
-			
+
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -683,7 +681,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 					Labels.getLabel("label_LegalDocumentDialog_DocumentTypeMaker.value"), listDocumentType, true));
 		}
 		if (!this.documentCategory.isDisabled()) {
-			this.documentCategory.setConstraint(new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentCategory.value"), getListDocumentCategory(), false));
+			this.documentCategory.setConstraint(
+					new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentCategory.value"),
+							getListDocumentCategory(), false));
 		}
 		if (!this.scheduleType.isDisabled()) {
 			this.scheduleType.setConstraint(new PTListValidator(
@@ -760,8 +760,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -827,7 +826,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			}
 			textbox.setValue(fileName);
 			if (textbox.getAttribute("data") == null) {
-				LegalDocument   document = new LegalDocument();
+				LegalDocument document = new LegalDocument();
 				document.setUploadDocumentType(docType);
 				textbox.setAttribute("data", document);
 			} else {
@@ -844,9 +843,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	public void onDocumentClicked(Event event) throws Exception {
 		@SuppressWarnings("unchecked")
-		List<Object> list  = (List<Object>) event.getData();
+		List<Object> list = (List<Object>) event.getData();
 		String docType = (String) list.get(0);
-		byte[] ddaImageData= (byte[]) list.get(1);
+		byte[] ddaImageData = (byte[]) list.get(1);
 
 		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
 			Filedownload.save(ddaImageData, "application/msword", this.documentName.getValue());
@@ -854,6 +853,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			Filedownload.save(ddaImageData, "application/octet-stream", this.documentName.getValue());
 		}
 	}
+
 	/**
 	 * Deletes a LegalDocument object from database.<br>
 	 * 
@@ -965,7 +965,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	public boolean isReadOnly(String componentName) {
 		if (isWorkFlowEnabled() || isNewDocumentDetails()) {
@@ -973,7 +972,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		}
 		return false;
 	}
-
 
 	/**
 	 * Set the components to ReadOnly. <br>
@@ -994,7 +992,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		readOnlyComponent(true, this.documentTypeApprove);
 		readOnlyComponent(true, this.documentAccepted);
 		readOnlyComponent(true, this.btnUploadDoc);
- 
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1028,12 +1026,12 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		final LegalDocument aLegalDocument = new LegalDocument();
 		BeanUtils.copyProperties(this.legalDocument, aLegalDocument);
 		boolean isNew = false;
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		doSetValidation();
 		doWriteComponentsToBean(aLegalDocument);
-		
+
 		isNew = aLegalDocument.isNew();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -1218,6 +1216,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	public void setEnquiry(boolean enquiry) {
 		this.enquiry = enquiry;
 	}
+
 	public SearchProcessor getSearchProcessor() {
 		return searchProcessor;
 	}

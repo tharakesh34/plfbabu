@@ -38,27 +38,27 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/InterfaceMapping/InterfaceMappingList.zul file.
  */
 public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> {
-	private static final long	serialVersionUID	= 5327118548986437717L;
-	private static final Logger	logger				= Logger.getLogger(InterfaceMappingListCtrl.class);
+	private static final long serialVersionUID = 5327118548986437717L;
+	private static final Logger logger = Logger.getLogger(InterfaceMappingListCtrl.class);
 
-	protected Window							window_InterfaceMappingList;
-	protected Borderlayout						borderLayout_InterfaceMappingList;
-	protected Listbox							listBoxInterfaceMapping;
-	protected Paging							pagingInterfaceMappingList;
+	protected Window window_InterfaceMappingList;
+	protected Borderlayout borderLayout_InterfaceMappingList;
+	protected Listbox listBoxInterfaceMapping;
+	protected Paging pagingInterfaceMappingList;
 
-	protected Listheader						listheader_InterfaceName;
-	protected Listheader						listheader_InterfaceField;
+	protected Listheader listheader_InterfaceName;
+	protected Listheader listheader_InterfaceField;
 
-	protected Button							button_InterfaceMappingList_NewInterfaceMapping;
-	protected Button							button_InterfaceMappingList_InterfaceMappingSearchDialog;
+	protected Button button_InterfaceMappingList_NewInterfaceMapping;
+	protected Button button_InterfaceMappingList_InterfaceMappingSearchDialog;
 
-	protected Textbox							interfaceName;
-	protected Textbox							interfaceField;
+	protected Textbox interfaceName;
+	protected Textbox interfaceField;
 
-	protected Listbox							sortOperator_interfaceName;
-	protected Listbox							sortOperator_interfaceField;
+	protected Listbox sortOperator_interfaceName;
+	protected Listbox sortOperator_interfaceField;
 
-	private transient InterfaceMappingService	interfaceMappingService;
+	private transient InterfaceMappingService interfaceMappingService;
 
 	/**
 	 * The default constructor.
@@ -98,10 +98,9 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 				sortOperator_interfaceName, Operators.STRING);
 		registerField("interfaceField", listheader_InterfaceField, SortOrder.NONE, interfaceField,
 				sortOperator_interfaceField, Operators.STRING);
-		
-		
+
 		// Render the page and display the data.
-		  
+
 		doRenderPage();
 		search();
 	}
@@ -201,8 +200,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 		arg.put("interfaceMappingListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/InterfaceMapping/InterfaceMappingDialog.zul", null,
-					arg);
+			Executions.createComponents("/WEB-INF/pages/InterfaceMapping/InterfaceMappingDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -248,9 +246,8 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 		search();
 	}
 
-	
 	public void setInterfaceMappingService(InterfaceMappingService interfaceMappingService) {
 		this.interfaceMappingService = interfaceMappingService;
 	}
-	 
+
 }

@@ -54,17 +54,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>SnapShotColumn table</b>.<br>
  *
  */
-public class SnapShotColumn extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class SnapShotColumn extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-private String columnName;
-private boolean active;
-	private boolean newRecord=false;
+	private String columnName;
+	private boolean active;
+	private boolean newRecord = false;
 	private String lovValue;
 	private SnapShotColumn befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -77,33 +77,36 @@ private boolean active;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getColumnName() {
 		return columnName;
 	}
+
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -111,7 +114,7 @@ private boolean active;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -120,19 +123,19 @@ private boolean active;
 		this.lovValue = lovValue;
 	}
 
-	public SnapShotColumn getBefImage(){
+	public SnapShotColumn getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(SnapShotColumn beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(SnapShotColumn beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

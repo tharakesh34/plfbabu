@@ -16,27 +16,27 @@ public class Applicant implements Serializable {
 	private static final long serialVersionUID = 8019839188681477564L;
 
 	@XmlElement(name = "FIRST_NAME")
-	private String	firstName;
+	private String firstName;
 
 	@XmlElement(name = "LAST_NAME")
-	private String	lastName;
+	private String lastName;
 
 	@XmlElement(name = "DOB")
-	private String	dob;
+	private String dob;
 
 	@XmlElement(name = "GENDER")
-	private String	gender;
+	private String gender;
 
 	@XmlElement(name = "PAN")
-	private String	pan;
+	private String pan;
 
 	@XmlElement(name = "MOBILE")
-	private String	mobile;
+	private String mobile;
 
 	@XmlElement(name = "MARITAL_STATUS")
-	private String	maritalStatus;
+	private String maritalStatus;
 
-	private Address	address;
+	private Address address;
 
 	public String getFirstName() {
 		return firstName;

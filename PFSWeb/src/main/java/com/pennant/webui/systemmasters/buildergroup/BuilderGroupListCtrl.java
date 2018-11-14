@@ -63,10 +63,10 @@ import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.systemmasters.buildergroup.model.BuilderGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.masters/BuilderGroup/BuilderGroupList.zul file.
@@ -92,10 +92,10 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 	// Search Fields
 	protected Uppercasebox name; // autowired
 	protected Textbox segmentation; // autowired
-	
+
 	protected Listbox sortOperator_name;
 	protected Listbox sortOperator_segmentation;
-	
+
 	private transient BuilderGroupService builderGroupService;
 
 	/**
@@ -133,7 +133,8 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 
 		registerField("id");
 		registerField("name", listheader_name, SortOrder.NONE, name, sortOperator_name, Operators.STRING);
-		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation, Operators.STRING);
+		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation,
+				Operators.STRING);
 		registerField("fieldCode");
 
 		// Render the page and display the data.
@@ -181,7 +182,6 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -192,7 +192,7 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 
 	public void onBuilderGroupItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxBuilderGroup.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -202,13 +202,13 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  id = ");
-		whereCond.append( buildergroup.getId());
+		whereCond.append(buildergroup.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(buildergroup.getVersion());
-	
+
 		if (doCheckAuthority(buildergroup, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && buildergroup.getWorkflowId() == 0) {
@@ -218,10 +218,10 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -234,7 +234,7 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("builderGroup", buildergroup);
 		arg.put("builderGroupListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -263,7 +263,7 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

@@ -66,83 +66,82 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> implements CustomerPhoneNumberDAO {
 	private static Logger logger = Logger.getLogger(CustomerPhoneNumberDAOImpl.class);
-		
+
 	public CustomerPhoneNumberDAOImpl() {
 		super();
 	}
 
-
 	/**
-	 * Fetch the Record  Customer PhoneNumbers details by key field
+	 * Fetch the Record Customer PhoneNumbers details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerPhoneNumber
 	 */
 	@Override
-	public CustomerPhoneNumber getCustomerPhoneNumberByID(final long id,String typeCode,String type) {
+	public CustomerPhoneNumber getCustomerPhoneNumberByID(final long id, String typeCode, String type) {
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setId(id);
 		customerPhoneNumber.setPhoneTypeCode(typeCode);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode," );
-		selectSql.append(" PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex," );
+		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode,");
+		selectSql.append(" PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PhoneCustID =:PhoneCustID AND PhoneTypeCode=:PhoneTypeCode ") ; 
-		
+		selectSql.append(" Where PhoneCustID =:PhoneCustID AND PhoneTypeCode=:PhoneTypeCode ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPhoneNumber.class);
-		
-		try{
-			customerPhoneNumber = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+
+		try {
+			customerPhoneNumber = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerPhoneNumber = null;
 		}
 		logger.debug("Leaving");
 		return customerPhoneNumber;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer PhoneNumbers by key PhoneCustID
+	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Customer PhoneNumbers by key PhoneCustID
 	 * 
-	 * @param Customer PhoneNumbers (customerPhoneNumber)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            PhoneNumbers (customerPhoneNumber)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(CustomerPhoneNumber customerPhoneNumber,String type) {
+	public void delete(CustomerPhoneNumber customerPhoneNumber, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From CustomerPhoneNumbers" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(" Delete From CustomerPhoneNumbers");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PhoneCustID =:PhoneCustID AND PhoneTypeCode =:PhoneTypeCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		
-		try{
+
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
@@ -151,167 +150,175 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into CustomerPhoneNumbers or CustomerPhoneNumbers_Temp.
 	 *
-	 * save Customer PhoneNumbers 
+	 * save Customer PhoneNumbers
 	 * 
-	 * @param Customer PhoneNumbers (customerPhoneNumber)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            PhoneNumbers (customerPhoneNumber)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public long save(CustomerPhoneNumber customerPhoneNumber,String type) {
+	public long save(CustomerPhoneNumber customerPhoneNumber, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into CustomerPhoneNumbers");
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:PhoneCustID, :PhoneTypeCode, :PhoneCountryCode,:PhoneAreaCode,:PhoneNumber,:PhoneTypePriority,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(
+				" (PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:PhoneCustID, :PhoneTypeCode, :PhoneCountryCode,:PhoneAreaCode,:PhoneNumber,:PhoneTypePriority,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return customerPhoneNumber.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record CustomerPhoneNumbers or CustomerPhoneNumbers_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Customer PhoneNumbers by key PhoneCustID and Version
+	 * This method updates the Record CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Customer PhoneNumbers by key PhoneCustID and Version
 	 * 
-	 * @param Customer PhoneNumbers (customerPhoneNumber)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            PhoneNumbers (customerPhoneNumber)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(CustomerPhoneNumber customerPhoneNumber,String type) {
+	public void update(CustomerPhoneNumber customerPhoneNumber, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerPhoneNumbers");
-		updateSql.append( StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneTypePriority =:PhoneTypePriority," );
-		updateSql.append(" PhoneNumber = :PhoneNumber," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );
-		updateSql.append(" WorkflowId = :WorkflowId" );
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneTypePriority =:PhoneTypePriority,");
+		updateSql.append(" PhoneNumber = :PhoneNumber,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
+		updateSql.append(" WorkflowId = :WorkflowId");
 		updateSql.append(" Where PhoneCustID =:PhoneCustID AND PhoneTypeCode=:PhoneTypeCode");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Getting List of Objects in Customers By Using CustID
 	 */
-	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id,String type) {
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id, String type) {
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex," );
+		selectSql.append(
+				" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
-		selectSql.append(StringUtils.trimToEmpty(type) );
-		selectSql.append(" Where PhoneCustID =:PhoneCustID ") ; 
-		
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PhoneCustID =:PhoneCustID ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPhoneNumber.class);
-		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving ");
 		return customerPhoneNumbers;
 	}
-	
-	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType) {
+
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id, String type,
+			String phoneType) {
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+		selectSql.append(
+				" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
-		selectSql.append(StringUtils.trimToEmpty(type) );
-		selectSql.append("  Where PhoneCustID =:PhoneCustID and PhoneTypeCode =:PhoneTypeCode") ; 
-		
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append("  Where PhoneCustID =:PhoneCustID and PhoneTypeCode =:PhoneTypeCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
 
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving ");
-		return  customerPhoneNumbers;
+		return customerPhoneNumbers;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Customer PhoneNumbers by key PhoneCustID
+	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Customer PhoneNumbers by key PhoneCustID
 	 * 
-	 * @param Customer PhoneNumbers (customerPhoneNumber)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Customer
+	 *            PhoneNumbers (customerPhoneNumber)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void deleteByCustomer(final long id ,String type) {
+	public void deleteByCustomer(final long id, String type) {
 		logger.debug("Entering");
-		
+
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From CustomerPhoneNumbers" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(" Delete From CustomerPhoneNumbers");
+		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PhoneCustID =:PhoneCustID ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
 
 	/**
 	 * Fetch the Customer PhoneNumber By its CustPhoneId
@@ -326,26 +333,28 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(id);
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
-		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+		selectSql.append(
+				" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
-		selectSql.append(StringUtils.trimToEmpty(type) );
-		selectSql.append(" Where PhoneCustID =:PhoneCustID") ; 
-		
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PhoneCustID =:PhoneCustID");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				CustomerPhoneNumber.class);
-		
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
 		logger.debug("Leaving ");
-		return  customerPhoneNumbers;
+		return customerPhoneNumbers;
 	}
 
 	/**
@@ -365,13 +374,13 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Version FROM CustomerPhoneNumbers");
-		
+
 		selectSql.append(" WHERE PhoneCustId = :PhoneCustId AND PhoneTypeCode = :PhoneTypeCode");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		
+
 		logger.debug("Leaving");
-		
+
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
@@ -385,26 +394,26 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	@Override
 	public int getPhoneTypeCodeCount(String phoneTypeCode) {
 		logger.debug("Entering");
-		
-		MapSqlParameterSource source=new MapSqlParameterSource();
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PhoneTypeCode", phoneTypeCode);
-		
+
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT COUNT(*) FROM BMTPhoneTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("PhoneTypeCode= :PhoneTypeCode");
-		
+
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {
 			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch(EmptyResultDataAccessException dae) {
+		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
 			recordCount = 0;
 		}
 		logger.debug("Leaving");
-		
+
 		return recordCount;
 	}
-	
+
 }

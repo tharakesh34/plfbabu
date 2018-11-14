@@ -72,7 +72,6 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 	}
 
-
 	private void updateProcessFlag(SystemNotificationExecutionDetails detail) {
 		logger.debug(Literal.ENTERING);
 		detail.setProcessingFlag(true);
@@ -111,8 +110,6 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		emailEngine.sendEmail(notification);
 
 	}
-
-
 
 	private void prepareSMSMessage(SystemNotificationExecutionDetails detail) {
 		Notification notification = new Notification();
@@ -165,11 +162,9 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		configuration.setTemplateLoader(loader);
 		Template templateSubject = configuration.getTemplate("mailSubject");
 
-
 		String data = new String(detail.getNotificationData(), "UTF-8");
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 				.parse(new InputSource(new StringReader(new String(detail.getNotificationData(), "UTF-8"))));
-		 
 
 		try {
 			subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, document);

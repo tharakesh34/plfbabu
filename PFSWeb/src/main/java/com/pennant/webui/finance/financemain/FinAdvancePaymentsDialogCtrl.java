@@ -118,105 +118,104 @@ import com.pennanttech.pff.document.external.ExternalDocumentManager;
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinAdvancePaymentsDialog.zul file.
  */
 public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
-	private static final long					serialVersionUID	= 1L;
-	private static final Logger					logger				= Logger
-			.getLogger(FinAdvancePaymentsDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FinAdvancePaymentsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window							window_FinAdvancePaymentsDialog;
+	protected Window window_FinAdvancePaymentsDialog;
 
-	protected Combobox							disbDate;
-	protected Decimalbox						disbDateAmount;
-	protected Intbox							disbSeq;
-	protected Intbox							paymentSequence;
-	protected Combobox							paymentDetail;
-	protected CurrencyBox						amtToBeReleased;
-	protected Textbox							liabilityHoldName;
-	protected Textbox							beneficiaryName;
-	protected Label								label_FinAdvancePaymentsDialog_BeneficiaryName;
-	protected Textbox							beneficiaryAccNo;
-	protected Label								label_FinAdvancePaymentsDialog_BeneficiaryAccNo;
-	protected Textbox							description;
-	protected Combobox							paymentType;
-	protected Textbox							llReferenceNo;
-	protected Datebox							llDate;
-	protected CurrencyBox						custContribution;
-	protected CurrencyBox						sellerContribution;
-	protected Textbox							remarks;
-	protected Textbox							transactionRef;
-	protected ExtendedCombobox					bankCode;
-	protected Textbox							payableLoc;
-	protected Textbox							printingLoc;
-	protected Space								printLoc;
-	protected Datebox							valueDate;
-	protected ExtendedCombobox					bankBranchID;
-	protected ExtendedCombobox					partnerBankID;
-	protected Textbox							bank;
-	protected Textbox							branch;
-	protected Textbox							city;
-	protected Space								contactNumber;
+	protected Combobox disbDate;
+	protected Decimalbox disbDateAmount;
+	protected Intbox disbSeq;
+	protected Intbox paymentSequence;
+	protected Combobox paymentDetail;
+	protected CurrencyBox amtToBeReleased;
+	protected Textbox liabilityHoldName;
+	protected Textbox beneficiaryName;
+	protected Label label_FinAdvancePaymentsDialog_BeneficiaryName;
+	protected Textbox beneficiaryAccNo;
+	protected Label label_FinAdvancePaymentsDialog_BeneficiaryAccNo;
+	protected Textbox description;
+	protected Combobox paymentType;
+	protected Textbox llReferenceNo;
+	protected Datebox llDate;
+	protected CurrencyBox custContribution;
+	protected CurrencyBox sellerContribution;
+	protected Textbox remarks;
+	protected Textbox transactionRef;
+	protected ExtendedCombobox bankCode;
+	protected Textbox payableLoc;
+	protected Textbox printingLoc;
+	protected Space printLoc;
+	protected Datebox valueDate;
+	protected ExtendedCombobox bankBranchID;
+	protected ExtendedCombobox partnerBankID;
+	protected Textbox bank;
+	protected Textbox branch;
+	protected Textbox city;
+	protected Space contactNumber;
 	//protected Textbox							phoneCountryCode;
 	//protected Textbox							phoneAreaCode;
-	protected Textbox							phoneNumber;
-	protected Iframe							docName;
+	protected Textbox phoneNumber;
+	protected Iframe docName;
 
-	protected Label								label_liabilityHoldName;
-	protected Hbox								hbox_liabilityHoldName;
-	protected Label								label_llReferenceNo;
-	protected Hbox								hbox_llReferenceNo;
-	protected Label								label_llDate;
-	protected Hbox								hbox_llDate;
-	protected Label								label_custContribution;
-	protected Hbox								hbox_custContribution;
-	protected Label								label_sellerContribution;
-	protected Hbox								hbox_sellerContribution;
+	protected Label label_liabilityHoldName;
+	protected Hbox hbox_liabilityHoldName;
+	protected Label label_llReferenceNo;
+	protected Hbox hbox_llReferenceNo;
+	protected Label label_llDate;
+	protected Hbox hbox_llDate;
+	protected Label label_custContribution;
+	protected Hbox hbox_custContribution;
+	protected Label label_sellerContribution;
+	protected Hbox hbox_sellerContribution;
 
-	protected Label								recordType;
-	protected Groupbox							gb_statusDetails;
-	protected Groupbox							gb_ChequeDetails;
-	protected Groupbox							gb_NeftDetails;
-	private boolean								enqModule			= false;
-	protected Button							btnGetCustBeneficiary;
-	protected Row								rowGetCust;
-	protected Caption							caption_FinAdvancePaymentsDialog_NeftDetails;
-	protected Caption							caption_FinAdvancePaymentsDialog_ChequeDetails;
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
+	protected Groupbox gb_ChequeDetails;
+	protected Groupbox gb_NeftDetails;
+	private boolean enqModule = false;
+	protected Button btnGetCustBeneficiary;
+	protected Row rowGetCust;
+	protected Caption caption_FinAdvancePaymentsDialog_NeftDetails;
+	protected Caption caption_FinAdvancePaymentsDialog_ChequeDetails;
 
 	// not auto wired vars
-	private FinAdvancePayments					finAdvancePayments;								// over handed per param
+	private FinAdvancePayments finAdvancePayments; // over handed per param
 
-	private transient boolean					newFinance;
+	private transient boolean newFinance;
 
 	// ServiceDAOs / Domain Classes
-	private transient PagedListService			pagedListService;
+	private transient PagedListService pagedListService;
 
-	private Object								financeMainDialogCtrl;
-	private FinAdvancePaymentsListCtrl			finAdvancePaymentsListCtrl;
-	private transient PayOrderIssueListCtrl		payOrderIssueListCtrl;
-	private transient PayOrderIssueDialogCtrl	payOrderIssueDialogCtrl;
-	private boolean								newRecord			= false;
-	private boolean								newCustomer			= false;
-	private int									ccyFormatter		= 0;
-	private long								custID;
-	private String								finCcy;
+	private Object financeMainDialogCtrl;
+	private FinAdvancePaymentsListCtrl finAdvancePaymentsListCtrl;
+	private transient PayOrderIssueListCtrl payOrderIssueListCtrl;
+	private transient PayOrderIssueDialogCtrl payOrderIssueDialogCtrl;
+	private boolean newRecord = false;
+	private boolean newCustomer = false;
+	private int ccyFormatter = 0;
+	private long custID;
+	private String finCcy;
 
-	private String								moduleType			= "";
+	private String moduleType = "";
 
-	private List<FinAdvancePayments>			finAdvancePaymentsDetails;
+	private List<FinAdvancePayments> finAdvancePaymentsDetails;
 
-	private boolean								poIssued			= false;
-	private boolean								allowMultyparty		= false;
-	private List<FinanceDisbursement>			financeDisbursement	= null;
-	private List<FinanceDisbursement>			approvedDisbursments;
+	private boolean poIssued = false;
+	private boolean allowMultyparty = false;
+	private List<FinanceDisbursement> financeDisbursement = null;
+	private List<FinanceDisbursement> approvedDisbursments;
 
-	protected int								accNoLength;
-	private transient BankDetailService			bankDetailService;
-	private FinanceMain							financeMain;
-	private DocumentDetails						documentDetails;
+	protected int accNoLength;
+	private transient BankDetailService bankDetailService;
+	private FinanceMain financeMain;
+	private DocumentDetails documentDetails;
 	@Autowired
-	private ExternalDocumentManager		externalDocumentManager	= null;
+	private ExternalDocumentManager externalDocumentManager = null;
 
 	/**
 	 * default constructor.<br>
@@ -235,6 +234,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	/**
 	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
 	 * selected FinAdvancePaymentsDetail object in a Map.
+	 * 
 	 * @param event
 	 * @throws Exception
 	 */
@@ -646,8 +646,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.disbDateAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.disbDateAmount.setScale(ccyFormatter);
 
-		
-
 		this.llDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -698,11 +696,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (StringUtils.isNotBlank(this.finAdvancePayments.getBranchBankCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
 		}
-		
-		if (accNoLength!=0) {
+
+		if (accNoLength != 0) {
 			this.beneficiaryAccNo.setMaxlength(accNoLength);
-		}else{
-			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);	
+		} else {
+			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
@@ -805,13 +803,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
 
-		
 		this.docName.setContent(externalDocumentManager.setDocContent(documentDetails));
 		logger.debug("Leaving");
 	}
 
-
-	
 	/**
 	 * Method to fill the combobox with given list of values and will exclude the the values
 	 * 
@@ -1013,7 +1008,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 					BigDecimal disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
 					BigDecimal insAmt = getAdjustedAmount(disbursement);
-					insAmt=insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
+					insAmt = insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
 					if (insAmt.compareTo(disAmt) > 0) {
 						throw new WrongValueException(this.amtToBeReleased,
 								Labels.getLabel("NUMBER_MAXVALUE_EQ",
@@ -1254,11 +1249,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PayableLoc.value"),
 								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
-			/*if (!this.printingLoc.isReadonly()) {
-				this.printingLoc.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
-								PennantRegularExpressions.REGEX_ADDRESS, false));
-			}*/
+			/*
+			 * if (!this.printingLoc.isReadonly()) { this.printingLoc.setConstraint( new
+			 * PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
+			 * PennantRegularExpressions.REGEX_ADDRESS, false)); }
+			 */
 			if (!this.valueDate.isReadonly()) {
 				Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
 				this.valueDate.setConstraint(
@@ -1663,9 +1658,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength!=0) {
+				if (accNoLength != 0) {
 					this.beneficiaryAccNo.setMaxlength(accNoLength);
-				}else{
+				} else {
 					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
 			}
@@ -1732,10 +1727,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_printingLoc"), this.printingLoc);
 				this.printLoc.setSclass("mandatory");
-				
+
 			} else {
-				/*this.printingLoc.setValue("");
-				readOnlyComponent(true, this.printingLoc);*/
+				/*
+				 * this.printingLoc.setValue(""); readOnlyComponent(true, this.printingLoc);
+				 */
 				this.printLoc.setSclass("");
 			}
 
@@ -1812,12 +1808,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
-				if (accNoLength!=0) {
+				if (accNoLength != 0) {
 					this.beneficiaryAccNo.setMaxlength(accNoLength);
-				}else{
+				} else {
 					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				
+
 			}
 		}
 	}

@@ -64,53 +64,55 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FlagServiceImpl extends GenericService<Flag> implements FlagService {
 	private static final Logger logger = Logger.getLogger(FlagServiceImpl.class);
-	
+
 	private AuditHeaderDAO auditHeaderDAO;
-	
+
 	private FlagDAO flagDAO;
 
 	public FlagServiceImpl() {
 		super();
 	}
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the flagDAO
 	 */
 	public FlagDAO getFlagDAO() {
 		return flagDAO;
 	}
+
 	/**
-	 * @param flagDAO the flagDAO to set
+	 * @param flagDAO
+	 *            the flagDAO to set
 	 */
 	public void setFlagDAO(FlagDAO flagDAO) {
 		this.flagDAO = flagDAO;
 	}
 
-	
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table Flags/Flags_Temp 
-	 * 			by using FlagDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using FlagDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtFlags by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Flags/Flags_Temp by using
+	 * FlagDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
+	 * FlagDAO's update method 3) Audit the record in to AuditHeader and AdtFlags by using
+	 * auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -119,41 +121,40 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 	}
 
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table Flags/Flags_Temp 
-	 * 			by using FlagDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using FlagDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtFlags by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
-	 * @param boolean onlineRequest
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Flags/Flags_Temp by using
+	 * FlagDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
+	 * FlagDAO's update method 3) Audit the record in to AuditHeader and AdtFlags by using
+	 * auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
-	 
-		
-	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
-		
+
+	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate", online);
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		Flag flag = (Flag) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		
+
 		if (flag.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (flag.isNew()) {
-			getFlagDAO().save(flag,tableType);
-		}else{
-			getFlagDAO().update(flag,tableType);
+			getFlagDAO().save(flag, tableType);
+		} else {
+			getFlagDAO().update(flag, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -163,27 +164,28 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table Flags by using FlagDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtFlags by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * Flags by using FlagDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and AdtFlags by
+	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete",false);
+		auditHeader = businessValidation(auditHeader, "delete", false);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		
+
 		Flag flag = (Flag) auditHeader.getAuditDetail().getModelData();
-		getFlagDAO().delete(flag,TableType.MAIN_TAB);
-		
+		getFlagDAO().delete(flag, TableType.MAIN_TAB);
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -191,25 +193,30 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 
 	/**
 	 * getFlagById fetch the details by using FlagDAO's getFlagById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Flag
 	 */
-	
+
 	@Override
 	public Flag getFlagById(String id) {
-		return getFlagDAO().getFlagById(id,"_View");
+		return getFlagDAO().getFlagById(id, "_View");
 	}
+
 	/**
-	 * getApprovedFlagById fetch the details by using FlagDAO's getFlagById method .
-	 * with parameter id and type as blank. it fetches the approved records from the Flags.
-	 * @param id (String)
+	 * getApprovedFlagById fetch the details by using FlagDAO's getFlagById method . with parameter id and type as
+	 * blank. it fetches the approved records from the Flags.
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return Flag
 	 */
-	
+
 	public Flag getApprovedFlagById(String id) {
-		return getFlagDAO().getFlagById(id,"_AView");
+		return getFlagDAO().getFlagById(id, "_AView");
 	}
 
 	/**
@@ -279,15 +286,16 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getFlagDAO().delete with parameters flag,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtFlags by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFlagDAO().delete with parameters flag,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtFlags by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	
+
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
@@ -306,63 +314,60 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 		return auditHeader;
 	}
 
-		/**
-		 * businessValidation method do the following steps.
-		 * 1)	validate the audit detail 
-		 * 2)	if any error/Warnings  then assign the to auditHeader
-		 * 3)   identify the nextprocess
-		 *  
-		 * @param AuditHeader (auditHeader)
-		 * @param boolean onlineRequest
-		 * @return auditHeader
-		 */
+	/**
+	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
+	 * assign the to auditHeader 3) identify the nextprocess
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
+	 * @return auditHeader
+	 */
 
-		
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest){
-			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
-			logger.debug("Leaving");
-			return auditHeader;
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
+		logger.debug("Entering");
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = nextProcess(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getFlagDAO().getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @param boolean
+	 *            onlineRequest
+	 * @return auditHeader
+	 */
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		Flag flag = (Flag) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (flag.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(flag.getRecordType()) && flagDAO
+				.isDuplicateKey(flag.getFlagCode(), flag.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_FlagCode") + ": " + flag.getFlagCode();
+
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
-        /**
-		 * Validation method do the following steps.
-		 * 1)	get the details from the auditHeader. 
-		 * 2)	fetch the details from the tables
-		 * 3)	Validate the Record based on the record details. 
-		 * 4) 	Validate for any business validation.
-		 * 5)	for any mismatch conditions Fetch the error details from getFlagDAO().getErrorDetail with Error ID and language as parameters.
-		 * 6)	if any error/Warnings  then assign the to auditHeader 
-		 * @param AuditHeader (auditHeader)
-		 * @param boolean onlineRequest
-		 * @return auditHeader
-		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug("Entering");
 
-			// Get the model object.
-			Flag flag= (Flag) auditDetail.getModelData();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-			// Check the unique keys.
-			if (flag.isNew() 
-					&& PennantConstants.RECORD_TYPE_NEW.equals(flag.getRecordType())
-					&& flagDAO.isDuplicateKey(flag.getFlagCode(), flag.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[1];
-
-				parameters[0] = PennantJavaUtil.getLabel("label_FlagCode") + ": " + flag.getFlagCode();
-				
-
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-			}
-
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-			logger.debug("Leaving");
-			return auditDetail;
-		}
+		logger.debug("Leaving");
+		return auditDetail;
+	}
 
 }

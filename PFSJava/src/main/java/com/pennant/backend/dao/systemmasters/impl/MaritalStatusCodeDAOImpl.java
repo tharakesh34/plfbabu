@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -73,7 +72,7 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 	public MaritalStatusCodeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record MaritalStatus Codes details by key field
 	 * 
@@ -84,21 +83,23 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 	 * @return MaritalStatusCode
 	 */
 	@Override
-	public MaritalStatusCode getMaritalStatusCodeById(final String id,String type) {
+	public MaritalStatusCode getMaritalStatusCodeById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
 		MaritalStatusCode maritalStatusCode = new MaritalStatusCode();
 		maritalStatusCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("Select MaritalStsCode, MaritalStsDesc, MaritalStsIsActive,SystemDefault,");
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTMaritalStatusCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where MaritalStsCode =:MaritalStsCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
-		RowMapper<MaritalStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MaritalStatusCode.class);
+		RowMapper<MaritalStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(MaritalStatusCode.class);
 
 		try {
 			maritalStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -111,10 +112,8 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTMaritalStatusCodes or
-	 * BMTMaritalStatusCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete MaritalStatus Codes by key
-	 * MaritalStsCode
+	 * This method Deletes the Record from the BMTMaritalStatusCodes or BMTMaritalStatusCodes_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete MaritalStatus Codes by key MaritalStsCode
 	 * 
 	 * @param Marital
 	 *            Status Codes (maritalStatusCode)
@@ -128,17 +127,17 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTMaritalStatusCodes");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where MaritalStsCode =:MaritalStsCode");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -151,8 +150,7 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 	}
 
 	/**
-	 * This method insert new Records into BMTMaritalStatusCodes or
-	 * BMTMaritalStatusCodes_Temp.
+	 * This method insert new Records into BMTMaritalStatusCodes or BMTMaritalStatusCodes_Temp.
 	 * 
 	 * save MaritalStatus Codes
 	 * 
@@ -168,20 +166,21 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 	public String save(MaritalStatusCode maritalStatusCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTMaritalStatusCodes");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (MaritalStsCode, MaritalStsDesc, MaritalStsIsActive,SystemDefault,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:MaritalStsCode, :MaritalStsDesc, :MaritalStsIsActive, :SystemDefault,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.trace(Literal.SQL + insertSql.toString());		
+
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -190,10 +189,8 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 	}
 
 	/**
-	 * This method updates the Record BMTMaritalStatusCodes or
-	 * BMTMaritalStatusCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update MaritalStatus Codes by key
-	 * MaritalStsCode and Version
+	 * This method updates the Record BMTMaritalStatusCodes or BMTMaritalStatusCodes_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update MaritalStatus Codes by key MaritalStsCode and Version
 	 * 
 	 * @param Marital
 	 *            Status Codes (maritalStatusCode)
@@ -208,26 +205,29 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTMaritalStatusCodes");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set  MaritalStsDesc = :MaritalStsDesc, MaritalStsIsActive = :MaritalStsIsActive, SystemDefault=:SystemDefault,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				" Set  MaritalStsDesc = :MaritalStsDesc, MaritalStsIsActive = :MaritalStsIsActive, SystemDefault=:SystemDefault,");
+		updateSql.append(
+				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(
+				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where MaritalStsCode =:MaritalStsCode");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.trace(Literal.SQL +  updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Fetch the count of system default values by key field
 	 * 
@@ -254,10 +254,10 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 		String dftMaritalStsCode = "";
 		try {
 			dftMaritalStsCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-        } catch (Exception e) {
-        	logger.warn("Exception: ", e);
-        	dftMaritalStsCode = "";
-        }
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			dftMaritalStsCode = "";
+		}
 		logger.debug("Leaving");
 		return dftMaritalStsCode;
 
@@ -278,7 +278,8 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 			sql = QueryUtil.getCountQuery("BMTMaritalStatusCodes_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "BMTMaritalStatusCodes_Temp", "BMTMaritalStatusCodes" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "BMTMaritalStatusCodes_Temp", "BMTMaritalStatusCodes" },
+					whereClause);
 			break;
 		}
 
@@ -298,5 +299,4 @@ public class MaritalStatusCodeDAOImpl extends BasicDao<MaritalStatusCode> implem
 		return exists;
 	}
 
-	
 }

@@ -60,11 +60,11 @@ public interface FinanceMainService {
 	int getFinanceCountById(String finReference, boolean isWIF);
 
 	int updateFinanceBasicDetails(FinanceMain financeMain);
-	
+
 	List<FinanceMain> getFinanceByCustId(long custId);
-	
+
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
-	
+
 	List<String> getFinReferencesByMandateId(long mandateId);
 
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);

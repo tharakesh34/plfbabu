@@ -78,8 +78,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/StaticParms/ExtendedFieldHeader/extendedFieldHeaderDialog.zul
+ * This is the controller class for the /WEB-INF/pages/StaticParms/ExtendedFieldHeader/extendedFieldHeaderDialog.zul
  * file.
  */
 public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
@@ -87,27 +86,25 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	private static final Logger logger = Logger.getLogger(ExtendedFieldHeaderDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 
-	protected Window 		window_ExtendedFieldHeaderDialog;	// autowired
+	protected Window window_ExtendedFieldHeaderDialog; // autowired
 
-	protected Combobox 		moduleName; 						// autowired
-	protected Combobox 		subModuleName; 						// autowired
-	protected Textbox 		tabHeading; 						// autowired
-	protected Radiogroup 	numberOfColumns; 					// autowired
-	protected Radio 		radio_column1;
-	protected Radio 		radio_column2;
-
+	protected Combobox moduleName; // autowired
+	protected Combobox subModuleName; // autowired
+	protected Textbox tabHeading; // autowired
+	protected Radiogroup numberOfColumns; // autowired
+	protected Radio radio_column1;
+	protected Radio radio_column2;
 
 	// not auto wired vars
 	private ExtendedFieldHeader extendedFieldHeader; // overhanded per param
 	private transient ExtendedFieldHeaderListCtrl extendedFieldHeaderListCtrl; // overhanded per param
 	private List<ValueLabel> modulesList = null;
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient ExtendedFieldHeaderService extendedFieldHeaderService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
@@ -127,9 +124,8 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected ExtendedFieldHeader
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected ExtendedFieldHeader object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -172,11 +168,12 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			// to it and can synchronize the shown data when we do insert, edit or
 			// delete extendedFieldHeader here.
 			if (arguments.containsKey("extendedFieldHeaderListCtrl")) {
-				setExtendedFieldHeaderListCtrl((ExtendedFieldHeaderListCtrl) arguments.get("extendedFieldHeaderListCtrl"));
+				setExtendedFieldHeaderListCtrl(
+						(ExtendedFieldHeaderListCtrl) arguments.get("extendedFieldHeaderListCtrl"));
 			} else {
 				setExtendedFieldHeaderListCtrl(null);
 			}
-			
+
 			if (arguments.containsKey("modulesList")) {
 				modulesList = (List<ValueLabel>) arguments.get("modulesList");
 			}
@@ -196,7 +193,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		// Empty sent any required attributes
 		this.moduleName.setMaxlength(50);
 		this.subModuleName.setMaxlength(50);
@@ -216,8 +213,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -329,12 +325,14 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		fillsubModule(this.subModuleName, aExtendedFieldHeader.getModuleName(),
 				aExtendedFieldHeader.getSubModuleName());
 		this.numberOfColumns.setSelectedIndex(0);
-		
+
 		// fillCombobox(this.subModuleName,PennantAppUtil.getSubModuleName(aExtendedFieldHeader.getModuleName()),aExtendedFieldHeader.getSubModuleName());
 		this.tabHeading.setValue(aExtendedFieldHeader.getTabHeading());
 
 		for (int i = 0; i < numberOfColumns.getItemCount(); i++) {
-			if (this.numberOfColumns.getItemAtIndex(i).getValue().equals(aExtendedFieldHeader.getNumberOfColumns()==null?"":aExtendedFieldHeader.getNumberOfColumns().trim())) {
+			if (this.numberOfColumns.getItemAtIndex(i).getValue()
+					.equals(aExtendedFieldHeader.getNumberOfColumns() == null ? ""
+							: aExtendedFieldHeader.getNumberOfColumns().trim())) {
 				this.numberOfColumns.setSelectedIndex(i);
 			}
 		}
@@ -356,9 +354,9 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if(!this.moduleName.isDisabled() && this.moduleName.getSelectedIndex()<1){
+			if (!this.moduleName.isDisabled() && this.moduleName.getSelectedIndex() < 1) {
 				throw new WrongValueException(moduleName, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_ExtendedFieldHeaderDialog_ModuleName.value")}));
+						new String[] { Labels.getLabel("label_ExtendedFieldHeaderDialog_ModuleName.value") }));
 			}
 			aExtendedFieldHeader.setModuleName(this.moduleName.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
@@ -366,9 +364,9 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		}
 
 		try {
-			if(!this.subModuleName.isDisabled() && this.subModuleName.getSelectedIndex()<1){
+			if (!this.subModuleName.isDisabled() && this.subModuleName.getSelectedIndex() < 1) {
 				throw new WrongValueException(subModuleName, Labels.getLabel("STATIC_INVALID",
-						new String[]{Labels.getLabel("label_ExtendedFieldHeaderDialog_SubModuleName.value")}));
+						new String[] { Labels.getLabel("label_ExtendedFieldHeaderDialog_SubModuleName.value") }));
 			}
 			aExtendedFieldHeader.setSubModuleName(this.subModuleName.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
@@ -409,8 +407,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExtendedFieldHeader
 	 * @throws Exception
@@ -458,7 +455,9 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		setValidationOn(true);
 
 		if (!this.tabHeading.isReadonly()) {
-			this.tabHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldHeaderDialog_TabHeading.value"), PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+			this.tabHeading.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ExtendedFieldHeaderDialog_TabHeading.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 
 		logger.debug("Leaving");
@@ -485,14 +484,14 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		final ExtendedFieldHeader aExtendedFieldHeader = new ExtendedFieldHeader();
 		BeanUtils.copyProperties(getExtendedFieldHeader(), aExtendedFieldHeader);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-		+ Labels.getLabel(aExtendedFieldHeader.getModuleName());
+				+ Labels.getLabel(aExtendedFieldHeader.getModuleName());
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aExtendedFieldHeader.getRecordType())) {
 				aExtendedFieldHeader.setVersion(aExtendedFieldHeader.getVersion() + 1);
@@ -567,7 +566,6 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		this.tabHeading.setReadonly(true);
 		this.radio_column1.setDisabled(true);
 		this.radio_column2.setDisabled(true);
-
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -734,7 +732,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
@@ -768,8 +766,8 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_ExtendedFieldHeaderDialog, auditHeader);
 						return processCompleted;
 					}
@@ -810,6 +808,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -817,6 +816,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public ExtendedFieldHeader getExtendedFieldHeader() {
 		return this.extendedFieldHeader;
 	}
+
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
 	}
@@ -824,6 +824,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void setExtendedFieldHeaderService(ExtendedFieldHeaderService extendedFieldHeaderService) {
 		this.extendedFieldHeaderService = extendedFieldHeaderService;
 	}
+
 	public ExtendedFieldHeaderService getExtendedFieldHeaderService() {
 		return this.extendedFieldHeaderService;
 	}
@@ -831,16 +832,17 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void setExtendedFieldHeaderListCtrl(ExtendedFieldHeaderListCtrl extendedFieldHeaderListCtrl) {
 		this.extendedFieldHeaderListCtrl = extendedFieldHeaderListCtrl;
 	}
+
 	public ExtendedFieldHeaderListCtrl getExtendedFieldHeaderListCtrl() {
 		return this.extendedFieldHeaderListCtrl;
 	}
-	
+
 	private void doSetLOVValidation() {
 	}
 
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -852,8 +854,8 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 	private void fillsubModule(Combobox combobox, String moduleName, String value) {
 		if (this.moduleName.getSelectedItem() != null) {
-			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null ? new HashMap<String, String>()
-					: PennantStaticListUtil.getModuleName().get(moduleName);
+			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null
+					? new HashMap<String, String>() : PennantStaticListUtil.getModuleName().get(moduleName);
 			ArrayList<String> arrayList = new ArrayList<String>(hashMap.keySet());
 			subModuleName.getItems().clear();
 			Comboitem comboitem = new Comboitem();
@@ -864,7 +866,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			if (arrayList != null) {
 				for (int i = 0; i < arrayList.size(); i++) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(Labels.getLabel("label_ExtendedField_"+arrayList.get(i)));
+					comboitem.setLabel(Labels.getLabel("label_ExtendedField_" + arrayList.get(i)));
 					comboitem.setValue(arrayList.get(i));
 					subModuleName.appendChild(comboitem);
 					if (StringUtils.trimToEmpty(value).equals(arrayList.get(i))) {
@@ -887,18 +889,20 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
+
 	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
-	
+
 	// Audit Changes
-	
+
 	private AuditHeader getAuditHeader(ExtendedFieldHeader aExtendedFieldHeader, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aExtendedFieldHeader.getBefImage(), aExtendedFieldHeader);
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aExtendedFieldHeader.getBefImage(),
+				aExtendedFieldHeader);
 		return new AuditHeader(String.valueOf(aExtendedFieldHeader.getModuleId()), null, null, null, auditDetail,
 				aExtendedFieldHeader.getUserDetails(), getOverideMap());
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
@@ -913,7 +917,6 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.extendedFieldHeader);
 	}
-	
 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
@@ -922,7 +925,6 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		getExtendedFieldHeaderListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.extendedFieldHeader.getModuleId());

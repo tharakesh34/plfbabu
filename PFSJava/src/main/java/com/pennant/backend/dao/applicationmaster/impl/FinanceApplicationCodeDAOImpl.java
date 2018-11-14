@@ -61,9 +61,10 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>FinanceApplicationCode model</b> class.<br>
  * 
  */
-public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCode> implements FinanceApplicationCodeDAO {
+public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCode>
+		implements FinanceApplicationCodeDAO {
 	private static Logger logger = Logger.getLogger(FinanceApplicationCodeDAOImpl.class);
-	
+
 	public FinanceApplicationCodeDAOImpl() {
 		super();
 	}
@@ -84,18 +85,21 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 		financeApplicationCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" SELECT FinAppType, FinAppDesc, FinAppIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(" SELECT FinAppType, FinAppDesc, FinAppIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTFinAppCodes");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinAppType =:FinAppType") ;
-				
+		selectSql.append(" Where FinAppType =:FinAppType");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeApplicationCode);
-		RowMapper<FinanceApplicationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceApplicationCode.class);
+		RowMapper<FinanceApplicationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceApplicationCode.class);
 
 		try {
-			financeApplicationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeApplicationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			financeApplicationCode = null;
@@ -105,10 +109,8 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTFinAppCodes or
-	 * BMTFinAppCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Application Codes by
-	 * key FinAppType
+	 * This method Deletes the Record from the BMTFinAppCodes or BMTFinAppCodes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Finance Application Codes by key FinAppType
 	 * 
 	 * @param Finance
 	 *            Application Codes (financeApplicationCode)
@@ -126,8 +128,8 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 		deleteSql.append("Delete From BMTFinAppCodes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinAppType =:FinAppType");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeApplicationCode);
 
 		try {
@@ -143,8 +145,7 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 	}
 
 	/**
-	 * This method insert new Records into BMTFinAppCodes or
-	 * BMTFinAppCodes_Temp.
+	 * This method insert new Records into BMTFinAppCodes or BMTFinAppCodes_Temp.
 	 * 
 	 * save Finance Application Codes
 	 * 
@@ -157,18 +158,20 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 	 * 
 	 */
 	@Override
-	public String save(FinanceApplicationCode financeApplicationCode,String type) {
+	public String save(FinanceApplicationCode financeApplicationCode, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append("Insert Into BMTFinAppCodes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinAppType, FinAppDesc, FinAppIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:FinAppType, :FinAppDesc, :FinAppIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+		insertSql.append(" (FinAppType, FinAppDesc, FinAppIsActive,");
+		insertSql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FinAppType, :FinAppDesc, :FinAppIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeApplicationCode);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -177,10 +180,8 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 	}
 
 	/**
-	 * This method updates the Record BMTFinAppCodes or
-	 * BMTFinAppCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Application Codes by
-	 * key FinAppType and Version
+	 * This method updates the Record BMTFinAppCodes or BMTFinAppCodes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Application Codes by key FinAppType and Version
 	 * 
 	 * @param Finance
 	 *            Application Codes (financeApplicationCode)
@@ -191,23 +192,24 @@ public class FinanceApplicationCodeDAOImpl extends BasicDao<FinanceApplicationCo
 	 * 
 	 */
 	@Override
-	public void update(FinanceApplicationCode financeApplicationCode,String type) {
+	public void update(FinanceApplicationCode financeApplicationCode, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 
 		updateSql.append("Update BMTFinAppCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinAppDesc = :FinAppDesc, FinAppIsActive = :FinAppIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" Set FinAppDesc = :FinAppDesc, FinAppIsActive = :FinAppIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinAppType =:FinAppType ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeApplicationCode);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 

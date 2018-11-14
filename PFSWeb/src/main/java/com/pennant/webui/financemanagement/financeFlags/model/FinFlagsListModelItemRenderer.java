@@ -16,11 +16,11 @@ import com.pennant.util.PennantAppUtil;
 public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFlag>, Serializable {
 
 	private static final long serialVersionUID = -4562142056572229437L;
-	
+
 	public FinFlagsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, FinanceFlag financeFlag, int count) throws Exception {
 
@@ -37,36 +37,36 @@ public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFl
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(financeFlag.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(financeFlag.getGraceTerms()+financeFlag.getNumberOfTerms()));
+		lc = new Listcell(String.valueOf(financeFlag.getGraceTerms() + financeFlag.getNumberOfTerms()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(financeFlag.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(financeFlag.getFinCcy());
 		lc.setParent(item);
 		BigDecimal finAmount = financeFlag.getFinAmount();
-		if(financeFlag.getFeeChargeAmt() != null && financeFlag.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+		if (financeFlag.getFeeChargeAmt() != null && financeFlag.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(financeFlag.getFeeChargeAmt());
 		}
-		
+
 		int formatter = CurrencyUtil.getFormat(financeFlag.getFinCcy());
-		
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount,formatter));
+
+		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, formatter));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
-		if(financeFlag.getFinRepaymentAmount()!=null){
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount
-					.subtract(financeFlag.getFinRepaymentAmount()),formatter));
+		if (financeFlag.getFinRepaymentAmount() != null) {
+			lc = new Listcell(
+					PennantAppUtil.amountFormate(finAmount.subtract(financeFlag.getFinRepaymentAmount()), formatter));
 			lc.setStyle("text-align:right");
-		}else{
+		} else {
 			lc = new Listcell("");
-			
+
 		}
 		lc.setParent(item);
 		lc = new Listcell(financeFlag.getRecordStatus());
 		lc.setParent(item);
 		item.setAttribute("id", financeFlag.getFinReference());
 		item.setAttribute("recordType", financeFlag.getRecordType());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceFlagsItemDoubleClicked");
 	}
 }

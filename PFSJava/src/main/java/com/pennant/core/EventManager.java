@@ -27,10 +27,10 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class EventManager implements ServletContextListener {
-	public static final String				QUEUE_NAME	= "AppNotificationQueue";
-	private static ServletContext			servletContext;
-	private SecurityUserOperationsService	securityUserOperationsService;
-	private MessagesService					messagesService;
+	public static final String QUEUE_NAME = "AppNotificationQueue";
+	private static ServletContext servletContext;
+	private SecurityUserOperationsService securityUserOperationsService;
+	private MessagesService messagesService;
 	private static final String DEFAULT_FROM = "SYSTEM";
 
 	public enum Notify {

@@ -54,35 +54,64 @@ import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennanttech.pff.core.TableType;
 
 public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
-	
-	ManualAdvise getManualAdviseById(long adviseID,String type);
+
+	ManualAdvise getManualAdviseById(long adviseID, String type);
+
 	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type);
+
 	void saveMovement(ManualAdviseMovements movement, String type);
+
 	void updateAdvPayment(ManualAdvise advise, TableType tableType);
+
 	List<ManualAdviseMovements> getAdviseMovements(long id);
+
 	ManualAdvise getManualAdviseByReceiptId(long receiptID, String string);
+
 	List<ManualAdviseMovements> getAdviseMovementsByReceipt(long receiptID, String type);
+
 	void deleteMovementsByReceiptID(long receiptID, String type);
-	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, int adviseType, String string);
+
+	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, int adviseType,
+			String string);
+
 	void updateMovementStatus(long receiptID, long receiptSeqID, String string, String string2);
+
 	List<ManualAdviseReserve> getPayableReserveList(long receiptSeqID);
+
 	ManualAdviseReserve getPayableReserve(long receiptSeqID, long payAgainstID);
+
 	void savePayableReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt);
+
 	void updatePayableReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve);
+
 	void deletePayableReserve(long receiptID, long payAgainstID);
+
 	void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt);
+
 	void updateUtilise(long adviseID, BigDecimal amount);
+
 	void reverseUtilise(long adviseID, BigDecimal amount);
+
 	Date getPresentmentBounceDueDate(long receiptId);
+
 	List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type);
+
 	void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType);
+
 	FinanceMain getFinanceDetails(String finReference);
+
 	List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type);
+
 	BigDecimal getBalanceAmt(String finReference);
+
 	String getTaxComponent(long adviseID, String type);
+
 	List<ManualAdvise> getManualAdvise(String finReference);
-	void updateWaivedAmount(ManualAdvise advise,TableType tableType);
+
+	void updateWaivedAmount(ManualAdvise advise, TableType tableType);
+
 	List<ManualAdvise> getManualAdvisesByFinRef(String finReference, String type);
+
 	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type);
-	
+
 }

@@ -28,11 +28,12 @@ public class ReleaseCIFProcess extends MQProcess {
 	 * 
 	 * @param customer
 	 * @param msgFormat
-	 * @param reserveRefNum 
+	 * @param reserveRefNum
 	 * @return String
 	 * @throws InterfaceException
 	 */
-	public String releaseCIF(InterfaceCustomer customer, String reserveRefNum, String msgFormat)throws InterfaceException {
+	public String releaseCIF(InterfaceCustomer customer, String reserveRefNum, String msgFormat)
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement request = null;
@@ -41,13 +42,14 @@ public class ReleaseCIFProcess extends MQProcess {
 		try {
 			OMFactory factory = OMAbstractFactory.getOMFactory();
 			MessageQueueClient client = new MessageQueueClient(getServiceConfigKey());
-			header =  new AHBMQHeader(msgFormat);
+			header = new AHBMQHeader(msgFormat);
 
 			OMElement requestElement = getReleaseCIFRequestElement(customer, reserveRefNum, factory, msgFormat);
 			request = PFFXmlUtil.generateRequest(header, factory, requestElement);
 
 			if (request != null) {
-				response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
+				response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(),
+						getWaitTime());
 			}
 
 		} catch (InterfaceException pfe) {
@@ -79,8 +81,8 @@ public class ReleaseCIFProcess extends MQProcess {
 		header = getReturnStatus(detailElement, header, responseElement);
 
 		logger.debug("Leaving");
-		
-		if(StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
+
+		if (StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			return header.getReturnCode();
 		} else {
 			throw new InterfaceException("PTI3002", header.getErrorMessage());
@@ -89,26 +91,27 @@ public class ReleaseCIFProcess extends MQProcess {
 
 	/**
 	 * Prepare ReserveCIF Request Element to send Interface through MQ
+	 * 
 	 * @param custCIF
 	 * @param referenceNum
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getReleaseCIFRequestElement(InterfaceCustomer customer, String reserveRefNum, 
-			OMFactory factory, String msgFormat){
+	private OMElement getReleaseCIFRequestElement(InterfaceCustomer customer, String reserveRefNum, OMFactory factory,
+			String msgFormat) {
 		logger.debug("Entering");
 
 		String newReferenceNum = PFFXmlUtil.getReferenceNumber();
 
-		OMElement requestElement= factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
-		OMElement releaseCIFRequest= factory.createOMElement("releaseCIFRequest",null);
-		PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "ReferenceNum",newReferenceNum);
-		PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "CIF",customer.getCustCIF());
+		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
+		OMElement releaseCIFRequest = factory.createOMElement("releaseCIFRequest", null);
+		PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "ReferenceNum", newReferenceNum);
+		PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "CIF", customer.getCustCIF());
 
-		if(StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.RELEASE_CIF_HPS)) {
-			PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "ReserveReferenceNum",reserveRefNum);
+		if (StringUtils.equals(msgFormat, InterfaceMasterConfigUtil.RELEASE_CIF_HPS)) {
+			PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "ReserveReferenceNum", reserveRefNum);
 		} else {
-			PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "ReserverReferenceNumber",reserveRefNum);
+			PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "ReserverReferenceNumber", reserveRefNum);
 		}
 		PFFXmlUtil.setOMChildElement(factory, releaseCIFRequest, "TimeStamp",
 				PFFXmlUtil.getTodayDateTime(InterfaceMasterConfigUtil.XML_DATETIME));

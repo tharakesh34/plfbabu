@@ -22,79 +22,77 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> implements AccountTypeGroupDAO {
 	private static Logger logger = Logger.getLogger(AccountTypeGroupDAOImpl.class);
-	
-	
+
 	public AccountTypeGroupDAOImpl() {
 		super();
 	}
 
 	/**
-	 * Fetch the Record  Account Type Group details by key field
+	 * Fetch the Record Account Type Group details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return AccountTypeGroup
 	 */
 	@Override
 	public AccountTypeGroup getAccountTypeGroupById(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		AccountTypeGroup accountTypeGroup = new AccountTypeGroup();
-		
+
 		accountTypeGroup.setId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select GroupId, GroupCode, GroupDescription, AcctTypeLevel,  ParentGroupId, GroupIsActive, " );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select GroupId, GroupCode, GroupDescription, AcctTypeLevel,  ParentGroupId, GroupIsActive, ");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if(type.contains("View")){
+		if (type.contains("View")) {
 			selectSql.append(",ParentGroup,  ParentGroupDesc, AcctTypeLevel");
 		}
 		selectSql.append(" From AccountTypeGroup");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where GroupId =:GroupId");
-		
+
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountTypeGroup);
-		RowMapper<AccountTypeGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
-				AccountTypeGroup.class);
-		
-		try{
-			accountTypeGroup = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		RowMapper<AccountTypeGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AccountTypeGroup.class);
+
+		try {
+			accountTypeGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accountTypeGroup = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return accountTypeGroup;
 	}
 
-
-	
 	/**
-	 * This method Deletes the Record from the BMTAggrementDef or BMTAggrementDef_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Account Type Group by key AggCode
+	 * This method Deletes the Record from the BMTAggrementDef or BMTAggrementDef_Temp. if Record not deleted then
+	 * throws DataAccessException with error 41003. delete Account Type Group by key AggCode
 	 * 
-	 * @param Account Type Group (accountTypeGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Type Group (accountTypeGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	public void delete(AccountTypeGroup accountTypeGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder("Delete From AccountTypeGroup");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where GroupId =:GroupId");
 		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
-		logger.trace(Literal.SQL +deleteSql.toString());
+
+		logger.trace(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountTypeGroup);
 		try {
@@ -109,15 +107,16 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * This method insert new Records into AccountTypeGroup or AccountTypeGroup_Temp.
 	 *
-	 * save Account Type Group  
+	 * save Account Type Group
 	 * 
-	 * @param Account Type Group (accountTypeGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Type Group (accountTypeGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -125,42 +124,43 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 	@Override
 	public String save(AccountTypeGroup accountTypeGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (accountTypeGroup.getId() == Long.MIN_VALUE) {
 			accountTypeGroup.setId(getNextId("SeqAccountTypeGroup"));
 			logger.debug("get NextID:" + accountTypeGroup.getId());
 		}
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into AccountTypeGroup");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into AccountTypeGroup");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (GroupId, GroupCode, GroupDescription, AcctTypeLevel, ParentGroupId, GroupIsActive, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:GroupId, :GroupCode, :GroupDescription, :AcctTypeLevel, :ParentGroupId, :GroupIsActive, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
+		insertSql.append(
+				" Values(:GroupId, :GroupCode, :GroupDescription, :AcctTypeLevel, :ParentGroupId, :GroupIsActive, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.trace(Literal.SQL + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountTypeGroup);
-		try{
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(accountTypeGroup.getId());
 	}
-	
+
 	/**
-	 * This method updates the Record BMTAggrementDef or BMTAggrementDef_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Account Type Group by key AggCode and Version
+	 * This method updates the Record BMTAggrementDef or BMTAggrementDef_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Account Type Group by key AggCode and Version
 	 * 
-	 * @param Account Type Group (accountTypeGroup)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Type Group (accountTypeGroup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -168,32 +168,33 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 	@Override
 	public void update(AccountTypeGroup accountTypeGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-	
+
 		int recordCount = 0;
-		StringBuilder	updateSql =new StringBuilder("Update AccountTypeGroup");
+		StringBuilder updateSql = new StringBuilder("Update AccountTypeGroup");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set GroupId = :GroupId, GroupCode = :GroupCode, GroupDescription = :GroupDescription, AcctTypeLevel = :AcctTypeLevel, ParentGroupId = :ParentGroupId, GroupIsActive = :GroupIsActive, " );
-		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );
+		updateSql.append(
+				" Set GroupId = :GroupId, GroupCode = :GroupCode, GroupDescription = :GroupDescription, AcctTypeLevel = :AcctTypeLevel, ParentGroupId = :ParentGroupId, GroupIsActive = :GroupIsActive, ");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where GroupId =:GroupId");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
+
 		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountTypeGroup);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String groupCode, TableType tableType) {
-		
+
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		String sql;
@@ -207,7 +208,7 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 			sql = QueryUtil.getCountQuery("AccountTypeGroup_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "AccountTypeGroup_Temp", "AccountTypeGroup"}, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "AccountTypeGroup_Temp", "AccountTypeGroup" }, whereClause);
 			break;
 		}
 

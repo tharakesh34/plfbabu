@@ -49,9 +49,9 @@ import com.pennant.backend.model.amtmasters.VehicleDealer;
 public interface VehicleDealerDAO {
 
 	VehicleDealer getVehicleDealerById(long id, String type);
-	
-	List<VehicleDealer> getVehicleDealerList(String dealerType,String type);
-	
+
+	List<VehicleDealer> getVehicleDealerList(String dealerType, String type);
+
 	VehicleDealer getOverDraftVehicleDealerById(String type);
 
 	void update(VehicleDealer vehicleDealer, String type);
@@ -62,7 +62,7 @@ public interface VehicleDealerDAO {
 
 	boolean SearchName(String dealerName, String dealerType);
 
-	int getVehicleDealerByType(String dealerType, String name,long id, String type);
+	int getVehicleDealerByType(String dealerType, String name, long id, String type);
 
 	int getVASManufactureCode(String dealerName, String type);
 
@@ -70,5 +70,5 @@ public interface VehicleDealerDAO {
 
 	int getVehicleDealerByCode(String code, String dealerType, long id, String type);
 
-	VehicleDealer getVehicleDealerById(String code, String delarType,String type);
+	VehicleDealer getVehicleDealerById(String code, String delarType, String type);
 }

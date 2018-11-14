@@ -22,7 +22,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public abstract class AbstractDialogController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 4993596882485929197L;
 	private final Logger logger = Logger.getLogger(getClass());
-	
+
 	// Button controller for the CRUD buttons
 	protected transient ButtonStatusCtrl btnCtrl;
 	protected Button btnNew;
@@ -32,33 +32,32 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	protected Button btnCancel;
 	protected Button btnClose;
 	protected Button btnNotes;
-	
+
 	protected South south;
 	protected Label recordStatus;
 	protected Radiogroup userAction;
 	protected Groupbox groupboxWf;
-	
+
 	protected boolean notesEntered;
-	
+
 	protected enum DialogType {
-		/** Makes the window as normal dialog.*/
+		/** Makes the window as normal dialog. */
 		EMBEDDED,
-		/** Makes this window as a modal dialog.*/
+		/** Makes this window as a modal dialog. */
 		MODAL,
-		/** Makes this window as overlapped with other components.*/
+		/** Makes this window as overlapped with other components. */
 		OVERLAPPED;
 	}
-	
-	private  DialogType dialogType = DialogType.EMBEDDED;
-	
-	
+
+	private DialogType dialogType = DialogType.EMBEDDED;
+
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
+
 		/* create the Button Controller. Disable not used buttons during working */
-		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), "button_"+pageRightName+"_", true, this.btnNew,
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), "button_" + pageRightName + "_", true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
-				
+
 		if (arguments.containsKey("enqiryModule")) {
 			if (arguments.get("enqiryModule") instanceof Boolean) {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
@@ -66,17 +65,16 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 				this.enqiryModule = true;
 			}
 		}
-		
-		if(arguments.containsKey("moduleCode")) {
+
+		if (arguments.containsKey("moduleCode")) {
 			this.moduleCode = (String) arguments.get("moduleCode");
 		}
 	}
-	
 
 	public Radiogroup setListRecordStatus(Radiogroup userAction) {
 		return setListRecordStatus(userAction, true);
 	}
-	
+
 	public Radiogroup setRejectRecordStatus(Radiogroup userAction) {
 		String sequences = "";
 
@@ -159,8 +157,8 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		logger.debug("Entering");
 
 		if (askConfirmation) {
-			if (MessageUtil.YES == MessageUtil
-					.confirm("Any changes made will be lost if you close this window. Are you sure you want to continue?")) {
+			if (MessageUtil.YES == MessageUtil.confirm(
+					"Any changes made will be lost if you close this window. Are you sure you want to continue?")) {
 				closeDialog();
 				return true;
 			}
@@ -168,11 +166,11 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			closeDialog();
 			return true;
 		}
-		
+
 		logger.debug("Leaving");
 		return false;
 	}
-	
+
 	/**
 	 * Makes the window as normal dialog.
 	 */
@@ -226,11 +224,11 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 
 		closeWindow();
-		
+
 		if (menuWest == null && groupboxMenu == null) {
 			return;
 		}
-		
+
 		menuWest.setVisible(true);
 		groupboxMenu.setVisible(true);
 
@@ -245,7 +243,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			}
 		}
 	}
-	
+
 	/**
 	 * Close the the window.
 	 */
@@ -253,27 +251,27 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		deAllocateAuthorities(pageRightName);
 		window.onClose();
 	}
-				
+
 	protected void deAllocateAuthorities(String pageRightName) {
 		if (StringUtils.isNotEmpty(pageRightName)) {
 			getUserWorkspace().deAllocateAuthorities(pageRightName);
 		}
 	}
-	
+
 	protected void setStatusDetails() {
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
+
 		if (enqiryModule) {
 			if (south != null) {
 				south.setVisible(false);
 			}
 		}
 	}
-		
+
 	/**
 	 * Sets whether notes entered or not.
 	 * 
@@ -281,19 +279,18 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	 */
 	public void setNotesEntered(boolean notesEnterd) {
 		logger.debug("Entering");
-		
+
 		if (!notesEntered) {
 			notesEntered = notesEnterd;
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	protected String getReference() {
 		return null;
 	}
-	
-	
+
 	protected Notes getNotes(AbstractWorkflowEntity entity) {
 		Notes notes = new Notes();
 		notes.setModuleName(moduleCode);
@@ -301,7 +298,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		notes.setVersion(entity.getVersion());
 		return notes;
 	}
-	
+
 	protected void doShowNotes(AbstractWorkflowEntity entity) {
 		logger.debug("Entering");
 		final HashMap<String, Object> map = new HashMap<String, Object>();

@@ -85,6 +85,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public String getId() {
 		return riskCode;
 	}
+
 	public void setId(String id) {
 		this.riskCode = id;
 	}
@@ -92,6 +93,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public String getRiskCode() {
 		return riskCode;
 	}
+
 	public void setRiskCode(String riskCode) {
 		this.riskCode = riskCode;
 	}
@@ -99,6 +101,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public String getRiskDesc() {
 		return riskDesc;
 	}
+
 	public void setRiskDesc(String riskDesc) {
 		this.riskDesc = riskDesc;
 	}
@@ -106,6 +109,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -113,6 +117,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -120,6 +125,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public CustRiskType getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(CustRiskType beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -127,6 +133,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -134,6 +141,7 @@ public class CustRiskType extends AbstractWorkflowEntity {
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
+
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}

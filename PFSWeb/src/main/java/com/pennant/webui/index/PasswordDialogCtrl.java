@@ -76,10 +76,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuser.changepassword.ChangePasswordModel;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /PFSWeb/WebContent/WEB-INF/pages/PasswordReset/changePwd.zul file.

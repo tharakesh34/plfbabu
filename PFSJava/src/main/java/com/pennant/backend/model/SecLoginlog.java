@@ -45,17 +45,17 @@ package com.pennant.backend.model;
 import java.sql.Timestamp;
 
 public class SecLoginlog implements java.io.Serializable, Entity {
-	private static final long	serialVersionUID	= -3312254328936965373L;
+	private static final long serialVersionUID = -3312254328936965373L;
 
-	private long				loginLogID;
-	private String				loginUsrLogin;
-	private Timestamp			loginTime;
-	private String				loginIP;
-	private String				loginBrowserType;
-	private int					loginStsID;
-	private String				loginSessionID;
-	private Timestamp			logOutTime;
-	private String				loginError;
+	private long loginLogID;
+	private String loginUsrLogin;
+	private Timestamp loginTime;
+	private String loginIP;
+	private String loginBrowserType;
+	private int loginStsID;
+	private String loginSessionID;
+	private Timestamp logOutTime;
+	private String loginError;
 
 	public SecLoginlog() {
 	}

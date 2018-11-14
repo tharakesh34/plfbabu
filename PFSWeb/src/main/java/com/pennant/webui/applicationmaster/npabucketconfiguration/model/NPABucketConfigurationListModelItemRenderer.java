@@ -53,12 +53,12 @@ import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class NPABucketConfigurationListModelItemRenderer implements ListitemRenderer<NPABucketConfiguration>, Serializable {
+public class NPABucketConfigurationListModelItemRenderer
+		implements ListitemRenderer<NPABucketConfiguration>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -66,23 +66,22 @@ public class NPABucketConfigurationListModelItemRenderer implements ListitemRend
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, NPABucketConfiguration nPABucketConfiguration, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(nPABucketConfiguration.getProductCode());
+		lc = new Listcell(nPABucketConfiguration.getProductCode());
 		lc.setParent(item);
-	  	lc = new Listcell(nPABucketConfiguration.getBucketCode());
+		lc = new Listcell(nPABucketConfiguration.getBucketCode());
 		lc.setParent(item);
-	  	lc = new Listcell(PennantApplicationUtil.formateInt(nPABucketConfiguration.getDueDays()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(nPABucketConfiguration.getRecordStatus());
+		lc = new Listcell(PennantApplicationUtil.formateInt(nPABucketConfiguration.getDueDays()));
+		lc.setParent(item);
+		lc = new Listcell(nPABucketConfiguration.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(nPABucketConfiguration.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("configID", nPABucketConfiguration.getConfigID());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onNPABucketConfigurationItemDoubleClicked");
 	}
 }

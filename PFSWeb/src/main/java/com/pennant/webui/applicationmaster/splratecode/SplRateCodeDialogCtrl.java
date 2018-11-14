@@ -73,31 +73,27 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/SplRateCode/splRateCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/SplRateCode/splRateCodeDialog.zul file.
  */
 public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	private static final long serialVersionUID = -8184469529624754015L;
 	private static final Logger logger = Logger.getLogger(SplRateCodeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_SplRateCodeDialog; 	// autowired
-	protected Textbox 	sRType; 					// autowired
-	protected Textbox 	sRTypeDesc; 				// autowired
-	protected Checkbox 	sRIsActive; 				// autowired
-
-
+	protected Window window_SplRateCodeDialog; // autowired
+	protected Textbox sRType; // autowired
+	protected Textbox sRTypeDesc; // autowired
+	protected Checkbox sRIsActive; // autowired
 
 	// not auto wired vars
-	private 		  SplRateCode 		  splRateCode; 			// overHanded per param
-	private transient SplRateCodeListCtrl splRateCodeListCtrl; 	// overHanded per param
+	private SplRateCode splRateCode; // overHanded per param
+	private transient SplRateCodeListCtrl splRateCodeListCtrl; // overHanded per param
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient SplRateCodeService splRateCodeService;
 
@@ -116,9 +112,8 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected SplRateCode object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected SplRateCode object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -143,14 +138,12 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 				setSplRateCode(null);
 			}
 
-			doLoadWorkFlow(this.splRateCode.isWorkflow(),
-					this.splRateCode.getWorkflowId(),
+			doLoadWorkFlow(this.splRateCode.isWorkflow(), this.splRateCode.getWorkflowId(),
 					this.splRateCode.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"SplRateCodeDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "SplRateCodeDialog");
 			}
 
 			// READ OVERHANDED params !
@@ -159,8 +152,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 			// or
 			// delete splRateCode here.
 			if (arguments.containsKey("splRateCodeListCtrl")) {
-				setSplRateCodeListCtrl((SplRateCodeListCtrl) arguments
-						.get("splRateCodeListCtrl"));
+				setSplRateCodeListCtrl((SplRateCodeListCtrl) arguments.get("splRateCodeListCtrl"));
 			} else {
 				setSplRateCodeListCtrl(null);
 			}
@@ -184,9 +176,9 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRType.setMaxlength(8);
 		this.sRTypeDesc.setMaxlength(50);
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -197,21 +189,16 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed(
-				"button_SplRateCodeDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_SplRateCodeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed(
-				"button_SplRateCodeDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_SplRateCodeDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SplRateCodeDialog_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SplRateCodeDialog_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SplRateCodeDialog_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SplRateCodeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -311,8 +298,9 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRTypeDesc.setValue(aSplRateCode.getSRTypeDesc());
 		this.sRIsActive.setChecked(aSplRateCode.isSRIsActive());
 		this.recordStatus.setValue(aSplRateCode.getRecordStatus());
-		
-		if(aSplRateCode.isNew() || (aSplRateCode.getRecordType() != null ? aSplRateCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aSplRateCode.isNew() || (aSplRateCode.getRecordType() != null ? aSplRateCode.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.sRIsActive.setChecked(true);
 			this.sRIsActive.setDisabled(true);
 		}
@@ -332,25 +320,25 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 
 		try {
 			aSplRateCode.setSRType(this.sRType.getValue().toUpperCase());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aSplRateCode.setSRTypeDesc(this.sRTypeDesc.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aSplRateCode.setSRIsActive(this.sRIsActive.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -364,8 +352,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSplRateCode
 	 * @throws Exception
@@ -381,12 +368,12 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 			this.sRType.focus();
 		} else {
 			this.sRTypeDesc.focus();
-			if (isWorkFlowEnabled()){
-				if (StringUtils.isNotBlank(aSplRateCode.getRecordType())){
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(aSplRateCode.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -414,14 +401,15 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.sRType.isReadonly()){
+		if (!this.sRType.isReadonly()) {
 			this.sRType.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateCodeDialog_SRType.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}	
-		if (!this.sRTypeDesc.isReadonly()){
-			this.sRTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateCodeDialog_SRTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		}	
+		}
+		if (!this.sRTypeDesc.isReadonly()) {
+			this.sRTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateCodeDialog_SRTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -435,11 +423,13 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRTypeDesc.setConstraint("");
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
 	}
+
 	/**
 	 * Remove Validations for LOV Fields
 	 */
@@ -456,13 +446,13 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRTypeDesc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList(){
+	private void refreshList() {
 		getSplRateCodeListCtrl().search();
-	} 
+	}
 
 	// CRUD operations
 
@@ -475,31 +465,30 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		logger.debug("Entering");
 		final SplRateCode aSplRateCode = new SplRateCode();
 		BeanUtils.copyProperties(getSplRateCode(), aSplRateCode);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels
-				.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_SplRateCodeDialog_SRType.value")+" : "+aSplRateCode.getSRType();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_SplRateCodeDialog_SRType.value") + " : " + aSplRateCode.getSRType();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aSplRateCode.getRecordType())){
-				aSplRateCode.setVersion(aSplRateCode.getVersion()+1);
+			if (StringUtils.isBlank(aSplRateCode.getRecordType())) {
+				aSplRateCode.setVersion(aSplRateCode.getVersion() + 1);
 				aSplRateCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aSplRateCode.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aSplRateCode,tranType)){
+				if (doProcess(aSplRateCode, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -511,10 +500,10 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		if (getSplRateCode().isNewRecord()){
+		if (getSplRateCode().isNewRecord()) {
 			this.sRType.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.sRType.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
@@ -522,18 +511,18 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRTypeDesc.setReadonly(isReadOnly("SplRateCodeDialog_sRTypeDesc"));
 		this.sRIsActive.setDisabled(isReadOnly("SplRateCodeDialog_sRIsActive"));
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.splRateCode.isNewRecord()){
+			if (this.splRateCode.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -549,12 +538,12 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRTypeDesc.setReadonly(true);
 		this.sRIsActive.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -594,31 +583,31 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		// Do data level validations here
 
 		isNew = aSplRateCode.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aSplRateCode.getRecordType())){
-				aSplRateCode.setVersion(aSplRateCode.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aSplRateCode.getRecordType())) {
+				aSplRateCode.setVersion(aSplRateCode.getVersion() + 1);
+				if (isNew) {
 					aSplRateCode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aSplRateCode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aSplRateCode.setNewRecord(true);
 				}
 			}
-		}else{
-			aSplRateCode.setVersion(aSplRateCode.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aSplRateCode.setVersion(aSplRateCode.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
-			if(doProcess(aSplRateCode,tranType)){
+			if (doProcess(aSplRateCode, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -629,24 +618,25 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aSplRateCode (SplRateCode)
+	 * @param aSplRateCode
+	 *            (SplRateCode)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SplRateCode aSplRateCode,String tranType){
+	private boolean doProcess(SplRateCode aSplRateCode, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
-		aSplRateCode.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getUserId());
+		aSplRateCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aSplRateCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aSplRateCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -676,15 +666,15 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 			if (StringUtils.isNotBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -694,97 +684,92 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 			aSplRateCode.setRoleCode(getRole());
 			aSplRateCode.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aSplRateCode, tranType);
+			auditHeader = getAuditHeader(aSplRateCode, tranType);
 			String operationRefs = getServiceOperations(taskId, aSplRateCode);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aSplRateCode,
-							PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aSplRateCode, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aSplRateCode, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aSplRateCode, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
 
-	/**	
-	 * Get the result after processing DataBase Operations 
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		SplRateCode aSplRateCode = (SplRateCode) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
-		
+		boolean deleteNotes = false;
+
 		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
+			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getSplRateCodeService().delete(auditHeader);
 
-						deleteNotes=true;
+						deleteNotes = true;
 					} else {
-						auditHeader = getSplRateCodeService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getSplRateCodeService().saveOrUpdate(auditHeader);
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getSplRateCodeService().doApprove(auditHeader);
 
-						if(aSplRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;
+						if (aSplRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSplRateCodeService().doReject(
-								auditHeader);
-						if(aSplRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getSplRateCodeService().doReject(auditHeader);
+						if (aSplRateCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_SplRateCodeDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_SplRateCodeDialog, auditHeader);
 						logger.debug("Leaving");
 						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_SplRateCodeDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_SplRateCodeDialog, auditHeader);
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.splRateCode),true);
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.splRateCode), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -798,34 +783,37 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
+
 	// WorkFlow Details
-	
+
 	/**
 	 * Get Audit Header Details
-	 * @param aSplRateCode (SplRateCode)
-	 * @param tranType (String)
+	 * 
+	 * @param aSplRateCode
+	 *            (SplRateCode)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(SplRateCode aSplRateCode, String tranType){
+	private AuditHeader getAuditHeader(SplRateCode aSplRateCode, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSplRateCode.getBefImage(), aSplRateCode);
-		return new AuditHeader(String.valueOf(aSplRateCode.getId()),
-				null, null, null, auditDetail,aSplRateCode.getUserDetails(),getOverideMap());
+		return new AuditHeader(String.valueOf(aSplRateCode.getId()), null, null, null, auditDetail,
+				aSplRateCode.getUserDetails(), getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF,e.getMessage(),null));
-			ErrorControl.showErrorControl(this.window_SplRateCodeDialog,
-					auditHeader);
+			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
+			ErrorControl.showErrorControl(this.window_SplRateCodeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -833,8 +821,10 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	}
 
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -847,8 +837,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,
-					map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -867,6 +856,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -874,6 +864,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	public SplRateCode getSplRateCode() {
 		return this.splRateCode;
 	}
+
 	public void setSplRateCode(SplRateCode splRateCode) {
 		this.splRateCode = splRateCode;
 	}
@@ -881,6 +872,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	public void setSplRateCodeService(SplRateCodeService splRateCodeService) {
 		this.splRateCodeService = splRateCodeService;
 	}
+
 	public SplRateCodeService getSplRateCodeService() {
 		return this.splRateCodeService;
 	}
@@ -888,6 +880,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	public void setSplRateCodeListCtrl(SplRateCodeListCtrl splRateCodeListCtrl) {
 		this.splRateCodeListCtrl = splRateCodeListCtrl;
 	}
+
 	public SplRateCodeListCtrl getSplRateCodeListCtrl() {
 		return this.splRateCodeListCtrl;
 	}

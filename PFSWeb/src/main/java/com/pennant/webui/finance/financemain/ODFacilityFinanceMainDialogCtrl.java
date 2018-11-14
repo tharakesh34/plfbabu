@@ -20,13 +20,13 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl implements Serializable {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(ODFacilityFinanceMainDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_ODFacilityFinanceMainDialog; 					
+	protected Window window_ODFacilityFinanceMainDialog;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -42,9 +42,8 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -71,11 +70,11 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		// delete financeMain here.
 		if (arguments.containsKey("financeMainListCtrl")) {
 			setFinanceMainListCtrl((FinanceMainListCtrl) arguments.get("financeMainListCtrl"));
-		} 
-		
+		}
+
 		if (arguments.containsKey("financeSelectCtrl")) {
 			setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
-		} 
+		}
 
 		if (arguments.containsKey("tabbox")) {
 			listWindowTab = (Tab) arguments.get("tabbox");
@@ -88,7 +87,7 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		if (arguments.containsKey("eventCode")) {
 			eventCode = (String) arguments.get("eventCode");
 		}
-		
+
 		if (arguments.containsKey("menuItemRightName")) {
 			menuItemRightName = (String) arguments.get("menuItemRightName");
 		}
@@ -99,60 +98,61 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
-		}else{
+		} else {
 			this.south.setHeight("0px");
 		}
 
 		setMainWindow(window_ODFacilityFinanceMainDialog);
 		setProductCode("ODFacility");
-		
-		if(financeMain.isAllowRepayRvw()){
+
+		if (financeMain.isAllowRepayRvw()) {
 			this.label_FinanceMainDialog_RepayRvwFrq.setVisible(true);
-		}else{
+		} else {
 			this.label_FinanceMainDialog_RepayRvwFrq.setVisible(false);
 		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
 
-		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52+ "px");
+		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");
 
 		// set Field Properties
 		doSetFieldProperties();
-		
+
 		doShowDialog(getFinanceDetail());
 		Events.echoEvent("onPostWinCreation", this.self, null);
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	public void doSetFieldProperties() {
-		
+
 		logger.debug("Entering");
-		
+
 		super.doSetFieldProperties();
-		
+
 		this.accountsOfficer.setMandatoryStyle(false);
 		this.dsaCode.setMandatoryStyle(false);
-		this.finAssetValue.setProperties(true, CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		this.finAssetValue.setProperties(true,
+				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 		this.repayPftFrq.setMandatoryStyle(true);
-		
+
 		if (getFinanceDetail().getFinScheduleData().getFinanceType().isDroplineOD()) {
 			this.repayFrq.setMandatoryStyle(true);
 		} else {
 			this.repayFrq.setMandatoryStyle(false);
 		}
-		
+
 		this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.maturityDate.setReadonly(true);
 		this.odMnthlyTerms.setValue(0);
 		this.odYearlyTerms.setValue(0);
-		
+
 		logger.debug("Leaving");
-		
+
 	}
-	
+
 	/**
 	 * If we close the dialog window. <br>
 	 * 
@@ -164,20 +164,19 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		doClose();
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		processSave();
 		logger.debug(Literal.LEAVING);
 	}
- 
-	
+
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -194,7 +193,7 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -208,5 +207,4 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		logger.debug("Leaving " + event.toString());
 	}
 
-	
 }

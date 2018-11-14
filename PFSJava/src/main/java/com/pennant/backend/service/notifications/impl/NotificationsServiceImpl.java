@@ -74,7 +74,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private NotificationsDAO notificationsDAO;
-	
+
 	public NotificationsServiceImpl() {
 		super();
 	}
@@ -98,17 +98,14 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	public void setNotificationsDAO(NotificationsDAO notificationsDAO) {
 		this.notificationsDAO = notificationsDAO;
 	}
-	
+
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTNotificationss/BMTNotificationss_Temp by using NotificationsDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using NotificationsDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtBMTNotificationss by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTNotificationss/BMTNotificationss_Temp by using NotificationsDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using NotificationsDAO's update method 3) Audit the record
+	 * in to AuditHeader and AdtBMTNotificationss by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -119,15 +116,14 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		String tableType = "";
-		Notifications notifications = (Notifications) auditHeader.getAuditDetail()
-				.getModelData();
+		Notifications notifications = (Notifications) auditHeader.getAuditDetail().getModelData();
 
 		if (notifications.isWorkflow()) {
 			tableType = "_Temp";
@@ -148,12 +144,10 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTNotificationss by using NotificationsDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtBMTNotificationss by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTNotificationss by using NotificationsDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtBMTNotificationss by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -164,14 +158,13 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "delete");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Notifications notifications = (Notifications) auditHeader.getAuditDetail()
-				.getModelData();
+		Notifications notifications = (Notifications) auditHeader.getAuditDetail().getModelData();
 		getNotificationsDAO().delete(notifications, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -180,8 +173,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	}
 
 	/**
-	 * getNotificationsById fetch the details by using NotificationsDAO's getNotificationsById
-	 * method.
+	 * getNotificationsById fetch the details by using NotificationsDAO's getNotificationsById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -195,9 +187,8 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	}
 
 	/**
-	 * getApprovedNotificationsById fetch the details by using NotificationsDAO's
-	 * getNotificationsById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTNotificationss.
+	 * getApprovedNotificationsById fetch the details by using NotificationsDAO's getNotificationsById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BMTNotificationss.
 	 * 
 	 * @param id
 	 *            (String)
@@ -208,9 +199,8 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	}
 
 	/**
-	 * getApprovedNotificationsById fetch the details by using NotificationsDAO's
-	 * getNotificationsById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTNotificationss.
+	 * getApprovedNotificationsById fetch the details by using NotificationsDAO's getNotificationsById method . with
+	 * parameter id and type as blank. it fetches the approved records from the BMTNotificationss.
 	 * 
 	 * @param id
 	 *            (String)
@@ -219,29 +209,25 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	public List<Notifications> getApprovedNotificationsByModule(String ruleModule) {
 		return getNotificationsDAO().getNotificationsByModule(ruleModule, "");
 	}
-	
+
 	/**
 	 * Method for Fetching List of Notification Details Using Rule ID List
 	 */
 	@Override
-    public List<Notifications> getApprovedNotificationsByRuleIdList(List<Long> notificationIdList) {
-	    return getNotificationsDAO().getNotificationsByRuleIdList(notificationIdList, "");
-    }
+	public List<Notifications> getApprovedNotificationsByRuleIdList(List<Long> notificationIdList) {
+		return getNotificationsDAO().getNotificationsByRuleIdList(notificationIdList, "");
+	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getNotificationsDAO().delete with parameters notifications,"" b) NEW Add new
-	 * record in to main table by using getNotificationsDAO().save with parameters
-	 * notifications,"" c) EDIT Update record in the main table by using
-	 * getNotificationsDAO().update with parameters notifications,"" 3) Delete the record
-	 * from the workFlow table by using getNotificationsDAO().delete with parameters
-	 * notifications,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTNotificationss by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtBMTNotificationss by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getNotificationsDAO().delete with
+	 * parameters notifications,"" b) NEW Add new record in to main table by using getNotificationsDAO().save with
+	 * parameters notifications,"" c) EDIT Update record in the main table by using getNotificationsDAO().update with
+	 * parameters notifications,"" 3) Delete the record from the workFlow table by using getNotificationsDAO().delete
+	 * with parameters notifications,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTNotificationss by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTNotificationss
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -252,15 +238,14 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		Notifications notifications = new Notifications();
-		BeanUtils.copyProperties((Notifications) auditHeader.getAuditDetail()
-				.getModelData(), notifications);
+		BeanUtils.copyProperties((Notifications) auditHeader.getAuditDetail().getModelData(), notifications);
 
 		if (notifications.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -272,8 +257,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 			notifications.setNextTaskId("");
 			notifications.setWorkflowId(0);
 
-			if (notifications.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (notifications.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				notifications.setRecordType("");
 				getNotificationsDAO().save(notifications, "");
@@ -298,13 +282,10 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getNotificationsDAO().delete with parameters
-	 * notifications,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtBMTNotificationss by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getNotificationsDAO().delete with parameters notifications,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtBMTNotificationss by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -314,14 +295,13 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
-		
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Notifications notifications = (Notifications) auditHeader.getAuditDetail()
-				.getModelData();
+		Notifications notifications = (Notifications) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getNotificationsDAO().delete(notifications, "_Temp");
 
@@ -331,84 +311,75 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getNotificationsDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getNotificationsDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		
+
 		Notifications notifications = (Notifications) auditDetail.getModelData();
 
 		Notifications tempNotifications = null;
 		if (notifications.isWorkflow()) {
-			tempNotifications = getNotificationsDAO().getNotifications(
-					notifications.getRuleCode(),
+			tempNotifications = getNotificationsDAO().getNotifications(notifications.getRuleCode(),
 					notifications.getRuleModule(), "_Temp");
 		}
 
-		Notifications befNotifications = getNotificationsDAO().getNotifications(
-				notifications.getRuleCode(), notifications.getRuleModule(),
-				" ");
+		Notifications befNotifications = getNotificationsDAO().getNotifications(notifications.getRuleCode(),
+				notifications.getRuleModule(), " ");
 		Notifications oldNotifications = notifications.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
-		
+
 		valueParm[0] = notifications.getRuleCode();
 		valueParm[1] = notifications.getRuleModule();
 
-		errParm[0] = PennantJavaUtil.getLabel("label_Notifications_RuleCode") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_Notifications_RuleModule") + ":"+valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_Notifications_RuleCode") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_Notifications_RuleModule") + ":" + valueParm[1];
 
 		if (notifications.isNew()) { // for New record or new record into work flow
 
 			if (!notifications.isWorkflow()) {// With out Work flow only new records
 				if (befNotifications != null) { // Record Already Exists in the table
-											// then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+					// then error
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (notifications.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
+				if (notifications.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
 					if (befNotifications != null || tempNotifications != null) { // if records already exists in
-												// the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001",errParm,null));
+						// the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befNotifications == null || tempNotifications != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -416,39 +387,37 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!notifications.isWorkflow()) { // With out Work flow for update and
-											// delete
+													// delete
 				if (befNotifications == null) { // if records not exists in the main
-											// table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41002",errParm,null));
+					// table
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldNotifications != null
-							&& !oldNotifications.getLastMntOn().equals(
-									befNotifications.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
+							&& !oldNotifications.getLastMntOn().equals(befNotifications.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41003",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41004",errParm,null));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
 					}
 				}
 			} else {
 				if (tempNotifications == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-				
-				if ( tempNotifications != null &&  oldNotifications != null
-						&& !oldNotifications.getLastMntOn().equals(
-								tempNotifications.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41005",errParm,null));
+
+				if (tempNotifications != null && oldNotifications != null
+						&& !oldNotifications.getLastMntOn().equals(tempNotifications.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !notifications.isWorkflow()) {
+
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !notifications.isWorkflow()) {
 			auditDetail.setBefImage(befNotifications);
 		}
 
@@ -477,6 +446,5 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 	public int triggerMail(String query) {
 		return getNotificationsDAO().triggerMail(query);
 	}
-	
 
 }

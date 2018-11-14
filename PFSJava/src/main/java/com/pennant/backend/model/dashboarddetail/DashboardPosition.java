@@ -52,21 +52,21 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class DashboardPosition extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	private String dashboardRef ;
+	private String dashboardRef;
 	private long UsrId;
 	private int dashboardCol;
 	private int dashboardRow;
 	private int dashboardColIndex;
 	private String DashboardDesc;
-	 
-	private boolean newRecord=false;
- 	private DashboardPosition befImage;
+
+	private boolean newRecord = false;
+	private DashboardPosition befImage;
 	private LoggedInUser userDetails;
 
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public DashboardPosition() {
 		super();
 	}
@@ -77,15 +77,15 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	//Getter and Setter methods
-	
+
 	public void setId(String dashboardRef) {
 		this.dashboardRef = dashboardRef;
 	}
-	
+
 	public String getId() {
-		return this.dashboardRef ;
-	}	
-	
+		return this.dashboardRef;
+	}
+
 	/**
 	 * @return the dashboardId
 	 */
@@ -94,7 +94,8 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardId the dashboardId to set
+	 * @param dashboardId
+	 *            the dashboardId to set
 	 */
 	public void setDashboardRef(String dashboardRef) {
 		this.dashboardRef = dashboardRef;
@@ -108,7 +109,8 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param userId
+	 *            the userId to set
 	 */
 	public void setUsrId(long usrId) {
 		UsrId = usrId;
@@ -122,7 +124,8 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardCol the dashboardCol to set
+	 * @param dashboardCol
+	 *            the dashboardCol to set
 	 */
 	public void setDashboardCol(int dashboardCol) {
 		this.dashboardCol = dashboardCol;
@@ -136,15 +139,16 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	public int getDashboardColIndex() {
-	    return dashboardColIndex;
-    }
+		return dashboardColIndex;
+	}
 
 	public void setDashboardColIndex(int dashboardColIndex) {
-	    this.dashboardColIndex = dashboardColIndex;
-    }
+		this.dashboardColIndex = dashboardColIndex;
+	}
 
 	/**
-	 * @param dashboardRow the dashboardRow to set
+	 * @param dashboardRow
+	 *            the dashboardRow to set
 	 */
 	public void setDashboardRow(int dashboardRow) {
 		this.dashboardRow = dashboardRow;
@@ -158,11 +162,12 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardDesc the dashboardDesc to set
+	 * @param dashboardDesc
+	 *            the dashboardDesc to set
 	 */
 	public void setDashboardDesc(String dashboardDesc) {
 		DashboardDesc = dashboardDesc;
-	}	
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -172,12 +177,12 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 		this.newRecord = newRecord;
 	}
 
-	public DashboardPosition getBefImage(){
+	public DashboardPosition getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(DashboardPosition beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(DashboardPosition beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

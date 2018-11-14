@@ -42,21 +42,33 @@
 */
 
 package com.pennant.backend.dao.others;
+
 import com.pennant.backend.model.others.JVPosting;
 
 public interface JVPostingDAO {
 
 	JVPosting getJVPosting();
+
 	JVPosting getNewJVPosting();
+
 	JVPosting getJVPostingById(long id, String type);
+
 	JVPosting getJVPostingByFileName(String fileName);
+
 	void update(JVPosting jVPosting, String type);
+
 	void updateHeaderDetails(JVPosting jVPosting, String type);
+
 	void updateValidationStatus(JVPosting jVPosting, String type);
+
 	void updateBatchPostingStatus(JVPosting jVPosting, String type);
+
 	void delete(JVPosting jVPosting, String type);
+
 	long save(JVPosting jVPosting, String type);
+
 	long getMaxSeqNum(JVPosting jvPosting);
+
 	long getBatchRerbyExpRef(String expReference);
-	
+
 }

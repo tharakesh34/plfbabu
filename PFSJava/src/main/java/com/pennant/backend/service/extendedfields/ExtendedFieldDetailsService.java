@@ -143,11 +143,11 @@ public class ExtendedFieldDetailsService {
 
 		return finalMap;
 	}
-	
+
 	public Map<String, ExtendedFieldData> getCollateralFields(String tableName, String reference) {
 		logger.debug(Literal.ENTERING);
 		Map<String, ExtendedFieldData> resultList = new HashMap<>();
-		
+
 		String tempTableName = tableName;
 		if (tempTableName.startsWith("verification")) {
 			tempTableName = tempTableName.replace("verification", "collateral");
@@ -165,11 +165,11 @@ public class ExtendedFieldDetailsService {
 			return resultList;
 		}
 
-		
 		return getResultMap(fieldDetailsList, getCollateralMap(tableName, reference));
 	}
 
-	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList, Map<String, Object> map) {
+	private Map<String, ExtendedFieldData> getResultMap(List<ExtendedFieldDetail> fieldDetailsList,
+			Map<String, Object> map) {
 		Map<String, ExtendedFieldData> resultMap = new HashMap<>();
 		ExtendedFieldData fieldData = null;
 
@@ -260,13 +260,12 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.ENTERING);
 		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		
-		
-		AuditDetail auditDetail  = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq);
+
+		AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq);
 		if (auditDetail == null) {
 			return auditDetails;
 		}
-		
+
 		auditDetails.add(auditDetail);
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
@@ -620,12 +619,12 @@ public class ExtendedFieldDetailsService {
 
 				if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 						&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-					if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-							tableName + type)) {
+					if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
+							extendedFieldRender.getSeqNo(), tableName + type)) {
 						extendedFieldRender.setNewRecord(true);
 					}
 				}
-				
+
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -746,7 +745,7 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
-			
+
 			String linkId = StringUtils.trimToEmpty(reference);
 			linkId = linkId.replaceAll("S", "");
 			String collRef = samplingDAO.getCollateralRef(sampling, linkId);
@@ -825,7 +824,7 @@ public class ExtendedFieldDetailsService {
 			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
-					if(!StringUtils.startsWith(reference, "S")) {
+					if (!StringUtils.startsWith(reference, "S")) {
 						mapValues.put("Reference", "S".concat(reference));
 					} else {
 						mapValues.put("Reference", reference);
@@ -853,11 +852,10 @@ public class ExtendedFieldDetailsService {
 				if (approveRec) {
 
 					// Handle on approve after resubmit(for got to add collaterals on initial approve)
-					if (extendedFieldRenderDAO.isExists(reference,
-							extendedFieldRender.getSeqNo(), tableName + type.getSuffix())) {
-						extendedFieldRenderDAO.update(reference,
-								extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), type.getSuffix(),
-								tableName.toString());
+					if (extendedFieldRenderDAO.isExists(reference, extendedFieldRender.getSeqNo(),
+							tableName + type.getSuffix())) {
+						extendedFieldRenderDAO.update(reference, extendedFieldRender.getSeqNo(),
+								extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
 					} else {
 						extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type.getSuffix(),
 								tableName.toString());
@@ -869,8 +867,8 @@ public class ExtendedFieldDetailsService {
 			}
 
 			if (deleteRecord) {
-				extendedFieldRenderDAO.delete(reference, extendedFieldRender.getSeqNo(),
-						type.getSuffix(), tableName.toString());
+				extendedFieldRenderDAO.delete(reference, extendedFieldRender.getSeqNo(), type.getSuffix(),
+						tableName.toString());
 			}
 			if (approveRec) {
 				extendedFieldRender.setRecordType(rcdType);
@@ -882,7 +880,7 @@ public class ExtendedFieldDetailsService {
 			extendedFieldRender.setBefImage(extendedFieldRender);
 			deatils.get(i).setExtended(true);
 			deatils.get(i).setModelData(extendedFieldRender);
-			
+
 			System.out.println("");
 		}
 		logger.debug(Literal.LEAVING);
@@ -1039,17 +1037,18 @@ public class ExtendedFieldDetailsService {
 					ExtendedFieldRender render = (ExtendedFieldRender) deatils.get(i).getModelData();
 					String linkId = StringUtils.trimToEmpty(render.getReference());
 					linkId = linkId.replaceAll("S", "");
-					
+
 					String collRef = samplingDAO.getCollateralRef(sampling, linkId);
 					ExtendedFieldHeader extHeader = extHeaderMap.get(collRef);
-					
+
 					StringBuilder table = new StringBuilder();
 					table.append(moduleCode);
 					table.append("_");
 					table.append(extHeader.getSubModuleName());
 					table.append("_tv");
 
-					AuditDetail auditDetail = validate(deatils.get(i), method, usrLanguage, table.toString().toLowerCase());
+					AuditDetail auditDetail = validate(deatils.get(i), method, usrLanguage,
+							table.toString().toLowerCase());
 					details.add(auditDetail);
 				}
 			}
@@ -1065,15 +1064,15 @@ public class ExtendedFieldDetailsService {
 
 		ExtendedFieldRender render = (ExtendedFieldRender) auditDetail.getModelData();
 		String reference = render.getReference();
- 		ExtendedFieldRender tempRender = null;
+		ExtendedFieldRender tempRender = null;
 
 		if (render.isWorkflow()) {
-			tempRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(),
-					tableName, "_Temp");
+			tempRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(), tableName,
+					"_Temp");
 		}
 
-		ExtendedFieldRender befExtRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference,
-				render.getSeqNo(), tableName, "");
+		ExtendedFieldRender befExtRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(),
+				tableName, "");
 		ExtendedFieldRender oldExRender = render.getBefImage();
 
 		if (tempRender == null && befExtRender == null) {
@@ -1954,11 +1953,11 @@ public class ExtendedFieldDetailsService {
 				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
-	
-	public List<ExtendedField> getExtndedFieldDetails(String moduleName, String subModuleName, String event,String reference) {
+	public List<ExtendedField> getExtndedFieldDetails(String moduleName, String subModuleName, String event,
+			String reference) {
 
-		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				moduleName, subModuleName,event, "");
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(moduleName,
+				subModuleName, event, "");
 		List<ExtendedField> extendedDetails = new ArrayList<ExtendedField>();
 		if (extendedFieldHeader != null) {
 			StringBuilder tableName = new StringBuilder();
@@ -1971,8 +1970,8 @@ public class ExtendedFieldDetailsService {
 			}
 			tableName.append("_ED");
 
-			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO
-					.getExtendedFieldMap(reference, tableName.toString(), "_View ");
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(reference,
+					tableName.toString(), "_View ");
 
 			if (renderMapList != null) {
 
@@ -2007,6 +2006,7 @@ public class ExtendedFieldDetailsService {
 		}
 		return extendedDetails;
 	}
+
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set

@@ -49,7 +49,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-
 public class RateCalculation {
 	private static final Logger logger = Logger.getLogger(RateCalculation.class);
 
@@ -71,7 +70,6 @@ public class RateCalculation {
 		BigDecimal big100 = new BigDecimal(100);
 		BigDecimal tolarance = new BigDecimal(1);
 
-		
 		BigDecimal payment = BigDecimal.ZERO;
 		Date dateStart = repayDates.get(0);
 		int days = 0;
@@ -93,13 +91,13 @@ public class RateCalculation {
 				payment = payments.get(j);
 				days = DateUtility.getDaysBetween(dateStart, repayDates.get(j));
 				divisor = BigDecimal.valueOf(Math.pow((xirr.divide(big100).doubleValue() + 1.0), (days / 365.0)));
-				payOfValue = payment.divide(divisor,9,RoundingMode.HALF_DOWN);
+				payOfValue = payment.divide(divisor, 9, RoundingMode.HALF_DOWN);
 				netOfValue = netOfValue.add(payOfValue);
 			}
 
 			netOfValue = netOfValue.setScale(0, RoundingMode.HALF_DOWN);
-			
-			if (netOfValue.abs().compareTo(tolarance)<=0) {
+
+			if (netOfValue.abs().compareTo(tolarance) <= 0) {
 				logger.debug("Leaving");
 				return xirr;
 			}

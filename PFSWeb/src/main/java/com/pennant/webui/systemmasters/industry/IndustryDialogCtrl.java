@@ -71,32 +71,30 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Industry/industryDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Industry/industryDialog.zul file.
  */
 public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	private static final long serialVersionUID = -2259811281710327276L;
 	private static final Logger logger = Logger.getLogger(IndustryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * component with the same 'id' in the ZUL-file are getting auto wired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by component with the same 'id' in the ZUL-file are getting auto wired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_IndustryDialog; 	
+	protected Window window_IndustryDialog;
 
-	protected Textbox 		industryCode; 			
-	protected ExtendedCombobox 		subSectorCode; 			
-	protected Textbox 		industryDesc; 			 			
-	protected Checkbox 		industryIsActive; 		
+	protected Textbox industryCode;
+	protected ExtendedCombobox subSectorCode;
+	protected Textbox industryDesc;
+	protected Checkbox industryIsActive;
 
 	// not autoWired Var's
-	private Industry industry; 				// overHanded per parameter
-	private transient IndustryListCtrl industryListCtrl; 	// overHanded per parameter
+	private Industry industry; // overHanded per parameter
+	private transient IndustryListCtrl industryListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient IndustryService industryService;
 
@@ -115,9 +113,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Industry object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Industry object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -142,14 +139,11 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 				setIndustry(null);
 			}
 
-			doLoadWorkFlow(this.industry.isWorkflow(),
-					this.industry.getWorkflowId(),
-					this.industry.getNextTaskId());
+			doLoadWorkFlow(this.industry.isWorkflow(), this.industry.getWorkflowId(), this.industry.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"IndustryDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "IndustryDialog");
 			}
 
 			// READ OVERHANDED parameters !
@@ -158,9 +152,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 			// or
 			// delete industry here.
 			if (arguments.containsKey("industryListCtrl")) {
-				setIndustryListCtrl((IndustryListCtrl) arguments
-						.get("industryListCtrl"));
-			}else{
+				setIndustryListCtrl((IndustryListCtrl) arguments.get("industryListCtrl"));
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -184,12 +177,12 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		this.industryCode.setMaxlength(8);
 		this.subSectorCode.setMaxlength(8);
 		this.industryDesc.setMaxlength(50);
-		
+
 		this.subSectorCode.setMandatoryStyle(true);
 		this.subSectorCode.setModuleName("SubSector");
 		this.subSectorCode.setValueColumn("SubSectorCode");
 		this.subSectorCode.setDescColumn("SubSectorDesc");
-		this.subSectorCode.setValidateColumns(new String[]{"SubSectorCode"});
+		this.subSectorCode.setValidateColumns(new String[] { "SubSectorCode" });
 
 		logger.debug("Leaving");
 	}
@@ -199,8 +192,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -316,8 +308,9 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 			this.subSectorCode.setDescription(aIndustry.getLovDescSubSectorCodeName());
 		}
 		this.recordStatus.setValue(aIndustry.getRecordStatus());
-		
-		if(aIndustry.isNew() || (aIndustry.getRecordType() != null ? aIndustry.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aIndustry.isNew() || (aIndustry.getRecordType() != null ? aIndustry.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.industryIsActive.setChecked(true);
 			this.industryIsActive.setDisabled(true);
 		}
@@ -331,12 +324,11 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 */
 	public void doWriteComponentsToBean(Industry aIndustry) {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aIndustry.setIndustryCode(this.industryCode.getValue()
-					.toUpperCase());
+			aIndustry.setIndustryCode(this.industryCode.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -375,8 +367,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aIndustry
 	 * @throws Exception
@@ -428,18 +419,21 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 
 		setValidationOn(true);
 
-		if (!this.industryCode.isReadonly()){
-			this.industryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_IndustryDialog_IndustryCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.industryCode.isReadonly()) {
+			this.industryCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndustryDialog_IndustryCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
 		if (!this.subSectorCode.isReadonly()) {
-			this.subSectorCode.setConstraint(new PTStringValidator(Labels.getLabel(
-					"label_IndustryDialog_SubSectorCode.value"), null, false,true));
+			this.subSectorCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_IndustryDialog_SubSectorCode.value"), null, false, true));
 		}
 
-		if (!this.industryDesc.isReadonly()){
-			this.industryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_IndustryDialog_IndustryDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.industryDesc.isReadonly()) {
+			this.industryDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IndustryDialog_IndustryDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");
@@ -457,7 +451,6 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -485,10 +478,9 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_IndustryDialog_IndustryCode.value")+" : "+aIndustry.getIndustryCode();
-				//+","+Labels.getLabel("label_IndustryDialog_SubSectorCode.value")+" : "+aIndustry.getSubSectorCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_IndustryDialog_IndustryCode.value") + " : " + aIndustry.getIndustryCode();
+		//+","+Labels.getLabel("label_IndustryDialog_SubSectorCode.value")+" : "+aIndustry.getSubSectorCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aIndustry.getRecordType())) {
 				aIndustry.setVersion(aIndustry.getVersion() + 1);
@@ -726,7 +718,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aIndustry,	PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aIndustry, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -789,8 +781,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_IndustryDialog, auditHeader);
 						return processCompleted;
 					}
@@ -834,10 +826,9 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Industry aIndustry, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aIndustry.getBefImage(), aIndustry);
-		return new AuditHeader(getReference(), null, null,
-				null, auditDetail, aIndustry.getUserDetails(), getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aIndustry.getBefImage(), aIndustry);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aIndustry.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
@@ -878,17 +869,15 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	private void refreshList() {
 		getIndustryListCtrl().search();
 	}
-	
 
 	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getIndustry().getIndustryCode()+PennantConstants.KEY_SEPERATOR +
-					getIndustry().getSubSectorCode();
+		return getIndustry().getIndustryCode() + PennantConstants.KEY_SEPERATOR + getIndustry().getSubSectorCode();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -904,6 +893,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	public Industry getIndustry() {
 		return this.industry;
 	}
+
 	public void setIndustry(Industry industry) {
 		this.industry = industry;
 	}
@@ -911,6 +901,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	public void setIndustryService(IndustryService industryService) {
 		this.industryService = industryService;
 	}
+
 	public IndustryService getIndustryService() {
 		return this.industryService;
 	}
@@ -918,6 +909,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	public void setIndustryListCtrl(IndustryListCtrl industryListCtrl) {
 		this.industryListCtrl = industryListCtrl;
 	}
+
 	public IndustryListCtrl getIndustryListCtrl() {
 		return this.industryListCtrl;
 	}

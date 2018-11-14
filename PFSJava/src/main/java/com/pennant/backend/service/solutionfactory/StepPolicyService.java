@@ -66,10 +66,10 @@ public interface StepPolicyService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 	StepPolicyDetail getStepPolicyDetail();
-	
+
 	StepPolicyDetail getNewStepPolicyDetail();
-	
+
 	List<StepPolicyDetail> getStepPolicyDetailsById(String id);
 }

@@ -88,8 +88,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/commitment/CommitmentRate/commitmentRateDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/commitment/CommitmentRate/commitmentRateDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
@@ -101,36 +100,35 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 
-	protected Window 						window_CommitmentRateDialog; 
+	protected Window window_CommitmentRateDialog;
 
-	protected Row 							row_CmtReference; 
-	protected Label 						label_CmtReference;
-	protected Hbox 							hlayout_CmtReference;
-	protected Space 						space_CmtReference; 
-	protected Textbox 						cmtReference; 
-	protected Label 						label_CmtRvwFrq;
-	protected FrequencyBox  				cmtRvwFrq; 
-	protected Label 						label_CmtBaseRate;
-	protected RateBox 						cmtBaseRate;
-	protected Label 						label_CmtActualRate;
-	protected Hbox 							hlayout_CmtActualRate;
-	protected Space 						space_CmtActualRate; 
-	protected Decimalbox 					cmtActualRate; 
-	protected Label 						label_CmtCalculatedRate;
-	protected Hbox 							hlayout_CmtCalculatedRate;
-	protected Space 						space_CmtCalculatedRate; 
-	protected Decimalbox 					cmtCalculatedRate; 
-	protected Label 						recordType;	 
-	protected Groupbox 						gb_statusDetails;
+	protected Row row_CmtReference;
+	protected Label label_CmtReference;
+	protected Hbox hlayout_CmtReference;
+	protected Space space_CmtReference;
+	protected Textbox cmtReference;
+	protected Label label_CmtRvwFrq;
+	protected FrequencyBox cmtRvwFrq;
+	protected Label label_CmtBaseRate;
+	protected RateBox cmtBaseRate;
+	protected Label label_CmtActualRate;
+	protected Hbox hlayout_CmtActualRate;
+	protected Space space_CmtActualRate;
+	protected Decimalbox cmtActualRate;
+	protected Label label_CmtCalculatedRate;
+	protected Hbox hlayout_CmtCalculatedRate;
+	protected Space space_CmtCalculatedRate;
+	protected Decimalbox cmtCalculatedRate;
+	protected Label recordType;
+	protected Groupbox gb_statusDetails;
 
-	private CommitmentRate 					commitmentRate; 
- 
-	private boolean 						newRecord 	 	 		= false;
-	private boolean 						newCommitment 	 		= false;
-	private String 							userRole 		 		= "";
-	private List<CommitmentRate> 			commitmentRateDetailList;
-	private CommitmentDialogCtrl 			commitmentDialogCtrl;
+	private CommitmentRate commitmentRate;
 
+	private boolean newRecord = false;
+	private boolean newCommitment = false;
+	private String userRole = "";
+	private List<CommitmentRate> commitmentRateDetailList;
+	private CommitmentDialogCtrl commitmentDialogCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -193,12 +191,13 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 				}
 			}
 
-			doLoadWorkFlow(this.commitmentRate.isWorkflow(), this.commitmentRate.getWorkflowId(), this.commitmentRate.getNextTaskId());
+			doLoadWorkFlow(this.commitmentRate.isWorkflow(), this.commitmentRate.getWorkflowId(),
+					this.commitmentRate.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "CommitmentRateDialog");
-			}  
+			}
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -219,9 +218,9 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -231,9 +230,9 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -243,9 +242,9 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -254,13 +253,13 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 
 		doWriteBeanToComponents(this.commitmentRate.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -276,7 +275,6 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
@@ -300,7 +298,6 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		doShowNotes(this.commitmentRate);
 	}
 
-
 	/**
 	 * when clicks on button "Commitment BaseRate"
 	 * 
@@ -310,7 +307,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	public void onFulfill$cmtBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		ForwardEvent forwardEvent = (ForwardEvent)event;
+		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -339,8 +336,10 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			}
 
 			if (StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue())) {
-				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(), this.cmtBaseRate.getSpecialComp(), this.cmtBaseRate.getBaseComp(), 
-						this.cmtBaseRate.getMarginValue(), this.cmtCalculatedRate, getCommitmentRate().getCmtPftRateMin(), getCommitmentRate().getCmtPftRateMax());
+				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(),
+						this.cmtBaseRate.getSpecialComp(), this.cmtBaseRate.getBaseComp(),
+						this.cmtBaseRate.getMarginValue(), this.cmtCalculatedRate,
+						getCommitmentRate().getCmtPftRateMin(), getCommitmentRate().getCmtPftRateMax());
 			} else {
 				this.cmtCalculatedRate.setValue(this.cmtActualRate.getValue());
 			}
@@ -362,13 +361,15 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			}
 
 			if (StringUtils.isNotBlank(this.cmtBaseRate.getSpecialValue())) {
-				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(), this.cmtBaseRate.getSpecialComp(), this.cmtBaseRate.getBaseComp(),
-						this.cmtBaseRate.getMarginValue(), this.cmtCalculatedRate, getCommitmentRate().getCmtPftRateMin(), getCommitmentRate().getCmtPftRateMax());
+				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(),
+						this.cmtBaseRate.getSpecialComp(), this.cmtBaseRate.getBaseComp(),
+						this.cmtBaseRate.getMarginValue(), this.cmtCalculatedRate,
+						getCommitmentRate().getCmtPftRateMin(), getCommitmentRate().getCmtPftRateMax());
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
-			if(this.cmtBaseRate.getMarginValue() != null) {
-				this.cmtCalculatedRate.setValue(PennantApplicationUtil.formatRate((
-						this.cmtCalculatedRate.getValue().add(this.cmtBaseRate.getMarginValue())).doubleValue(),2));
+			if (this.cmtBaseRate.getMarginValue() != null) {
+				this.cmtCalculatedRate.setValue(PennantApplicationUtil.formatRate(
+						(this.cmtCalculatedRate.getValue().add(this.cmtBaseRate.getMarginValue())).doubleValue(), 2));
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -378,12 +379,14 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * Method to calculate rates based on given base and special rate codes
 	 * 
 	 * @throws InterruptedException
-	 * **/
-	private void calculateRate(String rate, String currency, ExtendedCombobox splRate,ExtendedCombobox lovFieldTextBox, 
-			BigDecimal margin, Decimalbox effectiveRate, BigDecimal minAllowedRate, BigDecimal maxAllowedRate) throws InterruptedException {
+	 **/
+	private void calculateRate(String rate, String currency, ExtendedCombobox splRate, ExtendedCombobox lovFieldTextBox,
+			BigDecimal margin, Decimalbox effectiveRate, BigDecimal minAllowedRate, BigDecimal maxAllowedRate)
+			throws InterruptedException {
 		logger.debug("Entering");
 
-		RateDetail rateDetail = RateUtil.rates(rate, currency, splRate.getValue(), margin, minAllowedRate, maxAllowedRate);
+		RateDetail rateDetail = RateUtil.rates(rate, currency, splRate.getValue(), margin, minAllowedRate,
+				maxAllowedRate);
 
 		if (rateDetail.getErrorDetails() == null) {
 			effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
@@ -399,13 +402,14 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 
 	/**
 	 * Method for Changing cmtActualRate
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
 	public void onChange$cmtActualRate(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
-		if(this.cmtActualRate.getValue() == null){
+		if (this.cmtActualRate.getValue() == null) {
 			this.cmtActualRate.setValue(BigDecimal.ZERO);
 		}
 
@@ -426,8 +430,8 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		this.cmtReference.setMaxlength(20);
 		this.cmtRvwFrq.setMandatoryStyle(true);
 
-		this.cmtBaseRate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
-		this.cmtBaseRate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
+		this.cmtBaseRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
+		this.cmtBaseRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 
 		this.cmtActualRate.setMaxlength(13);
 		this.cmtActualRate.setFormat(PennantConstants.rateFormate9);
@@ -452,14 +456,13 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCommitmentRate
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(CommitmentRate aCommitmentRate) throws InterruptedException {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		if (isNewRecord()) {
 			this.btnCtrl.setInitNew();
@@ -521,7 +524,8 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		this.cmtCalculatedRate.setReadonly(true);
 
 		this.cmtBaseRate.setBaseReadonly(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtBaseRate"));
-		readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtMargin"), this.cmtBaseRate.getMarginComp());
+		readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtMargin"),
+				this.cmtBaseRate.getMarginComp());
 		readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtActualRate"), this.cmtActualRate);
 
 		//readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtReference"), this.cmtReference);
@@ -589,11 +593,10 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		if (!enqiryModule) {
 			getUserWorkspace().allocateAuthorities("CommitmentRateDialog", userRole);
@@ -605,7 +608,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			this.btnCancel.setVisible(false);
 		}
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -619,14 +622,15 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 *            CommitmentRate
 	 */
 	public void doWriteBeanToComponents(CommitmentRate aCommitmentRate) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		this.cmtReference.setValue(aCommitmentRate.getCmtReference());
 		this.cmtRvwFrq.setValue(aCommitmentRate.getCmtRvwFrq());
 
 		// Base Rate
 		this.cmtBaseRate.setBaseValue(aCommitmentRate.getCmtBaseRate());
-		this.cmtBaseRate.setBaseDescription(aCommitmentRate.getCmtBaseRate() == null ? "" : aCommitmentRate.getCmtBaseRateName());
+		this.cmtBaseRate.setBaseDescription(
+				aCommitmentRate.getCmtBaseRate() == null ? "" : aCommitmentRate.getCmtBaseRateName());
 
 		//Special Rate
 		//this.cmtBaseRate.setSpecialValue(aCommitmentRate.getCmtSpecialRate());
@@ -655,14 +659,14 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @param aCommitmentRate
 	 */
 	public void doWriteComponentsToBean(CommitmentRate aCommitmentRate) {
-		logger.debug("Entering") ;
+		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		//Commitment Reference
 		try {
 			aCommitmentRate.setCmtReference(this.cmtReference.getValue());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Review Frequency
@@ -700,26 +704,31 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
-		} 
+		}
 
 		//Fields (Base Rate, Margin) and Actual Rate are mutually Exclusive Validation
 		try {
 			if (this.cmtActualRate.getValue() != null && !this.cmtActualRate.isReadonly()) {
-				if ((this.cmtActualRate.getValue().intValue() > 0) && (StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue()))) {
+				if ((this.cmtActualRate.getValue().intValue() > 0)
+						&& (StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue()))) {
 
-					throw new WrongValueException(this.cmtActualRate, Labels.getLabel("EITHER_OR",
-							new String[] {Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), Labels.getLabel("label_CommitmentRateDialog_CmtActualRate.value") }));
+					throw new WrongValueException(this.cmtActualRate,
+							Labels.getLabel("EITHER_OR",
+									new String[] { Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"),
+											Labels.getLabel("label_CommitmentRateDialog_CmtActualRate.value") }));
 				}
-			} 
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		//Calculated Rate
 		try {
-			if(!this.cmtBaseRate.isBaseReadonly() && StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue())) {
-				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(), this.cmtBaseRate.getSpecialComp(),
-						this.cmtBaseRate.getBaseComp(), this.cmtBaseRate.getMarginValue(), this.cmtCalculatedRate, getCommitmentRate().getCmtPftRateMin(), getCommitmentRate().getCmtPftRateMax());
+			if (!this.cmtBaseRate.isBaseReadonly() && StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue())) {
+				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(),
+						this.cmtBaseRate.getSpecialComp(), this.cmtBaseRate.getBaseComp(),
+						this.cmtBaseRate.getMarginValue(), this.cmtCalculatedRate,
+						getCommitmentRate().getCmtPftRateMin(), getCommitmentRate().getCmtPftRateMax());
 			}
 
 		} catch (WrongValueException we) {
@@ -741,8 +750,9 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 
 		//Actual Rate
 		try {
-			aCommitmentRate.setCmtActualRate(this.cmtActualRate.getValue() == null ? BigDecimal.ZERO : this.cmtActualRate.getValue());
-		}catch (WrongValueException we ) {
+			aCommitmentRate.setCmtActualRate(
+					this.cmtActualRate.getValue() == null ? BigDecimal.ZERO : this.cmtActualRate.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -753,14 +763,14 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			} else {
 				aCommitmentRate.setCmtCalculatedRate(this.cmtCalculatedRate.getValue());
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -777,22 +787,27 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		logger.debug("Entering");
 
 		//Base Rate //Margin
-		if(!this.cmtBaseRate.isBaseReadonly()) {
-			this.cmtBaseRate.setBaseConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), null, false, true));
+		if (!this.cmtBaseRate.isBaseReadonly()) {
+			this.cmtBaseRate.setBaseConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), null, false, true));
 		}
 		if (!this.cmtBaseRate.isMarginReadonly()) {
-			this.cmtBaseRate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), 9, false,true,-9999,9999));
+			this.cmtBaseRate.setMarginConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), 9, false, true, -9999, 9999));
 		}
 
 		//Actual Rate
-		if (!this.cmtActualRate.isReadonly()){
-			this.cmtActualRate.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommitmentRateDialog_CmtActualRate.value"), 9, false,false,0,9999));
+		if (!this.cmtActualRate.isReadonly()) {
+			this.cmtActualRate.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_CommitmentRateDialog_CmtActualRate.value"), 9, false, false, 0, 9999));
 		}
 
 		//Calculated Rate
-		/*if (!this.cmtCalculatedRate.isReadonly()){
-			this.cmtCalculatedRate.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CommitmentRateDialog_CmtCalculatedRate.value"), 9, false,false,0,9999));
-		}*/
+		/*
+		 * if (!this.cmtCalculatedRate.isReadonly()){ this.cmtCalculatedRate.setConstraint(new
+		 * PTDecimalValidator(Labels.getLabel("label_CommitmentRateDialog_CmtCalculatedRate.value"), 9,
+		 * false,false,0,9999)); }
+		 */
 
 		logger.debug("Leaving");
 	}
@@ -849,15 +864,15 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");	
+		logger.debug("Entering");
 
 		final CommitmentRate aCommitmentRate = new CommitmentRate();
 		BeanUtils.copyProperties(getCommitmentRate(), aCommitmentRate);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_CmtRvwFrq")+" : " + aCommitmentRate.getCmtRvwFrq();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CmtRvwFrq") + " : " + aCommitmentRate.getCmtRvwFrq();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCommitmentRate.getRecordType())) {
 				aCommitmentRate.setVersion(aCommitmentRate.getVersion() + 1);
@@ -908,22 +923,22 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		BeanUtils.copyProperties(getCommitmentRate(), aCommitmentRate);
 		boolean isNew = false;
 
-		if(!PennantConstants.RECORD_TYPE_DEL.equals(aCommitmentRate.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aCommitmentRate.getRecordType()) && isValidation()) {
 			doSetValidation();
 			// fill the CommitmentRate object with the components data
 			doWriteComponentsToBean(aCommitmentRate);
 		}
 
 		isNew = aCommitmentRate.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.trimToEmpty(aCommitmentRate.getRecordType()).equals("")){
-				aCommitmentRate.setVersion(aCommitmentRate.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.trimToEmpty(aCommitmentRate.getRecordType()).equals("")) {
+				aCommitmentRate.setVersion(aCommitmentRate.getVersion() + 1);
+				if (isNew) {
 					aCommitmentRate.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aCommitmentRate.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aCommitmentRate.setNewRecord(true);
 				}
@@ -972,12 +987,13 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 					// send the data back to customer
 					closeDialog();
 				}
-			} 
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * 
 	 * @param aCommitmentRate
@@ -1007,7 +1023,9 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 				if (aCommitmentRate.getCmtRvwFrq().equals(commitmentRate.getCmtRvwFrq())) {
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1032,7 +1050,8 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 							recordAdded = true;
 							for (int j = 0; j < getCommitmentDialogCtrl().getCommitmentRateDetailList().size(); j++) {
 								CommitmentRate cmtRate = getCommitmentDialogCtrl().getCommitmentRateDetailList().get(j);
-								if (cmtRate.getCmtReference() == aCommitmentRate.getCmtReference() && cmtRate.getCmtRvwFrq().equals(aCommitmentRate.getCmtRvwFrq())) {
+								if (cmtRate.getCmtReference() == aCommitmentRate.getCmtReference()
+										&& cmtRate.getCmtRvwFrq().equals(aCommitmentRate.getCmtRvwFrq())) {
 									commitmentRateDetailList.add(cmtRate);
 								}
 							}
@@ -1056,7 +1075,6 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		return auditHeader;
 	}
 
-
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// +++++++++++++++++ WorkFlow Components+++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1067,9 +1085,10 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(CommitmentRate aCommitmentRate, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCommitmentRate.getBefImage(), aCommitmentRate);   
-		return new AuditHeader(aCommitmentRate.getCmtRvwFrq(),null,null,null,auditDetail,aCommitmentRate.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(CommitmentRate aCommitmentRate, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCommitmentRate.getBefImage(), aCommitmentRate);
+		return new AuditHeader(aCommitmentRate.getCmtRvwFrq(), null, null, null, auditDetail,
+				aCommitmentRate.getUserDetails(), getOverideMap());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1099,6 +1118,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	public void setNewCommitment(boolean newCommitment) {
 		this.newCommitment = newCommitment;
 	}
+
 	public CommitmentDialogCtrl getCommitmentDialogCtrl() {
 		return commitmentDialogCtrl;
 	}

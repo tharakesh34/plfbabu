@@ -66,47 +66,47 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
-	private static final long				serialVersionUID	= 6004939933729664895L;
-	private static final Logger				logger				= Logger.getLogger(FinanceCancellationDialogCtrl.class);
+	private static final long serialVersionUID = 6004939933729664895L;
+	private static final Logger logger = Logger.getLogger(FinanceCancellationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window						window_FinanceCancellationDialog;												// autoWired
+	protected Window window_FinanceCancellationDialog; // autoWired
 
 	// Finance Main Details Tab---> 1. Key Details
-	protected CurrencyBox					downPaySupl;																	// autoWired
-	protected Row							row_downPaySupl;																// autoWired
-	protected Row							row_FinCancelAc;																// autoWired
-	protected AccountSelectionBox			finCancelAc;																	// autoWired
-	protected Button						btnFlagDetails;
-	protected Uppercasebox					flagDetails;
+	protected CurrencyBox downPaySupl; // autoWired
+	protected Row row_downPaySupl; // autoWired
+	protected Row row_FinCancelAc; // autoWired
+	protected AccountSelectionBox finCancelAc; // autoWired
+	protected Button btnFlagDetails;
+	protected Uppercasebox flagDetails;
 
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
-	protected transient BigDecimal			oldVar_downPaySupl;
-	protected transient String				oldVar_disbAcctId;
+	protected transient BigDecimal oldVar_downPaySupl;
+	protected transient String oldVar_disbAcctId;
 
-	private FinanceCancellationService		financeCancellationService;
-	private FinanceReferenceDetailService	financeReferenceDetailService;
-	private PostingsPreparationUtil			postingsPreparationUtil;
+	private FinanceCancellationService financeCancellationService;
+	private FinanceReferenceDetailService financeReferenceDetailService;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
-	protected Listbox						listBoxCancelFinancePosting;
+	protected Listbox listBoxCancelFinancePosting;
 
-	protected Label							label_FinanceMainDialog_FinAssetValue;
-	protected Label							label_FinanceMainDialog_FinCurrentAssetValue;
-	protected Label							label_FinanceMainDialog_FinAmount;
-	protected CurrencyBox					finCurrentAssetValue;
-	protected Row							row_FinAssetValue;
-	protected CurrencyBox					finAssetValue;
-	protected Label							netFinAmount;
-	protected Checkbox						manualSchedule;
-	protected Row							row_ManualSchedule;
-	protected Textbox						finDivisionName;
-	protected Hbox							hbox_PromotionProduct;
-	private Label                            label_FinanceMainDialog_PromotionProduct;                                       ;
-	private Label							label_FinanceMainDialog_FinType;
+	protected Label label_FinanceMainDialog_FinAssetValue;
+	protected Label label_FinanceMainDialog_FinCurrentAssetValue;
+	protected Label label_FinanceMainDialog_FinAmount;
+	protected CurrencyBox finCurrentAssetValue;
+	protected Row row_FinAssetValue;
+	protected CurrencyBox finAssetValue;
+	protected Label netFinAmount;
+	protected Checkbox manualSchedule;
+	protected Row row_ManualSchedule;
+	protected Textbox finDivisionName;
+	protected Hbox hbox_PromotionProduct;
+	private Label label_FinanceMainDialog_PromotionProduct;;
+	private Label label_FinanceMainDialog_FinType;
 
 	/**
 	 * default constructor.<br>
@@ -216,8 +216,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		this.finCancelAc.setAccountDetails(financeType.getFinType(), AccountConstants.FinanceAccount_DISB,
 				financeType.getFinCcy());
 		this.finCancelAc.setFormatter(formatter);
-		this.finCancelAc.setBranchCode(StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain()
-				.getFinBranch()));
+		this.finCancelAc.setBranchCode(
+				StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch()));
 		this.finCancelAc.setTextBoxWidth(165);
 
 		if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
@@ -235,8 +235,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	private void setFinAssetFieldVisibility(FinanceType financeType) {
 
 		boolean isOverdraft = false;
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
-				.getFinanceMain().getProductCategory())) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
 			isOverdraft = true;
 		}
 
@@ -244,8 +244,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 			if (isOverdraft) {
 
-				this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
-						.getLabel("label_FinanceMainDialog_FinOverDftLimit.value"));
+				this.label_FinanceMainDialog_FinAssetValue
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinOverDftLimit.value"));
 				this.label_FinanceMainDialog_FinCurrentAssetValue.setValue("");
 				this.finCurrentAssetValue.setVisible(false);
 			} else {
@@ -254,15 +254,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					this.row_FinAssetValue.setVisible(true);
 					this.finAssetValue.setMandatory(true);
 					this.finCurrentAssetValue.setReadonly(true);
-					this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
-							.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
-					this.label_FinanceMainDialog_FinCurrentAssetValue.setValue(Labels
-							.getLabel("label_FinanceMainDialog_TotalDisbAmt.value"));
+					this.label_FinanceMainDialog_FinAssetValue
+							.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+					this.label_FinanceMainDialog_FinCurrentAssetValue
+							.setValue(Labels.getLabel("label_FinanceMainDialog_TotalDisbAmt.value"));
 				} else {
 					this.label_FinanceMainDialog_FinAssetValue.setVisible(false);
 					this.finAssetValue.setVisible(false);
-					this.label_FinanceMainDialog_FinCurrentAssetValue.setValue(Labels
-							.getLabel("label_FinanceMainDialog_TotalDisbAmt.value"));
+					this.label_FinanceMainDialog_FinCurrentAssetValue
+							.setValue(Labels.getLabel("label_FinanceMainDialog_TotalDisbAmt.value"));
 					this.label_FinanceMainDialog_FinCurrentAssetValue.setVisible(true);
 					this.finCurrentAssetValue.setVisible(true);
 				}
@@ -367,8 +367,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired()
-				&& aFinanceDetail.getFinScheduleData().getFinanceMain().getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
+		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && aFinanceDetail
+				.getFinScheduleData().getFinanceMain().getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
 			this.row_downPaySupl.setVisible(true);
 			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(),
 					CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
@@ -387,8 +387,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			this.finCancelAc.setMandatoryStyle(false);
 		}
 
-		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-				: moduleDefiner);
+		aFinanceDetail.setModuleDefiner(
+				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 
 		// Fill Remaining Tab Details
 		// ============================================
@@ -429,8 +429,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			this.getLabel_FinanceMainDialog_PromotionProduct().setVisible(true);
 			this.promotionProduct.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct() + " - "
 					+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescPromoFinTypeDesc());
-			this.label_FinanceMainDialog_FinType.setValue(Labels
-					.getLabel("label_FinanceMainDialog_PromotionCode.value"));
+			this.label_FinanceMainDialog_FinType
+					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isManualSchedule()) {
 			this.row_ManualSchedule.setVisible(true);
@@ -452,15 +452,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		BigDecimal feeChargeAmount = BigDecimal.ZERO;
-		BigDecimal finAmount = this.finAmount.getActualValue() == null ? BigDecimal.ZERO : this.finAmount
-				.getActualValue();
+		BigDecimal finAmount = this.finAmount.getActualValue() == null ? BigDecimal.ZERO
+				: this.finAmount.getActualValue();
 
 		// Fee calculation for Add to Disbursement
 		List<FinFeeDetail> finFeeDetails = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
 			for (FinFeeDetail feeDetail : finFeeDetails) {
-				if (StringUtils
-						.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 					feeChargeAmount = feeChargeAmount.add(feeDetail.getActualAmount()
 							.subtract(feeDetail.getWaivedAmount()).subtract(feeDetail.getPaidAmount()));
 				}
@@ -468,24 +468,24 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		}
 
 		feeChargeAmount = PennantApplicationUtil.formateAmount(feeChargeAmount, formatter);
-		BigDecimal netFinanceVal = finAmount.subtract(
-				this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue())).add(feeChargeAmount);
+		BigDecimal netFinanceVal = finAmount
+				.subtract(this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()))
+				.add(feeChargeAmount);
 		if (netFinanceVal.compareTo(BigDecimal.ZERO) < 0) {
 			netFinanceVal = BigDecimal.ZERO;
 		}
 
-		String netFinAmt = PennantApplicationUtil.amountFormate(
-				PennantApplicationUtil.unFormateAmount(netFinanceVal, formatter), formatter);
+		String netFinAmt = PennantApplicationUtil
+				.amountFormate(PennantApplicationUtil.unFormateAmount(netFinanceVal, formatter), formatter);
 		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
 			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
 				this.netFinAmount.setValue(netFinAmt + " ("
 						+ ((netFinanceVal.multiply(new BigDecimal(100))).divide(finAmount, 2, RoundingMode.HALF_DOWN))
 						+ "%)");
 			} else {
-				this.netFinAmount.setValue(netFinAmt
-						+ " ("
-						+ (((netFinanceVal.subtract(feeChargeAmount)).multiply(new BigDecimal(100))).divide(finAmount,
-								2, RoundingMode.HALF_DOWN)) + "%)");
+				this.netFinAmount.setValue(
+						netFinAmt + " (" + (((netFinanceVal.subtract(feeChargeAmount)).multiply(new BigDecimal(100)))
+								.divide(finAmount, 2, RoundingMode.HALF_DOWN)) + "%)");
 			}
 		} else {
 			this.netFinAmount.setValue("");
@@ -500,8 +500,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 *            (FinScheduleData)
 	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData) throws InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData)
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -521,8 +521,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			this.finCancelAc.clearErrorMessage();
 			if (!recSave && this.finCancelAc.isMandatory() && this.row_FinCancelAc.isVisible()
 					&& !this.finCancelAc.isReadonly()) {
-				this.finCancelAc.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinanceCancellationDialog_FinCancelAc.value"), null, true));
+				this.finCancelAc.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinanceCancellationDialog_FinCancelAc.value"), null, true));
 			}
 
 			aFinanceMain.setFinCancelAc(PennantApplicationUtil.unFormatAccountNumber(this.finCancelAc.getValue()));
@@ -551,14 +551,14 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
 
 				if (downPayment.compareTo(this.finAmount.getValidateValue()) > 0) {
-					throw new WrongValueException(this.downPayBank, Labels.getLabel("MAND_FIELD_MIN", new String[] {
-							Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-							PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter, false) }));
+					throw new WrongValueException(this.downPayBank,
+							Labels.getLabel("MAND_FIELD_MIN", new String[] {
+									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
+									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter, false) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
-					throw new WrongValueException(this.downPayBank, Labels.getLabel(
-							"PERC_MIN",
+					throw new WrongValueException(this.downPayBank, Labels.getLabel("PERC_MIN",
 							new String[] {
 									Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_DownPayBS.value"),
 									PennantAppUtil.formatAmount(reqDwnPay, formatter, false) }));
@@ -579,36 +579,35 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		try {
 			if (isOverDraft) {
 				//validate Overdraft Limit with configured finmin and fin max amounts
-				this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
-						.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
+				this.label_FinanceMainDialog_FinAssetValue
+						.setValue(Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
 
 				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, this.moduleDefiner)) {
-					if (this.finAssetValue.getValidateValue().compareTo(
-							PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter)) < 0) {
-						throw new WrongValueException(this.finAssetValue.getCcyTextBox(), Labels.getLabel(
-								"NUMBER_MINVALUE_EQ",
-								new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
-										String.valueOf(aFinanceMain.getFinAssetValue()) }));
+					if (this.finAssetValue.getValidateValue()
+							.compareTo(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter)) < 0) {
+						throw new WrongValueException(this.finAssetValue.getCcyTextBox(),
+								Labels.getLabel("NUMBER_MINVALUE_EQ",
+										new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
+												String.valueOf(aFinanceMain.getFinAssetValue()) }));
 					}
 
 				}
 			}
 			if (this.row_FinAssetValue.isVisible()) {
 				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
-				if (((StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB,
-						moduleDefiner)))) {
+				if (((StringUtils.isEmpty(moduleDefiner)
+						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
 							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 							&& finCurrentAssetValue.getActualValue().compareTo(finAssetValue.getActualValue()) > 0) {
-						throw new WrongValueException(finCurrentAssetValue.getCcyTextBox(), Labels.getLabel(
-								"NUMBER_MAXVALUE_EQ",
-								new String[] { this.label_FinanceMainDialog_FinCurrentAssetValue.getValue(),
-										String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
+						throw new WrongValueException(finCurrentAssetValue.getCcyTextBox(),
+								Labels.getLabel("NUMBER_MAXVALUE_EQ",
+										new String[] { this.label_FinanceMainDialog_FinCurrentAssetValue.getValue(),
+												String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
 					}
 				}
-				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
-						this.finAssetValue.isReadonly() ? this.finAssetValue.getActualValue() : this.finAssetValue
-								.getValidateValue(), formatter));
+				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.isReadonly()
+						? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), formatter));
 			}
 			//Validation  on finAsset And fin Current Asset value based on field visibility
 
@@ -617,22 +616,19 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					if (this.row_FinAssetValue.isVisible() && StringUtils.isEmpty(moduleDefiner)) {
 
 						//If max disbursement amount less than prinicpal amount validate the amount
-						aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
-								this.finAssetValue.getActualValue(), formatter));
-						aFinanceMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(
-								this.finCurrentAssetValue.getActualValue(), formatter));
+						aFinanceMain.setFinAssetValue(
+								PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
+						aFinanceMain.setFinCurrAssetValue(
+								PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 
 						if (this.row_FinAssetValue.isVisible() && finAssetValue.getActualValue() != null
 								&& this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								&& finAssetValue.getActualValue().compareTo(this.finAmount.getActualValue()) < 0) {
 
-							throw new WrongValueException(finAssetValue.getCcyTextBox(),
-									Labels.getLabel(
-											"NUMBER_MINVALUE_EQ",
-											new String[] {
-													this.label_FinanceMainDialog_FinAssetValue.getValue(),
-													String.valueOf(Labels
-															.getLabel("label_FinanceMainDialog_FinAmount.value")) }));
+							throw new WrongValueException(finAssetValue.getCcyTextBox(), Labels.getLabel(
+									"NUMBER_MINVALUE_EQ",
+									new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(), String
+											.valueOf(Labels.getLabel("label_FinanceMainDialog_FinAmount.value")) }));
 						}
 					}
 				}
@@ -847,8 +843,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
-			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
-					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
+			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum()
+					.compareTo(getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
@@ -959,16 +955,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 							Notify notify = Notify.valueOf("USER");
 							String[] to = aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId()
 									.split(",");
-							if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
-									.getFinReference())) {
+							if (StringUtils.isNotEmpty(
+									aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference())) {
 
 								String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
 										.getFinReference();
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceDetail
-										.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-													+ reference, notify, to);
+								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(
+										aFinanceDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, notify, to);
 								}
 							} else {
 								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
@@ -981,16 +976,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 							if (StringUtils.isNotEmpty(nextRoleCodes)) {
 								Notify notify = Notify.valueOf("ROLE");
 								String[] to = nextRoleCodes.split(",");
-								if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
-										.getFinReference())) {
+								if (StringUtils.isNotEmpty(
+										aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference())) {
 
 									String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
 											.getFinReference();
-									if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceDetail
-											.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-										getEventManager().publish(
-												Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-														+ reference, notify, to);
+									if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(
+											aFinanceDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
+										getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE")
+												+ " with Reference" + ":" + reference, notify, to);
 									}
 								} else {
 									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
@@ -1084,11 +1078,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @return
 	 * @throws InterruptedException
 	 * @throws JaxenException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws InterruptedException,
-			JaxenException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
+			throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1183,10 +1177,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @return
 	 * @throws InterruptedException
 	 * @throws JaxenException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException,InterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, JaxenException,
+			IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1232,8 +1227,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 							afinanceMain.setScheduleChange(false);
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_FinanceCancellationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1334,8 +1329,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
-			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil
-					.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
+			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(
+					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(6);
@@ -1360,7 +1355,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * Method to store the default values if no values are entered in respective fields when validate or build schedule
 	 * buttons are clicked
 	 * 
-	 * */
+	 */
 	public void doStoreDefaultValues() {
 		// calling method to clear the constraints
 		logger.debug("Entering");
@@ -1377,10 +1372,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	public FinanceMain getFinanceMain() {
 		FinanceMain financeMain = super.getFinanceMain();
 		financeMain.setDownPayment(PennantAppUtil.unFormateAmount(
-				this.downPayBank.getActualValue() == null ? BigDecimal.ZERO : this.downPayBank.getActualValue()
-						.add(this.downPaySupl.getActualValue() == null ? BigDecimal.ZERO : this.downPaySupl
-								.getActualValue()), CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData()
-						.getFinanceMain().getFinCcy())));
+				this.downPayBank.getActualValue() == null ? BigDecimal.ZERO
+						: this.downPayBank.getActualValue()
+								.add(this.downPaySupl.getActualValue() == null ? BigDecimal.ZERO
+										: this.downPaySupl.getActualValue()),
+				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 		financeMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(),
 				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
 		financeMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(),
@@ -1454,8 +1450,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException,
-			InvocationTargetException {
+	public FinanceDetail onExecuteStageAccDetail()
+			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		buildEvent = false;
 		doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
@@ -1465,8 +1461,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		return getFinanceDetail();
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	public void onSelectCheckListDetailsTab(ForwardEvent event)
+			throws ParseException, InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 
@@ -1495,8 +1491,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		boolean isOverdraft = false;
 
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
-				.getFinanceMain().getProductCategory())) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
 			isOverdraft = true;
 		}
 		// Finance Accounting Details Execution
@@ -1529,11 +1525,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			}
 
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
- 
 
-			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil.getReveralsByFinreference(finMain.getFinReference());
+			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil
+					.getReveralsByFinreference(finMain.getFinReference());
 
-		 
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {
 				getAccountingDetailDialogCtrl().doFillAccounting(accountingSetEntries);
@@ -1575,8 +1570,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		return postingsPreparationUtil;
 	}
 
-	public void setPostingsPreparationUtil(
-			PostingsPreparationUtil postingsPreparationUtil) {
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 

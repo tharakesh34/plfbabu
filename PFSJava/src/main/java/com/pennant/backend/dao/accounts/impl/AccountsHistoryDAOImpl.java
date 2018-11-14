@@ -51,11 +51,11 @@ import com.pennant.backend.model.accounts.AccountsHistory;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements AccountsHistoryDAO {
-	
+
 	public AccountsHistoryDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public boolean saveOrUpdate(AccountsHistory accountHist) {
 

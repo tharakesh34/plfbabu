@@ -28,8 +28,8 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementRequest;
 
 public abstract class AbstarctDisbursementRequest extends AbstractInterface implements DisbursementRequest {
-	protected final Logger	logger	= Logger.getLogger(getClass());
-		
+	protected final Logger logger = Logger.getLogger(getClass());
+
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I, IFT;
 	}
@@ -45,19 +45,20 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 		List<FinAdvancePayments> disbusments = (List<FinAdvancePayments>) params[1];
 		long userId = (long) params[2];
 		String fileNamePrefix = (String) params[3];
-		
+
 		processDisbursements(finType, userId, disbusments, fileNamePrefix);
 	}
-	
-	
-	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) throws Exception {
+
+	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements,
+			String fileNamePrefix) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		generateRequest(finType, userId, disbursements, fileNamePrefix);
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments, String fileNamePrefix) throws Exception {
+	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments,
+			String fileNamePrefix) throws Exception {
 		List<FinAdvancePayments> stp_IMPS = new ArrayList<>();
 		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
 
@@ -75,7 +76,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 
 		List<FinAdvancePayments> stp_Other = new ArrayList<>();
 		List<FinAdvancePayments> other_Other = new ArrayList<>();
-		
+
 		DisbursementTypes type = null;
 
 		for (FinAdvancePayments disbursment : disbusments) {
@@ -126,28 +127,18 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 				break;
 			}
 		}
-/*
-		if (!stp_IMPS.isEmpty()) {
-			List<Long> idList = null;
-			try {
-				idList = prepareRequest(getPaymentIds(stp_IMPS), type.name());
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-			
-			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
-		}
-
-		if (!other_IMPS.isEmpty()) {
-			List<Long> idList = null;
-			try {
-				idList = prepareRequest(getPaymentIds(other_IMPS), type.name());
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-			
-			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
-		}*/
+		/*
+		 * if (!stp_IMPS.isEmpty()) { List<Long> idList = null; try { idList = prepareRequest(getPaymentIds(stp_IMPS),
+		 * type.name()); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
+		 * 
+		 * sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId); }
+		 * 
+		 * if (!other_IMPS.isEmpty()) { List<Long> idList = null; try { idList =
+		 * prepareRequest(getPaymentIds(other_IMPS), type.name()); } catch (Exception e) {
+		 * logger.error(Literal.EXCEPTION, e); }
+		 * 
+		 * sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId); }
+		 */
 
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
@@ -159,7 +150,8 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
 		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.DD.name(), finType, userId, other_DD, null);
-		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE, null);
+		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE,
+				null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.I.name(), finType, userId, other_Other, null);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null);
 
@@ -177,17 +169,17 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 				List<Long> idList = null;
 				try {
 					idList = prepareRequest(getPaymentIds(map.get(bank)), paymentType);
-					
-					if (idList == null || idList.isEmpty() || (idList.size() !=disbusments.size() )) {
+
+					if (idList == null || idList.isEmpty() || (idList.size() != disbusments.size())) {
 						throw new ConcurrencyException();
 					}
-					
+
 					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
-					
+
 				} catch (Exception e) {
 					conclude(null, idList);
 					throw e;
-				} 
+				}
 			}
 		}
 	}
@@ -226,7 +218,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
 		parameterMap.put("PAYMENT_TYPE", paymentType);
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
-		
+
 		try {
 			if ("DISB_CITI_EXPORT".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
@@ -238,24 +230,25 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
 			status = export.exportData(configName, false);
-			
-			if(status == null || !"S".equals(status.getStatus())) {
-				if(status != null) {
+
+			if (status == null || !"S".equals(status.getStatus())) {
+				if (status != null) {
 					throw new AppException(status.getRemarks());
 				} else {
 					throw new Exception();
 				}
 			}
-			
+
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			conclude(status, idList);
 		}
 	}
-	
+
 	private void sendIMPSRequest(String configName, List<Long> dibursements, long userId) {
-		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, userId,getValueDate(),getAppDate());
+		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, userId,
+				getValueDate(), getAppDate());
 
 		impsRequest.setDisbursments(dibursements);
 		try {
@@ -265,7 +258,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 		}
 
 	}
-		
+
 	private synchronized List<Long> prepareRequest(Long[] disbursments, final String type) throws Exception {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap;
@@ -373,20 +366,24 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 		}
 		return keyHolder.getKey().longValue();
 	}
-	
+
 	private void conclude(DataEngineStatus status, List<Long> idList) {
-		
+
 		if (idList == null || idList.isEmpty()) {
 			return;
 		}
-		
+
 		if (status == null || !"S".equals(status.getStatus())) {
 			MapSqlParameterSource paramMap = new MapSqlParameterSource();
 			paramMap.addValue("ID", idList);
 			paramMap.addValue("STATUS", "APPROVED");
-			
-			namedJdbcTemplate.update("UPDATE FINADVANCEPAYMENTS SET STATUS = :STATUS where PAYMENTID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))", paramMap);
-			namedJdbcTemplate.update("UPDATE PAYMENTINSTRUCTIONS SET STATUS = :STATUS where PAYMENTINSTRUCTIONID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))", paramMap);
+
+			namedJdbcTemplate.update(
+					"UPDATE FINADVANCEPAYMENTS SET STATUS = :STATUS where PAYMENTID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))",
+					paramMap);
+			namedJdbcTemplate.update(
+					"UPDATE PAYMENTINSTRUCTIONS SET STATUS = :STATUS where PAYMENTINSTRUCTIONID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))",
+					paramMap);
 			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", paramMap);
 		}
 	}

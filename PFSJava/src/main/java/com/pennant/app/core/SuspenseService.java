@@ -65,12 +65,12 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 
 public class SuspenseService extends ServiceHelper {
-	private static final long		serialVersionUID	= -7469564513544156223L;
-	private static Logger			logger				= Logger.getLogger(SuspenseService.class);
+	private static final long serialVersionUID = -7469564513544156223L;
+	private static Logger logger = Logger.getLogger(SuspenseService.class);
 
-	private FinanceSuspHeadDAO		financeSuspHeadDAO;
-	private FinSuspHoldDAO			finSuspHoldDAO;
-	private PostingsPreparationUtil	postingsPreparationUtil;
+	private FinanceSuspHeadDAO financeSuspHeadDAO;
+	private FinSuspHoldDAO finSuspHoldDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
 	public SuspenseService() {
 		super();
@@ -111,8 +111,8 @@ public class SuspenseService extends ServiceHelper {
 			boolean isPastDeferment) throws Exception {
 		logger.debug("Entering");
 
-		int curOdDays = getFinODDetailsDAO()
-				.getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate());
+		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
+				repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -171,8 +171,8 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		// Insert Finance Suspend Details data
-		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(),
-				suspHead.getFinSuspSeq(), valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
+		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(), suspHead.getFinSuspSeq(),
+				valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
 
 		logger.debug("Leaving");
@@ -241,7 +241,7 @@ public class SuspenseService extends ServiceHelper {
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
-		
+
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		// Finance Suspend Head

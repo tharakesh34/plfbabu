@@ -88,7 +88,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	private Timestamp raisedOn;
-	@XmlElement(name="remarks")
+	@XmlElement(name = "remarks")
 	private String responsNotes;
 	private long responseBy = 0;
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
@@ -380,6 +380,5 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
-
 
 }

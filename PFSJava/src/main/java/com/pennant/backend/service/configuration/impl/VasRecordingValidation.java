@@ -24,8 +24,7 @@ public class VasRecordingValidation {
 		this.vasRecordingDAO = vasRecordingDAO;
 	}
 
-	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method,
-			String usrLanguage) {
+	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -46,7 +45,8 @@ public class VasRecordingValidation {
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
-	 * @param boolean onlineRequest
+	 * @param boolean
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -59,7 +59,8 @@ public class VasRecordingValidation {
 		if (vASRecording.isWorkflow()) {
 			tempVASRecording = getVASRecordingDAO().getVASRecordingByReference(vASRecording.getVasReference(), "_Temp");
 		}
-		VASRecording befVASRecording = getVASRecordingDAO().getVASRecordingByReference(vASRecording.getVasReference(), "");
+		VASRecording befVASRecording = getVASRecordingDAO().getVASRecordingByReference(vASRecording.getVasReference(),
+				"");
 
 		VASRecording oldVasRecording = vASRecording.getBefImage();
 
@@ -71,16 +72,19 @@ public class VasRecordingValidation {
 		if (vASRecording.isNew()) { // for New record or new record into work flow
 			if (!vASRecording.isWorkflow()) {// With out Work flow only new records  
 				if (befVASRecording != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befVASRecording != null || tempVASRecording != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befVASRecording == null || tempVASRecording != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
@@ -88,22 +92,30 @@ public class VasRecordingValidation {
 			// for work flow process records or (Record to update or Delete with out work flow)
 			if (!vASRecording.isWorkflow()) { // With out Work flow for update and delete
 				if (befVASRecording == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
-					if (oldVasRecording != null 	&& !oldVasRecording.getLastMntOn().equals(befVASRecording.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+					if (oldVasRecording != null
+							&& !oldVasRecording.getLastMntOn().equals(befVASRecording.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
 				if (tempVASRecording == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				if (tempVASRecording != null && oldVasRecording != null && !oldVasRecording.getLastMntOn().equals(tempVASRecording.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				if (tempVASRecording != null && oldVasRecording != null
+						&& !oldVasRecording.getLastMntOn().equals(tempVASRecording.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}

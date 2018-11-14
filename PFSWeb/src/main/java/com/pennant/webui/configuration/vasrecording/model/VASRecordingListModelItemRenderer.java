@@ -59,7 +59,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -72,48 +71,50 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 	public void render(Listitem item, VASRecording vASRecording, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(vASRecording.getProductCode());
+		lc = new Listcell(vASRecording.getProductCode());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(vASRecording.getPostingAgainst(), PennantStaticListUtil.getRecAgainstTypes()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(String.valueOf(vASRecording.getPrimaryLinkRef()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(vASRecording.getPostingAgainst(),
+				PennantStaticListUtil.getRecAgainstTypes()));
 		lc.setParent(item);
-	  	lc = new Listcell(vASRecording.getVasReference());
+		lc = new Listcell(String.valueOf(vASRecording.getPrimaryLinkRef()));
 		lc.setParent(item);
-	  	lc = new Listcell(String.valueOf(vASRecording.getFee()));
+		lc = new Listcell(vASRecording.getVasReference());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(vASRecording.getFeePaymentMode(), PennantStaticListUtil.getFeeTypes()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formatDate(vASRecording.getValueDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formateDate(vASRecording.getAccrualTillDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(DateUtility.formateDate(vASRecording.getRecurringDate(), PennantConstants.dateFormat));
-	  	lc.setParent(item);
-	  	lc = new Listcell(vASRecording.getDsaId());
+		lc = new Listcell(String.valueOf(vASRecording.getFee()));
 		lc.setParent(item);
-	  	lc = new Listcell(vASRecording.getDmaId());
+		lc = new Listcell(
+				PennantAppUtil.getlabelDesc(vASRecording.getFeePaymentMode(), PennantStaticListUtil.getFeeTypes()));
 		lc.setParent(item);
-	  	lc = new Listcell(vASRecording.getFulfilOfficerId());
+		lc = new Listcell(DateUtility.formatDate(vASRecording.getValueDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-	  	lc = new Listcell(vASRecording.getReferralId());
+		lc = new Listcell(DateUtility.formateDate(vASRecording.getAccrualTillDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		
+		lc = new Listcell(DateUtility.formateDate(vASRecording.getRecurringDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(vASRecording.getDsaId());
+		lc.setParent(item);
+		lc = new Listcell(vASRecording.getDmaId());
+		lc.setParent(item);
+		lc = new Listcell(vASRecording.getFulfilOfficerId());
+		lc.setParent(item);
+		lc = new Listcell(vASRecording.getReferralId());
+		lc.setParent(item);
+
 		String vasStatus = "";
-		if(StringUtils.equals(vASRecording.getVasStatus(), "C")){
+		if (StringUtils.equals(vASRecording.getVasStatus(), "C")) {
 			vasStatus = Labels.getLabel("label_VasStatus_Cancel");
-		}else {
-			if(StringUtils.isEmpty(vASRecording.getRecordType())){
+		} else {
+			if (StringUtils.isEmpty(vASRecording.getRecordType())) {
 				vasStatus = Labels.getLabel("label_VasStatus_Approved");
 			}
 		}
-				
+
 		lc = new Listcell(vasStatus);
-		if(StringUtils.equals(vASRecording.getVasStatus(), "C")){
+		if (StringUtils.equals(vASRecording.getVasStatus(), "C")) {
 			lc.setStyle("color:red");
 		}
 		lc.setParent(item);
-	  	lc = new Listcell(vASRecording.getRecordStatus());
+		lc = new Listcell(vASRecording.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(vASRecording.getRecordType()));
 		lc.setParent(item);

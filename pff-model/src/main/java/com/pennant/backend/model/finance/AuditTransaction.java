@@ -27,76 +27,89 @@ package com.pennant.backend.model.finance;
 
 import java.sql.Timestamp;
 
-
 /**
  * Model class for the <b>FinanceMain table</b>.<br>
  * 
  */
 public class AuditTransaction implements java.io.Serializable {
 
-    private static final long serialVersionUID = -3026443763391506067L;
-    
-    private String auditReference;
-    private Timestamp auditDate;
-    private String roleCode;
-    private String roleDesc;
-    private long lastMntBy;
+	private static final long serialVersionUID = -3026443763391506067L;
+
+	private String auditReference;
+	private Timestamp auditDate;
+	private String roleCode;
+	private String roleDesc;
+	private long lastMntBy;
 	private String usrName;
 	private String recordStatus;
 	private String recordType;
-	
-	public AuditTransaction() {
-		
-	}
-	
-	public String getAuditReference() {
-    	return auditReference;
-    }
-	public void setAuditReference(String auditReference) {
-    	this.auditReference = auditReference;
-    }
-	public Timestamp getAuditDate() {
-    	return auditDate;
-    }
-	public void setAuditDate(Timestamp auditDate) {
-    	this.auditDate = auditDate;
-    }
-	public String getRoleCode() {
-    	return roleCode;
-    }
-	public void setRoleCode(String roleCode) {
-    	this.roleCode = roleCode;
-    }
-	public String getRoleDesc() {
-    	return roleDesc;
-    }
-	public void setRoleDesc(String roleDesc) {
-    	this.roleDesc = roleDesc;
-    }
-	public long getLastMntBy() {
-    	return lastMntBy;
-    }
-	public void setLastMntBy(long lastMntBy) {
-    	this.lastMntBy = lastMntBy;
-    }
-	public String getUsrName() {
-    	return usrName;
-    }
-	public void setUsrName(String usrName) {
-    	this.usrName = usrName;
-    }
-	public String getRecordStatus() {
-    	return recordStatus;
-    }
-	public void setRecordStatus(String recordStatus) {
-    	this.recordStatus = recordStatus;
-    }
-	public String getRecordType() {
-    	return recordType;
-    }
-	public void setRecordType(String recordType) {
-    	this.recordType = recordType;
-    }
 
-    
+	public AuditTransaction() {
+
+	}
+
+	public String getAuditReference() {
+		return auditReference;
+	}
+
+	public void setAuditReference(String auditReference) {
+		this.auditReference = auditReference;
+	}
+
+	public Timestamp getAuditDate() {
+		return auditDate;
+	}
+
+	public void setAuditDate(Timestamp auditDate) {
+		this.auditDate = auditDate;
+	}
+
+	public String getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+
+	public String getRoleDesc() {
+		return roleDesc;
+	}
+
+	public void setRoleDesc(String roleDesc) {
+		this.roleDesc = roleDesc;
+	}
+
+	public long getLastMntBy() {
+		return lastMntBy;
+	}
+
+	public void setLastMntBy(long lastMntBy) {
+		this.lastMntBy = lastMntBy;
+	}
+
+	public String getUsrName() {
+		return usrName;
+	}
+
+	public void setUsrName(String usrName) {
+		this.usrName = usrName;
+	}
+
+	public String getRecordStatus() {
+		return recordStatus;
+	}
+
+	public void setRecordStatus(String recordStatus) {
+		this.recordStatus = recordStatus;
+	}
+
+	public String getRecordType() {
+		return recordType;
+	}
+
+	public void setRecordType(String recordType) {
+		this.recordType = recordType;
+	}
+
 }

@@ -102,7 +102,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
-	
+
 	private transient QueryDetailService queryDetailService;
 	private FinanceMain financeMain = null;
 	private LegalDetail legalDetail = null;
@@ -134,7 +134,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 		}
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "QueryDetail";
@@ -157,33 +157,33 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		setPageComponents(window_FinQueryDetailList, borderLayout_FinQueryDetailList, listBoxFinQueryDetail,
 				pagingFinQueryDetailList);
 		setItemRender(new QueryDetailListModelItemRenderer());
-		
-		if(arguments.containsKey("financeMain")){
+
+		if (arguments.containsKey("financeMain")) {
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
 		}
-		
-		if(arguments.containsKey("sampling")){
+
+		if (arguments.containsKey("sampling")) {
 			this.sampling = (Sampling) arguments.get("sampling");
 		}
-		
-		if(arguments.containsKey("legalDetail")){
+
+		if (arguments.containsKey("legalDetail")) {
 			this.legalDetail = (LegalDetail) arguments.get("legalDetail");
 		}
-		
+
 		if (arguments.containsKey("roleCode")) {
 			this.roleCode = (String) arguments.get("roleCode");
 		}
-		
+
 		if (arguments.containsKey("finHeaderList")) {
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		} else {
 			appendFinBasicDetails(null);
 		}
-		
+
 		if (arguments.containsKey("enquiry")) {
 			setEnquiry((boolean) arguments.get("enquiry"));
-		} 
-		
+		}
+
 		// Register buttons and fields.
 		//registerButton(button_FinQueryDetailList_NewQueryDetail, "button_FinQueryDetailList_NewQueryDetail", true);
 		this.button_FinQueryDetailList_NewQueryDetail.setVisible(true);
@@ -191,24 +191,24 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		if (isEnquiry() || enqiryModule) {
 			this.button_FinQueryDetailList_NewQueryDetail.setVisible(false);
 		}
-		
+
 		registerField("id");
 		registerField("finReference");
 		registerField("categoryId");
-		registerField("qryNotes");		
-		registerField("assignedRole");		
-		registerField("notifyTo");	
-		registerField("categoryCode");	
+		registerField("qryNotes");
+		registerField("assignedRole");
+		registerField("notifyTo");
+		registerField("categoryCode");
 		registerField("status");
-		registerField("raisedBy");		
-		registerField("raisedOn");	
-		registerField("categoryDescription");	
-		registerField("usrLogin");	
-		
+		registerField("raisedBy");
+		registerField("raisedOn");
+		registerField("categoryDescription");
+		registerField("usrLogin");
+
 		getBorderLayoutHeight();
 		this.listBoxFinQueryDetail.setHeight(this.borderLayoutHeight - 210 + "px");
 		this.window_FinQueryDetailList.setHeight(this.borderLayoutHeight - 80 + "px");
-		
+
 		doRenderPage();
 		search();
 	}
@@ -237,7 +237,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		logger.debug(Literal.ENTERING);
-		
+
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			String module = (String) arguments.get("moduleName");
@@ -245,20 +245,22 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			if (finHeaderList != null) {
 				map.put("finHeaderList", finHeaderList);
 			}
-			
+
 			if (PennantConstants.QUERY_ORIGINATION.equals(module)) {
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails, map);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
+						this.finBasicdetails, map);
 			} else {
 				map.put("moduleName", module);
-				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul", this.finBasicdetails, map);
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
+						this.finBasicdetails, map);
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -269,7 +271,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 	public void onQueryDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinQueryDetail.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -279,13 +281,13 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( querydetail.getId());
+		whereCond.append(querydetail.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(querydetail.getVersion());
-	
+
 		if (doCheckAuthority(querydetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && querydetail.getWorkflowId() == 0) {
@@ -295,10 +297,10 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -316,14 +318,14 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 			arg.put("sampling", this.sampling);
 		}
 		arg.put("roleCode", roleCode);
-		
+
 		if (legalDetail != null) {
 			arg.put("legalDetail", legalDetail);
 		}
 		if (sampling != null) {
 			arg.put("sampling", sampling);
 		}
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDetailNewDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -333,7 +335,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void doShowDialogPage(QueryDetail querydetail) {
 		logger.debug(Literal.ENTERING);
 
@@ -361,7 +363,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	public void setQueryDetailService(QueryDetailService queryDetailService) {
 		this.queryDetailService = queryDetailService;
 	}
-	
+
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
@@ -385,5 +387,5 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 	public void setEnquiry(boolean enquiry) {
 		this.enquiry = enquiry;
 	}
-	
+
 }

@@ -61,8 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>LegalApplicantDetail</b>.<br>
+ * Service implementation for methods that depends on <b>LegalApplicantDetail</b>.<br>
  */
 public class LegalApplicantDetailService extends GenericService<LegalApplicantDetail> {
 	private static final Logger logger = Logger.getLogger(LegalApplicantDetailService.class);
@@ -211,7 +210,8 @@ public class LegalApplicantDetailService extends GenericService<LegalApplicantDe
 		return auditDetails;
 	}
 
-	public List<AuditDetail> processingApplicantDetail(LegalDetail legalDetail, List<AuditDetail> auditDetails, TableType tableType) {
+	public List<AuditDetail> processingApplicantDetail(LegalDetail legalDetail, List<AuditDetail> auditDetails,
+			TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
@@ -222,7 +222,7 @@ public class LegalApplicantDetailService extends GenericService<LegalApplicantDe
 		for (int i = 0; i < auditDetails.size(); i++) {
 			LegalApplicantDetail legalApplicantDetail = (LegalApplicantDetail) auditDetails.get(i).getModelData();
 			legalApplicantDetail.setLegalId(legalDetail.getLegalId());
-			
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;

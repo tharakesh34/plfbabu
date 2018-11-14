@@ -12,7 +12,7 @@ import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
 
-public class ManagerChequeProcess extends GenericProcess{
+public class ManagerChequeProcess extends GenericProcess {
 
 	private static Logger logger = Logger.getLogger(ManagerChequeProcess.class);
 
@@ -20,6 +20,7 @@ public class ManagerChequeProcess extends GenericProcess{
 
 	/**
 	 * Method for validate the Cheque Number
+	 * 
 	 * @param accountNum
 	 * @param chequeNum
 	 * @throws AccountNotFoundException
@@ -38,34 +39,35 @@ public class ManagerChequeProcess extends GenericProcess{
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqChqAcc", accountNum);// Nostro Account Number
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqChqNo", chequeNum);// Cheque Number
 
-			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 	
-			pcmlDoc.setValue(pcml + ".@ERPRM", ""); 	
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000");
+			pcmlDoc.setValue(pcml + ".@ERPRM", "");
 
 			logger.debug(" Before PCML Call");
 			getHostConnection().callAPI(pcmlDoc, pcml);
 			logger.debug(" After PCML Call");
 
-			if (!("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString()))) { 
+			if (!("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString()))) {
 
-				logger.info(pcmlDoc.getValue(pcml + ".@ERPRM").toString());				
+				logger.info(pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 				throw new AccountNotFoundException(pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			}
 
-		} catch (ConnectionPoolException e){
+		} catch (ConnectionPoolException e) {
 			logger.error("Exception: ", e);
 			throw new AccountNotFoundException("Host Connection Failed.. Please contact administrator ");
-		}catch (AccountNotFoundException e) {
+		} catch (AccountNotFoundException e) {
 			logger.error("Exception: ", e);
 			//throw new AccountNotFoundException(e.getErrorMsg());AIB
 			throw new AccountNotFoundException(e.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw new AccountNotFoundException(e.getMessage());
-		} finally {			
+		} finally {
 			this.hostConnection.closeConnection(as400);
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * @param accountNum
 	 * @param chequeNo
@@ -74,7 +76,8 @@ public class ManagerChequeProcess extends GenericProcess{
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public String addStopOrder(String accountNum, String chequeNo, BigDecimal chqAmount, String draftCcy) throws AccountNotFoundException {
+	public String addStopOrder(String accountNum, String chequeNo, BigDecimal chqAmount, String draftCcy)
+			throws AccountNotFoundException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -90,32 +93,32 @@ public class ManagerChequeProcess extends GenericProcess{
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqAMT", chqAmount);// Cheque Amount
 			pcmlDoc.setValue(pcml + ".@REQDTA.dsReqStCcy", draftCcy);// Currency
 
-			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 	
-			pcmlDoc.setValue(pcml + ".@ERPRM", ""); 	
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000");
+			pcmlDoc.setValue(pcml + ".@ERPRM", "");
 
 			logger.debug(" Before PCML Call");
 			getHostConnection().callAPI(pcmlDoc, pcml);
 			logger.debug(" After PCML Call");
 
-			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) { 
+			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {
 				stopOrderRef = pcmlDoc.getValue(pcml + ".@RSPDTA.dsRspStopRef").toString();
-			}else{
-				logger.info(pcmlDoc.getValue(pcml + ".@ERPRM").toString());				
+			} else {
+				logger.info(pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 				throw new AccountNotFoundException(pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			}
 
-		} catch (ConnectionPoolException e){
+		} catch (ConnectionPoolException e) {
 			logger.error("Exception: ", e);
 			throw new AccountNotFoundException("Host Connection Failed.. Please contact administrator ");
-		}catch (AccountNotFoundException e) {
+		} catch (AccountNotFoundException e) {
 			logger.error("Exception: ", e);
 			//throw new AccountNotFoundException(e.getErrorMsg());AIB
 			throw new AccountNotFoundException(e.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 
 			logger.error("Exception: ", e);
 			throw new AccountNotFoundException(e.getMessage());
-		} finally {			
+		} finally {
 			this.hostConnection.closeConnection(as400);
 		}
 		logger.debug("Leaving");
@@ -129,6 +132,7 @@ public class ManagerChequeProcess extends GenericProcess{
 	public void setHostConnection(HostConnection hostConnection) {
 		this.hostConnection = hostConnection;
 	}
+
 	public HostConnection getHostConnection() {
 		return hostConnection;
 	}

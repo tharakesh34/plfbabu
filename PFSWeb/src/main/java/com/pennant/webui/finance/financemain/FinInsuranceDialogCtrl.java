@@ -49,46 +49,46 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
-	private static final long		serialVersionUID	= -6945930303723518608L;
-	private static final Logger		logger				= Logger.getLogger(FinInsuranceDialogCtrl.class);
+	private static final long serialVersionUID = -6945930303723518608L;
+	private static final Logger logger = Logger.getLogger(FinInsuranceDialogCtrl.class);
 
-	protected Window				window_FinInsurnaceDialog;
-	protected ExtendedCombobox		insuranceType;
-	protected ExtendedCombobox		insurancePolicy;
-	protected Checkbox				insuranceReq;
-	protected ExtendedCombobox		provider;
-	protected Combobox				paymentMethod;
-	protected Space					space_paymentmethod;
-	protected Combobox				calcType;
-	protected Decimalbox			insuranceRate;
-	protected Uppercasebox			insReference;
-	protected Combobox				waiverReason;
-	protected Combobox				insuranceStatus;
-	protected FrequencyBox			insuranceFrq;
-	protected CurrencyBox			amount;
-	protected ExtendedCombobox		calRule;
-	protected Combobox				calOn;
-	protected Decimalbox			calPercentage;
+	protected Window window_FinInsurnaceDialog;
+	protected ExtendedCombobox insuranceType;
+	protected ExtendedCombobox insurancePolicy;
+	protected Checkbox insuranceReq;
+	protected ExtendedCombobox provider;
+	protected Combobox paymentMethod;
+	protected Space space_paymentmethod;
+	protected Combobox calcType;
+	protected Decimalbox insuranceRate;
+	protected Uppercasebox insReference;
+	protected Combobox waiverReason;
+	protected Combobox insuranceStatus;
+	protected FrequencyBox insuranceFrq;
+	protected CurrencyBox amount;
+	protected ExtendedCombobox calRule;
+	protected Combobox calOn;
+	protected Decimalbox calPercentage;
 
-	private FinInsurances			finInsurance;
-	private FinFeeDetailListCtrl	finFeeDetailListCtrl;
-	private String					userRole;
-	private int						amountFormatter;
-	private List<FinInsurances>		finInsuranceList;
+	private FinInsurances finInsurance;
+	private FinFeeDetailListCtrl finFeeDetailListCtrl;
+	private String userRole;
+	private int amountFormatter;
+	private List<FinInsurances> finInsuranceList;
 
-	protected Row					row_Provider;
-	protected Row					row_Amount;
-	protected Row					row_InsuranceFrq;
-	protected Row					row_waiverReason;
-	protected Row					row_calRule;
-	protected Row					row_CalculaedOn;
-	protected Row					row_Percentage;
-	protected Row					row_calcType;
+	protected Row row_Provider;
+	protected Row row_Amount;
+	protected Row row_InsuranceFrq;
+	protected Row row_waiverReason;
+	protected Row row_calRule;
+	protected Row row_CalculaedOn;
+	protected Row row_Percentage;
+	protected Row row_calcType;
 
-	protected Label					label_FinInsuranceDialog_PaymentMethod;
+	protected Label label_FinInsuranceDialog_PaymentMethod;
 
 	//Old Variables
-	private boolean					isWIF				= false;
+	private boolean isWIF = false;
 
 	/**
 	 * default constructor.<br>
@@ -322,8 +322,8 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 
 			try {
 				if (this.row_InsuranceFrq.isVisible() && this.insuranceFrq.isValidComboValue()) {
-					aFinInsurance.setInsuranceFrq(this.insuranceFrq.getValue() == null ? "" : this.insuranceFrq
-							.getValue());
+					aFinInsurance
+							.setInsuranceFrq(this.insuranceFrq.getValue() == null ? "" : this.insuranceFrq.getValue());
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -393,14 +393,14 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 				this.amount.setReadonly(getFinInsurance().isAlwRateChange() || isReadOnly("FinInsuranceDialog_amount"));
 			} else if (this.calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
 				this.row_Percentage.setVisible(true);
-				this.calPercentage.setReadonly(getFinInsurance().isAlwRateChange()
-						|| isReadOnly("FinInsuranceDialog_percentage"));
+				this.calPercentage.setReadonly(
+						getFinInsurance().isAlwRateChange() || isReadOnly("FinInsuranceDialog_percentage"));
 				this.insuranceRate.setReadonly(true);
 				this.row_CalculaedOn.setVisible(true);
 			} else if (this.calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
 				this.row_CalculaedOn.setVisible(true);
-				this.insuranceRate.setReadonly(getFinInsurance().isAlwRateChange()
-						|| isReadOnly("FinInsuranceDialog_providerRate"));
+				this.insuranceRate.setReadonly(
+						getFinInsurance().isAlwRateChange() || isReadOnly("FinInsuranceDialog_providerRate"));
 			} else if (this.calcType.getSelectedItem().getValue().equals(InsuranceConstants.CALTYPE_RULE)) {
 				this.row_calRule.setVisible(true);
 			}
@@ -468,20 +468,20 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 			doSetFilterProviderType();
 		}
 		this.provider.setValue(aFinInsurance.getProvider(), aFinInsurance.getProviderName());
-		
+
 		String excldMthds = "";
-		if(StringUtils.equals(aFinInsurance.getCalType(), InsuranceConstants.CALTYPE_RULE)){
-			excldMthds = ","+InsuranceConstants.PAYTYPE_SCH_FRQ+",";
+		if (StringUtils.equals(aFinInsurance.getCalType(), InsuranceConstants.CALTYPE_RULE)) {
+			excldMthds = "," + InsuranceConstants.PAYTYPE_SCH_FRQ + ",";
 		}
 		fillComboBox(this.paymentMethod, aFinInsurance.getPaymentMethod(),
-				PennantStaticListUtil.getInsurancePaymentType(),excldMthds);
+				PennantStaticListUtil.getInsurancePaymentType(), excldMthds);
 		fillComboBox(this.calcType, aFinInsurance.getCalType(), PennantStaticListUtil.getInsuranceCalType(), "");
 		this.insuranceRate.setValue(aFinInsurance.getInsuranceRate());
 		this.insReference.setValue(aFinInsurance.getInsReference());
-		fillComboBox(this.waiverReason, aFinInsurance.getWaiverReason(),
-				PennantStaticListUtil.getInsWaiverReasonList(), "");
-		fillComboBox(this.insuranceStatus, aFinInsurance.getInsuranceStatus(),
-				PennantStaticListUtil.getInsStatusList(), "");
+		fillComboBox(this.waiverReason, aFinInsurance.getWaiverReason(), PennantStaticListUtil.getInsWaiverReasonList(),
+				"");
+		fillComboBox(this.insuranceStatus, aFinInsurance.getInsuranceStatus(), PennantStaticListUtil.getInsStatusList(),
+				"");
 
 		if (aFinInsurance.isNew()) {
 			this.insuranceReq.setChecked(true);
@@ -597,16 +597,16 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 	private void doSetValidation() {
 
 		if (!this.insurancePolicy.isReadonly()) {
-			this.insurancePolicy.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinInsuranceDialog_InsurancePolicy.value"), null, true, true));
+			this.insurancePolicy.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinInsuranceDialog_InsurancePolicy.value"), null, true, true));
 		}
 		if (!this.insuranceType.isReadonly()) {
-			this.insuranceType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinInsuranceDialog_InsuranceType.value"), null, true, true));
+			this.insuranceType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinInsuranceDialog_InsuranceType.value"), null, true, true));
 		}
 		if (this.row_Provider.isVisible() && !this.provider.isReadonly()) {
-			this.provider.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinInsuranceDialog_Provider.value"), null, true, true));
+			this.provider.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinInsuranceDialog_Provider.value"), null, true, true));
 		}
 
 		if (this.paymentMethod.isVisible() && !this.paymentMethod.isDisabled()) {
@@ -615,19 +615,19 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 		}
 
 		if (this.row_Provider.isVisible() && !this.insuranceRate.isReadonly()) {
-			this.insuranceRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinInsuranceDialog_InsuranceRate.value"), 9, true));
+			this.insuranceRate.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinInsuranceDialog_InsuranceRate.value"), 9, true));
 
 		}
 		if (!this.insReference.isReadonly()) {
 
-			this.insReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinInsuranceDialog_Reference.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.insReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinInsuranceDialog_Reference.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.insuranceReq.isChecked() && !this.waiverReason.isReadonly()) {
-			this.waiverReason.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinInsuranceDialog_WaiverReason.value"), null, true));
+			this.waiverReason.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinInsuranceDialog_WaiverReason.value"), null, true));
 		}
 		if (this.row_Amount.isVisible() && !this.amount.isReadonly()) {
 			this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinInsuranceDialog_Amount.value"),
@@ -664,9 +664,9 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 						&& finInsurance.getInsReference().equals(aFinInsurance.getInsReference())) {
 					// Both Current and Existing list rating same
 					if (aFinInsurance.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41008", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 					if (tranType == PennantConstants.TRAN_DEL) {
@@ -820,7 +820,8 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 				this.provider.setValue(detail.getInsuranceProvider(), detail.getTakafulName());
 				this.insuranceRate.setValue(detail.getPolicyRate());
 
-				fillComboBox(this.paymentMethod, detail.getDftPayType(), PennantStaticListUtil.getInsurancePaymentType(), "");
+				fillComboBox(this.paymentMethod, detail.getDftPayType(),
+						PennantStaticListUtil.getInsurancePaymentType(), "");
 				if (this.insuranceReq.isChecked()
 						&& this.paymentMethod.getSelectedItem().getValue().equals(InsuranceConstants.PAYTYPE_SCH_FRQ)) {
 					this.row_InsuranceFrq.setVisible(true);
@@ -838,18 +839,20 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 					this.row_Percentage.setVisible(false);
 					this.row_CalculaedOn.setVisible(false);
 					this.row_Amount.setVisible(false);
-					
+
 					String excldMthds = "";
-					if(StringUtils.equals(detail.getCalType(), InsuranceConstants.CALTYPE_RULE)){
-						excldMthds = ","+InsuranceConstants.PAYTYPE_SCH_FRQ+",";
+					if (StringUtils.equals(detail.getCalType(), InsuranceConstants.CALTYPE_RULE)) {
+						excldMthds = "," + InsuranceConstants.PAYTYPE_SCH_FRQ + ",";
 					}
-					
-					fillComboBox(this.paymentMethod, getFinInsurance().getPaymentMethod(),PennantStaticListUtil.getInsurancePaymentType(), excldMthds);
-					
+
+					fillComboBox(this.paymentMethod, getFinInsurance().getPaymentMethod(),
+							PennantStaticListUtil.getInsurancePaymentType(), excldMthds);
+
 				} else if (this.insuranceReq.isChecked()
 						&& detail.getCalType().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
 					this.calPercentage.setValue(detail.getPercentage());
-					fillComboBox(this.calOn, detail.getCalculateOn(), PennantStaticListUtil.getInsuranceCalculatedOn(),	"");
+					fillComboBox(this.calOn, detail.getCalculateOn(), PennantStaticListUtil.getInsuranceCalculatedOn(),
+							"");
 					this.insuranceRate.setReadonly(true);
 					this.row_calRule.setVisible(false);
 					this.row_Percentage.setVisible(true);
@@ -863,7 +866,8 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 					}
 				} else if (this.insuranceReq.isChecked()
 						&& detail.getCalType().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
-					fillComboBox(this.calOn, detail.getCalculateOn(), PennantStaticListUtil.getInsuranceCalculatedOn(), "");
+					fillComboBox(this.calOn, detail.getCalculateOn(), PennantStaticListUtil.getInsuranceCalculatedOn(),
+							"");
 					this.row_calRule.setVisible(false);
 					this.row_Percentage.setVisible(false);
 					this.row_Amount.setVisible(false);
@@ -882,7 +886,7 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 					this.row_Percentage.setVisible(false);
 					this.row_CalculaedOn.setVisible(false);
 					this.amount.setValue(PennantAppUtil.formateAmount(detail.getConstAmt(), amountFormatter));
-					
+
 					if (detail.isAlwRateChange()) {
 						this.amount.setReadonly(isReadOnly("FinInsuranceDialog_amount"));
 						this.insuranceRate.setReadonly(true);
@@ -932,17 +936,18 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 		logger.debug("Leaving");
 
 	}
+
 	public void onChange$calcType(Event event) {
 		logger.debug("Entering");
-		if(StringUtils.equals((String)this.calcType.getSelectedItem().getValue(), InsuranceConstants.CALTYPE_RULE)){			
+		if (StringUtils.equals((String) this.calcType.getSelectedItem().getValue(), InsuranceConstants.CALTYPE_RULE)) {
 			fillComboBox(this.paymentMethod, getFinInsurance().getPaymentMethod(),
-					PennantStaticListUtil.getInsurancePaymentType(), ","+InsuranceConstants.PAYTYPE_SCH_FRQ+",");
-		}else{
+					PennantStaticListUtil.getInsurancePaymentType(), "," + InsuranceConstants.PAYTYPE_SCH_FRQ + ",");
+		} else {
 			fillComboBox(this.paymentMethod, getFinInsurance().getPaymentMethod(),
 					PennantStaticListUtil.getInsurancePaymentType(), "");
 		}
 		logger.debug("Leaving");
-		
+
 	}
 
 	/**

@@ -57,28 +57,27 @@ public class WorkFlowUtil {
 
 	private static Map<String, WorkFlowDetails> workFlowMap = null;
 
-	public static void init(){
-		workFlowMap=null;
+	public static void init() {
+		workFlowMap = null;
 	}
-	
+
 	public static WorkFlowDetails getWorkflow(long id) {
 		return workFlowDetailsService.getWorkFlowDetailsByID(id);
 	}
 
-	public static WorkFlowDetails getDetailsByType(String workFlowType){
+	public static WorkFlowDetails getDetailsByType(String workFlowType) {
 
-		if (workFlowMap==null){
+		if (workFlowMap == null) {
 			loadWorkFlowData();
 		}
 
 		return workFlowDetailsService.getWorkFlowDetailsByFlowType(workFlowType);
 	}
 
-
 	public static WorkFlowDetails getWorkFlowDetails(String moduleName) {
 		WorkFlowDetails workFlowDetails = null;
-		
-		if("".equals(moduleName)) {
+
+		if ("".equals(moduleName)) {
 			return null; // TODO  Workflow setting shoud be removed in all the DAO's
 		}
 
@@ -90,13 +89,13 @@ public class WorkFlowUtil {
 		return workFlowDetails;
 	}
 
-	public static long getWorkFlowID(String workFlowType){
-		long workflowId=0;
+	public static long getWorkFlowID(String workFlowType) {
+		long workflowId = 0;
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(workFlowType);
-		if (moduleMapping!=null){
-			WorkFlowDetails workFlowDetails =  WorkFlowUtil.getDetailsByType(moduleMapping.getWorkflowType());
-			if (workFlowDetails!=null){
-				workflowId = workFlowDetails.getWorkFlowId();	
+		if (moduleMapping != null) {
+			WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(moduleMapping.getWorkflowType());
+			if (workFlowDetails != null) {
+				workflowId = workFlowDetails.getWorkFlowId();
 			}
 		}
 		return workflowId;
@@ -109,32 +108,32 @@ public class WorkFlowUtil {
 	public static WorkFlowDetailsService getWorkFlowDetailsService() {
 		return workFlowDetailsService;
 	}
-	
+
 	public static void loadWorkFlowData(WorkFlowDetails workFlowDetails) {
 		if (workFlowMap != null) {
-			
+
 			if (workFlowMap.containsKey(workFlowDetails.getWorkFlowType())) {
 				workFlowMap.remove(workFlowDetails.getWorkFlowType());
 			}
-			
+
 			workFlowMap.put(workFlowDetails.getWorkFlowType(), workFlowDetails);
 		}
 	}
 
-	private static  void loadWorkFlowData(){
+	private static void loadWorkFlowData() {
 		workFlowMap = new HashMap<String, WorkFlowDetails>() {
 			private static final long serialVersionUID = -3549857310897774789L;
 			{
 				WorkFlowDetailsService workFlowDetailsService = getWorkFlowDetailsService();
-				if (workFlowDetailsService!=null) {
-	                List<WorkFlowDetails> list = getWorkFlowDetailsService().getActiveWorkFlowDetails();
-	                if (list != null) {
-		                for (int i = 0; i < list.size(); i++) {
-			                WorkFlowDetails workFlowDetails = list.get(i);
-			                put(workFlowDetails.getWorkFlowType(), workFlowDetails);
-		                }
-	                }
-                }
+				if (workFlowDetailsService != null) {
+					List<WorkFlowDetails> list = getWorkFlowDetailsService().getActiveWorkFlowDetails();
+					if (list != null) {
+						for (int i = 0; i < list.size(); i++) {
+							WorkFlowDetails workFlowDetails = list.get(i);
+							put(workFlowDetails.getWorkFlowType(), workFlowDetails);
+						}
+					}
+				}
 
 			}
 		};

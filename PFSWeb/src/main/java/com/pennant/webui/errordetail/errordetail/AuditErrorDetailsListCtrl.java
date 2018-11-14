@@ -18,19 +18,19 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * This is the controller class for the /WEB-INF/pages/SystemMasters/Sector/SectorList.zul file.
  */
 public class AuditErrorDetailsListCtrl extends GFCBaseCtrl<AuditHeader> {
-	private static final long	serialVersionUID	= -4561944744750744817L;
+	private static final long serialVersionUID = -4561944744750744817L;
 
-	protected Window			window_ErrorDetails;
-	protected Borderlayout		borderLayout_ErrorDetails;
-	protected Paging			pagingErrorDetails;
-	protected Listbox			listBoxErrorDetails;
+	protected Window window_ErrorDetails;
+	protected Borderlayout borderLayout_ErrorDetails;
+	protected Paging pagingErrorDetails;
+	protected Listbox listBoxErrorDetails;
 
-	protected Listheader		listheader_ErrorCode;
-	protected Listheader		listheader_ErrorDescription;
+	protected Listheader listheader_ErrorCode;
+	protected Listheader listheader_ErrorDescription;
 
-	protected Button			btnClose;
+	protected Button btnClose;
 
-	private AuditHeader			auditHeader;
+	private AuditHeader auditHeader;
 
 	/**
 	 * default constructor.<br>

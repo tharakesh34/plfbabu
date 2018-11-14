@@ -63,51 +63,53 @@ import com.pennant.util.PennantAppUtil;
 public class DepositMovementsListModelItemRenderer implements ListitemRenderer<DepositMovements>, Serializable {
 
 	private static final long serialVersionUID = 3736186724610414895L;
-	
+
 	public DepositMovementsListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, DepositMovements depositMovements, int count) throws Exception {
 
 		Listcell lc;
-		
+
 		//Deposit Type
-		lc = new Listcell(PennantAppUtil.getlabelDesc(depositMovements.getDepositType(), PennantStaticListUtil.getDepositTypesListList()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(depositMovements.getDepositType(),
+				PennantStaticListUtil.getDepositTypesListList()));
 		lc.setParent(item);
-		
+
 		//Deposit Branch Code
 		lc = new Listcell(depositMovements.getBranchCode() + " - " + depositMovements.getBranchDesc());
 		lc.setParent(item);
-		
+
 		//Deposit Slip Number
 		lc = new Listcell(depositMovements.getDepositSlipNumber());
 		lc.setParent(item);
-		
+
 		//Deposit Date
 		lc = new Listcell(DateUtility.formatToLongDate(depositMovements.getTransactionDate()));
 		lc.setParent(item);
-		
+
 		//Partner Bank
 		lc = new Listcell(depositMovements.getPartnerBankName());
 		lc.setParent(item);
-		
+
 		//Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(depositMovements.getReservedAmount(), PennantConstants.defaultCCYDecPos));
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(depositMovements.getReservedAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		
+
 		//Record Status
 		lc = new Listcell(depositMovements.getRecordStatus());
 		lc.setParent(item);
-		
+
 		//Record Type
 		lc = new Listcell(PennantJavaUtil.getLabel(depositMovements.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("movementId", depositMovements.getMovementId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onDepositMovementsItemDoubleClicked");
 	}
 }

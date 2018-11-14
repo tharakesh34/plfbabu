@@ -41,14 +41,20 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.bmtmasters;
+
 import com.pennant.backend.model.bmtmasters.ScoringType;
 
 public interface ScoringTypeDAO {
 
 	ScoringType getScoringType();
+
 	ScoringType getNewScoringType();
-	ScoringType getScoringTypeById(String id,String type);
-	void update(ScoringType scoringType,String type);
-	void delete(ScoringType scoringType,String type);
-	String save(ScoringType scoringType,String type);
+
+	ScoringType getScoringTypeById(String id, String type);
+
+	void update(ScoringType scoringType, String type);
+
+	void delete(ScoringType scoringType, String type);
+
+	String save(ScoringType scoringType, String type);
 }

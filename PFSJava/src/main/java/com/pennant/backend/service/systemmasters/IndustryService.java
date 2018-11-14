@@ -51,12 +51,17 @@ import com.pennant.backend.model.systemmasters.Industry;
  * 
  */
 public interface IndustryService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Industry getIndustryById(String id);
+
 	Industry getApprovedIndustryById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

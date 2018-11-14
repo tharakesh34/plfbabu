@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -63,7 +62,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ReceiptTaxDetailDAOImpl extends BasicDao<ReceiptTaxDetail> implements ReceiptTaxDetailDAO {
 	private static Logger logger = Logger.getLogger(ReceiptTaxDetailDAOImpl.class);
-	
+
 	public ReceiptTaxDetailDAOImpl() {
 		super();
 	}
@@ -75,14 +74,16 @@ public class ReceiptTaxDetailDAOImpl extends BasicDao<ReceiptTaxDetail> implemen
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptSeqID", receiptSeqID);
 
-		StringBuilder selectSql = new StringBuilder("Select ReceiptSeqID , ReceiptID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST ");
+		StringBuilder selectSql = new StringBuilder(
+				"Select ReceiptSeqID , ReceiptID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST ");
 		selectSql.append(" From ReceiptTaxDetail");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReceiptTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptTaxDetail.class);
-		ReceiptTaxDetail taxDetail = null; 
+		RowMapper<ReceiptTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptTaxDetail.class);
+		ReceiptTaxDetail taxDetail = null;
 		try {
 			taxDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -100,8 +101,10 @@ public class ReceiptTaxDetailDAOImpl extends BasicDao<ReceiptTaxDetail> implemen
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ReceiptTaxDetail");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (ReceiptSeqID , ReceiptID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST)");
-		insertSql.append(" Values(:ReceiptSeqID , :ReceiptID, :TaxComponent , :PaidCGST , :PaidSGST , :PaidUGST  , :PaidIGST, :TotalGST)");
+		insertSql.append(
+				" (ReceiptSeqID , ReceiptID, TaxComponent , PaidCGST , PaidSGST , PaidUGST  ,PaidIGST, TotalGST)");
+		insertSql.append(
+				" Values(:ReceiptSeqID , :ReceiptID, :TaxComponent , :PaidCGST , :PaidSGST , :PaidUGST  , :PaidIGST, :TotalGST)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -109,7 +112,7 @@ public class ReceiptTaxDetailDAOImpl extends BasicDao<ReceiptTaxDetail> implemen
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void deleteByReceiptID(long receiptID, TableType tableType) {
 		logger.debug("Entering");
@@ -125,18 +128,18 @@ public class ReceiptTaxDetailDAOImpl extends BasicDao<ReceiptTaxDetail> implemen
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void delete(long receiptSeqID, TableType tableType) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptSeqID", receiptSeqID);
-		
+
 		StringBuilder deleteSql = new StringBuilder(" DELETE From ReceiptTaxDetail");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" where ReceiptSeqID = :ReceiptSeqID ");
-		
+
 		logger.debug("selectSql: " + deleteSql.toString());
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");

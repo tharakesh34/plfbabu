@@ -47,14 +47,15 @@ import java.util.List;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 
 public interface FinExpenseDetailsDAO {
-	
+
 	long saveFinExpenseDetails(FinExpenseDetails finFeeAmz);
-	
+
 	FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId);
 
 	void update(FinExpenseDetails finFeeAmz);
-	
+
 	List<FinExpenseDetails> getFinExpenseDetailsById(String financeRef);
+
 	List<FinExpenseDetails> getAMZFinExpenseDetails(String finRef, String type);
-	
+
 }

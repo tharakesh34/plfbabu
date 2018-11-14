@@ -77,7 +77,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	private String fundingAccount;
 	private String nostroAccount;
 	private String nostroFullName;
-	private BigDecimal chequeAmount = BigDecimal.ZERO; 
+	private BigDecimal chequeAmount = BigDecimal.ZERO;
 	private Date valueDate;
 	private String narration1;
 	private String narration2;
@@ -88,17 +88,17 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private ManagerCheque befImage;
 	private LoggedInUser userDetails;
-	
+
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
 	private List<ReturnDataSet> returnDataSetList;
 	private ManagerCheque reprintManagerCheque;
-	
- 	private String branchCode;
+
+	private String branchCode;
 	private String lovDescBranchDesc;
 	private String stopOrderRef;
-	
-	private BigDecimal chargeAmount = BigDecimal.ZERO; 
+
+	private BigDecimal chargeAmount = BigDecimal.ZERO;
 	private BigDecimal fundingAmount = BigDecimal.ZERO;
 	private Date issueDate;
 	private String todayDate;
@@ -110,7 +110,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	private String addressLine5;
 	private String amtInWords;
 	private BigDecimal amtInLocalCcy = BigDecimal.ZERO;
-	
+
 	//Added for Accounting Report Purpose
 	private String finReference;
 	private String finType;
@@ -131,8 +131,8 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("chqPurposeCodeName");
 		excludeFields.add("reprintManagerCheque");
 		excludeFields.add("lovDescBranchDesc");
@@ -145,7 +145,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finType");
 		excludeFields.add("lovDescFinTypeName");
 		excludeFields.add("lovDescCustShrtName");
-	 
+
 		return excludeFields;
 	}
 
@@ -157,13 +157,14 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 		return chequeID;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.chequeID = id;
 	}
 
 	public long getChequeID() {
 		return chequeID;
 	}
+
 	public void setChequeID(long chequeID) {
 		this.chequeID = chequeID;
 	}
@@ -171,6 +172,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getChqPurposeCode() {
 		return chqPurposeCode;
 	}
+
 	public void setChqPurposeCode(String chqPurposeCode) {
 		this.chqPurposeCode = chqPurposeCode;
 	}
@@ -179,13 +181,14 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 		return this.chqPurposeCodeName;
 	}
 
-	public void setChqPurposeCodeName (String chqPurposeCodeName) {
+	public void setChqPurposeCodeName(String chqPurposeCodeName) {
 		this.chqPurposeCodeName = chqPurposeCodeName;
 	}
 
 	public String getChequeRef() {
 		return chequeRef;
 	}
+
 	public void setChequeRef(String chequeRef) {
 		this.chequeRef = chequeRef;
 	}
@@ -193,6 +196,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getChequeNo() {
 		return chequeNo;
 	}
+
 	public void setChequeNo(String chequeNo) {
 		this.chequeNo = chequeNo;
 	}
@@ -200,6 +204,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getBeneficiaryName() {
 		return beneficiaryName;
 	}
+
 	public void setBeneficiaryName(String beneficiaryName) {
 		this.beneficiaryName = beneficiaryName;
 	}
@@ -207,6 +212,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getCustCIF() {
 		return custCIF;
 	}
+
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
@@ -214,6 +220,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getDraftCcy() {
 		return draftCcy;
 	}
+
 	public void setDraftCcy(String draftCcy) {
 		this.draftCcy = draftCcy;
 	}
@@ -221,6 +228,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getFundingCcy() {
 		return fundingCcy;
 	}
+
 	public void setFundingCcy(String fundingCcy) {
 		this.fundingCcy = fundingCcy;
 	}
@@ -228,6 +236,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getFundingAccount() {
 		return fundingAccount;
 	}
+
 	public void setFundingAccount(String fundingAccount) {
 		this.fundingAccount = fundingAccount;
 	}
@@ -235,12 +244,15 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getNostroAccount() {
 		return nostroAccount;
 	}
+
 	public void setNostroAccount(String nostroAccount) {
 		this.nostroAccount = nostroAccount;
 	}
+
 	public String getNostroFullName() {
 		return nostroFullName;
 	}
+
 	public void setNostroFullName(String nostroFullName) {
 		this.nostroFullName = nostroFullName;
 	}
@@ -248,6 +260,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public BigDecimal getChequeAmount() {
 		return chequeAmount;
 	}
+
 	public void setChequeAmount(BigDecimal chequeAmount) {
 		this.chequeAmount = chequeAmount;
 	}
@@ -255,6 +268,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public Date getValueDate() {
 		return valueDate;
 	}
+
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
@@ -262,6 +276,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getNarration1() {
 		return narration1;
 	}
+
 	public void setNarration1(String narration1) {
 		this.narration1 = narration1;
 	}
@@ -269,6 +284,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public String getNarration2() {
 		return narration2;
 	}
+
 	public void setNarration2(String narration2) {
 		this.narration2 = narration2;
 	}
@@ -276,14 +292,15 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public boolean isReprint() {
 		return reprint;
 	}
+
 	public void setReprint(boolean reprint) {
 		this.reprint = reprint;
 	}
 
-
 	public long getOldChequeID() {
 		return oldChequeID;
 	}
+
 	public void setOldChequeID(long oldChequeID) {
 		this.oldChequeID = oldChequeID;
 	}
@@ -291,6 +308,7 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public boolean isCancel() {
 		return cancel;
 	}
+
 	public void setCancel(boolean cancel) {
 		this.cancel = cancel;
 	}
@@ -311,12 +329,12 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public ManagerCheque getBefImage(){
+	public ManagerCheque getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(ManagerCheque beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(ManagerCheque beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -330,13 +348,15 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
+
 	public List<DocumentDetails> getDocumentDetailsList() {
 		return documentDetailsList;
 	}
-	
+
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
 		this.documentDetailsList = documentDetailsList;
 	}
@@ -348,26 +368,30 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	public void setReprintManagerCheque(ManagerCheque reprintManagerCheque) {
 		this.reprintManagerCheque = reprintManagerCheque;
 	}
+
 	public String getBranchCode() {
 		return branchCode;
 	}
+
 	public void setBranchCode(String branchCode) {
 		this.branchCode = branchCode;
 	}
 
 	public String getLovDescBranchDesc() {
-	    return lovDescBranchDesc;
-    }
+		return lovDescBranchDesc;
+	}
+
 	public void setLovDescBranchDesc(String lovDescBranchDesc) {
-	    this.lovDescBranchDesc = lovDescBranchDesc;
-    }
+		this.lovDescBranchDesc = lovDescBranchDesc;
+	}
 
 	public String getStopOrderRef() {
-	    return stopOrderRef;
-    }
+		return stopOrderRef;
+	}
+
 	public void setStopOrderRef(String stopOrderRef) {
-	    this.stopOrderRef = stopOrderRef;
-    }
+		this.stopOrderRef = stopOrderRef;
+	}
 
 	public List<ReturnDataSet> getReturnDataSetList() {
 		return returnDataSetList;
@@ -418,20 +442,20 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getAmtInWords() {
-	    return amtInWords;
-    }
+		return amtInWords;
+	}
 
 	public void setAmtInWords(String amtInWords) {
-	    this.amtInWords = amtInWords;
-    }
+		this.amtInWords = amtInWords;
+	}
 
 	public BigDecimal getAmtInLocalCcy() {
-	    return amtInLocalCcy;
-    }
+		return amtInLocalCcy;
+	}
 
 	public void setAmtInLocalCcy(BigDecimal amtInLocalCcy) {
-	    this.amtInLocalCcy = amtInLocalCcy;
-    }
+		this.amtInLocalCcy = amtInLocalCcy;
+	}
 
 	public String getAddressLine1() {
 		return addressLine1;
@@ -498,10 +522,10 @@ public class ManagerCheque extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getLovDescCustShrtName() {
-	    return lovDescCustShrtName;
-    }
+		return lovDescCustShrtName;
+	}
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-	    this.lovDescCustShrtName = lovDescCustShrtName;
-    } 
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
 }

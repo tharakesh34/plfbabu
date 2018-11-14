@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -5317225672461108680L;
-	
+
 	private long custID;
 	private String empStatus;
 	private String lovDescEmpStatus;
@@ -76,18 +76,18 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	private String empDept;
 	private String lovDescEmpDept;
 	private Date empFrom;
-	private BigDecimal 	monthlyIncome = BigDecimal.ZERO;
+	private BigDecimal monthlyIncome = BigDecimal.ZERO;
 	private String otherIncome;
 	private String lovDescOtherIncome;
-	private BigDecimal 	additionalIncome = BigDecimal.ZERO;
+	private BigDecimal additionalIncome = BigDecimal.ZERO;
 	private String empAlocType;
-	
-	private boolean newRecord=false;
+
+	private boolean newRecord = false;
 	private String lovValue;
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-	
+
 	private CustEmployeeDetail befImage;
 	private LoggedInUser userDetails;
 
@@ -104,33 +104,36 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("empAlocType");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public long getId() {
 		return custID;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.custID = id;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
+
 	public String getEmpStatus() {
 		return empStatus;
 	}
+
 	public void setEmpStatus(String empStatus) {
 		this.empStatus = empStatus;
 	}
@@ -138,6 +141,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescEmpStatus() {
 		return lovDescEmpStatus;
 	}
+
 	public void setLovDescEmpStatus(String lovDescEmpStatus) {
 		this.lovDescEmpStatus = lovDescEmpStatus;
 	}
@@ -145,6 +149,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getEmpSector() {
 		return empSector;
 	}
+
 	public void setEmpSector(String empSector) {
 		this.empSector = empSector;
 	}
@@ -152,6 +157,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescEmpSector() {
 		return lovDescEmpSector;
 	}
+
 	public void setLovDescEmpSector(String lovDescEmpSector) {
 		this.lovDescEmpSector = lovDescEmpSector;
 	}
@@ -159,6 +165,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getProfession() {
 		return profession;
 	}
+
 	public void setProfession(String profession) {
 		this.profession = profession;
 	}
@@ -166,6 +173,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescProfession() {
 		return lovDescProfession;
 	}
+
 	public void setLovDescProfession(String lovDescProfession) {
 		this.lovDescProfession = lovDescProfession;
 	}
@@ -173,6 +181,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public long getEmpName() {
 		return empName;
 	}
+
 	public void setEmpName(long empName) {
 		this.empName = empName;
 	}
@@ -180,6 +189,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescEmpName() {
 		return lovDescEmpName;
 	}
+
 	public void setLovDescEmpName(String lovDescEmpName) {
 		this.lovDescEmpName = lovDescEmpName;
 	}
@@ -187,6 +197,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getEmpNameForOthers() {
 		return empNameForOthers;
 	}
+
 	public void setEmpNameForOthers(String empNameForOthers) {
 		this.empNameForOthers = empNameForOthers;
 	}
@@ -194,6 +205,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getEmpDesg() {
 		return empDesg;
 	}
+
 	public void setEmpDesg(String empDesg) {
 		this.empDesg = empDesg;
 	}
@@ -201,6 +213,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescEmpDesg() {
 		return lovDescEmpDesg;
 	}
+
 	public void setLovDescEmpDesg(String lovDescEmpDesg) {
 		this.lovDescEmpDesg = lovDescEmpDesg;
 	}
@@ -208,6 +221,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getEmpDept() {
 		return empDept;
 	}
+
 	public void setEmpDept(String empDept) {
 		this.empDept = empDept;
 	}
@@ -215,6 +229,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescEmpDept() {
 		return lovDescEmpDept;
 	}
+
 	public void setLovDescEmpDept(String lovDescEmpDept) {
 		this.lovDescEmpDept = lovDescEmpDept;
 	}
@@ -222,6 +237,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public Date getEmpFrom() {
 		return empFrom;
 	}
+
 	public void setEmpFrom(Date empFrom) {
 		this.empFrom = empFrom;
 	}
@@ -229,6 +245,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public BigDecimal getMonthlyIncome() {
 		return monthlyIncome;
 	}
+
 	public void setMonthlyIncome(BigDecimal monthlyIncome) {
 		this.monthlyIncome = monthlyIncome;
 	}
@@ -236,6 +253,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getOtherIncome() {
 		return otherIncome;
 	}
+
 	public void setOtherIncome(String otherIncome) {
 		this.otherIncome = otherIncome;
 	}
@@ -243,6 +261,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescOtherIncome() {
 		return lovDescOtherIncome;
 	}
+
 	public void setLovDescOtherIncome(String lovDescOtherIncome) {
 		this.lovDescOtherIncome = lovDescOtherIncome;
 	}
@@ -250,6 +269,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public BigDecimal getAdditionalIncome() {
 		return additionalIncome;
 	}
+
 	public void setAdditionalIncome(BigDecimal additionalIncome) {
 		this.additionalIncome = additionalIncome;
 	}
@@ -257,13 +277,15 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -271,6 +293,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -278,6 +301,7 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescCustRecordType() {
 		return lovDescCustRecordType;
 	}
+
 	public void setLovDescCustRecordType(String lovDescCustRecordType) {
 		this.lovDescCustRecordType = lovDescCustRecordType;
 	}
@@ -285,34 +309,37 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
-	public CustEmployeeDetail getBefImage(){
+	public CustEmployeeDetail getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(CustEmployeeDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(CustEmployeeDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-	public void setLoginDetails(LoggedInUser userDetails){
+	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
-		this.userDetails=userDetails;
+		this.userDetails = userDetails;
 	}
 
 	public String getEmpAlocType() {
-	    return empAlocType;
-    }
+		return empAlocType;
+	}
 
 	public void setEmpAlocType(String empAlocType) {
-	    this.empAlocType = empAlocType;
-    }
+		this.empAlocType = empAlocType;
+	}
 }

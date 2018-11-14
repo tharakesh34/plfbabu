@@ -70,30 +70,28 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Designation/DesignationDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Designation/DesignationDialog.zul file.
  */
 public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	private static final long serialVersionUID = 1143275610624598706L;
 	private static final Logger logger = Logger.getLogger(DesignationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_DesignationDialog; 	// autoWired
+	protected Window window_DesignationDialog; // autoWired
 
-	protected Textbox 	desgCode; 					// autoWired
-	protected Textbox 	desgDesc; 					// autoWired
-	protected Checkbox 	desgIsActive; 				// autoWired
+	protected Textbox desgCode; // autoWired
+	protected Textbox desgDesc; // autoWired
+	protected Checkbox desgIsActive; // autoWired
 
 	// not autoWired variables
 	private Designation designation; // overHanded per parameter
 	private transient DesignationListCtrl designationListCtrl; // overHanded per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient DesignationService designationService;
 
@@ -112,9 +110,8 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Designation object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Designation object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -125,7 +122,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		// Set the page level components.
 		setPageComponents(window_DesignationDialog);
 
-		try{
+		try {
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
@@ -140,15 +137,13 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 				setDesignation(null);
 			}
 
-			doLoadWorkFlow(this.designation.isWorkflow(),
-					this.designation.getWorkflowId(),
+			doLoadWorkFlow(this.designation.isWorkflow(), this.designation.getWorkflowId(),
 					this.designation.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"DesignationDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DesignationDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -158,8 +153,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 			// or
 			// delete designation here.
 			if (arguments.containsKey("designationListCtrl")) {
-				setDesignationListCtrl((DesignationListCtrl) arguments
-						.get("designationListCtrl"));
+				setDesignationListCtrl((DesignationListCtrl) arguments.get("designationListCtrl"));
 			} else {
 				setDesignationListCtrl(null);
 			}
@@ -197,8 +191,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -306,8 +299,9 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		this.desgDesc.setValue(aDesignation.getDesgDesc());
 		this.desgIsActive.setChecked(aDesignation.isDesgIsActive());
 		this.recordStatus.setValue(aDesignation.getRecordStatus());
-		
-		if(aDesignation.isNew() || (aDesignation.getRecordType() != null ? aDesignation.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aDesignation.isNew() || (aDesignation.getRecordType() != null ? aDesignation.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.desgIsActive.setChecked(true);
 			this.desgIsActive.setDisabled(true);
 		}
@@ -360,8 +354,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDesignation
 	 * @throws Exception
@@ -411,12 +404,13 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 
 		setValidationOn(true);
 
-		if (!this.desgCode.isReadonly()){
-			this.desgCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DesignationDialog_DesgCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+		if (!this.desgCode.isReadonly()) {
+			this.desgCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DesignationDialog_DesgCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
-		if (!this.desgDesc.isReadonly()){
-			this.desgDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DesignationDialog_DesgDesc.value"), 
+		if (!this.desgDesc.isReadonly()) {
+			this.desgDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DesignationDialog_DesgDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
@@ -472,9 +466,8 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-				Labels.getLabel("label_DesignationDialog_DesgCode.value")+" : "+aDesignation.getDesgCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_DesignationDialog_DesgCode.value") + " : " + aDesignation.getDesgCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDesignation.getRecordType())) {
 				aDesignation.setVersion(aDesignation.getVersion() + 1);
@@ -767,8 +760,8 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DesignationDialog, auditHeader);
 						return processCompleted;
 					}
@@ -812,10 +805,9 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Designation aDesignation, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aDesignation.getBefImage(), aDesignation);
-		return new AuditHeader(String.valueOf(aDesignation.getId()), null,
-				null, null, auditDetail, aDesignation.getUserDetails(),	getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDesignation.getBefImage(), aDesignation);
+		return new AuditHeader(String.valueOf(aDesignation.getId()), null, null, null, auditDetail,
+				aDesignation.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -856,7 +848,6 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		getDesignationListCtrl().search();
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.designation.getDesgCode());
@@ -868,6 +859,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -875,6 +867,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	public Designation getDesignation() {
 		return this.designation;
 	}
+
 	public void setDesignation(Designation designation) {
 		this.designation = designation;
 	}
@@ -882,6 +875,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	public void setDesignationService(DesignationService designationService) {
 		this.designationService = designationService;
 	}
+
 	public DesignationService getDesignationService() {
 		return this.designationService;
 	}
@@ -889,6 +883,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	public void setDesignationListCtrl(DesignationListCtrl designationListCtrl) {
 		this.designationListCtrl = designationListCtrl;
 	}
+
 	public DesignationListCtrl getDesignationListCtrl() {
 		return this.designationListCtrl;
 	}

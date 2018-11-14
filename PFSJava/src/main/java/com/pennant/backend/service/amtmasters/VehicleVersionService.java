@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface VehicleVersionService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	VehicleVersion getVehicleVersionById(long id);
+
 	VehicleVersion getApprovedVehicleVersionById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

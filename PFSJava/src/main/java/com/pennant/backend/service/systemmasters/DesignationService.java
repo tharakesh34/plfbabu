@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.Designation;
 public interface DesignationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	Designation getDesignationById(String id);
+
 	Designation getApprovedDesignationById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

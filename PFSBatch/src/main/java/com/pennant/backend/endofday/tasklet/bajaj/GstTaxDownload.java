@@ -26,14 +26,14 @@ import com.pennanttech.pff.external.TaxDownloadProcess;
 import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
 
 public class GstTaxDownload implements Tasklet {
-	private Logger						logger	= Logger.getLogger(GstTaxDownload.class);
+	private Logger logger = Logger.getLogger(GstTaxDownload.class);
 
 	private Date valueDate;
 	private Date appDate;
 	private DataSource dataSource;
-	
+
 	@Autowired
-	private EODConfigDAO				eodConfigDAO;
+	private EODConfigDAO eodConfigDAO;
 
 	public EODConfig getEodConfig() {
 		try {
@@ -52,17 +52,19 @@ public class GstTaxDownload implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
 		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
-		
+
 		try {
-			logger.debug("START: GST-TAX Download Process for the value date: ".concat(DateUtil.format(appDate, DateFormat.LONG_DATE)));
-			
+			logger.debug("START: GST-TAX Download Process for the value date: "
+					.concat(DateUtil.format(appDate, DateFormat.LONG_DATE)));
+
 			DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new GSTTaxProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
-			
-			logger.debug("COMPLETED: GST-TAX Download Process for the value date: ".concat(DateUtil.format(appDate, DateFormat.LONG_DATE)));
+
+			logger.debug("COMPLETED: GST-TAX Download Process for the value date: "
+					.concat(DateUtil.format(appDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -82,7 +84,7 @@ public class GstTaxDownload implements Tasklet {
 	public DataSource getDataSource() {
 		return dataSource;
 	}
-	
+
 	public class GSTTaxProcessThread implements Runnable {
 		private long userId;
 
@@ -97,7 +99,8 @@ public class GstTaxDownload implements Tasklet {
 				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, appDate, appDate);
 				} else {
-					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, DateUtility.getMonthStart(appDate), DateUtility.getMonthEnd(appDate));
+					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate,
+							DateUtility.getMonthStart(appDate), DateUtility.getMonthEnd(appDate));
 				}
 				process.process();
 			} catch (Exception e) {

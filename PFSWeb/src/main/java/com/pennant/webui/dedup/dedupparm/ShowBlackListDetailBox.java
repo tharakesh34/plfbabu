@@ -46,14 +46,13 @@ import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
 public class ShowBlackListDetailBox extends Window implements Serializable {
 	private static final long serialVersionUID = -2854517425413800019L;
-	private static final Logger logger = Logger
-			.getLogger(ShowBlackListDetailBox.class);
+	private static final Logger logger = Logger.getLogger(ShowBlackListDetailBox.class);
 	private Textbox _textbox;
 	private Paging _paging;
 	private int pageSize = 10;
@@ -70,7 +69,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	private int userAction = 0;
 	private String[] listHeaders;
 	private String curAccessedUser = null;
-	
+
 	public BlackListCustomers curCustomer;
 
 	public ShowBlackListDetailBox() {
@@ -84,20 +83,18 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	public static Object show(Component parent, List<?> dedupList,
-			String dedupFields, BlackListCustomers blackListCustomers, String curUser) {
-		return new ShowBlackListDetailBox(parent, dedupList, dedupFields,
-				blackListCustomers, curUser);
+	public static Object show(Component parent, List<?> dedupList, String dedupFields,
+			BlackListCustomers blackListCustomers, String curUser) {
+		return new ShowBlackListDetailBox(parent, dedupList, dedupFields, blackListCustomers, curUser);
 	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
-	private ShowBlackListDetailBox(Component parent, List<?> listCode,
-			String dedupFields, BlackListCustomers blackListCustomers, String curUser) {
+	private ShowBlackListDetailBox(Component parent, List<?> listCode, String dedupFields,
+			BlackListCustomers blackListCustomers, String curUser) {
 		super();
 		this.customerBlackListSize = (List<?>) listCode;
 		this.fieldString = dedupFields.split(",");
@@ -114,11 +111,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 
 		int borderLayoutHeight = GFCBaseCtrl.getDesktopHeight();
 		int borderLayoutWidth = GFCBaseCtrl.getDesktopWidth();
-		this.setWidth((borderLayoutWidth -100) + "px");
-		this.setHeight((borderLayoutHeight -150) + "px");
+		this.setWidth((borderLayoutWidth - 100) + "px");
+		this.setHeight((borderLayoutHeight - 150) + "px");
 
 		// Window
-		int listRows = Math.round((borderLayoutHeight-300) / 25) - 3;
+		int listRows = Math.round((borderLayoutHeight - 300) / 25) - 3;
 		setPageSize(listRows);
 		this.setVisible(true);
 		this.setClosable(true);
@@ -232,7 +229,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		columns.appendChild(column1);
 		columns.appendChild(column2);
 		columns.appendChild(column3);
-		columns.appendChild(column4); 
+		columns.appendChild(column4);
 
 		grid.appendChild(columns);
 
@@ -240,23 +237,23 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		rows = new Rows();
 		rows.setParent(grid);
 
-		rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_BlackListCheckDialog_CustCIF.value"),
-				blCustomers.getCustCIF(),Labels.getLabel("label_BlackListCheckDialog_DOB.value"), 
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_CustCIF.value"),
+				blCustomers.getCustCIF(), Labels.getLabel("label_BlackListCheckDialog_DOB.value"),
 				DateUtility.formatToLongDate(blCustomers.getCustDOB())));
-		rows.appendChild(prepareRow(new Row(),	Labels.getLabel("label_BlackListCheckDialog_CustFName.value"),
-				blCustomers.getCustFName(),	Labels.getLabel("label_BlackListCheckDialog_CustLName.value"),
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_CustFName.value"),
+				blCustomers.getCustFName(), Labels.getLabel("label_BlackListCheckDialog_CustLName.value"),
 				blCustomers.getCustLName()));
-		rows.appendChild(prepareRow(new Row(),	Labels.getLabel("label_BlackListCheckDialog_EID.value"),
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_EID.value"),
 				PennantApplicationUtil.formatEIDNumber(blCustomers.getCustCRCPR()),
-					Labels.getLabel("label_BlackListCheckDialog_Passport.value"),blCustomers.getCustPassportNo()));
-		rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_BlackListCheckDialog_MobileNum.value"),
-				blCustomers.getMobileNumber(),Labels.getLabel("label_BlackListCheckDialog_Nationality.value"),
+				Labels.getLabel("label_BlackListCheckDialog_Passport.value"), blCustomers.getCustPassportNo()));
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_MobileNum.value"),
+				blCustomers.getMobileNumber(), Labels.getLabel("label_BlackListCheckDialog_Nationality.value"),
 				blCustomers.getCustNationality()));
 
 		// ListBox
 		this.listbox = new Listbox();
 		listbox.setStyle("border: none;");
-		this.listbox.setHeight((borderLayoutHeight -320) + "px");
+		this.listbox.setHeight((borderLayoutHeight - 320) + "px");
 		this.listbox.setVisible(true);
 		this.listbox.setSizedByContent(true);
 		this.listbox.setSpan("true");
@@ -286,8 +283,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	private Row prepareRow(Row row, String label1, String value1,
-			String label2, String value2) {
+	private Row prepareRow(Row row, String label1, String value1, String label2, String value2) {
 
 		Label label = new Label();
 		label.setValue(label1);
@@ -327,11 +323,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	 * Inner Cancel class.<br>
 	 */
 	final class OnCancelListener implements EventListener<Event> {
-		
+
 		public OnCancelListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(0);
@@ -344,11 +340,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	 * Inner OnProceedListener class.<br>
 	 */
 	final class OnProceedListener implements EventListener<Event> {
-		
+
 		public OnProceedListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 
@@ -356,8 +352,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			List<FinBlacklistCustomer> blackListData = new ArrayList<FinBlacklistCustomer>();
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
-				List<Component> componentList = ((Listcell) listitem
-						.getLastChild().getPreviousSibling()).getChildren();
+				List<Component> componentList = ((Listcell) listitem.getLastChild().getPreviousSibling()).getChildren();
 				if (componentList != null && componentList.size() > 0) {
 					Component component = componentList.get(0);
 					if (component instanceof Checkbox) {
@@ -365,11 +360,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 							setUserAction(-1);
 						} else {
 							BlackListCustomers customer = (BlackListCustomers) listitem.getAttribute("data");
-								if (customer.isNewBlacklistRecord()) {
-									customer.setOverrideUser(curAccessedUser);
-								}
-								FinBlacklistCustomer overrideCustomer = doSetFinBlacklistCustomer(customer);
-								blackListData.add(overrideCustomer);
+							if (customer.isNewBlacklistRecord()) {
+								customer.setOverrideUser(curAccessedUser);
+							}
+							FinBlacklistCustomer overrideCustomer = doSetFinBlacklistCustomer(customer);
+							blackListData.add(overrideCustomer);
 						}
 					}
 				}
@@ -385,7 +380,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 
 		private FinBlacklistCustomer doSetFinBlacklistCustomer(BlackListCustomers customer) {
 			logger.debug("Entering");
-			
+
 			FinBlacklistCustomer overrideCustomer = new FinBlacklistCustomer();
 			overrideCustomer.setCustCIF(customer.getCustCIF());
 			overrideCustomer.setFinReference(customer.getFinReference());
@@ -402,7 +397,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			overrideCustomer.setOverrideUser(customer.getOverrideUser());
 			overrideCustomer.setMobileNumber(customer.getMobileNumber());
 			overrideCustomer.setNewBlacklistRecord(customer.isNewBlacklistRecord());
-			
+
 			logger.debug("Leaving");
 			return overrideCustomer;
 		}
@@ -412,14 +407,13 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	 * Inner ListItemRenderer class.<br>
 	 */
 	final class BlackListBoxItemRenderer implements ListitemRenderer<Object> {
-		
+
 		public BlackListBoxItemRenderer() {
-			
+
 		}
-		
+
 		@Override
-		public void render(Listitem item, Object data, int count)
-				throws Exception {
+		public void render(Listitem item, Object data, int count) throws Exception {
 			String fieldValue = "";
 			String currentFieldValue = "";
 			Date dateFieldValue = new Date();
@@ -432,66 +426,65 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			for (int j = 0; j < fieldString.length; j++) {
 				final Listcell lc;
 				String fieldMethod = null;
-				if("boolean".equals(data.getClass().getDeclaredField(fieldString[j]).getType().toString())) {
-					fieldMethod = "is"
-							+ fieldString[j].substring(0, 1).toUpperCase()
-							+ fieldString[j].substring(1);
+				if ("boolean".equals(data.getClass().getDeclaredField(fieldString[j]).getType().toString())) {
+					fieldMethod = "is" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
 				} else {
-					fieldMethod = "get"
-							+ fieldString[j].substring(0, 1).toUpperCase()
-							+ fieldString[j].substring(1);
+					fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
 				}
 
 				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
-					currentFieldValue = (String) getCurCustomer().getClass().getMethod(fieldMethod).invoke(getCurCustomer());
-					if(fieldMethod.equals("get"+ Labels.getLabel("label_FinanceDeDupListCustCRCPR"))){
-						if(fieldValue != null && currentFieldValue != null){
-							fieldValue =PennantApplicationUtil.formatEIDNumber(fieldValue);
-							currentFieldValue=PennantApplicationUtil.formatEIDNumber(currentFieldValue);
+					currentFieldValue = (String) getCurCustomer().getClass().getMethod(fieldMethod)
+							.invoke(getCurCustomer());
+					if (fieldMethod.equals("get" + Labels.getLabel("label_FinanceDeDupListCustCRCPR"))) {
+						if (fieldValue != null && currentFieldValue != null) {
+							fieldValue = PennantApplicationUtil.formatEIDNumber(fieldValue);
+							currentFieldValue = PennantApplicationUtil.formatEIDNumber(currentFieldValue);
 						}
 					}
 					lc = new Listcell(fieldValue);
 					for (int k = 0; k < ruleFields.length; k++) {
 						if (fieldMethod.equals("get" + ruleFields[k])) {
-							if (StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(fieldValue), 
+							if (StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(fieldValue),
 									StringUtils.trimToEmpty(currentFieldValue))) {
 								lc.setStyle("font-weight:bold;color:#F20C0C;");
 							}
 						}
 					}
-					
+
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
-					Date curdateFieldValue = (Date) getCurCustomer().getClass().getMethod(fieldMethod).invoke(getCurCustomer());
+					Date curdateFieldValue = (Date) getCurCustomer().getClass().getMethod(fieldMethod)
+							.invoke(getCurCustomer());
 					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
-					
-					if(dateFieldValue != null && curdateFieldValue != null) {
-						for (int k = 0; k< ruleFields.length; k++) {
-							if(fieldMethod.equals("get"+ruleFields[k])) {
+
+					if (dateFieldValue != null && curdateFieldValue != null) {
+						for (int k = 0; k < ruleFields.length; k++) {
+							if (fieldMethod.equals("get" + ruleFields[k])) {
 								if (dateFieldValue.compareTo(curdateFieldValue) == 0) {
 									lc.setStyle("font-weight:bold;color:#F20C0C;");
 								}
 							}
 						}
 					}
-				} else if("boolean".equals(data.getClass().getMethod(fieldMethod).getReturnType().toString())) {
+				} else if ("boolean".equals(data.getClass().getMethod(fieldMethod).getReturnType().toString())) {
 					Checkbox chk = new Checkbox();
 
 					boolean newRule = (Boolean) data.getClass().getMethod("isNewRule").invoke(data);
 					boolean newRecord = (Boolean) data.getClass().getMethod("isNewBlacklistRecord").invoke(data);
 					String overrideUser = (String) data.getClass().getMethod("getOverrideUser").invoke(data);
-					
-					if (newRule	&& !newRecord && (Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
+
+					if (newRule && !newRecord && (Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(false);
 						chk.setChecked(false);
-					} else if (newRule && !newRecord &&  !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
+					} else if (newRule && !newRecord
+							&& !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
 						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
-					} else if (newRule	&& !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
+					} else if (newRule && !(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(false);
 						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
-					} else if (overrideUser != null	&& overrideUser.contains(curAccessedUser)) {
+					} else if (overrideUser != null && overrideUser.contains(curAccessedUser)) {
 						chk.setDisabled(true);
 						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
 					} else if (!(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
@@ -511,11 +504,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	}
 
 	public final class OnPagingEventListener implements EventListener<Event> {
-		
+
 		public OnPagingEventListener() {
-			
+
 		}
-		
+
 		@Override
 		public void onEvent(Event event) throws Exception {
 			final PagingEvent pe = (PagingEvent) event;
@@ -527,7 +520,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	}
 
 	// Setter/Getter
-	
+
 	public Object getObject() {
 		return this.objClass;
 	}
@@ -635,7 +628,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		}
 		return label;
 	}
-	
+
 	public BlackListCustomers getCurCustomer() {
 		return curCustomer;
 	}

@@ -79,8 +79,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalDetail/LegalDetailList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalDetail/LegalDetailList.zul file.
  * 
  */
 public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
@@ -105,13 +104,13 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected Button button_LegalDetailList_LegalDetailSearch;
 
 	// Search Fields
-	protected Textbox loanReference; 
-	protected Textbox collaterialReference; 
-	protected Textbox branch; 
-	protected Datebox legalDate; 
-	protected Textbox schedulelevelArea; 
-	protected Textbox legalDecision; 
-	protected Textbox legalReference; 
+	protected Textbox loanReference;
+	protected Textbox collaterialReference;
+	protected Textbox branch;
+	protected Datebox legalDate;
+	protected Textbox schedulelevelArea;
+	protected Textbox legalDecision;
+	protected Textbox legalReference;
 
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_CollaterialReference;
@@ -208,10 +207,9 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 			this.searchObject.addFilterOr(fileters);
 		}
 	}
-	
+
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -219,17 +217,22 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	public void onCreate$window_LegalDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_LegalDetailList, borderLayout_LegalDetailList, listBoxLegalDetail, pagingLegalDetailList);
+		setPageComponents(window_LegalDetailList, borderLayout_LegalDetailList, listBoxLegalDetail,
+				pagingLegalDetailList);
 		setItemRender(new LegalDetailListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_LegalDetailList_LegalDetailSearch);
-		
-		registerField("loanReference", listheader_LoanReference, SortOrder.NONE, loanReference, sortOperator_LoanReference, Operators.STRING);
-		registerField("collateralReference", listheader_CollaterialReference, SortOrder.NONE, collaterialReference, sortOperator_CollaterialReference, Operators.STRING);
-		registerField("legalReference", listheader_LegalReference, SortOrder.NONE, legalReference, sortOperator_LegalReference, Operators.STRING);
+
+		registerField("loanReference", listheader_LoanReference, SortOrder.NONE, loanReference,
+				sortOperator_LoanReference, Operators.STRING);
+		registerField("collateralReference", listheader_CollaterialReference, SortOrder.NONE, collaterialReference,
+				sortOperator_CollaterialReference, Operators.STRING);
+		registerField("legalReference", listheader_LegalReference, SortOrder.NONE, legalReference,
+				sortOperator_LegalReference, Operators.STRING);
 		registerField("branchDesc", listheader_Branch, SortOrder.NONE, branch, sortOperator_Branch, Operators.STRING);
-		registerField("legalDate", listheader_LegalDate, SortOrder.NONE, legalDate, sortOperator_LegalDate, Operators.DATE);
+		registerField("legalDate", listheader_LegalDate, SortOrder.NONE, legalDate, sortOperator_LegalDate,
+				Operators.DATE);
 		registerField("legalRemarks");
 		registerField("legalId");
 		registerField("active");
@@ -251,8 +254,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -262,8 +264,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -274,8 +275,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -292,8 +292,8 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -318,7 +318,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 				return;
 			}
 		}
-		
+
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  LegalReference = ");
 		whereCond.append(legaldetail.getLegalReference());
@@ -362,8 +362,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

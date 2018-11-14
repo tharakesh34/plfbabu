@@ -71,8 +71,8 @@ import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class ReadRecoveryFile implements Tasklet {
-	private Logger						logger	= Logger.getLogger(ReadRecoveryFile.class);
-	private PaymentRecoveryDetailDAO	paymentRecoveryDetailDAO;
+	private Logger logger = Logger.getLogger(ReadRecoveryFile.class);
+	private PaymentRecoveryDetailDAO paymentRecoveryDetailDAO;
 
 	public ReadRecoveryFile() {
 
@@ -128,11 +128,11 @@ public class ReadRecoveryFile implements Tasklet {
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
 
 		BufferedReader reader = new BufferedReader(new FileReader(readFile()));
-		
+
 		updatePaymentRecoveryDetail(reader, context);
 		//move files 
 		moveFilestoHistory();
-		
+
 		logger.debug("END: Request File Reading for Value Date: " + date);
 		return RepeatStatus.FINISHED;
 
@@ -170,7 +170,7 @@ public class ReadRecoveryFile implements Tasklet {
 	/**
 	 * @param details
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	private PaymentRecoveryDetail readDetails(String[] details) throws ParseException {
 		logger.debug(" Entering ");
@@ -194,7 +194,7 @@ public class ReadRecoveryFile implements Tasklet {
 		recoveryDetail.setFinancePurpose(details[14]);
 		recoveryDetail.setSysTranRef(details[15]);
 
-		int code =  CurrencyUtil.getFormat(recoveryDetail.getDebitCurrency());
+		int code = CurrencyUtil.getFormat(recoveryDetail.getDebitCurrency());
 		String debitamount = StringUtils.trimToEmpty(details[16]);
 		String secordayDebitamount = StringUtils.trimToEmpty(details[17]);
 
@@ -221,12 +221,14 @@ public class ReadRecoveryFile implements Tasklet {
 	}
 
 	private void moveFilestoHistory() throws IOException {
-		
-		File reqfile =  BatchFileUtil.getFile(BatchFileUtil.getAutoPayReqFileName());
+
+		File reqfile = BatchFileUtil.getFile(BatchFileUtil.getAutoPayReqFileName());
 		File respfile = BatchFileUtil.getFile(BatchFileUtil.getAutoPayResFileName());
 
-		File reqhsitory = new File(PathUtil.getPath(PathUtil.EOD_FILE_HISTORY) + "/" + BatchFileUtil.getAutoPayReqFileName());
-		File resphsitory = new File(PathUtil.getPath(PathUtil.EOD_FILE_HISTORY) + "/" + BatchFileUtil.getAutoPayResFileName());
+		File reqhsitory = new File(
+				PathUtil.getPath(PathUtil.EOD_FILE_HISTORY) + "/" + BatchFileUtil.getAutoPayReqFileName());
+		File resphsitory = new File(
+				PathUtil.getPath(PathUtil.EOD_FILE_HISTORY) + "/" + BatchFileUtil.getAutoPayResFileName());
 
 		Files.move(reqfile.toPath(), reqhsitory.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		Files.move(respfile.toPath(), resphsitory.toPath(), StandardCopyOption.REPLACE_EXISTING);

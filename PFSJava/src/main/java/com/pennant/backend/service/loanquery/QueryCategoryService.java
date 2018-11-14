@@ -42,15 +42,20 @@
 */
 package com.pennant.backend.service.loanquery;
 
-import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.loanquery.QueryCategory;
 
 public interface QueryCategoryService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	QueryCategory getQueryCategory(long id);
+
 	QueryCategory getApprovedQueryCategory(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

@@ -18,39 +18,39 @@ import com.pennant.app.util.DateUtility;
 
 public class ODDetailDownload implements Tasklet {
 	private Logger logger = Logger.getLogger(ODDetailDownload.class);
-	
+
 	private DataSource dataSource;
-	
+
 	private Date dateValueDate = null;
 	private Date dateAppDate = null;
 	private ExecutionContext stepExecutionContext;
 
 	public ODDetailDownload() {
-		
+
 	}
-	
+
 	@Override
-	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
+	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getAppValueDate();
 		dateAppDate = DateUtility.getAppDate();
 
-		logger.debug("START: Overdue Details for Report as Value Date: "+  DateUtility.addDays(dateValueDate,-1));		
+		logger.debug("START: Overdue Details for Report as Value Date: " + DateUtility.addDays(dateValueDate, -1));
 
-		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();	
+		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		Connection connection = null;
 		PreparedStatement sqlStatement = null;
-		
+
 		try {
-			
+
 			//Daily Download of Overdue Details
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 			sqlStatement.setString(1, dateAppDate.toString());
 			sqlStatement.executeUpdate();
-		
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
@@ -59,12 +59,12 @@ public class ODDetailDownload implements Tasklet {
 			}
 		}
 
-		logger.debug("COMPLETE: Overdue Details for Report as Value Date: "+  DateUtility.addDays(dateValueDate,-1));
+		logger.debug("COMPLETE: Overdue Details for Report as Value Date: " + DateUtility.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	/**
-	 * Method for preparation of Update Query To update 
+	 * Method for preparation of Update Query To update
 	 * 
 	 * @param updateQuery
 	 * @return
@@ -72,9 +72,12 @@ public class ODDetailDownload implements Tasklet {
 	private String prepareUpdateQuery() {
 
 		StringBuilder updateQuery = new StringBuilder(" Insert into FinODDetails_SnapShot ");
-		updateQuery.append(" SELECT ?, FinReference, FinODSchdDate,FinODFor,FinBranch,FinType,CustID,FinODTillDate,FinCurODAmt, ");
-		updateQuery.append(" FinCurODPri,FinCurODPft,FinMaxODAmt,FinMaxODPri,FinMaxODPft,GraceDays,IncGraceDays,FinCurODDays, ");
-		updateQuery.append(" TotPenaltyAmt,TotWaived,TotPenaltyPaid,TotPenaltyBal,FinLMdfDate,TotPftAmt,TotPftPaid,TotPftBal ");
+		updateQuery.append(
+				" SELECT ?, FinReference, FinODSchdDate,FinODFor,FinBranch,FinType,CustID,FinODTillDate,FinCurODAmt, ");
+		updateQuery.append(
+				" FinCurODPri,FinCurODPft,FinMaxODAmt,FinMaxODPri,FinMaxODPft,GraceDays,IncGraceDays,FinCurODDays, ");
+		updateQuery.append(
+				" TotPenaltyAmt,TotWaived,TotPenaltyPaid,TotPenaltyBal,FinLMdfDate,TotPftAmt,TotPftPaid,TotPftBal ");
 		updateQuery.append(" FROM FinODDetails ");
 		updateQuery.append(" where FinCurODAmt !=0 ");
 		return updateQuery.toString();
@@ -87,8 +90,9 @@ public class ODDetailDownload implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}
-	
+
 }

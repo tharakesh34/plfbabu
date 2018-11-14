@@ -33,6 +33,21 @@
  */
 package com.pennant.app.util;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.security.auth.login.AccountNotFoundException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
@@ -50,18 +65,6 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.InterfaceException;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import javax.security.auth.login.AccountNotFoundException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 
 /**
  * @author chaitanya.ch
@@ -72,24 +75,24 @@ import org.springframework.beans.BeanUtils;
  *
  */
 public class PostingsPreparationUtil implements Serializable {
-	private static final long			serialVersionUID	= 1715547921928620037L;
-	private Logger						logger				= Logger.getLogger(PostingsPreparationUtil.class);
+	private static final long serialVersionUID = 1715547921928620037L;
+	private Logger logger = Logger.getLogger(PostingsPreparationUtil.class);
 
-	private AccountEngineExecution		engineExecution;
-	private FinContributorDetailDAO		finContributorDetailDAO;
-	private PostingsDAO					postingsDAO;
-	private AccountProcessUtil			accountProcessUtil;
-	private CommitmentDAO				commitmentDAO;
-	private CommitmentMovementDAO		commitmentMovementDAO;
+	private AccountEngineExecution engineExecution;
+	private FinContributorDetailDAO finContributorDetailDAO;
+	private PostingsDAO postingsDAO;
+	private AccountProcessUtil accountProcessUtil;
+	private CommitmentDAO commitmentDAO;
+	private CommitmentMovementDAO commitmentMovementDAO;
 	//private FinanceCancellationProcess	financeCancellationProcess;
-	private FinanceTypeDAO				financeTypeDAO;
-	private FinTypeAccountingDAO		finTypeAccountingDAO;
-	private DivisionDetailDAO           divisionDetailDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private FinTypeAccountingDAO finTypeAccountingDAO;
+	private DivisionDetailDAO divisionDetailDAO;
 
 	public PostingsPreparationUtil() {
 		super();
 	}
-	
+
 	public AEEvent processPostingDetails(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
@@ -115,7 +118,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		return procCmtPostingDetails(commitment, dateAppDate, acSetEvent);
 	}
-
 
 	/**
 	 * Method To Process Finance Disbursement Cancellation posting IN PostingsPreparationUtil.java
@@ -147,10 +149,9 @@ public class PostingsPreparationUtil implements Serializable {
 			throws InterfaceException {
 		return procJVPostingEntryList(jvPostingEntryList, jVPosting);
 	}
- 
 
-	public AEEvent processPostings(AEEvent aeEvent) throws AccountNotFoundException, IllegalAccessException,
-	InvocationTargetException, InterfaceException {
+	public AEEvent processPostings(AEEvent aeEvent)
+			throws AccountNotFoundException, IllegalAccessException, InvocationTargetException, InterfaceException {
 		return processPostingDetails(aeEvent);
 	}
 
@@ -169,12 +170,11 @@ public class PostingsPreparationUtil implements Serializable {
 		getPostingsDAO().saveBatch(returnDatasetList);
 		getAccountProcessUtil().procAccountUpdate(returnDatasetList);
 
-
 		return aeEvent;
 	}
 
-	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap) throws InterfaceException,
-	IllegalAccessException, InvocationTargetException {
+	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
@@ -315,7 +315,8 @@ public class PostingsPreparationUtil implements Serializable {
 		movement.setFinBranch((String) dataMap.get("fm_finBranch"));
 		movement.setFinType((String) dataMap.get("fm_finType"));
 		movement.setMovementDate(curBussDate);
-		movement.setMovementOrder(getCommitmentMovementDAO().getMaxMovementOrderByRef(commitment.getCmtReference()) + 1);
+		movement.setMovementOrder(
+				getCommitmentMovementDAO().getMaxMovementOrderByRef(commitment.getCmtReference()) + 1);
 		movement.setMovementType("RA");
 		movement.setMovementAmount(postAmount);
 		movement.setCmtAmount(commitment.getCmtAmount());
@@ -393,32 +394,19 @@ public class PostingsPreparationUtil implements Serializable {
 		String errorMsg = null;
 
 		List<Object> returnList = new ArrayList<Object>();
-		/*try {
-			// Call To Finance Disbursement Cancellation posting  interface 
-			List<FinanceCancellation> list = getFinanceCancellationProcess().fetchCancelledFinancePostings(
-					finReference, linkedTranId);
-			if (list != null && list.size() > 0) {
-				FinanceCancellation cancellation = list.get(0);
-				//Check For errors
-				if (StringUtils.isBlank(cancellation.getDsRspErrD())) {
-					if (!StringUtils.equals(cancellation.getDsReqLnkTID(), "XXXX")) {
-						updateCancelledPosting(list);
-					}
-					postingSuccess = true;
-				}
-			}
-		} catch (InterfaceException e) {
-			logger.debug(e);
-			errorMsg = e.getErrorMessage();
-		} catch (Exception e) {
-			logger.debug(e);
-			errorMsg = e.getMessage();
-		}
-
-		returnList.add(postingSuccess);
-		returnList.add(errorMsg);
-
-		logger.debug("Leaving");*/
+		/*
+		 * try { // Call To Finance Disbursement Cancellation posting interface List<FinanceCancellation> list =
+		 * getFinanceCancellationProcess().fetchCancelledFinancePostings( finReference, linkedTranId); if (list != null
+		 * && list.size() > 0) { FinanceCancellation cancellation = list.get(0); //Check For errors if
+		 * (StringUtils.isBlank(cancellation.getDsRspErrD())) { if (!StringUtils.equals(cancellation.getDsReqLnkTID(),
+		 * "XXXX")) { updateCancelledPosting(list); } postingSuccess = true; } } } catch (InterfaceException e) {
+		 * logger.debug(e); errorMsg = e.getErrorMessage(); } catch (Exception e) { logger.debug(e); errorMsg =
+		 * e.getMessage(); }
+		 * 
+		 * returnList.add(postingSuccess); returnList.add(errorMsg);
+		 * 
+		 * logger.debug("Leaving");
+		 */
 		return returnList;
 	}
 
@@ -428,31 +416,23 @@ public class PostingsPreparationUtil implements Serializable {
 	 * 
 	 * @param financeCancellations
 	 *//*
-	private void updateCancelledPosting(List<FinanceCancellation> financeCancellations) {
-		logger.debug("Entering");
-
-		// Create object for postings(Posting table object)
-		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>(financeCancellations.size());
-		ReturnDataSet dataSet = null;
-		for (FinanceCancellation finCanl : financeCancellations) {
-			dataSet = new ReturnDataSet();
-			dataSet.setLinkedTranId(Long.parseLong(finCanl.getDsRspLnkTID()));
-			dataSet.setPostref(finCanl.getDsRspPostRef());
-			dataSet.setFinReference(finCanl.getDsRspFinRef());
-			dataSet.setFinEvent(finCanl.getDsRspFinEvent());
-			dataSet.setPostDate(DateUtility.convertDateFromAS400(new BigDecimal(finCanl.getDsRspPOD())));
-			dataSet.setAccount(finCanl.getDsRspAB() + finCanl.getDsRspAN() + finCanl.getDsRspAS());
-			dataSet.setPostStatus(finCanl.getDsRspStatus());
-			dataSet.setErrorId(finCanl.getDsRspErr());
-			dataSet.setErrorMsg(finCanl.getDsRspErrD());
-			returnDataSets.add(dataSet);
-		}
-
-		if (!returnDataSets.isEmpty()) {
-			getPostingsDAO().updateBatch(returnDataSets, "");
-		}
-		logger.debug("Leaving");
-	}*/
+		 * private void updateCancelledPosting(List<FinanceCancellation> financeCancellations) {
+		 * logger.debug("Entering");
+		 * 
+		 * // Create object for postings(Posting table object) List<ReturnDataSet> returnDataSets = new
+		 * ArrayList<ReturnDataSet>(financeCancellations.size()); ReturnDataSet dataSet = null; for (FinanceCancellation
+		 * finCanl : financeCancellations) { dataSet = new ReturnDataSet();
+		 * dataSet.setLinkedTranId(Long.parseLong(finCanl.getDsRspLnkTID()));
+		 * dataSet.setPostref(finCanl.getDsRspPostRef()); dataSet.setFinReference(finCanl.getDsRspFinRef());
+		 * dataSet.setFinEvent(finCanl.getDsRspFinEvent()); dataSet.setPostDate(DateUtility.convertDateFromAS400(new
+		 * BigDecimal(finCanl.getDsRspPOD()))); dataSet.setAccount(finCanl.getDsRspAB() + finCanl.getDsRspAN() +
+		 * finCanl.getDsRspAS()); dataSet.setPostStatus(finCanl.getDsRspStatus());
+		 * dataSet.setErrorId(finCanl.getDsRspErr()); dataSet.setErrorMsg(finCanl.getDsRspErrD());
+		 * returnDataSets.add(dataSet); }
+		 * 
+		 * if (!returnDataSets.isEmpty()) { getPostingsDAO().updateBatch(returnDataSets, ""); } logger.debug("Leaving");
+		 * }
+		 */
 
 	/**
 	 * Method to prepare accounting entries for FinancePostings
@@ -514,9 +494,8 @@ public class PostingsPreparationUtil implements Serializable {
 			internalAcEntryOne.setTxnCode(SysParamUtil.getValueAsString("CCYCNV_" + drCr + "RTRANCODE"));
 			internalAcEntryOne.setRevTxnCode(SysParamUtil.getValueAsString("CCYCNV_" + crDr + "RTRANCODE"));
 
-			internalAcEntryOne.setAccount((externalAcEntry.getAccount().length() > 4 ? externalAcEntry.getAccount()
-					.substring(0, 4) : externalAcEntry.getAccount())
-					+ "881"
+			internalAcEntryOne.setAccount((externalAcEntry.getAccount().length() > 4
+					? externalAcEntry.getAccount().substring(0, 4) : externalAcEntry.getAccount()) + "881"
 					+ CurrencyUtil.getFormat(externalAcEntry.getAccCCy()) + baseCcyNumber);
 			internalAcEntryOne.setAcType("");
 			internalAcEntryOne.setTxnAmount_Batch(CalculationUtil.getConvertedAmount(internalAcEntryOne.getTxnCCy(),
@@ -532,11 +511,9 @@ public class PostingsPreparationUtil implements Serializable {
 			internalAcEntryTwo.setAcEntryRef(3);
 			internalAcEntryTwo.setTxnCode(SysParamUtil.getValueAsString("CCYCNV_" + crDr + "RTRANCODE"));
 			internalAcEntryTwo.setRevTxnCode(SysParamUtil.getValueAsString("CCYCNV_" + drCr + "RTRANCODE"));
-			internalAcEntryTwo.setAccount((externalAcEntry.getAccount().length() > 4 ? externalAcEntry.getAccount()
-					.substring(0, 4) : externalAcEntry.getAccount())
-					+ "881"
-					+ baseCcyNumber
-					+ CurrencyUtil.getFormat(externalAcEntry.getAccCCy()));
+			internalAcEntryTwo.setAccount((externalAcEntry.getAccount().length() > 4
+					? externalAcEntry.getAccount().substring(0, 4) : externalAcEntry.getAccount()) + "881"
+					+ baseCcyNumber + CurrencyUtil.getFormat(externalAcEntry.getAccCCy()));
 			internalAcEntryTwo.setAcType("");
 			internalAcEntryTwo.setTxnAmount_Batch(CalculationUtil.getConvertedAmount(internalAcEntryOne.getTxnCCy(),
 					baseCcy, internalAcEntryOne.getTxnAmount()));
@@ -599,7 +576,7 @@ public class PostingsPreparationUtil implements Serializable {
 					linkedTranId = getPostingsDAO().getLinkedTransId();
 				}
 			}
-			
+
 			returnDataSet.setLinkedTranId(linkedTranId);
 			returnDataSet.setFinEvent("JVPOST");
 			returnDataSet.setTranDesc(jvPostingEntry.getAccountName());
@@ -619,8 +596,9 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setAmountType("D");
 			returnDataSet.setUserBranch(jVPosting.getUserDetails().getBranchCode());
 			returnDataSet.setCustAppDate(DateUtility.getAppDate());
-			returnDataSet.setEntityCode(getDivisionDetailDAO().getEntityCodeByDivision(jVPosting.getPostingDivision(), ""));
-			String ref = returnDataSet.getFinReference() + "/" + returnDataSet.getFinEvent()+ "/";
+			returnDataSet
+					.setEntityCode(getDivisionDetailDAO().getEntityCodeByDivision(jVPosting.getPostingDivision(), ""));
+			String ref = returnDataSet.getFinReference() + "/" + returnDataSet.getFinEvent() + "/";
 			returnDataSet.setPostingId(ref);
 
 			returnDataSet.setPostref(jVPosting.getBranch() + "-" + StringUtils.trim(jvPostingEntry.getAcType()) + "-"
@@ -642,9 +620,9 @@ public class PostingsPreparationUtil implements Serializable {
 		return list;
 	}
 
-
 	/**
 	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
+	 * 
 	 * @param aeEvent
 	 * @param dataMap
 	 * @return
@@ -655,12 +633,11 @@ public class PostingsPreparationUtil implements Serializable {
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
-		
-		
+
 		getEngineExecution().getAccEngineExecResults(aeEvent);
-		
+
 		validateCreditandDebitAmounts(aeEvent);
-		
+
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {
 			return aeEvent;
@@ -677,9 +654,10 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Leaving");
 		return aeEvent;
 	}
-	
+
 	/**
 	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
+	 * 
 	 * @param aeEvent
 	 * @param dataMap
 	 * @return
@@ -687,27 +665,27 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public AEEvent getAccounting(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public AEEvent getAccounting(AEEvent aeEvent)
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
-		
-		/*if (aeEvent.getLinkedTranId() <= 0) {
-			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
-		}
-		*/
+
+		/*
+		 * if (aeEvent.getLinkedTranId() <= 0) { aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId()); }
+		 */
 		getEngineExecution().getAccEngineExecResults(aeEvent);
-		
+
 		logger.debug("Leaving");
 		return aeEvent;
 	}
- 
- 
-	public AEEvent postAccountingEOD(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+
+	public AEEvent postAccountingEOD(AEEvent aeEvent)
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
-		
+
 		getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		if (!aeEvent.isPostingSucess()) {
@@ -718,7 +696,7 @@ public class PostingsPreparationUtil implements Serializable {
 		return aeEvent;
 
 	}
-	
+
 	public void saveAccountingEOD(List<ReturnDataSet> returnDatasetList) {
 		logger.debug("Entering");
 
@@ -729,7 +707,6 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * @param finReference
 	 * @return
@@ -737,11 +714,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference)  {
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference) {
 		logger.debug("Entering");
-		
-		
-		List<ReturnDataSet> returnDataSets =  getReveralsByFinreference(finReference);
+
+		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finReference);
 
 		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
 
@@ -764,8 +740,8 @@ public class PostingsPreparationUtil implements Serializable {
 	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnDataSets =  getReversalsByLinkedTranID(linkedTranId);
-		
+		List<ReturnDataSet> returnDataSets = getReversalsByLinkedTranID(linkedTranId);
+
 		getPostingsDAO().updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
 
 		getPostingsDAO().saveBatch(returnDataSets);
@@ -775,7 +751,7 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Leaving");
 		return returnDataSets;
 	}
-	
+
 	/**
 	 * 
 	 * @param linkedTranId
@@ -784,11 +760,11 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReversalsByPostRef(long postRef,long postingId) {
+	public List<ReturnDataSet> postReversalsByPostRef(long postRef, long postingId) {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnDataSets =  getReversalsByPostRef(postRef,postingId);
-		
+		List<ReturnDataSet> returnDataSets = getReversalsByPostRef(postRef, postingId);
+
 		getPostingsDAO().updateStatusByPostRef(postRef, AccountConstants.POSTINGS_REVERSE);
 
 		getPostingsDAO().saveBatch(returnDataSets);
@@ -798,7 +774,6 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Leaving");
 		return returnDataSets;
 	}
-
 
 	/**
 	 * 
@@ -810,18 +785,17 @@ public class PostingsPreparationUtil implements Serializable {
 	 */
 	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug("Entering");
-		
+
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
 
-		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
+		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
 
 		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 
 		logger.debug("Leaving");
 		return returnDataSets;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param postingId
@@ -830,20 +804,18 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReversalsByPostRef(long postRef,long postingId) {
+	public List<ReturnDataSet> getReversalsByPostRef(long postRef, long postingId) {
 		logger.debug("Entering");
-		
+
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
 
-		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByPostRef(postRef);
+		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByPostRef(postRef);
 
-		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID,postingId);
+		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID, postingId);
 
 		logger.debug("Leaving");
 		return returnDataSets;
 	}
-
-
 
 	/**
 	 * @param finReference
@@ -854,16 +826,16 @@ public class PostingsPreparationUtil implements Serializable {
 	 */
 	public List<ReturnDataSet> getReveralsByFinreference(String finReference) {
 		logger.debug("Entering");
-		
+
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
-		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference, false);
+		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByFinRef(finReference, false);
 
 		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 
 		logger.debug("Leaving");
 		return returnDataSets;
 	}
-	
+
 	public void validateCreditandDebitAmounts(AEEvent aeEvent) {
 
 		BigDecimal creditAmt = BigDecimal.ZERO;
@@ -884,8 +856,6 @@ public class PostingsPreparationUtil implements Serializable {
 					"Total credits and Total debits are not matched.Please check accounting configuration.");
 		}
 	}
-
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -939,13 +909,12 @@ public class PostingsPreparationUtil implements Serializable {
 		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
 
-	/*public void setFinanceCancellationProcess(FinanceCancellationProcess financeCancellationProcess) {
-		this.financeCancellationProcess = financeCancellationProcess;
-	}
-
-	public FinanceCancellationProcess getFinanceCancellationProcess() {
-		return financeCancellationProcess;
-	}*/
+	/*
+	 * public void setFinanceCancellationProcess(FinanceCancellationProcess financeCancellationProcess) {
+	 * this.financeCancellationProcess = financeCancellationProcess; }
+	 * 
+	 * public FinanceCancellationProcess getFinanceCancellationProcess() { return financeCancellationProcess; }
+	 */
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;

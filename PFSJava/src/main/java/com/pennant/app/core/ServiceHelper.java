@@ -103,40 +103,40 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 abstract public class ServiceHelper implements Serializable {
 
-	private static final long			serialVersionUID	= 4165353615228874397L;
-	private static Logger				logger				= Logger.getLogger(ServiceHelper.class);
+	private static final long serialVersionUID = 4165353615228874397L;
+	private static Logger logger = Logger.getLogger(ServiceHelper.class);
 
-	private DataSource					dataSource;
+	private DataSource dataSource;
 	//customer
-	private CustomerDAO					customerDAO;
-	private CustomerStatusCodeDAO		customerStatusCodeDAO;
-	private CustomerQueuingDAO			customerQueuingDAO;
+	private CustomerDAO customerDAO;
+	private CustomerStatusCodeDAO customerStatusCodeDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 	//Loan
-	private FinanceTypeDAO				financeTypeDAO;
-	private FinanceMainDAO				financeMainDAO;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private RepayInstructionDAO			repayInstructionDAO;
-	private FinanceDisbursementDAO		financeDisbursementDAO;
-	private FinanceRepaymentsDAO		financeRepaymentsDAO;
-	private FinanceProfitDetailDAO		financeProfitDetailDAO;
-	private FinFeeScheduleDetailDAO		finFeeScheduleDetailDAO;
-	private FinInsurancesDAO			finInsurancesDAO;
-	private PresentmentDetailDAO		presentmentDetailDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private RepayInstructionDAO repayInstructionDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
+	private FinInsurancesDAO finInsurancesDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 	//accounting
-	private FinContributorDetailDAO		finContributorDetailDAO;
-	private FinTypeAccountingDAO		finTypeAccountingDAO;
-	private PostingsDAO					postingsDAO;
-	private SecondaryAccountDAO			secondaryAccountDAO;
-	private AccountProcessUtil			accountProcessUtil;
-	private PostingsPreparationUtil		postingsPreparationUtil;
+	private FinContributorDetailDAO finContributorDetailDAO;
+	private FinTypeAccountingDAO finTypeAccountingDAO;
+	private PostingsDAO postingsDAO;
+	private SecondaryAccountDAO secondaryAccountDAO;
+	private AccountProcessUtil accountProcessUtil;
+	private PostingsPreparationUtil postingsPreparationUtil;
 	//over due
-	private FinODDetailsDAO				finODDetailsDAO;
-	private ProvisionDAO				provisionDAO;
-	private ProjectedAmortizationDAO 	projectedAmortizationDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private ProvisionDAO provisionDAO;
+	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	@Autowired
-	private EODConfigDAO				eodConfigDAO;
-	private static EODConfig			eodConfig;
+	private EODConfigDAO eodConfigDAO;
+	private static EODConfig eodConfig;
 
 	public long getAccountingID(FinanceMain main, String eventCode) {
 		if (StringUtils.isNotBlank(main.getPromotionCode())) {
@@ -522,7 +522,7 @@ abstract public class ServiceHelper implements Serializable {
 	public ProjectedAmortizationDAO getProjectedAmortizationDAO() {
 		return projectedAmortizationDAO;
 	}
- 
+
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
 	}

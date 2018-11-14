@@ -98,7 +98,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 						if (customer == null) {
 							failedCount++;
-							cibilService.logFileInfoException(headerId, String.valueOf(customerId), "Unable to fetch the details.");
+							cibilService.logFileInfoException(headerId, String.valueOf(customerId),
+									"Unable to fetch the details.");
 							return;
 						}
 
@@ -203,8 +204,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	 * <li>It is a Required segment.</li>
 	 * <li>It is of a fixed size of 146 bytes.</li>
 	 * <li>It occurs only once per update file.</li>
-	 * <li>All the fields must be provided; otherwise, the entire data input
-	 * file is rejected.</li>
+	 * <li>All the fields must be provided; otherwise, the entire data input file is rejected.</li>
 	 *
 	 */
 	public class HeaderSegment {
@@ -239,8 +239,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PN Segment describes personal consumer information, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 174
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 174 bytes.</li>
 	 * <li>It occurs only once per record.</li>
 	 * <li>Tag 06 is reserved for future use.</li>
 	 */
@@ -307,15 +306,13 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	/**
 	 * The PT Segment contains the known phone numbers of the consumer, and:
-	 * <li>This is a Required segment if at least one valid ID segment (with ID
-	 * Type of 01, 02, 03, 04, or 06) is not present.</li>
-	 * <li>It is variable in length and can be of a maximum size of 28
-	 * bytes.</li>
+	 * <li>This is a Required segment if at least one valid ID segment (with ID Type of 01, 02, 03, 04, or 06) is not
+	 * present.</li>
+	 * <li>It is variable in length and can be of a maximum size of 28 bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
-	 * <li>For accounts opened on/after June 1, 2007, at least one valid
-	 * Telephone (PT) segment or at least one valid Identification (ID) segment
-	 * (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the
-	 * record is rejected.</li>
+	 * <li>For accounts opened on/after June 1, 2007, at least one valid Telephone (PT) segment or at least one valid
+	 * Identification (ID) segment (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the record is
+	 * rejected.</li>
 	 *
 	 */
 	public class TelephoneSegment {
@@ -353,8 +350,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The EC Segment contains the email address of the consumer, and:
 	 * <li>This is a When Available segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 81
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 81 bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
 	 */
 	public class EmailContactSegment {
@@ -388,12 +384,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PA Segment contains the known address of the consumer, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 259
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 259 bytes.</li>
 	 * <li>This can occur maximum of 5 times per record.</li>
 	 * <li>Any extra PA Segments after the 5th one will be rejected.</li>
-	 * <li>At least one valid PA Segment is required. All invalid PA Segments
-	 * will be rejected.</li>
+	 * <li>At least one valid PA Segment is required. All invalid PA Segments will be rejected.</li>
 	 * <li>It can be provided as free format in Address Line Fields 1-5.</li>
 	 *
 	 */
@@ -453,11 +447,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 			if (loan.getLatestRpyDate() != null) {
 				writeValue(builder, "09", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
 			}
-			
+
 			int odDays = Integer.parseInt(getOdDays(loan.getOdDays()));
 			BigDecimal currentBalance = BigDecimal.ZERO;
 			String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
-			
+
 			if (odDays != 0) {
 				currentBalance = loan.getFutureSchedulePrin()
 						.add(loan.getInstalmentDue().subtract(loan.getInstalmentPaid())
@@ -467,29 +461,27 @@ public class RetailCibilReport extends BasicDao<Object> {
 			} else {
 				currentBalance = loan.getFutureSchedulePrin();
 			}
-			
+
 			if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
 				currentBalance = BigDecimal.ZERO;
 			}
-			
+
 			//### PSD --127340 20-06-2018 FOr cancelled loans current balnce and overdue amount should be 0
 			if (StringUtils.equals("C", closingstatus)) {
 				currentBalance = BigDecimal.ZERO;
 			}
 			//### PSD --127340 20-06-2018
-			
-			
+
 			if (currentBalance.compareTo(BigDecimal.ZERO) == 0 && loan.getLatestRpyDate() != null) {
 				writeValue(builder, "10", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
 			}
-			
+
 			writeValue(builder, "11", DateUtility.getAppDate(DATE_FORMAT), "08");
 			writeValue(builder, "12", loan.getFinAssetValue(), 9, "TL");
 			writeValue(builder, "13", currentBalance, 9, "TL");
-			
-			
+
 			BigDecimal amountOverdue = BigDecimal.ZERO;
-			
+
 			if (odDays != 0) {
 				amountOverdue = (loan.getInstalmentDue().subtract(loan.getInstalmentPaid()))
 						.add(loan.getBounceDue().subtract(loan.getBouncePaid())
@@ -498,12 +490,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 			} else {
 				amountOverdue = BigDecimal.ZERO;
 			}
-			
-			
+
 			if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
 				amountOverdue = BigDecimal.ZERO;
 			}
-			
+
 			//### PSD --127340 20-06-2018 FOr cancelled loans current balnce and overdue amount should be 0
 			if (StringUtils.equals("C", closingstatus)) {
 				amountOverdue = BigDecimal.ZERO;
@@ -511,13 +502,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 			//### PSD --127340 20-06-2018
 
 			writeValue(builder, "14", amountOverdue, 9, "TL");
-			
+
 			if (amountOverdue.compareTo(BigDecimal.ZERO) <= 0) {
 				writeValue(builder, "15", "0", 3, "TL");
 			} else {
 				writeValue(builder, "15", getOdDays(loan.getOdDays()), 3, "TL");
 			}
-
 
 			if (closingstatus.equals("W")) {
 				// 02 = Written-off
@@ -731,7 +721,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			Matcher regexMatcher = null;
 			Pattern regex = Pattern.compile("[0-9]");
 			Matcher regexMatcherforNum = regex.matcher(customerName);
-			
+
 			if (!regexMatcherforNum.find()) {
 				regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'");
 				regexMatcher = regex.matcher(customerName);
@@ -778,9 +768,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 	}
 
-	
-	
-	private  void writeCustomerAddress(StringBuilder writer, CustomerAddres custAddr) throws IOException {
+	private void writeCustomerAddress(StringBuilder writer, CustomerAddres custAddr) throws IOException {
 		StringBuilder builder = new StringBuilder();
 
 		if (custAddr.getCustAddrHNbr() != null) {
@@ -791,7 +779,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 		}
 
-		if (custAddr. getCustAddrStreet() != null) {
+		if (custAddr.getCustAddrStreet() != null) {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrStreet()));
 			if (custAddr.getCustFlatNbr() != null || custAddr.getCustAddrLine1() != null
 					|| custAddr.getCustAddrLine2() != null) {
@@ -859,8 +847,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
-	
+
 	private String updateRemarks() {
 		StringBuilder remarks = new StringBuilder();
 		if (failedCount > 0) {

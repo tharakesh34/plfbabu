@@ -92,8 +92,8 @@ public class Branch extends AbstractWorkflowEntity {
 	private String lovValue;
 	private Branch befImage;
 	private LoggedInUser userDetails;
-    private String pinCode;
-    private String pinAreaDesc;
+	private String pinCode;
+	private String pinAreaDesc;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -108,14 +108,14 @@ public class Branch extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("newBranchDesc");
 		excludeFields.add("parentBranchDesc");
 		excludeFields.add("pinAreaDesc");
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -123,13 +123,15 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getId() {
 		return branchCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.branchCode = id;
 	}
 
 	public String getBranchCode() {
 		return branchCode;
 	}
+
 	public void setBranchCode(String branchCode) {
 		this.branchCode = branchCode;
 	}
@@ -137,6 +139,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchDesc() {
 		return branchDesc;
 	}
+
 	public void setBranchDesc(String branchDesc) {
 		this.branchDesc = branchDesc;
 	}
@@ -144,6 +147,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchAddrLine1() {
 		return branchAddrLine1;
 	}
+
 	public void setBranchAddrLine1(String branchAddrLine1) {
 		this.branchAddrLine1 = branchAddrLine1;
 	}
@@ -151,6 +155,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchAddrLine2() {
 		return branchAddrLine2;
 	}
+
 	public void setBranchAddrLine2(String branchAddrLine2) {
 		this.branchAddrLine2 = branchAddrLine2;
 	}
@@ -158,6 +163,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchPOBox() {
 		return branchPOBox;
 	}
+
 	public void setBranchPOBox(String branchPOBox) {
 		this.branchPOBox = branchPOBox;
 	}
@@ -165,6 +171,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchCity() {
 		return branchCity;
 	}
+
 	public void setBranchCity(String branchCity) {
 		this.branchCity = branchCity;
 	}
@@ -180,13 +187,15 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchProvince() {
 		return branchProvince;
 	}
+
 	public void setBranchProvince(String branchProvince) {
 		this.branchProvince = branchProvince;
-	}	
+	}
 
 	public String getLovDescBranchProvinceName() {
 		return this.lovDescBranchProvinceName;
 	}
+
 	public void setLovDescBranchProvinceName(String lovDescBranchProvinceName) {
 		this.lovDescBranchProvinceName = lovDescBranchProvinceName;
 	}
@@ -194,13 +203,15 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchCountry() {
 		return branchCountry;
 	}
+
 	public void setBranchCountry(String branchCountry) {
 		this.branchCountry = branchCountry;
-	}	
+	}
 
 	public String getLovDescBranchCountryName() {
 		return this.lovDescBranchCountryName;
 	}
+
 	public void setLovDescBranchCountryName(String lovDescBranchCountryName) {
 		this.lovDescBranchCountryName = lovDescBranchCountryName;
 	}
@@ -208,6 +219,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchFax() {
 		return branchFax;
 	}
+
 	public void setBranchFax(String branchFax) {
 		this.branchFax = branchFax;
 	}
@@ -215,6 +227,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchTel() {
 		return branchTel;
 	}
+
 	public void setBranchTel(String branchTel) {
 		this.branchTel = branchTel;
 	}
@@ -222,6 +235,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchSwiftBankCde() {
 		return branchSwiftBankCde;
 	}
+
 	public void setBranchSwiftBankCde(String branchSwiftBankCde) {
 		this.branchSwiftBankCde = branchSwiftBankCde;
 	}
@@ -229,6 +243,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchSwiftCountry() {
 		return branchSwiftCountry;
 	}
+
 	public void setBranchSwiftCountry(String branchSwiftCountry) {
 		this.branchSwiftCountry = branchSwiftCountry;
 	}
@@ -236,14 +251,15 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getLovDescBranchSwiftCountryName() {
 		return lovDescBranchSwiftCountryName;
 	}
-	public void setLovDescBranchSwiftCountryName(
-			String lovDescBranchSwiftCountryName) {
+
+	public void setLovDescBranchSwiftCountryName(String lovDescBranchSwiftCountryName) {
 		this.lovDescBranchSwiftCountryName = lovDescBranchSwiftCountryName;
 	}
 
 	public String getBranchSwiftLocCode() {
 		return branchSwiftLocCode;
 	}
+
 	public void setBranchSwiftLocCode(String branchSwiftLocCode) {
 		this.branchSwiftLocCode = branchSwiftLocCode;
 	}
@@ -251,6 +267,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchSwiftBrnCde() {
 		return branchSwiftBrnCde;
 	}
+
 	public void setBranchSwiftBrnCde(String branchSwiftBrnCde) {
 		this.branchSwiftBrnCde = branchSwiftBrnCde;
 	}
@@ -258,6 +275,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getBranchSortCode() {
 		return branchSortCode;
 	}
+
 	public void setBranchSortCode(String branchSortCode) {
 		this.branchSortCode = branchSortCode;
 	}
@@ -265,6 +283,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public boolean isBranchIsActive() {
 		return branchIsActive;
 	}
+
 	public void setBranchIsActive(boolean branchIsActive) {
 		this.branchIsActive = branchIsActive;
 	}
@@ -272,6 +291,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getNewBranchCode() {
 		return newBranchCode;
 	}
+
 	public void setNewBranchCode(String newBranchCode) {
 		this.newBranchCode = newBranchCode;
 	}
@@ -279,6 +299,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getNewBranchDesc() {
 		return newBranchDesc;
 	}
+
 	public void setNewBranchDesc(String newBranchDesc) {
 		this.newBranchDesc = newBranchDesc;
 	}
@@ -286,6 +307,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -293,20 +315,23 @@ public class Branch extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Branch getBefImage(){
+	public Branch getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Branch beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Branch beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -382,6 +407,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public void setBranchAddrStreet(String branchAddrStreet) {
 		this.branchAddrStreet = branchAddrStreet;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
@@ -393,6 +419,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
 	}
+
 	public String getPinAreaDesc() {
 		return pinAreaDesc;
 	}

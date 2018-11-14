@@ -9,35 +9,35 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinInsurances extends AbstractWorkflowEntity  implements Entity {
+public class FinInsurances extends AbstractWorkflowEntity implements Entity {
 
-	private static final long	serialVersionUID	= 1L;
-	private long insId          = Long.MIN_VALUE;
-	private String				reference;
-	private String				module;
-	private String				insuranceType;
-	private String				insReference;
-	private String				insuranceTypeDesc;
-	private String				policyCode;
-	private String				policyDesc;
-	private boolean				insuranceReq;
-	private String				provider;
-	private String				providerName;
-	private String				paymentMethod;
-	private String				calType;
-	private BigDecimal			insuranceRate;
-	private String				waiverReason;
-	private String				insuranceStatus;	
-	private String				insuranceFrq;
-	private BigDecimal			amount;
-	private String              calRule;
-	private BigDecimal          calPerc=BigDecimal.ZERO;
-	private String              calOn;
-	private boolean				newRecord			= false;
-	private FinInsurances		befImage;
-	private LoggedInUser		userDetails;
+	private static final long serialVersionUID = 1L;
+	private long insId = Long.MIN_VALUE;
+	private String reference;
+	private String module;
+	private String insuranceType;
+	private String insReference;
+	private String insuranceTypeDesc;
+	private String policyCode;
+	private String policyDesc;
+	private boolean insuranceReq;
+	private String provider;
+	private String providerName;
+	private String paymentMethod;
+	private String calType;
+	private BigDecimal insuranceRate;
+	private String waiverReason;
+	private String insuranceStatus;
+	private String insuranceFrq;
+	private BigDecimal amount;
+	private String calRule;
+	private BigDecimal calPerc = BigDecimal.ZERO;
+	private String calOn;
+	private boolean newRecord = false;
+	private FinInsurances befImage;
+	private LoggedInUser userDetails;
 	private List<FinSchFrqInsurance> finSchFrqInsurances;
-	private boolean 			alwRateChange;
+	private boolean alwRateChange;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -67,7 +67,7 @@ public class FinInsurances extends AbstractWorkflowEntity  implements Entity {
 	public void setId(long id) {
 		this.insId = id;
 	}
-	
+
 	public long getInsId() {
 		return insId;
 	}
@@ -75,7 +75,7 @@ public class FinInsurances extends AbstractWorkflowEntity  implements Entity {
 	public void setInsId(long insId) {
 		this.insId = insId;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

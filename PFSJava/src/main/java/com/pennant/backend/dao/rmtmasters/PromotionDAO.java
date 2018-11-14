@@ -42,17 +42,25 @@
 */
 
 package com.pennant.backend.dao.rmtmasters;
+
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.Promotion;
 
 public interface PromotionDAO {
-	Promotion getPromotionById(String promotionCode,String type);
-	void update(Promotion promotion,String type);
-	void delete(Promotion promotion,String type);
-	String save(Promotion promotion,String type);
+	Promotion getPromotionById(String promotionCode, String type);
+
+	void update(Promotion promotion, String type);
+
+	void delete(Promotion promotion, String type);
+
+	String save(Promotion promotion, String type);
+
 	int getPromtionCodeCount(String promotionCode, String type);
+
 	int getFinanceTypeCountById(String finType);
+
 	List<Promotion> getPromotionsByFinType(String finType, String type);
+
 	int getPromotionByRuleCode(long ruleId, String type);
 }

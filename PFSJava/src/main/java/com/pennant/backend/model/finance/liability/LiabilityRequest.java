@@ -67,7 +67,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	private BigDecimal insClaimAmount;
 	private String insClaimReason;
 
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private LiabilityRequest befImage;
 	private LoggedInUser userDetails;
@@ -81,7 +81,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	private Date maturityDate;
 	private String finCcy;
 	private String custCIF;
-	private BigDecimal 	finAmount = BigDecimal.ZERO;
+	private BigDecimal finAmount = BigDecimal.ZERO;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -97,8 +97,8 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finType");
 		excludeFields.add("finBranch");
 		excludeFields.add("finStartDate");
@@ -115,7 +115,6 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
 
 	public String getFinType() {
 		return finType;
@@ -153,13 +152,14 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		return id;
 	}
 
-	public void setId (long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -167,6 +167,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	public long getInitiatedBy() {
 		return initiatedBy;
 	}
+
 	public void setInitiatedBy(long initiatedBy) {
 		this.initiatedBy = initiatedBy;
 	}
@@ -187,12 +188,12 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public LiabilityRequest getBefImage(){
+	public LiabilityRequest getBefImage() {
 		return this.befImage;
 	}
 
-	public void setBefImage(LiabilityRequest beforeImage){
-		this.befImage=beforeImage;
+	public void setBefImage(LiabilityRequest beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

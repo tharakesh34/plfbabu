@@ -76,34 +76,32 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/IncomeType/incomeTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/IncomeType/incomeTypeDialog.zul file.
  */
 public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	private static final long serialVersionUID = -9144099736284703562L;
 	private static final Logger logger = Logger.getLogger(IncomeTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by
-	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_IncomeTypeDialog;
+	protected Window window_IncomeTypeDialog;
 
 	protected Combobox incomeExpense;
 	protected Combobox category;
 	protected Decimalbox margin;
-	
-	protected Uppercasebox 	incomeTypeCode; 		
-	protected Textbox 		incomeTypeDesc; 		
-	protected Checkbox 		incomeTypeIsActive; 	
+
+	protected Uppercasebox incomeTypeCode;
+	protected Textbox incomeTypeDesc;
+	protected Checkbox incomeTypeIsActive;
 
 	// not autoWired variables
 	private IncomeType incomeType; // over handed per parameter
 	private transient IncomeTypeListCtrl incomeTypeListCtrl; // over handed per parameter
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient IncomeTypeService incomeTypeService;
 
@@ -122,9 +120,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected IncomeType object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected IncomeType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -150,15 +147,13 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 				setIncomeType(null);
 			}
 
-			doLoadWorkFlow(this.incomeType.isWorkflow(),
-					this.incomeType.getWorkflowId(),
+			doLoadWorkFlow(this.incomeType.isWorkflow(), this.incomeType.getWorkflowId(),
 					this.incomeType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"IncomeTypeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "IncomeTypeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -168,8 +163,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 			// or
 			// delete incomeType here.
 			if (arguments.containsKey("incomeTypeListCtrl")) {
-				setIncomeTypeListCtrl((IncomeTypeListCtrl) arguments
-						.get("incomeTypeListCtrl"));
+				setIncomeTypeListCtrl((IncomeTypeListCtrl) arguments.get("incomeTypeListCtrl"));
 			} else {
 				setIncomeTypeListCtrl(null);
 			}
@@ -203,8 +197,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -315,8 +308,9 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		this.margin.setValue(PennantAppUtil.formateAmount(aIncomeType.getMargin(), 2));
 		this.incomeTypeIsActive.setChecked(aIncomeType.isIncomeTypeIsActive());
 		this.recordStatus.setValue(aIncomeType.getRecordStatus());
-		
-		if(aIncomeType.isNew() || (aIncomeType.getRecordType() != null ? aIncomeType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aIncomeType.isNew() || (aIncomeType.getRecordType() != null ? aIncomeType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.incomeTypeIsActive.setChecked(true);
 			this.incomeTypeIsActive.setDisabled(true);
 		}
@@ -335,17 +329,23 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (this.incomeExpense.getSelectedItem()==null || StringUtils.trimToEmpty(this.incomeExpense.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(this.incomeExpense,Labels.getLabel("STATIC_INVALID",new String[]{Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value")}));
+			if (this.incomeExpense.getSelectedItem() == null
+					|| StringUtils.trimToEmpty(this.incomeExpense.getSelectedItem().getValue().toString())
+							.equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.incomeExpense, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value") }));
 			}
-			
+
 			aIncomeType.setIncomeExpense(this.incomeExpense.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (this.category.getSelectedItem()==null || StringUtils.trimToEmpty(this.category.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
-				throw new WrongValueException(this.category,Labels.getLabel("STATIC_INVALID",new String[]{Labels.getLabel("label_IncomeTypeDialog_Category.value")}));
+			if (this.category.getSelectedItem() == null
+					|| StringUtils.trimToEmpty(this.category.getSelectedItem().getValue().toString())
+							.equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.category, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_IncomeTypeDialog_Category.value") }));
 			}
 			aIncomeType.setCategory(this.category.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
@@ -390,13 +390,12 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aIncomeType
 	 * @throws Exception
 	 */
-	public void doShowDialog(IncomeType aIncomeType)throws Exception {
+	public void doShowDialog(IncomeType aIncomeType) throws Exception {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -424,7 +423,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 			doWriteBeanToComponents(aIncomeType);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_IncomeTypeDialog.onClose();
 		} catch (Exception e) {
@@ -440,18 +439,22 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.incomeTypeCode.isReadonly()){
-			this.incomeTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_IncomeTypeDialog_IncomeTypeCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.incomeTypeCode.isReadonly()) {
+			this.incomeTypeCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IncomeTypeDialog_IncomeTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.incomeTypeDesc.isReadonly()){
-			this.incomeTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_IncomeTypeDialog_IncomeTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.incomeTypeDesc.isReadonly()) {
+			this.incomeTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_IncomeTypeDialog_IncomeTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.margin.isReadonly()) {
-			this.margin.setConstraint(new 	PTDecimalValidator(Labels.getLabel("label_IncomeTypeDialog_Margin.value"), 2,false,false,100));
+			this.margin.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IncomeTypeDialog_Margin.value"), 2,
+					false, false, 100));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -504,11 +507,12 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value")+" : " +aIncomeType.getIncomeExpense() + "," +
-				Labels.getLabel("label_IncomeTypeDialog_Category.value")+" : " +aIncomeType.getLovDescCategoryName() + "," +
-				Labels.getLabel("label_IncomeTypeDialog_IncomeTypeCode.value")+" : " +aIncomeType.getIncomeTypeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value") + " : " + aIncomeType.getIncomeExpense()
+				+ "," + Labels.getLabel("label_IncomeTypeDialog_Category.value") + " : "
+				+ aIncomeType.getLovDescCategoryName() + ","
+				+ Labels.getLabel("label_IncomeTypeDialog_IncomeTypeCode.value") + " : "
+				+ aIncomeType.getIncomeTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aIncomeType.getRecordType())) {
 				aIncomeType.setVersion(aIncomeType.getVersion() + 1);
@@ -552,11 +556,13 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.margin);
 		}
-		
-		/*readOnlyComponent(isReadOnly("IncomeTypeDialog_incomeExpense"), this.incomeExpense);
-		readOnlyComponent(isReadOnly("IncomeTypeDialog_category"), this.category);
-		readOnlyComponent(isReadOnly("IncomeTypeDialog_margin"), this.margin);*/
-		
+
+		/*
+		 * readOnlyComponent(isReadOnly("IncomeTypeDialog_incomeExpense"), this.incomeExpense);
+		 * readOnlyComponent(isReadOnly("IncomeTypeDialog_category"), this.category);
+		 * readOnlyComponent(isReadOnly("IncomeTypeDialog_margin"), this.margin);
+		 */
+
 		this.incomeTypeDesc.setReadonly(isReadOnly("IncomeTypeDialog_incomeTypeDesc"));
 		this.margin.setReadonly(isReadOnly("IncomeTypeDialog_incomeTypeDesc"));
 		this.incomeTypeIsActive.setDisabled(isReadOnly("IncomeTypeDialog_incomeTypeIsActive"));
@@ -667,11 +673,11 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 				// Close the Existing Dialog
 				closeDialog();
 			}
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -750,7 +756,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aIncomeType,PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aIncomeType, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -813,8 +819,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, 
-								Labels.getLabel("InvalidWorkFlowMethod"),null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_IncomeTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -856,9 +862,9 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 */
 	private AuditHeader getAuditHeader(IncomeType aIncomeType, String tranType) {
 
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,aIncomeType.getBefImage(), aIncomeType);
-		return new AuditHeader(String.valueOf(aIncomeType.getId()), null, null,
-				null, auditDetail, aIncomeType.getUserDetails(),getOverideMap());
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aIncomeType.getBefImage(), aIncomeType);
+		return new AuditHeader(String.valueOf(aIncomeType.getId()), null, null, null, auditDetail,
+				aIncomeType.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -867,7 +873,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 * @param e
 	 *            (Exception)
 	 */
-	
+
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -875,7 +881,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_IncomeTypeDialog,auditHeader);
+			ErrorControl.showErrorControl(this.window_IncomeTypeDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -900,12 +906,11 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	private void refreshList() {
 		getIncomeTypeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.incomeType.getIncomeTypeCode());
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -914,6 +919,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -921,6 +927,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	public IncomeType getIncomeType() {
 		return this.incomeType;
 	}
+
 	public void setIncomeType(IncomeType incomeType) {
 		this.incomeType = incomeType;
 	}
@@ -928,6 +935,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	public void setIncomeTypeService(IncomeTypeService incomeTypeService) {
 		this.incomeTypeService = incomeTypeService;
 	}
+
 	public IncomeTypeService getIncomeTypeService() {
 		return this.incomeTypeService;
 	}
@@ -935,6 +943,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	public void setIncomeTypeListCtrl(IncomeTypeListCtrl incomeTypeListCtrl) {
 		this.incomeTypeListCtrl = incomeTypeListCtrl;
 	}
+
 	public IncomeTypeListCtrl getIncomeTypeListCtrl() {
 		return this.incomeTypeListCtrl;
 	}

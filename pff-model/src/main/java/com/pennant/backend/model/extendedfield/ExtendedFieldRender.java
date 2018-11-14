@@ -8,23 +8,24 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class ExtendedFieldRender extends AbstractWorkflowEntity {
 
-	private static final long	serialVersionUID	= -3393253877805479673L;
+	private static final long serialVersionUID = -3393253877805479673L;
 
-	private String				reference;
-	private int					seqNo				= 0;
-	private String				tableName;
-	private String				typeCode;
-	private String				typeCodeDesc;
-	private Map<String, Object>	mapValues			= null;
-	private Map<String, Object>	auditMapValues		= null;
-	private boolean				newRecord			= false;
-	private ExtendedFieldRender	befImage;
+	private String reference;
+	private int seqNo = 0;
+	private String tableName;
+	private String typeCode;
+	private String typeCodeDesc;
+	private Map<String, Object> mapValues = null;
+	private Map<String, Object> auditMapValues = null;
+	private boolean newRecord = false;
+	private ExtendedFieldRender befImage;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

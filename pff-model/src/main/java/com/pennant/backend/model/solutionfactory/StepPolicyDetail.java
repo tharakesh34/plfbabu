@@ -43,7 +43,6 @@ package com.pennant.backend.model.solutionfactory;
  ********************************************************************************************
 */
 
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -60,9 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>StepPolicyDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = {
-		"stepNumber","tenorSplitPerc","rateMargin","emiSplitPerc"
-})
+@XmlType(propOrder = { "stepNumber", "tenorSplitPerc", "rateMargin", "emiSplitPerc" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class StepPolicyDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -76,11 +73,11 @@ public class StepPolicyDetail extends AbstractWorkflowEntity {
 	private BigDecimal rateMargin = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal emiSplitPerc = BigDecimal.ZERO;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private StepPolicyDetail befImage;
 	private LoggedInUser userDetails;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -93,21 +90,21 @@ public class StepPolicyDetail extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		return new HashSet<String>();
 	}
-	
+
 	//Getter and Setter methods
-	
+
 	public String getId() {
 		return policyCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.policyCode = id;
 	}
-		
+
 	public String getPolicyCode() {
 		return policyCode;
 	}
@@ -127,10 +124,11 @@ public class StepPolicyDetail extends AbstractWorkflowEntity {
 	public BigDecimal getTenorSplitPerc() {
 		return tenorSplitPerc;
 	}
+
 	public void setTenorSplitPerc(BigDecimal tenorSplitPerc) {
 		this.tenorSplitPerc = tenorSplitPerc;
 	}
-	
+
 	public BigDecimal getRateMargin() {
 		return rateMargin;
 	}
@@ -154,7 +152,7 @@ public class StepPolicyDetail extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -163,12 +161,12 @@ public class StepPolicyDetail extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public StepPolicyDetail getBefImage(){
+	public StepPolicyDetail getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(StepPolicyDetail beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(StepPolicyDetail beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -179,4 +177,3 @@ public class StepPolicyDetail extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 }
-

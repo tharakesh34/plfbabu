@@ -62,14 +62,14 @@ import com.pennant.util.PennantAppUtil;
  * Item renderer for listItems in the listBox.
  * 
  */
-public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<CustomerIncome>,Serializable {
+public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<CustomerIncome>, Serializable {
 
 	private static final long serialVersionUID = 816239347392992946L;
 
 	public CustomerIncomeListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, CustomerIncome customerIncome, int count) throws Exception {
 
@@ -82,16 +82,17 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 		} else {
 
 			Listcell lc;
-			lc = new Listcell(customerIncome.getCustCif() );
+			lc = new Listcell(customerIncome.getCustCif());
 			lc.setParent(item);
-			lc = new Listcell(customerIncome.getIncomeType() + "-"+ customerIncome.getIncomeTypeDesc());
+			lc = new Listcell(customerIncome.getIncomeType() + "-" + customerIncome.getIncomeTypeDesc());
 			lc.setParent(item);
 			lc = new Listcell();
 			Checkbox cb = new Checkbox();
 			cb.setChecked(customerIncome.isJointCust());
 			cb.setParent(lc);
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), CurrencyUtil.getFormat(customerIncome.getToCcy())));
+			lc = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(),
+					CurrencyUtil.getFormat(customerIncome.getToCcy())));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			lc = new Listcell(customerIncome.getRecordStatus());
@@ -99,7 +100,7 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 			lc = new Listcell(PennantJavaUtil.getLabel(customerIncome.getRecordType()));
 			lc.setParent(item);
 			item.setAttribute("data", customerIncome);
-			ComponentsCtrl.applyForward(item,"onDoubleClick=onCustomerIncomeItemDoubleClicked");
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
 		}
 	}
 }

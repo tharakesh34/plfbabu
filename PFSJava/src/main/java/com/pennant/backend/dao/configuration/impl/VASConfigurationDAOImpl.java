@@ -43,8 +43,6 @@
 
 package com.pennant.backend.dao.configuration.impl;
 
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -60,7 +58,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
- 
+
 /**
  * DAO methods implementation for the <b>VASConfiguration model</b> class.<br>
  * 
@@ -68,14 +66,14 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implements VASConfigurationDAO {
 	private static Logger logger = Logger.getLogger(VASConfigurationDAOImpl.class);
-	
+
 	public VASConfigurationDAOImpl() {
 		super();
 	}
 
-
 	/**
-	 * This method set the Work Flow id based on the module name and return the new VASConfiguration 
+	 * This method set the Work Flow id based on the module name and return the new VASConfiguration
+	 * 
 	 * @return VASConfiguration
 	 */
 
@@ -86,12 +84,12 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		return new VASConfiguration();
 	}
 
-
 	/**
-	 * This method get the module from method getVASConfiguration() and set the new record flag as true and return VASConfiguration()   
+	 * This method get the module from method getVASConfiguration() and set the new record flag as true and return
+	 * VASConfiguration()
+	 * 
 	 * @return VASConfiguration
 	 */
-
 
 	@Override
 	public VASConfiguration getNewVASConfiguration() {
@@ -103,11 +101,12 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 	}
 
 	/**
-	 * Fetch the Record  VASConfiguration details by key field
+	 * Fetch the Record VASConfiguration details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return VASConfiguration
 	 */
 	@Override
@@ -117,10 +116,13 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
 
-		sql = new StringBuilder("Select ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting,");
-		sql.append(" RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ProductType, VasFee,");
+		sql = new StringBuilder(
+				"Select ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting,");
+		sql.append(
+				" RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ProductType, VasFee,");
 		sql.append("  AllowFeeToModify, ManufacturerId, PreValidation, PostValidation,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeAccountingName, AccrualAccountingName, FeeAccountingDesc, AccrualAccountingDesc");
 			sql.append(" ,ProductTypeDesc, ProductCategory, ManufacturerName");
@@ -132,7 +134,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 
 		source = new MapSqlParameterSource();
 		source.addValue("ProductCode", productCode);
-		RowMapper<VASConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASConfiguration.class);
+		RowMapper<VASConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VASConfiguration.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -144,111 +147,123 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the VasStructure or VasStructure_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete VASConfiguration by key ProductCode
+	 * This method Deletes the Record from the VasStructure or VasStructure_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete VASConfiguration by key ProductCode
 	 * 
-	 * @param VASConfiguration (vASConfiguration)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param VASConfiguration
+	 *            (vASConfiguration)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void delete(VASConfiguration vASConfiguration,String type) {
+	public void delete(VASConfiguration vASConfiguration, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From VasStructure");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ProductCode =:ProductCode");
-	
+
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into VasStructure or VasStructure_Temp.
 	 *
-	 * save VASConfiguration 
+	 * save VASConfiguration
 	 * 
-	 * @param VASConfiguration (vASConfiguration)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param VASConfiguration
+	 *            (vASConfiguration)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(VASConfiguration vASConfiguration,String type) {
+	public String save(VASConfiguration vASConfiguration, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into VasStructure");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into VasStructure");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting, RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ");
+		insertSql.append(
+				" (ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting, RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ");
 		insertSql.append("  ProductType, VasFee, AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, ");
-		insertSql.append("  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append("  Values(:ProductCode, :ProductDesc, :RecAgainst, :FeeAccrued, :FeeAccounting, :AccrualAccounting, :RecurringType, :FreeLockPeriod, :PreValidationReq, :PostValidationReq, :Active, :Remarks, ");
-		insertSql.append("  :ProductType, :VasFee, :AllowFeeToModify, :ManufacturerId, :PreValidation, :PostValidation, ");
-		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+		insertSql.append(
+				"  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				"  Values(:ProductCode, :ProductDesc, :RecAgainst, :FeeAccrued, :FeeAccounting, :AccrualAccounting, :RecurringType, :FreeLockPeriod, :PreValidationReq, :PostValidationReq, :Active, :Remarks, ");
+		insertSql.append(
+				"  :ProductType, :VasFee, :AllowFeeToModify, :ManufacturerId, :PreValidation, :PostValidation, ");
+		insertSql.append(
+				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vASConfiguration.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record VasStructure or VasStructure_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update VASConfiguration by key ProductCode and Version
+	 * This method updates the Record VasStructure or VasStructure_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update VASConfiguration by key ProductCode and Version
 	 * 
-	 * @param VASConfiguration (vASConfiguration)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param VASConfiguration
+	 *            (vASConfiguration)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(VASConfiguration vASConfiguration,String type) {
+	public void update(VASConfiguration vASConfiguration, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update VasStructure");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ProductDesc = :ProductDesc, RecAgainst = :RecAgainst, FeeAccrued = :FeeAccrued, FeeAccounting = :FeeAccounting,");
-		updateSql.append("  AccrualAccounting = :AccrualAccounting, RecurringType = :RecurringType, FreeLockPeriod = :FreeLockPeriod,");
-		updateSql.append("	PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, Active = :Active, Remarks = :Remarks,");
-		updateSql.append("  ProductType= :ProductType , VasFee = :VasFee, AllowFeeToModify = :AllowFeeToModify, ManufacturerId= :ManufacturerId, ");
-		updateSql.append("  PreValidation = :PreValidation, PostValidation= :PostValidation, Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append("  RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update VasStructure");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(
+				" Set ProductDesc = :ProductDesc, RecAgainst = :RecAgainst, FeeAccrued = :FeeAccrued, FeeAccounting = :FeeAccounting,");
+		updateSql.append(
+				"  AccrualAccounting = :AccrualAccounting, RecurringType = :RecurringType, FreeLockPeriod = :FreeLockPeriod,");
+		updateSql.append(
+				"	PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, Active = :Active, Remarks = :Remarks,");
+		updateSql.append(
+				"  ProductType= :ProductType , VasFee = :VasFee, AllowFeeToModify = :AllowFeeToModify, ManufacturerId= :ManufacturerId, ");
+		updateSql.append(
+				"  PreValidation = :PreValidation, PostValidation= :PostValidation, Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(
+				"  RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ProductCode =:ProductCode");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -265,7 +280,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from VasStructure T1 INNER JOIN VASRecording T2 On T1.ProductCode = T2.ProductCode");
+		sql.append(
+				" Select COUNT(*) from VasStructure T1 INNER JOIN VASRecording T2 On T1.ProductCode = T2.ProductCode");
 		sql.append(" Where T1.ProductType = :ProductType ");
 		logger.debug("Sql: " + sql.toString());
 
@@ -284,7 +300,7 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int getFeeAccountingCount(long feeAccountId, String type) {
 		logger.debug("Entering");
@@ -311,5 +327,5 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 
 		return count;
 	}
-	
+
 }

@@ -50,18 +50,30 @@ import com.pennant.backend.model.limit.LimitStructure;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 
 public interface LimitStructureService {
-	
+
 	LimitStructure getLimitStructure();
+
 	LimitStructure getNewLimitStructure();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	LimitStructure getLimitStructureById(String id);
+
 	LimitStructure getApprovedLimitStructureById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	int validationCheck(String lmtGrp, String type);
-	int limitItemCheck(String lmtItem,  String limitCategory,String type);
+
+	int limitItemCheck(String lmtItem, String limitCategory, String type);
+
 	int limitStructureCheck(String structureCode);
+
 	int getLimitStructureCountById(String structureCode);
+
 	List<LimitStructureDetail> getStructuredetailsByLimitGroup(String category, String groupCode, boolean isLine);
 }

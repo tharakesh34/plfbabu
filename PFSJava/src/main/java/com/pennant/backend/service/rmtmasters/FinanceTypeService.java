@@ -58,29 +58,50 @@ import com.pennant.backend.model.rmtmasters.ProductAsset;
  */
 public interface FinanceTypeService {
 	FinanceType getNewFinanceType();
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	FinanceType getFinanceTypeById(String id);
+
 	FinanceType getApprovedFinanceTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
+
 	FinanceType getFinanceTypeByFinType(String finType);
+
 	FinTypeAccount getFinTypeAccount();
+
 	FinTypeAccount getNewFinTypeAccount();
-	List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> finAssetTypelist,String type);
+
+	List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> finAssetTypelist, String type);
+
 	int getFinanceTypeCountById(String finType);
+
 	List<FinanceType> getFinanceTypeByProduct(String productCode);
+
 	String getAllowedCollateralTypes(String finType);
+
 	int getPromotionTypeCountById(String finType);
+
 	int getProductCountById(String productCode);
+
 	String getFinanceTypeDesc(String productCode);
+
 	List<String> fetchFeeCodeList(Long accountSetId);
+
 	List<FinTypeVASProducts> getFinTypeVasProducts(String finType);
+
 	FinanceType getOrgFinanceTypeById(String finType);
-	
+
 	boolean getFinTypeExist(String finType, String type);
+
 	FinanceType getApprovedFinanceType(String finType);
-	
+
 	FinanceType getFinLtvCheckByFinType(String finType);
+
 	String getAllowedRepayMethods(String finType);
 }

@@ -43,23 +43,23 @@
 package com.pennant.app.constants;
 
 public class FrequencyCodeTypes {
-	
-	public static final String FRQ_YEARLY 			= "Y";
-	public static final String FRQ_HALF_YEARLY 		= "H";
-	public static final String FRQ_QUARTERLY 		= "Q";
-	public static final String FRQ_MONTHLY 			= "M";
-	public static final String FRQ_BIMONTHLY 		= "B";
-	public static final String FRQ_FORTNIGHTLY 		= "F";
-	public static final String FRQ_BIWEEKLY 		= "X";
-	public static final String FRQ_WEEKLY 			= "W";
-	public static final String FRQ_DAILY     		= "D";
+
+	public static final String FRQ_YEARLY = "Y";
+	public static final String FRQ_HALF_YEARLY = "H";
+	public static final String FRQ_QUARTERLY = "Q";
+	public static final String FRQ_MONTHLY = "M";
+	public static final String FRQ_BIMONTHLY = "B";
+	public static final String FRQ_FORTNIGHTLY = "F";
+	public static final String FRQ_BIWEEKLY = "X";
+	public static final String FRQ_WEEKLY = "W";
+	public static final String FRQ_DAILY = "D";
 
 	//Valid Frequencies Error Codes
-	public static final String INVALID_DATE 		= "D";
-	public static final String INVALID_MONTH 		= "M";
-	public static final String INVALID_CODE 		= "C";
-	
-	public FrequencyCodeTypes(){
-		
+	public static final String INVALID_DATE = "D";
+	public static final String INVALID_MONTH = "M";
+	public static final String INVALID_CODE = "C";
+
+	public FrequencyCodeTypes() {
+
 	}
 }

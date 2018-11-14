@@ -49,17 +49,17 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
  *
  */
 public class InterfaceFields extends AbstractWorkflowEntity {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private long                interfaceId=Long.MIN_VALUE;
-	private String				interfaceName;
-	private String				tableName;
-	private String				field;
-	private String				dataType;
-	private int					lenght;
-	private String				module;
-	private String				mappingType;
-	private String				lovValue;
+	private long interfaceId = Long.MIN_VALUE;
+	private String interfaceName;
+	private String tableName;
+	private String field;
+	private String dataType;
+	private int lenght;
+	private String module;
+	private String mappingType;
+	private String lovValue;
 
 	public InterfaceFields() {
 		super();

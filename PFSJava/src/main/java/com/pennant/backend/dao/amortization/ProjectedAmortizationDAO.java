@@ -52,21 +52,31 @@ public interface ProjectedAmortizationDAO {
 
 	// IncomeAmortization
 	List<ProjectedAmortization> getActiveIncomeAMZDetails(boolean active);
+
 	List<ProjectedAmortization> getIncomeAMZDetailsByCustID(long custID);
+
 	List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finRef);
+
 	List<ProjectedAmortization> getIncomeAMZDetails(String finRef, long refenceID, String incomeType);
+
 	long saveIncomeAMZ(ProjectedAmortization proAmortization);
+
 	void saveBatchIncomeAMZ(List<ProjectedAmortization> amortizationList);
+
 	void updateBatchIncomeAMZ(List<ProjectedAmortization> amortizationList);
+
 	void updateBatchIncomeAMZAmounts(List<ProjectedAmortization> amortizationList);
 
 	// ProjectedAccruals
 	List<ProjectedAccrual> getProjectedAccrualDetails();
+
 	void deleteFutureAccruals(String finReference, Date monthEndDate);
+
 	void saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList);
 
 	// ProjectedIncomeAMZ
 	void deleteFutureProjIncomeAMZ(String finReference, Date monthEndDate);
+
 	void saveBatchProjIncomeAMZ(List<ProjectedAmortization> projIncomeAMZ);
 
 }

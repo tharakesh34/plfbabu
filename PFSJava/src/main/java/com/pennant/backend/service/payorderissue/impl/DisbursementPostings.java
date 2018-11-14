@@ -39,8 +39,8 @@ public class DisbursementPostings {
 		super();
 	}
 
-	public List<ReturnDataSet> getDisbPosting(List<FinAdvancePayments> advPaymentsList,  FinanceMain finMain ) throws IllegalAccessException,
-			InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> getDisbPosting(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain)
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		Map<Long, List<ReturnDataSet>> map = prepareDisbPosting(advPaymentsList, finMain, null);
 		List<ReturnDataSet> datasetList = new ArrayList<ReturnDataSet>();
 		for (Entry<Long, List<ReturnDataSet>> entry : map.entrySet()) {
@@ -50,7 +50,8 @@ public class DisbursementPostings {
 
 	}
 
-	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(List<FinAdvancePayments> advPaymentsList,  FinanceMain finMain, String usrBranch)
+	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(List<FinAdvancePayments> advPaymentsList,
+			FinanceMain finMain, String usrBranch)
 			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
@@ -102,13 +103,11 @@ public class DisbursementPostings {
 					dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
 					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-						aeEvent.getAcSetIDList().add(
-								AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-										aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
+								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
 					} else {
-						aeEvent.getAcSetIDList().add(
-								AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
-										aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
+								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
 					}
 					aeEvent.setLinkedTranId(0);
 					aeEvent.setEntityCode(finMain.getLovDescEntityCode());
@@ -123,15 +122,14 @@ public class DisbursementPostings {
 		logger.debug("Leaving");
 		return disbMap;
 	}
-	
-	
-	
-	public Map<Integer, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch)  throws InterfaceException {
+
+	public Map<Integer, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain,
+			String usrBranch) throws InterfaceException {
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();
 
-		Map<Integer,Long> disbMap = new HashMap<>();
+		Map<Integer, Long> disbMap = new HashMap<>();
 
 		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "");
 
@@ -145,7 +143,6 @@ public class DisbursementPostings {
 						&& !StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
 					continue;
 				}
-
 
 				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
 					// Reverse postings cancel case.
@@ -173,34 +170,31 @@ public class DisbursementPostings {
 					aeEvent.setPostingUserBranch(usrBranch);
 					aeEvent.setEntityCode(finMain.getLovDescEntityCode());
 					// Prepare posting for new added
-					boolean posted=true;
+					boolean posted = true;
 					dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
 					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-						aeEvent.getAcSetIDList().add(
-								AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-										aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
+								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
 					} else {
-						aeEvent.getAcSetIDList().add(
-								AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
-										aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
+								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
 					}
 					aeEvent.setLinkedTranId(0);
 					try {
 						aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 					} catch (Exception e) {
-						posted=false;
+						posted = false;
 					}
 					if (!aeEvent.isPostingSucess()) {
-						posted=false;
+						posted = false;
 					}
 
 					if (!posted) {
 						disbMap.put(finAdvancePayments.getPaymentSeq(), Long.MIN_VALUE);//To Identify
-					}else{
+					} else {
 						disbMap.put(finAdvancePayments.getPaymentSeq(), aeEvent.getLinkedTranId());
 					}
-					
 
 				}
 			}
@@ -208,8 +202,6 @@ public class DisbursementPostings {
 		logger.debug("Leaving");
 		return disbMap;
 	}
-
-	
 
 	private FinAdvancePayments isApproved(List<FinAdvancePayments> advPayment, long paymentID) {
 		if (advPayment == null || advPayment.isEmpty()) {

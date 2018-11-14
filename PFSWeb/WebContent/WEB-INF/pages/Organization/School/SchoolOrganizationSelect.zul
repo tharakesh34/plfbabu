@@ -2,20 +2,14 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_SchoolOrganizationSelect"
-		title="${c:l('window_SchoolOrganizationSelect.title')}"
-		border="normal" apply="${schoolOrganizationSelectCtrl}" width="40%"
-		height="30%" sizable="false"
-		style="border:0px; padding-left:5px; padding-right:5px;"
-		closable="true">
+	<window id="window_SchoolOrganizationSelect" title="${c:l('window_SchoolOrganizationSelect.title')}" border="normal"
+		apply="${schoolOrganizationSelectCtrl}" width="40%" height="30%" sizable="false"
+		style="border:0px; padding-left:5px; padding-right:5px;" closable="true">
 		<borderlayout id="borderLayout_SchoolOrganizationTypeList">
 			<center border="none" autoscroll="true">
-				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-					style="border:0px">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 					<columns>
 						<column width="100px" />
 						<column width="150px" />
@@ -24,22 +18,17 @@
 					<rows>
 						<row id="customerRow">
 							<space />
-							<label
-								id="label_SchoolOrganizationSelect_CustomerCIF"
-								value="${c:l('label_SchoolOrganizationSelect_CustomerCIF.value')}" />
+							<label id="label_SchoolOrganizationSelect_CustomerCIF" value="${c:l('label_SchoolOrganizationSelect_CustomerCIF.value')}" />
 							<hbox>
 								<extendedcombobox id="customer" />
 							</hbox>
 						</row>
 						<row id="financialYearRow">
 							<space />
-							<label
-								id="label_SchoolOrganizationSelect_financialYearRow"
-								value="${c:l('label_SchoolOrganizationSelect_financialYear.value')}" />
+							<label id="label_SchoolOrganizationSelect_financialYearRow" value="${c:l('label_SchoolOrganizationSelect_financialYear.value')}" />
 							<hbox>
 								<space spacing="2px" sclass="mandatory" />
-								<combobox id="financialYear"
-									width="150px" />
+								<combobox id="financialYear" width="150px" />
 							</hbox>
 						</row>
 						<row>
@@ -49,9 +38,7 @@
 								<space spacing="2px" />
 								<hbox>
 									<space spacing="10px" />
-									<button id="btnProceed"
-										label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
-										style="align:center"
+									<button id="btnProceed" label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}" style="align:center"
 										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
 									</button>
 								</hbox>

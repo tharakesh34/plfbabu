@@ -9,17 +9,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import com.pennant.datamigration.process.DataMigrationProcess;
-
 public class StartDataMigration {
-
 
 	public static void main(String[] args) {
 		try {
 
-			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			System.out.println(
+					"----------------------------------------------------------------------------------------------------------------------------");
 			System.out.println("Starting DataMigrationProcess Execution");
-			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			System.out.println(
+					"----------------------------------------------------------------------------------------------------------------------------");
 
 			// -----------------------------------------------------------------------------------------------------------------------------------
 			// Bean Loading
@@ -42,7 +41,8 @@ public class StartDataMigration {
 			// Bean Loading - Ending
 			// -----------------------------------------------------------------------------------------------------------------------------------
 
-			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			System.out.println(
+					"----------------------------------------------------------------------------------------------------------------------------");
 
 			// Calling Account Engine test case with constant finance Reference
 			if (DataMigrationProcess.processFinances(mainContext)) {
@@ -51,15 +51,17 @@ public class StartDataMigration {
 				System.err.println("DataMigrationProcess: failed");
 			}
 
-			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			System.out.println(
+					"----------------------------------------------------------------------------------------------------------------------------");
 			System.out.println("Ending DataMigrationProcess Execution");
-			System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+			System.out.println(
+					"----------------------------------------------------------------------------------------------------------------------------");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private static String[] CONFIG_LOCATIONS = new String[] {
-		 "dataMigrationContext.xml", "applicationContext-daos.xml"};
+
+	private static String[] CONFIG_LOCATIONS = new String[] { "dataMigrationContext.xml",
+			"applicationContext-daos.xml" };
 }

@@ -5,11 +5,11 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class CAFFacilityType extends AbstractWorkflowEntity {
 
-    private static final long serialVersionUID = 2404202219653834252L;
-    
+	private static final long serialVersionUID = 2404202219653834252L;
+
 	private String facilityType;
 	private String facilityDesc;
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	private String lovValue;
 	private CAFFacilityType befImage;
 	private LoggedInUser userDetails;
@@ -30,52 +30,59 @@ public class CAFFacilityType extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-		
+
 	public String getId() {
 		return facilityType;
-	}	
-	public void setId (String id) {
+	}
+
+	public void setId(String id) {
 		this.facilityType = id;
 	}
-	
+
 	public String getFacilityType() {
-    	return facilityType;
-    }
+		return facilityType;
+	}
+
 	public void setFacilityType(String facilityType) {
-    	this.facilityType = facilityType;
-    }
+		this.facilityType = facilityType;
+	}
 
 	public String getFacilityDesc() {
-    	return facilityDesc;
-    }
+		return facilityDesc;
+	}
+
 	public void setFacilityDesc(String facilityDesc) {
-    	this.facilityDesc = facilityDesc;
-    }
+		this.facilityDesc = facilityDesc;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
 	public CAFFacilityType getBefImage() {
-	    return this.befImage;
-    }
+		return this.befImage;
+	}
+
 	public void setBefImage(CAFFacilityType befImage) {
-	    this.befImage = befImage;
-    }
+		this.befImage = befImage;
+	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}

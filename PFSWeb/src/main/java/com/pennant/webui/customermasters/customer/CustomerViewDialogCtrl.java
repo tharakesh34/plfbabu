@@ -89,9 +89,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final Logger logger = Logger.getLogger(CustomerViewDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerDialogg;
 	protected North north;
@@ -351,9 +350,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -384,11 +382,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
-			
+
 			if (module.equals("360")) {
 				moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
-			
+
 			Customer customer = customerDetails.getCustomer();
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
 			old_ccyFormatter = ccyFormatter;
@@ -413,7 +411,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (arguments.containsKey("customerListCtrl")) {
 				customerListCtrl = (CustomerListCtrl) arguments.get("customerListCtrl");
 			}
-			
+
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
@@ -438,8 +436,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
 	 * @throws Exception
@@ -474,7 +471,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * 
 	 * @param aCustomer
 	 *            Customer
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) throws IOException {
@@ -485,7 +482,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		custCIF.setValue(aCustomer.getCustCIF());
 		custShrtName.setValue(aCustomer.getCustShrtName());
 
-		if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())){
+		if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())) {
 			Retails.setVisible(true);
 			Corporates.setVisible(false);
 			CustRetl.setVisible(true);
@@ -728,7 +725,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			custGenderCodeDescc.setValue(aCustomer.getLovDescCustGenderCodeName());
 			if (!StringUtils.isEmpty(aCustomer.getApplicationNo())) {
 				retail_applicationNo.setValue(aCustomer.getApplicationNo());
-			}else{
+			} else {
 				retail_applicationNo.setStyle("color:orange; font:12px");
 				retail_applicationNo.setValue("- - - - - - - - -");
 			}
@@ -759,12 +756,14 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			AMedia amedia = null;
 			for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
-					if(customerDocument.getCustDocImage() == null) {
+					if (customerDocument.getCustDocImage() == null) {
 						if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-							customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
-						} 
+							customerDocument.setCustDocImage(
+									PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+						}
 					}
-					amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
+					amedia = new AMedia(customerDocument.getCustDocName(), null, null,
+							customerDocument.getCustDocImage());
 					BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
 					customerPic.setContent(img);
 					customerPic1.setContent(img);
@@ -831,8 +830,9 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				listBoxCustomerIncome.appendChild(listitem);
 			}
 
-		} else if  (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerDetails.getCustomer().getCustCtgCode()) || 
-				StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME, customerDetails.getCustomer().getCustCtgCode())){
+		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerDetails.getCustomer().getCustCtgCode())
+				|| StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME,
+						customerDetails.getCustomer().getCustCtgCode())) {
 			Corporates.setVisible(true);
 			Retails.setVisible(false);
 			CustRetails.setVisible(false);
@@ -857,7 +857,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			if (!StringUtils.isEmpty(aCustomer.getApplicationNo())) {
 				corp_applicationNo.setValue(aCustomer.getApplicationNo());
-			}else{
+			} else {
 				corp_applicationNo.setStyle("color:orange; font:12px");
 				corp_applicationNo.setValue("- - - - - - - - -");
 			}
@@ -968,7 +968,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				i++;
 			}
 			corpcustLng.setValue(aCustomer.getCustLng() + ", ");
-			corpcustLngDesc.setValue(aCustomer.getLovDescCustLngName()); 
+			corpcustLngDesc.setValue(aCustomer.getLovDescCustLngName());
 			corpcustType.setValue(aCustomer.getLovDescCustTypeCodeName());
 			if (aCustomer.getLovDescCustGenderCodeName() != null) {
 				i++;
@@ -993,16 +993,18 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			shareHolderProgress.setStyle("image-height: 5px;");
 			bankingProgress.setValue((i * 100) / 20);
 			bankingProgress.setStyle("image-height: 5px;");
-			
+
 			AMedia amedia = null;
 			for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
-					if(customerDocument.getCustDocImage() == null) {
+					if (customerDocument.getCustDocImage() == null) {
 						if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-							customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
-						} 
+							customerDocument.setCustDocImage(
+									PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+						}
 					}
-					amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
+					amedia = new AMedia(customerDocument.getCustDocName(), null, null,
+							customerDocument.getCustDocImage());
 					BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
 					customerPic.setContent(img);
 					corpCustomerPic1.setContent(img);
@@ -1235,15 +1237,15 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if (customerDocument.getCustDocImage() == null) {
 					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument
-								.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+						customerDocument.setCustDocImage(
+								PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
 					} else if (StringUtils.isNotBlank(customerDocument.getDocUri())) {
 						try {
 							// Fetch document from interface
-							String custCif=this.custCIF.getValue();
-							DocumentDetails detail = externalDocumentManager
-									.getExternalDocument(customerDocument.getCustDocName(),customerDocument.getDocUri(),custCif);
-							if (detail!=null && detail.getDocImage()!=null) {
+							String custCif = this.custCIF.getValue();
+							DocumentDetails detail = externalDocumentManager.getExternalDocument(
+									customerDocument.getCustDocName(), customerDocument.getDocUri(), custCif);
+							if (detail != null && detail.getDocImage() != null) {
 								customerDocument.setCustDocImage(detail.getDocImage());
 								customerDocument.setCustDocName(detail.getDocName());
 							}
@@ -1833,7 +1835,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			this.listBoxCustomerDocuments.appendChild(listitem);
 		}
-	
+
 		logger.debug("Leaving");
 	}
 
@@ -1848,6 +1850,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		customerAddressDetailList = customerAddresDetails;
 	}
+
 	public void getAddressDetailss(List<CustomerAddres> customerAddresDetails) {
 		logger.debug("Entering");
 		if (customerAddresDetails != null && !customerAddresDetails.isEmpty()) {
@@ -2375,10 +2378,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					/*
 					 * if (StringUtils.trimToEmpty(directorDetail.getIdType())
-					 * .equals(StringUtils.trimToEmpty(directorDetail.
-					 * getLovDescCustDocCategoryName()))) { String desc =
-					 * PennantAppUtil.getlabelDesc(directorDetail.getIdType(),
-					 * docTypeList);
+					 * .equals(StringUtils.trimToEmpty(directorDetail. getLovDescCustDocCategoryName()))) { String desc
+					 * = PennantAppUtil.getlabelDesc(directorDetail.getIdType(), docTypeList);
 					 * directorDetail.setLovDescCustDocCategoryName(desc); }
 					 */
 					if (StringUtils.isNotBlank(directorDetail.getLovDescCustDocCategoryName())) {
@@ -2529,37 +2530,36 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
-	
+
 	public void onClick$custDetails(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
-		
-		Map<String, Object> arg = new  HashMap<>();
+
+		Map<String, Object> arg = new HashMap<>();
 		arg.put("customerDetails", customerDetails);
 		arg.put("customerViewDialogCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null,
-					arg);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$custSummary(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
-		
+
 		Map<String, Object> arg = new HashMap<>();
 		arg.put("customerDetails", customerDetails);
 		arg.put("customerViewDialogCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSummaryView.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

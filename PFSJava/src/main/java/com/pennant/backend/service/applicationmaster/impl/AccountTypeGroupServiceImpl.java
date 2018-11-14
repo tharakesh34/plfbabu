@@ -18,10 +18,10 @@ import com.pennanttech.pff.core.TableType;
 
 public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup> implements AccountTypeGroupService {
 
-	private static Logger		logger	= Logger.getLogger(AccountTypeGroupServiceImpl.class);
+	private static Logger logger = Logger.getLogger(AccountTypeGroupServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
-	private AccountTypeGroupDAO	accountTypeGroupDAO;
+	private AuditHeaderDAO auditHeaderDAO;
+	private AccountTypeGroupDAO accountTypeGroupDAO;
 
 	public AccountTypeGroupServiceImpl() {
 		super();
@@ -164,10 +164,11 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 
 		AccountTypeGroup accountTypeGroup = new AccountTypeGroup();
 		BeanUtils.copyProperties((AccountTypeGroup) auditHeader.getAuditDetail().getModelData(), accountTypeGroup);
-		
+
 		getAccountTypeGroupDAO().delete(accountTypeGroup, TableType.TEMP_TAB);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(accountTypeGroup.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(accountTypeGroupDAO.getAccountTypeGroupById(accountTypeGroup.getGroupId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(accountTypeGroupDAO.getAccountTypeGroupById(accountTypeGroup.getGroupId(), ""));
 		}
 
 		if (accountTypeGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -192,7 +193,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 				getAccountTypeGroupDAO().update(accountTypeGroup, TableType.MAIN_TAB);
 			}
 		}
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -271,15 +272,15 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 		// Get the model object.
 		AccountTypeGroup accountTypeGroup = (AccountTypeGroup) auditDetail.getModelData();
 		// Check the unique keys.
-		if (accountTypeGroup.isNew()
-				&& PennantConstants.RECORD_TYPE_NEW.equals(accountTypeGroup.getRecordType())
+		if (accountTypeGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(accountTypeGroup.getRecordType())
 				&& accountTypeGroupDAO.isDuplicateKey(accountTypeGroup.getGroupCode(),
 						accountTypeGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_AccountTypeGroupSearch_GroupCode") + ":" + accountTypeGroup.getGroupCode();
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,"41001", parameters, null));
+			parameters[0] = PennantJavaUtil.getLabel("label_AccountTypeGroupSearch_GroupCode") + ":"
+					+ accountTypeGroup.getGroupCode();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-	
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

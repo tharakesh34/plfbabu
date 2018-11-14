@@ -95,20 +95,20 @@ import com.pennanttech.pff.external.MandateProcess;
  * 
  */
 public class FinMandateServiceImpl implements FinMandateService {
-	private static final Logger	logger	= Logger.getLogger(FinMandateServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinMandateServiceImpl.class);
 
-	private AuditHeaderDAO		auditHeaderDAO;
-	private MandateDAO			mandateDAO;
-	private MandateStatusDAO	mandateStatusDAO;
-	private FinanceMainDAO		financeMainDAO;
-	private BankBranchService	bankBranchService;
+	private AuditHeaderDAO auditHeaderDAO;
+	private MandateDAO mandateDAO;
+	private MandateStatusDAO mandateStatusDAO;
+	private FinanceMainDAO financeMainDAO;
+	private BankBranchService bankBranchService;
 
 	@Autowired
 	private DocumentManagerDAO documentManagerDAO;
 
-	@Autowired (required=false)
+	@Autowired(required = false)
 	private MandateProcess mandateProcess;
-	private MandateCheckDigitDAO  mandateCheckDigitDAO;
+	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
 
 	public FinMandateServiceImpl() {
@@ -185,11 +185,11 @@ public class FinMandateServiceImpl implements FinMandateService {
 		logger.debug(" Entering ");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinanceMain finmain = financeDetail.getFinScheduleData().getFinanceMain();
-		List<CustomerEMail> customer  = new ArrayList<>();
+		List<CustomerEMail> customer = new ArrayList<>();
 		if (financeDetail.getCustomerDetails() != null) {
 			customer = financeDetail.getCustomerDetails().getCustomerEMailList();
 		}
-		
+
 		Mandate mandate = financeDetail.getMandate();
 
 		boolean isMandateReq = checkRepayMethod(finmain);
@@ -222,7 +222,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					mandateStatus.setReason(mandate.getReason());
 					mandateStatus.setChangeDate(DateUtility.getAppDate());
 					mandateStatusDAO.save(mandateStatus, "");
-					
+
 					try {
 						BigDecimal maxlimt = PennantApplicationUtil.formateAmount(mandate.getMaxLimit(),
 								CurrencyUtil.getFormat(mandate.getMandateCcy()));
@@ -231,21 +231,21 @@ public class FinMandateServiceImpl implements FinMandateService {
 						mandate.setFinType(finmain.getFinType());
 						mandate.setAppFormNo(finmain.getApplicationNo());
 						mandate.setLoanBranch(finmain.getLovDescFinBranchName());
-						
-						if (StringUtils.equals(finmain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) && auditHeader.getApiHeader()!=null) {
+
+						if (StringUtils.equals(finmain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+								&& auditHeader.getApiHeader() != null) {
 							BankBranch bankBranch = bankBranchDAO.getBankBrachByMicr(mandate.getMICR(), "");
 							mandate.setBankName(bankBranch.getBankName());
 							mandate.setBranchDesc(bankBranch.getBranchDesc());
 							mandate.setApprovalID(String.valueOf(mandate.getUserDetails().getUserId()));
 						}
-						
-						
+
 						for (CustomerEMail customerEMail : customer) {
 							if (customerEMail.getCustEMailPriority() == 5) {
 								mandate.setEmailId(customerEMail.getCustEMail());
 							}
 						}
-						
+
 						if (mandateProcess != null) {
 							boolean register = mandateProcess.registerMandate(mandate);
 							if (register) {
@@ -261,12 +261,12 @@ public class FinMandateServiceImpl implements FinMandateService {
 						} else {
 							logger.warn("MandateProcess not configured.");
 						}
-						
+
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
 				}
-				
+
 			}
 		} else {
 			finmain.setMandateID(0);
@@ -363,12 +363,13 @@ public class FinMandateServiceImpl implements FinMandateService {
 			Date firstRepayDate = null;
 
 			for (FinanceScheduleDetail schedule : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
-				
+
 				if (exposure.compareTo(schedule.getRepayAmount()) < 0) {
 					exposure = schedule.getRepayAmount();
 				}
-				
-				if ((schedule.isRepayOnSchDate() || schedule.isPftOnSchDate()) && !isHoliday(schedule.getBpiOrHoliday())) {
+
+				if ((schedule.isRepayOnSchDate() || schedule.isPftOnSchDate())
+						&& !isHoliday(schedule.getBpiOrHoliday())) {
 					if (schedule.getSchDate().compareTo(financeMain.getFinStartDate()) > 0 && firstRepayDate == null) {
 						firstRepayDate = schedule.getSchDate();
 					}
@@ -383,19 +384,20 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 				if (mandate.getMaxLimit().compareTo(exposure) < 0) {
 					auditDetail.setErrorDetail(90320);
-				}	
+				}
 
 			}
-			
+
 			//Mandate start date {0} should be before first repayments date {1}.
-			if (mandate.getStartDate()!=null && firstRepayDate!=null && firstRepayDate.compareTo(mandate.getStartDate())<0) {
+			if (mandate.getStartDate() != null && firstRepayDate != null
+					&& firstRepayDate.compareTo(mandate.getStartDate()) < 0) {
 				String[] errParmFrq = new String[2];
 				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
 				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "65020", errParmFrq, null), ""));
-				
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65020", errParmFrq, null), ""));
+
 			}
 
 			if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
@@ -463,20 +465,17 @@ public class FinMandateServiceImpl implements FinMandateService {
 							new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), null));
 				}
 
-				/*//BarCode Unique Validation
-				int count = mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(), "_View");
-				if (count > 0) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1, valueParm1), null));
-				}*/
+				/*
+				 * //BarCode Unique Validation int count = mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
+				 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
+				 * ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1, valueParm1), null)); }
+				 */
 			}
 		}
-	
-		
-		
+
 	}
 
-	private  boolean isHoliday(String bpiOrHoliday) {
+	private boolean isHoliday(String bpiOrHoliday) {
 		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)) {
@@ -485,8 +484,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 			return false;
 		}
 	}
-	
-	
+
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -506,7 +504,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
 				}
-				
+
 				if (mandate.getBankBranchID() != 0) {
 					BankBranch bankBranch = bankBranchService.getBankBranchById(mandate.getBankBranchID());
 
@@ -609,7 +607,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 		DocumentManager documentManager = new DocumentManager();
 		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
 			DocumentManager olddocumentManager = documentManagerDAO.getById(mandate.getDocumentRef());
-			if(olddocumentManager != null) {
+			if (olddocumentManager != null) {
 				byte[] arr1 = olddocumentManager.getDocImage();
 				byte[] arr2 = mandate.getDocImage();
 				if (!Arrays.equals(arr1, arr2)) {
@@ -655,7 +653,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
 	}
-	
+
 	private int checkSum(String barCode) {
 		int value = 0;
 		for (int i = 0; i < barCode.length() - 1; i++) {
@@ -667,6 +665,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 		return remainder;
 	}
+
 	public MandateCheckDigitDAO getMandateCheckDigitDAO() {
 		return mandateCheckDigitDAO;
 	}
@@ -678,6 +677,5 @@ public class FinMandateServiceImpl implements FinMandateService {
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
 	}
-
 
 }

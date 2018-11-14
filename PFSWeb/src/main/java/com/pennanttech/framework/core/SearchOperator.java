@@ -41,7 +41,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
  * <td><</td>
  * <td>less than</td>
  * </tr>
- * * </tr>
+ * *
+ * </tr>
  * <tr>
  * <td>4</td>
  * <td><=</td>
@@ -61,7 +62,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
  * <td>%</td>
  * <td>like</td>
  * </tr>
- * * </tr>
+ * *
+ * </tr>
  * <tr>
  * <td>7</td>
  * <td>%</td>
@@ -79,7 +81,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
  * <td>NOT IN</td>
  * </tr>
  * </table>
- * */
+ */
 public class SearchOperator {
 
 	public enum Operators {
@@ -153,7 +155,7 @@ public class SearchOperator {
 
 		simpleStringOperators.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), "="));
 		simpleStringOperators.add(new ValueLabel(String.valueOf(Filter.OP_LIKE), "%"));
-		
+
 		simpleNumaricOperators.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), "="));
 		simpleNumaricOperators.add(new ValueLabel(String.valueOf(Filter.OP_NOT_EQUAL), "<>"));
 

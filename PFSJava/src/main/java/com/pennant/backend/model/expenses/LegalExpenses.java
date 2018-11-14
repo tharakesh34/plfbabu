@@ -58,7 +58,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class LegalExpenses extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long id = Long.MIN_VALUE;
 	private String expReference;
 	private String customerId;
@@ -86,129 +86,110 @@ public class LegalExpenses extends AbstractWorkflowEntity implements Entity {
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("LegalExpenses"));
 	}
 
-	
 	public long getId() {
 		return id;
 	}
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
+
 	public LegalExpenses(String id) {
 		super();
-		this.finReference=id;
+		this.finReference = id;
 	}
 
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("transactionTypeName");
-			excludeFields.add("id");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("transactionTypeName");
+		excludeFields.add("id");
+		return excludeFields;
 	}
 
-	    // ******************************************************//
-		// ****************** getter / setter  ******************//
-		// ******************************************************//
+	// ******************************************************//
+	// ****************** getter / setter  ******************//
+	// ******************************************************//
 
-	
-	
-	
-	
-		
-	
 	public Date getBookingDate() {
 		return bookingDate;
 	}
+
 	public void setBookingDate(Date bookingDate) {
 		this.bookingDate = bookingDate;
 	}
-	
-	
-		
-	
+
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-	
-	
-		
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
-	
-		
-	
+
 	public String getTransactionType() {
 		return transactionType;
 	}
+
 	public void setTransactionType(String transactionType) {
 		this.transactionType = transactionType;
 	}
-	
+
 	public String getTransactionTypeName() {
 		return this.transactionTypeName;
 	}
 
-	public void setTransactionTypeName (String transactionTypeName) {
+	public void setTransactionTypeName(String transactionTypeName) {
 		this.transactionTypeName = transactionTypeName;
 	}
-	
-		
-	
+
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
-	
-		
-	
+
 	public BigDecimal getRecoveredAmount() {
 		return recoveredAmount;
 	}
+
 	public void setRecoveredAmount(BigDecimal recoveredAmount) {
 		this.recoveredAmount = recoveredAmount;
 	}
-	
-	
-		
-	
+
 	public BigDecimal getAmountdue() {
 		return amountdue;
 	}
+
 	public void setAmountdue(BigDecimal amountdue) {
 		this.amountdue = amountdue;
 	}
-	
-	
-		
-	
+
 	public boolean isIsRecoverdFromMOPA() {
 		return isRecoverdFromMOPA;
 	}
+
 	public void setIsRecoverdFromMOPA(boolean isRecoverdFromMOPA) {
 		this.isRecoverdFromMOPA = isRecoverdFromMOPA;
 	}
-	
-	
-		
-	
+
 	public BigDecimal getTotalCharges() {
 		return totalCharges;
 	}
+
 	public void setTotalCharges(BigDecimal totalCharges) {
 		this.totalCharges = totalCharges;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -216,7 +197,7 @@ public class LegalExpenses extends AbstractWorkflowEntity implements Entity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -225,12 +206,12 @@ public class LegalExpenses extends AbstractWorkflowEntity implements Entity {
 		this.lovValue = lovValue;
 	}
 
-	public LegalExpenses getBefImage(){
+	public LegalExpenses getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(LegalExpenses beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(LegalExpenses beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {

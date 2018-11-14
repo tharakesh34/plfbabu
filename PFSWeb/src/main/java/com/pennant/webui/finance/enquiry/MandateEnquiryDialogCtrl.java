@@ -95,90 +95,89 @@ import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/mandateDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/mandateDialog.zul file. <br>
  * ************************************************************<br>
  */
 public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
-	private static final long				serialVersionUID				= 1L;
-	private static final Logger				logger							= Logger.getLogger(MandateEnquiryDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(MandateEnquiryDialogCtrl.class);
 
-	protected Window						window_FinMandateEnquiryDialog;
-	protected ExtendedCombobox				custID;
-	protected ExtendedCombobox				mandateRef;
-	protected Combobox						mandateType;
-	protected ExtendedCombobox				bankBranchID;
-	protected Textbox						bank;
-	protected Textbox						city;
-	protected Textbox						micr;
-	protected Textbox						ifsc;
-	protected Textbox						accNumber;
-	protected Textbox						accHolderName;
-	protected Datebox						inputDate;
-	protected Textbox						jointAccHolderName;
-	protected Combobox						accType;
-	protected Checkbox						openMandate;
-	protected Datebox						startDate;
-	protected Datebox						expiryDate;
-	protected CurrencyBox					maxLimit;
-	protected FrequencyBox					periodicity;
-	protected Textbox						phoneCountryCode;
-	protected Textbox						phoneAreaCode;
-	protected Textbox						phoneNumber;
-	protected Combobox						status;
-	protected Textbox						approvalID;
-	protected Groupbox						gb_basicDetails;
-	protected Groupbox						gb_listBoxFinances;
-	protected Checkbox						useExisting;
-	protected Checkbox						active;
-	protected Textbox						reason;
-	protected Textbox						umrNumber;
-	protected Space							space_Reason;
-	protected Space							space_Expirydate;
-	protected Textbox						documentName;
-	protected Button						btnViewMandateDoc;
+	protected Window window_FinMandateEnquiryDialog;
+	protected ExtendedCombobox custID;
+	protected ExtendedCombobox mandateRef;
+	protected Combobox mandateType;
+	protected ExtendedCombobox bankBranchID;
+	protected Textbox bank;
+	protected Textbox city;
+	protected Textbox micr;
+	protected Textbox ifsc;
+	protected Textbox accNumber;
+	protected Textbox accHolderName;
+	protected Datebox inputDate;
+	protected Textbox jointAccHolderName;
+	protected Combobox accType;
+	protected Checkbox openMandate;
+	protected Datebox startDate;
+	protected Datebox expiryDate;
+	protected CurrencyBox maxLimit;
+	protected FrequencyBox periodicity;
+	protected Textbox phoneCountryCode;
+	protected Textbox phoneAreaCode;
+	protected Textbox phoneNumber;
+	protected Combobox status;
+	protected Textbox approvalID;
+	protected Groupbox gb_basicDetails;
+	protected Groupbox gb_listBoxFinances;
+	protected Checkbox useExisting;
+	protected Checkbox active;
+	protected Textbox reason;
+	protected Textbox umrNumber;
+	protected Space space_Reason;
+	protected Space space_Expirydate;
+	protected Textbox documentName;
+	protected Button btnViewMandateDoc;
 
-
-	private boolean							fromLoanEnquiry			= false;
+	private boolean fromLoanEnquiry = false;
 
 	// not auto wired vars
-	private Mandate							mandate;
-	private transient MandateListCtrl		mandateListCtrl;
+	private Mandate mandate;
+	private transient MandateListCtrl mandateListCtrl;
 
-	protected Button						btnProcess;
-	protected Button						btnView;
-	
+	protected Button btnProcess;
+	protected Button btnView;
+
 	//Added BarCode and Reg Status
-	protected Uppercasebox					barCodeNumber;
-	protected Label							amountInWords;
-	protected Label							regStatus;
-	protected ExtendedCombobox				finReference;
-	protected Checkbox						swapIsActive;
-	protected Label							label_RegStatus;
-	private ExtendedCombobox				entityCode;
+	protected Uppercasebox barCodeNumber;
+	protected Label amountInWords;
+	protected Label regStatus;
+	protected ExtendedCombobox finReference;
+	protected Checkbox swapIsActive;
+	protected Label label_RegStatus;
+	private ExtendedCombobox entityCode;
 
 	// ServiceDAOs / Domain Classes
-	private transient MandateService		mandateService;
+	private transient MandateService mandateService;
 
-	private final List<ValueLabel>			mandateTypeList					= PennantStaticListUtil.getMandateTypeList();
-	private final List<ValueLabel>			accTypeList						= PennantStaticListUtil.getAccTypeList();
-	private final List<ValueLabel>			statusTypeList					= PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+	private final List<ValueLabel> mandateTypeList = PennantStaticListUtil.getMandateTypeList();
+	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
+	private final List<ValueLabel> statusTypeList = PennantStaticListUtil
+			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 
-	protected Listbox						listBoxMandateFinExposure;
-	public transient int					ccyFormatter					= 0;
-	protected North							north_mandate;
+	protected Listbox listBoxMandateFinExposure;
+	public transient int ccyFormatter = 0;
+	protected North north_mandate;
 
 	/* loan related declrations */
 
-	long									mandateID						= 0;
-	protected Row							rowStatus;
-	private Tabpanel						tabPanel_dialogWindow;
-	private FinanceEnquiryHeaderDialogCtrl	financeEnquiryHeaderDialogCtrl	= null;
+	long mandateID = 0;
+	protected Row rowStatus;
+	private Tabpanel tabPanel_dialogWindow;
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 
 	@Autowired
-	private ExternalDocumentManager			externalDocumentManager;
-	
+	private ExternalDocumentManager externalDocumentManager;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -196,9 +195,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// ************************************************* //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Mandate object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Mandate object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -221,7 +219,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-				this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments.get("financeEnquiryHeaderDialogCtrl");
+				this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+						.get("financeEnquiryHeaderDialogCtrl");
 			}
 
 			// READ OVERHANDED params !
@@ -234,11 +233,10 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			} else {
 				setMandate(null);
 			}
-			
+
 			if (getMandate() != null) {
 				ccyFormatter = CurrencyUtil.getFormat(getMandate().getMandateCcy());
 			}
-
 
 			getUserWorkspace().allocateAuthorities(super.pageRightName);
 
@@ -299,19 +297,19 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRef.setDescColumn("CustID");
 		this.mandateRef.setDisplayStyle(2);
 		this.mandateRef.setValidateColumns(new String[] { "MandateID", "CustID" });
-		
+
 		this.umrNumber.setReadonly(true);
 
 		this.active.setChecked(true);
-		
+
 		this.barCodeNumber.setMaxlength(10);
-		
+
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		
+
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setMandatoryStyle(false);
 		this.entityCode.setModuleName("Entity");
@@ -338,8 +336,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aMandate
 	 * @throws InterruptedException
@@ -360,17 +357,17 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			// fill the components with the data
 			doWriteBeanToComponents(aMandate);
 			doDesignByMode();
-			
+
 			if (fromLoanEnquiry) {
 				if (tabPanel_dialogWindow != null) {
-					int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
+					int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()
+							* 20;
 					this.window_FinMandateEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
 					tabPanel_dialogWindow.appendChild(this.window_FinMandateEnquiryDialog);
 				}
-			}else{
+			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
-
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -425,8 +422,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * @param aMandate
 	 *            Mandate
 	 * @param tab
-	 * @throws Exception 
-	 * @throws WrongValueException 
+	 * @throws Exception
+	 * @throws WrongValueException
 	 */
 	public void doWriteBeanToComponents(Mandate aMandate) throws WrongValueException, Exception {
 		logger.debug("Entering");
@@ -453,13 +450,15 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (aMandate.getMandateID() != 0 && aMandate.getMandateID() != Long.MIN_VALUE) {
 			this.mandateRef.setAttribute("mandateID", aMandate.getMandateID());
-			this.mandateRef.setValue(String.valueOf(aMandate.getMandateID()), StringUtils.trimToEmpty(aMandate.getMandateRef()));
+			this.mandateRef.setValue(String.valueOf(aMandate.getMandateID()),
+					StringUtils.trimToEmpty(aMandate.getMandateRef()));
 		}
 		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, "");
 
 		if (aMandate.getBankBranchID() != Long.MIN_VALUE && aMandate.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", aMandate.getBankBranchID());
-			this.bankBranchID.setValue(StringUtils.trimToEmpty(aMandate.getBranchCode()), StringUtils.trimToEmpty(aMandate.getBranchDesc()));
+			this.bankBranchID.setValue(StringUtils.trimToEmpty(aMandate.getBranchCode()),
+					StringUtils.trimToEmpty(aMandate.getBranchDesc()));
 		}
 		this.city.setValue(StringUtils.trimToEmpty(aMandate.getCity()));
 		this.bank.setValue(StringUtils.trimToEmpty(aMandate.getBankName()));
@@ -487,10 +486,11 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setValue(aMandate.getOrgReference());
 		this.swapIsActive.setChecked(aMandate.isSwapIsActive());
 		this.amountInWords.setValue(AmtInitialCap());
-		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
-		
+		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil
+				.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
+
 		//Entity
-		this.entityCode.setValue(aMandate.getEntityCode(),aMandate.getEntityDesc());
+		this.entityCode.setValue(aMandate.getEntityCode(), aMandate.getEntityDesc());
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
@@ -504,15 +504,18 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
-				
-				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
+
+				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
+						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(), CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(),
+						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()), CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinStatus());
@@ -545,7 +548,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			Long documentRef = getMandate().getDocumentRef();
 			String externalRef = getMandate().getExternalRef();
 			String documentName = getMandate().getDocumentName();
-			
+
 			if (docImage == null && documentRef > 0) {
 				mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
 			} else {
@@ -572,20 +575,19 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private String AmtInitialCap() throws WrongValueException, Exception {
 		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
-	    
-		String[] words = amtInWords.split(" ");
-	    StringBuffer AmtInWord = new StringBuffer();
 
-	    for (int i = 0; i < words.length; i++) {
-	    	if (!words[i].isEmpty()) {
-				
-	    		AmtInWord.append(Character.toUpperCase(words[i].charAt(0)))
-	    		.append(words[i].substring(1)).append(" ");
+		String[] words = amtInWords.split(" ");
+		StringBuffer AmtInWord = new StringBuffer();
+
+		for (int i = 0; i < words.length; i++) {
+			if (!words[i].isEmpty()) {
+
+				AmtInWord.append(Character.toUpperCase(words[i].charAt(0))).append(words[i].substring(1)).append(" ");
 			}
-	    }          
-	    return AmtInWord.toString().trim();
+		}
+		return AmtInWord.toString().trim();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

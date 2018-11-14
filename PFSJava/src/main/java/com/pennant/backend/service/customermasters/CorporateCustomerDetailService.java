@@ -53,9 +53,14 @@ import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
 public interface CorporateCustomerDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	CorporateCustomerDetail getCorporateCustomerDetailById(long id);
+
 	CorporateCustomerDetail getApprovedCorporateCustomerDetailById(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

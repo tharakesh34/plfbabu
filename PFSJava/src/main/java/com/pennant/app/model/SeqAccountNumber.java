@@ -46,8 +46,8 @@ import java.io.Serializable;
 
 public class SeqAccountNumber implements Serializable {
 
-    private static final long serialVersionUID = -7643683412676440119L;
-    
+	private static final long serialVersionUID = -7643683412676440119L;
+
 	private String accountBranch;
 	private String accountHeadCode;
 	private String accountCcyCode;
@@ -63,14 +63,15 @@ public class SeqAccountNumber implements Serializable {
 		this.accountHeadCode = accountHeadCode;
 		this.accountCcyCode = accountCcyCode;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getAccountBranch() {
 		return accountBranch;
 	}
+
 	public void setAccountBranch(String accountBranch) {
 		this.accountBranch = accountBranch;
 	}
@@ -78,6 +79,7 @@ public class SeqAccountNumber implements Serializable {
 	public String getAccountHeadCode() {
 		return accountHeadCode;
 	}
+
 	public void setAccountHeadCode(String accountHeadCode) {
 		this.accountHeadCode = accountHeadCode;
 	}
@@ -85,6 +87,7 @@ public class SeqAccountNumber implements Serializable {
 	public String getAccountCcyCode() {
 		return accountCcyCode;
 	}
+
 	public void setAccountCcyCode(String accountCcyCode) {
 		this.accountCcyCode = accountCcyCode;
 	}
@@ -92,6 +95,7 @@ public class SeqAccountNumber implements Serializable {
 	public long getAccountSeqNo() {
 		return accountSeqNo;
 	}
+
 	public void setAccountSeqNo(long accountSeqNo) {
 		this.accountSeqNo = accountSeqNo;
 	}

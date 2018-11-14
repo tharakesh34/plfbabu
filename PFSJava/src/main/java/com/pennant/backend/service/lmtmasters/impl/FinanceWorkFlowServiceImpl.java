@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> implements FinanceWorkFlowService {
-	
+
 	private static final Logger logger = Logger.getLogger(FinanceWorkFlowServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -79,14 +79,15 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	public FinanceWorkFlowServiceImpl() {
 		super();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
@@ -94,56 +95,58 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
 		return financeWorkFlowDAO;
 	}
+
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
-	
+
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-	    return financeReferenceDetailDAO;
-    }
+		return financeReferenceDetailDAO;
+	}
+
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-	    this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-    }
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
 
 	public FacilityReferenceDetailDAO getFacilityReferenceDetailDAO() {
-	    return facilityReferenceDetailDAO;
-    }
+		return facilityReferenceDetailDAO;
+	}
+
 	public void setFacilityReferenceDetailDAO(FacilityReferenceDetailDAO facilityReferenceDetailDAO) {
-	    this.facilityReferenceDetailDAO = facilityReferenceDetailDAO;
-    }
-	
+		this.facilityReferenceDetailDAO = facilityReferenceDetailDAO;
+	}
+
 	/**
-	 * saveOrUpdate	method method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Do Add or Update the Record 
-	 * 		a)	Add new Record for the new record in the DB table LMTFinanceWorkFlowDef/LMTFinanceWorkFlowDef_Temp 
-	 * 			by using FinanceWorkFlowDAO's save method 
-	 * 		b)  Update the Record in the table. based on the module workFlow Configuration.
-	 * 			by using FinanceWorkFlowDAO's update method
-	 * 3)	Audit the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader)
-	 * @param AuditHeader (auditHeader)    
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * LMTFinanceWorkFlowDef/LMTFinanceWorkFlowDef_Temp by using FinanceWorkFlowDAO's save method b) Update the Record
+	 * in the table. based on the module workFlow Configuration. by using FinanceWorkFlowDAO's update method 3) Audit
+	 * the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		String tableType = "";
 		FinanceWorkFlow financeWorkFlow = (FinanceWorkFlow) auditHeader.getAuditDetail().getModelData();
 
 		if (financeWorkFlow.isWorkflow()) {
-			tableType="_Temp";
+			tableType = "_Temp";
 		}
 
 		if (financeWorkFlow.isNew()) {
-			getFinanceWorkFlowDAO().save(financeWorkFlow,tableType);
-		}else{
-			getFinanceWorkFlowDAO().update(financeWorkFlow,tableType);
+			getFinanceWorkFlowDAO().save(financeWorkFlow, tableType);
+		} else {
+			getFinanceWorkFlowDAO().update(financeWorkFlow, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -153,25 +156,26 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	}
 
 	/**
-	 * delete method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	delete Record for the DB table LMTFinanceWorkFlowDef by using FinanceWorkFlowDAO's delete method with type as Blank 
-	 * 3)	Audit the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader)    
-	 * @param AuditHeader (auditHeader)    
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * LMTFinanceWorkFlowDef by using FinanceWorkFlowDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader)
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		FinanceWorkFlow financeWorkFlow = (FinanceWorkFlow) auditHeader.getAuditDetail().getModelData();
-		getFinanceWorkFlowDAO().delete(financeWorkFlow,"");
+		getFinanceWorkFlowDAO().delete(financeWorkFlow, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -180,52 +184,58 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 
 	/**
 	 * getFinanceWorkFlowById fetch the details by using FinanceWorkFlowDAO's getFinanceWorkFlowById method.
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceWorkFlow
 	 */
 	@Override
-	public FinanceWorkFlow getFinanceWorkFlowById(String id, String finEvent , String moduleName) {
+	public FinanceWorkFlow getFinanceWorkFlowById(String id, String finEvent, String moduleName) {
 		return getFinanceWorkFlowDAO().getFinanceWorkFlowById(id, finEvent, moduleName, "_View");
 	}
 
 	/**
 	 * getApprovedFinanceWorkFlowById fetch the details by using FinanceWorkFlowDAO's getFinanceWorkFlowById method .
 	 * with parameter id and type as blank. it fetches the approved records from the LMTFinanceWorkFlowDef.
-	 * @param id (String)
+	 * 
+	 * @param id
+	 *            (String)
 	 * @return FinanceWorkFlow
 	 */
 
 	public FinanceWorkFlow getApprovedFinanceWorkFlowById(String id, String finEvent, String moduleName) {
-		return getFinanceWorkFlowDAO().getFinanceWorkFlowById(id, finEvent , moduleName, "_AView");
+		return getFinanceWorkFlowDAO().getFinanceWorkFlowById(id, finEvent, moduleName, "_AView");
 	}
-	
+
 	/**
 	 * Method for Fetching Workflow Type from Workflow Definition Details
 	 */
 	public String getFinanceWorkFlowType(String id, String finEvent, String moduleName) {
-		return getFinanceWorkFlowDAO().getFinanceWorkFlowType(id, finEvent , moduleName, "");
+		return getFinanceWorkFlowDAO().getFinanceWorkFlowType(id, finEvent, moduleName, "");
 	}
 
 	/**
-	 * doApprove method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	based on the Record type do following actions
-	 * 		a)  DELETE	Delete the record from the main table by using getFinanceWorkFlowDAO().delete with parameters financeWorkFlow,""
-	 * 		b)  NEW		Add new record in to main table by using getFinanceWorkFlowDAO().save with parameters financeWorkFlow,""
-	 * 		c)  EDIT	Update record in the main table by using getFinanceWorkFlowDAO().update with parameters financeWorkFlow,""
-	 * 3)	Delete the record from the workFlow table by using getFinanceWorkFlowDAO().delete with parameters financeWorkFlow,"_Temp"
-	 * 4)	Audit the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5)  	Audit the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * @param AuditHeader (auditHeader)    
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinanceWorkFlowDAO().delete with
+	 * parameters financeWorkFlow,"" b) NEW Add new record in to main table by using getFinanceWorkFlowDAO().save with
+	 * parameters financeWorkFlow,"" c) EDIT Update record in the main table by using getFinanceWorkFlowDAO().update
+	 * with parameters financeWorkFlow,"" 3) Delete the record from the workFlow table by using
+	 * getFinanceWorkFlowDAO().delete with parameters financeWorkFlow,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
+	 * Type.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -234,9 +244,9 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 		BeanUtils.copyProperties((FinanceWorkFlow) auditHeader.getAuditDetail().getModelData(), financeWorkFlow);
 
 		if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType=PennantConstants.TRAN_DEL;
+			tranType = PennantConstants.TRAN_DEL;
 
-			getFinanceWorkFlowDAO().delete(financeWorkFlow,"");
+			getFinanceWorkFlowDAO().delete(financeWorkFlow, "");
 
 		} else {
 			financeWorkFlow.setRoleCode("");
@@ -245,33 +255,34 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 			financeWorkFlow.setNextTaskId("");
 			financeWorkFlow.setWorkflowId(0);
 
-			if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){	
-				tranType=PennantConstants.TRAN_ADD;
+			if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
 				financeWorkFlow.setRecordType("");
-				getFinanceWorkFlowDAO().save(financeWorkFlow,"");
+				getFinanceWorkFlowDAO().save(financeWorkFlow, "");
 			} else {
-				tranType=PennantConstants.TRAN_UPD;
+				tranType = PennantConstants.TRAN_UPD;
 				financeWorkFlow.setRecordType("");
-				
+
 				//Remove Finance Process Editor Details If Workflow Modified from Previous Version
-				FinanceWorkFlow apprvFinWorkflow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(),
-						financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "");
-				if(apprvFinWorkflow != null){
-					if(!apprvFinWorkflow.getWorkFlowType().equals(financeWorkFlow.getWorkFlowType())){
-						if(PennantConstants.WORFLOW_MODULE_FINANCE.equals(financeWorkFlow.getModuleName()) || 
-								PennantConstants.WORFLOW_MODULE_PROMOTION.equals(financeWorkFlow.getModuleName())){
-							getFinanceReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(),financeWorkFlow.getFinEvent(), "");
-						}else if(PennantConstants.WORFLOW_MODULE_FACILITY.equals(financeWorkFlow.getModuleName())){
+				FinanceWorkFlow apprvFinWorkflow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(
+						financeWorkFlow.getId(), financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "");
+				if (apprvFinWorkflow != null) {
+					if (!apprvFinWorkflow.getWorkFlowType().equals(financeWorkFlow.getWorkFlowType())) {
+						if (PennantConstants.WORFLOW_MODULE_FINANCE.equals(financeWorkFlow.getModuleName())
+								|| PennantConstants.WORFLOW_MODULE_PROMOTION.equals(financeWorkFlow.getModuleName())) {
+							getFinanceReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(),
+									financeWorkFlow.getFinEvent(), "");
+						} else if (PennantConstants.WORFLOW_MODULE_FACILITY.equals(financeWorkFlow.getModuleName())) {
 							getFacilityReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(), "");
 						}
 					}
 				}
-				
-				getFinanceWorkFlowDAO().update(financeWorkFlow,"");
+
+				getFinanceWorkFlowDAO().update(financeWorkFlow, "");
 			}
 		}
 
-		getFinanceWorkFlowDAO().delete(financeWorkFlow,"_Temp");
+		getFinanceWorkFlowDAO().delete(financeWorkFlow, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -280,23 +291,24 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 		auditHeader.getAuditDetail().setModelData(financeWorkFlow);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");		
+		logger.debug("Leaving");
 
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps.
-	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
-	 * 		if there is any error or warning message then return the auditHeader.
-	 * 2)	Delete the record from the workFlow table by using getFinanceWorkFlowDAO().delete with parameters financeWorkFlow,"_Temp"
-	 * 3)	Audit the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * @param AuditHeader (auditHeader)    
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinanceWorkFlowDAO().delete with parameters financeWorkFlow,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	public AuditHeader  doReject(AuditHeader auditHeader) {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -305,7 +317,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 		FinanceWorkFlow financeWorkFlow = (FinanceWorkFlow) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinanceWorkFlowDAO().delete(financeWorkFlow,"_Temp");
+		getFinanceWorkFlowDAO().delete(financeWorkFlow, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -314,104 +326,117 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	}
 
 	/**
-	 * businessValidation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getFinanceWorkFlowDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)    
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFinanceWorkFlowDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader=nextProcess(auditHeader);
+		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFinanceWorkFlowDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFinanceWorkFlowDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());			
-		FinanceWorkFlow financeWorkFlow= (FinanceWorkFlow) auditDetail.getModelData();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinanceWorkFlow financeWorkFlow = (FinanceWorkFlow) auditDetail.getModelData();
 
-		FinanceWorkFlow tempFinanceWorkFlow= null;
-		if (financeWorkFlow.isWorkflow()){
-			tempFinanceWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(),financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "_Temp");
+		FinanceWorkFlow tempFinanceWorkFlow = null;
+		if (financeWorkFlow.isWorkflow()) {
+			tempFinanceWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(),
+					financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "_Temp");
 		}
-		FinanceWorkFlow befFinanceWorkFlow= getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(),financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "");
-		FinanceWorkFlow oldFinanceWorkFlow= financeWorkFlow.getBefImage();
+		FinanceWorkFlow befFinanceWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(),
+				financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "");
+		FinanceWorkFlow oldFinanceWorkFlow = financeWorkFlow.getBefImage();
 
-		String[] errParm= new String[2];
-		String[] valueParm= new String[2];
-		valueParm[0]=financeWorkFlow.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinanceWorkFlowDialog_FinType.value")+":"+valueParm[0];
-		valueParm[1]=financeWorkFlow.getFinEvent();
-		errParm[1]=PennantJavaUtil.getLabel("label_FinanceWorkFlowDialog_FinEvent.value")+":"+valueParm[1];
+		String[] errParm = new String[2];
+		String[] valueParm = new String[2];
+		valueParm[0] = financeWorkFlow.getId();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinanceWorkFlowDialog_FinType.value") + ":" + valueParm[0];
+		valueParm[1] = financeWorkFlow.getFinEvent();
+		errParm[1] = PennantJavaUtil.getLabel("label_FinanceWorkFlowDialog_FinEvent.value") + ":" + valueParm[1];
 
-		if (financeWorkFlow.isNew()){ // for New record or new record into work flow
+		if (financeWorkFlow.isNew()) { // for New record or new record into work flow
 
-			if (!financeWorkFlow.isWorkflow()){// With out Work flow only new records  
-				if (befFinanceWorkFlow !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFinanceWorkFlow !=null || tempFinanceWorkFlow!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
+			if (!financeWorkFlow.isWorkflow()) {// With out Work flow only new records  
+				if (befFinanceWorkFlow != null) { // Record Already Exists in the table then error  
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+				}
+			} else { // with work flow
+				if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinanceWorkFlow != null || tempFinanceWorkFlow != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				}else{ // if records not exists in the Main flow table
-					if (befFinanceWorkFlow ==null || tempFinanceWorkFlow!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				} else { // if records not exists in the Main flow table
+					if (befFinanceWorkFlow == null || tempFinanceWorkFlow != null) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
-		}else{
+		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!financeWorkFlow.isWorkflow()){	// With out Work flow for update and delete
+			if (!financeWorkFlow.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befFinanceWorkFlow ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-				}else{
-					if (oldFinanceWorkFlow!=null && !oldFinanceWorkFlow.getLastMntOn().equals(befFinanceWorkFlow.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
+				if (befFinanceWorkFlow == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+				} else {
+					if (oldFinanceWorkFlow != null
+							&& !oldFinanceWorkFlow.getLastMntOn().equals(befFinanceWorkFlow.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
+						} else {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
-			}else{
+			} else {
 
-				if (tempFinanceWorkFlow==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempFinanceWorkFlow == null) { // if records not exists in the Work flow table 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempFinanceWorkFlow!=null && oldFinanceWorkFlow!=null && !oldFinanceWorkFlow.getLastMntOn().equals(tempFinanceWorkFlow.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
+				if (tempFinanceWorkFlow != null && oldFinanceWorkFlow != null
+						&& !oldFinanceWorkFlow.getLastMntOn().equals(tempFinanceWorkFlow.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeWorkFlow.isWorkflow()){
-			financeWorkFlow.setBefImage(befFinanceWorkFlow);	
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeWorkFlow.isWorkflow()) {
+			financeWorkFlow.setBefImage(befFinanceWorkFlow);
 		}
 
 		return auditDetail;
@@ -419,7 +444,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 
 	@Override
 	public int getVASProductCode(String finType) {
-		
+
 		return getFinanceWorkFlowDAO().getVASProductCode(finType, "");
 	}
 

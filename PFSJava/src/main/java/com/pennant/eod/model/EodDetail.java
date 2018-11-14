@@ -4,10 +4,10 @@ import java.util.Date;
 
 public class EodDetail {
 
-	private Date	processDate;
-	private Date	statTime;
-	private Date	endTime;
-	private String	status;
+	private Date processDate;
+	private Date statTime;
+	private Date endTime;
+	private String status;
 
 	public EodDetail() {
 		super();

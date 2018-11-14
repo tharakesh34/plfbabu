@@ -53,10 +53,15 @@ import com.pennant.backend.model.systemmasters.AddressType;
 public interface AddressTypeService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	AddressType getAddressTypeById(String id);
+
 	AddressType getApprovedAddressTypeById(String id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 }

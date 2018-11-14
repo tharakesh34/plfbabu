@@ -62,19 +62,18 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer> implements VehicleManufacturerDAO {
 	private static Logger logger = Logger.getLogger(VehicleManufacturerDAOImpl.class);
-	
 
 	public VehicleManufacturerDAOImpl() {
 		super();
 	}
-	
 
 	/**
-	 * Fetch the Record  Vehicle Manufacturer Detail details by key field
+	 * Fetch the Record Vehicle Manufacturer Detail details by key field
 	 * 
-	 * @param id (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (int)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return VehicleManufacturer
 	 */
 	@Override
@@ -82,35 +81,33 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 		logger.debug("Entering");
 		VehicleManufacturer vehicleManufacturer = new VehicleManufacturer();
 		vehicleManufacturer.setManufacturerId(manufacturerId);
-		
-		StringBuilder   selectSql = new StringBuilder  ("SELECT ManufacturerId,  ManufacturerName, ");
+
+		StringBuilder selectSql = new StringBuilder("SELECT ManufacturerId,  ManufacturerName, ");
 		selectSql.append("Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append("TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  AMTVehicleManufacturer");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ManufacturerId=:ManufacturerId");
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
 		RowMapper<VehicleManufacturer> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(VehicleManufacturer.class);
-		
-		try{
-			vehicleManufacturer = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			vehicleManufacturer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			vehicleManufacturer = null;
 		}
 		logger.debug("Leaving");
 		return vehicleManufacturer;
 	}
-		
+
 	/**
-	 * This method Deletes the Record from the AMTVehicleManufacturer or
-	 * AMTVehicleManufacturer_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Vehicle Manufacturer Detail
-	 * by key ManufacturerId
+	 * This method Deletes the Record from the AMTVehicleManufacturer or AMTVehicleManufacturer_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Vehicle Manufacturer Detail by key
+	 * ManufacturerId
 	 * 
 	 * @param Vehicle
 	 *            Manufacturer Detail (vehicleManufacturer)
@@ -126,8 +123,8 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 		StringBuilder deleteSql = new StringBuilder("Delete From AMTVehicleManufacturer");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where ManufacturerId =:ManufacturerId");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
@@ -139,11 +136,10 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method insert new Records into AMTVehicleManufacturer or
-	 * AMTVehicleManufacturer_Temp. it fetches the available Sequence form
-	 * SeqAMTVehicleManufacturer by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into AMTVehicleManufacturer or AMTVehicleManufacturer_Temp. it fetches the
+	 * available Sequence form SeqAMTVehicleManufacturer by using getNextidviewDAO().getNextId() method.
 	 * 
 	 * save Vehicle Manufacturer Detail
 	 * 
@@ -156,34 +152,32 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 	 * 
 	 */
 	@Override
-	public long save(VehicleManufacturer vehicleManufacturer,String type) {
+	public long save(VehicleManufacturer vehicleManufacturer, String type) {
 		logger.debug("Entering");
-		if (vehicleManufacturer.getId()==Long.MIN_VALUE){
+		if (vehicleManufacturer.getId() == Long.MIN_VALUE) {
 			vehicleManufacturer.setId(getNextId("SeqAMTVehicleManufacturer"));
-			logger.debug("get NextID:"+vehicleManufacturer.getId());
+			logger.debug("get NextID:" + vehicleManufacturer.getId());
 		}
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into AMTVehicleManufacturer");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ManufacturerId, ManufacturerName, " );
+		insertSql.append(" (ManufacturerId, ManufacturerName, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ManufacturerId, :ManufacturerName,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
+
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return vehicleManufacturer.getId();
 	}
-	
+
 	/**
-	 * This method updates the Record AMTVehicleManufacturer or
-	 * AMTVehicleManufacturer_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Vehicle Manufacturer Detail
-	 * by key ManufacturerId and Version
+	 * This method updates the Record AMTVehicleManufacturer or AMTVehicleManufacturer_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Vehicle Manufacturer Detail by key ManufacturerId and Version
 	 * 
 	 * @param Vehicle
 	 *            Manufacturer Detail (vehicleManufacturer)
@@ -197,7 +191,7 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 	public void update(VehicleManufacturer vehicleManufacturer, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update AMTVehicleManufacturer");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ManufacturerName = :ManufacturerName,");
@@ -207,15 +201,15 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType,");
 		updateSql.append(" WorkflowId = :WorkflowId ");
 		updateSql.append(" Where ManufacturerId =:ManufacturerId");
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}

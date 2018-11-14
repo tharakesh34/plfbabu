@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+
 import com.pennant.backend.model.systemmasters.IdentityDetails;
 
 /**
@@ -49,9 +50,12 @@ import com.pennant.backend.model.systemmasters.IdentityDetails;
  * 
  */
 public interface IdentityDetailsDAO {
-	
-	IdentityDetails getIdentityDetailsById(String id,String type);
-	void update(IdentityDetails identityDetails,String type);
-	void delete(IdentityDetails identityDetails,String type);
-	String save(IdentityDetails identityDetails,String type);
+
+	IdentityDetails getIdentityDetailsById(String id, String type);
+
+	void update(IdentityDetails identityDetails, String type);
+
+	void delete(IdentityDetails identityDetails, String type);
+
+	String save(IdentityDetails identityDetails, String type);
 }

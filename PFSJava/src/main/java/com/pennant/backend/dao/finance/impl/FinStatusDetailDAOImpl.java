@@ -16,15 +16,15 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements FinStatusDetailDAO {
 	private static Logger logger = Logger.getLogger(FinStatusDetailDAOImpl.class);
-	
+
 	public FinStatusDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public void save(FinStatusDetail finStatusDetail) {
 		logger.debug("Entering");
-		 
+
 		StringBuilder insertSql = new StringBuilder(" Insert Into FinStatusDetail ");
 		insertSql.append(" (FinReference, ValueDate, CustId, FinStatus, ODDays ) values");
 		insertSql.append(" (:FinReference, :ValueDate, :CustId, :FinStatus, :ODDays)");
@@ -36,7 +36,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 	}
 
 	@Override
@@ -49,15 +49,15 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
 		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
-		
+
 		save(finStatusDetail);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	public int update(FinStatusDetail finStatusDetail) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinStatusDetail ");
 		updateSql.append(" Set FinStatus=:FinStatus  ");
 		updateSql.append(" Where FinReference =:FinReference AND ValueDate=:ValueDate");
@@ -66,36 +66,37 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
 		return this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 	}
-	
+
 	@Override
 	public List<FinStatusDetail> getFinStatusDetailList(Date valueDate) {
 		logger.debug("Entering");
-		
+
 		FinStatusDetail finStatusDetail = new FinStatusDetail();
-		finStatusDetail.setValueDate(valueDate);		
-		
+		finStatusDetail.setValueDate(valueDate);
+
 		StringBuilder selectSql = new StringBuilder(" Select CustId , FinStatus ");
 		selectSql.append(" From FinStatusDetail_View");
 		selectSql.append(" Where ValueDate =:ValueDate ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinStatusDetail.class);
+		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinStatusDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
-    public void updateCustStatuses(List<FinStatusDetail> custStatuses) {
+	public void updateCustStatuses(List<FinStatusDetail> custStatuses) {
 		logger.debug("Entering");
-		
-		StringBuilder selectSql = new StringBuilder("Update Customers  " );
+
+		StringBuilder selectSql = new StringBuilder("Update Customers  ");
 		selectSql.append(" Set CustSts = :FinStatus, CustStsChgDate= :ValueDate WHERE CustId=:CustId ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(custStatuses.toArray());
 		logger.debug("Leaving");
 		this.jdbcTemplate.batchUpdate(selectSql.toString(), beanParameters);
-    }
+	}
 
 }

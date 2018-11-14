@@ -7,386 +7,449 @@ import java.util.List;
 
 public class WIFCustomer implements Serializable {
 
-    private static final long serialVersionUID = 3847855909869736407L;
-    
-    private long custID = Long.MIN_VALUE;
-    private long existCustID = 0;
-    private String custCRCPR = "";
-    private String custShrtName = "";
-    private Date custDOB;
-    private String custGenderCode = "";
-    private String custNationality = "";
-    private String custBaseCcy = "";
-    private String custEmpSts = "";
-    private String custTypeCode = "";
-    private String custCtgCode = "";
-    private String custMaritalSts = "";
-    private int noOfDependents = 0;
-    private boolean custIsBlackListed = false;
-    private Date custBlackListDate;
-    private String custSector = "";
-    private String custSubSector = "";
-    private String custSegment;
-    private boolean jointCust = false;
-    private boolean elgRequired = false;
-    private boolean isNewRecord = true;
-    private String custSalutationCode;
-    private boolean salariedCustomer;
-    private long 	 empName;
-    private String   empDesg;
-    private String 	 empDept;
-    private BigDecimal	 totalIncome;
-    private BigDecimal 	totalExpense;
-    
-    private String lovDescCustCtgType = "RETAIL";//FIXME:How to use constants-PennantConstants.PFF_CUSTCTG_INDIV;
-    private String lovDescCustGenderCodeName;
-    private String lovDescCustNationalityName;
-    private String lovDescCustEmpStsName;
-    private String lovDescCustEmpAlocName;
-    private String lovDescCustEmpName;
-    private String lovDescCustTypeCodeName;
-    private String lovDescCustCtgCodeName;
-    private String lovDescCustMaritalStsName;
-    private String lovDescCustSectorName;
-    private String lovDescCustSubSectorName;
-    private String lovDescEmpName;
-    private String lovDescEmpDesg;
-    private String lovDescEmpDept;
-    private String lovDescCustSegmentName;
-    
-    private BigDecimal custRepayOther = BigDecimal.ZERO;
+	private static final long serialVersionUID = 3847855909869736407L;
+
+	private long custID = Long.MIN_VALUE;
+	private long existCustID = 0;
+	private String custCRCPR = "";
+	private String custShrtName = "";
+	private Date custDOB;
+	private String custGenderCode = "";
+	private String custNationality = "";
+	private String custBaseCcy = "";
+	private String custEmpSts = "";
+	private String custTypeCode = "";
+	private String custCtgCode = "";
+	private String custMaritalSts = "";
+	private int noOfDependents = 0;
+	private boolean custIsBlackListed = false;
+	private Date custBlackListDate;
+	private String custSector = "";
+	private String custSubSector = "";
+	private String custSegment;
+	private boolean jointCust = false;
+	private boolean elgRequired = false;
+	private boolean isNewRecord = true;
+	private String custSalutationCode;
+	private boolean salariedCustomer;
+	private long empName;
+	private String empDesg;
+	private String empDept;
+	private BigDecimal totalIncome;
+	private BigDecimal totalExpense;
+
+	private String lovDescCustCtgType = "RETAIL";//FIXME:How to use constants-PennantConstants.PFF_CUSTCTG_INDIV;
+	private String lovDescCustGenderCodeName;
+	private String lovDescCustNationalityName;
+	private String lovDescCustEmpStsName;
+	private String lovDescCustEmpAlocName;
+	private String lovDescCustEmpName;
+	private String lovDescCustTypeCodeName;
+	private String lovDescCustCtgCodeName;
+	private String lovDescCustMaritalStsName;
+	private String lovDescCustSectorName;
+	private String lovDescCustSubSectorName;
+	private String lovDescEmpName;
+	private String lovDescEmpDesg;
+	private String lovDescEmpDept;
+	private String lovDescCustSegmentName;
+
+	private BigDecimal custRepayOther = BigDecimal.ZERO;
 	private BigDecimal custRepayBank = BigDecimal.ZERO;
 	private BigDecimal custTotalExpense = BigDecimal.ZERO;
 	private BigDecimal custTotalIncome = BigDecimal.ZERO;
 	private BigDecimal curFinRepayAmt = BigDecimal.ZERO;
-    
-    private List<CustomerIncome> customerIncomeList;
 
-    public WIFCustomer() {
-    	
-    }
-    
+	private List<CustomerIncome> customerIncomeList;
+
+	public WIFCustomer() {
+
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-    
+
 	public String getCustCRCPR() {
-    	return custCRCPR;
-    }
+		return custCRCPR;
+	}
+
 	public void setCustCRCPR(String custCRCPR) {
-    	this.custCRCPR = custCRCPR;
-    }
-	
+		this.custCRCPR = custCRCPR;
+	}
+
 	public Date getCustDOB() {
-    	return custDOB;
-    }
+		return custDOB;
+	}
+
 	public void setCustDOB(Date custDOB) {
-    	this.custDOB = custDOB;
-    }
-	
+		this.custDOB = custDOB;
+	}
+
 	public String getCustGenderCode() {
-    	return custGenderCode;
-    }
+		return custGenderCode;
+	}
+
 	public void setCustGenderCode(String custGenderCode) {
-    	this.custGenderCode = custGenderCode;
-    }
-	
+		this.custGenderCode = custGenderCode;
+	}
+
 	public String getCustNationality() {
-    	return custNationality;
-    }
+		return custNationality;
+	}
+
 	public void setCustNationality(String custNationality) {
-    	this.custNationality = custNationality;
-    }
-	
+		this.custNationality = custNationality;
+	}
+
 	public String getCustBaseCcy() {
-    	return custBaseCcy;
-    }
+		return custBaseCcy;
+	}
+
 	public void setCustBaseCcy(String custBaseCcy) {
-    	this.custBaseCcy = custBaseCcy;
-    }
-	
+		this.custBaseCcy = custBaseCcy;
+	}
+
 	public String getCustEmpSts() {
-    	return custEmpSts;
-    }
+		return custEmpSts;
+	}
+
 	public void setCustEmpSts(String custEmpSts) {
-    	this.custEmpSts = custEmpSts;
-    }
-	
+		this.custEmpSts = custEmpSts;
+	}
+
 	public String getCustTypeCode() {
-    	return custTypeCode;
-    }
+		return custTypeCode;
+	}
+
 	public void setCustTypeCode(String custTypeCode) {
-    	this.custTypeCode = custTypeCode;
-    }
-	
+		this.custTypeCode = custTypeCode;
+	}
+
 	public String getCustCtgCode() {
-    	return custCtgCode;
-    }
+		return custCtgCode;
+	}
+
 	public void setCustCtgCode(String custCtgCode) {
-    	this.custCtgCode = custCtgCode;
-    }
-	
+		this.custCtgCode = custCtgCode;
+	}
+
 	public String getCustMaritalSts() {
-    	return custMaritalSts;
-    }
+		return custMaritalSts;
+	}
+
 	public void setCustMaritalSts(String custMaritalSts) {
-    	this.custMaritalSts = custMaritalSts;
-    }
-	
+		this.custMaritalSts = custMaritalSts;
+	}
+
 	public int getNoOfDependents() {
-    	return noOfDependents;
-    }
+		return noOfDependents;
+	}
+
 	public void setNoOfDependents(int noOfDependents) {
-    	this.noOfDependents = noOfDependents;
-    }
-	
+		this.noOfDependents = noOfDependents;
+	}
+
 	public boolean isCustIsBlackListed() {
-    	return custIsBlackListed;
-    }
+		return custIsBlackListed;
+	}
+
 	public void setCustIsBlackListed(boolean custIsBlackListed) {
-    	this.custIsBlackListed = custIsBlackListed;
-    }
-	
+		this.custIsBlackListed = custIsBlackListed;
+	}
+
 	public Date getCustBlackListDate() {
-    	return custBlackListDate;
-    }
+		return custBlackListDate;
+	}
+
 	public void setCustBlackListDate(Date custBlackListDate) {
-    	this.custBlackListDate = custBlackListDate;
-    }
-	
+		this.custBlackListDate = custBlackListDate;
+	}
+
 	public String getCustSector() {
-    	return custSector;
-    }
+		return custSector;
+	}
+
 	public void setCustSector(String custSector) {
-    	this.custSector = custSector;
-    }
-	
+		this.custSector = custSector;
+	}
+
 	public String getCustSubSector() {
-    	return custSubSector;
-    }
+		return custSubSector;
+	}
+
 	public void setCustSubSector(String custSubSector) {
-    	this.custSubSector = custSubSector;
-    }
-	
+		this.custSubSector = custSubSector;
+	}
+
 	public boolean isJointCust() {
-    	return jointCust;
-    }
+		return jointCust;
+	}
+
 	public void setJointCust(boolean jointCust) {
-    	this.jointCust = jointCust;
-    }
-	
+		this.jointCust = jointCust;
+	}
+
 	public void setLovDescCustCtgType(String lovDescCustCtgType) {
-	    this.lovDescCustCtgType = lovDescCustCtgType;
-    }
+		this.lovDescCustCtgType = lovDescCustCtgType;
+	}
+
 	public String getLovDescCustCtgType() {
-	    return lovDescCustCtgType;
-    }
-	
+		return lovDescCustCtgType;
+	}
+
 	public String getLovDescCustGenderCodeName() {
-    	return lovDescCustGenderCodeName;
-    }
+		return lovDescCustGenderCodeName;
+	}
+
 	public void setLovDescCustGenderCodeName(String lovDescCustGenderCodeName) {
-    	this.lovDescCustGenderCodeName = lovDescCustGenderCodeName;
-    }
-	
+		this.lovDescCustGenderCodeName = lovDescCustGenderCodeName;
+	}
+
 	public String getLovDescCustNationalityName() {
-    	return lovDescCustNationalityName;
-    }
+		return lovDescCustNationalityName;
+	}
+
 	public void setLovDescCustNationalityName(String lovDescCustNationalityName) {
-    	this.lovDescCustNationalityName = lovDescCustNationalityName;
-    }
-	
+		this.lovDescCustNationalityName = lovDescCustNationalityName;
+	}
+
 	public String getLovDescCustEmpStsName() {
-    	return lovDescCustEmpStsName;
-    }
+		return lovDescCustEmpStsName;
+	}
+
 	public void setLovDescCustEmpStsName(String lovDescCustEmpStsName) {
-    	this.lovDescCustEmpStsName = lovDescCustEmpStsName;
-    }
-	
+		this.lovDescCustEmpStsName = lovDescCustEmpStsName;
+	}
+
 	public String getLovDescCustTypeCodeName() {
-    	return lovDescCustTypeCodeName;
-    }
+		return lovDescCustTypeCodeName;
+	}
+
 	public void setLovDescCustTypeCodeName(String lovDescCustTypeCodeName) {
-    	this.lovDescCustTypeCodeName = lovDescCustTypeCodeName;
-    }
-	
+		this.lovDescCustTypeCodeName = lovDescCustTypeCodeName;
+	}
+
 	public String getLovDescCustCtgCodeName() {
-    	return lovDescCustCtgCodeName;
-    }
+		return lovDescCustCtgCodeName;
+	}
+
 	public void setLovDescCustCtgCodeName(String lovDescCustCtgCodeName) {
-    	this.lovDescCustCtgCodeName = lovDescCustCtgCodeName;
-    }
-	
+		this.lovDescCustCtgCodeName = lovDescCustCtgCodeName;
+	}
+
 	public String getLovDescCustMaritalStsName() {
-    	return lovDescCustMaritalStsName;
-    }
+		return lovDescCustMaritalStsName;
+	}
+
 	public void setLovDescCustMaritalStsName(String lovDescCustMaritalStsName) {
-    	this.lovDescCustMaritalStsName = lovDescCustMaritalStsName;
-    }
-	
+		this.lovDescCustMaritalStsName = lovDescCustMaritalStsName;
+	}
+
 	public String getLovDescCustSectorName() {
-    	return lovDescCustSectorName;
-    }
+		return lovDescCustSectorName;
+	}
+
 	public void setLovDescCustSectorName(String lovDescCustSectorName) {
-    	this.lovDescCustSectorName = lovDescCustSectorName;
-    }
-	
+		this.lovDescCustSectorName = lovDescCustSectorName;
+	}
+
 	public String getLovDescCustSubSectorName() {
-    	return lovDescCustSubSectorName;
-    }
+		return lovDescCustSubSectorName;
+	}
+
 	public void setLovDescCustSubSectorName(String lovDescCustSubSectorName) {
-    	this.lovDescCustSubSectorName = lovDescCustSubSectorName;
-    }
-	
+		this.lovDescCustSubSectorName = lovDescCustSubSectorName;
+	}
+
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
-	    this.customerIncomeList = customerIncomeList;
-    }
+		this.customerIncomeList = customerIncomeList;
+	}
+
 	public List<CustomerIncome> getCustomerIncomeList() {
-	    return customerIncomeList;
-    }
+		return customerIncomeList;
+	}
+
 	public void setNewRecord(boolean isNewRecord) {
-	    this.isNewRecord = isNewRecord;
-    }
+		this.isNewRecord = isNewRecord;
+	}
+
 	public boolean isNewRecord() {
-	    return isNewRecord;
-    }
+		return isNewRecord;
+	}
+
 	public void setCustID(long custID) {
-	    this.custID = custID;
-    }
+		this.custID = custID;
+	}
+
 	public long getCustID() {
-	    return custID;
-    }
+		return custID;
+	}
+
 	public void setCustShrtName(String custShrtName) {
-	    this.custShrtName = custShrtName;
-    }
+		this.custShrtName = custShrtName;
+	}
+
 	public String getCustShrtName() {
-	    return custShrtName;
-    }
-	
+		return custShrtName;
+	}
+
 	public void setExistCustID(long existCustID) {
-	    this.existCustID = existCustID;
-    }
+		this.existCustID = existCustID;
+	}
+
 	public long getExistCustID() {
-	    return existCustID;
-    }
-	
+		return existCustID;
+	}
+
 	public BigDecimal getCustRepayOther() {
-    	return custRepayOther;
-    }
+		return custRepayOther;
+	}
+
 	public void setCustRepayOther(BigDecimal custRepayOther) {
-    	this.custRepayOther = custRepayOther;
-    }
-	
+		this.custRepayOther = custRepayOther;
+	}
+
 	public BigDecimal getCustRepayBank() {
-    	return custRepayBank;
-    }
+		return custRepayBank;
+	}
+
 	public void setCustRepayBank(BigDecimal custRepayBank) {
-    	this.custRepayBank = custRepayBank;
-    }
-	
+		this.custRepayBank = custRepayBank;
+	}
+
 	public BigDecimal getCustTotalExpense() {
-    	return custTotalExpense;
-    }
+		return custTotalExpense;
+	}
+
 	public void setCustTotalExpense(BigDecimal custTotalExpense) {
-    	this.custTotalExpense = custTotalExpense;
-    }
-	
+		this.custTotalExpense = custTotalExpense;
+	}
+
 	public BigDecimal getCustTotalIncome() {
-    	return custTotalIncome;
-    }
+		return custTotalIncome;
+	}
+
 	public void setCustTotalIncome(BigDecimal custTotalIncome) {
-    	this.custTotalIncome = custTotalIncome;
-    }
+		this.custTotalIncome = custTotalIncome;
+	}
+
 	public void setElgRequired(boolean elgRequired) {
-	    this.elgRequired = elgRequired;
-    }
+		this.elgRequired = elgRequired;
+	}
+
 	public boolean isElgRequired() {
-	    return elgRequired;
-    }
+		return elgRequired;
+	}
+
 	public void setLovDescCustEmpAlocName(String lovDescCustEmpAlocName) {
-	    this.lovDescCustEmpAlocName = lovDescCustEmpAlocName;
-    }
+		this.lovDescCustEmpAlocName = lovDescCustEmpAlocName;
+	}
+
 	public String getLovDescCustEmpAlocName() {
-	    return lovDescCustEmpAlocName;
-    }
+		return lovDescCustEmpAlocName;
+	}
+
 	public void setLovDescCustEmpName(String lovDescCustEmpName) {
-	    this.lovDescCustEmpName = lovDescCustEmpName;
-    }
+		this.lovDescCustEmpName = lovDescCustEmpName;
+	}
+
 	public String getCustSalutationCode() {
 		return custSalutationCode;
 	}
+
 	public void setCustSalutationCode(String custSalutationCode) {
 		this.custSalutationCode = custSalutationCode;
 	}
+
 	public boolean isSalariedCustomer() {
 		return salariedCustomer;
 	}
+
 	public void setSalariedCustomer(boolean salariedCustomer) {
 		this.salariedCustomer = salariedCustomer;
 	}
+
 	public long getEmpName() {
 		return empName;
 	}
+
 	public void setEmpName(long empName) {
 		this.empName = empName;
 	}
+
 	public String getEmpDesg() {
 		return empDesg;
 	}
+
 	public void setEmpDesg(String empDesg) {
 		this.empDesg = empDesg;
 	}
+
 	public String getEmpDept() {
 		return empDept;
 	}
+
 	public void setEmpDept(String empDept) {
 		this.empDept = empDept;
 	}
+
 	public BigDecimal getTotalIncome() {
 		return totalIncome;
 	}
+
 	public void setTotalIncome(BigDecimal totalIncome) {
 		this.totalIncome = totalIncome;
 	}
+
 	public BigDecimal getTotalExpense() {
 		return totalExpense;
 	}
+
 	public void setTotalExpense(BigDecimal totalExpense) {
 		this.totalExpense = totalExpense;
 	}
+
 	public String getLovDescEmpName() {
 		return lovDescEmpName;
 	}
+
 	public void setLovDescEmpName(String lovDescEmpName) {
 		this.lovDescEmpName = lovDescEmpName;
 	}
+
 	public String getLovDescEmpDesg() {
 		return lovDescEmpDesg;
 	}
+
 	public void setLovDescEmpDesg(String lovDescEmpDesg) {
 		this.lovDescEmpDesg = lovDescEmpDesg;
 	}
+
 	public String getLovDescEmpDept() {
 		return lovDescEmpDept;
 	}
+
 	public void setLovDescEmpDept(String lovDescEmpDept) {
 		this.lovDescEmpDept = lovDescEmpDept;
 	}
+
 	public String getLovDescCustEmpName() {
-	    return lovDescCustEmpName;
-    }
+		return lovDescCustEmpName;
+	}
 
 	public BigDecimal getCurFinRepayAmt() {
-	    return curFinRepayAmt;
-    }
+		return curFinRepayAmt;
+	}
 
 	public void setCurFinRepayAmt(BigDecimal curFinRepayAmt) {
-	    this.curFinRepayAmt = curFinRepayAmt;
-    }
+		this.curFinRepayAmt = curFinRepayAmt;
+	}
 
 	public String getCustSegment() {
 		return custSegment;
 	}
+
 	public void setCustSegment(String custSegment) {
 		this.custSegment = custSegment;
 	}
@@ -394,6 +457,7 @@ public class WIFCustomer implements Serializable {
 	public String getLovDescCustSegmentName() {
 		return lovDescCustSegmentName;
 	}
+
 	public void setLovDescCustSegmentName(String lovDescCustSegmentName) {
 		this.lovDescCustSegmentName = lovDescCustSegmentName;
 	}

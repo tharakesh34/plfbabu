@@ -18,7 +18,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 	public HostStatusEnquiryProcessImpl() {
 		super();
 	}
-	
+
 	/*
 	 * Method For getting AS400 Connection Status
 	 */
@@ -32,7 +32,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 		HostEnquiry hostEnquiry = new HostEnquiry();
 
 		try {
-			
+
 			as400 = hostConnection.getConnection();
 			CommandCall commandCall = new CommandCall(as400);
 			commandCall.run("ADDLIBLE LIB(PFFLIB)");
@@ -40,24 +40,24 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 			// Request Data
 			pcmlDoc = new ProgramCallDocument(as400, pcml);
 			pcmlDoc.setValue(pcml + ".@REQDTA.UnitName", "MGR");
-			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 	
-			pcmlDoc.setValue(pcml + ".@ERPRM", ""); 	
-			
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000");
+			pcmlDoc.setValue(pcml + ".@ERPRM", "");
+
 			logger.debug(" Before PCML Call");
 			getHostConnection().callAPI(pcmlDoc, pcml);
 			logger.debug(" After PCML Call");
-			
+
 			// Response Data
-			hostEnquiry.setUnitName((String) pcmlDoc.getValue(pcml+".@RSPDTA.DSRSPUNITNAME"));
-		    hostEnquiry.setStatusCode((String) pcmlDoc.getValue(pcml+".@RSPDTA.DSRSPSTSCOD"));
-			hostEnquiry.setStatusDesc((String) pcmlDoc.getValue(pcml+".@RSPDTA.DSRSPSTSDEC"));
-			hostEnquiry.setNextBusDate(String.valueOf(pcmlDoc.getValue(pcml+".@RSPDTA.DSRSPNXTBUSDTE")));
-			hostEnquiry.setPrevBusDate(String.valueOf(pcmlDoc.getValue(pcml+".@RSPDTA.DSRSPPRVBUSDTE")));
-			hostEnquiry.setCurBusDate(String.valueOf(pcmlDoc.getValue(pcml+".@RSPDTA.DSRSPCURBUSDTE")));
-			
+			hostEnquiry.setUnitName((String) pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPUNITNAME"));
+			hostEnquiry.setStatusCode((String) pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPSTSCOD"));
+			hostEnquiry.setStatusDesc((String) pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPSTSDEC"));
+			hostEnquiry.setNextBusDate(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPNXTBUSDTE")));
+			hostEnquiry.setPrevBusDate(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPPRVBUSDTE")));
+			hostEnquiry.setCurBusDate(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DSRSPCURBUSDTE")));
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999", "Host Connection Failed.. Please contact administrator ");
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}
@@ -68,10 +68,11 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public void setHostConnection(HostConnection hostConnection) {
 		this.hostConnection = hostConnection;
 	}
+
 	public HostConnection getHostConnection() {
 		return hostConnection;
 	}

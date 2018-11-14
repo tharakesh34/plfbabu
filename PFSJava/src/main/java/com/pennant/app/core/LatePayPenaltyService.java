@@ -52,8 +52,8 @@ import com.pennant.backend.util.FinanceConstants;
 
 public class LatePayPenaltyService extends ServiceHelper {
 
-	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(LatePayPenaltyService.class);
+	private static final long serialVersionUID = 6161809223570900644L;
+	private static Logger logger = Logger.getLogger(LatePayPenaltyService.class);
 
 	/**
 	 * Default constructor
@@ -62,10 +62,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		super();
 	}
 
-
-	public void computeLPP(FinODDetails fod, Date valueDate, String idb,
-			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments, String roundingMode,
-			int roundingTarget) {
+	public void computeLPP(FinODDetails fod, Date valueDate, String idb, List<FinanceScheduleDetail> finScheduleDetails,
+			List<FinanceRepayments> repayments, String roundingMode, int roundingTarget) {
 		logger.debug("Entering");
 		BigDecimal penalty = BigDecimal.ZERO;
 		//Late Payment Penalty. Do not apply LPP
@@ -83,10 +81,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			//Fixed Fee. On Every Passing Schedule Month 
 		} else if (FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(fod.getODChargeType())) {
-			
+
 			BigDecimal balanceForCal = getBalanceForCal(fod);
-			
-			if(balanceForCal.compareTo(BigDecimal.ZERO) > 0){
+
+			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				int numberOfMonths = getMonthsBetween(fod, finScheduleDetails, valueDate);
 				penalty = fod.getODChargeAmtOrPerc().multiply(new BigDecimal(numberOfMonths));
 			}
@@ -96,18 +94,20 @@ public class LatePayPenaltyService extends ServiceHelper {
 			BigDecimal balanceForCal = getBalanceForCal(fod);
 
 			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
-			if(balanceForCal.compareTo(BigDecimal.ZERO) > 0){
-				BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100),
+						RoundingMode.HALF_DOWN);
 				penalty = balanceForCal.multiply(amtOrPercetage).divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
 			}
 
 			//Percentage ON OD Amount. One Time 
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(fod.getODChargeType())) {
 			BigDecimal balanceForCal = getBalanceForCal(fod);
-			
-			if(balanceForCal.compareTo(BigDecimal.ZERO) > 0){
+
+			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				int numberOfMonths = getMonthsBetween(fod, finScheduleDetails, valueDate);
-				BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+				BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100),
+						RoundingMode.HALF_DOWN);
 				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
 						.divide(new BigDecimal(100));
 			}
@@ -251,11 +251,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 		int terms = 0;
 		for (FinanceScheduleDetail finSchd : finScheduleDetails) {
 
-			if (DateUtility.compare(finSchd.getSchDate(),fod.getFinODSchdDate()) < 0) {
+			if (DateUtility.compare(finSchd.getSchDate(), fod.getFinODSchdDate()) < 0) {
 				continue;
 			}
 
-			if (DateUtility.compare(finSchd.getSchDate(),valueDate) > 0) {
+			if (DateUtility.compare(finSchd.getSchDate(), valueDate) > 0) {
 				break;
 			}
 

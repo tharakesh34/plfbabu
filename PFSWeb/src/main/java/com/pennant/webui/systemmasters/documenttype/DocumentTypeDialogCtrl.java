@@ -75,49 +75,46 @@ import com.pennanttech.pennapps.pff.document.DocumentCategory;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/DocumentType/documentTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/DocumentType/documentTypeDialog.zul file.
  */
 public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	private static final long serialVersionUID = 1222331967339400466L;
 	private static final Logger logger = Logger.getLogger(DocumentTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 	window_DocumentTypeDialog; 	// autoWired
+	protected Window window_DocumentTypeDialog; // autoWired
 
-	protected Textbox 	docTypeCode; 				// autoWired
-	protected Textbox 	docTypeDesc; 				// autoWired
-	protected Checkbox 	docIsMandatory; 			// autoWired
-	protected Checkbox 	docExpDateIsMand; 			// autoWired
-	protected Checkbox 	docIssueDateMand; 			// autoWired
-	protected Checkbox 	docIdNumMand; 				// autoWired
-	protected Checkbox 	docTypeIsActive; 			// autoWired
-	protected Checkbox 	pddDoc; 			// autoWired
-	protected Checkbox 	otcDoc; 			// autoWired
-	protected Checkbox 	lvReq; 			// autoWired
-	protected Checkbox 	rcuReq; 			// autoWired
-	protected Checkbox 	docIssuedAuthorityMand; 	// autoWired
-	protected Checkbox 	docIsPdfExtRequired; 	// autoWired
-	protected Checkbox 	docIsPasswordProtected; 	// autoWired
+	protected Textbox docTypeCode; // autoWired
+	protected Textbox docTypeDesc; // autoWired
+	protected Checkbox docIsMandatory; // autoWired
+	protected Checkbox docExpDateIsMand; // autoWired
+	protected Checkbox docIssueDateMand; // autoWired
+	protected Checkbox docIdNumMand; // autoWired
+	protected Checkbox docTypeIsActive; // autoWired
+	protected Checkbox pddDoc; // autoWired
+	protected Checkbox otcDoc; // autoWired
+	protected Checkbox lvReq; // autoWired
+	protected Checkbox rcuReq; // autoWired
+	protected Checkbox docIssuedAuthorityMand; // autoWired
+	protected Checkbox docIsPdfExtRequired; // autoWired
+	protected Checkbox docIsPasswordProtected; // autoWired
 	protected ExtendedCombobox mappingRef;
 	protected ExtendedCombobox docCategory;
-	protected Textbox docExternalRef;			// autoWired
+	protected Textbox docExternalRef; // autoWired
 	protected Row rowMappingRef;
-	
 
 	// not autoWired variables
 	private DocumentType documentType; // overHanded per parameters
 	private transient DocumentTypeListCtrl documentTypeListCtrl; // overHanded per parameters
 
 	private transient boolean validationOn;
-	
+
 	// ServiceDAOs / Domain Classes
 	private transient DocumentTypeService documentTypeService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -133,14 +130,13 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected DocumentType object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected DocumentType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_DocumentTypeDialog(Event event)	throws Exception {
+	public void onCreate$window_DocumentTypeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -160,15 +156,13 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 				setDocumentType(null);
 			}
 
-			doLoadWorkFlow(this.documentType.isWorkflow(),
-					this.documentType.getWorkflowId(),
+			doLoadWorkFlow(this.documentType.isWorkflow(), this.documentType.getWorkflowId(),
 					this.documentType.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"DocumentTypeDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "DocumentTypeDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -178,8 +172,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			// or
 			// delete documentType here.
 			if (arguments.containsKey("documentTypeListCtrl")) {
-				setDocumentTypeListCtrl((DocumentTypeListCtrl) arguments
-						.get("documentTypeListCtrl"));
+				setDocumentTypeListCtrl((DocumentTypeListCtrl) arguments.get("documentTypeListCtrl"));
 			} else {
 				setDocumentTypeListCtrl(null);
 			}
@@ -210,20 +203,20 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
+
 		this.mappingRef.setMaxlength(8);
 		this.mappingRef.setModuleName("DocumentDataMapping");
 		this.mappingRef.setValueColumn("Type");
 		this.mappingRef.setDescColumn("TypeDescription");
-		this.mappingRef.setValidateColumns(new String[]{"Type"});
-		
+		this.mappingRef.setValidateColumns(new String[] { "Type" });
+
 		this.docCategory.setMaxlength(16);
 		this.docCategory.setModuleName("DocumentCategory");
 		this.docCategory.setValueColumn("Code");
 		this.docCategory.setDescColumn("Description");
-		this.docCategory.setValidateColumns(new String[]{"Code"});
+		this.docCategory.setValidateColumns(new String[] { "Code" });
 		this.docCategory.setMandatoryStyle(true);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -232,8 +225,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -243,7 +235,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DocumentTypeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_DocumentTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -361,14 +353,16 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docCategory.setValue(category.getCode());
 		this.docCategory.setDescription(category.getDescription());
 		this.docCategory.setObject(category);
-		
-		this.mappingRef.setValue(String.valueOf(getDocumentType().getPdfMappingRef()).equals("0")?"":String.valueOf(getDocumentType().getPdfMappingRef()));
-		if(aDocumentType.isDocIsPdfExtRequired()){
+
+		this.mappingRef.setValue(String.valueOf(getDocumentType().getPdfMappingRef()).equals("0") ? ""
+				: String.valueOf(getDocumentType().getPdfMappingRef()));
+		if (aDocumentType.isDocIsPdfExtRequired()) {
 			this.mappingRef.setMandatoryStyle(true);
-		}else{
+		} else {
 			this.mappingRef.setMandatoryStyle(false);
 		}
-		if(aDocumentType.isNew() || (aDocumentType.getRecordType() != null ? aDocumentType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aDocumentType.isNew() || (aDocumentType.getRecordType() != null ? aDocumentType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.docTypeIsActive.setChecked(true);
 			this.docTypeIsActive.setDisabled(true);
 		}
@@ -392,13 +386,13 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocTypeDesc(this.docTypeDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocIsMandatory(this.docIsMandatory.isChecked());
 		} catch (WrongValueException we) {
@@ -424,31 +418,31 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocIssueDateMand(this.docIssueDateMand.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocIdNumMand(this.docIdNumMand.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocExpDateIsMand(this.docExpDateIsMand.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocIssuedAuthorityMand(this.docIssuedAuthorityMand.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aDocumentType.setDocTypeIsActive(this.docTypeIsActive.isChecked());
 		} catch (WrongValueException we) {
@@ -462,7 +456,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	 
+
 		try {
 			aDocumentType.setDocIsPdfExtRequired(this.docIsPdfExtRequired.isChecked());
 		} catch (WrongValueException we) {
@@ -473,18 +467,21 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.mappingRef.getValue() != null) {
-				aDocumentType.setPdfMappingRef(Long.valueOf(org.apache.commons.lang3.StringUtils.isBlank(this.mappingRef.getValue())? "0" : this.mappingRef.getValue()));
+				aDocumentType.setPdfMappingRef(
+						Long.valueOf(org.apache.commons.lang3.StringUtils.isBlank(this.mappingRef.getValue()) ? "0"
+								: this.mappingRef.getValue()));
 			} else {
 				aDocumentType.setPdfMappingRef(0);
 			}
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aDocumentType.setDocExternalRef(org.apache.commons.lang3.StringUtils.isBlank(this.docExternalRef.getValue())? this.docTypeCode.getValue():this.docExternalRef.getValue());
+			aDocumentType.setDocExternalRef(org.apache.commons.lang3.StringUtils.isBlank(this.docExternalRef.getValue())
+					? this.docTypeCode.getValue() : this.docExternalRef.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -502,7 +499,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		aDocumentType.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFulfill$mappingRef(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = this.mappingRef.getObject();
@@ -514,7 +511,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		logger.debug("Leaving" + event.toString());
 
 	}
-	 
+
 	public void onFulfill$docCategory(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = this.docCategory.getObject();
@@ -528,11 +525,11 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentType
 	 * @throws Exception
@@ -579,21 +576,26 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.docTypeCode.isReadonly()){
-			this.docTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if (!this.docTypeCode.isReadonly()) {
+			this.docTypeCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		if (!this.docTypeDesc.isReadonly()){
-			this.docTypeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeDesc.value"), 
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.docTypeDesc.isReadonly()) {
+			this.docTypeDesc
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeDesc.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
-		if (!this.docCategory.isReadonly()){
-			this.docCategory.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocCategory.value"),  null, true, true));
+
+		if (!this.docCategory.isReadonly()) {
+			this.docCategory.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_DocumentTypeDialog_DocCategory.value"), null, true, true));
 		}
-		
-		if (this.docIsPdfExtRequired.isChecked() && !this.docIsPdfExtRequired.isDisabled()){
-			this.mappingRef.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_MappingRef.value"),  null, true, true));
+
+		if (this.docIsPdfExtRequired.isChecked() && !this.docIsPdfExtRequired.isDisabled()) {
+			this.mappingRef.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_DocumentTypeDialog_MappingRef.value"), null, true, true));
 		}
 
 		logger.debug("Leaving");
@@ -648,9 +650,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel(
-				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
-				Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value")+" : "+aDocumentType.getDocTypeCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value") + " : "
+				+ aDocumentType.getDocTypeCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDocumentType.getRecordType())) {
 				aDocumentType.setVersion(aDocumentType.getVersion() + 1);
@@ -916,7 +918,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aDocumentType,	PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(aDocumentType, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -978,8 +980,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(
-								PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_DocumentTypeDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1022,8 +1024,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 */
 	private AuditHeader getAuditHeader(DocumentType aDocumentType, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aDocumentType.getBefImage(), aDocumentType);
-		return new AuditHeader(String.valueOf(aDocumentType.getId()), null,
-				null, null, auditDetail, aDocumentType.getUserDetails(), getOverideMap());
+		return new AuditHeader(String.valueOf(aDocumentType.getId()), null, null, null, auditDetail,
+				aDocumentType.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1045,35 +1047,34 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
-	public void onCheck$docIsPdfExtRequired(Event event){
+
+	public void onCheck$docIsPdfExtRequired(Event event) {
 		doCheckPdfExt();
 	}
-	
-	private void doCheckPdfExt(){
-		if(this.docIsPdfExtRequired.isChecked()){
+
+	private void doCheckPdfExt() {
+		if (this.docIsPdfExtRequired.isChecked()) {
 			this.mappingRef.setButtonDisabled(isReadOnly("DocumentTypeDialog_mappingRef"));
 			this.mappingRef.setMandatoryStyle(true);
-		}else{
+		} else {
 			this.mappingRef.setMandatoryStyle(false);
 			this.docIsPasswordProtected.setChecked(docIsPdfExtRequired.isChecked());
 		}
-        this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
+		this.docIsPasswordProtected.setDisabled(!docIsPdfExtRequired.isChecked());
 		this.mappingRef.setButtonDisabled(!docIsPdfExtRequired.isChecked());
 		this.mappingRef.setConstraint("");
 		this.mappingRef.setErrorMessage("");
 		this.mappingRef.setValue("");
 		//this.rowMappingRef.setVisible(docIsPdfExtRequired.isChecked());
 	}
-	
+
 	/**
 	 * Method to check document type checked or not
 	 * 
 	 */
 	private void doCheckCustomerDoc(String categoryCode) {
 		logger.debug("Entering");
-		
+
 		if (DocumentCategories.CUSTOMER.getKey().equals(categoryCode)) {
 			this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
 			this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
@@ -1093,9 +1094,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			this.docIssuedAuthorityMand.setChecked(false);
 			this.docIssuedAuthorityMand.setDisabled(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -1114,7 +1116,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	private void refreshList() {
 		getDocumentTypeListCtrl().search();
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.documentType.getDocTypeCode());
@@ -1127,6 +1129,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1134,6 +1137,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	public DocumentType getDocumentType() {
 		return this.documentType;
 	}
+
 	public void setDocumentType(DocumentType documentType) {
 		this.documentType = documentType;
 	}
@@ -1141,6 +1145,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	public void setDocumentTypeService(DocumentTypeService documentTypeService) {
 		this.documentTypeService = documentTypeService;
 	}
+
 	public DocumentTypeService getDocumentTypeService() {
 		return this.documentTypeService;
 	}
@@ -1148,6 +1153,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	public void setDocumentTypeListCtrl(DocumentTypeListCtrl documentTypeListCtrl) {
 		this.documentTypeListCtrl = documentTypeListCtrl;
 	}
+
 	public DocumentTypeListCtrl getDocumentTypeListCtrl() {
 		return this.documentTypeListCtrl;
 	}

@@ -46,8 +46,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 
 /**
- * Service declaration for methods that depends on
- * <b>FinMaintainInstruction</b>.<br>
+ * Service declaration for methods that depends on <b>FinMaintainInstruction</b>.<br>
  * 
  */
 public interface FinCovenantMaintanceService {

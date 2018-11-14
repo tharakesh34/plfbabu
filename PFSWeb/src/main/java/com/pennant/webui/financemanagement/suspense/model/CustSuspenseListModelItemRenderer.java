@@ -63,9 +63,9 @@ public class CustSuspenseListModelItemRenderer implements ListitemRenderer<Custo
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public CustSuspenseListModelItemRenderer() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Customer customer, int count) throws Exception {
 
@@ -77,7 +77,7 @@ public class CustSuspenseListModelItemRenderer implements ListitemRenderer<Custo
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustDftBranch());
 		lc.setParent(item);
-		lc = new Listcell(customer.getCustSts()+"-"+customer.getLovDescCustStsName());
+		lc = new Listcell(customer.getCustSts() + "-" + customer.getLovDescCustStsName());
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(customer.getCustStsChgDate()));
 		lc.setParent(item);

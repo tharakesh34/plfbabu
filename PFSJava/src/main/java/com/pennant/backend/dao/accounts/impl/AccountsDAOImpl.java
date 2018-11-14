@@ -70,21 +70,22 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	private static Logger logger = Logger.getLogger(AccountsDAOImpl.class);
-	
+
 	public AccountsDAOImpl() {
 		super();
 	}
-	
+
 	/**
-	 * This method set the Work Flow id based on the module name and return the new Accounts 
+	 * This method set the Work Flow id based on the module name and return the new Accounts
+	 * 
 	 * @return Accounts
 	 */
 	@Override
 	public Accounts getAccounts() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("Accounts");
-		Accounts accounts= new Accounts();
-		if (workFlowDetails!=null){
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Accounts");
+		Accounts accounts = new Accounts();
+		if (workFlowDetails != null) {
 			accounts.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
@@ -92,8 +93,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	}
 
 	/**
-	 * This method get the module from method getAcounts() and 
-	 * set the new record flag as true and return Accounts()   
+	 * This method get the module from method getAcounts() and set the new record flag as true and return Accounts()
+	 * 
 	 * @return Accounts
 	 */
 	@Override
@@ -106,97 +107,103 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	}
 
 	/**
-	 * Fetch the Record  Account Details details by key field
+	 * Fetch the Record Account Details details by key field
 	 * 
-	 * @param id (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return Accounts
 	 */
 	@Override
 	public Accounts getAccountsById(final String id, String type) {
 		logger.debug("Entering");
-		
+
 		Accounts accounts = new Accounts();
 		accounts.setAccountId(id);
-		
-		StringBuilder selectSql = new StringBuilder("Select AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, ");
-		selectSql.append("AcShortName, AcPurpose, InternalAc, CustSysAc,");
-		selectSql.append("ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive, AcBlocked,"); 
-		selectSql.append(" AcClosed, HostAcNumber");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",lovDescCustCIF,lovDescBranchCodeName,lovDescCurrency,lovDescAccTypeDesc, lovDescFinFormatter");
+		StringBuilder selectSql = new StringBuilder(
+				"Select AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, ");
+		selectSql.append("AcShortName, AcPurpose, InternalAc, CustSysAc,");
+		selectSql.append(
+				"ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive, AcBlocked,");
+		selectSql.append(" AcClosed, HostAcNumber");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					",lovDescCustCIF,lovDescBranchCodeName,lovDescCurrency,lovDescAccTypeDesc, lovDescFinFormatter");
 		}
 		selectSql.append(" From Accounts");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AccountId =:AccountId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
-		
-		try{
-			accounts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+
+		try {
+			accounts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			accounts = null;
 		}
 		logger.debug("Leaving");
 		return accounts;
 	}
-	
+
 	/**
-	 * Fetch the Record  Account Details List by key field
+	 * Fetch the Record Account Details List by key field
 	 * 
-	 * @param AcPurpose (String)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param AcPurpose
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return List<Accounts>
 	 */
 	@Override
 	public List<Accounts> getAccountsByAcPurpose(final String acPurpose, String type) {
 		logger.debug("Entering");
-		
+
 		Accounts accounts = new Accounts();
 		accounts.setAcPurpose(acPurpose);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select AcType ");
 		selectSql.append(" From RMTAccountTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AcPurpose =:AcPurpose");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	/**
-	 * This method Deletes the Record from the Accounts or Accounts_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Account Details by key AccointId
+	 * This method Deletes the Record from the Accounts or Accounts_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Account Details by key AccointId
 	 * 
-	 * @param Account Details (accounts)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Details (accounts)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	public void delete(Accounts accounts,String type) {
+	public void delete(Accounts accounts, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		
+
 		StringBuilder deleteSql = new StringBuilder("Delete From Accounts");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where AccountId =:AccountId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
-		try{
+		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -204,188 +211,197 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method insert new Records into Accounts or Accounts_Temp.
 	 *
-	 * save Account Details 
+	 * save Account Details
 	 * 
-	 * @param Account Details (accounts)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Details (accounts)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public String save(Accounts accounts,String type) {
+	public String save(Accounts accounts, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into Accounts");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
 		insertSql.append(", AcPurpose, InternalAc, CustSysAc");
-		insertSql.append(", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(
+				", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive");
 		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
+		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName");
 		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc");
 		insertSql.append(", :ShadowBal, :AcBalance, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
 		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
 		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return accounts.getAccountId();
 	}
-	
+
 	/**
 	 * This method insert new Records into Accounts or Accounts_Temp.
 	 *
-	 * save Account Details 
+	 * save Account Details
 	 * 
-	 * @param Account Details (accounts)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Details (accounts)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-	
+
 	@Override
-	public void saveList(List<Accounts> accountList,String type) {
+	public void saveList(List<Accounts> accountList, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into Accounts");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
 		insertSql.append(", AcPurpose, InternalAc, CustSysAc");
-		insertSql.append(", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(
+				", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive");
 		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
+		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName");
 		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc");
 		insertSql.append(", :ShadowBal, :AcBalance, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
 		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
 		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		logger.debug("insertSql: " + insertSql.toString());
-		
+
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
-	 * This method updates the Record Accounts or Accounts_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Account Details by key AccointId and Version
+	 * This method updates the Record Accounts or Accounts_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Account Details by key AccointId and Version
 	 * 
-	 * @param Account Details (accounts)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Details (accounts)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void update(Accounts accounts,String type) {
+	public void update(Accounts accounts, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update Accounts");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType" ); 
-		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
-		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
-		updateSql.append(", CustSysAc = :CustSysAc, ShadowBal = :ShadowBal,  AcBalance = :AcBalance" ); 
-		updateSql.append(", AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
-		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked" ); 
-		updateSql.append(", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
-		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" ); 
-		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update Accounts");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType");
+		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName");
+		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc");
+		updateSql.append(", CustSysAc = :CustSysAc, ShadowBal = :ShadowBal,  AcBalance = :AcBalance");
+		updateSql.append(", AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate");
+		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked");
+		updateSql.append(
+				", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
+		updateSql.append(
+				", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
+		updateSql.append(
+				", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where AccountId =:AccountId");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * This method updates the Record Accounts or Accounts_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Account Details by key AccointId and Version
+	 * This method updates the Record Accounts or Accounts_Temp. if Record not updated then throws DataAccessException
+	 * with error 41004. update Account Details by key AccointId and Version
 	 * 
-	 * @param Account Details (accounts)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
+	 * @param Account
+	 *            Details (accounts)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
-	public void updateList(List<Accounts> accountList,String type) {
+	public void updateList(List<Accounts> accountList, String type) {
 		logger.debug("Entering");
-		
-		StringBuilder	updateSql =new StringBuilder("Update Accounts");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType" ); 
-		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
-		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
-		updateSql.append(", CustSysAc = :CustSysAc, ShadowBal = :ShadowBal,  AcBalance = :AcBalance" ); 
-		updateSql.append(", AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
-		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked" ); 
-		updateSql.append(", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
-		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" ); 
-		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+
+		StringBuilder updateSql = new StringBuilder("Update Accounts");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType");
+		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName");
+		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc");
+		updateSql.append(", CustSysAc = :CustSysAc, ShadowBal = :ShadowBal,  AcBalance = :AcBalance");
+		updateSql.append(", AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate");
+		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked");
+		updateSql.append(
+				", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
+		updateSql.append(
+				", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
+		updateSql.append(
+				", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where AccountId =:AccountId");
-		
-		if (!type.endsWith("_Temp")){
+
+		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
 		}
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountList.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-    @Override
-    public void updateAccrualBalance() {
+
+	@Override
+	public void updateAccrualBalance() {
 		logger.debug("Entering");
-		
+
 		Accounts accounts = new Accounts();
 		accounts.setShadowBal(BigDecimal.ZERO);
-		
-		StringBuilder	updateSql =new StringBuilder("Update Accounts");
+
+		StringBuilder updateSql = new StringBuilder("Update Accounts");
 		updateSql.append(" Set ShadowBal = :ShadowBal ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
-    }
+	}
 
 	@Override
 	public boolean saveOrUpdate(Accounts account, String type) {
@@ -393,27 +409,27 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 		int recordCount = 0;
 
 		//PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
-		StringBuilder	updateSql =new StringBuilder("Update Accounts Set ");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" ShadowBal = (ShadowBal + :ShadowBal), " ); 
-		updateSql.append(" AcBalance = (AcBalance + :AcBalance) " ); 
+		StringBuilder updateSql = new StringBuilder("Update Accounts Set ");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" ShadowBal = (ShadowBal + :ShadowBal), ");
+		updateSql.append(" AcBalance = (AcBalance + :AcBalance) ");
 		updateSql.append(" Where AccountId =:AccountId");
 
-		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
+		StringBuilder insertSql = new StringBuilder("Insert Into Accounts");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
 		insertSql.append(", AcPurpose, InternalAc, CustSysAc");
-		insertSql.append(", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(
+				", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive");
 		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
+		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName");
 		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc");
 		insertSql.append(", :ShadowBal, :AcBalance, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
 		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
 		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
-
 
 		//TRY UPDATE.
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(account);
@@ -436,7 +452,7 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 			}
 
 		}
-		
+
 		return false;
 	}
 

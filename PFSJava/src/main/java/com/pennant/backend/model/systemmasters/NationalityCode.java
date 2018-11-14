@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class NationalityCode extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 6431173137706990656L;
-	
+
 	private String nationalityCode;
 	private String nationalityDesc;
 	private boolean nationalityIsActive;
@@ -84,6 +84,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public String getId() {
 		return nationalityCode;
 	}
+
 	public void setId(String id) {
 		this.nationalityCode = id;
 	}
@@ -91,6 +92,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public String getNationalityCode() {
 		return nationalityCode;
 	}
+
 	public void setNationalityCode(String nationalityCode) {
 		this.nationalityCode = nationalityCode;
 	}
@@ -98,6 +100,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public String getNationalityDesc() {
 		return nationalityDesc;
 	}
+
 	public void setNationalityDesc(String nationalityDesc) {
 		this.nationalityDesc = nationalityDesc;
 	}
@@ -105,6 +108,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public boolean isNationalityIsActive() {
 		return nationalityIsActive;
 	}
+
 	public void setNationalityIsActive(boolean nationalityIsActive) {
 		this.nationalityIsActive = nationalityIsActive;
 	}
@@ -112,6 +116,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -119,6 +124,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -126,6 +132,7 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public NationalityCode getBefImage() {
 		return this.befImage;
 	}
+
 	public void setBefImage(NationalityCode beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -133,9 +140,11 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

@@ -67,8 +67,8 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.DailyDownloadProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 
-public class DailyDownloadProcessImpl implements DailyDownloadProcess{
-	
+public class DailyDownloadProcessImpl implements DailyDownloadProcess {
+
 	private static Logger logger = Logger.getLogger(DailyDownloadProcessImpl.class);
 
 	private InterfaceDAO interfaceDAO;
@@ -76,98 +76,96 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	public DailyDownloadProcessImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Importing Currency Details
 	 */
 	@Override
-	public List<EquationCurrency>  importCurrencyDetails() throws InterfaceException{
+	public List<EquationCurrency> importCurrencyDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Method for Importing Relation Ship Officer Details
 	 */
 	@Override
 	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Method for Importing Customer Type Details
 	 */
 	@Override
 	public List<EquationCustomerType> importCustomerTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Method for Importing Department Details
 	 */
 	@Override
 	public List<EquationDepartment> importDepartmentDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Method for Importing Customer Group Details
 	 */
 	@Override
 	public List<EquationCustomerGroup> importCustomerGroupDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Method for Importing Account Type Details
 	 */
 	@Override
 	public List<EquationAccountType> importAccountTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
-	
-	
+
 	/**
 	 * Method for Importing Customer Rating Details
 	 */
 	@Override
 	public List<EquationCustomerRating> importCustomerRatingDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
-		logger.debug("Leaving");
-		return null;
-	}
-	
-	@Override
-	public List<EquationCountry> importCountryDetails() throws InterfaceException {
-		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
 
 	@Override
-	public List<EquationCustStatusCode> importCustStausCodeDetails()
-			throws InterfaceException {
+	public List<EquationCountry> importCountryDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationCustStatusCode> importCustStausCodeDetails() throws InterfaceException {
+		logger.debug("Entering");
+
 		logger.debug("Leaving");
 		return null;
 	}
@@ -175,7 +173,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	@Override
 	public List<EquationIndustry> importIndustryDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
@@ -183,16 +181,15 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	@Override
 	public List<EquationBranch> importBranchDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
 
 	@Override
-	public List<EquationInternalAccount> importInternalAccDetails()
-			throws InterfaceException {
+	public List<EquationInternalAccount> importInternalAccDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
@@ -200,7 +197,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	@Override
 	public List<EquationAbuser> importAbuserDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
@@ -208,51 +205,48 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	@Override
 	public List<InterfaceCustomerDetail> importCustomerDetails() throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
 
 	@Override
-	public List<EquationTransactionCode> importTransactionCodeDetails()
+	public List<EquationTransactionCode> importTransactionCodeDetails() throws InterfaceException {
+		logger.debug("Entering");
+
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationIdentityType> importIdentityTypeDetails() throws InterfaceException {
+		logger.debug("Entering");
+
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<IncomeAccountTransaction> importIncomeAccTransactions(List<IncomeAccountTransaction> finIncomeAccounts)
 			throws InterfaceException {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 		return null;
 	}
 
 	@Override
-	public List<EquationIdentityType> importIdentityTypeDetails()
-			throws InterfaceException {
-		logger.debug("Entering");
-		
-		logger.debug("Leaving");
-		return null;
+	public void processCustomerNumbers(List<String> existingCustomers) throws InterfaceException {
 	}
 
-	@Override
-	public List<IncomeAccountTransaction> importIncomeAccTransactions(
-			List<IncomeAccountTransaction> finIncomeAccounts) throws InterfaceException {
-		logger.debug("Entering");
-		
-		logger.debug("Leaving");
-		return null;
-	}
-	
-	@Override
-	public void processCustomerNumbers(List<String> existingCustomers)
-			throws InterfaceException {
-	}
-
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public InterfaceDAO getInterfaceDAO() {
 		return interfaceDAO;
 	}
+
 	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}

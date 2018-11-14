@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.financemanagement;
+
 import java.util.List;
 
 import com.pennant.backend.model.financemanagement.Provision;
@@ -50,14 +51,24 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 public interface ProvisionDAO {
 
 	Provision getProvision();
+
 	Provision getNewProvision();
-	Provision getProvisionById(String id,String type);
-	void update(Provision provision,String type);
-	void delete(Provision provision,String type);
-	String save(Provision provision,String type);
+
+	Provision getProvisionById(String id, String type);
+
+	void update(Provision provision, String type);
+
+	void delete(Provision provision, String type);
+
+	String save(Provision provision, String type);
+
 	void updateProvAmt(ProvisionMovement provisionMovement, String type);
+
 	List<Provision> getProcessedProvisions();
+
 	String saveProcessedProvisions(Provision provision);
+
 	Provision getCurNPABucket(String id);
+
 	void updateProvisonAmounts(Provision provision);
 }

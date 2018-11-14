@@ -57,7 +57,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
  */
 public final class DateUtility {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
-	
+
 	/**
 	 * Parsing Util Date in required Format
 	 * 

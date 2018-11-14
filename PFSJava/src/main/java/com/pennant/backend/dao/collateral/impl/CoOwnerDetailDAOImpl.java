@@ -18,16 +18,15 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoOwnerDetailDAO {
-	private static Logger	logger	= Logger.getLogger(CoOwnerDetailDAOImpl.class);
+	private static Logger logger = Logger.getLogger(CoOwnerDetailDAOImpl.class);
 
 	public CoOwnerDetailDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Guarantor Details by key CollateralRef
-	 * and CoOwnerId
+	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Guarantor Details by key CollateralRef and CoOwnerId
 	 * 
 	 * @param CoOwnerDetail
 	 *            Details (coOwnerDetail)
@@ -67,7 +66,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	@Override
 	public long save(CoOwnerDetail coOwnerDetail, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into CollateralCoOwners");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -92,9 +91,8 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	}
 
 	/**
-	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete CoOwnerDetail Details by key CollateralRef
-	 * and CoOwnerId
+	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete CoOwnerDetail Details by key CollateralRef and CoOwnerId
 	 * 
 	 * @param CoOwnerDetail
 	 *            Details (coOwnerDetail)
@@ -103,7 +101,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	 * @return void
 	 * @throws DataAccessException
 	 * 
-	 */ 
+	 */
 	@Override
 	public void update(CoOwnerDetail coOwnerDetail, String type) {
 		int recordCount = 0;
@@ -113,12 +111,17 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		sql.append("Update CollateralCoOwners");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set CustomerId = :CustomerId, BankCustomer = :BankCustomer, CoOwnerIDType = :CoOwnerIDType,");
-		sql.append(" CoOwnerIDNumber = :CoOwnerIDNumber, CoOwnerCIFName = :CoOwnerCIFName, CoOwnerPercentage = :CoOwnerPercentage, ");
+		sql.append(
+				" CoOwnerIDNumber = :CoOwnerIDNumber, CoOwnerCIFName = :CoOwnerCIFName, CoOwnerPercentage = :CoOwnerPercentage, ");
 		sql.append(" MobileNo = :MobileNo, EmailId = :EmailId, CoOwnerProofName = :CoOwnerProofName,");
-		sql.append(" Remarks = :Remarks, AddrHNbr = :AddrHNbr, FlatNbr = :FlatNbr, AddrStreet = :AddrStreet, AddrLine1 = :AddrLine1, ");
-		sql.append(" AddrLine2 = :AddrLine2, POBox = :POBox, AddrCity = :AddrCity, AddrProvince = :AddrProvince, AddrCountry = :AddrCountry,");
-		sql.append(" AddrZIP = :AddrZIP, CoOwnerProof = :CoOwnerProof, Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append(" RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(
+				" Remarks = :Remarks, AddrHNbr = :AddrHNbr, FlatNbr = :FlatNbr, AddrStreet = :AddrStreet, AddrLine1 = :AddrLine1, ");
+		sql.append(
+				" AddrLine2 = :AddrLine2, POBox = :POBox, AddrCity = :AddrCity, AddrProvince = :AddrProvince, AddrCountry = :AddrCountry,");
+		sql.append(
+				" AddrZIP = :AddrZIP, CoOwnerProof = :CoOwnerProof, Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(
+				" RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where CollateralRef = :CollateralRef AND CoOwnerId = :CoOwnerId ");
 		logger.debug("updateSql: " + sql.toString());
@@ -202,7 +205,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	/**
 	 * Get version of co-Owner details
 	 * 
@@ -235,8 +238,8 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	}
 
 	/**
-	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete CoOwnerDetail Details by key CollateralRef
+	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete CoOwnerDetail Details by key CollateralRef
 	 * 
 	 * @param CoOwnerDetail
 	 *            Details (coOwnerDetail)
@@ -249,10 +252,10 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	@Override
 	public void deleteList(String collateralRef, String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
-		
+
 		sql = new StringBuilder("Delete From CollateralCoOwners");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralRef = :CollateralRef");
@@ -260,7 +263,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 		this.jdbcTemplate.update(sql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
 }

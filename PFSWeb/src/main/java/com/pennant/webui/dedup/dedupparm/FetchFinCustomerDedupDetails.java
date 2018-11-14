@@ -19,25 +19,23 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FetchFinCustomerDedupDetails {
 
-	private static final Logger logger = Logger.getLogger(FetchFinCustomerDedupDetails.class);	
-	
-	
-	private static  String CUSTOMERDEDUP_LABELS =  "custCIF,custDOB,custFName,custLName,custCRCPR,"
+	private static final Logger logger = Logger.getLogger(FetchFinCustomerDedupDetails.class);
+
+	private static String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,"
 			+ "custPassportNo,mobileNumber,custNationality,dedupRule,override,overridenby";
 
 	private static DedupParmService dedupParmService;
-	
-	public FetchFinCustomerDedupDetails(){
+
+	public FetchFinCustomerDedupDetails() {
 		super();
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public static CustomerDetails getFinCustomerDedup(String userRole, String finType, String ref,
 			CustomerDetails custdetails, Window parentWindow, String curLoginUser) throws Exception {
 		logger.debug("Entering");
-		List<CustomerDedup> customerDedupList=null;
-		int userAction= -1;
+		List<CustomerDedup> customerDedupList = null;
+		int userAction = -1;
 		Customer customer = null;
 		String mobileNumber = "";
 		if (custdetails.getCustomer() != null) {
@@ -56,9 +54,9 @@ public class FetchFinCustomerDedupDetails {
 
 			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				// get customer dedup details from interface
-				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails,finType,ref);
+				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails, finType, ref);
 				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,phoneNumber,custCoreBank,address,override";
-			} 
+			}
 
 			if (custDedupData != null && !custDedupData.isEmpty()) {
 
@@ -73,7 +71,7 @@ public class FetchFinCustomerDedupDetails {
 					userAction = details.getUserAction();
 					customerDedupList = (List<CustomerDedup>) details.getObject();
 				}
-			} 
+			}
 
 			custdetails.setCustomerDedupList(null);
 
@@ -99,20 +97,18 @@ public class FetchFinCustomerDedupDetails {
 				}
 
 			}
-		
+
 			logger.debug("Leaving");
 
 		}
 		return custdetails;
-		
 
 	}
 
-
 	private static CustomerDedup doSetCustomerDedup(Customer customer, String finReference, String mobileNumber) {
 		logger.debug("Entering");
-		
-		if(customer != null) {
+
+		if (customer != null) {
 			CustomerDedup customerDedup = new CustomerDedup();
 
 			customerDedup.setFinReference(finReference);
@@ -136,23 +132,21 @@ public class FetchFinCustomerDedupDetails {
 			customerDedup.setCustPOB(customer.getCustPOB());
 			customerDedup.setCustResdCountry(customer.getCustResdCountry());
 			customerDedup.setCustEMail(customer.getEmailID());
-			
+
 			logger.debug("Leaving");
 			return customerDedup;
 		} else {
 			return null;
 		}
-		
+
 	}
 
 	public static DedupParmService getDedupParmService() {
 		return dedupParmService;
 	}
 
-
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		FetchFinCustomerDedupDetails.dedupParmService = dedupParmService;
 	}
-	
-	
+
 }

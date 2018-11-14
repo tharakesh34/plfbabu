@@ -64,14 +64,13 @@ import com.pennant.backend.service.limit.LimitStructureService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.limit.limitstructure.model.LimitStructureListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul
- * file.<br>
+ * This is the controller class for the /WEB-INF/pages/Limit/LimitStructure/LimitStructureList.zul file.<br>
  * ************************************************************<br>
  * 
  */
@@ -81,38 +80,35 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 	private static final Logger logger = Logger.getLogger(LimitStructureListCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting autowired by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer. ************************************************************************
 	 */
-	protected Window 							window_LimitStructureList; 
-	protected Paging 							pagingLimitStructureList; 
-	protected Borderlayout 						borderLayout_LimitStructureList; 
-	protected Listbox 							listBoxLimitStructure; 
-	protected Textbox							limitStructureType;
+	protected Window window_LimitStructureList;
+	protected Paging pagingLimitStructureList;
+	protected Borderlayout borderLayout_LimitStructureList;
+	protected Listbox listBoxLimitStructure;
+	protected Textbox limitStructureType;
 
 	// List headers
-	protected Listheader 						listheader_StructureCode; 
-	protected Listheader 						listheader_StructureName; 
-	protected Listheader						listheader_Active;
-
+	protected Listheader listheader_StructureCode;
+	protected Listheader listheader_StructureName;
+	protected Listheader listheader_Active;
 
 	// checkRights
-	protected Button 							button_LimitStructureList_NewLimitStructure; 
-	protected Button 							button_LimitStructureList_LimitStructureSearch; 
+	protected Button button_LimitStructureList_NewLimitStructure;
+	protected Button button_LimitStructureList_LimitStructureSearch;
 
 	// NEEDED for the ReUse in the SearchWindow
-	protected JdbcSearchObject<LimitStructure> 	searchObj;
-	protected Textbox 							structureCode; 
-	protected Listbox 							sortOperator_StructureCode; 
-	protected Textbox 							structureName; 
-	protected Listbox 							sortOperator_StructureName; 
-	protected Listbox 							sortOperator_active;
-	protected Checkbox 							active;
+	protected JdbcSearchObject<LimitStructure> searchObj;
+	protected Textbox structureCode;
+	protected Listbox sortOperator_StructureCode;
+	protected Textbox structureName;
+	protected Listbox sortOperator_StructureName;
+	protected Listbox sortOperator_active;
+	protected Checkbox active;
 
-	private transient LimitStructureService 	limitStructureService;
+	private transient LimitStructureService limitStructureService;
 
 	/**
 	 * default constructor.<br>
@@ -129,12 +125,13 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 		super.queueTableName = "LimitStructure_View";
 		super.enquiryTableName = "LimitStructure_AView";
 	}
+
 	@Override
 	protected void doAddFilters() {
 
-		super.doAddFilters();	
+		super.doAddFilters();
 
-		searchObject.addFilterEqual("LimitCategory",limitStructureType.getValue());
+		searchObject.addFilterEqual("LimitCategory", limitStructureType.getValue());
 
 	}
 
@@ -146,26 +143,25 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 	 */
 	public void onCreate$window_LimitStructureList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_LimitStructureList, borderLayout_LimitStructureList, listBoxLimitStructure, pagingLimitStructureList);
+		setPageComponents(window_LimitStructureList, borderLayout_LimitStructureList, listBoxLimitStructure,
+				pagingLimitStructureList);
 		setItemRender(new LimitStructureListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_LimitStructureList_NewLimitStructure, "button_LimitStructureList_NewLimitStructure", true);
+		registerButton(button_LimitStructureList_NewLimitStructure, "button_LimitStructureList_NewLimitStructure",
+				true);
 		registerButton(button_LimitStructureList_LimitStructureSearch);
-
 
 		registerField("structureCode", listheader_StructureCode, SortOrder.ASC, structureCode,
 				sortOperator_StructureCode, Operators.STRING);
 		registerField("structureName", listheader_StructureName, SortOrder.ASC, structureName,
-				sortOperator_StructureName, Operators.STRING);	
-		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active,
-				Operators.BOOLEAN);
+				sortOperator_StructureName, Operators.STRING);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the search button.
@@ -187,7 +183,6 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 		doReset();
 		search();
 	}
-
 
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
@@ -232,8 +227,8 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND StructureCode='" + limitStructure.getStructureCode()+ "'  AND version="+ limitStructure.getVersion() + " ";
-
+		String whereCond = " AND StructureCode='" + limitStructure.getStructureCode() + "'  AND version="
+				+ limitStructure.getVersion() + " ";
 
 		if (doCheckAuthority(limitStructure, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -258,14 +253,14 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("limitStructure", aLimitStructure);		
+		arg.put("limitStructure", aLimitStructure);
 		aLimitStructure.setLimitCategory(limitStructureType.getValue());
 		arg.put("limitStructureListCtrl", this);
 		arg.put("enqiryModule", super.enqiryModule);
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Limit/LimitStructure/LimitStructureDialog.zul",null,arg);
+			Executions.createComponents("/WEB-INF/pages/Limit/LimitStructure/LimitStructureDialog.zul", null, arg);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);

@@ -94,11 +94,11 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 	protected Textbox religionCode; // autowired
 	protected Textbox religionDesc; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_ReligionCode;
 	protected Listbox sortOperator_ReligionDesc;
 	protected Listbox sortOperator_Active;
-	
+
 	private transient ReligionService religionService;
 
 	/**
@@ -126,8 +126,7 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 	public void onCreate$window_ReligionList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_ReligionList, borderLayout_ReligionList, listBoxReligion,
-				pagingReligionList);
+		setPageComponents(window_ReligionList, borderLayout_ReligionList, listBoxReligion, pagingReligionList);
 		setItemRender(new ReligionListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -135,8 +134,10 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 		registerButton(button_ReligionList_NewReligion, "button_ReligionList_NewReligion", true);
 
 		registerField("religionId");
-		registerField("religionCode", listheader_ReligionCode, SortOrder.NONE, religionCode, sortOperator_ReligionCode, Operators.STRING);
-		registerField("religionDesc", listheader_ReligionDesc, SortOrder.NONE, religionDesc, sortOperator_ReligionDesc, Operators.STRING);
+		registerField("religionCode", listheader_ReligionCode, SortOrder.NONE, religionCode, sortOperator_ReligionCode,
+				Operators.STRING);
+		registerField("religionDesc", listheader_ReligionDesc, SortOrder.NONE, religionDesc, sortOperator_ReligionDesc,
+				Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -184,7 +185,6 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -195,7 +195,7 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 
 	public void onReligionItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxReligion.getSelectedItem();
 		final long religionId = (long) selectedItem.getAttribute("religionId");
@@ -205,13 +205,13 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  ReligionId = ");
-		whereCond.append( religion.getReligionId());
+		whereCond.append(religion.getReligionId());
 		whereCond.append(" AND  version=");
 		whereCond.append(religion.getVersion());
-	
+
 		if (doCheckAuthority(religion, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && religion.getWorkflowId() == 0) {
@@ -221,10 +221,10 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -237,7 +237,7 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("religion", religion);
 		arg.put("religionListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Religion/ReligionDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -267,7 +267,7 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 
